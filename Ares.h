@@ -1,10 +1,10 @@
 #ifndef ARES_H
 #define ARES_H
 
+#include <YRPP.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
-#include <YRPP.h>
 
 class Ares
 {

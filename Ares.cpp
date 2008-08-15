@@ -8,8 +8,8 @@
 
 #include "Ares.h"
 #include "Commands.h"
-#include "CommandClass.h"
-#include "CallCenter.cpp"
+#include <CommandClass.h>
+#include "CallCenter.h"
 #include <StaticInits.cpp>
 
 //Init Statics
