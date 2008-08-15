@@ -1,0 +1,32 @@
+Ares Features
+=============
+
+Command Line Arguments:
+- Disable the EA and WW logo using the "-NOLOGO" command line argument.
+- Enable log file writing (DEBUG.TXT) using the "-LOG" command line argument.
+- Truly disable the CD checks using the "-CD" command line argument.
+
+Engine Enhancements:
+- Sound files now also work outside a BAG file.
+- Unlimited (technically) countries possible, added following tags for (all) countries:
+		FlagFile=(string)			;Flag filename (including .pcx extension)
+		LSFile=(string)				;LoadScreen filename (including .shp extension, also requires a %s for the current screen width!)
+		LSPALFile=(string)			;LoadScreen palette filename (including .pal extension)
+		TauntFile=(string)			;Taunt filename (including taunts subdir and .wav extension, also requires a %02i for the taunt ID!)
+		LSName=(csflabel)			;Name of the country displayed on the loading screen
+		LSSpecialName=(csflabel)	;Name of the country's special weapon displayed on the loading screen
+		LSBrief=(csflabel)			;Description of the country displayed on the loading screen
+		StatusText=(csflabel)		;Brief description of the country displayed in the status bar of the selection menu
+
+Random Map Generator:
+- Archipelago maps enabled.
+- Desert maps enabled.
+- Bridge placement enabled.
+
+Buildings:
+- Custom Foundations possible (use FoundationMaker).
+
+Miscellaneous:
+- Bindable Map Snapshot command that saves the current map to a file.
+- Bindable AI Control command that lets the AI assume control over you.
+- Skirmish can be played alone.
