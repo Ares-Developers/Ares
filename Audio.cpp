@@ -77,8 +77,8 @@ EXPORT Ares_Audio_LoadWAV(REGISTERS* R)	//50% rewrite of Audio::LoadWAV
 		char* SampleName=(char*)SampleIndex;
 
 		DWORD* pAudioIndex=(DWORD*)R->get_EBX();	//AudioIndex*
-		pAudioIndex[0x110 >> 2]=NULL;	//ExternalFile = NULL
-		pAudioIndex[0x118 >> 2]=NULL;	//CurrentSampleFile = NULL
+		pAudioIndex[0x110 >> 2] = 0;	//ExternalFile = NULL
+		pAudioIndex[0x118 >> 2] = 0;	//CurrentSampleFile = NULL
 
 		//Replace the construction of the RawFileClass with one of a CCFileClass
 		char filename[0x100]="\0";
@@ -131,7 +131,7 @@ EXPORT Ares_Audio_GetSampleInfo(REGISTERS* R)
 	int SampleIndex=R->get_EDX();
 	if(SampleIndex>=0x400000)	//if greater than 0x400000, it's the SampleName allocated by us
 	{
-		char* SampleName=(char*)SampleIndex;
+		// gcc: unused char* SampleName=(char*)SampleIndex;
 
 		int* pAudioSample=(int*)R->get_StackVar32(0x4);	//AudioSample*
 		
