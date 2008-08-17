@@ -1,0 +1,121 @@
+# WIP Ares makefile
+# Made for: mingw32-g++ 3.4.5 (mingw-vista special r3)
+# You're not expected to understand this.
+
+# readme:
+
+# prerequisites:
+# svn://yrpp
+# svn://ares
+# gcc/mingw with binutils and whatnot
+
+# definitions: ADJUST BEFORE USING
+# YRPPPATH below should point to the directory with yrpp files
+# ARESPATH below should point to the directory with Ares files
+# GCCROOT  should point to the root directory of gcc
+# BINPATH  should point to a directory for object file output
+#          THIS DIR SHOULD ALWAYS EXIST
+#          deleting the object files will force make to remake them on the next run
+#          this directory is also where the final DLL will be created
+# BIN      is the filename of the final DLL
+# only uncomment PERLEXE if you're DCoder
+
+# todo:
+# autogenerate an INJ file from declarations in sources
+
+# usage:
+# either feed it to your IDE, or run it with
+# mingw32-make -I%CD% -C %CD% -R -r -f ares-gcc.win
+# or similar, I run this file from the parent directory of both /ares and /yrpp, see definitions above for related paths
+
+GCCVER    = $(shell mingw32-g++ -dumpversion) # works only if gcc is in %PATH% of course
+#PERLEXE   = f:/www/bin/perl/bin
+
+GCCROOT   = d:/bin/GCC3
+GCCBIN    = $(GCCROOT)/bin
+GCCINCL   = $(GCCROOT)/include
+GCCLIB    = $(GCCROOT)/lib
+CXX       = $(GCCBIN)/mingw32-g++.exe
+WINDRES   = $(GCCBIN)/windres.exe
+GPROF     = $(GCCBIN)/gprof.exe
+AR        = $(GCCBIN)/ar.exe
+RM        = rm -f
+LINK      = $(GCCBIN)/mingw32-g++.exe
+
+YRPPPATH  = $(CURDIR)/yrpp
+ARESPATH  = $(CURDIR)/Ares
+BINPATH   = $(CURDIR)/bin
+
+ARESCPPS  = $(wildcard $(ARESPATH)/*.cpp)
+CPPS      = $(ARESCPPS) $(YRPPPATH)/YRCallbacks.cpp
+ARESOBJS  = $(subst .cpp,.o, $(subst $(ARESPATH),$(BINPATH), $(ARESCPPS)))
+OBJS      = $(ARESOBJS) $(BINPATH)/YRCallbacks.o
+DEPS      = $(subst .o,.d, $(OBJS))
+
+LYRPP     = $(BINPATH)/yrpp
+LYRPPA    = $(BINPATH)/libyrpp.a
+
+LYRPPS    = yrpp
+LYRPPAS   = libyrpp.a
+
+LIBS      = -L$(GCCINCL) -L$(BINPATH) --no-export-all-symbols -masm=intel -save-temps -l$(LYRPPS)
+
+GCCVER4   = $(findstring 4.%.%, $(GCCVER))
+GCCINCL4  = $(GCCLIB)/gcc/mingw32/4.3.0/include
+
+GCCINC    = -I$(YRPPPATH) -I$(ARESPATH)
+GCCINC4X  = -I$(GCCINCL4) -I$(GCCINCL4)/c++ $(GCCINC)
+GCCINC3X  = -I$(GCCINCL) -I$(GCCINCL)/c++ -I$(GCCINCL)/common -I$(GCCINCL)/ddk -I$(GCCINCL)/c++/3.4.5 -I$(GCCINCL)/c++/3.4.5/bits -I$(GCCINCL)/c++/3.4.5/ext -I$(GCCINCL)/c++/3.4.5/mingw32 -I$(GCCINCL)/c++/3.4.5/mingw32/bits $(GCCINC)
+
+CXXINCS   = $(if $(GCCVER4), $(GCCINC4X), $(GCCINC3X))
+CXXSTD    = $(if $(GCCVER4),gnu++0x,gnu++98)
+BIN       = $(BINPATH)/Ares.dll
+DEFINES   = -DWIN32 -D_WINDOWS -DUNICODE -D_REFGUID_DEFINED # -D_USRDLL -DARES_EXPORTS
+CXXFLAGS  = $(CXXINCS) $(DEFINES) -DBUILDING_DLL=1 -save-temps -Wall -Wno-unknown-pragmas -masm=intel -O3 # -std=$(CXXSTD) -fdump-class-hierarchy-all -Wno-return-type 
+
+.PHONY: all all-before all-after clean clean-custom
+all: all-before $(BIN) all-after
+
+all-before:
+	$(if $(wildcard $(BINPATH)),,$(call md, $(BINPATH)))
+
+all-after:
+	$(foreach asmfile, $(wildcard *.s), $(call make-hex, $(asmfile)))
+
+clean: clean-custom
+	$(RM) $(OBJS) $(DEPS) $(BIN) $(LYRPPA)
+
+# TODO:
+# $(call md,dir)
+define md
+	$(error directory $1 does not exist)
+endef
+
+# $(call make-hex,source-file)
+define make-hex
+	$(if $(PERLEXE),$(shell $(PERLEXE) -wpl -e "s/\b(\d{5,})\b/sprintf('0x%%x', $$1)/eig;" $1 > $(subst .s,.ss,$1)),)
+endef
+
+# $(call make-depend,source-file,object-file,depend-file)
+define make-depend
+	touch $3
+	$(CXX) -MM -MF $3 -MP -MT $2 $(CXXFLAGS) $1
+endef
+
+$(BIN): $(LYRPPA) $(OBJS)
+	$(LINK) -shared $(OBJS) $(LIBS) -Wl,--out-implib,$(BINPATH)/libAres.a -o $(BIN)
+
+$(LYRPPA): $(BINPATH)/StaticInits.o
+	$(AR) rcs $@ $<
+
+$(BINPATH)/%.o: $(YRPPPATH)/%.cpp
+	$(call make-depend, $<, $@, $(subst .o,.d,$@))
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+$(BINPATH)/%.o: $(ARESPATH)/%.cpp
+	$(call make-depend, $<, $@, $(subst .o,.d,$@))
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+$(BINPATH)/StaticInits.o: $(YRPPPATH)/StaticInits.cpp $(wildcard $(YRPPPATH)/*.h)
+	$(call make-depend, $<, $@, $(subst .o,.d,$@))
+	$(CXX) $(CXXFLAGS) -c $< -o $@
