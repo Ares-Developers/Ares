@@ -8,20 +8,38 @@ Command Line Arguments:
 
 Engine Enhancements:
 - Sound files now also work outside a BAG file.
-- Unlimited (technically) countries possible, added following tags for (all) countries:
-		FlagFile=(string)			;Flag filename (including .pcx extension)
-		LSFile=(string)				;LoadScreen filename (including .shp extension, also requires a %s for the current screen width!)
-		LSPALFile=(string)			;LoadScreen palette filename (including .pal extension)
-		TauntFile=(string)			;Taunt filename (including taunts subdir and .wav extension, also requires a %02i for the taunt ID!)
-		LSName=(csflabel)			;Name of the country displayed on the loading screen
-		LSSpecialName=(csflabel)	;Name of the country's special weapon displayed on the loading screen
-		LSBrief=(csflabel)			;Description of the country displayed on the loading screen
-		StatusText=(csflabel)		;Brief description of the country displayed in the status bar of the selection menu
+- Unlimited (theoretically) countries possible, added following tags for (all) countries:
+		FlagFile=(string) ;Flag filename (including .pcx extension)
+		LSFile=(string) ;LoadScreen filename (including .shp extension, also requires a %s for the current screen width!)
+		LSPALFile=(string) ;LoadScreen palette filename (including .pal extension)
+		TauntFile=(string) ;Taunt filename (including taunts subdir and .wav extension, also requires a %02i for the taunt ID!)
+		LSName=(csflabel) ;Name of the country displayed on the loading screen
+		LSSpecialName=(csflabel) ;Name of the country's special weapon displayed on the loading screen
+		LSBrief=(csflabel) ;Description of the country displayed on the loading screen
+		StatusText=(csflabel) ;Brief description of the country displayed in the status bar of the selection menu
+		RandomSelectionWeight=(number) ;how likely it is, out of <sum of all weights>, that this country gets chosen as "Random", default is 1
+  All countries with Multiplay=yes will appear in the list and can be picked by selecting "Random".
+- Unlimited (theoretically) sides possible, side properties now get read from a section as well. These are the possible tags:
+		DefaultDisguise=(infantrytype) ;default disguise infantry
+		Crew=(infantrytype) ;crew infantry
+		SurvivorDivisor=(number) ;survivor divisor
+		BaseDefenses=(buildingtype list) ;list of base defense buildings
+		BaseDefenseCounts=(number list) ;the amount of each defense building
+		PowerPlant=(buildingtype) ;the power plant of this side
+		NOT YET SUPPORTED: LoadTextColor=(colorscheme) ;the color to use on the loading screen
+		ParaDrop=(infantrytype/vehicletype list) ;default paradrop squad for tech airports - ACCEPTS VEHICLES
+		ParaDropNum=(number list) ;the amount of each paradropped units
+		SidebarMixFileIndex=(number) ;the mix file number to use for the sidebar (ie 0 is Allied, 1 is Soviet etc)
+		SidebarYuriFileNames=(yes/no) ;use yuri sidebar file names
+		NOT YET SUPPORTED: EVATag=(string) ;name of the ini tag to load in evamd.ini for this side
+- BaseUnit, BuildConst and HarvesterUnit allow more than 3 entries to work
+- Only one ParaDrop plane is sent even if multiple unit types are specified
 
 Random Map Generator:
 - Archipelago maps enabled.
 - Desert maps enabled.
 - Bridge placement enabled.
+- Preview drawing avoided in many parts to increase random map generation speed by about 75%. More to come...
 
 Buildings:
 - Custom Foundations possible (use FoundationMaker).
