@@ -96,6 +96,7 @@ EXPORT_FUNC(IvanBombs_Spread)
 	return 0x469AA4;
 }
 
+// Insignificant=yes or DontScore=yes prevent EVA_UnitLost on unit destruction
 // 4D98DD, 6
 EXPORT_FUNC(Insignificant_UnitLost)
 {
@@ -103,4 +104,59 @@ EXPORT_FUNC(Insignificant_UnitLost)
 	TechnoTypeClass *T = (TechnoTypeClass *)t->GetType(); //R->get_EAX(); would work, but let's see if this does as well
 
 	return (T->get_Insignificant() || T->get_DontScore()) ? 0x4D9916 : 0;
+}
+
+// bugfix #277
+// 71204C, 6
+EXPORT_FUNC(TechnoTypeClass_GetCameo)
+{
+	TechnoTypeClass *T = (TechnoTypeClass *)R->get_ESI();
+	HouseClass *Player = (HouseClass *)R->get_EAX();
+
+	switch(T->What_Am_I())
+	{
+		case abs_InfantryType:
+			if(Player->get_Type()->get_VeteranInfantry()->FindItemIndex((InfantryTypeClass *)T) != -1)
+			{
+				R->set_EAX((DWORD)T->get_AltCameo());
+				return 0x7120C5;
+			}
+			break;
+		case abs_UnitType:
+			if(Player->get_Type()->get_VeteranUnits()->FindItemIndex((UnitTypeClass *)T) != -1)
+			{
+				R->set_EAX((DWORD)T->get_AltCameo());
+				return 0x7120C5;
+			}
+			break;
+		default:
+			return 0;
+	}
+	return 0;
+}
+
+// Crewed=yes jumpjets spawn parachuted infantry on destruction, not idle
+// 7382EA, 6
+EXPORT_FUNC(UnitClass_ReceiveDamage)
+{
+	GET(InfantryClass *, I)R->get_EDI();
+	if(I->GetHeight() > 0)
+	{
+		I->set_FallingDown(1);
+		I->set_HasParachute(1);
+		I->set_FallRate(0);
+	}
+	return 0;
+}
+
+// MakeInfantry that fails to place will just end the source animation and cleanup instead of memleaking to game end
+// 424B23, 6
+EXPORT_FUNC(AnimClass_Update)
+{
+	GET(InfantryClass *, I)R->get_EDI();
+	I->UnInit();
+	GET(AnimClass *, A)R->get_ESI();
+	A->set_TimeToDie(1);
+	A->UnInit();
+	return 0x424B29;
 }
