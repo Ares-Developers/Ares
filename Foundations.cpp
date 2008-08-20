@@ -127,7 +127,7 @@ void __stdcall Foundations::LoadFromINI(BuildingTypeClass* pThis, CCINIClass* pI
 					sprintf(key, "Foundation%d", i);
 					if(pArtINI->ReadString(pID, key, "", str, 0x80) > 0)
 					{
-						int x, y;
+						short x, y;
 						if(sscanf(str, "%d,%d", &x, &y) == 2)
 						{
 							pCurrent->X = x;

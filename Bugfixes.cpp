@@ -10,7 +10,7 @@
 
 // bugfix #379
 // 71A92A, 5
-EXPORT _Temporal_AvoidFriendlies(REGISTERS *R)
+EXPORT_FUNC(_Temporal_AvoidFriendlies)
 {
 	TemporalClass *m = (TemporalClass *)R->get_ESI(); 
 
@@ -26,7 +26,7 @@ EXPORT _Temporal_AvoidFriendlies(REGISTERS *R)
 
 // bugfix #385
 // 438E86, 5
-EXPORT IvanBombs_AttachableByAll(REGISTERS *R)
+EXPORT_FUNC(IvanBombs_AttachableByAll)
 {
 	TechnoClass *Source = (TechnoClass *)R->get_EBP();
 	switch(Source->What_Am_I())
@@ -42,7 +42,7 @@ EXPORT IvanBombs_AttachableByAll(REGISTERS *R)
 }
 
 // 469393, 7
-EXPORT IvanBombs_Spread(REGISTERS *R)
+EXPORT_FUNC(IvanBombs_Spread)
 {
 	BulletClass *bullet = (BulletClass *)R->get_ESI();
 	double cSpread = bullet->get_WH()->get_CellSpread();
@@ -97,7 +97,7 @@ EXPORT IvanBombs_Spread(REGISTERS *R)
 }
 
 // 4D98DD, 6
-EXPORT Insignificant_UnitLost(REGISTERS *R)
+EXPORT_FUNC(Insignificant_UnitLost)
 {
 	TechnoClass *t = (TechnoClass *)R->get_ESI();
 	TechnoTypeClass *T = (TechnoTypeClass *)t->GetType(); //R->get_EAX(); would work, but let's see if this does as well

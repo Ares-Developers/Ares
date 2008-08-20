@@ -48,3 +48,8 @@ Miscellaneous:
 - Bindable Map Snapshot command that saves the current map to a file.
 - Bindable AI Control command that lets the AI assume control over you.
 - Skirmish can be played alone.
+
+Bugfixes (still testing):
+- #385 - ivan bombs usable by all (TODO: proper cursors)
+- #??? - ivan bombs obey detonation warhead's CellSpread (unbalanced by default, but it was requested by Marshall, TODO: add ini tag to control)
+- #??? - Insignificant=yes blocks EVA_UnitLost now
