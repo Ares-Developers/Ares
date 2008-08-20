@@ -8,6 +8,7 @@
 
 #include <YRPP.h>
 
+// bugfix #379
 // 71A92A, 5
 EXPORT _Temporal_AvoidFriendlies(REGISTERS *R)
 {
@@ -21,4 +22,85 @@ EXPORT _Temporal_AvoidFriendlies(REGISTERS *R)
 	}
 
 	return 0;
+}
+
+// bugfix #385
+// 438E86, 5
+EXPORT IvanBombs_AttachableByAll(REGISTERS *R)
+{
+	TechnoClass *Source = (TechnoClass *)R->get_EBP();
+	switch(Source->What_Am_I())
+	{
+		case abs_Aircraft:
+		case abs_Building:
+		case abs_Infantry:
+		case abs_Unit:
+			return 0x438E97;
+		default:
+			return 0x439022;
+	}
+}
+
+// 469393, 7
+EXPORT IvanBombs_Spread(REGISTERS *R)
+{
+	BulletClass *bullet = (BulletClass *)R->get_ESI();
+	double cSpread = bullet->get_WH()->get_CellSpread();
+
+	if(!bullet->get_Target())
+	{
+		return 0;
+	}
+	
+	CoordStruct tgtLoc = *(bullet->get_Target()->get_Location());
+	TechnoClass *thOwner = (TechnoClass *)bullet->get_Owner();
+
+	// just real target
+	if(cSpread < 0.5)
+	{
+		BombListClass::Global()->Plant(thOwner, (TechnoClass *)bullet->get_Target());
+		return 0;
+	}
+
+	int Spread = int(cSpread);
+
+	int countCells = CellSpread::NumCells(Spread);
+	for(int i = 0; i < countCells; ++i)
+	{
+		CellStruct tmpCell = CellSpread::GetCell(i);
+		CellClass *c = MapClass::Global()->GetCellAt(&tmpCell);
+		for(ObjectClass *curObj = c->get_FirstObject(); curObj; curObj = curObj->get_NextObject())
+		{
+			if(!curObj->get_AttachedBomb())
+			{
+				BombListClass::Global()->Plant(thOwner, (TechnoClass *)curObj);
+			}
+		}
+	}
+
+/*
+	for(int i = 0; i < Unsorted::vec_ObjectsInLayers[2]->get_Capacity(); ++i)
+	{
+		ObjectClass *curObj = Unsorted::vec_ObjectsInLayers[2]->GetItem(i);
+		if(!(curObj->get_AbstractFlags() & ABSFLAGS_ISTECHNO))
+		{
+			continue;
+		}
+		if(curObj->get_Location()->DistanceFrom(tgtLoc) <= cSpread && !curObj->get_AttachedBomb())
+		{
+			BombListClass::Global()->Plant(thOwner, (TechnoClass *)curObj);
+		}
+	}
+*/
+
+	return 0x469AA4;
+}
+
+// 4D98DD, 6
+EXPORT Insignificant_UnitLost(REGISTERS *R)
+{
+	TechnoClass *t = (TechnoClass *)R->get_ESI();
+	TechnoTypeClass *T = (TechnoTypeClass *)t->GetType(); //R->get_EAX(); would work, but let's see if this does as well
+
+	return (T->get_Insignificant() || T->get_DontScore()) ? 0x4D9916 : 0;
 }
