@@ -8,7 +8,7 @@
 
 #include <YRPP.h>
 
-// bugfix #379
+// bugfix #379: Temporal friendly kills give veterancy
 // 71A92A, 5
 EXPORT_FUNC(_Temporal_AvoidFriendlies)
 {
@@ -24,7 +24,7 @@ EXPORT_FUNC(_Temporal_AvoidFriendlies)
 	return 0;
 }
 
-// bugfix #385
+// bugfix #385: Only InfantryTypes can use Ivan Bombs
 // 438E86, 5
 EXPORT_FUNC(IvanBombs_AttachableByAll)
 {
@@ -106,7 +106,7 @@ EXPORT_FUNC(Insignificant_UnitLost)
 	return (T->get_Insignificant() || T->get_DontScore()) ? 0x4D9916 : 0;
 }
 
-// bugfix #277
+// bugfix #277: VeteranInfantry and friends don't show promoted cameos
 // 71204C, 6
 EXPORT_FUNC(TechnoTypeClass_GetCameo)
 {
@@ -154,7 +154,7 @@ EXPORT_FUNC(TechnoTypeClass_GetCameo)
 	return 0;
 }
 
-// Crewed=yes jumpjets spawn parachuted infantry on destruction, not idle
+// bugfix #297: Crewed=yes jumpjets spawn parachuted infantry on destruction, not idle
 // 7382AB, 6
 EXPORT_FUNC(UnitClass_ReceiveDamage)
 {
@@ -180,7 +180,7 @@ EXPORT_FUNC(AnimClass_Update)
 	return 0x424B29;
 }
 
-// Crewed=yes AircraftTypes spawn parachuting infantry on death
+// bugfix #297: Crewed=yes AircraftTypes spawn parachuting infantry on death
 // 41668B, 6
 EXPORT_FUNC(AircraftClass_ReceiveDamage)
 {
