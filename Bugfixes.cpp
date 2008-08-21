@@ -12,10 +12,10 @@
 // 71A92A, 5
 EXPORT_FUNC(_Temporal_AvoidFriendlies)
 {
-	TemporalClass *m = (TemporalClass *)R->get_ESI(); 
+	GET(TemporalClass *, Temp, ESI); 
 
-	HouseClass *hv = m->get_TargetUnit()->get_Owner();
-	HouseClass *ho = m->get_OwningUnit()->get_Owner();
+	HouseClass *hv = Temp->get_TargetUnit()->get_Owner();
+	HouseClass *ho = Temp->get_OwningUnit()->get_Owner();
 
 	if(ho->IsAlliedWith(hv)) {
 		return 0x71A97D;
@@ -28,8 +28,8 @@ EXPORT_FUNC(_Temporal_AvoidFriendlies)
 // 438E86, 5
 EXPORT_FUNC(IvanBombs_AttachableByAll)
 {
-	TechnoClass *Source = (TechnoClass *)R->get_EBP();
-	switch(Source->What_Am_I())
+	GET(TechnoClass *, Source, EBP);
+	switch(Source->WhatAmI())
 	{
 		case abs_Aircraft:
 		case abs_Building:
@@ -44,7 +44,7 @@ EXPORT_FUNC(IvanBombs_AttachableByAll)
 // 469393, 7
 EXPORT_FUNC(IvanBombs_Spread)
 {
-	BulletClass *bullet = (BulletClass *)R->get_ESI();
+	GET(BulletClass *, bullet, ESI);
 	double cSpread = bullet->get_WH()->get_CellSpread();
 
 	if(!bullet->get_Target())
@@ -100,7 +100,7 @@ EXPORT_FUNC(IvanBombs_Spread)
 // 4D98DD, 6
 EXPORT_FUNC(Insignificant_UnitLost)
 {
-	TechnoClass *t = (TechnoClass *)R->get_ESI();
+	GET(TechnoClass *, t, ESI);
 	TechnoTypeClass *T = (TechnoTypeClass *)t->GetType(); //R->get_EAX(); would work, but let's see if this does as well
 
 	return (T->get_Insignificant() || T->get_DontScore()) ? 0x4D9916 : 0;
@@ -110,53 +110,113 @@ EXPORT_FUNC(Insignificant_UnitLost)
 // 71204C, 6
 EXPORT_FUNC(TechnoTypeClass_GetCameo)
 {
-	TechnoTypeClass *T = (TechnoTypeClass *)R->get_ESI();
-	HouseClass *Player = (HouseClass *)R->get_EAX();
+	GET(TechnoTypeClass *, T, ESI);
+	HouseTypeClass *Country = ((HouseClass *)R->get_EAX())->get_Type();
 
-	switch(T->What_Am_I())
+	TypeList<TechnoTypeClass*>* vec_Promoted;
+
+	TechnoTypeClass *Item = T;
+
+	switch(T->WhatAmI())
 	{
 		case abs_InfantryType:
-			if(Player->get_Type()->get_VeteranInfantry()->FindItemIndex((InfantryTypeClass *)T) != -1)
-			{
-				R->set_EAX((DWORD)T->get_AltCameo());
-				return 0x7120C5;
-			}
+			vec_Promoted = (TypeList<TechnoTypeClass*>*)Country->get_VeteranInfantry();
 			break;
+/*
+			if(Country->get_VeteranInfantry()->FindItemIndex((InfantryTypeClass *)T) == -1) // wth doesn't work
+			{
+				return 0;
+			}
+*/
 		case abs_UnitType:
-			if(Player->get_Type()->get_VeteranUnits()->FindItemIndex((UnitTypeClass *)T) != -1)
-			{
-				R->set_EAX((DWORD)T->get_AltCameo());
-				return 0x7120C5;
-			}
+			vec_Promoted = (TypeList<TechnoTypeClass*>*)Country->get_VeteranUnits();
 			break;
+		case abs_AircraftType:
+			vec_Promoted = (TypeList<TechnoTypeClass*>*)Country->get_VeteranAircraft();
+			break;
+		case abs_BuildingType:
+			Item = T->get_UndeploysInto();
+			if(Item)
+			{
+				vec_Promoted = (TypeList<TechnoTypeClass*>*)Country->get_VeteranUnits();
+				break;
+			}
 		default:
 			return 0;
+	}
+
+	for(int i = 0; i < vec_Promoted->get_Count(); ++i) {
+		if(vec_Promoted->GetItem(i) == Item) {
+			R->set_EAX((DWORD)T->get_AltCameo());
+			return 0x7120C5;
+		}
 	}
 	return 0;
 }
 
 // Crewed=yes jumpjets spawn parachuted infantry on destruction, not idle
-// 7382EA, 6
+// 7382AB, 6
 EXPORT_FUNC(UnitClass_ReceiveDamage)
 {
-	GET(InfantryClass *, I)R->get_EDI();
-	if(I->GetHeight() > 0)
-	{
-		I->set_FallingDown(1);
-		I->set_HasParachute(1);
-		I->set_FallRate(0);
-	}
-	return 0;
+	GET(TechnoClass *, t, ESI);
+	GET(InfantryClass *, I, EDI);
+
+	CoordStruct loc = *t->get_Location();
+	R->set_EAX(I->SpawnParachuted(&loc));
+
+	// replacing Put() with this call, let's see if that works
+	return 0x7382E2;
 }
 
 // MakeInfantry that fails to place will just end the source animation and cleanup instead of memleaking to game end
 // 424B23, 6
 EXPORT_FUNC(AnimClass_Update)
 {
-	GET(InfantryClass *, I)R->get_EDI();
-	I->UnInit();
-	GET(AnimClass *, A)R->get_ESI();
+	GET(InfantryClass *, I, EDI);
+	delete I;
+	GET(AnimClass *, A, ESI);
 	A->set_TimeToDie(1);
 	A->UnInit();
 	return 0x424B29;
+}
+
+// Crewed=yes AircraftTypes spawn parachuting infantry on death
+// 41668B, 6
+EXPORT_FUNC(AircraftClass_ReceiveDamage)
+{
+	GET(AircraftClass *, A, ESI);
+	if(!A->get_Type()->get_Crewed())
+	{
+		return 0;
+	}
+
+	CoordStruct loc = *A->get_Location();
+	loc.Z += 64;
+
+	InfantryTypeClass *PilotType = A->GetCrew();
+	if(!PilotType)
+	{
+		return 0;
+	}
+
+	InfantryClass *Pilot = new InfantryClass(PilotType, A->get_Owner());
+
+	Pilot->set_Health(PilotType->get_Strength() >> 1);
+	Pilot->get_Veterancy()->Veterancy = A->get_Veterancy()->Veterancy;
+	if(Pilot->SpawnParachuted(&loc))
+	{
+		Pilot->Scatter(0xB1CFE8, 1, 0);
+		Pilot->QueueMission(Pilot->get_Owner()->ControlledByHuman() ? mission_Guard : mission_Hunt, 0);
+		if(A->get_IsSelected())
+		{
+			Pilot->Select();
+		}
+		// TODO: Tag
+	}
+	else
+	{
+		delete Pilot;
+	}
+
+	return 0;
 }
