@@ -17,11 +17,8 @@ EXPORT_FUNC(_Temporal_AvoidFriendlies)
 	HouseClass *hv = Temp->get_TargetUnit()->get_Owner();
 	HouseClass *ho = Temp->get_OwningUnit()->get_Owner();
 
-	if(ho->IsAlliedWith(hv)) {
-		return 0x71A97D;
-	}
-
-	return 0;
+	RET_UNLESS(ho->IsAlliedWith(hv));
+	return 0x71A97D;
 }
 
 // bugfix #385: Only InfantryTypes can use Ivan Bombs
@@ -47,10 +44,7 @@ EXPORT_FUNC(IvanBombs_Spread)
 	GET(BulletClass *, bullet, ESI);
 	double cSpread = bullet->get_WH()->get_CellSpread();
 
-	if(!bullet->get_Target())
-	{
-		return 0;
-	}
+	RET_UNLESS(bullet->get_Target());
 	
 	CoordStruct tgtLoc = *(bullet->get_Target()->get_Location());
 	TechnoClass *thOwner = (TechnoClass *)bullet->get_Owner();
@@ -185,19 +179,13 @@ EXPORT_FUNC(AnimClass_Update)
 EXPORT_FUNC(AircraftClass_ReceiveDamage)
 {
 	GET(AircraftClass *, A, ESI);
-	if(!A->get_Type()->get_Crewed())
-	{
-		return 0;
-	}
+	RET_UNLESS(A->get_Type()->get_Crewed());
 
 	CoordStruct loc = *A->get_Location();
 	loc.Z += 64;
 
 	InfantryTypeClass *PilotType = A->GetCrew();
-	if(!PilotType)
-	{
-		return 0;
-	}
+	RET_UNLESS(!PilotType);
 
 	InfantryClass *Pilot = new InfantryClass(PilotType, A->get_Owner());
 
@@ -220,3 +208,101 @@ EXPORT_FUNC(AircraftClass_ReceiveDamage)
 
 	return 0;
 }
+
+// Ivan bomb cursors
+// 417F4F, 0xA
+EXPORT_FUNC(AircraftClass_GetCursorOverObject)
+{
+	GET(AircraftClass *, Source, ESI);
+	GET(TechnoClass *, Target, EDI);
+
+	RET_UNLESS(Target);
+
+	int idxWeapon = Source->SelectWeapon(Target);
+	WeaponTypeClass *Weapon = Source->GetWeapon(idxWeapon)->WeaponType;
+
+	RET_UNLESS(Weapon->get_Warhead()->get_IvanBomb());
+
+	R->set_EBX(Target->GetType()->get_Bombable() && !Target->get_AttachedBomb()
+		? act_IvanBomb
+		: act_NoIvanBomb);
+
+	return 0;
+}
+
+// Ivan bomb cursors
+// 51EB38, 6
+EXPORT_FUNC(InfantryClass_GetCursorOverObject)
+{
+	GET(InfantryClass *, Source, EDI);
+	GET(TechnoClass *, Target, ESI);
+
+	RET_UNLESS(Target);
+
+	int idxWeapon = Source->SelectWeapon(Target);
+	WeaponTypeClass *Weapon = Source->GetWeapon(idxWeapon)->WeaponType;
+
+	RET_UNLESS(Weapon->get_Warhead()->get_IvanBomb());
+
+	return 0x51EB48;
+}
+
+// Ivan bomb cursors
+// 740490, 6
+EXPORT_FUNC(UnitClass_GetCursorOverObject)
+{
+	GET(UnitClass *, Source, ESI);
+	GET(TechnoClass *, Target, EDI);
+
+	RET_UNLESS(Target);
+
+	int idxWeapon = Source->SelectWeapon(Target);
+	WeaponTypeClass *Weapon = Source->GetWeapon(idxWeapon)->WeaponType;
+
+	RET_UNLESS(Weapon->get_Warhead()->get_IvanBomb());
+
+	R->set_EBX(Target->GetType()->get_Bombable() && !Target->get_AttachedBomb()
+		? act_IvanBomb
+		: act_NoIvanBomb);
+	return 0;
+}
+
+// Ivan bomb cursors
+// 447512, 5
+EXPORT_FUNC(BuildingClass_GetCursorOverObject)
+{
+	GET(BuildingClass *, Source, ESI);
+	GET(TechnoClass *, Target, EBP);
+
+	RET_UNLESS(Target);
+
+	int idxWeapon = Source->SelectWeapon(Target);
+	WeaponTypeClass *Weapon = Source->GetWeapon(idxWeapon)->WeaponType;
+
+	RET_UNLESS(Weapon->get_Warhead()->get_IvanBomb());
+
+	R->set_EBX(Target->GetType()->get_Bombable() && !Target->get_AttachedBomb()
+		? act_IvanBomb
+		: act_NoIvanBomb);
+
+	return 0;
+}
+
+// decouple Yuri UI from soviet
+// 534FB1, 5
+EXPORT_FUNC(Game_LoadUI)
+{
+	return 0x534FBB;
+}
+
+// custom RadBeam colors
+// 6FD79C, 6
+EXPORT_FUNC(TechnoClass_FireRadBeam)
+{
+	// Pull a colour out of my arse
+	// GET(RadBeam *, Rad, ESI);
+	// Rad->SetColor(&colour_from_arse);
+	// return 0x6FD7A3;
+	return 0;
+}
+
