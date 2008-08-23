@@ -26,4 +26,12 @@ void CallCenter::Init()
 		HouseTypeClassCallback::LoadFromINI	=	Countries::LoadFromINI;
 
 		CommandClassCallback::Register	=	Ares::RegisterCommands;
+
+		WeaponTypeClassCallback::Create		=	WeaponTypeClassExt::Create;
+		WeaponTypeClassCallback::Delete		=	WeaponTypeClassExt::Delete;
+		WeaponTypeClassCallback::Load			=	WeaponTypeClassExt::Load;
+		WeaponTypeClassCallback::Save			=	WeaponTypeClassExt::Save;
+		WeaponTypeClassCallback::LoadFromINI	=	WeaponTypeClassExt::LoadFromINI;
+
+
 }

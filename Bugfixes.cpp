@@ -139,13 +139,26 @@ EXPORT_FUNC(TechnoTypeClass_GetCameo)
 			return 0;
 	}
 
+	SHPStruct *Alt = T->get_AltCameo();
+	RET_UNLESS(Alt);
+
 	for(int i = 0; i < vec_Promoted->get_Count(); ++i) {
 		if(vec_Promoted->GetItem(i) == Item) {
-			R->set_EAX((DWORD)T->get_AltCameo());
+			R->set_EAX((DWORD)Alt);
 			return 0x7120C5;
 		}
 	}
 	return 0;
+}
+
+// Naval=yes units show promoted cameos but don't actually get promoted
+// for now, show unpromoted cameos
+// someday, make em actually promoted (@ 0x735657)
+// 71204C, 6
+EXPORT_FUNC(TechnoTypeClass_GetCameo2)
+{
+	GET(TechnoTypeClass *, T, ESI);
+	return T->get_Naval() ? 0x7120BF : 0x7120C5;
 }
 
 // bugfix #297: Crewed=yes jumpjets spawn parachuted infantry on destruction, not idle
@@ -294,15 +307,3 @@ EXPORT_FUNC(Game_LoadUI)
 {
 	return 0x534FBB;
 }
-
-// custom RadBeam colors
-// 6FD79C, 6
-EXPORT_FUNC(TechnoClass_FireRadBeam)
-{
-	// Pull a colour out of my arse
-	// GET(RadBeam *, Rad, ESI);
-	// Rad->SetColor(&colour_from_arse);
-	// return 0x6FD7A3;
-	return 0;
-}
-
