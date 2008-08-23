@@ -28,10 +28,11 @@ EXPORT_FUNC(IvanBombs_AttachableByAll)
 	GET(TechnoClass *, Source, EBP);
 	switch(Source->WhatAmI())
 	{
-		case abs_Aircraft:
-		case abs_Building:
+		// Aircraft can't use them right just yet, IE if out of weapon range...
+		// case abs_Aircraft:
 		case abs_Infantry:
 		case abs_Unit:
+		case abs_Building:
 			return 0x438E97;
 		default:
 			return 0x439022;
