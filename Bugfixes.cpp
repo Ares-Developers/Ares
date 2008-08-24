@@ -308,3 +308,86 @@ EXPORT_FUNC(Game_LoadUI)
 {
 	return 0x534FBB;
 }
+
+// fix the 100 unit bug for vehicles
+// 4FEA60 - INCOMPLETE, DO NOT HOOK YET
+EXPORT Fix100UnitBug_Vehicles(REGISTERS* R)
+{
+	HouseClass* pThis = (HouseClass*)R->get_ECX();
+
+	if(pThis->get_ProducingUnitTypeIndex() == -1)
+	{
+		int nParentCountryIndex = HouseTypeClass::FindIndex(pThis->get_Type()->get_ParentCountry());
+		DWORD flagsOwner = 1 << nParentCountryIndex;
+
+		UnitTypeClass* pHarvester = NULL;
+		for(int i = 0; i < RulesClass::Global()->get_HarvesterUnit()->get_Count(); i++)
+		{
+			UnitTypeClass* pCurrent = (*RulesClass::Global()->get_HarvesterUnit())[i];
+			if(pCurrent->get_OwnerFlags() & flagsOwner)
+			{
+				pHarvester = pCurrent;
+				break;
+			}
+		}
+		
+		if(pHarvester)
+		{
+			//Buildable harvester found
+			int nHarvesters = pThis->get_CountResourceGatherers();
+			
+			int mMaxHarvesters = 
+				(*RulesClass::Global()->get_HarvestersPerRefinery())[pThis->get_AIDifficulty()] * pThis->get_CountResourceDestinations();
+			if(!pThis->FirstBuildableFromArray(RulesClass::Global()->get_BuildRefinery()))
+				mMaxHarvesters = 
+					(*RulesClass::Global()->get_AISlaveMinerNumber())[pThis->get_AIDifficulty()];
+
+			if(pThis->get_IQLevel2() >= RulesClass::Global()->get_Harvester() &&
+				!pThis->get_unknown_bool_242())
+			{
+				bool bPlayerControl;
+
+				if(*((eGameMode*)0xA8B238 == gm_Campaign) //TODO: Session::Global()->get_GameMode()
+					bPlayerControl = pThis->get_CurrentPlayer() || pThis->get_PlayerControl();
+				else
+					bPlayerControl = pThis->get_CurrentPlayer();
+
+				if(!bPlayerControl &&
+						nHarvesters < mMaxHarvesters &&
+						pThis->get_TechLevel() >= pHarvester->get_TechLevel())
+				{
+					pThis->set_ProducingUnitTypeIndex(pHarvester->get_ArrayIndex());
+					goto RETURN; //please slap me :3
+				}
+			}
+		}
+		else
+		{
+			//No buildable harvester found
+			int mMaxHarvesters =
+				(*RulesClass::Global()->get_AISlaveMinerNumber())[pThis->get_AIDifficulty()];
+
+			if(pThis->get_CountResourceGatherers() < mMaxHarvesters)
+			{
+				BuildingTypeClass* pBT = pThis->FirstBuildableFromArray(RulesClass::Global()->get_BuildRefinery());
+				if(pBT)
+				{
+					//awesome way to find out whether this building is a slave miner, isn't it? ...
+					UnitTypeClass* pSlaveMiner = pBT->get_UndeploysInto();
+					if(pSlaveMiner)
+					{
+						pThis->set_ProducingUnitTypeIndex(pSlaveMiner->get_ArrayIndex());
+						goto RETURN; //just accept that goto makes things easier in this case
+					}
+				}
+			}
+		}
+
+		//Don't build a harvester
+		//TO BE CONTINUED... from here on, we need TeamClass and TaskForceClass definitions. 
+	}
+
+RETURN:
+	R->set_EAX(0xF);
+	return 0x4FEEDA;
+}

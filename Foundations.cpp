@@ -106,8 +106,8 @@ void __stdcall Foundations::LoadFromINI(BuildingTypeClass* pThis, CCINIClass* pI
 				pThis->set_Foundation(FOUNDATION_CUSTOM);
 
 				//Load Width and Height
-				pData->CustomWidth = pArtINI->ReadInteger(pID, "FoundationX", 0);
-				pData->CustomHeight = pArtINI->ReadInteger(pID, "FoundationY", 0);
+				pData->CustomWidth = pArtINI->ReadInteger(pID, "Foundation.X", 0);
+				pData->CustomHeight = pArtINI->ReadInteger(pID, "Foundation.Y", 0);
 
 				//Allocate CellStruct array
 				if(pData->CustomData)
@@ -124,7 +124,7 @@ void __stdcall Foundations::LoadFromINI(BuildingTypeClass* pThis, CCINIClass* pI
 
 				for(int i = 0; i < pData->CustomWidth * pData->CustomHeight; i++)
 				{
-					sprintf(key, "Foundation%d", i);
+					sprintf(key, "Foundation.%d", i);
 					if(pArtINI->ReadString(pID, key, "", str, 0x80) > 0)
 					{
 						short x, y;

@@ -144,7 +144,7 @@ EXPORT Sides_LoadFromINI(REGISTERS* R)
 
 					ColorScheme* CS;
 
-					if(pINI->ReadString(pID, "BaseDefenseCounts", "", buffer, 0x200))
+					if(pINI->ReadString(pID, "AI.BaseDefenseCounts", "", buffer, 0x200))
 					{
 						pExt->BaseDefenseCounts.Clear();
 
@@ -152,7 +152,7 @@ EXPORT Sides_LoadFromINI(REGISTERS* R)
 							pExt->BaseDefenseCounts.AddItem(atoi(p));
 					}
 
-					if(pINI->ReadString(pID, "BaseDefenses", "", buffer, 0x200))
+					if(pINI->ReadString(pID, "AI.BaseDefenses", "", buffer, 0x200))
 					{
 						pExt->BaseDefenses.Clear();
 
@@ -166,17 +166,17 @@ EXPORT Sides_LoadFromINI(REGISTERS* R)
 					if(pINI->ReadString(pID, "DefaultDisguise", "", buffer, 0x80))
 						pExt->DefaultDisguise = InfantryTypeClass::FindOrAllocate(buffer);
 
-					if(pINI->ReadString(pID, "EVATag", "", buffer, 0x20))
+					if(pINI->ReadString(pID, "EVA.Tag", "", buffer, 0x20))
 						strncpy(pExt->EVATag, buffer, 0x20);
 
-					if(pINI->ReadString(pID, "LoadTextColor", "", buffer, 0x80))
+					if(pINI->ReadString(pID, "LoadScreenText.Color", "", buffer, 0x80))
 					{
 						CS = ColorScheme::Find(buffer);
 						if(CS)
 							pExt->LoadTextColor = CS;
 					}
 
-					if(pINI->ReadString(pID, "ParaDropTypes", "", buffer, 0x200))
+					if(pINI->ReadString(pID, "ParaDrop.Types", "", buffer, 0x200))
 					{
 						pExt->ParaDrop.Clear();
 
@@ -192,7 +192,7 @@ EXPORT Sides_LoadFromINI(REGISTERS* R)
 						}
 					}
 
-					if(pINI->ReadString(pID, "ParaDropNum", "", buffer, 0x200))
+					if(pINI->ReadString(pID, "ParaDrop.Num", "", buffer, 0x200))
 					{
 						pExt->ParaDropNum.Clear();
 
@@ -200,13 +200,13 @@ EXPORT Sides_LoadFromINI(REGISTERS* R)
 							pExt->ParaDropNum.AddItem(atoi(p));
 					}
 
-					if(pINI->ReadString(pID, "PowerPlant", "", buffer, 0x80))
+					if(pINI->ReadString(pID, "AI.PowerPlant", "", buffer, 0x80))
 						pExt->PowerPlant = BuildingTypeClass::FindOrAllocate(buffer);
 
 					pExt->SidebarMixFileIndex = 
-						pINI->ReadInteger(pID, "SidebarMixFileIndex", pExt->SidebarMixFileIndex);
+						pINI->ReadInteger(pID, "Sidebar.MixFileIndex", pExt->SidebarMixFileIndex);
 					pExt->SidebarYuriFileNames = 
-						pINI->ReadBool(pID, "SidebarYuriFileNames", pExt->SidebarYuriFileNames);
+						pINI->ReadBool(pID, "Sidebar.YuriFileNames", pExt->SidebarYuriFileNames);
 					pExt->SurvivorDivisor = 
 						pINI->ReadInteger(pID, "SurvivorDivisor", pExt->SurvivorDivisor);
 				}

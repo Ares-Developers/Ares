@@ -21,9 +21,6 @@ FILE*	Ares::pLogFile=NULL;
 void (_cdecl* Ares::Log)(const char* pFormat,...) = 
 	(void (__cdecl *)(const char *,...))0x4068E0;
 
-// defined but not used
-//static ColorStruct a1;
-
 //Implementations
 eMouseEventFlags __stdcall Ares::MouseEvent(Point2D* pClient,eMouseEventFlags EventFlags)
 {

@@ -155,7 +155,7 @@ void __stdcall Countries::LoadFromINI(HouseTypeClass* pThis, CCINIClass* pINI)
 		char buffer[0x80] = "\0";
 		char* pID = pThis->get_ID();
 
-		if(pINI->ReadString(pID, "FlagFile", "", buffer, 0x80))
+		if(pINI->ReadString(pID, "File.Flag", "", buffer, 0x80))
 		{
 			strncpy(pExt->FlagFile, buffer, 0x20);
 
@@ -163,25 +163,25 @@ void __stdcall Countries::LoadFromINI(HouseTypeClass* pThis, CCINIClass* pINI)
 			PCX::LoadFile(pExt->FlagFile);
 		}
 
-		if(pINI->ReadString(pID, "LSFile", "", buffer, 0x80))
+		if(pINI->ReadString(pID, "File.LoadScreen", "", buffer, 0x80))
 			strncpy(pExt->LSFile, buffer, 0x20);
 
-		if(pINI->ReadString(pID, "LSPALFile", "", buffer, 0x80))
+		if(pINI->ReadString(pID, "File.LoadScreenPAL", "", buffer, 0x80))
 			strncpy(pExt->LSPALFile, buffer, 0x20);
 
-		if(pINI->ReadString(pID, "TauntFile", "", buffer, 0x80))
+		if(pINI->ReadString(pID, "File.Taunt", "", buffer, 0x80))
 			strncpy(pExt->FlagFile, buffer, 0x20);
 
-		if(pINI->ReadString(pID, "LSName", "", buffer, 0x80))
+		if(pINI->ReadString(pID, "LoadScreenText.Name", "", buffer, 0x80))
 			strncpy(pExt->LSName, buffer, 0x20);
 
-		if(pINI->ReadString(pID, "LSSpecialName", "", buffer, 0x80))
+		if(pINI->ReadString(pID, "LoadScreenText.SpecialName", "", buffer, 0x80))
 			strncpy(pExt->LSSpecialName, buffer, 0x20);
 
-		if(pINI->ReadString(pID, "LSBrief", "", buffer, 0x80))
+		if(pINI->ReadString(pID, "LoadScreenText.Brief", "", buffer, 0x80))
 			strncpy(pExt->LSBrief, buffer, 0x20);
 
-		if(pINI->ReadString(pID, "StatusText", "", buffer, 0x80))
+		if(pINI->ReadString(pID, "MenuText.Status", "", buffer, 0x80))
 			strncpy(pExt->StatusText, buffer, 0x20);
 
 		pExt->RandomSelectionWeight = pINI->ReadInteger(pID, "RandomSelectionWeight", pExt->RandomSelectionWeight);
