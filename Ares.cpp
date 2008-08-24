@@ -18,6 +18,8 @@ bool	Ares::bNoCD=false;
 bool	Ares::bLog=true;
 FILE*	Ares::pLogFile=NULL;
 
+int FrameStepCommandClass::ArmageddonState = 0;
+
 void (_cdecl* Ares::Log)(const char* pFormat,...) = 
 	(void (__cdecl *)(const char *,...))0x4068E0;
 
@@ -32,6 +34,8 @@ void __stdcall Ares::RegisterCommands()
 	CommandClass::Array->AddItem(new AIControlCommandClass());
 	CommandClass::Array->AddItem(new MapSnapshotCommandClass());
 	CommandClass::Array->AddItem(new TestSomethingCommandClass());
+	CommandClass::Array->AddItem(new FrameByFrameCommandClass());
+	CommandClass::Array->AddItem(new FrameStepCommandClass());
 }
 
 void __stdcall Ares::CmdLineParse(char** ppArgs,int nNumArgs)
@@ -203,4 +207,24 @@ EXPORT Ares_NoLogo(REGISTERS* R)
 EXPORT Ares_AllowSinglePlay(REGISTERS* R)
 {
 	return 0x6AD16C;
+}
+
+	// 55AFB3, 6
+EXPORT_FUNC(Armageddon_Advance)
+{
+	switch(FrameStepCommandClass::ArmageddonState)
+	{
+		case 1:
+			Unsorted::ArmageddonMode = 0;
+			FrameStepCommandClass::ArmageddonState = 2;
+			break;
+		case 2:
+			Unsorted::ArmageddonMode = 1;
+			FrameStepCommandClass::ArmageddonState = 0;
+			break;
+		default:
+			break;
+	}
+	return 0;
+
 }

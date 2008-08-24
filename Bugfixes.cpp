@@ -347,7 +347,7 @@ EXPORT Fix100UnitBug_Vehicles(REGISTERS* R)
 			{
 				bool bPlayerControl;
 
-				if(*((eGameMode*)0xA8B238 == gm_Campaign) //TODO: Session::Global()->get_GameMode()
+				if(*(eGameMode*)0xA8B238 == gm_Campaign) //TODO: Session::Global()->get_GameMode()
 					bPlayerControl = pThis->get_CurrentPlayer() || pThis->get_PlayerControl();
 				else
 					bPlayerControl = pThis->get_CurrentPlayer();

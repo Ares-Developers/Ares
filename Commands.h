@@ -2,6 +2,7 @@
 #define ARES_COMMANDS_H
 
 #include <YRPP.h>
+#include "Commands.FrameByFrame.h"
 
 class MapSnapshotCommandClass : public CommandClass
 {
