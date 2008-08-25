@@ -391,3 +391,9 @@ RETURN:
 	R->set_EAX(0xF);
 	return 0x4FEEDA;
 }
+
+// 6BB9DD, 5
+EXPORT_FUNC(WinMain_LogNonsense)
+{
+	return 0x6BBE2B;
+}

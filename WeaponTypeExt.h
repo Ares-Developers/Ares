@@ -19,11 +19,14 @@ class WeaponTypeClassExt
 		// custom Ivan Bombs
 		bool Ivan_IsCustom;
 		bool Ivan_KillsBridges;
+		bool Ivan_Detachable;
 		int Ivan_Damage;
-		int Ivan_Duration;
+		int Ivan_Delay;
 		int Ivan_TickingSound;
 		int Ivan_AttachSound;
 		WarheadTypeClass *Ivan_WH;
+		SHPStruct *Ivan_Image;
+		int Ivan_FlickerRate;
 	};
 
 	EXT_P_DEFINE(WeaponTypeClass);
