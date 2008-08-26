@@ -1,6 +1,45 @@
 Ares Features
 =============
 
+Changes in v0.1.28.0:
+=============
+
+INI Flag renaming:
+	[Weapon]BeamColor => Beam.Color
+	[Weapon]BeamPeriod => Beam.Duration
+	[Weapon]BeamAmplitude => Beam.Amplitude
+	[Weapon]CustomBeam => Beam.IsCustom
+
+TS style Lasers:
+	[Weapon]Wave.IsLaser = boolean
+	[Weapon]Wave.IsBigLaser = boolean
+	I cannot honestly tell the difference between the two, but that may just be me. 
+
+All waves:
+	This involves Sonic Wave, TS Lasers and Magnetron Waves as they're all descendants of the same logic:
+	[Weapon]Wave.Color = r,g,b ; tested only on TS Lasers so far, but coded for all. Might cause IEs on the other two.
+
+Customizable Ivan Bombs:
+	Applicable to all weapons carrying warheads with IvanBomb=yes. All default to the settings in [General]. Units producing the Bomb are immune to its detonation effects, will be customizable later.
+	[Weapon]IvanBomb.Warhead = warhead_name
+	[Weapon]IvanBomb.Damage = integer
+	[Weapon]IvanBomb.Delay = integer
+	Note: the following flags have not been tested yet.
+	[Weapon]IvanBomb.AttachSound = sound_name
+	[Weapon]IvanBomb.TickingSound = sound_name
+	[Weapon]IvanBomb.FlickerRate = integer ; bug: it seems there's an off-by-one error somewhere in the code, the last stage of a ticking bomb is invisible
+	[Weapon]IvanBomb.Detachable = boolean ; can engineers remove it?
+	[Weapon]IvanBomb.Image = filename.shp ; with the extension
+
+Attribution:
+	Startup screen displays several information messages.
+
+Misc:
+	Skipping multiple useless log entries at startup.
+
+(Initial version) v0.1.1.0:
+=============
+
 Command Line Arguments:
 	Disable the EA and WW logo using the "-NOLOGO" command line argument.
 	Enable log file writing (DEBUG.TXT) using the "-LOG" command line argument.

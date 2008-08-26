@@ -3,7 +3,10 @@
 
 EXT_P_DECLARE(WeaponTypeClass);
 typedef stdext::hash_map<BombClass *, WeaponTypeClassExt::WeaponTypeClassData *> hash_bombExt;
+typedef stdext::hash_map<WaveClass *, WeaponTypeClassExt::WeaponTypeClassData *> hash_waveExt;
+
 hash_bombExt WeaponTypeClassExt::BombExt;
+hash_waveExt WeaponTypeClassExt::WaveExt;
 
 void __stdcall WeaponTypeClassExt::Create(WeaponTypeClass* pThis)
 {
@@ -12,11 +15,14 @@ void __stdcall WeaponTypeClassExt::Create(WeaponTypeClass* pThis)
 		ALLOC(ExtData, pData);
 
 		pData->Beam_IsCustom     = 0;
-		pData->Beam_Color        = ColorStruct(255, 255, 255);
 		pData->Beam_Duration     = 15;
 		pData->Beam_Amplitude    = 40.0;
-		pData->Beam_IsLaser      = 0;
-		pData->Beam_IsBigLaser   = 0;
+		pData->Beam_Color      = ColorStruct(255, 255, 255);
+
+		pData->Wave_IsCustom     = 0;
+		pData->Wave_IsLaser      = 0;
+		pData->Wave_IsBigLaser   = 0;
+		pData->Wave_Color      = ColorStruct(255, 255, 255);
 
 		pData->Ivan_IsCustom     = 0;
 		pData->Ivan_KillsBridges = 1;
@@ -77,15 +83,22 @@ void __stdcall WeaponTypeClassExt::LoadFromINI(WeaponTypeClass* pThis, CCINIClas
 	}
 	else
 	{
+		pData->Beam_IsCustom  = 1;
 		ColorStruct tmpColor = pData->Beam_Color;
 		pINI->ReadColor(&tmpColor, section, "Beam.Color", &pData->Beam_Color);
 		pData->Beam_Color     = tmpColor;
-	
+
 		pData->Beam_Duration     = pINI->ReadInteger(section, "Beam.Duration", pData->Beam_Duration);
 		pData->Beam_Amplitude    = pINI->ReadDouble(section, "Beam.Amplitude", pData->Beam_Amplitude);
 
-		pData->Beam_IsLaser      = pINI->ReadBool(section, "Beam.IsLaser", pData->Beam_IsLaser);
-		pData->Beam_IsBigLaser   = pINI->ReadBool(section, "Beam.IsBigLaser", pData->Beam_IsBigLaser);
+		pData->Wave_IsLaser      = pINI->ReadBool(section, "Wave.IsLaser", pData->Wave_IsLaser);
+		pData->Wave_IsBigLaser   = pINI->ReadBool(section, "Wave.IsBigLaser", pData->Wave_IsBigLaser);
+		
+		pData->Wave_IsCustom = pData->Wave_IsLaser || pData->Wave_IsBigLaser;
+
+		tmpColor = pData->Wave_Color;
+		pINI->ReadColor(&tmpColor, section, "Wave.Color", &pData->Wave_Color);
+		pData->Wave_Color     = tmpColor;
 	}
 
 	pData->Ivan_IsCustom = pThis->get_Warhead()->get_IvanBomb();
@@ -359,37 +372,140 @@ EXPORT_FUNC(TechnoClass_Fire)
 	GET(TechnoClass *, Owner, ESI);
 	GET(TechnoClass *, Target, EDI);
 
-	DWORD pTarget = R->get_EBP();
-
 	RET_UNLESS(CONTAINS(WeaponTypeClassExt::Ext_p, Source));
 	WeaponTypeClassExt::WeaponTypeClassData *pData = WeaponTypeClassExt::Ext_p[Source];
 
-	if((!pData->Beam_IsLaser && !pData->Beam_IsBigLaser))
+	RET_UNLESS(pData->Wave_IsCustom);
+
+	DWORD pESP = R->get_ESP();
+
+	DWORD xyzS = pESP + 0x44;
+	DWORD xyzT = pESP + 0x88;
+
+	CoordStruct *xyzSrc = (CoordStruct *)xyzS, *xyzTgt = (CoordStruct *)xyzT;
+
+	WaveClass *Wave = new WaveClass(xyzSrc, xyzTgt, Owner, pData->Wave_IsBigLaser ? 2 : 1, Target->GetCell());
+	WeaponTypeClassExt::WaveExt[Wave] = pData;
+	Owner->set_Wave(Wave);
+	return 0x6FF650;
+}
+
+// 75E981, 7
+EXPORT_FUNC(WaveClass_CTOR)
+{
+	GET(WaveClass *, Wave, ESI);
+	if(Wave->get_Type() == wave_Laser || Wave->get_Type() == wave_BigLaser)
 	{
 		return 0;
 	}
+	GET(WeaponTypeClass *, Weapon, EBX);
+	RET_UNLESS(Weapon);
+	RET_UNLESS(CONTAINS(WeaponTypeClassExt::Ext_p, Weapon));
+	WeaponTypeClassExt::WeaponTypeClassData *pData = WeaponTypeClassExt::Ext_p[Weapon];
+	WeaponTypeClassExt::WaveExt[Wave] = pData;
+	return 0;
+}
 
-	if(Owner->get_Wave())
+// 763226, 6
+EXPORT_FUNC(WaveClass_DTOR)
+{
+	GET(WaveClass *, Wave, EDI);
+	hash_waveExt::iterator i = WeaponTypeClassExt::WaveExt.find(Wave);
+	if(i != WeaponTypeClassExt::WaveExt.end())
 	{
-		Ares::Log("Freeing wave\n");
-		Owner->set_Wave(NULL);
+		WeaponTypeClassExt::WaveExt.erase(i);
+	}
+	return 0;
+}
+
+// 760FFC, 5
+// Alt beams update
+EXPORT_FUNC(WaveClass_Update)
+{
+	GET(WaveClass *, Wave, ESI);
+	Wave->Update_Beam();
+	return 0;
+}
+
+// 760BC2, 6
+EXPORT_FUNC(WaveClass_Draw2)
+{
+	GET(WaveClass *, Wave, EBX);
+	GET(WORD *, dest, EBP);
+
+	WeaponTypeClassExt::ModifyBeamColor(dest, dest, Wave);
+
+	return 0x760CAF;
+}
+
+// 760DE2, 6
+EXPORT_FUNC(WaveClass_Draw3)
+{
+	GET(WaveClass *, Wave, EBX);
+	GET(WORD *, dest, EDI);
+
+	WeaponTypeClassExt::ModifyBeamColor(dest, dest, Wave);
+
+	return 0x760ECB;
+}
+
+// 75EE57, 7
+EXPORT_FUNC(WaveClass_Draw_Sonic)
+{
+	DWORD pWave = R->get_ESP() - 8;
+	WaveClass * Wave = (WaveClass *)pWave;
+	DWORD src = R->get_EDI();
+	DWORD offs = src + R->get_ECX() * 2;
+
+	WeaponTypeClassExt::ModifyBeamColor((WORD *)offs, (WORD *)src, Wave);
+
+	return 0x75EF1C;
+}
+
+// 7601FB, 0B
+EXPORT_FUNC(WaveClass_Draw_Magnetron)
+{
+	DWORD pWave = R->get_ESP() - 4;
+	WaveClass * Wave = (WaveClass *)pWave;
+	DWORD src = R->get_EBX();
+	DWORD offs = src + R->get_ECX() * 2;
+
+	WeaponTypeClassExt::ModifyBeamColor((WORD *)offs, (WORD *)src, Wave);
+
+	return 0x7602D3;
+}
+
+void WeaponTypeClassExt::ModifyBeamColor(WORD *src, WORD *dst, WaveClass *Wave)
+{
+	RETZ_UNLESS(CONTAINS(WeaponTypeClassExt::WaveExt, Wave));
+	WeaponTypeClassExt::WeaponTypeClassData *pData = WeaponTypeClassExt::WaveExt[Wave];
+	RETZ_UNLESS(pData->Wave_IsCustom);
+
+	DWORD intensity;
+	if(Wave->get_Type() == wave_Laser || Wave->get_Type() == wave_BigLaser)
+	{
+		intensity = Wave->get_LaserIntensity();
 	}
 	else
 	{
-		DWORD pESP = R->get_ESP();
-
-		DWORD xyzS = pESP + 0x44;
-		DWORD xyzT = pESP + 0x88;
-
-		CoordStruct *xyzSrc = (CoordStruct *)xyzS, *xyzTgt = (CoordStruct *)xyzT; 
-
-		Ares::Log("Wave coords: (%d, %d, %d) - (%d, %d, %d) \n",
-			xyzSrc->X, xyzSrc->Y, xyzSrc->Z, xyzTgt->X, xyzTgt->Y, xyzTgt->Z);
-
-		WaveClass *Wave = new WaveClass(xyzSrc, xyzTgt, Owner, pData->Beam_IsBigLaser ? 2 : 1, Target);
-		Owner->set_Wave(Wave);
+		intensity = Wave->get_WaveIntensity();
 	}
-	return 0x6FF650;
-//
-//	return 0;
+
+	ColorStruct initial = Drawing::WordColor(*src);
+
+	ColorStruct modified = initial;
+
+// ugly hack to fix byte wraparound problems
+#define upcolor(c) \
+	int _ ## c = initial. c + (intensity * pData->Wave_Color. c ) / 256; \
+	_ ## c = min(_ ## c, 255); \
+	modified. c = _ ## c;
+
+	upcolor(R);
+	upcolor(G);
+	upcolor(B);
+
+	WORD color = Drawing::Color16bit(&modified);
+
+	*dst = color;
 }

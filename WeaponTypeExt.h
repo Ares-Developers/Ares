@@ -13,8 +13,11 @@ class WeaponTypeClassExt
 		ColorStruct Beam_Color;
 		int    Beam_Duration;
 		double Beam_Amplitude;
-		bool   Beam_IsLaser;
-		bool   Beam_IsBigLaser;
+		// TS Lasers
+		bool   Wave_IsCustom;
+		bool   Wave_IsLaser;
+		bool   Wave_IsBigLaser;
+		ColorStruct Wave_Color;
 
 		// custom Ivan Bombs
 		bool Ivan_IsCustom;
@@ -32,4 +35,6 @@ class WeaponTypeClassExt
 	EXT_P_DEFINE(WeaponTypeClass);
 
 	static stdext::hash_map<BombClass *, WeaponTypeClassData *> BombExt;
+	static stdext::hash_map<WaveClass *, WeaponTypeClassData *> WaveExt;
+	static void ModifyBeamColor(WORD *src, WORD *dst, WaveClass *Wave);
 };

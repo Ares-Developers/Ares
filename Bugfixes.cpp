@@ -397,3 +397,29 @@ EXPORT_FUNC(WinMain_LogNonsense)
 {
 	return 0x6BBE2B;
 }
+
+// 701190, 5
+EXPORT_FUNC(TechnoClass_IsPowerOnline)
+{
+	GET(TechnoClass *, Techno, ECX);
+
+	R->set_EAX(Techno->IsActive());
+	return 0;
+}
+
+// 4D8500, 7
+EXPORT_FUNC(FootClass_UpdatePosition)
+{
+	GET(FootClass *, F, ECX);
+	if(((TechnoTypeClass*)F->GetType())->get_GapRadiusInCells() > 0)
+	{
+		if(F->get_Locomotor()->Is_Moving()) {
+			F->DestroyGap();
+		}
+		else
+		{
+			F->CreateGap();
+		}
+	}
+	return 0;
+}
