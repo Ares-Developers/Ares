@@ -7,6 +7,7 @@
 #include "Ares.h"
 #include "Foundations.h"
 #include "WeaponTypeExt.h"
+#include "WarheadTypeExt.h"
 #include "Countries.h"
 
 /*

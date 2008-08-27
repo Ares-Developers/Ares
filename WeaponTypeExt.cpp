@@ -23,6 +23,9 @@ void __stdcall WeaponTypeClassExt::Create(WeaponTypeClass* pThis)
 		pData->Wave_IsLaser      = 0;
 		pData->Wave_IsBigLaser   = 0;
 		pData->Wave_Color      = ColorStruct(255, 255, 255);
+		pData->Wave_InitialIntensity = 160;
+		pData->Wave_IntensityStep = -6;
+		pData->Wave_FinalIntensity = 32; // yeah, they don't match well. Tell that to WW.
 
 		pData->Ivan_IsCustom     = 0;
 		pData->Ivan_KillsBridges = 1;
@@ -77,6 +80,7 @@ void __stdcall WeaponTypeClassExt::LoadFromINI(WeaponTypeClass* pThis, CCINIClas
 
 	ExtData *pData = Ext_p[pThis];
 
+	ColorStruct tmpColor;
 	if(!pINI->ReadBool(section, "Beam.IsCustom", 1))
 	{
 		pData->Beam_IsCustom = 0;
@@ -84,22 +88,26 @@ void __stdcall WeaponTypeClassExt::LoadFromINI(WeaponTypeClass* pThis, CCINIClas
 	else
 	{
 		pData->Beam_IsCustom  = 1;
-		ColorStruct tmpColor = pData->Beam_Color;
+		tmpColor = pData->Beam_Color;
 		pINI->ReadColor(&tmpColor, section, "Beam.Color", &pData->Beam_Color);
 		pData->Beam_Color     = tmpColor;
 
 		pData->Beam_Duration     = pINI->ReadInteger(section, "Beam.Duration", pData->Beam_Duration);
 		pData->Beam_Amplitude    = pINI->ReadDouble(section, "Beam.Amplitude", pData->Beam_Amplitude);
-
-		pData->Wave_IsLaser      = pINI->ReadBool(section, "Wave.IsLaser", pData->Wave_IsLaser);
-		pData->Wave_IsBigLaser   = pINI->ReadBool(section, "Wave.IsBigLaser", pData->Wave_IsBigLaser);
-		
-		pData->Wave_IsCustom = pData->Wave_IsLaser || pData->Wave_IsBigLaser;
-
-		tmpColor = pData->Wave_Color;
-		pINI->ReadColor(&tmpColor, section, "Wave.Color", &pData->Wave_Color);
-		pData->Wave_Color     = tmpColor;
 	}
+
+	pData->Wave_IsLaser      = pINI->ReadBool(section, "Wave.IsLaser", pData->Wave_IsLaser);
+	pData->Wave_IsBigLaser   = pINI->ReadBool(section, "Wave.IsBigLaser", pData->Wave_IsBigLaser);
+	
+	pData->Wave_IsCustom = pData->Wave_IsLaser || pData->Wave_IsBigLaser;
+
+	tmpColor = pData->Wave_Color;
+	pINI->ReadColor(&tmpColor, section, "Wave.Color", &pData->Wave_Color);
+	pData->Wave_Color     = tmpColor;
+
+	pData->Wave_InitialIntensity = pINI->ReadInteger(section, "Wave.InitialIntensity", pData->Wave_InitialIntensity);
+	pData->Wave_IntensityStep    = pINI->ReadInteger(section, "Wave.IntensityStep", pData->Wave_IntensityStep);
+	pData->Wave_FinalIntensity   = pINI->ReadInteger(section, "Wave.FinalIntensity", pData->Wave_FinalIntensity);
 
 	pData->Ivan_IsCustom = pThis->get_Warhead()->get_IvanBomb();
 
@@ -390,11 +398,12 @@ EXPORT_FUNC(TechnoClass_Fire)
 	return 0x6FF650;
 }
 
-// 75E981, 7
+// 75E963, 6
 EXPORT_FUNC(WaveClass_CTOR)
 {
 	GET(WaveClass *, Wave, ESI);
-	if(Wave->get_Type() == wave_Laser || Wave->get_Type() == wave_BigLaser)
+	DWORD Type = R->get_ECX();
+	if(Type == wave_Laser || Type == wave_BigLaser)
 	{
 		return 0;
 	}
@@ -404,6 +413,17 @@ EXPORT_FUNC(WaveClass_CTOR)
 	WeaponTypeClassExt::WeaponTypeClassData *pData = WeaponTypeClassExt::Ext_p[Weapon];
 	WeaponTypeClassExt::WaveExt[Wave] = pData;
 	return 0;
+}
+
+// 75EB87, 0A // fsdblargh, a single instruction spanning 10 bytes
+EXPORT_FUNC(WaveClass_CTOR2)
+{
+	GET(WaveClass *, Wave, ESI);
+	RET_UNLESS(CONTAINS(WeaponTypeClassExt::WaveExt, Wave));
+	WeaponTypeClassExt::WeaponTypeClassData *pData = WeaponTypeClassExt::WaveExt[Wave];
+	RET_UNLESS(pData->Wave_IsCustom);
+	Wave->set_WaveIntensity(pData->Wave_InitialIntensity);
+	return 0x75EB91;
 }
 
 // 763226, 6
@@ -420,11 +440,16 @@ EXPORT_FUNC(WaveClass_DTOR)
 
 // 760FFC, 5
 // Alt beams update
-EXPORT_FUNC(WaveClass_Update)
+EXPORT_FUNC(WaveClass_UpdateLaser)
 {
 	GET(WaveClass *, Wave, ESI);
 	Wave->Update_Beam();
-	return 0;
+	RET_UNLESS(CONTAINS(WeaponTypeClassExt::WaveExt, Wave));
+	WeaponTypeClassExt::WeaponTypeClassData *pData = WeaponTypeClassExt::WaveExt[Wave];
+	RET_UNLESS(pData->Wave_IsCustom);
+	int intense = Wave->get_WaveIntensity() + pData->Wave_IntensityStep;
+	Wave->set_WaveIntensity(intense);
+	return intense >= pData->Wave_FinalIntensity ? 0x761016 : 0x76100C;
 }
 
 // 760BC2, 6

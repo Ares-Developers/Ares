@@ -73,21 +73,6 @@ EXPORT_FUNC(IvanBombs_Spread)
 		}
 	}
 
-/*
-	for(int i = 0; i < Unsorted::vec_ObjectsInLayers[2]->get_Capacity(); ++i)
-	{
-		ObjectClass *curObj = Unsorted::vec_ObjectsInLayers[2]->GetItem(i);
-		if(!(curObj->get_AbstractFlags() & ABSFLAGS_ISTECHNO))
-		{
-			continue;
-		}
-		if(curObj->get_Location()->DistanceFrom(tgtLoc) <= cSpread && !curObj->get_AttachedBomb())
-		{
-			BombListClass::Global()->Plant(thOwner, (TechnoClass *)curObj);
-		}
-	}
-*/
-
 	return 0x469AA4;
 }
 

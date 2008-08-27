@@ -18,6 +18,9 @@ class WeaponTypeClassExt
 		bool   Wave_IsLaser;
 		bool   Wave_IsBigLaser;
 		ColorStruct Wave_Color;
+		int    Wave_InitialIntensity;
+		int    Wave_IntensityStep;
+		int    Wave_FinalIntensity;
 
 		// custom Ivan Bombs
 		bool Ivan_IsCustom;
