@@ -392,7 +392,7 @@ EXPORT_FUNC(TechnoClass_Fire)
 
 	CoordStruct *xyzSrc = (CoordStruct *)xyzS, *xyzTgt = (CoordStruct *)xyzT;
 
-	WaveClass *Wave = new WaveClass(xyzSrc, xyzTgt, Owner, pData->Wave_IsBigLaser ? 2 : 1, Target->GetCell());
+	WaveClass *Wave = new WaveClass(xyzSrc, xyzTgt, Owner, pData->Wave_IsBigLaser ? 2 : 1, Target);
 	WeaponTypeClassExt::WaveExt[Wave] = pData;
 	Owner->set_Wave(Wave);
 	return 0x6FF650;

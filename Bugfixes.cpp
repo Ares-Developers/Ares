@@ -408,3 +408,35 @@ EXPORT_FUNC(FootClass_UpdatePosition)
 	}
 	return 0;
 }
+// bugfix #187: Westwood idiocy
+// 531726, 5
+EXPORT_FUNC(StupidPips1)
+{
+	return 0x53173A;
+}
+
+// bugfix #187: Westwood idiocy
+// 53173F, 5
+EXPORT_FUNC(StupidPips2)
+{
+	return 0x531749;
+}
+
+// bugfix #187: Westwood idiocy
+// 5F698F, 5
+EXPORT_FUNC(ObjectClass_GetCell)
+{
+	return 0x5F69B2;
+}
+
+// UNTESTED!!
+// bugfix #388: Units firing from inside a transport do not obey DecloakToFire
+// 6FCA30, 6
+EXPORT_FUNC(TechnoClass_GetWeaponState)
+{
+	GET(TechnoClass *, Techno, ESI);
+	TechnoClass *Transport = Techno->get_Transporter();
+	RET_UNLESS(Transport && Transport->get_CloakingStage());
+	return 0x6FCA4F;
+}
+

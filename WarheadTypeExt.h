@@ -9,7 +9,7 @@ class WarheadTypeClassExt
 	struct WarheadTypeClassData
 	{
 		bool IsCustom;
-		bool PermaMindControl;
+		bool MindControl_Permanent;
 	};
 
 	EXT_P_DEFINE(WarheadTypeClass);

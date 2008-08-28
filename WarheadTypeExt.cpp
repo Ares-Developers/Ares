@@ -53,13 +53,10 @@ void __stdcall WarheadTypeClassExt::LoadFromINI(WarheadTypeClass* pThis, CCINICl
 
 	ExtData *pData = Ext_p[pThis];
 
-	if(!pINI->ReadBool(section, "Warhead.IsCustom", 1))
+	if(pThis->get_MindControl())
 	{
-		pData->IsCustom = 0;
+		pData->MindControl_Permanent = pINI->ReadBool(pThis->get_ID(), "MindControl.Permanent", pData->MindControl_Permanent);
 	}
-	else
-	{
-		pData->PermaMindControl = pINI->ReadBool(pThis->get_ID(), "PermanentMindControl", pData->PermaMindControl);
 /*
 		char buffer[256];
 		if(pINI->ReadString(section, "IvanBomb.Warhead", pData->Ivan_WH->get_ID(), buffer, 256) > 0)
@@ -67,9 +64,9 @@ void __stdcall WarheadTypeClassExt::LoadFromINI(WarheadTypeClass* pThis, CCINICl
 			pData->Ivan_WH           = WarheadTypeClass::FindOrAllocate(buffer);
 		}
 */
-	}
 }
 
+// feature #384: Permanent MindControl Warheads
 // 46920B, 6
 EXPORT_FUNC(BulletClass_Fire)
 {
@@ -79,19 +76,10 @@ EXPORT_FUNC(BulletClass_Fire)
 	RET_UNLESS(CONTAINS(WarheadTypeClassExt::Ext_p, pThis));
 	WarheadTypeClassExt::WarheadTypeClassData *pData = WarheadTypeClassExt::Ext_p[pThis];
 
-	RET_UNLESS(pData->PermaMindControl);
+	RET_UNLESS(pData->MindControl_Permanent);
 
 	TechnoClass *pTarget = (TechnoClass *)Bullet->get_Target();
-	switch(pTarget->WhatAmI())
-	{
-		case abs_Aircraft:
-		case abs_Infantry:
-		case abs_Unit:
-		case abs_Building:
-			break;
-		default:
-			return 0;
-	}
+	RET_UNLESS(pTarget->get_AbstractFlags() & ABSFLAGS_ISTECHNO);
 
 	TechnoTypeClass *pType = (TechnoTypeClass *)pTarget->GetType();
 
@@ -99,15 +87,16 @@ EXPORT_FUNC(BulletClass_Fire)
 	
 	if(pTarget->get_MindControlledBy())
 	{
-		pTarget->get_CaptureManager()->FreeUnit(pTarget);
+		pTarget->get_MindControlledBy()->get_CaptureManager()->FreeUnit(pTarget);
 	}
 	pTarget->SetOwningHouse(Bullet->get_Owner()->get_Owner(), 1);
 	pTarget->set_MindControlledByAUnit(1);
-	
+	pTarget->QueueMission(mission_Guard, 0);
+
 	CoordStruct coords;
-	*pTarget->GetCoords(&coords);
+	pTarget->GetCoords(&coords);
 	coords.Z += pType->get_MindControlRingOffset();
-	
+
 	AnimClass *MCAnim = new AnimClass(RulesClass::Global()->get_PermaControlledAnimationType(), coords);
 	pTarget->set_MindControlRingAnim(MCAnim);
 	MCAnim->SetOwnerObject(pTarget);
