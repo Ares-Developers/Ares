@@ -10,6 +10,8 @@ class WarheadTypeClassExt
 	{
 		bool IsCustom;
 		bool MindControl_Permanent;
+		int EMP_Duration;
+		bool EMP_AddDuration;
 	};
 
 	EXT_P_DEFINE(WarheadTypeClass);
