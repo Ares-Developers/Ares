@@ -41,6 +41,6 @@ EXPORT_FUNC(Game_Start)
 	Drawing::GetSurface_Hidden()->DrawText(L"Ares is active.", 10, 480, COLOR_GREEN);
 	Drawing::GetSurface_Hidden()->DrawText(L"This is a testing version, NOT a final product.", 20, 500, COLOR_RED);
 	Drawing::GetSurface_Hidden()->DrawText(L"Bugs are to be expected.", 20, 520, COLOR_RED);
-	Drawing::GetSurface_Hidden()->DrawText(L"Ares is © pd and DCoder 2007 - 2008.", 10, 540, COLOR_GREEN);
+	Drawing::GetSurface_Hidden()->DrawText(L"Ares is © pd, DCoder and Electro 2007 - 2008.", 10, 540, COLOR_GREEN);
 	return 0;
 }

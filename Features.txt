@@ -1,8 +1,12 @@
 Ares Features
 =============
 
-Changes in v0.1.28.0:
+Changes in v0.1.35.0:
 =============
+
+EMP Warheads:
+	[Warhead]EMEffect = boolean
+	[Warhead]EMP.Duration = integer
 
 INI Flag renaming:
 	[Weapon]BeamColor => Beam.Color
