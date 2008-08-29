@@ -9,7 +9,8 @@ void __stdcall WarheadTypeClassExt::Create(WarheadTypeClass* pThis)
 	{
 		ALLOC(ExtData, pData);
 
-		pData->IsCustom     = 0;
+		pData->IC_Duration = RulesClass::Global()->get_IronCurtainDuration();
+		pData->IC_Anim     = RulesClass::Global()->get_IronCurtainInvokeAnim();
 
 		Ext_p[pThis] = pData;
 	}
@@ -57,16 +58,16 @@ void __stdcall WarheadTypeClassExt::LoadFromINI(WarheadTypeClass* pThis, CCINICl
 	{
 		pData->MindControl_Permanent = pINI->ReadBool(section, "MindControl.Permanent", pData->MindControl_Permanent);
 	}
+
 	if(pThis->get_EMEffect()) {
 		pData->EMP_Duration = pINI->ReadInteger(section, "EMP.Duration", pData->EMP_Duration);
 	}
-	/*
-	char buffer[256];
-	if(pINI->ReadString(section, "IvanBomb.Warhead", pData->Ivan_WH->get_ID(), buffer, 256) > 0)
-	{
-	pData->Ivan_WH           = WarheadTypeClass::FindOrAllocate(buffer);
-	}
-	*/
+
+	pData->IC_Duration = pINI->ReadInteger(section, "IronCurtain.Duration", pData->IC_Duration);
+
+	PARSE_BUF();
+	PARSE_ANIM("IronCurtain.Anim", pData->IC_Anim);
+
 }
 
 // 5240BD, 7 
@@ -124,6 +125,16 @@ EXPORT_FUNC(BulletClass_Fire)
 
 	if(pTarget->IsIronCurtained()) return 0;
 
+	CoordStruct coords;
+	pTarget->GetCoords(&coords);
+
+	// add cellspread
+	if(pData->IC_Duration > 0)
+	{
+		new AnimClass(pData->IC_Anim, coords);
+		pTarget->IronCurtain(pData->IC_Duration, (DWORD)Bullet->get_Owner(), 1);
+	}
+
 	//Electro@pd: get working on support for multiple callbacks in Syringe
 	if(pData->EMP_Duration)
 	{
@@ -141,8 +152,6 @@ EXPORT_FUNC(BulletClass_Fire)
 		pTarget->set_MindControlledByAUnit(1);
 		pTarget->QueueMission(mission_Guard, 0);
 
-		CoordStruct coords;
-		pTarget->GetCoords(&coords);
 		coords.Z += pType->get_MindControlRingOffset();
 
 		AnimClass *MCAnim = new AnimClass(RulesClass::Global()->get_PermaControlledAnimationType(), coords);

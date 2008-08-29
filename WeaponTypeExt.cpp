@@ -27,6 +27,7 @@ void __stdcall WeaponTypeClassExt::Create(WeaponTypeClass* pThis)
 		pData->Wave_IntensityStep = -6;
 		pData->Wave_FinalIntensity = 32; // yeah, they don't match well. Tell that to WW.
 
+		// these can't be initialized to meaningful values, rules class is not loaded from ini yet
 		pData->Ivan_IsCustom     = 0;
 		pData->Ivan_KillsBridges = 1;
 		pData->Ivan_Detachable   = 1;
@@ -88,9 +89,7 @@ void __stdcall WeaponTypeClassExt::LoadFromINI(WeaponTypeClass* pThis, CCINIClas
 	else
 	{
 		pData->Beam_IsCustom  = 1;
-		tmpColor = pData->Beam_Color;
-		pINI->ReadColor(&tmpColor, section, "Beam.Color", &pData->Beam_Color);
-		pData->Beam_Color     = tmpColor;
+		PARSE_COLOR("Beam.Color", pData->Beam_Color, tmpColor);
 
 		pData->Beam_Duration     = pINI->ReadInteger(section, "Beam.Duration", pData->Beam_Duration);
 		pData->Beam_Amplitude    = pINI->ReadDouble(section, "Beam.Amplitude", pData->Beam_Amplitude);
@@ -101,9 +100,7 @@ void __stdcall WeaponTypeClassExt::LoadFromINI(WeaponTypeClass* pThis, CCINIClas
 	
 	pData->Wave_IsCustom = pData->Wave_IsLaser || pData->Wave_IsBigLaser;
 
-	tmpColor = pData->Wave_Color;
-	pINI->ReadColor(&tmpColor, section, "Wave.Color", &pData->Wave_Color);
-	pData->Wave_Color     = tmpColor;
+	PARSE_COLOR("Wave.Color", pData->Wave_Color, tmpColor);
 
 	pData->Wave_InitialIntensity = pINI->ReadInteger(section, "Wave.InitialIntensity", pData->Wave_InitialIntensity);
 	pData->Wave_IntensityStep    = pINI->ReadInteger(section, "Wave.IntensityStep", pData->Wave_IntensityStep);
@@ -136,22 +133,13 @@ void __stdcall WeaponTypeClassExt::LoadFromINI(WeaponTypeClass* pThis, CCINIClas
 			pData->Ivan_FlickerRate  = flicker;
 		}
 
-		char buffer[256];
+		PARSE_BUF();
 
-		if(pINI->ReadString(section, "IvanBomb.TickingSound", "", buffer, 256) > 0)
-		{
-			pData->Ivan_TickingSound = VocClass::FindIndex(buffer);
-		}
+		PARSE_SND("IvanBomb.TickingSound", pData->Ivan_TickingSound);
 
-		if(pINI->ReadString(section, "IvanBomb.AttachSound", "", buffer, 256) > 0)
-		{
-			pData->Ivan_AttachSound  = VocClass::FindIndex(buffer);
-		}
+		PARSE_SND("IvanBomb.AttachSound", pData->Ivan_AttachSound);
 
-		if(pINI->ReadString(section, "IvanBomb.Warhead", pData->Ivan_WH->get_ID(), buffer, 256) > 0)
-		{
-			pData->Ivan_WH           = WarheadTypeClass::FindOrAllocate(buffer);
-		}
+		PARSE_WH("IvanBomb.Warhead", pData->Ivan_WH);
 		
 		pINI->ReadString(section, "IvanBomb.Image", "", buffer, 256);
 		if(strlen(buffer))
@@ -524,7 +512,7 @@ void WeaponTypeClassExt::ModifyBeamColor(WORD *src, WORD *dst, WaveClass *Wave)
 #define upcolor(c) \
 	int _ ## c = initial. c + (intensity * pData->Wave_Color. c ) / 256; \
 	_ ## c = min(_ ## c, 255); \
-	modified. c = _ ## c;
+	modified. c = (BYTE)_ ## c;
 
 	upcolor(R);
 	upcolor(G);

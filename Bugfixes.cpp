@@ -408,6 +408,7 @@ EXPORT_FUNC(FootClass_UpdatePosition)
 	}
 	return 0;
 }
+
 // bugfix #187: Westwood idiocy
 // 531726, 5
 EXPORT_FUNC(StupidPips1)
@@ -438,5 +439,14 @@ EXPORT_FUNC(TechnoClass_GetWeaponState)
 	TechnoClass *Transport = Techno->get_Transporter();
 	RET_UNLESS(Transport && Transport->get_CloakingStage());
 	return 0x6FCA4F;
+}
+
+// PrismSupportModifier repair
+// 671152, 6
+EXPORT_FUNC(RulesClass_Addition_General)
+{
+	GET(RulesClass *, Rules, ESI);
+	Rules->set_PrismSupportModifier(Rules->get_PrismSupportModifier() / 100);
+	return 0;
 }
 

@@ -1,3 +1,6 @@
+#ifndef WEAPONTYPE_EXT_H
+#define WEAPONTYPE_EXT_H
+
 #include <YRPP.h>
 #include "Ares.h"
 
@@ -41,3 +44,5 @@ class WeaponTypeClassExt
 	static stdext::hash_map<WaveClass *, WeaponTypeClassData *> WaveExt;
 	static void ModifyBeamColor(WORD *src, WORD *dst, WaveClass *Wave);
 };
+
+#endif
