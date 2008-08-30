@@ -1,9 +1,12 @@
 #include <YRPP.h>
 #include "SuperWeaponTypeExt.h"
+#include "Actions.h"
+#include "Ares.h"
 
 EXT_P_DECLARE(SuperWeaponTypeClass);
 
 DynamicVectorClass<const char *> SuperWeaponTypeClassExt::CustomSWTypes;
+SuperWeaponTypeClass *SuperWeaponTypeClassExt::CurrentSWType = NULL;
 
 EXT_CTOR(SuperWeaponTypeClass)
 {
@@ -21,7 +24,7 @@ EXT_CTOR(SuperWeaponTypeClass)
 		pData->SpyPlane_Count = 1;
 		pData->SpyPlane_Mission = mission_AttackAgain;
 
-		pData->Nuke_Sound = RulesClass::Global()->get_DigSound();
+		pData->Nuke_Siren = RulesClass::Global()->get_DigSound();
 
 		pData->EVA_Ready = -1;
 		pData->EVA_Activated = -1;
@@ -33,6 +36,9 @@ EXT_CTOR(SuperWeaponTypeClass)
 		pData->Sonar_Range = 0;
 		pData->Sonar_Anim = NULL;
 		pData->Sonar_Sound = -1;
+		pData->Sonar_Delay = 15;
+
+		pData->SW_FireToShroud = 1;
 
 		Ext_p[pThis] = pData;
 	}
@@ -87,12 +93,13 @@ EXT_LOAD_INI(SuperWeaponTypeClass)
 		pData->SpyPlane_Mission = MissionClass::FindIndex(buffer);
 	}
 
-	PARSE_SND("Nuke.Sound", pData->Nuke_Sound);
+	PARSE_SND("Nuke.Sound", pData->Nuke_Siren);
 	PARSE_EVA("EVA.Ready", pData->EVA_Ready);
 	PARSE_EVA("EVA.Activated", pData->EVA_Activated);
 	PARSE_EVA("EVA.Detected", pData->EVA_Detected);
 
 	int customType;
+
 	if(pINI->ReadString(section, "Type", "", buffer, 256) > 0)
 	{
 		for(int i = 0; i < CustomSWTypes.get_Count(); ++i)
@@ -100,7 +107,8 @@ EXT_LOAD_INI(SuperWeaponTypeClass)
 			if(!strcmp(buffer, CustomSWTypes.GetItem(i)))
 			{
 				customType = FIRST_SW_TYPE + i;
-				pThis->set_ArrayIndex(customType);
+				pThis->set_Type(customType);
+				pThis->set_Action(0x7F);
 				break;
 			}
 		}
@@ -119,10 +127,13 @@ EXT_LOAD_INI(SuperWeaponTypeClass)
 	READ_CURSOR("Cursor", pData->SW_Cursor);
 	READ_CURSOR("NoCursor", pData->SW_NoCursor);
 
-	MousePointer *Cursor = &pData->SW_Cursor;
+	pData->SW_FireToShroud = pINI->ReadBool(section, "Super.FireIntoShroud", pData->SW_FireToShroud);
+
+	MouseCursor *Cursor = &pData->SW_Cursor;
 
 	// nocursor hotspot omitted, useless
-	if(pINI->ReadString(section, "Cursor.HotSpot", "", buffer, 256) > 0) {
+	if(pINI->ReadString(section, "Cursor.HotSpot", "", buffer, 256) > 0)
+	{
 		char *hotx = strtok(buffer, ",");
 		if(!strcmp(hotx, "Left")) Cursor->HotX = hotspx_left;
 		else if(!strcmp(hotx, "Center")) Cursor->HotX = hotspx_center;
@@ -142,9 +153,99 @@ EXT_LOAD_INI(SuperWeaponTypeClass)
 		case SW_SONARPULSE:
 			PARSE_ANIM("SonarPulse.Animation", pData->Sonar_Anim);
 			pData->Sonar_Range = pINI->ReadInteger(section, "SonarPulse.Range", pData->Sonar_Range);
+			pData->Sonar_Delay = pINI->ReadInteger(section, "SonarPulse.Delay", pData->Sonar_Delay);
 			PARSE_SND("SonarPulse.Sound", pData->Sonar_Sound);
 			break;
 	}
+}
+
+// 6CEF84, 7
+EXPORT_FUNC(SuperWeaponTypeClass_GetCursorOverObject)
+{
+	GET(SuperWeaponTypeClass *, pThis, EAX);
+//	int TypeIdx = pThis->get_Type();
+	RET_UNLESS(CONTAINS(SuperWeaponTypeClassExt::Ext_p, pThis));
+	SuperWeaponTypeClassExt::CurrentSWType = pThis;
+	SuperWeaponTypeClassExt::SuperWeaponTypeClassData *pData = SuperWeaponTypeClassExt::Ext_p[pThis];
+
+//	AbstractClass *pTarget = (AbstractClass *)R->get_StackVar32(0x10);
+
+//	CoordStruct tmpCoords;
+
+	Actions::Set(&pData->SW_Cursor);
+
+/*
+	// set cursor, set EAX to 7F
+	switch(TypeIdx)
+	{
+		case SW_ANIMATION:
+			Ares::Log("Type is Anim, setting Cursor\n");
+			Actions::Set(&pData->SW_Cursor);
+			break;
+		case SW_SONARPULSE:
+			if(MapClass::Global()->GetCellAt(pTarget->GetCoords(&tmpCoords))->Tile_Is_Water())
+			{
+				Ares::Log("Type is Sonar, on Water\n");
+				Actions::Set(&pData->SW_Cursor);
+			}
+			else
+			{
+				Ares::Log("Type is Sonar, no Water\n");
+				Actions::Set(&pData->SW_NoCursor);
+			}
+			break;
+	}
+*/
+
+	R->set_EAX(0x7F);
+	return 0x6CEFD9;
+}
+
+// 6AAF92, 6
+EXPORT_FUNC(SidebarClass_ProcessCameoClick)
+{
+	DWORD idx = R->get_ESI();
+	SuperWeaponTypeClass *pThis = SuperWeaponTypeClass::Array->GetItem(idx);
+//	int TypeIdx = pThis->get_Type();
+	RET_UNLESS(CONTAINS(SuperWeaponTypeClassExt::Ext_p, pThis));
+	SuperWeaponTypeClassExt::CurrentSWType = pThis;
+	SuperWeaponTypeClassExt::SuperWeaponTypeClassData *pData = SuperWeaponTypeClassExt::Ext_p[pThis];
+
+	Actions::Set(&pData->SW_Cursor);
+
+	return 0;
+}
+
+// 4AB35A, 6
+// custom SW Cursor
+EXPORT_FUNC(DisplayClass_SetAction)
+{
+	int Action = R->get_EAX();
+	RET_UNLESS(Action == 0x7F);
+	DWORD dwUnk = R->get_StackVar32(0x34);
+	DWORD pThis = R->get_ESI();
+
+	SuperWeaponTypeClassExt::SuperWeaponTypeClassData *pData = 
+		SuperWeaponTypeClassExt::Ext_p[SuperWeaponTypeClassExt::CurrentSWType];
+
+	Actions::Set(&pData->SW_Cursor);
+
+	PUSH_VAR32(dwUnk);
+	PUSH_VAR32(Action);
+	SET_REG32(ECX, pThis);
+	CALL_VT(0x48);
+	return 0x4AB78F;
+}
+
+// 653B3A, 5
+EXPORT_FUNC(RadarClass_RTacticalClass_MoreVoodoo)
+{
+	RET_UNLESS(Unsorted::CurrentSWType != -1);
+	SuperWeaponTypeClass *pSW = SuperWeaponTypeClass::Array->GetItem(Unsorted::CurrentSWType);
+	SuperWeaponTypeClassExt::SuperWeaponTypeClassData *pData = SuperWeaponTypeClassExt::Ext_p[pSW];
+	Actions::Set(&pData->SW_Cursor);
+	R->set_ESI(pSW->get_Action());
+	return 0x653CA3;
 }
 
 // 6CD67A, 5
@@ -169,7 +270,7 @@ EXPORT_FUNC(SuperClass_Launch_SpyPlane_Fire)
 	SuperWeaponTypeClass *pThis = Super->get_Type();
 	RET_UNLESS(CONTAINS(SuperWeaponTypeClassExt::Ext_p, pThis));
 	SuperWeaponTypeClassExt::SuperWeaponTypeClassData *pData = SuperWeaponTypeClassExt::Ext_p[pThis];
-	
+
 	Super->get_Owner()->SendSpyPlanes(
 		pData->SpyPlane_TypeIndex, pData->SpyPlane_Count, pData->SpyPlane_Mission, TargetCell, NULL);
 
@@ -178,13 +279,13 @@ EXPORT_FUNC(SuperClass_Launch_SpyPlane_Fire)
 
 // 6CDDE3, 6
 // decouple nuke siren from DigSound
-EXPORT_FUNC(SuperClass_Launch_Nuke_Sound)
+EXPORT_FUNC(SuperClass_Launch_Nuke_Siren)
 {
 	GET(SuperWeaponTypeClass *, pThis, EAX);
 	RET_UNLESS(CONTAINS(SuperWeaponTypeClassExt::Ext_p, pThis));
 	SuperWeaponTypeClassExt::SuperWeaponTypeClassData *pData = SuperWeaponTypeClassExt::Ext_p[pThis];
-	
-	R->set_ECX(pData->Nuke_Sound);
+
+	R->set_ECX(pData->Nuke_Siren);
 
 	return 0x6CDDE9;
 }
@@ -206,7 +307,7 @@ EXPORT_FUNC(SuperClass_AnnounceReady)
 
 bool _stdcall SuperWeaponTypeClassExt::SuperClass_Launch(SuperClass* pThis, CellStruct* pCoords)
 {
-	int TypeIdx = pThis->get_Type()->get_ArrayIndex();
+	int TypeIdx = pThis->get_Type()->get_Type();
 	RET_UNLESS(TypeIdx >= FIRST_SW_TYPE);
 
 	switch(TypeIdx)
@@ -231,6 +332,8 @@ bool SuperWeaponTypeClassExt::SuperClass_Launch_Animation(SuperClass* pThis, Cel
 
 	coords.Z += pData->Anim_ExtraZ;
 	new AnimClass(pData->Anim_Type, coords);
+
+	Unsorted::CurrentSWType = -1;
 	return 1;
 }
 
@@ -247,7 +350,7 @@ bool SuperWeaponTypeClassExt::SuperClass_Launch_SonarPulse(SuperClass* pThis, Ce
 	{
 		new AnimClass(pData->Sonar_Anim, coords);
 	}
-	
+
 	if(pData->Sonar_Sound != -1)
 	{
 		VocClass::PlayAt(pData->Sonar_Sound, &coords);
@@ -266,13 +369,47 @@ bool SuperWeaponTypeClassExt::SuperClass_Launch_SonarPulse(SuperClass* pThis, Ce
 				continue;
 			}
 			TechnoClass *curT = (TechnoClass *)curObj;
-			if(curT->get_CloakingStage())
+			if(curT->get_CloakState())
 			{
 				curT->Uncloak(1);
+				curT->set_CloakingSpeed(9);
+				curT->get_CloakTimer()->StartTime = Unsorted::CurrentFrame + pData->Sonar_Delay;
 			}
 		}
 	}
 
+	Unsorted::CurrentSWType = -1;
 	return 1;
 }
 
+// 6CEE96, 5
+EXPORT_FUNC(SuperWeaponTypeClass_GetTypeIndex)
+{
+	GET(const char *, TypeStr, EDI);
+	for(int i = 0; i < SuperWeaponTypeClassExt::CustomSWTypes.get_Count(); ++i)
+	{
+		if(!strcmp(TypeStr, SuperWeaponTypeClassExt::CustomSWTypes.GetItem(i)))
+		{
+			R->set_ESI(FIRST_SW_TYPE + i);
+			return 0x6CEE9C;
+		}
+	}
+	return 0;
+}
+
+// 4AC20C, 7
+// translates SW click to type
+EXPORT_FUNC(DisplayClass_LMBUp)
+{
+	int Action = R->get_StackVar32(0x9C);
+	if(Action < 0x7F)
+	{
+		int idx = (DWORD)SuperWeaponTypeClass::FindFirstOfAction(Action);
+		R->set_EAX(idx);
+		return idx ? 0x4AC21C : 0x4AC294;
+	}
+
+	R->set_EAX((DWORD)SuperWeaponTypeClassExt::CurrentSWType);
+
+	return 0x4AC21C;
+}

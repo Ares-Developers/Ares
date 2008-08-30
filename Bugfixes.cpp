@@ -437,7 +437,7 @@ EXPORT_FUNC(TechnoClass_GetWeaponState)
 {
 	GET(TechnoClass *, Techno, ESI);
 	TechnoClass *Transport = Techno->get_Transporter();
-	RET_UNLESS(Transport && Transport->get_CloakingStage());
+	RET_UNLESS(Transport && Transport->get_CloakState());
 	return 0x6FCA4F;
 }
 

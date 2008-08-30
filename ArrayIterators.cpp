@@ -9,5 +9,7 @@ EXPORT_FUNC(RulesClass_Addition)
 //	callbacks not defined yet
 //	ARRAY_ITERATE(BulletTypeClass, pINI);
 	ARRAY_ITERATE(WeaponTypeClass, pINI);
+
+	ARRAY_ITERATE(SuperWeaponTypeClass, pINI);
 	return 0;
 }

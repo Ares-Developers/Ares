@@ -16,6 +16,8 @@ public:
 	static bool		bLog;
 	static FILE*	pLogFile;
 
+	static const char *Version;
+
 	static void LogFile_Open()
 	{
 		LogFile_Close();

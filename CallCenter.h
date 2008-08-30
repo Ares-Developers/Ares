@@ -8,6 +8,7 @@
 #include "Foundations.h"
 #include "WeaponTypeExt.h"
 #include "WarheadTypeExt.h"
+#include "SuperWeaponTypeExt.h"
 #include "Countries.h"
 
 /*

@@ -30,4 +30,9 @@ void CallCenter::Init()
 	BIND_CALLBACKS(WeaponTypeClass);
 
 	BIND_CALLBACKS(WarheadTypeClass);
+
+	BIND_CALLBACKS(SuperWeaponTypeClass);
+
+	SuperClassCallback::Launch = SuperWeaponTypeClassExt::SuperClass_Launch;
+
 }

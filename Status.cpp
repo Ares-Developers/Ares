@@ -44,3 +44,11 @@ EXPORT_FUNC(Game_Start)
 	Drawing::GetSurface_Hidden()->DrawText(L"Ares is © pd, DCoder and Electro 2007 - 2008.", 10, 540, COLOR_GREEN);
 	return 0;
 }
+
+// 74FDC0, 5
+EXPORT_FUNC(Exception_Log)
+{
+	R->set_EAX((DWORD)Ares::Version);
+	return 0x74FEEF;
+}
+

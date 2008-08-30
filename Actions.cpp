@@ -2,25 +2,25 @@
 #include "Ares.h"
 #include "Actions.h"
 
-MousePointer * Actions::CustomPointer = NULL;
+MouseCursor * Actions::CustomCursor = NULL;
 
-// 5BDDC0, 5
+// 5BDDC8, 6
 // reset cursor
 EXPORT_FUNC(MouseClass_Update)
 {
-	Actions::CustomPointer = NULL;
+	Actions::CustomCursor = NULL;
 	return 0;
 }
 
 // 5BDC8C, 7
 // reset cursor
-// EAX <= current pointer index
+// EAX <= current Cursor index
 // ESI => &cursor
-EXPORT_FUNC(MouseClass_SetPointer)
+EXPORT_FUNC(MouseClass_SetCursor)
 {
-	RET_UNLESS(Actions::CustomPointer);
+	RET_UNLESS(Actions::CustomCursor);
 
-	MousePointer *pCursor = Actions::CustomPointer;
+	MouseCursor *pCursor = Actions::CustomCursor;
 
 	if(pCursor->MiniFrame != -1)
 	{
@@ -32,6 +32,7 @@ EXPORT_FUNC(MouseClass_SetPointer)
 		R->set_BL(0);
 	}
 
+	R->set_EAX(-1);
 	R->set_ESI((DWORD)pCursor);
 
 	return 0x5BDCB4;

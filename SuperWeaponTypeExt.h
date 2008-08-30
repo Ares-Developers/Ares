@@ -19,6 +19,7 @@ class SuperWeaponTypeClassExt
 	public:
 
 	static DynamicVectorClass<const char *> CustomSWTypes;
+	static SuperWeaponTypeClass *CurrentSWType;
 
 	struct SuperWeaponTypeClassData
 	{
@@ -28,7 +29,7 @@ class SuperWeaponTypeClassExt
 		int SpyPlane_Mission;
 		
 		// Nuke
-		int Nuke_Sound;
+		int Nuke_Siren;
 		
 		// Generic
 		int EVA_Ready;
@@ -43,9 +44,11 @@ class SuperWeaponTypeClassExt
 		int Sonar_Range;
 		AnimTypeClass *Sonar_Anim;
 		int Sonar_Sound;
+		int Sonar_Delay;
 
-		MousePointer SW_Cursor;
-		MousePointer SW_NoCursor;
+		MouseCursor SW_Cursor;
+		MouseCursor SW_NoCursor;
+		bool SW_FireToShroud;
 	};
 
 	EXT_P_DEFINE(SuperWeaponTypeClass);
