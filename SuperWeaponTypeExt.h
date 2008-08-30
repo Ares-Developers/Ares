@@ -43,6 +43,9 @@ class SuperWeaponTypeClassExt
 		int Sonar_Range;
 		AnimTypeClass *Sonar_Anim;
 		int Sonar_Sound;
+
+		MousePointer SW_Cursor;
+		MousePointer SW_NoCursor;
 	};
 
 	EXT_P_DEFINE(SuperWeaponTypeClass);

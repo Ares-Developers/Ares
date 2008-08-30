@@ -106,6 +106,33 @@ EXT_LOAD_INI(SuperWeaponTypeClass)
 		}
 	}
 
+#define READ_CURSOR(key, var) \
+	READCURSOR(key, var, Frame); \
+	READCURSOR(key, var, Count); \
+	READCURSOR(key, var, Interval); \
+	READCURSOR(key, var, MiniFrame); \
+	READCURSOR(key, var, MiniCount); \
+
+#define READCURSOR(key, var, str) \
+	var.str = pINI->ReadInteger(section, key "." # str, var.str);
+
+	READ_CURSOR("Cursor", pData->SW_Cursor);
+	READ_CURSOR("NoCursor", pData->SW_NoCursor);
+
+	MousePointer *Cursor = &pData->SW_Cursor;
+
+	// nocursor hotspot omitted, useless
+	if(pINI->ReadString(section, "Cursor.HotSpot", "", buffer, 256) > 0) {
+		char *hotx = strtok(buffer, ",");
+		if(!strcmp(hotx, "Left")) Cursor->HotX = hotspx_left;
+		else if(!strcmp(hotx, "Center")) Cursor->HotX = hotspx_center;
+		else if(!strcmp(hotx, "Right")) Cursor->HotX = hotspx_right;
+		char *hoty = strtok(NULL, ",");
+		if(!strcmp(hoty, "Top")) Cursor->HotY = hotspy_top;
+		else if(!strcmp(hoty, "Middle")) Cursor->HotY = hotspy_middle;
+		else if(!strcmp(hoty, "Bottom")) Cursor->HotY = hotspy_bottom;
+	}
+
 	switch(customType)
 	{
 		case SW_ANIMATION:
@@ -118,7 +145,6 @@ EXT_LOAD_INI(SuperWeaponTypeClass)
 			PARSE_SND("SonarPulse.Sound", pData->Sonar_Sound);
 			break;
 	}
-
 }
 
 // 6CD67A, 5
@@ -183,7 +209,7 @@ bool _stdcall SuperWeaponTypeClassExt::SuperClass_Launch(SuperClass* pThis, Cell
 	int TypeIdx = pThis->get_Type()->get_ArrayIndex();
 	RET_UNLESS(TypeIdx >= FIRST_SW_TYPE);
 
-	switch(TypeIdx - FIRST_SW_TYPE)
+	switch(TypeIdx)
 	{
 		case SW_ANIMATION:
 			return SuperWeaponTypeClassExt::SuperClass_Launch_Animation(pThis, pCoords);
