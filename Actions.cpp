@@ -4,12 +4,25 @@
 
 MouseCursor * Actions::CustomCursor = NULL;
 MouseCursor * Actions::LastCustomCursor = NULL;
-int Actions::LastFrame = 0;
+int Actions::LastTimerFrame = 0;
+int Actions::LastFrameIndex = 0;
+
+void Actions::Set(MouseCursor *pCursor)
+{
+	if(pCursor != Actions::LastCustomCursor)
+	{
+		Actions::LastFrameIndex = 0;
+		Actions::LastTimerFrame = Unsorted::CurrentFrame;
+	}
+	Actions::CustomCursor = pCursor;
+};
+
 
 // 5BDDC8, 6
 // reset cursor
 EXPORT_FUNC(MouseClass_Update)
 {
+	Actions::LastCustomCursor = Actions::CustomCursor;
 	Actions::CustomCursor = NULL;
 	return 0;
 }
@@ -34,32 +47,28 @@ EXPORT_FUNC(MouseClass_SetCursor)
 		R->set_BL(0);
 	}
 
-	R->set_EAX(Actions::Changed() ? 0xFF : 0x7F);
+	R->set_EAX(0xFF); // Actions::LastCustomCursor == Actions::CustomCursor ? 0x7F : 0xFF); // DOESN'T WORK
 	R->set_ESI((DWORD)pCursor);
 
 	return 0x5BDCB4;
 }
 
-// 
+// 5BDD86, 5
 EXPORT_FUNC(MouseClass_SetCursor2)
 {
-	RET_UNLESS(!Actions::Changed());
+	RET_UNLESS(Actions::CustomCursor);
 
 	MouseCursor *pCursor = Actions::CustomCursor;
 
-	if(pCursor->MiniFrame != -1)
+	if(Actions::LastTimerFrame - Unsorted::CurrentFrame > pCursor->Interval)
 	{
-		R->set_BL(R->get_StackVar8(0x24));
-	}
-	else
-	{
-		R->set_StackVar8(0x24, 0);
-		R->set_BL(0);
+		++Actions::LastFrameIndex;
+		Actions::LastFrameIndex %= pCursor->Count;
+		Actions::LastTimerFrame = Unsorted::CurrentFrame;
 	}
 
-	R->set_EAX(-1);
-	R->set_ESI((DWORD)pCursor);
+	R->set_EDX(pCursor->Frame + Actions::LastFrameIndex);
 
-	return 0x5BDCB4;
+	return 0;
 }
 

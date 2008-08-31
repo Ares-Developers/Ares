@@ -120,8 +120,20 @@ EXT_LOAD_INI(SuperWeaponTypeClass)
 
 	MouseCursor *Cursor = &pData->SW_Cursor;
 
-	// nocursor hotspot omitted, useless
 	if(pINI->ReadString(section, "Cursor.HotSpot", "", buffer, 256) > 0)
+	{
+		char *hotx = strtok(buffer, ",");
+		if(!strcmp(hotx, "Left")) Cursor->HotX = hotspx_left;
+		else if(!strcmp(hotx, "Center")) Cursor->HotX = hotspx_center;
+		else if(!strcmp(hotx, "Right")) Cursor->HotX = hotspx_right;
+		char *hoty = strtok(NULL, ",");
+		if(!strcmp(hoty, "Top")) Cursor->HotY = hotspy_top;
+		else if(!strcmp(hoty, "Middle")) Cursor->HotY = hotspy_middle;
+		else if(!strcmp(hoty, "Bottom")) Cursor->HotY = hotspy_bottom;
+	}
+
+	Cursor = &pData->SW_NoCursor;
+	if(pINI->ReadString(section, "NoCursor.HotSpot", "", buffer, 256) > 0)
 	{
 		char *hotx = strtok(buffer, ",");
 		if(!strcmp(hotx, "Left")) Cursor->HotX = hotspx_left;
@@ -169,7 +181,10 @@ void SuperWeaponTypeClassExt::SuperWeaponTypeClassData::Initialize()
 	this->Sonar_Delay = 15;
 
 	this->SW_FireToShroud = 1;
-	
+
+	this->SW_Cursor.HotX = hotspx_center;
+	this->SW_Cursor.HotY = hotspy_middle;
+
 	this->SW_Initialized = 1;
 }
 
@@ -195,50 +210,14 @@ EXPORT_FUNC(SuperWeaponTypeClass_GetCursorOverObject)
 {
 	GET(SuperWeaponTypeClass *, pThis, ECX);
 //	int TypeIdx = pThis->get_Type();
-	Ares::Log("GetCursorOverObject entry\n");
-	RET_UNLESS(CONTAINS(SuperWeaponTypeClassExt::Ext_p, pThis));
+	RET_UNLESS(CONTAINS(SuperWeaponTypeClassExt::Ext_p, pThis) && pThis->get_Action() >= 0x7E);
 	SuperWeaponTypeClassExt::CurrentSWType = pThis;
-	SuperWeaponTypeClassExt::SuperWeaponTypeClassData *pData = SuperWeaponTypeClassExt::Ext_p[pThis];
 
 	CellStruct *pCoords = (CellStruct *)R->get_StackVar32(0x0C);
 
-	bool ret;
-	if(SuperWeaponTypeClassExt::CanFireAt(pThis, pCoords))
-	{
-		Actions::Set(&pData->SW_Cursor);
-		R->set_EAX(SW_YES_CURSOR);
-		ret = 1;
-	}
-	else
-	{
-		Actions::Set(&pData->SW_NoCursor);
-		R->set_EAX(SW_NO_CURSOR);
-		ret = 0;
-	}
-	Ares::Log("GetCursorOverObject returns %d over coords (%d, %d)\n", ret, pCoords->X, pCoords->Y);
-
-/*
-	// set cursor, set EAX to 7F
-	switch(TypeIdx)
-	{
-		case SW_ANIMATION:
-			Ares::Log("Type is Anim, setting Cursor\n");
-			Actions::Set(&pData->SW_Cursor);
-			break;
-		case SW_SONARPULSE:
-			if(MapClass::Global()->GetCellAt(pTarget->GetCoords(&tmpCoords))->Tile_Is_Water())
-			{
-				Ares::Log("Type is Sonar, on Water\n");
-				Actions::Set(&pData->SW_Cursor);
-			}
-			else
-			{
-				Ares::Log("Type is Sonar, no Water\n");
-				Actions::Set(&pData->SW_NoCursor);
-			}
-			break;
-	}
-*/
+	R->set_EAX( SuperWeaponTypeClassExt::CanFireAt(pThis, pCoords)
+		? SW_YES_CURSOR
+		: SW_NO_CURSOR);
 
 	return 0x6CEFD9;
 }
@@ -247,7 +226,6 @@ EXPORT_FUNC(SuperWeaponTypeClass_GetCursorOverObject)
 EXPORT_FUNC(SidebarClass_ProcessCameoClick)
 {
 	DWORD idx = R->get_ESI();
-	Ares::Log("SW Cameo Click\n");
 	SuperWeaponTypeClass *pThis = SuperWeaponTypeClass::Array->GetItem(idx);
 //	int TypeIdx = pThis->get_Type();
 	RET_UNLESS(CONTAINS(SuperWeaponTypeClassExt::Ext_p, pThis));
@@ -265,27 +243,20 @@ EXPORT_FUNC(DisplayClass_SetAction)
 {
 	int Action = R->get_EAX();
 	RET_UNLESS(Action >= SW_NO_CURSOR);
-	CellStruct *pCoords = (CellStruct *)R->get_StackVar32(0x20);
+	GET(CellStruct *, pCoords, EBX);
 	DWORD dwUnk = R->get_StackVar32(0x34);
 	DWORD pThis = R->get_ESI();
+	bool Shrouded = R->get_StackVar8(0x28);
 
 	SuperWeaponTypeClassExt::SuperWeaponTypeClassData *pData = 
 		SuperWeaponTypeClassExt::Ext_p[SuperWeaponTypeClassExt::CurrentSWType];
 
-	SuperWeaponTypeClass *pSW = //SuperWeaponTypeClass::Array->GetItem(
-	SuperWeaponTypeClassExt::CurrentSWType;
-//	);
-
-	if(SuperWeaponTypeClassExt::CanFireAt(pSW, pCoords))
+	if(Shrouded && !pData->SW_FireToShroud)
 	{
-		Actions::Set(&pData->SW_Cursor);
-		Action = SW_YES_CURSOR;
-	}
-	else
-	{
-		Actions::Set(&pData->SW_NoCursor);
 		Action = SW_NO_CURSOR;
 	}
+
+	Actions::Set(Action == SW_NO_CURSOR ? &pData->SW_NoCursor : &pData->SW_Cursor);
 
 //	Actions::Set(Action == SW_NO_CURSOR ? &pData->SW_NoCursor : &pData->SW_Cursor);
 
@@ -431,6 +402,7 @@ bool SuperWeaponTypeClassExt::SuperClass_Launch_SonarPulse(SuperClass* pThis, Ce
 			if(curT->get_CloakState())
 			{
 				curT->Uncloak(1);
+				curT->set_Sensed(1);
 				//curT->set_CloakingSpeed(1);
 				//curT->get_CloakTimer()->StartTime = Unsorted::CurrentFrame + pData->Sonar_Delay;
 			}
