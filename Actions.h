@@ -8,10 +8,24 @@ class Actions
 	public:
 		static void Set(MouseCursor *pCursor)
 		{
+			if(pCursor == LastCustomCursor)
+			{
+				++LastFrame;
+			}
+			else
+			{
+				LastFrame = 0;
+			}
+			LastCustomCursor = CustomCursor;
 			CustomCursor = pCursor;
 		};
+		
+		static bool Changed()
+			{ return LastFrame == 0; }
 
 		static MouseCursor * CustomCursor;
+		static MouseCursor * LastCustomCursor;
+		static int LastFrame;
 };
 
 #endif

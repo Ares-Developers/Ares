@@ -6,6 +6,10 @@
 
 #include HASHMAP
 
+// actions for custom sw
+#define SW_YES_CURSOR 0x7F
+#define SW_NO_CURSOR 0x7E
+
 // the index of the first custom sw type
 #define FIRST_SW_TYPE 12
 
@@ -27,28 +31,31 @@ class SuperWeaponTypeClassExt
 		int SpyPlane_TypeIndex;
 		int SpyPlane_Count;
 		int SpyPlane_Mission;
-		
+
 		// Nuke
 		int Nuke_Siren;
-		
-		// Generic
-		int EVA_Ready;
-		int EVA_Activated;
-		int EVA_Detected;
-		
+
 		// Animation
 		AnimTypeClass *Anim_Type;
 		int Anim_ExtraZ;
-		
+
 		// Sonar
 		int Sonar_Range;
 		AnimTypeClass *Sonar_Anim;
 		int Sonar_Sound;
 		int Sonar_Delay;
 
+		// Generic
+		int EVA_Ready;
+		int EVA_Activated;
+		int EVA_Detected;
+
+		bool SW_Initialized; // if !set then still need to initialize default values - can't preinit in ctor, too early
+		bool SW_FireToShroud;
 		MouseCursor SW_Cursor;
 		MouseCursor SW_NoCursor;
-		bool SW_FireToShroud;
+
+		void Initialize();
 	};
 
 	EXT_P_DEFINE(SuperWeaponTypeClass);
@@ -57,6 +64,8 @@ class SuperWeaponTypeClassExt
 	
 	bool static SuperClass_Launch_Animation(SuperClass* pThis, CellStruct* pCoords);
 	bool static SuperClass_Launch_SonarPulse(SuperClass* pThis, CellStruct* pCoords);
+
+	bool static CanFireAt(SuperWeaponTypeClass *pThis, CellStruct* pCoords);
 
 };
 

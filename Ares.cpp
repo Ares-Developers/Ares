@@ -20,7 +20,7 @@ FILE*	Ares::pLogFile=NULL;
 
 int FrameStepCommandClass::ArmageddonState = 0;
 
-const char* Ares::Version = "Yuri's Revenge 1.001 + Ares.dll 0.1.34.0";
+const char* Ares::Version = "Yuri's Revenge 1.001 + Ares.dll 0.1.35.0";
 
 void (_cdecl* Ares::Log)(const char* pFormat,...) = 
 	(void (__cdecl *)(const char *,...))0x4068E0;
