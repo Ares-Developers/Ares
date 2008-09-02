@@ -45,10 +45,3 @@ EXPORT_FUNC(Game_Start)
 	return 0;
 }
 
-// 74FDC0, 5
-EXPORT_FUNC(Exception_Log)
-{
-	R->set_EAX((DWORD)Ares::Version);
-	return 0x74FEEF;
-}
-
