@@ -13,16 +13,10 @@
 // the index of the first custom sw type
 #define FIRST_SW_TYPE 12
 
-// list of new sw types
-// ATTENTION: make sure the array is filled in the same order (Ext::Create)
-#define SW_ANIMATION 12
-#define SW_SONARPULSE 13
-
 class SuperWeaponTypeClassExt
 {
 	public:
 
-	static DynamicVectorClass<const char *> CustomSWTypes;
 	static SuperWeaponTypeClass *CurrentSWType;
 
 	struct SuperWeaponTypeClassData
@@ -51,6 +45,7 @@ class SuperWeaponTypeClassExt
 		int EVA_Detected;
 
 		bool SW_Initialized; // if !set then still need to initialize default values - can't preinit in ctor, too early
+		bool SW_TypeCustom;
 		bool SW_FireToShroud;
 		MouseCursor SW_Cursor;
 		MouseCursor SW_NoCursor;
@@ -61,12 +56,55 @@ class SuperWeaponTypeClassExt
 	EXT_P_DEFINE(SuperWeaponTypeClass);
 
 	bool static _stdcall SuperClass_Launch(SuperClass* pThis, CellStruct* pCoords);
-	
-	bool static SuperClass_Launch_Animation(SuperClass* pThis, CellStruct* pCoords);
-	bool static SuperClass_Launch_SonarPulse(SuperClass* pThis, CellStruct* pCoords);
 
-	bool static CanFireAt(SuperWeaponTypeClass *pThis, CellStruct* pCoords);
+};
 
+// New SW Type framework. See SWTypes/*.h for examples of implemented ones. Don't touch yet, still WIP.
+class NewSWType
+{
+	protected:
+		int TypeIndex;
+		bool Registered;
+
+		void Register()
+			{ Array.AddItem(this); this->TypeIndex = Array.get_Count(); }
+
+	public:
+		NewSWType()
+			{ Registered = 0; Register(); };
+
+		virtual ~NewSWType()
+			{ };
+
+		static void Init();
+
+		virtual bool CanFireAt(CellStruct* pCoords)
+			{ return 1; }
+		virtual bool Launch(SuperClass* pSW, CellStruct* pCoords) = 0;
+
+		virtual void LoadFromINI(
+			SuperWeaponTypeClassExt::SuperWeaponTypeClassData *pData, 
+			SuperWeaponTypeClass *pSW, CCINIClass *pINI) = 0;
+
+		virtual const char * GetTypeString()
+			{ return ""; }
+		virtual const int GetTypeIndex()
+			{ return TypeIndex; }
+
+	static DynamicVectorClass<NewSWType *> Array;
+	static NewSWType * GetNthItem(int i)
+		{ return Array.GetItem(i - FIRST_SW_TYPE); }
+	static int FindIndex(const char *Type)
+	{
+		for(int i = 0; i < Array.get_Count(); ++i)
+		{
+			if(!strcmp(Array.GetItem(i)->GetTypeString(), Type))
+			{
+				return FIRST_SW_TYPE + i;
+			}
+		}
+		return -1;
+	}
 };
 
 #endif

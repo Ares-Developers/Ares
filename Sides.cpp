@@ -39,12 +39,8 @@ EXPORT Sides_LoadFromINI(REGISTERS* R)
 					if(!_strcmpi(pID, "Nod"))	//Soviets
 					{
 						for(int i = 0; i < RulesClass::Global()->get_SovietBaseDefenseCounts()->get_Count(); i++)
-							Ext.BaseDefenseCounts.AddItem((*RulesClass::Global()->get_SovietBaseDefenseCounts())[i]);
-						for(int i = 0; i < RulesClass::Global()->get_SovietBaseDefenseCounts()->get_Count(); i++)
 							Ext.BaseDefenseCounts.AddItem(RulesClass::Global()->get_SovietBaseDefenseCounts()->GetItem(i));
 
-						for(int i = 0; i < RulesClass::Global()->get_SovietBaseDefenses()->get_Count(); i++)
-							Ext.BaseDefenses.AddItem((*RulesClass::Global()->get_SovietBaseDefenses())[i]);
 						for(int i = 0; i < RulesClass::Global()->get_SovietBaseDefenses()->get_Count(); i++)
 							Ext.BaseDefenses.AddItem(RulesClass::Global()->get_SovietBaseDefenses()->GetItem(i));
 
@@ -54,12 +50,8 @@ EXPORT Sides_LoadFromINI(REGISTERS* R)
 						Ext.LoadTextColor = ColorScheme::Find("SovietLoad");
 						
 						for(int i = 0; i < RulesClass::Global()->get_SovParaDropInf()->get_Count(); i++)
-							Ext.ParaDrop.AddItem((*RulesClass::Global()->get_SovParaDropInf())[i]);
-						for(int i = 0; i < RulesClass::Global()->get_SovParaDropInf()->get_Count(); i++)
 							Ext.ParaDrop.AddItem((RulesClass::Global()->get_SovParaDropInf()->GetItem(i)));
 
-						for(int i = 0; i < RulesClass::Global()->get_SovParaDropNum()->get_Count(); i++)
-							Ext.ParaDropNum.AddItem((*RulesClass::Global()->get_SovParaDropNum())[i]);
 						for(int i = 0; i < RulesClass::Global()->get_SovParaDropNum()->get_Count(); i++)
 							Ext.ParaDropNum.AddItem(RulesClass::Global()->get_SovParaDropNum()->GetItem(i));
 
@@ -71,12 +63,8 @@ EXPORT Sides_LoadFromINI(REGISTERS* R)
 					else if(!_strcmpi(pID, "ThirdSide"))	//Yuri
 					{
 						for(int i = 0; i < RulesClass::Global()->get_ThirdBaseDefenseCounts()->get_Count(); i++)
-							Ext.BaseDefenseCounts.AddItem((*RulesClass::Global()->get_ThirdBaseDefenseCounts())[i]);
-						for(int i = 0; i < RulesClass::Global()->get_ThirdBaseDefenseCounts()->get_Count(); i++)
 							Ext.BaseDefenseCounts.AddItem(RulesClass::Global()->get_ThirdBaseDefenseCounts()->GetItem(i));
 
-						for(int i = 0; i < RulesClass::Global()->get_ThirdBaseDefenses()->get_Count(); i++)
-							Ext.BaseDefenses.AddItem((*RulesClass::Global()->get_ThirdBaseDefenses())[i]);
 						for(int i = 0; i < RulesClass::Global()->get_ThirdBaseDefenses()->get_Count(); i++)
 							Ext.BaseDefenses.AddItem(RulesClass::Global()->get_ThirdBaseDefenses()->GetItem(i));
 
@@ -86,12 +74,8 @@ EXPORT Sides_LoadFromINI(REGISTERS* R)
 						Ext.LoadTextColor = ColorScheme::Find("SovietLoad");
 						
 						for(int i = 0; i < RulesClass::Global()->get_YuriParaDropInf()->get_Count(); i++)
-							Ext.ParaDrop.AddItem((*RulesClass::Global()->get_YuriParaDropInf())[i]);
-						for(int i = 0; i < RulesClass::Global()->get_YuriParaDropInf()->get_Count(); i++)
 							Ext.ParaDrop.AddItem(RulesClass::Global()->get_YuriParaDropInf()->GetItem(i));
 
-						for(int i = 0; i < RulesClass::Global()->get_YuriParaDropNum()->get_Count(); i++)
-							Ext.ParaDropNum.AddItem((*RulesClass::Global()->get_YuriParaDropNum())[i]);
 						for(int i = 0; i < RulesClass::Global()->get_YuriParaDropNum()->get_Count(); i++)
 							Ext.ParaDropNum.AddItem(RulesClass::Global()->get_YuriParaDropNum()->GetItem(i));
 
@@ -103,12 +87,8 @@ EXPORT Sides_LoadFromINI(REGISTERS* R)
 					else //Allies or any other country
 					{
 						for(int i = 0; i < RulesClass::Global()->get_AlliedBaseDefenseCounts()->get_Count(); i++)
-							Ext.BaseDefenseCounts.AddItem((*RulesClass::Global()->get_AlliedBaseDefenseCounts())[i]);
-						for(int i = 0; i < RulesClass::Global()->get_AlliedBaseDefenseCounts()->get_Count(); i++)
 							Ext.BaseDefenseCounts.AddItem(RulesClass::Global()->get_AlliedBaseDefenseCounts()->GetItem(i));
 
-						for(int i = 0; i < RulesClass::Global()->get_AlliedBaseDefenses()->get_Count(); i++)
-							Ext.BaseDefenses.AddItem((*RulesClass::Global()->get_AlliedBaseDefenses())[i]);
 						for(int i = 0; i < RulesClass::Global()->get_AlliedBaseDefenses()->get_Count(); i++)
 							Ext.BaseDefenses.AddItem(RulesClass::Global()->get_AlliedBaseDefenses()->GetItem(i));
 
@@ -116,14 +96,10 @@ EXPORT Sides_LoadFromINI(REGISTERS* R)
 						Ext.DefaultDisguise = RulesClass::Global()->get_AlliedDisguise();
 						strcpy(Ext.EVATag, "Allied");
 						Ext.LoadTextColor = ColorScheme::Find("AlliedLoad");
-						
-						for(int i = 0; i < RulesClass::Global()->get_AllyParaDropInf()->get_Count(); i++)
-							Ext.ParaDrop.AddItem((*RulesClass::Global()->get_AllyParaDropInf())[i]);
+
 						for(int i = 0; i < RulesClass::Global()->get_AllyParaDropInf()->get_Count(); i++)
 							Ext.ParaDrop.AddItem(RulesClass::Global()->get_AllyParaDropInf()->GetItem(i));
 
-						for(int i = 0; i < RulesClass::Global()->get_AllyParaDropNum()->get_Count(); i++)
-							Ext.ParaDropNum.AddItem((*RulesClass::Global()->get_AllyParaDropNum())[i]);
 						for(int i = 0; i < RulesClass::Global()->get_AllyParaDropNum()->get_Count(); i++)
 							Ext.ParaDropNum.AddItem(RulesClass::Global()->get_AllyParaDropNum()->GetItem(i));
 
@@ -225,8 +201,6 @@ EXPORT Sides_BaseUnit(REGISTERS* R)
 		return 0x4F8F87;	//you survive
 
 	for(int i = 0; i < RulesClass::Global()->get_BaseUnit()->get_Count(); i++)
-		if(pThis->get_OwnedUnitTypes()->GetItemCount((*RulesClass::Global()->get_BaseUnit())[i]->get_ArrayIndex()) > 0)
-	for(int i = 0; i < RulesClass::Global()->get_BaseUnit()->get_Count(); i++)
 		if(pThis->get_OwnedUnitTypes()->GetItemCount(RulesClass::Global()->get_BaseUnit()->GetItem(i)->get_ArrayIndex()) > 0)
 			return 0x4F8F87;	//you survive	
 	
@@ -238,8 +212,6 @@ EXPORT Sides_BuildConst(REGISTERS* R)
 {
 	HouseClass* pThis = (HouseClass*)R->get_ESI();
 
-	for(int i = 0; i < RulesClass::Global()->get_BuildConst()->get_Count(); i++)
-		if(pThis->get_OwnedBuildingTypes1()->GetItemCount((*RulesClass::Global()->get_BuildConst())[i]->get_ArrayIndex()) > 0)
 	for(int i = 0; i < RulesClass::Global()->get_BuildConst()->get_Count(); i++)
 		if(pThis->get_OwnedBuildingTypes1()->GetItemCount(RulesClass::Global()->get_BuildConst()->GetItem(i)->get_ArrayIndex()) > 0)
 			return 0x4F8D02;	//"low power"
@@ -253,9 +225,6 @@ EXPORT Sides_SlaveMinerCheck(REGISTERS* R)
 	HouseClass* pThis = (HouseClass*)R->get_ESI();
 	int n = R->get_EDI();
 
-	for(int i = 0; i < RulesClass::Global()->get_BuildRefinery()->get_Count(); i++)
-		if((*RulesClass::Global()->get_BuildRefinery())[i]->get_SlavesNumber() > 0)	//new sane way to find a slave miner
-			n += pThis->get_OwnedBuildingTypes1()->GetItemCount((*RulesClass::Global()->get_BuildRefinery())[i]->get_ArrayIndex());
 	for(int i = 0; i < RulesClass::Global()->get_BuildRefinery()->get_Count(); i++)
 		if(RulesClass::Global()->get_BuildRefinery()->GetItem(i)->get_SlavesNumber() > 0)	//new sane way to find a slave miner
 			n += pThis->get_OwnedBuildingTypes1()->GetItemCount(RulesClass::Global()->get_BuildRefinery()->GetItem(i)->get_ArrayIndex());
