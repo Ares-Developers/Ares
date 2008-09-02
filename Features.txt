@@ -1,6 +1,10 @@
 Ares Features
 =============
 
+Changes in v0.1.44.0:
+=============
+Adding more meaningful data to Except.txt.
+
 Changes in v0.1.35.0:
 =============
 
