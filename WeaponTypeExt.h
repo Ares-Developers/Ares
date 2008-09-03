@@ -11,6 +11,9 @@ class WeaponTypeClassExt
 	public:
 	struct WeaponTypeClassData
 	{
+		// Generic
+		bool Weapon_Loaded;
+
 		// Coloured Rad Beams
 		bool   Beam_IsCustom;
 		ColorStruct Beam_Color;

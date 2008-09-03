@@ -308,7 +308,7 @@ EXPORT_FUNC(SuperWeaponTypeClass_GetTypeIndex)
 	int customType = NewSWType::FindIndex(TypeStr);
 	if(customType > -1)
 	{
-		R->set_ESI(FIRST_SW_TYPE + customType);
+		R->set_ESI(customType);
 		return 0x6CEE9C;
 	}
 	return 0;
@@ -336,3 +336,54 @@ EXPORT_FUNC(DisplayClass_LMBUp)
 	return 0x4AC21C;
 }
 
+// 446418, 6
+EXPORT_FUNC(BuildingClass_Place1)
+{
+	GET(BuildingClass *, pBuild, EBP);
+	GET(HouseClass *, pHouse, EAX);
+	int swTIdx = pBuild->get_Type()->get_SuperWeapon();
+	if(swTIdx == -1)
+	{
+		swTIdx = pBuild->get_Type()->get_SuperWeapon2();
+		if(swTIdx == -1)
+		{
+			return 0x446580;
+		}
+	}
+
+	SuperClass *pSuper = pHouse->get_Supers()->GetItem(swTIdx);
+	R->set_EAX((DWORD)pSuper);
+	return 0x44643E;
+}
+
+// 44656D, 6
+EXPORT_FUNC(BuildingClass_Place2)
+{
+	return 0x446580;
+}
+
+// 45100A, 6
+EXPORT_FUNC(BuildingClass_ProcessAnims1)
+{
+	GET(BuildingClass *, pBuild, ESI);
+	GET(HouseClass *, pHouse, EAX);
+	int swTIdx = pBuild->get_Type()->get_SuperWeapon();
+	if(swTIdx == -1)
+	{
+		swTIdx = pBuild->get_Type()->get_SuperWeapon2();
+		if(swTIdx == -1)
+		{
+			return 0x451145;
+		}
+	}
+
+	SuperClass *pSuper = pHouse->get_Supers()->GetItem(swTIdx);
+	R->set_EAX((DWORD)pSuper);
+	return 0x451030;
+}
+
+// 451132, 6
+EXPORT_FUNC(BuildingClass_ProcessAnims2)
+{
+	return 0x451145;
+}

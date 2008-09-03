@@ -14,6 +14,8 @@ void __stdcall WeaponTypeClassExt::Create(WeaponTypeClass* pThis)
 	{
 		ALLOC(ExtData, pData);
 
+		pData->Weapon_Loaded     = 1;
+
 		pData->Beam_IsCustom     = 0;
 		pData->Beam_Duration     = 15;
 		pData->Beam_Amplitude    = 40.0;
@@ -81,6 +83,15 @@ void __stdcall WeaponTypeClassExt::LoadFromINI(WeaponTypeClass* pThis, CCINIClas
 
 	ExtData *pData = Ext_p[pThis];
 
+	if(pThis->get_Damage() == 0 && pData->Weapon_Loaded)
+	{
+		// blargh
+		// this is the ugly case of a something that apparently isn't loaded from ini yet, wonder why
+		pData->Weapon_Loaded = 0;
+		pThis->LoadFromINI(pINI);
+		return;
+	}
+
 	ColorStruct tmpColor;
 	if(!pINI->ReadBool(section, "Beam.IsCustom", 1))
 	{
@@ -105,6 +116,12 @@ void __stdcall WeaponTypeClassExt::LoadFromINI(WeaponTypeClass* pThis, CCINIClas
 	pData->Wave_InitialIntensity = pINI->ReadInteger(section, "Wave.InitialIntensity", pData->Wave_InitialIntensity);
 	pData->Wave_IntensityStep    = pINI->ReadInteger(section, "Wave.IntensityStep", pData->Wave_IntensityStep);
 	pData->Wave_FinalIntensity   = pINI->ReadInteger(section, "Wave.FinalIntensity", pData->Wave_FinalIntensity);
+
+	if(!pThis->get_Warhead())
+	{
+		Ares::Log("Weapon %s doesn't have a Warhead yet, what gives?\n", section);
+		return;
+	}
 
 	pData->Ivan_IsCustom = pThis->get_Warhead()->get_IvanBomb();
 
