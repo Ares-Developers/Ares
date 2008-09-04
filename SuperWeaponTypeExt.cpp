@@ -41,6 +41,9 @@ EXT_LOAD(SuperWeaponTypeClass)
 
 		ULONG out;
 		pStm->Read(&Ext_p[pThis], sizeof(ExtData), &out);
+
+		SwizzleManagerClass::SwizzleManager()->Swizzle((void **)&(Ext_p[pThis]->Anim_Type));
+		SwizzleManagerClass::SwizzleManager()->Swizzle((void **)&(Ext_p[pThis]->Sonar_Anim));
 	}
 }
 
@@ -281,19 +284,6 @@ EXPORT_FUNC(SuperClass_Launch_Nuke_Siren)
 	return 0x6CDDE9;
 }
 
-// 6CBDD7, 6
-// custom EVA Announce
-EXPORT_FUNC(SuperClass_AnnounceReady)
-{
-	GET(SuperWeaponTypeClass *, pThis, EAX);
-	RET_UNLESS(CONTAINS(SuperWeaponTypeClassExt::Ext_p, pThis));
-	SuperWeaponTypeClassExt::SuperWeaponTypeClassData *pData = SuperWeaponTypeClassExt::Ext_p[pThis];
-	RET_UNLESS(pData->EVA_Ready != -1);
-
-	VoxClass::PlayIndex(pData->EVA_Ready);
-	return 0x6CBE68;
-}
-
 bool _stdcall SuperWeaponTypeClassExt::SuperClass_Launch(SuperClass* pThis, CellStruct* pCoords)
 {
 	int TypeIdx = pThis->get_Type()->get_Type();
@@ -335,6 +325,8 @@ EXPORT_FUNC(DisplayClass_LMBUp)
 
 	return 0x4AC21C;
 }
+
+// decoupling sw anims from types
 
 // 446418, 6
 EXPORT_FUNC(BuildingClass_Place1)
@@ -387,3 +379,54 @@ EXPORT_FUNC(BuildingClass_ProcessAnims2)
 {
 	return 0x451145;
 }
+
+// EVA_Detected
+// 446937, 6
+EXPORT_FUNC(BuildingClass_AnnounceSW)
+{
+	GET(BuildingClass *, pBuild, EBP);
+	int swTIdx = pBuild->get_Type()->get_SuperWeapon();
+	if(swTIdx == -1)
+	{
+		swTIdx = pBuild->get_Type()->get_SuperWeapon2();
+		if(swTIdx == -1)
+		{
+			return 0x44699A;
+		}
+	}
+
+	SuperWeaponTypeClass *pSW = SuperWeaponTypeClass::Array->GetItem(swTIdx);
+	RET_UNLESS(CONTAINS(SuperWeaponTypeClassExt::Ext_p, pSW));
+	SuperWeaponTypeClassExt::SuperWeaponTypeClassData *pData = SuperWeaponTypeClassExt::Ext_p[pSW];
+	RET_UNLESS(pData->EVA_Detected != -1);
+	VoxClass::PlayIndex(pData->EVA_Detected);
+	return 0x44699A;
+}
+
+// EVA_Ready
+// 6CBDD7, 6
+EXPORT_FUNC(SuperClass_AnnounceReady)
+{
+	GET(SuperWeaponTypeClass *, pThis, EAX);
+	RET_UNLESS(CONTAINS(SuperWeaponTypeClassExt::Ext_p, pThis));
+	SuperWeaponTypeClassExt::SuperWeaponTypeClassData *pData = SuperWeaponTypeClassExt::Ext_p[pThis];
+	RET_UNLESS(pData->EVA_Ready != -1);
+
+	VoxClass::PlayIndex(pData->EVA_Ready);
+	return 0x6CBE68;
+}
+
+// 6CC0EA, 9
+EXPORT_FUNC(SuperClass_Announce)
+{
+	GET(SuperClass *, pThis, ESI);
+	SuperWeaponTypeClass *pSW = pThis->get_Type();
+	RET_UNLESS(CONTAINS(SuperWeaponTypeClassExt::Ext_p, pSW));
+	SuperWeaponTypeClassExt::SuperWeaponTypeClassData *pData = SuperWeaponTypeClassExt::Ext_p[pSW];
+	RET_UNLESS(pData->EVA_Ready != -1);
+
+	VoxClass::PlayIndex(pData->EVA_Ready);
+	return 0x6CC17E;
+}
+
+// EVA_Activated is complex, will do later

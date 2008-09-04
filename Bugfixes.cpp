@@ -184,7 +184,7 @@ EXPORT_FUNC(AircraftClass_ReceiveDamage)
 	loc.Z += 64;
 
 	InfantryTypeClass *PilotType = A->GetCrew();
-	RET_UNLESS(!PilotType);
+	RET_UNLESS(PilotType);
 
 	InfantryClass *Pilot = new InfantryClass(PilotType, A->get_Owner());
 
@@ -450,3 +450,17 @@ EXPORT_FUNC(RulesClass_Addition_General)
 	return 0;
 }
 
+// 4693B0, 6
+// Overpowerer no longer just infantry
+EXPORT_FUNC(BulletClass_Fire_Overpower)
+{
+	GET(TechnoClass *, pT, ECX);
+	switch(pT->WhatAmI())
+	{
+		case abs_Infantry:
+		case abs_Unit:
+			return 0x4693BC;
+		default:
+			return 0x469AA4;
+	}
+}
