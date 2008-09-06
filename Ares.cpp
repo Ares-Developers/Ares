@@ -13,6 +13,7 @@
 #include <StaticInits.cpp>
 
 //Init Statics
+HANDLE  Ares::hInstance=0;
 bool	Ares::bNoLogo=false;
 bool	Ares::bNoCD=false;
 bool	Ares::bLog=true;
@@ -174,6 +175,7 @@ bool __stdcall DllMain(HANDLE hInstance,DWORD dwReason,LPVOID v)
 {
 	if(dwReason==DLL_PROCESS_ATTACH)
 	{
+		Ares::hInstance = hInstance;
 		CallCenter::Init();
 	}
 

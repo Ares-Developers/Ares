@@ -10,6 +10,8 @@ class Ares
 {
 public:
 	//Global Options
+	static HANDLE	hInstance;
+
 	static bool		bNoLogo;
 	static bool		bNoCD;
 
