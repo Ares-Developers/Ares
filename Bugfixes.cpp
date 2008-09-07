@@ -7,6 +7,7 @@
 #pragma warning(disable: 4035)	//"no return value" - there is one, just not in our code ;)
 
 #include <YRPP.h>
+#include <MacroHelpers.h> //basically indicates that this is DCoder country
 
 // bugfix #379: Temporal friendly kills give veterancy
 // 71A92A, 5

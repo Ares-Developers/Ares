@@ -1,6 +1,7 @@
 #ifndef ACTIONS_H
 #define ACTIONS_H
 
+#include <MacroHelpers.h> //basically indicates that this is DCoder country
 #include "Ares.h"
 
 class Actions

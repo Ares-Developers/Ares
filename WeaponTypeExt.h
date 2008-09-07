@@ -2,7 +2,7 @@
 #define WEAPONTYPE_EXT_H
 
 #include <YRPP.h>
-#include <MacroHelpers.h>
+#include <MacroHelpers.h> //basically indicates that this is DCoder country
 #include "Ares.h"
 
 #include <hash_map>

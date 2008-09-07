@@ -1,4 +1,5 @@
 #include <YRPP.h>
+#include <MacroHelpers.h> //basically indicates that this is DCoder country
 #include <YRCallbacks.h>
 
 EXPORT_FUNC(RulesClass_Addition)
