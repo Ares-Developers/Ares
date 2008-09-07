@@ -7,9 +7,7 @@
 class Exceptions
 {
 public:
-	static const char* PointerToID(DWORD ptr);
-
-	
+	static char* PointerToText(DWORD ptr, char* out);
 };
 
 #endif
