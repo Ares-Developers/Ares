@@ -1,7 +1,7 @@
 #include "TechnoExt.h"
 #include "TechnoTypeExt.h"
 
-EXT_P_DECLARE(TechnoClass);
+EXT_P_DEFINE(TechnoClass);
 
 EXT_CTOR(TechnoClass)
 {

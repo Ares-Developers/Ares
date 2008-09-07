@@ -21,7 +21,7 @@ class TechnoTypeClassExt
 		void Initialize(TechnoTypeClass *pThis);
 	};
 
-	EXT_P_DEFINE(TechnoTypeClass);
+	EXT_P_DECLARE(TechnoTypeClass);
 	EXT_FUNCS(TechnoTypeClass);
 	EXT_INI_FUNCS(TechnoTypeClass);
 };

@@ -1,7 +1,7 @@
 #include <YRPP.h>
 #include "WeaponTypeExt.h"
 
-EXT_P_DECLARE(WeaponTypeClass);
+EXT_P_DEFINE(WeaponTypeClass);
 typedef stdext::hash_map<BombClass *, WeaponTypeClassExt::WeaponTypeClassData *> hash_bombExt;
 typedef stdext::hash_map<WaveClass *, WeaponTypeClassExt::WeaponTypeClassData *> hash_waveExt;
 

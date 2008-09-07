@@ -3,7 +3,7 @@
 #include "Actions.h"
 #include "Ares.h"
 
-EXT_P_DECLARE(SuperWeaponTypeClass);
+EXT_P_DEFINE(SuperWeaponTypeClass);
 
 SuperWeaponTypeClass *SuperWeaponTypeClassExt::CurrentSWType = NULL;
 DynamicVectorClass<NewSWType *> NewSWType::Array;

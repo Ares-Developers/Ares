@@ -42,7 +42,7 @@ class WeaponTypeClassExt
 		int Ivan_FlickerRate;
 	};
 
-	EXT_P_DEFINE(WeaponTypeClass);
+	EXT_P_DECLARE(WeaponTypeClass);
 	EXT_FUNCS(WeaponTypeClass);
 	EXT_INI_FUNCS(WeaponTypeClass);
 

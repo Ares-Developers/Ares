@@ -2,7 +2,7 @@
 #include "TechnoTypeExt.h"
 #include "Sides.h"
 
-EXT_P_DECLARE(TechnoTypeClass);
+EXT_P_DEFINE(TechnoTypeClass);
 
 EXT_CTOR(TechnoTypeClass)
 {

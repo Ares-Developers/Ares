@@ -1,7 +1,7 @@
 #include <YRPP.h>
 #include "WarheadTypeExt.h"
 
-EXT_P_DECLARE(WarheadTypeClass);
+EXT_P_DEFINE(WarheadTypeClass);
 
 void __stdcall WarheadTypeClassExt::Create(WarheadTypeClass* pThis)
 {
@@ -9,8 +9,16 @@ void __stdcall WarheadTypeClassExt::Create(WarheadTypeClass* pThis)
 	{
 		ALLOC(ExtData, pData);
 
-		pData->IC_Duration = RulesClass::Global()->get_IronCurtainDuration();
-		pData->IC_Anim     = RulesClass::Global()->get_IronCurtainInvokeAnim();
+		pData->Is_Custom = 0;
+		pData->Is_Initialized = 0;
+
+		pData->MindControl_Permanent = 0;
+
+		pData->EMP_Duration = 0;
+
+		pData->IC_Duration = 0;
+		pData->IC_Anim = NULL;
+
 
 		Ext_p[pThis] = pData;
 	}
@@ -44,6 +52,12 @@ void __stdcall WarheadTypeClassExt::Save(WarheadTypeClass* pThis, IStream* pStm)
 	}
 }
 
+void WarheadTypeClassExt::WarheadTypeClassData::Initialize(WarheadTypeClass* pThis)
+{
+	this->IC_Anim     = RulesClass::Global()->get_IronCurtainInvokeAnim();
+	this->Is_Initialized = 1;
+}
+
 void __stdcall WarheadTypeClassExt::LoadFromINI(WarheadTypeClass* pThis, CCINIClass* pINI)
 {
 	const char * section = pThis->get_ID();
@@ -54,20 +68,27 @@ void __stdcall WarheadTypeClassExt::LoadFromINI(WarheadTypeClass* pThis, CCINICl
 
 	ExtData *pData = Ext_p[pThis];
 
+	if(!pData->Is_Initialized)
+	{
+		pData->Initialize(pThis);
+	}
+
 	if(pThis->get_MindControl())
 	{
 		pData->MindControl_Permanent = pINI->ReadBool(section, "MindControl.Permanent", pData->MindControl_Permanent);
+		pData->Is_Custom |= pData->MindControl_Permanent;
 	}
 
 	if(pThis->get_EMEffect()) {
 		pData->EMP_Duration = pINI->ReadInteger(section, "EMP.Duration", pData->EMP_Duration);
+		pData->Is_Custom |= 1;
 	}
 
 	pData->IC_Duration = pINI->ReadInteger(section, "IronCurtain.Duration", pData->IC_Duration);
+	pData->Is_Custom |= !!pData->IC_Duration;
 
 	PARSE_BUF();
 	PARSE_ANIM("IronCurtain.Anim", pData->IC_Anim);
-
 }
 
 // 5240BD, 7 
@@ -116,13 +137,16 @@ EXPORT_FUNC(BulletClass_Fire)
 	RET_UNLESS(CONTAINS(WarheadTypeClassExt::Ext_p, pThis));
 	WarheadTypeClassExt::WarheadTypeClassData *pData = WarheadTypeClassExt::Ext_p[pThis];
 
-	RET_UNLESS(pData->MindControl_Permanent || pData->EMP_Duration);
+	RET_UNLESS(pData->Is_Custom);
 
 	TechnoClass *pTarget = (TechnoClass *)Bullet->get_Target();
-	RET_UNLESS(pTarget->get_AbstractFlags() & ABSFLAGS_ISTECHNO);
 
-	TechnoTypeClass *pType = (TechnoTypeClass *)pTarget->GetType();
-
+	TechnoTypeClass *pType = NULL;
+	
+	if(pTarget->get_AbstractFlags() & ABSFLAGS_ISTECHNO)
+	{
+		pType = (TechnoTypeClass *)pTarget->GetType();
+	}
 	if(pTarget->IsIronCurtained()) return 0;
 
 	CoordStruct coords;
@@ -143,7 +167,7 @@ EXPORT_FUNC(BulletClass_Fire)
 
 	if(pData->MindControl_Permanent)
 	{
-		if(pType->get_ImmuneToPsionics()) return 0;
+		if(!pType || pType->get_ImmuneToPsionics()) return 0;
 		if(pTarget->get_MindControlledBy())
 		{
 			pTarget->get_MindControlledBy()->get_CaptureManager()->FreeUnit(pTarget);

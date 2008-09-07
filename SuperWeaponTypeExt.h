@@ -54,7 +54,7 @@ class SuperWeaponTypeClassExt
 		void Initialize();
 	};
 
-	EXT_P_DEFINE(SuperWeaponTypeClass);
+	EXT_P_DECLARE(SuperWeaponTypeClass);
 	EXT_FUNCS(SuperWeaponTypeClass);
 	EXT_INI_FUNCS(SuperWeaponTypeClass);
 
