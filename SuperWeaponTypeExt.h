@@ -4,7 +4,7 @@
 #include <YRPP.h>
 #include "Ares.h"
 
-#include HASHMAP
+#include <hash_map>
 
 // actions for custom sw
 #define SW_YES_CURSOR 0x7F

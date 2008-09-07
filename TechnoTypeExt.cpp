@@ -61,8 +61,8 @@ void TechnoTypeClassExt::TechnoTypeClassData::Initialize(TechnoTypeClass *pThis)
 	this->Survivors_Pilots.SetCapacity(SideClass::Array->get_Count(), NULL);
 
 	this->Survivors_PassengersEscape = pThis->get_Crewed();
-	this->Survivors_PilotChance = RulesClass::Global()->get_CrewEscape() * 100;
-	this->Survivors_PassengerChance = RulesClass::Global()->get_CrewEscape() * 100;
+	this->Survivors_PilotChance = (int)RulesClass::Global()->get_CrewEscape() * 100;
+	this->Survivors_PassengerChance = (int)RulesClass::Global()->get_CrewEscape() * 100;
 
 	for(int i = 0; i < SideClass::Array->get_Count(); ++i)
 	{

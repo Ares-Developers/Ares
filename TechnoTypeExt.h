@@ -4,7 +4,7 @@
 #include <YRPP.h>
 #include "Ares.h"
 
-#include HASHMAP
+#include <hash_map>
 
 class TechnoTypeClassExt
 {

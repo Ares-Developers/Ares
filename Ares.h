@@ -2,6 +2,7 @@
 #define ARES_H
 
 #include <YRPP.h>
+#include <hash_map>
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>

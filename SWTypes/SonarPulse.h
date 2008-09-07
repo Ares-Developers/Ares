@@ -2,10 +2,10 @@
 #define SUPERTYPE_EXT_SONAR_H
 
 #include <YRPP.h>
-#include "Ares.h"
-#include "SuperWeaponTypeExt.h"
+#include "..\Ares.h"
+#include "..\SuperWeaponTypeExt.h"
 
-#include HASHMAP
+#include <hash_map>
 
 class SW_SonarPulse : NewSWType
 {

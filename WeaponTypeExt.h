@@ -2,9 +2,10 @@
 #define WEAPONTYPE_EXT_H
 
 #include <YRPP.h>
+#include <MacroHelpers.h>
 #include "Ares.h"
 
-#include HASHMAP
+#include <hash_map>
 
 class WeaponTypeClassExt
 {

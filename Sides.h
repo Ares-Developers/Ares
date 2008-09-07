@@ -2,7 +2,7 @@
 #define SIDES_H
 
 #include "Ares.h"
-#include HASHMAP
+#include <hash_map>
 
 //TODO: Load/Save from savegames
 

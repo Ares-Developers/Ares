@@ -2,7 +2,7 @@
 #define FOUNDATIONS_H
 
 #include "Ares.h"
-#include HASHMAP
+#include <hash_map>
 
 #define FOUNDATION_CUSTOM	0x7F
 
