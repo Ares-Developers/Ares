@@ -33,10 +33,15 @@ EXPORT_FUNC(Scenario_Start4)
 
 EXPORT_FUNC(Game_Start)
 {
-	Drawing::GetSurface_Hidden()->DrawText(L"Ares is active.", 10, 480, COLOR_GREEN);
-	Drawing::GetSurface_Hidden()->DrawText(L"This is a testing version, NOT a final product.", 20, 500, COLOR_RED);
-	Drawing::GetSurface_Hidden()->DrawText(L"Bugs are to be expected.", 20, 520, COLOR_RED);
-	Drawing::GetSurface_Hidden()->DrawText(L"Ares is © pd, DCoder and Electro 2007 - 2008.", 10, 540, COLOR_GREEN);
+	Drawing::GetSurface_Hidden()->DrawText(L"Ares is active.", 10, 460, COLOR_GREEN);
+	Drawing::GetSurface_Hidden()->DrawText(L"This is a testing version, NOT a final product.", 20, 480, COLOR_RED);
+	Drawing::GetSurface_Hidden()->DrawText(L"Bugs are to be expected.", 20, 500, COLOR_RED);
+	Drawing::GetSurface_Hidden()->DrawText(L"Ares is © pd, DCoder and Electro 2007 - 2008.", 10, 520, COLOR_GREEN);
+
+	wchar_t wVersion[256];
+	wsprintf(wVersion, L"%hs", VERSION_STRVER);
+
+	Drawing::GetSurface_Hidden()->DrawText(wVersion, 10, 540, COLOR_RED | COLOR_GREEN);
 	return 0;
 }
 

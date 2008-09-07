@@ -6,6 +6,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "Ares.Version.h"
+
 class Ares
 {
 public:

@@ -54,6 +54,8 @@ class SuperWeaponTypeClassExt
 	};
 
 	EXT_P_DEFINE(SuperWeaponTypeClass);
+	EXT_FUNCS(SuperWeaponTypeClass);
+	EXT_INI_FUNCS(SuperWeaponTypeClass);
 
 	bool static _stdcall SuperClass_Launch(SuperClass* pThis, CellStruct* pCoords);
 

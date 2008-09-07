@@ -28,11 +28,18 @@ void CallCenter::Init()
 		CommandClassCallback::Register	=	Ares::RegisterCommands;
 
 	BIND_CALLBACKS(WeaponTypeClass);
+	BIND_INI_CALLBACKS(WeaponTypeClass);
 
 	BIND_CALLBACKS(WarheadTypeClass);
+	BIND_INI_CALLBACKS(WarheadTypeClass);
 
 	BIND_CALLBACKS(SuperWeaponTypeClass);
+	BIND_INI_CALLBACKS(SuperWeaponTypeClass);
 
 	SuperClassCallback::Launch = SuperWeaponTypeClassExt::SuperClass_Launch;
 
+	BIND_CALLBACKS(TechnoTypeClass);
+	BIND_INI_CALLBACKS(TechnoTypeClass);
+
+	BIND_CALLBACKS(TechnoClass);
 }

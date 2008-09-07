@@ -6,6 +6,8 @@
 
 #include "Ares.h"
 #include "Foundations.h"
+#include "TechnoExt.h"
+#include "TechnoTypeExt.h"
 #include "WeaponTypeExt.h"
 #include "WarheadTypeExt.h"
 #include "SuperWeaponTypeExt.h"

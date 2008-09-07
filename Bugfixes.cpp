@@ -147,20 +147,6 @@ EXPORT_FUNC(TechnoTypeClass_GetCameo2)
 	return T->get_Naval() ? 0x7120BF : 0x7120C5;
 }
 
-// bugfix #297: Crewed=yes jumpjets spawn parachuted infantry on destruction, not idle
-// 7382AB, 6
-EXPORT_FUNC(UnitClass_ReceiveDamage)
-{
-	GET(TechnoClass *, t, ESI);
-	GET(InfantryClass *, I, EDI);
-
-	CoordStruct loc = *t->get_Location();
-	R->set_EAX(I->SpawnParachuted(&loc));
-
-	// replacing Put() with this call, let's see if that works
-	return 0x7382E2;
-}
-
 // MakeInfantry that fails to place will just end the source animation and cleanup instead of memleaking to game end
 // 424B23, 6
 EXPORT_FUNC(AnimClass_Update)
@@ -171,41 +157,6 @@ EXPORT_FUNC(AnimClass_Update)
 	A->set_TimeToDie(1);
 	A->UnInit();
 	return 0x424B29;
-}
-
-// bugfix #297: Crewed=yes AircraftTypes spawn parachuting infantry on death
-// 41668B, 6
-EXPORT_FUNC(AircraftClass_ReceiveDamage)
-{
-	GET(AircraftClass *, A, ESI);
-	RET_UNLESS(A->get_Type()->get_Crewed());
-
-	CoordStruct loc = *A->get_Location();
-	loc.Z += 64;
-
-	InfantryTypeClass *PilotType = A->GetCrew();
-	RET_UNLESS(PilotType);
-
-	InfantryClass *Pilot = new InfantryClass(PilotType, A->get_Owner());
-
-	Pilot->set_Health(PilotType->get_Strength() >> 1);
-	Pilot->get_Veterancy()->Veterancy = A->get_Veterancy()->Veterancy;
-	if(Pilot->SpawnParachuted(&loc))
-	{
-		Pilot->Scatter(0xB1CFE8, 1, 0);
-		Pilot->QueueMission(Pilot->get_Owner()->ControlledByHuman() ? mission_Guard : mission_Hunt, 0);
-		if(A->get_IsSelected())
-		{
-			Pilot->Select();
-		}
-		// TODO: Tag
-	}
-	else
-	{
-		delete Pilot;
-	}
-
-	return 0;
 }
 
 // Ivan bomb cursors

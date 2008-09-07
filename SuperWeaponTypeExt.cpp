@@ -42,8 +42,8 @@ EXT_LOAD(SuperWeaponTypeClass)
 		ULONG out;
 		pStm->Read(&Ext_p[pThis], sizeof(ExtData), &out);
 
-		SwizzleManagerClass::SwizzleManager()->Swizzle((void **)&(Ext_p[pThis]->Anim_Type));
-		SwizzleManagerClass::SwizzleManager()->Swizzle((void **)&(Ext_p[pThis]->Sonar_Anim));
+		SWIZZLE(Ext_p[pThis]->Anim_Type);
+		SWIZZLE(Ext_p[pThis]->Sonar_Anim);
 	}
 }
 

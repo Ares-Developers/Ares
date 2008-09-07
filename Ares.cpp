@@ -1,11 +1,3 @@
-#ifndef _CRT_SECURE_NO_WARNINGS
-#define _CRT_SECURE_NO_WARNINGS
-#endif
-#ifndef _CRT_NON_CONFORMING_SWPRINTFS
-#define _CRT_NON_CONFORMING_SWPRINTFS
-#endif
-#pragma warning(disable: 4035)	//"no return value" - there is one, just not in our code ;)
-
 #include "Ares.h"
 #include "Commands.h"
 #include <CommandClass.h>
@@ -21,7 +13,7 @@ FILE*	Ares::pLogFile=NULL;
 
 int FrameStepCommandClass::ArmageddonState = 0;
 
-const char* Ares::Version = "Yuri's Revenge 1.001 + Ares.dll 0.1.45.0";
+const char* Ares::Version = VERSION_STRING;
 
 void (_cdecl* Ares::Log)(const char* pFormat,...) = 
 	(void (__cdecl *)(const char *,...))0x4068E0;
@@ -156,7 +148,7 @@ void Ares::SendPDPlane(
 				{
 					for(int k = 0; k < (*pNums)[i]; k++)
 					{
-						TechnoClass* pNew = (TechnoClass*)pTechnoType->CreateObject(pOwner);
+						FootClass* pNew = (FootClass*)pTechnoType->CreateObject(pOwner);
 						pNew->vt_entry_D4();
 						pPlane->get_Passengers()->AddPassenger(pNew);
 					}

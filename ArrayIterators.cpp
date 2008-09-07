@@ -11,5 +11,15 @@ EXPORT_FUNC(RulesClass_Addition)
 	ARRAY_ITERATE(WeaponTypeClass, pINI);
 
 	ARRAY_ITERATE(SuperWeaponTypeClass, pINI);
+
+	// HAXXX, stop looking at me like that
+	if(TechnoTypeClassCallback::LoadFromINI)
+	{
+		for(int i = 0; i < TechnoTypeClass::Array->get_Count(); ++i)
+		{
+			TechnoTypeClassCallback::LoadFromINI((TechnoTypeClass *)(TechnoTypeClass::Array->GetItem(i)), pINI);
+		}
+	}
+
 	return 0;
 }

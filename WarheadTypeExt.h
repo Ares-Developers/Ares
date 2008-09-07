@@ -20,6 +20,8 @@ class WarheadTypeClassExt
 	};
 
 	EXT_P_DEFINE(WarheadTypeClass);
+	EXT_FUNCS(WarheadTypeClass);
+	EXT_INI_FUNCS(WarheadTypeClass);
 };
 
 #endif

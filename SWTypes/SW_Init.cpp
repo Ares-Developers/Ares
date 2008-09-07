@@ -1,5 +1,5 @@
-#include "SWTypes/Animation.h"
-#include "SWTypes/SonarPulse.h"
+#include "Animation.h"
+#include "SonarPulse.h"
 
 void NewSWType::Init()
 {

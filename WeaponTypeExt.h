@@ -42,6 +42,8 @@ class WeaponTypeClassExt
 	};
 
 	EXT_P_DEFINE(WeaponTypeClass);
+	EXT_FUNCS(WeaponTypeClass);
+	EXT_INI_FUNCS(WeaponTypeClass);
 
 	static stdext::hash_map<BombClass *, WeaponTypeClassData *> BombExt;
 	static stdext::hash_map<WaveClass *, WeaponTypeClassData *> WaveExt;

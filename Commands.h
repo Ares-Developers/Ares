@@ -13,16 +13,16 @@ public:
 	//CommandClass
 	virtual const char* GetName()
 	{ return "MapSnapshot"; }
-	
+
 	virtual const wchar_t* GetUIName()
 	{ return L"Map Snapshot"; }
-	
+
 	virtual const wchar_t* GetUICategory()
 		{ return L"Ares"; }
-	
+
 	virtual const wchar_t* GetUIDescription()
 		{ return L"Saves the currently played map."; }
-	
+
 	virtual void Execute(DWORD dwUnk)
 	{
 		int i = 0;
@@ -47,7 +47,7 @@ public:
 		CALL(0x687CE0);
 
 		wchar_t msg[0x40] = L"\0";
-		wsprintf(msg, L"Map Snapshot saved as \"%s\".", buffer);
+		wsprintf(msg, L"Map Snapshot saved as '%hs'.", buffer);
 		MessageListClass::PrintMessage(msg);
 	}
 
@@ -64,16 +64,16 @@ public:
 	//CommandClass
 	virtual const char* GetName()
 	{ return "AIControl"; }
-	
+
 	virtual const wchar_t* GetUIName()
 	{ return L"AI Control"; }
-	
+
 	virtual const wchar_t* GetUICategory()
 		{ return L"Ares"; }
-	
+
 	virtual const wchar_t* GetUIDescription()
 		{ return L"Let the AI assume control."; }
-	
+
 	virtual void Execute(DWORD dwUnk)
 	{
 		HouseClass* P = HouseClass::Player();
@@ -118,16 +118,16 @@ public:
 	//CommandClass
 	virtual const char* GetName()
 		{ return "TestSomething"; }
-	
+
 	virtual const wchar_t* GetUIName()
 		{ return L"Test Function"; }
-	
+
 	virtual const wchar_t* GetUICategory()
 		{ return L"Ares"; }
-	
+
 	virtual const wchar_t* GetUIDescription()
 		{ return L"Executes a test function."; }
-	
+
 	virtual void Execute(DWORD dwUnk)
 	{
 		MessageListClass::PrintMessage(L"Test Function executed!");
