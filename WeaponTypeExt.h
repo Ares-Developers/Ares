@@ -13,24 +13,23 @@ class WeaponTypeClassExt
 	struct WeaponTypeClassData
 	{
 		// Generic
+		bool Is_Initialized;
 		bool Weapon_Loaded;
 
 		// Coloured Rad Beams
-		bool   Beam_IsCustom;
 		ColorStruct Beam_Color;
 		int    Beam_Duration;
 		double Beam_Amplitude;
 		// TS Lasers
-		bool   Wave_IsCustom;
 		bool   Wave_IsLaser;
 		bool   Wave_IsBigLaser;
 		ColorStruct Wave_Color;
+/*
 		int    Wave_InitialIntensity;
 		int    Wave_IntensityStep;
 		int    Wave_FinalIntensity;
-
+*/
 		// custom Ivan Bombs
-		bool Ivan_IsCustom;
 		bool Ivan_KillsBridges;
 		bool Ivan_Detachable;
 		int Ivan_Damage;
@@ -40,6 +39,8 @@ class WeaponTypeClassExt
 		WarheadTypeClass *Ivan_WH;
 		SHPStruct *Ivan_Image;
 		int Ivan_FlickerRate;
+
+		void Initialize(WeaponTypeClass* pThis);
 	};
 
 	EXT_P_DECLARE(WeaponTypeClass);

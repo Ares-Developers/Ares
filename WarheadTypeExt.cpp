@@ -152,11 +152,14 @@ EXPORT_FUNC(BulletClass_Fire)
 	CoordStruct coords;
 	pTarget->GetCoords(&coords);
 
-	// add cellspread
-	if(pData->IC_Duration > 0)
+	if(pTarget->get_AbstractFlags() & ABSFLAGS_ISTECHNO)
 	{
-		new AnimClass(pData->IC_Anim, coords);
-		pTarget->IronCurtain(pData->IC_Duration, (DWORD)Bullet->get_Owner(), 1);
+	// add cellspread
+		if(pData->IC_Duration > 0)
+		{
+			new AnimClass(pData->IC_Anim, coords);
+			pTarget->IronCurtain(pData->IC_Duration, (DWORD)Bullet->get_Owner(), 1);
+		}
 	}
 
 	//Electro@pd: get working on support for multiple callbacks in Syringe

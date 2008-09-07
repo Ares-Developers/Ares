@@ -14,23 +14,23 @@ void __stdcall WeaponTypeClassExt::Create(WeaponTypeClass* pThis)
 	{
 		ALLOC(ExtData, pData);
 
-		pData->Weapon_Loaded     = 1;
+		pData->Weapon_Loaded  = 1;
+		pData->Is_Initialized = 0;
 
-		pData->Beam_IsCustom     = 0;
 		pData->Beam_Duration     = 15;
 		pData->Beam_Amplitude    = 40.0;
 		pData->Beam_Color      = ColorStruct(255, 255, 255);
 
-		pData->Wave_IsCustom     = 0;
 		pData->Wave_IsLaser      = 0;
 		pData->Wave_IsBigLaser   = 0;
 		pData->Wave_Color      = ColorStruct(255, 255, 255);
+/*
 		pData->Wave_InitialIntensity = 160;
 		pData->Wave_IntensityStep = -6;
 		pData->Wave_FinalIntensity = 32; // yeah, they don't match well. Tell that to WW.
+*/
 
 		// these can't be initialized to meaningful values, rules class is not loaded from ini yet
-		pData->Ivan_IsCustom     = 0;
 		pData->Ivan_KillsBridges = 1;
 		pData->Ivan_Detachable   = 1;
 		pData->Ivan_Damage       = 0;
@@ -73,6 +73,29 @@ void __stdcall WeaponTypeClassExt::Save(WeaponTypeClass* pThis, IStream* pStm)
 	}
 }
 
+void WeaponTypeClassExt::WeaponTypeClassData::Initialize(WeaponTypeClass* pThis)
+{
+	this->Ivan_Damage       = RulesClass::Global()->get_IvanDamage();
+	this->Ivan_Delay        = RulesClass::Global()->get_IvanTimedDelay();
+	this->Ivan_TickingSound = RulesClass::Global()->get_BombTickingSound();
+	this->Ivan_AttachSound  = RulesClass::Global()->get_BombAttachSound();
+	this->Ivan_WH           = RulesClass::Global()->get_IvanWarhead();
+	this->Ivan_Image        = RulesClass::Global()->get_BOMBCURS_SHP();
+	this->Ivan_FlickerRate  = RulesClass::Global()->get_IvanIconFlickerRate();
+	if(pThis->get_IsRadBeam() || pThis->get_IsRadEruption())
+	{
+		if(pThis->get_Warhead()->get_Temporal())
+		{
+			this->Beam_Color = *RulesClass::Global()->get_ChronoBeamColor(); // Well, a RadEruption Temporal will look pretty funny
+		}
+		else
+		{
+			this->Beam_Color = *RulesClass::Global()->get_RadColor();
+		}
+	}
+	this->Is_Initialized = 1;
+}
+
 void __stdcall WeaponTypeClassExt::LoadFromINI(WeaponTypeClass* pThis, CCINIClass* pINI)
 {
 	const char * section = pThis->get_ID();
@@ -82,6 +105,11 @@ void __stdcall WeaponTypeClassExt::LoadFromINI(WeaponTypeClass* pThis, CCINIClas
 	}
 
 	ExtData *pData = Ext_p[pThis];
+
+	if(!pData->Is_Initialized)
+	{
+		pData->Initialize(pThis);
+	}
 
 	if(pThis->get_Damage() == 0 && pData->Weapon_Loaded)
 	{
@@ -93,29 +121,21 @@ void __stdcall WeaponTypeClassExt::LoadFromINI(WeaponTypeClass* pThis, CCINIClas
 	}
 
 	ColorStruct tmpColor;
-	if(!pINI->ReadBool(section, "Beam.IsCustom", 1))
-	{
-		pData->Beam_IsCustom = 0;
-	}
-	else
-	{
-		pData->Beam_IsCustom  = 1;
-		PARSE_COLOR("Beam.Color", pData->Beam_Color, tmpColor);
+	PARSE_COLOR("Beam.Color", pData->Beam_Color, tmpColor);
 
-		pData->Beam_Duration     = pINI->ReadInteger(section, "Beam.Duration", pData->Beam_Duration);
-		pData->Beam_Amplitude    = pINI->ReadDouble(section, "Beam.Amplitude", pData->Beam_Amplitude);
-	}
+	pData->Beam_Duration     = pINI->ReadInteger(section, "Beam.Duration", pData->Beam_Duration);
+	pData->Beam_Amplitude    = pINI->ReadDouble(section, "Beam.Amplitude", pData->Beam_Amplitude);
 
 	pData->Wave_IsLaser      = pINI->ReadBool(section, "Wave.IsLaser", pData->Wave_IsLaser);
 	pData->Wave_IsBigLaser   = pINI->ReadBool(section, "Wave.IsBigLaser", pData->Wave_IsBigLaser);
 	
-	pData->Wave_IsCustom = pData->Wave_IsLaser || pData->Wave_IsBigLaser;
-
 	PARSE_COLOR("Wave.Color", pData->Wave_Color, tmpColor);
 
+/*
 	pData->Wave_InitialIntensity = pINI->ReadInteger(section, "Wave.InitialIntensity", pData->Wave_InitialIntensity);
 	pData->Wave_IntensityStep    = pINI->ReadInteger(section, "Wave.IntensityStep", pData->Wave_IntensityStep);
 	pData->Wave_FinalIntensity   = pINI->ReadInteger(section, "Wave.FinalIntensity", pData->Wave_FinalIntensity);
+*/
 
 	if(!pThis->get_Warhead())
 	{
@@ -123,21 +143,8 @@ void __stdcall WeaponTypeClassExt::LoadFromINI(WeaponTypeClass* pThis, CCINIClas
 		return;
 	}
 
-	pData->Ivan_IsCustom = pThis->get_Warhead()->get_IvanBomb();
-
-	if(pData->Ivan_IsCustom)
+	if(pThis->get_Warhead()->get_IvanBomb())
 	{
-
-		if(!pData->Ivan_WH) {
-			pData->Ivan_Damage       = RulesClass::Global()->get_IvanDamage();
-			pData->Ivan_Delay        = RulesClass::Global()->get_IvanTimedDelay();
-			pData->Ivan_TickingSound = RulesClass::Global()->get_BombTickingSound();
-			pData->Ivan_AttachSound  = RulesClass::Global()->get_BombAttachSound();
-			pData->Ivan_WH           = RulesClass::Global()->get_IvanWarhead();
-			pData->Ivan_Image        = RulesClass::Global()->get_BOMBCURS_SHP();
-			pData->Ivan_FlickerRate  = RulesClass::Global()->get_IvanIconFlickerRate();
-		}
-
 		pData->Ivan_KillsBridges = pINI->ReadBool(section, "IvanBomb.DestroysBridges", pData->Ivan_KillsBridges);
 		pData->Ivan_Detachable   = pINI->ReadBool(section, "IvanBomb.Detachable", pData->Ivan_Detachable);
 
@@ -164,11 +171,11 @@ void __stdcall WeaponTypeClassExt::LoadFromINI(WeaponTypeClass* pThis, CCINIClas
 			SHPStruct *image = FileSystem::LoadSHPFile(buffer);
 			if(image)
 			{
+				Ares::Log("Loading Ivan Image %s succeeded: %d frames\n", buffer, image->Frames);
 				pData->Ivan_Image        = image;
 			}
 			else
 			{
-				Ares::Log("Loading Ivan Image %s failed, reverting to default\n", buffer);
 			}
 		}
 	}
@@ -182,7 +189,6 @@ EXPORT_FUNC(TechnoClass_FireRadBeam)
 	WeaponTypeClass* Source = (WeaponTypeClass *)R->get_StackVar32(0xC);
 	RET_UNLESS(CONTAINS(WeaponTypeClassExt::Ext_p, Source));
 	WeaponTypeClassExt::WeaponTypeClassData *pData = WeaponTypeClassExt::Ext_p[Source];
-	RET_UNLESS(pData->Beam_IsCustom);
 	Rad->set_Color(pData->Beam_Color);
 	Rad->set_Period(pData->Beam_Duration);
 	Rad->set_Amplitude(pData->Beam_Amplitude);
@@ -199,7 +205,6 @@ EXPORT_FUNC(BombListClass_Add1)
 	WeaponTypeClass *Source = Bullet->get_WeaponType();
 	RET_UNLESS(CONTAINS(WeaponTypeClassExt::Ext_p, Source));
 	WeaponTypeClassExt::WeaponTypeClassData *pData = WeaponTypeClassExt::Ext_p[Source];
-	RET_UNLESS(pData->Ivan_IsCustom);
 
 	WeaponTypeClassExt::BombExt[Bomb] = pData;
 	Bomb->set_DetonationFrame(Unsorted::CurrentFrame + pData->Ivan_Delay);
@@ -217,7 +222,7 @@ EXPORT_FUNC(BombListClass_Add2)
 	WeaponTypeClass *Source = Bullet->get_WeaponType();
 	RET_UNLESS(CONTAINS(WeaponTypeClassExt::Ext_p, Source));
 	WeaponTypeClassExt::WeaponTypeClassData *pData = WeaponTypeClassExt::Ext_p[Source];
-	RET_UNLESS(pData->Ivan_IsCustom && Owner->get_Owner()->ControlledByPlayer());
+	RET_UNLESS(Owner->get_Owner()->ControlledByPlayer());
 
 	if(pData->Ivan_AttachSound != -1)
 	{
@@ -238,24 +243,24 @@ EXPORT_FUNC(BombListClass_Add3)
 // custom ivan bomb drawing 1
 EXPORT_FUNC(TechnoClass_DrawExtras1)
 {
-	GET(BombClass *, Bomb, ECX);
+	GET(TechnoClass *, pThis, EBP);
+	BombClass * Bomb = pThis->get_AttachedBomb();
 
 	RET_UNLESS(CONTAINS(WeaponTypeClassExt::BombExt, Bomb));
 	WeaponTypeClassExt::WeaponTypeClassData *pData = WeaponTypeClassExt::BombExt[Bomb];
-	RET_UNLESS(pData->Ivan_IsCustom);
 
-	int frame = 2 * (Unsorted::CurrentFrame - Bomb->get_PlantingFrame()) / (pData->Ivan_Delay / pData->Ivan_Image->Frames);
+	int frame = (Unsorted::CurrentFrame - Bomb->get_PlantingFrame()) / (pData->Ivan_Delay / pData->Ivan_Image->Frames);
 
 	if(Unsorted::CurrentFrame % (2 * pData->Ivan_FlickerRate) >= pData->Ivan_FlickerRate)
 	{
 		++frame;
 	}
 
-	if( frame > pData->Ivan_Image->Frames )
+	if( frame >= pData->Ivan_Image->Frames )
 	{
-		frame = pData->Ivan_Image->Frames;
+		frame = pData->Ivan_Image->Frames - 1;
 	}
-	else if(frame == pData->Ivan_Image->Frames )
+	else if(frame == pData->Ivan_Image->Frames - 1 )
 	{
 		--frame;
 	}
@@ -269,13 +274,11 @@ EXPORT_FUNC(TechnoClass_DrawExtras1)
 // custom ivan bomb drawing 2
 EXPORT_FUNC(TechnoClass_DrawExtras2)
 {
-	DWORD pBomb = R->get_EBP();
-	pBomb += 0x38;
-	BombClass * Bomb = (BombClass *)pBomb;
+	GET(TechnoClass *, pThis, EBP);
+	BombClass * Bomb = pThis->get_AttachedBomb();
 
 	RET_UNLESS(CONTAINS(WeaponTypeClassExt::BombExt, Bomb));
 	WeaponTypeClassExt::WeaponTypeClassData *pData = WeaponTypeClassExt::BombExt[Bomb];
-	RET_UNLESS(pData->Ivan_IsCustom);
 
 	if(!pData->Ivan_Image)
 	{
@@ -284,7 +287,6 @@ EXPORT_FUNC(TechnoClass_DrawExtras2)
 	}
 
 	DWORD pImage = (DWORD)pData->Ivan_Image;
-	Ares::Log("Ivan Image = %08X\n", pImage);
 
 	R->set_ECX(pImage);
 	return 0x6F5247;
@@ -296,9 +298,8 @@ EXPORT_FUNC(TechnoClass_GetObjectActivityState)
 {
 	GET(TechnoClass *, Target, EBP);
 	BombClass *Bomb = Target->get_AttachedBomb();
-	RET_UNLESS(CONTAINS(WeaponTypeClassExt::BombExt, Bomb));
+	RET_UNLESS(Bomb && CONTAINS(WeaponTypeClassExt::BombExt, Bomb));
 	WeaponTypeClassExt::WeaponTypeClassData *pData = WeaponTypeClassExt::BombExt[Bomb];
-	RET_UNLESS(pData->Ivan_IsCustom);
 	if(!pData->Ivan_Detachable)
 	{
 		return 0x6FCBBE;
@@ -313,7 +314,6 @@ EXPORT_FUNC(InfantryClass_GetCursorOverObject2)
 	BombClass *Bomb = Target->get_AttachedBomb();
 	RET_UNLESS(CONTAINS(WeaponTypeClassExt::BombExt, Bomb));
 	WeaponTypeClassExt::WeaponTypeClassData *pData = WeaponTypeClassExt::BombExt[Bomb];
-	RET_UNLESS(pData->Ivan_IsCustom);
 	if(!pData->Ivan_Detachable)
 	{
 		return 0x51E49E;
@@ -329,7 +329,6 @@ EXPORT_FUNC(BombClass_Detonate1)
 	
 	RET_UNLESS(CONTAINS(WeaponTypeClassExt::BombExt, Bomb));
 	WeaponTypeClassExt::WeaponTypeClassData *pData = WeaponTypeClassExt::BombExt[Bomb];
-	RET_UNLESS(pData->Ivan_IsCustom);
 
 	R->set_StackVar32(0x4, (DWORD)pData->Ivan_WH);
 	R->set_EDX((DWORD)pData->Ivan_Damage);
@@ -344,7 +343,6 @@ EXPORT_FUNC(BombClass_Detonate2)
 	
 	RET_UNLESS(CONTAINS(WeaponTypeClassExt::BombExt, Bomb));
 	WeaponTypeClassExt::WeaponTypeClassData *pData = WeaponTypeClassExt::BombExt[Bomb];
-	RET_UNLESS(pData->Ivan_IsCustom);
 
 	R->set_EDX((DWORD)pData->Ivan_WH);
 	R->set_ECX((DWORD)pData->Ivan_Damage);
@@ -359,7 +357,6 @@ EXPORT_FUNC(BombClass_Detonate3)
 
 	RET_UNLESS(CONTAINS(WeaponTypeClassExt::BombExt, Bomb));
 	WeaponTypeClassExt::WeaponTypeClassData *pData = WeaponTypeClassExt::BombExt[Bomb];
-	RET_UNLESS(pData->Ivan_IsCustom);
 	return pData->Ivan_KillsBridges ? 0x438989 : 0;
 }
 
@@ -387,8 +384,6 @@ EXPORT_FUNC(TechnoClass_Fire)
 
 	RET_UNLESS(CONTAINS(WeaponTypeClassExt::Ext_p, Source));
 	WeaponTypeClassExt::WeaponTypeClassData *pData = WeaponTypeClassExt::Ext_p[Source];
-
-	RET_UNLESS(pData->Wave_IsCustom);
 
 	DWORD pESP = R->get_ESP();
 
@@ -420,16 +415,17 @@ EXPORT_FUNC(WaveClass_CTOR)
 	return 0;
 }
 
+/*
 // 75EB87, 0A // fsdblargh, a single instruction spanning 10 bytes
 EXPORT_FUNC(WaveClass_CTOR2)
 {
 	GET(WaveClass *, Wave, ESI);
 	RET_UNLESS(CONTAINS(WeaponTypeClassExt::WaveExt, Wave));
 	WeaponTypeClassExt::WeaponTypeClassData *pData = WeaponTypeClassExt::WaveExt[Wave];
-	RET_UNLESS(pData->Wave_IsCustom);
-	Wave->set_WaveIntensity(pData->Wave_InitialIntensity);
+//	Wave->set_WaveIntensity(pData->Wave_InitialIntensity);
 	return 0x75EB91;
 }
+*/
 
 // 763226, 6
 EXPORT_FUNC(WaveClass_DTOR)
@@ -443,6 +439,7 @@ EXPORT_FUNC(WaveClass_DTOR)
 	return 0;
 }
 
+/*
 // 760FFC, 5
 // Alt beams update
 EXPORT_FUNC(WaveClass_UpdateLaser)
@@ -451,11 +448,11 @@ EXPORT_FUNC(WaveClass_UpdateLaser)
 	Wave->Update_Beam();
 	RET_UNLESS(CONTAINS(WeaponTypeClassExt::WaveExt, Wave));
 	WeaponTypeClassExt::WeaponTypeClassData *pData = WeaponTypeClassExt::WaveExt[Wave];
-	RET_UNLESS(pData->Wave_IsCustom);
 	int intense = Wave->get_WaveIntensity() + pData->Wave_IntensityStep;
 	Wave->set_WaveIntensity(intense);
 	return intense >= pData->Wave_FinalIntensity ? 0x761016 : 0x76100C;
 }
+*/
 
 // 760BC2, 6
 EXPORT_FUNC(WaveClass_Draw2)
@@ -509,7 +506,6 @@ void WeaponTypeClassExt::ModifyBeamColor(WORD *src, WORD *dst, WaveClass *Wave)
 {
 	RETZ_UNLESS(CONTAINS(WeaponTypeClassExt::WaveExt, Wave));
 	WeaponTypeClassExt::WeaponTypeClassData *pData = WeaponTypeClassExt::WaveExt[Wave];
-	RETZ_UNLESS(pData->Wave_IsCustom);
 
 	DWORD intensity;
 	if(Wave->get_Type() == wave_Laser || Wave->get_Type() == wave_BigLaser)

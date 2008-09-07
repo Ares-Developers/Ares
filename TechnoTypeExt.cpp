@@ -12,7 +12,7 @@ EXT_CTOR(TechnoTypeClass)
 
 		pData->Survivors_Pilots.SetCapacity(1, NULL);
 
-		pData->Survivors_PassengersEscape = 0;
+		pData->Survivors_PassengersEscape = 1;
 		pData->Survivors_PilotChance = 0;
 		pData->Survivors_PassengerChance = 0;
 		pData->Survivors_Pilots[0] = NULL;
@@ -60,7 +60,7 @@ void TechnoTypeClassExt::TechnoTypeClassData::Initialize(TechnoTypeClass *pThis)
 {
 	this->Survivors_Pilots.SetCapacity(SideClass::Array->get_Count(), NULL);
 
-	this->Survivors_PassengersEscape = pThis->get_Crewed();
+	this->Survivors_PassengersEscape = 1; //pThis->get_Crewed();
 	this->Survivors_PilotChance = (int)RulesClass::Global()->get_CrewEscape() * 100;
 	this->Survivors_PassengerChance = (int)RulesClass::Global()->get_CrewEscape() * 100;
 

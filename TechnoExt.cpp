@@ -44,12 +44,12 @@ EXT_SAVE(TechnoClass)
 void TechnoClassExt::SpawnSurvivors(TechnoClass *pThis, TechnoClass *pKiller)
 {
 	TechnoTypeClass *Type = (TechnoTypeClass *)pThis->GetType();
-	RETZ_UNLESS(Type->get_Crewed());
+	RETZ_UNLESS(Type->get_Crewed() || pThis->get_Passengers());
 	TechnoTypeClassExt::TechnoTypeClassData *pData = TechnoTypeClassExt::Ext_p[Type];
 	int chance = pData->Survivors_PilotChance;
 
 	CoordStruct loc = *pThis->get_Location();
-	if(Randomizer::Global()->RandomRanged(1, 100) <= chance)
+	if(Type->get_Crewed() && Randomizer::Global()->RandomRanged(1, 100) <= chance)
 	{
 		InfantryTypeClass *PilotType = pData->Survivors_Pilots[pThis->get_Owner()->get_SideIndex()];
 		RETZ_UNLESS(PilotType);
