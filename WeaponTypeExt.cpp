@@ -249,7 +249,15 @@ EXPORT_FUNC(TechnoClass_DrawExtras1)
 	RET_UNLESS(CONTAINS(WeaponTypeClassExt::BombExt, Bomb));
 	WeaponTypeClassExt::WeaponTypeClassData *pData = WeaponTypeClassExt::BombExt[Bomb];
 
-	int frame = (Unsorted::CurrentFrame - Bomb->get_PlantingFrame()) / (pData->Ivan_Delay / pData->Ivan_Image->Frames);
+	if(pData->Ivan_Image->Frames < 2)
+	{
+		R->set_EAX(0);
+		return 0x6F5235;
+	}
+
+	int frame = 
+	(Unsorted::CurrentFrame - Bomb->get_PlantingFrame())
+		/ (pData->Ivan_Delay / (pData->Ivan_Image->Frames - 1)); // -1 so that last iteration has room to flicker
 
 	if(Unsorted::CurrentFrame % (2 * pData->Ivan_FlickerRate) >= pData->Ivan_FlickerRate)
 	{
@@ -384,6 +392,8 @@ EXPORT_FUNC(TechnoClass_Fire)
 
 	RET_UNLESS(CONTAINS(WeaponTypeClassExt::Ext_p, Source));
 	WeaponTypeClassExt::WeaponTypeClassData *pData = WeaponTypeClassExt::Ext_p[Source];
+
+	RET_UNLESS(pData->Wave_IsLaser || pData->Wave_IsBigLaser);
 
 	DWORD pESP = R->get_ESP();
 
