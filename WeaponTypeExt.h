@@ -49,7 +49,7 @@ class WeaponTypeClassExt
 
 	static stdext::hash_map<BombClass *, WeaponTypeClassData *> BombExt;
 	static stdext::hash_map<WaveClass *, WeaponTypeClassData *> WaveExt;
-	static void ModifyBeamColor(WORD *src, WORD *dst, WaveClass *Wave);
+	static void ModifyWaveColor(WORD *src, WORD *dst, int Intensity, WaveClass *Wave);
 };
 
 #endif

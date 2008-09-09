@@ -93,6 +93,17 @@ void WeaponTypeClassExt::WeaponTypeClassData::Initialize(WeaponTypeClass* pThis)
 			this->Beam_Color = *RulesClass::Global()->get_RadColor();
 		}
 	}
+
+	if(pThis->get_IsMagBeam())
+	{
+		this->Wave_Color = ColorStruct(255, 200, 255); // dunno the actual default, this is rules->magnabeamcolor
+	}
+	else if(pThis->get_IsSonic())
+	{
+		this->Wave_Color = ColorStruct(255, 255, 255); // dunno the actual default
+	}
+
+
 	this->Is_Initialized = 1;
 }
 
@@ -470,7 +481,7 @@ EXPORT_FUNC(WaveClass_Draw2)
 	GET(WaveClass *, Wave, EBX);
 	GET(WORD *, dest, EBP);
 
-	WeaponTypeClassExt::ModifyBeamColor(dest, dest, Wave);
+	WeaponTypeClassExt::ModifyWaveColor(dest, dest, Wave->get_LaserIntensity(), Wave);
 
 	return 0x760CAF;
 }
@@ -481,7 +492,7 @@ EXPORT_FUNC(WaveClass_Draw3)
 	GET(WaveClass *, Wave, EBX);
 	GET(WORD *, dest, EDI);
 
-	WeaponTypeClassExt::ModifyBeamColor(dest, dest, Wave);
+	WeaponTypeClassExt::ModifyWaveColor(dest, dest, Wave->get_LaserIntensity(), Wave);
 
 	return 0x760ECB;
 }
@@ -489,12 +500,12 @@ EXPORT_FUNC(WaveClass_Draw3)
 // 75EE57, 7
 EXPORT_FUNC(WaveClass_Draw_Sonic)
 {
-	DWORD pWave = R->get_ESP() - 8;
+	DWORD pWave = R->get_StackVar32(0x4);
 	WaveClass * Wave = (WaveClass *)pWave;
 	DWORD src = R->get_EDI();
 	DWORD offs = src + R->get_ECX() * 2;
 
-	WeaponTypeClassExt::ModifyBeamColor((WORD *)offs, (WORD *)src, Wave);
+	WeaponTypeClassExt::ModifyWaveColor((WORD *)offs, (WORD *)src, /* Wave->get_WaveIntensity() */ R->get_ESI(), Wave);
 
 	return 0x75EF1C;
 }
@@ -502,30 +513,26 @@ EXPORT_FUNC(WaveClass_Draw_Sonic)
 // 7601FB, 0B
 EXPORT_FUNC(WaveClass_Draw_Magnetron)
 {
-	DWORD pWave = R->get_ESP() - 4;
+	DWORD pWave = R->get_StackVar32(0x8);
 	WaveClass * Wave = (WaveClass *)pWave;
 	DWORD src = R->get_EBX();
 	DWORD offs = src + R->get_ECX() * 2;
 
-	WeaponTypeClassExt::ModifyBeamColor((WORD *)offs, (WORD *)src, Wave);
+	WeaponTypeClassExt::ModifyWaveColor((WORD *)offs, (WORD *)src, /*Wave->get_WaveIntensity(), */ R->get_EBP(), Wave);
 
+	return 0x760285;
+}
+
+// 760286, 5
+EXPORT_FUNC(WaveClass_Draw_Magnetron2)
+{
 	return 0x7602D3;
 }
 
-void WeaponTypeClassExt::ModifyBeamColor(WORD *src, WORD *dst, WaveClass *Wave)
+void WeaponTypeClassExt::ModifyWaveColor(WORD *src, WORD *dst, int Intensity, WaveClass *Wave)
 {
 	RETZ_UNLESS(CONTAINS(WeaponTypeClassExt::WaveExt, Wave));
 	WeaponTypeClassExt::WeaponTypeClassData *pData = WeaponTypeClassExt::WaveExt[Wave];
-
-	DWORD intensity;
-	if(Wave->get_Type() == wave_Laser || Wave->get_Type() == wave_BigLaser)
-	{
-		intensity = Wave->get_LaserIntensity();
-	}
-	else
-	{
-		intensity = Wave->get_WaveIntensity();
-	}
 
 	ColorStruct initial = Drawing::WordColor(*src);
 
@@ -533,7 +540,7 @@ void WeaponTypeClassExt::ModifyBeamColor(WORD *src, WORD *dst, WaveClass *Wave)
 
 // ugly hack to fix byte wraparound problems
 #define upcolor(c) \
-	int _ ## c = initial. c + (intensity * pData->Wave_Color. c ) / 256; \
+	int _ ## c = initial. c + (Intensity * pData->Wave_Color. c ) / 256; \
 	_ ## c = min(_ ## c, 255); \
 	modified. c = (BYTE)_ ## c;
 
