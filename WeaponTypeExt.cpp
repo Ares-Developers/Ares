@@ -4,9 +4,11 @@
 EXT_P_DEFINE(WeaponTypeClass);
 typedef stdext::hash_map<BombClass *, WeaponTypeClassExt::WeaponTypeClassData *> hash_bombExt;
 typedef stdext::hash_map<WaveClass *, WeaponTypeClassExt::WeaponTypeClassData *> hash_waveExt;
+typedef stdext::hash_map<TechnoClass *, int> hash_waveSlots;
 
 hash_bombExt WeaponTypeClassExt::BombExt;
 hash_waveExt WeaponTypeClassExt::WaveExt;
+hash_waveSlots WeaponTypeClassExt::WaveSlots;
 
 void __stdcall WeaponTypeClassExt::Create(WeaponTypeClass* pThis)
 {
@@ -20,10 +22,12 @@ void __stdcall WeaponTypeClassExt::Create(WeaponTypeClass* pThis)
 		pData->Beam_Duration     = 15;
 		pData->Beam_Amplitude    = 40.0;
 		pData->Beam_Color      = ColorStruct(255, 255, 255);
+		pData->Wave_IsHouseColor = 0;
 
 		pData->Wave_IsLaser      = 0;
 		pData->Wave_IsBigLaser   = 0;
 		pData->Wave_Color      = ColorStruct(255, 255, 255);
+		pData->Beam_IsHouseColor = 0;
 /*
 		pData->Wave_InitialIntensity = 160;
 		pData->Wave_IntensityStep = -6;
@@ -103,6 +107,10 @@ void WeaponTypeClassExt::WeaponTypeClassData::Initialize(WeaponTypeClass* pThis)
 		this->Wave_Color = ColorStruct(255, 255, 255); // dunno the actual default
 	}
 
+	this->Wave_Reverse[idxVehicle] = pThis->get_IsMagBeam();
+	this->Wave_Reverse[idxAircraft] = 0;
+	this->Wave_Reverse[idxBuilding] = 0;
+	this->Wave_Reverse[idxInfantry] = 0;
 
 	this->Is_Initialized = 1;
 }
@@ -132,15 +140,31 @@ void __stdcall WeaponTypeClassExt::LoadFromINI(WeaponTypeClass* pThis, CCINIClas
 	}
 
 	ColorStruct tmpColor;
-	PARSE_COLOR("Beam.Color", pData->Beam_Color, tmpColor);
 
 	pData->Beam_Duration     = pINI->ReadInteger(section, "Beam.Duration", pData->Beam_Duration);
 	pData->Beam_Amplitude    = pINI->ReadDouble(section, "Beam.Amplitude", pData->Beam_Amplitude);
+	pData->Beam_IsHouseColor = pINI->ReadBool(section, "Beam.IsHouseColor", pData->Beam_IsHouseColor);
+	if(!pData->Beam_IsHouseColor)
+	{
+		PARSE_COLOR("Beam.Color", pData->Beam_Color, tmpColor);
+	}
 
 	pData->Wave_IsLaser      = pINI->ReadBool(section, "Wave.IsLaser", pData->Wave_IsLaser);
 	pData->Wave_IsBigLaser   = pINI->ReadBool(section, "Wave.IsBigLaser", pData->Wave_IsBigLaser);
-	
-	PARSE_COLOR("Wave.Color", pData->Wave_Color, tmpColor);
+	pData->Wave_IsHouseColor = pINI->ReadBool(section, "Wave.IsHouseColor", pData->Wave_IsHouseColor);
+	if(!pData->Wave_IsHouseColor)
+	{
+		PARSE_COLOR("Wave.Color", pData->Wave_Color, tmpColor);
+	}
+
+	pData->Wave_Reverse[idxVehicle]   = 
+		pINI->ReadBool(section, "Wave.ReverseAgainstVehicles", pData->Wave_Reverse[idxVehicle]);
+	pData->Wave_Reverse[idxAircraft]  = 
+		pINI->ReadBool(section, "Wave.ReverseAgainstAircraft", pData->Wave_Reverse[idxAircraft]);
+	pData->Wave_Reverse[idxBuilding] = 
+		pINI->ReadBool(section, "Wave.ReverseAgainstBuildings", pData->Wave_Reverse[idxBuilding]);
+	pData->Wave_Reverse[idxInfantry]  = 
+		pINI->ReadBool(section, "Wave.ReverseAgainstinfantry", pData->Wave_Reverse[idxInfantry]);
 
 /*
 	pData->Wave_InitialIntensity = pINI->ReadInteger(section, "Wave.InitialIntensity", pData->Wave_InitialIntensity);
@@ -200,7 +224,15 @@ EXPORT_FUNC(TechnoClass_FireRadBeam)
 	WeaponTypeClass* Source = (WeaponTypeClass *)R->get_StackVar32(0xC);
 	RET_UNLESS(CONTAINS(WeaponTypeClassExt::Ext_p, Source));
 	WeaponTypeClassExt::WeaponTypeClassData *pData = WeaponTypeClassExt::Ext_p[Source];
-	Rad->set_Color(pData->Beam_Color);
+	if(pData->Beam_IsHouseColor)
+	{
+		GET(TechnoClass *, SourceUnit, EDI);
+		Rad->set_Color(*SourceUnit->get_Owner()->get_Color());
+	}
+	else
+	{
+		Rad->set_Color(pData->Beam_Color);
+	}
 	Rad->set_Period(pData->Beam_Duration);
 	Rad->set_Amplitude(pData->Beam_Amplitude);
 	return 0x6FD7A8;
@@ -301,7 +333,6 @@ EXPORT_FUNC(TechnoClass_DrawExtras2)
 
 	if(!pData->Ivan_Image)
 	{
-		Ares::Log("No Ivan Image!\n");
 		return 0;
 	}
 
@@ -404,6 +435,11 @@ EXPORT_FUNC(TechnoClass_Fire)
 	RET_UNLESS(CONTAINS(WeaponTypeClassExt::Ext_p, Source));
 	WeaponTypeClassExt::WeaponTypeClassData *pData = WeaponTypeClassExt::Ext_p[Source];
 
+	if(pData->Wave_IsLaser || pData->Wave_IsBigLaser || Source->get_IsSonic() || Source->get_IsMagBeam())
+	{
+		WeaponTypeClassExt::WaveSlots[Owner] = R->get_BaseVar32(0xC);
+	}
+
 	RET_UNLESS(pData->Wave_IsLaser || pData->Wave_IsBigLaser);
 
 	DWORD pESP = R->get_ESP();
@@ -457,6 +493,16 @@ EXPORT_FUNC(WaveClass_DTOR)
 	{
 		WeaponTypeClassExt::WaveExt.erase(i);
 	}
+
+/*
+ * dangerous - is the dtor sure to be called before the owner creates a new wave ?
+	hash_waveSlots::iterator j = WeaponTypeClassExt::WaveSlots.find(Wave->get_Owner());
+	if(j != WeaponTypeClassExt::WaveSlots.end())
+	{
+		WeaponTypeClassExt::WaveSlots.erase(j);
+	}
+*/
+
 	return 0;
 }
 
@@ -551,4 +597,42 @@ void WeaponTypeClassExt::ModifyWaveColor(WORD *src, WORD *dst, int Intensity, Wa
 	WORD color = Drawing::Color16bit(&modified);
 
 	*dst = color;
+}
+
+// 762C5C, 6
+EXPORT_FUNC(WaveClass_Update_Wave)
+{
+	GET(WaveClass *, Wave, ESI);
+	TechnoClass *Firer = Wave->get_Owner();
+	TechnoClass *Target = Wave->get_Target();
+	if(!Target)
+	{
+		return 0x762D57;
+	}
+
+	WeaponTypeClassExt::WeaponTypeClassData *pData = WeaponTypeClassExt::WaveExt[Wave];
+	int weaponIdx = WeaponTypeClassExt::WaveSlots[Firer];
+
+	CoordStruct xyzSrc, xyzTgt;
+	Firer->GetFLH(&xyzSrc, weaponIdx, 0, 0, 0);
+	Target->GetCoords__(&xyzTgt);
+
+	char idx = WeaponTypeClassExt:: AbsIDtoIdx(Target->WhatAmI());
+
+	bool reversed = idx >= 0 && pData->Wave_Reverse[idx];
+
+	if(Wave->get_Type() == wave_Magnetron)
+	{
+		reversed
+			? Wave->Draw_Magnetic(&xyzTgt, &xyzSrc)
+			: Wave->Draw_Magnetic(&xyzSrc, &xyzTgt);
+	}
+	else
+	{
+		reversed
+			? Wave->Draw_NonMagnetic(&xyzTgt, &xyzSrc)
+			: Wave->Draw_NonMagnetic(&xyzSrc, &xyzTgt);
+	}
+
+	return 0x762D57;
 }

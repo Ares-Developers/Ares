@@ -18,12 +18,15 @@ class WeaponTypeClassExt
 
 		// Coloured Rad Beams
 		ColorStruct Beam_Color;
+		bool   Beam_IsHouseColor;
 		int    Beam_Duration;
 		double Beam_Amplitude;
 		// TS Lasers
+		bool   Wave_IsHouseColor;
 		bool   Wave_IsLaser;
 		bool   Wave_IsBigLaser;
 		ColorStruct Wave_Color;
+		bool   Wave_Reverse[4];
 /*
 		int    Wave_InitialIntensity;
 		int    Wave_IntensityStep;
@@ -41,14 +44,40 @@ class WeaponTypeClassExt
 		int Ivan_FlickerRate;
 
 		void Initialize(WeaponTypeClass* pThis);
+
 	};
 
 	EXT_P_DECLARE(WeaponTypeClass);
 	EXT_FUNCS(WeaponTypeClass);
 	EXT_INI_FUNCS(WeaponTypeClass);
 
+#define idxVehicle 0
+#define idxAircraft 1
+#define idxBuilding 2
+#define idxInfantry 3
+
+	static char AbsIDtoIdx(eAbstractType absId)
+		{
+			switch(absId)
+			{
+				case abs_Unit:
+					return idxVehicle;
+				case abs_Aircraft:
+					return idxAircraft;
+				case abs_Building:
+					return idxBuilding;
+				case abs_Infantry:
+					return idxInfantry;
+				default:
+					return -1;
+			}
+		};
+
 	static stdext::hash_map<BombClass *, WeaponTypeClassData *> BombExt;
 	static stdext::hash_map<WaveClass *, WeaponTypeClassData *> WaveExt;
+
+	static stdext::hash_map<TechnoClass *, int> WaveSlots;
+
 	static void ModifyWaveColor(WORD *src, WORD *dst, int Intensity, WaveClass *Wave);
 };
 
