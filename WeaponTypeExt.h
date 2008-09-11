@@ -26,7 +26,7 @@ class WeaponTypeClassExt
 		bool   Wave_IsLaser;
 		bool   Wave_IsBigLaser;
 		ColorStruct Wave_Color;
-		bool   Wave_Reverse[4];
+		bool   Wave_Reverse[5];
 /*
 		int    Wave_InitialIntensity;
 		int    Wave_IntensityStep;
@@ -55,6 +55,7 @@ class WeaponTypeClassExt
 #define idxAircraft 1
 #define idxBuilding 2
 #define idxInfantry 3
+#define idxOther 4
 
 	static char AbsIDtoIdx(eAbstractType absId)
 		{
@@ -69,7 +70,7 @@ class WeaponTypeClassExt
 				case abs_Infantry:
 					return idxInfantry;
 				default:
-					return -1;
+					return idxOther;
 			}
 		};
 

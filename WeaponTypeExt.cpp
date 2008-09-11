@@ -100,7 +100,7 @@ void WeaponTypeClassExt::WeaponTypeClassData::Initialize(WeaponTypeClass* pThis)
 
 	if(pThis->get_IsMagBeam())
 	{
-		this->Wave_Color = ColorStruct(255, 200, 255); // dunno the actual default, this is rules->magnabeamcolor
+		this->Wave_Color = ColorStruct(0xB0, 0, 0xD0); // rp2 values
 	}
 	else if(pThis->get_IsSonic())
 	{
@@ -111,6 +111,7 @@ void WeaponTypeClassExt::WeaponTypeClassData::Initialize(WeaponTypeClass* pThis)
 	this->Wave_Reverse[idxAircraft] = 0;
 	this->Wave_Reverse[idxBuilding] = 0;
 	this->Wave_Reverse[idxInfantry] = 0;
+	this->Wave_Reverse[idxOther] = 0;
 
 	this->Is_Initialized = 1;
 }
@@ -164,7 +165,9 @@ void __stdcall WeaponTypeClassExt::LoadFromINI(WeaponTypeClass* pThis, CCINIClas
 	pData->Wave_Reverse[idxBuilding] = 
 		pINI->ReadBool(section, "Wave.ReverseAgainstBuildings", pData->Wave_Reverse[idxBuilding]);
 	pData->Wave_Reverse[idxInfantry]  = 
-		pINI->ReadBool(section, "Wave.ReverseAgainstinfantry", pData->Wave_Reverse[idxInfantry]);
+		pINI->ReadBool(section, "Wave.ReverseAgainstInfantry", pData->Wave_Reverse[idxInfantry]);
+	pData->Wave_Reverse[idxOther]  = 
+		pINI->ReadBool(section, "Wave.ReverseAgainstOthers", pData->Wave_Reverse[idxOther]);
 
 /*
 	pData->Wave_InitialIntensity = pINI->ReadInteger(section, "Wave.InitialIntensity", pData->Wave_InitialIntensity);
@@ -491,7 +494,7 @@ EXPORT_FUNC(WaveClass_DTOR)
 	hash_waveExt::iterator i = WeaponTypeClassExt::WaveExt.find(Wave);
 	if(i != WeaponTypeClassExt::WaveExt.end())
 	{
-		WeaponTypeClassExt::WaveExt.erase(i);
+			WeaponTypeClassExt::WaveExt.erase(i);
 	}
 
 /*
@@ -605,21 +608,22 @@ EXPORT_FUNC(WaveClass_Update_Wave)
 	GET(WaveClass *, Wave, ESI);
 	TechnoClass *Firer = Wave->get_Owner();
 	TechnoClass *Target = Wave->get_Target();
-	if(!Target)
+	if(!Target || !Firer)
 	{
 		return 0x762D57;
 	}
 
+	RET_UNLESS(CONTAINS(WeaponTypeClassExt::WaveExt, Wave));
 	WeaponTypeClassExt::WeaponTypeClassData *pData = WeaponTypeClassExt::WaveExt[Wave];
 	int weaponIdx = WeaponTypeClassExt::WaveSlots[Firer];
 
 	CoordStruct xyzSrc, xyzTgt;
 	Firer->GetFLH(&xyzSrc, weaponIdx, 0, 0, 0);
-	Target->GetCoords__(&xyzTgt);
+	Target->GetCoords__(&xyzTgt); // not GetCoords() ! 
 
 	char idx = WeaponTypeClassExt:: AbsIDtoIdx(Target->WhatAmI());
 
-	bool reversed = idx >= 0 && pData->Wave_Reverse[idx];
+	bool reversed = pData->Wave_Reverse[idx];
 
 	if(Wave->get_Type() == wave_Magnetron)
 	{
