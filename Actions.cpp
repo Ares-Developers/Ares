@@ -22,7 +22,10 @@ void Actions::Set(MouseCursor *pCursor)
 // reset cursor
 EXPORT_FUNC(MouseClass_Update)
 {
-	Actions::LastCustomCursor = Actions::CustomCursor;
+	if(Actions::CustomCursor)
+	{
+		Actions::LastCustomCursor = Actions::CustomCursor;
+	}
 	Actions::CustomCursor = NULL;
 	return 0;
 }

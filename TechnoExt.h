@@ -12,12 +12,15 @@ class TechnoClassExt
 	public:
 	struct TechnoClassData
 	{
+		// weapon slots fsblargh
+		byte idxSlot_Wave;
+		byte idxSlot_Beam;
 	};
 
 	EXT_P_DECLARE(TechnoClass);
 	EXT_FUNCS(TechnoClass);
 //	EXT_INI_FUNCS(TechnoClass);
-	static void SpawnSurvivors(TechnoClass *pThis, TechnoClass *pKiller);
+	static void SpawnSurvivors(TechnoClass *pThis, TechnoClass *pKiller, bool Select);
 	static bool ParadropSurvivor(FootClass *Survivor, CoordStruct *loc, bool Select);
 };
 

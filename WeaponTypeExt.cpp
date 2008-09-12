@@ -1,14 +1,13 @@
 #include <YRPP.h>
 #include "WeaponTypeExt.h"
+#include "TechnoExt.h"
 
 EXT_P_DEFINE(WeaponTypeClass);
 typedef stdext::hash_map<BombClass *, WeaponTypeClassExt::WeaponTypeClassData *> hash_bombExt;
 typedef stdext::hash_map<WaveClass *, WeaponTypeClassExt::WeaponTypeClassData *> hash_waveExt;
-typedef stdext::hash_map<TechnoClass *, int> hash_waveSlots;
 
 hash_bombExt WeaponTypeClassExt::BombExt;
 hash_waveExt WeaponTypeClassExt::WaveExt;
-hash_waveSlots WeaponTypeClassExt::WaveSlots;
 
 void __stdcall WeaponTypeClassExt::Create(WeaponTypeClass* pThis)
 {
@@ -219,9 +218,22 @@ void __stdcall WeaponTypeClassExt::LoadFromINI(WeaponTypeClass* pThis, CCINIClas
 	}
 }
 
+// 6FD64A, 6
+EXPORT_FUNC(TechnoClass_FireRadBeam1)
+{
+	byte idxWeapon = *(byte *)(R->get_StackVar32(0x18) + 0xC);
+/*
+	TechnoClass *Techno = (TechnoClass *)R->get_StackVar32(0x14);
+
+	TechnoClassExt::Ext_p[Techno]->idxSlot_Beam = idxWeapon;
+*/
+	R->set_StackVar32(0x0, idxWeapon);
+	return 0;
+}
+
 // 6FD79C, 6
 // custom RadBeam colors
-EXPORT_FUNC(TechnoClass_FireRadBeam)
+EXPORT_FUNC(TechnoClass_FireRadBeam2)
 {
 	GET(RadBeam *, Rad, ESI);
 	WeaponTypeClass* Source = (WeaponTypeClass *)R->get_StackVar32(0xC);
@@ -435,13 +447,12 @@ EXPORT_FUNC(TechnoClass_Fire)
 	GET(TechnoClass *, Owner, ESI);
 	GET(TechnoClass *, Target, EDI);
 
+	byte idxWeapon = R->get_BaseVar8(0xC);
+
+	TechnoClassExt::Ext_p[Owner]->idxSlot_Wave = idxWeapon;
+
 	RET_UNLESS(CONTAINS(WeaponTypeClassExt::Ext_p, Source));
 	WeaponTypeClassExt::WeaponTypeClassData *pData = WeaponTypeClassExt::Ext_p[Source];
-
-	if(pData->Wave_IsLaser || pData->Wave_IsBigLaser || Source->get_IsSonic() || Source->get_IsMagBeam())
-	{
-		WeaponTypeClassExt::WaveSlots[Owner] = R->get_BaseVar32(0xC);
-	}
 
 	RET_UNLESS(pData->Wave_IsLaser || pData->Wave_IsBigLaser);
 
@@ -583,13 +594,17 @@ void WeaponTypeClassExt::ModifyWaveColor(WORD *src, WORD *dst, int Intensity, Wa
 	RETZ_UNLESS(CONTAINS(WeaponTypeClassExt::WaveExt, Wave));
 	WeaponTypeClassExt::WeaponTypeClassData *pData = WeaponTypeClassExt::WaveExt[Wave];
 
+	ColorStruct *CurrentColor = pData->Wave_IsHouseColor 
+		? Wave->get_Owner()->get_Owner()->get_Color()
+		: &pData->Wave_Color;
+
 	ColorStruct initial = Drawing::WordColor(*src);
 
 	ColorStruct modified = initial;
 
 // ugly hack to fix byte wraparound problems
 #define upcolor(c) \
-	int _ ## c = initial. c + (Intensity * pData->Wave_Color. c ) / 256; \
+	int _ ## c = initial. c + (Intensity * CurrentColor-> c ) / 256; \
 	_ ## c = min(_ ## c, 255); \
 	modified. c = (BYTE)_ ## c;
 
@@ -615,7 +630,7 @@ EXPORT_FUNC(WaveClass_Update_Wave)
 
 	RET_UNLESS(CONTAINS(WeaponTypeClassExt::WaveExt, Wave));
 	WeaponTypeClassExt::WeaponTypeClassData *pData = WeaponTypeClassExt::WaveExt[Wave];
-	int weaponIdx = WeaponTypeClassExt::WaveSlots[Firer];
+	int weaponIdx = TechnoClassExt::Ext_p[Firer]->idxSlot_Wave;
 
 	CoordStruct xyzSrc, xyzTgt;
 	Firer->GetFLH(&xyzSrc, weaponIdx, 0, 0, 0);

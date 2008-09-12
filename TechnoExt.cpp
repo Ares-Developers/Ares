@@ -9,6 +9,9 @@ EXT_CTOR(TechnoClass)
 	{
 		ALLOC(ExtData, pData);
 
+		pData->idxSlot_Wave = 0;
+		pData->idxSlot_Beam = 0;
+
 		Ext_p[pThis] = pData;
 	}
 }
@@ -41,7 +44,7 @@ EXT_SAVE(TechnoClass)
 	}
 }
 
-void TechnoClassExt::SpawnSurvivors(TechnoClass *pThis, TechnoClass *pKiller)
+void TechnoClassExt::SpawnSurvivors(TechnoClass *pThis, TechnoClass *pKiller, bool Select)
 {
 	TechnoTypeClass *Type = (TechnoTypeClass *)pThis->GetType();
 	RETZ_UNLESS(Type->get_Crewed() || pThis->get_Passengers());
@@ -58,7 +61,7 @@ void TechnoClassExt::SpawnSurvivors(TechnoClass *pThis, TechnoClass *pKiller)
 
 		Pilot->set_Health(PilotType->get_Strength() >> 1);
 		Pilot->get_Veterancy()->Veterancy = pThis->get_Veterancy()->Veterancy;
-		if(!TechnoClassExt::ParadropSurvivor(Pilot, &loc, pThis->get_IsSelected()))
+		if(!TechnoClassExt::ParadropSurvivor(Pilot, &loc, Select))
 		{
 			delete Pilot;
 		}
@@ -79,7 +82,7 @@ void TechnoClassExt::SpawnSurvivors(TechnoClass *pThis, TechnoClass *pKiller)
 				CellStruct tmpCoords = CellSpread::GetCell(idx);
 				tmpLoc.X += tmpCoords.X * 128;
 				tmpLoc.Y += tmpCoords.Y * 128;
-				toDelete = !TechnoClassExt::ParadropSurvivor(passenger, &tmpLoc, pThis->get_IsSelected());
+				toDelete = !TechnoClassExt::ParadropSurvivor(passenger, &tmpLoc, Select);
 			}
 			if(toDelete)
 			{
@@ -118,7 +121,7 @@ EXPORT_FUNC(UnitClass_ReceiveDamage)
 {
 	GET(TechnoClass *, t, ESI);
 
-	TechnoClassExt::SpawnSurvivors(t, (TechnoClass *)R->get_StackVar32(0x54));
+	TechnoClassExt::SpawnSurvivors(t, (TechnoClass *)R->get_StackVar32(0x54), !!R->get_StackVar8(0x13));
 
 	return 0x73838A;
 }
@@ -129,7 +132,11 @@ EXPORT_FUNC(AircraftClass_ReceiveDamage)
 {
 	GET(AircraftClass *, a, ESI);
 
-	TechnoClassExt::SpawnSurvivors(a, (TechnoClass *)R->get_StackVar32(0x2C));
+	TechnoClass *Killer = (TechnoClass *)R->get_StackVar32(0x2C);
+	
+	bool select = a->get_IsSelected() && a->get_Owner()->ControlledByPlayer();
+
+	TechnoClassExt::SpawnSurvivors(a, Killer, select);
 
 	return 0;
 }
