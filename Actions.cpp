@@ -75,3 +75,94 @@ EXPORT_FUNC(MouseClass_SetCursor2)
 	return 0;
 }
 
+// ----------------------------------------
+//   CUSTOM WEAPON CURSORS
+// ----------------------------------------
+
+// 417F4F, 0xA
+EXPORT_FUNC(AircraftClass_GetCursorOverObject)
+{
+	GET(AircraftClass *, Source, ESI);
+	GET(TechnoClass *, Target, EDI);
+
+	RET_UNLESS(Target);
+
+	int idxWeapon = Source->SelectWeapon(Target);
+	WeaponTypeClass *Weapon = Source->GetWeapon(idxWeapon)->WeaponType;
+
+	// set Actions::CustomCursor to something
+	return 0;
+/*
+	RET_UNLESS(Weapon->get_Warhead()->get_IvanBomb());
+
+	R->set_EBX(!Target->GetType()->get_Immune() && Target->GetType()->get_Bombable() && !Target->get_AttachedBomb()
+		? act_IvanBomb
+		: act_NoIvanBomb);
+	return 0x417F68;
+*/
+}
+
+// 51EB38, 6
+EXPORT_FUNC(InfantryClass_GetCursorOverObject)
+{
+	GET(InfantryClass *, Source, EDI);
+	GET(TechnoClass *, Target, ESI);
+
+	RET_UNLESS(Target);
+
+	int idxWeapon = Source->SelectWeapon(Target);
+	WeaponTypeClass *Weapon = Source->GetWeapon(idxWeapon)->WeaponType;
+
+	// set Actions::CustomCursor to something
+	return 0;
+/*
+	RET_UNLESS(Weapon->get_Warhead()->get_IvanBomb());
+
+	return 0x51EB48;
+*/
+}
+
+// 740490, 6
+EXPORT_FUNC(UnitClass_GetCursorOverObject)
+{
+	GET(UnitClass *, Source, ESI);
+	GET(TechnoClass *, Target, EDI);
+
+	int idxWeapon = Source->SelectWeapon(Target);
+	WeaponTypeClass *Weapon = Source->GetWeapon(idxWeapon)->WeaponType;
+
+	// set Actions::CustomCursor to something
+	return 0;
+/*
+	RET_UNLESS(Weapon->get_Warhead()->get_IvanBomb());
+
+	R->set_EBX(Target->GetType()->get_Bombable() && !Target->get_AttachedBomb()
+		? act_IvanBomb
+		: act_NoIvanBomb);
+	return 0;
+*/
+}
+
+// 447512, 5
+EXPORT_FUNC(BuildingClass_GetCursorOverObject)
+{
+	GET(BuildingClass *, Source, ESI);
+	GET(TechnoClass *, Target, EBP);
+
+	int idxWeapon = Source->SelectWeapon(Target);
+	WeaponTypeClass *Weapon = Source->GetWeapon(idxWeapon)->WeaponType;
+
+	// set Actions::CustomCursor to something
+	return 0;
+/*
+	if((Target->get_AbstractFlags() & ABSFLAGS_ISTECHNO) && Weapon->get_Warhead()->get_IvanBomb())
+	{
+		R->set_EBX(!Target->GetType()->get_Immune() && Target->GetType()->get_Bombable() && !Target->get_AttachedBomb()
+			? act_IvanBomb
+			: act_NoIvanBomb);
+	}
+
+	return 0x44752C;
+*/
+}
+

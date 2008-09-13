@@ -520,6 +520,71 @@ EXPORT_FUNC(WaveClass_DTOR)
 	return 0;
 }
 
+// 760F50, 6
+// complete replacement for WaveClass::Update
+EXPORT_FUNC(WaveClass_Update)
+{
+	GET(WaveClass *, pThis, ECX);
+
+	int Intensity;
+
+	// hack, just copying the game's logic here
+	if(pThis->get_Owner()->GetWeapon(0)->WeaponType->get_AmbientDamage())
+	{
+		CoordStruct coords;
+		for(int i = 0; i < pThis->get_Cells()->get_Count(); ++i)
+		{
+			pThis->DamageArea(pThis->get_Cells()->GetItem(i)->Get3DCoords3(&coords));
+		}
+	}
+
+	switch(pThis->get_Type())
+	{
+		case wave_Sonic:
+			pThis->Update_Wave();
+			Intensity = pThis->get_WaveIntensity();
+			--Intensity;
+			pThis->set_WaveIntensity(Intensity);
+			if(Intensity < 0)
+			{
+				pThis->UnInit();
+			}
+			else
+			{
+				SET_REG32(ECX, pThis);
+				CALL(0x5F3E70); // ObjectClass::Update
+			}
+			break;
+		case wave_BigLaser:
+		case wave_Laser:
+			Intensity = pThis->get_LaserIntensity();
+			Intensity -= 6;
+			pThis->set_LaserIntensity(Intensity);
+			if(Intensity < 32)
+			{
+				pThis->UnInit();
+			}
+			break;
+		case wave_Magnetron:
+			pThis->Update_Wave();
+			Intensity = pThis->get_WaveIntensity();
+			--Intensity;
+			pThis->set_WaveIntensity(Intensity);
+			if(Intensity < 0)
+			{
+				pThis->UnInit();
+			}
+			else
+			{
+				SET_REG32(ECX, pThis);
+				CALL(0x5F3E70); // ObjectClass::Update
+			}
+			break;
+	}
+
+	return 0x76101A;
+}
+
 /*
 // 760FFC, 5
 // Alt beams update

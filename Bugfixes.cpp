@@ -7,6 +7,7 @@
 #pragma warning(disable: 4035)	//"no return value" - there is one, just not in our code ;)
 
 #include <YRPP.h>
+#include "Ares.h"
 #include <MacroHelpers.h> //basically indicates that this is DCoder country
 
 // bugfix #379: Temporal friendly kills give veterancy
@@ -30,7 +31,7 @@ EXPORT_FUNC(IvanBombs_AttachableByAll)
 	switch(Source->WhatAmI())
 	{
 		// Aircraft can't use them right just yet, IE if out of weapon range...
-		// case abs_Aircraft:
+		case abs_Aircraft:
 		case abs_Infantry:
 		case abs_Unit:
 		case abs_Building:
@@ -40,7 +41,18 @@ EXPORT_FUNC(IvanBombs_AttachableByAll)
 	}
 }
 
-// 469393, 7
+// 6FA4C6, 5
+/* this is a wtf: it unsets target if the unit can no longer affect its current target. 
+ * Makes sense, except Aircraft that lose the target so crudely in the middle of the attack
+ * (i.e. ivan bomb weapon) go wtfkerboom with an IE
+ */
+EXPORT_FUNC(TechnoClass_Update_ZeroOutTarget)
+{
+	GET(TechnoClass *, T, ESI);
+	return T->WhatAmI() == abs_Aircraft ? 0x6FA4D1 : 0;
+}
+
+// 46934D, 6
 EXPORT_FUNC(IvanBombs_Spread)
 {
 	GET(BulletClass *, bullet, ESI);
@@ -48,33 +60,43 @@ EXPORT_FUNC(IvanBombs_Spread)
 
 	RET_UNLESS(bullet->get_Target());
 	
-	CoordStruct tgtLoc = *(bullet->get_Target()->get_Location());
-	TechnoClass *thOwner = (TechnoClass *)bullet->get_Owner();
+	TechnoClass *pOwner = (TechnoClass *)bullet->get_Owner();
+	
+	TechnoClass *pTarget = (TechnoClass *)bullet->get_Target();
+	CoordStruct tgtLoc = *(pTarget->get_Location());
 
 	// just real target
 	if(cSpread < 0.5)
 	{
-		BombListClass::Global()->Plant(thOwner, (TechnoClass *)bullet->get_Target());
+		BombListClass::Global()->Plant(pOwner, pTarget);
 		return 0;
 	}
 
 	int Spread = int(cSpread);
 
+	CoordStruct tgtCoords;
+	pTarget->GetCoords(&tgtCoords);
+	CellStruct centerCoords;//, xyzTgt;
+	centerCoords = *MapClass::Global()->GetCellAt(&tgtCoords)->get_MapCoords();
+
 	int countCells = CellSpread::NumCells(Spread);
+
 	for(int i = 0; i < countCells; ++i)
 	{
 		CellStruct tmpCell = CellSpread::GetCell(i);
+		tmpCell += centerCoords;
 		CellClass *c = MapClass::Global()->GetCellAt(&tmpCell);
+
 		for(ObjectClass *curObj = c->get_FirstObject(); curObj; curObj = curObj->get_NextObject())
 		{
-			if(!curObj->get_AttachedBomb())
+			if(curObj != pOwner && (curObj->get_AbstractFlags() & ABSFLAGS_ISTECHNO) && !curObj->get_AttachedBomb())
 			{
-				BombListClass::Global()->Plant(thOwner, (TechnoClass *)curObj);
+				BombListClass::Global()->Plant(pOwner, (TechnoClass *)curObj);
 			}
 		}
 	}
 
-	return 0x469AA4;
+	return 0;
 }
 
 // Insignificant=yes or DontScore=yes prevent EVA_UnitLost on unit destruction
@@ -158,85 +180,6 @@ EXPORT_FUNC(AnimClass_Update)
 	A->set_TimeToDie(1);
 	A->UnInit();
 	return 0x424B29;
-}
-
-// Ivan bomb cursors
-// 417F4F, 0xA
-EXPORT_FUNC(AircraftClass_GetCursorOverObject)
-{
-	GET(AircraftClass *, Source, ESI);
-	GET(TechnoClass *, Target, EDI);
-
-	RET_UNLESS(Target);
-
-	int idxWeapon = Source->SelectWeapon(Target);
-	WeaponTypeClass *Weapon = Source->GetWeapon(idxWeapon)->WeaponType;
-
-	RET_UNLESS(Weapon->get_Warhead()->get_IvanBomb());
-
-	R->set_EBX(Target->GetType()->get_Bombable() && !Target->get_AttachedBomb()
-		? act_IvanBomb
-		: act_NoIvanBomb);
-
-	return 0;
-}
-
-// Ivan bomb cursors
-// 51EB38, 6
-EXPORT_FUNC(InfantryClass_GetCursorOverObject)
-{
-	GET(InfantryClass *, Source, EDI);
-	GET(TechnoClass *, Target, ESI);
-
-	RET_UNLESS(Target);
-
-	int idxWeapon = Source->SelectWeapon(Target);
-	WeaponTypeClass *Weapon = Source->GetWeapon(idxWeapon)->WeaponType;
-
-	RET_UNLESS(Weapon->get_Warhead()->get_IvanBomb());
-
-	return 0x51EB48;
-}
-
-// Ivan bomb cursors
-// 740490, 6
-EXPORT_FUNC(UnitClass_GetCursorOverObject)
-{
-	GET(UnitClass *, Source, ESI);
-	GET(TechnoClass *, Target, EDI);
-
-	RET_UNLESS(Target);
-
-	int idxWeapon = Source->SelectWeapon(Target);
-	WeaponTypeClass *Weapon = Source->GetWeapon(idxWeapon)->WeaponType;
-
-	RET_UNLESS(Weapon->get_Warhead()->get_IvanBomb());
-
-	R->set_EBX(Target->GetType()->get_Bombable() && !Target->get_AttachedBomb()
-		? act_IvanBomb
-		: act_NoIvanBomb);
-	return 0;
-}
-
-// Ivan bomb cursors
-// 447512, 5
-EXPORT_FUNC(BuildingClass_GetCursorOverObject)
-{
-	GET(BuildingClass *, Source, ESI);
-	GET(TechnoClass *, Target, EBP);
-
-	RET_UNLESS(Target);
-
-	int idxWeapon = Source->SelectWeapon(Target);
-	WeaponTypeClass *Weapon = Source->GetWeapon(idxWeapon)->WeaponType;
-
-	RET_UNLESS(Weapon->get_Warhead()->get_IvanBomb());
-
-	R->set_EBX(Target->GetType()->get_Bombable() && !Target->get_AttachedBomb()
-		? act_IvanBomb
-		: act_NoIvanBomb);
-
-	return 0;
 }
 
 // decouple Yuri UI from soviet
@@ -416,3 +359,12 @@ EXPORT_FUNC(BulletClass_Fire_Overpower)
 			return 0x469AA4;
 	}
 }
+
+// 74036E, 5
+// I'm tired of getting "Cannot Enter" when something is selected and trying to select an IFV, fixing that...
+EXPORT_FUNC(FooClass_GetCursorOverObject)
+{
+	R->set_EBX(act_Select);
+	return 0x74037A; // -5
+}
+
