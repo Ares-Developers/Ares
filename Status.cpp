@@ -1,5 +1,5 @@
 #include <YRPP.h>
-#include "Ares.h"
+#include "Ares.Version.h"
 
 EXPORT_FUNC(Scenario_Start0)
 {

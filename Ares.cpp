@@ -13,8 +13,6 @@ FILE*	Ares::pLogFile=NULL;
 
 int FrameStepCommandClass::ArmageddonState = 0;
 
-const char* Ares::Version = VERSION_STRING;
-
 void (_cdecl* Ares::Log)(const char* pFormat,...) = 
 	(void (__cdecl *)(const char *,...))0x4068E0;
 

@@ -1,10 +1,9 @@
 #include "Exceptions.h"
-#include "Ares.h"
 
 // 74FDC0, 5
 EXPORT_FUNC(Exception_Log)
 {
-	R->set_EAX((DWORD)Ares::Version);
+	R->set_EAX((DWORD)VERSION_STRING);
 	return 0x74FEEF;
 }
 
@@ -65,72 +64,91 @@ EXPORT_FUNC(Exception_Log_StackContent)
 	FIND_PTR_IN_T(arr, ptr); \
 	FIND_PTR_IN_I(arr, ptr);
 
+AbstractClass* Exceptions::PointerToAbstract(DWORD p)
+{
+	if(p == NULL)
+		return NULL;
+
+	int n = -1;
+
+	//search most Abstracts
+	AbstractClass* q = (AbstractClass*)p;
+	Ares::Log("\tSearching AbstractClass array...\n");
+
+	DynamicVectorClass<AbstractClass*>* pArray = 
+		(DynamicVectorClass<AbstractClass*>*)0xB0F670;
+
+	for(int i = 0; i < pArray->get_Count(); i++)
+	{
+		AbstractClass* A = pArray->GetItem(i);
+		if((DWORD)A == p)
+			return A;
+	}
+	/* this causes errors, I have no idea why...
+	n = pArray->FindItemIndex((AbstractClass*)p);
+	if(n >= 0)
+		return pArray->GetItem(n);
+	*/
+
+	//search AbstractTypes
+	Ares::Log("\tSearching AbstractTypeClass array...\n");
+
+	for(int i = 0; i < AbstractTypeClass::Array->get_Count(); i++)
+	{
+		AbstractTypeClass* AT = AbstractTypeClass::Array->GetItem(i);
+		if((DWORD)AT == p)
+			return AT;
+	}
+	/*
+	n = AbstractTypeClass::Array->FindItemIndex((AbstractTypeClass*)p);
+	if(n >= 0)
+		return AbstractTypeClass::Array->GetItem(n);
+	*/
+
+	//nothing found
+	return NULL;
+}
+
 char *Exceptions::PointerToText(DWORD ptr, char* out)
 {
-	//we assume now that ptr is a pointer to an object that has a VTable pointer at offset 0
-	//if anything goes wrong, continue
-	DWORD* p = (DWORD*)ptr;
-	if(!IsBadReadPtr(p, 0x4))
+	Ares::Log("\tTrying to resolve 0x%08X...\n", ptr);
+
+	if(ptr)
 	{
-		DWORD* VTable = (DWORD*)*p;
-		if(!IsBadReadPtr(--VTable, 0x4))
+		AbstractClass* A = PointerToAbstract(ptr);
+
+		Ares::Log("\tA = 0x%08X\n", A);
+
+		if(A)
 		{
-			DWORD* RTTI = (DWORD*)*VTable;
-			if(!IsBadReadPtr(RTTI, 0x10))
+			AbstractTypeClass* AT = dynamic_cast<AbstractTypeClass*>(A);
+			Ares::Log("\tAT = 0x%08X\n", AT);
+			if(AT)
+				sprintf(out, "%s: %s", AT->GetClassName(), AT->get_ID());
+			else
 			{
-				DWORD* TypeDesc = (DWORD*)RTTI[3];
-				if(!IsBadReadPtr(TypeDesc, 0x8))
+				ObjectClass* O = dynamic_cast<ObjectClass*>(A);
+				Ares::Log("\tO = 0x%08X\n", O);
+				if(O)
 				{
-					if(*TypeDesc == 0x7F9594)
-					{
-						//it is! return mangled class name
-						char* MangledName = (char*)TypeDesc + 8;
-
-						//browse base classes and retrieve more info if possible
-						DWORD* Bases = (DWORD*)RTTI[4];
-						
-						int NumBases = (int)Bases[2];
-						DWORD** BasesList = (DWORD**)Bases[3];
-						for(int i = 0; i < NumBases; i++)
-						{
-							DWORD* currentBase = BasesList[i];
-							if(*currentBase == 0x817808)
-							{
-								//p is an AbstractTypeClass subclass!
-								AbstractTypeClass* AT = (AbstractTypeClass*)p;
-								sprintf(out, "%s - %s", MangledName, AT->get_ID());
-								return out;
-							}
-							else if(*currentBase == 0x817AF8)
-							{
-								//p is an ObjectClass subclass!
-								ObjectClass* O = (ObjectClass*)p;
-								ObjectTypeClass* OT = O->GetType();
-
-								if(OT)
-									sprintf(out, "%s - Type: %s", MangledName, OT->get_ID());
-								else
-									sprintf(out, "%s - Type: NULL", MangledName);
-
-								return out;
-							}
-							else if(*currentBase == 0x8177C8)
-							{
-								//p is an AbstractClass subclass!
-								AbstractClass* A = (AbstractClass*)p;
-								break;
-							}
-						}
-					}
+					ObjectTypeClass* OT = O->GetType();
+					Ares::Log("\tOT = 0x%08X\n", O);
+					if(OT)
+						sprintf(out, "%s of type %s", O->GetClassName(), OT->get_ID());
+					else
+						strcpy(out, O->GetClassName());
 				}
+				else
+					strcpy(out, A->GetClassName());
 			}
 		}
+		else
+			strcpy(out, "Unknown");
 	}
-
-	if(!IsBadReadPtr(p, 1))
-		strcpy(out, "Pointer");
 	else
-		strcpy(out, "Data");
+		strcpy(out, "NULL");
+
+	Ares::Log("\tout -> %s\n\n", out);
 
 	return out;
 }

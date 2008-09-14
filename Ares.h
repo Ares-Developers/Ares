@@ -7,8 +7,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "Ares.Version.h"
-
 class Ares
 {
 public:
@@ -20,8 +18,6 @@ public:
 
 	static bool		bLog;
 	static FILE*	pLogFile;
-
-	static const char *Version;
 
 	static void LogFile_Open()
 	{
