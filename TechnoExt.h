@@ -15,6 +15,8 @@ class TechnoClassExt
 		// weapon slots fsblargh
 		byte idxSlot_Wave;
 		byte idxSlot_Beam;
+		
+		TimerStruct CloakSkipTimer;
 	};
 
 	EXT_P_DECLARE(TechnoClass);

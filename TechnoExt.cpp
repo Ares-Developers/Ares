@@ -12,6 +12,8 @@ EXT_CTOR(TechnoClass)
 		pData->idxSlot_Wave = 0;
 		pData->idxSlot_Beam = 0;
 
+		pData->CloakSkipTimer.Stop();
+
 		Ext_p[pThis] = pData;
 	}
 }
@@ -138,5 +140,25 @@ EXPORT_FUNC(AircraftClass_ReceiveDamage)
 
 	TechnoClassExt::SpawnSurvivors(a, Killer, select);
 
+	return 0;
+}
+
+// 6F9E50, 5
+EXPORT_FUNC(TechnoClass_Update)
+{
+	GET(TechnoClass *, Source, ECX);
+
+	RET_UNLESS(CONTAINS(TechnoClassExt::Ext_p, Source));
+	TechnoClassExt::TechnoClassData *pData = TechnoClassExt::Ext_p[Source];
+
+	if(pData->CloakSkipTimer.IsDone())
+	{
+		pData->CloakSkipTimer.Stop();
+		Source->set_Cloakable(Source->GetTechnoType()->get_Cloakable());
+	}
+	else if(pData->CloakSkipTimer.GetTimeLeft() > 0)
+	{
+		Source->set_Cloakable(0);
+	}
 	return 0;
 }
