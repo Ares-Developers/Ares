@@ -15,6 +15,7 @@ class WeaponTypeClassExt
 		// Generic
 		bool Is_Initialized;
 		bool Weapon_Loaded;
+		WeaponTypeClass *Weapon_Source;
 
 		// Coloured Rad Beams
 		ColorStruct Beam_Color;

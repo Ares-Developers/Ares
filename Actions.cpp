@@ -82,6 +82,9 @@ EXPORT_FUNC(MouseClass_SetCursor2)
 // 417F4F, 0xA
 EXPORT_FUNC(AircraftClass_GetCursorOverObject)
 {
+	// set Actions::CustomCursor to something
+	return 0;
+/*
 	GET(AircraftClass *, Source, ESI);
 	GET(TechnoClass *, Target, EDI);
 
@@ -90,9 +93,6 @@ EXPORT_FUNC(AircraftClass_GetCursorOverObject)
 	int idxWeapon = Source->SelectWeapon(Target);
 	WeaponTypeClass *Weapon = Source->GetWeapon(idxWeapon)->WeaponType;
 
-	// set Actions::CustomCursor to something
-	return 0;
-/*
 	RET_UNLESS(Weapon->get_Warhead()->get_IvanBomb());
 
 	R->set_EBX(!Target->GetType()->get_Immune() && Target->GetType()->get_Bombable() && !Target->get_AttachedBomb()
@@ -105,6 +105,9 @@ EXPORT_FUNC(AircraftClass_GetCursorOverObject)
 // 51EB38, 6
 EXPORT_FUNC(InfantryClass_GetCursorOverObject)
 {
+	// set Actions::CustomCursor to something
+	return 0;
+/*
 	GET(InfantryClass *, Source, EDI);
 	GET(TechnoClass *, Target, ESI);
 
@@ -113,9 +116,6 @@ EXPORT_FUNC(InfantryClass_GetCursorOverObject)
 	int idxWeapon = Source->SelectWeapon(Target);
 	WeaponTypeClass *Weapon = Source->GetWeapon(idxWeapon)->WeaponType;
 
-	// set Actions::CustomCursor to something
-	return 0;
-/*
 	RET_UNLESS(Weapon->get_Warhead()->get_IvanBomb());
 
 	return 0x51EB48;
@@ -125,15 +125,15 @@ EXPORT_FUNC(InfantryClass_GetCursorOverObject)
 // 740490, 6
 EXPORT_FUNC(UnitClass_GetCursorOverObject)
 {
+	// set Actions::CustomCursor to something
+	return 0;
+/*
 	GET(UnitClass *, Source, ESI);
 	GET(TechnoClass *, Target, EDI);
 
 	int idxWeapon = Source->SelectWeapon(Target);
 	WeaponTypeClass *Weapon = Source->GetWeapon(idxWeapon)->WeaponType;
 
-	// set Actions::CustomCursor to something
-	return 0;
-/*
 	RET_UNLESS(Weapon->get_Warhead()->get_IvanBomb());
 
 	R->set_EBX(Target->GetType()->get_Bombable() && !Target->get_AttachedBomb()
@@ -146,15 +146,15 @@ EXPORT_FUNC(UnitClass_GetCursorOverObject)
 // 447512, 5
 EXPORT_FUNC(BuildingClass_GetCursorOverObject)
 {
+	// set Actions::CustomCursor to something
+	return 0;
+/*
 	GET(BuildingClass *, Source, ESI);
 	GET(TechnoClass *, Target, EBP);
 
 	int idxWeapon = Source->SelectWeapon(Target);
 	WeaponTypeClass *Weapon = Source->GetWeapon(idxWeapon)->WeaponType;
 
-	// set Actions::CustomCursor to something
-	return 0;
-/*
 	if((Target->get_AbstractFlags() & ABSFLAGS_ISTECHNO) && Weapon->get_Warhead()->get_IvanBomb())
 	{
 		R->set_EBX(!Target->GetType()->get_Immune() && Target->GetType()->get_Bombable() && !Target->get_AttachedBomb()

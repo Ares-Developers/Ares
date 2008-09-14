@@ -145,7 +145,7 @@ EXPORT_FUNC(BulletClass_Fire)
 	
 	if(pTarget->get_AbstractFlags() & ABSFLAGS_ISTECHNO)
 	{
-		pType = (TechnoTypeClass *)pTarget->GetType();
+		pType = pTarget->GetTechnoType();
 	}
 	if(pTarget->IsIronCurtained()) return 0;
 

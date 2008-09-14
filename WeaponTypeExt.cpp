@@ -17,6 +17,7 @@ void __stdcall WeaponTypeClassExt::Create(WeaponTypeClass* pThis)
 
 		pData->Weapon_Loaded  = 1;
 		pData->Is_Initialized = 0;
+		pData->Weapon_Source  = pThis;
 
 		pData->Beam_Duration     = 15;
 		pData->Beam_Amplitude    = 40.0;
@@ -422,7 +423,7 @@ EXPORT_FUNC(BombClass_Detonate3)
 
 	RET_UNLESS(CONTAINS(WeaponTypeClassExt::BombExt, Bomb));
 	WeaponTypeClassExt::WeaponTypeClassData *pData = WeaponTypeClassExt::BombExt[Bomb];
-	return pData->Ivan_KillsBridges ? 0x438989 : 0;
+	return pData->Ivan_KillsBridges ? 0 : 0x438989;
 }
 
 // 4393F2, 5
@@ -456,10 +457,8 @@ EXPORT_FUNC(TechnoClass_Fire)
 
 	RET_UNLESS(pData->Wave_IsLaser || pData->Wave_IsBigLaser);
 
-	DWORD pESP = R->get_ESP();
-
-	DWORD xyzS = pESP + 0x44;
-	DWORD xyzT = pESP + 0x88;
+	DWORD xyzS = R->lea_StackVar(0x44); // need address of stack vars
+	DWORD xyzT = R->lea_StackVar(0x88);
 
 	CoordStruct *xyzSrc = (CoordStruct *)xyzS, *xyzTgt = (CoordStruct *)xyzT;
 
@@ -479,8 +478,7 @@ EXPORT_FUNC(WaveClass_CTOR)
 		return 0;
 	}
 	GET(WeaponTypeClass *, Weapon, EBX);
-	RET_UNLESS(Weapon);
-	RET_UNLESS(CONTAINS(WeaponTypeClassExt::Ext_p, Weapon));
+	RET_UNLESS(Weapon && CONTAINS(WeaponTypeClassExt::Ext_p, Weapon));
 	WeaponTypeClassExt::WeaponTypeClassData *pData = WeaponTypeClassExt::Ext_p[Weapon];
 	WeaponTypeClassExt::WaveExt[Wave] = pData;
 	return 0;
@@ -526,10 +524,12 @@ EXPORT_FUNC(WaveClass_Update)
 {
 	GET(WaveClass *, pThis, ECX);
 
+	RET_UNLESS(CONTAINS(WeaponTypeClassExt::WaveExt, pThis));
+	WeaponTypeClassExt::WeaponTypeClassData *pData = WeaponTypeClassExt::WaveExt[pThis];
+
 	int Intensity;
 
-	// hack, just copying the game's logic here
-	if(pThis->get_Owner()->GetWeapon(0)->WeaponType->get_AmbientDamage())
+	if(pData->Weapon_Source->get_AmbientDamage())
 	{
 		CoordStruct coords;
 		for(int i = 0; i < pThis->get_Cells()->get_Count(); ++i)
@@ -719,4 +719,15 @@ EXPORT_FUNC(WaveClass_Update_Wave)
 	}
 
 	return 0x762D57;
+}
+
+// 75F38F, 6
+EXPORT_FUNC(WaveClass_DamageCell)
+{
+	GET(WaveClass *, Wave, EBP);
+	RET_UNLESS(CONTAINS(WeaponTypeClassExt::WaveExt, Wave));
+	WeaponTypeClassExt::WeaponTypeClassData *pData = WeaponTypeClassExt::WaveExt[Wave];
+	R->set_EDI(R->get_EAX());
+	R->set_EBX((DWORD)pData->Weapon_Source);
+	return 0x75F39D;
 }
