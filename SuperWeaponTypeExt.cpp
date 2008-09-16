@@ -173,29 +173,55 @@ void SuperWeaponTypeClassExt::SuperWeaponTypeClassData::Initialize()
 	this->Sonar_Sound = -1;
 	this->Sonar_Delay = 15;
 
-	this->SW_FireToShroud = 1;
+	this->SW_FireToShroud = true;
 
 	this->SW_Cursor.HotX = hotspx_center;
 	this->SW_Cursor.HotY = hotspy_middle;
 
-	this->SW_Initialized = 1;
+	this->SW_Initialized = true;
 }
 
 // 6CEF84, 7
 EXPORT_FUNC(SuperWeaponTypeClass_GetCursorOverObject)
 {
-	GET(SuperWeaponTypeClass *, pThis, ECX);
-//	int TypeIdx = pThis->get_Type();
-	RET_UNLESS(CONTAINS(SuperWeaponTypeClassExt::Ext_p, pThis) && pThis->get_Action() >= 0x7E);
-	SuperWeaponTypeClassExt::CurrentSWType = pThis;
+	//FUCK THIS, no macros in my code xD -pd
+	SuperWeaponTypeClass* pThis = (SuperWeaponTypeClass*)R->get_ECX();
 
-	CellStruct *pCoords = (CellStruct *)R->get_StackVar32(0x0C);
+	if(SuperWeaponTypeClassExt::Ext_p.find(pThis) !=
+		SuperWeaponTypeClassExt::Ext_p.end())
+	{
+		SuperWeaponTypeClassExt::SuperWeaponTypeClassData *pData =
+			SuperWeaponTypeClassExt::Ext_p[pThis];
 
-	R->set_EAX( NewSWType::GetNthItem(pThis->get_Type())->CanFireAt(pCoords)
-		? SW_YES_CURSOR
-		: SW_NO_CURSOR);
+		if(pThis->get_Action() >= 0x7E)
+		{
+			SuperWeaponTypeClassExt::CurrentSWType = pThis;
 
-	return 0x6CEFD9;
+			CellStruct* pMapCoords = (CellStruct*)R->get_StackVar32(0x0C);
+
+			int Action = SW_YES_CURSOR;
+			
+			if(!pData->SW_FireToShroud)
+			{
+				CellClass* pCell = MapClass::Global()->GetCellAt(pMapCoords);
+				CoordStruct Crd;
+
+				if(MapClass::Global()->IsLocationShrouded(pCell->GetCoords(&Crd)))
+					Action = SW_NO_CURSOR;
+			}
+
+			/* will be done another time
+			R->set_EAX( NewSWType::GetNthItem(pThis->get_Type())->CanFireAt(pCoords)
+				? SW_YES_CURSOR
+				: SW_NO_CURSOR); */
+
+			R->set_EAX(Action);
+
+			Actions::Set(Action == SW_YES_CURSOR ? &pData->SW_Cursor : &pData->SW_NoCursor);
+			return 0x6CEFD9;
+		}
+	}
+	return 0;
 }
 
 /*
@@ -215,33 +241,6 @@ EXPORT_FUNC(SidebarClass_ProcessCameoClick)
 }
 */
 
-// 4AB35A, 6
-// custom SW Cursor
-EXPORT_FUNC(DisplayClass_SetAction)
-{
-	int Action = R->get_EAX();
-	RET_UNLESS(Action >= SW_NO_CURSOR);
-//	GET(CellStruct *, pCoords, EBX);
-	DWORD dwUnk = R->get_StackVar32(0x34);
-	DWORD pThis = R->get_ESI();
-	bool Shrouded = R->get_StackVar8(0x28) != 0;
-
-	SuperWeaponTypeClassExt::SuperWeaponTypeClassData *pData = 
-		SuperWeaponTypeClassExt::Ext_p[SuperWeaponTypeClassExt::CurrentSWType];
-
-	if(Shrouded && !pData->SW_FireToShroud)
-	{
-		Action = SW_NO_CURSOR;
-	}
-
-	Actions::Set(Action == SW_NO_CURSOR ? &pData->SW_NoCursor : &pData->SW_Cursor);
-
-	PUSH_VAR32(dwUnk);
-	PUSH_VAR32(Action);
-	SET_REG32(ECX, pThis);
-	CALL_VT(0x48);
-	return 0x4AB78F;
-}
 
 // 6CD67A, 5
 // decouple SpyPlane from SPYP

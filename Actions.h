@@ -8,11 +8,15 @@ class Actions
 {
 	public:
 		static void Set(MouseCursor *pCursor);
+		static void Set(MouseCursor *pCursor, bool bAllowShroud);
 
-		static MouseCursor * CustomCursor;
-		static MouseCursor * LastCustomCursor;
-		static int LastTimerFrame;
-		static int LastFrameIndex;
+		static MouseCursor MP;
+		static MouseCursor* MPCurrent;
+		static MouseCursor* MPCustom;
+
+		static MouseCursor* TempCursor;
+
+		static bool MPCustomAllowShroud;
 };
 
 #endif

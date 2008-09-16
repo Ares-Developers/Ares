@@ -72,9 +72,6 @@ AbstractClass* Exceptions::PointerToAbstract(DWORD p)
 	int n = -1;
 
 	//search most Abstracts
-	AbstractClass* q = (AbstractClass*)p;
-	Ares::Log("\tSearching AbstractClass array...\n");
-
 	DynamicVectorClass<AbstractClass*>* pArray = 
 		(DynamicVectorClass<AbstractClass*>*)0xB0F670;
 
@@ -91,8 +88,6 @@ AbstractClass* Exceptions::PointerToAbstract(DWORD p)
 	*/
 
 	//search AbstractTypes
-	Ares::Log("\tSearching AbstractTypeClass array...\n");
-
 	for(int i = 0; i < AbstractTypeClass::Array->get_Count(); i++)
 	{
 		AbstractTypeClass* AT = AbstractTypeClass::Array->GetItem(i);
@@ -111,44 +106,57 @@ AbstractClass* Exceptions::PointerToAbstract(DWORD p)
 
 char *Exceptions::PointerToText(DWORD ptr, char* out)
 {
-	Ares::Log("\tTrying to resolve 0x%08X...\n", ptr);
-
-	if(ptr)
+	if(!ptr)
 	{
-		AbstractClass* A = PointerToAbstract(ptr);
-
-		Ares::Log("\tA = 0x%08X\n", A);
-
-		if(A)
-		{
-			AbstractTypeClass* AT = dynamic_cast<AbstractTypeClass*>(A);
-			Ares::Log("\tAT = 0x%08X\n", AT);
-			if(AT)
-				sprintf(out, "%s: %s", AT->GetClassName(), AT->get_ID());
-			else
-			{
-				ObjectClass* O = dynamic_cast<ObjectClass*>(A);
-				Ares::Log("\tO = 0x%08X\n", O);
-				if(O)
-				{
-					ObjectTypeClass* OT = O->GetType();
-					Ares::Log("\tOT = 0x%08X\n", O);
-					if(OT)
-						sprintf(out, "%s of type %s", O->GetClassName(), OT->get_ID());
-					else
-						strcpy(out, O->GetClassName());
-				}
-				else
-					strcpy(out, A->GetClassName());
-			}
-		}
-		else
-			strcpy(out, "Unknown");
-	}
-	else
 		strcpy(out, "NULL");
+		return out;
+	}
 
-	Ares::Log("\tout -> %s\n\n", out);
+	if(ptr >= 0x401000 && ptr < 0x7E1000)
+	{
+		strcpy(out, ".text");
+		return out;
+	}
+	else if(ptr >= 0x7E1000 && ptr < 0x7E1608)
+	{
+		strcpy(out, ".idata");
+		return out;
+	}
+	else if(ptr >= 0x7E1608 && ptr < 0x812000)
+	{
+		strcpy(out, ".rdata");
+		return out;
+	}
+	else if(ptr >= 0x812000 && ptr < 0xB79BE4)
+	{
+		strcpy(out, ".data");
+		return out;
+	}
+
+	AbstractClass* A = PointerToAbstract(ptr);
+
+	if(A)
+	{
+		AbstractTypeClass* AT = dynamic_cast<AbstractTypeClass*>(A);
+		if(AT)
+			sprintf(out, "%s: %s", AT->GetClassName(), AT->get_ID());
+		else
+		{
+			ObjectClass* O = dynamic_cast<ObjectClass*>(A);
+			if(O)
+			{
+				ObjectTypeClass* OT = O->GetType();
+				if(OT)
+					sprintf(out, "%s of type %s", O->GetClassName(), OT->get_ID());
+				else
+					strcpy(out, O->GetClassName());
+			}
+			else
+				strcpy(out, A->GetClassName());
+		}
+	}
+
+	strcpy(out, "Unknown");
 
 	return out;
 }
