@@ -139,28 +139,32 @@ EXPORT_FUNC(BulletClass_Fire)
 
 	RET_UNLESS(pData->Is_Custom);
 
-	TechnoClass *pTarget = (TechnoClass *)Bullet->get_Target();
-
-	TechnoTypeClass *pType = NULL;
-	
-	if(pTarget->get_AbstractFlags() & ABSFLAGS_ISTECHNO)
-	{
-		pType = pTarget->GetTechnoType();
-	}
-	if(pTarget->IsIronCurtained()) return 0;
-
 	CoordStruct coords;
-	pTarget->GetCoords(&coords);
+	Bullet->get_Target()->GetCoords(&coords);
+	CellStruct cellCoords = *MapClass::Global()->GetCellAt(&coords)->get_MapCoords();
 
-	if(pTarget->get_AbstractFlags() & ABSFLAGS_ISTECHNO)
+	if(pData->IC_Duration > 0)
 	{
-	// add cellspread
-		if(pData->IC_Duration > 0)
+		new AnimClass(pData->IC_Anim, coords);
+		int countCells = CellSpread::NumCells(int(Bullet->get_WH()->get_CellSpread()));
+		for(int i = 0; i < countCells; ++i)
 		{
-			new AnimClass(pData->IC_Anim, coords);
-			pTarget->IronCurtain(pData->IC_Duration, (DWORD)Bullet->get_Owner(), 1);
+			CellStruct tmpCell = CellSpread::GetCell(i);
+			tmpCell += cellCoords;
+			CellClass *c = MapClass::Global()->GetCellAt(&tmpCell);
+			for(ObjectClass *curObj = c->get_FirstObject(); curObj; curObj = curObj->get_NextObject())
+			{
+				if(curObj->get_AbstractFlags() & ABSFLAGS_ISTECHNO)
+				{
+					((TechnoClass *)curObj)->IronCurtain(pData->IC_Duration, Bullet->get_Owner()->get_Owner(), 0);
+				}
+			}
 		}
 	}
+
+	RET_UNLESS(Bullet->get_Target()->get_AbstractFlags() & ABSFLAGS_ISTECHNO);
+	TechnoClass *pTarget = (TechnoClass *)Bullet->get_Target();
+	TechnoTypeClass *pType = pTarget->GetTechnoType();
 
 	//Electro@pd: get working on support for multiple callbacks in Syringe
 	if(pData->EMP_Duration)

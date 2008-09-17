@@ -210,6 +210,11 @@ EXPORT_FUNC(SuperWeaponTypeClass_GetCursorOverObject)
 					Action = SW_NO_CURSOR;
 			}
 
+			if(!NewSWType::GetNthItem(pThis->get_Type())->CanFireAt(pMapCoords))
+			{
+				Action = SW_NO_CURSOR;
+			}
+
 			/* will be done another time
 			R->set_EAX( NewSWType::GetNthItem(pThis->get_Type())->CanFireAt(pCoords)
 				? SW_YES_CURSOR
@@ -285,6 +290,12 @@ EXPORT_FUNC(SuperClass_Launch_Nuke_Siren)
 
 bool _stdcall SuperWeaponTypeClassExt::SuperClass_Launch(SuperClass* pThis, CellStruct* pCoords)
 {
+	SuperWeaponTypeClassExt::SuperWeaponTypeClassData *pData = SuperWeaponTypeClassExt::Ext_p[pThis->get_Type()];
+	if(pData->EVA_Activated != -1)
+	{
+		VoxClass::PlayIndex(pData->EVA_Activated);
+	}
+
 	int TypeIdx = pThis->get_Type()->get_Type();
 	RET_UNLESS(TypeIdx >= FIRST_SW_TYPE);
 	return NewSWType::GetNthItem(TypeIdx)->Launch(pThis, pCoords);
@@ -369,6 +380,7 @@ EXPORT_FUNC(BuildingClass_ProcessAnims1)
 	}
 
 	SuperClass *pSuper = pHouse->get_Supers()->GetItem(swTIdx);
+	R->set_EDI((DWORD)pBuild->GetTechnoType());
 	R->set_EAX((DWORD)pSuper);
 	return 0x451030;
 }

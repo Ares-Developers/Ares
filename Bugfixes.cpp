@@ -368,3 +368,10 @@ EXPORT_FUNC(FooClass_GetCursorOverObject)
 	return 0x74037A; // -5
 }
 
+// 4F7E49, 5
+// upgrades as prereqs, facepalm of epic proportions
+EXPORT_FUNC(HouseClass_CanBuildHowMany_Upgrades)
+{
+		return R->get_EAX() < 3 ? 0x4F7E41 : 0x4F7E34;
+}
+
