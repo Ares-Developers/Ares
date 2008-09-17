@@ -1,5 +1,5 @@
 #include "SonarPulse.h"
-#include "TechnoExt.h"
+#include "../TechnoExt.h"
 
 void SW_SonarPulse::LoadFromINI(
 	SuperWeaponTypeClassExt::SuperWeaponTypeClassData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI)
