@@ -16,12 +16,8 @@ void SW_SonarPulse::LoadFromINI(
 		pData->Initialize();
 	}
 
-	char buffer[256];
-
-	PARSE_ANIM("SonarPulse.Animation", pData->Sonar_Anim);
 	pData->Sonar_Range = pINI->ReadInteger(section, "SonarPulse.Range", pData->Sonar_Range);
 	pData->Sonar_Delay = pINI->ReadInteger(section, "SonarPulse.Delay", pData->Sonar_Delay);
-	PARSE_SND("SonarPulse.Sound", pData->Sonar_Sound);
 }
 
 bool SW_SonarPulse::CanFireAt(CellStruct *pCoords)
@@ -39,22 +35,16 @@ bool SW_SonarPulse::Launch(SuperClass* pThis, CellStruct* pCoords)
 	CoordStruct coords;
 	MapClass::Global()->GetCellAt(pCoords)->GetCoords(&coords);
 
-	if(pData->Sonar_Anim)
-	{
-		new AnimClass(pData->Sonar_Anim, coords);
-	}
-
-	if(pData->Sonar_Sound != -1)
-	{
-		VocClass::PlayAt(pData->Sonar_Sound, &coords);
-	}
-
 	int countCells = CellSpread::NumCells(pData->Sonar_Range);
 	for(int i = 0; i < countCells; ++i)
 	{
 		CellStruct tmpCell = CellSpread::GetCell(i);
 		tmpCell += *pCoords;
 		CellClass *c = MapClass::Global()->GetCellAt(&tmpCell);
+		if(c->get_LandType() != lt_Water)
+		{
+			continue;
+		}
 		for(ObjectClass *curObj = c->get_FirstObject(); curObj; curObj = curObj->get_NextObject())
 		{
 			if(!(curObj->get_AbstractFlags() & ABSFLAGS_ISTECHNO))

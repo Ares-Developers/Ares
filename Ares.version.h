@@ -3,7 +3,7 @@
 
 #define VERSION_MAJOR 0
 #define VERSION_MINOR 1
-#define VERSION_REVISION 66
+#define VERSION_REVISION 74
 #define VERSION_BUILD 1
 
 // ffs macro hell

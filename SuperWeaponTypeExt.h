@@ -30,27 +30,26 @@ class SuperWeaponTypeClassExt
 		// Nuke
 		int Nuke_Siren;
 
-		// Animation
-		AnimTypeClass *Anim_Type;
-		int Anim_ExtraZ;
-
 		// Sonar
 		int Sonar_Range;
-		AnimTypeClass *Sonar_Anim;
-		int Sonar_Sound;
 		int Sonar_Delay;
 
 		// Money
 		int Money_Amount;
-		int Money_Chaching;
 
 		// Generic
 		int EVA_Ready;
 		int EVA_Activated;
 		int EVA_Detected;
 
+		// anim/sound
+		int SW_Sound;
+		AnimTypeClass *SW_Anim;
+		int SW_AnimHeight;
+
 		bool SW_Initialized; // if !set then still need to initialize default values - can't preinit in ctor, too early
 		bool SW_TypeCustom;
+		bool SW_AutoFire;
 		bool SW_FireToShroud;
 		MouseCursor SW_Cursor;
 		MouseCursor SW_NoCursor;

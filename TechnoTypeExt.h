@@ -17,6 +17,11 @@ class TechnoTypeClassExt
 		int Survivors_PilotChance;
 		int Survivors_PassengerChance;
 
+		// animated cameos
+//		int Cameo_Interval;
+//		int Cameo_CurrentFrame;
+//		TimerStruct Cameo_Timer;
+
 		bool Data_Initialized;
 		void Initialize(TechnoTypeClass *pThis);
 	};

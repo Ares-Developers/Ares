@@ -69,6 +69,10 @@ void TechnoTypeClassExt::TechnoTypeClassData::Initialize(TechnoTypeClass *pThis)
 		this->Survivors_Pilots[i] = Sides::SideExt[SideClass::Array->GetItem(i)].Crew;
 	}
 
+//	this->Cameo_Interval = 300;
+//	this->Cameo_CurrentFrame = 0;
+//	this->Cameo_Timer.Stop();
+
 	this->Data_Initialized = 1;
 }
 
@@ -99,5 +103,36 @@ EXT_LOAD_INI(TechnoTypeClass)
 		sprintf(flag, "Survivor.Side%d", i);
 		PARSE_INFANTRY(flag, pData->Survivors_Pilots[i]);
 	}
+
+//	pData->Cameo_Interval = 
+//		CCINIClass::INI_Art->ReadInteger(section, "Cameo.Interval", pData->Cameo_Interval);
 }
+
+/*
+ * broken - stupid game only redraws when mouse is moved over a cameo edge or sw tab is blinking fsds
+// 6A9A2A, 6
+EXPORT_FUNC(TabCameoListClass_Draw)
+{
+	TechnoTypeClass * T = (TechnoTypeClass *)R->get_StackVar32(0x6C);
+	RET_UNLESS(CONTAINS(TechnoTypeClassExt::Ext_p, T));
+	TechnoTypeClassExt::TechnoTypeClassData *pData = TechnoTypeClassExt::Ext_p[T];
+
+	else if(pData->Cameo_Interval && !(Unsorted::CurrentFrame % pData->Cameo_Interval))
+	{
+		pData->Cameo_CurrentFrame = 
+			pData->Cameo_CurrentFrame < T->GetCameo()->Frames - 1
+				? pData->Cameo_CurrentFrame + 1
+				: 0;
+		R->set_StackVar32(4, pData->Cameo_CurrentFrame);
+		pData->Cameo_Timer.StartIfEmpty();
+		if(!strcmp("BFRT", T->get_ID()))
+		{
+			wchar_t msg[0x40] = L"\0";
+			wsprintf(msg, L"BFRT cameo rolled");
+			MessageListClass::PrintMessage(msg);
+		}
+	}
+	return 0;
+}
+*/
 

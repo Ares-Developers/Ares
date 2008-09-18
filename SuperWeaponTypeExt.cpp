@@ -42,8 +42,7 @@ EXT_LOAD(SuperWeaponTypeClass)
 		ULONG out;
 		pStm->Read(&Ext_p[pThis], sizeof(ExtData), &out);
 
-		SWIZZLE(Ext_p[pThis]->Anim_Type);
-		SWIZZLE(Ext_p[pThis]->Sonar_Anim);
+		SWIZZLE(Ext_p[pThis]->SW_Anim);
 	}
 }
 
@@ -114,6 +113,14 @@ EXT_LOAD_INI(SuperWeaponTypeClass)
 	READ_CURSOR("NoCursor", pData->SW_NoCursor);
 
 	pData->SW_FireToShroud = pINI->ReadBool(section, "Super.FireIntoShroud", pData->SW_FireToShroud);
+	pData->SW_AutoFire = pINI->ReadBool(section, "Super.AutoFire", pData->SW_AutoFire);
+
+	pData->Money_Amount = pINI->ReadInteger(section, "Money.Amount", pData->Money_Amount);
+
+	PARSE_ANIM("SW.Animation", pData->SW_Anim);
+	pData->SW_AnimHeight = pINI->ReadInteger(section, "SW.AnimationHeight", pData->SW_AnimHeight);
+
+	PARSE_SND("SW.Sound", pData->SW_Sound);
 
 	MouseCursor *Cursor = &pData->SW_Cursor;
 
@@ -162,18 +169,17 @@ void SuperWeaponTypeClassExt::SuperWeaponTypeClassData::Initialize()
 	this->EVA_Activated = -1;
 	this->EVA_Detected = -1;
 
-	this->Anim_Type = NULL;
-	this->Anim_ExtraZ = 0;
+	this->SW_Anim = NULL;
+	this->SW_AnimHeight = 0;
+	this->SW_Sound = -1;
 	
 	this->Sonar_Range = 0;
-	this->Sonar_Anim = NULL;
-	this->Sonar_Sound = -1;
 	this->Sonar_Delay = 15;
 
 	this->Money_Amount = 0;
-	this->Money_Chaching = -1;
 
 	this->SW_FireToShroud = true;
+//	this->SW_AutoFire = false;
 
 	this->SW_Cursor.Frame = 53; // Attack 
 	this->SW_Cursor.Count = 5;
@@ -302,6 +308,31 @@ bool _stdcall SuperWeaponTypeClassExt::SuperClass_Launch(SuperClass* pThis, Cell
 	if(pData->EVA_Activated != -1)
 	{
 		VoxClass::PlayIndex(pData->EVA_Activated);
+	}
+
+	if(pData->Money_Amount > 0)
+	{
+		Ares::Log("House %d gets %d credits\n", pThis->get_Owner()->get_ArrayIndex(), pData->Money_Amount);
+		pThis->get_Owner()->GiveMoney(pData->Money_Amount);
+	}
+	else
+	{
+		Ares::Log("House %d loses %d credits\n", pThis->get_Owner()->get_ArrayIndex(), -pData->Money_Amount);
+		pThis->get_Owner()->TakeMoney(-pData->Money_Amount);
+	}
+
+	CoordStruct coords;
+	MapClass::Global()->GetCellAt(pCoords)->GetCoords(&coords);
+
+	if(pData->SW_Anim)
+	{
+		coords.Z += pData->SW_AnimHeight;
+		new AnimClass(pData->SW_Anim, coords);
+	}
+
+	if(pData->SW_Sound != -1)
+	{
+		VocClass::PlayAt(pData->SW_Sound, &coords);
 	}
 
 	int TypeIdx = pThis->get_Type()->get_Type();
@@ -446,6 +477,19 @@ EXPORT_FUNC(SuperClass_Announce)
 
 	VoxClass::PlayIndex(pData->EVA_Ready);
 	return 0x6CC17E;
+}
+
+// 50B319, 6
+EXPORT_FUNC(HouseClass_UpdateSWs)
+{
+	GET(SuperClass *, Super, ECX);
+	SuperWeaponTypeClass *pSW = Super->get_Type();
+	RET_UNLESS(CONTAINS(SuperWeaponTypeClassExt::Ext_p, pSW));
+	SuperWeaponTypeClassExt::SuperWeaponTypeClassData *pData = SuperWeaponTypeClassExt::Ext_p[pSW];
+	RET_UNLESS(pData->SW_AutoFire);
+
+//	Fire! requires networking event woodoo or fake mouse clicks, bah
+	return 0;
 }
 
 // EVA_Activated is complex, will do later
