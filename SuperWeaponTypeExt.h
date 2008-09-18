@@ -36,8 +36,13 @@ class SuperWeaponTypeClassExt
 
 		// Sonar
 		int Sonar_Range;
+		AnimTypeClass *Sonar_Anim;
 		int Sonar_Sound;
 		int Sonar_Delay;
+
+		// Money
+		int Money_Amount;
+		int Money_Chaching;
 
 		// Generic
 		int EVA_Ready;

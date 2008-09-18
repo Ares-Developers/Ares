@@ -43,6 +43,7 @@ EXT_LOAD(SuperWeaponTypeClass)
 		pStm->Read(&Ext_p[pThis], sizeof(ExtData), &out);
 
 		SWIZZLE(Ext_p[pThis]->Anim_Type);
+		SWIZZLE(Ext_p[pThis]->Sonar_Anim);
 	}
 }
 
@@ -88,17 +89,14 @@ EXT_LOAD_INI(SuperWeaponTypeClass)
 	if(pINI->ReadString(section, "Action", "", buffer, 256) > 0 && !strcmp(buffer, "Custom"))
 	{
 		pThis->set_Action(SW_YES_CURSOR);
-		if(pINI->ReadString(section, "Type", "", buffer, 256) > 0)
+	}
+
+	if(pINI->ReadString(section, "Type", "", buffer, 256) > 0)
+	{
+		int customType = NewSWType::FindIndex(buffer);
+		if(customType > -1)
 		{
-			int customType = NewSWType::FindIndex(buffer);
-			if(customType > -1)
-			{
-				pThis->set_Type(customType);
-			}
-			else
-			{
-				pThis->set_Type(0);
-			}
+			pThis->set_Type(customType);
 		}
 	}
 
@@ -168,13 +166,30 @@ void SuperWeaponTypeClassExt::SuperWeaponTypeClassData::Initialize()
 	this->Anim_ExtraZ = 0;
 	
 	this->Sonar_Range = 0;
+	this->Sonar_Anim = NULL;
 	this->Sonar_Sound = -1;
 	this->Sonar_Delay = 15;
 
+	this->Money_Amount = 0;
+	this->Money_Chaching = -1;
+
 	this->SW_FireToShroud = true;
 
+	this->SW_Cursor.Frame = 53; // Attack 
+	this->SW_Cursor.Count = 5;
+	this->SW_Cursor.Interval = 5; // test?
+	this->SW_Cursor.MiniFrame = 52;
+	this->SW_Cursor.MiniCount = 1;
 	this->SW_Cursor.HotX = hotspx_center;
 	this->SW_Cursor.HotY = hotspy_middle;
+
+	this->SW_NoCursor.Frame = 0;
+	this->SW_NoCursor.Count = 1;
+	this->SW_NoCursor.Interval = 5;
+	this->SW_NoCursor.MiniFrame = 1;
+	this->SW_NoCursor.MiniCount = 1;
+	this->SW_NoCursor.HotX = hotspx_center;
+	this->SW_NoCursor.HotY = hotspy_middle;
 
 	this->SW_Initialized = true;
 }
@@ -208,15 +223,10 @@ EXPORT_FUNC(SuperWeaponTypeClass_GetCursorOverObject)
 					Action = SW_NO_CURSOR;
 			}
 
-			if(!NewSWType::GetNthItem(pThis->get_Type())->CanFireAt(pMapCoords))
+			if(pThis->get_Type() >= FIRST_SW_TYPE && !NewSWType::GetNthItem(pThis->get_Type())->CanFireAt(pMapCoords))
 			{
 				Action = SW_NO_CURSOR;
 			}
-
-			/* will be done another time
-			R->set_EAX( NewSWType::GetNthItem(pThis->get_Type())->CanFireAt(pCoords)
-				? SW_YES_CURSOR
-				: SW_NO_CURSOR); */
 
 			R->set_EAX(Action);
 

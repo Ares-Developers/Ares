@@ -19,13 +19,13 @@ class SW_Animation : NewSWType
 		virtual const char * GetTypeString()
 			{ return "Animation"; }
 
-	virtual void SW_Animation::LoadFromINI(
+	virtual void LoadFromINI(
 		SuperWeaponTypeClassExt::SuperWeaponTypeClassData *pData, 
 		SuperWeaponTypeClass *pSW, CCINIClass *pINI);
 
-	virtual bool SW_Animation::CanFireAt(CellStruct *pCoords);
+	virtual bool CanFireAt(CellStruct *pCoords);
 
-	virtual bool SW_Animation::Launch(SuperClass* pThis, CellStruct* pCoords);
+	virtual bool Launch(SuperClass* pThis, CellStruct* pCoords);
 
 };
 

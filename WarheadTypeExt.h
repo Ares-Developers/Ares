@@ -20,7 +20,6 @@ class WarheadTypeClassExt
 		int EMP_Duration;
 
 		int IC_Duration;
-		AnimTypeClass *IC_Anim;
 
 		// if you want to default properties to some global values like [General]IronCurtainDuration= , do so in this
 		void Initialize(WarheadTypeClass*);

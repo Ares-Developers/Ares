@@ -17,7 +17,6 @@ void __stdcall WarheadTypeClassExt::Create(WarheadTypeClass* pThis)
 		pData->EMP_Duration = 0;
 
 		pData->IC_Duration = 0;
-		pData->IC_Anim = NULL;
 
 
 		Ext_p[pThis] = pData;
@@ -54,7 +53,6 @@ void __stdcall WarheadTypeClassExt::Save(WarheadTypeClass* pThis, IStream* pStm)
 
 void WarheadTypeClassExt::WarheadTypeClassData::Initialize(WarheadTypeClass* pThis)
 {
-	this->IC_Anim     = RulesClass::Global()->get_IronCurtainInvokeAnim();
 	this->Is_Initialized = 1;
 }
 
@@ -86,9 +84,6 @@ void __stdcall WarheadTypeClassExt::LoadFromINI(WarheadTypeClass* pThis, CCINICl
 
 	pData->IC_Duration = pINI->ReadInteger(section, "IronCurtain.Duration", pData->IC_Duration);
 	pData->Is_Custom |= !!pData->IC_Duration;
-
-	PARSE_BUF();
-	PARSE_ANIM("IronCurtain.Anim", pData->IC_Anim);
 }
 
 // 5240BD, 7 
@@ -145,7 +140,6 @@ EXPORT_FUNC(BulletClass_Fire)
 
 	if(pData->IC_Duration > 0)
 	{
-		new AnimClass(pData->IC_Anim, coords);
 		int countCells = CellSpread::NumCells(int(Bullet->get_WH()->get_CellSpread()));
 		for(int i = 0; i < countCells; ++i)
 		{

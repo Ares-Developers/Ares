@@ -1,5 +1,5 @@
-#ifndef SUPERTYPE_EXT_SONAR_H
-#define SUPERTYPE_EXT_SONAR_H
+#ifndef SUPERTYPE_EXT_MONEY_H
+#define SUPERTYPE_EXT_MONEY_H
 
 #include <YRPP.h>
 #include "..\Ares.h"
@@ -7,21 +7,20 @@
 
 #include <hash_map>
 
-class SW_SonarPulse : NewSWType
+class SW_Money : NewSWType
 {
 	public:
-		SW_SonarPulse() : NewSWType()
+		SW_Money() : NewSWType()
 			{ };
 
-		virtual ~SW_SonarPulse()
+		virtual ~SW_Money()
 			{ };
 
 		virtual const char * GetTypeString()
-			{ return "SonarPulse"; }
+			{ return "Money"; }
 
 	virtual void LoadFromINI(
 		SuperWeaponTypeClassExt::SuperWeaponTypeClassData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI);
-	virtual bool CanFireAt(CellStruct *pCoords);
 	virtual bool Launch(SuperClass* pThis, CellStruct* pCoords);
 };
 #endif

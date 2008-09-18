@@ -659,7 +659,7 @@ void WeaponTypeClassExt::ModifyWaveColor(WORD *src, WORD *dst, int Intensity, Wa
 	RETZ_UNLESS(CONTAINS(WeaponTypeClassExt::WaveExt, Wave));
 	WeaponTypeClassExt::WeaponTypeClassData *pData = WeaponTypeClassExt::WaveExt[Wave];
 
-	ColorStruct *CurrentColor = pData->Wave_IsHouseColor 
+	ColorStruct *CurrentColor = (pData->Wave_IsHouseColor && Wave->get_Owner())
 		? Wave->get_Owner()->get_Owner()->get_Color()
 		: &pData->Wave_Color;
 
