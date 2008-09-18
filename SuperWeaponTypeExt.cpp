@@ -43,7 +43,6 @@ EXT_LOAD(SuperWeaponTypeClass)
 		pStm->Read(&Ext_p[pThis], sizeof(ExtData), &out);
 
 		SWIZZLE(Ext_p[pThis]->Anim_Type);
-		SWIZZLE(Ext_p[pThis]->Sonar_Anim);
 	}
 }
 
@@ -169,7 +168,6 @@ void SuperWeaponTypeClassExt::SuperWeaponTypeClassData::Initialize()
 	this->Anim_ExtraZ = 0;
 	
 	this->Sonar_Range = 0;
-	this->Sonar_Anim = NULL;
 	this->Sonar_Sound = -1;
 	this->Sonar_Delay = 15;
 

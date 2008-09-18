@@ -36,7 +36,6 @@ class SuperWeaponTypeClassExt
 
 		// Sonar
 		int Sonar_Range;
-		AnimTypeClass *Sonar_Anim;
 		int Sonar_Sound;
 		int Sonar_Delay;
 

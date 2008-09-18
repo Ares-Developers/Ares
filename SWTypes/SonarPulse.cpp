@@ -18,7 +18,6 @@ void SW_SonarPulse::LoadFromINI(
 
 	char buffer[256];
 
-	PARSE_ANIM("SonarPulse.Animation", pData->Sonar_Anim);
 	pData->Sonar_Range = pINI->ReadInteger(section, "SonarPulse.Range", pData->Sonar_Range);
 	pData->Sonar_Delay = pINI->ReadInteger(section, "SonarPulse.Delay", pData->Sonar_Delay);
 	PARSE_SND("SonarPulse.Sound", pData->Sonar_Sound);
@@ -38,11 +37,6 @@ bool SW_SonarPulse::Launch(SuperClass* pThis, CellStruct* pCoords)
 
 	CoordStruct coords;
 	MapClass::Global()->GetCellAt(pCoords)->GetCoords(&coords);
-
-	if(pData->Sonar_Anim)
-	{
-		new AnimClass(pData->Sonar_Anim, coords);
-	}
 
 	if(pData->Sonar_Sound != -1)
 	{
