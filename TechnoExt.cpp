@@ -49,12 +49,13 @@ EXT_SAVE(TechnoClass)
 void TechnoClassExt::SpawnSurvivors(TechnoClass *pThis, TechnoClass *pKiller, bool Select)
 {
 	TechnoTypeClass *Type = (TechnoTypeClass *)pThis->GetType();
-	RETZ_UNLESS(Type->get_Crewed() || pThis->get_Passengers());
 	TechnoTypeClassExt::TechnoTypeClassData *pData = TechnoTypeClassExt::Ext_p[Type];
-	int chance = pData->Survivors_PilotChance;
+	RETZ_UNLESS(pData->Survivors_PilotChance || pData->Survivors_PassengerChance);
 
 	CoordStruct loc = *pThis->get_Location();
-	if(Type->get_Crewed() && Randomizer::Global()->RandomRanged(1, 100) <= chance)
+
+	int chance = pData->Survivors_PilotChance;
+	if(chance && Randomizer::Global()->RandomRanged(1, 100) <= chance)
 	{
 		InfantryTypeClass *PilotType = pData->Survivors_Pilots[pThis->get_Owner()->get_SideIndex()];
 		RETZ_UNLESS(PilotType);
@@ -65,26 +66,31 @@ void TechnoClassExt::SpawnSurvivors(TechnoClass *pThis, TechnoClass *pKiller, bo
 		Pilot->get_Veterancy()->Veterancy = pThis->get_Veterancy()->Veterancy;
 		if(!TechnoClassExt::ParadropSurvivor(Pilot, &loc, Select))
 		{
+			Pilot->RegisterDestruction(pKiller); //(TechnoClass *)R->get_StackVar32(0x54));
 			delete Pilot;
 		}
 	}
 
+	chance = pData->Survivors_PassengerChance;
 	if(pThis->get_Passengers() > 0)
 	{
 		int idx = 0;
 		FootClass *passenger;
 		while(pThis->get_Passengers()->GetFirstPassenger())
 		{
-			++idx; // start passengers on cell 1, cell 0 is for pilot
-			passenger = pThis->get_Passengers()->RemoveFirstPassenger();
 			bool toDelete = 1;
-			if(Randomizer::Global()->RandomRanged(1, 100) <= chance)
+			passenger = pThis->get_Passengers()->RemoveFirstPassenger();
+			if(chance)
 			{
-				CoordStruct tmpLoc = loc;
-				CellStruct tmpCoords = CellSpread::GetCell(idx);
-				tmpLoc.X += tmpCoords.X * 128;
-				tmpLoc.Y += tmpCoords.Y * 128;
-				toDelete = !TechnoClassExt::ParadropSurvivor(passenger, &tmpLoc, Select);
+				++idx; // start passengers on cell 1, cell 0 is for pilot
+				if(Randomizer::Global()->RandomRanged(1, 100) <= chance)
+				{
+					CoordStruct tmpLoc = loc;
+					CellStruct tmpCoords = CellSpread::GetCell(idx);
+					tmpLoc.X += tmpCoords.X * 128;
+					tmpLoc.Y += tmpCoords.Y * 128;
+					toDelete = !TechnoClassExt::ParadropSurvivor(passenger, &tmpLoc, Select);
+				}
 			}
 			if(toDelete)
 			{

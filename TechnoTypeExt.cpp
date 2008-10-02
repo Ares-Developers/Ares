@@ -12,7 +12,6 @@ EXT_CTOR(TechnoTypeClass)
 
 		pData->Survivors_Pilots.SetCapacity(1, NULL);
 
-		pData->Survivors_PassengersEscape = 1;
 		pData->Survivors_PilotChance = 0;
 		pData->Survivors_PassengerChance = 0;
 		pData->Survivors_Pilots[0] = NULL;
@@ -60,7 +59,6 @@ void TechnoTypeClassExt::TechnoTypeClassData::Initialize(TechnoTypeClass *pThis)
 {
 	this->Survivors_Pilots.SetCapacity(SideClass::Array->get_Count(), NULL);
 
-	this->Survivors_PassengersEscape = 1; //pThis->get_Crewed();
 	this->Survivors_PilotChance = (int)RulesClass::Global()->get_CrewEscape() * 100;
 	this->Survivors_PassengerChance = (int)RulesClass::Global()->get_CrewEscape() * 100;
 
@@ -92,14 +90,13 @@ EXT_LOAD_INI(TechnoTypeClass)
 
 	pData->Survivors_Pilots.SetCapacity(SideClass::Array->get_Count(), NULL);
 
-	pData->Survivors_PassengersEscape = pINI->ReadBool(section, "Survivor.PassengersSurvive", pData->Survivors_PassengersEscape);
 	pData->Survivors_PilotChance = pINI->ReadInteger(section, "Survivor.PilotChance", pData->Survivors_PilotChance);
 	pData->Survivors_PassengerChance = pINI->ReadInteger(section, "Survivor.PassengerChance", pData->Survivors_PassengerChance);
 
+	char buffer[256];
+	char flag[256];
 	for(int i = 0; i < SideClass::Array->get_Count(); ++i)
 	{
-		char buffer[256];
-		char flag[256];
 		sprintf(flag, "Survivor.Side%d", i);
 		PARSE_INFANTRY(flag, pData->Survivors_Pilots[i]);
 	}

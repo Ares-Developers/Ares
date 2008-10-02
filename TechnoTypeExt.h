@@ -13,7 +13,6 @@ class TechnoTypeClassExt
 	struct TechnoTypeClassData
 	{
 		DynamicVectorClass<InfantryTypeClass *> Survivors_Pilots;
-		bool Survivors_PassengersEscape;
 		int Survivors_PilotChance;
 		int Survivors_PassengerChance;
 
