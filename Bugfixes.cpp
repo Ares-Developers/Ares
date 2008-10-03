@@ -364,8 +364,16 @@ EXPORT_FUNC(BulletClass_Fire_Overpower)
 // I'm tired of getting "Cannot Enter" when something is selected and trying to select an IFV, fixing that...
 EXPORT_FUNC(FooClass_GetCursorOverObject)
 {
-	R->set_EBX(act_Select);
-	return 0x74037A; // -5
+	DWORD orig = R->get_Origin();
+	if(orig == 0x74036E)
+	{
+		R->set_EBX(act_Select);
+	}
+	else
+	{
+		R->set_EBP(act_Select);
+	}
+	return orig + 5;
 }
 
 // 4F7E49, 5
@@ -375,3 +383,43 @@ EXPORT_FUNC(HouseClass_CanBuildHowMany_Upgrades)
 		return R->get_EAX() < 3 ? 0x4F7E41 : 0x4F7E34;
 }
 
+// 6D3D10, 6
+// dump a list of all loaded MIXes
+EXPORT_FUNC(Dump)
+{
+	Ares::Log("MIX list: \n");
+	RET_UNLESS(Unsorted::CurrentFrame == 5);
+	MixFileClass * MIX = MixFileClass::MIXes->First.Next;
+	int idx = 0;
+	while(MIX) {
+		Ares::Log("MIX file #%d is %s\n", idx, MIX->get_FileName());
+		MIX = MIX->get_Next();
+		++idx;
+	}
+	return 0;
+}
+
+// 715857, 5
+EXPORT_FUNC(TechnoTypeClass_LoadFromINI_LimitPalettes)
+{
+	return 0x715876;
+}
+
+// 4444E2, 6
+// alternative factory search - instead of same [Type], use any of same Factory= and Naval=
+EXPORT_FUNC(BuildingClass_KickOutUnit)
+{
+	GET(BuildingClass *, Src, ESI);
+	GET(BuildingClass *, Tst, EBP);
+
+	if(Src != Tst
+	 && Tst->GetCurrentMission() == mission_Guard
+	 && Tst->get_Type()->get_Factory() == Src->get_Type()->get_Factory()
+	 && Tst->get_Type()->get_Naval() == Src->get_Type()->get_Naval()
+	 && !Tst->get_Factory())
+	{
+		return 0x44451F;
+	}
+
+	return 0x444508;
+}
