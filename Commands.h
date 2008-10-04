@@ -47,7 +47,7 @@ public:
 		CALL(0x687CE0);
 
 		wchar_t msg[0x40] = L"\0";
-		wsprintf(msg, L"Map Snapshot saved as '%hs'.", buffer);
+		wsprintfW(msg, L"Map Snapshot saved as '%hs'.", buffer);
 		MessageListClass::PrintMessage(msg);
 	}
 

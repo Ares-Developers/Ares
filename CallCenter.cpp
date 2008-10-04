@@ -1,11 +1,3 @@
-#ifndef _CRT_SECURE_NO_WARNINGS
-#define _CRT_SECURE_NO_WARNINGS
-#endif
-#ifndef _CRT_NON_CONFORMING_SWPRINTFS
-#define _CRT_NON_CONFORMING_SWPRINTFS
-#endif
-#pragma warning(disable: 4035)	//"no return value" - there is one, just not in our code ;)
-
 #include "CallCenter.h"
 
 void CallCenter::Init()
@@ -42,4 +34,6 @@ void CallCenter::Init()
 	BIND_INI_CALLBACKS(TechnoTypeClass);
 
 	BIND_CALLBACKS(TechnoClass);
+
+	BIND_CALLBACKS(HouseClass);
 }

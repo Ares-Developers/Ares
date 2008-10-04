@@ -21,6 +21,9 @@ class TechnoTypeClassExt
 //		int Cameo_CurrentFrame;
 //		TimerStruct Cameo_Timer;
 
+		DynamicVectorClass< DynamicVectorClass<int>* > PrerequisiteLists;
+		DynamicVectorClass<int> PrerequisiteNegatives;
+
 		bool Data_Initialized;
 		void Initialize(TechnoTypeClass *pThis);
 	};

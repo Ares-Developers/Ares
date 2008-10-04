@@ -1,6 +1,7 @@
 #include <YRPP.h>
 #include "TechnoTypeExt.h"
 #include "Sides.h"
+#include "Prerequisites.h"
 
 EXT_P_DEFINE(TechnoTypeClass);
 
@@ -67,9 +68,8 @@ void TechnoTypeClassExt::TechnoTypeClassData::Initialize(TechnoTypeClass *pThis)
 		this->Survivors_Pilots[i] = Sides::SideExt[SideClass::Array->GetItem(i)].Crew;
 	}
 
-//	this->Cameo_Interval = 300;
-//	this->Cameo_CurrentFrame = 0;
-//	this->Cameo_Timer.Stop();
+	this->PrerequisiteLists.SetCapacity(0, NULL);
+	this->PrerequisiteLists.AddItem(new DynamicVectorClass<int>);
 
 	this->Data_Initialized = 1;
 }
@@ -93,7 +93,7 @@ EXT_LOAD_INI(TechnoTypeClass)
 	pData->Survivors_PilotChance = pINI->ReadInteger(section, "Survivor.PilotChance", pData->Survivors_PilotChance);
 	pData->Survivors_PassengerChance = pINI->ReadInteger(section, "Survivor.PassengerChance", pData->Survivors_PassengerChance);
 
-	char buffer[256];
+	char buffer[512];
 	char flag[256];
 	for(int i = 0; i < SideClass::Array->get_Count(); ++i)
 	{
@@ -101,35 +101,37 @@ EXT_LOAD_INI(TechnoTypeClass)
 		PARSE_INFANTRY(flag, pData->Survivors_Pilots[i]);
 	}
 
-//	pData->Cameo_Interval = 
-//		CCINIClass::INI_Art->ReadInteger(section, "Cameo.Interval", pData->Cameo_Interval);
-}
+	int PrereqListLen = pINI->ReadInteger(section, "Prerequisite.Lists", pData->PrerequisiteLists.get_Count() - 1);
 
-/*
- * broken - stupid game only redraws when mouse is moved over a cameo edge or sw tab is blinking fsds
-// 6A9A2A, 6
-EXPORT_FUNC(TabCameoListClass_Draw)
-{
-	TechnoTypeClass * T = (TechnoTypeClass *)R->get_StackVar32(0x6C);
-	RET_UNLESS(CONTAINS(TechnoTypeClassExt::Ext_p, T));
-	TechnoTypeClassExt::TechnoTypeClassData *pData = TechnoTypeClassExt::Ext_p[T];
-
-	else if(pData->Cameo_Interval && !(Unsorted::CurrentFrame % pData->Cameo_Interval))
+	if(PrereqListLen < 1)
 	{
-		pData->Cameo_CurrentFrame = 
-			pData->Cameo_CurrentFrame < T->GetCameo()->Frames - 1
-				? pData->Cameo_CurrentFrame + 1
-				: 0;
-		R->set_StackVar32(4, pData->Cameo_CurrentFrame);
-		pData->Cameo_Timer.StartIfEmpty();
-		if(!strcmp("BFRT", T->get_ID()))
+		PrereqListLen = 0;
+	}
+	++PrereqListLen;
+	while(PrereqListLen > pData->PrerequisiteLists.get_Count())
+	{
+		pData->PrerequisiteLists.AddItem(new DynamicVectorClass<int>);
+	}
+
+	DynamicVectorClass<int> *dvc = pData->PrerequisiteLists.GetItem(0);
+	if(pINI->ReadString(section, "Prerequisite", "", buffer, 0x200))
+	{
+		Prereqs::Parse(buffer, dvc);
+	}
+	for(int i = 1; i < PrereqListLen + 1; ++i)
+	{
+		sprintf(flag, "Prerequisite.List%d", i);
+		if(pINI->ReadString(section, flag, "", buffer, 0x200))
 		{
-			wchar_t msg[0x40] = L"\0";
-			wsprintf(msg, L"BFRT cameo rolled");
-			MessageListClass::PrintMessage(msg);
+			dvc = pData->PrerequisiteLists.GetItem(i);
+			Prereqs::Parse(buffer, dvc);
 		}
 	}
-	return 0;
+
+	dvc = &pData->PrerequisiteNegatives;
+	if(pINI->ReadString(section, "Prerequisite.Negatives", "", buffer, 0x200))
+	{
+		Prereqs::Parse(buffer, dvc);
+	}
 }
-*/
 

@@ -69,7 +69,7 @@ AbstractClass* Exceptions::PointerToAbstract(DWORD p)
 	if(p == NULL)
 		return NULL;
 
-	int n = -1;
+//	int n = -1;
 
 	//search most Abstracts
 	DynamicVectorClass<AbstractClass*>* pArray = 

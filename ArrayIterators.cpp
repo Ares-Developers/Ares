@@ -1,6 +1,7 @@
 #include <YRPP.h>
 #include <MacroHelpers.h> //basically indicates that this is DCoder country
 #include <YRCallbacks.h>
+#include "Ares.h"
 
 EXPORT_FUNC(RulesClass_Addition)
 {
@@ -18,7 +19,7 @@ EXPORT_FUNC(RulesClass_Addition)
 	{
 		for(int i = 0; i < TechnoTypeClass::Array->get_Count(); ++i)
 		{
-			TechnoTypeClassCallback::LoadFromINI((TechnoTypeClass *)(TechnoTypeClass::Array->GetItem(i)), pINI);
+			TechnoTypeClassCallback::LoadFromINI((TechnoTypeClass *)TechnoTypeClass::Array->GetItem(i), pINI);
 		}
 	}
 

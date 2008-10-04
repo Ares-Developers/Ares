@@ -26,7 +26,7 @@ public:
 	 Unsorted::ArmageddonMode = !Unsorted::ArmageddonMode;
 
 		wchar_t msg[0x40] = L"\0";
-		wsprintf(msg, L"Single stepping mode %s.", Unsorted::ArmageddonMode ? L"enabled" : L"disabled");
+		wsprintfW(msg, L"Single stepping mode %s.", Unsorted::ArmageddonMode ? L"enabled" : L"disabled");
 		MessageListClass::PrintMessage(msg);
 	}
 

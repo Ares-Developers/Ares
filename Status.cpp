@@ -39,7 +39,7 @@ EXPORT_FUNC(Game_Start)
 	Drawing::GetSurface_Hidden()->DrawText(L"Ares is © pd, DCoder and Electro 2007 - 2008.", 10, 520, COLOR_GREEN);
 
 	wchar_t wVersion[256];
-	wsprintf(wVersion, L"%hs", VERSION_STRVER);
+	wsprintfW(wVersion, L"%hs", VERSION_STRVER);
 
 	Drawing::GetSurface_Hidden()->DrawText(wVersion, 10, 540, COLOR_RED | COLOR_GREEN);
 	return 0;
