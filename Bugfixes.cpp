@@ -1,11 +1,3 @@
-#ifndef _CRT_SECURE_NO_WARNINGS
-#define _CRT_SECURE_NO_WARNINGS
-#endif
-#ifndef _CRT_NON_CONFORMING_SWPRINTFS
-#define _CRT_NON_CONFORMING_SWPRINTFS
-#endif
-#pragma warning(disable: 4035)	//"no return value" - there is one, just not in our code ;)
-
 #include <YRPP.h>
 #include "Ares.h"
 #include <MacroHelpers.h> //basically indicates that this is DCoder country
@@ -49,7 +41,7 @@ EXPORT_FUNC(IvanBombs_AttachableByAll)
 EXPORT_FUNC(TechnoClass_Update_ZeroOutTarget)
 {
 	GET(TechnoClass *, T, ESI);
-	return T->WhatAmI() == abs_Aircraft ? 0x6FA4D1 : 0;
+	return (T->WhatAmI() == abs_Aircraft) ? 0x6FA4D1 : 0;
 }
 
 // 46934D, 6
@@ -423,3 +415,59 @@ EXPORT_FUNC(BuildingClass_KickOutUnit)
 
 	return 0x444508;
 }
+
+// 42461D, 6
+// 42463A, 6
+// correct warhead for animation damage
+EXPORT_FUNC(AnimClass_Update_Damage)
+{
+	GET(AnimClass *, Anim, ESI);
+	WarheadTypeClass *W = Anim->get_Type()->get_Warhead();
+	if(!W) // NOT MY HACK
+	{
+		W = strcmp(Anim->get_Type()->get_ID(), "INVISO")
+			? RulesClass::Global()->get_FlameDamage2()
+			: RulesClass::Global()->get_C4Warhead();
+	}
+	DWORD WH = (DWORD)W;
+
+	DWORD origin = R->get_Origin();
+	if(origin == 0x42461D)
+	{
+		R->set_ECX(WH);
+	}
+	else
+	{
+		R->set_EDX(WH);
+	}
+	return origin + 6;
+}
+
+/*
+// 51F76D, 5
+EXPORT_FUNC(InfantryClass_Unload)
+{
+	GET(InfantryClass *, I, ESI);
+	return I::IsDesolator ? 0x51F77D : 0x51F792;
+}
+
+// 51CE9A, 5
+EXPORT_FUNC(InfantryClass_Idle)
+{
+	GET(InfantryClass *, I, ESI);
+	return I::IsCow ? 0x51CEAE : 0x51CECD;
+}
+
+// 7090D0, 5
+EXPORT_FUNC(TechnoClass_SelectFiringVoice)
+{
+	GET(TechnoClass *, T, ESI);
+	if(T->WhatAmI() == abs_Unit && (UnitClass *)T->get_Gunner())
+	{
+		R->set_EDI(T::VoiceRepair);
+		return 0x70914A;
+	}
+	return 0x7090ED;
+}
+*/
+

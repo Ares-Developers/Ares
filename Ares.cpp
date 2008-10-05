@@ -91,9 +91,9 @@ void Ares::SendPDPlane(
 		pNums->get_Count() > 0 &&
 		pOwner && pPlaneType && pTarget)
 	{
-		*((DWORD*)0xA8E7AC) += 1;		//some mutex
+		++Unsorted::SomeMutex;
 		AircraftClass* pPlane = (AircraftClass*)pPlaneType->CreateObject(pOwner);
-		*((DWORD*)0xA8E7AC) -= 1;		//some mutex
+		--Unsorted::SomeMutex;
 
 		pPlane->set_Spawned(true);
 
@@ -119,9 +119,6 @@ void Ares::SendPDPlane(
 		SET_REG32(ecx, 0x87F7E8);	//MapClass::Global()
 		CALL(0x4AA440);
 
-		Ares::Log("Ares: SpawnCell = %d, %d\n", spawn_cell.X, spawn_cell.Y);
-		Ares::Log("Ares: pDestination = %d, %d\n", pTarget->get_MapCoords()->X, pTarget->get_MapCoords()->Y);
-
 		pPlane->QueueMission(mission_ParadropApproach, false);
 
 		if(pTarget)
@@ -129,9 +126,9 @@ void Ares::SendPDPlane(
 
 		CoordStruct spawn_crd = {(spawn_cell.X << 8) + 128, (spawn_cell.Y << 8) + 128, 0};
 
-		*((DWORD*)0xA8E7AC) += 1;		//some mutex
+		++Unsorted::SomeMutex;
 		bool bSpawned = pPlane->Put(&spawn_crd, dir_N);
-		*((DWORD*)0xA8E7AC) -= 1;		//some mutex
+		--Unsorted::SomeMutex;
 
 		if(bSpawned)
 		{
@@ -147,7 +144,7 @@ void Ares::SendPDPlane(
 					for(int k = 0; k < (*pNums)[i]; k++)
 					{
 						FootClass* pNew = (FootClass*)pTechnoType->CreateObject(pOwner);
-						pNew->vt_entry_D4();
+						pNew->Remove();
 						pPlane->get_Passengers()->AddPassenger(pNew);
 					}
 				}
