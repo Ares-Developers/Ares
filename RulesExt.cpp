@@ -1,6 +1,6 @@
 #include <YRPP.h>
 #include "RulesExt.h"
-#include "GenericPrerequisites.h"
+#include "Prerequisites.h"
 
 RulesClassExt::RulesClassData* RulesClassExt::Data;
 
