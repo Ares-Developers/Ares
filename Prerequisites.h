@@ -12,7 +12,7 @@ public:
 
 	GenericPrerequisite(const char *Title)
 	{
-		this->Name = _strdup(Title);
+		strncpy(this->Name, Title, 32);
 		Array.AddItem(this);
 	}
 
@@ -41,8 +41,7 @@ public:
 	static void LoadFromINIList(CCINIClass *pINI);
 	void LoadFromINI(CCINIClass *pINI);
 
-
-	const char * Name;
+	char Name[32];
 	DynamicVectorClass<int> Prereqs;
 
 };
