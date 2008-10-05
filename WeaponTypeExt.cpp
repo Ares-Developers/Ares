@@ -21,7 +21,7 @@ void __stdcall WeaponTypeClassExt::Create(WeaponTypeClass* pThis)
 
 		pData->Beam_Duration     = 15;
 		pData->Beam_Amplitude    = 40.0;
-		pData->Beam_Color      = ColorStruct(255, 255, 255);
+		pData->Beam_Color = ColorStruct(255, 255, 255);
 		pData->Wave_IsHouseColor = 0;
 
 		pData->Wave_IsLaser      = 0;

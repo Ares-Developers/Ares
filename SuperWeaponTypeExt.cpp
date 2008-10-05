@@ -327,7 +327,7 @@ bool _stdcall SuperWeaponTypeClassExt::SuperClass_Launch(SuperClass* pThis, Cell
 	if(pData->SW_Anim)
 	{
 		coords.Z += pData->SW_AnimHeight;
-		new AnimClass(pData->SW_Anim, coords);
+		new AnimClass(pData->SW_Anim, &coords);
 	}
 
 	if(pData->SW_Sound != -1)

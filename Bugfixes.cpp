@@ -389,11 +389,11 @@ EXPORT_FUNC(Dump)
 {
 	Ares::Log("MIX list: \n");
 	RET_UNLESS(Unsorted::CurrentFrame == 5);
-	MixFileClass * MIX = MixFileClass::MIXes->First.Next;
+	MixFileClass* MIX = (MixFileClass*)MixFileClass::MIXes->get_First()->get_Next();
 	int idx = 0;
 	while(MIX) {
 		Ares::Log("MIX file #%d is %s\n", idx, MIX->get_FileName());
-		MIX = MIX->get_Next();
+		MIX = (MixFileClass*)MIX->get_Next();
 		++idx;
 	}
 	return 0;

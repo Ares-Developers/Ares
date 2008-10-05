@@ -163,7 +163,7 @@ EXPORT_FUNC(BulletClass_Fire)
 	//Electro@pd: get working on support for multiple callbacks in Syringe
 	if(pData->EMP_Duration)
 	{
-		new EMPulseClass(*(Bullet->get_Target()->GetCell()->get_MapCoords()), int(pThis->get_CellSpread()), pData->EMP_Duration);
+		new EMPulseClass(*(Bullet->get_Target()->GetCell()->get_MapCoords()), int(pThis->get_CellSpread()), pData->EMP_Duration, 0);
 	}
 
 	if(pData->MindControl_Permanent)
@@ -179,7 +179,7 @@ EXPORT_FUNC(BulletClass_Fire)
 
 		coords.Z += pType->get_MindControlRingOffset();
 
-		AnimClass *MCAnim = new AnimClass(RulesClass::Global()->get_PermaControlledAnimationType(), coords);
+		AnimClass *MCAnim = new AnimClass(RulesClass::Global()->get_PermaControlledAnimationType(), &coords);
 		pTarget->set_MindControlRingAnim(MCAnim);
 		MCAnim->SetOwnerObject(pTarget);
 
