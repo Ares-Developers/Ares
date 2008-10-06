@@ -20,6 +20,13 @@ class HouseClassExt
 
 	EXT_P_DECLARE(HouseClass);
 	EXT_FUNCS(HouseClass);
+
+	static signed int BuildLimitRemaining(HouseClass *pHouse, TechnoTypeClass *pItem);
+	static signed int CheckBuildLimit(HouseClass *pHouse, TechnoTypeClass *pItem, bool IncludeQueued);
+
+	static signed int RequirementsMet(HouseClass *pHouse, TechnoTypeClass *pItem);
+	static bool PrerequisitesMet(HouseClass *pHouse, TechnoTypeClass *pItem);
+
 };
 
 #endif

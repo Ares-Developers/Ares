@@ -50,6 +50,14 @@ class Prereqs
 {
 public:
 	static void Parse(char* buffer, DynamicVectorClass<int> *vec);
+
+	static bool HouseOwnsGeneric(HouseClass *pHouse, signed int Index);
+	static bool HouseOwnsBuilding(HouseClass *pHouse, signed int Index);
+	static bool HouseOwnsPrereq(HouseClass *pHouse, signed int Index);
+
+	static bool HouseOwnsAll(HouseClass *pHouse, DynamicVectorClass<int> *list);
+	static bool HouseOwnsAny(HouseClass *pHouse, DynamicVectorClass<int> *list);
+
 };
 
 #endif

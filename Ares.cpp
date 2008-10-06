@@ -109,6 +109,7 @@ void Ares::SendPDPlane(
 		//some ASM magic, seems to retrieve a random cell struct at a given edge
 		CellStruct spawn_cell;
 
+/*
 		PUSH_IMM(0);	//???
 		PUSH_IMM(1);	//???
 		PUSH_IMM(4);	//???
@@ -118,6 +119,8 @@ void Ares::SendPDPlane(
 		PUSH_PTR(spawn_cell);
 		SET_REG32(ecx, 0x87F7E8);	//MapClass::Global()
 		CALL(0x4AA440);
+*/
+		MapClass::Global()->PickCellOnEdge(&spawn_cell, edge, (CellStruct *)0xB04C38, (CellStruct *)0xB04C38, 4, 1, 0);
 
 		pPlane->QueueMission(mission_ParadropApproach, false);
 

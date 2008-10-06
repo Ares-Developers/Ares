@@ -29,8 +29,10 @@ class RulesClassExt
 		return Data;
 	};
 
-	EXT_FUNCS(RulesClass);
-	EXT_INI_FUNCS(RulesClass);
+	static void _stdcall Addition(CCINIClass* pINI);
+	static void _stdcall TypeData(CCINIClass* pINI);
+	static void _stdcall Load(IStream *pStm);
+	static void _stdcall Save(IStream *pStm);
 
 };
 
