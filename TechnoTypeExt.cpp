@@ -129,7 +129,7 @@ EXT_LOAD_INI(TechnoTypeClass)
 	}
 
 	dvc = &pData->PrerequisiteNegatives;
-	if(pINI->ReadString(section, "Prerequisite.Negatives", "", buffer, 0x200))
+	if(pINI->ReadString(section, "Prerequisite.Negative", "", buffer, 0x200))
 	{
 		Prereqs::Parse(buffer, dvc);
 	}

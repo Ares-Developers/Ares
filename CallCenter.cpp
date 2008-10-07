@@ -36,4 +36,7 @@ void CallCenter::Init()
 	BIND_CALLBACKS(TechnoClass);
 
 	BIND_CALLBACKS(HouseClass);
+
+	RulesClassCallback::Addition = RulesClassExt::Addition;
+	RulesClassCallback::TypeData = RulesClassExt::TypeData;
 }

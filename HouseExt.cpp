@@ -74,7 +74,7 @@ signed int HouseClassExt::RequirementsMet(HouseClass *pHouse, TechnoTypeClass *p
 		}
 	}
 
-	if(pHouse->get_TechLevel() <= pItem->get_TechLevel()) { return 0; }
+	if(pHouse->get_TechLevel() < pItem->get_TechLevel()) { return 0; }
 
 	return 1;
 }

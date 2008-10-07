@@ -11,10 +11,12 @@ class RulesClassExt
 {
 	public:
 
-	struct RulesClassData
+	class RulesClassData
 	{
-		bool Data_Initialized;
-		void Initialize();
+		public:
+			bool Data_Initialized;
+			void Initialize();
+			RulesClassData() { this->Data_Initialized = false; }
 	};
 
 	private:
@@ -29,6 +31,7 @@ class RulesClassExt
 		return Data;
 	};
 
+	public:
 	static void _stdcall Addition(CCINIClass* pINI);
 	static void _stdcall TypeData(CCINIClass* pINI);
 	static void _stdcall Load(IStream *pStm);

@@ -44,16 +44,16 @@ void RulesClassExt::RulesClassData::Initialize()
 
 void _stdcall RulesClassExt::Addition(CCINIClass* pINI)
 {
+}
+
+void _stdcall RulesClassExt::TypeData(CCINIClass* pINI)
+{
 	RulesClassExt::RulesClassData *pData = RulesClassExt::Global();
 	if(!pData->Data_Initialized)
 	{
 		pData->Initialize();
 	}
 
-}
-
-void _stdcall RulesClassExt::TypeData(CCINIClass* pINI)
-{
 	char buffer[0x24];
 
 	const char section[] = "WeaponTypes";
@@ -67,4 +67,6 @@ void _stdcall RulesClassExt::TypeData(CCINIClass* pINI)
 			WeaponTypeClass::FindOrAllocate(buffer);
 		}
 	}
+
+	GenericPrerequisite::LoadFromINIList(pINI);
 }

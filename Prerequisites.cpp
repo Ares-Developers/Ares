@@ -10,7 +10,11 @@ void GenericPrerequisite::LoadFromINIList(CCINIClass *pINI)
 	for(int i = 0; i < len; ++i)
 	{
 		const char *Key = pINI->GetKeyName(section, i);
-		FindOrAllocate(Key)->LoadFromINI(pINI);
+		FindOrAllocate(Key);
+	}
+	for(int i = 0; i < Array.get_Count(); ++i)
+	{
+		Array[i]->LoadFromINI(pINI);
 	}
 }
 
@@ -29,39 +33,43 @@ void GenericPrerequisite::LoadFromINI(CCINIClass *pINI)
 
 	DynamicVectorClass<int> *dvc = &this->Prereqs;
 
+	_snprintf(generalbuf, 0x80, "Prerequisite%s", name);
 	if(pINI->ReadString("General", generalbuf, "", buffer, 0x200))
 	{
 		Prereqs::Parse(buffer, dvc);
 	}
 
+	Ares::Log("genpreq parse - querying %s\n", this->Name);
 	if(pINI->ReadString(section, this->Name, "", buffer, 0x200))
 	{
+		Ares::Log("\tgenpreq parse - received %s\n", buffer);
 		Prereqs::Parse(buffer, dvc);
 	}
 }
 
 void Prereqs::Parse(char* buffer, DynamicVectorClass<int> *vec)
+{
+	vec->Clear();
+	char *cur = strtok(buffer, ",");
+	while(cur)
 	{
-		vec->Clear();
-		char *cur = strtok(buffer, ",");
-		while(cur)
+		int idx = BuildingTypeClass::FindIndex(cur);
+		if(idx > -1)
 		{
-			int idx = BuildingTypeClass::FindIndex(cur);
+			vec->AddItem(idx);
+		}
+		else
+		{
+			idx = GenericPrerequisite::FindIndex(cur);
 			if(idx > -1)
 			{
-				vec->AddItem(idx);
+				vec->AddItem(-1 - idx);
 			}
-			else
-			{
-				idx = GenericPrerequisite::FindIndex(cur);
-				if(idx > -1)
-				{
-					vec->AddItem(-1 - idx);
-				}
-			}
-			cur = strtok(NULL, ",");
 		}
+		cur = strtok(NULL, ",");
 	}
+
+}
 
 
 EXPORT_FUNC(RulesClass_TypeData)

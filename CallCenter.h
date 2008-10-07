@@ -7,6 +7,7 @@
 #include "Ares.h"
 #include "Foundations.h"
 #include "HouseExt.h"
+#include "RulesExt.h"
 #include "TechnoExt.h"
 #include "TechnoTypeExt.h"
 #include "WeaponTypeExt.h"
