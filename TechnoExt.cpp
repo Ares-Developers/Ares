@@ -50,13 +50,9 @@ void TechnoClassExt::SpawnSurvivors(TechnoClass *pThis, TechnoClass *pKiller, bo
 {
 	TechnoTypeClass *Type = pThis->GetTechnoType();
 
-	Ares::Log("survivors - start for [%s]\n", Type->get_ID());
-
 	HouseClass *pOwner = pThis->get_Owner();
 	TechnoTypeClassExt::TechnoTypeClassData *pData = TechnoTypeClassExt::Ext_p[Type];
 	RETZ_UNLESS(pData->Survivors_PilotChance || pData->Survivors_PassengerChance);
-
-	Ares::Log("survivors - chance\n");
 
 	CoordStruct loc = *pThis->get_Location();
 
@@ -86,29 +82,22 @@ void TechnoClassExt::SpawnSurvivors(TechnoClass *pThis, TechnoClass *pKiller, bo
 	chance = pData->Survivors_PassengerChance;
 	while(pThis->get_Passengers()->FirstPassenger)
 	{
-		Ares::Log("survivors - pasg loop\n");
-		int idx = 0;
 		FootClass *passenger;
 		bool toDelete = 1;
 		passenger = pThis->get_Passengers()->RemoveFirstPassenger();
-		Ares::Log("survivors - got pasg %s\n", passenger->GetType()->get_ID());
 		if(chance)
 		{
-			++idx; // start passengers on cell 2, cell 1 is for pilot
-			Ares::Log("survivors - pasg good chance\n");
 			if(Randomizer::Global()->RandomRanged(1, 100) <= chance)
 			{
 				CoordStruct tmpLoc = loc;
-				CellStruct tmpCoords = CellSpread::GetCell(idx);
+				CellStruct tmpCoords = CellSpread::GetCell(Randomizer::Global()->RandomRanged(0, 7));
 				tmpLoc.X += tmpCoords.X * 128;
 				tmpLoc.Y += tmpCoords.Y * 128;
-				Ares::Log("survivors - pasg spawn\n");
 				toDelete = !TechnoClassExt::ParadropSurvivor(passenger, &tmpLoc, Select);
 			}
 		}
 		if(toDelete)
 		{
-			Ares::Log("survivors - no dice, purge\n");
 			passenger->RegisterDestruction(pKiller); //(TechnoClass *)R->get_StackVar32(0x54));
 			passenger->UnInit();
 		}
@@ -119,22 +108,17 @@ bool TechnoClassExt::ParadropSurvivor(FootClass *Survivor, CoordStruct *loc, boo
 {
 	bool success;
 	int floorZ = MapClass::Global()->GetCellFloorHeight(loc);
-	Ares::Log("locZ %d, floorz %d\n", loc->Z, floorZ);
 	if(loc->Z > floorZ)
 	{
-		Ares::Log("survivors - deltaz , chute\n");
 		success = Survivor->SpawnParachuted(loc);
 	}
 	else
 	{
-		Ares::Log("survivors - no deltaz, place\n");
 		success = Survivor->Put(loc, Randomizer::Global()->RandomRanged(0, 7));
 	}
 	RET_UNLESS(success);
-	Ares::Log("survivor - in place\n");
 	Survivor->Scatter(0xB1CFE8, 1, 0);
 	Survivor->QueueMission(Survivor->get_Owner()->ControlledByHuman() ? mission_Guard : mission_Hunt, 0);
-	Ares::Log("survivors - queued up mission\n");
 	if(Select)
 	{
 		Survivor->Select();
@@ -188,3 +172,24 @@ EXPORT_FUNC(TechnoClass_Update)
 	}
 	return 0;
 }
+
+// 415CA6, 6
+// fix for vehicle paradrop alignment
+EXPORT_FUNC(AircraftClass_Paradrop)
+{
+	GET(AircraftClass *, A, EDI);
+	GET(FootClass *, P, ESI);
+	if(P->WhatAmI() != abs_Unit)
+	{
+		return 0;
+	}
+	CoordStruct SrcXYZ;
+	A->GetCoords(&SrcXYZ);
+	CoordStruct* XYZ = (CoordStruct *)R->lea_StackVar(0x20);
+	XYZ->X = SrcXYZ.X & ~0x80;
+	XYZ->Y = SrcXYZ.Y & ~0x80;
+	XYZ->Z = SrcXYZ.Z - 1;
+	R->set_ECX((DWORD)XYZ);
+	return 0x415DE3;
+}
+

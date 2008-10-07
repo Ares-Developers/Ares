@@ -39,10 +39,8 @@ void GenericPrerequisite::LoadFromINI(CCINIClass *pINI)
 		Prereqs::Parse(buffer, dvc);
 	}
 
-	Ares::Log("genpreq parse - querying %s\n", this->Name);
 	if(pINI->ReadString(section, this->Name, "", buffer, 0x200))
 	{
-		Ares::Log("\tgenpreq parse - received %s\n", buffer);
 		Prereqs::Parse(buffer, dvc);
 	}
 }
