@@ -23,6 +23,7 @@ class TechnoTypeClassExt
 
 		DynamicVectorClass< DynamicVectorClass<int>* > PrerequisiteLists;
 		DynamicVectorClass<int> PrerequisiteNegatives;
+		DWORD PrerequisiteTheaters;
 
 		bool Data_Initialized;
 		void Initialize(TechnoTypeClass *pThis);

@@ -71,6 +71,8 @@ void TechnoTypeClassExt::TechnoTypeClassData::Initialize(TechnoTypeClass *pThis)
 	this->PrerequisiteLists.SetCapacity(0, NULL);
 	this->PrerequisiteLists.AddItem(new DynamicVectorClass<int>);
 
+	this->PrerequisiteTheaters = 0xFFFFFFFF;
+
 	this->Data_Initialized = 1;
 }
 
@@ -133,5 +135,19 @@ EXT_LOAD_INI(TechnoTypeClass)
 	{
 		Prereqs::Parse(buffer, dvc);
 	}
+
+	if(pINI->ReadString(section, "Prerequisite.RequiredTheaters", "", buffer, 0x200))
+	{
+		pData->PrerequisiteTheaters = 0;
+		for(char *cur = strtok(buffer, ","); cur; cur = strtok(NULL, ","))
+		{
+			DWORD idx = Theater::FindIndex(cur);
+			if(idx > -1)
+			{
+				pData->PrerequisiteTheaters |= 1 << idx;
+			}
+		}
+	}
+
 }
 

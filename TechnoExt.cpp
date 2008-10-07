@@ -48,55 +48,69 @@ EXT_SAVE(TechnoClass)
 
 void TechnoClassExt::SpawnSurvivors(TechnoClass *pThis, TechnoClass *pKiller, bool Select)
 {
-	TechnoTypeClass *Type = (TechnoTypeClass *)pThis->GetType();
+	TechnoTypeClass *Type = pThis->GetTechnoType();
+
+	Ares::Log("survivors - start for [%s]\n", Type->get_ID());
+
+	HouseClass *pOwner = pThis->get_Owner();
 	TechnoTypeClassExt::TechnoTypeClassData *pData = TechnoTypeClassExt::Ext_p[Type];
 	RETZ_UNLESS(pData->Survivors_PilotChance || pData->Survivors_PassengerChance);
+
+	Ares::Log("survivors - chance\n");
 
 	CoordStruct loc = *pThis->get_Location();
 
 	int chance = pData->Survivors_PilotChance;
 	if(chance && Randomizer::Global()->RandomRanged(1, 100) <= chance)
 	{
-		InfantryTypeClass *PilotType = pData->Survivors_Pilots[pThis->get_Owner()->get_SideIndex()];
-		RETZ_UNLESS(PilotType);
-
-		InfantryClass *Pilot = new InfantryClass(PilotType, pThis->get_Owner());
-
-		Pilot->set_Health(PilotType->get_Strength() >> 1);
-		Pilot->get_Veterancy()->Veterancy = pThis->get_Veterancy()->Veterancy;
-		if(!TechnoClassExt::ParadropSurvivor(Pilot, &loc, Select))
+		InfantryTypeClass *PilotType = pData->Survivors_Pilots[pOwner->get_SideIndex()];
+		if(PilotType)
 		{
-			Pilot->RegisterDestruction(pKiller); //(TechnoClass *)R->get_StackVar32(0x54));
-			delete Pilot;
+			InfantryClass *Pilot = new InfantryClass(PilotType, pOwner);
+
+			Pilot->set_Health(PilotType->get_Strength() >> 1);
+			Pilot->get_Veterancy()->Veterancy = pThis->get_Veterancy()->Veterancy;
+			CoordStruct tmpLoc = loc;
+			CellStruct tmpCoords = CellSpread::GetCell(Randomizer::Global()->RandomRanged(0, 7));
+			tmpLoc.X += tmpCoords.X * 144;
+			tmpLoc.Y += tmpCoords.Y * 144;
+
+			if(!TechnoClassExt::ParadropSurvivor(Pilot, &tmpLoc, Select))
+			{
+				Pilot->RegisterDestruction(pKiller); //(TechnoClass *)R->get_StackVar32(0x54));
+				delete Pilot;
+			}
 		}
 	}
 
 	chance = pData->Survivors_PassengerChance;
-	if(pThis->get_Passengers() > 0)
+	while(pThis->get_Passengers()->FirstPassenger)
 	{
+		Ares::Log("survivors - pasg loop\n");
 		int idx = 0;
 		FootClass *passenger;
-		while(pThis->get_Passengers()->GetFirstPassenger())
+		bool toDelete = 1;
+		passenger = pThis->get_Passengers()->RemoveFirstPassenger();
+		Ares::Log("survivors - got pasg %s\n", passenger->GetType()->get_ID());
+		if(chance)
 		{
-			bool toDelete = 1;
-			passenger = pThis->get_Passengers()->RemoveFirstPassenger();
-			if(chance)
+			++idx; // start passengers on cell 2, cell 1 is for pilot
+			Ares::Log("survivors - pasg good chance\n");
+			if(Randomizer::Global()->RandomRanged(1, 100) <= chance)
 			{
-				++idx; // start passengers on cell 1, cell 0 is for pilot
-				if(Randomizer::Global()->RandomRanged(1, 100) <= chance)
-				{
-					CoordStruct tmpLoc = loc;
-					CellStruct tmpCoords = CellSpread::GetCell(idx);
-					tmpLoc.X += tmpCoords.X * 128;
-					tmpLoc.Y += tmpCoords.Y * 128;
-					toDelete = !TechnoClassExt::ParadropSurvivor(passenger, &tmpLoc, Select);
-				}
+				CoordStruct tmpLoc = loc;
+				CellStruct tmpCoords = CellSpread::GetCell(idx);
+				tmpLoc.X += tmpCoords.X * 128;
+				tmpLoc.Y += tmpCoords.Y * 128;
+				Ares::Log("survivors - pasg spawn\n");
+				toDelete = !TechnoClassExt::ParadropSurvivor(passenger, &tmpLoc, Select);
 			}
-			if(toDelete)
-			{
-				passenger->RegisterDestruction(pKiller); //(TechnoClass *)R->get_StackVar32(0x54));
-				delete passenger;
-			}
+		}
+		if(toDelete)
+		{
+			Ares::Log("survivors - no dice, purge\n");
+			passenger->RegisterDestruction(pKiller); //(TechnoClass *)R->get_StackVar32(0x54));
+			passenger->UnInit();
 		}
 	}
 }
@@ -104,17 +118,23 @@ void TechnoClassExt::SpawnSurvivors(TechnoClass *pThis, TechnoClass *pKiller, bo
 bool TechnoClassExt::ParadropSurvivor(FootClass *Survivor, CoordStruct *loc, bool Select)
 {
 	bool success;
-	if(loc->Z > 64)
+	int floorZ = MapClass::Global()->GetCellFloorHeight(loc);
+	Ares::Log("locZ %d, floorz %d\n", loc->Z, floorZ);
+	if(loc->Z > floorZ)
 	{
+		Ares::Log("survivors - deltaz , chute\n");
 		success = Survivor->SpawnParachuted(loc);
 	}
 	else
 	{
+		Ares::Log("survivors - no deltaz, place\n");
 		success = Survivor->Put(loc, Randomizer::Global()->RandomRanged(0, 7));
 	}
 	RET_UNLESS(success);
+	Ares::Log("survivor - in place\n");
 	Survivor->Scatter(0xB1CFE8, 1, 0);
 	Survivor->QueueMission(Survivor->get_Owner()->ControlledByHuman() ? mission_Guard : mission_Hunt, 0);
+	Ares::Log("survivors - queued up mission\n");
 	if(Select)
 	{
 		Survivor->Select();

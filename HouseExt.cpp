@@ -47,6 +47,12 @@ signed int HouseClassExt::RequirementsMet(HouseClass *pHouse, TechnoTypeClass *p
 {
 	if(pItem->get_Unbuildable()) { return 0; }
 
+	RET_UNLESS(CONTAINS(TechnoTypeClassExt::Ext_p, pItem));
+	TechnoTypeClassExt::TechnoTypeClassData *pData = TechnoTypeClassExt::Ext_p[pItem];
+
+	if(!(pData->PrerequisiteTheaters & (1 << ScenarioClass::Global()->get_Theater()))) { return 0; }
+	if(Prereqs::HouseOwnsAny(pHouse, &pData->PrerequisiteNegatives)) { return 0; }
+
 	// yes, the game checks it here
 	// hack value - skip real prereq check
 	if(Prereqs::HouseOwnsAny(pHouse, pItem->get_PrerequisiteOverride())) { return -1; }
