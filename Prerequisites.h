@@ -38,6 +38,15 @@ public:
 		return find ? find : new GenericPrerequisite(Title);
 	}
 
+	static void ClearArray()
+	{
+		while(int len = Array.get_Count())
+		{
+			delete Array[len];
+			Array.RemoveItem(len);
+		}
+	}
+
 	static void LoadFromINIList(CCINIClass *pINI);
 	void LoadFromINI(CCINIClass *pINI);
 

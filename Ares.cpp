@@ -5,11 +5,11 @@
 #include <StaticInits.cpp>
 
 //Init Statics
-HANDLE  Ares::hInstance=0;
-bool	Ares::bNoLogo=false;
-bool	Ares::bNoCD=false;
-bool	Ares::bLog=true;
-FILE*	Ares::pLogFile=NULL;
+HANDLE  Ares::hInstance = 0;
+bool	Ares::bNoLogo = false;
+bool	Ares::bNoCD = false;
+bool	Ares::bLog = true;
+FILE*	Ares::pLogFile = NULL;
 
 int FrameStepCommandClass::ArmageddonState = 0;
 
@@ -220,5 +220,5 @@ EXPORT_FUNC(Armageddon_Advance)
 			break;
 	}
 	return 0;
-
 }
+

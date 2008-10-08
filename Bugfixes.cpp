@@ -376,18 +376,12 @@ EXPORT_FUNC(HouseClass_CanBuildHowMany_Upgrades)
 }
 
 // 6D3D10, 6
-// dump a list of all loaded MIXes
 EXPORT_FUNC(Dump)
 {
-	Ares::Log("MIX list: \n");
-	RET_UNLESS(Unsorted::CurrentFrame == 5);
-	MixFileClass* MIX = (MixFileClass*)MixFileClass::MIXes->get_First()->get_Next();
-	int idx = 0;
-	while(MIX) {
-		Ares::Log("MIX file #%d is %s\n", idx, MIX->get_FileName());
-		MIX = (MixFileClass*)MIX->get_Next();
-		++idx;
+	if(Unsorted::CurrentFrame == 5) {
+		// do something for debugging - generic debug state report hook
 	}
+
 	return 0;
 }
 
