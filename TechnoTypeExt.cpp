@@ -73,6 +73,10 @@ void TechnoTypeClassExt::TechnoTypeClassData::Initialize(TechnoTypeClass *pThis)
 
 	this->PrerequisiteTheaters = 0xFFFFFFFF;
 
+	this->Secret_RequiredHouses = 0xFFFFFFFF;
+	this->Secret_ForbiddenHouses = 0;
+
+
 	this->Data_Initialized = 1;
 }
 
@@ -90,6 +94,8 @@ EXT_LOAD_INI(TechnoTypeClass)
 		pData->Initialize(pThis);
 	}
 
+
+	// survivors
 	pData->Survivors_Pilots.SetCapacity(SideClass::Array->get_Count(), NULL);
 
 	pData->Survivors_PilotChance = pINI->ReadInteger(section, "Survivor.PilotChance", pData->Survivors_PilotChance);
@@ -103,6 +109,8 @@ EXT_LOAD_INI(TechnoTypeClass)
 		PARSE_INFANTRY(flag, pData->Survivors_Pilots[i]);
 	}
 
+
+	// prereqs
 	int PrereqListLen = pINI->ReadInteger(section, "Prerequisite.Lists", pData->PrerequisiteLists.get_Count() - 1);
 
 	if(PrereqListLen < 1)
@@ -148,6 +156,14 @@ EXT_LOAD_INI(TechnoTypeClass)
 			}
 		}
 	}
+
+
+	// new secret lab
+	pData->Secret_RequiredHouses
+		= pINI->ReadHouseTypesList(section, "SecretLab.RequiredHouses", pData->Secret_RequiredHouses);
+
+	pData->Secret_ForbiddenHouses
+		= pINI->ReadHouseTypesList(section, "SecretLab.ForbiddenHouses", pData->Secret_ForbiddenHouses);
 
 }
 

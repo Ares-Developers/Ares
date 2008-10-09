@@ -25,6 +25,10 @@ class TechnoTypeClassExt
 		DynamicVectorClass<int> PrerequisiteNegatives;
 		DWORD PrerequisiteTheaters;
 
+		// new secret lab
+		DWORD Secret_RequiredHouses;
+		DWORD Secret_ForbiddenHouses;
+
 		bool Data_Initialized;
 		void Initialize(TechnoTypeClass *pThis);
 	};

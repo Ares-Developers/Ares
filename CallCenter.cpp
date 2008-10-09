@@ -8,11 +8,11 @@ void CallCenter::Init()
 		YRCallback::ExeTerminate	=	Ares::ExeTerminate;
 		YRCallback::PostGameInit	=	Ares::PostGameInit;
 
-		BuildingTypeClassCallback::Create		=	Foundations::Defaults;
-		BuildingTypeClassCallback::Delete		=	Foundations::Defaults;
-		BuildingTypeClassCallback::Load			=	Foundations::Load;
-		BuildingTypeClassCallback::Save			=	Foundations::Save;
-		BuildingTypeClassCallback::LoadFromINI	=	Foundations::LoadFromINI;
+		BuildingTypeClassCallback::Create		=	BuildingTypeClassExt::Defaults;
+		BuildingTypeClassCallback::Delete		=	BuildingTypeClassExt::Defaults;
+		BuildingTypeClassCallback::Load			=	BuildingTypeClassExt::Load;
+		BuildingTypeClassCallback::Save			=	BuildingTypeClassExt::Save;
+		BuildingTypeClassCallback::LoadFromINI	=	BuildingTypeClassExt::LoadFromINI;
 
 		HouseTypeClassCallback::Create		=	Countries::Construct;
 		HouseTypeClassCallback::LoadFromINI	=	Countries::LoadFromINI;

@@ -65,6 +65,8 @@ signed int HouseClassExt::RequirementsMet(HouseClass *pHouse, TechnoTypeClass *p
 
 	if(!pHouse->InRequiredHouses(pItem) || pHouse->InForbiddenHouses(pItem)) { return 0; }
 
+	if(!pHouse->HasFactoryForObject(pItem)) { return 0; }
+
 	if(!Unsorted::SWAllowed && pItem->WhatAmI() == abs_BuildingType)
 	{
 		BuildingTypeClass *pBld = (BuildingTypeClass*)pItem;

@@ -5,7 +5,7 @@
 #include <YRCallbacks.h>
 
 #include "Ares.h"
-#include "Foundations.h"
+#include "BuildingTypeExt.h"
 #include "HouseExt.h"
 #include "RulesExt.h"
 #include "TechnoExt.h"
