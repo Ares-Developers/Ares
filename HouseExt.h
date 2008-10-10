@@ -27,6 +27,8 @@ class HouseClassExt
 	static signed int RequirementsMet(HouseClass *pHouse, TechnoTypeClass *pItem);
 	static bool PrerequisitesMet(HouseClass *pHouse, TechnoTypeClass *pItem);
 
+	static signed int PrereqValidate
+		(HouseClass *pHouse, TechnoTypeClass *pItem, bool BuildLimitOnly, bool IncludeQueued);
 };
 
 #endif

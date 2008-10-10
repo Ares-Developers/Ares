@@ -1,5 +1,6 @@
 #include "BuildingTypeExt.h"
 #include "TechnoTypeExt.h"
+#include "HouseExt.h"
 
 stdext::hash_map<BuildingTypeClass*, BuildingTypeClassExt::BuildingTypeClassData> BuildingTypeClassExt::Ext_v;
 
@@ -16,6 +17,7 @@ void __stdcall BuildingTypeClassExt::Defaults(BuildingTypeClass* pThis)
 	Ext_v[pThis].CustomHeight = 0;
 	Ext_v[pThis].CustomData = NULL;
 	Ext_v[pThis].Secret_Boons.Clear();
+	Ext_v[pThis].Secret_Placed = false;
 }
 
 void __stdcall BuildingTypeClassExt::Load(BuildingTypeClass* pThis, IStream* pStm)
@@ -177,6 +179,62 @@ void __stdcall BuildingTypeClassExt::LoadFromINI(BuildingTypeClass* pThis, CCINI
 		= pINI->ReadBool(pThis->get_ID(), "SecretLab.GenerateOnCapture", pData->Secret_RecalcOnCapture);
 }
 
+void BuildingTypeClassExt::UpdateSecretLabOptions(BuildingClass *pThis)
+{
+	BuildingTypeClass *pType = pThis->get_Type();
+	BuildingTypeClassExt::BuildingTypeClassData* pData = &BuildingTypeClassExt::Ext_v[pType];
+	Ares::Log("Secret Lab update for %s\n", pType->get_ID());
+
+	RETZ_UNLESS(pData->Secret_Boons.get_Count() && (!pData->Secret_Placed || pData->Secret_RecalcOnCapture));
+
+	TechnoTypeClass *Result = pType->get_SecretInfantry();
+	if(!Result)
+	{
+		Result = pType->get_SecretUnit();
+	}
+	if(!Result)
+	{
+		Result = pType->get_SecretBuilding();
+	}
+	if(Result)
+	{
+		pThis->set_SecretProduction(Result);
+		return;
+	}
+
+	HouseClass *Owner = pThis->get_Owner();
+	int OwnerBits = 1 << Owner->get_Type()->get_ArrayIndex();
+
+	DynamicVectorClass<TechnoTypeClass *> Options;
+	for(int i = 0; i < pData->Secret_Boons.get_Count(); ++i)
+	{
+		TechnoTypeClass * Option = pData->Secret_Boons.GetItem(i);
+		TechnoTypeClassExt::TechnoTypeClassData* pTech = TechnoTypeClassExt::Ext_p[Option];
+
+		if(pTech->Secret_RequiredHouses & OwnerBits && !(pTech->Secret_ForbiddenHouses & OwnerBits))
+		{
+			if(HouseClassExt::RequirementsMet(Owner, Option))
+			{
+				Options.AddItem(Option);
+			}
+		}
+	}
+
+	if(Options.get_Count() < 1)
+	{
+		Ares::Log("Secret Lab [%s] has no boons applicable to country [%s]!\n",
+			pType->get_ID(), Owner->get_Type()->get_ID());
+		return;
+	}
+
+	int idx = Randomizer::Global()->RandomRanged(0, Options.get_Count() - 1);
+	Result = Options[idx];
+
+	Ares::Log("Secret Lab rolled %s for %s\n", Result->get_ID(), pType->get_ID());
+	pData->Secret_Placed = true;
+	pThis->set_SecretProduction(Result);
+}
+
 //hook at 0x45EC90
 EXPORT Foundations_GetFoundationWidth(REGISTERS* R)
 {
@@ -240,52 +298,10 @@ EXPORT Foundations_GetFoundationHeight(REGISTERS* R)
 EXPORT_FUNC(BuildingClass_ChangeOwnership)
 {
 	GET(BuildingClass *, pThis, ESI);
-	BuildingTypeClass *pType = pThis->get_Type();
-	RET_UNLESS(BuildingTypeClassExt::Ext_v.find(pType) != BuildingTypeClassExt::Ext_v.end());
-	BuildingTypeClassExt::BuildingTypeClassData* pData = &BuildingTypeClassExt::Ext_v[pType];
-
-	RET_UNLESS(pType->get_SecretLab() && pData->Secret_Boons.get_Count() && pData->Secret_RecalcOnCapture);
-
-	TechnoTypeClass *Result = pType->get_SecretInfantry();
-	if(!Result)
+	if(pThis->get_Type()->get_SecretLab())
 	{
-		Result = pType->get_SecretUnit();
-	}
-	if(!Result)
-	{
-		Result = pType->get_SecretBuilding();
-	}
-	if(Result)
-	{
-		pThis->set_SecretProduction(Result);
-		return 0;
+		BuildingTypeClassExt::UpdateSecretLabOptions(pThis);
 	}
 
-	HouseClass *Owner = pThis->get_Owner();
-	int OwnerBits = 1 << Owner->get_Type()->get_ArrayIndex();
-
-	DynamicVectorClass<TechnoTypeClass *> Options;
-	for(int i = 0; i < pData->Secret_Boons.get_Count(); ++i)
-	{
-		TechnoTypeClass * Option = pData->Secret_Boons.GetItem(i);
-		TechnoTypeClassExt::TechnoTypeClassData* pTech = TechnoTypeClassExt::Ext_p[Option];
-
-		if(pTech->Secret_RequiredHouses & OwnerBits && !(pTech->Secret_ForbiddenHouses & OwnerBits))
-		{
-			Options.AddItem(Option);
-		}
-	}
-
-	if(Options.get_Count() < 1)
-	{
-		Ares::Log("Secret Lab [%s] has no boons applicable to country [%s]!\n",
-			pType->get_ID(), Owner->get_Type()->get_ID());
-		return 0;
-	}
-
-	int idx = Randomizer::Global()->RandomRanged(0, Options.get_Count() - 1);
-	Result = Options[idx];
-
-	pThis->set_SecretProduction(Result);
 	return 0;
 }

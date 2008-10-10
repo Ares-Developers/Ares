@@ -20,6 +20,7 @@ public:
 		// new secret lab
 		DynamicVectorClass<TechnoTypeClass *> Secret_Boons;
 		bool Secret_RecalcOnCapture;
+		bool Secret_Placed;
 
 		// these two are to initialize things that can't be inited in ctor (e.g. things that default to rules values)
 		bool Data_Initialized;
@@ -32,6 +33,8 @@ public:
 	static void __stdcall Load(BuildingTypeClass*,IStream*);
 	static void __stdcall Save(BuildingTypeClass*,IStream*);
 	static void __stdcall LoadFromINI(BuildingTypeClass*,CCINIClass*);
+
+	static void UpdateSecretLabOptions(BuildingClass *pThis);
 };
 
 #endif
