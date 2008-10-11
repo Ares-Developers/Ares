@@ -17,6 +17,9 @@ EXT_CTOR(TechnoTypeClass)
 		pData->Survivors_PassengerChance = 0;
 		pData->Survivors_Pilots[0] = NULL;
 
+		pData->Is_Deso = 0;
+		pData->Is_Cow = 0;
+
 		pData->Data_Initialized = 0;
 
 		Ext_p[pThis] = pData;
@@ -165,5 +168,7 @@ EXT_LOAD_INI(TechnoTypeClass)
 	pData->Secret_ForbiddenHouses
 		= pINI->ReadHouseTypesList(section, "SecretLab.ForbiddenHouses", pData->Secret_ForbiddenHouses);
 
+	pData->Is_Deso = pINI->ReadBool(section, "IsDesolator", pData->Is_Deso);
+	pData->Is_Cow  = pINI->ReadBool(section, "IsCow", pData->Is_Cow);
 }
 

@@ -29,6 +29,9 @@ class TechnoTypeClassExt
 		DWORD Secret_RequiredHouses;
 		DWORD Secret_ForbiddenHouses;
 
+		bool Is_Deso;
+		bool Is_Cow;
+
 		bool Data_Initialized;
 		void Initialize(TechnoTypeClass *pThis);
 	};

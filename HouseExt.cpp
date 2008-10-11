@@ -50,6 +50,9 @@ signed int HouseClassExt::RequirementsMet(HouseClass *pHouse, TechnoTypeClass *p
 	RET_UNLESS(CONTAINS(TechnoTypeClassExt::Ext_p, pItem));
 	TechnoTypeClassExt::TechnoTypeClassData *pData = TechnoTypeClassExt::Ext_p[pItem];
 
+	// this has to happen before the first possible "can build" response or NCO happens
+	if(pItem->WhatAmI() != abs_BuildingType && !pHouse->HasFactoryForObject(pItem)) { return 0; }
+
 	if(!(pData->PrerequisiteTheaters & (1 << ScenarioClass::Global()->get_Theater()))) { return 0; }
 	if(Prereqs::HouseOwnsAny(pHouse, &pData->PrerequisiteNegatives)) { return 0; }
 
@@ -64,8 +67,6 @@ signed int HouseClassExt::RequirementsMet(HouseClass *pHouse, TechnoTypeClass *p
 	if(!pHouse->HasAllStolenTech(pItem)) { return 0; }
 
 	if(!pHouse->InRequiredHouses(pItem) || pHouse->InForbiddenHouses(pItem)) { return 0; }
-
-	if(pItem->WhatAmI() != abs_BuildingType && !pHouse->HasFactoryForObject(pItem)) { return 0; }
 
 	if(!Unsorted::SWAllowed && pItem->WhatAmI() == abs_BuildingType)
 	{

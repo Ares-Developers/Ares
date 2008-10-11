@@ -191,10 +191,10 @@ void BuildingTypeClassExt::UpdateSecretLabOptions(BuildingClass *pThis)
 	if(!Result)
 	{
 		Result = pType->get_SecretUnit();
-	}
-	if(!Result)
-	{
-		Result = pType->get_SecretBuilding();
+		if(!Result)
+		{
+			Result = pType->get_SecretBuilding();
+		}
 	}
 	if(Result)
 	{
@@ -213,7 +213,7 @@ void BuildingTypeClassExt::UpdateSecretLabOptions(BuildingClass *pThis)
 
 		if(pTech->Secret_RequiredHouses & OwnerBits && !(pTech->Secret_ForbiddenHouses & OwnerBits))
 		{
-			if(HouseClassExt::RequirementsMet(Owner, Option))
+			if(!HouseClassExt::RequirementsMet(Owner, Option))
 			{
 				Options.AddItem(Option);
 			}

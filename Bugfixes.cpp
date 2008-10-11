@@ -2,6 +2,8 @@
 #include "Ares.h"
 #include <MacroHelpers.h> //basically indicates that this is DCoder country
 
+#include "TechnoTypeExt.h"
+
 // bugfix #379: Temporal friendly kills give veterancy
 // 71A92A, 5
 EXPORT_FUNC(_Temporal_AvoidFriendlies)
@@ -437,21 +439,34 @@ EXPORT_FUNC(AnimClass_Update_Damage)
 	return origin + 6;
 }
 
-/*
 // 51F76D, 5
 EXPORT_FUNC(InfantryClass_Unload)
 {
-	GET(InfantryClass *, I, ESI);
-	return I::IsDesolator ? 0x51F77D : 0x51F792;
+	GET(TechnoClass *, I, ESI);
+	TechnoTypeClassExt::TechnoTypeClassData *pData = TechnoTypeClassExt::Ext_p[I->GetTechnoType()];
+	return pData->Is_Deso ? 0x51F77D : 0x51F792;
 }
 
 // 51CE9A, 5
 EXPORT_FUNC(InfantryClass_Idle)
 {
 	GET(InfantryClass *, I, ESI);
-	return I::IsCow ? 0x51CEAE : 0x51CECD;
+	TechnoTypeClassExt::TechnoTypeClassData *pData = TechnoTypeClassExt::Ext_p[I->GetTechnoType()];
+	return pData->Is_Cow ? 0x51CEAE : 0x51CECD;
 }
 
+// 747BBD, 5
+EXPORT_FUNC(UnitTypeClass_LoadFromINI)
+{
+	GET(UnitTypeClass *, U, ESI);
+
+	U->set_AltImage((SHPStruct *)R->get_EAX()); // jumping over, so replicated
+	return U->get_Gunner()
+		? 0x74BDD7
+		: 0x747E90;
+}
+
+/*
 // 7090D0, 5
 EXPORT_FUNC(TechnoClass_SelectFiringVoice)
 {
