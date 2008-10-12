@@ -69,20 +69,23 @@ void __stdcall BuildingTypeClassExt::Save(BuildingTypeClass* pThis, IStream* pSt
 
 void BuildingTypeClassExt::BuildingTypeClassData::Initialize(BuildingTypeClass *pThis)
 {
-	DynamicVectorClass<TechnoTypeClass *> *Options = (DynamicVectorClass<TechnoTypeClass *> *)RulesClass::Global()->get_SecretInfantry();
-	for(int i = 0; i < Options->get_Count(); ++i)
+	if(pThis->get_SecretLab())
 	{
-		this->Secret_Boons.AddItem(Options->GetItem(i));
-	}
-	Options = (DynamicVectorClass<TechnoTypeClass *> *)RulesClass::Global()->get_SecretUnits();
-	for(int i = 0; i < Options->get_Count(); ++i)
-	{
-		this->Secret_Boons.AddItem(Options->GetItem(i));
-	}
-	Options = (DynamicVectorClass<TechnoTypeClass *> *)RulesClass::Global()->get_SecretBuildings();
-	for(int i = 0; i < Options->get_Count(); ++i)
-	{
-		this->Secret_Boons.AddItem(Options->GetItem(i));
+		DynamicVectorClass<TechnoTypeClass *> *Options = (DynamicVectorClass<TechnoTypeClass *> *)RulesClass::Global()->get_SecretInfantry();
+		for(int i = 0; i < Options->get_Count(); ++i)
+		{
+			this->Secret_Boons.AddItem(Options->GetItem(i));
+		}
+		Options = (DynamicVectorClass<TechnoTypeClass *> *)RulesClass::Global()->get_SecretUnits();
+		for(int i = 0; i < Options->get_Count(); ++i)
+		{
+			this->Secret_Boons.AddItem(Options->GetItem(i));
+		}
+		Options = (DynamicVectorClass<TechnoTypeClass *> *)RulesClass::Global()->get_SecretBuildings();
+		for(int i = 0; i < Options->get_Count(); ++i)
+		{
+			this->Secret_Boons.AddItem(Options->GetItem(i));
+		}
 	}
 
 	this->Data_Initialized = 1;

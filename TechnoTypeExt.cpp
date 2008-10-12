@@ -131,7 +131,7 @@ EXT_LOAD_INI(TechnoTypeClass)
 	{
 		Prereqs::Parse(buffer, dvc);
 	}
-	for(int i = 0; i < PrereqListLen; ++i)
+	for(int i = 0; i < pData->PrerequisiteLists->get_Count(); ++i)
 	{
 		sprintf(flag, "Prerequisite.List%d", i);
 		if(pINI->ReadString(section, flag, "", buffer, 0x200))
