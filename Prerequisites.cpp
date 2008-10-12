@@ -92,6 +92,15 @@ bool Prereqs::HouseOwnsGeneric(HouseClass *pHouse, signed int Index)
 				return true;
 			}
 		}
+		if(Index == 5) // PROC alternate, man I hate the special cases
+		{
+			if(pHouse->get_OwnedUnitTypes()->GetItemCount(
+				RulesClass::Global()->get_PrerequisiteProcAlternate()->GetArrayIndex()
+				))
+			{
+				return true;
+			}
+		}
 		return false;
 	}
 	return false;
