@@ -1,6 +1,7 @@
 #include "Includes.h"
 #include "Ares.h"
 
+int Includes::LastReadIndex = -1;
 DynamicVectorClass<CCINIClass*> Includes::LoadedINIs;
 DynamicVectorClass<char*> Includes::LoadedINIFiles;
 
@@ -19,8 +20,6 @@ EXPORT_FUNC(CCINIClass_ReadCCFile2)
 	CCINIClass *xINI = Includes::LoadedINIs[Includes::LoadedINIs.get_Count() - 1];
 	const char *key;
 
-	Includes::LoadedINIs.RemoveItem(Includes::LoadedINIs.get_Count() - 1);
-
 	if(!xINI)
 	{
 		return 0;
@@ -29,9 +28,10 @@ EXPORT_FUNC(CCINIClass_ReadCCFile2)
 	char section[] = "#include";
 
 	int len = xINI->GetKeyCount(section);
-	for(int i = 0; i < len; ++i)
+	for(int i = Includes::LastReadIndex; i < len; i = Includes::LastReadIndex)
 	{
 		key = xINI->GetKeyName(section, i);
+		++Includes::LastReadIndex;
 		if(xINI->ReadString(section, key, "", buffer, 0x80))
 		{
 			bool canLoad = 1;
@@ -56,7 +56,13 @@ EXPORT_FUNC(CCINIClass_ReadCCFile2)
 		}
 	}
 
-	if(!Includes::LoadedINIs.get_Count() || Includes::LoadedINIs.get_Count() > 10)
+	if(!len)
+	{
+		Includes::LastReadIndex = -1;
+	}
+
+	Includes::LoadedINIs.RemoveItem(Includes::LoadedINIs.get_Count() - 1);
+	if(!Includes::LoadedINIs.get_Count())
 	{
 		for(int j = Includes::LoadedINIs.get_Count() - 1; j > 0; --j)
 		{

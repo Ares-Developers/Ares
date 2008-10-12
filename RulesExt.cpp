@@ -48,11 +48,7 @@ void _stdcall RulesClassExt::Addition(CCINIClass* pINI)
 
 void _stdcall RulesClassExt::TypeData(CCINIClass* pINI)
 {
-	RulesClassExt::RulesClassData *pData = RulesClassExt::Global();
-	if(!pData->Data_Initialized)
-	{
-		pData->Initialize();
-	}
+	RulesClassExt::Global()->Initialize();
 
 	char buffer[0x24];
 

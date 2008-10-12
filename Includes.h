@@ -6,6 +6,7 @@
 class Includes
 {
 public:
+	static int LastReadIndex;
 	static DynamicVectorClass<CCINIClass*> LoadedINIs;
 	static DynamicVectorClass<char*> LoadedINIFiles;
 };

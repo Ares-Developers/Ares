@@ -73,7 +73,19 @@ signed int HouseClassExt::RequirementsMet(HouseClass *pHouse, TechnoTypeClass *p
 		BuildingTypeClass *pBld = (BuildingTypeClass*)pItem;
 		if(pBld->get_SuperWeapon() != -1)
 		{
-			if(RulesClass::Global()->get_BuildTech()->FindItemIndex(pBld) == -1)
+			bool InTech = 0;
+			// AND AGAIN DVC<>::FindItemIndex fails! cannot find last item in the vector
+			DynamicVectorClass<BuildingTypeClass *> *dvc = RulesClass::Global()->get_BuildTech();
+			for(int i = 0; i < dvc->get_Count(); ++i)
+			{
+				if(pBld == dvc->GetItem(i))
+				{
+					InTech = 1;
+					break;
+				}
+			}
+
+			if(!InTech)
 			{
 				if(pHouse->get_Supers()->GetItem(pBld->get_SuperWeapon())->get_Type()->get_DisableableFromShell())
 				{
