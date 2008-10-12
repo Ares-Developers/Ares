@@ -332,7 +332,7 @@ bool _stdcall SuperWeaponTypeClassExt::SuperClass_Launch(SuperClass* pThis, Cell
 
 	if(pData->SW_Sound != -1)
 	{
-		VocClass::PlayAt(pData->SW_Sound, &coords);
+		VocClass::PlayAt(pData->SW_Sound, &coords, NULL);
 	}
 
 	int TypeIdx = pThis->get_Type()->get_Type();

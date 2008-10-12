@@ -285,7 +285,7 @@ EXPORT_FUNC(BombListClass_Add2)
 
 	if(pData->Ivan_AttachSound != -1)
 	{
-		VocClass::PlayAt(pData->Ivan_AttachSound, Bomb->get_TargetUnit()->get_Location());
+		VocClass::PlayAt(pData->Ivan_AttachSound, Bomb->get_TargetUnit()->get_Location(), Bomb->get_Audio());
 	}
 
 	return 0;

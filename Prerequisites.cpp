@@ -103,14 +103,18 @@ bool Prereqs::HouseOwnsBuilding(HouseClass *pHouse, int Index)
 	char *powerup = BType->get_PowersUpBuilding();
 	if(*powerup)
 	{
-		BType = BuildingTypeClass::Find(powerup);
-		if(pHouse->get_OwnedBuildingTypes1()->GetItemCount(BType->GetArrayIndex()) < 1)
+		BuildingTypeClass *BCore = BuildingTypeClass::Find(powerup);
+		if(pHouse->get_OwnedBuildingTypes1()->GetItemCount(BCore->GetArrayIndex()) < 1)
 		{
 			return false;
 		}
 		for(int i = 0; i < pHouse->get_Buildings()->get_Count(); ++i)
 		{
 			BuildingClass *Bld = pHouse->get_Buildings()->GetItem(i);
+			if(Bld->get_Type() != BCore)
+			{
+				continue;
+			}
 			for(int j = 0; j < 3; ++j)
 			{
 				BuildingTypeClass *Upgrade = Bld->get_Upgrades(j);
