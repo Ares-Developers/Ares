@@ -18,6 +18,11 @@ void __stdcall WarheadTypeClassExt::Create(WarheadTypeClass* pThis)
 
 		pData->IC_Duration = 0;
 
+		pData->Verses.SetCapacity(11, NULL);
+		for(int i = 0; i < pData->Verses.get_Count(); ++i)
+		{
+			pData->Verses[i] = 1.00;
+		}
 
 		Ext_p[pThis] = pData;
 	}
@@ -180,6 +185,11 @@ EXPORT_FUNC(BulletClass_Fire)
 		coords.Z += pType->get_MindControlRingOffset();
 
 		AnimClass *MCAnim = new AnimClass(RulesClass::Global()->get_PermaControlledAnimationType(), &coords);
+		AnimClass *oldMC = pTarget->get_MindControlRingAnim();
+		if(oldMC)
+		{
+			oldMC->UnInit();
+		}
 		pTarget->set_MindControlRingAnim(MCAnim);
 		MCAnim->SetOwnerObject(pTarget);
 
@@ -187,4 +197,15 @@ EXPORT_FUNC(BulletClass_Fire)
 	}
 
 	return 0;
+}
+
+// 6F36FE, 7
+EXPORT_FUNC(Verses_0)
+{
+	GET(WarheadTypeClass *, WH, EAX);
+	GET(int, Armor, ECX);
+	WarheadTypeClassExt::WarheadTypeClassData *pData = WarheadTypeClassExt::Ext_p[WH];
+	double x = pData->Verses[Armor];
+	__asm{ fld x };
+	return R->get_Origin() + 7;
 }

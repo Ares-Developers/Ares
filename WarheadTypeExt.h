@@ -21,6 +21,8 @@ class WarheadTypeClassExt
 
 		int IC_Duration;
 
+		DynamicVectorClass<double> Verses;
+
 		// if you want to default properties to some global values like [General]IronCurtainDuration= , do so in this
 		void Initialize(WarheadTypeClass*);
 	};

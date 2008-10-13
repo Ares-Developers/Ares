@@ -1,12 +1,5 @@
-#ifndef _CRT_SECURE_NO_WARNINGS
-#define _CRT_SECURE_NO_WARNINGS
-#endif
-#ifndef _CRT_NON_CONFORMING_SWPRINTFS
-#define _CRT_NON_CONFORMING_SWPRINTFS
-#endif
-#pragma warning(disable: 4035)	//"no return value" - there is one, just not in our code ;)
-
 #include "Ares.h"
+#include <MacroHelpers.h> //basically indicates that this is DCoder country
 
 //0x596FFE
 EXPORT RMG_EnableArchipelago(REGISTERS* R)
@@ -42,7 +35,7 @@ EXPORT RMG_EnableDesert(REGISTERS* R)
 //0x598FB8
 EXPORT RMG_GenerateUrban(REGISTERS* R)
 {
-	Ares::Log("RMG: Generating urban areas\n");
+	DEBUGLOG("RMG: Generating urban areas\n");
 
 	void* pMapSeed = (void*)R->get_ESI();
 	SET_REG32(ecx, pMapSeed);

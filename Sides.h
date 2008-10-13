@@ -2,6 +2,7 @@
 #define SIDES_H
 
 #include "Ares.h"
+#include <MacroHelpers.h> //basically indicates that this is DCoder country
 #include <hash_map>
 
 //TODO: Load/Save from savegames

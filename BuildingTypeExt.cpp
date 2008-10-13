@@ -186,7 +186,7 @@ void BuildingTypeClassExt::UpdateSecretLabOptions(BuildingClass *pThis)
 {
 	BuildingTypeClass *pType = pThis->get_Type();
 	BuildingTypeClassExt::BuildingTypeClassData* pData = &BuildingTypeClassExt::Ext_v[pType];
-	Ares::Log("Secret Lab update for %s\n", pType->get_ID());
+	DEBUGLOG("Secret Lab update for %s\n", pType->get_ID());
 
 	RETZ_UNLESS(pData->Secret_Boons.get_Count() && (!pData->Secret_Placed || pData->Secret_RecalcOnCapture));
 
@@ -225,7 +225,7 @@ void BuildingTypeClassExt::UpdateSecretLabOptions(BuildingClass *pThis)
 
 	if(Options.get_Count() < 1)
 	{
-		Ares::Log("Secret Lab [%s] has no boons applicable to country [%s]!\n",
+		DEBUGLOG("Secret Lab [%s] has no boons applicable to country [%s]!\n",
 			pType->get_ID(), Owner->get_Type()->get_ID());
 		return;
 	}
@@ -233,7 +233,7 @@ void BuildingTypeClassExt::UpdateSecretLabOptions(BuildingClass *pThis)
 	int idx = Randomizer::Global()->RandomRanged(0, Options.get_Count() - 1);
 	Result = Options[idx];
 
-	Ares::Log("Secret Lab rolled %s for %s\n", Result->get_ID(), pType->get_ID());
+	DEBUGLOG("Secret Lab rolled %s for %s\n", Result->get_ID(), pType->get_ID());
 	pData->Secret_Placed = true;
 	pThis->set_SecretProduction(Result);
 }

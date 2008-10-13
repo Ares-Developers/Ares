@@ -471,7 +471,7 @@ EXPORT Sides_LoadVoxFromINI(REGISTERS* R)
 	VoxClass* pThis = (VoxClass*)R->get_ESI();
 	CCINIClass* pINI = (CCINIClass*)R->get_EBP();
 
-	Ares::Log("VoxClass::LoadFromINI (%s, pINI = 0x%08X)\n", pThis->get_Name(), pINI);
+	DEBUGLOG("VoxClass::LoadFromINI (%s, pINI = 0x%08X)\n", pThis->get_Name(), pINI);
 
 	DynamicVectorClass<Sides::VoxFileNameStruct> FileNames;
 	Sides::VoxFileNameStruct vfn;

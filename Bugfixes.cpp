@@ -169,7 +169,7 @@ EXPORT_FUNC(TechnoTypeClass_GetCameo2)
 EXPORT_FUNC(AnimClass_Update)
 {
 	GET(InfantryClass *, I, EDI);
-	delete I;
+	I->UnInit();
 	GET(AnimClass *, A, ESI);
 	A->set_TimeToDie(1);
 	A->UnInit();

@@ -312,12 +312,12 @@ bool _stdcall SuperWeaponTypeClassExt::SuperClass_Launch(SuperClass* pThis, Cell
 
 	if(pData->Money_Amount > 0)
 	{
-		Ares::Log("House %d gets %d credits\n", pThis->get_Owner()->get_ArrayIndex(), pData->Money_Amount);
+		DEBUGLOG("House %d gets %d credits\n", pThis->get_Owner()->get_ArrayIndex(), pData->Money_Amount);
 		pThis->get_Owner()->GiveMoney(pData->Money_Amount);
 	}
 	else
 	{
-		Ares::Log("House %d loses %d credits\n", pThis->get_Owner()->get_ArrayIndex(), -pData->Money_Amount);
+		DEBUGLOG("House %d loses %d credits\n", pThis->get_Owner()->get_ArrayIndex(), -pData->Money_Amount);
 		pThis->get_Owner()->TakeMoney(-pData->Money_Amount);
 	}
 

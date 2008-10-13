@@ -34,6 +34,7 @@
 	-pd
 */
 
+#include <MacroHelpers.h> //basically indicates that this is DCoder country
 #include "../Ares.h"
 
 //4A3B4B, 9 - NOTE: This overrides a call, but it's absolute, so don't worry.
@@ -53,7 +54,7 @@ EXPORT FetchResource(REGISTERS* R)
 			LockResource(hResData);
 			R->set_EAX((DWORD)hResData);
 
-			Ares::Log("Resource %d loaded successfully: 0x%08X\n", lpName, hResData);
+			DEBUGLOG("Resource %d loaded successfully: 0x%08X\n", lpName, hResData);
 
 			return 0x4A3B73; //Resource locked and loaded (omg what a pun), return!
 		}

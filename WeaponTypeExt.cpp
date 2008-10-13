@@ -177,7 +177,7 @@ void __stdcall WeaponTypeClassExt::LoadFromINI(WeaponTypeClass* pThis, CCINIClas
 
 	if(!pThis->get_Warhead())
 	{
-		Ares::Log("Weapon %s doesn't have a Warhead yet, what gives?\n", section);
+		DEBUGLOG("Weapon %s doesn't have a Warhead yet, what gives?\n", section);
 		return;
 	}
 
@@ -209,7 +209,7 @@ void __stdcall WeaponTypeClassExt::LoadFromINI(WeaponTypeClass* pThis, CCINIClas
 			SHPStruct *image = FileSystem::LoadSHPFile(buffer);
 			if(image)
 			{
-				Ares::Log("Loading Ivan Image %s succeeded: %d frames\n", buffer, image->Frames);
+				DEBUGLOG("Loading Ivan Image %s succeeded: %d frames\n", buffer, image->Frames);
 				pData->Ivan_Image        = image;
 			}
 			else

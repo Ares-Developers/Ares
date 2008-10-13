@@ -2,6 +2,7 @@
 #define ARES_COMMANDS_H
 
 #include <YRPP.h>
+#include <MacroHelpers.h> //basically indicates that this is DCoder country
 #include "Commands.FrameByFrame.h"
 
 class MapSnapshotCommandClass : public CommandClass
@@ -38,7 +39,7 @@ public:
 			F = fopen(buffer, "rb");
 		}while(F != NULL);
 
-		Ares::Log("\t\t%s", buffer);
+		DEBUGLOG("\t\t%s", buffer);
 
 		char* pBuffer = buffer;
 
