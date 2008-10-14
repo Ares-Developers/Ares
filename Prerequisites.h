@@ -22,7 +22,7 @@ public:
 	static int FindIndex(const char *Title)
 	{
 		for(int i = 0; i < Array.get_Count(); ++i)
-			if(!strcmp(Title, Array.GetItem(i)->Name))
+			if(!_strcmpi(Title, Array.GetItem(i)->Name))
 				return i;
 		return -1;
 	}
@@ -30,7 +30,7 @@ public:
 	static GenericPrerequisite* Find(const char *Title)
 	{
 		for(int i = 0; i < Array.get_Count(); ++i)
-			if(!strcmp(Title, Array.GetItem(i)->Name))
+			if(!_strcmpi(Title, Array.GetItem(i)->Name))
 				return Array.GetItem(i);
 		return NULL;
 	}

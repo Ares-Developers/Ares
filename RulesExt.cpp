@@ -1,5 +1,6 @@
 #include "RulesExt.h"
 #include "Prerequisites.h"
+#include "ArmorTypes.h"
 
 RulesClassExt::RulesClassData* RulesClassExt::Data;
 
@@ -38,6 +39,19 @@ void RulesClassExt::RulesClassData::Initialize()
 	GenericPrerequisite::FindOrAllocate("RADAR");
 	GenericPrerequisite::FindOrAllocate("TECH");
 	GenericPrerequisite::FindOrAllocate("PROC");
+
+	ArmorType::FindOrAllocate("none");
+	ArmorType::FindOrAllocate("flak");
+	ArmorType::FindOrAllocate("plate");
+	ArmorType::FindOrAllocate("light");
+	ArmorType::FindOrAllocate("medium");
+	ArmorType::FindOrAllocate("heavy");
+	ArmorType::FindOrAllocate("wood");
+	ArmorType::FindOrAllocate("steel");
+	ArmorType::FindOrAllocate("concrete");
+	ArmorType::FindOrAllocate("special_1");
+	ArmorType::FindOrAllocate("special_2");
+
 	this->Data_Initialized = 1;
 }
 

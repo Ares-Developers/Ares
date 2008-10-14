@@ -1,4 +1,5 @@
 #include "WarheadTypeExt.h"
+#include "ArmorTypes.h"
 
 EXT_P_DEFINE(WarheadTypeClass);
 
@@ -74,6 +75,31 @@ void __stdcall WarheadTypeClassExt::LoadFromINI(WarheadTypeClass* pThis, CCINICl
 	{
 		pData->Initialize(pThis);
 	}
+
+	// writing custom verses parser just because
+	char buffer[0x100];
+	pINI->ReadString(section, "Verses", buffer, (char *)0x847C40, 0x100); // kekeke
+	int idx = 0;
+	for(char *cur = strtok(buffer, ","); cur; cur = strtok(NULL, ","))
+	{
+		double val = 1.0;
+		if(strchr(cur, '%'))
+		{
+			val = atoi(cur) * 100.0;
+		}
+		else
+		{
+			val = atof(cur);
+		}
+		pData->Verses[idx] = val;
+		++idx;
+		if(idx > 10)
+		{
+			break;
+		}
+	}
+
+	ArmorType::LoadForWarhead(pINI, pThis);
 
 	if(pThis->get_MindControl())
 	{
@@ -198,13 +224,73 @@ EXPORT_FUNC(BulletClass_Fire)
 	return 0;
 }
 
-// 6F36FE, 7
-EXPORT_FUNC(Verses_0)
-{
-	GET(WarheadTypeClass *, WH, EAX);
-	GET(int, Armor, ECX);
-	WarheadTypeClassExt::WarheadTypeClassData *pData = WarheadTypeClassExt::Ext_p[WH];
+#define GET_VERSES(reg_wh, reg_armor) \
+		GET(WarheadTypeClass *, WH, reg_wh); \
+	GET(int, Armor, reg_armor); \
+	WarheadTypeClassExt::WarheadTypeClassData *pData = WarheadTypeClassExt::Ext_p[WH]; \
 	double x = pData->Verses[Armor];
-	__asm{ fld x };
+
+#define FLD_VERSES(reg_wh, reg_armor) \
+	GET_VERSES(reg_wh, reg_armor) \
+	__asm{ fld x }; \
 	return R->get_Origin() + 7;
+
+#define FMUL_VERSES(reg_wh, reg_armor) \
+	GET_VERSES(reg_wh, reg_armor) \
+	__asm{ fmul x }; \
+	return R->get_Origin() + 7;
+
+// 6F36FE, 7 // temp, will be taken out when SelectWeapon is remade
+EXPORT_FUNC(Verses_fld_0)
+{
+	FLD_VERSES(EAX, ECX);
 }
+
+// 6F7D3D, 7
+EXPORT_FUNC(Verses_fld_1)
+{
+	FLD_VERSES(ECX, EAX);
+}
+
+// 708AF7, 7
+EXPORT_FUNC(Verses_fld_2)
+{
+	FLD_VERSES(ECX, EAX);
+}
+
+// 6FCB6A, 7
+EXPORT_FUNC(Verses_fld_3)
+{
+	FLD_VERSES(EDI, EAX);
+}
+
+// 6F3731, 7 // temp, will be taken out when SelectWeapon is remade
+EXPORT_FUNC(Verses_fld_4)
+{
+	FLD_VERSES(EDX, EAX);
+}
+
+// 703EB2, 7
+EXPORT_FUNC(Verses_fmul_0)
+{
+	FMUL_VERSES(EAX, ECX);
+}
+
+// 70CEC7, 7
+EXPORT_FUNC(Verses_fmul_1)
+{
+	FMUL_VERSES(EAX, EDX);
+}
+
+// 70CF49, 7
+EXPORT_FUNC(Verses_fmul_2)
+{
+	FMUL_VERSES(ECX, EAX);
+}
+
+// 48923D, 7
+EXPORT_FUNC(Verses_fmul_3)
+{
+	FMUL_VERSES(EDI, EDX);
+}
+
