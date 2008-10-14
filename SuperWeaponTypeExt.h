@@ -1,11 +1,20 @@
 #ifndef SUPERTYPE_EXT_H
 #define SUPERTYPE_EXT_H
 
-#include <YRPP.h>
 #include <MacroHelpers.h> //basically indicates that this is DCoder country
-#include "Ares.h"
-
 #include <hash_map>
+
+#include "Actions.h"
+
+#include <AircraftTypeClass.h>
+#include <AnimClass.h>
+#include <CCINIClass.h>
+#include <HouseClass.h>
+#include <MissionClass.h>
+#include <SuperClass.h>
+#include <SwizzleManagerClass.h>
+#include <VocClass.h>
+#include <VoxClass.h>
 
 // actions for custom sw
 #define SW_YES_CURSOR 0x7F

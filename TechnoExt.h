@@ -1,11 +1,15 @@
 #ifndef TECHNO_EXT_H
 #define TECHNO_EXT_H
 
-#include <YRPP.h>
 #include <MacroHelpers.h> //basically indicates that this is DCoder country
-#include "Ares.h"
-
 #include <hash_map>
+
+#include <AircraftClass.h>
+#include <CellSpread.h>
+#include <HouseClass.h>
+#include <InfantryClass.h>
+#include <MapClass.h>
+#include <Randomizer.h>
 
 class TechnoClassExt
 {
@@ -13,8 +17,8 @@ class TechnoClassExt
 	struct TechnoClassData
 	{
 		// weapon slots fsblargh
-		byte idxSlot_Wave;
-		byte idxSlot_Beam;
+		BYTE idxSlot_Wave;
+		BYTE idxSlot_Beam;
 		
 		TimerStruct CloakSkipTimer;
 	};

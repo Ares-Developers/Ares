@@ -1,7 +1,4 @@
-#include <YRPP.h>
 #include "SuperWeaponTypeExt.h"
-#include "Actions.h"
-#include "Ares.h"
 
 EXT_P_DEFINE(SuperWeaponTypeClass);
 

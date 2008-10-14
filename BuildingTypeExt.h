@@ -1,8 +1,15 @@
 #ifndef BUILDINGTYPE_EXT_H
 #define BUILDINGTYPE_EXT_H
 
-#include "Ares.h"
 #include <hash_map>
+
+#include <CCINIClass.h>
+#include <BuildingTypeClass.h>
+#include <InfantryTypeClass.h>
+#include <Randomizer.h>
+#include <UnitTypeClass.h>
+
+class BuildingClass;
 
 #define FOUNDATION_CUSTOM	0x7F
 

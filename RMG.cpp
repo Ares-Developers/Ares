@@ -1,5 +1,4 @@
-#include "Ares.h"
-#include <MacroHelpers.h> //basically indicates that this is DCoder country
+#include <StringTable.h>
 
 //0x596FFE
 EXPORT RMG_EnableArchipelago(REGISTERS* R)
@@ -35,8 +34,6 @@ EXPORT RMG_EnableDesert(REGISTERS* R)
 //0x598FB8
 EXPORT RMG_GenerateUrban(REGISTERS* R)
 {
-	DEBUGLOG("RMG: Generating urban areas\n");
-
 	void* pMapSeed = (void*)R->get_ESI();
 	SET_REG32(ecx, pMapSeed);
 	CALL(0x5A5020);

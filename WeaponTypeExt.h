@@ -1,11 +1,20 @@
 #ifndef WEAPONTYPE_EXT_H
 #define WEAPONTYPE_EXT_H
 
-#include <YRPP.h>
 #include <MacroHelpers.h> //basically indicates that this is DCoder country
-#include "Ares.h"
-
 #include <hash_map>
+
+#include <BombClass.h>
+#include <BulletClass.h>
+#include <CCINIClass.h>
+#include <Drawing.h>
+#include <RadBeam.h>
+#include <VocClass.h>
+#include <WarheadTypeClass.h>
+#include <WaveClass.h>
+#include <WeaponTypeClass.h>
+
+struct SHPStruct;
 
 class WeaponTypeClassExt
 {

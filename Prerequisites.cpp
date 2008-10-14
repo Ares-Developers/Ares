@@ -1,4 +1,3 @@
-#include <YRPP.h>
 #include "Prerequisites.h"
 
 DynamicVectorClass< GenericPrerequisite* > GenericPrerequisite::Array;

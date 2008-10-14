@@ -1,7 +1,18 @@
-#include <YRPP.h>
-#include "Ares.h"
-#include <MacroHelpers.h> //basically indicates that this is DCoder country
+#include <AnimClass.h>
+#include <BombListClass.h>
+#include <BulletClass.h>
+#include <CellSpread.h>
+#include <HouseClass.h>
+#include <InfantryClass.h>
+#include <LocomotionClass.h>
+#include <MapClass.h>
+#include <TechnoClass.h>
+#include <TemporalClass.h>
+#include <UnitTypeClass.h>
+#include <WarheadTypeClass.h>
 
+
+#include <MacroHelpers.h> //basically indicates that this is DCoder country
 #include "TechnoTypeExt.h"
 
 // bugfix #379: Temporal friendly kills give veterancy

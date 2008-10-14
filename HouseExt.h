@@ -1,11 +1,13 @@
 #ifndef HOUSE_EXT_H
 #define HOUSE_EXT_H
 
-#include <YRPP.h>
-#include <MacroHelpers.h> //basically indicates that this is DCoder country
-#include "Ares.h"
-
 #include <hash_map>
+#include <MacroHelpers.h> //basically indicates that this is DCoder country
+
+#include <FactoryClass.h>
+#include <HouseClass.h>
+#include <ScenarioClass.h>
+#include <SuperClass.h>
 
 class HouseClassExt
 {

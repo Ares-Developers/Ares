@@ -1,11 +1,11 @@
 #ifndef RULES_EXT_H
 #define RULES_EXT_H
 
-#include <YRPP.h>
 #include <MacroHelpers.h> //basically indicates that this is DCoder country
-#include "Ares.h"
-
 #include <hash_map>
+
+#include <CCINIClass.h>
+#include <WeaponTypeClass.h>
 
 class RulesClassExt
 {

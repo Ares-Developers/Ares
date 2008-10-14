@@ -1,7 +1,9 @@
 #ifndef INCLUSIONS_H
 #define INCLUSIONS_H
 
-#include <YRPP.h>
+#include <ArrayClasses.h>
+#include <CCFileClass.h>
+#include <CCINIClass.h>
 
 class Includes
 {

@@ -1,4 +1,3 @@
-#include <YRPP.h>
 #include "HouseExt.h"
 #include "Prerequisites.h"
 #include "TechnoTypeExt.h"

@@ -1,11 +1,18 @@
 #ifndef WARHEADTYPE_EXT_H
 #define WARHEADTYPE_EXT_H
 
-#include <YRPP.h>
-#include <MacroHelpers.h> //basically indicates that this is DCoder country
-#include "Ares.h"
-
 #include <hash_map>
+#include <MacroHelpers.h> //basically indicates that this is DCoder country
+
+#include <AnimClass.h>
+#include <BulletClass.h>
+#include <CaptureManagerClass.h>
+#include <CCINIClass.h>
+#include <CellSpread.h>
+#include <EMPulseClass.h>
+#include <MapClass.h>
+#include <TechnoClass.h>
+#include <WarheadTypeClass.h>
 
 class WarheadTypeClassExt
 {

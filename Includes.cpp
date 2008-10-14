@@ -1,5 +1,4 @@
 #include "Includes.h"
-#include "Ares.h"
 
 int Includes::LastReadIndex = -1;
 DynamicVectorClass<CCINIClass*> Includes::LoadedINIs;

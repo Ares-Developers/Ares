@@ -1,11 +1,3 @@
-#ifndef _CRT_SECURE_NO_WARNINGS
-#define _CRT_SECURE_NO_WARNINGS
-#endif
-#ifndef _CRT_NON_CONFORMING_SWPRINTFS
-#define _CRT_NON_CONFORMING_SWPRINTFS
-#endif
-#pragma warning(disable: 4035)	//"no return value" - there is one, just not in our code ;)
-
 #include "Sides.h"
 
 //Static init
@@ -465,6 +457,7 @@ EXPORT Sides_ParaDrop(REGISTERS* R)
 	return 0;
 }
 
+/*
 //0x752F46
 EXPORT Sides_LoadVoxFromINI(REGISTERS* R)
 {
@@ -500,8 +493,9 @@ EXPORT Sides_LoadVoxFromINI(REGISTERS* R)
 	}
 
 	Sides::EVAFiles[pThis] = FileNames;
-	return 0;
+	return 0;	
 }
+*/
 
 //0x7528E8
 EXPORT Sides_LoadVoxFile(REGISTERS* R)

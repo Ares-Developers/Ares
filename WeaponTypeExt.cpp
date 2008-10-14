@@ -1,4 +1,3 @@
-#include <YRPP.h>
 #include "WeaponTypeExt.h"
 #include "TechnoExt.h"
 

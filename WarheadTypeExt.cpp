@@ -1,4 +1,3 @@
-#include <YRPP.h>
 #include "WarheadTypeExt.h"
 
 EXT_P_DEFINE(WarheadTypeClass);

@@ -1,8 +1,6 @@
 #ifndef SUPERTYPE_EXT_SONAR_H
 #define SUPERTYPE_EXT_SONAR_H
 
-#include <YRPP.h>
-#include "..\Ares.h"
 #include "..\SuperWeaponTypeExt.h"
 
 #include <hash_map>

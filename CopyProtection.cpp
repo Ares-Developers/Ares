@@ -1,18 +1,8 @@
 //A whole source file simply for the purpose to dissolve WW's copy protections!
 
-#ifndef _CRT_SECURE_NO_WARNINGS
-#define _CRT_SECURE_NO_WARNINGS
-#endif
-#ifndef _CRT_NON_CONFORMING_SWPRINTFS
-#define _CRT_NON_CONFORMING_SWPRINTFS
-#endif
-#pragma warning(disable: 4035)	//"no return value" - there is one, just not in our code ;)
-
 #include "Ares.h"
 
 //TODO: Add a function that determines versions of the exes (detects a cracked ra2md.exe etc)?
-
-//
 
 //0x4A80D0
 EXPORT CD_AlwaysFindYR(REGISTERS* R)

@@ -1,9 +1,12 @@
 #ifndef GEN_PREREQ_H
 #define GEN_PREREQ_H
 
-#include <YRPP.h>
 #include <MacroHelpers.h> //basically indicates that this is DCoder country
-#include "Ares.h"
+#include <CCINIClass.h>
+#include <HouseClass.h>
+#include <UnitTypeClass.h>
+
+class HouseClass;
 
 class GenericPrerequisite
 {

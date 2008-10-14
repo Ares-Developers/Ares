@@ -1,4 +1,3 @@
-#include <YRPP.h>
 #include "Actions.h"
 
 MouseCursor Actions::MP = {0, 1, 0, 1, 1, 0, 0};
@@ -25,7 +24,7 @@ EXPORT Actions_CustomCursor_NonShrouded(REGISTERS* R)
 	if(pCursor)
 	{
 		//TODO: rewrite once MouseClass is defined!
-		GScreenClass* Mouse = (GScreenClass*)R->get_ESI();
+		MouseClass* Mouse = (MouseClass*)R->get_ESI();
 
 		//don't try this at home
 		Mouse->QueryCursor((int)pCursor, R->get_StackVar32(0x34));
