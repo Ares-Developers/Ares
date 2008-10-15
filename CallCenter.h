@@ -5,15 +5,12 @@
 #include <YRCallbacks.h>
 
 #include "Ares.h"
-#include "BuildingTypeExt.h"
 #include "HouseExt.h"
-#include "RulesExt.h"
 #include "TechnoExt.h"
 #include "TechnoTypeExt.h"
 #include "WeaponTypeExt.h"
 #include "WarheadTypeExt.h"
 #include "SuperWeaponTypeExt.h"
-#include "Countries.h"
 
 /*
 	Since only one function can be assigned to the YRPP callbacks,

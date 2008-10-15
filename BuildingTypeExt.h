@@ -1,6 +1,9 @@
 #ifndef BUILDINGTYPE_EXT_H
 #define BUILDINGTYPE_EXT_H
 
+#define BTEXT_VALIDATION 0xAFFEAFFE //double monkey!
+
+#include "Debug.h"
 #include <hash_map>
 
 #include <CCINIClass.h>
@@ -16,8 +19,13 @@ class BuildingClass;
 class BuildingTypeClassExt
 {
 public:
-	struct BuildingTypeClassData
+	class Struct
 	{
+	public:
+		// validation value for savegames
+		// not involved in any functionality, but I'm using this to find savegame problems, so keep it! -pd
+		DWORD SavegameValidation;
+
 		// foundations
 		bool IsCustom;
 		int CustomWidth;
@@ -29,17 +37,21 @@ public:
 		bool Secret_RecalcOnCapture;
 		bool Secret_Placed;
 
-		// these two are to initialize things that can't be inited in ctor (e.g. things that default to rules values)
-		bool Data_Initialized;
+		bool IsInitialized;
 		void Initialize(BuildingTypeClass *pThis);
+
+		Struct()
+		{
+			SavegameValidation = BTEXT_VALIDATION;
+			IsInitialized = false;
+			IsCustom = false;
+			CustomData = NULL;
+			CustomWidth = 0;
+			CustomHeight = 0;
+		}
 	};
 
-	static stdext::hash_map<BuildingTypeClass*, BuildingTypeClassData> Ext_v;
-
-	static void __stdcall Defaults(BuildingTypeClass*);
-	static void __stdcall Load(BuildingTypeClass*,IStream*);
-	static void __stdcall Save(BuildingTypeClass*,IStream*);
-	static void __stdcall LoadFromINI(BuildingTypeClass*,CCINIClass*);
+	static stdext::hash_map<BuildingTypeClass*, Struct> Map;
 
 	static void UpdateSecretLabOptions(BuildingClass *pThis);
 };

@@ -1,38 +1,12 @@
 #include "RulesExt.h"
 #include "Prerequisites.h"
+#include "Debug.h"
 #include "ArmorTypes.h"
 
-RulesClassExt::RulesClassData* RulesClassExt::Data;
+RulesClassExt::Struct RulesClassExt::Data;
 
-/*
-EXT_CTOR(RulesClass)
+void RulesClassExt::Struct::Initialize()
 {
-	RulesClassExt::Global()->Data_Initialized = 0;
-}
-
-EXT_DTOR(RulesClass)
-{
-	delete RulesClassExt::Global();
-}
-*/
-
-void RulesClassExt::Load(IStream *pStm)
-{
-	ULONG out;
-	pStm->Read(RulesClassExt::Global(), sizeof(RulesClassExt::RulesClassData), &out);
-}
-
-void RulesClassExt::Save(IStream *pStm)
-{
-	ULONG out;
-	pStm->Write(RulesClassExt::Global(), sizeof(RulesClassExt::RulesClassData), &out);
-}
-
-void RulesClassExt::RulesClassData::Initialize()
-{
-//	RulesClassExt::RulesClassData *pData = RulesClassExt::Global();
-//	RulesClass * pRules = RulesClass::Global();
-
 	GenericPrerequisite::FindOrAllocate("POWER");
 	GenericPrerequisite::FindOrAllocate("FACTORY");
 	GenericPrerequisite::FindOrAllocate("BARRACKS");
@@ -51,18 +25,47 @@ void RulesClassExt::RulesClassData::Initialize()
 	ArmorType::FindOrAllocate("concrete");
 	ArmorType::FindOrAllocate("special_1");
 	ArmorType::FindOrAllocate("special_2");
-
-	this->Data_Initialized = 1;
+	
+	IsInitialized = true;
 }
 
-void _stdcall RulesClassExt::Addition(CCINIClass* pINI)
+EXPORT RulesClassExt_Load(REGISTERS* R)
 {
+	IStream* pStm = (IStream*)R->get_StackVar32(0x4);
+
+	ULONG out;
+	pStm->Read(RulesClassExt::Global(), sizeof(RulesClassExt::Struct), &out);
+
+
+	if(RulesClassExt::Global()->SavegameValidation != RULESEXT_VALIDATION)
+		Debug::Log("SAVEGAME ERROR: RulesClassExt validation is faulty!\n");
+
+	return 0;
 }
 
-void _stdcall RulesClassExt::TypeData(CCINIClass* pINI)
+EXPORT RulesClassExt_Save(REGISTERS* R)
 {
+	IStream* pStm = (IStream*)R->get_StackVar32(0x4);
+
+	ULONG out;
+	pStm->Write(RulesClassExt::Global(), sizeof(RulesClassExt::Struct), &out);
+	return 0;
+}
+
+EXPORT RulesClassExt_Addition(REGISTERS* R)
+{
+	CCINIClass* pINI = (CCINIClass*)R->get_ESI();
+
 	RulesClassExt::Global()->Initialize();
 
+	return 0;
+}
+
+EXPORT RulesClassExt_TypeData(REGISTERS* R)
+{
+	CCINIClass* pINI = (CCINIClass*)R->get_ESI();
+
+	RulesClassExt::Global()->Initialize();
 	char buffer[0x24];
 
 	const char section[] = "WeaponTypes";
@@ -78,4 +81,5 @@ void _stdcall RulesClassExt::TypeData(CCINIClass* pINI)
 	}
 
 	GenericPrerequisite::LoadFromINIList(pINI);
+	return 0;
 }

@@ -1,8 +1,8 @@
-#include "Sides.h"
+#include "SideExt.h"
 
 //Static init
-stdext::hash_map<SideClass*, Sides::SideExtensionStruct> Sides::SideExt;
-stdext::hash_map<VoxClass*, DynamicVectorClass<Sides::VoxFileNameStruct> > Sides::EVAFiles;
+stdext::hash_map<SideClass*, SideExt::Struct> SideExt::Map;
+stdext::hash_map<VoxClass*, DynamicVectorClass<SideExt::VoxFileNameStruct> > SideExt::EVAFiles;
 
 //0x679A10
 EXPORT Sides_LoadFromINI(REGISTERS* R)
@@ -18,9 +18,9 @@ EXPORT Sides_LoadFromINI(REGISTERS* R)
 			if(_strcmpi(pID, "Civilian") && _strcmpi(pID, "Mutant"))
 			{
 				//defaults
-				if(Sides::SideExt.find(pThis) == Sides::SideExt.end())
+				if(SideExt::Map.find(pThis) == SideExt::Map.end())
 				{
-					Sides::SideExtensionStruct Ext;
+					SideExt::Struct Ext;
 
 					//are these necessary?
 					Ext.BaseDefenseCounts.Clear();
@@ -101,10 +101,10 @@ EXPORT Sides_LoadFromINI(REGISTERS* R)
 						Ext.SurvivorDivisor = RulesClass::Global()->get_AlliedSurvivorDivisor();
 					}
 
-					Sides::SideExt[pThis] = Ext;
+					SideExt::Map[pThis] = Ext;
 				}
 				
-				Sides::SideExtensionStruct* pExt = &Sides::SideExt[pThis];
+				SideExt::Struct* pExt = &SideExt::Map[pThis];
 				if(pExt)
 				{
 					char buffer[0x200];
@@ -233,9 +233,9 @@ EXPORT Sides_PowerPlant(REGISTERS* R)
 	int n = pThis->get_SideIndex();
 	SideClass* pSide = (*SideClass::Array)[n];
 
-	if(Sides::SideExt.find(pSide) != Sides::SideExt.end())
+	if(SideExt::Map.find(pSide) != SideExt::Map.end())
 	{
-		R->set_EDI((DWORD)Sides::SideExt[pSide].PowerPlant);
+		R->set_EDI((DWORD)SideExt::Map[pSide].PowerPlant);
 		return 0x4FE893;
 	}
 	else
@@ -250,26 +250,26 @@ EXPORT Sides_BaseDefenseCounts(REGISTERS* R)
 
 	SideClass* pSide = (*SideClass::Array)[n];
 
-	if(Sides::SideExt.find(pSide) != Sides::SideExt.end())
+	if(SideExt::Map.find(pSide) != SideExt::Map.end())
 	{
 		R->set_EAX(pThis->get_AIDifficulty());
-		R->set_EDX((DWORD)Sides::SideExt[pSide].BaseDefenseCounts.get_Items());
+		R->set_EDX((DWORD)SideExt::Map[pSide].BaseDefenseCounts.get_Items());
 		return 0x505CE6;
 	}
 	else
 		return 0;
 }
 
-DWORD Sides::BaseDefenses(REGISTERS* R, DWORD dwReturnAddress)
+DWORD SideExt::BaseDefenses(REGISTERS* R, DWORD dwReturnAddress)
 {
 	HouseTypeClass* pCountry = (HouseTypeClass*)R->get_EAX();
 
 	int n = pCountry->get_SideIndex();
 	SideClass* pSide = (*SideClass::Array)[n];
 
-	if(Sides::SideExt.find(pSide) != Sides::SideExt.end())
+	if(SideExt::Map.find(pSide) != SideExt::Map.end())
 	{
-		R->set_EBX((DWORD)&Sides::SideExt[pSide].BaseDefenses);
+		R->set_EBX((DWORD)&SideExt::Map[pSide].BaseDefenses);
 		return dwReturnAddress;
 	}
 	else
@@ -278,15 +278,15 @@ DWORD Sides::BaseDefenses(REGISTERS* R, DWORD dwReturnAddress)
 
 //0x507BCA
 EXPORT Sides_BaseDefenses1(REGISTERS* R)
-	{ return Sides::BaseDefenses(R, 0x507C00); }
+	{ return SideExt::BaseDefenses(R, 0x507C00); }
 
 //0x507DBA
 EXPORT Sides_BaseDefenses2(REGISTERS* R)
-	{ return Sides::BaseDefenses(R, 0x507DF0); }
+	{ return SideExt::BaseDefenses(R, 0x507DF0); }
 
 //0x507FAA
 EXPORT Sides_BaseDefenses3(REGISTERS* R)
-	{ return Sides::BaseDefenses(R, 0x507FE0); }
+	{ return SideExt::BaseDefenses(R, 0x507FE0); }
 
 //0x52267D
 EXPORT Sides_Disguise1(REGISTERS* R)
@@ -296,16 +296,16 @@ EXPORT Sides_Disguise1(REGISTERS* R)
 	int n = pHouse->get_SideIndex();
 	SideClass* pSide = (*SideClass::Array)[n];
 
-	if(Sides::SideExt.find(pSide) != Sides::SideExt.end())
+	if(SideExt::Map.find(pSide) != SideExt::Map.end())
 	{
-		R->set_EAX((DWORD)Sides::SideExt[pSide].DefaultDisguise);
+		R->set_EAX((DWORD)SideExt::Map[pSide].DefaultDisguise);
 		return 0x5226B7;
 	}
 	else
 		return 0;
 }
 
-DWORD Sides::Disguise(REGISTERS* R, DWORD dwReturnAddress, bool bUseESI)
+DWORD SideExt::Disguise(REGISTERS* R, DWORD dwReturnAddress, bool bUseESI)
 {
 	HouseClass* pHouse = (HouseClass*)R->get_EAX();
 	InfantryClass* pThis;
@@ -318,9 +318,9 @@ DWORD Sides::Disguise(REGISTERS* R, DWORD dwReturnAddress, bool bUseESI)
 	int n = pHouse->get_SideIndex();
 	SideClass* pSide = (*SideClass::Array)[n];
 
-	if(Sides::SideExt.find(pSide) != Sides::SideExt.end())
+	if(SideExt::Map.find(pSide) != SideExt::Map.end())
 	{
-		pThis->set_Disguise(Sides::SideExt[pSide].DefaultDisguise);
+		pThis->set_Disguise(SideExt::Map[pSide].DefaultDisguise);
 		return dwReturnAddress;
 	}
 	else
@@ -329,11 +329,11 @@ DWORD Sides::Disguise(REGISTERS* R, DWORD dwReturnAddress, bool bUseESI)
 
 //0x5227A3
 EXPORT Sides_Disguise2(REGISTERS* R)
-	{ return Sides::Disguise(R, 0x5227EC, false); }
+	{ return SideExt::Disguise(R, 0x5227EC, false); }
 
 //0x6F422F
 EXPORT Sides_Disguise3(REGISTERS* R)
-	{ return Sides::Disguise(R, 0x6F4277, true); }
+	{ return SideExt::Disguise(R, 0x6F4277, true); }
 
 //0x707D40
 EXPORT Sides_Crew(REGISTERS* R)
@@ -343,9 +343,9 @@ EXPORT Sides_Crew(REGISTERS* R)
 	int n = pHouse->get_SideIndex();
 	SideClass* pSide = (*SideClass::Array)[n];
 
-	if(Sides::SideExt.find(pSide) != Sides::SideExt.end())
+	if(SideExt::Map.find(pSide) != SideExt::Map.end())
 	{
-		R->set_ESI((DWORD)Sides::SideExt[pSide].Crew);
+		R->set_ESI((DWORD)SideExt::Map[pSide].Crew);
 		return 0x707D81;
 	}
 	else
@@ -360,23 +360,23 @@ EXPORT Sides_SurvivorDivisor(REGISTERS* R)
 	int n = pHouse->get_SideIndex();
 	SideClass* pSide = (*SideClass::Array)[n];
 
-	if(Sides::SideExt.find(pSide) != Sides::SideExt.end())
+	if(SideExt::Map.find(pSide) != SideExt::Map.end())
 	{
-		R->set_ESI((DWORD)Sides::SideExt[pSide].SurvivorDivisor);
+		R->set_ESI((DWORD)SideExt::Map[pSide].SurvivorDivisor);
 		return 0x451391;
 	}
 	else
 		return 0;
 }
 
-DWORD Sides::LoadTextColor(REGISTERS* R, DWORD dwReturnAddress)
+DWORD SideExt::LoadTextColor(REGISTERS* R, DWORD dwReturnAddress)
 {
 	int n = R->get_EAX();
 	SideClass* pSide = (*SideClass::Array)[n];
 
-	if(Sides::SideExt.find(pSide) != Sides::SideExt.end())
+	if(SideExt::Map.find(pSide) != SideExt::Map.end())
 	{
-		R->set_EAX((DWORD)Sides::SideExt[pSide].LoadTextColor);
+		R->set_EAX((DWORD)SideExt::Map[pSide].LoadTextColor);
 		return dwReturnAddress;
 	}
 	else
@@ -385,11 +385,11 @@ DWORD Sides::LoadTextColor(REGISTERS* R, DWORD dwReturnAddress)
 
 //0x642B36
 EXPORT Sides_LoadTextColor1(REGISTERS* R)
-	{ return Sides::LoadTextColor(R, 0x68CAA9); }
+	{ return SideExt::LoadTextColor(R, 0x68CAA9); }
 
 //0x643BB9
 EXPORT Sides_LoadTextColor2(REGISTERS* R)
-	{ return Sides::LoadTextColor(R, 0x643BEF); }
+	{ return SideExt::LoadTextColor(R, 0x643BEF); }
 
 //0x534FB1
 EXPORT Sides_MixFileIndex(REGISTERS* R)
@@ -397,24 +397,24 @@ EXPORT Sides_MixFileIndex(REGISTERS* R)
 	int n = R->get_ESI();
 	SideClass* pSide = (*SideClass::Array)[n];
 
-	if(Sides::SideExt.find(pSide) != Sides::SideExt.end())
-		R->set_ESI((DWORD)Sides::SideExt[pSide].SidebarMixFileIndex);
+	if(SideExt::Map.find(pSide) != SideExt::Map.end())
+		R->set_ESI((DWORD)SideExt::Map[pSide].SidebarMixFileIndex);
 	else if(n == 2)
 		R->set_ESI(1);
 
 	return 0x534FBB;
 }
 
-DWORD Sides::MixFileYuriFiles(REGISTERS* R, DWORD dwReturnAddress1, DWORD dwReturnAddress2)
+DWORD SideExt::MixFileYuriFiles(REGISTERS* R, DWORD dwReturnAddress1, DWORD dwReturnAddress2)
 {
 	BYTE* pScenario = (BYTE*)R->get_EAX();	//Scenario, upate this once mapped!
 	int n = *((int*)(pScenario + 0x34B8));
 
 	SideClass* pSide = (*SideClass::Array)[n];
 
-	if(Sides::SideExt.find(pSide) != Sides::SideExt.end())
+	if(SideExt::Map.find(pSide) != SideExt::Map.end())
 	{
-		if(Sides::SideExt[pSide].SidebarYuriFileNames)
+		if(SideExt::Map[pSide].SidebarYuriFileNames)
 			return dwReturnAddress1;
 		else
 			return dwReturnAddress2;
@@ -425,15 +425,15 @@ DWORD Sides::MixFileYuriFiles(REGISTERS* R, DWORD dwReturnAddress1, DWORD dwRetu
 
 //0x72FA1A
 EXPORT Sides_MixFileYuriFiles1(REGISTERS* R)
-	{ return Sides::MixFileYuriFiles(R, 0x72FA23, 0x72FA6A); }
+	{ return SideExt::MixFileYuriFiles(R, 0x72FA23, 0x72FA6A); }
 
 //0x72F370
 EXPORT Sides_MixFileYuriFiles2(REGISTERS* R)
-	{ return Sides::MixFileYuriFiles(R, 0x72F379, 0x72F3A0); }
+	{ return SideExt::MixFileYuriFiles(R, 0x72F379, 0x72F3A0); }
 
 //0x72FBC3
 EXPORT Sides_MixFileYuriFiles3(REGISTERS* R)
-	{ return Sides::MixFileYuriFiles(R, 0x72FBCE, 0x72FBF5); }
+	{ return SideExt::MixFileYuriFiles(R, 0x72FBCE, 0x72FBF5); }
 
 //0x6CD3C1
 EXPORT Sides_ParaDrop(REGISTERS* R)
@@ -443,14 +443,14 @@ EXPORT Sides_ParaDrop(REGISTERS* R)
 	int n = pHouse->get_SideIndex();
 	SideClass* pSide = (*SideClass::Array)[n];
 
-	if(Sides::SideExt.find(pSide) != Sides::SideExt.end())
+	if(SideExt::Map.find(pSide) != SideExt::Map.end())
 	{
 		Ares::SendPDPlane(
 			pHouse,
 			(CellClass*)R->get_EBP(),
 			AircraftTypeClass::Array->GetItem(R->get_ESI()),
-			&Sides::SideExt[pSide].ParaDrop,
-			&Sides::SideExt[pSide].ParaDropNum);
+			&SideExt::Map[pSide].ParaDrop,
+			&SideExt::Map[pSide].ParaDropNum);
 		
 		return 0x6CD500;
 	}
@@ -466,17 +466,17 @@ EXPORT Sides_LoadVoxFromINI(REGISTERS* R)
 
 	DEBUGLOG("VoxClass::LoadFromINI (%s, pINI = 0x%08X)\n", pThis->get_Name(), pINI);
 
-	DynamicVectorClass<Sides::VoxFileNameStruct> FileNames;
-	Sides::VoxFileNameStruct vfn;
+	DynamicVectorClass<SideExt::VoxFileNameStruct> FileNames;
+	SideExt::VoxFileNameStruct vfn;
 	char buffer[0x10] = "\0";
 	
 	for(int i = 0; i < SideClass::Array->get_Count(); i++)
 	{
-		if(Sides::SideExt.find((*SideClass::Array)[i]) != Sides::SideExt.end())
+		if(SideExt::Map.find((*SideClass::Array)[i]) != SideExt::Map.end())
 		{
 			pINI->ReadString(
 				pThis->get_Name(),
-				Sides::SideExt[(*SideClass::Array)[i]].EVATag,
+				SideExt::Map[(*SideClass::Array)[i]].EVATag,
 				"",
 				buffer,
 				0x10);
@@ -492,7 +492,7 @@ EXPORT Sides_LoadVoxFromINI(REGISTERS* R)
 		}
 	}
 
-	Sides::EVAFiles[pThis] = FileNames;
+	SideExt::EVAFiles[pThis] = FileNames;
 	return 0;	
 }
 */
@@ -501,11 +501,11 @@ EXPORT Sides_LoadVoxFromINI(REGISTERS* R)
 EXPORT Sides_LoadVoxFile(REGISTERS* R)
 {
 	VoxClass* pThis = (VoxClass*)R->get_EBP();
-	if(Sides::EVAFiles.find(pThis) != Sides::EVAFiles.end())
+	if(SideExt::EVAFiles.find(pThis) != SideExt::EVAFiles.end())
 	{
 		int nSideIndex = *((int*)0xB1D4C8);
 
-		R->set_EDI((DWORD)Sides::EVAFiles[pThis][nSideIndex].FileName);
+		R->set_EDI((DWORD)SideExt::EVAFiles[pThis][nSideIndex].FileName);
 		return 0x752901;
 	}
 

@@ -1,5 +1,7 @@
-#ifndef COUNTRIES_H
-#define COUNTRIES_H
+#ifndef HTEXT_H
+#define HTEXT_H
+
+#define HTEXT_VALIDATION 0x12345678
 
 #include <CCINIClass.h>
 #include <hash_map>
@@ -7,13 +9,18 @@
 #include <PCX.h>
 #include <StringTable.h>
 
+//TODO: Rename to HouseTypeExt
 //TODO: Load/Save from savegames
 
-class Countries
+class HouseTypeExt
 {
 public:
-	struct CountryExtensionStruct
+	class Struct
 	{
+	public:
+		// validation value for savegames
+		// not involved in any functionality, but I'm using this to find savegame problems, so keep it! -pd
+		DWORD SavegameValidation;
 		char FlagFile[0x20]; //Flag
 		char LSFile[0x20]; //LoadScreen
 		char LSPALFile[0x20]; //LoadScreen palette
@@ -25,11 +32,7 @@ public:
 		int RandomSelectionWeight; //This country gets added this many times into the list of legible countries for random selection.
 	};
 
-	static stdext::hash_map<HouseTypeClass*,CountryExtensionStruct> CountryExt;
-
-	static void __stdcall Construct(HouseTypeClass*);
-	static void __stdcall LoadFromINI(HouseTypeClass*, CCINIClass*);
-
+	static stdext::hash_map<HouseTypeClass*, Struct> Map;
 	static int PickRandomCountry();
 };
 

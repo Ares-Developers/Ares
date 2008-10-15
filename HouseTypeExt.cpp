@@ -1,16 +1,20 @@
-#include "Countries.h"
+#include "HouseTypeExt.h"
 
 //Static init
-stdext::hash_map<HouseTypeClass*,Countries::CountryExtensionStruct> Countries::CountryExt;
+stdext::hash_map<HouseTypeClass*, HouseTypeExt::Struct> HouseTypeExt::Map;
 
-void __stdcall Countries::Construct(HouseTypeClass* pThis)
+//0x511635, 5
+//0x511645, 3
+EXPORT HTExt_Construct(REGISTERS* R)
 {
-	CountryExtensionStruct Ext;
+	HouseTypeClass* pThis = (HouseTypeClass*)R->get_ESI();
+	HouseTypeExt::Struct Ext;
 
 	char* pID = pThis->get_ID();
 
 	//We assign default values by country ID rather than index so you simply add a new country
 	//without having to specify all the tags for the old ones
+	Ext.SavegameValidation = HTEXT_VALIDATION;
 
 	if(!_strcmpi(pID, "Americans"))	//USA
 	{
@@ -135,14 +139,20 @@ void __stdcall Countries::Construct(HouseTypeClass* pThis)
 	}
 	Ext.RandomSelectionWeight = 1;
 
-	CountryExt[pThis] = Ext;
+	HouseTypeExt::Map[pThis] = Ext;
+
+	return 0;
 }
 
-void __stdcall Countries::LoadFromINI(HouseTypeClass* pThis, CCINIClass* pINI)
+//0x51214F, 5
+EXPORT HTExt_LoadFromINI(REGISTERS* R)
 {
-	if(pINI && CountryExt.find(pThis) != CountryExt.end())
+	HouseTypeClass* pThis = (HouseTypeClass*)R->get_EBX();
+	CCINIClass* pINI = (CCINIClass*)R->get_BaseVar32(0x8);
+
+	if(pINI && HouseTypeExt::Map.find(pThis) != HouseTypeExt::Map.end())
 	{
-		CountryExtensionStruct* pExt = &CountryExt[pThis];
+		HouseTypeExt::Struct* pExt = &HouseTypeExt::Map[pThis];
 
 		char buffer[0x80] = "\0";
 		char* pID = pThis->get_ID();
@@ -178,18 +188,20 @@ void __stdcall Countries::LoadFromINI(HouseTypeClass* pThis, CCINIClass* pINI)
 
 		pExt->RandomSelectionWeight = pINI->ReadInteger(pID, "RandomSelectionWeight", pExt->RandomSelectionWeight);
 	}
+
+	return 0;
 }
 
 //0x5536DA
-EXPORT Countries_GetLSName(REGISTERS* R)
+EXPORT HTExt_GetLSName(REGISTERS* R)
 {
 	int n = R->get_EBX();
 	HouseTypeClass* pThis = HouseTypeClass::Array->GetItem(n);
 
 	char* pLSName = NULL;
 
-	if(Countries::CountryExt.find(pThis) != Countries::CountryExt.end())
-		pLSName = Countries::CountryExt[pThis].LSName;
+	if(HouseTypeExt::Map.find(pThis) != HouseTypeExt::Map.end())
+		pLSName = HouseTypeExt::Map[pThis].LSName;
 	else if(n == 0)
 		pLSName = "Name:Americans";
 	else 
@@ -200,14 +212,14 @@ EXPORT Countries_GetLSName(REGISTERS* R)
 }
 
 //0x553A05
-EXPORT Countries_GetLSSpecialName(REGISTERS* R)
+EXPORT HTExt_GetLSSpecialName(REGISTERS* R)
 {
 	int n = R->get_StackVar32(0x38);
 	HouseTypeClass* pThis = HouseTypeClass::Array->GetItem(n);
 
-	if(Countries::CountryExt.find(pThis) != Countries::CountryExt.end())
+	if(HouseTypeExt::Map.find(pThis) != HouseTypeExt::Map.end())
 	{
-		R->set_EAX((DWORD)StringTable::LoadString(Countries::CountryExt[pThis].LSSpecialName));
+		R->set_EAX((DWORD)StringTable::LoadString(HouseTypeExt::Map[pThis].LSSpecialName));
 		return 0x553B3B;
 	}
 
@@ -215,14 +227,14 @@ EXPORT Countries_GetLSSpecialName(REGISTERS* R)
 }
 
 //0x553D06
-EXPORT Countries_GetLSBrief(REGISTERS* R)
+EXPORT HTExt_GetLSBrief(REGISTERS* R)
 {
 	int n = R->get_StackVar32(0x38);
 	HouseTypeClass* pThis = HouseTypeClass::Array->GetItem(n);
 
-	if(Countries::CountryExt.find(pThis) != Countries::CountryExt.end())
+	if(HouseTypeExt::Map.find(pThis) != HouseTypeExt::Map.end())
 	{
-		R->set_ESI((DWORD)StringTable::LoadString(Countries::CountryExt[pThis].LSBrief));
+		R->set_ESI((DWORD)StringTable::LoadString(HouseTypeExt::Map[pThis].LSBrief));
 		return 0x553E54;
 	}
 
@@ -230,15 +242,15 @@ EXPORT Countries_GetLSBrief(REGISTERS* R)
 }
 
 //0x4E3579
-EXPORT Countries_DrawFlag(REGISTERS* R)
+EXPORT HTExt_DrawFlag(REGISTERS* R)
 {
 	int n = R->get_ECX();
 	HouseTypeClass* pThis = HouseTypeClass::Array->GetItem(n);
 	
 	char* pFlagFile = NULL;
 
-	if(Countries::CountryExt.find(pThis) != Countries::CountryExt.end())
-		pFlagFile = Countries::CountryExt[pThis].FlagFile;
+	if(HouseTypeExt::Map.find(pThis) != HouseTypeExt::Map.end())
+		pFlagFile = HouseTypeExt::Map[pThis].FlagFile;
 	else if(n == 0)
 		pFlagFile = "usai.pcx";
 	else
@@ -250,15 +262,15 @@ EXPORT Countries_DrawFlag(REGISTERS* R)
 }
 
 //0x72B690
-EXPORT Countries_LSPAL(REGISTERS* R)
+EXPORT HTExt_LSPAL(REGISTERS* R)
 {
 	int n = R->get_EDI();
 	HouseTypeClass* pThis = HouseTypeClass::Array->GetItem(n);
 
 	char* pPALFile = NULL;
 
-	if(Countries::CountryExt.find(pThis) != Countries::CountryExt.end())
-		pPALFile = Countries::CountryExt[pThis].LSPALFile;
+	if(HouseTypeExt::Map.find(pThis) != HouseTypeExt::Map.end())
+		pPALFile = HouseTypeExt::Map[pThis].LSPALFile;
 	else if(n == 0)
 		pPALFile = "mplsu.pal";	//need to recode cause I broke the code with the jump
 	else
@@ -274,15 +286,15 @@ EXPORT Countries_LSPAL(REGISTERS* R)
 }
 
 //0x4E38D8
-EXPORT Countries_GetSTT(REGISTERS* R)
+EXPORT HTExt_GetSTT(REGISTERS* R)
 {
 	int n = R->get_ECX();
 	HouseTypeClass* pThis = HouseTypeClass::Array->GetItem(n);
 
 	char* pSTT = NULL;
 
-	if(Countries::CountryExt.find(pThis) != Countries::CountryExt.end())
-		pSTT = Countries::CountryExt[pThis].StatusText;
+	if(HouseTypeExt::Map.find(pThis) != HouseTypeExt::Map.end())
+		pSTT = HouseTypeExt::Map[pThis].StatusText;
 	else if(n == 0)
 		pSTT = "STT:PlayerSideAmerica";
 	else 
@@ -293,15 +305,15 @@ EXPORT Countries_GetSTT(REGISTERS* R)
 }
 
 //0x553412
-EXPORT Countries_LSFile(REGISTERS* R)
+EXPORT HTExt_LSFile(REGISTERS* R)
 {
 	int n = R->get_EBX();
 	HouseTypeClass* pThis = HouseTypeClass::Array->GetItem(n);
 
 	char* pLSFile = NULL;
 
-	if(Countries::CountryExt.find(pThis) != Countries::CountryExt.end())
-		pLSFile = Countries::CountryExt[pThis].LSFile;
+	if(HouseTypeExt::Map.find(pThis) != HouseTypeExt::Map.end())
+		pLSFile = HouseTypeExt::Map[pThis].LSFile;
 	else if(n == 0)
 		pLSFile = "ls%sustates.shp";
 	else
@@ -312,16 +324,16 @@ EXPORT Countries_LSFile(REGISTERS* R)
 }
 
 //0x752BA1
-EXPORT Countries_GetTaunt(REGISTERS* R)
+EXPORT HTExt_GetTaunt(REGISTERS* R)
 {
 	char* pFileName = (char*)R->get_ESP() + 0x04;
 	int nTaunt = R->get_CL() & 0xF;
 	int nCountry = (R->get_CL() >> 4) & 0xF;	//ARF 16-country-limit >.<
 
 	HouseTypeClass* pThis = HouseTypeClass::Array->GetItem(nCountry);
-	if(Countries::CountryExt.find(pThis) != Countries::CountryExt.end())
+	if(HouseTypeExt::Map.find(pThis) != HouseTypeExt::Map.end())
 	{
-		sprintf(pFileName, Countries::CountryExt[pThis].TauntFile, nTaunt);
+		sprintf(pFileName, HouseTypeExt::Map[pThis].TauntFile, nTaunt);
 
 		R->set_ECX(*((DWORD*)0xB1D4D8));
 		return 0x752C54;
@@ -331,27 +343,27 @@ EXPORT Countries_GetTaunt(REGISTERS* R)
 }
 
 //0x4E3792
-EXPORT Countries_Unlimit1(REGISTERS* R)
+EXPORT HTExt_Unlimit1(REGISTERS* R)
 { return 0x4E37AD; }
 
 //0x4E3A9C
-EXPORT Countries_Unlimit2(REGISTERS* R)
+EXPORT HTExt_Unlimit2(REGISTERS* R)
 { return 0x4E3AA1; }
 
 //0x4E3F31
-EXPORT Countries_Unlimit3(REGISTERS* R)
+EXPORT HTExt_Unlimit3(REGISTERS* R)
 { return 0x4E3F4C; }
 
 //0x4E412C
-EXPORT Countries_Unlimit4(REGISTERS* R)
+EXPORT HTExt_Unlimit4(REGISTERS* R)
 { return 0x4E4147; }
 
 //0x4E41A7
-EXPORT Countries_Unlimit5(REGISTERS* R)
+EXPORT HTExt_Unlimit5(REGISTERS* R)
 { return 0x4E41C3; }
 
 //Helper function
-int Countries::PickRandomCountry()
+int HouseTypeExt::PickRandomCountry()
 {
 	std::vector<int> vecLegible;
 	HouseTypeClass* pCountry;
@@ -361,9 +373,9 @@ int Countries::PickRandomCountry()
 		pCountry = HouseTypeClass::Array->GetItem(i);
 		if(pCountry->get_Multiplay())
 		{
-			if(Countries::CountryExt.find(pCountry) != Countries::CountryExt.end())
+			if(HouseTypeExt::Map.find(pCountry) != HouseTypeExt::Map.end())
 			{
-				for(int k = 0; k < Countries::CountryExt[pCountry].RandomSelectionWeight; k++)
+				for(int k = 0; k < HouseTypeExt::Map[pCountry].RandomSelectionWeight; k++)
 					vecLegible.push_back(i);
 			}
 			else
@@ -394,15 +406,15 @@ int Countries::PickRandomCountry()
 }
 
 //0x69B774
-EXPORT Countries_PickRandom_Human(REGISTERS* R)
+EXPORT HTExt_PickRandom_Human(REGISTERS* R)
 {
-	R->set_EAX(Countries::PickRandomCountry());
+	R->set_EAX(HouseTypeExt::PickRandomCountry());
 	return 0x69B788;
 }
 
 //0x69B670
-EXPORT Countries_PickRandom_AI(REGISTERS* R)
+EXPORT HTExt_PickRandom_AI(REGISTERS* R)
 {
-	R->set_EAX(Countries::PickRandomCountry());
+	R->set_EAX(HouseTypeExt::PickRandomCountry());
 	return 0x69B684;
 }

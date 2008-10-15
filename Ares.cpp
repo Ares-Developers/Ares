@@ -8,13 +8,8 @@
 HANDLE  Ares::hInstance = 0;
 bool	Ares::bNoLogo = false;
 bool	Ares::bNoCD = false;
-bool	Ares::bLog = true;
-FILE*	Ares::pLogFile = NULL;
 
 int FrameStepCommandClass::ArmageddonState = 0;
-
-void (_cdecl* Ares::Log)(const char* pFormat,...) = 
-	(void (__cdecl *)(const char *,...))0x4068E0;
 
 //Implementations
 eMouseEventFlags __stdcall Ares::MouseEvent(Point2D* pClient,eMouseEventFlags EventFlags)
@@ -35,31 +30,31 @@ void __stdcall Ares::CmdLineParse(char** ppArgs,int nNumArgs)
 {
 	char* pArg;
 
-	if(nNumArgs>1)	//>1 because the exe path itself counts as an argument, too!
+	Debug::bLog = false;
+	bNoCD = false;
+	bNoLogo = false;
+
+	if(nNumArgs > 1)	//>1 because the exe path itself counts as an argument, too!
 	{
-		for(int i=1;i<nNumArgs;i++)
+		for(int i = 1; i < nNumArgs; i++)
 		{
-			pArg=ppArgs[i];
+			pArg = ppArgs[i];
 
 			_strupr(pArg);
 
-			if(_strcmpi(pArg,"-LOG")==0)bLog=true;
-			if(_strcmpi(pArg,"-CD")==0)bNoCD=true;
-			if(_strcmpi(pArg,"-NOLOGO")==0)bNoLogo=true;
+			if(_strcmpi(pArg,"-LOG") == 0)
+				Debug::bLog = true;
+
+			if(_strcmpi(pArg,"-CD") == 0)
+				bNoCD = true;
+
+			if(_strcmpi(pArg,"-NOLOGO") == 0)
+				bNoLogo = true;
 		}
 	}
-	else
-	{
-		bLog=false;
-		bNoCD=false;
-		bNoLogo=false;
-	}
 
-	if(!bLog)
-	{
-		LogFile_Close();
-		remove("DEBUG.TXT");
-	}
+	if(!Debug::bLog)
+		Debug::LogFileRemove();
 }
 
 void __stdcall Ares::PostGameInit()
@@ -69,12 +64,12 @@ void __stdcall Ares::PostGameInit()
 
 void __stdcall Ares::ExeRun()
 {
-	Ares::LogFile_Open();
+	Debug::LogFileOpen();
 }
 
 void __stdcall Ares::ExeTerminate()
 {
-	Ares::LogFile_Close();
+	Debug::LogFileClose();
 }
 
 //A new SendPDPlane function
@@ -173,20 +168,6 @@ bool __stdcall DllMain(HANDLE hInstance,DWORD dwReason,LPVOID v)
 }
 
 //Exports
-
-//Hook at 0x4068E0 AND 4A4AC0
-EXPORT Ares_Log(REGISTERS* R)
-{
-	if(Ares::bLog && Ares::pLogFile)
-	{
-		va_list ArgList=(va_list)(R->get_ESP()+0x8);
-		char* Format=(char*)R->get_StackVar32(0x4);
-
-		vfprintf(Ares::pLogFile,Format,ArgList);
-		fflush(Ares::pLogFile);
-	}
-	return 0;
-}
 
 //Hook at 0x52C5E0
 EXPORT Ares_NoLogo(REGISTERS* R)

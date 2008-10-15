@@ -2,109 +2,99 @@
 #include "TechnoTypeExt.h"
 #include "HouseExt.h"
 
-stdext::hash_map<BuildingTypeClass*, BuildingTypeClassExt::BuildingTypeClassData> BuildingTypeClassExt::Ext_v;
+stdext::hash_map<BuildingTypeClass*, BuildingTypeClassExt::Struct> BuildingTypeClassExt::Map;
 
-void __stdcall BuildingTypeClassExt::Defaults(BuildingTypeClass* pThis)
-{
-	if(Ext_v.find(pThis) != Ext_v.end())
-	{
-		if(Ext_v[pThis].CustomData)
-			delete Ext_v[pThis].CustomData;
-	}
-
-	Ext_v[pThis].IsCustom = false;
-	Ext_v[pThis].CustomWidth = 0;
-	Ext_v[pThis].CustomHeight = 0;
-	Ext_v[pThis].CustomData = NULL;
-	Ext_v[pThis].Secret_Boons.Clear();
-	Ext_v[pThis].Secret_Placed = false;
-}
-
-void __stdcall BuildingTypeClassExt::Load(BuildingTypeClass* pThis, IStream* pStm)
-{
-	if(Ext_v.find(pThis) != Ext_v.end())
-	{
-		Defaults(pThis);
-
-		ULONG out;
-		pStm->Read(&Ext_v[pThis], sizeof(BuildingTypeClassData), &out);
-
-		//if there's custom data, read it
-		if(Ext_v[pThis].IsCustom && Ext_v[pThis].CustomWidth > 0 && Ext_v[pThis].CustomHeight > 0)
-		{
-			Ext_v[pThis].CustomData = 
-				new CellStruct[Ext_v[pThis].CustomWidth * Ext_v[pThis].CustomHeight + 1];
-
-			pStm->Read(
-				Ext_v[pThis].CustomData,
-				sizeof(CellStruct) * (Ext_v[pThis].CustomWidth * Ext_v[pThis].CustomHeight + 1),
-				&out);
-
-			pThis->set_Foundation(FOUNDATION_CUSTOM);
-			pThis->set_FoundationData(Ext_v[pThis].CustomData);
-		}
-	}
-}
-
-void __stdcall BuildingTypeClassExt::Save(BuildingTypeClass* pThis, IStream* pStm)
-{
-	if(Ext_v.find(pThis) != Ext_v.end())
-	{
-		if(!Ext_v[pThis].CustomData)
-			Ext_v[pThis].IsCustom = true;
-
-		ULONG out;
-		pStm->Write(&Ext_v[pThis], sizeof(BuildingTypeClassData), &out);
-
-		//if there's custom data, write it
-		if(Ext_v[pThis].IsCustom)
-		{
-			pStm->Write(
-				Ext_v[pThis].CustomData,
-				sizeof(CellStruct) * (Ext_v[pThis].CustomWidth * Ext_v[pThis].CustomHeight + 1),
-				&out);
-		}
-	}
-}
-
-void BuildingTypeClassExt::BuildingTypeClassData::Initialize(BuildingTypeClass *pThis)
+//never called - I'll just leave it alone for now
+void BuildingTypeClassExt::Struct::Initialize(BuildingTypeClass *pThis)
 {
 	if(pThis->get_SecretLab())
 	{
 		DynamicVectorClass<TechnoTypeClass *> *Options = (DynamicVectorClass<TechnoTypeClass *> *)RulesClass::Global()->get_SecretInfantry();
 		for(int i = 0; i < Options->get_Count(); ++i)
-		{
-			this->Secret_Boons.AddItem(Options->GetItem(i));
-		}
+			Secret_Boons.AddItem(Options->GetItem(i));
+
 		Options = (DynamicVectorClass<TechnoTypeClass *> *)RulesClass::Global()->get_SecretUnits();
 		for(int i = 0; i < Options->get_Count(); ++i)
-		{
 			this->Secret_Boons.AddItem(Options->GetItem(i));
-		}
+
 		Options = (DynamicVectorClass<TechnoTypeClass *> *)RulesClass::Global()->get_SecretBuildings();
 		for(int i = 0; i < Options->get_Count(); ++i)
-		{
 			this->Secret_Boons.AddItem(Options->GetItem(i));
-		}
 	}
 
-	this->Data_Initialized = 1;
+	IsInitialized = true;
 }
 
-void __stdcall BuildingTypeClassExt::LoadFromINI(BuildingTypeClass* pThis, CCINIClass* pINI)
+//0x4652ED, 7
+EXPORT BTExt_Load(REGISTERS* R)
 {
-	//Reload the Foundation tag from the ART ini and check whether it is Custom.
-	if(Ext_v.find(pThis) == Ext_v.end())
+	BuildingTypeClass* pThis = (BuildingTypeClass*)R->get_ESI();
+	IStream* pStm = (IStream*)R->get_EDI();
+
+	BuildingTypeClassExt::Struct* pExt = &BuildingTypeClassExt::Map[pThis];
+
+	ULONG out;
+	pStm->Read(pExt, sizeof(BuildingTypeClassExt::Struct), &out);
+
+	if(pExt->SavegameValidation != BTEXT_VALIDATION)
+		Debug::Log("SAVEGAME ERROR: BuildingTypeExt validation is faulty for %s!\n", pThis->get_ID());
+
+	//if there's custom data, read it
+	if(pExt->IsCustom && pExt->CustomWidth > 0 && pExt->CustomHeight > 0)
 	{
-		return;
+		pExt->CustomData = new CellStruct[pExt->CustomWidth * pExt->CustomHeight + 1];
+
+		pStm->Read(
+			pExt->CustomData,
+			sizeof(CellStruct) * (pExt->CustomWidth * pExt->CustomHeight + 1),
+			&out);
+
+		pThis->set_Foundation(FOUNDATION_CUSTOM);
+		pThis->set_FoundationData(pExt->CustomData);
 	}
 
-	BuildingTypeClassData* pData = &Ext_v[pThis];
+	return 0;
+}
+
+//0x46536E, 3
+EXPORT BTExt_Save(REGISTERS* R)
+{
+	BuildingTypeClass* pThis = (BuildingTypeClass*)R->get_StackVar32(0x4);
+	IStream* pStm = (IStream*)R->get_StackVar32(0x8);
+
+	BuildingTypeClassExt::Struct* pExt = &BuildingTypeClassExt::Map[pThis];
+
+	if(!pExt->CustomData)
+		pExt->IsCustom = true;
+
+	ULONG out;
+	pStm->Write(pExt, sizeof(BuildingTypeClassExt::Struct), &out);
+
+	//if there's custom data, write it
+	if(pExt->IsCustom)
+	{
+		pStm->Write(
+			pExt->CustomData,
+			sizeof(CellStruct) * (pExt->CustomWidth * pExt->CustomHeight + 1),
+			&out);
+	}
+
+	return 0;
+}
+
+//0x464A47, 5
+EXPORT BTExt_LoadFromINI(REGISTERS* R)
+{
+	BuildingTypeClass* pThis = (BuildingTypeClass*)R->get_EBP();
+	CCINIClass* pINI = (CCINIClass*)R->get_StackVar32(0x36C);
+
+	//Reload the Foundation tag from the ART ini and check whether it is Custom.
+	BuildingTypeClassExt::Struct* pData = &BuildingTypeClassExt::Map[pThis];
 	if(pData->IsCustom)
 	{
 		//Reset
 		pThis->set_Foundation(FOUNDATION_CUSTOM);
-		pThis->set_FoundationData(Ext_v[pThis].CustomData);
+		pThis->set_FoundationData(pData->CustomData);
 	}
 	else
 	{
@@ -178,14 +168,16 @@ void __stdcall BuildingTypeClassExt::LoadFromINI(BuildingTypeClass* pThis, CCINI
 			}
 		}
 	}
-	pData->Secret_RecalcOnCapture
-		= pINI->ReadBool(pThis->get_ID(), "SecretLab.GenerateOnCapture", pData->Secret_RecalcOnCapture);
+	pData->Secret_RecalcOnCapture =
+		pINI->ReadBool(pThis->get_ID(), "SecretLab.GenerateOnCapture", pData->Secret_RecalcOnCapture);
+
+	return 0;
 }
 
 void BuildingTypeClassExt::UpdateSecretLabOptions(BuildingClass *pThis)
 {
 	BuildingTypeClass *pType = pThis->get_Type();
-	BuildingTypeClassExt::BuildingTypeClassData* pData = &BuildingTypeClassExt::Ext_v[pType];
+	BuildingTypeClassExt::Struct* pData = &BuildingTypeClassExt::Map[pType];
 	DEBUGLOG("Secret Lab update for %s\n", pType->get_ID());
 
 	RETZ_UNLESS(pData->Secret_Boons.get_Count() && (!pData->Secret_Placed || pData->Secret_RecalcOnCapture));
@@ -195,9 +187,7 @@ void BuildingTypeClassExt::UpdateSecretLabOptions(BuildingClass *pThis)
 	{
 		Result = pType->get_SecretUnit();
 		if(!Result)
-		{
 			Result = pType->get_SecretBuilding();
-		}
 	}
 	if(Result)
 	{
@@ -242,16 +232,14 @@ void BuildingTypeClassExt::UpdateSecretLabOptions(BuildingClass *pThis)
 EXPORT Foundations_GetFoundationWidth(REGISTERS* R)
 {
 	BuildingTypeClass* pThis = (BuildingTypeClass*)R->get_ECX();
-	if(BuildingTypeClassExt::Ext_v.find(pThis) != BuildingTypeClassExt::Ext_v.end())
-	{
-		BuildingTypeClassExt::BuildingTypeClassData* pData = &BuildingTypeClassExt::Ext_v[pThis];
+	BuildingTypeClassExt::Struct* pData = &BuildingTypeClassExt::Map[pThis];
 
-		if(pData->IsCustom)
-		{
-			R->set_EAX(pData->CustomWidth);
-			return 0x45EC9D;
-		}
+	if(pData->IsCustom)
+	{
+		R->set_EAX(pData->CustomWidth);
+		return 0x45EC9D;
 	}
+
 	return 0;
 }
 
@@ -259,16 +247,14 @@ EXPORT Foundations_GetFoundationWidth(REGISTERS* R)
 EXPORT Foundations_GetFoundationWidth2(REGISTERS* R)
 {
 	BuildingTypeClass* pThis = (BuildingTypeClass*)R->get_ECX();
-	if(BuildingTypeClassExt::Ext_v.find(pThis) != BuildingTypeClassExt::Ext_v.end())
-	{
-		BuildingTypeClassExt::BuildingTypeClassData* pData = &BuildingTypeClassExt::Ext_v[pThis];
+	BuildingTypeClassExt::Struct* pData = &BuildingTypeClassExt::Map[pThis];
 
-		if(pData->IsCustom)
-		{
-			R->set_EAX(pData->CustomWidth);
-			return 0x45ECED;
-		}
+	if(pData->IsCustom)
+	{
+		R->set_EAX(pData->CustomWidth);
+		return 0x45ECED;
 	}
+
 	return 0;
 }
 
@@ -276,22 +262,20 @@ EXPORT Foundations_GetFoundationWidth2(REGISTERS* R)
 EXPORT Foundations_GetFoundationHeight(REGISTERS* R)
 {
 	BuildingTypeClass* pThis = (BuildingTypeClass*)R->get_ECX();
-	if(BuildingTypeClassExt::Ext_v.find(pThis) != BuildingTypeClassExt::Ext_v.end())
+	BuildingTypeClassExt::Struct* pData = &BuildingTypeClassExt::Map[pThis];
+
+	if(pData->IsCustom)
 	{
-		BuildingTypeClassExt::BuildingTypeClassData* pData = &BuildingTypeClassExt::Ext_v[pThis];
+		bool bIncludeBib = (R->get_StackVar8(0x4) != 0 );
+		
+		int fH = pData->CustomHeight;
+		if(bIncludeBib && pThis->get_Bib())
+			++fH;
 
-		if(pData->IsCustom)
-		{
-			bool bIncludeBib = (R->get_StackVar8(0x4) != 0 );
-			
-			int fH = pData->CustomHeight;
-			if(bIncludeBib && pThis->get_Bib())
-				++fH;
-
-			R->set_EAX(fH);
-			return 0x45ECDA;
-		}
+		R->set_EAX(fH);
+		return 0x45ECDA;
 	}
+
 	return 0;
 }
 
@@ -302,9 +286,7 @@ EXPORT_FUNC(BuildingClass_ChangeOwnership)
 {
 	GET(BuildingClass *, pThis, ESI);
 	if(pThis->get_Type()->get_SecretLab())
-	{
 		BuildingTypeClassExt::UpdateSecretLabOptions(pThis);
-	}
 
 	return 0;
 }

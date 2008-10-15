@@ -8,15 +8,6 @@ void CallCenter::Init()
 		YRCallback::ExeTerminate	=	Ares::ExeTerminate;
 		YRCallback::PostGameInit	=	Ares::PostGameInit;
 
-		BuildingTypeClassCallback::Create		=	BuildingTypeClassExt::Defaults;
-		BuildingTypeClassCallback::Delete		=	BuildingTypeClassExt::Defaults;
-		BuildingTypeClassCallback::Load			=	BuildingTypeClassExt::Load;
-		BuildingTypeClassCallback::Save			=	BuildingTypeClassExt::Save;
-		BuildingTypeClassCallback::LoadFromINI	=	BuildingTypeClassExt::LoadFromINI;
-
-		HouseTypeClassCallback::Create		=	Countries::Construct;
-		HouseTypeClassCallback::LoadFromINI	=	Countries::LoadFromINI;
-
 		CommandClassCallback::Register	=	Ares::RegisterCommands;
 
 	BIND_CALLBACKS(WeaponTypeClass);
@@ -36,7 +27,4 @@ void CallCenter::Init()
 	BIND_CALLBACKS(TechnoClass);
 
 	BIND_CALLBACKS(HouseClass);
-
-	RulesClassCallback::Addition = RulesClassExt::Addition;
-	RulesClassCallback::TypeData = RulesClassExt::TypeData;
 }

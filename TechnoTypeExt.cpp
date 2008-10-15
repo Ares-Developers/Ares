@@ -1,5 +1,5 @@
 #include "TechnoTypeExt.h"
-#include "Sides.h"
+#include "SideExt.h"
 #include "Prerequisites.h"
 
 EXT_P_DEFINE(TechnoTypeClass);
@@ -66,9 +66,7 @@ void TechnoTypeClassExt::TechnoTypeClassData::Initialize(TechnoTypeClass *pThis)
 	this->Survivors_PassengerChance = (int)RulesClass::Global()->get_CrewEscape() * 100;
 
 	for(int i = 0; i < SideClass::Array->get_Count(); ++i)
-	{
-		this->Survivors_Pilots[i] = Sides::SideExt[SideClass::Array->GetItem(i)].Crew;
-	}
+		this->Survivors_Pilots[i] = SideExt::Map[SideClass::Array->GetItem(i)].Crew;
 
 	this->PrerequisiteLists.SetCapacity(0, NULL);
 	this->PrerequisiteLists.AddItem(new DynamicVectorClass<int>);

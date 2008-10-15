@@ -4,9 +4,7 @@
 #include <hash_map>
 #include <YRPP.h>
 
-class AircraftTypeClass;
-class CellClass;
-class HouseClass;
+#include "Debug.h"
 
 class Ares
 {
@@ -19,19 +17,6 @@ public:
 
 	static bool		bLog;
 	static FILE*	pLogFile;
-
-	static void LogFile_Open()
-	{
-		LogFile_Close();
-		pLogFile=fopen("DEBUG.TXT","w");
-	}
-	static void LogFile_Close()
-	{
-		if(pLogFile)fclose(pLogFile);
-		pLogFile=NULL;
-	}
-
-	static void (_cdecl* Log)(const char* pFormat,...);
 
 	//Callbacks
 	static eMouseEventFlags __stdcall MouseEvent(Point2D*,eMouseEventFlags);
