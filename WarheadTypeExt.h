@@ -14,6 +14,12 @@
 #include <TechnoClass.h>
 #include <WarheadTypeClass.h>
 
+#include <Conversions.h>
+
+#ifdef DEBUGBUILD
+#include "Debug.h"
+#endif
+
 class WarheadTypeClassExt
 {
 	public:

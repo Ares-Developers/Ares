@@ -4,6 +4,8 @@
 #include "CallCenter.h"
 #include <StaticInits.cpp>
 
+#include "Debug.h"
+
 //Init Statics
 HANDLE  Ares::hInstance = 0;
 bool	Ares::bNoLogo = false;

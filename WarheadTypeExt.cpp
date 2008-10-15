@@ -18,10 +18,9 @@ void __stdcall WarheadTypeClassExt::Create(WarheadTypeClass* pThis)
 
 		pData->IC_Duration = 0;
 
-		pData->Verses.SetCapacity(11, NULL);
-		for(int i = 0; i < pData->Verses.get_Count(); ++i)
+		for(int i = 0; i < 11; ++i)
 		{
-			pData->Verses[i] = 1.00;
+			pData->Verses.AddItem(1.00);
 		}
 
 		Ext_p[pThis] = pData;
@@ -64,6 +63,9 @@ void WarheadTypeClassExt::WarheadTypeClassData::Initialize(WarheadTypeClass* pTh
 void __stdcall WarheadTypeClassExt::LoadFromINI(WarheadTypeClass* pThis, CCINIClass* pINI)
 {
 	const char * section = pThis->get_ID();
+
+	DEBUGLOG("Reading ext for %s\n", section);
+
 	if(!CONTAINS(Ext_p, pThis) || !pINI->GetSection(section))
 	{
 		return;
@@ -78,24 +80,21 @@ void __stdcall WarheadTypeClassExt::LoadFromINI(WarheadTypeClass* pThis, CCINICl
 
 	// writing custom verses parser just because
 	char buffer[0x100];
-	pINI->ReadString(section, "Verses", buffer, (char *)0x847C40, 0x100); // kekeke
-	int idx = 0;
-	for(char *cur = strtok(buffer, ","); cur; cur = strtok(NULL, ","))
+	DEBUGLOG("\n[%s]Verses=", section);
+	if(pINI->ReadString(section, "Verses", "", buffer, 0x100))
 	{
-		double val = 1.0;
-		if(strchr(cur, '%'))
+		DEBUGLOG("\t%s", buffer);
+		int idx = 0;
+		for(char *cur = strtok(buffer, ","); cur; cur = strtok(NULL, ","))
 		{
-			val = atoi(cur) * 100.0;
-		}
-		else
-		{
-			val = atof(cur);
-		}
-		pData->Verses[idx] = val;
-		++idx;
-		if(idx > 10)
-		{
-			break;
+			DEBUGLOG("\n\t\tVerses #%d is %s", idx, cur);
+			pData->Verses[idx] = Conversions::Str2Armor(cur);
+			DEBUGLOG("\n\t\tWhich converts to %lf", pData->Verses[idx]);
+			++idx;
+			if(idx > 10)
+			{
+				break;
+			}
 		}
 	}
 
@@ -270,7 +269,7 @@ EXPORT_FUNC(Verses_fld_4)
 	FLD_VERSES(EDX, EAX);
 }
 
-// 703EB2, 7
+// 70CEB2, 7
 EXPORT_FUNC(Verses_fmul_0)
 {
 	FMUL_VERSES(EAX, ECX);
@@ -294,3 +293,12 @@ EXPORT_FUNC(Verses_fmul_3)
 	FMUL_VERSES(EDI, EDX);
 }
 
+// 75DDCC, 7
+EXPORT_FUNC(Verses_OrigParser)
+{
+	// should really be doing something smarter due to westwood's weirdass code, but cannot be bothered atm
+	// will fix if it is reported to actually break things
+	// this breaks 51E33D which stops infantry with verses (heavy=0 & steel=0) from targeting non-infantry at all
+	// (whoever wrote that code must have quite a few gears missing in his head)
+	return 0x75DE98;
+}

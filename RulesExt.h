@@ -9,6 +9,10 @@
 #include <CCINIClass.h>
 #include <WeaponTypeClass.h>
 
+//ifdef DEBUGBUILD
+#include "Debug.h"
+//endif
+
 class RulesClassExt
 {
 	public:

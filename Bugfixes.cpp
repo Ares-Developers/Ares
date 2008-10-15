@@ -11,6 +11,11 @@
 #include <UnitTypeClass.h>
 #include <WarheadTypeClass.h>
 
+#ifdef DEBUGBUILD
+#include "WarheadTypeExt.h"
+#include "ArmorTypes.h"
+#include "Debug.h"
+#endif
 
 #include <MacroHelpers.h> //basically indicates that this is DCoder country
 #include "TechnoTypeExt.h"
@@ -388,15 +393,35 @@ EXPORT_FUNC(HouseClass_CanBuildHowMany_Upgrades)
 		return R->get_EAX() < 3 ? 0x4F7E41 : 0x4F7E34;
 }
 
+#ifdef DEBUGBUILD
 // 6D3D10, 6
 EXPORT_FUNC(Dump)
 {
 	if(Unsorted::CurrentFrame == 5) {
 		// do something for debugging - generic debug state report hook
+		DEBUGLOG("Verses Against Armor Types:        ");
+		for(int j = 0; j < ArmorType::Array.get_Count(); ++j)
+		{
+			DEBUGLOG("|%10s", ArmorType::Array[j]->Title);
+		}
+		DEBUGLOG("\n");
+		for(int i = 0; i < WarheadTypeClass::Array->get_Count(); ++i)
+		{
+			WarheadTypeClass *WH = WarheadTypeClass::Array->GetItem(i);
+			WarheadTypeClassExt::WarheadTypeClassData *pData = WarheadTypeClassExt::Ext_p[WH];
+			DEBUGLOG("[%24s]Verses =", WH->get_ID());
+			for(int j = 0; j < pData->Verses.get_Count(); ++j)
+			{
+				DEBUGLOG("%c %9.6lf", (j ? ',' : ' '), pData->Verses[j]);
+			}
+			DEBUGLOG("\n");
+		}
+
 	}
 
 	return 0;
 }
+#endif
 
 // 715857, 5
 EXPORT_FUNC(TechnoTypeClass_LoadFromINI_LimitPalettes)

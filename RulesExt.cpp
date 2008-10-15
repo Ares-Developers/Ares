@@ -1,31 +1,14 @@
 #include "RulesExt.h"
 #include "Prerequisites.h"
-#include "Debug.h"
 #include "ArmorTypes.h"
 
 RulesClassExt::Struct RulesClassExt::Data;
 
 void RulesClassExt::Struct::Initialize()
 {
-	GenericPrerequisite::FindOrAllocate("POWER");
-	GenericPrerequisite::FindOrAllocate("FACTORY");
-	GenericPrerequisite::FindOrAllocate("BARRACKS");
-	GenericPrerequisite::FindOrAllocate("RADAR");
-	GenericPrerequisite::FindOrAllocate("TECH");
-	GenericPrerequisite::FindOrAllocate("PROC");
+	GenericPrerequisite::AddDefaults();
+	ArmorType::AddDefaults();
 
-	ArmorType::FindOrAllocate("none");
-	ArmorType::FindOrAllocate("flak");
-	ArmorType::FindOrAllocate("plate");
-	ArmorType::FindOrAllocate("light");
-	ArmorType::FindOrAllocate("medium");
-	ArmorType::FindOrAllocate("heavy");
-	ArmorType::FindOrAllocate("wood");
-	ArmorType::FindOrAllocate("steel");
-	ArmorType::FindOrAllocate("concrete");
-	ArmorType::FindOrAllocate("special_1");
-	ArmorType::FindOrAllocate("special_2");
-	
 	IsInitialized = true;
 }
 
@@ -35,7 +18,6 @@ EXPORT RulesClassExt_Load(REGISTERS* R)
 
 	ULONG out;
 	pStm->Read(RulesClassExt::Global(), sizeof(RulesClassExt::Struct), &out);
-
 
 	if(RulesClassExt::Global()->SavegameValidation != RULESEXT_VALIDATION)
 		Debug::Log("SAVEGAME ERROR: RulesClassExt validation is faulty!\n");
@@ -56,6 +38,15 @@ EXPORT RulesClassExt_Addition(REGISTERS* R)
 {
 	CCINIClass* pINI = (CCINIClass*)R->get_ESI();
 
+// RulesClassExt::Global()->Initialize();
+
+	return 0;
+}
+
+EXPORT RulesClassExt_PreAddition(REGISTERS* R)
+{
+	CCINIClass* pINI = (CCINIClass*)R->get_ESI();
+
 	RulesClassExt::Global()->Initialize();
 
 	return 0;
@@ -65,7 +56,6 @@ EXPORT RulesClassExt_TypeData(REGISTERS* R)
 {
 	CCINIClass* pINI = (CCINIClass*)R->get_ESI();
 
-	RulesClassExt::Global()->Initialize();
 	char buffer[0x24];
 
 	const char section[] = "WeaponTypes";
@@ -81,5 +71,7 @@ EXPORT RulesClassExt_TypeData(REGISTERS* R)
 	}
 
 	GenericPrerequisite::LoadFromINIList(pINI);
+	ArmorType::LoadFromINIList(pINI);
+
 	return 0;
 }

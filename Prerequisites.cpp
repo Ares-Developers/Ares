@@ -44,13 +44,25 @@ void GenericPrerequisite::LoadFromINI(CCINIClass *pINI)
 	}
 }
 
+void GenericPrerequisite::AddDefaults()
+{
+	FindOrAllocate("POWER");
+	FindOrAllocate("FACTORY");
+	FindOrAllocate("BARRACKS");
+	FindOrAllocate("RADAR");
+	FindOrAllocate("TECH");
+	FindOrAllocate("PROC");
+}
+
 void Prereqs::Parse(char* buffer, DynamicVectorClass<int> *vec)
 {
 	vec->Clear();
-	char *cur = strtok(buffer, ",");
-	while(cur)
+//	DEBUGLOG("Parsing prereq string %s\n", buffer);
+	for(char *cur = strtok(buffer, ","); cur; cur = strtok(NULL, ","))
 	{
+//		DEBUGLOG("\tParsing prereq token %s\n", cur);
 		int idx = BuildingTypeClass::FindIndex(cur);
+//		DEBUGLOG("\t\tgot positive index %d\n", idx);
 		if(idx > -1)
 		{
 			vec->AddItem(idx);
@@ -58,16 +70,15 @@ void Prereqs::Parse(char* buffer, DynamicVectorClass<int> *vec)
 		else
 		{
 			idx = GenericPrerequisite::FindIndex(cur);
+//			DEBUGLOG("\t\tgot negative index %d\n", idx);
 			if(idx > -1)
 			{
 				vec->AddItem(-1 - idx);
 			}
 		}
-		cur = strtok(NULL, ",");
 	}
 
 }
-
 
 EXPORT_FUNC(RulesClass_TypeData)
 {

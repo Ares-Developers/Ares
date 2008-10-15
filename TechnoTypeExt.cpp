@@ -146,19 +146,19 @@ EXT_LOAD_INI(TechnoTypeClass)
 
 	if(pINI->ReadString(section, "Prerequisite.RequiredTheaters", "", buffer, 0x200))
 	{
-		DEBUGLOG("[%s]Theater text: %s\n", section, buffer);
+//		DEBUGLOG("[%s]Theater text: %s\n", section, buffer);
 		pData->PrerequisiteTheaters = 0;
 		for(char *cur = strtok(buffer, ","); cur; cur = strtok(NULL, ","))
 		{
 			signed int idx = Theater::FindIndex(cur);
-			DEBUGLOG("[%s]Theater token %s maps to %d\n", section, cur, idx);
+//			DEBUGLOG("[%s]Theater token %s maps to %d\n", section, cur, idx);
 			if(idx > -1)
 			{
 				pData->PrerequisiteTheaters |= (1 << idx);
-				DEBUGLOG("[%s]Theater token bitfield: %X\n", section, pData->PrerequisiteTheaters);
+//				DEBUGLOG("[%s]Theater token bitfield: %X\n", section, pData->PrerequisiteTheaters);
 			}
 		}
-		DEBUGLOG("[%s]Theaters: %X\n", section, pData->PrerequisiteTheaters);
+//		DEBUGLOG("[%s]Theaters: %X\n", section, pData->PrerequisiteTheaters);
 	}
 
 

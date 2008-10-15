@@ -3,7 +3,6 @@
 
 #define BTEXT_VALIDATION 0xAFFEAFFE //double monkey!
 
-#include "Debug.h"
 #include <hash_map>
 
 #include <CCINIClass.h>
@@ -11,6 +10,12 @@
 #include <InfantryTypeClass.h>
 #include <Randomizer.h>
 #include <UnitTypeClass.h>
+
+#include "Ares.h"
+
+//ifdef DEBUGBUILD -- legit needs to log things, so no debug
+#include "Debug.h"
+//endif
 
 class BuildingClass;
 

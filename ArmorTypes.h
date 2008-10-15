@@ -4,7 +4,11 @@
 #include <ArrayClasses.h>
 #include <CCINIClass.h>
 #include <WarheadTypeClass.h>
+
+#include <Conversions.h>
+
 #include "WarheadTypeExt.h"
+#include "Ares.h"
 
 class ArmorType
 {
@@ -16,13 +20,16 @@ class ArmorType
 	{
 		strncpy(this->Title, Name, 31);
 		DefaultIndex = -1;
+		DEBUGLOG("Adding armor type %s (#%d)\n", Name, Array.get_Count());
 		Array.AddItem(this);
+		DEBUGLOG("Added armor type %s (#%d)\n", Name, Array.get_Count());
 	}
 
 	static DynamicVectorClass<ArmorType*> Array;
 
 	static ArmorType *FindOrAllocate(const char *Name)
 	{
+		DEBUGLOG("Looking for armor type %s (arrlen %d)\n", Name, Array.get_Count());
 		for(int i = 0; i < Array.get_Count(); ++i)
 		{
 			if(!_strcmpi(Array[i]->Title, Name))
@@ -47,6 +54,7 @@ class ArmorType
 
 	static void LoadFromINIList(CCINIClass *pINI);
 	static void LoadForWarhead(CCINIClass *pINI, WarheadTypeClass* pWH);
+	static void AddDefaults();
 };
 
 #endif

@@ -4,8 +4,6 @@
 #include <hash_map>
 #include <YRPP.h>
 
-#include "Debug.h"
-
 class Ares
 {
 public:

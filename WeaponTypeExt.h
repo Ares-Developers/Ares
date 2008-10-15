@@ -14,6 +14,10 @@
 #include <WaveClass.h>
 #include <WeaponTypeClass.h>
 
+#ifdef DEBUGBUILD
+#include "Debug.h"
+#endif
+
 struct SHPStruct;
 
 class WeaponTypeClassExt

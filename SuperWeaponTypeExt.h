@@ -16,6 +16,10 @@
 #include <VocClass.h>
 #include <VoxClass.h>
 
+#ifdef DEBUGBUILD
+#include "Debug.h"
+#endif
+
 // actions for custom sw
 #define SW_YES_CURSOR 0x7F
 #define SW_NO_CURSOR 0x7E

@@ -6,6 +6,10 @@
 #include <HouseClass.h>
 #include <UnitTypeClass.h>
 
+#ifdef DEBUGBUILD
+#include "Debug.h"
+#endif
+
 class HouseClass;
 
 class GenericPrerequisite
@@ -50,6 +54,8 @@ public:
 		}
 	}
 
+	static void AddDefaults();
+
 	static void LoadFromINIList(CCINIClass *pINI);
 	void LoadFromINI(CCINIClass *pINI);
 
@@ -69,7 +75,6 @@ public:
 
 	static bool HouseOwnsAll(HouseClass *pHouse, DynamicVectorClass<int> *list);
 	static bool HouseOwnsAny(HouseClass *pHouse, DynamicVectorClass<int> *list);
-
 };
 
 #endif
