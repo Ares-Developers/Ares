@@ -29,6 +29,7 @@ class TechnoTypeClassExt
 		DWORD Secret_ForbiddenHouses;
 
 		bool Is_Deso;
+		bool Is_Deso_Radiation;
 		bool Is_Cow;
 
 		DynamicVectorClass<WeaponStruct> Weapons;

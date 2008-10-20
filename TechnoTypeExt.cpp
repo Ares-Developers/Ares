@@ -15,7 +15,7 @@ EXT_CTOR(TechnoTypeClass)
 		pData->Survivors_PilotChance = 0;
 		pData->Survivors_PassengerChance = 0;
 
-		pData->Is_Deso = 0;
+		pData->Is_Deso = pData->Is_Deso_Radiation = 0;
 		pData->Is_Cow = 0;
 
 		pData->Weapons.SetCapacity(0, NULL);
@@ -84,6 +84,8 @@ void TechnoTypeClassExt::TechnoTypeClassData::Initialize(TechnoTypeClass *pThis)
 
 	this->Secret_RequiredHouses = 0xFFFFFFFF;
 	this->Secret_ForbiddenHouses = 0;
+
+	this->Is_Deso = this->Is_Deso_Radiation = !strcmp(pThis->get_ID(), "DESO");
 
 	this->Data_Initialized = 1;
 }
@@ -177,6 +179,7 @@ EXT_LOAD_INI(TechnoTypeClass)
 		= pINI->ReadHouseTypesList(section, "SecretLab.ForbiddenHouses", pData->Secret_ForbiddenHouses);
 
 	pData->Is_Deso = pINI->ReadBool(section, "IsDesolator", pData->Is_Deso);
+	pData->Is_Deso_Radiation = pINI->ReadBool(section, "IsDesolator.RadDependant", pData->Is_Deso_Radiation);
 	pData->Is_Cow  = pINI->ReadBool(section, "IsCow", pData->Is_Cow);
 
 	// weapons

@@ -397,6 +397,7 @@ EXPORT_FUNC(HouseClass_CanBuildHowMany_Upgrades)
 // 6D3D10, 6
 EXPORT_FUNC(Dump)
 {
+	/*
 	if(Unsorted::CurrentFrame == 5) {
 		// do something for debugging - generic debug state report hook
 		DEBUGLOG("Verses Against Armor Types:        ");
@@ -418,6 +419,52 @@ EXPORT_FUNC(Dump)
 		}
 
 	}
+
+	else */
+
+	static DWORD lastFrame = 0;
+	if(Unsorted::CurrentFrame == 15 && lastFrame != 15) { // this hook gets triggered 3 times per frame, so hack
+		DEBUGLOG("Weapons loaded: \n");
+		for(int i = 0; i < TechnoTypeClass::Array->get_Count(); ++i)
+		{
+			TechnoTypeClass *T = (TechnoTypeClass *)TechnoTypeClass::Array->GetItem(i);
+			DEBUGLOG("[%s]\n", T->get_ID());
+			TechnoTypeClassExt::TechnoTypeClassData *pData = TechnoTypeClassExt::Ext_p[T];
+
+			DEBUGLOG("\tWeapons:\n");
+			for(int j = 0; j < pData->Weapons.get_Count(); ++j)
+			{
+				WeaponTypeClass *W = pData->Weapons[j].WeaponType;
+				if(W)
+				{
+					DEBUGLOG("\t\t#%02d: %s\n", j, W->get_ID());
+				}
+				else
+				{
+					DEBUGLOG("\t\t#%02d: No WeaponType\n", j);
+				}
+			}
+
+			DEBUGLOG("\tEliteWeapons:\n");
+			for(int j = 0; j < pData->EliteWeapons.get_Count(); ++j)
+			{
+				WeaponTypeClass *W = pData->EliteWeapons[j].WeaponType;
+				if(W)
+				{
+					DEBUGLOG("\t\t#%02d: %s\n", j, W->get_ID());
+				}
+				else
+				{
+					DEBUGLOG("\t\t#%02d: No WeaponType\n", j);
+				}
+			}
+
+			DEBUGLOG("\n");
+		}
+
+	}
+
+	lastFrame = Unsorted::CurrentFrame;
 
 	return 0;
 }
@@ -515,4 +562,34 @@ EXPORT_FUNC(TechnoClass_SelectFiringVoice)
 	return 0x7090ED;
 }
 */
+
+// 414D36, 6
+// stop aircraft from losing target when it's in air
+EXPORT_FUNC(AACombat)
+{
+	return 0x414D4D;
+}
+
+// 5215F9, 6
+// godawful hack - Desolator deploy fire is triggered by ImmuneToRadiation !
+EXPORT_FUNC(InfantryClass_UpdateDeploy)
+{
+	GET(TechnoClass *, I, ESI);
+	TechnoTypeClassExt::TechnoTypeClassData *pData = TechnoTypeClassExt::Ext_p[I->GetTechnoType()];
+	return pData->Is_Deso ? 0x5216B6 : 0x52160D;
+}
+
+// 52138C, 6
+// godawful hack 2 - Desolator deploy fire is triggered by ImmuneToRadiation !
+// DON'T USE
+EXPORT_FUNC(InfantryClass_UpdateDeploy2)
+{
+/*
+	GET(TechnoClass *, I, ESI);
+	TechnoTypeClassExt::TechnoTypeClassData *pData = TechnoTypeClassExt::Ext_p[I->GetTechnoType()];
+	return pData->Is_Deso_Radiation ? 0x52139A : 0x5214B9;
+	WRONG: needs more code to reimplement weapon shooting without rad checks
+*/
+	return 0;
+}
 
