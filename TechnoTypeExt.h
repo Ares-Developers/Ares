@@ -31,6 +31,9 @@ class TechnoTypeClassExt
 		bool Is_Deso;
 		bool Is_Cow;
 
+		DynamicVectorClass<WeaponStruct> Weapons;
+		DynamicVectorClass<WeaponStruct> EliteWeapons;
+
 		bool Data_Initialized;
 		void Initialize(TechnoTypeClass *pThis);
 	};
@@ -38,6 +41,9 @@ class TechnoTypeClassExt
 	EXT_P_DECLARE(TechnoTypeClass);
 	EXT_FUNCS(TechnoTypeClass);
 	EXT_INI_FUNCS(TechnoTypeClass);
+
+	static void ReadWeapon(WeaponStruct *pWeapon, const char *prefix, const char *section, CCINIClass *pINI);
+
 };
 
 #endif

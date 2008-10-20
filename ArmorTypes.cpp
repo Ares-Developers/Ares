@@ -13,6 +13,7 @@ void ArmorType::LoadFromINIList(CCINIClass *pINI)
 //		DEBUGLOG("Reading armor type %s = %s\n", Key, buffer);
 
 		FindOrAllocate(Key)->DefaultIndex = ArmorType::FindIndex(buffer);
+		FindOrAllocate(Key)->DefaultVerses = Conversions::Str2Armor(buffer);
 //		DEBUGLOG("\tDefaultIndex = %d\n", ArmorType::FindIndex(buffer));
 	}
 }
@@ -30,10 +31,11 @@ void ArmorType::LoadForWarhead(CCINIClass *pINI, WarheadTypeClass* pWH)
 
 	while(pData->Verses.get_Count() < Array.get_Count())
 	{
-		int idx = Array[pData->Verses.get_Count()]->DefaultIndex;
+		ArmorType *pArmor = Array[pData->Verses.get_Count()];
+		int idx = pArmor->DefaultIndex;
 		pData->Verses.AddItem(
 			idx == -1
-				? 1.0
+				? pArmor->DefaultVerses
 				: pData->Verses[idx]
 		);
 	}

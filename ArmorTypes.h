@@ -15,6 +15,7 @@ class ArmorType
 	public:
 		char Title[32];
 		int DefaultIndex;
+		double DefaultVerses;
 
 	ArmorType(const char *Name)
 	{

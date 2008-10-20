@@ -10,14 +10,16 @@ EXT_CTOR(TechnoTypeClass)
 	{
 		ALLOC(ExtData, pData);
 
-		pData->Survivors_Pilots.SetCapacity(1, NULL);
+		pData->Survivors_Pilots.SetCapacity(0, NULL);
 
 		pData->Survivors_PilotChance = 0;
 		pData->Survivors_PassengerChance = 0;
-		pData->Survivors_Pilots[0] = NULL;
 
 		pData->Is_Deso = 0;
 		pData->Is_Cow = 0;
+
+		pData->Weapons.SetCapacity(0, NULL);
+		pData->EliteWeapons.SetCapacity(0, NULL);
 
 		pData->Data_Initialized = 0;
 
@@ -42,10 +44,13 @@ EXT_LOAD(TechnoTypeClass)
 		ULONG out;
 		pStm->Read(&Ext_p[pThis], sizeof(ExtData), &out);
 
-		for(int i = 0; i < Ext_p[pThis]->Survivors_Pilots.get_Count(); ++i)
-		{
-			SWIZZLE(Ext_p[pThis]->Survivors_Pilots[i]);
-		}
+		Ext_p[pThis]->Survivors_Pilots.Load(pStm);
+		Ext_p[pThis]->Weapons.Load(pStm);
+		Ext_p[pThis]->EliteWeapons.Load(pStm);
+		for ( int ii = 0; ii < Ext_p[pThis]->Weapons.get_Count(); ++ii )
+			SWIZZLE(Ext_p[pThis]->Weapons[ii].WeaponType);
+		for ( int ii = 0; ii < Ext_p[pThis]->EliteWeapons.get_Count(); ++ii )
+			SWIZZLE(Ext_p[pThis]->EliteWeapons[ii].WeaponType);
 	}
 }
 
@@ -55,6 +60,10 @@ EXT_SAVE(TechnoTypeClass)
 	{
 		ULONG out;
 		pStm->Write(&Ext_p[pThis], sizeof(ExtData), &out);
+
+		Ext_p[pThis]->Survivors_Pilots.Save(pStm);
+		Ext_p[pThis]->Weapons.Save(pStm);
+		Ext_p[pThis]->EliteWeapons.Save(pStm);
 	}
 }
 
@@ -62,8 +71,8 @@ void TechnoTypeClassExt::TechnoTypeClassData::Initialize(TechnoTypeClass *pThis)
 {
 	this->Survivors_Pilots.SetCapacity(SideClass::Array->get_Count(), NULL);
 
-	this->Survivors_PilotChance = (int)RulesClass::Global()->get_CrewEscape() * 100;
-	this->Survivors_PassengerChance = (int)RulesClass::Global()->get_CrewEscape() * 100;
+	this->Survivors_PilotChance = (int)(RulesClass::Global()->get_CrewEscape() * 100);
+	this->Survivors_PassengerChance = (int)(RulesClass::Global()->get_CrewEscape() * 100);
 
 	for(int i = 0; i < SideClass::Array->get_Count(); ++i)
 		this->Survivors_Pilots[i] = SideExt::Map[SideClass::Array->GetItem(i)].Crew;
@@ -75,7 +84,6 @@ void TechnoTypeClassExt::TechnoTypeClassData::Initialize(TechnoTypeClass *pThis)
 
 	this->Secret_RequiredHouses = 0xFFFFFFFF;
 	this->Secret_ForbiddenHouses = 0;
-
 
 	this->Data_Initialized = 1;
 }
@@ -108,7 +116,6 @@ EXT_LOAD_INI(TechnoTypeClass)
 		sprintf(flag, "Survivor.Side%d", i);
 		PARSE_INFANTRY(flag, pData->Survivors_Pilots[i]);
 	}
-
 
 	// prereqs
 	int PrereqListLen = pINI->ReadInteger(section, "Prerequisite.Lists", pData->PrerequisiteLists.get_Count() - 1);
@@ -171,5 +178,92 @@ EXT_LOAD_INI(TechnoTypeClass)
 
 	pData->Is_Deso = pINI->ReadBool(section, "IsDesolator", pData->Is_Deso);
 	pData->Is_Cow  = pINI->ReadBool(section, "IsCow", pData->Is_Cow);
+
+	// weapons
+	int WeaponCount = pINI->ReadInteger(section, "WeaponCount", pData->Weapons.get_Count());
+
+	if(WeaponCount < 2)
+	{
+		WeaponCount = 2;
+	}
+
+	while(WeaponCount < pData->Weapons.get_Count())
+	{
+		pData->Weapons.RemoveItem(pData->Weapons.get_Count() - 1);
+	}
+	if(WeaponCount > pData->Weapons.get_Count())
+	{
+		pData->Weapons.SetCapacity(WeaponCount, NULL);
+		pData->Weapons.set_Count(WeaponCount);
+	}
+
+	while(WeaponCount < pData->EliteWeapons.get_Count())
+	{
+		pData->EliteWeapons.RemoveItem(pData->EliteWeapons.get_Count() - 1);
+	}
+	if(WeaponCount > pData->EliteWeapons.get_Count())
+	{
+		pData->EliteWeapons.SetCapacity(WeaponCount, NULL);
+		pData->EliteWeapons.set_Count(WeaponCount);
+	}
+
+	WeaponStruct *W = &pData->Weapons[0];
+	ReadWeapon(W, "Primary", section, pINI);
+
+	W = &pData->EliteWeapons[0];
+	ReadWeapon(W, "ElitePrimary", section, pINI);
+
+	W = &pData->Weapons[1];
+	ReadWeapon(W, "Secondary", section, pINI);
+
+	W = &pData->EliteWeapons[1];
+	ReadWeapon(W, "EliteSecondary", section, pINI);
+
+	for(int i = 0; i < WeaponCount; ++i)
+	{
+		W = &pData->Weapons[i];
+		sprintf(flag, "Weapon%d", i);
+		ReadWeapon(W, flag, section, pINI);
+
+		W = &pData->EliteWeapons[i];
+		sprintf(flag, "EliteWeapon%d", i);
+		ReadWeapon(W, flag, section, pINI);
+	}
+}
+
+void TechnoTypeClassExt::ReadWeapon(WeaponStruct *pWeapon, const char *prefix, const char *section, CCINIClass *pINI)
+{
+	char buffer[256];
+	char flag[64];
+
+	pINI->ReadString(section, prefix, "", buffer, 0x100);
+
+	if(strlen(buffer))
+	{
+		pWeapon->WeaponType = WeaponTypeClass::FindOrAllocate(buffer);
+	}
+
+	CCINIClass *pArtINI = CCINIClass::INI_Art;
+
+	CoordStruct FLH;
+	// (Elite?)(Primary|Secondary)FireFLH - FIRE suffix
+	// (Elite?)(Weapon%d)FLH - no suffix
+	if(prefix[0] == 'W' || prefix[5] == 'W') // W EliteW
+	{
+		sprintf(flag, "%sFLH", prefix);
+	}
+	else
+	{
+		sprintf(flag, "%sFireFLH", prefix);
+	}
+	pArtINI->Read3Integers((int *)&FLH, section, flag, (int *)&pWeapon->FLH);
+	pWeapon->FLH = FLH;
+
+	sprintf(flag, "%sBarrelLength", prefix);
+	pWeapon->BarrelLength = pArtINI->ReadInteger(section, flag, pWeapon->BarrelLength);
+	sprintf(flag, "%sBarrelThickness", prefix);
+	pWeapon->BarrelThickness = pArtINI->ReadInteger(section, flag, pWeapon->BarrelThickness);
+	sprintf(flag, "%sTurretLocked", prefix);
+	pWeapon->TurretLocked = pArtINI->ReadBool(section, flag, pWeapon->TurretLocked);
 }
 
