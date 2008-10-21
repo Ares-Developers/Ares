@@ -90,6 +90,12 @@ EXPORT BTExt_LoadFromINI(REGISTERS* R)
 
 	//Reload the Foundation tag from the ART ini and check whether it is Custom.
 	BuildingTypeClassExt::Struct* pData = &BuildingTypeClassExt::Map[pThis];
+
+	if(!pData->IsInitialized)
+	{
+		pData->Initialize(pThis);
+	}
+
 	if(pData->IsCustom)
 	{
 		//Reset
