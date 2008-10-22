@@ -114,7 +114,7 @@ EXPORT_FUNC(IvanBombs_Spread)
 EXPORT_FUNC(Insignificant_UnitLost)
 {
 	GET(TechnoClass *, t, ESI);
-	TechnoTypeClass *T = (TechnoTypeClass *)t->GetType(); //R->get_EAX(); would work, but let's see if this does as well
+	TechnoTypeClass *T = t->GetTechnoType(); //R->get_EAX(); would work, but let's see if this does as well
 
 	return (T->get_Insignificant() || T->get_DontScore()) ? 0x4D9916 : 0;
 }
@@ -190,13 +190,6 @@ EXPORT_FUNC(AnimClass_Update)
 	A->set_TimeToDie(1);
 	A->UnInit();
 	return 0x424B29;
-}
-
-// decouple Yuri UI from soviet
-// 534FB1, 5
-EXPORT_FUNC(Game_LoadUI)
-{
-	return 0x534FBB;
 }
 
 // fix the 100 unit bug for vehicles
@@ -591,5 +584,17 @@ EXPORT_FUNC(InfantryClass_UpdateDeploy2)
 	WRONG: needs more code to reimplement weapon shooting without rad checks
 */
 	return 0;
+}
+
+// 6F7561, 5
+// westwood does firingUnit->WhatAmI() == abs_AircraftType
+// which naturally never works
+// let's see what this change does
+EXPORT_FUNC(Arcing_Aircraft)
+{
+	int T = R->get_EAX();
+	int *X = (int *)R->get_ESI();
+	R->set_EAX(*X);
+	return T == abs_Aircraft ? 0x6F75B2 : 0x6F7568;
 }
 
