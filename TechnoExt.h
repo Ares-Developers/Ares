@@ -10,6 +10,9 @@
 #include <InfantryClass.h>
 #include <MapClass.h>
 #include <Randomizer.h>
+#include <TemporalClass.h>
+#include <WeaponTypeClass.h>
+#include <WarheadTypeClass.h>
 
 class TechnoClassExt
 {
@@ -19,7 +22,8 @@ class TechnoClassExt
 		// weapon slots fsblargh
 		BYTE idxSlot_Wave;
 		BYTE idxSlot_Beam;
-		
+		BYTE idxSlot_Warp;
+
 		TimerStruct CloakSkipTimer;
 	};
 

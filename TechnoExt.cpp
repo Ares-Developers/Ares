@@ -11,6 +11,7 @@ EXT_CTOR(TechnoClass)
 
 		pData->idxSlot_Wave = 0;
 		pData->idxSlot_Beam = 0;
+		pData->idxSlot_Warp = 0;
 
 		pData->CloakSkipTimer.Stop();
 
@@ -193,3 +194,69 @@ EXPORT_FUNC(AircraftClass_Paradrop)
 	return 0x415DE3;
 }
 
+// 6F407D, 6
+EXPORT_FUNC(TechnoClass_Init)
+{
+	GET(TechnoClass *, T, ESI);
+	TechnoClassExt::TechnoClassData *pData = TechnoClassExt::Ext_p[T];
+	TechnoTypeClassExt::TechnoTypeClassData *pTypeData = TechnoTypeClassExt::Ext_p[T->GetTechnoType()];
+
+	CaptureManagerClass *Capturer = NULL;
+	ParasiteClass *Parasite = NULL;
+	TemporalClass *Temporal = NULL;
+	bool IsFoot = (T->get_AbstractFlags() & ABSFLAGS_ISFOOT) != 0;
+	FootClass *F = (FootClass *)T;
+
+	for(int i = 0; i < pTypeData->Weapons.get_Count(); ++i)
+	{
+		WeaponStruct *W = &pTypeData->Weapons[i];
+		if(!W || !W->WeaponType) { continue; }
+		WarheadTypeClass *WH = W->WeaponType->get_Warhead();
+		if(WH->get_MindControl() && Capturer == NULL)
+		{
+			Capturer = new CaptureManagerClass(T, W->WeaponType->get_Damage(), W->WeaponType->get_InfiniteMindControl());
+		}
+		else if(WH->get_Temporal() && Temporal == NULL)
+		{
+			Temporal = new TemporalClass(T);
+			pData->idxSlot_Warp = (BYTE)i;
+		}
+		else if(WH->get_Parasite() && IsFoot && Parasite == NULL)
+		{
+			Parasite = new ParasiteClass(F);
+		}
+	}
+
+	T->set_CaptureManager(Capturer);
+	T->set_TemporalImUsing(Temporal);
+	if(IsFoot)
+	{
+		F->set_ParasiteImUsing(Parasite);
+	}
+
+	return 0x6F41C0;
+}
+
+// 71A860, 6
+// temporal per-slot
+EXPORT_FUNC(TemporalClass_UpdateA)
+{
+	GET(TemporalClass *, Temp, ESI);
+	TechnoClass *T = Temp->get_Owner();
+	TechnoClassExt::TechnoClassData *pData = TechnoClassExt::Ext_p[T];
+	WeaponStruct *W = T->GetWeapon(pData->idxSlot_Warp);
+	R->set_EAX((DWORD)W);
+	return 0x71A876;
+}
+
+// 71AB30, 6
+// temporal per-slot
+EXPORT_FUNC(TemporalClass_GetHelperDamage)
+{
+	GET(TemporalClass *, Temp, ESI);
+	TechnoClass *T = Temp->get_Owner();
+	TechnoClassExt::TechnoClassData *pData = TechnoClassExt::Ext_p[T];
+	WeaponStruct *W = T->GetWeapon(pData->idxSlot_Warp);
+	R->set_EAX((DWORD)W);
+	return 0x71AB47;
+}
