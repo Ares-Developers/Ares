@@ -20,8 +20,19 @@
 #include <MacroHelpers.h> //basically indicates that this is DCoder country
 #include "TechnoTypeExt.h"
 
+// bugfix #471: InfantryTypes and BuildingTypes don't reload their ammo properly
+DEFINE_HOOK(43FE8E, BuildingClass_SkipStupidAmmoCode, 6) { return 0x43FEBE; }
+
+DEFINE_HOOK(6F9E5B, TechnoClass_ReloadOverride, 6)
+{
+	GET(TechnoClass *, T, ESI);
+	if(T->WhatAmI() == abs_Infantry || T->WhatAmI() == abs_Building)
+		T->Reload();
+	return 0;
+}
+
 // bugfix #231: DestroyAnims don't remap and cause reconnection errors
-DEFINE_HOOK(441D25,BuildingClass_Destroy,0A)
+DEFINE_HOOK(441D25, BuildingClass_Destroy, 0A)
 {
 	return 0x441D37;
 }
