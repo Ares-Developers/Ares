@@ -21,7 +21,10 @@
 #include "TechnoTypeExt.h"
 
 // bugfix #471: InfantryTypes and BuildingTypes don't reload their ammo properly
-DEFINE_HOOK(43FE8E, BuildingClass_SkipStupidAmmoCode, 6) { return 0x43FEBE; }
+DEFINE_HOOK(43FE8E, BuildingClass_SkipStupidAmmoCode, 6)
+{
+	return 0x43FEBE;
+}
 
 DEFINE_HOOK(6F9E5B, TechnoClass_ReloadOverride, 6)
 {
@@ -45,8 +48,7 @@ DEFINE_HOOK(71A92A, _Temporal_AvoidFriendlies, 5)
 	HouseClass *hv = Temp->get_Target()->get_Owner();
 	HouseClass *ho = Temp->get_Owner()->get_Owner();
 
-	RET_UNLESS(ho->IsAlliedWith(hv));
-	return 0x71A97D;
+	return ho->IsAlliedWith(hv) ? 0x71A97D : 0;
 }
 
 // bugfix #385: Only InfantryTypes can use Ivan Bombs
