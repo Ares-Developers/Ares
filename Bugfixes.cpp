@@ -11,8 +11,6 @@
 #include <UnitTypeClass.h>
 #include <WarheadTypeClass.h>
 
-#define DEBUGBUILD
-
 #ifdef DEBUGBUILD
 #include "WarheadTypeExt.h"
 #include "ArmorTypes.h"
@@ -23,8 +21,6 @@
 #include "TechnoTypeExt.h"
 
 // bugfix #231: DestroyAnims don't remap and cause reconnection errors
-// 4424A2, 6
-
 DEFINE_HOOK(441D25,BuildingClass_Destroy,0A)
 EXPORT_FUNC(BuildingClass_Destroy) { return 0x441D37; }
 
