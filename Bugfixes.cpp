@@ -11,6 +11,8 @@
 #include <UnitTypeClass.h>
 #include <WarheadTypeClass.h>
 
+#define DEBUGBUILD
+
 #ifdef DEBUGBUILD
 #include "WarheadTypeExt.h"
 #include "ArmorTypes.h"
@@ -20,14 +22,20 @@
 #include <MacroHelpers.h> //basically indicates that this is DCoder country
 #include "TechnoTypeExt.h"
 
+// bugfix #231: DestroyAnims don't remap and cause reconnection errors
+// 4424A2, 6
+
+DEFINE_HOOK(441D25,BuildingClass_Destroy,0A)
+EXPORT_FUNC(BuildingClass_Destroy) { return 0x441D37; }
+
 // bugfix #379: Temporal friendly kills give veterancy
 // 71A92A, 5
 EXPORT_FUNC(_Temporal_AvoidFriendlies)
 {
 	GET(TemporalClass *, Temp, ESI); 
 
-	HouseClass *hv = Temp->get_TargetUnit()->get_Owner();
-	HouseClass *ho = Temp->get_OwningUnit()->get_Owner();
+	HouseClass *hv = Temp->get_Target()->get_Owner();
+	HouseClass *ho = Temp->get_Owner()->get_Owner();
 
 	RET_UNLESS(ho->IsAlliedWith(hv));
 	return 0x71A97D;
