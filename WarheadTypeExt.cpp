@@ -3,6 +3,8 @@
 
 EXT_P_DEFINE(WarheadTypeClass);
 
+WarheadTypeClass *WarheadTypeClassExt::Temporal_WH = NULL;
+
 void __stdcall WarheadTypeClassExt::Create(WarheadTypeClass* pThis)
 {
 	if(!CONTAINS(Ext_p, pThis))
@@ -22,6 +24,8 @@ void __stdcall WarheadTypeClassExt::Create(WarheadTypeClass* pThis)
 		{
 			pData->Verses.AddItem(1.00);
 		}
+
+		pData->Temporal_WarpAway = NULL;
 
 		Ext_p[pThis] = pData;
 	}
@@ -57,6 +61,7 @@ void __stdcall WarheadTypeClassExt::Save(WarheadTypeClass* pThis, IStream* pStm)
 
 void WarheadTypeClassExt::WarheadTypeClassData::Initialize(WarheadTypeClass* pThis)
 {
+	this->Temporal_WarpAway = RulesClass::Global()->get_WarpAway();
 	this->Is_Initialized = 1;
 }
 
@@ -106,24 +111,30 @@ void __stdcall WarheadTypeClassExt::LoadFromINI(WarheadTypeClass* pThis, CCINICl
 		pData->Is_Custom |= pData->MindControl_Permanent;
 	}
 
-	if(pThis->get_EMEffect()) {
+	if(pThis->get_EMEffect())
+	{
 		pData->EMP_Duration = pINI->ReadInteger(section, "EMP.Duration", pData->EMP_Duration);
 		pData->Is_Custom |= 1;
 	}
 
 	pData->IC_Duration = pINI->ReadInteger(section, "IronCurtain.Duration", pData->IC_Duration);
 	pData->Is_Custom |= !!pData->IC_Duration;
+
+	if(pThis->get_Temporal())
+	{
+		PARSE_BUF();
+
+		PARSE_ANIM("Temporal.WarpAway", pData->Temporal_WarpAway);
+	}
 }
 
-// 5240BD, 7 
-EXPORT_FUNC(CyborgParsingMyArse)
+DEFINE_HOOK(5240BD, CyborgParsingMyArse, 7)
 {
 	return 0x5240C4;
 }
 
 //Feature #200: EMP Warheads
-//4C5824, 5
-EXPORT_FUNC(EMPulseClass_Initialize1)
+DEFINE_HOOK(4C5824, EMPulseClass_Initialize1, 5)
 {
 	GET(int, Duration, EDX);
 	GET(TechnoClass *, curVictim, ESI);
@@ -132,8 +143,7 @@ EXPORT_FUNC(EMPulseClass_Initialize1)
 	return 0;
 }
 
-//4C5718, 6
-EXPORT_FUNC(EMPulseClass_Initialize2)
+DEFINE_HOOK(4C5718, EMPulseClass_Initialize2, 6)
 {
 	GET(int, Duration, EAX);
 	GET(TechnoClass *, curVictim, ESI);
@@ -142,18 +152,15 @@ EXPORT_FUNC(EMPulseClass_Initialize2)
 	return 0;
 }
 
-//4C575E, 7
-EXPORT_FUNC(EMPulseClass_CyborgCheck)
+DEFINE_HOOK(4C575E, EMPulseClass_CyborgCheck, 7)
 {
 	GET(TechnoClass *, curVictim, ESI);
 	TechnoTypeClass* pType = (TechnoTypeClass*)curVictim->GetType();	
 	return pType->get_Cyborg_() ? 0x4C577A : 0;
 }
 
-
 // feature #384: Permanent MindControl Warheads + feature #200: EMP Warheads
-// 46920B, 6
-EXPORT_FUNC(BulletClass_Fire)
+DEFINE_HOOK(46920B, BulletClass_Fire, 6)
 {
 	GET(BulletClass *, Bullet, ESI);
 	WarheadTypeClass *pThis = Bullet->get_WH();
@@ -239,66 +246,74 @@ EXPORT_FUNC(BulletClass_Fire)
 	__asm{ fmul x }; \
 	return R->get_Origin() + 7;
 
-// 6F36FE, 7 // temp, will be taken out when SelectWeapon is remade
-EXPORT_FUNC(Verses_fld_0)
+// temp, will be taken out when SelectWeapon is remade
+DEFINE_HOOK(6F36FE, Verses_fld_0, 7)
 {
 	FLD_VERSES(EAX, ECX);
 }
 
-// 6F7D3D, 7
-EXPORT_FUNC(Verses_fld_1)
+DEFINE_HOOK(6F7D3D, Verses_fld_1, 7)
 {
 	FLD_VERSES(ECX, EAX);
 }
 
-// 708AF7, 7
-EXPORT_FUNC(Verses_fld_2)
+DEFINE_HOOK(708AF7, Verses_fld_2, 7)
 {
 	FLD_VERSES(ECX, EAX);
 }
 
-// 6FCB6A, 7
-EXPORT_FUNC(Verses_fld_3)
+DEFINE_HOOK(6FCB6A, Verses_fld_3, 7)
 {
 	FLD_VERSES(EDI, EAX);
 }
 
-// 6F3731, 7 // temp, will be taken out when SelectWeapon is remade
-EXPORT_FUNC(Verses_fld_4)
+// temp, will be taken out when SelectWeapon is remade
+DEFINE_HOOK(6F3731, Verses_fld_4, 7)
 {
 	FLD_VERSES(EDX, EAX);
 }
 
-// 70CEB2, 7
-EXPORT_FUNC(Verses_fmul_0)
+DEFINE_HOOK(70CEB2, Verses_fmul_0, 7)
 {
 	FMUL_VERSES(EAX, ECX);
 }
 
-// 70CEC7, 7
-EXPORT_FUNC(Verses_fmul_1)
+DEFINE_HOOK(70CEC7, Verses_fmul_1, 7)
 {
 	FMUL_VERSES(EAX, EDX);
 }
 
-// 70CF49, 7
-EXPORT_FUNC(Verses_fmul_2)
+DEFINE_HOOK(70CF49, Verses_fmul_2, 7)
 {
 	FMUL_VERSES(ECX, EAX);
 }
 
-// 48923D, 7
-EXPORT_FUNC(Verses_fmul_3)
+DEFINE_HOOK(48923D, Verses_fmul_3, 7)
 {
 	FMUL_VERSES(EDI, EDX);
 }
 
-// 75DDCC, 7
-EXPORT_FUNC(Verses_OrigParser)
+DEFINE_HOOK(75DDCC, Verses_OrigParser, 7)
 {
 	// should really be doing something smarter due to westwood's weirdass code, but cannot be bothered atm
 	// will fix if it is reported to actually break things
 	// this breaks 51E33D which stops infantry with verses (heavy=0 & steel=0) from targeting non-infantry at all
 	// (whoever wrote that code must have quite a few gears missing in his head)
 	return 0x75DE98;
+}
+
+// issue 472: deglob WarpAway
+DEFINE_HOOK(71A87B, TemporalClass_Update_CacheWH, 6)
+{
+	WarheadTypeClassExt::Temporal_WH = ((WeaponTypeClass *)R->get_EAX())->get_Warhead();
+	return 0;
+}
+
+// issue 472: deglob WarpAway
+DEFINE_HOOK(71A900, TemporalClass_Update_WarpAway, 6)
+{
+	WarheadTypeClassExt::WarheadTypeClassData *pData = WarheadTypeClassExt::Ext_p[WarheadTypeClassExt::Temporal_WH];
+
+	R->set_EDX((DWORD)pData->Temporal_WarpAway);
+	return 0x71A906;
 }

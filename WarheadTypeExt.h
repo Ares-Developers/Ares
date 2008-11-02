@@ -5,6 +5,7 @@
 #include <MacroHelpers.h> //basically indicates that this is DCoder country
 
 #include <AnimClass.h>
+#include <AnimTypeClass.h>
 #include <BulletClass.h>
 #include <CaptureManagerClass.h>
 #include <CCINIClass.h>
@@ -36,9 +37,14 @@ class WarheadTypeClassExt
 
 		DynamicVectorClass<double> Verses;
 
+		AnimTypeClass *Temporal_WarpAway;
+
 		// if you want to default properties to some global values like [General]IronCurtainDuration= , do so in this
 		void Initialize(WarheadTypeClass*);
 	};
+
+	// evil hack
+	static WarheadTypeClass *Temporal_WH;
 
 	EXT_P_DECLARE(WarheadTypeClass);
 	EXT_FUNCS(WarheadTypeClass);

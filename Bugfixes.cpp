@@ -22,11 +22,12 @@
 
 // bugfix #231: DestroyAnims don't remap and cause reconnection errors
 DEFINE_HOOK(441D25,BuildingClass_Destroy,0A)
-EXPORT_FUNC(BuildingClass_Destroy) { return 0x441D37; }
+{
+	return 0x441D37;
+}
 
 // bugfix #379: Temporal friendly kills give veterancy
-// 71A92A, 5
-EXPORT_FUNC(_Temporal_AvoidFriendlies)
+DEFINE_HOOK(71A92A, _Temporal_AvoidFriendlies, 5)
 {
 	GET(TemporalClass *, Temp, ESI); 
 
@@ -38,8 +39,7 @@ EXPORT_FUNC(_Temporal_AvoidFriendlies)
 }
 
 // bugfix #385: Only InfantryTypes can use Ivan Bombs
-// 438E86, 5
-EXPORT_FUNC(IvanBombs_AttachableByAll)
+DEFINE_HOOK(438E86, IvanBombs_AttachableByAll, 5)
 {
 	GET(TechnoClass *, Source, EBP);
 	switch(Source->WhatAmI())
@@ -55,19 +55,17 @@ EXPORT_FUNC(IvanBombs_AttachableByAll)
 	}
 }
 
-// 6FA4C6, 5
 /* this is a wtf: it unsets target if the unit can no longer affect its current target. 
  * Makes sense, except Aircraft that lose the target so crudely in the middle of the attack
  * (i.e. ivan bomb weapon) go wtfkerboom with an IE
  */
-EXPORT_FUNC(TechnoClass_Update_ZeroOutTarget)
+DEFINE_HOOK(6FA4C6, TechnoClass_Update_ZeroOutTarget, 5)
 {
 	GET(TechnoClass *, T, ESI);
 	return (T->WhatAmI() == abs_Aircraft) ? 0x6FA4D1 : 0;
 }
 
-// 46934D, 6
-EXPORT_FUNC(IvanBombs_Spread)
+DEFINE_HOOK(46934D, IvanBombs_Spread, 6)
 {
 	GET(BulletClass *, bullet, ESI);
 	double cSpread = bullet->get_WH()->get_CellSpread();
@@ -114,8 +112,7 @@ EXPORT_FUNC(IvanBombs_Spread)
 }
 
 // Insignificant=yes or DontScore=yes prevent EVA_UnitLost on unit destruction
-// 4D98DD, 6
-EXPORT_FUNC(Insignificant_UnitLost)
+DEFINE_HOOK(4D98DD, Insignificant_UnitLost, 6)
 {
 	GET(TechnoClass *, t, ESI);
 	TechnoTypeClass *T = t->GetTechnoType(); //R->get_EAX(); would work, but let's see if this does as well
@@ -124,8 +121,7 @@ EXPORT_FUNC(Insignificant_UnitLost)
 }
 
 // bugfix #277: VeteranInfantry and friends don't show promoted cameos
-// 71204C, 6
-EXPORT_FUNC(TechnoTypeClass_GetCameo)
+DEFINE_HOOK(71204C, TechnoTypeClass_GetCameo, 6)
 {
 	GET(TechnoTypeClass *, T, ESI);
 	HouseTypeClass *Country = ((HouseClass *)R->get_EAX())->get_Type();
@@ -177,16 +173,14 @@ EXPORT_FUNC(TechnoTypeClass_GetCameo)
 // Naval=yes units show promoted cameos but don't actually get promoted
 // for now, show unpromoted cameos
 // someday, make em actually promoted (@ 0x735657)
-// 71204C, 6
-EXPORT_FUNC(TechnoTypeClass_GetCameo2)
+DEFINE_HOOK(71204C, TechnoTypeClass_GetCameo2, 6)
 {
 	GET(TechnoTypeClass *, T, ESI);
 	return T->get_Naval() ? 0x7120BF : 0x7120C5;
 }
 
 // MakeInfantry that fails to place will just end the source animation and cleanup instead of memleaking to game end
-// 424B23, 6
-EXPORT_FUNC(AnimClass_Update)
+DEFINE_HOOK(424B23, AnimClass_Update, 6)
 {
 	GET(InfantryClass *, I, EDI);
 	I->UnInit();
@@ -279,12 +273,12 @@ RETURN:
 	return 0x4FEEDA;
 }
 
-// 6BB9DD, 5
-EXPORT_FUNC(WinMain_LogNonsense)
+DEFINE_HOOK(6BB9DD, WinMain_LogNonsense, 5)
 {
 	return 0x6BBE2B;
 }
 
+/*
 // 701190, 5
 EXPORT_FUNC(TechnoClass_IsPowerOnline)
 {
@@ -310,32 +304,29 @@ EXPORT_FUNC(FootClass_UpdatePosition)
 	}
 	return 0;
 }
+*/
 
 // bugfix #187: Westwood idiocy
-// 531726, 5
-EXPORT_FUNC(StupidPips1)
+DEFINE_HOOK(531726, StupidPips1, 5)
 {
 	return 0x53173A;
 }
 
 // bugfix #187: Westwood idiocy
-// 53173F, 5
-EXPORT_FUNC(StupidPips2)
+DEFINE_HOOK(53173F, StupidPips2, 5)
 {
 	return 0x531749;
 }
 
 // bugfix #187: Westwood idiocy
-// 5F698F, 5
-EXPORT_FUNC(ObjectClass_GetCell)
+DEFINE_HOOK(5F698F, ObjectClass_GetCell, 5)
 {
 	return 0x5F69B2;
 }
 
 // UNTESTED!!
 // bugfix #388: Units firing from inside a transport do not obey DecloakToFire
-// 6FCA30, 6
-EXPORT_FUNC(TechnoClass_GetWeaponState)
+DEFINE_HOOK(6FCA30, TechnoClass_GetWeaponState, 6)
 {
 	GET(TechnoClass *, Techno, ESI);
 	TechnoClass *Transport = Techno->get_Transporter();
@@ -344,17 +335,15 @@ EXPORT_FUNC(TechnoClass_GetWeaponState)
 }
 
 // PrismSupportModifier repair
-// 671152, 6
-EXPORT_FUNC(RulesClass_Addition_General)
+DEFINE_HOOK(671152, RulesClass_Addition_General, 6)
 {
 	GET(RulesClass *, Rules, ESI);
 	Rules->set_PrismSupportModifier(Rules->get_PrismSupportModifier() / 100);
 	return 0;
 }
 
-// 4693B0, 6
 // Overpowerer no longer just infantry
-EXPORT_FUNC(BulletClass_Fire_Overpower)
+DEFINE_HOOK(4693B0, BulletClass_Fire_Overpower, 6)
 {
 	GET(TechnoClass *, pT, ECX);
 	switch(pT->WhatAmI())
@@ -383,16 +372,14 @@ EXPORT_FUNC(FooClass_GetCursorOverObject)
 	return orig + 5;
 }
 
-// 4F7E49, 5
 // upgrades as prereqs, facepalm of epic proportions
-EXPORT_FUNC(HouseClass_CanBuildHowMany_Upgrades)
+DEFINE_HOOK(4F7E49, HouseClass_CanBuildHowMany_Upgrades, 5)
 {
 		return R->get_EAX() < 3 ? 0x4F7E41 : 0x4F7E34;
 }
 
 #ifdef DEBUGBUILD
-// 6D3D10, 6
-EXPORT_FUNC(Dump)
+DEFINE_HOOK(6D3D10, Dump, 6)
 {
 	/*
 	if(Unsorted::CurrentFrame == 5) {
@@ -467,15 +454,13 @@ EXPORT_FUNC(Dump)
 }
 #endif
 
-// 715857, 5
-EXPORT_FUNC(TechnoTypeClass_LoadFromINI_LimitPalettes)
+DEFINE_HOOK(715857, TechnoTypeClass_LoadFromINI_LimitPalettes, 5)
 {
 	return 0x715876;
 }
 
-// 4444E2, 6
 // alternative factory search - instead of same [Type], use any of same Factory= and Naval=
-EXPORT_FUNC(BuildingClass_KickOutUnit)
+DEFINE_HOOK(4444E2, BuildingClass_KickOutUnit, 6)
 {
 	GET(BuildingClass *, Src, ESI);
 	GET(BuildingClass *, Tst, EBP);
@@ -495,7 +480,8 @@ EXPORT_FUNC(BuildingClass_KickOutUnit)
 // 42461D, 6
 // 42463A, 6
 // correct warhead for animation damage
-EXPORT_FUNC(AnimClass_Update_Damage)
+DEFINE_HOOK(42461D, AnimClass_Update_Damage, 6)
+DEFINE_HOOK_AGAIN(42463A, AnimClass_Update_Damage, 6)
 {
 	GET(AnimClass *, Anim, ESI);
 	WarheadTypeClass *W = Anim->get_Type()->get_Warhead();
@@ -519,24 +505,21 @@ EXPORT_FUNC(AnimClass_Update_Damage)
 	return origin + 6;
 }
 
-// 51F76D, 5
-EXPORT_FUNC(InfantryClass_Unload)
+DEFINE_HOOK(51F76D, InfantryClass_Unload, 5)
 {
 	GET(TechnoClass *, I, ESI);
 	TechnoTypeClassExt::TechnoTypeClassData *pData = TechnoTypeClassExt::Ext_p[I->GetTechnoType()];
 	return pData->Is_Deso ? 0x51F77D : 0x51F792;
 }
 
-// 51CE9A, 5
-EXPORT_FUNC(InfantryClass_Idle)
+DEFINE_HOOK(51CE9A, InfantryClass_Idle, 5)
 {
 	GET(InfantryClass *, I, ESI);
 	TechnoTypeClassExt::TechnoTypeClassData *pData = TechnoTypeClassExt::Ext_p[I->GetTechnoType()];
 	return pData->Is_Cow ? 0x51CEAE : 0x51CECD;
 }
 
-// 747BBD, 5
-EXPORT_FUNC(UnitTypeClass_LoadFromINI)
+DEFINE_HOOK(747BBD, UnitTypeClass_LoadFromINI, 5)
 {
 	GET(UnitTypeClass *, U, ESI);
 
@@ -560,16 +543,14 @@ EXPORT_FUNC(TechnoClass_SelectFiringVoice)
 }
 */
 
-// 414D36, 6
 // stop aircraft from losing target when it's in air
-EXPORT_FUNC(AACombat)
+DEFINE_HOOK(414D36, AACombat, 6)
 {
 	return 0x414D4D;
 }
 
-// 5215F9, 6
 // godawful hack - Desolator deploy fire is triggered by ImmuneToRadiation !
-EXPORT_FUNC(InfantryClass_UpdateDeploy)
+DEFINE_HOOK(5215F9, InfantryClass_UpdateDeploy, 6)
 {
 	GET(TechnoClass *, I, ESI);
 	TechnoTypeClassExt::TechnoTypeClassData *pData = TechnoTypeClassExt::Ext_p[I->GetTechnoType()];
@@ -590,11 +571,10 @@ EXPORT_FUNC(InfantryClass_UpdateDeploy2)
 	return 0;
 }
 
-// 6F7561, 5
 // westwood does firingUnit->WhatAmI() == abs_AircraftType
 // which naturally never works
 // let's see what this change does
-EXPORT_FUNC(Arcing_Aircraft)
+DEFINE_HOOK(6F7561, Arcing_Aircraft, 5)
 {
 	int T = R->get_EAX();
 	int *X = (int *)R->get_ESI();
