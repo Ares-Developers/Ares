@@ -398,7 +398,10 @@ EXPORT Sides_MixFileIndex(REGISTERS* R)
 	SideClass* pSide = (*SideClass::Array)[n];
 
 	if(SideExt::Map.find(pSide) != SideExt::Map.end())
-		R->set_ESI((DWORD)SideExt::Map[pSide].SidebarMixFileIndex);
+		// original code is 
+		// sprintf(mixname, "SIDEC%02dMD.MIX", ESI + 1);
+		// it's easier to sub 1 here than to fix the calculation in the orig code
+		R->set_ESI(((DWORD)SideExt::Map[pSide].SidebarMixFileIndex) - 1);
 	else if(n == 2)
 		R->set_ESI(1);
 
