@@ -47,7 +47,7 @@ EXPORT Sides_LoadFromINI(REGISTERS* R)
 						for(int i = 0; i < RulesClass::Global()->get_SovParaDropNum()->get_Count(); i++)
 							Ext.ParaDropNum.AddItem(RulesClass::Global()->get_SovParaDropNum()->GetItem(i));
 
-						Ext.PowerPlant = RulesClass::Global()->get_NodRegularPower();
+//						Ext.PowerPlant = RulesClass::Global()->get_NodRegularPower();
 						Ext.SidebarMixFileIndex = 1;
 						Ext.SidebarYuriFileNames = false;
 						Ext.SurvivorDivisor = RulesClass::Global()->get_SovietSurvivorDivisor();
@@ -71,7 +71,7 @@ EXPORT Sides_LoadFromINI(REGISTERS* R)
 						for(int i = 0; i < RulesClass::Global()->get_YuriParaDropNum()->get_Count(); i++)
 							Ext.ParaDropNum.AddItem(RulesClass::Global()->get_YuriParaDropNum()->GetItem(i));
 
-						Ext.PowerPlant = RulesClass::Global()->get_ThirdPowerPlant();
+//						Ext.PowerPlant = RulesClass::Global()->get_ThirdPowerPlant();
 						Ext.SidebarMixFileIndex = 1;
 						Ext.SidebarYuriFileNames = true;
 						Ext.SurvivorDivisor = RulesClass::Global()->get_ThirdSurvivorDivisor();
@@ -95,7 +95,7 @@ EXPORT Sides_LoadFromINI(REGISTERS* R)
 						for(int i = 0; i < RulesClass::Global()->get_AllyParaDropNum()->get_Count(); i++)
 							Ext.ParaDropNum.AddItem(RulesClass::Global()->get_AllyParaDropNum()->GetItem(i));
 
-						Ext.PowerPlant = RulesClass::Global()->get_GDIPowerPlant();
+//						Ext.PowerPlant = RulesClass::Global()->get_GDIPowerPlant();
 						Ext.SidebarMixFileIndex = 0;
 						Ext.SidebarYuriFileNames = false;
 						Ext.SurvivorDivisor = RulesClass::Global()->get_AlliedSurvivorDivisor();
@@ -168,8 +168,8 @@ EXPORT Sides_LoadFromINI(REGISTERS* R)
 							pExt->ParaDropNum.AddItem(atoi(p));
 					}
 
-					if(pINI->ReadString(pID, "AI.PowerPlant", "", buffer, 0x80))
-						pExt->PowerPlant = BuildingTypeClass::FindOrAllocate(buffer);
+//					if(pINI->ReadString(pID, "AI.PowerPlant", "", buffer, 0x80))
+//					pExt->PowerPlant = BuildingTypeClass::FindOrAllocate(buffer);
 
 					pExt->SidebarMixFileIndex = 
 						pINI->ReadInteger(pID, "Sidebar.MixFileIndex", pExt->SidebarMixFileIndex);
@@ -223,23 +223,6 @@ EXPORT Sides_SlaveMinerCheck(REGISTERS* R)
 
 	R->set_EDI(n);
 	return 0x4F8F75;
-}
-
-//0x4FE782
-EXPORT Sides_PowerPlant(REGISTERS* R)
-{
-	HouseClass* pThis = (HouseClass*)R->get_EBP();
-
-	int n = pThis->get_SideIndex();
-	SideClass* pSide = (*SideClass::Array)[n];
-
-	if(SideExt::Map.find(pSide) != SideExt::Map.end())
-	{
-		R->set_EDI((DWORD)SideExt::Map[pSide].PowerPlant);
-		return 0x4FE893;
-	}
-	else
-		return 0;
 }
 
 //0x505C95

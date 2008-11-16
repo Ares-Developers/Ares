@@ -23,7 +23,7 @@ public:
 		int SurvivorDivisor;
 		TypeList<BuildingTypeClass*> BaseDefenses;
 		TypeList<int> BaseDefenseCounts;
-		BuildingTypeClass* PowerPlant;
+//		BuildingTypeClass* PowerPlant;
 		ColorScheme* LoadTextColor;
 		TypeList<TechnoTypeClass*> ParaDrop;
 		TypeList<int> ParaDropNum;
@@ -36,7 +36,7 @@ public:
 			SavegameValidation = SIDEEXT_VALIDATION;
 			DefaultDisguise = NULL;
 			Crew = NULL;
-			PowerPlant = NULL;
+//			PowerPlant = NULL;
 			LoadTextColor = NULL;
 			*EVATag = 0;
 		}

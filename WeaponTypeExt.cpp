@@ -242,11 +242,11 @@ EXPORT_FUNC(TechnoClass_FireRadBeam2)
 	if(pData->Beam_IsHouseColor)
 	{
 		GET(TechnoClass *, SourceUnit, EDI);
-		Rad->set_Color(*SourceUnit->get_Owner()->get_Color());
+		Rad->set_Color(SourceUnit->get_Owner()->get_Color());
 	}
 	else
 	{
-		Rad->set_Color(pData->Beam_Color);
+		Rad->set_Color(&pData->Beam_Color);
 	}
 	Rad->set_Period(pData->Beam_Duration);
 	Rad->set_Amplitude(pData->Beam_Amplitude);

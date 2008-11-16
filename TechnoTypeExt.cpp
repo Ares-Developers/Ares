@@ -21,6 +21,8 @@ EXT_CTOR(TechnoTypeClass)
 		pData->Weapons.SetCapacity(0, NULL);
 		pData->EliteWeapons.SetCapacity(0, NULL);
 
+		pData->Insignia_R = pData->Insignia_V = pData->Insignia_E = NULL;
+
 		pData->Data_Initialized = 0;
 
 		Ext_p[pThis] = pData;
@@ -51,6 +53,9 @@ EXT_LOAD(TechnoTypeClass)
 			SWIZZLE(Ext_p[pThis]->Weapons[ii].WeaponType);
 		for ( int ii = 0; ii < Ext_p[pThis]->EliteWeapons.get_Count(); ++ii )
 			SWIZZLE(Ext_p[pThis]->EliteWeapons[ii].WeaponType);
+		SWIZZLE(Ext_p[pThis]->Insignia_R);
+		SWIZZLE(Ext_p[pThis]->Insignia_V);
+		SWIZZLE(Ext_p[pThis]->Insignia_E);
 	}
 }
 
@@ -103,7 +108,6 @@ EXT_LOAD_INI(TechnoTypeClass)
 	{
 		pData->Initialize(pThis);
 	}
-
 
 	// survivors
 	pData->Survivors_Pilots.SetCapacity(SideClass::Array->get_Count(), NULL);
@@ -181,6 +185,30 @@ EXT_LOAD_INI(TechnoTypeClass)
 	pData->Is_Deso = pINI->ReadBool(section, "IsDesolator", pData->Is_Deso);
 	pData->Is_Deso_Radiation = pINI->ReadBool(section, "IsDesolator.RadDependant", pData->Is_Deso_Radiation);
 	pData->Is_Cow  = pINI->ReadBool(section, "IsCow", pData->Is_Cow);
+
+	// insignia
+	SHPStruct *image = NULL;
+	if(pINI->ReadString(section, "Insignia.Rookie", "", buffer, 256)) {
+		sprintf(flag, "%s.shp", buffer);
+		image = FileSystem::LoadSHPFile(flag);
+		if(image) {
+			pData->Insignia_R = image;
+		}
+	}
+	if(pINI->ReadString(section, "Insignia.Veteran", "", buffer, 256)) {
+		sprintf(flag, "%s.shp", buffer);
+		image = FileSystem::LoadSHPFile(flag);
+		if(image) {
+			pData->Insignia_V = image;
+		}
+	}
+	if(pINI->ReadString(section, "Insignia.Elite", "", buffer, 256)) {
+		sprintf(flag, "%s.shp", buffer);
+		image = FileSystem::LoadSHPFile(flag);
+		if(image) {
+			pData->Insignia_E = image;
+		}
+	}
 
 	// weapons
 	int WeaponCount = pINI->ReadInteger(section, "WeaponCount", pData->Weapons.get_Count());

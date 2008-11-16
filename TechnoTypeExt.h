@@ -35,6 +35,8 @@ class TechnoTypeClassExt
 		DynamicVectorClass<WeaponStruct> Weapons;
 		DynamicVectorClass<WeaponStruct> EliteWeapons;
 
+		SHPStruct *Insignia_R, *Insignia_V, *Insignia_E;
+
 		bool Data_Initialized;
 		void Initialize(TechnoTypeClass *pThis);
 	};

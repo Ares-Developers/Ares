@@ -61,6 +61,16 @@ class WeaponTypeClassExt
 
 	};
 
+	struct WeaponWeight
+	{
+		short index;
+		bool InRange;
+		float DPF;
+		bool operator < (const WeaponWeight &RHS) const {
+			return (this->InRange < RHS.InRange && this->DPF < RHS.DPF);
+		}
+	};
+
 	EXT_P_DECLARE(WeaponTypeClass);
 	EXT_FUNCS(WeaponTypeClass);
 	EXT_INI_FUNCS(WeaponTypeClass);

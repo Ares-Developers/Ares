@@ -3,6 +3,8 @@
 
 #include <MacroHelpers.h> //basically indicates that this is DCoder country
 #include <hash_map>
+#include <vector>
+#include <algorithm>
 
 #include <AircraftClass.h>
 #include <CellSpread.h>
@@ -13,6 +15,9 @@
 #include <TemporalClass.h>
 #include <WeaponTypeClass.h>
 #include <WarheadTypeClass.h>
+
+#include "WarheadTypeExt.h"
+#include "WeaponTypeExt.h"
 
 class TechnoClassExt
 {
@@ -25,6 +30,7 @@ class TechnoClassExt
 		BYTE idxSlot_Warp;
 
 		TimerStruct CloakSkipTimer;
+		SHPStruct * Insignia_Image;
 	};
 
 	EXT_P_DECLARE(TechnoClass);
@@ -32,6 +38,10 @@ class TechnoClassExt
 //	EXT_INI_FUNCS(TechnoClass);
 	static void SpawnSurvivors(TechnoClass *pThis, TechnoClass *pKiller, bool Select);
 	static bool ParadropSurvivor(FootClass *Survivor, CoordStruct *loc, bool Select);
+	
+	static int SelectWeaponAgainst(TechnoClass *pThis, TechnoClass *pTarget);
+	static bool EvalWeaponAgainst(TechnoClass *pThis, TechnoClass *pTarget, WeaponTypeClass* W);
+	static float EvalVersesAgainst(TechnoClass *pThis, TechnoClass *pTarget, WeaponTypeClass* W);
 };
 
 #endif

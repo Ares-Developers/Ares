@@ -6,6 +6,7 @@
 #include <InfantryClass.h>
 #include <LocomotionClass.h>
 #include <MapClass.h>
+#include <MixFileClass.h>
 #include <TechnoClass.h>
 #include <TemporalClass.h>
 #include <UnitTypeClass.h>
@@ -593,5 +594,16 @@ DEFINE_HOOK(6F7561, Arcing_Aircraft, 5)
 	int *X = (int *)R->get_ESI();
 	R->set_EAX(*X);
 	return T == abs_Aircraft ? 0x6F75B2 : 0x6F7568;
+}
+
+DEFINE_HOOK(6BD7DC, Expand_MIX_Reorg, 5)
+{
+	MixFileClass::Bootstrap();
+	return 0;
+}
+
+DEFINE_HOOK(52BB64, Expand_MIX_Deorg, 5)
+{
+	return 0x52BB69;
 }
 

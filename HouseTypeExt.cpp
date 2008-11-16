@@ -1,3 +1,4 @@
+#include "HouseExt.h"
 #include "HouseTypeExt.h"
 
 //Static init
@@ -139,9 +140,27 @@ EXPORT HTExt_Construct(REGISTERS* R)
 	}
 	Ext.RandomSelectionWeight = 1;
 
+	Ext.Powerplants.SetCapacity(0, NULL);
+	Ext.Data_Initialized = 1;
 	HouseTypeExt::Map[pThis] = Ext;
 
 	return 0;
+}
+
+void HouseTypeExt::Struct::Initialize(HouseTypeClass *pThis)
+{
+	switch(pThis->get_SideIndex()) {
+		case 0:
+			this->Powerplants.AddItem(RulesClass::Global()->get_GDIPowerPlant());
+			break;
+		case 1:
+			this->Powerplants.AddItem(RulesClass::Global()->get_NodRegularPower());
+			break;
+		case 2:
+			this->Powerplants.AddItem(RulesClass::Global()->get_ThirdPowerPlant());
+			break;
+	}
+	this->Data_Initialized = 1;
 }
 
 //0x51214F, 5
@@ -153,6 +172,10 @@ EXPORT HTExt_LoadFromINI(REGISTERS* R)
 	if(pINI && HouseTypeExt::Map.find(pThis) != HouseTypeExt::Map.end())
 	{
 		HouseTypeExt::Struct* pExt = &HouseTypeExt::Map[pThis];
+
+		if(!pExt->Data_Initialized) {
+			pExt->Initialize(pThis);
+		}
 
 		char buffer[0x80] = "\0";
 		char* pID = pThis->get_ID();
@@ -185,6 +208,16 @@ EXPORT HTExt_LoadFromINI(REGISTERS* R)
 
 		if(pINI->ReadString(pID, "MenuText.Status", "", buffer, 0x80))
 			strncpy(pExt->StatusText, buffer, 0x20);
+
+		char plants[0x200];
+		if(pINI->ReadString(pID, "AI.PowerPlants", "", buffer, 0x200)) {
+			pExt->Powerplants.SetCapacity(0, NULL);
+			for(char *bld = strtok(plants, ","); bld; bld = strtok(NULL, ",")) {
+				if(BuildingTypeClass *pBld = BuildingTypeClass::Find(bld)) {
+					pExt->Powerplants.AddItem(pBld);
+				}
+			}
+		}
 
 		pExt->RandomSelectionWeight = pINI->ReadInteger(pID, "RandomSelectionWeight", pExt->RandomSelectionWeight);
 	}
@@ -417,4 +450,25 @@ EXPORT HTExt_PickRandom_AI(REGISTERS* R)
 {
 	R->set_EAX(HouseTypeExt::PickRandomCountry());
 	return 0x69B684;
+}
+
+DEFINE_HOOK(4FE782, HTExt_PickPowerplant, 6)
+{
+	GET(HouseClass *, H, EBP);
+	HouseTypeExt::Struct *pData = &HouseTypeExt::Map[H->get_Type()];
+
+	std::vector<BuildingTypeClass *> Eligible;
+
+	for(int i = 0; i < pData->Powerplants.get_Count(); ++i) {
+		BuildingTypeClass *pPower = pData->Powerplants[i];
+		if(HouseClassExt::PrereqValidate(H, pPower, 0, 1) == 1) {
+			Eligible.push_back(pPower);
+		}
+	}
+	BuildingTypeClass *pResult = NULL;
+	int idx = Randomizer::Global()->RandomRanged(0, Eligible.size());
+	pResult = Eligible.at(idx);
+
+	R->set_EDI((DWORD)pResult);
+	return 0x4FE893;
 }
