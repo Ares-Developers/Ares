@@ -36,7 +36,7 @@ void CSFLoader::LoadAdditionalCSF(const char *pFileName)
 };
 
 //0x7346D0
-EXPORT CSF_LoadBaseFile(REGISTERS* R)
+DEFINE_HOOK(7346D0, CSF_LoadBaseFile, 6)
 {
 	StringTable::set_Loaded(true);
 	CSFLoader::CSFCount = 0;
@@ -45,7 +45,7 @@ EXPORT CSF_LoadBaseFile(REGISTERS* R)
 }
 
 //0x734823
-EXPORT CSF_AllocateMemory(REGISTERS* R)
+DEFINE_HOOK(734823, CSF_AllocateMemory, 6)
 {
 	//aaaah... finally, some serious hax :)
 	//we don't allocate memory by the amount of labels in the base CSF,
@@ -74,7 +74,7 @@ EXPORT CSF_AllocateMemory(REGISTERS* R)
 }
 
 //0x734A5F, 5
-EXPORT CSF_AddOrOverrideLabel(REGISTERS* R)
+DEFINE_HOOK(734A5F, CSF_AddOrOverrideLabel, 5)
 {
 	if(CSFLoader::CSFCount > 0)
 	{
@@ -127,7 +127,7 @@ EXPORT CSF_AddOrOverrideLabel(REGISTERS* R)
 }
 
 //0x734A97
-EXPORT CSF_SetIndex(REGISTERS* R)
+DEFINE_HOOK(734A97, CSF_SetIndex, 6)
 {
 	R->set_EDX((DWORD)StringTable::get_Labels());
 	

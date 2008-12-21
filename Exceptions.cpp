@@ -1,14 +1,14 @@
 #include "Exceptions.h"
 
 // 74FDC0, 5
-EXPORT_FUNC(Exception_Log)
+DEFINE_HOOK(74FDC0, Exception_Log, 5)
 {
 	R->set_EAX((DWORD)VERSION_STRING);
 	return 0x74FEEF;
 }
 
 // 4C8BC7, 6
-EXPORT_FUNC(Exception_Log_RegContent)
+DEFINE_HOOK(4C8BC7, Exception_Log_RegContent, 6)
 {
 	GET(_CONTEXT *, ctxt, EBP);
 	char buffer [256];  // IDs can't exceed some 24 chars, this should be enough
@@ -31,7 +31,7 @@ EXPORT_FUNC(Exception_Log_RegContent)
 }
 
 // 4C8E54, 9
-EXPORT_FUNC(Exception_Log_StackContent)
+DEFINE_HOOK(4C8E54, Exception_Log_StackContent, 9)
 {
 	GET(DWORD *, ptr, EDI);
 	char buffer [256];

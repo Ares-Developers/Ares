@@ -87,7 +87,7 @@ void ArmorType::AddDefaults()
 }
 
 // 4753F0, 0A
-EXPORT_FUNC(ArmorType_FindIndex)
+DEFINE_HOOK(4753F0, ArmorType_FindIndex, 0A)
 {
 	GET(CCINIClass *, pINI, ECX);
 	GET(ObjectTypeClass*, O, EBX);
@@ -125,7 +125,7 @@ EXPORT_FUNC(ArmorType_FindIndex)
 }
 
 // 4B9A52, 5
-EXPORT_FUNC(DropshipLoadout_PrintArmor)
+DEFINE_HOOK(4B9A52, DropshipLoadout_PrintArmor, 5)
 {
 	R->set_StackVar32(0x4, (DWORD)ArmorType::Array[R->get_EDX()]);
 	return 0;

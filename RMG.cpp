@@ -1,7 +1,7 @@
 #include <StringTable.h>
 
 //0x596FFE
-EXPORT RMG_EnableArchipelago(REGISTERS* R)
+DEFINE_HOOK(596FFE, RMG_EnableArchipelago, 0)
 {
 	R->set_EBP(0);						//start at index 0 instead of 1
 	R->set_EBX(0x82B034);				//set the list offset to "TXT_MAP_ARCHIPELAGO"
@@ -9,7 +9,7 @@ EXPORT RMG_EnableArchipelago(REGISTERS* R)
 }
 
 //0x5970EA
-EXPORT RMG_EnableDesert(REGISTERS* R)
+DEFINE_HOOK(5970EA, RMG_EnableDesert, 9)
 {
 	HWND hWnd=(HWND)R->get_EDI();
 
@@ -32,7 +32,7 @@ EXPORT RMG_EnableDesert(REGISTERS* R)
 }
 
 //0x598FB8
-EXPORT RMG_GenerateUrban(REGISTERS* R)
+DEFINE_HOOK(598FB8, RMG_GenerateUrban, 0)
 {
 	void* pMapSeed = (void*)R->get_ESI();
 	SET_REG32(ecx, pMapSeed);
@@ -40,20 +40,20 @@ EXPORT RMG_GenerateUrban(REGISTERS* R)
 }
 
 //0x59000E
-EXPORT RMG_FixPavedRoadEnd_Bridges_North(REGISTERS* R)
+DEFINE_HOOK(59000E, RMG_FixPavedRoadEnd_Bridges_North, 0)
 { return 0x590087; }
 //0x5900F7
-EXPORT RMG_FixPavedRoadEnd_Bridges_South(REGISTERS* R)
+DEFINE_HOOK(5900F7, RMG_FixPavedRoadEnd_Bridges_South, 0)
 { return 0x59015E; }
 //0x58FCC6
-EXPORT RMG_FixPavedRoadEnd_Bridges_West(REGISTERS* R)
+DEFINE_HOOK(58FCC6, RMG_FixPavedRoadEnd_Bridges_West, 0)
 { return 0x58FD2A; }
 //0x58FBDD
-EXPORT RMG_FixPavedRoadEnd_Bridges_East(REGISTERS* R)
+DEFINE_HOOK(58FBDD, RMG_FixPavedRoadEnd_Bridges_East, 0)
 { return 0x58FC55; }
 
 //0x58FA51
-EXPORT RMG_PlaceWEBridge(REGISTERS* R)
+DEFINE_HOOK(58FA51, RMG_PlaceWEBridge, 6)
 {
 	RectangleStruct* pRect = (RectangleStruct*)((BYTE*)R->get_ESP()+0x14);
 
@@ -64,7 +64,7 @@ EXPORT RMG_PlaceWEBridge(REGISTERS* R)
 }
 
 //0x58FE7B
-EXPORT RMG_PlaceNSBridge(REGISTERS* R)
+DEFINE_HOOK(58FE7B, RMG_PlaceNSBridge, 8)
 {
 	RectangleStruct* pRect = (RectangleStruct*)((BYTE*)R->get_ESP()+0x14);
 

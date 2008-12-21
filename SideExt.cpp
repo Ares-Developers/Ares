@@ -5,7 +5,7 @@ stdext::hash_map<SideClass*, SideExt::Struct> SideExt::Map;
 stdext::hash_map<VoxClass*, DynamicVectorClass<SideExt::VoxFileNameStruct> > SideExt::EVAFiles;
 
 //0x679A10
-EXPORT Sides_LoadFromINI(REGISTERS* R)
+DEFINE_HOOK(679A10, Sides_LoadFromINI, 5)
 {
 	CCINIClass* pINI = (CCINIClass*)R->get_StackVar32(4);
 	if(pINI)
@@ -107,12 +107,12 @@ EXPORT Sides_LoadFromINI(REGISTERS* R)
 				SideExt::Struct* pExt = &SideExt::Map[pThis];
 				if(pExt)
 				{
-					char buffer[0x200];
+					char buffer[BUFLEN];
 					char* p = NULL;
 
 					ColorScheme* CS;
 
-					if(pINI->ReadString(pID, "AI.BaseDefenseCounts", "", buffer, 0x200))
+					if(pINI->ReadString(pID, "AI.BaseDefenseCounts", "", buffer, BUFLEN))
 					{
 						pExt->BaseDefenseCounts.Clear();
 
@@ -120,7 +120,7 @@ EXPORT Sides_LoadFromINI(REGISTERS* R)
 							pExt->BaseDefenseCounts.AddItem(atoi(p));
 					}
 
-					if(pINI->ReadString(pID, "AI.BaseDefenses", "", buffer, 0x200))
+					if(pINI->ReadString(pID, "AI.BaseDefenses", "", buffer, BUFLEN))
 					{
 						pExt->BaseDefenses.Clear();
 
@@ -144,7 +144,7 @@ EXPORT Sides_LoadFromINI(REGISTERS* R)
 							pExt->LoadTextColor = CS;
 					}
 
-					if(pINI->ReadString(pID, "ParaDrop.Types", "", buffer, 0x200))
+					if(pINI->ReadString(pID, "ParaDrop.Types", "", buffer, BUFLEN))
 					{
 						pExt->ParaDrop.Clear();
 
@@ -160,7 +160,7 @@ EXPORT Sides_LoadFromINI(REGISTERS* R)
 						}
 					}
 
-					if(pINI->ReadString(pID, "ParaDrop.Num", "", buffer, 0x200))
+					if(pINI->ReadString(pID, "ParaDrop.Num", "", buffer, BUFLEN))
 					{
 						pExt->ParaDropNum.Clear();
 
@@ -185,7 +185,7 @@ EXPORT Sides_LoadFromINI(REGISTERS* R)
 }
 
 //0x4F8EC6
-EXPORT Sides_BaseUnit(REGISTERS* R)
+DEFINE_HOOK(4F8EC6, Sides_BaseUnit, 6)
 {
 	HouseClass* pThis = (HouseClass*)R->get_ESI();
 
@@ -200,7 +200,7 @@ EXPORT Sides_BaseUnit(REGISTERS* R)
 }
 
 //0x4F8C97
-EXPORT Sides_BuildConst(REGISTERS* R)
+DEFINE_HOOK(4F8C97, Sides_BuildConst, 6)
 {
 	HouseClass* pThis = (HouseClass*)R->get_ESI();
 
@@ -212,7 +212,7 @@ EXPORT Sides_BuildConst(REGISTERS* R)
 }
 
 //0x4F8F54
-EXPORT Sides_SlaveMinerCheck(REGISTERS* R)
+DEFINE_HOOK(4F8F54, Sides_SlaveMinerCheck, 6)
 {
 	HouseClass* pThis = (HouseClass*)R->get_ESI();
 	int n = R->get_EDI();
@@ -226,7 +226,7 @@ EXPORT Sides_SlaveMinerCheck(REGISTERS* R)
 }
 
 //0x505C95
-EXPORT Sides_BaseDefenseCounts(REGISTERS* R)
+DEFINE_HOOK(505C95, Sides_BaseDefenseCounts, 7)
 {
 	HouseClass* pThis = (HouseClass*)R->get_EBX();
 	int n = R->get_StackVar32(0x80);	//just to be on the safe side, we're not getting it from the House
@@ -260,19 +260,19 @@ DWORD SideExt::BaseDefenses(REGISTERS* R, DWORD dwReturnAddress)
 }
 
 //0x507BCA
-EXPORT Sides_BaseDefenses1(REGISTERS* R)
+DEFINE_HOOK(507BCA, Sides_BaseDefenses1, 6)
 	{ return SideExt::BaseDefenses(R, 0x507C00); }
 
 //0x507DBA
-EXPORT Sides_BaseDefenses2(REGISTERS* R)
+DEFINE_HOOK(507DBA, Sides_BaseDefenses2, 6)
 	{ return SideExt::BaseDefenses(R, 0x507DF0); }
 
 //0x507FAA
-EXPORT Sides_BaseDefenses3(REGISTERS* R)
+DEFINE_HOOK(507FAA, Sides_BaseDefenses3, 6)
 	{ return SideExt::BaseDefenses(R, 0x507FE0); }
 
 //0x52267D
-EXPORT Sides_Disguise1(REGISTERS* R)
+DEFINE_HOOK(52267D, Sides_Disguise1, 6)
 {
 	HouseClass* pHouse = (HouseClass*)R->get_EAX();
 
@@ -311,15 +311,15 @@ DWORD SideExt::Disguise(REGISTERS* R, DWORD dwReturnAddress, bool bUseESI)
 }
 
 //0x5227A3
-EXPORT Sides_Disguise2(REGISTERS* R)
+DEFINE_HOOK(5227A3, Sides_Disguise2, 6)
 	{ return SideExt::Disguise(R, 0x5227EC, false); }
 
 //0x6F422F
-EXPORT Sides_Disguise3(REGISTERS* R)
+DEFINE_HOOK(6F422F, Sides_Disguise3, 6)
 	{ return SideExt::Disguise(R, 0x6F4277, true); }
 
 //0x707D40
-EXPORT Sides_Crew(REGISTERS* R)
+DEFINE_HOOK(707D40, Sides_Crew, 6)
 {
 	HouseClass* pHouse = (HouseClass*)R->get_ECX();
 
@@ -336,7 +336,7 @@ EXPORT Sides_Crew(REGISTERS* R)
 }
 
 //0x451358
-EXPORT Sides_SurvivorDivisor(REGISTERS* R)
+DEFINE_HOOK(451358, Sides_SurvivorDivisor, 6)
 {
 	HouseClass* pHouse = (HouseClass*)R->get_EDX();
 
@@ -367,15 +367,15 @@ DWORD SideExt::LoadTextColor(REGISTERS* R, DWORD dwReturnAddress)
 }
 
 //0x642B36
-EXPORT Sides_LoadTextColor1(REGISTERS* R)
+DEFINE_HOOK(642B36, Sides_LoadTextColor1, 5)
 	{ return SideExt::LoadTextColor(R, 0x68CAA9); }
 
 //0x643BB9
-EXPORT Sides_LoadTextColor2(REGISTERS* R)
+DEFINE_HOOK(643BB9, Sides_LoadTextColor2, 5)
 	{ return SideExt::LoadTextColor(R, 0x643BEF); }
 
 //0x534FB1
-EXPORT Sides_MixFileIndex(REGISTERS* R)
+DEFINE_HOOK(534FB1, Sides_MixFileIndex, 5)
 {
 	int n = R->get_ESI();
 	SideClass* pSide = (*SideClass::Array)[n];
@@ -410,19 +410,19 @@ DWORD SideExt::MixFileYuriFiles(REGISTERS* R, DWORD dwReturnAddress1, DWORD dwRe
 }
 
 //0x72FA1A
-EXPORT Sides_MixFileYuriFiles1(REGISTERS* R)
+DEFINE_HOOK(72FA1A, Sides_MixFileYuriFiles1, 7)
 	{ return SideExt::MixFileYuriFiles(R, 0x72FA23, 0x72FA6A); }
 
 //0x72F370
-EXPORT Sides_MixFileYuriFiles2(REGISTERS* R)
+DEFINE_HOOK(72F370, Sides_MixFileYuriFiles2, 7)
 	{ return SideExt::MixFileYuriFiles(R, 0x72F379, 0x72F3A0); }
 
 //0x72FBC3
-EXPORT Sides_MixFileYuriFiles3(REGISTERS* R)
+DEFINE_HOOK(72FBC3, Sides_MixFileYuriFiles3, 5)
 	{ return SideExt::MixFileYuriFiles(R, 0x72FBCE, 0x72FBF5); }
 
 //0x6CD3C1
-EXPORT Sides_ParaDrop(REGISTERS* R)
+DEFINE_HOOK(6CD3C1, Sides_ParaDrop, 9)
 {
 	HouseClass* pHouse = ((SuperClass*)R->get_EBX())->get_Owner();
 
@@ -484,7 +484,7 @@ EXPORT Sides_LoadVoxFromINI(REGISTERS* R)
 */
 
 //0x7528E8
-EXPORT Sides_LoadVoxFile(REGISTERS* R)
+DEFINE_HOOK(7528E8, Sides_LoadVoxFile, 7)
 {
 	VoxClass* pThis = (VoxClass*)R->get_EBP();
 	if(SideExt::EVAFiles.find(pThis) != SideExt::EVAFiles.end())

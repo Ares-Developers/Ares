@@ -3,6 +3,7 @@
 
 #include <hash_map>
 #include <YRPP.h>
+#include <MacroHelpers.h>
 
 class Ares
 {
@@ -15,6 +16,9 @@ public:
 
 	static bool		bLog;
 	static FILE*	pLogFile;
+
+	static DWORD readLength;
+	static char readBuffer[BUFLEN];
 
 	//Callbacks
 	static eMouseEventFlags __stdcall MouseEvent(Point2D*,eMouseEventFlags);

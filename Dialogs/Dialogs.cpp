@@ -38,7 +38,7 @@
 #include "../Ares.h"
 
 //4A3B4B, 9 - NOTE: This overrides a call, but it's absolute, so don't worry.
-EXPORT FetchResource(REGISTERS* R)
+DEFINE_HOOK(4A3B4B, FetchResource, 9)
 {
 	HMODULE hModule = (HMODULE)Ares::hInstance; //hModule and hInstance are technically the same...
 	LPCTSTR lpName = (LPCTSTR)R->get_ECX();

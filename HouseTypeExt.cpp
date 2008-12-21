@@ -6,7 +6,8 @@ stdext::hash_map<HouseTypeClass*, HouseTypeExt::Struct> HouseTypeExt::Map;
 
 //0x511635, 5
 //0x511645, 3
-EXPORT HTExt_Construct(REGISTERS* R)
+DEFINE_HOOK(511635, HTExt_Construct, 5)
+DEFINE_HOOK_AGAIN(511645, HTExt_Construct, 3)
 {
 	HouseTypeClass* pThis = (HouseTypeClass*)R->get_ESI();
 	HouseTypeExt::Struct Ext;
@@ -164,7 +165,7 @@ void HouseTypeExt::Struct::Initialize(HouseTypeClass *pThis)
 }
 
 //0x51214F, 5
-EXPORT HTExt_LoadFromINI(REGISTERS* R)
+DEFINE_HOOK(51214F, HTExt_LoadFromINI, 5)
 {
 	HouseTypeClass* pThis = (HouseTypeClass*)R->get_EBX();
 	CCINIClass* pINI = (CCINIClass*)R->get_BaseVar32(0x8);
@@ -209,8 +210,8 @@ EXPORT HTExt_LoadFromINI(REGISTERS* R)
 		if(pINI->ReadString(pID, "MenuText.Status", "", buffer, 0x80))
 			strncpy(pExt->StatusText, buffer, 0x20);
 
-		char plants[0x200];
-		if(pINI->ReadString(pID, "AI.PowerPlants", "", buffer, 0x200)) {
+		char plants[BUFLEN];
+		if(pINI->ReadString(pID, "AI.PowerPlants", "", plants, BUFLEN)) {
 			pExt->Powerplants.SetCapacity(0, NULL);
 			for(char *bld = strtok(plants, ","); bld; bld = strtok(NULL, ",")) {
 				if(BuildingTypeClass *pBld = BuildingTypeClass::Find(bld)) {
@@ -226,7 +227,7 @@ EXPORT HTExt_LoadFromINI(REGISTERS* R)
 }
 
 //0x5536DA
-EXPORT HTExt_GetLSName(REGISTERS* R)
+DEFINE_HOOK(5536DA, HTExt_GetLSName, 9)
 {
 	int n = R->get_EBX();
 	HouseTypeClass* pThis = HouseTypeClass::Array->GetItem(n);
@@ -245,7 +246,7 @@ EXPORT HTExt_GetLSName(REGISTERS* R)
 }
 
 //0x553A05
-EXPORT HTExt_GetLSSpecialName(REGISTERS* R)
+DEFINE_HOOK(553A05, HTExt_GetLSSpecialName, 6)
 {
 	int n = R->get_StackVar32(0x38);
 	HouseTypeClass* pThis = HouseTypeClass::Array->GetItem(n);
@@ -260,7 +261,7 @@ EXPORT HTExt_GetLSSpecialName(REGISTERS* R)
 }
 
 //0x553D06
-EXPORT HTExt_GetLSBrief(REGISTERS* R)
+DEFINE_HOOK(553D06, HTExt_GetLSBrief, 6)
 {
 	int n = R->get_StackVar32(0x38);
 	HouseTypeClass* pThis = HouseTypeClass::Array->GetItem(n);
@@ -275,7 +276,7 @@ EXPORT HTExt_GetLSBrief(REGISTERS* R)
 }
 
 //0x4E3579
-EXPORT HTExt_DrawFlag(REGISTERS* R)
+DEFINE_HOOK(4E3579, HTExt_DrawFlag, 5)
 {
 	int n = R->get_ECX();
 	HouseTypeClass* pThis = HouseTypeClass::Array->GetItem(n);
@@ -295,7 +296,7 @@ EXPORT HTExt_DrawFlag(REGISTERS* R)
 }
 
 //0x72B690
-EXPORT HTExt_LSPAL(REGISTERS* R)
+DEFINE_HOOK(72B690, HTExt_LSPAL, 0A)
 {
 	int n = R->get_EDI();
 	HouseTypeClass* pThis = HouseTypeClass::Array->GetItem(n);
@@ -319,7 +320,7 @@ EXPORT HTExt_LSPAL(REGISTERS* R)
 }
 
 //0x4E38D8
-EXPORT HTExt_GetSTT(REGISTERS* R)
+DEFINE_HOOK(4E38D8, HTExt_GetSTT, 9)
 {
 	int n = R->get_ECX();
 	HouseTypeClass* pThis = HouseTypeClass::Array->GetItem(n);
@@ -338,7 +339,7 @@ EXPORT HTExt_GetSTT(REGISTERS* R)
 }
 
 //0x553412
-EXPORT HTExt_LSFile(REGISTERS* R)
+DEFINE_HOOK(553412, HTExt_LSFile, 9)
 {
 	int n = R->get_EBX();
 	HouseTypeClass* pThis = HouseTypeClass::Array->GetItem(n);
@@ -357,7 +358,7 @@ EXPORT HTExt_LSFile(REGISTERS* R)
 }
 
 //0x752BA1
-EXPORT HTExt_GetTaunt(REGISTERS* R)
+DEFINE_HOOK(752BA1, HTExt_GetTaunt, 6)
 {
 	char* pFileName = (char*)R->get_ESP() + 0x04;
 	int nTaunt = R->get_CL() & 0xF;
@@ -376,23 +377,23 @@ EXPORT HTExt_GetTaunt(REGISTERS* R)
 }
 
 //0x4E3792
-EXPORT HTExt_Unlimit1(REGISTERS* R)
+DEFINE_HOOK(4E3792, HTExt_Unlimit1, 0)
 { return 0x4E37AD; }
 
 //0x4E3A9C
-EXPORT HTExt_Unlimit2(REGISTERS* R)
+DEFINE_HOOK(4E3A9C, HTExt_Unlimit2, 0)
 { return 0x4E3AA1; }
 
 //0x4E3F31
-EXPORT HTExt_Unlimit3(REGISTERS* R)
+DEFINE_HOOK(4E3F31, HTExt_Unlimit3, 0)
 { return 0x4E3F4C; }
 
 //0x4E412C
-EXPORT HTExt_Unlimit4(REGISTERS* R)
+DEFINE_HOOK(4E412C, HTExt_Unlimit4, 0)
 { return 0x4E4147; }
 
 //0x4E41A7
-EXPORT HTExt_Unlimit5(REGISTERS* R)
+DEFINE_HOOK(4E41A7, HTExt_Unlimit5, 0)
 { return 0x4E41C3; }
 
 //Helper function
@@ -439,14 +440,14 @@ int HouseTypeExt::PickRandomCountry()
 }
 
 //0x69B774
-EXPORT HTExt_PickRandom_Human(REGISTERS* R)
+DEFINE_HOOK(69B774, HTExt_PickRandom_Human, 0)
 {
 	R->set_EAX(HouseTypeExt::PickRandomCountry());
 	return 0x69B788;
 }
 
 //0x69B670
-EXPORT HTExt_PickRandom_AI(REGISTERS* R)
+DEFINE_HOOK(69B670, HTExt_PickRandom_AI, 0)
 {
 	R->set_EAX(HouseTypeExt::PickRandomCountry());
 	return 0x69B684;

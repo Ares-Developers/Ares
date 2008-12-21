@@ -18,7 +18,7 @@ void Actions::Set(MouseCursor *pCursor)
 }
 
 //4AB44A
-EXPORT Actions_CustomCursor_NonShrouded(REGISTERS* R)
+DEFINE_HOOK(4AB44A, Actions_CustomCursor_NonShrouded, 9)
 {
 	MouseCursor* pCursor = Actions::MPCustom;
 	if(pCursor)
@@ -41,7 +41,7 @@ EXPORT Actions_CustomCursor_NonShrouded(REGISTERS* R)
 }
 
 //4AB366
-EXPORT Actions_CustomCursor_Shrouded(REGISTERS* R)
+DEFINE_HOOK(4AB366, Actions_CustomCursor_Shrouded, 9)
 {
 	MouseCursor* pCursor = Actions::MPCustom;
 	if(pCursor)
@@ -68,7 +68,7 @@ EXPORT Actions_CustomCursor_Shrouded(REGISTERS* R)
 }
 
 //5BDC8C, 7
-EXPORT Actions_PrepareCursor(REGISTERS* R)
+DEFINE_HOOK(5BDC8C, Actions_PrepareCursor, 7)
 {
 	MouseCursor* pCursor;
 
@@ -89,7 +89,7 @@ EXPORT Actions_PrepareCursor(REGISTERS* R)
 }
 
 //5BDD9F, 6
-EXPORT Actions_SetCursor(REGISTERS* R)
+DEFINE_HOOK(5BDD9F, Actions_SetCursor, 6)
 {
 	Actions::MPCurrent = Actions::TempCursor; //got set in Actions_UseCustomCursor
 	Actions::MP = *Actions::MPCurrent;
@@ -97,7 +97,7 @@ EXPORT Actions_SetCursor(REGISTERS* R)
 }
 
 //5BDADF, 7
-EXPORT Actions_UseCursor(REGISTERS* R)
+DEFINE_HOOK(5BDADF, Actions_UseCursor, 7)
 {
 	R->set_EBP((DWORD)&Actions::MP);
 
@@ -110,7 +110,7 @@ EXPORT Actions_UseCursor(REGISTERS* R)
 }
 
 //5BDDC8, 6
-EXPORT Actions_AnimateCursor(REGISTERS* R)
+DEFINE_HOOK(5BDDC8, Actions_AnimateCursor, 6)
 {
 	R->set_EBX((DWORD)&Actions::MP);
 
@@ -121,7 +121,7 @@ EXPORT Actions_AnimateCursor(REGISTERS* R)
 }
 
 //5BDE64, 6
-EXPORT Actions_AnimateCursor2(REGISTERS* R)
+DEFINE_HOOK(5BDE64, Actions_AnimateCursor2, 6)
 {
 	R->set_ECX((DWORD)&Actions::MP);
 
@@ -133,7 +133,7 @@ EXPORT Actions_AnimateCursor2(REGISTERS* R)
 }
 
 //4D7524
-EXPORT Actions_AllowForFootClass(REGISTERS* R)
+DEFINE_HOOK(4D7524, Actions_AllowForFootClass, 9)
 {
 	//overwrote the ja, need to replicate it
 	unsigned int CursorIndex = R->get_EAX();
@@ -149,7 +149,7 @@ EXPORT Actions_AllowForFootClass(REGISTERS* R)
 }
 
 //653CA6
-EXPORT Actions_AllowMinimap(REGISTERS* R)
+DEFINE_HOOK(653CA6, Actions_AllowMinimap, 5)
 {
 	MouseCursor* pCursor = Actions::MPCustom;
 	if(pCursor)
@@ -171,7 +171,7 @@ EXPORT Actions_AllowMinimap(REGISTERS* R)
 }
 
 //5BDDC0, 5
-EXPORT Actions_Reset(REGISTERS* R)
+DEFINE_HOOK(5BDDC0, Actions_Reset, 5)
 {
 	Actions::MPCustom = NULL;
 	return 0;
@@ -191,7 +191,7 @@ EXPORT Actions_Reset(REGISTERS* R)
 //
 //// 5BDDC8, 6
 //// reset cursor
-//EXPORT_FUNC(MouseClass_Update)
+//XPORT_FUNC(MouseClass_Update)
 //{
 //	if(Actions::CustomCursor)
 //	{
@@ -205,7 +205,7 @@ EXPORT Actions_Reset(REGISTERS* R)
 //// reset cursor
 //// EAX <= current Cursor index
 //// ESI => &cursor
-//EXPORT_FUNC(MouseClass_SetCursor)
+//XPORT_FUNC(MouseClass_SetCursor)
 //{
 //	RET_UNLESS(Actions::CustomCursor);
 //
@@ -228,7 +228,7 @@ EXPORT Actions_Reset(REGISTERS* R)
 //}
 //
 //// 5BDD86, 5
-//EXPORT_FUNC(MouseClass_SetCursor2)
+//XPORT_FUNC(MouseClass_SetCursor2)
 //{
 //	RET_UNLESS(Actions::CustomCursor);
 //
@@ -251,7 +251,7 @@ EXPORT Actions_Reset(REGISTERS* R)
 //// ----------------------------------------
 //
 //// 417F4F, 0xA
-//EXPORT_FUNC(AircraftClass_GetCursorOverObject)
+//XPORT_FUNC(AircraftClass_GetCursorOverObject)
 //{
 //	// set Actions::CustomCursor to something
 //	return 0;
@@ -274,7 +274,7 @@ EXPORT Actions_Reset(REGISTERS* R)
 //}
 //
 //// 51EB38, 6
-//EXPORT_FUNC(InfantryClass_GetCursorOverObject)
+//XPORT_FUNC(InfantryClass_GetCursorOverObject)
 //{
 //	// set Actions::CustomCursor to something
 //	return 0;
@@ -294,7 +294,7 @@ EXPORT Actions_Reset(REGISTERS* R)
 //}
 //
 //// 740490, 6
-//EXPORT_FUNC(UnitClass_GetCursorOverObject)
+//XPORT_FUNC(UnitClass_GetCursorOverObject)
 //{
 //	// set Actions::CustomCursor to something
 //	return 0;
@@ -315,7 +315,7 @@ EXPORT Actions_Reset(REGISTERS* R)
 //}
 //
 //// 447512, 5
-//EXPORT_FUNC(BuildingClass_GetCursorOverObject)
+//XPORT_FUNC(BuildingClass_GetCursorOverObject)
 //{
 //	// set Actions::CustomCursor to something
 //	return 0;

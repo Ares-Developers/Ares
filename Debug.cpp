@@ -27,7 +27,8 @@ void Debug::LogFileRemove()
 }
 
 //Hook at 0x4068E0 AND 4A4AC0
-EXPORT Debug_Log(REGISTERS* R)
+DEFINE_HOOK(4068E0, Debug_Log, 1)
+DEFINE_HOOK_AGAIN(4A4AC0, Debug_Log, 1)
 {
 	if(Debug::bLog && Debug::pLogFile)
 	{
@@ -37,5 +38,5 @@ EXPORT Debug_Log(REGISTERS* R)
 		vfprintf(Debug::pLogFile, Format, ArgList);
 		fflush(Debug::pLogFile);
 	}
-	return 0;
+	return 0x4A4AF9; // changed to co-op with YDE
 }

@@ -26,7 +26,7 @@ void BuildingTypeClassExt::Struct::Initialize(BuildingTypeClass *pThis)
 }
 
 //0x4652ED, 7
-EXPORT BTExt_Load(REGISTERS* R)
+DEFINE_HOOK(4652ED, BTExt_Load, 7)
 {
 	BuildingTypeClass* pThis = (BuildingTypeClass*)R->get_ESI();
 	IStream* pStm = (IStream*)R->get_EDI();
@@ -57,7 +57,7 @@ EXPORT BTExt_Load(REGISTERS* R)
 }
 
 //0x46536E, 3
-EXPORT BTExt_Save(REGISTERS* R)
+DEFINE_HOOK(46536E, BTExt_Save, 3)
 {
 	BuildingTypeClass* pThis = (BuildingTypeClass*)R->get_StackVar32(0x4);
 	IStream* pStm = (IStream*)R->get_StackVar32(0x8);
@@ -83,7 +83,7 @@ EXPORT BTExt_Save(REGISTERS* R)
 }
 
 //0x464A47, 5
-EXPORT BTExt_LoadFromINI(REGISTERS* R)
+DEFINE_HOOK(464A47, BTExt_LoadFromINI, 5)
 {
 	BuildingTypeClass* pThis = (BuildingTypeClass*)R->get_EBP();
 	CCINIClass* pINI = (CCINIClass*)R->get_StackVar32(0x36C);
@@ -161,8 +161,8 @@ EXPORT BTExt_LoadFromINI(REGISTERS* R)
 
 
 	// secret lab
-	char buffer[1024];
-	if(pINI->ReadString(pThis->get_ID(), "SecretLab.PossibleBoons", "", buffer, 1024))
+	char buffer[BUFLEN];
+	if(pINI->ReadString(pThis->get_ID(), "SecretLab.PossibleBoons", "", buffer, BUFLEN))
 	{
 		pData->Secret_Boons.Clear();
 		for(char *cur = strtok(buffer, ","); cur; cur = strtok(NULL, ","))
@@ -235,7 +235,7 @@ void BuildingTypeClassExt::UpdateSecretLabOptions(BuildingClass *pThis)
 }
 
 //hook at 0x45EC90
-EXPORT Foundations_GetFoundationWidth(REGISTERS* R)
+DEFINE_HOOK(45EC90, Foundations_GetFoundationWidth, 6)
 {
 	BuildingTypeClass* pThis = (BuildingTypeClass*)R->get_ECX();
 	BuildingTypeClassExt::Struct* pData = &BuildingTypeClassExt::Map[pThis];
@@ -250,7 +250,7 @@ EXPORT Foundations_GetFoundationWidth(REGISTERS* R)
 }
 
 //hook at 0x45ECE0
-EXPORT Foundations_GetFoundationWidth2(REGISTERS* R)
+DEFINE_HOOK(45ECE0, Foundations_GetFoundationWidth2, 6)
 {
 	BuildingTypeClass* pThis = (BuildingTypeClass*)R->get_ECX();
 	BuildingTypeClassExt::Struct* pData = &BuildingTypeClassExt::Map[pThis];
@@ -265,7 +265,7 @@ EXPORT Foundations_GetFoundationWidth2(REGISTERS* R)
 }
 
 //hook at 0x45ECA0
-EXPORT Foundations_GetFoundationHeight(REGISTERS* R)
+DEFINE_HOOK(45ECA0, Foundations_GetFoundationHeight, 6)
 {
 	BuildingTypeClass* pThis = (BuildingTypeClass*)R->get_ECX();
 	BuildingTypeClassExt::Struct* pData = &BuildingTypeClassExt::Map[pThis];
@@ -288,7 +288,7 @@ EXPORT Foundations_GetFoundationHeight(REGISTERS* R)
 // old - don't use 448277, 5
 
 // 445F80, 5
-EXPORT_FUNC(BuildingClass_ChangeOwnership)
+DEFINE_HOOK(445F80, BuildingClass_ChangeOwnership, 5)
 {
 	GET(BuildingClass *, pThis, ESI);
 	if(pThis->get_Type()->get_SecretLab())

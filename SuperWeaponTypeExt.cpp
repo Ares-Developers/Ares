@@ -198,7 +198,7 @@ void SuperWeaponTypeClassExt::SuperWeaponTypeClassData::Initialize()
 }
 
 // 6CEF84, 7
-EXPORT_FUNC(SuperWeaponTypeClass_GetCursorOverObject)
+DEFINE_HOOK(6CEF84, SuperWeaponTypeClass_GetCursorOverObject, 7)
 {
 	//FUCK THIS, no macros in my code xD -pd
 	SuperWeaponTypeClass* pThis = (SuperWeaponTypeClass*)R->get_ECX();
@@ -242,7 +242,7 @@ EXPORT_FUNC(SuperWeaponTypeClass_GetCursorOverObject)
 
 /*
 // 6AAF92, 6
-EXPORT_FUNC(SidebarClass_ProcessCameoClick)
+XPORT_FUNC(SidebarClass_ProcessCameoClick)
 {
 	DWORD idx = R->get_ESI();
 	SuperWeaponTypeClass *pThis = SuperWeaponTypeClass::Array->GetItem(idx);
@@ -260,7 +260,7 @@ EXPORT_FUNC(SidebarClass_ProcessCameoClick)
 
 // 6CD67A, 5
 // decouple SpyPlane from SPYP
-EXPORT_FUNC(SuperClass_Launch_SpyPlane_FindType)
+DEFINE_HOOK(6CD67A, SuperClass_Launch_SpyPlane_FindType, 5)
 {
 	GET(SuperClass *, Super, EBX);
 	SuperWeaponTypeClass *pThis = Super->get_Type();
@@ -273,7 +273,7 @@ EXPORT_FUNC(SuperClass_Launch_SpyPlane_FindType)
 
 // 6CD6A6, 6
 // decouple SpyPlane from allied paradrop counts
-EXPORT_FUNC(SuperClass_Launch_SpyPlane_Fire)
+DEFINE_HOOK(6CD6A6, SuperClass_Launch_SpyPlane_Fire, 6)
 {
 	GET(SuperClass *, Super, EBX);
 	GET(CellClass *,TargetCell, EDI);
@@ -289,7 +289,7 @@ EXPORT_FUNC(SuperClass_Launch_SpyPlane_Fire)
 
 // 6CDDE3, 6
 // decouple nuke siren from DigSound
-EXPORT_FUNC(SuperClass_Launch_Nuke_Siren)
+DEFINE_HOOK(6CDDE3, SuperClass_Launch_Nuke_Siren, 6)
 {
 	GET(SuperWeaponTypeClass *, pThis, EAX);
 	RET_UNLESS(CONTAINS(SuperWeaponTypeClassExt::Ext_p, pThis));
@@ -338,7 +338,7 @@ bool _stdcall SuperWeaponTypeClassExt::SuperClass_Launch(SuperClass* pThis, Cell
 }
 
 // 6CEE96, 5
-EXPORT_FUNC(SuperWeaponTypeClass_GetTypeIndex)
+DEFINE_HOOK(6CEE96, SuperWeaponTypeClass_GetTypeIndex, 5)
 {
 	GET(const char *, TypeStr, EDI);
 	int customType = NewSWType::FindIndex(TypeStr);
@@ -352,7 +352,7 @@ EXPORT_FUNC(SuperWeaponTypeClass_GetTypeIndex)
 
 // 4AC20C, 7
 // translates SW click to type
-EXPORT_FUNC(DisplayClass_LMBUp)
+DEFINE_HOOK(4AC20C, DisplayClass_LMBUp, 7)
 {
 	int Action = R->get_StackVar32(0x9C);
 	if(Action < SW_NO_CURSOR)
@@ -375,7 +375,7 @@ EXPORT_FUNC(DisplayClass_LMBUp)
 // decoupling sw anims from types
 
 // 446418, 6
-EXPORT_FUNC(BuildingClass_Place1)
+DEFINE_HOOK(446418, BuildingClass_Place1, 6)
 {
 	GET(BuildingClass *, pBuild, EBP);
 	GET(HouseClass *, pHouse, EAX);
@@ -395,13 +395,13 @@ EXPORT_FUNC(BuildingClass_Place1)
 }
 
 // 44656D, 6
-EXPORT_FUNC(BuildingClass_Place2)
+DEFINE_HOOK(44656D, BuildingClass_Place2, 6)
 {
 	return 0x446580;
 }
 
 // 45100A, 6
-EXPORT_FUNC(BuildingClass_ProcessAnims1)
+DEFINE_HOOK(45100A, BuildingClass_ProcessAnims1, 6)
 {
 	GET(BuildingClass *, pBuild, ESI);
 	GET(HouseClass *, pHouse, EAX);
@@ -422,14 +422,14 @@ EXPORT_FUNC(BuildingClass_ProcessAnims1)
 }
 
 // 451132, 6
-EXPORT_FUNC(BuildingClass_ProcessAnims2)
+DEFINE_HOOK(451132, BuildingClass_ProcessAnims2, 6)
 {
 	return 0x451145;
 }
 
 // EVA_Detected
 // 446937, 6
-EXPORT_FUNC(BuildingClass_AnnounceSW)
+DEFINE_HOOK(446937, BuildingClass_AnnounceSW, 6)
 {
 	GET(BuildingClass *, pBuild, EBP);
 	int swTIdx = pBuild->get_Type()->get_SuperWeapon();
@@ -452,7 +452,7 @@ EXPORT_FUNC(BuildingClass_AnnounceSW)
 
 // EVA_Ready
 // 6CBDD7, 6
-EXPORT_FUNC(SuperClass_AnnounceReady)
+DEFINE_HOOK(6CBDD7, SuperClass_AnnounceReady, 6)
 {
 	GET(SuperWeaponTypeClass *, pThis, EAX);
 	RET_UNLESS(CONTAINS(SuperWeaponTypeClassExt::Ext_p, pThis));
@@ -464,7 +464,7 @@ EXPORT_FUNC(SuperClass_AnnounceReady)
 }
 
 // 6CC0EA, 9
-EXPORT_FUNC(SuperClass_Announce)
+DEFINE_HOOK(6CC0EA, SuperClass_Announce, 9)
 {
 	GET(SuperClass *, pThis, ESI);
 	SuperWeaponTypeClass *pSW = pThis->get_Type();
@@ -477,7 +477,7 @@ EXPORT_FUNC(SuperClass_Announce)
 }
 
 // 50B319, 6
-EXPORT_FUNC(HouseClass_UpdateSWs)
+DEFINE_HOOK(50B319, HouseClass_UpdateSWs, 6)
 {
 	GET(SuperClass *, Super, ECX);
 	SuperWeaponTypeClass *pSW = Super->get_Type();

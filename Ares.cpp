@@ -11,6 +11,9 @@ HANDLE  Ares::hInstance = 0;
 bool	Ares::bNoLogo = false;
 bool	Ares::bNoCD = false;
 
+DWORD Ares::readLength = BUFLEN;
+char Ares::readBuffer[BUFLEN];
+
 int FrameStepCommandClass::ArmageddonState = 0;
 
 //Implementations
@@ -26,6 +29,7 @@ void __stdcall Ares::RegisterCommands()
 	CommandClass::Array->AddItem(new TestSomethingCommandClass());
 	CommandClass::Array->AddItem(new FrameByFrameCommandClass());
 	CommandClass::Array->AddItem(new FrameStepCommandClass());
+	CommandClass::Array->AddItem(new DumperCommandClass());
 }
 
 void __stdcall Ares::CmdLineParse(char** ppArgs,int nNumArgs)
@@ -172,7 +176,7 @@ bool __stdcall DllMain(HANDLE hInstance,DWORD dwReason,LPVOID v)
 //Exports
 
 //Hook at 0x52C5E0
-EXPORT Ares_NoLogo(REGISTERS* R)
+DEFINE_HOOK(52C5E0, Ares_NoLogo, 7)
 {
 	if(Ares::bNoLogo)
 		return 0x52C5F3;
@@ -181,13 +185,13 @@ EXPORT Ares_NoLogo(REGISTERS* R)
 }
 
 //0x6AD0ED
-EXPORT Ares_AllowSinglePlay(REGISTERS* R)
+DEFINE_HOOK(6AD0ED, Ares_AllowSinglePlay, 5)
 {
 	return 0x6AD16C;
 }
 
 	// 55AFB3, 6
-EXPORT_FUNC(Armageddon_Advance)
+DEFINE_HOOK(55AFB3, Armageddon_Advance, 6)
 {
 	switch(FrameStepCommandClass::ArmageddonState)
 	{

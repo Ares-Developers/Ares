@@ -115,7 +115,7 @@ EXT_LOAD_INI(TechnoTypeClass)
 	pData->Survivors_PilotChance = pINI->ReadInteger(section, "Survivor.PilotChance", pData->Survivors_PilotChance);
 	pData->Survivors_PassengerChance = pINI->ReadInteger(section, "Survivor.PassengerChance", pData->Survivors_PassengerChance);
 
-	char buffer[512];
+	char buffer[BUFLEN];
 	char flag[256];
 	for(int i = 0; i < SideClass::Array->get_Count(); ++i)
 	{
@@ -137,14 +137,14 @@ EXT_LOAD_INI(TechnoTypeClass)
 	}
 
 	DynamicVectorClass<int> *dvc = pData->PrerequisiteLists.GetItem(0);
-	if(pINI->ReadString(section, "Prerequisite", "", buffer, 0x200))
+	if(pINI->ReadString(section, "Prerequisite", "", buffer, BUFLEN))
 	{
 		Prereqs::Parse(buffer, dvc);
 	}
 	for(int i = 0; i < pData->PrerequisiteLists.get_Count(); ++i)
 	{
 		sprintf(flag, "Prerequisite.List%d", i);
-		if(pINI->ReadString(section, flag, "", buffer, 0x200))
+		if(pINI->ReadString(section, flag, "", buffer, BUFLEN))
 		{
 			dvc = pData->PrerequisiteLists.GetItem(i);
 			Prereqs::Parse(buffer, dvc);
@@ -152,12 +152,12 @@ EXT_LOAD_INI(TechnoTypeClass)
 	}
 
 	dvc = &pData->PrerequisiteNegatives;
-	if(pINI->ReadString(section, "Prerequisite.Negative", "", buffer, 0x200))
+	if(pINI->ReadString(section, "Prerequisite.Negative", "", buffer, BUFLEN))
 	{
 		Prereqs::Parse(buffer, dvc);
 	}
 
-	if(pINI->ReadString(section, "Prerequisite.RequiredTheaters", "", buffer, 0x200))
+	if(pINI->ReadString(section, "Prerequisite.RequiredTheaters", "", buffer, BUFLEN))
 	{
 //		DEBUGLOG("[%s]Theater text: %s\n", section, buffer);
 		pData->PrerequisiteTheaters = 0;

@@ -21,7 +21,7 @@ void GenericPrerequisite::LoadFromINI(CCINIClass *pINI)
 {
 	char section[] = "GenericPrerequisites";
 
-	char buffer[0x200];
+	char buffer[BUFLEN];
 	char generalbuf[0x80];
 
 	char name[0x80];
@@ -33,12 +33,12 @@ void GenericPrerequisite::LoadFromINI(CCINIClass *pINI)
 	DynamicVectorClass<int> *dvc = &this->Prereqs;
 
 	_snprintf(generalbuf, 0x80, "Prerequisite%s", name);
-	if(pINI->ReadString("General", generalbuf, "", buffer, 0x200))
+	if(pINI->ReadString("General", generalbuf, "", buffer, BUFLEN))
 	{
 		Prereqs::Parse(buffer, dvc);
 	}
 
-	if(pINI->ReadString(section, this->Name, "", buffer, 0x200))
+	if(pINI->ReadString(section, this->Name, "", buffer, BUFLEN))
 	{
 		Prereqs::Parse(buffer, dvc);
 	}
@@ -186,6 +186,3 @@ bool Prereqs::HouseOwnsAny(HouseClass *pHouse, DynamicVectorClass<int> *list)
 	}
 	return false;
 }
-
-
-

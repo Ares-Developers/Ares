@@ -1,7 +1,7 @@
 #include <MacroHelpers.h> //basically indicates that this is DCoder country
 #include <YRCallbacks.h>
 
-EXPORT_FUNC(RulesClass_Addition)
+DEFINE_HOOK(668F6A, RulesClass_Addition, 5)
 {
 	CCINIClass *pINI = (CCINIClass *)R->get_ESI();
 
@@ -23,4 +23,3 @@ EXPORT_FUNC(RulesClass_Addition)
 
 	return 0;
 }
-

@@ -4,6 +4,7 @@
 #include <YRPP.h>
 #include <MacroHelpers.h> //basically indicates that this is DCoder country
 #include "Commands.FrameByFrame.h"
+#include "Commands.Dump.h"
 
 class MapSnapshotCommandClass : public CommandClass
 {

@@ -170,7 +170,7 @@ signed int HouseClassExt::PrereqValidate
 	return HouseClassExt::CheckBuildLimit(pHouse, pItem, IncludeQueued);
 }
 
-EXPORT_FUNC(HouseClass_PrereqValidator)
+DEFINE_HOOK(4F7870, HouseClass_PrereqValidator, 7)
 {
 	// int (TechnoTypeClass *item, bool BuildLimitOnly, bool includeQueued)
 	/* return

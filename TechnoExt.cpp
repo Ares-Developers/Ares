@@ -117,7 +117,7 @@ bool TechnoClassExt::ParadropSurvivor(FootClass *Survivor, CoordStruct *loc, boo
 
 // bugfix #297: Crewed=yes jumpjets spawn parachuted infantry on destruction, not idle
 // 7381A9, 6
-EXPORT_FUNC(UnitClass_ReceiveDamage)
+DEFINE_HOOK(7381A9, UnitClass_ReceiveDamage, 6)
 {
 	GET(TechnoClass *, t, ESI);
 
@@ -128,7 +128,7 @@ EXPORT_FUNC(UnitClass_ReceiveDamage)
 
 // bugfix #297: Crewed=yes AircraftTypes spawn parachuting infantry on death
 // 41668B, 6
-EXPORT_FUNC(AircraftClass_ReceiveDamage)
+DEFINE_HOOK(41668B, AircraftClass_ReceiveDamage, 6)
 {
 	GET(AircraftClass *, a, ESI);
 
@@ -140,7 +140,7 @@ EXPORT_FUNC(AircraftClass_ReceiveDamage)
 }
 
 // 6F9E50, 5
-EXPORT_FUNC(TechnoClass_Update)
+DEFINE_HOOK(6F9E50, TechnoClass_Update, 5)
 {
 	GET(TechnoClass *, Source, ECX);
 
@@ -158,7 +158,7 @@ EXPORT_FUNC(TechnoClass_Update)
 
 // 415CA6, 6
 // fix for vehicle paradrop alignment
-EXPORT_FUNC(AircraftClass_Paradrop)
+DEFINE_HOOK(415CA6, AircraftClass_Paradrop, 6)
 {
 	GET(AircraftClass *, A, EDI);
 	GET(FootClass *, P, ESI);
@@ -176,7 +176,7 @@ EXPORT_FUNC(AircraftClass_Paradrop)
 }
 
 // 6F407D, 6
-EXPORT_FUNC(TechnoClass_Init)
+DEFINE_HOOK(6F407D, TechnoClass_Init, 6)
 {
 	GET(TechnoClass *, T, ESI);
 	TechnoClassExt::TechnoClassData *pData = TechnoClassExt::Ext_p[T];
@@ -213,7 +213,7 @@ EXPORT_FUNC(TechnoClass_Init)
 
 // 71A860, 6
 // temporal per-slot
-EXPORT_FUNC(TemporalClass_UpdateA)
+DEFINE_HOOK(71A860, TemporalClass_UpdateA, 6)
 {
 	GET(TemporalClass *, Temp, ESI);
 	TechnoClass *T = Temp->get_Owner();
@@ -225,7 +225,7 @@ EXPORT_FUNC(TemporalClass_UpdateA)
 
 // 71AB30, 6
 // temporal per-slot
-EXPORT_FUNC(TemporalClass_GetHelperDamage)
+DEFINE_HOOK(71AB30, TemporalClass_GetHelperDamage, 6)
 {
 	GET(TemporalClass *, Temp, ESI);
 	TechnoClass *T = Temp->get_Owner();

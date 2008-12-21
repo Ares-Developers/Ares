@@ -219,7 +219,7 @@ void __stdcall WeaponTypeClassExt::LoadFromINI(WeaponTypeClass* pThis, CCINIClas
 }
 
 // 6FD64A, 6
-EXPORT_FUNC(TechnoClass_FireRadBeam1)
+DEFINE_HOOK(6FD64A, TechnoClass_FireRadBeam1, 6)
 {
 	byte idxWeapon = *(byte *)(R->get_StackVar32(0x18) + 0xC);
 /*
@@ -233,7 +233,7 @@ EXPORT_FUNC(TechnoClass_FireRadBeam1)
 
 // 6FD79C, 6
 // custom RadBeam colors
-EXPORT_FUNC(TechnoClass_FireRadBeam2)
+DEFINE_HOOK(6FD79C, TechnoClass_FireRadBeam2, 6)
 {
 	GET(RadBeam *, Rad, ESI);
 	WeaponTypeClass* Source = (WeaponTypeClass *)R->get_StackVar32(0xC);
@@ -255,7 +255,7 @@ EXPORT_FUNC(TechnoClass_FireRadBeam2)
 
 // 438F8F, 6
 // custom ivan bomb attachment 1
-EXPORT_FUNC(BombListClass_Add1)
+DEFINE_HOOK(438F8F, BombListClass_Add1, 6)
 {
 	GET(BombClass *, Bomb, ESI);
 
@@ -272,7 +272,7 @@ EXPORT_FUNC(BombListClass_Add1)
 
 // 438FD1, 5
 // custom ivan bomb attachment 2
-EXPORT_FUNC(BombListClass_Add2)
+DEFINE_HOOK(438FD1, BombListClass_Add2, 5)
 {
 	GET(BombClass *, Bomb, ESI);
 	BulletClass* Bullet = (BulletClass *)R->get_StackVar32(0x0);
@@ -292,14 +292,14 @@ EXPORT_FUNC(BombListClass_Add2)
 
 // 438FD7, 7
 // custom ivan bomb attachment 3
-EXPORT_FUNC(BombListClass_Add3)
+DEFINE_HOOK(438FD7, BombListClass_Add3, 7)
 {
 	return 0x439022;
 }
 
 // 6F5230, 5
 // custom ivan bomb drawing 1
-EXPORT_FUNC(TechnoClass_DrawExtras1)
+DEFINE_HOOK(6F5230, TechnoClass_DrawExtras1, 5)
 {
 	GET(TechnoClass *, pThis, EBP);
 	BombClass * Bomb = pThis->get_AttachedBomb();
@@ -338,7 +338,7 @@ EXPORT_FUNC(TechnoClass_DrawExtras1)
 
 // 6F523C, 5
 // custom ivan bomb drawing 2
-EXPORT_FUNC(TechnoClass_DrawExtras2)
+DEFINE_HOOK(6F523C, TechnoClass_DrawExtras2, 5)
 {
 	GET(TechnoClass *, pThis, EBP);
 	BombClass * Bomb = pThis->get_AttachedBomb();
@@ -359,7 +359,7 @@ EXPORT_FUNC(TechnoClass_DrawExtras2)
 
 // 6FCBAD, 6
 // custom ivan bomb disarm 1
-EXPORT_FUNC(TechnoClass_GetObjectActivityState)
+DEFINE_HOOK(6FCBAD, TechnoClass_GetObjectActivityState, 6)
 {
 	GET(TechnoClass *, Target, EBP);
 	BombClass *Bomb = Target->get_AttachedBomb();
@@ -373,7 +373,7 @@ EXPORT_FUNC(TechnoClass_GetObjectActivityState)
 }
 
 // 51E488, 5
-EXPORT_FUNC(InfantryClass_GetCursorOverObject2)
+DEFINE_HOOK(51E488, InfantryClass_GetCursorOverObject2, 5)
 {
 	GET(TechnoClass *, Target, ESI);
 	BombClass *Bomb = Target->get_AttachedBomb();
@@ -388,7 +388,7 @@ EXPORT_FUNC(InfantryClass_GetCursorOverObject2)
 
 // 438799, 6
 // custom ivan bomb detonation 1
-EXPORT_FUNC(BombClass_Detonate1)
+DEFINE_HOOK(438799, BombClass_Detonate1, 6)
 {
 	GET(BombClass *, Bomb, ESI);
 	
@@ -402,7 +402,7 @@ EXPORT_FUNC(BombClass_Detonate1)
 
 // 438843, 6
 // custom ivan bomb detonation 2
-EXPORT_FUNC(BombClass_Detonate2)
+DEFINE_HOOK(438843, BombClass_Detonate2, 6)
 {
 	GET(BombClass *, Bomb, ESI);
 	
@@ -416,7 +416,7 @@ EXPORT_FUNC(BombClass_Detonate2)
 
 // 438879, 6
 // custom ivan bomb detonation 3
-EXPORT_FUNC(BombClass_Detonate3)
+DEFINE_HOOK(438879, BombClass_Detonate3, 6)
 {
 	GET(BombClass *, Bomb, ESI);
 
@@ -427,7 +427,7 @@ EXPORT_FUNC(BombClass_Detonate3)
 
 // 4393F2, 5
 // custom ivan bomb cleanup
-EXPORT_FUNC(BombClass_SDDTOR)
+DEFINE_HOOK(4393F2, BombClass_SDDTOR, 5)
 {
 	GET(BombClass *, Bomb, ECX);
 	hash_bombExt::iterator i = WeaponTypeClassExt::BombExt.find(Bomb);
@@ -441,7 +441,7 @@ EXPORT_FUNC(BombClass_SDDTOR)
 
 // custom beam styles
 // 6FF5F5, 6
-EXPORT_FUNC(TechnoClass_Fire)
+DEFINE_HOOK(6FF5F5, TechnoClass_Fire, 6)
 {
 	GET(WeaponTypeClass *, Source, EBX);
 	GET(TechnoClass *, Owner, ESI);
@@ -468,7 +468,7 @@ EXPORT_FUNC(TechnoClass_Fire)
 }
 
 // 75E963, 6
-EXPORT_FUNC(WaveClass_CTOR)
+DEFINE_HOOK(75E963, WaveClass_CTOR, 6)
 {
 	GET(WaveClass *, Wave, ESI);
 	DWORD Type = R->get_ECX();
@@ -485,7 +485,7 @@ EXPORT_FUNC(WaveClass_CTOR)
 
 /*
 // 75EB87, 0A // fsdblargh, a single instruction spanning 10 bytes
-EXPORT_FUNC(WaveClass_CTOR2)
+XPORT_FUNC(WaveClass_CTOR2)
 {
 	GET(WaveClass *, Wave, ESI);
 	RET_UNLESS(CONTAINS(WeaponTypeClassExt::WaveExt, Wave));
@@ -496,7 +496,7 @@ EXPORT_FUNC(WaveClass_CTOR2)
 */
 
 // 763226, 6
-EXPORT_FUNC(WaveClass_DTOR)
+DEFINE_HOOK(763226, WaveClass_DTOR, 6)
 {
 	GET(WaveClass *, Wave, EDI);
 	hash_waveExt::iterator i = WeaponTypeClassExt::WaveExt.find(Wave);
@@ -519,7 +519,7 @@ EXPORT_FUNC(WaveClass_DTOR)
 
 // 760F50, 6
 // complete replacement for WaveClass::Update
-EXPORT_FUNC(WaveClass_Update)
+DEFINE_HOOK(760F50, WaveClass_Update, 6)
 {
 	GET(WaveClass *, pThis, ECX);
 
@@ -587,7 +587,7 @@ EXPORT_FUNC(WaveClass_Update)
 /*
 // 760FFC, 5
 // Alt beams update
-EXPORT_FUNC(WaveClass_UpdateLaser)
+XPORT_FUNC(WaveClass_UpdateLaser)
 {
 	GET(WaveClass *, Wave, ESI);
 	Wave->Update_Beam();
@@ -600,7 +600,7 @@ EXPORT_FUNC(WaveClass_UpdateLaser)
 */
 
 // 760BC2, 6
-EXPORT_FUNC(WaveClass_Draw2)
+DEFINE_HOOK(760BC2, WaveClass_Draw2, 6)
 {
 	GET(WaveClass *, Wave, EBX);
 	GET(WORD *, dest, EBP);
@@ -611,7 +611,7 @@ EXPORT_FUNC(WaveClass_Draw2)
 }
 
 // 760DE2, 6
-EXPORT_FUNC(WaveClass_Draw3)
+DEFINE_HOOK(760DE2, WaveClass_Draw3, 6)
 {
 	GET(WaveClass *, Wave, EBX);
 	GET(WORD *, dest, EDI);
@@ -622,7 +622,7 @@ EXPORT_FUNC(WaveClass_Draw3)
 }
 
 // 75EE57, 7
-EXPORT_FUNC(WaveClass_Draw_Sonic)
+DEFINE_HOOK(75EE57, WaveClass_Draw_Sonic, 7)
 {
 	DWORD pWave = R->get_StackVar32(0x4);
 	WaveClass * Wave = (WaveClass *)pWave;
@@ -635,7 +635,7 @@ EXPORT_FUNC(WaveClass_Draw_Sonic)
 }
 
 // 7601FB, 0B
-EXPORT_FUNC(WaveClass_Draw_Magnetron)
+DEFINE_HOOK(7601FB, WaveClass_Draw_Magnetron, 0B)
 {
 	DWORD pWave = R->get_StackVar32(0x8);
 	WaveClass * Wave = (WaveClass *)pWave;
@@ -648,7 +648,7 @@ EXPORT_FUNC(WaveClass_Draw_Magnetron)
 }
 
 // 760286, 5
-EXPORT_FUNC(WaveClass_Draw_Magnetron2)
+DEFINE_HOOK(760286, WaveClass_Draw_Magnetron2, 5)
 {
 	return 0x7602D3;
 }
@@ -682,7 +682,7 @@ void WeaponTypeClassExt::ModifyWaveColor(WORD *src, WORD *dst, int Intensity, Wa
 }
 
 // 762C5C, 6
-EXPORT_FUNC(WaveClass_Update_Wave)
+DEFINE_HOOK(762C5C, WaveClass_Update_Wave, 6)
 {
 	GET(WaveClass *, Wave, ESI);
 	TechnoClass *Firer = Wave->get_Owner();
@@ -721,7 +721,7 @@ EXPORT_FUNC(WaveClass_Update_Wave)
 }
 
 // 75F38F, 6
-EXPORT_FUNC(WaveClass_DamageCell)
+DEFINE_HOOK(75F38F, WaveClass_DamageCell, 6)
 {
 	GET(WaveClass *, Wave, EBP);
 	RET_UNLESS(CONTAINS(WeaponTypeClassExt::WaveExt, Wave));

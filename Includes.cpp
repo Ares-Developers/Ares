@@ -5,7 +5,7 @@ DynamicVectorClass<CCINIClass*> Includes::LoadedINIs;
 DynamicVectorClass<char*> Includes::LoadedINIFiles;
 
 // 474200, 6
-EXPORT_FUNC(CCINIClass_ReadCCFile1)
+DEFINE_HOOK(474200, CCINIClass_ReadCCFile1, 6)
 {
 	Includes::LoadedINIs.AddItem((CCINIClass *)R->get_ECX());
 	Includes::LoadedINIFiles.AddItem(_strdup(((CCFileClass*)R->get_EAX())->GetFileName()));
@@ -13,7 +13,7 @@ EXPORT_FUNC(CCINIClass_ReadCCFile1)
 }
 
 // 474314, 6
-EXPORT_FUNC(CCINIClass_ReadCCFile2)
+DEFINE_HOOK(474314, CCINIClass_ReadCCFile2, 6)
 {
 	char buffer[0x80];
 	CCINIClass *xINI = Includes::LoadedINIs[Includes::LoadedINIs.get_Count() - 1];
