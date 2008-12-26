@@ -9,6 +9,7 @@
 #include <CCINIClass.h>
 #include <Drawing.h>
 #include <RadBeam.h>
+#include <RadSiteClass.h>
 #include <VocClass.h>
 #include <WarheadTypeClass.h>
 #include <WaveClass.h>
@@ -57,6 +58,20 @@ class WeaponTypeClassExt
 		SHPStruct *Ivan_Image;
 		int Ivan_FlickerRate;
 
+		// custom radiations
+		WarheadTypeClass *Rad_WH;
+		ColorStruct Rad_Color;
+		int Rad_Duration_Multiple;
+		int Rad_Application_Delay;
+		int Rad_Level_Max;
+		int Rad_Level_Delay;
+		int Rad_Light_Delay;
+		double Rad_Level_Factor;
+		double Rad_Light_Factor;
+		double Rad_Tint_Factor;
+
+		bool Data_Initialized;
+
 		void Initialize(WeaponTypeClass* pThis);
 
 	};
@@ -100,6 +115,7 @@ class WeaponTypeClassExt
 
 	static stdext::hash_map<BombClass *, WeaponTypeClassData *> BombExt;
 	static stdext::hash_map<WaveClass *, WeaponTypeClassData *> WaveExt;
+	static stdext::hash_map<RadSiteClass *, WeaponTypeClassData *> RadSiteExt;
 
 	static void ModifyWaveColor(WORD *src, WORD *dst, int Intensity, WaveClass *Wave);
 };

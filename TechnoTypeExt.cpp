@@ -23,6 +23,8 @@ EXT_CTOR(TechnoTypeClass)
 
 		pData->Insignia_R = pData->Insignia_V = pData->Insignia_E = NULL;
 
+		pData->Parachute_Anim = NULL;
+
 		pData->Data_Initialized = 0;
 
 		Ext_p[pThis] = pData;
@@ -91,6 +93,8 @@ void TechnoTypeClassExt::TechnoTypeClassData::Initialize(TechnoTypeClass *pThis)
 	this->Secret_ForbiddenHouses = 0;
 
 	this->Is_Deso = this->Is_Deso_Radiation = !strcmp(pThis->get_ID(), "DESO");
+
+	this->Parachute_Anim = RulesClass::Global()->get_Parachute();
 
 	this->Data_Initialized = 1;
 }
@@ -260,6 +264,8 @@ EXT_LOAD_INI(TechnoTypeClass)
 		sprintf(flag, "EliteWeapon%d", i);
 		ReadWeapon(W, flag, section, pINI);
 	}
+
+	PARSE_ANIM("Parachute.Anim", pData->Parachute_Anim);
 }
 
 void TechnoTypeClassExt::ReadWeapon(WeaponStruct *pWeapon, const char *prefix, const char *section, CCINIClass *pINI)
@@ -297,4 +303,3 @@ void TechnoTypeClassExt::ReadWeapon(WeaponStruct *pWeapon, const char *prefix, c
 	sprintf(flag, "%sTurretLocked", prefix);
 	pWeapon->TurretLocked = pArtINI->ReadBool(section, flag, pWeapon->TurretLocked);
 }
-

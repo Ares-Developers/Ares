@@ -460,3 +460,14 @@ DEFINE_HOOK(70A9BB, Insignia_4, 5)
 	return 0;
 }
 
+DEFINE_HOOK(5F5ADD, Parachute_Animation, 6)
+{
+	GET(TechnoClass *, T, ESI);
+	RET_UNLESS(ABS_IS_TECHNO(T));
+	TechnoClassExt::TechnoClassData *pData = TechnoClassExt::Ext_p[T];
+	TechnoTypeClassExt::TechnoTypeClassData *pTypeData = TechnoTypeClassExt::Ext_p[T->GetTechnoType()];
+	R->set_EDX((DWORD)pTypeData->Parachute_Anim);
+	return 0x5F5AE3;
+}
+
+

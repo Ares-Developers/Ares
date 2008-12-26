@@ -37,6 +37,8 @@ class TechnoTypeClassExt
 
 		SHPStruct *Insignia_R, *Insignia_V, *Insignia_E;
 
+		AnimTypeClass *Parachute_Anim;
+
 		bool Data_Initialized;
 		void Initialize(TechnoTypeClass *pThis);
 	};

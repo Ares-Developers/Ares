@@ -1,4 +1,5 @@
 #include "CSFLoader.h"
+#include <cstdio>
 
 int CSFLoader::CSFCount = 0;
 int CSFLoader::NextValueIndex = 0;
@@ -137,4 +138,15 @@ DEFINE_HOOK(734A97, CSF_SetIndex, 6)
 		R->set_ECX(R->get_StackVar32(0x18));
 
 	return 0x734AA1;
+}
+
+DEFINE_HOOK(6BD886, CSF_LoadExtraFiles, 5)
+{
+	char fname[32];
+	for(int idx = 0; idx < 100; ++idx) {
+		_snprintf(fname, 32, "stringtable%02d.csf", idx);
+		CSFLoader::LoadAdditionalCSF(fname);
+	}
+	R->set_AL(1);
+	return 0x6BD88B;
 }
