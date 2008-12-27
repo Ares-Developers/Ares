@@ -36,7 +36,7 @@ public:
 		{
 			if(F)fclose(F);
 
-			sprintf(buffer, "Map%04d.yrm", i++);
+			_snprintf(buffer, 16, "Map%04d.yrm", i++);
 			F = fopen(buffer, "rb");
 		}while(F != NULL);
 

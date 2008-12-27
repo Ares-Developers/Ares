@@ -123,7 +123,7 @@ EXT_LOAD_INI(TechnoTypeClass)
 	char flag[256];
 	for(int i = 0; i < SideClass::Array->get_Count(); ++i)
 	{
-		sprintf(flag, "Survivor.Side%d", i);
+		_snprintf(flag, 256, "Survivor.Side%d", i);
 		PARSE_INFANTRY(flag, pData->Survivors_Pilots[i]);
 	}
 
@@ -147,7 +147,7 @@ EXT_LOAD_INI(TechnoTypeClass)
 	}
 	for(int i = 0; i < pData->PrerequisiteLists.get_Count(); ++i)
 	{
-		sprintf(flag, "Prerequisite.List%d", i);
+		_snprintf(flag, 256, "Prerequisite.List%d", i);
 		if(pINI->ReadString(section, flag, "", buffer, BUFLEN))
 		{
 			dvc = pData->PrerequisiteLists.GetItem(i);
@@ -193,21 +193,21 @@ EXT_LOAD_INI(TechnoTypeClass)
 	// insignia
 	SHPStruct *image = NULL;
 	if(pINI->ReadString(section, "Insignia.Rookie", "", buffer, 256)) {
-		sprintf(flag, "%s.shp", buffer);
+		_snprintf(flag, 256, "%s.shp", buffer);
 		image = FileSystem::LoadSHPFile(flag);
 		if(image) {
 			pData->Insignia_R = image;
 		}
 	}
 	if(pINI->ReadString(section, "Insignia.Veteran", "", buffer, 256)) {
-		sprintf(flag, "%s.shp", buffer);
+		_snprintf(flag, 256, "%s.shp", buffer);
 		image = FileSystem::LoadSHPFile(flag);
 		if(image) {
 			pData->Insignia_V = image;
 		}
 	}
 	if(pINI->ReadString(section, "Insignia.Elite", "", buffer, 256)) {
-		sprintf(flag, "%s.shp", buffer);
+		_snprintf(flag, 256, "%s.shp", buffer);
 		image = FileSystem::LoadSHPFile(flag);
 		if(image) {
 			pData->Insignia_E = image;
@@ -257,11 +257,11 @@ EXT_LOAD_INI(TechnoTypeClass)
 	for(int i = 0; i < WeaponCount; ++i)
 	{
 		W = &pData->Weapons[i];
-		sprintf(flag, "Weapon%d", i);
+		_snprintf(flag, 256, "Weapon%d", i);
 		ReadWeapon(W, flag, section, pINI);
 
 		W = &pData->EliteWeapons[i];
-		sprintf(flag, "EliteWeapon%d", i);
+		_snprintf(flag, 256, "EliteWeapon%d", i);
 		ReadWeapon(W, flag, section, pINI);
 	}
 
@@ -287,19 +287,19 @@ void TechnoTypeClassExt::ReadWeapon(WeaponStruct *pWeapon, const char *prefix, c
 	// (Elite?)(Weapon%d)FLH - no suffix
 	if(prefix[0] == 'W' || prefix[5] == 'W') // W EliteW
 	{
-		sprintf(flag, "%sFLH", prefix);
+		_snprintf(flag, 64, "%sFLH", prefix);
 	}
 	else
 	{
-		sprintf(flag, "%sFireFLH", prefix);
+		_snprintf(flag, 64, "%sFireFLH", prefix);
 	}
 	pArtINI->Read3Integers((int *)&FLH, section, flag, (int *)&pWeapon->FLH);
 	pWeapon->FLH = FLH;
 
-	sprintf(flag, "%sBarrelLength", prefix);
+	_snprintf(flag, 64, "%sBarrelLength", prefix);
 	pWeapon->BarrelLength = pArtINI->ReadInteger(section, flag, pWeapon->BarrelLength);
-	sprintf(flag, "%sBarrelThickness", prefix);
+	_snprintf(flag, 64, "%sBarrelThickness", prefix);
 	pWeapon->BarrelThickness = pArtINI->ReadInteger(section, flag, pWeapon->BarrelThickness);
-	sprintf(flag, "%sTurretLocked", prefix);
+	_snprintf(flag, 64, "%sTurretLocked", prefix);
 	pWeapon->TurretLocked = pArtINI->ReadBool(section, flag, pWeapon->TurretLocked);
 }

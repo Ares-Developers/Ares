@@ -136,7 +136,7 @@ DEFINE_HOOK(464A47, BTExt_LoadFromINI, 5)
 
 				for(int i = 0; i < pData->CustomWidth * pData->CustomHeight; i++)
 				{
-					sprintf(key, "Foundation.%d", i);
+					_snprintf(key, 32, "Foundation.%d", i);
 					if(pArtINI->ReadString(pID, key, "", str, 0x80) > 0)
 					{
 						short x, y;

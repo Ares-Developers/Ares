@@ -54,7 +54,7 @@ void ArmorType::LoadForWarhead(CCINIClass *pINI, WarheadTypeClass* pWH)
 //	DEBUGLOG("Reading new verses of [%s]\n", section);
 	for(int i = 0; i < Array.get_Count(); ++i)
 	{
-		sprintf(buffer, "Versus.%s", Array[i]->Title);
+		_snprintf(buffer, 64, "Versus.%s", Array[i]->Title);
 //		DEBUGLOG("Reading armor #%d verses (%s)\n", i, buffer);
 		if(pINI->ReadString(section, buffer, "", ret, 0x20))
 		{

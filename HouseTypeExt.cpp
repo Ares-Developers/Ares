@@ -367,7 +367,7 @@ DEFINE_HOOK(752BA1, HTExt_GetTaunt, 6)
 	HouseTypeClass* pThis = HouseTypeClass::Array->GetItem(nCountry);
 	if(HouseTypeExt::Map.find(pThis) != HouseTypeExt::Map.end())
 	{
-		sprintf(pFileName, HouseTypeExt::Map[pThis].TauntFile, nTaunt);
+		_snprintf(pFileName, 32, HouseTypeExt::Map[pThis].TauntFile, nTaunt);
 
 		R->set_ECX(*((DWORD*)0xB1D4D8));
 		return 0x752C54;

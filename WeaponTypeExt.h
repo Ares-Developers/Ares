@@ -15,9 +15,9 @@
 #include <WaveClass.h>
 #include <WeaponTypeClass.h>
 
-#ifdef DEBUGBUILD
+#include "RadTypes.h"
+
 #include "Debug.h"
-#endif
 
 struct SHPStruct;
 
@@ -58,17 +58,7 @@ class WeaponTypeClassExt
 		SHPStruct *Ivan_Image;
 		int Ivan_FlickerRate;
 
-		// custom radiations
-		WarheadTypeClass *Rad_WH;
-		ColorStruct Rad_Color;
-		int Rad_Duration_Multiple;
-		int Rad_Application_Delay;
-		int Rad_Level_Max;
-		int Rad_Level_Delay;
-		int Rad_Light_Delay;
-		double Rad_Level_Factor;
-		double Rad_Light_Factor;
-		double Rad_Tint_Factor;
+		RadType * Rad_Type;
 
 		bool Data_Initialized;
 

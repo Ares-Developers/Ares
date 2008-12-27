@@ -19,6 +19,8 @@ public:
 
 	static DWORD readLength;
 	static char readBuffer[BUFLEN];
+	static char readDelims[4];
+	static char readDefval[4];
 
 	//Callbacks
 	static eMouseEventFlags __stdcall MouseEvent(Point2D*,eMouseEventFlags);

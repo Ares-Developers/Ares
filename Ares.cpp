@@ -13,6 +13,8 @@ bool	Ares::bNoCD = false;
 
 DWORD Ares::readLength = BUFLEN;
 char Ares::readBuffer[BUFLEN];
+char Ares::readDelims[4] = ",";
+char Ares::readDefval[4] = "";
 
 int FrameStepCommandClass::ArmageddonState = 0;
 

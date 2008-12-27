@@ -1,6 +1,7 @@
 #include "RulesExt.h"
 #include "Prerequisites.h"
 #include "ArmorTypes.h"
+#include "RadTypes.h"
 
 RulesClassExt::Struct RulesClassExt::Data;
 
@@ -72,6 +73,8 @@ EXPORT RulesClassExt_TypeData(REGISTERS* R)
 
 	GenericPrerequisite::LoadFromINIList(pINI);
 	ArmorType::LoadFromINIList(pINI);
+
+	RadType::LoadFromINIList(pINI);
 
 	return 0;
 }

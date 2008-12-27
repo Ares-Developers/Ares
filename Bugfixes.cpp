@@ -601,7 +601,7 @@ DEFINE_HOOK(6F7561, Arcing_Aircraft, 5)
 	return T == abs_Aircraft ? 0x6F75B2 : 0x6F7568;
 }
 
-DEFINE_HOOK(6BD7DC, Expand_MIX_Reorg, 5)
+DEFINE_HOOK(6BD7E3, Expand_MIX_Reorg, 5)
 {
 	MixFileClass::Bootstrap();
 	return 0;
@@ -609,6 +609,7 @@ DEFINE_HOOK(6BD7DC, Expand_MIX_Reorg, 5)
 
 DEFINE_HOOK(52BB64, Expand_MIX_Deorg, 5)
 {
+	R->set_AL(1);
 	return 0x52BB69;
 }
 

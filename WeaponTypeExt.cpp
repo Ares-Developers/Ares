@@ -47,17 +47,6 @@ void __stdcall WeaponTypeClassExt::Create(WeaponTypeClass* pThis)
 		pData->Ivan_Image        = NULL;
 		pData->Ivan_FlickerRate  = 30;
 
-		pData->Rad_WH = NULL;
-		pData->Rad_Color = ColorStruct(0, 240, 0);
-		pData->Rad_Duration_Multiple = 1;
-		pData->Rad_Application_Delay = 16;
-		pData->Rad_Level_Max = 500;
-		pData->Rad_Level_Delay = 16;
-		pData->Rad_Light_Delay = 16;
-		pData->Rad_Level_Factor = 1.0;
-		pData->Rad_Light_Factor = 1.0;
-		pData->Rad_Tint_Factor = 1.0;
-
 		Ext_p[pThis] = pData;
 	}
 }
@@ -126,17 +115,6 @@ void WeaponTypeClassExt::WeaponTypeClassData::Initialize(WeaponTypeClass* pThis)
 	this->Wave_Reverse[idxBuilding] = 0;
 	this->Wave_Reverse[idxInfantry] = 0;
 	this->Wave_Reverse[idxOther] = 0;
-
-	this->Rad_WH = Rules->get_RadSiteWarhead();
-	this->Rad_Color = *Rules->get_RadColor();
-	this->Rad_Duration_Multiple = Rules->get_RadDurationMultiple();
-	this->Rad_Application_Delay = Rules->get_RadApplicationDelay();
-	this->Rad_Level_Max = Rules->get_RadLevelMax();
-	this->Rad_Level_Delay = Rules->get_RadLevelDelay();
-	this->Rad_Light_Delay = Rules->get_RadLightDelay();
-	this->Rad_Level_Factor = Rules->get_RadLevelFactor();
-	this->Rad_Light_Factor = Rules->get_RadLightFactor();
-	this->Rad_Tint_Factor = Rules->get_RadTintFactor();
 
 	this->Is_Initialized = 1;
 }
@@ -237,25 +215,18 @@ void __stdcall WeaponTypeClassExt::LoadFromINI(WeaponTypeClass* pThis, CCINIClas
 				DEBUGLOG("Loading Ivan Image %s succeeded: %d frames\n", buffer, image->Frames);
 				pData->Ivan_Image        = image;
 			}
-			else
-			{
-			}
 		}
 	}
 	
 	if(pThis->get_RadLevel()) {
 //		pData->Beam_Duration     = pINI->ReadInteger(section, "Beam.Duration", pData->Beam_Duration);
-
-		PARSE_WH("Rad.Warhead", pData->Rad_WH);
-		PARSE_COLOR("Rad.Color", pData->Rad_Color, tmpColor);
-		pData->Rad_Duration_Multiple = pINI->ReadInteger(section, "Rad.DurationMultiple", pData->Rad_Duration_Multiple);
-		pData->Rad_Application_Delay = pINI->ReadInteger(section, "Rad.ApplicationDelay", pData->Rad_Application_Delay);
-		pData->Rad_Level_Max    = pINI->ReadInteger(section, "Rad.LevelMax", pData->Rad_Level_Max);
-		pData->Rad_Level_Delay  = pINI->ReadInteger(section, "Rad.LevelDelay", pData->Rad_Level_Delay);
-		pData->Rad_Light_Delay  = pINI->ReadInteger(section, "Rad.LightDelay", pData->Rad_Light_Delay);
-		pData->Rad_Level_Factor = pINI->ReadDouble(section, "Rad.LevelFactor", pData->Rad_Level_Factor);
-		pData->Rad_Light_Factor = pINI->ReadDouble(section, "Rad.LightFactor", pData->Rad_Light_Factor);
-		pData->Rad_Tint_Factor  = pINI->ReadDouble(section, "Rad.TintFactor", pData->Rad_Tint_Factor);
+		if(pINI->ReadString(section, "Radiation.Type", "", buffer, 256)) {
+			RadType * rType = RadType::Find(buffer);
+			if(!rType) {
+				Debug::Log("Weapon [%s] references undeclared RadiationType '%s'!\n", section, buffer);
+			}
+			pData->Rad_Type = rType;
+		}
 	}
 }
 
@@ -792,8 +763,8 @@ DEFINE_HOOK(65B593, RadSiteClass_Radiate_0, 6)
 	GET(RadSiteClass *, Rad, ECX);
 	WeaponTypeClassExt::WeaponTypeClassData *pData = WeaponTypeClassExt::RadSiteExt[Rad];
 
-	R->set_ECX(pData->Rad_Level_Delay);
-	R->set_EAX(pData->Rad_Light_Delay);
+	R->set_ECX(pData->Rad_Type->Level_Delay);
+	R->set_EAX(pData->Rad_Type->Light_Delay);
 
 	return 0x65B59F;
 }
@@ -808,7 +779,7 @@ DEFINE_HOOK(65B5CE, RadSiteClass_Radiate_1, 6)
 	R->set_EBX(0);
 	R->set_EDX(0);
 
-	ColorStruct clr = pData->Rad_Color;
+	ColorStruct clr = pData->Rad_Type->Color;
 
 	// NOT MY HACK, HELLO WESTWEIRD
 	if(ScenarioClass::Global()->get_Theater() == th_Snow) {
@@ -830,7 +801,7 @@ DEFINE_HOOK(65B63E, RadSiteClass_Radiate_2, 6)
 	GET(RadSiteClass *, Rad, EDI);
 	WeaponTypeClassExt::WeaponTypeClassData *pData = WeaponTypeClassExt::RadSiteExt[Rad];
 
-	double factor = pData->Rad_Light_Factor;
+	double factor = pData->Rad_Type->Light_Factor;
 	__asm { fmul factor };
 
 	return 0x65B644;
@@ -841,7 +812,7 @@ DEFINE_HOOK(65B6A0, RadSiteClass_Radiate_3, 6)
 	GET(RadSiteClass *, Rad, EDI);
 	WeaponTypeClassExt::WeaponTypeClassData *pData = WeaponTypeClassExt::RadSiteExt[Rad];
 
-	double factor = pData->Rad_Tint_Factor;
+	double factor = pData->Rad_Type->Tint_Factor;
 	__asm { fmul factor };
 	return 0x65B6A6;
 }
@@ -851,7 +822,7 @@ DEFINE_HOOK(65B6CA, RadSiteClass_Radiate_4, 6)
 	GET(RadSiteClass *, Rad, EDI);
 	WeaponTypeClassExt::WeaponTypeClassData *pData = WeaponTypeClassExt::RadSiteExt[Rad];
 
-	double factor = pData->Rad_Tint_Factor;
+	double factor = pData->Rad_Type->Tint_Factor;
 	__asm { fmul factor };
 	return 0x65B6D0;
 }
@@ -862,7 +833,7 @@ DEFINE_HOOK(65B6F2, RadSiteClass_Radiate_5, 6)
 	GET(RadSiteClass *, Rad, EDI);
 	WeaponTypeClassExt::WeaponTypeClassData *pData = WeaponTypeClassExt::RadSiteExt[Rad];
 
-	double factor = pData->Rad_Tint_Factor;
+	double factor = pData->Rad_Type->Tint_Factor;
 	__asm { fmul factor };
 	return 0x65B6F8;
 }
@@ -882,7 +853,7 @@ DEFINE_HOOK(65B843, RadSiteClass_Update_1, 6)
 	GET(RadSiteClass *, Rad, ESI);
 	WeaponTypeClassExt::WeaponTypeClassData *pData = WeaponTypeClassExt::RadSiteExt[Rad];
 
-	R->set_ECX(pData->Rad_Level_Delay);
+	R->set_ECX(pData->Rad_Type->Level_Delay);
 	return 0x65B849;
 }
 
@@ -891,7 +862,7 @@ DEFINE_HOOK(65B8B9, RadSiteClass_Update_2, 6)
 	GET(RadSiteClass *, Rad, ESI);
 	WeaponTypeClassExt::WeaponTypeClassData *pData = WeaponTypeClassExt::RadSiteExt[Rad];
 
-	R->set_ECX(pData->Rad_Light_Delay);
+	R->set_ECX(pData->Rad_Type->Light_Delay);
 	return 0x65B8BF;
 }
 

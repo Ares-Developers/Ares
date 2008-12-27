@@ -382,7 +382,7 @@ DEFINE_HOOK(534FB1, Sides_MixFileIndex, 5)
 
 	if(SideExt::Map.find(pSide) != SideExt::Map.end())
 		// original code is 
-		// sprintf(mixname, "SIDEC%02dMD.MIX", ESI + 1);
+		// sprtf(mixname, "SIDEC%02dMD.MIX", ESI + 1);
 		// it's easier to sub 1 here than to fix the calculation in the orig code
 		R->set_ESI(((DWORD)SideExt::Map[pSide].SidebarMixFileIndex) - 1);
 	else if(n == 2)
