@@ -1,7 +1,7 @@
 #ifndef CMD_DUMPFACT_H
 #define CMD_DUMPFACT_H
 
-#include "YDE.h"
+#include "Ares.h"
 #include "Debug.h"
 
 class DumperFactoryCommandClass : public CommandClass

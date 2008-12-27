@@ -1,33 +1,30 @@
 #include "ArmorTypes.h"
 
-DynamicVectorClass<ArmorType*> ArmorType::Array;
-void ArmorType::LoadFromINIList(CCINIClass *pINI)
+DynamicVectorClass<ArmorType*> Enumerable<ArmorType>::Array;
+
+const char * Enumerable<ArmorType>::GetMainSection()
 {
-	char section[] = "ArmorTypes";
+	return "ArmorTypes";
+}
+
+void Enumerable<ArmorType>::LoadFromINIList(CCINIClass *pINI)
+{
+	const char *section = Enumerable<ArmorType>::GetMainSection();
 	int len = pINI->GetKeyCount(section);
 	char buffer[0x40];
 	for(int i = 0; i < len; ++i)
 	{
 		const char *Key = pINI->GetKeyName(section, i);
 		pINI->ReadString(section, Key, "", buffer, 0x40);
-//		DEBUGLOG("Reading armor type %s = %s\n", Key, buffer);
 
 		FindOrAllocate(Key)->DefaultIndex = ArmorType::FindIndex(buffer);
 		FindOrAllocate(Key)->DefaultVerses = Conversions::Str2Armor(buffer);
-//		DEBUGLOG("\tDefaultIndex = %d\n", ArmorType::FindIndex(buffer));
 	}
 }
 
 void ArmorType::LoadForWarhead(CCINIClass *pINI, WarheadTypeClass* pWH)
 {
 	WarheadTypeClassExt::WarheadTypeClassData *pData = WarheadTypeClassExt::Ext_p[pWH];
-
-	DEBUGLOG("[%s]Verses: ", pWH->get_ID());
-	for(int j = 0; j < pData->Verses.get_Count(); ++j)
-	{
-		DEBUGLOG("\t%9.6lf", pData->Verses[j]);
-	}
-	DEBUGLOG("\n ###   1   ###\n");
 
 	while(pData->Verses.get_Count() < Array.get_Count())
 	{
@@ -40,35 +37,18 @@ void ArmorType::LoadForWarhead(CCINIClass *pINI, WarheadTypeClass* pWH)
 		);
 	}
 
-	DEBUGLOG("[%s]Verses: ", pWH->get_ID());
-	for(int j = 0; j < pData->Verses.get_Count(); ++j)
-	{
-		DEBUGLOG("\t%9.6lf", pData->Verses[j]);
-	}
-	DEBUGLOG("\n ###   2   ###\n");
-
 	char buffer[0x40];
 	char ret[0x20];
 	const char *section = pWH->get_ID();
 
-//	DEBUGLOG("Reading new verses of [%s]\n", section);
 	for(int i = 0; i < Array.get_Count(); ++i)
 	{
-		_snprintf(buffer, 64, "Versus.%s", Array[i]->Title);
-//		DEBUGLOG("Reading armor #%d verses (%s)\n", i, buffer);
+		_snprintf(buffer, 64, "Versus.%s", Array[i]->Name);
 		if(pINI->ReadString(section, buffer, "", ret, 0x20))
 		{
 			pData->Verses[i] = Conversions::Str2Armor(ret);
 		}
-//		DEBUGLOG("Got %lf\n", pData->Verses[i]);
 	}
-
-	DEBUGLOG("[%s]Verses: ", pWH->get_ID());
-	for(int j = 0; j < pData->Verses.get_Count(); ++j)
-	{
-		DEBUGLOG("\t%9.6lf", pData->Verses[j]);
-	}
-	DEBUGLOG("\n ###   3   ###\n");
 }
 
 void ArmorType::AddDefaults()
@@ -105,7 +85,7 @@ DEFINE_HOOK(4753F0, ArmorType_FindIndex, 0A)
 	char buf[0x20];
 
 	const char *curTitle = fallback < ArmorType::Array.get_Count()
-		? ArmorType::Array[fallback]->Title
+		? ArmorType::Array[fallback]->Name
 		: "none";
 
 	pINI->ReadString(Section, Key, curTitle, buf, 0x20);

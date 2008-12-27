@@ -1,7 +1,7 @@
 #ifndef CMD_DUMPTYPES_H
 #define CMD_DUMPTYPES_H
 
-#include "YDE.h"
+#include "Ares.h"
 #include "Debug.h"
 
 class DumperTypesCommandClass : public CommandClass

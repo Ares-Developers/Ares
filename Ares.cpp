@@ -31,7 +31,8 @@ void __stdcall Ares::RegisterCommands()
 	CommandClass::Array->AddItem(new TestSomethingCommandClass());
 	CommandClass::Array->AddItem(new FrameByFrameCommandClass());
 	CommandClass::Array->AddItem(new FrameStepCommandClass());
-	CommandClass::Array->AddItem(new DumperCommandClass());
+	CommandClass::Array->AddItem(new DumperFactoryCommandClass());
+	CommandClass::Array->AddItem(new DumperTypesCommandClass());
 }
 
 void __stdcall Ares::CmdLineParse(char** ppArgs,int nNumArgs)

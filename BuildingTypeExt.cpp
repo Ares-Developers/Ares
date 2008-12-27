@@ -161,11 +161,10 @@ DEFINE_HOOK(464A47, BTExt_LoadFromINI, 5)
 
 
 	// secret lab
-	char buffer[BUFLEN];
-	if(pINI->ReadString(pThis->get_ID(), "SecretLab.PossibleBoons", "", buffer, BUFLEN))
+	if(pINI->ReadString(pThis->get_ID(), "SecretLab.PossibleBoons", "", Ares::readBuffer, Ares::readLength))
 	{
 		pData->Secret_Boons.Clear();
-		for(char *cur = strtok(buffer, ","); cur; cur = strtok(NULL, ","))
+		for(char *cur = strtok(Ares::readBuffer, ","); cur; cur = strtok(NULL, ","))
 		{
 			TechnoTypeClass *pTechno = TechnoTypeClass::Find(cur);
 			if(pTechno)

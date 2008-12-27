@@ -1,27 +1,17 @@
+#include "Ares.h"
 #include "Prerequisites.h"
 
-DynamicVectorClass< GenericPrerequisite* > GenericPrerequisite::Array;
+DynamicVectorClass<GenericPrerequisite*> Enumerable<GenericPrerequisite>::Array;
 
-void GenericPrerequisite::LoadFromINIList(CCINIClass *pINI)
+const char * Enumerable<GenericPrerequisite>::GetMainSection()
 {
-	char section[] = "GenericPrerequisites";
-	int len = pINI->GetKeyCount(section);
-	for(int i = 0; i < len; ++i)
-	{
-		const char *Key = pINI->GetKeyName(section, i);
-		FindOrAllocate(Key);
-	}
-	for(int i = 0; i < Array.get_Count(); ++i)
-	{
-		Array[i]->LoadFromINI(pINI);
-	}
+	return "GenericPrerequisites";
 }
 
 void GenericPrerequisite::LoadFromINI(CCINIClass *pINI)
 {
-	char section[] = "GenericPrerequisites";
+	const char *section = GenericPrerequisite::GetMainSection();
 
-	char buffer[BUFLEN];
 	char generalbuf[0x80];
 
 	char name[0x80];
@@ -33,14 +23,14 @@ void GenericPrerequisite::LoadFromINI(CCINIClass *pINI)
 	DynamicVectorClass<int> *dvc = &this->Prereqs;
 
 	_snprintf(generalbuf, 0x80, "Prerequisite%s", name);
-	if(pINI->ReadString("General", generalbuf, "", buffer, BUFLEN))
+	if(pINI->ReadString("General", generalbuf, "", Ares::readBuffer, Ares::readLength))
 	{
-		Prereqs::Parse(buffer, dvc);
+		Prereqs::Parse(Ares::readBuffer, dvc);
 	}
 
-	if(pINI->ReadString(section, this->Name, "", buffer, BUFLEN))
+	if(pINI->ReadString(section, this->Name, "", Ares::readBuffer, Ares::readLength))
 	{
-		Prereqs::Parse(buffer, dvc);
+		Prereqs::Parse(Ares::readBuffer, dvc);
 	}
 }
 

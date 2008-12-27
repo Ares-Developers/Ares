@@ -6,16 +6,22 @@
 #include <HouseClass.h>
 #include <UnitTypeClass.h>
 
+#include "Enumerator.h"
+
 #ifdef DEBUGBUILD
 #include "Debug.h"
 #endif
 
 class HouseClass;
 
-class GenericPrerequisite
+class GenericPrerequisite;
+
+class GenericPrerequisite : public Enumerable<GenericPrerequisite>
 {
 public:
-	static DynamicVectorClass< GenericPrerequisite* > Array;
+	static void AddDefaults();
+
+	virtual void LoadFromINI(CCINIClass *pINI);
 
 	GenericPrerequisite(const char *Title)
 	{
@@ -23,45 +29,7 @@ public:
 		Array.AddItem(this);
 	}
 
-	static int FindIndex(const char *Title)
-	{
-		for(int i = 0; i < Array.get_Count(); ++i)
-			if(!_strcmpi(Title, Array.GetItem(i)->Name))
-				return i;
-		return -1;
-	}
-
-	static GenericPrerequisite* Find(const char *Title)
-	{
-		for(int i = 0; i < Array.get_Count(); ++i)
-			if(!_strcmpi(Title, Array.GetItem(i)->Name))
-				return Array.GetItem(i);
-		return NULL;
-	}
-
-	static GenericPrerequisite* FindOrAllocate(const char *Title)
-	{
-		GenericPrerequisite *find = Find(Title);
-		return find ? find : new GenericPrerequisite(Title);
-	}
-
-	static void ClearArray()
-	{
-		while(int len = Array.get_Count())
-		{
-			delete Array[len];
-			Array.RemoveItem(len);
-		}
-	}
-
-	static void AddDefaults();
-
-	static void LoadFromINIList(CCINIClass *pINI);
-	void LoadFromINI(CCINIClass *pINI);
-
-	char Name[32];
 	DynamicVectorClass<int> Prereqs;
-
 };
 
 class Prereqs
