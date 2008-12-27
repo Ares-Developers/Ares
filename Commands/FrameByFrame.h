@@ -1,5 +1,5 @@
-#ifndef FRAMEBYFRAME_H
-#define FRAMEBYFRAME_H
+#ifndef CMD_FRAME_H
+#define CMD_FRAME_H
 
 // toggle
 class FrameByFrameCommandClass : public CommandClass
@@ -10,13 +10,13 @@ public:
 
 	//CommandClass
 	virtual const char* GetName()
-	{ return "SingleStep"; }
+		{ return "SingleStep"; }
 
 	virtual const wchar_t* GetUIName()
-	{ return L"Toggle Single-stepping"; }
+		{ return L"Toggle Single-stepping"; }
 
 	virtual const wchar_t* GetUICategory()
-		{ return L"Ares"; }
+		{ return L"Development"; }
 
 	virtual const wchar_t* GetUIDescription()
 		{ return L"Toggles the single-stepping debug mode on or off."; }
