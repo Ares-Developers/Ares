@@ -214,6 +214,12 @@ EXT_LOAD_INI(TechnoTypeClass)
 		}
 	}
 
+	PARSE_ANIM("Parachute.Anim", pData->Parachute_Anim);
+
+
+	// quick fix - remove after the rest of weapon selector code is done
+	return;
+
 	// weapons
 	int WeaponCount = pINI->ReadInteger(section, "WeaponCount", pData->Weapons.get_Count());
 
@@ -264,8 +270,6 @@ EXT_LOAD_INI(TechnoTypeClass)
 		_snprintf(flag, 256, "EliteWeapon%d", i);
 		ReadWeapon(W, flag, section, pINI);
 	}
-
-	PARSE_ANIM("Parachute.Anim", pData->Parachute_Anim);
 }
 
 void TechnoTypeClassExt::ReadWeapon(WeaponStruct *pWeapon, const char *prefix, const char *section, CCINIClass *pINI)

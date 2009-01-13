@@ -630,3 +630,37 @@ DEFINE_HOOK(50CFAA, HouseClass_PickOffensiveSWTarget, 4)
 	return 0x50CFCD;
 }
 
+// bugfix #182: Spotlights cause an IE
+DEFINE_HOOK(5F5155, ObjectClass_Put, 6)
+{
+	return 0x5F5210;
+}
+
+// forced solid buildings - implement selection depending on projectile/building settings and heightmaps
+DEFINE_HOOK(4666F7, BulletClass_Update, 6)
+{
+	GET(BulletClass *, Bullet, EBP);
+
+	CellClass *MyCell = Bullet->GetCell();
+	BuildingClass * BuildingInIt = MyCell->GetBuilding();
+	if(BuildingInIt) {
+		CoordStruct MyXYZ;
+		MyCell->GetCoords(&MyXYZ);
+
+		// use this delta offset to pick specific foundation cell's height from height map when it's implemented
+		CellStruct MyXY, BldXY, DeltaXY;
+		Bullet->GetMapCoords(&MyXY);
+		BuildingInIt->GetMapCoords(&BldXY);
+		DeltaXY = MyXY - BldXY;
+
+		int MyHeight = Bullet->get_Location()->Z;
+		int BldHeight = MapClass::Global()->GetCellFloorHeight(&MyXYZ) + BuildingInIt->get_Type()->get_Height() * 256;
+		if(MyHeight <= BldHeight) {
+			Bullet->SetTarget((ObjectClass *)MyCell);
+			Bullet->set_SpawnNextAnim(1);
+			Bullet->set_NextAnim(NULL);
+		}
+	}
+
+	return 0;
+}
