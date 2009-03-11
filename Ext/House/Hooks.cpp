@@ -86,7 +86,8 @@ DEFINE_HOOK(4FEA60, Fix100UnitBug_Vehicles, 0)
 
 			bool bPlayerControl;
 
-			if(*(eGameMode*)0xA8B238 == gm_Campaign) { //TODO: Session::Global()->get_GameMode()
+			//TODO: Session::Global()->get_GameMode()
+			if(*(eGameMode*)0xA8B238 == gm_Campaign) {
 				bPlayerControl = pThis->CurrentPlayer || pThis->PlayerControl;
 			} else {
 				bPlayerControl = pThis->CurrentPlayer;
