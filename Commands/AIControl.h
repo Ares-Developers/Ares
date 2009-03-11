@@ -24,27 +24,23 @@ public:
 	{
 		HouseClass* P = HouseClass::Player();
 
-		if(P->get_CurrentPlayer() && P->get_PlayerControl())
-		{
+		if(P->CurrentPlayer && P->PlayerControl) {
 			//let AI assume control
-			P->set_CurrentPlayer(false);
-			P->set_PlayerControl(false);
-			P->set_Production(true);
-			P->set_AutocreateAllowed(true);
+			P->CurrentPlayer = P->PlayerControl = false;
+			P->Production = P->AutocreateAllowed = true;
 
 			//give full capabilities
-			P->set_IQLevel(RulesClass::Global()->get_MaxIQLevels());
-			P->set_IQLevel2(RulesClass::Global()->get_MaxIQLevels());
-			P->set_AIDifficulty(0);	//brutal!
+			P->IQLevel = RulesClass::Global()->MaxIQLevels;
+			P->IQLevel2 = RulesClass::Global()->MaxIQLevels;
+			P->AIDifficulty = 0;	//brutal!
 
 			//notify
 			MessageListClass::PrintMessage(L"AI assumed control!");
-		}
-		else
-		{
+
+		} else {
+
 			//re-assume control
-			P->set_CurrentPlayer(true);
-			P->set_PlayerControl(true);
+			P->CurrentPlayer = P->PlayerControl = true;
 
 			//notify
 			MessageListClass::PrintMessage(L"Player assumed control!");

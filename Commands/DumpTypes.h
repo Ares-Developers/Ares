@@ -1,8 +1,8 @@
 #ifndef CMD_DUMPTYPES_H
 #define CMD_DUMPTYPES_H
 
-#include "Ares.h"
-#include "Debug.h"
+#include "..\Ares.h"
+#include "..\Misc\Debug.h"
 
 class DumperTypesCommandClass : public CommandClass
 {
@@ -12,20 +12,20 @@ public:
 
 	//CommandClass
 	virtual const char* GetName()
-	{ return "Dump Factories"; }
+	{ return "Dump Data Types"; }
 
 	virtual const wchar_t* GetUIName()
-	{ return L"Dump Factories"; }
+	{ return L"Dump Types"; }
 
 	virtual const wchar_t* GetUICategory()
 		{ return L"Development"; }
 
 	virtual const wchar_t* GetUIDescription()
-		{ return L"Dumps the current factory debug data to the log"; }
+		{ return L"Dumps the current type list to the log"; }
 
 #define LOGTYPE(typestr, section) \
 	Debug::Log("[" # section "]\n"); \
-	for(int i = 0; i < typestr ## TypeClass::Array->get_Count(); ++i) { \
+	for(int i = 0; i < typestr ## TypeClass::Array->Count; ++i) { \
 		typestr ## TypeClass *X = typestr ## TypeClass::Array->GetItem(i); \
 		Debug::Log("%d = %s\n", i, X->get_ID()); \
 	}
@@ -55,25 +55,26 @@ public:
 		LOGTYPE(Particle, Particles);
 		LOGTYPE(ParticleSystem, ParticleSystems);
 
+/*
 		Debug::Log("Dumping Art Types\n\n");
-
 		Debug::Log("[Movies]\n");
-		for(int i = 0; i < MovieInfo::Array->get_Count(); ++i) {
+		for(int i = 0; i < MovieInfo::Array->Count; ++i) {
 			Debug::Log("%d = %s\n", i, MovieInfo::Array->GetItem(i).Name);
 		}
+*/
 
 		Debug::Log("Dumping AI Types\n\n");
 		LOGTYPE(Script, ScriptTypes);
 		LOGTYPE(Team, TeamTypes);
 
 		Debug::Log("[TaskForces]\n");
-		for(int i = 0; i < TaskForceClass::Array->get_Count(); ++i) {
+		for(int i = 0; i < TaskForceClass::Array->Count; ++i) {
 			TaskForceClass *X = TaskForceClass::Array->GetItem(i);
 			Debug::Log("%d = %s\n", i, X->get_ID());
 		}
 
 		Debug::Log("[AITriggerTypes]\n");
-		for(int i = 0; i < AITriggerTypeClass::Array->get_Count(); ++i) {
+		for(int i = 0; i < AITriggerTypeClass::Array->Count; ++i) {
 			char Buffer[1024];
 			memset(Buffer, 0, 1024);
 			AITriggerTypeClass::Array->GetItem(i)->FormatForSaving(Buffer);
@@ -81,9 +82,9 @@ public:
 		}
 
 		Debug::Log("[AITriggerTypesEnable]\n");
-		for(int i = 0; i < AITriggerTypeClass::Array->get_Count(); ++i) {
+		for(int i = 0; i < AITriggerTypeClass::Array->Count; ++i) {
 			AITriggerTypeClass *X = AITriggerTypeClass::Array->GetItem(i);
-			Debug::Log("%X = %s\n", X->get_ID(), X->get_IsEnabled() ? "yes" : "no");
+			Debug::Log("%X = %s\n", X->get_ID(), X->IsEnabled ? "yes" : "no");
 		}
 
 		MessageListClass::PrintMessage(L"Type data dumped");

@@ -2,8 +2,17 @@
 #define ARES_H
 
 #include <hash_map>
-#include <YRPP.h>
+//include <YRPP.h>
 #include <MacroHelpers.h>
+
+#include <AircraftTypeClass.h>
+#include <CellClass.h>
+#include <HouseClass.h>
+#include <InfantryTypeClass.h>
+#include <UnitTypeClass.h>
+#include <Unsorted.h>
+
+#include "Ares.version.h"
 
 class Ares
 {
@@ -19,8 +28,8 @@ public:
 
 	static DWORD readLength;
 	static char readBuffer[BUFLEN];
-	static char readDelims[4];
-	static char readDefval[4];
+	static const char readDelims[4];
+	static const char readDefval[4];
 
 	//Callbacks
 	static eMouseEventFlags __stdcall MouseEvent(Point2D*,eMouseEventFlags);

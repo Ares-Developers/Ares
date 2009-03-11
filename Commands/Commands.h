@@ -36,7 +36,7 @@ public:
 #include "Commands/AIControl.h"
 #include "Commands/MapSnapshot.h"
 #include "Commands/FrameByFrame.h"
-#include "Commands/DumpFactories.h"
 #include "Commands/DumpTypes.h"
+#include "Commands/ToggleFirestorm.h"
 
 #endif
