@@ -81,8 +81,7 @@ DEFINE_HOOK(4FEA60, Fix100UnitBug_Vehicles, 0)
 				RulesClass::Global()->get_AISlaveMinerNumber()->GetItem(AIDiff);
 		}
 
-		if(pThis->IQLevel2 >= RulesClass::Global()->get_Harvester() &&
-			!pThis->unknown_bool_242) {
+		if(pThis->IQLevel2 >= RulesClass::Global()->get_Harvester() && !pThis->unknown_bool_242) {
 
 			bool bPlayerControl;
 
