@@ -99,7 +99,7 @@ DEFINE_HOOK(4D98DD, Insignificant_UnitLost, 6)
 DEFINE_HOOK(712045, TechnoTypeClass_GetCameo, 5)
 {
 	// egads and gadzooks
-	retfunc<SHPStruct *> ret(R, 0x7120C6);
+	retfunc<SHPStruct *> ret(R, 0x007120C6);
 
 	GET(TechnoTypeClass *, T, ECX);
 	GET(HouseClass *, House, EAX);
