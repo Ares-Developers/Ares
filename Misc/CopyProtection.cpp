@@ -51,3 +51,10 @@ DEFINE_HOOK(49F7A0, CopyProtection_CheckProtectedData, 8)
 	R->set_AL(1);
 	return 0x49F8A7;
 }
+
+// this douchebag blows your base up when it thinks you're cheating
+DEFINE_HOOK(55CFDF, BlowMeUp, 7)
+{
+	return 0x55D059;
+}
+

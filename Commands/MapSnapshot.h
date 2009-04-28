@@ -9,10 +9,10 @@ public:
 
 	//CommandClass
 	virtual const char* GetName()
-	{ return "MapSnapshot"; }
+		{ return "MapSnapshot"; }
 
 	virtual const wchar_t* GetUIName()
-	{ return L"Map Snapshot"; }
+		{ return L"Map Snapshot"; }
 
 	virtual const wchar_t* GetUICategory()
 		{ return L"Development"; }
