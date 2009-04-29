@@ -280,7 +280,8 @@ int HouseTypeExt::PickRandomCountry()
 				}
 			}
 		} else {
-			vecLegible.push_back(i);
+// argh! pd, wth?
+//			vecLegible.push_back(i);
 		}
 	}
 
@@ -289,7 +290,7 @@ int HouseTypeExt::PickRandomCountry()
 		// (Y)
 		int pick = ScenarioClass::Global()->get_Random()->RandomRanged(0, vecLegible.size() - 1);
 
-		return vecLegible[pick];
+		return vecLegible.at(pick);
 	}
 	return 0;
 }
@@ -316,8 +317,6 @@ DEFINE_HOOK(511643, HouseTypeClass_CTOR_2, 5)
 DEFINE_HOOK(5116A0, HouseTypeClass_DTOR, 5)
 {
 	GET(HouseTypeClass*, pItem, ECX);
-
-	Debug::Log("Baleeting %s\n", pItem->get_ID());
 
 	HouseTypeExt::ExtMap.Remove(pItem);
 	return 0;

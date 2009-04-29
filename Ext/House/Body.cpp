@@ -111,7 +111,7 @@ signed int HouseExt::PrereqValidate
 			return 0;
 		}
 
-		if(!pHouse->PlayerControl) {
+		if(!pHouse->IsHumanoid()) {
 			return 1;
 		}
 
