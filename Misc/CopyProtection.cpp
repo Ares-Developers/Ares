@@ -53,7 +53,7 @@ DEFINE_HOOK(49F7A0, CopyProtection_CheckProtectedData, 8)
 }
 
 // this douchebag blows your base up when it thinks you're cheating
-DEFINE_HOOK(55CFDF, BlowMeUp, 7)
+DEFINE_HOOK(55CFDF, BlowMeUp, 0)
 {
 	return 0x55D059;
 }

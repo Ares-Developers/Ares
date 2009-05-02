@@ -23,8 +23,8 @@
 #define CRAZY_MACRO_GO_AWAY_2(TypeName)                                                      \
                                                                                              \
                                                                                              \
-	std::vector<int> CreationFrames(TypeName ## TypeClass::Array->Count, 0);                   \
-	std::vector<int> Values(TypeName ## TypeClass::Array->Count, 0x7FFFFFFF);                  \
+	std::vector<int> CreationFrames(TypeName ## TypeClass::Array->Count, 0x7FFFFFFF);          \
+	std::vector<int> Values(TypeName ## TypeClass::Array->Count, 0);                           \
                                                                                              \
 	for(int i = 0; i < TeamClass::Array->Count; ++i) {                                         \
 		TeamClass *CurrentTeam = TeamClass::Array->GetItem(i);                                   \
@@ -80,12 +80,12 @@
 			continue;                                                                              \
 		}                                                                                        \
                                                                                              \
-		if(CurrentValue < BestValue || CurrentValue == -1) {                                     \
+		if(BestValue < CurrentValue || BestValue == -1) {                                        \
 			BestValue = CurrentValue;                                                              \
 			BestChoices.clear();                                                                   \
 		}                                                                                        \
 		BestChoices.push_back(i);                                                                \
-		if(EarliestFrame < CreationFrames[i] || EarliestTypenameIndex == -1) {                   \
+		if(EarliestFrame > CreationFrames[i] || EarliestTypenameIndex == -1) {                   \
 			EarliestTypenameIndex = i;                                                             \
 			EarliestFrame = CreationFrames[i];                                                     \
 		}                                                                                        \
