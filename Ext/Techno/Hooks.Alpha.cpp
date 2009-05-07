@@ -48,7 +48,7 @@ DEFINE_HOOK(5F3E70, ObjectClass_Update, 5)
 		Inactive |= reinterpret_cast<TechnoClass *>(Source)->Deactivated;
 	}
 
-	if(Source->WhatAmI() == abs_Building) {
+	if(Source->WhatAmI() == abs_Building && Source->GetCurrentMission() != mission_Construction) {
 		Inactive |= !reinterpret_cast<BuildingClass *>(Source)->IsPowerOnline();
 	}
 

@@ -16,7 +16,7 @@ void TechnoExt::SpawnSurvivors(TechnoClass *pThis, TechnoClass *pKiller, bool Se
 
 	int chance = pData->Survivors_PilotChance;
 	if(chance && Randomizer::Global()->RandomRanged(1, 100) <= chance) {
-		InfantryTypeClass *PilotType = pData->Survivors_Pilots[pOwner->get_SideIndex()];
+		InfantryTypeClass *PilotType = pData->Survivors_Pilots[pOwner->SideIndex];
 		if(PilotType) {
 			InfantryClass *Pilot = new InfantryClass(PilotType, pOwner);
 

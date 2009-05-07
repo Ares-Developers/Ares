@@ -18,7 +18,9 @@ DEFINE_HOOK(420F40, Spotlights_UpdateFoo, 6)
 // bugfix #182: Spotlights cause an IE
 DEFINE_HOOK(5F5155, ObjectClass_Put, 6)
 {
-	return 0x5F5210;
+	return R->get_EAX()
+	 ? 0
+	 : 0x5F5210;
 }
 
 DEFINE_HOOK(6F6D04, TechnoClass_Put, 6)
@@ -91,7 +93,7 @@ DEFINE_HOOK(435C08, BuildingLightClass_Draw_ForceType, 5)
 }
 
 DEFINE_HOOK(435C32, BuildingLightClass_Draw_PowerOnline, A)
-	{
+{
 	GET(TechnoClass *, T, EDI);
 	return (T->WhatAmI() != abs_Building || (T->IsPowerOnline() && !reinterpret_cast<BuildingClass *>(T)->IsFogged))
 	  ? 0x435C52

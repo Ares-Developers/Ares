@@ -94,7 +94,7 @@ DEFINE_HOOK(75D1A9, WarheadTypeClass_CTOR, 7)
 	return 0;
 }
 
-DEFINE_HOOK(75D230, WarheadTypeClass_DTOR, 5)
+DEFINE_HOOK(75E510, WarheadTypeClass_DTOR, 6)
 {
 	GET(WarheadTypeClass*, pItem, ECX);
 

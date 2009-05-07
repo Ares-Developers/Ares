@@ -109,39 +109,39 @@ public:
 
 	E_T *FindOrAllocate(S_T* key) {
 		if(key == NULL) {
-			DEBUGLOG("CTOR of Ext attempted for a NULL pointer! WTF!\n");
+			Debug::Log("CTOR of Ext attempted for a NULL pointer! WTF!\n");
 			return NULL;
 		}
 		C_Map::iterator i = find(key);
 		if(i == end()) {
-			DEBUGLOG("CTOR of Ext for %X (%s) ... ", key, key->get_ID());
+			Debug::Log("CTOR of Ext for %X (%s) ... ", key, key->get_ID());
 			E_T * val = new E_T(typename E_T::Canary);
 			val->InitializeConstants(key);
 			i = insert(C_Map::value_type(key, val)).first;
-			DEBUGLOG("Cntr len now %d\n", size());
+			Debug::Log("Cntr len now %d\n", size());
 		}
 		return i->second;
 	}
 
 	E_T *Find(S_T* key) {
 		C_Map::iterator i = find(key);
-		DEBUGLOG("Lookup of Ext for %X (%s) ... ", key, key->get_ID());
+		Debug::Log("Lookup of Ext for %X (%s) ... ", key, key->get_ID());
 		if(i == end()) {
-			DEBUGLOG("Failed!\n");
+			Debug::Log("Failed!\n");
 			return NULL;
 		}
-		DEBUGLOG("Success!\n");
+		Debug::Log("Success!\n");
 		return i->second;
 	}
 
 	void Remove(S_T* key) {
 		C_Map::iterator i = find(key);
-		DEBUGLOG("DTOR of Ext for %X (%s) ... ", key, key->get_ID());
+		Debug::Log("DTOR of Ext for %X (%s) ... ", key, key->get_ID());
 		if(i != end()) {
 			delete i->second;
 			erase(i);
 		}
-		DEBUGLOG("Cntr len now %d\n", size());
+		Debug::Log("Cntr len now %d\n", size());
 	}
 
 	void Empty() {

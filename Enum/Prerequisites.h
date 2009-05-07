@@ -29,6 +29,11 @@ public:
 		Array.AddItem(this);
 	}
 
+	virtual ~GenericPrerequisite()
+	{
+		Array.RemoveItem(Array.FindItemIndex(this));
+	}
+
 	DynamicVectorClass<int> Prereqs;
 };
 

@@ -314,7 +314,7 @@ DEFINE_HOOK(511643, HouseTypeClass_CTOR_2, 5)
 	return 0;
 }
 
-DEFINE_HOOK(5116A0, HouseTypeClass_DTOR, 5)
+DEFINE_HOOK(512760, HouseTypeClass_DTOR, 6)
 {
 	GET(HouseTypeClass*, pItem, ECX);
 

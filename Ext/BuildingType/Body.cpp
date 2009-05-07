@@ -97,7 +97,6 @@ void BuildingTypeExt::ExtData::LoadFromINI(BuildingTypeClass *pThis, CCINIClass*
 		pThis->set_FoundationData(this->CustomData);
 	} else if(pArtINI) {
 
-//		if(pArtINI) {
 		char str[0x80]="\0";
 
 		if(pArtINI->ReadString(pArtID, "Foundation", "", str, 0x80) && !_strcmpi(str,"Custom")) {
@@ -139,7 +138,6 @@ void BuildingTypeExt::ExtData::LoadFromINI(BuildingTypeClass *pThis, CCINIClass*
 					break;
 				}
 			}
-//		}
 		}
 	}
 

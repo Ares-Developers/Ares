@@ -163,7 +163,8 @@ DEFINE_HOOK(771EE9, WeaponTypeClass_CTOR, 5)
 	return 0;
 }
 
-DEFINE_HOOK(771F50, WeaponTypeClass_DTOR, 5)
+
+DEFINE_HOOK(7730F0, WeaponTypeClass_DTOR, 5)
 {
 	GET(WeaponTypeClass*, pItem, ECX);
 
