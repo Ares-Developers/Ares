@@ -3,7 +3,7 @@
 
 #include <ScenarioClass.h>
 
-DEFINE_HOOK(5536DA, HTExt_GetLSName, 9)
+DEFINE_HOOK(5536DA, HTExt_GetLSName, 0)
 {
 	int n = R->get_EBX();
 	HouseTypeClass* pThis = HouseTypeClass::Array->Items[n];
@@ -51,7 +51,7 @@ DEFINE_HOOK(553D06, HTExt_GetLSBrief, 6)
 	return 0;
 }
 
-DEFINE_HOOK(4E3579, HTExt_DrawFlag, 5)
+DEFINE_HOOK(4E3579, HTExt_DrawFlag, 0)
 {
 	int n = R->get_ECX();
 	HouseTypeClass* pThis = HouseTypeClass::Array->Items[n];
@@ -72,7 +72,7 @@ DEFINE_HOOK(4E3579, HTExt_DrawFlag, 5)
 	return 0x4E3686;
 }
 
-DEFINE_HOOK(72B690, HTExt_LSPAL, 0A)
+DEFINE_HOOK(72B690, HTExt_LSPAL, 0)
 {
 	int n = R->get_EDI();
 	HouseTypeClass* pThis = HouseTypeClass::Array->Items[n];
@@ -97,7 +97,7 @@ DEFINE_HOOK(72B690, HTExt_LSPAL, 0A)
 	return 0x72B804;
 }
 
-DEFINE_HOOK(4E38D8, HTExt_GetSTT, 9)
+DEFINE_HOOK(4E38D8, HTExt_GetSTT, 0)
 {
 	int n = R->get_ECX();
 	HouseTypeClass* pThis = HouseTypeClass::Array->Items[n];
@@ -117,7 +117,7 @@ DEFINE_HOOK(4E38D8, HTExt_GetSTT, 9)
 	return 0x4E39F1;
 }
 
-DEFINE_HOOK(553412, HTExt_LSFile, 9)
+DEFINE_HOOK(553412, HTExt_LSFile, 0)
 {
 	int n = R->get_EBX();
 	HouseTypeClass* pThis = HouseTypeClass::Array->Items[n];

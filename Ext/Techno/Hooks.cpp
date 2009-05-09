@@ -2,7 +2,7 @@
 #include "..\TechnoType\Body.h"
 
 // bugfix #297: Crewed=yes jumpjets spawn parachuted infantry on destruction, not idle
-DEFINE_HOOK(7381A8, UnitClass_ReceiveDamage, 6)
+DEFINE_HOOK(7381AE, UnitClass_ReceiveDamage, 6)
 {
 	GET(TechnoClass *, t, ESI);
 	GET_STACK(TechnoClass *, Killer, 0x54);

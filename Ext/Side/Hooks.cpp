@@ -41,8 +41,10 @@ DEFINE_HOOK(4F8F54, Sides_SlaveMinerCheck, 6)
 	int n = R->get_EDI();
 
 	for(int i = 0; i < RulesClass::Global()->get_BuildRefinery()->Count; ++i) {
-		if(RulesClass::Global()->get_BuildRefinery()->GetItem(i)->SlavesNumber > 0) { //new sane way to find a slave miner
-			n += pThis->get_OwnedBuildingTypes1()->GetItemCount(RulesClass::Global()->get_BuildRefinery()->GetItem(i)->ArrayIndex);
+		 //new sane way to find a slave miner
+		if(RulesClass::Global()->get_BuildRefinery()->Items[i]->SlavesNumber > 0) {
+			n += pThis->get_OwnedBuildingTypes1()->GetItemCount(
+				RulesClass::Global()->get_BuildRefinery()->Items[i]->ArrayIndex);
 		}
 	}
 
@@ -192,7 +194,7 @@ DEFINE_HOOK(6CD3C1, Sides_ParaDrop, 9)
 
 /*
 //0x752F46
-EXPORT Sides_LoadVoxFromINI(REGISTERS* R)
+XPORT Sides_LoadVoxFromINI(REGISTERS* R)
 {
 	VoxClass* pThis = (VoxClass*)R->get_ESI();
 	CCINIClass* pINI = (CCINIClass*)R->get_EBP();

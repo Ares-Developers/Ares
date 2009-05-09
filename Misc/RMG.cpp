@@ -37,6 +37,7 @@ DEFINE_HOOK(598FB8, RMG_GenerateUrban, 0)
 	void* pMapSeed = (void*)R->get_ESI();
 	SET_REG32(ecx, pMapSeed);
 	CALL(0x5A5020);
+	return 0;
 }
 
 //0x59000E

@@ -308,7 +308,7 @@ DEFINE_HOOK_AGAIN(42463A, AnimClass_Update_Damage, 6)
 	} else {
 		R->set_EDX(WH);
 	}
-	return origin + 6;
+	return 0; // WHAT? origin + 6;
 }
 
 /*

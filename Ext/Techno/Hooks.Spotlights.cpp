@@ -182,7 +182,7 @@ DEFINE_HOOK(4360FF, BuildingLightClass_Draw_250, 6)
 }
 
 //5FF278
-DEFINE_HOOK(453CD3, SpotlightClass_CTOR, 6)
+DEFINE_HOOK(5FF278, SpotlightClass_CTOR, 6)
 {
 	GET_STACK(SpotlightClass *, Spot, 0x14);
 	GET(BuildingLightClass *, BL, ESI);

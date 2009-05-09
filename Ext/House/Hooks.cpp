@@ -40,10 +40,13 @@ DEFINE_HOOK(4F7870, HouseClass_PrereqValidator, 7)
 }
 
 // upgrades as prereqs, facepalm of epic proportions
-DEFINE_HOOK(4F7E49, HouseClass_CanBuildHowMany_Upgrades, 5)
+// not needed anymore since the whole function's been replaced
+/*
+A_FINE_HOOK(4F7E49, HouseClass_CanBuildHowMany_Upgrades, 5)
 {
 		return R->get_EAX() < 3 ? 0x4F7E41 : 0x4F7E34;
 }
+*/
 
 // fix the 100 unit bug for vehicles
 DEFINE_HOOK(4FEA60, HouseClass_AI_UnitProduction, 0)

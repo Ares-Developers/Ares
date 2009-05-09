@@ -27,6 +27,5 @@ DEFINE_HOOK(4C5718, EMPulseClass_Initialize2, 6)
 DEFINE_HOOK(4C575E, EMPulseClass_CyborgCheck, 7)
 {
 	GET(TechnoClass *, curVictim, ESI);
-	TechnoTypeClass* pType = (TechnoTypeClass*)curVictim->GetType();
-	return pType->Cyborg_ ? 0x4C577A : 0;
+	return curVictim->GetTechnoType()->Cyborg_ ? 0x4C577A : 0;
 }

@@ -54,7 +54,7 @@ XPORT_FUNC(SidebarClass_ProcessCameoClick)
 */
 
 // decouple SpyPlane from SPYP
-DEFINE_HOOK(6CD67A, SuperClass_Launch_SpyPlane_FindType, 5)
+DEFINE_HOOK(6CD67A, SuperClass_Launch_SpyPlane_FindType, 0)
 {
 	GET(SuperClass *, Super, EBX);
 	SuperWeaponTypeClass *pThis = Super->Type;
@@ -239,10 +239,10 @@ DEFINE_HOOK(50B319, HouseClass_UpdateSWs, 6)
 // EVA_Activated is complex, will do later
 
 // AI SW targeting submarines
-DEFINE_HOOK(50CFAA, HouseClass_PickOffensiveSWTarget, 4)
+DEFINE_HOOK(50CFAA, HouseClass_PickOffensiveSWTarget, 0)
 {
 	R->set_ESI(0);
 	R->set_StackVar8(0x13, 1);
-	return 0x50CFCD;
+	return 0x50CFC9;
 }
 

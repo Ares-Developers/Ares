@@ -88,7 +88,7 @@ DEFINE_HOOK(67062F, Buf_AnimToInf_Paradrop, 6)
 
 DEFINE_HOOK(66FA13, Buf_SecretBoons, 6)
 {
-	return 0x66FAD0;
+	return 0x66FAD6;
 }
 
 DEFINE_HOOK(66F7C0, Buf_PPA, 9)
