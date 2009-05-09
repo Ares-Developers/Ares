@@ -33,7 +33,7 @@ DEFINE_HOOK(511D16, Buf_CountryVeteran, 9)
 	PARSE_VECTOR_N(section, H, VeteranUnits, UnitTypeClass);
 	PARSE_VECTOR_N(section, H, VeteranAircraft, AircraftTypeClass);
 
-	return 0x511F20;
+	return 0x51208C;
 }
 
 // one hook to overwrite all lists and in the sequence skip them

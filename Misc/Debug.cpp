@@ -26,6 +26,28 @@ void Debug::LogFileRemove()
 	remove(DEBUG_FILE);
 }
 
+void Debug::DumpObj(byte *data, size_t len) {
+	Debug::Log("Dumping %u bytes of object at %X\n", len, data);
+
+	Debug::Log(" 00000 |");
+	for(DWORD rem = 0; rem < 0x10; ++rem) {
+		Debug::Log(" %02X |", rem);
+	}
+	Debug::Log("\n\n");
+	for(DWORD dec = 0; dec < len / 0x10; ++dec) {
+		Debug::Log(" %04X0 |", dec);
+		for(DWORD rem = 0; rem < 0x10; ++rem) {
+			Debug::Log(" %02X |", data[dec * 0x10 + rem]);
+		}
+		for(DWORD rem = 0; rem < 0x10; ++rem) {
+			byte sym = data[dec * 0x10 + rem];
+			Debug::Log("%c", isprint(sym) ? sym : '?');
+		}
+		Debug::Log("\n");
+	}
+	Debug::Log("\n");
+}
+
 //Hook at 0x4068E0 AND 4A4AC0
 DEFINE_HOOK(4068E0, Debug_Log, 1)
 DEFINE_HOOK_AGAIN(4A4AC0, Debug_Log, 1)

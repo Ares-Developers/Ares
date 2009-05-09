@@ -6,7 +6,8 @@
 #include "Body.h"
 #include "..\TechnoType\Body.h"
 
-DEFINE_HOOK(4666F7, BulletClass_Update_FSW, 6)
+/*
+A_FINE_HOOK(4666F7, BulletClass_Update_FSW, 6)
 {
 	GET(BulletClass *, Bullet, EBP);
 
@@ -28,6 +29,7 @@ DEFINE_HOOK(4666F7, BulletClass_Update_FSW, 6)
 
 	return 0;
 }
+*/
 
 DEFINE_HOOK(6FF008, TechnoClass_Fire_FSW, 8)
 DEFINE_HOOK_AGAIN(6FF860, TechnoClass_Fire_FSW, 8)
@@ -69,7 +71,7 @@ DEFINE_HOOK(4DA53E, FootClass_Update, 6)
 DEFINE_HOOK(4F8C97, HouseClass_Update_FSW_LowPower, 6)
 {
 	GET(HouseClass *, H, ESI);
-	H->set_FirestormActive(0);
+	H->FirestormActive = 0;
 	return 0;
 }
 
@@ -121,14 +123,14 @@ DEFINE_HOOK(43FC39, BuildingClass_Update_FSW, 6)
 		XYZ.X -= 768;
 		XYZ.Y -= 768;
 		if(AnimTypeClass *FSA = AnimTypeClass::Find("FSIDLE")) {
-			B->set_FirestormAnim(new AnimClass(FSA, &XYZ));
+			B->FirestormAnim = new AnimClass(FSA, &XYZ);
 		}
 	}
 
 	CellClass *C = B->GetCell();
 	for(ObjectClass *O = C->GetContent(); O; O = O->NextObject) {
 		O->GetCoords(&XYZ);
-		if((O->AbstractFlags & ABSFLAGS_ISTECHNO) && O != B) {
+		if(((O->AbstractFlags & ABSFLAGS_ISTECHNO) != 0) && O != B) {
 			int Damage = O->Health;
 			O->ReceiveDamage(&Damage, 0, RulesClass::Global()->C4Warhead, 0, 1, 0, H);
 		}

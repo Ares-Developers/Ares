@@ -33,6 +33,8 @@ void __stdcall Ares::RegisterCommands()
 	CommandClass::Array->AddItem(new FrameStepCommandClass());
 	CommandClass::Array->AddItem(new FirestormToggleCommandClass());
 	CommandClass::Array->AddItem(new DumperTypesCommandClass());
+	CommandClass::Array->AddItem(new DebuggingCommandClass());
+	CommandClass::Array->AddItem(new LoggingCommandClass());
 }
 
 void __stdcall Ares::CmdLineParse(char** ppArgs,int nNumArgs)
@@ -181,8 +183,9 @@ DEFINE_HOOK(6AD0ED, Ares_AllowSinglePlay, 5)
 	return 0x6AD16C;
 }
 
+/*
 	// 55AFB3, 6
-DEFINE_HOOK(55AFB3, Armageddon_Advance, 6)
+A_FINE_HOOK(55AFB3, Armageddon_Advance, 6)
 {
 	switch(FrameStepCommandClass::ArmageddonState)
 	{
@@ -199,6 +202,7 @@ DEFINE_HOOK(55AFB3, Armageddon_Advance, 6)
 	}
 	return 0;
 }
+*/
 
 DEFINE_HOOK(7CD810, ExeRun, 9)
 {

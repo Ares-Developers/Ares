@@ -15,6 +15,7 @@ public:
 	static void LogFileOpen();
 	static void LogFileClose();
 	static void LogFileRemove();
+	static void DumpObj(byte *data, size_t len);
 	static void (_cdecl* Log)(const char* pFormat, ...);
 };
 

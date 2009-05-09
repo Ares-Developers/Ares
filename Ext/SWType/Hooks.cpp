@@ -15,13 +15,13 @@ DEFINE_HOOK(6CEF84, SuperWeaponTypeClass_GetCursorOverObject, 7)
 
 		int Action = SW_YES_CURSOR;
 		
-		if(!pData->SW_FireToShroud)
-		{
+		if(!pData->SW_FireToShroud) {
 			CellClass* pCell = MapClass::Global()->GetCellAt(pMapCoords);
 			CoordStruct Crd;
 
-			if(MapClass::Global()->IsLocationShrouded(pCell->GetCoords(&Crd)))
+			if(MapClass::Global()->IsLocationShrouded(pCell->GetCoords(&Crd))) {
 				Action = SW_NO_CURSOR;
+			}
 		}
 
 		if(pThis->Type >= FIRST_SW_TYPE && !NewSWType::GetNthItem(pThis->Type)->CanFireAt(pMapCoords)) {

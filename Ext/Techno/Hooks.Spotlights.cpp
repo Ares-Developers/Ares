@@ -97,7 +97,7 @@ DEFINE_HOOK(435C32, BuildingLightClass_Draw_PowerOnline, A)
 	GET(TechnoClass *, T, EDI);
 	return (T->WhatAmI() != abs_Building || (T->IsPowerOnline() && !reinterpret_cast<BuildingClass *>(T)->IsFogged))
 	  ? 0x435C52
-	  : 0x4316BC;
+	  : 0x4361BC;
 }
 
 DEFINE_HOOK(436459, BuildingLightClass_Update, 6)

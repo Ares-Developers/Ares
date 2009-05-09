@@ -255,7 +255,7 @@ void HouseTypeExt::ExtData::LoadFromINI(HouseTypeClass *pThis, CCINIClass *pINI)
 
 	if(pINI->ReadString(pID, "AI.PowerPlants", "", Ares::readBuffer, Ares::readLength)) {
 		this->Powerplants.Clear();
-		for(char *bld = strtok(Ares::readBuffer, Ares::readDelims); bld; bld = strtok(NULL, ",")) {
+		for(char *bld = strtok(Ares::readBuffer, Ares::readDelims); bld; bld = strtok(NULL, Ares::readDelims)) {
 			if(BuildingTypeClass *pBld = BuildingTypeClass::Find(bld)) {
 				this->Powerplants.AddItem(pBld);
 			}
@@ -271,7 +271,7 @@ int HouseTypeExt::PickRandomCountry()
 	HouseTypeClass* pCountry;
 
 	for(int i = 0; i < HouseTypeClass::Array->Count; i++) {
-		pCountry = HouseTypeClass::Array->GetItem(i);
+		pCountry = HouseTypeClass::Array->Items[i];
 		if(pCountry->Multiplay) {
 			HouseTypeExt::ExtData *pData = HouseTypeExt::ExtMap.Find(pCountry);
 			if(pData) {

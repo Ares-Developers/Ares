@@ -99,8 +99,18 @@ private:
 	typedef typename T::ExtData          E_T;
 	typedef stdext::hash_map<S_T*, E_T*> C_Map;
 
+	unsigned int CTOR_Count;
+	unsigned int DTOR_Count;
+	unsigned int Lookup_Failure_Count;
+	unsigned int Lookup_Success_Count;
+
 public:
-	Container() {
+	Container() :
+		CTOR_Count(0),
+		DTOR_Count(0),
+		Lookup_Failure_Count(0),
+		Lookup_Success_Count(0)
+	{
 	}
 
 	virtual ~Container() {
@@ -114,34 +124,31 @@ public:
 		}
 		C_Map::iterator i = find(key);
 		if(i == end()) {
-			Debug::Log("CTOR of Ext for %X (%s) ... ", key, key->get_ID());
+			++CTOR_Count;
 			E_T * val = new E_T(typename E_T::Canary);
 			val->InitializeConstants(key);
 			i = insert(C_Map::value_type(key, val)).first;
-			Debug::Log("Cntr len now %d\n", size());
 		}
 		return i->second;
 	}
 
 	E_T *Find(S_T* key) {
 		C_Map::iterator i = find(key);
-		Debug::Log("Lookup of Ext for %X (%s) ... ", key, key->get_ID());
 		if(i == end()) {
-			Debug::Log("Failed!\n");
+			++Lookup_Failure_Count;
 			return NULL;
 		}
-		Debug::Log("Success!\n");
+		++Lookup_Success_Count;
 		return i->second;
 	}
 
 	void Remove(S_T* key) {
 		C_Map::iterator i = find(key);
-		Debug::Log("DTOR of Ext for %X (%s) ... ", key, key->get_ID());
 		if(i != end()) {
 			delete i->second;
 			erase(i);
+			++DTOR_Count;
 		}
-		Debug::Log("Cntr len now %d\n", size());
 	}
 
 	void Empty() {
@@ -189,6 +196,14 @@ public:
 #endif
 //		}
 	};
+
+	void Stat() {
+		const std::type_info &info = typeid(*this);
+		Debug::Log("Stats for container %s:\n", info.name());
+		
+		Debug::Log("|%08d|%08d|%08d/%08d|%08d|%08d|\n", 
+			CTOR_Count, DTOR_Count, Lookup_Success_Count, Lookup_Failure_Count, size(), S_T::Array->Count);
+	}
 
 };
 

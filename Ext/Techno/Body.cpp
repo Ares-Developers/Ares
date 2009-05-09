@@ -10,7 +10,9 @@ void TechnoExt::SpawnSurvivors(TechnoClass *pThis, TechnoClass *pKiller, bool Se
 
 	HouseClass *pOwner = pThis->get_Owner();
 	TechnoTypeExt::ExtData *pData = TechnoTypeExt::ExtMap.Find(Type);
+	TechnoExt::ExtData *pSelfData = TechnoExt::ExtMap.Find(pThis);
 	RETZ_UNLESS(pData->Survivors_PilotChance || pData->Survivors_PassengerChance);
+	RETZ_UNLESS(!pSelfData->Survivors_Done);
 
 	CoordStruct loc = *pThis->get_Location();
 
@@ -22,12 +24,19 @@ void TechnoExt::SpawnSurvivors(TechnoClass *pThis, TechnoClass *pKiller, bool Se
 
 			Pilot->set_Health(PilotType->Strength / 2);
 			Pilot->get_Veterancy()->Veterancy = pThis->get_Veterancy()->Veterancy;
-			CoordStruct tmpLoc = loc;
+			CoordStruct destLoc, tmpLoc = loc;
 			CellStruct tmpCoords = CellSpread::GetCell(Randomizer::Global()->RandomRanged(0, 7));
+
 			tmpLoc.X += tmpCoords.X * 144;
 			tmpLoc.Y += tmpCoords.Y * 144;
 
-			if(!TechnoExt::ParadropSurvivor(Pilot, &tmpLoc, Select)) {
+			CellClass * tmpCell = MapClass::Global()->GetCellAt(&tmpLoc);
+
+			tmpCell->FindInfantrySubposition(&destLoc, &tmpLoc, 0, 0, 0);
+
+			destLoc.Z = loc.Z;
+
+			if(!TechnoExt::ParadropSurvivor(Pilot, &destLoc, Select)) {
 				Pilot->RegisterDestruction(pKiller); //(TechnoClass *)R->get_StackVar32(0x54));
 				delete Pilot;
 			}
@@ -41,11 +50,19 @@ void TechnoExt::SpawnSurvivors(TechnoClass *pThis, TechnoClass *pKiller, bool Se
 		passenger = pThis->get_Passengers()->RemoveFirstPassenger();
 		if(chance) {
 			if(Randomizer::Global()->RandomRanged(1, 100) <= chance) {
-				CoordStruct tmpLoc = loc;
+				CoordStruct destLoc, tmpLoc = loc;
 				CellStruct tmpCoords = CellSpread::GetCell(Randomizer::Global()->RandomRanged(0, 7));
+
 				tmpLoc.X += tmpCoords.X * 128;
 				tmpLoc.Y += tmpCoords.Y * 128;
-				toDelete = !TechnoExt::ParadropSurvivor(passenger, &tmpLoc, Select);
+
+				CellClass * tmpCell = MapClass::Global()->GetCellAt(&tmpLoc);
+
+				tmpCell->FindInfantrySubposition(&destLoc, &tmpLoc, 0, 0, 0);
+
+				destLoc.Z = loc.Z;
+
+				toDelete = !TechnoExt::ParadropSurvivor(passenger, &destLoc, Select);
 			}
 		}
 		if(toDelete) {
@@ -53,6 +70,8 @@ void TechnoExt::SpawnSurvivors(TechnoClass *pThis, TechnoClass *pKiller, bool Se
 			passenger->UnInit();
 		}
 	}
+
+	pSelfData->Survivors_Done = 1;
 }
 
 bool TechnoExt::ParadropSurvivor(FootClass *Survivor, CoordStruct *loc, bool Select)

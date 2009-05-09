@@ -36,6 +36,8 @@ public:
 		BYTE idxSlot_Beam;
 		BYTE idxSlot_Warp;
 
+		bool Survivors_Done;
+
 		TimerStruct CloakSkipTimer;
 		SHPStruct * Insignia_Image;
 
@@ -43,6 +45,7 @@ public:
 			idxSlot_Wave (0),
 			idxSlot_Beam (0),
 			idxSlot_Warp (0),
+			Survivors_Done (0),
 			Insignia_Image (NULL)
 			{
 				this->CloakSkipTimer.Stop();

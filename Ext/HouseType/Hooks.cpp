@@ -6,7 +6,7 @@
 DEFINE_HOOK(5536DA, HTExt_GetLSName, 9)
 {
 	int n = R->get_EBX();
-	HouseTypeClass* pThis = HouseTypeClass::Array->GetItem(n);
+	HouseTypeClass* pThis = HouseTypeClass::Array->Items[n];
 
 	char* pLSName = NULL;
 
@@ -26,7 +26,7 @@ DEFINE_HOOK(5536DA, HTExt_GetLSName, 9)
 DEFINE_HOOK(553A05, HTExt_GetLSSpecialName, 6)
 {
 	int n = R->get_StackVar32(0x38);
-	HouseTypeClass* pThis = HouseTypeClass::Array->GetItem(n);
+	HouseTypeClass* pThis = HouseTypeClass::Array->Items[n];
 
 	HouseTypeExt::ExtData *pData = HouseTypeExt::ExtMap.Find(pThis);
 	if(pData) {
@@ -40,7 +40,7 @@ DEFINE_HOOK(553A05, HTExt_GetLSSpecialName, 6)
 DEFINE_HOOK(553D06, HTExt_GetLSBrief, 6)
 {
 	int n = R->get_StackVar32(0x38);
-	HouseTypeClass* pThis = HouseTypeClass::Array->GetItem(n);
+	HouseTypeClass* pThis = HouseTypeClass::Array->Items[n];
 
 	HouseTypeExt::ExtData *pData = HouseTypeExt::ExtMap.Find(pThis);
 	if(pData) {
@@ -54,7 +54,7 @@ DEFINE_HOOK(553D06, HTExt_GetLSBrief, 6)
 DEFINE_HOOK(4E3579, HTExt_DrawFlag, 5)
 {
 	int n = R->get_ECX();
-	HouseTypeClass* pThis = HouseTypeClass::Array->GetItem(n);
+	HouseTypeClass* pThis = HouseTypeClass::Array->Items[n];
 	
 	char* pFlagFile = NULL;
 
@@ -75,7 +75,7 @@ DEFINE_HOOK(4E3579, HTExt_DrawFlag, 5)
 DEFINE_HOOK(72B690, HTExt_LSPAL, 0A)
 {
 	int n = R->get_EDI();
-	HouseTypeClass* pThis = HouseTypeClass::Array->GetItem(n);
+	HouseTypeClass* pThis = HouseTypeClass::Array->Items[n];
 
 	char* pPALFile = NULL;
 
@@ -100,7 +100,7 @@ DEFINE_HOOK(72B690, HTExt_LSPAL, 0A)
 DEFINE_HOOK(4E38D8, HTExt_GetSTT, 9)
 {
 	int n = R->get_ECX();
-	HouseTypeClass* pThis = HouseTypeClass::Array->GetItem(n);
+	HouseTypeClass* pThis = HouseTypeClass::Array->Items[n];
 
 	char* pSTT = NULL;
 
@@ -120,7 +120,7 @@ DEFINE_HOOK(4E38D8, HTExt_GetSTT, 9)
 DEFINE_HOOK(553412, HTExt_LSFile, 9)
 {
 	int n = R->get_EBX();
-	HouseTypeClass* pThis = HouseTypeClass::Array->GetItem(n);
+	HouseTypeClass* pThis = HouseTypeClass::Array->Items[n];
 
 	char* pLSFile = NULL;
 
@@ -143,7 +143,7 @@ DEFINE_HOOK(752BA1, HTExt_GetTaunt, 6)
 	int nTaunt = R->get_CL() & 0xF;
 	int nCountry = (R->get_CL() >> 4) & 0xF;	//ARF 16-country-limit >.<
 
-	HouseTypeClass* pThis = HouseTypeClass::Array->GetItem(nCountry);
+	HouseTypeClass* pThis = HouseTypeClass::Array->Items[nCountry];
 	HouseTypeExt::ExtData *pData = HouseTypeExt::ExtMap.Find(pThis);
 	if(pData) {
 		_snprintf(pFileName, 32, pData->TauntFile, nTaunt);

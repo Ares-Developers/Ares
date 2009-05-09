@@ -20,6 +20,10 @@
 #include "..\Ext\BulletType\Body.h"
 #include "..\Ext\Techno\Body.h"
 #include "..\Ext\TechnoType\Body.h"
+#include "..\Ext\House\Body.h"
+#include "..\Ext\HouseType\Body.h"
+#include "..\Ext\WeaponType\Body.h"
+#include "..\Ext\WarheadType\Body.h"
 
 #include <MacroHelpers.h> //basically indicates that this is DCoder country
 
