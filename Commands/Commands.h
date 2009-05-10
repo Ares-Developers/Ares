@@ -2,7 +2,7 @@
 #define ARES_COMMANDS_H
 
 #include <YRPP.h>
-#include <MacroHelpers.h> //basically indicates that this is DCoder country
+#include <Helpers\Macro.h>
 
 class TestSomethingCommandClass : public CommandClass
 {

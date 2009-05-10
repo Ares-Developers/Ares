@@ -3,7 +3,7 @@
 
 #include <hash_map>
 #include <CCINIClass.h>
-#include <MacroHelpers.h>
+#include <Helpers\Macro.h>
 
 #include "..\Misc\Debug.h"
 

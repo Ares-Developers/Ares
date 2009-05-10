@@ -25,7 +25,8 @@
 #include "..\Ext\WeaponType\Body.h"
 #include "..\Ext\WarheadType\Body.h"
 
-#include <MacroHelpers.h> //basically indicates that this is DCoder country
+#include <Helpers\Macro.h>
+#include <Helpers\Template.h>
 
 #ifdef DEBUGBUILD
 #include "..\Ext\WarheadType\Body.h"

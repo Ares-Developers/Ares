@@ -1,7 +1,7 @@
 #ifndef GEN_PREREQ_H
 #define GEN_PREREQ_H
 
-#include <MacroHelpers.h> //basically indicates that this is DCoder country
+#include <Helpers\Macro.h>
 #include <CCINIClass.h>
 #include <HouseClass.h>
 #include <UnitTypeClass.h>

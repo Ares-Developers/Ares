@@ -1,7 +1,7 @@
 #ifndef RULES_EXT_H
 #define RULES_EXT_H
 
-#include <MacroHelpers.h> //basically indicates that this is DCoder country
+#include <Helpers\Macro.h>
 #include <CCINIClass.h>
 #include <WeaponTypeClass.h>
 #include <RulesClass.h>

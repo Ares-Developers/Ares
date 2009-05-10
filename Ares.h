@@ -3,7 +3,7 @@
 
 #include <hash_map>
 //include <YRPP.h>
-#include <MacroHelpers.h>
+#include <Helpers\Macro.h>
 
 #include <AircraftTypeClass.h>
 #include <CellClass.h>
@@ -49,6 +49,20 @@ public:
 		AircraftTypeClass* pPlaneType,
 		TypeList<TechnoTypeClass*>* pTypes,
 		TypeList<int>* pNums);
+
+
+
+
+	class GlobalControls {
+	private:
+		GlobalControls() {};
+	public:
+		static bool Initialized;
+		static bool AllowParallelAIQueues;
+
+		static void Load(CCINIClass *pINI);
+	};
+
 };
 
 #endif

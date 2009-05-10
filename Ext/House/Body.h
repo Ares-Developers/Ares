@@ -2,7 +2,8 @@
 #define HOUSE_EXT_H
 
 #include "..\_Container.hpp"
-#include <MacroHelpers.h> //basically indicates that this is DCoder country
+#include <Helpers\Macro.h>
+#include <Helpers\Template.h>
 
 #include <FactoryClass.h>
 #include <HouseClass.h>
@@ -18,8 +19,20 @@ class HouseExt
 	{
 		public:
 			bool IonSensitive;
+			
+			BuildingClass *Factory_BuildingType;
+			BuildingClass *Factory_InfantryType;
+			BuildingClass *Factory_VehicleType;
+			BuildingClass *Factory_NavyType;
+			BuildingClass *Factory_AircraftType;
+			
 		ExtData(const DWORD Canary = 0) : 
-			IonSensitive(0)
+			IonSensitive(0),
+			Factory_BuildingType(NULL),
+			Factory_InfantryType(NULL),
+			Factory_VehicleType(NULL),
+			Factory_NavyType(NULL),
+			Factory_AircraftType(NULL)
 		{
 		};
 
@@ -28,6 +41,7 @@ class HouseExt
 		}
 
 		virtual size_t Size() const { return sizeof(*this); };
+		
 	};
 
 	static Container<HouseExt> ExtMap;
@@ -40,6 +54,7 @@ class HouseExt
 
 	static signed int PrereqValidate
 		(HouseClass *pHouse, TechnoTypeClass *pItem, bool BuildLimitOnly, bool IncludeQueued);
+
 };
 
 #endif

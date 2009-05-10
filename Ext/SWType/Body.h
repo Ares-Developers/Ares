@@ -1,8 +1,7 @@
 #ifndef SUPERTYPE_EXT_H
 #define SUPERTYPE_EXT_H
 
-#include <MacroHelpers.h> //basically indicates that this is DCoder country
-
+#include <Helpers\Macro.h>
 #include <AircraftTypeClass.h>
 #include <AnimClass.h>
 #include <CCINIClass.h>

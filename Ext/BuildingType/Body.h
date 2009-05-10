@@ -7,7 +7,7 @@
 #include <Randomizer.h>
 #include <UnitTypeClass.h>
 
-#include <MacroHelpers.h>
+#include <Helpers\Macro.h>
 
 #include "..\_Container.hpp"
 #include "..\..\Ares.h"

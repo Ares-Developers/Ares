@@ -1,8 +1,7 @@
 #ifndef WARHEADTYPE_EXT_H
 #define WARHEADTYPE_EXT_H
 
-#include <MacroHelpers.h> //basically indicates that this is DCoder country
-
+#include <Helpers\Macro.h>
 #include <AnimClass.h>
 #include <IonBlastClass.h>
 #include <AnimTypeClass.h>

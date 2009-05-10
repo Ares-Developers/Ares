@@ -2,7 +2,7 @@
 #define SIDES_H
 
 #include <CCINIClass.h>
-#include <MacroHelpers.h>
+#include <Helpers\Macro.h>
 #include <SideClass.h>
 #include <ColorScheme.h>
 #include <InfantryTypeClass.h>

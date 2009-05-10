@@ -124,3 +124,41 @@ signed int HouseExt::PrereqValidate
 
 	return HouseExt::CheckBuildLimit(pHouse, pItem, IncludeQueued);
 }
+
+// =============================
+// container hooks
+
+DEFINE_HOOK(4F6532, HouseClass_CTOR, 5)
+{
+	GET(HouseClass*, pItem, EAX);
+
+	HouseExt::ExtMap.FindOrAllocate(pItem);
+	return 0;
+}
+
+DEFINE_HOOK(4F7140, HouseClass_DTOR, 6)
+{
+	GET(HouseClass*, pItem, ECX);
+
+	HouseExt::ExtMap.Remove(pItem);
+	return 0;
+}
+
+DEFINE_HOOK(504069, HouseClass_Load, 7)
+{
+	GET_STACK(HouseClass*, pItem, 0x24);
+	GET_STACK(IStream*, pStm, 0x28);
+
+	HouseExt::ExtMap.Load(pItem, pStm);
+	return 0;
+}
+
+
+DEFINE_HOOK(5046DE, HouseClass_Save, 7)
+{
+	GET_STACK(HouseClass*, pItem, 0x14);
+	GET_STACK(IStream*, pStm, 0x18);
+
+	HouseExt::ExtMap.Save(pItem, pStm);
+	return 0;
+}

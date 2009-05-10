@@ -1,7 +1,7 @@
 #ifndef RAD_TYPES_H
 #define RAD_TYPES_H
 
-#include <MacroHelpers.h> //basically indicates that this is DCoder country
+#include <Helpers\Macro.h>
 #include <CCINIClass.h>
 #include <WarheadTypeClass.h>
 #include <RadSiteClass.h>

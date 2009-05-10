@@ -1,8 +1,7 @@
 #ifndef TECHNOTYPE_EXT_H
 #define TECHNOTYPE_EXT_H
 
-#include <MacroHelpers.h> //basically indicates that this is DCoder country
-
+#include <Helpers\Macro.h>
 #include <TechnoTypeClass.h>
 
 #include "..\..\Ares.h"

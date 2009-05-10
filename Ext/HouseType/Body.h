@@ -6,7 +6,7 @@
 #include <BuildingTypeClass.h>
 #include <PCX.h>
 #include <StringTable.h>
-#include <MacroHelpers.h>
+#include <Helpers\Macro.h>
 
 #include "..\_Container.hpp"
 

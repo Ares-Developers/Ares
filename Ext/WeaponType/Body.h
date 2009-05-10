@@ -1,8 +1,7 @@
 #ifndef WEAPONTYPE_EXT_H
 #define WEAPONTYPE_EXT_H
 
-#include <MacroHelpers.h> //basically indicates that this is DCoder country
-
+#include <Helpers\Macro.h>
 #include <BombClass.h>
 #include <BulletClass.h>
 #include <CCINIClass.h>

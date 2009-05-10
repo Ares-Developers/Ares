@@ -1,4 +1,5 @@
 #include "Body.h"
+#include "..\..\Ares.h"
 
 DEFINE_HOOK(668BF0, RulesClass_Addition, 5)
 {
@@ -6,6 +7,7 @@ DEFINE_HOOK(668BF0, RulesClass_Addition, 5)
 	GET_STACK(CCINIClass*, pINI, 0x4);
 
 //	RulesClass::Initialized = false;
+	Ares::GlobalControls::Load(pINI);
 	RulesExt::LoadFromINI(pItem, pINI);
 	return 0;
 }
