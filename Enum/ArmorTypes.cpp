@@ -1,4 +1,5 @@
 #include "ArmorTypes.h"
+#include <Helpers\Macro.h>
 
 DynamicVectorClass<ArmorType*> Enumerable<ArmorType>::Array;
 
@@ -18,7 +19,12 @@ void Enumerable<ArmorType>::LoadFromINIList(CCINIClass *pINI)
 		pINI->ReadString(section, Key, "", buffer, 0x40);
 
 		FindOrAllocate(Key)->DefaultIndex = ArmorType::FindIndex(buffer);
-		FindOrAllocate(Key)->DefaultVerses = Conversions::Str2Armor(buffer);
+		DWORD specialFX;
+		WarheadTypeExt::VersesData *VS = &FindOrAllocate(Key)->DefaultVerses;
+		VS->Verses = Conversions::Str2Armor(buffer, &specialFX);
+		VS->ForceFire = ((specialFX & verses_ForceFire) == 0);
+		VS->Retaliate = ((specialFX & verses_Retaliate) == 0);
+		VS->PassiveAcquire = ((specialFX & verses_PassiveAcquire) == 0);
 	}
 }
 
@@ -39,15 +45,29 @@ void ArmorType::LoadForWarhead(CCINIClass *pINI, WarheadTypeClass* pWH)
 		);
 	}
 
-	char buffer[0x40];
+	char buffer[0x80];
 	char ret[0x20];
 	const char *section = pWH->get_ID();
 
 	for(int i = 0; i < Array.Count; ++i) {
 		_snprintf(buffer, 64, "Versus.%s", Array[i]->Name);
 		if(pINI->ReadString(section, buffer, "", ret, 0x20)) {
-			pData->Verses[i] = Conversions::Str2Armor(ret);
+			DWORD specialFX = 0x0;
+			pData->Verses[i].Verses = Conversions::Str2Armor(ret, &specialFX);
+
+			pData->Verses[i].ForceFire = ((specialFX & verses_ForceFire) != 0);
+			pData->Verses[i].Retaliate = ((specialFX & verses_Retaliate) != 0);
+			pData->Verses[i].PassiveAcquire = ((specialFX & verses_PassiveAcquire) != 0);
 		}
+
+		_snprintf(buffer, 128, "Versus.%s.ForceFire", Array[i]->Name);
+		pData->Verses[i].ForceFire = pINI->ReadBool(section, buffer, pData->Verses[i].ForceFire);
+
+		_snprintf(buffer, 128, "Versus.%s.Retaliate", Array[i]->Name);
+		pData->Verses[i].Retaliate = pINI->ReadBool(section, buffer, pData->Verses[i].Retaliate);
+
+		_snprintf(buffer, 128, "Versus.%s.PassiveAcquire", Array[i]->Name);
+		pData->Verses[i].PassiveAcquire = pINI->ReadBool(section, buffer, pData->Verses[i].PassiveAcquire);
 	}
 }
 

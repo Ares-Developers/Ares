@@ -295,6 +295,10 @@ void TechnoTypeClassExt::ReadWeapon(WeaponStruct *pWeapon, const char *prefix, c
 }
 */
 
+void TechnoTypeExt::PointerGotInvalid(void *ptr) {
+
+}
+
 // =============================
 // container hooks
 

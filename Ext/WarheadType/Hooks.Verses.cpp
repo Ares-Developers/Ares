@@ -4,7 +4,7 @@
 		GET(WarheadTypeClass *, WH, reg_wh); \
 	GET(int, Armor, reg_armor); \
 	WarheadTypeExt::ExtData *pData = WarheadTypeExt::ExtMap.Find(WH); \
-	double x = pData->Verses[Armor];
+	double x = pData->Verses[Armor].Verses;
 
 #define FLD_VERSES(reg_wh, reg_armor) \
 	GET_VERSES(reg_wh, reg_armor) \

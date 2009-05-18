@@ -29,6 +29,17 @@ DEFINE_HOOK(421730, AlphaShapeClass_SDDTOR, 8)
 	return 0;
 }
 
+DEFINE_HOOK(5F3D5B, ObjectClass_DTOR, A)
+{
+	GET(ObjectClass *, O, ESI);
+	hash_AlphaExt::iterator i = TechnoExt::AlphaExt.find(O);
+	if(i != TechnoExt::AlphaExt.end()) {
+		delete i->second;
+		TechnoExt::AlphaExt.erase(i);
+	}
+	return 0;
+}
+
 DEFINE_HOOK(5F3E70, ObjectClass_Update, 5)
 {
 	GET(ObjectClass *, Source, ECX);
@@ -56,7 +67,7 @@ DEFINE_HOOK(5F3E70, ObjectClass_Update, 5)
 		hash_AlphaExt::iterator i = TechnoExt::AlphaExt.find(Source);
 		if(i != TechnoExt::AlphaExt.end()) {
 			delete i->second;
-			TechnoExt::AlphaExt.erase(Source);
+			TechnoExt::AlphaExt.erase(i);
 		}
 		return 0;
 	}

@@ -47,8 +47,14 @@ void WarheadTypeExt::ExtData::LoadFromINI(WarheadTypeClass *pThis, CCINIClass *p
 		int idx = 0;
 		for(char *cur = strtok(buffer, ","); cur; cur = strtok(NULL, ",")) {
 			DEBUGLOG("\n\t\tVerses #%d is %s", idx, cur);
-			this->Verses[idx] = Conversions::Str2Armor(cur);
-			DEBUGLOG("\n\t\tWhich converts to %lf", this->Verses[idx]);
+			DWORD specialFX = 0x0;
+			this->Verses[idx].Verses = Conversions::Str2Armor(cur, &specialFX);
+
+			this->Verses[idx].ForceFire = ((specialFX & verses_ForceFire) != 0);
+			this->Verses[idx].Retaliate = ((specialFX & verses_Retaliate) != 0);
+			this->Verses[idx].PassiveAcquire = ((specialFX & verses_PassiveAcquire) != 0);
+
+			DEBUGLOG("\n\t\tWhich converts to %lf", this->Verses[idx].Verses);
 			++idx;
 			if(idx > 10) {
 				break;
@@ -82,6 +88,9 @@ void WarheadTypeExt::ExtData::LoadFromINI(WarheadTypeClass *pThis, CCINIClass *p
 	this->Ripple_Radius = pINI->ReadInteger(section, "Ripple.Radius", this->Ripple_Radius);
 };
 
+void WarheadTypeExt::PointerGotInvalid(void *ptr) {
+
+}
 
 // =============================
 // container hooks

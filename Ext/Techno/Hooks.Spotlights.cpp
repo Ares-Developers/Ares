@@ -39,8 +39,9 @@ DEFINE_HOOK(435820, BuildingLightClass_CTOR, 6)
 	GET_STACK(TechnoClass *, T, 0x4);
 	GET(BuildingLightClass *, BL, ECX);
 
-	if(TechnoExt::SpotlightExt.find(T) != TechnoExt::SpotlightExt.end()) {
-		TechnoExt::SpotlightExt.erase(T);
+	hash_SpotlightExt::iterator i = TechnoExt::SpotlightExt.find(T);
+	if(i != TechnoExt::SpotlightExt.end()) {
+		TechnoExt::SpotlightExt.erase(i);
 	}
 	TechnoExt::SpotlightExt[T] = BL;
 	return 0;
@@ -50,8 +51,20 @@ DEFINE_HOOK(4370C0, BuildingLightClass_SDDTOR, A)
 {
 	GET(BuildingLightClass *, BL, ECX);
 	TechnoClass *T = BL->OwnerObject;
-	if(TechnoExt::SpotlightExt.find(T) != TechnoExt::SpotlightExt.end()) {
-		TechnoExt::SpotlightExt.erase(T);
+	hash_SpotlightExt::iterator i = TechnoExt::SpotlightExt.find(T);
+	if(i != TechnoExt::SpotlightExt.end()) {
+		TechnoExt::SpotlightExt.erase(i);
+	}
+	return 0;
+}
+
+DEFINE_HOOK(6F4500, TechnoClass_DTOR_Spotlight, 5)
+{
+	GET(TechnoClass*, pItem, ECX);
+	hash_SpotlightExt::iterator i = TechnoExt::SpotlightExt.find(pItem);
+	if(i != TechnoExt::SpotlightExt.end()) {
+		delete i->second;
+		TechnoExt::SpotlightExt.erase(i);
 	}
 	return 0;
 }
@@ -178,6 +191,7 @@ DEFINE_HOOK(4360FF, BuildingLightClass_Draw_250, 6)
 	TechnoClass *Owner = TechnoExt::ActiveBuildingLight->OwnerObject;
 	TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(Owner->GetTechnoType());
 	R->set_ECX(pTypeData ? pTypeData->Spot_Height : 250);
+	TechnoExt::ActiveBuildingLight = NULL;
 	return 0x436105;
 }
 

@@ -147,6 +147,8 @@ public:
 		};
 
 	static void ModifyWaveColor(WORD *src, WORD *dst, int Intensity, WaveClass *Wave);
+
+	static void PointerGotInvalid(void *ptr);
 };
 
 typedef stdext::hash_map<BombClass *, WeaponTypeExt::ExtData *> hash_bombExt;

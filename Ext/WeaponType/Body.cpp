@@ -152,6 +152,10 @@ void WeaponTypeExt::ExtData::LoadFromINI(WeaponTypeExt::TT *pThis, CCINIClass *p
 */
 }
 
+void WeaponTypeExt::PointerGotInvalid(void *ptr) {
+
+}
+
 // =============================
 // container hooks
 

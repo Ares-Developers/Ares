@@ -28,6 +28,17 @@ class WarheadTypeExt //: public Container<WarheadTypeExt>
 public:
 	typedef WarheadTypeClass TT;
 
+	struct VersesData {
+		double Verses;
+		bool ForceFire;
+		bool Retaliate;
+		bool PassiveAcquire;
+		
+		bool operator ==(const VersesData &RHS) const {
+			return (CLOSE_ENOUGH(this->Verses, RHS.Verses));
+		};
+	};
+
 	class ExtData : public Extension<TT> 
 	{
 	public:
@@ -41,7 +52,7 @@ public:
 
 		int IC_Duration;
 
-		DynamicVectorClass<double> Verses;
+		DynamicVectorClass<VersesData> Verses;
 		double DeployedDamage;
 
 		AnimTypeClass *Temporal_WarpAway;
@@ -56,7 +67,8 @@ public:
 			DeployedDamage (1.00)
 			{
 				for(int i = 0; i < 11; ++i) {
-					Verses.AddItem(1.00);
+					VersesData vs = {1.00, 1, 1, 1};
+					Verses.AddItem(vs);
 				}
 			};
 
@@ -74,6 +86,8 @@ public:
 	static WarheadTypeClass *Temporal_WH;
 
 	static stdext::hash_map<IonBlastClass *, WarheadTypeExt::ExtData *> IonExt;
+
+	static void PointerGotInvalid(void *ptr);
 /*
 	EXT_P_DECLARE(WarheadTypeClass);
 	EXT_FUNCS(WarheadTypeClass);

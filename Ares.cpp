@@ -238,3 +238,16 @@ DEFINE_HOOK(533058, CommandClassCallback_Register, 7)
 	R->set_EAX((DWORD)(new DWORD(1)));	//Allocate SetUnitTabCommandClass
 	return 0x533062;
 }
+
+
+DEFINE_HOOK(7258D0, AnnounceInvalidPointer, 6)
+{
+	GET(void *, DEATH, ECX);
+
+	TechnoExt::PointerGotInvalid(DEATH);
+	TechnoTypeExt::PointerGotInvalid(DEATH);
+	WarheadTypeExt::PointerGotInvalid(DEATH);
+	WeaponTypeExt::PointerGotInvalid(DEATH);
+
+	return 0;
+}

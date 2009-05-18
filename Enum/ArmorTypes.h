@@ -18,7 +18,7 @@ class ArmorType  : public Enumerable<ArmorType>
 {
 	public:
 		int DefaultIndex;
-		double DefaultVerses;
+		WarheadTypeExt::VersesData DefaultVerses;
 
 	ArmorType(const char *Title)
 	{

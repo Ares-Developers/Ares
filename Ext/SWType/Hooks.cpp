@@ -81,8 +81,8 @@ DEFINE_HOOK(6CD6A6, SuperClass_Launch_SpyPlane_Fire, 6)
 // decouple nuke siren from DigSound
 DEFINE_HOOK(6CDDE3, SuperClass_Launch_Nuke_Siren, 6)
 {
-	GET(SuperWeaponTypeClass *, pThis, EAX);
-	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pThis);
+	GET(SuperClass *, Super, EBX);
+	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(Super->Type);
 
 	R->set_ECX(pData->Nuke_Siren);
 	return 0x6CDDE9;

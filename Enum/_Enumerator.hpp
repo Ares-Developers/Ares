@@ -49,9 +49,9 @@ public:
 
 	static void ClearArray()
 	{
-		while(int len = Array.Count) {
-			delete Array[len];
-			Array.RemoveItem(len);
+		for(int i = Array.Count - 1; i >= 0; --i) {
+			delete Array[i];
+			Array.RemoveItem(i);
 		}
 	}
 

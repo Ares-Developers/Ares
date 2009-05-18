@@ -93,6 +93,28 @@ bool TechnoExt::ParadropSurvivor(FootClass *Survivor, CoordStruct *loc, bool Sel
 	// TODO: Tag
 }
 
+void TechnoExt::PointerGotInvalid(void *ptr) {
+	hash_AlphaExt::iterator i = AlphaExt.find(reinterpret_cast<ObjectClass*>(ptr));
+	if(i != TechnoExt::AlphaExt.end()) {
+		TechnoExt::AlphaExt.erase(i);
+	}
+	for(hash_AlphaExt::iterator i = AlphaExt.begin(); i != AlphaExt.end(); ++i) {
+		if(ptr == ((void *)(i->second))) {
+			AlphaExt.erase(i->first);
+		}
+	}
+	
+
+	for(hash_SpotlightExt::iterator i = SpotlightExt.begin(); i != SpotlightExt.end(); ++i) {
+		if(ptr == ((void *)(i->second))) {
+			SpotlightExt.erase(i->first);
+		}
+	}
+
+	if(ptr == (void *)ActiveBuildingLight) {
+		ActiveBuildingLight = NULL;
+	}
+}
 
 // =============================
 // container hooks

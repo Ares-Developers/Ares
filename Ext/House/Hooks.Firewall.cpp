@@ -139,3 +139,17 @@ DEFINE_HOOK(43FC39, BuildingClass_Update_FSW, 6)
 	return 0;
 }
 
+DEFINE_HOOK(6FC0C5, TechnoClass_GetObjectActivityState_Firewall, 6)
+{
+	GET(TechnoClass *, Tgt, EBX);
+	if(Tgt->WhatAmI() == abs_Building) {
+		if(reinterpret_cast<BuildingClass*>(Tgt)->Type->FirestormWall) {
+			if(Tgt->Owner->FirestormActive) {
+				return 0x6FC86A;
+			}
+		}
+	}
+
+	return 0;
+}
+

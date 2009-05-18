@@ -97,7 +97,7 @@ DEFINE_HOOK(6F523C, TechnoClass_DrawExtras2, 5)
 
 // 6FCBAD, 6
 // custom ivan bomb disarm 1
-DEFINE_HOOK(6FCBAD, TechnoClass_GetObjectActivityState, 6)
+DEFINE_HOOK(6FCBAD, TechnoClass_GetObjectActivityState_IvanBomb, 6)
 {
 	GET(TechnoClass *, Target, EBP);
 	BombClass *Bomb = Target->AttachedBomb;

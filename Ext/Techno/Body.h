@@ -65,7 +65,9 @@ public:
 
 	static void SpawnSurvivors(TechnoClass *pThis, TechnoClass *pKiller, bool Select);
 	static bool ParadropSurvivor(FootClass *Survivor, CoordStruct *loc, bool Select);
-	
+
+	static void PointerGotInvalid(void *ptr);
+
 /*
 	static int SelectWeaponAgainst(TechnoClass *pThis, TechnoClass *pTarget);
 	static bool EvalWeaponAgainst(TechnoClass *pThis, TechnoClass *pTarget, WeaponTypeClass* W);
