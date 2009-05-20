@@ -1,5 +1,7 @@
 #include "Body.h"
 
+#include <Helpers\Template.h>
+
 const DWORD Extension<WeaponTypeClass>::Canary = 0x33333333;
 Container<WeaponTypeExt> WeaponTypeExt::ExtMap;
 
@@ -153,7 +155,9 @@ void WeaponTypeExt::ExtData::LoadFromINI(WeaponTypeExt::TT *pThis, CCINIClass *p
 }
 
 void WeaponTypeExt::PointerGotInvalid(void *ptr) {
-
+	AnnounceInvalidPointerMap(BombExt, ptr);
+	AnnounceInvalidPointerMap(WaveExt, ptr);
+	AnnounceInvalidPointerMap(RadSiteExt, ptr);
 }
 
 // =============================

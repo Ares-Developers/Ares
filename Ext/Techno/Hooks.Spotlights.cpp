@@ -80,7 +80,9 @@ DEFINE_HOOK(70FBE3, TechnoClass_Activate, 5)
 //			TechnoExt::SpotlightExt.erase(i);
 			delete i->second;
 		}
+		++Unsorted::SomeMutex;
 		new BuildingLightClass(T);
+		--Unsorted::SomeMutex;
 	}
 	return 0;
 }

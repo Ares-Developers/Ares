@@ -26,12 +26,14 @@ public:
 
 	virtual void Execute(DWORD dwUnk)
 	{
+#if 0
 		HouseClass *H = HouseClass::Player();
 		bool FS = H->FirestormActive;
 		H->FirestormActive = !FS;
 		wchar_t message[0x40];
 		wsprintfW(message, L"Firestorm state inverted, now %d\n", !FS);
 		MessageListClass::PrintMessage(message);
+#endif
 	}
 
 	//Constructor

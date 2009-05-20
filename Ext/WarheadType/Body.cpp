@@ -2,6 +2,8 @@
 #include <WeaponTypeClass.h>
 #include "..\..\Enum\ArmorTypes.h"
 
+#include <Helpers\Template.h>
+
 const DWORD Extension<WarheadTypeClass>::Canary = 0x22222222;
 Container<WarheadTypeExt> WarheadTypeExt::ExtMap;
 
@@ -89,7 +91,8 @@ void WarheadTypeExt::ExtData::LoadFromINI(WarheadTypeClass *pThis, CCINIClass *p
 };
 
 void WarheadTypeExt::PointerGotInvalid(void *ptr) {
-
+	AnnounceInvalidPointerMap(IonExt, ptr);
+	AnnounceInvalidPointer(Temporal_WH, ptr);
 }
 
 // =============================

@@ -31,6 +31,8 @@ A_FINE_HOOK(4666F7, BulletClass_Update_FSW, 6)
 }
 */
 
+#if 0
+
 DEFINE_HOOK(6FF008, TechnoClass_Fire_FSW, 8)
 DEFINE_HOOK_AGAIN(6FF860, TechnoClass_Fire_FSW, 8)
 {
@@ -54,7 +56,7 @@ DEFINE_HOOK(4DA53E, FootClass_Update, 6)
 	if(B) {
 		BuildingTypeClass *BT = B->Type;
 		HouseClass *H = B->Owner;
-		if(BT->FirestormWall && H->FirestormActive) {
+		if(BT->FirestormWall && H->FirestormActive && !F->InLimbo) {
 			int Damage = F->Health;
 			F->ReceiveDamage(&Damage, 0, RulesClass::Global()->C4Warhead, 0, 1, 0, H);
 			if(AnimTypeClass *FSAnim = AnimTypeClass::Find(F->IsInAir() ? "FSAIR" : "FSGRND")) {
@@ -130,7 +132,7 @@ DEFINE_HOOK(43FC39, BuildingClass_Update_FSW, 6)
 	CellClass *C = B->GetCell();
 	for(ObjectClass *O = C->GetContent(); O; O = O->NextObject) {
 		O->GetCoords(&XYZ);
-		if(((O->AbstractFlags & ABSFLAGS_ISTECHNO) != 0) && O != B) {
+		if(((O->AbstractFlags & ABSFLAGS_ISTECHNO) != 0) && O != B && !O->InLimbo) {
 			int Damage = O->Health;
 			O->ReceiveDamage(&Damage, 0, RulesClass::Global()->C4Warhead, 0, 1, 0, H);
 		}
@@ -153,3 +155,4 @@ DEFINE_HOOK(6FC0C5, TechnoClass_GetObjectActivityState_Firewall, 6)
 	return 0;
 }
 
+#endif

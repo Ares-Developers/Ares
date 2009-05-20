@@ -232,7 +232,7 @@ DEFINE_HOOK(46934D, IvanBombs_Spread, 6)
 
 		for(ObjectClass *curObj = c->GetContent(); curObj; curObj = curObj->NextObject) {
 			if(curObj != pOwner && (curObj->AbstractFlags & ABSFLAGS_ISTECHNO) && !curObj->AttachedBomb) {
-				BombListClass::Global()->Plant(pOwner, (TechnoClass *)curObj);
+				BombListClass::Global()->Plant(pOwner, reinterpret_cast<TechnoClass *>(curObj));
 			}
 		}
 	}

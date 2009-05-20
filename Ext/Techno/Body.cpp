@@ -1,6 +1,8 @@
 #include "Body.h"
 #include "..\TechnoType\Body.h"
 
+#include <Helpers\Template.h>
+
 const DWORD Extension<TechnoClass>::Canary = 0x55555555;
 Container<TechnoExt> TechnoExt::ExtMap;
 
@@ -78,11 +80,13 @@ bool TechnoExt::ParadropSurvivor(FootClass *Survivor, CoordStruct *loc, bool Sel
 {
 	bool success;
 	int floorZ = MapClass::Global()->GetCellFloorHeight(loc);
+	++Unsorted::SomeMutex;
 	if(loc->Z > floorZ) {
 		success = Survivor->SpawnParachuted(loc);
 	} else {
 		success = Survivor->Put(loc, Randomizer::Global()->RandomRanged(0, 7));
 	}
+	--Unsorted::SomeMutex;
 	RET_UNLESS(success);
 	Survivor->Scatter(0xB1CFE8, 1, 0);
 	Survivor->QueueMission(Survivor->Owner->ControlledByHuman() ? mission_Guard : mission_Hunt, 0);
@@ -94,22 +98,9 @@ bool TechnoExt::ParadropSurvivor(FootClass *Survivor, CoordStruct *loc, bool Sel
 }
 
 void TechnoExt::PointerGotInvalid(void *ptr) {
-	hash_AlphaExt::iterator i = AlphaExt.find(reinterpret_cast<ObjectClass*>(ptr));
-	if(i != TechnoExt::AlphaExt.end()) {
-		TechnoExt::AlphaExt.erase(i);
-	}
-	for(hash_AlphaExt::iterator i = AlphaExt.begin(); i != AlphaExt.end(); ++i) {
-		if(ptr == ((void *)(i->second))) {
-			AlphaExt.erase(i->first);
-		}
-	}
-	
-
-	for(hash_SpotlightExt::iterator i = SpotlightExt.begin(); i != SpotlightExt.end(); ++i) {
-		if(ptr == ((void *)(i->second))) {
-			SpotlightExt.erase(i->first);
-		}
-	}
+	AnnounceInvalidPointerMap(AlphaExt, ptr);
+	AnnounceInvalidPointerMap(SpotlightExt, ptr);
+	AnnounceInvalidPointer(ActiveBuildingLight, ptr);
 
 	if(ptr == (void *)ActiveBuildingLight) {
 		ActiveBuildingLight = NULL;
