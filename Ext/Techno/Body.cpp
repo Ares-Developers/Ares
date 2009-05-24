@@ -101,10 +101,6 @@ void TechnoExt::PointerGotInvalid(void *ptr) {
 	AnnounceInvalidPointerMap(AlphaExt, ptr);
 	AnnounceInvalidPointerMap(SpotlightExt, ptr);
 	AnnounceInvalidPointer(ActiveBuildingLight, ptr);
-
-	if(ptr == (void *)ActiveBuildingLight) {
-		ActiveBuildingLight = NULL;
-	}
 }
 
 // =============================

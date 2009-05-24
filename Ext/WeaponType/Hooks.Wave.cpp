@@ -225,7 +225,7 @@ DEFINE_HOOK(762C5C, WaveClass_Update_Wave, 6)
 		return 0x762D57;
 	}
 
-	RET_UNLESS(CONTAINS(WeaponTypeExt::WaveExt, Wave));
+	RET_UNLESS(WeaponTypeExt::WaveExt.find(Wave) != WeaponTypeExt::WaveExt.end());
 	WeaponTypeExt::ExtData *pData = WeaponTypeExt::WaveExt[Wave];
 	int weaponIdx = TechnoExt::ExtMap.Find(Firer)->idxSlot_Wave;
 

@@ -42,12 +42,16 @@ public:
 		bool Secret_RecalcOnCapture;
 		bool Secret_Placed;
 
+		// new firestorm wall
+		bool Firewall_Is;
+
 		ExtData(const DWORD Canary = 0) : 
 			Solid_Height (0),
 			IsCustom (false),
 			CustomData (NULL),
 			CustomWidth (0),
-			CustomHeight (0)
+			CustomHeight (0),
+			Firewall_Is (false)
 			{ };
 
 		virtual ~ExtData() {

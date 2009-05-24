@@ -19,6 +19,7 @@ class HouseExt
 	{
 		public:
 			bool IonSensitive;
+			bool FirewallActive;
 			
 			BuildingClass *Factory_BuildingType;
 			BuildingClass *Factory_InfantryType;
@@ -28,6 +29,7 @@ class HouseExt
 			
 		ExtData(const DWORD Canary = 0) : 
 			IonSensitive(0),
+			FirewallActive(0),
 			Factory_BuildingType(NULL),
 			Factory_InfantryType(NULL),
 			Factory_VehicleType(NULL),

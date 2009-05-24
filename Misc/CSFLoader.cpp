@@ -140,7 +140,8 @@ DEFINE_HOOK(734A97, CSF_SetIndex, 6)
 	return 0x734AA1;
 }
 
-DEFINE_HOOK(6BD886, CSF_LoadExtraFiles, 5)
+/*
+A_FINE_HOOK(6BD886, CSF_LoadExtraFiles, 5)
 {
 	char fname[32];
 	for(int idx = 0; idx < 100; ++idx) {
@@ -150,3 +151,4 @@ DEFINE_HOOK(6BD886, CSF_LoadExtraFiles, 5)
 	R->set_AL(1);
 	return 0x6BD88B;
 }
+*/

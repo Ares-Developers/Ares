@@ -88,6 +88,10 @@ void BuildingTypeExt::ExtData::LoadFromINI(BuildingTypeClass *pThis, CCINIClass*
 	}
 
 	char* pArtID = pThis->get_ImageFile();
+	char* pID = pThis->get_ID();
+
+	this->Firewall_Is = pINI->ReadBool(pID, "Firestorm.Wall", this->Firewall_Is);
+
 	this->Solid_Height = CCINIClass::INI_Art->ReadInteger(pArtID, "SolidHeight", this->Solid_Height);
 	CCINIClass* pArtINI = CCINIClass::INI_Art;
 

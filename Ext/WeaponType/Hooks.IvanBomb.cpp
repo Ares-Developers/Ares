@@ -3,6 +3,8 @@
 #include "Body.h"
 #include "..\Techno\Body.h"
 
+#include <Helpers\Template.h>
+
 // 438F8F, 6
 // custom ivan bomb attachment 1
 DEFINE_HOOK(438F8F, BombListClass_Add1, 6)
@@ -220,9 +222,26 @@ DEFINE_HOOK(46934D, IvanBombs_Spread, 6)
 
 	CoordStruct tgtCoords;
 	pTarget->GetCoords(&tgtCoords);
-	CellStruct centerCoords;//, xyzTgt;
-	centerCoords = *MapClass::Global()->GetCellAt(&tgtCoords)->get_MapCoords();
+	CellStruct centerCoords = *MapClass::Global()->GetCellAt(&tgtCoords)->get_MapCoords();
 
+	class IvanBombSpreadApplicator : public CellSpreadApplicator {
+		protected:
+			TechnoClass *pOwner;
+		public:
+			IvanBombSpreadApplicator(TechnoClass *owner)
+				: pOwner(owner), CellSpreadApplicator()
+			{ }
+			void operator() (ObjectClass *curObj, CellStruct *origin) {
+				if(curObj != pOwner && ABS_IS_TECHNO(curObj) && !curObj->AttachedBomb) {
+					BombListClass::Global()->Plant(pOwner, reinterpret_cast<TechnoClass *>(curObj));
+				}
+			}
+	} BombSpreader(pOwner);
+
+	CellSpreadIterator BombDelivery(BombSpreader, &centerCoords, Spread);
+	BombDelivery.Apply();
+
+/*
 	int countCells = CellSpread::NumCells(Spread);
 
 	for(int i = 0; i < countCells; ++i) {
@@ -236,6 +255,7 @@ DEFINE_HOOK(46934D, IvanBombs_Spread, 6)
 			}
 		}
 	}
+*/
 
 	return 0;
 }

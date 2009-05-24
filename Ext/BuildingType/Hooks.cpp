@@ -70,4 +70,3 @@ DEFINE_HOOK(43FB6D, BuildingClass_Update_LFP, 6)
 	}
 	return 0;
 }
-
