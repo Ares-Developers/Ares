@@ -48,6 +48,9 @@ class HouseExt
 
 	static Container<HouseExt> ExtMap;
 
+	static HouseClass *SavingNow;
+	static IStream *SavingStream;
+
 	static signed int BuildLimitRemaining(HouseClass *pHouse, TechnoTypeClass *pItem);
 	static signed int CheckBuildLimit(HouseClass *pHouse, TechnoTypeClass *pItem, bool IncludeQueued);
 

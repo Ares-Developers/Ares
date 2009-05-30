@@ -35,7 +35,12 @@
 */
 
 #include <Helpers\Macro.h>
-#include "../Ares.h"
+#include "Dialogs.h"
+#include "..\Ares.h"
+
+#include "..\Misc\Debug.h"
+
+const char * Dialogs::StatusString = NULL;
 
 //4A3B4B, 9 - NOTE: This overrides a call, but it's absolute, so don't worry.
 DEFINE_HOOK(4A3B4B, FetchResource, 9)
@@ -54,10 +59,41 @@ DEFINE_HOOK(4A3B4B, FetchResource, 9)
 			LockResource(hResData);
 			R->set_EAX((DWORD)hResData);
 
-			DEBUGLOG("Resource %d loaded successfully: 0x%08X\n", lpName, hResData);
+			Debug::Log("Resource %d loaded successfully: 0x%08X\n", lpName, hResData);
 
 			return 0x4A3B73; //Resource locked and loaded (omg what a pun), return!
 		}
 	}
 	return 0; //Nothing was found, try the game's own resources.
+}
+
+DEFINE_HOOK(60411B, Game_DialogFunc_Subtext_Load, 5)
+{
+	GET(int, DlgItemID, EAX);
+
+	Dialogs::StatusString = NULL;
+	if(DlgItemID == -1) {
+		return 0x604120;
+	}
+	if(DlgItemID >= ARES_GUI_START) {
+		switch(DlgItemID) {
+			case ARES_CHK_RMG_URBAN_AREAS:
+				Dialogs::StatusString = "STT:RMGUrbanAreas";
+				break;
+			default:
+				Dialogs::StatusString = "GUI:Debug";
+		}
+		return 0x604135;
+	}
+	return 0x604126;
+}
+
+
+DEFINE_HOOK(604136, Game_DialogFunc_Subtext_Propagate, 5)
+{
+	if(Dialogs::StatusString) {
+		R->set_EAX((DWORD)Dialogs::StatusString);
+		return 0x60413B;
+	}
+	return 0;
 }

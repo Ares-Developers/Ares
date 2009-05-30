@@ -5,6 +5,7 @@
 
 const DWORD Extension<TechnoClass>::Canary = 0x55555555;
 Container<TechnoExt> TechnoExt::ExtMap;
+eFiringState TechnoExt::FiringStateCache = -1;
 
 void TechnoExt::SpawnSurvivors(TechnoClass *pThis, TechnoClass *pKiller, bool Select)
 {

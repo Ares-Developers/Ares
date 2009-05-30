@@ -231,7 +231,7 @@ DEFINE_HOOK(46934D, IvanBombs_Spread, 6)
 			IvanBombSpreadApplicator(TechnoClass *owner)
 				: pOwner(owner), CellSpreadApplicator()
 			{ }
-			void operator() (ObjectClass *curObj, CellStruct *origin) {
+			virtual void operator() (ObjectClass *curObj, CellStruct *origin) {
 				if(curObj != pOwner && ABS_IS_TECHNO(curObj) && !curObj->AttachedBomb) {
 					BombListClass::Global()->Plant(pOwner, reinterpret_cast<TechnoClass *>(curObj));
 				}

@@ -23,9 +23,13 @@ public:
 	public:
 		// solid
 		bool SubjectToSolid;
+		
+		// firewall
+		bool SubjectToFirewall;
 
 		ExtData(const DWORD Canary = 0) : 
-			SubjectToSolid (false)
+			SubjectToSolid (false),
+			SubjectToFirewall (true)
 			{ };
 
 		virtual ~ExtData() {

@@ -3,37 +3,13 @@
 #include <BuildingClass.h>
 #include <CellClass.h>
 
+#include "..\..\Misc\Applicators.h"
+
 #include "Body.h"
 #include "..\BuildingType\Body.h"
 #include "..\Building\Body.h"
+#include "..\BulletType\Body.h"
 #include "..\TechnoType\Body.h"
-
-/*
-A_FINE_HOOK(4666F7, BulletClass_Update_FSW, 6)
-{
-	GET(BulletClass *, Bullet, EBP);
-
-	CellClass *C = Bullet->GetCell();
-	if(BuildingClass * B = C->GetBuilding()) {
-		BuildingTypeClass *BT = B->Type;
-		if(!Bullet->Owner || Bullet->Owner->Owner->IsAlliedWith(B->Owner)) {
-			return 0;
-		}
-		if(BT->FirestormWall && B->Owner->FirestormActive && !Bullet->Type->IgnoresFirestorm) {
-			if(AnimTypeClass *FSAnim = AnimTypeClass::Find(Bullet->IsInAir() ? "FSAIR" : "FSGRND")) {
-				CoordStruct XYZ;
-				Bullet->GetCoords(&XYZ);
-				new AnimClass(FSAnim, &XYZ);
-			}
-			Bullet->Release();
-		}
-	}
-
-	return 0;
-}
-*/
-
-#if 0
 
 DEFINE_HOOK(6FF008, TechnoClass_Fire_FSW, 8)
 DEFINE_HOOK_AGAIN(6FF860, TechnoClass_Fire_FSW, 8)
@@ -41,10 +17,34 @@ DEFINE_HOOK_AGAIN(6FF860, TechnoClass_Fire_FSW, 8)
 	CoordStruct src = *((CoordStruct *)R->lea_StackVar(0x44));
 	CoordStruct tgt = *((CoordStruct *)R->lea_StackVar(0x88));
 
+	BulletClass * Bullet = (BulletClass *) (R->get_Origin() == 0x6FF860 ? R->get_EDI() : R->get_EBX());
+
+	BulletTypeExt::ExtData *pBulletData = BulletTypeExt::ExtMap.Find(Bullet->Type);
+
+	if(!pBulletData->SubjectToFirewall) {
+		return 0;
+	}
+
 //	check the path of the projectile to see if there are any firestormed cells along the way
 //	if so, redirect the proj to the nearest one so it crashes
-//	this is only necessary for invisible projectiles which don't move to the target and thus
-//	BulletClass::Update hook above won't work
+//	this is technically only necessary for invisible projectiles which don't move to the target
+//	- the BulletClass::Update hook above wouldn't work for them
+
+// screw having two code paths
+
+	FirestormFinderApplicator FireFinder(Bullet->Owner->Owner);
+
+	CellSequence Path(&src, &tgt);
+
+	Path.Apply(FireFinder);
+
+	if(FireFinder.found) {
+		CellClass::Cell2Coord(&FireFinder.target, &tgt);
+		Bullet->Target = MapClass::Global()->GetCellAt(&tgt)->GetContent();
+		Bullet->Owner->ShouldLoseTargetNow = 1;
+//		Bullet->Owner->SetTarget(NULL);
+//		Bullet->Owner->Scatter(0xB1CFE8, 1, 0);
+	}
 
 	return 0;
 }
@@ -54,11 +54,12 @@ DEFINE_HOOK(4DA53E, FootClass_Update, 6)
 	GET(FootClass *, F, ESI);
 
 	CellClass *C = F->GetCell();
-	BuildingClass * B = C->GetBuilding();
-	if(B) {
+	if(BuildingClass * B = C->GetBuilding()) {
 		BuildingTypeClass *BT = B->Type;
 		HouseClass *H = B->Owner;
-		if(BT->FirestormWall && H->FirestormActive && !F->InLimbo) {
+		BuildingTypeExt::ExtData* pTypeData = BuildingTypeExt::ExtMap.Find(BT);
+		HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(B->Owner);
+		if(pTypeData->Firewall_Is && pHouseData->FirewallActive && !F->InLimbo) {
 			int Damage = F->Health;
 			F->ReceiveDamage(&Damage, 0, RulesClass::Global()->C4Warhead, 0, 1, 0, H);
 			if(AnimTypeClass *FSAnim = AnimTypeClass::Find(F->IsInAir() ? "FSAIR" : "FSGRND")) {
@@ -71,8 +72,6 @@ DEFINE_HOOK(4DA53E, FootClass_Update, 6)
 
 	return 0;
 }
-
-#endif
 
 DEFINE_HOOK(4F8C97, HouseClass_Update_FSW_LowPower, 6)
 {

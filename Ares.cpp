@@ -251,3 +251,9 @@ DEFINE_HOOK(7258D0, AnnounceInvalidPointer, 6)
 
 	return 0;
 }
+
+DEFINE_HOOK(74FDC0, GetModuleVersion, 5)
+{
+	R->set_EAX((DWORD)(VERSION_STRING));
+	return 0x74FEEF;
+}

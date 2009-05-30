@@ -63,6 +63,8 @@ public:
 
 	static BuildingLightClass * ActiveBuildingLight;
 
+	static eFiringState FiringStateCache;
+
 	static void SpawnSurvivors(TechnoClass *pThis, TechnoClass *pKiller, bool Select);
 	static bool ParadropSurvivor(FootClass *Survivor, CoordStruct *loc, bool Select);
 

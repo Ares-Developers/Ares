@@ -4,6 +4,8 @@
 
 const DWORD Extension<HouseClass>::Canary = 0x12345678;
 Container<HouseExt> HouseExt::ExtMap;
+HouseClass *HouseExt::SavingNow = NULL;
+IStream *HouseExt::SavingStream = NULL;
 
 // =============================
 // member funcs
@@ -153,12 +155,27 @@ DEFINE_HOOK(504069, HouseClass_Load, 7)
 	return 0;
 }
 
-
-DEFINE_HOOK(5046DE, HouseClass_Save, 7)
+DEFINE_HOOK(504080, HouseClass_Save_Prefix, 5)
 {
-	GET_STACK(HouseClass*, pItem, 0x14);
-	GET_STACK(IStream*, pStm, 0x18);
+	GET_STACK(HouseClass*, pItem, 0x4);
+	GET_STACK(IStream*, pStm, 0x8);
+
+	HouseExt::SavingNow = pItem;
+	HouseExt::SavingStream = pStm;
+
+	return 0;
+}
+
+DEFINE_HOOK(5046DE, HouseClass_Save_Suffix, 7)
+{
+//	GET_STACK(HouseClass*, pItem, 0x14);
+//	GET_STACK(IStream*, pStm, 0x18);
+	HouseClass *pItem = HouseExt::SavingNow;
+	IStream *pStm = HouseExt::SavingStream;
 
 	HouseExt::ExtMap.Save(pItem, pStm);
+	
+	HouseExt::SavingNow = 0;
+
 	return 0;
 }

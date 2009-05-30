@@ -119,7 +119,8 @@ public:
 
 	E_T *FindOrAllocate(S_T* key) {
 		if(key == NULL) {
-			Debug::Log("CTOR of Ext attempted for a NULL pointer! WTF!\n");
+			const std::type_info &info = typeid(*this);
+			Debug::Log("CTOR of %s attempted for a NULL pointer! WTF!\n", info.name());
 			return NULL;
 		}
 		C_Map::iterator i = find(key);
@@ -182,6 +183,8 @@ public:
 		ULONG out;
 		E_T* buffer = this->Find(key);
 		if(buffer) {
+			const std::type_info &info = typeid(key);
+			Debug::Log("Writing extdata of %s [%s]\n", key->get_ID(), info.name());
 			pStm->Write(buffer, buffer->Size(), &out);
 		}
 	};
@@ -189,6 +192,9 @@ public:
 	void Load(S_T *key, IStream *pStm) {
 		ULONG out;
 		E_T* buffer = this->FindOrAllocate(key); //OrAllocate, of course
+			const std::type_info &info = typeid(key);
+			Debug::Log("Reading extdata of %s [%s]\n", key->get_ID(), info.name());
+
 //		if(buffer) {
 			pStm->Read(buffer, buffer->Size(), &out);
 #ifdef DEBUGBUILD

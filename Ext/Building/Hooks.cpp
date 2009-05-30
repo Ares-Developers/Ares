@@ -1,8 +1,12 @@
 #include <AnimClass.h>
+#include <WeaponTypeClass.h>
+
+#include "..\..\Misc\Applicators.h"
 
 #include "Body.h"
 #include "..\BuildingType\Body.h"
 #include "..\House\Body.h"
+#include "..\Techno\Body.h"
 
 DEFINE_HOOK(4FB257, HouseClass_UnitFromFactory_Firewall, 6)
 {
@@ -122,7 +126,7 @@ DEFINE_HOOK(43FC39, BuildingClass_Update_FSW, 6)
 	CellClass *C = B->GetCell();
 	for(ObjectClass *O = C->GetContent(); O; O = O->NextObject) {
 		O->GetCoords(&XYZ);
-		if(((O->AbstractFlags & ABSFLAGS_ISTECHNO) != 0) && O != B && !O->InLimbo) {
+		if(((O->AbstractFlags & ABSFLAGS_ISTECHNO) != 0) && O != B && !O->InLimbo && O->IsAlive) {
 			int Damage = O->Health;
 			O->ReceiveDamage(&Damage, 0, RulesClass::Global()->C4Warhead, 0, 1, 0, H);
 		}
@@ -211,3 +215,43 @@ DEFINE_HOOK(6FC0C5, TechnoClass_GetObjectActivityState_Firewall, 6)
 	return 0;
 }
 
+DEFINE_HOOK(6FCD1D, TechnoClass_GetObjectActivityState_CanTargetFirewall, 5)
+{
+	GET(TechnoClass *, Src, ESI);
+	GET_STACK(TechnoClass *, Tgt, 0x24);
+	GET_STACK(int, idxWeapon, 0x28);
+
+	WeaponTypeClass *Weapon = Src->GetWeapon(idxWeapon)->WeaponType;
+	if(!Weapon || !Weapon->Projectile) {
+		return 0;
+	}
+
+	BulletTypeExt::ExtData *pBulletData = BulletTypeExt::ExtMap.Find(Weapon->Projectile);
+	if(!pBulletData->SubjectToFirewall) {
+		return 0;
+	}
+
+	FirestormFinderApplicator FireFinder(Src->Owner);
+
+	CellSequence Path(Src->get_Location(), Tgt->get_Location());
+
+	Path.Apply(FireFinder);
+
+	if(FireFinder.found) {
+		Src->ShouldLoseTargetNow = 1;
+		TechnoExt::FiringStateCache = 4; //fs_OutOfRange;
+	} else {
+		TechnoExt::FiringStateCache = -1;
+	}
+	return 0;
+}
+
+DEFINE_HOOK(6FCD23, TechnoClass_GetObjectActivityState_OverrideFirewall, 6)
+{
+	if(TechnoExt::FiringStateCache != -1) {
+		R->set_EAX(TechnoExt::FiringStateCache);
+		TechnoExt::FiringStateCache = -1;
+	}
+
+	return 0;
+}

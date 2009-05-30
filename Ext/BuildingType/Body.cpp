@@ -33,9 +33,7 @@ void BuildingTypeExt::ExtData::Initialize(BuildingTypeClass *pThis) {
 void Container<BuildingTypeExt>::Save(BuildingTypeClass *pThis, IStream *pStm) {
 	BuildingTypeExt::ExtData* pData = BuildingTypeExt::ExtMap.Find(pThis);
 
-	if(!pData->CustomData) {
-		pData->IsCustom = true;
-	}
+	pData->IsCustom = pData->CustomData != 0;
 
 	ULONG out;
 	pStm->Write(pData, pData->Size(), &out);

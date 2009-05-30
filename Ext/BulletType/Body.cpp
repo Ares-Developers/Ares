@@ -23,14 +23,13 @@ void BulletTypeExt::ExtData::LoadFromINI(BulletTypeClass *pThis, CCINIClass* pIN
 	}
 
 	this->SubjectToSolid = pINI->ReadBool(pThis->get_ID(), "SubjectToBuildings", this->SubjectToSolid);
+	this->SubjectToFirewall = pINI->ReadBool(pThis->get_ID(), "SubjectToFirewall", this->SubjectToFirewall);
 
 	this->_Initialized = is_Completed;
 }
 
 // =============================
 // container hooks
-
-
 
 DEFINE_HOOK(46BDD9, BulletTypeClass_CTOR, 5)
 {
