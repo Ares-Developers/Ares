@@ -5,6 +5,9 @@
 const DWORD Extension<BulletTypeClass>::Canary = 0xF00DF00D;
 Container<BulletTypeExt> BulletTypeExt::ExtMap;
 
+BulletTypeExt::TT *Container<BulletTypeExt>::SavingObject = NULL;
+IStream *Container<BulletTypeExt>::SavingStream = NULL;
+
 // =============================
 // member funcs
 
@@ -47,21 +50,27 @@ DEFINE_HOOK(46C890, BulletTypeClass_SDDTOR, 6)
 	return 0;
 }
 
-DEFINE_HOOK(46C722, BulletTypeClass_Load, 4)
+DEFINE_HOOK(46C6A0, BulletTypeClass_SaveLoad_Prefix, 5)
+DEFINE_HOOK_AGAIN(46C730, BulletTypeClass_SaveLoad_Prefix, 8)
 {
-	GET_STACK(BulletTypeClass*, pItem, 0x8);
-	GET_STACK(IStream*, pStm, 0xC);
+	GET_STACK(BulletTypeExt::TT*, pItem, 0x4);
+	GET_STACK(IStream*, pStm, 0x8); 
 
-	BulletTypeExt::ExtMap.Load(pItem, pStm);
+	Container<BulletTypeExt>::SavingObject = pItem;
+	Container<BulletTypeExt>::SavingStream = pStm;
+
 	return 0;
 }
 
-DEFINE_HOOK(46C74A, BulletTypeClass_Save, 3)
+DEFINE_HOOK(46C722, BulletTypeClass_Load_Suffix, 4)
 {
-	GET_STACK(BulletTypeClass*, pItem, 0x4);
-	GET_STACK(IStream*, pStm, 0x8);
+	BulletTypeExt::ExtMap.LoadStatic();
+	return 0;
+}
 
-	BulletTypeExt::ExtMap.Save(pItem, pStm);
+DEFINE_HOOK(46C74A, BulletTypeClass_Save_Suffix, 3)
+{
+	BulletTypeExt::ExtMap.SaveStatic();
 	return 0;
 }
 

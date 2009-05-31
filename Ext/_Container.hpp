@@ -3,6 +3,7 @@
 
 #include <hash_map>
 #include <CCINIClass.h>
+#include <SwizzleManagerClass.h>
 #include <Helpers\Macro.h>
 
 #include "..\Misc\Debug.h"
@@ -105,6 +106,9 @@ private:
 	unsigned int Lookup_Success_Count;
 
 public:
+	static S_T * SavingObject;
+	static IStream * SavingStream;
+
 	Container() :
 		CTOR_Count(0),
 		DTOR_Count(0),
@@ -179,34 +183,72 @@ public:
 		}
 	}
 
+	void SaveStatic() {
+		if(Container<T>::SavingObject && Container<T>::SavingStream) {
+			this->Save(Container<T>::SavingObject, Container<T>::SavingStream);
+			Container<T>::SavingObject = NULL;
+			Container<T>::SavingStream = NULL;
+		}
+	}
+
 	void Save(S_T *key, IStream *pStm) {
+		this->SaveKey(key, pStm);
+	}
+
+	E_T* SaveKey(S_T *key, IStream *pStm) {
 		ULONG out;
+//		const std::type_info &info = typeid(key);
+//		Debug::Log("SaveKey [%s] = %X\n", info.name(), key);
+
+		if(key == NULL) {
+			return NULL;
+		}
 		E_T* buffer = this->Find(key);
+//		Debug::Log("\tKey maps to %X\n", buffer);
 		if(buffer) {
-			const std::type_info &info = typeid(key);
-			Debug::Log("Writing extdata of %s [%s]\n", key->get_ID(), info.name());
+			pStm->Write(&buffer, 4, &out);
 			pStm->Write(buffer, buffer->Size(), &out);
 		}
+		return buffer;
 	};
 
-	void Load(S_T *key, IStream *pStm) {
-		ULONG out;
-		E_T* buffer = this->FindOrAllocate(key); //OrAllocate, of course
-			const std::type_info &info = typeid(key);
-			Debug::Log("Reading extdata of %s [%s]\n", key->get_ID(), info.name());
+	void LoadStatic() {
+		if(Container<T>::SavingObject && Container<T>::SavingStream) {
+			this->Load(Container<T>::SavingObject, Container<T>::SavingStream);
+			Container<T>::SavingObject = NULL;
+			Container<T>::SavingStream = NULL;
+		}
+	}
 
-//		if(buffer) {
-			pStm->Read(buffer, buffer->Size(), &out);
+	void Load(S_T *key, IStream *pStm) {
+		this->LoadKey(key, pStm);
+	}
+
+	E_T* LoadKey(S_T *key, IStream *pStm) {
+		ULONG out;
+//		const std::type_info &info = typeid(key);
+//		Debug::Log("LoadKey [%s] %X\n", info.name(), key);
+
+		if(key == NULL) {
+			Debug::Log("Load attempted for a NULL pointer! WTF!\n");
+			return NULL;
+		}
+		E_T* buffer = this->FindOrAllocate(key);
+		long origPtr;
+		pStm->Read(&origPtr, 4, &out);
+		pStm->Read(buffer, buffer->Size(), &out);
+//		Debug::Log("LoadKey Swizzle: %X => %X\n", origPtr, buffer);
+//		SwizzleManagerClass::Instance.Here_I_Am(origPtr, (void *)buffer);
 #ifdef DEBUGBUILD
 			assert(buffer->SavedCanary == typename E_T::Canary);
 #endif
-//		}
+		return buffer;
 	};
 
 	void Stat() {
 		const std::type_info &info = typeid(*this);
 		Debug::Log("Stats for container %s:\n", info.name());
-		
+
 		Debug::Log("|%08d|%08d|%08d/%08d|%08d|%08d|\n", 
 			CTOR_Count, DTOR_Count, Lookup_Success_Count, Lookup_Failure_Count, size(), S_T::Array->Count);
 	}

@@ -5,6 +5,12 @@
 #include <MapClass.h>
 #include <CellSpread.h>
 
+const DWORD Extension<BuildingClass>::Canary = 0x99999999;
+Container<BuildingExt> BuildingExt::ExtMap;
+
+BuildingClass *Container<BuildingExt>::SavingObject = NULL;
+IStream *Container<BuildingExt>::SavingStream = NULL;
+
 // =============================
 // member functions
 

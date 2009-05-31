@@ -5,6 +5,9 @@
 const DWORD Extension<BuildingTypeClass>::Canary = 0x11111111;
 Container<BuildingTypeExt> BuildingTypeExt::ExtMap;
 
+BuildingTypeExt::TT *Container<BuildingTypeExt>::SavingObject = NULL;
+IStream *Container<BuildingTypeExt>::SavingStream = NULL;
+
 // =============================
 // member funcs
 
@@ -29,47 +32,6 @@ void BuildingTypeExt::ExtData::Initialize(BuildingTypeClass *pThis) {
 	}
 	this->_Initialized = is_Inited;
 }
-
-void Container<BuildingTypeExt>::Save(BuildingTypeClass *pThis, IStream *pStm) {
-	BuildingTypeExt::ExtData* pData = BuildingTypeExt::ExtMap.Find(pThis);
-
-	pData->IsCustom = pData->CustomData != 0;
-
-	ULONG out;
-	pStm->Write(pData, pData->Size(), &out);
-
-	//if there's custom data, write it
-	if(pData->IsCustom) {
-		pStm->Write(
-			pData->CustomData,
-			sizeof(CellStruct) * (pData->CustomWidth * pData->CustomHeight + 1),
-			&out);
-	}
-};
-
-void Container<BuildingTypeExt>::Load(BuildingTypeClass *pThis, IStream *pStm) {
-	BuildingTypeExt::ExtData* pData = BuildingTypeExt::ExtMap.FindOrAllocate(pThis);
-
-	ULONG out;
-	pStm->Read(pData, pData->Size(), &out);
-
-	//if there's custom data, read it
-	if(pData->IsCustom && pData->CustomWidth > 0 && pData->CustomHeight > 0) {
-		pData->CustomData = new CellStruct[pData->CustomWidth * pData->CustomHeight + 1];
-
-		pStm->Read(
-			pData->CustomData,
-			sizeof(CellStruct) * (pData->CustomWidth * pData->CustomHeight + 1),
-			&out);
-
-		pThis->set_Foundation(FOUNDATION_CUSTOM);
-		pThis->set_FoundationData(pData->CustomData);
-	}
-
-#ifdef DEBUGBUILD
-	assert(this->SavedCanary == Extension<BuildingTypeClass>::Canary);
-#endif
-}; 
 
 void BuildingTypeExt::ExtData::LoadFromINI(BuildingTypeClass *pThis, CCINIClass* pINI)
 {
@@ -213,6 +175,50 @@ void BuildingTypeExt::UpdateSecretLabOptions(BuildingClass *pThis)
 }
 
 // =============================
+// load/save
+
+void Container<BuildingTypeExt>::Save(BuildingTypeClass *pThis, IStream *pStm) {
+	BuildingTypeExt::ExtData* pData = this->SaveKey(pThis, pStm);
+
+	if(pData) {
+		pData->IsCustom = pData->CustomData != 0;
+
+		if(pData->IsCustom) {
+			ULONG out;
+			pStm->Write(pData->CustomData,
+				sizeof(CellStruct) * (pData->CustomWidth * pData->CustomHeight + 1),
+				&out);
+		}
+	}
+};
+
+void Container<BuildingTypeExt>::Load(BuildingTypeClass *pThis, IStream *pStm) {
+	BuildingTypeExt::ExtData* pData = this->LoadKey(pThis, pStm);
+//	this->FindOrAllocate(pThis);
+
+	ULONG out;
+
+	//if there's custom data, read it
+	if(pData->IsCustom && pData->CustomWidth > 0 && pData->CustomHeight > 0) {
+		pData->CustomData = new CellStruct[pData->CustomWidth * pData->CustomHeight + 1];
+
+		pStm->Read(
+			pData->CustomData,
+			sizeof(CellStruct) * (pData->CustomWidth * pData->CustomHeight + 1),
+			&out);
+
+		pThis->set_Foundation(FOUNDATION_CUSTOM);
+		pThis->set_FoundationData(pData->CustomData);
+	} else {
+		pData->CustomData = NULL;
+	}
+
+#ifdef DEBUGBUILD
+	assert(this->SavedCanary == Extension<BuildingTypeClass>::Canary);
+#endif
+};
+
+// =============================
 // container hooks
 
 DEFINE_HOOK(45E50C, BuildingTypeClass_CTOR, 6)
@@ -232,21 +238,27 @@ DEFINE_HOOK(45E580, BuildingTypeClass_DTOR, 5)
 	return 0;
 }
 
-DEFINE_HOOK(4652ED, BuildingTypeClass_Load, 7)
+DEFINE_HOOK(465010, BuildingTypeClass_SaveLoad_Prefix, 5)
+DEFINE_HOOK_AGAIN(465300, BuildingTypeClass_SaveLoad_Prefix, 5)
 {
-	GET_STACK(BuildingTypeClass*, pItem, 0x20);
-	GET_STACK(IStream*, pStm, 0x24);
+	GET_STACK(BuildingTypeExt::TT*, pItem, 0x4);
+	GET_STACK(IStream*, pStm, 0x8); 
 
-	BuildingTypeExt::ExtMap.Load(pItem, pStm);
+	Container<BuildingTypeExt>::SavingObject = pItem;
+	Container<BuildingTypeExt>::SavingStream = pStm;
+
 	return 0;
 }
 
-DEFINE_HOOK(46536A, BuildingTypeClass_Save, 7)
+DEFINE_HOOK(4652ED, BuildingTypeClass_Load_Suffix, 7)
 {
-	GET_STACK(BuildingTypeClass*, pItem, 0x14);
-	GET_STACK(IStream*, pStm, 0x18);
+	BuildingTypeExt::ExtMap.LoadStatic();
+	return 0;
+}
 
-	BuildingTypeExt::ExtMap.Save(pItem, pStm);
+DEFINE_HOOK(46536A, BuildingTypeClass_Save_Suffix, 7)
+{
+	BuildingTypeExt::ExtMap.SaveStatic();
 	return 0;
 }
 

@@ -8,6 +8,9 @@
 const DWORD Extension<RulesClass>::Canary = 0x12341234;
 RulesExt::ExtData * RulesExt::Data = NULL;
 
+RulesExt::TT *Container<RulesExt>::SavingObject = NULL;
+IStream *Container<RulesExt>::SavingStream = NULL;
+
 void RulesExt::Allocate(RulesClass *pThis)
 {
 	if(Data) {

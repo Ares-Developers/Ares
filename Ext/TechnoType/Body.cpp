@@ -9,6 +9,9 @@
 const DWORD Extension<TechnoTypeClass>::Canary = 0x44444444;
 Container<TechnoTypeExt> TechnoTypeExt::ExtMap;
 
+TechnoTypeExt::TT *Container<TechnoTypeExt>::SavingObject = NULL;
+IStream *Container<TechnoTypeExt>::SavingStream = NULL;
+
 // =============================
 // member funcs
 
@@ -300,11 +303,71 @@ void TechnoTypeExt::PointerGotInvalid(void *ptr) {
 }
 
 // =============================
+// load/save
+
+void Container<TechnoTypeExt>::Save(TechnoTypeClass *pThis, IStream *pStm) {
+	TechnoTypeExt::ExtData* pData = this->SaveKey(pThis, pStm);
+
+	if(pData) {
+		ULONG out;
+		pData->Survivors_Pilots.Save(pStm);
+
+		pData->PrerequisiteLists.Save(pStm);
+
+		Debug::Log("Saving [%s] with %d PreqLists\n", pThis->get_ID(), pData->PrerequisiteLists.Count);
+		for(int ii = 0; ii < pData->PrerequisiteLists.Count; ++ii) {
+			pData->PrerequisiteLists.Items[ii]->Save(pStm);
+		}
+
+		pData->PrerequisiteNegatives.Save(pStm);
+		pData->Weapons.Save(pStm);
+		pData->EliteWeapons.Save(pStm);
+	}
+}
+
+void Container<TechnoTypeExt>::Load(TechnoTypeClass *pThis, IStream *pStm) {
+	TechnoTypeExt::ExtData* pData = this->LoadKey(pThis, pStm);
+
+	ULONG out;
+
+	pData->Survivors_Pilots.Load(pStm, 1);
+
+	pData->PrerequisiteLists.Load(pStm, 1);
+
+	Debug::Log("Loading [%s] with %d PreqLists\n", pThis->get_ID(), pData->PrerequisiteLists.Count);
+	for(int ii = 0; ii < pData->PrerequisiteLists.Count; ++ii) {
+		DynamicVectorClass<int> *vec = new DynamicVectorClass<int>();
+		vec->Load(pStm, 0);
+		Debug::Log("\t%d - %d\n", ii, vec->Count);
+		pData->PrerequisiteLists.Items[ii] = vec;
+	}
+	Debug::Log("Loaded [%s]\n", pThis->get_ID());
+
+	pData->PrerequisiteNegatives.Load(pStm, 0);
+	pData->Weapons.Load(pStm, 1);
+	pData->EliteWeapons.Load(pStm, 1);
+
+	SWIZZLE(pData->Parachute_Anim);
+	SWIZZLE(pData->Insignia_R);
+	SWIZZLE(pData->Insignia_V);
+	SWIZZLE(pData->Insignia_E);
+	
+	for(int ii = 0; ii < pData->Weapons.Count; ++ii) {
+		SWIZZLE(pData->Weapons.Items[ii].WeaponType);
+	}
+
+	for(int ii = 0; ii < pData->EliteWeapons.Count; ++ii) {
+		SWIZZLE(pData->EliteWeapons.Items[ii].WeaponType);
+	}
+}
+
+// =============================
 // container hooks
 
 DEFINE_HOOK(711835, TechnoTypeClass_CTOR, 5)
 {
 	GET(TechnoTypeClass*, pItem, ESI);
+
 	TechnoTypeExt::ExtMap.FindOrAllocate(pItem);
 	return 0;
 }
@@ -317,21 +380,27 @@ DEFINE_HOOK(711AE0, TechnoTypeClass_DTOR, 5)
 	return 0;
 }
 
-DEFINE_HOOK(716DAC, TechnoTypeClass_Load, A)
+DEFINE_HOOK(7162F0, TechnoTypeClass_SaveLoad_Prefix, 6)
+DEFINE_HOOK_AGAIN(716DC0, TechnoTypeClass_SaveLoad_Prefix, 5)
 {
-	GET_STACK(TechnoTypeClass*, pItem, 0x224);
-	GET_STACK(IStream*, pStm, 0x228);
+	GET_STACK(TechnoTypeExt::TT*, pItem, 0x4);
+	GET_STACK(IStream*, pStm, 0x8); 
 
-	TechnoTypeExt::ExtMap.Load(pItem, pStm);
+	Container<TechnoTypeExt>::SavingObject = pItem;
+	Container<TechnoTypeExt>::SavingStream = pStm;
+
 	return 0;
 }
 
-DEFINE_HOOK(717094, TechnoTypeClass_Save, 5)
+DEFINE_HOOK(716DAC, TechnoTypeClass_Load_Suffix, A)
 {
-	GET_STACK(TechnoTypeClass*, pItem, 0xC);
-	GET_STACK(IStream*, pStm, 0x10);
+	TechnoTypeExt::ExtMap.LoadStatic();
+	return 0;
+}
 
-	TechnoTypeExt::ExtMap.Save(pItem, pStm);
+DEFINE_HOOK(717094, TechnoTypeClass_Save_Suffix, 5)
+{
+	TechnoTypeExt::ExtMap.SaveStatic();
 	return 0;
 }
 

@@ -1,9 +1,11 @@
 #include "Body.h"
-
 #include <Helpers\Template.h>
 
 const DWORD Extension<WeaponTypeClass>::Canary = 0x33333333;
 Container<WeaponTypeExt> WeaponTypeExt::ExtMap;
+
+WeaponTypeExt::TT *Container<WeaponTypeExt>::SavingObject = NULL;
+IStream *Container<WeaponTypeExt>::SavingStream = NULL;
 
 hash_bombExt WeaponTypeExt::BombExt;
 hash_waveExt WeaponTypeExt::WaveExt;
@@ -161,6 +163,86 @@ void WeaponTypeExt::PointerGotInvalid(void *ptr) {
 }
 
 // =============================
+// load/save
+
+void Container<WeaponTypeExt>::Save(WeaponTypeClass *pThis, IStream *pStm) {
+	WeaponTypeExt::ExtData* pData = this->SaveKey(pThis, pStm);
+
+	if(pData) {
+		ULONG out;
+
+		DynamicVectorClass<BombClass *> *bombs = BombListClass::Global()->get_Bombs();
+		pStm->Write(&bombs->Count, 4, &out);
+		for(int ii = 0; ii < bombs->Count; ++ii) {
+			BombClass *ptr = bombs->Items[ii];
+			pStm->Write(ptr, 4, &out);
+			pStm->Write(WeaponTypeExt::BombExt[ptr], 4, &out);
+		}
+
+		pStm->Write(&WaveClass::Array->Count, 4, &out);
+		for(int ii = 0; ii < WaveClass::Array->Count; ++ii) {
+			WaveClass *ptr = WaveClass::Array->Items[ii];
+			pStm->Write(ptr, 4, &out);
+			pStm->Write(WeaponTypeExt::WaveExt[ptr], 4, &out);
+		}
+
+		pStm->Write(&RadSiteClass::Array->Count, 4, &out);
+		for(int ii = 0; ii < RadSiteClass::Array->Count; ++ii) {
+			RadSiteClass *ptr = RadSiteClass::Array->Items[ii];
+			pStm->Write(ptr, 4, &out);
+			pStm->Write(WeaponTypeExt::RadSiteExt[ptr], 4, &out);
+		}
+
+	}
+}
+
+void Container<WeaponTypeExt>::Load(WeaponTypeClass *pThis, IStream *pStm) {
+	WeaponTypeExt::ExtData* pData = this->LoadKey(pThis, pStm);
+
+	ULONG out;
+
+	int Count;
+	WeaponTypeExt::ExtData* data;
+
+	pStm->Read(&Count, 4, &out);
+	for(int ii = 0; ii < Count; ++ii) {
+		BombClass *bomb;
+		pStm->Read(&bomb, 4, &out);
+		SWIZZLE(bomb);
+
+		pStm->Read(&data, 4, &out);
+		SWIZZLE(data);
+		WeaponTypeExt::BombExt[bomb] = data;
+	}
+
+	pStm->Read(&Count, 4, &out);
+	for(int ii = 0; ii < Count; ++ii) {
+		WaveClass *wave;
+		pStm->Read(&wave, 4, &out);
+		SWIZZLE(wave);
+
+		pStm->Read(&data, 4, &out);
+		SWIZZLE(data);
+		WeaponTypeExt::WaveExt[wave] = data;
+	}
+
+	pStm->Read(&Count, 4, &out);
+	for(int ii = 0; ii < Count; ++ii) {
+		RadSiteClass *rad;
+		pStm->Read(&rad, 4, &out);
+		SWIZZLE(rad);
+
+		pStm->Read(&data, 4, &out);
+		SWIZZLE(data);
+		WeaponTypeExt::RadSiteExt[rad] = data;
+	}
+
+	SWIZZLE(pData->Weapon_Source);
+	SWIZZLE(pData->Ivan_WH);
+	SWIZZLE(pData->Ivan_Image);
+}
+
+// =============================
 // container hooks
 
 DEFINE_HOOK(771EE9, WeaponTypeClass_CTOR, 5)
@@ -180,22 +262,27 @@ DEFINE_HOOK(7730F0, WeaponTypeClass_DTOR, 5)
 	return 0;
 }
 
-DEFINE_HOOK(772EA6, WeaponTypeClass_Load, 6)
+DEFINE_HOOK(772CD0, WeaponTypeClass_SaveLoad_Prefix, 7)
+DEFINE_HOOK_AGAIN(772EB0, WeaponTypeClass_SaveLoad_Prefix, 5)
 {
-	GET_STACK(WeaponTypeClass*, pItem, 0x1C);
-	GET_STACK(IStream*, pStm, 0x20);
+	GET_STACK(WeaponTypeExt::TT*, pItem, 0x4);
+	GET_STACK(IStream*, pStm, 0x8); 
 
-	WeaponTypeExt::ExtMap.Load(pItem, pStm);
+	Container<WeaponTypeExt>::SavingObject = pItem;
+	Container<WeaponTypeExt>::SavingStream = pStm;
+
 	return 0;
 }
 
+DEFINE_HOOK(772EA6, WeaponTypeClass_Load_Suffix, 6)
+{
+	WeaponTypeExt::ExtMap.LoadStatic();
+	return 0;
+}
 
 DEFINE_HOOK(772F8C, WeaponTypeClass_Save, 5)
 {
-	GET_STACK(WeaponTypeClass*, pItem, 0xC);
-	GET_STACK(IStream*, pStm, 0x10);
-
-	WeaponTypeExt::ExtMap.Save(pItem, pStm);
+	WeaponTypeExt::ExtMap.SaveStatic();
 	return 0;
 }
 

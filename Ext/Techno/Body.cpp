@@ -5,6 +5,10 @@
 
 const DWORD Extension<TechnoClass>::Canary = 0x55555555;
 Container<TechnoExt> TechnoExt::ExtMap;
+
+TechnoExt::TT *Container<TechnoExt>::SavingObject = NULL;
+IStream *Container<TechnoExt>::SavingStream = NULL;
+
 eFiringState TechnoExt::FiringStateCache = -1;
 
 void TechnoExt::SpawnSurvivors(TechnoClass *pThis, TechnoClass *pKiller, bool Select)
@@ -105,6 +109,15 @@ void TechnoExt::PointerGotInvalid(void *ptr) {
 }
 
 // =============================
+// load/save
+
+void Container<TechnoExt>::Load(TechnoClass *pThis, IStream *pStm) {
+	TechnoExt::ExtData* pData = this->LoadKey(pThis, pStm);
+
+	SWIZZLE(pData->Insignia_Image);
+}
+
+// =============================
 // container hooks
 
 DEFINE_HOOK(6F3260, TechnoClass_CTOR, 5)
@@ -123,20 +136,26 @@ DEFINE_HOOK(6F4500, TechnoClass_DTOR, 5)
 	return 0;
 }
 
-DEFINE_HOOK(70C249, TechnoClass_Load, 5)
+DEFINE_HOOK(70BF50, TechnoClass_SaveLoad_Prefix, 5)
+DEFINE_HOOK_AGAIN(70C250, TechnoClass_SaveLoad_Prefix, 8)
 {
-	GET_STACK(TechnoClass*, pItem, 0xC);
-	GET_STACK(IStream*, pStm, 0x10);
+	GET_STACK(TechnoExt::TT*, pItem, 0x4);
+	GET_STACK(IStream*, pStm, 0x8); 
 
-	TechnoExt::ExtMap.Load(pItem, pStm);
+	Container<TechnoExt>::SavingObject = pItem;
+	Container<TechnoExt>::SavingStream = pStm;
+
 	return 0;
 }
 
-DEFINE_HOOK(70C264, TechnoClass_Save, 5)
+DEFINE_HOOK(70C249, TechnoClass_Load_Suffix, 5)
 {
-	GET_STACK(TechnoClass*, pItem, 0x4);
-	GET_STACK(IStream*, pStm, 0x8);
+	TechnoExt::ExtMap.LoadStatic();
+	return 0;
+}
 
-	TechnoExt::ExtMap.Save(pItem, pStm);
+DEFINE_HOOK(70C264, TechnoClass_Save_Suffix, 5)
+{
+	TechnoExt::ExtMap.SaveStatic();
 	return 0;
 }

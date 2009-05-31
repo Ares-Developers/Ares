@@ -4,6 +4,9 @@
 const DWORD Extension<SuperWeaponTypeClass>::Canary = 0x55555555;
 Container<SWTypeExt> SWTypeExt::ExtMap;
 
+SWTypeExt::TT *Container<SWTypeExt>::SavingObject = NULL;
+IStream *Container<SWTypeExt>::SavingStream = NULL;
+
 SuperWeaponTypeClass *SWTypeExt::CurrentSWType = NULL;
 
 void SWTypeExt::ExtData::InitializeConstants(SuperWeaponTypeClass *pThis)
@@ -187,6 +190,15 @@ bool _stdcall SWTypeExt::SuperClass_Launch(SuperClass* pThis, CellStruct* pCoord
 }
 
 // =============================
+// load/save
+
+void Container<SWTypeExt>::Load(SuperWeaponTypeClass *pThis, IStream *pStm) {
+	SWTypeExt::ExtData* pData = this->LoadKey(pThis, pStm);
+
+	SWIZZLE(pData->SW_Anim);
+}
+
+// =============================
 // container hooks
 
 DEFINE_HOOK(6CE6F6, SuperWeaponTypeClass_CTOR, 5)
@@ -205,21 +217,27 @@ DEFINE_HOOK(6CEFE0, SuperWeaponTypeClass_DTOR, 8)
 	return 0;
 }
 
-DEFINE_HOOK(6CE8BE, SuperWeaponTypeClass_Load, 7)
+DEFINE_HOOK(6CE800, SuperWeaponTypeClass_SaveLoad_Prefix, A)
+DEFINE_HOOK_AGAIN(6CE8D0, SuperWeaponTypeClass_SaveLoad_Prefix, 8)
 {
-	GET_STACK(SuperWeaponTypeClass*, pItem, 0x20C);
-	GET_STACK(IStream*, pStm, 0x210);
+	GET_STACK(SWTypeExt::TT*, pItem, 0x4);
+	GET_STACK(IStream*, pStm, 0x8); 
 
-	SWTypeExt::ExtMap.Load(pItem, pStm);
+	Container<SWTypeExt>::SavingObject = pItem;
+	Container<SWTypeExt>::SavingStream = pStm;
+
 	return 0;
 }
 
-DEFINE_HOOK(6CE8EA, SuperWeaponTypeClass_Save, 3)
+DEFINE_HOOK(6CE8BE, SuperWeaponTypeClass_Load_Suffix, 7)
 {
-	GET_STACK(SuperWeaponTypeClass*, pItem, 0x4);
-	GET_STACK(IStream*, pStm, 0x8);
+	SWTypeExt::ExtMap.LoadStatic();
+	return 0;
+}
 
-	SWTypeExt::ExtMap.Save(pItem, pStm);
+DEFINE_HOOK(6CE8EA, SuperWeaponTypeClass_Save_Suffix, 3)
+{
+	SWTypeExt::ExtMap.SaveStatic();
 	return 0;
 }
 

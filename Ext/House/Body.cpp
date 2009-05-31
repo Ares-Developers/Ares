@@ -4,8 +4,9 @@
 
 const DWORD Extension<HouseClass>::Canary = 0x12345678;
 Container<HouseExt> HouseExt::ExtMap;
-HouseClass *HouseExt::SavingNow = NULL;
-IStream *HouseExt::SavingStream = NULL;
+
+HouseExt::TT *Container<HouseExt>::SavingObject = NULL;
+IStream *Container<HouseExt>::SavingStream = NULL;
 
 // =============================
 // member funcs
@@ -128,6 +129,20 @@ signed int HouseExt::PrereqValidate
 }
 
 // =============================
+// load/save
+
+void Container<HouseExt>::Load(HouseClass *pThis, IStream *pStm) {
+	HouseExt::ExtData* pData = this->LoadKey(pThis, pStm);
+
+	ULONG out;
+	SWIZZLE(pData->Factory_BuildingType);
+	SWIZZLE(pData->Factory_InfantryType);
+	SWIZZLE(pData->Factory_VehicleType);
+	SWIZZLE(pData->Factory_NavyType);
+	SWIZZLE(pData->Factory_AircraftType);
+}
+
+// =============================
 // container hooks
 
 DEFINE_HOOK(4F6532, HouseClass_CTOR, 5)
@@ -146,36 +161,26 @@ DEFINE_HOOK(4F7140, HouseClass_DTOR, 6)
 	return 0;
 }
 
-DEFINE_HOOK(504069, HouseClass_Load, 7)
+DEFINE_HOOK(503040, HouseClass_SaveLoad_Prefix, 5)
+DEFINE_HOOK_AGAIN(504080, HouseClass_SaveLoad_Prefix, 5)
 {
-	GET_STACK(HouseClass*, pItem, 0x24);
-	GET_STACK(IStream*, pStm, 0x28);
+	GET_STACK(HouseExt::TT*, pItem, 0x4);
+	GET_STACK(IStream*, pStm, 0x8); 
 
-	HouseExt::ExtMap.Load(pItem, pStm);
+	Container<HouseExt>::SavingObject = pItem;
+	Container<HouseExt>::SavingStream = pStm;
+
 	return 0;
 }
 
-DEFINE_HOOK(504080, HouseClass_Save_Prefix, 5)
+DEFINE_HOOK(504069, HouseClass_Load_Suffix, 7)
 {
-	GET_STACK(HouseClass*, pItem, 0x4);
-	GET_STACK(IStream*, pStm, 0x8);
-
-	HouseExt::SavingNow = pItem;
-	HouseExt::SavingStream = pStm;
-
+	HouseExt::ExtMap.LoadStatic();
 	return 0;
 }
 
 DEFINE_HOOK(5046DE, HouseClass_Save_Suffix, 7)
 {
-//	GET_STACK(HouseClass*, pItem, 0x14);
-//	GET_STACK(IStream*, pStm, 0x18);
-	HouseClass *pItem = HouseExt::SavingNow;
-	IStream *pStm = HouseExt::SavingStream;
-
-	HouseExt::ExtMap.Save(pItem, pStm);
-	
-	HouseExt::SavingNow = 0;
-
+	HouseExt::ExtMap.SaveStatic();
 	return 0;
 }

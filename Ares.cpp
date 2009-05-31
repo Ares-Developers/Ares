@@ -1,10 +1,23 @@
 #include "Ares.h"
-#include "Commands/Commands.h"
+#include "Commands\Commands.h"
 #include <CommandClass.h>
 //include "CallCenter.h"
 #include <StaticInits.cpp>
 
-#include "Misc/Debug.h"
+#include "Ext\Building\Body.h"
+#include "Ext\BuildingType\Body.h"
+//include "Ext\Bullet\Body.h"
+#include "Ext\BulletType\Body.h"
+#include "Ext\House\Body.h"
+#include "Ext\HouseType\Body.h"
+#include "Ext\Side\Body.h"
+#include "Ext\SWType\Body.h"
+#include "Ext\Techno\Body.h"
+#include "Ext\TechnoType\Body.h"
+#include "Ext\WarheadType\Body.h"
+#include "Ext\WeaponType\Body.h"
+
+#include "Misc\Debug.h"
 
 //Init Statics
 HANDLE  Ares::hInstance = 0;
@@ -254,6 +267,29 @@ DEFINE_HOOK(7258D0, AnnounceInvalidPointer, 6)
 
 DEFINE_HOOK(74FDC0, GetModuleVersion, 5)
 {
-	R->set_EAX((DWORD)(VERSION_STRING));
+	R->set_EAX((DWORD)(VERSION_INTERNAL));
 	return 0x74FEEF;
+}
+
+DEFINE_HOOK(74FAE0, GetModuleInternalVersion, 5)
+{
+	R->set_EAX((DWORD)(VERSION_STRMINI));
+	return 0x74FC7B;
+}
+
+DEFINE_HOOK(685659, Scenario_ClearClasses, a)
+{
+	BuildingExt::ExtMap.Empty();
+	BuildingTypeExt::ExtMap.Empty();
+//	BulletExt::ExtMap.Empty();
+	BulletTypeExt::ExtMap.Empty();
+	HouseExt::ExtMap.Empty();
+	HouseTypeExt::ExtMap.Empty();
+	SideExt::ExtMap.Empty();
+	SWTypeExt::ExtMap.Empty();
+	TechnoExt::ExtMap.Empty();
+	TechnoTypeExt::ExtMap.Empty();
+	WarheadTypeExt::ExtMap.Empty();
+	WeaponTypeExt::ExtMap.Empty();
+	return 0;
 }

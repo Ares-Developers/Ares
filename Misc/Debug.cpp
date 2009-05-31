@@ -48,6 +48,14 @@ void Debug::DumpObj(byte *data, size_t len) {
 	Debug::Log("\n");
 }
 
+void Debug::DumpStack(REGISTERS *R, size_t len) {
+	Debug::Log("Dumping %X bytes of stack\n", len);
+	for(size_t i = 0; i < len; i += 4) {
+		Debug::Log("esp+%04X = %08X\n", i, R->get_StackVar32(i));
+	}
+	Debug::Log("Done.\n");
+}
+
 //Hook at 0x4068E0 AND 4A4AC0
 DEFINE_HOOK(4068E0, Debug_Log, 1)
 DEFINE_HOOK_AGAIN(4A4AC0, Debug_Log, 1)

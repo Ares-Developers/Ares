@@ -4,6 +4,9 @@
 const DWORD Extension<SideClass>::Canary = 0x87654321;
 Container<SideExt> SideExt::ExtMap;
 
+SideExt::TT *Container<SideExt>::SavingObject = NULL;
+IStream *Container<SideExt>::SavingStream = NULL;
+
 stdext::hash_map<VoxClass*, DynamicVectorClass<SideExt::VoxFileNameStruct> > SideExt::EVAFiles;
 
 void SideExt::ExtData::Initialize(SideClass *pThis)
@@ -270,6 +273,32 @@ DWORD SideExt::MixFileYuriFiles(REGISTERS* R, DWORD dwReturnAddress1, DWORD dwRe
 }
 
 // =============================
+// load/save
+
+void Container<SideExt>::Save(SideClass *pThis, IStream *pStm) {
+	SideExt::ExtData* pData = this->SaveKey(pThis, pStm);
+
+	if(pData) {
+		ULONG out;
+		pData->BaseDefenses.Save(pStm);
+		pData->BaseDefenseCounts.Save(pStm);
+		pData->ParaDrop.Save(pStm);
+		pData->ParaDropNum.Save(pStm);
+	}
+}
+
+void Container<SideExt>::Load(SideClass *pThis, IStream *pStm) {
+	SideExt::ExtData* pData = this->LoadKey(pThis, pStm);
+
+	SWIZZLE(pData->DefaultDisguise);
+	SWIZZLE(pData->Crew);
+	pData->BaseDefenses.Load(pStm, 1);
+	pData->BaseDefenseCounts.Load(pStm, 0);
+	pData->ParaDrop.Load(pStm, 1);
+	pData->ParaDropNum.Load(pStm, 0);
+}
+
+// =============================
 // container hooks
 
 DEFINE_HOOK(6A4609, SideClass_CTOR, 7)
@@ -289,21 +318,27 @@ DEFINE_HOOK(6A4930, SideClass_DTOR, 6)
 	return 0;
 }
 
-DEFINE_HOOK(6A488B, SideClass_Load, 6)
+DEFINE_HOOK(6A4780, SideClass_SaveLoad_Prefix, 6)
+DEFINE_HOOK_AGAIN(6A48A0, SideClass_SaveLoad_Prefix, 5)
 {
-	GET_STACK(SideClass*, pItem, 0x10);
-	GET_STACK(IStream*, pStm, 0x14);
+	GET_STACK(SideExt::TT*, pItem, 0x4);
+	GET_STACK(IStream*, pStm, 0x8); 
 
-	SideExt::ExtMap.Load(pItem, pStm);
+	Container<SideExt>::SavingObject = pItem;
+	Container<SideExt>::SavingStream = pStm;
+
 	return 0;
 }
 
-DEFINE_HOOK(6A48FC, SideClass_Save, 5)
+DEFINE_HOOK(6A488B, SideClass_Load_Suffix, 6)
 {
-	GET_STACK(SideClass*, pItem, 0xC);
-	GET_STACK(IStream*, pStm, 0x10);
+	SideExt::ExtMap.LoadStatic();
+	return 0;
+}
 
-	SideExt::ExtMap.Save(pItem, pStm);
+DEFINE_HOOK(6A48FC, SideClass_Save_Suffix, 5)
+{
+	SideExt::ExtMap.SaveStatic();
 	return 0;
 }
 

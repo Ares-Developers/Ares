@@ -7,6 +7,9 @@
 const DWORD Extension<WarheadTypeClass>::Canary = 0x22222222;
 Container<WarheadTypeExt> WarheadTypeExt::ExtMap;
 
+WarheadTypeExt::TT *Container<WarheadTypeExt>::SavingObject = NULL;
+IStream *Container<WarheadTypeExt>::SavingStream = NULL;
+
 hash_ionExt WarheadTypeExt::IonExt;
 
 WarheadTypeClass * WarheadTypeExt::Temporal_WH = NULL;
@@ -96,6 +99,33 @@ void WarheadTypeExt::PointerGotInvalid(void *ptr) {
 }
 
 // =============================
+// load/save
+void Container<WarheadTypeExt>::Save(WarheadTypeClass *pThis, IStream *pStm) {
+	WarheadTypeExt::ExtData* pData = this->SaveKey(pThis, pStm);
+
+	if(pData) {
+		ULONG out;
+		pData->Verses.Save(pStm);
+
+		pStm->Write(&IonBlastClass::Array->Count, 4, &out);
+		for(int ii = 0; ii < IonBlastClass::Array->Count; ++ii) {
+			IonBlastClass *ptr = IonBlastClass::Array->Items[ii];
+			pStm->Write(ptr, 4, &out);
+			pStm->Write(WarheadTypeExt::IonExt[ptr], 4, &out);
+		}
+
+	}
+}
+
+void Container<WarheadTypeExt>::Load(WarheadTypeClass *pThis, IStream *pStm) {
+	WarheadTypeExt::ExtData* pData = this->LoadKey(pThis, pStm);
+
+	pData->Verses.Load(pStm, 0);
+	
+	SWIZZLE(pData->Temporal_WarpAway);
+}
+
+// =============================
 // container hooks
 
 DEFINE_HOOK(75D1A9, WarheadTypeClass_CTOR, 7)
@@ -114,21 +144,27 @@ DEFINE_HOOK(75E510, WarheadTypeClass_DTOR, 6)
 	return 0;
 }
 
-DEFINE_HOOK(75E2AE, WarheadTypeClass_Load, 7)
+DEFINE_HOOK(75E0C0, WarheadTypeClass_SaveLoad_Prefix, 8)
+DEFINE_HOOK_AGAIN(75E2C0, WarheadTypeClass_SaveLoad_Prefix, 5)
 {
-	GET_STACK(WarheadTypeClass*, pItem, 0x14);
-	GET_STACK(IStream*, pStm, 0x18);
+	GET_STACK(WarheadTypeExt::TT*, pItem, 0x4);
+	GET_STACK(IStream*, pStm, 0x8); 
 
-	WarheadTypeExt::ExtMap.Load(pItem, pStm);
+	Container<WarheadTypeExt>::SavingObject = pItem;
+	Container<WarheadTypeExt>::SavingStream = pStm;
+
 	return 0;
 }
 
-DEFINE_HOOK(75E39C, WarheadTypeClass_Save, 5)
+DEFINE_HOOK(75E2AE, WarheadTypeClass_Load_Suffix, 7)
 {
-	GET_STACK(WarheadTypeClass*, pItem, 0xC);
-	GET_STACK(IStream*, pStm, 0x10);
+	WarheadTypeExt::ExtMap.LoadStatic();
+	return 0;
+}
 
-	WarheadTypeExt::ExtMap.Save(pItem, pStm);
+DEFINE_HOOK(75E39C, WarheadTypeClass_Save_Suffix, 5)
+{
+	WarheadTypeExt::ExtMap.SaveStatic();
 	return 0;
 }
 

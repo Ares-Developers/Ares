@@ -6,6 +6,9 @@
 const DWORD Extension<HouseTypeClass>::Canary = 0xAFFEAFFE;
 Container<HouseTypeExt> HouseTypeExt::ExtMap;
 
+HouseTypeExt::TT *Container<HouseTypeExt>::SavingObject = NULL;
+IStream *Container<HouseTypeExt>::SavingStream = NULL;
+
 void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis)
 {
 	char* pID = pThis->get_ID();
@@ -296,6 +299,23 @@ int HouseTypeExt::PickRandomCountry()
 }
 
 // =============================
+// load/save
+
+void Container<HouseTypeExt>::Save(HouseTypeClass *pThis, IStream *pStm) {
+	HouseTypeExt::ExtData* pData = this->SaveKey(pThis, pStm);
+
+	if(pData) {
+		pData->Powerplants.Save(pStm);
+	}
+}
+
+void Container<HouseTypeExt>::Load(HouseTypeClass *pThis, IStream *pStm) {
+	HouseTypeExt::ExtData* pData = this->LoadKey(pThis, pStm);
+
+	pData->Powerplants.Load(pStm, 1);
+}
+
+// =============================
 // container hooks
 
 DEFINE_HOOK(511635, HouseTypeClass_CTOR_1, 5)
@@ -322,21 +342,27 @@ DEFINE_HOOK(512760, HouseTypeClass_DTOR, 6)
 	return 0;
 }
 
-DEFINE_HOOK(51246D, HouseTypeClass_Load, 5)
+DEFINE_HOOK(512290, HouseTypeClass_SaveLoad_Prefix, 5)
+DEFINE_HOOK_AGAIN(512480, HouseTypeClass_SaveLoad_Prefix, 5)
 {
-	GET_STACK(HouseTypeClass*, pItem, 0x18);
-	GET_STACK(IStream*, pStm, 0x1C);
+	GET_STACK(HouseTypeExt::TT*, pItem, 0x4);
+	GET_STACK(IStream*, pStm, 0x8); 
 
-	HouseTypeExt::ExtMap.Load(pItem, pStm);
+	Container<HouseTypeExt>::SavingObject = pItem;
+	Container<HouseTypeExt>::SavingStream = pStm;
+
 	return 0;
 }
 
-DEFINE_HOOK(51255C, HouseTypeClass_Save, 5)
+DEFINE_HOOK(51246D, HouseTypeClass_Load_Suffix, 5)
 {
-	GET_STACK(HouseTypeClass*, pItem, 0xC);
-	GET_STACK(IStream*, pStm, 0x10);
+	HouseTypeExt::ExtMap.LoadStatic();
+	return 0;
+}
 
-	HouseTypeExt::ExtMap.Save(pItem, pStm);
+DEFINE_HOOK(51255C, HouseTypeClass_Save_Suffix, 5)
+{
+	HouseTypeExt::ExtMap.SaveStatic();
 	return 0;
 }
 

@@ -3,6 +3,7 @@
 
 #include <Helpers\Macro.h>
 #include <BombClass.h>
+#include <BombListClass.h>
 #include <BulletClass.h>
 #include <CCINIClass.h>
 #include <Drawing.h>

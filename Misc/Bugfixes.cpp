@@ -440,3 +440,38 @@ DEFINE_HOOK(48DED0, ShakeScreen, 1)
 	// shake the screen 
 	return 0;
 }
+
+DEFINE_HOOK(6CF3CF, sub_6CF350, 8)
+{
+	GET(DWORD, A, EAX);
+	GET(DWORD *, B, ECX);
+
+	Debug::Log("Swizzle comparison failed - %X != %X\n", A, *B);
+
+	Debug::DumpObj((byte *)&SwizzleManagerClass::Instance, sizeof(SwizzleManagerClass));
+
+	Debug::DumpStack(R, 0x40);
+
+	return 0;
+}
+
+DEFINE_HOOK(6CF2C0, SwizzleManagerClass_Here_I_Am, 5)
+{
+//	Debug::Log("Swizzle::Here_I_Am(%X, %X)\n", R->get_StackVar32(0x8), R->get_StackVar32(0xC));
+//	Debug::DumpStack(R, 0x40);
+	return 0;
+}
+
+DEFINE_HOOK(6CF240, SwizzleManagerClass_Swizzle, 6)
+{
+//	Debug::Log("Swizzle::Swizzle(%X)\n", R->get_StackVar32(0x8));
+//	Debug::DumpStack(R, 0x40);
+	return 0;
+}
+
+DEFINE_HOOK(6CF350, SwizzleManagerClass_Convert, 7)
+{
+//	Debug::Log("Swizzle::Convert()\n");
+//	Debug::DumpStack(R, 0x100);
+	return 0;
+}
