@@ -1,3 +1,4 @@
+#include "..\Ares.h"
 #include "Includes.h"
 
 int Includes::LastReadIndex = -1;
@@ -39,11 +40,12 @@ DEFINE_HOOK(474314, CCINIClass_ReadCCFile2, 6)
 			}
 
 			if(canLoad) {
-				CCFileClass *xFile = new CCFileClass(buffer);
+				CCFileClass *xFile;
+				GAME_ALLOC(CCFileClass, xFile, buffer);
 				if(xFile->Exists(NULL)) {
 					xINI->ReadCCFile(xFile);
 				}
-				delete xFile;
+				GAME_DEALLOC(xFile);
 			}
 		}
 	}
@@ -58,7 +60,7 @@ DEFINE_HOOK(474314, CCINIClass_ReadCCFile2, 6)
 			Includes::LoadedINIs.RemoveItem(j);
 		}
 		for(int j = Includes::LoadedINIFiles.Count - 1; j > 0; --j) {
-			delete Includes::LoadedINIFiles[j];
+			free(Includes::LoadedINIFiles[j]);
 			Includes::LoadedINIFiles.RemoveItem(j);
 		}
 		return 0;

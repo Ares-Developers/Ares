@@ -1,6 +1,7 @@
 //Allows WAV files being placed in Mixes
 
 #include <CCFileClass.h>
+#include "..\Ares.h"
 
 //Hook at 0x4064A0
 EXPORT Ares_Audio_AddSample(REGISTERS* R)	//Complete rewrite of VocClass::AddSample
@@ -77,7 +78,8 @@ EXPORT Ares_Audio_LoadWAV(REGISTERS* R)	//50% rewrite of Audio::LoadWAV
 		strncpy(filename, SampleName, 0x100);
 		strcat(filename, ".wav");
 
-		CCFileClass* pFile = new CCFileClass(filename);
+		CCFileClass* pFile;
+		GAME_ALLOC(CCFileClass, pFile, filename);
 		pAudioIndex[0x110 >> 2] = (DWORD)pFile;	//ExternalFile = pFile
 
 		if(pFile->Exists(NULL))
@@ -106,7 +108,7 @@ EXPORT Ares_Audio_LoadWAV(REGISTERS* R)	//50% rewrite of Audio::LoadWAV
 			}
 		}
 
-		delete pFile;
+		GAME_DEALLOC(pFile);
 		pAudioIndex[0x110 >> 2] = NULL;	//ExternalFile = NULL
 
 		R->set_EAX(0);
@@ -139,3 +141,4 @@ EXPORT Ares_Audio_GetSampleInfo(REGISTERS* R)
 	}
 	return 0;
 }
+

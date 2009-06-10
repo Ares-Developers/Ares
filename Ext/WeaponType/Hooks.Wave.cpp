@@ -9,18 +9,19 @@ DEFINE_HOOK(6FF5F5, TechnoClass_Fire, 6)
 	GET(TechnoClass *, Owner, ESI);
 	GET(TechnoClass *, Target, EDI);
 
-	GET_STACK(byte, idxWeapon, 0xC);
-
-	TechnoExt::ExtMap.Find(Owner)->idxSlot_Wave = idxWeapon;
-
 	WeaponTypeExt::ExtData *pData = WeaponTypeExt::ExtMap.Find(Source);
 
-	RET_UNLESS(pData->Wave_IsLaser || pData->Wave_IsBigLaser);
+	RET_UNLESS(Source->IsMagBeam || Source->IsSonic || pData->Wave_IsLaser || pData->Wave_IsBigLaser);
+
+	GET_BASE(byte, idxWeapon, 0xC);
+
+	TechnoExt::ExtMap.Find(Owner)->idxSlot_Wave = idxWeapon;
 
 	CoordStruct *xyzSrc = (CoordStruct *)R->lea_StackVar(0x44);
 	CoordStruct *xyzTgt = (CoordStruct *)R->lea_StackVar(0x88);
 
-	WaveClass *Wave = new WaveClass(xyzSrc, xyzTgt, Owner, pData->Wave_IsBigLaser ? 2 : 1, Target);
+	WaveClass *Wave;
+	GAME_ALLOC(WaveClass, Wave, xyzSrc, xyzTgt, Owner, pData->Wave_IsBigLaser ? 2 : 1, Target);
 	WeaponTypeExt::WaveExt[Wave] = pData;
 	Owner->set_Wave(Wave);
 	return 0x6FF650;
@@ -258,4 +259,14 @@ DEFINE_HOOK(75F38F, WaveClass_DamageCell, 6)
 	R->set_EDI(R->get_EAX());
 	R->set_EBX((DWORD)pData->Weapon_Source);
 	return 0x75F39D;
+}
+
+DEFINE_HOOK(7601C7, WaveClass_Draw_Purple, 8)
+{
+	GET(int, Q, EDX);
+	if(Q > 0x15F90) {
+		Q = 0x15F90;
+	}
+	R->set_EDX(Q);
+	return 0;
 }

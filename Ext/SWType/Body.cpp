@@ -177,7 +177,8 @@ bool _stdcall SWTypeExt::SuperClass_Launch(SuperClass* pThis, CellStruct* pCoord
 
 	if(pData->SW_Anim) {
 		coords.Z += pData->SW_AnimHeight;
-		new AnimClass(pData->SW_Anim, &coords);
+		AnimClass *placeholder;
+		GAME_ALLOC(AnimClass, placeholder, pData->SW_Anim, &coords);
 	}
 
 	if(pData->SW_Sound != -1) {

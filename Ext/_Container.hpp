@@ -1,6 +1,8 @@
 #ifndef CONTAINER_TEMPLATE_MAGIC_H
 #define CONTAINER_TEMPLATE_MAGIC_H
 
+#include <typeinfo>
+
 #include <hash_map>
 #include <CCINIClass.h>
 #include <SwizzleManagerClass.h>

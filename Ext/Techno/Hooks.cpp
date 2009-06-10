@@ -80,14 +80,14 @@ DEFINE_HOOK(6F407D, TechnoClass_Init_1, 6)
 		}
 		WarheadTypeClass *WH = W->Warhead;
 		if(WH->MindControl && Capturer == NULL) {
-			Capturer = new CaptureManagerClass(T, W->Damage, W->InfiniteMindControl);
+			GAME_ALLOC(CaptureManagerClass, Capturer, T, W->Damage, W->InfiniteMindControl);
 		}
 		if(WH->Temporal && Temporal == NULL) {
-			Temporal = new TemporalClass(T);
+			GAME_ALLOC(TemporalClass, Temporal, T);
 			pData->idxSlot_Warp = (BYTE)i;
 		}
 		if(WH->Parasite && IsFoot && Parasite == NULL) {
-			Parasite = new ParasiteClass(F);
+			GAME_ALLOC(ParasiteClass, Parasite, F);
 		}
 	}
 

@@ -30,19 +30,23 @@ void BuildingExt::ExtendFirewall(BuildingClass *pThis, CellStruct Center, HouseC
 			CurrentPos.X += short(curRange * offset.X);
 			CurrentPos.Y += short(curRange * offset.Y);
 
-			if(MapClass::Global()->CellExists(&CurrentPos)) {
-				CellClass *cell = MapClass::Global()->GetCellAt(&CurrentPos);
-				if(BuildingClass *OtherEnd = cell->GetBuilding()) {
-					if(OtherEnd->Owner != Owner || OtherEnd->Type != pThis->Type) {
-						fillRange = 0; // can't link
-					} else {
-						fillRange = curRange - 1;
-					}
-					break;
-				}
-			} else {
+			if(!MapClass::Global()->CellExists(&CurrentPos)) {
 				break;
 			}
+
+			CellClass *cell = MapClass::Global()->GetCellAt(&CurrentPos);
+
+			if(BuildingClass *OtherEnd = cell->GetBuilding()) {
+				if(OtherEnd->Owner == Owner && OtherEnd->Type == pThis->Type) {
+					fillRange = curRange - 1;
+					break;
+				}
+			}
+
+			if(!cell->CanThisExistHere(pThis->Type->SpeedType, pThis->Type, Owner)) {
+				break;
+			}
+
 		}
 
 		++Unsorted::SomeMutex;
@@ -54,7 +58,7 @@ void BuildingExt::ExtendFirewall(BuildingClass *pThis, CellStruct Center, HouseC
 			if(CellClass *cell = MapClass::Global()->GetCellAt(&CurrentPos)) {
 				if(BuildingClass *dummy = reinterpret_cast<BuildingClass *>(pThis->Type->CreateObject(Owner))) {
 					CellClass::Cell2Coord(&CurrentPos, &XYZ);
-					if(!cell->CanThisExistHere(dummy->Type->SpeedType, dummy->Type, Owner) || !dummy->Put(&XYZ, 0)) {
+					if(!dummy->Put(&XYZ, 0)) {
 						delete dummy;
 					}
 				}

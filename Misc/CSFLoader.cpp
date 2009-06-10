@@ -1,6 +1,8 @@
 #include "CSFLoader.h"
 #include <cstdio>
 
+#include "..\Ares.h"
+
 int CSFLoader::CSFCount = 0;
 int CSFLoader::NextValueIndex = 0;
 
@@ -10,7 +12,8 @@ void CSFLoader::LoadAdditionalCSF(const char *pFileName)
 	//To do that, use StringTable::LoadFile.
 	if(StringTable::is_Loaded() && pFileName && *pFileName)
 	{
-		CCFileClass* pFile = new CCFileClass(pFileName);
+		CCFileClass* pFile;
+		GAME_ALLOC(CCFileClass, pFile, pFileName);
 		if(pFile->Exists(NULL) && pFile->Open(FILE_READ_ACCESS))
 		{
 			CSFHeader header;
@@ -32,7 +35,7 @@ void CSFLoader::LoadAdditionalCSF(const char *pFileName)
 				}
 			}
 		}
-		delete pFile;
+		GAME_DEALLOC(pFile);
 	}
 };
 
@@ -140,8 +143,7 @@ DEFINE_HOOK(734A97, CSF_SetIndex, 6)
 	return 0x734AA1;
 }
 
-/*
-A_FINE_HOOK(6BD886, CSF_LoadExtraFiles, 5)
+DEFINE_HOOK(6BD886, CSF_LoadExtraFiles, 5)
 {
 	char fname[32];
 	for(int idx = 0; idx < 100; ++idx) {
@@ -151,4 +153,4 @@ A_FINE_HOOK(6BD886, CSF_LoadExtraFiles, 5)
 	R->set_AL(1);
 	return 0x6BD88B;
 }
-*/
+

@@ -39,15 +39,41 @@ eMouseEventFlags __stdcall Ares::MouseEvent(Point2D* pClient,eMouseEventFlags Ev
 
 void __stdcall Ares::RegisterCommands()
 {
-	CommandClass::Array->AddItem(new AIControlCommandClass());
-	CommandClass::Array->AddItem(new MapSnapshotCommandClass());
-	CommandClass::Array->AddItem(new TestSomethingCommandClass());
-	CommandClass::Array->AddItem(new FrameByFrameCommandClass());
-	CommandClass::Array->AddItem(new FrameStepCommandClass());
-	CommandClass::Array->AddItem(new FirestormToggleCommandClass());
-	CommandClass::Array->AddItem(new DumperTypesCommandClass());
-	CommandClass::Array->AddItem(new DebuggingCommandClass());
-	CommandClass::Array->AddItem(new LoggingCommandClass());
+	AIControlCommandClass *AICommand;
+	GAME_ALLOC(AIControlCommandClass, AICommand);
+	CommandClass::Array->AddItem(AICommand);
+
+	MapSnapshotCommandClass *MapSnapshotCommand;
+	GAME_ALLOC(MapSnapshotCommandClass, MapSnapshotCommand);
+	CommandClass::Array->AddItem(MapSnapshotCommand);
+
+	TestSomethingCommandClass *TestSomethingCommand;
+	GAME_ALLOC(TestSomethingCommandClass, TestSomethingCommand);
+	CommandClass::Array->AddItem(TestSomethingCommand);
+
+	FrameByFrameCommandClass *FrameByFrameCommand;
+	GAME_ALLOC(FrameByFrameCommandClass, FrameByFrameCommand);
+	CommandClass::Array->AddItem(FrameByFrameCommand);
+
+	FrameStepCommandClass *FrameStepCommand;
+	GAME_ALLOC(FrameStepCommandClass, FrameStepCommand);
+	CommandClass::Array->AddItem(FrameStepCommand);
+
+	FirestormToggleCommandClass *FirestormToggleCommand;
+	GAME_ALLOC(FirestormToggleCommandClass, FirestormToggleCommand);
+	CommandClass::Array->AddItem(FirestormToggleCommand);
+
+	DumperTypesCommandClass *DumperTypesCommand;
+	GAME_ALLOC(DumperTypesCommandClass, DumperTypesCommand);
+	CommandClass::Array->AddItem(DumperTypesCommand);
+
+	DebuggingCommandClass *DebuggingCommand;
+	GAME_ALLOC(DebuggingCommandClass, DebuggingCommand);
+	CommandClass::Array->AddItem(DebuggingCommand);
+
+	LoggingCommandClass *LoggingCommand;
+	GAME_ALLOC(LoggingCommandClass, LoggingCommand);
+	CommandClass::Array->AddItem(LoggingCommand);
 }
 
 void __stdcall Ares::CmdLineParse(char** ppArgs,int nNumArgs)
@@ -160,7 +186,7 @@ void Ares::SendPDPlane(HouseClass* pOwner, CellClass* pTarget, AircraftTypeClass
 			pPlane->NextMission();
 		} else {
 			if(pPlane) {
-				delete pPlane;
+				GAME_DEALLOC(pPlane);
 			}
 		}
 	}
@@ -248,7 +274,9 @@ DEFINE_HOOK(533058, CommandClassCallback_Register, 7)
 {
 	Ares::RegisterCommands();
 
-	R->set_EAX((DWORD)(new DWORD(1)));	//Allocate SetUnitTabCommandClass
+	DWORD *D;
+	GAME_ALLOC(DWORD, D);
+	R->set_EAX((DWORD)D);	//Allocate SetUnitTabCommandClass
 	return 0x533062;
 }
 
@@ -292,4 +320,20 @@ DEFINE_HOOK(685659, Scenario_ClearClasses, a)
 	WarheadTypeExt::ExtMap.Empty();
 	WeaponTypeExt::ExtMap.Empty();
 	return 0;
+}
+
+DEFINE_HOOK(7C8E17, operator_new, 6)
+{
+	GET_STACK(size_t, sz, 0x4);
+	void * p = operator new(sz);
+	R->set_EAX((DWORD)p);
+	return 0x7C8E24;
+}
+
+
+DEFINE_HOOK(7C8B3D, operator_delete, 9)
+{
+	GET_STACK(void *, p, 0x4);
+	operator delete(p);
+	return 0x7C8B47;
 }

@@ -14,22 +14,24 @@ class HouseExt
 {
 	public:
 	typedef HouseClass TT;
-	
+
 	class ExtData : public Extension<TT> 
 	{
 		public:
 			bool IonSensitive;
 			bool FirewallActive;
-			
+			int FirewallRecalc;
+
 			BuildingClass *Factory_BuildingType;
 			BuildingClass *Factory_InfantryType;
 			BuildingClass *Factory_VehicleType;
 			BuildingClass *Factory_NavyType;
 			BuildingClass *Factory_AircraftType;
-			
+
 		ExtData(const DWORD Canary = 0) : 
 			IonSensitive(0),
 			FirewallActive(0),
+			FirewallRecalc(0),
 			Factory_BuildingType(NULL),
 			Factory_InfantryType(NULL),
 			Factory_VehicleType(NULL),
@@ -56,6 +58,8 @@ class HouseExt
 
 	static signed int PrereqValidate
 		(HouseClass *pHouse, TechnoTypeClass *pItem, bool BuildLimitOnly, bool IncludeQueued);
+
+	static void Firestorm_SetState(HouseClass *pHouse, bool Active);
 
 };
 

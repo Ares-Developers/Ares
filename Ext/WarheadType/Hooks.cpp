@@ -21,7 +21,8 @@ DEFINE_HOOK(46920B, BulletClass_Fire, 6)
 	CellStruct cellCoords = *MapClass::Global()->GetCellAt(&coords)->get_MapCoords();
 
 	if(pData->Ripple_Radius) {
-		IonBlastClass *IB = new IonBlastClass(coords);
+		IonBlastClass *IB;
+		GAME_ALLOC(IonBlastClass, IB, coords);
 		WarheadTypeExt::IonExt[IB] = pData;
 	}
 
@@ -46,7 +47,8 @@ DEFINE_HOOK(46920B, BulletClass_Fire, 6)
 		TechnoTypeClass *pType = pTarget->GetTechnoType();
 
 		if(pData->EMP_Duration) {
-			new EMPulseClass(*(Bullet->Target->GetCell()->get_MapCoords()), int(pThis->CellSpread), pData->EMP_Duration, 0);
+			EMPulseClass *placeholder;
+			GAME_ALLOC(EMPulseClass, placeholder, *(Bullet->Target->GetCell()->get_MapCoords()), int(pThis->CellSpread), pData->EMP_Duration, 0);
 		}
 
 		if(pData->MindControl_Permanent) {
@@ -62,7 +64,8 @@ DEFINE_HOOK(46920B, BulletClass_Fire, 6)
 	
 			coords.Z += pType->MindControlRingOffset;
 	
-			AnimClass *MCAnim = new AnimClass(RulesClass::Global()->PermaControlledAnimationType, &coords);
+			AnimClass *MCAnim;
+			GAME_ALLOC(AnimClass, MCAnim, RulesClass::Global()->PermaControlledAnimationType, &coords);
 			AnimClass *oldMC = pTarget->MindControlRingAnim;
 			if(oldMC) {
 				oldMC->UnInit();

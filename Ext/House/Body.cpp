@@ -1,4 +1,5 @@
 #include "Body.h"
+#include "..\BuildingType\Body.h"
 #include "..\TechnoType\Body.h"
 #include "..\..\Enum\Prerequisites.h"
 
@@ -127,6 +128,38 @@ signed int HouseExt::PrereqValidate
 
 	return HouseExt::CheckBuildLimit(pHouse, pItem, IncludeQueued);
 }
+
+void HouseExt::Firestorm_SetState(HouseClass *pHouse, bool Active) {
+	HouseExt::ExtData* pData = HouseExt::ExtMap.Find(pHouse);
+
+	DynamicVectorClass<CellStruct> AffectedCoords;
+
+//	Debug::Log("Setting Firestorm State to (%d)\n", Active);
+	pData->FirewallActive = Active;
+
+	for(int i = 0; i < BuildingClass::Array->Count; ++i) {
+		BuildingClass *B = BuildingClass::Array->Items[i];
+		if(B->Owner == pHouse) {
+			BuildingTypeExt::ExtData *pBuildTypeData = BuildingTypeExt::ExtMap.Find(B->Type);
+			if(pBuildTypeData->Firewall_Is) {
+				CellStruct temp;
+				B->GetMapCoords(&temp);
+				AffectedCoords.AddItem(temp);
+			}
+		}
+	}
+
+//	Debug::Log("Collected Affected Coords list:\n");
+//	for(int i = 0; i < AffectedCoords.Count; ++i) {
+//		Debug::Log("\t%dx%d\n", AffectedCoords[i].X, AffectedCoords[i].Y);
+//	}
+//	Debug::Log("End of list\n");
+
+	MapClass::Global()->Update_Pathfinding_1();
+	MapClass::Global()->Update_Pathfinding_2(&AffectedCoords);
+
+//	Debug::Log("Finished with Affected Coords list:\n");
+};
 
 // =============================
 // load/save

@@ -65,7 +65,8 @@ DEFINE_HOOK(4DA53E, FootClass_Update, 6)
 			if(AnimTypeClass *FSAnim = AnimTypeClass::Find(F->IsInAir() ? "FSAIR" : "FSGRND")) {
 				CoordStruct XYZ;
 				F->GetCoords(&XYZ);
-				new AnimClass(FSAnim, &XYZ);
+				AnimClass * placeholder;
+				GAME_ALLOC(AnimClass, placeholder, FSAnim, &XYZ);
 			}
 		}
 	}
@@ -73,11 +74,21 @@ DEFINE_HOOK(4DA53E, FootClass_Update, 6)
 	return 0;
 }
 
+DEFINE_HOOK(4F8440, HouseClass_Update_FSW_Recalc, 5)
+{
+	GET(HouseClass *, H, ECX);
+	HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(H);
+	if(pHouseData->FirewallRecalc) {
+		--pHouseData->FirewallRecalc;
+		HouseExt::Firestorm_SetState(H, pHouseData->FirewallActive);
+	}
+	return 0;
+}
+
 DEFINE_HOOK(4F8C97, HouseClass_Update_FSW_LowPower, 6)
 {
 	GET(HouseClass *, H, ESI);
-	HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(H);
-	pHouseData->FirewallActive = 0;
+	HouseExt::Firestorm_SetState(H, 0);
 	return 0;
 }
 

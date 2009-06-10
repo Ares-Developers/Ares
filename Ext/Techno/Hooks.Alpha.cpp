@@ -80,7 +80,8 @@ DEFINE_HOOK(5F3E70, ObjectClass_Update, 5)
 	Point2D off = { ScreenArea->X - (Alpha->Width / 2), ScreenArea->Y - (Alpha->Height / 2) };
 	xy += off;
 	++Unsorted::SomeMutex;
-	new AlphaShapeClass(Source, xy.X, xy.Y);
+	AlphaShapeClass *placeholder;
+	GAME_ALLOC(AlphaShapeClass, placeholder, Source, xy.X, xy.Y);
 	--Unsorted::SomeMutex;
 	int Margin = 40;
 	RectangleStruct Dirty = 

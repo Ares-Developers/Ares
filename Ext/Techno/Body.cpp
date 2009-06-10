@@ -27,7 +27,7 @@ void TechnoExt::SpawnSurvivors(TechnoClass *pThis, TechnoClass *pKiller, bool Se
 	if(chance && Randomizer::Global()->RandomRanged(1, 100) <= chance) {
 		InfantryTypeClass *PilotType = pData->Survivors_Pilots[pOwner->SideIndex];
 		if(PilotType) {
-			InfantryClass *Pilot = new InfantryClass(PilotType, pOwner);
+			InfantryClass *Pilot = reinterpret_cast<InfantryClass *>(PilotType->CreateObject(pOwner));
 
 			Pilot->set_Health(PilotType->Strength / 2);
 			Pilot->get_Veterancy()->Veterancy = pThis->get_Veterancy()->Veterancy;
@@ -45,7 +45,7 @@ void TechnoExt::SpawnSurvivors(TechnoClass *pThis, TechnoClass *pKiller, bool Se
 
 			if(!TechnoExt::ParadropSurvivor(Pilot, &destLoc, Select)) {
 				Pilot->RegisterDestruction(pKiller); //(TechnoClass *)R->get_StackVar32(0x54));
-				delete Pilot;
+				GAME_DEALLOC(Pilot);
 			}
 		}
 	}

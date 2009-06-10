@@ -29,9 +29,11 @@ public:
 		HouseClass *H = HouseClass::Player();
 		HouseExt::ExtData *pData = HouseExt::ExtMap.Find(H); 
 		bool FS = pData->FirewallActive;
-		pData->FirewallActive = !FS;
+		FS = !FS;
+		HouseExt::Firestorm_SetState(H, FS);
+		pData->FirewallRecalc = 2;
 		wchar_t message[0x40];
-		wsprintfW(message, L"~Firestorm state inverted, now %d\n", !FS);
+		wsprintfW(message, L"~Firestorm state inverted, now %d\n", FS);
 		MessageListClass::PrintMessage(message);
 	}
 
