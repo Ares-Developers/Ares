@@ -17,6 +17,8 @@ DEFINE_HOOK(6FF5F5, TechnoClass_Fire, 6)
 
 	TechnoExt::ExtMap.Find(Owner)->idxSlot_Wave = idxWeapon;
 
+	RET_UNLESS(pData->Wave_IsLaser || pData->Wave_IsBigLaser);
+
 	CoordStruct *xyzSrc = (CoordStruct *)R->lea_StackVar(0x44);
 	CoordStruct *xyzTgt = (CoordStruct *)R->lea_StackVar(0x88);
 
