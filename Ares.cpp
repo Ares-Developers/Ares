@@ -4,6 +4,8 @@
 //include "CallCenter.h"
 #include <StaticInits.cpp>
 
+#include <new>
+
 #include "Ext\Building\Body.h"
 #include "Ext\BuildingType\Body.h"
 //include "Ext\Bullet\Body.h"
@@ -30,6 +32,8 @@ const char Ares::readDelims[4] = ",";
 const char Ares::readDefval[4] = "";
 
 int FrameStepCommandClass::ArmageddonState = 0;
+
+int Ares::AllocatedMemory = 0;
 
 //Implementations
 eMouseEventFlags __stdcall Ares::MouseEvent(Point2D* pClient,eMouseEventFlags EventFlags)
@@ -319,13 +323,28 @@ DEFINE_HOOK(685659, Scenario_ClearClasses, a)
 	TechnoTypeExt::ExtMap.Empty();
 	WarheadTypeExt::ExtMap.Empty();
 	WeaponTypeExt::ExtMap.Empty();
+
+	Ares::AllocatedMemory = 0;
 	return 0;
 }
 
 DEFINE_HOOK(7C8E17, operator_new, 6)
 {
+	static int tick = 0;
 	GET_STACK(size_t, sz, 0x4);
-	void * p = operator new(sz);
+
+	void * p = operator new(sz, std::nothrow);
+	if(!p) {
+		Debug::Log("Boom! 0x%X bytes allocated, failed to alloc 0x%X more\n", Ares::AllocatedMemory, sz);
+		exit(1);
+	}
+
+	++tick;
+	Ares::AllocatedMemory += sz;
+	if((tick % 100) == 0) {
+		Debug::Log("Total memory consumed atm: 0x%X bytes\n", Ares::AllocatedMemory);
+	}
+
 	R->set_EAX((DWORD)p);
 	return 0x7C8E24;
 }

@@ -31,6 +31,8 @@ public:
 	static const char readDelims[4];
 	static const char readDefval[4];
 
+	static int AllocatedMemory;
+
 	//Callbacks
 	static eMouseEventFlags __stdcall MouseEvent(Point2D*,eMouseEventFlags);
 	static void __stdcall CmdLineParse(char**,int);

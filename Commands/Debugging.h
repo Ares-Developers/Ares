@@ -58,6 +58,8 @@ public:
 		Debug::Log("All Debug data dumped\n\n");
 */
 
+		Debug::Log("Total memory consumed: 0x%X bytes\n", Ares::AllocatedMemory);
+
 		MessageListClass::PrintMessage(L"Debug data dumped");
 	}
 

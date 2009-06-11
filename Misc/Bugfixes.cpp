@@ -397,7 +397,6 @@ DEFINE_HOOK(5185C8, InfantryClass_ReceiveDamage_InfDeath, 6)
 	GET(DWORD, InfDeath, EDI); /// JA is for unsigned, goddamnit
 	--InfDeath;
 	R->set_EDI(InfDeath);
-	Debug::Log("Infantry %s is meeting death anim %d\n", I->get_ID(), InfDeath);
 
 	bool Handled = false;
 
