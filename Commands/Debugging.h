@@ -58,9 +58,13 @@ public:
 		Debug::Log("All Debug data dumped\n\n");
 */
 
-		Debug::Log("Total memory consumed: 0x%X bytes\n", Ares::AllocatedMemory);
+		Debug::Log("Total memory consumed: 0x%X bytes\n", MemMap::Total);
 
-		MessageListClass::PrintMessage(L"Debug data dumped");
+		wchar_t msg[0x40] = L"\0";
+		wsprintfW(msg, L"Total memory consumed: 0x%X bytes\n", MemMap::Total);
+		MessageListClass::PrintMessage(msg);
+
+//		MessageListClass::PrintMessage(L"Debug data dumped");
 	}
 
 	//Constructor

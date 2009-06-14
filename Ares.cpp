@@ -35,6 +35,9 @@ int FrameStepCommandClass::ArmageddonState = 0;
 
 int Ares::AllocatedMemory = 0;
 
+stdext::hash_map <DWORD, size_t> MemMap::AllocMap;
+size_t MemMap::Total;
+
 //Implementations
 eMouseEventFlags __stdcall Ares::MouseEvent(Point2D* pClient,eMouseEventFlags EventFlags)
 {
@@ -335,15 +338,23 @@ DEFINE_HOOK(7C8E17, operator_new, 6)
 
 	void * p = operator new(sz, std::nothrow);
 	if(!p) {
-		Debug::Log("Boom! 0x%X bytes allocated, failed to alloc 0x%X more\n", Ares::AllocatedMemory, sz);
+		Debug::Log("Boom! 0x%X bytes allocated, failed to alloc 0x%X more\n", MemMap::Total, sz);
 		exit(1);
 	}
 
 	++tick;
-	Ares::AllocatedMemory += sz;
-	if((tick % 100) == 0) {
-		Debug::Log("Total memory consumed atm: 0x%X bytes\n", Ares::AllocatedMemory);
+
+	if((tick % 1) == 0) {
+		Debug::Log("@ 0x%X: 0x%X + 0x%X bytes\n", R->get_StackVar32(0x0), MemMap::Total, sz);
 	}
+
+	MemMap::Add(p, sz);
+
+/*
+	if((tick % 1) == 0) {
+		Debug::Log("@ 0x%X: 0x%X + 0x%X bytes\n", R->get_StackVar32(0x0), MemMap::Total, sz);
+	}
+*/
 
 	R->set_EAX((DWORD)p);
 	return 0x7C8E24;
@@ -352,7 +363,17 @@ DEFINE_HOOK(7C8E17, operator_new, 6)
 
 DEFINE_HOOK(7C8B3D, operator_delete, 9)
 {
+	static int tick = 0;
 	GET_STACK(void *, p, 0x4);
+
+	++tick;
+
+	size_t sz = MemMap::Remove(p);
+
+	if((tick % 1) == 0) {
+		Debug::Log("@ 0x%X: 0x%X - 0x%X bytes\n", R->get_StackVar32(0x0), MemMap::Total, sz);
+	}
+
 	operator delete(p);
 	return 0x7C8B47;
 }

@@ -31,7 +31,7 @@ public:
 		bool FS = pData->FirewallActive;
 		FS = !FS;
 		HouseExt::Firestorm_SetState(H, FS);
-		pData->FirewallRecalc = 2;
+		pData->FirewallRecalc = 1;
 		wchar_t message[0x40];
 		wsprintfW(message, L"~Firestorm state inverted, now %d\n", FS);
 		MessageListClass::PrintMessage(message);

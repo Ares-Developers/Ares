@@ -56,6 +56,21 @@ void Debug::DumpStack(REGISTERS *R, size_t len) {
 	Debug::Log("Done.\n");
 }
 
+void __cdecl Debug::LogUnflushed(const char *Format, ...) {
+	if(Debug::bLog && Debug::pLogFile) {
+		va_list ArgList;
+		va_start(ArgList, Format);
+		vfprintf(Debug::pLogFile, Format, ArgList);
+		va_end(ArgList);
+	}
+}
+
+void Debug::Flush() {
+	if(Debug::bLog && Debug::pLogFile) {
+		fflush(Debug::pLogFile);
+	}
+}
+
 //Hook at 0x4068E0 AND 4A4AC0
 DEFINE_HOOK(4068E0, Debug_Log, 1)
 DEFINE_HOOK_AGAIN(4A4AC0, Debug_Log, 1)

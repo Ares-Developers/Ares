@@ -18,6 +18,9 @@ public:
 	static void DumpObj(byte *data, size_t len);
 	static void DumpStack(REGISTERS *R, size_t len);
 	static void (_cdecl* Log)(const char* pFormat, ...);
+
+	static void __cdecl Debug::LogUnflushed(const char *Format, ...);
+	static void Debug::Flush();
 };
 
 #endif

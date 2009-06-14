@@ -5,6 +5,8 @@
 //include <YRPP.h>
 #include <Helpers\Macro.h>
 
+#include "Misc\Debug.h"
+
 #include <AircraftTypeClass.h>
 #include <CellClass.h>
 #include <HouseClass.h>
@@ -65,6 +67,37 @@ public:
 		static void Load(CCINIClass *pINI);
 	};
 
+};
+
+class MemMap {
+public:
+	typedef stdext::hash_map <DWORD, size_t> memmap;
+	static stdext::hash_map <DWORD, size_t> AllocMap;
+	static size_t Total;
+	
+	static void Add(void * _addr, size_t amount) {
+		DWORD addr = (DWORD)_addr;
+		memmap::iterator i = AllocMap.find(addr);
+		if(i != AllocMap.end()) {
+			Debug::Log("Reallocated a used block of 0x%X bytes @ 0x%X!\n", amount, addr);
+		}
+		AllocMap[addr] = amount;
+		Total += amount;
+	}
+
+	static size_t Remove(void * _addr) {
+		DWORD addr = (DWORD)_addr;
+		memmap::iterator i = AllocMap.find(addr);
+		if(i == AllocMap.end()) {
+			Debug::Log("Deallocated a dud block @ 0x%X!\n", addr);
+			return 0;
+		} else {
+			size_t amount = AllocMap[addr];
+			Total -= amount;
+			AllocMap.erase(addr);
+			return amount;
+		}
+	}
 };
 
 #endif
