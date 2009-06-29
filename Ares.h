@@ -33,8 +33,6 @@ public:
 	static const char readDelims[4];
 	static const char readDefval[4];
 
-	static int AllocatedMemory;
-
 	//Callbacks
 	static eMouseEventFlags __stdcall MouseEvent(Point2D*,eMouseEventFlags);
 	static void __stdcall CmdLineParse(char**,int);
@@ -64,6 +62,22 @@ public:
 		static bool Initialized;
 		static bool AllowParallelAIQueues;
 
+		static byte GFX_DX_Force;
+
+		class SurfaceConfig {
+		public:
+			byte Memory;
+			byte Force3D;
+		};
+
+		static SurfaceConfig GFX_S_Alternate;
+		static SurfaceConfig GFX_S_Composite;
+		static SurfaceConfig GFX_S_Hidden;
+		static SurfaceConfig GFX_S_Hidden_2;
+		static SurfaceConfig GFX_S_Primary;
+		static SurfaceConfig GFX_S_Sidebar;
+		static SurfaceConfig GFX_S_Tile;
+
 		static void Load(CCINIClass *pINI);
 	};
 
@@ -79,7 +93,9 @@ public:
 		DWORD addr = (DWORD)_addr;
 		memmap::iterator i = AllocMap.find(addr);
 		if(i != AllocMap.end()) {
+#ifdef MEMORY_LOGGING
 			Debug::Log("Reallocated a used block of 0x%X bytes @ 0x%X!\n", amount, addr);
+#endif
 		}
 		AllocMap[addr] = amount;
 		Total += amount;

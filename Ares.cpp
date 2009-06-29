@@ -33,8 +33,6 @@ const char Ares::readDefval[4] = "";
 
 int FrameStepCommandClass::ArmageddonState = 0;
 
-int Ares::AllocatedMemory = 0;
-
 stdext::hash_map <DWORD, size_t> MemMap::AllocMap;
 size_t MemMap::Total;
 
@@ -327,7 +325,6 @@ DEFINE_HOOK(685659, Scenario_ClearClasses, a)
 	WarheadTypeExt::ExtMap.Empty();
 	WeaponTypeExt::ExtMap.Empty();
 
-	Ares::AllocatedMemory = 0;
 	return 0;
 }
 
@@ -342,19 +339,15 @@ DEFINE_HOOK(7C8E17, operator_new, 6)
 		exit(1);
 	}
 
+#ifdef MEMORY_LOGGING
 	++tick;
 
 	if((tick % 1) == 0) {
 		Debug::Log("@ 0x%X: 0x%X + 0x%X bytes\n", R->get_StackVar32(0x0), MemMap::Total, sz);
 	}
+#endif
 
 	MemMap::Add(p, sz);
-
-/*
-	if((tick % 1) == 0) {
-		Debug::Log("@ 0x%X: 0x%X + 0x%X bytes\n", R->get_StackVar32(0x0), MemMap::Total, sz);
-	}
-*/
 
 	R->set_EAX((DWORD)p);
 	return 0x7C8E24;
@@ -366,13 +359,15 @@ DEFINE_HOOK(7C8B3D, operator_delete, 9)
 	static int tick = 0;
 	GET_STACK(void *, p, 0x4);
 
-	++tick;
-
 	size_t sz = MemMap::Remove(p);
+
+#ifdef MEMORY_LOGGING
+	++tick;
 
 	if((tick % 1) == 0) {
 		Debug::Log("@ 0x%X: 0x%X - 0x%X bytes\n", R->get_StackVar32(0x0), MemMap::Total, sz);
 	}
+#endif
 
 	operator delete(p);
 	return 0x7C8B47;

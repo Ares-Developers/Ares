@@ -69,7 +69,7 @@ DEFINE_HOOK(4DA53E, FootClass_Update, 6)
 		HouseClass *H = B->Owner;
 		BuildingTypeExt::ExtData* pTypeData = BuildingTypeExt::ExtMap.Find(BT);
 		HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(B->Owner);
-		if(pTypeData->Firewall_Is && pHouseData->FirewallActive && !F->InLimbo) {
+		if(pTypeData->Firewall_Is && pHouseData->FirewallActive && !F->InLimbo && F->IsAlive && F->Health) {
 			int Damage = F->Health;
 			F->ReceiveDamage(&Damage, 0, RulesClass::Global()->C4Warhead, 0, 1, 0, H);
 			if(AnimTypeClass *FSAnim = AnimTypeClass::Find(F->IsInAir() ? "FSAIR" : "FSGRND")) {
@@ -88,9 +88,11 @@ DEFINE_HOOK(4F8440, HouseClass_Update_FSW_Recalc, 5)
 {
 	GET(HouseClass *, H, ECX);
 	HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(H);
-	if(pHouseData->FirewallRecalc) {
+	if(pHouseData->FirewallRecalc > 0) {
 		--pHouseData->FirewallRecalc;
 		HouseExt::Firestorm_SetState(H, pHouseData->FirewallActive);
+	} else if(pHouseData->FirewallRecalc < 0) {
+		pHouseData->FirewallRecalc = 0;
 	}
 	return 0;
 }

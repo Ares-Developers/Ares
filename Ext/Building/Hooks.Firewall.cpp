@@ -102,6 +102,7 @@ DEFINE_HOOK(43FC39, BuildingClass_Update_FSW, 6)
 	}
 
 	if(B->FirestormWallFrame != FWFrame) {
+		Debug::Log("Updating FWFrame of building %s\n", B->get_ID());
 		B->FirestormWallFrame = FWFrame;
 		B->GetCell()->Setup(0xFFFFFFFF);
 		B->SetLayer(lyr_Ground); // HACK - repaints properly
@@ -131,7 +132,7 @@ DEFINE_HOOK(43FC39, BuildingClass_Update_FSW, 6)
 	CellClass *C = B->GetCell();
 	for(ObjectClass *O = C->GetContent(); O; O = O->NextObject) {
 		O->GetCoords(&XYZ);
-		if(((O->AbstractFlags & ABSFLAGS_ISTECHNO) != 0) && O != B && !O->InLimbo && O->IsAlive) {
+		if(((O->AbstractFlags & ABSFLAGS_ISTECHNO) != 0) && O != B && !O->InLimbo && O->IsAlive && O->Health) {
 			int Damage = O->Health;
 			O->ReceiveDamage(&Damage, 0, RulesClass::Global()->C4Warhead, 0, 1, 0, H);
 		}

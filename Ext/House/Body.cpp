@@ -134,7 +134,11 @@ void HouseExt::Firestorm_SetState(HouseClass *pHouse, bool Active) {
 
 	DynamicVectorClass<CellStruct> AffectedCoords;
 
-//	Debug::Log("Setting Firestorm State to (%d)\n", Active);
+	Debug::Log("Setting Firestorm State from (%d) to (%d)\n", pData->FirewallActive, Active);
+	if(pData->FirewallActive == Active) {
+		return;
+	}
+
 	pData->FirewallActive = Active;
 
 	for(int i = 0; i < BuildingClass::Array->Count; ++i) {
