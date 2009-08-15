@@ -45,7 +45,21 @@ void Debug::DumpObj(byte *data, size_t len) {
 		}
 		Debug::Log("\n");
 	}
-	Debug::Log("\n");
+
+	DWORD dec = len / 0x10 * 0x10;
+	DWORD remlen = len - dec;
+	Debug::Log(" %05X |", dec);
+	for(DWORD rem = 0; rem < remlen; ++rem) {
+		Debug::Log(" %02X |", data[dec + rem]);
+	}
+	for(DWORD rem = remlen; rem < 0x10; ++rem) {
+		Debug::Log(" -- |");
+	}
+	for(DWORD rem = 0; rem < remlen; ++rem) {
+		byte sym = data[dec + rem];
+		Debug::Log("%c", isprint(sym) ? sym : '?');
+	}
+	Debug::Log("\nEnd of dump.\n");
 }
 
 void Debug::DumpStack(REGISTERS *R, size_t len) {

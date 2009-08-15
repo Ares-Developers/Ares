@@ -105,7 +105,9 @@ public:
 		DWORD addr = (DWORD)_addr;
 		memmap::iterator i = AllocMap.find(addr);
 		if(i == AllocMap.end()) {
+#ifdef MEMORY_LOGGING
 			Debug::Log("Deallocated a dud block @ 0x%X!\n", addr);
+#endif
 			return 0;
 		} else {
 			size_t amount = AllocMap[addr];

@@ -135,8 +135,6 @@ void SideExt::ExtData::LoadFromINI(SideClass *pThis, CCINIClass *pINI)
 
 	char* p = NULL;
 
-	ColorScheme* CS;
-
 	if(pINI->ReadString(pID, "AI.BaseDefenseCounts", "", Ares::readBuffer, Ares::readLength)) {
 		this->BaseDefenseCounts.Clear();
 
@@ -166,7 +164,7 @@ void SideExt::ExtData::LoadFromINI(SideClass *pThis, CCINIClass *pINI)
 	}
 
 	if(pINI->ReadString(pID, "LoadScreenText.Color", "", Ares::readBuffer, 0x80)) {
-		CS = ColorScheme::Find(Ares::readBuffer);
+		ColorScheme* CS = ColorScheme::Find(Ares::readBuffer);
 		if(CS) {
 			this->LoadTextColor = CS;
 		}
@@ -246,7 +244,7 @@ DWORD SideExt::LoadTextColor(REGISTERS* R, DWORD dwReturnAddress)
 	int n = R->get_EAX();
 	SideClass* pSide = SideClass::Array->GetItem(n);
 	SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide);
-	if(pData) {
+	if(pData && pData->LoadTextColor) {
 		R->set_EAX((DWORD)pData->LoadTextColor);
 		return dwReturnAddress;
 	} else {

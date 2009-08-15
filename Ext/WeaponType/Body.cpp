@@ -14,6 +14,15 @@ hash_radsiteExt WeaponTypeExt::RadSiteExt;
 void WeaponTypeExt::ExtData::InitializeRuled(WeaponTypeClass *pThis)
 {
 	RulesClass * Rules = RulesClass::Global();
+
+	if(pThis->IsRadBeam || pThis->IsRadEruption) {
+		if(pThis->Warhead->Temporal) {
+			this->Beam_Color = *Rules->get_ChronoBeamColor(); // Well, a RadEruption Temporal will look pretty funny
+		} else {
+			this->Beam_Color = *Rules->get_RadColor();
+		}
+	}
+
 	this->Ivan_Damage       = Rules->IvanDamage;
 	this->Ivan_Delay        = Rules->IvanTimedDelay;
 	this->Ivan_TickingSound = Rules->BombTickingSound;
@@ -27,15 +36,6 @@ void WeaponTypeExt::ExtData::InitializeRuled(WeaponTypeClass *pThis)
 void WeaponTypeExt::ExtData::Initialize(WeaponTypeClass *pThis)
 {
 	this->Weapon_Source  = pThis;
-	RulesClass * Rules = RulesClass::Global();
-
-	if(pThis->IsRadBeam || pThis->IsRadEruption) {
-		if(pThis->Warhead->Temporal) {
-			this->Beam_Color = *Rules->get_ChronoBeamColor(); // Well, a RadEruption Temporal will look pretty funny
-		} else {
-			this->Beam_Color = *Rules->get_RadColor();
-		}
-	}
 
 	if(pThis->IsMagBeam) {
 		this->Wave_Color = ColorStruct(0xB0, 0, 0xD0); // rp2 values

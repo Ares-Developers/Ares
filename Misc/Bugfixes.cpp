@@ -4,7 +4,9 @@
 #include <CellSpread.h>
 #include <HouseClass.h>
 #include <InfantryClass.h>
+#include <LightSourceClass.h>
 #include <LocomotionClass.h>
+#include <LoadProgressManager.h>
 #include <MapClass.h>
 #include <MixFileClass.h>
 #include <TacticalClass.h>
@@ -472,5 +474,61 @@ DEFINE_HOOK(6CF350, SwizzleManagerClass_Convert, 7)
 {
 //	Debug::Log("Swizzle::Convert()\n");
 //	Debug::DumpStack(R, 0x100);
+	return 0;
+}
+
+// testing lightpost draw changes
+// the constants are the same as in the unmodded game - modify them to alter the way the lightposts illuminate cells
+// see http://dc0d3r.name/src2/CellClass/GetColourComponents.cpp for context
+DEFINE_HOOK(48439A, CellClass_GetColourComponents, 5)
+{
+	GET(int, Distance, EAX);
+	GET(LightSourceClass *, LS, ESI);
+	TintStruct *LSTint = LS->get_LightTint();
+
+	GET_STACK(int*, Intensity, 0x44);
+	GET_STACK(int*, Tint_Red, 0x54);
+	GET_STACK(int*, Tint_Green, 0x58);
+	GET_STACK(int*, Tint_Blue, 0x5C);
+
+	const int RangeVisibilityFactor = 1000;
+	const int RangeDistanceFactor = 1000;
+	const int LightMultiplier = 1000;
+
+	int LSEffect = (RangeVisibilityFactor * LS->LightVisibility - RangeDistanceFactor * Distance) / LS->LightVisibility;
+	*Intensity  += int(LSEffect * LS->LightIntensity  / LightMultiplier);
+	*Tint_Red   += int(LSEffect * LSTint->Red   / LightMultiplier);
+	*Tint_Green += int(LSEffect * LSTint->Green / LightMultiplier);
+	*Tint_Blue  += int(LSEffect * LSTint->Blue  / LightMultiplier);
+
+	return 0x484440;
+}
+
+DEFINE_HOOK(6873AB, INIClass_ReadScenario_EarlyLoadRules, 5)
+{
+	RulesClass::Global()->Init(CCINIClass::INI_Rules);
+	Game::SetProgress(3);
+	(new LoadProgressManager())->Draw();
+	Game::SetProgress(20);
+	R->set_EAX(0x1180);
+	return 0x6873B0;
+}
+
+DEFINE_HOOK(6876A0, INIClass_ReadScenario_SkipRules, 5)
+{
+	Game::SetProgress(40);
+	Game::UnknownCall();
+	return 0x6876C2;
+}
+
+DEFINE_HOOK(687581, INIClass_ReadScenario_Skip_LoadManager, 5)
+{
+	return 0x68758D;
+}
+
+DEFINE_HOOK(5FA41D, GameOptionsClass_CTOR, 5)
+{
+	GET(byte *, Options, EAX);
+	Options[0x35] = 1;
 	return 0;
 }
