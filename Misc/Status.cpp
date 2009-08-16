@@ -1,33 +1,72 @@
 #include "..\Ares.version.h"
-#include <Drawing.h>
+#include "Status.h"
 
-DEFINE_HOOK(6876A0, Scenario_Start0, 5)
+Point2D StatusMessages::TLPoint = { 10, 340 };
+Point2D StatusMessages::Delta = { 0, 20 };
+
+DEFINE_HOOK(686B4F, Scenario_SetMessagePosition, 6)
 {
-	Drawing::DSurface_Hidden->DrawText(L"Loading scenario...", 10, 300, COLOR_GREEN);
+	GET_STACK(byte, Is_SP, 0x16);
+	StatusMessages::TLPoint.X = 10;
+	if(Is_SP) {
+		StatusMessages::TLPoint.Y = 120;
+	} else {
+		StatusMessages::TLPoint.Y = 340;
+	}
 	return 0;
 }
 
-DEFINE_HOOK(687748, Scenario_Start1, 6)
+DEFINE_HOOK(68758D, Scenario_Start0, 5)
 {
-	Drawing::DSurface_Hidden->DrawText(L"Initializing Rules...", 10, 340, COLOR_WHITE);
+	StatusMessages::Add(L"First pass at Swizzling ...", COLOR_WHITE);
 	return 0;
 }
 
-DEFINE_HOOK(68797A, Scenario_Start2, 5)
+DEFINE_HOOK(6875F3, Scenario_Start1, 6)
 {
-	Drawing::DSurface_Hidden->DrawText(L"Parsing Rules...", 10, 380, COLOR_WHITE);
+	StatusMessages::Add(L"Initializing Tactical display ...", COLOR_WHITE);
+	return 0;
+}
+
+DEFINE_HOOK(687748, Scenario_Start2, 6)
+{
+	StatusMessages::Add(L"Overriding rules with scenario ...", COLOR_WHITE);
 	return 0;
 }
 
 DEFINE_HOOK(68797A, Scenario_Start3, 5)
 {
-	Drawing::DSurface_Hidden->DrawText(L"Parsing AI...", 10, 380, COLOR_GREEN);
+	StatusMessages::Add(L"Overriding AI with scenario ...", COLOR_WHITE);
 	return 0;
 }
 
 DEFINE_HOOK(6879F9, Scenario_Start4, 5)
 {
-	Drawing::DSurface_Hidden->DrawText(L"Parsing Map...", 10, 380, COLOR_WHITE);
+	StatusMessages::Add(L"Loading Map ...", COLOR_WHITE);
+	return 0;
+}
+
+DEFINE_HOOK(687643, Scenario_Start5, 6)
+{
+	StatusMessages::Add(L"Initializing Theater...", COLOR_WHITE);
+	return 0;
+}
+
+DEFINE_HOOK(6876A0, Scenario_Start6, 5)
+{
+	StatusMessages::Add(L"Reading rules, langrule and gamemode controls...", COLOR_WHITE);
+	return 0;
+}
+
+DEFINE_HOOK(687A8F, Scenario_Start7, 5)
+{
+	StatusMessages::Add(L"Placing objects onto map ...", COLOR_WHITE);
+	return 0;
+}
+
+DEFINE_HOOK(687B21, Scenario_Start8, 5)
+{
+	StatusMessages::Add(L"Overriding rules with TMCJ4F if needed ...", COLOR_WHITE);
 	return 0;
 }
 

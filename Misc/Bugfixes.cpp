@@ -504,27 +504,53 @@ DEFINE_HOOK(48439A, CellClass_GetColourComponents, 5)
 	return 0x484440;
 }
 
+DEFINE_HOOK(4F54A0, HouseClass_CTOR_Trace, 5)
+{
+	GET_STACK(HouseTypeClass*, HT, 0x4);
+	Debug::Log("CTOR of house [%s]\n", HT->get_ID());
+	Debug::DumpStack(R, 0x40);
+	return 0;
+}
+
+/*
+A_FINE_HOOK(68ACFF, Scenario_ReadLightingAndBasic_SkipInitHouses, 5)
+{
+	return 0x68AD04;
+}
+*/
+
 DEFINE_HOOK(6873AB, INIClass_ReadScenario_EarlyLoadRules, 5)
 {
-	RulesClass::Global()->Init(CCINIClass::INI_Rules);
-	Game::SetProgress(3);
-	(new LoadProgressManager())->Draw();
-	Game::SetProgress(20);
+/*
+	GET_STACK(byte, Rules_leave_as_is, 0x12);
+	if(!Rules_leave_as_is || !RulesClass::Initialized) {
+		RulesClass::Global()->Init(CCINIClass::INI_Rules);
+	}
+	//(new LoadProgressManager())->Draw();
+	new LoadProgressManager();
+	//	Game::SetProgress(20);
+*/
+	RulesClass::Global()->Read_Sides(CCINIClass::INI_Rules);
 	R->set_EAX(0x1180);
 	return 0x6873B0;
 }
 
-DEFINE_HOOK(6876A0, INIClass_ReadScenario_SkipRules, 5)
+/*
+A_FINE_HOOK(6876A0, INIClass_ReadScenario_SkipRules, 5)
 {
 	Game::SetProgress(40);
 	Game::UnknownCall();
 	return 0x6876C2;
 }
+*/
 
-DEFINE_HOOK(687581, INIClass_ReadScenario_Skip_LoadManager, 5)
+/*
+A_FINE_HOOK(687581, INIClass_ReadScenario_Skip_LoadManager, 5)
 {
+	LoadProgressManager::LPMgr->Draw();
 	return 0x68758D;
 }
+*/
 
 DEFINE_HOOK(5FA41D, GameOptionsClass_CTOR, 5)
 {

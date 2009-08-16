@@ -154,3 +154,34 @@ DEFINE_HOOK(6BD886, CSF_LoadExtraFiles, 5)
 	return 0x6BD88B;
 }
 
+DEFINE_HOOK(734E83, CSF_LoadString_1, 6)
+{
+	GET(char *, Name, EBX);
+	if(strlen(Name) > 6 && !strncmp(Name, "NOSTR:", 6)) {
+		CSFString *NewString = new CSFString();
+		wsprintfW(NewString->Text, L"%hs", &Name[6]);
+
+		NewString->PreviousEntry = StringTable::LastLoadedString;
+		StringTable::LastLoadedString = NewString;
+
+		R->set_EAX((DWORD)NewString->Text);
+
+		return 0x734F0F;
+	}
+	return 0;
+}
+
+DEFINE_HOOK(734EC2, CSF_LoadString_2, 7)
+{
+	GET(char *, Name, EBX);
+	CSFString *NewString = new CSFString();
+
+	wsprintfW(NewString->Text, L"MISSING:'%hs'", Name);
+
+	NewString->PreviousEntry = StringTable::LastLoadedString;
+	StringTable::LastLoadedString = NewString;
+
+	R->set_EAX((DWORD)NewString->Text);
+
+	return 0x734F0F;
+}
