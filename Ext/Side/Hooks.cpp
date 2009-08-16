@@ -137,15 +137,16 @@ DEFINE_HOOK(451358, Sides_SurvivorDivisor, 6)
 	}
 }
 
-//0x642B36
 // WRONG! Stoopidwood passes CD= instead of Side= into singleplayer campaigns, TODO: fix that shit
 DEFINE_HOOK(642B36, Sides_LoadTextColor1, 5)
 	{ return SideExt::LoadTextColor(R, 0x68CAA9); }
 
-//0x643BB9
 // WRONG! Stoopidwood passes CD= instead of Side= into singleplayer campaigns, TODO: fix that shit
 DEFINE_HOOK(643BB9, Sides_LoadTextColor2, 5)
 	{ return SideExt::LoadTextColor(R, 0x643BEF); }
+
+DEFINE_HOOK(642B91, Sides_LoadTextColor3, 5)
+	{ return SideExt::LoadTextColor(R, 0x68CAA9); }
 
 //0x534FB1
 DEFINE_HOOK(534FB1, Sides_MixFileIndex, 5)

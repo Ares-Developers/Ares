@@ -23,6 +23,7 @@
 #include "..\Ext\Techno\Body.h"
 #include "..\Ext\TechnoType\Body.h"
 #include "..\Ext\House\Body.h"
+#include "..\Ext\Side\Body.h"
 #include "..\Ext\HouseType\Body.h"
 #include "..\Ext\WeaponType\Body.h"
 #include "..\Ext\WarheadType\Body.h"
@@ -531,6 +532,7 @@ DEFINE_HOOK(6873AB, INIClass_ReadScenario_EarlyLoadRules, 5)
 	//	Game::SetProgress(20);
 */
 	RulesClass::Global()->Read_Sides(CCINIClass::INI_Rules);
+	SideExt::ExtMap.LoadAllFromINI(CCINIClass::INI_Rules);
 	R->set_EAX(0x1180);
 	return 0x6873B0;
 }
