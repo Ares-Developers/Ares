@@ -16,8 +16,8 @@ DEFINE_HOOK(438F8F, BombListClass_Add1, 6)
 	WeaponTypeExt::ExtData *pData = WeaponTypeExt::ExtMap.Find(Source);
 
 	WeaponTypeExt::BombExt[Bomb] = pData;
-	Bomb->set_DetonationFrame(Unsorted::CurrentFrame + pData->Ivan_Delay);
-	Bomb->set_TickSound(pData->Ivan_TickingSound);
+	Bomb->set_DetonationFrame(Unsorted::CurrentFrame + pData->Ivan_Delay.Get());
+	Bomb->set_TickSound(pData->Ivan_TickingSound.Get());
 	return 0;
 }
 
@@ -31,8 +31,8 @@ DEFINE_HOOK(438FD1, BombListClass_Add2, 5)
 	GET(TechnoClass *, Owner, EBP);
 	WeaponTypeClass *Source = Bullet->WeaponType;
 	WeaponTypeExt::ExtData *pData = WeaponTypeExt::ExtMap.Find(Source);
-	if(Owner->Owner->ControlledByPlayer() && pData->Ivan_AttachSound != -1) {
-		VocClass::PlayAt(pData->Ivan_AttachSound, Bomb->TargetUnit->get_Location(), Bomb->get_Audio());
+	if(Owner->Owner->ControlledByPlayer() && pData->Ivan_AttachSound.Get() != -1) {
+		VocClass::PlayAt(pData->Ivan_AttachSound.Get(), Bomb->TargetUnit->get_Location(), Bomb->get_Audio());
 	}
 
 	return 0;
@@ -54,22 +54,22 @@ DEFINE_HOOK(6F5230, TechnoClass_DrawExtras1, 5)
 
 	WeaponTypeExt::ExtData *pData = WeaponTypeExt::BombExt[Bomb];
 
-	if(pData->Ivan_Image->Frames < 2) {
+	if(pData->Ivan_Image.Get()->Frames < 2) {
 		R->set_EAX(0);
 		return 0x6F5235;
 	}
 
 	int frame = 
 	(Unsorted::CurrentFrame - Bomb->PlantingFrame)
-		/ (pData->Ivan_Delay / (pData->Ivan_Image->Frames - 1)); // -1 so that last iteration has room to flicker
+		/ (pData->Ivan_Delay.Get() / (pData->Ivan_Image.Get()->Frames - 1)); // -1 so that last iteration has room to flicker
 
-	if(Unsorted::CurrentFrame % (2 * pData->Ivan_FlickerRate) >= pData->Ivan_FlickerRate) {
+	if(Unsorted::CurrentFrame % (2 * pData->Ivan_FlickerRate.Get()) >= pData->Ivan_FlickerRate.Get()) {
 		++frame;
 	}
 
-	if( frame >= pData->Ivan_Image->Frames ) {
-		frame = pData->Ivan_Image->Frames - 1;
-	} else if(frame == pData->Ivan_Image->Frames - 1 ) {
+	if( frame >= pData->Ivan_Image.Get()->Frames ) {
+		frame = pData->Ivan_Image.Get()->Frames - 1;
+	} else if(frame == pData->Ivan_Image.Get()->Frames - 1 ) {
 		--frame;
 	}
 
@@ -87,11 +87,11 @@ DEFINE_HOOK(6F523C, TechnoClass_DrawExtras2, 5)
 
 	WeaponTypeExt::ExtData *pData = WeaponTypeExt::BombExt[Bomb];
 
-	if(!pData->Ivan_Image) {
+	if(!pData->Ivan_Image.Get()) {
 		return 0;
 	}
 
-	DWORD pImage = (DWORD)pData->Ivan_Image;
+	DWORD pImage = (DWORD)pData->Ivan_Image.Get();
 
 	R->set_ECX(pImage);
 	return 0x6F5247;
@@ -133,8 +133,8 @@ DEFINE_HOOK(438799, BombClass_Detonate1, 6)
 
 	WeaponTypeExt::ExtData *pData = WeaponTypeExt::BombExt[Bomb];
 
-	R->set_StackVar32(0x4, (DWORD)pData->Ivan_WH);
-	R->set_EDX((DWORD)pData->Ivan_Damage);
+	R->set_StackVar32(0x4, (DWORD)pData->Ivan_WH.Get());
+	R->set_EDX((DWORD)pData->Ivan_Damage.Get());
 	return 0x43879F;
 }
 
@@ -146,8 +146,8 @@ DEFINE_HOOK(438843, BombClass_Detonate2, 6)
 
 	WeaponTypeExt::ExtData *pData = WeaponTypeExt::BombExt[Bomb];
 
-	R->set_EDX((DWORD)pData->Ivan_WH);
-	R->set_ECX((DWORD)pData->Ivan_Damage);
+	R->set_EDX((DWORD)pData->Ivan_WH.Get());
+	R->set_ECX((DWORD)pData->Ivan_Damage.Get());
 	return 0x438849;
 }
 

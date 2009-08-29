@@ -3,7 +3,6 @@
 
 DEFINE_HOOK(6CEF84, SuperWeaponTypeClass_GetCursorOverObject, 7)
 {
-	//FUCK THIS, no macros in my code xD -pd
 	GET(SuperWeaponTypeClass*, pThis, ECX);
 
 	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pThis);
@@ -221,7 +220,6 @@ DEFINE_HOOK(6CC0EA, SuperClass_AnnounceQuantity, 9)
 	return 0;
 }
 
-// 50B319, 6
 DEFINE_HOOK(50B319, HouseClass_UpdateSWs, 6)
 {
 //	GET(SuperClass *, Super, ECX);
@@ -246,3 +244,16 @@ DEFINE_HOOK(50CFAA, HouseClass_PickOffensiveSWTarget, 0)
 	return 0x50CFC9;
 }
 
+DEFINE_HOOK(6CC360, SuperClass_IsReadyToFire, 5)
+{
+	GET(SuperClass *, pThis, ECX);
+	SuperWeaponTypeClass *pSW = pThis->Type;
+	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSW);
+
+	if(pData->Money_Amount) {
+		if(pThis->Owner->Available_Money() < pData->Money_Amount) {
+			return 0x6CC381;
+		}
+	}
+	return 0;
+}

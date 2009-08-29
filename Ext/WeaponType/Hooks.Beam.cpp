@@ -25,7 +25,7 @@ DEFINE_HOOK(6FD79C, TechnoClass_FireRadBeam2, 6)
 		GET(TechnoClass *, SourceUnit, EDI);
 		Rad->set_Color(SourceUnit->Owner->get_Color());
 	} else {
-		Rad->set_Color(&pData->Beam_Color);
+		Rad->set_Color(pData->Beam_Color.GetEx());
 	}
 	Rad->set_Period(pData->Beam_Duration);
 	Rad->set_Amplitude(pData->Beam_Amplitude);

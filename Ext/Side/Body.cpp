@@ -167,7 +167,6 @@ void SideExt::ExtData::LoadFromINI(SideClass *pThis, CCINIClass *pINI)
 
 	if(pINI->ReadString(pID, "LoadScreenText.Color", "", Ares::readBuffer, 0x80)) {
 		ColorScheme* CS = ColorScheme::Find(Ares::readBuffer);
-		Debug::Log("LST.C = %s @ %X\n", Ares::readBuffer, CS);
 		if(CS) {
 			this->LoadTextColor = CS;
 		}
@@ -245,7 +244,6 @@ DWORD SideExt::Disguise(REGISTERS* R, DWORD dwReturnAddress, bool bUseESI)
 DWORD SideExt::LoadTextColor(REGISTERS* R, DWORD dwReturnAddress)
 {
 	int n = R->get_EAX();
-	Debug::Log("LTC @ %d\n", n);
 	SideClass* pSide = SideClass::Array->GetItem(n);
 	SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide);
 	if(pData && pData->LoadTextColor) {

@@ -481,7 +481,8 @@ DEFINE_HOOK(6CF350, SwizzleManagerClass_Convert, 7)
 // testing lightpost draw changes
 // the constants are the same as in the unmodded game - modify them to alter the way the lightposts illuminate cells
 // see http://dc0d3r.name/src2/CellClass/GetColourComponents.cpp for context
-DEFINE_HOOK(48439A, CellClass_GetColourComponents, 5)
+/*
+A_FINE_HOOK(48439A, CellClass_GetColourComponents, 5)
 {
 	GET(int, Distance, EAX);
 	GET(LightSourceClass *, LS, ESI);
@@ -504,14 +505,7 @@ DEFINE_HOOK(48439A, CellClass_GetColourComponents, 5)
 
 	return 0x484440;
 }
-
-DEFINE_HOOK(4F54A0, HouseClass_CTOR_Trace, 5)
-{
-	GET_STACK(HouseTypeClass*, HT, 0x4);
-	Debug::Log("CTOR of house [%s]\n", HT->get_ID());
-	Debug::DumpStack(R, 0x40);
-	return 0;
-}
+*/
 
 /*
 A_FINE_HOOK(68ACFF, Scenario_ReadLightingAndBasic_SkipInitHouses, 5)
@@ -531,10 +525,14 @@ DEFINE_HOOK(6873AB, INIClass_ReadScenario_EarlyLoadRules, 5)
 	new LoadProgressManager();
 	//	Game::SetProgress(20);
 */
-	RulesClass::Global()->Read_Sides(CCINIClass::INI_Rules);
-	SideExt::ExtMap.LoadAllFromINI(CCINIClass::INI_Rules);
-	R->set_EAX(0x1180);
-	return 0x6873B0;
+	switch(Unsorted::GameMode) {
+		case gm_Campaign:
+			RulesClass::Global()->Read_Sides(CCINIClass::INI_Rules);
+			SideExt::ExtMap.LoadAllFromINI(CCINIClass::INI_Rules);
+		default:
+			R->set_EAX(0x1180);
+			return 0x6873B0;
+	}
 }
 
 /*
@@ -558,5 +556,57 @@ DEFINE_HOOK(5FA41D, GameOptionsClass_CTOR, 5)
 {
 	GET(byte *, Options, EAX);
 	Options[0x35] = 1;
+	return 0;
+}
+
+//yikes
+//sidebar on the left - westwood's leftover code, doesn't work, enable at own risk, etc. etc.
+/*
+A_FINE_HOOK(5FAD09, Options_LoadFromINI, 5)
+{
+	GET(byte *, Options, ESI);
+	Options[0x1C] = 0;
+	return 0;
+}
+*/
+
+DEFINE_HOOK(455E4C, HouseClass_FindRepairBay, 9)
+{
+	GET(UnitClass *, Unit, ECX);
+	GET(BuildingClass *, Bay, ESI);
+
+	UnitTypeClass *UT = Unit->Type;
+	BuildingTypeClass *BT = Bay->Type;
+
+	bool isNotAcceptable = (UT->BalloonHover
+	 || BT->Naval != UT->Naval
+	 || BT->Factory == abs_AircraftType
+	 || BT->Helipad
+	 || BT->HoverPad && !RulesClass::Global()->SeparateAircraft
+	);
+	
+	if(isNotAcceptable) {
+		return 0x455EDE;
+	}
+	
+	eRadioCommands Response = Unit->SendCommand(rc_CanEnter, Bay);
+	
+	return Response == 0
+	 ? 0x455EDE
+	 : 0x455E5D
+	;
+}
+
+/*
+A_FINE_HOOK(67E75B, LoadGame_StallUI, 6)
+{
+	return 0x67E772;
+}
+*/
+
+DEFINE_HOOK(4F54A0, HouseClass_CTOR_Log, 5)
+{
+	GET_STACK(HouseTypeClass *, HT, 0x4);
+	Debug::Log("HouseClass::HouseClass(%s)\n", HT->get_ID());
 	return 0;
 }

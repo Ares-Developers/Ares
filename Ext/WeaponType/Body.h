@@ -2,6 +2,7 @@
 #define WEAPONTYPE_EXT_H
 
 #include <Helpers\Macro.h>
+#include <Helpers\Template.h>
 #include <BombClass.h>
 #include <BombListClass.h>
 #include <BulletClass.h>
@@ -22,6 +23,8 @@
 
 #include "..\_Container.hpp"
 
+#include "..\..\Helpers\Template.h"
+
 struct SHPStruct;
 
 class WeaponTypeExt
@@ -36,7 +39,7 @@ public:
 		WeaponTypeClass *Weapon_Source;
 
 		// Coloured Rad Beams
-		ColorStruct Beam_Color;
+		Customizable<ColorStruct> Beam_Color;
 		bool   Beam_IsHouseColor;
 		int    Beam_Duration;
 		double Beam_Amplitude;
@@ -44,7 +47,7 @@ public:
 		bool   Wave_IsHouseColor;
 		bool   Wave_IsLaser;
 		bool   Wave_IsBigLaser;
-		ColorStruct Wave_Color;
+		Customizable<ColorStruct> Wave_Color;
 		bool   Wave_Reverse[5];
 /*
 		int    Wave_InitialIntensity;
@@ -54,13 +57,13 @@ public:
 		// custom Ivan Bombs
 		bool Ivan_KillsBridges;
 		bool Ivan_Detachable;
-		int Ivan_Damage;
-		int Ivan_Delay;
-		int Ivan_TickingSound;
-		int Ivan_AttachSound;
-		WarheadTypeClass *Ivan_WH;
-		SHPStruct *Ivan_Image;
-		int Ivan_FlickerRate;
+		Customizable<int> Ivan_Damage;
+		Customizable<int> Ivan_Delay;
+		Customizable<int> Ivan_TickingSound;
+		Customizable<int> Ivan_AttachSound;
+		Customizable<WarheadTypeClass *> Ivan_WH;
+		Customizable<SHPStruct *> Ivan_Image;
+		Customizable<int> Ivan_FlickerRate;
 
 		RadType * Rad_Type;
 
@@ -78,17 +81,19 @@ public:
 			Wave_IsBigLaser (false),
 			Ivan_KillsBridges (false),
 			Ivan_Detachable (false),
-			Ivan_Damage (0),
-			Ivan_Delay (0),
-			Ivan_TickingSound (-1),
-			Ivan_AttachSound (-1),
-			Ivan_WH (NULL),
-			Ivan_Image (NULL),
-			Ivan_FlickerRate (15),
+			Ivan_Damage (&RulesClass::Global()->IvanDamage),
+			Ivan_Delay (&RulesClass::Global()->IvanTimedDelay),
+			Ivan_TickingSound (&RulesClass::Global()->BombTickingSound),
+			Ivan_AttachSound (&RulesClass::Global()->BombAttachSound),
+			Ivan_WH (&RulesClass::Global()->IvanWarhead),
+			Beam_Color (RulesClass::Global()->get_RadColor()),
+			Wave_Color (NULL),
+			Ivan_Image (&RulesClass::Global()->BOMBCURS_SHP),
+			Ivan_FlickerRate (&RulesClass::Global()->IvanIconFlickerRate),
 			Rad_Type (NULL)
 			{
-				this->Beam_Color = ColorStruct(255, 255, 255);
-				this->Wave_Color = ColorStruct(255, 255, 255);
+//				this->Beam_Color = ColorStruct(255, 255, 255);
+//				this->Wave_Color = ColorStruct(255, 255, 255);
 				for(int i = 0; i < 5; ++i) {
 					this->Wave_Reverse[i] = false;
 				}
@@ -97,7 +102,6 @@ public:
 		virtual size_t Size() const { return sizeof(*this); };
 
 		virtual void LoadFromINI(TT *pThis, CCINIClass *pINI);
-		virtual void InitializeRuled(TT* pThis);
 		virtual void Initialize(TT* pThis);
 	};
 

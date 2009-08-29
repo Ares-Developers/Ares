@@ -197,7 +197,7 @@ void WeaponTypeExt::ModifyWaveColor(WORD *src, WORD *dst, int Intensity, WaveCla
 
 	ColorStruct *CurrentColor = (pData->Wave_IsHouseColor && Wave->Owner)
 		? Wave->Owner->Owner->get_Color()
-		: &pData->Wave_Color;
+		: pData->Wave_Color.GetEx();
 
 	ColorStruct initial = Drawing::WordColor(*src);
 
