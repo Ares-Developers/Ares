@@ -199,18 +199,22 @@ public:
 
 	E_T* SaveKey(S_T *key, IStream *pStm) {
 		ULONG out;
-//		const std::type_info &info = typeid(key);
-//		Debug::Log("SaveKey [%s] = %X\n", info.name(), key);
+		
+		const std::type_info &info = typeid(key);
+		Debug::Log("Saving Key [%s] (%X)\n", info.name(), key);
 
 		if(key == NULL) {
 			return NULL;
 		}
 		E_T* buffer = this->Find(key);
-//		Debug::Log("\tKey maps to %X\n", buffer);
+		Debug::Log("\tKey maps to %X\n", buffer);
 		if(buffer) {
 			pStm->Write(&buffer, 4, &out);
 			pStm->Write(buffer, buffer->Size(), &out);
+//			Debug::Log("Save used up 0x%X bytes (HRESULT 0x%X)\n", out, res);
 		}
+
+		Debug::Log("\n\n");
 		return buffer;
 	};
 
@@ -228,8 +232,9 @@ public:
 
 	E_T* LoadKey(S_T *key, IStream *pStm) {
 		ULONG out;
-//		const std::type_info &info = typeid(key);
-//		Debug::Log("LoadKey [%s] %X\n", info.name(), key);
+
+		const std::type_info &info = typeid(key);
+		Debug::Log("Loading Key [%s] (%X)\n", info.name(), key);
 
 		if(key == NULL) {
 			Debug::Log("Load attempted for a NULL pointer! WTF!\n");
@@ -239,7 +244,7 @@ public:
 		long origPtr;
 		pStm->Read(&origPtr, 4, &out);
 		pStm->Read(buffer, buffer->Size(), &out);
-//		Debug::Log("LoadKey Swizzle: %X => %X\n", origPtr, buffer);
+		Debug::Log("LoadKey Swizzle: %X => %X\n", origPtr, buffer);
 //		SwizzleManagerClass::Instance.Here_I_Am(origPtr, (void *)buffer);
 #ifdef DEBUGBUILD
 			assert(buffer->SavedCanary == typename E_T::Canary);

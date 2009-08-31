@@ -304,7 +304,7 @@ DEFINE_HOOK(5F5ADD, Parachute_Animation, 6)
 	GET(TechnoClass *, T, ESI);
 	RET_UNLESS(ABS_IS_TECHNO(T));
 	TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(T->GetTechnoType());
-	R->set_EDX((DWORD)pTypeData->Parachute_Anim);
+	R->set_EDX((DWORD)pTypeData->Parachute_Anim.Get());
 	return 0x5F5AE3;
 }
 

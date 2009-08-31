@@ -14,13 +14,6 @@ hash_ionExt WarheadTypeExt::IonExt;
 
 WarheadTypeClass * WarheadTypeExt::Temporal_WH = NULL;
 
-void WarheadTypeExt::ExtData::InitializeRuled(WarheadTypeClass *pThis)
-{
-	this->Temporal_WarpAway = RulesClass::Global()->WarpAway;
-
-	this->_Initialized = is_Ruled;
-};
-
 void WarheadTypeExt::ExtData::LoadFromINI(WarheadTypeClass *pThis, CCINIClass *pINI)
 {
 	const char * section = pThis->get_ID();
@@ -82,11 +75,11 @@ void WarheadTypeExt::ExtData::LoadFromINI(WarheadTypeClass *pThis, CCINIClass *p
 	this->IC_Duration = pINI->ReadInteger(section, "IronCurtain.Duration", this->IC_Duration);
 	this->Is_Custom |= this->IC_Duration != 0;
 
-	if(pThis->Temporal) {
-		PARSE_BUF();
+//	if(pThis->Temporal) {
+//		PARSE_BUF();
 
-		PARSE_ANIM("Temporal.WarpAway", this->Temporal_WarpAway);
-	}
+//		PARSE_ANIM("Temporal.WarpAway", this->Temporal_WarpAway);
+//	}
 
 	this->DeployedDamage = pINI->ReadDouble(section, "Damage.Deployed", this->DeployedDamage);
 

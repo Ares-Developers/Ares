@@ -92,7 +92,7 @@ DEFINE_HOOK(71A900, TemporalClass_Update_WarpAway, 6)
 {
 	WarheadTypeExt::ExtData *pData = WarheadTypeExt::ExtMap.Find(WarheadTypeExt::Temporal_WH);
 
-	R->set_EDX((DWORD)pData->Temporal_WarpAway);
+	R->set_EDX((DWORD)pData->Temporal_WarpAway.Get());
 	return 0x71A906;
 }
 

@@ -22,7 +22,7 @@ void TechnoTypeExt::ExtData::Initialize(TechnoTypeClass *pThis) {
 	this->Survivors_Pilots.SetCapacity(SideClass::Array->Count, NULL);
 
 	for(int i = 0; i < SideClass::Array->Count; ++i) {
-		this->Survivors_Pilots[i] = SideExt::ExtMap.Find(SideClass::Array->Items[i])->Crew;
+		this->Survivors_Pilots[i] = SideExt::ExtMap.Find(SideClass::Array->Items[i])->Crew.Get();
 	}
 
 	this->PrerequisiteLists.SetCapacity(0, NULL);
@@ -35,8 +35,6 @@ void TechnoTypeExt::ExtData::Initialize(TechnoTypeClass *pThis) {
 
 	this->Is_Deso = this->Is_Deso_Radiation = !strcmp(pThis->get_ID(), "DESO");
 	this->Is_Cow = !strcmp(pThis->get_ID(), "COW");
-
-	this->Parachute_Anim = RulesClass::Global()->Parachute;
 
 	this->_Initialized = is_Inited;
 }
@@ -203,7 +201,8 @@ void TechnoTypeExt::ExtData::LoadFromINI(TechnoTypeClass *pThis, CCINIClass *pIN
 		}
 	}
 
-	PARSE_ANIM("Parachute.Anim", this->Parachute_Anim);
+	INI_EX exINI(pINI);
+	this->Parachute_Anim.Read(&exINI, section, "Parachute.Anim");
 
 	// quick fix - remove after the rest of weapon selector code is done
 	return;

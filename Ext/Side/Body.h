@@ -11,6 +11,7 @@
 #include <UnitTypeClass.h>
 
 #include "..\..\Ares.h"
+#include "..\..\Helpers\Template.h"
 
 class VoxClass;
 
@@ -24,12 +25,11 @@ class SideExt
 	class ExtData : public Extension<TT> 
 	{
 	public:
-		InfantryTypeClass* DefaultDisguise;
-		InfantryTypeClass* Crew;
-		int SurvivorDivisor;
+		Customizable<InfantryTypeClass*> DefaultDisguise;
+		Customizable<InfantryTypeClass*> Crew;
+		Customizable<int> SurvivorDivisor;
 		TypeList<BuildingTypeClass*> BaseDefenses;
 		TypeList<int> BaseDefenseCounts;
-//		BuildingTypeClass* PowerPlant;
 		ColorScheme* LoadTextColor;
 		TypeList<TechnoTypeClass*> ParaDrop;
 		TypeList<int> ParaDropNum;
@@ -38,8 +38,6 @@ class SideExt
 		char EVATag[0x20];	//TODO
 
 		ExtData(const DWORD Canary = 0) : 
-			DefaultDisguise (NULL),
-			Crew (NULL),
 //			PowerPlant = NULL;
 			LoadTextColor (NULL)
 		{
@@ -53,6 +51,7 @@ class SideExt
 		virtual size_t Size() const { return sizeof(*this); };
 
 		virtual void LoadFromINI(TT *pThis, CCINIClass *pINI);
+		virtual void LoadDataFromINI(TT *pThis, CCINIClass *pINI);
 		virtual void Initialize(TT *pThis);
 	};
 

@@ -90,7 +90,7 @@ DEFINE_HOOK(52267D, Sides_Disguise1, 6)
 	SideClass* pSide = SideClass::Array->GetItem(n);
 	SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide);
 	if(pData) {
-		R->set_EAX((DWORD)pData->DefaultDisguise);
+		R->set_EAX((DWORD)pData->DefaultDisguise.Get());
 		return 0x5226B7;
 	} else {
 		return 0;
@@ -114,7 +114,7 @@ DEFINE_HOOK(707D40, Sides_Crew, 6)
 	SideClass* pSide = SideClass::Array->GetItem(n);
 	SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide);
 	if(pData) {
-		R->set_ESI((DWORD)pData->Crew);
+		R->set_ESI((DWORD)pData->Crew.Get());
 		return 0x707D81;
 	} else {
 		return 0;
@@ -130,7 +130,7 @@ DEFINE_HOOK(451358, Sides_SurvivorDivisor, 6)
 	SideClass* pSide = SideClass::Array->GetItem(n);
 	SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide);
 	if(pData) {
-		R->set_ESI((DWORD)pData->SurvivorDivisor);
+		R->set_ESI((DWORD)pData->SurvivorDivisor.Get());
 		return 0x451391;
 	} else {
 		return 0;

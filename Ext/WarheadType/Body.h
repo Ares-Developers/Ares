@@ -18,6 +18,8 @@
 
 #include "..\_Container.hpp"
 
+#include "..\..\Helpers\Template.h"
+
 #ifdef DEBUGBUILD
 #include "..\..\Misc\Debug.h"
 #endif
@@ -55,7 +57,7 @@ public:
 		DynamicVectorClass<VersesData> Verses;
 		double DeployedDamage;
 
-		AnimTypeClass *Temporal_WarpAway;
+		Customizable<AnimTypeClass *> Temporal_WarpAway;
 
 		ExtData(const DWORD Canary = 0) : 
 			Is_Custom (false),
@@ -63,7 +65,7 @@ public:
 			Ripple_Radius (0),
 			EMP_Duration (0),
 			IC_Duration (0),
-			Temporal_WarpAway (NULL),
+			Temporal_WarpAway (&RulesClass::Global()->WarpAway),
 			DeployedDamage (1.00)
 			{
 				for(int i = 0; i < 11; ++i) {
@@ -77,7 +79,6 @@ public:
 		virtual size_t Size() const { return sizeof(*this); };
 
 		virtual void LoadFromINI(TT *pThis, CCINIClass *pINI);
-		virtual void InitializeRuled(TT *pThis);
 	};
 
 	static Container<WarheadTypeExt> ExtMap;

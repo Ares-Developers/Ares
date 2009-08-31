@@ -58,6 +58,8 @@ DEFINE_HOOK(4E3579, HTExt_DrawFlag, 0)
 	
 	char* pFlagFile = NULL;
 
+	Debug::Log("Flag of %s\n", pThis->get_ID());
+
 	HouseTypeExt::ExtData *pData = HouseTypeExt::ExtMap.Find(pThis);
 	if(pData) {
 		pFlagFile = pData->FlagFile;
@@ -67,6 +69,7 @@ DEFINE_HOOK(4E3579, HTExt_DrawFlag, 0)
 		return 0x4E3590;
 	}
 
+	Debug::Log("Flag resolves to %s\n", pFlagFile);
 	R->set_EAX((DWORD)PCX::GetSurface(pFlagFile));
 
 	return 0x4E3686;

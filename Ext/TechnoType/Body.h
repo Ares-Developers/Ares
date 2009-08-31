@@ -6,6 +6,7 @@
 
 #include "..\..\Ares.h"
 #include "..\_Container.hpp"
+#include "..\..\Helpers\Template.h"
 
 class TechnoTypeExt
 {
@@ -53,7 +54,7 @@ public:
 
 		SHPStruct *Insignia_R, *Insignia_V, *Insignia_E;
 
-		AnimTypeClass *Parachute_Anim;
+		Customizable<AnimTypeClass*> Parachute_Anim;
 
 		ExtData(const DWORD Canary = 0) : 
 			Survivors_PilotChance (0),
@@ -75,7 +76,7 @@ public:
 			Insignia_R (NULL),
 			Insignia_V (NULL),
 			Insignia_E (NULL),
-			Parachute_Anim (NULL)
+			Parachute_Anim (&RulesClass::Global()->Parachute)
 			{ };
 
 		virtual ~ExtData() { };

@@ -40,9 +40,10 @@ public:
 
 		// Coloured Rad Beams
 		Customizable<ColorStruct> Beam_Color;
-		bool   Beam_IsHouseColor;
 		int    Beam_Duration;
 		double Beam_Amplitude;
+		bool   Beam_IsHouseColor;
+
 		// TS Lasers
 		bool   Wave_IsHouseColor;
 		bool   Wave_IsLaser;
@@ -79,8 +80,8 @@ public:
 			Wave_IsHouseColor (false),
 			Wave_IsLaser (false),
 			Wave_IsBigLaser (false),
-			Ivan_KillsBridges (false),
-			Ivan_Detachable (false),
+			Ivan_KillsBridges (true),
+			Ivan_Detachable (true),
 			Ivan_Damage (&RulesClass::Global()->IvanDamage),
 			Ivan_Delay (&RulesClass::Global()->IvanTimedDelay),
 			Ivan_TickingSound (&RulesClass::Global()->BombTickingSound),

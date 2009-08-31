@@ -29,8 +29,10 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 			this->BaseDefenses.AddItem(RulesClass::Global()->get_SovietBaseDefenses()->GetItem(i));
 		}
 
-		this->Crew = RulesClass::Global()->SovietCrew;
-		this->DefaultDisguise = RulesClass::Global()->SovietDisguise;
+		this->Crew.Bind(&RulesClass::Global()->SovietCrew);
+		this->DefaultDisguise.Bind(&RulesClass::Global()->SovietDisguise);
+		this->SurvivorDivisor.Bind(&RulesClass::Global()->SovietSurvivorDivisor);
+
 		strcpy(this->EVATag, "Russian");
 		this->LoadTextColor = ColorScheme::Find("SovietLoad");
 		
@@ -42,10 +44,8 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 			this->ParaDropNum.AddItem(RulesClass::Global()->get_SovParaDropNum()->GetItem(i));
 		}
 
-//						this->PowerPlant = RulesClass::Global()->get_NodRegularPower();
 		this->SidebarMixFileIndex = 2;
 		this->SidebarYuriFileNames = false;
-		this->SurvivorDivisor = RulesClass::Global()->SovietSurvivorDivisor;
 
 	} else if(!_strcmpi(pID, "ThirdSide")) { //Yuri
 
@@ -57,8 +57,10 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 			this->BaseDefenses.AddItem(RulesClass::Global()->get_ThirdBaseDefenses()->GetItem(i));
 		}
 
-		this->Crew = RulesClass::Global()->ThirdCrew;
-		this->DefaultDisguise = RulesClass::Global()->ThirdDisguise;
+		this->Crew.Bind(&RulesClass::Global()->ThirdCrew);
+		this->DefaultDisguise.Bind(&RulesClass::Global()->ThirdDisguise);
+		this->SurvivorDivisor.Bind(&RulesClass::Global()->ThirdSurvivorDivisor);
+
 		strcpy(this->EVATag, "Yuri");
 		this->LoadTextColor = ColorScheme::Find("SovietLoad");
 		
@@ -70,10 +72,8 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 			this->ParaDropNum.AddItem(RulesClass::Global()->get_YuriParaDropNum()->GetItem(i));
 		}
 
-//						this->PowerPlant = RulesClass::Global()->get_ThirdPowerPlant();
 		this->SidebarMixFileIndex = 2;
 		this->SidebarYuriFileNames = true;
-		this->SurvivorDivisor = RulesClass::Global()->ThirdSurvivorDivisor;
 
 	} else { //Allies or any other country
 
@@ -85,8 +85,10 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 			this->BaseDefenses.AddItem(RulesClass::Global()->get_AlliedBaseDefenses()->GetItem(i));
 		}
 
-		this->Crew = RulesClass::Global()->AlliedCrew;
-		this->DefaultDisguise = RulesClass::Global()->AlliedDisguise;
+		this->Crew.Bind(&RulesClass::Global()->AlliedCrew);
+		this->DefaultDisguise.Bind(&RulesClass::Global()->AlliedDisguise);
+		this->SurvivorDivisor.Bind(&RulesClass::Global()->AlliedSurvivorDivisor);
+
 		strcpy(this->EVATag, "Allied");
 		this->LoadTextColor = ColorScheme::Find("AlliedLoad");
 
@@ -98,12 +100,10 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 			this->ParaDropNum.AddItem(RulesClass::Global()->get_AllyParaDropNum()->GetItem(i));
 		}
 
-//						this->PowerPlant = RulesClass::Global()->get_GDIPowerPlant();
 		this->SidebarMixFileIndex = 1;
 		this->SidebarYuriFileNames = false;
-		this->SurvivorDivisor = RulesClass::Global()->AlliedSurvivorDivisor;
 	}
-	
+
 	this->_Initialized = is_Inited;
 };
 
@@ -113,31 +113,27 @@ void SideExt::ExtData::LoadFromINI(SideClass *pThis, CCINIClass *pINI)
 		return;
 	}
 
-	char* pID = pThis->get_ID();
-
-/*
-	if(!_strcmpi(pID, "Civilian") || !_strcmpi(pID, "Mutant")) {
-		continue;
+//	Debug::Log("Loading Side %s from INI\n", pThis->get_ID());
+	switch(this->_Initialized) {
+		case is_Constanted:
+//			Debug::Log("Constanted\n");
+			this->InitializeRuled(pThis);
+		case is_Ruled:
+//			Debug::Log("Ruled\n");
+			this->Initialize(pThis);
+		case is_Inited:
+//			Debug::Log("Inited\n");
+			this->LoadDataFromINI(pThis, pINI);
 	}
-*/
+//	Debug::Log("Loaded Side\n");
+}
 
-	if(this->_Initialized == is_Constanted && RulesClass::Initialized) {
-		this->InitializeRuled(pThis);
-	}
-
-	if(this->_Initialized == is_Ruled) {
-		this->Initialize(pThis);
-	}
-
-/*
-	special case
-	if(this->_Initialized != is_Inited) {
-		return;
-	}
-*/
+void SideExt::ExtData::LoadDataFromINI(SideClass *pThis, CCINIClass *pINI)
+{
 	char* p = NULL;
+	char* section = pThis->get_ID();
 
-	if(pINI->ReadString(pID, "AI.BaseDefenseCounts", "", Ares::readBuffer, Ares::readLength)) {
+	if(pINI->ReadString(section, "AI.BaseDefenseCounts", "", Ares::readBuffer, Ares::readLength)) {
 		this->BaseDefenseCounts.Clear();
 
 		for(p = strtok(Ares::readBuffer, Ares::readDelims); p && *p; p = strtok(NULL, Ares::readDelims)) {
@@ -145,7 +141,7 @@ void SideExt::ExtData::LoadFromINI(SideClass *pThis, CCINIClass *pINI)
 		}
 	}
 
-	if(pINI->ReadString(pID, "AI.BaseDefenses", "", Ares::readBuffer, Ares::readLength)) {
+	if(pINI->ReadString(section, "AI.BaseDefenses", "", Ares::readBuffer, Ares::readLength)) {
 		this->BaseDefenses.Clear();
 
 		for(p = strtok(Ares::readBuffer, Ares::readDelims); p && *p; p = strtok(NULL, Ares::readDelims)) {
@@ -153,26 +149,24 @@ void SideExt::ExtData::LoadFromINI(SideClass *pThis, CCINIClass *pINI)
 		}
 	}
 
-	if(pINI->ReadString(pID, "Crew", "", Ares::readBuffer, 0x80)) {
-		this->Crew = InfantryTypeClass::FindOrAllocate(Ares::readBuffer);
-	}
+	INI_EX exINI(pINI);
 
-	if(pINI->ReadString(pID, "DefaultDisguise", "", Ares::readBuffer, 0x80)) {
-		this->DefaultDisguise = InfantryTypeClass::FindOrAllocate(Ares::readBuffer);
-	}
+	this->Crew.ReadFind(&exINI, section, "Crew", 1);
 
-	if(pINI->ReadString(pID, "EVA.Tag", "", Ares::readBuffer, 0x20)) {
+	this->DefaultDisguise.ReadFind(&exINI, section, "DefaultDisguise", 1);
+
+	if(pINI->ReadString(section, "EVA.Tag", "", Ares::readBuffer, 0x20)) {
 		strncpy(this->EVATag, Ares::readBuffer, 0x20);
 	}
 
-	if(pINI->ReadString(pID, "LoadScreenText.Color", "", Ares::readBuffer, 0x80)) {
+	if(pINI->ReadString(section, "LoadScreenText.Color", "", Ares::readBuffer, 0x80)) {
 		ColorScheme* CS = ColorScheme::Find(Ares::readBuffer);
 		if(CS) {
 			this->LoadTextColor = CS;
 		}
 	}
 
-	if(pINI->ReadString(pID, "ParaDrop.Types", "", Ares::readBuffer, Ares::readLength)) {
+	if(pINI->ReadString(section, "ParaDrop.Types", "", Ares::readBuffer, Ares::readLength)) {
 		this->ParaDrop.Clear();
 
 		for(p = strtok(Ares::readBuffer, Ares::readDelims); p && *p; p = strtok(NULL, Ares::readDelims)) {
@@ -188,7 +182,7 @@ void SideExt::ExtData::LoadFromINI(SideClass *pThis, CCINIClass *pINI)
 		}
 	}
 
-	if(pINI->ReadString(pID, "ParaDrop.Num", "", Ares::readBuffer, Ares::readLength)) {
+	if(pINI->ReadString(section, "ParaDrop.Num", "", Ares::readBuffer, Ares::readLength)) {
 		this->ParaDropNum.Clear();
 
 		for(p = strtok(Ares::readBuffer, Ares::readDelims); p && *p; p = strtok(NULL, Ares::readDelims)) {
@@ -196,13 +190,9 @@ void SideExt::ExtData::LoadFromINI(SideClass *pThis, CCINIClass *pINI)
 		}
 	}
 
-//					if(pINI->ReadString(pID, "AI.PowerPlant", "", buffer, 0x80))
-//					pData->PowerPlant = BuildingTypeClass::FindOrAllocate(buffer);
-
-	this->SidebarMixFileIndex =  pINI->ReadInteger(pID, "Sidebar.MixFileIndex", this->SidebarMixFileIndex);
-	this->SidebarYuriFileNames = pINI->ReadBool(pID, "Sidebar.YuriFileNames", this->SidebarYuriFileNames);
-	this->SurvivorDivisor =      pINI->ReadInteger(pID, "SurvivorDivisor", this->SurvivorDivisor);
-
+	this->SidebarMixFileIndex =  pINI->ReadInteger(section, "Sidebar.MixFileIndex", this->SidebarMixFileIndex);
+	this->SidebarYuriFileNames = pINI->ReadBool(section, "Sidebar.YuriFileNames", this->SidebarYuriFileNames);
+	this->SurvivorDivisor.Read(&exINI, section, "SurvivorDivisor");
 }
 
 DWORD SideExt::BaseDefenses(REGISTERS* R, DWORD dwReturnAddress)
@@ -224,17 +214,14 @@ DWORD SideExt::Disguise(REGISTERS* R, DWORD dwReturnAddress, bool bUseESI)
 {
 	HouseClass* pHouse = (HouseClass*)R->get_EAX();
 	InfantryClass* pThis;
-	
-	if(bUseESI)
-		pThis = (InfantryClass*)R->get_ESI();
-	else
-		pThis = (InfantryClass*)R->get_ECX();
+
+	pThis = (InfantryClass*)(bUseESI ? R->get_ESI() : R->get_ECX());
 
 	int n = pHouse->SideIndex;
 	SideClass* pSide = SideClass::Array->GetItem(n);
 	SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide);
 	if(pData) {
-		pThis->set_Disguise(pData->DefaultDisguise);
+		pThis->set_Disguise(pData->DefaultDisguise.Get());
 		return dwReturnAddress;
 	} else {
 		return 0;
@@ -262,11 +249,10 @@ DWORD SideExt::MixFileYuriFiles(REGISTERS* R, DWORD dwReturnAddress1, DWORD dwRe
 	SideClass* pSide = SideClass::Array->GetItem(n);
 	SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide);
 	if(pData) {
-		if(pData->SidebarYuriFileNames) {
-			return dwReturnAddress1;
-		} else {
-			return dwReturnAddress2;
-		}
+		return pData->SidebarYuriFileNames
+		 ? dwReturnAddress1
+		 : dwReturnAddress2
+		;
 	} else {
 		return 0;
 	}

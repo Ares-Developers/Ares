@@ -73,27 +73,26 @@ void WeaponTypeExt::ExtData::LoadFromINI(WeaponTypeExt::TT *pThis, CCINIClass *p
 
 	if(!this->Beam_IsHouseColor) {
 		this->Beam_Color.Read(&exINI, section, "Beam.Color");
-//		PARSE_COLOR("Beam.Color", this->Beam_Color, tmpColor);
 	}
 
-//	this->Wave_IsLaser      = pINI->ReadBool(section, "Wave.IsLaser", this->Wave_IsLaser);
-//	this->Wave_IsBigLaser   = pINI->ReadBool(section, "Wave.IsBigLaser", this->Wave_IsBigLaser);
-//	this->Wave_IsHouseColor = pINI->ReadBool(section, "Wave.IsHouseColor", this->Wave_IsHouseColor);
+	this->Wave_IsLaser      = pINI->ReadBool(section, "Wave.IsLaser", this->Wave_IsLaser);
+	this->Wave_IsBigLaser   = pINI->ReadBool(section, "Wave.IsBigLaser", this->Wave_IsBigLaser);
+	this->Wave_IsHouseColor = pINI->ReadBool(section, "Wave.IsHouseColor", this->Wave_IsHouseColor);
 
-//	if(!this->Wave_IsHouseColor) {
-//		PARSE_COLOR("Wave.Color", this->Wave_Color, tmpColor);
-//	}
+	if(!this->Wave_IsHouseColor) {
+		this->Wave_Color.Read(&exINI, section, "Wave.Color");
+	}
 
-//	this->Wave_Reverse[idxVehicle]   = 
-//		pINI->ReadBool(section, "Wave.ReverseAgainstVehicles", this->Wave_Reverse[idxVehicle]);
-//	this->Wave_Reverse[idxAircraft]  = 
-//		pINI->ReadBool(section, "Wave.ReverseAgainstAircraft", this->Wave_Reverse[idxAircraft]);
-//	this->Wave_Reverse[idxBuilding] = 
-//		pINI->ReadBool(section, "Wave.ReverseAgainstBuildings", this->Wave_Reverse[idxBuilding]);
-//	this->Wave_Reverse[idxInfantry]  = 
-//		pINI->ReadBool(section, "Wave.ReverseAgainstInfantry", this->Wave_Reverse[idxInfantry]);
-//	this->Wave_Reverse[idxOther]  = 
-//		pINI->ReadBool(section, "Wave.ReverseAgainstOthers", this->Wave_Reverse[idxOther]);
+	this->Wave_Reverse[idxVehicle]   = 
+		pINI->ReadBool(section, "Wave.ReverseAgainstVehicles", this->Wave_Reverse[idxVehicle]);
+	this->Wave_Reverse[idxAircraft]  = 
+		pINI->ReadBool(section, "Wave.ReverseAgainstAircraft", this->Wave_Reverse[idxAircraft]);
+	this->Wave_Reverse[idxBuilding] = 
+		pINI->ReadBool(section, "Wave.ReverseAgainstBuildings", this->Wave_Reverse[idxBuilding]);
+	this->Wave_Reverse[idxInfantry]  = 
+		pINI->ReadBool(section, "Wave.ReverseAgainstInfantry", this->Wave_Reverse[idxInfantry]);
+	this->Wave_Reverse[idxOther]  = 
+		pINI->ReadBool(section, "Wave.ReverseAgainstOthers", this->Wave_Reverse[idxOther]);
 
 //	pData->Wave_InitialIntensity = pINI->ReadInteger(section, "Wave.InitialIntensity", pData->Wave_InitialIntensity);
 //	pData->Wave_IntensityStep    = pINI->ReadInteger(section, "Wave.IntensityStep", pData->Wave_IntensityStep);
@@ -111,27 +110,21 @@ void WeaponTypeExt::ExtData::LoadFromINI(WeaponTypeExt::TT *pThis, CCINIClass *p
 		this->Ivan_Damage.Read(&exINI, section, "IvanBomb.Damage");
 		this->Ivan_Delay.Read(&exINI, section, "IvanBomb.Delay");
 
-//		this->Ivan_Damage       = pINI->ReadInteger(section, "IvanBomb.Damage", this->Ivan_Damage);
-//		this->Ivan_Delay        = pINI->ReadInteger(section, "IvanBomb.Delay", this->Ivan_Delay);
-//
-//		int flicker = pINI->ReadInteger(section, "IvanBomb.FlickerRate", this->Ivan_FlickerRate);
-//		if(flicker) {
-//			this->Ivan_FlickerRate  = flicker;
-//		}
-//
-//		PARSE_SND("IvanBomb.TickingSound", this->Ivan_TickingSound);
-//
-//		PARSE_SND("IvanBomb.AttachSound", this->Ivan_AttachSound);
-//
-//		PARSE_WH("IvanBomb.Warhead", this->Ivan_WH);
-//		
-//		pINI->ReadString(section, "IvanBomb.Image", "", buffer, 256);
-//		if(strlen(buffer)) {
-//			SHPStruct *image = FileSystem::LoadSHPFile(buffer);
-//			if(image) {
-//				this->Ivan_Image = image;
-//			}
-//		}
+		this->Ivan_FlickerRate.Read(&exINI, section, "IvanBomb.FlickerRate");
+
+		PARSE_SND_EX("IvanBomb.TickingSound", this->Ivan_TickingSound);
+
+		PARSE_SND_EX("IvanBomb.AttachSound", this->Ivan_AttachSound);
+
+		this->Ivan_WH.ReadFind(&exINI, section, "IvanBomb.Warhead");
+
+		pINI->ReadString(section, "IvanBomb.Image", "", buffer, 256);
+		if(strlen(buffer)) {
+			SHPStruct *image = FileSystem::LoadSHPFile(buffer);
+			if(image) {
+				this->Ivan_Image.Set(image);
+			}
+		}
 	}
 //
 /*

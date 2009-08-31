@@ -24,6 +24,10 @@ public:
 		return pINI->ReadString(pSection, pKey, "", this->buffer(), this->buflen()) > 1;
 	}
 
+	const char * value() {
+		return Ares::readBuffer;
+	}
+
 
 	// bool
 	bool ReadBool(const char* pSection, const char* pKey, bool* bBuffer) {

@@ -1,7 +1,8 @@
 #ifndef ARES_TEMPLATE_H
 #define ARES_TEMPLATE_H
 
-#include "..\..\Helpers\INIParser.h"
+#include "INIParser.h"
+#include "Type.h"
 
 /**
  * More fancy templates!
@@ -17,7 +18,9 @@ class Customizable {
 	T*   Default;
 	T    Value;
 public:
-	Customizable(T* alias) : Customized(false), Default(alias) {};
+	typedef T MyType;
+	typedef typename CompoundT<T>::BaseT MyBase;
+	Customizable(T* alias = NULL) : Customized(false), Default(alias) {};
 
 	void Bind(T* to) {
 		if(!this->Customized) {
@@ -47,7 +50,7 @@ public:
 	T Get() {
 		return this->Customized
 		 ? this->Value
-		 : *this->Default
+		 : this->Default ? *this->Default : T()
 		;
 	}
 
@@ -61,8 +64,18 @@ public:
 	void Read(INI_EX *parser, const char* pSection, const char* pKey) {
 	
 	}
+
+	void ReadFind(INI_EX *parser, const char* pSection, const char* pKey, bool Allocate = 0) {
+//		T buffer = this->Get();
+		if(parser->ReadString(pSection, pKey)) {
+//			if(buffer = ) {
+			this->Set((Allocate ? MyBase::FindOrAllocate : MyBase::Find)(parser->value()));
+//			}
+		}
+	}
 };
 
+template<>
 void Customizable<bool>::Read(INI_EX *parser, const char* pSection, const char* pKey) {
 	bool buffer = this->Get();
 	if(parser->ReadBool(pSection, pKey, &buffer)) {
@@ -70,6 +83,7 @@ void Customizable<bool>::Read(INI_EX *parser, const char* pSection, const char* 
 	}
 };
 
+template<>
 void Customizable<int>::Read(INI_EX *parser, const char* pSection, const char* pKey) {
 	int buffer = this->Get();
 	if(parser->ReadInteger(pSection, pKey, &buffer)) {
@@ -77,6 +91,7 @@ void Customizable<int>::Read(INI_EX *parser, const char* pSection, const char* p
 	}
 }
 
+template<>
 void Customizable<double>::Read(INI_EX *parser, const char* pSection, const char* pKey) {
 	double buffer = this->Get();
 	if(parser->ReadDouble(pSection, pKey, &buffer)) {
@@ -84,12 +99,14 @@ void Customizable<double>::Read(INI_EX *parser, const char* pSection, const char
 	}
 }
 
+template<>
 void Customizable<ColorStruct>::Read(INI_EX *parser, const char* pSection, const char* pKey) {
 	ColorStruct buffer = this->Get();
 	if(parser->Read3Bytes(pSection, pKey, (byte*)&buffer)) {
 		this->Set(buffer);
 	}
 }
+
 /*
  */
 
