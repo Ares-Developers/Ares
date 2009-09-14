@@ -56,13 +56,13 @@ void Ares::GlobalControls::Load(CCINIClass *pINI) {
 	GFX_S_ ## __surface__ .Force3D = INI->ReadBool("Graphics.Advanced", "Surface." # str(__surface__) # ".Force3D", GFX_S_ ## __surface__ .Force3D);
 
 
-//	ReadSurface(Alternate);
-//	ReadSurface(Composite);
-//	ReadSurface(Hidden);
-//	ReadSurface(Hidden_2);
-//	ReadSurface(Primary);
-//	ReadSurface(Sidebar);
-//	ReadSurface(Tile);
+	ReadSurface(Alternate);
+	ReadSurface(Composite);
+	ReadSurface(Hidden);
+	ReadSurface(Hidden_2);
+	ReadSurface(Primary);
+	ReadSurface(Sidebar);
+	ReadSurface(Tile);
 
 #endif
 
