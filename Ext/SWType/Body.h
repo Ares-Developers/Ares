@@ -7,6 +7,7 @@
 #include <CCINIClass.h>
 #include <HouseClass.h>
 #include <MissionClass.h>
+#include <RadarEventClass.h>
 #include <SuperClass.h>
 #include <SwizzleManagerClass.h>
 #include <VocClass.h>
@@ -63,6 +64,7 @@ public:
 		bool SW_TypeCustom;
 		bool SW_AutoFire;
 		bool SW_FireToShroud;
+		bool SW_RadarEvent;
 		MouseCursor SW_Cursor;
 		MouseCursor SW_NoCursor;
 
@@ -82,7 +84,8 @@ public:
 			SW_AnimHeight (0),
 			SW_TypeCustom (false),
 			SW_AutoFire (false),
-			SW_FireToShroud (true)
+			SW_FireToShroud (true),
+			SW_RadarEvent (false)
 			{ };
 
 		virtual ~ExtData() { };
@@ -98,7 +101,7 @@ public:
 
 	static SuperWeaponTypeClass *CurrentSWType;
 
-	bool static _stdcall SuperClass_Launch(SuperClass* pThis, CellStruct* pCoords);
+	bool static _stdcall SuperClass_Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer);
 };
 
 #endif

@@ -244,6 +244,17 @@ DEFINE_HOOK(50CFAA, HouseClass_PickOffensiveSWTarget, 0)
 	return 0x50CFC9;
 }
 
+// ARGH! 
+DEFINE_HOOK(6CC390, SuperClass_Launch, 6)
+{
+	GET(SuperClass *, pSuper, ECX);
+	GET_STACK(CellStruct*, pCoords, 0x4);
+	GET_STACK(byte, IsPlayer, 0x8);
+	bool handled = SWTypeExt::SuperClass_Launch(pSuper, pCoords, IsPlayer);
+
+	return handled ? 0x6CDE40 : 0;
+}
+
 DEFINE_HOOK(6CC360, SuperClass_IsReadyToFire, 5)
 {
 	GET(SuperClass *, pThis, ECX);

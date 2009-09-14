@@ -328,7 +328,8 @@ DEFINE_HOOK(685659, Scenario_ClearClasses, a)
 	return 0;
 }
 
-DEFINE_HOOK(7C8E17, operator_new, 6)
+/*
+A_FINE_HOOK(7C8E17, operator_new, 6)
 {
 	static int tick = 0;
 	GET_STACK(size_t, sz, 0x4);
@@ -345,23 +346,22 @@ DEFINE_HOOK(7C8E17, operator_new, 6)
 	if((tick % 1) == 0) {
 		Debug::Log("@ 0x%X: 0x%X + 0x%X bytes\n", R->get_StackVar32(0x0), MemMap::Total, sz);
 	}
-#endif
 
 	MemMap::Add(p, sz);
+#endif
 
 	R->set_EAX((DWORD)p);
 	return 0x7C8E24;
 }
 
-
-DEFINE_HOOK(7C8B3D, operator_delete, 9)
+A_FINE_HOOK(7C8B3D, operator_delete, 9)
 {
 	static int tick = 0;
 	GET_STACK(void *, p, 0x4);
 
+#ifdef MEMORY_LOGGING
 	size_t sz = MemMap::Remove(p);
 
-#ifdef MEMORY_LOGGING
 	++tick;
 
 	if((tick % 1) == 0) {
@@ -372,3 +372,4 @@ DEFINE_HOOK(7C8B3D, operator_delete, 9)
 	operator delete(p);
 	return 0x7C8B47;
 }
+*/

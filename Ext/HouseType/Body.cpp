@@ -178,7 +178,7 @@ void HouseTypeExt::ExtData::LoadFromRules(HouseTypeClass *pThis, CCINIClass *pIN
 
 	if(pINI->ReadString(pID, "File.Flag", "", Ares::readBuffer, Ares::readLength)) {
 		strncpy(this->FlagFile, Ares::readBuffer, 0x20);
-		Debug::Log("Got [%s]File.Flag = %s\n", pThis->get_ID(), this->FlagFile);
+//		Debug::Log("Got [%s]File.Flag = %s\n", pThis->get_ID(), this->FlagFile);
 		//Load PCX File so it can be drawn
 		PCX::LoadFile(this->FlagFile);
 	}
@@ -219,6 +219,8 @@ void HouseTypeExt::ExtData::LoadFromINI(HouseTypeClass *pThis, CCINIClass *pINI)
 	}
 
 	char* pID = pThis->get_ID();
+
+	Debug::Log("Loading Country %s from INI %X\n", pThis->get_ID(), pINI);
 
 	if(this->_Initialized == is_Constanted && RulesClass::Initialized) {
 		this->InitializeRuled(pThis);

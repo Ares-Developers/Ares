@@ -11,6 +11,10 @@ SuperWeaponTypeClass *SWTypeExt::CurrentSWType = NULL;
 
 void SWTypeExt::ExtData::InitializeConstants(SuperWeaponTypeClass *pThis)
 {
+	if(!NewSWType::Array.Count) {
+		NewSWType::Init();
+	}
+
 	this->SpyPlane_Count = 1;
 	this->SpyPlane_Mission = mission_AttackAgain;
 
@@ -117,6 +121,7 @@ void SWTypeExt::ExtData::LoadFromINI(SuperWeaponTypeClass *pThis, CCINIClass *pI
 
 	this->SW_FireToShroud = pINI->ReadBool(section, "Super.FireIntoShroud", this->SW_FireToShroud);
 	this->SW_AutoFire = pINI->ReadBool(section, "Super.AutoFire", this->SW_AutoFire);
+	this->SW_RadarEvent = pINI->ReadBool(section, "Super.CreateRadarEvent", this->SW_RadarEvent);
 
 	this->Money_Amount = pINI->ReadInteger(section, "Money.Amount", this->Money_Amount);
 
@@ -157,7 +162,7 @@ void SWTypeExt::ExtData::LoadFromINI(SuperWeaponTypeClass *pThis, CCINIClass *pI
 	}
 }
 
-bool _stdcall SWTypeExt::SuperClass_Launch(SuperClass* pThis, CellStruct* pCoords)
+bool _stdcall SWTypeExt::SuperClass_Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
 {
 	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pThis->Type);
 	if(pData->EVA_Activated != -1) {
@@ -167,7 +172,7 @@ bool _stdcall SWTypeExt::SuperClass_Launch(SuperClass* pThis, CellStruct* pCoord
 	if(pData->Money_Amount > 0) {
 		DEBUGLOG("House %d gets %d credits\n", pThis->Owner->ArrayIndex, pData->Money_Amount);
 		pThis->Owner->GiveMoney(pData->Money_Amount);
-	} else {
+	} else if(pData->Money_Amount < 0) {
 		DEBUGLOG("House %d loses %d credits\n", pThis->Owner->ArrayIndex, -pData->Money_Amount);
 		pThis->Owner->TakeMoney(-pData->Money_Amount);
 	}
@@ -185,9 +190,13 @@ bool _stdcall SWTypeExt::SuperClass_Launch(SuperClass* pThis, CellStruct* pCoord
 		VocClass::PlayAt(pData->SW_Sound, &coords, NULL);
 	}
 
+	if(pData->SW_RadarEvent) {
+		RadarEventClass::Create(RADAREVENT_SUPERWEAPONLAUNCHED, *pCoords);
+	}
+
 	int TypeIdx = pThis->Type->Type;
 	RET_UNLESS(TypeIdx >= FIRST_SW_TYPE);
-	return NewSWType::GetNthItem(TypeIdx)->Launch(pThis, pCoords);
+	return NewSWType::GetNthItem(TypeIdx)->Launch(pThis, pCoords, IsPlayer);
 }
 
 // =============================

@@ -68,16 +68,16 @@ public:
 		const char *pValue = this->buffer();
 
 		if(*pValue == '$') {
-			sscanf(pValue, "$%d", buffer);
+			sscanf(pValue, "$%d", &buffer);
 			return buffer;
 		}
 
 		if(tolower(pValue[strlen(pValue) - 2]) == 'h') {
-			sscanf(pValue, "%xh", buffer);
+			sscanf(pValue, "%xh", &buffer);
 			return buffer;
 		}
 
-		sscanf(pValue, "%d", buffer);
+		sscanf(pValue, "%d", &buffer);
 		return buffer;
 	}
 
@@ -157,7 +157,7 @@ public:
 
 	double ParseDouble(double nDefault) {
 		double buffer = nDefault;
-		sscanf(this->buffer(), "%f", buffer);
+		sscanf(this->buffer(), "%f", &buffer);
 		if(strchr(this->buffer(), '%')) {
 			buffer *= 0.01;
 		}

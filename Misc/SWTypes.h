@@ -26,7 +26,7 @@ class NewSWType
 
 		virtual bool CanFireAt(CellStruct* pCoords)
 			{ return 1; }
-		virtual bool Launch(SuperClass* pSW, CellStruct* pCoords) = 0;
+		virtual bool Launch(SuperClass* pSW, CellStruct* pCoords, byte IsPlayer) = 0;
 
 		virtual void LoadFromINI(
 			SWTypeExt::ExtData *pData, 

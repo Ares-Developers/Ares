@@ -8,6 +8,7 @@
 #include <BulletClass.h>
 #include <CCINIClass.h>
 #include <Drawing.h>
+#include <EBolt.h>
 #include <RadBeam.h>
 #include <RadSiteClass.h>
 #include <VocClass.h>
@@ -43,6 +44,11 @@ public:
 		int    Beam_Duration;
 		double Beam_Amplitude;
 		bool   Beam_IsHouseColor;
+
+		// Coloured EBolts
+		Customizable<ColorStruct> Bolt_Color1;
+		Customizable<ColorStruct> Bolt_Color2;
+		Customizable<ColorStruct> Bolt_Color3;
 
 		// TS Lasers
 		bool   Wave_IsHouseColor;
@@ -89,6 +95,9 @@ public:
 			Ivan_WH (&RulesClass::Global()->IvanWarhead),
 			Beam_Color (RulesClass::Global()->get_RadColor()),
 			Wave_Color (NULL),
+			Bolt_Color1 (NULL),
+			Bolt_Color2 (NULL),
+			Bolt_Color3 (NULL),
 			Ivan_Image (&RulesClass::Global()->BOMBCURS_SHP),
 			Ivan_FlickerRate (&RulesClass::Global()->IvanIconFlickerRate),
 			Rad_Type (NULL)
@@ -127,6 +136,7 @@ public:
 
 	static stdext::hash_map<BombClass *, ExtData *> BombExt;
 	static stdext::hash_map<WaveClass *, ExtData *> WaveExt;
+	static stdext::hash_map<EBolt *, ExtData *> BoltExt;
 	static stdext::hash_map<RadSiteClass *, ExtData *> RadSiteExt;
 
 #define idxVehicle 0
@@ -159,6 +169,7 @@ public:
 
 typedef stdext::hash_map<BombClass *, WeaponTypeExt::ExtData *> hash_bombExt;
 typedef stdext::hash_map<WaveClass *, WeaponTypeExt::ExtData *> hash_waveExt;
+typedef stdext::hash_map<EBolt *, WeaponTypeExt::ExtData *> hash_boltExt;
 typedef stdext::hash_map<RadSiteClass *, WeaponTypeExt::ExtData *> hash_radsiteExt;
 
 #endif

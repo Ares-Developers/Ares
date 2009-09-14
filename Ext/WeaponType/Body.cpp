@@ -8,6 +8,7 @@ IStream *Container<WeaponTypeExt>::SavingStream = NULL;
 
 hash_bombExt WeaponTypeExt::BombExt;
 hash_waveExt WeaponTypeExt::WaveExt;
+hash_boltExt WeaponTypeExt::BoltExt;
 hash_radsiteExt WeaponTypeExt::RadSiteExt;
 
 void WeaponTypeExt::ExtData::Initialize(WeaponTypeClass *pThis)
@@ -93,6 +94,12 @@ void WeaponTypeExt::ExtData::LoadFromINI(WeaponTypeExt::TT *pThis, CCINIClass *p
 		pINI->ReadBool(section, "Wave.ReverseAgainstInfantry", this->Wave_Reverse[idxInfantry]);
 	this->Wave_Reverse[idxOther]  = 
 		pINI->ReadBool(section, "Wave.ReverseAgainstOthers", this->Wave_Reverse[idxOther]);
+
+	if(pThis->IsElectricBolt) {
+		this->Bolt_Color1.Read(&exINI, section, "Bolt.Color1");
+		this->Bolt_Color2.Read(&exINI, section, "Bolt.Color2");
+		this->Bolt_Color3.Read(&exINI, section, "Bolt.Color3");
+	}
 
 //	pData->Wave_InitialIntensity = pINI->ReadInteger(section, "Wave.InitialIntensity", pData->Wave_InitialIntensity);
 //	pData->Wave_IntensityStep    = pINI->ReadInteger(section, "Wave.IntensityStep", pData->Wave_IntensityStep);
