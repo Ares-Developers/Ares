@@ -36,11 +36,14 @@
 
 #include <Helpers\Macro.h>
 #include "Dialogs.h"
+#include "registered.h"
 #include "..\Ares.h"
 
 #include "..\Misc\Debug.h"
 
 const char * Dialogs::StatusString = NULL;
+char Dialogs::ExceptDetailedMessage[0x400] = "";
+const int Dialogs::ExceptControlID = ARES_TXT_IE_DETAILS;
 
 //4A3B4B, 9 - NOTE: This overrides a call, but it's absolute, so don't worry.
 DEFINE_HOOK(4A3B4B, FetchResource, 9)

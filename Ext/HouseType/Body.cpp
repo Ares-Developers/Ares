@@ -220,7 +220,7 @@ void HouseTypeExt::ExtData::LoadFromINI(HouseTypeClass *pThis, CCINIClass *pINI)
 
 	char* pID = pThis->get_ID();
 
-	Debug::Log("Loading Country %s from INI %X\n", pThis->get_ID(), pINI);
+//	Debug::Log("Loading Country %s from INI %X\n", pThis->get_ID(), pINI);
 
 	if(this->_Initialized == is_Constanted && RulesClass::Initialized) {
 		this->InitializeRuled(pThis);

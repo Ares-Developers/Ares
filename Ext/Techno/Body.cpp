@@ -85,6 +85,7 @@ bool TechnoExt::ParadropSurvivor(FootClass *Survivor, CoordStruct *loc, bool Sel
 {
 	bool success;
 	int floorZ = MapClass::Global()->GetCellFloorHeight(loc);
+	Debug::Log("Spawning survivor: loc->Z = %X, floorZ = %X\n", loc->Z, floorZ);
 	++Unsorted::SomeMutex;
 	if(loc->Z > floorZ) {
 		success = Survivor->SpawnParachuted(loc);

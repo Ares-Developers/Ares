@@ -13,8 +13,7 @@ void Enumerable<ArmorType>::LoadFromINIList(CCINIClass *pINI)
 	const char *section = Enumerable<ArmorType>::GetMainSection();
 	int len = pINI->GetKeyCount(section);
 	char buffer[0x40];
-	for(int i = 0; i < len; ++i)
-	{
+	for(int i = 0; i < len; ++i) {
 		const char *Key = pINI->GetKeyName(section, i);
 		pINI->ReadString(section, Key, "", buffer, 0x40);
 

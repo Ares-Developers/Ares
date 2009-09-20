@@ -507,24 +507,8 @@ A_FINE_HOOK(48439A, CellClass_GetColourComponents, 5)
 }
 */
 
-/*
-A_FINE_HOOK(68ACFF, Scenario_ReadLightingAndBasic_SkipInitHouses, 5)
-{
-	return 0x68AD04;
-}
-*/
-
 DEFINE_HOOK(6873AB, INIClass_ReadScenario_EarlyLoadRules, 5)
 {
-/*
-	GET_STACK(byte, Rules_leave_as_is, 0x12);
-	if(!Rules_leave_as_is || !RulesClass::Initialized) {
-		RulesClass::Global()->Init(CCINIClass::INI_Rules);
-	}
-	//(new LoadProgressManager())->Draw();
-	new LoadProgressManager();
-	//	Game::SetProgress(20);
-*/
 	switch(Unsorted::GameMode) {
 		case gm_Campaign:
 			RulesClass::Global()->Read_Sides(CCINIClass::INI_Rules);
@@ -534,23 +518,6 @@ DEFINE_HOOK(6873AB, INIClass_ReadScenario_EarlyLoadRules, 5)
 			return 0x6873B0;
 	}
 }
-
-/*
-A_FINE_HOOK(6876A0, INIClass_ReadScenario_SkipRules, 5)
-{
-	Game::SetProgress(40);
-	Game::UnknownCall();
-	return 0x6876C2;
-}
-*/
-
-/*
-A_FINE_HOOK(687581, INIClass_ReadScenario_Skip_LoadManager, 5)
-{
-	LoadProgressManager::LPMgr->Draw();
-	return 0x68758D;
-}
-*/
 
 DEFINE_HOOK(5FA41D, GameOptionsClass_CTOR, 5)
 {
@@ -604,9 +571,47 @@ A_FINE_HOOK(67E75B, LoadGame_StallUI, 6)
 }
 */
 
-DEFINE_HOOK(4F54A0, HouseClass_CTOR_Log, 5)
+
+DEFINE_HOOK(505B36, HouseClass_GenerateAIBuildList_C0, 8)
 {
-	GET_STACK(HouseTypeClass *, HT, 0x4);
-	Debug::Log("HouseClass::HouseClass(%s)\n", HT->get_ID());
-	return 0;
+	LEA_STACK(DynamicVectorClass<BuildingTypeClass *> *, PlannedBase, 0x14);
+	return PlannedBase->Count < 1
+	 ? 0x505C95
+	 : 0
+	;
+}
+
+DEFINE_HOOK(505B92, HouseClass_GenerateAIBuildList_C1, 7)
+{
+	LEA_STACK(DynamicVectorClass<BuildingTypeClass *> *, PlannedBase, 0x14);
+	return PlannedBase->Count < 2
+	 ? 0x505C95
+	 : 0
+	;
+}
+
+DEFINE_HOOK(505BE1, HouseClass_GenerateAIBuildList_C2, 7)
+{
+	LEA_STACK(DynamicVectorClass<BuildingTypeClass *> *, PlannedBase, 0x14);
+	return PlannedBase->Count < 3
+	 ? 0x505C95
+	 : 0
+	;
+}
+
+DEFINE_HOOK(4242CA, AnimClass_Update_FixIE_TrailerSeperation, 6)
+{
+	GET(AnimTypeClass *, AT, EAX);
+	return AT->TrailerSeperation >= 1
+	 ? 0x4242D5
+	 : 0x424322
+	;
+}
+
+DEFINE_HOOK(441C21, BuildingClass_Destroy_ShakeScreenZero, 6)
+{
+	return RulesClass::Global()->ShakeScreen
+	 ? 0
+	 : 0x441C39
+	;
 }

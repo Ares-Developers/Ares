@@ -74,19 +74,35 @@ DEFINE_HOOK(6F407D, TechnoClass_Init_1, 6)
 //		WeaponStruct *W = &pTypeData->Weapons[i];
 	TechnoTypeClass *TT = T->GetTechnoType();
 	for(int i = 0; i < 18; ++i) {
-		WeaponTypeClass *W = TT->get_Weapon(i);
-		if(!W) {
+		WeaponTypeClass *W1 = TT->get_Weapon(i);
+		WeaponTypeClass *W2 = TT->get_EliteWeapon(i);
+		if(!W1 && !W2) {
 			continue;
 		}
-		WarheadTypeClass *WH = W->Warhead;
-		if(WH->MindControl && Capturer == NULL) {
-			GAME_ALLOC(CaptureManagerClass, Capturer, T, W->Damage, W->InfiniteMindControl);
+		WarheadTypeClass *WH1 = W1 ? W1->Warhead : NULL;
+		WarheadTypeClass *WH2 = W2 ? W2->Warhead : NULL;
+
+		if((W1 && !WH1) || (W2 && !WH2)) {
+			_snprintf(Ares::readBuffer, Ares::readLength, 
+			"Constructing an instance of [%s]:\r\n%sWeapon %s (slot %d) has no Warhead!\n", 
+				T->get_ID(), 
+				WH1 ? "Elite " : "",
+				(WH1 ? W2 : W1)->get_ID(),
+				i);
+			Ares::FatalError(Ares::readBuffer);
 		}
-		if(WH->Temporal && Temporal == NULL) {
+
+		if(WH1 && WH1->MindControl && Capturer == NULL) {
+			GAME_ALLOC(CaptureManagerClass, Capturer, T, W1->Damage, W2->InfiniteMindControl);
+		} else if(WH2 && WH2->MindControl && Capturer == NULL) {
+			GAME_ALLOC(CaptureManagerClass, Capturer, T, W2->Damage, W2->InfiniteMindControl);
+		}
+
+		if((WH1 && WH1->Temporal || WH2 && WH2->Temporal) && Temporal == NULL) {
 			GAME_ALLOC(TemporalClass, Temporal, T);
 			pData->idxSlot_Warp = (BYTE)i;
 		}
-		if(WH->Parasite && IsFoot && Parasite == NULL) {
+		if((WH1 && WH1->Parasite || WH2 && WH2->Parasite) && IsFoot && Parasite == NULL) {
 			GAME_ALLOC(ParasiteClass, Parasite, F);
 		}
 	}

@@ -113,7 +113,7 @@ void SideExt::ExtData::LoadFromINI(SideClass *pThis, CCINIClass *pINI)
 		return;
 	}
 
-	Debug::Log("Loading Side %s from INI %X\n", pThis->get_ID(), pINI);
+//	Debug::Log("Loading Side %s from INI %X\n", pThis->get_ID(), pINI);
 	switch(this->_Initialized) {
 		case is_Constanted:
 //			Debug::Log("Constanted\n");

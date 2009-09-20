@@ -52,8 +52,8 @@ public:
 		TypeList<TechnoTypeClass*>* pTypes,
 		TypeList<int>* pNums);
 
-
-
+	static void FatalError(const char *Message);
+	static int __stdcall FatalDialog_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 	class GlobalControls {
 	private:
