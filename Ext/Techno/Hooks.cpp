@@ -93,7 +93,7 @@ DEFINE_HOOK(6F407D, TechnoClass_Init_1, 6)
 		}
 
 		if(WH1 && WH1->MindControl && Capturer == NULL) {
-			GAME_ALLOC(CaptureManagerClass, Capturer, T, W1->Damage, W2->InfiniteMindControl);
+			GAME_ALLOC(CaptureManagerClass, Capturer, T, W1->Damage, W1->InfiniteMindControl);
 		} else if(WH2 && WH2->MindControl && Capturer == NULL) {
 			GAME_ALLOC(CaptureManagerClass, Capturer, T, W2->Damage, W2->InfiniteMindControl);
 		}
