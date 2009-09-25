@@ -192,7 +192,7 @@ void HouseTypeExt::ExtData::LoadFromRules(HouseTypeClass *pThis, CCINIClass *pIN
 	}
 
 	if(pINI->ReadString(pID, "File.Taunt", "", Ares::readBuffer, Ares::readLength)) {
-		strncpy(this->FlagFile, Ares::readBuffer, 0x20);
+		strncpy(this->TauntFile, Ares::readBuffer, 0x20);
 	}
 
 	if(pINI->ReadString(pID, "LoadScreenText.Name", "", Ares::readBuffer, Ares::readLength)) {
@@ -348,7 +348,7 @@ DEFINE_HOOK(512290, HouseTypeClass_SaveLoad_Prefix, 5)
 DEFINE_HOOK_AGAIN(512480, HouseTypeClass_SaveLoad_Prefix, 5)
 {
 	GET_STACK(HouseTypeExt::TT*, pItem, 0x4);
-	GET_STACK(IStream*, pStm, 0x8); 
+	GET_STACK(IStream*, pStm, 0x8);
 
 	Container<HouseTypeExt>::SavingObject = pItem;
 	Container<HouseTypeExt>::SavingStream = pStm;
