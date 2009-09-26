@@ -129,6 +129,7 @@ void __stdcall Ares::ExeRun()
 
 void __stdcall Ares::ExeTerminate()
 {
+	Debug::Log("XTACH\n");
 //	Debug::LogFileClose();
 }
 
@@ -201,11 +202,16 @@ void Ares::SendPDPlane(HouseClass* pOwner, CellClass* pTarget, AircraftTypeClass
 //DllMain
 bool __stdcall DllMain(HANDLE hInstance,DWORD dwReason,LPVOID v)
 {
-	if(dwReason==DLL_PROCESS_ATTACH)
-	{
-		Ares::hInstance = hInstance;
-		Debug::LogFileOpen();
-//		CallCenter::Init();
+	switch(dwReason) {
+		case DLL_PROCESS_ATTACH:
+			Ares::hInstance = hInstance;
+			Debug::LogFileOpen();
+			Debug::Log("ATTACH\n");
+			break;
+		case DLL_PROCESS_DETACH:
+			Debug::Log("DETACH\n");
+			Debug::LogFileClose();
+			break;
 	}
 
 	return true;
