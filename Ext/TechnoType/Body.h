@@ -14,12 +14,18 @@ public:
 	typedef TechnoTypeClass TT;
 	enum SpotlightAttachment { sa_Body, sa_Turret, sa_Barrel };
 
-	class ExtData : public Extension<TT> 
+	class ExtData : public Extension<TT>
 	{
 	public:
 		DynamicVectorClass<InfantryTypeClass *> Survivors_Pilots;
 		int Survivors_PilotChance;
 		int Survivors_PassengerChance;
+		// new on 26.09.09. for #621
+		// Could potentially be munged together as PilotChance[3] and PassengerChance[3] at a later point
+		int Survivors_VeteranPilotChance;
+		int Survivors_VeteranPassengerChance;
+		int Survivors_ElitePilotChance;
+		int Survivors_ElitePassengerChance;
 
 		// animated cameos
 //		int Cameo_Interval;
@@ -56,9 +62,13 @@ public:
 
 		Customizable<AnimTypeClass*> Parachute_Anim;
 
-		ExtData(const DWORD Canary = 0) : 
+		ExtData(const DWORD Canary = 0) :
 			Survivors_PilotChance (0),
 			Survivors_PassengerChance (0),
+			Survivors_VeteranPilotChance (0),
+			Survivors_VeteranPassengerChance (0),
+			Survivors_ElitePilotChance (0),
+			Survivors_ElitePassengerChance (0),
 			PrerequisiteTheaters (0xFFFFFFFF),
 			Secret_RequiredHouses (0),
 			Secret_ForbiddenHouses (0),

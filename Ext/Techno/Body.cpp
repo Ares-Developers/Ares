@@ -23,7 +23,7 @@ void TechnoExt::SpawnSurvivors(TechnoClass *pThis, TechnoClass *pKiller, bool Se
 
 	CoordStruct loc = *pThis->get_Location();
 
-	int chance = pData->Survivors_PilotChance;
+	int chance = pThis->get_Veterancy()->IsElite() ? pData->Survivors_ElitePilotChance : pThis->get_Veterancy()->IsVeteran() ? pData->Survivors_VeteranPilotChance : pData->Survivors_PilotChance;
 	if(chance && Randomizer::Global()->RandomRanged(1, 100) <= chance) {
 		InfantryTypeClass *PilotType = pData->Survivors_Pilots[pOwner->SideIndex];
 		if(PilotType) {
@@ -50,7 +50,7 @@ void TechnoExt::SpawnSurvivors(TechnoClass *pThis, TechnoClass *pKiller, bool Se
 		}
 	}
 
-	chance = pData->Survivors_PassengerChance;
+	chance = pThis->get_Veterancy()->IsElite() ? pData->Survivors_ElitePassengerChance : pThis->get_Veterancy()->IsVeteran() ? pData->Survivors_VeteranPassengerChance : pData->Survivors_PassengerChance;
 	while(pThis->get_Passengers()->FirstPassenger) {
 		FootClass *passenger;
 		bool toDelete = 1;
@@ -141,7 +141,7 @@ DEFINE_HOOK(70BF50, TechnoClass_SaveLoad_Prefix, 5)
 DEFINE_HOOK_AGAIN(70C250, TechnoClass_SaveLoad_Prefix, 8)
 {
 	GET_STACK(TechnoExt::TT*, pItem, 0x4);
-	GET_STACK(IStream*, pStm, 0x8); 
+	GET_STACK(IStream*, pStm, 0x8);
 
 	Container<TechnoExt>::SavingObject = pItem;
 	Container<TechnoExt>::SavingStream = pStm;

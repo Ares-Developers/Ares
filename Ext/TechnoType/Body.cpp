@@ -16,8 +16,8 @@ IStream *Container<TechnoTypeExt>::SavingStream = NULL;
 // member funcs
 
 void TechnoTypeExt::ExtData::Initialize(TechnoTypeClass *pThis) {
-	this->Survivors_PilotChance = (int)(RulesClass::Global()->CrewEscape * 100);
-	this->Survivors_PassengerChance = (int)(RulesClass::Global()->CrewEscape * 100);
+	this->Survivors_ElitePilotChance = this->Survivors_VeteranPilotChance = this->Survivors_PilotChance = (int)(RulesClass::Global()->CrewEscape * 100);
+	this->Survivors_ElitePassengerChance = this->Survivors_VeteranPassengerChance = this->Survivors_PassengerChance = (int)(RulesClass::Global()->CrewEscape * 100);
 
 	this->Survivors_Pilots.SetCapacity(SideClass::Array->Count, NULL);
 
@@ -102,6 +102,10 @@ void TechnoTypeExt::ExtData::LoadFromINI(TechnoTypeClass *pThis, CCINIClass *pIN
 
 	this->Survivors_PilotChance = pINI->ReadInteger(section, "Survivor.PilotChance", this->Survivors_PilotChance);
 	this->Survivors_PassengerChance = pINI->ReadInteger(section, "Survivor.PassengerChance", this->Survivors_PassengerChance);
+	this->Survivors_VeteranPilotChance = pINI->ReadInteger(section, "Survivor.VeteranPilotChance", this->Survivors_VeteranPilotChance);
+	this->Survivors_VeteranPassengerChance = pINI->ReadInteger(section, "Survivor.VeteranPassengerChance", this->Survivors_VeteranPassengerChance);
+	this->Survivors_ElitePilotChance = pINI->ReadInteger(section, "Survivor.ElitePilotChance", this->Survivors_ElitePilotChance);
+	this->Survivors_ElitePassengerChance = pINI->ReadInteger(section, "Survivor.ElitePassengerChance", this->Survivors_ElitePassengerChance);
 
 	char *buffer = Ares::readBuffer;
 	char flag[256];
@@ -350,7 +354,7 @@ void Container<TechnoTypeExt>::Load(TechnoTypeClass *pThis, IStream *pStm) {
 	SWIZZLE(pData->Insignia_R);
 	SWIZZLE(pData->Insignia_V);
 	SWIZZLE(pData->Insignia_E);
-	
+
 	for(int ii = 0; ii < pData->Weapons.Count; ++ii) {
 		SWIZZLE(pData->Weapons.Items[ii].WeaponType);
 	}
@@ -383,7 +387,7 @@ DEFINE_HOOK(7162F0, TechnoTypeClass_SaveLoad_Prefix, 6)
 DEFINE_HOOK_AGAIN(716DC0, TechnoTypeClass_SaveLoad_Prefix, 5)
 {
 	GET_STACK(TechnoTypeExt::TT*, pItem, 0x4);
-	GET_STACK(IStream*, pStm, 0x8); 
+	GET_STACK(IStream*, pStm, 0x8);
 
 	Container<TechnoTypeExt>::SavingObject = pItem;
 	Container<TechnoTypeExt>::SavingStream = pStm;
