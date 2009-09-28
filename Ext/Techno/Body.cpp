@@ -24,28 +24,33 @@ void TechnoExt::SpawnSurvivors(TechnoClass *pThis, TechnoClass *pKiller, bool Se
 	CoordStruct loc = *pThis->get_Location();
 
 	int chance = pThis->get_Veterancy()->IsElite() ? pData->Survivors_ElitePilotChance : pThis->get_Veterancy()->IsVeteran() ? pData->Survivors_VeteranPilotChance : pData->Survivors_PilotChance;
-	if(chance && Randomizer::Global()->RandomRanged(1, 100) <= chance) {
-		InfantryTypeClass *PilotType = pData->Survivors_Pilots[pOwner->SideIndex];
-		if(PilotType) {
-			InfantryClass *Pilot = reinterpret_cast<InfantryClass *>(PilotType->CreateObject(pOwner));
+	// remove check for Crewed if it is accounted for outside of this function
+	// checks if Crewed=yes is set and there is a chance pilots survive, and, if yes...
+	// ...attempts to spawn one Survivors_PilotCount times
+	if(pThis->Crewed && chance) for(int i = 0; i < pThis->Survivors_PilotCount; ++i) {
+		if(Randomizer::Global()->RandomRanged(1, 100) <= chance) {
+			InfantryTypeClass *PilotType = pData->Survivors_Pilots[pOwner->SideIndex];
+			if(PilotType) {
+				InfantryClass *Pilot = reinterpret_cast<InfantryClass *>(PilotType->CreateObject(pOwner));
 
-			Pilot->set_Health(PilotType->Strength / 2);
-			Pilot->get_Veterancy()->Veterancy = pThis->get_Veterancy()->Veterancy;
-			CoordStruct destLoc, tmpLoc = loc;
-			CellStruct tmpCoords = CellSpread::GetCell(Randomizer::Global()->RandomRanged(0, 7));
+				Pilot->set_Health(PilotType->Strength / 2);
+				Pilot->get_Veterancy()->Veterancy = pThis->get_Veterancy()->Veterancy;
+				CoordStruct destLoc, tmpLoc = loc;
+				CellStruct tmpCoords = CellSpread::GetCell(Randomizer::Global()->RandomRanged(0, 7));
 
-			tmpLoc.X += tmpCoords.X * 144;
-			tmpLoc.Y += tmpCoords.Y * 144;
+				tmpLoc.X += tmpCoords.X * 144;
+				tmpLoc.Y += tmpCoords.Y * 144;
 
-			CellClass * tmpCell = MapClass::Global()->GetCellAt(&tmpLoc);
+				CellClass * tmpCell = MapClass::Global()->GetCellAt(&tmpLoc);
 
-			tmpCell->FindInfantrySubposition(&destLoc, &tmpLoc, 0, 0, 0);
+				tmpCell->FindInfantrySubposition(&destLoc, &tmpLoc, 0, 0, 0);
 
-			destLoc.Z = loc.Z;
+				destLoc.Z = loc.Z;
 
-			if(!TechnoExt::ParadropSurvivor(Pilot, &destLoc, Select)) {
-				Pilot->RegisterDestruction(pKiller); //(TechnoClass *)R->get_StackVar32(0x54));
-				GAME_DEALLOC(Pilot);
+				if(!TechnoExt::ParadropSurvivor(Pilot, &destLoc, Select)) {
+					Pilot->RegisterDestruction(pKiller); //(TechnoClass *)R->get_StackVar32(0x54));
+					GAME_DEALLOC(Pilot);
+				}
 			}
 		}
 	}

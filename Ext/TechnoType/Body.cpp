@@ -21,6 +21,8 @@ void TechnoTypeExt::ExtData::Initialize(TechnoTypeClass *pThis) {
 
 	this->Survivors_Pilots.SetCapacity(SideClass::Array->Count, NULL);
 
+	this->Survivors_PilotCount = pThis->Crewed; // should be 0 if false, 1 if true
+
 	for(int i = 0; i < SideClass::Array->Count; ++i) {
 		this->Survivors_Pilots[i] = SideExt::ExtMap.Find(SideClass::Array->Items[i])->Crew.Get();
 	}
@@ -100,6 +102,7 @@ void TechnoTypeExt::ExtData::LoadFromINI(TechnoTypeClass *pThis, CCINIClass *pIN
 	// survivors
 	this->Survivors_Pilots.SetCapacity(SideClass::Array->Count, NULL);
 
+	this->Survivors_PilotCount = pINI->ReadInteger(section, "Survivor.Pilots", this->Survivors_PilotCount);
 	this->Survivors_PilotChance = pINI->ReadInteger(section, "Survivor.PilotChance", this->Survivors_PilotChance);
 	this->Survivors_PassengerChance = pINI->ReadInteger(section, "Survivor.PassengerChance", this->Survivors_PassengerChance);
 	this->Survivors_VeteranPilotChance = pINI->ReadInteger(section, "Survivor.VeteranPilotChance", this->Survivors_VeteranPilotChance);

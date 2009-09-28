@@ -26,6 +26,8 @@ public:
 		int Survivors_VeteranPassengerChance;
 		int Survivors_ElitePilotChance;
 		int Survivors_ElitePassengerChance;
+		// new on 28.09.09 for #631
+		int Survivors_PilotCount;// NOTE: Flag in INI is called Survivor.Pilots
 
 		// animated cameos
 //		int Cameo_Interval;
@@ -63,6 +65,7 @@ public:
 		Customizable<AnimTypeClass*> Parachute_Anim;
 
 		ExtData(const DWORD Canary = 0) :
+			Survivors_PilotCount (0),
 			Survivors_PilotChance (0),
 			Survivors_PassengerChance (0),
 			Survivors_VeteranPilotChance (0),
