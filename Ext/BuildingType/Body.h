@@ -45,7 +45,7 @@ public:
 		// new firestorm wall
 		bool Firewall_Is;
 
-		ExtData(const DWORD Canary = 0) : 
+		ExtData(const DWORD Canary = 0, const TT* OwnerObject = NULL) :
 			Solid_Height (0),
 			IsCustom (false),
 			CustomData (NULL),

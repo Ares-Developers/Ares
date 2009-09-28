@@ -76,10 +76,13 @@ DEFINE_HOOK(760F50, WaveClass_Update, 6)
 	GET(WaveClass *, pThis, ECX);
 
 	WeaponTypeExt::ExtData *pData = WeaponTypeExt::WaveExt[pThis];
+	const WeaponTypeClass *Weap = pData->AttachedToObject;
+
+	RET_UNLESS(Weap);
 
 	int Intensity;
 
-	if(pData->Weapon_Source->AmbientDamage) {
+	if(Weap->AmbientDamage) {
 		CoordStruct coords;
 		for(int i = 0; i < pThis->get_Cells()->Count; ++i) {
 			pThis->DamageArea(pThis->get_Cells()->GetItem(i)->Get3DCoords3(&coords));
@@ -259,7 +262,7 @@ DEFINE_HOOK(75F38F, WaveClass_DamageCell, 6)
 	GET(WaveClass *, Wave, EBP);
 	WeaponTypeExt::ExtData *pData = WeaponTypeExt::WaveExt[Wave];
 	R->set_EDI(R->get_EAX());
-	R->set_EBX((DWORD)pData->Weapon_Source);
+	R->set_EBX((DWORD)pData->AttachedToObject);
 	return 0x75F39D;
 }
 

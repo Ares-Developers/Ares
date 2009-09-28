@@ -27,7 +27,7 @@ public:
 		// firewall
 		bool SubjectToFirewall;
 
-		ExtData(const DWORD Canary = 0) : 
+		ExtData(const DWORD Canary = 0, const TT* OwnerObject = NULL) :
 			SubjectToSolid (false),
 			SubjectToFirewall (true)
 			{ };

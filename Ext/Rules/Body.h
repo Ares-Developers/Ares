@@ -23,8 +23,8 @@ class RulesExt
 		public:
 		AnimTypeClass* ElectricDeath;
 
-		ExtData(const DWORD Canary = 0)
-			: ElectricDeath(NULL)
+		ExtData(const DWORD Canary = 0, const TT* OwnerObject = NULL) :
+			ElectricDeath(NULL)
 			{ };
 
 		virtual ~ExtData() {

@@ -54,13 +54,15 @@ template<typename T>
 class Extension {
 	public:
 		eInitState _Initialized;
+		const T* AttachedToObject;
 	#ifdef DEBUGBUILD
 		DWORD SavedCanary;
 	#endif
 
 		static const DWORD Canary;
 
-		Extension(const DWORD Canary = 0) : 
+		Extension(const DWORD Canary = 0, const T* OwnerObject = NULL) :
+		AttachedToObject(OwnerObject),
 	#ifdef DEBUGBUILD
 		SavedCanary(Canary), 
 	#endif
@@ -132,7 +134,7 @@ public:
 		C_Map::iterator i = find(key);
 		if(i == end()) {
 			++CTOR_Count;
-			E_T * val = new E_T(typename E_T::Canary);
+			E_T * val = new E_T(typename E_T::Canary, key);
 			val->InitializeConstants(key);
 			i = insert(C_Map::value_type(key, val)).first;
 		}

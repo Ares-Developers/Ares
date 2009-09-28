@@ -30,7 +30,7 @@ class HouseTypeExt
 	
 			DynamicVectorClass<BuildingTypeClass *> Powerplants;
 
-			ExtData(const DWORD Canary = 0) : 
+		ExtData(const DWORD Canary = 0, const TT* OwnerObject = NULL) :
 				RandomSelectionWeight (0)
 			{
 				*FlagFile = 0;

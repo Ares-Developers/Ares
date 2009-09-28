@@ -37,7 +37,6 @@ public:
 	public:
 		// Generic
 		bool Weapon_Loaded;
-		WeaponTypeClass *Weapon_Source;
 
 		// Coloured Rad Beams
 		Customizable<ColorStruct> Beam_Color;
@@ -77,9 +76,8 @@ public:
 //		MouseCursor Cursor_Attack;
 //		bool Cursor_Custom;
 
-		ExtData(const DWORD Canary = 0) :
+		ExtData(const DWORD Canary = 0, const TT* OwnerObject = NULL) :
 			Weapon_Loaded (false),
-			Weapon_Source (NULL),
 			Beam_IsHouseColor (false),
 			Beam_Duration (15),
 			Beam_Amplitude (40.0),

@@ -68,7 +68,7 @@ public:
 		MouseCursor SW_Cursor;
 		MouseCursor SW_NoCursor;
 
-		ExtData(const DWORD Canary = 0) : 
+		ExtData(const DWORD Canary = 0, const TT* OwnerObject = NULL) :
 			SpyPlane_TypeIndex (0),
 			SpyPlane_Count (0),
 			SpyPlane_Mission (0),

@@ -13,8 +13,6 @@ hash_radsiteExt WeaponTypeExt::RadSiteExt;
 
 void WeaponTypeExt::ExtData::Initialize(WeaponTypeClass *pThis)
 {
-	this->Weapon_Source  = pThis;
-
 	this->Wave_Reverse[idxVehicle] = pThis->IsMagBeam;
 
 	this->_Initialized = is_Inited;
@@ -229,7 +227,6 @@ void Container<WeaponTypeExt>::Load(WeaponTypeClass *pThis, IStream *pStm) {
 		WeaponTypeExt::RadSiteExt[rad] = data;
 	}
 
-	SWIZZLE(pData->Weapon_Source);
 	SWIZZLE(pData->Ivan_WH);
 	SWIZZLE(pData->Ivan_Image);
 }

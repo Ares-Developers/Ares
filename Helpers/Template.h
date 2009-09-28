@@ -1,6 +1,9 @@
 #ifndef ARES_TEMPLATE_H
 #define ARES_TEMPLATE_H
 
+#include <stdexcept>
+
+#include <TechnoClass.h>
 #include "INIParser.h"
 #include "Type.h"
 
@@ -108,6 +111,73 @@ void Customizable<ColorStruct>::Read(INI_EX *parser, const char* pSection, const
 }
 
 /*
+ * This template is for something that varies depending on a unit's Veterancy Level
+ * Promotable<int> PilotChance; // class def
+ * PilotChance(NULL); // ctor init-list
+ * PilotChance->BindTo(Unit); // instantiation
+ * PilotChance->Get(); // usage
  */
+template<typename T>
+class Promotable {
+	TechnoClass * _BindTo;
+public:
+	T Rookie;
+	T Veteran;
+	T Elite;
+
+	Promotable(TechnoClass * Object = NULL) : _BindTo(Object) {};
+	Promotable<T>* BindTo(TechnoClass * Object) {
+		this->_BindTo = Object;
+		return this;
+	}
+
+	void SetAll(T val) {
+		this->Elite = this->Veteran = this->Rookie = val;
+	}
+
+	void LoadFromINI(CCINIClass *pINI, const char *Section, const char *BaseFlag) {
+		unsigned int buflen = strlen(BaseFlag) + 8;
+		char *FlagName = new char[buflen];
+
+		Customizable<T> Placeholder;
+		INI_EX exINI(pINI);
+		Placeholder.Set(this->Rookie);
+
+		_snprintf(FlagName, buflen, BaseFlag, "");
+		Placeholder.Read(&exINI, Section, FlagName);
+		this->Rookie = Placeholder.Get();
+
+		Placeholder.Set(this->Veteran);
+		_snprintf(FlagName, buflen, BaseFlag, "Veteran");
+		Placeholder.Read(&exINI, Section, FlagName);
+		this->Veteran = Placeholder.Get();
+
+		Placeholder.Set(this->Elite);
+		_snprintf(FlagName, buflen, BaseFlag, "Elite");
+		Placeholder.Read(&exINI, Section, FlagName);
+		this->Elite = Placeholder.Get();
+		
+		delete[] FlagName;
+	}
+
+	T* GetEx() {
+		if(!this->_BindTo) {
+			Debug::Log("Promotable<T> invoked without an owner!\n");
+			throw std::logic_error("Promotable<T> invoked without an owner!\n");
+		}
+		VeterancyStruct *XP = this->_BindTo->get_Veterancy();
+		if(XP->IsElite()) {
+			return &this->Elite;
+		}
+		if(XP->IsVeteran()) {
+			return &this->Veteran;
+		}
+		return &this->Rookie;
+	}
+
+	T Get() {
+		return *this->GetEx();
+	}
+};
 
 #endif

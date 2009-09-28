@@ -18,12 +18,12 @@ void TechnoExt::SpawnSurvivors(TechnoClass *pThis, TechnoClass *pKiller, bool Se
 	HouseClass *pOwner = pThis->get_Owner();
 	TechnoTypeExt::ExtData *pData = TechnoTypeExt::ExtMap.Find(Type);
 	TechnoExt::ExtData *pSelfData = TechnoExt::ExtMap.Find(pThis);
-	RETZ_UNLESS(pData->Survivors_PilotChance || pData->Survivors_PassengerChance);
+//	RETZ_UNLESS(pData->Survivors_PilotChance || pData->Survivors_PassengerChance);
 	RETZ_UNLESS(!pSelfData->Survivors_Done);
 
 	CoordStruct loc = *pThis->get_Location();
 
-	int chance = pThis->get_Veterancy()->IsElite() ? pData->Survivors_ElitePilotChance : pThis->get_Veterancy()->IsVeteran() ? pData->Survivors_VeteranPilotChance : pData->Survivors_PilotChance;
+	int chance = pData->Survivors_PilotChance.BindTo(pThis)->Get();
 	// remove check for Crewed if it is accounted for outside of this function
 	// checks if Crewed=yes is set and there is a chance pilots survive, and, if yes...
 	// ...attempts to spawn one Survivors_PilotCount times
@@ -57,7 +57,7 @@ void TechnoExt::SpawnSurvivors(TechnoClass *pThis, TechnoClass *pKiller, bool Se
 		}
 	}
 
-	chance = pThis->get_Veterancy()->IsElite() ? pData->Survivors_ElitePassengerChance : pThis->get_Veterancy()->IsVeteran() ? pData->Survivors_VeteranPassengerChance : pData->Survivors_PassengerChance;
+	chance = pData->Survivors_PassengerChance.BindTo(pThis)->Get();
 	while(pThis->get_Passengers()->FirstPassenger) {
 		FootClass *passenger;
 		bool toDelete = 1;

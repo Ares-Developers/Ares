@@ -315,6 +315,7 @@ bool TechnoClassExt::EvalWeaponAgainst(TechnoClass *pThis, TechnoClass *pTarget,
 }
 */
 
+/* #604 - customizable parachutes */
 DEFINE_HOOK(5F5ADD, Parachute_Animation, 6)
 {
 	GET(TechnoClass *, T, ESI);

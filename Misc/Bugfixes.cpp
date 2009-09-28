@@ -394,20 +394,6 @@ DEFINE_HOOK(69AE90, GameData_SetProgress, 5)
 	return 0;
 }
 
-DEFINE_HOOK(5185C8, InfantryClass_ReceiveDamage_InfDeath, 6)
-{
-	GET(InfantryClass *, I, ESI);
-	GET(DWORD, InfDeath, EDI); /// JA is for unsigned, goddamnit
-	--InfDeath;
-	R->set_EDI(InfDeath);
-
-	bool Handled = false;
-
-	return (!Handled && InfDeath < 10)
-	  ? 0x5185CE
-	  : 0x5185F1;
-}
-
 /*
 A_FINE_HOOK(447348, BuildingClass_GetCursorOverObject_CY, 6)
 {

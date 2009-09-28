@@ -37,8 +37,7 @@ class SideExt
 		bool SidebarYuriFileNames;
 		char EVATag[0x20];	//TODO
 
-		ExtData(const DWORD Canary = 0) : 
-//			PowerPlant = NULL;
+		ExtData(const DWORD Canary = 0, const TT* OwnerObject = NULL) :
 			LoadTextColor (NULL)
 		{
 			*EVATag = 0;

@@ -16,8 +16,8 @@ IStream *Container<TechnoTypeExt>::SavingStream = NULL;
 // member funcs
 
 void TechnoTypeExt::ExtData::Initialize(TechnoTypeClass *pThis) {
-	this->Survivors_ElitePilotChance = this->Survivors_VeteranPilotChance = this->Survivors_PilotChance = (int)(RulesClass::Global()->CrewEscape * 100);
-	this->Survivors_ElitePassengerChance = this->Survivors_VeteranPassengerChance = this->Survivors_PassengerChance = (int)(RulesClass::Global()->CrewEscape * 100);
+	this->Survivors_PilotChance.SetAll((int)RulesClass::Global()->CrewEscape * 100);
+	this->Survivors_PassengerChance.SetAll((int)RulesClass::Global()->CrewEscape * 100);
 
 	this->Survivors_Pilots.SetCapacity(SideClass::Array->Count, NULL);
 
@@ -103,12 +103,9 @@ void TechnoTypeExt::ExtData::LoadFromINI(TechnoTypeClass *pThis, CCINIClass *pIN
 	this->Survivors_Pilots.SetCapacity(SideClass::Array->Count, NULL);
 
 	this->Survivors_PilotCount = pINI->ReadInteger(section, "Survivor.Pilots", this->Survivors_PilotCount);
-	this->Survivors_PilotChance = pINI->ReadInteger(section, "Survivor.PilotChance", this->Survivors_PilotChance);
-	this->Survivors_PassengerChance = pINI->ReadInteger(section, "Survivor.PassengerChance", this->Survivors_PassengerChance);
-	this->Survivors_VeteranPilotChance = pINI->ReadInteger(section, "Survivor.VeteranPilotChance", this->Survivors_VeteranPilotChance);
-	this->Survivors_VeteranPassengerChance = pINI->ReadInteger(section, "Survivor.VeteranPassengerChance", this->Survivors_VeteranPassengerChance);
-	this->Survivors_ElitePilotChance = pINI->ReadInteger(section, "Survivor.ElitePilotChance", this->Survivors_ElitePilotChance);
-	this->Survivors_ElitePassengerChance = pINI->ReadInteger(section, "Survivor.ElitePassengerChance", this->Survivors_ElitePassengerChance);
+
+	this->Survivors_PilotChance.LoadFromINI(pINI, section, "Survivor.%sPilotChance");
+	this->Survivors_PassengerChance.LoadFromINI(pINI, section, "Survivor.%sPassengerChance");
 
 	char *buffer = Ares::readBuffer;
 	char flag[256];
