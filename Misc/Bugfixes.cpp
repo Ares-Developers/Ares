@@ -615,3 +615,4 @@ DEFINE_HOOK(441C21, BuildingClass_Destroy_ShakeScreenZero, 6)
 	 : 0x441C39
 	;
 }
+
