@@ -1,0 +1,358 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+	<title>Ares - Custom Foundation Generator</title>
+	<style  type="text/css">
+		/* #################################### CSS #################################### */
+		BODY {
+			font-family: Verdana, sans-serif;
+			margin: 0px;
+			padding: 0px;
+			color: #B3D45F;
+			background-color: #4F6D00;
+		}
+		FORM INPUT {
+			text-align: right;
+		}
+		H1 {
+			margin-top: 0px;
+			text-transform: uppercase;
+		}
+		P {
+			margin-bottom: 0px;
+		}
+		INPUT[type="text"], TEXTAREA {
+			background-color: #466100;
+			border: 1px solid #3d5400;
+			-moz-border-radius: 4px;
+			-webkit-border-radius: 4px;
+			padding: 2px;
+			color: #ABF014;
+		}
+		INPUT[type="text"]:hover {
+			background-color: #4F6D00;
+			border: 1px solid #7AA800;
+		}
+		INPUT[type="text"]:focus {
+			/* background-color: #4F6D00; */
+			border: 1px solid #7AA800;
+		}
+		#width, #height {
+			width: 5em;
+		}
+		#number_warning_x, #number_warning_y, #name_warning {
+			font-weight: bold;
+			font-size: large;
+			/*color: #990000;*/
+		}
+		#number_warning_x EM, #number_warning_y EM, #name_warning EM {
+			color: #EEEE00;
+			font-style: normal;
+		}
+		#name_note {
+			font-weight: bold;
+			/* color: #880000; */
+		}
+		INPUT[type="text"].inputwarn {
+			border: 2px solid #DD0000;
+		}
+		#sidelabels {
+			position: relative;
+			top: 0px;
+			left: 0px;
+			margin-left: auto;
+			margin-right: auto;
+			padding: 3em;
+			
+			-moz-transform: rotate(45deg);
+			-webkit-transform: rotate(45deg);
+		}
+		#sidelabels #label_top {
+			position: absolute;
+			top: 0px;
+			left: 0px;
+		}
+		#sidelabels #label_right {
+			position: absolute;
+			top: 0px;
+			right: 0px;
+		}
+		#sidelabels #label_bottom {
+			position: absolute;
+			bottom: 0px;
+			right: 0px;
+		}
+		#sidelabels #label_left {
+			position: absolute;
+			bottom: 0px;
+			left: 0px;
+		}
+		#editor {
+			text-align: center;
+			border-collapse: collapse;
+		}
+		#editor TD {
+			width: 40px;
+			height: 40px;
+		}
+		#editor .editCell {
+			border: 1px solid #2b3b00;
+		}
+		#editor .editCell:hover {
+			border: 1px solid #AA0000;
+			background-color: #880000;
+		}
+		#editor .topCell {
+			border-left: 1px solid #3d5400;
+			border-right: 1px solid #3d5400;
+		}
+		#editor .leftCell {
+			border-top: 1px solid #3d5400;
+			border-bottom: 1px solid #3d5400;
+		}
+		#editor .selectedCell {
+			border: 1px solid #008800 !important;
+			background-color: #00AA00;
+		}
+		#clearbtn {
+			position: absolute;
+			bottom: 6px;
+			right: 10px;
+		}
+		#code {
+			height: 300px;
+			width: 500px;
+			font-family: "Courier New", monospace;
+		}
+		/*#layout_header, #layout_params, #layout_canvas, #layout_code, #layout_footer {
+			width: 100%;
+		}*/
+		
+		#layout_header {
+			background-color: #7AA800;
+			border-bottom: 1px solid #557500;
+			height: 100px;
+			font-size: xx-large;
+			font-weight: bold;
+			color: #c8ed6a;
+		}
+		#layout_header SPAN {
+			position: absolute;
+			top: 25px;
+			left: 40px;
+			text-shadow: 1px 1px 5px #557500;
+		}
+		#layout_params {
+			background-color: #647E20;
+			border-top: 1px solid #779626;
+			border-bottom: 1px solid #4f6319;
+			padding: 0.5em 0.5em 0.8em 2em;
+			color: #bde065;
+			/* -moz-box-shadow: 0px 0px 50px 20px #557500; */
+		}
+		#layout_canvas {
+			background-color: #4F6D00;
+			border-top: 1px solid #628700;
+			border-bottom: 1px solid #3d5400;
+			padding: 10em 0px 10em 0px;
+			
+			position: relative;
+			top: 0px;
+			left: 0px;
+		}
+		#layout_code {
+			background-color: #4F6D00;
+			border-top: 1px solid #628700;
+			text-align: center;
+		}
+		#layout_footer {
+			margin-top: 5em;
+			font-size: x-small;
+			border-top: 1px solid #779626;
+			text-align: center;
+			padding: 0.2em;
+			
+			background-color: #647E20;
+		}
+	</style>
+</head>
+<body>
+<!-- #################################### HTML #################################### -->
+	<div id="layout_header">
+		<span>Ares Custom Foundation Generator</span>
+	</div>
+	<div id="layout_params">
+		<h1>Foundation</h1>
+		<form id="widthheight" action="./">
+			<p>
+				<label for="name">Building (art) Name:</label>
+				<input type="text" name="name_n" id="name" value="CATEMP">
+			</p>
+			<p>
+				<label for="width">X / Width:</label>
+				<input type="text" name="width_n" id="width" value="5" maxlength="3">
+				&nbsp;&nbsp;&nbsp;
+				<label for="height">Y / Height:</label>
+				<input type="text" name="height_n" id="height" value="5" maxlength="3">
+				&nbsp;&nbsp;&nbsp;
+				<input type="submit" name="set_params_n" id="set_params" value="Set Base Parameters">
+			</p>
+		</form>
+		<p id="number_warning_x" style="display: none;">Warning! Your <em>width</em> is either <em>0 (zero)</em> or could <em>not</em> be <em>recognized</em> as a number! Please check your input.</p>
+		<p id="number_warning_y" style="display: none;">Warning! Your <em>height</em> is either <em>0 (zero)</em> or could <em>not</em> be <em>recognized</em> as a number! Please check your input.</p>
+		<p id="name_warning" style="display: none;">Warning! Your building/art <em>name</em> is either <em>empty or</em> contains <em>whitespace</em>. Please check your input.</p>
+		<p id="name_note" style="display: none;">Attention: Your building/art name is longer than 8 characters. While that is possible, it is non-standard and not recommended.</p>
+	</div>
+	
+	<div id="layout_canvas">
+		<div id="sidelabels" style="display: none;">
+			<div id="label_top">Top / 0</div>
+			<div id="label_right">Right / X</div>
+			<table id="editor"><tr><td>dummy data to silence validator</td></tr></table>
+			<div id="label_bottom">Bottom</div>
+			<div id="label_left">Left / Y</div>
+		</div>
+		<input type="button" name="clearbtn_n" id="clearbtn" value="Clear Cells">
+	</div>
+	<div id="layout_code">
+		<h1>Code</h1>
+		<textarea id="code" readonly="readonly" cols="48" rows="16">Please enter name, width and height at the top and click "Set Base Parameters".</textarea>
+	</div>
+
+	<div id="layout_footer">Written 29.09.09 by Renegade</div>
+	
+	<!-- #################################### JAVASCRIPT #################################### -->
+	<script type="text/javascript" src="http://www.google.com/jsapi"></script>
+	<script type="text/javascript">
+		google.load("jquery", "1");
+		google.setOnLoadCallback(function() {
+			$("#number_warning_x").hide();
+			$("#number_warning_y").hide();
+			$("#name_warning").hide();
+			$("#name_note").hide();
+			$("#sidelabels").hide();
+			//$("#set_params").click(generateCanvas);
+			$("#widthheight").submit(generateCanvas);
+			$("#clearbtn").click(function() {updateCode(true);});
+		});
+	</script>
+	
+	<script type="text/javascript">
+		var baseParams = "Base parameters empty";
+		
+		function validateInput() {
+			var nameGood = true;
+			var widthGood = true;
+			var heightGood = true;
+			
+			($("#name").val().length > 8) ? $("#name_note").show("slow") : $("#name_note").hide("normal");
+			
+			if((isNaN(parseInt($("#width").val()))) || (parseInt($("#width").val()) <= 0)) {
+				$("#number_warning_x").show("fast");
+				$("#width").addClass("inputwarn");
+				widthGood = false;
+			} else {
+				$("#number_warning_x").hide("normal");
+				$("#width").removeClass("inputwarn");
+			}
+			
+			if((isNaN(parseInt($("#height").val()))) || (parseInt($("#height").val()) <= 0)) {
+				$("#number_warning_y").show("fast");
+				$("#height").addClass("inputwarn");
+				heightGood = false;
+			} else {
+				$("#number_warning_y").hide("normal");
+				$("#height").removeClass("inputwarn");
+			}
+			
+			if(($("#name").val().length <= 0) || /\s+/.test($("#name").val())) {
+				$("#name_warning").show("fast");
+				$("#name").addClass("inputwarn");
+				nameGood = false;
+			} else {
+				$("#name_warning").hide("normal");
+				$("#name").removeClass("inputwarn");
+			}
+			
+			return widthGood && heightGood && nameGood;
+		}
+		
+		function updateCode(clear) {
+			var foundationCells = "";
+			
+			var table = $("#editor")[0];
+			var dimX = table.rows[0].cells.length;
+			var dimY = table.rows.length;
+			var cellCounter = 0;
+			for(var yRows = 1; yRows < dimY; ++yRows) {
+				for(var xCols = 1; xCols < dimX; ++xCols) {
+					if(clear) {
+						$(table.rows[yRows].cells[xCols]).removeClass("selectedCell");
+						continue;
+					}
+					if($(table.rows[yRows].cells[xCols]).hasClass("selectedCell")) {
+						foundationCells += "\n" + "Foundation." + cellCounter + " = " + (xCols - 1) + "," + (yRows - 1);
+						++cellCounter;
+					}
+				}
+			}
+			$("#code").val(baseParams + foundationCells);
+		}
+		
+		function cellSelected(event) {
+			if($(this).hasClass("selectedCell")) {
+				$(this).removeClass("selectedCell");
+			} else {
+				$(this).addClass("selectedCell");
+			}
+			updateCode();
+		}
+	
+		function generateCanvas(event) {
+			event.preventDefault();
+			if(validateInput()) {
+				// Set up the base code for these parameters and save them globally for later retrieval
+				var generatedCode = "Internal Error: If you see this, code _should_ have been generated, but something went wrong in the process.";
+				
+				var buildingName = $("#name").val();
+				var foundWidth = parseInt($("#width").val());
+				var foundHeight = parseInt($("#height").val());
+				
+				generatedCode = "[" + buildingName + "]\nFoundation = Custom\nFoundation.X = " + foundWidth + "\nFoundation.Y = " + foundHeight;
+				
+				$("#code").val(generatedCode);
+				baseParams = generatedCode;
+				
+				// Draw the actual canvas
+				$("#editor").empty();
+				$("#sidelabels").width("100%");
+				for(var yRows = 0; yRows <= foundHeight; ++yRows) {
+					var tempRow = document.createElement("tr");
+					for(var xCols = 0; xCols <= foundWidth; ++xCols) {
+						var tempCol = document.createElement("td");
+						if((yRows !== 0) && (xCols !== 0)) $(tempCol).addClass("editCell");
+						if((yRows === 0) && (xCols > 0)) {
+							$(tempCol).text((xCols - 1)).removeClass("editCell").addClass("topCell");
+						}
+						if((xCols === 0) && (yRows > 0)) {
+							$(tempCol).text((yRows - 1)).removeClass("editCell").addClass("leftCell");
+						}
+						tempRow.appendChild(tempCol);
+					}
+					$("#editor")[0].appendChild(tempRow);
+				}
+				$("#sidelabels").show("slow", function() {
+					$("#sidelabels").width($("#editor").width());
+				});
+				
+				// Make the cells clickable
+				$(".editCell").click(cellSelected);
+			}
+		}
+		
+	</script>
+
+</body>
+</html>
