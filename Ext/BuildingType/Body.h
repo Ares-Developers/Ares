@@ -35,7 +35,9 @@ public:
 		bool IsCustom;
 		int CustomWidth;
 		int CustomHeight;
+		int OutlineLength;
 		CellStruct* CustomData;
+		CellStruct* OutlineData;
 
 		// new secret lab
 		DynamicVectorClass<TechnoTypeClass *> Secret_Boons;
@@ -49,6 +51,7 @@ public:
 			Solid_Height (0),
 			IsCustom (false),
 			CustomData (NULL),
+			OutlineData (NULL),
 			CustomWidth (0),
 			CustomHeight (0),
 			Firewall_Is (false)

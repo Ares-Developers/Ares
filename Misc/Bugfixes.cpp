@@ -602,3 +602,34 @@ DEFINE_HOOK(441C21, BuildingClass_Destroy_ShakeScreenZero, 6)
 	;
 }
 
+/*
+A_FINE_HOOK(45DD0E, BuildingTypeClass_InitFoundationOutlines, 5)
+{
+	CellStruct *Cell = (CellStruct *)0x89C900;
+	Debug::Log("Dumping\n");
+	Debug::Log("Foundations:\n");
+	for(int i = 0; i < 22; ++i) {
+		Debug::Log("Foundation #%d:\n\t", i);
+		for(int j = 0; j < 30; ++j) {
+			Debug::Log("(%d, %d) ", Cell->X, Cell->Y);
+			++Cell;
+		}
+		Debug::Log("\n");
+	}
+
+	Debug::Log("Outlines:\n");
+	Cell = (CellStruct *)0x89D368;
+
+	for(int i = 0; i < 22; ++i) {
+		Debug::Log("Foundation #%d:\n\t", i);
+		for(int j = 0; j < 30; ++j) {
+			Debug::Log("(%d, %d) ", Cell->X, Cell->Y);
+			++Cell;
+		}
+		Debug::Log("\n");
+	}
+
+	Debug::Log("Done.\n");
+	return 0;
+}
+*/

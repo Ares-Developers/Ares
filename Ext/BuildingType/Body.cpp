@@ -66,42 +66,78 @@ void BuildingTypeExt::ExtData::LoadFromINI(BuildingTypeClass *pThis, CCINIClass*
 		if(pArtINI->ReadString(pArtID, "Foundation", "", str, 0x80) && !_strcmpi(str,"Custom")) {
 			//Custom Foundation!
 			this->IsCustom = true;
-			pThis->set_Foundation(FOUNDATION_CUSTOM);
+			pThis->Foundation = FOUNDATION_CUSTOM;
 
 			//Load Width and Height
 			this->CustomWidth = pArtINI->ReadInteger(pArtID, "Foundation.X", 0);
 			this->CustomHeight = pArtINI->ReadInteger(pArtID, "Foundation.Y", 0);
+			this->OutlineLength = pArtINI->ReadInteger(pArtID, "FoundationOutline.Length", 0);
+
+			// at len < 10, things will end very badly for weapons factories
+			if(this->OutlineLength < 10) {
+				this->OutlineLength = 10;
+			}
 
 			//Allocate CellStruct array
 			if(this->CustomData) {
-				delete this->CustomData;
+				delete[] this->CustomData;
+			}
+
+			if(this->OutlineData) {
+				delete[] this->OutlineData;
 			}
 
 			CellStruct* pFoundationData = new CellStruct[this->CustomWidth * this->CustomHeight + 1];
-			
+			CellStruct* pOutlineData = new CellStruct[this->OutlineLength + 1];
+
 			this->CustomData = pFoundationData;
-			pThis->set_FoundationData(pFoundationData);
+			this->OutlineData = pOutlineData;
+			pThis->FoundationData = pFoundationData;
+			pThis->FoundationOutside = pOutlineData;
 
 			//Load FoundationData
 			CellStruct* pCurrent = pFoundationData;
 			char key[0x20];
 
-			for(int i = 0; i < this->CustomWidth * this->CustomHeight; i++) {
+			for(int i = 0; i < this->CustomWidth * this->CustomHeight; ++i) {
 				_snprintf(key, 32, "Foundation.%d", i);
 				if(pArtINI->ReadString(pArtID, key, "", str, 0x80)) {
-					short x, y;
-					if(sscanf(str, "%d,%d", &x, &y) == 2) {
-						pCurrent->X = x;
-						pCurrent->Y = y;
-						++pCurrent;
-					}
+					short x = 0, y = 0;
+					sscanf(str, "%d,%d", &x, &y);
+					pCurrent->X = x;
+					pCurrent->Y = y;
+					++pCurrent;
 				} else {
-					//Set end vector
-					pCurrent->X = 0x7FFF;
-					pCurrent->Y = 0x7FFF;
 					break;
 				}
 			}
+
+			//Set end vector
+			pCurrent->X = 0x7FFF;
+			pCurrent->Y = 0x7FFF;
+
+			pCurrent = pOutlineData;
+			for(int i = 0; i < this->OutlineLength; ++i) {
+				_snprintf(key, 32, "FoundationOutline.%d", i);
+				if(pArtINI->ReadString(pArtID, key, "", str, 0x80)) {
+					short x = 0, y = 0;
+					sscanf(str, "%d,%d", &x, &y);
+					pCurrent->X = x;
+					pCurrent->Y = y;
+					++pCurrent;
+				} else {
+					//Set end vector
+					// can't break, some stupid functions access fixed offsets without checking if that offset is within the valid range
+					pCurrent->X = 0x7FFF;
+					pCurrent->Y = 0x7FFF;
+					++pCurrent;
+				}
+			}
+
+			//Set end vector
+			pCurrent->X = 0x7FFF;
+			pCurrent->Y = 0x7FFF;
+
 		}
 	}
 
@@ -180,15 +216,14 @@ void BuildingTypeExt::UpdateSecretLabOptions(BuildingClass *pThis)
 void Container<BuildingTypeExt>::Save(BuildingTypeClass *pThis, IStream *pStm) {
 	BuildingTypeExt::ExtData* pData = this->SaveKey(pThis, pStm);
 
-	if(pData) {
-		pData->IsCustom = pData->CustomData != 0;
-
-		if(pData->IsCustom) {
-			ULONG out;
-			pStm->Write(pData->CustomData,
-				sizeof(CellStruct) * (pData->CustomWidth * pData->CustomHeight + 1),
-				&out);
-		}
+	if(pData && pData->IsCustom) {
+		ULONG out;
+		pStm->Write(pData->CustomData,
+			sizeof(CellStruct) * (pData->CustomWidth * pData->CustomHeight + 1),
+			&out);
+		pStm->Write(pData->OutlineData,
+			sizeof(CellStruct) * (pData->OutlineLength + 1),
+			&out);
 	}
 };
 
@@ -201,16 +236,23 @@ void Container<BuildingTypeExt>::Load(BuildingTypeClass *pThis, IStream *pStm) {
 	//if there's custom data, read it
 	if(pData->IsCustom && pData->CustomWidth > 0 && pData->CustomHeight > 0) {
 		pData->CustomData = new CellStruct[pData->CustomWidth * pData->CustomHeight + 1];
+		pData->OutlineData = new CellStruct[pData->OutlineLength + 1];
 
 		pStm->Read(
 			pData->CustomData,
 			sizeof(CellStruct) * (pData->CustomWidth * pData->CustomHeight + 1),
 			&out);
 
-		pThis->set_Foundation(FOUNDATION_CUSTOM);
-		pThis->set_FoundationData(pData->CustomData);
+		pStm->Read(
+			pData->OutlineData,
+			sizeof(CellStruct) * (pData->OutlineLength + 1),
+			&out);
+
+		pThis->Foundation = FOUNDATION_CUSTOM;
+		pThis->FoundationData = pData->CustomData;
+		pThis->FoundationOutside = pData->OutlineData;
 	} else {
-		pData->CustomData = NULL;
+		pData->CustomData = pData->OutlineData = NULL;
 	}
 
 #ifdef DEBUGBUILD
