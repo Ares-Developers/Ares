@@ -25,7 +25,10 @@
 		}
 		INPUT[type="text"], TEXTAREA {
 			background-color: #466100;
-			border: 1px solid #3d5400;
+			border-top: 1px solid #344700;
+			border-bottom: 1px solid #628700;
+			border-left: 1px solid #344700; /*3d5400*/
+			border-right: 1px solid #628700;
 			-moz-border-radius: 4px;
 			-webkit-border-radius: 4px;
 			padding: 2px;
@@ -38,6 +41,23 @@
 		INPUT[type="text"]:focus {
 			/* background-color: #4F6D00; */
 			border: 1px solid #7AA800;
+		}
+		INPUT[type="submit"], INPUT[type="button"] {
+			background-image: url("data:image/png,%89PNG%0D%0A%1A%0A%00%00%00%0DIHDR%00%00%00%01%00%00%00%1E%08%02%00%00%00b%F7%E3%90%00%00%00%01sRGB%00%AE%CE%1C%E9%00%00%00%09pHYs%00%00%0B%13%00%00%0B%13%01%00%9A%9C%18%00%00%00%07tIME%07%D9%09%1E%04%0E%0E%3A%01%0D%CF%00%00%00%25tEXtComment%00Created%20by%20Renegade%20with%20GIMP%A1-%04t%00%00%00MIDAT%08%D7-%C5%B1%11%840%00%03A%F9%ECZ(%97n%E8%EA%23%86%D0%92%08%F8%60gu%5E%07Ui%83T%DAR%05%B5%24%25.N%F0.v%F1.q%B0%CB%FD%FC%F0%16%89%88E%B6%B0%C5%18b%E8%FF%10H%CC)%E6%FA%AC%A5%17x%C739%803%AD%FD%00%00%00%00IEND%AEB%60%82");
+			border-color: #aced00 #344700 #2b3b00 #a8e800;
+			border-style: solid;
+			border-width: 1px;
+			-moz-border-radius: 4px;
+			-webkit-border-radius: 4px;
+			color: #253300;
+			cursor: pointer;
+		}
+		/*INPUT[type="submit"]:hover, INPUT[type="button"]:hover {
+			border-color: #aced00 #344700 #2b3b00 #a8e800;
+		}*/
+		INPUT[type="submit"]:active, INPUT[type="button"]:active {
+			border-color: #2b3b00 #a8e800 #aced00 #344700;
+			/* border-color: #aced00 #344700 #2b3b00 #a8e800; */
 		}
 		#width, #height {
 			width: 5em;
@@ -55,6 +75,13 @@
 			font-weight: bold;
 			/* color: #880000; */
 		}
+		#warfac_note {
+			font-size: small;
+			width: 500px;
+			margin-left: auto;
+			margin-right: auto;
+			text-align: justify;
+		}
 		INPUT[type="text"].inputwarn {
 			border: 2px solid #DD0000;
 		}
@@ -68,6 +95,7 @@
 			
 			-moz-transform: rotate(45deg);
 			-webkit-transform: rotate(45deg);
+			-moz-user-select: none;
 		}
 		#sidelabels #label_top {
 			position: absolute;
@@ -99,37 +127,58 @@
 		}
 		#editor .editCell {
 			border: 1px solid #2b3b00;
-		}
-		#editor .editCell:hover {
-			border: 1px solid #AA0000;
-			background-color: #880000;
+			cursor: pointer;
 		}
 		#editor .topCell {
 			border-left: 1px solid #3d5400;
 			border-right: 1px solid #3d5400;
+			border-bottom: 1px solid #2b3b00;
 		}
 		#editor .leftCell {
 			border-top: 1px solid #3d5400;
+			border-right: 1px solid #2b3b00;
 			border-bottom: 1px solid #3d5400;
+		}
+		#editor .outlineMargin {
+			border: 1px solid #4c630f !important;
+			background-color: #607e13;
+			cursor: pointer;
 		}
 		#editor .selectedCell {
 			border: 1px solid #008800 !important;
 			background-color: #00AA00;
 		}
-		#clearbtn {
+		#editor .outlineCell {
+			border: 1px solid #AA5500 !important;
+			background-color: #FF9900;
+		}
+		#editor .bibCell {
+			border: 1px solid #000088 !important;
+			background-color: #0000AA;
+		}
+		#editor .editCell:hover, #editor .outlineMargin:hover {
+			border: 1px solid #AA0000;
+			background-color: #880000;
+		}
+		#controlbuttons {
 			position: absolute;
 			bottom: 6px;
 			right: 10px;
+		}
+		#hint {
+			position: absolute;
+			top: 6px;
+			right: 10px;
+		}
+		#hint EM {
+			font-style: normal;
+			font-family: "Courier New", monospace;
 		}
 		#code {
 			height: 300px;
 			width: 500px;
 			font-family: "Courier New", monospace;
 		}
-		/*#layout_header, #layout_params, #layout_canvas, #layout_code, #layout_footer {
-			width: 100%;
-		}*/
-		
 		#layout_header {
 			background-color: #7AA800;
 			border-bottom: 1px solid #557500;
@@ -149,12 +198,12 @@
 			border-top: 1px solid #779626;
 			border-bottom: 1px solid #4f6319;
 			padding: 0.5em 0.5em 0.8em 2em;
-			color: #bde065;
+			color: #c8ed6b;
 			/* -moz-box-shadow: 0px 0px 50px 20px #557500; */
 		}
 		#layout_canvas {
 			background-color: #4F6D00;
-			border-top: 1px solid #628700;
+			border-top: 1px solid #5c8000;
 			border-bottom: 1px solid #3d5400;
 			padding: 10em 0px 10em 0px;
 			
@@ -180,9 +229,11 @@
 </head>
 <body>
 <!-- #################################### HTML #################################### -->
+	<!-- Header -->
 	<div id="layout_header">
 		<span>Ares Custom Foundation Generator</span>
 	</div>
+	<!-- Base parameter block -->
 	<div id="layout_params">
 		<h1>Foundation</h1>
 		<form id="widthheight" action="./">
@@ -200,13 +251,17 @@
 				<input type="submit" name="set_params_n" id="set_params" value="Set Base Parameters">
 			</p>
 		</form>
+		<!-- Warnings, these only pop up if there's stuff to complain about. -->
 		<p id="number_warning_x" style="display: none;">Warning! Your <em>width</em> is either <em>0 (zero)</em> or could <em>not</em> be <em>recognized</em> as a number! Please check your input.</p>
 		<p id="number_warning_y" style="display: none;">Warning! Your <em>height</em> is either <em>0 (zero)</em> or could <em>not</em> be <em>recognized</em> as a number! Please check your input.</p>
 		<p id="name_warning" style="display: none;">Warning! Your building/art <em>name</em> is either <em>empty or</em> contains <em>whitespace</em>. Please check your input.</p>
 		<p id="name_note" style="display: none;">Attention: Your building/art name is longer than 8 characters. While that is possible, it is non-standard and not recommended.</p>
 	</div>
 	
+	<!-- The canvas to "draw" on -->
 	<div id="layout_canvas">
+		<div id="hint">Select/unselect cells with the left mouse button, place outline cells with <em>[Ctrl]</em>+click.</div>
+		<!-- The corner labels are necessary for browsers who don't support rotation, and thus see the canvas 45° left -->
 		<div id="sidelabels" style="display: none;">
 			<div id="label_top">Top / 0</div>
 			<div id="label_right">Right / X</div>
@@ -214,11 +269,14 @@
 			<div id="label_bottom">Bottom</div>
 			<div id="label_left">Left / Y</div>
 		</div>
-		<input type="button" name="clearbtn_n" id="clearbtn" value="Clear Cells">
+		<!-- Outlines & clear buttons -->
+		<div id="controlbuttons"><input type="button" name="outlnbtn_n" id="outlnbtn" value="Generate Outline">&nbsp;<input type="button" name="clearbtn_n" id="clearbtn" value="Clear Cells"></div>
 	</div>
+	<!-- Code text and .10 outline warning -->
 	<div id="layout_code">
 		<h1>Code</h1>
 		<textarea id="code" readonly="readonly" cols="48" rows="16">Please enter name, width and height at the top and click "Set Base Parameters".</textarea>
+		<p id="warfac_note" style="display: none;"><strong>Note on War Factories and outlines:</strong> On War Factories, the game uses FoundationOutline.10 as the primary exit destination for newly spawned units, using the eight adjacent cells as alternative destinations. These cells basically form what the game sees as the factory's "bib", regardless of graphics.<br>You are seeing this message because you have no FoundationOutline.10 defined - if you are not making a foundation for a War Factory, this note can be ignored.<br>You can set FoundationOutline.10 manually by shift-clicking anywhere on the canvas.</p>
 	</div>
 
 	<div id="layout_footer">Written 29.09.09 by Renegade</div>
@@ -228,27 +286,38 @@
 	<script type="text/javascript">
 		google.load("jquery", "1");
 		google.setOnLoadCallback(function() {
+			// initialization
 			$("#number_warning_x").hide();
 			$("#number_warning_y").hide();
 			$("#name_warning").hide();
 			$("#name_note").hide();
+			$("#warfac_note").hide();
 			$("#sidelabels").hide();
 			//$("#set_params").click(generateCanvas);
-			$("#widthheight").submit(generateCanvas);
+			$("#widthheight").submit(generateCanvas); // set event handler
+			$("#widthheight").submit(); // trigger event to create default canvas
 			$("#clearbtn").click(function() {updateCode(true);});
+			$("#outlnbtn").click(generateOutline);
+			$("#code").val("Please enter name, width and height at the top and click \"Set Base Parameters\"."); // FF saves the value over refreshes, leaving old foundation data with empty canvases without this.
 		});
 	</script>
 	
 	<script type="text/javascript">
+		// When set, this stores the first three lines of the code: building name, width and height
 		var baseParams = "Base parameters empty";
 		
+		// This function validates the name, width and height input parameters and returns true if they're in order.
+		// If there's a problem, it unveils warnings and returns false.
 		function validateInput() {
 			var nameGood = true;
 			var widthGood = true;
 			var heightGood = true;
 			
+			// adds a notice if the name is longer than 8 chars...this has no effect on the validation, 
+			// as that's mostly a matter of adhering to tradition
 			($("#name").val().length > 8) ? $("#name_note").show("slow") : $("#name_note").hide("normal");
 			
+			// tests whether the width is not a number or zero or negative
 			if((isNaN(parseInt($("#width").val()))) || (parseInt($("#width").val()) <= 0)) {
 				$("#number_warning_x").show("fast");
 				$("#width").addClass("inputwarn");
@@ -258,6 +327,7 @@
 				$("#width").removeClass("inputwarn");
 			}
 			
+			// tests whether the height is not a number or zero or negative
 			if((isNaN(parseInt($("#height").val()))) || (parseInt($("#height").val()) <= 0)) {
 				$("#number_warning_y").show("fast");
 				$("#height").addClass("inputwarn");
@@ -267,6 +337,7 @@
 				$("#height").removeClass("inputwarn");
 			}
 			
+			// tests whether the name is empty or contains whitespace (the latter would technically be legal, but is just poor form)
 			if(($("#name").val().length <= 0) || /\s+/.test($("#name").val())) {
 				$("#name_warning").show("fast");
 				$("#name").addClass("inputwarn");
@@ -279,41 +350,138 @@
 			return widthGood && heightGood && nameGood;
 		}
 		
+		// This function updates the code box at the bottom with Ares-compliant INI code to generate the foundation the user drew ingame.
+		// As a special case, if the function is passed any value that could be interpreted as "true", e.g. a literal true, a true boolean 
+		// or positive integer, it will instead clear all cells and reset the code box.
 		function updateCode(clear) {
-			var foundationCells = "";
+			var foundationCellsString = "";
+			var outlineCellsString = "";
+			var bibCell = ($(".bibCell").length > 0) ? getCellCoords($(".bibCell")[0]) : false; // abusing weakly typed languages 101  // contains .x and .y coords
 			
-			var table = $("#editor")[0];
-			var dimX = table.rows[0].cells.length;
-			var dimY = table.rows.length;
-			var cellCounter = 0;
-			for(var yRows = 1; yRows < dimY; ++yRows) {
-				for(var xCols = 1; xCols < dimX; ++xCols) {
-					if(clear) {
-						$(table.rows[yRows].cells[xCols]).removeClass("selectedCell");
-						continue;
+			// special case: clear all
+			if(clear) {
+				$(".selectedCell").removeClass("selectedCell");
+				$(".outlineCell").removeClass("outlineCell");
+				$(".bibCell").removeClass("bibCell");
+				$("#code").val(baseParams);
+				return;
+			}
+			
+			// Vastly improved algorithm only checks cells that are actually selected
+			// foundation cells
+			var selectedCells = $(".selectedCell");
+			for(var i = 0; i < selectedCells.length; ++i) {
+				var tempCoords = getCellCoords(selectedCells[i]);
+				foundationCellsString += "\nFoundation." + i + " = " + (tempCoords.x - 2) + "," + (tempCoords.y - 2);
+			}
+			// outline incl. bib cell 
+			var outlineCells = $(".outlineCell");
+			if(bibCell && (outlineCells.length >= 11)) { // if we have a designated bib cell and there will be someone else occupying 10, we have to switch their places
+				var previous10 = getCellCoords(outlineCells[10]); // this way, we can happily override the old 10
+			}
+			if(bibCell && (outlineCells.length < 11)) { // same basic idea, but since there is no 10 this time, we have to save the empty spot until we know which one to put there
+				var bibWas = -1; // which i/number in the list was the bib?
+			}
+			for(var i = 0; i < outlineCells.length; ++i) {
+				var tempCoords = getCellCoords(outlineCells[i]);
+				//console.debug("ID: %i; tempcoords: %i, %i; bibcell: %i,%i", i, tempCoords.x, tempCoords.y, bibCell.x, bibCell.y);
+				// if it wasn't for the bib handling, this part would be two lines long - the first and the last x_x
+				if(bibCell) { // if a bib cell is defined ...
+					if(i === 10) { // ...and it is bib time, apply it
+						tempCoords = bibCell;
+					} else if((tempCoords.x === bibCell.x) && (tempCoords.y === bibCell.y)) { // if it's not, see if this is the original spot of the bib
+						if(outlineCells.length >= 11) {
+							tempCoords = previous10; // if this is where the bib originally was, place the coords from [10] here instead
+						} else { // if we don't get a [10] item in the list, just place the bib at place .10 (D said this'd work)
+							outlineCellsString += "\nFoundationOutline.10 = " + (bibCell.x - 2) + "," + (bibCell.y - 2);
+							bibWas = i; // memorize for which spot we did this, so we can fill it up later
+							continue; 
+						}
 					}
-					if($(table.rows[yRows].cells[xCols]).hasClass("selectedCell")) {
-						foundationCells += "\n" + "Foundation." + cellCounter + " = " + (xCols - 1) + "," + (yRows - 1);
-						++cellCounter;
+				}
+				if((bibWas >= 0) && (i === (outlineCells.length - 1))) { // if the bib was moved elsewhere, and this is the last loop, fill the gap
+					outlineCellsString += "\nFoundationOutline." + bibWas + " = " + (tempCoords.x - 2) + "," + (tempCoords.y - 2);
+					continue;
+					// we could do all sorts of magic to bring the list in order, but it makes no difference in parsing anyway *shrug*
+				}
+				
+				// save the individual lines of code
+				outlineCellsString += "\nFoundationOutline." + i + " = " + (tempCoords.x - 2) + "," + (tempCoords.y - 2);
+			}
+			if(outlineCells.length) {	// if there are outlines, output them
+				$("#code").val(baseParams + foundationCellsString + "\nFoundationOutline.Length = " + outlineCells.length + outlineCellsString);
+				if((outlineCells.length < 11) && !bibCell){ //if there are outlines defined, but no natural .10, and no special bib cell has been set ...
+					$("#warfac_note").show("normal"); // ... give a warning about WarFacs.
+				} else {
+					$("#warfac_note").hide("normal");
+				}
+			} else { // if there are no outlines, just give us the foundation
+				$("#code").val(baseParams + foundationCellsString);
+			}
+		}
+		
+		// this is the click handler for selecting/painting on the canvas
+		function cellSelected(event) {
+			// ctrl+click -> add cell to outline
+			// shift+click -> set outline .10 (bib center)
+			// normal click -> add cell to selection
+			if(event.shiftKey) {								// bib cell handling
+				if($(this).hasClass("bibCell")) {
+					$(this).removeClass("bibCell");
+				} else {
+					if($(".bibCell").length) { // if there was already a bib cell defined, kill the previous one
+						$(".bibCell").removeClass("bibCell");
+					}
+					$(this).addClass("outlineCell"); // need this since the bib is ultimately just a special case outline
+					$(this).addClass("bibCell");
+				}
+			} else if($(this).hasClass("outlineMargin")) {		// outline margin cell handling
+				if($(this).hasClass("outlineCell")) { // foundation handling is irrelevant here 'cause only outlines can be on the margin
+					$(this).removeClass("outlineCell");
+				} else {
+					$(this).addClass("outlineCell");
+				}
+			} else {
+				if(!event.ctrlKey) {							// foundation cell handling
+					if($(this).hasClass("selectedCell")) {
+						$(this).removeClass("selectedCell");
+					} else {
+						$(this).addClass("selectedCell");
+					}
+				} else {										// outline cell handling
+					if($(this).hasClass("outlineCell")) {
+						$(this).removeClass("outlineCell");
+					} else {
+						$(this).addClass("outlineCell");
 					}
 				}
 			}
-			$("#code").val(baseParams + foundationCells);
-		}
-		
-		function cellSelected(event) {
-			if($(this).hasClass("selectedCell")) {
-				$(this).removeClass("selectedCell");
-			} else {
-				$(this).addClass("selectedCell");
-			}
+			
+			// now that we finally worked out what has changed, time to update the code
 			updateCode();
 		}
 	
+		/*  this function generates the "canvas" foundations will be painted on
+			column and row 0 are the labels
+			column and row 1 are margins for outlines only
+			the last column and row each form the other two sides of the margin
+			
+			ultimatel layout is like this:
+			  LLL
+			 MMMMM
+			LMCCCM
+			LMCCCM
+			LMCCCM
+			 MMMMM
+			where L = label, M = margin, C = canvas
+		*/
 		function generateCanvas(event) {
+			// D asked for this to work with [enter] as well, so I had to use submit; this kills the standard submit
 			event.preventDefault();
+			
+			// this entire thing won't run if the base params aren't valid. there's nothing after this if.
 			if(validateInput()) {
-				// Set up the base code for these parameters and save them globally for later retrieval
+				// Build the code representation of the base parameters
 				var generatedCode = "Internal Error: If you see this, code _should_ have been generated, but something went wrong in the process.";
 				
 				var buildingName = $("#name").val();
@@ -322,34 +490,95 @@
 				
 				generatedCode = "[" + buildingName + "]\nFoundation = Custom\nFoundation.X = " + foundWidth + "\nFoundation.Y = " + foundHeight;
 				
+				// output the base params in the code box and save them globally
 				$("#code").val(generatedCode);
 				baseParams = generatedCode;
 				
 				// Draw the actual canvas
 				$("#editor").empty();
 				$("#sidelabels").width("100%");
-				for(var yRows = 0; yRows <= foundHeight; ++yRows) {
+				/* generates width + 2 margins + 1 label columns and
+				   generates height + 2 margins + 1 label rows
+				   
+				   classes:
+					editCell: clickable cells forming the paintable canvas
+					topCell: X-axis labels
+					leftCell: Y-axis labels
+					outlineMargin: only clickable/paintable for outlines
+				*/
+				var canvasYheight = foundHeight + 3; //canvas + 2 outline + 1 labels
+				var canvasXwidth = foundWidth + 3;
+				for(var yRows = 0; yRows <= canvasYheight; ++yRows) {
 					var tempRow = document.createElement("tr");
-					for(var xCols = 0; xCols <= foundWidth; ++xCols) {
+					for(var xCols = 0; xCols <= canvasXwidth; ++xCols) {
 						var tempCol = document.createElement("td");
-						if((yRows !== 0) && (xCols !== 0)) $(tempCol).addClass("editCell");
-						if((yRows === 0) && (xCols > 0)) {
-							$(tempCol).text((xCols - 1)).removeClass("editCell").addClass("topCell");
+						// if this cell is neither a label nor in the outline margin, make it editable
+						if((yRows > 1) && (xCols > 1) && (yRows < (canvasYheight - 1)) && (xCols < (canvasXwidth - 1))) $(tempCol).addClass("editCell");
+						
+						// build the label row
+						if((yRows === 0) && (xCols > 1) && (xCols < (canvasXwidth - 1))) {
+							$(tempCol).text((xCols - 2)).addClass("topCell");
 						}
-						if((xCols === 0) && (yRows > 0)) {
-							$(tempCol).text((yRows - 1)).removeClass("editCell").addClass("leftCell");
+						// build the label column
+						if((xCols === 0) && (yRows > 1) && (yRows < (canvasYheight - 1))) {
+							$(tempCol).text((yRows - 2)).addClass("leftCell");
 						}
+						
+						// draw the outline margin (surrounds the canvas)
+						if(((xCols > 0) && (xCols < canvasXwidth) && ((yRows === 1) || (yRows === (canvasYheight - 1))))
+							|| ((yRows > 0) && (yRows < canvasYheight) && ((xCols === 1) || (xCols === (canvasXwidth - 1)))))$(tempCol).addClass("outlineMargin").attr("title","Margin, for outlines only.");
 						tempRow.appendChild(tempCol);
 					}
+					// add the whole thing to the canvas/table
 					$("#editor")[0].appendChild(tempRow);
 				}
+				// make the div with the directional labels for the corners visible and reset the container's width to match the editor
 				$("#sidelabels").show("slow", function() {
 					$("#sidelabels").width($("#editor").width());
 				});
 				
 				// Make the cells clickable
-				$(".editCell").click(cellSelected);
+				$("#editor .editCell").click(cellSelected);
+				$("#editor .outlineMargin").click(cellSelected);
 			}
+		}
+		
+		// checks all eight surrounding cells of every cell on the canvas and turns them into outlines if they're empty (individually)
+		// thus auto-generating an outline for the foundation
+		function generateOutline() {
+			// get foundation cells
+			var selectedCells = $(".selectedCell");
+			
+			// if you change this, change the 8 in the for-j below
+			// there should be no reason to change it, though
+			// (these are the locations/directions of the other cells in relation to the current one)
+			var vectors = [{x: -1,y: -1},{x: 0,y: -1},{x: 1,y: -1},{x: -1,y: 0},{x: 1,y: 0},{x: -1,y: 1},{x: 0,y: 1},{x: 1,y: 1}];
+			
+			for(var i = 0; i < selectedCells.length; ++i) {
+				var tempCoords = getCellCoords(selectedCells[i]);
+				// go through all eight adjacent cells and check if they need outlining.
+				// if so, add outline
+				for(var j = 0; j < 8; ++j) {
+					var adjacentCell = getCell(tempCoords.x + vectors[j].x,tempCoords.y + vectors[j].y);
+					//console.debug("i: %i, j: %i, tempX: %i, tempY: %i, vectorX: %i, vectorY: %i", i, j, tempCoords.x, tempCoords.y, vectors[j].x, vectors[j].y);
+					if(!adjacentCell.hasClass("selectedCell")) {
+						adjacentCell.addClass("outlineCell");
+					}
+				}
+			}
+			// as usual, update the actually displayed code
+			updateCode();
+		}
+		
+		// helper function to de-clutter and make access more intuitive
+		function getCell(column, row) {
+			return $($("#editor")[0].rows[row].cells[column]);
+		}
+		
+		// returns an object with .x and .y members denoting the cell column and row in #editor
+		// based on actual table coordinates, though - that is, 0,0 is the top left corner of the label column and row
+		function getCellCoords(cell) {
+			return {x: parseInt($(cell).attr("cellIndex")), y: parseInt($(cell).parent().attr("rowIndex"))};
 		}
 		
 	</script>
