@@ -206,7 +206,7 @@ void TechnoTypeExt::ExtData::LoadFromINI(TechnoTypeClass *pThis, CCINIClass *pIN
 	}
 
 	INI_EX exINI(pINI);
-	this->Parachute_Anim.Read(&exINI, section, "Parachute.Anim");
+	this->Parachute_Anim.ReadFind(&exINI, section, "Parachute.Anim");
 
 	// quick fix - remove after the rest of weapon selector code is done
 	return;

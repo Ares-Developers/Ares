@@ -32,6 +32,8 @@ char Ares::readBuffer[BUFLEN];
 const char Ares::readDelims[4] = ",";
 const char Ares::readDefval[4] = "";
 
+int Ares::TrackIndex = 66;
+
 int FrameStepCommandClass::ArmageddonState = 0;
 
 stdext::hash_map <DWORD, size_t> MemMap::AllocMap;

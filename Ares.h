@@ -28,6 +28,8 @@ public:
 	static bool		bLog;
 	static FILE*	pLogFile;
 
+	static int TrackIndex;
+
 	static DWORD readLength;
 	static char readBuffer[BUFLEN];
 	static const char readDelims[4];

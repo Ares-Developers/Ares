@@ -602,34 +602,23 @@ DEFINE_HOOK(441C21, BuildingClass_Destroy_ShakeScreenZero, 6)
 	;
 }
 
-/*
-A_FINE_HOOK(45DD0E, BuildingTypeClass_InitFoundationOutlines, 5)
+DEFINE_HOOK(69A3BC, PKTNode_CTOR, 6)
 {
-	CellStruct *Cell = (CellStruct *)0x89C900;
-	Debug::Log("Dumping\n");
-	Debug::Log("Foundations:\n");
-	for(int i = 0; i < 22; ++i) {
-		Debug::Log("Foundation #%d:\n\t", i);
-		for(int j = 0; j < 30; ++j) {
-			Debug::Log("(%d, %d) ", Cell->X, Cell->Y);
-			++Cell;
-		}
-		Debug::Log("\n");
-	}
-
-	Debug::Log("Outlines:\n");
-	Cell = (CellStruct *)0x89D368;
-
-	for(int i = 0; i < 22; ++i) {
-		Debug::Log("Foundation #%d:\n\t", i);
-		for(int j = 0; j < 30; ++j) {
-			Debug::Log("(%d, %d) ", Cell->X, Cell->Y);
-			++Cell;
-		}
-		Debug::Log("\n");
-	}
-
-	Debug::Log("Done.\n");
+	GET_STACK(char *, mapname, 0x21C);
+	Debug::Log("\tAdding map %s\n", mapname);
 	return 0;
 }
-*/
+
+DEFINE_HOOK(699B2D, Game_ParsePKTs, 5)
+{
+	GET(char *, filename, ESI);
+	Debug::Log("Adding PKT %s\n", filename);
+	return 0;
+}
+
+DEFINE_HOOK(699C1C, Game_ParsePKTs_ClearFile, 7)
+{
+	LEA_STACK(CCINIClass *, pINI, 0x24);
+	pINI->Clear(NULL, NULL);
+	return 0;
+}

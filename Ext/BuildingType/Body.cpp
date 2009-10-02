@@ -138,7 +138,25 @@ void BuildingTypeExt::ExtData::LoadFromINI(BuildingTypeClass *pThis, CCINIClass*
 			pCurrent->X = 0x7FFF;
 			pCurrent->Y = 0x7FFF;
 
+/*
+			Debug::Log("Foundation :\n");
+			pCurrent = pThis->FoundationData;
+			while(pCurrent->X != 0x7FFF && pCurrent->Y != 0xFFFF) {
+				Debug::Log("(%d, %d) ", pCurrent->X, pCurrent->Y);
+				++pCurrent;
+			}
+			Debug::Log("\n");
+
+			Debug::Log("Foundation Outline:\n");
+			pCurrent = pThis->FoundationOutside;
+			while(pCurrent->X != 0x7FFF && pCurrent->Y != 0xFFFF) {
+				Debug::Log("(%d, %d) ", pCurrent->X, pCurrent->Y);
+				++pCurrent;
+			}
+			Debug::Log("\n");
+*/
 		}
+
 	}
 
 
