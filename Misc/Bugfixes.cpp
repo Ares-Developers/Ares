@@ -602,23 +602,19 @@ DEFINE_HOOK(441C21, BuildingClass_Destroy_ShakeScreenZero, 6)
 	;
 }
 
-DEFINE_HOOK(69A3BC, PKTNode_CTOR, 6)
-{
-	GET_STACK(char *, mapname, 0x21C);
-	Debug::Log("\tAdding map %s\n", mapname);
-	return 0;
-}
-
-DEFINE_HOOK(699B2D, Game_ParsePKTs, 5)
-{
-	GET(char *, filename, ESI);
-	Debug::Log("Adding PKT %s\n", filename);
-	return 0;
-}
-
 DEFINE_HOOK(699C1C, Game_ParsePKTs_ClearFile, 7)
 {
 	LEA_STACK(CCINIClass *, pINI, 0x24);
 	pINI->Clear(NULL, NULL);
+	return 0;
+}
+
+DEFINE_HOOK(7440BD, UnitClass_Remove, 6)
+{
+	GET(UnitClass *, U, ESI);
+	TechnoClass *Bunker = U->BunkerLinkedItem;
+	if(Bunker && Bunker->WhatAmI() == abs_Building) {
+		reinterpret_cast<BuildingClass *>(Bunker)->ClearBunker();
+	}
 	return 0;
 }

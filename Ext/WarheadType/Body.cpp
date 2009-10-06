@@ -18,9 +18,6 @@ void WarheadTypeExt::ExtData::LoadFromINI(WarheadTypeClass *pThis, CCINIClass *p
 {
 	const char * section = pThis->get_ID();
 
-	DEBUGLOG("Reading ext for %s\n", section);
-
-//	WarheadTypeExt::ExtData *pData = WarheadTypeExt::ExtMap.Find(pThis);
 	if(!pINI->GetSection(section)) {
 		return;
 	}
@@ -39,12 +36,9 @@ void WarheadTypeExt::ExtData::LoadFromINI(WarheadTypeClass *pThis, CCINIClass *p
 
 	// writing custom verses parser just because
 	char buffer[0x100];
-	DEBUGLOG("\n[%s]Verses=", section);
 	if(pINI->ReadString(section, "Verses", "", buffer, 0x100)) {
-		DEBUGLOG("\t%s", buffer);
 		int idx = 0;
 		for(char *cur = strtok(buffer, ","); cur; cur = strtok(NULL, ",")) {
-			DEBUGLOG("\n\t\tVerses #%d is %s", idx, cur);
 			DWORD specialFX = 0x0;
 			this->Verses[idx].Verses = Conversions::Str2Armor(cur, &specialFX);
 
@@ -52,7 +46,6 @@ void WarheadTypeExt::ExtData::LoadFromINI(WarheadTypeClass *pThis, CCINIClass *p
 			this->Verses[idx].Retaliate = ((specialFX & verses_Retaliate) != 0);
 			this->Verses[idx].PassiveAcquire = ((specialFX & verses_PassiveAcquire) != 0);
 
-			DEBUGLOG("\n\t\tWhich converts to %lf", this->Verses[idx].Verses);
 			++idx;
 			if(idx > 10) {
 				break;

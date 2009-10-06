@@ -1,0 +1,174 @@
+#include <AnimClass.h>
+#include <BulletClass.h>
+#include <CCINIClass.h>
+#include <CellSpread.h>
+#include <HouseClass.h>
+#include <InfantryClass.h>
+#include <LightSourceClass.h>
+#include <LocomotionClass.h>
+#include <LoadProgressManager.h>
+#include <MapClass.h>
+#include <MixFileClass.h>
+#include <TacticalClass.h>
+#include <TechnoClass.h>
+#include <TemporalClass.h>
+#include <UnitTypeClass.h>
+#include <WarheadTypeClass.h>
+
+#include "Debug.h"
+#include "..\Ares.h"
+#include "..\Ext\Rules\Body.h"
+#include "..\Ext\BuildingType\Body.h"
+#include "..\Ext\BulletType\Body.h"
+#include "..\Ext\Techno\Body.h"
+#include "..\Ext\TechnoType\Body.h"
+#include "..\Ext\House\Body.h"
+#include "..\Ext\Side\Body.h"
+#include "..\Ext\HouseType\Body.h"
+#include "..\Ext\WeaponType\Body.h"
+#include "..\Ext\WarheadType\Body.h"
+
+#include <Helpers\Macro.h>
+#include <Helpers\Template.h>
+
+DEFINE_HOOK(45DD0E, BuildingTypeClass_InitFoundationOutlines, 5)
+{
+	CellStruct *Cell = (CellStruct *)0x89C900;
+	Debug::Log("Dumping\n");
+	Debug::Log("Foundations:\n");
+	for(int i = 0; i < 22; ++i) {
+		Debug::Log("Foundation #%d:\n\t", i);
+		for(int j = 0; j < 30; ++j) {
+			Debug::Log("(%d, %d) ", Cell->X, Cell->Y);
+			++Cell;
+		}
+		Debug::Log("\n");
+	}
+
+	Debug::Log("Outlines:\n");
+	Cell = (CellStruct *)0x89D368;
+
+	for(int i = 0; i < 22; ++i) {
+		Debug::Log("Foundation #%d:\n\t", i);
+		for(int j = 0; j < 30; ++j) {
+			Debug::Log("(%d, %d) ", Cell->X, Cell->Y);
+			++Cell;
+		}
+		Debug::Log("\n");
+	}
+
+	Debug::Log("Done.\n");
+	return 0;
+}
+
+DEFINE_HOOK(444594, BuildingClass_KickOutUnit_DebugExitCoords, 6)
+{
+	GET(BuildingClass *, Factory, ESI);
+	GET(TechnoClass *, Production, EDI);
+
+	CoordStruct exitCoords, coords, *objCoords;
+	CellStruct cellCoords;
+
+	Factory->GetExitCoords(&exitCoords, 0);
+	Factory->GetCoords(&coords);
+	Factory->GetMapCoords(&cellCoords);
+	objCoords = Production->get_Location();
+
+	Debug::Log("==============\n");
+	
+	Debug::Log("0Exit coords: (%X, %X, %X)\n", exitCoords.X / 256, exitCoords.Y / 256, exitCoords.Z / 256);
+	Debug::Log("0Coords: (%X, %X, %X)\n", coords.X / 256, coords.Y / 256, coords.Z / 256);
+	Debug::Log("0Cell Coords: (%X, %X)\n", cellCoords.X, cellCoords.Y);
+	Debug::Log("0Location: (%X, %X, %X)\n", objCoords->X / 256, objCoords->Y / 256, objCoords->Z / 256);
+
+	GET(byte, result, EAX);
+	return result ? 0x44459A : 0x444EDE;
+}
+
+DEFINE_HOOK(44DE68, BuildingClass_Unload_InitExit, 6)
+{
+	GET(BuildingClass *, Factory, EBP);
+	GET(TechnoClass *, Production, EAX);
+
+	if(Production) {
+		CoordStruct exitCoords, coords, *objCoords;
+		CellStruct cellCoords;
+
+		Factory->GetExitCoords(&exitCoords, 0);
+		Factory->GetCoords(&coords);
+		Factory->GetMapCoords(&cellCoords);
+		objCoords = Production->get_Location();
+
+		Debug::Log("1Exit coords: (%d, %d, %d)\n", exitCoords.X / 256, exitCoords.Y / 256, exitCoords.Z / 256);
+		Debug::Log("1Coords: (%d, %d, %d)\n", coords.X / 256, coords.Y / 256, coords.Z / 256);
+		Debug::Log("1Cell Coords: (%d, %d)\n", cellCoords.X, cellCoords.Y);
+		Debug::Log("1Location: (%d, %d, %d)\n", objCoords->X / 256, objCoords->Y / 256, objCoords->Z / 256);
+	}
+
+	return 0;
+}
+
+DEFINE_HOOK(44DF52, BuildingClass_Unload_SetDest, 6)
+{
+	Debug::Log("Set Destination: (%X)\n", R->get_EAX());
+	return 0;
+}
+
+
+DEFINE_HOOK(44DF81, BuildingClass_Unload_DriveLoco, 6)
+{
+	GET_STACK(TechnoClass *, Production, 0x20);
+	LEA_STACK(CoordStruct *, objCoords, 0x34);
+
+	CoordStruct *unitCoords = Production->get_Location();
+	Debug::Log("UnitLocation: (%d, %d, %d)\n", unitCoords->X / 256, unitCoords->Y / 256, unitCoords->Z / 256);
+	Debug::Log("DriveToLocation: (%d, %d, %d)\n", objCoords->X / 256, objCoords->Y / 256, objCoords->Z / 256);
+	return 0;
+}
+
+
+DEFINE_HOOK(44E140, BuildingClass_Unload_ForceDriveLoco, 6)
+{
+	LEA_STACK(CoordStruct *, objCoords, 0x34);
+
+	Debug::Log("ForceDriveToLocation: (%d, %d, %d)\n", objCoords->X / 256, objCoords->Y / 256, objCoords->Z / 256);
+	return 0;
+}
+
+DEFINE_HOOK(65657A, sub_6563B0, 1)
+{
+	for(int i = 0; i < 22; ++i) {
+		DynamicVectorClass<Point2D> * vec = RadarClass::Global()->get_unknown_points_array_1278(i);
+		Debug::Log("Dumping vector #%d:\n", i);
+		for(int j = 0; j < vec->Count; ++j) {
+			Point2D p = vec->Items[j];
+			Debug::Log("(%x, %x) ", p.X, p.Y);
+		}
+	}
+
+	return 0;
+}
+
+DEFINE_HOOK(44DF91, BuildingClass_Unload_ForceTrack, 6)
+{
+	GET_STACK(TechnoClass *, Production, 0x34);
+	if(Production->Owner == HouseClass::Player()) {
+		R->set_StackVar32(0x4, Ares::TrackIndex);
+		Debug::Log("Force Track %d\n", Ares::TrackIndex);
+	}
+	return 0;
+}
+
+DEFINE_HOOK(69A3BC, PKTNode_CTOR, 6)
+{
+	GET_STACK(char *, mapname, 0x21C);
+	Debug::Log("\tAdding map %s\n", mapname);
+	return 0;
+}
+
+DEFINE_HOOK(699B2D, Game_ParsePKTs, 5)
+{
+	GET(char *, filename, ESI);
+	Debug::Log("Adding PKT %s\n", filename);
+	return 0;
+}

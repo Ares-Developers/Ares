@@ -3,6 +3,7 @@
 #include <CommandClass.h>
 //include "CallCenter.h"
 #include <StaticInits.cpp>
+#include <Unsorted.h>
 
 #include <new>
 
@@ -20,7 +21,6 @@
 #include "Ext\WeaponType\Body.h"
 
 #include "Misc\Debug.h"
-#include "UI\Dialogs.h"
 
 //Init Statics
 HANDLE  Ares::hInstance = 0;
@@ -383,62 +383,3 @@ A_FINE_HOOK(7C8B3D, operator_delete, 9)
 }
 */
 
-void Ares::FatalError(const char *Message) {
-	MouseClass *ReallyAMap = reinterpret_cast<MouseClass *>(MapClass::Global());
-	ReallyAMap->SetPointer(0, 0);
-	WWMouseClass::Instance->ReleaseMouse();
-
-	ShowCursor(1);
-
-	strncpy(Dialogs::ExceptDetailedMessage, Message, 0x400);
-
-	Debug::Log("\nFatal Error:\n");
-	Debug::Log(Message);
-
-	LPCDLGTEMPLATEA DialogBox = reinterpret_cast<LPCDLGTEMPLATEA>(Game::GetResource(247, 5));
-
-	DialogBoxIndirectParamA(Game::hInstance, DialogBox, Game::hWnd, &Ares::FatalDialog_WndProc, 0);
-
-	Debug::Log("Exiting...\n");
-	exit(1);
-}
-
-int __stdcall Ares::FatalDialog_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-	if(uMsg > WM_COMMAND) {
-		if(uMsg == WM_MOVING) {
-			Game::sub_776D80((tagRECT *)lParam);
-		}
-		return 0;
-	}
-	switch(uMsg) {
-		case WM_COMMAND:
-			if(wParam == 1153) {
-				EndDialog(hWnd, 1153);
-			}
-			return 0;
-		case WM_CLOSE:
-			EndDialog(hWnd, 1153);
-			Game::sub_53E420(hWnd);
-			return 0;
-		case WM_INITDIALOG:
-			SetDlgItemTextA(hWnd, Dialogs::ExceptControlID, Dialogs::ExceptDetailedMessage);
-			SetFocus(hWnd);
-			if ( Game::hWnd ) {
-				Game::CenterWindowIn(hWnd, Game::hWnd);
-			}
-			ShowWindow(hWnd, 1);
-			Game::sub_53E3C0(hWnd);
-		default:
-			return 0;
-	}
-}
-
-
-DEFINE_HOOK(4C850B, Exception_Dialog, 5)
-{
-	MouseClass *ReallyAMap = reinterpret_cast<MouseClass *>(MapClass::Global());
-	ReallyAMap->SetPointer(0, 0);
-	WWMouseClass::Instance->ReleaseMouse();
-
-	return 0;
-}

@@ -50,11 +50,13 @@ public:
 		bool Spot_DisableB;
 		bool Spot_Reverse;
 
+		bool Is_Bomb;
+
 		// these are not implemented at all yet
 		DynamicVectorClass<WeaponStruct> Weapons;
 		DynamicVectorClass<WeaponStruct> EliteWeapons;
 
-		SHPStruct *Insignia_R, *Insignia_V, *Insignia_E;
+		Promotable<SHPStruct *> Insignia;
 
 		Customizable<AnimTypeClass*> Parachute_Anim;
 
@@ -76,11 +78,10 @@ public:
 			Spot_DisableG (false),
 			Spot_DisableB (false),
 			Spot_Reverse (false),
-			Insignia_R (NULL),
-			Insignia_V (NULL),
-			Insignia_E (NULL),
+			Is_Bomb (false),
+			Insignia (NULL),
 			Parachute_Anim (&RulesClass::Global()->Parachute)
-			{ };
+			{ this->Insignia.SetAll(NULL); };
 
 		virtual ~ExtData() { };
 

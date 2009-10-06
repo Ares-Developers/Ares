@@ -12,7 +12,6 @@
 #include <HouseClass.h>
 #include <InfantryTypeClass.h>
 #include <UnitTypeClass.h>
-#include <Unsorted.h>
 
 #include "Ares.version.h"
 
@@ -53,9 +52,6 @@ public:
 		AircraftTypeClass* pPlaneType,
 		TypeList<TechnoTypeClass*>* pTypes,
 		TypeList<int>* pNums);
-
-	static void FatalError(const char *Message);
-	static int __stdcall FatalDialog_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 	class GlobalControls {
 	private:

@@ -180,14 +180,16 @@ void TechnoTypeExt::ExtData::LoadFromINI(TechnoTypeClass *pThis, CCINIClass *pIN
 	this->Spot_DisableB = pINI->ReadBool(section, "Spotlight.DisableBlue", this->Spot_DisableB);
 	this->Spot_Reverse = pINI->ReadBool(section, "Spotlight.IsInverted", this->Spot_Reverse);
 
+	this->Is_Bomb = pINI->ReadBool(section, "IsBomb", this->Is_Bomb);
+
 	// insignia
+/*
 	SHPStruct *image = NULL;
 	if(pINI->ReadString(section, "Insignia.Rookie", "", buffer, 256)) {
 		_snprintf(flag, 256, "%s.shp", buffer);
 		image = FileSystem::LoadSHPFile(flag);
 		if(image) {
 			this->Insignia_R = image;
-		} else {
 		}
 	}
 	if(pINI->ReadString(section, "Insignia.Veteran", "", buffer, 256)) {
@@ -204,8 +206,10 @@ void TechnoTypeExt::ExtData::LoadFromINI(TechnoTypeClass *pThis, CCINIClass *pIN
 			this->Insignia_E = image;
 		}
 	}
+*/
 
 	INI_EX exINI(pINI);
+	this->Insignia.LoadFromINI(pINI, section, "Insignia.%s");
 	this->Parachute_Anim.ReadFind(&exINI, section, "Parachute.Anim");
 
 	// quick fix - remove after the rest of weapon selector code is done
@@ -350,10 +354,12 @@ void Container<TechnoTypeExt>::Load(TechnoTypeClass *pThis, IStream *pStm) {
 	pData->Weapons.Load(pStm, 1);
 	pData->EliteWeapons.Load(pStm, 1);
 
+/*
 	SWIZZLE(pData->Parachute_Anim);
 	SWIZZLE(pData->Insignia_R);
 	SWIZZLE(pData->Insignia_V);
 	SWIZZLE(pData->Insignia_E);
+*/
 
 	for(int ii = 0; ii < pData->Weapons.Count; ++ii) {
 		SWIZZLE(pData->Weapons.Items[ii].WeaponType);

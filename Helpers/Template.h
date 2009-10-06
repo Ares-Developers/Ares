@@ -110,6 +110,17 @@ void Customizable<ColorStruct>::Read(INI_EX *parser, const char* pSection, const
 	}
 }
 
+template<>
+void Customizable<SHPStruct *>::Read(INI_EX *parser, const char* pSection, const char* pKey) {
+	if(parser->ReadString(pSection, pKey)) {
+		char flag[256];
+		_snprintf(flag, 256, "%s.shp", parser->value());
+		SHPStruct *image = FileSystem::LoadSHPFile(flag);
+		if(image) {
+			this->Set(image);
+		}
+	}
+}
 /*
  * This template is for something that varies depending on a unit's Veterancy Level
  * Promotable<int> PilotChance; // class def
@@ -143,7 +154,7 @@ public:
 		INI_EX exINI(pINI);
 		Placeholder.Set(this->Rookie);
 
-		_snprintf(FlagName, buflen, BaseFlag, "");
+		_snprintf(FlagName, buflen, BaseFlag, "Rookie");
 		Placeholder.Read(&exINI, Section, FlagName);
 		this->Rookie = Placeholder.Get();
 

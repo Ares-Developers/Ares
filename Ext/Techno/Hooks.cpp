@@ -1,6 +1,8 @@
 #include "Body.h"
 #include "..\TechnoType\Body.h"
 
+#include "..\..\Misc\Debug.h"
+
 // bugfix #297: Crewed=yes jumpjets spawn parachuted infantry on destruction, not idle
 DEFINE_HOOK(7381AE, UnitClass_ReceiveDamage, 6)
 {
@@ -89,7 +91,7 @@ DEFINE_HOOK(6F407D, TechnoClass_Init_1, 6)
 				WH1 ? "Elite " : "",
 				(WH1 ? W2 : W1)->get_ID(),
 				i);
-			Ares::FatalError(Ares::readBuffer);
+			Debug::FatalError(Ares::readBuffer);
 		}
 
 		if(WH1 && WH1->MindControl && Capturer == NULL) {
@@ -321,6 +323,9 @@ DEFINE_HOOK(5F5ADD, Parachute_Animation, 6)
 	GET(TechnoClass *, T, ESI);
 	RET_UNLESS(ABS_IS_TECHNO(T));
 	TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(T->GetTechnoType());
+	if(pTypeData->Is_Bomb) {
+		T->IsABomb = 1;
+	}
 	R->set_EDX((DWORD)pTypeData->Parachute_Anim.Get());
 	return 0x5F5AE3;
 }

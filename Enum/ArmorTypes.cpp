@@ -8,23 +8,20 @@ const char * Enumerable<ArmorType>::GetMainSection()
 	return "ArmorTypes";
 }
 
-void Enumerable<ArmorType>::LoadFromINIList(CCINIClass *pINI)
+void ArmorType::LoadFromINI(CCINIClass *pINI)
 {
 	const char *section = Enumerable<ArmorType>::GetMainSection();
-	int len = pINI->GetKeyCount(section);
-	char buffer[0x40];
-	for(int i = 0; i < len; ++i) {
-		const char *Key = pINI->GetKeyName(section, i);
-		pINI->ReadString(section, Key, "", buffer, 0x40);
 
-		FindOrAllocate(Key)->DefaultIndex = ArmorType::FindIndex(buffer);
-		DWORD specialFX;
-		WarheadTypeExt::VersesData *VS = &FindOrAllocate(Key)->DefaultVerses;
-		VS->Verses = Conversions::Str2Armor(buffer, &specialFX);
-		VS->ForceFire = ((specialFX & verses_ForceFire) == 0);
-		VS->Retaliate = ((specialFX & verses_Retaliate) == 0);
-		VS->PassiveAcquire = ((specialFX & verses_PassiveAcquire) == 0);
-	}
+	char buffer[0x40];
+	pINI->ReadString(section, this->Name, "", buffer, 0x40);
+
+	this->DefaultIndex = ArmorType::FindIndex(buffer);
+	DWORD specialFX;
+	WarheadTypeExt::VersesData *VS = &this->DefaultVerses;
+	VS->Verses = Conversions::Str2Armor(buffer, &specialFX);
+	VS->ForceFire = ((specialFX & verses_ForceFire) == 0);
+	VS->Retaliate = ((specialFX & verses_Retaliate) == 0);
+	VS->PassiveAcquire = ((specialFX & verses_PassiveAcquire) == 0);
 }
 
 void ArmorType::LoadForWarhead(CCINIClass *pINI, WarheadTypeClass* pWH)
@@ -51,6 +48,7 @@ void ArmorType::LoadForWarhead(CCINIClass *pINI, WarheadTypeClass* pWH)
 	for(int i = 0; i < Array.Count; ++i) {
 		_snprintf(buffer, 64, "Versus.%s", Array[i]->Name);
 		if(pINI->ReadString(section, buffer, "", ret, 0x20)) {
+
 			DWORD specialFX = 0x0;
 			pData->Verses[i].Verses = Conversions::Str2Armor(ret, &specialFX);
 
@@ -107,9 +105,7 @@ DEFINE_HOOK(4753F0, ArmorType_FindIndex, 0A)
 		: "none";
 
 	pINI->ReadString(Section, Key, curTitle, buf, 0x20);
-//	DEBUGLOG("Read Armor=%s\n", buf);
 	int idx = ArmorType::FindIndex(buf);
-//	DEBUGLOG("Mapping armor %s to %d\n", buf, idx);
 	R->set_EAX(idx == -1 ? 0 : idx);
 
 	return 0x475430;

@@ -20,22 +20,17 @@ class ArmorType  : public Enumerable<ArmorType>
 		int DefaultIndex;
 		WarheadTypeExt::VersesData DefaultVerses;
 
-	ArmorType(const char *Title)
-	{
+	ArmorType(const char *Title) {
 		strncpy(this->Name, Title, 31);
 		DefaultIndex = -1;
 		Array.AddItem(this);
 	}
 
-	virtual ~ArmorType()
-	{
+	virtual ~ArmorType() {
 		Array.RemoveItem(Array.FindItemIndex(this));
 	}
 
-	virtual void LoadFromINI(CCINIClass *pINI)
-	{
-		;
-	}
+	virtual void LoadFromINI(CCINIClass *pINI);
 
 	static void LoadForWarhead(CCINIClass *pINI, WarheadTypeClass* pWH);
 	static void AddDefaults();

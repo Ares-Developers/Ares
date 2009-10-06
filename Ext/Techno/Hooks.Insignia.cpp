@@ -13,46 +13,29 @@ DEFINE_HOOK(70A990, TechnoClass_DrawVeterancy, 5)
 	int iFrame = -1;
 	TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(T->GetTechnoType());
 
-	SHPStruct *fCustom = NULL;
+	pTypeData->Insignia.BindTo(T);
+	SHPStruct *fCustom = pTypeData->Insignia.Get();
 
-	switch(T->get_Veterancy()->GetRemainingLevel()) {
-		case rank_Rookie:
-			fCustom = pTypeData->Insignia_R;
-			if(fCustom) {
-				iFile = fCustom;
-				iFrame = 0;
-			} else {
-				iFrame = -1;
-			}
-			break;
-		case rank_Veteran:
-			fCustom = pTypeData->Insignia_V;
-			if(fCustom) {
-				iFile = fCustom;
-				iFrame = 0;
-			} else {
-				iFrame = 14;
-			}
-			break;
-		case rank_Elite:
-			fCustom = pTypeData->Insignia_E;
-			if(fCustom) {
-				iFile = fCustom;
-				iFrame = 0;
-			} else {
-				iFrame = 15;
-			}
-			break;
-	}
-
-	offset.X += 5;
-	offset.Y += 2;
-	if(T->WhatAmI() != abs_Infantry) {
-		offset.X += 5;
-		offset.Y += 4;
+	if(fCustom) {
+		iFile = fCustom;
+		iFrame = 0;
+	} else {
+		VeterancyStruct *XP = T->get_Veterancy();
+		if(XP->IsElite()) {
+			iFrame = 15;
+		} else if(XP->IsVeteran()) {
+			iFrame = 14;
+		}
 	}
 
 	if(iFrame != -1 && iFile) {
+		offset.X += 5;
+		offset.Y += 2;
+		if(T->WhatAmI() != abs_Infantry) {
+			offset.X += 5;
+			offset.Y += 4;
+		}
+
 		Drawing::DSurface_Hidden_2->DrawSHP(
 			FileSystem::THEATER_PAL, iFile, iFrame, &offset, pRect, bf_Alpha | bf_400 | bf_200, 0, -2, 0, 1000, 0, 0, 0, 0, 0);
 	}

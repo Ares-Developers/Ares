@@ -113,19 +113,14 @@ void SideExt::ExtData::LoadFromINI(SideClass *pThis, CCINIClass *pINI)
 		return;
 	}
 
-//	Debug::Log("Loading Side %s from INI %X\n", pThis->get_ID(), pINI);
 	switch(this->_Initialized) {
 		case is_Constanted:
-//			Debug::Log("Constanted\n");
 			this->InitializeRuled(pThis);
 		case is_Ruled:
-//			Debug::Log("Ruled\n");
 			this->Initialize(pThis);
 		case is_Inited:
-//			Debug::Log("Inited\n");
 			this->LoadDataFromINI(pThis, pINI);
 	}
-//	Debug::Log("Loaded Side\n");
 }
 
 void SideExt::ExtData::LoadDataFromINI(SideClass *pThis, CCINIClass *pINI)
