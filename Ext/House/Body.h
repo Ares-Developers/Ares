@@ -28,7 +28,7 @@ class HouseExt
 			BuildingClass *Factory_NavyType;
 			BuildingClass *Factory_AircraftType;
 
-		ExtData(const DWORD Canary = 0, const TT* OwnerObject = NULL) :
+		ExtData(const DWORD Canary = 0, const TT* OwnerObject = NULL) : Extension(Canary, OwnerObject),
 			IonSensitive(0),
 			FirewallActive(0),
 			FirewallRecalc(0),

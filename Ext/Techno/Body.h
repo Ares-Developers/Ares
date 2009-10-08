@@ -41,7 +41,7 @@ public:
 		TimerStruct CloakSkipTimer;
 		SHPStruct * Insignia_Image;
 
-		ExtData(const DWORD Canary = 0, const TT* OwnerObject = NULL) :
+		ExtData(const DWORD Canary = 0, const TT* OwnerObject = NULL) : Extension(Canary, OwnerObject),
 			idxSlot_Wave (0),
 			idxSlot_Beam (0),
 			idxSlot_Warp (0),

@@ -60,7 +60,7 @@ public:
 
 		Customizable<AnimTypeClass*> Parachute_Anim;
 
-		ExtData(const DWORD Canary = 0, const TT* OwnerObject = NULL) :
+		ExtData(const DWORD Canary = 0, const TT* OwnerObject = NULL) : Extension(Canary, OwnerObject),
 			Survivors_PilotCount (0),
 			Survivors_PilotChance (NULL),
 			Survivors_PassengerChance (NULL),

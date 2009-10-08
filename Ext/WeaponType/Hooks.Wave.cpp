@@ -24,6 +24,7 @@ DEFINE_HOOK(6FF5F5, TechnoClass_Fire, 6)
 
 	WaveClass *Wave;
 	GAME_ALLOC(WaveClass, Wave, xyzSrc, xyzTgt, Owner, pData->Wave_IsBigLaser ? 2 : 1, Target);
+
 	WeaponTypeExt::WaveExt[Wave] = pData;
 	Owner->set_Wave(Wave);
 	return 0x6FF650;
@@ -40,7 +41,8 @@ DEFINE_HOOK(75E963, WaveClass_CTOR, 6)
 	GET(WeaponTypeClass *, Weapon, EBX);
 
 	if(Weapon) {
-		WeaponTypeExt::WaveExt[Wave] = WeaponTypeExt::ExtMap.Find(Weapon);
+		WeaponTypeExt::ExtData *pData = WeaponTypeExt::ExtMap.Find(Weapon);
+		WeaponTypeExt::WaveExt[Wave] = pData;
 	}
 	return 0;
 }

@@ -76,7 +76,7 @@ public:
 //		MouseCursor Cursor_Attack;
 //		bool Cursor_Custom;
 
-		ExtData(const DWORD Canary = 0, const TT* OwnerObject = NULL) :
+		ExtData(const DWORD Canary = 0, const TT* OwnerObject = NULL) : Extension(Canary, OwnerObject),
 			Weapon_Loaded (false),
 			Beam_IsHouseColor (false),
 			Beam_Duration (15),

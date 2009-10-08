@@ -21,7 +21,7 @@ public:
 	class ExtData : public Extension<TT> 
 	{
 	public:
-		ExtData(const DWORD Canary = 0, const TT* OwnerObject = NULL)
+		ExtData(const DWORD Canary = 0, const TT* OwnerObject = NULL) : Extension(Canary, OwnerObject)
 			{ };
 
 		virtual ~ExtData() {

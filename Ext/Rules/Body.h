@@ -23,7 +23,7 @@ class RulesExt
 		public:
 		AnimTypeClass* ElectricDeath;
 
-		ExtData(const DWORD Canary = 0, const TT* OwnerObject = NULL) :
+		ExtData(const DWORD Canary = 0, const TT* OwnerObject = NULL) : Extension(Canary, OwnerObject),
 			ElectricDeath(NULL)
 			{ };
 
