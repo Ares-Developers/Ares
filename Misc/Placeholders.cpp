@@ -8,25 +8,6 @@
 #if 0
 #include <SpecificStructures.h>
 
-/* #633 - spy building infiltration */
-A_FINE_HOOK(4571E0, BuildingClass_Infiltrate, 5)
-{
-	GET(BuildingClass *, EnteredBuilding, ECX);
-	GET_STACK(HouseClass *, EnteredBy, 0x4);
-
-	bool apply_normal_infiltration_logic = 1;
-
-	// wrapper around the entire function, so you better handle _every_ single thing if you return 0
-	return (apply_normal_infiltration_logic) ? 0 : 0x45759F;
-}
-
-// fix palette for spied factory production cameo drawing
-A_FINE_HOOK(43E8D9, BuildingClass_DrawVisible, 6)
-{
-	R->set_EDX((DWORD)FileSystem::CAMEO_PAL);
-	return 0x43E8DF;
-}
-
 /* #179 - New Upgrade System - promotions */
 A_FINE_HOOK(6FA0F0, TechnoClass_Update_TurnedVeteran, 6)
 {
