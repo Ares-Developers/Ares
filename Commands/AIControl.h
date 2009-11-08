@@ -22,7 +22,7 @@ public:
 
 	virtual void Execute(DWORD dwUnk)
 	{
-		HouseClass* P = HouseClass::Player();
+		HouseClass* P = HouseClass::Player;
 
 		if(P->CurrentPlayer && P->PlayerControl) {
 			//let AI assume control

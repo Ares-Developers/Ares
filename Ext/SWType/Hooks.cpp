@@ -14,7 +14,7 @@ DEFINE_HOOK(6CEF84, SuperWeaponTypeClass_GetCursorOverObject, 7)
 
 		int Action = SW_YES_CURSOR;
 		
-		if(!pData->SW_FireToShroud) {
+		if(!pData->SW_FireToShroud.Get()) {
 			CellClass* pCell = MapClass::Global()->GetCellAt(pMapCoords);
 			CoordStruct Crd;
 
@@ -59,7 +59,7 @@ DEFINE_HOOK(6CD67A, SuperClass_Launch_SpyPlane_FindType, 0)
 	SuperWeaponTypeClass *pThis = Super->Type;
 	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pThis);
 
-	R->set_EAX(pData->SpyPlane_TypeIndex);
+	R->set_EAX(pData->SpyPlane_TypeIndex.Get());
 	return 0x6CD684;
 }
 
@@ -72,7 +72,7 @@ DEFINE_HOOK(6CD6A6, SuperClass_Launch_SpyPlane_Fire, 6)
 	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pThis);
 
 	Super->Owner->SendSpyPlanes(
-		pData->SpyPlane_TypeIndex, pData->SpyPlane_Count, pData->SpyPlane_Mission, TargetCell, NULL);
+		pData->SpyPlane_TypeIndex.Get(), pData->SpyPlane_Count.Get(), pData->SpyPlane_Mission.Get(), TargetCell, NULL);
 
 	return 0x6CD6E9;
 }

@@ -78,24 +78,11 @@ EXT_SAVE(TechnoTypeClass)
 }
 */
 
-void TechnoTypeExt::ExtData::LoadFromINI(TechnoTypeClass *pThis, CCINIClass *pINI)
+void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass *pINI)
 {
 	const char * section = pThis->get_ID();
-//	TechnoTypeExt::ExtData *pData = TechnoTypeExt::ExtMap.Find(pThis);
 
 	if(!pINI->GetSection(section)) {
-		return;
-	}
-
-	if(this->_Initialized == is_Constanted && RulesClass::Initialized) {
-		this->InitializeRuled(pThis);
-	}
-
-	if(this->_Initialized == is_Ruled) {
-		this->Initialize(pThis);
-	}
-
-	if(this->_Initialized != is_Inited) {
 		return;
 	}
 
@@ -111,7 +98,7 @@ void TechnoTypeExt::ExtData::LoadFromINI(TechnoTypeClass *pThis, CCINIClass *pIN
 	char flag[256];
 	for(int i = 0; i < SideClass::Array->Count; ++i) {
 		_snprintf(flag, 256, "Survivor.Side%d", i);
-		PARSE_INFANTRY(flag, this->Survivors_Pilots[i]);
+		this->Survivors_Pilots[i] = InfantryTypeClass::Find(flag);
 	}
 
 	// prereqs
@@ -127,6 +114,10 @@ void TechnoTypeExt::ExtData::LoadFromINI(TechnoTypeClass *pThis, CCINIClass *pIN
 
 	DynamicVectorClass<int> *dvc = this->PrerequisiteLists.GetItem(0);
 	if(pINI->ReadString(section, "Prerequisite", "", buffer, BUFLEN)) {
+		Prereqs::Parse(buffer, dvc);
+	}
+	if(pINI->ReadString(section, "PrerequisiteOverride", "", buffer, BUFLEN)) {
+		dvc = pThis->get_PrerequisiteOverride();
 		Prereqs::Parse(buffer, dvc);
 	}
 	for(int i = 0; i < this->PrerequisiteLists.Count; ++i) {
@@ -146,7 +137,7 @@ void TechnoTypeExt::ExtData::LoadFromINI(TechnoTypeClass *pThis, CCINIClass *pIN
 		this->PrerequisiteTheaters = 0;
 		for(char *cur = strtok(buffer, ","); cur; cur = strtok(NULL, ",")) {
 			signed int idx = Theater::FindIndex(cur);
-			if(idx > -1) {
+			if(idx != -1) {
 				this->PrerequisiteTheaters |= (1 << idx);
 			}
 		}
@@ -182,35 +173,16 @@ void TechnoTypeExt::ExtData::LoadFromINI(TechnoTypeClass *pThis, CCINIClass *pIN
 
 	this->Is_Bomb = pINI->ReadBool(section, "IsBomb", this->Is_Bomb);
 
-	// insignia
 /*
-	SHPStruct *image = NULL;
-	if(pINI->ReadString(section, "Insignia.Rookie", "", buffer, 256)) {
-		_snprintf(flag, 256, "%s.shp", buffer);
-		image = FileSystem::LoadSHPFile(flag);
-		if(image) {
-			this->Insignia_R = image;
-		}
-	}
-	if(pINI->ReadString(section, "Insignia.Veteran", "", buffer, 256)) {
-		_snprintf(flag, 256, "%s.shp", buffer);
-		image = FileSystem::LoadSHPFile(flag);
-		if(image) {
-			this->Insignia_V = image;
-		}
-	}
-	if(pINI->ReadString(section, "Insignia.Elite", "", buffer, 256)) {
-		_snprintf(flag, 256, "%s.shp", buffer);
-		image = FileSystem::LoadSHPFile(flag);
-		if(image) {
-			this->Insignia_E = image;
-		}
+	this is too late - Art files are loaded before this hook fires... brilliant
+	if(pINI->ReadString(section, "WaterVoxel", "", buffer, 256)) {
+		this->WaterAlt = 1;
 	}
 */
 
 	INI_EX exINI(pINI);
 	this->Insignia.LoadFromINI(pINI, section, "Insignia.%s");
-	this->Parachute_Anim.ReadFind(&exINI, section, "Parachute.Anim");
+	this->Parachute_Anim.Parse(&exINI, section, "Parachute.Anim");
 
 	// quick fix - remove after the rest of weapon selector code is done
 	return;
@@ -341,14 +313,11 @@ void Container<TechnoTypeExt>::Load(TechnoTypeClass *pThis, IStream *pStm) {
 
 	pData->PrerequisiteLists.Load(pStm, 1);
 
-	Debug::Log("Loading [%s] with %d PreqLists\n", pThis->get_ID(), pData->PrerequisiteLists.Count);
 	for(int ii = 0; ii < pData->PrerequisiteLists.Count; ++ii) {
 		DynamicVectorClass<int> *vec = new DynamicVectorClass<int>();
 		vec->Load(pStm, 0);
-		Debug::Log("\t%d - %d\n", ii, vec->Count);
 		pData->PrerequisiteLists.Items[ii] = vec;
 	}
-	Debug::Log("Loaded [%s]\n", pThis->get_ID());
 
 	pData->PrerequisiteNegatives.Load(pStm, 0);
 	pData->Weapons.Load(pStm, 1);

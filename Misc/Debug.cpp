@@ -4,7 +4,9 @@
 #include <WWMouseClass.h>
 
 bool Debug::bLog = true;
-FILE* Debug::pLogFile = NULL;
+FILE *Debug::pLogFile = NULL;
+wchar_t Debug::LogFileName[MAX_PATH] = L"\0";
+wchar_t Debug::LogFileTempName[MAX_PATH] = L"\0";
 
 void (_cdecl* Debug::Log)(const char* pFormat, ...) =
 	(void (__cdecl *)(const char *,...))0x4068E0;
@@ -12,21 +14,48 @@ void (_cdecl* Debug::Log)(const char* pFormat, ...) =
 void Debug::LogFileOpen()
 {
 	LogFileClose();
-	pLogFile = fopen(DEBUG_FILE, "w");
+	MakeLogFile();
+
+	pLogFile = _wfopen(LogFileTempName, L"w");
 }
 
 void Debug::LogFileClose()
 {
-	if(pLogFile)
-		fclose(pLogFile);
+	if(Debug::pLogFile) {
+		fclose(Debug::pLogFile);
+		CopyFileW(LogFileTempName, LogFileName, FALSE);
+	}
 
-	pLogFile = NULL;
+	Debug::pLogFile = NULL;
+}
+
+void Debug::MakeLogFile() {
+	static bool made = 0;
+	if(!made) {
+		wchar_t path[MAX_PATH];
+
+		SYSTEMTIME time;
+
+		GetLocalTime(&time);
+		GetCurrentDirectoryW(MAX_PATH, path);
+
+		swprintf(LogFileName, MAX_PATH, L"%s\\debug", path);
+		CreateDirectoryW(LogFileName, NULL);
+
+		swprintf(LogFileTempName, MAX_PATH, L"%s\\debug\\debug.log", 
+			path);
+
+		swprintf(LogFileName, MAX_PATH, L"%s\\debug\\debug.%04u%02u%02u-%02u%02u%02u.log", 
+			path, time.wYear, time.wMonth, time.wDay, time.wHour, time.wMinute, time.wSecond);
+
+		made = 1;
+	}
 }
 
 void Debug::LogFileRemove()
 {
 	LogFileClose();
-	remove(DEBUG_FILE);
+	DeleteFileW(LogFileTempName);
 }
 
 void Debug::DumpObj(byte *data, size_t len) {
@@ -96,7 +125,7 @@ LONG WINAPI Debug::ExceptionHandler(int code, LPEXCEPTION_POINTERS pExs)
 {
 	Debug::FreeMouse();
 	Debug::Log("D::EH\n");
-	bool g_ExtendedMinidumps = false;
+	bool g_ExtendedMinidumps = true;
 //	if (IsDebuggerAttached()) return EXCEPTION_CONTINUE_SEARCH;
 	if (pExs->ExceptionRecord->ExceptionCode == ERROR_MOD_NOT_FOUND ||
 		pExs->ExceptionRecord->ExceptionCode == ERROR_PROC_NOT_FOUND)
@@ -128,6 +157,7 @@ LONG WINAPI Debug::ExceptionHandler(int code, LPEXCEPTION_POINTERS pExs)
 		case EXCEPTION_PRIV_INSTRUCTION:
 		case EXCEPTION_SINGLE_STEP:
 		case EXCEPTION_STACK_OVERFLOW:
+		case 0xE06D7363: // exception thrown and not caught
 		{
 			Debug::Log("D::EH - Dump\n");
 
@@ -251,11 +281,11 @@ DEFINE_HOOK_AGAIN(4A4AC0, Debug_Log, 1)
 	return 0x4A4AF9; // changed to co-op with YDE
 }
 
-#ifdef DUMP_EXTENSIVE
-A_FINE_HOOK(4C8FE0, Exception_Handler, 9)
+//ifdef DUMP_EXTENSIVE
+DEFINE_HOOK(4C8FE0, Exception_Handler, 9)
 {
 	GET(int, code, ECX);
 	GET(LPEXCEPTION_POINTERS, pExs, EDX);
 	Debug::ExceptionHandler(code, pExs);
 }
-#endif
+//endif

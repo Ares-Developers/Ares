@@ -18,23 +18,11 @@ void WeaponTypeExt::ExtData::Initialize(WeaponTypeClass *pThis)
 	this->_Initialized = is_Inited;
 };
 
-void WeaponTypeExt::ExtData::LoadFromINI(WeaponTypeExt::TT *pThis, CCINIClass *pINI)
+void WeaponTypeExt::ExtData::LoadFromINIFile(WeaponTypeExt::TT *pThis, CCINIClass *pINI)
 {
 	const char * section = pThis->get_ID();
 	if(!pINI->GetSection(section)) {
 		return;
-	}
-
-	if(this->_Initialized == is_Constanted && RulesClass::Initialized) {
-		this->InitializeRuled(pThis);
-	}
-
-	if(this->_Initialized == is_Ruled) {
-		this->Initialize(pThis);
-	}
-
-	if(this->_Initialized != is_Inited) {
-//		return;
 	}
 
 	RulesClass * Rules = RulesClass::Global();
@@ -59,8 +47,6 @@ void WeaponTypeExt::ExtData::LoadFromINI(WeaponTypeExt::TT *pThis, CCINIClass *p
 		pThis->LoadFromINI(pINI);
 		return;
 	}
-
-	PARSE_BUF();
 
 	ColorStruct tmpColor;
 
@@ -117,19 +103,13 @@ void WeaponTypeExt::ExtData::LoadFromINI(WeaponTypeExt::TT *pThis, CCINIClass *p
 
 		this->Ivan_FlickerRate.Read(&exINI, section, "IvanBomb.FlickerRate");
 
-		PARSE_SND_EX("IvanBomb.TickingSound", this->Ivan_TickingSound);
+		this->Ivan_TickingSound.Read(&exINI, section, "IvanBomb.TickingSound");
 
-		PARSE_SND_EX("IvanBomb.AttachSound", this->Ivan_AttachSound);
+		this->Ivan_AttachSound.Read(&exINI, section, "IvanBomb.AttachSound");
 
-		this->Ivan_WH.ReadFind(&exINI, section, "IvanBomb.Warhead");
+		this->Ivan_WH.Parse(&exINI, section, "IvanBomb.Warhead");
 
-		pINI->ReadString(section, "IvanBomb.Image", "", buffer, 256);
-		if(strlen(buffer)) {
-			SHPStruct *image = FileSystem::LoadSHPFile(buffer);
-			if(image) {
-				this->Ivan_Image.Set(image);
-			}
-		}
+		this->Ivan_Image.Read(&exINI, section, "IvanBomb.Image");
 	}
 //
 /*

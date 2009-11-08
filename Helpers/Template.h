@@ -3,12 +3,115 @@
 
 #include <stdexcept>
 
+#include <MouseClass.h>
 #include <TechnoClass.h>
 #include "INIParser.h"
 #include "Type.h"
 
 /**
  * More fancy templates!
+ * This one is just a nicer-looking INI Parser... the fun starts with the next one
+ */
+
+template<typename T>
+class Valueable {
+protected:
+	T    Value;
+public:
+	typedef T MyType;
+	typedef typename CompoundT<T>::BaseT MyBase;
+	Valueable(T Default = T()) : Value(Default) {};
+
+	operator T () {
+		return this->Get();
+	}
+
+	operator T* () {
+		return this->GetEx();
+	}
+
+	T* operator & () {
+		return this->GetEx();
+	}
+
+	bool operator != (T other) const {
+		return this->Value != other;
+	};
+
+	void Set(T val) {
+		this->Value = val;
+	}
+
+	void SetEx(T* val) {
+		this->Value = *val;
+	}
+
+	T Get() {
+		return this->Value;
+	}
+
+	T* GetEx() {
+		return &this->Value;
+	}
+
+	void Read(INI_EX *parser, const char* pSection, const char* pKey) {
+		ImplementThisFunction();
+	}
+
+	void Parse(INI_EX *parser, const char* pSection, const char* pKey, bool Allocate = 0) {
+		if(parser->ReadString(pSection, pKey)) {
+			this->Set((Allocate ? MyBase::FindOrAllocate : MyBase::Find)(parser->value()));
+		}
+	}
+};
+
+// more fun
+template<typename T, typename Lookuper>
+class ValueableIdx {
+protected:
+	T    Value;
+public:
+	ValueableIdx(T Default) : Value(Default) {};
+
+	operator T () {
+		return this->Get();
+	}
+
+	operator T* () {
+		return this->GetEx();
+	}
+
+	T* operator & () {
+		return this->GetEx();
+	}
+
+	void Set(T val) {
+		this->Value = val;
+	}
+
+	void SetEx(T* val) {
+		this->Value = *val;
+	}
+
+	T Get() {
+		return this->Value;
+	}
+
+	T* GetEx() {
+		return &this->Value;
+	}
+
+	void Read(INI_EX *parser, const char* pSection, const char* pKey) {
+		if(parser->ReadString(pSection, pKey)) {
+			int idx = Lookuper::FindIndex(parser->value());
+			if(idx != -1) {
+				this->Set(idx);
+			}
+		}
+	}
+};
+
+/*
  * This one is for data that defaults to some original flag value but can be overwritten with custom values
  * Bind() it to a data address from where to take the value 
  * (e.g. &RulesClass::Global()->RadBeamColor for custom-colorizable rad waves) 
@@ -16,14 +119,11 @@
  */
 
 template<typename T>
-class Customizable {
+class Customizable : public Valueable<T> {
 	bool Customized;
 	T*   Default;
-	T    Value;
 public:
-	typedef T MyType;
-	typedef typename CompoundT<T>::BaseT MyBase;
-	Customizable(T* alias = NULL) : Customized(false), Default(alias) {};
+	Customizable(T* alias = NULL) : Valueable(T()), Customized(false), Default(alias) {};
 
 	void Bind(T* to) {
 		if(!this->Customized) {
@@ -63,64 +163,8 @@ public:
 		 : this->Default
 		;
 	}
-
-	void Read(INI_EX *parser, const char* pSection, const char* pKey) {
-	
-	}
-
-	void ReadFind(INI_EX *parser, const char* pSection, const char* pKey, bool Allocate = 0) {
-//		T buffer = this->Get();
-		if(parser->ReadString(pSection, pKey)) {
-//			if(buffer = ) {
-			this->Set((Allocate ? MyBase::FindOrAllocate : MyBase::Find)(parser->value()));
-//			}
-		}
-	}
 };
 
-template<>
-void Customizable<bool>::Read(INI_EX *parser, const char* pSection, const char* pKey) {
-	bool buffer = this->Get();
-	if(parser->ReadBool(pSection, pKey, &buffer)) {
-		this->Set(buffer);
-	}
-};
-
-template<>
-void Customizable<int>::Read(INI_EX *parser, const char* pSection, const char* pKey) {
-	int buffer = this->Get();
-	if(parser->ReadInteger(pSection, pKey, &buffer)) {
-		this->Set(buffer);
-	}
-}
-
-template<>
-void Customizable<double>::Read(INI_EX *parser, const char* pSection, const char* pKey) {
-	double buffer = this->Get();
-	if(parser->ReadDouble(pSection, pKey, &buffer)) {
-		this->Set(buffer);
-	}
-}
-
-template<>
-void Customizable<ColorStruct>::Read(INI_EX *parser, const char* pSection, const char* pKey) {
-	ColorStruct buffer = this->Get();
-	if(parser->Read3Bytes(pSection, pKey, (byte*)&buffer)) {
-		this->Set(buffer);
-	}
-}
-
-template<>
-void Customizable<SHPStruct *>::Read(INI_EX *parser, const char* pSection, const char* pKey) {
-	if(parser->ReadString(pSection, pKey)) {
-		char flag[256];
-		_snprintf(flag, 256, "%s.shp", parser->value());
-		SHPStruct *image = FileSystem::LoadSHPFile(flag);
-		if(image) {
-			this->Set(image);
-		}
-	}
-}
 /*
  * This template is for something that varies depending on a unit's Veterancy Level
  * Promotable<int> PilotChance; // class def
@@ -190,5 +234,106 @@ public:
 		return *this->GetEx();
 	}
 };
+
+
+// specializations
+
+template<>
+void Valueable<bool>::Read(INI_EX *parser, const char* pSection, const char* pKey) {
+	bool buffer = this->Get();
+	if(parser->ReadBool(pSection, pKey, &buffer)) {
+		this->Set(buffer);
+	}
+};
+
+template<>
+void Valueable<int>::Read(INI_EX *parser, const char* pSection, const char* pKey) {
+	int buffer = this->Get();
+	if(parser->ReadInteger(pSection, pKey, &buffer)) {
+		this->Set(buffer);
+	}
+};
+
+template<>
+void Valueable<double>::Read(INI_EX *parser, const char* pSection, const char* pKey) {
+	double buffer = this->Get();
+	if(parser->ReadDouble(pSection, pKey, &buffer)) {
+		this->Set(buffer);
+	}
+};
+
+template<>
+void Valueable<ColorStruct>::Read(INI_EX *parser, const char* pSection, const char* pKey) {
+	ColorStruct buffer = this->Get();
+	if(parser->Read3Bytes(pSection, pKey, (byte*)&buffer)) {
+		this->Set(buffer);
+	}
+};
+
+template<>
+void Valueable<SHPStruct *>::Read(INI_EX *parser, const char* pSection, const char* pKey) {
+	if(parser->ReadString(pSection, pKey)) {
+		char flag[256];
+		_snprintf(flag, 256, "%s.shp", parser->value());
+		SHPStruct *image = FileSystem::LoadSHPFile(flag);
+		if(image) {
+			this->Set(image);
+		}
+	}
+};
+
+template<>
+void Valueable<MouseCursor>::Read(INI_EX *parser, const char* pSection, const char* pKey) {
+	Customizable<int> Placeholder;
+
+	MouseCursor *Cursor = this->GetEx();
+
+	char pFlagName [32];
+	_snprintf(pFlagName, 32, "%s.Frame", pKey);
+	Placeholder.Set(Cursor->Frame);
+	Placeholder.Read(parser, pSection, pFlagName);
+	Cursor->Frame = Placeholder.Get();
+
+	_snprintf(pFlagName, 32, "%s.Count", pKey);
+	Placeholder.Set(Cursor->Count);
+	Placeholder.Read(parser, pSection, pFlagName);
+	Cursor->Count = Placeholder.Get();
+
+	_snprintf(pFlagName, 32, "%s.Interval", pKey);
+	Placeholder.Set(Cursor->Count);
+	Placeholder.Read(parser, pSection, pFlagName);
+	Cursor->Interval = Placeholder.Get();
+
+	_snprintf(pFlagName, 32, "%s.MiniFrame", pKey);
+	Placeholder.Set(Cursor->MiniFrame);
+	Placeholder.Read(parser, pSection, pFlagName);
+	Cursor->MiniFrame = Placeholder.Get();
+
+	_snprintf(pFlagName, 32, "%s.MiniCount", pKey);
+	Placeholder.Set(Cursor->MiniCount);
+	Placeholder.Read(parser, pSection, pFlagName);
+	Cursor->MiniCount = Placeholder.Get();
+
+	_snprintf(pFlagName, 32, "%s.HotSpot", pKey);
+	if(parser->ReadString(pSection, pFlagName)) {
+		char *buffer = const_cast<char *>(parser->value());
+		char *hotx = strtok(buffer, ",");
+		if(!strcmp(hotx, "Left")) this->Value.HotX = hotspx_left;
+		else if(!strcmp(hotx, "Center")) this->Value.HotX = hotspx_center;
+		else if(!strcmp(hotx, "Right")) this->Value.HotX = hotspx_right;
+
+		char *hoty = strtok(NULL, ",");
+		if(!strcmp(hoty, "Top")) this->Value.HotY = hotspy_top;
+		else if(!strcmp(hoty, "Middle")) this->Value.HotY = hotspy_middle;
+		else if(!strcmp(hoty, "Bottom")) this->Value.HotY = hotspy_bottom;
+	}
+};
+
+//template class Valueable<bool>;
+//template class Valueable<int>;
+//template class Valueable<double>;
+//template class Valueable<ColorStruct>;
+//template class Valueable<SHPStruct *>;
+//template class Valueable<MouseCursor>;
 
 #endif

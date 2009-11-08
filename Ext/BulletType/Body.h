@@ -37,7 +37,7 @@ public:
 
 		virtual size_t Size() const { return sizeof(*this); };
 
-		virtual void LoadFromINI(TT *pThis, CCINIClass *pINI);
+		virtual void LoadFromINIFile(TT *pThis, CCINIClass *pINI);
 	};
 
 	static Container<BulletTypeExt> ExtMap;

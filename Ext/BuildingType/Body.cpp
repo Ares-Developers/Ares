@@ -33,20 +33,8 @@ void BuildingTypeExt::ExtData::Initialize(BuildingTypeClass *pThis) {
 	this->_Initialized = is_Inited;
 }
 
-void BuildingTypeExt::ExtData::LoadFromINI(BuildingTypeClass *pThis, CCINIClass* pINI)
+void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINIClass* pINI)
 {
-	if(this->_Initialized == is_Constanted && RulesClass::Initialized) {
-		this->InitializeRuled(pThis);
-	}
-
-	if(this->_Initialized == is_Ruled) {
-		this->Initialize(pThis);
-	}
-
-	if(this->_Initialized != is_Inited) {
-		return;
-	}
-
 	char* pArtID = pThis->get_ImageFile();
 	char* pID = pThis->get_ID();
 
@@ -137,30 +125,10 @@ void BuildingTypeExt::ExtData::LoadFromINI(BuildingTypeClass *pThis, CCINIClass*
 			//Set end vector
 			pCurrent->X = 0x7FFF;
 			pCurrent->Y = 0x7FFF;
-
-/*
-			Debug::Log("Foundation :\n");
-			pCurrent = pThis->FoundationData;
-			while(pCurrent->X != 0x7FFF && pCurrent->Y != 0xFFFF) {
-				Debug::Log("(%d, %d) ", pCurrent->X, pCurrent->Y);
-				++pCurrent;
-			}
-			Debug::Log("\n");
-
-			Debug::Log("Foundation Outline:\n");
-			pCurrent = pThis->FoundationOutside;
-			while(pCurrent->X != 0x7FFF && pCurrent->Y != 0xFFFF) {
-				Debug::Log("(%d, %d) ", pCurrent->X, pCurrent->Y);
-				++pCurrent;
-			}
-			Debug::Log("\n");
-*/
 		}
 
 	}
 
-
-	// secret lab
 	if(pINI->ReadString(pThis->get_ID(), "SecretLab.PossibleBoons", "", Ares::readBuffer, Ares::readLength)) {
 		this->Secret_Boons.Clear();
 		for(char *cur = strtok(Ares::readBuffer, ","); cur; cur = strtok(NULL, ",")) {
@@ -170,8 +138,8 @@ void BuildingTypeExt::ExtData::LoadFromINI(BuildingTypeClass *pThis, CCINIClass*
 			}
 		}
 	}
-	this->Secret_RecalcOnCapture =
-		pINI->ReadBool(pThis->get_ID(), "SecretLab.GenerateOnCapture", this->Secret_RecalcOnCapture);
+
+	this->Secret_RecalcOnCapture = pINI->ReadBool(pThis->get_ID(), "SecretLab.GenerateOnCapture", this->Secret_RecalcOnCapture);
 
 	this->_Initialized = is_Completed;
 }

@@ -19,19 +19,6 @@ DEFINE_HOOK(45EC90, Foundations_GetFoundationWidth, 6)
 	return 0;
 }
 
-DEFINE_HOOK(45ECE0, Foundations_GetFoundationWidth2, 6)
-{
-	GET(BuildingTypeClass*, pThis, ECX);
-	BuildingTypeExt::ExtData* pData = BuildingTypeExt::ExtMap.Find(pThis);
-
-	if(pData->IsCustom) {
-		R->set_EAX(pData->CustomWidth);
-		return 0x45ECED;
-	}
-
-	return 0;
-}
-
 DEFINE_HOOK(45ECA0, Foundations_GetFoundationHeight, 6)
 {
 	GET(BuildingTypeClass*, pThis, ECX);

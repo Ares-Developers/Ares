@@ -1,13 +1,13 @@
 #ifndef RULES_EXT_H
 #define RULES_EXT_H
 
-#include <Helpers\Macro.h>
 #include <CCINIClass.h>
 #include <WeaponTypeClass.h>
 #include <RulesClass.h>
 #include <AnimTypeClass.h>
 
 #include "..\_Container.hpp"
+#include "..\..\Helpers\Template.h"
 
 //ifdef DEBUGBUILD
 #include "..\..\Misc\Debug.h"
@@ -21,7 +21,7 @@ class RulesExt
 	class ExtData : public Extension<TT> 
 	{
 		public:
-		AnimTypeClass* ElectricDeath;
+		Valueable<AnimTypeClass* >ElectricDeath;
 
 		ExtData(const DWORD Canary = 0, const TT* OwnerObject = NULL) : Extension(Canary, OwnerObject),
 			ElectricDeath(NULL)
@@ -32,7 +32,7 @@ class RulesExt
 
 		virtual size_t Size() const { return sizeof(*this); };
 
-		virtual void LoadFromINI(TT *pThis, CCINIClass *pINI);
+		virtual void LoadFromINIFile(TT *pThis, CCINIClass *pINI);
 		virtual void LoadBeforeTypeData(TT *pThis, CCINIClass *pINI);
 		virtual void LoadAfterTypeData(TT *pThis, CCINIClass *pINI);
 		virtual void InitializeConstants(TT *pThis);
@@ -46,7 +46,7 @@ public:
 	static void Allocate(RulesClass *pThis);
 	static void Remove(RulesClass *pThis);
 
-	static void LoadFromINI(RulesClass *pThis, CCINIClass *pINI);
+	static void LoadFromINIFile(RulesClass *pThis, CCINIClass *pINI);
 	static void LoadBeforeTypeData(RulesClass *pThis, CCINIClass *pINI);
 	static void LoadAfterTypeData(RulesClass *pThis, CCINIClass *pINI);
 

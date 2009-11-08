@@ -10,20 +10,18 @@ const char * Enumerable<RadType>::GetMainSection()
 
 void RadType::LoadFromINI(CCINIClass *pINI)
 {
-	ColorStruct tmpColor;
-
 	const char *section = this->Name;
 
-	PARSE_BUF();
+	INI_EX exINI(pINI);
 
-	PARSE_WH("Warhead", this->WH);
-	PARSE_COLOR("Color", this->Color, tmpColor);
-	this->Duration_Multiple = pINI->ReadInteger(section, "DurationMultiple", this->Duration_Multiple);
-	this->Application_Delay = pINI->ReadInteger(section, "ApplicationDelay", this->Application_Delay);
-	this->Level_Max    = pINI->ReadInteger(section, "LevelMax", this->Level_Max);
-	this->Level_Delay  = pINI->ReadInteger(section, "LevelDelay", this->Level_Delay);
-	this->Light_Delay  = pINI->ReadInteger(section, "LightDelay", this->Light_Delay);
-	this->Level_Factor = pINI->ReadDouble(section, "LevelFactor", this->Level_Factor);
-	this->Light_Factor = pINI->ReadDouble(section, "LightFactor", this->Light_Factor);
-	this->Tint_Factor  = pINI->ReadDouble(section, "TintFactor", this->Tint_Factor);
+	this->WH.Parse(&exINI, section, "Warhead");
+	this->Color.Read(&exINI, section, "Color");
+	this->Duration_Multiple.Read(&exINI, section, "DurationMultiple");
+	this->Application_Delay.Read(&exINI, section, "ApplicationDelay");
+	this->Level_Max.Read(&exINI, section, "LevelMax");
+	this->Level_Delay.Read(&exINI, section, "LevelDelay");
+	this->Light_Delay.Read(&exINI, section, "LightDelay");
+	this->Level_Factor.Read(&exINI, section, "LevelFactor");
+	this->Light_Factor.Read(&exINI, section, "LightFactor");
+	this->Tint_Factor.Read(&exINI, section, "TintFactor");
 }

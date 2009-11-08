@@ -1,6 +1,8 @@
 #include "Actions.h"
+#include "..\Misc\Debug.h"
+#include <TechnoClass.h>
 
-MouseCursor Actions::MP = {0, 1, 0, 1, 1, 0, 0};
+MouseCursor Actions::MP(0, 1, 0, 1, 1, 0, 0);
 MouseCursor* Actions::MPCurrent = NULL;
 MouseCursor* Actions::MPCustom = NULL;
 MouseCursor* Actions::TempCursor = NULL;
@@ -336,3 +338,28 @@ DEFINE_HOOK(5BDDC0, Actions_Reset, 5)
 //	return 0x44752C;
 //*/
 //}
+
+DEFINE_HOOK(6929FC, DisplayClass_ChooseAction_CanSell, 7)
+{
+	GET(TechnoClass *, Target, ESI);
+	switch(Target->WhatAmI()) {
+		case abs_Aircraft:
+		case abs_Unit:
+			R->set_StackVar32(0x10, act_SellUnit);
+			return 0x692B06;
+		case abs_Building:
+			R->set_StackVar32(0x10, Target->IsStrange() ? act_NoSell : act_Sell);
+			return 0x692B06;
+		default:
+			return 0x692AFE;
+	}
+}
+
+DEFINE_HOOK(4ABFBE, DisplayClass_LeftMouseButtonUp_ExecPowerToggle, 7)
+{
+	GET(TechnoClass *, Target, ESI);
+	return (Target && Target->WhatAmI() == abs_Building)
+	 ? 0x4ABFCE
+	 : 0x4AC294
+	;
+}

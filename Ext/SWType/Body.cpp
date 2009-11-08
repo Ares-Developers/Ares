@@ -15,40 +15,23 @@ void SWTypeExt::ExtData::InitializeConstants(SuperWeaponTypeClass *pThis)
 		NewSWType::Init();
 	}
 
-	this->SpyPlane_Count = 1;
-	this->SpyPlane_Mission = mission_AttackAgain;
+	MouseCursor *Cursor = &this->SW_Cursor;
+	Cursor->Frame = 53; // Attack 
+	Cursor->Count = 5;
+	Cursor->Interval = 5; // test?
+	Cursor->MiniFrame = 52;
+	Cursor->MiniCount = 1;
+	Cursor->HotX = hotspx_center;
+	Cursor->HotY = hotspy_middle;
 
-	this->EVA_Ready = -1;
-	this->EVA_Activated = -1;
-	this->EVA_Detected = -1;
-
-	this->SW_Anim = NULL;
-	this->SW_AnimHeight = 0;
-	this->SW_Sound = -1;
-	
-	this->Sonar_Range = 0;
-	this->Sonar_Delay = 15;
-
-	this->Money_Amount = 0;
-
-	this->SW_FireToShroud = true;
-//	this->SW_AutoFire = false;
-
-	this->SW_Cursor.Frame = 53; // Attack 
-	this->SW_Cursor.Count = 5;
-	this->SW_Cursor.Interval = 5; // test?
-	this->SW_Cursor.MiniFrame = 52;
-	this->SW_Cursor.MiniCount = 1;
-	this->SW_Cursor.HotX = hotspx_center;
-	this->SW_Cursor.HotY = hotspy_middle;
-
-	this->SW_NoCursor.Frame = 0;
-	this->SW_NoCursor.Count = 1;
-	this->SW_NoCursor.Interval = 5;
-	this->SW_NoCursor.MiniFrame = 1;
-	this->SW_NoCursor.MiniCount = 1;
-	this->SW_NoCursor.HotX = hotspx_center;
-	this->SW_NoCursor.HotY = hotspy_middle;
+	Cursor = &this->SW_NoCursor;
+	Cursor->Frame = 0;
+	Cursor->Count = 1;
+	Cursor->Interval = 5;
+	Cursor->MiniFrame = 1;
+	Cursor->MiniCount = 1;
+	Cursor->HotX = hotspx_center;
+	Cursor->HotY = hotspy_middle;
 
 	this->_Initialized = is_Constanted;
 }
@@ -60,100 +43,51 @@ void SWTypeExt::ExtData::InitializeRuled(SuperWeaponTypeClass *pThis)
 	this->_Initialized = is_Ruled;
 }
 
-void SWTypeExt::ExtData::LoadFromINI(SuperWeaponTypeClass *pThis, CCINIClass *pINI)
+void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass *pINI)
 {
 	const char * section = pThis->get_ID();
-//	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pThis);
+
 	if(!pINI->GetSection(section)) {
 		return;
 	}
 
-	if(this->_Initialized == is_Constanted && RulesClass::Initialized) {
-		this->InitializeRuled(pThis);
-	}
+	INI_EX exINI(pINI);
 
-	if(this->_Initialized == is_Ruled) {
-		this->Initialize(pThis);
-	}
+	this->SpyPlane_Count.Read(&exINI, section, "SpyPlane.Count");
 
-	if(this->_Initialized != is_Inited) {
-		return;
-	}
+	this->SpyPlane_TypeIndex.Read(&exINI, section, "SpyPlane.Type");
 
-	char buffer[256];
+	this->SpyPlane_Mission.Read(&exINI, section, "SpyPlane.Mission");
 
-	this->SpyPlane_Count = pINI->ReadInteger(section, "SpyPlane.Count", this->SpyPlane_Count);
+	this->Nuke_Siren.Read(&exINI, section, "Nuke.Sound");
+	this->EVA_Ready.Read(&exINI, section, "EVA.Ready");
+	this->EVA_Activated.Read(&exINI, section, "EVA.Activated");
+	this->EVA_Detected.Read(&exINI, section, "EVA.Detected");
 
-	PARSE_AIRCRAFT_IDX("SpyPlane.Type", this->SpyPlane_TypeIndex);
-
-	if(pINI->ReadString(section, "SpyPlane.Mission", "", buffer, 256)) {
-		this->SpyPlane_Mission = MissionClass::FindIndex(buffer);
-	}
-
-	PARSE_SND("Nuke.Sound", this->Nuke_Siren);
-	PARSE_EVA("EVA.Ready", this->EVA_Ready);
-	PARSE_EVA("EVA.Activated", this->EVA_Activated);
-	PARSE_EVA("EVA.Detected", this->EVA_Detected);
-
-	if(pINI->ReadString(section, "Action", "", buffer, 256) && !strcmp(buffer, "Custom")) {
+	if(exINI.ReadString(section, "Action") && !strcmp(exINI.value(), "Custom")) {
 		pThis->set_Action(SW_YES_CURSOR);
 	}
 
-	if(pINI->ReadString(section, "Type", "", buffer, 256)) {
-		int customType = NewSWType::FindIndex(buffer);
+	if(exINI.ReadString(section, "Type")) {
+		int customType = NewSWType::FindIndex(exINI.value());
 		if(customType > -1) {
 			pThis->set_Type(customType);
 		}
 	}
 
-#define READ_CURSOR(key, var) \
-	READCURSOR(key, var, Frame); \
-	READCURSOR(key, var, Count); \
-	READCURSOR(key, var, Interval); \
-	READCURSOR(key, var, MiniFrame); \
-	READCURSOR(key, var, MiniCount); \
+	this->SW_FireToShroud.Read(&exINI, section, "Super.FireIntoShroud");
+	this->SW_AutoFire.Read(&exINI, section, "Super.AutoFire");
+	this->SW_RadarEvent.Read(&exINI, section, "Super.CreateRadarEvent");
 
-#define READCURSOR(key, var, str) \
-	var.str = pINI->ReadInteger(section, key "." # str, var.str);
+	this->Money_Amount.Read(&exINI, section, "Money.Amount");
 
-	READ_CURSOR("Cursor", this->SW_Cursor);
-	READ_CURSOR("NoCursor", this->SW_NoCursor);
+	this->SW_Anim.Parse(&exINI, section, "SW.Animation");
+	this->SW_AnimHeight.Read(&exINI, section, "SW.AnimationHeight");
 
-	this->SW_FireToShroud = pINI->ReadBool(section, "Super.FireIntoShroud", this->SW_FireToShroud);
-	this->SW_AutoFire = pINI->ReadBool(section, "Super.AutoFire", this->SW_AutoFire);
-	this->SW_RadarEvent = pINI->ReadBool(section, "Super.CreateRadarEvent", this->SW_RadarEvent);
+	this->SW_Sound.Read(&exINI, section, "SW.Sound");
 
-	this->Money_Amount = pINI->ReadInteger(section, "Money.Amount", this->Money_Amount);
-
-	PARSE_ANIM("SW.Animation", this->SW_Anim);
-	this->SW_AnimHeight = pINI->ReadInteger(section, "SW.AnimationHeight", this->SW_AnimHeight);
-
-	PARSE_SND("SW.Sound", this->SW_Sound);
-
-	MouseCursor *Cursor = &this->SW_Cursor;
-
-	if(pINI->ReadString(section, "Cursor.HotSpot", "", buffer, 256)) {
-		char *hotx = strtok(buffer, ",");
-		if(!strcmp(hotx, "Left")) Cursor->HotX = hotspx_left;
-		else if(!strcmp(hotx, "Center")) Cursor->HotX = hotspx_center;
-		else if(!strcmp(hotx, "Right")) Cursor->HotX = hotspx_right;
-		char *hoty = strtok(NULL, ",");
-		if(!strcmp(hoty, "Top")) Cursor->HotY = hotspy_top;
-		else if(!strcmp(hoty, "Middle")) Cursor->HotY = hotspy_middle;
-		else if(!strcmp(hoty, "Bottom")) Cursor->HotY = hotspy_bottom;
-	}
-
-	Cursor = &this->SW_NoCursor;
-	if(pINI->ReadString(section, "NoCursor.HotSpot", "", buffer, 256)) {
-		char *hotx = strtok(buffer, ",");
-		if(!strcmp(hotx, "Left")) Cursor->HotX = hotspx_left;
-		else if(!strcmp(hotx, "Center")) Cursor->HotX = hotspx_center;
-		else if(!strcmp(hotx, "Right")) Cursor->HotX = hotspx_right;
-		char *hoty = strtok(NULL, ",");
-		if(!strcmp(hoty, "Top")) Cursor->HotY = hotspy_top;
-		else if(!strcmp(hoty, "Middle")) Cursor->HotY = hotspy_middle;
-		else if(!strcmp(hoty, "Bottom")) Cursor->HotY = hotspy_bottom;
-	}
+	this->SW_Cursor.Read(&exINI, section, "Cursor");
+	this->SW_NoCursor.Read(&exINI, section, "NoCursor");
 
 	int Type = pThis->Type - FIRST_SW_TYPE;
 	if(Type >= 0 && Type < NewSWType::Array.Count ) {
@@ -165,22 +99,24 @@ void SWTypeExt::ExtData::LoadFromINI(SuperWeaponTypeClass *pThis, CCINIClass *pI
 bool _stdcall SWTypeExt::SuperClass_Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
 {
 	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pThis->Type);
+
 	if(pData->EVA_Activated != -1) {
 		VoxClass::PlayIndex(pData->EVA_Activated);
 	}
 
-	if(pData->Money_Amount > 0) {
-		DEBUGLOG("House %d gets %d credits\n", pThis->Owner->ArrayIndex, pData->Money_Amount);
-		pThis->Owner->GiveMoney(pData->Money_Amount);
-	} else if(pData->Money_Amount < 0) {
-		DEBUGLOG("House %d loses %d credits\n", pThis->Owner->ArrayIndex, -pData->Money_Amount);
-		pThis->Owner->TakeMoney(-pData->Money_Amount);
+	int Money_Amount = pData->Money_Amount;
+	if(Money_Amount > 0) {
+		DEBUGLOG("House %d gets %d credits\n", pThis->Owner->ArrayIndex, Money_Amount);
+		pThis->Owner->GiveMoney(Money_Amount);
+	} else if(Money_Amount < 0) {
+		DEBUGLOG("House %d loses %d credits\n", pThis->Owner->ArrayIndex, -Money_Amount);
+		pThis->Owner->TakeMoney(-Money_Amount);
 	}
 
 	CoordStruct coords;
 	MapClass::Global()->GetCellAt(pCoords)->GetCoords(&coords);
 
-	if(pData->SW_Anim) {
+	if(pData->SW_Anim != NULL) {
 		coords.Z += pData->SW_AnimHeight;
 		AnimClass *placeholder;
 		GAME_ALLOC(AnimClass, placeholder, pData->SW_Anim, &coords);

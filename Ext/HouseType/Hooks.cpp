@@ -199,6 +199,11 @@ DEFINE_HOOK(4FE782, HTExt_PickPowerplant, 6)
 			Eligible.push_back(pPower);
 		}
 	}
+	if(Eligible.size() == 0) {
+		char message [0x100];
+		_snprintf(message, 0x100, "Country [%s] did not find any powerplants it could construct!", H->Type);
+		Debug::FatalError(message);
+	}
 	BuildingTypeClass *pResult = NULL;
 	int idx = ScenarioClass::Global()->get_Random()->RandomRanged(0, Eligible.size() - 1);
 	pResult = Eligible.at(idx);

@@ -249,3 +249,47 @@ DEFINE_HOOK(7528E8, Sides_LoadVoxFile, 7)
 
 	return 0;
 }
+
+/* fixes to reorder the savegame */
+DEFINE_HOOK(67D315, SaveGame_EarlySaveSides, 5)
+{
+	GET(LPSTREAM, pStm, ESI);
+	bool Saved_OK = Game::Save_Sides(pStm, SideClass::Array) >= 0;
+	return Saved_OK
+	 ? 0
+	 : 0x67E0B8
+	;
+}
+
+DEFINE_HOOK(67E09A, SaveGame_LateSkipSides, 5)
+{
+	GET(int, success, EAX);
+	return success >= 0
+	 ? 0x67E0C2
+	 : 0x67E0B8
+	;
+}
+
+
+DEFINE_HOOK(67E74A, LoadGame_EarlyLoadSides, 5)
+{
+	GET(LPSTREAM, pStm, ESI);
+
+	int length = 0;
+	LPVOID out;
+	if(pStm->Read(&length, 4, 0) < 0) {
+		return 0x67F7A3;
+	}
+	for(int i = 0; i < length; ++i) {
+		if((*Imports::OleLoadFromStream)(pStm, &IIDs::AbstractClass_0, &out) < 0) {
+			return 0x67F7A3;
+		}
+	}
+
+	return 0;
+}
+
+DEFINE_HOOK(67F281, LoadGame_LateSkipSides, 7)
+{
+	return 0x67F2BF;
+}

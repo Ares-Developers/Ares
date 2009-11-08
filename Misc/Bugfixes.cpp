@@ -177,34 +177,6 @@ DEFINE_HOOK(6BB9DD, WinMain_LogNonsense, 5)
 	return 0x6BBE2B;
 }
 
-/*
-// 701190, 5
-XPORT_FUNC(TechnoClass_IsPowerOnline)
-{
-	GET(TechnoClass *, Techno, ECX);
-
-	R->set_EAX(Techno->IsActive());
-	return 0;
-}
-
-// 4D8500, 7
-XPORT_FUNC(FootClass_UpdatePosition)
-{
-	GET(FootClass *, F, ECX);
-	if(((TechnoTypeClass*)F->GetType())->get_GapRadiusInCells() > 0)
-	{
-		if(F->get_Locomotor()->Is_Moving()) {
-			F->DestroyGap();
-		}
-		else
-		{
-			F->CreateGap();
-		}
-	}
-	return 0;
-}
-*/
-
 // bugfix #187: Westwood idiocy
 DEFINE_HOOK(531726, StupidPips1, 5)
 {
@@ -440,6 +412,8 @@ DEFINE_HOOK(6CF3CF, sub_6CF350, 8)
 
 	Debug::DumpStack(R, 0x40);
 
+	throw new std::logic_error("Pointer swizzling failed!");
+
 	return 0;
 }
 
@@ -617,4 +591,49 @@ DEFINE_HOOK(7440BD, UnitClass_Remove, 6)
 		reinterpret_cast<BuildingClass *>(Bunker)->ClearBunker();
 	}
 	return 0;
+}
+
+DEFINE_HOOK(50928C, HouseClass_Update_Factories_Queues_SkipBrokenDTOR, 5)
+{
+	return 0x5092A3;
+}
+
+// parasites don't get moved with the host -> MC links are bloopy
+DEFINE_HOOK(4DB87E, FootClass_SetCoords, 6)
+{
+	GET(FootClass *, F, ESI);
+	if(F->ParasiteEatingMe) {
+		F->ParasiteEatingMe->SetLocation(&F->Location);
+	}
+	return 0;
+}
+
+// removing hardcoded references to GAWALL and NAWALL
+DEFINE_HOOK(440709, BuildingClass_Put, 6)
+{
+	GET(CellClass *, Cell, EDI);
+	int idxOverlay = Cell->OverlayTypeIndex;
+	bool Sellable = 1;
+	if(idxOverlay > -1) {
+		Sellable = OverlayTypeClass::Array->GetItem(idxOverlay)->Wall;
+	}
+	return Sellable ? 0x44071A : 0x440725;
+}
+
+DEFINE_HOOK(480534, sub_480510, 5)
+{
+	GET(int, idxOverlay, EAX);
+	bool Wall = idxOverlay != -1 && OverlayTypeClass::Array->GetItem(idxOverlay)->Wall;
+	return Wall ? 0x480549 : 0x480552;
+}
+
+//westwood is stupid!
+// every frame they create a vector<TeamClass *> , copy all the teams from ::Array into it, iterate with ->Update(), delete
+// so this is OMG OPTIMIZED I guess
+DEFINE_HOOK(55B502, LogicClass_Update_UpdateAITeamsFaster, 5)
+{
+	for(int i = TeamClass::Array->Count - 1; i >= 0; --i) {
+		TeamClass::Array->GetItem(i)->Update();
+	}
+	return 0x55B5A1;
 }

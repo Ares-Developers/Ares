@@ -106,6 +106,7 @@ DEFINE_HOOK(6F407D, TechnoClass_Init_1, 6)
 		}
 		if((WH1 && WH1->Parasite || WH2 && WH2->Parasite) && IsFoot && Parasite == NULL) {
 			GAME_ALLOC(ParasiteClass, Parasite, F);
+			pData->idxSlot_Parasite = (BYTE)i;
 		}
 	}
 
@@ -144,6 +145,35 @@ DEFINE_HOOK(71AB30, TemporalClass_GetHelperDamage, 5)
 	R->set_EAX((DWORD)W);
 	return 0x71AB47;
 }
+
+// parasite per-slot
+DEFINE_HOOK(62A020, ParasiteClass_Update, A)
+{
+	GET(TechnoClass *, T, ECX);
+	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(T);
+	WeaponStruct *W = T->GetWeapon(pData->idxSlot_Parasite);
+	R->set_EAX((DWORD)W);
+	return 0x62A02A;
+}
+
+DEFINE_HOOK(62A7B1, Parasite_ExitUnit, 9)
+{
+	GET(TechnoClass *, T, ECX);
+	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(T);
+	WeaponStruct *W = T->GetWeapon(pData->idxSlot_Parasite);
+	R->set_EAX((DWORD)W);
+	return 0x62A7BA;
+}
+
+DEFINE_HOOK(629804, ParasiteClass_UpdateSquiddy, 9)
+{
+	GET(TechnoClass *, T, ECX);
+	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(T);
+	WeaponStruct *W = T->GetWeapon(pData->idxSlot_Parasite);
+	R->set_EAX((DWORD)W);
+	return 0x62980D;
+}
+
 
 DEFINE_HOOK(6F3330, TechnoClass_SelectWeapon, 5)
 {
@@ -375,3 +405,15 @@ EXPORT_FUNC(InfantryClass_UpdateDeploy2)
 	return 0;
 }
 
+DEFINE_HOOK(73B672, UnitClass_DrawVXL, 6)
+{
+	GET(UnitClass *, U, EBP);
+	TechnoTypeExt::ExtData *pData = TechnoTypeExt::ExtMap.Find(U->GetTechnoType());
+	if(pData->WaterAlt) {
+		if(U->GetCell()->LandType == lt_Water) {
+			R->set_EAX(0);
+			return 0x73B68B;
+		}
+	}
+	return 0;
+}

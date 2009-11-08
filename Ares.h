@@ -64,8 +64,8 @@ public:
 
 		class SurfaceConfig {
 		public:
-			byte Memory;
 			byte Force3D;
+			byte Memory;
 		};
 
 		static SurfaceConfig GFX_S_Alternate;

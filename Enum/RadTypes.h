@@ -1,13 +1,13 @@
 #ifndef RAD_TYPES_H
 #define RAD_TYPES_H
 
-#include <Helpers\Macro.h>
 #include <CCINIClass.h>
 #include <WarheadTypeClass.h>
 #include <RadSiteClass.h>
 #include <RulesClass.h>
 
 #include "_Enumerator.hpp"
+#include "..\Helpers\Template.h"
 
 #ifdef DEBUGBUILD
 #include "..\Misc\Debug.h"
@@ -18,50 +18,40 @@ class RadType;
 class RadType : public Enumerable<RadType>
 {
 public:
+
+	Customizable<WarheadTypeClass *> WH;
+	Customizable<ColorStruct> Color;
+	Customizable<int> Duration_Multiple;
+	Customizable<int> Application_Delay;
+	Customizable<int> Level_Max;
+	Customizable<int> Level_Delay;
+	Customizable<int> Light_Delay;
+	Customizable<double> Level_Factor;
+	Customizable<double> Light_Factor;
+	Customizable<double> Tint_Factor;
+
 	virtual void LoadFromINI(CCINIClass *pINI);
 
-/*
-	template <typename T2>
-	static const char * GetMainSection();
-
-	virtual const char * GetMainSection()
-	{
-		return "RadiationTypes";
-	};
-*/
-	RadType(const char *Title)
+	RadType(const char *Title) :
+		WH(&RulesClass::Instance->RadSiteWarhead),
+		Color(&RulesClass::Instance->RadColor),
+		Duration_Multiple(&RulesClass::Instance->RadDurationMultiple),
+		Application_Delay(&RulesClass::Instance->RadApplicationDelay),
+		Level_Max(&RulesClass::Instance->RadLevelMax),
+		Level_Delay(&RulesClass::Instance->RadLevelDelay),
+		Light_Delay(&RulesClass::Instance->RadLightDelay),
+		Level_Factor(&RulesClass::Instance->RadLevelFactor),
+		Light_Factor(&RulesClass::Instance->RadLightFactor),
+		Tint_Factor(&RulesClass::Instance->RadTintFactor)
 	{
 		strncpy(this->Name, Title, 32);
 		Array.AddItem(this);
-
-		RulesClass *Rules = RulesClass::Global();
-		this->WH = Rules->RadSiteWarhead;
-		this->Color = *Rules->get_RadColor();
-		this->Duration_Multiple = Rules->RadDurationMultiple;
-		this->Application_Delay = Rules->RadApplicationDelay;
-		this->Level_Max = Rules->RadLevelMax;
-		this->Level_Delay = Rules->RadLevelDelay;
-		this->Light_Delay = Rules->RadLightDelay;
-		this->Level_Factor = Rules->RadLevelFactor;
-		this->Light_Factor = Rules->RadLightFactor;
-		this->Tint_Factor = Rules->RadTintFactor;
 	}
 
 	virtual ~RadType()
 	{
 		Array.RemoveItem(Array.FindItemIndex(this));
 	}
-
-	WarheadTypeClass *WH;
-	ColorStruct Color;
-	int Duration_Multiple;
-	int Application_Delay;
-	int Level_Max;
-	int Level_Delay;
-	int Light_Delay;
-	double Level_Factor;
-	double Light_Factor;
-	double Tint_Factor;
 };
 
 #endif

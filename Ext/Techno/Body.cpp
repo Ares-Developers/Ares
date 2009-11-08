@@ -11,6 +11,8 @@ IStream *Container<TechnoExt>::SavingStream = NULL;
 
 eFiringState TechnoExt::FiringStateCache = -1;
 
+bool TechnoExt::NeedsRegap = false;
+
 void TechnoExt::SpawnSurvivors(TechnoClass *pThis, TechnoClass *pKiller, bool Select)
 {
 	TechnoTypeClass *Type = pThis->GetTechnoType();

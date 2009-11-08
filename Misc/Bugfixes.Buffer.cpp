@@ -250,3 +250,31 @@ DEFINE_HOOK(75D660, Buf_Warhead, 9)
 
 	return 0;
 }
+
+// == Map Scripting ==
+DEFINE_HOOK(7274AF, TriggerTypeClass_LoadFromINI_Read_Events, 5)
+{
+	R->set_StackVar32(0x0, (DWORD)Ares::readBuffer);
+	R->set_StackVar32(0x4, Ares::readLength);
+	return 0;
+}
+
+DEFINE_HOOK(7274C8, TriggerTypeClass_LoadFromINI_Strtok_Events, 5)
+{
+	R->set_ECX((DWORD)Ares::readBuffer);
+	return 0;
+}
+
+
+DEFINE_HOOK(727529, TriggerTypeClass_LoadFromINI_Read_Actions, 5)
+{
+	R->set_StackVar32(0x0, (DWORD)Ares::readBuffer);
+	R->set_StackVar32(0x4, Ares::readLength);
+	return 0;
+}
+
+DEFINE_HOOK(727544, TriggerTypeClass_LoadFromINI_Strtok_Actions, 5)
+{
+	R->set_EDX((DWORD)Ares::readBuffer);
+	return 0;
+}

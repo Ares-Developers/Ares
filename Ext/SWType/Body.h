@@ -1,7 +1,6 @@
 #ifndef SUPERTYPE_EXT_H
 #define SUPERTYPE_EXT_H
 
-#include <Helpers\Macro.h>
 #include <AircraftTypeClass.h>
 #include <AnimClass.h>
 #include <CCINIClass.h>
@@ -14,6 +13,7 @@
 #include <VoxClass.h>
 
 #include "..\..\Misc\Actions.h"
+#include "..\..\Helpers\Template.h"
 
 #ifdef DEBUGBUILD
 #include "..\..\Misc\Debug.h"
@@ -37,41 +37,41 @@ public:
 	{
 	public:
 		// SpyPlane
-		int SpyPlane_TypeIndex;
-		int SpyPlane_Count;
-		int SpyPlane_Mission;
+		ValueableIdx<int, AircraftTypeClass> SpyPlane_TypeIndex;
+		Valueable<int> SpyPlane_Count;
+		ValueableIdx<int, MissionClass> SpyPlane_Mission;
 
 		// Nuke
-		int Nuke_Siren;
+		ValueableIdx<int, VocClass> Nuke_Siren;
 
 		// Sonar
-		int Sonar_Range;
-		int Sonar_Delay;
+		Valueable<int> Sonar_Range;
+		Valueable<int> Sonar_Delay;
 
 		// Money
-		int Money_Amount;
+		Valueable<int> Money_Amount;
 
 		// Generic
-		int EVA_Ready;
-		int EVA_Activated;
-		int EVA_Detected;
+		ValueableIdx<int, VoxClass> EVA_Ready;
+		ValueableIdx<int, VoxClass> EVA_Activated;
+		ValueableIdx<int, VoxClass> EVA_Detected;
 
 		// anim/sound
-		int SW_Sound;
-		AnimTypeClass *SW_Anim;
-		int SW_AnimHeight;
+		ValueableIdx<int, VocClass> SW_Sound;
+		Valueable<AnimTypeClass *> SW_Anim;
+		Valueable<int> SW_AnimHeight;
 
-		bool SW_TypeCustom;
-		bool SW_AutoFire;
-		bool SW_FireToShroud;
-		bool SW_RadarEvent;
-		MouseCursor SW_Cursor;
-		MouseCursor SW_NoCursor;
+		Valueable<bool> SW_TypeCustom;
+		Valueable<bool> SW_AutoFire;
+		Valueable<bool> SW_FireToShroud;
+		Valueable<bool> SW_RadarEvent;
+		Valueable<MouseCursor> SW_Cursor;
+		Valueable<MouseCursor> SW_NoCursor;
 
 		ExtData(const DWORD Canary = 0, const TT* OwnerObject = NULL) : Extension(Canary, OwnerObject),
 			SpyPlane_TypeIndex (0),
-			SpyPlane_Count (0),
-			SpyPlane_Mission (0),
+			SpyPlane_Count (1),
+			SpyPlane_Mission (mission_AttackAgain),
 			Nuke_Siren (-1),
 			Sonar_Range (0),
 			Sonar_Delay (0),
@@ -92,7 +92,7 @@ public:
 
 		virtual size_t Size() const { return sizeof(*this); };
 
-		virtual void LoadFromINI(TT *pThis, CCINIClass *pINI);
+		virtual void LoadFromINIFile(TT *pThis, CCINIClass *pINI);
 		virtual void InitializeConstants(TT *pThis);
 		virtual void InitializeRuled(TT *pThis);
 	};

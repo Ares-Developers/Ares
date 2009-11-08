@@ -11,20 +11,8 @@ IStream *Container<BulletTypeExt>::SavingStream = NULL;
 // =============================
 // member funcs
 
-void BulletTypeExt::ExtData::LoadFromINI(BulletTypeClass *pThis, CCINIClass* pINI)
+void BulletTypeExt::ExtData::LoadFromINIFile(BulletTypeClass *pThis, CCINIClass* pINI)
 {
-	if(this->_Initialized == is_Constanted && RulesClass::Initialized) {
-		this->InitializeRuled(pThis);
-	}
-
-	if(this->_Initialized == is_Ruled) {
-		this->Initialize(pThis);
-	}
-
-	if(this->_Initialized != is_Inited) {
-		return;
-	}
-
 	this->SubjectToSolid = pINI->ReadBool(pThis->get_ID(), "SubjectToBuildings", this->SubjectToSolid);
 	this->SubjectToFirewall = pINI->ReadBool(pThis->get_ID(), "SubjectToFirewall", this->SubjectToFirewall);
 

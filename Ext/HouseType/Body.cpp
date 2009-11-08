@@ -13,10 +13,6 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis)
 {
 	char* pID = pThis->get_ID();
 
-	if(this->_Initialized >= is_Constanted) {
-		return;
-	}
-
 	//We assign default values by country ID rather than index so you simply add a new country
 	//without having to specify all the tags for the old ones
 
@@ -170,7 +166,7 @@ void HouseTypeExt::ExtData::Initialize(HouseTypeClass *pThis)
 	this->_Initialized = is_Inited;
 }
 
-void HouseTypeExt::ExtData::LoadFromRules(HouseTypeClass *pThis, CCINIClass *pINI)
+void HouseTypeExt::ExtData::LoadFromRulesFile(HouseTypeClass *pThis, CCINIClass *pINI)
 {
 	char* pID = pThis->get_ID();
 
@@ -212,25 +208,9 @@ void HouseTypeExt::ExtData::LoadFromRules(HouseTypeClass *pThis, CCINIClass *pIN
 	}
 }
 
-void HouseTypeExt::ExtData::LoadFromINI(HouseTypeClass *pThis, CCINIClass *pINI)
+void HouseTypeExt::ExtData::LoadFromINIFile(HouseTypeClass *pThis, CCINIClass *pINI)
 {
-	if(!pINI) {
-		return;
-	}
-
 	char* pID = pThis->get_ID();
-
-//	Debug::Log("Loading Country %s from INI %X\n", pThis->get_ID(), pINI);
-
-	if(this->_Initialized == is_Constanted && RulesClass::Initialized) {
-		this->InitializeRuled(pThis);
-	}
-
-	if(this->_Initialized == is_Ruled) {
-		this->Initialize(pThis);
-	}
-
-	this->LoadFromRules(pThis, pINI);
 
 /*
 	discarding this - special case, needs to load things even before the rules is done
@@ -296,6 +276,8 @@ int HouseTypeExt::PickRandomCountry()
 		int pick = ScenarioClass::Global()->get_Random()->RandomRanged(0, vecLegible.size() - 1);
 
 		return vecLegible.at(pick);
+	} else {
+		Debug::FatalError("No countries eligible for random selection!");
 	}
 	return 0;
 }

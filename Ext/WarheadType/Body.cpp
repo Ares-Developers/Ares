@@ -14,23 +14,13 @@ hash_ionExt WarheadTypeExt::IonExt;
 
 WarheadTypeClass * WarheadTypeExt::Temporal_WH = NULL;
 
-void WarheadTypeExt::ExtData::LoadFromINI(WarheadTypeClass *pThis, CCINIClass *pINI)
+void WarheadTypeExt::ExtData::LoadFromINIFile(WarheadTypeClass *pThis, CCINIClass *pINI)
 {
 	const char * section = pThis->get_ID();
 
+	INI_EX exINI(pINI);
+
 	if(!pINI->GetSection(section)) {
-		return;
-	}
-
-	if(this->_Initialized == is_Constanted && RulesClass::Initialized) {
-		this->InitializeRuled(pThis);
-	}
-
-	if(this->_Initialized == is_Ruled) {
-		this->Initialize(pThis);
-	}
-
-	if(this->_Initialized != is_Inited) {
 		return;
 	}
 
@@ -68,11 +58,9 @@ void WarheadTypeExt::ExtData::LoadFromINI(WarheadTypeClass *pThis, CCINIClass *p
 	this->IC_Duration = pINI->ReadInteger(section, "IronCurtain.Duration", this->IC_Duration);
 	this->Is_Custom |= this->IC_Duration != 0;
 
-//	if(pThis->Temporal) {
-//		PARSE_BUF();
-
-//		PARSE_ANIM("Temporal.WarpAway", this->Temporal_WarpAway);
-//	}
+	if(pThis->Temporal) {
+		this->Temporal_WarpAway.Parse(&exINI, section, "Temporal.WarpAway");
+	}
 
 	this->DeployedDamage = pINI->ReadDouble(section, "Damage.Deployed", this->DeployedDamage);
 
@@ -92,17 +80,16 @@ void Container<WarheadTypeExt>::Save(WarheadTypeClass *pThis, IStream *pStm) {
 	if(pData) {
 		ULONG out;
 		pData->Verses.Save(pStm);
-
+	}
+}
+/*
 		pStm->Write(&IonBlastClass::Array->Count, 4, &out);
 		for(int ii = 0; ii < IonBlastClass::Array->Count; ++ii) {
 			IonBlastClass *ptr = IonBlastClass::Array->Items[ii];
 			pStm->Write(ptr, 4, &out);
 			pStm->Write(WarheadTypeExt::IonExt[ptr], 4, &out);
 		}
-
-	}
-}
-
+*/
 void Container<WarheadTypeExt>::Load(WarheadTypeClass *pThis, IStream *pStm) {
 	WarheadTypeExt::ExtData* pData = this->LoadKey(pThis, pStm);
 

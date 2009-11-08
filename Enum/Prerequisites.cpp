@@ -59,13 +59,6 @@ void Prereqs::Parse(char* buffer, DynamicVectorClass<int> *vec)
 
 }
 
-EXPORT_FUNC(RulesClass_TypeData)
-{
-	CCINIClass *pINI = (CCINIClass *)R->get_StackVar32(0x4);
-	GenericPrerequisite::LoadFromINIList(pINI);
-	return 0;
-}
-
 	// helper funcs
 
 bool Prereqs::HouseOwnsGeneric(HouseClass *pHouse, signed int Index)

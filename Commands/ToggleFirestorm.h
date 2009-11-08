@@ -26,7 +26,7 @@ public:
 
 	virtual void Execute(DWORD dwUnk)
 	{
-		HouseClass *H = HouseClass::Player();
+		HouseClass *H = HouseClass::Player;
 		HouseExt::ExtData *pData = HouseExt::ExtMap.Find(H); 
 		bool FS = pData->FirewallActive;
 		FS = !FS;

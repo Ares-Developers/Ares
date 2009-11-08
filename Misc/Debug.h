@@ -1,7 +1,7 @@
 #ifndef DEBUG_H
 #define DEBUG_H
 
-#define DEBUG_FILE "DEBUG.TXT"
+//define DEBUG_FILE "DEBUG.TXT"
 
 #include <stdio.h>
 #include <YRPPCore.h>
@@ -16,7 +16,10 @@ class Debug
 public:
 	static bool bLog;
 	static FILE* pLogFile;
+	static wchar_t LogFileName[MAX_PATH];
+	static wchar_t LogFileTempName[MAX_PATH];
 
+	static void MakeLogFile();
 	static void LogFileOpen();
 	static void LogFileClose();
 	static void LogFileRemove();

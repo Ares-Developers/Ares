@@ -172,3 +172,104 @@ DEFINE_HOOK(699B2D, Game_ParsePKTs, 5)
 	Debug::Log("Adding PKT %s\n", filename);
 	return 0;
 }
+
+#define stack_len 0xC0
+
+DEFINE_HOOK(4C98B0, FactoryClass_CTOR, 5)
+{
+	Debug::Log("Factory::CTOR(%X)\n", R->get_ECX());
+	Debug::DumpStack(R, stack_len);
+	return 0;
+}
+
+DEFINE_HOOK(4CA770, FactoryClass_SDDTOR, 6)
+{
+	Debug::Log("Factory::DTOR(%X)\n", R->get_ECX());
+	Debug::DumpStack(R, stack_len);
+	return 0;
+}
+
+DEFINE_HOOK(4FA5A8, HouseClass_BeginProductionOf, 5)
+{
+	GET(HouseClass *, H, EDI);
+	GET(TechnoTypeClass *, TT, EBP);
+	if(H == HouseClass::Player) {
+		Debug::Log("Player House begins construction of %s in factory %X\n", TT->get_ID(), R->get_ESI());
+		Debug::DumpStack(R, stack_len);
+		Debug::DumpObj((byte *)&H->Primary_ForAircraft, 36);
+	}
+	return 0;
+}
+
+DEFINE_HOOK(4FAA1F, HouseClass_AbandonProductionOf, 8)
+{
+	GET(HouseClass *, H, ECX);
+	if(H == HouseClass::Player) {
+		Debug::Log("Player House Abandons production of absID %d\n", R->get_StackVar32(0x1C));
+		Debug::DumpStack(R, stack_len);
+		Debug::DumpObj((byte *)&H->Primary_ForAircraft, 36);
+	}
+	return 0;
+}
+
+DEFINE_HOOK(4FABB8, HouseClass_AbandonProductionOf2, 6)
+{
+	GET(HouseClass *, H, EDI);
+	if(H == HouseClass::Player) {
+		Debug::Log("Player House DTORs factory %X\n", R->get_ESI());
+		Debug::DumpStack(R, stack_len);
+		Debug::DumpObj((byte *)&H->Primary_ForAircraft, 36);
+	}
+	return 0;
+}
+
+DEFINE_HOOK(50929A, HouseClass_Update_Factories_Queues, 6)
+{
+	GET(HouseClass *, H, EBP);
+	if(H == HouseClass::Player) {
+		Debug::Log("Player House borks DTOR of factory %X\n", R->get_ESI());
+		Debug::DumpStack(R, stack_len);
+		Debug::DumpObj((byte *)&H->Primary_ForAircraft, 36);
+	}
+	return 0;
+}
+
+DEFINE_HOOK(44EC5E, BuildingClass_Remove, 6)
+{
+	GET(TechnoTypeClass *, TT, EAX);
+	GET(BuildingClass *, B, ESI);
+	Debug::Log("Deletion of building %s (%X) - erasing product %s\n", B->get_ID(), B, TT->get_ID());
+	Debug::DumpStack(R, stack_len);
+	Debug::DumpObj((byte *)&B->Owner->Primary_ForAircraft, 36);
+	return 0;
+}
+
+DEFINE_HOOK(459F28, BuildingClass_SDDTOR, 5)
+{
+	Debug::Log("~BuildingClass(%X)\n", R->get_ESI());
+	Debug::DumpStack(R, stack_len);
+	return 0;
+}
+
+
+DEFINE_HOOK(509140, HouseClass_Update_Factories_Queues_2, 5)
+{
+	GET(HouseClass *, H, ECX);
+	if(H == HouseClass::Player) {
+		Debug::Log("Player House updating factory queues, caller is %d/%d/%d\n", R->get_StackVar32(0x4), R->get_StackVar32(0x8), R->get_StackVar32(0xC));
+	}
+	return 0;
+}
+
+DEFINE_HOOK(5091A1, HouseClass_Update_Factories_Queues_3, 8)
+{
+	GET(FactoryClass *, Fact, ESI);
+	GET(HouseClass *, H, EBP);
+	if(H == HouseClass::Player) {
+		Debug::Log("Player House updating factory %X", Fact);
+		if(Fact) {
+			Debug::DumpObj((byte*)Fact, sizeof(*Fact));
+		}
+	}
+	return Fact ? 0x5091A9 : 0x5092A3;
+}

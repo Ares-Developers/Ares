@@ -132,7 +132,7 @@ void __stdcall Ares::ExeRun()
 void __stdcall Ares::ExeTerminate()
 {
 	Debug::Log("XTACH\n");
-//	Debug::LogFileClose();
+	Debug::LogFileClose();
 }
 
 //A new SendPDPlane function
@@ -211,8 +211,8 @@ bool __stdcall DllMain(HANDLE hInstance,DWORD dwReason,LPVOID v)
 			Debug::Log("ATTACH\n");
 			break;
 		case DLL_PROCESS_DETACH:
-			Debug::Log("DETACH\n");
-			Debug::LogFileClose();
+//			Debug::Log("DETACH\n");
+//			Debug::LogFileClose();
 			break;
 	}
 
@@ -266,7 +266,8 @@ DEFINE_HOOK(7CD810, ExeRun, 9)
 DEFINE_HOOK(7CD8EF, ExeTerminate, 9)
 {
 	Ares::ExeTerminate();
-	return 0;
+	GET(int, result, EAX);
+	ExitProcess(result); //teehee 
 }
 
 DEFINE_HOOK(52CAE9, _YR_PostGameInit, 5)

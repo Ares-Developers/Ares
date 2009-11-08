@@ -35,6 +35,7 @@ public:
 		BYTE idxSlot_Wave;
 		BYTE idxSlot_Beam;
 		BYTE idxSlot_Warp;
+		BYTE idxSlot_Parasite;
 
 		bool Survivors_Done;
 
@@ -45,6 +46,7 @@ public:
 			idxSlot_Wave (0),
 			idxSlot_Beam (0),
 			idxSlot_Warp (0),
+			idxSlot_Parasite(0),
 			Survivors_Done (0),
 			Insignia_Image (NULL)
 			{
@@ -64,6 +66,8 @@ public:
 	static BuildingLightClass * ActiveBuildingLight;
 
 	static eFiringState FiringStateCache;
+
+	static bool NeedsRegap;
 
 	static void SpawnSurvivors(TechnoClass *pThis, TechnoClass *pKiller, bool Select);
 	static bool ParadropSurvivor(FootClass *Survivor, CoordStruct *loc, bool Select);

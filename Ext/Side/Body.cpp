@@ -107,23 +107,7 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 	this->_Initialized = is_Inited;
 };
 
-void SideExt::ExtData::LoadFromINI(SideClass *pThis, CCINIClass *pINI)
-{
-	if(!pINI) {
-		return;
-	}
-
-	switch(this->_Initialized) {
-		case is_Constanted:
-			this->InitializeRuled(pThis);
-		case is_Ruled:
-			this->Initialize(pThis);
-		case is_Inited:
-			this->LoadDataFromINI(pThis, pINI);
-	}
-}
-
-void SideExt::ExtData::LoadDataFromINI(SideClass *pThis, CCINIClass *pINI)
+void SideExt::ExtData::LoadFromINIFile(SideClass *pThis, CCINIClass *pINI)
 {
 	char* p = NULL;
 	char* section = pThis->get_ID();
@@ -146,9 +130,9 @@ void SideExt::ExtData::LoadDataFromINI(SideClass *pThis, CCINIClass *pINI)
 
 	INI_EX exINI(pINI);
 
-	this->Crew.ReadFind(&exINI, section, "Crew", 1);
+	this->Crew.Parse(&exINI, section, "Crew", 1);
 
-	this->DefaultDisguise.ReadFind(&exINI, section, "DefaultDisguise", 1);
+	this->DefaultDisguise.Parse(&exINI, section, "DefaultDisguise", 1);
 
 	if(pINI->ReadString(section, "EVA.Tag", "", Ares::readBuffer, 0x20)) {
 		strncpy(this->EVATag, Ares::readBuffer, 0x20);

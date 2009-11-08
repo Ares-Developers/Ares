@@ -27,7 +27,7 @@ void RulesExt::Remove(RulesClass *pThis)
 	}
 }
 
-void RulesExt::LoadFromINI(RulesClass *pThis, CCINIClass *pINI)
+void RulesExt::LoadFromINIFile(RulesClass *pThis, CCINIClass *pINI)
 {
 	Data->LoadFromINI(pThis, pINI);
 }
@@ -48,7 +48,6 @@ void RulesExt::LoadAfterTypeData(RulesClass *pThis, CCINIClass *pINI)
 	Data->LoadAfterTypeData(pThis, pINI);
 }
 
-
 void RulesExt::ExtData::InitializeConstants(RulesClass *pThis)
 {
 	GenericPrerequisite::AddDefaults();
@@ -62,34 +61,9 @@ void RulesExt::ExtData::Initialize(RulesClass *pThis)
 	this->_Initialized = is_Inited;
 }
 
-void RulesExt::ExtData::LoadFromINI(RulesClass *pThis, CCINIClass *pINI)
+void RulesExt::ExtData::LoadFromINIFile(RulesClass *pThis, CCINIClass *pINI)
 {
-	RulesExt::ExtData *pData = RulesExt::Global();
-
-	if(!pData) {
-		return;
-	}
-
-	if(this->_Initialized == is_Blank) {
-		this->InitializeConstants(pThis);
-	}
-	if(this->_Initialized == is_Constanted && RulesClass::Initialized) {
-		this->InitializeRuled(pThis);
-	}
-
-	if(this->_Initialized == is_Ruled) {
-		this->Initialize(pThis);
-	}
-
-	if(this->_Initialized != is_Inited) {
-		return;
-	}
-
-	// this is where the main reading should happen
-	const char section[] = "AudioVisual";
-
-	PARSE_BUF();
-	PARSE_ANIM("InfantryElectrocuted", pData->ElectricDeath);
+	// earliest loader - can't really do much because nothing else is initialized yet, so lookups won't work
 }
 
 void RulesExt::ExtData::LoadBeforeTypeData(RulesClass *pThis, CCINIClass *pINI)
@@ -105,6 +79,9 @@ void RulesExt::ExtData::LoadBeforeTypeData(RulesClass *pThis, CCINIClass *pINI)
 	}
 }
 
+// this should load everything that TypeData is not dependant on
+// i.e. InfantryElectrocuted= can go here since nothing refers to it
+// but [GenericPrerequisites] have to go earlier because they're used in parsing TypeData
 void RulesExt::ExtData::LoadAfterTypeData(RulesClass *pThis, CCINIClass *pINI)
 {
 	RulesExt::ExtData *pData = RulesExt::Global();
@@ -113,21 +90,16 @@ void RulesExt::ExtData::LoadAfterTypeData(RulesClass *pThis, CCINIClass *pINI)
 		return;
 	}
 
-	if(this->_Initialized == is_Constanted && RulesClass::Initialized) {
-		this->InitializeRuled(pThis);
-	}
+	const char section[] = "AudioVisual";
 
-	if(this->_Initialized == is_Ruled) {
-		this->Initialize(pThis);
-	}
+	INI_EX exINI(pINI);
 
-	if(this->_Initialized != is_Inited) {
-		return;
-	}
+	pData->ElectricDeath.Parse(&exINI, section, "InfantryElectrocuted");
 
 	for(int i = 0; i < WeaponTypeClass::Array->Count; ++i) {
 		WeaponTypeClass::Array->Items[i]->LoadFromINI(pINI);
 	}
+
 }
 
 // =============================

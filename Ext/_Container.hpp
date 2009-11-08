@@ -77,21 +77,45 @@ class Extension {
 		// virtual size_t Size() const { return sizeof(*this); };
 		virtual size_t Size() const = 0;
 
+		// major refactoring!
+		// LoadFromINI is now a non-virtual public function that orchestrates the initialization/loading of extension data
+		// all its slaves are now protected functions
+		void LoadFromINI(T *pThis, CCINIClass *pINI) {
+			if(!pINI) {
+				return;
+			}
+
+			switch(this->_Initialized) {
+				case is_Blank:
+					this->InitializeConstants(pThis);
+				case is_Constanted:
+					this->InitializeRuled(pThis);
+				case is_Ruled:
+					this->Initialize(pThis);
+				case is_Inited:
+					if(pINI == CCINIClass::INI_Rules) {
+						this->LoadFromRulesFile(pThis, pINI);
+					}
+					this->LoadFromINIFile(pThis, pINI);
+			}
+		}
+
+//	protected:
 		//reimpl in each class separately
-		virtual void LoadFromINI(T *pThis, CCINIClass *pINI) {};
+		virtual void LoadFromINIFile(T *pThis, CCINIClass *pINI) {};
 
 		// for things that only logically work in rules - countries, sides, etc
-		virtual void LoadFromRules(T *pThis, CCINIClass *pINI) {};
-		virtual void InitializeConstants(T *pThis)
-		{
+		virtual void LoadFromRulesFile(T *pThis, CCINIClass *pINI) {};
+
+		virtual void InitializeConstants(T *pThis) {
 			this->_Initialized = is_Constanted;
 		};
-		virtual void InitializeRuled(T *pThis)
-		{
+
+		virtual void InitializeRuled(T *pThis) {
 			this->_Initialized = is_Ruled;
 		};
-		virtual void Initialize(T *pThis)
-		{
+
+		virtual void Initialize(T *pThis) {
 			this->_Initialized = is_Inited;
 		};
 };
@@ -183,7 +207,7 @@ public:
 
 	void LoadAllFromRules(CCINIClass *pINI) {
 		for(C_Map::iterator i = begin(); i != end(); i++) {
-			i->second->LoadFromRules(i->first, pINI);
+			i->second->LoadFromRulesFile(i->first, pINI);
 		}
 	}
 
@@ -247,7 +271,8 @@ public:
 		pStm->Read(&origPtr, 4, &out);
 		pStm->Read(buffer, buffer->Size(), &out);
 		Debug::Log("LoadKey Swizzle: %X => %X\n", origPtr, buffer);
-//		SwizzleManagerClass::Instance.Here_I_Am(origPtr, (void *)buffer);
+		SwizzleManagerClass::Instance.Here_I_Am(origPtr, (void *)buffer);
+		SWIZZLE(buffer->AttachedToObject);
 #ifdef DEBUGBUILD
 			assert(buffer->SavedCanary == typename E_T::Canary);
 #endif
