@@ -62,6 +62,10 @@ public:
 
 		Customizable<AnimTypeClass*> Parachute_Anim;
 
+		// new on 08.11.09 for #342 (Operator=)
+		InfantryTypeClass * Operator;
+		bool IsAPromiscuousWhoreAndLetsAnyoneRideIt;
+
 		ExtData(const DWORD Canary = 0, const TT* OwnerObject = NULL) : Extension(Canary, OwnerObject),
 			Survivors_PilotCount (0),
 			Survivors_PilotChance (NULL),
@@ -83,7 +87,9 @@ public:
 			Is_Bomb (false),
 			WaterAlt (false),
 			Insignia (NULL),
-			Parachute_Anim (&RulesClass::Global()->Parachute)
+			Parachute_Anim (&RulesClass::Global()->Parachute),
+			Operator (NULL),
+			IsAPromiscuousWhoreAndLetsAnyoneRideIt (false)
 			{ this->Insignia.SetAll(NULL); };
 
 		virtual ~ExtData() { };

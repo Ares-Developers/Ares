@@ -42,6 +42,49 @@ DEFINE_HOOK(6F9E50, TechnoClass_Update, 5)
 	return 0;
 }
 
+
+//! TechnoClass::Update is called every frame; returning 0 tells it to execute the original function's code as well.
+DEFINE_HOOK(6F9E76, TechnoClass_Update, 6)
+{
+	GET(TechnoClass *, pThis, ESI); // object this is called on
+	TechnoTypeClass *Type = pThis->GetTechnoType();
+
+	//! Related to operators/drivers, issue #342
+	if(Type->Operator != NULL) {
+
+		if(pThis->Passengers->NumPassengers) {
+
+			// I have no clue if that's how IndexOf works and if InfantryTypeClass::Find() returns a compatible pointer,
+			// but D is off for the night and IndexOf has no definition anywhere I could read it.
+			if(pThis->Passengers->IndexOf(Type->Operator) != -1) {
+				// takes a specific operator and someone is present AND that someone is the operator, so it stays active/gets reactivated
+				if(pThis->Deactivated) pThis->Reactivate();
+			} else {
+				// takes a specific operator and someone is present, but it's not the operator, so it stays deactivated/gets deactivated
+				if(!pThis->Deactivated) pThis->Deactivate();
+			}
+
+		} else {
+			// takes a specific operator but no one is present, so it stays deactivated/gets deactivated
+			if(!pThis->Deactivated) pThis->Deactivate();
+		}
+
+	} else if(Type->IsAPromiscuousWhoreAndLetsAnyoneRideIt) {
+
+		if(pThis->Passengers->NumPassengers) {
+			// takes anyone and someone is present, so it stays active/gets reactivated
+			if(pThis->Deactivated) pThis->Reactivate();
+		} else {
+			// takes anyone but no one is present, so it stays deactivated/gets deactivated
+			if(!pThis->Deactivated) pThis->Deactivate();
+		}
+
+	}
+
+	//return 0x6F9E7C; // using this value instead makes this function override the original game one's entirely - don't activate this unless you handle *everything* originally handled by the game
+	return 0;
+}
+
 // fix for vehicle paradrop alignment
 DEFINE_HOOK(415CA6, AircraftClass_Paradrop, 6)
 {
@@ -85,9 +128,9 @@ DEFINE_HOOK(6F407D, TechnoClass_Init_1, 6)
 		WarheadTypeClass *WH2 = W2 ? W2->Warhead : NULL;
 
 		if((W1 && !WH1) || (W2 && !WH2)) {
-			_snprintf(Ares::readBuffer, Ares::readLength, 
-			"Constructing an instance of [%s]:\r\n%sWeapon %s (slot %d) has no Warhead!\n", 
-				T->get_ID(), 
+			_snprintf(Ares::readBuffer, Ares::readLength,
+			"Constructing an instance of [%s]:\r\n%sWeapon %s (slot %d) has no Warhead!\n",
+				T->get_ID(),
 				WH1 ? "Elite " : "",
 				(WH1 ? W2 : W1)->get_ID(),
 				i);
@@ -179,7 +222,7 @@ DEFINE_HOOK(6F3330, TechnoClass_SelectWeapon, 5)
 {
 	TechnoClass * pThis = (TechnoClass *)R->get_ECX();
 	TechnoClass * pTarg = (TechnoClass *)R->get_StackVar32(0x4);
-	
+
 //	DWORD Selected = TechnoClassExt::SelectWeaponAgainst(pThis, pTarg);
 //	R->set_EAX(Selected);
 //	return 0x6F3813;
@@ -236,10 +279,10 @@ int TechnoClassExt::SelectWeaponAgainst(TechnoClass *pThis, TechnoClass *pTarget
 	if(pTarget->WhatAmI() == abs_Cell) {
 		CellClass *pTargetCell = (CellClass *)pTarget;
 		if(
-			
+
 			(pTargetCell->get_LandType() != lt_Water && pTargetCell->IsOnFloor())
-			|| ((pTargetCell->get_Flags() & cf_Bridge) && pThisT->get_Naval()) 
-			
+			|| ((pTargetCell->get_Flags() & cf_Bridge) && pThisT->get_Naval())
+
 			&& (!pTargetCell->IsInAir() && pThisT->get_LandTargeting() == 2)
 
 		)
@@ -268,7 +311,7 @@ int TechnoClassExt::SelectWeaponAgainst(TechnoClass *pThis, TechnoClass *pTarget
 	if(WCount < 1) {
 		return 0;
 	}
-	
+
 	std::vector<WeaponTypeClassExt::WeaponWeight> Weights(WCount);
 //	Weights.reserve(WCount);
 
