@@ -48,37 +48,44 @@ DEFINE_HOOK(6F9E76, TechnoClass_Update, 6)
 {
 	GET(TechnoClass *, pThis, ESI); // object this is called on
 	TechnoTypeClass *Type = pThis->GetTechnoType();
+	TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(Type); // gah...multilayered YR++ness!
 
-	//! Related to operators/drivers, issue #342
-	if(Type->Operator != NULL) {
+	// Related to operators/drivers, issue #342
+	if(!pThis->GetCell()->GetBuilding()) { // Only execute if we're not on a building [GetBuilding() returns BuildingClass * and NULL if there is none at the current cell]
+		if(pTypeData->Operator != NULL) {
+			if(pThis->Passengers.NumPassengers) {
+				bool foundAnOperator = false;
 
-		if(pThis->Passengers->NumPassengers) {
+				// loop & condition come from D
+				for(FootClass* F = pThis->Passengers.GetFirstPassenger(); F; F = F->NextObject) {
+					if(F->GetTechnoType() == pTypeData->Operator) {
+						foundAnOperator = true;
+						break;
+					}
+				}
 
-			// I have no clue if that's how IndexOf works and if InfantryTypeClass::Find() returns a compatible pointer,
-			// but D is off for the night and IndexOf has no definition anywhere I could read it.
-			if(pThis->Passengers->IndexOf(Type->Operator) != -1) {
-				// takes a specific operator and someone is present AND that someone is the operator, so it stays active/gets reactivated
-				if(pThis->Deactivated) pThis->Reactivate();
+				if(foundAnOperator) {
+					// takes a specific operator and someone is present AND that someone is the operator, so it stays active/gets reactivated
+					if(pThis->Deactivated) pThis->Reactivate();
+				} else {
+					// takes a specific operator and someone is present, but it's not the operator, so it stays deactivated/gets deactivated
+					if(!pThis->Deactivated) pThis->Deactivate();
+				}
 			} else {
-				// takes a specific operator and someone is present, but it's not the operator, so it stays deactivated/gets deactivated
+				// takes a specific operator but no one is present, so it stays deactivated/gets deactivated
 				if(!pThis->Deactivated) pThis->Deactivate();
 			}
-
-		} else {
-			// takes a specific operator but no one is present, so it stays deactivated/gets deactivated
-			if(!pThis->Deactivated) pThis->Deactivate();
+		} else if(pTypeData->IsAPromiscuousWhoreAndLetsAnyoneRideIt) {
+			if(pThis->Passengers.NumPassengers) {
+				// takes anyone and someone is present, so it stays active/gets reactivated
+				if(pThis->Deactivated) pThis->Reactivate();
+			} else {
+				// takes anyone but no one is present, so it stays deactivated/gets deactivated
+				if(!pThis->Deactivated) pThis->Deactivate();
+			}
 		}
-
-	} else if(Type->IsAPromiscuousWhoreAndLetsAnyoneRideIt) {
-
-		if(pThis->Passengers->NumPassengers) {
-			// takes anyone and someone is present, so it stays active/gets reactivated
-			if(pThis->Deactivated) pThis->Reactivate();
-		} else {
-			// takes anyone but no one is present, so it stays deactivated/gets deactivated
-			if(!pThis->Deactivated) pThis->Deactivate();
-		}
-
+	} else if(pThis->GetCell()->GetBuilding() == pThis) {
+		// TODO: repeat stuff from above for occupants
 	}
 
 	//return 0x6F9E7C; // using this value instead makes this function override the original game one's entirely - don't activate this unless you handle *everything* originally handled by the game
