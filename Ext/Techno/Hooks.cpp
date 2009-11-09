@@ -44,7 +44,7 @@ DEFINE_HOOK(6F9E50, TechnoClass_Update, 5)
 
 
 //! TechnoClass::Update is called every frame; returning 0 tells it to execute the original function's code as well.
-DEFINE_HOOK(6F9E76, TechnoClass_Update, 6)
+DEFINE_HOOK(6F9E76, TechnoClass_Update_CheckOperators, 6)
 {
 	GET(TechnoClass *, pThis, ESI); // object this is called on
 	TechnoTypeClass *Type = pThis->GetTechnoType();
@@ -57,8 +57,8 @@ DEFINE_HOOK(6F9E76, TechnoClass_Update, 6)
 				bool foundAnOperator = false;
 
 				// loop & condition come from D
-				for(FootClass* F = pThis->Passengers.GetFirstPassenger(); F; F = F->NextObject) {
-					if(F->GetTechnoType() == pTypeData->Operator) {
+				for(ObjectClass* O = pThis->Passengers.GetFirstPassenger(); O; O = O->NextObject) {
+					if(ABS_IS_FOOT(O) && O->GetType() == pTypeData->Operator) {
 						foundAnOperator = true;
 						break;
 					}

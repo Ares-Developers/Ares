@@ -185,8 +185,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	this->Parachute_Anim.Parse(&exINI, section, "Parachute.Anim");
 
 	// new on 08.11.09 for #342 (Operator=)
-	//this->Operator.ReadFind(&exINI, section, "Operator");
-	if(pINI->ReadString(section, "Operator", "", buffer, BUFLEN) { // try to read the flag
+	if(pINI->ReadString(section, "Operator", "", buffer, BUFLEN)) { // try to read the flag
 		this->IsAPromiscuousWhoreAndLetsAnyoneRideIt = (strcmp(buffer, "_ANY_") == 0); // set whether this type accepts all operators
 		if(!this->IsAPromiscuousWhoreAndLetsAnyoneRideIt) { // if not, find the specific operator it allows
 			this->Operator = InfantryTypeClass::Find(buffer);
