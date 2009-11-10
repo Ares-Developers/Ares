@@ -51,7 +51,8 @@ DEFINE_HOOK(6F9E76, TechnoClass_Update_CheckOperators, 6)
 	TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(Type); // gah...multilayered YR++ness!
 
 	// Related to operators/drivers, issue #342
-	if(!pThis->GetCell()->GetBuilding()) { // Only execute if we're not on a building [GetBuilding() returns BuildingClass * and NULL if there is none at the current cell]
+	BuildingClass * pTheBuildingBelow = pThis->GetCell()->GetBuilding();
+	if(!pTheBuildingBelow) { // Only execute if we're not on a building [GetBuilding() returns BuildingClass * and NULL if there is none at the current cell]
 		if(pTypeData->Operator != NULL) {
 			if(pThis->Passengers.NumPassengers) {
 				bool foundAnOperator = false;
@@ -84,8 +85,38 @@ DEFINE_HOOK(6F9E76, TechnoClass_Update_CheckOperators, 6)
 				if(!pThis->Deactivated) pThis->Deactivate();
 			}
 		}
-	} else if(pThis->GetCell()->GetBuilding() == pThis) {
-		// TODO: repeat stuff from above for occupants
+	} else if(pTheBuildingBelow == pThis) { // if there IS a building below, AND we are that building, repeat the same stuff for Occupants
+		if(pTypeData->Operator != NULL) {
+			if(pThis->Occupants.Count) { //alternatively maybe pThis->GetOccupantCount()?
+				bool foundAnOperator = false;
+
+				for(int i = 0; i < pThis->Occupants.Count; ++i) {
+					if(pThis->Occupants[i]->GetType() == pTypeData->Operator) {
+						foundAnOperator = true;
+						break;
+					}
+				}
+
+				if(foundAnOperator) {
+					// takes a specific operator and someone is present AND that someone is the operator, so it stays active/gets reactivated
+					if(pThis->Deactivated) pThis->Reactivate();
+				} else {
+					// takes a specific operator and someone is present, but it's not the operator, so it stays deactivated/gets deactivated
+					if(!pThis->Deactivated) pThis->Deactivate();
+				}
+			} else {
+				// takes a specific operator but no one is present, so it stays deactivated/gets deactivated
+				if(!pThis->Deactivated) pThis->Deactivate();
+			}
+		} else if(pTypeData->IsAPromiscuousWhoreAndLetsAnyoneRideIt) {
+			if(pThis->Occupants.Count) {
+				// takes anyone and someone is present, so it stays active/gets reactivated
+				if(pThis->Deactivated) pThis->Reactivate();
+			} else {
+				// takes anyone but no one is present, so it stays deactivated/gets deactivated
+				if(!pThis->Deactivated) pThis->Deactivate();
+			}
+		}
 	}
 
 	//return 0x6F9E7C; // using this value instead makes this function override the original game one's entirely - don't activate this unless you handle *everything* originally handled by the game
