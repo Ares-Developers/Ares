@@ -15,6 +15,7 @@ void BulletTypeExt::ExtData::LoadFromINIFile(BulletTypeClass *pThis, CCINIClass*
 {
 	this->SubjectToSolid = pINI->ReadBool(pThis->get_ID(), "SubjectToBuildings", this->SubjectToSolid);
 	this->SubjectToFirewall = pINI->ReadBool(pThis->get_ID(), "SubjectToFirewall", this->SubjectToFirewall);
+	this->SubjectToTrenches = pINI->ReadBool(pThis->get_ID(), "SubjectToTrenches", this->SubjectToTrenches);
 
 	this->_Initialized = is_Completed;
 }
@@ -42,7 +43,7 @@ DEFINE_HOOK(46C6A0, BulletTypeClass_SaveLoad_Prefix, 5)
 DEFINE_HOOK_AGAIN(46C730, BulletTypeClass_SaveLoad_Prefix, 8)
 {
 	GET_STACK(BulletTypeExt::TT*, pItem, 0x4);
-	GET_STACK(IStream*, pStm, 0x8); 
+	GET_STACK(IStream*, pStm, 0x8);
 
 	Container<BulletTypeExt>::SavingObject = pItem;
 	Container<BulletTypeExt>::SavingStream = pStm;

@@ -18,18 +18,22 @@ class BulletTypeExt
 public:
 	typedef BulletTypeClass TT;
 
-	class ExtData : public Extension<TT> 
+	class ExtData : public Extension<TT>
 	{
 	public:
 		// solid
 		bool SubjectToSolid;
-		
+
 		// firewall
 		bool SubjectToFirewall;
 
+		// added on 11.11.09 for #667 (part of Trenches)
+		bool SubjectToTrenches; //! if false, this projectile/weapon *always* passes through to the occupants, regardless of UC.PassThrough
+
 		ExtData(const DWORD Canary = 0, const TT* OwnerObject = NULL) : Extension(Canary, OwnerObject),
 			SubjectToSolid (false),
-			SubjectToFirewall (true)
+			SubjectToFirewall (true),
+			SubjectToTrenches (true)
 			{ };
 
 		virtual ~ExtData() {

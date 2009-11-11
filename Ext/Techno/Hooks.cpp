@@ -52,7 +52,15 @@ DEFINE_HOOK(6F9E76, TechnoClass_Update_CheckOperators, 6)
 
 	// Related to operators/drivers, issue #342
 	BuildingClass * pTheBuildingBelow = pThis->GetCell()->GetBuilding();
-	if(!pTheBuildingBelow) { // Only execute if we're not on a building [GetBuilding() returns BuildingClass * and NULL if there is none at the current cell]
+
+	/* Conditions checked:
+	- Is there no building below us
+	OR
+	- Is this the building on this cell AND is it online
+
+	pTheBuildingBelow will be NULL if no building was found
+	*/
+	if(!pTheBuildingBelow || ((pTheBuildingBelow == pThis) && (pTheBuildingBelow->IsPowerOnline()))) {
 		if(pTypeData->Operator != NULL) {
 			if(pThis->Passengers.NumPassengers) {
 				bool foundAnOperator = false;
@@ -78,38 +86,6 @@ DEFINE_HOOK(6F9E76, TechnoClass_Update_CheckOperators, 6)
 			}
 		} else if(pTypeData->IsAPromiscuousWhoreAndLetsAnyoneRideIt) {
 			if(pThis->Passengers.NumPassengers) {
-				// takes anyone and someone is present, so it stays active/gets reactivated
-				if(pThis->Deactivated) pThis->Reactivate();
-			} else {
-				// takes anyone but no one is present, so it stays deactivated/gets deactivated
-				if(!pThis->Deactivated) pThis->Deactivate();
-			}
-		}
-	} else if(pTheBuildingBelow == pThis) { // if there IS a building below, AND we are that building, repeat the same stuff for Occupants
-		if(pTypeData->Operator != NULL) {
-			if(pThis->Occupants.Count) { //alternatively maybe pThis->GetOccupantCount()?
-				bool foundAnOperator = false;
-
-				for(int i = 0; i < pThis->Occupants.Count; ++i) {
-					if(pThis->Occupants[i]->GetType() == pTypeData->Operator) {
-						foundAnOperator = true;
-						break;
-					}
-				}
-
-				if(foundAnOperator) {
-					// takes a specific operator and someone is present AND that someone is the operator, so it stays active/gets reactivated
-					if(pThis->Deactivated) pThis->Reactivate();
-				} else {
-					// takes a specific operator and someone is present, but it's not the operator, so it stays deactivated/gets deactivated
-					if(!pThis->Deactivated) pThis->Deactivate();
-				}
-			} else {
-				// takes a specific operator but no one is present, so it stays deactivated/gets deactivated
-				if(!pThis->Deactivated) pThis->Deactivate();
-			}
-		} else if(pTypeData->IsAPromiscuousWhoreAndLetsAnyoneRideIt) {
-			if(pThis->Occupants.Count) {
 				// takes anyone and someone is present, so it stays active/gets reactivated
 				if(pThis->Deactivated) pThis->Reactivate();
 			} else {
