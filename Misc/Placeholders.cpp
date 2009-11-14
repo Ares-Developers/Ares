@@ -168,15 +168,6 @@ A_FINE_HOOK(50E1B0, HouseClass_HasPoweredCenters, 6)
 	return 0x50E1BD;
 }
 
-/* #221 - Trenches */
-// building receives damage
-A_FINE_HOOK(44235E, BuildingClass_ReceiveDamage_Trenches, 6)
-{
-	GET(BuildingClass *, Building, ESI);
-	LEA_STACK(args_ReceiveDamage *, Arguments, 0xA0);
-	return 0;
-}
-
 /* #218 - specific occupiers */
 A_FINE_HOOK(457D85, BuildingClass_CanBeOccupied_SpecificOccupiers, 6)
 {

@@ -1,7 +1,6 @@
 #include "Body.h"
 #include "..\TechnoType\Body.h"
 #include "..\House\Body.h"
-#include <vector>
 
 const DWORD Extension<BuildingTypeClass>::Canary = 0x11111111;
 Container<BuildingTypeExt> BuildingTypeExt::ExtMap;
@@ -143,12 +142,11 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 	this->Secret_RecalcOnCapture = pINI->ReadBool(pThis->get_ID(), "SecretLab.GenerateOnCapture", this->Secret_RecalcOnCapture);
 
 	// added on 11.11.09 for #221 and children (Trenches)
-	this->UCPassThrough = pINI->ReadDouble(section, "UC.PassThrough", this->UCPassThrough);
-	this->UCFatalRate = pINI->ReadDouble(section, "UC.FatalRate", this->UCFatalRate);
-	this->UCDamageMultiplier = pINI->ReadDouble(section, "UC.DamageMultiplier", this->UCDamageMultiplier);
-	this->BunkerRaidable = pINI->ReadBool(pThis->get_ID(), "Bunker.Raidable", this->BunkerRaidable);
-	static std::vector<char *> trenchKinds;
-	if(pINI->ReadString(section, "IsTrench", "", buffer, BUFLEN)) {
+	this->UCPassThrough = pINI->ReadDouble(pID, "UC.PassThrough", this->UCPassThrough);
+	this->UCFatalRate = pINI->ReadDouble(pID, "UC.FatalRate", this->UCFatalRate);
+	this->UCDamageMultiplier = pINI->ReadDouble(pID, "UC.DamageMultiplier", this->UCDamageMultiplier);
+	this->BunkerRaidable = pINI->ReadBool(pID, "Bunker.Raidable", this->BunkerRaidable);
+	if(pINI->ReadString(pID, "IsTrench", "", Ares::readBuffer, Ares::readLength)) {
 		/*  If the list of kinds is empty so far, just add this kind as the first one;
 			if there already are kinds in it, compare the current kind against the kinds in the list;
 			if it was found, assign that kind's ID to this type;
@@ -158,10 +156,10 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 			grows so long that the search through all kinds takes up significant time is very low, and
 			vectors are far simpler to use in this situation.
 		*/
-		if(trenchKinds.size()) {
+		if(this->trenchKinds.size()) {
 			signed int foundMatch = -1;
-			for(int i = 0; i < trenchKinds.size(); ++i) {
-				if(strcmp(trenchKinds.at(i), buffer) == 0) { // maybe just trenchKinds.at(i) == buffer here?
+			for(unsigned int i = 0; i < this->trenchKinds.size(); ++i) {
+				if(this->trenchKinds.at(i).compare(Ares::readBuffer) == 0) {
 					foundMatch = i;
 					break;
 				}
@@ -170,20 +168,20 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 			if(foundMatch > -1) {
 				this->IsTrench = foundMatch;
 			} else {
-				this->IsTrench = trenchKinds.size();
-				trenchKinds.push_back(buffer);
+				this->IsTrench = this->trenchKinds.size();
+				this->trenchKinds.push_back(Ares::readBuffer);
 			}
 
 		} else {
 			this->IsTrench = 0;
-			trenchKinds.push_back(buffer);
+			this->trenchKinds.push_back(Ares::readBuffer);
 		}
 	}
-	if(pINI->ReadString(section, "Rubble.Intact", "", buffer, BUFLEN)) {
-		this->RubbleIntact = BuildingTypeClass::Find(buffer);
+	if(pINI->ReadString(pID, "Rubble.Intact", "", Ares::readBuffer, Ares::readLength)) {
+		this->RubbleIntact = BuildingTypeClass::Find(Ares::readBuffer);
 	}
-	if(pINI->ReadString(section, "Rubble.Destroyed", "", buffer, BUFLEN)) {
-		this->RubbleDestroyed = BuildingTypeClass::Find(buffer);
+	if(pINI->ReadString(pID, "Rubble.Destroyed", "", Ares::readBuffer, Ares::readLength)) {
+		this->RubbleDestroyed = BuildingTypeClass::Find(Ares::readBuffer);
 	}
 
 	this->_Initialized = is_Completed;

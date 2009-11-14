@@ -21,7 +21,7 @@ public:
 		Promotable<int> Survivors_PilotChance;
 		Promotable<int> Survivors_PassengerChance;
 		// new on 28.09.09 for #631
-		int Survivors_PilotCount;// NOTE: Flag in INI is called Survivor.Pilots
+		int Survivors_PilotCount; //!< Defines the number of pilots inside this vehicle if Crewed=yes; maximum number of pilots who can survive. Defaults to 0 if Crewed=no; defaults to 1 if Crewed=yes. // NOTE: Flag in INI is called Survivor.Pilots
 
 		// animated cameos
 //		int Cameo_Interval;
@@ -63,8 +63,8 @@ public:
 		Customizable<AnimTypeClass*> Parachute_Anim;
 
 		// new on 08.11.09 for #342 (Operator=)
-		InfantryTypeClass * Operator;
-		bool IsAPromiscuousWhoreAndLetsAnyoneRideIt;
+		InfantryTypeClass * Operator; //!< Saves a pointer to an InfantryType required to be a passenger of this unit in order for it to work. Defaults to NULL. \sa TechnoClass_Update_CheckOperators, bool IsAPromiscuousWhoreAndLetsAnyoneRideIt
+		bool IsAPromiscuousWhoreAndLetsAnyoneRideIt; //!< If this is true, Operator= is not checked, and the object will work with any passenger, provided there is one. \sa InfantryTypeClass * Operator
 
 		ExtData(const DWORD Canary = 0, const TT* OwnerObject = NULL) : Extension(Canary, OwnerObject),
 			Survivors_PilotCount (0),
