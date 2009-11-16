@@ -1,5 +1,5 @@
 #include "Body.h"
-#include "..\..\Misc\SWTypes.h"
+#include "../../Misc/SWTypes.h"
 
 DEFINE_HOOK(6CEF84, SuperWeaponTypeClass_GetCursorOverObject, 7)
 {

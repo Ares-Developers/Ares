@@ -1,4 +1,4 @@
-#include "..\Ares.version.h"
+#include "../Ares.version.h"
 #include "Status.h"
 
 Point2D StatusMessages::TLPoint = { 10, 340 };
@@ -72,14 +72,14 @@ DEFINE_HOOK(687B21, Scenario_Start8, 5)
 
 DEFINE_HOOK(531413, Game_Start, 5)
 {
-	Drawing::DSurface_Hidden->DrawText(L"Ares is active.", 10, 460, COLOR_GREEN);
-	Drawing::DSurface_Hidden->DrawText(L"This is a testing version, NOT a final product.", 20, 480, COLOR_RED);
-	Drawing::DSurface_Hidden->DrawText(L"Bugs are to be expected.", 20, 500, COLOR_RED);
-	Drawing::DSurface_Hidden->DrawText(L"Ares is © pd, DCoder, Electro and Renegade 2007 - 2009.", 10, 520, COLOR_GREEN);
+	DSurface::Hidden->DrawText(L"Ares is active.", 10, 460, COLOR_GREEN);
+	DSurface::Hidden->DrawText(L"This is a testing version, NOT a final product.", 20, 480, COLOR_RED);
+	DSurface::Hidden->DrawText(L"Bugs are to be expected.", 20, 500, COLOR_RED);
+	DSurface::Hidden->DrawText(L"Ares is © pd, DCoder, Electro and Renegade 2007 - 2009.", 10, 520, COLOR_GREEN);
 
 	wchar_t wVersion[256];
 	wsprintfW(wVersion, L"%hs", VERSION_STRVER);
 
-	Drawing::DSurface_Hidden->DrawText(wVersion, 10, 540, COLOR_RED | COLOR_GREEN);
+	DSurface::Hidden->DrawText(wVersion, 10, 540, COLOR_RED | COLOR_GREEN);
 	return 0;
 }

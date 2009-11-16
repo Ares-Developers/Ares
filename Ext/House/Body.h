@@ -1,9 +1,9 @@
 #ifndef HOUSE_EXT_H
 #define HOUSE_EXT_H
 
-#include "..\_Container.hpp"
-#include <Helpers\Macro.h>
-#include <Helpers\Template.h>
+#include "../_Container.hpp"
+#include <Helpers/Macro.h>
+#include <Helpers/Template.h>
 
 #include <FactoryClass.h>
 #include <HouseClass.h>

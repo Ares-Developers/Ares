@@ -6,9 +6,9 @@
 #include <BuildingTypeClass.h>
 #include <PCX.h>
 #include <StringTable.h>
-#include <Helpers\Macro.h>
+#include <Helpers/Macro.h>
 
-#include "..\_Container.hpp"
+#include "../_Container.hpp"
 
 class HouseTypeExt
 {

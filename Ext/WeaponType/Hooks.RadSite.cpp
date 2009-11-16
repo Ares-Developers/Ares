@@ -1,7 +1,7 @@
 #include <ScenarioClass.h>
 
 #include "Body.h"
-#include "..\Techno\Body.h"
+#include "../Techno/Body.h"
 /*
 A_FINE_HOOK(4691D5, RadSite_Create_1, 5)
 {

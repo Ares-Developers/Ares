@@ -1,5 +1,5 @@
 #include "Body.h"
-#include "..\Techno\Body.h"
+#include "../Techno/Body.h"
 
 DEFINE_HOOK(6FD480, TechnoClass_FireEBolt, 6)
 {

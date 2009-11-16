@@ -1,6 +1,6 @@
 #include "Body.h"
-#include "..\HouseType\Body.h"
-#include "..\..\Ares.h"
+#include "../HouseType/Body.h"
+#include "../../Ares.h"
 #include <ScenarioClass.h>
 
 const DWORD Extension<HouseTypeClass>::Canary = 0xAFFEAFFE;

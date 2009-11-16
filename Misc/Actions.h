@@ -1,7 +1,7 @@
 #ifndef ACTIONS_H
 #define ACTIONS_H
 
-#include <Helpers\Macro.h>
+#include <Helpers/Macro.h>
 #include <MouseClass.h>
 
 class Actions

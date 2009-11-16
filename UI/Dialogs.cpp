@@ -34,12 +34,12 @@
 	-pd
 */
 
-#include <Helpers\Macro.h>
+#include <Helpers/Macro.h>
 #include "Dialogs.h"
 #include "registered.h"
-#include "..\Ares.h"
+#include "../Ares.h"
 
-#include "..\Misc\Debug.h"
+#include "../Misc/Debug.h"
 
 const char * Dialogs::StatusString = NULL;
 char Dialogs::ExceptDetailedMessage[0x400] = "";

@@ -1,7 +1,7 @@
 #include "Body.h"
-#include "..\BuildingType\Body.h"
-#include "..\TechnoType\Body.h"
-#include "..\..\Enum\Prerequisites.h"
+#include "../BuildingType/Body.h"
+#include "../TechnoType/Body.h"
+#include "../../Enum/Prerequisites.h"
 
 const DWORD Extension<HouseClass>::Canary = 0x12345678;
 Container<HouseExt> HouseExt::ExtMap;
@@ -156,7 +156,7 @@ void HouseExt::Firestorm_SetState(HouseClass *pHouse, bool Active) {
 
 //	Debug::Log("Collected Affected Coords list:\n");
 //	for(int i = 0; i < AffectedCoords.Count; ++i) {
-//		Debug::Log("\t%dx%d\n", AffectedCoords[i].X, AffectedCoords[i].Y);
+//		Debug::Log("/t%dx%d\n", AffectedCoords[i].X, AffectedCoords[i].Y);
 //	}
 //	Debug::Log("End of list\n");
 

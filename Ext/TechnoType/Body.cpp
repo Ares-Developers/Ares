@@ -1,7 +1,7 @@
 #include "Body.h"
-#include "..\Side\Body.h"
-#include "..\..\Enum\Prerequisites.h"
-#include "..\..\Misc\Debug.h"
+#include "../Side/Body.h"
+#include "../../Enum/Prerequisites.h"
+#include "../../Misc/Debug.h"
 
 #include <AnimTypeClass.h>
 #include <Theater.h>

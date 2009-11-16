@@ -1,5 +1,5 @@
 #include "Body.h"
-#include "..\TechnoType\Body.h"
+#include "../TechnoType/Body.h"
 
 DEFINE_HOOK(70A990, TechnoClass_DrawVeterancy, 5)
 {
@@ -36,7 +36,7 @@ DEFINE_HOOK(70A990, TechnoClass_DrawVeterancy, 5)
 			offset.Y += 4;
 		}
 
-		Drawing::DSurface_Hidden_2->DrawSHP(
+		DSurface::Hidden_2->DrawSHP(
 			FileSystem::THEATER_PAL, iFile, iFrame, &offset, pRect, bf_Alpha | bf_400 | bf_200, 0, -2, 0, 1000, 0, 0, 0, 0, 0);
 	}
 

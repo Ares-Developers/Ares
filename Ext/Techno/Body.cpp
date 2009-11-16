@@ -1,7 +1,7 @@
 #include "Body.h"
-#include "..\TechnoType\Body.h"
+#include "../TechnoType/Body.h"
 
-#include <Helpers\Template.h>
+#include <Helpers/Template.h>
 
 const DWORD Extension<TechnoClass>::Canary = 0x55555555;
 Container<TechnoExt> TechnoExt::ExtMap;

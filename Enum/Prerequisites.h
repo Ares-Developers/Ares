@@ -1,7 +1,7 @@
 #ifndef GEN_PREREQ_H
 #define GEN_PREREQ_H
 
-#include <Helpers\Macro.h>
+#include <Helpers/Macro.h>
 #include <CCINIClass.h>
 #include <HouseClass.h>
 #include <UnitTypeClass.h>
@@ -9,7 +9,7 @@
 #include "_Enumerator.hpp"
 
 #ifdef DEBUGBUILD
-#include "..\Misc\Debug.h"
+#include "../Misc/Debug.h"
 #endif
 
 class HouseClass;

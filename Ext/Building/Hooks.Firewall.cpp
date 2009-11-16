@@ -1,12 +1,12 @@
 #include <AnimClass.h>
 #include <WeaponTypeClass.h>
 
-#include "..\..\Misc\Applicators.h"
+#include "../../Misc/Applicators.h"
 
 #include "Body.h"
-#include "..\BuildingType\Body.h"
-#include "..\House\Body.h"
-#include "..\Techno\Body.h"
+#include "../BuildingType/Body.h"
+#include "../House/Body.h"
+#include "../Techno/Body.h"
 
 DEFINE_HOOK(4FB257, HouseClass_UnitFromFactory_Firewall, 6)
 {

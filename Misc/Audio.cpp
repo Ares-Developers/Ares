@@ -1,7 +1,7 @@
 //Allows WAV files being placed in Mixes
 
 #include <CCFileClass.h>
-#include "..\Ares.h"
+#include "../Ares.h"
 
 //Hook at 0x4064A0
 EXPORT Ares_Audio_AddSample(REGISTERS* R)	//Complete rewrite of VocClass::AddSample

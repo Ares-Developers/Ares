@@ -1,5 +1,5 @@
 #include "Body.h"
-#include "..\Techno\Body.h"
+#include "../Techno/Body.h"
 
 // custom beam styles
 // 6FF5F5, 6

@@ -2,8 +2,8 @@
 #include <BuildingClass.h>
 #include <CellClass.h>
 #include <MapClass.h>
-#include "..\BulletType\Body.h"
-#include "..\BuildingType\Body.h"
+#include "../BulletType/Body.h"
+#include "../BuildingType/Body.h"
 
 // forced solid buildings - implement selection depending on projectile/building settings and heightmaps
 DEFINE_HOOK(4666F7, BulletClass_Update, 6)

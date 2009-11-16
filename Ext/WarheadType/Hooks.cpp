@@ -2,7 +2,7 @@
 #include <IonBlastClass.h>
 #include <WeaponTypeClass.h>
 #include "Body.h"
-#include "..\..\Enum\ArmorTypes.h"
+#include "../../Enum/ArmorTypes.h"
 
 // feature #384: Permanent MindControl Warheads + feature #200: EMP Warheads
 // attach #407 here - set TechnoClass::Flashing.Duration

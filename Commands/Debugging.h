@@ -2,14 +2,14 @@
 #define CMD_DEBUGGING_H
 
 #include "Ares.h"
-#include "..\Misc\Debug.h"
+#include "../Misc/Debug.h"
 
-#include "..\Ext\Techno\Body.h"
-#include "..\Ext\TechnoType\Body.h"
-#include "..\Ext\House\Body.h"
-#include "..\Ext\HouseType\Body.h"
-#include "..\Ext\WeaponType\Body.h"
-#include "..\Ext\WarheadType\Body.h"
+#include "../Ext/Techno/Body.h"
+#include "../Ext/TechnoType/Body.h"
+#include "../Ext/House/Body.h"
+#include "../Ext/HouseType/Body.h"
+#include "../Ext/WeaponType/Body.h"
+#include "../Ext/WarheadType/Body.h"
 
 class DebuggingCommandClass : public CommandClass
 {
@@ -61,7 +61,7 @@ public:
 /*
 		Debug::Log("Total memory consumed: 0x%X bytes\n", MemMap::Total);
 
-		wchar_t msg[0x40] = L"\0";
+		wchar_t msg[0x40] = L"/0";
 		wsprintfW(msg, L"Total memory consumed: 0x%X bytes\n", MemMap::Total);
 		MessageListClass::PrintMessage(msg);
 */

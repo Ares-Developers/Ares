@@ -1,9 +1,9 @@
 #ifndef CMD_TOGGLE_FS_H
 #define CMD_TOGGLE_FS_H
 
-#include "..\Ares.h"
-#include "..\Ext\House\Body.h"
-#include "..\Misc\Debug.h"
+#include "../Ares.h"
+#include "../Ext/House/Body.h"
+#include "../Misc/Debug.h"
 
 class FirestormToggleCommandClass : public CommandClass
 {

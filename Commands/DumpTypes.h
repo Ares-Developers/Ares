@@ -1,8 +1,8 @@
 #ifndef CMD_DUMPTYPES_H
 #define CMD_DUMPTYPES_H
 
-#include "..\Ares.h"
-#include "..\Misc\Debug.h"
+#include "../Ares.h"
+#include "../Misc/Debug.h"
 
 class DumperTypesCommandClass : public CommandClass
 {

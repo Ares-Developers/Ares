@@ -1,7 +1,7 @@
 #include "CSFLoader.h"
 #include <cstdio>
 
-#include "..\Ares.h"
+#include "../Ares.h"
 
 int CSFLoader::CSFCount = 0;
 int CSFLoader::NextValueIndex = 0;

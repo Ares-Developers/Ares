@@ -1,5 +1,5 @@
 #include "Body.h"
-#include "..\..\Misc\SWTypes.h"
+#include "../../Misc/SWTypes.h"
 
 const DWORD Extension<SuperWeaponTypeClass>::Canary = 0x55555555;
 Container<SWTypeExt> SWTypeExt::ExtMap;

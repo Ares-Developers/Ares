@@ -1,7 +1,7 @@
 #ifndef NEW_SW_TYPE_H
 #define NEW_SW_TYPE_H
 
-#include "..\Ext\SWType\Body.h"
+#include "../Ext/SWType/Body.h"
 
 class SWTypeExt;
 

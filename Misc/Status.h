@@ -1,7 +1,7 @@
 #ifndef STATUS_MESSAGES_H
 #define STATUS_MESSAGES_H
 
-#include "..\Ares.h"
+#include "../Ares.h"
 #include <Drawing.h>
 #include <LoadProgressManager.h>
 

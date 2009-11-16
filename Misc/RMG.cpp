@@ -1,5 +1,5 @@
 #include "RMG.h"
-#include "..\UI\registered.h"
+#include "../UI/registered.h"
 
 bool RMG::UrbanAreas = 0;
 bool RMG::UrbanAreasRead = 0;

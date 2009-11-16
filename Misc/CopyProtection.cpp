@@ -1,6 +1,6 @@
 //A whole source file simply for the purpose to dissolve WW's copy protections!
 
-#include "..\Ares.h"
+#include "../Ares.h"
 
 //TODO: Add a function that determines versions of the exes (detects a cracked ra2md.exe etc)?
 

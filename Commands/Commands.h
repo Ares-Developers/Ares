@@ -2,7 +2,7 @@
 #define ARES_COMMANDS_H
 
 #include <YRPP.h>
-#include <Helpers\Macro.h>
+#include <Helpers/Macro.h>
 
 class TestSomethingCommandClass : public CommandClass
 {

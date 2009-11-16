@@ -1,8 +1,8 @@
 #ifndef WEAPONTYPE_EXT_H
 #define WEAPONTYPE_EXT_H
 
-#include <Helpers\Macro.h>
-#include <Helpers\Template.h>
+#include <Helpers/Macro.h>
+#include <Helpers/Template.h>
 #include <BombClass.h>
 #include <BombListClass.h>
 #include <BulletClass.h>
@@ -18,13 +18,13 @@
 #include <ScenarioClass.h>
 #include <MouseClass.h>
 
-#include "..\..\Enum\RadTypes.h"
+#include "../../Enum/RadTypes.h"
 
-#include "..\..\Misc\Debug.h"
+#include "../../Misc/Debug.h"
 
-#include "..\_Container.hpp"
+#include "../_Container.hpp"
 
-#include "..\..\Helpers\Template.h"
+#include "../../Helpers/Template.h"
 
 struct SHPStruct;
 

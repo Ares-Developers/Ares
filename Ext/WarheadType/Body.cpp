@@ -1,8 +1,8 @@
 #include "Body.h"
 #include <WeaponTypeClass.h>
-#include "..\..\Enum\ArmorTypes.h"
+#include "../../Enum/ArmorTypes.h"
 
-#include <Helpers\Template.h>
+#include <Helpers/Template.h>
 
 const DWORD Extension<WarheadTypeClass>::Canary = 0x22222222;
 Container<WarheadTypeExt> WarheadTypeExt::ExtMap;

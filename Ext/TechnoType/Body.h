@@ -1,12 +1,12 @@
 #ifndef TECHNOTYPE_EXT_H
 #define TECHNOTYPE_EXT_H
 
-#include <Helpers\Macro.h>
+#include <Helpers/Macro.h>
 #include <TechnoTypeClass.h>
 
-#include "..\..\Ares.h"
-#include "..\_Container.hpp"
-#include "..\..\Helpers\Template.h"
+#include "../../Ares.h"
+#include "../_Container.hpp"
+#include "../../Helpers/Template.h"
 
 class TechnoTypeExt
 {

@@ -1,5 +1,5 @@
 #include "Body.h"
-#include "..\Techno\Body.h"
+#include "../Techno/Body.h"
 
 DEFINE_HOOK(6FD64A, TechnoClass_FireRadBeam1, 6)
 {

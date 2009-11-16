@@ -2,7 +2,7 @@
 #define SIDES_H
 
 #include <CCINIClass.h>
-#include <Helpers\Macro.h>
+#include <Helpers/Macro.h>
 #include <SideClass.h>
 #include <ColorScheme.h>
 #include <InfantryTypeClass.h>
@@ -10,12 +10,12 @@
 #include <BuildingTypeClass.h>
 #include <UnitTypeClass.h>
 
-#include "..\..\Ares.h"
-#include "..\..\Helpers\Template.h"
+#include "../../Ares.h"
+#include "../../Helpers/Template.h"
 
 class VoxClass;
 
-#include "..\_Container.hpp"
+#include "../_Container.hpp"
 
 class SideExt
 {

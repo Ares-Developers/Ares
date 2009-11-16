@@ -1,7 +1,7 @@
 #include "Body.h"
 //include "Side.h"
-#include "..\..\Enum\Prerequisites.h"
-#include "..\..\Misc\Debug.h"
+#include "../../Enum/Prerequisites.h"
+#include "../../Misc/Debug.h"
 
 // =============================
 // other hooks

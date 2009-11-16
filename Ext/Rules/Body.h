@@ -6,11 +6,11 @@
 #include <RulesClass.h>
 #include <AnimTypeClass.h>
 
-#include "..\_Container.hpp"
-#include "..\..\Helpers\Template.h"
+#include "../_Container.hpp"
+#include "../../Helpers/Template.h"
 
 //ifdef DEBUGBUILD
-#include "..\..\Misc\Debug.h"
+#include "../../Misc/Debug.h"
 //endif
 
 class RulesExt

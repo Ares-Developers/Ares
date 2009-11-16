@@ -3,14 +3,14 @@
 #include <BuildingClass.h>
 #include <CellClass.h>
 
-#include "..\..\Misc\Applicators.h"
+#include "../../Misc/Applicators.h"
 
 #include "Body.h"
-#include "..\BuildingType\Body.h"
-#include "..\Building\Body.h"
-#include "..\House\Body.h"
-#include "..\BulletType\Body.h"
-#include "..\TechnoType\Body.h"
+#include "../BuildingType/Body.h"
+#include "../Building/Body.h"
+#include "../House/Body.h"
+#include "../BulletType/Body.h"
+#include "../TechnoType/Body.h"
 
 DEFINE_HOOK(6FF008, TechnoClass_Fire_FSW, 8)
 DEFINE_HOOK_AGAIN(6FF860, TechnoClass_Fire_FSW, 8)

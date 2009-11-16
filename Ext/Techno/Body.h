@@ -1,7 +1,7 @@
 #ifndef TECHNO_EXT_H
 #define TECHNO_EXT_H
 
-#include <Helpers\Macro.h>
+#include <Helpers/Macro.h>
 #include <hash_map>
 #include <vector>
 #include <algorithm>
@@ -18,10 +18,10 @@
 #include <AlphaShapeClass.h>
 #include <SpotlightClass.h>
 
-#include "..\WarheadType\Body.h"
-#include "..\WeaponType\Body.h"
+#include "../WarheadType/Body.h"
+#include "../WeaponType/Body.h"
 
-#include "..\_Container.hpp"
+#include "../_Container.hpp"
 
 class TechnoExt
 {

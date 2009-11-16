@@ -1,5 +1,5 @@
 #include "Body.h"
-#include "..\TechnoType\Body.h"
+#include "../TechnoType/Body.h"
 #include "MacroHacks.h"
 
 #include <RulesClass.h>
@@ -14,7 +14,7 @@
 #include <UnitClass.h>
 #include <UnitTypeClass.h>
 
-#include "..\..\Misc\Debug.h"
+#include "../../Misc/Debug.h"
 
 #include <vector>
 

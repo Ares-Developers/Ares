@@ -7,8 +7,8 @@
 
 #include <Conversions.h>
 
-#include "..\Ext\WarheadType\Body.h"
-#include "..\Ares.h"
+#include "../Ext/WarheadType/Body.h"
+#include "../Ares.h"
 
 #include "_Enumerator.hpp"
 

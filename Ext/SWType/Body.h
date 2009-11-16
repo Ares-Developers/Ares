@@ -12,11 +12,11 @@
 #include <VocClass.h>
 #include <VoxClass.h>
 
-#include "..\..\Misc\Actions.h"
-#include "..\..\Helpers\Template.h"
+#include "../../Misc/Actions.h"
+#include "../../Helpers/Template.h"
 
 #ifdef DEBUGBUILD
-#include "..\..\Misc\Debug.h"
+#include "../../Misc/Debug.h"
 #endif
 
 // actions for custom sw
@@ -26,7 +26,7 @@
 // the index of the first custom sw type
 #define FIRST_SW_TYPE 12
 
-#include "..\_Container.hpp"
+#include "../_Container.hpp"
 
 class SWTypeExt
 {

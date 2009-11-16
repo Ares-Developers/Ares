@@ -17,10 +17,10 @@
 #include <WarheadTypeClass.h>
 
 #include "Debug.h"
-#include "..\Ares.h"
+#include "../Ares.h"
 
-#include <Helpers\Macro.h>
-#include "..\Helpers\Macro.h"
+#include <Helpers/Macro.h>
+#include "../Helpers/Macro.h"
 
 /* issue 193 - increasing the buffer length for certain flag parsing */
 

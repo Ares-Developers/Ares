@@ -1,9 +1,9 @@
 #include <BombListClass.h>
 
 #include "Body.h"
-#include "..\Techno\Body.h"
+#include "../Techno/Body.h"
 
-#include <Helpers\Template.h>
+#include <Helpers/Template.h>
 
 // 438F8F, 6
 // custom ivan bomb attachment 1

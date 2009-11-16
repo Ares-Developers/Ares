@@ -1,9 +1,9 @@
 #include "Body.h"
-#include "..\Side\Body.h"
-#include "..\HouseType\Body.h"
-#include "..\..\Enum\Prerequisites.h"
-#include "..\..\Enum\ArmorTypes.h"
-#include "..\..\Enum\RadTypes.h"
+#include "../Side/Body.h"
+#include "../HouseType/Body.h"
+#include "../../Enum/Prerequisites.h"
+#include "../../Enum/ArmorTypes.h"
+#include "../../Enum/RadTypes.h"
 
 const DWORD Extension<RulesClass>::Canary = 0x12341234;
 RulesExt::ExtData * RulesExt::Data = NULL;

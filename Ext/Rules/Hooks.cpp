@@ -1,5 +1,5 @@
 #include "Body.h"
-#include "..\..\Ares.h"
+#include "../../Ares.h"
 
 DEFINE_HOOK(668BF0, RulesClass_Addition, 5)
 {

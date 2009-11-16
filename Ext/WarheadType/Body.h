@@ -1,7 +1,7 @@
 #ifndef WARHEADTYPE_EXT_H
 #define WARHEADTYPE_EXT_H
 
-#include <Helpers\Macro.h>
+#include <Helpers/Macro.h>
 #include <AnimClass.h>
 #include <IonBlastClass.h>
 #include <AnimTypeClass.h>
@@ -16,12 +16,12 @@
 
 #include <Conversions.h>
 
-#include "..\_Container.hpp"
+#include "../_Container.hpp"
 
-#include "..\..\Helpers\Template.h"
+#include "../../Helpers/Template.h"
 
 #ifdef DEBUGBUILD
-#include "..\..\Misc\Debug.h"
+#include "../../Misc/Debug.h"
 #endif
 
 //class WarheadTypeExt;

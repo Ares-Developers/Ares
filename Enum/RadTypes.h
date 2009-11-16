@@ -7,10 +7,10 @@
 #include <RulesClass.h>
 
 #include "_Enumerator.hpp"
-#include "..\Helpers\Template.h"
+#include "../Helpers/Template.h"
 
 #ifdef DEBUGBUILD
-#include "..\Misc\Debug.h"
+#include "../Misc/Debug.h"
 #endif
 
 class RadType;

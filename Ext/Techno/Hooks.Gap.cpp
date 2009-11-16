@@ -1,7 +1,7 @@
 #include "Body.h"
-#include "..\TechnoType\Body.h"
+#include "../TechnoType/Body.h"
 
-#include "..\..\Misc\Debug.h"
+#include "../../Misc/Debug.h"
 
 DEFINE_HOOK(6FB191, TechnoClass_CreateGap, 8)
 {

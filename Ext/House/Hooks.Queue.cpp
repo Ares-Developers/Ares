@@ -1,6 +1,6 @@
 #include "Body.h"
-#include "..\TechnoType\Body.h"
-#include "..\..\Ares.h"
+#include "../TechnoType/Body.h"
+#include "../../Ares.h"
 
 // =============================
 // multiqueue hooks

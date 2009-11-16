@@ -16,24 +16,24 @@
 #include <WarheadTypeClass.h>
 
 #include "Debug.h"
-#include "..\Ares.h"
-#include "..\Ext\Rules\Body.h"
-#include "..\Ext\BuildingType\Body.h"
-#include "..\Ext\BulletType\Body.h"
-#include "..\Ext\Techno\Body.h"
-#include "..\Ext\TechnoType\Body.h"
-#include "..\Ext\House\Body.h"
-#include "..\Ext\Side\Body.h"
-#include "..\Ext\HouseType\Body.h"
-#include "..\Ext\WeaponType\Body.h"
-#include "..\Ext\WarheadType\Body.h"
+#include "../Ares.h"
+#include "../Ext/Rules/Body.h"
+#include "../Ext/BuildingType/Body.h"
+#include "../Ext/BulletType/Body.h"
+#include "../Ext/Techno/Body.h"
+#include "../Ext/TechnoType/Body.h"
+#include "../Ext/House/Body.h"
+#include "../Ext/Side/Body.h"
+#include "../Ext/HouseType/Body.h"
+#include "../Ext/WeaponType/Body.h"
+#include "../Ext/WarheadType/Body.h"
 
-#include <Helpers\Macro.h>
-#include <Helpers\Template.h>
+#include <Helpers/Macro.h>
+#include <Helpers/Template.h>
 
 #ifdef DEBUGBUILD
-#include "..\Ext\WarheadType\Body.h"
-#include "..\Enum\ArmorTypes.h"
+#include "../Ext/WarheadType/Body.h"
+#include "../Enum/ArmorTypes.h"
 #endif
 
 // fix for ultra-fast processors overrunning the performance evaluator function
@@ -331,32 +331,31 @@ DEFINE_HOOK(6F7561, Arcing_Aircraft, 5)
 	return 0;
 
 /*
-FINE_HOOK(6F4AB0, TechnoClass_ReceivedRadioCommand, 8)
+DEFINE_HOOK(6F4AB0, TechnoClass_ReceivedRadioCommand, 8)
 {
 	XL('T');
 }
 
-
-FINE_HOOK(4D8FB0, FootClass_ReceivedRadioCommand, 5)
+DEFINE_HOOK(4D8FB0, FootClass_ReceivedRadioCommand, 5)
 {
 	XL('F');
 }
 
-FINE_HOOK(43C2D0, BuildingClass_ReceivedRadioCommand, 5)
+DEFINE_HOOK(43C2D0, BuildingClass_ReceivedRadioCommand, 5)
 {
 	XL('B');
 }
 
-FINE_HOOK(4190B0, AircraftClass_ReceivedRadioCommand, 5)
+DEFINE_HOOK(4190B0, AircraftClass_ReceivedRadioCommand, 5)
 {
 	XL('A');
 }
 
-FINE_HOOK(737430, UnitClass_ReceivedRadioCommand, 5)
+DEFINE_HOOK(737430, UnitClass_ReceivedRadioCommand, 5)
 {
 	XL('U');
 }
-*/
+//*/
 
 DEFINE_HOOK(69AE90, GameData_SetProgress, 5)
 {

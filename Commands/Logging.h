@@ -2,7 +2,7 @@
 #define CMD_LOGGING_H
 
 #include "Ares.h"
-#include "..\Misc\Debug.h"
+#include "../Misc/Debug.h"
 
 class LoggingCommandClass : public CommandClass
 {

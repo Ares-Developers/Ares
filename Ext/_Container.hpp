@@ -6,9 +6,9 @@
 #include <hash_map>
 #include <CCINIClass.h>
 #include <SwizzleManagerClass.h>
-#include <Helpers\Macro.h>
+#include <Helpers/Macro.h>
 
-#include "..\Misc\Debug.h"
+#include "../Misc/Debug.h"
 
 enum eInitState {
 	is_Blank = 0x0, // CTOR'd

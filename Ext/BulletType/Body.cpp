@@ -1,6 +1,6 @@
 #include "Body.h"
-#include "..\TechnoType\Body.h"
-#include "..\House\Body.h"
+#include "../TechnoType/Body.h"
+#include "../House/Body.h"
 
 const DWORD Extension<BulletTypeClass>::Canary = 0xF00DF00D;
 Container<BulletTypeExt> BulletTypeExt::ExtMap;

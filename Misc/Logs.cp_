@@ -16,20 +16,20 @@
 #include <WarheadTypeClass.h>
 
 #include "Debug.h"
-#include "..\Ares.h"
-#include "..\Ext\Rules\Body.h"
-#include "..\Ext\BuildingType\Body.h"
-#include "..\Ext\BulletType\Body.h"
-#include "..\Ext\Techno\Body.h"
-#include "..\Ext\TechnoType\Body.h"
-#include "..\Ext\House\Body.h"
-#include "..\Ext\Side\Body.h"
-#include "..\Ext\HouseType\Body.h"
-#include "..\Ext\WeaponType\Body.h"
-#include "..\Ext\WarheadType\Body.h"
+#include "../Ares.h"
+#include "../Ext/Rules/Body.h"
+#include "../Ext/BuildingType/Body.h"
+#include "../Ext/BulletType/Body.h"
+#include "../Ext/Techno/Body.h"
+#include "../Ext/TechnoType/Body.h"
+#include "../Ext/House/Body.h"
+#include "../Ext/Side/Body.h"
+#include "../Ext/HouseType/Body.h"
+#include "../Ext/WeaponType/Body.h"
+#include "../Ext/WarheadType/Body.h"
 
-#include <Helpers\Macro.h>
-#include <Helpers\Template.h>
+#include <Helpers/Macro.h>
+#include <Helpers/Template.h>
 
 DEFINE_HOOK(45DD0E, BuildingTypeClass_InitFoundationOutlines, 5)
 {
@@ -272,4 +272,18 @@ DEFINE_HOOK(5091A1, HouseClass_Update_Factories_Queues_3, 8)
 		}
 	}
 	return Fact ? 0x5091A9 : 0x5092A3;
+}
+
+DEFINE_HOOK(51EE27, InfantryClass_GetCursorOverObject, 6)
+{
+	GET(int, Response, EAX);
+	Debug::Log("Got %d\n", Response);
+	switch(Response) {
+		case 1:
+			return 0x51EE36; // OK
+		case 10:
+			return 0x51EE2F; // not OK
+		default:
+			return 0x51EE3B; // wait what
+	}
 }

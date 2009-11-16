@@ -3,7 +3,7 @@
 
 #include <hash_map>
 
-#include "..\SWTypes.h"
+#include "../SWTypes.h"
 
 class SW_SonarPulse : NewSWType
 {

@@ -4,12 +4,12 @@
 #include <CCINIClass.h>
 #include <BulletTypeClass.h>
 
-#include <Helpers\Macro.h>
+#include <Helpers/Macro.h>
 
-#include "..\_Container.hpp"
-#include "..\..\Ares.h"
+#include "../_Container.hpp"
+#include "../../Ares.h"
 
-#include "..\..\Misc\Debug.h"
+#include "../../Misc/Debug.h"
 
 #define FOUNDATION_CUSTOM	0x7F
 

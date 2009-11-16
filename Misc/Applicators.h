@@ -1,13 +1,13 @@
 #include <BulletClass.h>
 #include <BuildingClass.h>
 #include <CellClass.h>
-#include <Helpers\Template.h>
+#include <Helpers/Template.h>
 
-#include "..\..\Ext\BuildingType\Body.h"
-#include "..\..\Ext\Building\Body.h"
-#include "..\..\Ext\BulletType\Body.h"
-#include "..\..\Ext\House\Body.h"
-#include "..\..\Ext\TechnoType\Body.h"
+#include "../../Ext/BuildingType/Body.h"
+#include "../../Ext/Building/Body.h"
+#include "../../Ext/BulletType/Body.h"
+#include "../../Ext/House/Body.h"
+#include "../../Ext/TechnoType/Body.h"
 
 class FirestormFinderApplicator : public CellSequenceApplicator {
 	protected:

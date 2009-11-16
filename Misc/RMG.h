@@ -3,7 +3,7 @@
 
 #include <StringTable.h>
 #include <CCINIClass.h>
-#include <Helpers\Macro.h>
+#include <Helpers/Macro.h>
 #include "Debug.h"
 
 class RMG {
