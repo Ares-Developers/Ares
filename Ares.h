@@ -3,9 +3,11 @@
 
 #include <hash_map>
 //include <YRPP.h>
-#include <Helpers\Macro.h>
+#include <Helpers/Macro.h>
 
-#include "Misc\Debug.h"
+#include <CCINIClass.h>
+
+#include "Misc/Debug.h"
 
 #include <AircraftTypeClass.h>
 #include <CellClass.h>
@@ -14,6 +16,15 @@
 #include <UnitTypeClass.h>
 
 #include "Ares.version.h"
+
+#define GFX_DX_HW 0x01l
+#define GFX_DX_EM 0x02l
+
+#define GFX_SU_VRAM 0x00l
+#define GFX_SU_SYSTEM 0x01l
+
+#define GFX_SU_NF3D 0x00l
+#define GFX_SU_F3D 0x01l
 
 class Ares
 {
@@ -57,6 +68,14 @@ public:
 	private:
 		GlobalControls() {};
 	public:
+		static CCINIClass * INI;
+
+		static void OpenConfig();
+		static void CloseConfig();
+		static void LoadConfig();
+
+		static void Load(CCINIClass *pINI);
+
 		static bool Initialized;
 		static bool AllowParallelAIQueues;
 
@@ -75,9 +94,9 @@ public:
 		static SurfaceConfig GFX_S_Primary;
 		static SurfaceConfig GFX_S_Sidebar;
 		static SurfaceConfig GFX_S_Tile;
-
-		static void Load(CCINIClass *pINI);
 	};
+
+	static bool RunningOnWindows7OrVista();
 
 };
 

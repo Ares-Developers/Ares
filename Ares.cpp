@@ -1,5 +1,5 @@
 #include "Ares.h"
-#include "Commands\Commands.h"
+#include "Commands/Commands.h"
 #include <CommandClass.h>
 //include "CallCenter.h"
 #include <StaticInits.cpp>
@@ -7,20 +7,20 @@
 
 #include <new>
 
-#include "Ext\Building\Body.h"
-#include "Ext\BuildingType\Body.h"
-//include "Ext\Bullet\Body.h"
-#include "Ext\BulletType\Body.h"
-#include "Ext\House\Body.h"
-#include "Ext\HouseType\Body.h"
-#include "Ext\Side\Body.h"
-#include "Ext\SWType\Body.h"
-#include "Ext\Techno\Body.h"
-#include "Ext\TechnoType\Body.h"
-#include "Ext\WarheadType\Body.h"
-#include "Ext\WeaponType\Body.h"
+#include "Ext/Building/Body.h"
+#include "Ext/BuildingType/Body.h"
+//include "Ext/Bullet/Body.h"
+#include "Ext/BulletType/Body.h"
+#include "Ext/House/Body.h"
+#include "Ext/HouseType/Body.h"
+#include "Ext/Side/Body.h"
+#include "Ext/SWType/Body.h"
+#include "Ext/Techno/Body.h"
+#include "Ext/TechnoType/Body.h"
+#include "Ext/WarheadType/Body.h"
+#include "Ext/WeaponType/Body.h"
 
-#include "Misc\Debug.h"
+#include "Misc/Debug.h"
 
 //Init Statics
 HANDLE  Ares::hInstance = 0;
@@ -127,10 +127,13 @@ void __stdcall Ares::ExeRun()
 	Debug::LogFileOpen();
 
 	Unsorted::Savegame_Magic = SAVEGAME_MAGIC;
+	Game::bVideoBackBuffer = false;
+	Game::bAllowVRAMSidebar = false;
 }
 
 void __stdcall Ares::ExeTerminate()
 {
+	GlobalControls::CloseConfig();
 	Debug::Log("XTACH\n");
 	Debug::LogFileClose();
 }
@@ -384,3 +387,18 @@ A_FINE_HOOK(7C8B3D, operator_delete, 9)
 }
 */
 
+bool Ares::RunningOnWindows7OrVista() {
+	static bool W7 = false;
+	static bool Checked = false;
+	if(!Checked) {
+		Checked = true;
+		OSVERSIONINFO osvi;
+
+		ZeroMemory(&osvi, sizeof(OSVERSIONINFO));
+		osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+		GetVersionEx(&osvi);
+
+		W7 = (osvi.dwMajorVersion == 6)/* && (osvi.dwMinorVersion >= 1)*/;
+	}
+	return W7;
+}
