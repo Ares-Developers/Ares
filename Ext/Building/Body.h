@@ -4,13 +4,13 @@
 #include <CCINIClass.h>
 #include <BuildingClass.h>
 
-#include <Helpers\Macro.h>
+#include <Helpers/Macro.h>
 
-#include "..\_Container.hpp"
-#include "..\..\Ares.h"
+#include "../_Container.hpp"
+#include "../../Ares.h"
 
 #ifdef DEBUGBUILD
-#include "..\..\Misc\Debug.h"
+#include "../../Misc/Debug.h"
 #endif
 
 class BuildingExt
@@ -35,6 +35,8 @@ public:
 	static DWORD GetFirewallFlags(BuildingClass *pThis);
 
 	static void ExtendFirewall(BuildingClass *pThis, CellStruct Center, HouseClass *Owner);
+
+	static void UpdateDisplayTo(BuildingClass *pThis);
 
 };
 

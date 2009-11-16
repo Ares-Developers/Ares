@@ -1,5 +1,5 @@
 #include "Body.h"
-#include "..\BuildingType\Body.h"
+#include "../BuildingType/Body.h"
 #include <BuildingClass.h>
 #include <CellClass.h>
 #include <MapClass.h>
@@ -81,4 +81,18 @@ DWORD BuildingExt::GetFirewallFlags(BuildingClass *pThis) {
 		}
 	}
 	return flags;
+}
+
+void BuildingExt::UpdateDisplayTo(BuildingClass *pThis) {
+	if(pThis->Type->Radar) {
+		HouseClass *H = pThis->Owner;
+		H->RadarVisibleTo.Clear();
+		for(int i = 0; i < H->Buildings.Count; ++i) {
+			BuildingClass *currentB = H->Buildings.GetItem(i);
+			if(!currentB->InLimbo && currentB->Type->Radar) {
+				H->RadarVisibleTo.data |= currentB->DisplayProductionTo.data;
+			}
+		}
+		MapClass::Instance->sub_4F42F0(2);
+	}
 }

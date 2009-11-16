@@ -36,29 +36,87 @@ DEFINE_HOOK(43E832, BuildingClass_DrawVisible_P2, 6)
 }
 
 // fix palette for spied factory production cameo drawing
-DEFINE_HOOK(43E8D9, BuildingClass_DrawVisible_P3, 6)
+DEFINE_HOOK(43E8D1, BuildingClass_DrawVisible_P3, 8)
 {
-	R->set_EDX((DWORD)FileSystem::CAMEO_PAL);
+	GET(TechnoTypeClass *, Type, EAX);
+	R->SetEx_EAX<SHPStruct *>(Type->Cameo);
+	R->SetEx_EDX<ConvertClass *>(FileSystem::CAMEO_PAL);
 	return 0x43E8DF;
 }
 
 // if this is a radar, change the owner's house bitfields responsible for radar reveals
 DEFINE_HOOK(44161C, BuildingClass_Destroy_OldSpy1, 6)
 {
+	GET(BuildingClass *, B, ESI);
+	B->DisplayProductionTo.Clear();
+	BuildingExt::UpdateDisplayTo(B);
 	return 0x4416A2;
 }
 
 // if this is a radar, change the owner's house bitfields responsible for radar reveals
 DEFINE_HOOK(448312, BuildingClass_ChangeOwnership_OldSpy1, a)
 {
+	GET(HouseClass *, newOwner, EBX);
+	GET(BuildingClass *, B, ESI);
+	
+	if(B->DisplayProductionTo.Contains(newOwner)) {
+		B->DisplayProductionTo.Remove(newOwner);
+		BuildingExt::UpdateDisplayTo(B);
+	}
 	return 0x4483A0;
 }
 
 // if this is a radar, drop the new owner from the bitfield
 DEFINE_HOOK(448D95, BuildingClass_ChangeOwnership_OldSpy2, 8)
 {
+	GET(HouseClass *, newOwner, EDI);
+	GET(BuildingClass *, B, ESI);
+
+	if(B->DisplayProductionTo.Contains(newOwner)) {
+		B->DisplayProductionTo.Remove(newOwner);
+	}
+
 	return 0x448DB9;
 }
+
+DEFINE_HOOK(44F7A0, BuildingClass_UpdateDisplayTo, 0)
+{
+	GET(BuildingClass *, B, ECX);
+	BuildingExt::UpdateDisplayTo(B);
+	return 0x44F813;
+}
+
+DEFINE_HOOK(509303, HouseClass_AllyWith_unused, 0)
+{
+	GET(HouseClass *, pThis, ESI);
+	GET(HouseClass *, pThat, EAX);
+	
+	pThis->RadarVisibleTo.Add(pThat);
+	return 0x509319;
+}
+
+DEFINE_HOOK(56757F, MapClass_RevealArea0_DisplayTo, 0)
+{
+	GET(HouseClass *, pThis, ESI);
+	GET(HouseClass *, pThat, EAX);
+	
+	return pThis->RadarVisibleTo.Contains(pThat)
+	 ? 0x567597
+	 : 0x56759D
+	;
+}
+
+DEFINE_HOOK(567AC1, MapClass_RevealArea1_DisplayTo, 0)
+{
+	GET(HouseClass *, pThis, EBX);
+	GET(HouseClass *, pThat, EAX);
+	
+	return pThis->RadarVisibleTo.Contains(pThat)
+	 ? 0x567AD9
+	 : 0x567ADF
+	;
+}
+
 
 /* #221 - Trenches, subissue #663: Forward damage to occupants in UC buildings and Battle Bunkers  */
 // building receives damage

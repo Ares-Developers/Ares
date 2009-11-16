@@ -1,12 +1,14 @@
 #include "Body.h"
-#include "..\TechnoType\Body.h"
-#include "..\House\Body.h"
+#include "../TechnoType/Body.h"
+#include "../House/Body.h"
 
 const DWORD Extension<BuildingTypeClass>::Canary = 0x11111111;
 Container<BuildingTypeExt> BuildingTypeExt::ExtMap;
 
 BuildingTypeExt::TT *Container<BuildingTypeExt>::SavingObject = NULL;
 IStream *Container<BuildingTypeExt>::SavingStream = NULL;
+
+std::vector<std::string> BuildingTypeExt::ExtData::trenchKinds;
 
 // =============================
 // member funcs
@@ -37,6 +39,11 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 {
 	char* pArtID = pThis->get_ImageFile();
 	char* pID = pThis->get_ID();
+
+	if(pThis->UnitRepair && pThis->Factory == abs_AircraftType) {
+		_snprintf(Ares::readBuffer, Ares::readLength, "BuildingType [%s] has both UnitRepair=yes and Factory=AircraftType.\nThis combination causes Internal Errors and other unwanted behaviour.", pID);
+		Debug::FatalError(Ares::readBuffer);
+	}
 
 	this->Firewall_Is = pINI->ReadBool(pID, "Firestorm.Wall", this->Firewall_Is);
 
@@ -156,10 +163,10 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 			grows so long that the search through all kinds takes up significant time is very low, and
 			vectors are far simpler to use in this situation.
 		*/
-		if(this->trenchKinds.size()) {
+		if(trenchKinds.size()) {
 			signed int foundMatch = -1;
-			for(unsigned int i = 0; i < this->trenchKinds.size(); ++i) {
-				if(this->trenchKinds.at(i).compare(Ares::readBuffer) == 0) {
+			for(unsigned int i = 0; i < trenchKinds.size(); ++i) {
+				if(trenchKinds.at(i).compare(Ares::readBuffer) == 0) {
 					foundMatch = i;
 					break;
 				}
@@ -168,13 +175,13 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 			if(foundMatch > -1) {
 				this->IsTrench = foundMatch;
 			} else {
-				this->IsTrench = this->trenchKinds.size();
-				this->trenchKinds.push_back(Ares::readBuffer);
+				this->IsTrench = trenchKinds.size();
+				trenchKinds.push_back(Ares::readBuffer);
 			}
 
 		} else {
 			this->IsTrench = 0;
-			this->trenchKinds.push_back(Ares::readBuffer);
+			trenchKinds.push_back(Ares::readBuffer);
 		}
 	}
 	if(pINI->ReadString(pID, "Rubble.Intact", "", Ares::readBuffer, Ares::readLength)) {

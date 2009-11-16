@@ -5,11 +5,11 @@
 
 #include <stdio.h>
 #include <YRPPCore.h>
-#include <Helpers\Macro.h>
+#include <Helpers/Macro.h>
 #include <Windows.h>
 #include <Dbghelp.h>
 
-#include "UI\Dialogs.h"
+#include "UI/Dialogs.h"
 
 class Debug
 {
