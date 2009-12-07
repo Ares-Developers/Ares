@@ -281,7 +281,7 @@ DEFINE_HOOK(6FCD1D, TechnoClass_GetObjectActivityState_CanTargetFirewall, 5)
 
 	if(FireFinder.found) {
 		Src->ShouldLoseTargetNow = 1;
-		TechnoExt::FiringStateCache = fs_CantAffect;
+		TechnoExt::FiringStateCache = FireError::ILLEGAL;
 	} else {
 		TechnoExt::FiringStateCache = -1;
 	}

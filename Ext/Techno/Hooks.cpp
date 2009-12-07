@@ -113,7 +113,7 @@ DEFINE_HOOK(415CA6, AircraftClass_Paradrop, 6)
 	XYZ->X = SrcXYZ.X & ~0x80;
 	XYZ->Y = SrcXYZ.Y & ~0x80;
 	XYZ->Z = SrcXYZ.Z - 1;
-	R->set_ECX((DWORD)XYZ);
+	R->SetEx_ECX<CoordStruct *>(XYZ);
 	return 0x415DE3;
 }
 
@@ -188,7 +188,7 @@ DEFINE_HOOK(71A860, TemporalClass_UpdateA, 6)
 	TechnoClass *T = Temp->Owner;
 	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(T);
 	WeaponStruct *W = T->GetWeapon(pData->idxSlot_Warp);
-	R->set_EAX((DWORD)W);
+	R->SetEx_EAX<WeaponStruct *>(W);
 	return 0x71A876;
 }
 
@@ -199,7 +199,7 @@ DEFINE_HOOK(71AB30, TemporalClass_GetHelperDamage, 5)
 	TechnoClass *T = Temp->Owner;
 	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(T);
 	WeaponStruct *W = T->GetWeapon(pData->idxSlot_Warp);
-	R->set_EAX((DWORD)W);
+	R->SetEx_EAX<WeaponStruct *>(W);
 	return 0x71AB47;
 }
 
@@ -209,7 +209,7 @@ DEFINE_HOOK(62A020, ParasiteClass_Update, A)
 	GET(TechnoClass *, T, ECX);
 	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(T);
 	WeaponStruct *W = T->GetWeapon(pData->idxSlot_Parasite);
-	R->set_EAX((DWORD)W);
+	R->SetEx_EAX<WeaponStruct *>(W);
 	return 0x62A02A;
 }
 
@@ -218,7 +218,7 @@ DEFINE_HOOK(62A7B1, Parasite_ExitUnit, 9)
 	GET(TechnoClass *, T, ECX);
 	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(T);
 	WeaponStruct *W = T->GetWeapon(pData->idxSlot_Parasite);
-	R->set_EAX((DWORD)W);
+	R->SetEx_EAX<WeaponStruct *>(W);
 	return 0x62A7BA;
 }
 
@@ -227,7 +227,7 @@ DEFINE_HOOK(629804, ParasiteClass_UpdateSquiddy, 9)
 	GET(TechnoClass *, T, ECX);
 	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(T);
 	WeaponStruct *W = T->GetWeapon(pData->idxSlot_Parasite);
-	R->set_EAX((DWORD)W);
+	R->SetEx_EAX<WeaponStruct *>(W);
 	return 0x62980D;
 }
 
@@ -413,7 +413,7 @@ DEFINE_HOOK(5F5ADD, Parachute_Animation, 6)
 	if(pTypeData->Is_Bomb) {
 		T->IsABomb = 1;
 	}
-	R->set_EDX((DWORD)pTypeData->Parachute_Anim.Get());
+	R->SetEx_EDX<AnimTypeClass *>(pTypeData->Parachute_Anim);
 	return 0x5F5AE3;
 }
 

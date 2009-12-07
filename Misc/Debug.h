@@ -14,8 +14,16 @@
 class Debug
 {
 public:
+	enum Severity {
+		Notice = 0x1,
+		Warning = 0x2,
+		Error = 0x3
+	};
+	static const char * SeverityString(Debug::Severity severity);
+
 	static bool bLog;
 	static FILE* pLogFile;
+//	static FILE* pDevLogFile;
 	static wchar_t LogFileName[MAX_PATH];
 	static wchar_t LogFileTempName[MAX_PATH];
 
@@ -34,6 +42,8 @@ public:
 	static void FreeMouse();
 	static void FatalError(const char *Message, bool Exit = 1);
 	static int __stdcall FatalDialog_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
+	static void DevLog(Debug::Severity severity, const char* Format, ...);
 };
 
 #endif

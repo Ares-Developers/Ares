@@ -11,6 +11,28 @@ wchar_t Debug::LogFileTempName[MAX_PATH] = L"\0";
 void (_cdecl* Debug::Log)(const char* pFormat, ...) =
 	(void (__cdecl *)(const char *,...))0x4068E0;
 
+void Debug::DevLog(Debug::Severity severity, const char* Format, ...) {
+	va_list args;
+	fprintf(pLogFile, "[Developer %s]", Debug::SeverityString(severity));
+	va_start(args, Format);
+	vfprintf(pLogFile, Format, args);
+	va_end(args);
+//	fprintf(pLogFile, "\n");
+}
+
+const char * Debug::SeverityString(Debug::Severity severity) {
+	switch(severity) {
+		case Notice:
+			return "notice";
+		case Warning:
+			return "warning";
+		case Error:
+			return "error";
+		default:
+			return "wtf";
+	}
+}
+
 void Debug::LogFileOpen()
 {
 	LogFileClose();

@@ -1,7 +1,7 @@
 #include <BulletClass.h>
 #include <BuildingClass.h>
 #include <CellClass.h>
-#include <Helpers/Template.h>
+#include <Helpers/Other.h>
 
 #include "../../Ext/BuildingType/Body.h"
 #include "../../Ext/Building/Body.h"

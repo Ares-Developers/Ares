@@ -111,6 +111,10 @@ public:
 
 		virtual void LoadFromINIFile(TT *pThis, CCINIClass *pINI);
 		virtual void Initialize(TT* pThis);
+
+		bool IsWave(WeaponTypeClass *pThis) {
+			return pThis->IsSonic || pThis->IsMagBeam || this->Wave_IsLaser || this->Wave_IsBigLaser;
+		}
 	};
 
 /*

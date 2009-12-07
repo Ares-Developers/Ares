@@ -9,7 +9,7 @@ Container<TechnoExt> TechnoExt::ExtMap;
 TechnoExt::TT *Container<TechnoExt>::SavingObject = NULL;
 IStream *Container<TechnoExt>::SavingStream = NULL;
 
-eFiringState TechnoExt::FiringStateCache = -1;
+FireError TechnoExt::FiringStateCache = -1;
 
 bool TechnoExt::NeedsRegap = false;
 

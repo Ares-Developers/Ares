@@ -38,6 +38,8 @@ void WeaponTypeExt::ExtData::LoadFromINIFile(WeaponTypeExt::TT *pThis, CCINIClas
 		this->Wave_Color.Set(ColorStruct(0xB0, 0, 0xD0)); // rp2 values
 	} else if(pThis->IsSonic) {
 		this->Wave_Color.Set(ColorStruct(255, 255, 255)); // dunno the actual default
+	} else {
+		this->Wave_Color.Set(ColorStruct(255, 255, 255)); // placeholder
 	}
 
 	if(pThis->Damage == 0 && this->Weapon_Loaded) {
@@ -64,7 +66,7 @@ void WeaponTypeExt::ExtData::LoadFromINIFile(WeaponTypeExt::TT *pThis, CCINIClas
 	this->Wave_IsBigLaser   = pINI->ReadBool(section, "Wave.IsBigLaser", this->Wave_IsBigLaser);
 	this->Wave_IsHouseColor = pINI->ReadBool(section, "Wave.IsHouseColor", this->Wave_IsHouseColor);
 
-	if(!this->Wave_IsHouseColor) {
+	if(this->IsWave(pThis) && !this->Wave_IsHouseColor) {
 		this->Wave_Color.Read(&exINI, section, "Wave.Color");
 	}
 

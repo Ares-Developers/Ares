@@ -86,9 +86,13 @@ DEFINE_HOOK(760F50, WaveClass_Update, 6)
 
 	if(Weap->AmbientDamage) {
 		CoordStruct coords;
+//		Debug::Log("Damaging Cells for weapon %X (Intensity = %d)\n", pData, pThis->WaveIntensity);
 		for(int i = 0; i < pThis->get_Cells()->Count; ++i) {
-			pThis->DamageArea(pThis->get_Cells()->GetItem(i)->Get3DCoords3(&coords));
+			CellClass *Cell = pThis->get_Cells()->GetItem(i);
+//			Debug::Log("\t(%hd,%hd)\n", Cell->MapCoords.X, Cell->MapCoords.Y);
+			pThis->DamageArea(Cell->Get3DCoords3(&coords));
 		}
+//		Debug::Log("Done damaging %X\n", pData);
 	}
 
 	switch(pThis->Type) {
@@ -237,8 +241,8 @@ DEFINE_HOOK(762C5C, WaveClass_Update_Wave, 6)
 	WeaponTypeExt::ExtData *pData = WeaponTypeExt::WaveExt[Wave];
 	int weaponIdx = TechnoExt::ExtMap.Find(Firer)->idxSlot_Wave;
 
-	CoordStruct xyzSrc, xyzTgt;
-	Firer->GetFLH(&xyzSrc, weaponIdx, 0, 0, 0);
+	CoordStruct xyzSrc, xyzTgt, xyzDummy = {0, 0, 0};
+	Firer->GetFLH(&xyzSrc, weaponIdx, xyzDummy);
 	Target->GetCoords__(&xyzTgt); // not GetCoords() ! 
 
 	char idx = WeaponTypeExt:: AbsIDtoIdx(Target->WhatAmI());

@@ -1,5 +1,5 @@
-#ifndef BulletType_EXT_H
-#define BulletType_EXT_H
+#ifndef BULLETTYPE_EXT_H
+#define BULLETTYPE_EXT_H
 
 #include <CCINIClass.h>
 #include <BulletTypeClass.h>
@@ -27,12 +27,15 @@ public:
 		// firewall
 		bool SubjectToFirewall;
 
+		bool Parachuted;
+
 		// added on 11.11.09 for #667 (part of Trenches)
 		bool SubjectToTrenches; //! if false, this projectile/weapon *always* passes through to the occupants, regardless of UC.PassThrough
 
 		ExtData(const DWORD Canary = 0, const TT* OwnerObject = NULL) : Extension(Canary, OwnerObject),
 			SubjectToSolid (false),
 			SubjectToFirewall (true),
+			Parachuted (false),
 			SubjectToTrenches (true)
 			{ };
 

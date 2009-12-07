@@ -287,3 +287,27 @@ DEFINE_HOOK(51EE27, InfantryClass_GetCursorOverObject, 6)
 			return 0x51EE3B; // wait what
 	}
 }
+
+DEFINE_HOOK(489A01, DamageArea_Each, 6)
+{
+	GET(TechnoClass *, T, ESI);
+	GET(int, Distance, EDI);
+	GET_STACK(int, Cutoff, 0x68);
+
+	Debug::Log("About to deal damage to %s, which is %d leptons away from blast point (cutoff distance is %d)\n", T->get_ID(), Distance, Cutoff);
+
+	return 0;
+}
+
+DEFINE_HOOK(489ABC, DamageArea_Affected, 5)
+{
+	Debug::Log("\tDealt damage\n");
+	return 0;
+}
+
+DEFINE_HOOK(414BB9, AircraftClass_Update, 6)
+{
+	GET(AircraftClass *, A, ESI);
+	Debug::Log("Aircraft %s in mission %d, status %d, distance from target %d\n", A->get_ID(), A->CurrentMission, A->MissionStatus, A->DistanceFrom(A->Target));
+	return 0;
+}

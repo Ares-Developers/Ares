@@ -15,6 +15,8 @@ void BulletTypeExt::ExtData::LoadFromINIFile(BulletTypeClass *pThis, CCINIClass*
 {
 	this->SubjectToSolid = pINI->ReadBool(pThis->get_ID(), "SubjectToBuildings", this->SubjectToSolid);
 	this->SubjectToFirewall = pINI->ReadBool(pThis->get_ID(), "SubjectToFirewall", this->SubjectToFirewall);
+	this->Parachuted = pINI->ReadBool(pThis->get_ID(), "Parachuted", this->Parachuted);
+
 	this->SubjectToTrenches = pINI->ReadBool(pThis->get_ID(), "SubjectToTrenches", this->SubjectToTrenches);
 
 	this->_Initialized = is_Completed;

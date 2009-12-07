@@ -32,11 +32,13 @@ public:
 	//Global Options
 	static HANDLE	hInstance;
 
-	static bool		bNoLogo;
-	static bool		bNoCD;
+	static bool bNoLogo;
+	static bool bNoCD;
 
-	static bool		bLog;
-	static FILE*	pLogFile;
+	static bool bTestingRun;
+
+	static bool bLog;
+	static FILE* pLogFile;
 
 	static int TrackIndex;
 

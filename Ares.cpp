@@ -23,9 +23,10 @@
 #include "Misc/Debug.h"
 
 //Init Statics
-HANDLE  Ares::hInstance = 0;
-bool	Ares::bNoLogo = false;
-bool	Ares::bNoCD = false;
+HANDLE Ares::hInstance = 0;
+bool Ares::bNoLogo = false;
+bool Ares::bNoCD = false;
+bool Ares::bTestingRun = false;
 
 DWORD Ares::readLength = BUFLEN;
 char Ares::readBuffer[BUFLEN];
@@ -97,16 +98,15 @@ void __stdcall Ares::CmdLineParse(char** ppArgs,int nNumArgs)
 		for(int i = 1; i < nNumArgs; i++) {
 			pArg = ppArgs[i];
 			_strupr(pArg);
-			if(_strcmpi(pArg,"-LOG") == 0) {
+
+			if(strcmp(pArg,"-LOG") == 0) {
 				Debug::bLog = true;
-			}
-
-			if(_strcmpi(pArg,"-CD") == 0) {
+			} else if(strcmp(pArg,"-CD") == 0) {
 				bNoCD = true;
-			}
-
-			if(_strcmpi(pArg,"-NOLOGO") == 0) {
+			} else if(strcmp(pArg,"-NOLOGO") == 0) {
 				bNoLogo = true;
+			} else if(strcmp(pArg, "-TESTRUN") == 0) {
+				bTestingRun = true;
 			}
 		}
 	}
