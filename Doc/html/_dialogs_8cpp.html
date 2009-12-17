@@ -9,6 +9,7 @@
   <div class="tabs">
     <ul>
       <li><a href="index.html"><span>Main&nbsp;Page</span></a></li>
+      <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li><a href="dirs.html"><span>Directories</span></a></li>
@@ -34,148 +35,29 @@
   </div>
 </div>
 <div class="contents">
-<h1>Dialogs.cpp File Reference</h1><code>#include &lt;Helpers\Macro.h&gt;</code><br>
+<h1>Dialogs.cpp File Reference</h1><code>#include &lt;<a class="el" href="_macro_8h.html">Helpers/Macro.h</a>&gt;</code><br>
 <code>#include &quot;<a class="el" href="_dialogs_8h.html">Dialogs.h</a>&quot;</code><br>
 <code>#include &quot;<a class="el" href="registered_8h.html">registered.h</a>&quot;</code><br>
-<code>#include &quot;..\Ares.h&quot;</code><br>
-<code>#include &quot;..\Misc\Debug.h&quot;</code><br>
+<code>#include &quot;<a class="el" href="_ares_8h.html">../Ares.h</a>&quot;</code><br>
+<code>#include &quot;<a class="el" href="_debug_8h.html">../Misc/Debug.h</a>&quot;</code><br>
 <table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="_dialogs_8cpp.html#d91ac01a1f35f719dbd8e1e17fd590ed">DEFINE_HOOK</a> (4A3B4B, FetchResource, 9)</td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="_dialogs_8cpp.html#8c314bf14ce4523accd825de81dbf329">DEFINE_HOOK</a> (60411B, Game_DialogFunc_Subtext_Load, 5)</td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="_dialogs_8cpp.html#c7f33cfcb37219b7bb372c3ce2146a1d">DEFINE_HOOK</a> (604136, Game_DialogFunc_Subtext_Propagate, 5)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="_dialogs_8cpp.html#1148c2a617c674fc72205bbc16030717">__declspec</a> (dllexport) DWORD _cdecl FetchResource(REGISTERS *R)</td></tr>
 
 </table>
 <hr><h2>Function Documentation</h2>
-<a class="anchor" name="c7f33cfcb37219b7bb372c3ce2146a1d"></a><!-- doxytag: member="Dialogs.cpp::DEFINE_HOOK" ref="c7f33cfcb37219b7bb372c3ce2146a1d" args="(604136, Game_DialogFunc_Subtext_Propagate, 5)" -->
+<a class="anchor" name="1148c2a617c674fc72205bbc16030717"></a><!-- doxytag: member="Dialogs.cpp::__declspec" ref="1148c2a617c674fc72205bbc16030717" args="(dllexport) DWORD _cdecl FetchResource(REGISTERS *R)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">DEFINE_HOOK           </td>
+          <td class="memname">__declspec           </td>
           <td>(</td>
-          <td class="paramtype">604136&nbsp;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramtype">dllexport&nbsp;</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
           <td></td>
-          <td class="paramtype">Game_DialogFunc_Subtext_Propagate&nbsp;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">5&nbsp;</td>
-          <td class="paramname"></td><td>&nbsp;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-<div class="fragment"><pre class="fragment"><a name="l00096"></a>00096 {
-<a name="l00097"></a>00097         <span class="keywordflow">if</span>(<a class="code" href="class_dialogs.html#245c685d75fb3932b47e59c3d79a8fff">Dialogs::StatusString</a>) {
-<a name="l00098"></a>00098                 R-&gt;set_EAX((DWORD)<a class="code" href="class_dialogs.html#245c685d75fb3932b47e59c3d79a8fff">Dialogs::StatusString</a>);
-<a name="l00099"></a>00099                 <span class="keywordflow">return</span> 0x60413B;
-<a name="l00100"></a>00100         }
-<a name="l00101"></a>00101         <span class="keywordflow">return</span> 0;
-<a name="l00102"></a>00102 }
-</pre></div>
-<p>
-
-</div>
-</div><p>
-<a class="anchor" name="8c314bf14ce4523accd825de81dbf329"></a><!-- doxytag: member="Dialogs.cpp::DEFINE_HOOK" ref="8c314bf14ce4523accd825de81dbf329" args="(60411B, Game_DialogFunc_Subtext_Load, 5)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">DEFINE_HOOK           </td>
-          <td>(</td>
-          <td class="paramtype">60411B&nbsp;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">Game_DialogFunc_Subtext_Load&nbsp;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">5&nbsp;</td>
-          <td class="paramname"></td><td>&nbsp;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-<div class="fragment"><pre class="fragment"><a name="l00074"></a>00074 {
-<a name="l00075"></a>00075         GET(<span class="keywordtype">int</span>, DlgItemID, EAX);
-<a name="l00076"></a>00076 
-<a name="l00077"></a>00077         <a class="code" href="class_dialogs.html#245c685d75fb3932b47e59c3d79a8fff">Dialogs::StatusString</a> = NULL;
-<a name="l00078"></a>00078         <span class="keywordflow">if</span>(DlgItemID == -1) {
-<a name="l00079"></a>00079                 <span class="keywordflow">return</span> 0x604120;
-<a name="l00080"></a>00080         }
-<a name="l00081"></a>00081         <span class="keywordflow">if</span>(DlgItemID &gt;= <a class="code" href="registered_8h.html#ad0b663ad58fd5d0bc3016156442a9d4">ARES_GUI_START</a>) {
-<a name="l00082"></a>00082                 <span class="keywordflow">switch</span>(DlgItemID) {
-<a name="l00083"></a>00083                         <span class="keywordflow">case</span> <a class="code" href="registered_8h.html#d65aacc5873515baf3c80f607d545c8e">ARES_CHK_RMG_URBAN_AREAS</a>:
-<a name="l00084"></a>00084                                 <a class="code" href="class_dialogs.html#245c685d75fb3932b47e59c3d79a8fff">Dialogs::StatusString</a> = <span class="stringliteral">"STT:RMGUrbanAreas"</span>;
-<a name="l00085"></a>00085                                 <span class="keywordflow">break</span>;
-<a name="l00086"></a>00086                         <span class="keywordflow">default</span>:
-<a name="l00087"></a>00087                                 <a class="code" href="class_dialogs.html#245c685d75fb3932b47e59c3d79a8fff">Dialogs::StatusString</a> = <span class="stringliteral">"GUI:Debug"</span>;
-<a name="l00088"></a>00088                 }
-<a name="l00089"></a>00089                 <span class="keywordflow">return</span> 0x604135;
-<a name="l00090"></a>00090         }
-<a name="l00091"></a>00091         <span class="keywordflow">return</span> 0x604126;
-<a name="l00092"></a>00092 }
-</pre></div>
-<p>
-
-</div>
-</div><p>
-<a class="anchor" name="d91ac01a1f35f719dbd8e1e17fd590ed"></a><!-- doxytag: member="Dialogs.cpp::DEFINE_HOOK" ref="d91ac01a1f35f719dbd8e1e17fd590ed" args="(4A3B4B, FetchResource, 9)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">DEFINE_HOOK           </td>
-          <td>(</td>
-          <td class="paramtype">4A3B4B&nbsp;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">FetchResource&nbsp;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">9&nbsp;</td>
-          <td class="paramname"></td><td>&nbsp;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td><td></td>
         </tr>
       </table>
 </div>
@@ -210,7 +92,7 @@
 </div>
 </div><p>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Sat Nov 14 05:42:15 2009 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 17 09:37:30 2009 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

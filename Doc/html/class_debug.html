@@ -9,6 +9,7 @@
   <div class="tabs">
     <ul>
       <li><a href="index.html"><span>Main&nbsp;Page</span></a></li>
+      <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li><a href="dirs.html"><span>Directories</span></a></li>
@@ -40,7 +41,15 @@
 <p>
 <a href="class_debug-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
+<tr><td colspan="2"><br><h2>Public Types</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_debug.html#38f58dd0c1bec9042ead4a8eea1f3db1">Severity</a> { <a class="el" href="class_debug.html#38f58dd0c1bec9042ead4a8eea1f3db1de425086cfb3ac857d78d1d38e042665">Notice</a> =  0x1, 
+<a class="el" href="class_debug.html#38f58dd0c1bec9042ead4a8eea1f3db15f9964e5d1d0c948704f783d10ce46c4">Warning</a> =  0x2, 
+<a class="el" href="class_debug.html#38f58dd0c1bec9042ead4a8eea1f3db184c6ea9e411b9a465c18af311547f156">Error</a> =  0x3
+ }</td></tr>
+
 <tr><td colspan="2"><br><h2>Static Public Member Functions</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">static const char *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_debug.html#9e999c8d9682b4e9896c7559664be425">SeverityString</a> (<a class="el" href="class_debug.html#38f58dd0c1bec9042ead4a8eea1f3db1">Debug::Severity</a> severity)</td></tr>
+
 <tr><td class="memItemLeft" nowrap align="right" valign="top">static void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_debug.html#c8c4eef18e039525cebdc4c7b3514f7c">MakeLogFile</a> ()</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">static void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_debug.html#3bdacc0c9ae25e0546849a639aeb8780">LogFileOpen</a> ()</td></tr>
@@ -67,6 +76,8 @@
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">static int __stdcall&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_debug.html#0aaabe54ba958e2cb50019a514708e31">FatalDialog_WndProc</a> (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)</td></tr>
 
+<tr><td class="memItemLeft" nowrap align="right" valign="top">static void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_debug.html#4dcfff56d6e69bd62771feadb91014de">DevLog</a> (<a class="el" href="class_debug.html#38f58dd0c1bec9042ead4a8eea1f3db1">Debug::Severity</a> severity, const char *Format,...)</td></tr>
+
 <tr><td colspan="2"><br><h2>Static Public Attributes</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">static bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_debug.html#a0ec4107880adada173eb96ccd9a81e1">bLog</a> = true</td></tr>
 
@@ -77,7 +88,87 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top">static wchar_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_debug.html#17d5b518bc350921e6c27723edd96c33">LogFileTempName</a> [MAX_PATH] = L&quot;\0&quot;</td></tr>
 
 </table>
+<hr><h2>Member Enumeration Documentation</h2>
+<a class="anchor" name="38f58dd0c1bec9042ead4a8eea1f3db1"></a><!-- doxytag: member="Debug::Severity" ref="38f58dd0c1bec9042ead4a8eea1f3db1" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="class_debug.html#38f58dd0c1bec9042ead4a8eea1f3db1">Debug::Severity</a>          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+<dl compact><dt><b>Enumerator: </b></dt><dd>
+<table border="0" cellspacing="2" cellpadding="0">
+<tr><td valign="top"><em><a class="anchor" name="38f58dd0c1bec9042ead4a8eea1f3db1de425086cfb3ac857d78d1d38e042665"></a><!-- doxytag: member="Notice" ref="38f58dd0c1bec9042ead4a8eea1f3db1de425086cfb3ac857d78d1d38e042665" args="" -->Notice</em>&nbsp;</td><td>
+</td></tr>
+<tr><td valign="top"><em><a class="anchor" name="38f58dd0c1bec9042ead4a8eea1f3db15f9964e5d1d0c948704f783d10ce46c4"></a><!-- doxytag: member="Warning" ref="38f58dd0c1bec9042ead4a8eea1f3db15f9964e5d1d0c948704f783d10ce46c4" args="" -->Warning</em>&nbsp;</td><td>
+</td></tr>
+<tr><td valign="top"><em><a class="anchor" name="38f58dd0c1bec9042ead4a8eea1f3db184c6ea9e411b9a465c18af311547f156"></a><!-- doxytag: member="Error" ref="38f58dd0c1bec9042ead4a8eea1f3db184c6ea9e411b9a465c18af311547f156" args="" -->Error</em>&nbsp;</td><td>
+</td></tr>
+</table>
+</dl>
+<div class="fragment"><pre class="fragment"><a name="l00017"></a>00017                       {
+<a name="l00018"></a>00018                 <a class="code" href="class_debug.html#38f58dd0c1bec9042ead4a8eea1f3db1de425086cfb3ac857d78d1d38e042665">Notice</a> = 0x1,
+<a name="l00019"></a>00019                 <a class="code" href="class_debug.html#38f58dd0c1bec9042ead4a8eea1f3db15f9964e5d1d0c948704f783d10ce46c4">Warning</a> = 0x2,
+<a name="l00020"></a>00020                 <a class="code" href="class_debug.html#38f58dd0c1bec9042ead4a8eea1f3db184c6ea9e411b9a465c18af311547f156">Error</a> = 0x3
+<a name="l00021"></a>00021         };
+</pre></div>
+<p>
+
+</div>
+</div><p>
 <hr><h2>Member Function Documentation</h2>
+<a class="anchor" name="4dcfff56d6e69bd62771feadb91014de"></a><!-- doxytag: member="Debug::DevLog" ref="4dcfff56d6e69bd62771feadb91014de" args="(Debug::Severity severity, const char *Format,...)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Debug::DevLog           </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_debug.html#38f58dd0c1bec9042ead4a8eea1f3db1">Debug::Severity</a>&nbsp;</td>
+          <td class="paramname"> <em>severity</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&nbsp;</td>
+          <td class="paramname"> <em>Format</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&nbsp;</td>
+          <td class="paramname"> <em>...</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+<b>Initial value:</b><div class="fragment"><pre class="fragment">
+        (<a class="code" href="class_debug.html#f768b0a1c786e7622aefc7fe9a21f7a2">void</a> (__cdecl *)(<span class="keyword">const</span> <span class="keywordtype">char</span> *,...))0x4068E0
+</pre></div><div class="fragment"><pre class="fragment"><a name="l00014"></a>00014                                                                   {
+<a name="l00015"></a>00015         va_list args;
+<a name="l00016"></a>00016         fprintf(<a class="code" href="class_debug.html#9df9c8424b214bec57c0435da1c5e307">pLogFile</a>, <span class="stringliteral">"[Developer %s]"</span>, <a class="code" href="class_debug.html#9e999c8d9682b4e9896c7559664be425">Debug::SeverityString</a>(severity));
+<a name="l00017"></a>00017         va_start(args, Format);
+<a name="l00018"></a>00018         vfprintf(<a class="code" href="class_debug.html#9df9c8424b214bec57c0435da1c5e307">pLogFile</a>, Format, args);
+<a name="l00019"></a>00019         va_end(args);
+<a name="l00020"></a>00020 <span class="comment">//      fprintf(pLogFile, "\n");</span>
+<a name="l00021"></a>00021 }
+</pre></div>
+<p>
+
+</div>
+</div><p>
 <a class="anchor" name="0a7d559b37243d067418b665203ebac8"></a><!-- doxytag: member="Debug::DumpObj" ref="0a7d559b37243d067418b665203ebac8" args="(byte *data, size_t len)" -->
 <div class="memitem">
 <div class="memproto">
@@ -104,41 +195,41 @@
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00061"></a>00061                                           {
-<a name="l00062"></a>00062         Debug::Log(<span class="stringliteral">"Dumping %u bytes of object at %X\n"</span>, len, data);
-<a name="l00063"></a>00063 
-<a name="l00064"></a>00064         Debug::Log(<span class="stringliteral">" 00000 |"</span>);
-<a name="l00065"></a>00065         <span class="keywordflow">for</span>(DWORD rem = 0; rem &lt; 0x10; ++rem) {
-<a name="l00066"></a>00066                 Debug::Log(<span class="stringliteral">" %02X |"</span>, rem);
-<a name="l00067"></a>00067         }
-<a name="l00068"></a>00068         Debug::Log(<span class="stringliteral">"\n\n"</span>);
-<a name="l00069"></a>00069         <span class="keywordflow">for</span>(DWORD dec = 0; dec &lt; len / 0x10; ++dec) {
-<a name="l00070"></a>00070                 Debug::Log(<span class="stringliteral">" %04X0 |"</span>, dec);
-<a name="l00071"></a>00071                 <span class="keywordflow">for</span>(DWORD rem = 0; rem &lt; 0x10; ++rem) {
-<a name="l00072"></a>00072                         Debug::Log(<span class="stringliteral">" %02X |"</span>, data[dec * 0x10 + rem]);
-<a name="l00073"></a>00073                 }
-<a name="l00074"></a>00074                 <span class="keywordflow">for</span>(DWORD rem = 0; rem &lt; 0x10; ++rem) {
-<a name="l00075"></a>00075                         byte sym = data[dec * 0x10 + rem];
-<a name="l00076"></a>00076                         Debug::Log(<span class="stringliteral">"%c"</span>, isprint(sym) ? sym : <span class="charliteral">'?'</span>);
-<a name="l00077"></a>00077                 }
-<a name="l00078"></a>00078                 Debug::Log(<span class="stringliteral">"\n"</span>);
-<a name="l00079"></a>00079         }
-<a name="l00080"></a>00080 
-<a name="l00081"></a>00081         DWORD dec = len / 0x10 * 0x10;
-<a name="l00082"></a>00082         DWORD remlen = len - dec;
-<a name="l00083"></a>00083         Debug::Log(<span class="stringliteral">" %05X |"</span>, dec);
-<a name="l00084"></a>00084         <span class="keywordflow">for</span>(DWORD rem = 0; rem &lt; remlen; ++rem) {
-<a name="l00085"></a>00085                 Debug::Log(<span class="stringliteral">" %02X |"</span>, data[dec + rem]);
-<a name="l00086"></a>00086         }
-<a name="l00087"></a>00087         <span class="keywordflow">for</span>(DWORD rem = remlen; rem &lt; 0x10; ++rem) {
-<a name="l00088"></a>00088                 Debug::Log(<span class="stringliteral">" -- |"</span>);
+<div class="fragment"><pre class="fragment"><a name="l00083"></a>00083                                           {
+<a name="l00084"></a>00084         Debug::Log(<span class="stringliteral">"Dumping %u bytes of object at %X\n"</span>, len, data);
+<a name="l00085"></a>00085 
+<a name="l00086"></a>00086         Debug::Log(<span class="stringliteral">" 00000 |"</span>);
+<a name="l00087"></a>00087         <span class="keywordflow">for</span>(DWORD rem = 0; rem &lt; 0x10; ++rem) {
+<a name="l00088"></a>00088                 Debug::Log(<span class="stringliteral">" %02X |"</span>, rem);
 <a name="l00089"></a>00089         }
-<a name="l00090"></a>00090         <span class="keywordflow">for</span>(DWORD rem = 0; rem &lt; remlen; ++rem) {
-<a name="l00091"></a>00091                 byte sym = data[dec + rem];
-<a name="l00092"></a>00092                 Debug::Log(<span class="stringliteral">"%c"</span>, isprint(sym) ? sym : <span class="charliteral">'?'</span>);
-<a name="l00093"></a>00093         }
-<a name="l00094"></a>00094         Debug::Log(<span class="stringliteral">"\nEnd of dump.\n"</span>);
-<a name="l00095"></a>00095 }
+<a name="l00090"></a>00090         Debug::Log(<span class="stringliteral">"\n\n"</span>);
+<a name="l00091"></a>00091         <span class="keywordflow">for</span>(DWORD dec = 0; dec &lt; len / 0x10; ++dec) {
+<a name="l00092"></a>00092                 Debug::Log(<span class="stringliteral">" %04X0 |"</span>, dec);
+<a name="l00093"></a>00093                 <span class="keywordflow">for</span>(DWORD rem = 0; rem &lt; 0x10; ++rem) {
+<a name="l00094"></a>00094                         Debug::Log(<span class="stringliteral">" %02X |"</span>, data[dec * 0x10 + rem]);
+<a name="l00095"></a>00095                 }
+<a name="l00096"></a>00096                 <span class="keywordflow">for</span>(DWORD rem = 0; rem &lt; 0x10; ++rem) {
+<a name="l00097"></a>00097                         byte sym = data[dec * 0x10 + rem];
+<a name="l00098"></a>00098                         Debug::Log(<span class="stringliteral">"%c"</span>, isprint(sym) ? sym : <span class="charliteral">'?'</span>);
+<a name="l00099"></a>00099                 }
+<a name="l00100"></a>00100                 Debug::Log(<span class="stringliteral">"\n"</span>);
+<a name="l00101"></a>00101         }
+<a name="l00102"></a>00102 
+<a name="l00103"></a>00103         DWORD dec = len / 0x10 * 0x10;
+<a name="l00104"></a>00104         DWORD remlen = len - dec;
+<a name="l00105"></a>00105         Debug::Log(<span class="stringliteral">" %05X |"</span>, dec);
+<a name="l00106"></a>00106         <span class="keywordflow">for</span>(DWORD rem = 0; rem &lt; remlen; ++rem) {
+<a name="l00107"></a>00107                 Debug::Log(<span class="stringliteral">" %02X |"</span>, data[dec + rem]);
+<a name="l00108"></a>00108         }
+<a name="l00109"></a>00109         <span class="keywordflow">for</span>(DWORD rem = remlen; rem &lt; 0x10; ++rem) {
+<a name="l00110"></a>00110                 Debug::Log(<span class="stringliteral">" -- |"</span>);
+<a name="l00111"></a>00111         }
+<a name="l00112"></a>00112         <span class="keywordflow">for</span>(DWORD rem = 0; rem &lt; remlen; ++rem) {
+<a name="l00113"></a>00113                 byte sym = data[dec + rem];
+<a name="l00114"></a>00114                 Debug::Log(<span class="stringliteral">"%c"</span>, isprint(sym) ? sym : <span class="charliteral">'?'</span>);
+<a name="l00115"></a>00115         }
+<a name="l00116"></a>00116         Debug::Log(<span class="stringliteral">"\nEnd of dump.\n"</span>);
+<a name="l00117"></a>00117 }
 </pre></div>
 <p>
 
@@ -170,13 +261,13 @@
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00097"></a>00097                                               {
-<a name="l00098"></a>00098         Debug::Log(<span class="stringliteral">"Dumping %X bytes of stack\n"</span>, len);
-<a name="l00099"></a>00099         <span class="keywordflow">for</span>(<span class="keywordtype">size_t</span> i = 0; i &lt; len; i += 4) {
-<a name="l00100"></a>00100                 Debug::Log(<span class="stringliteral">"esp+%04X = %08X\n"</span>, i, R-&gt;get_StackVar32(i));
-<a name="l00101"></a>00101         }
-<a name="l00102"></a>00102         Debug::Log(<span class="stringliteral">"Done.\n"</span>);
-<a name="l00103"></a>00103 }
+<div class="fragment"><pre class="fragment"><a name="l00119"></a>00119                                               {
+<a name="l00120"></a>00120         Debug::Log(<span class="stringliteral">"Dumping %X bytes of stack\n"</span>, len);
+<a name="l00121"></a>00121         <span class="keywordflow">for</span>(<span class="keywordtype">size_t</span> i = 0; i &lt; len; i += 4) {
+<a name="l00122"></a>00122                 Debug::Log(<span class="stringliteral">"esp+%04X = %08X\n"</span>, i, R-&gt;get_StackVar32(i));
+<a name="l00123"></a>00123         }
+<a name="l00124"></a>00124         Debug::Log(<span class="stringliteral">"Done.\n"</span>);
+<a name="l00125"></a>00125 }
 </pre></div>
 <p>
 
@@ -208,90 +299,90 @@
 <div class="memdoc">
 
 <p>
-minidump <div class="fragment"><pre class="fragment"><a name="l00125"></a>00125 {
-<a name="l00126"></a>00126         <a class="code" href="class_debug.html#7ae1f0e4f27680a16506ecb144ba20db">Debug::FreeMouse</a>();
-<a name="l00127"></a>00127         Debug::Log(<span class="stringliteral">"D::EH\n"</span>);
-<a name="l00128"></a>00128         <span class="keywordtype">bool</span> g_ExtendedMinidumps = <span class="keyword">true</span>;
-<a name="l00129"></a>00129 <span class="comment">//      if (IsDebuggerAttached()) return EXCEPTION_CONTINUE_SEARCH;</span>
-<a name="l00130"></a>00130         <span class="keywordflow">if</span> (pExs-&gt;ExceptionRecord-&gt;ExceptionCode == ERROR_MOD_NOT_FOUND ||
-<a name="l00131"></a>00131                 pExs-&gt;ExceptionRecord-&gt;ExceptionCode == ERROR_PROC_NOT_FOUND)
-<a name="l00132"></a>00132         {
-<a name="l00133"></a>00133                 Debug::Log(<span class="stringliteral">"D::EH - _NOT_FOUND\n"</span>);
-<a name="l00134"></a>00134                 <span class="comment">//tell user</span>
-<a name="l00135"></a>00135                 ExitProcess(pExs-&gt;ExceptionRecord-&gt;ExceptionCode);
-<a name="l00136"></a>00136         }
-<a name="l00137"></a>00137 
-<a name="l00138"></a>00138         <span class="keywordflow">switch</span>(pExs-&gt;ExceptionRecord-&gt;ExceptionCode)
-<a name="l00139"></a>00139         {
-<a name="l00140"></a>00140                 <span class="keywordflow">case</span> EXCEPTION_ACCESS_VIOLATION:
-<a name="l00141"></a>00141                 <span class="keywordflow">case</span> EXCEPTION_ARRAY_BOUNDS_EXCEEDED:
-<a name="l00142"></a>00142                 <span class="keywordflow">case</span> EXCEPTION_BREAKPOINT:
-<a name="l00143"></a>00143                 <span class="keywordflow">case</span> EXCEPTION_DATATYPE_MISALIGNMENT:
-<a name="l00144"></a>00144                 <span class="keywordflow">case</span> EXCEPTION_FLT_DENORMAL_OPERAND:
-<a name="l00145"></a>00145                 <span class="keywordflow">case</span> EXCEPTION_FLT_DIVIDE_BY_ZERO:
-<a name="l00146"></a>00146                 <span class="keywordflow">case</span> EXCEPTION_FLT_INEXACT_RESULT:
-<a name="l00147"></a>00147                 <span class="keywordflow">case</span> EXCEPTION_FLT_INVALID_OPERATION:
-<a name="l00148"></a>00148                 <span class="keywordflow">case</span> EXCEPTION_FLT_OVERFLOW:
-<a name="l00149"></a>00149                 <span class="keywordflow">case</span> EXCEPTION_FLT_STACK_CHECK:
-<a name="l00150"></a>00150                 <span class="keywordflow">case</span> EXCEPTION_FLT_UNDERFLOW:
-<a name="l00151"></a>00151                 <span class="keywordflow">case</span> EXCEPTION_ILLEGAL_INSTRUCTION:
-<a name="l00152"></a>00152                 <span class="keywordflow">case</span> EXCEPTION_IN_PAGE_ERROR:
-<a name="l00153"></a>00153                 <span class="keywordflow">case</span> EXCEPTION_INT_DIVIDE_BY_ZERO:
-<a name="l00154"></a>00154                 <span class="keywordflow">case</span> EXCEPTION_INT_OVERFLOW:
-<a name="l00155"></a>00155                 <span class="keywordflow">case</span> EXCEPTION_INVALID_DISPOSITION:
-<a name="l00156"></a>00156                 <span class="keywordflow">case</span> EXCEPTION_NONCONTINUABLE_EXCEPTION:
-<a name="l00157"></a>00157                 <span class="keywordflow">case</span> EXCEPTION_PRIV_INSTRUCTION:
-<a name="l00158"></a>00158                 <span class="keywordflow">case</span> EXCEPTION_SINGLE_STEP:
-<a name="l00159"></a>00159                 <span class="keywordflow">case</span> EXCEPTION_STACK_OVERFLOW:
-<a name="l00160"></a>00160                 <span class="keywordflow">case</span> 0xE06D7363: <span class="comment">// exception thrown and not caught</span>
-<a name="l00161"></a>00161                 {
-<a name="l00162"></a>00162                         Debug::Log(<span class="stringliteral">"D::EH - Dump\n"</span>);
-<a name="l00163"></a>00163 
-<a name="l00164"></a>00164                         <span class="keywordtype">wchar_t</span> filename[MAX_PATH];
-<a name="l00165"></a>00165                         <span class="keywordtype">wchar_t</span> path[MAX_PATH];
-<a name="l00166"></a>00166                 
-<a name="l00167"></a>00167                         HANDLE dumpFile;
-<a name="l00168"></a>00168                         SYSTEMTIME time;
-<a name="l00169"></a>00169                         MINIDUMP_EXCEPTION_INFORMATION expParam;
-<a name="l00170"></a>00170                         
-<a name="l00171"></a>00171                         GetLocalTime(&amp;time);
-<a name="l00172"></a>00172                         GetCurrentDirectoryW(MAX_PATH, path);
-<a name="l00173"></a>00173 
-<a name="l00174"></a>00174                         swprintf(filename, MAX_PATH, L<span class="stringliteral">"%s\\debug"</span>, path);
-<a name="l00175"></a>00175                         CreateDirectoryW(filename, NULL);
-<a name="l00176"></a>00176 
-<a name="l00177"></a>00177                         swprintf(filename, MAX_PATH, g_ExtendedMinidumps ? L<span class="stringliteral">"%s\\debug\\extcrashdump.%04u%02u%02u-%02u%02u%02u.dmp"</span> : L<span class="stringliteral">"%s\\debug\\crashdump.%04u%02u%02u-%02u%02u%02u.dmp"</span>, 
-<a name="l00178"></a>00178                                                         path, 
-<a name="l00179"></a>00179                                                         time.wYear, time.wMonth, time.wDay, 
-<a name="l00180"></a>00180                                                         time.wHour, time.wMinute, time.wSecond);
-<a name="l00181"></a>00181 
-<a name="l00182"></a>00182                         dumpFile = CreateFileW(filename, GENERIC_READ | GENERIC_WRITE, 
-<a name="l00183"></a>00183                                                         FILE_SHARE_WRITE | FILE_SHARE_READ, NULL, CREATE_ALWAYS, FILE_FLAG_WRITE_THROUGH, NULL);
-<a name="l00184"></a>00184 
-<a name="l00185"></a>00185                         expParam.ThreadId = GetCurrentThreadId();
-<a name="l00186"></a>00186                         expParam.ExceptionPointers = pExs;
-<a name="l00187"></a>00187                         expParam.ClientPointers = FALSE;
-<a name="l00188"></a>00188 
-<a name="l00189"></a>00189                         MINIDUMP_TYPE type = (MINIDUMP_TYPE) ((g_ExtendedMinidumps ? MiniDumpWithFullMemory : (MiniDumpWithDataSegs | MiniDumpWithIndirectlyReferencedMemory)));
-<a name="l00190"></a>00190 
-<a name="l00191"></a>00191                         MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), dumpFile, type, &amp;expParam, NULL, NULL);
-<a name="l00192"></a>00192                         CloseHandle(dumpFile);
-<a name="l00193"></a>00193 
-<a name="l00194"></a>00194                         <a class="code" href="class_debug.html#c71444646f841bbeb30195fb9b3a5001">Debug::FatalError</a>(<span class="stringliteral">"The cause of this error could not be determined.\r\n"</span>
-<a name="l00195"></a>00195                                 <span class="stringliteral">"A crash dump should have been created in your game's \\debug subfolder.\r\n"</span>
-<a name="l00196"></a>00196                                 <span class="stringliteral">"You can submit that to the developers (along with debug.txt and syringe.log)."</span>, 0);
-<a name="l00197"></a>00197 
-<a name="l00198"></a>00198                         ExitProcess(pExs-&gt;ExceptionRecord-&gt;ExceptionCode); <span class="comment">// Exit.</span>
-<a name="l00199"></a>00199                         <span class="keywordflow">break</span>;
-<a name="l00200"></a>00200                 }
-<a name="l00201"></a>00201                 <span class="keywordflow">default</span>:
-<a name="l00202"></a>00202                         Debug::Log(<span class="stringliteral">"D::EH - _CS\n"</span>);
-<a name="l00203"></a>00203                         <a class="code" href="class_debug.html#0a7d559b37243d067418b665203ebac8">Debug::DumpObj</a>((byte *)pExs-&gt;ExceptionRecord, <span class="keyword">sizeof</span>(*(pExs-&gt;ExceptionRecord)));
-<a name="l00204"></a>00204                         ExitProcess(pExs-&gt;ExceptionRecord-&gt;ExceptionCode); <span class="comment">// Exit.</span>
-<a name="l00205"></a>00205 <span class="comment">//                      return EXCEPTION_CONTINUE_SEARCH;</span>
-<a name="l00206"></a>00206                         <span class="keywordflow">break</span>;
-<a name="l00207"></a>00207         }
-<a name="l00208"></a>00208 };
+minidump <div class="fragment"><pre class="fragment"><a name="l00147"></a>00147 {
+<a name="l00148"></a>00148         <a class="code" href="class_debug.html#7ae1f0e4f27680a16506ecb144ba20db">Debug::FreeMouse</a>();
+<a name="l00149"></a>00149         Debug::Log(<span class="stringliteral">"D::EH\n"</span>);
+<a name="l00150"></a>00150         <span class="keywordtype">bool</span> g_ExtendedMinidumps = <span class="keyword">true</span>;
+<a name="l00151"></a>00151 <span class="comment">//      if (IsDebuggerAttached()) return EXCEPTION_CONTINUE_SEARCH;</span>
+<a name="l00152"></a>00152         <span class="keywordflow">if</span> (pExs-&gt;ExceptionRecord-&gt;ExceptionCode == ERROR_MOD_NOT_FOUND ||
+<a name="l00153"></a>00153                 pExs-&gt;ExceptionRecord-&gt;ExceptionCode == ERROR_PROC_NOT_FOUND)
+<a name="l00154"></a>00154         {
+<a name="l00155"></a>00155                 Debug::Log(<span class="stringliteral">"D::EH - _NOT_FOUND\n"</span>);
+<a name="l00156"></a>00156                 <span class="comment">//tell user</span>
+<a name="l00157"></a>00157                 ExitProcess(pExs-&gt;ExceptionRecord-&gt;ExceptionCode);
+<a name="l00158"></a>00158         }
+<a name="l00159"></a>00159 
+<a name="l00160"></a>00160         <span class="keywordflow">switch</span>(pExs-&gt;ExceptionRecord-&gt;ExceptionCode)
+<a name="l00161"></a>00161         {
+<a name="l00162"></a>00162                 <span class="keywordflow">case</span> EXCEPTION_ACCESS_VIOLATION:
+<a name="l00163"></a>00163                 <span class="keywordflow">case</span> EXCEPTION_ARRAY_BOUNDS_EXCEEDED:
+<a name="l00164"></a>00164                 <span class="keywordflow">case</span> EXCEPTION_BREAKPOINT:
+<a name="l00165"></a>00165                 <span class="keywordflow">case</span> EXCEPTION_DATATYPE_MISALIGNMENT:
+<a name="l00166"></a>00166                 <span class="keywordflow">case</span> EXCEPTION_FLT_DENORMAL_OPERAND:
+<a name="l00167"></a>00167                 <span class="keywordflow">case</span> EXCEPTION_FLT_DIVIDE_BY_ZERO:
+<a name="l00168"></a>00168                 <span class="keywordflow">case</span> EXCEPTION_FLT_INEXACT_RESULT:
+<a name="l00169"></a>00169                 <span class="keywordflow">case</span> EXCEPTION_FLT_INVALID_OPERATION:
+<a name="l00170"></a>00170                 <span class="keywordflow">case</span> EXCEPTION_FLT_OVERFLOW:
+<a name="l00171"></a>00171                 <span class="keywordflow">case</span> EXCEPTION_FLT_STACK_CHECK:
+<a name="l00172"></a>00172                 <span class="keywordflow">case</span> EXCEPTION_FLT_UNDERFLOW:
+<a name="l00173"></a>00173                 <span class="keywordflow">case</span> EXCEPTION_ILLEGAL_INSTRUCTION:
+<a name="l00174"></a>00174                 <span class="keywordflow">case</span> EXCEPTION_IN_PAGE_ERROR:
+<a name="l00175"></a>00175                 <span class="keywordflow">case</span> EXCEPTION_INT_DIVIDE_BY_ZERO:
+<a name="l00176"></a>00176                 <span class="keywordflow">case</span> EXCEPTION_INT_OVERFLOW:
+<a name="l00177"></a>00177                 <span class="keywordflow">case</span> EXCEPTION_INVALID_DISPOSITION:
+<a name="l00178"></a>00178                 <span class="keywordflow">case</span> EXCEPTION_NONCONTINUABLE_EXCEPTION:
+<a name="l00179"></a>00179                 <span class="keywordflow">case</span> EXCEPTION_PRIV_INSTRUCTION:
+<a name="l00180"></a>00180                 <span class="keywordflow">case</span> EXCEPTION_SINGLE_STEP:
+<a name="l00181"></a>00181                 <span class="keywordflow">case</span> EXCEPTION_STACK_OVERFLOW:
+<a name="l00182"></a>00182                 <span class="keywordflow">case</span> 0xE06D7363: <span class="comment">// exception thrown and not caught</span>
+<a name="l00183"></a>00183                 {
+<a name="l00184"></a>00184                         Debug::Log(<span class="stringliteral">"D::EH - Dump\n"</span>);
+<a name="l00185"></a>00185 
+<a name="l00186"></a>00186                         <span class="keywordtype">wchar_t</span> filename[MAX_PATH];
+<a name="l00187"></a>00187                         <span class="keywordtype">wchar_t</span> path[MAX_PATH];
+<a name="l00188"></a>00188                 
+<a name="l00189"></a>00189                         HANDLE dumpFile;
+<a name="l00190"></a>00190                         SYSTEMTIME time;
+<a name="l00191"></a>00191                         MINIDUMP_EXCEPTION_INFORMATION expParam;
+<a name="l00192"></a>00192                         
+<a name="l00193"></a>00193                         GetLocalTime(&amp;time);
+<a name="l00194"></a>00194                         GetCurrentDirectoryW(MAX_PATH, path);
+<a name="l00195"></a>00195 
+<a name="l00196"></a>00196                         swprintf(filename, MAX_PATH, L<span class="stringliteral">"%s\\debug"</span>, path);
+<a name="l00197"></a>00197                         CreateDirectoryW(filename, NULL);
+<a name="l00198"></a>00198 
+<a name="l00199"></a>00199                         swprintf(filename, MAX_PATH, g_ExtendedMinidumps ? L<span class="stringliteral">"%s\\debug\\extcrashdump.%04u%02u%02u-%02u%02u%02u.dmp"</span> : L<span class="stringliteral">"%s\\debug\\crashdump.%04u%02u%02u-%02u%02u%02u.dmp"</span>, 
+<a name="l00200"></a>00200                                                         path, 
+<a name="l00201"></a>00201                                                         time.wYear, time.wMonth, time.wDay, 
+<a name="l00202"></a>00202                                                         time.wHour, time.wMinute, time.wSecond);
+<a name="l00203"></a>00203 
+<a name="l00204"></a>00204                         dumpFile = CreateFileW(filename, GENERIC_READ | GENERIC_WRITE, 
+<a name="l00205"></a>00205                                                         FILE_SHARE_WRITE | FILE_SHARE_READ, NULL, CREATE_ALWAYS, FILE_FLAG_WRITE_THROUGH, NULL);
+<a name="l00206"></a>00206 
+<a name="l00207"></a>00207                         expParam.ThreadId = GetCurrentThreadId();
+<a name="l00208"></a>00208                         expParam.ExceptionPointers = pExs;
+<a name="l00209"></a>00209                         expParam.ClientPointers = FALSE;
+<a name="l00210"></a>00210 
+<a name="l00211"></a>00211                         MINIDUMP_TYPE type = (MINIDUMP_TYPE) ((g_ExtendedMinidumps ? MiniDumpWithFullMemory : (MiniDumpWithDataSegs | MiniDumpWithIndirectlyReferencedMemory)));
+<a name="l00212"></a>00212 
+<a name="l00213"></a>00213                         MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), dumpFile, type, &amp;expParam, NULL, NULL);
+<a name="l00214"></a>00214                         CloseHandle(dumpFile);
+<a name="l00215"></a>00215 
+<a name="l00216"></a>00216                         <a class="code" href="class_debug.html#c71444646f841bbeb30195fb9b3a5001">Debug::FatalError</a>(<span class="stringliteral">"The cause of this error could not be determined.\r\n"</span>
+<a name="l00217"></a>00217                                 <span class="stringliteral">"A crash dump should have been created in your game's \\debug subfolder.\r\n"</span>
+<a name="l00218"></a>00218                                 <span class="stringliteral">"You can submit that to the developers (along with debug.txt and syringe.log)."</span>, 0);
+<a name="l00219"></a>00219 
+<a name="l00220"></a>00220                         ExitProcess(pExs-&gt;ExceptionRecord-&gt;ExceptionCode); <span class="comment">// Exit.</span>
+<a name="l00221"></a>00221                         <span class="keywordflow">break</span>;
+<a name="l00222"></a>00222                 }
+<a name="l00223"></a>00223                 <span class="keywordflow">default</span>:
+<a name="l00224"></a>00224                         Debug::Log(<span class="stringliteral">"D::EH - _CS\n"</span>);
+<a name="l00225"></a>00225                         <a class="code" href="class_debug.html#0a7d559b37243d067418b665203ebac8">Debug::DumpObj</a>((byte *)pExs-&gt;ExceptionRecord, <span class="keyword">sizeof</span>(*(pExs-&gt;ExceptionRecord)));
+<a name="l00226"></a>00226                         ExitProcess(pExs-&gt;ExceptionRecord-&gt;ExceptionCode); <span class="comment">// Exit.</span>
+<a name="l00227"></a>00227 <span class="comment">//                      return EXCEPTION_CONTINUE_SEARCH;</span>
+<a name="l00228"></a>00228                         <span class="keywordflow">break</span>;
+<a name="l00229"></a>00229         }
+<a name="l00230"></a>00230 };
 </pre></div>
 <p>
 
@@ -335,35 +426,35 @@ minidump <div class="fragment"><pre class="fragment"><a name="l00125"></a>00125 
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00234"></a>00234                                                                                            {
-<a name="l00235"></a>00235         <span class="keywordflow">if</span>(uMsg &gt; WM_COMMAND) {
-<a name="l00236"></a>00236                 <span class="keywordflow">if</span>(uMsg == WM_MOVING) {
-<a name="l00237"></a>00237                         Game::sub_776D80((tagRECT *)lParam);
-<a name="l00238"></a>00238                 }
-<a name="l00239"></a>00239                 <span class="keywordflow">return</span> 0;
-<a name="l00240"></a>00240         }
-<a name="l00241"></a>00241         <span class="keywordflow">switch</span>(uMsg) {
-<a name="l00242"></a>00242                 <span class="keywordflow">case</span> WM_COMMAND:
-<a name="l00243"></a>00243                         <span class="keywordflow">if</span>(wParam == 1153) {
-<a name="l00244"></a>00244                                 EndDialog(hWnd, 1153);
-<a name="l00245"></a>00245                         }
-<a name="l00246"></a>00246                         <span class="keywordflow">return</span> 0;
-<a name="l00247"></a>00247                 <span class="keywordflow">case</span> WM_CLOSE:
-<a name="l00248"></a>00248                         EndDialog(hWnd, 1153);
-<a name="l00249"></a>00249                         Game::sub_53E420(hWnd);
-<a name="l00250"></a>00250                         <span class="keywordflow">return</span> 0;
-<a name="l00251"></a>00251                 <span class="keywordflow">case</span> WM_INITDIALOG:
-<a name="l00252"></a>00252                         SetDlgItemTextA(hWnd, <a class="code" href="class_dialogs.html#015ad65cdc8e5605690305b8287625b7">Dialogs::ExceptControlID</a>, <a class="code" href="class_dialogs.html#b9b126f859887a81940969575f708789">Dialogs::ExceptDetailedMessage</a>);
-<a name="l00253"></a>00253                         SetFocus(hWnd);
-<a name="l00254"></a>00254                         <span class="keywordflow">if</span> ( Game::hWnd ) {
-<a name="l00255"></a>00255                                 Game::CenterWindowIn(hWnd, Game::hWnd);
-<a name="l00256"></a>00256                         }
-<a name="l00257"></a>00257                         ShowWindow(hWnd, 1);
-<a name="l00258"></a>00258                         Game::sub_53E3C0(hWnd);
-<a name="l00259"></a>00259                 <span class="keywordflow">default</span>:
-<a name="l00260"></a>00260                         <span class="keywordflow">return</span> 0;
-<a name="l00261"></a>00261         }
-<a name="l00262"></a>00262 }
+<div class="fragment"><pre class="fragment"><a name="l00256"></a>00256                                                                                            {
+<a name="l00257"></a>00257         <span class="keywordflow">if</span>(uMsg &gt; WM_COMMAND) {
+<a name="l00258"></a>00258                 <span class="keywordflow">if</span>(uMsg == WM_MOVING) {
+<a name="l00259"></a>00259                         Game::sub_776D80((tagRECT *)lParam);
+<a name="l00260"></a>00260                 }
+<a name="l00261"></a>00261                 <span class="keywordflow">return</span> 0;
+<a name="l00262"></a>00262         }
+<a name="l00263"></a>00263         <span class="keywordflow">switch</span>(uMsg) {
+<a name="l00264"></a>00264                 <span class="keywordflow">case</span> WM_COMMAND:
+<a name="l00265"></a>00265                         <span class="keywordflow">if</span>(wParam == 1153) {
+<a name="l00266"></a>00266                                 EndDialog(hWnd, 1153);
+<a name="l00267"></a>00267                         }
+<a name="l00268"></a>00268                         <span class="keywordflow">return</span> 0;
+<a name="l00269"></a>00269                 <span class="keywordflow">case</span> WM_CLOSE:
+<a name="l00270"></a>00270                         EndDialog(hWnd, 1153);
+<a name="l00271"></a>00271                         Game::sub_53E420(hWnd);
+<a name="l00272"></a>00272                         <span class="keywordflow">return</span> 0;
+<a name="l00273"></a>00273                 <span class="keywordflow">case</span> WM_INITDIALOG:
+<a name="l00274"></a>00274                         SetDlgItemTextA(hWnd, <a class="code" href="class_dialogs.html#015ad65cdc8e5605690305b8287625b7">Dialogs::ExceptControlID</a>, <a class="code" href="class_dialogs.html#b9b126f859887a81940969575f708789">Dialogs::ExceptDetailedMessage</a>);
+<a name="l00275"></a>00275                         SetFocus(hWnd);
+<a name="l00276"></a>00276                         <span class="keywordflow">if</span> ( Game::hWnd ) {
+<a name="l00277"></a>00277                                 Game::CenterWindowIn(hWnd, Game::hWnd);
+<a name="l00278"></a>00278                         }
+<a name="l00279"></a>00279                         ShowWindow(hWnd, 1);
+<a name="l00280"></a>00280                         Game::sub_53E3C0(hWnd);
+<a name="l00281"></a>00281                 <span class="keywordflow">default</span>:
+<a name="l00282"></a>00282                         <span class="keywordflow">return</span> 0;
+<a name="l00283"></a>00283         }
+<a name="l00284"></a>00284 }
 </pre></div>
 <p>
 
@@ -395,22 +486,22 @@ minidump <div class="fragment"><pre class="fragment"><a name="l00125"></a>00125 
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00217"></a>00217                                                      {
-<a name="l00218"></a>00218         <a class="code" href="class_debug.html#7ae1f0e4f27680a16506ecb144ba20db">Debug::FreeMouse</a>();
-<a name="l00219"></a>00219         strncpy(<a class="code" href="class_dialogs.html#b9b126f859887a81940969575f708789">Dialogs::ExceptDetailedMessage</a>, Message, 0x400);
-<a name="l00220"></a>00220 
-<a name="l00221"></a>00221         Debug::Log(<span class="stringliteral">"\nFatal Error:\n"</span>);
-<a name="l00222"></a>00222         Debug::Log(Message);
-<a name="l00223"></a>00223 
-<a name="l00224"></a>00224         LPCDLGTEMPLATEA DialogBox = <span class="keyword">reinterpret_cast&lt;</span>LPCDLGTEMPLATEA<span class="keyword">&gt;</span>(Game::GetResource(247, 5));
-<a name="l00225"></a>00225 
-<a name="l00226"></a>00226         DialogBoxIndirectParamA(Game::hInstance, DialogBox, Game::hWnd, &amp;<a class="code" href="class_debug.html#0aaabe54ba958e2cb50019a514708e31">Debug::FatalDialog_WndProc</a>, 0);
-<a name="l00227"></a>00227 
-<a name="l00228"></a>00228         <span class="keywordflow">if</span>(Exit) {
-<a name="l00229"></a>00229                 Debug::Log(<span class="stringliteral">"Exiting...\n"</span>);
-<a name="l00230"></a>00230                 ExitProcess(1);
-<a name="l00231"></a>00231         }
-<a name="l00232"></a>00232 }
+<div class="fragment"><pre class="fragment"><a name="l00239"></a>00239                                                      {
+<a name="l00240"></a>00240         <a class="code" href="class_debug.html#7ae1f0e4f27680a16506ecb144ba20db">Debug::FreeMouse</a>();
+<a name="l00241"></a>00241         strncpy(<a class="code" href="class_dialogs.html#b9b126f859887a81940969575f708789">Dialogs::ExceptDetailedMessage</a>, Message, 0x400);
+<a name="l00242"></a>00242 
+<a name="l00243"></a>00243         Debug::Log(<span class="stringliteral">"\nFatal Error:\n"</span>);
+<a name="l00244"></a>00244         Debug::Log(Message);
+<a name="l00245"></a>00245 
+<a name="l00246"></a>00246         LPCDLGTEMPLATEA DialogBox = <span class="keyword">reinterpret_cast&lt;</span>LPCDLGTEMPLATEA<span class="keyword">&gt;</span>(Game::GetResource(247, 5));
+<a name="l00247"></a>00247 
+<a name="l00248"></a>00248         DialogBoxIndirectParamA(Game::hInstance, DialogBox, Game::hWnd, &amp;<a class="code" href="class_debug.html#0aaabe54ba958e2cb50019a514708e31">Debug::FatalDialog_WndProc</a>, 0);
+<a name="l00249"></a>00249 
+<a name="l00250"></a>00250         <span class="keywordflow">if</span>(Exit) {
+<a name="l00251"></a>00251                 Debug::Log(<span class="stringliteral">"Exiting...\n"</span>);
+<a name="l00252"></a>00252                 ExitProcess(1);
+<a name="l00253"></a>00253         }
+<a name="l00254"></a>00254 }
 </pre></div>
 <p>
 
@@ -432,11 +523,11 @@ minidump <div class="fragment"><pre class="fragment"><a name="l00125"></a>00125 
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00114"></a>00114                   {
-<a name="l00115"></a>00115         <span class="keywordflow">if</span>(<a class="code" href="class_debug.html#a0ec4107880adada173eb96ccd9a81e1">Debug::bLog</a> &amp;&amp; <a class="code" href="class_debug.html#9df9c8424b214bec57c0435da1c5e307">Debug::pLogFile</a>) {
-<a name="l00116"></a>00116                 fflush(<a class="code" href="class_debug.html#9df9c8424b214bec57c0435da1c5e307">Debug::pLogFile</a>);
-<a name="l00117"></a>00117         }
-<a name="l00118"></a>00118 }
+<div class="fragment"><pre class="fragment"><a name="l00136"></a>00136                   {
+<a name="l00137"></a>00137         <span class="keywordflow">if</span>(<a class="code" href="class_debug.html#a0ec4107880adada173eb96ccd9a81e1">Debug::bLog</a> &amp;&amp; <a class="code" href="class_debug.html#9df9c8424b214bec57c0435da1c5e307">Debug::pLogFile</a>) {
+<a name="l00138"></a>00138                 fflush(<a class="code" href="class_debug.html#9df9c8424b214bec57c0435da1c5e307">Debug::pLogFile</a>);
+<a name="l00139"></a>00139         }
+<a name="l00140"></a>00140 }
 </pre></div>
 <p>
 
@@ -458,12 +549,12 @@ minidump <div class="fragment"><pre class="fragment"><a name="l00125"></a>00125 
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00210"></a>00210                       {
-<a name="l00211"></a>00211         MouseClass::Instance-&gt;SetPointer(0, 0);
-<a name="l00212"></a>00212         WWMouseClass::Instance-&gt;ReleaseMouse();
-<a name="l00213"></a>00213 
-<a name="l00214"></a>00214         ShowCursor(1);
-<a name="l00215"></a>00215 }
+<div class="fragment"><pre class="fragment"><a name="l00232"></a>00232                       {
+<a name="l00233"></a>00233         MouseClass::Instance-&gt;SetPointer(0, 0);
+<a name="l00234"></a>00234         WWMouseClass::Instance-&gt;ReleaseMouse();
+<a name="l00235"></a>00235 
+<a name="l00236"></a>00236         ShowCursor(1);
+<a name="l00237"></a>00237 }
 </pre></div>
 <p>
 
@@ -485,14 +576,14 @@ minidump <div class="fragment"><pre class="fragment"><a name="l00125"></a>00125 
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00023"></a>00023 {
-<a name="l00024"></a>00024         <span class="keywordflow">if</span>(<a class="code" href="class_debug.html#9df9c8424b214bec57c0435da1c5e307">Debug::pLogFile</a>) {
-<a name="l00025"></a>00025                 fclose(<a class="code" href="class_debug.html#9df9c8424b214bec57c0435da1c5e307">Debug::pLogFile</a>);
-<a name="l00026"></a>00026                 CopyFileW(<a class="code" href="class_debug.html#17d5b518bc350921e6c27723edd96c33">LogFileTempName</a>, <a class="code" href="class_debug.html#1f012d5e4c8059cc2e38359c9b3eac55">LogFileName</a>, FALSE);
-<a name="l00027"></a>00027         }
-<a name="l00028"></a>00028 
-<a name="l00029"></a>00029         <a class="code" href="class_debug.html#9df9c8424b214bec57c0435da1c5e307">Debug::pLogFile</a> = NULL;
-<a name="l00030"></a>00030 }
+<div class="fragment"><pre class="fragment"><a name="l00045"></a>00045 {
+<a name="l00046"></a>00046         <span class="keywordflow">if</span>(<a class="code" href="class_debug.html#9df9c8424b214bec57c0435da1c5e307">Debug::pLogFile</a>) {
+<a name="l00047"></a>00047                 fclose(<a class="code" href="class_debug.html#9df9c8424b214bec57c0435da1c5e307">Debug::pLogFile</a>);
+<a name="l00048"></a>00048                 CopyFileW(<a class="code" href="class_debug.html#17d5b518bc350921e6c27723edd96c33">LogFileTempName</a>, <a class="code" href="class_debug.html#1f012d5e4c8059cc2e38359c9b3eac55">LogFileName</a>, FALSE);
+<a name="l00049"></a>00049         }
+<a name="l00050"></a>00050 
+<a name="l00051"></a>00051         <a class="code" href="class_debug.html#9df9c8424b214bec57c0435da1c5e307">Debug::pLogFile</a> = NULL;
+<a name="l00052"></a>00052 }
 </pre></div>
 <p>
 
@@ -514,14 +605,12 @@ minidump <div class="fragment"><pre class="fragment"><a name="l00125"></a>00125 
 <div class="memdoc">
 
 <p>
-<b>Initial value:</b><div class="fragment"><pre class="fragment">
-        (<a class="code" href="class_debug.html#f768b0a1c786e7622aefc7fe9a21f7a2">void</a> (__cdecl *)(<span class="keyword">const</span> <span class="keywordtype">char</span> *,...))0x4068E0
-</pre></div><div class="fragment"><pre class="fragment"><a name="l00015"></a>00015 {
-<a name="l00016"></a>00016         <a class="code" href="class_debug.html#fa3069535ec78b3ea611e1020a26b173">LogFileClose</a>();
-<a name="l00017"></a>00017         <a class="code" href="class_debug.html#c8c4eef18e039525cebdc4c7b3514f7c">MakeLogFile</a>();
-<a name="l00018"></a>00018 
-<a name="l00019"></a>00019         <a class="code" href="class_debug.html#9df9c8424b214bec57c0435da1c5e307">pLogFile</a> = _wfopen(<a class="code" href="class_debug.html#17d5b518bc350921e6c27723edd96c33">LogFileTempName</a>, L<span class="stringliteral">"w"</span>);
-<a name="l00020"></a>00020 }
+<div class="fragment"><pre class="fragment"><a name="l00037"></a>00037 {
+<a name="l00038"></a>00038         <a class="code" href="class_debug.html#fa3069535ec78b3ea611e1020a26b173">LogFileClose</a>();
+<a name="l00039"></a>00039         <a class="code" href="class_debug.html#c8c4eef18e039525cebdc4c7b3514f7c">MakeLogFile</a>();
+<a name="l00040"></a>00040 
+<a name="l00041"></a>00041         <a class="code" href="class_debug.html#9df9c8424b214bec57c0435da1c5e307">pLogFile</a> = _wfopen(<a class="code" href="class_debug.html#17d5b518bc350921e6c27723edd96c33">LogFileTempName</a>, L<span class="stringliteral">"w"</span>);
+<a name="l00042"></a>00042 }
 </pre></div>
 <p>
 
@@ -543,10 +632,10 @@ minidump <div class="fragment"><pre class="fragment"><a name="l00125"></a>00125 
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00056"></a>00056 {
-<a name="l00057"></a>00057         <a class="code" href="class_debug.html#fa3069535ec78b3ea611e1020a26b173">LogFileClose</a>();
-<a name="l00058"></a>00058         DeleteFileW(<a class="code" href="class_debug.html#17d5b518bc350921e6c27723edd96c33">LogFileTempName</a>);
-<a name="l00059"></a>00059 }
+<div class="fragment"><pre class="fragment"><a name="l00078"></a>00078 {
+<a name="l00079"></a>00079         <a class="code" href="class_debug.html#fa3069535ec78b3ea611e1020a26b173">LogFileClose</a>();
+<a name="l00080"></a>00080         DeleteFileW(<a class="code" href="class_debug.html#17d5b518bc350921e6c27723edd96c33">LogFileTempName</a>);
+<a name="l00081"></a>00081 }
 </pre></div>
 <p>
 
@@ -578,14 +667,14 @@ minidump <div class="fragment"><pre class="fragment"><a name="l00125"></a>00125 
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00105"></a>00105                                                         {
-<a name="l00106"></a>00106         <span class="keywordflow">if</span>(<a class="code" href="class_debug.html#a0ec4107880adada173eb96ccd9a81e1">Debug::bLog</a> &amp;&amp; <a class="code" href="class_debug.html#9df9c8424b214bec57c0435da1c5e307">Debug::pLogFile</a>) {
-<a name="l00107"></a>00107                 va_list ArgList;
-<a name="l00108"></a>00108                 va_start(ArgList, Format);
-<a name="l00109"></a>00109                 vfprintf(<a class="code" href="class_debug.html#9df9c8424b214bec57c0435da1c5e307">Debug::pLogFile</a>, Format, ArgList);
-<a name="l00110"></a>00110                 va_end(ArgList);
-<a name="l00111"></a>00111         }
-<a name="l00112"></a>00112 }
+<div class="fragment"><pre class="fragment"><a name="l00127"></a>00127                                                         {
+<a name="l00128"></a>00128         <span class="keywordflow">if</span>(<a class="code" href="class_debug.html#a0ec4107880adada173eb96ccd9a81e1">Debug::bLog</a> &amp;&amp; <a class="code" href="class_debug.html#9df9c8424b214bec57c0435da1c5e307">Debug::pLogFile</a>) {
+<a name="l00129"></a>00129                 va_list ArgList;
+<a name="l00130"></a>00130                 va_start(ArgList, Format);
+<a name="l00131"></a>00131                 vfprintf(<a class="code" href="class_debug.html#9df9c8424b214bec57c0435da1c5e307">Debug::pLogFile</a>, Format, ArgList);
+<a name="l00132"></a>00132                 va_end(ArgList);
+<a name="l00133"></a>00133         }
+<a name="l00134"></a>00134 }
 </pre></div>
 <p>
 
@@ -607,28 +696,62 @@ minidump <div class="fragment"><pre class="fragment"><a name="l00125"></a>00125 
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00032"></a>00032                         {
-<a name="l00033"></a>00033         <span class="keyword">static</span> <span class="keywordtype">bool</span> made = 0;
-<a name="l00034"></a>00034         <span class="keywordflow">if</span>(!made) {
-<a name="l00035"></a>00035                 <span class="keywordtype">wchar_t</span> path[MAX_PATH];
-<a name="l00036"></a>00036 
-<a name="l00037"></a>00037                 SYSTEMTIME time;
-<a name="l00038"></a>00038 
-<a name="l00039"></a>00039                 GetLocalTime(&amp;time);
-<a name="l00040"></a>00040                 GetCurrentDirectoryW(MAX_PATH, path);
-<a name="l00041"></a>00041 
-<a name="l00042"></a>00042                 swprintf(<a class="code" href="class_debug.html#1f012d5e4c8059cc2e38359c9b3eac55">LogFileName</a>, MAX_PATH, L<span class="stringliteral">"%s\\debug"</span>, path);
-<a name="l00043"></a>00043                 CreateDirectoryW(<a class="code" href="class_debug.html#1f012d5e4c8059cc2e38359c9b3eac55">LogFileName</a>, NULL);
-<a name="l00044"></a>00044 
-<a name="l00045"></a>00045                 swprintf(<a class="code" href="class_debug.html#17d5b518bc350921e6c27723edd96c33">LogFileTempName</a>, MAX_PATH, L<span class="stringliteral">"%s\\debug\\debug.log"</span>, 
-<a name="l00046"></a>00046                         path);
-<a name="l00047"></a>00047 
-<a name="l00048"></a>00048                 swprintf(<a class="code" href="class_debug.html#1f012d5e4c8059cc2e38359c9b3eac55">LogFileName</a>, MAX_PATH, L<span class="stringliteral">"%s\\debug\\debug.%04u%02u%02u-%02u%02u%02u.log"</span>, 
-<a name="l00049"></a>00049                         path, time.wYear, time.wMonth, time.wDay, time.wHour, time.wMinute, time.wSecond);
-<a name="l00050"></a>00050 
-<a name="l00051"></a>00051                 made = 1;
-<a name="l00052"></a>00052         }
-<a name="l00053"></a>00053 }
+<div class="fragment"><pre class="fragment"><a name="l00054"></a>00054                         {
+<a name="l00055"></a>00055         <span class="keyword">static</span> <span class="keywordtype">bool</span> made = 0;
+<a name="l00056"></a>00056         <span class="keywordflow">if</span>(!made) {
+<a name="l00057"></a>00057                 <span class="keywordtype">wchar_t</span> path[MAX_PATH];
+<a name="l00058"></a>00058 
+<a name="l00059"></a>00059                 SYSTEMTIME time;
+<a name="l00060"></a>00060 
+<a name="l00061"></a>00061                 GetLocalTime(&amp;time);
+<a name="l00062"></a>00062                 GetCurrentDirectoryW(MAX_PATH, path);
+<a name="l00063"></a>00063 
+<a name="l00064"></a>00064                 swprintf(<a class="code" href="class_debug.html#1f012d5e4c8059cc2e38359c9b3eac55">LogFileName</a>, MAX_PATH, L<span class="stringliteral">"%s\\debug"</span>, path);
+<a name="l00065"></a>00065                 CreateDirectoryW(<a class="code" href="class_debug.html#1f012d5e4c8059cc2e38359c9b3eac55">LogFileName</a>, NULL);
+<a name="l00066"></a>00066 
+<a name="l00067"></a>00067                 swprintf(<a class="code" href="class_debug.html#17d5b518bc350921e6c27723edd96c33">LogFileTempName</a>, MAX_PATH, L<span class="stringliteral">"%s\\debug\\debug.log"</span>, 
+<a name="l00068"></a>00068                         path);
+<a name="l00069"></a>00069 
+<a name="l00070"></a>00070                 swprintf(<a class="code" href="class_debug.html#1f012d5e4c8059cc2e38359c9b3eac55">LogFileName</a>, MAX_PATH, L<span class="stringliteral">"%s\\debug\\debug.%04u%02u%02u-%02u%02u%02u.log"</span>, 
+<a name="l00071"></a>00071                         path, time.wYear, time.wMonth, time.wDay, time.wHour, time.wMinute, time.wSecond);
+<a name="l00072"></a>00072 
+<a name="l00073"></a>00073                 made = 1;
+<a name="l00074"></a>00074         }
+<a name="l00075"></a>00075 }
+</pre></div>
+<p>
+
+</div>
+</div><p>
+<a class="anchor" name="9e999c8d9682b4e9896c7559664be425"></a><!-- doxytag: member="Debug::SeverityString" ref="9e999c8d9682b4e9896c7559664be425" args="(Debug::Severity severity)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char * Debug::SeverityString           </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_debug.html#38f58dd0c1bec9042ead4a8eea1f3db1">Debug::Severity</a>&nbsp;</td>
+          <td class="paramname"> <em>severity</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+<div class="fragment"><pre class="fragment"><a name="l00023"></a>00023                                                          {
+<a name="l00024"></a>00024         <span class="keywordflow">switch</span>(severity) {
+<a name="l00025"></a>00025                 <span class="keywordflow">case</span> <a class="code" href="class_debug.html#38f58dd0c1bec9042ead4a8eea1f3db1de425086cfb3ac857d78d1d38e042665">Notice</a>:
+<a name="l00026"></a>00026                         <span class="keywordflow">return</span> <span class="stringliteral">"notice"</span>;
+<a name="l00027"></a>00027                 <span class="keywordflow">case</span> <a class="code" href="class_debug.html#38f58dd0c1bec9042ead4a8eea1f3db15f9964e5d1d0c948704f783d10ce46c4">Warning</a>:
+<a name="l00028"></a>00028                         <span class="keywordflow">return</span> <span class="stringliteral">"warning"</span>;
+<a name="l00029"></a>00029                 <span class="keywordflow">case</span> <a class="code" href="class_debug.html#38f58dd0c1bec9042ead4a8eea1f3db184c6ea9e411b9a465c18af311547f156">Error</a>:
+<a name="l00030"></a>00030                         <span class="keywordflow">return</span> <span class="stringliteral">"error"</span>;
+<a name="l00031"></a>00031                 <span class="keywordflow">default</span>:
+<a name="l00032"></a>00032                         <span class="keywordflow">return</span> <span class="stringliteral">"wtf"</span>;
+<a name="l00033"></a>00033         }
+<a name="l00034"></a>00034 }
 </pre></div>
 <p>
 
@@ -718,7 +841,7 @@ minidump <div class="fragment"><pre class="fragment"><a name="l00125"></a>00125 
 <hr>The documentation for this class was generated from the following files:<ul>
 <li>Misc/<a class="el" href="_debug_8h.html">Debug.h</a><li>Misc/<a class="el" href="_debug_8cpp.html">Debug.cpp</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Sat Nov 14 05:42:16 2009 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 17 09:37:30 2009 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

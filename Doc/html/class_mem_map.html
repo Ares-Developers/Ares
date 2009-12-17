@@ -9,6 +9,7 @@
   <div class="tabs">
     <ul>
       <li><a href="index.html"><span>Main&nbsp;Page</span></a></li>
+      <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li><a href="dirs.html"><span>Directories</span></a></li>
@@ -99,17 +100,17 @@ size_t &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00090"></a>00090                                                      {
-<a name="l00091"></a>00091                 DWORD addr = (DWORD)_addr;
-<a name="l00092"></a>00092                 memmap::iterator i = <a class="code" href="class_mem_map.html#dff5e0ea61ad534bd2da5013b81d2787">AllocMap</a>.find(addr);
-<a name="l00093"></a>00093                 <span class="keywordflow">if</span>(i != <a class="code" href="class_mem_map.html#dff5e0ea61ad534bd2da5013b81d2787">AllocMap</a>.end()) {
-<a name="l00094"></a>00094 <span class="preprocessor">#ifdef MEMORY_LOGGING</span>
-<a name="l00095"></a>00095 <span class="preprocessor"></span>                        Debug::Log(<span class="stringliteral">"Reallocated a used block of 0x%X bytes @ 0x%X!\n"</span>, amount, addr);
-<a name="l00096"></a>00096 <span class="preprocessor">#endif</span>
-<a name="l00097"></a>00097 <span class="preprocessor"></span>                }
-<a name="l00098"></a>00098                 <a class="code" href="class_mem_map.html#dff5e0ea61ad534bd2da5013b81d2787">AllocMap</a>[addr] = amount;
-<a name="l00099"></a>00099                 <a class="code" href="class_mem_map.html#7dbb9b6435859db4aea7b683bd84d670">Total</a> += amount;
-<a name="l00100"></a>00100         }
+<div class="fragment"><pre class="fragment"><a name="l00111"></a>00111                                                      {
+<a name="l00112"></a>00112                 DWORD addr = (DWORD)_addr;
+<a name="l00113"></a>00113                 memmap::iterator i = <a class="code" href="class_mem_map.html#dff5e0ea61ad534bd2da5013b81d2787">AllocMap</a>.find(addr);
+<a name="l00114"></a>00114                 <span class="keywordflow">if</span>(i != <a class="code" href="class_mem_map.html#dff5e0ea61ad534bd2da5013b81d2787">AllocMap</a>.end()) {
+<a name="l00115"></a>00115 <span class="preprocessor">#ifdef MEMORY_LOGGING</span>
+<a name="l00116"></a>00116 <span class="preprocessor"></span>                        Debug::Log(<span class="stringliteral">"Reallocated a used block of 0x%X bytes @ 0x%X!\n"</span>, amount, addr);
+<a name="l00117"></a>00117 <span class="preprocessor">#endif</span>
+<a name="l00118"></a>00118 <span class="preprocessor"></span>                }
+<a name="l00119"></a>00119                 <a class="code" href="class_mem_map.html#dff5e0ea61ad534bd2da5013b81d2787">AllocMap</a>[addr] = amount;
+<a name="l00120"></a>00120                 <a class="code" href="class_mem_map.html#7dbb9b6435859db4aea7b683bd84d670">Total</a> += amount;
+<a name="l00121"></a>00121         }
 </pre></div>
 <p>
 
@@ -132,21 +133,21 @@ size_t &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00102"></a>00102                                            {
-<a name="l00103"></a>00103                 DWORD addr = (DWORD)_addr;
-<a name="l00104"></a>00104                 memmap::iterator i = <a class="code" href="class_mem_map.html#dff5e0ea61ad534bd2da5013b81d2787">AllocMap</a>.find(addr);
-<a name="l00105"></a>00105                 <span class="keywordflow">if</span>(i == <a class="code" href="class_mem_map.html#dff5e0ea61ad534bd2da5013b81d2787">AllocMap</a>.end()) {
-<a name="l00106"></a>00106 <span class="preprocessor">#ifdef MEMORY_LOGGING</span>
-<a name="l00107"></a>00107 <span class="preprocessor"></span>                        Debug::Log(<span class="stringliteral">"Deallocated a dud block @ 0x%X!\n"</span>, addr);
-<a name="l00108"></a>00108 <span class="preprocessor">#endif</span>
-<a name="l00109"></a>00109 <span class="preprocessor"></span>                        <span class="keywordflow">return</span> 0;
-<a name="l00110"></a>00110                 } <span class="keywordflow">else</span> {
-<a name="l00111"></a>00111                         <span class="keywordtype">size_t</span> amount = <a class="code" href="class_mem_map.html#dff5e0ea61ad534bd2da5013b81d2787">AllocMap</a>[addr];
-<a name="l00112"></a>00112                         <a class="code" href="class_mem_map.html#7dbb9b6435859db4aea7b683bd84d670">Total</a> -= amount;
-<a name="l00113"></a>00113                         <a class="code" href="class_mem_map.html#dff5e0ea61ad534bd2da5013b81d2787">AllocMap</a>.erase(addr);
-<a name="l00114"></a>00114                         <span class="keywordflow">return</span> amount;
-<a name="l00115"></a>00115                 }
-<a name="l00116"></a>00116         }
+<div class="fragment"><pre class="fragment"><a name="l00123"></a>00123                                            {
+<a name="l00124"></a>00124                 DWORD addr = (DWORD)_addr;
+<a name="l00125"></a>00125                 memmap::iterator i = <a class="code" href="class_mem_map.html#dff5e0ea61ad534bd2da5013b81d2787">AllocMap</a>.find(addr);
+<a name="l00126"></a>00126                 <span class="keywordflow">if</span>(i == <a class="code" href="class_mem_map.html#dff5e0ea61ad534bd2da5013b81d2787">AllocMap</a>.end()) {
+<a name="l00127"></a>00127 <span class="preprocessor">#ifdef MEMORY_LOGGING</span>
+<a name="l00128"></a>00128 <span class="preprocessor"></span>                        Debug::Log(<span class="stringliteral">"Deallocated a dud block @ 0x%X!\n"</span>, addr);
+<a name="l00129"></a>00129 <span class="preprocessor">#endif</span>
+<a name="l00130"></a>00130 <span class="preprocessor"></span>                        <span class="keywordflow">return</span> 0;
+<a name="l00131"></a>00131                 } <span class="keywordflow">else</span> {
+<a name="l00132"></a>00132                         <span class="keywordtype">size_t</span> amount = <a class="code" href="class_mem_map.html#dff5e0ea61ad534bd2da5013b81d2787">AllocMap</a>[addr];
+<a name="l00133"></a>00133                         <a class="code" href="class_mem_map.html#7dbb9b6435859db4aea7b683bd84d670">Total</a> -= amount;
+<a name="l00134"></a>00134                         <a class="code" href="class_mem_map.html#dff5e0ea61ad534bd2da5013b81d2787">AllocMap</a>.erase(addr);
+<a name="l00135"></a>00135                         <span class="keywordflow">return</span> amount;
+<a name="l00136"></a>00136                 }
+<a name="l00137"></a>00137         }
 </pre></div>
 <p>
 
@@ -186,7 +187,7 @@ size_t &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 <hr>The documentation for this class was generated from the following files:<ul>
 <li><a class="el" href="_ares_8h.html">Ares.h</a><li><a class="el" href="_ares_8cpp.html">Ares.cpp</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Sat Nov 14 05:42:17 2009 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 17 09:37:31 2009 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

@@ -9,6 +9,7 @@
   <div class="tabs">
     <ul>
       <li><a href="index.html"><span>Main&nbsp;Page</span></a></li>
+      <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li><a href="dirs.html"><span>Directories</span></a></li>
@@ -58,12 +59,16 @@
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">static void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ares.html#1751185a92aacdba420effec1faa0363">SendPDPlane</a> (HouseClass *pOwner, CellClass *pDestination, AircraftTypeClass *pPlaneType, TypeList&lt; TechnoTypeClass * &gt; *pTypes, TypeList&lt; int &gt; *pNums)</td></tr>
 
+<tr><td class="memItemLeft" nowrap align="right" valign="top">static bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ares.html#87be4737f0bdcabe099042a16c336538">RunningOnWindows7OrVista</a> ()</td></tr>
+
 <tr><td colspan="2"><br><h2>Static Public Attributes</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">static HANDLE&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ares.html#cdb0ebd090cdcc9ed1adb3c81be23804">hInstance</a> = 0</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">static bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ares.html#519e50df4f355b0861f35d0dfa8be704">bNoLogo</a> = false</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">static bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ares.html#0386d19ff330bb071446ddd36c06463f">bNoCD</a> = false</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">static bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ares.html#d6a313cd3d8b24b74155e80fa5023fcf">bTestingRun</a> = false</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">static bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ares.html#e0d4a9b6e5217b7e354e4edccce85483">bLog</a></td></tr>
 
@@ -107,28 +112,27 @@
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00088"></a>00088 {
-<a name="l00089"></a>00089         <span class="keywordtype">char</span>* pArg;
-<a name="l00090"></a>00090 
-<a name="l00091"></a>00091         <a class="code" href="class_debug.html#a0ec4107880adada173eb96ccd9a81e1">Debug::bLog</a> = <span class="keyword">false</span>;
-<a name="l00092"></a>00092         <a class="code" href="class_ares.html#0386d19ff330bb071446ddd36c06463f">bNoCD</a> = <span class="keyword">false</span>;
-<a name="l00093"></a>00093         <a class="code" href="class_ares.html#519e50df4f355b0861f35d0dfa8be704">bNoLogo</a> = <span class="keyword">false</span>;
-<a name="l00094"></a>00094 
-<a name="l00095"></a>00095         <span class="comment">// &gt; 1 because the exe path itself counts as an argument, too!</span>
-<a name="l00096"></a>00096         <span class="keywordflow">if</span>(nNumArgs &gt; 1) {
-<a name="l00097"></a>00097                 <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 1; i &lt; nNumArgs; i++) {
-<a name="l00098"></a>00098                         pArg = ppArgs[i];
-<a name="l00099"></a>00099                         _strupr(pArg);
-<a name="l00100"></a>00100                         <span class="keywordflow">if</span>(_strcmpi(pArg,<span class="stringliteral">"-LOG"</span>) == 0) {
-<a name="l00101"></a>00101                                 <a class="code" href="class_debug.html#a0ec4107880adada173eb96ccd9a81e1">Debug::bLog</a> = <span class="keyword">true</span>;
-<a name="l00102"></a>00102                         }
-<a name="l00103"></a>00103 
-<a name="l00104"></a>00104                         <span class="keywordflow">if</span>(_strcmpi(pArg,<span class="stringliteral">"-CD"</span>) == 0) {
+<div class="fragment"><pre class="fragment"><a name="l00089"></a>00089 {
+<a name="l00090"></a>00090         <span class="keywordtype">char</span>* pArg;
+<a name="l00091"></a>00091 
+<a name="l00092"></a>00092         <a class="code" href="class_debug.html#a0ec4107880adada173eb96ccd9a81e1">Debug::bLog</a> = <span class="keyword">false</span>;
+<a name="l00093"></a>00093         <a class="code" href="class_ares.html#0386d19ff330bb071446ddd36c06463f">bNoCD</a> = <span class="keyword">false</span>;
+<a name="l00094"></a>00094         <a class="code" href="class_ares.html#519e50df4f355b0861f35d0dfa8be704">bNoLogo</a> = <span class="keyword">false</span>;
+<a name="l00095"></a>00095 
+<a name="l00096"></a>00096         <span class="comment">// &gt; 1 because the exe path itself counts as an argument, too!</span>
+<a name="l00097"></a>00097         <span class="keywordflow">if</span>(nNumArgs &gt; 1) {
+<a name="l00098"></a>00098                 <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 1; i &lt; nNumArgs; i++) {
+<a name="l00099"></a>00099                         pArg = ppArgs[i];
+<a name="l00100"></a>00100                         _strupr(pArg);
+<a name="l00101"></a>00101 
+<a name="l00102"></a>00102                         <span class="keywordflow">if</span>(strcmp(pArg,<span class="stringliteral">"-LOG"</span>) == 0) {
+<a name="l00103"></a>00103                                 <a class="code" href="class_debug.html#a0ec4107880adada173eb96ccd9a81e1">Debug::bLog</a> = <span class="keyword">true</span>;
+<a name="l00104"></a>00104                         } <span class="keywordflow">else</span> <span class="keywordflow">if</span>(strcmp(pArg,<span class="stringliteral">"-CD"</span>) == 0) {
 <a name="l00105"></a>00105                                 <a class="code" href="class_ares.html#0386d19ff330bb071446ddd36c06463f">bNoCD</a> = <span class="keyword">true</span>;
-<a name="l00106"></a>00106                         }
-<a name="l00107"></a>00107 
-<a name="l00108"></a>00108                         <span class="keywordflow">if</span>(_strcmpi(pArg,<span class="stringliteral">"-NOLOGO"</span>) == 0) {
-<a name="l00109"></a>00109                                 <a class="code" href="class_ares.html#519e50df4f355b0861f35d0dfa8be704">bNoLogo</a> = <span class="keyword">true</span>;
+<a name="l00106"></a>00106                         } <span class="keywordflow">else</span> <span class="keywordflow">if</span>(strcmp(pArg,<span class="stringliteral">"-NOLOGO"</span>) == 0) {
+<a name="l00107"></a>00107                                 <a class="code" href="class_ares.html#519e50df4f355b0861f35d0dfa8be704">bNoLogo</a> = <span class="keyword">true</span>;
+<a name="l00108"></a>00108                         } <span class="keywordflow">else</span> <span class="keywordflow">if</span>(strcmp(pArg, <span class="stringliteral">"-TESTRUN"</span>) == 0) {
+<a name="l00109"></a>00109                                 <a class="code" href="class_ares.html#d6a313cd3d8b24b74155e80fa5023fcf">bTestingRun</a> = <span class="keyword">true</span>;
 <a name="l00110"></a>00110                         }
 <a name="l00111"></a>00111                 }
 <a name="l00112"></a>00112         }
@@ -163,7 +167,9 @@
 <a name="l00127"></a>00127         <a class="code" href="class_debug.html#3bdacc0c9ae25e0546849a639aeb8780">Debug::LogFileOpen</a>();
 <a name="l00128"></a>00128 
 <a name="l00129"></a>00129         Unsorted::Savegame_Magic = <a class="code" href="_ares_8version_8h.html#3cfff0b01497b9f98a1f90e2c4fc7620">SAVEGAME_MAGIC</a>;
-<a name="l00130"></a>00130 }
+<a name="l00130"></a>00130         Game::bVideoBackBuffer = <span class="keyword">false</span>;
+<a name="l00131"></a>00131         Game::bAllowVRAMSidebar = <span class="keyword">false</span>;
+<a name="l00132"></a>00132 }
 </pre></div>
 <p>
 
@@ -185,10 +191,11 @@
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00133"></a>00133 {
-<a name="l00134"></a>00134         Debug::Log(<span class="stringliteral">"XTACH\n"</span>);
-<a name="l00135"></a>00135         <a class="code" href="class_debug.html#fa3069535ec78b3ea611e1020a26b173">Debug::LogFileClose</a>();
-<a name="l00136"></a>00136 }
+<div class="fragment"><pre class="fragment"><a name="l00135"></a>00135 {
+<a name="l00136"></a>00136         <a class="code" href="class_ares_1_1_global_controls.html#4618490b7e40c04bb248d80ecf8a802d">GlobalControls::CloseConfig</a>();
+<a name="l00137"></a>00137         Debug::Log(<span class="stringliteral">"XTACH\n"</span>);
+<a name="l00138"></a>00138         <a class="code" href="class_debug.html#fa3069535ec78b3ea611e1020a26b173">Debug::LogFileClose</a>();
+<a name="l00139"></a>00139 }
 </pre></div>
 <p>
 
@@ -220,9 +227,9 @@
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00044"></a>00044 {
-<a name="l00045"></a>00045         <span class="keywordflow">return</span> EventFlags;
-<a name="l00046"></a>00046 }
+<div class="fragment"><pre class="fragment"><a name="l00045"></a>00045 {
+<a name="l00046"></a>00046         <span class="keywordflow">return</span> EventFlags;
+<a name="l00047"></a>00047 }
 </pre></div>
 <p>
 
@@ -268,43 +275,79 @@
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00049"></a>00049 {
-<a name="l00050"></a>00050         <a class="code" href="class_a_i_control_command_class.html">AIControlCommandClass</a> *AICommand;
-<a name="l00051"></a>00051         GAME_ALLOC(<a class="code" href="class_a_i_control_command_class.html">AIControlCommandClass</a>, AICommand);
-<a name="l00052"></a>00052         CommandClass::Array-&gt;AddItem(AICommand);
-<a name="l00053"></a>00053 
-<a name="l00054"></a>00054         <a class="code" href="class_map_snapshot_command_class.html">MapSnapshotCommandClass</a> *MapSnapshotCommand;
-<a name="l00055"></a>00055         GAME_ALLOC(<a class="code" href="class_map_snapshot_command_class.html">MapSnapshotCommandClass</a>, MapSnapshotCommand);
-<a name="l00056"></a>00056         CommandClass::Array-&gt;AddItem(MapSnapshotCommand);
-<a name="l00057"></a>00057 
-<a name="l00058"></a>00058         <a class="code" href="class_test_something_command_class.html">TestSomethingCommandClass</a> *TestSomethingCommand;
-<a name="l00059"></a>00059         GAME_ALLOC(<a class="code" href="class_test_something_command_class.html">TestSomethingCommandClass</a>, TestSomethingCommand);
-<a name="l00060"></a>00060         CommandClass::Array-&gt;AddItem(TestSomethingCommand);
-<a name="l00061"></a>00061 
-<a name="l00062"></a>00062         <a class="code" href="class_frame_by_frame_command_class.html">FrameByFrameCommandClass</a> *FrameByFrameCommand;
-<a name="l00063"></a>00063         GAME_ALLOC(<a class="code" href="class_frame_by_frame_command_class.html">FrameByFrameCommandClass</a>, FrameByFrameCommand);
-<a name="l00064"></a>00064         CommandClass::Array-&gt;AddItem(FrameByFrameCommand);
-<a name="l00065"></a>00065 
-<a name="l00066"></a>00066         <a class="code" href="class_frame_step_command_class.html">FrameStepCommandClass</a> *FrameStepCommand;
-<a name="l00067"></a>00067         GAME_ALLOC(<a class="code" href="class_frame_step_command_class.html">FrameStepCommandClass</a>, FrameStepCommand);
-<a name="l00068"></a>00068         CommandClass::Array-&gt;AddItem(FrameStepCommand);
-<a name="l00069"></a>00069 
-<a name="l00070"></a>00070         <a class="code" href="class_firestorm_toggle_command_class.html">FirestormToggleCommandClass</a> *FirestormToggleCommand;
-<a name="l00071"></a>00071         GAME_ALLOC(<a class="code" href="class_firestorm_toggle_command_class.html">FirestormToggleCommandClass</a>, FirestormToggleCommand);
-<a name="l00072"></a>00072         CommandClass::Array-&gt;AddItem(FirestormToggleCommand);
-<a name="l00073"></a>00073 
-<a name="l00074"></a>00074         <a class="code" href="class_dumper_types_command_class.html">DumperTypesCommandClass</a> *DumperTypesCommand;
-<a name="l00075"></a>00075         GAME_ALLOC(<a class="code" href="class_dumper_types_command_class.html">DumperTypesCommandClass</a>, DumperTypesCommand);
-<a name="l00076"></a>00076         CommandClass::Array-&gt;AddItem(DumperTypesCommand);
-<a name="l00077"></a>00077 
-<a name="l00078"></a>00078         <a class="code" href="class_debugging_command_class.html">DebuggingCommandClass</a> *DebuggingCommand;
-<a name="l00079"></a>00079         GAME_ALLOC(<a class="code" href="class_debugging_command_class.html">DebuggingCommandClass</a>, DebuggingCommand);
-<a name="l00080"></a>00080         CommandClass::Array-&gt;AddItem(DebuggingCommand);
-<a name="l00081"></a>00081 
-<a name="l00082"></a>00082         <a class="code" href="class_logging_command_class.html">LoggingCommandClass</a> *LoggingCommand;
-<a name="l00083"></a>00083         GAME_ALLOC(<a class="code" href="class_logging_command_class.html">LoggingCommandClass</a>, LoggingCommand);
-<a name="l00084"></a>00084         CommandClass::Array-&gt;AddItem(LoggingCommand);
-<a name="l00085"></a>00085 }
+<div class="fragment"><pre class="fragment"><a name="l00050"></a>00050 {
+<a name="l00051"></a>00051         <a class="code" href="class_a_i_control_command_class.html">AIControlCommandClass</a> *AICommand;
+<a name="l00052"></a>00052         GAME_ALLOC(<a class="code" href="class_a_i_control_command_class.html">AIControlCommandClass</a>, AICommand);
+<a name="l00053"></a>00053         CommandClass::Array-&gt;AddItem(AICommand);
+<a name="l00054"></a>00054 
+<a name="l00055"></a>00055         <a class="code" href="class_map_snapshot_command_class.html">MapSnapshotCommandClass</a> *MapSnapshotCommand;
+<a name="l00056"></a>00056         GAME_ALLOC(<a class="code" href="class_map_snapshot_command_class.html">MapSnapshotCommandClass</a>, MapSnapshotCommand);
+<a name="l00057"></a>00057         CommandClass::Array-&gt;AddItem(MapSnapshotCommand);
+<a name="l00058"></a>00058 
+<a name="l00059"></a>00059         <a class="code" href="class_test_something_command_class.html">TestSomethingCommandClass</a> *TestSomethingCommand;
+<a name="l00060"></a>00060         GAME_ALLOC(<a class="code" href="class_test_something_command_class.html">TestSomethingCommandClass</a>, TestSomethingCommand);
+<a name="l00061"></a>00061         CommandClass::Array-&gt;AddItem(TestSomethingCommand);
+<a name="l00062"></a>00062 
+<a name="l00063"></a>00063         <a class="code" href="class_frame_by_frame_command_class.html">FrameByFrameCommandClass</a> *FrameByFrameCommand;
+<a name="l00064"></a>00064         GAME_ALLOC(<a class="code" href="class_frame_by_frame_command_class.html">FrameByFrameCommandClass</a>, FrameByFrameCommand);
+<a name="l00065"></a>00065         CommandClass::Array-&gt;AddItem(FrameByFrameCommand);
+<a name="l00066"></a>00066 
+<a name="l00067"></a>00067         <a class="code" href="class_frame_step_command_class.html">FrameStepCommandClass</a> *FrameStepCommand;
+<a name="l00068"></a>00068         GAME_ALLOC(<a class="code" href="class_frame_step_command_class.html">FrameStepCommandClass</a>, FrameStepCommand);
+<a name="l00069"></a>00069         CommandClass::Array-&gt;AddItem(FrameStepCommand);
+<a name="l00070"></a>00070 
+<a name="l00071"></a>00071         <a class="code" href="class_firestorm_toggle_command_class.html">FirestormToggleCommandClass</a> *FirestormToggleCommand;
+<a name="l00072"></a>00072         GAME_ALLOC(<a class="code" href="class_firestorm_toggle_command_class.html">FirestormToggleCommandClass</a>, FirestormToggleCommand);
+<a name="l00073"></a>00073         CommandClass::Array-&gt;AddItem(FirestormToggleCommand);
+<a name="l00074"></a>00074 
+<a name="l00075"></a>00075         <a class="code" href="class_dumper_types_command_class.html">DumperTypesCommandClass</a> *DumperTypesCommand;
+<a name="l00076"></a>00076         GAME_ALLOC(<a class="code" href="class_dumper_types_command_class.html">DumperTypesCommandClass</a>, DumperTypesCommand);
+<a name="l00077"></a>00077         CommandClass::Array-&gt;AddItem(DumperTypesCommand);
+<a name="l00078"></a>00078 
+<a name="l00079"></a>00079         <a class="code" href="class_debugging_command_class.html">DebuggingCommandClass</a> *DebuggingCommand;
+<a name="l00080"></a>00080         GAME_ALLOC(<a class="code" href="class_debugging_command_class.html">DebuggingCommandClass</a>, DebuggingCommand);
+<a name="l00081"></a>00081         CommandClass::Array-&gt;AddItem(DebuggingCommand);
+<a name="l00082"></a>00082 
+<a name="l00083"></a>00083         <a class="code" href="class_logging_command_class.html">LoggingCommandClass</a> *LoggingCommand;
+<a name="l00084"></a>00084         GAME_ALLOC(<a class="code" href="class_logging_command_class.html">LoggingCommandClass</a>, LoggingCommand);
+<a name="l00085"></a>00085         CommandClass::Array-&gt;AddItem(LoggingCommand);
+<a name="l00086"></a>00086 }
+</pre></div>
+<p>
+
+</div>
+</div><p>
+<a class="anchor" name="87be4737f0bdcabe099042a16c336538"></a><!-- doxytag: member="Ares::RunningOnWindows7OrVista" ref="87be4737f0bdcabe099042a16c336538" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Ares::RunningOnWindows7OrVista           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+<div class="fragment"><pre class="fragment"><a name="l00390"></a>00390                                     {
+<a name="l00391"></a>00391         <span class="keyword">static</span> <span class="keywordtype">bool</span> W7 = <span class="keyword">false</span>;
+<a name="l00392"></a>00392         <span class="keyword">static</span> <span class="keywordtype">bool</span> Checked = <span class="keyword">false</span>;
+<a name="l00393"></a>00393         <span class="keywordflow">if</span>(!Checked) {
+<a name="l00394"></a>00394                 Checked = <span class="keyword">true</span>;
+<a name="l00395"></a>00395                 OSVERSIONINFO osvi;
+<a name="l00396"></a>00396 
+<a name="l00397"></a>00397                 ZeroMemory(&amp;osvi, <span class="keyword">sizeof</span>(OSVERSIONINFO));
+<a name="l00398"></a>00398                 osvi.dwOSVersionInfoSize = <span class="keyword">sizeof</span>(OSVERSIONINFO);
+<a name="l00399"></a>00399                 GetVersionEx(&amp;osvi);
+<a name="l00400"></a>00400 
+<a name="l00401"></a>00401                 W7 = (osvi.dwMajorVersion == 6)<span class="comment">/* &amp;&amp; (osvi.dwMinorVersion &gt;= 1)*/</span>;
+<a name="l00402"></a>00402         }
+<a name="l00403"></a>00403         <span class="keywordflow">return</span> W7;
+<a name="l00404"></a>00404 }
 </pre></div>
 <p>
 
@@ -354,67 +397,67 @@
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00142"></a>00142 {
-<a name="l00143"></a>00143         <span class="keywordflow">if</span>(pNums &amp;&amp; pTypes &amp;&amp;
-<a name="l00144"></a>00144                 pNums-&gt;Count == pTypes-&gt;Count &amp;&amp;
-<a name="l00145"></a>00145                 pNums-&gt;Count &gt; 0 &amp;&amp;
-<a name="l00146"></a>00146                 pOwner &amp;&amp; pPlaneType &amp;&amp; pTarget)
-<a name="l00147"></a>00147         {
-<a name="l00148"></a>00148                 ++Unsorted::SomeMutex;
-<a name="l00149"></a>00149                 AircraftClass* pPlane = (AircraftClass*)pPlaneType-&gt;CreateObject(pOwner);
-<a name="l00150"></a>00150                 --Unsorted::SomeMutex;
-<a name="l00151"></a>00151 
-<a name="l00152"></a>00152                 pPlane-&gt;Spawned = <span class="keyword">true</span>;
-<a name="l00153"></a>00153 
-<a name="l00154"></a>00154                 <span class="comment">//Get edge (direction for plane to come from)</span>
-<a name="l00155"></a>00155                 <span class="keywordtype">int</span> edge = pOwner-&gt;StartingEdge;
-<a name="l00156"></a>00156                 <span class="keywordflow">if</span>(edge &lt; edge_NORTH || edge &gt; edge_WEST) {
-<a name="l00157"></a>00157                         edge = pOwner-&gt;Edge;
-<a name="l00158"></a>00158                         <span class="keywordflow">if</span>(edge &lt; edge_NORTH || edge &gt; edge_WEST) {
-<a name="l00159"></a>00159                                 edge = edge_NORTH;
-<a name="l00160"></a>00160                         }
-<a name="l00161"></a>00161                 }
-<a name="l00162"></a>00162 
-<a name="l00163"></a>00163                 <span class="comment">//some ASM magic, seems to retrieve a random cell struct at a given edge</span>
-<a name="l00164"></a>00164                 CellStruct spawn_cell;
+<div class="fragment"><pre class="fragment"><a name="l00145"></a>00145 {
+<a name="l00146"></a>00146         <span class="keywordflow">if</span>(pNums &amp;&amp; pTypes &amp;&amp;
+<a name="l00147"></a>00147                 pNums-&gt;Count == pTypes-&gt;Count &amp;&amp;
+<a name="l00148"></a>00148                 pNums-&gt;Count &gt; 0 &amp;&amp;
+<a name="l00149"></a>00149                 pOwner &amp;&amp; pPlaneType &amp;&amp; pTarget)
+<a name="l00150"></a>00150         {
+<a name="l00151"></a>00151                 ++Unsorted::SomeMutex;
+<a name="l00152"></a>00152                 AircraftClass* pPlane = (AircraftClass*)pPlaneType-&gt;CreateObject(pOwner);
+<a name="l00153"></a>00153                 --Unsorted::SomeMutex;
+<a name="l00154"></a>00154 
+<a name="l00155"></a>00155                 pPlane-&gt;Spawned = <span class="keyword">true</span>;
+<a name="l00156"></a>00156 
+<a name="l00157"></a>00157                 <span class="comment">//Get edge (direction for plane to come from)</span>
+<a name="l00158"></a>00158                 <span class="keywordtype">int</span> edge = pOwner-&gt;StartingEdge;
+<a name="l00159"></a>00159                 <span class="keywordflow">if</span>(edge &lt; edge_NORTH || edge &gt; edge_WEST) {
+<a name="l00160"></a>00160                         edge = pOwner-&gt;Edge;
+<a name="l00161"></a>00161                         <span class="keywordflow">if</span>(edge &lt; edge_NORTH || edge &gt; edge_WEST) {
+<a name="l00162"></a>00162                                 edge = edge_NORTH;
+<a name="l00163"></a>00163                         }
+<a name="l00164"></a>00164                 }
 <a name="l00165"></a>00165 
-<a name="l00166"></a>00166                 MapClass::Global()-&gt;PickCellOnEdge(&amp;spawn_cell, edge, (CellStruct *)0xB04C38, (CellStruct *)0xB04C38, 4, 1, 0);
-<a name="l00167"></a>00167 
-<a name="l00168"></a>00168                 pPlane-&gt;QueueMission(mission_ParadropApproach, <span class="keyword">false</span>);
-<a name="l00169"></a>00169 
-<a name="l00170"></a>00170                 <span class="keywordflow">if</span>(pTarget) {
-<a name="l00171"></a>00171                         pPlane-&gt;SetTarget(pTarget);
-<a name="l00172"></a>00172                 }
-<a name="l00173"></a>00173 
-<a name="l00174"></a>00174                 CoordStruct spawn_crd = {(spawn_cell.X &lt;&lt; 8) + 128, (spawn_cell.Y &lt;&lt; 8) + 128, 0};
-<a name="l00175"></a>00175 
-<a name="l00176"></a>00176                 ++Unsorted::SomeMutex;
-<a name="l00177"></a>00177                 <span class="keywordtype">bool</span> bSpawned = pPlane-&gt;Put(&amp;spawn_crd, dir_N);
-<a name="l00178"></a>00178                 --Unsorted::SomeMutex;
-<a name="l00179"></a>00179 
-<a name="l00180"></a>00180                 <span class="keywordflow">if</span>(bSpawned) {
-<a name="l00181"></a>00181                         pPlane-&gt;HasPassengers = <span class="keyword">true</span>;
-<a name="l00182"></a>00182                         <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; pTypes-&gt;Count; i++) {
-<a name="l00183"></a>00183                                 TechnoTypeClass* pTechnoType = pTypes-&gt;GetItem(i);
-<a name="l00184"></a>00184 
-<a name="l00185"></a>00185                                 <span class="comment">//only allow infantry and vehicles</span>
-<a name="l00186"></a>00186                                 eAbstractType WhatAmI = pTechnoType-&gt;WhatAmI();
-<a name="l00187"></a>00187                                 <span class="keywordflow">if</span>(WhatAmI == abs_UnitType || WhatAmI == abs_InfantryType) {
-<a name="l00188"></a>00188                                         <span class="keywordflow">for</span>(<span class="keywordtype">int</span> k = 0; k &lt; pNums-&gt;Items[i]; k++) {
-<a name="l00189"></a>00189                                                 FootClass* pNew = (FootClass*)pTechnoType-&gt;CreateObject(pOwner);
-<a name="l00190"></a>00190                                                 pNew-&gt;Remove();
-<a name="l00191"></a>00191                                                 pPlane-&gt;get_Passengers()-&gt;AddPassenger(pNew);
-<a name="l00192"></a>00192                                         }
-<a name="l00193"></a>00193                                 }
-<a name="l00194"></a>00194                         }
-<a name="l00195"></a>00195                         pPlane-&gt;NextMission();
-<a name="l00196"></a>00196                 } <span class="keywordflow">else</span> {
-<a name="l00197"></a>00197                         <span class="keywordflow">if</span>(pPlane) {
-<a name="l00198"></a>00198                                 GAME_DEALLOC(pPlane);
-<a name="l00199"></a>00199                         }
-<a name="l00200"></a>00200                 }
-<a name="l00201"></a>00201         }
-<a name="l00202"></a>00202 }
+<a name="l00166"></a>00166                 <span class="comment">//some ASM magic, seems to retrieve a random cell struct at a given edge</span>
+<a name="l00167"></a>00167                 CellStruct spawn_cell;
+<a name="l00168"></a>00168 
+<a name="l00169"></a>00169                 MapClass::Global()-&gt;PickCellOnEdge(&amp;spawn_cell, edge, (CellStruct *)0xB04C38, (CellStruct *)0xB04C38, 4, 1, 0);
+<a name="l00170"></a>00170 
+<a name="l00171"></a>00171                 pPlane-&gt;QueueMission(mission_ParadropApproach, <span class="keyword">false</span>);
+<a name="l00172"></a>00172 
+<a name="l00173"></a>00173                 <span class="keywordflow">if</span>(pTarget) {
+<a name="l00174"></a>00174                         pPlane-&gt;SetTarget(pTarget);
+<a name="l00175"></a>00175                 }
+<a name="l00176"></a>00176 
+<a name="l00177"></a>00177                 CoordStruct spawn_crd = {(spawn_cell.X &lt;&lt; 8) + 128, (spawn_cell.Y &lt;&lt; 8) + 128, 0};
+<a name="l00178"></a>00178 
+<a name="l00179"></a>00179                 ++Unsorted::SomeMutex;
+<a name="l00180"></a>00180                 <span class="keywordtype">bool</span> bSpawned = pPlane-&gt;Put(&amp;spawn_crd, dir_N);
+<a name="l00181"></a>00181                 --Unsorted::SomeMutex;
+<a name="l00182"></a>00182 
+<a name="l00183"></a>00183                 <span class="keywordflow">if</span>(bSpawned) {
+<a name="l00184"></a>00184                         pPlane-&gt;HasPassengers = <span class="keyword">true</span>;
+<a name="l00185"></a>00185                         <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; pTypes-&gt;Count; i++) {
+<a name="l00186"></a>00186                                 TechnoTypeClass* pTechnoType = pTypes-&gt;GetItem(i);
+<a name="l00187"></a>00187 
+<a name="l00188"></a>00188                                 <span class="comment">//only allow infantry and vehicles</span>
+<a name="l00189"></a>00189                                 eAbstractType WhatAmI = pTechnoType-&gt;WhatAmI();
+<a name="l00190"></a>00190                                 <span class="keywordflow">if</span>(WhatAmI == abs_UnitType || WhatAmI == abs_InfantryType) {
+<a name="l00191"></a>00191                                         <span class="keywordflow">for</span>(<span class="keywordtype">int</span> k = 0; k &lt; pNums-&gt;Items[i]; k++) {
+<a name="l00192"></a>00192                                                 FootClass* pNew = (FootClass*)pTechnoType-&gt;CreateObject(pOwner);
+<a name="l00193"></a>00193                                                 pNew-&gt;Remove();
+<a name="l00194"></a>00194                                                 pPlane-&gt;get_Passengers()-&gt;AddPassenger(pNew);
+<a name="l00195"></a>00195                                         }
+<a name="l00196"></a>00196                                 }
+<a name="l00197"></a>00197                         }
+<a name="l00198"></a>00198                         pPlane-&gt;NextMission();
+<a name="l00199"></a>00199                 } <span class="keywordflow">else</span> {
+<a name="l00200"></a>00200                         <span class="keywordflow">if</span>(pPlane) {
+<a name="l00201"></a>00201                                 GAME_DEALLOC(pPlane);
+<a name="l00202"></a>00202                         }
+<a name="l00203"></a>00203                 }
+<a name="l00204"></a>00204         }
+<a name="l00205"></a>00205 }
 </pre></div>
 <p>
 
@@ -457,6 +500,21 @@
       <table class="memname">
         <tr>
           <td class="memname">bool <a class="el" href="class_ares.html#519e50df4f355b0861f35d0dfa8be704">Ares::bNoLogo</a> = false<code> [static]</code>          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+
+</div>
+</div><p>
+<a class="anchor" name="d6a313cd3d8b24b74155e80fa5023fcf"></a><!-- doxytag: member="Ares::bTestingRun" ref="d6a313cd3d8b24b74155e80fa5023fcf" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="class_ares.html#d6a313cd3d8b24b74155e80fa5023fcf">Ares::bTestingRun</a> = false<code> [static]</code>          </td>
         </tr>
       </table>
 </div>
@@ -574,7 +632,7 @@
 <hr>The documentation for this class was generated from the following files:<ul>
 <li><a class="el" href="_ares_8h.html">Ares.h</a><li><a class="el" href="_ares_8cpp.html">Ares.cpp</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Sat Nov 14 05:42:16 2009 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 17 09:37:30 2009 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

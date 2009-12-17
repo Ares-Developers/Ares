@@ -63,9 +63,9 @@ DEFINE_HOOK(46920B, BulletClass_Fire, 6)
 			pTarget->SetOwningHouse(Bullet->Owner->Owner, 1);
 			pTarget->set_MindControlledByAUnit(1);
 			pTarget->QueueMission(mission_Guard, 0);
-	
+
 			coords.Z += pType->MindControlRingOffset;
-	
+
 			AnimClass *MCAnim;
 			GAME_ALLOC(AnimClass, MCAnim, RulesClass::Global()->PermaControlledAnimationType, &coords);
 			AnimClass *oldMC = pTarget->MindControlRingAnim;
@@ -74,9 +74,15 @@ DEFINE_HOOK(46920B, BulletClass_Fire, 6)
 			}
 			pTarget->MindControlRingAnim = MCAnim;
 			MCAnim->SetOwnerObject(pTarget);
-	
+
 			return 0x469AA4;
 		}
+	}
+
+	BulletExt::ExtData* TheBulletExt = BulletExt::ExtMap.Find(Bullet);
+	if(TheBulletExt->DamageOccupants()) {
+		// the occupants have been damaged, do not damage the building (the original target)
+		Bullet->Remove(); // horrible crashes to remind D to fix this ;)
 	}
 
 	return 0;

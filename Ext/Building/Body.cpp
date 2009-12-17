@@ -4,6 +4,7 @@
 #include <CellClass.h>
 #include <MapClass.h>
 #include <CellSpread.h>
+#include <GeneralStructures.h> // for CellStruct
 
 const DWORD Extension<BuildingClass>::Canary = 0x99999999;
 Container<BuildingExt> BuildingExt::ExtMap;
@@ -94,5 +95,136 @@ void BuildingExt::UpdateDisplayTo(BuildingClass *pThis) {
 			}
 		}
 		MapClass::Instance->sub_4F42F0(2);
+	}
+}
+
+// #664: Advanced Rubble
+//! This function switches the building into its Advanced Rubble state or back to normal.
+/*!
+	If no respective target-state object exists in the ExtData so far, the function will create it.
+	It'll check beforehand whether the necessary Rubble.Intact or Rubble.Destroyed are actually set on the type.
+	If the necessary one is not set, it'll log a debug message and abort.
+
+	Rubble is set to full health on placing, since, no matter what we do in the backend, to the player, each pile of rubble is a new one.
+	The reconstructed building, on the other hand, is set to 1% of it's health, since it was just no reconstructed, and not freshly built or repaired yet.
+
+	Lastly, the function will set the current building as the alternate state on the other state, to ensure that, if the other state gets triggered back,
+	it is connected to this state. (e.g. when a building is turned into rubble, the normal state will set itself as the normal state of the rubble,
+	so when the rubble is reconstructed, it switches back to the correct normal state.)
+
+	\param beingRepaired if set to true, the function will turn the building back into its normal state. If false or unset, the building will be turned into rubble.
+
+	\author Renegade
+	\date 16.12.09+
+*/
+void BuildingExt::ExtData::RubbleYell(bool beingRepaired = false) {
+	BuildingClass* currentBuilding = this->AttachedToObject;
+	BuildingTypeClass* currentBuildingType = game_cast<BuildingTypeClass *>(currentBuilding->GetTechnoType());
+
+	currentBuilding->Remove(); // only takes it off the map
+
+	if(beingRepaired) {
+		if(!this->NormalState && !currentBuildingType->RubbleIntact) {
+			Debug::Log("Warning! Advanced Rubble was supposed to be reconstructed but Ares could not obtain its normal state. Check if Rubble.Intact is set (correctly).");
+			return;
+		}
+
+		// if we don't have a normal state building yet, create one.
+		if(!this->NormalState) {
+			this->NormalState = game_cast<BuildingClass *>(currentBuildingType->RubbleIntact->CreateObject(currentBuilding->Owner));
+		}
+
+		this->NormalState->Health = static_cast<int>(this->NormalState->Type->Strength / 100); // see description above
+		this->NormalState->IsAlive = true; // assuming this is in the sense of "is not destroyed"
+		// Location should not be changed by removal
+		this->NormalState->Put(&currentBuilding->Location, currentBuilding->Facing);
+
+		// make sure we get back here if necessary
+		BuildingExt::ExtData* NormalExt = BuildingExt::ExtMap.Find(this->NormalState);
+		NormalExt->setRubble(currentBuilding);
+
+	} else { // if we're not here to repair that thing, obviously, we're gonna crush it
+		if(!this->RubbleState && !currentBuildingType->RubbleDestroyed) {
+			Debug::Log("Warning! Building was supposed to be turned into Advanced Rubble but Ares could not obtain its rubble state. Check if Rubble.Destroyed is set (correctly).");
+			return;
+		}
+
+		if(!this->RubbleState) {
+			this->RubbleState = game_cast<BuildingClass *>(currentBuildingType->RubbleDestroyed->CreateObject(currentBuilding->Owner));
+		}
+		this->RubbleState->Health = this->RubbleState->Type->Strength; // see description above
+		// Location should not be changed by removal
+		this->RubbleState->Put(&currentBuilding->Location, currentBuilding->Facing);
+
+		// make sure we get back here if necessary
+		BuildingExt::ExtData* RubbleExt = BuildingExt::ExtMap.Find(this->RubbleState);
+		RubbleExt->setNormal(currentBuilding);
+	}
+
+	return;
+}
+
+// #666: IsTrench/Traversal
+//! This function checks if occupants of the current building can, on principle, move on to the target building.
+/*!
+	Conditions checked are whether there are occupants in the current building, whether the target building is full,
+	whether the current building even is a trench, and whether both buildings are of the same trench kind.
+
+	The current system assumes 1x1 sized trench parts; it will probably work in all cases where the 0,0 (top) cells of
+	buildings touch (e.g. a 3x3 building next to a 1x3 building), but not when the 0,0 cells are further apart.
+	This may be changed at a later point in time, if there is demand for it.
+
+	\param targetBuilding a pointer to the target building.
+	\return returns true if traversal between both buildings is legal, otherwise false.
+	\sa doTraverseTo()
+
+	\author Renegade
+	\date 16.12.09+
+*/
+bool BuildingExt::ExtData::canTraverseTo(BuildingClass* targetBuilding) {
+	BuildingClass* currentBuilding = this->AttachedToObject;
+	//BuildingTypeClass* currentBuildingType = game_cast<BuildingTypeClass *>(currentBuilding->GetTechnoType());
+	BuildingTypeClass* targetBuildingType = game_cast<BuildingTypeClass *>(targetBuilding->GetTechnoType());
+
+	if((targetBuilding->Occupants->Count >= targetBuildingType->MaxNumberOccupants) || !currentBuilding->Occupants->Count || !targetBuildingType->CanBeOccupied) {
+		return false; // Can't traverse if there's no one to move, or the target is full, or we can't actually occupy the target
+	}
+
+	BuildingTypeExt::ExtData* currentBuildingTypeExt = BuildingTypeExt::ExtMap.Find(currentBuilding->GetTechnoType());
+	BuildingTypeExt::ExtData* targetBuildingTypeExt = BuildingTypeExt::ExtMap.Find(targetBuilding->GetTechnoType());
+
+	if((currentBuildingTypeExt->IsTrench > -1) && (currentBuildingTypeExt->IsTrench == targetBuildingTypeExt->IsTrench)) {
+		// if we've come here, there's room, there are people to move, and the buildings are trenches and of the same kind
+		// the only questioning remaining is whether they are next to each other.
+		return targetBuilding->Location->DistanceFrom(currentBuilding->Location) <= 256.0; // if the target building is more than 256 leptons away, it's not on a straight neighboring cell
+
+	} else {
+		return false; // not the same trench kind or not a trench
+	}
+
+}
+
+// #666: IsTrench/Traversal
+//! This function moves as many occupants as possible from the current to the target building.
+/*!
+	This function will move occupants from the current building to the target building until either
+	a) the target building is full, or
+	b) the current building is empty.
+
+	\warning The function assumes the legality of the traversal was checked beforehand with #canTraverseTo(), and will therefore not do any safety checks.
+
+	\param targetBuilding a pointer to the target building.
+	\sa canTraverseTo()
+
+	\author Renegade
+	\date 16.12.09+
+*/
+void BuildingExt::ExtData::doTraverseTo(BuildingClass* targetBuilding) {
+	BuildingClass* currentBuilding = this->AttachedToObject;
+	BuildingTypeClass* targetBuildingType = game_cast<BuildingTypeClass *>(targetBuilding->GetTechnoType());
+
+	while(currentBuilding->Occupants->Count && (targetBuilding->Occupants->Count < targetBuildingType->MaxNumberOccupants)) { // depending on Westwood's handling, this could explode when Size > 1 units are involved...but don't tell the users that
+		targetBuilding->Occupants->AddItem(currentBuilding->Occupants->GetItem(0));
+		currentBuilding->Occupants->RemoveItem(0); // maybe switch Add/Remove if the game gets pissy about multiple of them walking around
 	}
 }

@@ -9,6 +9,7 @@
   <div class="tabs">
     <ul>
       <li><a href="index.html"><span>Main&nbsp;Page</span></a></li>
+      <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li><a href="dirs.html"><span>Directories</span></a></li>
@@ -33,23 +34,23 @@
 </div>
 <div class="contents">
 <h1>Ares.cpp File Reference</h1><code>#include &quot;<a class="el" href="_ares_8h.html">Ares.h</a>&quot;</code><br>
-<code>#include &quot;Commands\Commands.h&quot;</code><br>
+<code>#include &quot;<a class="el" href="_commands_8h.html">Commands/Commands.h</a>&quot;</code><br>
 <code>#include &lt;CommandClass.h&gt;</code><br>
 <code>#include &lt;StaticInits.cpp&gt;</code><br>
 <code>#include &lt;Unsorted.h&gt;</code><br>
 <code>#include &lt;new&gt;</code><br>
-<code>#include &quot;Ext\Building\Body.h&quot;</code><br>
-<code>#include &quot;Ext\BuildingType\Body.h&quot;</code><br>
-<code>#include &quot;Ext\BulletType\Body.h&quot;</code><br>
-<code>#include &quot;Ext\House\Body.h&quot;</code><br>
-<code>#include &quot;Ext\HouseType\Body.h&quot;</code><br>
-<code>#include &quot;Ext\Side\Body.h&quot;</code><br>
-<code>#include &quot;Ext\SWType\Body.h&quot;</code><br>
-<code>#include &quot;Ext\Techno\Body.h&quot;</code><br>
-<code>#include &quot;Ext\TechnoType\Body.h&quot;</code><br>
-<code>#include &quot;Ext\WarheadType\Body.h&quot;</code><br>
-<code>#include &quot;Ext\WeaponType\Body.h&quot;</code><br>
-<code>#include &quot;Misc\Debug.h&quot;</code><br>
+<code>#include &quot;<a class="el" href="_building_2_body_8h.html">Ext/Building/Body.h</a>&quot;</code><br>
+<code>#include &quot;<a class="el" href="_building_type_2_body_8h.html">Ext/BuildingType/Body.h</a>&quot;</code><br>
+<code>#include &quot;<a class="el" href="_bullet_type_2_body_8h.html">Ext/BulletType/Body.h</a>&quot;</code><br>
+<code>#include &quot;<a class="el" href="_house_2_body_8h.html">Ext/House/Body.h</a>&quot;</code><br>
+<code>#include &quot;<a class="el" href="_house_type_2_body_8h.html">Ext/HouseType/Body.h</a>&quot;</code><br>
+<code>#include &quot;<a class="el" href="_side_2_body_8h.html">Ext/Side/Body.h</a>&quot;</code><br>
+<code>#include &quot;<a class="el" href="_s_w_type_2_body_8h.html">Ext/SWType/Body.h</a>&quot;</code><br>
+<code>#include &quot;<a class="el" href="_techno_2_body_8h.html">Ext/Techno/Body.h</a>&quot;</code><br>
+<code>#include &quot;<a class="el" href="_techno_type_2_body_8h.html">Ext/TechnoType/Body.h</a>&quot;</code><br>
+<code>#include &quot;<a class="el" href="_warhead_type_2_body_8h.html">Ext/WarheadType/Body.h</a>&quot;</code><br>
+<code>#include &quot;<a class="el" href="_weapon_type_2_body_8h.html">Ext/WeaponType/Body.h</a>&quot;</code><br>
+<code>#include &quot;<a class="el" href="_debug_8h.html">Misc/Debug.h</a>&quot;</code><br>
 <table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Functions</h2></td></tr>
@@ -82,14 +83,13 @@ TechnoClass::Update is called every frame; returning 0 tells it to execute the o
 *<p>
 * * * 
 <p>
-<dl class="return" compact><dt><b>Returns:</b></dt><dd>0: proceed to Building-&gt;ReceiveDamage <p>
-0x442373: the building will not call technoclass::receivedamage or anything else , as if the hit hadn't happened at all</dd></dl>
-<div class="fragment"><pre class="fragment"><a name="l00226"></a>00226 {
-<a name="l00227"></a>00227         <span class="keywordflow">if</span>(<a class="code" href="class_ares.html#519e50df4f355b0861f35d0dfa8be704">Ares::bNoLogo</a>)
-<a name="l00228"></a>00228                 <span class="keywordflow">return</span> 0x52C5F3;
-<a name="l00229"></a>00229         <span class="keywordflow">else</span>
-<a name="l00230"></a>00230                 <span class="keywordflow">return</span> 0;
-<a name="l00231"></a>00231 }
+<dl compact><dt><b><a class="el" href="todo.html#_todo000001">Todo:</a></b></dt><dd>show entry cursor, hooked up to traversal logic </dd></dl>
+<div class="fragment"><pre class="fragment"><a name="l00229"></a>00229 {
+<a name="l00230"></a>00230         <span class="keywordflow">if</span>(<a class="code" href="class_ares.html#519e50df4f355b0861f35d0dfa8be704">Ares::bNoLogo</a>)
+<a name="l00231"></a>00231                 <span class="keywordflow">return</span> 0x52C5F3;
+<a name="l00232"></a>00232         <span class="keywordflow">else</span>
+<a name="l00233"></a>00233                 <span class="keywordflow">return</span> 0;
+<a name="l00234"></a>00234 }
 </pre></div>
 <p>
 
@@ -127,28 +127,28 @@ TechnoClass::Update is called every frame; returning 0 tells it to execute the o
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00206"></a>00206 {
-<a name="l00207"></a>00207         <span class="keywordflow">switch</span>(dwReason) {
-<a name="l00208"></a>00208                 <span class="keywordflow">case</span> DLL_PROCESS_ATTACH:
-<a name="l00209"></a>00209                         <a class="code" href="class_ares.html#cdb0ebd090cdcc9ed1adb3c81be23804">Ares::hInstance</a> = hInstance;
-<a name="l00210"></a>00210                         <a class="code" href="class_debug.html#3bdacc0c9ae25e0546849a639aeb8780">Debug::LogFileOpen</a>();
-<a name="l00211"></a>00211                         Debug::Log(<span class="stringliteral">"ATTACH\n"</span>);
-<a name="l00212"></a>00212                         <span class="keywordflow">break</span>;
-<a name="l00213"></a>00213                 <span class="keywordflow">case</span> DLL_PROCESS_DETACH:
-<a name="l00214"></a>00214 <span class="comment">//                      Debug::Log("DETACH\n");</span>
-<a name="l00215"></a>00215 <span class="comment">//                      Debug::LogFileClose();</span>
-<a name="l00216"></a>00216                         <span class="keywordflow">break</span>;
-<a name="l00217"></a>00217         }
-<a name="l00218"></a>00218 
-<a name="l00219"></a>00219         <span class="keywordflow">return</span> <span class="keyword">true</span>;
-<a name="l00220"></a>00220 }
+<div class="fragment"><pre class="fragment"><a name="l00209"></a>00209 {
+<a name="l00210"></a>00210         <span class="keywordflow">switch</span>(dwReason) {
+<a name="l00211"></a>00211                 <span class="keywordflow">case</span> DLL_PROCESS_ATTACH:
+<a name="l00212"></a>00212                         <a class="code" href="class_ares.html#cdb0ebd090cdcc9ed1adb3c81be23804">Ares::hInstance</a> = hInstance;
+<a name="l00213"></a>00213                         <a class="code" href="class_debug.html#3bdacc0c9ae25e0546849a639aeb8780">Debug::LogFileOpen</a>();
+<a name="l00214"></a>00214                         Debug::Log(<span class="stringliteral">"ATTACH\n"</span>);
+<a name="l00215"></a>00215                         <span class="keywordflow">break</span>;
+<a name="l00216"></a>00216                 <span class="keywordflow">case</span> DLL_PROCESS_DETACH:
+<a name="l00217"></a>00217 <span class="comment">//                      Debug::Log("DETACH\n");</span>
+<a name="l00218"></a>00218 <span class="comment">//                      Debug::LogFileClose();</span>
+<a name="l00219"></a>00219                         <span class="keywordflow">break</span>;
+<a name="l00220"></a>00220         }
+<a name="l00221"></a>00221 
+<a name="l00222"></a>00222         <span class="keywordflow">return</span> <span class="keyword">true</span>;
+<a name="l00223"></a>00223 }
 </pre></div>
 <p>
 
 </div>
 </div><p>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Sat Nov 14 05:42:15 2009 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 17 09:37:30 2009 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

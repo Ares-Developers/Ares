@@ -9,6 +9,7 @@
   <div class="tabs">
     <ul>
       <li><a href="index.html"><span>Main&nbsp;Page</span></a></li>
+      <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li><a href="dirs.html"><span>Directories</span></a></li>
@@ -38,7 +39,7 @@
 <code>#include &lt;IonBlastClass.h&gt;</code><br>
 <code>#include &lt;WeaponTypeClass.h&gt;</code><br>
 <code>#include &quot;<a class="el" href="_warhead_type_2_body_8h.html">Body.h</a>&quot;</code><br>
-<code>#include &quot;..\..\Enum\ArmorTypes.h&quot;</code><br>
+<code>#include &quot;<a class="el" href="_armor_types_8h.html">../../Enum/ArmorTypes.h</a>&quot;</code><br>
 <table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Functions</h2></td></tr>
@@ -118,9 +119,9 @@
 <a name="l00063"></a>00063                         pTarget-&gt;SetOwningHouse(Bullet-&gt;Owner-&gt;Owner, 1);
 <a name="l00064"></a>00064                         pTarget-&gt;set_MindControlledByAUnit(1);
 <a name="l00065"></a>00065                         pTarget-&gt;QueueMission(mission_Guard, 0);
-<a name="l00066"></a>00066         
+<a name="l00066"></a>00066 
 <a name="l00067"></a>00067                         coords.Z += pType-&gt;MindControlRingOffset;
-<a name="l00068"></a>00068         
+<a name="l00068"></a>00068 
 <a name="l00069"></a>00069                         AnimClass *MCAnim;
 <a name="l00070"></a>00070                         GAME_ALLOC(AnimClass, MCAnim, RulesClass::Global()-&gt;PermaControlledAnimationType, &amp;coords);
 <a name="l00071"></a>00071                         AnimClass *oldMC = pTarget-&gt;MindControlRingAnim;
@@ -129,20 +130,26 @@
 <a name="l00074"></a>00074                         }
 <a name="l00075"></a>00075                         pTarget-&gt;MindControlRingAnim = MCAnim;
 <a name="l00076"></a>00076                         MCAnim-&gt;SetOwnerObject(pTarget);
-<a name="l00077"></a>00077         
+<a name="l00077"></a>00077 
 <a name="l00078"></a>00078                         <span class="keywordflow">return</span> 0x469AA4;
 <a name="l00079"></a>00079                 }
 <a name="l00080"></a>00080         }
 <a name="l00081"></a>00081 
-<a name="l00082"></a>00082         <span class="keywordflow">return</span> 0;
-<a name="l00083"></a>00083 }
+<a name="l00082"></a>00082         <a class="code" href="class_bullet_ext_1_1_ext_data.html">BulletExt::ExtData</a>* TheBulletExt = <a class="code" href="class_bullet_ext.html#d95a2d8a0cc55e4187f3cfb8ae60ab29">BulletExt::ExtMap</a>.<a class="code" href="class_container.html#90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(Bullet);
+<a name="l00083"></a>00083         <span class="keywordflow">if</span>(TheBulletExt-&gt;<a class="code" href="class_bullet_ext_1_1_ext_data.html#a3afac5846ade163b708d9d5b9007e53" title="Does the entire PassThrough logic, checks &amp;amp; damage.">DamageOccupants</a>()) {
+<a name="l00084"></a>00084                 <span class="comment">// the occupants have been damaged, do not damage the building (the original target)</span>
+<a name="l00085"></a>00085                 Bullet-&gt;Remove(); <span class="comment">// horrible crashes to remind D to fix this ;)</span>
+<a name="l00086"></a>00086         }
+<a name="l00087"></a>00087 
+<a name="l00088"></a>00088         <span class="keywordflow">return</span> 0;
+<a name="l00089"></a>00089 }
 </pre></div>
 <p>
 
 </div>
 </div><p>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Sat Nov 14 05:42:15 2009 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 17 09:37:30 2009 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

@@ -62,7 +62,7 @@ DEFINE_HOOK(448312, BuildingClass_ChangeOwnership_OldSpy1, a)
 {
 	GET(HouseClass *, newOwner, EBX);
 	GET(BuildingClass *, B, ESI);
-	
+
 	if(B->DisplayProductionTo.Contains(newOwner)) {
 		B->DisplayProductionTo.Remove(newOwner);
 		BuildingExt::UpdateDisplayTo(B);
@@ -94,7 +94,7 @@ DEFINE_HOOK(509303, HouseClass_AllyWith_unused, 0)
 {
 	GET(HouseClass *, pThis, ESI);
 	GET(HouseClass *, pThat, EAX);
-	
+
 	pThis->RadarVisibleTo.Add(pThat);
 	return 0x509319;
 }
@@ -103,7 +103,7 @@ DEFINE_HOOK(56757F, MapClass_RevealArea0_DisplayTo, 0)
 {
 	GET(HouseClass *, pThis, ESI);
 	GET(HouseClass *, pThat, EAX);
-	
+
 	return pThis->RadarVisibleTo.Contains(pThat)
 	 ? 0x567597
 	 : 0x56759D
@@ -114,7 +114,7 @@ DEFINE_HOOK(567AC1, MapClass_RevealArea1_DisplayTo, 0)
 {
 	GET(HouseClass *, pThis, EBX);
 	GET(HouseClass *, pThat, EAX);
-	
+
 	return pThis->RadarVisibleTo.Contains(pThat)
 	 ? 0x567AD9
 	 : 0x567ADF
@@ -123,8 +123,8 @@ DEFINE_HOOK(567AC1, MapClass_RevealArea1_DisplayTo, 0)
 
 
 /* #221 - Trenches, subissue #663: Forward damage to occupants in UC buildings and Battle Bunkers  */
-// building receives damage
-DEFINE_HOOK(44235E, BuildingClass_ReceiveDamage_Trenches, 6)
+// building receives damage // this was moved to BulletExt::ExtData::DamageOccupants() which is executed in WarheadType hook BulletClass_Fire
+A_FINE_HOOK(44235E, BuildingClass_ReceiveDamage_Trenches, 6)
 {
 	GET(BuildingClass *, Building, ESI);
 	LEA_STACK(args_ReceiveDamage *, Arguments, 0xA0);
@@ -160,4 +160,101 @@ DEFINE_HOOK(44235E, BuildingClass_ReceiveDamage_Trenches, 6)
 		Debug::Log("Warning: Safety case reached in BuildingClass_ReceiveDamage_Trenches.\nTarget: %p\nSource House: %p\nWarhead: %p\nDamage: %i\nExecuting default ReceiveDamage() handler...", Arguments->target, Arguments->SourceHouse, Arguments->WH, *Arguments->Damage);
 		return 0;
 	*/
+}
+
+/* 	#218 - specific occupiers // comes in 0.2
+	#665 - raidable buildings */
+DEFINE_HOOK(457D58, BuildingClass_CanBeOccupied_SpecificOccupiers, 6)
+{
+	GET(BuildingClass *, pThis, ESI);
+	GET(InfantryClass *, pInf, EDI);
+	BuildingClassExt* pBuildExt = BuildingClassExt::ExtMap.Find(pThis);
+	bool can_occupy = false;
+
+	if(pInf->Occupier) {
+		bool isFull = (pThis->GetOccupantCount() == pThis->BuildingType->MaxNumberOccupants);
+		bool isIneligible = (isFull || pThis->IsRedHP() || pInf->IsMindControlled());
+
+		if(!isFull && !isIneligible) {
+			if(pThis->Owner != pInf->Owner) {
+				can_occupy = (pThis->Owner->Type->MultiplayPassive || pBuildExt->BunkerRaidable);
+			} else {
+				can_occupy = true;
+			}
+		}
+	}
+
+/*
+// original code replaced by this hook
+	if(pInf->Occupier) {
+		if ( pThis->Owner != pInf->Owner && !pThis->Owner->Country->MultiplayPassive
+			|| pThis->GetOccupantCount() == pThis->BuildingType->MaxNumberOccupants
+			|| pThis->IsRedHP()
+			|| pInf->IsMindControlled() )
+			return 0;
+	}
+	return 1;
+*/
+
+	return can_occupy ? 0x457DD5 : 0x457DA3;
+}
+
+
+// #664: Advanced Rubble - turning into rubble part
+DEFINE_HOOK(44266B, BuildingClass_ReceiveDamage_AfterPreDeathSequence, 6)
+{
+	GET(BuildingClass *, pThis, ESI);
+	BuildingExt::ExtData* BuildingAresData = BuildingExt::ExtMap.Find(pThis);
+	BuildingTypeExt::ExtData* destrBuildTE = BuildingTypeExt::ExtMap.Find(pThis->Type);
+
+	if(pThis->C4Timer.IsDone()) {
+		// If this object has a rubble building set, turn, otherwise die
+		if(destrBuildTE->RubbleDestroyed) {
+			BuildingAresData->RubbleYell();
+		} else {
+			pThis->UnInit();
+			pThis->AfterDestruction();
+		}
+	}
+
+	/* original code
+	if(pThis->C4Timer.IsDone()) {
+		pThis->UnInit();
+		pThis->AfterDestruction();
+	}*/
+	return 0x442905;
+}
+
+// #666: Trench Traversal - check if traversal is possible & cursor display
+DEFINE_HOOK(44725F, BuildingClass_GetCursorOverObject_TargetABuilding, 5)
+{
+	GET(BuildingClass *, pThis, ECX);
+	GET(TechnoClass *, T, EBP);
+	// not decided on UI handling yet
+
+	if(T->WhatAmI() == abs_Building) {
+		BuildingClass* targetBuilding = game_cast<BuildingClass *>(T);
+		BuildingExt::ExtData* curBuildExt = BuildingExt::ExtMap.Find(pThis);
+
+		if(curBuildExt->canTraverseTo(targetBuilding)) {
+			//! \todo show entry cursor, hooked up to traversal logic
+		}
+	}
+
+	return 0;
+}
+
+// #664: Advanced Rubble - prevent rubble from being sold, ever
+A_FINE_HOOK(4494D2, BuildingClass_IsSellable, 6)
+{
+	GET(BuildingClass *, B, ESI);
+	switch(decision) {
+		case Yes:
+			return 0x449532;
+		case No:
+			return 0x449536;
+		case DecideNormally:
+		default:
+			return 0;
+	}
 }

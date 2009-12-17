@@ -54,10 +54,10 @@ public:
 		double UCFatalRate; 					//!< Chance of an occupant getting killed instantly when a bullet passes through. 0.0 = 0%, 1.0 = 100%; Defaults to 0.0.
 		double UCDamageMultiplier; 				//!< How many percent of normal damage are applied if an occupant is hit when a bullet passes through. 0.0 = 0%, 1.0 = 100%; Defaults to 1.0.
 		bool BunkerRaidable; 					//!< Can this BuildingType be occupied by hostile forces despite being owned by a player, if empty?
-		signed int IsTrench; 					//!< Enables moving between segments - saves ID of a kind of trench. /sa trenchKinds
-		BuildingTypeClass * RubbleIntact; 		//!< What BuildingType to turn into when repaired (rubble repair, not normal repair).
-		BuildingTypeClass * RubbleDestroyed;	//!< What BuildingType to turn into when destroyed (rubble destroyed, not normal destroyed).
-		static std::vector<std::string> trenchKinds; //!< Vector of strings associating known trench names with IsTrench IDs. /sa IsTrench
+		signed int IsTrench; 					//!< Enables moving between segments - saves ID of a kind of trench. \sa trenchKinds
+		BuildingTypeClass * RubbleIntact; 		//!< What BuildingType to turn into when reconstructed. (This is the normal building, set on rubble.)
+		BuildingTypeClass * RubbleDestroyed;	//!< What BuildingType to turn into when destroyed. (This is the rubble, set on normal buildings.)
+		static std::vector<std::string> trenchKinds; //!< Vector of strings associating known trench names with IsTrench IDs. \sa IsTrench
 
 		ExtData(const DWORD Canary = 0, const TT* OwnerObject = NULL) : Extension(Canary, OwnerObject),
 			Solid_Height (0),

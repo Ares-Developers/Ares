@@ -9,6 +9,7 @@
   <div class="tabs">
     <ul>
       <li><a href="index.html"><span>Main&nbsp;Page</span></a></li>
+      <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li><a href="dirs.html"><span>Directories</span></a></li>
@@ -37,26 +38,60 @@
 <table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Defines</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">#define&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="_ares_8_global_controls_8cpp.html#637627ddb653e37b61593816cbd94e7c">GFX_DX_HW</a>&nbsp;&nbsp;&nbsp;0x01l</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">#define&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="_ares_8_global_controls_8cpp.html#8269f97b2652fc717949a982d7b4f02a">str</a>(x)&nbsp;&nbsp;&nbsp;str_(x)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">#define&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="_ares_8_global_controls_8cpp.html#9c81069cfc9a4ec59165ec9c4a7b005f">GFX_DX_EM</a>&nbsp;&nbsp;&nbsp;0x02l</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">#define&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="_ares_8_global_controls_8cpp.html#9a2fd643347fb68e6c6d269badbba3f8">str_</a>(x)&nbsp;&nbsp;&nbsp;#x</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">#define&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="_ares_8_global_controls_8cpp.html#6cbdacff19c84a18bcd75588628bb788">GFX_SU_VRAM</a>&nbsp;&nbsp;&nbsp;0x01l</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">#define&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="_ares_8_global_controls_8cpp.html#29db7f3e8e229930b2c0a3625b0fbb68">ReadSurface</a>(__surface__)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">#define&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="_ares_8_global_controls_8cpp.html#f281e660a2be8d433b87923a5931bb18">GFX_SU_SYSTEM</a>&nbsp;&nbsp;&nbsp;0x02l</td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top">#define&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="_ares_8_global_controls_8cpp.html#953a0925a3ebac63dae5427074e00ccd">GFX_SU_F3D</a>&nbsp;&nbsp;&nbsp;0x01l</td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top">#define&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="_ares_8_global_controls_8cpp.html#bfe04813b26cb017f09e7c78350c5f83">GFX_SU_NF3D</a>&nbsp;&nbsp;&nbsp;0x02l</td></tr>
+<tr><td colspan="2"><br><h2>Functions</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="_ares_8_global_controls_8cpp.html#23f4b16a07b705320f5f1ec649902fcf">__declspec</a> (dllexport) DWORD _cdecl _LoadRA2MD(REGISTERS *R)</td></tr>
 
 </table>
 <hr><h2>Define Documentation</h2>
-<a class="anchor" name="9c81069cfc9a4ec59165ec9c4a7b005f"></a><!-- doxytag: member="Ares.GlobalControls.cpp::GFX_DX_EM" ref="9c81069cfc9a4ec59165ec9c4a7b005f" args="" -->
+<a class="anchor" name="29db7f3e8e229930b2c0a3625b0fbb68"></a><!-- doxytag: member="Ares.GlobalControls.cpp::ReadSurface" ref="29db7f3e8e229930b2c0a3625b0fbb68" args="(__surface__)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define GFX_DX_EM&nbsp;&nbsp;&nbsp;0x02l          </td>
+          <td class="memname">#define ReadSurface          </td>
+          <td>(</td>
+          <td class="paramtype">__surface__&nbsp;</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+<b>Value:</b><div class="fragment"><pre class="fragment"><span class="keywordflow">if</span>(INI-&gt;ReadString(<span class="stringliteral">"Graphics.Advanced"</span>, <span class="stringliteral">"Surface."</span> <a class="code" href="_ares_8_global_controls_8cpp.html#8269f97b2652fc717949a982d7b4f02a">str</a>(__surface__) <span class="stringliteral">".Memory"</span>, <a class="code" href="class_ares.html#e006972559a168cb9746f8cc76150e95">Ares::readDefval</a>, <a class="code" href="class_ares.html#55c2fe642b451f2535b29a62120385bf">Ares::readBuffer</a>, <a class="code" href="class_ares.html#dc3a89d98277ea17bef774907bdd8dc8">Ares::readLength</a>)) { \
+                <span class="keywordflow">if</span>(!_strcmpi(<a class="code" href="class_ares.html#55c2fe642b451f2535b29a62120385bf">Ares::readBuffer</a>, <span class="stringliteral">"VRAM"</span>)) { \
+                        GFX_S_ ## __surface__ .Memory = <a class="code" href="_ares_8h.html#6cbdacff19c84a18bcd75588628bb788">GFX_SU_VRAM</a>; \
+                } <span class="keywordflow">else</span> <span class="keywordflow">if</span>(!_strcmpi(<a class="code" href="class_ares.html#55c2fe642b451f2535b29a62120385bf">Ares::readBuffer</a>, <span class="stringliteral">"System"</span>)) { \
+                        GFX_S_ ## __surface__ .Memory = <a class="code" href="_ares_8h.html#f281e660a2be8d433b87923a5931bb18">GFX_SU_SYSTEM</a>; \
+                } \
+        } \
+        Debug::Log(<span class="stringliteral">"Surface."</span> <a class="code" href="_ares_8_global_controls_8cpp.html#8269f97b2652fc717949a982d7b4f02a">str</a>(__surface__) <span class="stringliteral">".Memory = %s/%d\n"</span>, <a class="code" href="class_ares.html#55c2fe642b451f2535b29a62120385bf">Ares::readBuffer</a>, GFX_S_ ## __surface__ .Memory); \
+        <span class="keywordflow">if</span>(INI-&gt;ReadString(<span class="stringliteral">"Graphics.Advanced"</span>, <span class="stringliteral">"Surface."</span> <a class="code" href="_ares_8_global_controls_8cpp.html#8269f97b2652fc717949a982d7b4f02a">str</a>(__surface__) <span class="stringliteral">".Force3D"</span>, <a class="code" href="class_ares.html#e006972559a168cb9746f8cc76150e95">Ares::readDefval</a>, <a class="code" href="class_ares.html#55c2fe642b451f2535b29a62120385bf">Ares::readBuffer</a>, <a class="code" href="class_ares.html#dc3a89d98277ea17bef774907bdd8dc8">Ares::readLength</a>)) { \
+         <span class="keywordtype">bool</span> F3D = INI-&gt;ReadBool(<span class="stringliteral">"Graphics.Advanced"</span>, <span class="stringliteral">"Surface."</span> <a class="code" href="_ares_8_global_controls_8cpp.html#8269f97b2652fc717949a982d7b4f02a">str</a>(__surface__) <span class="stringliteral">".Force3D"</span>, <span class="keyword">false</span>); \
+         GFX_S_ ## __surface__ .Force3D = F3D ? 1 : 0;\
+        }
+</pre></div>
+</div>
+</div><p>
+<a class="anchor" name="8269f97b2652fc717949a982d7b4f02a"></a><!-- doxytag: member="Ares.GlobalControls.cpp::str" ref="8269f97b2652fc717949a982d7b4f02a" args="(x)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define str          </td>
+          <td>(</td>
+          <td class="paramtype">x&nbsp;</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td>&nbsp;&nbsp;&nbsp;str_(x)</td>
         </tr>
       </table>
 </div>
@@ -66,12 +101,17 @@
 
 </div>
 </div><p>
-<a class="anchor" name="637627ddb653e37b61593816cbd94e7c"></a><!-- doxytag: member="Ares.GlobalControls.cpp::GFX_DX_HW" ref="637627ddb653e37b61593816cbd94e7c" args="" -->
+<a class="anchor" name="9a2fd643347fb68e6c6d269badbba3f8"></a><!-- doxytag: member="Ares.GlobalControls.cpp::str_" ref="9a2fd643347fb68e6c6d269badbba3f8" args="(x)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define GFX_DX_HW&nbsp;&nbsp;&nbsp;0x01l          </td>
+          <td class="memname">#define str_          </td>
+          <td>(</td>
+          <td class="paramtype">x&nbsp;</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td>&nbsp;&nbsp;&nbsp;#x</td>
         </tr>
       </table>
 </div>
@@ -81,68 +121,39 @@
 
 </div>
 </div><p>
-<a class="anchor" name="953a0925a3ebac63dae5427074e00ccd"></a><!-- doxytag: member="Ares.GlobalControls.cpp::GFX_SU_F3D" ref="953a0925a3ebac63dae5427074e00ccd" args="" -->
+<hr><h2>Function Documentation</h2>
+<a class="anchor" name="23f4b16a07b705320f5f1ec649902fcf"></a><!-- doxytag: member="Ares.GlobalControls.cpp::__declspec" ref="23f4b16a07b705320f5f1ec649902fcf" args="(dllexport) DWORD _cdecl _LoadRA2MD(REGISTERS *R)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define GFX_SU_F3D&nbsp;&nbsp;&nbsp;0x01l          </td>
+          <td class="memname">__declspec           </td>
+          <td>(</td>
+          <td class="paramtype">dllexport&nbsp;</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 
 <p>
-
-</div>
-</div><p>
-<a class="anchor" name="bfe04813b26cb017f09e7c78350c5f83"></a><!-- doxytag: member="Ares.GlobalControls.cpp::GFX_SU_NF3D" ref="bfe04813b26cb017f09e7c78350c5f83" args="" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define GFX_SU_NF3D&nbsp;&nbsp;&nbsp;0x02l          </td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-
-</div>
-</div><p>
-<a class="anchor" name="f281e660a2be8d433b87923a5931bb18"></a><!-- doxytag: member="Ares.GlobalControls.cpp::GFX_SU_SYSTEM" ref="f281e660a2be8d433b87923a5931bb18" args="" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define GFX_SU_SYSTEM&nbsp;&nbsp;&nbsp;0x02l          </td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-
-</div>
-</div><p>
-<a class="anchor" name="6cbdacff19c84a18bcd75588628bb788"></a><!-- doxytag: member="Ares.GlobalControls.cpp::GFX_SU_VRAM" ref="6cbdacff19c84a18bcd75588628bb788" args="" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define GFX_SU_VRAM&nbsp;&nbsp;&nbsp;0x01l          </td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
+<div class="fragment"><pre class="fragment"><a name="l00068"></a>00068 {
+<a name="l00069"></a>00069         Debug::Log(<span class="stringliteral">"LRM1\n"</span>);
+<a name="l00070"></a>00070         <a class="code" href="class_ares_1_1_global_controls.html#cbfe8cad41eb325326437e9015a4174c">Ares::GlobalControls::OpenConfig</a>();
+<a name="l00071"></a>00071         Debug::Log(<span class="stringliteral">"LRM1+\n"</span>);
+<a name="l00072"></a>00072         <a class="code" href="class_ares_1_1_global_controls.html#80eda48db48148f41e53b58fb8ab40d2">Ares::GlobalControls::LoadConfig</a>();
+<a name="l00073"></a>00073         Debug::Log(<span class="stringliteral">"LRM2\n"</span>);
+<a name="l00074"></a>00074         <span class="keywordflow">return</span> 0;
+<a name="l00075"></a>00075 }
+</pre></div>
 <p>
 
 </div>
 </div><p>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Sat Nov 14 05:42:15 2009 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 17 09:37:30 2009 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

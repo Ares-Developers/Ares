@@ -9,6 +9,7 @@
   <div class="tabs">
     <ul>
       <li><a href="index.html"><span>Main&nbsp;Page</span></a></li>
+      <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li><a href="dirs.html"><span>Directories</span></a></li>
@@ -46,14 +47,22 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top">class &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ares_1_1_global_controls_1_1_surface_config.html">SurfaceConfig</a></td></tr>
 
 <tr><td colspan="2"><br><h2>Static Public Member Functions</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">static void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ares_1_1_global_controls.html#cbfe8cad41eb325326437e9015a4174c">OpenConfig</a> ()</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">static void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ares_1_1_global_controls.html#4618490b7e40c04bb248d80ecf8a802d">CloseConfig</a> ()</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">static void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ares_1_1_global_controls.html#80eda48db48148f41e53b58fb8ab40d2">LoadConfig</a> ()</td></tr>
+
 <tr><td class="memItemLeft" nowrap align="right" valign="top">static void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ares_1_1_global_controls.html#3472a19de87fe3be4d81b113c483e27f">Load</a> (CCINIClass *pINI)</td></tr>
 
 <tr><td colspan="2"><br><h2>Static Public Attributes</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">static CCINIClass *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ares_1_1_global_controls.html#941d0714333600fc295cfedaf0d77b22">INI</a> = NULL</td></tr>
+
 <tr><td class="memItemLeft" nowrap align="right" valign="top">static bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ares_1_1_global_controls.html#97b4c5d46d25cd6651a81da4164c6af7">Initialized</a> = 0</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">static bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ares_1_1_global_controls.html#5149ac53a71afb281b9f4b7667340c49">AllowParallelAIQueues</a> = 1</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">static byte&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ares_1_1_global_controls.html#0c4befe7af1abbb75f7034b569dd03b0">GFX_DX_Force</a> = 0xFF</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">static byte&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ares_1_1_global_controls.html#0c4befe7af1abbb75f7034b569dd03b0">GFX_DX_Force</a> = 0</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">static <a class="el" href="class_ares_1_1_global_controls_1_1_surface_config.html">SurfaceConfig</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ares_1_1_global_controls.html#c409c57dbf1730617e087bdf7dfa62b7">GFX_S_Alternate</a> = {0xFF, 0xFF}</td></tr>
 
@@ -90,13 +99,38 @@
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00058"></a>00058 {};
+<div class="fragment"><pre class="fragment"><a name="l00071"></a>00071 {};
 </pre></div>
 <p>
 
 </div>
 </div><p>
 <hr><h2>Member Function Documentation</h2>
+<a class="anchor" name="4618490b7e40c04bb248d80ecf8a802d"></a><!-- doxytag: member="Ares::GlobalControls::CloseConfig" ref="4618490b7e40c04bb248d80ecf8a802d" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Ares::Ares::GlobalControls::CloseConfig           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+<div class="fragment"><pre class="fragment"><a name="l00095"></a>00095                                      {
+<a name="l00096"></a>00096         <span class="keyword">delete</span> <a class="code" href="class_ares_1_1_global_controls.html#941d0714333600fc295cfedaf0d77b22">INI</a>;
+<a name="l00097"></a>00097         <a class="code" href="class_ares_1_1_global_controls.html#941d0714333600fc295cfedaf0d77b22">INI</a> = NULL;
+<a name="l00098"></a>00098 }
+</pre></div>
+<p>
+
+</div>
+</div><p>
 <a class="anchor" name="3472a19de87fe3be4d81b113c483e27f"></a><!-- doxytag: member="Ares::GlobalControls::Load" ref="3472a19de87fe3be4d81b113c483e27f" args="(CCINIClass *pINI)" -->
 <div class="memitem">
 <div class="memproto">
@@ -114,48 +148,108 @@
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00028"></a>00028                                               {
-<a name="l00029"></a>00029         <a class="code" href="class_ares_1_1_global_controls.html#97b4c5d46d25cd6651a81da4164c6af7">Initialized</a> = 1;
-<a name="l00030"></a>00030         <a class="code" href="class_ares_1_1_global_controls.html#5149ac53a71afb281b9f4b7667340c49">AllowParallelAIQueues</a> = pINI-&gt;ReadBool(<span class="stringliteral">"GlobalControls"</span>, <span class="stringliteral">"AllowParallelAIQueues"</span>, <a class="code" href="class_ares_1_1_global_controls.html#5149ac53a71afb281b9f4b7667340c49">AllowParallelAIQueues</a>);
-<a name="l00031"></a>00031 
-<a name="l00032"></a>00032 <span class="preprocessor">#if 0</span>
-<a name="l00033"></a>00033 <span class="preprocessor"></span>        CCINIClass *INI = CCINIClass::INI_RA2MD;
-<a name="l00034"></a>00034 
-<a name="l00035"></a>00035         <span class="keywordflow">if</span>(INI-&gt;ReadString(<span class="stringliteral">"Graphics.Advanced"</span>, <span class="stringliteral">"DirectX.Force"</span>, <a class="code" href="class_ares.html#e006972559a168cb9746f8cc76150e95">Ares::readDefval</a>, <a class="code" href="class_ares.html#55c2fe642b451f2535b29a62120385bf">Ares::readBuffer</a>, <a class="code" href="class_ares.html#dc3a89d98277ea17bef774907bdd8dc8">Ares::readLength</a>)) {
-<a name="l00036"></a>00036                 <span class="keywordflow">if</span>(!_strcmpi(<a class="code" href="class_ares.html#55c2fe642b451f2535b29a62120385bf">Ares::readBuffer</a>, <span class="stringliteral">"hardware"</span>)) {
-<a name="l00037"></a>00037                         <a class="code" href="class_ares_1_1_global_controls.html#0c4befe7af1abbb75f7034b569dd03b0">GFX_DX_Force</a> = <a class="code" href="_ares_8_global_controls_8cpp.html#637627ddb653e37b61593816cbd94e7c">GFX_DX_HW</a>;
-<a name="l00038"></a>00038                 } <span class="keywordflow">else</span> <span class="keywordflow">if</span>(!_strcmpi(<a class="code" href="class_ares.html#55c2fe642b451f2535b29a62120385bf">Ares::readBuffer</a>, <span class="stringliteral">"emulation"</span>)) {
-<a name="l00039"></a>00039                         <a class="code" href="class_ares_1_1_global_controls.html#0c4befe7af1abbb75f7034b569dd03b0">GFX_DX_Force</a> = <a class="code" href="_ares_8_global_controls_8cpp.html#9c81069cfc9a4ec59165ec9c4a7b005f">GFX_DX_EM</a>;
-<a name="l00040"></a>00040                 }
-<a name="l00041"></a>00041         }
-<a name="l00042"></a>00042 
-<a name="l00043"></a>00043 <span class="comment">//ifndef str</span>
-<a name="l00044"></a>00044 <span class="preprocessor">#define str(x) str_(x)</span>
-<a name="l00045"></a>00045 <span class="preprocessor"></span><span class="preprocessor">#define str_(x) #x</span>
-<a name="l00046"></a>00046 <span class="preprocessor"></span><span class="comment">//endif</span>
-<a name="l00047"></a>00047 
-<a name="l00048"></a>00048 <span class="preprocessor">#define ReadSurface(__surface__) \</span>
-<a name="l00049"></a>00049 <span class="preprocessor">        if(INI-&gt;ReadString("Graphics.Advanced", "Surface." str(__surface__) ".Memory", Ares::readDefval, Ares::readBuffer, Ares::readLength)) { \</span>
-<a name="l00050"></a>00050 <span class="preprocessor">                if(!_strcmpi(Ares::readBuffer, "VRAM")) { \</span>
-<a name="l00051"></a>00051 <span class="preprocessor">                        GFX_S_ ## __surface__ .Memory = GFX_SU_VRAM; \</span>
-<a name="l00052"></a>00052 <span class="preprocessor">                } else if(!_strcmpi(Ares::readBuffer, "System")) { \</span>
-<a name="l00053"></a>00053 <span class="preprocessor">                        GFX_S_ ## __surface__ .Memory = GFX_SU_SYSTEM; \</span>
-<a name="l00054"></a>00054 <span class="preprocessor">                } \</span>
-<a name="l00055"></a>00055 <span class="preprocessor">        } \</span>
-<a name="l00056"></a>00056 <span class="preprocessor">        GFX_S_ ## __surface__ .Force3D = INI-&gt;ReadBool("Graphics.Advanced", "Surface." # str(__surface__) # ".Force3D", GFX_S_ ## __surface__ .Force3D);</span>
+<div class="fragment"><pre class="fragment"><a name="l00022"></a>00022                                               {
+<a name="l00023"></a>00023         <a class="code" href="class_ares_1_1_global_controls.html#97b4c5d46d25cd6651a81da4164c6af7">Initialized</a> = 1;
+<a name="l00024"></a>00024         <a class="code" href="class_ares_1_1_global_controls.html#5149ac53a71afb281b9f4b7667340c49">AllowParallelAIQueues</a> = pINI-&gt;ReadBool(<span class="stringliteral">"GlobalControls"</span>, <span class="stringliteral">"AllowParallelAIQueues"</span>, <a class="code" href="class_ares_1_1_global_controls.html#5149ac53a71afb281b9f4b7667340c49">AllowParallelAIQueues</a>);
+<a name="l00025"></a>00025 }
+</pre></div>
+<p>
+
+</div>
+</div><p>
+<a class="anchor" name="80eda48db48148f41e53b58fb8ab40d2"></a><!-- doxytag: member="Ares::GlobalControls::LoadConfig" ref="80eda48db48148f41e53b58fb8ab40d2" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Ares::Ares::GlobalControls::LoadConfig           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+<div class="fragment"><pre class="fragment"><a name="l00027"></a>00027                                     {
+<a name="l00028"></a>00028         <span class="keywordflow">if</span>(<a class="code" href="class_ares_1_1_global_controls.html#941d0714333600fc295cfedaf0d77b22">INI</a>-&gt;ReadString(<span class="stringliteral">"Graphics.Advanced"</span>, <span class="stringliteral">"DirectX.Force"</span>, <a class="code" href="class_ares.html#e006972559a168cb9746f8cc76150e95">Ares::readDefval</a>, <a class="code" href="class_ares.html#55c2fe642b451f2535b29a62120385bf">Ares::readBuffer</a>, <a class="code" href="class_ares.html#dc3a89d98277ea17bef774907bdd8dc8">Ares::readLength</a>)) {
+<a name="l00029"></a>00029                 <span class="keywordflow">if</span>(!_strcmpi(<a class="code" href="class_ares.html#55c2fe642b451f2535b29a62120385bf">Ares::readBuffer</a>, <span class="stringliteral">"hardware"</span>)) {
+<a name="l00030"></a>00030                         <a class="code" href="class_ares_1_1_global_controls.html#0c4befe7af1abbb75f7034b569dd03b0">GFX_DX_Force</a> = <a class="code" href="_ares_8h.html#637627ddb653e37b61593816cbd94e7c">GFX_DX_HW</a>;
+<a name="l00031"></a>00031                 } <span class="keywordflow">else</span> <span class="keywordflow">if</span>(!_strcmpi(<a class="code" href="class_ares.html#55c2fe642b451f2535b29a62120385bf">Ares::readBuffer</a>, <span class="stringliteral">"emulation"</span>)) {
+<a name="l00032"></a>00032                         <a class="code" href="class_ares_1_1_global_controls.html#0c4befe7af1abbb75f7034b569dd03b0">GFX_DX_Force</a> = <a class="code" href="_ares_8h.html#9c81069cfc9a4ec59165ec9c4a7b005f">GFX_DX_EM</a>;
+<a name="l00033"></a>00033                 }
+<a name="l00034"></a>00034         }
+<a name="l00035"></a>00035         <span class="keywordflow">if</span>(<a class="code" href="class_ares.html#87be4737f0bdcabe099042a16c336538">Ares::RunningOnWindows7OrVista</a>()) {
+<a name="l00036"></a>00036                 <a class="code" href="class_ares_1_1_global_controls.html#0c4befe7af1abbb75f7034b569dd03b0">GFX_DX_Force</a> = 0;
+<a name="l00037"></a>00037         }
+<a name="l00038"></a>00038 
+<a name="l00039"></a>00039 <span class="comment">//ifndef str</span>
+<a name="l00040"></a>00040 <span class="preprocessor">#define str(x) str_(x)</span>
+<a name="l00041"></a>00041 <span class="preprocessor"></span><span class="preprocessor">#define str_(x) #x</span>
+<a name="l00042"></a>00042 <span class="preprocessor"></span><span class="comment">//endif</span>
+<a name="l00043"></a>00043 
+<a name="l00044"></a>00044 <span class="preprocessor">#define ReadSurface(__surface__) \</span>
+<a name="l00045"></a>00045 <span class="preprocessor">        if(INI-&gt;ReadString("Graphics.Advanced", "Surface." str(__surface__) ".Memory", Ares::readDefval, Ares::readBuffer, Ares::readLength)) { \</span>
+<a name="l00046"></a>00046 <span class="preprocessor">                if(!_strcmpi(Ares::readBuffer, "VRAM")) { \</span>
+<a name="l00047"></a>00047 <span class="preprocessor">                        GFX_S_ ## __surface__ .Memory = GFX_SU_VRAM; \</span>
+<a name="l00048"></a>00048 <span class="preprocessor">                } else if(!_strcmpi(Ares::readBuffer, "System")) { \</span>
+<a name="l00049"></a>00049 <span class="preprocessor">                        GFX_S_ ## __surface__ .Memory = GFX_SU_SYSTEM; \</span>
+<a name="l00050"></a>00050 <span class="preprocessor">                } \</span>
+<a name="l00051"></a>00051 <span class="preprocessor">        } \</span>
+<a name="l00052"></a>00052 <span class="preprocessor">        Debug::Log("Surface." str(__surface__) ".Memory = %s/%d\n", Ares::readBuffer, GFX_S_ ## __surface__ .Memory); \</span>
+<a name="l00053"></a>00053 <span class="preprocessor">        if(INI-&gt;ReadString("Graphics.Advanced", "Surface." str(__surface__) ".Force3D", Ares::readDefval, Ares::readBuffer, Ares::readLength)) { \</span>
+<a name="l00054"></a>00054 <span class="preprocessor">         bool F3D = INI-&gt;ReadBool("Graphics.Advanced", "Surface." str(__surface__) ".Force3D", false); \</span>
+<a name="l00055"></a>00055 <span class="preprocessor">         GFX_S_ ## __surface__ .Force3D = F3D ? 1 : 0;\</span>
+<a name="l00056"></a>00056 <span class="preprocessor">        }</span>
 <a name="l00057"></a>00057 <span class="preprocessor"></span>
-<a name="l00058"></a>00058 
-<a name="l00059"></a>00059         ReadSurface(Alternate);
-<a name="l00060"></a>00060         ReadSurface(Composite);
-<a name="l00061"></a>00061         ReadSurface(Hidden);
-<a name="l00062"></a>00062         ReadSurface(Hidden_2);
-<a name="l00063"></a>00063         ReadSurface(Primary);
-<a name="l00064"></a>00064         ReadSurface(Sidebar);
-<a name="l00065"></a>00065         ReadSurface(Tile);
-<a name="l00066"></a>00066 
-<a name="l00067"></a>00067 <span class="preprocessor">#endif</span>
-<a name="l00068"></a>00068 <span class="preprocessor"></span>
-<a name="l00069"></a>00069 }
+<a name="l00058"></a>00058         <a class="code" href="_ares_8_global_controls_8cpp.html#29db7f3e8e229930b2c0a3625b0fbb68">ReadSurface</a>(Alternate);
+<a name="l00059"></a>00059         <a class="code" href="_ares_8_global_controls_8cpp.html#29db7f3e8e229930b2c0a3625b0fbb68">ReadSurface</a>(Composite);
+<a name="l00060"></a>00060         <a class="code" href="_ares_8_global_controls_8cpp.html#29db7f3e8e229930b2c0a3625b0fbb68">ReadSurface</a>(Hidden);
+<a name="l00061"></a>00061         <a class="code" href="_ares_8_global_controls_8cpp.html#29db7f3e8e229930b2c0a3625b0fbb68">ReadSurface</a>(Hidden_2);
+<a name="l00062"></a>00062         <a class="code" href="_ares_8_global_controls_8cpp.html#29db7f3e8e229930b2c0a3625b0fbb68">ReadSurface</a>(Primary);
+<a name="l00063"></a>00063         <a class="code" href="_ares_8_global_controls_8cpp.html#29db7f3e8e229930b2c0a3625b0fbb68">ReadSurface</a>(Sidebar);
+<a name="l00064"></a>00064         <a class="code" href="_ares_8_global_controls_8cpp.html#29db7f3e8e229930b2c0a3625b0fbb68">ReadSurface</a>(Tile);
+<a name="l00065"></a>00065 }
+</pre></div>
+<p>
+
+</div>
+</div><p>
+<a class="anchor" name="cbfe8cad41eb325326437e9015a4174c"></a><!-- doxytag: member="Ares::GlobalControls::OpenConfig" ref="cbfe8cad41eb325326437e9015a4174c" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Ares::Ares::GlobalControls::OpenConfig           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+<div class="fragment"><pre class="fragment"><a name="l00077"></a>00077                                     {
+<a name="l00078"></a>00078         Debug::Log(<span class="stringliteral">"OC1\n"</span>);
+<a name="l00079"></a>00079         <a class="code" href="class_ares_1_1_global_controls.html#941d0714333600fc295cfedaf0d77b22">INI</a> = <span class="keyword">new</span> CCINIClass();
+<a name="l00080"></a>00080         Debug::Log(<span class="stringliteral">"OC2\n"</span>);
+<a name="l00081"></a>00081         CCFileClass *cfg = <span class="keyword">new</span> CCFileClass(<span class="stringliteral">"Ares.ini"</span>);
+<a name="l00082"></a>00082         Debug::Log(<span class="stringliteral">"OC3\n"</span>);
+<a name="l00083"></a>00083         <span class="keywordflow">if</span>(cfg-&gt;Exists(NULL)) {
+<a name="l00084"></a>00084                 Debug::Log(<span class="stringliteral">"OC4+\n"</span>);
+<a name="l00085"></a>00085                 <a class="code" href="class_ares_1_1_global_controls.html#941d0714333600fc295cfedaf0d77b22">INI</a>-&gt;ReadCCFile(cfg);
+<a name="l00086"></a>00086         } <span class="keywordflow">else</span> {
+<a name="l00087"></a>00087                 Debug::Log(<span class="stringliteral">"OC4-\n"</span>);
+<a name="l00088"></a>00088                 Debug::Log(<span class="stringliteral">"Ares.ini does not exist."</span>);
+<a name="l00089"></a>00089                 ExitProcess(1);
+<a name="l00090"></a>00090         }
+<a name="l00091"></a>00091         Debug::Log(<span class="stringliteral">"OC5\n"</span>);
+<a name="l00092"></a>00092         <span class="keyword">delete</span> cfg;
+<a name="l00093"></a>00093 }
 </pre></div>
 <p>
 
@@ -182,7 +276,7 @@
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">byte Ares::Ares::GlobalControls::GFX_DX_Force = 0xFF<code> [static]</code>          </td>
+          <td class="memname">byte Ares::Ares::GlobalControls::GFX_DX_Force = 0<code> [static]</code>          </td>
         </tr>
       </table>
 </div>
@@ -297,6 +391,21 @@
 
 </div>
 </div><p>
+<a class="anchor" name="941d0714333600fc295cfedaf0d77b22"></a><!-- doxytag: member="Ares::GlobalControls::INI" ref="941d0714333600fc295cfedaf0d77b22" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">CCINIClass * Ares::Ares::GlobalControls::INI = NULL<code> [static]</code>          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+
+</div>
+</div><p>
 <a class="anchor" name="97b4c5d46d25cd6651a81da4164c6af7"></a><!-- doxytag: member="Ares::GlobalControls::Initialized" ref="97b4c5d46d25cd6651a81da4164c6af7" args="" -->
 <div class="memitem">
 <div class="memproto">
@@ -315,7 +424,7 @@
 <hr>The documentation for this class was generated from the following files:<ul>
 <li><a class="el" href="_ares_8h.html">Ares.h</a><li><a class="el" href="_ares_8_global_controls_8cpp.html">Ares.GlobalControls.cpp</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Sat Nov 14 05:42:16 2009 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 17 09:37:30 2009 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

@@ -9,6 +9,7 @@
   <div class="tabs">
     <ul>
       <li><a href="index.html"><span>Main&nbsp;Page</span></a></li>
+      <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li><a href="dirs.html"><span>Directories</span></a></li>
@@ -66,6 +67,8 @@ Inheritance diagram for BulletTypeExt::BulletTypeExt::ExtData:</div>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_bullet_type_ext_1_1_ext_data.html#ceda0fb9a29eb81bda1d60c56e601ca4">SubjectToFirewall</a></td></tr>
 
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_bullet_type_ext_1_1_ext_data.html#4eac20750d11e37e05f8a6aa99c307b5">Parachuted</a></td></tr>
+
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_bullet_type_ext_1_1_ext_data.html#b91b332bbf0e909781282037bc5cbc1b">SubjectToTrenches</a></td></tr>
 
 </table>
@@ -98,11 +101,12 @@ Inheritance diagram for BulletTypeExt::BulletTypeExt::ExtData:</div>
 <p>
 if false, this projectile/weapon *always* passes through to the occupants, regardless of UC.PassThrough 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00033"></a>00033                                                                               : <a class="code" href="class_extension.html#ab62cf8e498a26bf7e3c14f31d906ace">Extension</a>(<a class="code" href="class_extension.html#2f0c543d5bceafd46d103be4f87a5abe">Canary</a>, OwnerObject),
-<a name="l00034"></a>00034                         <a class="code" href="class_bullet_type_ext_1_1_ext_data.html#b27cf3868840849f145fe03d9d5c453a">SubjectToSolid</a> (<span class="keyword">false</span>),
-<a name="l00035"></a>00035                         <a class="code" href="class_bullet_type_ext_1_1_ext_data.html#ceda0fb9a29eb81bda1d60c56e601ca4">SubjectToFirewall</a> (<span class="keyword">true</span>),
-<a name="l00036"></a>00036                         <a class="code" href="class_bullet_type_ext_1_1_ext_data.html#b91b332bbf0e909781282037bc5cbc1b">SubjectToTrenches</a> (<span class="keyword">true</span>)
-<a name="l00037"></a>00037                         { };
+<div class="fragment"><pre class="fragment"><a name="l00035"></a>00035                                                                               : <a class="code" href="class_extension.html#ab62cf8e498a26bf7e3c14f31d906ace">Extension</a>(<a class="code" href="class_extension.html#2f0c543d5bceafd46d103be4f87a5abe">Canary</a>, OwnerObject),
+<a name="l00036"></a>00036                         <a class="code" href="class_bullet_type_ext_1_1_ext_data.html#b27cf3868840849f145fe03d9d5c453a">SubjectToSolid</a> (<span class="keyword">false</span>),
+<a name="l00037"></a>00037                         <a class="code" href="class_bullet_type_ext_1_1_ext_data.html#ceda0fb9a29eb81bda1d60c56e601ca4">SubjectToFirewall</a> (<span class="keyword">true</span>),
+<a name="l00038"></a>00038                         <a class="code" href="class_bullet_type_ext_1_1_ext_data.html#4eac20750d11e37e05f8a6aa99c307b5">Parachuted</a> (<span class="keyword">false</span>),
+<a name="l00039"></a>00039                         <a class="code" href="class_bullet_type_ext_1_1_ext_data.html#b91b332bbf0e909781282037bc5cbc1b">SubjectToTrenches</a> (<span class="keyword">true</span>)
+<a name="l00040"></a>00040                         { };
 </pre></div>
 <p>
 
@@ -124,8 +128,8 @@ if false, this projectile/weapon *always* passes through to the occupants, regar
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00039"></a>00039                                    {
-<a name="l00040"></a>00040                 }
+<div class="fragment"><pre class="fragment"><a name="l00042"></a>00042                                    {
+<a name="l00043"></a>00043                 }
 </pre></div>
 <p>
 
@@ -161,10 +165,12 @@ if false, this projectile/weapon *always* passes through to the occupants, regar
 <div class="fragment"><pre class="fragment"><a name="l00015"></a>00015 {
 <a name="l00016"></a>00016         this-&gt;<a class="code" href="class_bullet_type_ext_1_1_ext_data.html#b27cf3868840849f145fe03d9d5c453a">SubjectToSolid</a> = pINI-&gt;ReadBool(pThis-&gt;get_ID(), <span class="stringliteral">"SubjectToBuildings"</span>, this-&gt;<a class="code" href="class_bullet_type_ext_1_1_ext_data.html#b27cf3868840849f145fe03d9d5c453a">SubjectToSolid</a>);
 <a name="l00017"></a>00017         this-&gt;<a class="code" href="class_bullet_type_ext_1_1_ext_data.html#ceda0fb9a29eb81bda1d60c56e601ca4">SubjectToFirewall</a> = pINI-&gt;ReadBool(pThis-&gt;get_ID(), <span class="stringliteral">"SubjectToFirewall"</span>, this-&gt;<a class="code" href="class_bullet_type_ext_1_1_ext_data.html#ceda0fb9a29eb81bda1d60c56e601ca4">SubjectToFirewall</a>);
-<a name="l00018"></a>00018         this-&gt;<a class="code" href="class_bullet_type_ext_1_1_ext_data.html#b91b332bbf0e909781282037bc5cbc1b">SubjectToTrenches</a> = pINI-&gt;ReadBool(pThis-&gt;get_ID(), <span class="stringliteral">"SubjectToTrenches"</span>, this-&gt;<a class="code" href="class_bullet_type_ext_1_1_ext_data.html#b91b332bbf0e909781282037bc5cbc1b">SubjectToTrenches</a>);
+<a name="l00018"></a>00018         this-&gt;<a class="code" href="class_bullet_type_ext_1_1_ext_data.html#4eac20750d11e37e05f8a6aa99c307b5">Parachuted</a> = pINI-&gt;ReadBool(pThis-&gt;get_ID(), <span class="stringliteral">"Parachuted"</span>, this-&gt;<a class="code" href="class_bullet_type_ext_1_1_ext_data.html#4eac20750d11e37e05f8a6aa99c307b5">Parachuted</a>);
 <a name="l00019"></a>00019 
-<a name="l00020"></a>00020         this-&gt;<a class="code" href="class_extension.html#43a1ac11c4b59b629cac89f9e9df88e4">_Initialized</a> = <a class="code" href="___container_8hpp.html#9443389dd7829ff977a768ff6f425820980171c6b7f22ee8ecfb5b8beeb8eee6">is_Completed</a>;
-<a name="l00021"></a>00021 }
+<a name="l00020"></a>00020         this-&gt;<a class="code" href="class_bullet_type_ext_1_1_ext_data.html#b91b332bbf0e909781282037bc5cbc1b">SubjectToTrenches</a> = pINI-&gt;ReadBool(pThis-&gt;get_ID(), <span class="stringliteral">"SubjectToTrenches"</span>, this-&gt;<a class="code" href="class_bullet_type_ext_1_1_ext_data.html#b91b332bbf0e909781282037bc5cbc1b">SubjectToTrenches</a>);
+<a name="l00021"></a>00021 
+<a name="l00022"></a>00022         this-&gt;<a class="code" href="class_extension.html#43a1ac11c4b59b629cac89f9e9df88e4">_Initialized</a> = <a class="code" href="___container_8hpp.html#9443389dd7829ff977a768ff6f425820980171c6b7f22ee8ecfb5b8beeb8eee6">is_Completed</a>;
+<a name="l00023"></a>00023 }
 </pre></div>
 <p>
 
@@ -188,13 +194,28 @@ if false, this projectile/weapon *always* passes through to the occupants, regar
 <p>
 
 <p>Implements <a class="el" href="class_extension.html#44ddedd12613b24b7b03d21982782047">Extension&lt; TT &gt;</a>.</p>
-<div class="fragment"><pre class="fragment"><a name="l00042"></a>00042 { <span class="keywordflow">return</span> <span class="keyword">sizeof</span>(*this); };
+<div class="fragment"><pre class="fragment"><a name="l00045"></a>00045 { <span class="keywordflow">return</span> <span class="keyword">sizeof</span>(*this); };
 </pre></div>
 <p>
 
 </div>
 </div><p>
 <hr><h2>Member Data Documentation</h2>
+<a class="anchor" name="4eac20750d11e37e05f8a6aa99c307b5"></a><!-- doxytag: member="BulletTypeExt::ExtData::Parachuted" ref="4eac20750d11e37e05f8a6aa99c307b5" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool BulletTypeExt::BulletTypeExt::ExtData::Parachuted          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+
+</div>
+</div><p>
 <a class="anchor" name="ceda0fb9a29eb81bda1d60c56e601ca4"></a><!-- doxytag: member="BulletTypeExt::ExtData::SubjectToFirewall" ref="ceda0fb9a29eb81bda1d60c56e601ca4" args="" -->
 <div class="memitem">
 <div class="memproto">
@@ -243,7 +264,7 @@ if false, this projectile/weapon *always* passes through to the occupants, regar
 <hr>The documentation for this class was generated from the following files:<ul>
 <li>Ext/BulletType/<a class="el" href="_bullet_type_2_body_8h.html">Body.h</a><li>Ext/BulletType/<a class="el" href="_bullet_type_2_body_8cpp.html">Body.cpp</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Sat Nov 14 05:42:16 2009 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 17 09:37:30 2009 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>
