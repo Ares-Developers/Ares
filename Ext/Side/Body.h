@@ -37,7 +37,7 @@ class SideExt
 		bool SidebarYuriFileNames;
 		char EVATag[0x20];	//TODO
 
-		ExtData(const DWORD Canary = 0, const TT* OwnerObject = NULL) : Extension(Canary, OwnerObject),
+		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension(Canary, OwnerObject),
 			LoadTextColor (NULL)
 		{
 			*EVATag = 0;

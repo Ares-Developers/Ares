@@ -59,7 +59,7 @@ public:
 		BuildingTypeClass * RubbleDestroyed;	//!< What BuildingType to turn into when destroyed. (This is the rubble, set on normal buildings.)
 		static std::vector<std::string> trenchKinds; //!< Vector of strings associating known trench names with IsTrench IDs. \sa IsTrench
 
-		ExtData(const DWORD Canary = 0, const TT* OwnerObject = NULL) : Extension(Canary, OwnerObject),
+		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension(Canary, OwnerObject),
 			Solid_Height (0),
 			IsCustom (false),
 			CustomData (NULL),

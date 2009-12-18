@@ -68,7 +68,7 @@ public:
 		Valueable<MouseCursor> SW_Cursor;
 		Valueable<MouseCursor> SW_NoCursor;
 
-		ExtData(const DWORD Canary = 0, const TT* OwnerObject = NULL) : Extension(Canary, OwnerObject),
+		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension(Canary, OwnerObject),
 			SpyPlane_TypeIndex (0),
 			SpyPlane_Count (1),
 			SpyPlane_Mission (mission_AttackAgain),

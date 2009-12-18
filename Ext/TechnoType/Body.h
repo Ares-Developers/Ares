@@ -66,7 +66,7 @@ public:
 		InfantryTypeClass * Operator; //!< Saves a pointer to an InfantryType required to be a passenger of this unit in order for it to work. Defaults to NULL. \sa TechnoClass_Update_CheckOperators, bool IsAPromiscuousWhoreAndLetsAnyoneRideIt
 		bool IsAPromiscuousWhoreAndLetsAnyoneRideIt; //!< If this is true, Operator= is not checked, and the object will work with any passenger, provided there is one. \sa InfantryTypeClass * Operator
 
-		ExtData(const DWORD Canary = 0, const TT* OwnerObject = NULL) : Extension(Canary, OwnerObject),
+		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension(Canary, OwnerObject),
 			Survivors_PilotCount (0),
 			Survivors_PilotChance (NULL),
 			Survivors_PassengerChance (NULL),

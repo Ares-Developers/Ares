@@ -6,7 +6,7 @@
 #include <CellSpread.h>
 #include <GeneralStructures.h> // for CellStruct
 
-const DWORD Extension<BuildingClass>::Canary = 0x99999999;
+const DWORD Extension<BuildingClass>::Canary = 0x87654321;
 Container<BuildingExt> BuildingExt::ExtMap;
 
 BuildingClass *Container<BuildingExt>::SavingObject = NULL;
@@ -117,21 +117,22 @@ void BuildingExt::UpdateDisplayTo(BuildingClass *pThis) {
 	\author Renegade
 	\date 16.12.09+
 */
-void BuildingExt::ExtData::RubbleYell(bool beingRepaired = false) {
+void BuildingExt::ExtData::RubbleYell(bool beingRepaired) {
 	BuildingClass* currentBuilding = this->AttachedToObject;
-	BuildingTypeClass* currentBuildingType = game_cast<BuildingTypeClass *>(currentBuilding->GetTechnoType());
+	BuildingTypeClass* currentBuildingType = currentBuilding->Type;
+	BuildingTypeExt::ExtData *pTypeData = BuildingTypeExt::ExtMap.Find(currentBuildingType);
 
 	currentBuilding->Remove(); // only takes it off the map
 
 	if(beingRepaired) {
-		if(!this->NormalState && !currentBuildingType->RubbleIntact) {
+		if(!this->NormalState && !pTypeData->RubbleIntact) {
 			Debug::Log("Warning! Advanced Rubble was supposed to be reconstructed but Ares could not obtain its normal state. Check if Rubble.Intact is set (correctly).");
 			return;
 		}
 
 		// if we don't have a normal state building yet, create one.
 		if(!this->NormalState) {
-			this->NormalState = game_cast<BuildingClass *>(currentBuildingType->RubbleIntact->CreateObject(currentBuilding->Owner));
+			this->NormalState = specific_cast<BuildingClass *>(pTypeData->RubbleIntact->CreateObject(currentBuilding->Owner));
 		}
 
 		this->NormalState->Health = static_cast<int>(this->NormalState->Type->Strength / 100); // see description above
@@ -144,13 +145,13 @@ void BuildingExt::ExtData::RubbleYell(bool beingRepaired = false) {
 		NormalExt->setRubble(currentBuilding);
 
 	} else { // if we're not here to repair that thing, obviously, we're gonna crush it
-		if(!this->RubbleState && !currentBuildingType->RubbleDestroyed) {
+		if(!this->RubbleState && !pTypeData->RubbleDestroyed) {
 			Debug::Log("Warning! Building was supposed to be turned into Advanced Rubble but Ares could not obtain its rubble state. Check if Rubble.Destroyed is set (correctly).");
 			return;
 		}
 
 		if(!this->RubbleState) {
-			this->RubbleState = game_cast<BuildingClass *>(currentBuildingType->RubbleDestroyed->CreateObject(currentBuilding->Owner));
+			this->RubbleState = specific_cast<BuildingClass *>(pTypeData->RubbleDestroyed->CreateObject(currentBuilding->Owner));
 		}
 		this->RubbleState->Health = this->RubbleState->Type->Strength; // see description above
 		// Location should not be changed by removal
@@ -184,19 +185,19 @@ void BuildingExt::ExtData::RubbleYell(bool beingRepaired = false) {
 bool BuildingExt::ExtData::canTraverseTo(BuildingClass* targetBuilding) {
 	BuildingClass* currentBuilding = this->AttachedToObject;
 	//BuildingTypeClass* currentBuildingType = game_cast<BuildingTypeClass *>(currentBuilding->GetTechnoType());
-	BuildingTypeClass* targetBuildingType = game_cast<BuildingTypeClass *>(targetBuilding->GetTechnoType());
+	BuildingTypeClass* targetBuildingType = targetBuilding->Type;
 
-	if((targetBuilding->Occupants->Count >= targetBuildingType->MaxNumberOccupants) || !currentBuilding->Occupants->Count || !targetBuildingType->CanBeOccupied) {
+	if((targetBuilding->Occupants.Count >= targetBuildingType->MaxNumberOccupants) || !currentBuilding->Occupants.Count || !targetBuildingType->CanBeOccupied) {
 		return false; // Can't traverse if there's no one to move, or the target is full, or we can't actually occupy the target
 	}
 
-	BuildingTypeExt::ExtData* currentBuildingTypeExt = BuildingTypeExt::ExtMap.Find(currentBuilding->GetTechnoType());
-	BuildingTypeExt::ExtData* targetBuildingTypeExt = BuildingTypeExt::ExtMap.Find(targetBuilding->GetTechnoType());
+	BuildingTypeExt::ExtData* currentBuildingTypeExt = BuildingTypeExt::ExtMap.Find(currentBuilding->Type);
+	BuildingTypeExt::ExtData* targetBuildingTypeExt = BuildingTypeExt::ExtMap.Find(targetBuilding->Type);
 
 	if((currentBuildingTypeExt->IsTrench > -1) && (currentBuildingTypeExt->IsTrench == targetBuildingTypeExt->IsTrench)) {
 		// if we've come here, there's room, there are people to move, and the buildings are trenches and of the same kind
 		// the only questioning remaining is whether they are next to each other.
-		return targetBuilding->Location->DistanceFrom(currentBuilding->Location) <= 256.0; // if the target building is more than 256 leptons away, it's not on a straight neighboring cell
+		return targetBuilding->Location.DistanceFrom(currentBuilding->Location) <= 256.0; // if the target building is more than 256 leptons away, it's not on a straight neighboring cell
 
 	} else {
 		return false; // not the same trench kind or not a trench
@@ -221,10 +222,54 @@ bool BuildingExt::ExtData::canTraverseTo(BuildingClass* targetBuilding) {
 */
 void BuildingExt::ExtData::doTraverseTo(BuildingClass* targetBuilding) {
 	BuildingClass* currentBuilding = this->AttachedToObject;
-	BuildingTypeClass* targetBuildingType = game_cast<BuildingTypeClass *>(targetBuilding->GetTechnoType());
+	BuildingTypeClass* targetBuildingType = targetBuilding->Type;
 
-	while(currentBuilding->Occupants->Count && (targetBuilding->Occupants->Count < targetBuildingType->MaxNumberOccupants)) { // depending on Westwood's handling, this could explode when Size > 1 units are involved...but don't tell the users that
-		targetBuilding->Occupants->AddItem(currentBuilding->Occupants->GetItem(0));
-		currentBuilding->Occupants->RemoveItem(0); // maybe switch Add/Remove if the game gets pissy about multiple of them walking around
+	while(currentBuilding->Occupants.Count && (targetBuilding->Occupants.Count < targetBuildingType->MaxNumberOccupants)) { // depending on Westwood's handling, this could explode when Size > 1 units are involved...but don't tell the users that
+		targetBuilding->Occupants.AddItem(currentBuilding->Occupants.GetItem(0));
+		currentBuilding->Occupants.RemoveItem(0); // maybe switch Add/Remove if the game gets pissy about multiple of them walking around
 	}
+}
+
+// =============================
+// container hooks
+
+
+DEFINE_HOOK(43BCBD, BuildingClass_CTOR, 6)
+{
+	GET(BuildingClass*, pItem, ESI);
+
+	BuildingExt::ExtMap.FindOrAllocate(pItem);
+	return 0;
+}
+
+DEFINE_HOOK(43BCF7, BuildingClass_DTOR, 6)
+{
+	GET(BuildingClass*, pItem, ECX);
+
+	BuildingExt::ExtMap.Remove(pItem);
+	return 0;
+}
+
+DEFINE_HOOK(453E20, BuildingClass_SaveLoad_Prefix, 5)
+DEFINE_HOOK_AGAIN(454190, BuildingClass_SaveLoad_Prefix, 5)
+{
+	GET_STACK(BuildingExt::TT*, pItem, 0x4);
+	GET_STACK(IStream*, pStm, 0x8);
+
+	Container<BuildingExt>::SavingObject = pItem;
+	Container<BuildingExt>::SavingStream = pStm;
+
+	return 0;
+}
+
+DEFINE_HOOK(45417E, BuildingClass_Load_Suffix, 5)
+{
+	BuildingExt::ExtMap.LoadStatic();
+	return 0;
+}
+
+DEFINE_HOOK(454244, BuildingClass_Save_Suffix, 7)
+{
+	BuildingExt::ExtMap.SaveStatic();
+	return 0;
 }

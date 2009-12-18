@@ -25,7 +25,8 @@ public:
 		BuildingClass* NormalState; //!< This BuildingClass will be used as the building's normal state after the building was reconstructed from rubble. Its type should have \link BuildingTypeExt::ExtData::RubbleDestroyed Rubble.Destroyed \endlink set.
 
 	public:
-		ExtData(const DWORD Canary = 0, const TT* OwnerObject = NULL) : Extension(Canary, OwnerObject), RubbleState(NULL), NormalState(NULL)
+		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension(Canary, OwnerObject),
+			RubbleState(NULL), NormalState(NULL)
 			{ };
 
 		virtual ~ExtData() {

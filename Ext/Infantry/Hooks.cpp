@@ -1,8 +1,11 @@
 #include <InfantryClass.h>
 #include <BuildingClass.h>
+#include <SpecificStructures.h>
 #include "../Building/Body.h"
+#include "../BuildingType/Body.h"
 
 // #664: Advanced Rubble - reconstruction part: Check
+/* -- TODO: UI handler
 A_FINE_HOOK(51E635, InfantryClass_GetCursorOverObject_EngineerOverFriendlyBuilding, 5)
 {
 	GET(BuildingClass *, Target, ESI);
@@ -19,6 +22,7 @@ A_FINE_HOOK(51E635, InfantryClass_GetCursorOverObject_EngineerOverFriendlyBuildi
 		;
 	}
 }
+*/
 
 // #664: Advanced Rubble - reconstruction part: Reconstruction
 DEFINE_HOOK(519FAF, InfantryClass_UpdatePosition_EngineerRepairsFriendly, 6)

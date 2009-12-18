@@ -2,6 +2,7 @@
 #include <IonBlastClass.h>
 #include <WeaponTypeClass.h>
 #include "Body.h"
+#include "../Bullet/Body.h"
 #include "../../Enum/ArmorTypes.h"
 
 // feature #384: Permanent MindControl Warheads + feature #200: EMP Warheads
@@ -37,8 +38,8 @@ DEFINE_HOOK(46920B, BulletClass_Fire, 6)
 			tmpCell += cellCoords;
 			CellClass *c = MapClass::Global()->GetCellAt(&tmpCell);
 			for(ObjectClass *curObj = c->GetContent(); curObj; curObj = curObj->NextObject) {
-				if(curObj->AbstractFlags & ABSFLAGS_ISTECHNO) {
-					reinterpret_cast<TechnoClass *>(curObj)->IronCurtain(pData->IC_Duration, Bullet->Owner->Owner, 0);
+				if(TechnoClass *curTechno = generic_cast<TechnoClass *>(curObj)) {
+					curTechno->IronCurtain(pData->IC_Duration, Bullet->Owner->Owner, 0);
 				}
 			}
 		}

@@ -23,18 +23,18 @@ public:
 	public:
 
 
-		ExtData(const DWORD Canary = 0, const TT* OwnerObject = NULL) { };
+		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension(Canary, OwnerObject)
+			{ };
 
 		virtual ~ExtData() {
 		}
 
 		virtual size_t Size() const { return sizeof(*this); };
 
-		virtual bool DamageOccupants();
+		bool DamageOccupants();
 	};
 
 	static Container<BulletExt> ExtMap;
-//	static ExtData ExtMap;
 };
 
 #endif

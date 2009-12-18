@@ -124,7 +124,7 @@ DEFINE_HOOK(567AC1, MapClass_RevealArea1_DisplayTo, 0)
 
 /* #221 - Trenches, subissue #663: Forward damage to occupants in UC buildings and Battle Bunkers  */
 // building receives damage // this was moved to BulletExt::ExtData::DamageOccupants() which is executed in WarheadType hook BulletClass_Fire
-A_FINE_HOOK(44235E, BuildingClass_ReceiveDamage_Trenches, 6)
+DEFINE_HOOK(44235E, BuildingClass_ReceiveDamage_Trenches, 6)
 {
 	GET(BuildingClass *, Building, ESI);
 	LEA_STACK(args_ReceiveDamage *, Arguments, 0xA0);
@@ -168,16 +168,16 @@ DEFINE_HOOK(457D58, BuildingClass_CanBeOccupied_SpecificOccupiers, 6)
 {
 	GET(BuildingClass *, pThis, ESI);
 	GET(InfantryClass *, pInf, EDI);
-	BuildingClassExt* pBuildExt = BuildingClassExt::ExtMap.Find(pThis);
+	BuildingTypeExt::ExtData* pBuildTypeExt = BuildingTypeExt::ExtMap.Find(pThis->Type);
 	bool can_occupy = false;
 
-	if(pInf->Occupier) {
-		bool isFull = (pThis->GetOccupantCount() == pThis->BuildingType->MaxNumberOccupants);
-		bool isIneligible = (isFull || pThis->IsRedHP() || pInf->IsMindControlled());
+	if(pInf->Type->Occupier) {
+		bool isFull = (pThis->GetOccupantCount() == pThis->Type->MaxNumberOccupants);
+		bool isIneligible = (pThis->IsRedHP() || pInf->IsMindControlled());
 
 		if(!isFull && !isIneligible) {
 			if(pThis->Owner != pInf->Owner) {
-				can_occupy = (pThis->Owner->Type->MultiplayPassive || pBuildExt->BunkerRaidable);
+				can_occupy = (pThis->Owner->Type->MultiplayPassive || pBuildTypeExt->BunkerRaidable);
 			} else {
 				can_occupy = true;
 			}
@@ -233,7 +233,7 @@ DEFINE_HOOK(44725F, BuildingClass_GetCursorOverObject_TargetABuilding, 5)
 	// not decided on UI handling yet
 
 	if(T->WhatAmI() == abs_Building) {
-		BuildingClass* targetBuilding = game_cast<BuildingClass *>(T);
+		BuildingClass* targetBuilding = specific_cast<BuildingClass *>(T);
 		BuildingExt::ExtData* curBuildExt = BuildingExt::ExtMap.Find(pThis);
 
 		if(curBuildExt->canTraverseTo(targetBuilding)) {
@@ -245,6 +245,7 @@ DEFINE_HOOK(44725F, BuildingClass_GetCursorOverObject_TargetABuilding, 5)
 }
 
 // #664: Advanced Rubble - prevent rubble from being sold, ever
+/* TODO: UI handler
 A_FINE_HOOK(4494D2, BuildingClass_IsSellable, 6)
 {
 	GET(BuildingClass *, B, ESI);
@@ -258,3 +259,4 @@ A_FINE_HOOK(4494D2, BuildingClass_IsSellable, 6)
 			return 0;
 	}
 }
+*/

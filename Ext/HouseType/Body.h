@@ -30,7 +30,7 @@ class HouseTypeExt
 	
 			DynamicVectorClass<BuildingTypeClass *> Powerplants;
 
-		ExtData(const DWORD Canary = 0, const TT* OwnerObject = NULL) : Extension(Canary, OwnerObject),
+		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension(Canary, OwnerObject),
 				RandomSelectionWeight (0)
 			{
 				*FlagFile = 0;

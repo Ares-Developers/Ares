@@ -16,7 +16,7 @@ void RulesExt::Allocate(RulesClass *pThis)
 	if(Data) {
 		Remove(pThis);
 	}
-	Data = new RulesExt::ExtData(RulesExt::ExtData::Canary);
+	Data = new RulesExt::ExtData(RulesExt::ExtData::Canary, pThis);
 }
 
 void RulesExt::Remove(RulesClass *pThis)

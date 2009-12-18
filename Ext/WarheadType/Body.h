@@ -59,7 +59,7 @@ public:
 
 		Customizable<AnimTypeClass *> Temporal_WarpAway;
 
-		ExtData(const DWORD Canary = 0, const TT* OwnerObject = NULL) : Extension(Canary, OwnerObject),
+		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension(Canary, OwnerObject),
 			Is_Custom (false),
 			MindControl_Permanent (false),
 			Ripple_Radius (0),

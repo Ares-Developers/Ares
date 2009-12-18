@@ -32,7 +32,7 @@ public:
 		// added on 11.11.09 for #667 (part of Trenches)
 		bool SubjectToTrenches; //! if false, this projectile/weapon *always* passes through to the occupants, regardless of UC.PassThrough
 
-		ExtData(const DWORD Canary = 0, const TT* OwnerObject = NULL) : Extension(Canary, OwnerObject),
+		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension(Canary, OwnerObject),
 			SubjectToSolid (false),
 			SubjectToFirewall (true),
 			Parachuted (false),
@@ -48,7 +48,6 @@ public:
 	};
 
 	static Container<BulletTypeExt> ExtMap;
-//	static ExtData ExtMap;
 };
 
 #endif

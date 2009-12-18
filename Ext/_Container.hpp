@@ -54,14 +54,14 @@ template<typename T>
 class Extension {
 	public:
 		eInitState _Initialized;
-		const T* AttachedToObject;
+		T* const AttachedToObject;
 	#ifdef DEBUGBUILD
 		DWORD SavedCanary;
 	#endif
 
 		static const DWORD Canary;
 
-		Extension(const DWORD Canary = 0, const T* OwnerObject = NULL) :
+		Extension(const DWORD Canary, T* const OwnerObject) :
 		AttachedToObject(OwnerObject),
 	#ifdef DEBUGBUILD
 		SavedCanary(Canary), 
@@ -118,6 +118,11 @@ class Extension {
 		virtual void Initialize(T *pThis) {
 			this->_Initialized = is_Inited;
 		};
+		
+	private:
+		void operator = (Extension &RHS) {
+			
+		}
 };
 
 //template<typename T1, typename T2>
