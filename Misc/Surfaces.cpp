@@ -13,8 +13,6 @@ DEFINE_HOOK(533FD0, AllocateSurfaces, 0)
 
 	RectangleStruct *rect_Alternate = rect_Hidden;
 
-	Debug::Log("Allocating surfaces\n");
-
 #define DELSURFACE(surface) \
 	if(surface) { \
 		delete surface; \
@@ -67,8 +65,6 @@ DEFINE_HOOK(533FD0, AllocateSurfaces, 0)
 	}
 
 	ALLOCSURFACE(Alternate, 1, 0);
-
-	Debug::Log("Allocated surfaces\n");
 
 	return 0x53443E;
 }

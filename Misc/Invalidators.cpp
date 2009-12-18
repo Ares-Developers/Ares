@@ -51,9 +51,9 @@ DEFINE_HOOK(474DEE, INIClass_GetFoundation, 7)
 	if(R->get_EAX() == -1) {
 		GET_STACK(const char *, Section, 0x2C);
 		LEA_STACK(const char *, Value, 0x8);
-//		if(_strcmpi(Value, "<none>")) {
+		if(_strcmpi(Value, "Custom")) {
 			Debug::DevLog(Debug::Notice, "[%s]Foundation=%s is not a valid value!\n", Section, Value);
-//		}
+		}
 	}
 	return 0;
 }
@@ -68,11 +68,14 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 	*/
 	for(int i = 0; i < TechnoTypeClass::Array->Count; ++i) {
 		TechnoTypeClass *Item = reinterpret_cast<TechnoTypeClass *>(TechnoTypeClass::Array->Items[i]);
-		if(ABS_IS_FOOT(Item) && Item->SpeedType == -1) {
+
+		bool IsFoot = Item->WhatAmI() != abs_BuildingType;
+
+		if(IsFoot && Item->SpeedType == -1) {
 			Debug::DevLog(Debug::Error, "[%s]SpeedType is invalid!\n", Item->get_ID());
 		}
 
-		if(ABS_IS_FOOT(Item) && Item->MovementZone == -1) {
+		if(IsFoot && Item->MovementZone == -1) {
 			Debug::DevLog(Debug::Error, "[%s]MovementZone is invalid!\n", Item->get_ID());
 		}
 

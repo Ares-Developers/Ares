@@ -67,9 +67,11 @@ DEFINE_HOOK(6F9E76, TechnoClass_Update_CheckOperators, 6)
 
 				// loop & condition come from D
 				for(ObjectClass* O = pThis->Passengers.GetFirstPassenger(); O; O = O->NextObject) {
-					if(ABS_IS_FOOT(O) && O->GetType() == pTypeData->Operator) {
-						foundAnOperator = true;
-						break;
+					if(FootClass *F = generic_cast<FootClass *>(O)) {
+						if(F->GetType() == pTypeData->Operator) {
+							foundAnOperator = true;
+							break;
+						}
 					}
 				}
 
@@ -408,7 +410,7 @@ bool TechnoClassExt::EvalWeaponAgainst(TechnoClass *pThis, TechnoClass *pTarget,
 DEFINE_HOOK(5F5ADD, Parachute_Animation, 6)
 {
 	GET(TechnoClass *, T, ESI);
-	RET_UNLESS(ABS_IS_TECHNO(T));
+	RET_UNLESS(generic_cast<FootClass *>(T));
 	TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(T->GetTechnoType());
 	if(pTypeData->Is_Bomb) {
 		T->IsABomb = 1;

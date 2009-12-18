@@ -32,31 +32,18 @@ public:
 
 	virtual void Execute(DWORD dwUnk)
 	{
-/*
+
 		Debug::Log("Dumping all Debug data in Frame %X\n\n", Unsorted::CurrentFrame);
 		for(int i = 0; i < BuildingClass::Array->Count; ++i) {
 			BuildingClass *B = BuildingClass::Array->Items[i];
-			CoordStruct *loc = B->get_Location();
+			CoordStruct *loc = &B->Location;
 			CellStruct XY;
 			B->GetMapCoords(&XY);
-			Debug::Log("Building [%s] owned by %s\n", 
-			B->get_ID(), B->Owner->get_ID());
-			//, loc->X, loc->Y, loc->Z, //XY.X, XY.Y, B->GetCurrentMission(), B->FirestormWallFrame, B->LaserFenceFrame);
-			if(_strcmpi(B->get_ID(), "GAGAP")) {
-				continue;
-			}
-			byte *W = reinterpret_cast<byte *>(B);
-			for(int j = 0; j < 0x71; ++j) {
-				Debug::Log("%04X | ", j * 0x10);
-				for(int k = 0; k < 0x10; ++k) {
-					Debug::Log("%02X ", W[j * 0x10 + k]);
-				}
-				Debug::Log("\n");
-			}
-			Debug::Log("\n");
+			Debug::Log("Building [%s] owned by %s: Location = (%d, %d, %d), CellCoords = (%d, %d) \n", 
+			B->get_ID(), B->Owner->get_ID(),
+				loc->X, loc->Y, loc->Z, XY.X, XY.Y);// , B->GetCurrentMission(), B->FirestormWallFrame, B->LaserFenceFrame);
 		}
 		Debug::Log("All Debug data dumped\n\n");
-*/
 
 /*
 		Debug::Log("Total memory consumed: 0x%X bytes\n", MemMap::Total);
@@ -66,11 +53,13 @@ public:
 		MessageListClass::PrintMessage(msg);
 */
 
+/*
 		Ares::TrackIndex = (Ares::TrackIndex + 1) % 72;
 		wchar_t msg[0x40] = L"\0";
 		wsprintfW(msg, L"TrackIndex: %d\n", Ares::TrackIndex);
 
 		MessageListClass::PrintMessage(msg);
+*/
 	}
 
 	//Constructor

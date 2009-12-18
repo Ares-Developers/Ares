@@ -66,29 +66,21 @@ void Ares::GlobalControls::LoadConfig() {
 
 DEFINE_HOOK(6BC0CD, _LoadRA2MD, 5)
 {
-	Debug::Log("LRM1\n");
 	Ares::GlobalControls::OpenConfig();
-	Debug::Log("LRM1+\n");
 	Ares::GlobalControls::LoadConfig();
-	Debug::Log("LRM2\n");
 	return 0;
 }
 
 void Ares::GlobalControls::OpenConfig() {
-	Debug::Log("OC1\n");
 	INI = new CCINIClass();
-	Debug::Log("OC2\n");
 	CCFileClass *cfg = new CCFileClass("Ares.ini");
-	Debug::Log("OC3\n");
 	if(cfg->Exists(NULL)) {
-		Debug::Log("OC4+\n");
 		INI->ReadCCFile(cfg);
-	} else {
-		Debug::Log("OC4-\n");
-		Debug::Log("Ares.ini does not exist.");
-		ExitProcess(1);
+//	} else {
+//		Debug::Log("OC4-\n");
+//		Debug::Log("Ares.ini does not exist.");
+//		ExitProcess(1);
 	}
-	Debug::Log("OC5\n");
 	delete cfg;
 }
 

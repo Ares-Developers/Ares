@@ -232,8 +232,10 @@ DEFINE_HOOK(46934D, IvanBombs_Spread, 6)
 				: pOwner(owner), CellSpreadApplicator()
 			{ }
 			virtual void operator() (ObjectClass *curObj, CellStruct *origin) {
-				if(curObj != pOwner && ABS_IS_TECHNO(curObj) && !curObj->AttachedBomb) {
-					BombListClass::Global()->Plant(pOwner, reinterpret_cast<TechnoClass *>(curObj));
+				if(curObj != pOwner && !curObj->AttachedBomb) {
+					if(TechnoClass *curTech = generic_cast<TechnoClass *>(curObj)) {
+						BombListClass::Global()->Plant(pOwner, curTech);
+					}
 				}
 			}
 	} BombSpreader(pOwner);

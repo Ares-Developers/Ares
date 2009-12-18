@@ -8,6 +8,7 @@
 class TestScaffold {
 public:
 	static void FloatToIntTest();
+	static void GameCastTest();
 };
 
 #endif

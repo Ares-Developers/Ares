@@ -5,8 +5,8 @@
 
 #include <MouseClass.h>
 #include <TechnoClass.h>
+#include <Helpers/Type.h>
 #include "INIParser.h"
-#include "Type.h"
 
 /**
  * More fancy templates!
