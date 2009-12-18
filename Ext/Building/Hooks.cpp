@@ -121,47 +121,6 @@ DEFINE_HOOK(567AC1, MapClass_RevealArea1_DisplayTo, 0)
 	;
 }
 
-
-/* #221 - Trenches, subissue #663: Forward damage to occupants in UC buildings and Battle Bunkers  */
-// building receives damage // this was moved to BulletExt::ExtData::DamageOccupants() which is executed in WarheadType hook BulletClass_Fire
-DEFINE_HOOK(44235E, BuildingClass_ReceiveDamage_Trenches, 6)
-{
-	GET(BuildingClass *, Building, ESI);
-	LEA_STACK(args_ReceiveDamage *, Arguments, 0xA0);
-	//BuildingTypeClass *BuildingType = Building->Type;
-	BuildingTypeExt::ExtData *BuildingAresData = BuildingTypeExt::ExtMap.Find(Building->Type);
-
-	if(Building->Occupants.Count && BuildingAresData->UCPassThrough) { // only work when UCPassThrough is set, as per community vote in thread #1392
-		if(false || ((ScenarioClass::Instance->Random.RandomRanged(0, 99) / 100) < BuildingAresData->UCPassThrough)) { //\todo replace false with !SubjectToTrenches once we can access that
-			int poorBastard = ScenarioClass::Instance->Random.RandomRanged(0, Building->Occupants.Count - 1); // which Occupant is getting it?
-			if(BuildingAresData->UCFatalRate && ((ScenarioClass::Instance->Random.RandomRanged(0, 99) / 100) < BuildingAresData->UCFatalRate)) {
-				// fatal hit
-				Building->Occupants[poorBastard]->Destroyed(Arguments->Attacker); // ReceiveDamage lists 4th argument as "pAttacker", and given that I call ReceiveDamage on this unit, it's kind of obvious who the target is...maybe wrongly labeled in args_ReceiveDamage?
-			} else {
-				// just a flesh wound
-				*Arguments->Damage = static_cast<int> (ceil(*Arguments->Damage * BuildingAresData->UCDamageMultiplier));
-				Building->Occupants[poorBastard]->ReceiveDamage(Arguments->Damage, Arguments->DistanceToEpicenter, Arguments->WH, Arguments->Attacker, Arguments->IgnoreDefenses, Arguments->PreventsPassengerEscape, Arguments->SourceHouse);
-			}
-
-			return 0x442373;
-		}
-	}
-
-	// continue normally
-	return 0;
-
-	/*!
-		\return 0: proceed to Building->ReceiveDamage
-		\return 0x442373: the building will not call technoclass::receivedamage or anything else , as if the hit hadn't happened at all
-		*/
-
-	/* yes, I'm gonna jinx it and say: This should never be reached.
-		don't jinx my compiler kthx
-		Debug::Log("Warning: Safety case reached in BuildingClass_ReceiveDamage_Trenches.\nTarget: %p\nSource House: %p\nWarhead: %p\nDamage: %i\nExecuting default ReceiveDamage() handler...", Arguments->target, Arguments->SourceHouse, Arguments->WH, *Arguments->Damage);
-		return 0;
-	*/
-}
-
 /* 	#218 - specific occupiers // comes in 0.2
 	#665 - raidable buildings */
 DEFINE_HOOK(457D58, BuildingClass_CanBeOccupied_SpecificOccupiers, 6)

@@ -1,5 +1,4 @@
 #include <InfantryClass.h>
-#include <RulesClass.h>
 #include <ScenarioClass.h>
 
 #include "Body.h"
@@ -60,7 +59,7 @@ bool BulletExt::ExtData::DamageOccupants() {
 					*/
 
 					// just a flesh wound
-					int adjustedDamage = static_cast<int> (ceil(TheBullet->Health * RulesClass::Instance->OccupyDamageMultiplier)); // Bullet->Health is the damage it delivers (go Westwood)
+					int adjustedDamage = static_cast<int> (ceil(TheBullet->Health * BuildingAresData->UCDamageMultiplier)); // Bullet->Health is the damage it delivers (go Westwood)
 					Building->Occupants[poorBastard]->ReceiveDamage(&adjustedDamage, 0, TheBullet->WH, TheBullet->Owner, false, true, TheBullet->GetOwningHouse());
 				}
 				return true;
