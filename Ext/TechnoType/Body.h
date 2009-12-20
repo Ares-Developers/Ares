@@ -87,7 +87,7 @@ public:
 			Is_Bomb (false),
 			WaterAlt (false),
 			Insignia (NULL),
-			Parachute_Anim (&RulesClass::Global()->Parachute),
+			Parachute_Anim(&RulesClass::Instance->Parachute),
 			Operator (NULL),
 			IsAPromiscuousWhoreAndLetsAnyoneRideIt (false)
 			{ this->Insignia.SetAll(NULL); };

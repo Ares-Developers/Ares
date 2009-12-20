@@ -31,15 +31,15 @@ void TechnoExt::SpawnSurvivors(TechnoClass *pThis, TechnoClass *pKiller, bool Se
 	// ...attempts to spawn one Survivors_PilotCount times
 	if(Type->Crewed && chance) {
 		for(int i = 0; i < pData->Survivors_PilotCount; ++i) {
-			if(Randomizer::Global()->RandomRanged(1, 100) <= chance) {
+			if(ScenarioClass::Instance->Random.RandomRanged(1, 100) <= chance) {
 				InfantryTypeClass *PilotType = pData->Survivors_Pilots[pOwner->SideIndex];
 				if(PilotType) {
 					InfantryClass *Pilot = reinterpret_cast<InfantryClass *>(PilotType->CreateObject(pOwner));
 
-					Pilot->set_Health(PilotType->Strength / 2);
+					Pilot->Health = (PilotType->Strength / 2);
 					Pilot->get_Veterancy()->Veterancy = pThis->get_Veterancy()->Veterancy;
 					CoordStruct destLoc, tmpLoc = loc;
-					CellStruct tmpCoords = CellSpread::GetCell(Randomizer::Global()->RandomRanged(0, 7));
+					CellStruct tmpCoords = CellSpread::GetCell(ScenarioClass::Instance->Random.RandomRanged(0, 7));
 
 					tmpLoc.X += tmpCoords.X * 144;
 					tmpLoc.Y += tmpCoords.Y * 144;
@@ -65,9 +65,9 @@ void TechnoExt::SpawnSurvivors(TechnoClass *pThis, TechnoClass *pKiller, bool Se
 		bool toDelete = 1;
 		passenger = pThis->get_Passengers()->RemoveFirstPassenger();
 		if(chance) {
-			if(Randomizer::Global()->RandomRanged(1, 100) <= chance) {
+			if(ScenarioClass::Instance->Random.RandomRanged(1, 100) <= chance) {
 				CoordStruct destLoc, tmpLoc = loc;
-				CellStruct tmpCoords = CellSpread::GetCell(Randomizer::Global()->RandomRanged(0, 7));
+				CellStruct tmpCoords = CellSpread::GetCell(ScenarioClass::Instance->Random.RandomRanged(0, 7));
 
 				tmpLoc.X += tmpCoords.X * 128;
 				tmpLoc.Y += tmpCoords.Y * 128;
@@ -99,7 +99,7 @@ bool TechnoExt::ParadropSurvivor(FootClass *Survivor, CoordStruct *loc, bool Sel
 	if(loc->Z - floorZ > 100) {
 		success = Survivor->SpawnParachuted(loc);
 	} else {
-		success = Survivor->Put(loc, Randomizer::Global()->RandomRanged(0, 7));
+		success = Survivor->Put(loc, ScenarioClass::Instance->Random.RandomRanged(0, 7));
 	}
 	--Unsorted::SomeMutex;
 	RET_UNLESS(success);

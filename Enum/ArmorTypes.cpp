@@ -93,9 +93,9 @@ DEFINE_HOOK(4753F0, ArmorType_FindIndex, 0A)
 		ArmorType::AddDefaults();
 	}
 
-	const char *Section = (const char *)R->get_StackVar32(0x4);
-	const char *Key = (const char *)R->get_StackVar32(0x8);
-	int fallback = R->get_StackVar32(0xC);
+	GET_STACK(const char *, Section, 0x4);
+	GET_STACK(const char *, Key, 0x8);
+	GET_STACK(int, fallback, 0xC);
 
 //	DEBUGLOG("[%s]%s (%d)\n", Section, Key, fallback);
 	char buf[0x20];
@@ -106,7 +106,7 @@ DEFINE_HOOK(4753F0, ArmorType_FindIndex, 0A)
 
 	pINI->ReadString(Section, Key, curTitle, buf, 0x20);
 	int idx = ArmorType::FindIndex(buf);
-	R->set_EAX(idx == -1 ? 0 : idx);
+	R->EAX(idx == -1 ? 0 : idx);
 
 	return 0x475430;
 }
@@ -114,7 +114,7 @@ DEFINE_HOOK(4753F0, ArmorType_FindIndex, 0A)
 // 4B9A52, 5
 DEFINE_HOOK(4B9A52, DropshipLoadout_PrintArmor, 5)
 {
-	R->set_StackVar32(0x4, (DWORD)ArmorType::Array[R->get_EDX()]);
+	R->Stack(0x4, ArmorType::Array[R->EDX()]);
 	return 0;
 }
 

@@ -29,8 +29,8 @@ DEFINE_HOOK(4666F7, BulletClass_Update, 6)
 		if(MyHeight <= BldHeight) {
 //			Debug::Log("Bullet at %d hits building of height %d == boom\n", MyHeight, BldHeight);
 			Bullet->SetTarget((ObjectClass *)MyCell);
-			Bullet->set_SpawnNextAnim(1);
-			Bullet->set_NextAnim(NULL);
+			Bullet->SpawnNextAnim = 1;
+			Bullet->NextAnim = NULL;
 		}
 	}
 
@@ -43,7 +43,7 @@ DEFINE_HOOK(46867F, BulletClass_SetMovement_Parachute, 5)
 	GET(BulletClass *, Bullet, ECX);
 //	GET_BASE(BulletVelocity *, Trajectory, 0xC);
 
-	R->SetEx_EBX<BulletClass *>(Bullet);
+	R->EBX<BulletClass *>(Bullet);
 	
 	BulletTypeExt::ExtData *pBulletData = BulletTypeExt::ExtMap.Find(Bullet->Type);
 
@@ -58,6 +58,6 @@ DEFINE_HOOK(46867F, BulletClass_SetMovement_Parachute, 5)
 		result = Bullet->Put(XYZ, 0);
 	}
 
-	R->set_EAX(result);
+	R->EAX(result);
 	return 0x468689;
 }

@@ -5,7 +5,7 @@
 
 DEFINE_HOOK(5536DA, HTExt_GetLSName, 0)
 {
-	int n = R->get_EBX();
+	int n = R->EBX();
 	HouseTypeClass* pThis = HouseTypeClass::Array->Items[n];
 
 	char* pLSName = NULL;
@@ -19,18 +19,18 @@ DEFINE_HOOK(5536DA, HTExt_GetLSName, 0)
 		return 0x5536FB;
 	}
 
-	R->set_EDI((DWORD)StringTable::LoadString(pLSName));
+	R->EDI(StringTable::LoadString(pLSName));
 	return 0x553820;
 }
 
 DEFINE_HOOK(553A05, HTExt_GetLSSpecialName, 6)
 {
-	int n = R->get_StackVar32(0x38);
+	int n = R->Stack32(0x38);
 	HouseTypeClass* pThis = HouseTypeClass::Array->Items[n];
 
 	HouseTypeExt::ExtData *pData = HouseTypeExt::ExtMap.Find(pThis);
 	if(pData) {
-		R->set_EAX((DWORD)StringTable::LoadString(pData->LSSpecialName));
+		R->EAX(StringTable::LoadString(pData->LSSpecialName));
 		return 0x553B3B;
 	}
 
@@ -39,12 +39,12 @@ DEFINE_HOOK(553A05, HTExt_GetLSSpecialName, 6)
 
 DEFINE_HOOK(553D06, HTExt_GetLSBrief, 6)
 {
-	int n = R->get_StackVar32(0x38);
+	int n = R->Stack32(0x38);
 	HouseTypeClass* pThis = HouseTypeClass::Array->Items[n];
 
 	HouseTypeExt::ExtData *pData = HouseTypeExt::ExtMap.Find(pThis);
 	if(pData) {
-		R->set_ESI((DWORD)StringTable::LoadString(pData->LSBrief));
+		R->ESI(StringTable::LoadString(pData->LSBrief));
 		return 0x553E54;
 	}
 
@@ -53,7 +53,7 @@ DEFINE_HOOK(553D06, HTExt_GetLSBrief, 6)
 
 DEFINE_HOOK(4E3579, HTExt_DrawFlag, 0)
 {
-	int n = R->get_ECX();
+	int n = R->ECX();
 	HouseTypeClass* pThis = HouseTypeClass::Array->Items[n];
 	
 	char* pFlagFile = NULL;
@@ -70,14 +70,14 @@ DEFINE_HOOK(4E3579, HTExt_DrawFlag, 0)
 	}
 
 //	Debug::Log("Flag resolves to %s\n", pFlagFile);
-	R->set_EAX((DWORD)PCX::GetSurface(pFlagFile));
+	R->EAX(PCX::GetSurface(pFlagFile));
 
 	return 0x4E3686;
 }
 
 DEFINE_HOOK(72B690, HTExt_LSPAL, 0)
 {
-	int n = R->get_EDI();
+	int n = R->EDI();
 	HouseTypeClass* pThis = HouseTypeClass::Array->Items[n];
 
 	char* pPALFile = NULL;
@@ -102,7 +102,7 @@ DEFINE_HOOK(72B690, HTExt_LSPAL, 0)
 
 DEFINE_HOOK(4E38D8, HTExt_GetSTT, 0)
 {
-	int n = R->get_ECX();
+	int n = R->ECX();
 	HouseTypeClass* pThis = HouseTypeClass::Array->Items[n];
 
 	char* pSTT = NULL;
@@ -116,13 +116,13 @@ DEFINE_HOOK(4E38D8, HTExt_GetSTT, 0)
 		return 0x4E38F3;
 	}
 
-	R->set_EAX((DWORD)StringTable::LoadString(pSTT));
+	R->EAX(StringTable::LoadString(pSTT));
 	return 0x4E39F1;
 }
 
 DEFINE_HOOK(553412, HTExt_LSFile, 0)
 {
-	int n = R->get_EBX();
+	int n = R->EBX();
 	HouseTypeClass* pThis = HouseTypeClass::Array->Items[n];
 
 	char* pLSFile = NULL;
@@ -136,21 +136,21 @@ DEFINE_HOOK(553412, HTExt_LSFile, 0)
 		return 0x553421;
 	}
 
-	R->set_EDX((DWORD)pLSFile);
+	R->EDX(pLSFile);
 	return 0x55342C;
 }
 
 DEFINE_HOOK(752BA1, HTExt_GetTaunt, 6)
 {
-	char* pFileName = (char*)R->get_ESP() + 0x04;
-	int nTaunt = R->get_CL() & 0xF;
-	int nCountry = (R->get_CL() >> 4) & 0xF;	//ARF 16-country-limit >.<
+	char* pFileName = R->lea_Stack<char *>(0x04);
+	int nTaunt = R->CL() & 0xF;
+	int nCountry = (R->CL() >> 4) & 0xF;	//ARF 16-country-limit >.<
 
 	HouseTypeClass* pThis = HouseTypeClass::Array->Items[nCountry];
 	HouseTypeExt::ExtData *pData = HouseTypeExt::ExtMap.Find(pThis);
 	if(pData) {
 		_snprintf(pFileName, 32, pData->TauntFile, nTaunt);
-		R->set_ECX(*((DWORD*)0xB1D4D8));
+		R->ECX(*((DWORD*)0xB1D4D8));
 		return 0x752C54;
 	}
 
@@ -175,14 +175,14 @@ DEFINE_HOOK(4E41A7, HTExt_Unlimit5, 0)
 //0x69B774
 DEFINE_HOOK(69B774, HTExt_PickRandom_Human, 0)
 {
-	R->set_EAX(HouseTypeExt::PickRandomCountry());
+	R->EAX(HouseTypeExt::PickRandomCountry());
 	return 0x69B788;
 }
 
 //0x69B670
 DEFINE_HOOK(69B670, HTExt_PickRandom_AI, 0)
 {
-	R->set_EAX(HouseTypeExt::PickRandomCountry());
+	R->EAX(HouseTypeExt::PickRandomCountry());
 	return 0x69B684;
 }
 
@@ -208,6 +208,6 @@ DEFINE_HOOK(4FE782, HTExt_PickPowerplant, 6)
 	int idx = ScenarioClass::Global()->get_Random()->RandomRanged(0, Eligible.size() - 1);
 	pResult = Eligible.at(idx);
 
-	R->set_EDI((DWORD)pResult);
+	R->EDI(pResult);
 	return 0x4FE893;
 }

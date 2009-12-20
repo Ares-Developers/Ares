@@ -5,7 +5,7 @@
 //0x4F8EC6
 DEFINE_HOOK(4F8EC6, Sides_BaseUnit, 6)
 {
-	HouseClass* pThis = (HouseClass*)R->get_ESI();
+	GET(HouseClass *, pThis, ESI);
 
 	if(pThis->OwnedBuildings > 0) {
 		return 0x4F8F87;	//you survive
@@ -23,7 +23,7 @@ DEFINE_HOOK(4F8EC6, Sides_BaseUnit, 6)
 //0x4F8C97
 DEFINE_HOOK(4F8C97, Sides_BuildConst, 6)
 {
-	HouseClass* pThis = (HouseClass*)R->get_ESI();
+	GET(HouseClass *, pThis, ESI);
 
 	for(int i = 0; i < RulesClass::Global()->get_BuildConst()->Count; ++i) {
 		if(pThis->get_OwnedBuildingTypes1()->GetItemCount(RulesClass::Global()->get_BuildConst()->GetItem(i)->ArrayIndex) > 0) {
@@ -37,8 +37,8 @@ DEFINE_HOOK(4F8C97, Sides_BuildConst, 6)
 //0x4F8F54
 DEFINE_HOOK(4F8F54, Sides_SlaveMinerCheck, 6)
 {
-	HouseClass* pThis = (HouseClass*)R->get_ESI();
-	int n = R->get_EDI();
+	GET(HouseClass *, pThis, ESI);
+	GET(int, n, EDI);
 
 	for(int i = 0; i < RulesClass::Global()->get_BuildRefinery()->Count; ++i) {
 		 //new sane way to find a slave miner
@@ -48,21 +48,21 @@ DEFINE_HOOK(4F8F54, Sides_SlaveMinerCheck, 6)
 		}
 	}
 
-	R->set_EDI(n);
+	R->EDI(n);
 	return 0x4F8F75;
 }
 
 //0x505C95
 DEFINE_HOOK(505C95, Sides_BaseDefenseCounts, 7)
 {
-	HouseClass* pThis = (HouseClass*)R->get_EBX();
-	int n = R->get_StackVar32(0x80);	//just to be on the safe side, we're not getting it from the House
+	GET(HouseClass *, pThis, EBX);
+	int n = R->Stack32(0x80);	//just to be on the safe side, we're not getting it from the House
 
 	SideClass* pSide = SideClass::Array->GetItem(n);
 	SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide);
 	if(pData) {
-		R->set_EAX(pThis->AIDifficulty);
-		R->set_EDX((DWORD)pData->BaseDefenseCounts.get_Items());
+		R->EAX(pThis->AIDifficulty);
+		R->EDX(&pData->BaseDefenseCounts.Items);
 		return 0x505CE6;
 	} else {
 		return 0;
@@ -84,13 +84,13 @@ DEFINE_HOOK(507FAA, Sides_BaseDefenses3, 6)
 //0x52267D
 DEFINE_HOOK(52267D, Sides_Disguise1, 6)
 {
-	HouseClass* pHouse = (HouseClass*)R->get_EAX();
+	GET(HouseClass *, pHouse, EAX);
 
 	int n = pHouse->SideIndex;
 	SideClass* pSide = SideClass::Array->GetItem(n);
 	SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide);
 	if(pData) {
-		R->set_EAX((DWORD)pData->DefaultDisguise.Get());
+		R->EAX<InfantryTypeClass *>(pData->DefaultDisguise);
 		return 0x5226B7;
 	} else {
 		return 0;
@@ -108,13 +108,13 @@ DEFINE_HOOK(6F422F, Sides_Disguise3, 6)
 //0x707D40
 DEFINE_HOOK(707D40, Sides_Crew, 6)
 {
-	HouseClass* pHouse = (HouseClass*)R->get_ECX();
+	GET(HouseClass *, pHouse, ECX);
 
 	int n = pHouse->SideIndex;
 	SideClass* pSide = SideClass::Array->GetItem(n);
 	SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide);
 	if(pData) {
-		R->set_ESI((DWORD)pData->Crew.Get());
+		R->ESI<InfantryTypeClass *>(pData->Crew);
 		return 0x707D81;
 	} else {
 		return 0;
@@ -124,13 +124,13 @@ DEFINE_HOOK(707D40, Sides_Crew, 6)
 //0x451358
 DEFINE_HOOK(451358, Sides_SurvivorDivisor, 6)
 {
-	HouseClass* pHouse = (HouseClass*)R->get_EDX();
+	GET(HouseClass *, pHouse, EDX);
 
 	int n = pHouse->SideIndex;
 	SideClass* pSide = SideClass::Array->GetItem(n);
 	SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide);
 	if(pData) {
-		R->set_ESI((DWORD)pData->SurvivorDivisor.Get());
+		R->ESI<int>(pData->SurvivorDivisor);
 		return 0x451391;
 	} else {
 		return 0;
@@ -151,16 +151,16 @@ DEFINE_HOOK(642B91, Sides_LoadTextColor3, 5)
 //0x534FB1
 DEFINE_HOOK(534FB1, Sides_MixFileIndex, 5)
 {
-	int n = R->get_ESI();
+	GET(int, n, ESI);
 	SideClass* pSide = SideClass::Array->GetItem(n);
 	SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide);
 	if(pData) {
 		// original code is 
 		// sprtf(mixname, "SIDEC%02dMD.MIX", ESI + 1);
 		// it's easier to sub 1 here than to fix the calculation in the orig code
-		R->set_ESI(pData->SidebarMixFileIndex - 1);
+		R->ESI(pData->SidebarMixFileIndex - 1);
 	} else if(n == 2) {
-		R->set_ESI(1);
+		R->ESI(1);
 	}
 
 	return 0x534FBB;
@@ -177,7 +177,9 @@ DEFINE_HOOK(72FBC0, Sides_MixFileYuriFiles3, 5)
 
 DEFINE_HOOK(6CD3C1, Sides_ParaDrop, 9)
 {
-	HouseClass* pHouse = ((SuperClass*)R->get_EBX())->Owner;
+	GET(SuperClass *, SW, EBX);
+	HouseClass * pHouse = SW->Owner;
+	GET(CellClass *, Cell, EBP);
 
 	int n = pHouse->SideIndex;
 	SideClass* pSide = SideClass::Array->GetItem(n);
@@ -185,8 +187,8 @@ DEFINE_HOOK(6CD3C1, Sides_ParaDrop, 9)
 	if(pData) {
 		Ares::SendPDPlane(
 			pHouse,
-			(CellClass*)R->get_EBP(),
-			AircraftTypeClass::Array->GetItem(R->get_ESI()),
+			Cell,
+			AircraftTypeClass::Array->GetItem(R->ESI()),
 			&pData->ParaDrop,
 			&pData->ParaDropNum);
 
@@ -238,12 +240,12 @@ XPORT Sides_LoadVoxFromINI(REGISTERS* R)
 //0x7528E8
 DEFINE_HOOK(7528E8, Sides_LoadVoxFile, 7)
 {
-	VoxClass* pThis = (VoxClass*)R->get_EBP();
+	GET(VoxClass *, pThis, EBP);
 	if(SideExt::EVAFiles.find(pThis) != SideExt::EVAFiles.end())
 	{
 		int nSideIndex = *((int*)0xB1D4C8);
 
-		R->set_EDI((DWORD)SideExt::EVAFiles[pThis][nSideIndex].FileName);
+		R->EDI(SideExt::EVAFiles[pThis][nSideIndex].FileName);
 		return 0x752901;
 	}
 

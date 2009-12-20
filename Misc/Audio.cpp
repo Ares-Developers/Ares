@@ -7,35 +7,35 @@
 EXPORT Ares_Audio_AddSample(REGISTERS* R)	//Complete rewrite of VocClass::AddSample
 {
 	//TODO: Once a VocClass and AudioIDXData definition is available, rewrite this. -pd
-	int* pVoc=(int*)R->get_ECX(); //VocClass*
-	char* pSampleName=(char*)R->get_EDX();
+	GET(int*, pVoc, ECX); //VocClass*
+	GET(char*, pSampleName, EDX);
 
-	if(pVoc[0x134 >> 2]==0x20) //if(pVoc->get_NumSamples()==0x20)
-		R->set_EAX(0); //return false
-	else
-	{
+	if(pVoc[0x134 >> 2]==0x20) { //if(pVoc->get_NumSamples()==0x20)
+		R->EAX(0); //return false
+	} else {
 		if(*((int*)0x87E2A0)) //I dunno
 		{
-			while(*pSampleName == '$' || *pSampleName == '#')
+			while(*pSampleName == '$' || *pSampleName == '#') {
 				++pSampleName;
+			}
 
 			int nSampleIndex = -1;
 			void* pAudioIDXData = *((void**)0x87E294);
-			if(pAudioIDXData)
-			{
+			if(pAudioIDXData) {
 				SET_REG32(edx, pSampleName);
 				SET_REG32(ecx, pAudioIDXData);
 				CALL(0x4015C0); //nSampleIndex = FindSampleIndex(pSampleName)
 				GET_REG32(nSampleIndex, eax);
 			}
 
-			if(nSampleIndex == -1)
+			if(nSampleIndex == -1) {
 				nSampleIndex = (int)_strdup(pSampleName);
+			}
 
 			pVoc[(0xB4 >> 2) + pVoc[0x134 >> 2]] = nSampleIndex; //Set sample index or string pointer
 			++pVoc[0x134 >> 2];
 
-			R->set_EAX(1); //return true
+			R->EAX(1); //return true
 		}
 	}
 	return 0x40651E;
@@ -46,14 +46,16 @@ EXPORT Ares_Audio_DeleteSampleNames(REGISTERS* R)
 {
 	//TODO: Once a VocClass definition is available, rewrite this. -pd
 
-	int* pVoc = *((int**)R->get_ESI());	//VocClass*
-	if(pVoc)
-	{
-		for(int i=0; i < pVoc[0x134 >> 2]; i++)	//pVoc[0x134>>2] = NumSamples
-		{
+	GET(int **, ppVoc, ESI);
+	int* pVoc = *ppVoc; //VocClass*
+	if(pVoc) {
+		//pVoc[0x134>>2] = NumSamples
+		for(int i=0; i < pVoc[0x134 >> 2]; i++) {
 			int SampleIndex = pVoc[i + (0xB4 >> 2)];	//SampleIndex[i]
-			if(SampleIndex >= 0x400000)	//if greater than 0x400000, it's the SampleName allocated by us
+			if(SampleIndex >= 0x400000) {
+				//if greater than 0x400000, it's the SampleName allocated by us
 				delete (char*)SampleIndex;
+			}
 		}
 	}
 	return 0;
@@ -63,13 +65,13 @@ EXPORT Ares_Audio_DeleteSampleNames(REGISTERS* R)
 EXPORT Ares_Audio_LoadWAV(REGISTERS* R)	//50% rewrite of Audio::LoadWAV
 {
 	//TODO: Once an AudioIndex definition is available, rewrite this. -pd
-	int SampleIndex = R->get_EDX();
+	GET(int, SampleIndex, EDX);
 
-	if(SampleIndex>=0x400000)	//if greater than 0x400000, it's the SampleName allocated by us
-	{
+	//if greater than 0x400000, it's the SampleName allocated by us
+	if(SampleIndex>=0x400000) {
 		char* SampleName=(char*)SampleIndex;
 
-		DWORD* pAudioIndex=(DWORD*)R->get_EBX();	//AudioIndex*
+		GET(DWORD *, pAudioIndex, EBX);	//AudioIndex*
 		pAudioIndex[0x110 >> 2] = 0;	//ExternalFile = NULL
 		pAudioIndex[0x118 >> 2] = 0;	//CurrentSampleFile = NULL
 
@@ -82,15 +84,13 @@ EXPORT Ares_Audio_LoadWAV(REGISTERS* R)	//50% rewrite of Audio::LoadWAV
 		GAME_ALLOC(CCFileClass, pFile, filename);
 		pAudioIndex[0x110 >> 2] = (DWORD)pFile;	//ExternalFile = pFile
 
-		if(pFile->Exists(NULL))
-		{
-			if(pFile->Open(FILE_READ_ACCESS))
-			{
+		if(pFile->Exists(NULL)) {
+			if(pFile->Open(FILE_READ_ACCESS)) {
 				int WAVStruct[0x8];
 				int nSampleSize;
 				int nResult;
 
-				int* pSampleSize=&nSampleSize;
+				int* pSampleSize = &nSampleSize;
 
 				PUSH_VAR32(pSampleSize);
 				SET_REG32(edx,WAVStruct);
@@ -98,11 +98,10 @@ EXPORT Ares_Audio_LoadWAV(REGISTERS* R)	//50% rewrite of Audio::LoadWAV
 				CALL(0x408610);
 				GET_REG32(nResult,eax);
 
-				if(nResult)
-				{
+				if(nResult) {
 					pAudioIndex[0x118 >> 2] = (DWORD)pFile;	//CurrentSampleFile = pFile
 					pAudioIndex[0x11C >> 2] = nSampleSize;	//CurrentSampleSize = nSampleSize
-					R->set_EAX(1);
+					R->EAX(1);
 					return 0x401889;
 				}
 			}
@@ -111,7 +110,7 @@ EXPORT Ares_Audio_LoadWAV(REGISTERS* R)	//50% rewrite of Audio::LoadWAV
 		GAME_DEALLOC(pFile);
 		pAudioIndex[0x110 >> 2] = NULL;	//ExternalFile = NULL
 
-		R->set_EAX(0);
+		R->EAX(0);
 		return 0x401889;
 	}
 
@@ -122,12 +121,12 @@ EXPORT Ares_Audio_LoadWAV(REGISTERS* R)	//50% rewrite of Audio::LoadWAV
 EXPORT Ares_Audio_GetSampleInfo(REGISTERS* R)
 {
 	//TODO: Once an AudioSample definition is available (if ever), rewrite this. -pd
-	int SampleIndex = R->get_EDX();
-	if(SampleIndex >= 0x400000)	//if greater than 0x400000, it's the SampleName allocated by us
-	{
+	GET(int, SampleIndex, EDX);
+	//if greater than 0x400000, it's the SampleName allocated by us
+	if(SampleIndex >= 0x400000) {
 		// gcc: unused char* SampleName=(char*)SampleIndex;
 
-		int* pAudioSample = (int*)R->get_StackVar32(0x4);	//AudioSample*
+		GET_STACK(int *, pAudioSample, 0x4);	//AudioSample*
 		
 		pAudioSample[0x00 >> 2] = 4;
 		pAudioSample[0x04 >> 2] = 0;
@@ -136,7 +135,7 @@ EXPORT Ares_Audio_GetSampleInfo(REGISTERS* R)
 		pAudioSample[0x10 >> 2] = 2;
 		pAudioSample[0x18 >> 2] = 0;
 
-		R->set_EAX((DWORD)pAudioSample);
+		R->EAX(pAudioSample);
 		return 0x40169E;
 	}
 	return 0;

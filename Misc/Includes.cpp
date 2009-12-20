@@ -8,8 +8,8 @@ DynamicVectorClass<char*> Includes::LoadedINIFiles;
 // 474200, 6
 DEFINE_HOOK(474200, CCINIClass_ReadCCFile1, 6)
 {
-	Includes::LoadedINIs.AddItem((CCINIClass *)R->get_ECX());
-	Includes::LoadedINIFiles.AddItem(_strdup(((CCFileClass*)R->get_EAX())->GetFileName()));
+	Includes::LoadedINIs.AddItem(R->ECX<CCINIClass *>());
+	Includes::LoadedINIFiles.AddItem(_strdup(R->EAX<CCFileClass*>()->GetFileName()));
 	return 0;
 }
 

@@ -112,7 +112,7 @@ DEFINE_HOOK(66F34B, Buf_RepairBay, 5)
 {
 	GET(RulesClass *, Rules, ESI);
 
-	Rules->set_NoParachuteMaxFallRate(R->get_EAX());
+	Rules->NoParachuteMaxFallRate = R->EAX();
 
 	return 0x66F450;
 }
@@ -134,7 +134,7 @@ DEFINE_HOOK(66BC71, Buf_CombatDamage, 9)
 	GET(RulesClass *, Rules, ESI);
 	GET(CCINIClass *, INI, EDI);
 
-	Rules->set_TiberiumStrength(R->get_EAX());
+	Rules->TiberiumStrength = R->EAX();
 
 	const char *section = "CombatDamage";
 	PARSE_VECTOR_N(section, Rules, Scorches, SmudgeTypeClass);
@@ -230,7 +230,7 @@ DEFINE_HOOK(713BF1, Buf_DmgpartSys, 6)
 	GET(TechnoTypeClass *, T, EBP);
 	GET(ParticleSystemTypeClass *, SPS, EAX);
 
-	T->set_RefinerySmokeParticleSystem(SPS);
+	T->RefinerySmokeParticleSystem = SPS;
 	return 0x713E1A;
 }
 
@@ -254,27 +254,27 @@ DEFINE_HOOK(75D660, Buf_Warhead, 9)
 // == Map Scripting ==
 DEFINE_HOOK(7274AF, TriggerTypeClass_LoadFromINI_Read_Events, 5)
 {
-	R->set_StackVar32(0x0, (DWORD)Ares::readBuffer);
-	R->set_StackVar32(0x4, Ares::readLength);
+	R->Stack(0x0, Ares::readBuffer);
+	R->Stack(0x4, Ares::readLength);
 	return 0;
 }
 
 DEFINE_HOOK(7274C8, TriggerTypeClass_LoadFromINI_Strtok_Events, 5)
 {
-	R->set_ECX((DWORD)Ares::readBuffer);
+	R->ECX(Ares::readBuffer);
 	return 0;
 }
 
 
 DEFINE_HOOK(727529, TriggerTypeClass_LoadFromINI_Read_Actions, 5)
 {
-	R->set_StackVar32(0x0, (DWORD)Ares::readBuffer);
-	R->set_StackVar32(0x4, Ares::readLength);
+	R->Stack(0x0, Ares::readBuffer);
+	R->Stack(0x4, Ares::readLength);
 	return 0;
 }
 
 DEFINE_HOOK(727544, TriggerTypeClass_LoadFromINI_Strtok_Actions, 5)
 {
-	R->set_EDX((DWORD)Ares::readBuffer);
+	R->EDX(Ares::readBuffer);
 	return 0;
 }

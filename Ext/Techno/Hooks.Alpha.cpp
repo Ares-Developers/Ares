@@ -104,7 +104,7 @@ DEFINE_HOOK(4210AC, Alphas_UpdateAll, 5)
 		T->get_Facing()->GetFacing(&Facing);
 		WORD F = (WORD)Facing;
 		int idx = F >> (16 - countFrames);
-		R->set_StackVar32(0x0, idx);
+		R->Stack(0x0, idx);
 	}
 	return 0;
 }
@@ -127,6 +127,6 @@ DEFINE_HOOK(42146E, TacticalClass_UpdateAlphasInRectangle, 5)
 		WORD F = (WORD)Facing;
 		idx = F >> (16 - countFrames);
 	}
-	R->set_EAX((DWORD)Image->GetFrameHeader(buffer, idx));
+	R->EAX(Image->GetFrameHeader(buffer, idx));
 	return 0x421478;
 }

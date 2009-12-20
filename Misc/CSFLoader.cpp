@@ -10,16 +10,13 @@ void CSFLoader::LoadAdditionalCSF(const char *pFileName)
 {
 	//The main stringtable must have been loaded (memory allocation)
 	//To do that, use StringTable::LoadFile.
-	if(StringTable::is_Loaded() && pFileName && *pFileName)
-	{
+	if(StringTable::is_Loaded() && pFileName && *pFileName) {
 		CCFileClass* pFile;
 		GAME_ALLOC(CCFileClass, pFile, pFileName);
-		if(pFile->Exists(NULL) && pFile->Open(FILE_READ_ACCESS))
-		{
+		if(pFile->Exists(NULL) && pFile->Open(FILE_READ_ACCESS)) {
 			CSFHeader header;
 
-			if(pFile->ReadBytes(&header, sizeof(CSFHeader)) == sizeof(CSFHeader))
-			{
+			if(pFile->ReadBytes(&header, sizeof(CSFHeader)) == sizeof(CSFHeader)) {
 				if(header.Signature == CSF_SIGNATURE &&
 					header.CSFVersion >= 2 &&
 					header.Language == StringTable::get_Language()) //should stay in one language
@@ -114,7 +111,7 @@ DEFINE_HOOK(734A5F, CSF_AddOrOverrideLabel, 5)
 				pExtraValues[idx] = NULL;
 			}
 
-			R->set_EBP((DWORD)(pLabel - StringTable::get_Labels())); //trick 17
+			R->EBP((pLabel - StringTable::get_Labels())); //trick 17
 		}
 		else
 		{
@@ -124,7 +121,7 @@ DEFINE_HOOK(734A5F, CSF_AddOrOverrideLabel, 5)
 			StringTable::set_ValueCount(idx + 1);
 			StringTable::set_LabelCount(StringTable::get_LabelCount() + 1);
 
-			R->set_EBP(idx * sizeof(CSFLabel)); //set the index
+			R->EBP(idx * sizeof(CSFLabel)); //set the index
 		}
 	}
 	return 0;
@@ -133,12 +130,12 @@ DEFINE_HOOK(734A5F, CSF_AddOrOverrideLabel, 5)
 //0x734A97
 DEFINE_HOOK(734A97, CSF_SetIndex, 6)
 {
-	R->set_EDX((DWORD)StringTable::get_Labels());
+	R->EDX(StringTable::get_Labels());
 	
 	if(CSFLoader::CSFCount > 0)
-		R->set_ECX(CSFLoader::NextValueIndex);
+		R->ECX(CSFLoader::NextValueIndex);
 	else
-		R->set_ECX(R->get_StackVar32(0x18));
+		R->ECX(R->Stack32(0x18));
 
 	return 0x734AA1;
 }
@@ -150,7 +147,7 @@ DEFINE_HOOK(6BD886, CSF_LoadExtraFiles, 5)
 		_snprintf(fname, 32, "stringtable%02d.csf", idx);
 		CSFLoader::LoadAdditionalCSF(fname);
 	}
-	R->set_AL(1);
+	R->AL(1);
 	return 0x6BD88B;
 }
 
@@ -164,7 +161,7 @@ DEFINE_HOOK(734E83, CSF_LoadString_1, 6)
 		NewString->PreviousEntry = StringTable::LastLoadedString;
 		StringTable::LastLoadedString = NewString;
 
-		R->set_EAX((DWORD)NewString->Text);
+		R->EAX(NewString->Text);
 
 		return 0x734F0F;
 	}
@@ -181,7 +178,7 @@ DEFINE_HOOK(734EC2, CSF_LoadString_2, 7)
 	NewString->PreviousEntry = StringTable::LastLoadedString;
 	StringTable::LastLoadedString = NewString;
 
-	R->set_EAX((DWORD)NewString->Text);
+	R->EAX(NewString->Text);
 
 	return 0x734F0F;
 }

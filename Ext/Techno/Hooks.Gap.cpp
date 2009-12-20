@@ -36,11 +36,11 @@ DEFINE_HOOK(6FB4B1, TechnoClass_DeleteGap_new, 6)
 {
 	GET(FootClass *, F, ESI);
 	if(F->WhatAmI() == abs_Building) {
-		R->SetEx_EDX<CoordStruct *>(&F->Location);
+		R->EDX<CoordStruct *>(&F->Location);
 	} else {
 		CoordStruct *XYZ = new CoordStruct;
 		MapClass::Instance->GetCellAt(&F->LastMapCoords)->GetCoords(XYZ);
-		R->SetEx_EDX<CoordStruct *>(XYZ);
+		R->EDX<CoordStruct *>(XYZ);
 	}
 	return 0x6FB4B7;
 }

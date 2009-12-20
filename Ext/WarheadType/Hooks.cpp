@@ -62,7 +62,7 @@ DEFINE_HOOK(46920B, BulletClass_Fire, 6)
 				pTarget->MindControlledBy->CaptureManager->FreeUnit(pTarget);
 			}
 			pTarget->SetOwningHouse(Bullet->Owner->Owner, 1);
-			pTarget->set_MindControlledByAUnit(1);
+			pTarget->MindControlledByAUnit = 1;
 			pTarget->QueueMission(mission_Guard, 0);
 
 			coords.Z += pType->MindControlRingOffset;
@@ -92,7 +92,7 @@ DEFINE_HOOK(46920B, BulletClass_Fire, 6)
 // issue 472: deglob WarpAway
 DEFINE_HOOK(71A87B, TemporalClass_Update_CacheWH, 6)
 {
-	WarheadTypeExt::Temporal_WH = ((WeaponTypeClass *)R->get_EAX())->Warhead;
+	WarheadTypeExt::Temporal_WH = R->EAX<WeaponTypeClass *>()->Warhead;
 	return 0;
 }
 
@@ -101,14 +101,14 @@ DEFINE_HOOK(71A900, TemporalClass_Update_WarpAway, 6)
 {
 	WarheadTypeExt::ExtData *pData = WarheadTypeExt::ExtMap.Find(WarheadTypeExt::Temporal_WH);
 
-	R->set_EDX((DWORD)pData->Temporal_WarpAway.Get());
+	R->EDX<AnimTypeClass *>(pData->Temporal_WarpAway);
 	return 0x71A906;
 }
 
 DEFINE_HOOK(517FC1, InfantryClass_ReceiveDamage_DeployedDamage, 6)
 {
 	GET(InfantryClass *, I, ESI);
-	GET(byte, IgnoreDefenses, BL);
+	bool IgnoreDefenses = R->BL() != 0;
 
 	if(!I->IsDeployed() || IgnoreDefenses) {
 		return 0;

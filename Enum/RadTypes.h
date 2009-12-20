@@ -50,7 +50,8 @@ public:
 
 	virtual ~RadType()
 	{
-		Array.RemoveItem(Array.FindItemIndex(this));
+		RadType * placeholder = this;
+		Array.RemoveItem(Array.FindItemIndex(&placeholder));
 	}
 };
 

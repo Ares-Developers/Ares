@@ -71,6 +71,6 @@ DEFINE_HOOK(533FD0, AllocateSurfaces, 0)
 
 DEFINE_HOOK(7C89D4, DirectDrawCreate, 6)
 {
-	R->set_StackVar32(0x4, Ares::GlobalControls::GFX_DX_Force);
+	R->Stack<DWORD>(0x4, Ares::GlobalControls::GFX_DX_Force);
 	return 0;
 }

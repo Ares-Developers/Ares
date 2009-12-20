@@ -294,7 +294,7 @@ DEFINE_HOOK(533058, CommandClassCallback_Register, 7)
 
 	DWORD *D;
 	GAME_ALLOC(DWORD, D);
-	R->set_EAX((DWORD)D);	//Allocate SetUnitTabCommandClass
+	R->EAX<DWORD *>(D);	//Allocate SetUnitTabCommandClass
 	return 0x533062;
 }
 
@@ -313,13 +313,13 @@ DEFINE_HOOK(7258D0, AnnounceInvalidPointer, 6)
 
 DEFINE_HOOK(74FDC0, GetModuleVersion, 5)
 {
-	R->set_EAX((DWORD)(VERSION_INTERNAL));
+	R->EAX<const char *>(VERSION_INTERNAL);
 	return 0x74FEEF;
 }
 
 DEFINE_HOOK(74FAE0, GetModuleInternalVersion, 5)
 {
-	R->set_EAX((DWORD)(VERSION_STRMINI));
+	R->EAX<const char *>(VERSION_STRMINI);
 	return 0x74FC7B;
 }
 

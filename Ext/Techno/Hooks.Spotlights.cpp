@@ -18,7 +18,7 @@ DEFINE_HOOK(420F40, Spotlights_UpdateFoo, 6)
 // bugfix #182: Spotlights cause an IE
 DEFINE_HOOK(5F5155, ObjectClass_Put, 6)
 {
-	return R->get_EAX()
+	return R->EAX()
 	 ? 0
 	 : 0x5F5210;
 }
@@ -157,11 +157,11 @@ DEFINE_HOOK(436459, BuildingLightClass_Update, 6)
 		Loc.Y -= pTypeData->Spot_Distance * Math::cos(Angle);
 		Loc.X += pTypeData->Spot_Distance * Math::sin(Angle);
 
-		BL->set_field_B8(&Loc);
-		BL->set_field_C4(&Loc);
+		BL->field_B8 = Loc;
+		BL->field_C4 = Loc;
 //		double zer0 = 0.0;
 		__asm { fldz }
-		return R->get_AL()
+		return R->AL()
 		 ? 0x436461
 		 : 0x4364C8;
 	}
@@ -179,7 +179,7 @@ DEFINE_HOOK(436072, BuildingLightClass_Draw_430, 6)
 {
 	TechnoClass *Owner = TechnoExt::ActiveBuildingLight->OwnerObject;
 	TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(Owner->GetTechnoType());
-	R->set_EAX((pTypeData ? pTypeData->Spot_Height : 250) + 180);
+	R->EAX((pTypeData ? pTypeData->Spot_Height : 250) + 180);
 	return 0x436078;
 }
 
@@ -187,7 +187,7 @@ DEFINE_HOOK(4360D8, BuildingLightClass_Draw_400, 6)
 {
 	TechnoClass *Owner = TechnoExt::ActiveBuildingLight->OwnerObject;
 	TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(Owner->GetTechnoType());
-	R->set_ECX((pTypeData ? pTypeData->Spot_Height : 250) + 150);
+	R->ECX((pTypeData ? pTypeData->Spot_Height : 250) + 150);
 	return 0x4360DE;
 }
 
@@ -195,7 +195,7 @@ DEFINE_HOOK(4360FF, BuildingLightClass_Draw_250, 6)
 {
 	TechnoClass *Owner = TechnoExt::ActiveBuildingLight->OwnerObject;
 	TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(Owner->GetTechnoType());
-	R->set_ECX(pTypeData ? pTypeData->Spot_Height : 250);
+	R->ECX(pTypeData ? pTypeData->Spot_Height : 250);
 	TechnoExt::ActiveBuildingLight = NULL;
 	return 0x436105;
 }

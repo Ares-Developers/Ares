@@ -49,8 +49,8 @@ const int Dialogs::ExceptControlID = ARES_TXT_IE_DETAILS;
 DEFINE_HOOK(4A3B4B, FetchResource, 9)
 {
 	HMODULE hModule = (HMODULE)Ares::hInstance; //hModule and hInstance are technically the same...
-	LPCTSTR lpName = (LPCTSTR)R->get_ECX();
-	LPCTSTR lpType = (LPCTSTR)R->get_EDX();
+	GET(LPCTSTR, lpName, ECX);
+	GET(LPCTSTR, lpType, EDX);
 
 	HRSRC hResInfo = FindResource(hModule, lpName, lpType);
 
@@ -60,9 +60,7 @@ DEFINE_HOOK(4A3B4B, FetchResource, 9)
 		if(hResData)
 		{
 			LockResource(hResData);
-			R->set_EAX((DWORD)hResData);
-
-			Debug::Log("Resource %d loaded successfully: 0x%08X\n", lpName, hResData);
+			R->EAX(hResData);
 
 			return 0x4A3B73; //Resource locked and loaded (omg what a pun), return!
 		}
@@ -95,7 +93,7 @@ DEFINE_HOOK(60411B, Game_DialogFunc_Subtext_Load, 5)
 DEFINE_HOOK(604136, Game_DialogFunc_Subtext_Propagate, 5)
 {
 	if(Dialogs::StatusString) {
-		R->set_EAX((DWORD)Dialogs::StatusString);
+		R->EAX(Dialogs::StatusString);
 		return 0x60413B;
 	}
 	return 0;

@@ -119,7 +119,7 @@ void Debug::DumpObj(byte *data, size_t len) {
 void Debug::DumpStack(REGISTERS *R, size_t len) {
 	Debug::Log("Dumping %X bytes of stack\n", len);
 	for(size_t i = 0; i < len; i += 4) {
-		Debug::Log("esp+%04X = %08X\n", i, R->get_StackVar32(i));
+		Debug::Log("esp+%04X = %08X\n", i, R->Stack32(i));
 	}
 	Debug::Log("Done.\n");
 }
@@ -294,8 +294,8 @@ DEFINE_HOOK_AGAIN(4A4AC0, Debug_Log, 1)
 {
 	if(Debug::bLog && Debug::pLogFile)
 	{
-		va_list ArgList = (va_list)(R->get_ESP() + 0x8);
-		char* Format = (char*)R->get_StackVar32(0x4);
+		LEA_STACK(va_list, ArgList, 0x8);
+		GET_STACK(char *, Format, 0x4);
 
 		vfprintf(Debug::pLogFile, Format, ArgList);
 		fflush(Debug::pLogFile);

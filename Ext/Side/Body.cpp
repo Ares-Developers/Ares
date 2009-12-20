@@ -176,13 +176,13 @@ void SideExt::ExtData::LoadFromINIFile(SideClass *pThis, CCINIClass *pINI)
 
 DWORD SideExt::BaseDefenses(REGISTERS* R, DWORD dwReturnAddress)
 {
-	HouseTypeClass* pCountry = (HouseTypeClass*)R->get_EAX();
+	GET(HouseTypeClass *, pCountry, EAX);
 
 	int n = pCountry->SideIndex;
 	SideClass* pSide = SideClass::Array->GetItem(n);
 	SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide);
 	if(pData) {
-		R->set_EBX((DWORD)&pData->BaseDefenses);
+		R->EBX(&pData->BaseDefenses);
 		return dwReturnAddress;
 	} else {
 		return 0;
@@ -191,16 +191,14 @@ DWORD SideExt::BaseDefenses(REGISTERS* R, DWORD dwReturnAddress)
 
 DWORD SideExt::Disguise(REGISTERS* R, DWORD dwReturnAddress, bool bUseESI)
 {
-	HouseClass* pHouse = (HouseClass*)R->get_EAX();
-	InfantryClass* pThis;
-
-	pThis = (InfantryClass*)(bUseESI ? R->get_ESI() : R->get_ECX());
+	GET(HouseClass *, pHouse, EAX);
+	InfantryClass* pThis = (bUseESI ? R->ESI<InfantryClass*>() : R->ECX<InfantryClass *>());
 
 	int n = pHouse->SideIndex;
 	SideClass* pSide = SideClass::Array->GetItem(n);
 	SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide);
 	if(pData) {
-		pThis->set_Disguise(pData->DefaultDisguise.Get());
+		pThis->Disguise = pData->DefaultDisguise;
 		return dwReturnAddress;
 	} else {
 		return 0;
@@ -209,11 +207,11 @@ DWORD SideExt::Disguise(REGISTERS* R, DWORD dwReturnAddress, bool bUseESI)
 
 DWORD SideExt::LoadTextColor(REGISTERS* R, DWORD dwReturnAddress)
 {
-	int n = R->get_EAX();
+	int n = R->EAX();
 	SideClass* pSide = SideClass::Array->GetItem(n);
 	SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide);
 	if(pData && pData->LoadTextColor) {
-		R->set_EAX((DWORD)pData->LoadTextColor);
+		R->EAX(pData->LoadTextColor);
 		return dwReturnAddress;
 	} else {
 		return 0;
@@ -222,7 +220,7 @@ DWORD SideExt::LoadTextColor(REGISTERS* R, DWORD dwReturnAddress)
 
 DWORD SideExt::MixFileYuriFiles(REGISTERS* R, DWORD dwReturnAddress1, DWORD dwReturnAddress2)
 {
-	BYTE* pScenario = (BYTE*)R->get_EAX();	//Scenario, upate this once mapped!
+	BYTE* pScenario = R->EAX<BYTE *>();	//Scenario, upate this once mapped!
 	int n = *((int*)(pScenario + 0x34B8));
 
 	SideClass* pSide = SideClass::Array->GetItem(n);

@@ -19,14 +19,14 @@ DEFINE_HOOK(6FF5F5, TechnoClass_Fire, 6)
 
 	RET_UNLESS(pData->Wave_IsLaser || pData->Wave_IsBigLaser);
 
-	CoordStruct *xyzSrc = (CoordStruct *)R->lea_StackVar(0x44);
-	CoordStruct *xyzTgt = (CoordStruct *)R->lea_StackVar(0x88);
+	LEA_STACK(CoordStruct *, xyzSrc, 0x44);
+	LEA_STACK(CoordStruct *, xyzTgt, 0x88);
 
 	WaveClass *Wave;
 	GAME_ALLOC(WaveClass, Wave, xyzSrc, xyzTgt, Owner, pData->Wave_IsBigLaser ? 2 : 1, Target);
 
 	WeaponTypeExt::WaveExt[Wave] = pData;
-	Owner->set_Wave(Wave);
+	Owner->Wave = Wave;
 	return 0x6FF650;
 }
 
@@ -34,7 +34,7 @@ DEFINE_HOOK(6FF5F5, TechnoClass_Fire, 6)
 DEFINE_HOOK(75E963, WaveClass_CTOR, 6)
 {
 	GET(WaveClass *, Wave, ESI);
-	DWORD Type = R->get_ECX();
+	GET(DWORD, Type, ECX);
 	if(Type == wave_Laser || Type == wave_BigLaser) {
 		return 0;
 	}
@@ -174,10 +174,11 @@ DEFINE_HOOK(760DE2, WaveClass_Draw3, 0)
 DEFINE_HOOK(75EE57, WaveClass_Draw_Sonic, 7)
 {
 	GET_STACK(WaveClass *, Wave, 0x4);
-	DWORD src = R->get_EDI();
-	DWORD offs = src + R->get_ECX() * 2;
+	GET(DWORD, src, EDI);
+	GET(DWORD, offset, ECX);
+	DWORD offs = src + offset * 2;
 
-	WeaponTypeExt::ModifyWaveColor((WORD *)offs, (WORD *)src, R->get_ESI(), Wave);
+	WeaponTypeExt::ModifyWaveColor((WORD *)offs, (WORD *)src, R->ESI(), Wave);
 
 	return 0x75EF1C;
 }
@@ -186,10 +187,11 @@ DEFINE_HOOK(75EE57, WaveClass_Draw_Sonic, 7)
 DEFINE_HOOK(7601FB, WaveClass_Draw_Magnetron, 0B)
 {
 	GET_STACK(WaveClass *, Wave, 0x8);
-	DWORD src = R->get_EBX();
-	DWORD offs = src + R->get_ECX() * 2;
+	GET(DWORD, src, EBX);
+	GET(DWORD, offset, ECX);
+	DWORD offs = src + offset * 2;
 
-	WeaponTypeExt::ModifyWaveColor((WORD *)offs, (WORD *)src, R->get_EBP(), Wave);
+	WeaponTypeExt::ModifyWaveColor((WORD *)offs, (WORD *)src, R->EBP(), Wave);
 
 	return 0x760285;
 }
@@ -205,8 +207,8 @@ void WeaponTypeExt::ModifyWaveColor(WORD *src, WORD *dst, int Intensity, WaveCla
 	WeaponTypeExt::ExtData *pData = WeaponTypeExt::WaveExt[Wave];
 
 	ColorStruct *CurrentColor = (pData->Wave_IsHouseColor && Wave->Owner)
-		? Wave->Owner->Owner->get_Color()
-		: pData->Wave_Color.GetEx();
+		? &Wave->Owner->Owner->Color
+		: &pData->Wave_Color;
 
 	ColorStruct initial = Drawing::WordColor(*src);
 
@@ -267,8 +269,8 @@ DEFINE_HOOK(75F38F, WaveClass_DamageCell, 6)
 {
 	GET(WaveClass *, Wave, EBP);
 	WeaponTypeExt::ExtData *pData = WeaponTypeExt::WaveExt[Wave];
-	R->set_EDI(R->get_EAX());
-	R->set_EBX((DWORD)pData->AttachedToObject);
+	R->EDI(R->EAX());
+	R->EBX(pData->AttachedToObject);
 	return 0x75F39D;
 }
 
@@ -278,6 +280,6 @@ DEFINE_HOOK(7601C7, WaveClass_Draw_Purple, 8)
 	if(Q > 0x15F90) {
 		Q = 0x15F90;
 	}
-	R->set_EDX(Q);
+	R->EDX(Q);
 	return 0;
 }

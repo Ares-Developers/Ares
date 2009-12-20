@@ -46,11 +46,11 @@ public:
 		this->Value = *val;
 	}
 
-	T Get() {
+	virtual T Get() {
 		return this->Value;
 	}
 
-	T* GetEx() {
+	virtual T* GetEx() {
 		return &this->Value;
 	}
 
@@ -93,11 +93,11 @@ public:
 		this->Value = *val;
 	}
 
-	T Get() {
+	virtual T Get() {
 		return this->Value;
 	}
 
-	T* GetEx() {
+	virtual T* GetEx() {
 		return &this->Value;
 	}
 
@@ -150,14 +150,14 @@ public:
 		}
 	}
 
-	T Get() {
+	virtual T Get() {
 		return this->Customized
 		 ? this->Value
 		 : this->Default ? *this->Default : T()
 		;
 	}
 
-	T* GetEx() {
+	virtual T* GetEx() {
 		return this->Customized
 		 ? &this->Value
 		 : this->Default

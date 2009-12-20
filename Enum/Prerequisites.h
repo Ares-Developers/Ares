@@ -31,7 +31,8 @@ public:
 
 	virtual ~GenericPrerequisite()
 	{
-		Array.RemoveItem(Array.FindItemIndex(this));
+		GenericPrerequisite *placeholder = this;
+		Array.RemoveItem(Array.FindItemIndex(&placeholder));
 	}
 
 	DynamicVectorClass<int> Prereqs;

@@ -10,7 +10,7 @@ DEFINE_HOOK(6CEF84, SuperWeaponTypeClass_GetCursorOverObject, 7)
 	if(pThis->Action >= 0x7E) {
 		SWTypeExt::CurrentSWType = pThis;
 
-		CellStruct* pMapCoords = (CellStruct*)R->get_StackVar32(0x0C);
+		GET_STACK(CellStruct *, pMapCoords, 0x0C);
 
 		int Action = SW_YES_CURSOR;
 		
@@ -27,7 +27,7 @@ DEFINE_HOOK(6CEF84, SuperWeaponTypeClass_GetCursorOverObject, 7)
 			Action = SW_NO_CURSOR;
 		}
 
-		R->set_EAX(Action);
+		R->EAX(Action);
 
 		Actions::Set(Action == SW_YES_CURSOR ? &pData->SW_Cursor : &pData->SW_NoCursor);
 		return 0x6CEFD9;
@@ -59,7 +59,7 @@ DEFINE_HOOK(6CD67A, SuperClass_Launch_SpyPlane_FindType, 0)
 	SuperWeaponTypeClass *pThis = Super->Type;
 	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pThis);
 
-	R->set_EAX(pData->SpyPlane_TypeIndex.Get());
+	R->EAX<int>(pData->SpyPlane_TypeIndex);
 	return 0x6CD684;
 }
 
@@ -83,7 +83,7 @@ DEFINE_HOOK(6CDDE3, SuperClass_Launch_Nuke_Siren, 6)
 	GET(SuperClass *, Super, EBX);
 	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(Super->Type);
 
-	R->set_ECX(pData->Nuke_Siren);
+	R->ECX(pData->Nuke_Siren);
 	return 0x6CDDE9;
 }
 
@@ -93,7 +93,7 @@ DEFINE_HOOK(6CEE96, SuperWeaponTypeClass_GetTypeIndex, 5)
 	GET(const char *, TypeStr, EDI);
 	int customType = NewSWType::FindIndex(TypeStr);
 	if(customType > -1) {
-		R->set_ESI(customType);
+		R->ESI(customType);
 		return 0x6CEE9C;
 	}
 	return 0;
@@ -103,18 +103,18 @@ DEFINE_HOOK(6CEE96, SuperWeaponTypeClass_GetTypeIndex, 5)
 // translates SW click to type
 DEFINE_HOOK(4AC20C, DisplayClass_LMBUp, 7)
 {
-	int Action = R->get_StackVar32(0x9C);
+	int Action = R->Stack32(0x9C);
 	if(Action < SW_NO_CURSOR) {
-		int idx = (DWORD)SuperWeaponTypeClass::FindFirstOfAction(Action);
-		R->set_EAX(idx);
+		SuperWeaponTypeClass * idx = SuperWeaponTypeClass::FindFirstOfAction(Action);
+		R->EAX(idx);
 		return idx ? 0x4AC21C : 0x4AC294;
 	}
 	else if(Action == SW_NO_CURSOR) {
-		R->set_EAX(0);
+		R->EAX(0);
 		return 0x4AC294;
 	}
 
-	R->set_EAX((DWORD)SWTypeExt::CurrentSWType);
+	R->EAX(SWTypeExt::CurrentSWType);
 
 	return 0x4AC21C;
 }
@@ -134,7 +134,7 @@ DEFINE_HOOK(446418, BuildingClass_Place1, 6)
 	}
 
 	SuperClass *pSuper = pHouse->get_Supers()->GetItem(swTIdx);
-	R->set_EAX((DWORD)pSuper);
+	R->EAX(pSuper);
 	return 0x44643E;
 }
 
@@ -158,8 +158,8 @@ DEFINE_HOOK(45100A, BuildingClass_ProcessAnims1, 6)
 	}
 
 	SuperClass *pSuper = pHouse->get_Supers()->GetItem(swTIdx);
-	R->set_EDI((DWORD)pBuild->GetTechnoType());
-	R->set_EAX((DWORD)pSuper);
+	R->EDI(pBuild->Type);
+	R->EAX(pSuper);
 	return 0x451030;
 }
 
@@ -239,8 +239,8 @@ DEFINE_HOOK(50B319, HouseClass_UpdateSWs, 6)
 // AI SW targeting submarines
 DEFINE_HOOK(50CFAA, HouseClass_PickOffensiveSWTarget, 0)
 {
-	R->set_ESI(0);
-	R->set_StackVar8(0x13, 1);
+	R->ESI(0);
+	R->Stack8(0x13, 1);
 	return 0x50CFC9;
 }
 

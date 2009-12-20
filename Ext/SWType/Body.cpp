@@ -65,13 +65,13 @@ void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass
 	this->EVA_Detected.Read(&exINI, section, "EVA.Detected");
 
 	if(exINI.ReadString(section, "Action") && !strcmp(exINI.value(), "Custom")) {
-		pThis->set_Action(SW_YES_CURSOR);
+		pThis->Action = SW_YES_CURSOR;
 	}
 
 	if(exINI.ReadString(section, "Type")) {
 		int customType = NewSWType::FindIndex(exINI.value());
 		if(customType > -1) {
-			pThis->set_Type(customType);
+			pThis->Type = customType;
 		}
 	}
 

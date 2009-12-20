@@ -39,8 +39,8 @@
 // fix for ultra-fast processors overrunning the performance evaluator function
 DEFINE_HOOK(5CB0B1, QueryPerformance, 5)
 {
-	if(!R->get_EAX()) {
-		R->set_EAX(1);
+	if(!R->EAX()) {
+		R->EAX(1);
 	}
 	return 0;
 }
@@ -53,7 +53,7 @@ DEFINE_HOOK(6BD7E3, Expand_MIX_Reorg, 5)
 
 DEFINE_HOOK(52BB64, Expand_MIX_Deorg, 5)
 {
-	R->set_AL(1);
+	R->AL(1);
 	return 0x52BB69;
 }
 
@@ -167,7 +167,7 @@ DEFINE_HOOK(424B23, AnimClass_Update, 6)
 	GET(InfantryClass *, I, EDI);
 	I->UnInit();
 	GET(AnimClass *, A, ESI);
-	A->set_TimeToDie(1);
+	A->TimeToDie = 1;
 	A->UnInit();
 	return 0x424B29;
 }
@@ -209,7 +209,7 @@ DEFINE_HOOK(6FCA30, TechnoClass_GetWeaponState, 6)
 DEFINE_HOOK(671152, RulesClass_Addition_General, 6)
 {
 	GET(RulesClass *, Rules, ESI);
-	Rules->set_PrismSupportModifier(Rules->PrismSupportModifier / 100);
+	Rules->PrismSupportModifier /= 100;
 	return 0;
 }
 
@@ -280,9 +280,9 @@ DEFINE_HOOK_AGAIN(42463A, AnimClass_Update_Damage, 6)
 
 	DWORD origin = R->get_Origin();
 	if(origin == 0x42461D) {
-		R->set_ECX(WH);
+		R->ECX(WH);
 	} else {
-		R->set_EDX(WH);
+		R->EDX(WH);
 	}
 	return 0; // WHAT? origin + 6;
 }
@@ -312,9 +312,9 @@ DEFINE_HOOK(414D36, AACombat, 5)
 // let's see what this change does
 DEFINE_HOOK(6F7561, Arcing_Aircraft, 5)
 {
-	int T = R->get_EAX();
-	int *X = (int *)R->get_ESI();
-	R->set_EAX(*X);
+	GET(int, T, EAX);
+	GET(int *, X, ESI);
+	R->EAX(*X);
 	return T == abs_Aircraft ? 0x6F75B2 : 0x6F7568;
 }
 
@@ -473,7 +473,7 @@ DEFINE_HOOK(6873AB, INIClass_ReadScenario_EarlyLoadRules, 5)
 			RulesClass::Global()->Read_Sides(CCINIClass::INI_Rules);
 			SideExt::ExtMap.LoadAllFromINI(CCINIClass::INI_Rules);
 		default:
-			R->set_EAX(0x1180);
+			R->EAX(0x1180);
 			return 0x6873B0;
 	}
 }
@@ -569,7 +569,7 @@ DEFINE_HOOK(4242CA, AnimClass_Update_FixIE_TrailerSeperation, 6)
 
 DEFINE_HOOK(441C21, BuildingClass_Destroy_ShakeScreenZero, 6)
 {
-	return RulesClass::Global()->ShakeScreen
+	return RulesClass::Instance->ShakeScreen
 	 ? 0
 	 : 0x441C39
 	;

@@ -34,7 +34,7 @@ DEFINE_HOOK(4C24BE, EBolt_Draw_Color1, 5)
 	if(pData) {
 		ColorStruct * clr = pData->Bolt_Color1.GetEx();
 		if(clr) {
-			R->set_EAX(Drawing::Color16bit(clr));
+			R->EAX(Drawing::Color16bit(clr));
 			return 0x4C24E4;
 		}
 	}
@@ -50,7 +50,7 @@ DEFINE_HOOK(4C25CB, EBolt_Draw_Color2, 5)
 	if(pData) {
 		ColorStruct * clr = pData->Bolt_Color2.GetEx();
 		if(clr) {
-			R->set_StackVar32(0x18, Drawing::Color16bit(clr));
+			R->Stack<int>(0x18, Drawing::Color16bit(clr));
 			return 0x4C25FD;
 		}
 	}
@@ -67,8 +67,8 @@ DEFINE_HOOK(4C26C7, EBolt_Draw_Color3, 5)
 	if(pData) {
 		ColorStruct * clr = pData->Bolt_Color3.GetEx();
 		if(clr) {
-			R->set_EBX(R->get_EBX() - 2);
-			R->set_EAX(Drawing::Color16bit(clr));
+			R->EBX(R->EBX() - 2);
+			R->EAX(Drawing::Color16bit(clr));
 			return 0x4C26EE;
 		}
 	}

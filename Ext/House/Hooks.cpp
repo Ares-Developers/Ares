@@ -18,7 +18,7 @@ DEFINE_HOOK(4F7870, HouseClass_PrereqValidator, 7)
 	GET_STACK(bool, BuildLimitOnly, 0x8);
 	GET_STACK(bool, IncludeQueued, 0xC);
 
-	R->set_EAX(HouseExt::PrereqValidate(pHouse, pItem, BuildLimitOnly, IncludeQueued));
+	R->EAX(HouseExt::PrereqValidate(pHouse, pItem, BuildLimitOnly, IncludeQueued));
 	return 0x4F8361;
 }
 

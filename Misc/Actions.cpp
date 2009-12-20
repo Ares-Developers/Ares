@@ -23,19 +23,18 @@ void Actions::Set(MouseCursor *pCursor)
 DEFINE_HOOK(4AB44A, Actions_CustomCursor_NonShrouded, 9)
 {
 	MouseCursor* pCursor = Actions::MPCustom;
-	if(pCursor)
-	{
+	if(pCursor) {
 		//TODO: rewrite once MouseClass is defined!
-		MouseClass* Mouse = (MouseClass*)R->get_ESI();
+		GET(MouseClass *, Mouse, ESI);
 
 		//don't try this at home
-		Mouse->QueryCursor((int)pCursor, R->get_StackVar32(0x34));
+		Mouse->QueryCursor((int)pCursor, R->Stack32(0x34));
 
 		return 0x4AB78F;
 	}
 
 	//overwrote the ja, need to replicate it
-	unsigned int CursorIndex = R->get_EAX();
+	unsigned int CursorIndex = R->EAX();
 	if(CursorIndex > 0x47)
 		return 0x4AB781;
 	else
@@ -46,15 +45,13 @@ DEFINE_HOOK(4AB44A, Actions_CustomCursor_NonShrouded, 9)
 DEFINE_HOOK(4AB366, Actions_CustomCursor_Shrouded, 9)
 {
 	MouseCursor* pCursor = Actions::MPCustom;
-	if(pCursor)
-	{
-		if(Actions::MPCustomAllowShroud)
-		{
+	if(pCursor) {
+		if(Actions::MPCustomAllowShroud) {
 			//TODO: rewrite once MouseClass is defined!
-			GScreenClass* Mouse = (GScreenClass*)R->get_ESI();
+			GET(GScreenClass *, Mouse, ESI);
 
 			//don't try this at home
-			Mouse->QueryCursor((int)pCursor, R->get_StackVar32(0x34));
+			Mouse->QueryCursor((int)pCursor, R->Stack32(0x34));
 
 			return 0x4AB78F;
 		}
@@ -62,7 +59,7 @@ DEFINE_HOOK(4AB366, Actions_CustomCursor_Shrouded, 9)
 	}
 
 	//overwrote the ja, need to replicate it
-	unsigned int CursorIndex = R->get_EAX();
+	unsigned int CursorIndex = R->EAX();
 	if(CursorIndex > 0x48)
 		return 0x4AB781;
 	else
@@ -74,7 +71,7 @@ DEFINE_HOOK(5BDC8C, Actions_PrepareCursor, 7)
 {
 	MouseCursor* pCursor;
 
-	unsigned int CursorIndex = R->get_EAX();
+	unsigned int CursorIndex = R->EAX();
 	if(CursorIndex > 0x56) //no idea why it's 0x56...
 	{
 		//don't try this at home
@@ -84,8 +81,8 @@ DEFINE_HOOK(5BDC8C, Actions_PrepareCursor, 7)
 		pCursor = MouseCursor::First + CursorIndex;
 
 	Actions::TempCursor = pCursor; //setting temp cursor for use in Actions_SetCursor!
-	R->set_ESI((DWORD)pCursor);
-	R->set_ECX(pCursor->MiniFrame);
+	R->ESI(pCursor);
+	R->ECX(pCursor->MiniFrame);
 
 	return 0x5BDCA3;
 }
@@ -101,9 +98,9 @@ DEFINE_HOOK(5BDD9F, Actions_SetCursor, 6)
 //5BDADF, B
 DEFINE_HOOK(5BDADF, Actions_UseCursor, 0)
 {
-	R->set_EBP((DWORD)&Actions::MP);
+	R->EBP(&Actions::MP);
 
-	bool bMini = (R->get_DL() != 0);
+	bool bMini = (R->DL() != 0);
 
 	if(bMini)
 		return 0x5BDAEC;
@@ -114,7 +111,7 @@ DEFINE_HOOK(5BDADF, Actions_UseCursor, 0)
 //5BDDC8, 6
 DEFINE_HOOK(5BDDC8, Actions_AnimateCursor, 6)
 {
-	R->set_EBX((DWORD)&Actions::MP);
+	R->EBX(&Actions::MP);
 
 	if(Actions::MP.Interval == 0)
 		return 0x5BDF13; //no animation
@@ -125,9 +122,9 @@ DEFINE_HOOK(5BDDC8, Actions_AnimateCursor, 6)
 //5BDE64, 6
 DEFINE_HOOK(5BDE64, Actions_AnimateCursor2, 6)
 {
-	R->set_ECX((DWORD)&Actions::MP);
+	R->ECX(&Actions::MP);
 
-	bool* pMouse = (bool*)R->get_ESI();
+	GET(byte *, pMouse, ESI);
 	if(pMouse[0x555C])
 		return 0x5BDE84; //minimap
 	else
@@ -138,37 +135,36 @@ DEFINE_HOOK(5BDE64, Actions_AnimateCursor2, 6)
 DEFINE_HOOK(4D7524, Actions_AllowForFootClass, 9)
 {
 	//overwrote the ja, need to replicate it
-	unsigned int CursorIndex = R->get_EAX();
-	if(CursorIndex > 0x46)
-	{
-		if(CursorIndex == 0x7E || CursorIndex == 0x7D)
+	unsigned int CursorIndex = R->EAX();
+	if(CursorIndex > 0x46) {
+		if(CursorIndex == 0x7E || CursorIndex == 0x7D) {
 			return 0x4D769F;
-		else
+		} else {
 			return 0x4D7CC0;
-	}
-	else
+		}
+	} else {
 		return 0x4D752D;
+	}
 }
 
 //653CA6
 DEFINE_HOOK(653CA6, Actions_AllowMinimap, 5)
 {
 	MouseCursor* pCursor = Actions::MPCustom;
-	if(pCursor)
-	{
-		if(pCursor->MiniFrame >= 0)
+	if(pCursor) {
+		if(pCursor->MiniFrame >= 0) {
 			return 0x653CC0;
-		else
+		} else {
 			return 0x653CBA;
-	}
-	else
-	{
+		}
+	} else {
 		//overwrote the ja, need to replicate it
-		unsigned int CursorIndex = R->get_EAX();
-		if(CursorIndex > 0x47)
+		unsigned int CursorIndex = R->EAX();
+		if(CursorIndex > 0x47) {
 			return 0x653CBA;
-		else
+		} else {
 			return 0x653CAB;
+		}
 	}
 }
 
@@ -345,10 +341,10 @@ DEFINE_HOOK(6929FC, DisplayClass_ChooseAction_CanSell, 7)
 	switch(Target->WhatAmI()) {
 		case abs_Aircraft:
 		case abs_Unit:
-			R->set_StackVar32(0x10, act_SellUnit);
+			R->Stack<DWORD>(0x10, act_SellUnit);
 			return 0x692B06;
 		case abs_Building:
-			R->set_StackVar32(0x10, Target->IsStrange() ? act_NoSell : act_Sell);
+			R->Stack<DWORD>(0x10, Target->IsStrange() ? act_NoSell : act_Sell);
 			return 0x692B06;
 		default:
 			return 0x692AFE;

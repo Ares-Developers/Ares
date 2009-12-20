@@ -42,7 +42,7 @@ DEFINE_HOOK(518744, InfantryClass_ReceiveDamage_ElectricDeath, 6)
 		El = AnimTypeClass::Array->GetItem(1);
 	}
 
-	R->set_EDX((DWORD)El);
+	R->EDX(El);
 	return 0x51874D;
 }
 

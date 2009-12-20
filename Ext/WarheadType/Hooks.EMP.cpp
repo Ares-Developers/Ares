@@ -11,7 +11,7 @@ DEFINE_HOOK(4C5824, EMPulseClass_Initialize1, 5)
 	GET(int, Duration, EDX);
 	GET(TechnoClass *, curVictim, ESI);
 	Duration += curVictim->EMPLockRemaining;
-	R->set_EDX(Duration);
+	R->EDX(Duration);
 	return 0;
 }
 
@@ -20,7 +20,7 @@ DEFINE_HOOK(4C5718, EMPulseClass_Initialize2, 6)
 	GET(int, Duration, EAX);
 	GET(TechnoClass *, curVictim, ESI);
 	Duration += curVictim->EMPLockRemaining;
-	R->set_EAX(Duration);
+	R->EAX(Duration);
 	return 0;
 }
 

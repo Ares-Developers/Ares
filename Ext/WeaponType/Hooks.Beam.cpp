@@ -3,12 +3,12 @@
 
 DEFINE_HOOK(6FD64A, TechnoClass_FireRadBeam1, 6)
 {
-	byte idxWeapon = *(byte *)(R->get_StackVar32(0x18) + 0xC);
+	byte idxWeapon = *(byte *)(R->Stack32(0x18) + 0xC); // hack! 0x18 fetches the caller's EBP, which gives us access to its locals, including idxWeapon
+	GET_STACK(TechnoClass *, Techno, 0x14);
 
-	TechnoClass *Techno = (TechnoClass *)R->get_StackVar32(0x14);
 	TechnoExt::ExtMap.Find(Techno)->idxSlot_Beam = idxWeapon;
 
-	R->set_StackVar32(0x0, idxWeapon);
+	R->Stack<int>(0x0, idxWeapon);
 	return 0;
 }
 
@@ -17,17 +17,17 @@ DEFINE_HOOK(6FD64A, TechnoClass_FireRadBeam1, 6)
 DEFINE_HOOK(6FD79C, TechnoClass_FireRadBeam2, 6)
 {
 	GET(RadBeam *, Rad, ESI);
-	WeaponTypeClass* pSource = (WeaponTypeClass *)R->get_StackVar32(0xC);
+	GET_STACK(WeaponTypeClass *, pSource, 0xC);
 
 	WeaponTypeExt::ExtData *pData = WeaponTypeExt::ExtMap.Find(pSource);
 
 	if(pData->Beam_IsHouseColor) {
 		GET(TechnoClass *, SourceUnit, EDI);
-		Rad->set_Color(SourceUnit->Owner->get_Color());
+		Rad->Color = SourceUnit->Owner->Color;
 	} else {
-		Rad->set_Color(pData->Beam_Color.GetEx());
+		Rad->Color = pData->Beam_Color;
 	}
-	Rad->set_Period(pData->Beam_Duration);
-	Rad->set_Amplitude(pData->Beam_Amplitude);
+	Rad->Period = pData->Beam_Duration;
+	Rad->Amplitude = pData->Beam_Amplitude;
 	return 0x6FD7A8;
 }

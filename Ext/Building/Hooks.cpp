@@ -43,8 +43,8 @@ DEFINE_HOOK(43E832, BuildingClass_DrawVisible_P2, 6)
 DEFINE_HOOK(43E8D1, BuildingClass_DrawVisible_P3, 8)
 {
 	GET(TechnoTypeClass *, Type, EAX);
-	R->SetEx_EAX<SHPStruct *>(Type->Cameo);
-	R->SetEx_EDX<ConvertClass *>(FileSystem::CAMEO_PAL);
+	R->EAX<SHPStruct *>(Type->Cameo);
+	R->EDX<ConvertClass *>(FileSystem::CAMEO_PAL);
 	return 0x43E8DF;
 }
 
@@ -187,7 +187,7 @@ DEFINE_HOOK(44266B, BuildingClass_ReceiveDamage_AfterPreDeathSequence, 6)
 // #666: Trench Traversal - check if traversal is possible & cursor display
 DEFINE_HOOK(44725F, BuildingClass_GetCursorOverObject_TargetABuilding, 5)
 {
-	GET(BuildingClass *, pThis, ECX);
+	GET(BuildingClass *, pThis, ESI);
 	GET(TechnoClass *, T, EBP);
 	// not decided on UI handling yet
 

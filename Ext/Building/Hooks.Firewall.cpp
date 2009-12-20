@@ -145,12 +145,12 @@ DEFINE_HOOK(43FC39, BuildingClass_Update_FSW, 6)
 DEFINE_HOOK(483D8E, CellClass_Setup_Slave, 6)
 {
 	GET(BuildingClass *, B, ESI);
-	R->set_EAX((DWORD)B->Type);
+	R->EAX(B->Type);
 	BuildingTypeExt::ExtData* pTypeData = BuildingTypeExt::ExtMap.Find(B->Type);
 	HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(B->Owner); 
 
 	if(pTypeData->Firewall_Is) {
-		R->set_EBP(pHouseData->FirewallActive ? 6 : 0);
+		R->EBP(pHouseData->FirewallActive ? 6 : 0);
 		return 0x483D6B;
 	} else {
 		return 0x483DB0;
@@ -291,7 +291,7 @@ DEFINE_HOOK(6FCD1D, TechnoClass_GetObjectActivityState_CanTargetFirewall, 5)
 DEFINE_HOOK(6FCD23, TechnoClass_GetObjectActivityState_OverrideFirewall, 6)
 {
 	if(TechnoExt::FiringStateCache != -1) {
-		R->set_EAX(TechnoExt::FiringStateCache);
+		R->EAX(TechnoExt::FiringStateCache);
 		TechnoExt::FiringStateCache = -1;
 	}
 

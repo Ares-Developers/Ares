@@ -52,8 +52,8 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 
 	if(this->IsCustom) {
 		//Reset
-		pThis->set_Foundation(FOUNDATION_CUSTOM);
-		pThis->set_FoundationData(this->CustomData);
+		pThis->Foundation = FOUNDATION_CUSTOM;
+		pThis->FoundationData = this->CustomData;
 	} else if(pArtINI) {
 
 		char str[0x80]="\0";
@@ -238,12 +238,12 @@ void BuildingTypeExt::UpdateSecretLabOptions(BuildingClass *pThis)
 		return;
 	}
 
-	int idx = Randomizer::Global()->RandomRanged(0, Options.Count - 1);
+	int idx = ScenarioClass::Instance->Random.RandomRanged(0, Options.Count - 1);
 	Result = Options[idx];
 
 	DEBUGLOG("Secret Lab rolled %s for %s\n", Result->get_ID(), pType->get_ID());
 	pData->Secret_Placed = true;
-	pThis->set_SecretProduction(Result);
+	pThis->SecretProduction = Result;
 }
 
 // =============================

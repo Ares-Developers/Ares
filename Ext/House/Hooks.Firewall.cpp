@@ -15,10 +15,10 @@
 DEFINE_HOOK(6FF008, TechnoClass_Fire_FSW, 8)
 DEFINE_HOOK_AGAIN(6FF860, TechnoClass_Fire_FSW, 8)
 {
-	CoordStruct src = *((CoordStruct *)R->lea_StackVar(0x44));
-	CoordStruct tgt = *((CoordStruct *)R->lea_StackVar(0x88));
+	CoordStruct src = *R->lea_Stack<CoordStruct *>(0x44);
+	CoordStruct tgt = *R->lea_Stack<CoordStruct *>(0x88);
 
-	BulletClass * Bullet = (BulletClass *) (R->get_Origin() == 0x6FF860 ? R->get_EDI() : R->get_EBX());
+	BulletClass * Bullet = R->get_Origin() == 0x6FF860 ? R->EDI<BulletClass *>() : R->EBX<BulletClass *>();
 
 	BulletTypeExt::ExtData *pBulletData = BulletTypeExt::ExtMap.Find(Bullet->Type);
 
