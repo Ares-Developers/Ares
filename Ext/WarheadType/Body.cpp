@@ -47,16 +47,13 @@ void WarheadTypeExt::ExtData::LoadFromINIFile(WarheadTypeClass *pThis, CCINIClas
 
 	if(pThis->MindControl) {
 		this->MindControl_Permanent = pINI->ReadBool(section, "MindControl.Permanent", this->MindControl_Permanent);
-		this->Is_Custom |= this->MindControl_Permanent;
 	}
 
 	if(pThis->EMEffect) {
 		this->EMP_Duration = pINI->ReadInteger(section, "EMP.Duration", this->EMP_Duration);
-		this->Is_Custom |= 1;
 	}
 
 	this->IC_Duration = pINI->ReadInteger(section, "IronCurtain.Duration", this->IC_Duration);
-	this->Is_Custom |= this->IC_Duration != 0;
 
 	if(pThis->Temporal) {
 		this->Temporal_WarpAway.Parse(&exINI, section, "Temporal.WarpAway");

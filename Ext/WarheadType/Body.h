@@ -44,8 +44,6 @@ public:
 	class ExtData : public Extension<TT> 
 	{
 	public:
-		bool Is_Custom; // set to 1 when any feature is actually used
-
 		bool MindControl_Permanent;
 
 		int Ripple_Radius;
@@ -60,7 +58,6 @@ public:
 		Customizable<AnimTypeClass *> Temporal_WarpAway;
 
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension(Canary, OwnerObject),
-			Is_Custom (false),
 			MindControl_Permanent (false),
 			Ripple_Radius (0),
 			EMP_Duration (0),

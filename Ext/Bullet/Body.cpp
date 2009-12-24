@@ -31,22 +31,21 @@ IStream *Container<BulletExt>::SavingStream = NULL;
 */
 bool BulletExt::ExtData::DamageOccupants() {
 	BulletClass* TheBullet = this->AttachedToObject;
-	BuildingClass* Building = NULL;
 
-	if(TheBullet->Target->WhatAmI() == abs_Building) {
-		BuildingClass* Building = reinterpret_cast<BuildingClass *> (TheBullet->Target);
-	} else {
-		return false; // target is not a building, so nothing to do
-	}
-
-	if(Building) { // if that pointer is null, something went wrong
+	if(BuildingClass* Building = specific_cast<BuildingClass *> (TheBullet->Target)) { // if that pointer is null, something went wrong
 		BulletTypeExt::ExtData* TheBulletTypeExt = BulletTypeExt::ExtMap.Find(TheBullet->Type);
 		BuildingTypeExt::ExtData* BuildingAresData = BuildingTypeExt::ExtMap.Find(Building->Type);
 
+		Debug::Log("Bullet %s is about to damage occupants of %s: occupants #%d, UC.PT = %lf\n", 
+			TheBullet->Type->ID, Building->Type->ID, Building->Occupants.Count, BuildingAresData->UCPassThrough);
+
 		if(Building->Occupants.Count && BuildingAresData->UCPassThrough) { // only work when UCPassThrough is set, as per community vote in thread #1392
+			Debug::Log("SubjToTrenches = %d\n", TheBulletTypeExt->SubjectToTrenches);
 			if(!TheBulletTypeExt->SubjectToTrenches || ((ScenarioClass::Instance->Random.RandomRanged(0, 99) / 100) < BuildingAresData->UCPassThrough)) { // test for negative b/c being SubjectToTrenches means "we're getting stopped by trenches".
 				int poorBastard = ScenarioClass::Instance->Random.RandomRanged(0, Building->Occupants.Count - 1); // which Occupant is getting it?
+				Debug::Log("Poor Bastard #%d\n", poorBastard);
 				if(BuildingAresData->UCFatalRate && ((ScenarioClass::Instance->Random.RandomRanged(0, 99) / 100) < BuildingAresData->UCFatalRate)) {
+					Debug::Log("Fatal hit!\n");
 					// fatal hit
 					Building->Occupants[poorBastard]->Destroyed(TheBullet->Owner);
 				} else {
@@ -59,8 +58,11 @@ bool BulletExt::ExtData::DamageOccupants() {
 					*/
 
 					// just a flesh wound
+					Debug::Log("Flesh wound - health(%d) * UCDmgMult(%lf)\n", TheBullet->Health, BuildingAresData->UCDamageMultiplier);
 					int adjustedDamage = static_cast<int> (ceil(TheBullet->Health * BuildingAresData->UCDamageMultiplier)); // Bullet->Health is the damage it delivers (go Westwood)
-					Building->Occupants[poorBastard]->ReceiveDamage(&adjustedDamage, 0, TheBullet->WH, TheBullet->Owner, false, true, TheBullet->GetOwningHouse());
+					Debug::Log("Adjusted damage = %d\n", adjustedDamage);
+					int result = Building->Occupants[poorBastard]->ReceiveDamage(&adjustedDamage, 0, TheBullet->WH, TheBullet->Owner, false, true, TheBullet->GetOwningHouse());
+					Debug::Log("Received damage, %d\n", result);
 				}
 				return true;
 			} else {

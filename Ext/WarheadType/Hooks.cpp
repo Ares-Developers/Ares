@@ -29,8 +29,6 @@ DEFINE_HOOK(46920B, BulletClass_Fire, 6)
 		WarheadTypeExt::IonExt[IB] = pData;
 	}
 
-	RET_UNLESS(pData->Is_Custom);
-
 	if(pData->IC_Duration > 0) {
 		int countCells = CellSpread::NumCells(int(Bullet->WH->CellSpread));
 		for(int i = 0; i < countCells; ++i) {
