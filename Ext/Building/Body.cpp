@@ -57,7 +57,7 @@ void BuildingExt::ExtendFirewall(BuildingClass *pThis, CellStruct Center, HouseC
 			CurrentPos.Y += short(curRange * offset.Y);
 
 			if(CellClass *cell = MapClass::Global()->GetCellAt(&CurrentPos)) {
-				if(BuildingClass *dummy = reinterpret_cast<BuildingClass *>(pThis->Type->CreateObject(Owner))) {
+				if(BuildingClass *dummy = specific_cast<BuildingClass *>(pThis->Type->CreateObject(Owner))) {
 					CellClass::Cell2Coord(&CurrentPos, &XYZ);
 					if(!dummy->Put(&XYZ, 0)) {
 						delete dummy;

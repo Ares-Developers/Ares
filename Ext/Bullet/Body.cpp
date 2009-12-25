@@ -48,6 +48,10 @@ bool BulletExt::ExtData::DamageOccupants() {
 					Debug::Log("Fatal hit!\n");
 					// fatal hit
 					Building->Occupants[poorBastard]->Destroyed(TheBullet->Owner);
+					Building->Occupants[poorBastard]->UnInit();
+					// don't separate these two lines - poor guy's already ~dtor'd, but his pointer is still dangling from the vector
+					Building->Occupants.RemoveItem(poorBastard);
+					Building->UpdateThreatInCell(Building->GetCell());
 				} else {
 					/* ReceiveDamage args:
 					virtual eDamageState ReceiveDamage(int* pDamage, int DistanceFromEpicenter, WarheadTypeClass* pWH,
