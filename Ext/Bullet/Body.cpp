@@ -11,7 +11,7 @@ Container<BulletExt> BulletExt::ExtMap;
 BulletClass *Container<BulletExt>::SavingObject = NULL;
 IStream *Container<BulletExt>::SavingStream = NULL;
 
-
+// #663: PassThrough; #667: SubjectToTrenches
 //! Does the entire PassThrough logic, checks & damage
 /*!
 	This function determines whether the projectile should

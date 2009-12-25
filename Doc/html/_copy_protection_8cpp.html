@@ -61,20 +61,19 @@
 
 <p>
 <div class="fragment"><pre class="fragment"><a name="l00008"></a>00008 {
-<a name="l00009"></a>00009         <span class="keywordflow">if</span>(<a class="code" href="class_ares.html#0386d19ff330bb071446ddd36c06463f">Ares::bNoCD</a>)
-<a name="l00010"></a>00010         {
-<a name="l00011"></a>00011                 R-&gt;set_EAX(2);
-<a name="l00012"></a>00012                 <span class="keywordflow">return</span> 0x4A8265;
-<a name="l00013"></a>00013         }
-<a name="l00014"></a>00014         <span class="keywordflow">return</span> 0;
-<a name="l00015"></a>00015 }
+<a name="l00009"></a>00009         <span class="keywordflow">if</span>(<a class="code" href="class_ares.html#0386d19ff330bb071446ddd36c06463f">Ares::bNoCD</a>) {
+<a name="l00010"></a>00010                 R-&gt;EAX(2);
+<a name="l00011"></a>00011                 <span class="keywordflow">return</span> 0x4A8265;
+<a name="l00012"></a>00012         }
+<a name="l00013"></a>00013         <span class="keywordflow">return</span> 0;
+<a name="l00014"></a>00014 }
 </pre></div>
 <p>
 
 </div>
 </div><p>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 17 09:37:30 2009 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Dec 25 12:00:14 2009 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

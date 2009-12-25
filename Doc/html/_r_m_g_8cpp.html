@@ -62,8 +62,8 @@
 
 <p>
 <div class="fragment"><pre class="fragment"><a name="l00009"></a>00009 {
-<a name="l00010"></a>00010         R-&gt;set_EBP(0);                                          <span class="comment">//start at index 0 instead of 1</span>
-<a name="l00011"></a>00011         R-&gt;set_EBX(0x82B034);                           <span class="comment">//set the list offset to "TXT_MAP_ARCHIPELAGO"</span>
+<a name="l00010"></a>00010         R-&gt;EBP(0);                                              <span class="comment">//start at index 0 instead of 1</span>
+<a name="l00011"></a>00011         R-&gt;EBX(0x82B034);                               <span class="comment">//set the list offset to "TXT_MAP_ARCHIPELAGO"</span>
 <a name="l00012"></a>00012         <span class="keywordflow">return</span> 0x597008;
 <a name="l00013"></a>00013 }
 </pre></div>
@@ -72,7 +72,7 @@
 </div>
 </div><p>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 17 09:37:30 2009 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Dec 25 12:00:14 2009 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

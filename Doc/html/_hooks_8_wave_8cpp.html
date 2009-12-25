@@ -103,14 +103,14 @@
 <a name="l00019"></a>00019 
 <a name="l00020"></a>00020         RET_UNLESS(pData-&gt;<a class="code" href="class_weapon_type_ext_1_1_ext_data.html#c3dbe5e01b2a87efc7e99180313785e5">Wave_IsLaser</a> || pData-&gt;<a class="code" href="class_weapon_type_ext_1_1_ext_data.html#9dcfb9c0ae6f7b32e3a0c2c2a8a1d4c9">Wave_IsBigLaser</a>);
 <a name="l00021"></a>00021 
-<a name="l00022"></a>00022         CoordStruct *xyzSrc = (CoordStruct *)R-&gt;lea_StackVar(0x44);
-<a name="l00023"></a>00023         CoordStruct *xyzTgt = (CoordStruct *)R-&gt;lea_StackVar(0x88);
+<a name="l00022"></a>00022         LEA_STACK(CoordStruct *, xyzSrc, 0x44);
+<a name="l00023"></a>00023         LEA_STACK(CoordStruct *, xyzTgt, 0x88);
 <a name="l00024"></a>00024 
 <a name="l00025"></a>00025         WaveClass *Wave;
 <a name="l00026"></a>00026         GAME_ALLOC(WaveClass, Wave, xyzSrc, xyzTgt, Owner, pData-&gt;<a class="code" href="class_weapon_type_ext_1_1_ext_data.html#9dcfb9c0ae6f7b32e3a0c2c2a8a1d4c9">Wave_IsBigLaser</a> ? 2 : 1, Target);
 <a name="l00027"></a>00027 
 <a name="l00028"></a>00028         <a class="code" href="class_weapon_type_ext.html#43b29f68aeeb9b5c7b0d353960d4a62f">WeaponTypeExt::WaveExt</a>[Wave] = pData;
-<a name="l00029"></a>00029         Owner-&gt;set_Wave(Wave);
+<a name="l00029"></a>00029         Owner-&gt;Wave = Wave;
 <a name="l00030"></a>00030         <span class="keywordflow">return</span> 0x6FF650;
 <a name="l00031"></a>00031 }
 </pre></div>
@@ -119,7 +119,7 @@
 </div>
 </div><p>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 17 09:37:30 2009 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Dec 25 12:00:14 2009 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

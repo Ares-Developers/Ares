@@ -96,7 +96,7 @@
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00077"></a>00077 {}
+<div class="fragment"><pre class="fragment"><a name="l00066"></a>00066 {}
 </pre></div>
 <p>
 
@@ -121,46 +121,35 @@
 
 <p>
 <div class="fragment"><pre class="fragment"><a name="l00034"></a>00034         {
-<a name="l00035"></a>00035 <span class="comment">/*</span>
-<a name="l00036"></a>00036 <span class="comment">                Debug::Log("Dumping all Debug data in Frame %X\n\n", Unsorted::CurrentFrame);</span>
-<a name="l00037"></a>00037 <span class="comment">                for(int i = 0; i &lt; BuildingClass::Array-&gt;Count; ++i) {</span>
-<a name="l00038"></a>00038 <span class="comment">                        BuildingClass *B = BuildingClass::Array-&gt;Items[i];</span>
-<a name="l00039"></a>00039 <span class="comment">                        CoordStruct *loc = B-&gt;get_Location();</span>
-<a name="l00040"></a>00040 <span class="comment">                        CellStruct XY;</span>
-<a name="l00041"></a>00041 <span class="comment">                        B-&gt;GetMapCoords(&amp;XY);</span>
-<a name="l00042"></a>00042 <span class="comment">                        Debug::Log("Building [%s] owned by %s\n", </span>
-<a name="l00043"></a>00043 <span class="comment">                        B-&gt;get_ID(), B-&gt;Owner-&gt;get_ID());</span>
-<a name="l00044"></a>00044 <span class="comment">                        //, loc-&gt;X, loc-&gt;Y, loc-&gt;Z, //XY.X, XY.Y, B-&gt;GetCurrentMission(), B-&gt;FirestormWallFrame, B-&gt;LaserFenceFrame);</span>
-<a name="l00045"></a>00045 <span class="comment">                        if(_strcmpi(B-&gt;get_ID(), "GAGAP")) {</span>
-<a name="l00046"></a>00046 <span class="comment">                                continue;</span>
-<a name="l00047"></a>00047 <span class="comment">                        }</span>
-<a name="l00048"></a>00048 <span class="comment">                        byte *W = reinterpret_cast&lt;byte *&gt;(B);</span>
-<a name="l00049"></a>00049 <span class="comment">                        for(int j = 0; j &lt; 0x71; ++j) {</span>
-<a name="l00050"></a>00050 <span class="comment">                                Debug::Log("%04X | ", j * 0x10);</span>
-<a name="l00051"></a>00051 <span class="comment">                                for(int k = 0; k &lt; 0x10; ++k) {</span>
-<a name="l00052"></a>00052 <span class="comment">                                        Debug::Log("%02X ", W[j * 0x10 + k]);</span>
-<a name="l00053"></a>00053 <span class="comment">                                }</span>
-<a name="l00054"></a>00054 <span class="comment">                                Debug::Log("\n");</span>
-<a name="l00055"></a>00055 <span class="comment">                        }</span>
-<a name="l00056"></a>00056 <span class="comment">                        Debug::Log("\n");</span>
-<a name="l00057"></a>00057 <span class="comment">                }</span>
-<a name="l00058"></a>00058 <span class="comment">                Debug::Log("All Debug data dumped\n\n");</span>
-<a name="l00059"></a>00059 <span class="comment">*/</span>
-<a name="l00060"></a>00060 
-<a name="l00061"></a>00061 <span class="comment">/*</span>
-<a name="l00062"></a>00062 <span class="comment">                Debug::Log("Total memory consumed: 0x%X bytes\n", MemMap::Total);</span>
-<a name="l00063"></a>00063 <span class="comment"></span>
-<a name="l00064"></a>00064 <span class="comment">                wchar_t msg[0x40] = L"/0";</span>
-<a name="l00065"></a>00065 <span class="comment">                wsprintfW(msg, L"Total memory consumed: 0x%X bytes\n", MemMap::Total);</span>
-<a name="l00066"></a>00066 <span class="comment">                MessageListClass::PrintMessage(msg);</span>
-<a name="l00067"></a>00067 <span class="comment">*/</span>
-<a name="l00068"></a>00068 
-<a name="l00069"></a>00069                 <a class="code" href="class_ares.html#b9c7abefc9e52132f875dc0b2f46b859">Ares::TrackIndex</a> = (<a class="code" href="class_ares.html#b9c7abefc9e52132f875dc0b2f46b859">Ares::TrackIndex</a> + 1) % 72;
-<a name="l00070"></a>00070                 <span class="keywordtype">wchar_t</span> msg[0x40] = L<span class="stringliteral">"\0"</span>;
-<a name="l00071"></a>00071                 wsprintfW(msg, L<span class="stringliteral">"TrackIndex: %d\n"</span>, <a class="code" href="class_ares.html#b9c7abefc9e52132f875dc0b2f46b859">Ares::TrackIndex</a>);
-<a name="l00072"></a>00072 
-<a name="l00073"></a>00073                 MessageListClass::PrintMessage(msg);
-<a name="l00074"></a>00074         }
+<a name="l00035"></a>00035 
+<a name="l00036"></a>00036                 Debug::Log(<span class="stringliteral">"Dumping all Debug data in Frame %X\n\n"</span>, Unsorted::CurrentFrame);
+<a name="l00037"></a>00037                 <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; BuildingClass::Array-&gt;Count; ++i) {
+<a name="l00038"></a>00038                         BuildingClass *B = BuildingClass::Array-&gt;Items[i];
+<a name="l00039"></a>00039                         CoordStruct *loc = &amp;B-&gt;Location;
+<a name="l00040"></a>00040                         CellStruct XY;
+<a name="l00041"></a>00041                         B-&gt;GetMapCoords(&amp;XY);
+<a name="l00042"></a>00042                         Debug::Log(<span class="stringliteral">"Building [%s] owned by %s: Location = (%d, %d, %d), CellCoords = (%d, %d) \n"</span>, 
+<a name="l00043"></a>00043                         B-&gt;get_ID(), B-&gt;Owner-&gt;get_ID(),
+<a name="l00044"></a>00044                                 loc-&gt;X, loc-&gt;Y, loc-&gt;Z, XY.X, XY.Y);<span class="comment">// , B-&gt;GetCurrentMission(), B-&gt;FirestormWallFrame, B-&gt;LaserFenceFrame);</span>
+<a name="l00045"></a>00045                 }
+<a name="l00046"></a>00046                 Debug::Log(<span class="stringliteral">"All Debug data dumped\n\n"</span>);
+<a name="l00047"></a>00047 
+<a name="l00048"></a>00048 <span class="comment">/*</span>
+<a name="l00049"></a>00049 <span class="comment">                Debug::Log("Total memory consumed: 0x%X bytes\n", MemMap::Total);</span>
+<a name="l00050"></a>00050 <span class="comment"></span>
+<a name="l00051"></a>00051 <span class="comment">                wchar_t msg[0x40] = L"/0";</span>
+<a name="l00052"></a>00052 <span class="comment">                wsprintfW(msg, L"Total memory consumed: 0x%X bytes\n", MemMap::Total);</span>
+<a name="l00053"></a>00053 <span class="comment">                MessageListClass::PrintMessage(msg);</span>
+<a name="l00054"></a>00054 <span class="comment">*/</span>
+<a name="l00055"></a>00055 
+<a name="l00056"></a>00056 <span class="comment">/*</span>
+<a name="l00057"></a>00057 <span class="comment">                Ares::TrackIndex = (Ares::TrackIndex + 1) % 72;</span>
+<a name="l00058"></a>00058 <span class="comment">                wchar_t msg[0x40] = L"\0";</span>
+<a name="l00059"></a>00059 <span class="comment">                wsprintfW(msg, L"TrackIndex: %d\n", Ares::TrackIndex);</span>
+<a name="l00060"></a>00060 <span class="comment"></span>
+<a name="l00061"></a>00061 <span class="comment">                MessageListClass::PrintMessage(msg);</span>
+<a name="l00062"></a>00062 <span class="comment">*/</span>
+<a name="l00063"></a>00063         }
 </pre></div>
 <p>
 
@@ -257,7 +246,7 @@
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>Commands/<a class="el" href="_debugging_8h.html">Debugging.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 17 09:37:30 2009 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Dec 25 12:00:15 2009 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

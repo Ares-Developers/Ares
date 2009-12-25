@@ -44,9 +44,41 @@
 <code>#include &lt;GeneralStructures.h&gt;</code><br>
 <table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
+<tr><td colspan="2"><br><h2>Functions</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="_building_2_body_8cpp.html#492d5ba71e4a525fd5158fd5f14f732c">__declspec</a> (dllexport) DWORD _cdecl BuildingClass_CTOR(REGISTERS *R)</td></tr>
+
 </table>
+<hr><h2>Function Documentation</h2>
+<a class="anchor" name="492d5ba71e4a525fd5158fd5f14f732c"></a><!-- doxytag: member="Body.cpp::__declspec" ref="492d5ba71e4a525fd5158fd5f14f732c" args="(dllexport) DWORD _cdecl BuildingClass_CTOR(REGISTERS *R)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">__declspec           </td>
+          <td>(</td>
+          <td class="paramtype">dllexport&nbsp;</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td></td>
+        </tr>
+      </table>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 17 09:37:30 2009 for Ares by&nbsp;
+<div class="memdoc">
+
+<p>
+<div class="fragment"><pre class="fragment"><a name="l00238"></a>00238 {
+<a name="l00239"></a>00239         GET(BuildingClass*, pItem, ESI);
+<a name="l00240"></a>00240 
+<a name="l00241"></a>00241         <a class="code" href="class_building_ext.html#bae25aca766faa296092dea1dc69cff7">BuildingExt::ExtMap</a>.<a class="code" href="class_container.html#73c02e221290552e7bf07d91e801c256">FindOrAllocate</a>(pItem);
+<a name="l00242"></a>00242         <span class="keywordflow">return</span> 0;
+<a name="l00243"></a>00243 }
+</pre></div>
+<p>
+
+</div>
+</div><p>
+</div>
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Dec 25 12:00:14 2009 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

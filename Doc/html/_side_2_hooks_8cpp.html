@@ -62,7 +62,7 @@
 
 <p>
 <div class="fragment"><pre class="fragment"><a name="l00007"></a>00007 {
-<a name="l00008"></a>00008         HouseClass* pThis = (HouseClass*)R-&gt;get_ESI();
+<a name="l00008"></a>00008         GET(HouseClass *, pThis, ESI);
 <a name="l00009"></a>00009 
 <a name="l00010"></a>00010         <span class="keywordflow">if</span>(pThis-&gt;OwnedBuildings &gt; 0) {
 <a name="l00011"></a>00011                 <span class="keywordflow">return</span> 0x4F8F87;        <span class="comment">//you survive</span>
@@ -82,7 +82,7 @@
 </div>
 </div><p>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 17 09:37:30 2009 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Dec 25 12:00:14 2009 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

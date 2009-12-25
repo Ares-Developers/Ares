@@ -64,7 +64,7 @@
 
 <p>
 <div class="fragment"><pre class="fragment"><a name="l00007"></a>00007 {
-<a name="l00008"></a>00008         <span class="keywordflow">if</span>(R-&gt;get_EAX() == -1) {
+<a name="l00008"></a>00008         <span class="keywordflow">if</span>(R-&gt;EAX() == -1) {
 <a name="l00009"></a>00009                 GET_STACK(<span class="keyword">const</span> <span class="keywordtype">char</span> *, Section, 0x8C);
 <a name="l00010"></a>00010                 LEA_STACK(<span class="keyword">const</span> <span class="keywordtype">char</span> *, Value, 0x8);
 <a name="l00011"></a>00011                 GET_STACK(DWORD, caller, 0x88);
@@ -74,7 +74,7 @@
 <a name="l00015"></a>00015 <span class="comment">                        UnitTypeClass::LoadFromINI overrides it to (this-&gt;Crusher ? Track : Wheel) just before reading its SpeedType</span>
 <a name="l00016"></a>00016 <span class="comment">                        so we should not alert if we're responding to a TType read and our subject is a UnitType, or all VehicleTypes without an explicit ST declaration will get dinged</span>
 <a name="l00017"></a>00017 <span class="comment">                */</span>
-<a name="l00018"></a>00018                 <span class="keywordflow">if</span>(caller != 0x7121E5 || reinterpret_cast&lt;TechnoTypeClass *&gt;(R-&gt;get_EBP())-&gt;WhatAmI() != abs_UnitType) {
+<a name="l00018"></a>00018                 <span class="keywordflow">if</span>(caller != 0x7121E5 || R-&gt;EBP&lt;TechnoTypeClass *&gt;()-&gt;WhatAmI() != abs_UnitType) {
 <a name="l00019"></a>00019                         <a class="code" href="class_debug.html#4dcfff56d6e69bd62771feadb91014de">Debug::DevLog</a>(<a class="code" href="class_debug.html#38f58dd0c1bec9042ead4a8eea1f3db1de425086cfb3ac857d78d1d38e042665">Debug::Notice</a>, <span class="stringliteral">"[%s]SpeedType=%s is not a valid value!\n"</span>, Section, Value);
 <a name="l00020"></a>00020                 }
 <a name="l00021"></a>00021         }
@@ -86,7 +86,7 @@
 </div>
 </div><p>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 17 09:37:30 2009 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Dec 25 12:00:14 2009 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

@@ -66,8 +66,8 @@
 <p>
 <div class="fragment"><pre class="fragment"><a name="l00050"></a>00050 {
 <a name="l00051"></a>00051         HMODULE hModule = (HMODULE)<a class="code" href="class_ares.html#cdb0ebd090cdcc9ed1adb3c81be23804">Ares::hInstance</a>; <span class="comment">//hModule and hInstance are technically the same...</span>
-<a name="l00052"></a>00052         LPCTSTR lpName = (LPCTSTR)R-&gt;get_ECX();
-<a name="l00053"></a>00053         LPCTSTR lpType = (LPCTSTR)R-&gt;get_EDX();
+<a name="l00052"></a>00052         GET(LPCTSTR, lpName, ECX);
+<a name="l00053"></a>00053         GET(LPCTSTR, lpType, EDX);
 <a name="l00054"></a>00054 
 <a name="l00055"></a>00055         HRSRC hResInfo = FindResource(hModule, lpName, lpType);
 <a name="l00056"></a>00056 
@@ -77,22 +77,20 @@
 <a name="l00060"></a>00060                 <span class="keywordflow">if</span>(hResData)
 <a name="l00061"></a>00061                 {
 <a name="l00062"></a>00062                         LockResource(hResData);
-<a name="l00063"></a>00063                         R-&gt;set_EAX((DWORD)hResData);
+<a name="l00063"></a>00063                         R-&gt;EAX(hResData);
 <a name="l00064"></a>00064 
-<a name="l00065"></a>00065                         Debug::Log(<span class="stringliteral">"Resource %d loaded successfully: 0x%08X\n"</span>, lpName, hResData);
-<a name="l00066"></a>00066 
-<a name="l00067"></a>00067                         <span class="keywordflow">return</span> 0x4A3B73; <span class="comment">//Resource locked and loaded (omg what a pun), return!</span>
-<a name="l00068"></a>00068                 }
-<a name="l00069"></a>00069         }
-<a name="l00070"></a>00070         <span class="keywordflow">return</span> 0; <span class="comment">//Nothing was found, try the game's own resources.</span>
-<a name="l00071"></a>00071 }
+<a name="l00065"></a>00065                         <span class="keywordflow">return</span> 0x4A3B73; <span class="comment">//Resource locked and loaded (omg what a pun), return!</span>
+<a name="l00066"></a>00066                 }
+<a name="l00067"></a>00067         }
+<a name="l00068"></a>00068         <span class="keywordflow">return</span> 0; <span class="comment">//Nothing was found, try the game's own resources.</span>
+<a name="l00069"></a>00069 }
 </pre></div>
 <p>
 
 </div>
 </div><p>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 17 09:37:30 2009 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Dec 25 12:00:14 2009 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

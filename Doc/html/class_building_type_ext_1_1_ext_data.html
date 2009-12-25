@@ -53,7 +53,7 @@ Inheritance diagram for BuildingTypeExt::BuildingTypeExt::ExtData:</div>
 <a href="class_building_type_ext_1_1_ext_data-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_building_type_ext_1_1_ext_data.html#b05246538187debd6644c92371d71652">ExtData</a> (const DWORD <a class="el" href="class_extension.html#2f0c543d5bceafd46d103be4f87a5abe">Canary</a>=0, const <a class="el" href="class_building_type_ext.html#cab837147c1630e22be787d25d5923b5">TT</a> *OwnerObject=NULL)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_building_type_ext_1_1_ext_data.html#c800483c472d992afccb7263ac6080cd">ExtData</a> (const DWORD <a class="el" href="class_extension.html#2f0c543d5bceafd46d103be4f87a5abe">Canary</a>, <a class="el" href="class_building_type_ext.html#cab837147c1630e22be787d25d5923b5">TT</a> *const OwnerObject)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_building_type_ext_1_1_ext_data.html#65761cd296d057c90a760a11cd0ab55f">~ExtData</a> ()</td></tr>
 
@@ -114,7 +114,7 @@ Inheritance diagram for BuildingTypeExt::BuildingTypeExt::ExtData:</div>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Vector of strings associating known trench names with IsTrench IDs.  <a href="#0d2fbc7315b31bb7bca146230504f5aa"></a><br></td></tr>
 </table>
 <hr><h2>Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" name="b05246538187debd6644c92371d71652"></a><!-- doxytag: member="BuildingTypeExt::ExtData::ExtData" ref="b05246538187debd6644c92371d71652" args="(const DWORD Canary=0, const TT *OwnerObject=NULL)" -->
+<a class="anchor" name="c800483c472d992afccb7263ac6080cd"></a><!-- doxytag: member="BuildingTypeExt::ExtData::ExtData" ref="c800483c472d992afccb7263ac6080cd" args="(const DWORD Canary, TT *const OwnerObject)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -122,13 +122,13 @@ Inheritance diagram for BuildingTypeExt::BuildingTypeExt::ExtData:</div>
           <td class="memname">BuildingTypeExt::BuildingTypeExt::ExtData::ExtData           </td>
           <td>(</td>
           <td class="paramtype">const DWORD&nbsp;</td>
-          <td class="paramname"> <em>Canary</em> = <code>0</code>, </td>
+          <td class="paramname"> <em>Canary</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="class_building_type_ext.html#cab837147c1630e22be787d25d5923b5">TT</a> *&nbsp;</td>
-          <td class="paramname"> <em>OwnerObject</em> = <code>NULL</code></td><td>&nbsp;</td>
+          <td class="paramtype"><a class="el" href="class_building_type_ext.html#cab837147c1630e22be787d25d5923b5">TT</a> *const &nbsp;</td>
+          <td class="paramname"> <em>OwnerObject</em></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -140,7 +140,7 @@ Inheritance diagram for BuildingTypeExt::BuildingTypeExt::ExtData:</div>
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00062"></a>00062                                                                               : <a class="code" href="class_extension.html#ab62cf8e498a26bf7e3c14f31d906ace">Extension</a>(<a class="code" href="class_extension.html#2f0c543d5bceafd46d103be4f87a5abe">Canary</a>, OwnerObject),
+<div class="fragment"><pre class="fragment"><a name="l00062"></a>00062                                                                    : <a class="code" href="class_extension.html#3f8a8fd621ae648a99ab593e8d69681e">Extension</a>(<a class="code" href="class_extension.html#2f0c543d5bceafd46d103be4f87a5abe">Canary</a>, OwnerObject),
 <a name="l00063"></a>00063                         <a class="code" href="class_building_type_ext_1_1_ext_data.html#a3768c28cb107973d736eb978297e340">Solid_Height</a> (0),
 <a name="l00064"></a>00064                         <a class="code" href="class_building_type_ext_1_1_ext_data.html#66e081b4358e106e52fbe3e0b07dbf2a">IsCustom</a> (<span class="keyword">false</span>),
 <a name="l00065"></a>00065                         <a class="code" href="class_building_type_ext_1_1_ext_data.html#83f0cbbc6ebc24aa1e99b44eb184cebe">CustomData</a> (NULL),
@@ -271,8 +271,8 @@ Inheritance diagram for BuildingTypeExt::BuildingTypeExt::ExtData:</div>
 <a name="l00052"></a>00052 
 <a name="l00053"></a>00053         <span class="keywordflow">if</span>(this-&gt;<a class="code" href="class_building_type_ext_1_1_ext_data.html#66e081b4358e106e52fbe3e0b07dbf2a">IsCustom</a>) {
 <a name="l00054"></a>00054                 <span class="comment">//Reset</span>
-<a name="l00055"></a>00055                 pThis-&gt;set_Foundation(<a class="code" href="_building_type_2_body_8h.html#ebcbf33e215fbd352e5f8a89448e17d6">FOUNDATION_CUSTOM</a>);
-<a name="l00056"></a>00056                 pThis-&gt;set_FoundationData(this-&gt;<a class="code" href="class_building_type_ext_1_1_ext_data.html#83f0cbbc6ebc24aa1e99b44eb184cebe">CustomData</a>);
+<a name="l00055"></a>00055                 pThis-&gt;Foundation = <a class="code" href="_building_type_2_body_8h.html#ebcbf33e215fbd352e5f8a89448e17d6">FOUNDATION_CUSTOM</a>;
+<a name="l00056"></a>00056                 pThis-&gt;FoundationData = this-&gt;<a class="code" href="class_building_type_ext_1_1_ext_data.html#83f0cbbc6ebc24aa1e99b44eb184cebe">CustomData</a>;
 <a name="l00057"></a>00057         } <span class="keywordflow">else</span> <span class="keywordflow">if</span>(pArtINI) {
 <a name="l00058"></a>00058 
 <a name="l00059"></a>00059                 <span class="keywordtype">char</span> <a class="code" href="_ares_8_global_controls_8cpp.html#8269f97b2652fc717949a982d7b4f02a">str</a>[0x80]=<span class="stringliteral">"\0"</span>;
@@ -748,7 +748,7 @@ How many percent of the shots pass through the building to the occupants? 0.0 = 
 <hr>The documentation for this class was generated from the following files:<ul>
 <li>Ext/BuildingType/<a class="el" href="_building_type_2_body_8h.html">Body.h</a><li>Ext/BuildingType/<a class="el" href="_building_type_2_body_8cpp.html">Body.cpp</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 17 09:37:30 2009 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Dec 25 12:00:15 2009 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

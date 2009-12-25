@@ -70,10 +70,10 @@
 
 <p>
 <div class="fragment"><pre class="fragment"><a name="l00017"></a>00017 {
-<a name="l00018"></a>00018         CoordStruct src = *((CoordStruct *)R-&gt;lea_StackVar(0x44));
-<a name="l00019"></a>00019         CoordStruct tgt = *((CoordStruct *)R-&gt;lea_StackVar(0x88));
+<a name="l00018"></a>00018         CoordStruct src = *R-&gt;lea_Stack&lt;CoordStruct *&gt;(0x44);
+<a name="l00019"></a>00019         CoordStruct tgt = *R-&gt;lea_Stack&lt;CoordStruct *&gt;(0x88);
 <a name="l00020"></a>00020 
-<a name="l00021"></a>00021         BulletClass * Bullet = (BulletClass *) (R-&gt;get_Origin() == 0x6FF860 ? R-&gt;get_EDI() : R-&gt;get_EBX());
+<a name="l00021"></a>00021         BulletClass * Bullet = R-&gt;get_Origin() == 0x6FF860 ? R-&gt;EDI&lt;BulletClass *&gt;() : R-&gt;EBX&lt;BulletClass *&gt;();
 <a name="l00022"></a>00022 
 <a name="l00023"></a>00023         <a class="code" href="class_bullet_type_ext_1_1_ext_data.html">BulletTypeExt::ExtData</a> *pBulletData = <a class="code" href="class_bullet_type_ext.html#7dc0a4583e92987bd0b670ed627aef26">BulletTypeExt::ExtMap</a>.<a class="code" href="class_container.html#90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(Bullet-&gt;Type);
 <a name="l00024"></a>00024 
@@ -119,7 +119,7 @@
 </div>
 </div><p>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 17 09:37:30 2009 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Dec 25 12:00:14 2009 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

@@ -46,10 +46,6 @@
 <tr><td colspan="2"><br><h2>Functions</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="_building_2_hooks_8cpp.html#c8de6aac5842be68f2da9bedad743274">__declspec</a> (dllexport) DWORD _cdecl BuildingClass_Infiltrate(REGISTERS *R)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="_building_2_hooks_8cpp.html#7b61441ce44dd3d78e007f6515e701ed">A_FINE_HOOK</a> (44235E, BuildingClass_ReceiveDamage_Trenches, 6)</td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="_building_2_hooks_8cpp.html#7fe82183c856081de51e35b5b1f952c2">A_FINE_HOOK</a> (4494D2, BuildingClass_IsSellable, 6)</td></tr>
-
 </table>
 <hr><h2>Function Documentation</h2>
 <a class="anchor" name="c8de6aac5842be68f2da9bedad743274"></a><!-- doxytag: member="Hooks.cpp::__declspec" ref="c8de6aac5842be68f2da9bedad743274" args="(dllexport) DWORD _cdecl BuildingClass_Infiltrate(REGISTERS *R)" -->
@@ -69,10 +65,11 @@
 <div class="memdoc">
 
 <p>
+<dl compact><dt><b><a class="el" href="todo.html#_todo000001">Todo:</a></b></dt><dd>add owning house stuff </dd></dl>
 
 <p>
 RA1-Style Spying, as requested in issue #633 This sets the respective bit to inform the game that a particular house has spied this building. Knowing that, the game will reveal the current production in this building to the players who have spied it. In practice, this means: If a player who has spied a factory clicks on that factory, he will see the cameo of whatever is being built in the factory.<p>
-<dl compact><dt><b><a class="el" href="todo.html#_todo000001">Todo:</a></b></dt><dd>show entry cursor, hooked up to traversal logic </dd></dl>
+<dl compact><dt><b><a class="el" href="todo.html#_todo000002">Todo:</a></b></dt><dd>show entry cursor, hooked up to traversal logic </dd></dl>
 <div class="fragment"><pre class="fragment"><a name="l00010"></a>00010 {
 <a name="l00011"></a>00011         GET(BuildingClass *, EnteredBuilding, ECX);
 <a name="l00012"></a>00012         GET_STACK(HouseClass *, EnteredBy, 0x4);
@@ -91,129 +88,8 @@ RA1-Style Spying, as requested in issue #633 This sets the respective bit to inf
 
 </div>
 </div><p>
-<a class="anchor" name="7fe82183c856081de51e35b5b1f952c2"></a><!-- doxytag: member="Hooks.cpp::A_FINE_HOOK" ref="7fe82183c856081de51e35b5b1f952c2" args="(4494D2, BuildingClass_IsSellable, 6)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">A_FINE_HOOK           </td>
-          <td>(</td>
-          <td class="paramtype">4494D2&nbsp;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">BuildingClass_IsSellable&nbsp;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">6&nbsp;</td>
-          <td class="paramname"></td><td>&nbsp;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td><td></td>
-        </tr>
-      </table>
 </div>
-<div class="memdoc">
-
-<p>
-<div class="fragment"><pre class="fragment"><a name="l00249"></a>00249 {
-<a name="l00250"></a>00250         GET(BuildingClass *, B, ESI);
-<a name="l00251"></a>00251         <span class="keywordflow">switch</span>(decision) {
-<a name="l00252"></a>00252                 <span class="keywordflow">case</span> Yes:
-<a name="l00253"></a>00253                         <span class="keywordflow">return</span> 0x449532;
-<a name="l00254"></a>00254                 <span class="keywordflow">case</span> No:
-<a name="l00255"></a>00255                         <span class="keywordflow">return</span> 0x449536;
-<a name="l00256"></a>00256                 <span class="keywordflow">case</span> DecideNormally:
-<a name="l00257"></a>00257                 <span class="keywordflow">default</span>:
-<a name="l00258"></a>00258                         <span class="keywordflow">return</span> 0;
-<a name="l00259"></a>00259         }
-<a name="l00260"></a>00260 }
-</pre></div>
-<p>
-
-</div>
-</div><p>
-<a class="anchor" name="7b61441ce44dd3d78e007f6515e701ed"></a><!-- doxytag: member="Hooks.cpp::A_FINE_HOOK" ref="7b61441ce44dd3d78e007f6515e701ed" args="(44235E, BuildingClass_ReceiveDamage_Trenches, 6)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">A_FINE_HOOK           </td>
-          <td>(</td>
-          <td class="paramtype">44235E&nbsp;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">BuildingClass_ReceiveDamage_Trenches&nbsp;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">6&nbsp;</td>
-          <td class="paramname"></td><td>&nbsp;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-
-<p>
-<dl class="return" compact><dt><b>Returns:</b></dt><dd>0: proceed to Building-&gt;ReceiveDamage <p>
-0x442373: the building will not call technoclass::receivedamage or anything else , as if the hit hadn't happened at all</dd></dl>
-<div class="fragment"><pre class="fragment"><a name="l00128"></a>00128 {
-<a name="l00129"></a>00129         GET(BuildingClass *, Building, ESI);
-<a name="l00130"></a>00130         LEA_STACK(args_ReceiveDamage *, Arguments, 0xA0);
-<a name="l00131"></a>00131         <span class="comment">//BuildingTypeClass *BuildingType = Building-&gt;Type;</span>
-<a name="l00132"></a>00132         <a class="code" href="class_building_type_ext_1_1_ext_data.html">BuildingTypeExt::ExtData</a> *BuildingAresData = <a class="code" href="class_building_type_ext.html#9643fa629dd6d2a20eeefa4942d8612a">BuildingTypeExt::ExtMap</a>.<a class="code" href="class_container.html#90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(Building-&gt;Type);
-<a name="l00133"></a>00133 
-<a name="l00134"></a>00134         <span class="keywordflow">if</span>(Building-&gt;Occupants.Count &amp;&amp; BuildingAresData-&gt;<a class="code" href="class_building_type_ext_1_1_ext_data.html#4274f2da0b95141162610c3fddb409e8" title="How many percent of the shots pass through the building to the occupants? 0.0 = 0%...">UCPassThrough</a>) { <span class="comment">// only work when UCPassThrough is set, as per community vote in thread #1392</span>
-<a name="l00135"></a>00135                 <span class="keywordflow">if</span>(<span class="keyword">false</span> || ((ScenarioClass::Instance-&gt;Random.RandomRanged(0, 99) / 100) &lt; BuildingAresData-&gt;<a class="code" href="class_building_type_ext_1_1_ext_data.html#4274f2da0b95141162610c3fddb409e8" title="How many percent of the shots pass through the building to the occupants? 0.0 = 0%...">UCPassThrough</a>)) { <span class="comment">//\todo replace false with !SubjectToTrenches once we can access that</span>
-<a name="l00136"></a>00136                         <span class="keywordtype">int</span> poorBastard = ScenarioClass::Instance-&gt;Random.RandomRanged(0, Building-&gt;Occupants.Count - 1); <span class="comment">// which Occupant is getting it?</span>
-<a name="l00137"></a>00137                         <span class="keywordflow">if</span>(BuildingAresData-&gt;<a class="code" href="class_building_type_ext_1_1_ext_data.html#6cccf17f0703b5e5014e377bb5ebe9c4" title="Chance of an occupant getting killed instantly when a bullet passes through. 0.0...">UCFatalRate</a> &amp;&amp; ((ScenarioClass::Instance-&gt;Random.RandomRanged(0, 99) / 100) &lt; BuildingAresData-&gt;<a class="code" href="class_building_type_ext_1_1_ext_data.html#6cccf17f0703b5e5014e377bb5ebe9c4" title="Chance of an occupant getting killed instantly when a bullet passes through. 0.0...">UCFatalRate</a>)) {
-<a name="l00138"></a>00138                                 <span class="comment">// fatal hit</span>
-<a name="l00139"></a>00139                                 Building-&gt;Occupants[poorBastard]-&gt;Destroyed(Arguments-&gt;Attacker); <span class="comment">// ReceiveDamage lists 4th argument as "pAttacker", and given that I call ReceiveDamage on this unit, it's kind of obvious who the target is...maybe wrongly labeled in args_ReceiveDamage?</span>
-<a name="l00140"></a>00140                         } <span class="keywordflow">else</span> {
-<a name="l00141"></a>00141                                 <span class="comment">// just a flesh wound</span>
-<a name="l00142"></a>00142                                 *Arguments-&gt;Damage = <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span> (ceil(*Arguments-&gt;Damage * BuildingAresData-&gt;<a class="code" href="class_building_type_ext_1_1_ext_data.html#96fa7c7c918cee22691ef5ce0762efcb" title="How many percent of normal damage are applied if an occupant is hit when a bullet...">UCDamageMultiplier</a>));
-<a name="l00143"></a>00143                                 Building-&gt;Occupants[poorBastard]-&gt;ReceiveDamage(Arguments-&gt;Damage, Arguments-&gt;DistanceToEpicenter, Arguments-&gt;WH, Arguments-&gt;Attacker, Arguments-&gt;IgnoreDefenses, Arguments-&gt;PreventsPassengerEscape, Arguments-&gt;SourceHouse);
-<a name="l00144"></a>00144                         }
-<a name="l00145"></a>00145 
-<a name="l00146"></a>00146                         <span class="keywordflow">return</span> 0x442373;
-<a name="l00147"></a>00147                 }
-<a name="l00148"></a>00148         }
-<a name="l00149"></a>00149 
-<a name="l00150"></a>00150         <span class="comment">// continue normally</span>
-<a name="l00151"></a>00151         <span class="keywordflow">return</span> 0;
-<a name="l00152"></a>00152 
-<a name="l00158"></a>00158         <span class="comment">/* yes, I'm gonna jinx it and say: This should never be reached.</span>
-<a name="l00159"></a>00159 <span class="comment">                don't jinx my compiler kthx</span>
-<a name="l00160"></a>00160 <span class="comment">                Debug::Log("Warning: Safety case reached in BuildingClass_ReceiveDamage_Trenches.\nTarget: %p\nSource House: %p\nWarhead: %p\nDamage: %i\nExecuting default ReceiveDamage() handler...", Arguments-&gt;target, Arguments-&gt;SourceHouse, Arguments-&gt;WH, *Arguments-&gt;Damage);</span>
-<a name="l00161"></a>00161 <span class="comment">                return 0;</span>
-<a name="l00162"></a>00162 <span class="comment">        */</span>
-<a name="l00163"></a>00163 }
-</pre></div>
-<p>
-
-</div>
-</div><p>
-</div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 17 09:37:30 2009 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Dec 25 12:00:14 2009 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

@@ -87,8 +87,8 @@
 <a name="l00029"></a>00029                 <span class="keywordflow">if</span>(MyHeight &lt;= BldHeight) {
 <a name="l00030"></a>00030 <span class="comment">//                      Debug::Log("Bullet at %d hits building of height %d == boom\n", MyHeight, BldHeight);</span>
 <a name="l00031"></a>00031                         Bullet-&gt;SetTarget((ObjectClass *)MyCell);
-<a name="l00032"></a>00032                         Bullet-&gt;set_SpawnNextAnim(1);
-<a name="l00033"></a>00033                         Bullet-&gt;set_NextAnim(NULL);
+<a name="l00032"></a>00032                         Bullet-&gt;SpawnNextAnim = 1;
+<a name="l00033"></a>00033                         Bullet-&gt;NextAnim = NULL;
 <a name="l00034"></a>00034                 }
 <a name="l00035"></a>00035         }
 <a name="l00036"></a>00036 
@@ -100,7 +100,7 @@
 </div>
 </div><p>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 17 09:37:30 2009 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Dec 25 12:00:14 2009 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

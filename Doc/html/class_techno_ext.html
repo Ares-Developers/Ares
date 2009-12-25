@@ -129,7 +129,7 @@
 <a name="l00099"></a>00099         <span class="keywordflow">if</span>(loc-&gt;Z - floorZ &gt; 100) {
 <a name="l00100"></a>00100                 success = Survivor-&gt;SpawnParachuted(loc);
 <a name="l00101"></a>00101         } <span class="keywordflow">else</span> {
-<a name="l00102"></a>00102                 success = Survivor-&gt;Put(loc, Randomizer::Global()-&gt;RandomRanged(0, 7));
+<a name="l00102"></a>00102                 success = Survivor-&gt;Put(loc, ScenarioClass::Instance-&gt;Random.RandomRanged(0, 7));
 <a name="l00103"></a>00103         }
 <a name="l00104"></a>00104         --Unsorted::SomeMutex;
 <a name="l00105"></a>00105         RET_UNLESS(success);
@@ -222,15 +222,15 @@
 <a name="l00031"></a>00031         <span class="comment">// ...attempts to spawn one Survivors_PilotCount times</span>
 <a name="l00032"></a>00032         <span class="keywordflow">if</span>(Type-&gt;Crewed &amp;&amp; chance) {
 <a name="l00033"></a>00033                 <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; pData-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#78f692482ea81301d28708837b978147" title="Defines the number of pilots inside this vehicle if Crewed=yes; maximum number of...">Survivors_PilotCount</a>; ++i) {
-<a name="l00034"></a>00034                         <span class="keywordflow">if</span>(Randomizer::Global()-&gt;RandomRanged(1, 100) &lt;= chance) {
+<a name="l00034"></a>00034                         <span class="keywordflow">if</span>(ScenarioClass::Instance-&gt;Random.RandomRanged(1, 100) &lt;= chance) {
 <a name="l00035"></a>00035                                 InfantryTypeClass *PilotType = pData-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#75adaef47a3cda263cf520cf4f43d605">Survivors_Pilots</a>[pOwner-&gt;SideIndex];
 <a name="l00036"></a>00036                                 <span class="keywordflow">if</span>(PilotType) {
 <a name="l00037"></a>00037                                         InfantryClass *Pilot = <span class="keyword">reinterpret_cast&lt;</span>InfantryClass *<span class="keyword">&gt;</span>(PilotType-&gt;CreateObject(pOwner));
 <a name="l00038"></a>00038 
-<a name="l00039"></a>00039                                         Pilot-&gt;set_Health(PilotType-&gt;Strength / 2);
+<a name="l00039"></a>00039                                         Pilot-&gt;Health = (PilotType-&gt;Strength / 2);
 <a name="l00040"></a>00040                                         Pilot-&gt;get_Veterancy()-&gt;Veterancy = pThis-&gt;get_Veterancy()-&gt;Veterancy;
 <a name="l00041"></a>00041                                         CoordStruct destLoc, tmpLoc = loc;
-<a name="l00042"></a>00042                                         CellStruct tmpCoords = CellSpread::GetCell(Randomizer::Global()-&gt;RandomRanged(0, 7));
+<a name="l00042"></a>00042                                         CellStruct tmpCoords = CellSpread::GetCell(ScenarioClass::Instance-&gt;Random.RandomRanged(0, 7));
 <a name="l00043"></a>00043 
 <a name="l00044"></a>00044                                         tmpLoc.X += tmpCoords.X * 144;
 <a name="l00045"></a>00045                                         tmpLoc.Y += tmpCoords.Y * 144;
@@ -256,9 +256,9 @@
 <a name="l00065"></a>00065                 <span class="keywordtype">bool</span> toDelete = 1;
 <a name="l00066"></a>00066                 passenger = pThis-&gt;get_Passengers()-&gt;RemoveFirstPassenger();
 <a name="l00067"></a>00067                 <span class="keywordflow">if</span>(chance) {
-<a name="l00068"></a>00068                         <span class="keywordflow">if</span>(Randomizer::Global()-&gt;RandomRanged(1, 100) &lt;= chance) {
+<a name="l00068"></a>00068                         <span class="keywordflow">if</span>(ScenarioClass::Instance-&gt;Random.RandomRanged(1, 100) &lt;= chance) {
 <a name="l00069"></a>00069                                 CoordStruct destLoc, tmpLoc = loc;
-<a name="l00070"></a>00070                                 CellStruct tmpCoords = CellSpread::GetCell(Randomizer::Global()-&gt;RandomRanged(0, 7));
+<a name="l00070"></a>00070                                 CellStruct tmpCoords = CellSpread::GetCell(ScenarioClass::Instance-&gt;Random.RandomRanged(0, 7));
 <a name="l00071"></a>00071 
 <a name="l00072"></a>00072                                 tmpLoc.X += tmpCoords.X * 128;
 <a name="l00073"></a>00073                                 tmpLoc.Y += tmpCoords.Y * 128;
@@ -379,7 +379,7 @@
 <hr>The documentation for this class was generated from the following files:<ul>
 <li>Ext/Techno/<a class="el" href="_techno_2_body_8h.html">Body.h</a><li>Ext/Techno/<a class="el" href="_techno_2_body_8cpp.html">Body.cpp</a><li>Ext/Techno/<a class="el" href="_hooks_8_alpha_8cpp.html">Hooks.Alpha.cpp</a><li>Ext/Techno/<a class="el" href="_hooks_8_spotlights_8cpp.html">Hooks.Spotlights.cpp</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 17 09:37:31 2009 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Dec 25 12:00:15 2009 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

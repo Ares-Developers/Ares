@@ -81,7 +81,9 @@ DEFINE_HOOK(46920B, BulletClass_Fire, 6)
 	BulletExt::ExtData* TheBulletExt = BulletExt::ExtMap.Find(Bullet);
 	if(TheBulletExt->DamageOccupants()) {
 		// the occupants have been damaged, do not damage the building (the original target)
-		Bullet->Remove(); // horrible crashes to remind D to fix this ;)
+		Bullet->Health = 0;
+		Bullet->DamageMultiplier = 0;
+		Bullet->Remove();
 	}
 
 	return 0;

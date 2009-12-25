@@ -131,12 +131,12 @@
 <a name="l00238"></a>00238                 <span class="keywordflow">return</span>;
 <a name="l00239"></a>00239         }
 <a name="l00240"></a>00240 
-<a name="l00241"></a>00241         <span class="keywordtype">int</span> idx = Randomizer::Global()-&gt;RandomRanged(0, Options.Count - 1);
+<a name="l00241"></a>00241         <span class="keywordtype">int</span> idx = ScenarioClass::Instance-&gt;Random.RandomRanged(0, Options.Count - 1);
 <a name="l00242"></a>00242         Result = Options[idx];
 <a name="l00243"></a>00243 
 <a name="l00244"></a>00244         DEBUGLOG(<span class="stringliteral">"Secret Lab rolled %s for %s\n"</span>, Result-&gt;get_ID(), pType-&gt;get_ID());
 <a name="l00245"></a>00245         pData-&gt;<a class="code" href="class_building_type_ext_1_1_ext_data.html#373151cd86ee5dd18f074ab5ccdf3a8c">Secret_Placed</a> = <span class="keyword">true</span>;
-<a name="l00246"></a>00246         pThis-&gt;set_SecretProduction(Result);
+<a name="l00246"></a>00246         pThis-&gt;SecretProduction = Result;
 <a name="l00247"></a>00247 }
 </pre></div>
 <p>
@@ -162,7 +162,7 @@
 <hr>The documentation for this class was generated from the following files:<ul>
 <li>Ext/BuildingType/<a class="el" href="_building_type_2_body_8h.html">Body.h</a><li>Ext/BuildingType/<a class="el" href="_building_type_2_body_8cpp.html">Body.cpp</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 17 09:37:30 2009 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Dec 25 12:00:15 2009 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

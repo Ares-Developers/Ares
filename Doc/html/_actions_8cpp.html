@@ -67,31 +67,30 @@
 <p>
 * * * <div class="fragment"><pre class="fragment"><a name="l00024"></a>00024 {
 <a name="l00025"></a>00025         MouseCursor* pCursor = <a class="code" href="class_actions.html#1a5f6b2fa988feb5aae24d76ab7a6beb">Actions::MPCustom</a>;
-<a name="l00026"></a>00026         <span class="keywordflow">if</span>(pCursor)
-<a name="l00027"></a>00027         {
-<a name="l00028"></a>00028                 <span class="comment">//TODO: rewrite once MouseClass is defined!</span>
-<a name="l00029"></a>00029                 MouseClass* Mouse = (MouseClass*)R-&gt;get_ESI();
-<a name="l00030"></a>00030 
-<a name="l00031"></a>00031                 <span class="comment">//don't try this at home</span>
-<a name="l00032"></a>00032                 Mouse-&gt;QueryCursor((<span class="keywordtype">int</span>)pCursor, R-&gt;get_StackVar32(0x34));
-<a name="l00033"></a>00033 
-<a name="l00034"></a>00034                 <span class="keywordflow">return</span> 0x4AB78F;
-<a name="l00035"></a>00035         }
-<a name="l00036"></a>00036 
-<a name="l00037"></a>00037         <span class="comment">//overwrote the ja, need to replicate it</span>
-<a name="l00038"></a>00038         <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> CursorIndex = R-&gt;get_EAX();
-<a name="l00039"></a>00039         <span class="keywordflow">if</span>(CursorIndex &gt; 0x47)
-<a name="l00040"></a>00040                 <span class="keywordflow">return</span> 0x4AB781;
-<a name="l00041"></a>00041         <span class="keywordflow">else</span>
-<a name="l00042"></a>00042                 <span class="keywordflow">return</span> 0x4AB453;
-<a name="l00043"></a>00043 }
+<a name="l00026"></a>00026         <span class="keywordflow">if</span>(pCursor) {
+<a name="l00027"></a>00027                 <span class="comment">//TODO: rewrite once MouseClass is defined!</span>
+<a name="l00028"></a>00028                 GET(MouseClass *, Mouse, ESI);
+<a name="l00029"></a>00029 
+<a name="l00030"></a>00030                 <span class="comment">//don't try this at home</span>
+<a name="l00031"></a>00031                 Mouse-&gt;QueryCursor((<span class="keywordtype">int</span>)pCursor, R-&gt;Stack32(0x34));
+<a name="l00032"></a>00032 
+<a name="l00033"></a>00033                 <span class="keywordflow">return</span> 0x4AB78F;
+<a name="l00034"></a>00034         }
+<a name="l00035"></a>00035 
+<a name="l00036"></a>00036         <span class="comment">//overwrote the ja, need to replicate it</span>
+<a name="l00037"></a>00037         <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> CursorIndex = R-&gt;EAX();
+<a name="l00038"></a>00038         <span class="keywordflow">if</span>(CursorIndex &gt; 0x47)
+<a name="l00039"></a>00039                 <span class="keywordflow">return</span> 0x4AB781;
+<a name="l00040"></a>00040         <span class="keywordflow">else</span>
+<a name="l00041"></a>00041                 <span class="keywordflow">return</span> 0x4AB453;
+<a name="l00042"></a>00042 }
 </pre></div>
 <p>
 
 </div>
 </div><p>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 17 09:37:30 2009 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Dec 25 12:00:14 2009 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

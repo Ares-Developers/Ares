@@ -53,7 +53,7 @@ Inheritance diagram for WarheadTypeExt::WarheadTypeExt::ExtData:</div>
 <a href="class_warhead_type_ext_1_1_ext_data-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_warhead_type_ext_1_1_ext_data.html#401307ca3be5fb0843e8db9ac1fceae9">ExtData</a> (const DWORD <a class="el" href="class_extension.html#2f0c543d5bceafd46d103be4f87a5abe">Canary</a>=0, const <a class="el" href="class_warhead_type_ext.html#d1fd304abf77078a6f84d208799cccde">TT</a> *OwnerObject=NULL)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_warhead_type_ext_1_1_ext_data.html#0dc595b81e805f8a57c9e8f46be4bf03">ExtData</a> (const DWORD <a class="el" href="class_extension.html#2f0c543d5bceafd46d103be4f87a5abe">Canary</a>, <a class="el" href="class_warhead_type_ext.html#d1fd304abf77078a6f84d208799cccde">TT</a> *const OwnerObject)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_warhead_type_ext_1_1_ext_data.html#b18944489b1a5a781ad442545c094b96">~ExtData</a> ()</td></tr>
 
@@ -62,8 +62,6 @@ Inheritance diagram for WarheadTypeExt::WarheadTypeExt::ExtData:</div>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_warhead_type_ext_1_1_ext_data.html#3fca7347f8d5729e2328d5126be64271">LoadFromINIFile</a> (<a class="el" href="class_warhead_type_ext.html#d1fd304abf77078a6f84d208799cccde">TT</a> *pThis, CCINIClass *pINI)</td></tr>
 
 <tr><td colspan="2"><br><h2>Public Attributes</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_warhead_type_ext_1_1_ext_data.html#cf7c7b2bc960731c4b0199541683f599">Is_Custom</a></td></tr>
-
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_warhead_type_ext_1_1_ext_data.html#ac67934f4029e1e865f4907ecbc76bb5">MindControl_Permanent</a></td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_warhead_type_ext_1_1_ext_data.html#473cf3b919a34e8caf2860e9f05fe69b">Ripple_Radius</a></td></tr>
@@ -80,7 +78,7 @@ Inheritance diagram for WarheadTypeExt::WarheadTypeExt::ExtData:</div>
 
 </table>
 <hr><h2>Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" name="401307ca3be5fb0843e8db9ac1fceae9"></a><!-- doxytag: member="WarheadTypeExt::ExtData::ExtData" ref="401307ca3be5fb0843e8db9ac1fceae9" args="(const DWORD Canary=0, const TT *OwnerObject=NULL)" -->
+<a class="anchor" name="0dc595b81e805f8a57c9e8f46be4bf03"></a><!-- doxytag: member="WarheadTypeExt::ExtData::ExtData" ref="0dc595b81e805f8a57c9e8f46be4bf03" args="(const DWORD Canary, TT *const OwnerObject)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -88,13 +86,13 @@ Inheritance diagram for WarheadTypeExt::WarheadTypeExt::ExtData:</div>
           <td class="memname">WarheadTypeExt::WarheadTypeExt::ExtData::ExtData           </td>
           <td>(</td>
           <td class="paramtype">const DWORD&nbsp;</td>
-          <td class="paramname"> <em>Canary</em> = <code>0</code>, </td>
+          <td class="paramname"> <em>Canary</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="class_warhead_type_ext.html#d1fd304abf77078a6f84d208799cccde">TT</a> *&nbsp;</td>
-          <td class="paramname"> <em>OwnerObject</em> = <code>NULL</code></td><td>&nbsp;</td>
+          <td class="paramtype"><a class="el" href="class_warhead_type_ext.html#d1fd304abf77078a6f84d208799cccde">TT</a> *const &nbsp;</td>
+          <td class="paramname"> <em>OwnerObject</em></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -106,20 +104,19 @@ Inheritance diagram for WarheadTypeExt::WarheadTypeExt::ExtData:</div>
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00062"></a>00062                                                                               : <a class="code" href="class_extension.html#ab62cf8e498a26bf7e3c14f31d906ace">Extension</a>(<a class="code" href="class_extension.html#2f0c543d5bceafd46d103be4f87a5abe">Canary</a>, OwnerObject),
-<a name="l00063"></a>00063                         <a class="code" href="class_warhead_type_ext_1_1_ext_data.html#cf7c7b2bc960731c4b0199541683f599">Is_Custom</a> (<span class="keyword">false</span>),
-<a name="l00064"></a>00064                         <a class="code" href="class_warhead_type_ext_1_1_ext_data.html#ac67934f4029e1e865f4907ecbc76bb5">MindControl_Permanent</a> (<span class="keyword">false</span>),
-<a name="l00065"></a>00065                         <a class="code" href="class_warhead_type_ext_1_1_ext_data.html#473cf3b919a34e8caf2860e9f05fe69b">Ripple_Radius</a> (0),
-<a name="l00066"></a>00066                         <a class="code" href="class_warhead_type_ext_1_1_ext_data.html#94e6b628222742c7b45bcee95aeb04be">EMP_Duration</a> (0),
-<a name="l00067"></a>00067                         <a class="code" href="class_warhead_type_ext_1_1_ext_data.html#989a1063a343d29046e1b9e2999003fc">IC_Duration</a> (0),
-<a name="l00068"></a>00068                         <a class="code" href="class_warhead_type_ext_1_1_ext_data.html#ee10d41bd810cf9af1d5fe7738bb5c3b">Temporal_WarpAway</a> (&amp;RulesClass::Global()-&gt;WarpAway),
-<a name="l00069"></a>00069                         <a class="code" href="class_warhead_type_ext_1_1_ext_data.html#e76cbc1bae2cb7f656b14c69dbd3fe74">DeployedDamage</a> (1.00)
-<a name="l00070"></a>00070                         {
-<a name="l00071"></a>00071                                 <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; 11; ++i) {
-<a name="l00072"></a>00072                                         VersesData vs = {1.00, 1, 1, 1};
-<a name="l00073"></a>00073                                         <a class="code" href="class_warhead_type_ext_1_1_ext_data.html#a98c782be341b4956d26eb59a1ea553b">Verses</a>.AddItem(vs);
-<a name="l00074"></a>00074                                 }
-<a name="l00075"></a>00075                         };
+<div class="fragment"><pre class="fragment"><a name="l00060"></a>00060                                                                    : <a class="code" href="class_extension.html#3f8a8fd621ae648a99ab593e8d69681e">Extension</a>(<a class="code" href="class_extension.html#2f0c543d5bceafd46d103be4f87a5abe">Canary</a>, OwnerObject),
+<a name="l00061"></a>00061                         <a class="code" href="class_warhead_type_ext_1_1_ext_data.html#ac67934f4029e1e865f4907ecbc76bb5">MindControl_Permanent</a> (<span class="keyword">false</span>),
+<a name="l00062"></a>00062                         <a class="code" href="class_warhead_type_ext_1_1_ext_data.html#473cf3b919a34e8caf2860e9f05fe69b">Ripple_Radius</a> (0),
+<a name="l00063"></a>00063                         <a class="code" href="class_warhead_type_ext_1_1_ext_data.html#94e6b628222742c7b45bcee95aeb04be">EMP_Duration</a> (0),
+<a name="l00064"></a>00064                         <a class="code" href="class_warhead_type_ext_1_1_ext_data.html#989a1063a343d29046e1b9e2999003fc">IC_Duration</a> (0),
+<a name="l00065"></a>00065                         <a class="code" href="class_warhead_type_ext_1_1_ext_data.html#ee10d41bd810cf9af1d5fe7738bb5c3b">Temporal_WarpAway</a> (&amp;RulesClass::Global()-&gt;WarpAway),
+<a name="l00066"></a>00066                         <a class="code" href="class_warhead_type_ext_1_1_ext_data.html#e76cbc1bae2cb7f656b14c69dbd3fe74">DeployedDamage</a> (1.00)
+<a name="l00067"></a>00067                         {
+<a name="l00068"></a>00068                                 <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; 11; ++i) {
+<a name="l00069"></a>00069                                         VersesData vs = {1.00, 1, 1, 1};
+<a name="l00070"></a>00070                                         <a class="code" href="class_warhead_type_ext_1_1_ext_data.html#a98c782be341b4956d26eb59a1ea553b">Verses</a>.AddItem(vs);
+<a name="l00071"></a>00071                                 }
+<a name="l00072"></a>00072                         };
 </pre></div>
 <p>
 
@@ -141,7 +138,7 @@ Inheritance diagram for WarheadTypeExt::WarheadTypeExt::ExtData:</div>
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00077"></a>00077 { };
+<div class="fragment"><pre class="fragment"><a name="l00074"></a>00074 { };
 </pre></div>
 <p>
 
@@ -206,25 +203,22 @@ Inheritance diagram for WarheadTypeExt::WarheadTypeExt::ExtData:</div>
 <a name="l00047"></a>00047 
 <a name="l00048"></a>00048         <span class="keywordflow">if</span>(pThis-&gt;MindControl) {
 <a name="l00049"></a>00049                 this-&gt;<a class="code" href="class_warhead_type_ext_1_1_ext_data.html#ac67934f4029e1e865f4907ecbc76bb5">MindControl_Permanent</a> = pINI-&gt;ReadBool(section, <span class="stringliteral">"MindControl.Permanent"</span>, this-&gt;<a class="code" href="class_warhead_type_ext_1_1_ext_data.html#ac67934f4029e1e865f4907ecbc76bb5">MindControl_Permanent</a>);
-<a name="l00050"></a>00050                 this-&gt;<a class="code" href="class_warhead_type_ext_1_1_ext_data.html#cf7c7b2bc960731c4b0199541683f599">Is_Custom</a> |= this-&gt;<a class="code" href="class_warhead_type_ext_1_1_ext_data.html#ac67934f4029e1e865f4907ecbc76bb5">MindControl_Permanent</a>;
-<a name="l00051"></a>00051         }
-<a name="l00052"></a>00052 
-<a name="l00053"></a>00053         <span class="keywordflow">if</span>(pThis-&gt;EMEffect) {
-<a name="l00054"></a>00054                 this-&gt;<a class="code" href="class_warhead_type_ext_1_1_ext_data.html#94e6b628222742c7b45bcee95aeb04be">EMP_Duration</a> = pINI-&gt;ReadInteger(section, <span class="stringliteral">"EMP.Duration"</span>, this-&gt;<a class="code" href="class_warhead_type_ext_1_1_ext_data.html#94e6b628222742c7b45bcee95aeb04be">EMP_Duration</a>);
-<a name="l00055"></a>00055                 this-&gt;<a class="code" href="class_warhead_type_ext_1_1_ext_data.html#cf7c7b2bc960731c4b0199541683f599">Is_Custom</a> |= 1;
-<a name="l00056"></a>00056         }
+<a name="l00050"></a>00050         }
+<a name="l00051"></a>00051 
+<a name="l00052"></a>00052         <span class="keywordflow">if</span>(pThis-&gt;EMEffect) {
+<a name="l00053"></a>00053                 this-&gt;<a class="code" href="class_warhead_type_ext_1_1_ext_data.html#94e6b628222742c7b45bcee95aeb04be">EMP_Duration</a> = pINI-&gt;ReadInteger(section, <span class="stringliteral">"EMP.Duration"</span>, this-&gt;<a class="code" href="class_warhead_type_ext_1_1_ext_data.html#94e6b628222742c7b45bcee95aeb04be">EMP_Duration</a>);
+<a name="l00054"></a>00054         }
+<a name="l00055"></a>00055 
+<a name="l00056"></a>00056         this-&gt;<a class="code" href="class_warhead_type_ext_1_1_ext_data.html#989a1063a343d29046e1b9e2999003fc">IC_Duration</a> = pINI-&gt;ReadInteger(section, <span class="stringliteral">"IronCurtain.Duration"</span>, this-&gt;<a class="code" href="class_warhead_type_ext_1_1_ext_data.html#989a1063a343d29046e1b9e2999003fc">IC_Duration</a>);
 <a name="l00057"></a>00057 
-<a name="l00058"></a>00058         this-&gt;<a class="code" href="class_warhead_type_ext_1_1_ext_data.html#989a1063a343d29046e1b9e2999003fc">IC_Duration</a> = pINI-&gt;ReadInteger(section, <span class="stringliteral">"IronCurtain.Duration"</span>, this-&gt;<a class="code" href="class_warhead_type_ext_1_1_ext_data.html#989a1063a343d29046e1b9e2999003fc">IC_Duration</a>);
-<a name="l00059"></a>00059         this-&gt;<a class="code" href="class_warhead_type_ext_1_1_ext_data.html#cf7c7b2bc960731c4b0199541683f599">Is_Custom</a> |= this-&gt;<a class="code" href="class_warhead_type_ext_1_1_ext_data.html#989a1063a343d29046e1b9e2999003fc">IC_Duration</a> != 0;
-<a name="l00060"></a>00060 
-<a name="l00061"></a>00061         <span class="keywordflow">if</span>(pThis-&gt;Temporal) {
-<a name="l00062"></a>00062                 this-&gt;<a class="code" href="class_warhead_type_ext_1_1_ext_data.html#ee10d41bd810cf9af1d5fe7738bb5c3b">Temporal_WarpAway</a>.<a class="code" href="class_valueable.html#ce02cef5e194a4738d03707ce1c44646">Parse</a>(&amp;exINI, section, <span class="stringliteral">"Temporal.WarpAway"</span>);
-<a name="l00063"></a>00063         }
-<a name="l00064"></a>00064 
-<a name="l00065"></a>00065         this-&gt;<a class="code" href="class_warhead_type_ext_1_1_ext_data.html#e76cbc1bae2cb7f656b14c69dbd3fe74">DeployedDamage</a> = pINI-&gt;ReadDouble(section, <span class="stringliteral">"Damage.Deployed"</span>, this-&gt;<a class="code" href="class_warhead_type_ext_1_1_ext_data.html#e76cbc1bae2cb7f656b14c69dbd3fe74">DeployedDamage</a>);
-<a name="l00066"></a>00066 
-<a name="l00067"></a>00067         this-&gt;<a class="code" href="class_warhead_type_ext_1_1_ext_data.html#473cf3b919a34e8caf2860e9f05fe69b">Ripple_Radius</a> = pINI-&gt;ReadInteger(section, <span class="stringliteral">"Ripple.Radius"</span>, this-&gt;<a class="code" href="class_warhead_type_ext_1_1_ext_data.html#473cf3b919a34e8caf2860e9f05fe69b">Ripple_Radius</a>);
-<a name="l00068"></a>00068 };
+<a name="l00058"></a>00058         <span class="keywordflow">if</span>(pThis-&gt;Temporal) {
+<a name="l00059"></a>00059                 this-&gt;<a class="code" href="class_warhead_type_ext_1_1_ext_data.html#ee10d41bd810cf9af1d5fe7738bb5c3b">Temporal_WarpAway</a>.<a class="code" href="class_valueable.html#ce02cef5e194a4738d03707ce1c44646">Parse</a>(&amp;exINI, section, <span class="stringliteral">"Temporal.WarpAway"</span>);
+<a name="l00060"></a>00060         }
+<a name="l00061"></a>00061 
+<a name="l00062"></a>00062         this-&gt;<a class="code" href="class_warhead_type_ext_1_1_ext_data.html#e76cbc1bae2cb7f656b14c69dbd3fe74">DeployedDamage</a> = pINI-&gt;ReadDouble(section, <span class="stringliteral">"Damage.Deployed"</span>, this-&gt;<a class="code" href="class_warhead_type_ext_1_1_ext_data.html#e76cbc1bae2cb7f656b14c69dbd3fe74">DeployedDamage</a>);
+<a name="l00063"></a>00063 
+<a name="l00064"></a>00064         this-&gt;<a class="code" href="class_warhead_type_ext_1_1_ext_data.html#473cf3b919a34e8caf2860e9f05fe69b">Ripple_Radius</a> = pINI-&gt;ReadInteger(section, <span class="stringliteral">"Ripple.Radius"</span>, this-&gt;<a class="code" href="class_warhead_type_ext_1_1_ext_data.html#473cf3b919a34e8caf2860e9f05fe69b">Ripple_Radius</a>);
+<a name="l00065"></a>00065 };
 </pre></div>
 <p>
 
@@ -248,7 +242,7 @@ Inheritance diagram for WarheadTypeExt::WarheadTypeExt::ExtData:</div>
 <p>
 
 <p>Implements <a class="el" href="class_extension.html#44ddedd12613b24b7b03d21982782047">Extension&lt; TT &gt;</a>.</p>
-<div class="fragment"><pre class="fragment"><a name="l00079"></a>00079 { <span class="keywordflow">return</span> <span class="keyword">sizeof</span>(*this); };
+<div class="fragment"><pre class="fragment"><a name="l00076"></a>00076 { <span class="keywordflow">return</span> <span class="keyword">sizeof</span>(*this); };
 </pre></div>
 <p>
 
@@ -291,21 +285,6 @@ Inheritance diagram for WarheadTypeExt::WarheadTypeExt::ExtData:</div>
       <table class="memname">
         <tr>
           <td class="memname">int WarheadTypeExt::WarheadTypeExt::ExtData::IC_Duration          </td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-
-</div>
-</div><p>
-<a class="anchor" name="cf7c7b2bc960731c4b0199541683f599"></a><!-- doxytag: member="WarheadTypeExt::ExtData::Is_Custom" ref="cf7c7b2bc960731c4b0199541683f599" args="" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool WarheadTypeExt::WarheadTypeExt::ExtData::Is_Custom          </td>
         </tr>
       </table>
 </div>
@@ -378,7 +357,7 @@ Inheritance diagram for WarheadTypeExt::WarheadTypeExt::ExtData:</div>
 <hr>The documentation for this class was generated from the following files:<ul>
 <li>Ext/WarheadType/<a class="el" href="_warhead_type_2_body_8h.html">Body.h</a><li>Ext/WarheadType/<a class="el" href="_warhead_type_2_body_8cpp.html">Body.cpp</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 17 09:37:31 2009 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Dec 25 12:00:15 2009 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

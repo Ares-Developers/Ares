@@ -69,9 +69,9 @@
 <a name="l00093"></a>00093                 <a class="code" href="class_armor_type.html#4160a82a696fb161368b83bab9961b94">ArmorType::AddDefaults</a>();
 <a name="l00094"></a>00094         }
 <a name="l00095"></a>00095 
-<a name="l00096"></a>00096         <span class="keyword">const</span> <span class="keywordtype">char</span> *Section = (<span class="keyword">const</span> <span class="keywordtype">char</span> *)R-&gt;get_StackVar32(0x4);
-<a name="l00097"></a>00097         <span class="keyword">const</span> <span class="keywordtype">char</span> *Key = (<span class="keyword">const</span> <span class="keywordtype">char</span> *)R-&gt;get_StackVar32(0x8);
-<a name="l00098"></a>00098         <span class="keywordtype">int</span> fallback = R-&gt;get_StackVar32(0xC);
+<a name="l00096"></a>00096         GET_STACK(<span class="keyword">const</span> <span class="keywordtype">char</span> *, Section, 0x4);
+<a name="l00097"></a>00097         GET_STACK(<span class="keyword">const</span> <span class="keywordtype">char</span> *, Key, 0x8);
+<a name="l00098"></a>00098         GET_STACK(<span class="keywordtype">int</span>, fallback, 0xC);
 <a name="l00099"></a>00099 
 <a name="l00100"></a>00100 <span class="comment">//      DEBUGLOG("[%s]%s (%d)\n", Section, Key, fallback);</span>
 <a name="l00101"></a>00101         <span class="keywordtype">char</span> buf[0x20];
@@ -82,7 +82,7 @@
 <a name="l00106"></a>00106 
 <a name="l00107"></a>00107         pINI-&gt;ReadString(Section, Key, curTitle, buf, 0x20);
 <a name="l00108"></a>00108         <span class="keywordtype">int</span> idx = <a class="code" href="class_enumerable.html#9b4bcdfca82ac04940344e7d613bb43b">ArmorType::FindIndex</a>(buf);
-<a name="l00109"></a>00109         R-&gt;set_EAX(idx == -1 ? 0 : idx);
+<a name="l00109"></a>00109         R-&gt;EAX(idx == -1 ? 0 : idx);
 <a name="l00110"></a>00110 
 <a name="l00111"></a>00111         <span class="keywordflow">return</span> 0x475430;
 <a name="l00112"></a>00112 }
@@ -92,7 +92,7 @@
 </div>
 </div><p>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 17 09:37:30 2009 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Dec 25 12:00:14 2009 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

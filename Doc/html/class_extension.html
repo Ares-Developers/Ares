@@ -42,7 +42,7 @@
 <a href="class_extension-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_extension.html#ab62cf8e498a26bf7e3c14f31d906ace">Extension</a> (const DWORD <a class="el" href="class_extension.html#2f0c543d5bceafd46d103be4f87a5abe">Canary</a>=0, const T *OwnerObject=NULL)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_extension.html#3f8a8fd621ae648a99ab593e8d69681e">Extension</a> (const DWORD <a class="el" href="class_extension.html#2f0c543d5bceafd46d103be4f87a5abe">Canary</a>, T *const OwnerObject)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_extension.html#9e1c6918cc8c5f21f139b7c49d33349a">~Extension</a> ()</td></tr>
 
@@ -63,17 +63,20 @@
 <tr><td colspan="2"><br><h2>Public Attributes</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="___container_8hpp.html#9443389dd7829ff977a768ff6f425820">eInitState</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_extension.html#43a1ac11c4b59b629cac89f9e9df88e4">_Initialized</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">const T *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_extension.html#625b5030da4ce593b307c3a331248eca">AttachedToObject</a></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">T *const&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_extension.html#72742b36a0db81d6697da473dfe8281d">AttachedToObject</a></td></tr>
 
 <tr><td colspan="2"><br><h2>Static Public Attributes</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">static const DWORD&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_extension.html#2f0c543d5bceafd46d103be4f87a5abe">Canary</a> = 0x99999999</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">static const DWORD&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_extension.html#2f0c543d5bceafd46d103be4f87a5abe">Canary</a> = 0x87654321</td></tr>
+
+<tr><td colspan="2"><br><h2>Private Member Functions</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_extension.html#4ff1ae320d2b933d556884b08baad3a6">operator=</a> (<a class="el" href="class_extension.html">Extension</a> &amp;RHS)</td></tr>
 
 </table>
 <h3>template&lt;typename T&gt;<br>
  class Extension&lt; T &gt;</h3>
 
 <hr><h2>Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" name="ab62cf8e498a26bf7e3c14f31d906ace"></a><!-- doxytag: member="Extension::Extension" ref="ab62cf8e498a26bf7e3c14f31d906ace" args="(const DWORD Canary=0, const T *OwnerObject=NULL)" -->
+<a class="anchor" name="3f8a8fd621ae648a99ab593e8d69681e"></a><!-- doxytag: member="Extension::Extension" ref="3f8a8fd621ae648a99ab593e8d69681e" args="(const DWORD Canary, T *const OwnerObject)" -->
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
@@ -83,13 +86,13 @@ template&lt;typename T&gt; </div>
           <td class="memname"><a class="el" href="class_extension.html">Extension</a>&lt; T &gt;::<a class="el" href="class_extension.html">Extension</a>           </td>
           <td>(</td>
           <td class="paramtype">const DWORD&nbsp;</td>
-          <td class="paramname"> <em>Canary</em> = <code>0</code>, </td>
+          <td class="paramname"> <em>Canary</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const T *&nbsp;</td>
-          <td class="paramname"> <em>OwnerObject</em> = <code>NULL</code></td><td>&nbsp;</td>
+          <td class="paramtype">T *const &nbsp;</td>
+          <td class="paramname"> <em>OwnerObject</em></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -101,8 +104,8 @@ template&lt;typename T&gt; </div>
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00064"></a>00064                                                                                :
-<a name="l00065"></a>00065                 <a class="code" href="class_extension.html#625b5030da4ce593b307c3a331248eca">AttachedToObject</a>(OwnerObject),
+<div class="fragment"><pre class="fragment"><a name="l00064"></a>00064                                                                     :
+<a name="l00065"></a>00065                 <a class="code" href="class_extension.html#72742b36a0db81d6697da473dfe8281d">AttachedToObject</a>(OwnerObject),
 <a name="l00066"></a>00066 <span class="preprocessor">        #ifdef DEBUGBUILD</span>
 <a name="l00067"></a>00067 <span class="preprocessor"></span>                SavedCanary(<a class="code" href="class_extension.html#2f0c543d5bceafd46d103be4f87a5abe">Canary</a>), 
 <a name="l00068"></a>00068 <span class="preprocessor">        #endif</span>
@@ -340,6 +343,33 @@ template&lt;typename T&gt; </div>
 
 </div>
 </div><p>
+<a class="anchor" name="4ff1ae320d2b933d556884b08baad3a6"></a><!-- doxytag: member="Extension::operator=" ref="4ff1ae320d2b933d556884b08baad3a6" args="(Extension &amp;RHS)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="class_extension.html">Extension</a>&lt; T &gt;::operator=           </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_extension.html">Extension</a>&lt; T &gt; &amp;&nbsp;</td>
+          <td class="paramname"> <em>RHS</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td><code> [inline, private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+<div class="fragment"><pre class="fragment"><a name="l00123"></a>00123                                                  {
+<a name="l00124"></a>00124                         
+<a name="l00125"></a>00125                 }
+</pre></div>
+<p>
+
+</div>
+</div><p>
 <a class="anchor" name="44ddedd12613b24b7b03d21982782047"></a><!-- doxytag: member="Extension::Size" ref="44ddedd12613b24b7b03d21982782047" args="() const =0" -->
 <div class="memitem">
 <div class="memproto">
@@ -381,14 +411,14 @@ template&lt;typename T&gt; </div>
 
 </div>
 </div><p>
-<a class="anchor" name="625b5030da4ce593b307c3a331248eca"></a><!-- doxytag: member="Extension::AttachedToObject" ref="625b5030da4ce593b307c3a331248eca" args="" -->
+<a class="anchor" name="72742b36a0db81d6697da473dfe8281d"></a><!-- doxytag: member="Extension::AttachedToObject" ref="72742b36a0db81d6697da473dfe8281d" args="" -->
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename T&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">const T* <a class="el" href="class_extension.html">Extension</a>&lt; T &gt;::<a class="el" href="class_extension.html#625b5030da4ce593b307c3a331248eca">AttachedToObject</a>          </td>
+          <td class="memname">T* const <a class="el" href="class_extension.html">Extension</a>&lt; T &gt;::<a class="el" href="class_extension.html#72742b36a0db81d6697da473dfe8281d">AttachedToObject</a>          </td>
         </tr>
       </table>
 </div>
@@ -405,7 +435,7 @@ template&lt;typename T&gt; </div>
 template&lt;typename T&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">const DWORD <a class="el" href="class_extension.html">Extension</a>&lt; T &gt;::<a class="el" href="class_extension.html#2f0c543d5bceafd46d103be4f87a5abe">Canary</a> = 0x99999999<code> [static]</code>          </td>
+          <td class="memname">const DWORD <a class="el" href="class_extension.html">Extension</a>&lt; T &gt;::<a class="el" href="class_extension.html#2f0c543d5bceafd46d103be4f87a5abe">Canary</a> = 0x87654321<code> [static]</code>          </td>
         </tr>
       </table>
 </div>
@@ -416,9 +446,9 @@ template&lt;typename T&gt; </div>
 </div>
 </div><p>
 <hr>The documentation for this class was generated from the following files:<ul>
-<li>Ext/<a class="el" href="___container_8hpp.html">_Container.hpp</a><li>Ext/Building/<a class="el" href="_building_2_body_8cpp.html">Body.cpp</a><li>Ext/BuildingType/<a class="el" href="_building_type_2_body_8cpp.html">Body.cpp</a><li>Ext/BulletType/<a class="el" href="_bullet_type_2_body_8cpp.html">Body.cpp</a><li>Ext/House/<a class="el" href="_house_2_body_8cpp.html">Body.cpp</a><li>Ext/HouseType/<a class="el" href="_house_type_2_body_8cpp.html">Body.cpp</a><li>Ext/Rules/<a class="el" href="_rules_2_body_8cpp.html">Body.cpp</a><li>Ext/Side/<a class="el" href="_side_2_body_8cpp.html">Body.cpp</a><li>Ext/SWType/<a class="el" href="_s_w_type_2_body_8cpp.html">Body.cpp</a><li>Ext/Techno/<a class="el" href="_techno_2_body_8cpp.html">Body.cpp</a><li>Ext/TechnoType/<a class="el" href="_techno_type_2_body_8cpp.html">Body.cpp</a><li>Ext/WarheadType/<a class="el" href="_warhead_type_2_body_8cpp.html">Body.cpp</a><li>Ext/WeaponType/<a class="el" href="_weapon_type_2_body_8cpp.html">Body.cpp</a></ul>
+<li>Ext/<a class="el" href="___container_8hpp.html">_Container.hpp</a><li>Ext/Building/<a class="el" href="_building_2_body_8cpp.html">Body.cpp</a><li>Ext/BuildingType/<a class="el" href="_building_type_2_body_8cpp.html">Body.cpp</a><li>Ext/Bullet/<a class="el" href="_bullet_2_body_8cpp.html">Body.cpp</a><li>Ext/BulletType/<a class="el" href="_bullet_type_2_body_8cpp.html">Body.cpp</a><li>Ext/House/<a class="el" href="_house_2_body_8cpp.html">Body.cpp</a><li>Ext/HouseType/<a class="el" href="_house_type_2_body_8cpp.html">Body.cpp</a><li>Ext/Rules/<a class="el" href="_rules_2_body_8cpp.html">Body.cpp</a><li>Ext/Side/<a class="el" href="_side_2_body_8cpp.html">Body.cpp</a><li>Ext/SWType/<a class="el" href="_s_w_type_2_body_8cpp.html">Body.cpp</a><li>Ext/Techno/<a class="el" href="_techno_2_body_8cpp.html">Body.cpp</a><li>Ext/TechnoType/<a class="el" href="_techno_type_2_body_8cpp.html">Body.cpp</a><li>Ext/WarheadType/<a class="el" href="_warhead_type_2_body_8cpp.html">Body.cpp</a><li>Ext/WeaponType/<a class="el" href="_weapon_type_2_body_8cpp.html">Body.cpp</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 17 09:37:30 2009 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Dec 25 12:00:15 2009 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

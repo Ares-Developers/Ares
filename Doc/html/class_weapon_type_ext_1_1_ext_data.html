@@ -53,7 +53,7 @@ Inheritance diagram for WeaponTypeExt::WeaponTypeExt::ExtData:</div>
 <a href="class_weapon_type_ext_1_1_ext_data-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_weapon_type_ext_1_1_ext_data.html#25b769d7738ff869b6cd26025aeefa19">ExtData</a> (const DWORD <a class="el" href="class_extension.html#2f0c543d5bceafd46d103be4f87a5abe">Canary</a>=0, const <a class="el" href="class_weapon_type_ext.html#7d7d54db727323a6c6a285e0573e04b3">TT</a> *OwnerObject=NULL)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_weapon_type_ext_1_1_ext_data.html#73b9e48ef10e1a2aeb5649b1e6010229">ExtData</a> (const DWORD <a class="el" href="class_extension.html#2f0c543d5bceafd46d103be4f87a5abe">Canary</a>, <a class="el" href="class_weapon_type_ext.html#7d7d54db727323a6c6a285e0573e04b3">TT</a> *const OwnerObject)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual size_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_weapon_type_ext_1_1_ext_data.html#c6022e067a57ebc4e7540fadeba57b5f">Size</a> () const </td></tr>
 
@@ -112,7 +112,7 @@ Inheritance diagram for WeaponTypeExt::WeaponTypeExt::ExtData:</div>
 
 </table>
 <hr><h2>Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" name="25b769d7738ff869b6cd26025aeefa19"></a><!-- doxytag: member="WeaponTypeExt::ExtData::ExtData" ref="25b769d7738ff869b6cd26025aeefa19" args="(const DWORD Canary=0, const TT *OwnerObject=NULL)" -->
+<a class="anchor" name="73b9e48ef10e1a2aeb5649b1e6010229"></a><!-- doxytag: member="WeaponTypeExt::ExtData::ExtData" ref="73b9e48ef10e1a2aeb5649b1e6010229" args="(const DWORD Canary, TT *const OwnerObject)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -120,13 +120,13 @@ Inheritance diagram for WeaponTypeExt::WeaponTypeExt::ExtData:</div>
           <td class="memname">WeaponTypeExt::WeaponTypeExt::ExtData::ExtData           </td>
           <td>(</td>
           <td class="paramtype">const DWORD&nbsp;</td>
-          <td class="paramname"> <em>Canary</em> = <code>0</code>, </td>
+          <td class="paramname"> <em>Canary</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="class_weapon_type_ext.html#7d7d54db727323a6c6a285e0573e04b3">TT</a> *&nbsp;</td>
-          <td class="paramname"> <em>OwnerObject</em> = <code>NULL</code></td><td>&nbsp;</td>
+          <td class="paramtype"><a class="el" href="class_weapon_type_ext.html#7d7d54db727323a6c6a285e0573e04b3">TT</a> *const &nbsp;</td>
+          <td class="paramname"> <em>OwnerObject</em></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -138,7 +138,7 @@ Inheritance diagram for WeaponTypeExt::WeaponTypeExt::ExtData:</div>
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00079"></a>00079                                                                               : <a class="code" href="class_extension.html#ab62cf8e498a26bf7e3c14f31d906ace">Extension</a>(<a class="code" href="class_extension.html#2f0c543d5bceafd46d103be4f87a5abe">Canary</a>, OwnerObject),
+<div class="fragment"><pre class="fragment"><a name="l00079"></a>00079                                                                    : <a class="code" href="class_extension.html#3f8a8fd621ae648a99ab593e8d69681e">Extension</a>(<a class="code" href="class_extension.html#2f0c543d5bceafd46d103be4f87a5abe">Canary</a>, OwnerObject),
 <a name="l00080"></a>00080                         <a class="code" href="class_weapon_type_ext_1_1_ext_data.html#b89aa4269276205c9710a855f8c35899">Weapon_Loaded</a> (<span class="keyword">false</span>),
 <a name="l00081"></a>00081                         <a class="code" href="class_weapon_type_ext_1_1_ext_data.html#8ffe9004477f7de2da3aaaacc04047a0">Beam_IsHouseColor</a> (<span class="keyword">false</span>),
 <a name="l00082"></a>00082                         <a class="code" href="class_weapon_type_ext_1_1_ext_data.html#3e77ba781512b8a79f399a77b981c539">Beam_Duration</a> (15),
@@ -738,7 +738,7 @@ Inheritance diagram for WeaponTypeExt::WeaponTypeExt::ExtData:</div>
 <hr>The documentation for this class was generated from the following files:<ul>
 <li>Ext/WeaponType/<a class="el" href="_weapon_type_2_body_8h.html">Body.h</a><li>Ext/WeaponType/<a class="el" href="_weapon_type_2_body_8cpp.html">Body.cpp</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 17 09:37:31 2009 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Dec 25 12:00:16 2009 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

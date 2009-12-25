@@ -53,7 +53,7 @@ Inheritance diagram for TechnoTypeExt::TechnoTypeExt::ExtData:</div>
 <a href="class_techno_type_ext_1_1_ext_data-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_techno_type_ext_1_1_ext_data.html#916a32928378e4bc99c04f7ed51f878e">ExtData</a> (const DWORD <a class="el" href="class_extension.html#2f0c543d5bceafd46d103be4f87a5abe">Canary</a>=0, const <a class="el" href="class_techno_type_ext.html#78978352c49bcc7a11b166c32d538be5">TT</a> *OwnerObject=NULL)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_techno_type_ext_1_1_ext_data.html#d9c880b8536868d2ccb6f4ba5bbfffc3">ExtData</a> (const DWORD <a class="el" href="class_extension.html#2f0c543d5bceafd46d103be4f87a5abe">Canary</a>, <a class="el" href="class_techno_type_ext.html#78978352c49bcc7a11b166c32d538be5">TT</a> *const OwnerObject)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_techno_type_ext_1_1_ext_data.html#a11b649dde43463fec4bd2a55cac68f2">~ExtData</a> ()</td></tr>
 
@@ -127,7 +127,7 @@ Inheritance diagram for TechnoTypeExt::TechnoTypeExt::ExtData:</div>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">If this is true, Operator= is not checked, and the object will work with any passenger, provided there is one.  <a href="#c781caa8e68d2f58952ab9da9df5a19b"></a><br></td></tr>
 </table>
 <hr><h2>Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" name="916a32928378e4bc99c04f7ed51f878e"></a><!-- doxytag: member="TechnoTypeExt::ExtData::ExtData" ref="916a32928378e4bc99c04f7ed51f878e" args="(const DWORD Canary=0, const TT *OwnerObject=NULL)" -->
+<a class="anchor" name="d9c880b8536868d2ccb6f4ba5bbfffc3"></a><!-- doxytag: member="TechnoTypeExt::ExtData::ExtData" ref="d9c880b8536868d2ccb6f4ba5bbfffc3" args="(const DWORD Canary, TT *const OwnerObject)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -135,13 +135,13 @@ Inheritance diagram for TechnoTypeExt::TechnoTypeExt::ExtData:</div>
           <td class="memname">TechnoTypeExt::TechnoTypeExt::ExtData::ExtData           </td>
           <td>(</td>
           <td class="paramtype">const DWORD&nbsp;</td>
-          <td class="paramname"> <em>Canary</em> = <code>0</code>, </td>
+          <td class="paramname"> <em>Canary</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="class_techno_type_ext.html#78978352c49bcc7a11b166c32d538be5">TT</a> *&nbsp;</td>
-          <td class="paramname"> <em>OwnerObject</em> = <code>NULL</code></td><td>&nbsp;</td>
+          <td class="paramtype"><a class="el" href="class_techno_type_ext.html#78978352c49bcc7a11b166c32d538be5">TT</a> *const &nbsp;</td>
+          <td class="paramname"> <em>OwnerObject</em></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -153,7 +153,7 @@ Inheritance diagram for TechnoTypeExt::TechnoTypeExt::ExtData:</div>
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00069"></a>00069                                                                               : <a class="code" href="class_extension.html#ab62cf8e498a26bf7e3c14f31d906ace">Extension</a>(<a class="code" href="class_extension.html#2f0c543d5bceafd46d103be4f87a5abe">Canary</a>, OwnerObject),
+<div class="fragment"><pre class="fragment"><a name="l00069"></a>00069                                                                    : <a class="code" href="class_extension.html#3f8a8fd621ae648a99ab593e8d69681e">Extension</a>(<a class="code" href="class_extension.html#2f0c543d5bceafd46d103be4f87a5abe">Canary</a>, OwnerObject),
 <a name="l00070"></a>00070                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#78f692482ea81301d28708837b978147" title="Defines the number of pilots inside this vehicle if Crewed=yes; maximum number of...">Survivors_PilotCount</a> (0),
 <a name="l00071"></a>00071                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#602692ec44303698d83964130e820a26">Survivors_PilotChance</a> (NULL),
 <a name="l00072"></a>00072                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#ad0fcc85d2b4dfce250f7eee7f602892">Survivors_PassengerChance</a> (NULL),
@@ -174,7 +174,7 @@ Inheritance diagram for TechnoTypeExt::TechnoTypeExt::ExtData:</div>
 <a name="l00087"></a>00087                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#7d8f1f46c8ebf217860382b69e430abd">Is_Bomb</a> (<span class="keyword">false</span>),
 <a name="l00088"></a>00088                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#30a9aecc206ee45b23e74cc7e611504b">WaterAlt</a> (<span class="keyword">false</span>),
 <a name="l00089"></a>00089                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#f84d6821a7e7f529e6645c9e6919d772">Insignia</a> (NULL),
-<a name="l00090"></a>00090                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#8bb3b580b74c434d544d303e84c55087">Parachute_Anim</a> (&amp;RulesClass::Global()-&gt;Parachute),
+<a name="l00090"></a>00090                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#8bb3b580b74c434d544d303e84c55087">Parachute_Anim</a>(&amp;RulesClass::Instance-&gt;Parachute),
 <a name="l00091"></a>00091                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#b41fcd7290a799fc82fb2604baa140b9" title="Saves a pointer to an InfantryType required to be a passenger of this unit in order...">Operator</a> (NULL),
 <a name="l00092"></a>00092                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#c781caa8e68d2f58952ab9da9df5a19b" title="If this is true, Operator= is not checked, and the object will work with any passenger...">IsAPromiscuousWhoreAndLetsAnyoneRideIt</a> (<span class="keyword">false</span>)
 <a name="l00093"></a>00093                         { this-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#f84d6821a7e7f529e6645c9e6919d772">Insignia</a>.<a class="code" href="class_promotable.html#39204a3c8cc8094a01c1672389bb7fd1">SetAll</a>(NULL); };
@@ -857,7 +857,7 @@ Defines the number of pilots inside this vehicle if Crewed=yes; maximum number o
 <hr>The documentation for this class was generated from the following files:<ul>
 <li>Ext/TechnoType/<a class="el" href="_techno_type_2_body_8h.html">Body.h</a><li>Ext/TechnoType/<a class="el" href="_techno_type_2_body_8cpp.html">Body.cpp</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 17 09:37:31 2009 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Dec 25 12:00:15 2009 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

@@ -63,7 +63,7 @@
 
 <p>
 <div class="fragment"><pre class="fragment"><a name="l00007"></a>00007 {
-<a name="l00008"></a>00008         <span class="keywordtype">int</span> n = R-&gt;get_EBX();
+<a name="l00008"></a>00008         <span class="keywordtype">int</span> n = R-&gt;EBX();
 <a name="l00009"></a>00009         HouseTypeClass* pThis = HouseTypeClass::Array-&gt;Items[n];
 <a name="l00010"></a>00010 
 <a name="l00011"></a>00011         <span class="keywordtype">char</span>* pLSName = NULL;
@@ -77,7 +77,7 @@
 <a name="l00019"></a>00019                 <span class="keywordflow">return</span> 0x5536FB;
 <a name="l00020"></a>00020         }
 <a name="l00021"></a>00021 
-<a name="l00022"></a>00022         R-&gt;set_EDI((DWORD)StringTable::LoadString(pLSName));
+<a name="l00022"></a>00022         R-&gt;EDI(StringTable::LoadString(pLSName));
 <a name="l00023"></a>00023         <span class="keywordflow">return</span> 0x553820;
 <a name="l00024"></a>00024 }
 </pre></div>
@@ -86,7 +86,7 @@
 </div>
 </div><p>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 17 09:37:30 2009 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Dec 25 12:00:14 2009 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

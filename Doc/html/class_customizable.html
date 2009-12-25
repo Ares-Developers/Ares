@@ -61,9 +61,9 @@ Inheritance diagram for Customizable&lt; T &gt;:</div>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_customizable.html#0413bf26561b7474595cac5e07ec53b9">Lock</a> ()</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">T&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_customizable.html#dfc43c04f2a3d477e802e64dbd8673c4">Get</a> ()</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual T&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_customizable.html#334587c69d7acc490366c91633365849">Get</a> ()</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">T *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_customizable.html#889d20cfe21f5aa79821c37b32eb05dc">GetEx</a> ()</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual T *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_customizable.html#762c1195f5c7dd755b08b8dbbd03370b">GetEx</a> ()</td></tr>
 
 <tr><td colspan="2"><br><h2>Private Attributes</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_customizable.html#b947092510a84ab6265e29e1afecbb82">Customized</a></td></tr>
@@ -130,18 +130,18 @@ template&lt;typename T&gt; </div>
 
 </div>
 </div><p>
-<a class="anchor" name="dfc43c04f2a3d477e802e64dbd8673c4"></a><!-- doxytag: member="Customizable::Get" ref="dfc43c04f2a3d477e802e64dbd8673c4" args="()" -->
+<a class="anchor" name="334587c69d7acc490366c91633365849"></a><!-- doxytag: member="Customizable::Get" ref="334587c69d7acc490366c91633365849" args="()" -->
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename T&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">T <a class="el" href="class_customizable.html">Customizable</a>&lt; T &gt;::Get           </td>
+          <td class="memname">virtual T <a class="el" href="class_customizable.html">Customizable</a>&lt; T &gt;::Get           </td>
           <td>(</td>
           <td class="paramname">          </td>
           <td>&nbsp;)&nbsp;</td>
-          <td><code> [inline]</code></td>
+          <td><code> [inline, virtual]</code></td>
         </tr>
       </table>
 </div>
@@ -149,8 +149,8 @@ template&lt;typename T&gt; </div>
 
 <p>
 
-<p>Reimplemented from <a class="el" href="class_valueable.html#26de2a13c81dfdec06f5ccd3b58a3b90">Valueable&lt; T &gt;</a>.</p>
-<div class="fragment"><pre class="fragment"><a name="l00153"></a>00153                 {
+<p>Reimplemented from <a class="el" href="class_valueable.html#4f5eae470563f06f257cbc81df24f7a9">Valueable&lt; T &gt;</a>.</p>
+<div class="fragment"><pre class="fragment"><a name="l00153"></a>00153                         {
 <a name="l00154"></a>00154                 <span class="keywordflow">return</span> this-&gt;<a class="code" href="class_customizable.html#b947092510a84ab6265e29e1afecbb82">Customized</a>
 <a name="l00155"></a>00155                  ? this-&gt;<a class="code" href="class_valueable.html#d35b03b172acfd867aa88954bbfc955e">Value</a>
 <a name="l00156"></a>00156                  : this-&gt;<a class="code" href="class_customizable.html#0fcde73f4fb2c2c6d84a4fa08f4fbe02">Default</a> ? *this-&gt;<a class="code" href="class_customizable.html#0fcde73f4fb2c2c6d84a4fa08f4fbe02">Default</a> : T()
@@ -161,18 +161,18 @@ template&lt;typename T&gt; </div>
 
 </div>
 </div><p>
-<a class="anchor" name="889d20cfe21f5aa79821c37b32eb05dc"></a><!-- doxytag: member="Customizable::GetEx" ref="889d20cfe21f5aa79821c37b32eb05dc" args="()" -->
+<a class="anchor" name="762c1195f5c7dd755b08b8dbbd03370b"></a><!-- doxytag: member="Customizable::GetEx" ref="762c1195f5c7dd755b08b8dbbd03370b" args="()" -->
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename T&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">T* <a class="el" href="class_customizable.html">Customizable</a>&lt; T &gt;::GetEx           </td>
+          <td class="memname">virtual T* <a class="el" href="class_customizable.html">Customizable</a>&lt; T &gt;::GetEx           </td>
           <td>(</td>
           <td class="paramname">          </td>
           <td>&nbsp;)&nbsp;</td>
-          <td><code> [inline]</code></td>
+          <td><code> [inline, virtual]</code></td>
         </tr>
       </table>
 </div>
@@ -180,8 +180,8 @@ template&lt;typename T&gt; </div>
 
 <p>
 
-<p>Reimplemented from <a class="el" href="class_valueable.html#edb1336c5d258f6bf9f2b2f563e96e57">Valueable&lt; T &gt;</a>.</p>
-<div class="fragment"><pre class="fragment"><a name="l00160"></a>00160                    {
+<p>Reimplemented from <a class="el" href="class_valueable.html#fe65570f5f7fcae6d409ce6235a21d8a">Valueable&lt; T &gt;</a>.</p>
+<div class="fragment"><pre class="fragment"><a name="l00160"></a>00160                            {
 <a name="l00161"></a>00161                 <span class="keywordflow">return</span> this-&gt;<a class="code" href="class_customizable.html#b947092510a84ab6265e29e1afecbb82">Customized</a>
 <a name="l00162"></a>00162                  ? &amp;this-&gt;<a class="code" href="class_valueable.html#d35b03b172acfd867aa88954bbfc955e">Value</a>
 <a name="l00163"></a>00163                  : this-&gt;<a class="code" href="class_customizable.html#0fcde73f4fb2c2c6d84a4fa08f4fbe02">Default</a>
@@ -321,7 +321,7 @@ template&lt;typename T&gt; </div>
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>Helpers/<a class="el" href="_template_8h.html">Template.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 17 09:37:30 2009 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Dec 25 12:00:15 2009 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

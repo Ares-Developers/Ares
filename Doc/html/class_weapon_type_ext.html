@@ -162,31 +162,31 @@
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00204"></a>00204 {
-<a name="l00205"></a>00205         <a class="code" href="class_weapon_type_ext_1_1_ext_data.html">WeaponTypeExt::ExtData</a> *pData = <a class="code" href="class_weapon_type_ext.html#43b29f68aeeb9b5c7b0d353960d4a62f">WeaponTypeExt::WaveExt</a>[Wave];
-<a name="l00206"></a>00206 
-<a name="l00207"></a>00207         ColorStruct *CurrentColor = (pData-&gt;<a class="code" href="class_weapon_type_ext_1_1_ext_data.html#e8138d3fef1bf06c9f27c15df59f2f79">Wave_IsHouseColor</a> &amp;&amp; Wave-&gt;Owner)
-<a name="l00208"></a>00208                 ? Wave-&gt;Owner-&gt;Owner-&gt;get_Color()
-<a name="l00209"></a>00209                 : pData-&gt;<a class="code" href="class_weapon_type_ext_1_1_ext_data.html#bae84d39eef2f64c048cd68f0f67d113">Wave_Color</a>.<a class="code" href="class_customizable.html#889d20cfe21f5aa79821c37b32eb05dc">GetEx</a>();
-<a name="l00210"></a>00210 
-<a name="l00211"></a>00211         ColorStruct initial = Drawing::WordColor(*src);
+<div class="fragment"><pre class="fragment"><a name="l00206"></a>00206 {
+<a name="l00207"></a>00207         <a class="code" href="class_weapon_type_ext_1_1_ext_data.html">WeaponTypeExt::ExtData</a> *pData = <a class="code" href="class_weapon_type_ext.html#43b29f68aeeb9b5c7b0d353960d4a62f">WeaponTypeExt::WaveExt</a>[Wave];
+<a name="l00208"></a>00208 
+<a name="l00209"></a>00209         ColorStruct *CurrentColor = (pData-&gt;<a class="code" href="class_weapon_type_ext_1_1_ext_data.html#e8138d3fef1bf06c9f27c15df59f2f79">Wave_IsHouseColor</a> &amp;&amp; Wave-&gt;Owner)
+<a name="l00210"></a>00210                 ? &amp;Wave-&gt;Owner-&gt;Owner-&gt;Color
+<a name="l00211"></a>00211                 : &amp;pData-&gt;<a class="code" href="class_weapon_type_ext_1_1_ext_data.html#bae84d39eef2f64c048cd68f0f67d113">Wave_Color</a>;
 <a name="l00212"></a>00212 
-<a name="l00213"></a>00213         ColorStruct modified = initial;
+<a name="l00213"></a>00213         ColorStruct initial = Drawing::WordColor(*src);
 <a name="l00214"></a>00214 
-<a name="l00215"></a>00215 <span class="comment">// ugly hack to fix byte wraparound problems</span>
-<a name="l00216"></a>00216 <span class="preprocessor">#define upcolor(c) \</span>
-<a name="l00217"></a>00217 <span class="preprocessor">        int _ ## c = initial. c + (Intensity * CurrentColor-&gt; c ) / 256; \</span>
-<a name="l00218"></a>00218 <span class="preprocessor">        _ ## c = min(_ ## c, 255); \</span>
-<a name="l00219"></a>00219 <span class="preprocessor">        modified. c = (BYTE)_ ## c;</span>
-<a name="l00220"></a>00220 <span class="preprocessor"></span>
-<a name="l00221"></a>00221         <a class="code" href="_hooks_8_wave_8cpp.html#2939fe46ddddf81787f08b88418a09df">upcolor</a>(R);
-<a name="l00222"></a>00222         <a class="code" href="_hooks_8_wave_8cpp.html#2939fe46ddddf81787f08b88418a09df">upcolor</a>(G);
-<a name="l00223"></a>00223         <a class="code" href="_hooks_8_wave_8cpp.html#2939fe46ddddf81787f08b88418a09df">upcolor</a>(B);
-<a name="l00224"></a>00224 
-<a name="l00225"></a>00225         WORD color = Drawing::Color16bit(&amp;modified);
+<a name="l00215"></a>00215         ColorStruct modified = initial;
+<a name="l00216"></a>00216 
+<a name="l00217"></a>00217 <span class="comment">// ugly hack to fix byte wraparound problems</span>
+<a name="l00218"></a>00218 <span class="preprocessor">#define upcolor(c) \</span>
+<a name="l00219"></a>00219 <span class="preprocessor">        int _ ## c = initial. c + (Intensity * CurrentColor-&gt; c ) / 256; \</span>
+<a name="l00220"></a>00220 <span class="preprocessor">        _ ## c = min(_ ## c, 255); \</span>
+<a name="l00221"></a>00221 <span class="preprocessor">        modified. c = (BYTE)_ ## c;</span>
+<a name="l00222"></a>00222 <span class="preprocessor"></span>
+<a name="l00223"></a>00223         <a class="code" href="_hooks_8_wave_8cpp.html#2939fe46ddddf81787f08b88418a09df">upcolor</a>(R);
+<a name="l00224"></a>00224         <a class="code" href="_hooks_8_wave_8cpp.html#2939fe46ddddf81787f08b88418a09df">upcolor</a>(G);
+<a name="l00225"></a>00225         <a class="code" href="_hooks_8_wave_8cpp.html#2939fe46ddddf81787f08b88418a09df">upcolor</a>(B);
 <a name="l00226"></a>00226 
-<a name="l00227"></a>00227         *dst = color;
-<a name="l00228"></a>00228 }
+<a name="l00227"></a>00227         WORD color = Drawing::Color16bit(&amp;modified);
+<a name="l00228"></a>00228 
+<a name="l00229"></a>00229         *dst = color;
+<a name="l00230"></a>00230 }
 </pre></div>
 <p>
 
@@ -298,7 +298,7 @@
 <hr>The documentation for this class was generated from the following files:<ul>
 <li>Ext/WeaponType/<a class="el" href="_weapon_type_2_body_8h.html">Body.h</a><li>Ext/WeaponType/<a class="el" href="_weapon_type_2_body_8cpp.html">Body.cpp</a><li>Ext/WeaponType/<a class="el" href="_hooks_8_wave_8cpp.html">Hooks.Wave.cpp</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 17 09:37:31 2009 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Dec 25 12:00:15 2009 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

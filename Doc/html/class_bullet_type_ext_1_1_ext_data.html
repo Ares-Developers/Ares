@@ -53,9 +53,9 @@ Inheritance diagram for BulletTypeExt::BulletTypeExt::ExtData:</div>
 <a href="class_bullet_type_ext_1_1_ext_data-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_bullet_type_ext_1_1_ext_data.html#c1aefae75f9549a6f899b3c8224c573b">ExtData</a> (const DWORD <a class="el" href="class_extension.html#2f0c543d5bceafd46d103be4f87a5abe">Canary</a>=0, const <a class="el" href="class_bullet_type_ext.html#61ce8e7bfea7c50575d9f5b28f468441">TT</a> *OwnerObject=NULL)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_bullet_type_ext_1_1_ext_data.html#5bc8817b57d5302a814ed001d338db6b">ExtData</a> (const DWORD <a class="el" href="class_extension.html#2f0c543d5bceafd46d103be4f87a5abe">Canary</a>, <a class="el" href="class_bullet_type_ext.html#61ce8e7bfea7c50575d9f5b28f468441">TT</a> *const OwnerObject)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">if false, this projectile/weapon *always* passes through to the occupants, regardless of UC.PassThrough  <a href="#c1aefae75f9549a6f899b3c8224c573b"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">if false, this projectile/weapon *always* passes through to the occupants, regardless of UC.PassThrough  <a href="#5bc8817b57d5302a814ed001d338db6b"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_bullet_type_ext_1_1_ext_data.html#7e4c215efde22bc9bca22eb96f099054">~ExtData</a> ()</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual size_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_bullet_type_ext_1_1_ext_data.html#a0081b1000992dec9b38ef9f7c8c4875">Size</a> () const </td></tr>
@@ -73,7 +73,7 @@ Inheritance diagram for BulletTypeExt::BulletTypeExt::ExtData:</div>
 
 </table>
 <hr><h2>Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" name="c1aefae75f9549a6f899b3c8224c573b"></a><!-- doxytag: member="BulletTypeExt::ExtData::ExtData" ref="c1aefae75f9549a6f899b3c8224c573b" args="(const DWORD Canary=0, const TT *OwnerObject=NULL)" -->
+<a class="anchor" name="5bc8817b57d5302a814ed001d338db6b"></a><!-- doxytag: member="BulletTypeExt::ExtData::ExtData" ref="5bc8817b57d5302a814ed001d338db6b" args="(const DWORD Canary, TT *const OwnerObject)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -81,13 +81,13 @@ Inheritance diagram for BulletTypeExt::BulletTypeExt::ExtData:</div>
           <td class="memname">BulletTypeExt::BulletTypeExt::ExtData::ExtData           </td>
           <td>(</td>
           <td class="paramtype">const DWORD&nbsp;</td>
-          <td class="paramname"> <em>Canary</em> = <code>0</code>, </td>
+          <td class="paramname"> <em>Canary</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="class_bullet_type_ext.html#61ce8e7bfea7c50575d9f5b28f468441">TT</a> *&nbsp;</td>
-          <td class="paramname"> <em>OwnerObject</em> = <code>NULL</code></td><td>&nbsp;</td>
+          <td class="paramtype"><a class="el" href="class_bullet_type_ext.html#61ce8e7bfea7c50575d9f5b28f468441">TT</a> *const &nbsp;</td>
+          <td class="paramname"> <em>OwnerObject</em></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -101,7 +101,7 @@ Inheritance diagram for BulletTypeExt::BulletTypeExt::ExtData:</div>
 <p>
 if false, this projectile/weapon *always* passes through to the occupants, regardless of UC.PassThrough 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00035"></a>00035                                                                               : <a class="code" href="class_extension.html#ab62cf8e498a26bf7e3c14f31d906ace">Extension</a>(<a class="code" href="class_extension.html#2f0c543d5bceafd46d103be4f87a5abe">Canary</a>, OwnerObject),
+<div class="fragment"><pre class="fragment"><a name="l00035"></a>00035                                                                    : <a class="code" href="class_extension.html#3f8a8fd621ae648a99ab593e8d69681e">Extension</a>(<a class="code" href="class_extension.html#2f0c543d5bceafd46d103be4f87a5abe">Canary</a>, OwnerObject),
 <a name="l00036"></a>00036                         <a class="code" href="class_bullet_type_ext_1_1_ext_data.html#b27cf3868840849f145fe03d9d5c453a">SubjectToSolid</a> (<span class="keyword">false</span>),
 <a name="l00037"></a>00037                         <a class="code" href="class_bullet_type_ext_1_1_ext_data.html#ceda0fb9a29eb81bda1d60c56e601ca4">SubjectToFirewall</a> (<span class="keyword">true</span>),
 <a name="l00038"></a>00038                         <a class="code" href="class_bullet_type_ext_1_1_ext_data.html#4eac20750d11e37e05f8a6aa99c307b5">Parachuted</a> (<span class="keyword">false</span>),
@@ -264,7 +264,7 @@ if false, this projectile/weapon *always* passes through to the occupants, regar
 <hr>The documentation for this class was generated from the following files:<ul>
 <li>Ext/BulletType/<a class="el" href="_bullet_type_2_body_8h.html">Body.h</a><li>Ext/BulletType/<a class="el" href="_bullet_type_2_body_8cpp.html">Body.cpp</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 17 09:37:30 2009 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Dec 25 12:00:15 2009 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

@@ -53,7 +53,7 @@ Inheritance diagram for SWTypeExt::SWTypeExt::ExtData:</div>
 <a href="class_s_w_type_ext_1_1_ext_data-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_s_w_type_ext_1_1_ext_data.html#32de152d3b272eb92d8d05d593b46bcb">ExtData</a> (const DWORD <a class="el" href="class_extension.html#2f0c543d5bceafd46d103be4f87a5abe">Canary</a>=0, const <a class="el" href="class_s_w_type_ext.html#0180ced26778bf3a8d253b03a146681c">TT</a> *OwnerObject=NULL)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_s_w_type_ext_1_1_ext_data.html#390c72bb4dd989262255d9eb7d8ce74b">ExtData</a> (const DWORD <a class="el" href="class_extension.html#2f0c543d5bceafd46d103be4f87a5abe">Canary</a>, <a class="el" href="class_s_w_type_ext.html#0180ced26778bf3a8d253b03a146681c">TT</a> *const OwnerObject)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_s_w_type_ext_1_1_ext_data.html#30e16c62696337efcf9ba8cffaa41382">~ExtData</a> ()</td></tr>
 
@@ -107,7 +107,7 @@ AircraftTypeClass &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a cla
 
 </table>
 <hr><h2>Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" name="32de152d3b272eb92d8d05d593b46bcb"></a><!-- doxytag: member="SWTypeExt::ExtData::ExtData" ref="32de152d3b272eb92d8d05d593b46bcb" args="(const DWORD Canary=0, const TT *OwnerObject=NULL)" -->
+<a class="anchor" name="390c72bb4dd989262255d9eb7d8ce74b"></a><!-- doxytag: member="SWTypeExt::ExtData::ExtData" ref="390c72bb4dd989262255d9eb7d8ce74b" args="(const DWORD Canary, TT *const OwnerObject)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -115,13 +115,13 @@ AircraftTypeClass &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a cla
           <td class="memname">SWTypeExt::SWTypeExt::ExtData::ExtData           </td>
           <td>(</td>
           <td class="paramtype">const DWORD&nbsp;</td>
-          <td class="paramname"> <em>Canary</em> = <code>0</code>, </td>
+          <td class="paramname"> <em>Canary</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="class_s_w_type_ext.html#0180ced26778bf3a8d253b03a146681c">TT</a> *&nbsp;</td>
-          <td class="paramname"> <em>OwnerObject</em> = <code>NULL</code></td><td>&nbsp;</td>
+          <td class="paramtype"><a class="el" href="class_s_w_type_ext.html#0180ced26778bf3a8d253b03a146681c">TT</a> *const &nbsp;</td>
+          <td class="paramname"> <em>OwnerObject</em></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -133,7 +133,7 @@ AircraftTypeClass &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a cla
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00071"></a>00071                                                                               : <a class="code" href="class_extension.html#ab62cf8e498a26bf7e3c14f31d906ace">Extension</a>(<a class="code" href="class_extension.html#2f0c543d5bceafd46d103be4f87a5abe">Canary</a>, OwnerObject),
+<div class="fragment"><pre class="fragment"><a name="l00071"></a>00071                                                                    : <a class="code" href="class_extension.html#3f8a8fd621ae648a99ab593e8d69681e">Extension</a>(<a class="code" href="class_extension.html#2f0c543d5bceafd46d103be4f87a5abe">Canary</a>, OwnerObject),
 <a name="l00072"></a>00072                         <a class="code" href="class_s_w_type_ext_1_1_ext_data.html#d53cc569bd443ec7d0eed664c51a48b4">SpyPlane_TypeIndex</a> (0),
 <a name="l00073"></a>00073                         <a class="code" href="class_s_w_type_ext_1_1_ext_data.html#6ae06ab09e93b869ea58c044b3322654">SpyPlane_Count</a> (1),
 <a name="l00074"></a>00074                         <a class="code" href="class_s_w_type_ext_1_1_ext_data.html#878ff4b4600dc64326daa53626abbf63">SpyPlane_Mission</a> (mission_AttackAgain),
@@ -301,13 +301,13 @@ AircraftTypeClass &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a cla
 <a name="l00065"></a>00065         this-&gt;<a class="code" href="class_s_w_type_ext_1_1_ext_data.html#ef5297e5f2d74e481194c456e74d0890">EVA_Detected</a>.<a class="code" href="class_valueable_idx.html#c16db559b91f92e874356a63f13ebad2">Read</a>(&amp;exINI, section, <span class="stringliteral">"EVA.Detected"</span>);
 <a name="l00066"></a>00066 
 <a name="l00067"></a>00067         <span class="keywordflow">if</span>(exINI.ReadString(section, <span class="stringliteral">"Action"</span>) &amp;&amp; !strcmp(exINI.value(), <span class="stringliteral">"Custom"</span>)) {
-<a name="l00068"></a>00068                 pThis-&gt;set_Action(<a class="code" href="_s_w_type_2_body_8h.html#3828d4bdcec55d055849f3503ab93410">SW_YES_CURSOR</a>);
+<a name="l00068"></a>00068                 pThis-&gt;Action = <a class="code" href="_s_w_type_2_body_8h.html#3828d4bdcec55d055849f3503ab93410">SW_YES_CURSOR</a>;
 <a name="l00069"></a>00069         }
 <a name="l00070"></a>00070 
 <a name="l00071"></a>00071         <span class="keywordflow">if</span>(exINI.ReadString(section, <span class="stringliteral">"Type"</span>)) {
 <a name="l00072"></a>00072                 <span class="keywordtype">int</span> customType = <a class="code" href="class_new_s_w_type.html#6f6659b52c8a26c8e83340cdfbef43f9">NewSWType::FindIndex</a>(exINI.value());
 <a name="l00073"></a>00073                 <span class="keywordflow">if</span>(customType &gt; -1) {
-<a name="l00074"></a>00074                         pThis-&gt;set_Type(customType);
+<a name="l00074"></a>00074                         pThis-&gt;Type = customType;
 <a name="l00075"></a>00075                 }
 <a name="l00076"></a>00076         }
 <a name="l00077"></a>00077 
@@ -649,7 +649,7 @@ AircraftTypeClass &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a cla
 <hr>The documentation for this class was generated from the following files:<ul>
 <li>Ext/SWType/<a class="el" href="_s_w_type_2_body_8h.html">Body.h</a><li>Ext/SWType/<a class="el" href="_s_w_type_2_body_8cpp.html">Body.cpp</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 17 09:37:31 2009 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Dec 25 12:00:15 2009 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

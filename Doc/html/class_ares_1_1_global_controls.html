@@ -122,10 +122,10 @@
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00095"></a>00095                                      {
-<a name="l00096"></a>00096         <span class="keyword">delete</span> <a class="code" href="class_ares_1_1_global_controls.html#941d0714333600fc295cfedaf0d77b22">INI</a>;
-<a name="l00097"></a>00097         <a class="code" href="class_ares_1_1_global_controls.html#941d0714333600fc295cfedaf0d77b22">INI</a> = NULL;
-<a name="l00098"></a>00098 }
+<div class="fragment"><pre class="fragment"><a name="l00087"></a>00087                                      {
+<a name="l00088"></a>00088         <span class="keyword">delete</span> <a class="code" href="class_ares_1_1_global_controls.html#941d0714333600fc295cfedaf0d77b22">INI</a>;
+<a name="l00089"></a>00089         <a class="code" href="class_ares_1_1_global_controls.html#941d0714333600fc295cfedaf0d77b22">INI</a> = NULL;
+<a name="l00090"></a>00090 }
 </pre></div>
 <p>
 
@@ -233,23 +233,18 @@
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00077"></a>00077                                     {
-<a name="l00078"></a>00078         Debug::Log(<span class="stringliteral">"OC1\n"</span>);
-<a name="l00079"></a>00079         <a class="code" href="class_ares_1_1_global_controls.html#941d0714333600fc295cfedaf0d77b22">INI</a> = <span class="keyword">new</span> CCINIClass();
-<a name="l00080"></a>00080         Debug::Log(<span class="stringliteral">"OC2\n"</span>);
-<a name="l00081"></a>00081         CCFileClass *cfg = <span class="keyword">new</span> CCFileClass(<span class="stringliteral">"Ares.ini"</span>);
-<a name="l00082"></a>00082         Debug::Log(<span class="stringliteral">"OC3\n"</span>);
-<a name="l00083"></a>00083         <span class="keywordflow">if</span>(cfg-&gt;Exists(NULL)) {
-<a name="l00084"></a>00084                 Debug::Log(<span class="stringliteral">"OC4+\n"</span>);
-<a name="l00085"></a>00085                 <a class="code" href="class_ares_1_1_global_controls.html#941d0714333600fc295cfedaf0d77b22">INI</a>-&gt;ReadCCFile(cfg);
-<a name="l00086"></a>00086         } <span class="keywordflow">else</span> {
-<a name="l00087"></a>00087                 Debug::Log(<span class="stringliteral">"OC4-\n"</span>);
-<a name="l00088"></a>00088                 Debug::Log(<span class="stringliteral">"Ares.ini does not exist."</span>);
-<a name="l00089"></a>00089                 ExitProcess(1);
-<a name="l00090"></a>00090         }
-<a name="l00091"></a>00091         Debug::Log(<span class="stringliteral">"OC5\n"</span>);
-<a name="l00092"></a>00092         <span class="keyword">delete</span> cfg;
-<a name="l00093"></a>00093 }
+<div class="fragment"><pre class="fragment"><a name="l00074"></a>00074                                     {
+<a name="l00075"></a>00075         <a class="code" href="class_ares_1_1_global_controls.html#941d0714333600fc295cfedaf0d77b22">INI</a> = <span class="keyword">new</span> CCINIClass();
+<a name="l00076"></a>00076         CCFileClass *cfg = <span class="keyword">new</span> CCFileClass(<span class="stringliteral">"Ares.ini"</span>);
+<a name="l00077"></a>00077         <span class="keywordflow">if</span>(cfg-&gt;Exists(NULL)) {
+<a name="l00078"></a>00078                 <a class="code" href="class_ares_1_1_global_controls.html#941d0714333600fc295cfedaf0d77b22">INI</a>-&gt;ReadCCFile(cfg);
+<a name="l00079"></a>00079 <span class="comment">//      } else {</span>
+<a name="l00080"></a>00080 <span class="comment">//              Debug::Log("OC4-\n");</span>
+<a name="l00081"></a>00081 <span class="comment">//              Debug::Log("Ares.ini does not exist.");</span>
+<a name="l00082"></a>00082 <span class="comment">//              ExitProcess(1);</span>
+<a name="l00083"></a>00083         }
+<a name="l00084"></a>00084         <span class="keyword">delete</span> cfg;
+<a name="l00085"></a>00085 }
 </pre></div>
 <p>
 
@@ -424,7 +419,7 @@
 <hr>The documentation for this class was generated from the following files:<ul>
 <li><a class="el" href="_ares_8h.html">Ares.h</a><li><a class="el" href="_ares_8_global_controls_8cpp.html">Ares.GlobalControls.cpp</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 17 09:37:30 2009 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Dec 25 12:00:15 2009 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

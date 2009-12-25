@@ -264,7 +264,7 @@
 <div class="fragment"><pre class="fragment"><a name="l00119"></a>00119                                               {
 <a name="l00120"></a>00120         Debug::Log(<span class="stringliteral">"Dumping %X bytes of stack\n"</span>, len);
 <a name="l00121"></a>00121         <span class="keywordflow">for</span>(<span class="keywordtype">size_t</span> i = 0; i &lt; len; i += 4) {
-<a name="l00122"></a>00122                 Debug::Log(<span class="stringliteral">"esp+%04X = %08X\n"</span>, i, R-&gt;get_StackVar32(i));
+<a name="l00122"></a>00122                 Debug::Log(<span class="stringliteral">"esp+%04X = %08X\n"</span>, i, R-&gt;Stack32(i));
 <a name="l00123"></a>00123         }
 <a name="l00124"></a>00124         Debug::Log(<span class="stringliteral">"Done.\n"</span>);
 <a name="l00125"></a>00125 }
@@ -841,7 +841,7 @@ minidump <div class="fragment"><pre class="fragment"><a name="l00147"></a>00147 
 <hr>The documentation for this class was generated from the following files:<ul>
 <li>Misc/<a class="el" href="_debug_8h.html">Debug.h</a><li>Misc/<a class="el" href="_debug_8cpp.html">Debug.cpp</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 17 09:37:30 2009 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Dec 25 12:00:15 2009 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>
