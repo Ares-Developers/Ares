@@ -36,15 +36,15 @@ bool BulletExt::ExtData::DamageOccupants() {
 		BulletTypeExt::ExtData* TheBulletTypeExt = BulletTypeExt::ExtMap.Find(TheBullet->Type);
 		BuildingTypeExt::ExtData* BuildingAresData = BuildingTypeExt::ExtMap.Find(Building->Type);
 
-		Debug::Log("Bullet %s is about to damage occupants of %s: occupants #%d, UC.PT = %lf\n", 
+		Debug::Log("Bullet %s is about to damage occupants of %s: occupants #%d, UC.PT = %lf\n",
 			TheBullet->Type->ID, Building->Type->ID, Building->Occupants.Count, BuildingAresData->UCPassThrough);
 
 		if(Building->Occupants.Count && BuildingAresData->UCPassThrough) { // only work when UCPassThrough is set, as per community vote in thread #1392
 			Debug::Log("SubjToTrenches = %d\n", TheBulletTypeExt->SubjectToTrenches);
-			if(!TheBulletTypeExt->SubjectToTrenches || ((ScenarioClass::Instance->Random.RandomRanged(0, 99) / 100) < BuildingAresData->UCPassThrough)) { // test for negative b/c being SubjectToTrenches means "we're getting stopped by trenches".
+			if(!TheBulletTypeExt->SubjectToTrenches || ((ScenarioClass::Instance->Random.RandomRanged(0, 99) / 100.0) < BuildingAresData->UCPassThrough)) { // test for negative b/c being SubjectToTrenches means "we're getting stopped by trenches".
 				int poorBastard = ScenarioClass::Instance->Random.RandomRanged(0, Building->Occupants.Count - 1); // which Occupant is getting it?
 				Debug::Log("Poor Bastard #%d\n", poorBastard);
-				if(BuildingAresData->UCFatalRate && ((ScenarioClass::Instance->Random.RandomRanged(0, 99) / 100) < BuildingAresData->UCFatalRate)) {
+				if(BuildingAresData->UCFatalRate && ((ScenarioClass::Instance->Random.RandomRanged(0, 99) / 100.0) < BuildingAresData->UCFatalRate)) {
 					Debug::Log("Fatal hit!\n");
 					// fatal hit
 					Building->Occupants[poorBastard]->Destroyed(TheBullet->Owner);

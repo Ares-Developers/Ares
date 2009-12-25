@@ -122,7 +122,7 @@ DEFINE_HOOK(567AC1, MapClass_RevealArea1_DisplayTo, 0)
 }
 
 /* 	#218 - specific occupiers // comes in 0.2
-	#665 - raidable buildings */
+	#665 - raidable buildings */ //!\todo add owning house stuff
 DEFINE_HOOK(457D58, BuildingClass_CanBeOccupied_SpecificOccupiers, 6)
 {
 	GET(BuildingClass *, pThis, ESI);
@@ -204,6 +204,7 @@ DEFINE_HOOK(44725F, BuildingClass_GetCursorOverObject_TargetABuilding, 5)
 }
 
 // #664: Advanced Rubble - prevent rubble from being sold, ever
+// #665: Raidable Buildings - prevent raided buildings from being sold while raided
 /* TODO: UI handler
 A_FINE_HOOK(4494D2, BuildingClass_IsSellable, 6)
 {
@@ -218,4 +219,21 @@ A_FINE_HOOK(4494D2, BuildingClass_IsSellable, 6)
 			return 0;
 	}
 }
+*/
+
+// NEED HOOK: In the moment of an occupant entering the building
+/*
+	if((The Building's Owner != The Infantry's Owner) && !Building ExtData->isCurrentlyRaided) {
+		Building ExtData->OwnerBeforeRaid = The Building's Owner;
+		Building ExtData->isCurrentlyRaided = true;
+		The Building->SetOwningHouse(The Infantry's Owner);
+	}
+*/
+
+// NEED HOOK: In the moment or after an occupant leaves the building (after Occupants.Count has been decreased)
+/*	if(Building ExtData->isCurrentlyRaided && !Building->Occupants.Count) {
+		The Building->SetOwningHouse(Building ExtData->OwnerBeforeRaid);
+		Building ExtData->OwnerBeforeRaid = NULL;
+		Building ExtData->isCurrentlyRaided = false;
+	}
 */

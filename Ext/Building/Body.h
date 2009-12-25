@@ -25,15 +25,18 @@ public:
 		BuildingClass* NormalState; //!< This BuildingClass will be used as the building's normal state after the building was reconstructed from rubble. Its type should have \link BuildingTypeExt::ExtData::RubbleDestroyed Rubble.Destroyed \endlink set.
 
 	public:
+		HouseClass* OwnerBeforeRaid; //!< Contains the house which owned this building prior to it being raided and turned over to the raiding party.
+		bool isCurrentlyRaided; //!< Whether this building is currently occupied by someone not the actual owner of the structure.
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension(Canary, OwnerObject),
-			RubbleState(NULL), NormalState(NULL)
+			RubbleState(NULL), NormalState(NULL),
+			OwnerBeforeRaid(NULL), isCurrentlyRaided(false)
 			{ };
 
 		virtual ~ExtData() {
 		}
 
 		virtual size_t Size() const { return sizeof(*this); };
-
 
 		void RubbleYell(bool beingRepaired = false); // This function triggers back and forth between rubble states.
 		void setRubble(BuildingClass* arg) {RubbleState = arg;} //!< Public setter for #RubbleState, used to set a link back on NormalState from RubbleState. \param arg the building to use as rubble. \sa RubbleYell()
