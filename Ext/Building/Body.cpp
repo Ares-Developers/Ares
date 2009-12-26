@@ -15,7 +15,7 @@ IStream *Container<BuildingExt>::SavingStream = NULL;
 // =============================
 // member functions
 
-void BuildingExt::ExtendFirewall(BuildingClass *pThis, CellStruct Center, HouseClass *Owner) {
+/*void BuildingExt::ExtendFirewall(BuildingClass *pThis, CellStruct Center, HouseClass *Owner) { // replaced by more generic
 	BuildingTypeExt::ExtData* pData = BuildingTypeExt::ExtMap.Find(pThis->Type);
 
 	if(!pData->Firewall_Is) {
@@ -67,7 +67,7 @@ void BuildingExt::ExtendFirewall(BuildingClass *pThis, CellStruct Center, HouseC
 		}
 		--Unsorted::SomeMutex;
 	}
-}
+}*/
 
 DWORD BuildingExt::GetFirewallFlags(BuildingClass *pThis) {
 	CellClass *MyCell = MapClass::Global()->GetCellAt(pThis->get_Location());
@@ -166,6 +166,22 @@ void BuildingExt::ExtData::RubbleYell(bool beingRepaired) {
 }
 
 // #666: IsTrench/Traversal
+/*! This function checks if the current and the target building are both of the same trench kind.
+
+	\param targetBuilding a pointer to the target building.
+	\return true if both buildings are trenches and are of the same trench kind, otherwise false.
+
+	\author Renegade
+	\date 25.12.09+
+*/
+bool BuildingExt::ExtData::sameTrench(BuildingClass* targetBuilding) {
+	BuildingTypeExt::ExtData* currentTypeExtData = BuildingTypeExt::ExtMap.Find(this->AttachedToObject->Type);
+	BuildingTypeExt::ExtData* targetTypeExtData = BuildingTypeExt::ExtMap.Find(targetBuilding->Type);
+
+	return ((currentTypeExtData->IsTrench > -1) && (currentTypeExtData->IsTrench == targetTypeExtData->IsTrench));
+}
+
+// #666: IsTrench/Traversal
 //! This function checks if occupants of the current building can, on principle, move on to the target building.
 /*!
 	Conditions checked are whether there are occupants in the current building, whether the target building is full,
@@ -176,7 +192,7 @@ void BuildingExt::ExtData::RubbleYell(bool beingRepaired) {
 	This may be changed at a later point in time, if there is demand for it.
 
 	\param targetBuilding a pointer to the target building.
-	\return returns true if traversal between both buildings is legal, otherwise false.
+	\return true if traversal between both buildings is legal, otherwise false.
 	\sa doTraverseTo()
 
 	\author Renegade
@@ -194,7 +210,7 @@ bool BuildingExt::ExtData::canTraverseTo(BuildingClass* targetBuilding) {
 	BuildingTypeExt::ExtData* currentBuildingTypeExt = BuildingTypeExt::ExtMap.Find(currentBuilding->Type);
 	BuildingTypeExt::ExtData* targetBuildingTypeExt = BuildingTypeExt::ExtMap.Find(targetBuilding->Type);
 
-	if((currentBuildingTypeExt->IsTrench > -1) && (currentBuildingTypeExt->IsTrench == targetBuildingTypeExt->IsTrench)) {
+	if(this->sameTrench(targetBuilding)) {
 		// if we've come here, there's room, there are people to move, and the buildings are trenches and of the same kind
 		// the only questioning remaining is whether they are next to each other.
 		return targetBuilding->Location.DistanceFrom(currentBuilding->Location) <= 256.0; // if the target building is more than 256 leptons away, it's not on a straight neighboring cell
@@ -229,6 +245,112 @@ void BuildingExt::ExtData::doTraverseTo(BuildingClass* targetBuilding) {
 		currentBuilding->Occupants.RemoveItem(0); // maybe switch Add/Remove if the game gets pissy about multiple of them walking around
 	}
 }
+
+// Firewalls
+// #666: IsTrench/Linking
+// Short check: Is the building of a linkable kind at all?
+bool BuildingExt::ExtData::isLinkable() {
+	BuildingTypeExt::ExtData* typeExtData = BuildingTypeExt::ExtMap.Find(this->AttachedToObject->Type);
+	return typeExtData->Firewall_Is || (typeExtData->IsTrench > -1);
+}
+
+// Full check: Can this building be linked to the target building?
+bool BuildingExt::ExtData::canLinkTo(BuildingClass* targetBuilding) {
+	BuildingClass* currentBuilding = this->AttachedToObject;
+
+	// Different owners
+	if(currentBuilding->Owner != targetBuilding->Owner) { //<-- see thread 1424
+		return false;
+	}
+
+	BuildingTypeExt::ExtData* currentTypeExtData = BuildingTypeExt::ExtMap.Find(currentBuilding->Type);
+	BuildingTypeExt::ExtData* targetTypeExtData = BuildingTypeExt::ExtMap.Find(targetBuilding->Type);
+
+	// Firewalls
+	if(currentTypeExtData->Firewall_Is && targetTypeExtData->Firewall_Is) {
+		return true;
+	}
+
+	// Trenches
+	if(this->sameTrench(targetBuilding)) {
+		return true;
+	}
+
+	return false;
+}
+/*!
+
+	\param theBuilding the building which we're trying to link to existing buildings.
+	\param selectedCell the cell at which we're trying to build.
+	\param buildingOwner the owner of the building we're trying to link.
+	\sa isLinkable()
+	\sa canLinkTo()
+
+	\author DCoder, Renegade
+	\date 26.12.09+
+*/
+void BuildingExt::buildLines(BuildingClass* theBuilding, CellStruct selectedCell, HouseClass* buildingOwner) {
+	BuildingExt::ExtData* buildingExtData = BuildingExt::ExtMap.Find(theBuilding);
+	//BuildingTypeExt::ExtData* buildingTypeExtData = BuildingTypeExt::ExtMap.Find(theBuilding->Type);
+
+	// check if this building is linkable at all and abort if it isn't
+	if(!buildingExtData->isLinkable()) {
+		return;
+	}
+
+	int maxLinkDistance = theBuilding->Type->GuardRange / 256; // GuardRange governs how far the link can go, is saved in leptons
+
+	CoordStruct coordBuffer; // used below in Cell2Coord()
+
+	for(int direction = 0; direction <= 7; direction += 2) { // the 4 straight directions of the simple compass
+		CellStruct directionOffset = CellSpread::GetNeighbourOffset(direction); // coordinates of the neighboring cell in the given direction relative to the current cell (e.g. 0,1)
+		int linkLength = 0; // how many cells to build on from center in direction to link up with a found building
+
+		for(int distanceFromCenter = 1; distanceFromCenter <= maxLinkDistance; ++distanceFromCenter) {
+			CellStruct cellToCheck = selectedCell;
+			cellToCheck.X += short(distanceFromCenter * directionOffset.X); // adjust the cell to check based on current distance, relative to the selected cell
+			cellToCheck.Y += short(distanceFromCenter * directionOffset.Y); // e.g. 25 += 5 * 1 for "five away on the Y axis"
+
+			if(!MapClass::Global()->CellExists(&cellToCheck)) { // don't parse this cell if it doesn't exist (duh)
+				break;
+			}
+
+			CellClass *cell = MapClass::Global()->GetCellAt(&cellToCheck);
+
+			if(BuildingClass *OtherEnd = cell->GetBuilding()) { // if we find a building...
+				if(buildingExtData->canLinkTo(OtherEnd)) { // ...and it is linkable, we found what we needed
+					linkLength = distanceFromCenter - 1; // distanceFromCenter directly would be on top of the found building
+					break;
+				}
+
+				break; // we found a building, but it's not linkable
+			}
+
+			if(!cell->CanThisExistHere(theBuilding->Type->SpeedType, theBuilding->Type, buildingOwner)) { // abort if that buildingtype is not allowed to be built there
+				break;
+			}
+
+		}
+
+		++Unsorted::SomeMutex; // another mystical Westwood mechanism. According to D, Bad Things happen if this is missing.
+		for(int distanceFromCenter = linkLength; distanceFromCenter > 0; --distanceFromCenter) { // build a line of this buildingtype from the found building (if any)
+			CellStruct cellToBuildOn = selectedCell;											// to the newly built one
+			cellToBuildOn.X += short(distanceFromCenter * directionOffset.X);
+			cellToBuildOn.Y += short(distanceFromCenter * directionOffset.Y);
+
+			if(CellClass *cell = MapClass::Global()->GetCellAt(&cellToBuildOn)) {
+				if(BuildingClass *tempBuilding = specific_cast<BuildingClass *>(theBuilding->Type->CreateObject(buildingOwner))) {
+					CellClass::Cell2Coord(&cellToBuildOn, &coordBuffer);
+					if(!tempBuilding->Put(&coordBuffer, 0)) {
+						delete tempBuilding;
+					}
+				}
+			}
+		}
+		--Unsorted::SomeMutex;
+	}
+}
+
 
 // =============================
 // container hooks

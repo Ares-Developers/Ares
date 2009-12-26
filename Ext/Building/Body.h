@@ -38,18 +38,27 @@ public:
 
 		virtual size_t Size() const { return sizeof(*this); };
 
+		// related to Advanced Rubble
 		void RubbleYell(bool beingRepaired = false); // This function triggers back and forth between rubble states.
 		void setRubble(BuildingClass* arg) {RubbleState = arg;} //!< Public setter for #RubbleState, used to set a link back on NormalState from RubbleState. \param arg the building to use as rubble. \sa RubbleYell()
 		void setNormal(BuildingClass* arg) {NormalState = arg;} //!< Public setter for #NormalState, used to set a link back on RubbleState from NormalState. \param arg the normal building. \sa RubbleYell()
+
+		// related to trench traversal
 		bool canTraverseTo(BuildingClass* targetBuilding); // Returns true if people can move from the current building to the target building, otherwise false.
 		void doTraverseTo(BuildingClass* targetBuilding); // This function moves as many occupants as possible from the current to the target building.
+		bool sameTrench(BuildingClass* targetBuilding); // Checks if both buildings are of the same trench kind.
+
+		// related to linkable buildings
+		bool isLinkable(); //!< Returns true if this is a structure that can be linked to other structures, like a wall, fence, or trench. This is used to quick-check if the game has to look for linkable buildings in the first place. \sa canLinkTo()
+		bool canLinkTo(BuildingClass* targetBuilding); //!< Checks if the current building can link to the given target building. \param targetBuilding the building to check for compatibility. \return true if the two buildings can be linked. \sa isLinkable()
 	};
 
 	static Container<BuildingExt> ExtMap;
 
 	static DWORD GetFirewallFlags(BuildingClass *pThis);
 
-	static void ExtendFirewall(BuildingClass *pThis, CellStruct Center, HouseClass *Owner);
+	//static void ExtendFirewall(BuildingClass *pThis, CellStruct Center, HouseClass *Owner); // replaced by generic buildLines
+	static void buildLines(BuildingClass*, CellStruct, HouseClass*); // Does the actual line-building, using isLinkable() and canLinkTo().
 
 	static void UpdateDisplayTo(BuildingClass *pThis);
 

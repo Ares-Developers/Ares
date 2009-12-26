@@ -14,7 +14,8 @@ DEFINE_HOOK(4FB257, HouseClass_UnitFromFactory_Firewall, 6)
 	GET(HouseClass *, H, EBP);
 	GET_STACK(CellStruct, CenterPos, 0x4C);
 
-	BuildingExt::ExtendFirewall(B, CenterPos, H);
+	//BuildingExt::ExtendFirewall(B, CenterPos, H);
+	BuildingExt::buildLines(B, CenterPos, H);
 
 	return 0;
 }
@@ -27,7 +28,8 @@ DEFINE_HOOK(445355, BuildingClass_KickOutUnit_Firewall, 6)
 	GET(BuildingClass *, B, EDI);
 	GET_STACK(CellStruct, CenterPos, 0x2C);
 
-	BuildingExt::ExtendFirewall(B, CenterPos, Factory->Owner);
+	//BuildingExt::ExtendFirewall(B, CenterPos, Factory->Owner);
+	BuildingExt::buildLines(B, CenterPos, Factory->Owner);
 
 	return 0;
 }
@@ -72,7 +74,7 @@ DEFINE_HOOK(442230, BuildingClass_ReceiveDamage_FSW, 6)
 	GET_STACK(int *, Damage, 0x4);
 
 	BuildingTypeExt::ExtData* pTypeData = BuildingTypeExt::ExtMap.Find(pThis->Type);
-	HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(pThis->Owner); 
+	HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(pThis->Owner);
 	if(pTypeData->Firewall_Is && pHouseData->FirewallActive) {
 		*Damage = 0;
 		return 0x442C14;
@@ -93,7 +95,7 @@ DEFINE_HOOK(43FC39, BuildingClass_Update_FSW, 6)
 		return 0;
 	}
 
-	HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(H); 
+	HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(H);
 	bool FS = pHouseData->FirewallActive;
 
 	DWORD FWFrame = BuildingExt::GetFirewallFlags(B);
@@ -147,7 +149,7 @@ DEFINE_HOOK(483D8E, CellClass_Setup_Slave, 6)
 	GET(BuildingClass *, B, ESI);
 	R->EAX(B->Type);
 	BuildingTypeExt::ExtData* pTypeData = BuildingTypeExt::ExtMap.Find(B->Type);
-	HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(B->Owner); 
+	HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(B->Owner);
 
 	if(pTypeData->Firewall_Is) {
 		R->EBP(pHouseData->FirewallActive ? 6 : 0);
@@ -162,7 +164,7 @@ DEFINE_HOOK(51BD4C, InfantryClass_Update, 6)
 {
 	GET(BuildingClass *, B, EDI);
 	BuildingTypeExt::ExtData* pTypeData = BuildingTypeExt::ExtMap.Find(B->Type);
-	HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(B->Owner); 
+	HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(B->Owner);
 
 	if(pTypeData->Firewall_Is) {
 		return pHouseData->FirewallActive
@@ -178,7 +180,7 @@ DEFINE_HOOK(51C4C8, InfantryClass_IsCellOccupied, 6)
 {
 	GET(BuildingClass *, B, ESI);
 	BuildingTypeExt::ExtData* pTypeData = BuildingTypeExt::ExtMap.Find(B->Type);
-	HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(B->Owner); 
+	HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(B->Owner);
 
 	if(pTypeData->Firewall_Is) {
 		return pHouseData->FirewallActive
@@ -194,7 +196,7 @@ DEFINE_HOOK(73F7B0, UnitClass_IsCellOccupied, 6)
 {
 	GET(BuildingClass *, B, ESI);
 	BuildingTypeExt::ExtData* pTypeData = BuildingTypeExt::ExtMap.Find(B->Type);
-	HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(B->Owner); 
+	HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(B->Owner);
 
 	if(pTypeData->Firewall_Is) {
 		return pHouseData->FirewallActive
@@ -210,7 +212,7 @@ DEFINE_HOOK(58819F, MapClass_SomePathfinding_1, 6)
 {
 	GET(BuildingClass *, B, EAX);
 	BuildingTypeExt::ExtData* pTypeData = BuildingTypeExt::ExtMap.Find(B->Type);
-	HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(B->Owner); 
+	HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(B->Owner);
 
 	return (pTypeData->Firewall_Is && pHouseData->FirewallActive)
 		 ? 0x5881BF
@@ -222,7 +224,7 @@ DEFINE_HOOK(58828C, MapClass_SomePathfinding_2, 6)
 {
 	GET(BuildingClass *, B, EAX);
 	BuildingTypeExt::ExtData* pTypeData = BuildingTypeExt::ExtMap.Find(B->Type);
-	HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(B->Owner); 
+	HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(B->Owner);
 
 	return (pTypeData->Firewall_Is && pHouseData->FirewallActive)
 		 ? 0x5882AC
@@ -234,7 +236,7 @@ DEFINE_HOOK(5884A4, MapClass_SomePathfinding_3, 6)
 {
 	GET(BuildingClass *, B, EAX);
 	BuildingTypeExt::ExtData* pTypeData = BuildingTypeExt::ExtMap.Find(B->Type);
-	HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(B->Owner); 
+	HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(B->Owner);
 
 	return (pTypeData->Firewall_Is && pHouseData->FirewallActive)
 		 ? 0x5884C4
