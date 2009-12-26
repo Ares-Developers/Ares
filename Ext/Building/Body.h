@@ -62,6 +62,7 @@ public:
 
 	static void UpdateDisplayTo(BuildingClass *pThis);
 
+	static signed int GetImageFrameIndex(BuildingClass *pThis);
 };
 
 #endif

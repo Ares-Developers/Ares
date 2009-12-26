@@ -57,14 +57,17 @@ DEFINE_HOOK(6D5A5C, sub_6D59D0, 6)
 }
 
 // frame to draw
-DEFINE_HOOK(43EFB3, BuildingClass_GetAnimLengths, 6)
+DEFINE_HOOK(43EFB3, BuildingClass_GetStaticImageFrame, 6)
 {
-	GET(BuildingTypeClass *, BT, EAX);
-	BuildingTypeExt::ExtData* pTypeData = BuildingTypeExt::ExtMap.Find(BT);
+	GET(BuildingClass *, B, ESI);
 
-	return pTypeData->Firewall_Is
-	 ? 0x43EFBD
-	 : 0x43EFC6;
+	signed int FrameIdx = BuildingExt::GetImageFrameIndex(B);
+
+	if(FrameIdx != -1) {
+		R->EAX<signed int>(FrameIdx);
+		return 0x43EFC3;
+	}
+	return 0x43EFC6;
 }
 
 // ignore damage
