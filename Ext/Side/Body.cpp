@@ -7,7 +7,7 @@ Container<SideExt> SideExt::ExtMap;
 SideExt::TT *Container<SideExt>::SavingObject = NULL;
 IStream *Container<SideExt>::SavingStream = NULL;
 
-stdext::hash_map<VoxClass*, DynamicVectorClass<SideExt::VoxFileNameStruct> > SideExt::EVAFiles;
+hash_map<VoxClass*, DynamicVectorClass<SideExt::VoxFileNameStruct> > SideExt::EVAFiles;
 
 void SideExt::ExtData::Initialize(SideClass *pThis)
 {
@@ -35,7 +35,7 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 
 		strcpy(this->EVATag, "Russian");
 		this->LoadTextColor = ColorScheme::Find("SovietLoad");
-		
+
 		for(int i = 0; i < RulesClass::Global()->get_SovParaDropInf()->Count; ++i) {
 			this->ParaDrop.AddItem((RulesClass::Global()->get_SovParaDropInf()->GetItem(i)));
 		}
@@ -63,7 +63,7 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 
 		strcpy(this->EVATag, "Yuri");
 		this->LoadTextColor = ColorScheme::Find("SovietLoad");
-		
+
 		for(int i = 0; i < RulesClass::Global()->get_YuriParaDropInf()->Count; ++i) {
 			this->ParaDrop.AddItem(RulesClass::Global()->get_YuriParaDropInf()->GetItem(i));
 		}
@@ -150,7 +150,7 @@ void SideExt::ExtData::LoadFromINIFile(SideClass *pThis, CCINIClass *pINI)
 
 		for(p = strtok(Ares::readBuffer, Ares::readDelims); p && *p; p = strtok(NULL, Ares::readDelims)) {
 			TechnoTypeClass* pTT = UnitTypeClass::Find(p);
-			
+
 			if(!pTT) {
 				pTT = InfantryTypeClass::Find(p);
 			}
@@ -285,7 +285,7 @@ DEFINE_HOOK(6A4780, SideClass_SaveLoad_Prefix, 6)
 DEFINE_HOOK_AGAIN(6A48A0, SideClass_SaveLoad_Prefix, 5)
 {
 	GET_STACK(SideExt::TT*, pItem, 0x4);
-	GET_STACK(IStream*, pStm, 0x8); 
+	GET_STACK(IStream*, pStm, 0x8);
 
 	Container<SideExt>::SavingObject = pItem;
 	Container<SideExt>::SavingStream = pStm;

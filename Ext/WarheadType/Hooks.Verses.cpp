@@ -16,6 +16,7 @@
 	__asm{ fmul x }; \
 	return R->get_Origin() + 7;
 
+#ifdef _MSC_VER
 // temp, will be taken out when SelectWeapon is remade
 DEFINE_HOOK(6F36FE, Verses_fld_0, 7)
 {
@@ -62,6 +63,8 @@ DEFINE_HOOK(48923D, Verses_fmul_3, 7)
 {
 	FMUL_VERSES(EDI, EDX);
 }
+
+#endif
 
 DEFINE_HOOK(75DDCC, Verses_OrigParser, 7)
 {

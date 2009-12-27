@@ -37,7 +37,7 @@ DEFINE_HOOK(519FAF, InfantryClass_UpdatePosition_EngineerRepairsFriendly, 6)
 	if(TargetTypeExtData->RubbleIntact) {
 		TargetExtData->RubbleYell(true);
 		do_normal_repair = false;
-		pThis->Scatter(0xB1CFE8, 1, 0) // since we're not gonna eat the Engineer, it has to move away; borrowed the arguments from other calls
+		pThis->Scatter(0xB1CFE8, 1, 0); // since we're not gonna eat the Engineer, it has to move away; borrowed the arguments from other calls
 	}
 
 

@@ -1,7 +1,7 @@
 #ifndef SUPERTYPE_EXT_SONAR_H
 #define SUPERTYPE_EXT_SONAR_H
 
-#include <hash_map>
+#include <xcompile.h>
 
 #include "../SWTypes.h"
 

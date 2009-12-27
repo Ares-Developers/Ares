@@ -7,7 +7,7 @@
 #include <AnimTypeClass.h>
 
 #include "../_Container.hpp"
-#include "../../Helpers/Template.h"
+#include "../../Utilities/Template.h"
 
 //ifdef DEBUGBUILD
 #include "../../Misc/Debug.h"
@@ -18,12 +18,12 @@ class RulesExt
 	public:
 	typedef RulesClass TT;
 
-	class ExtData : public Extension<TT> 
+	class ExtData : public Extension<TT>
 	{
 		public:
 		Valueable<AnimTypeClass* >ElectricDeath;
 
-		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension(Canary, OwnerObject),
+		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			ElectricDeath(NULL)
 			{ };
 

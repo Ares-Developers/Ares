@@ -34,7 +34,6 @@
 	-pd
 */
 
-#include <Helpers/Macro.h>
 #include "Dialogs.h"
 #include "registered.h"
 #include "../Ares.h"

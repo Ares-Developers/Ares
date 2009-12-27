@@ -1,7 +1,7 @@
 #ifndef ARES_H
 #define ARES_H
 
-#include <hash_map>
+#include <xcompile.h>
 //include <YRPP.h>
 #include <Helpers/Macro.h>
 
@@ -104,10 +104,10 @@ public:
 
 class MemMap {
 public:
-	typedef stdext::hash_map <DWORD, size_t> memmap;
-	static stdext::hash_map <DWORD, size_t> AllocMap;
+	typedef hash_map <DWORD, size_t> memmap;
+	static hash_map <DWORD, size_t> AllocMap;
 	static size_t Total;
-	
+
 	static void Add(void * _addr, size_t amount) {
 		DWORD addr = (DWORD)_addr;
 		memmap::iterator i = AllocMap.find(addr);

@@ -1,12 +1,11 @@
 #ifndef TECHNOTYPE_EXT_H
 #define TECHNOTYPE_EXT_H
 
-#include <Helpers/Macro.h>
 #include <TechnoTypeClass.h>
 
 #include "../../Ares.h"
 #include "../_Container.hpp"
-#include "../../Helpers/Template.h"
+#include "../../Utilities/Template.h"
 
 class TechnoTypeExt
 {
@@ -66,10 +65,10 @@ public:
 		InfantryTypeClass * Operator; //!< Saves a pointer to an InfantryType required to be a passenger of this unit in order for it to work. Defaults to NULL. \sa TechnoClass_Update_CheckOperators, bool IsAPromiscuousWhoreAndLetsAnyoneRideIt
 		bool IsAPromiscuousWhoreAndLetsAnyoneRideIt; //!< If this is true, Operator= is not checked, and the object will work with any passenger, provided there is one. \sa InfantryTypeClass * Operator
 
-		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension(Canary, OwnerObject),
-			Survivors_PilotCount (0),
+		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			Survivors_PilotChance (NULL),
 			Survivors_PassengerChance (NULL),
+			Survivors_PilotCount (0),
 			PrerequisiteTheaters (0xFFFFFFFF),
 			Secret_RequiredHouses (0),
 			Secret_ForbiddenHouses (0),

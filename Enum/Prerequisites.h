@@ -1,7 +1,6 @@
 #ifndef GEN_PREREQ_H
 #define GEN_PREREQ_H
 
-#include <Helpers/Macro.h>
 #include <CCINIClass.h>
 #include <HouseClass.h>
 #include <UnitTypeClass.h>

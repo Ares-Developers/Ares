@@ -1,7 +1,7 @@
 #ifndef WARHEADTYPE_EXT_H
 #define WARHEADTYPE_EXT_H
 
-#include <Helpers/Macro.h>
+#include <xcompile.h>
 #include <AnimClass.h>
 #include <IonBlastClass.h>
 #include <AnimTypeClass.h>
@@ -18,7 +18,7 @@
 
 #include "../_Container.hpp"
 
-#include "../../Helpers/Template.h"
+#include "../../Utilities/Template.h"
 
 #ifdef DEBUGBUILD
 #include "../../Misc/Debug.h"
@@ -35,13 +35,13 @@ public:
 		bool ForceFire;
 		bool Retaliate;
 		bool PassiveAcquire;
-		
+
 		bool operator ==(const VersesData &RHS) const {
 			return (CLOSE_ENOUGH(this->Verses, RHS.Verses));
 		};
 	};
 
-	class ExtData : public Extension<TT> 
+	class ExtData : public Extension<TT>
 	{
 	public:
 		bool MindControl_Permanent;
@@ -57,13 +57,13 @@ public:
 
 		Customizable<AnimTypeClass *> Temporal_WarpAway;
 
-		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension(Canary, OwnerObject),
+		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			MindControl_Permanent (false),
 			Ripple_Radius (0),
 			EMP_Duration (0),
 			IC_Duration (0),
-			Temporal_WarpAway (&RulesClass::Global()->WarpAway),
-			DeployedDamage (1.00)
+			DeployedDamage (1.00),
+			Temporal_WarpAway (&RulesClass::Global()->WarpAway)
 			{
 				for(int i = 0; i < 11; ++i) {
 					VersesData vs = {1.00, 1, 1, 1};
@@ -83,7 +83,7 @@ public:
 	// evil hack
 	static WarheadTypeClass *Temporal_WH;
 
-	static stdext::hash_map<IonBlastClass *, WarheadTypeExt::ExtData *> IonExt;
+	static hash_map<IonBlastClass *, WarheadTypeExt::ExtData *> IonExt;
 
 	static void PointerGotInvalid(void *ptr);
 /*
@@ -93,5 +93,5 @@ public:
 */
 };
 
-typedef stdext::hash_map<IonBlastClass *, WarheadTypeExt::ExtData *> hash_ionExt; 
+typedef hash_map<IonBlastClass *, WarheadTypeExt::ExtData *> hash_ionExt;
 #endif

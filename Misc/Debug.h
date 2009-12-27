@@ -3,13 +3,14 @@
 
 //define DEBUG_FILE "DEBUG.TXT"
 
-#include <stdio.h>
+#include <cstdio>
 #include <YRPPCore.h>
-#include <Helpers/Macro.h>
 #include <Windows.h>
+#ifdef _MSC_VER
 #include <Dbghelp.h>
+#endif
 
-#include "UI/Dialogs.h"
+#include "../UI/Dialogs.h"
 
 class Debug
 {

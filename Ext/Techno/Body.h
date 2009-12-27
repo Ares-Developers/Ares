@@ -1,8 +1,7 @@
 #ifndef TECHNO_EXT_H
 #define TECHNO_EXT_H
 
-#include <Helpers/Macro.h>
-#include <hash_map>
+#include <xcompile.h>
 #include <vector>
 #include <algorithm>
 
@@ -28,7 +27,7 @@ class TechnoExt
 public:
 	typedef TechnoClass TT;
 
-	class ExtData : public Extension<TT> 
+	class ExtData : public Extension<TT>
 	{
 	public:
 		// weapon slots fsblargh
@@ -42,7 +41,7 @@ public:
 		TimerStruct CloakSkipTimer;
 		SHPStruct * Insignia_Image;
 
-		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension(Canary, OwnerObject),
+		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			idxSlot_Wave (0),
 			idxSlot_Beam (0),
 			idxSlot_Warp (0),
@@ -60,8 +59,8 @@ public:
 	};
 
 	static Container<TechnoExt> ExtMap;
-	static stdext::hash_map<ObjectClass *, AlphaShapeClass *> AlphaExt;
-	static stdext::hash_map<TechnoClass *, BuildingLightClass *> SpotlightExt;
+	static hash_map<ObjectClass *, AlphaShapeClass *> AlphaExt;
+	static hash_map<TechnoClass *, BuildingLightClass *> SpotlightExt;
 
 	static BuildingLightClass * ActiveBuildingLight;
 
@@ -81,6 +80,6 @@ public:
 */
 };
 
-typedef stdext::hash_map<ObjectClass *, AlphaShapeClass *> hash_AlphaExt;
-typedef stdext::hash_map<TechnoClass *, BuildingLightClass *> hash_SpotlightExt;
+typedef hash_map<ObjectClass *, AlphaShapeClass *> hash_AlphaExt;
+typedef hash_map<TechnoClass *, BuildingLightClass *> hash_SpotlightExt;
 #endif

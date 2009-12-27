@@ -85,7 +85,7 @@ EXPORT Ares_Audio_LoadWAV(REGISTERS* R)	//50% rewrite of Audio::LoadWAV
 		pAudioIndex[0x110 >> 2] = (DWORD)pFile;	//ExternalFile = pFile
 
 		if(pFile->Exists(NULL)) {
-			if(pFile->Open(FILE_READ_ACCESS)) {
+			if(pFile->Open(eFileMode::Read)) {
 				int WAVStruct[0x8];
 				int nSampleSize;
 				int nResult;
@@ -127,7 +127,7 @@ EXPORT Ares_Audio_GetSampleInfo(REGISTERS* R)
 		// gcc: unused char* SampleName=(char*)SampleIndex;
 
 		GET_STACK(int *, pAudioSample, 0x4);	//AudioSample*
-		
+
 		pAudioSample[0x00 >> 2] = 4;
 		pAudioSample[0x04 >> 2] = 0;
 		pAudioSample[0x08 >> 2] = 22050;

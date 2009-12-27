@@ -7,8 +7,6 @@
 #include <Randomizer.h>
 #include <UnitTypeClass.h>
 
-#include <Helpers/Macro.h>
-
 #include "../_Container.hpp"
 #include "../../Ares.h"
 
@@ -59,13 +57,14 @@ public:
 		BuildingTypeClass * RubbleDestroyed;	//!< What BuildingType to turn into when destroyed. (This is the rubble, set on normal buildings.)
 		static std::vector<std::string> trenchKinds; //!< Vector of strings associating known trench names with IsTrench IDs. \sa IsTrench
 
-		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension(Canary, OwnerObject),
+		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			Solid_Height (0),
 			IsCustom (false),
-			CustomData (NULL),
-			OutlineData (NULL),
 			CustomWidth (0),
 			CustomHeight (0),
+			OutlineLength (0),
+			CustomData (NULL),
+			OutlineData (NULL),
 			Firewall_Is (false),
 			UCPassThrough (0.0),
 			UCFatalRate (0.0),

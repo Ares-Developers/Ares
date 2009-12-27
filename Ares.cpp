@@ -37,7 +37,7 @@ int Ares::TrackIndex = 66;
 
 int FrameStepCommandClass::ArmageddonState = 0;
 
-stdext::hash_map <DWORD, size_t> MemMap::AllocMap;
+hash_map <DWORD, size_t> MemMap::AllocMap;
 size_t MemMap::Total;
 
 //Implementations
@@ -270,7 +270,7 @@ DEFINE_HOOK(7CD8EF, ExeTerminate, 9)
 {
 	Ares::ExeTerminate();
 	GET(int, result, EAX);
-	ExitProcess(result); //teehee 
+	ExitProcess(result); //teehee
 }
 
 DEFINE_HOOK(52CAE9, _YR_PostGameInit, 5)

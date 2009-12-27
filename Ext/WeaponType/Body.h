@@ -1,7 +1,7 @@
 #ifndef WEAPONTYPE_EXT_H
 #define WEAPONTYPE_EXT_H
 
-#include <Helpers/Macro.h>
+#include <xcompile.h>
 #include <Helpers/Template.h>
 #include <BombClass.h>
 #include <BombListClass.h>
@@ -24,7 +24,7 @@
 
 #include "../_Container.hpp"
 
-#include "../../Helpers/Template.h"
+#include "../../Utilities/Template.h"
 
 struct SHPStruct;
 
@@ -32,7 +32,7 @@ class WeaponTypeExt
 {
 public:
 	typedef WeaponTypeClass TT;
-	class ExtData : public Extension<TT> 
+	class ExtData : public Extension<TT>
 	{
 	public:
 		// Generic
@@ -76,28 +76,28 @@ public:
 //		MouseCursor Cursor_Attack;
 //		bool Cursor_Custom;
 
-		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension(Canary, OwnerObject),
+		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			Weapon_Loaded (false),
-			Beam_IsHouseColor (false),
+			Beam_Color (&RulesClass::Instance->RadColor),
 			Beam_Duration (15),
 			Beam_Amplitude (40.0),
-			Wave_IsHouseColor (false),
-			Wave_IsLaser (false),
-			Wave_IsBigLaser (false),
-			Ivan_KillsBridges (true),
-			Ivan_Detachable (true),
-			Ivan_Damage (&RulesClass::Global()->IvanDamage),
-			Ivan_Delay (&RulesClass::Global()->IvanTimedDelay),
-			Ivan_TickingSound (&RulesClass::Global()->BombTickingSound),
-			Ivan_AttachSound (&RulesClass::Global()->BombAttachSound),
-			Ivan_WH (&RulesClass::Global()->IvanWarhead),
-			Beam_Color (RulesClass::Global()->get_RadColor()),
-			Wave_Color (NULL),
+			Beam_IsHouseColor (false),
 			Bolt_Color1 (NULL),
 			Bolt_Color2 (NULL),
 			Bolt_Color3 (NULL),
-			Ivan_Image (&RulesClass::Global()->BOMBCURS_SHP),
-			Ivan_FlickerRate (&RulesClass::Global()->IvanIconFlickerRate),
+			Wave_IsHouseColor (false),
+			Wave_IsLaser (false),
+			Wave_IsBigLaser (false),
+			Wave_Color (NULL),
+			Ivan_KillsBridges (true),
+			Ivan_Detachable (true),
+			Ivan_Damage (&RulesClass::Instance->IvanDamage),
+			Ivan_Delay (&RulesClass::Instance->IvanTimedDelay),
+			Ivan_TickingSound (&RulesClass::Instance->BombTickingSound),
+			Ivan_AttachSound (&RulesClass::Instance->BombAttachSound),
+			Ivan_WH (&RulesClass::Instance->IvanWarhead),
+			Ivan_Image (&RulesClass::Instance->BOMBCURS_SHP),
+			Ivan_FlickerRate (&RulesClass::Instance->IvanIconFlickerRate),
 			Rad_Type (NULL)
 			{
 //				this->Beam_Color = ColorStruct(255, 255, 255);
@@ -136,10 +136,10 @@ public:
 
 	static Container<WeaponTypeExt> ExtMap;
 
-	static stdext::hash_map<BombClass *, ExtData *> BombExt;
-	static stdext::hash_map<WaveClass *, ExtData *> WaveExt;
-	static stdext::hash_map<EBolt *, ExtData *> BoltExt;
-	static stdext::hash_map<RadSiteClass *, ExtData *> RadSiteExt;
+	static hash_map<BombClass *, ExtData *> BombExt;
+	static hash_map<WaveClass *, ExtData *> WaveExt;
+	static hash_map<EBolt *, ExtData *> BoltExt;
+	static hash_map<RadSiteClass *, ExtData *> RadSiteExt;
 
 #define idxVehicle 0
 #define idxAircraft 1
@@ -169,9 +169,9 @@ public:
 	static void PointerGotInvalid(void *ptr);
 };
 
-typedef stdext::hash_map<BombClass *, WeaponTypeExt::ExtData *> hash_bombExt;
-typedef stdext::hash_map<WaveClass *, WeaponTypeExt::ExtData *> hash_waveExt;
-typedef stdext::hash_map<EBolt *, WeaponTypeExt::ExtData *> hash_boltExt;
-typedef stdext::hash_map<RadSiteClass *, WeaponTypeExt::ExtData *> hash_radsiteExt;
+typedef hash_map<BombClass *, WeaponTypeExt::ExtData *> hash_bombExt;
+typedef hash_map<WaveClass *, WeaponTypeExt::ExtData *> hash_waveExt;
+typedef hash_map<EBolt *, WeaponTypeExt::ExtData *> hash_boltExt;
+typedef hash_map<RadSiteClass *, WeaponTypeExt::ExtData *> hash_radsiteExt;
 
 #endif

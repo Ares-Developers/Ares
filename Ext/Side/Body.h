@@ -1,8 +1,8 @@
 #ifndef SIDES_H
 #define SIDES_H
 
+#include <xcompile.h>
 #include <CCINIClass.h>
-#include <Helpers/Macro.h>
 #include <SideClass.h>
 #include <ColorScheme.h>
 #include <InfantryTypeClass.h>
@@ -11,7 +11,7 @@
 #include <UnitTypeClass.h>
 
 #include "../../Ares.h"
-#include "../../Helpers/Template.h"
+#include "../../Utilities/Template.h"
 
 class VoxClass;
 
@@ -21,8 +21,8 @@ class SideExt
 {
 	public:
 	typedef SideClass TT;
-	
-	class ExtData : public Extension<TT> 
+
+	class ExtData : public Extension<TT>
 	{
 	public:
 		Customizable<InfantryTypeClass*> DefaultDisguise;
@@ -37,7 +37,7 @@ class SideExt
 		bool SidebarYuriFileNames;
 		char EVATag[0x20];	//TODO
 
-		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension(Canary, OwnerObject),
+		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			LoadTextColor (NULL)
 		{
 			*EVATag = 0;
@@ -68,7 +68,7 @@ class SideExt
 
 	static Container<SideExt> ExtMap;
 
-	static stdext::hash_map<VoxClass*, DynamicVectorClass<VoxFileNameStruct> > EVAFiles;
+	static hash_map<VoxClass*, DynamicVectorClass<VoxFileNameStruct> > EVAFiles;
 
 	static DWORD BaseDefenses(REGISTERS* R, DWORD dwReturnAddress);
 	static DWORD Disguise(REGISTERS* R, DWORD dwReturnAddress, bool bUseESI);

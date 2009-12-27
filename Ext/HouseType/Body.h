@@ -6,7 +6,6 @@
 #include <BuildingTypeClass.h>
 #include <PCX.h>
 #include <StringTable.h>
-#include <Helpers/Macro.h>
 
 #include "../_Container.hpp"
 
@@ -14,8 +13,8 @@ class HouseTypeExt
 {
 	public:
 	typedef HouseTypeClass TT;
-	
-	class ExtData : public Extension<TT> 
+
+	class ExtData : public Extension<TT>
 	{
 		public:
 			char FlagFile[0x20]; //Flag
@@ -27,10 +26,10 @@ class HouseTypeExt
 			char LSBrief[0x20]; //Stringtable label for this country's load brief
 			char StatusText[0x20]; //Stringtable label for this country's Skirmish STT
 			int RandomSelectionWeight; //This country gets added this many times into the list of legible countries for random selection.
-	
+
 			DynamicVectorClass<BuildingTypeClass *> Powerplants;
 
-		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension(Canary, OwnerObject),
+		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 				RandomSelectionWeight (0)
 			{
 				*FlagFile = 0;

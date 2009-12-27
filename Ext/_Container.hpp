@@ -1,12 +1,25 @@
 #ifndef CONTAINER_TEMPLATE_MAGIC_H
 #define CONTAINER_TEMPLATE_MAGIC_H
 
+#ifdef _MSC_VER
 #include <typeinfo>
+#endif
 
-#include <hash_map>
+#ifdef __GNUC__
+#include <ext/hash_fun.h>
+namespace __gnu_cxx {
+	template<>
+	struct hash<void *> {
+		size_t operator()(void* const &v) const {
+			return reinterpret_cast<std::size_t>(v);
+		}
+	};
+};
+#endif
+
+#include <xcompile.h>
 #include <CCINIClass.h>
 #include <SwizzleManagerClass.h>
-#include <Helpers/Macro.h>
 
 #include "../Misc/Debug.h"
 
@@ -20,7 +33,7 @@ enum eInitState {
 
 /*
  * ==========================
- *    It's a kind of magic   
+ *    It's a kind of magic
  * ==========================
 
  * These two templates are the basis of the new class extension standard.
@@ -35,13 +48,13 @@ enum eInitState {
 
    Container<TX> is the storage for all the Extension<T> which share the same T,
     where TX is the containing class of the relevant derivate of Extension<T>. // complex, huh?
-   ( for example, there is Container<WarheadTypeExt> 
+   ( for example, there is Container<WarheadTypeExt>
      which contains all the custom data for all WarheadTypeClass instances,
      and WarheadTypeExt itself contains just statics like the Container itself
-      
+
       )
 
-   Requires: 
+   Requires:
    	typedef TX::TT = T;
    	const DWORD Extension<T>::Canary = (any dword value easily identifiable in a byte stream)
    	class TX::ExtData : public Extension<T> { custom_data; }
@@ -62,11 +75,11 @@ class Extension {
 		static const DWORD Canary;
 
 		Extension(const DWORD Canary, T* const OwnerObject) :
-		AttachedToObject(OwnerObject),
+		_Initialized(is_Blank),
 	#ifdef DEBUGBUILD
-		SavedCanary(Canary), 
+		SavedCanary(Canary),
 	#endif
-		_Initialized(is_Blank)
+		AttachedToObject(OwnerObject)
 		{ };
 
 		virtual ~Extension() { };
@@ -118,20 +131,20 @@ class Extension {
 		virtual void Initialize(T *pThis) {
 			this->_Initialized = is_Inited;
 		};
-		
+
 	private:
 		void operator = (Extension &RHS) {
-			
+
 		}
 };
 
 //template<typename T1, typename T2>
 template<typename T>
-class Container : public stdext::hash_map<typename T::TT*, typename T::ExtData* > {
+class Container : public hash_map<typename T::TT*, typename T::ExtData* > {
 private:
-	typedef typename T::TT               S_T;
-	typedef typename T::ExtData          E_T;
-	typedef stdext::hash_map<S_T*, E_T*> C_Map;
+	typedef typename T::TT        S_T;
+	typedef typename T::ExtData   E_T;
+	typedef hash_map<S_T*, E_T*>  C_Map;
 
 	unsigned int CTOR_Count;
 	unsigned int DTOR_Count;
@@ -160,19 +173,19 @@ public:
 			Debug::Log("CTOR of %s attempted for a NULL pointer! WTF!\n", info.name());
 			return NULL;
 		}
-		C_Map::iterator i = find(key);
-		if(i == end()) {
+		typename C_Map::iterator i = this->find(key);
+		if(i == this->end()) {
 			++CTOR_Count;
-			E_T * val = new E_T(typename E_T::Canary, key);
+			E_T * val = new E_T(/*typename*/ E_T::Canary, key);
 			val->InitializeConstants(key);
-			i = insert(C_Map::value_type(key, val)).first;
+			i = this->insert(typename C_Map::value_type(key, val)).first;
 		}
 		return i->second;
 	}
 
 	E_T *Find(S_T* key) {
-		C_Map::iterator i = find(key);
-		if(i == end()) {
+		typename C_Map::iterator i = this->find(key);
+		if(i == this->end()) {
 			++Lookup_Failure_Count;
 			return NULL;
 		}
@@ -181,8 +194,8 @@ public:
 	}
 
 	void Remove(S_T* key) {
-		C_Map::iterator i = find(key);
-		if(i != end()) {
+		typename C_Map::iterator i = this->find(key);
+		if(i != this->end()) {
 			delete i->second;
 			erase(i);
 			++DTOR_Count;
@@ -190,7 +203,7 @@ public:
 	}
 
 	void Empty() {
-		for(C_Map::iterator i = begin(); i != end(); ) {
+		for(typename C_Map::iterator i = this->begin(); i != this->end(); ) {
 			delete i->second;
 			erase(i++);
 	//		++i;
@@ -198,20 +211,20 @@ public:
 	}
 
 	void LoadAllFromINI(CCINIClass *pINI) {
-		for(C_Map::iterator i = begin(); i != end(); i++) {
+		for(typename C_Map::iterator i = this->begin(); i != this->end(); i++) {
 			i->second->LoadFromINI(i->first, pINI);
 		}
 	}
 
 	void LoadFromINI(S_T*key, CCINIClass *pINI) {
-		C_Map::iterator i = find(key);
-		if(i != end()) {
+		typename C_Map::iterator i = this->find(key);
+		if(i != this->end()) {
 			i->second->LoadFromINI(key, pINI);
 		}
 	}
 
 	void LoadAllFromRules(CCINIClass *pINI) {
-		for(C_Map::iterator i = begin(); i != end(); i++) {
+		for(typename C_Map::iterator i = this->begin(); i != this->end(); i++) {
 			i->second->LoadFromRulesFile(i->first, pINI);
 		}
 	}
@@ -230,7 +243,7 @@ public:
 
 	E_T* SaveKey(S_T *key, IStream *pStm) {
 		ULONG out;
-		
+
 		const std::type_info &info = typeid(key);
 		Debug::Log("Saving Key [%s] (%X)\n", info.name(), key);
 
@@ -288,8 +301,8 @@ public:
 		const std::type_info &info = typeid(*this);
 		Debug::Log("Stats for container %s:\n", info.name());
 
-		Debug::Log("|%08d|%08d|%08d/%08d|%08d|%08d|\n", 
-			CTOR_Count, DTOR_Count, Lookup_Success_Count, Lookup_Failure_Count, size(), S_T::Array->Count);
+		Debug::Log("|%08d|%08d|%08d/%08d|%08d|%08d|\n",
+			CTOR_Count, DTOR_Count, Lookup_Success_Count, Lookup_Failure_Count, this->size(), S_T::Array->Count);
 	}
 
 };

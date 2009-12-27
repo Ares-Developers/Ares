@@ -19,8 +19,7 @@
 #include "Debug.h"
 #include "../Ares.h"
 
-#include <Helpers/Macro.h>
-#include "../Helpers/Macro.h"
+#include "../Utilities/Macro.h"
 
 /* issue 193 - increasing the buffer length for certain flag parsing */
 

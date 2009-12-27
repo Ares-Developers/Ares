@@ -1,5 +1,4 @@
 #include "ArmorTypes.h"
-#include <Helpers/Macro.h>
 
 DynamicVectorClass<ArmorType*> Enumerable<ArmorType>::Array;
 

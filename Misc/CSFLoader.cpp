@@ -13,7 +13,7 @@ void CSFLoader::LoadAdditionalCSF(const char *pFileName)
 	if(StringTable::is_Loaded() && pFileName && *pFileName) {
 		CCFileClass* pFile;
 		GAME_ALLOC(CCFileClass, pFile, pFileName);
-		if(pFile->Exists(NULL) && pFile->Open(FILE_READ_ACCESS)) {
+		if(pFile->Exists(NULL) && pFile->Open(eFileMode::Read)) {
 			CSFHeader header;
 
 			if(pFile->ReadBytes(&header, sizeof(CSFHeader)) == sizeof(CSFHeader)) {
@@ -131,7 +131,7 @@ DEFINE_HOOK(734A5F, CSF_AddOrOverrideLabel, 5)
 DEFINE_HOOK(734A97, CSF_SetIndex, 6)
 {
 	R->EDX(StringTable::get_Labels());
-	
+
 	if(CSFLoader::CSFCount > 0)
 		R->ECX(CSFLoader::NextValueIndex);
 	else

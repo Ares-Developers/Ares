@@ -4,8 +4,6 @@
 #include <CCINIClass.h>
 #include <BuildingClass.h>
 
-#include <Helpers/Macro.h>
-
 #include "../_Container.hpp"
 #include "../../Ares.h"
 
@@ -28,7 +26,7 @@ public:
 		HouseClass* OwnerBeforeRaid; //!< Contains the house which owned this building prior to it being raided and turned over to the raiding party.
 		bool isCurrentlyRaided; //!< Whether this building is currently occupied by someone not the actual owner of the structure.
 
-		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension(Canary, OwnerObject),
+		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			RubbleState(NULL), NormalState(NULL),
 			OwnerBeforeRaid(NULL), isCurrentlyRaided(false)
 			{ };

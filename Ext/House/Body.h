@@ -2,7 +2,6 @@
 #define HOUSE_EXT_H
 
 #include "../_Container.hpp"
-#include <Helpers/Macro.h>
 #include <Helpers/Template.h>
 
 #include <FactoryClass.h>
@@ -15,7 +14,7 @@ class HouseExt
 	public:
 	typedef HouseClass TT;
 
-	class ExtData : public Extension<TT> 
+	class ExtData : public Extension<TT>
 	{
 		public:
 			bool IonSensitive;
@@ -28,7 +27,7 @@ class HouseExt
 			BuildingClass *Factory_NavyType;
 			BuildingClass *Factory_AircraftType;
 
-		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension(Canary, OwnerObject),
+		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			IonSensitive(0),
 			FirewallActive(0),
 			FirewallRecalc(0),
@@ -45,7 +44,7 @@ class HouseExt
 		}
 
 		virtual size_t Size() const { return sizeof(*this); };
-		
+
 	};
 
 	static Container<HouseExt> ExtMap;

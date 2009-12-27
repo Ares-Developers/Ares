@@ -13,7 +13,7 @@
 #include <VoxClass.h>
 
 #include "../../Misc/Actions.h"
-#include "../../Helpers/Template.h"
+#include "../../Utilities/Template.h"
 
 #ifdef DEBUGBUILD
 #include "../../Misc/Debug.h"
@@ -33,7 +33,7 @@ class SWTypeExt
 public:
 	typedef SuperWeaponTypeClass TT;
 
-	class ExtData : public Extension<TT> 
+	class ExtData : public Extension<TT>
 	{
 	public:
 		// SpyPlane
@@ -68,7 +68,7 @@ public:
 		Valueable<MouseCursor> SW_Cursor;
 		Valueable<MouseCursor> SW_NoCursor;
 
-		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension(Canary, OwnerObject),
+		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			SpyPlane_TypeIndex (0),
 			SpyPlane_Count (1),
 			SpyPlane_Mission (mission_AttackAgain),
@@ -101,7 +101,7 @@ public:
 
 	static SuperWeaponTypeClass *CurrentSWType;
 
-	bool static _stdcall SuperClass_Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer);
+	bool static __stdcall SuperClass_Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer);
 };
 
 #endif

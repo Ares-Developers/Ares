@@ -28,8 +28,7 @@
 #include "../Ext/WeaponType/Body.h"
 #include "../Ext/WarheadType/Body.h"
 
-#include <Helpers/Macro.h>
-#include <Helpers/Template.h>
+#include <Utilities/Template.h>
 
 #ifdef DEBUGBUILD
 #include "../Ext/WarheadType/Body.h"
@@ -86,7 +85,7 @@ DEFINE_HOOK(441D25, BuildingClass_Destroy, 0A)
 // bugfix #379: Temporal friendly kills give veterancy
 DEFINE_HOOK(71A92A, _Temporal_AvoidFriendlies, 5)
 {
-	GET(TemporalClass *, Temp, ESI); 
+	GET(TemporalClass *, Temp, ESI);
 
 	HouseClass *hv = Temp->Target->Owner;
 	HouseClass *ho = Temp->Owner->Owner;
@@ -396,7 +395,7 @@ in void UnitClass::Destroy(UnitClass *this) {
 DEFINE_HOOK(48DED0, ShakeScreen, 1)
 {
 	GET(int, Force, ECX);
-	// shake the screen 
+	// shake the screen
 	return 0;
 }
 
@@ -510,13 +509,13 @@ DEFINE_HOOK(455E4C, HouseClass_FindRepairBay, 9)
 	 || BT->Helipad
 	 || BT->HoverPad && !RulesClass::Global()->SeparateAircraft
 	);
-	
+
 	if(isNotAcceptable) {
 		return 0x455EDE;
 	}
-	
+
 	eRadioCommands Response = Unit->SendCommand(rc_CanEnter, Bay);
-	
+
 	return Response == 0
 	 ? 0x455EDE
 	 : 0x455E5D

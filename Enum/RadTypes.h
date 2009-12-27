@@ -7,7 +7,7 @@
 #include <RulesClass.h>
 
 #include "_Enumerator.hpp"
-#include "../Helpers/Template.h"
+#include "../Utilities/Template.h"
 
 #ifdef DEBUGBUILD
 #include "../Misc/Debug.h"

@@ -1,3 +1,4 @@
+#include <ArrayClasses.h>
 #include "../Ares.h"
 #include "Prerequisites.h"
 
