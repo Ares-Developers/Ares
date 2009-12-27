@@ -122,7 +122,7 @@ DEFINE_HOOK(567AC1, MapClass_RevealArea1_DisplayTo, 0)
 }
 
 /* 	#218 - specific occupiers // comes in 0.2
-	#665 - raidable buildings */ //!\todo add owning house stuff
+	#665 - raidable buildings */
 DEFINE_HOOK(457D58, BuildingClass_CanBeOccupied_SpecificOccupiers, 6)
 {
 	GET(BuildingClass *, pThis, ESI);
@@ -196,44 +196,122 @@ DEFINE_HOOK(44725F, BuildingClass_GetCursorOverObject_TargetABuilding, 5)
 		BuildingExt::ExtData* curBuildExt = BuildingExt::ExtMap.Find(pThis);
 
 		if(curBuildExt->canTraverseTo(targetBuilding)) {
-			//! \todo show entry cursor, hooked up to traversal logic
+			//show entry cursor, hooked up to traversal logic in BuildingClass_GetCursorOverObject_TargetABuilding
+			// this is currently decomissioned in favor of the less hack-intensive rally-point based system
+			// see BuildingClass_UnloadOccupants_EachOccupantLeaves
 		}
 	}
 
 	return 0;
 }
 
-// #664: Advanced Rubble - prevent rubble from being sold, ever
 // #665: Raidable Buildings - prevent raided buildings from being sold while raided
-/* TODO: UI handler
-A_FINE_HOOK(4494D2, BuildingClass_IsSellable, 6)
+DEFINE_HOOK(4494D2, BuildingClass_IsSellable, 6)
 {
 	GET(BuildingClass *, B, ESI);
-	switch(decision) {
-		case Yes:
+	BuildingExt::ExtData* curBuildExt = BuildingExt::ExtMap.Find(B);
+
+	enum SellValues {FORCE_SELLABLE, FORCE_UNSELLABLE, DECIDE_NORMALLY} sellTreatment;
+	sellTreatment = DECIDE_NORMALLY; // default
+
+	if(curBuildExt->isCurrentlyRaided) {
+		sellTreatment = FORCE_UNSELLABLE; // enemy shouldn't be able to sell "borrowed" buildings
+	}
+
+	switch(sellTreatment) {
+		case FORCE_SELLABLE:
 			return 0x449532;
-		case No:
+		case FORCE_UNSELLABLE:
 			return 0x449536;
-		case DecideNormally:
+		case DECIDE_NORMALLY:
 		default:
 			return 0;
 	}
 }
-*/
 
-// NEED HOOK: In the moment of an occupant entering the building
-/*
-	if((The Building's Owner != The Infantry's Owner) && !Building ExtData->isCurrentlyRaided) {
-		Building ExtData->OwnerBeforeRaid = The Building's Owner;
-		Building ExtData->isCurrentlyRaided = true;
-		The Building->SetOwningHouse(The Infantry's Owner);
-	}
+/* Requested in issue #695
+	Instructions from D:
+	Flow:
+	Occupier is Remove()'d from the map,
+	added to the Occupants list,
+	<-- hook happens here
+	ThreatToCell is updated,
+	"EVA_StructureGarrisoned" is played if applicable.
 */
+DEFINE_HOOK(52297F, InfantryClass_GarrisonBuilding_OccupierEntered, 5)
+{
+    GET(InfantryClass *, pInf, ESI);
+    GET(BuildingClass *, pBld, EBP);
+    BuildingExt::ExtData* buildingExtData = BuildingExt::ExtMap.Find(pBld);
 
-// NEED HOOK: In the moment or after an occupant leaves the building (after Occupants.Count has been decreased)
-/*	if(Building ExtData->isCurrentlyRaided && !Building->Occupants.Count) {
-		The Building->SetOwningHouse(Building ExtData->OwnerBeforeRaid);
-		Building ExtData->OwnerBeforeRaid = NULL;
-		Building ExtData->isCurrentlyRaided = false;
+	// if building and owner are from different players, and the building is not in raided state
+	// change the building's owner and mark it as raided
+	if((pBld->Owner != pInf->Owner) && !buildingExtData->isCurrentlyRaided) {
+		buildingExtData->OwnerBeforeRaid = pBld->Owner;
+		buildingExtData->isCurrentlyRaided = true;
+		pBld->SetOwningHouse(pInf->Owner);
 	}
+    return 0;
+}
+
+/* Requested in issue #694
+	D: The first hook fires each time one of the occupants is ejected through the Deploy function -
+	the game doesn't have a builtin way to remove a single occupant, only all of them, so this is rigged inside that.*/
+DEFINE_HOOK(4580A9, BuildingClass_UnloadOccupants_EachOccupantLeaves, 6)
+{
+    GET(BuildingClass *, pBld, ESI);
+    GET(int, idxOccupant, EBP);
+
+    /*
+    - get current rally point target; if there is none, exit trench
+    - check if target cell has a building
+		- if so, check if it's the same building
+			- if so, do nothing
+			- if not, check building with canTraverseTo
+				- if true, doTraverseTo
+				- if false, do nothing
+		- if not, exit trench
+    */
+
+    if(0/* spawned in a different building */) {
+        return 0x45819D;
+    }
+    // do the normal kickout thing
+    return 0;
+}
+
+/* Requested in issue #694
+	D: The second hook fires each time one of the occupants is killed (Assaulter). Note that it doesn't catch the damage forwarding fatal hit.
 */
+DEFINE_HOOK(4586CA, BuildingClass_KillOccupiers_EachOccupierKilled, 6)
+{
+    GET(BuildingClass *, pBld, ESI);
+    GET(int, idxOccupant, EDI);
+    return 0;
+}
+
+/* Requested in issue #694
+	D: The third hook fires after all the occupants have been ejected (by the first hook).
+*/
+DEFINE_HOOK(4581CD, BuildingClass_UnloadOccupants_AllOccupantsHaveLeft, 6)
+{
+    GET(BuildingClass *, pBld, ESI);
+    BuildingExt::ExtData* buildingExtData = BuildingExt::ExtMap.Find(pBld);
+
+    buildingExtData->evalRaidStatus();
+
+    return 0;
+}
+
+/* Requested in issue #694
+	D: The fourth hook fires after all the occupants have been killed by the second hook.
+*/
+DEFINE_HOOK(458729, BuildingClass_KillOccupiers_AllOccupantsKilled, 6)
+{
+    GET(BuildingClass *, pBld, ESI);
+	BuildingExt::ExtData* buildingExtData = BuildingExt::ExtMap.Find(pBld);
+
+	buildingExtData->evalRaidStatus();
+
+    return 0;
+}

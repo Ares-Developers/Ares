@@ -189,6 +189,11 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 	}
 	if(pINI->ReadString(pID, "Rubble.Destroyed", "", Ares::readBuffer, Ares::readLength)) {
 		this->RubbleDestroyed = BuildingTypeClass::Find(Ares::readBuffer);
+		this->RubbleDestroyed->Capturable = false;
+		this->RubbleDestroyed->TogglePower = false;
+		this->RubbleDestroyed->Unsellable = true;
+		this->RubbleDestroyed->ClickRepairable = false;
+		this->RubbleDestroyed->CanBeOccupied = false;
 	}
 
 	this->_Initialized = is_Completed;

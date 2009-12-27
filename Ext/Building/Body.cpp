@@ -107,6 +107,8 @@ void BuildingExt::UpdateDisplayTo(BuildingClass *pThis) {
 
 	Rubble is set to full health on placing, since, no matter what we do in the backend, to the player, each pile of rubble is a new one.
 	The reconstructed building, on the other hand, is set to 1% of it's health, since it was just no reconstructed, and not freshly built or repaired yet.
+	UPDATE: Due to practical concerns, rubble health will be set to 99% of its health and be prevented from being click-repairable,
+	in order to ensure Engineers always get a repair cursor and can enter to repair.
 
 	Lastly, the function will set the current building as the alternate state on the other state, to ensure that, if the other state gets triggered back,
 	it is connected to this state. (e.g. when a building is turned into rubble, the normal state will set itself as the normal state of the rubble,
@@ -153,7 +155,7 @@ void BuildingExt::ExtData::RubbleYell(bool beingRepaired) {
 		if(!this->RubbleState) {
 			this->RubbleState = specific_cast<BuildingClass *>(pTypeData->RubbleDestroyed->CreateObject(currentBuilding->Owner));
 		}
-		this->RubbleState->Health = this->RubbleState->Type->Strength; // see description above
+		this->RubbleState->Health = this->RubbleState->Type->Strength * 0.99; // see description above
 		// Location should not be changed by removal
 		this->RubbleState->Put(&currentBuilding->Location, currentBuilding->Facing);
 
@@ -243,6 +245,16 @@ void BuildingExt::ExtData::doTraverseTo(BuildingClass* targetBuilding) {
 	while(currentBuilding->Occupants.Count && (targetBuilding->Occupants.Count < targetBuildingType->MaxNumberOccupants)) { // depending on Westwood's handling, this could explode when Size > 1 units are involved...but don't tell the users that
 		targetBuilding->Occupants.AddItem(currentBuilding->Occupants.GetItem(0));
 		currentBuilding->Occupants.RemoveItem(0); // maybe switch Add/Remove if the game gets pissy about multiple of them walking around
+	}
+
+	this->evalRaidStatus(); // if the traversal emptied the current building, it'll have to be returned to its owner
+}
+
+void BuildingExt::ExtData::evalRaidStatus() {
+	if(this->isCurrentlyRaided && !this->AttachedToObject->Occupants.Count) { // if the building is still marked as raided, but unoccupied, return it to its previous owner
+		this->AttachedToObject->SetOwningHouse(this->OwnerBeforeRaid);
+		this->OwnerBeforeRaid = NULL;
+		this->isCurrentlyRaided = false;
 	}
 }
 
@@ -354,12 +366,12 @@ void BuildingExt::buildLines(BuildingClass* theBuilding, CellStruct selectedCell
 // return -1 to let nature take its course
 signed int BuildingExt::GetImageFrameIndex(BuildingClass *pThis) {
 	BuildingTypeExt::ExtData *pData = BuildingTypeExt::ExtMap.Find(pThis->Type);
-	
+
 	if(pData->Firewall_Is) {
 		return pThis->FirestormWallFrame;
-		
+
 		/* this is the code the game uses to calculate the firewall's frame number when you place/remove sections... should be a good base for trench frames
-		
+
 			int frameIdx = 0;
 			CellClass *Cell = this->GetCell();
 			for(int direction = 0; direction <= 7; direction += 2) {
@@ -372,7 +384,7 @@ signed int BuildingExt::GetImageFrameIndex(BuildingClass *pThis) {
 
 		*/
 	}
-	
+
 	if(pData->IsTrench > -1) {
 		return 0;
 	}
