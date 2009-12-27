@@ -140,11 +140,15 @@ void BuildingExt::ExtData::RubbleYell(bool beingRepaired) {
 		this->NormalState->Health = static_cast<int>(this->NormalState->Type->Strength / 100); // see description above
 		this->NormalState->IsAlive = true; // assuming this is in the sense of "is not destroyed"
 		// Location should not be changed by removal
-		this->NormalState->Put(&currentBuilding->Location, currentBuilding->Facing);
-
-		// make sure we get back here if necessary
-		BuildingExt::ExtData* NormalExt = BuildingExt::ExtMap.Find(this->NormalState);
-		NormalExt->setRubble(currentBuilding);
+		if(this->NormalState->Put(&currentBuilding->Location, currentBuilding->Facing)) {
+			// make sure we get back here if necessary
+			BuildingExt::ExtData* NormalExt = BuildingExt::ExtMap.Find(this->NormalState);
+			NormalExt->setRubble(currentBuilding);
+		} else {
+			Debug::Log("Failed to place NormalState\n");
+			delete this->NormalState;
+			this->NormalState = NULL;
+		}
 
 	} else { // if we're not here to repair that thing, obviously, we're gonna crush it
 		if(!this->RubbleState && !pTypeData->RubbleDestroyed) {
@@ -157,11 +161,15 @@ void BuildingExt::ExtData::RubbleYell(bool beingRepaired) {
 		}
 		this->RubbleState->Health = this->RubbleState->Type->Strength * 0.99; // see description above
 		// Location should not be changed by removal
-		this->RubbleState->Put(&currentBuilding->Location, currentBuilding->Facing);
-
-		// make sure we get back here if necessary
-		BuildingExt::ExtData* RubbleExt = BuildingExt::ExtMap.Find(this->RubbleState);
-		RubbleExt->setNormal(currentBuilding);
+		if(this->RubbleState->Put(&currentBuilding->Location, currentBuilding->Facing)) {
+			// make sure we get back here if necessary
+			BuildingExt::ExtData* RubbleExt = BuildingExt::ExtMap.Find(this->RubbleState);
+			RubbleExt->setNormal(currentBuilding);
+		} else {
+			Debug::Log("Failed to place Rubble State\n");
+			delete this->RubbleState;
+			this->RubbleState = NULL;
+		}
 	}
 
 	return;

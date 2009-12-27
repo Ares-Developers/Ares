@@ -166,11 +166,15 @@ DEFINE_HOOK(44266B, BuildingClass_ReceiveDamage_AfterPreDeathSequence, 6)
 	BuildingExt::ExtData* BuildingAresData = BuildingExt::ExtMap.Find(pThis);
 	BuildingTypeExt::ExtData* destrBuildTE = BuildingTypeExt::ExtMap.Find(pThis->Type);
 
-	if(pThis->C4Timer.IsDone()) {
+	Debug::Log("Destroying trench\n");
+	if(!pThis->C4Timer.Ignorable()) {
+		Debug::Log("C4 Done\n");
 		// If this object has a rubble building set, turn, otherwise die
 		if(destrBuildTE->RubbleDestroyed) {
+			Debug::Log("Rubble destroyed\n");
 			BuildingAresData->RubbleYell();
 		} else {
+			Debug::Log("UnInit\n");
 			pThis->UnInit();
 			pThis->AfterDestruction();
 		}

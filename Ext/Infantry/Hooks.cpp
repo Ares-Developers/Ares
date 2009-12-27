@@ -35,9 +35,17 @@ DEFINE_HOOK(519FAF, InfantryClass_UpdatePosition_EngineerRepairsFriendly, 6)
 	bool do_normal_repair = true;
 
 	if(TargetTypeExtData->RubbleIntact) {
-		TargetExtData->RubbleYell(true);
 		do_normal_repair = false;
-		pThis->Scatter(0xB1CFE8, 1, 0); // since we're not gonna eat the Engineer, it has to move away; borrowed the arguments from other calls
+		pThis->Remove();
+		TargetExtData->RubbleYell(true);
+		if(pThis->Put(&pThis->Location, 0)) {
+			CoordStruct XYZ;
+			pThis->GetCoords(&XYZ);
+			DWORD pLocation = (DWORD)&XYZ;
+			pThis->Scatter(pLocation, 1, 0); // since we're not gonna eat the Engineer, it has to move away
+		} else {
+			pThis->UnInit();
+		}
 	}
 
 
