@@ -121,54 +121,38 @@ void BuildingExt::UpdateDisplayTo(BuildingClass *pThis) {
 */
 void BuildingExt::ExtData::RubbleYell(bool beingRepaired) {
 	BuildingClass* currentBuilding = this->AttachedToObject;
-	BuildingTypeClass* currentBuildingType = currentBuilding->Type;
-	BuildingTypeExt::ExtData *pTypeData = BuildingTypeExt::ExtMap.Find(currentBuildingType);
+	BuildingTypeExt::ExtData* pTypeData = BuildingTypeExt::ExtMap.Find(currentBuilding->Type);
+	BuildingClass* newState = NULL;
 
 	currentBuilding->Remove(); // only takes it off the map
 
 	if(beingRepaired) {
-		if(!this->NormalState && !pTypeData->RubbleIntact) {
-			Debug::Log("Warning! Advanced Rubble was supposed to be reconstructed but Ares could not obtain its normal state. Check if Rubble.Intact is set (correctly).");
+		if(!pTypeData->RubbleIntact) {
+			Debug::Log("Warning! Advanced Rubble was supposed to be reconstructed but Ares could not obtain its normal state. Check if Rubble.Intact is set (correctly).\n");
 			return;
 		}
 
-		// if we don't have a normal state building yet, create one.
-		if(!this->NormalState) {
-			this->NormalState = specific_cast<BuildingClass *>(pTypeData->RubbleIntact->CreateObject(currentBuilding->Owner));
-		}
-
-		this->NormalState->Health = static_cast<int>(this->NormalState->Type->Strength / 100); // see description above
-		this->NormalState->IsAlive = true; // assuming this is in the sense of "is not destroyed"
+		newState = specific_cast<BuildingClass *>(pTypeData->RubbleIntact->CreateObject(currentBuilding->Owner));
+		newState->Health = static_cast<int>(newState->Type->Strength / 100); // see description above
+		newState->IsAlive = true; // assuming this is in the sense of "is not destroyed"
 		// Location should not be changed by removal
-		if(this->NormalState->Put(&currentBuilding->Location, currentBuilding->Facing)) {
-			// make sure we get back here if necessary
-			BuildingExt::ExtData* NormalExt = BuildingExt::ExtMap.Find(this->NormalState);
-			NormalExt->setRubble(currentBuilding);
-		} else {
-			Debug::Log("Failed to place NormalState\n");
-			delete this->NormalState;
-			this->NormalState = NULL;
+		if(!newState->Put(&currentBuilding->Location, currentBuilding->Facing)) {
+			Debug::Log("Advanced Rubble: Failed to place normal state on map!\n");
+			delete newState;
 		}
 
 	} else { // if we're not here to repair that thing, obviously, we're gonna crush it
-		if(!this->RubbleState && !pTypeData->RubbleDestroyed) {
-			Debug::Log("Warning! Building was supposed to be turned into Advanced Rubble but Ares could not obtain its rubble state. Check if Rubble.Destroyed is set (correctly).");
+		if(!pTypeData->RubbleDestroyed) {
+			Debug::Log("Warning! Building was supposed to be turned into Advanced Rubble but Ares could not obtain its rubble state. Check if Rubble.Destroyed is set (correctly).\n");
 			return;
 		}
 
-		if(!this->RubbleState) {
-			this->RubbleState = specific_cast<BuildingClass *>(pTypeData->RubbleDestroyed->CreateObject(currentBuilding->Owner));
-		}
-		this->RubbleState->Health = this->RubbleState->Type->Strength * 0.99; // see description above
+		newState = specific_cast<BuildingClass *>(pTypeData->RubbleDestroyed->CreateObject(currentBuilding->Owner));
+		newState->Health = newState->Type->Strength * 0.99; // see description above
 		// Location should not be changed by removal
-		if(this->RubbleState->Put(&currentBuilding->Location, currentBuilding->Facing)) {
-			// make sure we get back here if necessary
-			BuildingExt::ExtData* RubbleExt = BuildingExt::ExtMap.Find(this->RubbleState);
-			RubbleExt->setNormal(currentBuilding);
-		} else {
-			Debug::Log("Failed to place Rubble State\n");
-			delete this->RubbleState;
-			this->RubbleState = NULL;
+		if(!newState->Put(&currentBuilding->Location, currentBuilding->Facing)) {
+			Debug::Log("Advanced Rubble: Failed to place rubble state on map!\n");
+			delete newState;
 		}
 	}
 
