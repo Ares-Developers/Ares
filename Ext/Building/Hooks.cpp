@@ -1,5 +1,6 @@
 #include "Body.h"
 #include "../BuildingType/Body.h"
+#include "../Techno/Body.h"
 #include <SpecificStructures.h>
 #include <ScenarioClass.h>
 #include <InfantryClass.h>
@@ -160,7 +161,9 @@ DEFINE_HOOK(457D58, BuildingClass_CanBeOccupied_SpecificOccupiers, 6)
 
 
 // #664: Advanced Rubble - turning into rubble part
-DEFINE_HOOK(44266B, BuildingClass_ReceiveDamage_AfterPreDeathSequence, 6)
+// moved to before the survivors get unlimboed, per sanity's requirements
+//A_FINE_HOOK(44266B, BuildingClass_ReceiveDamage_AfterPreDeathSequence, 6)
+DEFINE_HOOK(441F12, BuildingClass_Destroy_RubbleYell, 6)
 {
 	GET(BuildingClass *, pThis, ESI);
 	BuildingExt::ExtData* BuildingAresData = BuildingExt::ExtMap.Find(pThis);
@@ -185,7 +188,7 @@ DEFINE_HOOK(44266B, BuildingClass_ReceiveDamage_AfterPreDeathSequence, 6)
 		pThis->UnInit();
 		pThis->AfterDestruction();
 	}*/
-	return 0x442905;
+	return 0;
 }
 
 // #666: Trench Traversal - check if traversal is possible & cursor display
@@ -244,9 +247,12 @@ DEFINE_HOOK(4494D2, BuildingClass_IsSellable, 6)
 */
 DEFINE_HOOK(52297F, InfantryClass_GarrisonBuilding_OccupierEntered, 5)
 {
-    GET(InfantryClass *, pInf, ESI);
-    GET(BuildingClass *, pBld, EBP);
-    BuildingExt::ExtData* buildingExtData = BuildingExt::ExtMap.Find(pBld);
+	GET(InfantryClass *, pInf, ESI);
+	GET(BuildingClass *, pBld, EBP);
+	BuildingExt::ExtData* buildingExtData = BuildingExt::ExtMap.Find(pBld);
+	TechnoExt::ExtData* infExtData = TechnoExt::ExtMap.Find(pInf);
+
+	infExtData->GarrisonedIn = pBld;
 
 	// if building and owner are from different players, and the building is not in raided state
 	// change the building's owner and mark it as raided
@@ -255,7 +261,7 @@ DEFINE_HOOK(52297F, InfantryClass_GarrisonBuilding_OccupierEntered, 5)
 		buildingExtData->isCurrentlyRaided = true;
 		pBld->SetOwningHouse(pInf->Owner);
 	}
-    return 0;
+	return 0;
 }
 
 /* Requested in issue #694
@@ -263,8 +269,11 @@ DEFINE_HOOK(52297F, InfantryClass_GarrisonBuilding_OccupierEntered, 5)
 	the game doesn't have a builtin way to remove a single occupant, only all of them, so this is rigged inside that.*/
 DEFINE_HOOK(4580A9, BuildingClass_UnloadOccupants_EachOccupantLeaves, 6)
 {
-    GET(BuildingClass *, pBld, ESI);
-    GET(int, idxOccupant, EBP);
+	GET(BuildingClass *, pBld, ESI);
+	GET(int, idxOccupant, EBP);
+
+	TechnoExt::ExtData* infExtData = TechnoExt::ExtMap.Find(pBld->Occupants[idxOccupant]);
+	infExtData->GarrisonedIn = NULL;
 
     /*
     - get current rally point target; if there is none, exit trench

@@ -29,7 +29,7 @@ DEFINE_HOOK(46920B, BulletClass_Fire, 6)
 		WarheadTypeExt::IonExt[IB] = pData;
 	}
 
-	if(pData->IC_Duration > 0) {
+	if(pData->IC_Duration != 0) {
 		int countCells = CellSpread::NumCells(int(Bullet->WH->CellSpread));
 		for(int i = 0; i < countCells; ++i) {
 			CellStruct tmpCell = CellSpread::GetCell(i);
@@ -37,7 +37,21 @@ DEFINE_HOOK(46920B, BulletClass_Fire, 6)
 			CellClass *c = MapClass::Global()->GetCellAt(&tmpCell);
 			for(ObjectClass *curObj = c->GetContent(); curObj; curObj = curObj->NextObject) {
 				if(TechnoClass *curTechno = generic_cast<TechnoClass *>(curObj)) {
-					curTechno->IronCurtain(pData->IC_Duration, Bullet->Owner->Owner, 0);
+					if(curTechno->IronCurtainTimer.Ignorable()) {
+						if(pData->IC_Duration > 0) {
+							curTechno->IronCurtain(pData->IC_Duration, Bullet->Owner->Owner, 0);
+						}
+					} else {
+						if(pData->IC_Duration > 0) {
+							curTechno->IronCurtainTimer.TimeLeft += pData->IC_Duration;
+						} else {
+							if(curTechno->IronCurtainTimer.TimeLeft <= abs(pData->IC_Duration)) {
+								curTechno->IronCurtainTimer.TimeLeft = 1;
+							} else {
+								curTechno->IronCurtainTimer.TimeLeft += pData->IC_Duration;
+							}
+						}
+					}
 				}
 			}
 		}

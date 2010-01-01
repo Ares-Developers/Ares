@@ -125,10 +125,11 @@ void BuildingExt::ExtData::RubbleYell(bool beingRepaired) {
 	BuildingClass* newState = NULL;
 
 	currentBuilding->Remove(); // only takes it off the map
+	currentBuilding->DestroyNthAnim(BuildingAnimSlot::All);
 
 	if(beingRepaired) {
 		if(!pTypeData->RubbleIntact) {
-			Debug::Log("Warning! Advanced Rubble was supposed to be reconstructed but Ares could not obtain its normal state. Check if Rubble.Intact is set (correctly).\n");
+			Debug::Log("Warning! Advanced Rubble was supposed to be reconstructed but Ares could not obtain its normal state. Check if [%s]Rubble.Intact is set (correctly).\n", currentBuilding->Type->ID);
 			return;
 		}
 
@@ -140,10 +141,11 @@ void BuildingExt::ExtData::RubbleYell(bool beingRepaired) {
 			Debug::Log("Advanced Rubble: Failed to place normal state on map!\n");
 			delete newState;
 		}
+		currentBuilding->UnInit();
 
 	} else { // if we're not here to repair that thing, obviously, we're gonna crush it
 		if(!pTypeData->RubbleDestroyed) {
-			Debug::Log("Warning! Building was supposed to be turned into Advanced Rubble but Ares could not obtain its rubble state. Check if Rubble.Destroyed is set (correctly).\n");
+			Debug::Log("Warning! Building was supposed to be turned into Advanced Rubble but Ares could not obtain its rubble state. Check if [%s]Rubble.Destroyed is set (correctly).\n", currentBuilding->Type->ID);
 			return;
 		}
 

@@ -36,8 +36,10 @@ bool BulletExt::ExtData::DamageOccupants() {
 		BulletTypeExt::ExtData* TheBulletTypeExt = BulletTypeExt::ExtMap.Find(TheBullet->Type);
 		BuildingTypeExt::ExtData* BuildingAresData = BuildingTypeExt::ExtMap.Find(Building->Type);
 
+/*
 		Debug::Log("Bullet %s is about to damage occupants of %s: occupants #%d, UC.PT = %lf\n",
 			TheBullet->Type->ID, Building->Type->ID, Building->Occupants.Count, BuildingAresData->UCPassThrough);
+*/
 
 		if(Building->Occupants.Count && BuildingAresData->UCPassThrough) { // only work when UCPassThrough is set, as per community vote in thread #1392
 			Debug::Log("SubjToTrenches = %d\n", TheBulletTypeExt->SubjectToTrenches);
