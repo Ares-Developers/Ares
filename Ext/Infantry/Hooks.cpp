@@ -67,3 +67,13 @@ DEFINE_HOOK(51DF38, InfantryClass_Remove, A)
 
 	return 0;
 }
+
+/*
+A_FINE_HOOK(518434, InfantryClass_ReceiveDamage_SkipDeathAnim, 7)
+{
+	GET(InfantryClass *, pThis, ESI);
+	GET_STACK(ObjectClass *, pAttacker, 0xE0);
+	bool skipInfDeathAnim = false;
+	return skipDeathAnim ? 0x5185F1 : 0;
+}
+*/

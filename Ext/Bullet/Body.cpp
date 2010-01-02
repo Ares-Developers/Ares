@@ -3,6 +3,7 @@
 
 #include "Body.h"
 #include "../BulletType/Body.h"
+#include "../Building/Body.h"
 #include "../BuildingType/Body.h"
 
 const DWORD Extension<BulletClass>::Canary = 0x87654321;
