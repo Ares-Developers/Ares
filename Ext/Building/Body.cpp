@@ -264,8 +264,8 @@ bool BuildingExt::ExtData::isLinkable() {
 bool BuildingExt::ExtData::canLinkTo(BuildingClass* targetBuilding) {
 	BuildingClass* currentBuilding = this->AttachedToObject;
 
-	// Different owners
-	if(currentBuilding->Owner != targetBuilding->Owner) { //<-- see thread 1424
+	// Different owners // and owners not allied
+	if((currentBuilding->Owner != targetBuilding->Owner) && !currentBuilding->Owner->IsAlliedWith(targetBuilding->Owner)) { //<-- see thread 1424
 		return false;
 	}
 

@@ -70,6 +70,9 @@ bool BulletExt::ExtData::DamageOccupants() {
 					int result = Building->Occupants[poorBastard]->ReceiveDamage(&adjustedDamage, 0, TheBullet->WH, TheBullet->Owner, false, true, TheBullet->GetOwningHouse());
 					Debug::Log("Received damage, %d\n", result);
 				}
+
+				BuildingExt::ExtData* SpecificBuildingExt = BuildingExt::ExtMap.Find(Building); // BuildingAresData is for the BuildingType, for some reason
+				SpecificBuildingExt->evalRaidStatus(); // if the last occupant was killed and this building was raided, it needs to be returned to its owner. (Bug #700)
 				return true;
 			} else {
 				return false; // no damage dealt b/c bullet was SubjectToTrenches=yes and UC.PassThrough did not apply
