@@ -4,6 +4,7 @@
 #include "../Building/Body.h"
 #include "../BuildingType/Body.h"
 #include "../Techno/Body.h"
+#include "Body.h"
 
 // #664: Advanced Rubble - reconstruction part: Check
 /* -- TODO: UI handler
@@ -68,12 +69,14 @@ DEFINE_HOOK(51DF38, InfantryClass_Remove, A)
 	return 0;
 }
 
-/*
-A_FINE_HOOK(518434, InfantryClass_ReceiveDamage_SkipDeathAnim, 7)
+DEFINE_HOOK(518434, InfantryClass_ReceiveDamage_SkipDeathAnim, 7)
 {
 	GET(InfantryClass *, pThis, ESI);
 	GET_STACK(ObjectClass *, pAttacker, 0xE0);
-	bool skipInfDeathAnim = false;
+	InfantryExt::ExtData* trooperAres = InfantryExt::ExtMap.Find(pThis);
+	bool skipInfDeathAnim = false; // leaving this default in case this is expanded in the future
+
+	skipInfDeathAnim = trooperAres->IsOccupant();
+
 	return skipDeathAnim ? 0x5185F1 : 0;
 }
-*/
