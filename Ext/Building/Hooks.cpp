@@ -138,7 +138,7 @@ DEFINE_HOOK(457D58, BuildingClass_CanBeOccupied_SpecificOccupiers, 6)
 
 		if(!isFull && !isIneligible) {
 			if(pThis->Owner != pInf->Owner) {
-				can_occupy = (pThis->Owner->Type->MultiplayPassive || pBuildTypeExt->BunkerRaidable) && isEmpty; // The building switches owner after the first occupant enters, so this check should not interfere with the player who captured it, only prevent others from entering it while it's occupied. (Bug #699)
+				can_occupy = (pThis->Owner->Type->MultiplayPassive || (pBuildTypeExt->BunkerRaidable && isEmpty)); // The building switches owner after the first occupant enters, so this check should not interfere with the player who captured it, only prevent others from entering it while it's occupied. (Bug #699)
 			} else {
 				can_occupy = true;
 			}
