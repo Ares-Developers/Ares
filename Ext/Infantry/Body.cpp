@@ -1,9 +1,10 @@
 #include <InfantryClass.h>
 #include <ScenarioClass.h>
 
+#include <BuildingClass.h>
+#include <CellClass.h>
+
 #include "Body.h"
-#include "../Building/Body.h"
-#include "../BuildingType/Body.h"
 
 bool InfantryExt::ExtData::IsOccupant() {
 	InfantryClass* thisTrooper = this->AttachedToObject;
