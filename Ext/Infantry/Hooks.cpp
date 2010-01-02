@@ -73,10 +73,15 @@ DEFINE_HOOK(518434, InfantryClass_ReceiveDamage_SkipDeathAnim, 7)
 {
 	GET(InfantryClass *, pThis, ESI);
 	GET_STACK(ObjectClass *, pAttacker, 0xE0);
-	InfantryExt::ExtData* trooperAres = InfantryExt::ExtMap.Find(pThis);
-	bool skipInfDeathAnim = false; // leaving this default in case this is expanded in the future
+//	InfantryExt::ExtData* trooperAres = InfantryExt::ExtMap.Find(pThis);
+//	bool skipInfDeathAnim = false; // leaving this default in case this is expanded in the future
 
-	skipInfDeathAnim = trooperAres->IsOccupant();
+	// there is not InfantryExt ExtMap yet!
+	// too much space would get wasted since there is only four bytes worth of data we need to store per object
+	// so those four bytes get stashed in Techno Map instead. they will get their own map if there's ever enough data to warrant it
+	TechnoExt::ExtData* pData = TechnoExt::ExtMap.Find(pThis);
 
-	return skipDeathAnim ? 0x5185F1 : 0;
+	bool skipInfDeathAnim = pData->GarrisonedIn;
+
+	return skipInfDeathAnim ? 0x5185F1 : 0;
 }

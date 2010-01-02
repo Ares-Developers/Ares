@@ -26,12 +26,12 @@ DEFINE_HOOK(4FEA60, HouseClass_AI_UnitProduction, 0)
 {
 	CRAZY_MACRO_GO_AWAY_1(0x4FEEDA, Unit);
 
-	int nParentCountryIndex = HouseTypeClass::FindIndex(pThis->Type->get_ParentCountry());
+	int nParentCountryIndex = HouseTypeClass::FindIndex(pThis->Type->ParentCountry);
 	DWORD flagsOwner = 1 << nParentCountryIndex;
 
 	UnitTypeClass* pHarvester = NULL;
-	for(int i = 0; i < RulesClass::Global()->get_HarvesterUnit()->Count; i++) {
-		UnitTypeClass* pCurrent = RulesClass::Global()->get_HarvesterUnit()->GetItem(i);
+	for(int i = 0; i < RulesClass::Instance->HarvesterUnit.Count; i++) {
+		UnitTypeClass* pCurrent = RulesClass::Instance->HarvesterUnit[i];
 		if(pCurrent->OwnerFlags & flagsOwner) {
 			pHarvester = pCurrent;
 			break;
@@ -42,15 +42,15 @@ DEFINE_HOOK(4FEA60, HouseClass_AI_UnitProduction, 0)
 		//Buildable harvester found
 		int nHarvesters = pThis->CountResourceGatherers;
 
-		int mMaxHarvesters = 
-			RulesClass::Global()->get_HarvestersPerRefinery()->GetItem(AIDiff)
-				 * pThis->get_CountResourceDestinations();
-		if(!pThis->FirstBuildableFromArray(RulesClass::Global()->get_BuildRefinery())) {
-			mMaxHarvesters = 
-				RulesClass::Global()->get_AISlaveMinerNumber()->GetItem(AIDiff);
+		int mMaxHarvesters =
+			RulesClass::Instance->HarvestersPerRefinery[AIDiff]
+				 * pThis->CountResourceDestinations;
+		if(!pThis->FirstBuildableFromArray(&RulesClass::Instance->BuildRefinery)) {
+			mMaxHarvesters =
+				RulesClass::Instance->AISlaveMinerNumber[AIDiff];
 		}
 
-		if(pThis->IQLevel2 >= RulesClass::Global()->get_Harvester() && !pThis->unknown_bool_242) {
+		if(pThis->IQLevel2 >= RulesClass::Instance->Harvester && !pThis->unknown_bool_242) {
 
 			bool bPlayerControl;
 
@@ -68,11 +68,10 @@ DEFINE_HOOK(4FEA60, HouseClass_AI_UnitProduction, 0)
 		}
 	} else {
 		//No buildable harvester found
-		int mMaxHarvesters = RulesClass::Global()->get_AISlaveMinerNumber()->GetItem(AIDiff);
+		int mMaxHarvesters = RulesClass::Instance->AISlaveMinerNumber[AIDiff];
 
 		if(pThis->CountResourceGatherers < mMaxHarvesters) {
-			BuildingTypeClass* pBT = pThis->FirstBuildableFromArray(RulesClass::Global()->get_BuildRefinery());
-			if(pBT) {
+			if(BuildingTypeClass* pBT = pThis->FirstBuildableFromArray(&RulesClass::Instance->BuildRefinery)) {
 				//awesome way to find out whether this building is a slave miner, isn't it? ...
 				UnitTypeClass* pSlaveMiner = pBT->UndeploysInto;
 				if(pSlaveMiner) {

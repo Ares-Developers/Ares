@@ -60,11 +60,11 @@ DEFINE_HOOK(66D55E, Buf_General, 6)
 	PARSE_VECTOR_N(section, Rules, SecretInfantry, InfantryTypeClass);
 	PARSE_VECTOR_N(section, Rules, SecretUnits, UnitTypeClass);
 	PARSE_VECTOR_N(section, Rules, SecretBuildings, BuildingTypeClass);
-	DWORD Sum = Rules->get_SecretInfantry()->Count
-		+ Rules->get_SecretUnits()->Count
-		+ Rules->get_SecretBuildings()->Count;
+	DWORD Sum = Rules->SecretInfantry.Count
+		+ Rules->SecretUnits.Count
+		+ Rules->SecretBuildings.Count;
 
-	Rules->set_SecretSum(Sum);
+	Rules->SecretSum = Sum;
 
 	PARSE_VECTOR_N(section, Rules, HarvesterUnit, UnitTypeClass);
 	PARSE_VECTOR_N(section, Rules, BaseUnit, UnitTypeClass);
@@ -96,7 +96,7 @@ DEFINE_HOOK(66F7C0, Buf_PPA, 9)
 	GET(RulesClass *, Rules, ESI);
 
 	GET(UnitTypeClass *, Pt, EAX); // recreating overwritten bits
-	Rules->set_PrerequisiteProcAlternate(Pt);
+	Rules->PrerequisiteProcAlternate = Pt;
 
 	return 0x66F9FA;
 }

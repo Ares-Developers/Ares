@@ -437,7 +437,7 @@ DEFINE_HOOK(747BBD, UnitTypeClass_LoadFromINI, 5)
 {
 	GET(UnitTypeClass *, U, ESI);
 
-	U->set_AltImage(R->EAX<SHPStruct *>()); // jumping over, so replicated
+	U->AltImage = R->EAX<SHPStruct *>(); // jumping over, so replicated
 	return U->Gunner
 		? 0x747BD7
 		: 0x747E90;

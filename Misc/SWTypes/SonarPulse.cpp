@@ -22,7 +22,7 @@ bool SW_SonarPulse::CanFireAt(CellStruct *pCoords)
 
 bool SW_SonarPulse::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
 {
-	SuperWeaponTypeClass *pType = pThis->get_Type();
+	SuperWeaponTypeClass *pType = pThis->Type;
 	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pType);
 
 	if(!pData) {

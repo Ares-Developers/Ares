@@ -17,13 +17,13 @@ void TechnoExt::SpawnSurvivors(TechnoClass *pThis, TechnoClass *pKiller, bool Se
 {
 	TechnoTypeClass *Type = pThis->GetTechnoType();
 
-	HouseClass *pOwner = pThis->get_Owner();
+	HouseClass *pOwner = pThis->Owner;
 	TechnoTypeExt::ExtData *pData = TechnoTypeExt::ExtMap.Find(Type);
 	TechnoExt::ExtData *pSelfData = TechnoExt::ExtMap.Find(pThis);
 //	RETZ_UNLESS(pData->Survivors_PilotChance || pData->Survivors_PassengerChance);
 	RETZ_UNLESS(!pSelfData->Survivors_Done);
 
-	CoordStruct loc = *pThis->get_Location();
+	CoordStruct loc = pThis->Location;
 
 	int chance = pData->Survivors_PilotChance.BindTo(pThis)->Get();
 	// remove check for Crewed if it is accounted for outside of this function
@@ -37,14 +37,14 @@ void TechnoExt::SpawnSurvivors(TechnoClass *pThis, TechnoClass *pKiller, bool Se
 					InfantryClass *Pilot = reinterpret_cast<InfantryClass *>(PilotType->CreateObject(pOwner));
 
 					Pilot->Health = (PilotType->Strength / 2);
-					Pilot->get_Veterancy()->Veterancy = pThis->get_Veterancy()->Veterancy;
+					Pilot->get_Veterancy()->Veterancy = pThis->Veterancy.Veterancy;
 					CoordStruct destLoc, tmpLoc = loc;
 					CellStruct tmpCoords = CellSpread::GetCell(ScenarioClass::Instance->Random.RandomRanged(0, 7));
 
 					tmpLoc.X += tmpCoords.X * 144;
 					tmpLoc.Y += tmpCoords.Y * 144;
 
-					CellClass * tmpCell = MapClass::Global()->GetCellAt(&tmpLoc);
+					CellClass * tmpCell = MapClass::Instance->GetCellAt(&tmpLoc);
 
 					tmpCell->FindInfantrySubposition(&destLoc, &tmpLoc, 0, 0, 0);
 
@@ -60,10 +60,10 @@ void TechnoExt::SpawnSurvivors(TechnoClass *pThis, TechnoClass *pKiller, bool Se
 	}
 
 	chance = pData->Survivors_PassengerChance.BindTo(pThis)->Get();
-	while(pThis->get_Passengers()->FirstPassenger) {
-		FootClass *passenger;
+	while(pThis->Passengers.FirstPassenger) {
+		FootClass *passenger = NULL;
 		bool toDelete = 1;
-		passenger = pThis->get_Passengers()->RemoveFirstPassenger();
+		passenger = pThis->Passengers.RemoveFirstPassenger();
 		if(chance) {
 			if(ScenarioClass::Instance->Random.RandomRanged(1, 100) <= chance) {
 				CoordStruct destLoc, tmpLoc = loc;
@@ -72,7 +72,7 @@ void TechnoExt::SpawnSurvivors(TechnoClass *pThis, TechnoClass *pKiller, bool Se
 				tmpLoc.X += tmpCoords.X * 128;
 				tmpLoc.Y += tmpCoords.Y * 128;
 
-				CellClass * tmpCell = MapClass::Global()->GetCellAt(&tmpLoc);
+				CellClass * tmpCell = MapClass::Instance->GetCellAt(&tmpLoc);
 
 				tmpCell->FindInfantrySubposition(&destLoc, &tmpLoc, 0, 0, 0);
 
@@ -93,7 +93,7 @@ void TechnoExt::SpawnSurvivors(TechnoClass *pThis, TechnoClass *pKiller, bool Se
 bool TechnoExt::ParadropSurvivor(FootClass *Survivor, CoordStruct *loc, bool Select)
 {
 	bool success;
-	int floorZ = MapClass::Global()->GetCellFloorHeight(loc);
+	int floorZ = MapClass::Instance->GetCellFloorHeight(loc);
 	Debug::Log("Spawning survivor: loc->Z = %X, floorZ = %X\n", loc->Z, floorZ);
 	++Unsorted::SomeMutex;
 	if(loc->Z - floorZ > 100) {
