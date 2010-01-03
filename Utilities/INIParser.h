@@ -157,7 +157,7 @@ public:
 
 	double ParseDouble(double nDefault) {
 		double buffer = nDefault;
-		sscanf(this->buffer(), "%f", &buffer);
+		sscanf(this->buffer(), "%lf", &buffer);
 		if(strchr(this->buffer(), '%')) {
 			buffer *= 0.01;
 		}

@@ -1,8 +1,6 @@
 #ifndef ARES_MACRO_H
 #define ARES_MACRO_H
 
-#include <Helpers/Macro.h>
-
 #if 0
 
 // DEPRECATED, use Valueable<T> instead
@@ -198,7 +196,7 @@ IF_STR(ini_section, #ini_key) { \
 	FOR_STRTOK{ \
 		int idx = objtype::FindIndex(cur); if(idx > -1) { buf |= (1 << idx); } \
 	} \
-	obj->set_ ## obj_key (buf); \
+	obj-> ## obj_key  = buf; \
 }
 
 #define PARSE_VECTOR_INT(ini_section, ini_key, obj) \

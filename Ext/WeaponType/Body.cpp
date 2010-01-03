@@ -70,15 +70,15 @@ void WeaponTypeExt::ExtData::LoadFromINIFile(WeaponTypeExt::TT *pThis, CCINIClas
 		this->Wave_Color.Read(&exINI, section, "Wave.Color");
 	}
 
-	this->Wave_Reverse[idxVehicle]   = 
+	this->Wave_Reverse[idxVehicle]   =
 		pINI->ReadBool(section, "Wave.ReverseAgainstVehicles", this->Wave_Reverse[idxVehicle]);
-	this->Wave_Reverse[idxAircraft]  = 
+	this->Wave_Reverse[idxAircraft]  =
 		pINI->ReadBool(section, "Wave.ReverseAgainstAircraft", this->Wave_Reverse[idxAircraft]);
-	this->Wave_Reverse[idxBuilding] = 
+	this->Wave_Reverse[idxBuilding] =
 		pINI->ReadBool(section, "Wave.ReverseAgainstBuildings", this->Wave_Reverse[idxBuilding]);
-	this->Wave_Reverse[idxInfantry]  = 
+	this->Wave_Reverse[idxInfantry]  =
 		pINI->ReadBool(section, "Wave.ReverseAgainstInfantry", this->Wave_Reverse[idxInfantry]);
-	this->Wave_Reverse[idxOther]  = 
+	this->Wave_Reverse[idxOther]  =
 		pINI->ReadBool(section, "Wave.ReverseAgainstOthers", this->Wave_Reverse[idxOther]);
 
 	if(pThis->IsElectricBolt) {

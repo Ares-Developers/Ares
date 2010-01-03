@@ -38,14 +38,6 @@ public:
 		return this->Value != other;
 	};
 
-	void Set(T val) {
-		this->Value = val;
-	}
-
-	void SetEx(T* val) {
-		this->Value = *val;
-	}
-
 	virtual T Get() {
 		return this->Value;
 	}
@@ -54,9 +46,17 @@ public:
 		return &this->Value;
 	}
 
+	virtual void Set(T val) {
+		this->Value = val;
+	}
+
+	virtual void SetEx(T* val) {
+		this->Value = *val;
+	}
+
 	void Read(INI_EX *parser, const char* pSection, const char* pKey) {
 		ImplementThisFunction();
-	}
+	};
 
 	void Parse(INI_EX *parser, const char* pSection, const char* pKey, bool Allocate = 0) {
 		if(parser->ReadString(pSection, pKey)) {
@@ -85,20 +85,20 @@ public:
 		return this->GetEx();
 	}
 
-	void Set(T val) {
-		this->Value = val;
-	}
-
-	void SetEx(T* val) {
-		this->Value = *val;
-	}
-
 	virtual T Get() {
 		return this->Value;
 	}
 
+	virtual void Set(T val) {
+		this->Value = val;
+	}
+
 	virtual T* GetEx() {
 		return &this->Value;
+	}
+
+	virtual void SetEx(T* val) {
+		this->Value = *val;
 	}
 
 	void Read(INI_EX *parser, const char* pSection, const char* pKey) {
@@ -113,8 +113,8 @@ public:
 
 /*
  * This one is for data that defaults to some original flag value but can be overwritten with custom values
- * Bind() it to a data address from where to take the value 
- * (e.g. &RulesClass::Global()->RadBeamColor for custom-colorizable rad waves) 
+ * Bind() it to a data address from where to take the value
+ * (e.g. &RulesClass::Global()->RadBeamColor for custom-colorizable rad waves)
  * and Set() it to a fixed value
  */
 
@@ -123,7 +123,7 @@ class Customizable : public Valueable<T> {
 	bool Customized;
 	T*   Default;
 public:
-	Customizable(T* alias = NULL) : Valueable(T()), Customized(false), Default(alias) {};
+	Customizable(T* alias = NULL) : Valueable<T>(T()), Customized(false), Default(alias) {};
 
 	void Bind(T* to) {
 		if(!this->Customized) {
@@ -131,12 +131,26 @@ public:
 		}
 	}
 
-	void Set(T val) {
+	virtual T Get() {
+		return this->Customized
+		 ? this->Value
+		 : this->Default ? *this->Default : T()
+		;
+	}
+
+	virtual void Set(T val) {
 		this->Customized = true;
 		this->Value = val;
 	}
 
-	void SetEx(T* val) {
+	virtual T* GetEx() {
+		return this->Customized
+		 ? &this->Value
+		 : this->Default
+		;
+	}
+
+	virtual void SetEx(T* val) {
 		this->Customized = true;
 		this->Value = *val;
 	}
@@ -148,20 +162,6 @@ public:
 			}
 			this->Customized = true;
 		}
-	}
-
-	virtual T Get() {
-		return this->Customized
-		 ? this->Value
-		 : this->Default ? *this->Default : T()
-		;
-	}
-
-	virtual T* GetEx() {
-		return this->Customized
-		 ? &this->Value
-		 : this->Default
-		;
 	}
 };
 
@@ -211,7 +211,7 @@ public:
 		_snprintf(FlagName, buflen, BaseFlag, "Elite");
 		Placeholder.Read(&exINI, Section, FlagName);
 		this->Elite = Placeholder.Get();
-		
+
 		delete[] FlagName;
 	}
 
