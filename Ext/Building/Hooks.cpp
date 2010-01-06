@@ -4,6 +4,7 @@
 #include <SpecificStructures.h>
 #include <ScenarioClass.h>
 #include <InfantryClass.h>
+#include <CellClass.h>
 #include <cmath>
 
 /* #633 - spy building infiltration */
@@ -268,7 +269,8 @@ DEFINE_HOOK(52297F, InfantryClass_GarrisonBuilding_OccupierEntered, 5)
 /* Requested in issue #694
 	D: The first hook fires each time one of the occupants is ejected through the Deploy function -
 	the game doesn't have a builtin way to remove a single occupant, only all of them, so this is rigged inside that.*/
-DEFINE_HOOK(4580A9, BuildingClass_UnloadOccupants_EachOccupantLeaves, 6)
+// This is CURRENTLY UNUSED - look at BuildingClass_UnloadOccupants_AboutToStartUnloading and BuildingClass_UnloadOccupants_AllOccupantsHaveLeft instead
+/*A_FINE_HOOK(4580A9, BuildingClass_UnloadOccupants_EachOccupantLeaves, 6)
 {
 	GET(BuildingClass *, pBld, ESI);
 	GET(int, idxOccupant, EBP);
@@ -276,7 +278,7 @@ DEFINE_HOOK(4580A9, BuildingClass_UnloadOccupants_EachOccupantLeaves, 6)
 	TechnoExt::ExtData* infExtData = TechnoExt::ExtMap.Find(pBld->Occupants[idxOccupant]);
 	infExtData->GarrisonedIn = NULL;
 
-    /*
+    / *
     - get current rally point target; if there is none, exit trench
     - check if target cell has a building
 		- if so, check if it's the same building
@@ -285,14 +287,14 @@ DEFINE_HOOK(4580A9, BuildingClass_UnloadOccupants_EachOccupantLeaves, 6)
 				- if true, doTraverseTo
 				- if false, do nothing
 		- if not, exit trench
-    */
+    * /
 
-    if(0/* spawned in a different building */) {
+    if(0/ * spawned in a different building * /) {
         return 0x45819D;
     }
     // do the normal kickout thing
     return 0;
-}
+}*/
 
 /* Requested in issue #694
 	D: The second hook fires each time one of the occupants is killed (Assaulter). Note that it doesn't catch the damage forwarding fatal hit.
@@ -301,6 +303,10 @@ DEFINE_HOOK(4586CA, BuildingClass_KillOccupiers_EachOccupierKilled, 6)
 {
     GET(BuildingClass *, pBld, ESI);
     GET(int, idxOccupant, EDI);
+    // I don't think anyone ever actually tested Assaulter=yes with raiding, putting this here 'cause it's likely needed
+	BuildingExt::ExtData* buildingExtData = BuildingExt::ExtMap.Find(pBld);
+    buildingExtData->evalRaidStatus();
+
     return 0;
 }
 
@@ -328,4 +334,22 @@ DEFINE_HOOK(458729, BuildingClass_KillOccupiers_AllOccupantsKilled, 6)
 	buildingExtData->evalRaidStatus();
 
     return 0;
+}
+
+// #666: Trench Traversal - check if traversal is possible & traverse, eject or do nothing, depending on the result
+DEFINE_HOOK(457DF5, BuildingClass_UnloadOccupants_AboutToStartUnloading, 6)
+{
+	GET(BuildingClass *, currentBuilding, ESI);
+	/*CellClass* rallyPoint =; // wherever the rally point points to
+	if(BuildingClass* targetBuilding = rallyPoint->GetBuilding()) {
+		BuildingExt::ExtData* currentBuildingExt = BuildingExt::ExtMap.Find(currentBuilding);
+		if(currentBuildingExt->canTraverseTo(targetBuilding)) {
+			currentBuildingExt->doTraverseTo(targetBuilding); // also calls evalRaidStatus()
+		} else {
+			// see if we can find a way to abort eviction here
+		}
+	}
+
+	*/
+	return 0;
 }
