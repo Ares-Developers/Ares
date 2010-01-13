@@ -29,7 +29,7 @@ public:
 	virtual void Execute(DWORD dwUnk)
 	{
 		if(Debug::bLog) {
-			Debug::LogFileClose();
+			Debug::LogFileClose(666);
 			Debug::bLog = false;
 			MessageListClass::PrintMessage(L"Debug logging OFF");
 		} else {

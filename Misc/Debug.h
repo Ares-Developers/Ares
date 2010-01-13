@@ -30,7 +30,7 @@ public:
 
 	static void MakeLogFile();
 	static void LogFileOpen();
-	static void LogFileClose();
+	static void LogFileClose(int tag);
 	static void LogFileRemove();
 	static void DumpObj(byte *data, size_t len);
 	static void DumpStack(REGISTERS *R, size_t len);

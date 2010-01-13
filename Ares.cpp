@@ -89,7 +89,7 @@ void __stdcall Ares::CmdLineParse(char** ppArgs,int nNumArgs)
 {
 	char* pArg;
 
-	Debug::bLog = false;
+//	Debug::bLog = false;
 	bNoCD = false;
 	bNoLogo = false;
 
@@ -111,8 +111,8 @@ void __stdcall Ares::CmdLineParse(char** ppArgs,int nNumArgs)
 		}
 	}
 
-	if(!Debug::bLog) {
-		Debug::LogFileRemove();
+	if(Debug::bLog) {
+		Debug::LogFileOpen();
 	}
 }
 
@@ -124,7 +124,6 @@ void __stdcall Ares::PostGameInit()
 void __stdcall Ares::ExeRun()
 {
 	Ares::readLength = BUFLEN;
-	Debug::LogFileOpen();
 
 	Unsorted::Savegame_Magic = SAVEGAME_MAGIC;
 	Game::bVideoBackBuffer = false;
@@ -135,7 +134,7 @@ void __stdcall Ares::ExeTerminate()
 {
 	GlobalControls::CloseConfig();
 	Debug::Log("XTACH\n");
-	Debug::LogFileClose();
+	Debug::LogFileClose(111);
 }
 
 //A new SendPDPlane function

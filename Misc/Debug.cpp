@@ -12,6 +12,9 @@ void (_cdecl* Debug::Log)(const char* pFormat, ...) =
 	(void (__cdecl *)(const char *,...))0x4068E0;
 
 void Debug::DevLog(Debug::Severity severity, const char* Format, ...) {
+	if(!pLogFile) {
+		return;
+	}
 	va_list args;
 	fprintf(pLogFile, "[Developer %s]", Debug::SeverityString(severity));
 	va_start(args, Format);
@@ -35,20 +38,26 @@ const char * Debug::SeverityString(Debug::Severity severity) {
 
 void Debug::LogFileOpen()
 {
-	LogFileClose();
 	MakeLogFile();
+	LogFileClose(999);
 
 	pLogFile = _wfopen(LogFileTempName, L"w");
+	if(!pLogFile) {
+		wchar_t msg[100] = L"\0";
+		wsprintfW(msg, L"Log file failed to open. Error code = %X", errno);
+		MessageBoxW(Game::hWnd, LogFileTempName, msg, MB_OK | MB_ICONEXCLAMATION);
+		ExitProcess(1);
+	}
 }
 
-void Debug::LogFileClose()
+void Debug::LogFileClose(int tag)
 {
 	if(Debug::pLogFile) {
+		fprintf(Debug::pLogFile, "Closing log file on request %d", tag);
 		fclose(Debug::pLogFile);
 		CopyFileW(LogFileTempName, LogFileName, FALSE);
+		Debug::pLogFile = NULL;
 	}
-
-	Debug::pLogFile = NULL;
 }
 
 void Debug::MakeLogFile() {
@@ -64,10 +73,10 @@ void Debug::MakeLogFile() {
 		swprintf(LogFileName, MAX_PATH, L"%s\\debug", path);
 		CreateDirectoryW(LogFileName, NULL);
 
-		swprintf(LogFileTempName, MAX_PATH, L"%s\\debug\\debug.log", 
+		swprintf(LogFileTempName, MAX_PATH, L"%s\\debug\\debug.log",
 			path);
 
-		swprintf(LogFileName, MAX_PATH, L"%s\\debug\\debug.%04u%02u%02u-%02u%02u%02u.log", 
+		swprintf(LogFileName, MAX_PATH, L"%s\\debug\\debug.%04u%02u%02u-%02u%02u%02u.log",
 			path, time.wYear, time.wMonth, time.wDay, time.wHour, time.wMinute, time.wSecond);
 
 		made = 1;
@@ -76,7 +85,7 @@ void Debug::MakeLogFile() {
 
 void Debug::LogFileRemove()
 {
-	LogFileClose();
+	LogFileClose(555);
 	DeleteFileW(LogFileTempName);
 }
 
@@ -147,7 +156,7 @@ LONG WINAPI Debug::ExceptionHandler(int code, LPEXCEPTION_POINTERS pExs)
 {
 	Debug::FreeMouse();
 	Debug::Log("D::EH\n");
-	bool g_ExtendedMinidumps = true;
+	SetWindowTextW(Game::hWnd, L"Fatal Error - Yuri's Revenge");
 //	if (IsDebuggerAttached()) return EXCEPTION_CONTINUE_SEARCH;
 	if (pExs->ExceptionRecord->ExceptionCode == ERROR_MOD_NOT_FOUND ||
 		pExs->ExceptionRecord->ExceptionCode == ERROR_PROC_NOT_FOUND)
@@ -181,42 +190,44 @@ LONG WINAPI Debug::ExceptionHandler(int code, LPEXCEPTION_POINTERS pExs)
 		case EXCEPTION_STACK_OVERFLOW:
 		case 0xE06D7363: // exception thrown and not caught
 		{
-			Debug::Log("D::EH - Dump\n");
+			if(MessageBoxW(Game::hWnd, L"Yuri's Revenge has encountered a fatal error!\nWould you like to create a full crash report for the developers?", L"Fatal Error!", MB_YESNO | MB_ICONERROR) == IDYES) {
+				bool g_ExtendedMinidumps = true;
+				Debug::Log("D::EH - Dump\n");
 
-			wchar_t filename[MAX_PATH];
-			wchar_t path[MAX_PATH];
-		
-			HANDLE dumpFile;
-			SYSTEMTIME time;
-			MINIDUMP_EXCEPTION_INFORMATION expParam;
-			
-			GetLocalTime(&time);
-			GetCurrentDirectoryW(MAX_PATH, path);
+				wchar_t filename[MAX_PATH];
+				wchar_t path[MAX_PATH];
 
-			swprintf(filename, MAX_PATH, L"%s\\debug", path);
-			CreateDirectoryW(filename, NULL);
+				HANDLE dumpFile;
+				SYSTEMTIME time;
+				MINIDUMP_EXCEPTION_INFORMATION expParam;
 
-			swprintf(filename, MAX_PATH, g_ExtendedMinidumps ? L"%s\\debug\\extcrashdump.%04u%02u%02u-%02u%02u%02u.dmp" : L"%s\\debug\\crashdump.%04u%02u%02u-%02u%02u%02u.dmp", 
-							path, 
-							time.wYear, time.wMonth, time.wDay, 
-							time.wHour, time.wMinute, time.wSecond);
+				GetLocalTime(&time);
+				GetCurrentDirectoryW(MAX_PATH, path);
 
-			dumpFile = CreateFileW(filename, GENERIC_READ | GENERIC_WRITE, 
-							FILE_SHARE_WRITE | FILE_SHARE_READ, NULL, CREATE_ALWAYS, FILE_FLAG_WRITE_THROUGH, NULL);
+				swprintf(filename, MAX_PATH, L"%s\\debug", path);
+				CreateDirectoryW(filename, NULL);
 
-			expParam.ThreadId = GetCurrentThreadId();
-			expParam.ExceptionPointers = pExs;
-			expParam.ClientPointers = FALSE;
+				swprintf(filename, MAX_PATH, g_ExtendedMinidumps ? L"%s\\debug\\extcrashdump.%04u%02u%02u-%02u%02u%02u.dmp" : L"%s\\debug\\crashdump.%04u%02u%02u-%02u%02u%02u.dmp",
+								path,
+								time.wYear, time.wMonth, time.wDay,
+								time.wHour, time.wMinute, time.wSecond);
 
-			MINIDUMP_TYPE type = (MINIDUMP_TYPE) ((g_ExtendedMinidumps ? MiniDumpWithFullMemory : (MiniDumpWithDataSegs | MiniDumpWithIndirectlyReferencedMemory)));
+				dumpFile = CreateFileW(filename, GENERIC_READ | GENERIC_WRITE,
+								FILE_SHARE_WRITE | FILE_SHARE_READ, NULL, CREATE_ALWAYS, FILE_FLAG_WRITE_THROUGH, NULL);
 
-			MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), dumpFile, type, &expParam, NULL, NULL);
-			CloseHandle(dumpFile);
+				expParam.ThreadId = GetCurrentThreadId();
+				expParam.ExceptionPointers = pExs;
+				expParam.ClientPointers = FALSE;
 
-			Debug::FatalError("The cause of this error could not be determined.\r\n"
-				"A crash dump should have been created in your game's \\debug subfolder.\r\n"
-				"You can submit that to the developers (along with debug.txt and syringe.log).", 0);
+				MINIDUMP_TYPE type = (MINIDUMP_TYPE) ((g_ExtendedMinidumps ? MiniDumpWithFullMemory : (MiniDumpWithDataSegs | MiniDumpWithIndirectlyReferencedMemory)));
 
+				MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), dumpFile, type, &expParam, NULL, NULL);
+				CloseHandle(dumpFile);
+
+				Debug::FatalError("The cause of this error could not be determined.\r\n"
+					"A crash dump should have been created in your game's \\debug subfolder.\r\n"
+					"You can submit that to the developers (along with debug.txt and syringe.log).", 0);
+			}
 			ExitProcess(pExs->ExceptionRecord->ExceptionCode); // Exit.
 			break;
 		}
