@@ -241,6 +241,8 @@ LONG WINAPI Debug::ExceptionHandler(int code, LPEXCEPTION_POINTERS pExs)
 };
 
 void Debug::FreeMouse() {
+	Game::sub_53E6B0();
+
 	MouseClass::Instance->SetPointer(0, 0);
 	WWMouseClass::Instance->ReleaseMouse();
 
