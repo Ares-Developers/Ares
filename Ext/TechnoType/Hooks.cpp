@@ -39,18 +39,3 @@ DEFINE_HOOK(715320, TechnoTypeClass_LoadFromINI_EarlyReader, 6)
 
 	return 0;
 }
-
-DEFINE_HOOK(6A9A2A, TabCameoListClass_Draw, 6)
-{
-	GET_STACK(TechnoTypeClass *, pType, STACK_OFFS(0x4C4, 0x458));
-
-	if(pType) {
-		if(TechnoTypeExt::ExtData *pData = TechnoTypeExt::ExtMap.Find(pType)) {
-			ConvertClass *pPalette = pData->CameoConvert ? pData->CameoConvert : FileSystem::CAMEO_PAL;
-
-			R->EDX<ConvertClass *>(pPalette);
-			return 0x6A9A30;
-		}
-	}
-	return 0;
-}

@@ -14,6 +14,7 @@
 
 #include "../../Misc/Actions.h"
 #include "../../Utilities/Template.h"
+#include "../../Utilities/Constructs.h"
 
 #ifdef DEBUGBUILD
 #include "../../Misc/Debug.h"
@@ -68,6 +69,8 @@ public:
 		Valueable<MouseCursor> SW_Cursor;
 		Valueable<MouseCursor> SW_NoCursor;
 
+		CustomPalette CameoPal;
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			SpyPlane_TypeIndex (0),
 			SpyPlane_Count (1),
@@ -85,7 +88,8 @@ public:
 			SW_TypeCustom (false),
 			SW_AutoFire (false),
 			SW_FireToShroud (true),
-			SW_RadarEvent (false)
+			SW_RadarEvent (false),
+			CameoPal()
 			{ };
 
 		virtual ~ExtData() { };

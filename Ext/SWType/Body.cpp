@@ -16,7 +16,7 @@ void SWTypeExt::ExtData::InitializeConstants(SuperWeaponTypeClass *pThis)
 	}
 
 	MouseCursor *Cursor = &this->SW_Cursor;
-	Cursor->Frame = 53; // Attack 
+	Cursor->Frame = 53; // Attack
 	Cursor->Count = 5;
 	Cursor->Interval = 5; // test?
 	Cursor->MiniFrame = 52;
@@ -94,9 +94,11 @@ void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass
 		NewSWType *swt = NewSWType::GetNthItem(pThis->Type);
 		swt->LoadFromINI(this, pThis, pINI);
 	}
+
+	this->CameoPal.LoadFromINI(pINI, pThis->ID, "SidebarPalette");
 }
 
-bool _stdcall SWTypeExt::SuperClass_Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
+bool __stdcall SWTypeExt::SuperClass_Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
 {
 	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pThis->Type);
 
@@ -167,7 +169,7 @@ DEFINE_HOOK(6CE800, SuperWeaponTypeClass_SaveLoad_Prefix, A)
 DEFINE_HOOK_AGAIN(6CE8D0, SuperWeaponTypeClass_SaveLoad_Prefix, 8)
 {
 	GET_STACK(SWTypeExt::TT*, pItem, 0x4);
-	GET_STACK(IStream*, pStm, 0x8); 
+	GET_STACK(IStream*, pStm, 0x8);
 
 	Container<SWTypeExt>::SavingObject = pItem;
 	Container<SWTypeExt>::SavingStream = pStm;

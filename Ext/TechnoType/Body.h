@@ -6,6 +6,7 @@
 #include "../../Ares.h"
 #include "../_Container.hpp"
 #include "../../Utilities/Template.h"
+#include "../../Utilities/Constructs.h"
 
 class TechnoTypeExt
 {
@@ -65,9 +66,7 @@ public:
 		InfantryTypeClass * Operator; //!< Saves a pointer to an InfantryType required to be a passenger of this unit in order for it to work. Defaults to NULL. \sa TechnoClass_Update_CheckOperators, bool IsAPromiscuousWhoreAndLetsAnyoneRideIt
 		bool IsAPromiscuousWhoreAndLetsAnyoneRideIt; //!< If this is true, Operator= is not checked, and the object will work with any passenger, provided there is one. \sa InfantryTypeClass * Operator
 
-		// custom paletted cameos
-		ConvertClass *CameoConvert;
-		BytePalette *CameoPalette;
+		CustomPalette CameoPal;
 
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			Survivors_PilotChance (NULL),
@@ -93,14 +92,10 @@ public:
 			Parachute_Anim(&RulesClass::Instance->Parachute),
 			Operator (NULL),
 			IsAPromiscuousWhoreAndLetsAnyoneRideIt (false),
-			CameoConvert(NULL),
-			CameoPalette(NULL)
+			CameoPal()
 			{ this->Insignia.SetAll(NULL); };
 
-		virtual ~ExtData() {
-			delete this->CameoConvert;
-			delete this->CameoPalette;
-		};
+		virtual ~ExtData() {};
 
 		virtual size_t Size() const { return sizeof(*this); };
 

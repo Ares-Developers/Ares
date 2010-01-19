@@ -192,12 +192,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 		}
 	}
 
-	if(CCINIClass::INI_Art->ReadString(pThis->ImageFile, "CameoPalette", "", buffer, BUFLEN)) {
-		delete this->CameoPalette;
-		delete this->CameoConvert;
-		ConvertClass::CreateFromFile(buffer, &this->CameoPalette, &this->CameoConvert);
-	}
-
+	this->CameoPal.LoadFromINI(CCINIClass::INI_Art, pThis->ImageFile, "CameoPalette");
 
 	// quick fix - remove after the rest of weapon selector code is done
 	return;
