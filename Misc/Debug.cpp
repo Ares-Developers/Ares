@@ -191,6 +191,10 @@ LONG WINAPI Debug::ExceptionHandler(int code, LPEXCEPTION_POINTERS pExs)
 		case 0xE06D7363: // exception thrown and not caught
 		{
 			if(MessageBoxW(Game::hWnd, L"Yuri's Revenge has encountered a fatal error!\nWould you like to create a full crash report for the developers?", L"Fatal Error!", MB_YESNO | MB_ICONERROR) == IDYES) {
+
+				HCURSOR loadCursor = LoadCursor(NULL, IDC_WAIT);
+				SetClassLong(Game::hWnd, GCL_HCURSOR, (LONG)loadCursor);
+				SetCursor(loadCursor);
 				bool g_ExtendedMinidumps = true;
 				Debug::Log("D::EH - Dump\n");
 
@@ -224,6 +228,9 @@ LONG WINAPI Debug::ExceptionHandler(int code, LPEXCEPTION_POINTERS pExs)
 				MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), dumpFile, type, &expParam, NULL, NULL);
 				CloseHandle(dumpFile);
 
+				loadCursor = LoadCursor(NULL, IDC_ARROW);
+				SetClassLong(Game::hWnd, GCL_HCURSOR, (LONG)loadCursor);
+				SetCursor(loadCursor);
 				Debug::FatalError("The cause of this error could not be determined.\r\n"
 					"A crash dump should have been created in your game's \\debug subfolder.\r\n"
 					"You can submit that to the developers (along with debug.txt and syringe.log).", 0);
@@ -241,58 +248,40 @@ LONG WINAPI Debug::ExceptionHandler(int code, LPEXCEPTION_POINTERS pExs)
 };
 
 void Debug::FreeMouse() {
-	Game::sub_53E6B0();
+	static bool freed = false;
+	if(!freed) {
+		Game::sub_53E6B0();
 
-	MouseClass::Instance->SetPointer(0, 0);
-	WWMouseClass::Instance->ReleaseMouse();
+		MouseClass::Instance->SetPointer(0, 0);
+		WWMouseClass::Instance->ReleaseMouse();
 
-	ShowCursor(1);
+		ShowCursor(1);
+
+		freed = true;
+	}
 }
 
 void Debug::FatalError(const char *Message, bool Exit) {
 	Debug::FreeMouse();
-	strncpy(Dialogs::ExceptDetailedMessage, Message, 0x400);
+	wsprintfW(Dialogs::ExceptDetailedMessage,
+		L"Ares has encountered an internal error and is unable to continue normally. Please visit our website at http://ares.strategy-x.com for updates and support.\n\n"
+		L"%hs",
+		Message, 0x400);
 
 	Debug::Log("\nFatal Error:\n");
 	Debug::Log(Message);
 
+/*
 	LPCDLGTEMPLATEA DialogBox = reinterpret_cast<LPCDLGTEMPLATEA>(Game::GetResource(247, 5));
 
 	DialogBoxIndirectParamA(Game::hInstance, DialogBox, Game::hWnd, &Debug::FatalDialog_WndProc, 0);
-
+*/
+	MessageBoxW(Game::hWnd,
+		Dialogs::ExceptDetailedMessage,
+		L"Fatal Error - Yuri's Revenge", MB_OK | MB_ICONERROR);
 	if(Exit) {
 		Debug::Log("Exiting...\n");
 		ExitProcess(1);
-	}
-}
-
-int __stdcall Debug::FatalDialog_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-	if(uMsg > WM_COMMAND) {
-		if(uMsg == WM_MOVING) {
-			Game::sub_776D80((tagRECT *)lParam);
-		}
-		return 0;
-	}
-	switch(uMsg) {
-		case WM_COMMAND:
-			if(wParam == 1153) {
-				EndDialog(hWnd, 1153);
-			}
-			return 0;
-		case WM_CLOSE:
-			EndDialog(hWnd, 1153);
-			Game::sub_53E420(hWnd);
-			return 0;
-		case WM_INITDIALOG:
-			SetDlgItemTextA(hWnd, Dialogs::ExceptControlID, Dialogs::ExceptDetailedMessage);
-			SetFocus(hWnd);
-			if ( Game::hWnd ) {
-				Game::CenterWindowIn(hWnd, Game::hWnd);
-			}
-			ShowWindow(hWnd, 1);
-			Game::sub_53E3C0(hWnd);
-		default:
-			return 0;
 	}
 }
 

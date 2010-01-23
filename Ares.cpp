@@ -89,7 +89,7 @@ void __stdcall Ares::CmdLineParse(char** ppArgs,int nNumArgs)
 {
 	char* pArg;
 
-//	Debug::bLog = false;
+	Debug::bLog = false;
 	bNoCD = false;
 	bNoLogo = false;
 
@@ -209,8 +209,9 @@ bool __stdcall DllMain(HANDLE hInstance,DWORD dwReason,LPVOID v)
 	switch(dwReason) {
 		case DLL_PROCESS_ATTACH:
 			Ares::hInstance = hInstance;
-			Debug::LogFileOpen();
-			Debug::Log("ATTACH\n");
+//			Debug::LogFileOpen();
+//			Debug::Log("ATTACH\n");
+			Debug::LogFileRemove();
 			break;
 		case DLL_PROCESS_DETACH:
 //			Debug::Log("DETACH\n");

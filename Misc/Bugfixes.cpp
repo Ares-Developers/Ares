@@ -356,14 +356,15 @@ DEFINE_HOOK(737430, UnitClass_ReceivedRadioCommand, 5)
 }
 //*/
 
-DEFINE_HOOK(69AE90, GameData_SetProgress, 5)
+/*
+A_FINE_HOOK(69AE90, GameData_SetProgress, 5)
 {
 	GET_STACK(int, progress, 0x4);
 	Debug::Log("Progress is now %d%%\n", progress);
 
 	return 0;
 }
-
+*/
 /*
 A_FINE_HOOK(447348, BuildingClass_GetCursorOverObject_CY, 6)
 {
@@ -392,12 +393,14 @@ in void UnitClass::Destroy(UnitClass *this) {
 		TacticalClass::ShakeScreen(v8);
 	}
 }*/
-DEFINE_HOOK(48DED0, ShakeScreen, 1)
+/*
+A_FINE_HOOK(48DED0, ShakeScreen, 1)
 {
 	GET(int, Force, ECX);
 	// shake the screen
 	return 0;
 }
+*/
 
 DEFINE_HOOK(6CF3CF, sub_6CF350, 8)
 {
@@ -415,26 +418,28 @@ DEFINE_HOOK(6CF3CF, sub_6CF350, 8)
 	return 0;
 }
 
-DEFINE_HOOK(6CF2C0, SwizzleManagerClass_Here_I_Am, 5)
+/*
+A_FINE_HOOK(6CF2C0, SwizzleManagerClass_Here_I_Am, 5)
 {
 //	Debug::Log("Swizzle::Here_I_Am(%X, %X)\n", R->get_StackVar32(0x8), R->get_StackVar32(0xC));
 //	Debug::DumpStack(R, 0x40);
 	return 0;
 }
 
-DEFINE_HOOK(6CF240, SwizzleManagerClass_Swizzle, 6)
+A_FINE_HOOK(6CF240, SwizzleManagerClass_Swizzle, 6)
 {
 //	Debug::Log("Swizzle::Swizzle(%X)\n", R->get_StackVar32(0x8));
 //	Debug::DumpStack(R, 0x40);
 	return 0;
 }
 
-DEFINE_HOOK(6CF350, SwizzleManagerClass_Convert, 7)
+A_FINE_HOOK(6CF350, SwizzleManagerClass_Convert, 7)
 {
 //	Debug::Log("Swizzle::Convert()\n");
 //	Debug::DumpStack(R, 0x100);
 	return 0;
 }
+*/
 
 // testing lightpost draw changes
 // the constants are the same as in the unmodded game - modify them to alter the way the lightposts illuminate cells
@@ -477,6 +482,7 @@ DEFINE_HOOK(6873AB, INIClass_ReadScenario_EarlyLoadRules, 5)
 	}
 }
 
+// allowhiresmodes
 DEFINE_HOOK(5FA41D, GameOptionsClass_CTOR, 5)
 {
 	GET(byte *, Options, EAX);

@@ -5,7 +5,7 @@
 class Dialogs {
 public:
 	static const char *StatusString;
-	static char ExceptDetailedMessage[0x400];
+	static wchar_t ExceptDetailedMessage[0x400];
 	static const int ExceptControlID;
 };
 

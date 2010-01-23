@@ -41,7 +41,7 @@
 #include "../Misc/Debug.h"
 
 const char * Dialogs::StatusString = NULL;
-char Dialogs::ExceptDetailedMessage[0x400] = "";
+wchar_t Dialogs::ExceptDetailedMessage[0x400] = L"\0";
 const int Dialogs::ExceptControlID = ARES_TXT_IE_DETAILS;
 
 //4A3B4B, 9 - NOTE: This overrides a call, but it's absolute, so don't worry.
