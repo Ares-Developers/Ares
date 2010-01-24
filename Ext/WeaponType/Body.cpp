@@ -128,10 +128,11 @@ void WeaponTypeExt::ExtData::LoadFromINIFile(WeaponTypeExt::TT *pThis, CCINIClas
 */
 }
 
-void WeaponTypeExt::PointerGotInvalid(void *ptr) {
-	AnnounceInvalidPointerMap(BombExt, ptr);
-	AnnounceInvalidPointerMap(WaveExt, ptr);
-	AnnounceInvalidPointerMap(RadSiteExt, ptr);
+void Container<WeaponTypeExt>::InvalidatePointer(void *ptr) {
+	AnnounceInvalidPointerMap(WeaponTypeExt::BombExt, ptr);
+	AnnounceInvalidPointerMap(WeaponTypeExt::WaveExt, ptr);
+	AnnounceInvalidPointerMap(WeaponTypeExt::BoltExt, ptr);
+	AnnounceInvalidPointerMap(WeaponTypeExt::RadSiteExt, ptr);
 }
 
 // =============================

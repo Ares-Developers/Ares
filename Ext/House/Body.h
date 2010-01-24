@@ -45,6 +45,14 @@ class HouseExt
 
 		virtual size_t Size() const { return sizeof(*this); };
 
+		virtual void InvalidatePointer(void *ptr) {
+			AnnounceInvalidPointer(Factory_AircraftType, ptr);
+			AnnounceInvalidPointer(Factory_BuildingType, ptr);
+			AnnounceInvalidPointer(Factory_VehicleType, ptr);
+			AnnounceInvalidPointer(Factory_NavyType, ptr);
+			AnnounceInvalidPointer(Factory_InfantryType, ptr);
+		}
+
 	};
 
 	static Container<HouseExt> ExtMap;

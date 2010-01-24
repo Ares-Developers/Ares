@@ -99,6 +99,9 @@ public:
 		virtual void LoadFromINIFile(TT *pThis, CCINIClass *pINI);
 		virtual void InitializeConstants(TT *pThis);
 		virtual void InitializeRuled(TT *pThis);
+
+		virtual void InvalidatePointer(void *ptr) {
+		}
 	};
 
 	static Container<SWTypeExt> ExtMap;

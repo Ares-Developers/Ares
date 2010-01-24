@@ -112,6 +112,10 @@ public:
 		virtual void LoadFromINIFile(TT *pThis, CCINIClass *pINI);
 		virtual void Initialize(TT* pThis);
 
+		virtual void InvalidatePointer(void *ptr) {
+			AnnounceInvalidPointer(Rad_Type, ptr);
+		}
+
 		bool IsWave(WeaponTypeClass *pThis) {
 			return pThis->IsSonic || pThis->IsMagBeam || this->Wave_IsLaser || this->Wave_IsBigLaser;
 		}
@@ -165,8 +169,6 @@ public:
 		};
 
 	static void ModifyWaveColor(WORD *src, WORD *dst, int Intensity, WaveClass *Wave);
-
-	static void PointerGotInvalid(void *ptr);
 };
 
 typedef hash_map<BombClass *, WeaponTypeExt::ExtData *> hash_bombExt;

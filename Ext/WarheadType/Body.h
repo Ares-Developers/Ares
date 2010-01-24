@@ -76,21 +76,17 @@ public:
 		virtual size_t Size() const { return sizeof(*this); };
 
 		virtual void LoadFromINIFile(TT *pThis, CCINIClass *pINI);
+
+		virtual void InvalidatePointer(void *ptr) {
+		}
+
 	};
 
 	static Container<WarheadTypeExt> ExtMap;
 
-	// evil hack
 	static WarheadTypeClass *Temporal_WH;
 
 	static hash_map<IonBlastClass *, WarheadTypeExt::ExtData *> IonExt;
-
-	static void PointerGotInvalid(void *ptr);
-/*
-	EXT_P_DECLARE(WarheadTypeClass);
-	EXT_FUNCS(WarheadTypeClass);
-	EXT_INI_FUNCS(WarheadTypeClass);
-*/
 };
 
 typedef hash_map<IonBlastClass *, WarheadTypeExt::ExtData *> hash_ionExt;

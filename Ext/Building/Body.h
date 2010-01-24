@@ -33,6 +33,10 @@ public:
 
 		virtual size_t Size() const { return sizeof(*this); };
 
+		virtual void InvalidatePointer(void *ptr) {
+			AnnounceInvalidPointer(OwnerBeforeRaid, ptr);
+		}
+
 		// related to Advanced Rubble
 		void RubbleYell(bool beingRepaired = false); // This function triggers back and forth between rubble states.
 

@@ -37,7 +37,10 @@ class RulesExt
 		virtual void LoadAfterTypeData(TT *pThis, CCINIClass *pINI);
 		virtual void InitializeConstants(TT *pThis);
 		virtual void Initialize(TT *pThis);
-	};
+
+		virtual void InvalidatePointer(void *ptr) {
+		}
+};
 
 private:
 	static ExtData *Data;

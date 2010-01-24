@@ -64,9 +64,9 @@ void WarheadTypeExt::ExtData::LoadFromINIFile(WarheadTypeClass *pThis, CCINIClas
 	this->Ripple_Radius = pINI->ReadInteger(section, "Ripple.Radius", this->Ripple_Radius);
 };
 
-void WarheadTypeExt::PointerGotInvalid(void *ptr) {
-	AnnounceInvalidPointerMap(IonExt, ptr);
-	AnnounceInvalidPointer(Temporal_WH, ptr);
+void Container<WarheadTypeExt>::InvalidatePointer(void *ptr) {
+	AnnounceInvalidPointerMap(WarheadTypeExt::IonExt, ptr);
+	AnnounceInvalidPointer(WarheadTypeExt::Temporal_WH, ptr);
 }
 
 // =============================
@@ -91,7 +91,7 @@ void Container<WarheadTypeExt>::Load(WarheadTypeClass *pThis, IStream *pStm) {
 	WarheadTypeExt::ExtData* pData = this->LoadKey(pThis, pStm);
 
 	pData->Verses.Load(pStm, 0);
-	
+
 	SWIZZLE(pData->Temporal_WarpAway);
 }
 
@@ -118,7 +118,7 @@ DEFINE_HOOK(75E0C0, WarheadTypeClass_SaveLoad_Prefix, 8)
 DEFINE_HOOK_AGAIN(75E2C0, WarheadTypeClass_SaveLoad_Prefix, 5)
 {
 	GET_STACK(WarheadTypeExt::TT*, pItem, 0x4);
-	GET_STACK(IStream*, pStm, 0x8); 
+	GET_STACK(IStream*, pStm, 0x8);
 
 	Container<WarheadTypeExt>::SavingObject = pItem;
 	Container<WarheadTypeExt>::SavingStream = pStm;

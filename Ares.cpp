@@ -9,10 +9,11 @@
 
 #include "Ext/Building/Body.h"
 #include "Ext/BuildingType/Body.h"
-//include "Ext/Bullet/Body.h"
+#include "Ext/Bullet/Body.h"
 #include "Ext/BulletType/Body.h"
 #include "Ext/House/Body.h"
 #include "Ext/HouseType/Body.h"
+#include "Ext/Infantry/Body.h"
 #include "Ext/Side/Body.h"
 #include "Ext/SWType/Body.h"
 #include "Ext/Techno/Body.h"
@@ -303,10 +304,19 @@ DEFINE_HOOK(7258D0, AnnounceInvalidPointer, 6)
 {
 	GET(void *, DEATH, ECX);
 
-	TechnoExt::PointerGotInvalid(DEATH);
-	TechnoTypeExt::PointerGotInvalid(DEATH);
-	WarheadTypeExt::PointerGotInvalid(DEATH);
-	WeaponTypeExt::PointerGotInvalid(DEATH);
+	INVALID_CTR(BuildingExt, DEATH);
+	INVALID_CTR(BuildingTypeExt, DEATH);
+	INVALID_CTR(BulletExt, DEATH);
+	INVALID_CTR(BulletTypeExt, DEATH);
+	INVALID_CTR(HouseExt, DEATH);
+	INVALID_CTR(HouseTypeExt, DEATH);
+	INVALID_CTR(InfantryExt, DEATH);
+	INVALID_CTR(SideExt, DEATH);
+	INVALID_CTR(SWTypeExt, DEATH);
+	INVALID_CTR(TechnoExt, DEATH);
+	INVALID_CTR(TechnoTypeExt, DEATH);
+	INVALID_CTR(WarheadTypeExt, DEATH);
+	INVALID_CTR(WeaponTypeExt, DEATH);
 
 	return 0;
 }

@@ -112,10 +112,10 @@ bool TechnoExt::ParadropSurvivor(FootClass *Survivor, CoordStruct *loc, bool Sel
 	// TODO: Tag
 }
 
-void TechnoExt::PointerGotInvalid(void *ptr) {
-	AnnounceInvalidPointerMap(AlphaExt, ptr);
-	AnnounceInvalidPointerMap(SpotlightExt, ptr);
-	AnnounceInvalidPointer(ActiveBuildingLight, ptr);
+void Container<TechnoExt>::InvalidatePointer(void *ptr) {
+	AnnounceInvalidPointerMap(TechnoExt::AlphaExt, ptr);
+	AnnounceInvalidPointerMap(TechnoExt::SpotlightExt, ptr);
+	AnnounceInvalidPointer(TechnoExt::ActiveBuildingLight, ptr);
 }
 
 // =============================

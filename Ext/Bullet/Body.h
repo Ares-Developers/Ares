@@ -30,6 +30,10 @@ public:
 		virtual size_t Size() const { return sizeof(*this); };
 
 		bool DamageOccupants();
+
+		virtual void InvalidatePointer(void *ptr) {
+		}
+
 	};
 
 	static Container<BulletExt> ExtMap;

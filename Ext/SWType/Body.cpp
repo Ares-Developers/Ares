@@ -137,6 +137,10 @@ bool __stdcall SWTypeExt::SuperClass_Launch(SuperClass* pThis, CellStruct* pCoor
 	return NewSWType::GetNthItem(TypeIdx)->Launch(pThis, pCoords, IsPlayer);
 }
 
+void Container<SWTypeExt>::InvalidatePointer(void *ptr) {
+	AnnounceInvalidPointer(SWTypeExt::CurrentSWType, ptr);
+}
+
 // =============================
 // load/save
 

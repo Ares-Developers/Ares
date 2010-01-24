@@ -6,6 +6,8 @@
 
 #include "Body.h"
 
+Container<InfantryExt> InfantryExt::ExtMap;
+
 bool InfantryExt::ExtData::IsOccupant() {
 	InfantryClass* thisTrooper = this->AttachedToObject;
 

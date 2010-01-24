@@ -18,14 +18,16 @@ public:
 	{
 	public:
 
-
-		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension(Canary, OwnerObject)
+		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject)
 			{ };
 
 		virtual ~ExtData() {
 		}
 
 		virtual size_t Size() const { return sizeof(*this); };
+
+		virtual void InvalidatePointer(void *ptr) {
+		}
 
 		bool IsOccupant(); //!< Determines whether this InfantryClass is currently an occupant inside a BuildingClass.
 	};

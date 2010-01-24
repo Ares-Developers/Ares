@@ -101,7 +101,11 @@ public:
 
 		virtual void LoadFromINIFile(TT *pThis, CCINIClass *pINI);
 		virtual void Initialize(TT *pThis);
-	};
+
+		virtual void InvalidatePointer(void *ptr) {
+			AnnounceInvalidPointer(Operator, ptr);
+		}
+};
 
 	static Container<TechnoTypeExt> ExtMap;
 

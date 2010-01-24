@@ -52,6 +52,9 @@ class HouseTypeExt
 		virtual void LoadFromRulesFile(TT *pThis, CCINIClass *pINI);
 		virtual void InitializeConstants(TT *pThis);
 		virtual void Initialize(TT *pThis);
+
+		virtual void InvalidatePointer(void *ptr) {
+		}
 	};
 
 	static Container<HouseTypeExt> ExtMap;

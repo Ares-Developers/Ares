@@ -132,6 +132,8 @@ class Extension {
 			this->_Initialized = is_Inited;
 		};
 
+		virtual void InvalidatePointer(void *ptr) = 0;
+
 	private:
 		void operator = (Extension &RHS) {
 
@@ -155,6 +157,26 @@ public:
 	static S_T * SavingObject;
 	static IStream * SavingStream;
 
+	void PointerGotInvalid(void *ptr) {
+		this->InvalidatePointer(ptr);
+		this->InvalidateExtDataPointer(ptr);
+	}
+
+#define INVALID_CTR(type, p) \
+	type::ExtMap.PointerGotInvalid(p);
+
+protected:
+	// invalidate pointers to container's static gunk here (use full qualified names)
+	virtual void InvalidatePointer(void *ptr) {
+	};
+
+	void InvalidateExtDataPointer(void *ptr) {
+		for(typename C_Map::iterator i = this->begin(); i != this->end(); ++i) {
+			i->second->InvalidatePointer(ptr);
+		}
+	}
+
+public:
 	Container() :
 		CTOR_Count(0),
 		DTOR_Count(0),
@@ -195,6 +217,14 @@ public:
 
 	void Remove(S_T* key) {
 		typename C_Map::iterator i = this->find(key);
+		if(i != this->end()) {
+			delete i->second;
+			erase(i);
+			++DTOR_Count;
+		}
+	}
+
+	void Remove(typename C_Map::iterator i) {
 		if(i != this->end()) {
 			delete i->second;
 			erase(i);
