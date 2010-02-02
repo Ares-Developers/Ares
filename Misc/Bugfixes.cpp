@@ -641,3 +641,13 @@ DEFINE_HOOK(55B502, LogicClass_Update_UpdateAITeamsFaster, 5)
 	}
 	return 0x55B5A1;
 }
+
+// Guard command failure
+DEFINE_HOOK(730DB0, GuardCommandClass_Execute, 0)
+{
+	GET(TechnoClass *, T, ESI);
+	return (T->Owner != HouseClass::Player || !T->IsControllable())
+		? 0x730E62
+		: 0x730DBE
+	;
+}
