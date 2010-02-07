@@ -13,7 +13,7 @@ DEFINE_HOOK(4F8EC6, Sides_BaseUnit, 6)
 
 	for(int i = 0; i < RulesClass::Global()->get_BaseUnit()->Count; ++i) {
 		if(pThis->get_OwnedUnitTypes()->GetItemCount(RulesClass::Global()->get_BaseUnit()->GetItem(i)->ArrayIndex) > 0) {
-			return 0x4F8F87;	//you survive	
+			return 0x4F8F87;	//you survive
 		}
 	}
 
@@ -61,12 +61,14 @@ DEFINE_HOOK(505C95, Sides_BaseDefenseCounts, 7)
 	SideClass* pSide = SideClass::Array->GetItem(n);
 	SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide);
 	if(pData) {
-		R->EAX(pThis->AIDifficulty);
-		R->EDX(&pData->BaseDefenseCounts.Items);
-		return 0x505CE6;
-	} else {
-		return 0;
+		if(pThis->AIDifficulty < pData->BaseDefenseCounts.Count) {
+			R->EAX<int>(pData->BaseDefenseCounts.GetItem(pThis->AIDifficulty));
+			return 0x505CE9;
+		} else {
+			Debug::Log("WTF! vector has %d items, requested item #%d\n", pData->BaseDefenseCounts.Count, pThis->AIDifficulty);
+		}
 	}
+	return 0;
 }
 
 //0x507BCA
@@ -155,7 +157,7 @@ DEFINE_HOOK(534FB1, Sides_MixFileIndex, 5)
 	SideClass* pSide = SideClass::Array->GetItem(n);
 	SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide);
 	if(pData) {
-		// original code is 
+		// original code is
 		// sprtf(mixname, "SIDEC%02dMD.MIX", ESI + 1);
 		// it's easier to sub 1 here than to fix the calculation in the orig code
 		R->ESI(pData->SidebarMixFileIndex - 1);
@@ -209,7 +211,7 @@ XPORT Sides_LoadVoxFromINI(REGISTERS* R)
 	DynamicVectorClass<SideExt::VoxFileNameStruct> FileNames;
 	SideExt::VoxFileNameStruct vfn;
 	char buffer[0x10] = "\0";
-	
+
 	for(int i = 0; i < SideClass::Array->get_Count(); i++)
 	{
 		if(SideExt::Map.find((*SideClass::Array)[i]) != SideExt::Map.end())
@@ -222,7 +224,7 @@ XPORT Sides_LoadVoxFromINI(REGISTERS* R)
 				0x10);
 
 			strcpy(vfn.FileName, buffer);
-		
+
 			FileNames.AddItem(vfn);
 		}
 		else
@@ -233,7 +235,7 @@ XPORT Sides_LoadVoxFromINI(REGISTERS* R)
 	}
 
 	SideExt::EVAFiles[pThis] = FileNames;
-	return 0;	
+	return 0;
 }
 */
 
