@@ -26,7 +26,7 @@ DEFINE_HOOK(445355, BuildingClass_KickOutUnit_Firewall, 6)
 	GET(BuildingClass *, Factory, ESI);
 
 	GET(BuildingClass *, B, EDI);
-	GET_STACK(CellStruct, CenterPos, 0x2C);
+	GET_STACK(CellStruct, CenterPos, 0x20);
 
 	//BuildingExt::ExtendFirewall(B, CenterPos, Factory->Owner);
 	BuildingExt::buildLines(B, CenterPos, Factory->Owner);

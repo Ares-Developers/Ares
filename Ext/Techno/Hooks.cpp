@@ -476,3 +476,44 @@ DEFINE_HOOK(73B672, UnitClass_DrawVXL, 6)
 	}
 	return 0;
 }
+
+// stops movement sound from being played while unit is being pulled by a magnetron (see terror drone)
+DEFINE_HOOK(4DAA68, FootClass_Update_MoveSound, 6)
+{
+	GET(FootClass *, F, ESI);
+	return (F->unknown_bool_53C || F->FrozenStill)
+		? 0x4DAAEE
+		: 0x4DAA70
+	;
+}
+
+DEFINE_HOOK(73C725, UnitClass_DrawSHP_DrawShadowEarlier, 6)
+{
+	GET(UnitClass *, U, EBP);
+	GET(SHPStruct *, Image, EDI);
+	GET(int, FrameToDraw, EBX);
+	GET_STACK(Point2D, coords, 0x12C);
+	LEA_STACK(RectangleStruct *, BoundingRect, 0x134);
+
+	if(U->unknown_bool_420) {
+		coords.Y -= 14;
+	}
+
+	Point2D XYAdjust = {0, 0};
+	U->Locomotor->Shadow_Point(&XYAdjust);
+	coords += XYAdjust;
+
+	int ZAdjust = U->GetZAdjustment() - 2;
+
+	FrameToDraw += Image->Frames / 2;
+
+	DSurface::Hidden_2->DrawSHP(FileSystem::THEATER_PAL, Image, FrameToDraw, &coords, BoundingRect, 0x2E01,
+			0, ZAdjust, 0, 1000, 0, 0, 0, 0, 0);
+
+	return 0;
+}
+
+DEFINE_HOOK(73C733, UnitClass_DrawSHP_SkipTurretedShadow, 7)
+{
+	return 0x73C7AC;
+}

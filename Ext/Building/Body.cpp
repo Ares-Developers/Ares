@@ -304,16 +304,16 @@ void BuildingExt::buildLines(BuildingClass* theBuilding, CellStruct selectedCell
 		return;
 	}
 
-	int maxLinkDistance = theBuilding->Type->GuardRange / 256; // GuardRange governs how far the link can go, is saved in leptons
+	short maxLinkDistance = theBuilding->Type->GuardRange / 256; // GuardRange governs how far the link can go, is saved in leptons
 
 	for(int direction = 0; direction <= 7; direction += 2) { // the 4 straight directions of the simple compass
 		CellStruct directionOffset = CellSpread::GetNeighbourOffset(direction); // coordinates of the neighboring cell in the given direction relative to the current cell (e.g. 0,1)
 		int linkLength = 0; // how many cells to build on from center in direction to link up with a found building
 
-		for(int distanceFromCenter = 1; distanceFromCenter <= maxLinkDistance; ++distanceFromCenter) {
-			CellStruct cellToCheck = selectedCell;
-			cellToCheck.X += short(distanceFromCenter * directionOffset.X); // adjust the cell to check based on current distance, relative to the selected cell
-			cellToCheck.Y += short(distanceFromCenter * directionOffset.Y); // e.g. 25 += 5 * 1 for "five away on the Y axis"
+		CellStruct cellToCheck = selectedCell;
+		for(short distanceFromCenter = 1; distanceFromCenter <= maxLinkDistance; ++distanceFromCenter) {
+			cellToCheck.X += directionOffset.X; // adjust the cell to check based on current distance, relative to the selected cell
+			cellToCheck.Y += directionOffset.Y; // e.g. 25 += 5 * 1 for "five away on the Y axis"
 
 			if(!MapClass::Global()->CellExists(&cellToCheck)) { // don't parse this cell if it doesn't exist (duh)
 				break;
