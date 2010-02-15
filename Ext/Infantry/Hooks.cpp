@@ -96,3 +96,13 @@ DEFINE_HOOK(518434, InfantryClass_ReceiveDamage_SkipDeathAnim, 7)
 
 	return skipInfDeathAnim ? 0x5185F1 : 0;
 }
+
+// should correct issue #743
+DEFINE_HOOK(51D799, InfantryClass_PlayAnim_WaterSound, 7)
+{
+	GET(InfantryClass *, I, ESI);
+	return (I->Transporter || I->Type->MovementZone != mz_AmphibiousDestroyer)
+		? 0x51D8BF
+		: 0x51D7A6
+	;
+}

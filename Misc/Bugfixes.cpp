@@ -651,3 +651,29 @@ DEFINE_HOOK(730DB0, GuardCommandClass_Execute, 0)
 		: 0x730DBE
 	;
 }
+
+/* #367 - do we need to draw a link to this victim */
+DEFINE_HOOK(472198, CaptureManagerClass_DrawLinks, 6)
+{
+	enum { Draw_Yes, Draw_No, Draw_Maybe } decision = Draw_Maybe;
+	GET(CaptureManagerClass *, Controlled, EDI);
+	GET(TechnoClass *, Item, ECX);
+
+	if(FootClass *F = generic_cast<FootClass *>(Controlled->Owner)) {
+		if(ParasiteClass *Parasite = F->ParasiteImUsing) {
+			if(Parasite->Victim) {
+				decision = Draw_No;
+			}
+		}
+	}
+
+	switch(decision) {
+		case Draw_Yes:
+			return 0x4721E6;
+		case Draw_No:
+			return 0x472287;
+		case Draw_Maybe:
+		default:
+			return 0;
+	}
+}

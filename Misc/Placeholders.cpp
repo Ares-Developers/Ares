@@ -111,24 +111,6 @@ A_FINE_HOOK(45673E, BuildingClass_GetRangeOfRadial, 7)
 	return 0x456745;
 }
 
-/* #367 - do we need to draw a link to this victim */
-A_FINE_HOOK(472198, CaptureManagerClass_DrawLinks, 6)
-{
-	GET(CaptureManagerClass *, Controlled, EDi);
-	GET(TechnoClass *, Item, ECX);
-
-/*
-	switch(decision) {
-		case Draw_Absolutely_Yes:
-			return 0x4721E6;
-		case Draw_Absolutely_Not:
-			return 0x472287;
-		case Decide_Normally:
-		default:
-			return 0;
-*/
-}
-
 /* #617 - robot control centers */
 // hook also into technoclass::ctor/dtor to update power requirements, or use the hook for #347 below
 // don't forget RegisteredAsPoweredUnitSource
