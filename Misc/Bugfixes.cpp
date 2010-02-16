@@ -483,11 +483,19 @@ DEFINE_HOOK(6873AB, INIClass_ReadScenario_EarlyLoadRules, 5)
 }
 
 // allowhiresmodes
-DEFINE_HOOK(5FA41D, GameOptionsClass_CTOR, 5)
+/*
+A_FINE_HOOK(5FA41D, GameOptionsClass_CTOR, 5)
 {
 	GET(byte *, Options, EAX);
-	Options[0x35] = 1;
+	Options[0x35] = 0; // zero out the hires flag entirely
 	return 0;
+}
+*/
+
+DEFINE_HOOK(5601E3, OptionsDlg_WndProc, 0)
+{
+	// skip the allowhires check entirely - all supported 16bit modes are accepted, should make net resolution limit stfu
+	return 0x5601FC;
 }
 
 //yikes
@@ -655,25 +663,31 @@ DEFINE_HOOK(730DB0, GuardCommandClass_Execute, 0)
 /* #367 - do we need to draw a link to this victim */
 DEFINE_HOOK(472198, CaptureManagerClass_DrawLinks, 6)
 {
-	enum { Draw_Yes, Draw_No, Draw_Maybe } decision = Draw_Maybe;
+	enum { Draw_Maybe = 0, Draw_Yes = 0x4721E6, Draw_No = 0x472287} decision = Draw_Maybe;
 	GET(CaptureManagerClass *, Controlled, EDI);
 	GET(TechnoClass *, Item, ECX);
 
 	if(FootClass *F = generic_cast<FootClass *>(Controlled->Owner)) {
-		if(ParasiteClass *Parasite = F->ParasiteImUsing) {
-			if(Parasite->Victim) {
-				decision = Draw_No;
-			}
+		if(F->ParasiteImUsing && F->InLimbo) {
+			decision = Draw_No;
 		}
 	}
 
-	switch(decision) {
-		case Draw_Yes:
-			return 0x4721E6;
-		case Draw_No:
-			return 0x472287;
-		case Draw_Maybe:
-		default:
-			return 0;
+	return decision;
+}
+
+/* #746 - don't set parasite eject point to cell center, but set it to fall and explode like a bomb */
+DEFINE_HOOK(62A2F8, ParasiteClass_PointerGotInvalid, 6)
+{
+	GET(ParasiteClass *, Parasite, ESI);
+	GET(CoordStruct *, XYZ, EAX);
+
+	if(UnitClass *U = specific_cast<UnitClass *>(Parasite->Owner)) {
+		if(!U->Type->Naval && U->InAir) {
+			*XYZ = U->Location;
+			U->FallingDown = U->IsABomb = true;
+		}
 	}
+
+	return 0;
 }
