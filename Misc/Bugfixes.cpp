@@ -683,7 +683,7 @@ DEFINE_HOOK(62A2F8, ParasiteClass_PointerGotInvalid, 6)
 	GET(CoordStruct *, XYZ, EAX);
 
 	if(UnitClass *U = specific_cast<UnitClass *>(Parasite->Owner)) {
-		if(!U->Type->Naval && U->InAir) {
+		if(!U->Type->Naval && U->GetHeight() > 200) {
 			*XYZ = U->Location;
 			U->FallingDown = U->IsABomb = true;
 		}

@@ -1,10 +1,13 @@
 #include "Body.h"
 #include "../BuildingType/Body.h"
 #include "../Techno/Body.h"
+#include "../../Misc/Network.h"
+
 #include <SpecificStructures.h>
 #include <ScenarioClass.h>
 #include <InfantryClass.h>
 #include <CellClass.h>
+
 #include <cmath>
 
 /* #633 - spy building infiltration */
@@ -208,6 +211,29 @@ DEFINE_HOOK(44725F, BuildingClass_GetCursorOverObject_TargetABuilding, 5)
 			//show entry cursor, hooked up to traversal logic in BuildingClass_GetCursorOverObject_TargetABuilding
 			// this is currently decomissioned in favor of the less hack-intensive rally-point based system
 			// see BuildingClass_UnloadOccupants_EachOccupantLeaves
+			R->EAX<eAction>(act_Enter);
+			return 0x447273;
+		}
+	}
+
+	return 0;
+}
+
+DEFINE_HOOK(443414, BuildingClass_ClickedMission, 6)
+{
+	GET(eAction, Action, EAX);
+	GET(BuildingClass *, pThis, ECX);
+
+	GET_STACK(ObjectClass *, pTarget, 0x8);
+
+	if(Action == act_Enter) {
+		if(BuildingClass *pTargetBuilding = specific_cast<BuildingClass *>(pTarget)) {
+			CoordStruct XYZ;
+			pTargetBuilding->GetCoords(&XYZ);
+			CellStruct tgt = { short(XYZ.X / 256), short(XYZ.Y / 256) };
+			AresNetEvent::Handlers::RaiseTrenchRedirectClick(pThis, &tgt);
+			R->EAX(1);
+			return 0x44344D;
 		}
 	}
 
