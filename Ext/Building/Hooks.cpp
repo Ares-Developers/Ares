@@ -208,9 +208,7 @@ DEFINE_HOOK(44725F, BuildingClass_GetCursorOverObject_TargetABuilding, 5)
 		BuildingExt::ExtData* curBuildExt = BuildingExt::ExtMap.Find(pThis);
 
 		if(curBuildExt->canTraverseTo(targetBuilding)) {
-			//show entry cursor, hooked up to traversal logic in BuildingClass_GetCursorOverObject_TargetABuilding
-			// this is currently decomissioned in favor of the less hack-intensive rally-point based system
-			// see BuildingClass_UnloadOccupants_EachOccupantLeaves
+			//show entry cursor, hooked up to traversal logic in Misc/Network.cpp -> AresNetEvent::Handlers::RespondToTrenchRedirectClick
 			R->EAX<eAction>(act_Enter);
 			return 0x447273;
 		}
@@ -295,7 +293,7 @@ DEFINE_HOOK(52297F, InfantryClass_GarrisonBuilding_OccupierEntered, 5)
 /* Requested in issue #694
 	D: The first hook fires each time one of the occupants is ejected through the Deploy function -
 	the game doesn't have a builtin way to remove a single occupant, only all of them, so this is rigged inside that.*/
-// This is CURRENTLY UNUSED - look at BuildingClass_UnloadOccupants_AboutToStartUnloading and BuildingClass_UnloadOccupants_AllOccupantsHaveLeft instead
+// This is CURRENTLY UNUSED - look at Misc/Network.cpp -> AresNetEvent::Handlers::RespondToTrenchRedirectClick
 /*A_FINE_HOOK(4580A9, BuildingClass_UnloadOccupants_EachOccupantLeaves, 6)
 {
 	GET(BuildingClass *, pBld, ESI);
@@ -363,7 +361,8 @@ DEFINE_HOOK(458729, BuildingClass_KillOccupiers_AllOccupantsKilled, 6)
 }
 
 // #666: Trench Traversal - check if traversal is possible & traverse, eject or do nothing, depending on the result
-DEFINE_HOOK(457DF5, BuildingClass_UnloadOccupants_AboutToStartUnloading, 6)
+// This is CURRENTLY UNUSED - look at Misc/Network.cpp -> AresNetEvent::Handlers::RespondToTrenchRedirectClick
+A_FINE_HOOK(457DF5, BuildingClass_UnloadOccupants_AboutToStartUnloading, 6)
 {
 	GET(BuildingClass *, currentBuilding, ESI);
 	/*CellClass* rallyPoint =; // wherever the rally point points to

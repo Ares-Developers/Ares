@@ -65,7 +65,15 @@ void AresNetEvent::Handlers::RespondToTrenchRedirectClick(NetworkEvent *Event) {
 	if(BuildingClass * pSourceBuilding = ID->UnpackBuilding()) {
 		++ID;
 		if(CellClass * pTargetCell = ID->UnpackCell()) {
+			/*
+				pSourceBuilding == selected building the soldiers are in
+				pTargetCell == cell the user clicked on; event fires only on buildings which showed the enter cursor
+			*/
 			Debug::Log("Setting target coords of [%s] to cell at %d, %d\n", pSourceBuilding->Type->ID, pTargetCell->MapCoords);
+
+			BuildingExt::ExtData* sourceBuildingExt = BuildingExt::ExtMap.Find(pSourceBuilding);
+			BuildingClass* targetBuilding = pTargetCell->GetBuilding();
+			sourceBuildingExt->doTraverseTo(targetBuilding); // check has happened before the enter cursor appeared
 		}
 	}
 
