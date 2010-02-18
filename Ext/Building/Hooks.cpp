@@ -352,14 +352,15 @@ DEFINE_HOOK(4581CD, BuildingClass_UnloadOccupants_AllOccupantsHaveLeft, 6)
 */
 DEFINE_HOOK(458729, BuildingClass_KillOccupiers_AllOccupantsKilled, 6)
 {
-    GET(BuildingClass *, pBld, ESI);
+	GET(BuildingClass *, pBld, ESI);
 	BuildingExt::ExtData* buildingExtData = BuildingExt::ExtMap.Find(pBld);
 
 	buildingExtData->evalRaidStatus();
 
-    return 0;
+	return 0;
 }
 
+/*
 // #666: Trench Traversal - check if traversal is possible & traverse, eject or do nothing, depending on the result
 // This is CURRENTLY UNUSED - look at Misc/Network.cpp -> AresNetEvent::Handlers::RespondToTrenchRedirectClick
 A_FINE_HOOK(457DF5, BuildingClass_UnloadOccupants_AboutToStartUnloading, 6)
@@ -375,6 +376,7 @@ A_FINE_HOOK(457DF5, BuildingClass_UnloadOccupants_AboutToStartUnloading, 6)
 		}
 	}
 
-	*/
+
 	return 0;
 }
+*/

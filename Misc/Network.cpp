@@ -3,6 +3,8 @@
 #include "Debug.h"
 #include "../Ares.h"
 
+#include "../Ext/Building/Body.h"
+
 #include <BuildingClass.h>
 #include <HouseClass.h>
 #include <NetworkEvents.h>

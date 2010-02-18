@@ -3,8 +3,7 @@
 #include <CCFileClass.h>
 #include "../Ares.h"
 
-//Hook at 0x4064A0
-EXPORT Ares_Audio_AddSample(REGISTERS* R)	//Complete rewrite of VocClass::AddSample
+DEFINE_HOOK(4064A0, Ares_Audio_AddSample, 0)	//Complete rewrite of VocClass::AddSample
 {
 	//TODO: Once a VocClass and AudioIDXData definition is available, rewrite this. -pd
 	GET(int*, pVoc, ECX); //VocClass*
@@ -42,7 +41,8 @@ EXPORT Ares_Audio_AddSample(REGISTERS* R)	//Complete rewrite of VocClass::AddSam
 }
 
 //Hook at 0x75144F AND 0x75048E
-EXPORT Ares_Audio_DeleteSampleNames(REGISTERS* R)
+DEFINE_HOOK(75144F, Ares_Audio_DeleteSampleNames, 9)
+DEFINE_HOOK_AGAIN(75048E, Ares_Audio_DeleteSampleNames, 9)
 {
 	//TODO: Once a VocClass definition is available, rewrite this. -pd
 
@@ -61,8 +61,7 @@ EXPORT Ares_Audio_DeleteSampleNames(REGISTERS* R)
 	return 0;
 }
 
-//Hook at 0x4016F9
-EXPORT Ares_Audio_LoadWAV(REGISTERS* R)	//50% rewrite of Audio::LoadWAV
+DEFINE_HOOK(4016F7, Ares_Audio_LoadWAV, 5)	//50% rewrite of Audio::LoadWAV
 {
 	//TODO: Once an AudioIndex definition is available, rewrite this. -pd
 	GET(int, SampleIndex, EDX);
@@ -117,8 +116,7 @@ EXPORT Ares_Audio_LoadWAV(REGISTERS* R)	//50% rewrite of Audio::LoadWAV
 	return 0;
 }
 
-//Hook at 0x401642
-EXPORT Ares_Audio_GetSampleInfo(REGISTERS* R)
+DEFINE_HOOK(401642, Ares_Audio_GetSampleInfo, 6)
 {
 	//TODO: Once an AudioSample definition is available (if ever), rewrite this. -pd
 	GET(int, SampleIndex, EDX);
