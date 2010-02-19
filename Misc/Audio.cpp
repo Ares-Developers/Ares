@@ -1,7 +1,12 @@
 //Allows WAV files being placed in Mixes
 
+#include <Audio.h>
 #include <CCFileClass.h>
+#include <VocClass.h>
 #include "../Ares.h"
+
+// assuming nobody has 128k legit samples in their game
+#define MINIMUM_ARES_SAMPLE 0x20000
 
 DEFINE_HOOK(4064A0, Ares_Audio_AddSample, 0)	//Complete rewrite of VocClass::AddSample
 {
@@ -9,7 +14,7 @@ DEFINE_HOOK(4064A0, Ares_Audio_AddSample, 0)	//Complete rewrite of VocClass::Add
 	GET(int*, pVoc, ECX); //VocClass*
 	GET(char*, pSampleName, EDX);
 
-	if(pVoc[0x134 >> 2]==0x20) { //if(pVoc->get_NumSamples()==0x20)
+	if(pVoc[0x134 >> 2] == 0x20) { //if(pVoc->get_NumSamples()==0x20)
 		R->EAX(0); //return false
 	} else {
 		if(*((int*)0x87E2A0)) //I dunno
@@ -21,10 +26,15 @@ DEFINE_HOOK(4064A0, Ares_Audio_AddSample, 0)	//Complete rewrite of VocClass::Add
 			int nSampleIndex = -1;
 			void* pAudioIDXData = *((void**)0x87E294);
 			if(pAudioIDXData) {
+
+				nSampleIndex = Audio::FindSampleIndex(pAudioIDXData, pSampleName);
+
+/*
 				SET_REG32(edx, pSampleName);
 				SET_REG32(ecx, pAudioIDXData);
 				CALL(0x4015C0); //nSampleIndex = FindSampleIndex(pSampleName)
 				GET_REG32(nSampleIndex, eax);
+*/
 			}
 
 			if(nSampleIndex == -1) {
@@ -40,9 +50,9 @@ DEFINE_HOOK(4064A0, Ares_Audio_AddSample, 0)	//Complete rewrite of VocClass::Add
 	return 0x40651E;
 }
 
-//Hook at 0x75144F AND 0x75048E
+//Hook at 0x75144F AND 0x75048E (?? that address makes no sense)
 DEFINE_HOOK(75144F, Ares_Audio_DeleteSampleNames, 9)
-DEFINE_HOOK_AGAIN(75048E, Ares_Audio_DeleteSampleNames, 9)
+//FINE_HOOK_AGAIN(75048E, Ares_Audio_DeleteSampleNames, 9)
 {
 	//TODO: Once a VocClass definition is available, rewrite this. -pd
 
@@ -52,13 +62,14 @@ DEFINE_HOOK_AGAIN(75048E, Ares_Audio_DeleteSampleNames, 9)
 		//pVoc[0x134>>2] = NumSamples
 		for(int i=0; i < pVoc[0x134 >> 2]; i++) {
 			int SampleIndex = pVoc[i + (0xB4 >> 2)];	//SampleIndex[i]
-			if(SampleIndex >= 0x400000) {
+			if(SampleIndex >= MINIMUM_ARES_SAMPLE) {
 				//if greater than 0x400000, it's the SampleName allocated by us
 				delete (char*)SampleIndex;
 			}
 		}
+		delete (char *)ppVoc;
 	}
-	return 0;
+	return R->get_Origin() + 9;
 }
 
 DEFINE_HOOK(4016F7, Ares_Audio_LoadWAV, 5)	//50% rewrite of Audio::LoadWAV
@@ -66,8 +77,7 @@ DEFINE_HOOK(4016F7, Ares_Audio_LoadWAV, 5)	//50% rewrite of Audio::LoadWAV
 	//TODO: Once an AudioIndex definition is available, rewrite this. -pd
 	GET(int, SampleIndex, EDX);
 
-	//if greater than 0x400000, it's the SampleName allocated by us
-	if(SampleIndex>=0x400000) {
+	if(SampleIndex >= MINIMUM_ARES_SAMPLE) {
 		char* SampleName=(char*)SampleIndex;
 
 		GET(DWORD *, pAudioIndex, EBX);	//AudioIndex*
@@ -87,15 +97,8 @@ DEFINE_HOOK(4016F7, Ares_Audio_LoadWAV, 5)	//50% rewrite of Audio::LoadWAV
 			if(pFile->Open(eFileMode::Read)) {
 				int WAVStruct[0x8];
 				int nSampleSize;
-				int nResult;
 
-				int* pSampleSize = &nSampleSize;
-
-				PUSH_VAR32(pSampleSize);
-				SET_REG32(edx,WAVStruct);
-				SET_REG32(ecx,pFile);
-				CALL(0x408610);
-				GET_REG32(nResult,eax);
+				int nResult = Audio::ReadWAVFile(pFile, (void *)WAVStruct, &nSampleSize);
 
 				if(nResult) {
 					pAudioIndex[0x118 >> 2] = (DWORD)pFile;	//CurrentSampleFile = pFile
@@ -105,12 +108,11 @@ DEFINE_HOOK(4016F7, Ares_Audio_LoadWAV, 5)	//50% rewrite of Audio::LoadWAV
 				}
 			}
 		}
+		pAudioIndex[0x110 >> 2] = NULL;	//ExternalFile = NULL
+		R->EAX(0);
 
 		GAME_DEALLOC(pFile);
-		pAudioIndex[0x110 >> 2] = NULL;	//ExternalFile = NULL
 
-		R->EAX(0);
-		return 0x401889;
 	}
 
 	return 0;
@@ -120,9 +122,7 @@ DEFINE_HOOK(401642, Ares_Audio_GetSampleInfo, 6)
 {
 	//TODO: Once an AudioSample definition is available (if ever), rewrite this. -pd
 	GET(int, SampleIndex, EDX);
-	//if greater than 0x400000, it's the SampleName allocated by us
-	if(SampleIndex >= 0x400000) {
-		// gcc: unused char* SampleName=(char*)SampleIndex;
+	if(SampleIndex >= MINIMUM_ARES_SAMPLE) {
 
 		GET_STACK(int *, pAudioSample, 0x4);	//AudioSample*
 
