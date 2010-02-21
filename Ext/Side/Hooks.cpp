@@ -2,24 +2,6 @@
 
 #include <SuperClass.h>
 
-//0x4F8EC6
-DEFINE_HOOK(4F8EC6, Sides_BaseUnit, 6)
-{
-	GET(HouseClass *, pThis, ESI);
-
-	if(pThis->OwnedBuildings > 0) {
-		return 0x4F8F87;	//you survive
-	}
-
-	for(int i = 0; i < RulesClass::Global()->get_BaseUnit()->Count; ++i) {
-		if(pThis->get_OwnedUnitTypes()->GetItemCount(RulesClass::Global()->get_BaseUnit()->GetItem(i)->ArrayIndex) > 0) {
-			return 0x4F8F87;	//you survive
-		}
-	}
-
-	return 0x4F8F79; //YOU LOSE!!!
-}
-
 //0x4F8C97
 DEFINE_HOOK(4F8C97, Sides_BuildConst, 6)
 {

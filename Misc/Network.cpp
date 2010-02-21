@@ -64,9 +64,9 @@ void AresNetEvent::Handlers::RaiseTrenchRedirectClick(BuildingClass *Source, Cel
 
 void AresNetEvent::Handlers::RespondToTrenchRedirectClick(NetworkEvent *Event) {
 	NetID *ID = reinterpret_cast<NetID *>(Event->ExtraData);
-	if(BuildingClass * pSourceBuilding = ID->UnpackBuilding()) {
+	if(CellClass * pTargetCell = ID->UnpackCell()) {
 		++ID;
-		if(CellClass * pTargetCell = ID->UnpackCell()) {
+		if(BuildingClass * pSourceBuilding = ID->UnpackBuilding()) {
 			/*
 				pSourceBuilding == selected building the soldiers are in
 				pTargetCell == cell the user clicked on; event fires only on buildings which showed the enter cursor

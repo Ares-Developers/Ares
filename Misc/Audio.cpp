@@ -11,10 +11,10 @@
 DEFINE_HOOK(4064A0, Ares_Audio_AddSample, 0)	//Complete rewrite of VocClass::AddSample
 {
 	//TODO: Once a VocClass and AudioIDXData definition is available, rewrite this. -pd
-	GET(int*, pVoc, ECX); //VocClass*
+	GET(VocClass*, pVoc, ECX); //VocClass*
 	GET(char*, pSampleName, EDX);
 
-	if(pVoc[0x134 >> 2] == 0x20) { //if(pVoc->get_NumSamples()==0x20)
+	if(pVoc->NumSamples == 0x20) { //if(pVoc->get_NumSamples()==0x20)
 		R->EAX(0); //return false
 	} else {
 		if(*((int*)0x87E2A0)) //I dunno
@@ -23,26 +23,17 @@ DEFINE_HOOK(4064A0, Ares_Audio_AddSample, 0)	//Complete rewrite of VocClass::Add
 				++pSampleName;
 			}
 
-			int nSampleIndex = -1;
-			void* pAudioIDXData = *((void**)0x87E294);
-			if(pAudioIDXData) {
-
-				nSampleIndex = Audio::FindSampleIndex(pAudioIDXData, pSampleName);
-
-/*
-				SET_REG32(edx, pSampleName);
-				SET_REG32(ecx, pAudioIDXData);
-				CALL(0x4015C0); //nSampleIndex = FindSampleIndex(pSampleName)
-				GET_REG32(nSampleIndex, eax);
-*/
-			}
+			int nSampleIndex = (AudioIDXData::IDX)
+				? AudioIDXData::IDX->FindSampleIndex(pSampleName)
+				: -1
+			;
 
 			if(nSampleIndex == -1) {
 				nSampleIndex = (int)_strdup(pSampleName);
 			}
 
-			pVoc[(0xB4 >> 2) + pVoc[0x134 >> 2]] = nSampleIndex; //Set sample index or string pointer
-			++pVoc[0x134 >> 2];
+			pVoc->SampleIndex[pVoc->NumSamples] = nSampleIndex; //Set sample index or string pointer
+			++pVoc->NumSamples;
 
 			R->EAX(1); //return true
 		}
@@ -56,18 +47,16 @@ DEFINE_HOOK(75144F, Ares_Audio_DeleteSampleNames, 9)
 {
 	//TODO: Once a VocClass definition is available, rewrite this. -pd
 
-	GET(int **, ppVoc, ESI);
-	int* pVoc = *ppVoc; //VocClass*
-	if(pVoc) {
+	GET(VocClass **, ppVoc, ESI);
+	if(VocClass *pVoc = *ppVoc) {
 		//pVoc[0x134>>2] = NumSamples
-		for(int i=0; i < pVoc[0x134 >> 2]; i++) {
-			int SampleIndex = pVoc[i + (0xB4 >> 2)];	//SampleIndex[i]
+		for(int i=0; i < pVoc->NumSamples; ++i) {
+			int SampleIndex = pVoc->SampleIndex[i];	//SampleIndex[i]
 			if(SampleIndex >= MINIMUM_ARES_SAMPLE) {
-				//if greater than 0x400000, it's the SampleName allocated by us
 				delete (char*)SampleIndex;
 			}
 		}
-		delete (char *)ppVoc;
+		delete ppVoc;
 	}
 	return R->get_Origin() + 9;
 }

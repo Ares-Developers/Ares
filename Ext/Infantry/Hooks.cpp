@@ -92,9 +92,7 @@ DEFINE_HOOK(518434, InfantryClass_ReceiveDamage_SkipDeathAnim, 7)
 	// so those four bytes get stashed in Techno Map instead. they will get their own map if there's ever enough data to warrant it
 	TechnoExt::ExtData* pData = TechnoExt::ExtMap.Find(pThis);
 
-	bool skipInfDeathAnim = pData->GarrisonedIn;
-
-	return skipInfDeathAnim ? 0x5185F1 : 0;
+	return pData->GarrisonedIn ? 0x5185F1 : 0;
 }
 
 // should correct issue #743
