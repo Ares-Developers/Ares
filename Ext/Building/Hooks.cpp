@@ -126,6 +126,25 @@ DEFINE_HOOK(567AC1, MapClass_RevealArea1_DisplayTo, 0)
 	;
 }
 
+/* #754 - evict Hospital/Armory contents */
+DEFINE_HOOK(448277, BuildingClass_UnloadPassengers_ChangeOwner_Sell, 5)
+DEFINE_HOOK_AGAIN(447113, BuildingClass_UnloadPassengers_ChangeOwner_Sell, 5)
+{
+	GET(BuildingClass *, B, ESI);
+
+	BuildingExt::KickOutHospitalArmory(B);
+	return 0;
+}
+
+DEFINE_HOOK(44D8A1, BuildingClass_UnloadPassengers_Unload, 6)
+{
+	GET(BuildingClass *, B, EBP);
+
+	BuildingExt::KickOutHospitalArmory(B);
+	return 0;
+}
+
+
 /* 	#218 - specific occupiers // comes in 0.2
 	#665 - raidable buildings */
 DEFINE_HOOK(457D58, BuildingClass_CanBeOccupied_SpecificOccupiers, 6)

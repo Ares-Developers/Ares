@@ -429,3 +429,14 @@ DEFINE_HOOK(454244, BuildingClass_Save_Suffix, 7)
 	BuildingExt::ExtMap.SaveStatic();
 	return 0;
 }
+
+void BuildingExt::KickOutHospitalArmory(BuildingClass *pThis)
+{
+	if(pThis->Type->Hospital || pThis->Type->Armory) {
+		if(FootClass * Passenger = pThis->Passengers.RemoveFirstPassenger()) {
+			pThis->KickOutUnit(Passenger, &BuildingClass::DefaultCellCoords);
+		}
+	}
+}
+
+

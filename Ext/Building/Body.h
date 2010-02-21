@@ -63,6 +63,8 @@ public:
 	static void UpdateDisplayTo(BuildingClass *pThis);
 
 	static signed int GetImageFrameIndex(BuildingClass *pThis);
+
+	static void KickOutHospitalArmory(BuildingClass *pThis);
 };
 
 #endif
