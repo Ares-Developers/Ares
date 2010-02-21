@@ -199,8 +199,8 @@ bool BuildingExt::ExtData::canTraverseTo(BuildingClass* targetBuilding) {
 	//BuildingTypeClass* currentBuildingType = game_cast<BuildingTypeClass *>(currentBuilding->GetTechnoType());
 	BuildingTypeClass* targetBuildingType = targetBuilding->Type;
 
-	if((targetBuilding->Occupants.Count >= targetBuildingType->MaxNumberOccupants) || !currentBuilding->Occupants.Count || !targetBuildingType->CanBeOccupied) {
-		return false; // Can't traverse if there's no one to move, or the target is full, or we can't actually occupy the target
+	if((targetBuilding == currentBuilding) || (targetBuilding->Occupants.Count >= targetBuildingType->MaxNumberOccupants) || !currentBuilding->Occupants.Count || !targetBuildingType->CanBeOccupied) {
+		return false; // Can't traverse if there's no one to move, or the target is full, we can't actually occupy the target, or if it's actually the same building
 	}
 
 	BuildingTypeExt::ExtData* currentBuildingTypeExt = BuildingTypeExt::ExtMap.Find(currentBuilding->Type);
