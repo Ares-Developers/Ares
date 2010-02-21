@@ -128,7 +128,7 @@ DEFINE_HOOK(567AC1, MapClass_RevealArea1_DisplayTo, 0)
 
 /* #754 - evict Hospital/Armory contents */
 DEFINE_HOOK(448277, BuildingClass_UnloadPassengers_ChangeOwner_Sell, 5)
-DEFINE_HOOK_AGAIN(447113, BuildingClass_UnloadPassengers_ChangeOwner_Sell, 5)
+DEFINE_HOOK_AGAIN(447113, BuildingClass_UnloadPassengers_ChangeOwner_Sell, 6)
 {
 	GET(BuildingClass *, B, ESI);
 

@@ -49,7 +49,6 @@ DEFINE_HOOK(75144F, Ares_Audio_DeleteSampleNames, 9)
 
 	GET(VocClass **, ppVoc, ESI);
 	if(VocClass *pVoc = *ppVoc) {
-		//pVoc[0x134>>2] = NumSamples
 		for(int i=0; i < pVoc->NumSamples; ++i) {
 			int SampleIndex = pVoc->SampleIndex[i];	//SampleIndex[i]
 			if(SampleIndex >= MINIMUM_ARES_SAMPLE) {
@@ -61,6 +60,23 @@ DEFINE_HOOK(75144F, Ares_Audio_DeleteSampleNames, 9)
 	return R->get_Origin() + 9;
 }
 
+
+DEFINE_HOOK(75048E, VocClass_LoadFromINI_ResetSamples, 9)
+{
+	GET(VocClass **, ppVoc, ESI);
+	if(VocClass *pVoc = *ppVoc) {
+		for(int i=0; i < pVoc->NumSamples; ++i) {
+			int SampleIndex = pVoc->SampleIndex[i];	//SampleIndex[i]
+			if(SampleIndex >= MINIMUM_ARES_SAMPLE) {
+				delete (char*)SampleIndex;
+			}
+		}
+		pVoc->NumSamples = 0;
+	}
+	return 0;
+}
+
+
 DEFINE_HOOK(4016F7, Ares_Audio_LoadWAV, 5)	//50% rewrite of Audio::LoadWAV
 {
 	//TODO: Once an AudioIndex definition is available, rewrite this. -pd
@@ -69,7 +85,7 @@ DEFINE_HOOK(4016F7, Ares_Audio_LoadWAV, 5)	//50% rewrite of Audio::LoadWAV
 	if(SampleIndex >= MINIMUM_ARES_SAMPLE) {
 		char* SampleName=(char*)SampleIndex;
 
-		GET(DWORD *, pAudioIndex, EBX);	//AudioIndex*
+		GET(DWORD *, pAudioIndex, ECX);	//AudioIndex*
 		pAudioIndex[0x110 >> 2] = 0;	//ExternalFile = NULL
 		pAudioIndex[0x118 >> 2] = 0;	//CurrentSampleFile = NULL
 
@@ -87,9 +103,7 @@ DEFINE_HOOK(4016F7, Ares_Audio_LoadWAV, 5)	//50% rewrite of Audio::LoadWAV
 				int WAVStruct[0x8];
 				int nSampleSize;
 
-				int nResult = Audio::ReadWAVFile(pFile, (void *)WAVStruct, &nSampleSize);
-
-				if(nResult) {
+				if(Audio::ReadWAVFile(pFile, (void *)WAVStruct, &nSampleSize)) {
 					pAudioIndex[0x118 >> 2] = (DWORD)pFile;	//CurrentSampleFile = pFile
 					pAudioIndex[0x11C >> 2] = nSampleSize;	//CurrentSampleSize = nSampleSize
 					R->EAX(1);
@@ -98,16 +112,16 @@ DEFINE_HOOK(4016F7, Ares_Audio_LoadWAV, 5)	//50% rewrite of Audio::LoadWAV
 			}
 		}
 		pAudioIndex[0x110 >> 2] = NULL;	//ExternalFile = NULL
-		R->EAX(0);
-
 		GAME_DEALLOC(pFile);
 
+		R->EAX(0);
+		return 0x401889;
 	}
 
 	return 0;
 }
 
-DEFINE_HOOK(401642, Ares_Audio_GetSampleInfo, 6)
+DEFINE_HOOK(401640, Ares_Audio_GetSampleInfo, 5)
 {
 	//TODO: Once an AudioSample definition is available (if ever), rewrite this. -pd
 	GET(int, SampleIndex, EDX);
