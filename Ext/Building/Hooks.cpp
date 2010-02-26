@@ -301,7 +301,8 @@ DEFINE_HOOK(52297F, InfantryClass_GarrisonBuilding_OccupierEntered, 5)
 
 	// if building and owner are from different players, and the building is not in raided state
 	// change the building's owner and mark it as raided
-	if((pBld->Owner != pInf->Owner) && !buildingExtData->isCurrentlyRaided) {
+	// but only if that's even necessary - no need to raid neutral houses.
+	if((pBld->Owner != pInf->Owner) && !pBld->Owner->Type->MultiplayPassive && !buildingExtData->isCurrentlyRaided) {
 		buildingExtData->OwnerBeforeRaid = pBld->Owner;
 		buildingExtData->isCurrentlyRaided = true;
 		pBld->SetOwningHouse(pInf->Owner);
