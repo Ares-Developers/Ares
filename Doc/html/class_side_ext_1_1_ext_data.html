@@ -62,6 +62,8 @@ Inheritance diagram for SideExt::SideExt::ExtData:</div>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_side_ext_1_1_ext_data.html#91d69d771474674fcd72cb29aeabc81f">Initialize</a> (<a class="el" href="class_side_ext.html#bd72931c5590e9dfc8df6603e0c5956a">TT</a> *pThis)</td></tr>
 
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_side_ext_1_1_ext_data.html#277c27aba40071f24f58953268e2afb6">InvalidatePointer</a> (void *ptr)</td></tr>
+
 <tr><td colspan="2"><br><h2>Public Attributes</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="class_customizable.html">Customizable</a>&lt; InfantryTypeClass * &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_side_ext_1_1_ext_data.html#5a47ebb315d1bddd69a7bf1790fe5b17">DefaultDisguise</a></td></tr>
 
@@ -165,102 +167,128 @@ Inheritance diagram for SideExt::SideExt::ExtData:</div>
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00013"></a>00013 {
-<a name="l00014"></a>00014         <span class="keywordtype">char</span>* pID = pThis-&gt;get_ID();
-<a name="l00015"></a>00015 
-<a name="l00016"></a>00016         <span class="comment">//are these necessary?</span>
-<a name="l00017"></a>00017         this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#a15be92191aea8c5b5bccd24fc60c0fb">BaseDefenseCounts</a>.Clear();
-<a name="l00018"></a>00018         this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#1a26b482d8302e619c5b1c69e57e056d">BaseDefenses</a>.Clear();
-<a name="l00019"></a>00019         this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#12ac5f62fa9ab885061a2735191b8a78">ParaDrop</a>.Clear();
-<a name="l00020"></a>00020         this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#76f6c000acc6db81506f2adcd6671205">ParaDropNum</a>.Clear();
-<a name="l00021"></a>00021 
-<a name="l00022"></a>00022         <span class="keywordflow">if</span>(!_strcmpi(pID, <span class="stringliteral">"Nod"</span>)) { <span class="comment">//Soviets</span>
-<a name="l00023"></a>00023 
-<a name="l00024"></a>00024                 <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; RulesClass::Global()-&gt;get_SovietBaseDefenseCounts()-&gt;Count; ++i) {
-<a name="l00025"></a>00025                         this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#a15be92191aea8c5b5bccd24fc60c0fb">BaseDefenseCounts</a>.AddItem(RulesClass::Global()-&gt;get_SovietBaseDefenseCounts()-&gt;GetItem(i));
-<a name="l00026"></a>00026                 }
-<a name="l00027"></a>00027 
-<a name="l00028"></a>00028                 <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; RulesClass::Global()-&gt;get_SovietBaseDefenses()-&gt;Count; ++i) {
-<a name="l00029"></a>00029                         this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#1a26b482d8302e619c5b1c69e57e056d">BaseDefenses</a>.AddItem(RulesClass::Global()-&gt;get_SovietBaseDefenses()-&gt;GetItem(i));
-<a name="l00030"></a>00030                 }
-<a name="l00031"></a>00031 
-<a name="l00032"></a>00032                 this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#ef976a6a01e77adcefcaa9b71b23bc88">Crew</a>.<a class="code" href="class_customizable.html#0756e376a0207e8dc7a835b8d42ae34c">Bind</a>(&amp;RulesClass::Global()-&gt;SovietCrew);
-<a name="l00033"></a>00033                 this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#5a47ebb315d1bddd69a7bf1790fe5b17">DefaultDisguise</a>.<a class="code" href="class_customizable.html#0756e376a0207e8dc7a835b8d42ae34c">Bind</a>(&amp;RulesClass::Global()-&gt;SovietDisguise);
-<a name="l00034"></a>00034                 this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#722aa7cf8deb4ebfd4a3c5d526633a86">SurvivorDivisor</a>.<a class="code" href="class_customizable.html#0756e376a0207e8dc7a835b8d42ae34c">Bind</a>(&amp;RulesClass::Global()-&gt;SovietSurvivorDivisor);
-<a name="l00035"></a>00035 
-<a name="l00036"></a>00036                 strcpy(this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#0c734544713705e7f5e74a2acf495d9d">EVATag</a>, <span class="stringliteral">"Russian"</span>);
-<a name="l00037"></a>00037                 this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#603cf9393b8dd699ae75b5db033c1bd0">LoadTextColor</a> = ColorScheme::Find(<span class="stringliteral">"SovietLoad"</span>);
-<a name="l00038"></a>00038 
-<a name="l00039"></a>00039                 <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; RulesClass::Global()-&gt;get_SovParaDropInf()-&gt;Count; ++i) {
-<a name="l00040"></a>00040                         this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#12ac5f62fa9ab885061a2735191b8a78">ParaDrop</a>.AddItem((RulesClass::Global()-&gt;get_SovParaDropInf()-&gt;GetItem(i)));
-<a name="l00041"></a>00041                 }
-<a name="l00042"></a>00042 
-<a name="l00043"></a>00043                 <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; RulesClass::Global()-&gt;get_SovParaDropNum()-&gt;Count; ++i) {
-<a name="l00044"></a>00044                         this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#76f6c000acc6db81506f2adcd6671205">ParaDropNum</a>.AddItem(RulesClass::Global()-&gt;get_SovParaDropNum()-&gt;GetItem(i));
-<a name="l00045"></a>00045                 }
-<a name="l00046"></a>00046 
-<a name="l00047"></a>00047                 this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#03e9f9fbc7fbae9b9dcdc798b0c9ba52">SidebarMixFileIndex</a> = 2;
-<a name="l00048"></a>00048                 this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#93a67f267e67c1f6d9b3bed0f00af36c">SidebarYuriFileNames</a> = <span class="keyword">false</span>;
-<a name="l00049"></a>00049 
-<a name="l00050"></a>00050         } <span class="keywordflow">else</span> <span class="keywordflow">if</span>(!_strcmpi(pID, <span class="stringliteral">"ThirdSide"</span>)) { <span class="comment">//Yuri</span>
-<a name="l00051"></a>00051 
-<a name="l00052"></a>00052                 <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; RulesClass::Global()-&gt;get_ThirdBaseDefenseCounts()-&gt;Count; ++i) {
-<a name="l00053"></a>00053                         this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#a15be92191aea8c5b5bccd24fc60c0fb">BaseDefenseCounts</a>.AddItem(RulesClass::Global()-&gt;get_ThirdBaseDefenseCounts()-&gt;GetItem(i));
-<a name="l00054"></a>00054                 }
-<a name="l00055"></a>00055 
-<a name="l00056"></a>00056                 <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; RulesClass::Global()-&gt;get_ThirdBaseDefenses()-&gt;Count; ++i) {
-<a name="l00057"></a>00057                         this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#1a26b482d8302e619c5b1c69e57e056d">BaseDefenses</a>.AddItem(RulesClass::Global()-&gt;get_ThirdBaseDefenses()-&gt;GetItem(i));
-<a name="l00058"></a>00058                 }
-<a name="l00059"></a>00059 
-<a name="l00060"></a>00060                 this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#ef976a6a01e77adcefcaa9b71b23bc88">Crew</a>.<a class="code" href="class_customizable.html#0756e376a0207e8dc7a835b8d42ae34c">Bind</a>(&amp;RulesClass::Global()-&gt;ThirdCrew);
-<a name="l00061"></a>00061                 this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#5a47ebb315d1bddd69a7bf1790fe5b17">DefaultDisguise</a>.<a class="code" href="class_customizable.html#0756e376a0207e8dc7a835b8d42ae34c">Bind</a>(&amp;RulesClass::Global()-&gt;ThirdDisguise);
-<a name="l00062"></a>00062                 this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#722aa7cf8deb4ebfd4a3c5d526633a86">SurvivorDivisor</a>.<a class="code" href="class_customizable.html#0756e376a0207e8dc7a835b8d42ae34c">Bind</a>(&amp;RulesClass::Global()-&gt;ThirdSurvivorDivisor);
-<a name="l00063"></a>00063 
-<a name="l00064"></a>00064                 strcpy(this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#0c734544713705e7f5e74a2acf495d9d">EVATag</a>, <span class="stringliteral">"Yuri"</span>);
-<a name="l00065"></a>00065                 this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#603cf9393b8dd699ae75b5db033c1bd0">LoadTextColor</a> = ColorScheme::Find(<span class="stringliteral">"SovietLoad"</span>);
-<a name="l00066"></a>00066 
-<a name="l00067"></a>00067                 <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; RulesClass::Global()-&gt;get_YuriParaDropInf()-&gt;Count; ++i) {
-<a name="l00068"></a>00068                         this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#12ac5f62fa9ab885061a2735191b8a78">ParaDrop</a>.AddItem(RulesClass::Global()-&gt;get_YuriParaDropInf()-&gt;GetItem(i));
-<a name="l00069"></a>00069                 }
-<a name="l00070"></a>00070 
-<a name="l00071"></a>00071                 <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; RulesClass::Global()-&gt;get_YuriParaDropNum()-&gt;Count; ++i) {
-<a name="l00072"></a>00072                         this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#76f6c000acc6db81506f2adcd6671205">ParaDropNum</a>.AddItem(RulesClass::Global()-&gt;get_YuriParaDropNum()-&gt;GetItem(i));
-<a name="l00073"></a>00073                 }
-<a name="l00074"></a>00074 
-<a name="l00075"></a>00075                 this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#03e9f9fbc7fbae9b9dcdc798b0c9ba52">SidebarMixFileIndex</a> = 2;
-<a name="l00076"></a>00076                 this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#93a67f267e67c1f6d9b3bed0f00af36c">SidebarYuriFileNames</a> = <span class="keyword">true</span>;
-<a name="l00077"></a>00077 
-<a name="l00078"></a>00078         } <span class="keywordflow">else</span> { <span class="comment">//Allies or any other country</span>
-<a name="l00079"></a>00079 
-<a name="l00080"></a>00080                 <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; RulesClass::Global()-&gt;get_AlliedBaseDefenseCounts()-&gt;Count; ++i) {
-<a name="l00081"></a>00081                         this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#a15be92191aea8c5b5bccd24fc60c0fb">BaseDefenseCounts</a>.AddItem(RulesClass::Global()-&gt;get_AlliedBaseDefenseCounts()-&gt;GetItem(i));
-<a name="l00082"></a>00082                 }
-<a name="l00083"></a>00083 
-<a name="l00084"></a>00084                 <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; RulesClass::Global()-&gt;get_AlliedBaseDefenses()-&gt;Count; ++i) {
-<a name="l00085"></a>00085                         this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#1a26b482d8302e619c5b1c69e57e056d">BaseDefenses</a>.AddItem(RulesClass::Global()-&gt;get_AlliedBaseDefenses()-&gt;GetItem(i));
-<a name="l00086"></a>00086                 }
-<a name="l00087"></a>00087 
-<a name="l00088"></a>00088                 this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#ef976a6a01e77adcefcaa9b71b23bc88">Crew</a>.<a class="code" href="class_customizable.html#0756e376a0207e8dc7a835b8d42ae34c">Bind</a>(&amp;RulesClass::Global()-&gt;AlliedCrew);
-<a name="l00089"></a>00089                 this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#5a47ebb315d1bddd69a7bf1790fe5b17">DefaultDisguise</a>.<a class="code" href="class_customizable.html#0756e376a0207e8dc7a835b8d42ae34c">Bind</a>(&amp;RulesClass::Global()-&gt;AlliedDisguise);
-<a name="l00090"></a>00090                 this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#722aa7cf8deb4ebfd4a3c5d526633a86">SurvivorDivisor</a>.<a class="code" href="class_customizable.html#0756e376a0207e8dc7a835b8d42ae34c">Bind</a>(&amp;RulesClass::Global()-&gt;AlliedSurvivorDivisor);
-<a name="l00091"></a>00091 
-<a name="l00092"></a>00092                 strcpy(this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#0c734544713705e7f5e74a2acf495d9d">EVATag</a>, <span class="stringliteral">"Allied"</span>);
-<a name="l00093"></a>00093                 this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#603cf9393b8dd699ae75b5db033c1bd0">LoadTextColor</a> = ColorScheme::Find(<span class="stringliteral">"AlliedLoad"</span>);
-<a name="l00094"></a>00094 
-<a name="l00095"></a>00095                 <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; RulesClass::Global()-&gt;get_AllyParaDropInf()-&gt;Count; ++i) {
-<a name="l00096"></a>00096                         this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#12ac5f62fa9ab885061a2735191b8a78">ParaDrop</a>.AddItem(RulesClass::Global()-&gt;get_AllyParaDropInf()-&gt;GetItem(i));
-<a name="l00097"></a>00097                 }
-<a name="l00098"></a>00098 
-<a name="l00099"></a>00099                 <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; RulesClass::Global()-&gt;get_AllyParaDropNum()-&gt;Count; ++i) {
-<a name="l00100"></a>00100                         this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#76f6c000acc6db81506f2adcd6671205">ParaDropNum</a>.AddItem(RulesClass::Global()-&gt;get_AllyParaDropNum()-&gt;GetItem(i));
-<a name="l00101"></a>00101                 }
-<a name="l00102"></a>00102 
-<a name="l00103"></a>00103                 this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#03e9f9fbc7fbae9b9dcdc798b0c9ba52">SidebarMixFileIndex</a> = 1;
-<a name="l00104"></a>00104                 this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#93a67f267e67c1f6d9b3bed0f00af36c">SidebarYuriFileNames</a> = <span class="keyword">false</span>;
-<a name="l00105"></a>00105         }
-<a name="l00106"></a>00106 
-<a name="l00107"></a>00107         this-&gt;<a class="code" href="class_extension.html#43a1ac11c4b59b629cac89f9e9df88e4">_Initialized</a> = <a class="code" href="___container_8hpp.html#9443389dd7829ff977a768ff6f4258207836fa8d375e1c815ed740c792e0a3c5">is_Inited</a>;
-<a name="l00108"></a>00108 };
+<div class="fragment"><pre class="fragment"><a name="l00014"></a>00014 {
+<a name="l00015"></a>00015         <span class="keywordtype">char</span>* pID = pThis-&gt;ID;
+<a name="l00016"></a>00016 
+<a name="l00017"></a>00017         <span class="comment">//are these necessary?</span>
+<a name="l00018"></a>00018         this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#a15be92191aea8c5b5bccd24fc60c0fb">BaseDefenseCounts</a>.Clear();
+<a name="l00019"></a>00019         this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#1a26b482d8302e619c5b1c69e57e056d">BaseDefenses</a>.Clear();
+<a name="l00020"></a>00020         this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#12ac5f62fa9ab885061a2735191b8a78">ParaDrop</a>.Clear();
+<a name="l00021"></a>00021         this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#76f6c000acc6db81506f2adcd6671205">ParaDropNum</a>.Clear();
+<a name="l00022"></a>00022 
+<a name="l00023"></a>00023         <span class="keywordflow">if</span>(!_strcmpi(pID, <span class="stringliteral">"Nod"</span>)) { <span class="comment">//Soviets</span>
+<a name="l00024"></a>00024 
+<a name="l00025"></a>00025                 <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; RulesClass::Instance-&gt;SovietBaseDefenseCounts.Count; ++i) {
+<a name="l00026"></a>00026                         this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#a15be92191aea8c5b5bccd24fc60c0fb">BaseDefenseCounts</a>.AddItem(RulesClass::Instance-&gt;SovietBaseDefenseCounts.GetItem(i));
+<a name="l00027"></a>00027                 }
+<a name="l00028"></a>00028 
+<a name="l00029"></a>00029                 <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; RulesClass::Instance-&gt;SovietBaseDefenses.Count; ++i) {
+<a name="l00030"></a>00030                         this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#1a26b482d8302e619c5b1c69e57e056d">BaseDefenses</a>.AddItem(RulesClass::Global()-&gt;get_SovietBaseDefenses()-&gt;GetItem(i));
+<a name="l00031"></a>00031                 }
+<a name="l00032"></a>00032 
+<a name="l00033"></a>00033                 this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#ef976a6a01e77adcefcaa9b71b23bc88">Crew</a>.<a class="code" href="class_customizable.html#0756e376a0207e8dc7a835b8d42ae34c">Bind</a>(&amp;RulesClass::Instance-&gt;SovietCrew);
+<a name="l00034"></a>00034                 this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#5a47ebb315d1bddd69a7bf1790fe5b17">DefaultDisguise</a>.<a class="code" href="class_customizable.html#0756e376a0207e8dc7a835b8d42ae34c">Bind</a>(&amp;RulesClass::Instance-&gt;SovietDisguise);
+<a name="l00035"></a>00035                 this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#722aa7cf8deb4ebfd4a3c5d526633a86">SurvivorDivisor</a>.<a class="code" href="class_customizable.html#0756e376a0207e8dc7a835b8d42ae34c">Bind</a>(&amp;RulesClass::Instance-&gt;SovietSurvivorDivisor);
+<a name="l00036"></a>00036 
+<a name="l00037"></a>00037                 strcpy(this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#0c734544713705e7f5e74a2acf495d9d">EVATag</a>, <span class="stringliteral">"Russian"</span>);
+<a name="l00038"></a>00038                 this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#603cf9393b8dd699ae75b5db033c1bd0">LoadTextColor</a> = ColorScheme::Find(<span class="stringliteral">"SovietLoad"</span>);
+<a name="l00039"></a>00039 
+<a name="l00040"></a>00040                 <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; RulesClass::Instance-&gt;SovParaDropInf.Count; ++i) {
+<a name="l00041"></a>00041                         this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#12ac5f62fa9ab885061a2735191b8a78">ParaDrop</a>.AddItem((RulesClass::Instance-&gt;SovParaDropInf.GetItem(i)));
+<a name="l00042"></a>00042                 }
+<a name="l00043"></a>00043 
+<a name="l00044"></a>00044                 <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; RulesClass::Instance-&gt;SovParaDropNum.Count; ++i) {
+<a name="l00045"></a>00045                         this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#76f6c000acc6db81506f2adcd6671205">ParaDropNum</a>.AddItem(RulesClass::Instance-&gt;SovParaDropNum.GetItem(i));
+<a name="l00046"></a>00046                 }
+<a name="l00047"></a>00047 
+<a name="l00048"></a>00048                 this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#03e9f9fbc7fbae9b9dcdc798b0c9ba52">SidebarMixFileIndex</a> = 2;
+<a name="l00049"></a>00049                 this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#93a67f267e67c1f6d9b3bed0f00af36c">SidebarYuriFileNames</a> = <span class="keyword">false</span>;
+<a name="l00050"></a>00050 
+<a name="l00051"></a>00051         } <span class="keywordflow">else</span> <span class="keywordflow">if</span>(!_strcmpi(pID, <span class="stringliteral">"ThirdSide"</span>)) { <span class="comment">//Yuri</span>
+<a name="l00052"></a>00052 
+<a name="l00053"></a>00053                 <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; RulesClass::Instance-&gt;ThirdBaseDefenseCounts.Count; ++i) {
+<a name="l00054"></a>00054                         this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#a15be92191aea8c5b5bccd24fc60c0fb">BaseDefenseCounts</a>.AddItem(RulesClass::Instance-&gt;ThirdBaseDefenseCounts.GetItem(i));
+<a name="l00055"></a>00055                 }
+<a name="l00056"></a>00056 
+<a name="l00057"></a>00057                 <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; RulesClass::Instance-&gt;ThirdBaseDefenses.Count; ++i) {
+<a name="l00058"></a>00058                         this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#1a26b482d8302e619c5b1c69e57e056d">BaseDefenses</a>.AddItem(RulesClass::Instance-&gt;ThirdBaseDefenses.GetItem(i));
+<a name="l00059"></a>00059                 }
+<a name="l00060"></a>00060 
+<a name="l00061"></a>00061                 this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#ef976a6a01e77adcefcaa9b71b23bc88">Crew</a>.<a class="code" href="class_customizable.html#0756e376a0207e8dc7a835b8d42ae34c">Bind</a>(&amp;RulesClass::Instance-&gt;ThirdCrew);
+<a name="l00062"></a>00062                 this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#5a47ebb315d1bddd69a7bf1790fe5b17">DefaultDisguise</a>.<a class="code" href="class_customizable.html#0756e376a0207e8dc7a835b8d42ae34c">Bind</a>(&amp;RulesClass::Instance-&gt;ThirdDisguise);
+<a name="l00063"></a>00063                 this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#722aa7cf8deb4ebfd4a3c5d526633a86">SurvivorDivisor</a>.<a class="code" href="class_customizable.html#0756e376a0207e8dc7a835b8d42ae34c">Bind</a>(&amp;RulesClass::Instance-&gt;ThirdSurvivorDivisor);
+<a name="l00064"></a>00064 
+<a name="l00065"></a>00065                 strcpy(this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#0c734544713705e7f5e74a2acf495d9d">EVATag</a>, <span class="stringliteral">"Yuri"</span>);
+<a name="l00066"></a>00066                 this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#603cf9393b8dd699ae75b5db033c1bd0">LoadTextColor</a> = ColorScheme::Find(<span class="stringliteral">"SovietLoad"</span>);
+<a name="l00067"></a>00067 
+<a name="l00068"></a>00068                 <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; RulesClass::Instance-&gt;YuriParaDropInf.Count; ++i) {
+<a name="l00069"></a>00069                         this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#12ac5f62fa9ab885061a2735191b8a78">ParaDrop</a>.AddItem(RulesClass::Instance-&gt;YuriParaDropInf.GetItem(i));
+<a name="l00070"></a>00070                 }
+<a name="l00071"></a>00071 
+<a name="l00072"></a>00072                 <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; RulesClass::Instance-&gt;YuriParaDropNum.Count; ++i) {
+<a name="l00073"></a>00073                         this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#76f6c000acc6db81506f2adcd6671205">ParaDropNum</a>.AddItem(RulesClass::Instance-&gt;YuriParaDropNum.GetItem(i));
+<a name="l00074"></a>00074                 }
+<a name="l00075"></a>00075 
+<a name="l00076"></a>00076                 this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#03e9f9fbc7fbae9b9dcdc798b0c9ba52">SidebarMixFileIndex</a> = 2;
+<a name="l00077"></a>00077                 this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#93a67f267e67c1f6d9b3bed0f00af36c">SidebarYuriFileNames</a> = <span class="keyword">true</span>;
+<a name="l00078"></a>00078 
+<a name="l00079"></a>00079         } <span class="keywordflow">else</span> { <span class="comment">//Allies or any other country</span>
+<a name="l00080"></a>00080 
+<a name="l00081"></a>00081                 <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; RulesClass::Instance-&gt;AlliedBaseDefenseCounts.Count; ++i) {
+<a name="l00082"></a>00082                         this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#a15be92191aea8c5b5bccd24fc60c0fb">BaseDefenseCounts</a>.AddItem(RulesClass::Instance-&gt;AlliedBaseDefenseCounts.GetItem(i));
+<a name="l00083"></a>00083                 }
+<a name="l00084"></a>00084 
+<a name="l00085"></a>00085                 <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; RulesClass::Instance-&gt;AlliedBaseDefenses.Count; ++i) {
+<a name="l00086"></a>00086                         this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#1a26b482d8302e619c5b1c69e57e056d">BaseDefenses</a>.AddItem(RulesClass::Instance-&gt;AlliedBaseDefenses.GetItem(i));
+<a name="l00087"></a>00087                 }
+<a name="l00088"></a>00088 
+<a name="l00089"></a>00089                 this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#ef976a6a01e77adcefcaa9b71b23bc88">Crew</a>.<a class="code" href="class_customizable.html#0756e376a0207e8dc7a835b8d42ae34c">Bind</a>(&amp;RulesClass::Instance-&gt;AlliedCrew);
+<a name="l00090"></a>00090                 this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#5a47ebb315d1bddd69a7bf1790fe5b17">DefaultDisguise</a>.<a class="code" href="class_customizable.html#0756e376a0207e8dc7a835b8d42ae34c">Bind</a>(&amp;RulesClass::Instance-&gt;AlliedDisguise);
+<a name="l00091"></a>00091                 this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#722aa7cf8deb4ebfd4a3c5d526633a86">SurvivorDivisor</a>.<a class="code" href="class_customizable.html#0756e376a0207e8dc7a835b8d42ae34c">Bind</a>(&amp;RulesClass::Instance-&gt;AlliedSurvivorDivisor);
+<a name="l00092"></a>00092 
+<a name="l00093"></a>00093                 strcpy(this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#0c734544713705e7f5e74a2acf495d9d">EVATag</a>, <span class="stringliteral">"Allied"</span>);
+<a name="l00094"></a>00094                 this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#603cf9393b8dd699ae75b5db033c1bd0">LoadTextColor</a> = ColorScheme::Find(<span class="stringliteral">"AlliedLoad"</span>);
+<a name="l00095"></a>00095 
+<a name="l00096"></a>00096                 <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; RulesClass::Instance-&gt;AllyParaDropInf.Count; ++i) {
+<a name="l00097"></a>00097                         this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#12ac5f62fa9ab885061a2735191b8a78">ParaDrop</a>.AddItem(RulesClass::Instance-&gt;AllyParaDropInf.GetItem(i));
+<a name="l00098"></a>00098                 }
+<a name="l00099"></a>00099 
+<a name="l00100"></a>00100                 <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; RulesClass::Instance-&gt;AllyParaDropNum.Count; ++i) {
+<a name="l00101"></a>00101                         this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#76f6c000acc6db81506f2adcd6671205">ParaDropNum</a>.AddItem(RulesClass::Instance-&gt;AllyParaDropNum.GetItem(i));
+<a name="l00102"></a>00102                 }
+<a name="l00103"></a>00103 
+<a name="l00104"></a>00104                 this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#03e9f9fbc7fbae9b9dcdc798b0c9ba52">SidebarMixFileIndex</a> = 1;
+<a name="l00105"></a>00105                 this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#93a67f267e67c1f6d9b3bed0f00af36c">SidebarYuriFileNames</a> = <span class="keyword">false</span>;
+<a name="l00106"></a>00106         }
+<a name="l00107"></a>00107 
+<a name="l00108"></a>00108         this-&gt;<a class="code" href="class_extension.html#43a1ac11c4b59b629cac89f9e9df88e4">_Initialized</a> = <a class="code" href="___container_8hpp.html#9443389dd7829ff977a768ff6f4258207836fa8d375e1c815ed740c792e0a3c5">is_Inited</a>;
+<a name="l00109"></a>00109 };
+</pre></div>
+<p>
+
+</div>
+</div><p>
+<a class="anchor" name="277c27aba40071f24f58953268e2afb6"></a><!-- doxytag: member="SideExt::ExtData::InvalidatePointer" ref="277c27aba40071f24f58953268e2afb6" args="(void *ptr)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void SideExt::SideExt::ExtData::InvalidatePointer           </td>
+          <td>(</td>
+          <td class="paramtype">void *&nbsp;</td>
+          <td class="paramname"> <em>ptr</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td><code> [inline, virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+
+<p>Implements <a class="el" href="class_extension.html#9e6b2ac570eddadb2ca3c01668da88b8">Extension&lt; TT &gt;</a>.</p>
+<div class="fragment"><pre class="fragment"><a name="l00054"></a>00054                                                           {
+<a name="l00055"></a>00055                 }
 </pre></div>
 <p>
 
@@ -292,47 +320,46 @@ Inheritance diagram for SideExt::SideExt::ExtData:</div>
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00111"></a>00111 {
-<a name="l00112"></a>00112         <span class="keywordtype">char</span>* p = NULL;
-<a name="l00113"></a>00113         <span class="keywordtype">char</span>* section = pThis-&gt;get_ID();
-<a name="l00114"></a>00114 
-<a name="l00115"></a>00115         <span class="keywordflow">if</span>(pINI-&gt;ReadString(section, <span class="stringliteral">"AI.BaseDefenseCounts"</span>, <span class="stringliteral">""</span>, <a class="code" href="class_ares.html#55c2fe642b451f2535b29a62120385bf">Ares::readBuffer</a>, <a class="code" href="class_ares.html#dc3a89d98277ea17bef774907bdd8dc8">Ares::readLength</a>)) {
-<a name="l00116"></a>00116                 this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#a15be92191aea8c5b5bccd24fc60c0fb">BaseDefenseCounts</a>.Clear();
-<a name="l00117"></a>00117 
-<a name="l00118"></a>00118                 <span class="keywordflow">for</span>(p = strtok(<a class="code" href="class_ares.html#55c2fe642b451f2535b29a62120385bf">Ares::readBuffer</a>, <a class="code" href="class_ares.html#9514486488c527e3a06ed543e9edeb1f">Ares::readDelims</a>); p &amp;&amp; *p; p = strtok(NULL, <a class="code" href="class_ares.html#9514486488c527e3a06ed543e9edeb1f">Ares::readDelims</a>)) {
-<a name="l00119"></a>00119                         this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#a15be92191aea8c5b5bccd24fc60c0fb">BaseDefenseCounts</a>.AddItem(atoi(p));
-<a name="l00120"></a>00120                 }
-<a name="l00121"></a>00121         }
-<a name="l00122"></a>00122 
-<a name="l00123"></a>00123         <span class="keywordflow">if</span>(pINI-&gt;ReadString(section, <span class="stringliteral">"AI.BaseDefenses"</span>, <span class="stringliteral">""</span>, <a class="code" href="class_ares.html#55c2fe642b451f2535b29a62120385bf">Ares::readBuffer</a>, <a class="code" href="class_ares.html#dc3a89d98277ea17bef774907bdd8dc8">Ares::readLength</a>)) {
-<a name="l00124"></a>00124                 this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#1a26b482d8302e619c5b1c69e57e056d">BaseDefenses</a>.Clear();
-<a name="l00125"></a>00125 
-<a name="l00126"></a>00126                 <span class="keywordflow">for</span>(p = strtok(<a class="code" href="class_ares.html#55c2fe642b451f2535b29a62120385bf">Ares::readBuffer</a>, <a class="code" href="class_ares.html#9514486488c527e3a06ed543e9edeb1f">Ares::readDelims</a>); p &amp;&amp; *p; p = strtok(NULL, <a class="code" href="class_ares.html#9514486488c527e3a06ed543e9edeb1f">Ares::readDelims</a>)) {
-<a name="l00127"></a>00127                         this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#1a26b482d8302e619c5b1c69e57e056d">BaseDefenses</a>.AddItem(BuildingTypeClass::FindOrAllocate(p));
-<a name="l00128"></a>00128                 }
-<a name="l00129"></a>00129         }
-<a name="l00130"></a>00130 
-<a name="l00131"></a>00131         <a class="code" href="class_i_n_i___e_x.html">INI_EX</a> exINI(pINI);
-<a name="l00132"></a>00132 
-<a name="l00133"></a>00133         this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#ef976a6a01e77adcefcaa9b71b23bc88">Crew</a>.<a class="code" href="class_valueable.html#ce02cef5e194a4738d03707ce1c44646">Parse</a>(&amp;exINI, section, <span class="stringliteral">"Crew"</span>, 1);
-<a name="l00134"></a>00134 
-<a name="l00135"></a>00135         this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#5a47ebb315d1bddd69a7bf1790fe5b17">DefaultDisguise</a>.<a class="code" href="class_valueable.html#ce02cef5e194a4738d03707ce1c44646">Parse</a>(&amp;exINI, section, <span class="stringliteral">"DefaultDisguise"</span>, 1);
-<a name="l00136"></a>00136 
-<a name="l00137"></a>00137         <span class="keywordflow">if</span>(pINI-&gt;ReadString(section, <span class="stringliteral">"EVA.Tag"</span>, <span class="stringliteral">""</span>, <a class="code" href="class_ares.html#55c2fe642b451f2535b29a62120385bf">Ares::readBuffer</a>, 0x20)) {
-<a name="l00138"></a>00138                 strncpy(this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#0c734544713705e7f5e74a2acf495d9d">EVATag</a>, <a class="code" href="class_ares.html#55c2fe642b451f2535b29a62120385bf">Ares::readBuffer</a>, 0x20);
-<a name="l00139"></a>00139         }
-<a name="l00140"></a>00140 
-<a name="l00141"></a>00141         <span class="keywordflow">if</span>(pINI-&gt;ReadString(section, <span class="stringliteral">"LoadScreenText.Color"</span>, <span class="stringliteral">""</span>, <a class="code" href="class_ares.html#55c2fe642b451f2535b29a62120385bf">Ares::readBuffer</a>, 0x80)) {
-<a name="l00142"></a>00142                 ColorScheme* CS = ColorScheme::Find(<a class="code" href="class_ares.html#55c2fe642b451f2535b29a62120385bf">Ares::readBuffer</a>);
-<a name="l00143"></a>00143                 <span class="keywordflow">if</span>(CS) {
+<div class="fragment"><pre class="fragment"><a name="l00112"></a>00112 {
+<a name="l00113"></a>00113         <span class="keywordtype">char</span>* p = NULL;
+<a name="l00114"></a>00114         <span class="keywordtype">char</span>* section = pThis-&gt;get_ID();
+<a name="l00115"></a>00115 
+<a name="l00116"></a>00116         <span class="keywordflow">if</span>(pINI-&gt;ReadString(section, <span class="stringliteral">"AI.BaseDefenseCounts"</span>, <span class="stringliteral">""</span>, <a class="code" href="class_ares.html#d4af8279307df25dd1e696f7380beb39">Ares::readBuffer</a>, <a class="code" href="class_ares.html#dc3a89d98277ea17bef774907bdd8dc8">Ares::readLength</a>)) {
+<a name="l00117"></a>00117                 this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#a15be92191aea8c5b5bccd24fc60c0fb">BaseDefenseCounts</a>.Clear();
+<a name="l00118"></a>00118 
+<a name="l00119"></a>00119                 <span class="keywordflow">for</span>(p = strtok(<a class="code" href="class_ares.html#d4af8279307df25dd1e696f7380beb39">Ares::readBuffer</a>, <a class="code" href="class_ares.html#9514486488c527e3a06ed543e9edeb1f">Ares::readDelims</a>); p &amp;&amp; *p; p = strtok(NULL, <a class="code" href="class_ares.html#9514486488c527e3a06ed543e9edeb1f">Ares::readDelims</a>)) {
+<a name="l00120"></a>00120                         this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#a15be92191aea8c5b5bccd24fc60c0fb">BaseDefenseCounts</a>.AddItem(atoi(p));
+<a name="l00121"></a>00121                 }
+<a name="l00122"></a>00122         }
+<a name="l00123"></a>00123 
+<a name="l00124"></a>00124         <span class="keywordflow">if</span>(pINI-&gt;ReadString(section, <span class="stringliteral">"AI.BaseDefenses"</span>, <span class="stringliteral">""</span>, <a class="code" href="class_ares.html#d4af8279307df25dd1e696f7380beb39">Ares::readBuffer</a>, <a class="code" href="class_ares.html#dc3a89d98277ea17bef774907bdd8dc8">Ares::readLength</a>)) {
+<a name="l00125"></a>00125                 this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#1a26b482d8302e619c5b1c69e57e056d">BaseDefenses</a>.Clear();
+<a name="l00126"></a>00126 
+<a name="l00127"></a>00127                 <span class="keywordflow">for</span>(p = strtok(<a class="code" href="class_ares.html#d4af8279307df25dd1e696f7380beb39">Ares::readBuffer</a>, <a class="code" href="class_ares.html#9514486488c527e3a06ed543e9edeb1f">Ares::readDelims</a>); p &amp;&amp; *p; p = strtok(NULL, <a class="code" href="class_ares.html#9514486488c527e3a06ed543e9edeb1f">Ares::readDelims</a>)) {
+<a name="l00128"></a>00128                         this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#1a26b482d8302e619c5b1c69e57e056d">BaseDefenses</a>.AddItem(BuildingTypeClass::FindOrAllocate(p));
+<a name="l00129"></a>00129                 }
+<a name="l00130"></a>00130         }
+<a name="l00131"></a>00131 
+<a name="l00132"></a>00132         <a class="code" href="class_i_n_i___e_x.html">INI_EX</a> exINI(pINI);
+<a name="l00133"></a>00133 
+<a name="l00134"></a>00134         this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#ef976a6a01e77adcefcaa9b71b23bc88">Crew</a>.<a class="code" href="class_valueable.html#ce02cef5e194a4738d03707ce1c44646">Parse</a>(&amp;exINI, section, <span class="stringliteral">"Crew"</span>, 1);
+<a name="l00135"></a>00135 
+<a name="l00136"></a>00136         this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#5a47ebb315d1bddd69a7bf1790fe5b17">DefaultDisguise</a>.<a class="code" href="class_valueable.html#ce02cef5e194a4738d03707ce1c44646">Parse</a>(&amp;exINI, section, <span class="stringliteral">"DefaultDisguise"</span>, 1);
+<a name="l00137"></a>00137 
+<a name="l00138"></a>00138         <span class="keywordflow">if</span>(pINI-&gt;ReadString(section, <span class="stringliteral">"EVA.Tag"</span>, <span class="stringliteral">""</span>, <a class="code" href="class_ares.html#d4af8279307df25dd1e696f7380beb39">Ares::readBuffer</a>, 0x20)) {
+<a name="l00139"></a>00139                 strncpy(this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#0c734544713705e7f5e74a2acf495d9d">EVATag</a>, <a class="code" href="class_ares.html#d4af8279307df25dd1e696f7380beb39">Ares::readBuffer</a>, 0x20);
+<a name="l00140"></a>00140         }
+<a name="l00141"></a>00141 
+<a name="l00142"></a>00142         <span class="keywordflow">if</span>(pINI-&gt;ReadString(section, <span class="stringliteral">"LoadScreenText.Color"</span>, <span class="stringliteral">""</span>, <a class="code" href="class_ares.html#d4af8279307df25dd1e696f7380beb39">Ares::readBuffer</a>, 0x80)) {
+<a name="l00143"></a>00143                 <span class="keywordflow">if</span>(ColorScheme* CS = ColorScheme::Find(<a class="code" href="class_ares.html#d4af8279307df25dd1e696f7380beb39">Ares::readBuffer</a>)) {
 <a name="l00144"></a>00144                         this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#603cf9393b8dd699ae75b5db033c1bd0">LoadTextColor</a> = CS;
 <a name="l00145"></a>00145                 }
 <a name="l00146"></a>00146         }
 <a name="l00147"></a>00147 
-<a name="l00148"></a>00148         <span class="keywordflow">if</span>(pINI-&gt;ReadString(section, <span class="stringliteral">"ParaDrop.Types"</span>, <span class="stringliteral">""</span>, <a class="code" href="class_ares.html#55c2fe642b451f2535b29a62120385bf">Ares::readBuffer</a>, <a class="code" href="class_ares.html#dc3a89d98277ea17bef774907bdd8dc8">Ares::readLength</a>)) {
+<a name="l00148"></a>00148         <span class="keywordflow">if</span>(pINI-&gt;ReadString(section, <span class="stringliteral">"ParaDrop.Types"</span>, <span class="stringliteral">""</span>, <a class="code" href="class_ares.html#d4af8279307df25dd1e696f7380beb39">Ares::readBuffer</a>, <a class="code" href="class_ares.html#dc3a89d98277ea17bef774907bdd8dc8">Ares::readLength</a>)) {
 <a name="l00149"></a>00149                 this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#12ac5f62fa9ab885061a2735191b8a78">ParaDrop</a>.Clear();
 <a name="l00150"></a>00150 
-<a name="l00151"></a>00151                 <span class="keywordflow">for</span>(p = strtok(<a class="code" href="class_ares.html#55c2fe642b451f2535b29a62120385bf">Ares::readBuffer</a>, <a class="code" href="class_ares.html#9514486488c527e3a06ed543e9edeb1f">Ares::readDelims</a>); p &amp;&amp; *p; p = strtok(NULL, <a class="code" href="class_ares.html#9514486488c527e3a06ed543e9edeb1f">Ares::readDelims</a>)) {
+<a name="l00151"></a>00151                 <span class="keywordflow">for</span>(p = strtok(<a class="code" href="class_ares.html#d4af8279307df25dd1e696f7380beb39">Ares::readBuffer</a>, <a class="code" href="class_ares.html#9514486488c527e3a06ed543e9edeb1f">Ares::readDelims</a>); p &amp;&amp; *p; p = strtok(NULL, <a class="code" href="class_ares.html#9514486488c527e3a06ed543e9edeb1f">Ares::readDelims</a>)) {
 <a name="l00152"></a>00152                         TechnoTypeClass* pTT = UnitTypeClass::Find(p);
 <a name="l00153"></a>00153 
 <a name="l00154"></a>00154                         <span class="keywordflow">if</span>(!pTT) {
@@ -345,10 +372,10 @@ Inheritance diagram for SideExt::SideExt::ExtData:</div>
 <a name="l00161"></a>00161                 }
 <a name="l00162"></a>00162         }
 <a name="l00163"></a>00163 
-<a name="l00164"></a>00164         <span class="keywordflow">if</span>(pINI-&gt;ReadString(section, <span class="stringliteral">"ParaDrop.Num"</span>, <span class="stringliteral">""</span>, <a class="code" href="class_ares.html#55c2fe642b451f2535b29a62120385bf">Ares::readBuffer</a>, <a class="code" href="class_ares.html#dc3a89d98277ea17bef774907bdd8dc8">Ares::readLength</a>)) {
+<a name="l00164"></a>00164         <span class="keywordflow">if</span>(pINI-&gt;ReadString(section, <span class="stringliteral">"ParaDrop.Num"</span>, <span class="stringliteral">""</span>, <a class="code" href="class_ares.html#d4af8279307df25dd1e696f7380beb39">Ares::readBuffer</a>, <a class="code" href="class_ares.html#dc3a89d98277ea17bef774907bdd8dc8">Ares::readLength</a>)) {
 <a name="l00165"></a>00165                 this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#76f6c000acc6db81506f2adcd6671205">ParaDropNum</a>.Clear();
 <a name="l00166"></a>00166 
-<a name="l00167"></a>00167                 <span class="keywordflow">for</span>(p = strtok(<a class="code" href="class_ares.html#55c2fe642b451f2535b29a62120385bf">Ares::readBuffer</a>, <a class="code" href="class_ares.html#9514486488c527e3a06ed543e9edeb1f">Ares::readDelims</a>); p &amp;&amp; *p; p = strtok(NULL, <a class="code" href="class_ares.html#9514486488c527e3a06ed543e9edeb1f">Ares::readDelims</a>)) {
+<a name="l00167"></a>00167                 <span class="keywordflow">for</span>(p = strtok(<a class="code" href="class_ares.html#d4af8279307df25dd1e696f7380beb39">Ares::readBuffer</a>, <a class="code" href="class_ares.html#9514486488c527e3a06ed543e9edeb1f">Ares::readDelims</a>); p &amp;&amp; *p; p = strtok(NULL, <a class="code" href="class_ares.html#9514486488c527e3a06ed543e9edeb1f">Ares::readDelims</a>)) {
 <a name="l00168"></a>00168                         this-&gt;<a class="code" href="class_side_ext_1_1_ext_data.html#76f6c000acc6db81506f2adcd6671205">ParaDropNum</a>.AddItem(atoi(p));
 <a name="l00169"></a>00169                 }
 <a name="l00170"></a>00170         }
@@ -555,7 +582,7 @@ Inheritance diagram for SideExt::SideExt::ExtData:</div>
 <hr>The documentation for this class was generated from the following files:<ul>
 <li>Ext/Side/<a class="el" href="_side_2_body_8h.html">Body.h</a><li>Ext/Side/<a class="el" href="_side_2_body_8cpp.html">Body.cpp</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Sat Jan 2 21:12:07 2010 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Mon Mar 1 23:35:18 2010 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

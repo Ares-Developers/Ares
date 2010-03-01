@@ -176,12 +176,12 @@ Inheritance diagram for GenericPrerequisite:</div>
 <a name="l00024"></a>00024         DynamicVectorClass&lt;int&gt; *dvc = &amp;this-&gt;<a class="code" href="class_prereqs.html">Prereqs</a>;
 <a name="l00025"></a>00025 
 <a name="l00026"></a>00026         _snprintf(generalbuf, 0x80, <span class="stringliteral">"Prerequisite%s"</span>, name);
-<a name="l00027"></a>00027         <span class="keywordflow">if</span>(pINI-&gt;ReadString(<span class="stringliteral">"General"</span>, generalbuf, <span class="stringliteral">""</span>, <a class="code" href="class_ares.html#55c2fe642b451f2535b29a62120385bf">Ares::readBuffer</a>, <a class="code" href="class_ares.html#dc3a89d98277ea17bef774907bdd8dc8">Ares::readLength</a>)) {
-<a name="l00028"></a>00028                 <a class="code" href="class_prereqs.html#45690b8063e2351e7e66c4c20ee7147a">Prereqs::Parse</a>(<a class="code" href="class_ares.html#55c2fe642b451f2535b29a62120385bf">Ares::readBuffer</a>, dvc);
+<a name="l00027"></a>00027         <span class="keywordflow">if</span>(pINI-&gt;ReadString(<span class="stringliteral">"General"</span>, generalbuf, <span class="stringliteral">""</span>, <a class="code" href="class_ares.html#d4af8279307df25dd1e696f7380beb39">Ares::readBuffer</a>, <a class="code" href="class_ares.html#dc3a89d98277ea17bef774907bdd8dc8">Ares::readLength</a>)) {
+<a name="l00028"></a>00028                 <a class="code" href="class_prereqs.html#45690b8063e2351e7e66c4c20ee7147a">Prereqs::Parse</a>(<a class="code" href="class_ares.html#d4af8279307df25dd1e696f7380beb39">Ares::readBuffer</a>, dvc);
 <a name="l00029"></a>00029         }
 <a name="l00030"></a>00030 
-<a name="l00031"></a>00031         <span class="keywordflow">if</span>(pINI-&gt;ReadString(section, this-&gt;Name, <span class="stringliteral">""</span>, <a class="code" href="class_ares.html#55c2fe642b451f2535b29a62120385bf">Ares::readBuffer</a>, <a class="code" href="class_ares.html#dc3a89d98277ea17bef774907bdd8dc8">Ares::readLength</a>)) {
-<a name="l00032"></a>00032                 <a class="code" href="class_prereqs.html#45690b8063e2351e7e66c4c20ee7147a">Prereqs::Parse</a>(<a class="code" href="class_ares.html#55c2fe642b451f2535b29a62120385bf">Ares::readBuffer</a>, dvc);
+<a name="l00031"></a>00031         <span class="keywordflow">if</span>(pINI-&gt;ReadString(section, this-&gt;Name, <span class="stringliteral">""</span>, <a class="code" href="class_ares.html#d4af8279307df25dd1e696f7380beb39">Ares::readBuffer</a>, <a class="code" href="class_ares.html#dc3a89d98277ea17bef774907bdd8dc8">Ares::readLength</a>)) {
+<a name="l00032"></a>00032                 <a class="code" href="class_prereqs.html#45690b8063e2351e7e66c4c20ee7147a">Prereqs::Parse</a>(<a class="code" href="class_ares.html#d4af8279307df25dd1e696f7380beb39">Ares::readBuffer</a>, dvc);
 <a name="l00033"></a>00033         }
 <a name="l00034"></a>00034 }
 </pre></div>
@@ -208,7 +208,7 @@ Inheritance diagram for GenericPrerequisite:</div>
 <hr>The documentation for this class was generated from the following files:<ul>
 <li>Enum/<a class="el" href="_prerequisites_8h.html">Prerequisites.h</a><li>Enum/<a class="el" href="_prerequisites_8cpp.html">Prerequisites.cpp</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Sat Jan 2 21:12:07 2010 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Mon Mar 1 23:35:18 2010 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

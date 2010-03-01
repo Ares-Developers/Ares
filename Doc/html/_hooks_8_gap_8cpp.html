@@ -64,20 +64,23 @@
 <div class="fragment"><pre class="fragment"><a name="l00007"></a>00007 {
 <a name="l00008"></a>00008         GET(TechnoClass *, T, ESI);
 <a name="l00009"></a>00009         <span class="keywordtype">bool</span> canGap = <span class="keyword">false</span>;
-<a name="l00010"></a>00010         <span class="keywordflow">if</span>(T-&gt;WhatAmI() != abs_Building) {
-<a name="l00011"></a>00011                 canGap = T-&gt;IsAlive &amp;&amp; !T-&gt;InLimbo &amp;&amp; !T-&gt;Deactivated;
+<a name="l00010"></a>00010         <span class="keywordflow">if</span>(BuildingClass * B = specific_cast&lt;BuildingClass *&gt;(T)) {
+<a name="l00011"></a>00011                 canGap = B-&gt;IsPowerOnline();
 <a name="l00012"></a>00012         } <span class="keywordflow">else</span> {
-<a name="l00013"></a>00013                 canGap = <span class="keyword">reinterpret_cast&lt;</span>BuildingClass *<span class="keyword">&gt;</span>(T)-&gt;IsPowerOnline();
+<a name="l00013"></a>00013                 canGap = T-&gt;IsAlive &amp;&amp; !T-&gt;InLimbo &amp;&amp; !T-&gt;Deactivated;
 <a name="l00014"></a>00014         }
-<a name="l00015"></a>00015         <span class="keywordflow">return</span> canGap ? 0x6FB1A1 : 0x6FB45C;
-<a name="l00016"></a>00016 }
+<a name="l00015"></a>00015         <span class="keywordflow">return</span> canGap
+<a name="l00016"></a>00016                 ? 0x6FB1A1
+<a name="l00017"></a>00017                 : 0x6FB45C
+<a name="l00018"></a>00018         ;
+<a name="l00019"></a>00019 }
 </pre></div>
 <p>
 
 </div>
 </div><p>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Sat Jan 2 21:12:06 2010 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Mon Mar 1 23:35:17 2010 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

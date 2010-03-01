@@ -97,7 +97,8 @@ DEFINE_HOOK(6F9E76, TechnoClass_Update_CheckOperators, 6)
 		}
 	}
 
-	//return 0x6F9E7C; // using this value instead makes this function override the original game one's entirely - don't activate this unless you handle *everything* originally handled by the game
+	/* 	using 0x6F9E7C instead makes this function override the original game one's entirely -
+		don't activate that unless you handle _everything_ originally handled by the game */
 	return 0;
 }
 

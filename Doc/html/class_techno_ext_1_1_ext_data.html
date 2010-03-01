@@ -58,6 +58,8 @@ Inheritance diagram for TechnoExt::TechnoExt::ExtData:</div>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual size_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_techno_ext_1_1_ext_data.html#66a6aeb62965a28b12ddb7b963b83e7b">Size</a> () const </td></tr>
 
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_techno_ext_1_1_ext_data.html#d38ea8a1b3701ae3e1811ae982f4945d">InvalidatePointer</a> (void *ptr)</td></tr>
+
 <tr><td colspan="2"><br><h2>Public Attributes</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">BYTE&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_techno_ext_1_1_ext_data.html#14a9c259c452080520de27dab2fcbbba">idxSlot_Wave</a></td></tr>
 
@@ -142,6 +144,33 @@ Inheritance diagram for TechnoExt::TechnoExt::ExtData:</div>
 </div>
 </div><p>
 <hr><h2>Member Function Documentation</h2>
+<a class="anchor" name="d38ea8a1b3701ae3e1811ae982f4945d"></a><!-- doxytag: member="TechnoExt::ExtData::InvalidatePointer" ref="d38ea8a1b3701ae3e1811ae982f4945d" args="(void *ptr)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void TechnoExt::TechnoExt::ExtData::InvalidatePointer           </td>
+          <td>(</td>
+          <td class="paramtype">void *&nbsp;</td>
+          <td class="paramname"> <em>ptr</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td><code> [inline, virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+
+<p>Implements <a class="el" href="class_extension.html#9e6b2ac570eddadb2ca3c01668da88b8">Extension&lt; TT &gt;</a>.</p>
+<div class="fragment"><pre class="fragment"><a name="l00062"></a>00062                                                           {
+<a name="l00063"></a>00063                         AnnounceInvalidPointer(this-&gt;<a class="code" href="class_techno_ext_1_1_ext_data.html#22818382078c11a99db08bb40f0a1178">GarrisonedIn</a>, ptr);
+<a name="l00064"></a>00064                 }
+</pre></div>
+<p>
+
+</div>
+</div><p>
 <a class="anchor" name="66a6aeb62965a28b12ddb7b963b83e7b"></a><!-- doxytag: member="TechnoExt::ExtData::Size" ref="66a6aeb62965a28b12ddb7b963b83e7b" args="() const " -->
 <div class="memitem">
 <div class="memproto">
@@ -290,7 +319,7 @@ Inheritance diagram for TechnoExt::TechnoExt::ExtData:</div>
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>Ext/Techno/<a class="el" href="_techno_2_body_8h.html">Body.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Sat Jan 2 21:12:07 2010 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Mon Mar 1 23:35:19 2010 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

@@ -58,6 +58,8 @@ Inheritance diagram for BuildingExt::BuildingExt::ExtData:</div>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual size_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_building_ext_1_1_ext_data.html#d63c5123584319b1984524dc5b758c04">Size</a> () const </td></tr>
 
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_building_ext_1_1_ext_data.html#4918704e582482416d8a6a0232bd3e93">InvalidatePointer</a> (void *ptr)</td></tr>
+
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_building_ext_1_1_ext_data.html#21d04400f5987ecf67d56b132700b063">RubbleYell</a> (bool beingRepaired=false)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">This function switches the building into its Advanced Rubble state or back to normal.  <a href="#21d04400f5987ecf67d56b132700b063"></a><br></td></tr>
@@ -69,6 +71,7 @@ Inheritance diagram for BuildingExt::BuildingExt::ExtData:</div>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">This function moves as many occupants as possible from the current to the target building.  <a href="#17b1563086581584c3e904e168506636"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_building_ext_1_1_ext_data.html#e4a73a7dee4d4ffb1e68a2aa3355ef6f">sameTrench</a> (BuildingClass *targetBuilding)</td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">This function checks if the current and the target building are both of the same trench kind.  <a href="#e4a73a7dee4d4ffb1e68a2aa3355ef6f"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_building_ext_1_1_ext_data.html#7523847404477cd1be29ab2f403d4fb3">isLinkable</a> ()</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Returns true if this is a structure that can be linked to other structures, like a wall, fence, or trench. This is used to quick-check if the game has to look for linkable buildings in the first place.  <a href="#7523847404477cd1be29ab2f403d4fb3"></a><br></td></tr>
@@ -171,29 +174,29 @@ Checks if the current building can link to the given target building.
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>true if the two buildings can be linked. </dd></dl>
 <dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="class_building_ext_1_1_ext_data.html#7523847404477cd1be29ab2f403d4fb3" title="Returns true if this is a structure that can be linked to other structures, like...">isLinkable()</a> </dd></dl>
-<div class="fragment"><pre class="fragment"><a name="l00264"></a>00264                                                                 {
-<a name="l00265"></a>00265         BuildingClass* currentBuilding = this-&gt;<a class="code" href="class_extension.html#72742b36a0db81d6697da473dfe8281d">AttachedToObject</a>;
-<a name="l00266"></a>00266 
-<a name="l00267"></a>00267         <span class="comment">// Different owners // and owners not allied</span>
-<a name="l00268"></a>00268         <span class="keywordflow">if</span>((currentBuilding-&gt;Owner != targetBuilding-&gt;Owner) &amp;&amp; !currentBuilding-&gt;Owner-&gt;IsAlliedWith(targetBuilding-&gt;Owner)) { <span class="comment">//&lt;-- see thread 1424</span>
-<a name="l00269"></a>00269                 <span class="keywordflow">return</span> <span class="keyword">false</span>;
-<a name="l00270"></a>00270         }
-<a name="l00271"></a>00271 
-<a name="l00272"></a>00272         <a class="code" href="class_building_type_ext_1_1_ext_data.html">BuildingTypeExt::ExtData</a>* currentTypeExtData = <a class="code" href="class_building_type_ext.html#9643fa629dd6d2a20eeefa4942d8612a">BuildingTypeExt::ExtMap</a>.<a class="code" href="class_container.html#90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(currentBuilding-&gt;Type);
-<a name="l00273"></a>00273         <a class="code" href="class_building_type_ext_1_1_ext_data.html">BuildingTypeExt::ExtData</a>* targetTypeExtData = <a class="code" href="class_building_type_ext.html#9643fa629dd6d2a20eeefa4942d8612a">BuildingTypeExt::ExtMap</a>.<a class="code" href="class_container.html#90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(targetBuilding-&gt;Type);
-<a name="l00274"></a>00274 
-<a name="l00275"></a>00275         <span class="comment">// Firewalls</span>
-<a name="l00276"></a>00276         <span class="keywordflow">if</span>(currentTypeExtData-&gt;<a class="code" href="class_building_type_ext_1_1_ext_data.html#51503707d3c7be1bcd829f893acdd21e">Firewall_Is</a> &amp;&amp; targetTypeExtData-&gt;<a class="code" href="class_building_type_ext_1_1_ext_data.html#51503707d3c7be1bcd829f893acdd21e">Firewall_Is</a>) {
-<a name="l00277"></a>00277                 <span class="keywordflow">return</span> <span class="keyword">true</span>;
-<a name="l00278"></a>00278         }
-<a name="l00279"></a>00279 
-<a name="l00280"></a>00280         <span class="comment">// Trenches</span>
-<a name="l00281"></a>00281         <span class="keywordflow">if</span>(this-&gt;<a class="code" href="class_building_ext_1_1_ext_data.html#e4a73a7dee4d4ffb1e68a2aa3355ef6f">sameTrench</a>(targetBuilding)) {
-<a name="l00282"></a>00282                 <span class="keywordflow">return</span> <span class="keyword">true</span>;
-<a name="l00283"></a>00283         }
+<div class="fragment"><pre class="fragment"><a name="l00274"></a>00274                                                                 {
+<a name="l00275"></a>00275         BuildingClass* currentBuilding = this-&gt;<a class="code" href="class_extension.html#72742b36a0db81d6697da473dfe8281d">AttachedToObject</a>;
+<a name="l00276"></a>00276 
+<a name="l00277"></a>00277         <span class="comment">// Different owners // and owners not allied</span>
+<a name="l00278"></a>00278         <span class="keywordflow">if</span>((currentBuilding-&gt;Owner != targetBuilding-&gt;Owner) &amp;&amp; !currentBuilding-&gt;Owner-&gt;IsAlliedWith(targetBuilding-&gt;Owner)) { <span class="comment">//&lt;-- see thread 1424</span>
+<a name="l00279"></a>00279                 <span class="keywordflow">return</span> <span class="keyword">false</span>;
+<a name="l00280"></a>00280         }
+<a name="l00281"></a>00281 
+<a name="l00282"></a>00282         <a class="code" href="class_building_type_ext_1_1_ext_data.html">BuildingTypeExt::ExtData</a>* currentTypeExtData = <a class="code" href="class_building_type_ext.html#9643fa629dd6d2a20eeefa4942d8612a">BuildingTypeExt::ExtMap</a>.<a class="code" href="class_container.html#90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(currentBuilding-&gt;Type);
+<a name="l00283"></a>00283         <a class="code" href="class_building_type_ext_1_1_ext_data.html">BuildingTypeExt::ExtData</a>* targetTypeExtData = <a class="code" href="class_building_type_ext.html#9643fa629dd6d2a20eeefa4942d8612a">BuildingTypeExt::ExtMap</a>.<a class="code" href="class_container.html#90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(targetBuilding-&gt;Type);
 <a name="l00284"></a>00284 
-<a name="l00285"></a>00285         <span class="keywordflow">return</span> <span class="keyword">false</span>;
-<a name="l00286"></a>00286 }
+<a name="l00285"></a>00285         <span class="comment">// Firewalls</span>
+<a name="l00286"></a>00286         <span class="keywordflow">if</span>(currentTypeExtData-&gt;<a class="code" href="class_building_type_ext_1_1_ext_data.html#51503707d3c7be1bcd829f893acdd21e">Firewall_Is</a> &amp;&amp; targetTypeExtData-&gt;<a class="code" href="class_building_type_ext_1_1_ext_data.html#51503707d3c7be1bcd829f893acdd21e">Firewall_Is</a>) {
+<a name="l00287"></a>00287                 <span class="keywordflow">return</span> <span class="keyword">true</span>;
+<a name="l00288"></a>00288         }
+<a name="l00289"></a>00289 
+<a name="l00290"></a>00290         <span class="comment">// Trenches</span>
+<a name="l00291"></a>00291         <span class="keywordflow">if</span>(this-&gt;<a class="code" href="class_building_ext_1_1_ext_data.html#e4a73a7dee4d4ffb1e68a2aa3355ef6f" title="This function checks if the current and the target building are both of the same...">sameTrench</a>(targetBuilding)) {
+<a name="l00292"></a>00292                 <span class="keywordflow">return</span> <span class="keyword">true</span>;
+<a name="l00293"></a>00293         }
+<a name="l00294"></a>00294 
+<a name="l00295"></a>00295         <span class="keywordflow">return</span> <span class="keyword">false</span>;
+<a name="l00296"></a>00296 }
 </pre></div>
 <p>
 
@@ -229,28 +232,34 @@ The current system assumes 1x1 sized trench parts; it will probably work in all 
 <dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="class_building_ext_1_1_ext_data.html#17b1563086581584c3e904e168506636" title="This function moves as many occupants as possible from the current to the target...">doTraverseTo()</a></dd></dl>
 <dl class="author" compact><dt><b>Author:</b></dt><dd>Renegade </dd></dl>
 <dl class="date" compact><dt><b>Date:</b></dt><dd>16.12.09+ </dd></dl>
-<div class="fragment"><pre class="fragment"><a name="l00197"></a>00197                                                                     {
-<a name="l00198"></a>00198         BuildingClass* currentBuilding = this-&gt;<a class="code" href="class_extension.html#72742b36a0db81d6697da473dfe8281d">AttachedToObject</a>;
-<a name="l00199"></a>00199         <span class="comment">//BuildingTypeClass* currentBuildingType = game_cast&lt;BuildingTypeClass *&gt;(currentBuilding-&gt;GetTechnoType());</span>
-<a name="l00200"></a>00200         BuildingTypeClass* targetBuildingType = targetBuilding-&gt;Type;
-<a name="l00201"></a>00201 
-<a name="l00202"></a>00202         <span class="keywordflow">if</span>((targetBuilding-&gt;Occupants.Count &gt;= targetBuildingType-&gt;MaxNumberOccupants) || !currentBuilding-&gt;Occupants.Count || !targetBuildingType-&gt;CanBeOccupied) {
-<a name="l00203"></a>00203                 <span class="keywordflow">return</span> <span class="keyword">false</span>; <span class="comment">// Can't traverse if there's no one to move, or the target is full, or we can't actually occupy the target</span>
-<a name="l00204"></a>00204         }
-<a name="l00205"></a>00205 
-<a name="l00206"></a>00206         <a class="code" href="class_building_type_ext_1_1_ext_data.html">BuildingTypeExt::ExtData</a>* currentBuildingTypeExt = <a class="code" href="class_building_type_ext.html#9643fa629dd6d2a20eeefa4942d8612a">BuildingTypeExt::ExtMap</a>.<a class="code" href="class_container.html#90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(currentBuilding-&gt;Type);
-<a name="l00207"></a>00207         <a class="code" href="class_building_type_ext_1_1_ext_data.html">BuildingTypeExt::ExtData</a>* targetBuildingTypeExt = <a class="code" href="class_building_type_ext.html#9643fa629dd6d2a20eeefa4942d8612a">BuildingTypeExt::ExtMap</a>.<a class="code" href="class_container.html#90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(targetBuilding-&gt;Type);
-<a name="l00208"></a>00208 
-<a name="l00209"></a>00209         <span class="keywordflow">if</span>(this-&gt;<a class="code" href="class_building_ext_1_1_ext_data.html#e4a73a7dee4d4ffb1e68a2aa3355ef6f">sameTrench</a>(targetBuilding)) {
-<a name="l00210"></a>00210                 <span class="comment">// if we've come here, there's room, there are people to move, and the buildings are trenches and of the same kind</span>
-<a name="l00211"></a>00211                 <span class="comment">// the only questioning remaining is whether they are next to each other.</span>
-<a name="l00212"></a>00212                 <span class="keywordflow">return</span> targetBuilding-&gt;Location.DistanceFrom(currentBuilding-&gt;Location) &lt;= 256.0; <span class="comment">// if the target building is more than 256 leptons away, it's not on a straight neighboring cell</span>
-<a name="l00213"></a>00213 
-<a name="l00214"></a>00214         } <span class="keywordflow">else</span> {
-<a name="l00215"></a>00215                 <span class="keywordflow">return</span> <span class="keyword">false</span>; <span class="comment">// not the same trench kind or not a trench</span>
-<a name="l00216"></a>00216         }
-<a name="l00217"></a>00217 
-<a name="l00218"></a>00218 }
+<div class="fragment"><pre class="fragment"><a name="l00199"></a>00199                                                                     {
+<a name="l00200"></a>00200         BuildingClass* currentBuilding = this-&gt;<a class="code" href="class_extension.html#72742b36a0db81d6697da473dfe8281d">AttachedToObject</a>;
+<a name="l00201"></a>00201         <span class="comment">//BuildingTypeClass* currentBuildingType = game_cast&lt;BuildingTypeClass *&gt;(currentBuilding-&gt;GetTechnoType());</span>
+<a name="l00202"></a>00202         BuildingTypeClass* targetBuildingType = targetBuilding-&gt;Type;
+<a name="l00203"></a>00203 
+<a name="l00204"></a>00204         <span class="keywordflow">if</span>((targetBuilding == currentBuilding)
+<a name="l00205"></a>00205                 || (targetBuilding-&gt;Occupants.Count &gt;= targetBuildingType-&gt;MaxNumberOccupants)
+<a name="l00206"></a>00206                 || !currentBuilding-&gt;Occupants.Count
+<a name="l00207"></a>00207                 || !targetBuildingType-&gt;CanBeOccupied) { <span class="comment">// I'm a little if-clause short and stout...</span>
+<a name="l00208"></a>00208                 <span class="comment">// Can't traverse if there's no one to move, or the target is full, we can't actually occupy the target,</span>
+<a name="l00209"></a>00209                 <span class="comment">// or if it's actually the same building</span>
+<a name="l00210"></a>00210                 <span class="keywordflow">return</span> <span class="keyword">false</span>;
+<a name="l00211"></a>00211         }
+<a name="l00212"></a>00212 
+<a name="l00213"></a>00213         <a class="code" href="class_building_type_ext_1_1_ext_data.html">BuildingTypeExt::ExtData</a>* currentBuildingTypeExt = <a class="code" href="class_building_type_ext.html#9643fa629dd6d2a20eeefa4942d8612a">BuildingTypeExt::ExtMap</a>.<a class="code" href="class_container.html#90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(currentBuilding-&gt;Type);
+<a name="l00214"></a>00214         <a class="code" href="class_building_type_ext_1_1_ext_data.html">BuildingTypeExt::ExtData</a>* targetBuildingTypeExt = <a class="code" href="class_building_type_ext.html#9643fa629dd6d2a20eeefa4942d8612a">BuildingTypeExt::ExtMap</a>.<a class="code" href="class_container.html#90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(targetBuilding-&gt;Type);
+<a name="l00215"></a>00215 
+<a name="l00216"></a>00216         <span class="keywordflow">if</span>(this-&gt;<a class="code" href="class_building_ext_1_1_ext_data.html#e4a73a7dee4d4ffb1e68a2aa3355ef6f" title="This function checks if the current and the target building are both of the same...">sameTrench</a>(targetBuilding)) {
+<a name="l00217"></a>00217                 <span class="comment">// if we've come here, there's room, there are people to move, and the buildings are trenches and of the same kind</span>
+<a name="l00218"></a>00218                 <span class="comment">// the only questioning remaining is whether they are next to each other.</span>
+<a name="l00219"></a>00219                 <span class="comment">// if the target building is more than 256 leptons away, it's not on a straight neighboring cell.</span>
+<a name="l00220"></a>00220                 <span class="keywordflow">return</span> targetBuilding-&gt;Location.DistanceFrom(currentBuilding-&gt;Location) &lt;= 256.0;
+<a name="l00221"></a>00221 
+<a name="l00222"></a>00222         } <span class="keywordflow">else</span> {
+<a name="l00223"></a>00223                 <span class="keywordflow">return</span> <span class="keyword">false</span>; <span class="comment">// not the same trench kind or not a trench</span>
+<a name="l00224"></a>00224         }
+<a name="l00225"></a>00225 
+<a name="l00226"></a>00226 }
 </pre></div>
 <p>
 
@@ -285,17 +294,18 @@ This function will move occupants from the current building to the target buildi
 <dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="class_building_ext_1_1_ext_data.html#fc818dee964beb1c3e2fb17390df15c6" title="This function checks if occupants of the current building can, on principle, move...">canTraverseTo()</a></dd></dl>
 <dl class="author" compact><dt><b>Author:</b></dt><dd>Renegade </dd></dl>
 <dl class="date" compact><dt><b>Date:</b></dt><dd>16.12.09+ </dd></dl>
-<div class="fragment"><pre class="fragment"><a name="l00235"></a>00235                                                                    {
-<a name="l00236"></a>00236         BuildingClass* currentBuilding = this-&gt;<a class="code" href="class_extension.html#72742b36a0db81d6697da473dfe8281d">AttachedToObject</a>;
-<a name="l00237"></a>00237         BuildingTypeClass* targetBuildingType = targetBuilding-&gt;Type;
-<a name="l00238"></a>00238 
-<a name="l00239"></a>00239         <span class="keywordflow">while</span>(currentBuilding-&gt;Occupants.Count &amp;&amp; (targetBuilding-&gt;Occupants.Count &lt; targetBuildingType-&gt;MaxNumberOccupants)) { <span class="comment">// depending on Westwood's handling, this could explode when Size &gt; 1 units are involved...but don't tell the users that</span>
-<a name="l00240"></a>00240                 targetBuilding-&gt;Occupants.AddItem(currentBuilding-&gt;Occupants.GetItem(0));
-<a name="l00241"></a>00241                 currentBuilding-&gt;Occupants.RemoveItem(0); <span class="comment">// maybe switch Add/Remove if the game gets pissy about multiple of them walking around</span>
-<a name="l00242"></a>00242         }
-<a name="l00243"></a>00243 
-<a name="l00244"></a>00244         this-&gt;<a class="code" href="class_building_ext_1_1_ext_data.html#29586d61b4f18e7fd044e0dd5e10c946" title="Checks if the building is empty but still marked as raided, and returns the building...">evalRaidStatus</a>(); <span class="comment">// if the traversal emptied the current building, it'll have to be returned to its owner</span>
-<a name="l00245"></a>00245 }
+<div class="fragment"><pre class="fragment"><a name="l00243"></a>00243                                                                    {
+<a name="l00244"></a>00244         BuildingClass* currentBuilding = this-&gt;<a class="code" href="class_extension.html#72742b36a0db81d6697da473dfe8281d">AttachedToObject</a>;
+<a name="l00245"></a>00245         BuildingTypeClass* targetBuildingType = targetBuilding-&gt;Type;
+<a name="l00246"></a>00246 
+<a name="l00247"></a>00247         <span class="comment">// depending on Westwood's handling, this could explode when Size &gt; 1 units are involved...but don't tell the users that</span>
+<a name="l00248"></a>00248         <span class="keywordflow">while</span>(currentBuilding-&gt;Occupants.Count &amp;&amp; (targetBuilding-&gt;Occupants.Count &lt; targetBuildingType-&gt;MaxNumberOccupants)) {
+<a name="l00249"></a>00249                 targetBuilding-&gt;Occupants.AddItem(currentBuilding-&gt;Occupants.GetItem(0));
+<a name="l00250"></a>00250                 currentBuilding-&gt;Occupants.RemoveItem(0); <span class="comment">// maybe switch Add/Remove if the game gets pissy about multiple of them walking around</span>
+<a name="l00251"></a>00251         }
+<a name="l00252"></a>00252 
+<a name="l00253"></a>00253         this-&gt;<a class="code" href="class_building_ext_1_1_ext_data.html#29586d61b4f18e7fd044e0dd5e10c946" title="Checks if the building is empty but still marked as raided, and returns the building...">evalRaidStatus</a>(); <span class="comment">// if the traversal emptied the current building, it'll have to be returned to its owner</span>
+<a name="l00254"></a>00254 }
 </pre></div>
 <p>
 
@@ -319,13 +329,41 @@ This function will move occupants from the current building to the target buildi
 <p>
 Checks if the building is empty but still marked as raided, and returns the building to its previous owner, if so. 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00247"></a>00247                                         {
-<a name="l00248"></a>00248         <span class="keywordflow">if</span>(this-&gt;<a class="code" href="class_building_ext_1_1_ext_data.html#f8a542bf713fcbfc1bf81a7cfa5ed2c1" title="Whether this building is currently occupied by someone not the actual owner of the...">isCurrentlyRaided</a> &amp;&amp; !this-&gt;<a class="code" href="class_extension.html#72742b36a0db81d6697da473dfe8281d">AttachedToObject</a>-&gt;Occupants.Count) { <span class="comment">// if the building is still marked as raided, but unoccupied, return it to its previous owner</span>
-<a name="l00249"></a>00249                 this-&gt;<a class="code" href="class_extension.html#72742b36a0db81d6697da473dfe8281d">AttachedToObject</a>-&gt;SetOwningHouse(this-&gt;<a class="code" href="class_building_ext_1_1_ext_data.html#7270bd5eb03823bf3ed264a38e645455" title="Contains the house which owned this building prior to it being raided and turned...">OwnerBeforeRaid</a>);
-<a name="l00250"></a>00250                 this-&gt;<a class="code" href="class_building_ext_1_1_ext_data.html#7270bd5eb03823bf3ed264a38e645455" title="Contains the house which owned this building prior to it being raided and turned...">OwnerBeforeRaid</a> = NULL;
-<a name="l00251"></a>00251                 this-&gt;<a class="code" href="class_building_ext_1_1_ext_data.html#f8a542bf713fcbfc1bf81a7cfa5ed2c1" title="Whether this building is currently occupied by someone not the actual owner of the...">isCurrentlyRaided</a> = <span class="keyword">false</span>;
-<a name="l00252"></a>00252         }
-<a name="l00253"></a>00253 }
+<div class="fragment"><pre class="fragment"><a name="l00256"></a>00256                                         {
+<a name="l00257"></a>00257         <span class="comment">// if the building is still marked as raided, but unoccupied, return it to its previous owner</span>
+<a name="l00258"></a>00258         <span class="keywordflow">if</span>(this-&gt;<a class="code" href="class_building_ext_1_1_ext_data.html#f8a542bf713fcbfc1bf81a7cfa5ed2c1" title="Whether this building is currently occupied by someone not the actual owner of the...">isCurrentlyRaided</a> &amp;&amp; !this-&gt;<a class="code" href="class_extension.html#72742b36a0db81d6697da473dfe8281d">AttachedToObject</a>-&gt;Occupants.Count) {
+<a name="l00259"></a>00259                 this-&gt;<a class="code" href="class_extension.html#72742b36a0db81d6697da473dfe8281d">AttachedToObject</a>-&gt;SetOwningHouse(this-&gt;<a class="code" href="class_building_ext_1_1_ext_data.html#7270bd5eb03823bf3ed264a38e645455" title="Contains the house which owned this building prior to it being raided and turned...">OwnerBeforeRaid</a>);
+<a name="l00260"></a>00260                 this-&gt;<a class="code" href="class_building_ext_1_1_ext_data.html#7270bd5eb03823bf3ed264a38e645455" title="Contains the house which owned this building prior to it being raided and turned...">OwnerBeforeRaid</a> = NULL;
+<a name="l00261"></a>00261                 this-&gt;<a class="code" href="class_building_ext_1_1_ext_data.html#f8a542bf713fcbfc1bf81a7cfa5ed2c1" title="Whether this building is currently occupied by someone not the actual owner of the...">isCurrentlyRaided</a> = <span class="keyword">false</span>;
+<a name="l00262"></a>00262         }
+<a name="l00263"></a>00263 }
+</pre></div>
+<p>
+
+</div>
+</div><p>
+<a class="anchor" name="4918704e582482416d8a6a0232bd3e93"></a><!-- doxytag: member="BuildingExt::ExtData::InvalidatePointer" ref="4918704e582482416d8a6a0232bd3e93" args="(void *ptr)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void BuildingExt::BuildingExt::ExtData::InvalidatePointer           </td>
+          <td>(</td>
+          <td class="paramtype">void *&nbsp;</td>
+          <td class="paramname"> <em>ptr</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td><code> [inline, virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+
+<p>Implements <a class="el" href="class_extension.html#9e6b2ac570eddadb2ca3c01668da88b8">Extension&lt; TT &gt;</a>.</p>
+<div class="fragment"><pre class="fragment"><a name="l00036"></a>00036                                                           {
+<a name="l00037"></a>00037                         AnnounceInvalidPointer(<a class="code" href="class_building_ext_1_1_ext_data.html#7270bd5eb03823bf3ed264a38e645455" title="Contains the house which owned this building prior to it being raided and turned...">OwnerBeforeRaid</a>, ptr);
+<a name="l00038"></a>00038                 }
 </pre></div>
 <p>
 
@@ -350,10 +388,10 @@ Checks if the building is empty but still marked as raided, and returns the buil
 Returns true if this is a structure that can be linked to other structures, like a wall, fence, or trench. This is used to quick-check if the game has to look for linkable buildings in the first place. 
 <p>
 <dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="class_building_ext_1_1_ext_data.html#63d2873ee89296616c24bc3a440819d1" title="Checks if the current building can link to the given target building.">canLinkTo()</a> </dd></dl>
-<div class="fragment"><pre class="fragment"><a name="l00258"></a>00258                                     {
-<a name="l00259"></a>00259         <a class="code" href="class_building_type_ext_1_1_ext_data.html">BuildingTypeExt::ExtData</a>* typeExtData = <a class="code" href="class_building_type_ext.html#9643fa629dd6d2a20eeefa4942d8612a">BuildingTypeExt::ExtMap</a>.<a class="code" href="class_container.html#90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(this-&gt;<a class="code" href="class_extension.html#72742b36a0db81d6697da473dfe8281d">AttachedToObject</a>-&gt;Type);
-<a name="l00260"></a>00260         <span class="keywordflow">return</span> typeExtData-&gt;<a class="code" href="class_building_type_ext_1_1_ext_data.html#51503707d3c7be1bcd829f893acdd21e">Firewall_Is</a> || (typeExtData-&gt;<a class="code" href="class_building_type_ext_1_1_ext_data.html#3af26b553e32907458b023e766272dd7" title="Enables moving between segments - saves ID of a kind of trench.">IsTrench</a> &gt; -1);
-<a name="l00261"></a>00261 }
+<div class="fragment"><pre class="fragment"><a name="l00268"></a>00268                                     {
+<a name="l00269"></a>00269         <a class="code" href="class_building_type_ext_1_1_ext_data.html">BuildingTypeExt::ExtData</a>* typeExtData = <a class="code" href="class_building_type_ext.html#9643fa629dd6d2a20eeefa4942d8612a">BuildingTypeExt::ExtMap</a>.<a class="code" href="class_container.html#90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(this-&gt;<a class="code" href="class_extension.html#72742b36a0db81d6697da473dfe8281d">AttachedToObject</a>-&gt;Type);
+<a name="l00270"></a>00270         <span class="keywordflow">return</span> typeExtData-&gt;<a class="code" href="class_building_type_ext_1_1_ext_data.html#51503707d3c7be1bcd829f893acdd21e">Firewall_Is</a> || (typeExtData-&gt;<a class="code" href="class_building_type_ext_1_1_ext_data.html#3af26b553e32907458b023e766272dd7" title="Enables moving between segments - saves ID of a kind of trench.">IsTrench</a> &gt; -1);
+<a name="l00271"></a>00271 }
 </pre></div>
 <p>
 
@@ -398,37 +436,39 @@ Lastly, the function will set the current building as the alternate state on the
 <a name="l00129"></a>00129 
 <a name="l00130"></a>00130         <span class="keywordflow">if</span>(beingRepaired) {
 <a name="l00131"></a>00131                 <span class="keywordflow">if</span>(!pTypeData-&gt;<a class="code" href="class_building_type_ext_1_1_ext_data.html#540c722c0770aa5a4db400f331bfd098" title="What BuildingType to turn into when reconstructed. (This is the normal building,...">RubbleIntact</a>) {
-<a name="l00132"></a>00132                         Debug::Log(<span class="stringliteral">"Warning! Advanced Rubble was supposed to be reconstructed but Ares could not obtain its normal state. Check if [%s]Rubble.Intact is set (correctly).\n"</span>, currentBuilding-&gt;Type-&gt;ID);
-<a name="l00133"></a>00133                         <span class="keywordflow">return</span>;
-<a name="l00134"></a>00134                 }
-<a name="l00135"></a>00135 
-<a name="l00136"></a>00136                 newState = specific_cast&lt;BuildingClass *&gt;(pTypeData-&gt;<a class="code" href="class_building_type_ext_1_1_ext_data.html#540c722c0770aa5a4db400f331bfd098" title="What BuildingType to turn into when reconstructed. (This is the normal building,...">RubbleIntact</a>-&gt;CreateObject(currentBuilding-&gt;Owner));
-<a name="l00137"></a>00137                 newState-&gt;Health = <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(newState-&gt;Type-&gt;Strength / 100); <span class="comment">// see description above</span>
-<a name="l00138"></a>00138                 newState-&gt;IsAlive = <span class="keyword">true</span>; <span class="comment">// assuming this is in the sense of "is not destroyed"</span>
-<a name="l00139"></a>00139                 <span class="comment">// Location should not be changed by removal</span>
-<a name="l00140"></a>00140                 <span class="keywordflow">if</span>(!newState-&gt;Put(&amp;currentBuilding-&gt;Location, currentBuilding-&gt;Facing)) {
-<a name="l00141"></a>00141                         Debug::Log(<span class="stringliteral">"Advanced Rubble: Failed to place normal state on map!\n"</span>);
-<a name="l00142"></a>00142                         <span class="keyword">delete</span> newState;
-<a name="l00143"></a>00143                 }
-<a name="l00144"></a>00144                 currentBuilding-&gt;UnInit();
-<a name="l00145"></a>00145 
-<a name="l00146"></a>00146         } <span class="keywordflow">else</span> { <span class="comment">// if we're not here to repair that thing, obviously, we're gonna crush it</span>
-<a name="l00147"></a>00147                 <span class="keywordflow">if</span>(!pTypeData-&gt;<a class="code" href="class_building_type_ext_1_1_ext_data.html#651a8bd6ba32545c28b1839a1a927f4f" title="What BuildingType to turn into when destroyed. (This is the rubble, set on normal...">RubbleDestroyed</a>) {
-<a name="l00148"></a>00148                         Debug::Log(<span class="stringliteral">"Warning! Building was supposed to be turned into Advanced Rubble but Ares could not obtain its rubble state. Check if [%s]Rubble.Destroyed is set (correctly).\n"</span>, currentBuilding-&gt;Type-&gt;ID);
-<a name="l00149"></a>00149                         <span class="keywordflow">return</span>;
-<a name="l00150"></a>00150                 }
-<a name="l00151"></a>00151 
-<a name="l00152"></a>00152                 newState = specific_cast&lt;BuildingClass *&gt;(pTypeData-&gt;<a class="code" href="class_building_type_ext_1_1_ext_data.html#651a8bd6ba32545c28b1839a1a927f4f" title="What BuildingType to turn into when destroyed. (This is the rubble, set on normal...">RubbleDestroyed</a>-&gt;CreateObject(currentBuilding-&gt;Owner));
-<a name="l00153"></a>00153                 newState-&gt;Health = newState-&gt;Type-&gt;Strength * 0.99; <span class="comment">// see description above</span>
-<a name="l00154"></a>00154                 <span class="comment">// Location should not be changed by removal</span>
-<a name="l00155"></a>00155                 <span class="keywordflow">if</span>(!newState-&gt;Put(&amp;currentBuilding-&gt;Location, currentBuilding-&gt;Facing)) {
-<a name="l00156"></a>00156                         Debug::Log(<span class="stringliteral">"Advanced Rubble: Failed to place rubble state on map!\n"</span>);
-<a name="l00157"></a>00157                         <span class="keyword">delete</span> newState;
-<a name="l00158"></a>00158                 }
-<a name="l00159"></a>00159         }
-<a name="l00160"></a>00160 
-<a name="l00161"></a>00161         <span class="keywordflow">return</span>;
-<a name="l00162"></a>00162 }
+<a name="l00132"></a>00132                         Debug::Log(<span class="stringliteral">"Warning! Advanced Rubble was supposed to be reconstructed but Ares could not obtain its normal state. \</span>
+<a name="l00133"></a>00133 <span class="stringliteral">                        Check if [%s]Rubble.Intact is set (correctly).\n"</span>, currentBuilding-&gt;Type-&gt;ID);
+<a name="l00134"></a>00134                         <span class="keywordflow">return</span>;
+<a name="l00135"></a>00135                 }
+<a name="l00136"></a>00136 
+<a name="l00137"></a>00137                 newState = specific_cast&lt;BuildingClass *&gt;(pTypeData-&gt;<a class="code" href="class_building_type_ext_1_1_ext_data.html#540c722c0770aa5a4db400f331bfd098" title="What BuildingType to turn into when reconstructed. (This is the normal building,...">RubbleIntact</a>-&gt;CreateObject(currentBuilding-&gt;Owner));
+<a name="l00138"></a>00138                 newState-&gt;Health = <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(newState-&gt;Type-&gt;Strength / 100); <span class="comment">// see description above</span>
+<a name="l00139"></a>00139                 newState-&gt;IsAlive = <span class="keyword">true</span>; <span class="comment">// assuming this is in the sense of "is not destroyed"</span>
+<a name="l00140"></a>00140                 <span class="comment">// Location should not be changed by removal</span>
+<a name="l00141"></a>00141                 <span class="keywordflow">if</span>(!newState-&gt;Put(&amp;currentBuilding-&gt;Location, currentBuilding-&gt;Facing)) {
+<a name="l00142"></a>00142                         Debug::Log(<span class="stringliteral">"Advanced Rubble: Failed to place normal state on map!\n"</span>);
+<a name="l00143"></a>00143                         <span class="keyword">delete</span> newState;
+<a name="l00144"></a>00144                 }
+<a name="l00145"></a>00145                 currentBuilding-&gt;UnInit();
+<a name="l00146"></a>00146 
+<a name="l00147"></a>00147         } <span class="keywordflow">else</span> { <span class="comment">// if we're not here to repair that thing, obviously, we're gonna crush it</span>
+<a name="l00148"></a>00148                 <span class="keywordflow">if</span>(!pTypeData-&gt;<a class="code" href="class_building_type_ext_1_1_ext_data.html#651a8bd6ba32545c28b1839a1a927f4f" title="What BuildingType to turn into when destroyed. (This is the rubble, set on normal...">RubbleDestroyed</a>) {
+<a name="l00149"></a>00149                         Debug::Log(<span class="stringliteral">"Warning! Building was supposed to be turned into Advanced Rubble but Ares could not obtain its rubble state. \</span>
+<a name="l00150"></a>00150 <span class="stringliteral">                        Check if [%s]Rubble.Destroyed is set (correctly).\n"</span>, currentBuilding-&gt;Type-&gt;ID);
+<a name="l00151"></a>00151                         <span class="keywordflow">return</span>;
+<a name="l00152"></a>00152                 }
+<a name="l00153"></a>00153 
+<a name="l00154"></a>00154                 newState = specific_cast&lt;BuildingClass *&gt;(pTypeData-&gt;<a class="code" href="class_building_type_ext_1_1_ext_data.html#651a8bd6ba32545c28b1839a1a927f4f" title="What BuildingType to turn into when destroyed. (This is the rubble, set on normal...">RubbleDestroyed</a>-&gt;CreateObject(currentBuilding-&gt;Owner));
+<a name="l00155"></a>00155                 newState-&gt;Health = newState-&gt;Type-&gt;Strength * 0.99; <span class="comment">// see description above</span>
+<a name="l00156"></a>00156                 <span class="comment">// Location should not be changed by removal</span>
+<a name="l00157"></a>00157                 <span class="keywordflow">if</span>(!newState-&gt;Put(&amp;currentBuilding-&gt;Location, currentBuilding-&gt;Facing)) {
+<a name="l00158"></a>00158                         Debug::Log(<span class="stringliteral">"Advanced Rubble: Failed to place rubble state on map!\n"</span>);
+<a name="l00159"></a>00159                         <span class="keyword">delete</span> newState;
+<a name="l00160"></a>00160                 }
+<a name="l00161"></a>00161         }
+<a name="l00162"></a>00162 
+<a name="l00163"></a>00163         <span class="keywordflow">return</span>;
+<a name="l00164"></a>00164 }
 </pre></div>
 <p>
 
@@ -451,7 +491,8 @@ Lastly, the function will set the current building as the alternate state on the
 <div class="memdoc">
 
 <p>
-This function checks if the current and the target building are both of the same trench kind.<p>
+This function checks if the current and the target building are both of the same trench kind. 
+<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>targetBuilding</em>&nbsp;</td><td>a pointer to the target building. </td></tr>
@@ -460,12 +501,12 @@ This function checks if the current and the target building are both of the same
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>true if both buildings are trenches and are of the same trench kind, otherwise false.</dd></dl>
 <dl class="author" compact><dt><b>Author:</b></dt><dd>Renegade </dd></dl>
 <dl class="date" compact><dt><b>Date:</b></dt><dd>25.12.09+ </dd></dl>
-<div class="fragment"><pre class="fragment"><a name="l00173"></a>00173                                                                  {
-<a name="l00174"></a>00174         <a class="code" href="class_building_type_ext_1_1_ext_data.html">BuildingTypeExt::ExtData</a>* currentTypeExtData = <a class="code" href="class_building_type_ext.html#9643fa629dd6d2a20eeefa4942d8612a">BuildingTypeExt::ExtMap</a>.<a class="code" href="class_container.html#90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(this-&gt;<a class="code" href="class_extension.html#72742b36a0db81d6697da473dfe8281d">AttachedToObject</a>-&gt;Type);
-<a name="l00175"></a>00175         <a class="code" href="class_building_type_ext_1_1_ext_data.html">BuildingTypeExt::ExtData</a>* targetTypeExtData = <a class="code" href="class_building_type_ext.html#9643fa629dd6d2a20eeefa4942d8612a">BuildingTypeExt::ExtMap</a>.<a class="code" href="class_container.html#90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(targetBuilding-&gt;Type);
-<a name="l00176"></a>00176 
-<a name="l00177"></a>00177         <span class="keywordflow">return</span> ((currentTypeExtData-&gt;<a class="code" href="class_building_type_ext_1_1_ext_data.html#3af26b553e32907458b023e766272dd7" title="Enables moving between segments - saves ID of a kind of trench.">IsTrench</a> &gt; -1) &amp;&amp; (currentTypeExtData-&gt;<a class="code" href="class_building_type_ext_1_1_ext_data.html#3af26b553e32907458b023e766272dd7" title="Enables moving between segments - saves ID of a kind of trench.">IsTrench</a> == targetTypeExtData-&gt;<a class="code" href="class_building_type_ext_1_1_ext_data.html#3af26b553e32907458b023e766272dd7" title="Enables moving between segments - saves ID of a kind of trench.">IsTrench</a>));
-<a name="l00178"></a>00178 }
+<div class="fragment"><pre class="fragment"><a name="l00175"></a>00175                                                                  {
+<a name="l00176"></a>00176         <a class="code" href="class_building_type_ext_1_1_ext_data.html">BuildingTypeExt::ExtData</a>* currentTypeExtData = <a class="code" href="class_building_type_ext.html#9643fa629dd6d2a20eeefa4942d8612a">BuildingTypeExt::ExtMap</a>.<a class="code" href="class_container.html#90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(this-&gt;<a class="code" href="class_extension.html#72742b36a0db81d6697da473dfe8281d">AttachedToObject</a>-&gt;Type);
+<a name="l00177"></a>00177         <a class="code" href="class_building_type_ext_1_1_ext_data.html">BuildingTypeExt::ExtData</a>* targetTypeExtData = <a class="code" href="class_building_type_ext.html#9643fa629dd6d2a20eeefa4942d8612a">BuildingTypeExt::ExtMap</a>.<a class="code" href="class_container.html#90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(targetBuilding-&gt;Type);
+<a name="l00178"></a>00178 
+<a name="l00179"></a>00179         <span class="keywordflow">return</span> ((currentTypeExtData-&gt;<a class="code" href="class_building_type_ext_1_1_ext_data.html#3af26b553e32907458b023e766272dd7" title="Enables moving between segments - saves ID of a kind of trench.">IsTrench</a> &gt; -1) &amp;&amp; (currentTypeExtData-&gt;<a class="code" href="class_building_type_ext_1_1_ext_data.html#3af26b553e32907458b023e766272dd7" title="Enables moving between segments - saves ID of a kind of trench.">IsTrench</a> == targetTypeExtData-&gt;<a class="code" href="class_building_type_ext_1_1_ext_data.html#3af26b553e32907458b023e766272dd7" title="Enables moving between segments - saves ID of a kind of trench.">IsTrench</a>));
+<a name="l00180"></a>00180 }
 </pre></div>
 <p>
 
@@ -533,7 +574,7 @@ Contains the house which owned this building prior to it being raided and turned
 <hr>The documentation for this class was generated from the following files:<ul>
 <li>Ext/Building/<a class="el" href="_building_2_body_8h.html">Body.h</a><li>Ext/Building/<a class="el" href="_building_2_body_8cpp.html">Body.cpp</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Sat Jan 2 21:12:06 2010 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Mon Mar 1 23:35:18 2010 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

@@ -57,13 +57,16 @@ public:
 
 		Customizable<AnimTypeClass *> Temporal_WarpAway;
 
+		bool AffectsEnemies; // request #397
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			MindControl_Permanent (false),
 			Ripple_Radius (0),
 			EMP_Duration (0),
 			IC_Duration (0),
 			DeployedDamage (1.00),
-			Temporal_WarpAway (&RulesClass::Global()->WarpAway)
+			Temporal_WarpAway (&RulesClass::Global()->WarpAway),
+			AffectsEnemies (true)
 			{
 				for(int i = 0; i < 11; ++i) {
 					VersesData vs = {1.00, 1, 1, 1};

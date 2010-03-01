@@ -61,6 +61,8 @@ Inheritance diagram for BulletExt::BulletExt::ExtData:</div>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_bullet_ext_1_1_ext_data.html#a3afac5846ade163b708d9d5b9007e53">DamageOccupants</a> ()</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Does the entire PassThrough logic, checks &amp; damage.  <a href="#a3afac5846ade163b708d9d5b9007e53"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_bullet_ext_1_1_ext_data.html#990f09b1655f70efb5b746852f676442">InvalidatePointer</a> (void *ptr)</td></tr>
+
 </table>
 <hr><h2>Constructor &amp; Destructor Documentation</h2>
 <a class="anchor" name="a69d8ba88dcd66f5bda4a8a7be1e5843"></a><!-- doxytag: member="BulletExt::ExtData::ExtData" ref="a69d8ba88dcd66f5bda4a8a7be1e5843" args="(const DWORD Canary, TT *const OwnerObject)" -->
@@ -154,50 +156,83 @@ If so, it proceeds to damage the occupants, and then returns true. If the projec
 <a name="l00041"></a>00041 <span class="comment">                Debug::Log("Bullet %s is about to damage occupants of %s: occupants #%d, UC.PT = %lf\n",</span>
 <a name="l00042"></a>00042 <span class="comment">                        TheBullet-&gt;Type-&gt;ID, Building-&gt;Type-&gt;ID, Building-&gt;Occupants.Count, BuildingAresData-&gt;UCPassThrough);</span>
 <a name="l00043"></a>00043 <span class="comment">*/</span>
-<a name="l00044"></a>00044 
-<a name="l00045"></a>00045                 <span class="keywordflow">if</span>(Building-&gt;Occupants.Count &amp;&amp; BuildingAresData-&gt;<a class="code" href="class_building_type_ext_1_1_ext_data.html#4274f2da0b95141162610c3fddb409e8" title="How many percent of the shots pass through the building to the occupants? 0.0 = 0%...">UCPassThrough</a>) { <span class="comment">// only work when UCPassThrough is set, as per community vote in thread #1392</span>
+<a name="l00044"></a>00044                 <span class="comment">// only work when UCPassThrough is set, as per community vote in thread #1392</span>
+<a name="l00045"></a>00045                 <span class="keywordflow">if</span>(Building-&gt;Occupants.Count &amp;&amp; BuildingAresData-&gt;<a class="code" href="class_building_type_ext_1_1_ext_data.html#4274f2da0b95141162610c3fddb409e8" title="How many percent of the shots pass through the building to the occupants? 0.0 = 0%...">UCPassThrough</a>) {
 <a name="l00046"></a>00046                         Debug::Log(<span class="stringliteral">"SubjToTrenches = %d\n"</span>, TheBulletTypeExt-&gt;<a class="code" href="class_bullet_type_ext_1_1_ext_data.html#b91b332bbf0e909781282037bc5cbc1b">SubjectToTrenches</a>);
-<a name="l00047"></a>00047                         <span class="keywordflow">if</span>(!TheBulletTypeExt-&gt;<a class="code" href="class_bullet_type_ext_1_1_ext_data.html#b91b332bbf0e909781282037bc5cbc1b">SubjectToTrenches</a> || ((ScenarioClass::Instance-&gt;Random.RandomRanged(0, 99) / 100.0) &lt; BuildingAresData-&gt;<a class="code" href="class_building_type_ext_1_1_ext_data.html#4274f2da0b95141162610c3fddb409e8" title="How many percent of the shots pass through the building to the occupants? 0.0 = 0%...">UCPassThrough</a>)) { <span class="comment">// test for negative b/c being SubjectToTrenches means "we're getting stopped by trenches".</span>
-<a name="l00048"></a>00048                                 <span class="keywordtype">int</span> poorBastard = ScenarioClass::Instance-&gt;Random.RandomRanged(0, Building-&gt;Occupants.Count - 1); <span class="comment">// which Occupant is getting it?</span>
-<a name="l00049"></a>00049                                 Debug::Log(<span class="stringliteral">"Poor Bastard #%d\n"</span>, poorBastard);
-<a name="l00050"></a>00050                                 <span class="keywordflow">if</span>(BuildingAresData-&gt;<a class="code" href="class_building_type_ext_1_1_ext_data.html#6cccf17f0703b5e5014e377bb5ebe9c4" title="Chance of an occupant getting killed instantly when a bullet passes through. 0.0...">UCFatalRate</a> &amp;&amp; ((ScenarioClass::Instance-&gt;Random.RandomRanged(0, 99) / 100.0) &lt; BuildingAresData-&gt;<a class="code" href="class_building_type_ext_1_1_ext_data.html#6cccf17f0703b5e5014e377bb5ebe9c4" title="Chance of an occupant getting killed instantly when a bullet passes through. 0.0...">UCFatalRate</a>)) {
-<a name="l00051"></a>00051                                         Debug::Log(<span class="stringliteral">"Fatal hit!\n"</span>);
-<a name="l00052"></a>00052                                         <span class="comment">// fatal hit</span>
-<a name="l00053"></a>00053                                         Building-&gt;Occupants[poorBastard]-&gt;Destroyed(TheBullet-&gt;Owner);
-<a name="l00054"></a>00054                                         Building-&gt;Occupants[poorBastard]-&gt;UnInit();
-<a name="l00055"></a>00055                                         <span class="comment">// don't separate these two lines - poor guy's already ~dtor'd, but his pointer is still dangling from the vector</span>
-<a name="l00056"></a>00056                                         Building-&gt;Occupants.RemoveItem(poorBastard);
-<a name="l00057"></a>00057                                         Building-&gt;UpdateThreatInCell(Building-&gt;GetCell());
-<a name="l00058"></a>00058                                 } <span class="keywordflow">else</span> {
-<a name="l00059"></a>00059                                         <span class="comment">/* ReceiveDamage args:</span>
-<a name="l00060"></a>00060 <span class="comment">                                        virtual eDamageState ReceiveDamage(int* pDamage, int DistanceFromEpicenter, WarheadTypeClass* pWH,</span>
-<a name="l00061"></a>00061 <span class="comment">                                                ObjectClass* Attacker, bool IgnoreDefenses, bool PreventPassengerEscape, HouseClass* pAttackingHouse) R0;</span>
-<a name="l00062"></a>00062 <span class="comment">                                                where</span>
-<a name="l00063"></a>00063 <span class="comment">                                                DistanceFromEpicenter -&gt; used for CellSpread/PercentAtMax</span>
-<a name="l00064"></a>00064 <span class="comment">                                                IgnoreDefenses -&gt; ignore Immune=yes</span>
-<a name="l00065"></a>00065 <span class="comment">                                        */</span>
-<a name="l00066"></a>00066 
-<a name="l00067"></a>00067                                         <span class="comment">// just a flesh wound</span>
-<a name="l00068"></a>00068                                         Debug::Log(<span class="stringliteral">"Flesh wound - health(%d) * UCDmgMult(%lf)\n"</span>, TheBullet-&gt;Health, BuildingAresData-&gt;<a class="code" href="class_building_type_ext_1_1_ext_data.html#96fa7c7c918cee22691ef5ce0762efcb" title="How many percent of normal damage are applied if an occupant is hit when a bullet...">UCDamageMultiplier</a>);
-<a name="l00069"></a>00069                                         <span class="keywordtype">int</span> adjustedDamage = <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span> (ceil(TheBullet-&gt;Health * BuildingAresData-&gt;<a class="code" href="class_building_type_ext_1_1_ext_data.html#96fa7c7c918cee22691ef5ce0762efcb" title="How many percent of normal damage are applied if an occupant is hit when a bullet...">UCDamageMultiplier</a>)); <span class="comment">// Bullet-&gt;Health is the damage it delivers (go Westwood)</span>
-<a name="l00070"></a>00070                                         Debug::Log(<span class="stringliteral">"Adjusted damage = %d\n"</span>, adjustedDamage);
-<a name="l00071"></a>00071                                         <span class="keywordtype">int</span> result = Building-&gt;Occupants[poorBastard]-&gt;ReceiveDamage(&amp;adjustedDamage, 0, TheBullet-&gt;WH, TheBullet-&gt;Owner, <span class="keyword">false</span>, <span class="keyword">true</span>, TheBullet-&gt;GetOwningHouse());
-<a name="l00072"></a>00072                                         Debug::Log(<span class="stringliteral">"Received damage, %d\n"</span>, result);
-<a name="l00073"></a>00073                                 }
-<a name="l00074"></a>00074 
-<a name="l00075"></a>00075                                 <a class="code" href="class_building_ext_1_1_ext_data.html">BuildingExt::ExtData</a>* SpecificBuildingExt = <a class="code" href="class_building_ext.html#bae25aca766faa296092dea1dc69cff7">BuildingExt::ExtMap</a>.<a class="code" href="class_container.html#90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(Building); <span class="comment">// BuildingAresData is for the BuildingType, for some reason</span>
-<a name="l00076"></a>00076                                 SpecificBuildingExt-&gt;<a class="code" href="class_building_ext_1_1_ext_data.html#29586d61b4f18e7fd044e0dd5e10c946" title="Checks if the building is empty but still marked as raided, and returns the building...">evalRaidStatus</a>(); <span class="comment">// if the last occupant was killed and this building was raided, it needs to be returned to its owner. (Bug #700)</span>
-<a name="l00077"></a>00077                                 <span class="keywordflow">return</span> <span class="keyword">true</span>;
-<a name="l00078"></a>00078                         } <span class="keywordflow">else</span> {
-<a name="l00079"></a>00079                                 <span class="keywordflow">return</span> <span class="keyword">false</span>; <span class="comment">// no damage dealt b/c bullet was SubjectToTrenches=yes and UC.PassThrough did not apply</span>
-<a name="l00080"></a>00080                         }
-<a name="l00081"></a>00081                 } <span class="keywordflow">else</span> {
-<a name="l00082"></a>00082                         <span class="keywordflow">return</span> <span class="keyword">false</span>; <span class="comment">// no damage dealt b/c either there were no occupants, or UC.PassThrough is set to 0</span>
-<a name="l00083"></a>00083                 }
-<a name="l00084"></a>00084         } <span class="keywordflow">else</span> {
-<a name="l00085"></a>00085                 <span class="keywordflow">return</span> <span class="keyword">false</span>; <span class="comment">// no damage dealt b/c the building-pointer was NULL (which is concerning)</span>
-<a name="l00086"></a>00086         }
-<a name="l00087"></a>00087 }
+<a name="l00047"></a>00047                         <span class="comment">// test for !SubjectToTrenches because being SubjectToTrenches means "we're getting stopped by trenches".</span>
+<a name="l00048"></a>00048                         <span class="keywordflow">if</span>(!TheBulletTypeExt-&gt;<a class="code" href="class_bullet_type_ext_1_1_ext_data.html#b91b332bbf0e909781282037bc5cbc1b">SubjectToTrenches</a>
+<a name="l00049"></a>00049                                 || ((ScenarioClass::Instance-&gt;Random.RandomRanged(0, 99) / 100.0) &lt; BuildingAresData-&gt;<a class="code" href="class_building_type_ext_1_1_ext_data.html#4274f2da0b95141162610c3fddb409e8" title="How many percent of the shots pass through the building to the occupants? 0.0 = 0%...">UCPassThrough</a>)) {
+<a name="l00050"></a>00050                                 <span class="keywordtype">int</span> poorBastard = ScenarioClass::Instance-&gt;Random.RandomRanged(0, Building-&gt;Occupants.Count - 1); <span class="comment">// which Occupant is getting it?</span>
+<a name="l00051"></a>00051                                 Debug::Log(<span class="stringliteral">"Poor Bastard #%d\n"</span>, poorBastard);
+<a name="l00052"></a>00052                                 <span class="keywordflow">if</span>(BuildingAresData-&gt;<a class="code" href="class_building_type_ext_1_1_ext_data.html#6cccf17f0703b5e5014e377bb5ebe9c4" title="Chance of an occupant getting killed instantly when a bullet passes through. 0.0...">UCFatalRate</a>
+<a name="l00053"></a>00053                                         &amp;&amp; ((ScenarioClass::Instance-&gt;Random.RandomRanged(0, 99) / 100.0) &lt; BuildingAresData-&gt;<a class="code" href="class_building_type_ext_1_1_ext_data.html#6cccf17f0703b5e5014e377bb5ebe9c4" title="Chance of an occupant getting killed instantly when a bullet passes through. 0.0...">UCFatalRate</a>)) {
+<a name="l00054"></a>00054                                         Debug::Log(<span class="stringliteral">"Fatal hit!\n"</span>);
+<a name="l00055"></a>00055                                         <span class="comment">// fatal hit</span>
+<a name="l00056"></a>00056                                         Building-&gt;Occupants[poorBastard]-&gt;Destroyed(TheBullet-&gt;Owner);
+<a name="l00057"></a>00057                                         Building-&gt;Occupants[poorBastard]-&gt;UnInit();
+<a name="l00058"></a>00058                                         <span class="comment">// don't separate these two lines - poor guy's already ~dtor'd, but his pointer is still dangling from the vector</span>
+<a name="l00059"></a>00059                                         Building-&gt;Occupants.RemoveItem(poorBastard);
+<a name="l00060"></a>00060                                         Building-&gt;UpdateThreatInCell(Building-&gt;GetCell());
+<a name="l00061"></a>00061                                 } <span class="keywordflow">else</span> {
+<a name="l00062"></a>00062                                         <span class="comment">/* ReceiveDamage args:</span>
+<a name="l00063"></a>00063 <span class="comment">                                        virtual eDamageState ReceiveDamage(int* pDamage, int DistanceFromEpicenter, WarheadTypeClass* pWH,</span>
+<a name="l00064"></a>00064 <span class="comment">                                                ObjectClass* Attacker, bool IgnoreDefenses, bool PreventPassengerEscape, HouseClass* pAttackingHouse) R0;</span>
+<a name="l00065"></a>00065 <span class="comment">                                                where</span>
+<a name="l00066"></a>00066 <span class="comment">                                                DistanceFromEpicenter -&gt; used for CellSpread/PercentAtMax</span>
+<a name="l00067"></a>00067 <span class="comment">                                                IgnoreDefenses -&gt; ignore Immune=yes</span>
+<a name="l00068"></a>00068 <span class="comment">                                        */</span>
+<a name="l00069"></a>00069 
+<a name="l00070"></a>00070                                         <span class="comment">// just a flesh wound</span>
+<a name="l00071"></a>00071                                         Debug::Log(<span class="stringliteral">"Flesh wound - health(%d) * UCDmgMult(%lf)\n"</span>, TheBullet-&gt;Health, BuildingAresData-&gt;<a class="code" href="class_building_type_ext_1_1_ext_data.html#96fa7c7c918cee22691ef5ce0762efcb" title="How many percent of normal damage are applied if an occupant is hit when a bullet...">UCDamageMultiplier</a>);
+<a name="l00072"></a>00072                                         <span class="comment">// Bullet-&gt;Health is the damage it delivers (go Westwood)</span>
+<a name="l00073"></a>00073                                         <span class="keywordtype">int</span> adjustedDamage = <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span> (ceil(TheBullet-&gt;Health * BuildingAresData-&gt;<a class="code" href="class_building_type_ext_1_1_ext_data.html#96fa7c7c918cee22691ef5ce0762efcb" title="How many percent of normal damage are applied if an occupant is hit when a bullet...">UCDamageMultiplier</a>));
+<a name="l00074"></a>00074                                         Debug::Log(<span class="stringliteral">"Adjusted damage = %d\n"</span>, adjustedDamage);
+<a name="l00075"></a>00075                                         <span class="keywordtype">int</span> result = Building-&gt;Occupants[poorBastard]-&gt;ReceiveDamage(&amp;adjustedDamage, 0, TheBullet-&gt;WH,
+<a name="l00076"></a>00076                                                                 TheBullet-&gt;Owner, <span class="keyword">false</span>, <span class="keyword">true</span>, TheBullet-&gt;GetOwningHouse());
+<a name="l00077"></a>00077                                         Debug::Log(<span class="stringliteral">"Received damage, %d\n"</span>, result);
+<a name="l00078"></a>00078                                 }
+<a name="l00079"></a>00079 
+<a name="l00080"></a>00080                                 <span class="comment">// BuildingAresData is for the BuildingType for some reason, so we need a new Ext var</span>
+<a name="l00081"></a>00081                                 <a class="code" href="class_building_ext_1_1_ext_data.html">BuildingExt::ExtData</a>* SpecificBuildingExt = <a class="code" href="class_building_ext.html#bae25aca766faa296092dea1dc69cff7">BuildingExt::ExtMap</a>.<a class="code" href="class_container.html#90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(Building);
+<a name="l00082"></a>00082                                 <span class="comment">// if the last occupant was killed and this building was raided, it needs to be returned to its owner. (Bug #700)</span>
+<a name="l00083"></a>00083                                 SpecificBuildingExt-&gt;<a class="code" href="class_building_ext_1_1_ext_data.html#29586d61b4f18e7fd044e0dd5e10c946" title="Checks if the building is empty but still marked as raided, and returns the building...">evalRaidStatus</a>();
+<a name="l00084"></a>00084                                 <span class="keywordflow">return</span> <span class="keyword">true</span>;
+<a name="l00085"></a>00085                         } <span class="keywordflow">else</span> {
+<a name="l00086"></a>00086                                 <span class="keywordflow">return</span> <span class="keyword">false</span>; <span class="comment">// no damage dealt b/c bullet was SubjectToTrenches=yes and UC.PassThrough did not apply</span>
+<a name="l00087"></a>00087                         }
+<a name="l00088"></a>00088                 } <span class="keywordflow">else</span> {
+<a name="l00089"></a>00089                         <span class="keywordflow">return</span> <span class="keyword">false</span>; <span class="comment">// no damage dealt b/c either there were no occupants, or UC.PassThrough is set to 0</span>
+<a name="l00090"></a>00090                 }
+<a name="l00091"></a>00091         } <span class="keywordflow">else</span> {
+<a name="l00092"></a>00092                 <span class="keywordflow">return</span> <span class="keyword">false</span>; <span class="comment">// no damage dealt b/c the building-pointer was NULL (which is concerning)</span>
+<a name="l00093"></a>00093         }
+<a name="l00094"></a>00094 }
+</pre></div>
+<p>
+
+</div>
+</div><p>
+<a class="anchor" name="990f09b1655f70efb5b746852f676442"></a><!-- doxytag: member="BulletExt::ExtData::InvalidatePointer" ref="990f09b1655f70efb5b746852f676442" args="(void *ptr)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void BulletExt::BulletExt::ExtData::InvalidatePointer           </td>
+          <td>(</td>
+          <td class="paramtype">void *&nbsp;</td>
+          <td class="paramname"> <em>ptr</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td><code> [inline, virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+
+<p>Implements <a class="el" href="class_extension.html#9e6b2ac570eddadb2ca3c01668da88b8">Extension&lt; TT &gt;</a>.</p>
+<div class="fragment"><pre class="fragment"><a name="l00034"></a>00034                                                           {
+<a name="l00035"></a>00035                 }
 </pre></div>
 <p>
 
@@ -230,7 +265,7 @@ If so, it proceeds to damage the occupants, and then returns true. If the projec
 <hr>The documentation for this class was generated from the following files:<ul>
 <li>Ext/Bullet/<a class="el" href="_bullet_2_body_8h.html">Body.h</a><li>Ext/Bullet/<a class="el" href="_bullet_2_body_8cpp.html">Body.cpp</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Sat Jan 2 21:12:06 2010 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Mon Mar 1 23:35:18 2010 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

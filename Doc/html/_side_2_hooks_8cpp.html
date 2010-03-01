@@ -39,11 +39,11 @@
 <table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="_side_2_hooks_8cpp.html#d0960ea8270b466661b31f53777f45c8">__declspec</a> (dllexport) DWORD __cdecl Sides_BaseUnit(REGISTERS *R)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="_side_2_hooks_8cpp.html#8f3ce357bdbf88ec00e1eefd304e27ed">__declspec</a> (dllexport) DWORD __cdecl Sides_BuildConst(REGISTERS *R)</td></tr>
 
 </table>
 <hr><h2>Function Documentation</h2>
-<a class="anchor" name="d0960ea8270b466661b31f53777f45c8"></a><!-- doxytag: member="Hooks.cpp::__declspec" ref="d0960ea8270b466661b31f53777f45c8" args="(dllexport) DWORD __cdecl Sides_BaseUnit(REGISTERS *R)" -->
+<a class="anchor" name="8f3ce357bdbf88ec00e1eefd304e27ed"></a><!-- doxytag: member="Hooks.cpp::__declspec" ref="8f3ce357bdbf88ec00e1eefd304e27ed" args="(dllexport) DWORD __cdecl Sides_BuildConst(REGISTERS *R)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -63,25 +63,21 @@
 <div class="fragment"><pre class="fragment"><a name="l00007"></a>00007 {
 <a name="l00008"></a>00008         GET(HouseClass *, pThis, ESI);
 <a name="l00009"></a>00009 
-<a name="l00010"></a>00010         <span class="keywordflow">if</span>(pThis-&gt;OwnedBuildings &gt; 0) {
-<a name="l00011"></a>00011                 <span class="keywordflow">return</span> 0x4F8F87;        <span class="comment">//you survive</span>
-<a name="l00012"></a>00012         }
-<a name="l00013"></a>00013 
-<a name="l00014"></a>00014         <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; RulesClass::Global()-&gt;get_BaseUnit()-&gt;Count; ++i) {
-<a name="l00015"></a>00015                 <span class="keywordflow">if</span>(pThis-&gt;get_OwnedUnitTypes()-&gt;GetItemCount(RulesClass::Global()-&gt;get_BaseUnit()-&gt;GetItem(i)-&gt;ArrayIndex) &gt; 0) {
-<a name="l00016"></a>00016                         <span class="keywordflow">return</span> 0x4F8F87;        <span class="comment">//you survive   </span>
-<a name="l00017"></a>00017                 }
-<a name="l00018"></a>00018         }
-<a name="l00019"></a>00019 
-<a name="l00020"></a>00020         <span class="keywordflow">return</span> 0x4F8F79; <span class="comment">//YOU LOSE!!!</span>
-<a name="l00021"></a>00021 }
+<a name="l00010"></a>00010         <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; RulesClass::Instance-&gt;BuildConst.Count; ++i) {
+<a name="l00011"></a>00011                 <span class="keywordflow">if</span>(pThis-&gt;OwnedBuildingTypes1.GetItemCount(RulesClass::Instance-&gt;BuildConst.GetItem(i)-&gt;ArrayIndex) &gt; 0) {
+<a name="l00012"></a>00012                         <span class="keywordflow">return</span> 0x4F8D02;        <span class="comment">//"low power"</span>
+<a name="l00013"></a>00013                 }
+<a name="l00014"></a>00014         }
+<a name="l00015"></a>00015 
+<a name="l00016"></a>00016         <span class="keywordflow">return</span> 0x4F8DB1;
+<a name="l00017"></a>00017 }
 </pre></div>
 <p>
 
 </div>
 </div><p>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Sat Jan 2 21:12:06 2010 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Mon Mar 1 23:35:17 2010 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

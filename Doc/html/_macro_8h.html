@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-<title>Ares: Helpers/Macro.h File Reference</title>
+<title>Ares: Utilities/Macro.h File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css">
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -30,15 +30,14 @@
       <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
     </ul>
   </div>
-  <div class="navpath"><a class="el" href="dir_685afe2249b4cf4bf9ef36430f4f25f7.html">Helpers</a>
+  <div class="navpath"><a class="el" href="dir_3bd4a5f57807936e029b1e9e80bcb549.html">Utilities</a>
   </div>
 </div>
 <div class="contents">
-<h1>Macro.h File Reference</h1><code>#include &lt;<a class="el" href="_macro_8h.html">Helpers/Macro.h</a>&gt;</code><br>
-<table border="0" cellpadding="0" cellspacing="0">
+<h1>Macro.h File Reference</h1><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Defines</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">#define&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="_macro_8h.html#f03b5295576341d044ede84f369374f8">IF_STR</a>(section, key)&nbsp;&nbsp;&nbsp;if(INI-&gt;ReadString(section, key, <a class="el" href="class_ares.html#e006972559a168cb9746f8cc76150e95">Ares::readDefval</a>, <a class="el" href="class_ares.html#55c2fe642b451f2535b29a62120385bf">Ares::readBuffer</a>, <a class="el" href="class_ares.html#dc3a89d98277ea17bef774907bdd8dc8">Ares::readLength</a>))</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">#define&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="_macro_8h.html#f03b5295576341d044ede84f369374f8">IF_STR</a>(section, key)&nbsp;&nbsp;&nbsp;if(INI-&gt;ReadString(section, key, <a class="el" href="class_ares.html#e006972559a168cb9746f8cc76150e95">Ares::readDefval</a>, <a class="el" href="class_ares.html#d4af8279307df25dd1e696f7380beb39">Ares::readBuffer</a>, <a class="el" href="class_ares.html#dc3a89d98277ea17bef774907bdd8dc8">Ares::readLength</a>))</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">#define&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="_macro_8h.html#9ba7f8fa39f3c920d82b23bb62451f41">FOR_STRTOK</a></td></tr>
 
@@ -64,7 +63,7 @@
 <div class="memdoc">
 
 <p>
-<b>Value:</b><div class="fragment"><pre class="fragment"><span class="keywordflow">for</span>(<span class="keywordtype">char</span> *cur = strtok(<a class="code" href="class_ares.html#55c2fe642b451f2535b29a62120385bf">Ares::readBuffer</a>, <a class="code" href="class_ares.html#9514486488c527e3a06ed543e9edeb1f">Ares::readDelims</a>); \
+<b>Value:</b><div class="fragment"><pre class="fragment"><span class="keywordflow">for</span>(<span class="keywordtype">char</span> *cur = strtok(<a class="code" href="class_ares.html#d4af8279307df25dd1e696f7380beb39">Ares::readBuffer</a>, <a class="code" href="class_ares.html#9514486488c527e3a06ed543e9edeb1f">Ares::readDelims</a>); \
                 cur; cur = strtok(NULL, <a class="code" href="class_ares.html#9514486488c527e3a06ed543e9edeb1f">Ares::readDelims</a>))
 </pre></div>
 </div>
@@ -82,7 +81,7 @@
           <td class="paramtype">key&nbsp;</td>
           <td class="paramname">          </td>
           <td>&nbsp;)&nbsp;</td>
-          <td>&nbsp;&nbsp;&nbsp;if(INI-&gt;ReadString(section, key, <a class="el" href="class_ares.html#e006972559a168cb9746f8cc76150e95">Ares::readDefval</a>, <a class="el" href="class_ares.html#55c2fe642b451f2535b29a62120385bf">Ares::readBuffer</a>, <a class="el" href="class_ares.html#dc3a89d98277ea17bef774907bdd8dc8">Ares::readLength</a>))</td>
+          <td>&nbsp;&nbsp;&nbsp;if(INI-&gt;ReadString(section, key, <a class="el" href="class_ares.html#e006972559a168cb9746f8cc76150e95">Ares::readDefval</a>, <a class="el" href="class_ares.html#d4af8279307df25dd1e696f7380beb39">Ares::readBuffer</a>, <a class="el" href="class_ares.html#dc3a89d98277ea17bef774907bdd8dc8">Ares::readLength</a>))</td>
         </tr>
       </table>
 </div>
@@ -161,7 +160,7 @@
         <a class="code" href="_macro_8h.html#9ba7f8fa39f3c920d82b23bb62451f41">FOR_STRTOK</a>{ \
                 <span class="keywordtype">int</span> idx = objtype::FindIndex(cur); <span class="keywordflow">if</span>(idx &gt; -1) { buf |= (1 &lt;&lt; idx); } \
         } \
-        obj-&gt;set_ ## obj_key (buf); \
+        obj-&gt; ## obj_key  = buf; \
 }
 </pre></div>
 </div>
@@ -235,7 +234,7 @@
 </div>
 </div><p>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Sat Jan 2 21:12:06 2010 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Mon Mar 1 23:35:17 2010 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

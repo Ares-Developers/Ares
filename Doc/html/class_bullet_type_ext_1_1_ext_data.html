@@ -61,6 +61,8 @@ Inheritance diagram for BulletTypeExt::BulletTypeExt::ExtData:</div>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_bullet_type_ext_1_1_ext_data.html#95edbf3a331da1eb2bf0e560323f5e56">LoadFromINIFile</a> (<a class="el" href="class_bullet_type_ext.html#61ce8e7bfea7c50575d9f5b28f468441">TT</a> *pThis, CCINIClass *pINI)</td></tr>
 
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_bullet_type_ext_1_1_ext_data.html#b1ad7210262873bcb005060f5c5e73a5">InvalidatePointer</a> (void *ptr)</td></tr>
+
 <tr><td colspan="2"><br><h2>Public Attributes</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_bullet_type_ext_1_1_ext_data.html#b27cf3868840849f145fe03d9d5c453a">SubjectToSolid</a></td></tr>
 
@@ -135,6 +137,32 @@ if false, this projectile/weapon *always* passes through to the occupants, regar
 </div>
 </div><p>
 <hr><h2>Member Function Documentation</h2>
+<a class="anchor" name="b1ad7210262873bcb005060f5c5e73a5"></a><!-- doxytag: member="BulletTypeExt::ExtData::InvalidatePointer" ref="b1ad7210262873bcb005060f5c5e73a5" args="(void *ptr)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void BulletTypeExt::BulletTypeExt::ExtData::InvalidatePointer           </td>
+          <td>(</td>
+          <td class="paramtype">void *&nbsp;</td>
+          <td class="paramname"> <em>ptr</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td><code> [inline, virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+
+<p>Implements <a class="el" href="class_extension.html#9e6b2ac570eddadb2ca3c01668da88b8">Extension&lt; TT &gt;</a>.</p>
+<div class="fragment"><pre class="fragment"><a name="l00047"></a>00047                                                           {
+<a name="l00048"></a>00048                 }
+</pre></div>
+<p>
+
+</div>
+</div><p>
 <a class="anchor" name="95edbf3a331da1eb2bf0e560323f5e56"></a><!-- doxytag: member="BulletTypeExt::ExtData::LoadFromINIFile" ref="95edbf3a331da1eb2bf0e560323f5e56" args="(TT *pThis, CCINIClass *pINI)" -->
 <div class="memitem">
 <div class="memproto">
@@ -162,11 +190,11 @@ if false, this projectile/weapon *always* passes through to the occupants, regar
 
 <p>
 <div class="fragment"><pre class="fragment"><a name="l00015"></a>00015 {
-<a name="l00016"></a>00016         this-&gt;<a class="code" href="class_bullet_type_ext_1_1_ext_data.html#b27cf3868840849f145fe03d9d5c453a">SubjectToSolid</a> = pINI-&gt;ReadBool(pThis-&gt;get_ID(), <span class="stringliteral">"SubjectToBuildings"</span>, this-&gt;<a class="code" href="class_bullet_type_ext_1_1_ext_data.html#b27cf3868840849f145fe03d9d5c453a">SubjectToSolid</a>);
-<a name="l00017"></a>00017         this-&gt;<a class="code" href="class_bullet_type_ext_1_1_ext_data.html#ceda0fb9a29eb81bda1d60c56e601ca4">SubjectToFirewall</a> = pINI-&gt;ReadBool(pThis-&gt;get_ID(), <span class="stringliteral">"SubjectToFirewall"</span>, this-&gt;<a class="code" href="class_bullet_type_ext_1_1_ext_data.html#ceda0fb9a29eb81bda1d60c56e601ca4">SubjectToFirewall</a>);
-<a name="l00018"></a>00018         this-&gt;<a class="code" href="class_bullet_type_ext_1_1_ext_data.html#4eac20750d11e37e05f8a6aa99c307b5">Parachuted</a> = pINI-&gt;ReadBool(pThis-&gt;get_ID(), <span class="stringliteral">"Parachuted"</span>, this-&gt;<a class="code" href="class_bullet_type_ext_1_1_ext_data.html#4eac20750d11e37e05f8a6aa99c307b5">Parachuted</a>);
+<a name="l00016"></a>00016         this-&gt;<a class="code" href="class_bullet_type_ext_1_1_ext_data.html#b27cf3868840849f145fe03d9d5c453a">SubjectToSolid</a> = pINI-&gt;ReadBool(pThis-&gt;ID, <span class="stringliteral">"SubjectToBuildings"</span>, this-&gt;SubjectToSolid);
+<a name="l00017"></a>00017         this-&gt;<a class="code" href="class_bullet_type_ext_1_1_ext_data.html#ceda0fb9a29eb81bda1d60c56e601ca4">SubjectToFirewall</a> = pINI-&gt;ReadBool(pThis-&gt;ID, <span class="stringliteral">"SubjectToFirewall"</span>, this-&gt;SubjectToFirewall);
+<a name="l00018"></a>00018         this-&gt;<a class="code" href="class_bullet_type_ext_1_1_ext_data.html#4eac20750d11e37e05f8a6aa99c307b5">Parachuted</a> = pINI-&gt;ReadBool(pThis-&gt;ID, <span class="stringliteral">"Parachuted"</span>, this-&gt;Parachuted);
 <a name="l00019"></a>00019 
-<a name="l00020"></a>00020         this-&gt;<a class="code" href="class_bullet_type_ext_1_1_ext_data.html#b91b332bbf0e909781282037bc5cbc1b">SubjectToTrenches</a> = pINI-&gt;ReadBool(pThis-&gt;get_ID(), <span class="stringliteral">"SubjectToTrenches"</span>, this-&gt;<a class="code" href="class_bullet_type_ext_1_1_ext_data.html#b91b332bbf0e909781282037bc5cbc1b">SubjectToTrenches</a>);
+<a name="l00020"></a>00020         this-&gt;<a class="code" href="class_bullet_type_ext_1_1_ext_data.html#b91b332bbf0e909781282037bc5cbc1b">SubjectToTrenches</a> = pINI-&gt;ReadBool(pThis-&gt;ID, <span class="stringliteral">"SubjectToTrenches"</span>, this-&gt;SubjectToTrenches);
 <a name="l00021"></a>00021 
 <a name="l00022"></a>00022         this-&gt;<a class="code" href="class_extension.html#43a1ac11c4b59b629cac89f9e9df88e4">_Initialized</a> = <a class="code" href="___container_8hpp.html#9443389dd7829ff977a768ff6f425820980171c6b7f22ee8ecfb5b8beeb8eee6">is_Completed</a>;
 <a name="l00023"></a>00023 }
@@ -263,7 +291,7 @@ if false, this projectile/weapon *always* passes through to the occupants, regar
 <hr>The documentation for this class was generated from the following files:<ul>
 <li>Ext/BulletType/<a class="el" href="_bullet_type_2_body_8h.html">Body.h</a><li>Ext/BulletType/<a class="el" href="_bullet_type_2_body_8cpp.html">Body.cpp</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Sat Jan 2 21:12:06 2010 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Mon Mar 1 23:35:18 2010 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

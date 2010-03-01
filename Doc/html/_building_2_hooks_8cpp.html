@@ -37,18 +37,20 @@
 <h1>Hooks.cpp File Reference</h1><code>#include &quot;<a class="el" href="_building_2_body_8h.html">Body.h</a>&quot;</code><br>
 <code>#include &quot;<a class="el" href="_building_type_2_body_8h.html">../BuildingType/Body.h</a>&quot;</code><br>
 <code>#include &quot;<a class="el" href="_techno_2_body_8h.html">../Techno/Body.h</a>&quot;</code><br>
+<code>#include &quot;<a class="el" href="_network_8h.html">../../Misc/Network.h</a>&quot;</code><br>
 <code>#include &lt;SpecificStructures.h&gt;</code><br>
 <code>#include &lt;ScenarioClass.h&gt;</code><br>
 <code>#include &lt;InfantryClass.h&gt;</code><br>
+<code>#include &lt;CellClass.h&gt;</code><br>
 <code>#include &lt;cmath&gt;</code><br>
 <table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="_building_2_hooks_8cpp.html#1ac05b05ae98d6c356b8e45d61871ecc">__declspec</a> (dllexport) DWORD __cdecl BuildingClass_Infiltrate(REGISTERS *R)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="_building_2_hooks_8cpp.html#350aa76c6366c19df7c3099f18a7d59f">__declspec</a> (dllexport) DWORD __cdecl BuildingClass_UnloadPassengers_ChangeOwner_Sell(REGISTERS *R)</td></tr>
 
 </table>
 <hr><h2>Function Documentation</h2>
-<a class="anchor" name="1ac05b05ae98d6c356b8e45d61871ecc"></a><!-- doxytag: member="Hooks.cpp::__declspec" ref="1ac05b05ae98d6c356b8e45d61871ecc" args="(dllexport) DWORD __cdecl BuildingClass_Infiltrate(REGISTERS *R)" -->
+<a class="anchor" name="350aa76c6366c19df7c3099f18a7d59f"></a><!-- doxytag: member="Hooks.cpp::__declspec" ref="350aa76c6366c19df7c3099f18a7d59f" args="(dllexport) DWORD __cdecl BuildingClass_UnloadPassengers_ChangeOwner_Sell(REGISTERS *R)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -65,28 +67,19 @@
 <div class="memdoc">
 
 <p>
-
-<p>
-RA1-Style Spying, as requested in issue #633 This sets the respective bit to inform the game that a particular house has spied this building. Knowing that, the game will reveal the current production in this building to the players who have spied it. In practice, this means: If a player who has spied a factory clicks on that factory, he will see the cameo of whatever is being built in the factory. <div class="fragment"><pre class="fragment"><a name="l00011"></a>00011 {
-<a name="l00012"></a>00012         GET(BuildingClass *, EnteredBuilding, ECX);
-<a name="l00013"></a>00013         GET_STACK(HouseClass *, EnteredBy, 0x4);
-<a name="l00014"></a>00014 
-<a name="l00015"></a>00015         <span class="keywordtype">bool</span> apply_normal_infiltration_logic = 1;
-<a name="l00016"></a>00016 
-<a name="l00021"></a>00021         EnteredBuilding-&gt;DisplayProductionTo.Add(EnteredBy);
-<a name="l00022"></a>00022 
-<a name="l00023"></a>00023         <span class="comment">// also note that the slow radar reparse call (MapClass::sub_4F42D0()) is not made here, meaning if you enter a radar, there will be a discrepancy between what you see on the map/tact map and what the game thinks you see</span>
-<a name="l00024"></a>00024 
-<a name="l00025"></a>00025         <span class="comment">// wrapper around the entire function, so return 0 or handle _every_ single thing</span>
-<a name="l00026"></a>00026         <span class="keywordflow">return</span> (apply_normal_infiltration_logic) ? 0 : 0x45759F;
-<a name="l00027"></a>00027 }
+<div class="fragment"><pre class="fragment"><a name="l00016"></a>00016 {
+<a name="l00017"></a>00017         GET(BuildingClass *, B, ESI);
+<a name="l00018"></a>00018 
+<a name="l00019"></a>00019         <a class="code" href="class_building_ext.html#ac5d31fb267a37e55bec72b827206713">BuildingExt::KickOutHospitalArmory</a>(B);
+<a name="l00020"></a>00020         <span class="keywordflow">return</span> 0;
+<a name="l00021"></a>00021 }
 </pre></div>
 <p>
 
 </div>
 </div><p>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Sat Jan 2 21:12:06 2010 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Mon Mar 1 23:35:17 2010 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

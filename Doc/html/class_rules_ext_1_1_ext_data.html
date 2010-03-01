@@ -68,6 +68,8 @@ Inheritance diagram for RulesExt::RulesExt::ExtData:</div>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_rules_ext_1_1_ext_data.html#cceff256663e484a59ca77a4ebad4c3f">Initialize</a> (<a class="el" href="class_rules_ext.html#c3fc0f3c503adebb6d26d8834966e2dc">TT</a> *pThis)</td></tr>
 
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_rules_ext_1_1_ext_data.html#ca90e1f00094d5d6ed925ea57f18ed20">InvalidatePointer</a> (void *ptr)</td></tr>
+
 <tr><td colspan="2"><br><h2>Public Attributes</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="class_valueable.html">Valueable</a>&lt; AnimTypeClass * &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_rules_ext_1_1_ext_data.html#caf6fa64ac08e786fd4dfceb883f22c5">ElectricDeath</a></td></tr>
 
@@ -184,6 +186,32 @@ Inheritance diagram for RulesExt::RulesExt::ExtData:</div>
 
 </div>
 </div><p>
+<a class="anchor" name="ca90e1f00094d5d6ed925ea57f18ed20"></a><!-- doxytag: member="RulesExt::ExtData::InvalidatePointer" ref="ca90e1f00094d5d6ed925ea57f18ed20" args="(void *ptr)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void RulesExt::RulesExt::ExtData::InvalidatePointer           </td>
+          <td>(</td>
+          <td class="paramtype">void *&nbsp;</td>
+          <td class="paramname"> <em>ptr</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td><code> [inline, virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+
+<p>Implements <a class="el" href="class_extension.html#9e6b2ac570eddadb2ca3c01668da88b8">Extension&lt; TT &gt;</a>.</p>
+<div class="fragment"><pre class="fragment"><a name="l00041"></a>00041                                                           {
+<a name="l00042"></a>00042                 }
+</pre></div>
+<p>
+
+</div>
+</div><p>
 <a class="anchor" name="ede72aaba8d2d7f62a526c8162aed7e6"></a><!-- doxytag: member="RulesExt::ExtData::LoadAfterTypeData" ref="ede72aaba8d2d7f62a526c8162aed7e6" args="(TT *pThis, CCINIClass *pINI)" -->
 <div class="memitem">
 <div class="memproto">
@@ -265,8 +293,8 @@ Inheritance diagram for RulesExt::RulesExt::ExtData:</div>
 <a name="l00073"></a>00073         <span class="keywordtype">int</span> len = pINI-&gt;GetKeyCount(section);
 <a name="l00074"></a>00074         <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; len; ++i) {
 <a name="l00075"></a>00075                 <span class="keyword">const</span> <span class="keywordtype">char</span> *key = pINI-&gt;GetKeyName(section, i);
-<a name="l00076"></a>00076                 <span class="keywordflow">if</span>(pINI-&gt;ReadString(section, key, <span class="stringliteral">""</span>, <a class="code" href="class_ares.html#55c2fe642b451f2535b29a62120385bf">Ares::readBuffer</a>, <a class="code" href="class_ares.html#dc3a89d98277ea17bef774907bdd8dc8">Ares::readLength</a>)) {
-<a name="l00077"></a>00077                         WeaponTypeClass::FindOrAllocate(<a class="code" href="class_ares.html#55c2fe642b451f2535b29a62120385bf">Ares::readBuffer</a>);
+<a name="l00076"></a>00076                 <span class="keywordflow">if</span>(pINI-&gt;ReadString(section, key, <span class="stringliteral">""</span>, <a class="code" href="class_ares.html#d4af8279307df25dd1e696f7380beb39">Ares::readBuffer</a>, <a class="code" href="class_ares.html#dc3a89d98277ea17bef774907bdd8dc8">Ares::readLength</a>)) {
+<a name="l00077"></a>00077                         WeaponTypeClass::FindOrAllocate(<a class="code" href="class_ares.html#d4af8279307df25dd1e696f7380beb39">Ares::readBuffer</a>);
 <a name="l00078"></a>00078                 }
 <a name="l00079"></a>00079         }
 <a name="l00080"></a>00080 }
@@ -352,7 +380,7 @@ Inheritance diagram for RulesExt::RulesExt::ExtData:</div>
 <hr>The documentation for this class was generated from the following files:<ul>
 <li>Ext/Rules/<a class="el" href="_rules_2_body_8h.html">Body.h</a><li>Ext/Rules/<a class="el" href="_rules_2_body_8cpp.html">Body.cpp</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Sat Jan 2 21:12:07 2010 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Mon Mar 1 23:35:18 2010 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

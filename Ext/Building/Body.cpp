@@ -129,7 +129,8 @@ void BuildingExt::ExtData::RubbleYell(bool beingRepaired) {
 
 	if(beingRepaired) {
 		if(!pTypeData->RubbleIntact) {
-			Debug::Log("Warning! Advanced Rubble was supposed to be reconstructed but Ares could not obtain its normal state. Check if [%s]Rubble.Intact is set (correctly).\n", currentBuilding->Type->ID);
+			Debug::Log("Warning! Advanced Rubble was supposed to be reconstructed but Ares could not obtain its normal state. \
+			Check if [%s]Rubble.Intact is set (correctly).\n", currentBuilding->Type->ID);
 			return;
 		}
 
@@ -145,7 +146,8 @@ void BuildingExt::ExtData::RubbleYell(bool beingRepaired) {
 
 	} else { // if we're not here to repair that thing, obviously, we're gonna crush it
 		if(!pTypeData->RubbleDestroyed) {
-			Debug::Log("Warning! Building was supposed to be turned into Advanced Rubble but Ares could not obtain its rubble state. Check if [%s]Rubble.Destroyed is set (correctly).\n", currentBuilding->Type->ID);
+			Debug::Log("Warning! Building was supposed to be turned into Advanced Rubble but Ares could not obtain its rubble state. \
+			Check if [%s]Rubble.Destroyed is set (correctly).\n", currentBuilding->Type->ID);
 			return;
 		}
 
@@ -162,8 +164,8 @@ void BuildingExt::ExtData::RubbleYell(bool beingRepaired) {
 }
 
 // #666: IsTrench/Traversal
-/*! This function checks if the current and the target building are both of the same trench kind.
-
+//! This function checks if the current and the target building are both of the same trench kind.
+/*!
 	\param targetBuilding a pointer to the target building.
 	\return true if both buildings are trenches and are of the same trench kind, otherwise false.
 
@@ -199,8 +201,13 @@ bool BuildingExt::ExtData::canTraverseTo(BuildingClass* targetBuilding) {
 	//BuildingTypeClass* currentBuildingType = game_cast<BuildingTypeClass *>(currentBuilding->GetTechnoType());
 	BuildingTypeClass* targetBuildingType = targetBuilding->Type;
 
-	if((targetBuilding == currentBuilding) || (targetBuilding->Occupants.Count >= targetBuildingType->MaxNumberOccupants) || !currentBuilding->Occupants.Count || !targetBuildingType->CanBeOccupied) {
-		return false; // Can't traverse if there's no one to move, or the target is full, we can't actually occupy the target, or if it's actually the same building
+	if((targetBuilding == currentBuilding)
+		|| (targetBuilding->Occupants.Count >= targetBuildingType->MaxNumberOccupants)
+		|| !currentBuilding->Occupants.Count
+		|| !targetBuildingType->CanBeOccupied) { // I'm a little if-clause short and stout...
+		// Can't traverse if there's no one to move, or the target is full, we can't actually occupy the target,
+		// or if it's actually the same building
+		return false;
 	}
 
 	BuildingTypeExt::ExtData* currentBuildingTypeExt = BuildingTypeExt::ExtMap.Find(currentBuilding->Type);
@@ -209,7 +216,8 @@ bool BuildingExt::ExtData::canTraverseTo(BuildingClass* targetBuilding) {
 	if(this->sameTrench(targetBuilding)) {
 		// if we've come here, there's room, there are people to move, and the buildings are trenches and of the same kind
 		// the only questioning remaining is whether they are next to each other.
-		return targetBuilding->Location.DistanceFrom(currentBuilding->Location) <= 256.0; // if the target building is more than 256 leptons away, it's not on a straight neighboring cell
+		// if the target building is more than 256 leptons away, it's not on a straight neighboring cell.
+		return targetBuilding->Location.DistanceFrom(currentBuilding->Location) <= 256.0;
 
 	} else {
 		return false; // not the same trench kind or not a trench
@@ -236,7 +244,8 @@ void BuildingExt::ExtData::doTraverseTo(BuildingClass* targetBuilding) {
 	BuildingClass* currentBuilding = this->AttachedToObject;
 	BuildingTypeClass* targetBuildingType = targetBuilding->Type;
 
-	while(currentBuilding->Occupants.Count && (targetBuilding->Occupants.Count < targetBuildingType->MaxNumberOccupants)) { // depending on Westwood's handling, this could explode when Size > 1 units are involved...but don't tell the users that
+	// depending on Westwood's handling, this could explode when Size > 1 units are involved...but don't tell the users that
+	while(currentBuilding->Occupants.Count && (targetBuilding->Occupants.Count < targetBuildingType->MaxNumberOccupants)) {
 		targetBuilding->Occupants.AddItem(currentBuilding->Occupants.GetItem(0));
 		currentBuilding->Occupants.RemoveItem(0); // maybe switch Add/Remove if the game gets pissy about multiple of them walking around
 	}
@@ -245,7 +254,8 @@ void BuildingExt::ExtData::doTraverseTo(BuildingClass* targetBuilding) {
 }
 
 void BuildingExt::ExtData::evalRaidStatus() {
-	if(this->isCurrentlyRaided && !this->AttachedToObject->Occupants.Count) { // if the building is still marked as raided, but unoccupied, return it to its previous owner
+	// if the building is still marked as raided, but unoccupied, return it to its previous owner
+	if(this->isCurrentlyRaided && !this->AttachedToObject->Occupants.Count) {
 		this->AttachedToObject->SetOwningHouse(this->OwnerBeforeRaid);
 		this->OwnerBeforeRaid = NULL;
 		this->isCurrentlyRaided = false;

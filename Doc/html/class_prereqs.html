@@ -81,14 +81,14 @@
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00123"></a>00123 {
-<a name="l00124"></a>00124         <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; list-&gt;Count; ++i) {
-<a name="l00125"></a>00125                 <span class="keywordflow">if</span>(!<a class="code" href="class_prereqs.html#e09efc570c8b2cc49bce569591e72666">HouseOwnsPrereq</a>(pHouse, list-&gt;GetItem(i))) {
-<a name="l00126"></a>00126                         <span class="keywordflow">return</span> <span class="keyword">false</span>;
-<a name="l00127"></a>00127                 }
-<a name="l00128"></a>00128         }
-<a name="l00129"></a>00129         <span class="keywordflow">return</span> <span class="keyword">true</span>;
-<a name="l00130"></a>00130 }
+<div class="fragment"><pre class="fragment"><a name="l00122"></a>00122 {
+<a name="l00123"></a>00123         <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; list-&gt;Count; ++i) {
+<a name="l00124"></a>00124                 <span class="keywordflow">if</span>(!<a class="code" href="class_prereqs.html#e09efc570c8b2cc49bce569591e72666">HouseOwnsPrereq</a>(pHouse, list-&gt;GetItem(i))) {
+<a name="l00125"></a>00125                         <span class="keywordflow">return</span> <span class="keyword">false</span>;
+<a name="l00126"></a>00126                 }
+<a name="l00127"></a>00127         }
+<a name="l00128"></a>00128         <span class="keywordflow">return</span> <span class="keyword">true</span>;
+<a name="l00129"></a>00129 }
 </pre></div>
 <p>
 
@@ -120,14 +120,14 @@
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00133"></a>00133 {
-<a name="l00134"></a>00134         <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; list-&gt;Count; ++i) {
-<a name="l00135"></a>00135                 <span class="keywordflow">if</span>(<a class="code" href="class_prereqs.html#e09efc570c8b2cc49bce569591e72666">HouseOwnsPrereq</a>(pHouse, list-&gt;GetItem(i))) {
-<a name="l00136"></a>00136                         <span class="keywordflow">return</span> <span class="keyword">true</span>;
-<a name="l00137"></a>00137                 }
-<a name="l00138"></a>00138         }
-<a name="l00139"></a>00139         <span class="keywordflow">return</span> <span class="keyword">false</span>;
-<a name="l00140"></a>00140 }
+<div class="fragment"><pre class="fragment"><a name="l00132"></a>00132 {
+<a name="l00133"></a>00133         <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; list-&gt;Count; ++i) {
+<a name="l00134"></a>00134                 <span class="keywordflow">if</span>(<a class="code" href="class_prereqs.html#e09efc570c8b2cc49bce569591e72666">HouseOwnsPrereq</a>(pHouse, list-&gt;GetItem(i))) {
+<a name="l00135"></a>00135                         <span class="keywordflow">return</span> <span class="keyword">true</span>;
+<a name="l00136"></a>00136                 }
+<a name="l00137"></a>00137         }
+<a name="l00138"></a>00138         <span class="keywordflow">return</span> <span class="keyword">false</span>;
+<a name="l00139"></a>00139 }
 </pre></div>
 <p>
 
@@ -198,17 +198,16 @@
 <a name="l00073"></a>00073                         }
 <a name="l00074"></a>00074                 }
 <a name="l00075"></a>00075                 <span class="keywordflow">if</span>(Index == 5) { <span class="comment">// PROC alternate, man I hate the special cases</span>
-<a name="l00076"></a>00076                         <span class="keywordflow">if</span>(pHouse-&gt;get_OwnedUnitTypes()-&gt;GetItemCount(
-<a name="l00077"></a>00077                                 RulesClass::Global()-&gt;PrerequisiteProcAlternate-&gt;GetArrayIndex()
-<a name="l00078"></a>00078                                 ))
-<a name="l00079"></a>00079                         {
-<a name="l00080"></a>00080                                 <span class="keywordflow">return</span> <span class="keyword">true</span>;
-<a name="l00081"></a>00081                         }
-<a name="l00082"></a>00082                 }
-<a name="l00083"></a>00083                 <span class="keywordflow">return</span> <span class="keyword">false</span>;
-<a name="l00084"></a>00084         }
-<a name="l00085"></a>00085         <span class="keywordflow">return</span> <span class="keyword">false</span>;
-<a name="l00086"></a>00086 }
+<a name="l00076"></a>00076                         <span class="keywordflow">if</span>(UnitTypeClass *ProcAlt = RulesClass::Instance-&gt;PrerequisiteProcAlternate) {
+<a name="l00077"></a>00077                                 <span class="keywordflow">if</span>(pHouse-&gt;OwnedUnitTypes.GetItemCount(ProcAlt-&gt;GetArrayIndex())) {
+<a name="l00078"></a>00078                                         <span class="keywordflow">return</span> <span class="keyword">true</span>;
+<a name="l00079"></a>00079                                 }
+<a name="l00080"></a>00080                         }
+<a name="l00081"></a>00081                 }
+<a name="l00082"></a>00082                 <span class="keywordflow">return</span> <span class="keyword">false</span>;
+<a name="l00083"></a>00083         }
+<a name="l00084"></a>00084         <span class="keywordflow">return</span> <span class="keyword">false</span>;
+<a name="l00085"></a>00085 }
 </pre></div>
 <p>
 
@@ -240,11 +239,11 @@
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00116"></a>00116 {
-<a name="l00117"></a>00117         <span class="keywordflow">return</span> Index &lt; 0
-<a name="l00118"></a>00118           ? <a class="code" href="class_prereqs.html#c7957f7d9256e062cf17769fcb117a82">HouseOwnsGeneric</a>(pHouse, Index)
-<a name="l00119"></a>00119           : <a class="code" href="class_prereqs.html#8f0c8388c5349d6ec6858d933586d9c7">HouseOwnsBuilding</a>(pHouse, Index);
-<a name="l00120"></a>00120 }
+<div class="fragment"><pre class="fragment"><a name="l00115"></a>00115 {
+<a name="l00116"></a>00116         <span class="keywordflow">return</span> Index &lt; 0
+<a name="l00117"></a>00117           ? <a class="code" href="class_prereqs.html#c7957f7d9256e062cf17769fcb117a82">HouseOwnsGeneric</a>(pHouse, Index)
+<a name="l00118"></a>00118           : <a class="code" href="class_prereqs.html#8f0c8388c5349d6ec6858d933586d9c7">HouseOwnsBuilding</a>(pHouse, Index);
+<a name="l00119"></a>00119 }
 </pre></div>
 <p>
 
@@ -299,7 +298,7 @@
 <hr>The documentation for this class was generated from the following files:<ul>
 <li>Enum/<a class="el" href="_prerequisites_8h.html">Prerequisites.h</a><li>Enum/<a class="el" href="_prerequisites_8cpp.html">Prerequisites.cpp</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Sat Jan 2 21:12:07 2010 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Mon Mar 1 23:35:18 2010 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

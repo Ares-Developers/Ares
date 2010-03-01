@@ -58,6 +58,8 @@ Inheritance diagram for InfantryExt::InfantryExt::ExtData:</div>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual size_t&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_infantry_ext_1_1_ext_data.html#644e1939f7958e35a8a593fd9bb9513d">Size</a> () const </td></tr>
 
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_infantry_ext_1_1_ext_data.html#158c5b3856f235f931ba911df4960f1e">InvalidatePointer</a> (void *ptr)</td></tr>
+
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_infantry_ext_1_1_ext_data.html#fa6ed85ca95e4f65797c6bcbbf786826">IsOccupant</a> ()</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Determines whether this InfantryClass is currently an occupant inside a BuildingClass.  <a href="#fa6ed85ca95e4f65797c6bcbbf786826"></a><br></td></tr>
@@ -89,8 +91,8 @@ Inheritance diagram for InfantryExt::InfantryExt::ExtData:</div>
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00022"></a>00022                                                                    : <a class="code" href="class_extension.html#3f8a8fd621ae648a99ab593e8d69681e">Extension</a>(<a class="code" href="class_extension.html#2f0c543d5bceafd46d103be4f87a5abe">Canary</a>, OwnerObject)
-<a name="l00023"></a>00023                         { };
+<div class="fragment"><pre class="fragment"><a name="l00021"></a>00021                                                                    : <a class="code" href="class_extension.html">Extension&lt;TT&gt;</a>(<a class="code" href="class_extension.html#2f0c543d5bceafd46d103be4f87a5abe">Canary</a>, OwnerObject)
+<a name="l00022"></a>00022                         { };
 </pre></div>
 <p>
 
@@ -112,14 +114,40 @@ Inheritance diagram for InfantryExt::InfantryExt::ExtData:</div>
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00025"></a>00025                                    {
-<a name="l00026"></a>00026                 }
+<div class="fragment"><pre class="fragment"><a name="l00024"></a>00024                                    {
+<a name="l00025"></a>00025                 }
 </pre></div>
 <p>
 
 </div>
 </div><p>
 <hr><h2>Member Function Documentation</h2>
+<a class="anchor" name="158c5b3856f235f931ba911df4960f1e"></a><!-- doxytag: member="InfantryExt::ExtData::InvalidatePointer" ref="158c5b3856f235f931ba911df4960f1e" args="(void *ptr)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void InfantryExt::InfantryExt::ExtData::InvalidatePointer           </td>
+          <td>(</td>
+          <td class="paramtype">void *&nbsp;</td>
+          <td class="paramname"> <em>ptr</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td><code> [inline, virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+
+<p>Implements <a class="el" href="class_extension.html#9e6b2ac570eddadb2ca3c01668da88b8">Extension&lt; TT &gt;</a>.</p>
+<div class="fragment"><pre class="fragment"><a name="l00029"></a>00029                                                           {
+<a name="l00030"></a>00030                 }
+</pre></div>
+<p>
+
+</div>
+</div><p>
 <a class="anchor" name="fa6ed85ca95e4f65797c6bcbbf786826"></a><!-- doxytag: member="InfantryExt::ExtData::IsOccupant" ref="fa6ed85ca95e4f65797c6bcbbf786826" args="()" -->
 <div class="memitem">
 <div class="memproto">
@@ -138,16 +166,17 @@ Inheritance diagram for InfantryExt::InfantryExt::ExtData:</div>
 <p>
 Determines whether this InfantryClass is currently an occupant inside a BuildingClass. 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00009"></a>00009                                     {
-<a name="l00010"></a>00010         InfantryClass* thisTrooper = this-&gt;<a class="code" href="class_extension.html#72742b36a0db81d6697da473dfe8281d">AttachedToObject</a>;
-<a name="l00011"></a>00011 
-<a name="l00012"></a>00012         <span class="comment">// under the assumption that occupants' position is correctly updated and not stuck on the pre-occupation one</span>
-<a name="l00013"></a>00013         <span class="keywordflow">if</span>(BuildingClass* buildingBelow = thisTrooper-&gt;GetCell()-&gt;GetBuilding()) {
-<a name="l00014"></a>00014                 <span class="keywordflow">return</span> (buildingBelow-&gt;Occupants.FindItemIndex(&amp;thisTrooper) != -1); <span class="comment">// cases where this could be false would be Nighthawks or Rocketeers above the building</span>
-<a name="l00015"></a>00015         } <span class="keywordflow">else</span> {
-<a name="l00016"></a>00016                 <span class="keywordflow">return</span> <span class="keyword">false</span>; <span class="comment">// if there is no building, he can't occupy one</span>
-<a name="l00017"></a>00017         }
-<a name="l00018"></a>00018 }
+<div class="fragment"><pre class="fragment"><a name="l00011"></a>00011                                     {
+<a name="l00012"></a>00012         InfantryClass* thisTrooper = this-&gt;<a class="code" href="class_extension.html#72742b36a0db81d6697da473dfe8281d">AttachedToObject</a>;
+<a name="l00013"></a>00013 
+<a name="l00014"></a>00014         <span class="comment">// under the assumption that occupants' position is correctly updated and not stuck on the pre-occupation one</span>
+<a name="l00015"></a>00015         <span class="keywordflow">if</span>(BuildingClass* buildingBelow = thisTrooper-&gt;GetCell()-&gt;GetBuilding()) {
+<a name="l00016"></a>00016                 <span class="comment">// cases where this could be false would be Nighthawks or Rocketeers above the building</span>
+<a name="l00017"></a>00017                 <span class="keywordflow">return</span> (buildingBelow-&gt;Occupants.FindItemIndex(&amp;thisTrooper) != -1);
+<a name="l00018"></a>00018         } <span class="keywordflow">else</span> {
+<a name="l00019"></a>00019                 <span class="keywordflow">return</span> <span class="keyword">false</span>; <span class="comment">// if there is no building, he can't occupy one</span>
+<a name="l00020"></a>00020         }
+<a name="l00021"></a>00021 }
 </pre></div>
 <p>
 
@@ -171,7 +200,7 @@ Determines whether this InfantryClass is currently an occupant inside a Building
 <p>
 
 <p>Implements <a class="el" href="class_extension.html#44ddedd12613b24b7b03d21982782047">Extension&lt; TT &gt;</a>.</p>
-<div class="fragment"><pre class="fragment"><a name="l00028"></a>00028 { <span class="keywordflow">return</span> <span class="keyword">sizeof</span>(*this); };
+<div class="fragment"><pre class="fragment"><a name="l00027"></a>00027 { <span class="keywordflow">return</span> <span class="keyword">sizeof</span>(*this); };
 </pre></div>
 <p>
 
@@ -180,7 +209,7 @@ Determines whether this InfantryClass is currently an occupant inside a Building
 <hr>The documentation for this class was generated from the following files:<ul>
 <li>Ext/Infantry/<a class="el" href="_infantry_2_body_8h.html">Body.h</a><li>Ext/Infantry/<a class="el" href="_infantry_2_body_8cpp.html">Body.cpp</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Sat Jan 2 21:12:07 2010 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Mon Mar 1 23:35:18 2010 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

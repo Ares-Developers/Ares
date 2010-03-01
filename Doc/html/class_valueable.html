@@ -34,7 +34,7 @@
   </div>
 </div>
 <div class="contents">
-<h1>Valueable&lt; T &gt; Class Template Reference</h1><!-- doxytag: class="Valueable" --><code>#include &lt;Helpers/Template.h&gt;</code>
+<h1>Valueable&lt; T &gt; Class Template Reference</h1><!-- doxytag: class="Valueable" --><code>#include &lt;Utilities/Template.h&gt;</code>
 <p>
 
 <p>
@@ -56,13 +56,13 @@
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_valueable.html#83f8f9c217842e5b72c2445dba04973f">operator!=</a> (T other) const </td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_valueable.html#722b10b4d3d336cdee71be41237eee11">Set</a> (T val)</td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_valueable.html#530b64715da76044cf3b83cfc606b83f">SetEx</a> (T *val)</td></tr>
-
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual T&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_valueable.html#4f5eae470563f06f257cbc81df24f7a9">Get</a> ()</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual T *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_valueable.html#fe65570f5f7fcae6d409ce6235a21d8a">GetEx</a> ()</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_valueable.html#eb909ed95d6e70f8afa5e609c9725e08">Set</a> (T val)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_valueable.html#07967d48fd67f1cf4c11ae079fa6152e">SetEx</a> (T *val)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_valueable.html#0f0c57826adca78b4d46a69b5344a03b">Read</a> (<a class="el" href="class_i_n_i___e_x.html">INI_EX</a> *parser, const char *pSection, const char *pKey)</td></tr>
 
@@ -158,9 +158,9 @@ template&lt;typename T&gt; </div>
 <p>
 
 <p>Reimplemented in <a class="el" href="class_customizable.html#334587c69d7acc490366c91633365849">Customizable&lt; T &gt;</a>, <a class="el" href="class_customizable.html#334587c69d7acc490366c91633365849">Customizable&lt; AnimTypeClass * &gt;</a>, <a class="el" href="class_customizable.html#334587c69d7acc490366c91633365849">Customizable&lt; double &gt;</a>, <a class="el" href="class_customizable.html#334587c69d7acc490366c91633365849">Customizable&lt; WarheadTypeClass * &gt;</a>, <a class="el" href="class_customizable.html#334587c69d7acc490366c91633365849">Customizable&lt; InfantryTypeClass * &gt;</a>, <a class="el" href="class_customizable.html#334587c69d7acc490366c91633365849">Customizable&lt; SHPStruct * &gt;</a>, <a class="el" href="class_customizable.html#334587c69d7acc490366c91633365849">Customizable&lt; int &gt;</a>, and <a class="el" href="class_customizable.html#334587c69d7acc490366c91633365849">Customizable&lt; ColorStruct &gt;</a>.</p>
-<div class="fragment"><pre class="fragment"><a name="l00049"></a>00049                         {
-<a name="l00050"></a>00050                 <span class="keywordflow">return</span> this-&gt;<a class="code" href="class_valueable.html#d35b03b172acfd867aa88954bbfc955e">Value</a>;
-<a name="l00051"></a>00051         }
+<div class="fragment"><pre class="fragment"><a name="l00041"></a>00041                         {
+<a name="l00042"></a>00042                 <span class="keywordflow">return</span> this-&gt;<a class="code" href="class_valueable.html#d35b03b172acfd867aa88954bbfc955e">Value</a>;
+<a name="l00043"></a>00043         }
 </pre></div>
 <p>
 
@@ -186,9 +186,9 @@ template&lt;typename T&gt; </div>
 <p>
 
 <p>Reimplemented in <a class="el" href="class_customizable.html#762c1195f5c7dd755b08b8dbbd03370b">Customizable&lt; T &gt;</a>, <a class="el" href="class_customizable.html#762c1195f5c7dd755b08b8dbbd03370b">Customizable&lt; AnimTypeClass * &gt;</a>, <a class="el" href="class_customizable.html#762c1195f5c7dd755b08b8dbbd03370b">Customizable&lt; double &gt;</a>, <a class="el" href="class_customizable.html#762c1195f5c7dd755b08b8dbbd03370b">Customizable&lt; WarheadTypeClass * &gt;</a>, <a class="el" href="class_customizable.html#762c1195f5c7dd755b08b8dbbd03370b">Customizable&lt; InfantryTypeClass * &gt;</a>, <a class="el" href="class_customizable.html#762c1195f5c7dd755b08b8dbbd03370b">Customizable&lt; SHPStruct * &gt;</a>, <a class="el" href="class_customizable.html#762c1195f5c7dd755b08b8dbbd03370b">Customizable&lt; int &gt;</a>, and <a class="el" href="class_customizable.html#762c1195f5c7dd755b08b8dbbd03370b">Customizable&lt; ColorStruct &gt;</a>.</p>
-<div class="fragment"><pre class="fragment"><a name="l00053"></a>00053                            {
-<a name="l00054"></a>00054                 <span class="keywordflow">return</span> &amp;this-&gt;<a class="code" href="class_valueable.html#d35b03b172acfd867aa88954bbfc955e">Value</a>;
-<a name="l00055"></a>00055         }
+<div class="fragment"><pre class="fragment"><a name="l00045"></a>00045                            {
+<a name="l00046"></a>00046                 <span class="keywordflow">return</span> &amp;this-&gt;<a class="code" href="class_valueable.html#d35b03b172acfd867aa88954bbfc955e">Value</a>;
+<a name="l00047"></a>00047         }
 </pre></div>
 <p>
 
@@ -341,7 +341,7 @@ template&lt;typename T&gt; </div>
 <p>
 <div class="fragment"><pre class="fragment"><a name="l00061"></a>00061                                                                                               {
 <a name="l00062"></a>00062                 <span class="keywordflow">if</span>(parser-&gt;<a class="code" href="class_i_n_i___e_x.html#6298994f14ab037ee97955dc26324e15">ReadString</a>(pSection, pKey)) {
-<a name="l00063"></a>00063                         this-&gt;<a class="code" href="class_valueable.html#722b10b4d3d336cdee71be41237eee11">Set</a>((Allocate ? MyBase::FindOrAllocate : MyBase::Find)(parser-&gt;<a class="code" href="class_i_n_i___e_x.html#d5e2a66c776e48cd759e319fee7a1272">value</a>()));
+<a name="l00063"></a>00063                         this-&gt;<a class="code" href="class_valueable.html#eb909ed95d6e70f8afa5e609c9725e08">Set</a>((Allocate ? MyBase::FindOrAllocate : MyBase::Find)(parser-&gt;<a class="code" href="class_i_n_i___e_x.html#d5e2a66c776e48cd759e319fee7a1272">value</a>()));
 <a name="l00064"></a>00064                 }
 <a name="l00065"></a>00065         }
 </pre></div>
@@ -385,25 +385,25 @@ template&lt;typename T&gt; </div>
 <p>
 <div class="fragment"><pre class="fragment"><a name="l00057"></a>00057                                                                           {
 <a name="l00058"></a>00058                 ImplementThisFunction();
-<a name="l00059"></a>00059         }
+<a name="l00059"></a>00059         };
 </pre></div>
 <p>
 
 </div>
 </div><p>
-<a class="anchor" name="722b10b4d3d336cdee71be41237eee11"></a><!-- doxytag: member="Valueable::Set" ref="722b10b4d3d336cdee71be41237eee11" args="(T val)" -->
+<a class="anchor" name="eb909ed95d6e70f8afa5e609c9725e08"></a><!-- doxytag: member="Valueable::Set" ref="eb909ed95d6e70f8afa5e609c9725e08" args="(T val)" -->
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename T&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="class_valueable.html">Valueable</a>&lt; T &gt;::Set           </td>
+          <td class="memname">virtual void <a class="el" href="class_valueable.html">Valueable</a>&lt; T &gt;::Set           </td>
           <td>(</td>
           <td class="paramtype">T&nbsp;</td>
           <td class="paramname"> <em>val</em>          </td>
           <td>&nbsp;)&nbsp;</td>
-          <td><code> [inline]</code></td>
+          <td><code> [inline, virtual]</code></td>
         </tr>
       </table>
 </div>
@@ -411,28 +411,28 @@ template&lt;typename T&gt; </div>
 
 <p>
 
-<p>Reimplemented in <a class="el" href="class_customizable.html#f7eadf58e278d06bcc484bcd4031eec8">Customizable&lt; T &gt;</a>, <a class="el" href="class_customizable.html#f7eadf58e278d06bcc484bcd4031eec8">Customizable&lt; AnimTypeClass * &gt;</a>, <a class="el" href="class_customizable.html#f7eadf58e278d06bcc484bcd4031eec8">Customizable&lt; double &gt;</a>, <a class="el" href="class_customizable.html#f7eadf58e278d06bcc484bcd4031eec8">Customizable&lt; WarheadTypeClass * &gt;</a>, <a class="el" href="class_customizable.html#f7eadf58e278d06bcc484bcd4031eec8">Customizable&lt; InfantryTypeClass * &gt;</a>, <a class="el" href="class_customizable.html#f7eadf58e278d06bcc484bcd4031eec8">Customizable&lt; SHPStruct * &gt;</a>, <a class="el" href="class_customizable.html#f7eadf58e278d06bcc484bcd4031eec8">Customizable&lt; int &gt;</a>, and <a class="el" href="class_customizable.html#f7eadf58e278d06bcc484bcd4031eec8">Customizable&lt; ColorStruct &gt;</a>.</p>
-<div class="fragment"><pre class="fragment"><a name="l00041"></a>00041                         {
-<a name="l00042"></a>00042                 this-&gt;<a class="code" href="class_valueable.html#d35b03b172acfd867aa88954bbfc955e">Value</a> = val;
-<a name="l00043"></a>00043         }
+<p>Reimplemented in <a class="el" href="class_customizable.html#c6afc74f9f6ee25258faadba11a7f7f1">Customizable&lt; T &gt;</a>, <a class="el" href="class_customizable.html#c6afc74f9f6ee25258faadba11a7f7f1">Customizable&lt; AnimTypeClass * &gt;</a>, <a class="el" href="class_customizable.html#c6afc74f9f6ee25258faadba11a7f7f1">Customizable&lt; double &gt;</a>, <a class="el" href="class_customizable.html#c6afc74f9f6ee25258faadba11a7f7f1">Customizable&lt; WarheadTypeClass * &gt;</a>, <a class="el" href="class_customizable.html#c6afc74f9f6ee25258faadba11a7f7f1">Customizable&lt; InfantryTypeClass * &gt;</a>, <a class="el" href="class_customizable.html#c6afc74f9f6ee25258faadba11a7f7f1">Customizable&lt; SHPStruct * &gt;</a>, <a class="el" href="class_customizable.html#c6afc74f9f6ee25258faadba11a7f7f1">Customizable&lt; int &gt;</a>, and <a class="el" href="class_customizable.html#c6afc74f9f6ee25258faadba11a7f7f1">Customizable&lt; ColorStruct &gt;</a>.</p>
+<div class="fragment"><pre class="fragment"><a name="l00049"></a>00049                                 {
+<a name="l00050"></a>00050                 this-&gt;<a class="code" href="class_valueable.html#d35b03b172acfd867aa88954bbfc955e">Value</a> = val;
+<a name="l00051"></a>00051         }
 </pre></div>
 <p>
 
 </div>
 </div><p>
-<a class="anchor" name="530b64715da76044cf3b83cfc606b83f"></a><!-- doxytag: member="Valueable::SetEx" ref="530b64715da76044cf3b83cfc606b83f" args="(T *val)" -->
+<a class="anchor" name="07967d48fd67f1cf4c11ae079fa6152e"></a><!-- doxytag: member="Valueable::SetEx" ref="07967d48fd67f1cf4c11ae079fa6152e" args="(T *val)" -->
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename T&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="class_valueable.html">Valueable</a>&lt; T &gt;::SetEx           </td>
+          <td class="memname">virtual void <a class="el" href="class_valueable.html">Valueable</a>&lt; T &gt;::SetEx           </td>
           <td>(</td>
           <td class="paramtype">T *&nbsp;</td>
           <td class="paramname"> <em>val</em>          </td>
           <td>&nbsp;)&nbsp;</td>
-          <td><code> [inline]</code></td>
+          <td><code> [inline, virtual]</code></td>
         </tr>
       </table>
 </div>
@@ -440,10 +440,10 @@ template&lt;typename T&gt; </div>
 
 <p>
 
-<p>Reimplemented in <a class="el" href="class_customizable.html#b585a11218c1c2660f8edb3be92d65c2">Customizable&lt; T &gt;</a>, <a class="el" href="class_customizable.html#b585a11218c1c2660f8edb3be92d65c2">Customizable&lt; AnimTypeClass * &gt;</a>, <a class="el" href="class_customizable.html#b585a11218c1c2660f8edb3be92d65c2">Customizable&lt; double &gt;</a>, <a class="el" href="class_customizable.html#b585a11218c1c2660f8edb3be92d65c2">Customizable&lt; WarheadTypeClass * &gt;</a>, <a class="el" href="class_customizable.html#b585a11218c1c2660f8edb3be92d65c2">Customizable&lt; InfantryTypeClass * &gt;</a>, <a class="el" href="class_customizable.html#b585a11218c1c2660f8edb3be92d65c2">Customizable&lt; SHPStruct * &gt;</a>, <a class="el" href="class_customizable.html#b585a11218c1c2660f8edb3be92d65c2">Customizable&lt; int &gt;</a>, and <a class="el" href="class_customizable.html#b585a11218c1c2660f8edb3be92d65c2">Customizable&lt; ColorStruct &gt;</a>.</p>
-<div class="fragment"><pre class="fragment"><a name="l00045"></a>00045                            {
-<a name="l00046"></a>00046                 this-&gt;<a class="code" href="class_valueable.html#d35b03b172acfd867aa88954bbfc955e">Value</a> = *val;
-<a name="l00047"></a>00047         }
+<p>Reimplemented in <a class="el" href="class_customizable.html#1639246ae5ea3914b1d30cf378593ee7">Customizable&lt; T &gt;</a>, <a class="el" href="class_customizable.html#1639246ae5ea3914b1d30cf378593ee7">Customizable&lt; AnimTypeClass * &gt;</a>, <a class="el" href="class_customizable.html#1639246ae5ea3914b1d30cf378593ee7">Customizable&lt; double &gt;</a>, <a class="el" href="class_customizable.html#1639246ae5ea3914b1d30cf378593ee7">Customizable&lt; WarheadTypeClass * &gt;</a>, <a class="el" href="class_customizable.html#1639246ae5ea3914b1d30cf378593ee7">Customizable&lt; InfantryTypeClass * &gt;</a>, <a class="el" href="class_customizable.html#1639246ae5ea3914b1d30cf378593ee7">Customizable&lt; SHPStruct * &gt;</a>, <a class="el" href="class_customizable.html#1639246ae5ea3914b1d30cf378593ee7">Customizable&lt; int &gt;</a>, and <a class="el" href="class_customizable.html#1639246ae5ea3914b1d30cf378593ee7">Customizable&lt; ColorStruct &gt;</a>.</p>
+<div class="fragment"><pre class="fragment"><a name="l00053"></a>00053                                    {
+<a name="l00054"></a>00054                 this-&gt;<a class="code" href="class_valueable.html#d35b03b172acfd867aa88954bbfc955e">Value</a> = *val;
+<a name="l00055"></a>00055         }
 </pre></div>
 <p>
 
@@ -468,9 +468,9 @@ template&lt;typename T&gt; </div>
 </div>
 </div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li>Helpers/<a class="el" href="_template_8h.html">Template.h</a></ul>
+<li>Utilities/<a class="el" href="_template_8h.html">Template.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Sat Jan 2 21:12:07 2010 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Mon Mar 1 23:35:19 2010 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

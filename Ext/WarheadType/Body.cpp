@@ -62,6 +62,8 @@ void WarheadTypeExt::ExtData::LoadFromINIFile(WarheadTypeClass *pThis, CCINIClas
 	this->DeployedDamage = pINI->ReadDouble(section, "Damage.Deployed", this->DeployedDamage);
 
 	this->Ripple_Radius = pINI->ReadInteger(section, "Ripple.Radius", this->Ripple_Radius);
+
+	this->AffectsEnemies = pINI->ReadBool(section, "AffectsEnemies", this->AffectsEnemies);
 };
 
 void Container<WarheadTypeExt>::InvalidatePointer(void *ptr) {

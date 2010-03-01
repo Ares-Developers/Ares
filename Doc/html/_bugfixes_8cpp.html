@@ -62,7 +62,7 @@
 <code>#include &quot;<a class="el" href="_house_type_2_body_8h.html">../Ext/HouseType/Body.h</a>&quot;</code><br>
 <code>#include &quot;<a class="el" href="_weapon_type_2_body_8h.html">../Ext/WeaponType/Body.h</a>&quot;</code><br>
 <code>#include &quot;<a class="el" href="_warhead_type_2_body_8h.html">../Ext/WarheadType/Body.h</a>&quot;</code><br>
-<code>#include &lt;Utilities/Template.h&gt;</code><br>
+<code>#include &lt;<a class="el" href="_template_8h.html">Utilities/Template.h</a>&gt;</code><br>
 <table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Defines</h2></td></tr>
@@ -91,8 +91,8 @@
 
 <p>
 <b>Value:</b><div class="fragment"><pre class="fragment">GET(TechnoClass *, T, ECX); \
-        Debug::Log(<span class="stringliteral">"%c: [%s] receiving...\n"</span>, r, T-&gt;GetType()-&gt;get_ID()); \
-        Debug::Log(<span class="stringliteral">"\t Subject = %s\n"</span>, ((TechnoClass *)R-&gt;get_StackVar32(0x4))-&gt;GetType()-&gt;get_ID()); \
+        Debug::Log(<span class="stringliteral">"%c: [%s] receiving...\n"</span>, r, T-&gt;GetType()-&gt;ID); \
+        Debug::Log(<span class="stringliteral">"\t Subject = %s\n"</span>, ((TechnoClass *)R-&gt;get_StackVar32(0x4))-&gt;GetType()-&gt;ID); \
         Debug::Log(<span class="stringliteral">"\t command = %d\n"</span>, R-&gt;get_StackVar32(0x8)); \
         Debug::Log(<span class="stringliteral">"\t unknown = %d\n"</span>, R-&gt;get_StackVar32(0xC)); \
         <span class="keywordflow">for</span>(DWORD i = 0x10; i &lt; 0x40; i += 4) { \
@@ -132,7 +132,7 @@
 </div>
 </div><p>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Sat Jan 2 21:12:06 2010 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Mon Mar 1 23:35:17 2010 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

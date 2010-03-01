@@ -10,13 +10,15 @@ DEFINE_HOOK(4571E0, BuildingClass_Infiltrate, 5)
 
 	bool apply_normal_infiltration_logic = 1;
 
-	//! RA1-Style Spying, as requested in issue #633
-	//! This sets the respective bit to inform the game that a particular house has spied this building.
-	//! Knowing that, the game will reveal the current production in this building to the players who have spied it.
-	//! In practice, this means: If a player who has spied a factory clicks on that factory, he will see the cameo of whatever is being built in the factory.
+	/*	RA1-Style Spying, as requested in issue #633
+		This sets the respective bit to inform the game that a particular house has spied this building.
+		Knowing that, the game will reveal the current production in this building to the players who have spied it.
+		In practice, this means: If a player who has spied a factory clicks on that factory,
+		he will see the cameo of whatever is being built in the factory. */
 	EnteredBuilding->DisplayProductionTo.Add(EnteredBy);
 
-	// also note that the slow radar reparse call (MapClass::sub_4F42D0()) is not made here, meaning if you enter a radar, there will be a discrepancy between what you see on the map/tact map and what the game thinks you see
+	// also note that the slow radar reparse call (MapClass::sub_4F42D0()) is not made here, meaning if you enter a radar,
+	// there will be a discrepancy between what you see on the map/tact map and what the game thinks you see
 
 	// wrapper around the entire function, so return 0 or handle _every_ single thing
 	return (apply_normal_infiltration_logic)

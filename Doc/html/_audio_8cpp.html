@@ -34,14 +34,35 @@
   </div>
 </div>
 <div class="contents">
-<h1>Audio.cpp File Reference</h1><code>#include &lt;CCFileClass.h&gt;</code><br>
+<h1>Audio.cpp File Reference</h1><code>#include &lt;Audio.h&gt;</code><br>
+<code>#include &lt;CCFileClass.h&gt;</code><br>
+<code>#include &lt;VocClass.h&gt;</code><br>
 <code>#include &quot;<a class="el" href="_ares_8h.html">../Ares.h</a>&quot;</code><br>
 <table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
+<tr><td colspan="2"><br><h2>Defines</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">#define&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="_audio_8cpp.html#26a2db00f5ec447b9566bebeb24bfd91">MINIMUM_ARES_SAMPLE</a>&nbsp;&nbsp;&nbsp;0x20000</td></tr>
+
 <tr><td colspan="2"><br><h2>Functions</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="_audio_8cpp.html#3168a1ce398cc273bde8d765ff17559e">__declspec</a> (dllexport) DWORD __cdecl Ares_Audio_AddSample(REGISTERS *R)</td></tr>
 
 </table>
+<hr><h2>Define Documentation</h2>
+<a class="anchor" name="26a2db00f5ec447b9566bebeb24bfd91"></a><!-- doxytag: member="Audio.cpp::MINIMUM_ARES_SAMPLE" ref="26a2db00f5ec447b9566bebeb24bfd91" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define MINIMUM_ARES_SAMPLE&nbsp;&nbsp;&nbsp;0x20000          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+
+</div>
+</div><p>
 <hr><h2>Function Documentation</h2>
 <a class="anchor" name="3168a1ce398cc273bde8d765ff17559e"></a><!-- doxytag: member="Audio.cpp::__declspec" ref="3168a1ce398cc273bde8d765ff17559e" args="(dllexport) DWORD __cdecl Ares_Audio_AddSample(REGISTERS *R)" -->
 <div class="memitem">
@@ -60,35 +81,31 @@
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00008"></a>00008 {
-<a name="l00009"></a>00009         <span class="comment">//TODO: Once a VocClass and AudioIDXData definition is available, rewrite this. -pd</span>
-<a name="l00010"></a>00010         GET(<span class="keywordtype">int</span>*, pVoc, ECX); <span class="comment">//VocClass*</span>
-<a name="l00011"></a>00011         GET(<span class="keywordtype">char</span>*, pSampleName, EDX);
-<a name="l00012"></a>00012 
-<a name="l00013"></a>00013         <span class="keywordflow">if</span>(pVoc[0x134 &gt;&gt; 2]==0x20) { <span class="comment">//if(pVoc-&gt;get_NumSamples()==0x20)</span>
-<a name="l00014"></a>00014                 R-&gt;EAX(0); <span class="comment">//return false</span>
-<a name="l00015"></a>00015         } <span class="keywordflow">else</span> {
-<a name="l00016"></a>00016                 <span class="keywordflow">if</span>(*((<span class="keywordtype">int</span>*)0x87E2A0)) <span class="comment">//I dunno</span>
-<a name="l00017"></a>00017                 {
-<a name="l00018"></a>00018                         <span class="keywordflow">while</span>(*pSampleName == <span class="charliteral">'$'</span> || *pSampleName == <span class="charliteral">'#'</span>) {
-<a name="l00019"></a>00019                                 ++pSampleName;
-<a name="l00020"></a>00020                         }
-<a name="l00021"></a>00021 
-<a name="l00022"></a>00022                         <span class="keywordtype">int</span> nSampleIndex = -1;
-<a name="l00023"></a>00023                         <span class="keywordtype">void</span>* pAudioIDXData = *((<span class="keywordtype">void</span>**)0x87E294);
-<a name="l00024"></a>00024                         <span class="keywordflow">if</span>(pAudioIDXData) {
-<a name="l00025"></a>00025                                 SET_REG32(edx, pSampleName);
-<a name="l00026"></a>00026                                 SET_REG32(ecx, pAudioIDXData);
-<a name="l00027"></a>00027                                 CALL(0x4015C0); <span class="comment">//nSampleIndex = FindSampleIndex(pSampleName)</span>
-<a name="l00028"></a>00028                                 GET_REG32(nSampleIndex, eax);
-<a name="l00029"></a>00029                         }
+<div class="fragment"><pre class="fragment"><a name="l00012"></a>00012 {
+<a name="l00013"></a>00013         <span class="comment">//TODO: Once a VocClass and AudioIDXData definition is available, rewrite this. -pd</span>
+<a name="l00014"></a>00014         GET(VocClass*, pVoc, ECX); <span class="comment">//VocClass*</span>
+<a name="l00015"></a>00015         GET(<span class="keywordtype">char</span>*, pSampleName, EDX);
+<a name="l00016"></a>00016 
+<a name="l00017"></a>00017         <span class="keywordflow">if</span>(pVoc-&gt;NumSamples == 0x20) { <span class="comment">//if(pVoc-&gt;get_NumSamples()==0x20)</span>
+<a name="l00018"></a>00018                 R-&gt;EAX(0); <span class="comment">//return false</span>
+<a name="l00019"></a>00019         } <span class="keywordflow">else</span> {
+<a name="l00020"></a>00020                 <span class="keywordflow">if</span>(*((<span class="keywordtype">int</span>*)0x87E2A0)) <span class="comment">//I dunno</span>
+<a name="l00021"></a>00021                 {
+<a name="l00022"></a>00022                         <span class="keywordflow">while</span>(*pSampleName == <span class="charliteral">'$'</span> || *pSampleName == <span class="charliteral">'#'</span>) {
+<a name="l00023"></a>00023                                 ++pSampleName;
+<a name="l00024"></a>00024                         }
+<a name="l00025"></a>00025 
+<a name="l00026"></a>00026                         <span class="keywordtype">int</span> nSampleIndex = (AudioIDXData::IDX)
+<a name="l00027"></a>00027                                 ? AudioIDXData::IDX-&gt;FindSampleIndex(pSampleName)
+<a name="l00028"></a>00028                                 : -1
+<a name="l00029"></a>00029                         ;
 <a name="l00030"></a>00030 
 <a name="l00031"></a>00031                         <span class="keywordflow">if</span>(nSampleIndex == -1) {
 <a name="l00032"></a>00032                                 nSampleIndex = (int)_strdup(pSampleName);
 <a name="l00033"></a>00033                         }
 <a name="l00034"></a>00034 
-<a name="l00035"></a>00035                         pVoc[(0xB4 &gt;&gt; 2) + pVoc[0x134 &gt;&gt; 2]] = nSampleIndex; <span class="comment">//Set sample index or string pointer</span>
-<a name="l00036"></a>00036                         ++pVoc[0x134 &gt;&gt; 2];
+<a name="l00035"></a>00035                         pVoc-&gt;SampleIndex[pVoc-&gt;NumSamples] = nSampleIndex; <span class="comment">//Set sample index or string pointer</span>
+<a name="l00036"></a>00036                         ++pVoc-&gt;NumSamples;
 <a name="l00037"></a>00037 
 <a name="l00038"></a>00038                         R-&gt;EAX(1); <span class="comment">//return true</span>
 <a name="l00039"></a>00039                 }
@@ -101,7 +118,7 @@
 </div>
 </div><p>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Sat Jan 2 21:12:06 2010 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Mon Mar 1 23:35:17 2010 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

@@ -34,7 +34,7 @@
   </div>
 </div>
 <div class="contents">
-<h1>ValueableIdx&lt; T, Lookuper &gt; Class Template Reference</h1><!-- doxytag: class="ValueableIdx" --><code>#include &lt;Helpers/Template.h&gt;</code>
+<h1>ValueableIdx&lt; T, Lookuper &gt; Class Template Reference</h1><!-- doxytag: class="ValueableIdx" --><code>#include &lt;Utilities/Template.h&gt;</code>
 <p>
 
 <p>
@@ -49,13 +49,13 @@
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">T *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_valueable_idx.html#68b0765f9d4ecf7035e0ae242061ed71">operator&amp;</a> ()</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_valueable_idx.html#5d77a325a22e142c02faec4fc10708ae">Set</a> (T val)</td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_valueable_idx.html#1a1ffc2a6a056db6b57a46b67f613ff0">SetEx</a> (T *val)</td></tr>
-
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual T&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_valueable_idx.html#00764b0af7a266052d1360f8a49199a1">Get</a> ()</td></tr>
 
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_valueable_idx.html#daa6cbdaf6e5b073684d3ac0ca8f3a74">Set</a> (T val)</td></tr>
+
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual T *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_valueable_idx.html#cbb82aedea995ea971c393055b4e0e7f">GetEx</a> ()</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_valueable_idx.html#10c5b433360b4c152500a4ab8413c348">SetEx</a> (T *val)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_valueable_idx.html#c16db559b91f92e874356a63f13ebad2">Read</a> (<a class="el" href="class_i_n_i___e_x.html">INI_EX</a> *parser, const char *pSection, const char *pKey)</td></tr>
 
@@ -111,9 +111,9 @@ template&lt;typename T, typename Lookuper&gt; </div>
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00096"></a>00096                         {
-<a name="l00097"></a>00097                 <span class="keywordflow">return</span> this-&gt;<a class="code" href="class_valueable_idx.html#99854decc2d2ad3bb8dbe030d2c15ed0">Value</a>;
-<a name="l00098"></a>00098         }
+<div class="fragment"><pre class="fragment"><a name="l00088"></a>00088                         {
+<a name="l00089"></a>00089                 <span class="keywordflow">return</span> this-&gt;<a class="code" href="class_valueable_idx.html#99854decc2d2ad3bb8dbe030d2c15ed0">Value</a>;
+<a name="l00090"></a>00090         }
 </pre></div>
 <p>
 
@@ -137,9 +137,9 @@ template&lt;typename T, typename Lookuper&gt; </div>
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00100"></a>00100                            {
-<a name="l00101"></a>00101                 <span class="keywordflow">return</span> &amp;this-&gt;<a class="code" href="class_valueable_idx.html#99854decc2d2ad3bb8dbe030d2c15ed0">Value</a>;
-<a name="l00102"></a>00102         }
+<div class="fragment"><pre class="fragment"><a name="l00096"></a>00096                            {
+<a name="l00097"></a>00097                 <span class="keywordflow">return</span> &amp;this-&gt;<a class="code" href="class_valueable_idx.html#99854decc2d2ad3bb8dbe030d2c15ed0">Value</a>;
+<a name="l00098"></a>00098         }
 </pre></div>
 <p>
 
@@ -261,7 +261,7 @@ template&lt;typename T, typename Lookuper&gt; </div>
 <a name="l00105"></a>00105                 <span class="keywordflow">if</span>(parser-&gt;<a class="code" href="class_i_n_i___e_x.html#6298994f14ab037ee97955dc26324e15">ReadString</a>(pSection, pKey)) {
 <a name="l00106"></a>00106                         <span class="keywordtype">int</span> idx = Lookuper::FindIndex(parser-&gt;<a class="code" href="class_i_n_i___e_x.html#d5e2a66c776e48cd759e319fee7a1272">value</a>());
 <a name="l00107"></a>00107                         <span class="keywordflow">if</span>(idx != -1) {
-<a name="l00108"></a>00108                                 this-&gt;<a class="code" href="class_valueable_idx.html#5d77a325a22e142c02faec4fc10708ae">Set</a>(idx);
+<a name="l00108"></a>00108                                 this-&gt;<a class="code" href="class_valueable_idx.html#daa6cbdaf6e5b073684d3ac0ca8f3a74">Set</a>(idx);
 <a name="l00109"></a>00109                         }
 <a name="l00110"></a>00110                 }
 <a name="l00111"></a>00111         }
@@ -270,55 +270,55 @@ template&lt;typename T, typename Lookuper&gt; </div>
 
 </div>
 </div><p>
-<a class="anchor" name="5d77a325a22e142c02faec4fc10708ae"></a><!-- doxytag: member="ValueableIdx::Set" ref="5d77a325a22e142c02faec4fc10708ae" args="(T val)" -->
+<a class="anchor" name="daa6cbdaf6e5b073684d3ac0ca8f3a74"></a><!-- doxytag: member="ValueableIdx::Set" ref="daa6cbdaf6e5b073684d3ac0ca8f3a74" args="(T val)" -->
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename T, typename Lookuper&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="class_valueable_idx.html">ValueableIdx</a>&lt; T, Lookuper &gt;::Set           </td>
+          <td class="memname">virtual void <a class="el" href="class_valueable_idx.html">ValueableIdx</a>&lt; T, Lookuper &gt;::Set           </td>
           <td>(</td>
           <td class="paramtype">T&nbsp;</td>
           <td class="paramname"> <em>val</em>          </td>
           <td>&nbsp;)&nbsp;</td>
-          <td><code> [inline]</code></td>
+          <td><code> [inline, virtual]</code></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00088"></a>00088                         {
-<a name="l00089"></a>00089                 this-&gt;<a class="code" href="class_valueable_idx.html#99854decc2d2ad3bb8dbe030d2c15ed0">Value</a> = val;
-<a name="l00090"></a>00090         }
+<div class="fragment"><pre class="fragment"><a name="l00092"></a>00092                                 {
+<a name="l00093"></a>00093                 this-&gt;<a class="code" href="class_valueable_idx.html#99854decc2d2ad3bb8dbe030d2c15ed0">Value</a> = val;
+<a name="l00094"></a>00094         }
 </pre></div>
 <p>
 
 </div>
 </div><p>
-<a class="anchor" name="1a1ffc2a6a056db6b57a46b67f613ff0"></a><!-- doxytag: member="ValueableIdx::SetEx" ref="1a1ffc2a6a056db6b57a46b67f613ff0" args="(T *val)" -->
+<a class="anchor" name="10c5b433360b4c152500a4ab8413c348"></a><!-- doxytag: member="ValueableIdx::SetEx" ref="10c5b433360b4c152500a4ab8413c348" args="(T *val)" -->
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename T, typename Lookuper&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="class_valueable_idx.html">ValueableIdx</a>&lt; T, Lookuper &gt;::SetEx           </td>
+          <td class="memname">virtual void <a class="el" href="class_valueable_idx.html">ValueableIdx</a>&lt; T, Lookuper &gt;::SetEx           </td>
           <td>(</td>
           <td class="paramtype">T *&nbsp;</td>
           <td class="paramname"> <em>val</em>          </td>
           <td>&nbsp;)&nbsp;</td>
-          <td><code> [inline]</code></td>
+          <td><code> [inline, virtual]</code></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00092"></a>00092                            {
-<a name="l00093"></a>00093                 this-&gt;<a class="code" href="class_valueable_idx.html#99854decc2d2ad3bb8dbe030d2c15ed0">Value</a> = *val;
-<a name="l00094"></a>00094         }
+<div class="fragment"><pre class="fragment"><a name="l00100"></a>00100                                    {
+<a name="l00101"></a>00101                 this-&gt;<a class="code" href="class_valueable_idx.html#99854decc2d2ad3bb8dbe030d2c15ed0">Value</a> = *val;
+<a name="l00102"></a>00102         }
 </pre></div>
 <p>
 
@@ -343,9 +343,9 @@ template&lt;typename T, typename Lookuper&gt; </div>
 </div>
 </div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li>Helpers/<a class="el" href="_template_8h.html">Template.h</a></ul>
+<li>Utilities/<a class="el" href="_template_8h.html">Template.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Sat Jan 2 21:12:07 2010 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Mon Mar 1 23:35:19 2010 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

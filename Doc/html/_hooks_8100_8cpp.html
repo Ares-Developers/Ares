@@ -124,24 +124,23 @@
 <a name="l00073"></a>00073                 <span class="keywordflow">if</span>(pThis-&gt;CountResourceGatherers &lt; mMaxHarvesters) {
 <a name="l00074"></a>00074                         <span class="keywordflow">if</span>(BuildingTypeClass* pBT = pThis-&gt;FirstBuildableFromArray(&amp;RulesClass::Instance-&gt;BuildRefinery)) {
 <a name="l00075"></a>00075                                 <span class="comment">//awesome way to find out whether this building is a slave miner, isn't it? ...</span>
-<a name="l00076"></a>00076                                 UnitTypeClass* pSlaveMiner = pBT-&gt;UndeploysInto;
-<a name="l00077"></a>00077                                 <span class="keywordflow">if</span>(pSlaveMiner) {
-<a name="l00078"></a>00078                                         pThis-&gt;ProducingUnitTypeIndex = pSlaveMiner-&gt;ArrayIndex;
-<a name="l00079"></a>00079                                         <span class="keywordflow">return</span> ret();
-<a name="l00080"></a>00080                                 }
-<a name="l00081"></a>00081                         }
-<a name="l00082"></a>00082                 }
-<a name="l00083"></a>00083         }
-<a name="l00084"></a>00084 
-<a name="l00085"></a>00085         <a class="code" href="_macro_hacks_8h.html#55e4a29612a14f820147377a8302f141">CRAZY_MACRO_GO_AWAY_2</a>(Unit);
-<a name="l00086"></a>00086 }
+<a name="l00076"></a>00076                                 <span class="keywordflow">if</span>(UnitTypeClass* pSlaveMiner = pBT-&gt;UndeploysInto) {
+<a name="l00077"></a>00077                                         pThis-&gt;ProducingUnitTypeIndex = pSlaveMiner-&gt;ArrayIndex;
+<a name="l00078"></a>00078                                         <span class="keywordflow">return</span> ret();
+<a name="l00079"></a>00079                                 }
+<a name="l00080"></a>00080                         }
+<a name="l00081"></a>00081                 }
+<a name="l00082"></a>00082         }
+<a name="l00083"></a>00083 
+<a name="l00084"></a>00084         <a class="code" href="_macro_hacks_8h.html#55e4a29612a14f820147377a8302f141">CRAZY_MACRO_GO_AWAY_2</a>(Unit);
+<a name="l00085"></a>00085 }
 </pre></div>
 <p>
 
 </div>
 </div><p>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Sat Jan 2 21:12:06 2010 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Mon Mar 1 23:35:17 2010 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

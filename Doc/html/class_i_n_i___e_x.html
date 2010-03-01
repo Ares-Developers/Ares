@@ -34,7 +34,7 @@
   </div>
 </div>
 <div class="contents">
-<h1>INI_EX Class Reference</h1><!-- doxytag: class="INI_EX" --><code>#include &lt;Helpers/INIParser.h&gt;</code>
+<h1>INI_EX Class Reference</h1><!-- doxytag: class="INI_EX" --><code>#include &lt;Utilities/INIParser.h&gt;</code>
 <p>
 
 <p>
@@ -127,7 +127,7 @@
 
 <p>
 <div class="fragment"><pre class="fragment"><a name="l00010"></a>00010                         {
-<a name="l00011"></a>00011                 <span class="keywordflow">return</span> <a class="code" href="class_ares.html#55c2fe642b451f2535b29a62120385bf">Ares::readBuffer</a>;
+<a name="l00011"></a>00011                 <span class="keywordflow">return</span> <a class="code" href="class_ares.html#d4af8279307df25dd1e696f7380beb39">Ares::readBuffer</a>;
 <a name="l00012"></a>00012         }
 </pre></div>
 <p>
@@ -326,7 +326,7 @@
 <p>
 <div class="fragment"><pre class="fragment"><a name="l00158"></a>00158                                             {
 <a name="l00159"></a>00159                 <span class="keywordtype">double</span> <a class="code" href="class_i_n_i___e_x.html#59e1b3ed7c3e175c8dead69d50351f03">buffer</a> = nDefault;
-<a name="l00160"></a>00160                 sscanf(this-&gt;<a class="code" href="class_i_n_i___e_x.html#59e1b3ed7c3e175c8dead69d50351f03">buffer</a>(), <span class="stringliteral">"%f"</span>, &amp;buffer);
+<a name="l00160"></a>00160                 sscanf(this-&gt;<a class="code" href="class_i_n_i___e_x.html#59e1b3ed7c3e175c8dead69d50351f03">buffer</a>(), <span class="stringliteral">"%lf"</span>, &amp;buffer);
 <a name="l00161"></a>00161                 <span class="keywordflow">if</span>(strchr(this-&gt;<a class="code" href="class_i_n_i___e_x.html#59e1b3ed7c3e175c8dead69d50351f03">buffer</a>(), <span class="charliteral">'%'</span>)) {
 <a name="l00162"></a>00162                         buffer *= 0.01;
 <a name="l00163"></a>00163                 }
@@ -736,7 +736,7 @@
 
 <p>
 <div class="fragment"><pre class="fragment"><a name="l00027"></a>00027                              {
-<a name="l00028"></a>00028                 <span class="keywordflow">return</span> <a class="code" href="class_ares.html#55c2fe642b451f2535b29a62120385bf">Ares::readBuffer</a>;
+<a name="l00028"></a>00028                 <span class="keywordflow">return</span> <a class="code" href="class_ares.html#d4af8279307df25dd1e696f7380beb39">Ares::readBuffer</a>;
 <a name="l00029"></a>00029         }
 </pre></div>
 <p>
@@ -760,9 +760,9 @@
 </div>
 </div><p>
 <hr>The documentation for this class was generated from the following file:<ul>
-<li>Helpers/<a class="el" href="_i_n_i_parser_8h.html">INIParser.h</a></ul>
+<li>Utilities/<a class="el" href="_i_n_i_parser_8h.html">INIParser.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Sat Jan 2 21:12:07 2010 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Mon Mar 1 23:35:18 2010 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

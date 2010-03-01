@@ -72,53 +72,56 @@
 <a name="l00018"></a>00018         CoordStruct src = *R-&gt;lea_Stack&lt;CoordStruct *&gt;(0x44);
 <a name="l00019"></a>00019         CoordStruct tgt = *R-&gt;lea_Stack&lt;CoordStruct *&gt;(0x88);
 <a name="l00020"></a>00020 
-<a name="l00021"></a>00021         BulletClass * Bullet = R-&gt;get_Origin() == 0x6FF860 ? R-&gt;EDI&lt;BulletClass *&gt;() : R-&gt;EBX&lt;BulletClass *&gt;();
-<a name="l00022"></a>00022 
-<a name="l00023"></a>00023         <a class="code" href="class_bullet_type_ext_1_1_ext_data.html">BulletTypeExt::ExtData</a> *pBulletData = <a class="code" href="class_bullet_type_ext.html#7dc0a4583e92987bd0b670ed627aef26">BulletTypeExt::ExtMap</a>.<a class="code" href="class_container.html#90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(Bullet-&gt;Type);
-<a name="l00024"></a>00024 
-<a name="l00025"></a>00025         <span class="keywordtype">bool</span> FirestormActive = 0;
-<a name="l00026"></a>00026         <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; HouseClass::Array-&gt;Count; ++i) {
-<a name="l00027"></a>00027                 <a class="code" href="class_house_ext_1_1_ext_data.html">HouseExt::ExtData</a> *pData = <a class="code" href="class_house_ext.html#4a73e500fabd21a7359c5247c31d4c03">HouseExt::ExtMap</a>.<a class="code" href="class_container.html#90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(HouseClass::Array-&gt;Items[i]);
-<a name="l00028"></a>00028                 <span class="keywordflow">if</span>(pData &amp;&amp; pData-&gt;<a class="code" href="class_house_ext_1_1_ext_data.html#f2e91b1fc2de13ab1e96ff1242cab060">FirewallActive</a>) {
-<a name="l00029"></a>00029                         FirestormActive = 1;
-<a name="l00030"></a>00030                         <span class="keywordflow">break</span>;
-<a name="l00031"></a>00031                 }
-<a name="l00032"></a>00032         }
-<a name="l00033"></a>00033 
-<a name="l00034"></a>00034         <span class="keywordflow">if</span>(!FirestormActive || !pBulletData-&gt;<a class="code" href="class_bullet_type_ext_1_1_ext_data.html#ceda0fb9a29eb81bda1d60c56e601ca4">SubjectToFirewall</a>) {
-<a name="l00035"></a>00035                 <span class="keywordflow">return</span> 0;
-<a name="l00036"></a>00036         }
-<a name="l00037"></a>00037 
-<a name="l00038"></a>00038 <span class="comment">//      check the path of the projectile to see if there are any firestormed cells along the way</span>
-<a name="l00039"></a>00039 <span class="comment">//      if so, redirect the proj to the nearest one so it crashes</span>
-<a name="l00040"></a>00040 <span class="comment">//      this is technically only necessary for invisible projectiles which don't move to the target</span>
-<a name="l00041"></a>00041 <span class="comment">//      - the BulletClass::Update hook above wouldn't work for them</span>
-<a name="l00042"></a>00042 
-<a name="l00043"></a>00043 <span class="comment">// screw having two code paths</span>
-<a name="l00044"></a>00044 
-<a name="l00045"></a>00045         <a class="code" href="class_firestorm_finder_applicator.html">FirestormFinderApplicator</a> FireFinder(Bullet-&gt;Owner-&gt;Owner);
-<a name="l00046"></a>00046 
-<a name="l00047"></a>00047         CellSequence Path(&amp;src, &amp;tgt);
-<a name="l00048"></a>00048 
-<a name="l00049"></a>00049         Path.Apply(FireFinder);
-<a name="l00050"></a>00050 
-<a name="l00051"></a>00051         <span class="keywordflow">if</span>(FireFinder.found) {
-<a name="l00052"></a>00052                 CellClass::Cell2Coord(&amp;FireFinder.target, &amp;tgt);
-<a name="l00053"></a>00053                 Bullet-&gt;Target = MapClass::Global()-&gt;GetCellAt(&amp;tgt)-&gt;GetContent();
-<a name="l00054"></a>00054                 Bullet-&gt;Owner-&gt;ShouldLoseTargetNow = 1;
-<a name="l00055"></a>00055 <span class="comment">//              Bullet-&gt;Owner-&gt;SetTarget(NULL);</span>
-<a name="l00056"></a>00056 <span class="comment">//              Bullet-&gt;Owner-&gt;Scatter(0xB1CFE8, 1, 0);</span>
-<a name="l00057"></a>00057         }
-<a name="l00058"></a>00058 
-<a name="l00059"></a>00059         <span class="keywordflow">return</span> 0;
-<a name="l00060"></a>00060 }
+<a name="l00021"></a>00021         BulletClass * Bullet = R-&gt;get_Origin() == 0x6FF860
+<a name="l00022"></a>00022                 ? R-&gt;EDI&lt;BulletClass *&gt;()
+<a name="l00023"></a>00023                 : R-&gt;EBX&lt;BulletClass *&gt;()
+<a name="l00024"></a>00024         ;
+<a name="l00025"></a>00025 
+<a name="l00026"></a>00026         <a class="code" href="class_bullet_type_ext_1_1_ext_data.html">BulletTypeExt::ExtData</a> *pBulletData = <a class="code" href="class_bullet_type_ext.html#7dc0a4583e92987bd0b670ed627aef26">BulletTypeExt::ExtMap</a>.<a class="code" href="class_container.html#90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(Bullet-&gt;Type);
+<a name="l00027"></a>00027 
+<a name="l00028"></a>00028         <span class="keywordtype">bool</span> FirestormActive = 0;
+<a name="l00029"></a>00029         <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; HouseClass::Array-&gt;Count; ++i) {
+<a name="l00030"></a>00030                 <a class="code" href="class_house_ext_1_1_ext_data.html">HouseExt::ExtData</a> *pData = <a class="code" href="class_house_ext.html#4a73e500fabd21a7359c5247c31d4c03">HouseExt::ExtMap</a>.<a class="code" href="class_container.html#90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(HouseClass::Array-&gt;Items[i]);
+<a name="l00031"></a>00031                 <span class="keywordflow">if</span>(pData &amp;&amp; pData-&gt;<a class="code" href="class_house_ext_1_1_ext_data.html#f2e91b1fc2de13ab1e96ff1242cab060">FirewallActive</a>) {
+<a name="l00032"></a>00032                         FirestormActive = 1;
+<a name="l00033"></a>00033                         <span class="keywordflow">break</span>;
+<a name="l00034"></a>00034                 }
+<a name="l00035"></a>00035         }
+<a name="l00036"></a>00036 
+<a name="l00037"></a>00037         <span class="keywordflow">if</span>(!FirestormActive || !pBulletData-&gt;<a class="code" href="class_bullet_type_ext_1_1_ext_data.html#ceda0fb9a29eb81bda1d60c56e601ca4">SubjectToFirewall</a>) {
+<a name="l00038"></a>00038                 <span class="keywordflow">return</span> 0;
+<a name="l00039"></a>00039         }
+<a name="l00040"></a>00040 
+<a name="l00041"></a>00041 <span class="comment">//      check the path of the projectile to see if there are any firestormed cells along the way</span>
+<a name="l00042"></a>00042 <span class="comment">//      if so, redirect the proj to the nearest one so it crashes</span>
+<a name="l00043"></a>00043 <span class="comment">//      this is technically only necessary for invisible projectiles which don't move to the target</span>
+<a name="l00044"></a>00044 <span class="comment">//      - the BulletClass::Update hook above wouldn't work for them</span>
+<a name="l00045"></a>00045 
+<a name="l00046"></a>00046 <span class="comment">// screw having two code paths</span>
+<a name="l00047"></a>00047 
+<a name="l00048"></a>00048         <a class="code" href="class_firestorm_finder_applicator.html">FirestormFinderApplicator</a> FireFinder(Bullet-&gt;Owner-&gt;Owner);
+<a name="l00049"></a>00049 
+<a name="l00050"></a>00050         CellSequence Path(&amp;src, &amp;tgt);
+<a name="l00051"></a>00051 
+<a name="l00052"></a>00052         Path.Apply(FireFinder);
+<a name="l00053"></a>00053 
+<a name="l00054"></a>00054         <span class="keywordflow">if</span>(FireFinder.found) {
+<a name="l00055"></a>00055                 CellClass::Cell2Coord(&amp;FireFinder.target, &amp;tgt);
+<a name="l00056"></a>00056                 Bullet-&gt;Target = MapClass::Instance-&gt;GetCellAt(&amp;tgt)-&gt;GetContent();
+<a name="l00057"></a>00057                 Bullet-&gt;Owner-&gt;ShouldLoseTargetNow = 1;
+<a name="l00058"></a>00058 <span class="comment">//              Bullet-&gt;Owner-&gt;SetTarget(NULL);</span>
+<a name="l00059"></a>00059 <span class="comment">//              Bullet-&gt;Owner-&gt;Scatter(0xB1CFE8, 1, 0);</span>
+<a name="l00060"></a>00060         }
+<a name="l00061"></a>00061 
+<a name="l00062"></a>00062         <span class="keywordflow">return</span> 0;
+<a name="l00063"></a>00063 }
 </pre></div>
 <p>
 
 </div>
 </div><p>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Sat Jan 2 21:12:06 2010 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Mon Mar 1 23:35:17 2010 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>
