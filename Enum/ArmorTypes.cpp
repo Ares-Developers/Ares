@@ -82,12 +82,9 @@ void ArmorType::AddDefaults()
 	FindOrAllocate("special_2");
 }
 
-// 4753F0, 0A
-DEFINE_HOOK(4753F0, ArmorType_FindIndex, 0A)
+DEFINE_HOOK(4753F0, ArmorType_FindIndex, A)
 {
 	GET(CCINIClass *, pINI, ECX);
-//	GET(ObjectTypeClass*, O, EBX);
-//	DEBUGLOG("Mapping armor of %s (arrlen %d)\n", O->get_ID(), ArmorType::Array.get_Count());
 	if(!ArmorType::Array.Count) {
 		ArmorType::AddDefaults();
 	}
@@ -96,7 +93,6 @@ DEFINE_HOOK(4753F0, ArmorType_FindIndex, 0A)
 	GET_STACK(const char *, Key, 0x8);
 	GET_STACK(int, fallback, 0xC);
 
-//	DEBUGLOG("[%s]%s (%d)\n", Section, Key, fallback);
 	char buf[0x20];
 
 	const char *curTitle = fallback < ArmorType::Array.Count
@@ -110,7 +106,6 @@ DEFINE_HOOK(4753F0, ArmorType_FindIndex, 0A)
 	return 0x475430;
 }
 
-// 4B9A52, 5
 DEFINE_HOOK(4B9A52, DropshipLoadout_PrintArmor, 5)
 {
 	R->Stack(0x4, ArmorType::Array[R->EDX()]);

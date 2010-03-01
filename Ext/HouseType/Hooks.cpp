@@ -10,8 +10,7 @@ DEFINE_HOOK(5536DA, HTExt_GetLSName, 0)
 
 	char* pLSName = NULL;
 
-	HouseTypeExt::ExtData *pData = HouseTypeExt::ExtMap.Find(pThis);
-	if(pData) {
+	if(HouseTypeExt::ExtData *pData = HouseTypeExt::ExtMap.Find(pThis)) {
 		pLSName = pData->LSName;
 	} else if(n == 0) {
 		pLSName = "Name:Americans";
@@ -28,8 +27,7 @@ DEFINE_HOOK(553A05, HTExt_GetLSSpecialName, 6)
 	int n = R->Stack32(0x38);
 	HouseTypeClass* pThis = HouseTypeClass::Array->Items[n];
 
-	HouseTypeExt::ExtData *pData = HouseTypeExt::ExtMap.Find(pThis);
-	if(pData) {
+	if(HouseTypeExt::ExtData *pData = HouseTypeExt::ExtMap.Find(pThis)) {
 		R->EAX(StringTable::LoadString(pData->LSSpecialName));
 		return 0x553B3B;
 	}
@@ -42,8 +40,7 @@ DEFINE_HOOK(553D06, HTExt_GetLSBrief, 6)
 	int n = R->Stack32(0x38);
 	HouseTypeClass* pThis = HouseTypeClass::Array->Items[n];
 
-	HouseTypeExt::ExtData *pData = HouseTypeExt::ExtMap.Find(pThis);
-	if(pData) {
+	if(HouseTypeExt::ExtData *pData = HouseTypeExt::ExtMap.Find(pThis)) {
 		R->ESI(StringTable::LoadString(pData->LSBrief));
 		return 0x553E54;
 	}
@@ -55,13 +52,10 @@ DEFINE_HOOK(4E3579, HTExt_DrawFlag, 0)
 {
 	int n = R->ECX();
 	HouseTypeClass* pThis = HouseTypeClass::Array->Items[n];
-	
+
 	char* pFlagFile = NULL;
 
-//	Debug::Log("Flag of %s\n", pThis->get_ID());
-
-	HouseTypeExt::ExtData *pData = HouseTypeExt::ExtMap.Find(pThis);
-	if(pData) {
+	if(HouseTypeExt::ExtData *pData = HouseTypeExt::ExtMap.Find(pThis)) {
 		pFlagFile = pData->FlagFile;
 	} else if(n == 0) {
 		pFlagFile = "usai.pcx";
@@ -82,8 +76,7 @@ DEFINE_HOOK(72B690, HTExt_LSPAL, 0)
 
 	char* pPALFile = NULL;
 
-	HouseTypeExt::ExtData *pData = HouseTypeExt::ExtMap.Find(pThis);
-	if(pData) {
+	if(HouseTypeExt::ExtData *pData = HouseTypeExt::ExtMap.Find(pThis)) {
 		pPALFile = pData->LSPALFile;
 	} else if(n == 0) {
 		pPALFile = "mplsu.pal";	//need to recode cause I broke the code with the jump
@@ -107,8 +100,7 @@ DEFINE_HOOK(4E38D8, HTExt_GetSTT, 0)
 
 	char* pSTT = NULL;
 
-	HouseTypeExt::ExtData *pData = HouseTypeExt::ExtMap.Find(pThis);
-	if(pData) {
+	if(HouseTypeExt::ExtData *pData = HouseTypeExt::ExtMap.Find(pThis)) {
 		pSTT = pData->StatusText;
 	} else if(n == 0) {
 		pSTT = "STT:PlayerSideAmerica";
@@ -127,8 +119,7 @@ DEFINE_HOOK(553412, HTExt_LSFile, 0)
 
 	char* pLSFile = NULL;
 
-	HouseTypeExt::ExtData *pData = HouseTypeExt::ExtMap.Find(pThis);
-	if(pData) {
+	if(HouseTypeExt::ExtData *pData = HouseTypeExt::ExtMap.Find(pThis)) {
 		pLSFile = pData->LSFile;
 	} else if(n == 0) {
 		pLSFile = "ls%sustates.shp";
@@ -204,9 +195,8 @@ DEFINE_HOOK(4FE782, HTExt_PickPowerplant, 6)
 		_snprintf(message, 0x100, "Country [%s] did not find any powerplants it could construct!", H->Type);
 		Debug::FatalError(message);
 	}
-	BuildingTypeClass *pResult = NULL;
 	int idx = ScenarioClass::Global()->get_Random()->RandomRanged(0, Eligible.size() - 1);
-	pResult = Eligible.at(idx);
+	BuildingTypeClass *pResult = Eligible.at(idx);
 
 	R->EDI(pResult);
 	return 0x4FE893;

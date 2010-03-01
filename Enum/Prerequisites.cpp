@@ -74,7 +74,7 @@ bool Prereqs::HouseOwnsGeneric(HouseClass *pHouse, signed int Index)
 		}
 		if(Index == 5) { // PROC alternate, man I hate the special cases
 			if(UnitTypeClass *ProcAlt = RulesClass::Instance->PrerequisiteProcAlternate) {
-				if(pHouse->get_OwnedUnitTypes()->GetItemCount(ProcAlt->GetArrayIndex())) {
+				if(pHouse->OwnedUnitTypes.GetItemCount(ProcAlt->GetArrayIndex())) {
 					return true;
 				}
 			}
@@ -87,19 +87,19 @@ bool Prereqs::HouseOwnsGeneric(HouseClass *pHouse, signed int Index)
 bool Prereqs::HouseOwnsBuilding(HouseClass *pHouse, int Index)
 {
 	BuildingTypeClass *BType = BuildingTypeClass::Array->GetItem(Index);
-	char *powerup = BType->get_PowersUpBuilding();
+	char *powerup = BType->PowersUpBuilding;
 	if(*powerup) {
 		BuildingTypeClass *BCore = BuildingTypeClass::Find(powerup);
-		if(pHouse->get_OwnedBuildingTypes1()->GetItemCount(BCore->GetArrayIndex()) < 1) {
+		if(pHouse->OwnedBuildingTypes1.GetItemCount(BCore->GetArrayIndex()) < 1) {
 			return false;
 		}
-		for(int i = 0; i < pHouse->get_Buildings()->Count; ++i) {
-			BuildingClass *Bld = pHouse->get_Buildings()->GetItem(i);
+		for(int i = 0; i < pHouse->Buildings.Count; ++i) {
+			BuildingClass *Bld = pHouse->Buildings.GetItem(i);
 			if(Bld->Type != BCore) {
 				continue;
 			}
 			for(int j = 0; j < 3; ++j) {
-				BuildingTypeClass *Upgrade = Bld->get_Upgrades(j);
+				BuildingTypeClass *Upgrade = Bld->Upgrades[j];
 				if(Upgrade == BType) {
 					return true;
 				}

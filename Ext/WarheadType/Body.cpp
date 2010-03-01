@@ -4,11 +4,11 @@
 
 #include <Helpers/Template.h>
 
-const DWORD Extension<WarheadTypeClass>::Canary = 0x22222222;
+template<> const DWORD Extension<WarheadTypeClass>::Canary = 0x22222222;
 Container<WarheadTypeExt> WarheadTypeExt::ExtMap;
 
-WarheadTypeExt::TT *Container<WarheadTypeExt>::SavingObject = NULL;
-IStream *Container<WarheadTypeExt>::SavingStream = NULL;
+template<> WarheadTypeExt::TT *Container<WarheadTypeExt>::SavingObject = NULL;
+template<> IStream *Container<WarheadTypeExt>::SavingStream = NULL;
 
 hash_ionExt WarheadTypeExt::IonExt;
 
@@ -16,7 +16,7 @@ WarheadTypeClass * WarheadTypeExt::Temporal_WH = NULL;
 
 void WarheadTypeExt::ExtData::LoadFromINIFile(WarheadTypeClass *pThis, CCINIClass *pINI)
 {
-	const char * section = pThis->get_ID();
+	const char * section = pThis->ID;
 
 	INI_EX exINI(pINI);
 

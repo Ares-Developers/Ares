@@ -2,11 +2,11 @@
 #include "../TechnoType/Body.h"
 #include "../House/Body.h"
 
-const DWORD Extension<BuildingTypeClass>::Canary = 0x11111111;
+template<> const DWORD Extension<BuildingTypeClass>::Canary = 0x11111111;
 Container<BuildingTypeExt> BuildingTypeExt::ExtMap;
 
-BuildingTypeExt::TT *Container<BuildingTypeExt>::SavingObject = NULL;
-IStream *Container<BuildingTypeExt>::SavingStream = NULL;
+template<> BuildingTypeExt::TT *Container<BuildingTypeExt>::SavingObject = NULL;
+template<> IStream *Container<BuildingTypeExt>::SavingStream = NULL;
 
 std::vector<std::string> BuildingTypeExt::ExtData::trenchKinds;
 
@@ -17,17 +17,17 @@ void BuildingTypeExt::ExtData::Initialize(BuildingTypeClass *pThis) {
 	if(pThis->SecretLab) {
 		this->Secret_Boons.Clear();
 		DynamicVectorClass<TechnoTypeClass *> *Options
-			= (DynamicVectorClass<TechnoTypeClass *> *)RulesClass::Global()->get_SecretInfantry();
+			= (DynamicVectorClass<TechnoTypeClass *> *)&RulesClass::Instance->SecretInfantry;
 		for(int i = 0; i < Options->Count; ++i) {
 			this->Secret_Boons.AddItem(Options->GetItem(i));
 		}
 
-		Options = (DynamicVectorClass<TechnoTypeClass *> *)RulesClass::Global()->get_SecretUnits();
+		Options = (DynamicVectorClass<TechnoTypeClass *> *)&RulesClass::Instance->SecretUnits;
 		for(int i = 0; i < Options->Count; ++i) {
 			this->Secret_Boons.AddItem(Options->GetItem(i));
 		}
 
-		Options = (DynamicVectorClass<TechnoTypeClass *> *)RulesClass::Global()->get_SecretBuildings();
+		Options = (DynamicVectorClass<TechnoTypeClass *> *)&RulesClass::Instance->SecretBuildings;
 		for(int i = 0; i < Options->Count; ++i) {
 			this->Secret_Boons.AddItem(Options->GetItem(i));
 		}
@@ -37,11 +37,13 @@ void BuildingTypeExt::ExtData::Initialize(BuildingTypeClass *pThis) {
 
 void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINIClass* pINI)
 {
-	char* pArtID = pThis->get_ImageFile();
-	char* pID = pThis->get_ID();
+	char* pArtID = pThis->ImageFile;
+	char* pID = pThis->ID;
 
 	if(pThis->UnitRepair && pThis->Factory == abs_AircraftType) {
-		_snprintf(Ares::readBuffer, Ares::readLength, "BuildingType [%s] has both UnitRepair=yes and Factory=AircraftType.\nThis combination causes Internal Errors and other unwanted behaviour.", pID);
+		_snprintf(Ares::readBuffer, Ares::readLength,
+			"BuildingType [%s] has both UnitRepair=yes and Factory=AircraftType.\n"
+			"This combination causes Internal Errors and other unwanted behaviour.", pID);
 		Debug::FatalError(Ares::readBuffer);
 	}
 
@@ -136,7 +138,7 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 
 	}
 
-	if(pINI->ReadString(pThis->get_ID(), "SecretLab.PossibleBoons", "", Ares::readBuffer, Ares::readLength)) {
+	if(pINI->ReadString(pID, "SecretLab.PossibleBoons", "", Ares::readBuffer, Ares::readLength)) {
 		this->Secret_Boons.Clear();
 		for(char *cur = strtok(Ares::readBuffer, ","); cur; cur = strtok(NULL, ",")) {
 			TechnoTypeClass *pTechno = TechnoTypeClass::Find(cur);
@@ -146,7 +148,7 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 		}
 	}
 
-	this->Secret_RecalcOnCapture = pINI->ReadBool(pThis->get_ID(), "SecretLab.GenerateOnCapture", this->Secret_RecalcOnCapture);
+	this->Secret_RecalcOnCapture = pINI->ReadBool(pID, "SecretLab.GenerateOnCapture", this->Secret_RecalcOnCapture);
 
 	// added on 11.11.09 for #221 and children (Trenches)
 	this->UCPassThrough = pINI->ReadDouble(pID, "UC.PassThrough", this->UCPassThrough);
@@ -223,14 +225,14 @@ void BuildingTypeExt::UpdateSecretLabOptions(BuildingClass *pThis)
 	}
 
 	HouseClass *Owner = pThis->Owner;
-	int OwnerBits = 1 << Owner->Type->ArrayIndex;
+	unsigned int OwnerBits = 1 << Owner->Type->ArrayIndex;
 
 	DynamicVectorClass<TechnoTypeClass *> Options;
 	for(int i = 0; i < pData->Secret_Boons.Count; ++i) {
 		TechnoTypeClass * Option = pData->Secret_Boons.GetItem(i);
 		TechnoTypeExt::ExtData* pTech = TechnoTypeExt::ExtMap.Find(Option);
 
-		if(pTech->Secret_RequiredHouses & OwnerBits && !(pTech->Secret_ForbiddenHouses & OwnerBits)) {
+		if((pTech->Secret_RequiredHouses & OwnerBits) && !(pTech->Secret_ForbiddenHouses & OwnerBits)) {
 			if(!HouseExt::RequirementsMet(Owner, Option)) {
 				Options.AddItem(Option);
 			}
@@ -239,14 +241,14 @@ void BuildingTypeExt::UpdateSecretLabOptions(BuildingClass *pThis)
 
 	if(Options.Count < 1) {
 		DEBUGLOG("Secret Lab [%s] has no boons applicable to country [%s]!\n",
-			pType->get_ID(), Owner->Type->get_ID());
+			pType->ID, Owner->Type->ID);
 		return;
 	}
 
 	int idx = ScenarioClass::Instance->Random.RandomRanged(0, Options.Count - 1);
 	Result = Options[idx];
 
-	DEBUGLOG("Secret Lab rolled %s for %s\n", Result->get_ID(), pType->get_ID());
+	DEBUGLOG("Secret Lab rolled %s for %s\n", Result->ID, pType->ID);
 	pData->Secret_Placed = true;
 	pThis->SecretProduction = Result;
 }

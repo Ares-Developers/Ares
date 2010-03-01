@@ -6,11 +6,11 @@
 #include "../Building/Body.h"
 #include "../BuildingType/Body.h"
 
-const DWORD Extension<BulletClass>::Canary = 0x87654321;
+template<> const DWORD Extension<BulletClass>::Canary = 0x87654321;
 Container<BulletExt> BulletExt::ExtMap;
 
-BulletClass *Container<BulletExt>::SavingObject = NULL;
-IStream *Container<BulletExt>::SavingStream = NULL;
+template<> BulletClass *Container<BulletExt>::SavingObject = NULL;
+template<> IStream *Container<BulletExt>::SavingStream = NULL;
 
 // #663: PassThrough; #667: SubjectToTrenches
 //! Does the entire PassThrough logic, checks & damage

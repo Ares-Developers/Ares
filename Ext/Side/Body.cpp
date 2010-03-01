@@ -1,17 +1,18 @@
 #include "Body.h"
+#include <ScenarioClass.h>
 
 //Static init
-const DWORD Extension<SideClass>::Canary = 0x87654321;
+template<> const DWORD Extension<SideClass>::Canary = 0x87654321;
 Container<SideExt> SideExt::ExtMap;
 
-SideExt::TT *Container<SideExt>::SavingObject = NULL;
-IStream *Container<SideExt>::SavingStream = NULL;
+template<> SideExt::TT *Container<SideExt>::SavingObject = NULL;
+template<> IStream *Container<SideExt>::SavingStream = NULL;
 
 hash_map<VoxClass*, DynamicVectorClass<SideExt::VoxFileNameStruct> > SideExt::EVAFiles;
 
 void SideExt::ExtData::Initialize(SideClass *pThis)
 {
-	char* pID = pThis->get_ID();
+	char* pID = pThis->ID;
 
 	//are these necessary?
 	this->BaseDefenseCounts.Clear();
@@ -21,27 +22,27 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 
 	if(!_strcmpi(pID, "Nod")) { //Soviets
 
-		for(int i = 0; i < RulesClass::Global()->get_SovietBaseDefenseCounts()->Count; ++i) {
-			this->BaseDefenseCounts.AddItem(RulesClass::Global()->get_SovietBaseDefenseCounts()->GetItem(i));
+		for(int i = 0; i < RulesClass::Instance->SovietBaseDefenseCounts.Count; ++i) {
+			this->BaseDefenseCounts.AddItem(RulesClass::Instance->SovietBaseDefenseCounts.GetItem(i));
 		}
 
-		for(int i = 0; i < RulesClass::Global()->get_SovietBaseDefenses()->Count; ++i) {
+		for(int i = 0; i < RulesClass::Instance->SovietBaseDefenses.Count; ++i) {
 			this->BaseDefenses.AddItem(RulesClass::Global()->get_SovietBaseDefenses()->GetItem(i));
 		}
 
-		this->Crew.Bind(&RulesClass::Global()->SovietCrew);
-		this->DefaultDisguise.Bind(&RulesClass::Global()->SovietDisguise);
-		this->SurvivorDivisor.Bind(&RulesClass::Global()->SovietSurvivorDivisor);
+		this->Crew.Bind(&RulesClass::Instance->SovietCrew);
+		this->DefaultDisguise.Bind(&RulesClass::Instance->SovietDisguise);
+		this->SurvivorDivisor.Bind(&RulesClass::Instance->SovietSurvivorDivisor);
 
 		strcpy(this->EVATag, "Russian");
 		this->LoadTextColor = ColorScheme::Find("SovietLoad");
 
-		for(int i = 0; i < RulesClass::Global()->get_SovParaDropInf()->Count; ++i) {
-			this->ParaDrop.AddItem((RulesClass::Global()->get_SovParaDropInf()->GetItem(i)));
+		for(int i = 0; i < RulesClass::Instance->SovParaDropInf.Count; ++i) {
+			this->ParaDrop.AddItem((RulesClass::Instance->SovParaDropInf.GetItem(i)));
 		}
 
-		for(int i = 0; i < RulesClass::Global()->get_SovParaDropNum()->Count; ++i) {
-			this->ParaDropNum.AddItem(RulesClass::Global()->get_SovParaDropNum()->GetItem(i));
+		for(int i = 0; i < RulesClass::Instance->SovParaDropNum.Count; ++i) {
+			this->ParaDropNum.AddItem(RulesClass::Instance->SovParaDropNum.GetItem(i));
 		}
 
 		this->SidebarMixFileIndex = 2;
@@ -49,27 +50,27 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 
 	} else if(!_strcmpi(pID, "ThirdSide")) { //Yuri
 
-		for(int i = 0; i < RulesClass::Global()->get_ThirdBaseDefenseCounts()->Count; ++i) {
-			this->BaseDefenseCounts.AddItem(RulesClass::Global()->get_ThirdBaseDefenseCounts()->GetItem(i));
+		for(int i = 0; i < RulesClass::Instance->ThirdBaseDefenseCounts.Count; ++i) {
+			this->BaseDefenseCounts.AddItem(RulesClass::Instance->ThirdBaseDefenseCounts.GetItem(i));
 		}
 
-		for(int i = 0; i < RulesClass::Global()->get_ThirdBaseDefenses()->Count; ++i) {
-			this->BaseDefenses.AddItem(RulesClass::Global()->get_ThirdBaseDefenses()->GetItem(i));
+		for(int i = 0; i < RulesClass::Instance->ThirdBaseDefenses.Count; ++i) {
+			this->BaseDefenses.AddItem(RulesClass::Instance->ThirdBaseDefenses.GetItem(i));
 		}
 
-		this->Crew.Bind(&RulesClass::Global()->ThirdCrew);
-		this->DefaultDisguise.Bind(&RulesClass::Global()->ThirdDisguise);
-		this->SurvivorDivisor.Bind(&RulesClass::Global()->ThirdSurvivorDivisor);
+		this->Crew.Bind(&RulesClass::Instance->ThirdCrew);
+		this->DefaultDisguise.Bind(&RulesClass::Instance->ThirdDisguise);
+		this->SurvivorDivisor.Bind(&RulesClass::Instance->ThirdSurvivorDivisor);
 
 		strcpy(this->EVATag, "Yuri");
 		this->LoadTextColor = ColorScheme::Find("SovietLoad");
 
-		for(int i = 0; i < RulesClass::Global()->get_YuriParaDropInf()->Count; ++i) {
-			this->ParaDrop.AddItem(RulesClass::Global()->get_YuriParaDropInf()->GetItem(i));
+		for(int i = 0; i < RulesClass::Instance->YuriParaDropInf.Count; ++i) {
+			this->ParaDrop.AddItem(RulesClass::Instance->YuriParaDropInf.GetItem(i));
 		}
 
-		for(int i = 0; i < RulesClass::Global()->get_YuriParaDropNum()->Count; ++i) {
-			this->ParaDropNum.AddItem(RulesClass::Global()->get_YuriParaDropNum()->GetItem(i));
+		for(int i = 0; i < RulesClass::Instance->YuriParaDropNum.Count; ++i) {
+			this->ParaDropNum.AddItem(RulesClass::Instance->YuriParaDropNum.GetItem(i));
 		}
 
 		this->SidebarMixFileIndex = 2;
@@ -77,27 +78,27 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 
 	} else { //Allies or any other country
 
-		for(int i = 0; i < RulesClass::Global()->get_AlliedBaseDefenseCounts()->Count; ++i) {
-			this->BaseDefenseCounts.AddItem(RulesClass::Global()->get_AlliedBaseDefenseCounts()->GetItem(i));
+		for(int i = 0; i < RulesClass::Instance->AlliedBaseDefenseCounts.Count; ++i) {
+			this->BaseDefenseCounts.AddItem(RulesClass::Instance->AlliedBaseDefenseCounts.GetItem(i));
 		}
 
-		for(int i = 0; i < RulesClass::Global()->get_AlliedBaseDefenses()->Count; ++i) {
-			this->BaseDefenses.AddItem(RulesClass::Global()->get_AlliedBaseDefenses()->GetItem(i));
+		for(int i = 0; i < RulesClass::Instance->AlliedBaseDefenses.Count; ++i) {
+			this->BaseDefenses.AddItem(RulesClass::Instance->AlliedBaseDefenses.GetItem(i));
 		}
 
-		this->Crew.Bind(&RulesClass::Global()->AlliedCrew);
-		this->DefaultDisguise.Bind(&RulesClass::Global()->AlliedDisguise);
-		this->SurvivorDivisor.Bind(&RulesClass::Global()->AlliedSurvivorDivisor);
+		this->Crew.Bind(&RulesClass::Instance->AlliedCrew);
+		this->DefaultDisguise.Bind(&RulesClass::Instance->AlliedDisguise);
+		this->SurvivorDivisor.Bind(&RulesClass::Instance->AlliedSurvivorDivisor);
 
 		strcpy(this->EVATag, "Allied");
 		this->LoadTextColor = ColorScheme::Find("AlliedLoad");
 
-		for(int i = 0; i < RulesClass::Global()->get_AllyParaDropInf()->Count; ++i) {
-			this->ParaDrop.AddItem(RulesClass::Global()->get_AllyParaDropInf()->GetItem(i));
+		for(int i = 0; i < RulesClass::Instance->AllyParaDropInf.Count; ++i) {
+			this->ParaDrop.AddItem(RulesClass::Instance->AllyParaDropInf.GetItem(i));
 		}
 
-		for(int i = 0; i < RulesClass::Global()->get_AllyParaDropNum()->Count; ++i) {
-			this->ParaDropNum.AddItem(RulesClass::Global()->get_AllyParaDropNum()->GetItem(i));
+		for(int i = 0; i < RulesClass::Instance->AllyParaDropNum.Count; ++i) {
+			this->ParaDropNum.AddItem(RulesClass::Instance->AllyParaDropNum.GetItem(i));
 		}
 
 		this->SidebarMixFileIndex = 1;
@@ -139,8 +140,7 @@ void SideExt::ExtData::LoadFromINIFile(SideClass *pThis, CCINIClass *pINI)
 	}
 
 	if(pINI->ReadString(section, "LoadScreenText.Color", "", Ares::readBuffer, 0x80)) {
-		ColorScheme* CS = ColorScheme::Find(Ares::readBuffer);
-		if(CS) {
+		if(ColorScheme* CS = ColorScheme::Find(Ares::readBuffer)) {
 			this->LoadTextColor = CS;
 		}
 	}
@@ -180,8 +180,7 @@ DWORD SideExt::BaseDefenses(REGISTERS* R, DWORD dwReturnAddress)
 
 	int n = pCountry->SideIndex;
 	SideClass* pSide = SideClass::Array->GetItem(n);
-	SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide);
-	if(pData) {
+	if(SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide)) {
 		R->EBX(&pData->BaseDefenses);
 		return dwReturnAddress;
 	} else {
@@ -196,8 +195,7 @@ DWORD SideExt::Disguise(REGISTERS* R, DWORD dwReturnAddress, bool bUseESI)
 
 	int n = pHouse->SideIndex;
 	SideClass* pSide = SideClass::Array->GetItem(n);
-	SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide);
-	if(pData) {
+	if(SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide)) {
 		pThis->Disguise = pData->DefaultDisguise;
 		return dwReturnAddress;
 	} else {
@@ -220,15 +218,13 @@ DWORD SideExt::LoadTextColor(REGISTERS* R, DWORD dwReturnAddress)
 
 DWORD SideExt::MixFileYuriFiles(REGISTERS* R, DWORD dwReturnAddress1, DWORD dwReturnAddress2)
 {
-	BYTE* pScenario = R->EAX<BYTE *>();	//Scenario, upate this once mapped!
-	int n = *((int*)(pScenario + 0x34B8));
+	GET(ScenarioClass *, pScen, EAX); //TODO test
 
-	SideClass* pSide = SideClass::Array->GetItem(n);
-	SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide);
-	if(pData) {
+	SideClass* pSide = SideClass::Array->GetItem(pScen->PlayerSideIndex);
+	if(SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide)) {
 		return pData->SidebarYuriFileNames
-		 ? dwReturnAddress1
-		 : dwReturnAddress2
+			? dwReturnAddress1
+			: dwReturnAddress2
 		;
 	} else {
 		return 0;

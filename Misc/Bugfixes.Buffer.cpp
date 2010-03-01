@@ -28,7 +28,7 @@ DEFINE_HOOK(511D16, Buf_CountryVeteran, 9)
 	GET(HouseTypeClass *, H, EBX);
 	GET(CCINIClass *, INI, ESI);
 
-	const char *section = H->get_ID();
+	const char *section = H->ID;
 	PARSE_VECTOR_N(section, H, VeteranInfantry, InfantryTypeClass);
 	PARSE_VECTOR_N(section, H, VeteranUnits, UnitTypeClass);
 	PARSE_VECTOR_N(section, H, VeteranAircraft, AircraftTypeClass);

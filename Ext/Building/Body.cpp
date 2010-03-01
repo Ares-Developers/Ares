@@ -6,11 +6,11 @@
 #include <CellSpread.h>
 #include <GeneralStructures.h> // for CellStruct
 
-const DWORD Extension<BuildingClass>::Canary = 0x87654321;
+template<> const DWORD Extension<BuildingClass>::Canary = 0x87654321;
 Container<BuildingExt> BuildingExt::ExtMap;
 
-BuildingClass *Container<BuildingExt>::SavingObject = NULL;
-IStream *Container<BuildingExt>::SavingStream = NULL;
+template<> BuildingClass *Container<BuildingExt>::SavingObject = NULL;
+template<> IStream *Container<BuildingExt>::SavingStream = NULL;
 
 // =============================
 // member functions
@@ -310,10 +310,8 @@ void BuildingExt::buildLines(BuildingClass* theBuilding, CellStruct selectedCell
 		CellStruct directionOffset = CellSpread::GetNeighbourOffset(direction); // coordinates of the neighboring cell in the given direction relative to the current cell (e.g. 0,1)
 		int linkLength = 0; // how many cells to build on from center in direction to link up with a found building
 
-		CellStruct cellToCheck = selectedCell;
 		for(short distanceFromCenter = 1; distanceFromCenter <= maxLinkDistance; ++distanceFromCenter) {
-			cellToCheck.X += directionOffset.X; // adjust the cell to check based on current distance, relative to the selected cell
-			cellToCheck.Y += directionOffset.Y; // e.g. 25 += 5 * 1 for "five away on the Y axis"
+			CellStruct cellToCheck = selectedCell + directionOffset; // adjust the cell to check based on current distance, relative to the selected cell
 
 			if(!MapClass::Global()->CellExists(&cellToCheck)) { // don't parse this cell if it doesn't exist (duh)
 				break;
@@ -337,10 +335,9 @@ void BuildingExt::buildLines(BuildingClass* theBuilding, CellStruct selectedCell
 		}
 
 		++Unsorted::SomeMutex; // another mystical Westwood mechanism. According to D, Bad Things happen if this is missing.
-		for(int distanceFromCenter = linkLength; distanceFromCenter > 0; --distanceFromCenter) { // build a line of this buildingtype from the found building (if any)
-			CellStruct cellToBuildOn = selectedCell;											// to the newly built one
-			cellToBuildOn.X += short(distanceFromCenter * directionOffset.X);
-			cellToBuildOn.Y += short(distanceFromCenter * directionOffset.Y);
+		// build a line of this buildingtype from the found building (if any) to the newly built one
+		for(int distanceFromCenter = 1; distanceFromCenter <= linkLength; ++distanceFromCenter) {
+			CellStruct cellToBuildOn = selectedCell + directionOffset;
 
 			if(CellClass *cell = MapClass::Global()->GetCellAt(&cellToBuildOn)) {
 				if(BuildingClass *tempBuilding = specific_cast<BuildingClass *>(theBuilding->Type->CreateObject(buildingOwner))) {
@@ -386,6 +383,15 @@ signed int BuildingExt::GetImageFrameIndex(BuildingClass *pThis) {
 	return -1;
 }
 
+void BuildingExt::KickOutHospitalArmory(BuildingClass *pThis)
+{
+	if(pThis->Type->Hospital || pThis->Type->Armory) {
+		if(FootClass * Passenger = pThis->Passengers.RemoveFirstPassenger()) {
+			pThis->KickOutUnit(Passenger, &BuildingClass::DefaultCellCoords);
+		}
+	}
+}
+
 // =============================
 // container hooks
 
@@ -429,14 +435,4 @@ DEFINE_HOOK(454244, BuildingClass_Save_Suffix, 7)
 	BuildingExt::ExtMap.SaveStatic();
 	return 0;
 }
-
-void BuildingExt::KickOutHospitalArmory(BuildingClass *pThis)
-{
-	if(pThis->Type->Hospital || pThis->Type->Armory) {
-		if(FootClass * Passenger = pThis->Passengers.RemoveFirstPassenger()) {
-			pThis->KickOutUnit(Passenger, &BuildingClass::DefaultCellCoords);
-		}
-	}
-}
-
 

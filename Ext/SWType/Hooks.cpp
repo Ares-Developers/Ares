@@ -13,12 +13,12 @@ DEFINE_HOOK(6CEF84, SuperWeaponTypeClass_GetCursorOverObject, 7)
 		GET_STACK(CellStruct *, pMapCoords, 0x0C);
 
 		int Action = SW_YES_CURSOR;
-		
+
 		if(!pData->SW_FireToShroud.Get()) {
-			CellClass* pCell = MapClass::Global()->GetCellAt(pMapCoords);
+			CellClass* pCell = MapClass::Instance->GetCellAt(pMapCoords);
 			CoordStruct Crd;
 
-			if(MapClass::Global()->IsLocationShrouded(pCell->GetCoords(&Crd))) {
+			if(MapClass::Instance->IsLocationShrouded(pCell->GetCoords(&Crd))) {
 				Action = SW_NO_CURSOR;
 			}
 		}
@@ -56,8 +56,7 @@ XPORT_FUNC(SidebarClass_ProcessCameoClick)
 DEFINE_HOOK(6CD67A, SuperClass_Launch_SpyPlane_FindType, 0)
 {
 	GET(SuperClass *, Super, EBX);
-	SuperWeaponTypeClass *pThis = Super->Type;
-	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pThis);
+	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(Super->Type);
 
 	R->EAX<int>(pData->SpyPlane_TypeIndex);
 	return 0x6CD684;
@@ -68,11 +67,10 @@ DEFINE_HOOK(6CD6A6, SuperClass_Launch_SpyPlane_Fire, 6)
 {
 	GET(SuperClass *, Super, EBX);
 	GET(CellClass *,TargetCell, EDI);
-	SuperWeaponTypeClass *pThis = Super->Type;
-	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pThis);
+	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(Super->Type);
 
 	Super->Owner->SendSpyPlanes(
-		pData->SpyPlane_TypeIndex.Get(), pData->SpyPlane_Count.Get(), pData->SpyPlane_Mission.Get(), TargetCell, NULL);
+		pData->SpyPlane_TypeIndex, pData->SpyPlane_Count, pData->SpyPlane_Mission, TargetCell, NULL);
 
 	return 0x6CD6E9;
 }
@@ -105,9 +103,9 @@ DEFINE_HOOK(4AC20C, DisplayClass_LMBUp, 7)
 {
 	int Action = R->Stack32(0x9C);
 	if(Action < SW_NO_CURSOR) {
-		SuperWeaponTypeClass * idx = SuperWeaponTypeClass::FindFirstOfAction(Action);
-		R->EAX(idx);
-		return idx ? 0x4AC21C : 0x4AC294;
+		SuperWeaponTypeClass * pSW = SuperWeaponTypeClass::FindFirstOfAction(Action);
+		R->EAX(pSW);
+		return pSW ? 0x4AC21C : 0x4AC294;
 	}
 	else if(Action == SW_NO_CURSOR) {
 		R->EAX(0);
@@ -133,8 +131,7 @@ DEFINE_HOOK(446418, BuildingClass_Place1, 6)
 		}
 	}
 
-	SuperClass *pSuper = pHouse->get_Supers()->GetItem(swTIdx);
-	R->EAX(pSuper);
+	R->EAX(pHouse->Supers.GetItem(swTIdx));
 	return 0x44643E;
 }
 
@@ -157,9 +154,8 @@ DEFINE_HOOK(45100A, BuildingClass_ProcessAnims1, 6)
 		}
 	}
 
-	SuperClass *pSuper = pHouse->get_Supers()->GetItem(swTIdx);
 	R->EDI(pBuild->Type);
-	R->EAX(pSuper);
+	R->EAX(pHouse->Supers.GetItem(swTIdx));
 	return 0x451030;
 }
 
@@ -225,12 +221,12 @@ DEFINE_HOOK(50B319, HouseClass_UpdateSWs, 6)
 //	GET(SuperClass *, Super, ECX);
 	GET(HouseClass *, H, EBP);
 	GET(int, Index, EDI);
-	SuperClass *Super = H->get_Supers()->GetItem(Index);
+	SuperClass *Super = H->Supers.GetItem(Index);
 	SuperWeaponTypeClass *pSW = Super->Type;
 	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSW);
-	RET_UNLESS(pData->SW_AutoFire);
-
-//	Fire! requires networking event woodoo or fake mouse clicks, bah
+	if(pData->SW_AutoFire) {
+	//	Fire! requires networking event woodoo or fake mouse clicks, bah
+	}
 	return 0;
 }
 
@@ -244,7 +240,7 @@ DEFINE_HOOK(50CFAA, HouseClass_PickOffensiveSWTarget, 0)
 	return 0x50CFC9;
 }
 
-// ARGH! 
+// ARGH!
 DEFINE_HOOK(6CC390, SuperClass_Launch, 6)
 {
 	GET(SuperClass *, pSuper, ECX);
@@ -274,8 +270,8 @@ DEFINE_HOOK(44691B, BuildingClass_4DC_SWAvailable, 6)
 	GET(BuildingClass *, Structure, EBP);
 	GET(BuildingTypeClass *, AuxBuilding, EAX);
 	return Structure->Owner->CountOwnedNow(AuxBuilding) > 0
-	 ? 0x446937
-	 : 0x44699A
+		? 0x446937
+		: 0x44699A
 	;
 }
 
@@ -284,8 +280,8 @@ DEFINE_HOOK(45765A, BuildingClass_SWAvailable, 6)
 	GET(BuildingClass *, Structure, ESI);
 	GET(BuildingTypeClass *, AuxBuilding, EAX);
 	return Structure->Owner->CountOwnedNow(AuxBuilding) > 0
-	 ? 0x457676
-	 : 0x45767B
+		? 0x457676
+		: 0x45767B
 	;
 }
 
@@ -294,7 +290,7 @@ DEFINE_HOOK(4576BA, BuildingClass_SW2Available, 6)
 	GET(BuildingClass *, Structure, ESI);
 	GET(BuildingTypeClass *, AuxBuilding, EAX);
 	return Structure->Owner->CountOwnedNow(AuxBuilding) > 0
-	 ? 0x4576D6
-	 : 0x4576DB
+		? 0x4576D6
+		: 0x4576DB
 	;
 }

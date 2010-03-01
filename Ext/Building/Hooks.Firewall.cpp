@@ -107,7 +107,6 @@ DEFINE_HOOK(43FC39, BuildingClass_Update_FSW, 6)
 	}
 
 	if(B->FirestormWallFrame != FWFrame) {
-		Debug::Log("Updating FWFrame of building %s\n", B->get_ID());
 		B->FirestormWallFrame = FWFrame;
 		B->GetCell()->Setup(0xFFFFFFFF);
 		B->SetLayer(lyr_Ground); // HACK - repaints properly
@@ -121,7 +120,7 @@ DEFINE_HOOK(43FC39, BuildingClass_Update_FSW, 6)
 	}
 
 	CoordStruct XYZ;
-	if(!(Unsorted::CurrentFrame % 7) && ScenarioClass::Global()->get_Random()->RandomRanged(0, 15) == 1) {
+	if(!(Unsorted::CurrentFrame % 7) && ScenarioClass::Instance->Random.RandomRanged(0, 15) == 1) {
 		AnimClass *IdleAnim = B->FirestormAnim;
 		if(IdleAnim) {
 			GAME_DEALLOC(IdleAnim);
@@ -171,8 +170,9 @@ DEFINE_HOOK(51BD4C, InfantryClass_Update, 6)
 
 	if(pTypeData->Firewall_Is) {
 		return pHouseData->FirewallActive
-		 ? 0x51BD7F
-		 : 0x51BD7D;
+			? 0x51BD7F
+			: 0x51BD7D
+		;
 	} else {
 		return 0x51BD68;
 	}
@@ -187,8 +187,9 @@ DEFINE_HOOK(51C4C8, InfantryClass_IsCellOccupied, 6)
 
 	if(pTypeData->Firewall_Is) {
 		return pHouseData->FirewallActive
-		 ? 0x51C7D0
-		 : 0x51C70F;
+			? 0x51C7D0
+			: 0x51C70F
+		;
 	} else {
 		return 0x51C4EB;
 	}
@@ -203,8 +204,9 @@ DEFINE_HOOK(73F7B0, UnitClass_IsCellOccupied, 6)
 
 	if(pTypeData->Firewall_Is) {
 		return pHouseData->FirewallActive
-		 ? 0x73FCD0
-		 : 0x73FA87;
+			? 0x73FCD0
+			: 0x73FA87
+		;
 	} else {
 		return 0x73F7D3;
 	}
@@ -218,8 +220,9 @@ DEFINE_HOOK(58819F, MapClass_SomePathfinding_1, 6)
 	HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(B->Owner);
 
 	return (pTypeData->Firewall_Is && pHouseData->FirewallActive)
-		 ? 0x5881BF
-		 : 0x5881C4;
+		? 0x5881BF
+		: 0x5881C4
+	;
 }
 
 // pathfinding 6
@@ -230,8 +233,9 @@ DEFINE_HOOK(58828C, MapClass_SomePathfinding_2, 6)
 	HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(B->Owner);
 
 	return (pTypeData->Firewall_Is && pHouseData->FirewallActive)
-		 ? 0x5882AC
-		 : 0x5882B1;
+		? 0x5882AC
+		: 0x5882B1
+	;
 }
 
 // pathfinding 7
@@ -242,8 +246,9 @@ DEFINE_HOOK(5884A4, MapClass_SomePathfinding_3, 6)
 	HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(B->Owner);
 
 	return (pTypeData->Firewall_Is && pHouseData->FirewallActive)
-		 ? 0x5884C4
-		 : 0x5884C9;
+		? 0x5884C4
+		: 0x5884C9
+	;
 }
 
 // targeting state

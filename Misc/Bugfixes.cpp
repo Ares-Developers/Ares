@@ -112,10 +112,6 @@ DEFINE_HOOK(712045, TechnoTypeClass_GetCameo, 5)
 	GET(HouseClass *, House, EAX);
 	HouseTypeClass *Country = House->Type;
 
-	TypeList<TechnoTypeClass*>* vec_Promoted = NULL;
-
-	TechnoTypeClass *Item = NULL;
-
 	SHPStruct *Cameo = T->Cameo;
 	SHPStruct *Alt = T->AltCameo;
 	if(!Alt) {
@@ -127,34 +123,20 @@ DEFINE_HOOK(712045, TechnoTypeClass_GetCameo, 5)
 			if(House->BarracksInfiltrated && !T->Naval && T->Trainable) {
 				return ret(Alt);
 			} else {
-				vec_Promoted = (TypeList<TechnoTypeClass*>*)Country->get_VeteranInfantry();
+				return ret(Country->VeteranInfantry.GetItemIndex((InfantryTypeClass **)&T) == -1 ? Cameo : Alt);
 			}
-			break;
 		case abs_UnitType:
 			if(House->WarFactoryInfiltrated && !T->Naval && T->Trainable) {
 				return ret(Alt);
 			} else {
-				vec_Promoted = (TypeList<TechnoTypeClass*>*)Country->get_VeteranUnits();
+				return ret(Country->VeteranUnits.GetItemIndex((UnitTypeClass **)&T) == -1 ? Cameo : Alt);
 			}
-			break;
 		case abs_AircraftType:
-			vec_Promoted = (TypeList<TechnoTypeClass*>*)Country->get_VeteranAircraft();
-			break;
+			return ret(Country->VeteranAircraft.GetItemIndex((AircraftTypeClass **)&T) == -1 ? Cameo : Alt);
 		case abs_BuildingType:
-			Item = T->UndeploysInto;
-			if(Item) {
-				vec_Promoted = (TypeList<TechnoTypeClass*>*)Country->get_VeteranUnits();
-				break;
+			if(TechnoTypeClass *Item = T->UndeploysInto) {
+				return ret(Country->VeteranUnits.GetItemIndex((UnitTypeClass **)&Item) == -1 ? Cameo : Alt);
 			}
-		default:
-			return ret(Cameo);
-	}
-
-	for(int i = 0; i < vec_Promoted->Count; ++i) {
-		if(vec_Promoted->GetItem(i) == Item) {
-			return ret(Alt);
-			break;
-		}
 	}
 
 	return ret(Cameo);
@@ -320,8 +302,8 @@ DEFINE_HOOK(6F7561, Arcing_Aircraft, 5)
 // leave this here
 #define XL(r) \
 	GET(TechnoClass *, T, ECX); \
-	Debug::Log("%c: [%s] receiving...\n", r, T->GetType()->get_ID()); \
-	Debug::Log("\t Subject = %s\n", ((TechnoClass *)R->get_StackVar32(0x4))->GetType()->get_ID()); \
+	Debug::Log("%c: [%s] receiving...\n", r, T->GetType()->ID); \
+	Debug::Log("\t Subject = %s\n", ((TechnoClass *)R->get_StackVar32(0x4))->GetType()->ID); \
 	Debug::Log("\t command = %d\n", R->get_StackVar32(0x8)); \
 	Debug::Log("\t unknown = %d\n", R->get_StackVar32(0xC)); \
 	for(DWORD i = 0x10; i < 0x40; i += 4) { \
@@ -413,7 +395,7 @@ DEFINE_HOOK(6CF3CF, sub_6CF350, 8)
 
 	Debug::DumpStack(R, 0x40);
 
-	throw new std::logic_error("Pointer swizzling failed!");
+	Debug::FatalError("Saved data loading failed\n", true);
 
 	return 0;
 }
@@ -521,7 +503,7 @@ DEFINE_HOOK(455E4C, HouseClass_FindRepairBay, 9)
 	 || BT->Naval != UT->Naval
 	 || BT->Factory == abs_AircraftType
 	 || BT->Helipad
-	 || BT->HoverPad && !RulesClass::Global()->SeparateAircraft
+	 || BT->HoverPad && !RulesClass::Instance->SeparateAircraft
 	);
 
 	if(isNotAcceptable) {
@@ -610,22 +592,12 @@ DEFINE_HOOK(50928C, HouseClass_Update_Factories_Queues_SkipBrokenDTOR, 5)
 	return 0x5092A3;
 }
 
-// parasites don't get moved with the host -> MC links are bloopy
-DEFINE_HOOK(4DB87E, FootClass_SetCoords, 6)
-{
-	GET(FootClass *, F, ESI);
-	if(F->ParasiteEatingMe) {
-		F->ParasiteEatingMe->SetLocation(&F->Location);
-	}
-	return 0;
-}
-
 // removing hardcoded references to GAWALL and NAWALL
 DEFINE_HOOK(440709, BuildingClass_Put, 6)
 {
 	GET(CellClass *, Cell, EDI);
 	int idxOverlay = Cell->OverlayTypeIndex;
-	bool Sellable = 1;
+	bool Sellable = true;
 	if(idxOverlay > -1) {
 		Sellable = OverlayTypeClass::Array->GetItem(idxOverlay)->Wall;
 	}

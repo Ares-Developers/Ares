@@ -11,16 +11,16 @@ BuildingLightClass * TechnoExt::ActiveBuildingLight = NULL;
 DEFINE_HOOK(420F40, Spotlights_UpdateFoo, 6)
 {
 	return Game::CurrentFrameRate >= Game::GetMinFrameRate()
-	  ? 0
-	  : 0x421346;
+		? 0
+		: 0x421346;
 }
 
 // bugfix #182: Spotlights cause an IE
 DEFINE_HOOK(5F5155, ObjectClass_Put, 6)
 {
 	return R->EAX()
-	 ? 0
-	 : 0x5F5210;
+		? 0
+		: 0x5F5210;
 }
 
 DEFINE_HOOK(6F6D0E, TechnoClass_Put_1, 7)
@@ -128,8 +128,9 @@ DEFINE_HOOK(435C32, BuildingLightClass_Draw_PowerOnline, A)
 {
 	GET(TechnoClass *, T, EDI);
 	return (T->WhatAmI() != abs_Building || (T->IsPowerOnline() && !reinterpret_cast<BuildingClass *>(T)->IsFogged))
-	 ? 0x435C52
-	 : 0x4361BC;
+		? 0x435C52
+		: 0x4361BC
+	;
 }
 
 DEFINE_HOOK(436459, BuildingLightClass_Update, 6)

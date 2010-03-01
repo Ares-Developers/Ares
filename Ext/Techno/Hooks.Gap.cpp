@@ -7,12 +7,15 @@ DEFINE_HOOK(6FB191, TechnoClass_CreateGap, 8)
 {
 	GET(TechnoClass *, T, ESI);
 	bool canGap = false;
-	if(T->WhatAmI() != abs_Building) {
-		canGap = T->IsAlive && !T->InLimbo && !T->Deactivated;
+	if(BuildingClass * B = specific_cast<BuildingClass *>(T)) {
+		canGap = B->IsPowerOnline();
 	} else {
-		canGap = reinterpret_cast<BuildingClass *>(T)->IsPowerOnline();
+		canGap = T->IsAlive && !T->InLimbo && !T->Deactivated;
 	}
-	return canGap ? 0x6FB1A1 : 0x6FB45C;
+	return canGap
+		? 0x6FB1A1
+		: 0x6FB45C
+	;
 }
 
 DEFINE_HOOK(4D8642, FootClass_UpdatePosition, 6)
@@ -73,12 +76,18 @@ DEFINE_HOOK(6F6B66, TechnoClass_Remove_DeleteGap, A)
 
 DEFINE_HOOK(6FB446, TechnoClass_CreateGap_RefreshMap, 5)
 {
-	return TechnoExt::NeedsRegap ? 0x6FB45C : 0;
+	return TechnoExt::NeedsRegap
+		? 0x6FB45C
+		: 0
+	;
 }
 
 DEFINE_HOOK(6FB723, TechnoClass_DeleteGap_RefreshMap, 5)
 {
-	return TechnoExt::NeedsRegap ? 0x6FB739 : 0;
+	return TechnoExt::NeedsRegap
+		? 0x6FB739
+		: 0
+	;
 }
 
 DEFINE_HOOK(55AFB3, LogicClass_Update_Gaps, 6)

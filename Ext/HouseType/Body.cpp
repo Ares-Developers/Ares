@@ -3,11 +3,11 @@
 #include "../../Ares.h"
 #include <ScenarioClass.h>
 
-const DWORD Extension<HouseTypeClass>::Canary = 0xAFFEAFFE;
+template<> const DWORD Extension<HouseTypeClass>::Canary = 0xAFFEAFFE;
 Container<HouseTypeExt> HouseTypeExt::ExtMap;
 
-HouseTypeExt::TT *Container<HouseTypeExt>::SavingObject = NULL;
-IStream *Container<HouseTypeExt>::SavingStream = NULL;
+template<> HouseTypeExt::TT *Container<HouseTypeExt>::SavingObject = NULL;
+template<> IStream *Container<HouseTypeExt>::SavingStream = NULL;
 
 void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis)
 {
@@ -168,7 +168,7 @@ void HouseTypeExt::ExtData::Initialize(HouseTypeClass *pThis)
 
 void HouseTypeExt::ExtData::LoadFromRulesFile(HouseTypeClass *pThis, CCINIClass *pINI)
 {
-	char* pID = pThis->get_ID();
+	char* pID = pThis->ID;
 
 	this->InitializeConstants(pThis);
 
@@ -210,7 +210,7 @@ void HouseTypeExt::ExtData::LoadFromRulesFile(HouseTypeClass *pThis, CCINIClass 
 
 void HouseTypeExt::ExtData::LoadFromINIFile(HouseTypeClass *pThis, CCINIClass *pINI)
 {
-	char* pID = pThis->get_ID();
+	char* pID = pThis->ID;
 
 /*
 	discarding this - special case, needs to load things even before the rules is done
@@ -258,22 +258,16 @@ int HouseTypeExt::PickRandomCountry()
 	for(int i = 0; i < HouseTypeClass::Array->Count; i++) {
 		pCountry = HouseTypeClass::Array->Items[i];
 		if(pCountry->Multiplay) {
-			HouseTypeExt::ExtData *pData = HouseTypeExt::ExtMap.Find(pCountry);
-			if(pData) {
+			if(HouseTypeExt::ExtData *pData = HouseTypeExt::ExtMap.Find(pCountry)) {
 				for(int k = 0; k < pData->RandomSelectionWeight; k++) {
 					vecLegible.push_back(i);
 				}
 			}
-		} else {
-// argh! pd, wth?
-//			vecLegible.push_back(i);
 		}
 	}
 
 	if(vecLegible.size() > 0) {
-		//Scenario->Random.Ranged(0, vecLegible.size() - 1)
-		// (Y)
-		int pick = ScenarioClass::Global()->get_Random()->RandomRanged(0, vecLegible.size() - 1);
+		int pick = ScenarioClass::Instance->Random.RandomRanged(0, vecLegible.size() - 1);
 
 		return vecLegible.at(pick);
 	} else {

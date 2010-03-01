@@ -5,11 +5,11 @@
 #include "../../Enum/ArmorTypes.h"
 #include "../../Enum/RadTypes.h"
 
-const DWORD Extension<RulesClass>::Canary = 0x12341234;
+template<> const DWORD Extension<RulesClass>::Canary = 0x12341234;
 RulesExt::ExtData * RulesExt::Data = NULL;
 
-RulesExt::TT *Container<RulesExt>::SavingObject = NULL;
-IStream *Container<RulesExt>::SavingStream = NULL;
+template<> RulesExt::TT *Container<RulesExt>::SavingObject = NULL;
+template<> IStream *Container<RulesExt>::SavingStream = NULL;
 
 void RulesExt::Allocate(RulesClass *pThis)
 {

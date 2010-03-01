@@ -48,7 +48,6 @@ public:
 	static const char readDefval[4];
 
 	//Callbacks
-	static eMouseEventFlags __stdcall MouseEvent(Point2D*,eMouseEventFlags);
 	static void __stdcall CmdLineParse(char**,int);
 
 	static void __stdcall ExeRun();

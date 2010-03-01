@@ -1,10 +1,10 @@
 #include "Body.h"
 
-const DWORD Extension<WeaponTypeClass>::Canary = 0x33333333;
+template<> const DWORD Extension<WeaponTypeClass>::Canary = 0x33333333;
 Container<WeaponTypeExt> WeaponTypeExt::ExtMap;
 
-WeaponTypeExt::TT *Container<WeaponTypeExt>::SavingObject = NULL;
-IStream *Container<WeaponTypeExt>::SavingStream = NULL;
+template<> WeaponTypeExt::TT *Container<WeaponTypeExt>::SavingObject = NULL;
+template<> IStream *Container<WeaponTypeExt>::SavingStream = NULL;
 
 hash_bombExt WeaponTypeExt::BombExt;
 hash_waveExt WeaponTypeExt::WaveExt;
@@ -25,12 +25,10 @@ void WeaponTypeExt::ExtData::LoadFromINIFile(WeaponTypeExt::TT *pThis, CCINIClas
 		return;
 	}
 
-	RulesClass * Rules = RulesClass::Global();
-
 	if(pThis->IsRadBeam || pThis->IsRadEruption) {
 		if(pThis->Warhead->Temporal) {
 			// Well, a RadEruption Temporal will look pretty funny, but this is what WW uses
-			this->Beam_Color.Bind(Rules->get_ChronoBeamColor());
+			this->Beam_Color.Bind(&RulesClass::Instance->ChronoBeamColor);
 		}
 	}
 

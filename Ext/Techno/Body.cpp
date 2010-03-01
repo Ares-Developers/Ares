@@ -3,11 +3,11 @@
 
 #include <Helpers/Template.h>
 
-const DWORD Extension<TechnoClass>::Canary = 0x55555555;
+template<> const DWORD Extension<TechnoClass>::Canary = 0x55555555;
 Container<TechnoExt> TechnoExt::ExtMap;
 
-TechnoExt::TT *Container<TechnoExt>::SavingObject = NULL;
-IStream *Container<TechnoExt>::SavingStream = NULL;
+template<> TechnoExt::TT *Container<TechnoExt>::SavingObject = NULL;
+template<> IStream *Container<TechnoExt>::SavingStream = NULL;
 
 FireError TechnoExt::FiringStateCache = -1;
 
@@ -32,8 +32,7 @@ void TechnoExt::SpawnSurvivors(TechnoClass *pThis, TechnoClass *pKiller, bool Se
 	if(Type->Crewed && chance) {
 		for(int i = 0; i < pData->Survivors_PilotCount; ++i) {
 			if(ScenarioClass::Instance->Random.RandomRanged(1, 100) <= chance) {
-				InfantryTypeClass *PilotType = pData->Survivors_Pilots[pOwner->SideIndex];
-				if(PilotType) {
+				if(InfantryTypeClass *PilotType = pData->Survivors_Pilots[pOwner->SideIndex]) {
 					InfantryClass *Pilot = reinterpret_cast<InfantryClass *>(PilotType->CreateObject(pOwner));
 
 					Pilot->Health = (PilotType->Strength / 2);
@@ -94,7 +93,6 @@ bool TechnoExt::ParadropSurvivor(FootClass *Survivor, CoordStruct *loc, bool Sel
 {
 	bool success;
 	int floorZ = MapClass::Instance->GetCellFloorHeight(loc);
-	Debug::Log("Spawning survivor: loc->Z = %X, floorZ = %X\n", loc->Z, floorZ);
 	++Unsorted::SomeMutex;
 	if(loc->Z - floorZ > 100) {
 		success = Survivor->SpawnParachuted(loc);

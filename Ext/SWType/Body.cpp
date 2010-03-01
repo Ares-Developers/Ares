@@ -1,11 +1,11 @@
 #include "Body.h"
 #include "../../Misc/SWTypes.h"
 
-const DWORD Extension<SuperWeaponTypeClass>::Canary = 0x55555555;
+template<> const DWORD Extension<SuperWeaponTypeClass>::Canary = 0x55555555;
 Container<SWTypeExt> SWTypeExt::ExtMap;
 
-SWTypeExt::TT *Container<SWTypeExt>::SavingObject = NULL;
-IStream *Container<SWTypeExt>::SavingStream = NULL;
+template<> SWTypeExt::TT *Container<SWTypeExt>::SavingObject = NULL;
+template<> IStream *Container<SWTypeExt>::SavingStream = NULL;
 
 SuperWeaponTypeClass *SWTypeExt::CurrentSWType = NULL;
 
@@ -116,7 +116,7 @@ bool __stdcall SWTypeExt::SuperClass_Launch(SuperClass* pThis, CellStruct* pCoor
 	}
 
 	CoordStruct coords;
-	MapClass::Global()->GetCellAt(pCoords)->GetCoords(&coords);
+	MapClass::Instance->GetCellAt(pCoords)->GetCoords(&coords);
 
 	if(pData->SW_Anim != NULL) {
 		coords.Z += pData->SW_AnimHeight;

@@ -9,7 +9,7 @@ DEFINE_HOOK(4502F4, BuildingClass_Update_Factory, 6)
 {
 	GET(BuildingClass *, B, ESI);
 	HouseClass * H = B->Owner;
-	
+
 	if(H->Production && !Ares::GlobalControls::AllowParallelAIQueues) {
 		HouseExt::ExtData *pData = HouseExt::ExtMap.Find(H);
 		BuildingClass **curFactory = NULL;
@@ -102,6 +102,6 @@ DEFINE_HOOK(443CCA, BuildingClass_KickOutUnit_AircraftType, A)
 {
 	GET(HouseClass  *, H, EDX);
 
-	HouseExt::ExtMap.Find(H)->Factory_VehicleType = NULL;
+	HouseExt::ExtMap.Find(H)->Factory_AircraftType = NULL;
 	return 0;
 }

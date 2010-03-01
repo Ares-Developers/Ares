@@ -104,3 +104,13 @@ DEFINE_HOOK(58FE7B, RMG_PlaceNSBridge, 8)
 	 ? 0x58FE91
 	 : 0;
 }
+
+DEFINE_HOOK(545904, IsometricTileTypeClass_CreateFromINIList_MediansFix, 7)
+{
+	if(R->EAX() == -1) {
+		// all theaters except snow have this set, so I'll assume that this was tripped by snow.
+		// don't like it? put the damned tag in the INI.
+		R->EAX(71);
+	}
+	return 0;
+}

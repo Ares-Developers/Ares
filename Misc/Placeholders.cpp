@@ -304,6 +304,7 @@ A_FINE_HOOK(746BCB, UnitClass_GetUIName, 4)
 A_FINE_HOOK(481B22, CellClass_CrateBeingCollected_Part1_Overrides, 5)
 {
 	GET(ePowerup, RandomPowerup, EBX);
+	GET(CellClass *, pThis, ESI);
 	bool Handled = 0;
 	return Handled ? 0x481D86 : 0;
 }
@@ -311,6 +312,7 @@ A_FINE_HOOK(481B22, CellClass_CrateBeingCollected_Part1_Overrides, 5)
 A_FINE_HOOK(481DB8, CellClass_CrateBeingCollected_Part2_ActualEffects, 5)
 {
 	GET(ePowerup, RandomPowerup, EBX);
+	GET(CellClass *, pThis, ESI);
 	bool Handled = 0;
 	return Handled ? 0x483389 : 0;
 }

@@ -111,9 +111,9 @@ DEFINE_HOOK(415CA6, AircraftClass_Paradrop, 6)
 	}
 	CoordStruct SrcXYZ;
 	A->GetCoords(&SrcXYZ);
-	CoordStruct* XYZ = R->lea_Stack<CoordStruct *>(0x20);
-	XYZ->X = SrcXYZ.X & ~0x80;
-	XYZ->Y = SrcXYZ.Y & ~0x80;
+	LEA_STACK(CoordStruct *, XYZ, 0x20);
+	XYZ->X = SrcXYZ.X & ~0x7F;
+	XYZ->Y = SrcXYZ.Y & ~0x7F;
 	XYZ->Z = SrcXYZ.Z - 1;
 	R->ECX<CoordStruct *>(XYZ);
 	return 0x415DE3;

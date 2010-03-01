@@ -4,6 +4,8 @@
 Point2D StatusMessages::TLPoint = { 10, 340 };
 Point2D StatusMessages::Delta = { 0, 20 };
 
+bool StatusMessages::Visible = false; // changed per Marshall's request, TODO INI flag
+
 DEFINE_HOOK(686B4F, Scenario_SetMessagePosition, 6)
 {
 	GET_STACK(byte, Is_SP, 0x16);

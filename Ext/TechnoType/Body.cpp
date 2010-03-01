@@ -6,11 +6,11 @@
 #include <AnimTypeClass.h>
 #include <Theater.h>
 
-const DWORD Extension<TechnoTypeClass>::Canary = 0x44444444;
+template<> const DWORD Extension<TechnoTypeClass>::Canary = 0x44444444;
 Container<TechnoTypeExt> TechnoTypeExt::ExtMap;
 
-TechnoTypeExt::TT *Container<TechnoTypeExt>::SavingObject = NULL;
-IStream *Container<TechnoTypeExt>::SavingStream = NULL;
+template<> TechnoTypeExt::TT *Container<TechnoTypeExt>::SavingObject = NULL;
+template<> IStream *Container<TechnoTypeExt>::SavingStream = NULL;
 
 // =============================
 // member funcs
@@ -24,7 +24,7 @@ void TechnoTypeExt::ExtData::Initialize(TechnoTypeClass *pThis) {
 	this->Survivors_PilotCount = pThis->Crewed; // should be 0 if false, 1 if true
 
 	for(int i = 0; i < SideClass::Array->Count; ++i) {
-		this->Survivors_Pilots[i] = SideExt::ExtMap.Find(SideClass::Array->Items[i])->Crew.Get();
+		this->Survivors_Pilots[i] = SideExt::ExtMap.Find(SideClass::Array->Items[i])->Crew;
 	}
 
 	this->PrerequisiteLists.SetCapacity(0, NULL);
@@ -35,8 +35,8 @@ void TechnoTypeExt::ExtData::Initialize(TechnoTypeClass *pThis) {
 	this->Secret_RequiredHouses = 0xFFFFFFFF;
 	this->Secret_ForbiddenHouses = 0;
 
-	this->Is_Deso = this->Is_Deso_Radiation = !strcmp(pThis->get_ID(), "DESO");
-	this->Is_Cow = !strcmp(pThis->get_ID(), "COW");
+	this->Is_Deso = this->Is_Deso_Radiation = !strcmp(pThis->ID, "DESO");
+	this->Is_Cow = !strcmp(pThis->ID, "COW");
 
 	this->_Initialized = is_Inited;
 }
@@ -80,7 +80,7 @@ EXT_SAVE(TechnoTypeClass)
 
 void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass *pINI)
 {
-	const char * section = pThis->get_ID();
+	const char * section = pThis->ID;
 
 	if(!pINI->GetSection(section)) {
 		return;

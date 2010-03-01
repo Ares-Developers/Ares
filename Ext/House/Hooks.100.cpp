@@ -73,8 +73,7 @@ DEFINE_HOOK(4FEA60, HouseClass_AI_UnitProduction, 0)
 		if(pThis->CountResourceGatherers < mMaxHarvesters) {
 			if(BuildingTypeClass* pBT = pThis->FirstBuildableFromArray(&RulesClass::Instance->BuildRefinery)) {
 				//awesome way to find out whether this building is a slave miner, isn't it? ...
-				UnitTypeClass* pSlaveMiner = pBT->UndeploysInto;
-				if(pSlaveMiner) {
+				if(UnitTypeClass* pSlaveMiner = pBT->UndeploysInto) {
 					pThis->ProducingUnitTypeIndex = pSlaveMiner->ArrayIndex;
 					return ret();
 				}

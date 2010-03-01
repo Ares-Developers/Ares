@@ -125,7 +125,7 @@ A_FINE_HOOK(65B8B9, RadSiteClass_Update_2, 6)
 	return 0x65B8BF;
 }
 
-/* -- doesn't work logically
+// -- doesn't work logically
 FINE_HOOK(487CB0, CellClass_GetRadLevel, 5)
 {
 	GET(CellClass *, Cell, ECX);

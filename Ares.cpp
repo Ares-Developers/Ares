@@ -42,11 +42,6 @@ hash_map <DWORD, size_t> MemMap::AllocMap;
 size_t MemMap::Total;
 
 //Implementations
-eMouseEventFlags __stdcall Ares::MouseEvent(Point2D* pClient,eMouseEventFlags EventFlags)
-{
-	return EventFlags;
-}
-
 void __stdcall Ares::RegisterCommands()
 {
 	AIControlCommandClass *AICommand;
@@ -114,6 +109,7 @@ void __stdcall Ares::CmdLineParse(char** ppArgs,int nNumArgs)
 
 	if(Debug::bLog) {
 		Debug::LogFileOpen();
+		Debug::Log("Initialized " VERSION_STRVER);
 	}
 }
 
@@ -134,7 +130,6 @@ void __stdcall Ares::ExeRun()
 void __stdcall Ares::ExeTerminate()
 {
 	GlobalControls::CloseConfig();
-	Debug::Log("XTACH\n");
 	Debug::LogFileClose(111);
 }
 
@@ -149,7 +144,7 @@ void Ares::SendPDPlane(HouseClass* pOwner, CellClass* pTarget, AircraftTypeClass
 		pOwner && pPlaneType && pTarget)
 	{
 		++Unsorted::SomeMutex;
-		AircraftClass* pPlane = (AircraftClass*)pPlaneType->CreateObject(pOwner);
+		AircraftClass* pPlane = reinterpret_cast<AircraftClass*>(pPlaneType->CreateObject(pOwner));
 		--Unsorted::SomeMutex;
 
 		pPlane->Spawned = true;
@@ -189,9 +184,9 @@ void Ares::SendPDPlane(HouseClass* pOwner, CellClass* pTarget, AircraftTypeClass
 				eAbstractType WhatAmI = pTechnoType->WhatAmI();
 				if(WhatAmI == abs_UnitType || WhatAmI == abs_InfantryType) {
 					for(int k = 0; k < pNums->Items[i]; k++) {
-						FootClass* pNew = (FootClass*)pTechnoType->CreateObject(pOwner);
+						FootClass* pNew = reinterpret_cast<FootClass*>(pTechnoType->CreateObject(pOwner));
 						pNew->Remove();
-						pPlane->get_Passengers()->AddPassenger(pNew);
+						pPlane->Passengers.AddPassenger(pNew);
 					}
 				}
 			}
@@ -228,10 +223,10 @@ bool __stdcall DllMain(HANDLE hInstance,DWORD dwReason,LPVOID v)
 //Hook at 0x52C5E0
 DEFINE_HOOK(52C5E0, Ares_NoLogo, 7)
 {
-	if(Ares::bNoLogo)
-		return 0x52C5F3;
-	else
-		return 0;
+	return (Ares::bNoLogo)
+		? 0x52C5F3
+		: 0
+	;
 }
 
 //0x6AD0ED

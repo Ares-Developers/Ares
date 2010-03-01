@@ -18,7 +18,10 @@ DEFINE_HOOK_AGAIN(6FF860, TechnoClass_Fire_FSW, 8)
 	CoordStruct src = *R->lea_Stack<CoordStruct *>(0x44);
 	CoordStruct tgt = *R->lea_Stack<CoordStruct *>(0x88);
 
-	BulletClass * Bullet = R->get_Origin() == 0x6FF860 ? R->EDI<BulletClass *>() : R->EBX<BulletClass *>();
+	BulletClass * Bullet = R->get_Origin() == 0x6FF860
+		? R->EDI<BulletClass *>()
+		: R->EBX<BulletClass *>()
+	;
 
 	BulletTypeExt::ExtData *pBulletData = BulletTypeExt::ExtMap.Find(Bullet->Type);
 
@@ -50,7 +53,7 @@ DEFINE_HOOK_AGAIN(6FF860, TechnoClass_Fire_FSW, 8)
 
 	if(FireFinder.found) {
 		CellClass::Cell2Coord(&FireFinder.target, &tgt);
-		Bullet->Target = MapClass::Global()->GetCellAt(&tgt)->GetContent();
+		Bullet->Target = MapClass::Instance->GetCellAt(&tgt)->GetContent();
 		Bullet->Owner->ShouldLoseTargetNow = 1;
 //		Bullet->Owner->SetTarget(NULL);
 //		Bullet->Owner->Scatter(0xB1CFE8, 1, 0);

@@ -4,8 +4,9 @@ DEFINE_HOOK(53CC6E, IonBlastClass_Update, 6)
 {
 	GET(IonBlastClass *, IB, EBX);
 	return (WarheadTypeExt::IonExt.find(IB) == WarheadTypeExt::IonExt.end())
-	  ? 0
-	  : 0x53CE0A;
+		? 0
+		: 0x53CE0A
+	;
 }
 
 DEFINE_HOOK(53CC0D, IonBlastClass_Update_DTOR, 5)
@@ -22,7 +23,7 @@ DEFINE_HOOK(53CBF5, IonBlastClass_Update_Duration, 5)
 {
 	GET(int, Idx, EAX);
 	GET(IonBlastClass *, IB, EBX);
-	
+
 	int Ripple_Radius;
 	if(WarheadTypeExt::IonExt.find(IB) == WarheadTypeExt::IonExt.end()) {
 		Ripple_Radius = 0;
@@ -32,6 +33,7 @@ DEFINE_HOOK(53CBF5, IonBlastClass_Update_Duration, 5)
 	}
 
 	return (Idx < Ripple_Radius)
-	  ? 0x53CC3A
-	  : 0x53CBFA;
+		? 0x53CC3A
+		: 0x53CBFA
+	;
 }

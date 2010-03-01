@@ -20,8 +20,7 @@ DEFINE_HOOK(46920B, BulletClass_Fire, 6) {
 	} else {
 		Bullet->GetCoords(&coords);
 	}
-	CellStruct cellCoords =
-			*MapClass::Global()->GetCellAt(&coords)->get_MapCoords();
+	CellStruct cellCoords = MapClass::Instance->GetCellAt(&coords)->MapCoords;
 
 	if (pData->Ripple_Radius) {
 		IonBlastClass *IB;
@@ -63,14 +62,12 @@ DEFINE_HOOK(46920B, BulletClass_Fire, 6) {
 	}
 
 	if (Bullet->Target) {
-		if (Bullet->Target->AbstractFlags & ABSFLAGS_ISTECHNO) {
-			TechnoClass *pTarget =
-					reinterpret_cast<TechnoClass *> (Bullet->Target);
+		if (TechnoClass *pTarget = specific_cast<TechnoClass *>(Bullet->Target)) {
 			TechnoTypeClass *pType = pTarget->GetTechnoType();
 
 			if (pData->EMP_Duration) {
 				EMPulseClass *placeholder;
-				GAME_ALLOC(EMPulseClass, placeholder, *(Bullet->Target->GetCell()->get_MapCoords()), int(pThis->CellSpread), pData->EMP_Duration, 0);
+				GAME_ALLOC(EMPulseClass, placeholder, Bullet->Target->GetCell()->MapCoords, int(pThis->CellSpread), pData->EMP_Duration, 0);
 			}
 
 			if (pData->MindControl_Permanent) {
@@ -87,7 +84,7 @@ DEFINE_HOOK(46920B, BulletClass_Fire, 6) {
 				coords.Z += pType->MindControlRingOffset;
 
 				AnimClass *MCAnim;
-				GAME_ALLOC(AnimClass, MCAnim, RulesClass::Global()->PermaControlledAnimationType, &coords);
+				GAME_ALLOC(AnimClass, MCAnim, RulesClass::Instance->PermaControlledAnimationType, &coords);
 				AnimClass *oldMC = pTarget->MindControlRingAnim;
 				if (oldMC) {
 					oldMC->UnInit();
@@ -141,6 +138,7 @@ DEFINE_HOOK(517FC1, InfantryClass_ReceiveDamage_DeployedDamage, 6) {
 	*Damage = int(*Damage * pData->DeployedDamage);
 
 	return WH // yes, let's make sure the pointer's safe AFTER we've dereferenced it... Failstwood!
-	? 0x517FF9
-			: 0x518016;
+		? 0x517FF9
+		: 0x518016
+	;
 }

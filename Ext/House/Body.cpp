@@ -3,11 +3,11 @@
 #include "../TechnoType/Body.h"
 #include "../../Enum/Prerequisites.h"
 
-const DWORD Extension<HouseClass>::Canary = 0x12345678;
+template<> const DWORD Extension<HouseClass>::Canary = 0x12345678;
 Container<HouseExt> HouseExt::ExtMap;
 
-HouseExt::TT *Container<HouseExt>::SavingObject = NULL;
-IStream *Container<HouseExt>::SavingStream = NULL;
+template<> HouseExt::TT *Container<HouseExt>::SavingObject = NULL;
+template<> IStream *Container<HouseExt>::SavingStream = NULL;
 
 // =============================
 // member funcs
@@ -42,22 +42,13 @@ signed int HouseExt::RequirementsMet(HouseClass *pHouse, TechnoTypeClass *pItem)
 
 	if(!pHouse->InRequiredHouses(pItem) || pHouse->InForbiddenHouses(pItem)) { return 0; }
 
-	if(!Unsorted::SWAllowed && pItem->WhatAmI() == abs_BuildingType) {
-		BuildingTypeClass *pBld = (BuildingTypeClass*)pItem;
-		if(pBld->SuperWeapon != -1) {
-			bool InTech = 0;
-			// AND AGAIN DVC<>::FindItemIndex fails! cannot find last item in the vector
-			DynamicVectorClass<BuildingTypeClass *> *dvc = RulesClass::Global()->get_BuildTech();
-			for(int i = 0; i < dvc->Count; ++i) {
-				if(pBld == dvc->GetItem(i)) {
-					InTech = 1;
-					break;
-				}
-			}
-
-			if(!InTech) {
-				if(pHouse->get_Supers()->GetItem(pBld->SuperWeapon)->Type->DisableableFromShell) {
-					return 0;
+	if(!Unsorted::SWAllowed) {
+		if(BuildingTypeClass *pBld = specific_cast<BuildingTypeClass*>(pItem)) {
+			if(pBld->SuperWeapon != -1) {
+				if(RulesClass::Instance->BuildTech.FindItemIndex(&pBld) != -1) {
+					if(pHouse->get_Supers()->GetItem(pBld->SuperWeapon)->Type->DisableableFromShell) {
+						return 0;
+					}
 				}
 			}
 		}
@@ -75,8 +66,6 @@ bool HouseExt::PrerequisitesMet(HouseClass *pHouse, TechnoTypeClass *pItem)
 
 	for(int i = 0; i < pData->PrerequisiteLists.Count; ++i) {
 		if(Prereqs::HouseOwnsAll(pHouse, pData->PrerequisiteLists[i])) {
-			for(int j = 0; j < pData->PrerequisiteLists[i]->Count; ++j) {
-			}
 			return 1;
 		}
 	}
@@ -132,15 +121,13 @@ signed int HouseExt::PrereqValidate
 void HouseExt::Firestorm_SetState(HouseClass *pHouse, bool Active) {
 	HouseExt::ExtData* pData = HouseExt::ExtMap.Find(pHouse);
 
-	DynamicVectorClass<CellStruct> AffectedCoords;
-
 	if(pData->FirewallActive == Active) {
 		return;
 	}
 
-//	Debug::Log("Setting Firestorm State from (%d) to (%d)\n", pData->FirewallActive, Active);
-
 	pData->FirewallActive = Active;
+
+	DynamicVectorClass<CellStruct> AffectedCoords;
 
 	for(int i = 0; i < BuildingClass::Array->Count; ++i) {
 		BuildingClass *B = BuildingClass::Array->Items[i];
@@ -154,16 +141,8 @@ void HouseExt::Firestorm_SetState(HouseClass *pHouse, bool Active) {
 		}
 	}
 
-//	Debug::Log("Collected Affected Coords list:\n");
-//	for(int i = 0; i < AffectedCoords.Count; ++i) {
-//		Debug::Log("/t%dx%d\n", AffectedCoords[i].X, AffectedCoords[i].Y);
-//	}
-//	Debug::Log("End of list\n");
-
 	MapClass::Global()->Update_Pathfinding_1();
 	MapClass::Global()->Update_Pathfinding_2(&AffectedCoords);
-
-//	Debug::Log("Finished with Affected Coords list:\n");
 };
 
 // =============================
@@ -203,7 +182,7 @@ DEFINE_HOOK(503040, HouseClass_SaveLoad_Prefix, 5)
 DEFINE_HOOK_AGAIN(504080, HouseClass_SaveLoad_Prefix, 5)
 {
 	GET_STACK(HouseExt::TT*, pItem, 0x4);
-	GET_STACK(IStream*, pStm, 0x8); 
+	GET_STACK(IStream*, pStm, 0x8);
 
 	Container<HouseExt>::SavingObject = pItem;
 	Container<HouseExt>::SavingStream = pStm;

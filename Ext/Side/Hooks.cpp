@@ -7,8 +7,8 @@ DEFINE_HOOK(4F8C97, Sides_BuildConst, 6)
 {
 	GET(HouseClass *, pThis, ESI);
 
-	for(int i = 0; i < RulesClass::Global()->get_BuildConst()->Count; ++i) {
-		if(pThis->get_OwnedBuildingTypes1()->GetItemCount(RulesClass::Global()->get_BuildConst()->GetItem(i)->ArrayIndex) > 0) {
+	for(int i = 0; i < RulesClass::Instance->BuildConst.Count; ++i) {
+		if(pThis->OwnedBuildingTypes1.GetItemCount(RulesClass::Instance->BuildConst.GetItem(i)->ArrayIndex) > 0) {
 			return 0x4F8D02;	//"low power"
 		}
 	}
@@ -22,11 +22,11 @@ DEFINE_HOOK(4F8F54, Sides_SlaveMinerCheck, 6)
 	GET(HouseClass *, pThis, ESI);
 	GET(int, n, EDI);
 
-	for(int i = 0; i < RulesClass::Global()->get_BuildRefinery()->Count; ++i) {
+	for(int i = 0; i < RulesClass::Instance->BuildRefinery.Count; ++i) {
 		 //new sane way to find a slave miner
-		if(RulesClass::Global()->get_BuildRefinery()->Items[i]->SlavesNumber > 0) {
-			n += pThis->get_OwnedBuildingTypes1()->GetItemCount(
-				RulesClass::Global()->get_BuildRefinery()->Items[i]->ArrayIndex);
+		if(RulesClass::Instance->BuildRefinery.Items[i]->SlavesNumber > 0) {
+			n += pThis->OwnedBuildingTypes1.GetItemCount(
+				RulesClass::Instance->BuildRefinery.Items[i]->ArrayIndex);
 		}
 	}
 
@@ -41,8 +41,7 @@ DEFINE_HOOK(505C95, Sides_BaseDefenseCounts, 7)
 	int n = R->Stack32(0x80);	//just to be on the safe side, we're not getting it from the House
 
 	SideClass* pSide = SideClass::Array->GetItem(n);
-	SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide);
-	if(pData) {
+	if(SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide)) {
 		if(pThis->AIDifficulty < pData->BaseDefenseCounts.Count) {
 			R->EAX<int>(pData->BaseDefenseCounts.GetItem(pThis->AIDifficulty));
 			return 0x505CE9;
@@ -72,8 +71,7 @@ DEFINE_HOOK(52267D, Sides_Disguise1, 6)
 
 	int n = pHouse->SideIndex;
 	SideClass* pSide = SideClass::Array->GetItem(n);
-	SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide);
-	if(pData) {
+	if(SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide)) {
 		R->EAX<InfantryTypeClass *>(pData->DefaultDisguise);
 		return 0x5226B7;
 	} else {
@@ -96,8 +94,7 @@ DEFINE_HOOK(707D40, Sides_Crew, 6)
 
 	int n = pHouse->SideIndex;
 	SideClass* pSide = SideClass::Array->GetItem(n);
-	SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide);
-	if(pData) {
+	if(SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide)) {
 		R->ESI<InfantryTypeClass *>(pData->Crew);
 		return 0x707D81;
 	} else {
@@ -110,10 +107,8 @@ DEFINE_HOOK(451358, Sides_SurvivorDivisor, 6)
 {
 	GET(HouseClass *, pHouse, EDX);
 
-	int n = pHouse->SideIndex;
-	SideClass* pSide = SideClass::Array->GetItem(n);
-	SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide);
-	if(pData) {
+	SideClass* pSide = SideClass::Array->GetItem(pHouse->SideIndex);
+	if(SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide)) {
 		R->ESI<int>(pData->SurvivorDivisor);
 		return 0x451391;
 	} else {
@@ -137,10 +132,9 @@ DEFINE_HOOK(534FB1, Sides_MixFileIndex, 5)
 {
 	GET(int, n, ESI);
 	SideClass* pSide = SideClass::Array->GetItem(n);
-	SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide);
-	if(pData) {
+	if(SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide)) {
 		// original code is
-		// sprtf(mixname, "SIDEC%02dMD.MIX", ESI + 1);
+		// sprintf(mixname, "SIDEC%02dMD.MIX", ESI + 1);
 		// it's easier to sub 1 here than to fix the calculation in the orig code
 		R->ESI(pData->SidebarMixFileIndex - 1);
 	} else if(n == 2) {
@@ -165,10 +159,8 @@ DEFINE_HOOK(6CD3C1, Sides_ParaDrop, 9)
 	HouseClass * pHouse = SW->Owner;
 	GET(CellClass *, Cell, EBP);
 
-	int n = pHouse->SideIndex;
-	SideClass* pSide = SideClass::Array->GetItem(n);
-	SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide);
-	if(pData) {
+	SideClass* pSide = SideClass::Array->GetItem(pHouse->SideIndex);
+	if(SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide)) {
 		Ares::SendPDPlane(
 			pHouse,
 			Cell,
@@ -225,8 +217,7 @@ XPORT Sides_LoadVoxFromINI(REGISTERS* R)
 DEFINE_HOOK(7528E8, Sides_LoadVoxFile, 7)
 {
 	GET(VoxClass *, pThis, EBP);
-	if(SideExt::EVAFiles.find(pThis) != SideExt::EVAFiles.end())
-	{
+	if(SideExt::EVAFiles.find(pThis) != SideExt::EVAFiles.end()) {
 		int nSideIndex = *((int*)0xB1D4C8);
 
 		R->EDI(SideExt::EVAFiles[pThis][nSideIndex].FileName);
@@ -240,10 +231,9 @@ DEFINE_HOOK(7528E8, Sides_LoadVoxFile, 7)
 DEFINE_HOOK(67D315, SaveGame_EarlySaveSides, 5)
 {
 	GET(LPSTREAM, pStm, ESI);
-	bool Saved_OK = Game::Save_Sides(pStm, SideClass::Array) >= 0;
-	return Saved_OK
-	 ? 0
-	 : 0x67E0B8
+	return (Game::Save_Sides(pStm, SideClass::Array) >= 0)
+		? 0
+		: 0x67E0B8
 	;
 }
 
@@ -251,8 +241,8 @@ DEFINE_HOOK(67E09A, SaveGame_LateSkipSides, 5)
 {
 	GET(int, success, EAX);
 	return success >= 0
-	 ? 0x67E0C2
-	 : 0x67E0B8
+		? 0x67E0C2
+		: 0x67E0B8
 	;
 }
 

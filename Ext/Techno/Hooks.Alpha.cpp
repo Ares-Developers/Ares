@@ -54,7 +54,7 @@ DEFINE_HOOK(5F3E70, ObjectClass_Update, 5)
 	}
 
 	bool Inactive = Source->InLimbo;
-	
+
 	if(Source->AbstractFlags & ABSFLAGS_ISTECHNO) {
 		Inactive |= reinterpret_cast<TechnoClass *>(Source)->Deactivated;
 	}
@@ -75,8 +75,8 @@ DEFINE_HOOK(5F3E70, ObjectClass_Update, 5)
 	CoordStruct XYZ;
 	Point2D xy;
 	Source->GetCoords(&XYZ);
-	TacticalClass::Global()->CoordsToClient(&XYZ, &xy);
-	RectangleStruct *ScreenArea = TacticalClass::Global()->get_VisibleArea();
+	TacticalClass::Instance->CoordsToClient(&XYZ, &xy);
+	RectangleStruct *ScreenArea = &TacticalClass::Instance->VisibleArea;
 	Point2D off = { ScreenArea->X - (Alpha->Width / 2), ScreenArea->Y - (Alpha->Height / 2) };
 	xy += off;
 	++Unsorted::SomeMutex;
@@ -84,10 +84,10 @@ DEFINE_HOOK(5F3E70, ObjectClass_Update, 5)
 	GAME_ALLOC(AlphaShapeClass, placeholder, Source, xy.X, xy.Y);
 	--Unsorted::SomeMutex;
 	int Margin = 40;
-	RectangleStruct Dirty = 
-	  { xy.X - ScreenArea->X - Margin, xy.Y - ScreenArea->Y - Margin, 
+	RectangleStruct Dirty =
+	  { xy.X - ScreenArea->X - Margin, xy.Y - ScreenArea->Y - Margin,
 	    Alpha->Width + 2 * Margin, Alpha->Height + 2 * Margin };
-	TacticalClass::Global()->RegisterDirtyArea(Dirty, 1);
+	TacticalClass::Instance->RegisterDirtyArea(Dirty, 1);
 
 	return 0;
 }

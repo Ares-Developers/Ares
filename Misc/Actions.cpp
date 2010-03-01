@@ -35,10 +35,10 @@ DEFINE_HOOK(4AB44A, Actions_CustomCursor_NonShrouded, 9)
 
 	//overwrote the ja, need to replicate it
 	unsigned int CursorIndex = R->EAX();
-	if(CursorIndex > 0x47)
-		return 0x4AB781;
-	else
-		return 0x4AB453;
+	return (CursorIndex > 0x47)
+		? 0x4AB781
+		: 0x4AB453
+	;
 }
 
 //4AB366
@@ -54,16 +54,17 @@ DEFINE_HOOK(4AB366, Actions_CustomCursor_Shrouded, 9)
 			Mouse->QueryCursor((int)pCursor, R->Stack32(0x34));
 
 			return 0x4AB78F;
+		} else {
+			return 0x4AB781;
 		}
-		else return 0x4AB781;
 	}
 
 	//overwrote the ja, need to replicate it
 	unsigned int CursorIndex = R->EAX();
-	if(CursorIndex > 0x48)
-		return 0x4AB781;
-	else
-		return 0x4AB36F;
+	return (CursorIndex > 0x48)
+		? 0x4AB781
+		: 0x4AB36F
+	;
 }
 
 //5BDC8C, 7
@@ -72,13 +73,13 @@ DEFINE_HOOK(5BDC8C, Actions_PrepareCursor, 7)
 	MouseCursor* pCursor;
 
 	unsigned int CursorIndex = R->EAX();
-	if(CursorIndex > 0x56) //no idea why it's 0x56...
-	{
+	if(CursorIndex > 0x56) {
+		//no idea why it's 0x56...
 		//don't try this at home
 		pCursor = (MouseCursor*)CursorIndex;
-	}
-	else
+	} else {
 		pCursor = MouseCursor::First + CursorIndex;
+	}
 
 	Actions::TempCursor = pCursor; //setting temp cursor for use in Actions_SetCursor!
 	R->ESI(pCursor);
@@ -100,12 +101,10 @@ DEFINE_HOOK(5BDADF, Actions_UseCursor, 0)
 {
 	R->EBP(&Actions::MP);
 
-	bool bMini = (R->DL() != 0);
-
-	if(bMini)
-		return 0x5BDAEC;
-	else
-		return 0x5BDAFA;
+	return R->DL()
+		? 0x5BDAEC
+		: 0x5BDAFA
+	;
 }
 
 //5BDDC8, 6
@@ -113,10 +112,10 @@ DEFINE_HOOK(5BDDC8, Actions_AnimateCursor, 6)
 {
 	R->EBX(&Actions::MP);
 
-	if(Actions::MP.Interval == 0)
-		return 0x5BDF13; //no animation
-	else
-		return 0x5BDDED;
+	return (Actions::MP.Interval == 0)
+		? 0x5BDF13  //no animation
+		: 0x5BDDED
+	;
 }
 
 //5BDE64, 6
@@ -125,10 +124,10 @@ DEFINE_HOOK(5BDE64, Actions_AnimateCursor2, 6)
 	R->ECX(&Actions::MP);
 
 	GET(byte *, pMouse, ESI);
-	if(pMouse[0x555C])
-		return 0x5BDE84; //minimap
-	else
-		return 0x5BDE92;
+	return (pMouse[0x555C])
+		? 0x5BDE84 //minimap
+		: 0x5BDE92
+	;
 }
 
 //4D7524

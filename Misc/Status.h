@@ -10,9 +10,13 @@ public:
 	static Point2D TLPoint;
 	static Point2D Delta;
 
+	static bool Visible;
+
 	static void Add(const wchar_t * pText, DWORD dwColor) {
-		LoadProgressManager::DrawText(pText, TLPoint.X, TLPoint.Y, dwColor);
-		TLPoint += Delta;
+		if(Visible) {
+			LoadProgressManager::DrawText(pText, TLPoint.X, TLPoint.Y, dwColor);
+			TLPoint += Delta;
+		}
 	}
 
 };

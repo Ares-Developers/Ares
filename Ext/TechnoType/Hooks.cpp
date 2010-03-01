@@ -32,7 +32,7 @@ DEFINE_HOOK(715320, TechnoTypeClass_LoadFromINI_EarlyReader, 6)
 
 	TechnoTypeExt::ExtData *pData = TechnoTypeExt::ExtMap.Find(pType);
 
-	if(pINI->ReadString(pType->get_ID(), "WaterVoxel", "", Ares::readBuffer, Ares::readLength)) {
+	if(pINI->ReadString(pType->ID, "WaterVoxel", "", Ares::readBuffer, Ares::readLength)) {
 		pData->WaterAlt = 1;
 //		_strncpy
 	}

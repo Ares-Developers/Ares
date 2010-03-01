@@ -59,7 +59,7 @@ DEFINE_HOOK(6F5230, TechnoClass_DrawExtras1, 5)
 		return 0x6F5235;
 	}
 
-	int frame = 
+	int frame =
 	(Unsorted::CurrentFrame - Bomb->PlantingFrame)
 		/ (pData->Ivan_Delay.Get() / (pData->Ivan_Image.Get()->Frames - 1)); // -1 so that last iteration has room to flicker
 
@@ -67,9 +67,9 @@ DEFINE_HOOK(6F5230, TechnoClass_DrawExtras1, 5)
 		++frame;
 	}
 
-	if( frame >= pData->Ivan_Image.Get()->Frames ) {
+	if(frame >= pData->Ivan_Image.Get()->Frames) {
 		frame = pData->Ivan_Image.Get()->Frames - 1;
-	} else if(frame == pData->Ivan_Image.Get()->Frames - 1 ) {
+	} else if(frame == pData->Ivan_Image.Get()->Frames - 1) {
 		--frame;
 	}
 
@@ -99,8 +99,7 @@ DEFINE_HOOK(6F523C, TechnoClass_DrawExtras2, 5)
 DEFINE_HOOK(6FCBAD, TechnoClass_GetObjectActivityState_IvanBomb, 6)
 {
 	GET(TechnoClass *, Target, EBP);
-	BombClass *Bomb = Target->AttachedBomb;
-	if(Bomb) {
+	if(BombClass *Bomb = Target->AttachedBomb) {
 		WeaponTypeExt::ExtData *pData = WeaponTypeExt::BombExt[Bomb];
 		if(!pData->Ivan_Detachable) {
 			return 0x6FCBBE;
@@ -176,7 +175,6 @@ DEFINE_HOOK(438E86, IvanBombs_AttachableByAll, 5)
 {
 	GET(TechnoClass *, Source, EBP);
 	switch(Source->WhatAmI()) {
-		// Aircraft can't use them right just yet, IE if out of weapon range...
 		case abs_Aircraft:
 		case abs_Infantry:
 		case abs_Unit:
@@ -187,7 +185,7 @@ DEFINE_HOOK(438E86, IvanBombs_AttachableByAll, 5)
 	}
 }
 
-/* this is a wtf: it unsets target if the unit can no longer affect its current target. 
+/* this is a wtf: it unsets target if the unit can no longer affect its current target.
  * Makes sense, except Aircraft that lose the target so crudely in the middle of the attack
  * (i.e. ivan bomb weapon) go wtfkerboom with an IE
  */
@@ -204,10 +202,10 @@ DEFINE_HOOK(46934D, IvanBombs_Spread, 6)
 
 	RET_UNLESS(bullet->Target);
 
-	TechnoClass *pOwner = (TechnoClass *)bullet->Owner;
+	TechnoClass *pOwner = reinterpret_cast<TechnoClass *>(bullet->Owner);
 
-	TechnoClass *pTarget = (TechnoClass *)bullet->Target;
-	CoordStruct tgtLoc = *(pTarget->get_Location());
+	TechnoClass *pTarget = reinterpret_cast<TechnoClass *>(bullet->Target);
+	CoordStruct tgtLoc = pTarget->Location;
 
 	// just real target
 	if(cSpread < 0.5) {
@@ -219,7 +217,7 @@ DEFINE_HOOK(46934D, IvanBombs_Spread, 6)
 
 	CoordStruct tgtCoords;
 	pTarget->GetCoords(&tgtCoords);
-	CellStruct centerCoords = *MapClass::Global()->GetCellAt(&tgtCoords)->get_MapCoords();
+	CellStruct centerCoords = MapClass::Instance->GetCellAt(&tgtCoords)->MapCoords;
 
 	class IvanBombSpreadApplicator : public CellSpreadApplicator {
 		protected:

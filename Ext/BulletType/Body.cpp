@@ -2,22 +2,22 @@
 #include "../TechnoType/Body.h"
 #include "../House/Body.h"
 
-const DWORD Extension<BulletTypeClass>::Canary = 0xF00DF00D;
+template<> const DWORD Extension<BulletTypeClass>::Canary = 0xF00DF00D;
 Container<BulletTypeExt> BulletTypeExt::ExtMap;
 
-BulletTypeExt::TT *Container<BulletTypeExt>::SavingObject = NULL;
-IStream *Container<BulletTypeExt>::SavingStream = NULL;
+template<> BulletTypeExt::TT *Container<BulletTypeExt>::SavingObject = NULL;
+template<> IStream *Container<BulletTypeExt>::SavingStream = NULL;
 
 // =============================
 // member funcs
 
 void BulletTypeExt::ExtData::LoadFromINIFile(BulletTypeClass *pThis, CCINIClass* pINI)
 {
-	this->SubjectToSolid = pINI->ReadBool(pThis->get_ID(), "SubjectToBuildings", this->SubjectToSolid);
-	this->SubjectToFirewall = pINI->ReadBool(pThis->get_ID(), "SubjectToFirewall", this->SubjectToFirewall);
-	this->Parachuted = pINI->ReadBool(pThis->get_ID(), "Parachuted", this->Parachuted);
+	this->SubjectToSolid = pINI->ReadBool(pThis->ID, "SubjectToBuildings", this->SubjectToSolid);
+	this->SubjectToFirewall = pINI->ReadBool(pThis->ID, "SubjectToFirewall", this->SubjectToFirewall);
+	this->Parachuted = pINI->ReadBool(pThis->ID, "Parachuted", this->Parachuted);
 
-	this->SubjectToTrenches = pINI->ReadBool(pThis->get_ID(), "SubjectToTrenches", this->SubjectToTrenches);
+	this->SubjectToTrenches = pINI->ReadBool(pThis->ID, "SubjectToTrenches", this->SubjectToTrenches);
 
 	this->_Initialized = is_Completed;
 }

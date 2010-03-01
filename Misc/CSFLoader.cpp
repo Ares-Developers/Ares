@@ -57,8 +57,7 @@ DEFINE_HOOK(734823, CSF_AllocateMemory, 6)
 	wchar_t** pValues = new wchar_t*[CSF_MAX_ENTRIES];
 	char** pExtraValues = new char*[CSF_MAX_ENTRIES];
 
-	for(int i = 0; i < CSF_MAX_ENTRIES; i++)
-	{
+	for(int i = 0; i < CSF_MAX_ENTRIES; i++) {
 		*pLabels[i].Name = 0;
 		pLabels[i].NumValues = 0;
 		pLabels[i].FirstValueIndex = 0;
@@ -132,10 +131,11 @@ DEFINE_HOOK(734A97, CSF_SetIndex, 6)
 {
 	R->EDX(StringTable::get_Labels());
 
-	if(CSFLoader::CSFCount > 0)
+	if(CSFLoader::CSFCount > 0) {
 		R->ECX(CSFLoader::NextValueIndex);
-	else
+	} else {
 		R->ECX(R->Stack32(0x18));
+	}
 
 	return 0x734AA1;
 }
