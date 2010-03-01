@@ -6,7 +6,7 @@
 #include "../../Enum/ArmorTypes.h"
 
 // feature #384: Permanent MindControl Warheads + feature #200: EMP Warheads + feature #397: AffectsEnemies
-// attach #407 here - set TechnoClass::Flashing.Duration
+// attach #407 here - set TechnoClass::Flashing.Duration // that doesn't exist, according to yrpp::TechnoClass.h::struct FlashData
 // attach #561 here, reuse #407's additional hooks for colouring
 DEFINE_HOOK(46920B, BulletClass_Fire, 6) {
 	GET(BulletClass *, Bullet, ESI);
