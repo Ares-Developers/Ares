@@ -518,3 +518,19 @@ DEFINE_HOOK(73C733, UnitClass_DrawSHP_SkipTurretedShadow, 7)
 {
 	return 0x73C7AC;
 }
+
+/* #397 - AffectsEnemies */
+DEFINE_HOOK(701C97, TechnoClass_ReceiveDamage_AffectsEnemies, 6)
+{
+	GET(WarheadTypeClass *, WH, EBP);
+	GET(TechnoClass *, Victim, ESI);
+	LEA_STACK(args_ReceiveDamage *, Arguments, 0xC8);
+	bool CanAffect = true;
+
+
+	WarheadTypeExt::ExtData *WHTypeExt = WarheadTypeExt::ExtMap.Find(pThis);
+
+	CanAffect = WHTypeExt->AffectsEnemies || (!WHTypeExt->AffectsEnemies && Victim->Owner->IsAlliedWith(Arguments->SourceHouse));
+
+	return CanAffect ? 0 : 0x701CC2;
+}

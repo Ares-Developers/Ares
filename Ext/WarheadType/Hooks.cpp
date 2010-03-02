@@ -5,7 +5,7 @@
 #include "../Bullet/Body.h"
 #include "../../Enum/ArmorTypes.h"
 
-// feature #384: Permanent MindControl Warheads + feature #200: EMP Warheads + feature #397: AffectsEnemies
+// feature #384: Permanent MindControl Warheads + feature #200: EMP Warheads
 // attach #407 here - set TechnoClass::Flashing.Duration // that doesn't exist, according to yrpp::TechnoClass.h::struct FlashData
 // attach #561 here, reuse #407's additional hooks for colouring
 DEFINE_HOOK(46920B, BulletClass_Fire, 6) {
@@ -13,21 +13,6 @@ DEFINE_HOOK(46920B, BulletClass_Fire, 6) {
 	WarheadTypeClass *pThis = Bullet->WH;
 
 	WarheadTypeExt::ExtData *pData = WarheadTypeExt::ExtMap.Find(pThis);
-
-	/* 	Request #397 - AffectsEnemies
-		Not sure where to implement this best
-		placing it here since we seem to handle warhead application stuff here,
-		and there's no need to do everything else if it's not supposed to affect the target anyway */
-	if (!pData->AffectsEnemies
-		&& Bullet->Target
-		&& !Bullet->Target->Owner->IsAlliedWith(Bullet->Owner)) { // need to check what IsAlliedWith returns for self - for fire on own people
-			// if it doesn't affect enemies, but the target and the owner aren't allies, kill the bullet and exit
-			// below is the less-pretty way to do it, since we won't get a warhead-anim
-			Bullet->Health = 0;
-			Bullet->DamageMultiplier = 0;
-			Bullet->Remove();
-			return 0;
-	}
 
 	CoordStruct coords;
 	if (Bullet->Target) {

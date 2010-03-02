@@ -241,17 +241,6 @@ A_FINE_HOOK(71986A, TeleportLocomotionClass_ILocomotion_Update_3, 6)
 	return 0x719870;
 }
 
-/* #397 - AffectsEnemies */
-A_FINE_HOOK(701C97, TechnoClass_ReceiveDamage_AffectsEnemies, 6)
-{
-	GET(WarheadTypeClass *, WH, EBP);
-	GET(TechnoClass *, Victim, ESI);
-	LEA_STACK(args_ReceiveDamage *, Arguments, 0xC8);
-
-	bool CanAffect = 1;
-	return CanAffect ? 0 : 0x701CC2;
-}
-
 /* #599 - new alternate arts */
 	// sprintf newly formed file basename back into ObjectType::ImageFile
 	// might need a different method for VXL to avoid duplicating all related files
