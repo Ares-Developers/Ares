@@ -1,7 +1,8 @@
 #include "Body.h"
 #include "../TechnoType/Body.h"
-
 #include "../../Misc/Debug.h"
+
+#include <SpecificStructures.h>
 
 // bugfix #297: Crewed=yes jumpjets spawn parachuted infantry on destruction, not idle
 DEFINE_HOOK(7381AE, UnitClass_ReceiveDamage, 6)
@@ -522,11 +523,10 @@ DEFINE_HOOK(73C733, UnitClass_DrawSHP_SkipTurretedShadow, 7)
 /* #397 - AffectsEnemies */
 DEFINE_HOOK(701C97, TechnoClass_ReceiveDamage_AffectsEnemies, 6)
 {
-	GET(WarheadTypeClass *, WH, EBP);
+	GET(WarheadTypeClass *, pThis, EBP);
 	GET(TechnoClass *, Victim, ESI);
 	LEA_STACK(args_ReceiveDamage *, Arguments, 0xC8);
 	bool CanAffect = true;
-
 
 	WarheadTypeExt::ExtData *WHTypeExt = WarheadTypeExt::ExtMap.Find(pThis);
 

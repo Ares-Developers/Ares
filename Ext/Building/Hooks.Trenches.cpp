@@ -277,7 +277,7 @@ A_FINE_HOOK(457DF5, BuildingClass_UnloadOccupants_AboutToStartUnloading, 6)
 	<Renegade> at what place in the chain is that executed?
 	<DCoder> in the middle of where the building changes ownership from old player to new
 */
-DEFINE_HOOK(448401, BuildingClass_ChangeOwnership, 6)
+DEFINE_HOOK(448401, BuildingClass_ChangeOwnership_TrenchEVA, 6)
 {
 	GET(BuildingClass *, pBld, ESI);
 	GET(HouseClass *, pNewOwner, EBX);
