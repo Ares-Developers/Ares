@@ -57,6 +57,9 @@ public:
 		BuildingTypeClass * RubbleDestroyed;	//!< What BuildingType to turn into when destroyed. (This is the rubble, set on normal buildings.)
 		static std::vector<std::string> trenchKinds; //!< Vector of strings associating known trench names with IsTrench IDs. \sa IsTrench
 
+		// added 03.03.10 for #696 (switch for spied radar behavior)
+		bool LegacyRadarEffect; //!< Whether to use RA's "reveal radar to spy" or RA2's "disrupt radar for victim" on spying of a radar. true = use RA's system
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			Solid_Height (0),
 			IsCustom (false),
@@ -72,7 +75,8 @@ public:
 			BunkerRaidable (false),
 			IsTrench (-1),
 			RubbleIntact (NULL),
-			RubbleDestroyed (NULL)
+			RubbleDestroyed (NULL),
+			LegacyRadarEffect (false)
 			{ };
 
 		virtual ~ExtData() {

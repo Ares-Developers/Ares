@@ -198,6 +198,8 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 		this->RubbleDestroyed->CanBeOccupied = false;
 	}
 
+	this->LegacyRadarEffect = pINI->ReadBool(pID, "SpyEffect.LegacyRadar", this->LegacyRadarEffect);
+
 	this->_Initialized = is_Completed;
 }
 
