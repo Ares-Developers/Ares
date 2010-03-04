@@ -17,10 +17,13 @@ DEFINE_HOOK(4571E0, BuildingClass_Infiltrate, 5)
 		In practice, this means: If a player who has spied a factory clicks on that factory,
 		he will see the cameo of whatever is being built in the factory.
 
+		Addition 04.03.10: People complained about it not being optional. Now it is.
+
 		Issue #696 - changed radar/spy behavior
 		The previous implementation also reactivated RA's behavior when spying a radar - the additional check makes that optional.
 	*/
-	if(!EnteredBuilding->Type->Radar || (EnteredBuilding->Type->Radar && EnteredBuildingTypeExt->LegacyRadarEffect)) {
+	if(EnteredBuilding->Type->DisplayProduction
+	   && (!EnteredBuilding->Type->Radar || (EnteredBuilding->Type->Radar && EnteredBuildingTypeExt->LegacyRadarEffect))) {
 		EnteredBuilding->DisplayProductionTo.Add(EnteredBy);
 	}
 

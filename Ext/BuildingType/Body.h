@@ -58,7 +58,10 @@ public:
 		static std::vector<std::string> trenchKinds; //!< Vector of strings associating known trench names with IsTrench IDs. \sa IsTrench
 
 		// added 03.03.10 for #696 (switch for spied radar behavior)
-		bool LegacyRadarEffect; //!< Whether to use RA's "reveal radar to spy" or RA2's "disrupt radar for victim" on spying of a radar. true = use RA's system
+		bool LegacyRadarEffect; //!< Whether to use RA's "reveal radar to spy" in addition to RA2's "disrupt radar for victim" on spying of a radar. Defaults to false, requires DisplayProduction to be true. \sa DisplayProduction
+
+		// added 04.03.10 for 633#c2727
+		bool DisplayProduction; //!< Whether to show a factory/radar's production/view to the house who spied it. (RA spy behavior.) Defaults to false. \sa LegacyRadarEffect
 
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			Solid_Height (0),
@@ -76,7 +79,8 @@ public:
 			IsTrench (-1),
 			RubbleIntact (NULL),
 			RubbleDestroyed (NULL),
-			LegacyRadarEffect (false)
+			LegacyRadarEffect (false),
+			DisplayProduction (false)
 			{ };
 
 		virtual ~ExtData() {
