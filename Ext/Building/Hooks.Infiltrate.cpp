@@ -22,7 +22,7 @@ DEFINE_HOOK(4571E0, BuildingClass_Infiltrate, 5)
 		Issue #696 - changed radar/spy behavior
 		The previous implementation also reactivated RA's behavior when spying a radar - the additional check makes that optional.
 	*/
-	if(EnteredBuilding->Type->DisplayProduction
+	if(EnteredBuildingTypeExt->DisplayProduction
 	   && (!EnteredBuilding->Type->Radar || (EnteredBuilding->Type->Radar && EnteredBuildingTypeExt->LegacyRadarEffect))) {
 		EnteredBuilding->DisplayProductionTo.Add(EnteredBy);
 	}

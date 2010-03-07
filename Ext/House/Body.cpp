@@ -45,8 +45,8 @@ signed int HouseExt::RequirementsMet(HouseClass *pHouse, TechnoTypeClass *pItem)
 	if(!Unsorted::SWAllowed) {
 		if(BuildingTypeClass *pBld = specific_cast<BuildingTypeClass*>(pItem)) {
 			if(pBld->SuperWeapon != -1) {
-				if(RulesClass::Instance->BuildTech.FindItemIndex(&pBld) != -1) {
-					if(pHouse->get_Supers()->GetItem(pBld->SuperWeapon)->Type->DisableableFromShell) {
+				if(RulesClass::Instance->BuildTech.FindItemIndex(&pBld) == -1) {
+					if(pHouse->Supers.GetItem(pBld->SuperWeapon)->Type->DisableableFromShell) {
 						return 0;
 					}
 				}

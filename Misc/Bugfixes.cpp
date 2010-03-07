@@ -123,19 +123,19 @@ DEFINE_HOOK(712045, TechnoTypeClass_GetCameo, 5)
 			if(House->BarracksInfiltrated && !T->Naval && T->Trainable) {
 				return ret(Alt);
 			} else {
-				return ret(Country->VeteranInfantry.GetItemIndex((InfantryTypeClass **)&T) == -1 ? Cameo : Alt);
+				return ret(Country->VeteranInfantry.FindItemIndex((InfantryTypeClass **)&T) == -1 ? Cameo : Alt);
 			}
 		case abs_UnitType:
 			if(House->WarFactoryInfiltrated && !T->Naval && T->Trainable) {
 				return ret(Alt);
 			} else {
-				return ret(Country->VeteranUnits.GetItemIndex((UnitTypeClass **)&T) == -1 ? Cameo : Alt);
+				return ret(Country->VeteranUnits.FindItemIndex((UnitTypeClass **)&T) == -1 ? Cameo : Alt);
 			}
 		case abs_AircraftType:
-			return ret(Country->VeteranAircraft.GetItemIndex((AircraftTypeClass **)&T) == -1 ? Cameo : Alt);
+			return ret(Country->VeteranAircraft.FindItemIndex((AircraftTypeClass **)&T) == -1 ? Cameo : Alt);
 		case abs_BuildingType:
 			if(TechnoTypeClass *Item = T->UndeploysInto) {
-				return ret(Country->VeteranUnits.GetItemIndex((UnitTypeClass **)&Item) == -1 ? Cameo : Alt);
+				return ret(Country->VeteranUnits.FindItemIndex((UnitTypeClass **)&Item) == -1 ? Cameo : Alt);
 			}
 	}
 
