@@ -34,20 +34,12 @@ char Ares::readBuffer[BUFLEN];
 const char Ares::readDelims[4] = ",";
 const char Ares::readDefval[4] = "";
 
-int Ares::TrackIndex = 66;
-
-int FrameStepCommandClass::ArmageddonState = 0;
-
 hash_map <DWORD, size_t> MemMap::AllocMap;
 size_t MemMap::Total;
 
 //Implementations
 void __stdcall Ares::RegisterCommands()
 {
-	AIControlCommandClass *AICommand;
-	GAME_ALLOC(AIControlCommandClass, AICommand);
-	CommandClass::Array->AddItem(AICommand);
-
 	MapSnapshotCommandClass *MapSnapshotCommand;
 	GAME_ALLOC(MapSnapshotCommandClass, MapSnapshotCommand);
 	CommandClass::Array->AddItem(MapSnapshotCommand);
@@ -56,14 +48,6 @@ void __stdcall Ares::RegisterCommands()
 	GAME_ALLOC(TestSomethingCommandClass, TestSomethingCommand);
 	CommandClass::Array->AddItem(TestSomethingCommand);
 
-	FrameByFrameCommandClass *FrameByFrameCommand;
-	GAME_ALLOC(FrameByFrameCommandClass, FrameByFrameCommand);
-	CommandClass::Array->AddItem(FrameByFrameCommand);
-
-	FrameStepCommandClass *FrameStepCommand;
-	GAME_ALLOC(FrameStepCommandClass, FrameStepCommand);
-	CommandClass::Array->AddItem(FrameStepCommand);
-
 	FirestormToggleCommandClass *FirestormToggleCommand;
 	GAME_ALLOC(FirestormToggleCommandClass, FirestormToggleCommand);
 	CommandClass::Array->AddItem(FirestormToggleCommand);
@@ -71,14 +55,6 @@ void __stdcall Ares::RegisterCommands()
 	DumperTypesCommandClass *DumperTypesCommand;
 	GAME_ALLOC(DumperTypesCommandClass, DumperTypesCommand);
 	CommandClass::Array->AddItem(DumperTypesCommand);
-
-	DebuggingCommandClass *DebuggingCommand;
-	GAME_ALLOC(DebuggingCommandClass, DebuggingCommand);
-	CommandClass::Array->AddItem(DebuggingCommand);
-
-	LoggingCommandClass *LoggingCommand;
-	GAME_ALLOC(LoggingCommandClass, LoggingCommand);
-	CommandClass::Array->AddItem(LoggingCommand);
 }
 
 void __stdcall Ares::CmdLineParse(char** ppArgs,int nNumArgs)

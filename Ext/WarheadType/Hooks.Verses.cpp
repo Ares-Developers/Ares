@@ -1,49 +1,69 @@
 #include "Body.h"
 
 #define GET_VERSES(reg_wh, reg_armor) \
-		GET(WarheadTypeClass *, WH, reg_wh); \
+	GET(WarheadTypeClass *, WH, reg_wh); \
 	GET(int, Armor, reg_armor); \
 	WarheadTypeExt::ExtData *pData = WarheadTypeExt::ExtMap.Find(WH); \
-	double x = pData->Verses[Armor].Verses;
+	WarheadTypeExt::VersesData *vsData = &pData->Verses[Armor]; \
+	double VS = vsData->Verses;
 
 #define FLD_VERSES(reg_wh, reg_armor) \
 	GET_VERSES(reg_wh, reg_armor) \
-	__asm{ fld x }; \
+	__asm{ fld VS }; \
 	return R->get_Origin() + 7;
 
 #define FMUL_VERSES(reg_wh, reg_armor) \
 	GET_VERSES(reg_wh, reg_armor) \
-	__asm{ fmul x }; \
+	__asm{ fmul VS }; \
 	return R->get_Origin() + 7;
 
 #ifdef _MSC_VER
-// temp, will be taken out when SelectWeapon is remade
-DEFINE_HOOK(6F36FE, Verses_fld_0, 7)
+DEFINE_HOOK(6F36FE, Verses_fld_0, 0)
 {
-	FLD_VERSES(EAX, ECX);
+	GET_VERSES(EAX, ECX);
+	return VS != 0.0 // vsData->ForceFire - taking this out because it has nothing to do with _forcing_ fire
+		? 0x6F37AD
+		: 0x6F3716
+	;
 }
 
-DEFINE_HOOK(6F7D3D, Verses_fld_1, 7)
+DEFINE_HOOK(6F3731, Verses_fld_1, 0)
 {
-	FLD_VERSES(ECX, EAX);
+	GET_VERSES(ECX, EAX);
+	return VS == 0.0
+		? 0x6F3745
+		: 0x6F3754
+	;
 }
 
-DEFINE_HOOK(708AF7, Verses_fld_2, 7)
+DEFINE_HOOK(708AF7, Verses_fld_2, 0)
 {
-	FLD_VERSES(ECX, EAX);
+	GET_VERSES(ECX, EAX);
+	return vsData->Retaliate
+		? 0x708B0B
+		: 0x708B17
+	;
 }
 
-DEFINE_HOOK(6FCB6A, Verses_fld_3, 7)
+DEFINE_HOOK(6FCB6A, Verses_fld_3, 0)
 {
-	FLD_VERSES(EDI, EAX);
+	GET_VERSES(EDI, EAX);
+	return vsData->ForceFire
+		? 0x6FCB7E
+		: 0x6FCB8D
+	;
 }
 
-// temp, will be taken out when SelectWeapon is remade
-DEFINE_HOOK(6F3731, Verses_fld_4, 7)
+DEFINE_HOOK(6F7D3D, Verses_fld_4, 0)
 {
-	FLD_VERSES(EDX, EAX);
+	GET_VERSES(EDI, EAX);
+	return vsData->PassiveAcquire
+		? 0x6F7D55
+		: 0x6F894F
+	;
 }
 
+//
 DEFINE_HOOK(70CEB2, Verses_fmul_0, 7)
 {
 	FMUL_VERSES(EAX, ECX);
