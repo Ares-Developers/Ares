@@ -59,6 +59,8 @@ public:
 
 		bool AffectsEnemies; // request #397
 
+		Valueable<AnimTypeClass*> InfDeathAnim;
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			MindControl_Permanent (false),
 			Ripple_Radius (0),
@@ -66,7 +68,8 @@ public:
 			IC_Duration (0),
 			DeployedDamage (1.00),
 			Temporal_WarpAway (&RulesClass::Global()->WarpAway),
-			AffectsEnemies (true)
+			AffectsEnemies (true),
+			InfDeathAnim (NULL)
 			{
 				for(int i = 0; i < 11; ++i) {
 					VersesData vs = {1.00, 1, 1, 1};

@@ -116,8 +116,7 @@ DEFINE_HOOK(71A87B, TemporalClass_Update_CacheWH, 6) {
 
 // issue 472: deglob WarpAway
 DEFINE_HOOK(71A900, TemporalClass_Update_WarpAway, 6) {
-	WarheadTypeExt::ExtData *pData = WarheadTypeExt::ExtMap.Find(
-			WarheadTypeExt::Temporal_WH);
+	WarheadTypeExt::ExtData *pData = WarheadTypeExt::ExtMap.Find(WarheadTypeExt::Temporal_WH);
 
 	R->EDX<AnimTypeClass *> (pData->Temporal_WarpAway);
 	return 0x71A906;
@@ -140,5 +139,35 @@ DEFINE_HOOK(517FC1, InfantryClass_ReceiveDamage_DeployedDamage, 6) {
 	return WH // yes, let's make sure the pointer's safe AFTER we've dereferenced it... Failstwood!
 		? 0x517FF9
 		: 0x518016
+	;
+}
+
+/* #188 - InfDeaths */
+DEFINE_HOOK(5185C8, InfantryClass_ReceiveDamage_InfDeath, 6)
+{
+	GET(InfantryClass *, I, ESI);
+	GET_STACK(WarheadTypeClass *, WH, 0xDC);
+	GET(DWORD, InfDeath, EDI);
+	--InfDeath;
+	R->EDI(InfDeath);
+
+	bool Handled = false;
+
+	if(!I->Type->NotHuman) {
+		if(I->GetHeight() < 10) {
+			WarheadTypeExt::ExtData *pData = WarheadTypeExt::ExtMap.Find(WH);
+			if(AnimTypeClass *deathAnim = pData->InfDeathAnim) {
+				AnimClass *Anim = NULL;
+				GAME_ALLOC(AnimClass, Anim, deathAnim, &I->Location);
+				Anim->Owner = I->Owner;
+				Anim->LightConvert = ColorScheme::Array->Items[I->Owner->ColorSchemeIndex]->LightConvert;
+				Handled = true;
+			}
+		}
+	}
+
+	return (Handled || InfDeath >= 10)
+		? 0x5185F1
+		: 0x5185CE
 	;
 }

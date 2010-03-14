@@ -150,22 +150,6 @@ A_FINE_HOOK(50E1B0, HouseClass_HasPoweredCenters, 6)
 	return 0x50E1BD;
 }
 
-
-/* #188 - InfDeaths */
-A_FINE_HOOK(5185C8, InfantryClass_ReceiveDamage_InfDeath, 6)
-{
-	GET(InfantryClass *, I, ESI);
-	GET(DWORD, InfDeath, EDI); /// JA is for unsigned, goddamnit
-	--InfDeath;
-	R->set_EDI(InfDeath);
-
-	bool Handled = false;
-
-	return (!Handled && InfDeath < 10)
-	  ? 0x5185CE
-	  : 0x5185F1;
-}
-
 /* #346 - Veterancy from MC */
 A_FINE_HOOK(702FFC, TechnoClass_RegisterDestruction, 6)
 {

@@ -3,11 +3,10 @@
 
 #define VERSION_MAJOR 0
 #define VERSION_MINOR 1
-#define VERSION_REVISION 343
+#define VERSION_REVISION 345
 
 #define SAVEGAME_MAGIC ((VERSION_MAJOR << 24) | (VERSION_MINOR << 16) | (VERSION_REVISION))
 
-// ffs macro hell
 #define str(x) str_(x)
 #define str_(x) #x
 
