@@ -29,7 +29,7 @@ DEFINE_HOOK(6F36FE, Verses_fld_0, 0)
 
 DEFINE_HOOK(6F3731, Verses_fld_1, 0)
 {
-	GET_VERSES(ECX, EAX);
+	GET_VERSES(EDX, EAX);
 	return VS == 0.0
 		? 0x6F3745
 		: 0x6F3754
@@ -49,14 +49,14 @@ DEFINE_HOOK(6FCB6A, Verses_fld_3, 0)
 {
 	GET_VERSES(EDI, EAX);
 	return vsData->ForceFire
-		? 0x6FCB7E
-		: 0x6FCB8D
+		? 0x6FCB8D
+		: 0x6FCB7E
 	;
 }
 
 DEFINE_HOOK(6F7D3D, Verses_fld_4, 0)
 {
-	GET_VERSES(EDI, EAX);
+	GET_VERSES(ECX, EAX);
 	return vsData->PassiveAcquire
 		? 0x6F7D55
 		: 0x6F894F
