@@ -194,6 +194,16 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 
 	this->CameoPal.LoadFromINI(CCINIClass::INI_Art, pThis->ImageFile, "CameoPalette");
 
+	if(pINI->ReadString(section, "Prerequisite.StolenTechs", "", buffer, BUFLEN)) {
+		this->RequiredStolenTech.reset();
+		for(char *cur = strtok(buffer, ","); cur; cur = strtok(NULL, ",")) {
+			signed int idx = atoi(cur);
+			if(idx > -1 && idx < 32) {
+				this->RequiredStolenTech.set(idx);
+			}
+		}
+	}
+
 	// quick fix - remove after the rest of weapon selector code is done
 	return;
 }

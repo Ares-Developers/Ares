@@ -2,6 +2,7 @@
 #include <Unsorted.h>
 #include <MouseClass.h>
 #include <WWMouseClass.h>
+#include "Ares.version.h"
 
 bool Debug::bLog = true;
 FILE *Debug::pLogFile = NULL;
@@ -155,13 +156,13 @@ void Debug::Flush() {
 LONG WINAPI Debug::ExceptionHandler(int code, LPEXCEPTION_POINTERS pExs)
 {
 	Debug::FreeMouse();
-	Debug::Log("D::EH\n");
+	Debug::Log("Exception handler fired!\n");
 	SetWindowTextW(Game::hWnd, L"Fatal Error - Yuri's Revenge");
 //	if (IsDebuggerAttached()) return EXCEPTION_CONTINUE_SEARCH;
 	if (pExs->ExceptionRecord->ExceptionCode == ERROR_MOD_NOT_FOUND ||
 		pExs->ExceptionRecord->ExceptionCode == ERROR_PROC_NOT_FOUND)
 	{
-		Debug::Log("D::EH - _NOT_FOUND\n");
+		Debug::Log("Massive failure: Procedure or module not found!\n");
 		//tell user
 		ExitProcess(pExs->ExceptionRecord->ExceptionCode);
 	}
@@ -190,35 +191,59 @@ LONG WINAPI Debug::ExceptionHandler(int code, LPEXCEPTION_POINTERS pExs)
 		case EXCEPTION_STACK_OVERFLOW:
 		case 0xE06D7363: // exception thrown and not caught
 		{
-			if(MessageBoxW(Game::hWnd, L"Yuri's Revenge has encountered a fatal error!\nWould you like to create a full crash report for the developers?", L"Fatal Error!", MB_YESNO | MB_ICONERROR) == IDYES) {
+			wchar_t filename[MAX_PATH];
+			wchar_t path[MAX_PATH];
+			SYSTEMTIME time;
 
+			GetLocalTime(&time);
+			GetCurrentDirectoryW(MAX_PATH, path);
+
+			swprintf(filename, MAX_PATH, L"%s\\debug", path);
+			CreateDirectoryW(filename, NULL);
+
+			swprintf(filename, MAX_PATH, L"%s\\debug\\except.%04u%02u%02u-%02u%02u%02u.txt",
+				path, time.wYear, time.wMonth, time.wDay, time.wHour, time.wMinute, time.wSecond);
+
+			if(FILE *except = _wfopen(filename, L"w")) {
+#define DELIM "---------------------\n"
+				fprintf(except, "Internal Error encountered!\n");
+				fprintf(except, DELIM);
+				fprintf(except, VERSION_STRVER);
+				fprintf(except, "\n" DELIM);
+
+				fprintf(except, "Exception code: %08X at %08X\n", pExs->ExceptionRecord->ExceptionCode, pExs->ExceptionRecord->ExceptionAddress);
+
+				fprintf(except, "Registers:\n");
+				PCONTEXT pCtxt = pExs->ContextRecord;
+				fprintf(except, "EIP: %08X\tESP: %08X\tEBP: %08X\n", pCtxt->Eip, pCtxt->Esp, pCtxt->Ebp);
+				fprintf(except, "EAX: %08X\tEBX: %08X\tECX: %08X\n", pCtxt->Eax, pCtxt->Ebx, pCtxt->Ecx);
+				fprintf(except, "EDX: %08X\tESI: %08X\tEDI: %08X\n", pCtxt->Edx, pCtxt->Esi, pCtxt->Edi);
+
+				fprintf(except, "\nStack dump:\n");
+				DWORD *ptr = (DWORD *)(pCtxt->Esp);
+				for(int i = 0; i < 0x100; ++i) {
+					fprintf(except, "%08X: %08X\n", ptr, *ptr);
+					++ptr;
+				}
+
+				fclose(except);
+				Debug::Log("Exception data has been saved to file:\n%ls\n", filename);
+			}
+
+			if(MessageBoxW(Game::hWnd, L"Yuri's Revenge has encountered a fatal error!\nWould you like to create a full crash report for the developers?", L"Fatal Error!", MB_YESNO | MB_ICONERROR) == IDYES) {
 				HCURSOR loadCursor = LoadCursor(NULL, IDC_WAIT);
 				SetClassLong(Game::hWnd, GCL_HCURSOR, (LONG)loadCursor);
 				SetCursor(loadCursor);
 				bool g_ExtendedMinidumps = true;
-				Debug::Log("D::EH - Dump\n");
-
-				wchar_t filename[MAX_PATH];
-				wchar_t path[MAX_PATH];
-
-				HANDLE dumpFile;
-				SYSTEMTIME time;
-				MINIDUMP_EXCEPTION_INFORMATION expParam;
-
-				GetLocalTime(&time);
-				GetCurrentDirectoryW(MAX_PATH, path);
-
-				swprintf(filename, MAX_PATH, L"%s\\debug", path);
-				CreateDirectoryW(filename, NULL);
+				Debug::Log("Making a memory dump\n");
 
 				swprintf(filename, MAX_PATH, g_ExtendedMinidumps ? L"%s\\debug\\extcrashdump.%04u%02u%02u-%02u%02u%02u.dmp" : L"%s\\debug\\crashdump.%04u%02u%02u-%02u%02u%02u.dmp",
-								path,
-								time.wYear, time.wMonth, time.wDay,
-								time.wHour, time.wMinute, time.wSecond);
+					path, time.wYear, time.wMonth, time.wDay, time.wHour, time.wMinute, time.wSecond);
 
-				dumpFile = CreateFileW(filename, GENERIC_READ | GENERIC_WRITE,
+				HANDLE dumpFile = CreateFileW(filename, GENERIC_READ | GENERIC_WRITE,
 								FILE_SHARE_WRITE | FILE_SHARE_READ, NULL, CREATE_ALWAYS, FILE_FLAG_WRITE_THROUGH, NULL);
 
+				MINIDUMP_EXCEPTION_INFORMATION expParam;
 				expParam.ThreadId = GetCurrentThreadId();
 				expParam.ExceptionPointers = pExs;
 				expParam.ClientPointers = FALSE;
@@ -239,7 +264,7 @@ LONG WINAPI Debug::ExceptionHandler(int code, LPEXCEPTION_POINTERS pExs)
 			break;
 		}
 		default:
-			Debug::Log("D::EH - _CS\n");
+			Debug::Log("Massive failure: reason unknown, have fun figuring it out\n");
 			Debug::DumpObj((byte *)pExs->ExceptionRecord, sizeof(*(pExs->ExceptionRecord)));
 			ExitProcess(pExs->ExceptionRecord->ExceptionCode); // Exit.
 //			return EXCEPTION_CONTINUE_SEARCH;

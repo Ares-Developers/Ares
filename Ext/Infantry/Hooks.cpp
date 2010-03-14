@@ -7,7 +7,7 @@
 #include "Body.h"
 
 // #664: Advanced Rubble - reconstruction part: Check
-/* -- TODO: UI handler
+/*
 A_FINE_HOOK(51E635, InfantryClass_GetCursorOverObject_EngineerOverFriendlyBuilding, 5)
 {
 	GET(BuildingClass *, Target, ESI);

@@ -1,10 +1,14 @@
 #include "Body.h"
 #include "../BuildingType/Body.h"
+#include "../House/Body.h"
 #include <BuildingClass.h>
 #include <CellClass.h>
 #include <MapClass.h>
 #include <CellSpread.h>
 #include <GeneralStructures.h> // for CellStruct
+#include <VoxClass.h>
+#include <RadarEventClass.h>
+#include <SuperClass.h>
 
 template<> const DWORD Extension<BuildingClass>::Canary = 0x87654321;
 Container<BuildingExt> BuildingExt::ExtMap;
@@ -90,8 +94,10 @@ void BuildingExt::UpdateDisplayTo(BuildingClass *pThis) {
 		H->RadarVisibleTo.Clear();
 		for(int i = 0; i < H->Buildings.Count; ++i) {
 			BuildingClass *currentB = H->Buildings.GetItem(i);
-			if(!currentB->InLimbo && currentB->Type->Radar) {
-				H->RadarVisibleTo.data |= currentB->DisplayProductionTo.data;
+			if(!currentB->InLimbo) {
+				if(BuildingTypeExt::ExtMap.Find(currentB->Type)->RevealRadar) {
+					H->RadarVisibleTo.data |= currentB->DisplayProductionTo.data;
+				}
 			}
 		}
 		MapClass::Instance->sub_4F42F0(2);
@@ -152,7 +158,7 @@ void BuildingExt::ExtData::RubbleYell(bool beingRepaired) {
 		}
 
 		newState = specific_cast<BuildingClass *>(pTypeData->RubbleDestroyed->CreateObject(currentBuilding->Owner));
-		newState->Health = newState->Type->Strength * 0.99; // see description above
+		newState->Health = static_cast<int>(newState->Type->Strength * 0.99); // see description above
 		// Location should not be changed by removal
 		if(!newState->Put(&currentBuilding->Location, currentBuilding->Facing)) {
 			Debug::Log("Advanced Rubble: Failed to place rubble state on map!\n");
@@ -204,7 +210,7 @@ bool BuildingExt::ExtData::canTraverseTo(BuildingClass* targetBuilding) {
 	if((targetBuilding == currentBuilding)
 		|| (targetBuilding->Occupants.Count >= targetBuildingType->MaxNumberOccupants)
 		|| !currentBuilding->Occupants.Count
-		|| !targetBuildingType->CanBeOccupied) { // I'm a little if-clause short and stout...
+		|| !targetBuildingType->CanBeOccupied) { // I'm a little if-clause short and stdout... // beat you to the punchline -- D
 		// Can't traverse if there's no one to move, or the target is full, we can't actually occupy the target,
 		// or if it's actually the same building
 		return false;
@@ -400,6 +406,197 @@ void BuildingExt::KickOutHospitalArmory(BuildingClass *pThis)
 			pThis->KickOutUnit(Passenger, &BuildingClass::DefaultCellCoords);
 		}
 	}
+}
+
+// =============================
+// infiltration
+
+bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
+	BuildingClass *EnteredBuilding = this->AttachedToObject;
+	BuildingTypeClass *EnteredType = EnteredBuilding->Type;
+	HouseClass *Owner = EnteredBuilding->Owner;
+	BuildingTypeExt::ExtData* pTypeExt = BuildingTypeExt::ExtMap.Find(EnteredBuilding->Type);
+	HouseExt::ExtData* pEntererExt = HouseExt::ExtMap.Find(Enterer);
+
+	if(!pTypeExt->InfiltrateCustom) {
+		return false;
+	}
+
+	if(Owner == Enterer) {
+		return true;
+	}
+
+	bool raiseEva = false;
+
+	if(Enterer->ControlledByPlayer() || Owner->ControlledByPlayer()) {
+		CellStruct xy;
+		EnteredBuilding->GetMapCoords(&xy);
+		if(RadarEventClass::Create(RADAREVENT_STRUCTUREINFILTRATED, xy)) {
+			raiseEva = true;
+		}
+	}
+
+	bool evaForOwner = Owner->ControlledByPlayer() && raiseEva;
+	bool evaForEnterer = Enterer->ControlledByPlayer() && raiseEva;
+	bool effectApplied = false;
+
+
+	if(pTypeExt->ResetRadar) {
+		Owner->ReshroudMap();
+		if(!Owner->SpySatActive && evaForOwner) {
+			VoxClass::Play("EVA_RadarSabotaged");
+		}
+		if(!Enterer->SpySatActive && evaForEnterer) {
+			VoxClass::Play("EVA_BuildingInfRadarSabotaged");
+		}
+		effectApplied = true;
+	}
+
+
+	if(pTypeExt->PowerOutageDuration > 0) {
+		Owner->CreatePowerOutage(pTypeExt->PowerOutageDuration);
+		if(evaForOwner) {
+			VoxClass::Play("EVA_PowerSabotaged");
+		}
+		if(evaForEnterer) {
+			VoxClass::Play("EVA_BuildingInfiltrated");
+			VoxClass::Play("EVA_EnemyBasePoweredDown");
+		}
+		effectApplied = true;
+	}
+
+
+	if(pTypeExt->StolenTechIndex > -1) {
+		pEntererExt->StolenTech.set(pTypeExt->StolenTechIndex);
+
+		Enterer->ShouldRecheckTechTree = true;
+		if(evaForOwner) {
+			VoxClass::Play("EVA_TechnologyStolen");
+		}
+		if(evaForEnterer) {
+			VoxClass::Play("EVA_BuildingInfiltrated");
+			VoxClass::Play("EVA_NewTechnologyAcquired");
+		}
+		effectApplied = true;
+	}
+
+
+	if(pTypeExt->ResetSW) {
+		bool somethingReset = false;
+		int swIdx = EnteredType->SuperWeapon;
+		if(swIdx != -1) {
+			Owner->Supers.Items[swIdx]->Reset();
+			somethingReset = true;
+		}
+		swIdx = EnteredType->SuperWeapon2;
+		if(swIdx != -1) {
+			Owner->Supers.Items[swIdx]->Reset();
+			somethingReset = true;
+		}
+		for(int i = 0; i < EnteredType->Upgrades; ++i) {
+			if(BuildingTypeClass *Upgrade = EnteredBuilding->Upgrades[i]) {
+				swIdx = Upgrade->SuperWeapon;
+				if(swIdx != -1) {
+					Owner->Supers.Items[swIdx]->Reset();
+					somethingReset = true;
+				}
+				swIdx = Upgrade->SuperWeapon2;
+				if(swIdx != -1) {
+					Owner->Supers.Items[swIdx]->Reset();
+					somethingReset = true;
+				}
+			}
+		}
+
+		if(somethingReset) {
+			if(evaForOwner || evaForEnterer) {
+				VoxClass::Play("EVA_BuildingInfiltrated");
+			}
+			effectApplied = true;
+		}
+	}
+
+
+	int bounty = 0;
+	int available = Owner->Available_Money();
+	if(pTypeExt->StolenMoneyAmount > 0) {
+		bounty = pTypeExt->StolenMoneyAmount;
+	} else if(pTypeExt->StolenMoneyPercentage > 0) {
+		bounty = int(available * RulesClass::Instance->SpyMoneyStealPercent);
+	}
+	if(bounty > 0) {
+		bounty = min(bounty, available);
+		Owner->TakeMoney(bounty);
+		Enterer->GiveMoney(bounty);
+		if(evaForOwner) {
+			VoxClass::Play("EVA_CashStolen");
+		}
+		if(evaForEnterer) {
+			VoxClass::Play("EVA_BuildingInfCashStolen");
+		}
+		effectApplied = true;
+	}
+
+
+	if(pTypeExt->GainVeterancy) {
+		bool promotionStolen = true;
+
+		switch(EnteredType->Factory) {
+			case UnitTypeClass::AbsID:
+				Enterer->WarFactoryInfiltrated = true;
+				break;
+			case InfantryTypeClass::AbsID:
+				Enterer->BarracksInfiltrated = true;
+				break;
+				// TODO: aircraft/building
+			default:
+				promotionStolen = false;
+		}
+
+		if(promotionStolen) {
+			Enterer->ShouldRecheckTechTree = true;
+			if(Enterer->ControlledByPlayer()) {
+				MouseClass::Instance->unknown_bool_53A6 = true;
+			}
+			if(evaForOwner) {
+				VoxClass::Play("EVA_TechnologyStolen");
+			}
+			if(evaForEnterer) {
+				VoxClass::Play("EVA_BuildingInfiltrated");
+				VoxClass::Play("EVA_NewTechnologyAcquired");
+			}
+			effectApplied = true;
+		}
+	}
+
+
+	/*	RA1-Style Spying, as requested in issue #633
+		This sets the respective bit to inform the game that a particular house has spied this building.
+		Knowing that, the game will reveal the current production in this building to the players who have spied it.
+		In practice, this means: If a player who has spied a factory clicks on that factory,
+		he will see the cameo of whatever is being built in the factory.
+
+		Addition 04.03.10: People complained about it not being optional. Now it is.
+
+		Issue #696 - changed radar/spy behavior
+		The previous implementation also reactivated RA's behavior when spying a radar - the additional check makes that optional.
+	*/
+	if(pTypeExt->RevealProduction || pTypeExt->RevealRadar) {
+		EnteredBuilding->DisplayProductionTo.Add(Enterer);
+		if(evaForOwner || evaForEnterer) {
+			VoxClass::Play("EVA_BuildingInfiltrated");
+		}
+		effectApplied = true;
+	}
+
+	// also note that the slow radar reparse call (MapClass::sub_4F42D0()) is not made here, meaning if you enter a radar,
+	// there will be a discrepancy between what you see on the map/tact map and what the game thinks you see
+
+
+	if(effectApplied) {
+		EnteredBuilding->SetLayer(lyr_Ground);
+	}
+	return true;
 }
 
 // =============================

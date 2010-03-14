@@ -9,6 +9,7 @@
 
 #include "../_Container.hpp"
 #include "../../Ares.h"
+#include "../../Utilities/Template.h"
 
 #include <vector>
 
@@ -58,10 +59,21 @@ public:
 		static std::vector<std::string> trenchKinds; //!< Vector of strings associating known trench names with IsTrench IDs. \sa IsTrench
 
 		// added 03.03.10 for #696 (switch for spied radar behavior)
-		bool LegacyRadarEffect; //!< Whether to use RA's "reveal radar to spy" in addition to RA2's "disrupt radar for victim" on spying of a radar. Defaults to false, requires DisplayProduction to be true. \sa DisplayProduction
+//		bool LegacyRadarEffect; //!< Whether to use RA's "reveal radar to spy" in addition to RA2's "disrupt radar for victim" on spying of a radar. Defaults to false, requires DisplayProduction to be true. \sa DisplayProduction
 
 		// added 04.03.10 for 633#c2727
-		bool DisplayProduction; //!< Whether to show a factory/radar's production/view to the house who spied it. (RA spy behavior.) Defaults to false. \sa LegacyRadarEffect
+//		bool DisplayProduction; //!< Whether to show a factory/radar's production/view to the house who spied it. (RA spy behavior.) Defaults to false. \sa LegacyRadarEffect
+
+		Valueable<bool> InfiltrateCustom;
+		Valueable<bool> RevealProduction;
+		Valueable<bool> ResetSW;
+		Valueable<bool> ResetRadar;
+		Valueable<bool> RevealRadar;
+		Valueable<bool> GainVeterancy;
+		Valueable<int> StolenTechIndex;
+		Valueable<int> StolenMoneyAmount;
+		Valueable<int> StolenMoneyPercentage;
+		Valueable<int> PowerOutageDuration;
 
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			Solid_Height (0),
@@ -79,8 +91,17 @@ public:
 			IsTrench (-1),
 			RubbleIntact (NULL),
 			RubbleDestroyed (NULL),
-			LegacyRadarEffect (false),
-			DisplayProduction (false)
+
+			InfiltrateCustom (false),
+			RevealProduction (false),
+			ResetSW (false),
+			ResetRadar (false),
+			RevealRadar (false),
+			GainVeterancy (false),
+			StolenTechIndex (-1),
+			StolenMoneyAmount (0),
+			StolenMoneyPercentage (0),
+			PowerOutageDuration (0)
 			{ };
 
 		virtual ~ExtData() {

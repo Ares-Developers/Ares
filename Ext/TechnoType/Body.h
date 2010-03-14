@@ -8,6 +8,8 @@
 #include "../../Utilities/Template.h"
 #include "../../Utilities/Constructs.h"
 
+#include <bitset>
+
 class TechnoTypeExt
 {
 public:
@@ -68,6 +70,8 @@ public:
 
 		CustomPalette CameoPal;
 
+		std::bitset<32> RequiredStolenTech;
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			Survivors_PilotChance (NULL),
 			Survivors_PassengerChance (NULL),
@@ -92,7 +96,8 @@ public:
 			Parachute_Anim(&RulesClass::Instance->Parachute),
 			Operator (NULL),
 			IsAPromiscuousWhoreAndLetsAnyoneRideIt (false),
-			CameoPal()
+			CameoPal(),
+			RequiredStolenTech(0)
 			{ this->Insignia.SetAll(NULL); };
 
 		virtual ~ExtData() {};

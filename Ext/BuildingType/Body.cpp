@@ -198,8 +198,22 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 		this->RubbleDestroyed->CanBeOccupied = false;
 	}
 
-	this->LegacyRadarEffect = pINI->ReadBool(pID, "SpyEffect.LegacyRadar", this->LegacyRadarEffect);
-	this->DisplayProduction = pINI->ReadBool(pID, "SpyEffect.DisplayProduction", this->DisplayProduction);
+//	this->LegacyRadarEffect = pINI->ReadBool(pID, "SpyEffect.LegacyRadar", this->LegacyRadarEffect);
+//	this->DisplayProduction = pINI->ReadBool(pID, "SpyEffect.DisplayProduction", this->DisplayProduction);
+
+	INI_EX exINI(pINI);
+	this->InfiltrateCustom.Read(&exINI, pID, "SpyEffect.Custom");
+	if(this->InfiltrateCustom) {
+		this->RevealProduction.Read(&exINI, pID, "SpyEffect.RevealProduction");
+		this->ResetSW.Read(&exINI, pID, "SpyEffect.ResetSuperweapons");
+		this->ResetRadar.Read(&exINI, pID, "SpyEffect.ResetRadar");
+		this->RevealRadar.Read(&exINI, pID, "SpyEffect.RevealRadar");
+		this->GainVeterancy.Read(&exINI, pID, "SpyEffect.UnitVeterancy");
+		this->StolenTechIndex.Read(&exINI, pID, "SpyEffect.StolenTechIndex");
+		this->PowerOutageDuration.Read(&exINI, pID, "SpyEffect.PowerOutageDuration");
+		this->StolenMoneyAmount.Read(&exINI, pID, "SpyEffect.StolenMoneyAmount");
+		this->StolenMoneyPercentage.Read(&exINI, pID, "SpyEffect.StolenMoneyPercentage");
+	}
 
 	this->_Initialized = is_Completed;
 }

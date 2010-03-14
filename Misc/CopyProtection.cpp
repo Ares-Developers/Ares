@@ -2,8 +2,6 @@
 
 #include "../Ares.h"
 
-//TODO: Add a function that determines versions of the exes (detects a cracked ra2md.exe etc)?
-
 DEFINE_HOOK(4A80D0, CD_AlwaysFindYR, 6)
 {
 	if(Ares::bNoCD) {

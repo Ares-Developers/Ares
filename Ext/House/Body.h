@@ -9,6 +9,8 @@
 #include <ScenarioClass.h>
 #include <SuperClass.h>
 
+#include <bitset>
+
 class HouseExt
 {
 	public:
@@ -27,6 +29,8 @@ class HouseExt
 			BuildingClass *Factory_NavyType;
 			BuildingClass *Factory_AircraftType;
 
+			std::bitset<32> StolenTech;
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			IonSensitive(0),
 			FirewallActive(0),
@@ -35,7 +39,8 @@ class HouseExt
 			Factory_InfantryType(NULL),
 			Factory_VehicleType(NULL),
 			Factory_NavyType(NULL),
-			Factory_AircraftType(NULL)
+			Factory_AircraftType(NULL),
+			StolenTech(0)
 		{
 		};
 

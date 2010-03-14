@@ -145,6 +145,7 @@ DEFINE_HOOK(6F407D, TechnoClass_Init_1, 6)
 		WarheadTypeClass *WH1 = W1 ? W1->Warhead : NULL;
 		WarheadTypeClass *WH2 = W2 ? W2->Warhead : NULL;
 
+#if 0
 		if((W1 && !WH1) || (W2 && !WH2)) {
 			_snprintf(Ares::readBuffer, Ares::readLength,
 			"Constructing an instance of [%s]:\r\n%sWeapon %s (slot %d) has no Warhead!\n",
@@ -154,6 +155,7 @@ DEFINE_HOOK(6F407D, TechnoClass_Init_1, 6)
 				i);
 			Debug::FatalError(Ares::readBuffer);
 		}
+#endif
 
 		if(WH1 && WH1->MindControl && Capturer == NULL) {
 			GAME_ALLOC(CaptureManagerClass, Capturer, T, W1->Damage, W1->InfiniteMindControl);
