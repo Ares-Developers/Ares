@@ -40,7 +40,7 @@ class HouseExt
 			Factory_VehicleType(NULL),
 			Factory_NavyType(NULL),
 			Factory_AircraftType(NULL),
-			StolenTech(0)
+			StolenTech(0ull)
 		{
 		};
 
