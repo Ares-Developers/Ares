@@ -146,7 +146,8 @@ DEFINE_HOOK(517FC1, InfantryClass_ReceiveDamage_DeployedDamage, 6) {
 DEFINE_HOOK(5185C8, InfantryClass_ReceiveDamage_InfDeath, 6)
 {
 	GET(InfantryClass *, I, ESI);
-	GET_STACK(WarheadTypeClass *, WH, 0xDC);
+	LEA_STACK(args_ReceiveDamage *, Arguments, 0xD4);
+//	GET_STACK(WarheadTypeClass *, WH, 0xDC);
 	GET(DWORD, InfDeath, EDI);
 	--InfDeath;
 	R->EDI(InfDeath);
@@ -155,7 +156,7 @@ DEFINE_HOOK(5185C8, InfantryClass_ReceiveDamage_InfDeath, 6)
 
 	if(!I->Type->NotHuman) {
 		if(I->GetHeight() < 10) {
-			WarheadTypeExt::ExtData *pData = WarheadTypeExt::ExtMap.Find(WH);
+			WarheadTypeExt::ExtData *pData = WarheadTypeExt::ExtMap.Find(Arguments->WH);
 			if(AnimTypeClass *deathAnim = pData->InfDeathAnim) {
 				AnimClass *Anim = NULL;
 				GAME_ALLOC(AnimClass, Anim, deathAnim, &I->Location);
