@@ -1,4 +1,5 @@
 #include "Ares.h"
+#include "Ares.version.h"
 #include "Commands/Commands.h"
 #include <CommandClass.h>
 //include "CallCenter.h"

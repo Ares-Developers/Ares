@@ -3,6 +3,7 @@
 #include <WWMouseClass.h>
 
 #include "Ares.h"
+#include "Utilities/Macro.h"
 
 #include "Ext/TechnoType/Body.h"
 #include "Ext/SWType/Body.h"
