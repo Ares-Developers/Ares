@@ -25,10 +25,9 @@ void WarheadTypeExt::ExtData::LoadFromINIFile(WarheadTypeClass *pThis, CCINIClas
 	}
 
 	// writing custom verses parser just because
-	char buffer[0x100];
-	if(pINI->ReadString(section, "Verses", "", buffer, 0x100)) {
+	if(pINI->ReadString(section, "Verses", "", Ares::readBuffer, Ares::readLength)) {
 		int idx = 0;
-		for(char *cur = strtok(buffer, ","); cur; cur = strtok(NULL, ",")) {
+		for(char *cur = strtok(Ares::readBuffer, ","); cur; cur = strtok(NULL, ",")) {
 			DWORD specialFX = 0x0;
 			this->Verses[idx].Verses = Conversions::Str2Armor(cur, &specialFX);
 
@@ -67,21 +66,22 @@ void WarheadTypeExt::ExtData::LoadFromINIFile(WarheadTypeClass *pThis, CCINIClas
 
 	this->InfDeathAnim.Parse(&exINI, section, "InfDeathAnim");
 
-	if(pINI->ReadString(section, "MakeInfantryOwner", "", buffer, BUFLEN)) {
+	if(pINI->ReadString(section, "MakeInfantryOwner", "", Ares::readBuffer, Ares::readLength)) {
 		// fugly. C++ needs switch over strings.
-		if(strcmp(buffer, "invoker") == 0) {
+		if(strcmp(Ares::readBuffer, "invoker") == 0) {
 			this->MakeInfantryOwner = WarheadTypeExt::ExtData::INVOKER;
-		} else if(strcmp(buffer, "killer") == 0) {
+		} else if(strcmp(Ares::readBuffer, "killer") == 0) {
 			this->MakeInfantryOwner = WarheadTypeExt::ExtData::KILLER;
-		} else if(strcmp(buffer, "victim") == 0) {
+		} else if(strcmp(Ares::readBuffer, "victim") == 0) {
 			this->MakeInfantryOwner = WarheadTypeExt::ExtData::VICTIM;
-		} else if(strcmp(buffer, "neutral") == 0) {
+		} else if(strcmp(Ares::readBuffer, "neutral") == 0) {
 			this->MakeInfantryOwner = WarheadTypeExt::ExtData::NEUTRAL;
-		} else if(strcmp(buffer, "random") == 0) {
+		} else if(strcmp(Ares::readBuffer, "random") == 0) {
 			this->MakeInfantryOwner = WarheadTypeExt::ExtData::RANDOM;
 		}
 
 	}
+
 };
 
 void Container<WarheadTypeExt>::InvalidatePointer(void *ptr) {
