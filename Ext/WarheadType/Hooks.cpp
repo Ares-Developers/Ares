@@ -9,6 +9,8 @@
 #include "../Bullet/Body.h"
 #include "../../Enum/ArmorTypes.h"
 
+#include <SpecificStructures.h>
+
 // feature #384: Permanent MindControl Warheads + feature #200: EMP Warheads
 // attach #407 here - set TechnoClass::Flashing.Duration // that doesn't exist, according to yrpp::TechnoClass.h::struct FlashData
 // attach #561 here, reuse #407's additional hooks for colouring
@@ -171,12 +173,13 @@ DEFINE_HOOK(5185C8, InfantryClass_ReceiveDamage_InfDeath, 6)
 						break;
 
 					case WarheadTypeExt::ExtData::NEUTRAL:
+					{
 						/* REPLACE THIS SHIT WHEN THERE IS A BETTER INTERFACE */
-						HouseTypeClass* NeutralHouseType = SideClass::Find("Neutral")->Houses->GetItem(0);
+						int FirstNeutralCountry = SideClass::Find("Civilian")->HouseTypes.GetItem(0);
 						HouseClass* NeutralHouse = NULL;
-						for(short i = HouseClass::Array.Count - 1; i >= 0; --i) {
-							if(HouseClass::Array[i]->Type == NeutralHouseType) {
-								NeutralHouse = HouseClass::Array[i];
+						for(short i = HouseClass::Array->Count - 1; i >= 0; --i) {
+							if(HouseClass::Array->GetItem(i)->Type->ArrayIndex == FirstNeutralCountry) {
+								NeutralHouse = HouseClass::Array->GetItem(i);
 								break;
 							}
 						}
@@ -187,9 +190,10 @@ DEFINE_HOOK(5185C8, InfantryClass_ReceiveDamage_InfDeath, 6)
 							Debug::Log("Could not find a neutral house to set MakeInfantry anim %p to.", Anim);
 						}
 						break;
+					}
 
 					case WarheadTypeExt::ExtData::RANDOM:
-						Anim->Owner = HouseClass::Array[ScenarioClass::Instance->Random.RandomRanged(0, HouseClass::Array.Count - 1)];
+						Anim->Owner = HouseClass::Array->GetItem(ScenarioClass::Instance->Random.RandomRanged(0, HouseClass::Array->Count - 1));
 						break;
 
 					case WarheadTypeExt::ExtData::INVOKER:
