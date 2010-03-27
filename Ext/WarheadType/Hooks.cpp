@@ -1,6 +1,10 @@
 #include <InfantryClass.h>
 #include <IonBlastClass.h>
+#include <ScenarioClass.h>
 #include <WeaponTypeClass.h>
+#include <HouseTypeClass.h>
+#include <HouseClass.h>
+#include <SideClass.h>
 #include "Body.h"
 #include "../Bullet/Body.h"
 #include "../../Enum/ArmorTypes.h"
@@ -160,7 +164,41 @@ DEFINE_HOOK(5185C8, InfantryClass_ReceiveDamage_InfDeath, 6)
 			if(AnimTypeClass *deathAnim = pData->InfDeathAnim) {
 				AnimClass *Anim = NULL;
 				GAME_ALLOC(AnimClass, Anim, deathAnim, &I->Location);
-				Anim->Owner = I->Owner;
+
+				switch(pData->MakeInfantryOwner) {
+					case WarheadTypeExt::ExtData::VICTIM:
+						Anim->Owner = I->Owner;
+						break;
+
+					case WarheadTypeExt::ExtData::NEUTRAL:
+						/* REPLACE THIS SHIT WHEN THERE IS A BETTER INTERFACE */
+						HouseTypeClass* NeutralHouseType = SideClass::Find("Neutral")->Houses->GetItem(0);
+						HouseClass* NeutralHouse = NULL;
+						for(short i = HouseClass::Array.Count - 1; i >= 0; --i) {
+							if(HouseClass::Array[i]->Type == NeutralHouseType) {
+								NeutralHouse = HouseClass::Array[i];
+								break;
+							}
+						}
+
+						if(NeutralHouse) {
+							Anim->Owner = NeutralHouse;
+						} else {
+							Debug::Log("Could not find a neutral house to set MakeInfantry anim %p to.", Anim);
+						}
+						break;
+
+					case WarheadTypeExt::ExtData::RANDOM:
+						Anim->Owner = HouseClass::Array[ScenarioClass::Instance->Random.RandomRanged(0, HouseClass::Array.Count - 1)];
+						break;
+
+					case WarheadTypeExt::ExtData::INVOKER:
+					case WarheadTypeExt::ExtData::KILLER:
+					default:
+						Anim->Owner = Arguments->Attacker->Owner;
+						break;
+				}
+
 				Anim->LightConvert = ColorScheme::Array->Items[I->Owner->ColorSchemeIndex]->LightConvert;
 				Handled = true;
 			}
