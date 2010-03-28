@@ -193,7 +193,9 @@ DEFINE_HOOK(5185C8, InfantryClass_ReceiveDamage_InfDeath, 6)
 
 				if(newOwner) {
 					Anim->Owner = newOwner;
-					Anim->LightConvert = ColorScheme::Array->Items[newOwner->ColorSchemeIndex]->LightConvert;
+					if(deathAnim->MakeInfantry > -1) {
+						Anim->LightConvert = ColorScheme::Array->Items[newOwner->ColorSchemeIndex]->LightConvert;
+					}
 				}
 				Handled = true;
 			}

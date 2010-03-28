@@ -494,6 +494,11 @@ DEFINE_HOOK(4DAA68, FootClass_Update_MoveSound, 6)
 DEFINE_HOOK(73C725, UnitClass_DrawSHP_DrawShadowEarlier, 6)
 {
 	GET(UnitClass *, U, EBP);
+
+	if(U->CloakState) {
+		return 0;
+	}
+
 	GET(SHPStruct *, Image, EDI);
 	GET(int, FrameToDraw, EBX);
 	GET_STACK(Point2D, coords, 0x12C);
