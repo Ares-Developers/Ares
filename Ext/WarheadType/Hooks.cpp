@@ -167,43 +167,34 @@ DEFINE_HOOK(5185C8, InfantryClass_ReceiveDamage_InfDeath, 6)
 				AnimClass *Anim = NULL;
 				GAME_ALLOC(AnimClass, Anim, deathAnim, &I->Location);
 
+				HouseClass *newOwner = NULL;
 				switch(pData->MakeInfantryOwner) {
 					case WarheadTypeExt::ExtData::VICTIM:
-						Anim->Owner = I->Owner;
+						newOwner = I->Owner;
 						break;
 
 					case WarheadTypeExt::ExtData::NEUTRAL:
 					{
 						/* REPLACE THIS SHIT WHEN THERE IS A BETTER INTERFACE */
-						int FirstNeutralCountry = SideClass::Find("Civilian")->HouseTypes.GetItem(0);
-						HouseClass* NeutralHouse = NULL;
-						for(short i = HouseClass::Array->Count - 1; i >= 0; --i) {
-							if(HouseClass::Array->GetItem(i)->Type->ArrayIndex == FirstNeutralCountry) {
-								NeutralHouse = HouseClass::Array->GetItem(i);
-								break;
-							}
-						}
-
-						if(NeutralHouse) {
-							Anim->Owner = NeutralHouse;
-						} else {
-							Debug::Log("Could not find a neutral house to set MakeInfantry anim %p to.", Anim);
-						}
+						newOwner = HouseClass::FindByCountryIndex(HouseTypeClass::FindIndexOfName("Neutral"));
 						break;
 					}
 
 					case WarheadTypeExt::ExtData::RANDOM:
-						Anim->Owner = HouseClass::Array->GetItem(ScenarioClass::Instance->Random.RandomRanged(0, HouseClass::Array->Count - 1));
+						newOwner = HouseClass::Array->GetItem(ScenarioClass::Instance->Random.RandomRanged(0, HouseClass::Array->Count - 1));
 						break;
 
 					case WarheadTypeExt::ExtData::INVOKER:
 					case WarheadTypeExt::ExtData::KILLER:
 					default:
-						Anim->Owner = Arguments->Attacker->Owner;
+						newOwner = Arguments->Attacker->Owner;
 						break;
 				}
 
-				Anim->LightConvert = ColorScheme::Array->Items[I->Owner->ColorSchemeIndex]->LightConvert;
+				if(newOwner) {
+					Anim->Owner = newOwner;
+					Anim->LightConvert = ColorScheme::Array->Items[newOwner->ColorSchemeIndex]->LightConvert;
+				}
 				Handled = true;
 			}
 		}
