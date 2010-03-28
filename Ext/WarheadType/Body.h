@@ -63,7 +63,6 @@ public:
 		bool AffectsEnemies; // request #397
 
 		Valueable<AnimTypeClass*> InfDeathAnim;
-		enum {INVOKER, KILLER, VICTIM, NEUTRAL, RANDOM} MakeInfantryOwner;
 
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			MindControl_Permanent (false),
@@ -73,8 +72,7 @@ public:
 			DeployedDamage (1.00),
 			Temporal_WarpAway (&RulesClass::Global()->WarpAway),
 			AffectsEnemies (true),
-			InfDeathAnim (NULL),
-			MakeInfantryOwner (INVOKER)
+			InfDeathAnim (NULL)
 			{
 				for(int i = 0; i < 11; ++i) {
 					VersesData vs;

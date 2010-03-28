@@ -9,8 +9,6 @@
 #include "../Bullet/Body.h"
 #include "../../Enum/ArmorTypes.h"
 
-#include <SpecificStructures.h>
-
 // feature #384: Permanent MindControl Warheads + feature #200: EMP Warheads
 // attach #407 here - set TechnoClass::Flashing.Duration // that doesn't exist, according to yrpp::TechnoClass.h::struct FlashData
 // attach #561 here, reuse #407's additional hooks for colouring
@@ -145,65 +143,5 @@ DEFINE_HOOK(517FC1, InfantryClass_ReceiveDamage_DeployedDamage, 6) {
 	return WH // yes, let's make sure the pointer's safe AFTER we've dereferenced it... Failstwood!
 		? 0x517FF9
 		: 0x518016
-	;
-}
-
-/* #188 - InfDeaths */
-DEFINE_HOOK(5185C8, InfantryClass_ReceiveDamage_InfDeath, 6)
-{
-	GET(InfantryClass *, I, ESI);
-	LEA_STACK(args_ReceiveDamage *, Arguments, 0xD4);
-//	GET_STACK(WarheadTypeClass *, WH, 0xDC);
-	GET(DWORD, InfDeath, EDI);
-	--InfDeath;
-	R->EDI(InfDeath);
-
-	bool Handled = false;
-
-	if(!I->Type->NotHuman) {
-		if(I->GetHeight() < 10) {
-			WarheadTypeExt::ExtData *pData = WarheadTypeExt::ExtMap.Find(Arguments->WH);
-			if(AnimTypeClass *deathAnim = pData->InfDeathAnim) {
-				AnimClass *Anim = NULL;
-				GAME_ALLOC(AnimClass, Anim, deathAnim, &I->Location);
-
-				HouseClass *newOwner = NULL;
-				switch(pData->MakeInfantryOwner) {
-					case WarheadTypeExt::ExtData::VICTIM:
-						newOwner = I->Owner;
-						break;
-
-					case WarheadTypeExt::ExtData::NEUTRAL:
-					{
-						/* REPLACE THIS SHIT WHEN THERE IS A BETTER INTERFACE */
-						newOwner = HouseClass::FindByCountryIndex(HouseTypeClass::FindIndexOfName("Neutral"));
-						break;
-					}
-
-					case WarheadTypeExt::ExtData::RANDOM:
-						newOwner = HouseClass::Array->GetItem(ScenarioClass::Instance->Random.RandomRanged(0, HouseClass::Array->Count - 1));
-						break;
-
-					case WarheadTypeExt::ExtData::INVOKER:
-					case WarheadTypeExt::ExtData::KILLER:
-					default:
-						newOwner = Arguments->Attacker->Owner;
-						break;
-				}
-
-				if(newOwner) {
-					Anim->Owner = newOwner;
-					if(deathAnim->MakeInfantry > -1) {
-						Anim->LightConvert = ColorScheme::Array->Items[newOwner->ColorSchemeIndex]->LightConvert;
-					}
-				}
-				Handled = true;
-			}
-		}
-	}
-
-	return (Handled || InfDeath >= 10)
-		? 0x5185F1
-		: 0x5185CE
 	;
 }

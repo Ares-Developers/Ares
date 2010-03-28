@@ -59,23 +59,6 @@ void WarheadTypeExt::ExtData::LoadFromINIFile(WarheadTypeClass *pThis, CCINIClas
 	this->AffectsEnemies = pINI->ReadBool(section, "AffectsEnemies", this->AffectsEnemies);
 
 	this->InfDeathAnim.Parse(&exINI, section, "InfDeathAnim");
-
-	if(pINI->ReadString(section, "MakeInfantryOwner", "", Ares::readBuffer, Ares::readLength)) {
-		// fugly. C++ needs switch over strings.
-		if(strcmp(Ares::readBuffer, "invoker") == 0) {
-			this->MakeInfantryOwner = WarheadTypeExt::ExtData::INVOKER;
-		} else if(strcmp(Ares::readBuffer, "killer") == 0) {
-			this->MakeInfantryOwner = WarheadTypeExt::ExtData::KILLER;
-		} else if(strcmp(Ares::readBuffer, "victim") == 0) {
-			this->MakeInfantryOwner = WarheadTypeExt::ExtData::VICTIM;
-		} else if(strcmp(Ares::readBuffer, "neutral") == 0) {
-			this->MakeInfantryOwner = WarheadTypeExt::ExtData::NEUTRAL;
-		} else if(strcmp(Ares::readBuffer, "random") == 0) {
-			this->MakeInfantryOwner = WarheadTypeExt::ExtData::RANDOM;
-		}
-
-	}
-
 };
 
 void Container<WarheadTypeExt>::InvalidatePointer(void *ptr) {

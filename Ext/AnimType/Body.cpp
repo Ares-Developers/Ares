@@ -1,10 +1,70 @@
 #include "Body.h"
+#include "../../Ares.h"
+#include <HouseTypeClass.h>
+#include <HouseClass.h>
+#include <ScenarioClass.h>
 
 template<> const DWORD Extension<AnimTypeClass>::Canary = 0xEEEEEEEE;
 Container<AnimTypeExt> AnimTypeExt::ExtMap;
 
 template<> AnimTypeExt::TT *Container<AnimTypeExt>::SavingObject = NULL;
 template<> IStream *Container<AnimTypeExt>::SavingStream = NULL;
+
+void AnimTypeExt::ExtData::LoadFromINIFile(AnimTypeClass *pThis, CCINIClass *pINI)
+{
+	if(pINI->ReadString(pThis->ID, "MakeInfantryOwner", "", Ares::readBuffer, Ares::readLength)) {
+		// fugly. C++ needs switch over strings.
+		if(strcmp(Ares::readBuffer, "invoker") == 0) {
+			this->MakeInfantryOwner = ExtData::INVOKER;
+		} else if(strcmp(Ares::readBuffer, "killer") == 0) {
+			this->MakeInfantryOwner = ExtData::KILLER;
+		} else if(strcmp(Ares::readBuffer, "victim") == 0) {
+			this->MakeInfantryOwner = ExtData::VICTIM;
+		} else if(strcmp(Ares::readBuffer, "neutral") == 0) {
+			this->MakeInfantryOwner = ExtData::NEUTRAL;
+		} else if(strcmp(Ares::readBuffer, "random") == 0) {
+			this->MakeInfantryOwner = ExtData::RANDOM;
+		}
+	}
+
+}
+
+void AnimTypeExt::SetMakeInfOwner(AnimClass *pAnim, HouseClass *pInvoker, HouseClass *pVictim, HouseClass *pKiller)
+{
+	AnimTypeExt::ExtData *pAnimData = AnimTypeExt::ExtMap.Find(pAnim->Type);
+	HouseClass *newOwner = NULL;
+	switch(pAnimData->MakeInfantryOwner) {
+		case AnimTypeExt::ExtData::NEUTRAL:
+			newOwner = HouseClass::FindByCountryIndex(HouseTypeClass::FindIndexOfName("Neutral"));
+			break;
+
+		case AnimTypeExt::ExtData::RANDOM:
+			newOwner = HouseClass::Array->GetItem(ScenarioClass::Instance->Random.RandomRanged(0, HouseClass::Array->Count - 1));
+			break;
+
+		case AnimTypeExt::ExtData::VICTIM:
+			newOwner = pVictim;
+			break;
+
+		case AnimTypeExt::ExtData::INVOKER:
+			newOwner = pInvoker;
+			break;
+
+		case AnimTypeExt::ExtData::KILLER:
+		default:
+			newOwner = pKiller;
+			break;
+	}
+
+	if(newOwner) {
+		pAnim->Owner = newOwner;
+		if(pAnim->Type->MakeInfantry > -1) {
+			pAnim->LightConvert = ColorScheme::Array->Items[newOwner->ColorSchemeIndex]->LightConvert;
+		}
+	}
+
+}
+
 
 // =============================
 // container hooks
