@@ -15,12 +15,8 @@ void ArmorType::LoadFromINI(CCINIClass *pINI)
 	pINI->ReadString(section, this->Name, "", buffer, 0x40);
 
 	this->DefaultIndex = ArmorType::FindIndex(buffer);
-	DWORD specialFX;
 	WarheadTypeExt::VersesData *VS = &this->DefaultVerses;
-	VS->Verses = Conversions::Str2Armor(buffer, &specialFX);
-	VS->ForceFire = ((specialFX & verses_ForceFire) == 0);
-	VS->Retaliate = ((specialFX & verses_Retaliate) == 0);
-	VS->PassiveAcquire = ((specialFX & verses_PassiveAcquire) == 0);
+	VS->Parse(buffer);
 }
 
 void ArmorType::LoadForWarhead(CCINIClass *pINI, WarheadTypeClass* pWH)
@@ -48,12 +44,7 @@ void ArmorType::LoadForWarhead(CCINIClass *pINI, WarheadTypeClass* pWH)
 		_snprintf(buffer, 64, "Versus.%s", Array[i]->Name);
 		if(pINI->ReadString(section, buffer, "", ret, 0x20)) {
 
-			DWORD specialFX = 0x0;
-			pData->Verses[i].Verses = Conversions::Str2Armor(ret, &specialFX);
-
-			pData->Verses[i].ForceFire = ((specialFX & verses_ForceFire) != 0);
-			pData->Verses[i].Retaliate = ((specialFX & verses_Retaliate) != 0);
-			pData->Verses[i].PassiveAcquire = ((specialFX & verses_PassiveAcquire) != 0);
+			pData->Verses[i].Parse(ret);
 		}
 
 		_snprintf(buffer, 128, "Versus.%s.ForceFire", Array[i]->Name);
