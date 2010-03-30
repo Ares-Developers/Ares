@@ -193,7 +193,7 @@ A_FINE_HOOK(5190C5, InfantryClass_Draw_Tint, 5)
 	GET(InfantryClass *, Item, ESI);
 	DWORD currentTint = R->get_StackVar32(0x18);
 
-	R->set_StackVar32(currentTint);
+	R->set_StackVar32(currentTint, 0x18);
 	return 0;
 }
 
@@ -288,5 +288,29 @@ A_FINE_HOOK(481DB8, CellClass_CrateBeingCollected_Part2_ActualEffects, 5)
 	GET(CellClass *, pThis, ESI);
 	bool Handled = 0;
 	return Handled ? 0x483389 : 0;
+}
+
+/* outrageously delicious
+ * start for multicell units
+ * marks cells as occupied, mouseover events work
+ * pathfinding of other units around this one works
+ * pathfinding of this unit around others doesn't
+ * 	click target becomes {0, 0} and unit disregards its own child cells when pathfinding
+ * 	so can park {0, 0} next to a structure, then {1, 0} ends up inside said structure and unit explodes upon stopping
+ * */
+A_FINE_HOOK(5F7641, ObjectTypeClass_GetFoundationData, 6)
+{
+	CellStruct *StubFoundation = (CellStruct *)0xAC1438;
+	CellStruct *TestFoundation = (CellStruct *)0x89C978;
+	GET_STACK(ObjectTypeClass *, ObjType, 0x0);
+
+	if(ObjType && ObjType->WhatAmI() == abs_UnitType && strcmp(ObjType->ID, "MTNK") == 0) {
+		Debug::Log("EHLO\n");
+		R->EAX<CellStruct *>(TestFoundation);
+		return 0x5F7697;
+	} else {
+		R->EAX<CellStruct *>(StubFoundation);
+		return 0;
+	}
 }
 #endif
