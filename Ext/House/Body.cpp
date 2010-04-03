@@ -31,7 +31,9 @@ signed int HouseExt::RequirementsMet(HouseClass *pHouse, TechnoTypeClass *pItem)
 	if(!(pData->PrerequisiteTheaters & (1 << ScenarioClass::Global()->Theater))) { return 0; }
 	if(Prereqs::HouseOwnsAny(pHouse, &pData->PrerequisiteNegatives)) { return 0; }
 
-	if((pHouseExt->StolenTech & pData->RequiredStolenTech) != pData->RequiredStolenTech) { return 0; }
+	if(pData->RequiredStolenTech.any()) {
+		if((pHouseExt->StolenTech & pData->RequiredStolenTech) != pData->RequiredStolenTech) { return 0; }
+	}
 
 	// yes, the game checks it here
 	// hack value - skip real prereq check
