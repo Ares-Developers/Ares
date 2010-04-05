@@ -577,11 +577,8 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 		he will see the cameo of whatever is being built in the factory.
 
 		Addition 04.03.10: People complained about it not being optional. Now it is.
-
-		Issue #696 - changed radar/spy behavior
-		The previous implementation also reactivated RA's behavior when spying a radar - the additional check makes that optional.
 	*/
-	if(pTypeExt->RevealProduction || pTypeExt->RevealRadar) {
+	if(pTypeExt->RevealProduction) {
 		EnteredBuilding->DisplayProductionTo.Add(Enterer);
 		if(evaForOwner || evaForEnterer) {
 			VoxClass::Play("EVA_BuildingInfiltrated");
@@ -589,9 +586,16 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 		effectApplied = true;
 	}
 
-	// also note that the slow radar reparse call (MapClass::sub_4F42D0()) is not made here, meaning if you enter a radar,
-	// there will be a discrepancy between what you see on the map/tact map and what the game thinks you see
-
+	if(pTypeExt->RevealRadar) {
+		EnteredBuilding->DisplayProductionTo.Add(Enterer);
+		BuildingExt::UpdateDisplayTo(EnteredBuilding);
+		if(evaForOwner || evaForEnterer) {
+			VoxClass::Play("EVA_BuildingInfiltrated");
+		}
+		MapClass::Instance->sub_657CE0();
+		MapClass::Instance->sub_4F42F0(2);
+		effectApplied = true;
+	}
 
 	if(effectApplied) {
 		EnteredBuilding->SetLayer(lyr_Ground);
