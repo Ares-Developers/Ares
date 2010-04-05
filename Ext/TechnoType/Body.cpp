@@ -94,11 +94,12 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	this->Survivors_PilotChance.LoadFromINI(pINI, section, "Survivor.%sPilotChance");
 	this->Survivors_PassengerChance.LoadFromINI(pINI, section, "Survivor.%sPassengerChance");
 
-	char *buffer = Ares::readBuffer;
 	char flag[256];
 	for(int i = 0; i < SideClass::Array->Count; ++i) {
 		_snprintf(flag, 256, "Survivor.Side%d", i);
-		this->Survivors_Pilots[i] = InfantryTypeClass::Find(flag);
+		if(pINI->ReadString(section, flag, "", Ares::readBuffer, Ares::readLength)) {
+			this->Survivors_Pilots[i] = InfantryTypeClass::Find(Ares::readBuffer);
+		}
 	}
 
 	// prereqs
@@ -113,29 +114,29 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	}
 
 	DynamicVectorClass<int> *dvc = this->PrerequisiteLists.GetItem(0);
-	if(pINI->ReadString(section, "Prerequisite", "", buffer, BUFLEN)) {
-		Prereqs::Parse(buffer, dvc);
+	if(pINI->ReadString(section, "Prerequisite", "", Ares::readBuffer, Ares::readLength)) {
+		Prereqs::Parse(Ares::readBuffer, dvc);
 	}
-	if(pINI->ReadString(section, "PrerequisiteOverride", "", buffer, BUFLEN)) {
+	if(pINI->ReadString(section, "PrerequisiteOverride", "", Ares::readBuffer, Ares::readLength)) {
 		dvc = pThis->get_PrerequisiteOverride();
-		Prereqs::Parse(buffer, dvc);
+		Prereqs::Parse(Ares::readBuffer, dvc);
 	}
 	for(int i = 0; i < this->PrerequisiteLists.Count; ++i) {
 		_snprintf(flag, 256, "Prerequisite.List%d", i);
-		if(pINI->ReadString(section, flag, "", buffer, BUFLEN)) {
+		if(pINI->ReadString(section, flag, "", Ares::readBuffer, Ares::readLength)) {
 			dvc = this->PrerequisiteLists.GetItem(i);
-			Prereqs::Parse(buffer, dvc);
+			Prereqs::Parse(Ares::readBuffer, dvc);
 		}
 	}
 
 	dvc = &this->PrerequisiteNegatives;
-	if(pINI->ReadString(section, "Prerequisite.Negative", "", buffer, BUFLEN)) {
-		Prereqs::Parse(buffer, dvc);
+	if(pINI->ReadString(section, "Prerequisite.Negative", "", Ares::readBuffer, Ares::readLength)) {
+		Prereqs::Parse(Ares::readBuffer, dvc);
 	}
 
-	if(pINI->ReadString(section, "Prerequisite.RequiredTheaters", "", buffer, BUFLEN)) {
+	if(pINI->ReadString(section, "Prerequisite.RequiredTheaters", "", Ares::readBuffer, Ares::readLength)) {
 		this->PrerequisiteTheaters = 0;
-		for(char *cur = strtok(buffer, ","); cur; cur = strtok(NULL, ",")) {
+		for(char *cur = strtok(Ares::readBuffer, ","); cur; cur = strtok(NULL, ",")) {
 			signed int idx = Theater::FindIndex(cur);
 			if(idx != -1) {
 				this->PrerequisiteTheaters |= (1 << idx);
@@ -157,12 +158,12 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	this->Is_Spotlighted = pINI->ReadBool(section, "HasSpotlight", this->Is_Spotlighted);
 	this->Spot_Height = pINI->ReadInteger(section, "Spotlight.StartHeight", this->Spot_Height);
 	this->Spot_Distance = pINI->ReadInteger(section, "Spotlight.Distance", this->Spot_Distance);
-	if(pINI->ReadString(section, "Spotlight.AttachedTo", "", buffer, 256)) {
-		if(!_strcmpi(buffer, "body")) {
+	if(pINI->ReadString(section, "Spotlight.AttachedTo", "", Ares::readBuffer, Ares::readLength)) {
+		if(!_strcmpi(Ares::readBuffer, "body")) {
 			this->Spot_AttachedTo = sa_Body;
-		} else if(!_strcmpi(buffer, "turret")) {
+		} else if(!_strcmpi(Ares::readBuffer, "turret")) {
 			this->Spot_AttachedTo = sa_Turret;
-		} else if(!_strcmpi(buffer, "barrel")) {
+		} else if(!_strcmpi(Ares::readBuffer, "barrel")) {
 			this->Spot_AttachedTo = sa_Barrel;
 		}
 	}
@@ -185,18 +186,18 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	this->Parachute_Anim.Parse(&exINI, section, "Parachute.Anim");
 
 	// new on 08.11.09 for #342 (Operator=)
-	if(pINI->ReadString(section, "Operator", "", buffer, BUFLEN)) { // try to read the flag
-		this->IsAPromiscuousWhoreAndLetsAnyoneRideIt = (strcmp(buffer, "_ANY_") == 0); // set whether this type accepts all operators
+	if(pINI->ReadString(section, "Operator", "", Ares::readBuffer, Ares::readLength)) { // try to read the flag
+		this->IsAPromiscuousWhoreAndLetsAnyoneRideIt = (strcmp(Ares::readBuffer, "_ANY_") == 0); // set whether this type accepts all operators
 		if(!this->IsAPromiscuousWhoreAndLetsAnyoneRideIt) { // if not, find the specific operator it allows
-			this->Operator = InfantryTypeClass::Find(buffer);
+			this->Operator = InfantryTypeClass::Find(Ares::readBuffer);
 		}
 	}
 
 	this->CameoPal.LoadFromINI(CCINIClass::INI_Art, pThis->ImageFile, "CameoPalette");
 
-	if(pINI->ReadString(section, "Prerequisite.StolenTechs", "", buffer, BUFLEN)) {
+	if(pINI->ReadString(section, "Prerequisite.StolenTechs", "", Ares::readBuffer, Ares::readLength)) {
 		this->RequiredStolenTech.reset();
-		for(char *cur = strtok(buffer, ","); cur; cur = strtok(NULL, ",")) {
+		for(char *cur = strtok(Ares::readBuffer, ","); cur; cur = strtok(NULL, ",")) {
 			signed int idx = atoi(cur);
 			if(idx > -1 && idx < 32) {
 				this->RequiredStolenTech.set(idx);
