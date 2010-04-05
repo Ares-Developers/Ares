@@ -59,6 +59,8 @@ void WarheadTypeExt::ExtData::LoadFromINIFile(WarheadTypeClass *pThis, CCINIClas
 	this->AffectsEnemies = pINI->ReadBool(section, "AffectsEnemies", this->AffectsEnemies);
 
 	this->InfDeathAnim.Parse(&exINI, section, "InfDeathAnim");
+
+	this->KillDriver = pINI->ReadBool(section, "KillDriver", this->KillDriver);
 };
 
 void Container<WarheadTypeExt>::InvalidatePointer(void *ptr) {

@@ -5,6 +5,9 @@
 #include <HouseTypeClass.h>
 #include <HouseClass.h>
 #include <SideClass.h>
+#include <FootClass.h>
+#include <TechnoClass>
+#include <CaptureManagerClass>
 #include "Body.h"
 #include "../Bullet/Body.h"
 #include "../../Enum/ArmorTypes.h"
@@ -106,6 +109,34 @@ DEFINE_HOOK(46920B, BulletClass_Fire, 6) {
 			Bullet->Health = 0;
 			Bullet->DamageMultiplier = 0;
 			Bullet->Remove();
+		}
+
+		// Request #733: KillDriver/"Jarmen Kell"
+		TechnoTypeExt::ExtData* TargetTypeExt = TechnoTypeExt::ExtMap.Find(Bullet->Target->Type);
+		// conditions: Warhead is KillDriver, target is Vehicle or Aircraft, but not protected and not a living being
+		if(pData->KillDriver
+		  && ((Bullet->Target->WhatAmI() == abs_Unit) || (Bullet->Target->WhatAmI() == abs_Aircraft))
+		  && !(TargetTypeExt->ProtectedDriver || Bullet->Target->Type->Organic || Bullet->Target->Type->Natural)) {
+
+			// If this vehicle uses Operator=, we have to take care of actual "physical" drivers, rather than theoretical ones
+			if(TargetTypeExt->IsAPromiscuousWhoreAndLetsAnyoneRideIt || TargetTypeExt->Operator) {
+				//! \todo Change this to "kill one driver and eject everyone else"
+				while(Bullet->Target->Passengers.FirstPassenger) {
+					FootClass *passenger = NULL;
+					passenger = pThis->Passengers.RemoveFirstPassenger();
+					passenger->RegisterDestruction(pKiller);
+					passenger->UnInit();
+				}
+			}
+			if(TechnoClass *Controller = Bullet->Target->MindControlledBy) {
+				if(CaptureManagerClass *MC = Controller->CaptureManager) {
+					MC->FreeUnit(Bullet->Target);
+				}
+			}
+
+			// Hand over to Civilian/Special house
+			Bullet->Target->SetOwningHouse(HouseClass::FindByCountryIndex(HouseTypeClass::FindIndexOfName("Special")));
+
 		}
 	}
 
