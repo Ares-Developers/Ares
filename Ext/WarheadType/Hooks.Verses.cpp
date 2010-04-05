@@ -21,7 +21,7 @@
 DEFINE_HOOK(6F36FE, Verses_fld_0, 0)
 {
 	GET_VERSES(EAX, ECX);
-	return VS != 0.0 // vsData->ForceFire - taking this out because it has nothing to do with _forcing_ fire
+	return VS == 0.0 // vsData->ForceFire - taking this out because it has nothing to do with _forcing_ fire
 		? 0x6F37AD
 		: 0x6F3716
 	;

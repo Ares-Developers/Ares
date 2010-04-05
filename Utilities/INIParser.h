@@ -21,7 +21,7 @@ public:
 	{};
 
 	bool ReadString(const char* pSection, const char* pKey) {
-		return pINI->ReadString(pSection, pKey, "", this->buffer(), this->buflen()) > 1;
+		return pINI->ReadString(pSection, pKey, "", this->buffer(), this->buflen()) >= 1;
 	}
 
 	const char * value() {

@@ -1,4 +1,5 @@
 #include "Ares.h"
+#include "Ares.version.h"
 #include "Commands/Commands.h"
 #include <CommandClass.h>
 //include "CallCenter.h"
@@ -85,7 +86,7 @@ void __stdcall Ares::CmdLineParse(char** ppArgs,int nNumArgs)
 
 	if(Debug::bLog) {
 		Debug::LogFileOpen();
-		Debug::Log("Initialized " VERSION_STRVER);
+		Debug::Log("Initialized " VERSION_STRVER "\n");
 	}
 }
 

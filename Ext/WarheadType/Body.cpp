@@ -25,17 +25,10 @@ void WarheadTypeExt::ExtData::LoadFromINIFile(WarheadTypeClass *pThis, CCINIClas
 	}
 
 	// writing custom verses parser just because
-	char buffer[0x100];
-	if(pINI->ReadString(section, "Verses", "", buffer, 0x100)) {
+	if(pINI->ReadString(section, "Verses", "", Ares::readBuffer, Ares::readLength)) {
 		int idx = 0;
-		for(char *cur = strtok(buffer, ","); cur; cur = strtok(NULL, ",")) {
-			DWORD specialFX = 0x0;
-			this->Verses[idx].Verses = Conversions::Str2Armor(cur, &specialFX);
-
-			this->Verses[idx].ForceFire = ((specialFX & verses_ForceFire) != 0);
-			this->Verses[idx].Retaliate = ((specialFX & verses_Retaliate) != 0);
-			this->Verses[idx].PassiveAcquire = ((specialFX & verses_PassiveAcquire) != 0);
-
+		for(char *cur = strtok(Ares::readBuffer, ","); cur; cur = strtok(NULL, ",")) {
+			this->Verses[idx].Parse(cur);
 			++idx;
 			if(idx > 10) {
 				break;

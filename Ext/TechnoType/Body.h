@@ -97,7 +97,7 @@ public:
 			Operator (NULL),
 			IsAPromiscuousWhoreAndLetsAnyoneRideIt (false),
 			CameoPal(),
-			RequiredStolenTech(0)
+			RequiredStolenTech(0ull)
 			{ this->Insignia.SetAll(NULL); };
 
 		virtual ~ExtData() {};

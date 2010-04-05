@@ -45,7 +45,7 @@ DEFINE_HOOK(43E8D1, BuildingClass_DrawVisible_P3, 8)
 	GET(TechnoTypeClass *, Type, EAX);
 	TechnoTypeExt::ExtData *pData = TechnoTypeExt::ExtMap.Find(Type);
 	R->EAX<SHPStruct *>(Type->Cameo);
-	R->EDX<ConvertClass *>(pData->CameoPal.Convert);
+	R->EDX<ConvertClass *>(pData->CameoPal.Convert ? pData->CameoPal.Convert : FileSystem::CAMEO_PAL);
 	return 0x43E8DF;
 }
 

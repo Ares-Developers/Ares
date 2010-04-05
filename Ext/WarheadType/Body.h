@@ -30,15 +30,18 @@ class WarheadTypeExt //: public Container<WarheadTypeExt>
 public:
 	typedef WarheadTypeClass TT;
 
-	struct VersesData {
+	struct VersesData : public WarheadFlags {
 		double Verses;
-		bool ForceFire;
-		bool Retaliate;
-		bool PassiveAcquire;
+
+		VersesData(double VS = 1.0, bool FF = true, bool Retal = true, bool Acquire = true): Verses(VS), WarheadFlags(FF, Retal, Acquire) {};
 
 		bool operator ==(const VersesData &RHS) const {
 			return (CLOSE_ENOUGH(this->Verses, RHS.Verses));
 		};
+
+		void Parse(const char *str) {
+			this->Verses = Conversions::Str2Armor(str, this);
+		}
 	};
 
 	class ExtData : public Extension<TT>
@@ -72,7 +75,7 @@ public:
 			InfDeathAnim (NULL)
 			{
 				for(int i = 0; i < 11; ++i) {
-					VersesData vs = {1.00, 1, 1, 1};
+					VersesData vs;
 					Verses.AddItem(vs);
 				}
 			};

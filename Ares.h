@@ -15,8 +15,6 @@
 #include <InfantryTypeClass.h>
 #include <UnitTypeClass.h>
 
-#include "Ares.version.h"
-
 #define GFX_DX_HW 0x01l
 #define GFX_DX_EM 0x02l
 
