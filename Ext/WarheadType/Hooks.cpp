@@ -14,6 +14,7 @@
 // attach #561 here, reuse #407's additional hooks for colouring
 DEFINE_HOOK(46920B, BulletClass_Fire, 6) {
 	GET(BulletClass *, Bullet, ESI);
+	LEA_STACK(CoordStruct *, detonationXYZ, 0xAC);
 	WarheadTypeClass *pThis = Bullet->WH;
 
 	WarheadTypeExt::ExtData *pData = WarheadTypeExt::ExtMap.Find(pThis);
@@ -65,14 +66,14 @@ DEFINE_HOOK(46920B, BulletClass_Fire, 6) {
 		}
 	}
 
+	if (pData->EMP_Duration) {
+		EMPulseClass *placeholder;
+		GAME_ALLOC(EMPulseClass, placeholder, cellCoords, int(pThis->CellSpread), pData->EMP_Duration, 0);
+	}
+
 	if (Bullet->Target) {
 		if (TechnoClass *pTarget = specific_cast<TechnoClass *>(Bullet->Target)) {
 			TechnoTypeClass *pType = pTarget->GetTechnoType();
-
-			if (pData->EMP_Duration) {
-				EMPulseClass *placeholder;
-				GAME_ALLOC(EMPulseClass, placeholder, Bullet->Target->GetCell()->MapCoords, int(pThis->CellSpread), pData->EMP_Duration, 0);
-			}
 
 			if (pData->MindControl_Permanent) {
 				if (!pType || pType->ImmuneToPsionics) {
