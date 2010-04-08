@@ -72,7 +72,7 @@ DEFINE_HOOK(46920B, BulletClass_Fire, 6) {
 	}
 
 	if (Bullet->Target) {
-		if (TechnoClass *pTarget = specific_cast<TechnoClass *>(Bullet->Target)) {
+		if (TechnoClass *pTarget = generic_cast<TechnoClass *>(Bullet->Target)) {
 			TechnoTypeClass *pType = pTarget->GetTechnoType();
 
 			if (pData->MindControl_Permanent) {

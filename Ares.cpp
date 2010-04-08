@@ -56,6 +56,10 @@ void __stdcall Ares::RegisterCommands()
 	DumperTypesCommandClass *DumperTypesCommand;
 	GAME_ALLOC(DumperTypesCommandClass, DumperTypesCommand);
 	CommandClass::Array->AddItem(DumperTypesCommand);
+
+	DebuggingCommandClass *DebuggingCommand;
+	GAME_ALLOC(DebuggingCommandClass, DebuggingCommand);
+	CommandClass::Array->AddItem(DebuggingCommand);
 }
 
 void __stdcall Ares::CmdLineParse(char** ppArgs,int nNumArgs)

@@ -90,39 +90,3 @@ DEFINE_HOOK_AGAIN(7B94B2, WWMouseClass_DrawCursor_V2, 6)
 
 	return 0;
 }
-
-DEFINE_HOOK(6A9A2A, TabCameoListClass_Draw, 6)
-{
-	GET_STACK(ObjectTypeClass *, pType, STACK_OFFS(0x4C4, 0x458));
-
-	if(pType) {
-		ConvertClass *pPalette = NULL;
-		eAbstractType absId = pType->WhatAmI();
-		TechnoTypeClass *pTech = NULL;
-		SuperWeaponTypeClass *pSW = NULL;
-		switch(absId) {
-			case SuperWeaponTypeClass::AbsID:
-				pSW = reinterpret_cast<SuperWeaponTypeClass *>(pType);
-				if(SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSW)) {
-					pPalette = pData->CameoPal.Convert;
-				}
-				break;
-			case UnitTypeClass::AbsID:
-			case AircraftTypeClass::AbsID:
-			case BuildingTypeClass::AbsID:
-			case InfantryTypeClass::AbsID:
-				pTech = reinterpret_cast<TechnoTypeClass *>(pType);
-				if(TechnoTypeExt::ExtData *pData = TechnoTypeExt::ExtMap.Find(pTech)) {
-					pPalette = pData->CameoPal.Convert;
-				}
-				break;
-		}
-		if(!pPalette) {
-			pPalette = FileSystem::CAMEO_PAL;
-		}
-
-		R->EDX<ConvertClass *>(pPalette);
-		return 0x6A9A30;
-	}
-	return 0;
-}

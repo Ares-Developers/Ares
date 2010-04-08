@@ -1,6 +1,11 @@
 #ifndef ARES_H
 #define ARES_H
 
+//ifndef str
+#define str(x) str_(x)
+#define str_(x) #x
+//endif
+
 #include <xcompile.h>
 //include <YRPP.h>
 #include <Helpers/Macro.h>

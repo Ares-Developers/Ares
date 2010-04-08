@@ -102,46 +102,6 @@ DEFINE_HOOK(4D98DD, Insignificant_UnitLost, 6)
 	return (T->Insignificant || T->DontScore) ? 0x4D9916 : 0;
 }
 
-// bugfix #277 revisited: VeteranInfantry and friends don't show promoted cameos
-DEFINE_HOOK(712045, TechnoTypeClass_GetCameo, 5)
-{
-	// egads and gadzooks
-	retfunc<SHPStruct *> ret(R, 0x7120C6);
-
-	GET(TechnoTypeClass *, T, ECX);
-	GET(HouseClass *, House, EAX);
-	HouseTypeClass *Country = House->Type;
-
-	SHPStruct *Cameo = T->Cameo;
-	SHPStruct *Alt = T->AltCameo;
-	if(!Alt) {
-		return ret(Cameo);
-	}
-
-	switch(T->WhatAmI()) {
-		case abs_InfantryType:
-			if(House->BarracksInfiltrated && !T->Naval && T->Trainable) {
-				return ret(Alt);
-			} else {
-				return ret(Country->VeteranInfantry.FindItemIndex((InfantryTypeClass **)&T) == -1 ? Cameo : Alt);
-			}
-		case abs_UnitType:
-			if(House->WarFactoryInfiltrated && !T->Naval && T->Trainable) {
-				return ret(Alt);
-			} else {
-				return ret(Country->VeteranUnits.FindItemIndex((UnitTypeClass **)&T) == -1 ? Cameo : Alt);
-			}
-		case abs_AircraftType:
-			return ret(Country->VeteranAircraft.FindItemIndex((AircraftTypeClass **)&T) == -1 ? Cameo : Alt);
-		case abs_BuildingType:
-			if(TechnoTypeClass *Item = T->UndeploysInto) {
-				return ret(Country->VeteranUnits.FindItemIndex((UnitTypeClass **)&Item) == -1 ? Cameo : Alt);
-			}
-	}
-
-	return ret(Cameo);
-}
-
 // MakeInfantry that fails to place will just end the source animation and cleanup instead of memleaking to game end
 DEFINE_HOOK(424B23, AnimClass_Update, 6)
 {

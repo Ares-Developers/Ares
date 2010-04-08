@@ -556,7 +556,7 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 		if(promotionStolen) {
 			Enterer->ShouldRecheckTechTree = true;
 			if(Enterer->ControlledByPlayer()) {
-				MouseClass::Instance->unknown_bool_53A6 = true;
+				MouseClass::Instance->SidebarNeedsRepaint();
 			}
 			if(evaForOwner) {
 				VoxClass::Play("EVA_TechnologyStolen");

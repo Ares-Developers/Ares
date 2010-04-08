@@ -36,11 +36,6 @@ void Ares::GlobalControls::LoadConfig() {
 		GFX_DX_Force = 0;
 	}
 
-//ifndef str
-#define str(x) str_(x)
-#define str_(x) #x
-//endif
-
 #define ReadSurface(__surface__) \
 	if(INI->ReadString("Graphics.Advanced", "Surface." str(__surface__) ".Memory", Ares::readDefval, Ares::readBuffer, Ares::readLength)) { \
 		if(!_strcmpi(Ares::readBuffer, "VRAM")) { \
