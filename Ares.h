@@ -11,6 +11,7 @@
 #include <Helpers/Macro.h>
 
 #include <CCINIClass.h>
+#include <MixFileClass.h>
 
 #include "Misc/Debug.h"
 
@@ -49,6 +50,10 @@ public:
 	static char readBuffer[BUFLEN];
 	static const char readDelims[4];
 	static const char readDefval[4];
+
+	static MixFileClass *aresMIX;
+	static void InitOwnResources();
+	static void UninitOwnResources();
 
 	//Callbacks
 	static void __stdcall CmdLineParse(char**,int);
@@ -101,7 +106,6 @@ public:
 	};
 
 	static bool RunningOnWindows7OrVista();
-
 };
 
 class MemMap {

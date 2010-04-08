@@ -89,20 +89,6 @@ public:
 		ARRAY_SIZE(ParasiteClass);
 //		ARRAY_SIZE(BombClass);
 
-		for(int i = 0; i < ConvertClass::Array->Count; ++i) {
-			ConvertClass *C = ConvertClass::Array->GetItem(i);
-			Debug::Log("Convert #%d: BytesPerPixel: %d, length of BufferA: 0x%X bytes, length of BufferB: 0x%X bytes\n",
-				i, C->LeanAndMean, C->LeanAndMean * C->Count * 8, C->LeanAndMean == 1 ? 0x100 : 0
-			);
-		}
-
-		for(int i = 0; i < LightConvertClass::Array->Count; ++i) {
-			ConvertClass *C = LightConvertClass::Array->GetItem(i);
-			Debug::Log("LightConvert #%d: BytesPerPixel: %d, length of BufferA: 0x%X bytes, length of BufferB: 0x%X bytes\n",
-				i, C->LeanAndMean, C->LeanAndMean * C->Count * 8, C->LeanAndMean == 1 ? 0x100 : 0
-			);
-		}
-
 		for(MixFileClass *MIX = reinterpret_cast<MixFileClass *>(MixFileClass::MIXes->First.Next); MIX; MIX = reinterpret_cast<MixFileClass *>(MIX->Next)) {
 			Debug::Log("MIX %s - %d bytes\n", MIX->FileName, MIX->FileSize);
 		}

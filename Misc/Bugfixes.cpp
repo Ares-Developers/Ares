@@ -56,6 +56,18 @@ DEFINE_HOOK(52BB64, Expand_MIX_Deorg, 5)
 	return 0x52BB69;
 }
 
+DEFINE_HOOK(53029E, Load_Bootstrap_AresMIX, 5)
+{
+	Ares::InitOwnResources();
+	return 0;
+}
+
+DEFINE_HOOK(6BE9BD, sub_6BE1C0, 6)
+{
+	Ares::UninitOwnResources();
+	return 0;
+}
+
 DEFINE_HOOK(715857, TechnoTypeClass_LoadFromINI_LimitPalettes, 5)
 {
 	return 0x715876;

@@ -44,7 +44,6 @@ void Ares::GlobalControls::LoadConfig() {
 			GFX_S_ ## __surface__ .Memory = GFX_SU_SYSTEM; \
 		} \
 	} \
-	Debug::Log("Surface." str(__surface__) ".Memory = %s/%d\n", Ares::readBuffer, GFX_S_ ## __surface__ .Memory); \
 	if(INI->ReadString("Graphics.Advanced", "Surface." str(__surface__) ".Force3D", Ares::readDefval, Ares::readBuffer, Ares::readLength)) { \
 	 bool F3D = INI->ReadBool("Graphics.Advanced", "Surface." str(__surface__) ".Force3D", false); \
 	 GFX_S_ ## __surface__ .Force3D = F3D ? 1 : 0;\
@@ -71,10 +70,6 @@ void Ares::GlobalControls::OpenConfig() {
 	CCFileClass *cfg = new CCFileClass("Ares.ini");
 	if(cfg->Exists(NULL)) {
 		INI->ReadCCFile(cfg);
-//	} else {
-//		Debug::Log("OC4-\n");
-//		Debug::Log("Ares.ini does not exist.");
-//		ExitProcess(1);
 	}
 	delete cfg;
 }

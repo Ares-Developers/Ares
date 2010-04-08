@@ -35,8 +35,24 @@ char Ares::readBuffer[BUFLEN];
 const char Ares::readDelims[4] = ",";
 const char Ares::readDefval[4] = "";
 
+MixFileClass *Ares::aresMIX = NULL;
+
 hash_map <DWORD, size_t> MemMap::AllocMap;
 size_t MemMap::Total;
+
+void Ares::InitOwnResources()
+{
+	UninitOwnResources();
+	aresMIX = new MixFileClass("ares.mix");
+}
+
+void Ares::UninitOwnResources()
+{
+	if(aresMIX) {
+		delete aresMIX;
+		aresMIX = NULL;
+	}
+}
 
 //Implementations
 void __stdcall Ares::RegisterCommands()
