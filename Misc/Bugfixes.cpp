@@ -96,6 +96,28 @@ DEFINE_HOOK(51BCB2, InfantryClass_Update_Reload, 6)
 	return 0x51BCC0;
 }
 
+DEFINE_HOOK(51DF8C, InfantryClass_Fire_RearmTimer, 6)
+{
+	GET(InfantryClass *, I, ESI);
+	int Ammo = I->Type->Ammo;
+	if(Ammo > 0 && I->Ammo < Ammo) {
+		I->ReloadNow();
+	}
+	return 0;
+}
+
+DEFINE_HOOK(6FF66C, TechnoClass_Fire_RearmTimer, 6)
+{
+	GET(TechnoClass *, T, ESI);
+	if(BuildingClass * B = specific_cast<BuildingClass *>(T)) {
+		int Ammo = B->Type->Ammo;
+		if(Ammo > 0 && B->Ammo < Ammo) {
+			B->ReloadNow();
+		}
+	}
+	return 0;
+}
+
 // bugfix #231: DestroyAnims don't remap and cause reconnection errors
 DEFINE_HOOK(441D25, BuildingClass_Destroy, 0A)
 {
