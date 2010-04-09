@@ -74,18 +74,26 @@ DEFINE_HOOK(715857, TechnoTypeClass_LoadFromINI_LimitPalettes, 5)
 }
 
 // bugfix #471: InfantryTypes and BuildingTypes don't reload their ammo properly
-DEFINE_HOOK(43FE8E, BuildingClass_SkipStupidAmmoCode, 6)
+DEFINE_HOOK(43FEB2, BuildingClass_Update_Reload, 6)
 {
+	GET(BuildingClass *, B, ESI);
+	B->Reload();
 	return 0x43FEBE;
 }
 
-DEFINE_HOOK(6F9E5B, TechnoClass_ReloadOverride, 6)
+DEFINE_HOOK(5200D7, InfantryClass_UpdatePanic_DontReload, 6)
 {
-	GET(TechnoClass *, T, ESI);
-	if(T->WhatAmI() == abs_Infantry || T->WhatAmI() == abs_Building) {
-		T->Reload();
+	return 0x52010B;
+}
+
+DEFINE_HOOK(51BCB2, InfantryClass_Update_Reload, 6)
+{
+	GET(InfantryClass *, I, ESI);
+	if(I->InLimbo) {
+		return 0x51BDCF;
 	}
-	return 0;
+	I->Reload();
+	return 0x51BCC0;
 }
 
 // bugfix #231: DestroyAnims don't remap and cause reconnection errors
