@@ -5,6 +5,7 @@
 #include <HouseClass.h>
 #include <TechnoClass.h>
 #include <TechnoTypeClass.h>
+#include <Randomizer.h>
 
 bool RMG::UrbanAreas = 0;
 bool RMG::UrbanAreasRead = 0;
@@ -65,7 +66,7 @@ DEFINE_HOOK(5982D5, MapSeedClass_LoadFromINI, 6)
 			// no [Urban] section - use our defaults; ASSUMES default rules...
 
 			RMG::UrbanStructures.Clear();
-			char *defStructures [] = {"CITY01", "CITY02", "CITY03", "CITY04", "CITY05", "CITY06", "CANEWY20", "CANEWY21", 0};
+			char *defStructures [] = {"CABUNK01", "CABUNK02", "CAARMY01", "CAARMY02", "CAARMY03", "CAARMY04", "CACHIG03", "CANEWY01", "CANEWY14", "CANWY09", "CANWY26", "CANWY25", "CATEXS07", 0};
 			for(char ** cur = defStructures; *cur && **cur; ++cur) {
 				RMG::UrbanStructures.AddItem(*cur);
 			}
@@ -137,34 +138,21 @@ DEFINE_HOOK(5A65CA, MapSeedClass_Generate_PlaceUrbanStructures_Start, 5)
 
 DEFINE_HOOK(5A6619, MapSeedClass_Generate_PlaceUrbanStructures_Loop, 6)
 {
-	GET_STACK(int, Count, 0x78);
 	++RMG::UrbanStructuresReadSoFar;
-	return (RMG::UrbanStructures.Count >= RMG::UrbanStructuresReadSoFar)
+	return (RMG::UrbanStructures.Count > RMG::UrbanStructuresReadSoFar)
 		? 0x5A65D1
 		: 0x5A6621
 	;
 }
 
-DEFINE_HOOK(5A66A6, MapSeedClass_Generate_PlaceUrbanStructures_CTOR, 5)
+DEFINE_HOOK(5A6998, MapSeedClass_Generate_PlaceUrbanFoots, 5)
 {
-	GET(char **, names, ECX);
-	GET(DWORD, idx, EAX);
-
-	R->EDX<DWORD>(idx);
-	R->ECX<char *>(names[idx]);
-	return 0x5A66AB;
-}
-
-DEFINE_HOOK(5A69B9, MapSeedClass_Generate_PlaceUrbanFoots, 5)
-{
-	GET(int, Index, EAX);
 	int Length = RMG::UrbanInfantry.Count + RMG::UrbanVehicles.Count;
 	if(Length == 0) {
 		return 0x5A6B96; // no possible items - nothing to do
 	}
-	if(Index < 0 || Index >= Length) {
-		return 0x5A6998;
-	}
+
+	int Index = Randomizer::Global()->RandomRanged(0, Length - 1);
 
 	GET(HouseClass *, Owner, EBP);
 	ObjectClass *Item = NULL;
@@ -181,6 +169,29 @@ DEFINE_HOOK(5A69B9, MapSeedClass_Generate_PlaceUrbanFoots, 5)
 	return 0x5A6A31;
 }
 
+// ==============================
+
+DEFINE_HOOK(5A5C6A, MapSeedClass_Generate_PlacePavedRoads_RoadEndNE, 9)
+{
+	return 0x5A5CC8;
+}
+
+DEFINE_HOOK(5A5D6F, MapSeedClass_Generate_PlacePavedRoads_RoadEndSW, 9)
+{
+	return 0x5A5DB8;
+}
+
+DEFINE_HOOK(5A5F6A, MapSeedClass_Generate_PlacePavedRoads_RoadEndNW, 8)
+{
+	return 0x5A5FF8;
+}
+
+DEFINE_HOOK(5A6464, MapSeedClass_Generate_PlacePavedRoads_RoadEndSE, 9)
+{
+	return 0x5A64AD;
+}
+
+// ==============================
 
 DEFINE_HOOK(59000E, RMG_FixPavedRoadEnd_Bridges_North, 0)
 {

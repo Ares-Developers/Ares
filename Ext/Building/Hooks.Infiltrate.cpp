@@ -41,7 +41,8 @@ DEFINE_HOOK(43E7EF, BuildingClass_DrawVisible_P1, 5)
 DEFINE_HOOK(43E832, BuildingClass_DrawVisible_P2, 6)
 {
 	GET(BuildingClass *, B, ESI);
-	return B->DisplayProductionTo.Contains(HouseClass::Player)
+	BuildingTypeExt::ExtData *pType = BuildingTypeExt::ExtMap.Find(B->Type);
+	return (pType->RevealProduction && B->DisplayProductionTo.Contains(HouseClass::Player))
 		? 0x43E856
 		: 0x43E8EC
 	;
