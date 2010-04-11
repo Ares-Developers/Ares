@@ -35,7 +35,7 @@ void WeaponTypeExt::ExtData::LoadFromINIFile(WeaponTypeExt::TT *pThis, CCINIClas
 	if(pThis->IsMagBeam) {
 		this->Wave_Color.Set(ColorStruct(0xB0, 0, 0xD0)); // rp2 values
 	} else if(pThis->IsSonic) {
-		this->Wave_Color.Set(ColorStruct(255, 255, 255)); // dunno the actual default
+		this->Wave_Color.Set(ColorStruct(0, 0, 0)); // 0,0,0 is a magic value for "no custom handling"
 	} else {
 		this->Wave_Color.Set(ColorStruct(255, 255, 255)); // placeholder
 	}
