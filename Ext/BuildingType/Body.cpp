@@ -77,11 +77,11 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 
 			//Allocate CellStruct array
 			if(this->CustomData) {
-				delete[] this->CustomData;
+				delete [] this->CustomData;
 			}
 
 			if(this->OutlineData) {
-				delete[] this->OutlineData;
+				delete [] this->OutlineData;
 			}
 
 			CellStruct* pFoundationData = new CellStruct[this->CustomWidth * this->CustomHeight + 1];
@@ -296,7 +296,7 @@ void Container<BuildingTypeExt>::Load(BuildingTypeClass *pThis, IStream *pStm) {
 	//if there's custom data, read it
 	if(pData->IsCustom && pData->CustomWidth > 0 && pData->CustomHeight > 0) {
 		pData->CustomData = new CellStruct[pData->CustomWidth * pData->CustomHeight + 1];
-		pData->OutlineData = new CellStruct[pData->OutlineLength + 1];
+		pData->OutlineData = new CellStruct [pData->OutlineLength + 1];
 
 		pStm->Read(
 			pData->CustomData,

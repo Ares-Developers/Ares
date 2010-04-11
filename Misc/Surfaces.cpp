@@ -20,7 +20,7 @@ DEFINE_HOOK(533FD0, AllocateSurfaces, 0)
 
 #define DELSURFACE(surface) \
 	if(surface) { \
-		delete surface; \
+		GAME_DEALLOC(surface); \
 		surface = 0; \
 	}
 
@@ -41,7 +41,8 @@ DEFINE_HOOK(533FD0, AllocateSurfaces, 0)
 		if(Force3D == 0xFF) { \
 			Force3D = f3d; \
 		} \
-		DSurface *S = new DSurface(rect_ ## surface->Width, rect_ ## surface->Height, !!Memory, !!Force3D); \
+		DSurface *S; \
+		GAME_ALLOC(DSurface, S, rect_ ## surface->Width, rect_ ## surface->Height, !!Memory, !!Force3D); \
 		if(!S) { \
 			Debug::FatalError("Failed to allocate " str(surface) " - cannot continue."); \
 		} \
@@ -53,17 +54,17 @@ DEFINE_HOOK(533FD0, AllocateSurfaces, 0)
 		ALLOCSURFACE(Hidden, 0, 0);
 	}
 
-	ALLOCSURFACE(Composite, Game::bVideoBackBuffer, 1);
-	ALLOCSURFACE(Tile, Game::bVideoBackBuffer, 1);
+	ALLOCSURFACE(Composite, !Game::bVideoBackBuffer, 1);
+	ALLOCSURFACE(Tile, !Game::bVideoBackBuffer, 1);
 
 	if(DSurface::Composite->VRAMmed ^ DSurface::Tile->VRAMmed) {
 		DELSURFACE(DSurface::Composite);
 		DELSURFACE(DSurface::Tile);
-		DSurface::Composite = new DSurface(rect_Composite->Width, rect_Composite->Height, 1, 1);
-		DSurface::Tile = new DSurface(rect_Tile->Width, rect_Tile->Height, 1, 1);
+		GAME_ALLOC(DSurface, DSurface::Composite, rect_Composite->Width, rect_Composite->Height, 1, 1);
+		GAME_ALLOC(DSurface, DSurface::Tile, rect_Tile->Width, rect_Tile->Height, 1, 1);
 	}
 
-	ALLOCSURFACE(Sidebar, Game::bAllowVRAMSidebar, 1);
+	ALLOCSURFACE(Sidebar, !Game::bAllowVRAMSidebar, 0);
 
 	if(!flag) {
 		ALLOCSURFACE(Hidden, 0, 0);

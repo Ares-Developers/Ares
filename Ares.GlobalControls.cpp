@@ -66,15 +66,16 @@ DEFINE_HOOK(6BC0CD, _LoadRA2MD, 5)
 }
 
 void Ares::GlobalControls::OpenConfig() {
-	INI = new CCINIClass();
-	CCFileClass *cfg = new CCFileClass("Ares.ini");
+	GAME_ALLOC(CCINIClass, INI);
+	CCFileClass *cfg;
+	GAME_ALLOC(CCFileClass, cfg, "Ares.ini");
 	if(cfg->Exists(NULL)) {
 		INI->ReadCCFile(cfg);
 	}
-	delete cfg;
+	GAME_DEALLOC(cfg);
 }
 
 void Ares::GlobalControls::CloseConfig() {
-	delete INI;
+	GAME_DEALLOC(INI);
 	INI = NULL;
 }

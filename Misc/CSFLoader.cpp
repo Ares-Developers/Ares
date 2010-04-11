@@ -53,9 +53,12 @@ DEFINE_HOOK(734823, CSF_AllocateMemory, 6)
 	//but enough for exactly CSF_MAX_ENTRIES entries.
 	//We're assuming we have only one value for one label, which is standard.
 
-	CSFLabel* pLabels = new CSFLabel[CSF_MAX_ENTRIES];
-	wchar_t** pValues = new wchar_t*[CSF_MAX_ENTRIES];
-	char** pExtraValues = new char*[CSF_MAX_ENTRIES];
+	CSFLabel* pLabels;
+	GAME_ALLOC_ARR(CSFLabel, CSF_MAX_ENTRIES, pLabels);
+	wchar_t** pValues;
+	GAME_ALLOC_ARR(wchar_t*, CSF_MAX_ENTRIES, pValues);
+	char** pExtraValues;
+	GAME_ALLOC_ARR(char*, CSF_MAX_ENTRIES, pExtraValues);
 
 	for(int i = 0; i < CSF_MAX_ENTRIES; i++) {
 		*pLabels[i].Name = 0;
@@ -99,14 +102,14 @@ DEFINE_HOOK(734A5F, CSF_AddOrOverrideLabel, 5)
 			wchar_t** pValues = StringTable::get_Values();
 			if(pValues[idx])
 			{
-				delete pValues[idx];
+				GAME_DEALLOC(pValues[idx]);
 				pValues[idx] = NULL;
 			}
 
 			char** pExtraValues = StringTable::get_ExtraValues();
 			if(pExtraValues[idx])
 			{
-				delete pExtraValues[idx];
+				GAME_DEALLOC(pExtraValues[idx]);
 				pExtraValues[idx] = NULL;
 			}
 
@@ -156,7 +159,8 @@ DEFINE_HOOK(734E83, CSF_LoadString_1, 6)
 {
 	GET(char *, Name, EBX);
 	if(strlen(Name) > 6 && !strncmp(Name, "NOSTR:", 6)) {
-		CSFString *NewString = new CSFString();
+		CSFString *NewString;
+		GAME_ALLOC(CSFString, NewString);
 		wsprintfW(NewString->Text, L"%hs", &Name[6]);
 
 		NewString->PreviousEntry = StringTable::LastLoadedString;
@@ -172,7 +176,8 @@ DEFINE_HOOK(734E83, CSF_LoadString_1, 6)
 DEFINE_HOOK(734EC2, CSF_LoadString_2, 7)
 {
 	GET(char *, Name, EBX);
-	CSFString *NewString = new CSFString();
+	CSFString *NewString;
+	GAME_ALLOC(CSFString, NewString);
 
 	wsprintfW(NewString->Text, L"MISSING:'%hs'", Name);
 

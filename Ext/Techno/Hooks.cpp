@@ -161,10 +161,16 @@ DEFINE_HOOK(6F407D, TechnoClass_Init_1, 6)
 			GAME_ALLOC(CaptureManagerClass, Capturer, T, W2->Damage, W2->InfiniteMindControl);
 		}
 
-		if((WH1 && WH1->Temporal || WH2 && WH2->Temporal) && Temporal == NULL) {
+		if(WH1 && WH1->Temporal && Temporal == NULL) {
 			GAME_ALLOC(TemporalClass, Temporal, T);
+			Temporal->WarpRemaining = W1->Damage;
+			pData->idxSlot_Warp = (BYTE)i;
+		} else if(WH2 && WH2->Temporal && Temporal == NULL) {
+			GAME_ALLOC(TemporalClass, Temporal, T);
+			Temporal->WarpRemaining = W2->Damage;
 			pData->idxSlot_Warp = (BYTE)i;
 		}
+
 		if((WH1 && WH1->Parasite || WH2 && WH2->Parasite) && IsFoot && Parasite == NULL) {
 			GAME_ALLOC(ParasiteClass, Parasite, F);
 			pData->idxSlot_Parasite = (BYTE)i;

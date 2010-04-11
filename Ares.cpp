@@ -43,13 +43,13 @@ size_t MemMap::Total;
 void Ares::InitOwnResources()
 {
 	UninitOwnResources();
-	aresMIX = new MixFileClass("ares.mix");
+	GAME_ALLOC(MixFileClass, aresMIX, "ares.mix");
 }
 
 void Ares::UninitOwnResources()
 {
 	if(aresMIX) {
-		delete aresMIX;
+		GAME_DEALLOC(aresMIX);
 		aresMIX = NULL;
 	}
 }
@@ -295,6 +295,8 @@ DEFINE_HOOK(533058, CommandClassCallback_Register, 7)
 DEFINE_HOOK(7258D0, AnnounceInvalidPointer, 6)
 {
 	GET(void *, DEATH, ECX);
+
+//	Debug::Log("PointerGotInvalid: %X\n", DEATH);
 
 	INVALID_CTR(BuildingExt, DEATH);
 	INVALID_CTR(BuildingTypeExt, DEATH);
