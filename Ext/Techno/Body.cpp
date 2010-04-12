@@ -60,9 +60,8 @@ void TechnoExt::SpawnSurvivors(TechnoClass *pThis, TechnoClass *pKiller, bool Se
 
 	chance = pData->Survivors_PassengerChance.BindTo(pThis)->Get();
 	while(pThis->Passengers.FirstPassenger) {
-		FootClass *passenger = NULL;
 		bool toDelete = 1;
-		passenger = pThis->Passengers.RemoveFirstPassenger();
+		FootClass *passenger = pThis->Passengers.RemoveFirstPassenger();
 		if(chance) {
 			if(ScenarioClass::Instance->Random.RandomRanged(1, 100) <= chance) {
 				CoordStruct destLoc, tmpLoc = loc;

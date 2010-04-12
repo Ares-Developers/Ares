@@ -6,10 +6,11 @@
 #include <HouseClass.h>
 #include <SideClass.h>
 #include <FootClass.h>
-#include <TechnoClass>
-#include <CaptureManagerClass>
+#include <TechnoClass.h>
+#include <CaptureManagerClass.h>
 #include "Body.h"
 #include "../Bullet/Body.h"
+#include "../TechnoType/Body.h"
 #include "../../Enum/ArmorTypes.h"
 
 // feature #384: Permanent MindControl Warheads + feature #200: EMP Warheads
@@ -76,10 +77,10 @@ DEFINE_HOOK(46920B, BulletClass_Fire, 6) {
 
 	if (Bullet->Target) {
 		if (TechnoClass *pTarget = generic_cast<TechnoClass *>(Bullet->Target)) {
-			TechnoTypeClass *pType = pTarget->GetTechnoType();
+			TechnoTypeClass *pTargetType = pTarget->GetTechnoType();
 
 			if (pData->MindControl_Permanent) {
-				if (!pType || pType->ImmuneToPsionics) {
+				if (!pTargetType || pTargetType->ImmuneToPsionics) {
 					return 0;
 				}
 				if (pTarget->MindControlledBy) {
@@ -89,7 +90,7 @@ DEFINE_HOOK(46920B, BulletClass_Fire, 6) {
 				pTarget->MindControlledByAUnit = 1;
 				pTarget->QueueMission(mission_Guard, 0);
 
-				coords.Z += pType->MindControlRingOffset;
+				coords.Z += pTargetType->MindControlRingOffset;
 
 				AnimClass *MCAnim;
 				GAME_ALLOC(AnimClass, MCAnim, RulesClass::Instance->PermaControlledAnimationType, &coords);
@@ -102,6 +103,35 @@ DEFINE_HOOK(46920B, BulletClass_Fire, 6) {
 
 				return 0x469AA4;
 			}
+
+
+			// Request #733: KillDriver/"Jarmen Kell"
+			TechnoTypeExt::ExtData* TargetTypeExt = TechnoTypeExt::ExtMap.Find(pTargetType);
+			// conditions: Warhead is KillDriver, target is Vehicle or Aircraft, but not protected and not a living being
+			if(pData->KillDriver
+			  && ((pTarget->WhatAmI() == abs_Unit) || (pTarget->WhatAmI() == abs_Aircraft))
+			  && !(TargetTypeExt->ProtectedDriver || pTargetType->Organic || pTargetType->Natural)) {
+
+				// If this vehicle uses Operator=, we have to take care of actual "physical" drivers, rather than theoretical ones
+				if(TargetTypeExt->IsAPromiscuousWhoreAndLetsAnyoneRideIt || TargetTypeExt->Operator) {
+					//! \todo Change this to "kill one driver and eject everyone else"
+					while(pTarget->Passengers.FirstPassenger) {
+						FootClass *passenger = pTarget->Passengers.RemoveFirstPassenger();
+						passenger->RegisterDestruction(Bullet->Owner);
+						passenger->UnInit();
+					}
+				}
+				if(TechnoClass *Controller = pTarget->MindControlledBy) {
+					if(CaptureManagerClass *MC = Controller->CaptureManager) {
+						MC->FreeUnit(pTarget);
+					}
+				}
+
+				// Hand over to Civilian/Special house
+				pTarget->SetOwningHouse(HouseClass::FindByCountryIndex(HouseTypeClass::FindIndexOfName("Special")));
+
+			}
+
 		}
 
 		BulletExt::ExtData* TheBulletExt = BulletExt::ExtMap.Find(Bullet);
@@ -110,34 +140,6 @@ DEFINE_HOOK(46920B, BulletClass_Fire, 6) {
 			Bullet->Health = 0;
 			Bullet->DamageMultiplier = 0;
 			Bullet->Remove();
-		}
-
-		// Request #733: KillDriver/"Jarmen Kell"
-		TechnoTypeExt::ExtData* TargetTypeExt = TechnoTypeExt::ExtMap.Find(Bullet->Target->Type);
-		// conditions: Warhead is KillDriver, target is Vehicle or Aircraft, but not protected and not a living being
-		if(pData->KillDriver
-		  && ((Bullet->Target->WhatAmI() == abs_Unit) || (Bullet->Target->WhatAmI() == abs_Aircraft))
-		  && !(TargetTypeExt->ProtectedDriver || Bullet->Target->Type->Organic || Bullet->Target->Type->Natural)) {
-
-			// If this vehicle uses Operator=, we have to take care of actual "physical" drivers, rather than theoretical ones
-			if(TargetTypeExt->IsAPromiscuousWhoreAndLetsAnyoneRideIt || TargetTypeExt->Operator) {
-				//! \todo Change this to "kill one driver and eject everyone else"
-				while(Bullet->Target->Passengers.FirstPassenger) {
-					FootClass *passenger = NULL;
-					passenger = pThis->Passengers.RemoveFirstPassenger();
-					passenger->RegisterDestruction(pKiller);
-					passenger->UnInit();
-				}
-			}
-			if(TechnoClass *Controller = Bullet->Target->MindControlledBy) {
-				if(CaptureManagerClass *MC = Controller->CaptureManager) {
-					MC->FreeUnit(Bullet->Target);
-				}
-			}
-
-			// Hand over to Civilian/Special house
-			Bullet->Target->SetOwningHouse(HouseClass::FindByCountryIndex(HouseTypeClass::FindIndexOfName("Special")));
-
 		}
 	}
 
