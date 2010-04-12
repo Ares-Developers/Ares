@@ -20,14 +20,14 @@ public:
 	{};
 
 	~CustomPalette() {
-		delete this->Convert;
-		delete this->Palette;
+		GAME_DEALLOC(this->Convert);
+		GAME_DEALLOC(this->Palette);
 	}
 
 	bool LoadFromINI(CCINIClass *pINI, const char *pSection, const char *pKey) {
 		if(pINI->ReadString(pSection, pKey, "", Ares::readBuffer, Ares::readLength)) {
-			delete this->Palette;
-			delete this->Convert;
+			GAME_DEALLOC(this->Palette);
+			GAME_DEALLOC(this->Convert);
 			ConvertClass::CreateFromFile(Ares::readBuffer, &this->Palette, &this->Convert);
 			return true;
 		}

@@ -18,6 +18,14 @@ DEFINE_HOOK(4571E0, BuildingClass_Infiltrate, 5)
 	;
 }
 
+// #814: force sidebar repaint for standard spy effects
+DEFINE_HOOK(457533, BuildingClass_Infiltrate_Standard, 6)
+DEFINE_HOOK_AGAIN(4574D2, BuildingClass_Infiltrate_Standard, 6)
+{
+	MouseClass::Instance->SidebarNeedsRepaint();
+	return R->get_Origin() + 6;
+}
+
 // check before drawing the tooltip
 DEFINE_HOOK(43E7EF, BuildingClass_DrawVisible_P1, 5)
 {
@@ -33,7 +41,8 @@ DEFINE_HOOK(43E7EF, BuildingClass_DrawVisible_P1, 5)
 DEFINE_HOOK(43E832, BuildingClass_DrawVisible_P2, 6)
 {
 	GET(BuildingClass *, B, ESI);
-	return B->DisplayProductionTo.Contains(HouseClass::Player)
+	BuildingTypeExt::ExtData *pType = BuildingTypeExt::ExtMap.Find(B->Type);
+	return (pType->RevealProduction && B->DisplayProductionTo.Contains(HouseClass::Player))
 		? 0x43E856
 		: 0x43E8EC
 	;

@@ -52,7 +52,7 @@ DEFINE_HOOK(75144F, Ares_Audio_DeleteSampleNames, 9)
 		for(int i=0; i < pVoc->NumSamples; ++i) {
 			int SampleIndex = pVoc->SampleIndex[i];	//SampleIndex[i]
 			if(SampleIndex >= MINIMUM_ARES_SAMPLE) {
-				delete (char*)SampleIndex;
+				free((char*)SampleIndex);
 			}
 		}
 		delete ppVoc;
@@ -68,7 +68,7 @@ DEFINE_HOOK(75048E, VocClass_LoadFromINI_ResetSamples, 9)
 		for(int i=0; i < pVoc->NumSamples; ++i) {
 			int SampleIndex = pVoc->SampleIndex[i];	//SampleIndex[i]
 			if(SampleIndex >= MINIMUM_ARES_SAMPLE) {
-				delete (char*)SampleIndex;
+				free((char*)SampleIndex);
 			}
 		}
 		pVoc->NumSamples = 0;

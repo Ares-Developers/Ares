@@ -20,7 +20,7 @@ DEFINE_HOOK(533FD0, AllocateSurfaces, 0)
 
 #define DELSURFACE(surface) \
 	if(surface) { \
-		delete surface; \
+		GAME_DEALLOC(surface); \
 		surface = 0; \
 	}
 
@@ -41,7 +41,8 @@ DEFINE_HOOK(533FD0, AllocateSurfaces, 0)
 		if(Force3D == 0xFF) { \
 			Force3D = f3d; \
 		} \
-		DSurface *S = new DSurface(rect_ ## surface->Width, rect_ ## surface->Height, !!Memory, !!Force3D); \
+		DSurface *S; \
+		GAME_ALLOC(DSurface, S, rect_ ## surface->Width, rect_ ## surface->Height, !!Memory, !!Force3D); \
 		if(!S) { \
 			Debug::FatalError("Failed to allocate " str(surface) " - cannot continue."); \
 		} \
@@ -53,17 +54,17 @@ DEFINE_HOOK(533FD0, AllocateSurfaces, 0)
 		ALLOCSURFACE(Hidden, 0, 0);
 	}
 
-	ALLOCSURFACE(Composite, Game::bVideoBackBuffer, 1);
-	ALLOCSURFACE(Tile, Game::bVideoBackBuffer, 1);
+	ALLOCSURFACE(Composite, !Game::bVideoBackBuffer, 1);
+	ALLOCSURFACE(Tile, !Game::bVideoBackBuffer, 1);
 
 	if(DSurface::Composite->VRAMmed ^ DSurface::Tile->VRAMmed) {
 		DELSURFACE(DSurface::Composite);
 		DELSURFACE(DSurface::Tile);
-		DSurface::Composite = new DSurface(rect_Composite->Width, rect_Composite->Height, 1, 1);
-		DSurface::Tile = new DSurface(rect_Tile->Width, rect_Tile->Height, 1, 1);
+		GAME_ALLOC(DSurface, DSurface::Composite, rect_Composite->Width, rect_Composite->Height, 1, 1);
+		GAME_ALLOC(DSurface, DSurface::Tile, rect_Tile->Width, rect_Tile->Height, 1, 1);
 	}
 
-	ALLOCSURFACE(Sidebar, Game::bAllowVRAMSidebar, 1);
+	ALLOCSURFACE(Sidebar, !Game::bAllowVRAMSidebar, 0);
 
 	if(!flag) {
 		ALLOCSURFACE(Hidden, 0, 0);
@@ -88,41 +89,5 @@ DEFINE_HOOK_AGAIN(7B94B2, WWMouseClass_DrawCursor_V2, 6)
 
 	R->Stack<void*>(0x18, Blitter);
 
-	return 0;
-}
-
-DEFINE_HOOK(6A9A2A, TabCameoListClass_Draw, 6)
-{
-	GET_STACK(ObjectTypeClass *, pType, STACK_OFFS(0x4C4, 0x458));
-
-	if(pType) {
-		ConvertClass *pPalette = NULL;
-		eAbstractType absId = pType->WhatAmI();
-		TechnoTypeClass *pTech = NULL;
-		SuperWeaponTypeClass *pSW = NULL;
-		switch(absId) {
-			case SuperWeaponTypeClass::AbsID:
-				pSW = reinterpret_cast<SuperWeaponTypeClass *>(pType);
-				if(SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSW)) {
-					pPalette = pData->CameoPal.Convert;
-				}
-				break;
-			case UnitTypeClass::AbsID:
-			case AircraftTypeClass::AbsID:
-			case BuildingTypeClass::AbsID:
-			case InfantryTypeClass::AbsID:
-				pTech = reinterpret_cast<TechnoTypeClass *>(pType);
-				if(TechnoTypeExt::ExtData *pData = TechnoTypeExt::ExtMap.Find(pTech)) {
-					pPalette = pData->CameoPal.Convert;
-				}
-				break;
-		}
-		if(!pPalette) {
-			pPalette = FileSystem::CAMEO_PAL;
-		}
-
-		R->EDX<ConvertClass *>(pPalette);
-		return 0x6A9A30;
-	}
 	return 0;
 }

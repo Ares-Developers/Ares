@@ -36,11 +36,6 @@ void Ares::GlobalControls::LoadConfig() {
 		GFX_DX_Force = 0;
 	}
 
-//ifndef str
-#define str(x) str_(x)
-#define str_(x) #x
-//endif
-
 #define ReadSurface(__surface__) \
 	if(INI->ReadString("Graphics.Advanced", "Surface." str(__surface__) ".Memory", Ares::readDefval, Ares::readBuffer, Ares::readLength)) { \
 		if(!_strcmpi(Ares::readBuffer, "VRAM")) { \
@@ -49,7 +44,6 @@ void Ares::GlobalControls::LoadConfig() {
 			GFX_S_ ## __surface__ .Memory = GFX_SU_SYSTEM; \
 		} \
 	} \
-	Debug::Log("Surface." str(__surface__) ".Memory = %s/%d\n", Ares::readBuffer, GFX_S_ ## __surface__ .Memory); \
 	if(INI->ReadString("Graphics.Advanced", "Surface." str(__surface__) ".Force3D", Ares::readDefval, Ares::readBuffer, Ares::readLength)) { \
 	 bool F3D = INI->ReadBool("Graphics.Advanced", "Surface." str(__surface__) ".Force3D", false); \
 	 GFX_S_ ## __surface__ .Force3D = F3D ? 1 : 0;\
@@ -72,19 +66,16 @@ DEFINE_HOOK(6BC0CD, _LoadRA2MD, 5)
 }
 
 void Ares::GlobalControls::OpenConfig() {
-	INI = new CCINIClass();
-	CCFileClass *cfg = new CCFileClass("Ares.ini");
+	GAME_ALLOC(CCINIClass, INI);
+	CCFileClass *cfg;
+	GAME_ALLOC(CCFileClass, cfg, "Ares.ini");
 	if(cfg->Exists(NULL)) {
 		INI->ReadCCFile(cfg);
-//	} else {
-//		Debug::Log("OC4-\n");
-//		Debug::Log("Ares.ini does not exist.");
-//		ExitProcess(1);
 	}
-	delete cfg;
+	GAME_DEALLOC(cfg);
 }
 
 void Ares::GlobalControls::CloseConfig() {
-	delete INI;
+	GAME_DEALLOC(INI);
 	INI = NULL;
 }

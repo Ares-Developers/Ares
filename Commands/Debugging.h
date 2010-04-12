@@ -11,6 +11,8 @@
 #include "../Ext/WeaponType/Body.h"
 #include "../Ext/WarheadType/Body.h"
 
+#include <YRPP.h>
+
 class DebuggingCommandClass : public CommandClass
 {
 public:
@@ -19,10 +21,10 @@ public:
 
 	//CommandClass
 	virtual const char* GetName()
-	{ return "Debug Dump"; }
+		{ return "Debug Dump"; }
 
 	virtual const wchar_t* GetUIName()
-	{ return L"Debugging Dump"; }
+		{ return L"Debugging Dump"; }
 
 	virtual const wchar_t* GetUICategory()
 		{ return L"Development"; }
@@ -32,21 +34,67 @@ public:
 
 	virtual void Execute(DWORD dwUnk)
 	{
-/*
-		Debug::Log("Total memory consumed: 0x%X bytes\n", MemMap::Total);
+#define ARRAY_SIZE(t) \
+		Debug::Log("Size of " str(t) "::Array is: %d items * %d bytes = %d bytes total\n", t::Array->Count , sizeof(t), t::Array->Count * sizeof(t));
 
-		wchar_t msg[0x40] = L"/0";
-		wsprintfW(msg, L"Total memory consumed: 0x%X bytes\n", MemMap::Total);
-		MessageListClass::PrintMessage(msg);
-*/
+		Debug::Log("Reporting main array sizes\n");
 
-/*
-		Ares::TrackIndex = (Ares::TrackIndex + 1) % 72;
-		wchar_t msg[0x40] = L"\0";
-		wsprintfW(msg, L"TrackIndex: %d\n", Ares::TrackIndex);
+		ARRAY_SIZE(AnimClass);
+		ARRAY_SIZE(AnimTypeClass);
+		ARRAY_SIZE(HouseClass);
+		ARRAY_SIZE(HouseTypeClass);
+		ARRAY_SIZE(SideClass);
+		ARRAY_SIZE(OverlayClass);
+		ARRAY_SIZE(OverlayTypeClass);
+		ARRAY_SIZE(ParticleClass);
+		ARRAY_SIZE(ParticleTypeClass);
+		ARRAY_SIZE(ParticleSystemClass);
+		ARRAY_SIZE(ParticleSystemTypeClass);
+//		ARRAY_SIZE(SuperClass);
+		ARRAY_SIZE(SuperWeaponTypeClass);
+		ARRAY_SIZE(WarheadTypeClass);
+		ARRAY_SIZE(WeaponTypeClass);
+		ARRAY_SIZE(BulletClass);
+		ARRAY_SIZE(BulletTypeClass);
 
-		MessageListClass::PrintMessage(msg);
-*/
+		ARRAY_SIZE(TechnoClass);
+		ARRAY_SIZE(TechnoTypeClass);
+		ARRAY_SIZE(AircraftClass);
+		ARRAY_SIZE(AircraftTypeClass);
+		ARRAY_SIZE(InfantryClass);
+		ARRAY_SIZE(InfantryTypeClass);
+		ARRAY_SIZE(UnitClass);
+		ARRAY_SIZE(UnitTypeClass);
+		ARRAY_SIZE(BuildingClass);
+		ARRAY_SIZE(BuildingTypeClass);
+
+//		ARRAY_SIZE(ScriptClass);
+		ARRAY_SIZE(ScriptTypeClass);
+		ARRAY_SIZE(TeamClass);
+		ARRAY_SIZE(TeamTypeClass);
+		ARRAY_SIZE(TaskForceClass);
+		ARRAY_SIZE(AITriggerTypeClass);
+
+//		ARRAY_SIZE(TActionClass);
+//		ARRAY_SIZE(TEventClass);
+//		ARRAY_SIZE(TriggerClass);
+//		ARRAY_SIZE(TriggerTypeClass);
+
+		ARRAY_SIZE(WaveClass);
+//		ARRAY_SIZE(VoxelAnimClass);
+//		ARRAY_SIZE(VoxelAnimTypeClass);
+//		ARRAY_SIZE(CaptureManagerClass);
+//		ARRAY_SIZE(SpawnManagerClass);
+//		ARRAY_SIZE(SlaveManagerClass);
+		ARRAY_SIZE(ParasiteClass);
+//		ARRAY_SIZE(BombClass);
+
+		for(MixFileClass *MIX = reinterpret_cast<MixFileClass *>(MixFileClass::MIXes->First.Next); MIX; MIX = reinterpret_cast<MixFileClass *>(MIX->Next)) {
+			Debug::Log("MIX %s - %d bytes\n", MIX->FileName, MIX->FileSize);
+		}
+
+		Debug::Log("Done reporting sizes.\n");
+		MessageListClass::PrintMessage(L"Array sizes logged");
 	}
 
 	//Constructor

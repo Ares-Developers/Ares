@@ -56,22 +56,64 @@ DEFINE_HOOK(52BB64, Expand_MIX_Deorg, 5)
 	return 0x52BB69;
 }
 
+DEFINE_HOOK(53029E, Load_Bootstrap_AresMIX, 5)
+{
+	Ares::InitOwnResources();
+	return 0;
+}
+
+DEFINE_HOOK(6BE9BD, sub_6BE1C0, 6)
+{
+	Ares::UninitOwnResources();
+	return 0;
+}
+
 DEFINE_HOOK(715857, TechnoTypeClass_LoadFromINI_LimitPalettes, 5)
 {
 	return 0x715876;
 }
 
 // bugfix #471: InfantryTypes and BuildingTypes don't reload their ammo properly
-DEFINE_HOOK(43FE8E, BuildingClass_SkipStupidAmmoCode, 6)
+DEFINE_HOOK(43FEB2, BuildingClass_Update_Reload, 6)
 {
+	GET(BuildingClass *, B, ESI);
+	B->Reload();
 	return 0x43FEBE;
 }
 
-DEFINE_HOOK(6F9E5B, TechnoClass_ReloadOverride, 6)
+DEFINE_HOOK(5200D7, InfantryClass_UpdatePanic_DontReload, 6)
+{
+	return 0x52010B;
+}
+
+DEFINE_HOOK(51BCB2, InfantryClass_Update_Reload, 6)
+{
+	GET(InfantryClass *, I, ESI);
+	if(I->InLimbo) {
+		return 0x51BDCF;
+	}
+	I->Reload();
+	return 0x51BCC0;
+}
+
+DEFINE_HOOK(51DF8C, InfantryClass_Fire_RearmTimer, 6)
+{
+	GET(InfantryClass *, I, ESI);
+	int Ammo = I->Type->Ammo;
+	if(Ammo > 0 && I->Ammo < Ammo) {
+		I->ReloadNow();
+	}
+	return 0;
+}
+
+DEFINE_HOOK(6FF66C, TechnoClass_Fire_RearmTimer, 6)
 {
 	GET(TechnoClass *, T, ESI);
-	if(T->WhatAmI() == abs_Infantry || T->WhatAmI() == abs_Building) {
-		T->Reload();
+	if(BuildingClass * B = specific_cast<BuildingClass *>(T)) {
+		int Ammo = B->Type->Ammo;
+		if(Ammo > 0 && B->Ammo < Ammo) {
+			B->ReloadNow();
+		}
 	}
 	return 0;
 }
@@ -100,46 +142,6 @@ DEFINE_HOOK(4D98DD, Insignificant_UnitLost, 6)
 	TechnoTypeClass *T = t->GetTechnoType();
 
 	return (T->Insignificant || T->DontScore) ? 0x4D9916 : 0;
-}
-
-// bugfix #277 revisited: VeteranInfantry and friends don't show promoted cameos
-DEFINE_HOOK(712045, TechnoTypeClass_GetCameo, 5)
-{
-	// egads and gadzooks
-	retfunc<SHPStruct *> ret(R, 0x7120C6);
-
-	GET(TechnoTypeClass *, T, ECX);
-	GET(HouseClass *, House, EAX);
-	HouseTypeClass *Country = House->Type;
-
-	SHPStruct *Cameo = T->Cameo;
-	SHPStruct *Alt = T->AltCameo;
-	if(!Alt) {
-		return ret(Cameo);
-	}
-
-	switch(T->WhatAmI()) {
-		case abs_InfantryType:
-			if(House->BarracksInfiltrated && !T->Naval && T->Trainable) {
-				return ret(Alt);
-			} else {
-				return ret(Country->VeteranInfantry.FindItemIndex((InfantryTypeClass **)&T) == -1 ? Cameo : Alt);
-			}
-		case abs_UnitType:
-			if(House->WarFactoryInfiltrated && !T->Naval && T->Trainable) {
-				return ret(Alt);
-			} else {
-				return ret(Country->VeteranUnits.FindItemIndex((UnitTypeClass **)&T) == -1 ? Cameo : Alt);
-			}
-		case abs_AircraftType:
-			return ret(Country->VeteranAircraft.FindItemIndex((AircraftTypeClass **)&T) == -1 ? Cameo : Alt);
-		case abs_BuildingType:
-			if(TechnoTypeClass *Item = T->UndeploysInto) {
-				return ret(Country->VeteranUnits.FindItemIndex((UnitTypeClass **)&Item) == -1 ? Cameo : Alt);
-			}
-	}
-
-	return ret(Cameo);
 }
 
 // MakeInfantry that fails to place will just end the source animation and cleanup instead of memleaking to game end

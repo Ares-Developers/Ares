@@ -1,11 +1,17 @@
 #ifndef ARES_H
 #define ARES_H
 
+//ifndef str
+#define str(x) str_(x)
+#define str_(x) #x
+//endif
+
 #include <xcompile.h>
 //include <YRPP.h>
 #include <Helpers/Macro.h>
 
 #include <CCINIClass.h>
+#include <MixFileClass.h>
 
 #include "Misc/Debug.h"
 
@@ -44,6 +50,10 @@ public:
 	static char readBuffer[BUFLEN];
 	static const char readDelims[4];
 	static const char readDefval[4];
+
+	static MixFileClass *aresMIX;
+	static void InitOwnResources();
+	static void UninitOwnResources();
 
 	//Callbacks
 	static void __stdcall CmdLineParse(char**,int);
@@ -96,7 +106,6 @@ public:
 	};
 
 	static bool RunningOnWindows7OrVista();
-
 };
 
 class MemMap {

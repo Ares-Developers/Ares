@@ -35,8 +35,24 @@ char Ares::readBuffer[BUFLEN];
 const char Ares::readDelims[4] = ",";
 const char Ares::readDefval[4] = "";
 
+MixFileClass *Ares::aresMIX = NULL;
+
 hash_map <DWORD, size_t> MemMap::AllocMap;
 size_t MemMap::Total;
+
+void Ares::InitOwnResources()
+{
+	UninitOwnResources();
+	GAME_ALLOC(MixFileClass, aresMIX, "ares.mix");
+}
+
+void Ares::UninitOwnResources()
+{
+	if(aresMIX) {
+		GAME_DEALLOC(aresMIX);
+		aresMIX = NULL;
+	}
+}
 
 //Implementations
 void __stdcall Ares::RegisterCommands()
@@ -56,6 +72,10 @@ void __stdcall Ares::RegisterCommands()
 	DumperTypesCommandClass *DumperTypesCommand;
 	GAME_ALLOC(DumperTypesCommandClass, DumperTypesCommand);
 	CommandClass::Array->AddItem(DumperTypesCommand);
+
+	DebuggingCommandClass *DebuggingCommand;
+	GAME_ALLOC(DebuggingCommandClass, DebuggingCommand);
+	CommandClass::Array->AddItem(DebuggingCommand);
 }
 
 void __stdcall Ares::CmdLineParse(char** ppArgs,int nNumArgs)
@@ -275,6 +295,8 @@ DEFINE_HOOK(533058, CommandClassCallback_Register, 7)
 DEFINE_HOOK(7258D0, AnnounceInvalidPointer, 6)
 {
 	GET(void *, DEATH, ECX);
+
+//	Debug::Log("PointerGotInvalid: %X\n", DEATH);
 
 	INVALID_CTR(BuildingExt, DEATH);
 	INVALID_CTR(BuildingTypeExt, DEATH);

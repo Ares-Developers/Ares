@@ -105,7 +105,8 @@ public:
 			{ };
 
 		virtual ~ExtData() {
-			delete CustomData;
+			delete [] CustomData;
+			delete [] OutlineData;
 		}
 
 		virtual size_t Size() const { return sizeof(*this); };

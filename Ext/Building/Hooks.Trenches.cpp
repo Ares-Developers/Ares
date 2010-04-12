@@ -61,15 +61,11 @@ DEFINE_HOOK(441F12, BuildingClass_Destroy_RubbleYell, 6)
 	BuildingExt::ExtData* BuildingAresData = BuildingExt::ExtMap.Find(pThis);
 	BuildingTypeExt::ExtData* destrBuildTE = BuildingTypeExt::ExtMap.Find(pThis->Type);
 
-	Debug::Log("Destroying trench\n");
 	if(!pThis->C4Timer.Ignorable()) {
-		Debug::Log("C4 Done\n");
 		// If this object has a rubble building set, turn, otherwise die
 		if(destrBuildTE->RubbleDestroyed) {
-			Debug::Log("Rubble destroyed\n");
 			BuildingAresData->RubbleYell();
 		} else {
-			Debug::Log("UnInit\n");
 			pThis->UnInit();
 			pThis->AfterDestruction();
 		}

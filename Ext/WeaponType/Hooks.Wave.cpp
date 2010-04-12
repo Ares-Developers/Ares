@@ -149,25 +149,27 @@ XPORT_FUNC(WaveClass_UpdateLaser)
 }
 */
 
-DEFINE_HOOK(760BC2, WaveClass_Draw2, 0)
+DEFINE_HOOK(760BC2, WaveClass_Draw2, 9)
 {
 	GET(WaveClass *, Wave, EBX);
 	GET(WORD *, dest, EBP);
 
-	WeaponTypeExt::ModifyWaveColor(dest, dest, Wave->LaserIntensity, Wave);
-
-	return 0x760CAF;
+	return (WeaponTypeExt::ModifyWaveColor(dest, dest, Wave->LaserIntensity, Wave))
+		? 0x760CAF
+		: 0
+	;
 }
 
 // 760DE2, 6
-DEFINE_HOOK(760DE2, WaveClass_Draw3, 0)
+DEFINE_HOOK(760DE2, WaveClass_Draw3, 9)
 {
 	GET(WaveClass *, Wave, EBX);
 	GET(WORD *, dest, EDI);
 
-	WeaponTypeExt::ModifyWaveColor(dest, dest, Wave->LaserIntensity, Wave);
-
-	return 0x760ECB;
+	return (WeaponTypeExt::ModifyWaveColor(dest, dest, Wave->LaserIntensity, Wave))
+		? 0x760ECB
+		: 0
+	;
 }
 
 // 75EE57, 7
@@ -178,9 +180,10 @@ DEFINE_HOOK(75EE57, WaveClass_Draw_Sonic, 7)
 	GET(DWORD, offset, ECX);
 	DWORD offs = src + offset * 2;
 
-	WeaponTypeExt::ModifyWaveColor((WORD *)offs, (WORD *)src, R->ESI(), Wave);
-
-	return 0x75EF1C;
+	return (WeaponTypeExt::ModifyWaveColor((WORD *)offs, (WORD *)src, R->ESI(), Wave))
+		? 0x75EF1C
+		: 0
+	;
 }
 
 // 7601FB, 0B
@@ -191,9 +194,10 @@ DEFINE_HOOK(7601FB, WaveClass_Draw_Magnetron, 0B)
 	GET(DWORD, offset, ECX);
 	DWORD offs = src + offset * 2;
 
-	WeaponTypeExt::ModifyWaveColor((WORD *)offs, (WORD *)src, R->EBP(), Wave);
-
-	return 0x760285;
+	return (WeaponTypeExt::ModifyWaveColor((WORD *)offs, (WORD *)src, R->EBP(), Wave))
+		? 0x760285
+		: 0
+	;
 }
 
 // 760286, 5
@@ -202,13 +206,17 @@ DEFINE_HOOK(760286, WaveClass_Draw_Magnetron2, 5)
 	return 0x7602D3;
 }
 
-void WeaponTypeExt::ModifyWaveColor(WORD *src, WORD *dst, int Intensity, WaveClass *Wave)
+bool WeaponTypeExt::ModifyWaveColor(WORD *src, WORD *dst, int Intensity, WaveClass *Wave)
 {
 	WeaponTypeExt::ExtData *pData = WeaponTypeExt::WaveExt[Wave];
 
 	ColorStruct *CurrentColor = (pData->Wave_IsHouseColor && Wave->Owner)
 		? &Wave->Owner->Owner->Color
 		: &pData->Wave_Color;
+
+	if(*CurrentColor == ColorStruct(0, 0, 0)) {
+		return false;
+	}
 
 	ColorStruct initial = Drawing::WordColor(*src);
 
@@ -227,6 +235,7 @@ void WeaponTypeExt::ModifyWaveColor(WORD *src, WORD *dst, int Intensity, WaveCla
 	WORD color = Drawing::Color16bit(&modified);
 
 	*dst = color;
+	return true;
 }
 
 // 762C5C, 6
@@ -245,7 +254,7 @@ DEFINE_HOOK(762C5C, WaveClass_Update_Wave, 6)
 
 	CoordStruct xyzSrc, xyzTgt, xyzDummy = {0, 0, 0};
 	Firer->GetFLH(&xyzSrc, weaponIdx, xyzDummy);
-	Target->GetCoords__(&xyzTgt); // not GetCoords() ! 
+	Target->GetCoords__(&xyzTgt); // not GetCoords() !
 
 	char idx = WeaponTypeExt:: AbsIDtoIdx(Target->WhatAmI());
 

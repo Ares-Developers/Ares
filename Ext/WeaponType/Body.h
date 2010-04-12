@@ -168,7 +168,8 @@ public:
 			}
 		};
 
-	static void ModifyWaveColor(WORD *src, WORD *dst, int Intensity, WaveClass *Wave);
+	// @return skipNormalHandling?
+	static bool ModifyWaveColor(WORD *src, WORD *dst, int Intensity, WaveClass *Wave);
 };
 
 typedef hash_map<BombClass *, WeaponTypeExt::ExtData *> hash_bombExt;
