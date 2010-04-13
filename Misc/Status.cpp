@@ -85,3 +85,15 @@ DEFINE_HOOK(531413, Game_Start, 5)
 	DSurface::Hidden->DrawText(wVersion, 10, 540, COLOR_RED | COLOR_GREEN);
 	return 0;
 }
+
+DEFINE_HOOK(74FDC0, GetModuleVersion, 5)
+{
+	R->EAX<const char *>(VERSION_INTERNAL);
+	return 0x74FEEF;
+}
+
+DEFINE_HOOK(74FAE0, GetModuleInternalVersion, 5)
+{
+	R->EAX<const char *>(VERSION_STRMINI);
+	return 0x74FC7B;
+}

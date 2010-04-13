@@ -59,26 +59,31 @@ void TechnoExt::SpawnSurvivors(TechnoClass *pThis, TechnoClass *pKiller, bool Se
 	}
 
 	chance = pData->Survivors_PassengerChance.BindTo(pThis)->Get();
+
 	while(pThis->Passengers.FirstPassenger) {
-		FootClass *passenger = NULL;
 		bool toDelete = 1;
-		passenger = pThis->Passengers.RemoveFirstPassenger();
-		if(chance) {
-			if(ScenarioClass::Instance->Random.RandomRanged(1, 100) <= chance) {
-				CoordStruct destLoc, tmpLoc = loc;
-				CellStruct tmpCoords = CellSpread::GetCell(ScenarioClass::Instance->Random.RandomRanged(0, 7));
+		FootClass *passenger = pThis->Passengers.RemoveFirstPassenger();
+		bool toSpawn = false;
+		if(chance > 0) {
+			toSpawn = ScenarioClass::Instance->Random.RandomRanged(1, 100) <= chance;
+		} else if(chance == -1 && pThis->WhatAmI() == abs_Unit) {
+			int occupation = passenger->IsCellOccupied(pThis->GetCell(), -1, -1, 0, 1);
+			toSpawn = (occupation == 0 || occupation == 2);
+		}
+		if(toSpawn) {
+			CoordStruct destLoc, tmpLoc = loc;
+			CellStruct tmpCoords = CellSpread::GetCell(ScenarioClass::Instance->Random.RandomRanged(0, 7));
 
-				tmpLoc.X += tmpCoords.X * 128;
-				tmpLoc.Y += tmpCoords.Y * 128;
+			tmpLoc.X += tmpCoords.X * 128;
+			tmpLoc.Y += tmpCoords.Y * 128;
 
-				CellClass * tmpCell = MapClass::Instance->GetCellAt(&tmpLoc);
+			CellClass * tmpCell = MapClass::Instance->GetCellAt(&tmpLoc);
 
-				tmpCell->FindInfantrySubposition(&destLoc, &tmpLoc, 0, 0, 0);
+			tmpCell->FindInfantrySubposition(&destLoc, &tmpLoc, 0, 0, 0);
 
-				destLoc.Z = loc.Z;
+			destLoc.Z = loc.Z;
 
-				toDelete = !TechnoExt::ParadropSurvivor(passenger, &destLoc, Select);
-			}
+			toDelete = !TechnoExt::ParadropSurvivor(passenger, &destLoc, Select);
 		}
 		if(toDelete) {
 			passenger->RegisterDestruction(pKiller); //(TechnoClass *)R->get_StackVar32(0x54));

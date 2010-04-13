@@ -665,3 +665,14 @@ DEFINE_HOOK(62A2F8, ParasiteClass_PointerGotInvalid, 6)
 
 	return 0;
 }
+
+// update parasite coords along with the host
+DEFINE_HOOK(4DB87E, FootClass_SetCoords, 6)
+{
+	GET(FootClass *, F, ESI);
+	if(F->ParasiteEatingMe) {
+		F->ParasiteEatingMe->SetLocation(&F->Location);
+	}
+	return 0;
+}
+
