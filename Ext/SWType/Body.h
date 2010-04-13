@@ -71,6 +71,10 @@ public:
 
 		CustomPalette CameoPal;
 
+		// SW: Generic Warhead
+		Valueable<WarheadTypeClass *> GWarhead_WH;
+		Valueable<int> GWarhead_Damage;
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			SpyPlane_TypeIndex (0),
 			SpyPlane_Count (1),
@@ -89,7 +93,9 @@ public:
 			SW_AutoFire (false),
 			SW_FireToShroud (true),
 			SW_RadarEvent (false),
-			CameoPal()
+			CameoPal(),
+			GWarhead_WH(NULL),
+			GWarhead_Damage(0)
 			{ };
 
 		virtual ~ExtData() { };
