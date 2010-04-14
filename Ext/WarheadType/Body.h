@@ -13,6 +13,9 @@
 #include <MapClass.h>
 #include <TechnoClass.h>
 #include <WarheadTypeClass.h>
+#include <HouseClass.h>
+#include <ObjectClass.h>
+#include <GeneralStructures.h>
 
 #include <Conversions.h>
 
@@ -96,6 +99,12 @@ public:
 	static WarheadTypeClass *Temporal_WH;
 
 	static hash_map<IonBlastClass *, WarheadTypeExt::ExtData *> IonExt;
+
+	static void applyRipples(WarheadTypeClass *, const CoordStruct&);
+	static void applyIronCurtain(WarheadTypeClass *, const CoordStruct&, HouseClass *);
+	static void applyEMP(WarheadTypeClass *, const CoordStruct&);
+	static bool applyPermaMC(WarheadTypeClass *, const CoordStruct&, HouseClass *, ObjectClass *);
+	static void applyOccupantDamage(BulletClass *);
 };
 
 typedef hash_map<IonBlastClass *, WarheadTypeExt::ExtData *> hash_ionExt;

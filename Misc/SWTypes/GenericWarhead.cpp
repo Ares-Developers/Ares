@@ -37,7 +37,12 @@ bool SW_GenericWarhead::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPl
 
 	// crush, kill, destroy
 	// NULL -> TechnoClass* SourceObject
-	MapClass::DamageArea(coords, pData->GWarhead_Damage, NULL, pData->GWarhead_WH, 1, pThis->Owner);
+	WarheadTypeExt::ExtData::applyRipples(pData->GWarhead_WH, coords);
+	WarheadTypeExt::ExtData::applyIronCurtain(pData->GWarhead_WH, coords, pThis->Owner);
+	WarheadTypeExt::ExtData::applyEMP(pData->GWarhead_WH, coords);
+	if(!WarheadTypeExt::ExtData::applyPermaMC(pData->GWarhead_WH, coords, pThis->Owner, MapClass::Global()->GetCellAt(pCoords)->GetContent())) {
+		MapClass::DamageArea(coords, pData->GWarhead_Damage, NULL, pData->GWarhead_WH, 1, pThis->Owner);
+	}
 
 
 	Unsorted::CurrentSWType = -1;
