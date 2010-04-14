@@ -125,7 +125,7 @@ DEFINE_HOOK(441D25, BuildingClass_Destroy, 0A)
 }
 
 // bugfix #379: Temporal friendly kills give veterancy
-DEFINE_HOOK(71A92A, _Temporal_AvoidFriendlies, 5)
+DEFINE_HOOK(71A92A, TemporalClass_Update_AvoidFriendlies, 5)
 {
 	GET(TemporalClass *, Temp, ESI);
 

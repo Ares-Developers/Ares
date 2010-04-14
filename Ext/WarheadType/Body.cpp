@@ -108,54 +108,45 @@ void Container<WarheadTypeExt>::Load(WarheadTypeClass *pThis, IStream *pStm) {
 /*!
 	This function checks if the passed warhead has Ripple.Radius set, and, if so, applies the effect.
 	\note Moved here from hook BulletClass_Fire.
-	\param pWH The warhead to check/handle.
 	\param coords The coordinates of the warhead impact, the center of the Ripple area.
 */
-static void WarheadTypeExt::ExtData::applyRipples(WarheadTypeClass* pWH, const CoordStruct& coords) {
-	WarheadTypeExt::ExtData *pWHExt = WarheadTypeExt::ExtMap.Find(pWH);
-
-	if (WHExt->Ripple_Radius) {
+void WarheadTypeExt::ExtData::applyRipples(CoordStruct *coords) {
+	if (this->Ripple_Radius) {
 		IonBlastClass *IB;
-		GAME_ALLOC(IonBlastClass, IB, coords);
-		WarheadTypeExt::IonExt[IB] = WHExt;
+		GAME_ALLOC(IonBlastClass, IB, *coords);
+		WarheadTypeExt::IonExt[IB] = this;
 	}
 }
 
 /*!
 	This function checks if the passed warhead has IronCurtain.Duration set, and, if so, applies the effect.
 	\note Moved here from hook BulletClass_Fire.
-	\param pWH The warhead to check/handle.
 	\param coords The coordinates of the warhead impact, the center of the Iron Curtain area.
 	\param Owner Owner of the Iron Curtain effect, i.e. the one triggering this.
 */
-static void WarheadTypeExt::ExtData::applyIronCurtain(WarheadTypeClass* pWH, const CoordStruct& coords, HouseClass* Owner) {
-	WarheadTypeExt::ExtData *pWHExt = WarheadTypeExt::ExtMap.Find(pWH);
-	CellStruct cellCoords = MapClass::Instance->GetCellAt(&coords)->MapCoords;
+void WarheadTypeExt::ExtData::applyIronCurtain(CoordStruct *coords, HouseClass* Owner) {
+	CellStruct cellCoords = MapClass::Instance->GetCellAt(coords)->MapCoords;
 
-	if (pWHExt->IC_Duration != 0) {
-		int countCells = CellSpread::NumCells(int(pWH->CellSpread));
+	if (this->IC_Duration != 0) {
+		int countCells = CellSpread::NumCells(int(this->AttachedToObject->CellSpread));
 		for (int i = 0; i < countCells; ++i) {
 			CellStruct tmpCell = CellSpread::GetCell(i);
 			tmpCell += cellCoords;
-			CellClass *c = MapClass::Global()->GetCellAt(&tmpCell);
-			for (ObjectClass *curObj = c->GetContent(); curObj; curObj
-					= curObj->NextObject) {
+			CellClass *c = MapClass::Instance->GetCellAt(&tmpCell);
+			for (ObjectClass *curObj = c->GetContent(); curObj; curObj = curObj->NextObject) {
 				if (TechnoClass *curTechno = generic_cast<TechnoClass *>(curObj)) {
 					if (curTechno->IronCurtainTimer.Ignorable()) {
-						if (pWHExt->IC_Duration > 0) {
-							curTechno->IronCurtain(pWHExt->IC_Duration, Owner, 0);
+						if (this->IC_Duration > 0) {
+							curTechno->IronCurtain(this->IC_Duration, Owner, 0);
 						}
 					} else {
-						if (pWHExt->IC_Duration > 0) {
-							curTechno->IronCurtainTimer.TimeLeft
-									+= pWHExt->IC_Duration;
+						if (this->IC_Duration > 0) {
+							curTechno->IronCurtainTimer.TimeLeft += this->IC_Duration;
 						} else {
-							if (curTechno->IronCurtainTimer.TimeLeft <= abs(
-									pWHExt->IC_Duration)) {
+							if (curTechno->IronCurtainTimer.TimeLeft <= abs(this->IC_Duration)) {
 								curTechno->IronCurtainTimer.TimeLeft = 1;
 							} else {
-								curTechno->IronCurtainTimer.TimeLeft
-										+= pWHExt->IC_Duration;
+								curTechno->IronCurtainTimer.TimeLeft += this->IC_Duration;
 							}
 						}
 					}
@@ -168,32 +159,27 @@ static void WarheadTypeExt::ExtData::applyIronCurtain(WarheadTypeClass* pWH, con
 /*!
 	This function checks if the passed warhead has EMP.Duration set, and, if so, applies the effect.
 	\note Moved here from hook BulletClass_Fire.
-	\param pWH The warhead to check/handle.
 	\param coords The coordinates of the warhead impact, the center of the EMP area.
 */
-static void WarheadTypeExt::ExtData::applyEMP(WarheadTypeClass* pWH, const CoordStruct& coords) {
-	WarheadTypeExt::ExtData *pWHExt = WarheadTypeExt::ExtMap.Find(pWH);
-	if (pWHExt->EMP_Duration) {
-		CellStruct cellCoords = MapClass::Instance->GetCellAt(&coords)->MapCoords;
+void WarheadTypeExt::ExtData::applyEMP(CoordStruct *coords) {
+	if (this->EMP_Duration) {
+		CellStruct cellCoords = MapClass::Instance->GetCellAt(coords)->MapCoords;
 
 		EMPulseClass *placeholder;
-		GAME_ALLOC(EMPulseClass, placeholder, cellCoords, int(pWH->CellSpread), pWHExt->EMP_Duration, 0);
+		GAME_ALLOC(EMPulseClass, placeholder, cellCoords, int(this->AttachedToObject->CellSpread), this->EMP_Duration, 0);
 	}
 }
 
 /*!
 	This function checks if the passed warhead has MindControl.Permanent set, and, if so, applies the effect.
 	\note Moved here from hook BulletClass_Fire.
-	\param pWH The warhead to check/handle.
 	\param coords The coordinates of the warhead impact, the center of the Mind Control animation.
 	\param Owner Owner of the Mind Control effect, i.e. the one controlling the target afterwards.
 	\param Target Target of the Mind Control effect, i.e. the one being controlled by the owner afterwards.
 	\return false if effect wasn't applied, true if it was. This is important for the chain of damage effects, as, in case of true, the target is now a friendly unit.
 */
-static bool WarheadTypeExt::ExtData::applyPermaMC(WarheadTypeClass* pWH, const CoordStruct& coords, HouseClass* Owner, ObjectClass* Target) {
-	WarheadTypeExt::ExtData *pWHExt = WarheadTypeExt::ExtMap.Find(pWH);
-
-	if (pWHExt->MindControl_Permanent && Target) {
+bool WarheadTypeExt::ExtData::applyPermaMC(CoordStruct *coords, HouseClass* Owner, ObjectClass* Target) {
+	if (this->MindControl_Permanent && Target) {
 		if (TechnoClass *pTarget = generic_cast<TechnoClass *>(Target)) {
 			TechnoTypeClass *pType = pTarget->GetTechnoType();
 
@@ -207,10 +193,11 @@ static bool WarheadTypeExt::ExtData::applyPermaMC(WarheadTypeClass* pWH, const C
 			pTarget->MindControlledByAUnit = 1;
 			pTarget->QueueMission(mission_Guard, 0);
 
-			coords.Z += pType->MindControlRingOffset;
+			CoordStruct XYZ = *coords;
+			XYZ.Z += pType->MindControlRingOffset;
 
 			AnimClass *MCAnim;
-			GAME_ALLOC(AnimClass, MCAnim, RulesClass::Instance->PermaControlledAnimationType, &coords);
+			GAME_ALLOC(AnimClass, MCAnim, RulesClass::Instance->PermaControlledAnimationType, &XYZ);
 			AnimClass *oldMC = pTarget->MindControlRingAnim;
 			if (oldMC) {
 				oldMC->UnInit();
@@ -220,6 +207,7 @@ static bool WarheadTypeExt::ExtData::applyPermaMC(WarheadTypeClass* pWH, const C
 			return true; // should return 0x469AA4 in hook
 		}
 	}
+	return false;
 }
 
 /*!
@@ -229,7 +217,7 @@ static bool WarheadTypeExt::ExtData::applyPermaMC(WarheadTypeClass* pWH, const C
 	\param Bullet The projectile
 	\todo This should probably be moved to /Ext/Bullet/ instead, I just maintained the previous structure to ease transition. Since UC.DaMO (#778) in 0.5 will require a reimplementation of this logic anyway, we can probably just leave it here until then.
 */
-static void WarheadTypeExt::ExtData::applyOccupantDamage(BulletClass* Bullet) {
+void WarheadTypeExt::applyOccupantDamage(BulletClass* Bullet) {
 	if (Bullet->Target) {
 		BulletExt::ExtData* TheBulletExt = BulletExt::ExtMap.Find(Bullet);
 		if (TheBulletExt->DamageOccupants()) {

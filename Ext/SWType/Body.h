@@ -71,6 +71,8 @@ public:
 
 		CustomPalette CameoPal;
 
+		DynamicVectorClass<TechnoTypeClass *> SW_Deliverables;
+
 		// SW: Generic Warhead
 		Valueable<WarheadTypeClass *> GWarhead_WH;
 		Valueable<int> GWarhead_Damage;

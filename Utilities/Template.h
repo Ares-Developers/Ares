@@ -38,6 +38,10 @@ public:
 		return this->Value != other;
 	};
 
+	bool operator ! () {
+		return this->Get() == 0;
+	};
+
 	virtual T Get() {
 		return this->Value;
 	}

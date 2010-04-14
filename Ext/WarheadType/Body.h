@@ -92,6 +92,10 @@ public:
 		virtual void InvalidatePointer(void *ptr) {
 		}
 
+		void applyRipples(CoordStruct *);
+		void applyIronCurtain(CoordStruct *, HouseClass *);
+		void applyEMP(CoordStruct *);
+		bool applyPermaMC(CoordStruct *, HouseClass *, ObjectClass *);
 	};
 
 	static Container<WarheadTypeExt> ExtMap;
@@ -100,10 +104,26 @@ public:
 
 	static hash_map<IonBlastClass *, WarheadTypeExt::ExtData *> IonExt;
 
-	static void applyRipples(WarheadTypeClass *, const CoordStruct&);
-	static void applyIronCurtain(WarheadTypeClass *, const CoordStruct&, HouseClass *);
-	static void applyEMP(WarheadTypeClass *, const CoordStruct&);
-	static bool applyPermaMC(WarheadTypeClass *, const CoordStruct&, HouseClass *, ObjectClass *);
+	static void applyRipples(WarheadTypeClass * pWH, CoordStruct* coords) {
+		if(auto pWHExt = WarheadTypeExt::ExtMap.Find(pWH)) {
+			pWHExt->applyRipples(coords);
+		}
+	}
+	static void applyIronCurtain(WarheadTypeClass * pWH, CoordStruct* coords, HouseClass * House) {
+		if(auto pWHExt = WarheadTypeExt::ExtMap.Find(pWH)) {
+			pWHExt->applyIronCurtain(coords, House);
+		}
+	}
+	static void applyEMP(WarheadTypeClass * pWH, CoordStruct* coords) {
+		if(auto pWHExt = WarheadTypeExt::ExtMap.Find(pWH)) {
+			pWHExt->applyEMP(coords);
+		}
+	}
+	static bool applyPermaMC(WarheadTypeClass * pWH, CoordStruct* coords, HouseClass * House, ObjectClass * Source) {
+		if(auto pWHExt = WarheadTypeExt::ExtMap.Find(pWH)) {
+			pWHExt->applyPermaMC(coords, House, Source);
+		}
+	}
 	static void applyOccupantDamage(BulletClass *);
 };
 

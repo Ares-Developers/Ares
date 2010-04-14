@@ -4,7 +4,7 @@
 void SW_GenericWarhead::LoadFromINI(
 	SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI)
 {
-	const char * section = pSW->get_ID();
+	const char * section = pSW->ID;
 
 	if(!pINI->GetSection(section)) {
 		return;
@@ -12,7 +12,7 @@ void SW_GenericWarhead::LoadFromINI(
 
 	INI_EX exINI(pINI);
 	pData->GWarhead_WH.Parse(&exINI, section, "GenericWarhead.Warhead");
-	pData->GWarhead_Damage.Parse(&exINI, section, "GenericWarhead.Damage");
+	pData->GWarhead_Damage.Read(&exINI, section, "GenericWarhead.Damage");
 }
 
 /*bool SW_GenericWarhead::CanFireAt(CellStruct *pCoords) // D says I don't have to have this if there are no limits
@@ -27,23 +27,25 @@ bool SW_GenericWarhead::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPl
 	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pType);
 
 	if(!pData || !pData->GWarhead_WH) {
-		Debug::Log("Couldn't launch GenericWarhead SW - a variable is unavailable! \
-		SW ExtData: %p - Warhead: %p - Damage: %i", pData, pData->GWarhead_WH, pData->GWarhead_Damage);
+		Debug::Log("Couldn't launch GenericWarhead SW ([%s])\n", pType->ID);
 		return 0;
 	}
 
 	CoordStruct coords;
-	MapClass::Global()->GetCellAt(pCoords)->GetCoords(&coords);
+	CellClass *Cell = MapClass::Instance->GetCellAt(pCoords);
+	Cell->GetCoords(&coords);
+
+	auto pWHExt = WarheadTypeExt::ExtMap.Find(pData->GWarhead_WH);
 
 	// crush, kill, destroy
 	// NULL -> TechnoClass* SourceObject
-	WarheadTypeExt::ExtData::applyRipples(pData->GWarhead_WH, coords);
-	WarheadTypeExt::ExtData::applyIronCurtain(pData->GWarhead_WH, coords, pThis->Owner);
-	WarheadTypeExt::ExtData::applyEMP(pData->GWarhead_WH, coords);
-	if(!WarheadTypeExt::ExtData::applyPermaMC(pData->GWarhead_WH, coords, pThis->Owner, MapClass::Global()->GetCellAt(pCoords)->GetContent())) {
-		MapClass::DamageArea(coords, pData->GWarhead_Damage, NULL, pData->GWarhead_WH, 1, pThis->Owner);
-	}
+	pWHExt->applyRipples(&coords);
+	pWHExt->applyIronCurtain(&coords, pThis->Owner);
+	pWHExt->applyEMP(&coords);
 
+	if(!pWHExt->applyPermaMC(&coords, pThis->Owner, Cell->GetContent())) {
+		MapClass::DamageArea(&coords, pData->GWarhead_Damage, NULL, pData->GWarhead_WH, 1, pThis->Owner);
+	}
 
 	Unsorted::CurrentSWType = -1;
 	return 1;

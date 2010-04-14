@@ -24,12 +24,14 @@ DEFINE_HOOK(46920B, BulletClass_Fire, 6) {
 		Bullet->GetCoords(&coords);
 	}
 
-	WarheadTypeExt::ExtData::applyRipples(pThis, coords);
-	WarheadTypeExt::ExtData::applyIronCurtain(pThis, coords, Bullet->Owner->Owner);
-	WarheadTypeExt::ExtData::applyEMP(pThis, coords);
-	WarheadTypeExt::ExtData::applyOccupantDamage(Bullet);
+	auto pWHExt = WarheadTypeExt::ExtMap.Find(pThis);
 
-	return WarheadTypeExt::ExtData::applyPermaMC(pThis, coords, Bullet->Owner->Owner, Bullet->Target) ? 0x469AA4 : 0;
+	pWHExt->applyRipples(&coords);
+	pWHExt->applyIronCurtain(&coords, Bullet->Owner->Owner);
+	pWHExt->applyEMP(&coords);
+	WarheadTypeExt::applyOccupantDamage(Bullet);
+
+	return pWHExt->applyPermaMC(&coords, Bullet->Owner->Owner, Bullet->Target) ? 0x469AA4 : 0;
 }
 
 // issue 472: deglob WarpAway
