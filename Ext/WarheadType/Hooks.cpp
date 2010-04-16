@@ -26,12 +26,20 @@ DEFINE_HOOK(46920B, BulletClass_Fire, 6) {
 
 	auto pWHExt = WarheadTypeExt::ExtMap.Find(pThis);
 
+	HouseClass *OwnerHouse = (Bullet->Owner)
+		? Bullet->Owner->Owner
+		: NULL
+	;
+
 	pWHExt->applyRipples(&coords);
-	pWHExt->applyIronCurtain(&coords, Bullet->Owner->Owner);
+	pWHExt->applyIronCurtain(&coords, OwnerHouse);
 	pWHExt->applyEMP(&coords);
 	WarheadTypeExt::applyOccupantDamage(Bullet);
 
-	return pWHExt->applyPermaMC(&coords, Bullet->Owner->Owner, Bullet->Target) ? 0x469AA4 : 0;
+	return (OwnerHouse && pWHExt->applyPermaMC(&coords, OwnerHouse, Bullet->Target))
+		? 0x469AA4
+		: 0
+	;
 }
 
 // issue 472: deglob WarpAway

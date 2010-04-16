@@ -1,6 +1,7 @@
 #include "Body.h"
 #include "../House/Body.h"
-
+#include "Ares.h"
+#include <Audio.h>
 #include <ScenarioClass.h>
 
 DEFINE_HOOK(5536DA, HTExt_GetLSName, 0)
@@ -133,16 +134,15 @@ DEFINE_HOOK(553412, HTExt_LSFile, 0)
 
 DEFINE_HOOK(752BA1, HTExt_GetTaunt, 6)
 {
-	char* pFileName = R->lea_Stack<char *>(0x04);
-	int nTaunt = R->CL() & 0xF;
-	int nCountry = (R->CL() >> 4) & 0xF;	//ARF 16-country-limit >.<
+	GET(TauntDataStruct, TauntData, ECX);
+//	LEA_STACK(char*, pFileName, 0);
 
-	HouseTypeClass* pThis = HouseTypeClass::Array->Items[nCountry];
+	HouseTypeClass* pThis = HouseTypeClass::Array->Items[TauntData.countryIdx];
 	HouseTypeExt::ExtData *pData = HouseTypeExt::ExtMap.Find(pThis);
 	if(pData) {
-		_snprintf(pFileName, 32, pData->TauntFile, nTaunt);
-		R->ECX(*((DWORD*)0xB1D4D8));
-		return 0x752C54;
+		_snprintf(Ares::readBuffer, Ares::readLength, pData->TauntFile, TauntData.tauntIdx);
+		R->EAX(AudioStream::Instance->PlayWAV(Ares::readBuffer, false));
+		return 0x752C5F;
 	}
 
 	return 0;
