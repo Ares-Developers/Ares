@@ -258,7 +258,7 @@ LONG WINAPI Debug::ExceptionHandler(int code, LPEXCEPTION_POINTERS pExs)
 				SetCursor(loadCursor);
 				Debug::FatalError("The cause of this error could not be determined.\r\n"
 					"A crash dump should have been created in your game's \\debug subfolder.\r\n"
-					"You can submit that to the developers (along with debug.txt and syringe.log).", 0);
+					"You can submit that to the developers (along with debug.txt and syringe.log).");
 			}
 			ExitProcess(pExs->ExceptionRecord->ExceptionCode); // Exit.
 			break;
@@ -286,15 +286,15 @@ void Debug::FreeMouse() {
 	}
 }
 
-void Debug::FatalError(const char *Message, bool Exit) {
-	Debug::FreeMouse();
+void Debug::FatalError() {
 	wsprintfW(Dialogs::ExceptDetailedMessage,
-		L"Ares has encountered an internal error and is unable to continue normally. Please visit our website at http://ares.strategy-x.com for updates and support.\n\n"
+		L"Ares has encountered an internal error and is unable to continue normally. "
+		L"Please visit our website at http://ares.strategy-x.com for updates and support.\n\n"
 		L"%hs",
-		Message, 0x400);
+		Ares::readBuffer, 0x400);
 
 	Debug::Log("\nFatal Error:\n");
-	Debug::Log(Message);
+	Debug::Log(Ares::readBuffer);
 
 /*
 	LPCDLGTEMPLATEA DialogBox = reinterpret_cast<LPCDLGTEMPLATEA>(Game::GetResource(247, 5));
@@ -304,10 +304,28 @@ void Debug::FatalError(const char *Message, bool Exit) {
 	MessageBoxW(Game::hWnd,
 		Dialogs::ExceptDetailedMessage,
 		L"Fatal Error - Yuri's Revenge", MB_OK | MB_ICONERROR);
-	if(Exit) {
-		Debug::Log("Exiting...\n");
-		ExitProcess(1);
-	}
+}
+
+void Debug::FatalError(const char *Message, ...) {
+	Debug::FreeMouse();
+
+	va_list args;
+	va_start(args, Message);
+	vsnprintf(Ares::readBuffer, Ares::readLength, Message, args); /* note that the message will be truncated somewhere after 0x300 chars... */
+	va_end(args);
+
+	FatalError();
+}
+
+void Debug::FatalErrorAndExit(const char *Message, ...) {
+	va_list args;
+	va_start(args, Message);
+	vsnprintf(Ares::readBuffer, Ares::readLength, Message, args); /* note that the message will be truncated somewhere after 0x300 chars... */
+	va_end(args);
+
+	Debug::FatalError();
+	Debug::Log("Exiting...\n");
+	ExitProcess(1);
 }
 
 DEFINE_HOOK(4C850B, Exception_Dialog, 5)

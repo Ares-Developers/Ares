@@ -271,7 +271,7 @@ int HouseTypeExt::PickRandomCountry()
 
 		return vecLegible.at(pick);
 	} else {
-		Debug::FatalError("No countries eligible for random selection!");
+		Debug::FatalErrorAndExit("No countries eligible for random selection!");
 	}
 	return 0;
 }

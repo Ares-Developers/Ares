@@ -41,7 +41,7 @@ signed int HouseExt::RequirementsMet(HouseClass *pHouse, TechnoTypeClass *pItem)
 
 	if(pHouse->HasFromSecretLab(pItem)) { return -1; }
 
-	if(pItem->TechLevel == -1) { return 0; }
+	if(pHouse->IsHumanoid() && pItem->TechLevel == -1) { return 0; }
 
 	if(!pHouse->HasAllStolenTech(pItem)) { return 0; }
 

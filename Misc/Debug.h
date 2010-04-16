@@ -3,6 +3,7 @@
 
 //define DEBUG_FILE "DEBUG.TXT"
 
+#include "Ares.h"
 #include <cstdio>
 #include <YRPPCore.h>
 #include <Windows.h>
@@ -41,7 +42,9 @@ public:
 	static LONG WINAPI ExceptionHandler(int code, LPEXCEPTION_POINTERS pExs);
 
 	static void FreeMouse();
-	static void FatalError(const char *Message, bool Exit = 1);
+	static void FatalError(); /* takes formatted message from Ares::readBuffer */
+	static void FatalError(const char *Message, ...);
+	static void FatalErrorAndExit(const char *Message, ...);
 	static int __stdcall FatalDialog_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 	static void DevLog(Debug::Severity severity, const char* Format, ...);

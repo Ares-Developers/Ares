@@ -41,10 +41,9 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 	char* pID = pThis->ID;
 
 	if(pThis->UnitRepair && pThis->Factory == abs_AircraftType) {
-		_snprintf(Ares::readBuffer, Ares::readLength,
+		Debug::FatalErrorAndExit(
 			"BuildingType [%s] has both UnitRepair=yes and Factory=AircraftType.\n"
 			"This combination causes Internal Errors and other unwanted behaviour.", pID);
-		Debug::FatalError(Ares::readBuffer);
 	}
 
 	this->Firewall_Is = pINI->ReadBool(pID, "Firestorm.Wall", this->Firewall_Is);

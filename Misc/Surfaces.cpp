@@ -44,7 +44,7 @@ DEFINE_HOOK(533FD0, AllocateSurfaces, 0)
 		DSurface *S; \
 		GAME_ALLOC(DSurface, S, rect_ ## surface->Width, rect_ ## surface->Height, !!Memory, !!Force3D); \
 		if(!S) { \
-			Debug::FatalError("Failed to allocate " str(surface) " - cannot continue."); \
+			Debug::FatalErrorAndExit("Failed to allocate " str(surface) " - cannot continue."); \
 		} \
 		DSurface:: ## surface = S; \
 		S->Fill(0); \
