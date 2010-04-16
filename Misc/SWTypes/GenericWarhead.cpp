@@ -45,6 +45,11 @@ bool SW_GenericWarhead::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPl
 
 	if(!pWHExt->applyPermaMC(&coords, pThis->Owner, Cell->GetContent())) {
 		MapClass::DamageArea(&coords, pData->GWarhead_Damage, NULL, pData->GWarhead_WH, 1, pThis->Owner);
+		if(AnimTypeClass * DamageAnimType = MapClass::SelectDamageAnimation(pData->GWarhead_Damage, pData->GWarhead_WH, Cell->LandType, &coords)) {
+			AnimClass *DamageAnim;
+			GAME_ALLOC(AnimClass, DamageAnim, DamageAnimType, &coords);
+		}
+		MapClass::FlashbangWarheadAt(pData->GWarhead_Damage, pData->GWarhead_WH, coords, false, 0);
 	}
 
 	Unsorted::CurrentSWType = -1;
