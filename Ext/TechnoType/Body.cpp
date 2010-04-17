@@ -37,8 +37,6 @@ void TechnoTypeExt::ExtData::Initialize(TechnoTypeClass *pThis) {
 
 	this->Is_Deso = this->Is_Deso_Radiation = !strcmp(pThis->ID, "DESO");
 	this->Is_Cow = !strcmp(pThis->ID, "COW");
-
-	this->_Initialized = is_Inited;
 }
 
 /*

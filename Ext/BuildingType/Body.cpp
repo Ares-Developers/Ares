@@ -32,7 +32,6 @@ void BuildingTypeExt::ExtData::Initialize(BuildingTypeClass *pThis) {
 			this->Secret_Boons.AddItem(Options->GetItem(i));
 		}
 	}
-	this->_Initialized = is_Inited;
 }
 
 void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINIClass* pINI)
@@ -213,8 +212,6 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 		this->StolenMoneyAmount.Read(&exINI, pID, "SpyEffect.StolenMoneyAmount");
 		this->StolenMoneyPercentage.Read(&exINI, pID, "SpyEffect.StolenMoneyPercentage");
 	}
-
-	this->_Initialized = is_Completed;
 }
 
 void BuildingTypeExt::UpdateSecretLabOptions(BuildingClass *pThis)

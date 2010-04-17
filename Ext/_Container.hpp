@@ -101,15 +101,20 @@ class Extension {
 			switch(this->_Initialized) {
 				case is_Blank:
 					this->InitializeConstants(pThis);
+					this->_Initialized = is_Constanted;
 				case is_Constanted:
 					this->InitializeRuled(pThis);
+					this->_Initialized = is_Ruled;
 				case is_Ruled:
 					this->Initialize(pThis);
+					this->_Initialized = is_Inited;
 				case is_Inited:
+				case is_Completed:
 					if(pINI == CCINIClass::INI_Rules) {
 						this->LoadFromRulesFile(pThis, pINI);
 					}
 					this->LoadFromINIFile(pThis, pINI);
+					this->_Initialized = is_Completed;
 			}
 		}
 
@@ -120,17 +125,11 @@ class Extension {
 		// for things that only logically work in rules - countries, sides, etc
 		virtual void LoadFromRulesFile(T *pThis, CCINIClass *pINI) {};
 
-		virtual void InitializeConstants(T *pThis) {
-			this->_Initialized = is_Constanted;
-		};
+		virtual void InitializeConstants(T *pThis) { };
 
-		virtual void InitializeRuled(T *pThis) {
-			this->_Initialized = is_Ruled;
-		};
+		virtual void InitializeRuled(T *pThis) { };
 
-		virtual void Initialize(T *pThis) {
-			this->_Initialized = is_Inited;
-		};
+		virtual void Initialize(T *pThis) { };
 
 		virtual void InvalidatePointer(void *ptr) = 0;
 

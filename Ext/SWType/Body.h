@@ -20,10 +20,6 @@
 #include "../../Misc/Debug.h"
 #endif
 
-// actions for custom sw
-#define SW_YES_CURSOR 0x7F
-#define SW_NO_CURSOR 0x7E
-
 // the index of the first custom sw type
 #define FIRST_SW_TYPE 12
 

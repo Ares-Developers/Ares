@@ -105,7 +105,6 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 		this->SidebarYuriFileNames = false;
 	}
 
-	this->_Initialized = is_Inited;
 };
 
 void SideExt::ExtData::LoadFromINIFile(SideClass *pThis, CCINIClass *pINI)

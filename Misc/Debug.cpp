@@ -234,24 +234,14 @@ LONG WINAPI Debug::ExceptionHandler(int code, LPEXCEPTION_POINTERS pExs)
 				HCURSOR loadCursor = LoadCursor(NULL, IDC_WAIT);
 				SetClassLong(Game::hWnd, GCL_HCURSOR, (LONG)loadCursor);
 				SetCursor(loadCursor);
-				bool g_ExtendedMinidumps = true;
 				Debug::Log("Making a memory dump\n");
-
-				swprintf(filename, MAX_PATH, g_ExtendedMinidumps ? L"%s\\debug\\extcrashdump.%04u%02u%02u-%02u%02u%02u.dmp" : L"%s\\debug\\crashdump.%04u%02u%02u-%02u%02u%02u.dmp",
-					path, time.wYear, time.wMonth, time.wDay, time.wHour, time.wMinute, time.wSecond);
-
-				HANDLE dumpFile = CreateFileW(filename, GENERIC_READ | GENERIC_WRITE,
-								FILE_SHARE_WRITE | FILE_SHARE_READ, NULL, CREATE_ALWAYS, FILE_FLAG_WRITE_THROUGH, NULL);
 
 				MINIDUMP_EXCEPTION_INFORMATION expParam;
 				expParam.ThreadId = GetCurrentThreadId();
 				expParam.ExceptionPointers = pExs;
 				expParam.ClientPointers = FALSE;
 
-				MINIDUMP_TYPE type = (MINIDUMP_TYPE) ((g_ExtendedMinidumps ? MiniDumpWithFullMemory : (MiniDumpWithDataSegs | MiniDumpWithIndirectlyReferencedMemory)));
-
-				MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), dumpFile, type, &expParam, NULL, NULL);
-				CloseHandle(dumpFile);
+				Debug::FullDump(&expParam);
 
 				loadCursor = LoadCursor(NULL, IDC_ARROW);
 				SetClassLong(Game::hWnd, GCL_HCURSOR, (LONG)loadCursor);
@@ -272,9 +262,32 @@ LONG WINAPI Debug::ExceptionHandler(int code, LPEXCEPTION_POINTERS pExs)
 	}
 };
 
+void Debug::FullDump(MINIDUMP_EXCEPTION_INFORMATION *pException) {
+	wchar_t filename[MAX_PATH];
+	wchar_t path[MAX_PATH];
+	SYSTEMTIME time;
+
+	GetLocalTime(&time);
+	GetCurrentDirectoryW(MAX_PATH, path);
+
+	swprintf(filename, MAX_PATH, L"%s\\debug", path);
+	CreateDirectoryW(filename, NULL);
+
+	swprintf(filename, MAX_PATH, L"%s\\debug\\extcrashdump.%04u%02u%02u-%02u%02u%02u.dmp",
+		path, time.wYear, time.wMonth, time.wDay, time.wHour, time.wMinute, time.wSecond);
+
+	HANDLE dumpFile = CreateFileW(filename, GENERIC_READ | GENERIC_WRITE,
+					FILE_SHARE_WRITE | FILE_SHARE_READ, NULL, CREATE_ALWAYS, FILE_FLAG_WRITE_THROUGH, NULL);
+
+	MINIDUMP_TYPE type = (MINIDUMP_TYPE)MiniDumpWithFullMemory;
+
+	MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), dumpFile, type, pException, NULL, NULL);
+	CloseHandle(dumpFile);
+}
+
 void Debug::FreeMouse() {
-	static bool freed = false;
-	if(!freed) {
+//	static bool freed = false;
+//	if(!freed) {
 		Game::sub_53E6B0();
 
 		MouseClass::Instance->SetPointer(0, 0);
@@ -282,11 +295,30 @@ void Debug::FreeMouse() {
 
 		ShowCursor(1);
 
-		freed = true;
-	}
+#define BLACK_SURFACE(s) \
+		if(DSurface::s) { \
+			DSurface::s->Fill(0); \
+		}
+
+		BLACK_SURFACE(Alternate);
+		BLACK_SURFACE(Composite);
+		BLACK_SURFACE(Hidden);
+		BLACK_SURFACE(Hidden_2);
+		BLACK_SURFACE(Primary);
+		BLACK_SURFACE(Sidebar);
+		BLACK_SURFACE(Tile);
+
+		ShowCursor(1);
+
+//		DirectDrawWrap::DisposeOfStuff();
+//		DirectDrawWrap::lpDD->SetCooperativeLevel(Game::hWnd, eDDCoopLevel::DDSCL_NORMAL);
+//		DirectDrawWrap::lpDD->SetDisplayMode(800, 600, 16);
+
+//		freed = true;
+//	}
 }
 
-void Debug::FatalError() {
+void Debug::FatalError(bool Dump) {
 	wsprintfW(Dialogs::ExceptDetailedMessage,
 		L"Ares has encountered an internal error and is unable to continue normally. "
 		L"Please visit our website at http://ares.strategy-x.com for updates and support.\n\n"
@@ -294,16 +326,15 @@ void Debug::FatalError() {
 		Ares::readBuffer, 0x400);
 
 	Debug::Log("\nFatal Error:\n");
-	Debug::Log(Ares::readBuffer);
+	Debug::Log("%s\n", Ares::readBuffer);
 
-/*
-	LPCDLGTEMPLATEA DialogBox = reinterpret_cast<LPCDLGTEMPLATEA>(Game::GetResource(247, 5));
-
-	DialogBoxIndirectParamA(Game::hInstance, DialogBox, Game::hWnd, &Debug::FatalDialog_WndProc, 0);
-*/
 	MessageBoxW(Game::hWnd,
 		Dialogs::ExceptDetailedMessage,
 		L"Fatal Error - Yuri's Revenge", MB_OK | MB_ICONERROR);
+
+	if(Dump) {
+		Debug::FullDump(NULL);
+	}
 }
 
 void Debug::FatalError(const char *Message, ...) {
@@ -314,16 +345,18 @@ void Debug::FatalError(const char *Message, ...) {
 	vsnprintf(Ares::readBuffer, Ares::readLength, Message, args); /* note that the message will be truncated somewhere after 0x300 chars... */
 	va_end(args);
 
-	FatalError();
+	Debug::FatalError(false);
 }
 
 void Debug::FatalErrorAndExit(const char *Message, ...) {
+	Debug::FreeMouse();
+
 	va_list args;
 	va_start(args, Message);
 	vsnprintf(Ares::readBuffer, Ares::readLength, Message, args); /* note that the message will be truncated somewhere after 0x300 chars... */
 	va_end(args);
 
-	Debug::FatalError();
+	Debug::FatalError(false);
 	Debug::Log("Exiting...\n");
 	ExitProcess(1);
 }

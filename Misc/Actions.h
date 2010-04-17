@@ -3,6 +3,10 @@
 
 #include <MouseClass.h>
 
+// actions for custom sw
+#define SW_YES_CURSOR 0x7F
+#define SW_NO_CURSOR 0x7E
+
 class Actions
 {
 	public:
