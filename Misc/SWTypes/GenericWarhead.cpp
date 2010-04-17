@@ -33,7 +33,7 @@ bool SW_GenericWarhead::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPl
 
 	CoordStruct coords;
 	CellClass *Cell = MapClass::Instance->GetCellAt(pCoords);
-	Cell->GetCoords(&coords);
+	Cell->GetCoordsWithBridge(&coords);
 
 	auto pWHExt = WarheadTypeExt::ExtMap.Find(pData->GWarhead_WH);
 

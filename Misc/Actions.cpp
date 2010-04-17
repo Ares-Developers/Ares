@@ -14,11 +14,6 @@ void Actions::Set(MouseCursor *pCursor, bool bAllowShroud)
 	Actions::MPCustomAllowShroud = bAllowShroud;
 }
 
-void Actions::Set(MouseCursor *pCursor)
-{
-	Set(pCursor, true);
-}
-
 //4AB44A
 DEFINE_HOOK(4AB44A, Actions_CustomCursor_NonShrouded, 9)
 {
@@ -151,7 +146,6 @@ DEFINE_HOOK(653CA6, Actions_AllowMinimap, 5)
 	MouseCursor* pCursor = Actions::MPCustom;
 	if(pCursor) {
 		if(pCursor->MiniFrame >= 0) {
-			R->ESI(SW_YES_CURSOR);
 			return 0x653CC0;
 		} else {
 			return 0x653CBA;

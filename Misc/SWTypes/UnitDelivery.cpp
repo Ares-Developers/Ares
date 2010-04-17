@@ -76,7 +76,7 @@ void UnitDeliveryStateMachine::PlaceUnits() {
 			CoordStruct XYZ;
 			if(MapClass::Instance->CellExists(&tmpCell)) {
 				CellClass *cell = MapClass::Instance->GetCellAt(&tmpCell);
-				cell->GetCoords(&XYZ);
+				cell->GetCoordsWithBridge(&XYZ);
 				Placed = Item->Put(&XYZ, (cellIdx & 7));
 			}
 		} while(!Placed);

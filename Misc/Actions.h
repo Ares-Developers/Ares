@@ -10,8 +10,7 @@
 class Actions
 {
 	public:
-		static void Set(MouseCursor *pCursor);
-		static void Set(MouseCursor *pCursor, bool bAllowShroud);
+		static void Set(MouseCursor *pCursor, bool bAllowShroud = false);
 
 		static MouseCursor MP;
 		static MouseCursor* MPCurrent;
