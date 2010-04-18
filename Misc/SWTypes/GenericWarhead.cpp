@@ -43,8 +43,18 @@ bool SW_GenericWarhead::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPl
 	pWHExt->applyIronCurtain(&coords, pThis->Owner);
 	pWHExt->applyEMP(&coords);
 
+	BuildingClass *Firer = NULL;
+	HouseClass *FirerHouse = pThis->Owner;
+	for(int i = 0; i < FirerHouse->Buildings.Count; ++i) {
+		BuildingClass *B = FirerHouse->Buildings[i];
+		if(B->HasSuperWeapon(pThis->Type->ArrayIndex)) {
+			Firer = B;
+			break;
+		}
+	}
+
 	if(!pWHExt->applyPermaMC(&coords, pThis->Owner, Cell->GetContent())) {
-		MapClass::DamageArea(&coords, pData->GWarhead_Damage, NULL, pData->GWarhead_WH, 1, pThis->Owner);
+		MapClass::DamageArea(&coords, pData->GWarhead_Damage, Firer, pData->GWarhead_WH, 1, pThis->Owner);
 		if(AnimTypeClass * DamageAnimType = MapClass::SelectDamageAnimation(pData->GWarhead_Damage, pData->GWarhead_WH, Cell->LandType, &coords)) {
 			AnimClass *DamageAnim;
 			GAME_ALLOC(AnimClass, DamageAnim, DamageAnimType, &coords);
