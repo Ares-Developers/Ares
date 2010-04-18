@@ -541,7 +541,21 @@ DEFINE_HOOK(701C97, TechnoClass_ReceiveDamage_AffectsEnemies, 6)
 
 	WarheadTypeExt::ExtData *WHTypeExt = WarheadTypeExt::ExtMap.Find(pThis);
 
-	CanAffect = WHTypeExt->AffectsEnemies || (!WHTypeExt->AffectsEnemies && Victim->Owner->IsAlliedWith(Arguments->SourceHouse));
+	if(Arguments->Attacker) {
+		CanAffect = WHTypeExt->AffectsEnemies || Victim->Owner->IsAlliedWith(Arguments->Attacker->Owner);
+
+		if(Arguments->Attacker->Owner != Arguments->SourceHouse) {
+			Debug::Log("Info: During AffectsEnemies parsing, Attacker's Owner was %p [%s], but SourceHouse was %p [%s].",
+			Arguments->Attacker->Owner, Arguments->Attacker->Owner->get_ID(), Arguments->SourceHouse, Arguments->SourceHouse->get_ID());
+		}
+
+	} else if(Arguments->SourceHouse) {
+		// fallback, in case future ways of damage dealing don't include an attacker, e.g. stuff like GenericWarhead
+		CanAffect = WHTypeExt->AffectsEnemies || Victim->Owner->IsAlliedWith(Arguments->SourceHouse);
+
+	} else {
+		Debug::Log("Warning: Neither Attacker nor SourceHouse were set during AffectsEnemies parsing!");
+	}
 
 	return CanAffect ? 0 : 0x701CC2;
 }
