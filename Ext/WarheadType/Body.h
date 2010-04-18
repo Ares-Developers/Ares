@@ -13,6 +13,9 @@
 #include <MapClass.h>
 #include <TechnoClass.h>
 #include <WarheadTypeClass.h>
+#include <HouseClass.h>
+#include <ObjectClass.h>
+#include <GeneralStructures.h>
 
 #include <Conversions.h>
 
@@ -64,8 +67,6 @@ public:
 
 		Valueable<AnimTypeClass*> InfDeathAnim;
 
-		bool KillDriver; //!< Whether this warhead turns the target vehicle over to the special side ("kills the driver"). Request #733.
-
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			MindControl_Permanent (false),
 			Ripple_Radius (0),
@@ -74,8 +75,7 @@ public:
 			DeployedDamage (1.00),
 			Temporal_WarpAway (&RulesClass::Global()->WarpAway),
 			AffectsEnemies (true),
-			InfDeathAnim (NULL),
-			KillDriver (false)
+			InfDeathAnim (NULL)
 			{
 				for(int i = 0; i < 11; ++i) {
 					VersesData vs;
@@ -92,6 +92,10 @@ public:
 		virtual void InvalidatePointer(void *ptr) {
 		}
 
+		void applyRipples(CoordStruct *);
+		void applyIronCurtain(CoordStruct *, HouseClass *);
+		void applyEMP(CoordStruct *);
+		bool applyPermaMC(CoordStruct *, HouseClass *, ObjectClass *);
 	};
 
 	static Container<WarheadTypeExt> ExtMap;
@@ -99,6 +103,28 @@ public:
 	static WarheadTypeClass *Temporal_WH;
 
 	static hash_map<IonBlastClass *, WarheadTypeExt::ExtData *> IonExt;
+
+	static void applyRipples(WarheadTypeClass * pWH, CoordStruct* coords) {
+		if(auto pWHExt = WarheadTypeExt::ExtMap.Find(pWH)) {
+			pWHExt->applyRipples(coords);
+		}
+	}
+	static void applyIronCurtain(WarheadTypeClass * pWH, CoordStruct* coords, HouseClass * House) {
+		if(auto pWHExt = WarheadTypeExt::ExtMap.Find(pWH)) {
+			pWHExt->applyIronCurtain(coords, House);
+		}
+	}
+	static void applyEMP(WarheadTypeClass * pWH, CoordStruct* coords) {
+		if(auto pWHExt = WarheadTypeExt::ExtMap.Find(pWH)) {
+			pWHExt->applyEMP(coords);
+		}
+	}
+	static bool applyPermaMC(WarheadTypeClass * pWH, CoordStruct* coords, HouseClass * House, ObjectClass * Source) {
+		if(auto pWHExt = WarheadTypeExt::ExtMap.Find(pWH)) {
+			pWHExt->applyPermaMC(coords, House, Source);
+		}
+	}
+	static void applyOccupantDamage(BulletClass *);
 };
 
 typedef hash_map<IonBlastClass *, WarheadTypeExt::ExtData *> hash_ionExt;

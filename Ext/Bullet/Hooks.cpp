@@ -14,23 +14,29 @@ DEFINE_HOOK(4666F7, BulletClass_Update, 6)
 	BulletTypeExt::ExtData *pBulletData = BulletTypeExt::ExtMap.Find(Bullet->Type);
 	BuildingClass *BuildingInIt = MyCell->GetBuilding();
 	if(pBulletData->SubjectToSolid && BuildingInIt && Bullet->Owner != BuildingInIt) {
-		BuildingTypeExt::ExtData *pBuildingData = BuildingTypeExt::ExtMap.Find(BuildingInIt->Type);
-		CoordStruct MyXYZ;
-		MyCell->GetCoords(&MyXYZ);
+		auto *pBuildingTypeData = BuildingTypeExt::ExtMap.Find(BuildingInIt->Type);
+		if(int solidHeight = pBuildingTypeData->Solid_Height) {
+			if(solidHeight < 0) {
+				solidHeight = BuildingInIt->Type->Height * 256;
+			} else {
+				solidHeight *= 256;
+			}
+			CoordStruct MyXYZ;
+			MyCell->GetCoords(&MyXYZ);
 
-		// use this delta offset to pick specific foundation cell's height from height map when it's implemented
-		CellStruct MyXY, BldXY, DeltaXY;
-		Bullet->GetMapCoords(&MyXY);
-		BuildingInIt->GetMapCoords(&BldXY);
-		DeltaXY = MyXY - BldXY;
+			// use this delta offset to pick specific foundation cell's height from height map when it's implemented
+			CellStruct MyXY, BldXY, DeltaXY;
+			Bullet->GetMapCoords(&MyXY);
+			BuildingInIt->GetMapCoords(&BldXY);
+			DeltaXY = MyXY - BldXY;
 
-		int MyHeight = Bullet->get_Location()->Z;
-		int BldHeight = MapClass::Global()->GetCellFloorHeight(&MyXYZ) + pBuildingData->Solid_Height * 256;
-		if(MyHeight <= BldHeight) {
-//			Debug::Log("Bullet at %d hits building of height %d == boom\n", MyHeight, BldHeight);
-			Bullet->SetTarget((ObjectClass *)MyCell);
-			Bullet->SpawnNextAnim = 1;
-			Bullet->NextAnim = NULL;
+			int MyHeight = Bullet->Location.Z;
+			int BldHeight = MapClass::Instance->GetCellFloorHeight(&MyXYZ) + solidHeight;
+			if(MyHeight <= BldHeight) {
+				Bullet->SetTarget((ObjectClass *)MyCell);
+				Bullet->SpawnNextAnim = 1;
+				Bullet->NextAnim = NULL;
+			}
 		}
 	}
 
@@ -44,7 +50,7 @@ DEFINE_HOOK(46867F, BulletClass_SetMovement_Parachute, 5)
 //	GET_BASE(BulletVelocity *, Trajectory, 0xC);
 
 	R->EBX<BulletClass *>(Bullet);
-	
+
 	BulletTypeExt::ExtData *pBulletData = BulletTypeExt::ExtMap.Find(Bullet->Type);
 
 //	Debug::Log("Bullet [%s] is parachuted (%d)\n", Bullet->Type->get_ID(), pBulletData->Parachuted);

@@ -16,8 +16,8 @@ template<> IStream *Container<TechnoTypeExt>::SavingStream = NULL;
 // member funcs
 
 void TechnoTypeExt::ExtData::Initialize(TechnoTypeClass *pThis) {
-	this->Survivors_PilotChance.SetAll((int)RulesClass::Global()->CrewEscape * 100);
-	this->Survivors_PassengerChance.SetAll((int)RulesClass::Global()->CrewEscape * 100);
+	this->Survivors_PilotChance.SetAll(int(RulesClass::Instance->CrewEscape * 100));
+	this->Survivors_PassengerChance.SetAll(-1); // was (int)RulesClass::Global()->CrewEscape * 100); - changed to -1 to indicate "100% if this is a land transport"
 
 	this->Survivors_Pilots.SetCapacity(SideClass::Array->Count, NULL);
 
@@ -37,8 +37,6 @@ void TechnoTypeExt::ExtData::Initialize(TechnoTypeClass *pThis) {
 
 	this->Is_Deso = this->Is_Deso_Radiation = !strcmp(pThis->ID, "DESO");
 	this->Is_Cow = !strcmp(pThis->ID, "COW");
-
-	this->_Initialized = is_Inited;
 }
 
 /*
@@ -204,10 +202,6 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 			}
 		}
 	}
-
-	// #733
-	this->ProtectedDriver = pINI->ReadBool(section, "ProtectedDriver", this->ProtectedDriver);
-	this->CanDrive = pINI->ReadBool(section, "CanDrive", this->CanDrive);
 
 	// quick fix - remove after the rest of weapon selector code is done
 	return;

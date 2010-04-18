@@ -7,9 +7,7 @@ DEFINE_HOOK(6CEF84, SuperWeaponTypeClass_GetCursorOverObject, 7)
 
 	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pThis);
 
-	if(pThis->Action >= 0x7E) {
-		SWTypeExt::CurrentSWType = pThis;
-
+	if(pThis->Action == SW_YES_CURSOR) {
 		GET_STACK(CellStruct *, pMapCoords, 0x0C);
 
 		int Action = SW_YES_CURSOR;
@@ -29,8 +27,55 @@ DEFINE_HOOK(6CEF84, SuperWeaponTypeClass_GetCursorOverObject, 7)
 
 		R->EAX(Action);
 
-		Actions::Set(Action == SW_YES_CURSOR ? &pData->SW_Cursor : &pData->SW_NoCursor);
+		if(Action == SW_YES_CURSOR) {
+			SWTypeExt::CurrentSWType = pThis;
+			Actions::Set(&pData->SW_Cursor, pData->SW_FireToShroud);
+		} else {
+			SWTypeExt::CurrentSWType = NULL;
+			Actions::Set(&pData->SW_NoCursor, pData->SW_FireToShroud);
+		}
 		return 0x6CEFD9;
+	}
+	return 0;
+}
+
+
+DEFINE_HOOK(653B3A, RadarClass_GetMouseAction_CustomSWAction, 5)
+{
+	int idxSWType = Unsorted::CurrentSWType;
+	if(idxSWType > -1) {
+		SuperWeaponTypeClass *pThis = SuperWeaponTypeClass::Array->GetItem(idxSWType);
+		SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pThis);
+
+		if(pThis->Action == SW_YES_CURSOR) {
+			GET_STACK(CellStruct, pMapCoords, STACK_OFFS(0x54, 0x3C));
+
+			int Action = SW_YES_CURSOR;
+
+			if(!pData->SW_FireToShroud.Get()) {
+				CellClass* pCell = MapClass::Instance->GetCellAt(&pMapCoords);
+				CoordStruct Crd;
+
+				if(MapClass::Instance->IsLocationShrouded(pCell->GetCoords(&Crd))) {
+					Action = SW_NO_CURSOR;
+				}
+			}
+
+			if(pThis->Type >= FIRST_SW_TYPE && !NewSWType::GetNthItem(pThis->Type)->CanFireAt(&pMapCoords)) {
+				Action = SW_NO_CURSOR;
+			}
+
+			R->ESI(Action);
+
+			if(Action == SW_YES_CURSOR) {
+				SWTypeExt::CurrentSWType = pThis;
+				Actions::Set(&pData->SW_Cursor, pData->SW_FireToShroud);
+			} else {
+				SWTypeExt::CurrentSWType = NULL;
+				Actions::Set(&pData->SW_NoCursor, pData->SW_FireToShroud);
+			}
+			return 0x653CA3;
+		}
 	}
 	return 0;
 }

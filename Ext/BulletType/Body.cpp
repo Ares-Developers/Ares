@@ -18,8 +18,6 @@ void BulletTypeExt::ExtData::LoadFromINIFile(BulletTypeClass *pThis, CCINIClass*
 	this->Parachuted = pINI->ReadBool(pThis->ID, "Parachuted", this->Parachuted);
 
 	this->SubjectToTrenches = pINI->ReadBool(pThis->ID, "SubjectToTrenches", this->SubjectToTrenches);
-
-	this->_Initialized = is_Completed;
 }
 
 // =============================

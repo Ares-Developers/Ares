@@ -65,7 +65,7 @@ DEFINE_HOOK(4F8EBD, HouseClass_Update_HasBeenDefeated, 0)
 				return true;
 			}
 			if(FootClass *F = generic_cast<FootClass *>(T)) {
-				return F->ParasiteImUsing;
+				return F->ParasiteImUsing != NULL;
 			}
 			return false;
 		}
@@ -112,4 +112,15 @@ DEFINE_HOOK(4F8EBD, HouseClass_Update_HasBeenDefeated, 0)
 	H->AcceptDefeat();
 
 	return 0x4F8F87;
+}
+
+DEFINE_HOOK(4F645F, HouseClass_CTOR_FixSideIndices, 5)
+{
+	GET(HouseClass *, pHouse, EBP);
+	if(HouseTypeClass * pCountry = pHouse->Type) {
+		if(strcmp(pCountry->ID, "Neutral") && strcmp(pCountry->ID, "Special")) {
+			pHouse->SideIndex = pCountry->SideIndex;
+		}
+	}
+	return 0x4F6490;
 }

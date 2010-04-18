@@ -14,17 +14,11 @@ void Actions::Set(MouseCursor *pCursor, bool bAllowShroud)
 	Actions::MPCustomAllowShroud = bAllowShroud;
 }
 
-void Actions::Set(MouseCursor *pCursor)
-{
-	Set(pCursor, true);
-}
-
 //4AB44A
 DEFINE_HOOK(4AB44A, Actions_CustomCursor_NonShrouded, 9)
 {
 	MouseCursor* pCursor = Actions::MPCustom;
 	if(pCursor) {
-		//TODO: rewrite once MouseClass is defined!
 		GET(MouseClass *, Mouse, ESI);
 
 		//don't try this at home
@@ -47,7 +41,6 @@ DEFINE_HOOK(4AB366, Actions_CustomCursor_Shrouded, 9)
 	MouseCursor* pCursor = Actions::MPCustom;
 	if(pCursor) {
 		if(Actions::MPCustomAllowShroud) {
-			//TODO: rewrite once MouseClass is defined!
 			GET(GScreenClass *, Mouse, ESI);
 
 			//don't try this at home
@@ -123,6 +116,7 @@ DEFINE_HOOK(5BDE64, Actions_AnimateCursor2, 6)
 {
 	R->ECX(&Actions::MP);
 
+	// TODO: MouseClass
 	GET(byte *, pMouse, ESI);
 	return (pMouse[0x555C])
 		? 0x5BDE84 //minimap
@@ -136,7 +130,7 @@ DEFINE_HOOK(4D7524, Actions_AllowForFootClass, 9)
 	//overwrote the ja, need to replicate it
 	unsigned int CursorIndex = R->EAX();
 	if(CursorIndex > 0x46) {
-		if(CursorIndex == 0x7E || CursorIndex == 0x7D) {
+		if(CursorIndex == (SW_YES_CURSOR - 1) || CursorIndex == (SW_NO_CURSOR - 1)) {
 			return 0x4D769F;
 		} else {
 			return 0x4D7CC0;
@@ -157,8 +151,8 @@ DEFINE_HOOK(653CA6, Actions_AllowMinimap, 5)
 			return 0x653CBA;
 		}
 	} else {
-		//overwrote the ja, need to replicate it
 		unsigned int CursorIndex = R->EAX();
+		//overwrote the ja, need to replicate it
 		if(CursorIndex > 0x47) {
 			return 0x653CBA;
 		} else {
@@ -174,75 +168,6 @@ DEFINE_HOOK(5BDDC0, Actions_Reset, 5)
 	return 0;
 }
 
-//DCoder's version
-//void Actions::Set(MouseCursor *pCursor)
-//{
-//	if(pCursor != Actions::LastCustomCursor)
-//	{
-//		Actions::LastFrameIndex = 0;
-//		Actions::LastTimerFrame = Unsorted::CurrentFrame;
-//	}
-//	Actions::CustomCursor = pCursor;
-//};
-//
-//
-//// 5BDDC8, 6
-//// reset cursor
-//XPORT_FUNC(MouseClass_Update)
-//{
-//	if(Actions::CustomCursor)
-//	{
-//		Actions::LastCustomCursor = Actions::CustomCursor;
-//	}
-//	Actions::CustomCursor = NULL;
-//	return 0;
-//}
-//
-//// 5BDC8C, 7
-//// reset cursor
-//// EAX <= current Cursor index
-//// ESI => &cursor
-//XPORT_FUNC(MouseClass_SetCursor)
-//{
-//	RET_UNLESS(Actions::CustomCursor);
-//
-//	MouseCursor *pCursor = Actions::CustomCursor;
-//
-//	if(pCursor->MiniFrame != -1)
-//	{
-//		R->set_BL(R->get_StackVar8(0x24));
-//	}
-//	else
-//	{
-//		R->set_StackVar8(0x24, 0);
-//		R->set_BL(0);
-//	}
-//
-//	R->set_EAX(0xFF); // Actions::LastCustomCursor == Actions::CustomCursor ? 0x7F : 0xFF); // DOESN'T WORK
-//	R->set_ESI((DWORD)pCursor);
-//
-//	return 0x5BDCB4;
-//}
-//
-//// 5BDD86, 5
-//XPORT_FUNC(MouseClass_SetCursor2)
-//{
-//	RET_UNLESS(Actions::CustomCursor);
-//
-//	MouseCursor *pCursor = Actions::CustomCursor;
-//
-//	if(Actions::LastTimerFrame - Unsorted::CurrentFrame > pCursor->Interval)
-//	{
-//		++Actions::LastFrameIndex;
-//		Actions::LastFrameIndex %= pCursor->Count;
-//		Actions::LastTimerFrame = Unsorted::CurrentFrame;
-//	}
-//
-//	R->set_EDX(pCursor->Frame + Actions::LastFrameIndex);
-//
-//	return 0;
-//}
-//
 //// ----------------------------------------
 ////   CUSTOM WEAPON CURSORS
 //// ----------------------------------------

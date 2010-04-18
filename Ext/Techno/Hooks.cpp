@@ -146,13 +146,12 @@ DEFINE_HOOK(6F407D, TechnoClass_Init_1, 6)
 		WarheadTypeClass *WH2 = W2 ? W2->Warhead : NULL;
 
 		if((W1 && !WH1) || (W2 && !WH2)) {
-			_snprintf(Ares::readBuffer, Ares::readLength,
-			"Constructing an instance of [%s]:\r\n%sWeapon %s (slot %d) has no Warhead!\n",
-				T->get_ID(),
-				WH1 ? "Elite " : "",
-				(WH1 ? W2 : W1)->get_ID(),
-				i);
-			Debug::FatalError(Ares::readBuffer);
+			Debug::FatalErrorAndExit(
+				"Constructing an instance of [%s]:\r\n%sWeapon %s (slot %d) has no Warhead!",
+					T->get_ID(),
+					WH1 ? "Elite " : "",
+					(WH1 ? W2 : W1)->get_ID(),
+					i);
 		}
 
 		if(WH1 && WH1->MindControl && Capturer == NULL) {

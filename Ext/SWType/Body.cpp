@@ -32,15 +32,12 @@ void SWTypeExt::ExtData::InitializeConstants(SuperWeaponTypeClass *pThis)
 	Cursor->MiniCount = 1;
 	Cursor->HotX = hotspx_center;
 	Cursor->HotY = hotspy_middle;
-
-	this->_Initialized = is_Constanted;
 }
 
 void SWTypeExt::ExtData::InitializeRuled(SuperWeaponTypeClass *pThis)
 {
 	this->SpyPlane_TypeIndex = AircraftTypeClass::FindIndex("SPYP");
 	this->Nuke_Siren = RulesClass::Global()->DigSound;
-	this->_Initialized = is_Ruled;
 }
 
 void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass *pINI)

@@ -14,8 +14,6 @@ hash_radsiteExt WeaponTypeExt::RadSiteExt;
 void WeaponTypeExt::ExtData::Initialize(WeaponTypeClass *pThis)
 {
 	this->Wave_Reverse[idxVehicle] = pThis->IsMagBeam;
-
-	this->_Initialized = is_Inited;
 };
 
 void WeaponTypeExt::ExtData::LoadFromINIFile(WeaponTypeExt::TT *pThis, CCINIClass *pINI)

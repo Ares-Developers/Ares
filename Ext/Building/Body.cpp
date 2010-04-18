@@ -208,7 +208,10 @@ void BuildingExt::ExtData::doTraverseTo(BuildingClass* targetBuilding) {
 void BuildingExt::ExtData::evalRaidStatus() {
 	// if the building is still marked as raided, but unoccupied, return it to its previous owner
 	if(this->isCurrentlyRaided && !this->AttachedToObject->Occupants.Count) {
-		this->AttachedToObject->SetOwningHouse(this->OwnerBeforeRaid);
+		// Fix for #838: Only return the building to the previous owner if he hasn't been defeated
+		if(!this->OwnerBeforeRaid->Defeated) {
+			this->AttachedToObject->SetOwningHouse(this->OwnerBeforeRaid);
+		}
 		this->OwnerBeforeRaid = NULL;
 		this->isCurrentlyRaided = false;
 	}

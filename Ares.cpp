@@ -315,18 +315,6 @@ DEFINE_HOOK(7258D0, AnnounceInvalidPointer, 6)
 	return 0;
 }
 
-DEFINE_HOOK(74FDC0, GetModuleVersion, 5)
-{
-	R->EAX<const char *>(VERSION_INTERNAL);
-	return 0x74FEEF;
-}
-
-DEFINE_HOOK(74FAE0, GetModuleInternalVersion, 5)
-{
-	R->EAX<const char *>(VERSION_STRMINI);
-	return 0x74FC7B;
-}
-
 DEFINE_HOOK(685659, Scenario_ClearClasses, a)
 {
 	BuildingExt::ExtMap.Empty();

@@ -20,10 +20,6 @@
 #include "../../Misc/Debug.h"
 #endif
 
-// actions for custom sw
-#define SW_YES_CURSOR 0x7F
-#define SW_NO_CURSOR 0x7E
-
 // the index of the first custom sw type
 #define FIRST_SW_TYPE 12
 
@@ -71,6 +67,12 @@ public:
 
 		CustomPalette CameoPal;
 
+		DynamicVectorClass<TechnoTypeClass *> SW_Deliverables;
+
+		// SW: Generic Warhead
+		Valueable<WarheadTypeClass *> GWarhead_WH;
+		Valueable<int> GWarhead_Damage;
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			SpyPlane_TypeIndex (0),
 			SpyPlane_Count (1),
@@ -89,7 +91,9 @@ public:
 			SW_AutoFire (false),
 			SW_FireToShroud (true),
 			SW_RadarEvent (false),
-			CameoPal()
+			CameoPal(),
+			GWarhead_WH(NULL),
+			GWarhead_Damage(0)
 			{ };
 
 		virtual ~ExtData() { };

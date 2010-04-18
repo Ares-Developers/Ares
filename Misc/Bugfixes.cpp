@@ -125,7 +125,7 @@ DEFINE_HOOK(441D25, BuildingClass_Destroy, 0A)
 }
 
 // bugfix #379: Temporal friendly kills give veterancy
-DEFINE_HOOK(71A92A, _Temporal_AvoidFriendlies, 5)
+DEFINE_HOOK(71A92A, TemporalClass_Update_AvoidFriendlies, 5)
 {
 	GET(TemporalClass *, Temp, ESI);
 
@@ -397,7 +397,7 @@ DEFINE_HOOK(6CF3CF, sub_6CF350, 8)
 
 	Debug::DumpStack(R, 0x40);
 
-	Debug::FatalError("Saved data loading failed\n", true);
+	Debug::FatalErrorAndExit("Saved data loading failed");
 
 	return 0;
 }
@@ -665,3 +665,14 @@ DEFINE_HOOK(62A2F8, ParasiteClass_PointerGotInvalid, 6)
 
 	return 0;
 }
+
+// update parasite coords along with the host
+DEFINE_HOOK(4DB87E, FootClass_SetCoords, 6)
+{
+	GET(FootClass *, F, ESI);
+	if(F->ParasiteEatingMe) {
+		F->ParasiteEatingMe->SetLocation(&F->Location);
+	}
+	return 0;
+}
+

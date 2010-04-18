@@ -32,7 +32,6 @@ void BuildingTypeExt::ExtData::Initialize(BuildingTypeClass *pThis) {
 			this->Secret_Boons.AddItem(Options->GetItem(i));
 		}
 	}
-	this->_Initialized = is_Inited;
 }
 
 void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINIClass* pINI)
@@ -41,10 +40,9 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 	char* pID = pThis->ID;
 
 	if(pThis->UnitRepair && pThis->Factory == abs_AircraftType) {
-		_snprintf(Ares::readBuffer, Ares::readLength,
+		Debug::FatalErrorAndExit(
 			"BuildingType [%s] has both UnitRepair=yes and Factory=AircraftType.\n"
 			"This combination causes Internal Errors and other unwanted behaviour.", pID);
-		Debug::FatalError(Ares::readBuffer);
 	}
 
 	this->Firewall_Is = pINI->ReadBool(pID, "Firestorm.Wall", this->Firewall_Is);
@@ -214,8 +212,6 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 		this->StolenMoneyAmount.Read(&exINI, pID, "SpyEffect.StolenMoneyAmount");
 		this->StolenMoneyPercentage.Read(&exINI, pID, "SpyEffect.StolenMoneyPercentage");
 	}
-
-	this->_Initialized = is_Completed;
 }
 
 void BuildingTypeExt::UpdateSecretLabOptions(BuildingClass *pThis)

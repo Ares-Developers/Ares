@@ -26,7 +26,6 @@ void AnimTypeExt::ExtData::LoadFromINIFile(AnimTypeClass *pThis, CCINIClass *pIN
 			this->MakeInfantryOwner = ExtData::RANDOM;
 		}
 	}
-
 }
 
 void AnimTypeExt::SetMakeInfOwner(AnimClass *pAnim, HouseClass *pInvoker, HouseClass *pVictim, HouseClass *pKiller)
