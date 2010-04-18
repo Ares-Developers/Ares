@@ -545,8 +545,8 @@ DEFINE_HOOK(701C97, TechnoClass_ReceiveDamage_AffectsEnemies, 6)
 		CanAffect = WHTypeExt->AffectsEnemies || Victim->Owner->IsAlliedWith(Arguments->Attacker->Owner);
 
 		if(Arguments->Attacker->Owner != Arguments->SourceHouse) {
-			Debug::Log("Info: During AffectsEnemies parsing, Attacker's Owner was %p [%s], but SourceHouse was %p [%s].",
-			Arguments->Attacker->Owner, Arguments->Attacker->Owner->get_ID(), Arguments->SourceHouse, Arguments->SourceHouse->get_ID());
+			Debug::Log("Info: During AffectsEnemies parsing, Attacker's Owner was %p [%s], but SourceHouse was %p.",
+			Arguments->Attacker->Owner, Arguments->Attacker->Owner->get_ID(), Arguments->SourceHouse);
 		}
 
 	} else if(Arguments->SourceHouse) {
