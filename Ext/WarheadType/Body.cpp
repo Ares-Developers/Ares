@@ -72,6 +72,8 @@ void WarheadTypeExt::ExtData::LoadFromINIFile(WarheadTypeClass *pThis, CCINIClas
 	this->AffectsEnemies = pINI->ReadBool(section, "AffectsEnemies", this->AffectsEnemies);
 
 	this->InfDeathAnim.Parse(&exINI, section, "InfDeathAnim");
+
+	this->KillDriver = pINI->ReadBool(section, "KillDriver", this->KillDriver);
 };
 
 void Container<WarheadTypeExt>::InvalidatePointer(void *ptr) {
@@ -225,6 +227,48 @@ void WarheadTypeExt::applyOccupantDamage(BulletClass* Bullet) {
 			Bullet->Health = 0;
 			Bullet->DamageMultiplier = 0;
 			Bullet->Remove();
+		}
+	}
+}
+
+// Request #733: KillDriver/"Jarmen Kell"
+/*! This function checks if the KillDriver effect should be applied, and, if so, applies it.
+	\param Bullet Pointer to the bullet
+	\return true if the effect was applied, false if not
+	\todo This needs to be refactored to work with the generic warhead SW. I want to create a generic cellspread function first.
+*/
+bool WarheadTypeExt::applyKillDriver(BulletClass* Bullet) {
+	if(!Bullet->Target || !this->KillDriver) {
+		return false;
+	} else if(TechnoClass *pTarget = generic_cast<TechnoClass *>(Bullet->Target)) {
+		TechnoTypeClass *pTargetType = pTarget->GetTechnoType();
+		TechnoTypeExt::ExtData* TargetTypeExt = TechnoTypeExt::ExtMap.Find(pTargetType);
+
+		// conditions: Warhead is KillDriver, target is Vehicle or Aircraft, but not protected and not a living being
+		if(((pTarget->WhatAmI() == abs_Unit) || (pTarget->WhatAmI() == abs_Aircraft))
+		  && !(TargetTypeExt->ProtectedDriver || pTargetType->Organic || pTargetType->Natural)) {
+
+			// If this vehicle uses Operator=, we have to take care of actual "physical" drivers, rather than theoretical ones
+			if(TargetTypeExt->IsAPromiscuousWhoreAndLetsAnyoneRideIt || TargetTypeExt->Operator) {
+				//! \todo Change this to "kill one driver and eject everyone else"
+				while(pTarget->Passengers.FirstPassenger) {
+					FootClass *passenger = pTarget->Passengers.RemoveFirstPassenger();
+					passenger->RegisterDestruction(Bullet->Owner);
+					passenger->UnInit();
+				}
+			}
+			// If this unit is driving under influence, we have to free it first
+			if(TechnoClass *Controller = pTarget->MindControlledBy) {
+				if(CaptureManagerClass *MC = Controller->CaptureManager) {
+					MC->FreeUnit(pTarget);
+				}
+			}
+
+			// Hand over to Civilian/Special house
+			pTarget->SetOwningHouse(HouseClass::FindByCountryIndex(HouseTypeClass::FindIndexOfName("Special")));
+			return true;
+		} else {
+			return false;
 		}
 	}
 }

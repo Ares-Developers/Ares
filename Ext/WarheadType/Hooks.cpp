@@ -35,6 +35,7 @@ DEFINE_HOOK(46920B, BulletClass_Fire, 6) {
 	pWHExt->applyIronCurtain(&coords, OwnerHouse);
 	pWHExt->applyEMP(&coords);
 	WarheadTypeExt::applyOccupantDamage(Bullet);
+	pWHExt->applyKillDriver(Bullet);
 
 	return (OwnerHouse && pWHExt->applyPermaMC(&coords, OwnerHouse, Bullet->Target))
 		? 0x469AA4
