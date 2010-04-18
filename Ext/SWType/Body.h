@@ -68,6 +68,7 @@ public:
 		CustomPalette CameoPal;
 
 		DynamicVectorClass<TechnoTypeClass *> SW_Deliverables;
+		Valueable<bool> SW_DeliverBuildups;
 
 		// SW: Generic Warhead
 		Valueable<WarheadTypeClass *> GWarhead_WH;
@@ -92,6 +93,7 @@ public:
 			SW_FireToShroud (true),
 			SW_RadarEvent (false),
 			CameoPal(),
+			SW_DeliverBuildups (false),
 			GWarhead_WH(NULL),
 			GWarhead_Damage(0)
 			{ };

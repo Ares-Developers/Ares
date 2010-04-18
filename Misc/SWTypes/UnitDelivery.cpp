@@ -28,6 +28,9 @@ void SW_UnitDelivery::LoadFromINI(
 			}
 		}
 	}
+
+	INI_EX exINI(pINI);
+	pData->SW_DeliverBuildups.Read(&exINI, section, "SW.DeliverBuildups");
 }
 
 bool SW_UnitDelivery::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
@@ -61,23 +64,46 @@ void UnitDeliveryStateMachine::PlaceUnits() {
 		return;
 	}
 
+	bool CellContainsInfantry = false;
 	while(unitIdx < pData->SW_Deliverables.Count) {
 		TechnoTypeClass * Type = pData->SW_Deliverables[unitIdx];
-		TechnoClass * Item = reinterpret_cast<TechnoClass *>(Type->CreateObject(this->Super->Owner));
+		TechnoClass * Item = generic_cast<TechnoClass *>(Type->CreateObject(this->Super->Owner));
+		BuildingClass * ItemBuilding = specific_cast<BuildingClass *>(Item);
+
+		if(ItemBuilding && pData->SW_DeliverBuildups) {
+			ItemBuilding->QueueMission(mission_Construction, false);
+		}
+		bool isInfantry = Item->WhatAmI() == InfantryClass::AbsID;
+
+		if(CellContainsInfantry && !isInfantry) {
+			++cellIdx;
+			CellContainsInfantry = false;
+		}
+
 		bool Placed = false;
 		do {
-			++cellIdx;
-			if(cellIdx >= 100) { // 100 cells should be enough for any sane delivery
-				unitIdx = 999;
-				Item->UnInit();
-				break;
-			}
 			CellStruct tmpCell = CellSpread::GetCell(cellIdx) + this->Coords;
-			CoordStruct XYZ;
 			if(MapClass::Instance->CellExists(&tmpCell)) {
 				CellClass *cell = MapClass::Instance->GetCellAt(&tmpCell);
+				CoordStruct XYZ;
 				cell->GetCoordsWithBridge(&XYZ);
-				Placed = Item->Put(&XYZ, (cellIdx & 7));
+				if(Placed = Item->Put(&XYZ, (cellIdx & 7))) {
+					if(ItemBuilding && pData->SW_DeliverBuildups) {
+						ItemBuilding->UpdateOwner(this->Super->Owner);
+						ItemBuilding->unknown_bool_6DD = 1;
+					}
+				}
+			}
+
+			if(!Placed || !isInfantry) {
+				++cellIdx;
+				if(cellIdx >= 100) { // 100 cells should be enough for any sane delivery
+					unitIdx = 999;
+					Item->UnInit();
+					break;
+				}
+			} else {
+				CellContainsInfantry = true;
 			}
 		} while(!Placed);
 		++unitIdx;
