@@ -55,16 +55,22 @@ void UnitDeliveryStateMachine::Update() {
 	};
 }
 
+// Replaced my own implementation with AlexB's shown below
+
+//This function doesn't skip any placeable items, no matter how
+//they are ordered. Infantry is grouped. Units are moved to the
+//center as close as they can. There is an additional fix for a
+//glitch: previously, even if a unit could be placed, it would
+//have been unloaded again, when it was at index 100.
+
 void UnitDeliveryStateMachine::PlaceUnits() {
 	int unitIdx = 0;
-	int cellIdx = 0;
 	SWTypeExt::ExtData *pData = this->FindExtData();
 
 	if(!pData) {
 		return;
 	}
 
-	bool CellContainsInfantry = false;
 	while(unitIdx < pData->SW_Deliverables.Count) {
 		TechnoTypeClass * Type = pData->SW_Deliverables[unitIdx];
 		TechnoClass * Item = generic_cast<TechnoClass *>(Type->CreateObject(this->Super->Owner));
@@ -73,13 +79,8 @@ void UnitDeliveryStateMachine::PlaceUnits() {
 		if(ItemBuilding && pData->SW_DeliverBuildups) {
 			ItemBuilding->QueueMission(mission_Construction, false);
 		}
-		bool isInfantry = Item->WhatAmI() == InfantryClass::AbsID;
 
-		if(CellContainsInfantry && !isInfantry) {
-			++cellIdx;
-			CellContainsInfantry = false;
-		}
-
+		int cellIdx = 0;
 		bool Placed = false;
 		do {
 			CellStruct tmpCell = CellSpread::GetCell(cellIdx) + this->Coords;
@@ -95,15 +96,13 @@ void UnitDeliveryStateMachine::PlaceUnits() {
 				}
 			}
 
-			if(!Placed || !isInfantry) {
-				++cellIdx;
-				if(cellIdx >= 100) { // 100 cells should be enough for any sane delivery
-					unitIdx = 999;
+			++cellIdx;
+			if(cellIdx >= 100) { // 100 cells should be enough for any sane delivery
+				cellIdx = 0;
+				if(!Placed) {
 					Item->UnInit();
-					break;
 				}
-			} else {
-				CellContainsInfantry = true;
+				break;
 			}
 		} while(!Placed);
 		++unitIdx;

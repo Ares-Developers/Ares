@@ -34,7 +34,7 @@ public:
 	static void LogFileClose(int tag);
 	static void LogFileRemove();
 	static void DumpObj(byte *data, size_t len);
-	static void DumpStack(REGISTERS *R, size_t len);
+	static void DumpStack(REGISTERS *R, size_t len, size_t startAt = 0);
 	static void (_cdecl* Log)(const char* pFormat, ...);
 
 	static void __cdecl LogUnflushed(const char *Format, ...);

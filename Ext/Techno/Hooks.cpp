@@ -124,14 +124,16 @@ DEFINE_HOOK(415CA6, AircraftClass_Paradrop, 6)
 DEFINE_HOOK(6F407D, TechnoClass_Init_1, 6)
 {
 	GET(TechnoClass *, T, ESI);
+	TechnoTypeClass * Type = T->GetTechnoType();
 	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(T);
-	TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(T->GetTechnoType());
+	TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(Type);
 
 	CaptureManagerClass *Capturer = NULL;
 	ParasiteClass *Parasite = NULL;
 	TemporalClass *Temporal = NULL;
-	bool IsFoot = (T->AbstractFlags & ABSFLAGS_ISFOOT) != 0;
-	FootClass *F = (FootClass *)T;
+
+	FootClass *F = generic_cast<FootClass *>(T);
+	bool IsFoot = (F != NULL);
 
 //	for(int i = 0; i < pTypeData->Weapons.get_Count(); ++i) {
 //		WeaponStruct *W = &pTypeData->Weapons[i];
@@ -148,9 +150,9 @@ DEFINE_HOOK(6F407D, TechnoClass_Init_1, 6)
 		if((W1 && !WH1) || (W2 && !WH2)) {
 			Debug::FatalErrorAndExit(
 				"Constructing an instance of [%s]:\r\n%sWeapon %s (slot %d) has no Warhead!",
-					T->get_ID(),
+					Type->ID,
 					WH1 ? "Elite " : "",
-					(WH1 ? W2 : W1)->get_ID(),
+					(WH1 ? W2 : W1)->ID,
 					i);
 		}
 
@@ -486,13 +488,23 @@ DEFINE_HOOK(73B672, UnitClass_DrawVXL, 6)
 }
 
 // stops movement sound from being played while unit is being pulled by a magnetron (see terror drone)
+DEFINE_HOOK(7101CF, FootClass_ImbueLocomotor, 7)
+{
+	GET(FootClass *, F, ESI);
+	F->Audio7.ShutUp();
+	return 0;
+}
+
 DEFINE_HOOK(4DAA68, FootClass_Update_MoveSound, 6)
 {
 	GET(FootClass *, F, ESI);
-	return (F->unknown_bool_53C || F->FrozenStill)
-		? 0x4DAAEE
-		: 0x4DAA70
-	;
+	if(F->unknown_bool_53C) {
+		return 0x4DAAEE;
+	}
+	if(F->LocomotorSource) {
+		F->Audio7.ShutUp();
+	}
+	return 0x4DAA70;
 }
 
 DEFINE_HOOK(73C725, UnitClass_DrawSHP_DrawShadowEarlier, 6)
@@ -545,8 +557,13 @@ DEFINE_HOOK(701C97, TechnoClass_ReceiveDamage_AffectsEnemies, 6)
 		CanAffect = WHTypeExt->AffectsEnemies || Victim->Owner->IsAlliedWith(Arguments->Attacker->Owner);
 
 		if(Arguments->Attacker->Owner != Arguments->SourceHouse) {
-			Debug::Log("Info: During AffectsEnemies parsing, Attacker's Owner was %p [%s], but SourceHouse was %p.",
-			Arguments->Attacker->Owner, Arguments->Attacker->Owner->get_ID(), Arguments->SourceHouse);
+			Debug::Log("Info: During AffectsEnemies parsing, Attacker's Owner was %p [%s], but SourceHouse was %p [%s].",
+				Arguments->Attacker->Owner,
+				(Arguments->Attacker->Owner ? Arguments->Attacker->Owner->Type->ID : "null"),
+				Arguments->SourceHouse,
+				(Arguments->SourceHouse ? Arguments->SourceHouse->Type->ID : "null")
+				);
+			Debug::DumpStack(R, 0xE0, 0xC0);
 		}
 
 	} else if(Arguments->SourceHouse) {
@@ -554,7 +571,8 @@ DEFINE_HOOK(701C97, TechnoClass_ReceiveDamage_AffectsEnemies, 6)
 		CanAffect = WHTypeExt->AffectsEnemies || Victim->Owner->IsAlliedWith(Arguments->SourceHouse);
 
 	} else {
-		Debug::Log("Warning: Neither Attacker nor SourceHouse were set during AffectsEnemies parsing!");
+		//Debug::Log("Warning: Neither Attacker nor SourceHouse were set during AffectsEnemies parsing!");
+		// this is often the case for ownerless damage i.e. crates/fire particles, no point in logging it
 	}
 
 	return CanAffect ? 0 : 0x701CC2;

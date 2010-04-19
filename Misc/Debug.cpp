@@ -126,9 +126,9 @@ void Debug::DumpObj(byte *data, size_t len) {
 	Debug::Log("\nEnd of dump.\n");
 }
 
-void Debug::DumpStack(REGISTERS *R, size_t len) {
+void Debug::DumpStack(REGISTERS *R, size_t len, size_t startAt) {
 	Debug::Log("Dumping %X bytes of stack\n", len);
-	for(size_t i = 0; i < len; i += 4) {
+	for(size_t i = startAt; i < len; i += 4) {
 		Debug::Log("esp+%04X = %08X\n", i, R->Stack32(i));
 	}
 	Debug::Log("Done.\n");
