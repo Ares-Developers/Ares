@@ -279,7 +279,12 @@ DEFINE_HOOK(448401, BuildingClass_ChangeOwnership_TrenchEVA, 6)
 	GET(HouseClass *, pNewOwner, EBX);
 	enum wasHandled { Yes = 0x44848F, No = 0} Handled = No;
 
+	BuildingExt::ExtData* bldExt = BuildingExt::ExtMap.Find(pBld);
 
+	if(bldExt->ignoreNextEVA) {
+		Handled = Yes;
+		bldExt->ignoreNextEVA = false;
+	}
 
 	return Handled;
 }

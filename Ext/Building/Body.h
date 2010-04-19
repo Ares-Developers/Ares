@@ -23,12 +23,13 @@ public:
 	public:
 		HouseClass* OwnerBeforeRaid; //!< Contains the house which owned this building prior to it being raided and turned over to the raiding party.
 		bool isCurrentlyRaided; //!< Whether this building is currently occupied by someone not the actual owner of the structure.
+		bool ignoreNextEVA; //!< This is used when returning raided buildings, to decide whether to play EVA announcements about building capture.
 
 		bool InfiltratedBy(HouseClass *Enterer);
 
 	public:
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
-			OwnerBeforeRaid(NULL), isCurrentlyRaided(false)
+			OwnerBeforeRaid(NULL), isCurrentlyRaided(false), ignoreNextEVA(false)
 			{ };
 
 		virtual ~ExtData() {

@@ -210,6 +210,7 @@ void BuildingExt::ExtData::evalRaidStatus() {
 	if(this->isCurrentlyRaided && !this->AttachedToObject->Occupants.Count) {
 		// Fix for #838: Only return the building to the previous owner if he hasn't been defeated
 		if(!this->OwnerBeforeRaid->Defeated) {
+			this->ignoreNextEVA = true; // #698 - used in BuildingClass_ChangeOwnership_TrenchEVA to override EVA announcement
 			this->AttachedToObject->SetOwningHouse(this->OwnerBeforeRaid);
 		}
 		this->OwnerBeforeRaid = NULL;
