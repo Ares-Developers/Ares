@@ -89,9 +89,15 @@ void UnitDeliveryStateMachine::PlaceUnits() {
 				CoordStruct XYZ;
 				cell->GetCoordsWithBridge(&XYZ);
 				if(Placed = Item->Put(&XYZ, (cellIdx & 7))) {
-					if(ItemBuilding && pData->SW_DeliverBuildups) {
-						ItemBuilding->UpdateOwner(this->Super->Owner);
-						ItemBuilding->unknown_bool_6DD = 1;
+					if(ItemBuilding) {
+						if (pData->SW_DeliverBuildups) {
+							ItemBuilding->UpdateOwner(this->Super->Owner);
+							ItemBuilding->unknown_bool_6DD = 1;
+						}
+					} else {
+						if(Type->BalloonHover || Type->JumpJet) {
+							Item->Scatter(0xB1CFE8, 1, 0);
+						}
 					}
 				}
 			}
