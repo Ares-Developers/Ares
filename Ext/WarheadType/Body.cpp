@@ -166,7 +166,8 @@ void WarheadTypeExt::ExtData::applyEMP(CoordStruct *coords) {
 		CellStruct cellCoords = MapClass::Instance->GetCellAt(coords)->MapCoords;
 
 		EMPulseClass *placeholder;
-		GAME_ALLOC(EMPulseClass, placeholder, cellCoords, int(this->AttachedToObject->CellSpread), this->EMP_Duration, 0);
+		GAME_ALLOC(EMPulseClass, placeholder, cellCoords,
+			int(this->AttachedToObject->CellSpread), this->EMP_Duration, this->AttachedToObject->Owner);
 	}
 }
 
@@ -176,7 +177,8 @@ void WarheadTypeExt::ExtData::applyEMP(CoordStruct *coords) {
 	\param coords The coordinates of the warhead impact, the center of the Mind Control animation.
 	\param Owner Owner of the Mind Control effect, i.e. the one controlling the target afterwards.
 	\param Target Target of the Mind Control effect, i.e. the one being controlled by the owner afterwards.
-	\return false if effect wasn't applied, true if it was. This is important for the chain of damage effects, as, in case of true, the target is now a friendly unit.
+	\return false if effect wasn't applied, true if it was.
+		This is important for the chain of damage effects, as, in case of true, the target is now a friendly unit.
 */
 bool WarheadTypeExt::ExtData::applyPermaMC(CoordStruct *coords, HouseClass* Owner, ObjectClass* Target) {
 	if (this->MindControl_Permanent && Target) {
@@ -211,11 +213,15 @@ bool WarheadTypeExt::ExtData::applyPermaMC(CoordStruct *coords, HouseClass* Owne
 }
 
 /*!
-	This function checks if the projectile transporting the warhead should pass through the building's walls and deliver the warhead to the occupants instead. If so, it performs that effect.
+	This function checks if the projectile transporting the warhead should pass through
+		the building's walls and deliver the warhead to the occupants instead. If so, it performs that effect.
 	\note Moved here from hook BulletClass_Fire.
-	\note This cannot logically be triggered in situations where the warhead is not delivered by a projectile, such as the GenericWarhead super weapon.
+	\note This cannot logically be triggered in situations where the warhead is not delivered by a projectile,
+		such as the GenericWarhead super weapon.
 	\param Bullet The projectile
-	\todo This should probably be moved to /Ext/Bullet/ instead, I just maintained the previous structure to ease transition. Since UC.DaMO (#778) in 0.5 will require a reimplementation of this logic anyway, we can probably just leave it here until then.
+	\todo This should probably be moved to /Ext/Bullet/ instead, I just maintained the previous structure to ease transition.
+		Since UC.DaMO (#778) in 0.5 will require a reimplementation of this logic anyway,
+		we can probably just leave it here until then.
 */
 void WarheadTypeExt::applyOccupantDamage(BulletClass* Bullet) {
 	if (Bullet->Target) {
