@@ -503,6 +503,7 @@ DEFINE_HOOK(4DAA68, FootClass_Update_MoveSound, 6)
 	}
 	if(F->LocomotorSource) {
 		F->Audio7.ShutUp();
+		return 0x4DAAEE;
 	}
 	return 0x4DAA70;
 }
