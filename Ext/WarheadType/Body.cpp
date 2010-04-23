@@ -167,7 +167,7 @@ void WarheadTypeExt::ExtData::applyEMP(CoordStruct *coords) {
 
 		EMPulseClass *placeholder;
 		GAME_ALLOC(EMPulseClass, placeholder, cellCoords,
-			int(this->AttachedToObject->CellSpread), this->EMP_Duration, this->AttachedToObject->Owner);
+			int(this->AttachedToObject->CellSpread), this->EMP_Duration, this->AttachedToObject);
 	}
 }
 
