@@ -25,6 +25,8 @@ template<> IStream *Container<WarheadTypeExt>::SavingStream = NULL;
 
 hash_ionExt WarheadTypeExt::IonExt;
 
+hash_technoExt WarheadTypeExt::TechnoExt;
+
 WarheadTypeClass * WarheadTypeExt::Temporal_WH = NULL;
 
 void WarheadTypeExt::ExtData::LoadFromINIFile(WarheadTypeClass *pThis, CCINIClass *pINI)
@@ -57,6 +59,7 @@ void WarheadTypeExt::ExtData::LoadFromINIFile(WarheadTypeClass *pThis, CCINIClas
 
 	if(pThis->EMEffect) {
 		this->EMP_Duration = pINI->ReadInteger(section, "EMP.Duration", this->EMP_Duration);
+		this->EMP_Cap = pINI->ReadInteger(section, "EMP.Cap", this->EMP_Cap);
 	}
 
 	this->IC_Duration = pINI->ReadInteger(section, "IronCurtain.Duration", this->IC_Duration);
@@ -76,6 +79,7 @@ void WarheadTypeExt::ExtData::LoadFromINIFile(WarheadTypeClass *pThis, CCINIClas
 
 void Container<WarheadTypeExt>::InvalidatePointer(void *ptr) {
 	AnnounceInvalidPointerMap(WarheadTypeExt::IonExt, ptr);
+	AnnounceInvalidPointerMap(WarheadTypeExt::TechnoExt, ptr);
 	AnnounceInvalidPointer(WarheadTypeExt::Temporal_WH, ptr);
 }
 
@@ -161,13 +165,17 @@ void WarheadTypeExt::ExtData::applyIronCurtain(CoordStruct *coords, HouseClass* 
 	\note Moved here from hook BulletClass_Fire.
 	\param coords The coordinates of the warhead impact, the center of the EMP area.
 */
-void WarheadTypeExt::ExtData::applyEMP(CoordStruct *coords) {
+void WarheadTypeExt::ExtData::applyEMP(CoordStruct *coords, TechnoClass *source) {
 	if (this->EMP_Duration) {
 		CellStruct cellCoords = MapClass::Instance->GetCellAt(coords)->MapCoords;
 
+		WarheadTypeExt::TechnoExt[source] = this;
+
 		EMPulseClass *placeholder;
 		GAME_ALLOC(EMPulseClass, placeholder, cellCoords,
-			int(this->AttachedToObject->CellSpread), this->EMP_Duration, this->AttachedToObject);
+			int(this->AttachedToObject->CellSpread), this->EMP_Duration, source);
+
+		WarheadTypeExt::TechnoExt.erase(source);
 	}
 }
 

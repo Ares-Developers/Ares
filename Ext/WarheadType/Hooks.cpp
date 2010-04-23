@@ -33,7 +33,7 @@ DEFINE_HOOK(46920B, BulletClass_Fire, 6) {
 
 	pWHExt->applyRipples(&coords);
 	pWHExt->applyIronCurtain(&coords, OwnerHouse);
-	pWHExt->applyEMP(&coords);
+	pWHExt->applyEMP(&coords, Bullet->Owner);
 	WarheadTypeExt::applyOccupantDamage(Bullet);
 
 	return (OwnerHouse && pWHExt->applyPermaMC(&coords, OwnerHouse, Bullet->Target))

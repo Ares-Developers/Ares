@@ -72,6 +72,8 @@ public:
 
 		std::bitset<32> RequiredStolenTech;
 
+		Valueable<bool> ImmuneToEMP;
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			Survivors_PilotChance (NULL),
 			Survivors_PassengerChance (NULL),
@@ -97,7 +99,8 @@ public:
 			Operator (NULL),
 			IsAPromiscuousWhoreAndLetsAnyoneRideIt (false),
 			CameoPal(),
-			RequiredStolenTech(0ull)
+			RequiredStolenTech(0ull),
+			ImmuneToEMP (false)
 			{ this->Insignia.SetAll(NULL); };
 
 		virtual ~ExtData() {};

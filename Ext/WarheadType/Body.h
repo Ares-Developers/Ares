@@ -56,6 +56,8 @@ public:
 
 		int EMP_Duration;
 
+		int EMP_Cap;
+
 		int IC_Duration;
 
 		DynamicVectorClass<VersesData> Verses;
@@ -71,6 +73,7 @@ public:
 			MindControl_Permanent (false),
 			Ripple_Radius (0),
 			EMP_Duration (0),
+			EMP_Cap (-1),
 			IC_Duration (0),
 			DeployedDamage (1.00),
 			Temporal_WarpAway (&RulesClass::Global()->WarpAway),
@@ -94,7 +97,7 @@ public:
 
 		void applyRipples(CoordStruct *);
 		void applyIronCurtain(CoordStruct *, HouseClass *);
-		void applyEMP(CoordStruct *);
+		void applyEMP(CoordStruct *, TechnoClass *);
 		bool applyPermaMC(CoordStruct *, HouseClass *, ObjectClass *);
 	};
 
@@ -103,6 +106,8 @@ public:
 	static WarheadTypeClass *Temporal_WH;
 
 	static hash_map<IonBlastClass *, WarheadTypeExt::ExtData *> IonExt;
+
+	static hash_map<TechnoClass *, WarheadTypeExt::ExtData *> TechnoExt;
 
 	static void applyRipples(WarheadTypeClass * pWH, CoordStruct* coords) {
 		if(auto pWHExt = WarheadTypeExt::ExtMap.Find(pWH)) {
@@ -114,9 +119,9 @@ public:
 			pWHExt->applyIronCurtain(coords, House);
 		}
 	}
-	static void applyEMP(WarheadTypeClass * pWH, CoordStruct* coords) {
+	static void applyEMP(WarheadTypeClass * pWH, CoordStruct* coords, TechnoClass *source) {
 		if(auto pWHExt = WarheadTypeExt::ExtMap.Find(pWH)) {
-			pWHExt->applyEMP(coords);
+			pWHExt->applyEMP(coords, source);
 		}
 	}
 	static bool applyPermaMC(WarheadTypeClass * pWH, CoordStruct* coords, HouseClass * House, ObjectClass * Source) {
@@ -128,4 +133,5 @@ public:
 };
 
 typedef hash_map<IonBlastClass *, WarheadTypeExt::ExtData *> hash_ionExt;
+typedef hash_map<TechnoClass *, WarheadTypeExt::ExtData *> hash_technoExt;
 #endif

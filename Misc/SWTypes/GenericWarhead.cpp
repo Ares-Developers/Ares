@@ -41,7 +41,6 @@ bool SW_GenericWarhead::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPl
 	// NULL -> TechnoClass* SourceObject
 	pWHExt->applyRipples(&coords);
 	pWHExt->applyIronCurtain(&coords, pThis->Owner);
-	pWHExt->applyEMP(&coords);
 
 	BuildingClass *Firer = NULL;
 	HouseClass *FirerHouse = pThis->Owner;
@@ -52,6 +51,8 @@ bool SW_GenericWarhead::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPl
 			break;
 		}
 	}
+
+	pWHExt->applyEMP(&coords, Firer);
 
 	if(!pWHExt->applyPermaMC(&coords, pThis->Owner, Cell->GetContent())) {
 		MapClass::DamageArea(&coords, pData->GWarhead_Damage, Firer, pData->GWarhead_WH, 1, pThis->Owner);

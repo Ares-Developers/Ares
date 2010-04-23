@@ -203,6 +203,8 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 		}
 	}
 
+	this->ImmuneToEMP.Read(&exINI, section, "ImmuneToEMP");
+
 	// quick fix - remove after the rest of weapon selector code is done
 	return;
 }
