@@ -1,6 +1,7 @@
 #include "Body.h"
 #include <WeaponTypeClass.h>
 #include "../../Enum/ArmorTypes.h"
+#include "../Techno/Body.h"
 
 #include <WarheadTypeClass.h>
 #include <GeneralStructures.h>
@@ -25,9 +26,9 @@ template<> IStream *Container<WarheadTypeExt>::SavingStream = NULL;
 
 hash_ionExt WarheadTypeExt::IonExt;
 
-hash_technoExt WarheadTypeExt::TechnoExt;
-
 WarheadTypeClass * WarheadTypeExt::Temporal_WH = NULL;
+
+WarheadTypeClass * WarheadTypeExt::EMP_WH = NULL;
 
 void WarheadTypeExt::ExtData::LoadFromINIFile(WarheadTypeClass *pThis, CCINIClass *pINI)
 {
@@ -79,7 +80,6 @@ void WarheadTypeExt::ExtData::LoadFromINIFile(WarheadTypeClass *pThis, CCINIClas
 
 void Container<WarheadTypeExt>::InvalidatePointer(void *ptr) {
 	AnnounceInvalidPointerMap(WarheadTypeExt::IonExt, ptr);
-	AnnounceInvalidPointerMap(WarheadTypeExt::TechnoExt, ptr);
 	AnnounceInvalidPointer(WarheadTypeExt::Temporal_WH, ptr);
 }
 
@@ -169,13 +169,13 @@ void WarheadTypeExt::ExtData::applyEMP(CoordStruct *coords, TechnoClass *source)
 	if (this->EMP_Duration) {
 		CellStruct cellCoords = MapClass::Instance->GetCellAt(coords)->MapCoords;
 
-		WarheadTypeExt::TechnoExt[source] = this;
+		// the cap is saved with the ExtData of TechnoExt.
+		WarheadTypeExt::EMP_WH = this->AttachedToObject;
 
+		// create the pulse.
 		EMPulseClass *placeholder;
 		GAME_ALLOC(EMPulseClass, placeholder, cellCoords,
 			int(this->AttachedToObject->CellSpread), this->EMP_Duration, source);
-
-		WarheadTypeExt::TechnoExt.erase(source);
 	}
 }
 

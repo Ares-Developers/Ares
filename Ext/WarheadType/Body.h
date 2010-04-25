@@ -105,9 +105,9 @@ public:
 
 	static WarheadTypeClass *Temporal_WH;
 
-	static hash_map<IonBlastClass *, WarheadTypeExt::ExtData *> IonExt;
+	static WarheadTypeClass *EMP_WH;
 
-	static hash_map<TechnoClass *, WarheadTypeExt::ExtData *> TechnoExt;
+	static hash_map<IonBlastClass *, WarheadTypeExt::ExtData *> IonExt;
 
 	static void applyRipples(WarheadTypeClass * pWH, CoordStruct* coords) {
 		if(auto pWHExt = WarheadTypeExt::ExtMap.Find(pWH)) {
@@ -130,8 +130,21 @@ public:
 		}
 	}
 	static void applyOccupantDamage(BulletClass *);
+
+	static void createEMPulse(EMPulseClass *, TechnoClass *);
+	static void disableEMPEffect(TechnoClass *);
+
+private:
+	static bool isEMPTypeImmune(TechnoClass *, HouseClass *);
+	static bool isEMPImmune(TechnoClass *, HouseClass *);
+	static bool canAffectTarget(TechnoClass *, HouseClass *, WarheadTypeClass *);
+	static bool canBeEMPAffected(TechnoClass *, HouseClass *);
+	static bool shouldEMPHouse(HouseClass *, HouseClass *, WarheadTypeExt::ExtData *);
+	static int getCappedDuration(int, int, int);
+	static void updateRadarBlackout(TechnoClass *);
+	static bool enableEMPEffect(TechnoClass *, ObjectClass *);
+	static bool verbose;
 };
 
 typedef hash_map<IonBlastClass *, WarheadTypeExt::ExtData *> hash_ionExt;
-typedef hash_map<TechnoClass *, WarheadTypeExt::ExtData *> hash_technoExt;
 #endif
