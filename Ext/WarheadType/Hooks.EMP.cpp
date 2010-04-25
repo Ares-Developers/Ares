@@ -93,7 +93,8 @@ bool WarheadTypeExt::canBeEMPAffected(TechnoClass * Unit, HouseClass * SourceHou
 		// buildings are emp prone if they consume power and need it to function
 		if (BuildingClass * VictimBuilding = specific_cast<BuildingClass *> (Unit)) {
 			BuildingTypeClass * VictimBuildingType = VictimBuilding->Type;
-			isEMPProne = (VictimBuildingType->Powered && (VictimBuildingType->PowerDrain > 0));
+			isEMPProne = ((VictimBuildingType->Powered && (VictimBuildingType->PowerDrain > 0))
+				          || VictimBuildingType->TogglePower);
 
 			// may have a special function.
 			if (VictimBuildingType->Radar ||
