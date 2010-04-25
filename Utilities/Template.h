@@ -129,6 +129,26 @@ class Customizable : public Valueable<T> {
 public:
 	Customizable(T* alias = NULL) : Valueable<T>(T()), Customized(false), Default(alias) {};
 
+	operator T () {
+		return this->Get();
+	}
+
+	operator T* () {
+		return this->GetEx();
+	}
+
+	T* operator & () {
+		return this->GetEx();
+	}
+
+	bool operator != (T other) const {
+		return this->Value != other;
+	};
+
+	bool operator ! () {
+		return this->Get() == 0;
+	};
+
 	void Bind(T* to) {
 		if(!this->Customized) {
 			this->Default = to;
