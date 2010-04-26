@@ -42,19 +42,19 @@ public:
 		return this->Get() == 0;
 	};
 
-	/*virtual */T Get() {
+	virtual T Get() {
 		return this->Value;
 	}
 
-	/*virtual */T* GetEx() {
+	virtual T* GetEx() {
 		return &this->Value;
 	}
 
-	/*virtual */void Set(T val) {
+	virtual void Set(T val) {
 		this->Value = val;
 	}
 
-	/*virtual */void SetEx(T* val) {
+	virtual void SetEx(T* val) {
 		this->Value = *val;
 	}
 
@@ -89,19 +89,19 @@ public:
 		return this->GetEx();
 	}
 
-	/*virtual */T Get() {
+	virtual T Get() {
 		return this->Value;
 	}
 
-	/*virtual */void Set(T val) {
+	virtual void Set(T val) {
 		this->Value = val;
 	}
 
-	/*virtual */T* GetEx() {
+	virtual T* GetEx() {
 		return &this->Value;
 	}
 
-	/*virtual */void SetEx(T* val) {
+	virtual void SetEx(T* val) {
 		this->Value = *val;
 	}
 
@@ -129,52 +129,32 @@ class Customizable : public Valueable<T> {
 public:
 	Customizable(T* alias = NULL) : Valueable<T>(T()), Customized(false), Default(alias) {};
 
-	operator T () {
-		return this->Get();
-	}
-
-	operator T* () {
-		return this->GetEx();
-	}
-
-	T* operator & () {
-		return this->GetEx();
-	}
-
-	bool operator != (T other) const {
-		return this->Value != other;
-	};
-
-	bool operator ! () {
-		return this->Get() == 0;
-	};
-
 	void Bind(T* to) {
 		if(!this->Customized) {
 			this->Default = to;
 		}
 	}
 
-	/*virtual */T Get() {
+	virtual T Get() {
 		return this->Customized
 		 ? this->Value
 		 : this->Default ? *this->Default : T()
 		;
 	}
 
-	/*virtual */void Set(T val) {
+	virtual void Set(T val) {
 		this->Customized = true;
 		this->Value = val;
 	}
 
-	/*virtual */T* GetEx() {
+	virtual T* GetEx() {
 		return this->Customized
 		 ? &this->Value
 		 : this->Default
 		;
 	}
 
-	/*virtual */void SetEx(T* val) {
+	virtual void SetEx(T* val) {
 		this->Customized = true;
 		this->Value = *val;
 	}
@@ -185,12 +165,6 @@ public:
 				this->Value = *this->Default;
 			}
 			this->Customized = true;
-		}
-	}
-
-	void Parse(INI_EX *parser, const char* pSection, const char* pKey, bool Allocate = 0) {
-		if(parser->ReadString(pSection, pKey)) {
-			this->Set((Allocate ? MyBase::FindOrAllocate : MyBase::Find)(parser->value()));
 		}
 	}
 };
