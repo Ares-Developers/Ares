@@ -57,25 +57,12 @@ void Ares::UninitOwnResources()
 //Implementations
 void __stdcall Ares::RegisterCommands()
 {
-	MapSnapshotCommandClass *MapSnapshotCommand;
-	GAME_ALLOC(MapSnapshotCommandClass, MapSnapshotCommand);
-	CommandClass::Array->AddItem(MapSnapshotCommand);
-
-	TestSomethingCommandClass *TestSomethingCommand;
-	GAME_ALLOC(TestSomethingCommandClass, TestSomethingCommand);
-	CommandClass::Array->AddItem(TestSomethingCommand);
-
-	FirestormToggleCommandClass *FirestormToggleCommand;
-	GAME_ALLOC(FirestormToggleCommandClass, FirestormToggleCommand);
-	CommandClass::Array->AddItem(FirestormToggleCommand);
-
-	DumperTypesCommandClass *DumperTypesCommand;
-	GAME_ALLOC(DumperTypesCommandClass, DumperTypesCommand);
-	CommandClass::Array->AddItem(DumperTypesCommand);
-
-	DebuggingCommandClass *DebuggingCommand;
-	GAME_ALLOC(DebuggingCommandClass, DebuggingCommand);
-	CommandClass::Array->AddItem(DebuggingCommand);
+	MakeCommand<AIControlCommandClass>();
+	MakeCommand<MapSnapshotCommandClass>();
+	MakeCommand<TestSomethingCommandClass>();
+	MakeCommand<FirestormToggleCommandClass>();
+	MakeCommand<DumperTypesCommandClass>();
+	MakeCommand<DebuggingCommandClass>();
 }
 
 void __stdcall Ares::CmdLineParse(char** ppArgs,int nNumArgs)

@@ -92,98 +92,116 @@ DEFINE_HOOK_AGAIN(7B94B2, WWMouseClass_DrawCursor_V2, 6)
 	return 0;
 }
 
-#if 0
-A_FINE_HOOK(537CFE, Game_MakeScreenshot, 0)
+DEFINE_HOOK(537BC0, Game_MakeScreenshot, 0)
 {
-	DSurface * Surface = DSurface::Hidden;
-	if(WORD * buffer = reinterpret_cast<WORD *>(Surface->Lock(0, 0))) {
+	RECT Viewport;
+	if(Imports::GetWindowRect(Game::hWnd, &Viewport)) {
+		POINT TL = {Viewport.left, Viewport.top}, BR = {Viewport.right, Viewport.bottom};
+		if(Imports::ClientToScreen(Game::hWnd, &TL) && Imports::ClientToScreen(Game::hWnd, &BR)) {
+			RectangleStruct ClipRect = {TL.x, TL.y, Viewport.right + 1, Viewport.bottom + 1};
 
-		int idx = -1;
-		char fname[16];
-		CCFileClass *ScreenShot = new CCFileClass;
-		do {
-			++idx;
-			_snprintf(fname, 16, "SCRN%04.bmp", idx);
-		} while(ScreenShot->Exists(fname));
+			DSurface * Surface = DSurface::Hidden;
 
-		ScreenShot->OpenEx(fname, eFileMode::Write);
+			int width = Surface->GetWidth();
+			int height = Surface->GetHeight();
 
-		int width = Surface->GetWidth();
-		int height = Surface->GetHeight();
+			size_t arrayLen = width * height;
 
-		size_t arrayLen = width * height;
+			if(width < ClipRect.Width) {
+				ClipRect.Width = width;
+			}
+			if(height < ClipRect.Height) {
+				ClipRect.Height = height;
+			}
 
-		#pragma pack(push, 1)
-		struct bmpfile_magic {
-		  unsigned char magic[2];
-		} h1;
+			RectangleStruct DestRect = {0, 0, width, height};
 
-		h1.magic[0] = 'B';
-		h1.magic[1] = 'M';
+			WWMouseClass::Instance->HideCursor();
+			Surface->BlitPart(&DestRect, DSurface::Primary, &ClipRect, 0, 1);
+			WWMouseClass::Instance->ShowCursor();
 
-		struct bmpfile_header {
-		  DWORD filesz;
-		  WORD creator1;
-		  WORD creator2;
-		  DWORD bmp_offset;
-		} h2;
-		h2.creator1 = h2.creator2 = 0;
+			if(WORD * buffer = reinterpret_cast<WORD *>(Surface->Lock(0, 0))) {
+				int idx = -1;
+				char fname[16];
+				CCFileClass *ScreenShot = NULL;
+				do {
+					if(ScreenShot) {
+						delete ScreenShot;
+						ScreenShot = NULL;
+					}
+					++idx;
+					_snprintf(fname, 16, "SCRN%04d.bmp", idx);
+					ScreenShot = new CCFileClass(fname);
+				} while(ScreenShot->Exists(0));
 
-		struct bmp_dib_v3_header_t {
-		  DWORD header_sz;
-		  DWORD width;
-		  DWORD height;
-		  WORD nplanes;
-		  WORD bitspp;
-		  DWORD compress_type;
-		  DWORD bmp_bytesz;
-		  DWORD hres;
-		  DWORD vres;
-		  DWORD ncolors;
-		  DWORD nimpcolors;
-		} h3;
-		h3.header_sz = 40;
-		h3.width = width;
-		h3.height = -height; // magic! no need to reverse rows this way
-		h3.nplanes = 1;
-		h3.bitspp = 16;
-		h3.compress_type = BI_BITFIELDS;
-		h3.bmp_bytesz = arrayLen * 2;
-		h3.hres = 4000;
-		h3.vres = 4000;
-		h3.ncolors = h3.nimpcolors = 0;
+				ScreenShot->OpenEx(fname, eFileMode::Write);
 
-		struct bmp_rgbmask {
-			DWORD R; //
-			DWORD G; //
-			DWORD B; //
-		} h4;
-		h4.R = 0xF800;
-		h4.G = 0x07E0;
-		h4.B = 0x001F; // look familiar?
+				#pragma pack(push, 1)
+				struct bmpfile_full_header {
+					unsigned char magic[2];
+					DWORD filesz;
+					WORD creator1;
+					WORD creator2;
+					DWORD bmp_offset;
+					DWORD header_sz;
+					DWORD width;
+					DWORD height;
+					WORD nplanes;
+					WORD bitspp;
+					DWORD compress_type;
+					DWORD bmp_bytesz;
+					DWORD hres;
+					DWORD vres;
+					DWORD ncolors;
+					DWORD nimpcolors;
+					DWORD R; //
+					DWORD G; //
+					DWORD B; //
+				} h;
+				#pragma pack(pop)
 
-		h2.bmp_offset = sizeof(h1) + sizeof(h2) + sizeof(h3) + sizeof(h4);
-		h2.filesz = h2.bmp_offset + h3.bmp_bytesz;
+				h.magic[0] = 'B';
+				h.magic[1] = 'M';
 
-		#pragma pack(pop)
+				h.creator1 = h.creator2 = 0;
 
-		ScreenShot->WriteBytes(&h1, sizeof(h1));
-		ScreenShot->WriteBytes(&h2, sizeof(h2));
-		ScreenShot->WriteBytes(&h3, sizeof(h3));
-		ScreenShot->WriteBytes(&h4, sizeof(h4));
-		WORD *pixels = new WORD [arrayLen];
-		WORD *pixelData = pixels;
-		int pitch = Surface->SurfDesc->lPitch;
-		for(int r = 0; r < height; ++r) {
-			memcpy(pixels, reinterpret_cast<void *>(buffer), width * 2);
-			pixels += width;
-			buffer += pitch / 2; // /2 because buffer is a WORD * and pitch is in bytes
+				h.header_sz = 40;
+				h.width = width;
+				h.height = -height; // magic! no need to reverse rows this way
+				h.nplanes = 1;
+				h.bitspp = 16;
+				h.compress_type = BI_BITFIELDS;
+				h.bmp_bytesz = arrayLen * 2;
+				h.hres = 4000;
+				h.vres = 4000;
+				h.ncolors = h.nimpcolors = 0;
+
+				h.R = 0xF800;
+				h.G = 0x07E0;
+				h.B = 0x001F; // look familiar?
+
+				h.bmp_offset = sizeof(h);
+				h.filesz = h.bmp_offset + h.bmp_bytesz;
+
+				ScreenShot->WriteBytes(&h, sizeof(h));
+				WORD *pixels = new WORD [arrayLen];
+				WORD *pixelData = pixels;
+				int pitch = Surface->SurfDesc->lPitch;
+				for(int r = 0; r < height; ++r) {
+					memcpy(pixels, reinterpret_cast<void *>(buffer), width * 2);
+					pixels += width;
+					buffer += pitch / 2; // /2 because buffer is a WORD * and pitch is in bytes
+				}
+				ScreenShot->WriteBytes(pixelData, arrayLen * 2);
+				ScreenShot->Close();
+				delete[] pixelData;
+				delete ScreenShot;
+
+				Debug::Log("Wrote screenshot to file %s\n", fname);
+				Surface->Unlock();
+			}
 		}
-		Debug::Log("Writing file");
-		ScreenShot->WriteBytes(pixelData, arrayLen * 2);
-		ScreenShot->Close();
-		delete[] pixelData;
 	}
-	return 0x537DC0;
+
+	return 0x537DC9;
 }
-#endif

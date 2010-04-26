@@ -31,8 +31,16 @@ public:
 	TestSomethingCommandClass(){}
 };
 
+// will the templates ever stop? :D
+template <typename T>
+void MakeCommand() {
+	T* command;
+	GAME_ALLOC(T, command);
+	CommandClass::Array->AddItem(command);
+};
+
 // include other commands like this
-//include "Commands/AIControl.h"
+#include "Commands/AIControl.h"
 #include "Commands/MapSnapshot.h"
 //include "Commands/FrameByFrame.h"
 #include "Commands/DumpTypes.h"
