@@ -90,6 +90,11 @@ DEFINE_HOOK(70FBE3, TechnoClass_Activate, 5)
 	GET(TechnoClass *, T, ECX);
 	TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(T->GetTechnoType());
 
+	// prevent emp'd units from recovering.
+	if(T->IsUnderEMP()) {
+		return 0x70FC82;
+	}
+
 	if(pTypeData->Is_Spotlighted) {
 		hash_SpotlightExt::iterator i = TechnoExt::SpotlightExt.find(T);
 		if(i != TechnoExt::SpotlightExt.end()) {

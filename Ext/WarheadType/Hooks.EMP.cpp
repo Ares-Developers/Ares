@@ -183,12 +183,8 @@ bool WarheadTypeExt::enableEMPEffect(TechnoClass * Victim, ObjectClass * Souce) 
 			}
 		}
 		if (FootClass * Foot = generic_cast<FootClass *>(Victim)) {
-			if (Foot->Locomotor->Is_Moving()) {
-				Foot->Locomotor->Stop_Moving();
-				if (!Foot->Deactivated)
-					Foot->Deactivate();
-			}
-			Foot->Locomotor->Power_Off();
+			if (!Foot->Deactivated)
+				Foot->Deactivate();
 		}
 	}
 
@@ -206,15 +202,15 @@ void WarheadTypeExt::disableEMPEffect(TechnoClass * Victim) {
 		}
 	} else {
 		if (FootClass * Foot = generic_cast<FootClass *>(Victim)) {
-			Foot->Locomotor->Power_On();
 			if (Foot->Deactivated)
 				Foot->Reactivate();
 		}
-		TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(Victim);
-		if (pData && pData->EMPSparkleAnim) {
-			pData->EMPSparkleAnim->RemainingIterations = 0; // basically "you don't need to show up anymore"
-			pData->EMPSparkleAnim = NULL;
-		}
+	}
+
+	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(Victim);
+	if (pData && pData->EMPSparkleAnim) {
+		pData->EMPSparkleAnim->RemainingIterations = 0; // basically "you don't need to show up anymore"
+		pData->EMPSparkleAnim = NULL;
 	}
 }
 
