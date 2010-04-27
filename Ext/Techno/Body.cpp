@@ -117,6 +117,34 @@ bool TechnoExt::ParadropSurvivor(FootClass *Survivor, CoordStruct *loc, bool Sel
 	// TODO: Tag
 }
 
+void TechnoExt::StopDraining(TechnoClass *Drainer, TechnoClass *Drainee) {
+	// fill the gaps
+	if(Drainer && !Drainee)
+		Drainee = Drainer->DrainTarget;
+
+	if(!Drainer && Drainee)
+		Drainer = Drainee->DrainingMe;
+
+	// sanity check, then end draining.
+	if(Drainer && Drainee) {
+		// stop the animation.
+		if (Drainer->DrainAnim) {
+			Drainer->DrainAnim->UnInit();
+			Drainer->DrainAnim = NULL;
+		}
+
+		// remove links.
+		Drainee->DrainingMe = NULL;
+		Drainer->DrainTarget = NULL;
+
+		// tell the game to recheck the drained
+		// player's tech level.
+		if (Drainee->Owner) {
+			Drainee->Owner->ShouldRecheckTechTree = true;
+		}
+	}
+}
+
 void Container<TechnoExt>::InvalidatePointer(void *ptr) {
 	AnnounceInvalidPointerMap(TechnoExt::AlphaExt, ptr);
 	AnnounceInvalidPointerMap(TechnoExt::SpotlightExt, ptr);

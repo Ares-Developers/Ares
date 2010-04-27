@@ -131,19 +131,7 @@ public:
 	}
 	static void applyOccupantDamage(BulletClass *);
 
-	static void createEMPulse(EMPulseClass *, TechnoClass *);
-	static void disableEMPEffect(TechnoClass *);
-
-private:
-	static bool isEMPTypeImmune(TechnoClass *, HouseClass *);
-	static bool isEMPImmune(TechnoClass *, HouseClass *);
-	static bool canAffectTarget(TechnoClass *, HouseClass *, WarheadTypeClass *);
-	static bool canBeEMPAffected(TechnoClass *, HouseClass *);
-	static bool shouldEMPHouse(HouseClass *, HouseClass *, WarheadTypeExt::ExtData *);
-	static int getCappedDuration(int, int, int);
-	static void updateRadarBlackout(TechnoClass *);
-	static bool enableEMPEffect(TechnoClass *, ObjectClass *);
-	static bool verbose;
+    static bool canWarheadAffectTarget(TechnoClass *, HouseClass *, WarheadTypeClass *);
 };
 
 typedef hash_map<IonBlastClass *, WarheadTypeExt::ExtData *> hash_ionExt;

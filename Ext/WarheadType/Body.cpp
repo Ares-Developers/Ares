@@ -2,6 +2,7 @@
 #include <WeaponTypeClass.h>
 #include "../../Enum/ArmorTypes.h"
 #include "../Techno/Body.h"
+#include "Misc/EMPulse.h"
 
 #include <WarheadTypeClass.h>
 #include <GeneralStructures.h>
@@ -167,15 +168,9 @@ void WarheadTypeExt::ExtData::applyIronCurtain(CoordStruct *coords, HouseClass* 
 */
 void WarheadTypeExt::ExtData::applyEMP(CoordStruct *coords, TechnoClass *source) {
 	if (this->EMP_Duration) {
+		// launch our rewritten EMP.
 		CellStruct cellCoords = MapClass::Instance->GetCellAt(coords)->MapCoords;
-
-		// the cap is saved with the ExtData of TechnoExt.
-		WarheadTypeExt::EMP_WH = this->AttachedToObject;
-
-		// create the pulse.
-		EMPulseClass *placeholder;
-		GAME_ALLOC(EMPulseClass, placeholder, cellCoords,
-			int(this->AttachedToObject->CellSpread), this->EMP_Duration, source);
+		EMPulse::CreateEMPulse(this, cellCoords, source);
 	}
 }
 
@@ -241,6 +236,39 @@ void WarheadTypeExt::applyOccupantDamage(BulletClass* Bullet) {
 			Bullet->Remove();
 		}
 	}
+}
+
+//! Gets whether a Techno can be affected by a warhead fired by a house.
+/*!
+	A warhead will not affect allies if AffectsAllies is not set and will not
+	affect enemies if AffectsEnemies is not set.
+
+	\param Target The Techno WH is fired at.
+	\param SourceHouse The house that fired WH.
+
+	\returns True if WH can affect Target, false otherwise.
+
+	\author AlexB
+	\date 2010-04-27
+*/
+bool WarheadTypeExt::canWarheadAffectTarget(TechnoClass * Target, HouseClass * SourceHouse, WarheadTypeClass *WH) {
+	if (SourceHouse && Target && WH) {
+		// owner and target house are allied and this warhead
+		// is set to not hurt any allies.
+		bool alliedWithTarget = SourceHouse->IsAlliedWith(Target->Owner);
+		if (alliedWithTarget && !WH->AffectsAllies) {
+			return false;
+		}
+
+		// this warhead's pulse is designed to fly around
+		// enemy units. useful for healing.
+		WarheadTypeExt::ExtData *pWHdata = WarheadTypeExt::ExtMap.Find(WH);
+		if (!alliedWithTarget && !pWHdata->AffectsEnemies) {
+			return false;
+		}
+	}
+
+	return true;
 }
 
 // =============================
