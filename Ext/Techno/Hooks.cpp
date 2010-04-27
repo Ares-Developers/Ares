@@ -53,7 +53,18 @@ DEFINE_HOOK(6F9E76, TechnoClass_Update_CheckOperators, 6)
 	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(pThis);
 
 	// Related to operators/drivers, issue #342
-	if((pThis->WhatAmI() != abs_Building) || pThis->IsPowerOnline()) {
+	BuildingClass * pTheBuildingBelow = pThis->GetCell()->GetBuilding();
+
+	/* Conditions checked:
+		- Is there no building below us
+		OR
+		- Is this the building on this cell AND is it online
+
+		pTheBuildingBelow will be NULL if no building was found
+		This check ensures that Operator'd units don't Deactivate above structures such as War Factories, Repair Depots or Battle Bunkers.
+		(Which is potentially abusable, but let's hope no one figures that out.)
+	*/
+	if(!pTheBuildingBelow || ((pTheBuildingBelow == pThis) && (pTheBuildingBelow->IsPowerOnline()))) {
 		if(pData->IsOperated()) { // either does have an operator or doesn't need one, so...
 			if(pThis->Deactivated) { // ...if it's currently off, turn it on! (oooh baby)
 				pThis->Reactivate();
