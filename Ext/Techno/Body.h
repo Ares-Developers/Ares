@@ -65,6 +65,9 @@ public:
 		virtual void InvalidatePointer(void *ptr) {
 			AnnounceInvalidPointer(this->GarrisonedIn, ptr);
 		}
+
+		bool IsOperated();
+		bool IsPowered();
 	};
 
 	static Container<TechnoExt> ExtMap;

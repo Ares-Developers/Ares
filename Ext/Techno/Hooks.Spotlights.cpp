@@ -89,9 +89,15 @@ DEFINE_HOOK(70FBE3, TechnoClass_Activate, 5)
 {
 	GET(TechnoClass *, T, ECX);
 	TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(T->GetTechnoType());
+	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(T);
 
-	// prevent emp'd units from recovering.
-	if(T->IsUnderEMP()) {
+	/* Check abort conditions:
+		- Is the object currently EMP'd?
+		- Does the object need an operator, but doesn't have one?
+		- Does the object need a powering structure that is offline?
+	   If any of the above conditions, bail out and don't activate the object.
+	*/
+	if(T->IsUnderEMP() || !pData->IsPowered() || !pData->IsOperated()) {
 		return 0x70FC82;
 	}
 

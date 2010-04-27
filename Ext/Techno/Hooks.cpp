@@ -48,52 +48,19 @@ DEFINE_HOOK(6F9E50, TechnoClass_Update, 5)
 DEFINE_HOOK(6F9E76, TechnoClass_Update_CheckOperators, 6)
 {
 	GET(TechnoClass *, pThis, ESI); // object this is called on
-	TechnoTypeClass *Type = pThis->GetTechnoType();
-	TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(Type); // gah...multilayered YR++ness!
+	//TechnoTypeClass *Type = pThis->GetTechnoType();
+	//TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(Type);
+	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(pThis);
 
 	// Related to operators/drivers, issue #342
-	BuildingClass * pTheBuildingBelow = pThis->GetCell()->GetBuilding();
-
-	/* Conditions checked:
-	- Is there no building below us
-	OR
-	- Is this the building on this cell AND is it online
-
-	pTheBuildingBelow will be NULL if no building was found
-	*/
-	if(!pTheBuildingBelow || ((pTheBuildingBelow == pThis) && (pTheBuildingBelow->IsPowerOnline()))) {
-		if(pTypeData->Operator != NULL) {
-			if(pThis->Passengers.NumPassengers) {
-				bool foundAnOperator = false;
-
-				// loop & condition come from D
-				for(ObjectClass* O = pThis->Passengers.GetFirstPassenger(); O; O = O->NextObject) {
-					if(FootClass *F = generic_cast<FootClass *>(O)) {
-						if(F->GetType() == pTypeData->Operator) {
-							foundAnOperator = true;
-							break;
-						}
-					}
-				}
-
-				if(foundAnOperator) {
-					// takes a specific operator and someone is present AND that someone is the operator, so it stays active/gets reactivated
-					if(pThis->Deactivated) pThis->Reactivate();
-				} else {
-					// takes a specific operator and someone is present, but it's not the operator, so it stays deactivated/gets deactivated
-					if(!pThis->Deactivated) pThis->Deactivate();
-				}
-			} else {
-				// takes a specific operator but no one is present, so it stays deactivated/gets deactivated
-				if(!pThis->Deactivated) pThis->Deactivate();
+	if((pThis->WhatAmI() != abs_Building) || pThis->IsPowerOnline()) {
+		if(pData->IsOperated()) { // either does have an operator or doesn't need one, so...
+			if(pThis->Deactivated) { // ...if it's currently off, turn it on! (oooh baby)
+				pThis->Reactivate();
 			}
-		} else if(pTypeData->IsAPromiscuousWhoreAndLetsAnyoneRideIt) {
-			if(pThis->Passengers.NumPassengers) {
-				// takes anyone and someone is present, so it stays active/gets reactivated
-				if(pThis->Deactivated) pThis->Reactivate();
-			} else {
-				// takes anyone but no one is present, so it stays deactivated/gets deactivated
-				if(!pThis->Deactivated) pThis->Deactivate();
+		} else { // doesn't have an operator, so...
+			if(!pThis->Deactivated) { // ...if it's not off yet, turn it off!
+				pThis->Deactivate();
 			}
 		}
 	}

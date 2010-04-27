@@ -1,6 +1,8 @@
 #include "Body.h"
 #include "../TechnoType/Body.h"
 
+#include <HouseClass.h>
+#include <BuildingClass.h>
 #include <Helpers/Template.h>
 
 template<> const DWORD Extension<TechnoClass>::Canary = 0x55555555;
@@ -119,6 +121,66 @@ void Container<TechnoExt>::InvalidatePointer(void *ptr) {
 	AnnounceInvalidPointerMap(TechnoExt::AlphaExt, ptr);
 	AnnounceInvalidPointerMap(TechnoExt::SpotlightExt, ptr);
 	AnnounceInvalidPointer(TechnoExt::ActiveBuildingLight, ptr);
+}
+
+/*! This function checks if this object can currently be used, in terms of having or needing an operator.
+	\return true if it needs an operator and has one, <b>or if it doesn't need an operator in the first place</b>. false if it needs an operator and doesn't have one.
+	\author Renegade
+	\date 27.04.10
+*/
+bool TechnoExt::ExtData::IsOperated() {
+	TechnoTypeExt::ExtData* TypeExt = TechnoTypeExt::ExtMap.Find(this->AttachedToObject->GetTechnoType());
+
+	if(TypeExt->Operator) {
+		if(this->AttachedToObject->Passengers.NumPassengers) {
+			// loop & condition come from D
+			for(ObjectClass* O = this->AttachedToObject->Passengers.GetFirstPassenger(); O; O = O->NextObject) {
+				if(FootClass *F = generic_cast<FootClass *>(O)) {
+					if(F->GetType() == TypeExt->Operator) {
+						// takes a specific operator and someone is present AND that someone is the operator, therefore it is operated
+						return true;
+					}
+				}
+			}
+			// takes a specific operator and someone is present, but it's not the operator, therefore it's not operated
+			return false;
+		} else {
+			// takes a specific operator but no one is present, therefore it's not operated
+			return false;
+		}
+	} else if(TypeExt->IsAPromiscuousWhoreAndLetsAnyoneRideIt) {
+		// takes anyone, therefore it's operated if anyone is there
+		return static_cast<bool> (this->AttachedToObject->Passengers.NumPassengers);
+	} else {
+		/* Isn't even set as an Operator-using object, therefore we are returning TRUE,
+		 since, logically, if it doesn't need operators, it can be/is operated, no matter if there are passengers or not.
+		 (Also, if we didn't do this, Reactivate() would fail for for non-Operator-units, for example.) */
+		return true;
+	}
+}
+
+/*! This function checks if this object can currently be used, in terms of having or needing a powering structure and that structure's status.
+	\return true if it needs a structure and has an active one, <b>or if it doesn't need a structure in the first place</b>. false if it needs a structure and doesn't have an active one.
+	\author Renegade
+	\date 27.04.10
+*/
+bool TechnoExt::ExtData::IsPowered() {
+	if(this->AttachedToObject->Type->PoweredUnit) {
+		HouseClass* Owner = this->AttachedToObject->Owner;
+		for(int i = 0; i < Owner->Buildings.Count; ++i) {
+			BuildingClass* Building = Owner->Buildings.GetItem(i);
+			if(Building->Type->PowersUnit) {
+				if(Building->Type->PowersUnit == this->AttachedToObject->Type) {
+					return Building->RegisteredAsPoweredUnitSource && !Building->IsUnderEMP(); // alternatively, HasPower, IsPowerOnline()
+				}
+			}
+		}
+		// if we reach this, we found no building that currently powers this object
+		return false;
+	} else {
+		// object doesn't need a particular powering structure, therefore, for the purposes of the game, it IS powered
+		return true;
+	}
 }
 
 // =============================
