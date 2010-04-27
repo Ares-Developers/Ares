@@ -178,7 +178,7 @@ bool TechnoExt::ExtData::IsOperated() {
 		}
 	} else if(TypeExt->IsAPromiscuousWhoreAndLetsAnyoneRideIt) {
 		// takes anyone, therefore it's operated if anyone is there
-		return static_cast<bool> (this->AttachedToObject->Passengers.NumPassengers);
+		return (this->AttachedToObject->Passengers.NumPassengers > 0);
 	} else {
 		/* Isn't even set as an Operator-using object, therefore we are returning TRUE,
 		 since, logically, if it doesn't need operators, it can be/is operated, no matter if there are passengers or not.
@@ -193,12 +193,13 @@ bool TechnoExt::ExtData::IsOperated() {
 	\date 27.04.10
 */
 bool TechnoExt::ExtData::IsPowered() {
-	if(this->AttachedToObject->Type->PoweredUnit) {
+	TechnoTypeClass *TT = this->AttachedToObject->GetTechnoType();
+	if(TT && TT->PoweredUnit) {
 		HouseClass* Owner = this->AttachedToObject->Owner;
 		for(int i = 0; i < Owner->Buildings.Count; ++i) {
 			BuildingClass* Building = Owner->Buildings.GetItem(i);
 			if(Building->Type->PowersUnit) {
-				if(Building->Type->PowersUnit == this->AttachedToObject->Type) {
+				if(Building->Type->PowersUnit == TT) {
 					return Building->RegisteredAsPoweredUnitSource && !Building->IsUnderEMP(); // alternatively, HasPower, IsPowerOnline()
 				}
 			}
