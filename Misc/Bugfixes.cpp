@@ -90,6 +90,28 @@ DEFINE_HOOK(71A92A, TemporalClass_Update_AvoidFriendlies, 5)
 	return ho->IsAlliedWith(hv) ? 0x71A97D : 0;
 }
 
+// bugfix #874 A: Temporal warheads affect Warpable=no units
+DEFINE_HOOK(71AF2B, TemporalClass_Fire_UnwarpableA, A) {
+	// skip freeing captured and destroying spawned units,
+	// as it is not clear here if this is warpable at all.
+	return 0x71AF4D;
+}
+
+// bugfix #874 B: Temporal warheads affect Warpable=no units
+DEFINE_HOOK(71AF76, TemporalClass_Fire_UnwarpableB, 9) {
+	GET(TechnoClass *, T, EDI);
+
+	// now it has been checked: this is warpable.
+	// free captured and destroy spawned units.
+	if (T->SpawnManager)
+		T->SpawnManager->KillNodes();
+	if (T->CaptureManager)
+		T->CaptureManager->FreeAll();
+
+	// always resume normally.
+	return 0;
+}
+
 // Insignificant=yes or DontScore=yes prevent EVA_UnitLost on unit destruction
 DEFINE_HOOK(4D98DD, Insignificant_UnitLost, 6)
 {
