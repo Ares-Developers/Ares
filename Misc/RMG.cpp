@@ -3,6 +3,7 @@
 #include "Ares.h"
 
 #include <HouseClass.h>
+#include <OverlayTypeClass.h>
 #include <TechnoClass.h>
 #include <TechnoTypeClass.h>
 #include <Randomizer.h>
@@ -54,6 +55,15 @@ DEFINE_HOOK(596C81, MapSeedClass_DialogFunc_GetData, 5)
 		RMG::UrbanAreas = (1 == SendMessageA(hDlgItem, BM_GETCHECK, 0, 0));
 	}
 	return 0;
+}
+
+DEFINE_HOOK(5FED00, OverlayTypeClass_GetRadarColor, 0)
+{
+	GET(OverlayTypeClass*, ovType, ECX);
+	GET_STACK(ColorStruct *, color, 0x04);
+	*color = ovType->RadarColor;
+	R->EAX<ColorStruct*>(color);
+	return 0x5FEDDA;
 }
 
 DEFINE_HOOK(5982D5, MapSeedClass_LoadFromINI, 6)

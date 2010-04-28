@@ -14,6 +14,8 @@ public:
 	static int UrbanStructuresReadSoFar;
 	static DynamicVectorClass<char*> UrbanVehicles;
 	static DynamicVectorClass<char*> UrbanInfantry;
+
+	static long startTime;
 };
 
 #endif
