@@ -455,9 +455,9 @@ EXPORT_FUNC(InfantryClass_UpdateDeploy2)
 DEFINE_HOOK(73B672, UnitClass_DrawVXL, 6)
 {
 	GET(UnitClass *, U, EBP);
-	TechnoTypeExt::ExtData *pData = TechnoTypeExt::ExtMap.Find(U->GetTechnoType());
+	TechnoTypeExt::ExtData *pData = TechnoTypeExt::ExtMap.Find(U->Type);
 	if(pData->WaterAlt) {
-		if(U->GetCell()->LandType == lt_Water) {
+		if(!U->OnBridge && U->GetCell()->LandType == lt_Water) {
 			R->EAX(0);
 			return 0x73B68B;
 		}
