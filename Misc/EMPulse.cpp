@@ -215,15 +215,14 @@ bool EMPulse::isCurrentlyEMPImmune(TechnoClass * Target, HouseClass * SourceHous
 
 	Buildings with special functions like Radar, SuperWeapon, PowersUnit,
 	Sensors, LaserFencePost and UndeploysInto are prone. Otherwise a Building
-	is prone if it either allows to TogglePower or it needs power and is 
-	Powered.
+	is prone if it consumes power and is Powered.
 
 	\param Target The Techno to get the susceptibility to EMP of.
 
 	\returns True if Target is prone to EMPs, false otherwise.
 
 	\author AlexB
-	\date 2010-04-27
+	\date 2010-04-28
 */
 bool EMPulse::isEMPProne(TechnoClass * Target) {
 	bool prone = false;
@@ -231,8 +230,8 @@ bool EMPulse::isEMPProne(TechnoClass * Target) {
 	// buildings are emp prone if they consume power and need it to function
 	if (BuildingClass * TargetBuilding = specific_cast<BuildingClass *> (Target)) {
 		BuildingTypeClass * TargetBuildingType = TargetBuilding->Type;
-		prone = ((TargetBuildingType->Powered && (TargetBuildingType->PowerDrain > 0))
-				|| TargetBuildingType->TogglePower);
+		prone = ((TargetBuildingType->Powered && (TargetBuildingType->PowerDrain > 0)));
+				//|| TargetBuildingType->TogglePower);
 
 		// may have a special function.
 		if (TargetBuildingType->Radar ||
@@ -367,6 +366,54 @@ void EMPulse::updateRadarBlackout(TechnoClass * Techno) {
 	}
 }
 
+//! If the victim is owned by the human player creates radar events and EVA warnings.
+/*!
+	Creates a radar event and makes EVA tell you so if the Techno is a resource
+	gatherer or harvester. If it is a building that can not be undeployed and
+	counts as BaseNormal a base under attack event is raised.
+
+	\param Techno The Techno that has been attacked.
+
+	\author AlexB
+	\date 2010-04-29
+*/
+void EMPulse::announceAttack(TechnoClass * Techno) {
+	enum AttackEvents {None = 0, Base = 1, Harvester = 2};
+	AttackEvents rEvent = None;
+
+	// find out what event is the most appropriate.
+	if (Techno && (Techno->Owner == HouseClass::Player)) {
+		if (BuildingClass * Building = specific_cast<BuildingClass *>(Techno)) {
+			if(Building->Type->ResourceGatherer) {
+				// slave miner, for example
+				rEvent = Harvester;
+			} else if(!Building->Type->Insignificant && !Building->Type->BaseNormal) {
+				rEvent = Base;
+			}
+		} else if (UnitClass * Unit = specific_cast<UnitClass *>(Techno)) {
+			if (Unit->Type->Harvester || Unit->Type->ResourceGatherer) {
+				rEvent = Harvester;
+			}
+		}
+	}
+
+	// handle the event.
+	if (rEvent != None) {
+		CellStruct xy;
+		Techno->GetMapCoords(&xy);
+
+		switch (rEvent) {
+			case Harvester:
+				if (RadarEventClass::Create(RADAREVENT_OREMINERUNDERATTACK, xy))
+					VoxClass::Play("EVA_OreMinerUnderAttack", -1, -1);
+				break;
+			case Base:
+				HouseClass::Player->BuildingUnderAttack(specific_cast<BuildingClass *>(Techno));
+				break;
+		}
+	}
+}
+
 //! Sets all properties to disable a Techno.
 /*!
 	Disables Buildings and crashes flying Aircrafts. Foots get deactivated.
@@ -385,9 +432,13 @@ void EMPulse::updateRadarBlackout(TechnoClass * Techno) {
 	\returns True if Victim has been destroyed by the EMP effect, False otherwise.
 
 	\author AlexB
-	\date 2010-04-27
+	\date 2010-04-28
 */
 bool EMPulse::enableEMPEffect(TechnoClass * Victim, ObjectClass * Souce) {
+	Victim->Owner->ShouldRecheckTechTree = true;
+	Victim->Owner->NoIdeaButWillCheck = true;
+	Victim->Owner->PowerBlackout = true;
+
 	if (BuildingClass * Building = specific_cast<BuildingClass *>(Victim)) {
 		Building->DisableStuff();
 		updateRadarBlackout(Building);
@@ -401,28 +452,24 @@ bool EMPulse::enableEMPEffect(TechnoClass * Victim, ObjectClass * Souce) {
 				return true;
 			}
 		}
-		if (FootClass * Foot = generic_cast<FootClass *>(Victim)) {
-			// release all captured units.
-			if (Foot->CaptureManager)
-				Foot->CaptureManager->FreeAll();
-
-			// crash all spawned units.
-			if (Foot->SpawnManager) {
-				Foot->SpawnManager->KillNodes();
-				// TODO: Still spawns units and attacks.
-			}
-
-			// stop draining.
-			TechnoExt::StopDraining(Foot->DrainingMe, NULL);
-			TechnoExt::StopDraining(NULL, Foot->DrainTarget);
-
-			// finally, deactivate and sparkle.
-			if (!Foot->Deactivated)
-				Foot->Deactivate();
-
-			// TODO: Notify victim under attack
-		}
 	}
+
+	// deactivate and sparkle.
+	if (!Victim->Deactivated)
+		Victim->Deactivate();
+
+	// release all captured units.
+	if (Victim->CaptureManager)
+		Victim->CaptureManager->FreeAll();
+
+	// crash all spawned units.
+	if (Victim->SpawnManager) {
+		Victim->SpawnManager->KillNodes();
+	}
+
+	//// stop draining.
+	//TechnoExt::StopDraining(Victim->DrainingMe, NULL);
+	//TechnoExt::StopDraining(NULL, Victim->DrainTarget);
 
 	// set the sparkle animation.
 	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(Victim);
@@ -430,6 +477,9 @@ bool EMPulse::enableEMPEffect(TechnoClass * Victim, ObjectClass * Souce) {
 		GAME_ALLOC(AnimClass, pData->EMPSparkleAnim, RulesClass::Instance->EMPulseSparkles, &Victim->Location);
 		pData->EMPSparkleAnim->SetOwnerObject(Victim);
 	}
+
+	// warn the player
+	announceAttack(Victim);
 
 	// the unit still lives.
 	return false;
@@ -447,24 +497,33 @@ bool EMPulse::enableEMPEffect(TechnoClass * Victim, ObjectClass * Souce) {
 	\param Victim The Techno that shall have its EMP effects removed.
 
 	\author AlexB
-	\date 2010-04-27
+	\date 2010-04-28
 */
 void EMPulse::DisableEMPEffect(TechnoClass * Victim) {
 	if (BuildingClass * Building = specific_cast<BuildingClass *>(Victim)) {
 		if (!Building->Type->InvisibleInGame) {
 			Building->EnableStuff();
 			updateRadarBlackout(Building);
+
 		}
 	}
 
-	if (FootClass * Foot = generic_cast<FootClass *>(Victim)) {
-		if (Foot->Deactivated)
-			Foot->Reactivate();
-	}
+	Victim->Owner->ShouldRecheckTechTree = true;
+	Victim->Owner->NoIdeaButWillCheck = true;
+	Victim->Owner->PowerBlackout = true;
+
+	if (Victim->Deactivated)
+		Victim->Reactivate();
 
 	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(Victim);
 	if (pData && pData->EMPSparkleAnim) {
 		pData->EMPSparkleAnim->RemainingIterations = 0; // basically "you don't need to show up anymore"
 		pData->EMPSparkleAnim = NULL;
+	}
+
+	// get harvesters back to work.
+	if (UnitClass * Unit = specific_cast<UnitClass *>(Victim)) {
+		if (Unit->Type->Harvester || Unit->Type->ResourceGatherer)
+			Unit->QueueMission(mission_Harvest, true);
 	}
 }

@@ -21,6 +21,7 @@ protected:
 	static int getCappedDuration(int, int, int);
 	static void updateRadarBlackout(TechnoClass *);
 	static bool enableEMPEffect(TechnoClass *, ObjectClass *);
+	static void announceAttack(TechnoClass *);
 	static bool verbose;
 };
 

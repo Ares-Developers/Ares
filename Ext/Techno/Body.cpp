@@ -117,6 +117,17 @@ bool TechnoExt::ParadropSurvivor(FootClass *Survivor, CoordStruct *loc, bool Sel
 	// TODO: Tag
 }
 
+//! Breaks the link between DrainTarget and DrainingMe.
+/*!
+	The links between the drainer and its victim are removed and the draining
+	animation is no longer played.
+
+	\param Drainer The Techno that drains power or credits.
+	\param Drainee The Techno that power or credits get gets drained from.
+
+	\author AlexB
+	\date 2010-04-27
+*/
 void TechnoExt::StopDraining(TechnoClass *Drainer, TechnoClass *Drainee) {
 	// fill the gaps
 	if(Drainer && !Drainee)
