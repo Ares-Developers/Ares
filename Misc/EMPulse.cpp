@@ -436,7 +436,6 @@ void EMPulse::announceAttack(TechnoClass * Techno) {
 */
 bool EMPulse::enableEMPEffect(TechnoClass * Victim, ObjectClass * Souce) {
 	Victim->Owner->ShouldRecheckTechTree = true;
-	Victim->Owner->NoIdeaButWillCheck = true;
 	Victim->Owner->PowerBlackout = true;
 
 	if (BuildingClass * Building = specific_cast<BuildingClass *>(Victim)) {
@@ -509,7 +508,6 @@ void EMPulse::DisableEMPEffect(TechnoClass * Victim) {
 	}
 
 	Victim->Owner->ShouldRecheckTechTree = true;
-	Victim->Owner->NoIdeaButWillCheck = true;
 	Victim->Owner->PowerBlackout = true;
 
 	if (Victim->Deactivated)
