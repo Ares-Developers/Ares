@@ -2,6 +2,7 @@
 #include "../Side/Body.h"
 #include "../../Enum/Prerequisites.h"
 #include "../../Misc/Debug.h"
+#include "../../Misc/EMPulse.h"
 
 #include <AnimTypeClass.h>
 #include <Theater.h>
@@ -203,7 +204,11 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 		}
 	}
 
-	this->ImmuneToEMP.Read(&exINI, section, "ImmuneToEMP");
+	// EMP immunity. The default for each type is decided by the EMPulse class.
+	// (Cyborg tag may not be parsed, so we do it here first)
+	this->AttachedToObject->Cyborg_ = pINI->ReadBool(section, "Cyborg", false);
+	bool ImmuneToEMPDefault = !EMPulse::IsTypeEMPProne(this->AttachedToObject);
+	this->ImmuneToEMP.Set(pINI->ReadBool(section, "ImmuneToEMP", ImmuneToEMPDefault));
 
 	// quick fix - remove after the rest of weapon selector code is done
 	return;

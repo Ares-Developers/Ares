@@ -11,13 +11,13 @@ public:
 	static void CreateEMPulse(EMPulseClass *Legacy, TechnoClass *Firer);
 	static void CreateEMPulse(WarheadTypeExt::ExtData *Warhead, CellStruct Target, TechnoClass *Firer);
 	static void DisableEMPEffect(TechnoClass *Techno);
+	static bool IsTypeEMPProne(TechnoTypeClass *Type);
 
 protected:
 	static bool isEMPTypeImmune(TechnoClass *);
 	static bool isEMPImmune(TechnoClass *, HouseClass *);
 	static bool isCurrentlyEMPImmune(TechnoClass *, HouseClass *);
-	static bool isEMPProne(TechnoClass *);
-	static bool isEligibleEMPTarget(TechnoClass *, HouseClass *, WarheadTypeExt::ExtData *);
+	static bool isEligibleEMPTarget(TechnoClass *, HouseClass *, WarheadTypeClass *);
 	static int getCappedDuration(int, int, int);
 	static void updateRadarBlackout(TechnoClass *);
 	static bool enableEMPEffect(TechnoClass *, ObjectClass *);

@@ -62,7 +62,7 @@ void EMPulse::CreateEMPulse(WarheadTypeExt::ExtData * Warhead, CellStruct Coords
 							(Firer ? Firer->get_ID() : NULL),
 							curTechno->get_ID());
 
-				if (isEligibleEMPTarget(curTechno, pHouse, Warhead)) {
+				if (isEligibleEMPTarget(curTechno, pHouse, Warhead->AttachedToObject)) {
 					if (verbose)
 						Debug::Log("[CreateEMPulse] Step 2: %s\n",
 								curTechno->get_ID());
@@ -207,49 +207,46 @@ bool EMPulse::isCurrentlyEMPImmune(TechnoClass * Target, HouseClass * SourceHous
 	return isEMPImmune(Target, SourceHouse);
 }
 
-//! Gets whether an EMP would have an effect on a Techno.
+//! Gets whether an EMP would have an effect on a TechnoType.
 /*!
 	Infantry that has Cyborg set is prone to EMP.
 
 	Non-Infantry Foots are prone only if they aren't organic.
 
 	Buildings with special functions like Radar, SuperWeapon, PowersUnit,
-	Sensors, LaserFencePost and UndeploysInto are prone. Otherwise a Building
-	is prone if it consumes power and is Powered.
+	Sensors, LaserFencePost, GapGenerator and UndeploysInto are prone. Otherwise
+	a Building is prone if it consumes power and is Powered.
 
-	\param Target The Techno to get the susceptibility to EMP of.
+	\param Type The TechnoType to get the susceptibility to EMP of.
 
-	\returns True if Target is prone to EMPs, false otherwise.
+	\returns True if Type is prone to EMPs, false otherwise.
 
 	\author AlexB
-	\date 2010-04-28
+	\date 2010-04-30
 */
-bool EMPulse::isEMPProne(TechnoClass * Target) {
-	bool prone = false;
+bool EMPulse::IsTypeEMPProne(TechnoTypeClass * Type) {
+	bool prone = true;
 
 	// buildings are emp prone if they consume power and need it to function
-	if (BuildingClass * TargetBuilding = specific_cast<BuildingClass *> (Target)) {
-		BuildingTypeClass * TargetBuildingType = TargetBuilding->Type;
-		prone = ((TargetBuildingType->Powered && (TargetBuildingType->PowerDrain > 0)));
-				//|| TargetBuildingType->TogglePower);
+	if (BuildingTypeClass * BuildingType = specific_cast<BuildingTypeClass *>(Type)) {
+		prone = (BuildingType->Powered && (BuildingType->PowerDrain > 0));
 
 		// may have a special function.
-		if (TargetBuildingType->Radar ||
-			(TargetBuildingType->SuperWeapon> -1) || (TargetBuildingType->SuperWeapon2 > -1)
-			|| TargetBuildingType->UndeploysInto
-			|| TargetBuildingType->PowersUnit
-			|| TargetBuildingType->Sensors
-			|| TargetBuildingType->LaserFencePost) {
+		if (BuildingType->Radar ||
+			(BuildingType->SuperWeapon> -1) || (BuildingType->SuperWeapon2 > -1)
+			|| BuildingType->UndeploysInto
+			|| BuildingType->PowersUnit
+			|| BuildingType->Sensors
+			|| BuildingType->LaserFencePost
+			|| BuildingType->GapGenerator) {
 				prone = true;
 		}
-	} else {
+	} else if (InfantryTypeClass * InfantryType = specific_cast<InfantryTypeClass *>(Type)) {
 		// affected only if this is a cyborg.
-		if (InfantryClass * TargetInfantry = specific_cast<InfantryClass *> (Target)) {
-			prone = TargetInfantry->Type->Cyborg_;
-		} else {
-			// if this is a vessel or vehicle that is organic: no effect.
-			prone = !Target->GetTechnoType()->Organic;
-		}
+		prone = InfantryType->Cyborg_;
+	} else {
+		// if this is a vessel or vehicle that is organic: no effect.
+		prone = !Type->Organic;
 	}
 
 	return prone;
@@ -266,20 +263,17 @@ bool EMPulse::isEMPProne(TechnoClass * Target) {
 	\returns True Target is eligible, false otherwise.
 
 	\author AlexB
-	\date 2010-04-27
+	\date 2010-04-30
 */
-bool EMPulse::isEligibleEMPTarget(TechnoClass * Target, HouseClass * SourceHouse, WarheadTypeExt::ExtData *Warhead) {
+bool EMPulse::isEligibleEMPTarget(TechnoClass * Target, HouseClass * SourceHouse, WarheadTypeClass *Warhead) {
 	if (isCurrentlyEMPImmune(Target, SourceHouse))
 		return false;
 
-	if (!isEMPProne(Target))
+	if (!WarheadTypeExt::canWarheadAffectTarget(Target, SourceHouse, Warhead)) {
+		if (verbose)
+			Debug::Log("[isEligibleEMPTarget] \"%s\" does not affect target.\n", Warhead->ID);
 		return false;
-
-	//if (!canWarheadAffectTarget(Target, SourceHouse, WarheadTypeExt::EMP_WH)) {
-		//if (verbose)
-		//	Debug::Log("[isEligibleEMPTarget] \"%s\" does not affect target.\n", WarheadTypeExt::EMP_WH->ID);
-	//	return false;
-	//}
+	}
 
 	return true;
 }
