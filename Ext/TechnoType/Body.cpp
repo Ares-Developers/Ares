@@ -204,11 +204,11 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 		}
 	}
 
-	// EMP immunity. The default for each type is decided by the EMPulse class.
-	// (Cyborg tag may not be parsed, so we do it here first)
-	this->AttachedToObject->Cyborg_ = pINI->ReadBool(section, "Cyborg", false);
-	bool ImmuneToEMPDefault = !EMPulse::IsTypeEMPProne(this->AttachedToObject);
-	this->ImmuneToEMP.Set(pINI->ReadBool(section, "ImmuneToEMP", ImmuneToEMPDefault));
+	// EMP immunity. The default for each type is decided by the EMPulse class,
+	// the first time a unit of this TechnoType is EMP'd.
+	bool EMPTemp = pINI->ReadBool(section, "ImmuneToEMP", false);
+	this->ImmuneToEMP.Set(EMPTemp);
+	this->ImmuneToEMPSet.Set((EMPTemp == pINI->ReadBool(section, "ImmuneToEMP", true)));
 
 	// quick fix - remove after the rest of weapon selector code is done
 	return;
