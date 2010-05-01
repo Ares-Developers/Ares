@@ -42,38 +42,35 @@ DEFINE_HOOK(712045, TechnoTypeClass_GetCameo, 5)
 	return ret(Cameo);
 }
 
-DEFINE_HOOK(6A9A2A, TabCameoListClass_Draw, 6)
+// a global var ewww
+ConvertClass * CurrentDrawnConvert = NULL;
+
+DEFINE_HOOK(6A9948, TabCameoListClass_Draw_SW, 6)
 {
-	GET_STACK(ObjectTypeClass *, pType, STACK_OFFS(0x4C4, 0x458));
-
-	if(pType) {
-		ConvertClass *pPalette = NULL;
-		eAbstractType absId = pType->WhatAmI();
-		TechnoTypeClass *pTech = NULL;
-		SuperWeaponTypeClass *pSW = NULL;
-		switch(absId) {
-			case SuperWeaponTypeClass::AbsID:
-				pSW = reinterpret_cast<SuperWeaponTypeClass *>(pType);
-				if(SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSW)) {
-					pPalette = pData->CameoPal.Convert;
-				}
-				break;
-			case UnitTypeClass::AbsID:
-			case AircraftTypeClass::AbsID:
-			case BuildingTypeClass::AbsID:
-			case InfantryTypeClass::AbsID:
-				pTech = reinterpret_cast<TechnoTypeClass *>(pType);
-				if(TechnoTypeExt::ExtData *pData = TechnoTypeExt::ExtMap.Find(pTech)) {
-					pPalette = pData->CameoPal.Convert;
-				}
-				break;
-		}
-		if(!pPalette) {
-			pPalette = FileSystem::CAMEO_PAL;
-		}
-
-		R->EDX<ConvertClass *>(pPalette);
-		return 0x6A9A30;
+	GET(SuperWeaponTypeClass *, pSW, EAX);
+	if(SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSW)) {
+		CurrentDrawnConvert = pData->CameoPal.Convert;
 	}
 	return 0;
+}
+
+DEFINE_HOOK(6A9A2A, TabCameoListClass_Draw_Main, 6)
+{
+	GET_STACK(TechnoTypeClass *, pTech, STACK_OFFS(0x4C4, 0x458));
+
+	ConvertClass *pPalette = NULL;
+	if(pTech) {
+		if(TechnoTypeExt::ExtData *pData = TechnoTypeExt::ExtMap.Find(pTech)) {
+			pPalette = pData->CameoPal.Convert;
+		}
+	} else if(CurrentDrawnConvert) {
+		pPalette = CurrentDrawnConvert;
+		CurrentDrawnConvert = NULL;
+	}
+
+	if(!pPalette) {
+		pPalette = FileSystem::CAMEO_PAL;
+	}
+	R->EDX<ConvertClass *>(pPalette);
+	return 0x6A9A30;
 }

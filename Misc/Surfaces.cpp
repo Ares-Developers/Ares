@@ -100,7 +100,7 @@ DEFINE_HOOK(537BC0, Game_MakeScreenshot, 0)
 		if(Imports::ClientToScreen(Game::hWnd, &TL) && Imports::ClientToScreen(Game::hWnd, &BR)) {
 			RectangleStruct ClipRect = {TL.x, TL.y, Viewport.right + 1, Viewport.bottom + 1};
 
-			DSurface * Surface = DSurface::Hidden;
+			DSurface * Surface = DSurface::Primary;
 
 			int width = Surface->GetWidth();
 			int height = Surface->GetHeight();
@@ -117,8 +117,7 @@ DEFINE_HOOK(537BC0, Game_MakeScreenshot, 0)
 			RectangleStruct DestRect = {0, 0, width, height};
 
 			WWMouseClass::Instance->HideCursor();
-			Surface->BlitPart(&DestRect, DSurface::Primary, &ClipRect, 0, 1);
-			WWMouseClass::Instance->ShowCursor();
+//			Surface->BlitPart(&DestRect, DSurface::Primary, &ClipRect, 0, 1);
 
 			if(WORD * buffer = reinterpret_cast<WORD *>(Surface->Lock(0, 0))) {
 				int idx = -1;
@@ -192,6 +191,7 @@ DEFINE_HOOK(537BC0, Game_MakeScreenshot, 0)
 					pixels += width;
 					buffer += pitch / 2; // /2 because buffer is a WORD * and pitch is in bytes
 				}
+
 				ScreenShot->WriteBytes(pixelData, arrayLen * 2);
 				ScreenShot->Close();
 				delete[] pixelData;
@@ -200,6 +200,9 @@ DEFINE_HOOK(537BC0, Game_MakeScreenshot, 0)
 				Debug::Log("Wrote screenshot to file %s\n", fname);
 				Surface->Unlock();
 			}
+
+			WWMouseClass::Instance->ShowCursor();
+
 		}
 	}
 

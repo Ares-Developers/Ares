@@ -72,15 +72,19 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 		bool IsFoot = Item->WhatAmI() != abs_BuildingType;
 
 		if(IsFoot && Item->SpeedType == -1) {
-			Debug::DevLog(Debug::Error, "[%s]SpeedType is invalid!\n", Item->get_ID());
+			Debug::DevLog(Debug::Error, "[%s]SpeedType is invalid!\n", Item->ID);
 		}
 
 		if(IsFoot && Item->MovementZone == -1) {
-			Debug::DevLog(Debug::Error, "[%s]MovementZone is invalid!\n", Item->get_ID());
+			Debug::DevLog(Debug::Error, "[%s]MovementZone is invalid!\n", Item->ID);
 		}
 
 		if(Item->Armor == -1) {
-			Debug::DevLog(Debug::Error, "[%s]Armor is invalid!\n", Item->get_ID());
+			Debug::DevLog(Debug::Error, "[%s]Armor is invalid!\n", Item->ID);
+		}
+
+		if(Item->Passengers > 0 && Item->SizeLimit < 1) {
+			Debug::DevLog(Debug::Error, "[%s]Passengers=%d and SizeLimit=%d!\n", Item->ID, Item->Passengers, Item->SizeLimit);
 		}
 	}
 
