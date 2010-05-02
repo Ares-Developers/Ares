@@ -74,6 +74,8 @@ public:
 
 		Valueable<bool> ImmuneToEMPSet;
 		Valueable<bool> ImmuneToEMP;
+		bool VeteranAbilityEMPIMMUNE;
+		bool EliteAbilityEMPIMMUNE;
 
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			Survivors_PilotChance (NULL),
@@ -102,7 +104,9 @@ public:
 			CameoPal(),
 			RequiredStolenTech(0ull),
 			ImmuneToEMPSet (false),
-			ImmuneToEMP (false)
+			ImmuneToEMP (false),
+			VeteranAbilityEMPIMMUNE (false),
+			EliteAbilityEMPIMMUNE (false)
 			{ this->Insignia.SetAll(NULL); };
 
 		virtual ~ExtData() {};

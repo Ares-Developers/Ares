@@ -210,6 +210,23 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	this->ImmuneToEMP.Set(EMPTemp);
 	this->ImmuneToEMPSet.Set((EMPTemp == pINI->ReadBool(section, "ImmuneToEMP", true)));
 
+	if(pINI->ReadString(section, "VeteranAbilities", "", Ares::readBuffer, Ares::readLength)) {
+		for(char *cur = strtok(Ares::readBuffer, ","); cur; cur = strtok(NULL, ",")) {
+			if(!_strcmpi(cur, "empimmune")) {
+				this->VeteranAbilityEMPIMMUNE = true;
+				this->EliteAbilityEMPIMMUNE = true;
+			}
+		}
+	}
+
+	if(pINI->ReadString(section, "EliteAbilities", "", Ares::readBuffer, Ares::readLength)) {
+		for(char *cur = strtok(Ares::readBuffer, ","); cur; cur = strtok(NULL, ",")) {
+			if(!_strcmpi(cur, "empimmune")) {
+				this->EliteAbilityEMPIMMUNE = true;
+			}
+		}
+	}
+
 	// quick fix - remove after the rest of weapon selector code is done
 	return;
 }

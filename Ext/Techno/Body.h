@@ -44,6 +44,7 @@ public:
 		BuildingClass *GarrisonedIn; // when infantry garrisons a building, we need a fast way to find said building when damage forwarding kills it
 
 		AnimClass *EMPSparkleAnim;
+		eMission EMPLastMission;
 
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			idxSlot_Wave (0),
@@ -53,7 +54,8 @@ public:
 			Survivors_Done (0),
 			Insignia_Image (NULL),
 			GarrisonedIn (NULL),
-			EMPSparkleAnim (NULL)
+			EMPSparkleAnim (NULL),
+			EMPLastMission (mission_None)
 			{
 				this->CloakSkipTimer.Stop();
 			};

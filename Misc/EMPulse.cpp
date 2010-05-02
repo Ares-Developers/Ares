@@ -147,6 +147,7 @@ bool EMPulse::isEMPTypeImmune(TechnoClass * Target) {
 //! Gets whether a Techno is immune to an EMP fired by a house.
 /*!
 	Target can not be affected by EMPs if it is either immune to EMPs or type immune.
+	It may also have recieved EMP immunity through it's veterancy.
 
 	\param Target The Techno the EMP is fired at.
 	\param SourceHouse The house that fired the EMP.
@@ -154,7 +155,7 @@ bool EMPulse::isEMPTypeImmune(TechnoClass * Target) {
 	\returns True if Target is immune to EMP, false otherwise.
 
 	\author AlexB
-	\date 2010-04-27
+	\date 2010-05-02
 */
 bool EMPulse::isEMPImmune(TechnoClass * Target, HouseClass * SourceHouse) {
 	// this can be overridden by a flag on the techno.
@@ -171,6 +172,17 @@ bool EMPulse::isEMPImmune(TechnoClass * Target, HouseClass * SourceHouse) {
 	if (pData->ImmuneToEMP.Get()) {
 		if (verbose)
 			Debug::Log("[isEMPImmune] \"%s\" is ImmuneToEMP.\n", Target->get_ID());
+		return true;
+	}
+
+	// this may be immune because of veteran and elite abilities.
+	if (Target->Veterancy.IsElite() && (pData->EliteAbilityEMPIMMUNE || pData->VeteranAbilityEMPIMMUNE)) {
+		if (verbose)
+			Debug::Log("[isEMPImmune] \"%s\" is immune because it is elite.\n", Target->get_ID());
+		return true;
+	} else if (Target->Veterancy.IsVeteran() && pData->VeteranAbilityEMPIMMUNE) {
+		if (verbose)
+			Debug::Log("[isEMPImmune] \"%s\" is immune because it is veteran.\n", Target->get_ID());
 		return true;
 	}
 
@@ -203,7 +215,7 @@ bool EMPulse::isEMPImmune(TechnoClass * Target, HouseClass * SourceHouse) {
 	\returns True if Target is immune to EMP, false otherwise.
 
 	\author AlexB
-	\date 2010-05-01
+	\date 2010-05-02
 */
 bool EMPulse::isCurrentlyEMPImmune(TechnoClass * Target, HouseClass * SourceHouse) {
 	// iron curtained objects can not be affected by EMPs
@@ -211,12 +223,10 @@ bool EMPulse::isCurrentlyEMPImmune(TechnoClass * Target, HouseClass * SourceHous
 		return true;
 	}
 
-	// buildings still being constructed/sold would display the buildup anim
+	// technos still being constructed/sold would display the buildup anim
 	// over and over again.
-	if (BuildingClass *Building = specific_cast<BuildingClass*>(Target)) {
-		if ((Building->CurrentMission == mission_Construction) || (Building->CurrentMission == mission_Selling)) {
-			return true;
-		}
+	if ((Target->CurrentMission == mission_Construction) || (Target->CurrentMission == mission_Selling)) {
+		return true;
 	}
 
 	// the current status does allow this target to
@@ -464,6 +474,10 @@ bool EMPulse::enableEMPEffect(TechnoClass * Victim, ObjectClass * Souce) {
 		}
 	}
 
+	// cache the last mission this thing did
+	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(Victim);
+	pData->EMPLastMission = Victim->CurrentMission;
+
 	// deactivate and sparkle.
 	if (!Victim->Deactivated)
 		Victim->Deactivate();
@@ -482,7 +496,6 @@ bool EMPulse::enableEMPEffect(TechnoClass * Victim, ObjectClass * Souce) {
 	//TechnoExt::StopDraining(NULL, Victim->DrainTarget);
 
 	// set the sparkle animation.
-	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(Victim);
 	if (!pData->EMPSparkleAnim && RulesClass::Instance->EMPulseSparkles) {
 		GAME_ALLOC(AnimClass, pData->EMPSparkleAnim, RulesClass::Instance->EMPulseSparkles, &Victim->Location);
 		pData->EMPSparkleAnim->SetOwnerObject(Victim);
@@ -514,7 +527,6 @@ void EMPulse::DisableEMPEffect(TechnoClass * Victim) {
 		if (!Building->Type->InvisibleInGame) {
 			Building->EnableStuff();
 			updateRadarBlackout(Building);
-
 		}
 	}
 
@@ -533,6 +545,6 @@ void EMPulse::DisableEMPEffect(TechnoClass * Victim) {
 	// get harvesters back to work.
 	if (UnitClass * Unit = specific_cast<UnitClass *>(Victim)) {
 		if (Unit->Type->Harvester || Unit->Type->ResourceGatherer)
-			Unit->QueueMission(mission_Harvest, true);
+			Unit->QueueMission(pData->EMPLastMission, true);
 	}
 }
