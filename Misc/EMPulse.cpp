@@ -195,7 +195,7 @@ bool EMPulse::isEMPImmune(TechnoClass * Target, HouseClass * SourceHouse) {
 	being affected by them.
 
 	Currently, EMPs can be temporarily averted if Target is under the influence of
-	the Iron Curtain.
+	the Iron Curtain or still being constructed or sold.
 
 	\param Target The Techno the EMP is fired at.
 	\param SourceHouse The house that fired the EMP.
@@ -203,12 +203,20 @@ bool EMPulse::isEMPImmune(TechnoClass * Target, HouseClass * SourceHouse) {
 	\returns True if Target is immune to EMP, false otherwise.
 
 	\author AlexB
-	\date 2010-04-27
+	\date 2010-05-01
 */
 bool EMPulse::isCurrentlyEMPImmune(TechnoClass * Target, HouseClass * SourceHouse) {
 	// iron curtained objects can not be affected by EMPs
 	if (Target->IsIronCurtained()) {
 		return true;
+	}
+
+	// buildings still being constructed/sold would display the buildup anim
+	// over and over again.
+	if (BuildingClass *Building = specific_cast<BuildingClass*>(Target)) {
+		if ((Building->CurrentMission == mission_Construction) || (Building->CurrentMission == mission_Selling)) {
+			return true;
+		}
 	}
 
 	// the current status does allow this target to

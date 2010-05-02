@@ -37,27 +37,3 @@ DEFINE_HOOK(6FAF0D, TechnoClass_Update_EMPLock, 6) {
 
 	return 0x6FAFFD;
 }
-
-// pretends the building is powered off when still emp'd
-DEFINE_HOOK(50B020, HouseClass_CheckSWs_EMPulsedA, 6) {
-	GET(BuildingClass *, pThis, EDI);
-
-	if (pThis->EMPLockRemaining > 0) {
-		R->BL(0);
-		return 0x50B026;
-	}
-
-	return 0;
-}
-
-// pretends the building is powered off when still emp'd
-DEFINE_HOOK(50B04F, HouseClass_CheckSWs_EMPulsedB, 6) {
-	GET(BuildingClass *, pThis, EDI);
-
-	if (pThis->EMPLockRemaining > 0) {
-		R->BL(0);
-		return 0x50B055;
-	}
-
-	return 0;
-}
