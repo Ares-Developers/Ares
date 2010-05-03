@@ -35,16 +35,13 @@ void EMPulse::CreateEMPulse(EMPulseClass *Legacy, TechnoClass *Firer) {
 	\param Firer The Techno that fired the pulse.
 
 	\author AlexB
-	\date 2010-04-27
+	\date 2010-05-03
 */
 void EMPulse::CreateEMPulse(WarheadTypeExt::ExtData * Warhead, CellStruct Coords, TechnoClass *Firer) {
 	if (!Warhead) {
 		Debug::DevLog(Debug::Error, "Trying to CreateEMPulse() with Warhead pointing to NULL. Funny.\n");
 		return;
 	}
-
-	// fill the gaps
-	HouseClass *pHouse = (Firer ? Firer->Owner : NULL);
 
 	if (verbose)
 		Debug::Log("[CreateEMPulse] Duration: %d, Cap: %d\n", Warhead->EMP_Duration, Warhead->EMP_Cap);
@@ -56,49 +53,65 @@ void EMPulse::CreateEMPulse(WarheadTypeExt::ExtData * Warhead, CellStruct Coords
 		tmpCell += cellCoords;
 		CellClass *c = MapClass::Instance->GetCellAt(&tmpCell);
 		for (ObjectClass *curObj = c->GetContent(); curObj; curObj = curObj->NextObject) {
-			if (TechnoClass * curTechno = generic_cast<TechnoClass *> (curObj)) {
+			deliverEMPDamage(curObj, Firer, Warhead);
+		}
+	}
+}
+
+//! Deals EMP damage the object..
+/*!
+	Applies, removes or alters the EMP effect on a given unit.
+
+	\param object The Techno that should get affected by EMP.
+
+	\author AlexB
+	\date 2010-05-03
+*/
+void EMPulse::deliverEMPDamage(ObjectClass *object, TechnoClass *Firer, WarheadTypeExt::ExtData *Warhead) {
+	// fill the gaps
+	HouseClass *pHouse = (Firer ? Firer->Owner : NULL);
+	
+	if (TechnoClass * curTechno = generic_cast<TechnoClass *> (object)) {
+		if (verbose)
+			Debug::Log("[CreateEMPulse] Step 1: %s => %s\n",
+					(Firer ? Firer->get_ID() : NULL),
+					curTechno->get_ID());
+
+		if (isEligibleEMPTarget(curTechno, pHouse, Warhead->AttachedToObject)) {
+			if (verbose)
+				Debug::Log("[CreateEMPulse] Step 2: %s\n",
+						curTechno->get_ID());
+			// get the new capped value
+			int oldValue = curTechno->EMPLockRemaining;
+			int newValue = getCappedDuration(oldValue, Warhead->EMP_Duration, Warhead->EMP_Cap);
+
+			if (verbose)
+				Debug::Log("[CreateEMPulse] Step 3: %d\n",
+						newValue);
+
+			// can not be less than zero
+			curTechno->EMPLockRemaining = max(0, newValue);
+			if (verbose)
+				Debug::Log("[CreateEMPulse] Step 4: %d\n",
+						newValue);
+
+			// newly de-paralyzed
+			if ((oldValue > 0) && (curTechno->EMPLockRemaining <= 0)) {
 				if (verbose)
-					Debug::Log("[CreateEMPulse] Step 1: %s => %s\n",
-							(Firer ? Firer->get_ID() : NULL),
-							curTechno->get_ID());
-
-				if (isEligibleEMPTarget(curTechno, pHouse, Warhead->AttachedToObject)) {
-					if (verbose)
-						Debug::Log("[CreateEMPulse] Step 2: %s\n",
-								curTechno->get_ID());
-					// get the new capped value
-					int oldValue = curTechno->EMPLockRemaining;
-					int newValue = getCappedDuration(oldValue, Warhead->EMP_Duration, Warhead->EMP_Cap);
-
-					if (verbose)
-						Debug::Log("[CreateEMPulse] Step 3: %d\n",
-								newValue);
-
-					// can not be less than zero
-					curTechno->EMPLockRemaining = max(0, newValue);
-					if (verbose)
-						Debug::Log("[CreateEMPulse] Step 4: %d\n",
-								newValue);
-
-					// newly de-paralyzed
-					if ((oldValue > 0) && (curTechno->EMPLockRemaining <= 0)) {
-						if (verbose)
-							Debug::Log("[CreateEMPulse] Step 5a\n");
-						DisableEMPEffect(curTechno);
-					} else if ((oldValue <= 0) && (curTechno->EMPLockRemaining > 0)) {
-						// newly paralyzed unit
-						if (verbose)
-							Debug::Log("[CreateEMPulse] Step 5b\n");
-						if (enableEMPEffect(curTechno, Firer)) {
-							continue;
-						}
-					} else if (oldValue != newValue) {
-						// At least update the radar, if this is one.
-						updateRadarBlackout(curTechno);
-						if (verbose)
-							Debug::Log("[CreateEMPulse] Step 5c\n");
-					}
+					Debug::Log("[CreateEMPulse] Step 5a\n");
+				DisableEMPEffect(curTechno);
+			} else if ((oldValue <= 0) && (curTechno->EMPLockRemaining > 0)) {
+				// newly paralyzed unit
+				if (verbose)
+					Debug::Log("[CreateEMPulse] Step 5b\n");
+				if (enableEMPEffect(curTechno, Firer)) {
+					return;
 				}
+			} else if (oldValue != newValue) {
+				// At least update the radar, if this is one.
+				updateRadarBlackout(curTechno);
+				if (verbose)
+					Debug::Log("[CreateEMPulse] Step 5c\n");
 			}
 		}
 	}
@@ -108,10 +121,11 @@ void EMPulse::CreateEMPulse(WarheadTypeExt::ExtData * Warhead, CellStruct Coords
 /*!
 	Type immunity does work a little different for EMP weapons than for ordinary
 	projectiles. Target is type immune to EMP if it has a weapon that uses a
-	warhead also having EMEffect set. It is irrelevant which Techno fired the EMP.
+	warhead also having EMP.Duration set. It is irrelevant which Techno fired
+	the EMP.
 
-	If Target is elite, only EliteWeapons are used to check for EMEffect,
-	otherwise only ordinary Weapons are used.
+	If Target is elite, only EliteWeapons are used to check for a non-zero
+	EMP.Duration, otherwise only ordinary Weapons are used.
 
 	\param Target The Techno to check EMP type immunity for.
 
@@ -133,10 +147,12 @@ bool EMPulse::isEMPTypeImmune(TechnoClass * Target) {
 			}
 
 			WarheadTypeClass *WarheadType = WeaponType->Warhead;
-			if (WarheadType && WarheadType->EMEffect) {
-				// this unit can fire emps and type immunity
-				// grants it to never be affected.
-				return true;
+			if (WarheadTypeExt::ExtData *pWH = WarheadTypeExt::ExtMap.Find(WarheadType)) {
+				if (pWH->EMP_Duration != 0) {
+					// this unit can fire emps and type immunity
+					// grants it to never be affected.
+					return true;
+				}
 			}
 		}
 	}
@@ -187,7 +203,7 @@ bool EMPulse::isEMPImmune(TechnoClass * Target, HouseClass * SourceHouse) {
 	}
 
 	// if houses differ, TypeImmune does not count.
-	if (Target->Owner != SourceHouse) {
+	if (Target->Owner == SourceHouse) {
 		// ignore if type immune. don't even try.
 		if (isEMPTypeImmune(Target)) {
 			// This unit can fire emps and type immunity
@@ -387,6 +403,41 @@ void EMPulse::updateRadarBlackout(TechnoClass * Techno) {
 	}
 }
 
+//! Updates the SpawnManager to account for the EMP effect.
+/*!
+	Defers all regeneration and spawning until after the EMP effect is over.
+	If spawned units are on the go, that is, launching or flying, they are
+	destroyed.
+
+	\param Techno The Techno that might be a spawner.
+
+	\author AlexB
+	\date 2010-05-03
+*/
+void EMPulse::updateSpawnManager(TechnoClass * Techno, ObjectClass * Source = NULL) {
+	if (SpawnManagerClass *SM = Techno->SpawnManager) {
+		
+		if (Techno->EMPLockRemaining > 0) {
+			// crash all spawned units that are visible. else, they'd land somewhere else.
+			for (int i=0; i < SM->SpawnedNodes.Count; ++i) {
+				SpawnNode *spawn = SM->SpawnedNodes.GetItem(i);
+				// kill every spawned unit that is in the air. exempt missiles.
+				if(!spawn->IsSpawnMissile && spawn->Unit && spawn->Status >= 2 && spawn->Status <= 4) {
+					spawn->Unit->Crash(Source);
+				}
+			}
+
+			// pause the timers so spawning and regenerating is deferred.
+			SM->SpawnTimer.StartTime = -1;
+			SM->UnknownTimer.StartTime = -1;
+		} else {
+			// resume counting.
+			SM->SpawnTimer.StartIfEmpty();
+			SM->UnknownTimer.StartIfEmpty();
+		}
+	}
+}
+
 //! If the victim is owned by the human player creates radar events and EVA warnings.
 /*!
 	Creates a radar event and makes EVA tell you so if the Techno is a resource
@@ -453,9 +504,9 @@ void EMPulse::announceAttack(TechnoClass * Techno) {
 	\returns True if Victim has been destroyed by the EMP effect, False otherwise.
 
 	\author AlexB
-	\date 2010-04-28
+	\date 2010-05-03
 */
-bool EMPulse::enableEMPEffect(TechnoClass * Victim, ObjectClass * Souce) {
+bool EMPulse::enableEMPEffect(TechnoClass * Victim, ObjectClass * Source) {
 	Victim->Owner->ShouldRecheckTechTree = true;
 	Victim->Owner->PowerBlackout = true;
 
@@ -468,7 +519,7 @@ bool EMPulse::enableEMPEffect(TechnoClass * Victim, ObjectClass * Souce) {
 			if (Aircraft->InAir) {
 				if (EMPulse::verbose)
 					Debug::Log("[enableEMPEffect] Plane crash: %s\n", Aircraft->get_ID());
-				Aircraft->Crash(Souce);
+				Aircraft->Crash(Source);
 				return true;
 			}
 		}
@@ -486,10 +537,7 @@ bool EMPulse::enableEMPEffect(TechnoClass * Victim, ObjectClass * Souce) {
 	if (Victim->CaptureManager)
 		Victim->CaptureManager->FreeAll();
 
-	// crash all spawned units.
-	if (Victim->SpawnManager) {
-		Victim->SpawnManager->KillNodes();
-	}
+	updateSpawnManager(Victim, Source);
 
 	//// stop draining.
 	//TechnoExt::StopDraining(Victim->DrainingMe, NULL);
@@ -512,15 +560,12 @@ bool EMPulse::enableEMPEffect(TechnoClass * Victim, ObjectClass * Souce) {
 /*!
 	Reactivates the Techno. The EMP sparkle animation is stopped.
 
-	Radars come back online.
-
-	If Victim mind controls any units, they are freed. Spawned units are
-	killed. Draining is stopped.
+	Radars come back online. Spawners are allowed to resume their work.
 
 	\param Victim The Techno that shall have its EMP effects removed.
 
 	\author AlexB
-	\date 2010-04-28
+	\date 2010-05-03
 */
 void EMPulse::DisableEMPEffect(TechnoClass * Victim) {
 	if (BuildingClass * Building = specific_cast<BuildingClass *>(Victim)) {
@@ -535,6 +580,9 @@ void EMPulse::DisableEMPEffect(TechnoClass * Victim) {
 
 	if (Victim->Deactivated)
 		Victim->Reactivate();
+
+	// allow to spawn units again.
+	updateSpawnManager(Victim);
 
 	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(Victim);
 	if (pData && pData->EMPSparkleAnim) {

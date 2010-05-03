@@ -59,10 +59,8 @@ void WarheadTypeExt::ExtData::LoadFromINIFile(WarheadTypeClass *pThis, CCINIClas
 		this->MindControl_Permanent = pINI->ReadBool(section, "MindControl.Permanent", this->MindControl_Permanent);
 	}
 
-	if(pThis->EMEffect) {
-		this->EMP_Duration = pINI->ReadInteger(section, "EMP.Duration", this->EMP_Duration);
-		this->EMP_Cap = pINI->ReadInteger(section, "EMP.Cap", this->EMP_Cap);
-	}
+	this->EMP_Duration = pINI->ReadInteger(section, "EMP.Duration", this->EMP_Duration);
+	this->EMP_Cap = pINI->ReadInteger(section, "EMP.Cap", this->EMP_Cap);
 
 	this->IC_Duration = pINI->ReadInteger(section, "IronCurtain.Duration", this->IC_Duration);
 

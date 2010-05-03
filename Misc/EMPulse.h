@@ -14,12 +14,14 @@ public:
 	static bool IsTypeEMPProne(TechnoTypeClass *Type);
 
 protected:
+	static void deliverEMPDamage(ObjectClass *, TechnoClass *, WarheadTypeExt::ExtData *);
 	static bool isEMPTypeImmune(TechnoClass *);
 	static bool isEMPImmune(TechnoClass *, HouseClass *);
 	static bool isCurrentlyEMPImmune(TechnoClass *, HouseClass *);
 	static bool isEligibleEMPTarget(TechnoClass *, HouseClass *, WarheadTypeClass *);
 	static int getCappedDuration(int, int, int);
 	static void updateRadarBlackout(TechnoClass *);
+	static void updateSpawnManager(TechnoClass *, ObjectClass *);
 	static bool enableEMPEffect(TechnoClass *, ObjectClass *);
 	static void announceAttack(TechnoClass *);
 	static bool verbose;
