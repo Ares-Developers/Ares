@@ -157,7 +157,7 @@ void HouseTypeExt::ExtData::LoadFromRulesFile(HouseTypeClass *pThis, CCINIClass 
 
 	if (pINI->ReadString(pID, "File.Flag", "", Ares::readBuffer, Ares::readLength)) {
 		strncpy(this->FlagFile, Ares::readBuffer, 0x20);
-		PCX::LoadFile(this->FlagFile);
+		PCX::Instance->LoadFile(this->FlagFile);
 	}
 
 	if (pINI->ReadString(pID, "File.LoadScreen", "", Ares::readBuffer, Ares::readLength)) {
