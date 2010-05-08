@@ -38,7 +38,7 @@ void TechnoExt::SpawnSurvivors(TechnoClass *pThis, TechnoClass *pKiller, bool Se
 					InfantryClass *Pilot = reinterpret_cast<InfantryClass *>(PilotType->CreateObject(pOwner));
 
 					Pilot->Health = (PilotType->Strength / 2);
-					Pilot->get_Veterancy()->Veterancy = pThis->Veterancy.Veterancy;
+					Pilot->Veterancy.Veterancy = pThis->Veterancy.Veterancy;
 					CoordStruct destLoc, tmpLoc = loc;
 					CellStruct tmpCoords = CellSpread::GetCell(ScenarioClass::Instance->Random.RandomRanged(0, 7));
 

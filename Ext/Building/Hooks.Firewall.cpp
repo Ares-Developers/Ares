@@ -285,7 +285,7 @@ DEFINE_HOOK(6FCD1D, TechnoClass_GetObjectActivityState_CanTargetFirewall, 5)
 
 	FirestormFinderApplicator FireFinder(Src->Owner);
 
-	CellSequence Path(Src->get_Location(), Tgt->get_Location());
+	CellSequence Path(&Src->Location, &Tgt->Location);
 
 	Path.Apply(FireFinder);
 

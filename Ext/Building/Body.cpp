@@ -20,7 +20,7 @@ template<> IStream *Container<BuildingExt>::SavingStream = NULL;
 // member functions
 
 DWORD BuildingExt::GetFirewallFlags(BuildingClass *pThis) {
-	CellClass *MyCell = MapClass::Global()->GetCellAt(pThis->get_Location());
+	CellClass *MyCell = MapClass::Instance->GetCellAt(&pThis->Location);
 	DWORD flags = 0;
 	for(int direction = 0; direction < 8; direction += 2) {
 		CellClass *Neighbour = MyCell->GetNeighbourCell(direction);

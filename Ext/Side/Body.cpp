@@ -27,7 +27,7 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 		}
 
 		for(int i = 0; i < RulesClass::Instance->SovietBaseDefenses.Count; ++i) {
-			this->BaseDefenses.AddItem(RulesClass::Global()->get_SovietBaseDefenses()->GetItem(i));
+			this->BaseDefenses.AddItem(RulesClass::Instance->SovietBaseDefenses.GetItem(i));
 		}
 
 		this->Crew.Bind(&RulesClass::Instance->SovietCrew);

@@ -151,17 +151,17 @@ DEFINE_HOOK(436459, BuildingLightClass_Update, 6)
 	TechnoClass *Owner = BL->OwnerObject;
 	TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(Owner->GetTechnoType());
 	if(Owner && Owner->WhatAmI() != abs_Building) {
-		CoordStruct Loc = *Owner->get_Location();
+		CoordStruct Loc = Owner->Location;
 		DWORD Facing;
 		switch(pTypeData->Spot_AttachedTo) {
 			case TechnoTypeExt::sa_Barrel:
-				Owner->get_BarrelFacing()->GetFacing(&Facing);
+				Owner->BarrelFacing.GetFacing(&Facing);
 				break;
 			case TechnoTypeExt::sa_Turret:
-				Owner->get_TurretFacing()->GetFacing(&Facing);
+				Owner->TurretFacing.GetFacing(&Facing);
 				break;
 			default:
-				Owner->get_Facing()->GetFacing(&Facing);
+				Owner->Facing.GetFacing(&Facing);
 		}
 		WORD F = (WORD)Facing;
 

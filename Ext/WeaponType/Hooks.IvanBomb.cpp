@@ -32,7 +32,7 @@ DEFINE_HOOK(438FD1, BombListClass_Add2, 5)
 	WeaponTypeClass *Source = Bullet->WeaponType;
 	WeaponTypeExt::ExtData *pData = WeaponTypeExt::ExtMap.Find(Source);
 	if(Owner->Owner->ControlledByPlayer() && pData->Ivan_AttachSound != -1) {
-		VocClass::PlayAt(pData->Ivan_AttachSound, &Bomb->TargetUnit->Location, Bomb->get_Audio());
+		VocClass::PlayAt(pData->Ivan_AttachSound, &Bomb->TargetUnit->Location, &Bomb->Audio);
 	}
 
 	return 0;
@@ -209,7 +209,7 @@ DEFINE_HOOK(46934D, IvanBombs_Spread, 6)
 
 	// just real target
 	if(cSpread < 0.5) {
-		BombListClass::Global()->Plant(pOwner, pTarget);
+		BombListClass::Instance->Plant(pOwner, pTarget);
 		return 0;
 	}
 
@@ -229,7 +229,7 @@ DEFINE_HOOK(46934D, IvanBombs_Spread, 6)
 			virtual void operator() (ObjectClass *curObj, CellStruct *origin) {
 				if(curObj != pOwner && !curObj->AttachedBomb) {
 					if(TechnoClass *curTech = generic_cast<TechnoClass *>(curObj)) {
-						BombListClass::Global()->Plant(pOwner, curTech);
+						BombListClass::Instance->Plant(pOwner, curTech);
 					}
 				}
 			}

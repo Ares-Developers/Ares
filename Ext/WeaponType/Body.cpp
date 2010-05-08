@@ -51,7 +51,7 @@ void WeaponTypeExt::ExtData::LoadFromINIFile(WeaponTypeExt::TT *pThis, CCINIClas
 	INI_EX exINI(pINI);
 
 	this->Beam_Duration     = pINI->ReadInteger(section, "Beam.Duration", this->Beam_Duration);
-	this->Beam_Amplitude    = pINI->ReadInteger(section, "Beam.Amplitude", this->Beam_Amplitude);
+	this->Beam_Amplitude    = pINI->ReadDouble(section, "Beam.Amplitude", this->Beam_Amplitude);
 	this->Beam_IsHouseColor = pINI->ReadBool(section, "Beam.IsHouseColor", this->Beam_IsHouseColor);
 
 	if(!this->Beam_IsHouseColor) {
@@ -140,7 +140,7 @@ void Container<WeaponTypeExt>::Save(WeaponTypeClass *pThis, IStream *pStm) {
 	if(pData) {
 		ULONG out;
 
-		DynamicVectorClass<BombClass *> *bombs = BombListClass::Global()->get_Bombs();
+		DynamicVectorClass<BombClass *> *bombs = &BombListClass::Instance->Bombs;
 		pStm->Write(&bombs->Count, 4, &out);
 		for(int ii = 0; ii < bombs->Count; ++ii) {
 			BombClass *ptr = bombs->Items[ii];

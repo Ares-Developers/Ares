@@ -28,7 +28,7 @@ signed int HouseExt::RequirementsMet(HouseClass *pHouse, TechnoTypeClass *pItem)
 	// this has to happen before the first possible "can build" response or NCO happens
 	if(pItem->WhatAmI() != abs_BuildingType && !pHouse->HasFactoryForObject(pItem)) { return 0; }
 
-	if(!(pData->PrerequisiteTheaters & (1 << ScenarioClass::Global()->Theater))) { return 0; }
+	if(!(pData->PrerequisiteTheaters & (1 << ScenarioClass::Instance->Theater))) { return 0; }
 	if(Prereqs::HouseOwnsAny(pHouse, &pData->PrerequisiteNegatives)) { return 0; }
 
 	if(pData->RequiredStolenTech.any()) {
@@ -37,7 +37,7 @@ signed int HouseExt::RequirementsMet(HouseClass *pHouse, TechnoTypeClass *pItem)
 
 	// yes, the game checks it here
 	// hack value - skip real prereq check
-	if(Prereqs::HouseOwnsAny(pHouse, pItem->get_PrerequisiteOverride())) { return -1; }
+	if(Prereqs::HouseOwnsAny(pHouse, &pItem->PrerequisiteOverride)) { return -1; }
 
 	if(pHouse->HasFromSecretLab(pItem)) { return -1; }
 

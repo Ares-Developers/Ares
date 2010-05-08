@@ -87,8 +87,8 @@ DEFINE_HOOK(760F50, WaveClass_Update, 6)
 	if(Weap->AmbientDamage) {
 		CoordStruct coords;
 //		Debug::Log("Damaging Cells for weapon %X (Intensity = %d)\n", pData, pThis->WaveIntensity);
-		for(int i = 0; i < pThis->get_Cells()->Count; ++i) {
-			CellClass *Cell = pThis->get_Cells()->GetItem(i);
+		for(int i = 0; i < pThis->Cells.Count; ++i) {
+			CellClass *Cell = pThis->Cells.GetItem(i);
 //			Debug::Log("\t(%hd,%hd)\n", Cell->MapCoords.X, Cell->MapCoords.Y);
 			pThis->DamageArea(Cell->Get3DCoords3(&coords));
 		}

@@ -28,7 +28,7 @@ class FirestormFinderApplicator : public CellSequenceApplicator {
 						BuildingTypeExt::ExtData* pTypeData = BuildingTypeExt::ExtMap.Find(B->Type);
 						HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(B->Owner);
 						if(pTypeData->Firewall_Is && pHouseData->FirewallActive) {
-							target = *curCell->get_MapCoords();
+							target = curCell->MapCoords;
 							found = 1;
 						}
 					}

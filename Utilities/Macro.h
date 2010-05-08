@@ -186,7 +186,7 @@ IF_STR(ini_section, #ini_key) { \
 
 #define PARSE_VECTOR_N(ini_section, obj, ini_key, objtype) \
 IF_STR(ini_section, #ini_key) { \
-	DynamicVectorClass<objtype *>* vec = obj->get_ ## ini_key(); vec->Clear(); \
+	DynamicVectorClass<objtype *>* vec = &obj->ini_key; vec->Clear(); \
 	FOR_STRTOK{ \
 		objtype *idx = objtype::Find(cur); \
 		if(idx) { vec->AddItem(idx); } \
@@ -204,7 +204,7 @@ IF_STR(ini_section, #ini_key) { \
 
 #define PARSE_VECTOR_INT(ini_section, ini_key, obj) \
 IF_STR(ini_section, #ini_key) { \
-	DynamicVectorClass<int>* vec = obj->get_ ## ini_key(); vec->Clear(); \
+	DynamicVectorClass<int>* vec = &obj->ini_key; vec->Clear(); \
 	FOR_STRTOK{ \
 		int idx = atoi(cur); vec->AddItem(idx); \
 	} \

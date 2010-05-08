@@ -117,7 +117,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 		Prereqs::Parse(Ares::readBuffer, dvc);
 	}
 	if(pINI->ReadString(section, "PrerequisiteOverride", "", Ares::readBuffer, Ares::readLength)) {
-		dvc = pThis->get_PrerequisiteOverride();
+		dvc = &pThis->PrerequisiteOverride;
 		Prereqs::Parse(Ares::readBuffer, dvc);
 	}
 	for(int i = 0; i < this->PrerequisiteLists.Count; ++i) {

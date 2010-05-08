@@ -101,7 +101,7 @@ DEFINE_HOOK(4210AC, Alphas_UpdateAll, 5)
 		int countFrames = Conversions::Int2Highest(Image->Frames);
 		TechnoClass *T = reinterpret_cast<TechnoClass *>(O);
 		DWORD Facing;
-		T->get_Facing()->GetFacing(&Facing);
+		T->Facing.GetFacing(&Facing);
 		WORD F = (WORD)Facing;
 		int idx = F >> (16 - countFrames);
 		R->Stack(0x0, idx);
@@ -123,7 +123,7 @@ DEFINE_HOOK(42146E, TacticalClass_UpdateAlphasInRectangle, 5)
 		int countFrames = Conversions::Int2Highest(Image->Frames);
 		TechnoClass *T = reinterpret_cast<TechnoClass *>(O);
 		DWORD Facing;
-		T->get_Facing()->GetFacing(&Facing);
+		T->Facing.GetFacing(&Facing);
 		WORD F = (WORD)Facing;
 		idx = F >> (16 - countFrames);
 	}

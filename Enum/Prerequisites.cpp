@@ -107,7 +107,7 @@ bool Prereqs::HouseOwnsBuilding(HouseClass *pHouse, int Index)
 		}
 		return false;
 	} else {
-		return pHouse->get_OwnedBuildingTypes1()->GetItemCount(Index) > 0;
+		return pHouse->OwnedBuildingTypes1.GetItemCount(Index) > 0;
 	}
 }
 

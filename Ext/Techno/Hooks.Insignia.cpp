@@ -20,7 +20,7 @@ DEFINE_HOOK(70A990, TechnoClass_DrawVeterancy, 5)
 		iFile = fCustom;
 		iFrame = 0;
 	} else {
-		VeterancyStruct *XP = T->get_Veterancy();
+		VeterancyStruct *XP = &T->Veterancy;
 		if(XP->IsElite()) {
 			iFrame = 15;
 		} else if(XP->IsVeteran()) {

@@ -192,7 +192,7 @@ DEFINE_HOOK(4FE782, HTExt_PickPowerplant, 6)
 	if(Eligible.size() == 0) {
 		Debug::FatalErrorAndExit("Country [%s] did not find any powerplants it could construct!", H->Type->ID);
 	}
-	int idx = ScenarioClass::Global()->get_Random()->RandomRanged(0, Eligible.size() - 1);
+	int idx = ScenarioClass::Instance->Random.RandomRanged(0, Eligible.size() - 1);
 	BuildingTypeClass *pResult = Eligible.at(idx);
 
 	R->EDI(pResult);

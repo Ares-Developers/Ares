@@ -224,7 +224,7 @@ public:
 			Debug::Log("Promotable<T> invoked without an owner!\n");
 			throw std::logic_error("Promotable<T> invoked without an owner!\n");
 		}
-		VeterancyStruct *XP = this->_BindTo->get_Veterancy();
+		VeterancyStruct *XP = &this->_BindTo->Veterancy;
 		if(XP->IsElite()) {
 			return &this->Elite;
 		}
