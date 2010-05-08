@@ -563,7 +563,7 @@ bool EMPulse::enableEMPEffect(TechnoClass * Victim, ObjectClass * Source) {
 	pData->EMPLastMission = Victim->CurrentMission;
 
 	// deactivate and sparkle.
-	if (!Victim->Deactivated) {
+	if (!Victim->Deactivated && (Victim->CurrentMission != mission_Unload)) {
 		Victim->Deactivate();
 	}
 

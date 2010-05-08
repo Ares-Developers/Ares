@@ -17,6 +17,11 @@ DEFINE_HOOK(6FAF0D, TechnoClass_Update_EMPLock, 6) {
 			// function here that is quicker in retrieving the
 			// EMP animation and does more stuff.
 			EMPulse::DisableEMPEffect(pThis);
+		} else {
+			// deactivate units that were unloading afterwards
+			if (!pThis->Deactivated && (pThis->CurrentMission != mission_Unload)) {
+				pThis->Deactivate();
+			}
 		}
 	}
 
