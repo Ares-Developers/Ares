@@ -652,4 +652,3 @@ DEFINE_HOOK(4DB87E, FootClass_SetCoords, 6)
 	}
 	return 0;
 }
-

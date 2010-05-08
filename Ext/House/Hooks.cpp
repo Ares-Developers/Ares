@@ -1,6 +1,7 @@
 #include "Body.h"
 #include "../TechnoType/Body.h"
 
+#include <StringTable.h>
 #include <GameModeOptionsClass.h>
 #include <BuildingClass.h>
 #include <AircraftClass.h>
@@ -8,6 +9,7 @@
 #include <UnitClass.h>
 #include <ArrayClasses.h>
 #include <Helpers/Template.h>
+#include <CRT.h>
 
 // =============================
 // other hooks
@@ -123,4 +125,31 @@ DEFINE_HOOK(4F645F, HouseClass_CTOR_FixSideIndices, 5)
 		}
 	}
 	return 0x4F6490;
+}
+
+DEFINE_HOOK(500CC5, HouseClass_InitFromINI_FixBufferLimits, 6)
+{
+	GET(HouseClass *, H, EBX);
+
+	if(H->UINameString[0]) {
+		const wchar_t *str = StringTable::LoadString(H->UINameString);
+		CRT::wcsncpy(H->UIName, str, 20);
+	} else {
+		CRT::wcsncpy(H->UIName, H->Type->UIName, 20);
+	}
+
+	H->UIName[20] = 0;
+	return 0x500D0D;
+}
+
+DEFINE_HOOK(4F62FF, HouseClass_CTOR_FixNameOverflow, 6)
+{
+	GET(HouseClass *, H, EBP);
+	GET_STACK(HouseTypeClass *, Country, 0x48);
+
+	CRT::wcsncpy(H->UIName, Country->UIName, 20);
+
+	H->UIName[20] = 0;
+
+	return 0x4F6312;
 }

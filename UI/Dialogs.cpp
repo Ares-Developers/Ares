@@ -51,13 +51,8 @@ DEFINE_HOOK(4A3B4B, FetchResource, 9)
 	GET(LPCTSTR, lpName, ECX);
 	GET(LPCTSTR, lpType, EDX);
 
-	HRSRC hResInfo = FindResource(hModule, lpName, lpType);
-
-	if(hResInfo)
-	{
-		HGLOBAL hResData = LoadResource(hModule, hResInfo);
-		if(hResData)
-		{
+	if(HRSRC hResInfo = FindResource(hModule, lpName, lpType)) {
+		if(HGLOBAL hResData = LoadResource(hModule, hResInfo)) {
 			LockResource(hResData);
 			R->EAX(hResData);
 

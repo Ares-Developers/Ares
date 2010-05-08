@@ -114,7 +114,7 @@ DEFINE_HOOK(537BC0, Game_MakeScreenshot, 0)
 				ClipRect.Height = height;
 			}
 
-			RectangleStruct DestRect = {0, 0, width, height};
+//			RectangleStruct DestRect = {0, 0, width, height};
 
 			WWMouseClass::Instance->HideCursor();
 //			Surface->BlitPart(&DestRect, DSurface::Primary, &ClipRect, 0, 1);
@@ -208,3 +208,4 @@ DEFINE_HOOK(537BC0, Game_MakeScreenshot, 0)
 
 	return 0x537DC9;
 }
+

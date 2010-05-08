@@ -64,7 +64,6 @@ DEFINE_HOOK(4E3579, HTExt_DrawFlag, 0)
 		return 0x4E3590;
 	}
 
-//	Debug::Log("Flag resolves to %s\n", pFlagFile);
 	R->EAX(PCX::Instance->GetSurface(pFlagFile));
 
 	return 0x4E3686;
