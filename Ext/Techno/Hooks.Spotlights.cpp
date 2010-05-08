@@ -2,6 +2,7 @@
 #include "../TechnoType/Body.h"
 
 #include <YRMath.h>
+#include <HouseClass.h>
 #include <TacticalClass.h>
 
 hash_SpotlightExt TechnoExt::SpotlightExt;
@@ -31,6 +32,12 @@ DEFINE_HOOK(6F6D0E, TechnoClass_Put_1, 7)
 	if(pTypeData->Is_Spotlighted) {
 		BuildingLightClass *placeholder;
 		GAME_ALLOC(BuildingLightClass, placeholder, T);
+		if(BuildingClass * B = specific_cast<BuildingClass *>(T)) {
+			if(B->Spotlight) {
+				delete B->Spotlight;
+			}
+			B->Spotlight = placeholder;
+		}
 	}
 
 	return 0;
@@ -44,11 +51,21 @@ DEFINE_HOOK(6F6F20, TechnoClass_Put_2, 6)
 	if(pTypeData->Is_Spotlighted) {
 		BuildingLightClass *placeholder;
 		GAME_ALLOC(BuildingLightClass, placeholder, T);
+		if(BuildingClass * B = specific_cast<BuildingClass *>(T)) {
+			if(B->Spotlight) {
+				delete B->Spotlight;
+			}
+			B->Spotlight = placeholder;
+		}
 	}
 
 	return 0;
 }
 
+DEFINE_HOOK(441163, BuildingClass_Put_DontSpawnSpotlight, 0)
+{
+	return 0x441196;
+}
 
 DEFINE_HOOK(435820, BuildingLightClass_CTOR, 6)
 {
@@ -66,6 +83,7 @@ DEFINE_HOOK(435820, BuildingLightClass_CTOR, 6)
 DEFINE_HOOK(4370C0, BuildingLightClass_SDDTOR, A)
 {
 	GET(BuildingLightClass *, BL, ECX);
+
 	TechnoClass *T = BL->OwnerObject;
 	hash_SpotlightExt::iterator i = TechnoExt::SpotlightExt.find(T);
 	if(i != TechnoExt::SpotlightExt.end()) {
@@ -110,6 +128,12 @@ DEFINE_HOOK(70FBE3, TechnoClass_Activate, 5)
 		++Unsorted::SomeMutex;
 		BuildingLightClass *placeholder;
 		GAME_ALLOC(BuildingLightClass, placeholder, T);
+		if(BuildingClass * B = specific_cast<BuildingClass *>(T)) {
+			if(B->Spotlight) {
+				delete B->Spotlight;
+			}
+			B->Spotlight = placeholder;
+		}
 		--Unsorted::SomeMutex;
 	}
 	return 0;

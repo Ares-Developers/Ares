@@ -58,8 +58,7 @@ void RulesExt::ExtData::LoadBeforeTypeData(RulesClass *pThis, CCINIClass *pINI) 
 	int len = pINI->GetKeyCount(section);
 	for (int i = 0; i < len; ++i) {
 		const char *key = pINI->GetKeyName(section, i);
-		if (pINI->ReadString(section, key, "", Ares::readBuffer,
-				Ares::readLength)) {
+		if (pINI->ReadString(section, key, "", Ares::readBuffer, Ares::readLength)) {
 			WeaponTypeClass::FindOrAllocate(Ares::readBuffer);
 		}
 	}
@@ -75,11 +74,9 @@ void RulesExt::ExtData::LoadAfterTypeData(RulesClass *pThis, CCINIClass *pINI) {
 		return;
 	}
 
-	const char section[] = "AudioVisual";
-
 	INI_EX exINI(pINI);
 
-	pData->ElectricDeath.Parse(&exINI, section, "InfantryElectrocuted");
+	pData->ElectricDeath.Parse(&exINI, "AudioVisual", "InfantryElectrocuted");
 
 	for (int i = 0; i < WeaponTypeClass::Array->Count; ++i) {
 		WeaponTypeClass::Array->GetItem(i)->LoadFromINI(pINI);

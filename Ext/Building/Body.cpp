@@ -472,7 +472,7 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 	if(pTypeExt->StolenMoneyAmount > 0) {
 		bounty = pTypeExt->StolenMoneyAmount;
 	} else if(pTypeExt->StolenMoneyPercentage > 0) {
-		bounty = int(available * RulesClass::Instance->SpyMoneyStealPercent);
+		bounty = int(available * pTypeExt->StolenMoneyPercentage);
 	}
 	if(bounty > 0) {
 		bounty = min(bounty, available);
