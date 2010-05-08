@@ -446,6 +446,28 @@ void EMPulse::updateSpawnManager(TechnoClass * Techno, ObjectClass * Source = NU
 	}
 }
 
+//! Updates the SlaveManager to account for the EMP effect.
+/*!
+	Stops the slaves where they are standing until the EMP effect is over.
+
+	\param Techno The Techno that might be an enslaver.
+
+	\author AlexB
+	\date 2010-05-07
+*/
+void EMPulse::updateSlaveManager(TechnoClass * Techno) {
+	if (SlaveManagerClass *SM = Techno->SlaveManager) {
+		
+		if (Techno->EMPLockRemaining > 0) {
+			// pause the timers so spawning and regenerating is deferred.
+			SM->RespawnTimer.StartTime = -1;
+		} else {
+			// resume slaving around.
+			SM->RespawnTimer.StartIfEmpty();
+		}
+	}
+}
+
 //! If the victim is owned by the human player creates radar events and EVA warnings.
 /*!
 	Creates a radar event and makes EVA tell you so if the Techno is a resource
@@ -550,7 +572,9 @@ bool EMPulse::enableEMPEffect(TechnoClass * Victim, ObjectClass * Source) {
 		Victim->CaptureManager->FreeAll();
 	}
 
+	// update managers.
 	updateSpawnManager(Victim, Source);
+	updateSlaveManager(Victim);
 
 	// set the sparkle animation.
 	if (!pData->EMPSparkleAnim && RulesClass::Instance->EMPulseSparkles) {
@@ -577,9 +601,16 @@ bool EMPulse::enableEMPEffect(TechnoClass * Victim, ObjectClass * Source) {
 	\date 2010-05-03
 */
 void EMPulse::DisableEMPEffect(TechnoClass * Victim) {
+	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(Victim);
+	bool HasPower = true;
+
 	if (BuildingClass * Building = specific_cast<BuildingClass *>(Victim)) {
+		HasPower = Building->HasPower;
+
 		if (!Building->Type->InvisibleInGame) {
-			Building->EnableStuff();
+			if (HasPower) {
+				Building->EnableStuff();
+			}
 			updateRadarBlackout(Building);
 		}
 	}
@@ -587,14 +618,14 @@ void EMPulse::DisableEMPEffect(TechnoClass * Victim) {
 	Victim->Owner->ShouldRecheckTechTree = true;
 	Victim->Owner->PowerBlackout = true;
 
-	if (Victim->Deactivated) {
+	if (Victim->Deactivated && HasPower) {
 		Victim->Reactivate();
 	}
 
 	// allow to spawn units again.
 	updateSpawnManager(Victim);
+	updateSlaveManager(Victim);
 
-	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(Victim);
 	if (pData && pData->EMPSparkleAnim) {
 		pData->EMPSparkleAnim->RemainingIterations = 0; // basically "you don't need to show up anymore"
 		pData->EMPSparkleAnim = NULL;
