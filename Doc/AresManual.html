@@ -126,6 +126,28 @@
 	</style>
 </head>
 <body>
+<!--
+	Documentation documentation:
+	We're abusing two HTML elements to auto-generate the manual's lists:
+	
+	<var class="file section type default">TagName=</var>
+	Example: <var class="rules SuperWeapon integer xxxnum5">Cursor.Interval=</var>
+	This would generate the entry for Cursor.Interval= in section [SuperWeapon] of type integer with default 6, under the rulesmd.ini flags in Appendix A - New Flags/Sections.
+	We're parsing three special values: xxxnum, xxxperc and R_G_B; this is necessary because CSS classes can't start with numbers, and commas are CSS operators
+		xxxnum just vanishes
+		xxxperc appends a percentage sign to the number
+		R_G_B is turned into R,G,B
+	If you need spaces, use underscores instead (e.g. list_of_InfantryTypes). Try not to be verbose, and not to use special characters.
+	
+	<dfn class="kind of change/addition">Description</dfn>
+	Example: <dfn class="bugfix">Prism support modifier fixed for game modes/maps.</dfn>
+	This would generate a feature explanation listing for Prism support modifiers in the bugfix section of Appendix B – Ares Feature Summary.
+	We're accepting:
+		bugfix -> this is a bugfix
+		restored -> this was restored from Tiberian Sun
+		new -> this is a new feature, added by Ares
+	The explanations are sorted into the the respective lists in Appendix B.
+-->
 <div id="wrapper">
 	<a name="top"></a>
 	<a href="#top" id="toplink">return to top &uarr;</a>
@@ -330,7 +352,7 @@
 		<dt>[GlobalControls]&#9658;AllowParallelAIQueues= (boolean)</dt>
 		<dd>Set this to yes to re-enable AI factory cloning.<dd>
 	</dl>
-	<dfn class="bugfix">If an AI is made to build multiple factories of the same type they will no longer result in cloned units/buildings (this can be turned back on if desired).</dfn><var class="rules GlobalControls boolean no">AllowParallelAIQueues=</var>
+	<dfn class="bugfix">If an AI is made to build multiple factories of the same type they will no longer result in cloned units/buildings (this can be turned back on if desired).</dfn><var class="rules">GlobalControls</var><var class="rules GlobalControls boolean no">AllowParallelAIQueues=</var>
 	
 	<div class="ares02"><h4>Alternate Theater Art For BuildingTypes (Ares 0.2)</h4>
 	<p>BuildingTypes whose artmd.ini entry has NewTheater=yes set would have the second letter of their  SHP filenames replaced by another letter, depending on the theater of the current map. For example, GAWEAP uses SHP files named GAWEAP* on arctic maps, GTWEAP* on temperate maps, GDWEAP* on desert maps and so on. In the event that a SHP file with the appropriate filename does not exist, the game falls back to GTWEAP*.<br>
@@ -368,12 +390,12 @@
 	</ul>
 	<p><span class="note">NB: Tiberian Sun used the weapon's Damage flag to determine how long the EMP effect would last. Ares, however, uses 2 new flags (EMP.Duration and EMP.Cap) to provide greater control. The weapon's Damage will be delivered independently from EMP paralysis (so a weapon can both damage and paralyze its target).</span></p>
 	<dl class="flaglist">
-		<dt>[Warhead]&#9658;EMEffect= (boolean)</dt>
+		<!--<dt>[Warhead]&#9658;EMEffect= (boolean)</dt>
 		<dd>Specifies whether or not this warhead will (in addition to damage) trigger an EMP on the affected units. Defaults to no.
-		<span class="note">NB: This flag is residual from Tiberian Sun and may be made obsolete in future.</span></dd>
+		<span class="note">NB: This flag is residual from Tiberian Sun and may be made obsolete in future.</span><var class="rules Warhead boolean no">EMEffect=</var></dd> NOW OBSOLETE-->
 		<dt>[Warhead]&#9658;EMP.Duration= (integer &ndash; frames)<br>
 		[Warhead]&#9658;EMP.Cap= (integer &ndash; frames)</dt>
-		<dd>These two flags are used together to determine how long (in frames) the affected units will be EMP'd for.</dd>
+		<dd>These two flags are used together to determine how long (in frames) the affected units will be EMP'd for.<var class="rules Warhead integer_-_frames xxxnum0">EMP.Duration=</var><var class="rules Warhead integer_-_frames xxxnum-1">EMP.Cap=</var></dd>
 	</dl>
 	<p>The game keeps track of how much longer each unit will remain paralyzed. Each unit essentially has a hidden EMP counter that counts down frame by frame until it reaches zero, at which point the unit will be re-activated. This counter is what gets modified by EMP warheads.</p>
 	<p>First we will look at positive EMP.Duration &ndash; the targets are going to be paralyzed.</p>
@@ -450,7 +472,7 @@
 	<p>The Firestorm Wall has been re-enabled for testing purposes only at this stage. A BuildingType with Firestorm.Wall=yes will act as a section of such a wall, and auto-connect to other nearby pieces (see the original building's SHP from Tiberian Sun to see how the art is controlled). When the wall is activated, any objects on top of these sections are destroyed, and non-friendly projectiles without SubjectToFirestorm=no are stopped by this wall. Since the new Ares super weapons are on hold until <a href="http://bugs.renegadeprojects.com/view.php?id=424">issue #424</a> is resolved, the Firestorm is not implemented as a super weapon for now &ndash; it's a keyboard command you can bind and (de)activate as you wish.<br>
 	<span class="note">NB: Implementing the Firestorm as a command has a drawback &ndash; since commands are not transferred between players, this command will cause a reconnection error in a multiplayer game. This is intended only as a way to test and debug the Firestorm, whoch is therefore not yet a supported feature of Ares.</span> <br>
 	<span class="note">NB: The animations used by this logic are temporarily hard-coded to "FSIDLE", "FSGRND" and "FSAIR", as was used in Tiberian Sun.</span><br>
-	<span class="note">NB: The AI has a lot of problems with targets behind an active Firestorm Wall, though this should not be a major problem due to the relatively small amount of game time that the Wall is active for.</span><dfn class="restored">Firestorm Wall</dfn></p>
+	<span class="note">NB: The AI has a lot of problems with targets behind an active Firestorm Wall, though this should not be a major problem due to the relatively small amount of game time that the Wall is active for.</span><dfn class="restored">Firestorm Wall</dfn><var class="rules Projectile boolean no">SubjectToFirestorm=</var></p>
 
 	<h3>Amphibious Voxel Changes</h3>
 	<p>In Tiberian Sun, the Amphibious APC would appear to sink into the water. This was achieved by changing the imagery from apc.vxl to apcw.vxl. With Ares, you can now specify</p>
@@ -472,26 +494,26 @@
 	<span class="note">NB: The following filename specifications (where raw C-style format specifiers like %s are required) are going to be changed into safer versions in the future. The replacement style has not been decided yet.</span></p>
 	<dl class="flaglist">
 		<dt>[Country]&#9658;File.Flag= (filename, including the .pcx extension)</dt>
-		<dd>The PCX file to use for the country's flag, in the format "filename.pcx".</dd>
+		<dd>The PCX file to use for the country's flag, in the format "filename.pcx".<var class="rules Country filename">File.Flag=</var></dd>
 		<dt>[Country]&#9658;File.LoadScreen= (filename, including the .shp extension)</dt>
-		<dd>The SHP file to use for the country's loading screen, in the format "filename%s.shp". The filename specified must include "%s", which will be substituted for the current screen width (640 or 800 pixels). For example, File.LoadScreen=ls%susstates.shp will make the game load ls800usstates.shp.</dd>
+		<dd>The SHP file to use for the country's loading screen, in the format "filename%s.shp". The filename specified must include "%s", which will be substituted for the current screen width (640 or 800 pixels). For example, File.LoadScreen=ls%susstates.shp will make the game load ls800usstates.shp.<var class="rules Country filename">File.LoadScreen=</var></dd>
 		<dt>[Country]&#9658;File.LoadScreenPAL= (filename, including the .pal extension)</dt>
-		<dd>The palette file to use for the country's loading screen, in the format "filename.pal".</dd>
+		<dd>The palette file to use for the country's loading screen, in the format "filename.pal".<var class="rules Country filename">File.LoadScreenPAL=</var></dd>
 		<dt>[Country]&#9658;File.Taunt= (filename, including the Taunts\ directory and .wav extension)</dt>
 		<dd>Path of the files to use for the country's taunts, in the format "Taunts\filename%02i.wav". The filename specified must include "%02i", which will be substituted for the taunt ID (01 through 08). For example, File.Taunt=Taunts\tauam%02i.wav will make the game load taunts tauam01.wav through tauam08.wav.<br>
-		<span class="note">NB: Taunts will only be registered for up to 16 countries.</span></dd>
+		<span class="note">NB: Taunts will only be registered for up to 16 countries.</span><var class="rules Country filename">File.Taunt=</var></dd>
 		<dt>[Country]&#9658;LoadScreenText.Name= (CSF label)</dt>
-		<dd>Name of the country, displayed on the loading screen (where a map of the country is usually shown). For example, LoadScreenText.Name=Name:Americans.</dd>
+		<dd>Name of the country, displayed on the loading screen (where a map of the country is usually shown). For example, LoadScreenText.Name=Name:Americans.<var class="rules Country CSF_label">LoadScreenText.Name=</var></dd>
 		<dt>[Country]&#9658;LoadScreenText.SpecialName= (CSF label)</dt>
-		<dd>Name of the country's special weapon, displayed on the loading screen. For example, LoadScreenText.SpecialName=Name:apara.</dd>
+		<dd>Name of the country's special weapon, displayed on the loading screen. For example, LoadScreenText.SpecialName=Name:apara.<var class="rules Country CSF_label">LoadScreenText.SpecialName=</var></dd>
 		<dt>[Country]&#9658;LoadScreenText.Brief= (CSF label)</dt>
-		<dd>Description of the country and its special weapon, displayed on the loading screen. For example, LoadScreenText.Brief=loadbrief:usa.</dd>
+		<dd>Description of the country and its special weapon, displayed on the loading screen. For example, LoadScreenText.Brief=loadbrief:usa.<var class="rules Country CSF_label">LoadScreenText.Brief=</var></dd>
 		<dt>[Country]&#9658;MenuText.Status= (CSF label)</dt>
-		<dd>Brief description of the country, displayed in the status bar of the country selection screen when the player mouse-overs that country in the country selection drop-down list.</dd>
+		<dd>Brief description of the country, displayed in the status bar of the country selection screen when the player mouse-overs that country in the country selection drop-down list.<var class="rules Country CSF_label">MenuText.Status=</var></dd>
 		<dt>[Country]&#9658;RandomSelectionWeight= (integer)</dt>
-		<dd>Specifies how likely it is that this country will be randomly selected when a player chooses 'Random'. The probability of this country being picked is calculated by dividing this country's RandomSelectionWeight value by the sum of all Multiplay=yes countries' RandomSelectionWeight values. Defaults to 1.</dd>
+		<dd>Specifies how likely it is that this country will be randomly selected when a player chooses 'Random'. The probability of this country being picked is calculated by dividing this country's RandomSelectionWeight value by the sum of all Multiplay=yes countries' RandomSelectionWeight values. Defaults to 1.<var class="rules Country integer xxxnum1">RandomSelectionWeight=</var></dd>
 		<dt>[Country]&#9658;AI.PowerPlants= (list of BuildingTypes)</dt>
-		<dd>A list of buildings that the AI will treat as this country's power plants.</dd>
+		<dd>A list of buildings that the AI will treat as this country's power plants.<var class="rules Country list_of_BuildingTypes">AI.PowerPlants=</var></dd>
 	</dl>
 	
 	<h4>Sides</h4>
@@ -500,29 +522,29 @@
 	Each side can (and should) define its own values for the following flags in the side's INI section:</p>
 	<dl class="flaglist">
 		<dt>[Side]&#9658;DefaultDisguise= (InfantryType)</dt>
-		<dd>Default InfantryType that disguisable infantry will be disguised as when first created.</dd>
+		<dd>Default InfantryType that disguisable infantry will be disguised as when first created.<var class="rules Side InfantryType">DefaultDisguise=</var></dd>
 		<dt>[Side]&#9658;Crew= (InfantryType)</dt>
-		<dd>The InfantryType that is spawned as a survivor when objects (with Crewed=yes set) owned by this side are destroyed (or, in the case of buildings, sold)</dd>
+		<dd>The InfantryType that is spawned as a survivor when objects (with Crewed=yes set) owned by this side are destroyed (or, in the case of buildings, sold)<var class="rules Side InfantryType">Crew=</var></dd>
 		<dt>[Side]&#9658;SurvivorDivisor= (integer)</dt>
-		<dd>An object's refund amount is divided by this number to determine how many survivors will be spawned when this object is destroyed (or, in the case of buildings, sold).</dd>
+		<dd>An object's refund amount is divided by this number to determine how many survivors will be spawned when this object is destroyed (or, in the case of buildings, sold).<var class="rules Side integer">SurvivorDivisor=</var></dd>
 		<dt>[Side]&#9658;AI.BaseDefenses= (list of BuildingTypes)</dt>
-		<dd>List of base defense buildings that the AI can build.</dd>
+		<dd>List of base defense buildings that the AI can build.<var class="rules Side list_of_BuildingTypes">AI.BaseDefenses=</var></dd>
 		<dt>[Side]&#9658;AI.BaseDefenseCounts= (list of integers)</dt>
-		<dd>The maximum number of each corresponding base defense building (listed against AI.BaseDefenses) that the AI can build.</dd>
+		<dd>The maximum number of each corresponding base defense building (listed against AI.BaseDefenses) that the AI can build.<var class="rules Side list_of_integers">AI.BaseDefenseCounts=</var></dd>
 		<dt>[Side]&#9658;LoadScreenText.Color= (R,G,B)</dt>
-		<dd>Text on the loading screen for this side will be displayed in this color.</dd>
+		<dd>Text on the loading screen for this side will be displayed in this color.<var class="rules Side R_G_B">LoadScreenText.Color=</var></dd>
 		<dt>[Side]&#9658;ParaDrop.Types= (list of InfantryTypes and/or VehicleTypes)</dt>
 		<dd>The units that will be paradropped by Type=ParaDrop super weapons (such as the one normally provided by a Tech Airport) for this side. Defaults to [General]&#9658;AllyParaDropInf for GDI (Allied), [General]&#9658;SovParaDropInf for Nod (Soviet), and [General]&#9658;YuriParaDropInf for ThirdSide (Yuri).<br>
-		<span class="note">NB: The original flags used to control the paradrop units only accept InfantryTypes. To include VehicleTypes in a paradrop you must use the new ParaDrop.Types and ParaDrop.Num flags.</span></dd>
+		<span class="note">NB: The original flags used to control the paradrop units only accept InfantryTypes. To include VehicleTypes in a paradrop you must use the new ParaDrop.Types and ParaDrop.Num flags.</span><var class="rules Side list_of_InfantryTypes/VehicleTypes">ParaDrop.Types=</var></dd>
 		<dt>[Side]&#9658;ParaDrop.Num= (list of integers)</dt>
-		<dd>The quantity of each corresponding unit (listed against ParaDrop.Types) that will be paradropped. Defaults to [General]&#9658;AllyParaDropNum for GDI (Allied), [General]&#9658;SovParaDropNum for Nod (Soviet), and [General]&#9658;YuriParaDropNum for ThirdSide (Yuri).</dd>
+		<dd>The quantity of each corresponding unit (listed against ParaDrop.Types) that will be paradropped. Defaults to [General]&#9658;AllyParaDropNum for GDI (Allied), [General]&#9658;SovParaDropNum for Nod (Soviet), and [General]&#9658;YuriParaDropNum for ThirdSide (Yuri).<var class="rules Side list_of_integers">ParaDrop.Num=</var></dd>
 		<dt>[Side]&#9658;Sidebar.MixFileIndex= (integer)</dt>
-		<dd>The MIX file number to use for the sidebar (e.g. 1 for the Allied sidec01.mix, 2 for the Soviet sidec02.mix)<dfn class="new">Sides can specify their own unique UI.</dfn></dd>
+		<dd>The MIX file number to use for the sidebar (e.g. 1 for the Allied sidec01.mix, 2 for the Soviet sidec02.mix)<dfn class="new">Sides can specify their own unique UI.</dfn><var class="rules Side integer">Sidebar.MixFileIndex=</var></dd>
 		<dt>[Side]&#9658;Sidebar.YuriFileNames= (boolean)</dt>
-		<dd>Whether or not to use the Yuri sidebar file names (sidec02md.mix and the Yuri-specific files within that MIX).</dd>
+		<dd>Whether or not to use the Yuri sidebar file names (sidec02md.mix and the Yuri-specific files within that MIX).<var class="rules Side boolean">Sidebar.YuriFileNames=</var></dd>
 		<dt>[Side]&#9658;EVA.Tag= (EVA event)</dt>
 		<dd>Name of the INI tag to load from evamd.ini for this side's EVA (vocal interface assistant &ndash; e.g. Eva for Allied, Sofia for Soviet and Some Guy for Yuri).<br>
-		<span class="note">NB: EVA.Tag is not yet implemented.</span></dd>
+		<span class="note">NB: EVA.Tag is not yet implemented.</span><var class="rules Side EVA event">EVA.Tag=</var></dd>
 	</dl>
 	
 	<h3>Weapons</h3>
@@ -533,13 +555,13 @@
 	<p>Before Ares, Radiation beams could not be customized &ndash; they were always either green or blue depending on the type of weapon. Now, however, radiation beams can be customized using the following flags (which affect weapons with IsRadBeam=yes set and/or IsRadEruption=yes set) in the weapon's INI section:<dfn class="new">Rad beams can have custom colors, duration and amplitude.</dfn></p>
 	<dl class="flaglist">
 		<dt>[Weapon]&#9658;Beam.Color= (R,G,B)</dt>
-		<dd>The color that the beam will be drawn in. Defaults to [AudioVisual]&#9658;ChronoBeamColor for weapons with a Temporal warhead, and [Radiation]&#9658;RadColor for weapons with a non-Temporal warhead.</dd>
+		<dd>The color that the beam will be drawn in. Defaults to [AudioVisual]&#9658;ChronoBeamColor for weapons with a Temporal warhead, and [Radiation]&#9658;RadColor for weapons with a non-Temporal warhead.<var class="rules Weapon R_G_B">Beam.Color=</var></dd>
 		<dt>[Weapon]&#9658;Beam.IsHouseColor= (boolean)</dt>
-		<dd>Whether or not the beam should be drawn using the firing unit's player color instead of the specific color specified by Beam.Color.</dd>
+		<dd>Whether or not the beam should be drawn using the firing unit's player color instead of the specific color specified by Beam.Color.<var class="rules Weapon boolean no">Beam.IsHouseColor=</var></dd>
 		<dt>[Weapon]&#9658;Beam.Duration= (integer)</dt>
-		<dd>The number of frames for which the beam should be visible. Default is 15 as per original RadBeams. The RadEruption effect originally used a random value between 5 and 20.</dd>
+		<dd>The number of frames for which the beam should be visible. Default is 15 as per original RadBeams. The RadEruption effect originally used a random value between 5 and 20.<var class="rules Weapon integer_-_frames xxxnum15">Beam.Duration=</var></dd>
 		<dt>[Weapon]&#9658;Beam.Amplitude= (float)</dt>
-		<dd>The amplitude of the beam (possibly measured in pixels?). Defaults to 40.0 as per original RadBeams. The RadEruption effect originally used a random value between 100.0 and 500.0.</dd>
+		<dd>The amplitude of the beam (possibly measured in pixels?). Defaults to 40.0 as per original RadBeams. The RadEruption effect originally used a random value between 100.0 and 500.0.<var class="rules Weapon float xxxnum40">Beam.Amplitude=</var></dd>
 	</dl>
 	
 	<h4>Electric Bolt Coloring</h4>
@@ -547,7 +569,7 @@
 	<dt>[Weapon]&#9658;Bolt.Color1= (R,G,B)<br>
 	[Weapon]&#9658;Bolt.Color2= (R,G,B)<br>
 	[Weapon]&#9658;Bolt.Color3= (R,G,B)</dt>
-	<dd>The three colors used to draw this Electric Bolt. Can be omitted to use the default values (default values are palette-dependent as opposed to RGB).<dfn class="new">Electric bolts can have custom colors.</dfn></dd>
+	<dd>The three colors used to draw this Electric Bolt. Can be omitted to use the default values (default values are palette-dependent as opposed to RGB).<dfn class="new">Electric bolts can have custom colors.</dfn><var class="rules Weapon R_G_B">Bolt.Color1=</var><var class="rules Weapon R_G_B">Bolt.Color2=</var><var class="rules Weapon R_G_B">Bolt.Color3=</var></dd>
 	</dl>
 
 	<h4>Wave Effects</h4>
@@ -557,30 +579,30 @@
 		<dt>[Weapon]&#9658;Wave.IsBigLaser= (boolean)</dt>
 	</dl>
 	<p>IsLaser and IsBigLaser should technically produce two different effects, however so far no difference has been observed.<br>
-	The following flags are applicable to all Wave effects; the aforementioned Wave.Is(Big)Laser=yes as well as Sonic=yes and IsMagBeam=yes.</p>
+	The following flags are applicable to all Wave effects; the aforementioned Wave.Is(Big)Laser=yes as well as Sonic=yes and IsMagBeam=yes.<var class="rules Weapon boolean no">Wave.IsLaser=</var><var class="rules Weapon boolean no">Wave.IsBigLaser=</var></p>
 
 	<h4>Wave Coloring</h4>
 	<dl class="flaglist">
 		<dt>[Weapon]&#9658;Wave.Color= (R,G,B)</dt>
 		<dd>The color of the wave. Default value is different depending on the type of Wave.<br>
-		<span class="note">NB: Sonic Waves do no yet have a sensible default Wave.Color.</span><dd>
+		<span class="note">NB: Sonic Waves do no yet have a sensible default Wave.Color.</span><var class="rules Weapon R_G_B">Wave.Color=</var><dd>
 		<dt>[Weapon]&#9658;Wave.IsHouseColor= (boolean)</dt>
-		<dd>If this is set to yes then the wave will be drawn in the firing unit's house color instead of the color specified by Wave.Color.<dfn class="new">Waves can have custom colors.</dfn><dd>
+		<dd>If this is set to yes then the wave will be drawn in the firing unit's house color instead of the color specified by Wave.Color.<dfn class="new">Waves can have custom colors.</dfn><var class="rules Weapon boolean no">Wave.IsHouseColor=</var><dd>
 	</dl>
 	
 	<h4>Wave Direction</h4>
 	<p>Waves are drawn in different directions (from firer to target or vice versa) depending on the type of wave and the circumstances. This direction can now be customized in several ways. The following flags all default to no unless otherwise specified.</p>
 	<dl class="flaglist">
 		<dt>[Weapon]&#9658;Wave.ReverseAgainstVehicles= (boolean)</dt>
-		<dd>Whether or not the wave will be drawn from the target to the firer when the target is a VehicleType. Defaults to yes if IsMagBeam=yes is set on the weapon.<dd>
+		<dd>Whether or not the wave will be drawn from the target to the firer when the target is a VehicleType. Defaults to yes if IsMagBeam=yes is set on the weapon.<var class="rules Weapon boolean">Wave.ReverseAgainstVehicles=</var><dd>
 		<dt>[Weapon]&#9658;Wave.ReverseAgainstBuildings= (boolean)</dt>
-		<dd>Whether or not the wave will be drawn from the target to the firer when the target is a BuildingType.<dd>
+		<dd>Whether or not the wave will be drawn from the target to the firer when the target is a BuildingType.<var class="rules Weapon boolean no">Wave.ReverseAgainstBuildings=</var><dd>
 		<dt>[Weapon]&#9658;Wave.ReverseAgainstInfantry= (boolean)</dt>
-		<dd>Whether or not the wave will be drawn from the target to the firer when the target is an InfantryType.<dd>
+		<dd>Whether or not the wave will be drawn from the target to the firer when the target is an InfantryType.<var class="rules Weapon boolean no">Wave.ReverseAgainstInfantry=</var><dd>
 		<dt>[Weapon]&#9658;Wave.ReverseAgainstAircraft= (boolean)</dt>
-		<dd>Whether or not the wave will be drawn from the target to the firer when the target is an AircraftType.<dd>
+		<dd>Whether or not the wave will be drawn from the target to the firer when the target is an AircraftType.<var class="rules Weapon boolean no">Wave.ReverseAgainstAircraft=</var><dd>
 		<dt>[Weapon]&#9658;Wave.ReverseAgainstOthers= (boolean)</dt>
-		<dd>Whether or not the wave will be drawn from target to firer when the target is anything not covered by the other 'ReverseAgainst' flags (i.e. trees, overlays, empty cells, etc.).<dfn class="new">Customisable wave direction.</dfn><dd>
+		<dd>Whether or not the wave will be drawn from target to firer when the target is anything not covered by the other 'ReverseAgainst' flags (i.e. trees, overlays, empty cells, etc.).<dfn class="new">Customisable wave direction.</dfn><var class="rules Weapon boolean no">Wave.ReverseAgainstOthers=</var><dd>
 	</dl>
 	
 	<h4>Wave Ambient Damage</h4>
@@ -597,28 +619,28 @@
 	When IvanBomb=yes is set on the weapon's warhead, the weapon can specify the following flags in order to customize that bomb.</p>
 	<dl class="flaglist">
 		<dt>[Weapon]&#9658;IvanBomb.Warhead= (WarheadType)</dt>
-		<dd>The warhead that will be used when the bomb detonates.<dd>
+		<dd>The warhead that will be used when the bomb detonates.<var class="rules Weapon warhead">IvanBomb.Warhead=</var><dd>
 		<dt>[Weapon]&#9658;IvanBomb.Damage= (integer)</dt>
-		<dd>The damage that will be dealt when the bomb detonates.<dd>
+		<dd>The damage that will be dealt when the bomb detonates.<var class="rules Weapon integer_-_damage">IvanBomb.Damage=</var><dd>
 		<dt>[Weapon]&#9658;IvanBomb.Detachable= (boolean)</dt>
-		<dd>Whether or not Engineers can remove this bomb from units it has been attached to.<dd>
+		<dd>Whether or not Engineers can remove this bomb from units it has been attached to.<var class="rules Weapon boolean">IvanBomb.Detachable=</var><dd>
 		<dt>[Weapon]&#9658;IvanBomb.DestroysBridges= (boolean)</dt>
 		<dd>Whether or not this bomb can be used on Bridge Repair Huts in order to destroy the corresponding Bridge.<br>
-			<span class="note">NB: Bombs can always be attached to Bridge Huts, but the resulting explosion will not destroy the bridge unless IvanBomb.DestroysBridges=yes is set.</span><dd>
+			<span class="note">NB: Bombs can always be attached to Bridge Huts, but the resulting explosion will not destroy the bridge unless IvanBomb.DestroysBridges=yes is set.</span><var class="rules Weapon boolean">IvanBomb.DestroysBridges=</var><dd>
 		<dt>[Weapon]&#9658;IvanBomb.Delay= (integer)</dt>
-		<dd>The number of frames that will elapse before the bomb detonates automatically.<dd>
+		<dd>The number of frames that will elapse before the bomb detonates automatically.<var class="rules Weapon integer_-_frames">IvanBomb.Delay=</var><dd>
 		<dt>[Weapon]&#9658;IvanBomb.AttachSound= (Sound name)</dt>
-		<dd>The sound that will be played when the bomb is attached to a target.<dd>
+		<dd>The sound that will be played when the bomb is attached to a target.<var class="rules Weapon sound">IvanBomb.AttachSound=</var><dd>
 		<dt>[Weapon]&#9658;IvanBomb.TickingSound= (Sound name)</dt>
-		<dd>The sound that will be played whilst the bomb is attached to a unit. In order for this sound to loop correctly, the sound must have Control=loop set in its INI section in soundmd.ini.<dd>
+		<dd>The sound that will be played whilst the bomb is attached to a unit. In order for this sound to loop correctly, the sound must have Control=loop set in its INI section in soundmd.ini.<var class="rules Weapon sound">IvanBomb.TickingSound=</var><dd>
 		<dt>[Weapon]&#9658;IvanBomb.Image= (filename, including the .shp extension)</dt>
-		<dd>The SHP file for the image to display over a unit that has a bomb attached to them, in the format "filename.shp". If the image cannot be loaded then the game will fall back to the default bombcurs.shp.<dd>
+		<dd>The SHP file for the image to display over a unit that has a bomb attached to them, in the format "filename.shp". If the image cannot be loaded then the game will fall back to the default bombcurs.shp.<var class="rules Weapon filename">IvanBomb.Image=</var><dd>
 		<dt>[Weapon]&#9658;IvanBomb.FlickerRate= (integer)</dt>
 		<dd>The rate at which the bomb SHP will flip back and forth between two frames to give the impression of a flickering fuse.<br>
 			On every game frame, the frame of the bomb SHP is calculated as follows:
 <pre>frameToShow = (Game.CurrentFrame &ndash; Bomb.PlantingFrame) / (Bomb.Delay / (Bomb.Image.Frames &ndash; 1)) <!-- fix markup here -->
 IF (CurrentFrame mod (2 * Bomb.FlickerRate) >= Bomb.FlickerRate) THEN frameToShow = frameToShow + 1</pre>
-			Originally this logic was hard-coded to ignore the last frame of the bomb SHP, which was originally planned to be used for so called "death bombs" which were cut from the game before Red Alert 2 was released. This hard-coding has been changed so that the whole SHP is now considered for the fuse, however this means that you'll now see that extra frame from bombcurs.shp, unless you replace that SHP file.<dd>
+			Originally this logic was hard-coded to ignore the last frame of the bomb SHP, which was originally planned to be used for so called "death bombs" which were cut from the game before Red Alert 2 was released. This hard-coding has been changed so that the whole SHP is now considered for the fuse, however this means that you'll now see that extra frame from bombcurs.shp, unless you replace that SHP file.<var class="rules Weapon integer">IvanBomb.FlickerRate=</var><dd>
 	</dl>
 
 	<h3>Warheads</h3>
@@ -626,7 +648,7 @@ IF (CurrentFrame mod (2 * Bomb.FlickerRate) >= Bomb.FlickerRate) THEN frameToSho
 	<dl class="flaglist">
 		<dt>[Warhead]&#9658;IronCurtain.Duration= (integer)</dt>
 		<dd>Endows the target unit(s) with the Iron Curtain effect for the specified number of frames, if they are not already under the effect. Units that are already under the effect will have the duration of the effect extended by the specified number of frames (the duration is cumulative rather than absolute).<br>
-		If the duration value is negative then a unit's current Iron Curtain effect (if any) will be shortened by the specified number of frames (so you could create a weapon that will nullify the Iron Curtain effect by setting IronCurtain.Duration=-99999).<dd>
+		If the duration value is negative then a unit's current Iron Curtain effect (if any) will be shortened by the specified number of frames (so you could create a weapon that will nullify the Iron Curtain effect by setting IronCurtain.Duration=-99999).<var class="rules Warhead integer_-_frames xxxnum0">IronCurtain.Duration=</var><dd>
 	</dl>
 	<p>This feature works with CellSpread to affect multiple targets.<br>
 	<span class="note">NB: No other warhead properties (e.g. Verses) affect the application of this effect.</span><dfn class="new">Weapons can apply the Iron Curtain effect for a specified number of frames (stackable).</dfn></p>
@@ -634,37 +656,37 @@ IF (CurrentFrame mod (2 * Bomb.FlickerRate) >= Bomb.FlickerRate) THEN frameToSho
 	<h4>Permanent Mind-Control</h4>
 	<dl class="flaglist">
 		<dt>[Warhead]&#9658;MindControl.Permanent= (boolean)</dt>
-		<dd>If the warhead has MindControl.Permanent=yes set as well as MindControl=yes set then the mind-control will be permanent.<dd>
+		<dd>If the warhead has MindControl.Permanent=yes set as well as MindControl=yes set then the mind-control will be permanent.<var class="rules Warhead boolean no">MindControl.Permanent=</var><dd>
 	</dl>
 	<p>Permanent mind-control is handled in the same way as the Psychic Dominator effect &ndash; previously-mind-controlled units (even permanently) are re-mind-controlled, and the mind-controller does not have a limit on the number of units that it can permanently mind-control.<br>
 	Unlike the Psychic Dominator, buildings are susceptible to permanent mind-control if the warhead can target them.<dfn class="new">Permanent mind-control weapons.</dfn></p>
 	
 	<h4>Customizable WarpAway</h4>
-	<p>If [Warhead]&#9658;Temporal.WarpAway is set, it specifies the animation to be played when this warhead erases an object, instead of [General]&#9658;WarpAway=.<dfn class="new">Per-weapon WarpAway animation.</dfn></p>
+	<p>If [Warhead]&#9658;Temporal.WarpAway is set, it specifies the animation to be played when this warhead erases an object, instead of [General]&#9658;WarpAway=.<dfn class="new">Per-weapon WarpAway animation.</dfn><var class="rules Warhead animation">Temporal.WarpAway=</var></p>
 
 	<h4>Ion Cannon Ripple Effect</h4>
 	<dl class="flaglist">
 		<dt>[Warhead]&#9658;Ripple.Radius= (integer, scale unknown)</dt>
-		<dd>This generates a visual shockwave when the warhead detonates, identical to the one produced by Tiberian Sun's Ion Cannon. It is recommended that you don't set Radius above 79. Note that this is a visual effect only.<dfn class="new">Ion Cannon ripple effect for weapons.</dfn></dd>
+		<dd>This generates a visual shockwave when the warhead detonates, identical to the one produced by Tiberian Sun's Ion Cannon. It is recommended that you don't set Radius above 79. Note that this is a visual effect only.<dfn class="new">Ion Cannon ripple effect for weapons.</dfn><var class="rules Warhead integer">Ripple.Radius=</var></dd>
 	</dl>
 
 	<h4>Deployed Infantry Damage multiplier</h4>
 	<dl class="flaglist">
 		<dt>[Warhead]&#9658;Deployed.Damage= (float - multiplier)</dt>
-		<dd>A multiplier applied to Damage if the InfantryType receiving it is currently deployed.</dd>
+		<dd>A multiplier applied to Damage if the InfantryType receiving it is currently deployed.<var class="rules Warhead float_-_multiplier xxxperc100">Deployed.Damage=</var></dd>
 	</dl>
 	<p>Note that this is not the same as the existing ProneDamage= flag; deployed units are not considered to be prone. Defaults to 100%.<dfn class="new">Per-warhead damage multiplier against deployed infantry.</dfn></p>
 
 	<h4>AffectsEnemies</h4>
 	<dl class="flaglist">
 		<dt>[Warhead]&#9658;AffectsEnemies= (boolean)</dt>
-		<dd>Specifies whether or not this warhead can damage enemy units. This has no effect on the warhead's ability to target enemy units. A counterpart to the existing AffectsAllies flag.<dfn class="new">AffectsEnemies= flag added (counterpart for AffectsAllies=).</dfn></dd>
+		<dd>Specifies whether or not this warhead can damage enemy units. This has no effect on the warhead's ability to target enemy units. A counterpart to the existing AffectsAllies flag.<dfn class="new">AffectsEnemies= flag added (counterpart for AffectsAllies=).</dfn><var class="rules Warhead boolean yes">AffectsEnemies=</var></dd>
 	</dl>
 
 	<h4>InfDeathAnim</h4>
 	<dl class="flaglist">
 		<dt>[Warhead]&#9658;InfDeathAnim= (string, animation ID)</dt>
-		<dd>Specifies the animation to display when an InfantryType (with NotHuman=no) is killed by this warhead. Works in the same way as existing InfDeath animations except this flag allows you to specify an animation ID rather than an integer. Further more, the animation will be treated as the correct type (e.g. mutation or non-mutation) automatically, which means that you can now have any number of mutations that produce player-owned InfantryTypes. See MakeInfantryOwner for how to control which player will gain control of 'mutated' infantry.<dfn class="new">New InfDeaths (InfDeathAnim= any animation, auto-detect mutation).</dfn></dd>
+		<dd>Specifies the animation to display when an InfantryType (with NotHuman=no) is killed by this warhead. Works in the same way as existing InfDeath animations except this flag allows you to specify an animation ID rather than an integer. Further more, the animation will be treated as the correct type (e.g. mutation or non-mutation) automatically, which means that you can now have any number of mutations that produce player-owned InfantryTypes. See MakeInfantryOwner for how to control which player will gain control of 'mutated' infantry.<dfn class="new">New InfDeaths (InfDeathAnim= any animation, auto-detect mutation).</dfn><var class="rules Warhead animation">InfDeathAnim=</var></dd>
 	</dl>
 
 	<h3>Additional ArmorTypes and Verses</h3>
@@ -675,9 +697,12 @@ IF (CurrentFrame mod (2 * Bomb.FlickerRate) >= Bomb.FlickerRate) THEN frameToSho
 
 	<p>paper=steel declares a new ArmorType called "paper" whose Verses on each warhead defaults to being the same as that warhead's Verses against the "steel" ArmorType.
 	magic=11% declares a new ArmorType called "magic" whose Verses on all warheads defaults to 11%.<br>
-	These ArmorTypes can be assigned to objects in the same way as the standard ArmorTypes (case-insensitively). Their susceptibility to specific warheads can be specified as follows:
-	[Warhead]&#9658;Versus.magic=150% ;makes this warhead very good at damaging objects with Armor=magic.<br>
-	Note that each individual ArmorType's versus value is specified using the new "Versus.*" flag, whereas the original 11 ArmorTypes versus values are specified using the original Verses flag (note Westwood's misspelling of "versus").<br>
+	These ArmorTypes can be assigned to objects in the same way as the standard ArmorTypes (case-insensitively). Their susceptibility to specific warheads can be specified as follows:</p>
+	<dl class="flaglist">
+		<dt>[Warhead]&#9658;Versus.magic=150%</dt>
+		<dd>makes this warhead very good at damaging objects with Armor=magic.<var class="rules Warhead float_-_multiplier">Versus.*=</var></dd>
+	</dl>
+	<p>Note that each individual ArmorType's versus value is specified using the new "Versus.*" flag, whereas the original 11 ArmorTypes versus values are specified using the original Verses flag (note Westwood's misspelling of "versus").<br>
 	The original Verses= flag parser no longer crashes if you specify less than 11 values.<dfn class="new">Additional armor types which can default to reacting like an existing armor type.</dfn><var class="rules">ArmorTypes</var></p>
 
 	<h4>Warhead Verses' Special Values</h4>
@@ -688,11 +713,11 @@ IF (CurrentFrame mod (2 * Bomb.FlickerRate) >= Bomb.FlickerRate) THEN frameToSho
 	These behaviors can now be toggled on or off independently of the damage multiplier (so you can now have a warhead that is 100% effective against an armor type but, at the same time, will not directly target a unit with that ArmorType).</p>
 	<dl class="flaglist">
 		<dt>[Warhead]&#9658;Versus.magic.ForceFire= (boolean)</dt>
-		<dd>Whether or not this warhead is allowed to be force-fired on the "magic" ArmorType.</dd>
+		<dd>Whether or not this warhead is allowed to be force-fired on the "magic" ArmorType.<var class="rules Warhead boolean">Versus.*.ForceFire=</var></dd>
 		<dt>[Warhead]&#9658;Versus.steel.Retaliate= (boolean)</dt>
-		<dd>Whether or not this warhead is allowed to be used in retaliation against the "steel" ArmorType</dd>
+		<dd>Whether or not this warhead is allowed to be used in retaliation against the "steel" ArmorType<var class="rules Warhead boolean">Versus.*.Retaliate=</var></dd>
 		<dt>[Warhead]&#9658;Versus.clingfilm.PassiveAcquire= (boolean)</dt>
-		<dd>Whether or not this warhead is allowed to be used to attack the "clingfilm" ArmorType automatically.</dd>
+		<dd>Whether or not this warhead is allowed to be used to attack the "clingfilm" ArmorType automatically.<var class="rules Warhead boolean">Versus.*.PassiveAcquire=</var></dd>
 	</dl>
 	<p>Note Ares' correct spelling of "acquire".<dfn class="new">Warhead verses special behaviours can be decoupled from Verses (ForceFire/Retaliate/PassiveAcquire).</dfn></p>
 
@@ -888,13 +913,13 @@ IF (CurrentFrame mod (2 * Bomb.FlickerRate) >= Bomb.FlickerRate) THEN frameToSho
 	In rulesmd.ini:</p>
 	<dl class="flaglist">
 		<dt>[Projectile]&#9658;SubjectToBuildings= (boolean)</dt>
-		<dd>Whether or not this projectile can be blocked by solid buildings. Defaults to no.</dd>
+		<dd>Whether or not this projectile can be blocked by solid buildings. Defaults to no.<var class="rules Projectile boolean no">SubjectToBuildings=</var></dd>
 	</dl>
 	<p>In artmd.ini:</p>
 	<dl class="flaglist">
 		<dt>[BuildingArt]&#9658;SolidHeight= (integer &ndash; cells)</dt>
 		<dd>How tall the solid part of the building is considered to be, measured in cells (each cell has a height of 256 leptons), so buildings with a large amount of clear space near their top can allow projectiles to fly through that space. Negative values (e.g. -1) tell the game to consider the building's full Height as solid. Default is zero, meaning the building is not at all solid (as per the normal game).<br>
-		<span class="note">NB: The solid building logic does not lend itself well to non-rectangular buildings, such as the Paris Tower or Space Needle.</span></dd>
+		<span class="note">NB: The solid building logic does not lend itself well to non-rectangular buildings, such as the Paris Tower or Space Needle.</span><var class="art UnitArt integer_-_height_in_cells xxxnum0">SolidHeight=</var></dd>
 	</dl>
 	<p><span class="note">NB: The solid building logic does not lend itself well to non-rectangular buildings, such as the Paris Tower or Space Needle.</span><dfn class="new">Buildings can be made solid (like walls) to certain projectiles.</dfn></p>
 
@@ -913,7 +938,7 @@ IF (CurrentFrame mod (2 * Bomb.FlickerRate) >= Bomb.FlickerRate) THEN frameToSho
 		<dt>[BuildingType]&#9658;UC.DamageMultiplier= (float - multiplier)</dt>
 		<dd>If a shot has passed through but isn't necessarily fatal then one occupant will be damaged. The damage dealt by the weapon will be multiplied by UC.DamageMultiplier. Defaults to 100% (i.e. no change to the damage dealt by the weapon).</dd>
 		<dt>[Projectile]&#9658;SubjectToTrenches= (boolean)</dt>
-		<dd>Whether or not this projectile will override the normal UC.PassThrough chance on targeted buildings. If the projectile has SubjectToTrenches=no set, and the target building has UC.PassThrough set greater than zero, then the building will be treated as if it had UC.PassThrough=100%, when hit by this projectile. If SubjectToTrenches=yes is set (default), then the normal UC.PassThrough chance will be used when the building is hit by this projectile.</dd>
+		<dd>Whether or not this projectile will override the normal UC.PassThrough chance on targeted buildings. If the projectile has SubjectToTrenches=no set, and the target building has UC.PassThrough set greater than zero, then the building will be treated as if it had UC.PassThrough=100%, when hit by this projectile. If SubjectToTrenches=yes is set (default), then the normal UC.PassThrough chance will be used when the building is hit by this projectile.<var class="rules Projectile boolean no">SubjectToTrenches=</var></dd>
 	</dl>
 	<p>SubjectToTrenches was very much intended for trenches - a Grenadier, for example, would easily be able to drop their grenade into an open trench and would therefore definitely harm the occupants.<br>
 	<span class="note">NB: The name 'SubjectToTrenches' is misleading if you are not thinking about trenches. This has an effect on all occupiable buildings with UC.PassThrough > 0%.</span></p>
@@ -1046,7 +1071,7 @@ IF (CurrentFrame mod (2 * Bomb.FlickerRate) >= Bomb.FlickerRate) THEN frameToSho
 	<dl class="flaglist">
 		<dt>[UnitArt]&#9658;CameoPalette= (filename, including the .pal extension)</dt>
 		<dd>Specifies the palette to use for the unit's cameo (Cameo and AltCameo must use the same palette), in the format "filename.pal". <br>
-		Defaults to cameo.pal.<dd>
+		Defaults to cameo.pal.<var class="art UnitArt filename cameo.pal">CameoPalette=</var><dd>
 	</dl>
 	<p>In rulesmd.ini:</p>
 	<dl class="flaglist">
@@ -1131,7 +1156,7 @@ IF (CurrentFrame mod (2 * Bomb.FlickerRate) >= Bomb.FlickerRate) THEN frameToSho
 	5=rules_infantry.ini</pre>
 	<p>As each INI file is loaded, any flag that is encountered that has already been defined will have its value updated with the newly found value. Using the above include list as an example, if [E1]&#9658;Strength=200 is specified in rulesmd.ini, and [E1]&#9658;Strength=300 is specified in rules_infantry.ini, then the GI will have Strength=300 in-game.</p>
 
-	<p>INI files are taken to be relative to the Red Alert 2 directory. Values in the include list can include subfolders (e.g. 5=MyMod\rules_infantry.ini). The currently loaded MIXes are also scanned for the files if a loose file of that name cannot be found, however, this only works if you do not specify a subfolder.<dfn class="new">[#include] section allows rulesmd.ini to be split up into separate files.</dfn></p>
+	<p>INI files are taken to be relative to the Red Alert 2 directory. Values in the include list can include subfolders (e.g. 5=MyMod\rules_infantry.ini). The currently loaded MIXes are also scanned for the files if a loose file of that name cannot be found, however, this only works if you do not specify a subfolder.<dfn class="new">[#include] section allows rulesmd.ini to be split up into separate files.</dfn><var class="rules">#include</var></p>
 	<h4>String Table Enhancements</h4>
 	<p>In addition to ra2md.csf, the game will now load &ndash; stringtable00.csf through stringtable99.csf. These string tables will add to or replace strings that were included in previously loaded string tables.<br>
 	It is also now possible to name objects in INI code (without having to create a string table entry) by using the NOSTR: prefix. For example, UIName=NOSTR:Sonar Pulse will be displayed as "Sonar Pulse". However, the string (including the prefix) cannot exceed 31 characters.<dfn class="new">Object names can be written directly into rulesmd.ini rather than adding them to the string table.</dfn></p>
@@ -1144,7 +1169,7 @@ IF (CurrentFrame mod (2 * Bomb.FlickerRate) >= Bomb.FlickerRate) THEN frameToSho
 	<h4>Mouse.sha</h4>
 	<p>SHP compression can now be used on mouse.sha. Without Ares, using SHP compression on mouse.sha would result in a garbled mouse cursor in-game.<dfn class="new">SHP compression can be used on mouse.sha.</dfn></p>
 	<h4>InfantryElectrocuted</h4>
-	<p>The animation displayed for a dying InfantryType when the warhead that killed them had InfDeath=5 used to be hard-coded to the second animation from the [Animations] list. You can now specify [AudioVisual]&#9658;InfantryElectrocuted= instead. If InfantryElectrocuted is not defined then the game will search for an animation named "ELECTRO", before finally falling back to the second animation like before.<dfn class="new">Animation for InfDeath=5 can be overriden using InfantryElectrocuted= (instead of using the second animation from [Animations]).</dfn><var class="rules AudioVisual animation">InfantryElectrocuted=</var><!-- this was listed under [General] in the old manual flag list --></p>
+	<p>The animation displayed for a dying InfantryType when the warhead that killed them had InfDeath=5 used to be hard-coded to the second animation from the [Animations] list. You can now specify [AudioVisual]&#9658;InfantryElectrocuted= instead. If InfantryElectrocuted is not defined then the game will search for an animation named "ELECTRO", before finally falling back to the second animation like before.<dfn class="new">Animation for InfDeath=5 can be overriden using InfantryElectrocuted= (instead of using the second animation from [Animations]).</dfn><var class="rules AudioVisual animation">InfantryElectrocuted=</var></p>
 	<h4>Snowmd.ini</h4>
 	<dl class="flaglist">
 		<dt>[General]&#9658;Medians=71</dt>
@@ -1281,6 +1306,91 @@ IF (CurrentFrame mod (2 * Bomb.FlickerRate) >= Bomb.FlickerRate) THEN frameToSho
 	<h2>Appendix A &ndash; New Flags/Sections</h2>
 	<p>This is a list of new flags/sections only. Existing flags/sections whose functionality has changed are not listed here (except in extreme cases).</p>
 	<div id="list_flags"></div><!--
+	
+	<var class="rules SuperWeapon integer">Cursor.Count=</var>
+<var class="rules SuperWeapon integer">Cursor.Frame=</var>
+<var class="rules SuperWeapon list_of_2 enumerations Center,Middle">Cursor.HotSpot=</var>
+<var class="rules SuperWeapon integer xxxnum5">Cursor.Interval=</var>
+<var class="rules SuperWeapon integer">Cursor.MiniCount=</var>
+<var class="rules SuperWeapon integer">Cursor.MiniFrame=</var>
+<var class="rules SuperWeapon EVA event">EVA.Activated=</var>
+<var class="rules SuperWeapon EVA event">EVA.Detected=</var>
+<var class="rules SuperWeapon EVA event">EVA.Ready=</var>
+<var class="rules SuperWeapon warhead">GenericWarhead.Warhead=</var>
+<var class="rules SuperWeapon integer_-_damage">GenericWarhead.Damage=</var>
+<var class="rules SuperWeapon integer_-_credits xxxnum0">Money.Amount=</var>
+<var class="rules SuperWeapon integer">NoCursor.Count=</var>
+<var class="rules SuperWeapon integer">NoCursor.Frame=</var>
+<var class="rules SuperWeapon list_of_2 enumerations Center,Middle">NoCursor.HotSpot=</var>
+<var class="rules SuperWeapon integer xxxnum5">NoCursor.Interval=</var>
+<var class="rules SuperWeapon integer">NoCursor.MiniCount=</var>
+<var class="rules SuperWeapon integer">NoCursor.MiniFrame=</var>
+<var class="rules SuperWeapon sound [AudioVisual]&#9658;DigSound">Nuke.Sound=</var>
+<var class="rules SuperWeapon filename cameo.pal">SidebarPalette=</var>
+<var class="rules SuperWeapon integer_-_frames">SonarPulse.Delay=</var>
+<var class="rules SuperWeapon integer_-_cells">SonarPulse.Range=</var>
+<var class="rules SuperWeapon integer xxxnum1">SpyPlane.Count=</var>
+<var class="rules SuperWeapon mission SpyPlane_Approach">SpyPlane.Mission=</var>
+<var class="rules SuperWeapon AircraftType SPYP">SpyPlane.Type=</var>
+<var class="rules SuperWeapon animation">SW.Animation=</var>
+<var class="rules SuperWeapon integer">SW.AnimationHeight=</var>
+<var class="rules SuperWeapon list_of_TechnoTypes">SW.Deliver=</var>
+<var class="rules SuperWeapon boolean">SW.FireIntoShroud=</var>
+
+<var class="rules TechnoType boolean no">AlternateTheaterArt=</var>
+<var class="rules TechnoType boolean no">Bunker.Raidable=</var>
+<var class="rules TechnoType boolean no">Firestorm.Wall=</var>
+<var class="rules TechnoType boolean no">HasSpotlight=</var>
+<var class="rules TechnoType filename">Insignia.Rookie=</var>
+<var class="rules TechnoType filename">Insignia.Veteran=</var>
+<var class="rules TechnoType filename">Insignia.Elite=</var>
+<var class="rules TechnoType boolean">IsCow=</var>
+<var class="rules TechnoType boolean">IsDesolator=</var>
+<var class="rules TechnoType string_-_trench_type_ID">IsTrench=</var>
+<var class="rules TechnoType boolean no">LaserFence=</var>
+<var class="rules TechnoType boolean no">LaserFencePost=</var>
+<var class="rules TechnoType InfantryType">Operator=</var>
+<var class="rules TechnoType animation">Parachute.Anim=</var>
+<var class="rules TechnoType list_of_theater names">Prerequisite.RequiredTheaters=</var>
+<var class="rules TechnoType list_of_BuildingTypes">Prerequisite.Negative=</var>
+<var class="rules TechnoType integer">Prerequisite.Lists=</var>
+<var class="rules TechnoType list_of_BuildingTypes">Prerequisite.List#=</var>
+<var class="rules TechnoType list_of_integers">Prerequisite.StolenTechs=</var>
+<var class="rules TechnoType BuildingType">Rubble.Destroyed=</var>
+<var class="rules TechnoType BuildingType">Rubble.Intact=</var>
+<var class="rules TechnoType list_of_countries">Secret.ForbiddenHouses=</var>
+<var class="rules TechnoType list_of_countries">Secret.RequiredHouses=</var>
+<var class="rules TechnoType boolean no">SecretLab.GenerateOnCapture=</var>
+<var class="rules TechnoType list_of_TechnoTypes">SecretLab.PossibleBoons=</var>
+<var class="rules TechnoType enumeration">Spotlight.AttachedTo=</var>
+<var class="rules TechnoType boolean no">Spotlight.DisableBlue=</var>
+<var class="rules TechnoType boolean no">Spotlight.DisableColor=</var>
+<var class="rules TechnoType boolean no">Spotlight.DisableGreen=</var>
+<var class="rules TechnoType boolean no">Spotlight.DisableRed=</var>
+<var class="rules TechnoType integer_-_leptons xxxnum1024">Spotlight.Distance=</var>
+<var class="rules TechnoType integer_-_leptons xxxnum250">Spotlight.StartHeight=</var>
+<var class="rules TechnoType boolean no">SpyEffect.Custom=</var>
+<var class="rules TechnoType boolean no">SpyEffect.ResetRadar=</var>
+<var class="rules TechnoType boolean no">SpyEffect.RevealRadar=</var>
+<var class="rules TechnoType integer_-_frames xxxnum0">SpyEffect.PowerOutageDuration=</var>
+<var class="rules TechnoType integer_-_credits xxxnum0">SpyEffect.StolenMoneyAmount=</var>
+<var class="rules TechnoType boolean no">SpyEffect.ResetSuperweapons=</var>
+<var class="rules TechnoType integer">SpyEffect.StolenTechIndex=</var>
+<var class="rules TechnoType boolean no">SpyEffect.UnitVeterancy=</var>
+<var class="rules TechnoType boolean no">SpyEffect.RevealProduction=</var>
+<var class="rules TechnoType integer">Survivor.PilotCount=</var>
+<var class="rules TechnoType integer xxxnum-1">Survivor.RookiePassengerChance=</var>
+<var class="rules TechnoType integer">Survivor.RookiePilotChance=</var>
+<var class="rules TechnoType InfantryType">Survivor.Side#=</var>
+<var class="rules TechnoType integer xxxnum-1">Survivor.VeteranPassengerChance=</var>
+<var class="rules TechnoType integer">Survivor.VeteranPilotChance=</var>
+<var class="rules TechnoType integer xxxnum-1">Survivor.ElitePassengerChance=</var>
+<var class="rules TechnoType integer">Survivor.ElitePilotChance=</var>
+<var class="rules TechnoType float_-_multiplier">UC.DamageMultiplier=</var>
+<var class="rules TechnoType float_-_chance">UC.FatalRate=</var>
+<var class="rules TechnoType float_-_chance">UC.PassThrough=</var>
+<var class="rules TechnoType string (any*)">WaterVoxel=</var>
+
 
 	■ = rulesmd.ini flags/sections
 	■ = artmd.ini flags/sections
@@ -1892,6 +2002,27 @@ IF (CurrentFrame mod (2 * Bomb.FlickerRate) >= Bomb.FlickerRate) THEN frameToSho
 			return id.replace(doNotWant, "");
 		}
 		
+		function parseFlagData(datastring) {
+			var number = /xxxnum(-?\d+)/;
+			var percentage = /xxxperc(-?\d+)/;
+			var RGB = /R_G_B/;
+			var spaceChar = /_/g;
+			
+			if(RGB.test(datastring)) {
+				return 'R,G,B';
+			}
+			
+			if(number.test(datastring)) {
+				return number.exec(datastring)[1];
+			}
+			
+			if(percentage.test(datastring)) {
+				return percentage.exec(datastring)[1] + '%';
+			}
+			
+			return datastring.replace(spaceChar, " ");
+		}
+		
 		function listNewFlags(file) {
 			var flags = new Object();
 			var definitions = $("." + file);
@@ -1910,8 +2041,8 @@ IF (CurrentFrame mod (2 * Bomb.FlickerRate) >= Bomb.FlickerRate) THEN frameToSho
 					
 					// file section type default
 					switch(attributes.length) {
-						case 4: flags[curSection][curIdx].default = attributes[3];
-						case 3: flags[curSection][curIdx].type = attributes[2];
+						case 4: flags[curSection][curIdx].default = parseFlagData(attributes[3]);
+						case 3: flags[curSection][curIdx].type = parseFlagData(attributes[2]);
 						case 2: flags[curSection][curIdx].name = curFlag;
 							break;
 					}

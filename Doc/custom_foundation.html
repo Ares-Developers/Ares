@@ -282,8 +282,9 @@
 	<div id="layout_footer">Written 29.09.09 by Renegade</div>
 	
 	<!-- #################################### JAVASCRIPT #################################### -->
-	<script type="text/javascript" src="http://www.google.com/jsapi"></script>
-	<script type="text/javascript">
+	<!-- <script type="text/javascript" src="http://www.google.com/jsapi"></script> -->
+	<script type="text/javascript" src="./jquery-1.4.2.min.js"></script>
+	<!-- <script type="text/javascript">
 		google.load("jquery", "1");
 		google.setOnLoadCallback(function() {
 			// initialization
@@ -300,9 +301,27 @@
 			$("#outlnbtn").click(generateOutline);
 			$("#code").val("Please enter name, width and height at the top and click \"Set Base Parameters\"."); // FF saves the value over refreshes, leaving old foundation data with empty canvases without this.
 		});
-	</script>
+	</script> -->
 	
 	<script type="text/javascript">
+		function setup(evt) {
+			// initialization
+			$("#number_warning_x").hide();
+			$("#number_warning_y").hide();
+			$("#name_warning").hide();
+			$("#name_note").hide();
+			$("#warfac_note").hide();
+			$("#sidelabels").hide();
+			//$("#set_params").click(generateCanvas);
+			$("#widthheight").submit(generateCanvas); // set event handler
+			$("#widthheight").submit(); // trigger event to create default canvas
+			$("#clearbtn").click(function() {updateCode(true);});
+			$("#outlnbtn").click(generateOutline);
+			$("#code").val("Please enter name, width and height at the top and click \"Set Base Parameters\"."); // FF saves the value over refreshes, leaving old foundation data with empty canvases without this.
+		}
+	
+		$(document).ready(setup);
+	
 		// When set, this stores the first three lines of the code: building name, width and height
 		var baseParams = "Base parameters empty";
 		
