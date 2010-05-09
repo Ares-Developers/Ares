@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
 "http://www.w3.org/TR/html4/strict.dtd">
 
 <html>
@@ -358,9 +358,10 @@
 	<p>The original game includes a little-known flag that allows all ObjectTypes (anything placeable on the map - Projectiles, Trees, Overlays, Smudges (not the IsometricTileTypes), Aircraft, Infantry, Vehicles and Buildings) to have a lighting effect displayed on them.<br>
 	<code>[Object]&#9658;AlphaImage=ALPHATST</code> instructs the game to display ALPHATST.shp on the object as a lighting effect. The SHP must be saved without any compression (just like mouse.sha). 
 	Ares adds two improvements to this feature:<br>
-	The lighting effect will follow the object around as it moves, rather than staying where the object was created.<dfn class="bugfix">Alpha lights will now move with the object they are attached too.</dfn><br>
-	<span class="note">NB: Alpha Lights on moving objects are a potential source of lag.<br>
-	If the SHP has multiple frames then it is interpreted as a multi-facing image, and the largest n frames in the image are used as facing-specific versions (in this case, n is the largest power of 2 that is less than or equal to the number of frames in the SHP, e.g. 2/4/8/16/32/64...).</span><dfn class="bugfix">Alpha lights can now have multiple facings.</dfn></p>
+	<ul>
+		<li>The lighting effect will follow the object around as it moves, rather than staying where the object was created.<dfn class="bugfix">Alpha lights will now move with the object they are attached too.</dfn><br><span class="note">NB: Alpha Lights on moving objects are a potential source of lag.</span></li>
+		<li>If the SHP has multiple frames then it is interpreted as a multi-facing image, and the largest n frames in the image are used as facing-specific versions (in this case, n is the largest power of 2 that is less than or equal to the number of frames in the SHP, e.g. 2/4/8/16/32/64...)<dfn class="bugfix">Alpha lights can now have multiple facings.</dfn></p></li>
+	</ul>
 
 	<h4>Mind-Controller Parasites</h4>
 	<p>MC-parasites would draw a mind-control link between the mind-controlled unit and the point on the map where the parasite entered the unit. Now the link will not be drawn at all. You can also use MindControl.Permanent instead, in order to use the perma-mc animation.<dfn class="bugfix">Mind-controller parasites will no longer draw the mind-control link when the the target is selected.</dfn></p>
@@ -405,6 +406,9 @@
 	<h4>ChronoSphere'd amphibious objects sinking for no reason</h4>
 	<p>When an amphibious (not hover) object that can normally enter water cells with no problem was chronoshifted into them through the ChronoSphere, it used to sink. Ares corrects this so all amphibious objects can be shifted into water with no ill effects.<dfn class="bugfix">Amphibious objects no longer sink if ChronoShifted into water.</dfn></p>
 
+	<h4>Mind-Controlled Units Freed By Ineffective Temporal Attacks</h4>
+	<p>If <code>Warpable=yes</code> was set on, say, the Master Mind, and the Master Mind was attacked by a Chrono Legionnaire, then any units mind-controlled by the Master Mind would be freed, even though the Master Mind itself was not frozen. <span class="gamename">Ares</span> fixes this so that the mind-controlled units are not freed.<dfn class="bugfix">Mind-controlled units are no longer freed by ineffective temporal attacks (against Warpable=no).</dfn></p>
+	
 	<h3>Type 3 Fixes (Performance)</h3>
 	<ul>
 	<li>pips.shp was getting reloaded from disk six times in a row.</li>
@@ -422,31 +426,31 @@
 	Below is a list of the features that Ares has restored, along with any changes or enhancements to the way those features used to work in <span class="gamename">Tiberian Sun</span>.<br>
 	Note that, in many cases, Ares has drastically changed the way these features are implemented.</p>
 
-	<h3>Electromagnetic Pulse</h3>
+	<h3>EMP</h3>
 	<p>Vehicles affected by EMP (Electromagnetic Pulse) are paralyzed in a similar manner to a Chrono Legionnaire erasing a unit. Unlike the Chrono Legionnaire however, EMP'd vehicles can still be attacked by other units.<br>
 	EMP paralysis affects units in various ways:<dfn class="restored">EMP weapons</dfn><p>
 	<ul>
-		<li>Primary effect: Affected units will not respond to any commands. They will stop moving and will not attack anything. Hovering units (such as the Robot Tank) will land.</li>
-		<li>Units under the effects of EMP will display the animation specified by <code>[General]&#9658;EMPulseSparkles=EMP_FX01</code></li>
-		<li>Buildings that can undeploy into vehicles (e.g. MCVs) will not be able to do so if they are under the effect of EMP.</li>
-		<li>Aircraft affected by EMP will immediately crash.</li>
-		<li>Affected Base Defenses will not be able to shoot.</li>
-		<li>Gap Generators, Laser Fence Posts, and buildings powering units (e.g. Robot Control Centers) will stop working.</li>
-		<li>Buildings providing super weapons will shut down and the super weapons will stop charging, if they are <code>[SuperWeapon]&#9658;IsPowered=yes</code>.</li>
-		<li>Radar buildings will stop providing radar.</li>	
-  </ul>
-	<p><span class="note">NB: <span class="gamename">Tiberian Sun</span> used the weapon's Damage flag to determine how long the EMP effect would last. Ares, however, uses 2 new flags (EMP.Duration and EMP.Cap) to provide greater control. The weapon's Damage will be delivered independently from EMP paralysis (so a weapon can both damage and paralyze its target).</span></p>
+		<li>Primary effect: units will not respond to any commands. They will stop moving and will not attack anything.>/li>
+		<li>Hovering units (such as the Robot Tank) will land.</li>
+		<li>Units display the animation specified by <code>[General]&#9658;EMPulseSparkles=EMP_FX01</code>. Note that the <span class="filename">emp_fx01.shp</span> file that comes with Red Alert 2 is in the Tiberian Sun palette and needs to be converted.</li>
+		<li>Voxel-based units are darkened (SHP-based units are not).</li>
+		<li>Buildings that can undeploy into vehicles (e.g. MCVs) will not be able to do so.</li>
+		<li>Aircraft will immediately crash.</li>
+		<li>Base defenses will not be able to fire their weapon.</li>
+		<li>Gap Generators will stop emitting radar gap.</li>
+		<li>Laser Fence Posts will stop emitting laser fences.</li>
+		<li>Robot Control Centers will stop working.</li>
+		<li>Super weapon buildings will shut down and the super weapons themselves will stop charging, <i>if</i> they have <code>[SuperWeapon]&#9658;IsPowered=yes</code> set.</li>
+		<li>Radar buildings will stop providing radar.</li>
+		<li>Units that spawn other units will cease to do so.</li>
+		<li>Harvesters that were in the middle of harvesting when hit by EMP will resume harvesting after EMP wears off.</li>
+  	</ul>
+	<p><span class="note">NB: <span class="gamename">Tiberian Sun</span> used the weapon's Damage flag to determine how long the EMP effect would last. Ares, however, uses 2 new flags (EMP.Duration and EMP.Cap) to provide greater control. The weapon's Damage will be delivered independently from EMP paralysis (so a weapon can both damage and paralyze its target). <span class="gamename">Tiberian Sun</span> also used the flag EMEffect=yes, which is not used in Ares.</span></p>
 	<dl class="flaglist">
-		<!--<dt>[Warhead]&#9658;EMEffect= (boolean)</dt>
-		<dd>Specifies whether or not this warhead will (in addition to damage) trigger an EMP on the affected units. Defaults to no.
-		<span class="note">NB: This flag is residual from <span class="gamename">Tiberian Sun</span> and may be made obsolete in future.</span><var class="rules Warhead boolean no">EMEffect=</var></dd> NOW OBSOLETE-->
 		<dt>[Warhead]&#9658;EMP.Duration= (integer &ndash; frames)<br>
 		[Warhead]&#9658;EMP.Cap= (integer &ndash; frames)</dt>
-		<dd>These two flags are used together to determine how long (in frames) the affected units will be EMP'd for.<var class="rules Warhead integer_-_frames xxxnum0">EMP.Duration=</var><var class="rules Warhead integer_-_frames xxxnum-1">EMP.Cap=</var></dd>
-		<dt>[TechnoType]&#9658;ImmuneToEMP= (boolean)</dt>
-		<dd>If set to yes then the TechnoType can't be affected by EMP. Defaults to yes for every unit that is <code>Organic=yes</code>, for infantry that is <code>Cyborg=no</code>. Defaults to no for buildings that are either <code>Powered=yes</code> and have a negative <code>Power=</code> value or have special functionality as seen the list above.<var class="rules TechnoType boolean Depends_on_TechnoType">ImmuneToEMP=</var></dd>
+		<dd>The above two flags are used together to determine how long (in frames) the affected units will be EMP'd for.<var class="rules Warhead integer_-_frames xxxnum0">EMP.Duration=</var><var class="rules Warhead integer_-_frames xxxnum-1">EMP.Cap=</var></dd>
 	</dl>
-	<p>Setting <code>ImmuneToEMP</code> always overrides the default. TechnoTypes having <code>ImmuneToEMP=yes</code> can never be affected by EMP, TechnoTypes having <code>ImmuneToEMP=no</code> will get deactivated by EMP.</p>
 	<p>The game keeps track of how much longer each unit will remain paralyzed. Each unit essentially has a hidden EMP counter that counts down frame by frame until it reaches zero, at which point the unit will be re-activated. This counter is what gets modified by EMP warheads.</p>
 	<p>First we will look at positive EMP.Duration &ndash; the targets are going to be paralyzed.</p>
 	<ul>
@@ -486,9 +490,46 @@
 		<li><code>EMP.Cap=0</code><br>
 		EMP.Duration is irrelevant. The EMP counter will be set to zero and the unit will re-activate.</li>
 	</ul>
+	<dl class="flaglist">
+		<dt>[TechnoType]&#9658;ImmuneToEMP= (boolean)</dt>
+		<dd>
+			The above flag specifies whether or not the TechnoType is immune to the effects of EMP. The default immunity status is determined based on the following rules:<br>
+			<ul>
+				<li>
+					BuildingTypes:<br>
+					<code>ImmuneToEMP</code> defaults to no for BuildingTypes that have <code>Powered=yes</code> and a negative <code>Power=</code> value set.<br>
+					<code>ImmuneToEMP</code> defaults to no for BuildingTypes that provide one or more of the following special functions:<br>
+					<ul>
+						<li>Radar</li>
+						<li>Super weapons</li>
+						<li>Undeploy into a vehicle (e.g. Construction Yards)</li>
+						<li>Powers vehicles (e.g. Robot Control Centre)</li>
+						<li>Gap Generator</li>
+						<li>Sensors</li>
+						<li>Laser Fence Posts</li>
+					</ul>
+				</li>	
+				<li>
+					InfantryTypes:<br>
+					<code>ImmuneToEMP</code> defaults to yes for InfantryTypes unless <code>Cyborg=yes</code> is set (in which case, <code>ImmuneToEMP</code> defaults to no.
+				</li>
+				<li>
+					VehicleTypes and AircraftTypes:<br>
+					<code>ImmuneToEMP</code> defaults to no for VehicleTypes and AiracraftTypes unless <code>Organic=yes</code> is set (in which case, <code>ImmuneToEMP</code> defaults to yes.
+				</li>
+			</ul>
+			<br>
+			Manually setting <code>ImmuneToEMP</code> always overrides the default.<br>
+			<br>
+			EMP immunity can also be granted via the new veteran/elite ability "EMPIMMUNE". Just set <code>VeteranAbilities=EMPIMMUNE</code> or <code>EliteAbilities=EMPIMMUNE</code> on the TechnoType.<br>
+			<br>
+			EMP immunity also respects <code>TypeImmune</code>, <code>AffectsAllies</code> and <code>AffectsEnemies</code> on the warhead.
+			<var class="rules TechnoType boolean Depends_on_TechnoType">ImmuneToEMP=</var>
+		</dd>
+	</dl>
 
 	<h3>SellUnit</h3>
-	<p>In <span class="gamename">Tiberian Sun</span> you could sell units that were docked with a structure by using the normal Sell button on the sidebar. In <span class="gamename">Yuri's Revenge</span>, a super weapon with <code>Action=SellUnit</code> achieves the same function. However, if such a super weapon were fired on a unit inside a Tank Bunker then an Internal Error would occur (sometimes this would be delayed until the destruction of the Tank Bunker). Ares prevents the error occurring.<dfn class="restored">SellUnit super weapon no longer causes IEs with Tank Bunker.</dfn></p>
+	<p>In <span class="gamename">Tiberian Sun</span> you could sell units that were docked with a structure by using the normal Sell button on the sidebar. In <span class="gamename">Yuri's Revenge</span>, a super weapon with <code>Action=SellUnit</code> achieves the same function. However, if such a super weapon were fired on a unit inside a Tank Bunker then an Internal Error would occur (sometimes this would be delayed until the destruction of the Tank Bunker). <span class="gamename">Ares</span> prevents the error occurring.<dfn class="restored">SellUnit super weapon no longer causes IEs with Tank Bunker.</dfn></p>
 
 	<h3>PowerToggle</h3>
 	<p>In <span class="gamename">Tiberian Sun</span> there was a button on the sidebar that allowed players to turn their own buildings on and off and in low power situations. In <span class="gamename">Yuri's Revenge</span>, a super weapon with <code>Action=PowerToggle</code> achieves the same function. However, if such a super weapon were fired into an empty cell then an Internal Error would occur. Ares prevents the error occurring.<dfn class="restored">PowerToggle super weapon no longer causes IE when targetting an empty cell.</dfn></p>
@@ -893,6 +934,7 @@ IF (CurrentFrame mod (2 * Bomb.FlickerRate) >= Bomb.FlickerRate) THEN frameToSho
 		<dt>[SuperWeapon]&#9658;GenericWarhead.Damage= (integer)</dt>
 		<dd>The amount of damage that will be dealt by the warhead.<dfn class="new">New super weapon type: GenericWarhead (detonate any warhead at target cell).</dfn><var class="rules SuperWeapon integer_-_damage">GenericWarhead.Damage=</var></dd>
 	</dl>
+	Don't forget that the BuildingType will need <code>DamageSelf=yes</code> set (just like the Soviet Nuclear Missile Silo) if you want the warhead to be capable of damaging the firing building.
 	
 	<h5><code>Type=UnitDelivery</code></h5>
 	<p>The Unit Delivery super weapon will create the specified unit(s) in the target cell. This uses the CellSpread model to place the units.</p>
