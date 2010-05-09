@@ -44,7 +44,6 @@ void MakeCommand() {
 #include "Commands/MapSnapshot.h"
 //include "Commands/FrameByFrame.h"
 #include "Commands/DumpTypes.h"
-#include "Commands/ToggleFirestorm.h"
 #include "Commands/Debugging.h"
 //include "Commands/Logging.h"
 

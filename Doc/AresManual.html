@@ -207,7 +207,7 @@
 
 	<h3>Compatibility Notes</h3>
 	<h4>RockPatch/NPatch</h4>
-	<p>Ares is not intended to be used in conjunction with any third party patch that modifies the executable of the game. This is due to fairly obvious technical reasons that were best summarized by Renegade: [paraphrase] "You can't use the USA maps on your GPS to navigate through Russia."<br>
+	<p>Ares is not intended to be used in conjunction with any third party patch that modifies the executable of the game. This is due to fairly obvious technical reasons that were best summarized by Renegade: [paraphrase] <q cite="Renegade">You can't use the USA maps on your GPS to navigate through Russia.</q><br>
 	...because sooner or later you will drive down a road that doesn't exist, and off a cliff.</p>
 
 	<h4>Save Games</h4>
@@ -402,6 +402,9 @@
 	<p>BuildingTypes whose artmd.ini entry has <code>NewTheater=yes</code> set would have the second letter of their  SHP filenames replaced by another letter, depending on the theater of the current map. For example, GAWEAP uses SHP files named GAWEAP* on arctic maps, GTWEAP* on temperate maps, GDWEAP* on desert maps and so on. In the event that a SHP file with the appropriate filename does not exist, the game falls back to GTWEAP*.<br>
 	However, in <span class="gamename">Yuri's Revenge</span> this filename-adjusting logic only works for BuildingTypes whose Image ID starts with G, N, Y or C. Ares extends this logic to work for Image IDs starting with any letter (A-Z or a-z).</p></div>
 
+	<h4>ChronoSphere'd amphibious objects sinking for no reason</h4>
+	<p>When an amphibious (not hover) object that can normally enter water cells with no problem was chronoshifted into them through the ChronoSphere, it used to sink. Ares corrects this so all amphibious objects can be shifted into water with no ill effects.<dfn class="bugfix">Amphibious objects no longer sink if ChronoShifted into water.</dfn></p>
+
 	<h3>Type 3 Fixes (Performance)</h3>
 	<ul>
 	<li>pips.shp was getting reloaded from disk six times in a row.</li>
@@ -516,10 +519,9 @@
 	Laser Fences now work just the same as they did in <span class="gamename">Tiberian Sun</span>. You need a BuildingType with <code>LaserFencePost=yes</code> to act as a corner post, and another BuildingType with <code>LaserFence=yes</code> which will be placed in between the corner posts automatically (see the original building's SHP from <span class="gamename">Tiberian Sun</span> to see how the art is controlled). These fences are impassable to ground objects and invulnerable to normal damage, but when a corner post is destroyed, the fences connected to it are lost. When the corner post loses power, the fences connected to it go offline and become freely passable. When the post regains power, the fences reactivate and any object unfortunate enough to be traversing them will be destroyed.<dfn class="restored">Laser Fences</dfn><var class="rules TechnoType boolean no">LaserFence=</var><var class="rules TechnoType boolean no">LaserFencePost=</var></p>
 
 	<h3>Firestorm Wall</h3>
-	<p>The Firestorm Wall has been re-enabled for testing purposes only at this stage. A BuildingType with <code>Firestorm.Wall=yes</code> will act as a section of such a wall, and auto-connect to other nearby pieces (see the original building's SHP from <span class="gamename">Tiberian Sun</span> to see how the art is controlled). When the wall is activated, any objects on top of these sections are destroyed, and non-friendly projectiles without <code>SubjectToFirestorm=no</code> are stopped by this wall. Since the new Ares super weapons are on hold until <a href="http://bugs.renegadeprojects.com/view.php?id=424">issue #424</a> is resolved, the Firestorm is not implemented as a super weapon for now &ndash; it's a keyboard command you can bind and (de)activate as you wish.<br>
-	<span class="note">NB: Implementing the Firestorm as a command has a drawback &ndash; since commands are not transferred between players, this command will cause a reconnection error in a multiplayer game. This is intended only as a way to test and debug the Firestorm, whoch is therefore not yet a supported feature of Ares.</span> <br>
+	<p>The Firestorm Wall has been re-enabled for testing purposes only at this stage. A BuildingType with <code>Firestorm.Wall=yes</code> will act as a section of such a wall, and auto-connect to other nearby pieces (see the original building's SHP from <span class="gamename">Tiberian Sun</span> to see how the art is controlled). When the wall is activated, any objects on top of these sections are destroyed, and non-friendly projectiles without <code>SubjectToFirestorm=no</code> are stopped by this wall. This is implemented as a Super Weapon with <code>Type=Firestorm</code> (for more details see the <a href="#TypeFirestorm">New Super Weapon Types: Firestorm</a> section).<br>
 	<span class="note">NB: The animations used by this logic are temporarily hard-coded to "FSIDLE", "FSGRND" and "FSAIR", as was used in <span class="gamename">Tiberian Sun</span>.</span><br>
-	<span class="note">NB: The AI has a lot of problems with targets behind an active Firestorm Wall, though this should not be a major problem due to the relatively small amount of game time that the Wall is active for.</span><dfn class="restored">Firestorm Wall</dfn><var class="rules TechnoType boolean no">Firestorm.Wall=</var><var class="rules Projectile boolean no">SubjectToFirestorm=</var></p>
+	<span class="note">NB: The AI has a lot of problems with targets behind an active Firestorm Wall, though this should not be a major problem due to the relatively small amount of game time that the Wall is active for.</span><dfn class="restored">Firestorm Wall</dfn><var class="rules BuildingType boolean no">Firestorm.Wall=</var><var class="rules Projectile boolean no">SubjectToFirestorm=</var></p>
 
 	<h3>Amphibious Voxel Changes</h3>
 	<p>In <span class="gamename">Tiberian Sun</span>, the Amphibious APC would appear to sink into the water. This was achieved by changing the imagery from apc.vxl to apcw.vxl. With Ares, you can now specify</p>
@@ -782,8 +784,7 @@ IF (CurrentFrame mod (2 * Bomb.FlickerRate) >= Bomb.FlickerRate) THEN frameToSho
 	<span class="note">NB: Like <code>InfDeath=9</code>, all mutation animations will be rendered in the unit palette instead of anim.pal.</span><dfn class="new">MakeInfantry animations (InfDeathAnim, DeathAnims, map triggers) can choose who the owner will be as killer|victim|neutral|random.</dfn><var class="art Animation enumeration invoker">MakeInfantryOwner=</var></p>
 	
 	<h3>Super Weapons</h3>
-	<p>In <span class="gamename">Yuri's Revenge</span>, there is very little you can do to change or add to the existing super weapons &ndash; most super weapon-related features are hard-coded to only work as designed for the original super weapons. Ares, however, includes several new ways to customize existing super weapons as well as several wholly new super weapons.<br>
-	<span class="note">NB: Super weapon features are incomplete so we ask that these are not used for the time being &ndash; many of these new features will be rewritten when <a href="http://bugs.renegadeprojects.com/view.php?id=424">issue #424</a> is resolved, so there is little point in testing the following changes at this stage.</span><dfn class="new">Super Weapons:</dfn></p>
+	<p>In <span class="gamename">Yuri's Revenge</span>, there is very little you can do to change or add to the existing super weapons &ndash; most super weapon-related features are hard-coded to only work as designed for the original super weapons. Ares, however, includes several new ways to customize existing super weapons as well as several wholly new super weapons.<dfn class="new">Super Weapons:</dfn></p>
 	
 	<h4>Building Animations</h4>
 	<p>Buildings can display specific animations for when the attached super weapon is charging, is nearly charged (1 minute remaining in the normal game), is ready to be fired, and when it fires. However, in <span class="gamename">Yuri's Revenge</span>, these animations only work properly for the original super weapons. In Ares, these will work for any super weapon.<dfn class="new">Building animations played correctly for new super weapons.</dfn></p>
@@ -907,6 +908,11 @@ IF (CurrentFrame mod (2 * Bomb.FlickerRate) >= Bomb.FlickerRate) THEN frameToSho
 	If you have more than one building, the resulting placement might look odd.<br>
 	The actual delivery of the units happens all at once, on the 20th frame after firing the super weapon. This delayed-effect logic will most likely be customizable in future and so, in future, the delay for this super weapon may default to a different amount.<dfn class="new">New super weapon type: UnitDelivery (create unit(s) at target cell).</dfn></p>
 	
+	<h5><code>Type=Firestorm</code></h5>
+	<p>This superweapon is a recreation of the <span class="gamename">Tiberian Sun</span> Firestorm superweapon - when fired, all structures with <code>Firestorm.Wall=yes</code> owned by the firing player will activate an energy shield, blocking all hostile projectiles except those with <code>SubjectToFirestorm=no</code> from passing through and destroying any friend or foe unlucky enough to come into direct contact with active cells. <br>
+	This Superweapon uses the old Charge Drain logic - once it's charged and activated, the effect will persist for a certain time, after which it will automatically shut down and the superweapon will restart its charging process. You can disable the effect while it's active, this will let it recharge faster. Refer to ModEnc for more information about the Charge Drain logic. While in <span class="gamename">Tiberian Sun</span> the Charge Drain was disableable through an INI flag, Ares forces this logic to be used regardless of the corresponding INI flag. <br>
+	In addition, Ares forces this SW to ignore its assigned <code>Action=</code>, if any - this is required to make it fire right from the sidebar.</p>
+
 	<h3>Survivors</h3>
 	<p>In the original Red Alert, pilots would parachute from destroyed aircraft. Ares reintroduces this feature along with some additional improvements, all of which are customizable.<br>
 	AircraftTypes and VehicleTypes have the option of spawning a pilot (or driver) when they are destroyed. In order for a pilot to be spawned from an airborne unit, the ground beneath the destroyed unit must be clear.<br>
@@ -1009,10 +1015,10 @@ IF (CurrentFrame mod (2 * Bomb.FlickerRate) >= Bomb.FlickerRate) THEN frameToSho
 		<dt>[BuildingType]&#9658;Rubble.Destroyed= (BuildingType)</dt>
 		<dd>The new BuildingType that this BuildingType will transform into upon destruction. Buildings that are created via Rubble.Destroyed will have the following properties forced upon them:
 		<pre>Capturable=no
-		TogglePower=no
-		Unsellable=yes
-		ClickRepairable=no
-		CanBeOccupied=no</pre>
+TogglePower=no
+Unsellable=yes
+ClickRepairable=no
+CanBeOccupied=no</pre>
 		The building will be created with 99% of its maximum Strength. This, combined with <code>ClickRepairable=no</code>, ensures that Engineers will get a repair cursor over the building.<var class="rules TechnoType BuildingType">Rubble.Destroyed=</var></dd>
 		<dt>[BuildingType]&#9658;Rubble.Intact= (BuildingType)</dt>
 		<dd>The new BuildingType that this BuildingType will transform into when it is repaired.<var class="rules TechnoType BuildingType">Rubble.Intact=</var></dd>
@@ -1068,9 +1074,9 @@ IF (CurrentFrame mod (2 * Bomb.FlickerRate) >= Bomb.FlickerRate) THEN frameToSho
 	<p>You can now create custom generic prerequisite groups like the existing POWER (PrerequisitePower), FACTORY (PrerequisiteFactory), BARRACKS (PrerequisiteBarracks), RADAR (PrerequisiteRadar), TECH (PrerequisiteTech) and PROC (PrerequisiteProc and PrerequisiteProcAlternate) groups.<br>
 	To create new groups simply include the new <code>[GenericPrerequisites]</code> section and add flags with the format <code>GROUPNAME=</code> (list of BuildingTypes). For example:</p>
 	<pre>[GenericPrerequisites]
-	NAVALYARD=GAYARD,NAYARD,YAYARD
-	CONYARD=GACNST,NACNST,YACNST
-	AIRFORCE=GAAIRC,AMRADR</pre>
+NAVALYARD=GAYARD,NAYARD,YAYARD
+CONYARD=GACNST,NACNST,YACNST
+AIRFORCE=GAAIRC,AMRADR</pre>
 	<p>If you declare any of the existing groups (POWER/FACTORY/BARRACKS/RADAR/TECH/PROC) then the BuildingTypes specified in the <code>[GenericPrerequisites]</code> section will be used instead of those specified on the original PrerequisiteGroup flags (i.e. <code>[GenericPrerequisites]&#9658;POWER=</code>, if specified, overrides <code>[General]&#9658;PrerequisitePower=</code>). Take note that <code>[GenericPrerequisites]&#9658;PROC=</code> does not override or nullify [General]PrerequisiteProcAlternate=.<dfn class="new">New Prerequisite Groups.</dfn><var class="rules">GenericPrerequisites</var></p>
 	
 	<h3>Secret Labs</h3>
@@ -1226,7 +1232,7 @@ IF (CurrentFrame mod (2 * Bomb.FlickerRate) >= Bomb.FlickerRate) THEN frameToSho
 		<dt>[General]&#9658;Medians=71</dt>
 		<dd>This setting is needed to prevent an Internal Error occurring in the Random Map Generator if Urban Areas are enabled by the user. This change is also needed by the Terrain Expansion.</dd>
 	</dl>
-	<p>In order to avoid internal errors, Ares sets this to 71 by default.<dfn class="new">Snowmd.ini defaults <code>Medians=71</code> (this is needed by the Terrain Expansion and also prevents an IE in the Random Map Generator when Urban Ares are enabled).</dfn></p>
+	<p>In order to avoid internal errors, Ares sets this to 71 by default if it's not specified in the terrain control file.<dfn class="new">Snowmd.ini defaults <code>Medians=71</code> (this is needed by the Terrain Expansion and also prevents an IE in the Random Map Generator when Urban Ares are enabled).</dfn></p>
 	<h2>User Interface Features</h2>
 	<p>Numerous enhancements and additions have been made to the user interface &ndash; aspects of <span class="gamename">Yuri's Revenge</span> outside the main in-game battlefield view.</p>
 	<h3>Loading Screen</h3>
@@ -1241,11 +1247,13 @@ IF (CurrentFrame mod (2 * Bomb.FlickerRate) >= Bomb.FlickerRate) THEN frameToSho
 	<p>Some potential errors may now be triggered when loading rather than waiting for the error to crop up in game.<dfn class="new">Improved Internal Error handling and debug logs to assist with debugging mods/Ares.</dfn></p>
 	<h3>Random Map Generator</h3>
 	<p>Ares lets you create random maps using some new map styles &ndash; Archipelago terrain and the Desert tileset.<br>
+	<span class="note">NB: these options are not affected by the "Surprise Me" function for the moment.</span><br>
 	The RMG will now place bridges at random on maps that include rivers.<dfn class="new">Random Map Generator enhancements:</dfn><br>
 	A new checkbox &ndash; 'Place Urban Areas' &ndash; allows the user to add an assortment of streets and urban combat buildings at random spots throughout the generated map. The objects placed by this feature are hard-coded to the following list for the time being:<br>
 	Structures: CABUNK01, CABUNK02, CAARMY01, CAARMY02, CAARMY03, CAARMY04, CACHIG03, CANEWY01, CANEWY14, CANWY09, CANWY26, CANWY25, CATEXS07<br>
 	Vehicles: TRUCKA, TRUCKB, COP, EUROC, SUVW, SUVB, FTRK, AMBU<br>
-	Infantry: CIV1, CIV2, CIV3, CIVA, CIVB, CIVC<dfn class="new">Place Urban Areas option.</dfn><dfn class="new">Bridges over rivers.</dfn><dfn class="new">New terrain style: Archipelago.</dfn><dfn class="new">New tileset: Desert.</dfn></p>
+	Infantry: CIV1, CIV2, CIV3, CIVA, CIVB, CIVC<dfn class="new">Place Urban Areas option.</dfn><dfn class="new">Bridges over rivers.</dfn><dfn class="new">New terrain style: Archipelago.</dfn><dfn class="new">New tileset: Desert.</dfn><br>
+	<span class="note">NB: urban areas generated in the minimap preview do not always correspond to content generated ingame, especially in Desert maps. This is still being investigated.</span></p>
 	<h3>Keyboard Commands (Hotkeys)</h3>
 	<p>Ares includes several new commands that can be issued in game via the use of keyboard hotkeys. Note that the labels for these hotkeys are presently hard-coded, unlike the standard <span class="gamename">Yuri's Revenge</span> hotkeys (which use the string table).</p>
 	<h4>Map Snapshot</h4>
@@ -1278,6 +1286,7 @@ IF (CurrentFrame mod (2 * Bomb.FlickerRate) >= Bomb.FlickerRate) THEN frameToSho
 	Surface.$surface.Memory= (System|VRAM)
 	Surface.$surface.Force3D= (true|false)</pre>
 	<p>...where $surface is one of Composite, Alternate, Hidden, Sidebar or Tile.<br>
+	<span class="note">NB: enabling Force3D forces Memory into VRAM mode.</span><br>
 	<span class="note">NB: Ares.ini is not intended to be included or edited by mods, as this file may include various other settings in future that the end-user wishes to set themselves. Launch Base does not permit mods to include ares.ini, and also provides its own interface to allow the user to modify the above graphical settings.</span><dfn class="new">Graphics/Surface drawing options can be configured by the user (advanced users only).</dfn></p>
 	
 	<h2>Required Changes For Mods Using Ares</h2>
@@ -1310,7 +1319,7 @@ IF (CurrentFrame mod (2 * Bomb.FlickerRate) >= Bomb.FlickerRate) THEN frameToSho
 		<li>Renegade &ndash; the first contributor who adds functionality while working on Linux!</li>
 		<li>AlexB &ndash; [Insert comment here]</li>
 	</ul>
-	<p>Documentation by DCoder, Marshall and Nighthawk. If there are any omissions or errors in this document, please <a href="http://bugs.renegadeprojects.com/bug_report_page.php">file a bug</a> under the category "Wrong Information" or "Outdated Information, whichever fits better.<br>
+	<p>Documentation by DCoder, Marshall, Nighthawk and Renegade. If there are any omissions or errors in this document, please <a href="http://bugs.renegadeprojects.com/bug_report_page.php">file a bug</a> under the category "Wrong Information" or "Outdated Information", whichever fits better.<br>
 	If you feel something is not explained clearly enough, please post on the RenegadeProjects Network Forums and let us know where the issue is.</p>
 	<h3>Special Thanks</h3>
 	<h4>Westwood Studios</h4>

@@ -58,6 +58,7 @@ class HouseExt
 			AnnounceInvalidPointer(Factory_InfantryType, ptr);
 		}
 
+		void SetFirestormState(bool Active);
 	};
 
 	static Container<HouseExt> ExtMap;
@@ -70,9 +71,6 @@ class HouseExt
 
 	static signed int PrereqValidate
 		(HouseClass *pHouse, TechnoTypeClass *pItem, bool BuildLimitOnly, bool IncludeQueued);
-
-	static void Firestorm_SetState(HouseClass *pHouse, bool Active);
-
 };
 
 #endif

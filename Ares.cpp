@@ -60,7 +60,6 @@ void __stdcall Ares::RegisterCommands()
 	MakeCommand<AIControlCommandClass>();
 	MakeCommand<MapSnapshotCommandClass>();
 	MakeCommand<TestSomethingCommandClass>();
-	MakeCommand<FirestormToggleCommandClass>();
 	MakeCommand<DumperTypesCommandClass>();
 	MakeCommand<DebuggingCommandClass>();
 }

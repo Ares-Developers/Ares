@@ -123,7 +123,8 @@ signed int HouseExt::PrereqValidate
 	return HouseExt::CheckBuildLimit(pHouse, pItem, IncludeQueued);
 }
 
-void HouseExt::Firestorm_SetState(HouseClass *pHouse, bool Active) {
+void HouseExt::ExtData::SetFirestormState(bool Active) {
+	HouseClass *pHouse = this->AttachedToObject;
 	HouseExt::ExtData* pData = HouseExt::ExtMap.Find(pHouse);
 
 	if(pData->FirewallActive == Active) {

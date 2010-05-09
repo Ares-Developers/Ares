@@ -126,3 +126,20 @@ DEFINE_HOOK(50AF10, HouseClass_CheckSWs, 5)
 
 	return 0x50B1CA;
 }
+
+// a ChargeDrain SW expired - fire it to trigger status update
+DEFINE_HOOK(6CBD86, SuperClass_Progress_Charged, 7)
+{
+	GET(SuperClass *, Super, ESI);
+	Super->Launch(&Super->ChronoMapCoords, Super->Owner == HouseClass::Player);
+	return 0;
+}
+
+// a ChargeDrain SW was clicked while it was active - fire to trigger status update
+DEFINE_HOOK(6CB979, SuperClass_ClickFire, 6)
+{
+	GET(SuperClass *, Super, ESI);
+	Super->Launch(&Super->ChronoMapCoords, Super->Owner == HouseClass::Player);
+
+	return 0;
+}

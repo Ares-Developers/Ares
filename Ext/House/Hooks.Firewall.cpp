@@ -74,7 +74,7 @@ DEFINE_HOOK(4DA53E, FootClass_Update, 6)
 		HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(B->Owner);
 		if(pTypeData->Firewall_Is && pHouseData->FirewallActive && !F->InLimbo && F->IsAlive && F->Health) {
 			int Damage = F->Health;
-			F->ReceiveDamage(&Damage, 0, RulesClass::Global()->C4Warhead, 0, 1, 0, H);
+			F->ReceiveDamage(&Damage, 0, RulesClass::Instance->C4Warhead, 0, 1, 0, H);
 			if(AnimTypeClass *FSAnim = AnimTypeClass::Find(F->IsInAir() ? "FSAIR" : "FSGRND")) {
 				CoordStruct XYZ;
 				F->GetCoords(&XYZ);
@@ -93,7 +93,7 @@ DEFINE_HOOK(4F8440, HouseClass_Update_FSW_Recalc, 5)
 	HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(H);
 	if(pHouseData->FirewallRecalc > 0) {
 		--pHouseData->FirewallRecalc;
-		HouseExt::Firestorm_SetState(H, pHouseData->FirewallActive);
+		pHouseData->SetFirestormState(pHouseData->FirewallActive);
 	} else if(pHouseData->FirewallRecalc < 0) {
 		pHouseData->FirewallRecalc = 0;
 	}
@@ -103,7 +103,9 @@ DEFINE_HOOK(4F8440, HouseClass_Update_FSW_Recalc, 5)
 DEFINE_HOOK(4F8C97, HouseClass_Update_FSW_LowPower, 6)
 {
 	GET(HouseClass *, H, ESI);
-	HouseExt::Firestorm_SetState(H, 0);
+	HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(H);
+	pHouseData->SetFirestormState(0);
+
 	return 0;
 }
 

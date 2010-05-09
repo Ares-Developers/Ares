@@ -276,14 +276,15 @@ void BuildingExt::buildLines(BuildingClass* theBuilding, CellStruct selectedCell
 		CellStruct directionOffset = CellSpread::GetNeighbourOffset(direction); // coordinates of the neighboring cell in the given direction relative to the current cell (e.g. 0,1)
 		int linkLength = 0; // how many cells to build on from center in direction to link up with a found building
 
+		CellStruct cellToCheck = selectedCell;
 		for(short distanceFromCenter = 1; distanceFromCenter <= maxLinkDistance; ++distanceFromCenter) {
-			CellStruct cellToCheck = selectedCell + directionOffset; // adjust the cell to check based on current distance, relative to the selected cell
+			cellToCheck += directionOffset; // adjust the cell to check based on current distance, relative to the selected cell
 
-			if(!MapClass::Global()->CellExists(&cellToCheck)) { // don't parse this cell if it doesn't exist (duh)
+			if(!MapClass::Instance->CellExists(&cellToCheck)) { // don't parse this cell if it doesn't exist (duh)
 				break;
 			}
 
-			CellClass *cell = MapClass::Global()->GetCellAt(&cellToCheck);
+			CellClass *cell = MapClass::Instance->GetCellAt(&cellToCheck);
 
 			if(BuildingClass *OtherEnd = cell->GetBuilding()) { // if we find a building...
 				if(buildingExtData->canLinkTo(OtherEnd)) { // ...and it is linkable, we found what we needed
@@ -302,10 +303,11 @@ void BuildingExt::buildLines(BuildingClass* theBuilding, CellStruct selectedCell
 
 		++Unsorted::SomeMutex; // another mystical Westwood mechanism. According to D, Bad Things happen if this is missing.
 		// build a line of this buildingtype from the found building (if any) to the newly built one
+		CellStruct cellToBuildOn = selectedCell;
 		for(int distanceFromCenter = 1; distanceFromCenter <= linkLength; ++distanceFromCenter) {
-			CellStruct cellToBuildOn = selectedCell + directionOffset;
+			cellToBuildOn += directionOffset;
 
-			if(CellClass *cell = MapClass::Global()->GetCellAt(&cellToBuildOn)) {
+			if(CellClass *cell = MapClass::Instance->GetCellAt(&cellToBuildOn)) {
 				if(BuildingClass *tempBuilding = specific_cast<BuildingClass *>(theBuilding->Type->CreateObject(buildingOwner))) {
 					CoordStruct coordBuffer;
 					CellClass::Cell2Coord(&cellToBuildOn, &coordBuffer);

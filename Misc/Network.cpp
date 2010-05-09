@@ -4,6 +4,7 @@
 #include "../Ares.h"
 
 #include "../Ext/Building/Body.h"
+#include "../Ext/House/Body.h"
 
 #include <BuildingClass.h>
 #include <HouseClass.h>
@@ -18,8 +19,10 @@ DEFINE_HOOK(4C6CCD, Networking_RespondToEvent, 0)
 		// Received Ares event, do something about it
 		switch(EventKind) {
 			case AresNetEvent::aev_TrenchRedirectClick:
-				Debug::Log("Setting trench target...\n");
 				AresNetEvent::Handlers::RespondToTrenchRedirectClick(Event);
+				break;
+			case AresNetEvent::aev_FirewallToggle:
+				AresNetEvent::Handlers::RespondToFirewallToggle(Event);
 				break;
 		}
 	}
@@ -71,12 +74,29 @@ void AresNetEvent::Handlers::RespondToTrenchRedirectClick(NetworkEvent *Event) {
 				pSourceBuilding == selected building the soldiers are in
 				pTargetCell == cell the user clicked on; event fires only on buildings which showed the enter cursor
 			*/
-			Debug::Log("Setting target coords of [%s] to cell at %d, %d\n", pSourceBuilding->Type->ID, pTargetCell->MapCoords);
-
 			BuildingExt::ExtData* sourceBuildingExt = BuildingExt::ExtMap.Find(pSourceBuilding);
 			BuildingClass* targetBuilding = pTargetCell->GetBuilding();
 			sourceBuildingExt->doTraverseTo(targetBuilding); // check has happened before the enter cursor appeared
 		}
 	}
 
+}
+
+void AresNetEvent::Handlers::RaiseFirewallToggle(HouseClass *Source) {
+	NetworkEvent * Event = new NetworkEvent();
+	Event->Kind = AresNetEvent::aev_FirewallToggle;
+	Event->HouseIndex = byte(Source->ArrayIndex);
+
+	Networking::AddEvent(Event);
+	delete Event;
+}
+
+void AresNetEvent::Handlers::RespondToFirewallToggle(NetworkEvent *Event) {
+	if(HouseClass * pSourceHouse = HouseClass::Array->GetItem(Event->HouseIndex)) {
+		HouseExt::ExtData *pData = HouseExt::ExtMap.Find(pSourceHouse);
+		bool FS = pData->FirewallActive;
+		FS = !FS;
+		pData->SetFirestormState(FS);
+		pData->FirewallRecalc = 1;
+	}
 }

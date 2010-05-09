@@ -2,6 +2,7 @@
 #include "SWTypes/SonarPulse.h"
 #include "SWTypes/UnitDelivery.h"
 #include "SWTypes/GenericWarhead.h"
+#include "SWTypes/Firewall.h"
 
 DynamicVectorClass<NewSWType *> NewSWType::Array;
 DynamicVectorClass<SWStateMachine *> SWStateMachine::Array;
@@ -11,6 +12,7 @@ void NewSWType::Init()
 	new SW_SonarPulse();
 	new SW_UnitDelivery();
 	new SW_GenericWarhead();
+	new SW_Firewall();
 }
 
 DEFINE_HOOK(55AFB3, LogicClass_Update, 6)
