@@ -238,6 +238,10 @@
 	<p>When a unit kills an enemy unit it gains experience which can lead to that unit becoming veteran or elite. Killing friendly units (your own or your allies') does not earn experience in this way.<br>
 	However, Temporal warheads (warheads with <code>Temporal=yes</code> set) did used to earn experience when killing friendly units. This is no longer the case. <dfn class="bugfix">Temporal warheads no longer gain experience when used against allies</dfn></p>
 
+	<h4>Temporal Warheads Still Affect Objects That Are Not Warpable</h4>
+	<p>Attacking a mind controlling unit or structure with a <code>Temporal=yes</code> warhead would free the captured units even if the target is not warpable (TechnoTypes with <code>Warpable=no</code> set).<br>
+	Also, spawning units would have their spawned aircraft destroyed. This is no longer happens. <dfn class="bugfix">Temporal warheads no longer affect objects that are not warpable</dfn></p>
+
 	<h4>'Absolute-Damage' Prism Support Modifier</h4>
 	<p>Whenever a game mode or map declared the <code>[General]</code> section without re-stating the PrismSupportModifier, the PrismSupportModifier from rulesmd.ini would get multiplied by 100, thus causing supported Prism Towers to deal seemingly 'instant-kill' damage.<br>
 	This bug is now fixed, however it should be noted that several official maps used to exhibit this bug and so are 'fixed' by the UMP by re-stating PrismSupportModifier which means that these maps are now set at the original 150%, regardless of what your mod may set it to (so if you are incorporating the UMP into your mod and change the modifier as well then you will need to amend the 'fixed' UMP maps accordingly).<dfn class="bugfix">Prism support modifier fixed for game modes/maps.</dfn></p>
@@ -420,14 +424,14 @@
 	EMP paralysis affects units in various ways:<dfn class="restored">EMP weapons</dfn><p>
 	<ul>
 		<li>Primary effect: Affected units will not respond to any commands. They will stop moving and will not attack anything. Hovering units (such as the Robot Tank) will land.</li>
-		<li>Units under the effects of EMP will display the animation specified by  [General]?EMPulseSparkles=EMP_FX01</li>
-		<li>Infantry with <code>Cyborg=yes</code> set are affected by EMP in the same way as vehicles.</li>
+		<li>Units under the effects of EMP will display the animation specified by <code>[General]&#9658;EMPulseSparkles=EMP_FX01</code></li>
 		<li>Buildings that can undeploy into vehicles (e.g. MCVs) will not be able to do so if they are under the effect of EMP.</li>
 		<li>Aircraft affected by EMP will immediately crash.</li>
-		<li>Base Defenses will shut down.</li>
-		<li>Laser Fences will shut down.</li>
-		<li>Radar buildings will stop providing radar.</li>
-	</ul>
+		<li>Affected Base Defenses will not be able to shoot.</li>
+		<li>Gap Generators, Laser Fence Posts, and buildings powering units (e.g. Robot Control Centers) will stop working.</li>
+		<li>Buildings providing super weapons will shut down and the super weapons will stop charging, if they are <code>[SuperWeapon]&#9658;IsPowered=yes</code>.</li>
+		<li>Radar buildings will stop providing radar.</li>	
+  </ul>
 	<p><span class="note">NB: <span class="gamename">Tiberian Sun</span> used the weapon's Damage flag to determine how long the EMP effect would last. Ares, however, uses 2 new flags (EMP.Duration and EMP.Cap) to provide greater control. The weapon's Damage will be delivered independently from EMP paralysis (so a weapon can both damage and paralyze its target).</span></p>
 	<dl class="flaglist">
 		<!--<dt>[Warhead]&#9658;EMEffect= (boolean)</dt>
@@ -436,7 +440,10 @@
 		<dt>[Warhead]&#9658;EMP.Duration= (integer &ndash; frames)<br>
 		[Warhead]&#9658;EMP.Cap= (integer &ndash; frames)</dt>
 		<dd>These two flags are used together to determine how long (in frames) the affected units will be EMP'd for.<var class="rules Warhead integer_-_frames xxxnum0">EMP.Duration=</var><var class="rules Warhead integer_-_frames xxxnum-1">EMP.Cap=</var></dd>
+		<dt>[TechnoType]&#9658;ImmuneToEMP= (boolean)</dt>
+		<dd>If set to yes then the TechnoType can't be affected by EMP. Defaults to yes for every unit that is <code>Organic=yes</code>, for infantry that is <code>Cyborg=no</code>. Defaults to no for buildings that are either <code>Powered=yes</code> and have a negative <code>Power=</code> value or have special functionality as seen the list above.<var class="rules TechnoType boolean Depends_on_TechnoType">ImmuneToEMP=</var></dd>
 	</dl>
+	<p>Setting <code>ImmuneToEMP</code> always overrides the default. TechnoTypes having <code>ImmuneToEMP=yes</code> can never be affected by EMP, TechnoTypes having <code>ImmuneToEMP=no</code> will get deactivated by EMP.</p>
 	<p>The game keeps track of how much longer each unit will remain paralyzed. Each unit essentially has a hidden EMP counter that counts down frame by frame until it reaches zero, at which point the unit will be re-activated. This counter is what gets modified by EMP warheads.</p>
 	<p>First we will look at positive EMP.Duration &ndash; the targets are going to be paralyzed.</p>
 	<ul>
@@ -797,7 +804,7 @@ IF (CurrentFrame mod (2 * Bomb.FlickerRate) >= Bomb.FlickerRate) THEN frameToSho
 		<dt>[SuperWeapon]&#9658;Cursor.HotSpot= (HotSpot X, HotSpot Y)</dt>
 		<dd>Specifies the coordinates on the cursor that are considered to be the 'tip' &ndash; that is, the point from which the click event will handled. HotSpot X should be one of "Left", "Center" or "Middle". HotSpot Y should be one of "Top", "Middle" or "Bottom".<br>
 		For example, <code>Cursor.HotSpot=Left,Top</code> will treat the top-left corner of the cursor as the tip. Default is "Center,Middle".<br>
-		All of the above "Cursor." flags have a corresponding "NoCursor." flag, which allows you to specify the cursor that will be displayed then the mouse pointer is positioned over a point where the super weapon cannot be fired (e.g. the Force Shield cannot be fired over empty ground, so will display an alternate cursor to indicate this).<var class="rules SuperWeapon list_of_2 enumerations Center,Middle">Cursor.HotSpot=</var></dd>
+		All of the above "Cursor." flags have a corresponding "NoCursor." flag, which allows you to specify the cursor that will be displayed then the mouse pointer is positioned over a point where the super weapon cannot be fired (e.g. the Force Shield cannot be fired over empty ground, so will display an alternate cursor to indicate this).<var class="rules SuperWeapon list_of_2 enumerationsCenter_Middle">Cursor.HotSpot=</var></dd>
 		<dt>[SuperWeapon]&#9658;NoCursor.Frame=<br>
 		[SuperWeapon]&#9658;NoCursor.Count=<br>
 		[SuperWeapon]&#9658;NoCursor.Interval=<br>
@@ -891,10 +898,12 @@ IF (CurrentFrame mod (2 * Bomb.FlickerRate) >= Bomb.FlickerRate) THEN frameToSho
 	<dl class="flaglist">
 		<dt>[SuperWeapon]&#9658;SW.Deliver= (list of TechnoTypes)</dt>
 		<dd>The list of units that will be delivered. This works for infantry, vehicles, aircraft and buildings.<var class="rules SuperWeapon list_of_TechnoTypes">SW.Deliver=</var></dd>
+		<dt>[SuperWeapon]&#9658;SW.DeliverBuildups= (boolean)</dt>
+		<dd>Controls whether buildings delivered with this super weapon should play their buildup animation prior to becoming available.<var class="rules SuperWeapon boolean no">SW.DeliverBuildups=</var></dd>
 	</dl>
-	<p>All objects are placed on the ground, including aircraft and flying units that never land (e.g. the Rocketeer, which will take off when ordered to move). <br>
-	If a cell is occupied, the super weapon will retry on the next cell and so on, until the object gets placed. Once the first unit is placed, the next one will be placed on the next free cell (so no infantry squad in a single cell, for now) and so on. The whole process will stop if, after 100 cells, there are still units that have not been placed.<br>
-	You can mix in naval units and they will be placed where they can normally exist. However, if there are ground units in the list after naval ones, and you fire it at a place with no water nearby, the naval units will not find any suitable placement cell, and the process will abort without delivering the remaining ground units.<br>
+	<p>All objects are placed on the ground, including aircraft. Flying units that never land (e.g. the Rocketeer and Kirovs) will take off.<br>
+	If a cell is occupied, the super weapon will retry on the next cell and so on, until the object gets placed. Once the first unit is placed, this process starts again for the next item in the list. Infantry squads are grouped in a single cell. The search will skip an item if it has not been placed after testing 100 cells.<br>
+	You can mix in naval units and they will be placed where they can normally exist.<br>
 	If you have more than one building, the resulting placement might look odd.<br>
 	The actual delivery of the units happens all at once, on the 20th frame after firing the super weapon. This delayed-effect logic will most likely be customizable in future and so, in future, the delay for this super weapon may default to a different amount.<dfn class="new">New super weapon type: UnitDelivery (create unit(s) at target cell).</dfn></p>
 	
@@ -1302,7 +1311,7 @@ IF (CurrentFrame mod (2 * Bomb.FlickerRate) >= Bomb.FlickerRate) THEN frameToSho
 		<li>AlexB &ndash; [Insert comment here]</li>
 	</ul>
 	<p>Documentation by DCoder, Marshall and Nighthawk. If there are any omissions or errors in this document, please <a href="http://bugs.renegadeprojects.com/bug_report_page.php">file a bug</a> under the category "Wrong Information" or "Outdated Information, whichever fits better.<br>
-	If you feel something is not explained clearly enough, please post on the RenegadeProjects Network Forums and let us now where the issue is.</p>
+	If you feel something is not explained clearly enough, please post on the RenegadeProjects Network Forums and let us know where the issue is.</p>
 	<h3>Special Thanks</h3>
 	<h4>Westwood Studios</h4>
 	<p>For creating this great game in the first place. Although you guys really should've fired half of your coding staff (out of a cannon, into the sun).</p>
