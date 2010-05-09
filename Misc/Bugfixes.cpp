@@ -571,25 +571,6 @@ DEFINE_HOOK(50928C, HouseClass_Update_Factories_Queues_SkipBrokenDTOR, 5)
 	return 0x5092A3;
 }
 
-// removing hardcoded references to GAWALL and NAWALL
-DEFINE_HOOK(440709, BuildingClass_Put, 6)
-{
-	GET(CellClass *, Cell, EDI);
-	int idxOverlay = Cell->OverlayTypeIndex;
-	bool Sellable = true;
-	if(idxOverlay > -1) {
-		Sellable = OverlayTypeClass::Array->GetItem(idxOverlay)->Wall;
-	}
-	return Sellable ? 0x44071A : 0x440725;
-}
-
-DEFINE_HOOK(480534, sub_480510, 5)
-{
-	GET(int, idxOverlay, EAX);
-	bool Wall = idxOverlay != -1 && OverlayTypeClass::Array->GetItem(idxOverlay)->Wall;
-	return Wall ? 0x480549 : 0x480552;
-}
-
 //westwood is stupid!
 // every frame they create a vector<TeamClass *> , copy all the teams from ::Array into it, iterate with ->Update(), delete
 // so this is OMG OPTIMIZED I guess
