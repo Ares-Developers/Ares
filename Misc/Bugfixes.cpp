@@ -636,7 +636,7 @@ DEFINE_HOOK(62A2F8, ParasiteClass_PointerGotInvalid, 6)
 	if(UnitClass *U = specific_cast<UnitClass *>(Parasite->Owner)) {
 		if(!U->Type->Naval && U->GetHeight() > 200) {
 			*XYZ = U->Location;
-			U->FallingDown = U->IsABomb = true;
+			U->IsFallingDown = U->IsABomb = true;
 		}
 	}
 
@@ -651,4 +651,24 @@ DEFINE_HOOK(4DB87E, FootClass_SetCoords, 6)
 		F->ParasiteEatingMe->SetLocation(&F->Location);
 	}
 	return 0;
+}
+
+// bug 897
+DEFINE_HOOK(718871, TeleportLocomotionClass_UnfreezeObject_SinkOrSwim, 7)
+{
+	GET(TechnoTypeClass *, Type, EAX);
+
+	switch(Type->MovementZone) {
+		case mz_Amphibious:
+		case mz_AmphibiousCrusher:
+		case mz_AmphibiousDestroyer:
+		case mz_WaterBeach:
+			R->BL(1);
+			return 0x7188B1;
+	}
+	if(Type->SpeedType == st_Hover) {
+		// will set BL to 1 , unless this is a powered unit with no power centers <-- what if we have a powered unit that's not a hover?
+		return 0x71887A;
+	}
+	return 0x7188B1;
 }
