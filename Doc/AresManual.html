@@ -331,7 +331,7 @@
 	<span class="note">NB: The 'special treatment' sets up the object wielding these weapons. However, the original code is not designed to handle an object having more than one weapon with 'special' functionality so it is not recommended to have multiple weapons with the same type of special functionality on a single object.</span><dfn class="bugfix">Special weapons (mind-control/parasite/temporal) will now work in the Secondary slot.</dfn></p>
 
 	<h4>DestroyAnims Don't Remap</h4>
-	<p>The remappable parts of animations played via the use of the <code>DestroyAnims=</code> flag (when a building is destroyed) used to remain red in color &ndash; they would not get remapped to the owning player's house color. Now they will.<dfn class="bugfix">DestroyAnims can use remappable colors.</dfn></p>
+	<p>The remappable parts of animations played via the use of the <code>DestroyAnims=</code> flag (when a building is destroyed) used to remain red in color &ndash; they would not get remapped to the owning player's house color. Now they will. Note that the games files already include suitable animations for some buildings, however some of these (the Allied Barracks and Prism Tower) use the red palette indexes rather than the remappable indexes so you will need to recolor the images.<dfn class="bugfix">DestroyAnims can use remappable colors.</dfn></p>
 
 	<h4>DestroyAnims Cause Reconnection Errors</h4>
 	<p>The <code>DestroyAnims=</code> flag used to cause reconnection errors in multiplayer whenever it was used. This should not happen anymore.<dfn class="bugfix">DestroyAnims don't cause reconnection errors anymore.</dfn></p>
@@ -403,11 +403,14 @@
 	<p>BuildingTypes whose artmd.ini entry has <code>NewTheater=yes</code> set would have the second letter of their  SHP filenames replaced by another letter, depending on the theater of the current map. For example, GAWEAP uses SHP files named GAWEAP* on arctic maps, GTWEAP* on temperate maps, GDWEAP* on desert maps and so on. In the event that a SHP file with the appropriate filename does not exist, the game falls back to GTWEAP*.<br>
 	However, in <span class="gamename">Yuri's Revenge</span> this filename-adjusting logic only works for BuildingTypes whose Image ID starts with G, N, Y or C. Ares extends this logic to work for Image IDs starting with any letter (A-Z or a-z).</p></div>
 
-	<h4>ChronoSphere'd amphibious objects sinking for no reason</h4>
-	<p>When an amphibious (not hover) object that can normally enter water cells with no problem was chronoshifted into them through the ChronoSphere, it used to sink. Ares corrects this so all amphibious objects can be shifted into water with no ill effects.<dfn class="bugfix">Amphibious objects no longer sink if ChronoShifted into water.</dfn></p>
+	<h4>Amphibious Objects Sink When Chronoshifted Onto Water</h4>
+	<p>When an amphibious (not hover) object - that is, one that can normally enter water cells without problem - was chronoshifted onto water by the Chrono Sphere, it would sink. Ares corrects this so that all amphibious objects can be chronoshifted onto water without sinking.<dfn class="bugfix">Amphibious objects no longer sink when chronoshifted onto water.</dfn></p>
 
 	<h4>Mind-Controlled Units Freed By Ineffective Temporal Attacks</h4>
 	<p>If <code>Warpable=yes</code> was set on, say, the Master Mind, and the Master Mind was attacked by a Chrono Legionnaire, then any units mind-controlled by the Master Mind would be freed, even though the Master Mind itself was not frozen. <span class="gamename">Ares</span> fixes this so that the mind-controlled units are not freed.<dfn class="bugfix">Mind-controlled units are no longer freed by ineffective temporal attacks (against Warpable=no).</dfn></p>
+	
+	<h4>Hardcoded Wall/Gate Interactions</h4>
+	<p>In <span class="gamename">Tiberian Sun</span> you could place buildable gates on top of existing walls. This logic still exists in Yuri's Revenge. However, the logic was hardcoded to only work with GAWALL and NAWALL, so it wouldn't work with Yuri's wall (YAWALL) or, indeed, any other walls you might add to the game. <span class="gamename">Ares</span> changes this so that all overlays with <code>Wall=yes</code> set can have gates "slammed" onto them.<br><span class="note">NB: The automatic joining of walls to the gates still only works for GAWALL and NAWALL however this will be fixed in future.</span><dfn class="bugfix">Gates can be slammed onto any walls, not just GAWALL or NAWALL.</dfn></p>
 	
 	<h3>Type 3 Fixes (Performance)</h3>
 	<ul>
@@ -442,7 +445,9 @@
 		<li>Robot Control Centers will stop working.</li>
 		<li>Super weapon buildings will shut down and the super weapons themselves will stop charging, <i>if</i> they have <code>[SuperWeapon]&#9658;IsPowered=yes</code> set.</li>
 		<li>Radar buildings will stop providing radar.</li>
-		<li>Units that spawn other units will cease to do so.</li>
+		<li>Units that spawn other units will cease to do so. If the spawner unit has launched any aircraft then the aircraft will immediately crash.</li>
+		<li>Slave Miner slaves will stop working.</li>
+		<li>Units that are in their unloading state (such as ore harvesters depositing ore or Siege Choppers transforming) will only become EMP'd once they have finished unloading.</li>
 		<li>Harvesters that were in the middle of harvesting when hit by EMP will resume harvesting after EMP wears off.</li>
   	</ul>
 	<p><span class="note">NB: <span class="gamename">Tiberian Sun</span> used the weapon's Damage flag to determine how long the EMP effect would last. Ares, however, uses 2 new flags (EMP.Duration and EMP.Cap) to provide greater control. The weapon's Damage will be delivered independently from EMP paralysis (so a weapon can both damage and paralyze its target). <span class="gamename">Tiberian Sun</span> also used the flag EMEffect=yes, which is not used in Ares.</span></p>
@@ -560,16 +565,17 @@
 	Laser Fences now work just the same as they did in <span class="gamename">Tiberian Sun</span>. You need a BuildingType with <code>LaserFencePost=yes</code> to act as a corner post, and another BuildingType with <code>LaserFence=yes</code> which will be placed in between the corner posts automatically (see the original building's SHP from <span class="gamename">Tiberian Sun</span> to see how the art is controlled). These fences are impassable to ground objects and invulnerable to normal damage, but when a corner post is destroyed, the fences connected to it are lost. When the corner post loses power, the fences connected to it go offline and become freely passable. When the post regains power, the fences reactivate and any object unfortunate enough to be traversing them will be destroyed.<dfn class="restored">Laser Fences</dfn><var class="rules TechnoType boolean no">LaserFence=</var><var class="rules TechnoType boolean no">LaserFencePost=</var></p>
 
 	<h3>Firestorm Wall</h3>
-	<p>The Firestorm Wall has been re-enabled for testing purposes only at this stage. A BuildingType with <code>Firestorm.Wall=yes</code> will act as a section of such a wall, and auto-connect to other nearby pieces (see the original building's SHP from <span class="gamename">Tiberian Sun</span> to see how the art is controlled). When the wall is activated, any objects on top of these sections are destroyed, and non-friendly projectiles without <code>SubjectToFirestorm=no</code> are stopped by this wall. This is implemented as a Super Weapon with <code>Type=Firestorm</code> (for more details see the <a href="#TypeFirestorm">New Super Weapon Types: Firestorm</a> section).<br>
-	<span class="note">NB: The animations used by this logic are temporarily hard-coded to "FSIDLE", "FSGRND" and "FSAIR", as was used in <span class="gamename">Tiberian Sun</span>.</span><br>
-	<span class="note">NB: The AI has a lot of problems with targets behind an active Firestorm Wall, though this should not be a major problem due to the relatively small amount of game time that the Wall is active for.</span><dfn class="restored">Firestorm Wall</dfn><var class="rules BuildingType boolean no">Firestorm.Wall=</var><var class="rules Projectile boolean no">SubjectToFirestorm=</var></p>
+	<p>The Firestorm Wall and super weapon can now be implemented in <span class="gamename">Yuri's Revenge</span>.<br>
+	See the <a href="#TypeFirestorm">New Super Weapon Types: Firestorm</a> section) for details.<br>
 
 	<h3>Amphibious Voxel Changes</h3>
-	<p>In <span class="gamename">Tiberian Sun</span>, the Amphibious APC would appear to sink into the water. This was achieved by changing the imagery from apc.vxl to apcw.vxl. With Ares, you can now specify</p>
-	<dl class="flaglist">
-		<dt>[VehicleType]&#9658;WaterVoxel=(any string)</dt><dd>to make the amphibious unit's voxel change from XXXX.vxl to XXXXwo.vxl when in water.<var class="rules TechnoType string_-_voxel_file_name_suffix">WaterVoxel=</var></dd>
-	</dl>
-	<p><span class="note">NB: In future this will be changed to use the entered string as the voxel filename.</span><dfn class="restored">Amphibious vehicles can change their voxel when moving between water/land.</dfn></p>
+	<p>
+		In <span class="gamename">Tiberian Sun</span>, the Amphibious APC would appear to sink into the water. This was achieved by changing the imagery from apc.vxl to apcw.vxl. With Ares, you can now specify:
+		<dl class="flaglist">
+			<dt>[VehicleType]&#9658;WaterVoxel= (any string)</dt><dd>to make the amphibious unit's voxel change from XXXX.vxl to XXXXwo.vxl when in water.<br><span class="note">NB: In future this will be changed to use the entered string as the voxel filename.</span><var class="rules TechnoType string_-_voxel_file_name_suffix">WaterVoxel=</var></dd>
+		</dl>
+		<dfn class="restored">Amphibious vehicles can change their voxel when moving between water/land.</dfn>
+	</p>
 
 	<h2>New &amp; Enhanced In-Game Logic</h2>
 	<p>This chapter documents all the completely new features that have been added to the game.</p>
@@ -942,7 +948,7 @@ IF (CurrentFrame mod (2 * Bomb.FlickerRate) >= Bomb.FlickerRate) THEN frameToSho
 		<dt>[SuperWeapon]&#9658;SW.Deliver= (list of TechnoTypes)</dt>
 		<dd>The list of units that will be delivered. This works for infantry, vehicles, aircraft and buildings.<var class="rules SuperWeapon list_of_TechnoTypes">SW.Deliver=</var></dd>
 		<dt>[SuperWeapon]&#9658;SW.DeliverBuildups= (boolean)</dt>
-		<dd>Controls whether buildings delivered with this super weapon should play their buildup animation prior to becoming available.<var class="rules SuperWeapon boolean no">SW.DeliverBuildups=</var></dd>
+		<dd>Whether or not buildings delivered by this super weapon should play their buildup animation prior to becoming available.<var class="rules SuperWeapon boolean no">SW.DeliverBuildups=</var></dd>
 	</dl>
 	<p>All objects are placed on the ground, including aircraft. Flying units that never land (e.g. the Rocketeer and Kirovs) will take off.<br>
 	If a cell is occupied, the super weapon will retry on the next cell and so on, until the object gets placed. Once the first unit is placed, this process starts again for the next item in the list. Infantry squads are grouped in a single cell. The search will skip an item if it has not been placed after testing 100 cells.<br>
@@ -951,9 +957,21 @@ IF (CurrentFrame mod (2 * Bomb.FlickerRate) >= Bomb.FlickerRate) THEN frameToSho
 	The actual delivery of the units happens all at once, on the 20th frame after firing the super weapon. This delayed-effect logic will most likely be customizable in future and so, in future, the delay for this super weapon may default to a different amount.<dfn class="new">New super weapon type: UnitDelivery (create unit(s) at target cell).</dfn></p>
 	
 	<h5><code>Type=Firestorm</code></h5>
-	<p>This superweapon is a recreation of the <span class="gamename">Tiberian Sun</span> Firestorm superweapon - when fired, all structures with <code>Firestorm.Wall=yes</code> owned by the firing player will activate an energy shield, blocking all hostile projectiles except those with <code>SubjectToFirestorm=no</code> from passing through and destroying any friend or foe unlucky enough to come into direct contact with active cells. <br>
-	This Superweapon uses the old Charge Drain logic - once it's charged and activated, the effect will persist for a certain time, after which it will automatically shut down and the superweapon will restart its charging process. You can disable the effect while it's active, this will let it recharge faster. Refer to ModEnc for more information about the Charge Drain logic. While in <span class="gamename">Tiberian Sun</span> the Charge Drain was disableable through an INI flag, Ares forces this logic to be used regardless of the corresponding INI flag. <br>
-	In addition, Ares forces this SW to ignore its assigned <code>Action=</code>, if any - this is required to make it fire right from the sidebar.</p>
+	<p>
+		This superweapon is a recreation of the <span class="gamename">Tiberian Sun</span> Firestorm superweapon.<br>
+		When activated, all structures owned by the firing player that have <code>Firestorm.Wall=yes</code> set will emit an energy field, blocking all hostile projectiles (except those with <code>SubjectToFirestorm=no</code> set) from passing through. The energy field also destroys any friend or foe unlucky (or stupid) enough to come into direct contact with active cells.<br>
+		<br>
+		BuildingTypes with <code>Firestorm.Wall=yes</code> set will act as a section of the Firestorm Wall and auto-connect to other nearby pieces (check the original building's SHP from <span class="gamename">Tiberian Sun</span> to see how the art is controlled).<br>
+		<br>
+		This Superweapon uses the old Charge-Drain logic: once activated, the effect will persist for a duration determined by <code>[General]&#9658;ChargeToDrainRatio</code>, after which it will automatically shut down and the superweapon will restart its charging process. Whilst the effect is active you can click the super weapon button again to manually deactivate it, thus allowing the recharge process to begin earlier and finish faster. Refer to <a href="http://modenc.renegadeprojects.com/ChargeToDrainRatio">ModEnc</a> for more information about Charge-Drain logic.<br>
+		<br>
+		In <span class="gamename">Tiberian Sun</span>, the Charge-Drain feature was disableable through an INI flag (<code>[SuperWeapon]&#9658;UseChargeDrain=no</code>) however: <span class="gamename">Ares</span> forces this logic to be used regardless of the value of that flag. <span class="gamename">Ares</span> also forces this super weapon to ignore its assigned <code>Action</code>, if any, as this is required to make it activate from a single click of the sidebar icon.</p>
+		<span class="note">NB: The animations used by this logic are temporarily hard-coded to "FSIDLE", "FSGRND" and "FSAIR", as was used in <span class="gamename">Tiberian Sun</span>.</span><br>
+		<span class="note">NB: The AI has a lot of problems with targets behind an active Firestorm Wall, although this should not be a major problem due to the relatively small amount of game time that the Wall is active for.</span>
+	</p>
+	<dfn class="restored">Firestorm Wall</dfn>
+	<var class="rules BuildingType boolean no">Firestorm.Wall=</var>
+	<var class="rules Projectile boolean no">SubjectToFirestorm=</var>
 
 	<h3>Survivors</h3>
 	<p>In the original Red Alert, pilots would parachute from destroyed aircraft. Ares reintroduces this feature along with some additional improvements, all of which are customizable.<br>
@@ -1287,6 +1305,8 @@ AIRFORCE=GAAIRC,AMRADR</pre>
 	In the event of an Internal Error, Ares can sometimes tell you what caused the error. For example:<img src="./manual_images/ie.png" alt="Screenshot of an Ares Internal Error dialog showing the cause of an Internal Error" style="border: none;"></p>
 
 	<p>Some potential errors may now be triggered when loading rather than waiting for the error to crop up in game.<dfn class="new">Improved Internal Error handling and debug logs to assist with debugging mods/Ares.</dfn></p>
+	<h3>Bitmap Screenshots</h3>
+	<p>With Ares active, screenshots are now generated as BMP files rather than PCX. BMP files are smaller in size and are more widely supported.<br><span class="note">NB:The BMP files are written in reverse line order. This is perfectly valid but some graphics editors may not support it.</span><dfn class="new">Screenshots saved as BMP files rather than PCX.</dfn></p>
 	<h3>Random Map Generator</h3>
 	<p>Ares lets you create random maps using some new map styles &ndash; Archipelago terrain and the Desert tileset.<br>
 	<span class="note">NB: these options are not affected by the "Surprise Me" function for the moment.</span><br>
@@ -1306,6 +1326,8 @@ AIRFORCE=GAAIRC,AMRADR</pre>
 	<h4>Type Data Dumping</h4>
 	<p>A key can be assigned to output some additional information to the debug.log file (see above). The additional information is written to the log each time the key is pressed. This includes information such as AI trigger weighting, so mod authors can see how the AI is performing over the course of a game.<br>
 	Note that debug.log file writing must be turned on otherwise the data will not be written to the file.<dfn class="new">Type data dumping command (dump type information to a log file, including AI trigger weights).</dfn></p>
+	<h4>AI Assume Control</h4>
+	<p>A key can be assigned to have the AI take control of your base so that you can observe what the AI does. This is for testing purposes only.<br><span class="note">NB: You must let the AI assume control of your base before you deploy your MCV, otherwise the AI will do nothing.<br>NB: This hot key is available in multiplayer at present however this will most likely be changed in future.</span></p>
 	<h3>Command Line Arguments</h3>
 	<dl>
 		<dt>-CD</dt>
@@ -1336,19 +1358,25 @@ AIRFORCE=GAAIRC,AMRADR</pre>
 	This section details the modifications you'll most likely need to make to ensure your mod does not receive any unexpected changes from simply being run whilst Ares is active.<br>
 	In future these changes will be provided as extensions to the standard files that are included with the YR Unofficial 1.002 Mini-Patch Developer's Pack.</p>
 	<h3>artmd.ini</h3>
-	<dl class="flaglist">
-		<dt>[TELE]&#9658;SecondaryFireFLH=85,0,130</dt>
-		<dd>See RadBeams And Waves Using The Wrong FLH.</dd>
-	</dl>
+	<ul>
+		<li>
+			<dl class="flaglist">
+				<dt>[TELE]&#9658;SecondaryFireFLH=85,0,130</dt>
+				<dd>See RadBeams And Waves Using The Wrong FLH.</dd>
+			</dl>
+		</li>
+	</ul>
 	<h3>bombcurs.shp</h3>
 	<p>This animation needs to have its last frame removed if you don't want to see the previously unused skull image. See IvanBomb.FlickerRate.</p>
 	<h3>ares.mix</h3>
-	<p>Mods should not include ares.mix. This new MIX file is bundled with Ares to provide any new/modified files that Ares changes/additions rely on. This MIX file presently includes:
-	ares.csf &ndash; includes a few new strings that are used by the Random Map Generator:</p>
-	<ul class="nobullets">
-		<li>GUI:UrbanAreas=Create Urban Areas</li>
-		<li>Name:Desert=Desert</li>
-		<li>STT:RMGUrbanAreas=Choose whether urban areas will be present on the map.</li>
+	Mods should not include ares.mix. This new MIX file is bundled with Ares to provide any new/modified files that Ares changes/additions rely on. This MIX file presently includes:
+	<ul>
+		<li>ares.csf &ndash; includes a few new strings that are used by the Random Map Generator:</li>
+		<ul class="nobullets">
+			<li>GUI:UrbanAreas=Create Urban Areas</li>
+			<li>Name:Desert=Desert</li>
+			<li>STT:RMGUrbanAreas=Choose whether urban areas will be present on the map.</li>
+		</ul>
 	</ul>
 
 	<h2>Credits</h2>
@@ -1371,7 +1399,7 @@ AIRFORCE=GAAIRC,AMRADR</pre>
 	<p>For developing Launch Base and the YR Unofficial 1.002 Mini-Patch (UMP), and whipping this documentation into shape.</p>
 
 	<h4>Renegade</h4>
-	<p>For hosting Ares itself, performing the duties of Project Manager when necessary, and, of course, contributing code and helper tools.</p>
+	<p>For hosting Ares itself, performing the duties of Project Manager, creating the HTML version of the Ares manual and, of course, contributing code and helper tools.</p>
 
 	<h4>Ares Testers</h4>
 	<p>For devoting their free time to testing Ares and giving us feedback - this enables us to make <span class="gamename">Yuri's Revenge</span> and Ares even better.</p>
