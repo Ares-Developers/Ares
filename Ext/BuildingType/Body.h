@@ -119,6 +119,7 @@ public:
 			AnnounceInvalidPointer(RubbleDestroyed, ptr);
 		}
 
+		bool IsLinkable();
 	};
 
 	static Container<BuildingTypeExt> ExtMap;

@@ -266,6 +266,11 @@ void BuildingTypeExt::UpdateSecretLabOptions(BuildingClass *pThis)
 	pThis->SecretProduction = Result;
 }
 
+// Short check: Is the building of a linkable kind at all?
+bool BuildingTypeExt::ExtData::IsLinkable() {
+	return this->Firewall_Is || (this->IsTrench > -1);
+}
+
 // =============================
 // load/save
 

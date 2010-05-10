@@ -223,7 +223,7 @@ void BuildingExt::ExtData::evalRaidStatus() {
 // Short check: Is the building of a linkable kind at all?
 bool BuildingExt::ExtData::isLinkable() {
 	BuildingTypeExt::ExtData* typeExtData = BuildingTypeExt::ExtMap.Find(this->AttachedToObject->Type);
-	return typeExtData->Firewall_Is || (typeExtData->IsTrench > -1);
+	return typeExtData->IsLinkable();
 }
 
 // Full check: Can this building be linked to the target building?
@@ -311,7 +311,11 @@ void BuildingExt::buildLines(BuildingClass* theBuilding, CellStruct selectedCell
 				if(BuildingClass *tempBuilding = specific_cast<BuildingClass *>(theBuilding->Type->CreateObject(buildingOwner))) {
 					CoordStruct coordBuffer;
 					CellClass::Cell2Coord(&cellToBuildOn, &coordBuffer);
-					if(!tempBuilding->Put(&coordBuffer, 0)) {
+					if(tempBuilding->Put(&coordBuffer, 0)) {
+						tempBuilding->QueueMission(mission_Construction, false);
+						tempBuilding->UpdateOwner(buildingOwner);
+						tempBuilding->unknown_bool_6DD = 1;
+					} else {
 						GAME_DEALLOC(tempBuilding);
 					}
 				}

@@ -71,6 +71,8 @@ void UnitDeliveryStateMachine::PlaceUnits() {
 		return;
 	}
 
+	++Unsorted::SomeMutex;
+
 	while(unitIdx < pData->SW_Deliverables.Count) {
 		TechnoTypeClass * Type = pData->SW_Deliverables[unitIdx];
 		TechnoClass * Item = generic_cast<TechnoClass *>(Type->CreateObject(this->Super->Owner));
@@ -114,4 +116,5 @@ void UnitDeliveryStateMachine::PlaceUnits() {
 		++unitIdx;
 	}
 
+	--Unsorted::SomeMutex;
 }
