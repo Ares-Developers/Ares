@@ -71,8 +71,6 @@ void UnitDeliveryStateMachine::PlaceUnits() {
 		return;
 	}
 
-	++Unsorted::SomeMutex;
-
 	while(unitIdx < pData->SW_Deliverables.Count) {
 		TechnoTypeClass * Type = pData->SW_Deliverables[unitIdx];
 		TechnoClass * Item = generic_cast<TechnoClass *>(Type->CreateObject(this->Super->Owner));
@@ -90,7 +88,12 @@ void UnitDeliveryStateMachine::PlaceUnits() {
 				CellClass *cell = MapClass::Instance->GetCellAt(&tmpCell);
 				CoordStruct XYZ;
 				cell->GetCoordsWithBridge(&XYZ);
-				if(Placed = Item->Put(&XYZ, (cellIdx & 7))) {
+
+				++Unsorted::SomeMutex;
+				Placed = Item->Put(&XYZ, (cellIdx & 7));
+				--Unsorted::SomeMutex;
+
+				if(Placed) {
 					if(ItemBuilding) {
 						if (pData->SW_DeliverBuildups) {
 							ItemBuilding->UpdateOwner(this->Super->Owner);
@@ -115,6 +118,4 @@ void UnitDeliveryStateMachine::PlaceUnits() {
 		} while(!Placed);
 		++unitIdx;
 	}
-
-	--Unsorted::SomeMutex;
 }

@@ -1,6 +1,8 @@
 #include "Body.h"
 #include "../BuildingType/Body.h"
 #include "../House/Body.h"
+
+#include <AnimClass.h>
 #include <BuildingClass.h>
 #include <CellClass.h>
 #include <MapClass.h>
@@ -301,7 +303,6 @@ void BuildingExt::buildLines(BuildingClass* theBuilding, CellStruct selectedCell
 
 		}
 
-		++Unsorted::SomeMutex; // another mystical Westwood mechanism. According to D, Bad Things happen if this is missing.
 		// build a line of this buildingtype from the found building (if any) to the newly built one
 		CellStruct cellToBuildOn = selectedCell;
 		for(int distanceFromCenter = 1; distanceFromCenter <= linkLength; ++distanceFromCenter) {
@@ -311,7 +312,12 @@ void BuildingExt::buildLines(BuildingClass* theBuilding, CellStruct selectedCell
 				if(BuildingClass *tempBuilding = specific_cast<BuildingClass *>(theBuilding->Type->CreateObject(buildingOwner))) {
 					CoordStruct coordBuffer;
 					CellClass::Cell2Coord(&cellToBuildOn, &coordBuffer);
-					if(tempBuilding->Put(&coordBuffer, 0)) {
+
+					++Unsorted::SomeMutex; // another mystical Westwood mechanism. According to D, Bad Things happen if this is missing.
+					bool Put = tempBuilding->Put(&coordBuffer, 0);
+					--Unsorted::SomeMutex;
+
+					if(Put) {
 						tempBuilding->QueueMission(mission_Construction, false);
 						tempBuilding->UpdateOwner(buildingOwner);
 						tempBuilding->unknown_bool_6DD = 1;
@@ -321,7 +327,6 @@ void BuildingExt::buildLines(BuildingClass* theBuilding, CellStruct selectedCell
 				}
 			}
 		}
-		--Unsorted::SomeMutex;
 	}
 }
 
@@ -557,6 +562,80 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 		EnteredBuilding->SetLayer(lyr_Ground);
 	}
 	return true;
+}
+
+void BuildingExt::ExtData::UpdateFirewall() {
+	BuildingClass *B = this->AttachedToObject;
+	BuildingTypeClass *BT = B->Type;
+	HouseClass *H = B->Owner;
+	BuildingTypeExt::ExtData* pTypeData = BuildingTypeExt::ExtMap.Find(BT);
+
+	if(!pTypeData->Firewall_Is) {
+		return;
+	}
+
+	HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(H);
+	bool FS = pHouseData->FirewallActive;
+
+	DWORD FWFrame = BuildingExt::GetFirewallFlags(B);
+	if(FS) {
+		FWFrame += 32;
+	}
+
+	if(B->FirestormWallFrame != FWFrame) {
+		if(!pHouseData->FirewallRecalc) {
+			pHouseData->FirewallRecalc = 1;
+		}
+		B->FirestormWallFrame = FWFrame;
+		B->GetCell()->Setup(0xFFFFFFFF);
+		B->SetLayer(lyr_Ground); // HACK - repaints properly
+	}
+
+	if(!FS) {
+		return;
+	}
+
+	if(!(Unsorted::CurrentFrame % 7) && ScenarioClass::Instance->Random.RandomRanged(0, 15) == 1) {
+		int corners = (FWFrame & 0xF); // 1111b
+		if(AnimClass *IdleAnim = B->FirestormAnim) {
+			GAME_DEALLOC(IdleAnim);
+			B->FirestormAnim = 0;
+		}
+		if(corners != 5 && corners != 10) {  // (0101b || 1010b) == part of a straight line
+			CoordStruct XYZ;
+			B->GetCoords(&XYZ);
+			XYZ.X -= 768;
+			XYZ.Y -= 768;
+			if(AnimTypeClass *FSA = AnimTypeClass::Find("FSIDLE")) {
+				GAME_ALLOC(AnimClass, B->FirestormAnim, FSA, &XYZ);
+			}
+		}
+	}
+
+	this->ImmolateVictims();
+}
+
+void BuildingExt::ExtData::ImmolateVictims() {
+	CellClass *C = this->AttachedToObject->GetCell();
+	for(ObjectClass *O = C->GetContent(); O; O = O->NextObject) {
+		this->ImmolateVictim(O);
+	}
+}
+
+void BuildingExt::ExtData::ImmolateVictim(ObjectClass * Victim) {
+	BuildingClass *pThis = this->AttachedToObject;
+	if(generic_cast<TechnoClass *>(Victim) && Victim != pThis && !Victim->InLimbo && Victim->IsAlive && Victim->Health) {
+		CoordStruct XYZ;
+		Victim->GetCoords(&XYZ);
+		int Damage = Victim->Health;
+		Victim->ReceiveDamage(&Damage, 0, RulesClass::Instance->C4Warhead/* todo */, 0, 1, 0, pThis->Owner);
+
+		if(AnimTypeClass *FSAnim = AnimTypeClass::Find(Victim->IsInAir() ? "FSAIR" : "FSGRND")) {
+			AnimClass * placeholder;
+			GAME_ALLOC(AnimClass, placeholder, FSAnim, &XYZ);
+		}
+
+	}
 }
 
 // =============================

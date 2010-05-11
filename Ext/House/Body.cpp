@@ -1,4 +1,5 @@
 #include "Body.h"
+#include "../Building/Body.h"
 #include "../BuildingType/Body.h"
 #include "../TechnoType/Body.h"
 #include "../../Enum/Prerequisites.h"
@@ -135,20 +136,20 @@ void HouseExt::ExtData::SetFirestormState(bool Active) {
 
 	DynamicVectorClass<CellStruct> AffectedCoords;
 
-	for(int i = 0; i < BuildingClass::Array->Count; ++i) {
-		BuildingClass *B = BuildingClass::Array->Items[i];
-		if(B->Owner == pHouse) {
-			BuildingTypeExt::ExtData *pBuildTypeData = BuildingTypeExt::ExtMap.Find(B->Type);
-			if(pBuildTypeData->Firewall_Is) {
-				CellStruct temp;
-				B->GetMapCoords(&temp);
-				AffectedCoords.AddItem(temp);
-			}
+	for(int i = 0; i < pHouse->Buildings.Count; ++i) {
+		BuildingClass *B = pHouse->Buildings[i];
+		BuildingTypeExt::ExtData *pBuildTypeData = BuildingTypeExt::ExtMap.Find(B->Type);
+		if(pBuildTypeData->Firewall_Is) {
+			BuildingExt::ExtData * pData = BuildingExt::ExtMap.Find(B);
+			pData->UpdateFirewall();
+			CellStruct temp;
+			B->GetMapCoords(&temp);
+			AffectedCoords.AddItem(temp);
 		}
 	}
 
-	MapClass::Global()->Update_Pathfinding_1();
-	MapClass::Global()->Update_Pathfinding_2(&AffectedCoords);
+	MapClass::Instance->Update_Pathfinding_1();
+	MapClass::Instance->Update_Pathfinding_2(&AffectedCoords);
 };
 
 // =============================

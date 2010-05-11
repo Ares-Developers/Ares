@@ -62,31 +62,6 @@ DEFINE_HOOK_AGAIN(6FF860, TechnoClass_Fire_FSW, 8)
 	return 0;
 }
 
-DEFINE_HOOK(4DA53E, FootClass_Update, 6)
-{
-	GET(FootClass *, F, ESI);
-
-	CellClass *C = F->GetCell();
-	if(BuildingClass * B = C->GetBuilding()) {
-		BuildingTypeClass *BT = B->Type;
-		HouseClass *H = B->Owner;
-		BuildingTypeExt::ExtData* pTypeData = BuildingTypeExt::ExtMap.Find(BT);
-		HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(B->Owner);
-		if(pTypeData->Firewall_Is && pHouseData->FirewallActive && !F->InLimbo && F->IsAlive && F->Health) {
-			int Damage = F->Health;
-			F->ReceiveDamage(&Damage, 0, RulesClass::Instance->C4Warhead, 0, 1, 0, H);
-			if(AnimTypeClass *FSAnim = AnimTypeClass::Find(F->IsInAir() ? "FSAIR" : "FSGRND")) {
-				CoordStruct XYZ;
-				F->GetCoords(&XYZ);
-				AnimClass * placeholder;
-				GAME_ALLOC(AnimClass, placeholder, FSAnim, &XYZ);
-			}
-		}
-	}
-
-	return 0;
-}
-
 DEFINE_HOOK(4F8440, HouseClass_Update_FSW_Recalc, 5)
 {
 	GET(HouseClass *, H, ECX);
