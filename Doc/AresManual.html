@@ -127,7 +127,7 @@
 		}
 		.note {
 			/*font-weight: bold;*/
-			color: #DD6600;
+			color: #DD4400;
 			font-size: 90%;
 			font-style: italic;
 		}
@@ -155,6 +155,9 @@
 		}
 		.gamename {
 			font-variant: small-caps;
+		}
+		.filename {
+			font-family: monospace;
 		}
 		div.ares02 H4 {
 			margin-top: 0em;
@@ -191,28 +194,28 @@
 	<noscript><p class="red">The Ares manual uses JavaScript for extended functionality such as TOC generation. How about you join the 21st century and enable JS?</p></noscript>
 	<img src="./manual_images/ares_manual_header.png" alt="Ares logo" style="border: none;">
 	<a name="top"></a>
-	<h1>Ares Documentation</h1>
+	<h1><span class="gamename">Ares</span> Documentation</h1>
 	<h2>Table of Contents</h2>
-	<div id="ares_version_selector">Show Ares 0.2 documentation <input type="checkbox" id="show_02" value="true"> </div><p>Due to the length of the TOC, it is hidden by default. <a href="#toc" id="toctoggle">Click here</a> to expand it.</p>
+	<div id="ares_version_selector">Show <span class="gamename">Ares</span> 0.2 documentation <input type="checkbox" id="show_02" value="true"> </div><p>Due to the length of the TOC, it is hidden by default. <a href="#toc" id="toctoggle">Click here</a> to expand it.</p>
 	<ul id="toc" class="nobullets"><li class="pseudo"></li></ul>
 	
 	<h2>Introduction</h2>
-	<p>Ares (formerly known as <span class="gamename">RockPatch 2</span>) is the new tool to extend the capabilities of <span class="gamename">Yuri's Revenge</span>. It was conceived by pd near the end of 2007, and is currently in an early development and testing cycle.</p>
+	<p><span class="gamename">Ares</span> is the new tool to extend the capabilities of <span class="gamename">Yuri's Revenge</span>. It was conceived by pd near the end of 2007, and is currently in an early development and testing cycle.</p>
 
-	<p>This documentation is aimed primarily at Ares testers, as Ares is a work in progress and subject to many further changes. However, the documentation is also aimed at mod authors wishing to make use of the new functionality that Ares offers.</p>
+	<p>This documentation is aimed primarily at <span class="gamename">Ares</span> testers, as <span class="gamename">Ares</span> is a work in progress and subject to many further changes. However, the documentation is also aimed at mod authors wishing to make use of the new functionality that <span class="gamename">Ares</span> offers.</p>
 
-	<p>Ares is incorporated into <span class="gamename">Yuri's Revenge</span> via the use of Syringe, a program developed by pd to 'inject' DLL code into a running executable without modifying the executable itself. In this case, the Ares DLL is injected into the <span class="gamename">Yuri's Revenge 1.001</span> main executable, gamemd.exe.</p>
+	<p><span class="gamename">Ares</span> is incorporated into <span class="gamename">Yuri's Revenge</span> via the use of Syringe, a program developed by pd to 'inject' DLL code into a running executable without modifying the executable itself. In this case, the <span class="gamename">Ares</span> DLL is injected into the <span class="gamename">Yuri's Revenge 1.001</span> main executable, gamemd.exe.</p>
 	
 	<p>Syringe can be run directly via a command line prompt, or automatically using Launch Base. See the respective documentations of those programs for further details.</p>
 
 	<h3>Compatibility Notes</h3>
 	<h4>RockPatch/NPatch</h4>
-	<p>Ares is not intended to be used in conjunction with any third party patch that modifies the executable of the game. This is due to fairly obvious technical reasons that were best summarized by Renegade: [paraphrase] <q cite="Renegade">You can't use the USA maps on your GPS to navigate through Russia.</q><br>
+	<p><span class="gamename">Ares</span> is not intended to be used in conjunction with any third party patch that modifies the executable of the game. This is due to fairly obvious technical reasons that were best summarized by Renegade: [paraphrase] <q cite="Renegade">You can't use the USA maps on your GPS to navigate through Russia.</q><br>
 	...because sooner or later you will drive down a road that doesn't exist, and off a cliff.</p>
 
 	<h4>Save Games</h4>
-	<p>For the same reasons, Ares does not support loading save games or scripted IPB videos that were created with any other version of the game than the very same version of Ares (not even the original <span class="gamename">Yuri's Revenge</span> save games are supported).<br>
-	<span class="note">NB: Unfortunately, for the moment, save games are not functional at all in Ares. This is a known problem that will be fixed in the future - Ares will eventually be able to load games that were saved using [the exact same version of] Ares.</span></p>
+	<p>For the same reasons, <span class="gamename">Ares</span> does not support loading save games or scripted IPB videos that were created with any other version of the game than the very same version of <span class="gamename">Ares</span> (not even the original <span class="gamename">Yuri's Revenge</span> save games are supported).<br>
+	<span class="note">NB: Unfortunately, for the moment, save games are not functional at all in <span class="gamename">Ares</span>. This is a known problem that will be fixed in the future - <span class="gamename">Ares</span> will eventually be able to load games that were saved using [the exact same version of] <span class="gamename">Ares</span>.</span></p>
 
 	<h3>Known Major Issues</h3>
 	<ul>
@@ -225,7 +228,7 @@
 	</ul>
 
 	<h2>Bug Fixes</h2>
-	<p>Ares provides three types of bug fixes:</p>
+	<p><span class="gamename">Ares</span> provides three types of bug fixes:</p>
 	<ol>
 	<li>Fixes to genuine bugs in the original, unmodded <span class="gamename">Yuri's Revenge 1.001</span>, that cannot be fixed simply by modifying INI files or graphics (like the <span class="gamename">UMP</span> does).</li>
 	<li>Fixes to logic that goes unused in the unmodded game, or at least not used to its full capabilities &ndash; i.e. game logic that often does not work as expected when used in mods.<br>
@@ -243,14 +246,14 @@
 	Also, spawning units would have their spawned aircraft destroyed. This is no longer happens. <dfn class="bugfix">Temporal warheads no longer affect objects that are not warpable</dfn></p>
 
 	<h4>'Absolute-Damage' Prism Support Modifier</h4>
-	<p>Whenever a game mode or map declared the <code>[General]</code> section without re-stating the PrismSupportModifier, the PrismSupportModifier from rulesmd.ini would get multiplied by 100, thus causing supported Prism Towers to deal seemingly 'instant-kill' damage.<br>
+	<p>Whenever a game mode or map declared the <code>[General]</code> section without re-stating the <code>PrismSupportModifier</code>, the <code>PrismSupportModifier</code> from <span class="filename">rulesmd.ini</span> would get multiplied by 100, thus causing supported Prism Towers to deal seemingly 'instant-kill' damage.<br>
 	This bug is now fixed, however it should be noted that several official maps used to exhibit this bug and so are 'fixed' by the UMP by re-stating PrismSupportModifier which means that these maps are now set at the original 150%, regardless of what your mod may set it to (so if you are incorporating the UMP into your mod and change the modifier as well then you will need to amend the 'fixed' UMP maps accordingly).<dfn class="bugfix">Prism support modifier fixed for game modes/maps.</dfn></p>
 
 	<h4>Frozen Mutation (MakeInfantry) Animations</h4>
-	<p>Infantry killed by a mutation warhead appear to transform into another InfantryType. Internally this is achieved by playing an animation, upon completion of which a new infantry unit is spawned. If the cell where the new infantry is to be spawned is already occupied then the animation will pause on the final frame until the obstacle is cleared. The original game would allocate memory for the new infantry on every frame but would fail to de-allocate that memory when the infantry could not be placed. The more time that passes with the animation in this state, the worse the memory leak gets &ndash; resulting in the game eventually grinding to a halt. Ares fixes this by simply deleting the animation if the new infantry unit cannot be spawned.<dfn class="bugfix">Stuck mutation animations are deleted (thus preventing a memory leak)</dfn></p>
+	<p>Infantry killed by a mutation warhead appear to transform into another InfantryType. Internally this is achieved by playing an animation, upon completion of which a new infantry unit is spawned. If the cell where the new infantry is to be spawned is already occupied then the animation will pause on the final frame until the obstacle is cleared. The original game would allocate memory for the new infantry on every frame but would fail to de-allocate that memory when the infantry could not be placed. The more time that passes with the animation in this state, the worse the memory leak gets &ndash; resulting in the game eventually grinding to a halt. <span class="gamename">Ares</span> fixes this by simply deleting the animation if the new infantry unit cannot be spawned.<dfn class="bugfix">Stuck mutation animations are deleted (thus preventing a memory leak)</dfn></p>
 
 	<h4>Misleading Veteran Naval Cameos</h4>
-	<p>When you infiltrate an enemy War Factory, any [trainable] VehicleTypes' (not AircraftTypes) cameos (build icons) will gain the veteran symbol, indicating that they will start veteran when built. However, only vehicles built from a War Factory will actually start veteran, not vehicles built from a Naval Yard. Ares ensures that only the vehicles that will actually start veteran gain the veteran symbol for their cameos.<dfn class="bugfix">Spying a war factory will not give you veteran build icons for naval units incorrectly.</dfn></p>
+	<p>When you infiltrate an enemy War Factory, any [trainable] VehicleTypes' (not AircraftTypes) cameos (build icons) will gain the veteran symbol, indicating that they will start veteran when built. However, only vehicles built from a War Factory will actually start veteran, not vehicles built from a Naval Yard. <span class="gamename">Ares</span> ensures that only the vehicles that will actually start veteran gain the veteran symbol for their cameos.<dfn class="bugfix">Spying a war factory will not give you veteran build icons for naval units incorrectly.</dfn></p>
 
 	<h4>Secret Lab Boon Weighting</h4>
 	<p>The random weighting of each possible Secret Lab boon was not calculated correctly &ndash; the later a boon appeared in the list the less likely it was to appear in-game. For example, if the Grand Cannon were not picked as the boon for the first Secret Lab on the map (probability 1/8) then it could not be picked for any of the other Secret Labs. This has been fixed such that every Secret Lab will pick its boon completely at random, independently of other Secret Labs on the map.<dfn class="bugfix">Secret lab boons are picked truly at random.</dfn></p>
@@ -265,14 +268,14 @@
 	<p>It was possible to issue the 'guard mode' order to enemy harvesters as if they were your own units. Players unaware of this exploit would find their economy crippled when facing an unscrupulous player. It is no longer possible to issue the guard mode order to enemy harvesters.<dfn class="bugfix">"Enemy harvester guard mode" exploit no longer works.</dfn></p>
 
 	<h4>Parasites In Airborne Units</h4>
-	<p>If a parasite (e.g. Terror Drone) entered a unit that can fly (e.g. Nighthawk) and that unit was destroyed by the parasite whilst airborne then the parasite would appear, unscathed, on the ground beneath the destroyed unit. In Ares, the parasite will instead appear at the same height as the destroyed airborne unit and fall to the ground - where it will be destroyed by the impact.<dfn class="bugfix">Parasites that destroy an airborne unit will fall to the ground and be destroyed too.</dfn></p>
+	<p>If a parasite (e.g. Terror Drone) entered a unit that can fly (e.g. Nighthawk) and that unit was destroyed by the parasite whilst airborne then the parasite would appear, unscathed, on the ground beneath the destroyed unit. In <span class="gamename">Ares</span>, the parasite will instead appear at the same height as the destroyed airborne unit and fall to the ground - where it will be destroyed by the impact.<dfn class="bugfix">Parasites that destroy an airborne unit will fall to the ground and be destroyed too.</dfn></p>
 
 	<h4>Warhead Verses' Special Values</h4>
 	<p>The Verses flag (which is used on warheads to manipulate the damage dealt versus different armor types) has three special-case values used to define additional behavior:<br>
 	0% means no force fire, no retaliate, no passive acquire <br>
 	1% means no retaliate, no passive acquire<br>
 	2% means no passive acquire<br>
-	However, a bug with the way the floating point values are compared means that these behaviors were not always applied consistently. Ares fixes this bug so the behavior should always be consistent now.<br>
+	However, a bug with the way the floating point values are compared means that these behaviors were not always applied consistently. <span class="gamename">Ares</span> fixes this bug so the behavior should always be consistent now.<br>
 	The special behaviors can also now be toggled independently of the Verses value (see Additional ArmorTypes and Verses).<dfn class="bugfix">Warhead verses special values (0%/1%/2%) should now apply their behavior consistently.</dfn></p>
 
 	<h4>Unit Sounds Played At Inappropriate Times</h4>
@@ -283,13 +286,13 @@
 	<p>When an InfantryType with <code>MovementZone=AmphibiousDestroyer</code> was carried between water and land inside an 'open topped' vehicle (e.g. a Nighthawk converted into a flying Battle Fortress), their EnterWaterSound/ExitWaterSound would be played. Now, these sounds will only be played when the InfantryType themselves physically enters/leaves water.</p>
 
 	<h4>Buildable Secret Labs</h4>
-	<p>Secret Lab boons were picked on map load so if a Secret Lab were not pre-placed on the map then it would not provide a boon. With Ares, Secret Labs constructed by a player will randomly pick a boon that that player could not build at the time the Secret Lab was placed.<dfn class="bugfix">Buildable secret labs will now have a boon.</dfn></p>
+	<p>Secret Lab boons were picked on map load so if a Secret Lab were not pre-placed on the map then it would not provide a boon. With <span class="gamename">Ares</span>, Secret Labs constructed by a player will randomly pick a boon that that player could not build at the time the Secret Lab was placed.<dfn class="bugfix">Buildable secret labs will now have a boon.</dfn></p>
 
 	<h4>Buildable Construction Yards</h4>
 	<p>Construction Yards that were made buildable from the sidebar would cause an Internal Error if the player started construction of one and then cancelled it. This error no longer occurs.<dfn class="bugfix">Buildable construction yards no longer cause an IE when canceled.</dfn></p>
 
 	<h4>Animation Damage Warheads</h4>
-	<p>Animations may have appeared to deal damage randomly rather than based on the warhead specified. In fact, animations were hard-coded to deal damage using the warhead specified by <code>[CombatDamage]&#9658;FlameDamage2</code>, unless the animation ID was <code>[INVISO]</code>, in which case the warhead used was <code>[CombatDamage]&#9658;C4Warhead</code>. With Ares, the <code>[Animation]&#9658;Warhead=</code> flag will be adhered to, with the aforementioned warheads used as the default if <code>[Animation]&#9658;Warhead</code> is not specified.<dfn class="bugfix">Animations' warhead flag now works.</dfn><var class="art Animation warhead">Warhead=</var></p>
+	<p>Animations may have appeared to deal damage randomly rather than based on the warhead specified. In fact, animations were hard-coded to deal damage using the warhead specified by <code>[CombatDamage]&#9658;FlameDamage2</code>, unless the animation ID was <code>[INVISO]</code>, in which case the warhead used was <code>[CombatDamage]&#9658;C4Warhead</code>. With <span class="gamename">Ares</span>, the <code>[Animation]&#9658;Warhead=</code> flag will be adhered to, with the aforementioned warheads used as the default if <code>[Animation]&#9658;Warhead</code> is not specified.<dfn class="bugfix">Animations' warhead flag now works.</dfn><var class="art Animation warhead">Warhead=</var></p>
 
 	<h4>Initial Veteran Cameos</h4>
 	<p>When you infiltrate, say, an enemy Barracks, any [trainable] infantry that you subsequently build will start veteran. The infantry's cameos (build icons) will gain the veteran symbol to indicate this. However, if the country you are playing as has any units that always 'start veteran' then those units did not gain the veteran symbol for their cameos. Now they do.<dfn class="bugfix">Units that start veteran as a country-specific bonus will now have veteran build icons.</dfn></p>
@@ -302,7 +305,7 @@
 
 	<h4>RadBeams And Waves Using The Wrong FLH</h4>
 	<p>The weapon effects of Radiation Beams and Waves (Sonic and Magnetron Beams) would always get drawn from the FLH of the firing unit's current primary weapon rather than from the FLH of the weapon that actually fired the beam/wave. Now the weapon effects will be drawn using the correct FLH.<br>
-	Note that the Magnetron does not have a SecondaryFireFLH set in the unmodded game, so any mod using Ares will need to set this themselves. You may also need to correct the FLHs for the IFV.<dfn class="bugfix">RadBeams and waves will use the correct FLH (instead of always using PrimaryFLH).</dfn></p>
+	Note that the Magnetron does not have a SecondaryFireFLH set in the unmodded game, so any mod using <span class="gamename">Ares</span> will need to set this themselves. You may also need to correct the FLHs for the IFV.<dfn class="bugfix">RadBeams and waves will use the correct FLH (instead of always using PrimaryFLH).</dfn></p>
 
 	<h4>Sonic Wave Ambient Damage</h4>
 	<p>The Warhead and AmbientDamage settings used when applying ambient damage from a sonic weapon were always taken from the unit's current primary weapon rather than the weapon that actually fired the wave. Now these settings are taken from the weapon that fired the wave.<dfn class="bugfix">Sonic wave ambient damage comes from the correct weapon (instead of always Primary).</dfn></p>
@@ -312,22 +315,22 @@
 	<span class="note">NB: BuildingTypes do not get the Dynamite cursor.</span><dfn class="bugfix">Ivan bombs can be fired by any unit (instead of just infantry).</dfn></p>
 
 	<h4>BuildingType Upgrades Are Not Viable Prerequisites</h4>
-	<p>Before Ares, upgrades did not appear to work as prerequisites &ndash; if you had the upgrade, you still didn't satisfy the prerequisite. In fact, only the most recently constructed BuildingType would be checked to see if it had the upgrade. With Ares, all upgrades on all BuildingTypes are eligible to satisfy any prerequisite logic that a normal BuildingType can.<br>
+	<p>Before <span class="gamename">Ares</span>, upgrades did not appear to work as prerequisites &ndash; if you had the upgrade, you still didn't satisfy the prerequisite. In fact, only the most recently constructed BuildingType would be checked to see if it had the upgrade. With <span class="gamename">Ares</span>, all upgrades on all BuildingTypes are eligible to satisfy any prerequisite logic that a normal BuildingType can.<br>
 	In addition, upgrades can now satisfy a super weapon's AuxBuilding.<dfn class="bugfix">Building upgrades can now be used as prerequisites.</dfn></p>
 
 	<h4>Custom Palettes</h4>
-	<p>The original game supports custom palettes on TechnoTypes using <code>Palette=</code> (filename, excluding .pal extension) on the TechnoType's entry in artmd.ini. However, the game would crash (with the message "You have violated the limit of having only one extra building Palette" in the (non-existent) log file) if you used the Palette flag more than once. And, of course, the one extra palette was already in use on the Statue of Liberty. Ares removes this limit and lets you use custom palettes on all TechnoTypes to your heart's content.<br>
+	<p>The original game supports custom palettes on TechnoTypes using <code>Palette=</code> (filename, excluding .pal extension) on the TechnoType's entry in <span class="filename">artmd.ini</span>. However, the game would crash (with the message "You have violated the limit of having only one extra building Palette" in the (non-existent) log file) if you used the Palette flag more than once. And, of course, the one extra palette was already in use on the Statue of Liberty. <span class="gamename">Ares</span> removes this limit and lets you use custom palettes on all TechnoTypes to your heart's content.<br>
 	<span class="note">NB: It is not known why this apparently arbitrary limit on custom palettes was in place &ndash; it may have been there to mask a bug that we don't yet know about.</span><dfn class="bugfix">Units can specify a custom palette.</dfn></p>
 
 	<h4>Factory Load Sharing</h4>
-	<p>If you had queued up a lot of vehicles such that the primary factory could not cope with the rapid exit cycle then the game would search for alternative exits &ndash; other instances of the same BuildingType. In Ares this has been extended to search for all BuildingTypes with the same <code>Factory=</code> and <code>Naval=</code> settings.<br>
+	<p>If you had queued up a lot of vehicles such that the primary factory could not cope with the rapid exit cycle then the game would search for alternative exits &ndash; other instances of the same BuildingType. In <span class="gamename">Ares</span> this has been extended to search for all BuildingTypes with the same <code>Factory=</code> and <code>Naval=</code> settings.<br>
 	<span class="note">NB: This fix currently prevents the so-called 'kennel hack' from working.</span><dfn class="bugfix">Factory load sharing for factories of the same type, rather than just the same ID.</dfn></p>
 
 	<h4>New Construction Options</h4>
 	<p>One cause of the NCO bug (where the EVA will announce "new construction options" when, in fact, there aren't any) was the game's failure to check if the player had the appropriate factory type to build the unit concerned (e.g. a VehicleType factory for VehicleTypes). Such a check will now take place, thus removing this cause of the NCO bug.<dfn class="bugfix">"New construction options" no longer announced if player does not have the correct factory type for a unit.</dfn></p>
 
 	<h4>"Special" Weapons Only Functional In The Primary Slot</h4>
-	<p>Units with weapons that use <code>MindControl=yes</code>, Parasite=yes or <code>Temporal=yes</code> require special treatment behind-the-scenes in order to function. However, the original game only performed this treatment if those units had such weapons as their Primary weapon. The treatment would not be applied for Secondary weapons and thus result in crashes. Ares performs the treatment for Secondary weapons too.<br>
+	<p>Units with weapons that use <code>MindControl=yes</code>, Parasite=yes or <code>Temporal=yes</code> require special treatment behind-the-scenes in order to function. However, the original game only performed this treatment if those units had such weapons as their Primary weapon. The treatment would not be applied for Secondary weapons and thus result in crashes. <span class="gamename">Ares</span> performs the treatment for Secondary weapons too.<br>
 	<span class="note">NB: The 'special treatment' sets up the object wielding these weapons. However, the original code is not designed to handle an object having more than one weapon with 'special' functionality so it is not recommended to have multiple weapons with the same type of special functionality on a single object.</span><dfn class="bugfix">Special weapons (mind-control/parasite/temporal) will now work in the Secondary slot.</dfn></p>
 
 	<h4>DestroyAnims Don't Remap</h4>
@@ -337,7 +340,7 @@
 	<p>The <code>DestroyAnims=</code> flag used to cause reconnection errors in multiplayer whenever it was used. This should not happen anymore.<dfn class="bugfix">DestroyAnims don't cause reconnection errors anymore.</dfn></p>
 
 	<h4>BuildingTypes and InfantryTypes Do Not Reload Ammo Properly</h4>
-	<p>See ModEnc://Ammo for exact details of this problem. Put simply, ammo/reloading logic did not work properly on BuildingTypes or InfantryTypes and was essentially useless on those object types. Ares fixes this logic such that these object types will now reload their ammo properly. Note that AircraftTypes are hard-coded to require docking to reload.<br>
+	<p>See ModEnc://Ammo for exact details of this problem. Put simply, ammo/reloading logic did not work properly on BuildingTypes or InfantryTypes and was essentially useless on those object types. <span class="gamename">Ares</span> fixes this logic such that these object types will now reload their ammo properly. Note that AircraftTypes are hard-coded to require docking to reload.<br>
 	Additionally, BuildingTypes with <code>Hospital=yes</code> or <code>Armory=yes</code> limit their special effects to the current Ammo they have, and previously those structures were hardwired to never reload their ammo. This restriction has been lifted, so you might need to revise the balance of such structures.<dfn class="bugfix">Infantry and buildings can now reload ammo correctly.</dfn></p>
 
 	<h4>Unit Instances Not Counting Towards BuildLimit</h4>
@@ -352,47 +355,47 @@
 	<p>Multiple loose PKT files can now be used without their contents being duplicated (unless you duplicate the mapfilters, of course).<dfn class="bugfix">Multiple loose PKT files no longer have their contents duplicated.</dfn></p>
 	
 	<h4>Overriding Missionsmd.pkt</h4>
-	<p>You can now override the original missionsmd.pkt by placing your own version in an expandmd##.mix file (the game has been modified to load these files before langmd.mix).<dfn class="bugfix">Missionsmd.pkt can now be overridden by your own version inside expandmd##.mix</dfn></p>
+	<p>You can now override the original <span class="filename">missionsmd.pkt</span> by placing your own version in an <span class="filename">expandmd##.mix</span> file (the game has been modified to load these files before <span class="filename">langmd.mix</span>).<dfn class="bugfix">Missionsmd.pkt can now be overridden by your own version inside expandmd##.mix</dfn></p>
 
 	<h4>Moving Alpha Lights</h4>
 	<p>The original game includes a little-known flag that allows all ObjectTypes (anything placeable on the map - Projectiles, Trees, Overlays, Smudges (not the IsometricTileTypes), Aircraft, Infantry, Vehicles and Buildings) to have a lighting effect displayed on them.<br>
-	<code>[Object]&#9658;AlphaImage=ALPHATST</code> instructs the game to display ALPHATST.shp on the object as a lighting effect. The SHP must be saved without any compression (just like mouse.sha). 
-	Ares adds two improvements to this feature:<br>
+	<code>[Object]&#9658;AlphaImage=ALPHATST</code> instructs the game to display <span class="filename">ALPHATST.shp</span> on the object as a lighting effect. The SHP must be saved without any compression (just like mouse.sha). 
+	<span class="gamename">Ares</span> adds two improvements to this feature:<br>
 	<ul>
 		<li>The lighting effect will follow the object around as it moves, rather than staying where the object was created.<dfn class="bugfix">Alpha lights will now move with the object they are attached too.</dfn><br><span class="note">NB: Alpha Lights on moving objects are a potential source of lag.</span></li>
-		<li>If the SHP has multiple frames then it is interpreted as a multi-facing image, and the largest n frames in the image are used as facing-specific versions (in this case, n is the largest power of 2 that is less than or equal to the number of frames in the SHP, e.g. 2/4/8/16/32/64...)<dfn class="bugfix">Alpha lights can now have multiple facings.</dfn></p></li>
+		<li>If the SHP has multiple frames then it is interpreted as a multi-facing image, and the largest n frames in the image are used as facing-specific versions (in this case, n is the largest power of 2 that is less than or equal to the number of frames in the SHP, e.g. 2/4/8/16/32/64...)<dfn class="bugfix">Alpha lights can now have multiple facings.</dfn></li>
 	</ul>
 
 	<h4>Mind-Controller Parasites</h4>
 	<p>MC-parasites would draw a mind-control link between the mind-controlled unit and the point on the map where the parasite entered the unit. Now the link will not be drawn at all. You can also use MindControl.Permanent instead, in order to use the perma-mc animation.<dfn class="bugfix">Mind-controller parasites will no longer draw the mind-control link when the the target is selected.</dfn></p>
 
 	<h4>SpyPlane.Count Decoupled From AllyParaDropNum</h4>
-	<p>If you set <code>AllyParaDropNum=</code> to a list of integers so as to send multiple InfantryTypes in the paradrop (and thus multiple paradrop planes) then the SpyPlane super weapon would also send the same number of planes as there were elements in that list. In Ares, the number of spy planes sent out is now specified by the super weapon's own <code>SpyPlane.Count=</code> flag (which defaults to 1).<dfn class="bugfix">SpyPlane.Count decoupled from AllyParaDropNum.</dfn></p>
+	<p>If you set <code>AllyParaDropNum=</code> to a list of integers so as to send multiple InfantryTypes in the paradrop (and thus multiple paradrop planes) then the SpyPlane super weapon would also send the same number of planes as there were elements in that list. In <span class="gamename">Ares</span>, the number of spy planes sent out is now specified by the super weapon's own <code>SpyPlane.Count=</code> flag (which defaults to 1).<dfn class="bugfix">SpyPlane.Count decoupled from AllyParaDropNum.</dfn></p>
 
 	<h4>DigSound</h4>
-	<p><code>[AudioVisual]&#9658;DigSound=</code> is used for both the global Nuke siren and the sound made when a subterranean unit (with Locomotor={4A582743-9839-11d1-B709-00A024DDAFD1}) digs into or emerges from the ground. With Ares, the super weapon can specify its own <code>Nuke.Sound=</code> (which defaults to <code>[AudioVisual]&#9658;DigSound=</code>).<dfn class="bugfix">Nuke super weapons can be overridden to use a sound other than DigSound for their siren.</dfn></p>
+	<p><code>[AudioVisual]&#9658;DigSound=</code> is used for both the global Nuke siren and the sound made when a subterranean unit (with Locomotor={4A582743-9839-11d1-B709-00A024DDAFD1}) digs into or emerges from the ground. With <span class="gamename">Ares</span>, the super weapon can specify its own <code>Nuke.Sound=</code> (which defaults to <code>[AudioVisual]&#9658;DigSound=</code>).<dfn class="bugfix">Nuke super weapons can be overridden to use a sound other than DigSound for their siren.</dfn></p>
 
 	<h4>Jumpjet Shadows</h4>
 	<p>If a Jumpjet vehicle uses SHP-based imagery then the shadow would only be drawn when the unit was at rest on the ground or if <code>Turret=yes</code> were set (and then the shadow would appear directly underneath the unit instead of on the ground). Now the shadow will always be drawn correctly on the ground.<dfn class="bugfix">Shadows on jumpjet units will now be drawn correctly when the unit is airborne.</dfn></p>
 
 	<h4>Vehicle Paradrop Offset</h4>
-	<p>Passengers of AircraftTypes get paradropped out if the AircraftType fires its weapon. The passengers would always use the infantry sub-cell positions for where they would be spawned, even if the passenger were not an InfantryType. This ultimately meant that vehicles would appear to fall part-way into the ground upon landing. This error no longer happens in Ares.<br>
+	<p>Passengers of AircraftTypes get paradropped out if the AircraftType fires its weapon. The passengers would always use the infantry sub-cell positions for where they would be spawned, even if the passenger were not an InfantryType. This ultimately meant that vehicles would appear to fall part-way into the ground upon landing. This error no longer happens in <span class="gamename">Ares</span>.<br>
 	(The same problem also used to occur with vehicles paradropped from aircraft with <code>Carryall=yes</code> set.)<dfn class="bugfix">Vehicles that are paradropped will now be centered correctly on the cell they land on, rather than being offset.</dfn></p>
 
 	<h4>Air-To-Air Combat</h4>
 	<p>Anti-air weapons (where the projectile has <code>AA=yes</code> set) could not be used by AircraftTypes &ndash; aircraft simply would not attack other airborne units. Now, anti-air weapons work just fine on aircraft. No additional flags are required.<dfn class="bugfix">Aircraft can now attack other aircraft if given a weapon with an <code>AA=yes</code> projectile.</dfn></p>
 
 	<h4>BaseUnit</h4>
-	<p><code>[General]&#9658;BaseUnit=</code> specifies the list of VehicleTypes that are considered to be MCVs. Only the first 3 entries of this list were recognized by the game, which means that additional sides would never be playable in non-Short Games (among other limitations). Ares removes this limit so all entries in the list are now recognized.<dfn class="bugfix"><code>BaseUnit=</code> can now hold more than 3 vehicles.</dfn></p>
+	<p><code>[General]&#9658;BaseUnit=</code> specifies the list of VehicleTypes that are considered to be MCVs. Only the first 3 entries of this list were recognized by the game, which means that additional sides would never be playable in non-Short Games (among other limitations). <span class="gamename">Ares</span> removes this limit so all entries in the list are now recognized.<dfn class="bugfix"><code>BaseUnit=</code> can now hold more than 3 vehicles.</dfn></p>
 
 	<h4>BuildConst</h4>
-	<p>If you get into low power then the EVA will announce 'low power', but only if you have one of the first 3 buildings from the <code>[AI]&#9658;BuildConst=</code> list. With Ares, you'll get the EVA announcement if you have any building from the list.<dfn class="bugfix">"Low power" announcement used to occur only if you owned one of the first 3 buildings from <code>BuildConst=</code>. This now works if you have any building on the list.</dfn></p>
+	<p>If you get into low power then the EVA will announce 'low power', but only if you have one of the first 3 buildings from the <code>[AI]&#9658;BuildConst=</code> list. With <span class="gamename">Ares</span>, you'll get the EVA announcement if you have any building from the list.<dfn class="bugfix">"Low power" announcement used to occur only if you owned one of the first 3 buildings from <code>BuildConst=</code>. This now works if you have any building on the list.</dfn></p>
 
 	<h4>Infantry Lost In Special Function Buildings</h4>
-	<p>Infantry sent into an Armory or old-style Tech Hospital emerge a few moments later, having had the relevant benefit applied (e.g. promotion or healing). However, if the building were destroyed, sold or undeployed whilst the InfantryType were still inside then that InfantryType would remain in 'limbo' whilst still counting towards the owning player's units (e.g. defeat conditions, build limit, etc). Ares will make sure that such InfantryTypes are ejected from the building in those situations.<dfn class="bugfix">Infantry still inside a Hospital or Armory when it is destroyed/sold may go into limbo instead of emerging, meaning that they still count towards the player's units. Now they will emerge.</dfn></p>
+	<p>Infantry sent into an Armory or old-style Tech Hospital emerge a few moments later, having had the relevant benefit applied (e.g. promotion or healing). However, if the building were destroyed, sold or undeployed whilst the InfantryType were still inside then that InfantryType would remain in 'limbo' whilst still counting towards the owning player's units (e.g. defeat conditions, build limit, etc). <span class="gamename">Ares</span> will make sure that such InfantryTypes are ejected from the building in those situations.<dfn class="bugfix">Infantry still inside a Hospital or Armory when it is destroyed/sold may go into limbo instead of emerging, meaning that they still count towards the player's units. Now they will emerge.</dfn></p>
 
 	<h4>Multiple AI Factories Clone Units</h4>
-	<p>If the AI were modified to build multiple factories of the same type then every time they built a unit from that factory type they would produce a copy of that unit from every additional factory. For example, if the AI were made to build a second War Factory then they would get a second copy of every vehicle they build. This behavior is disabled by default in Ares, although a flag has been added to allow mod authors to turn it back on if they really want to:</p>
+	<p>If the AI were modified to build multiple factories of the same type then every time they built a unit from that factory type they would produce a copy of that unit from every additional factory. For example, if the AI were made to build a second War Factory then they would get a second copy of every vehicle they build. This behavior is disabled by default in <span class="gamename">Ares</span>, although a flag has been added to allow mod authors to turn it back on if they really want to:</p>
 	<dl class="flaglist">
 		<dt>[GlobalControls]&#9658;AllowParallelAIQueues= (boolean)</dt>
 		<dd>Set this to yes to re-enable AI factory cloning.<dd>
@@ -400,34 +403,34 @@
 	<dfn class="bugfix">If an AI is made to build multiple factories of the same type they will no longer result in cloned units/buildings (this can be turned back on if desired).</dfn><var class="rules">GlobalControls</var><var class="rules GlobalControls boolean no">AllowParallelAIQueues=</var>
 	
 	<div class="ares02"><h4>Alternate Theater Art For BuildingTypes (Ares 0.2)</h4>
-	<p>BuildingTypes whose artmd.ini entry has <code>NewTheater=yes</code> set would have the second letter of their  SHP filenames replaced by another letter, depending on the theater of the current map. For example, GAWEAP uses SHP files named GAWEAP* on arctic maps, GTWEAP* on temperate maps, GDWEAP* on desert maps and so on. In the event that a SHP file with the appropriate filename does not exist, the game falls back to GTWEAP*.<br>
-	However, in <span class="gamename">Yuri's Revenge</span> this filename-adjusting logic only works for BuildingTypes whose Image ID starts with G, N, Y or C. Ares extends this logic to work for Image IDs starting with any letter (A-Z or a-z).</p></div>
+	<p>BuildingTypes whose <span class="filename">artmd.ini</span> entry has <code>NewTheater=yes</code> set would have the second letter of their  SHP filenames replaced by another letter, depending on the theater of the current map. For example, GAWEAP uses SHP files named GAWEAP* on arctic maps, GTWEAP* on temperate maps, GDWEAP* on desert maps and so on. In the event that a SHP file with the appropriate filename does not exist, the game falls back to GTWEAP*.<br>
+	However, in <span class="gamename">Yuri's Revenge</span> this filename-adjusting logic only works for BuildingTypes whose Image ID starts with G, N, Y or C. <span class="gamename">Ares</span> extends this logic to work for Image IDs starting with any letter (A-Z or a-z).</p></div>
 
 	<h4>Amphibious Objects Sink When Chronoshifted Onto Water</h4>
-	<p>When an amphibious (not hover) object - that is, one that can normally enter water cells without problem - was chronoshifted onto water by the Chrono Sphere, it would sink. Ares corrects this so that all amphibious objects can be chronoshifted onto water without sinking.<dfn class="bugfix">Amphibious objects no longer sink when chronoshifted onto water.</dfn></p>
+	<p>When an amphibious (not hover) object - that is, one that can normally enter water cells without problem - was chronoshifted onto water by the Chrono Sphere, it would sink. <span class="gamename">Ares</span> corrects this so that all amphibious objects can be chronoshifted onto water without sinking.<dfn class="bugfix">Amphibious objects no longer sink when chronoshifted onto water.</dfn></p>
 
 	<h4>Mind-Controlled Units Freed By Ineffective Temporal Attacks</h4>
-	<p>If <code>Warpable=yes</code> was set on, say, the Master Mind, and the Master Mind was attacked by a Chrono Legionnaire, then any units mind-controlled by the Master Mind would be freed, even though the Master Mind itself was not frozen. <span class="gamename">Ares</span> fixes this so that the mind-controlled units are not freed.<dfn class="bugfix">Mind-controlled units are no longer freed by ineffective temporal attacks (against Warpable=no).</dfn></p>
+	<p>If <code>Warpable=yes</code> was set on, say, the Master Mind, and the Master Mind was attacked by a Chrono Legionnaire, then any units mind-controlled by the Master Mind would be freed, even though the Master Mind itself was not frozen. <span class="gamename"><span class="gamename">Ares</span></span> fixes this so that the mind-controlled units are not freed.<dfn class="bugfix">Mind-controlled units are no longer freed by ineffective temporal attacks (against Warpable=no).</dfn></p>
 	
 	<h4>Hardcoded Wall/Gate Interactions</h4>
 	<p>In <span class="gamename">Tiberian Sun</span> you could place buildable gates on top of existing walls. This logic still exists in Yuri's Revenge. However, the logic was hardcoded to only work with GAWALL and NAWALL, so it wouldn't work with Yuri's wall (YAWALL) or, indeed, any other walls you might add to the game. <span class="gamename">Ares</span> changes this so that all overlays with <code>Wall=yes</code> set can have gates "slammed" onto them.<br><span class="note">NB: The automatic joining of walls to the gates still only works for GAWALL and NAWALL however this will be fixed in future.</span><dfn class="bugfix">Gates can be slammed onto any walls, not just GAWALL or NAWALL.</dfn></p>
 	
 	<h3>Type 3 Fixes (Performance)</h3>
 	<ul>
-	<li>pips.shp was getting reloaded from disk six times in a row.</li>
+	<li><span class="filename">pips.shp</span> was getting reloaded from disk six times in a row.</li>
 	<li>A commonly used function, ObjectClass::GetCell, performed the same tasks twice.</li>
 	<li>During startup, many superfluous calls were made to the debug log file writer.</li>
 	<li>Random Map Generator time has been greatly reduced (much time was wasted by redrawing the minimap multiple times during a map's generation).</li>
 	<li>Some particularly fast CPUs could cause the game to crash on startup.</li>
-	<li>There exists a version of ddraw.dll that is often touted as improving the performance of <span class="gamename">Yuri's Revenge</span>. This "magic" DLL forces DirectDraw into software emulation mode, which doesn't use any hardware accelerated GPU functionality. This means special effects that are not emulated are simply omitted, potentially improving performance. Ares uses software emulation mode by default, making this DLL unnecessary. However, Windows Vista and Windows 7 come with DirectX 10 - which does not  support software emulation - so Ares will not default to software emulation mode on those versions of Windows (otherwise users would just get a completely black screen).</li>
+	<li>There exists a version of ddraw.dll that is often touted as improving the performance of <span class="gamename">Yuri's Revenge</span>. This "magic" DLL forces DirectDraw into software emulation mode, which doesn't use any hardware accelerated GPU functionality. This means special effects that are not emulated are simply omitted, potentially improving performance. <span class="gamename">Ares</span> uses software emulation mode by default, making this DLL unnecessary. However, Windows Vista and Windows 7 come with DirectX 10 - which does not  support software emulation - so <span class="gamename">Ares</span> will not default to software emulation mode on those versions of Windows (otherwise users would just get a completely black screen).</li>
 	</ul><dfn class="bugfix">Several performance enhancements.</dfn>
 	
 	<h2>Restored <span class="gamename">Tiberian Sun</span> Logic</h2>
 	<p>The <span class="gamename">Yuri's Revenge</span> engine is based on the <span class="gamename">Red Alert 2</span> engine which, in turn, is based on the <span class="gamename">Tiberian Sun</span> engine.<br>
 	Various features that existed in <span class="gamename">Tiberian Sun</span> were removed in <span class="gamename">Red Alert 2</span>, and further features were removed in <span class="gamename">Yuri's Revenge</span> and in the 1.001 patch.<br>
 	The extent to which these features no longer exist in <span class="gamename">Yuri's Revenge 1.001</span> varies, from not functioning correctly to complete removal of the logic (sometimes because simply using the logic causes an Internal Error).<br>
-	Below is a list of the features that Ares has restored, along with any changes or enhancements to the way those features used to work in <span class="gamename">Tiberian Sun</span>.<br>
-	Note that, in many cases, Ares has drastically changed the way these features are implemented.</p>
+	Below is a list of the features that <span class="gamename">Ares</span> has restored, along with any changes or enhancements to the way those features used to work in <span class="gamename">Tiberian Sun</span>.<br>
+	Note that, in many cases, <span class="gamename">Ares</span> has drastically changed the way these features are implemented.</p>
 
 	<h3>EMP</h3>
 	<p>Vehicles affected by EMP (Electromagnetic Pulse) are paralyzed in a similar manner to a Chrono Legionnaire erasing a unit. Unlike the Chrono Legionnaire however, EMP'd vehicles can still be attacked by other units.<br>
@@ -437,7 +440,7 @@
 		<li>Hovering units (such as the Robot Tank) will land.</li>
 		<li>Units display the animation specified by <code>[General]&#9658;EMPulseSparkles=EMP_FX01</code>. Note that the <span class="filename">emp_fx01.shp</span> file that comes with Red Alert 2 is in the Tiberian Sun palette and needs to be converted.</li>
 		<li>Voxel-based units are darkened (SHP-based units are not).</li>
-		<li>Buildings that can undeploy into vehicles (e.g. MCVs) will not be able to do so.</li>
+		<li>Buildings that can undeploy into vehicles (e.g. MCVs) still can, but the resulting vehicle will remain EMP'd until the effect wears off.</li>
 		<li>Aircraft will immediately crash.</li>
 		<li>Base defenses will not be able to fire their weapon.</li>
 		<li>Gap Generators will stop emitting radar gap.</li>
@@ -450,7 +453,7 @@
 		<li>Units that are in their unloading state (such as ore harvesters depositing ore or Siege Choppers transforming) will only become EMP'd once they have finished unloading.</li>
 		<li>Harvesters that were in the middle of harvesting when hit by EMP will resume harvesting after EMP wears off.</li>
   	</ul>
-	<p><span class="note">NB: <span class="gamename">Tiberian Sun</span> used the weapon's Damage flag to determine how long the EMP effect would last. Ares, however, uses 2 new flags (EMP.Duration and EMP.Cap) to provide greater control. The weapon's Damage will be delivered independently from EMP paralysis (so a weapon can both damage and paralyze its target). <span class="gamename">Tiberian Sun</span> also used the flag EMEffect=yes, which is not used in Ares.</span></p>
+	<p><span class="note">NB: <span class="gamename">Tiberian Sun</span> used the weapon's Damage flag to determine how long the EMP effect would last. <span class="gamename">Ares</span>, however, uses 2 new flags (EMP.Duration and EMP.Cap) to provide greater control. The weapon's Damage will be delivered independently from EMP paralysis (so a weapon can both damage and paralyze its target). <span class="gamename">Tiberian Sun</span> also used the flag EMEffect=yes, which is not used in <span class="gamename">Ares</span>.</span></p>
 	<dl class="flaglist">
 		<dt>[Warhead]&#9658;EMP.Duration= (integer &ndash; frames)<br>
 		[Warhead]&#9658;EMP.Cap= (integer &ndash; frames)</dt>
@@ -470,7 +473,7 @@
 		<li><code>EMP.Cap=0</code><br>
 		Makes this EMP effect stackable, but uncapped.<br>
 		The target's EMP counter is incremented by EMP.Duration, without limit.<br>
-		This is Ares legacy behavior (before the EMP.Cap flag was added).<br>
+		This is <span class="gamename">Ares</span> legacy behavior (before the EMP.Cap flag was added).<br>
 		Example:<br>
 		EMP counter is 25, <code>EMP.Duration=10</code>. Result: EMP counter will be set to 35.</li>
 		<li>EMP.Cap=-1<br>
@@ -537,7 +540,7 @@
 	<p>In <span class="gamename">Tiberian Sun</span> you could sell units that were docked with a structure by using the normal Sell button on the sidebar. In <span class="gamename">Yuri's Revenge</span>, a super weapon with <code>Action=SellUnit</code> achieves the same function. However, if such a super weapon were fired on a unit inside a Tank Bunker then an Internal Error would occur (sometimes this would be delayed until the destruction of the Tank Bunker). <span class="gamename">Ares</span> prevents the error occurring.<dfn class="restored">SellUnit super weapon no longer causes IEs with Tank Bunker.</dfn></p>
 
 	<h3>PowerToggle</h3>
-	<p>In <span class="gamename">Tiberian Sun</span> there was a button on the sidebar that allowed players to turn their own buildings on and off and in low power situations. In <span class="gamename">Yuri's Revenge</span>, a super weapon with <code>Action=PowerToggle</code> achieves the same function. However, if such a super weapon were fired into an empty cell then an Internal Error would occur. Ares prevents the error occurring.<dfn class="restored">PowerToggle super weapon no longer causes IE when targetting an empty cell.</dfn></p>
+	<p>In <span class="gamename">Tiberian Sun</span> there was a button on the sidebar that allowed players to turn their own buildings on and off and in low power situations. In <span class="gamename">Yuri's Revenge</span>, a super weapon with <code>Action=PowerToggle</code> achieves the same function. However, if such a super weapon were fired into an empty cell then an Internal Error would occur. <span class="gamename">Ares</span> prevents the error occurring.<dfn class="restored">PowerToggle super weapon no longer causes IE when targetting an empty cell.</dfn></p>
 
 	<h3>Spotlights</h3>
 	<p>Spotlights would cause an Internal Error whenever they were created. The error no longer occurs so spotlights can now be used.<dfn class="restored">Spotlights</dfn></p>
@@ -566,25 +569,27 @@
 
 	<h3>Firestorm Wall</h3>
 	<p>The Firestorm Wall and super weapon can now be implemented in <span class="gamename">Yuri's Revenge</span>.<br>
-	See the <a href="#TypeFirestorm">New Super Weapon Types: Firestorm</a> section) for details.<br>
+	See the <a href="#TypeFirestorm">New Super Weapon Types: Firestorm</a> section) for details.</p>
 
 	<h3>Amphibious Voxel Changes</h3>
-	<p>
-		In <span class="gamename">Tiberian Sun</span>, the Amphibious APC would appear to sink into the water. This was achieved by changing the imagery from apc.vxl to apcw.vxl. With Ares, you can now specify:
-		<dl class="flaglist">
-			<dt>[VehicleType]&#9658;WaterVoxel= (any string)</dt><dd>to make the amphibious unit's voxel change from XXXX.vxl to XXXXwo.vxl when in water.<br><span class="note">NB: In future this will be changed to use the entered string as the voxel filename.</span><var class="rules TechnoType string_-_voxel_file_name_suffix">WaterVoxel=</var></dd>
-		</dl>
-		<dfn class="restored">Amphibious vehicles can change their voxel when moving between water/land.</dfn>
-	</p>
+	In <span class="gamename">Tiberian Sun</span>, the Amphibious APC would appear to sink into the water. This was achieved by changing the imagery from <span class="filename">apc.vxl</span> to <span class="filename">apcw.vxl</span>. With <span class="gamename">Ares</span>, you can now specify:
+	<dl class="flaglist">
+		<dt>[VehicleType]&#9658;WaterVoxel= (any string)</dt>
+		<dd></dd>
+	</dl>
+	...to make the amphibious unit's voxel change from <span class="filename">XXXX.vxl</span> to <span class="filename">XXXXwo.vxl</span> when in water.<br>
+	<span class="note">NB: In future this will be changed to use the entered string as the voxel filename.</span>
+	<var class="rules TechnoType string_-_voxel_file_name_suffix">WaterVoxel=</var>
+	<dfn class="restored">Amphibious vehicles can change their voxel when moving between water/land.</dfn>
 
 	<h2>New &amp; Enhanced In-Game Logic</h2>
 	<p>This chapter documents all the completely new features that have been added to the game.</p>
 
 	<h3>Sides &amp; Countries</h3>
-	<p>In the original game the sides and countries were, for the most part, hard-coded. You could not add to, remove or reorder the 10 countries or 3 sides. Ares, however, makes these tasks possible &ndash; you can now have up to 16‡ countries and 16 sides, and you can customize these in numerous ways...<dfn class="new">New sides &amp; countries (including numerous enhancements).</dfn></p>
+	<p>In the original game the sides and countries were, for the most part, hard-coded. You could not add to, remove or reorder the 10 countries or 3 sides. <span class="gamename">Ares</span>, however, makes these tasks possible &ndash; you can now have up to 16‡ countries and 16 sides, and you can customize these in numerous ways...<dfn class="new">New sides &amp; countries (including numerous enhancements).</dfn></p>
 
 	<h4>Countries</h4>
-	<p>Countries are specified in the <code>[Countries]</code> list in rulesmd.ini. Any country with <code>Multiplay=yes</code> set will appear in the country selection drop-down list and be eligible for random selection if the player chooses 'Random'.<dfn class="new">Countries can be excluded from the 'random country' option, or given differing weights.</dfn><br>
+	<p>Countries are specified in the <code>[Countries]</code> list in <span class="filename">rulesmd.ini</span>. Any country with <code>Multiplay=yes</code> set will appear in the country selection drop-down list and be eligible for random selection if the player chooses 'Random'.<dfn class="new">Countries can be excluded from the 'random country' option, or given differing weights.</dfn><br>
 	The <code>[Countries]</code> list can contain up to 32 countries, however taunts will only work for 16 of these.<br>
 	Each country can be customized using the following flags in the country's INI section:<br>
 	<span class="note">NB: The following filename specifications (where raw C-style format specifiers like %s are required) are going to be changed into safer versions in the future. The replacement style has not been decided yet.</span></p>
@@ -592,7 +597,7 @@
 		<dt>[Country]&#9658;File.Flag= (filename, including the .pcx extension)</dt>
 		<dd>The PCX file to use for the country's flag, in the format "filename.pcx".<var class="rules Country filename">File.Flag=</var></dd>
 		<dt>[Country]&#9658;File.LoadScreen= (filename, including the .shp extension)</dt>
-		<dd>The SHP file to use for the country's loading screen, in the format "filename%s.shp". The filename specified must include "%s", which will be substituted for the current screen width (640 or 800 pixels). For example, <code>File.LoadScreen=ls%susstates.shp</code> will make the game load ls800usstates.shp.<var class="rules Country filename">File.LoadScreen=</var></dd>
+		<dd>The SHP file to use for the country's loading screen, in the format "filename%s.shp". The filename specified must include "%s", which will be substituted for the current screen width (640 or 800 pixels). For example, <code>File.LoadScreen=ls%susstates.shp</code> will make the game load <span class="filename">ls800usstates.shp</span>.<var class="rules Country filename">File.LoadScreen=</var></dd>
 		<dt>[Country]&#9658;File.LoadScreenPAL= (filename, including the .pal extension)</dt>
 		<dd>The palette file to use for the country's loading screen, in the format "filename.pal".<var class="rules Country filename">File.LoadScreenPAL=</var></dd>
 		<dt>[Country]&#9658;File.Taunt= (filename, including the Taunts\ directory and .wav extension)</dt>
@@ -613,7 +618,7 @@
 	</dl>
 	
 	<h4>Sides</h4>
-	<p>Sides are specified in the <code>[Sides]</code> list in rulesmd.ini.<br>
+	<p>Sides are specified in the <code>[Sides]</code> list in <span class="filename">rulesmd.ini</span>.<br>
 	There is no limit to the number of sides that can be defined. However, only 16 fully-working countries can be implemented (see above).<br>
 	Each side can (and should) define its own values for the following flags in the side's INI section:</p>
 	<dl class="flaglist">
@@ -635,11 +640,11 @@
 		<dt>[Side]&#9658;ParaDrop.Num= (list of integers)</dt>
 		<dd>The quantity of each corresponding unit (listed against ParaDrop.Types) that will be paradropped. Defaults to <code>[General]&#9658;AllyParaDropNum</code> for GDI (Allied), <code>[General]&#9658;SovParaDropNum</code> for Nod (Soviet), and <code>[General]&#9658;YuriParaDropNum</code> for ThirdSide (Yuri).<var class="rules Side list_of_integers">ParaDrop.Num=</var></dd>
 		<dt>[Side]&#9658;Sidebar.MixFileIndex= (integer)</dt>
-		<dd>The MIX file number to use for the sidebar (e.g. 1 for the Allied sidec01.mix, 2 for the Soviet sidec02.mix)<dfn class="new">Sides can specify their own unique UI.</dfn><var class="rules Side integer">Sidebar.MixFileIndex=</var></dd>
+		<dd>The MIX file number to use for the sidebar (e.g. 1 for the Allied <span class="filename">sidec01.mix</span>, 2 for the Soviet <span class="filename">sidec02.mix</span>)<dfn class="new">Sides can specify their own unique UI.</dfn><var class="rules Side integer">Sidebar.MixFileIndex=</var></dd>
 		<dt>[Side]&#9658;Sidebar.YuriFileNames= (boolean)</dt>
-		<dd>Whether or not to use the Yuri sidebar file names (sidec02md.mix and the Yuri-specific files within that MIX).<var class="rules Side boolean">Sidebar.YuriFileNames=</var></dd>
+		<dd>Whether or not to use the Yuri sidebar file names (<span class="filename">sidec02md.mix</span> and the Yuri-specific files within that MIX).<var class="rules Side boolean">Sidebar.YuriFileNames=</var></dd>
 		<dt>[Side]&#9658;EVA.Tag= (EVA event)</dt>
-		<dd>Name of the INI tag to load from evamd.ini for this side's EVA (vocal interface assistant &ndash; e.g. Eva for Allied, Sofia for Soviet and Some Guy for Yuri).<br>
+		<dd>Name of the INI tag to load from <span class="filename">evamd.ini</span> for this side's EVA (vocal interface assistant &ndash; e.g. Eva for Allied, Sofia for Soviet and Some Guy for Yuri).<br>
 		<span class="note">NB: EVA.Tag is not yet implemented.</span><var class="rules Side EVA event">EVA.Tag=</var></dd>
 	</dl>
 	
@@ -648,7 +653,7 @@
 	<p>This new section allows you to declare new weapons without having to declare a dummy unit to parse them (like the official "WEEDGUY" hack). This works in the same way as the existing <code>[Warheads]</code> section. Any WeaponType listed under the <code>[WeaponTypes]</code> section will be parsed by the game and can be used as a shrapnel weapon or a new weapon in a game mode, etc.</p>
 
 	<h4>Radiation Beams</h4>
-	<p>Before Ares, Radiation beams could not be customized &ndash; they were always either green or blue depending on the type of weapon. Now, however, radiation beams can be customized using the following flags (which affect weapons with <code>IsRadBeam=yes</code> set and/or <code>IsRadEruption=yes</code> set) in the weapon's INI section:<dfn class="new">Rad beams can have custom colors, duration and amplitude.</dfn></p>
+	<p>Before <span class="gamename">Ares</span>, Radiation beams could not be customized &ndash; they were always either green or blue depending on the type of weapon. Now, however, radiation beams can be customized using the following flags (which affect weapons with <code>IsRadBeam=yes</code> set and/or <code>IsRadEruption=yes</code> set) in the weapon's INI section:<dfn class="new">Rad beams can have custom colors, duration and amplitude.</dfn></p>
 	<dl class="flaglist">
 		<dt>[Weapon]&#9658;Beam.Color= (R,G,B)</dt>
 		<dd>The color that the beam will be drawn in. Defaults to <code>[AudioVisual]&#9658;ChronoBeamColor</code> for weapons with a Temporal warhead, and <code>[Radiation]&#9658;RadColor</code> for weapons with a non-Temporal warhead.<var class="rules Weapon R_G_B">Beam.Color=</var></dd>
@@ -711,7 +716,7 @@
 	</dl>
 	
 	<h4>Customizable Ivan Bombs</h4>
-	<p>As with many other features of <span class="gamename">Yuri's Revenge</span>, the settings that control Crazy Ivan Bombs are global so you can't have multiple variations of them with their own controls. With Ares it is now possible to create new Ivan Bomb-esque weapons &ndash; new types of sticky bomb with whatever settings you like. The only aspect of Ivan Bombs that hasn't been de-globalized is the ability to remote detonate the bombs &ndash; this feature is either enabled or disabled for all Ivan Bomb types.<br>
+	<p>As with many other features of <span class="gamename">Yuri's Revenge</span>, the settings that control Crazy Ivan Bombs are global so you can't have multiple variations of them with their own controls. With <span class="gamename">Ares</span> it is now possible to create new Ivan Bomb-esque weapons &ndash; new types of sticky bomb with whatever settings you like. The only aspect of Ivan Bombs that hasn't been de-globalized is the ability to remote detonate the bombs &ndash; this feature is either enabled or disabled for all Ivan Bomb types.<br>
 	When <code>IvanBomb=yes</code> is set on the weapon's warhead, the weapon can specify the following flags in order to customize that bomb.</p>
 	<dl class="flaglist">
 		<dt>[Weapon]&#9658;IvanBomb.Warhead= (WarheadType)</dt>
@@ -728,15 +733,19 @@
 		<dt>[Weapon]&#9658;IvanBomb.AttachSound= (Sound name)</dt>
 		<dd>The sound that will be played when the bomb is attached to a target.<var class="rules Weapon sound">IvanBomb.AttachSound=</var><dd>
 		<dt>[Weapon]&#9658;IvanBomb.TickingSound= (Sound name)</dt>
-		<dd>The sound that will be played whilst the bomb is attached to a unit. In order for this sound to loop correctly, the sound must have <code>Control=loop</code> set in its INI section in soundmd.ini.<var class="rules Weapon sound">IvanBomb.TickingSound=</var><dd>
+		<dd>The sound that will be played whilst the bomb is attached to a unit. In order for this sound to loop correctly, the sound must have <code>Control=loop</code> set in its INI section in <span class="filename">soundmd.ini</span>.<var class="rules Weapon sound">IvanBomb.TickingSound=</var><dd>
 		<dt>[Weapon]&#9658;IvanBomb.Image= (filename, including the .shp extension)</dt>
-		<dd>The SHP file for the image to display over a unit that has a bomb attached to them, in the format "filename.shp". If the image cannot be loaded then the game will fall back to the default bombcurs.shp.<var class="rules Weapon filename">IvanBomb.Image=</var><dd>
+		<dd>The SHP file for the image to display over a unit that has a bomb attached to them, in the format "filename.shp". If the image cannot be loaded then the game will fall back to the default <span class="filename">bombcurs.shp</span>.<var class="rules Weapon filename">IvanBomb.Image=</var><dd>
 		<dt>[Weapon]&#9658;IvanBomb.FlickerRate= (integer)</dt>
-		<dd>The rate at which the bomb SHP will flip back and forth between two frames to give the impression of a flickering fuse.<br>
+		<dd>
+			The rate at which the bomb SHP will flip back and forth between two frames to give the impression of a flickering fuse.<br>
 			On every game frame, the frame of the bomb SHP is calculated as follows:
-<pre>frameToShow = (Game.CurrentFrame &ndash; Bomb.PlantingFrame) / (Bomb.Delay / (Bomb.Image.Frames &ndash; 1)) <!-- fix markup here -->
-IF (CurrentFrame mod (2 * Bomb.FlickerRate) >= Bomb.FlickerRate) THEN frameToShow = frameToShow + 1</pre>
-			Originally this logic was hard-coded to ignore the last frame of the bomb SHP, which was originally planned to be used for so called "death bombs" which were cut from the game before <span class="gamename">Red Alert 2</span> was released. This hard-coding has been changed so that the whole SHP is now considered for the fuse, however this means that you'll now see that extra frame from bombcurs.shp, unless you replace that SHP file.<img src="./manual_images/bombcurs.png" alt="Image of bombcurs.shp"><var class="rules Weapon integer">IvanBomb.FlickerRate=</var><dd>
+			<pre>frameToShow = (Game.CurrentFrame &ndash; Bomb.PlantingFrame) / (Bomb.Delay / (Bomb.Image.Frames &ndash; 1)) <!-- fix markup here -->
+			IF (CurrentFrame mod (2 * Bomb.FlickerRate) >= Bomb.FlickerRate) THEN frameToShow = frameToShow + 1</pre>
+			Originally this logic was hard-coded to ignore the last frame of the bomb SHP, which was originally planned to be used for so called "death bombs" which were cut from the game before <span class="gamename">Red Alert 2</span> was released. This hard-coding has been changed so that the whole SHP is now considered for the fuse, however this means that you'll now see that extra frame from <span class="filename">bombcurs.shp</span>, unless you replace that SHP file.<br>
+			<img src="./manual_images/bombcurs.png" alt="Image of bombcurs.shp">
+			<var class="rules Weapon integer">IvanBomb.FlickerRate=</var>
+		</dd>
 	</dl>
 
 	<h3>Warheads</h3>
@@ -815,15 +824,15 @@ IF (CurrentFrame mod (2 * Bomb.FlickerRate) >= Bomb.FlickerRate) THEN frameToSho
 		<dt>[Warhead]&#9658;Versus.clingfilm.PassiveAcquire= (boolean)</dt>
 		<dd>Whether or not this warhead is allowed to be used to attack the "clingfilm" ArmorType automatically.<var class="rules Warhead boolean">Versus.*.PassiveAcquire=</var></dd>
 	</dl>
-	<p>Note Ares' correct spelling of "acquire".<dfn class="new">Warhead verses special behaviours can be decoupled from Verses (ForceFire/Retaliate/PassiveAcquire).</dfn></p>
+	<p>Note <span class="gamename">Ares</span>' correct spelling of "acquire".<dfn class="new">Warhead verses special behaviours can be decoupled from Verses (ForceFire/Retaliate/PassiveAcquire).</dfn></p>
 
 	<h3>MakeInfantryOwner</h3>
-	<p>The original MakeInfantry logic would always grant ownership of newly-created infantry to the neutral side, unless the animation was caused by an InfantryType being killed by an <code>InfDeath=9</code> warhead (in which case the killing player would get ownership of the new InfantryType). Ares lets you choose which player will gain ownership, from one of several options.</p>
+	<p>The original MakeInfantry logic would always grant ownership of newly-created infantry to the neutral side, unless the animation was caused by an InfantryType being killed by an <code>InfDeath=9</code> warhead (in which case the killing player would get ownership of the new InfantryType). <span class="gamename">Ares</span> lets you choose which player will gain ownership, from one of several options.</p>
 	<dl class="flaglist">
 		<dt>[Animation]&#9658;MakeInfantryOwner= (enumeration &ndash; invoker|killer|victim|neutral|random)</dt>
 		<dd>Specifies which house will own the resulting InfantryType that gets created after this animation has played. The animation's re-mappable colors will be shown in that house's color.</dd>
 	</dl>
-	<p>Note that this is not a warhead property &ndash; it goes on the corresponding animation entry in artmd.ini. However, MakeInfantryOwner only works for specific animations; namely those invoked by InfDeathAnim, DeathAnims and map triggers. The deafult MakeInfantryOwner is 'invoker', which corresponds to a different player depending on the animation.<br>
+	<p>Note that this is not a warhead property &ndash; it goes on the corresponding animation entry in <span class="filename">artmd.ini</span>. However, <code>MakeInfantryOwner</code> only works for specific animations; namely those invoked by InfDeathAnim, DeathAnims and map triggers. The deafult MakeInfantryOwner is 'invoker', which corresponds to a different player depending on the animation.<br>
 	For InfDeathAnim, 'invoker' represents 'killer' (the owner of the killing unit).<br>
 	For DeathAnims, 'invoker' represents 'victim' (the owner of the dying unit).<br>
 	For map triggers, 'invoker', 'killer' and 'victim' all represent the house that is considered to be the owner of the trigger.
@@ -831,10 +840,10 @@ IF (CurrentFrame mod (2 * Bomb.FlickerRate) >= Bomb.FlickerRate) THEN frameToSho
 	<span class="note">NB: Like <code>InfDeath=9</code>, all mutation animations will be rendered in the unit palette instead of anim.pal.</span><dfn class="new">MakeInfantry animations (InfDeathAnim, DeathAnims, map triggers) can choose who the owner will be as killer|victim|neutral|random.</dfn><var class="art Animation enumeration invoker">MakeInfantryOwner=</var></p>
 	
 	<h3>Super Weapons</h3>
-	<p>In <span class="gamename">Yuri's Revenge</span>, there is very little you can do to change or add to the existing super weapons &ndash; most super weapon-related features are hard-coded to only work as designed for the original super weapons. Ares, however, includes several new ways to customize existing super weapons as well as several wholly new super weapons.<dfn class="new">Super Weapons:</dfn></p>
+	<p>In <span class="gamename">Yuri's Revenge</span>, there is very little you can do to change or add to the existing super weapons &ndash; most super weapon-related features are hard-coded to only work as designed for the original super weapons. <span class="gamename">Ares</span>, however, includes several new ways to customize existing super weapons as well as several wholly new super weapons.<dfn class="new">Super Weapons:</dfn></p>
 	
 	<h4>Building Animations</h4>
-	<p>Buildings can display specific animations for when the attached super weapon is charging, is nearly charged (1 minute remaining in the normal game), is ready to be fired, and when it fires. However, in <span class="gamename">Yuri's Revenge</span>, these animations only work properly for the original super weapons. In Ares, these will work for any super weapon.<dfn class="new">Building animations played correctly for new super weapons.</dfn></p>
+	<p>Buildings can display specific animations for when the attached super weapon is charging, is nearly charged (1 minute remaining in the normal game), is ready to be fired, and when it fires. However, in <span class="gamename">Yuri's Revenge</span>, these animations only work properly for the original super weapons. In <span class="gamename">Ares</span>, these will work for any super weapon.<dfn class="new">Building animations played correctly for new super weapons.</dfn></p>
 	
 	<h4>Cursors</h4>
 	<p>Setting <code>Action=Custom</code> on a super weapon will allow you to specify custom mouse cursors for the super weapon, using the following flags:<dfn class="new">Custom cursors.</dfn></p>
@@ -898,7 +907,7 @@ IF (CurrentFrame mod (2 * Bomb.FlickerRate) >= Bomb.FlickerRate) THEN frameToSho
 	<h4>Enhanced Super Weapon Types</h4>
 	<h5><code>Type=ParaDrop</code></h5>
 	<p>The original flags that control the units provided by the generic paradrop super weapons (AllyParaDropInf, SovParaDropInf and YuriParaDropInf) only accept InfantryTypes. If you try to include a VehicleType via these lists then the game will create a new InfantryType instead - with the same parameters as the existing VehicleType - ultimately resulting in an invisible InfantryType being delivered in the paradrop.<br>
-	With Ares, there are 2 new side-specific flags (ParaDrop.Types and ParaDrop.Num) that override the old flags. These new flags will accept VehicleTypes as well as InfantryTypes.</p>
+	With <span class="gamename">Ares</span>, there are 2 new side-specific flags (ParaDrop.Types and ParaDrop.Num) that override the old flags. These new flags will accept VehicleTypes as well as InfantryTypes.</p>
 	<pre>
 		[Side]&#9658;ParaDrop.Types=E1,MTNK,FV
 		[Side]&#9658;ParaDrop.Num=6,2,1
@@ -965,7 +974,7 @@ IF (CurrentFrame mod (2 * Bomb.FlickerRate) >= Bomb.FlickerRate) THEN frameToSho
 		<br>
 		This Superweapon uses the old Charge-Drain logic: once activated, the effect will persist for a duration determined by <code>[General]&#9658;ChargeToDrainRatio</code>, after which it will automatically shut down and the superweapon will restart its charging process. Whilst the effect is active you can click the super weapon button again to manually deactivate it, thus allowing the recharge process to begin earlier and finish faster. Refer to <a href="http://modenc.renegadeprojects.com/ChargeToDrainRatio">ModEnc</a> for more information about Charge-Drain logic.<br>
 		<br>
-		In <span class="gamename">Tiberian Sun</span>, the Charge-Drain feature was disableable through an INI flag (<code>[SuperWeapon]&#9658;UseChargeDrain=no</code>) however: <span class="gamename">Ares</span> forces this logic to be used regardless of the value of that flag. <span class="gamename">Ares</span> also forces this super weapon to ignore its assigned <code>Action</code>, if any, as this is required to make it activate from a single click of the sidebar icon.</p>
+		In <span class="gamename">Tiberian Sun</span>, the Charge-Drain feature was disableable through an INI flag (<code>[SuperWeapon]&#9658;UseChargeDrain=no</code>) however: <span class="gamename">Ares</span> forces this logic to be used regardless of the value of that flag. <span class="gamename">Ares</span> also forces this super weapon to ignore its assigned <code>Action</code>, if any, as this is required to make it activate from a single click of the sidebar icon.<br>
 		<span class="note">NB: The animations used by this logic are temporarily hard-coded to "FSIDLE", "FSGRND" and "FSAIR", as was used in <span class="gamename">Tiberian Sun</span>.</span><br>
 		<span class="note">NB: The AI has a lot of problems with targets behind an active Firestorm Wall, although this should not be a major problem due to the relatively small amount of game time that the Wall is active for.</span>
 	</p>
@@ -974,7 +983,7 @@ IF (CurrentFrame mod (2 * Bomb.FlickerRate) >= Bomb.FlickerRate) THEN frameToSho
 	<var class="rules Projectile boolean no">SubjectToFirestorm=</var>
 
 	<h3>Survivors</h3>
-	<p>In the original Red Alert, pilots would parachute from destroyed aircraft. Ares reintroduces this feature along with some additional improvements, all of which are customizable.<br>
+	<p>In the original Red Alert, pilots would parachute from destroyed aircraft. <span class="gamename">Ares</span> reintroduces this feature along with some additional improvements, all of which are customizable.<br>
 	AircraftTypes and VehicleTypes have the option of spawning a pilot (or driver) when they are destroyed. In order for a pilot to be spawned from an airborne unit, the ground beneath the destroyed unit must be clear.<br>
 	The following flags control the percent chance of a survivor being spawned, and the type of unit that that survivor will be.</p>
 	<dl class="flaglist">
@@ -1025,12 +1034,12 @@ IF (CurrentFrame mod (2 * Bomb.FlickerRate) >= Bomb.FlickerRate) THEN frameToSho
 
 	<h3>Solid Buildings</h3>
 	<p>Buildings can now be made 'solid' to projectiles, meaning that projectiles will detonate when hitting a building rather than passing through it.<br>
-	In rulesmd.ini:</p>
+	In <span class="filename">rulesmd.ini</span>:</p>
 	<dl class="flaglist">
 		<dt>[Projectile]&#9658;SubjectToBuildings= (boolean)</dt>
 		<dd>Whether or not this projectile can be blocked by solid buildings. Defaults to no.<var class="rules Projectile boolean no">SubjectToBuildings=</var></dd>
 	</dl>
-	<p>In artmd.ini:</p>
+	<p>In <span class="filename">artmd.ini</span>:</p>
 	<dl class="flaglist">
 		<dt>[BuildingArt]&#9658;SolidHeight= (integer &ndash; cells)</dt>
 		<dd>How tall the solid part of the building is considered to be, measured in cells (each cell has a height of 256 leptons), so buildings with a large amount of clear space near their top can allow projectiles to fly through that space. Negative values (e.g. -1) tell the game to consider the building's full Height as solid. Default is zero, meaning the building is not at all solid (as per the normal game).<br>
@@ -1070,7 +1079,7 @@ IF (CurrentFrame mod (2 * Bomb.FlickerRate) >= Bomb.FlickerRate) THEN frameToSho
 	
 	<h4>Advanced Rubble</h4>
 	<p>If you really hit a trench hard enough to destroy it you're only doing one of two things; either you're turning a small hole into a larger hole, or you're making it collapse. Either way, you don't really remove the trench from the battlefield - just render it unusable. It will be easier to re-dig a trench there than on untouched soil, and, on the other hand, you can't just build there like nothing ever happened.<br>
-	Advanced Rubble is implemented in a similar way to other upgrade systems in Ares:</p>
+	Advanced Rubble is implemented in a similar way to other upgrade systems in <span class="gamename">Ares</span>:</p>
 	<dl class="flaglist">
 		<dt>[BuildingType]&#9658;Rubble.Destroyed= (BuildingType)</dt>
 		<dd>The new BuildingType that this BuildingType will transform into upon destruction. Buildings that are created via Rubble.Destroyed will have the following properties forced upon them:
@@ -1126,7 +1135,7 @@ CanBeOccupied=no</pre>
 		<dt>[Unit]&#9658;Prerequisite.StolenTechs= (list of integers)</dt>
 		<dd>The list of stealable technology types that must be stolen before this object can be built. See Stolen Technology for more information.<dfn class="new">New StolenTech requirements.</dfn><var class="rules TechnoType list_of_integers">Prerequisite.StolenTechs=</var></dd>
 	</dl>
-	<p>On the following page is a flowchart of the current prerequisite system. Blue sections are unchanged from the original system. Pink sections have been modified or added by Ares.</p>
+	<p>On the following page is a flowchart of the current prerequisite system. Blue sections are unchanged from the original system. Pink sections have been modified or added by <span class="gamename">Ares</span>.</p>
 	
 	<img src="./manual_images/prerequisite_system.png" alt="Flowchart of the current prerequisite system" style="border: none;">
 
@@ -1162,7 +1171,7 @@ AIRFORCE=GAAIRC,AMRADR</pre>
 	<h4>IsDesolator</h4>
 	<p>The <code>[DESO]</code> was hard-coded to have different deploy-weapon firing timing than other units. The change to the timing appears to be related to the unit's art Sequence although the exact effect has not been investigated. You can now set <code>IsDesolator=yes</code> on other InfantryTypes or, indeed, <code>IsDesolator=no</code> on the <code>[DESO]</code>.<var class="rules TechnoType boolean">IsDesolator=</var></p>
 	<h4>Multiple IFVs / Gunner</h4>
-	<p>The <code>[FV]</code> was the only unit to be checked for the special turret and weapon flags, such as  SniperTurretIndex. With Ares, all VehicleTypes with <code>Gunner=yes</code> set will read those flags. This means that you can now have multiple types of IFV.<dfn class="new">Custom IFV clones.</dfn></p>
+	<p>The <code>[FV]</code> was the only unit to be checked for the special turret and weapon flags, such as  SniperTurretIndex. With <span class="gamename">Ares</span>, all VehicleTypes with <code>Gunner=yes</code> set will read those flags. This means that you can now have multiple types of IFV.<dfn class="new">Custom IFV clones.</dfn></p>
 	
 	<h3>Customizable Insignia</h3>
 	<p>Units can now have custom insignia (chevrons) to represent their veterancy level. </p>
@@ -1170,27 +1179,27 @@ AIRFORCE=GAAIRC,AMRADR</pre>
 		<dt>[TechnoType]&#9658;Insignia.Rookie= (filename, excluding the .shp extension)<br>
 		[TechnoType]&#9658;Insignia.Veteran= (filename, excluding the .shp extension)<br>
 		[TechnoType]&#9658;Insignia.Elite= (filename, excluding the .shp extension)</dt>
-		<dd>For example, <code>Insignia.Rookie=SAMPLE</code> would display sample.shp as the insignia while the object is rookie.<var class="rules TechnoType filename">Insignia.Rookie=</var><var class="rules TechnoType filename">Insignia.Veteran=</var><var class="rules TechnoType filename">Insignia.Elite=</var></dd>
+		<dd>For example, <code>Insignia.Rookie=SAMPLE</code> would display <span class="filename">sample.shp</span> as the insignia while the object is rookie.<var class="rules TechnoType filename">Insignia.Rookie=</var><var class="rules TechnoType filename">Insignia.Veteran=</var><var class="rules TechnoType filename">Insignia.Elite=</var></dd>
 	</dl>
-	<p>These SHPs - like the original pips.shp - are expected to be in the theater palette. If you specify an insignia, the first frame of its SHP will be drawn. Veteran and Elite objects without the insignia specified will still display the 15th/16th frames of pips.shp as usual.<dfn class="new">Custom insignia for veteran/elite units.</dfn></p>
+	<p>These SHPs - like the original <span class="filename">pips.shp</span> - are expected to be in the theater palette. If you specify an insignia, the first frame of its SHP will be drawn. Veteran and Elite objects without the insignia specified will still display the 15th/16th frames of <span class="filename">pips.shp</span> as usual.<dfn class="new">Custom insignia for veteran/elite units.</dfn></p>
 	
 	<h3>Customizable Parachute Animations</h3>
 	<p>Objects can now have their own individual parachute animation.</p>
 	<dl class="flaglist">
 		<dt>[Object]&#9658;Parachute.Anim= (animation)</dt>
-		<dd>Specifies the animation from artmd.ini to use as the object's parachute when the object is falling. If omitted, Parachute.Anim will default to PARACH. The SHP is expected to be in the unit palette.<var class="rules TechnoType animation">Parachute.Anim=</var></dd>
+		<dd>Specifies the animation from <span class="filename">artmd.ini</span> to use as the object's parachute when the object is falling. If omitted, Parachute.Anim will default to PARACH. The SHP is expected to be in the unit palette.<var class="rules TechnoType animation">Parachute.Anim=</var></dd>
 	</dl>
 	<p>While the animation is playing, the object's falling speed will reach, but not exceed, <code>[General]&#9658;ParachuteMaxFallRate=</code>. After the animation disappears, if the object is still falling then the object's speed will increase to match <code>[General]&#9658;NoParachuteMaxFallRate=</code>. <dfn class="new">Custom parachute animations.</dfn></p>
 	
 	<h3>Custom Cameo Palettes</h3>
 	<p>Rather than always using the cameo palette, individual cameos can now use their own bespoke palette.<br>
-	In artmd.ini:</p>
+	In <span class="filename">artmd.ini</span>:</p>
 	<dl class="flaglist">
 		<dt>[UnitArt]&#9658;CameoPalette= (filename, including the .pal extension)</dt>
 		<dd>Specifies the palette to use for the unit's cameo (Cameo and AltCameo must use the same palette), in the format "filename.pal". <br>
 		Defaults to cameo.pal.<var class="art UnitArt filename cameo.pal">CameoPalette=</var><dd>
 	</dl>
-	<p>In rulesmd.ini:</p>
+	<p>In <span class="filename">rulesmd.ini</span>:</p>
 	<dl class="flaglist">
 		<dt>[SuperWeapon]&#9658;SidebarPalette= (filename, including the .pal extension)</dt>
 		<dd>Specifies the palette to use for the super weapon's SidebarImage, in the format "filename.pal".
@@ -1198,18 +1207,18 @@ AIRFORCE=GAAIRC,AMRADR</pre>
 	</dl>
 	
 	<h3>Spy Behavior</h3>
-	<p><span class="gamename">Yuri's Revenge</span> only permits a Spy to achieve one effect on infiltrating, which is determined by a hard-coded order of precedence. Spy infiltration logic has been rewritten in Ares to be more flexible, including some new effects that a Spy can achieve.<br>
+	<p><span class="gamename">Yuri's Revenge</span> only permits a Spy to achieve one effect on infiltrating, which is determined by a hard-coded order of precedence. Spy infiltration logic has been rewritten in <span class="gamename">Ares</span> to be more flexible, including some new effects that a Spy can achieve.<br>
 	All of the following flags default to no or zero.</p>
 	<dl class="flaglist">
 		<dt>[BuildingType]&#9658;SpyEffect.Custom= (boolean)</dt>
-		<dd>Whether or not to use the Ares spy infiltration logic instead of the original <span class="gamename">Yuri's Revenge</span> logic.<var class="rules TechnoType boolean no">SpyEffect.Custom=</var></dd>
+		<dd>Whether or not to use the <span class="gamename">Ares</span> spy infiltration logic instead of the original <span class="gamename">Yuri's Revenge</span> logic.<var class="rules TechnoType boolean no">SpyEffect.Custom=</var></dd>
 	</dl>
 	<p><span class="note">NB: Must be set to yes for any of the following effects to work...</span><dfn class="new">Spy behaviour:</dfn><dfn class="new">Multiple effects can be achieved on a single building.</dfn></p>
 	<h4>Radar</h4>
 	<dl class="flaglist">
 		<dt>[BuildingType]&#9658;SpyEffect.ResetRadar= (boolean)</dt>
 		<dd>Whether or not spying this enemy building will cause the normal radar sabotage behavior (i.e. re-shrouding the enemy's map down to just the terrain that they can presently see).<var class="rules TechnoType boolean no">SpyEffect.ResetRadar=</var></dd>
-		<dt>[BuildingType]&#9658;SpyEffect.RevealRadar= (boolean) *NEW EFFECT*</dt>
+		<dt>[BuildingType]&#9658;SpyEffect.RevealRadar= (boolean) <span style="color:blue">*NEW EFFECT*</span></dt>
 		<dd>Whether or not spying this enemy radar will reveal to you, the infiltrator, all of the terrain that they, the enemy, have thus far explored. The building must also have <code>Radar=yes</code> set.<dfn class="new">New effect: Reveal radar (shows you what the enemy can see).</dfn><var class="rules TechnoType boolean no">SpyEffect.RevealRadar=</var></dd>
 	</dl>
 	<h4>Power</h4>
@@ -1219,7 +1228,7 @@ AIRFORCE=GAAIRC,AMRADR</pre>
 	</dl>
 	<h4>Money</h4>
 	<dl class="flaglist">
-		<dt>[BuildingType]&#9658;SpyEffect.StolenMoneyAmount= (integer - credits) *NEW EFFECT*</dt>
+		<dt>[BuildingType]&#9658;SpyEffect.StolenMoneyAmount= (integer - credits) <span style="color:blue">*NEW EFFECT*</span></dt>
 		<dd>The amount of credits that will be stolen from the enemy upon spying this enemy building.<dfn class="new">New effect: Steal money amount (steals a set amount of money rather than a percentage).</dfn><var class="rules TechnoType integer_-_credits xxxnum0">SpyEffect.StolenMoneyAmount=</var></dd>
 		<dt>[BuildingType]&#9658;SpyEffect.StolenMoneyPercentage= (float - multiplier)</dt>
 		<dd>The percentage of the enemy's current credits that will be stolen from the enemy upon spying this enemy building. Only has an effect if <code>SpyEffect.StolenMoneyAmount=0</code>.<br>
@@ -1241,50 +1250,50 @@ AIRFORCE=GAAIRC,AMRADR</pre>
 	Spying <code>[GATECH]</code> satisfies <code>RequiresStolenAlliedTech=yes</code><br>
 	Spying <code>[NATECH]</code> satisfies <code>RequiresStolenSovietTech=yes</code><br>
 	Spying <code>[YATECH]</code> satisfies <code>RequiresStolenThirdTech=yes</code><br>
-	In Ares, spying a building with <code>SpyEffect.StolenTechIndex=2</code> (for example) satisfies the stolen tech requirements for units that require stolen tech 2.<br>
+	In <span class="gamename">Ares</span>, spying a building with <code>SpyEffect.StolenTechIndex=2</code> (for example) satisfies the stolen tech requirements for units that require stolen tech 2.<br>
 	<span class="note">NB: If you set <code>SpyEffect.Custom=yes</code> on GATECH, NATECH or YATECH then those buildings will no longer satisfy the old RequiresStolen*Tech flags.</span></p>
 	<h4>Factories</h4>
 	<dl class="flaglist">
 		<dt>[BuildingType]&#9658;SpyEffect.UnitVeterancy= (boolean)</dt>
 		<dd>Whether or not spying this enemy factory will make all future units you build from your own factories of the same type start veteran. For example, spying an enemy barracks with <code>SpyEffect.UnitVeterancy=yes</code> set will cause all future InfantryTypes that you build to start veteran.<br>
 		<span class="note">NB: This only works for VehicleType and InfantryType factories at present. Also note that infiltrating any VehicleType factory (i.e. War Factory or Naval Yard) will only make land vehicles start veteran - Naval vehicles cannot be made to start veteran through spy infiltration logic.</span><var class="rules TechnoType boolean no">SpyEffect.UnitVeterancy=</var></dd>
-		<dt>[BuildingType]&#9658;SpyEffect.RevealProduction= (boolean) *NEW EFFECT*</dt>
+		<dt>[BuildingType]&#9658;SpyEffect.RevealProduction= (boolean) <span style="color:blue">*NEW EFFECT*</span></dt>
 		<dd>Whether or not spying this enemy factory will allow you to see what the enemy is presently building from that factory. Once the building has been spied, select the building and the cameo of the unit that is being produced will be displayed over the building.<img src="./manual_images/production_spying.png" alt="Screenshot of a current production being revealed"><dfn class="new">New effect: Reveal production cameo (shows you what the enemy are currently building).</dfn><var class="rules TechnoType boolean no">SpyEffect.RevealProduction=</var></dd>
 	</dl>
 	<div class="ares02">
 	<h4>AlternateTheaterArt</h4>
-	<p>The Navy Seal has <code>AlternateArcticArt=yes</code> set, which causes the game to use the image file seala.shp on arctic maps, instead of seal.shp. This logic works for any InfantryType, however this only works for the arctic theater and only for InfantryTypes.</p>
+	<p>The Navy Seal has <code>AlternateArcticArt=yes</code> set, which causes the game to use the image file <span class="filename">seala.shp</span> on arctic maps, instead of <span class="filename">seal.shp</span>. This logic works for any InfantryType, however this only works for the arctic theater and only for InfantryTypes.</p>
 	<dl class="flaglist">
 		<dt>[TechnoType]&#9658;AlternateTheaterArt= (boolean)</dt>
-		<dd>Specifies whether or not this SHP-based unit can have alternate art depending on the theater of the current map. For example, setting <code>Image=JUNK</code> and <code>AlternateTheaterArt=yes</code> on a unit will make the unit load artmd.ini section <code>[JUNKA]</code> on arctic, <code>[JUNKD]</code> on desert, and so on according to theater. If any of those sections do not exist then the unit will fall back to <code>[JUNK]</code>. So quite similar to AlternateArcticArt, just automatic and smarter. Defaults to no.<br>
+		<dd>Specifies whether or not this SHP-based unit can have alternate art depending on the theater of the current map. For example, setting <code>Image=JUNK</code> and <code>AlternateTheaterArt=yes</code> on a unit will make the unit load <span class="filename">artmd.ini</span> section <code>[JUNKA]</code> on arctic, <code>[JUNKD]</code> on desert, and so on according to theater. If any of those sections do not exist then the unit will fall back to <code>[JUNK]</code>. So quite similar to AlternateArcticArt, just automatic and smarter. Defaults to no.<br>
 		<span class="note">NB: This only works for SHP-based units. Voxels do not use this system and cannot have theater-specifc art (you'd have to use Prerequisite.RequiredTheaters to achieve that).</span><var class="rules TechnoType boolean no">AlternateTheaterArt=</var></dd>
 	</dl></div>
 
 	<h3>Miscellaneous Modding Enhancements</h3>
 	<p>All the changes/additions that make various tasks easier for the mod author, but don't directly provide any new functionality.</p>
 	<h4>[#include]</h4>
-	<p>Ares allows you to split your rulesmd.ini file up into separate pieces so as to better organise the various settings. Any INI files you list under the new <code>[#include]</code> section will be loaded once the main file itself has finished loading. INI files included in this manner can also specify their own <code>[#include]</code> section to load further INIs. There is no depth limit, and the file loading recursion is depth-first (In English: if the original INI file includes multiple files, and an included file includes other files itself, those second-level files will be included before resuming inclusion of the remaining first-level ones. Recurse again if necessary.)<br>
-	For example, the <code>[#include]</code> section you specify in rulesmd.ini may look something like this:</p>
+	<p><span class="gamename">Ares</span> allows you to split your <span class="filename">rulesmd.ini</span> file up into separate pieces so as to better organise the various settings. Any INI files you list under the new <code>[#include]</code> section will be loaded once the main file itself has finished loading. INI files included in this manner can also specify their own <code>[#include]</code> section to load further INIs. There is no depth limit, and the file loading recursion is depth-first (In English: if the original INI file includes multiple files, and an included file includes other files itself, those second-level files will be included before resuming inclusion of the remaining first-level ones. Recurse again if necessary.)<br>
+	For example, the <code>[#include]</code> section you specify in <span class="filename">rulesmd.ini</span> may look something like this:</p>
 	<pre>[#include]
 	1=rules_sw.ini
 	2=rules_vehicles.ini
 	3=rules_buildings.ini
 	4=rules_aircraft.ini
 	5=rules_infantry.ini</pre>
-	<p>As each INI file is loaded, any flag that is encountered that has already been defined will have its value updated with the newly found value. Using the above include list as an example, if <code>[E1]&#9658;Strength=200</code> is specified in rulesmd.ini, and <code>[E1]&#9658;Strength=300</code> is specified in rules_infantry.ini, then the GI will have <code>Strength=300</code> in-game.</p>
+	<p>As each INI file is loaded, any flag that is encountered that has already been defined will have its value updated with the newly found value. Using the above include list as an example, if <code>[E1]&#9658;Strength=200</code> is specified in <span class="filename">rulesmd.ini</span>, and <code>[E1]&#9658;Strength=300</code> is specified in <span class="filename">rules_infantry.ini</span>, then the GI will have <code>Strength=300</code> in-game.</p>
 
-	<p>INI files are taken to be relative to the <span class="gamename">Red Alert 2</span> directory. Values in the include list can include subfolders (e.g. 5=MyMod\rules_infantry.ini). The currently loaded MIXes are also scanned for the files if a loose file of that name cannot be found, however, this only works if you do not specify a subfolder.<dfn class="new"><code>[#include]</code> section allows rulesmd.ini to be split up into separate files.</dfn><var class="rules">#include</var></p>
+	<p>INI files are taken to be relative to the <span class="gamename">Red Alert 2</span> directory. Values in the include list can include subfolders (e.g. 5=MyMod\rules_infantry.ini). The currently loaded MIXes are also scanned for the files if a loose file of that name cannot be found, however, this only works if you do not specify a subfolder.<dfn class="new"><code>[#include]</code> section allows <span class="filename">rulesmd.ini</span> to be split up into separate files.</dfn><var class="rules">#include</var></p>
 	<h4>String Table Enhancements</h4>
 	<p>In addition to ra2md.csf, the game will now load &ndash; stringtable00.csf through stringtable99.csf. These string tables will add to or replace strings that were included in previously loaded string tables.<br>
-	It is also now possible to name objects in INI code (without having to create a string table entry) by using the NOSTR: prefix. For example, UIName=NOSTR:Sonar Pulse will be displayed as "Sonar Pulse". However, the string (including the prefix) cannot exceed 31 characters.<dfn class="new">Object names can be written directly into rulesmd.ini rather than adding them to the string table.</dfn></p>
+	It is also now possible to name objects in INI code (without having to create a string table entry) by using the NOSTR: prefix. For example, UIName=NOSTR:Sonar Pulse will be displayed as "Sonar Pulse". However, the string (including the prefix) cannot exceed 31 characters.<dfn class="new">Object names can be written directly into <span class="filename">rulesmd.ini</span> rather than adding them to the string table.</dfn></p>
 	<h4>List Lengths</h4>
-	<p>There are several INI flags that take a comma-separated list of values. The game imposes a maximum length for INI flag values of 128 characters which isn't always long enough for lists &ndash; especially with some of the extensions that Ares allows. This limit has been relaxed for flags that take lists &ndash; the maximum length for flags that take lists is now 2048 characters.<dfn class="new">Several INI flag lists have been extended to allow more text to be parsed.</dfn></p>
+	<p>There are several INI flags that take a comma-separated list of values. The game imposes a maximum length for INI flag values of 128 characters which isn't always long enough for lists &ndash; especially with some of the extensions that <span class="gamename">Ares</span> allows. This limit has been relaxed for flags that take lists &ndash; the maximum length for flags that take lists is now 2048 characters.<dfn class="new">Several INI flag lists have been extended to allow more text to be parsed.</dfn></p>
 	<h4>MIX Loading Order</h4>
-	<p>expandmd##.mix files are now loaded earlier, allowing them to override content from langmd.mix.<dfn class="new">expandmd##.mix can override content from langmd.mix.</dfn></p>
+	<p><span class="filename">expandmd##.mix</span> files are now loaded earlier, allowing them to override content from <span class="filename">langmd.mix</span>.<dfn class="new">expandmd##.mix can override content from langmd.mix.</dfn></p>
 	<h4>Loose Audio Files</h4>
-	<p>The game can now load WAV files that are loose in the <span class="gamename">Red Alert 2</span> game directory &ndash; they no longer have to be packed into a BAG file. Sounds should be referenced in audiomd.ini just the same as always (without the .wav extension).<dfn class="new">WAV files loose in the <span class="gamename">Red Alert 2</span> directory can now be played, without having to include them in audio.bag.</dfn></p>
+	<p>The game can now load WAV files that are loose in the <span class="gamename">Red Alert 2</span> game directory &ndash; they no longer have to be packed into a BAG file. Sounds should be referenced in <span class="filename">audiomd.ini</span> just the same as always (without the .wav extension).<dfn class="new">WAV files loose in the <span class="gamename">Red Alert 2</span> directory can now be played, without having to include them in audio.bag.</dfn></p>
 	<h4>Mouse.sha</h4>
-	<p>SHP compression can now be used on mouse.sha. Without Ares, using SHP compression on mouse.sha would result in a garbled mouse cursor in-game.<dfn class="new">SHP compression can be used on mouse.sha.</dfn></p>
+	<p>SHP compression can now be used on mouse.sha. Without <span class="gamename">Ares</span>, using SHP compression on mouse.sha would result in a garbled mouse cursor in-game.<dfn class="new">SHP compression can be used on mouse.sha.</dfn></p>
 	<h4>InfantryElectrocuted</h4>
 	<p>The animation displayed for a dying InfantryType when the warhead that killed them had <code>InfDeath=5</code> used to be hard-coded to the second animation from the <code>[Animations]</code> list. You can now specify <code>[AudioVisual]&#9658;InfantryElectrocuted=</code> instead. If InfantryElectrocuted is not defined then the game will search for an animation named "ELECTRO", before finally falling back to the second animation like before.<dfn class="new">Animation for <code>InfDeath=5</code> can be overriden using <code>InfantryElectrocuted=</code> (instead of using the second animation from [Animations]).</dfn><var class="rules AudioVisual animation">InfantryElectrocuted=</var></p>
 	<h4>Snowmd.ini</h4>
@@ -1292,23 +1301,23 @@ AIRFORCE=GAAIRC,AMRADR</pre>
 		<dt>[General]&#9658;Medians=71</dt>
 		<dd>This setting is needed to prevent an Internal Error occurring in the Random Map Generator if Urban Areas are enabled by the user. This change is also needed by the Terrain Expansion.</dd>
 	</dl>
-	<p>In order to avoid internal errors, Ares sets this to 71 by default if it's not specified in the terrain control file.<dfn class="new">Snowmd.ini defaults <code>Medians=71</code> (this is needed by the Terrain Expansion and also prevents an IE in the Random Map Generator when Urban Ares are enabled).</dfn></p>
+	<p>In order to avoid internal errors, <span class="gamename">Ares</span> sets this to 71 by default if it's not specified in the terrain control file.<dfn class="new"><span class="filename">Snowmd.ini</span> defaults <code>Medians=71</code> (this is needed by the Terrain Expansion and also prevents an IE in the Random Map Generator when Urban <span class="gamename">Ares</span> are enabled).</dfn></p>
 	<h2>User Interface Features</h2>
 	<p>Numerous enhancements and additions have been made to the user interface &ndash; aspects of <span class="gamename">Yuri's Revenge</span> outside the main in-game battlefield view.</p>
 	<h3>Loading Screen</h3>
-	<p>The initial loading screen displayed when first starting <span class="gamename">Yuri's Revenge</span> now indicates that Ares is active and stresses that it is a test version.</p>
+	<p>The initial loading screen displayed when first starting <span class="gamename">Yuri's Revenge</span> now indicates that <span class="gamename">Ares</span> is active and stresses that it is a test version.</p>
 	<h3>Internal Errors / Debugging</h3>
-	<p>When an Internal Error occurs, the except.txt file that is produced has been modified so as to output more information that is both relevant to mod authors, and also relevant to us, the developers, when debugging the changes and additions introduced by Ares.<br>
+	<p>When an Internal Error occurs, the except.txt file that is produced has been modified so as to output more information that is both relevant to mod authors, and also relevant to us, the developers, when debugging the changes and additions introduced by <span class="gamename">Ares</span>.<br>
 	except.txt may include a timestamp in the filename to prevent existing an existing except.txt file being overwritten.<br>
-	Ares will give you the option to produce a crash dump file to assist in determining the cause of the error. This file will be stored in a Debug folder within the main game directory. Note that the crash dump file is very large and may only be readable by the Ares developers. Like except.txt, this file will include a timestamp in the filename.<br>
-	If you have turned on debug logging (see Command Line Arguments and Keyboard Commands) then the game will produce a debug.log file in the aforementioned Debug folder. Like except.txt, this file will include a timestamp in the filename. The log file may contain useful information for helping diagnose problems with your mod or Ares itself.<br>
-	In the event of an Internal Error, Ares can sometimes tell you what caused the error. For example:<img src="./manual_images/ie.png" alt="Screenshot of an Ares Internal Error dialog showing the cause of an Internal Error" style="border: none;"></p>
+	<span class="gamename">Ares</span> will give you the option to produce a crash dump file to assist in determining the cause of the error. This file will be stored in a Debug folder within the main game directory. Note that the crash dump file is very large and may only be readable by the <span class="gamename">Ares</span> developers. Like except.txt, this file will include a timestamp in the filename.<br>
+	If you have turned on debug logging (see Command Line Arguments and Keyboard Commands) then the game will produce a debug.log file in the aforementioned Debug folder. Like except.txt, this file will include a timestamp in the filename. The log file may contain useful information for helping diagnose problems with your mod or <span class="gamename">Ares</span> itself.<br>
+	In the event of an Internal Error, <span class="gamename">Ares</span> can sometimes tell you what caused the error. For example:<img src="./manual_images/ie.png" alt="Screenshot of an Ares Internal Error dialog showing the cause of an Internal Error" style="border: none;"></p>
 
 	<p>Some potential errors may now be triggered when loading rather than waiting for the error to crop up in game.<dfn class="new">Improved Internal Error handling and debug logs to assist with debugging mods/Ares.</dfn></p>
 	<h3>Bitmap Screenshots</h3>
-	<p>With Ares active, screenshots are now generated as BMP files rather than PCX. BMP files are smaller in size and are more widely supported.<br><span class="note">NB:The BMP files are written in reverse line order. This is perfectly valid but some graphics editors may not support it.</span><dfn class="new">Screenshots saved as BMP files rather than PCX.</dfn></p>
+	<p>With <span class="gamename">Ares</span> active, screenshots are now generated as BMP files rather than PCX. BMP files are smaller in size and are more widely supported.<br><span class="note">NB:The BMP files are written in reverse line order. This is perfectly valid but some graphics editors may not support it.</span><dfn class="new">Screenshots saved as BMP files rather than PCX.</dfn></p>
 	<h3>Random Map Generator</h3>
-	<p>Ares lets you create random maps using some new map styles &ndash; Archipelago terrain and the Desert tileset.<br>
+	<p><span class="gamename">Ares</span> lets you create random maps using some new map styles &ndash; Archipelago terrain and the Desert tileset.<br>
 	<span class="note">NB: these options are not affected by the "Surprise Me" function for the moment.</span><br>
 	The RMG will now place bridges at random on maps that include rivers.<dfn class="new">Random Map Generator enhancements:</dfn><br>
 	A new checkbox &ndash; 'Place Urban Areas' &ndash; allows the user to add an assortment of streets and urban combat buildings at random spots throughout the generated map. The objects placed by this feature are hard-coded to the following list for the time being:<br>
@@ -1317,7 +1326,7 @@ AIRFORCE=GAAIRC,AMRADR</pre>
 	Infantry: CIV1, CIV2, CIV3, CIVA, CIVB, CIVC<dfn class="new">Place Urban Areas option.</dfn><dfn class="new">Bridges over rivers.</dfn><dfn class="new">New terrain style: Archipelago.</dfn><dfn class="new">New tileset: Desert.</dfn><br>
 	<span class="note">NB: urban areas generated in the minimap preview do not always correspond to content generated ingame, especially in Desert maps. This is still being investigated.</span></p>
 	<h3>Keyboard Commands (Hotkeys)</h3>
-	<p>Ares includes several new commands that can be issued in game via the use of keyboard hotkeys. Note that the labels for these hotkeys are presently hard-coded, unlike the standard <span class="gamename">Yuri's Revenge</span> hotkeys (which use the string table).</p>
+	<p><span class="gamename">Ares</span> includes several new commands that can be issued in game via the use of keyboard hotkeys. Note that the labels for these hotkeys are presently hard-coded, unlike the standard <span class="gamename">Yuri's Revenge</span> hotkeys (which use the string table).</p>
 	<h4>Map Snapshot</h4>
 	<p>A key can be assigned to save a snapshot of the current game as a YRM map file, which can be edited in FinalAlert 2 YR.<br>
 	<span class="note">NB: Loading the generated map file in-game causes an Internal Error. The reason for this is not yet known. If you do encounter it then please provide the developers with the crash information.</span><dfn class="new">Map snapshot command (saves a YRM map file of the current map).</dfn></p>
@@ -1339,12 +1348,12 @@ AIRFORCE=GAAIRC,AMRADR</pre>
 		<dd>Turns debug.log file writing on initially. See Internal Errors / Debugging</dd>
 	</dl>
 	<h3>New Game Resolutions</h3>
-	<p>Various new resolutions have been enabled by default in the Options screen, up to 4096x4096. This is the same effect provided by the AllowHiResModes setting or the HIRES cheat code, both of which are obsolete in Ares.<dfn class="new">AllowHiResMods enabled by default.</dfn></p>
+	<p>Various new resolutions have been enabled by default in the Options screen, up to 4096x4096. This is the same effect provided by the AllowHiResModes setting or the HIRES cheat code, both of which are obsolete in <span class="gamename">Ares</span>.<dfn class="new">AllowHiResMods enabled by default.</dfn></p>
 	<h3>Lone Player Skirmish</h3>
 	<p>You can now start a single player skirmish game without any AI players. This is primarily used for testing a mod without having to worry about the AI attacking you.<dfn class="new">Can play single player skirmish without any computer players.</dfn></p>
 	<h3>Graphics / Surface Drawing</h3>
-	<p>This is for advanced users only! By default, most of the game's drawing surfaces are allocated in system memory, but two of them (frequently used destination buffers) default to GPU memory.<br> Techniques used by the game to draw images to the screen require the former ones to be copied to the latter ones, and this operation is fairly expensive. Ares allows you to allocate those surfaces in system memory, which means the source to destination copying is almost free.<br>
-	In ares.ini you can add the following section:</p>
+	<p>This is for advanced users only! By default, most of the game's drawing surfaces are allocated in system memory, but two of them (frequently used destination buffers) default to GPU memory.<br> Techniques used by the game to draw images to the screen require the former ones to be copied to the latter ones, and this operation is fairly expensive. <span class="gamename">Ares</span> allows you to allocate those surfaces in system memory, which means the source to destination copying is almost free.<br>
+	In <span class="filename">ares.ini</span> you can add the following section:</p>
 	<pre>[Graphics.Advanced]
 	DirectX.Force= (hardware|emulation)
 	Surface.$surface.Memory= (System|VRAM)
@@ -1353,9 +1362,9 @@ AIRFORCE=GAAIRC,AMRADR</pre>
 	<span class="note">NB: enabling Force3D forces Memory into VRAM mode.</span><br>
 	<span class="note">NB: Ares.ini is not intended to be included or edited by mods, as this file may include various other settings in future that the end-user wishes to set themselves. Launch Base does not permit mods to include ares.ini, and also provides its own interface to allow the user to modify the above graphical settings.</span><dfn class="new">Graphics/Surface drawing options can be configured by the user (advanced users only).</dfn></p>
 	
-	<h2>Required Changes For Mods Using Ares</h2>
-	<p>Unfortunately, Ares will not simply "work" without changes to the original game files. The reason for this is that maintaining compatibility with the original game files whilst still offering the enhancements that are Ares' raison d'être would make implementing Ares features (both for us, the developers, and you, the mod author) considerably more complex, ultimately wasting time that would be better spent on other tasks.<br>
-	This section details the modifications you'll most likely need to make to ensure your mod does not receive any unexpected changes from simply being run whilst Ares is active.<br>
+	<h2>Required Changes For Mods Using <span class="gamename">Ares</span></h2>
+	<p>Unfortunately, <span class="gamename">Ares</span> will not simply "work" without changes to the original game files. The reason for this is that maintaining compatibility with the original game files whilst still offering the enhancements that are <span class="gamename">Ares</span>' raison d'être would make implementing <span class="gamename">Ares</span> features (both for us, the developers, and you, the mod author) considerably more complex, ultimately wasting time that would be better spent on other tasks.<br>
+	This section details the modifications you'll most likely need to make to ensure your mod does not receive any unexpected changes from simply being run whilst <span class="gamename">Ares</span> is active.<br>
 	In future these changes will be provided as extensions to the standard files that are included with the YR Unofficial 1.002 Mini-Patch Developer's Pack.</p>
 	<h3>artmd.ini</h3>
 	<ul>
@@ -1369,23 +1378,25 @@ AIRFORCE=GAAIRC,AMRADR</pre>
 	<h3>bombcurs.shp</h3>
 	<p>This animation needs to have its last frame removed if you don't want to see the previously unused skull image. See IvanBomb.FlickerRate.</p>
 	<h3>ares.mix</h3>
-	Mods should not include ares.mix. This new MIX file is bundled with Ares to provide any new/modified files that Ares changes/additions rely on. This MIX file presently includes:
+	Mods should not include <span class="filename">ares.mix</span>. This new MIX file is bundled with <span class="gamename">Ares</span> to provide any new/modified files that <span class="gamename">Ares</span> changes/additions rely on. This MIX file presently includes:
 	<ul>
-		<li>ares.csf &ndash; includes a few new strings that are used by the Random Map Generator:</li>
-		<ul class="nobullets">
-			<li>GUI:UrbanAreas=Create Urban Areas</li>
-			<li>Name:Desert=Desert</li>
-			<li>STT:RMGUrbanAreas=Choose whether urban areas will be present on the map.</li>
-		</ul>
+		<li>
+			ares.csf &ndash; includes a few new strings that are used by the Random Map Generator:
+			<ul class="nobullets">
+				<li>GUI:UrbanAreas=Create Urban Areas</li>
+				<li>Name:Desert=Desert</li>
+				<li>STT:RMGUrbanAreas=Choose whether urban areas will be present on the map.</li>
+			</ul>
+		</li>
 	</ul>
 
 	<h2>Credits</h2>
-	<p>Ares is being developed by:
+	<p><span class="gamename">Ares</span> is being developed by:
 	<ul class="nobullets">
-		<li>pd &ndash; the brains behind Ares and Syringe, and the author of the original RockPatch. Officially retired from the project, but his contributions will never be forgotten.</li>
-		<li>DCoder &ndash; the crazy programmer guy with too many projects and too little free time. Spearhead of the Ares project.</li>
-		<li>Electro &ndash; the first contributor who can add functionality without needing to understand raw assembly code (another great Ares feature - you can contribute as soon as you know C++).
-		<li>Nighthawk &ndash; Ares' project manager.</li>
+		<li>pd &ndash; the brains behind <span class="gamename">Ares</span> and Syringe, and the author of the original RockPatch. Officially retired from the project, but his contributions will never be forgotten.</li>
+		<li>DCoder &ndash; the crazy programmer guy with too many projects and too little free time. Spearhead of the <span class="gamename">Ares</span> project.</li>
+		<li>Electro &ndash; the first contributor who can add functionality without needing to understand raw assembly code (another great <span class="gamename">Ares</span> feature - you can contribute as soon as you know C++).
+		<li>Nighthawk &ndash; <span class="gamename">Ares</span>' project manager.</li>
 		<li>Renegade &ndash; the first contributor who adds functionality while working on Linux!</li>
 		<li>AlexB &ndash; [Insert comment here]</li>
 	</ul>
@@ -1399,10 +1410,10 @@ AIRFORCE=GAAIRC,AMRADR</pre>
 	<p>For developing Launch Base and the YR Unofficial 1.002 Mini-Patch (UMP), and whipping this documentation into shape.</p>
 
 	<h4>Renegade</h4>
-	<p>For hosting Ares itself, performing the duties of Project Manager, creating the HTML version of the Ares manual and, of course, contributing code and helper tools.</p>
+	<p>For hosting <span class="gamename">Ares</span> itself, performing the duties of Project Manager, creating the HTML version of the <span class="gamename">Ares</span> manual and, of course, contributing code and helper tools.</p>
 
-	<h4>Ares Testers</h4>
-	<p>For devoting their free time to testing Ares and giving us feedback - this enables us to make <span class="gamename">Yuri's Revenge</span> and Ares even better.</p>
+	<h4><span class="gamename">Ares</span> Testers</h4>
+	<p>For devoting their free time to testing <span class="gamename">Ares</span> and giving us feedback - this enables us to make <span class="gamename">Yuri's Revenge</span> and <span class="gamename">Ares</span> even better.</p>
 	<ul>
 		<li>AlexB</li>
 		<li>angrymod</li>
@@ -1437,8 +1448,8 @@ AIRFORCE=GAAIRC,AMRADR</pre>
 	<p>This is a list of new flags/sections only. Existing flags/sections whose functionality has changed are not listed here (except in extreme cases).</p>
 	<div id="list_flags"></div>
 
-	<h2>Appendix B &ndash; Ares Feature Summary</h2>
-	<p>Below is a list of everything that Ares brings to <span class="gamename">Yuri's Revenge</span> as a series of quick bullet points.</p>
+	<h2>Appendix B &ndash; <span class="gamename">Ares</span> Feature Summary</h2>
+	<p>Below is a list of everything that <span class="gamename">Ares</span> brings to <span class="gamename">Yuri's Revenge</span> as a series of quick bullet points.</p>
 	
 	<h3>Bug Fixes</h3>
 	<ul id="list_bugfix"><li class="pseudo"></li></ul>
@@ -1487,10 +1498,10 @@ AIRFORCE=GAAIRC,AMRADR</pre>
 		<li>Lighting</li>
 	</ul>
 
-	<p>30 of 59 NPatch features are presently unique to NPatch (this is an approximation and subject to interpretation).</p>
+	<p>30 of 59 <span class="gamename">NPatch</span> features are presently unique to <span class="gamename">NPatch</span> (this is an approximation and subject to interpretation).</p>
 
-	<p>51 of 84 Ares features are unique to Ares (again, this is an approximation and subject to interpretation, however we have tried to be strict in only counting totally unique features).<br>
-	This does not count the Bug Fixes section (NPatch documentation does not go into detail about the extent of bug fixes, if any).</p>
+	<p>51 of 84 <span class="gamename">Ares</span> features are unique to <span class="gamename">Ares</span> (again, this is an approximation and subject to interpretation, however we have tried to be strict in only counting totally unique features).<br>
+	This does not count the Bug Fixes section (<span class="gamename">NPatch</span> documentation does not go into detail about the extent of bug fixes, if any).</p>
 	
 	<!-- YOU SHOULD NOT NEED TO EDIT ANYTHING BELOW THIS LINE -->
 	<script type="text/javascript">
