@@ -12,6 +12,8 @@ public:
 	static void CreateEMPulse(WarheadTypeExt::ExtData *Warhead, CellStruct Target, TechnoClass *Firer);
 	static void DisableEMPEffect(TechnoClass *Techno);
 	static bool IsTypeEMPProne(TechnoTypeClass *Type);
+	static bool IsDeactivationAdvisable(TechnoClass *Techno);
+	static void UpdateSparkleAnim(TechnoClass *Techno);
 
 protected:
 	static void deliverEMPDamage(ObjectClass *, TechnoClass *, WarheadTypeExt::ExtData *);

@@ -19,11 +19,30 @@ DEFINE_HOOK(6FAF0D, TechnoClass_Update_EMPLock, 6) {
 			EMPulse::DisableEMPEffect(pThis);
 		} else {
 			// deactivate units that were unloading afterwards
-			if (!pThis->Deactivated && (pThis->CurrentMission != mission_Unload)) {
+			if (!pThis->Deactivated && EMPulse::IsDeactivationAdvisable(pThis)) {
 				pThis->Deactivate();
+
+				// update the current mission
+				if (TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(pThis)) {
+					pData->EMPLastMission = pThis->CurrentMission;
+				}
 			}
 		}
 	}
 
 	return 0x6FAFFD;
+}
+
+// copy the remaining EMP duration to the unit when undeploying a building.
+DEFINE_HOOK(44A04C, BuildingClass_Unload_CopyEMPDuration, 6) {
+	GET(TechnoClass *, pBuilding, EBP);
+	GET(TechnoClass *, pUnit, EBX);
+
+	// reuse the EMP duration of the deployed/undeployed Techno.
+	if(pUnit && pBuilding) {
+		pUnit->EMPLockRemaining = pBuilding->EMPLockRemaining;
+		EMPulse::UpdateSparkleAnim(pUnit);
+	}
+
+	return 0;
 }

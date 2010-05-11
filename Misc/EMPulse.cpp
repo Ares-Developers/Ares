@@ -226,7 +226,7 @@ bool EMPulse::isEMPImmune(TechnoClass * Target, HouseClass * SourceHouse) {
 	being affected by them.
 
 	Currently, EMPs can be temporarily averted if Target is under the influence of
-	the Iron Curtain or still being constructed or sold.
+	the Iron Curtain.
 
 	\param Target The Techno the EMP is fired at.
 	\param SourceHouse The house that fired the EMP.
@@ -239,12 +239,6 @@ bool EMPulse::isEMPImmune(TechnoClass * Target, HouseClass * SourceHouse) {
 bool EMPulse::isCurrentlyEMPImmune(TechnoClass * Target, HouseClass * SourceHouse) {
 	// iron curtained objects can not be affected by EMPs
 	if (Target->IsIronCurtained()) {
-		return true;
-	}
-
-	// technos still being constructed/sold would display the buildup anim
-	// over and over again.
-	if ((Target->CurrentMission == mission_Construction) || (Target->CurrentMission == mission_Selling)) {
 		return true;
 	}
 
@@ -323,6 +317,36 @@ bool EMPulse::isEligibleEMPTarget(TechnoClass * Target, HouseClass * SourceHouse
 		return false;
 	}
 
+	return true;
+}
+
+//! Gets whether this Techno should be deactivated right now.
+/*!
+	Objects that are currently deploying, constructing, or selling should
+	not be deactivated.
+
+	\param Target The Techno to be deactivated.
+
+	\returns True if Target should be deactivated, false otherwise.
+
+	\author AlexB
+	\date 2010-05-09
+*/
+bool EMPulse::IsDeactivationAdvisable(TechnoClass * Target) {
+	switch(Target->CurrentMission)
+	{
+	case mission_Selling:
+	case mission_Construction:
+	case mission_Unload:
+		if (EMPulse::verbose) {
+			Debug::Log("[IsDeactivationAdvisable] %s should not be disabled. Mission: %d\n", Target->get_ID(), Target->CurrentMission);
+		}
+		return false;
+	}
+
+	if (EMPulse::verbose) {
+		Debug::Log("[IsDeactivationAdvisable] %s should be disabled. Mission: %d\n", Target->get_ID(), Target->CurrentMission);
+	}
 	return true;
 }
 
@@ -430,7 +454,7 @@ void EMPulse::updateSpawnManager(TechnoClass * Techno, ObjectClass * Source = NU
 			for (int i=0; i < SM->SpawnedNodes.Count; ++i) {
 				SpawnNode *spawn = SM->SpawnedNodes.GetItem(i);
 				// kill every spawned unit that is in the air. exempt missiles.
-				if(!spawn->IsSpawnMissile && spawn->Unit && spawn->Status >= 2 && spawn->Status <= 4) {
+				if(!spawn->IsSpawnMissile && spawn->Unit && spawn->Status >= 0 && spawn->Status <= 4) {
 					spawn->Unit->Crash(Source);
 				}
 			}
@@ -464,6 +488,32 @@ void EMPulse::updateSlaveManager(TechnoClass * Techno) {
 		} else {
 			// resume slaving around.
 			SM->RespawnTimer.StartIfEmpty();
+		}
+	}
+}
+
+//! Updates the sparkle animation of Techno.
+/*!
+	Enables or disables the EMP sparkle animation.
+
+	\param Techno The Techno to update.
+
+	\author AlexB
+	\date 2010-05-09
+*/
+void EMPulse::UpdateSparkleAnim(TechnoClass * Techno) {
+	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(Techno);
+	if (pData) {
+		if (Techno->IsUnderEMP()) {
+			if (!pData->EMPSparkleAnim && RulesClass::Instance->EMPulseSparkles) {
+				GAME_ALLOC(AnimClass, pData->EMPSparkleAnim, RulesClass::Instance->EMPulseSparkles, &Techno->Location);
+				pData->EMPSparkleAnim->SetOwnerObject(Techno);
+			}
+		} else {
+			if (pData->EMPSparkleAnim) {
+				pData->EMPSparkleAnim->RemainingIterations = 0; // basically "you don't need to show up anymore"
+				pData->EMPSparkleAnim = NULL;
+			}
 		}
 	}
 }
@@ -563,7 +613,7 @@ bool EMPulse::enableEMPEffect(TechnoClass * Victim, ObjectClass * Source) {
 	pData->EMPLastMission = Victim->CurrentMission;
 
 	// deactivate and sparkle.
-	if (!Victim->Deactivated && (Victim->CurrentMission != mission_Unload)) {
+	if (!Victim->Deactivated && IsDeactivationAdvisable(Victim)) {
 		Victim->Deactivate();
 	}
 
@@ -577,10 +627,7 @@ bool EMPulse::enableEMPEffect(TechnoClass * Victim, ObjectClass * Source) {
 	updateSlaveManager(Victim);
 
 	// set the sparkle animation.
-	if (!pData->EMPSparkleAnim && RulesClass::Instance->EMPulseSparkles) {
-		GAME_ALLOC(AnimClass, pData->EMPSparkleAnim, RulesClass::Instance->EMPulseSparkles, &Victim->Location);
-		pData->EMPSparkleAnim->SetOwnerObject(Victim);
-	}
+	UpdateSparkleAnim(Victim);
 
 	// warn the player
 	announceAttack(Victim);
@@ -605,7 +652,7 @@ void EMPulse::DisableEMPEffect(TechnoClass * Victim) {
 	bool HasPower = true;
 
 	if (BuildingClass * Building = specific_cast<BuildingClass *>(Victim)) {
-		HasPower = Building->HasPower;
+		HasPower = Building->HasPower && !(Building->Owner->PowerDrain > Building->Owner->PowerOutput) ;
 
 		if (!Building->Type->InvisibleInGame) {
 			if (HasPower) {
@@ -626,10 +673,8 @@ void EMPulse::DisableEMPEffect(TechnoClass * Victim) {
 	updateSpawnManager(Victim);
 	updateSlaveManager(Victim);
 
-	if (pData && pData->EMPSparkleAnim) {
-		pData->EMPSparkleAnim->RemainingIterations = 0; // basically "you don't need to show up anymore"
-		pData->EMPSparkleAnim = NULL;
-	}
+	// update the animation
+	UpdateSparkleAnim(Victim);
 
 	// get harvesters back to work.
 	if (UnitClass * Unit = specific_cast<UnitClass *>(Victim)) {
