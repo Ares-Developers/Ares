@@ -126,9 +126,9 @@ void Ares::SendPDPlane(HouseClass* pOwner, CellClass* pTarget, AircraftTypeClass
 		pNums->Count > 0 &&
 		pOwner && pPlaneType && pTarget)
 	{
-		++Unsorted::SomeMutex;
+		++Unsorted::IKnowWhatImDoing;
 		AircraftClass* pPlane = reinterpret_cast<AircraftClass*>(pPlaneType->CreateObject(pOwner));
-		--Unsorted::SomeMutex;
+		--Unsorted::IKnowWhatImDoing;
 
 		pPlane->Spawned = true;
 
@@ -154,9 +154,9 @@ void Ares::SendPDPlane(HouseClass* pOwner, CellClass* pTarget, AircraftTypeClass
 
 		CoordStruct spawn_crd = {(spawn_cell.X << 8) + 128, (spawn_cell.Y << 8) + 128, 0};
 
-		++Unsorted::SomeMutex;
+		++Unsorted::IKnowWhatImDoing;
 		bool bSpawned = pPlane->Put(&spawn_crd, dir_N);
-		--Unsorted::SomeMutex;
+		--Unsorted::IKnowWhatImDoing;
 
 		if(bSpawned) {
 			pPlane->HasPassengers = true;

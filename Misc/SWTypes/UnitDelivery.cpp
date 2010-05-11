@@ -89,11 +89,7 @@ void UnitDeliveryStateMachine::PlaceUnits() {
 				CoordStruct XYZ;
 				cell->GetCoordsWithBridge(&XYZ);
 
-				++Unsorted::SomeMutex;
-				Placed = Item->Put(&XYZ, (cellIdx & 7));
-				--Unsorted::SomeMutex;
-
-				if(Placed) {
+				if(Placed = Item->Put(&XYZ, (cellIdx & 7))) {
 					if(ItemBuilding) {
 						if (pData->SW_DeliverBuildups) {
 							ItemBuilding->UpdateOwner(this->Super->Owner);

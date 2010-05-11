@@ -100,13 +100,13 @@ bool TechnoExt::ParadropSurvivor(FootClass *Survivor, CoordStruct *loc, bool Sel
 {
 	bool success;
 	int floorZ = MapClass::Instance->GetCellFloorHeight(loc);
-	++Unsorted::SomeMutex;
+	++Unsorted::IKnowWhatImDoing;
 	if(loc->Z - floorZ > 100) {
 		success = Survivor->SpawnParachuted(loc);
 	} else {
 		success = Survivor->Put(loc, ScenarioClass::Instance->Random.RandomRanged(0, 7));
 	}
-	--Unsorted::SomeMutex;
+	--Unsorted::IKnowWhatImDoing;
 	RET_UNLESS(success);
 	Survivor->Scatter(0xB1CFE8, 1, 0);
 	Survivor->QueueMission(Survivor->Owner->ControlledByHuman() ? mission_Guard : mission_Hunt, 0);

@@ -125,7 +125,7 @@ DEFINE_HOOK(70FBE3, TechnoClass_Activate, 5)
 			TechnoExt::SpotlightExt.erase(i);
 			GAME_DEALLOC(i->second);
 		}
-		++Unsorted::SomeMutex;
+		++Unsorted::IKnowWhatImDoing;
 		BuildingLightClass *placeholder;
 		GAME_ALLOC(BuildingLightClass, placeholder, T);
 		if(BuildingClass * B = specific_cast<BuildingClass *>(T)) {
@@ -134,7 +134,7 @@ DEFINE_HOOK(70FBE3, TechnoClass_Activate, 5)
 			}
 			B->Spotlight = placeholder;
 		}
-		--Unsorted::SomeMutex;
+		--Unsorted::IKnowWhatImDoing;
 	}
 	return 0;
 }

@@ -79,10 +79,10 @@ DEFINE_HOOK(5F3E70, ObjectClass_Update, 5)
 	RectangleStruct *ScreenArea = &TacticalClass::Instance->VisibleArea;
 	Point2D off = { ScreenArea->X - (Alpha->Width / 2), ScreenArea->Y - (Alpha->Height / 2) };
 	xy += off;
-	++Unsorted::SomeMutex;
+	++Unsorted::IKnowWhatImDoing;
 	AlphaShapeClass *placeholder;
 	GAME_ALLOC(AlphaShapeClass, placeholder, Source, xy.X, xy.Y);
-	--Unsorted::SomeMutex;
+	--Unsorted::IKnowWhatImDoing;
 	int Margin = 40;
 	RectangleStruct Dirty =
 	  { xy.X - ScreenArea->X - Margin, xy.Y - ScreenArea->Y - Margin,

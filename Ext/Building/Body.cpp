@@ -313,9 +313,9 @@ void BuildingExt::buildLines(BuildingClass* theBuilding, CellStruct selectedCell
 					CoordStruct coordBuffer;
 					CellClass::Cell2Coord(&cellToBuildOn, &coordBuffer);
 
-					++Unsorted::SomeMutex; // another mystical Westwood mechanism. According to D, Bad Things happen if this is missing.
+					++Unsorted::IKnowWhatImDoing; // put the building there even if normal rules would deny - e.g. under units
 					bool Put = tempBuilding->Put(&coordBuffer, 0);
-					--Unsorted::SomeMutex;
+					--Unsorted::IKnowWhatImDoing;
 
 					if(Put) {
 						tempBuilding->QueueMission(mission_Construction, false);
