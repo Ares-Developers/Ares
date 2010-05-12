@@ -9,6 +9,7 @@
   <div class="tabs">
     <ul>
       <li><a href="index.html"><span>Main&nbsp;Page</span></a></li>
+      <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li><a href="dirs.html"><span>Directories</span></a></li>
@@ -193,13 +194,13 @@ template&lt;typename T&gt; </div>
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00180"></a>00180                     :
-<a name="l00181"></a>00181                 <a class="code" href="class_container.html#8a956b3fe4cd38cf6173a0679149c1cf">CTOR_Count</a>(0),
-<a name="l00182"></a>00182                 <a class="code" href="class_container.html#d9849e39fa0395ad2db5da54939426c3">DTOR_Count</a>(0),
-<a name="l00183"></a>00183                 <a class="code" href="class_container.html#794cce6feed2e68005d8fea68bcbc5e7">Lookup_Failure_Count</a>(0),
-<a name="l00184"></a>00184                 <a class="code" href="class_container.html#a059fe2188d761e0fd984f4cf7d20776">Lookup_Success_Count</a>(0)
-<a name="l00185"></a>00185         {
-<a name="l00186"></a>00186         }
+<div class="fragment"><pre class="fragment"><a name="l00179"></a>00179                     :
+<a name="l00180"></a>00180                 <a class="code" href="class_container.html#8a956b3fe4cd38cf6173a0679149c1cf">CTOR_Count</a>(0),
+<a name="l00181"></a>00181                 <a class="code" href="class_container.html#d9849e39fa0395ad2db5da54939426c3">DTOR_Count</a>(0),
+<a name="l00182"></a>00182                 <a class="code" href="class_container.html#794cce6feed2e68005d8fea68bcbc5e7">Lookup_Failure_Count</a>(0),
+<a name="l00183"></a>00183                 <a class="code" href="class_container.html#a059fe2188d761e0fd984f4cf7d20776">Lookup_Success_Count</a>(0)
+<a name="l00184"></a>00184         {
+<a name="l00185"></a>00185         }
 
 </pre></div>
 <p>
@@ -224,9 +225,9 @@ template&lt;typename T&gt; </div>
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00188"></a>00188                              {
-<a name="l00189"></a>00189                 <a class="code" href="class_container.html#105aa8d04208a57b2fd88332b36d824d">Empty</a>();
-<a name="l00190"></a>00190         }
+<div class="fragment"><pre class="fragment"><a name="l00187"></a>00187                              {
+<a name="l00188"></a>00188                 <a class="code" href="class_container.html#105aa8d04208a57b2fd88332b36d824d">Empty</a>();
+<a name="l00189"></a>00189         }
 </pre></div>
 <p>
 
@@ -251,13 +252,13 @@ template&lt;typename T&gt; </div>
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00235"></a>00235                      {
-<a name="l00236"></a>00236                 <span class="keywordflow">for</span>(<span class="keyword">typename</span> C_Map::iterator i = this-&gt;begin(); i != this-&gt;end(); ) {
-<a name="l00237"></a>00237                         <span class="keyword">delete</span> i-&gt;second;
-<a name="l00238"></a>00238                         erase(i++);
-<a name="l00239"></a>00239         <span class="comment">//              ++i;</span>
-<a name="l00240"></a>00240                 }
-<a name="l00241"></a>00241         }
+<div class="fragment"><pre class="fragment"><a name="l00234"></a>00234                      {
+<a name="l00235"></a>00235                 <span class="keywordflow">for</span>(<span class="keyword">typename</span> C_Map::iterator i = this-&gt;begin(); i != this-&gt;end(); ) {
+<a name="l00236"></a>00236                         <span class="keyword">delete</span> i-&gt;second;
+<a name="l00237"></a>00237                         erase(i++);
+<a name="l00238"></a>00238         <span class="comment">//              ++i;</span>
+<a name="l00239"></a>00239                 }
+<a name="l00240"></a>00240         }
 </pre></div>
 <p>
 
@@ -282,15 +283,15 @@ template&lt;typename T&gt; </div>
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00208"></a>00208                             {
-<a name="l00209"></a>00209                 <span class="keyword">typename</span> C_Map::iterator i = this-&gt;find(key);
-<a name="l00210"></a>00210                 <span class="keywordflow">if</span>(i == this-&gt;end()) {
-<a name="l00211"></a>00211                         ++<a class="code" href="class_container.html#794cce6feed2e68005d8fea68bcbc5e7">Lookup_Failure_Count</a>;
-<a name="l00212"></a>00212                         <span class="keywordflow">return</span> NULL;
-<a name="l00213"></a>00213                 }
-<a name="l00214"></a>00214                 ++<a class="code" href="class_container.html#a059fe2188d761e0fd984f4cf7d20776">Lookup_Success_Count</a>;
-<a name="l00215"></a>00215                 <span class="keywordflow">return</span> i-&gt;second;
-<a name="l00216"></a>00216         }
+<div class="fragment"><pre class="fragment"><a name="l00207"></a>00207                             {
+<a name="l00208"></a>00208                 <span class="keyword">typename</span> C_Map::iterator i = this-&gt;find(key);
+<a name="l00209"></a>00209                 <span class="keywordflow">if</span>(i == this-&gt;end()) {
+<a name="l00210"></a>00210                         ++<a class="code" href="class_container.html#794cce6feed2e68005d8fea68bcbc5e7">Lookup_Failure_Count</a>;
+<a name="l00211"></a>00211                         <span class="keywordflow">return</span> NULL;
+<a name="l00212"></a>00212                 }
+<a name="l00213"></a>00213                 ++<a class="code" href="class_container.html#a059fe2188d761e0fd984f4cf7d20776">Lookup_Success_Count</a>;
+<a name="l00214"></a>00214                 <span class="keywordflow">return</span> i-&gt;second;
+<a name="l00215"></a>00215         }
 </pre></div>
 <p>
 
@@ -315,21 +316,21 @@ template&lt;typename T&gt; </div>
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00192"></a>00192                                       {
-<a name="l00193"></a>00193                 <span class="keywordflow">if</span>(key == NULL) {
-<a name="l00194"></a>00194                         <span class="keyword">const</span> std::type_info &amp;info = <span class="keyword">typeid</span>(*this);
-<a name="l00195"></a>00195                         Debug::Log(<span class="stringliteral">"CTOR of %s attempted for a NULL pointer! WTF!\n"</span>, info.name());
-<a name="l00196"></a>00196                         <span class="keywordflow">return</span> NULL;
-<a name="l00197"></a>00197                 }
-<a name="l00198"></a>00198                 <span class="keyword">typename</span> C_Map::iterator i = this-&gt;find(key);
-<a name="l00199"></a>00199                 <span class="keywordflow">if</span>(i == this-&gt;end()) {
-<a name="l00200"></a>00200                         ++<a class="code" href="class_container.html#8a956b3fe4cd38cf6173a0679149c1cf">CTOR_Count</a>;
-<a name="l00201"></a>00201                         <a class="code" href="class_container.html#7756affd4838bf21955c8c2eb8e44f09">E_T</a> * val = <span class="keyword">new</span> <a class="code" href="class_container.html#7756affd4838bf21955c8c2eb8e44f09">E_T</a>(<span class="comment">/*typename*/</span> E_T::Canary, key);
-<a name="l00202"></a>00202                         val-&gt;InitializeConstants(key);
-<a name="l00203"></a>00203                         i = this-&gt;insert(<span class="keyword">typename</span> C_Map::value_type(key, val)).first;
-<a name="l00204"></a>00204                 }
-<a name="l00205"></a>00205                 <span class="keywordflow">return</span> i-&gt;second;
-<a name="l00206"></a>00206         }
+<div class="fragment"><pre class="fragment"><a name="l00191"></a>00191                                       {
+<a name="l00192"></a>00192                 <span class="keywordflow">if</span>(key == NULL) {
+<a name="l00193"></a>00193                         <span class="keyword">const</span> std::type_info &amp;info = <span class="keyword">typeid</span>(*this);
+<a name="l00194"></a>00194                         Debug::Log(<span class="stringliteral">"CTOR of %s attempted for a NULL pointer! WTF!\n"</span>, info.name());
+<a name="l00195"></a>00195                         <span class="keywordflow">return</span> NULL;
+<a name="l00196"></a>00196                 }
+<a name="l00197"></a>00197                 <span class="keyword">typename</span> C_Map::iterator i = this-&gt;find(key);
+<a name="l00198"></a>00198                 <span class="keywordflow">if</span>(i == this-&gt;end()) {
+<a name="l00199"></a>00199                         ++<a class="code" href="class_container.html#8a956b3fe4cd38cf6173a0679149c1cf">CTOR_Count</a>;
+<a name="l00200"></a>00200                         <a class="code" href="class_container.html#7756affd4838bf21955c8c2eb8e44f09">E_T</a> * val = <span class="keyword">new</span> <a class="code" href="class_container.html#7756affd4838bf21955c8c2eb8e44f09">E_T</a>(<span class="comment">/*typename*/</span> E_T::Canary, key);
+<a name="l00201"></a>00201                         val-&gt;InitializeConstants(key);
+<a name="l00202"></a>00202                         i = this-&gt;insert(<span class="keyword">typename</span> C_Map::value_type(key, val)).first;
+<a name="l00203"></a>00203                 }
+<a name="l00204"></a>00204                 <span class="keywordflow">return</span> i-&gt;second;
+<a name="l00205"></a>00205         }
 </pre></div>
 <p>
 
@@ -354,11 +355,11 @@ template&lt;typename T&gt; </div>
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00173"></a>00173                                                  {
-<a name="l00174"></a>00174                 <span class="keywordflow">for</span>(<span class="keyword">typename</span> C_Map::iterator i = this-&gt;begin(); i != this-&gt;end(); ++i) {
-<a name="l00175"></a>00175                         i-&gt;second-&gt;InvalidatePointer(ptr);
-<a name="l00176"></a>00176                 }
-<a name="l00177"></a>00177         }
+<div class="fragment"><pre class="fragment"><a name="l00172"></a>00172                                                  {
+<a name="l00173"></a>00173                 <span class="keywordflow">for</span>(<span class="keyword">typename</span> C_Map::iterator i = this-&gt;begin(); i != this-&gt;end(); ++i) {
+<a name="l00174"></a>00174                         i-&gt;second-&gt;InvalidatePointer(ptr);
+<a name="l00175"></a>00175                 }
+<a name="l00176"></a>00176         }
 </pre></div>
 <p>
 
@@ -383,8 +384,8 @@ template&lt;typename T&gt; </div>
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00170"></a>00170                                                   {
-<a name="l00171"></a>00171         };
+<div class="fragment"><pre class="fragment"><a name="l00169"></a>00169                                                   {
+<a name="l00170"></a>00170         };
 </pre></div>
 <p>
 
@@ -418,9 +419,9 @@ template&lt;typename T&gt; </div>
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00303"></a>00303                                            {
-<a name="l00304"></a>00304                 this-&gt;<a class="code" href="class_container.html#f8cf8fc0fcc757d5e72334ea3b8ca6c0">LoadKey</a>(key, pStm);
-<a name="l00305"></a>00305         }
+<div class="fragment"><pre class="fragment"><a name="l00302"></a>00302                                            {
+<a name="l00303"></a>00303                 this-&gt;<a class="code" href="class_container.html#f8cf8fc0fcc757d5e72334ea3b8ca6c0">LoadKey</a>(key, pStm);
+<a name="l00304"></a>00304         }
 </pre></div>
 <p>
 
@@ -445,11 +446,11 @@ template&lt;typename T&gt; </div>
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00243"></a>00243                                               {
-<a name="l00244"></a>00244                 <span class="keywordflow">for</span>(<span class="keyword">typename</span> C_Map::iterator i = this-&gt;begin(); i != this-&gt;end(); i++) {
-<a name="l00245"></a>00245                         i-&gt;second-&gt;LoadFromINI(i-&gt;first, pINI);
-<a name="l00246"></a>00246                 }
-<a name="l00247"></a>00247         }
+<div class="fragment"><pre class="fragment"><a name="l00242"></a>00242                                               {
+<a name="l00243"></a>00243                 <span class="keywordflow">for</span>(<span class="keyword">typename</span> C_Map::iterator i = this-&gt;begin(); i != this-&gt;end(); i++) {
+<a name="l00244"></a>00244                         i-&gt;second-&gt;LoadFromINI(i-&gt;first, pINI);
+<a name="l00245"></a>00245                 }
+<a name="l00246"></a>00246         }
 </pre></div>
 <p>
 
@@ -474,11 +475,11 @@ template&lt;typename T&gt; </div>
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00256"></a>00256                                                 {
-<a name="l00257"></a>00257                 <span class="keywordflow">for</span>(<span class="keyword">typename</span> C_Map::iterator i = this-&gt;begin(); i != this-&gt;end(); i++) {
-<a name="l00258"></a>00258                         i-&gt;second-&gt;LoadFromRulesFile(i-&gt;first, pINI);
-<a name="l00259"></a>00259                 }
-<a name="l00260"></a>00260         }
+<div class="fragment"><pre class="fragment"><a name="l00255"></a>00255                                                 {
+<a name="l00256"></a>00256                 <span class="keywordflow">for</span>(<span class="keyword">typename</span> C_Map::iterator i = this-&gt;begin(); i != this-&gt;end(); i++) {
+<a name="l00257"></a>00257                         i-&gt;second-&gt;LoadFromRulesFile(i-&gt;first, pINI);
+<a name="l00258"></a>00258                 }
+<a name="l00259"></a>00259         }
 </pre></div>
 <p>
 
@@ -512,12 +513,12 @@ template&lt;typename T&gt; </div>
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00249"></a>00249                                                     {
-<a name="l00250"></a>00250                 <span class="keyword">typename</span> C_Map::iterator i = this-&gt;find(key);
-<a name="l00251"></a>00251                 <span class="keywordflow">if</span>(i != this-&gt;end()) {
-<a name="l00252"></a>00252                         i-&gt;second-&gt;LoadFromINI(key, pINI);
-<a name="l00253"></a>00253                 }
-<a name="l00254"></a>00254         }
+<div class="fragment"><pre class="fragment"><a name="l00248"></a>00248                                                     {
+<a name="l00249"></a>00249                 <span class="keyword">typename</span> C_Map::iterator i = this-&gt;find(key);
+<a name="l00250"></a>00250                 <span class="keywordflow">if</span>(i != this-&gt;end()) {
+<a name="l00251"></a>00251                         i-&gt;second-&gt;LoadFromINI(key, pINI);
+<a name="l00252"></a>00252                 }
+<a name="l00253"></a>00253         }
 </pre></div>
 <p>
 
@@ -551,28 +552,28 @@ template&lt;typename T&gt; </div>
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00307"></a>00307                                               {
-<a name="l00308"></a>00308                 ULONG out;
-<a name="l00309"></a>00309 
-<a name="l00310"></a>00310                 <span class="keyword">const</span> std::type_info &amp;info = <span class="keyword">typeid</span>(key);
-<a name="l00311"></a>00311                 Debug::Log(<span class="stringliteral">"Loading Key [%s] (%X)\n"</span>, info.name(), key);
-<a name="l00312"></a>00312 
-<a name="l00313"></a>00313                 <span class="keywordflow">if</span>(key == NULL) {
-<a name="l00314"></a>00314                         Debug::Log(<span class="stringliteral">"Load attempted for a NULL pointer! WTF!\n"</span>);
-<a name="l00315"></a>00315                         <span class="keywordflow">return</span> NULL;
-<a name="l00316"></a>00316                 }
-<a name="l00317"></a>00317                 <a class="code" href="class_container.html#7756affd4838bf21955c8c2eb8e44f09">E_T</a>* buffer = this-&gt;<a class="code" href="class_container.html#73c02e221290552e7bf07d91e801c256">FindOrAllocate</a>(key);
-<a name="l00318"></a>00318                 <span class="keywordtype">long</span> origPtr;
-<a name="l00319"></a>00319                 pStm-&gt;Read(&amp;origPtr, 4, &amp;out);
-<a name="l00320"></a>00320                 pStm-&gt;Read(buffer, buffer-&gt;Size(), &amp;out);
-<a name="l00321"></a>00321                 Debug::Log(<span class="stringliteral">"LoadKey Swizzle: %X =&gt; %X\n"</span>, origPtr, buffer);
-<a name="l00322"></a>00322                 SwizzleManagerClass::Instance.Here_I_Am(origPtr, (<span class="keywordtype">void</span> *)buffer);
-<a name="l00323"></a>00323                 SWIZZLE(buffer-&gt;AttachedToObject);
-<a name="l00324"></a>00324 <span class="preprocessor">#ifdef DEBUGBUILD</span>
-<a name="l00325"></a>00325 <span class="preprocessor"></span>                        assert(buffer-&gt;SavedCanary == <span class="keyword">typename</span> E_T::Canary);
-<a name="l00326"></a>00326 <span class="preprocessor">#endif</span>
-<a name="l00327"></a>00327 <span class="preprocessor"></span>                <span class="keywordflow">return</span> buffer;
-<a name="l00328"></a>00328         };
+<div class="fragment"><pre class="fragment"><a name="l00306"></a>00306                                               {
+<a name="l00307"></a>00307                 ULONG out;
+<a name="l00308"></a>00308 
+<a name="l00309"></a>00309                 <span class="keyword">const</span> std::type_info &amp;info = <span class="keyword">typeid</span>(key);
+<a name="l00310"></a>00310                 Debug::Log(<span class="stringliteral">"Loading Key [%s] (%X)\n"</span>, info.name(), key);
+<a name="l00311"></a>00311 
+<a name="l00312"></a>00312                 <span class="keywordflow">if</span>(key == NULL) {
+<a name="l00313"></a>00313                         Debug::Log(<span class="stringliteral">"Load attempted for a NULL pointer! WTF!\n"</span>);
+<a name="l00314"></a>00314                         <span class="keywordflow">return</span> NULL;
+<a name="l00315"></a>00315                 }
+<a name="l00316"></a>00316                 <a class="code" href="class_container.html#7756affd4838bf21955c8c2eb8e44f09">E_T</a>* buffer = this-&gt;<a class="code" href="class_container.html#73c02e221290552e7bf07d91e801c256">FindOrAllocate</a>(key);
+<a name="l00317"></a>00317                 <span class="keywordtype">long</span> origPtr;
+<a name="l00318"></a>00318                 pStm-&gt;Read(&amp;origPtr, 4, &amp;out);
+<a name="l00319"></a>00319                 pStm-&gt;Read(buffer, buffer-&gt;Size(), &amp;out);
+<a name="l00320"></a>00320                 Debug::Log(<span class="stringliteral">"LoadKey Swizzle: %X =&gt; %X\n"</span>, origPtr, buffer);
+<a name="l00321"></a>00321                 SwizzleManagerClass::Instance.Here_I_Am(origPtr, (<span class="keywordtype">void</span> *)buffer);
+<a name="l00322"></a>00322                 SWIZZLE(buffer-&gt;AttachedToObject);
+<a name="l00323"></a>00323 <span class="preprocessor">#ifdef DEBUGBUILD</span>
+<a name="l00324"></a>00324 <span class="preprocessor"></span>                        assert(buffer-&gt;SavedCanary == <span class="keyword">typename</span> E_T::Canary);
+<a name="l00325"></a>00325 <span class="preprocessor">#endif</span>
+<a name="l00326"></a>00326 <span class="preprocessor"></span>                <span class="keywordflow">return</span> buffer;
+<a name="l00327"></a>00327         };
 </pre></div>
 <p>
 
@@ -596,13 +597,13 @@ template&lt;typename T&gt; </div>
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00295"></a>00295                           {
-<a name="l00296"></a>00296                 <span class="keywordflow">if</span>(<a class="code" href="class_container.html">Container&lt;T&gt;::SavingObject</a> &amp;&amp; <a class="code" href="class_container.html">Container&lt;T&gt;::SavingStream</a>) {
-<a name="l00297"></a>00297                         this-&gt;<a class="code" href="class_container.html#fcdbce6bb1f081f750dcd1bc63156af5">Load</a>(<a class="code" href="class_container.html">Container&lt;T&gt;::SavingObject</a>, <a class="code" href="class_container.html">Container&lt;T&gt;::SavingStream</a>);
-<a name="l00298"></a>00298                         <a class="code" href="class_container.html">Container&lt;T&gt;::SavingObject</a> = NULL;
-<a name="l00299"></a>00299                         <a class="code" href="class_container.html">Container&lt;T&gt;::SavingStream</a> = NULL;
-<a name="l00300"></a>00300                 }
-<a name="l00301"></a>00301         }
+<div class="fragment"><pre class="fragment"><a name="l00294"></a>00294                           {
+<a name="l00295"></a>00295                 <span class="keywordflow">if</span>(<a class="code" href="class_container.html">Container&lt;T&gt;::SavingObject</a> &amp;&amp; <a class="code" href="class_container.html">Container&lt;T&gt;::SavingStream</a>) {
+<a name="l00296"></a>00296                         this-&gt;<a class="code" href="class_container.html#fcdbce6bb1f081f750dcd1bc63156af5">Load</a>(<a class="code" href="class_container.html">Container&lt;T&gt;::SavingObject</a>, <a class="code" href="class_container.html">Container&lt;T&gt;::SavingStream</a>);
+<a name="l00297"></a>00297                         <a class="code" href="class_container.html">Container&lt;T&gt;::SavingObject</a> = NULL;
+<a name="l00298"></a>00298                         <a class="code" href="class_container.html">Container&lt;T&gt;::SavingStream</a> = NULL;
+<a name="l00299"></a>00299                 }
+<a name="l00300"></a>00300         }
 </pre></div>
 <p>
 
@@ -627,10 +628,10 @@ template&lt;typename T&gt; </div>
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00160"></a>00160                                           {
-<a name="l00161"></a>00161                 this-&gt;<a class="code" href="class_container.html#ee24171d9c34bbaa30b34e4c9d5aa6c2">InvalidatePointer</a>(ptr);
-<a name="l00162"></a>00162                 this-&gt;<a class="code" href="class_container.html#33bd6f42a9b27a2285b27485efb03a8c">InvalidateExtDataPointer</a>(ptr);
-<a name="l00163"></a>00163         }
+<div class="fragment"><pre class="fragment"><a name="l00159"></a>00159                                           {
+<a name="l00160"></a>00160                 this-&gt;<a class="code" href="class_container.html#ee24171d9c34bbaa30b34e4c9d5aa6c2">InvalidatePointer</a>(ptr);
+<a name="l00161"></a>00161                 this-&gt;<a class="code" href="class_container.html#33bd6f42a9b27a2285b27485efb03a8c">InvalidateExtDataPointer</a>(ptr);
+<a name="l00162"></a>00162         }
 </pre></div>
 <p>
 
@@ -655,13 +656,13 @@ template&lt;typename T&gt; </div>
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00227"></a>00227                                               {
-<a name="l00228"></a>00228                 <span class="keywordflow">if</span>(i != this-&gt;end()) {
-<a name="l00229"></a>00229                         <span class="keyword">delete</span> i-&gt;second;
-<a name="l00230"></a>00230                         erase(i);
-<a name="l00231"></a>00231                         ++<a class="code" href="class_container.html#d9849e39fa0395ad2db5da54939426c3">DTOR_Count</a>;
-<a name="l00232"></a>00232                 }
-<a name="l00233"></a>00233         }
+<div class="fragment"><pre class="fragment"><a name="l00226"></a>00226                                               {
+<a name="l00227"></a>00227                 <span class="keywordflow">if</span>(i != this-&gt;end()) {
+<a name="l00228"></a>00228                         <span class="keyword">delete</span> i-&gt;second;
+<a name="l00229"></a>00229                         erase(i);
+<a name="l00230"></a>00230                         ++<a class="code" href="class_container.html#d9849e39fa0395ad2db5da54939426c3">DTOR_Count</a>;
+<a name="l00231"></a>00231                 }
+<a name="l00232"></a>00232         }
 </pre></div>
 <p>
 
@@ -686,14 +687,14 @@ template&lt;typename T&gt; </div>
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00218"></a>00218                               {
-<a name="l00219"></a>00219                 <span class="keyword">typename</span> C_Map::iterator i = this-&gt;find(key);
-<a name="l00220"></a>00220                 <span class="keywordflow">if</span>(i != this-&gt;end()) {
-<a name="l00221"></a>00221                         <span class="keyword">delete</span> i-&gt;second;
-<a name="l00222"></a>00222                         erase(i);
-<a name="l00223"></a>00223                         ++<a class="code" href="class_container.html#d9849e39fa0395ad2db5da54939426c3">DTOR_Count</a>;
-<a name="l00224"></a>00224                 }
-<a name="l00225"></a>00225         }
+<div class="fragment"><pre class="fragment"><a name="l00217"></a>00217                               {
+<a name="l00218"></a>00218                 <span class="keyword">typename</span> C_Map::iterator i = this-&gt;find(key);
+<a name="l00219"></a>00219                 <span class="keywordflow">if</span>(i != this-&gt;end()) {
+<a name="l00220"></a>00220                         <span class="keyword">delete</span> i-&gt;second;
+<a name="l00221"></a>00221                         erase(i);
+<a name="l00222"></a>00222                         ++<a class="code" href="class_container.html#d9849e39fa0395ad2db5da54939426c3">DTOR_Count</a>;
+<a name="l00223"></a>00223                 }
+<a name="l00224"></a>00224         }
 </pre></div>
 <p>
 
@@ -727,9 +728,9 @@ template&lt;typename T&gt; </div>
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00270"></a>00270                                            {
-<a name="l00271"></a>00271                 this-&gt;<a class="code" href="class_container.html#7ab558ec4f0a5baca022551c3af3287c">SaveKey</a>(key, pStm);
-<a name="l00272"></a>00272         }
+<div class="fragment"><pre class="fragment"><a name="l00269"></a>00269                                            {
+<a name="l00270"></a>00270                 this-&gt;<a class="code" href="class_container.html#7ab558ec4f0a5baca022551c3af3287c">SaveKey</a>(key, pStm);
+<a name="l00271"></a>00271         }
 </pre></div>
 <p>
 
@@ -763,26 +764,26 @@ template&lt;typename T&gt; </div>
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00274"></a>00274                                               {
-<a name="l00275"></a>00275                 ULONG out;
-<a name="l00276"></a>00276 
-<a name="l00277"></a>00277                 <span class="keyword">const</span> std::type_info &amp;info = <span class="keyword">typeid</span>(key);
-<a name="l00278"></a>00278                 Debug::Log(<span class="stringliteral">"Saving Key [%s] (%X)\n"</span>, info.name(), key);
-<a name="l00279"></a>00279 
-<a name="l00280"></a>00280                 <span class="keywordflow">if</span>(key == NULL) {
-<a name="l00281"></a>00281                         <span class="keywordflow">return</span> NULL;
-<a name="l00282"></a>00282                 }
-<a name="l00283"></a>00283                 <a class="code" href="class_container.html#7756affd4838bf21955c8c2eb8e44f09">E_T</a>* buffer = this-&gt;<a class="code" href="class_container.html#90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(key);
-<a name="l00284"></a>00284                 Debug::Log(<span class="stringliteral">"\tKey maps to %X\n"</span>, buffer);
-<a name="l00285"></a>00285                 <span class="keywordflow">if</span>(buffer) {
-<a name="l00286"></a>00286                         pStm-&gt;Write(&amp;buffer, 4, &amp;out);
-<a name="l00287"></a>00287                         pStm-&gt;Write(buffer, buffer-&gt;Size(), &amp;out);
-<a name="l00288"></a>00288 <span class="comment">//                      Debug::Log("Save used up 0x%X bytes (HRESULT 0x%X)\n", out, res);</span>
-<a name="l00289"></a>00289                 }
-<a name="l00290"></a>00290 
-<a name="l00291"></a>00291                 Debug::Log(<span class="stringliteral">"\n\n"</span>);
-<a name="l00292"></a>00292                 <span class="keywordflow">return</span> buffer;
-<a name="l00293"></a>00293         };
+<div class="fragment"><pre class="fragment"><a name="l00273"></a>00273                                               {
+<a name="l00274"></a>00274                 ULONG out;
+<a name="l00275"></a>00275 
+<a name="l00276"></a>00276                 <span class="keyword">const</span> std::type_info &amp;info = <span class="keyword">typeid</span>(key);
+<a name="l00277"></a>00277                 Debug::Log(<span class="stringliteral">"Saving Key [%s] (%X)\n"</span>, info.name(), key);
+<a name="l00278"></a>00278 
+<a name="l00279"></a>00279                 <span class="keywordflow">if</span>(key == NULL) {
+<a name="l00280"></a>00280                         <span class="keywordflow">return</span> NULL;
+<a name="l00281"></a>00281                 }
+<a name="l00282"></a>00282                 <a class="code" href="class_container.html#7756affd4838bf21955c8c2eb8e44f09">E_T</a>* buffer = this-&gt;<a class="code" href="class_container.html#90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(key);
+<a name="l00283"></a>00283                 Debug::Log(<span class="stringliteral">"\tKey maps to %X\n"</span>, buffer);
+<a name="l00284"></a>00284                 <span class="keywordflow">if</span>(buffer) {
+<a name="l00285"></a>00285                         pStm-&gt;Write(&amp;buffer, 4, &amp;out);
+<a name="l00286"></a>00286                         pStm-&gt;Write(buffer, buffer-&gt;Size(), &amp;out);
+<a name="l00287"></a>00287 <span class="comment">//                      Debug::Log("Save used up 0x%X bytes (HRESULT 0x%X)\n", out, res);</span>
+<a name="l00288"></a>00288                 }
+<a name="l00289"></a>00289 
+<a name="l00290"></a>00290                 Debug::Log(<span class="stringliteral">"\n\n"</span>);
+<a name="l00291"></a>00291                 <span class="keywordflow">return</span> buffer;
+<a name="l00292"></a>00292         };
 </pre></div>
 <p>
 
@@ -806,13 +807,13 @@ template&lt;typename T&gt; </div>
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00262"></a>00262                           {
-<a name="l00263"></a>00263                 <span class="keywordflow">if</span>(<a class="code" href="class_container.html">Container&lt;T&gt;::SavingObject</a> &amp;&amp; <a class="code" href="class_container.html">Container&lt;T&gt;::SavingStream</a>) {
-<a name="l00264"></a>00264                         this-&gt;<a class="code" href="class_container.html#121d986cee3b33280cdce23f6761c781">Save</a>(<a class="code" href="class_container.html">Container&lt;T&gt;::SavingObject</a>, <a class="code" href="class_container.html">Container&lt;T&gt;::SavingStream</a>);
-<a name="l00265"></a>00265                         <a class="code" href="class_container.html">Container&lt;T&gt;::SavingObject</a> = NULL;
-<a name="l00266"></a>00266                         <a class="code" href="class_container.html">Container&lt;T&gt;::SavingStream</a> = NULL;
-<a name="l00267"></a>00267                 }
-<a name="l00268"></a>00268         }
+<div class="fragment"><pre class="fragment"><a name="l00261"></a>00261                           {
+<a name="l00262"></a>00262                 <span class="keywordflow">if</span>(<a class="code" href="class_container.html">Container&lt;T&gt;::SavingObject</a> &amp;&amp; <a class="code" href="class_container.html">Container&lt;T&gt;::SavingStream</a>) {
+<a name="l00263"></a>00263                         this-&gt;<a class="code" href="class_container.html#121d986cee3b33280cdce23f6761c781">Save</a>(<a class="code" href="class_container.html">Container&lt;T&gt;::SavingObject</a>, <a class="code" href="class_container.html">Container&lt;T&gt;::SavingStream</a>);
+<a name="l00264"></a>00264                         <a class="code" href="class_container.html">Container&lt;T&gt;::SavingObject</a> = NULL;
+<a name="l00265"></a>00265                         <a class="code" href="class_container.html">Container&lt;T&gt;::SavingStream</a> = NULL;
+<a name="l00266"></a>00266                 }
+<a name="l00267"></a>00267         }
 </pre></div>
 <p>
 
@@ -878,13 +879,13 @@ template&lt;typename T&gt; </div>
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00330"></a>00330                     {
-<a name="l00331"></a>00331                 <span class="keyword">const</span> std::type_info &amp;info = <span class="keyword">typeid</span>(*this);
-<a name="l00332"></a>00332                 Debug::Log(<span class="stringliteral">"Stats for container %s:\n"</span>, info.name());
-<a name="l00333"></a>00333 
-<a name="l00334"></a>00334                 Debug::Log(<span class="stringliteral">"|%08d|%08d|%08d/%08d|%08d|%08d|\n"</span>,
-<a name="l00335"></a>00335                         <a class="code" href="class_container.html#8a956b3fe4cd38cf6173a0679149c1cf">CTOR_Count</a>, <a class="code" href="class_container.html#d9849e39fa0395ad2db5da54939426c3">DTOR_Count</a>, <a class="code" href="class_container.html#a059fe2188d761e0fd984f4cf7d20776">Lookup_Success_Count</a>, <a class="code" href="class_container.html#794cce6feed2e68005d8fea68bcbc5e7">Lookup_Failure_Count</a>, this-&gt;size(), S_T::Array-&gt;Count);
-<a name="l00336"></a>00336         }
+<div class="fragment"><pre class="fragment"><a name="l00329"></a>00329                     {
+<a name="l00330"></a>00330                 <span class="keyword">const</span> std::type_info &amp;info = <span class="keyword">typeid</span>(*this);
+<a name="l00331"></a>00331                 Debug::Log(<span class="stringliteral">"Stats for container %s:\n"</span>, info.name());
+<a name="l00332"></a>00332 
+<a name="l00333"></a>00333                 Debug::Log(<span class="stringliteral">"|%08d|%08d|%08d/%08d|%08d|%08d|\n"</span>,
+<a name="l00334"></a>00334                         <a class="code" href="class_container.html#8a956b3fe4cd38cf6173a0679149c1cf">CTOR_Count</a>, <a class="code" href="class_container.html#d9849e39fa0395ad2db5da54939426c3">DTOR_Count</a>, <a class="code" href="class_container.html#a059fe2188d761e0fd984f4cf7d20776">Lookup_Success_Count</a>, <a class="code" href="class_container.html#794cce6feed2e68005d8fea68bcbc5e7">Lookup_Failure_Count</a>, this-&gt;size(), S_T::Array-&gt;Count);
+<a name="l00335"></a>00335         }
 </pre></div>
 <p>
 
@@ -996,7 +997,7 @@ template&lt;typename T&gt; </div>
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>Ext/<a class="el" href="___container_8hpp.html">_Container.hpp</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Mon Mar 1 23:35:18 2010 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed May 12 23:21:00 2010 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

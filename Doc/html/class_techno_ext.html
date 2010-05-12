@@ -9,6 +9,7 @@
   <div class="tabs">
     <ul>
       <li><a href="index.html"><span>Main&nbsp;Page</span></a></li>
+      <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li><a href="dirs.html"><span>Directories</span></a></li>
@@ -51,6 +52,9 @@
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">static bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_techno_ext.html#7d4485d7aae9182a5461af705278eadc">ParadropSurvivor</a> (FootClass *Survivor, CoordStruct *loc, bool Select)</td></tr>
 
+<tr><td class="memItemLeft" nowrap align="right" valign="top">static void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_techno_ext.html#ae9631478226ada4d987ce91607d1481">StopDraining</a> (TechnoClass *Drainer, TechnoClass *Drainee)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Breaks the link between DrainTarget and DrainingMe.  <a href="#ae9631478226ada4d987ce91607d1481"></a><br></td></tr>
 <tr><td colspan="2"><br><h2>Static Public Attributes</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">static <a class="el" href="class_container.html">Container</a>&lt; <a class="el" href="class_techno_ext.html">TechnoExt</a> &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_techno_ext.html#3cdb7f8ccc49548f0b621ff80df0e8fb">ExtMap</a></td></tr>
 
@@ -116,25 +120,25 @@
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00093"></a>00093 {
-<a name="l00094"></a>00094         <span class="keywordtype">bool</span> success;
-<a name="l00095"></a>00095         <span class="keywordtype">int</span> floorZ = MapClass::Instance-&gt;GetCellFloorHeight(loc);
-<a name="l00096"></a>00096         ++Unsorted::SomeMutex;
-<a name="l00097"></a>00097         <span class="keywordflow">if</span>(loc-&gt;Z - floorZ &gt; 100) {
-<a name="l00098"></a>00098                 success = Survivor-&gt;SpawnParachuted(loc);
-<a name="l00099"></a>00099         } <span class="keywordflow">else</span> {
-<a name="l00100"></a>00100                 success = Survivor-&gt;Put(loc, ScenarioClass::Instance-&gt;Random.RandomRanged(0, 7));
-<a name="l00101"></a>00101         }
-<a name="l00102"></a>00102         --Unsorted::SomeMutex;
-<a name="l00103"></a>00103         RET_UNLESS(success);
-<a name="l00104"></a>00104         Survivor-&gt;Scatter(0xB1CFE8, 1, 0);
-<a name="l00105"></a>00105         Survivor-&gt;QueueMission(Survivor-&gt;Owner-&gt;ControlledByHuman() ? mission_Guard : mission_Hunt, 0);
-<a name="l00106"></a>00106         <span class="keywordflow">if</span>(Select) {
-<a name="l00107"></a>00107                 Survivor-&gt;Select();
+<div class="fragment"><pre class="fragment"><a name="l00100"></a>00100 {
+<a name="l00101"></a>00101         <span class="keywordtype">bool</span> success;
+<a name="l00102"></a>00102         <span class="keywordtype">int</span> floorZ = MapClass::Instance-&gt;GetCellFloorHeight(loc);
+<a name="l00103"></a>00103         ++Unsorted::IKnowWhatImDoing;
+<a name="l00104"></a>00104         <span class="keywordflow">if</span>(loc-&gt;Z - floorZ &gt; 100) {
+<a name="l00105"></a>00105                 success = Survivor-&gt;SpawnParachuted(loc);
+<a name="l00106"></a>00106         } <span class="keywordflow">else</span> {
+<a name="l00107"></a>00107                 success = Survivor-&gt;Put(loc, ScenarioClass::Instance-&gt;Random.RandomRanged(0, 7));
 <a name="l00108"></a>00108         }
-<a name="l00109"></a>00109         <span class="keywordflow">return</span> 1;
-<a name="l00110"></a>00110         <span class="comment">// TODO: Tag</span>
-<a name="l00111"></a>00111 }
+<a name="l00109"></a>00109         --Unsorted::IKnowWhatImDoing;
+<a name="l00110"></a>00110         RET_UNLESS(success);
+<a name="l00111"></a>00111         Survivor-&gt;Scatter(0xB1CFE8, 1, 0);
+<a name="l00112"></a>00112         Survivor-&gt;QueueMission(Survivor-&gt;Owner-&gt;ControlledByHuman() ? mission_Guard : mission_Hunt, 0);
+<a name="l00113"></a>00113         <span class="keywordflow">if</span>(Select) {
+<a name="l00114"></a>00114                 Survivor-&gt;Select();
+<a name="l00115"></a>00115         }
+<a name="l00116"></a>00116         <span class="keywordflow">return</span> 1;
+<a name="l00117"></a>00117         <span class="comment">// TODO: Tag</span>
+<a name="l00118"></a>00118 }
 </pre></div>
 <p>
 
@@ -172,80 +176,154 @@
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00017"></a>00017 {
-<a name="l00018"></a>00018         TechnoTypeClass *Type = pThis-&gt;GetTechnoType();
-<a name="l00019"></a>00019 
-<a name="l00020"></a>00020         HouseClass *pOwner = pThis-&gt;Owner;
-<a name="l00021"></a>00021         <a class="code" href="class_techno_type_ext_1_1_ext_data.html">TechnoTypeExt::ExtData</a> *pData = <a class="code" href="class_techno_type_ext.html#cc5f01db1b341572a92ad754a7d15c48">TechnoTypeExt::ExtMap</a>.<a class="code" href="class_container.html#90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(Type);
-<a name="l00022"></a>00022         <a class="code" href="class_techno_ext_1_1_ext_data.html">TechnoExt::ExtData</a> *pSelfData = <a class="code" href="class_techno_ext.html#3cdb7f8ccc49548f0b621ff80df0e8fb">TechnoExt::ExtMap</a>.<a class="code" href="class_container.html#90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(pThis);
-<a name="l00023"></a>00023 <span class="comment">//      RETZ_UNLESS(pData-&gt;Survivors_PilotChance || pData-&gt;Survivors_PassengerChance);</span>
-<a name="l00024"></a>00024         RETZ_UNLESS(!pSelfData-&gt;<a class="code" href="class_techno_ext_1_1_ext_data.html#d219476e964aa845eb07457f2cbb7901">Survivors_Done</a>);
-<a name="l00025"></a>00025 
-<a name="l00026"></a>00026         CoordStruct loc = pThis-&gt;Location;
+<div class="fragment"><pre class="fragment"><a name="l00019"></a>00019 {
+<a name="l00020"></a>00020         TechnoTypeClass *Type = pThis-&gt;GetTechnoType();
+<a name="l00021"></a>00021 
+<a name="l00022"></a>00022         HouseClass *pOwner = pThis-&gt;Owner;
+<a name="l00023"></a>00023         <a class="code" href="class_techno_type_ext_1_1_ext_data.html">TechnoTypeExt::ExtData</a> *pData = <a class="code" href="class_techno_type_ext.html#cc5f01db1b341572a92ad754a7d15c48">TechnoTypeExt::ExtMap</a>.<a class="code" href="class_container.html#90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(Type);
+<a name="l00024"></a>00024         <a class="code" href="class_techno_ext_1_1_ext_data.html">TechnoExt::ExtData</a> *pSelfData = <a class="code" href="class_techno_ext.html#3cdb7f8ccc49548f0b621ff80df0e8fb">TechnoExt::ExtMap</a>.<a class="code" href="class_container.html#90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(pThis);
+<a name="l00025"></a>00025 <span class="comment">//      RETZ_UNLESS(pData-&gt;Survivors_PilotChance || pData-&gt;Survivors_PassengerChance);</span>
+<a name="l00026"></a>00026         RETZ_UNLESS(!pSelfData-&gt;<a class="code" href="class_techno_ext_1_1_ext_data.html#d219476e964aa845eb07457f2cbb7901">Survivors_Done</a>);
 <a name="l00027"></a>00027 
-<a name="l00028"></a>00028         <span class="keywordtype">int</span> chance = pData-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#602692ec44303698d83964130e820a26">Survivors_PilotChance</a>.<a class="code" href="class_promotable.html#04226bc856e3fb2a904bc70962b0b27e">BindTo</a>(pThis)-&gt;<a class="code" href="class_promotable.html#797ea74a82ee24db3c3892dcce5e1949">Get</a>();
-<a name="l00029"></a>00029         <span class="comment">// remove check for Crewed if it is accounted for outside of this function</span>
-<a name="l00030"></a>00030         <span class="comment">// checks if Crewed=yes is set and there is a chance pilots survive, and, if yes...</span>
-<a name="l00031"></a>00031         <span class="comment">// ...attempts to spawn one Survivors_PilotCount times</span>
-<a name="l00032"></a>00032         <span class="keywordflow">if</span>(Type-&gt;Crewed &amp;&amp; chance) {
-<a name="l00033"></a>00033                 <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; pData-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#78f692482ea81301d28708837b978147" title="Defines the number of pilots inside this vehicle if Crewed=yes; maximum number of...">Survivors_PilotCount</a>; ++i) {
-<a name="l00034"></a>00034                         <span class="keywordflow">if</span>(ScenarioClass::Instance-&gt;Random.RandomRanged(1, 100) &lt;= chance) {
-<a name="l00035"></a>00035                                 <span class="keywordflow">if</span>(InfantryTypeClass *PilotType = pData-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#75adaef47a3cda263cf520cf4f43d605">Survivors_Pilots</a>[pOwner-&gt;SideIndex]) {
-<a name="l00036"></a>00036                                         InfantryClass *Pilot = <span class="keyword">reinterpret_cast&lt;</span>InfantryClass *<span class="keyword">&gt;</span>(PilotType-&gt;CreateObject(pOwner));
-<a name="l00037"></a>00037 
-<a name="l00038"></a>00038                                         Pilot-&gt;Health = (PilotType-&gt;Strength / 2);
-<a name="l00039"></a>00039                                         Pilot-&gt;get_Veterancy()-&gt;Veterancy = pThis-&gt;Veterancy.Veterancy;
-<a name="l00040"></a>00040                                         CoordStruct destLoc, tmpLoc = loc;
-<a name="l00041"></a>00041                                         CellStruct tmpCoords = CellSpread::GetCell(ScenarioClass::Instance-&gt;Random.RandomRanged(0, 7));
-<a name="l00042"></a>00042 
-<a name="l00043"></a>00043                                         tmpLoc.X += tmpCoords.X * 144;
-<a name="l00044"></a>00044                                         tmpLoc.Y += tmpCoords.Y * 144;
-<a name="l00045"></a>00045 
-<a name="l00046"></a>00046                                         CellClass * tmpCell = MapClass::Instance-&gt;GetCellAt(&amp;tmpLoc);
+<a name="l00028"></a>00028         CoordStruct loc = pThis-&gt;Location;
+<a name="l00029"></a>00029 
+<a name="l00030"></a>00030         <span class="keywordtype">int</span> chance = pData-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#602692ec44303698d83964130e820a26">Survivors_PilotChance</a>.<a class="code" href="class_promotable.html#04226bc856e3fb2a904bc70962b0b27e">BindTo</a>(pThis)-&gt;<a class="code" href="class_promotable.html#797ea74a82ee24db3c3892dcce5e1949">Get</a>();
+<a name="l00031"></a>00031         <span class="comment">// remove check for Crewed if it is accounted for outside of this function</span>
+<a name="l00032"></a>00032         <span class="comment">// checks if Crewed=yes is set and there is a chance pilots survive, and, if yes...</span>
+<a name="l00033"></a>00033         <span class="comment">// ...attempts to spawn one Survivors_PilotCount times</span>
+<a name="l00034"></a>00034         <span class="keywordflow">if</span>(Type-&gt;Crewed &amp;&amp; chance) {
+<a name="l00035"></a>00035                 <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; pData-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#78f692482ea81301d28708837b978147" title="Defines the number of pilots inside this vehicle if Crewed=yes; maximum number of...">Survivors_PilotCount</a>; ++i) {
+<a name="l00036"></a>00036                         <span class="keywordflow">if</span>(ScenarioClass::Instance-&gt;Random.RandomRanged(1, 100) &lt;= chance) {
+<a name="l00037"></a>00037                                 <span class="keywordflow">if</span>(InfantryTypeClass *PilotType = pData-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#75adaef47a3cda263cf520cf4f43d605">Survivors_Pilots</a>[pOwner-&gt;SideIndex]) {
+<a name="l00038"></a>00038                                         InfantryClass *Pilot = <span class="keyword">reinterpret_cast&lt;</span>InfantryClass *<span class="keyword">&gt;</span>(PilotType-&gt;CreateObject(pOwner));
+<a name="l00039"></a>00039 
+<a name="l00040"></a>00040                                         Pilot-&gt;Health = (PilotType-&gt;Strength / 2);
+<a name="l00041"></a>00041                                         Pilot-&gt;Veterancy.Veterancy = pThis-&gt;Veterancy.Veterancy;
+<a name="l00042"></a>00042                                         CoordStruct destLoc, tmpLoc = loc;
+<a name="l00043"></a>00043                                         CellStruct tmpCoords = CellSpread::GetCell(ScenarioClass::Instance-&gt;Random.RandomRanged(0, 7));
+<a name="l00044"></a>00044 
+<a name="l00045"></a>00045                                         tmpLoc.X += tmpCoords.X * 144;
+<a name="l00046"></a>00046                                         tmpLoc.Y += tmpCoords.Y * 144;
 <a name="l00047"></a>00047 
-<a name="l00048"></a>00048                                         tmpCell-&gt;FindInfantrySubposition(&amp;destLoc, &amp;tmpLoc, 0, 0, 0);
+<a name="l00048"></a>00048                                         CellClass * tmpCell = MapClass::Instance-&gt;GetCellAt(&amp;tmpLoc);
 <a name="l00049"></a>00049 
-<a name="l00050"></a>00050                                         destLoc.Z = loc.Z;
+<a name="l00050"></a>00050                                         tmpCell-&gt;FindInfantrySubposition(&amp;destLoc, &amp;tmpLoc, 0, 0, 0);
 <a name="l00051"></a>00051 
-<a name="l00052"></a>00052                                         <span class="keywordflow">if</span>(!<a class="code" href="class_techno_ext.html#7d4485d7aae9182a5461af705278eadc">TechnoExt::ParadropSurvivor</a>(Pilot, &amp;destLoc, Select)) {
-<a name="l00053"></a>00053                                                 Pilot-&gt;RegisterDestruction(pKiller); <span class="comment">//(TechnoClass *)R-&gt;get_StackVar32(0x54));</span>
-<a name="l00054"></a>00054                                                 GAME_DEALLOC(Pilot);
-<a name="l00055"></a>00055                                         }
-<a name="l00056"></a>00056                                 }
-<a name="l00057"></a>00057                         }
-<a name="l00058"></a>00058                 }
-<a name="l00059"></a>00059         }
-<a name="l00060"></a>00060 
-<a name="l00061"></a>00061         chance = pData-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#ad0fcc85d2b4dfce250f7eee7f602892">Survivors_PassengerChance</a>.<a class="code" href="class_promotable.html#04226bc856e3fb2a904bc70962b0b27e">BindTo</a>(pThis)-&gt;<a class="code" href="class_promotable.html#797ea74a82ee24db3c3892dcce5e1949">Get</a>();
-<a name="l00062"></a>00062         <span class="keywordflow">while</span>(pThis-&gt;Passengers.FirstPassenger) {
-<a name="l00063"></a>00063                 FootClass *passenger = NULL;
-<a name="l00064"></a>00064                 <span class="keywordtype">bool</span> toDelete = 1;
-<a name="l00065"></a>00065                 passenger = pThis-&gt;Passengers.RemoveFirstPassenger();
-<a name="l00066"></a>00066                 <span class="keywordflow">if</span>(chance) {
-<a name="l00067"></a>00067                         <span class="keywordflow">if</span>(ScenarioClass::Instance-&gt;Random.RandomRanged(1, 100) &lt;= chance) {
-<a name="l00068"></a>00068                                 CoordStruct destLoc, tmpLoc = loc;
-<a name="l00069"></a>00069                                 CellStruct tmpCoords = CellSpread::GetCell(ScenarioClass::Instance-&gt;Random.RandomRanged(0, 7));
-<a name="l00070"></a>00070 
-<a name="l00071"></a>00071                                 tmpLoc.X += tmpCoords.X * 128;
-<a name="l00072"></a>00072                                 tmpLoc.Y += tmpCoords.Y * 128;
-<a name="l00073"></a>00073 
-<a name="l00074"></a>00074                                 CellClass * tmpCell = MapClass::Instance-&gt;GetCellAt(&amp;tmpLoc);
-<a name="l00075"></a>00075 
-<a name="l00076"></a>00076                                 tmpCell-&gt;FindInfantrySubposition(&amp;destLoc, &amp;tmpLoc, 0, 0, 0);
-<a name="l00077"></a>00077 
-<a name="l00078"></a>00078                                 destLoc.Z = loc.Z;
-<a name="l00079"></a>00079 
-<a name="l00080"></a>00080                                 toDelete = !<a class="code" href="class_techno_ext.html#7d4485d7aae9182a5461af705278eadc">TechnoExt::ParadropSurvivor</a>(passenger, &amp;destLoc, Select);
-<a name="l00081"></a>00081                         }
-<a name="l00082"></a>00082                 }
-<a name="l00083"></a>00083                 <span class="keywordflow">if</span>(toDelete) {
-<a name="l00084"></a>00084                         passenger-&gt;RegisterDestruction(pKiller); <span class="comment">//(TechnoClass *)R-&gt;get_StackVar32(0x54));</span>
-<a name="l00085"></a>00085                         passenger-&gt;UnInit();
-<a name="l00086"></a>00086                 }
-<a name="l00087"></a>00087         }
-<a name="l00088"></a>00088 
-<a name="l00089"></a>00089         pSelfData-&gt;<a class="code" href="class_techno_ext_1_1_ext_data.html#d219476e964aa845eb07457f2cbb7901">Survivors_Done</a> = 1;
-<a name="l00090"></a>00090 }
+<a name="l00052"></a>00052                                         destLoc.Z = loc.Z;
+<a name="l00053"></a>00053 
+<a name="l00054"></a>00054                                         <span class="keywordflow">if</span>(!<a class="code" href="class_techno_ext.html#7d4485d7aae9182a5461af705278eadc">TechnoExt::ParadropSurvivor</a>(Pilot, &amp;destLoc, Select)) {
+<a name="l00055"></a>00055                                                 Pilot-&gt;RegisterDestruction(pKiller); <span class="comment">//(TechnoClass *)R-&gt;get_StackVar32(0x54));</span>
+<a name="l00056"></a>00056                                                 GAME_DEALLOC(Pilot);
+<a name="l00057"></a>00057                                         }
+<a name="l00058"></a>00058                                 }
+<a name="l00059"></a>00059                         }
+<a name="l00060"></a>00060                 }
+<a name="l00061"></a>00061         }
+<a name="l00062"></a>00062 
+<a name="l00063"></a>00063         chance = pData-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#ad0fcc85d2b4dfce250f7eee7f602892">Survivors_PassengerChance</a>.<a class="code" href="class_promotable.html#04226bc856e3fb2a904bc70962b0b27e">BindTo</a>(pThis)-&gt;<a class="code" href="class_promotable.html#797ea74a82ee24db3c3892dcce5e1949">Get</a>();
+<a name="l00064"></a>00064 
+<a name="l00065"></a>00065         <span class="keywordflow">while</span>(pThis-&gt;Passengers.FirstPassenger) {
+<a name="l00066"></a>00066                 <span class="keywordtype">bool</span> toDelete = 1;
+<a name="l00067"></a>00067                 FootClass *passenger = pThis-&gt;Passengers.RemoveFirstPassenger();
+<a name="l00068"></a>00068                 <span class="keywordtype">bool</span> toSpawn = <span class="keyword">false</span>;
+<a name="l00069"></a>00069                 <span class="keywordflow">if</span>(chance &gt; 0) {
+<a name="l00070"></a>00070                         toSpawn = ScenarioClass::Instance-&gt;Random.RandomRanged(1, 100) &lt;= chance;
+<a name="l00071"></a>00071                 } <span class="keywordflow">else</span> <span class="keywordflow">if</span>(chance == -1 &amp;&amp; pThis-&gt;WhatAmI() == abs_Unit) {
+<a name="l00072"></a>00072                         <span class="keywordtype">int</span> occupation = passenger-&gt;IsCellOccupied(pThis-&gt;GetCell(), -1, -1, 0, 1);
+<a name="l00073"></a>00073                         toSpawn = (occupation == 0 || occupation == 2);
+<a name="l00074"></a>00074                 }
+<a name="l00075"></a>00075                 <span class="keywordflow">if</span>(toSpawn) {
+<a name="l00076"></a>00076                         CoordStruct destLoc, tmpLoc = loc;
+<a name="l00077"></a>00077                         CellStruct tmpCoords = CellSpread::GetCell(ScenarioClass::Instance-&gt;Random.RandomRanged(0, 7));
+<a name="l00078"></a>00078 
+<a name="l00079"></a>00079                         tmpLoc.X += tmpCoords.X * 128;
+<a name="l00080"></a>00080                         tmpLoc.Y += tmpCoords.Y * 128;
+<a name="l00081"></a>00081 
+<a name="l00082"></a>00082                         CellClass * tmpCell = MapClass::Instance-&gt;GetCellAt(&amp;tmpLoc);
+<a name="l00083"></a>00083 
+<a name="l00084"></a>00084                         tmpCell-&gt;FindInfantrySubposition(&amp;destLoc, &amp;tmpLoc, 0, 0, 0);
+<a name="l00085"></a>00085 
+<a name="l00086"></a>00086                         destLoc.Z = loc.Z;
+<a name="l00087"></a>00087 
+<a name="l00088"></a>00088                         toDelete = !<a class="code" href="class_techno_ext.html#7d4485d7aae9182a5461af705278eadc">TechnoExt::ParadropSurvivor</a>(passenger, &amp;destLoc, Select);
+<a name="l00089"></a>00089                 }
+<a name="l00090"></a>00090                 <span class="keywordflow">if</span>(toDelete) {
+<a name="l00091"></a>00091                         passenger-&gt;RegisterDestruction(pKiller); <span class="comment">//(TechnoClass *)R-&gt;get_StackVar32(0x54));</span>
+<a name="l00092"></a>00092                         passenger-&gt;UnInit();
+<a name="l00093"></a>00093                 }
+<a name="l00094"></a>00094         }
+<a name="l00095"></a>00095 
+<a name="l00096"></a>00096         pSelfData-&gt;<a class="code" href="class_techno_ext_1_1_ext_data.html#d219476e964aa845eb07457f2cbb7901">Survivors_Done</a> = 1;
+<a name="l00097"></a>00097 }
+</pre></div>
+<p>
+
+</div>
+</div><p>
+<a class="anchor" name="ae9631478226ada4d987ce91607d1481"></a><!-- doxytag: member="TechnoExt::StopDraining" ref="ae9631478226ada4d987ce91607d1481" args="(TechnoClass *Drainer, TechnoClass *Drainee)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void TechnoExt::StopDraining           </td>
+          <td>(</td>
+          <td class="paramtype">TechnoClass *&nbsp;</td>
+          <td class="paramname"> <em>Drainer</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">TechnoClass *&nbsp;</td>
+          <td class="paramname"> <em>Drainee</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Breaks the link between DrainTarget and DrainingMe. 
+<p>
+The links between the drainer and its victim are removed and the draining animation is no longer played.<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>Drainer</em>&nbsp;</td><td>The Techno that drains power or credits. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>Drainee</em>&nbsp;</td><td>The Techno that power or credits get gets drained from.</td></tr>
+  </table>
+</dl>
+<dl class="author" compact><dt><b>Author:</b></dt><dd>AlexB </dd></dl>
+<dl class="date" compact><dt><b>Date:</b></dt><dd>2010-04-27 </dd></dl>
+<div class="fragment"><pre class="fragment"><a name="l00131"></a>00131                                                                        {
+<a name="l00132"></a>00132         <span class="comment">// fill the gaps</span>
+<a name="l00133"></a>00133         <span class="keywordflow">if</span>(Drainer &amp;&amp; !Drainee)
+<a name="l00134"></a>00134                 Drainee = Drainer-&gt;DrainTarget;
+<a name="l00135"></a>00135 
+<a name="l00136"></a>00136         <span class="keywordflow">if</span>(!Drainer &amp;&amp; Drainee)
+<a name="l00137"></a>00137                 Drainer = Drainee-&gt;DrainingMe;
+<a name="l00138"></a>00138 
+<a name="l00139"></a>00139         <span class="comment">// sanity check, then end draining.</span>
+<a name="l00140"></a>00140         <span class="keywordflow">if</span>(Drainer &amp;&amp; Drainee) {
+<a name="l00141"></a>00141                 <span class="comment">// stop the animation.</span>
+<a name="l00142"></a>00142                 <span class="keywordflow">if</span> (Drainer-&gt;DrainAnim) {
+<a name="l00143"></a>00143                         Drainer-&gt;DrainAnim-&gt;UnInit();
+<a name="l00144"></a>00144                         Drainer-&gt;DrainAnim = NULL;
+<a name="l00145"></a>00145                 }
+<a name="l00146"></a>00146 
+<a name="l00147"></a>00147                 <span class="comment">// remove links.</span>
+<a name="l00148"></a>00148                 Drainee-&gt;DrainingMe = NULL;
+<a name="l00149"></a>00149                 Drainer-&gt;DrainTarget = NULL;
+<a name="l00150"></a>00150 
+<a name="l00151"></a>00151                 <span class="comment">// tell the game to recheck the drained</span>
+<a name="l00152"></a>00152                 <span class="comment">// player's tech level.</span>
+<a name="l00153"></a>00153                 <span class="keywordflow">if</span> (Drainee-&gt;Owner) {
+<a name="l00154"></a>00154                         Drainee-&gt;Owner-&gt;ShouldRecheckTechTree = <span class="keyword">true</span>;
+<a name="l00155"></a>00155                 }
+<a name="l00156"></a>00156         }
+<a name="l00157"></a>00157 }
 </pre></div>
 <p>
 
@@ -345,7 +423,7 @@
 <hr>The documentation for this class was generated from the following files:<ul>
 <li>Ext/Techno/<a class="el" href="_techno_2_body_8h.html">Body.h</a><li>Ext/Techno/<a class="el" href="_techno_2_body_8cpp.html">Body.cpp</a><li>Ext/Techno/<a class="el" href="_hooks_8_alpha_8cpp.html">Hooks.Alpha.cpp</a><li>Ext/Techno/<a class="el" href="_hooks_8_spotlights_8cpp.html">Hooks.Spotlights.cpp</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Mon Mar 1 23:35:19 2010 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed May 12 23:21:01 2010 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

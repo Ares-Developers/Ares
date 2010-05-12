@@ -9,6 +9,7 @@
   <div class="tabs">
     <ul>
       <li><a href="index.html"><span>Main&nbsp;Page</span></a></li>
+      <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li><a href="dirs.html"><span>Directories</span></a></li>
@@ -59,35 +60,35 @@
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00086"></a>00086 {
-<a name="l00087"></a>00087         GET(CCINIClass *, pINI, ECX);
-<a name="l00088"></a>00088         <span class="keywordflow">if</span>(!<a class="code" href="class_enumerable.html#92acdb216fc564bc8ad84f131a81ddfc">ArmorType::Array</a>.Count) {
-<a name="l00089"></a>00089                 <a class="code" href="class_armor_type.html#4160a82a696fb161368b83bab9961b94">ArmorType::AddDefaults</a>();
-<a name="l00090"></a>00090         }
-<a name="l00091"></a>00091 
-<a name="l00092"></a>00092         GET_STACK(<span class="keyword">const</span> <span class="keywordtype">char</span> *, Section, 0x4);
-<a name="l00093"></a>00093         GET_STACK(<span class="keyword">const</span> <span class="keywordtype">char</span> *, Key, 0x8);
-<a name="l00094"></a>00094         GET_STACK(<span class="keywordtype">int</span>, fallback, 0xC);
-<a name="l00095"></a>00095 
-<a name="l00096"></a>00096         <span class="keywordtype">char</span> buf[0x20];
-<a name="l00097"></a>00097 
-<a name="l00098"></a>00098         <span class="keyword">const</span> <span class="keywordtype">char</span> *curTitle = fallback &lt; <a class="code" href="class_enumerable.html#92acdb216fc564bc8ad84f131a81ddfc">ArmorType::Array</a>.Count
-<a name="l00099"></a>00099                 ? <a class="code" href="class_enumerable.html#92acdb216fc564bc8ad84f131a81ddfc">ArmorType::Array</a>[fallback]-&gt;Name
-<a name="l00100"></a>00100                 : <span class="stringliteral">"none"</span>;
-<a name="l00101"></a>00101 
-<a name="l00102"></a>00102         pINI-&gt;ReadString(Section, Key, curTitle, buf, 0x20);
-<a name="l00103"></a>00103         <span class="keywordtype">int</span> idx = <a class="code" href="class_enumerable.html#9b4bcdfca82ac04940344e7d613bb43b">ArmorType::FindIndex</a>(buf);
-<a name="l00104"></a>00104         R-&gt;EAX(idx == -1 ? 0 : idx);
-<a name="l00105"></a>00105 
-<a name="l00106"></a>00106         <span class="keywordflow">return</span> 0x475430;
-<a name="l00107"></a>00107 }
+<div class="fragment"><pre class="fragment"><a name="l00077"></a>00077 {
+<a name="l00078"></a>00078         GET(CCINIClass *, pINI, ECX);
+<a name="l00079"></a>00079         <span class="keywordflow">if</span>(!<a class="code" href="class_enumerable.html#92acdb216fc564bc8ad84f131a81ddfc">ArmorType::Array</a>.Count) {
+<a name="l00080"></a>00080                 <a class="code" href="class_armor_type.html#4160a82a696fb161368b83bab9961b94">ArmorType::AddDefaults</a>();
+<a name="l00081"></a>00081         }
+<a name="l00082"></a>00082 
+<a name="l00083"></a>00083         GET_STACK(<span class="keyword">const</span> <span class="keywordtype">char</span> *, Section, 0x4);
+<a name="l00084"></a>00084         GET_STACK(<span class="keyword">const</span> <span class="keywordtype">char</span> *, Key, 0x8);
+<a name="l00085"></a>00085         GET_STACK(<span class="keywordtype">int</span>, fallback, 0xC);
+<a name="l00086"></a>00086 
+<a name="l00087"></a>00087         <span class="keywordtype">char</span> buf[0x20];
+<a name="l00088"></a>00088 
+<a name="l00089"></a>00089         <span class="keyword">const</span> <span class="keywordtype">char</span> *curTitle = fallback &lt; <a class="code" href="class_enumerable.html#92acdb216fc564bc8ad84f131a81ddfc">ArmorType::Array</a>.Count
+<a name="l00090"></a>00090                 ? <a class="code" href="class_enumerable.html#92acdb216fc564bc8ad84f131a81ddfc">ArmorType::Array</a>[fallback]-&gt;Name
+<a name="l00091"></a>00091                 : <span class="stringliteral">"none"</span>;
+<a name="l00092"></a>00092 
+<a name="l00093"></a>00093         pINI-&gt;ReadString(Section, Key, curTitle, buf, 0x20);
+<a name="l00094"></a>00094         <span class="keywordtype">int</span> idx = <a class="code" href="class_enumerable.html#9b4bcdfca82ac04940344e7d613bb43b">ArmorType::FindIndex</a>(buf);
+<a name="l00095"></a>00095         R-&gt;EAX(idx == -1 ? 0 : idx);
+<a name="l00096"></a>00096 
+<a name="l00097"></a>00097         <span class="keywordflow">return</span> 0x475430;
+<a name="l00098"></a>00098 }
 </pre></div>
 <p>
 
 </div>
 </div><p>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Mon Mar 1 23:35:17 2010 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed May 12 23:21:00 2010 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

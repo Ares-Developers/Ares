@@ -9,6 +9,7 @@
   <div class="tabs">
     <ul>
       <li><a href="index.html"><span>Main&nbsp;Page</span></a></li>
+      <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li><a href="dirs.html"><span>Directories</span></a></li>
@@ -42,7 +43,10 @@ Inheritance diagram for NewSWType:</div>
 
 <p><center><img src="class_new_s_w_type.png" usemap="#NewSWType_map" border="0" alt=""></center>
 <map name="NewSWType_map">
-<area href="class_s_w___sonar_pulse.html" alt="SW_SonarPulse" shape="rect" coords="0,56,103,80">
+<area href="class_s_w___firewall.html" alt="SW_Firewall" shape="rect" coords="0,56,134,80">
+<area href="class_s_w___generic_warhead.html" alt="SW_GenericWarhead" shape="rect" coords="144,56,278,80">
+<area href="class_s_w___sonar_pulse.html" alt="SW_SonarPulse" shape="rect" coords="288,56,422,80">
+<area href="class_s_w___unit_delivery.html" alt="SW_UnitDelivery" shape="rect" coords="432,56,566,80">
 </map>
 </div>
 
@@ -247,7 +251,7 @@ Inheritance diagram for NewSWType:</div>
 
 <p>
 
-<p>Reimplemented in <a class="el" href="class_s_w___sonar_pulse.html#ed1ae97341a16bf65a0bcba204e34dab">SW_SonarPulse</a>.</p>
+<p>Reimplemented in <a class="el" href="class_s_w___firewall.html#a2fe4b150680cb1ec3832ad53db50050">SW_Firewall</a>, <a class="el" href="class_s_w___generic_warhead.html#681a04a69373b1f577669e1a59d201d8">SW_GenericWarhead</a>, <a class="el" href="class_s_w___sonar_pulse.html#ed1ae97341a16bf65a0bcba204e34dab">SW_SonarPulse</a>, and <a class="el" href="class_s_w___unit_delivery.html#1efd6a6b5f348830273a56ac62e6ec03">SW_UnitDelivery</a>.</p>
 <div class="fragment"><pre class="fragment"><a name="l00036"></a>00036                         { <span class="keywordflow">return</span> <span class="stringliteral">""</span>; }
 </pre></div>
 <p>
@@ -270,9 +274,12 @@ Inheritance diagram for NewSWType:</div>
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00007"></a>00007 {
-<a name="l00008"></a>00008         <span class="keyword">new</span> <a class="code" href="class_s_w___sonar_pulse.html">SW_SonarPulse</a>();
-<a name="l00009"></a>00009 }
+<div class="fragment"><pre class="fragment"><a name="l00011"></a>00011 {
+<a name="l00012"></a>00012         <span class="keyword">new</span> <a class="code" href="class_s_w___sonar_pulse.html">SW_SonarPulse</a>();
+<a name="l00013"></a>00013         <span class="keyword">new</span> <a class="code" href="class_s_w___unit_delivery.html">SW_UnitDelivery</a>();
+<a name="l00014"></a>00014         <span class="keyword">new</span> <a class="code" href="class_s_w___generic_warhead.html">SW_GenericWarhead</a>();
+<a name="l00015"></a>00015         <span class="keyword">new</span> <a class="code" href="class_s_w___firewall.html">SW_Firewall</a>();
+<a name="l00016"></a>00016 }
 </pre></div>
 <p>
 
@@ -311,7 +318,7 @@ Inheritance diagram for NewSWType:</div>
 
 <p>
 
-<p>Implemented in <a class="el" href="class_s_w___sonar_pulse.html#e177623a82bb4c32439201c6436716cf">SW_SonarPulse</a>.</p>
+<p>Implemented in <a class="el" href="class_s_w___firewall.html#5042c09710620b100e6ffbe22aa19124">SW_Firewall</a>, <a class="el" href="class_s_w___generic_warhead.html#0d60c88817ab19e88ac2bfca9ca6bb49">SW_GenericWarhead</a>, <a class="el" href="class_s_w___sonar_pulse.html#e177623a82bb4c32439201c6436716cf">SW_SonarPulse</a>, and <a class="el" href="class_s_w___unit_delivery.html#7acaa2ca50c98b0ae4a5a04db9095e9a">SW_UnitDelivery</a>.</p>
 
 </div>
 </div><p>
@@ -348,7 +355,7 @@ Inheritance diagram for NewSWType:</div>
 
 <p>
 
-<p>Implemented in <a class="el" href="class_s_w___sonar_pulse.html#c9ac398033f7c2ebf4ea3b152a3ed3e3">SW_SonarPulse</a>.</p>
+<p>Implemented in <a class="el" href="class_s_w___firewall.html#d9c32e728aeae252a7d2163cf637ddb4">SW_Firewall</a>, <a class="el" href="class_s_w___generic_warhead.html#a90c418a6bd0f6c99cf8becbf690650e">SW_GenericWarhead</a>, <a class="el" href="class_s_w___sonar_pulse.html#c9ac398033f7c2ebf4ea3b152a3ed3e3">SW_SonarPulse</a>, and <a class="el" href="class_s_w___unit_delivery.html#46943ae2f5bc7124dc67b6059ce3b8cf">SW_UnitDelivery</a>.</p>
 
 </div>
 </div><p>
@@ -423,7 +430,7 @@ Inheritance diagram for NewSWType:</div>
 <hr>The documentation for this class was generated from the following files:<ul>
 <li>Misc/<a class="el" href="_s_w_types_8h.html">SWTypes.h</a><li>Misc/<a class="el" href="_s_w_types_8cpp.html">SWTypes.cpp</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Mon Mar 1 23:35:18 2010 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed May 12 23:21:00 2010 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

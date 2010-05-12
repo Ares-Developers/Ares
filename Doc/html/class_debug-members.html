@@ -9,6 +9,7 @@
   <div class="tabs">
     <ul>
       <li><a href="index.html"><span>Main&nbsp;Page</span></a></li>
+      <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li><a href="dirs.html"><span>Directories</span></a></li>
@@ -38,13 +39,16 @@
   <tr class="memlist"><td><a class="el" href="class_debug.html#a0ec4107880adada173eb96ccd9a81e1">bLog</a></td><td><a class="el" href="class_debug.html">Debug</a></td><td><code> [static]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="class_debug.html#4dcfff56d6e69bd62771feadb91014de">DevLog</a>(Debug::Severity severity, const char *Format,...)</td><td><a class="el" href="class_debug.html">Debug</a></td><td><code> [static]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="class_debug.html#0a7d559b37243d067418b665203ebac8">DumpObj</a>(byte *data, size_t len)</td><td><a class="el" href="class_debug.html">Debug</a></td><td><code> [static]</code></td></tr>
-  <tr class="memlist"><td><a class="el" href="class_debug.html#bb16b24d936d45ec02d776afb41674cb">DumpStack</a>(REGISTERS *R, size_t len)</td><td><a class="el" href="class_debug.html">Debug</a></td><td><code> [static]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="class_debug.html#cd0bbec3e1aae30d7b425ddacddb3eb4">DumpStack</a>(REGISTERS *R, size_t len, size_t startAt=0)</td><td><a class="el" href="class_debug.html">Debug</a></td><td><code> [static]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="class_debug.html#38f58dd0c1bec9042ead4a8eea1f3db184c6ea9e411b9a465c18af311547f156">Error</a> enum value</td><td><a class="el" href="class_debug.html">Debug</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="class_debug.html#85e230cc7977c048008a98ace66950c7">ExceptionHandler</a>(int code, LPEXCEPTION_POINTERS pExs)</td><td><a class="el" href="class_debug.html">Debug</a></td><td><code> [static]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="class_debug.html#634d01afc07c9928fe92772d29b194f6">FatalDialog_WndProc</a>(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)</td><td><a class="el" href="class_debug.html">Debug</a></td><td><code> [static]</code></td></tr>
-  <tr class="memlist"><td><a class="el" href="class_debug.html#c71444646f841bbeb30195fb9b3a5001">FatalError</a>(const char *Message, bool Exit=1)</td><td><a class="el" href="class_debug.html">Debug</a></td><td><code> [static]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="class_debug.html#57175cd3e35ad0dcce1c235ddedb193d">FatalError</a>(bool Dump=false)</td><td><a class="el" href="class_debug.html">Debug</a></td><td><code> [static]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="class_debug.html#753c8c1b4e00d20f87311c0e18786944">FatalError</a>(const char *Message,...)</td><td><a class="el" href="class_debug.html">Debug</a></td><td><code> [static]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="class_debug.html#f5877607385240e065c60bed324530ff">FatalErrorAndExit</a>(const char *Message,...)</td><td><a class="el" href="class_debug.html">Debug</a></td><td><code> [static]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="class_debug.html#b9f69fa9e84bbd28f3dc2c6d8eff422f">Flush</a>()</td><td><a class="el" href="class_debug.html">Debug</a></td><td><code> [static]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="class_debug.html#7ae1f0e4f27680a16506ecb144ba20db">FreeMouse</a>()</td><td><a class="el" href="class_debug.html">Debug</a></td><td><code> [static]</code></td></tr>
+  <tr class="memlist"><td><a class="el" href="class_debug.html#10da79604ff64753429a4662a47f0832">FullDump</a>(MINIDUMP_EXCEPTION_INFORMATION *pException)</td><td><a class="el" href="class_debug.html">Debug</a></td><td><code> [static]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="class_debug.html#05f6859d43f1f38f2e45b770e93443fc">LogFileClose</a>(int tag)</td><td><a class="el" href="class_debug.html">Debug</a></td><td><code> [static]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="class_debug.html#1f012d5e4c8059cc2e38359c9b3eac55">LogFileName</a></td><td><a class="el" href="class_debug.html">Debug</a></td><td><code> [static]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="class_debug.html#3bdacc0c9ae25e0546849a639aeb8780">LogFileOpen</a>()</td><td><a class="el" href="class_debug.html">Debug</a></td><td><code> [static]</code></td></tr>
@@ -59,7 +63,7 @@
   <tr class="memlist"><td><a class="el" href="class_debug.html#f768b0a1c786e7622aefc7fe9a21f7a2">void</a>(_cdecl *Log)(const char *pFormat</td><td><a class="el" href="class_debug.html">Debug</a></td><td><code> [static]</code></td></tr>
   <tr class="memlist"><td><a class="el" href="class_debug.html#38f58dd0c1bec9042ead4a8eea1f3db15f9964e5d1d0c948704f783d10ce46c4">Warning</a> enum value</td><td><a class="el" href="class_debug.html">Debug</a></td><td></td></tr>
 </table></div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Mon Mar 1 23:35:18 2010 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed May 12 23:21:00 2010 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

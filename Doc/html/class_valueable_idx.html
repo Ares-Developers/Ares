@@ -9,6 +9,7 @@
   <div class="tabs">
     <ul>
       <li><a href="index.html"><span>Main&nbsp;Page</span></a></li>
+      <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li><a href="dirs.html"><span>Directories</span></a></li>
@@ -86,7 +87,7 @@ template&lt;typename T, typename Lookuper&gt; </div>
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00074"></a>00074 : <a class="code" href="class_valueable_idx.html#99854decc2d2ad3bb8dbe030d2c15ed0">Value</a>(Default) {};
+<div class="fragment"><pre class="fragment"><a name="l00078"></a>00078 : <a class="code" href="class_valueable_idx.html#99854decc2d2ad3bb8dbe030d2c15ed0">Value</a>(Default) {};
 </pre></div>
 <p>
 
@@ -111,9 +112,9 @@ template&lt;typename T, typename Lookuper&gt; </div>
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00088"></a>00088                         {
-<a name="l00089"></a>00089                 <span class="keywordflow">return</span> this-&gt;<a class="code" href="class_valueable_idx.html#99854decc2d2ad3bb8dbe030d2c15ed0">Value</a>;
-<a name="l00090"></a>00090         }
+<div class="fragment"><pre class="fragment"><a name="l00092"></a>00092                         {
+<a name="l00093"></a>00093                 <span class="keywordflow">return</span> this-&gt;<a class="code" href="class_valueable_idx.html#99854decc2d2ad3bb8dbe030d2c15ed0">Value</a>;
+<a name="l00094"></a>00094         }
 </pre></div>
 <p>
 
@@ -137,9 +138,9 @@ template&lt;typename T, typename Lookuper&gt; </div>
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00096"></a>00096                            {
-<a name="l00097"></a>00097                 <span class="keywordflow">return</span> &amp;this-&gt;<a class="code" href="class_valueable_idx.html#99854decc2d2ad3bb8dbe030d2c15ed0">Value</a>;
-<a name="l00098"></a>00098         }
+<div class="fragment"><pre class="fragment"><a name="l00100"></a>00100                            {
+<a name="l00101"></a>00101                 <span class="keywordflow">return</span> &amp;this-&gt;<a class="code" href="class_valueable_idx.html#99854decc2d2ad3bb8dbe030d2c15ed0">Value</a>;
+<a name="l00102"></a>00102         }
 </pre></div>
 <p>
 
@@ -163,9 +164,9 @@ template&lt;typename T, typename Lookuper&gt; </div>
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00076"></a>00076                       {
-<a name="l00077"></a>00077                 <span class="keywordflow">return</span> this-&gt;<a class="code" href="class_valueable_idx.html#00764b0af7a266052d1360f8a49199a1">Get</a>();
-<a name="l00078"></a>00078         }
+<div class="fragment"><pre class="fragment"><a name="l00080"></a>00080                       {
+<a name="l00081"></a>00081                 <span class="keywordflow">return</span> this-&gt;<a class="code" href="class_valueable_idx.html#00764b0af7a266052d1360f8a49199a1">Get</a>();
+<a name="l00082"></a>00082         }
 </pre></div>
 <p>
 
@@ -189,9 +190,9 @@ template&lt;typename T, typename Lookuper&gt; </div>
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00080"></a>00080                        {
-<a name="l00081"></a>00081                 <span class="keywordflow">return</span> this-&gt;<a class="code" href="class_valueable_idx.html#cbb82aedea995ea971c393055b4e0e7f">GetEx</a>();
-<a name="l00082"></a>00082         }
+<div class="fragment"><pre class="fragment"><a name="l00084"></a>00084                        {
+<a name="l00085"></a>00085                 <span class="keywordflow">return</span> this-&gt;<a class="code" href="class_valueable_idx.html#cbb82aedea995ea971c393055b4e0e7f">GetEx</a>();
+<a name="l00086"></a>00086         }
 </pre></div>
 <p>
 
@@ -215,9 +216,9 @@ template&lt;typename T, typename Lookuper&gt; </div>
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00084"></a>00084                          {
-<a name="l00085"></a>00085                 <span class="keywordflow">return</span> this-&gt;<a class="code" href="class_valueable_idx.html#cbb82aedea995ea971c393055b4e0e7f">GetEx</a>();
-<a name="l00086"></a>00086         }
+<div class="fragment"><pre class="fragment"><a name="l00088"></a>00088                          {
+<a name="l00089"></a>00089                 <span class="keywordflow">return</span> this-&gt;<a class="code" href="class_valueable_idx.html#cbb82aedea995ea971c393055b4e0e7f">GetEx</a>();
+<a name="l00090"></a>00090         }
 </pre></div>
 <p>
 
@@ -257,14 +258,14 @@ template&lt;typename T, typename Lookuper&gt; </div>
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00104"></a>00104                                                                           {
-<a name="l00105"></a>00105                 <span class="keywordflow">if</span>(parser-&gt;<a class="code" href="class_i_n_i___e_x.html#6298994f14ab037ee97955dc26324e15">ReadString</a>(pSection, pKey)) {
-<a name="l00106"></a>00106                         <span class="keywordtype">int</span> idx = Lookuper::FindIndex(parser-&gt;<a class="code" href="class_i_n_i___e_x.html#d5e2a66c776e48cd759e319fee7a1272">value</a>());
-<a name="l00107"></a>00107                         <span class="keywordflow">if</span>(idx != -1) {
-<a name="l00108"></a>00108                                 this-&gt;<a class="code" href="class_valueable_idx.html#daa6cbdaf6e5b073684d3ac0ca8f3a74">Set</a>(idx);
-<a name="l00109"></a>00109                         }
-<a name="l00110"></a>00110                 }
-<a name="l00111"></a>00111         }
+<div class="fragment"><pre class="fragment"><a name="l00108"></a>00108                                                                           {
+<a name="l00109"></a>00109                 <span class="keywordflow">if</span>(parser-&gt;<a class="code" href="class_i_n_i___e_x.html#6298994f14ab037ee97955dc26324e15">ReadString</a>(pSection, pKey)) {
+<a name="l00110"></a>00110                         <span class="keywordtype">int</span> idx = Lookuper::FindIndex(parser-&gt;<a class="code" href="class_i_n_i___e_x.html#d5e2a66c776e48cd759e319fee7a1272">value</a>());
+<a name="l00111"></a>00111                         <span class="keywordflow">if</span>(idx != -1) {
+<a name="l00112"></a>00112                                 this-&gt;<a class="code" href="class_valueable_idx.html#daa6cbdaf6e5b073684d3ac0ca8f3a74">Set</a>(idx);
+<a name="l00113"></a>00113                         }
+<a name="l00114"></a>00114                 }
+<a name="l00115"></a>00115         }
 </pre></div>
 <p>
 
@@ -289,9 +290,9 @@ template&lt;typename T, typename Lookuper&gt; </div>
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00092"></a>00092                                 {
-<a name="l00093"></a>00093                 this-&gt;<a class="code" href="class_valueable_idx.html#99854decc2d2ad3bb8dbe030d2c15ed0">Value</a> = val;
-<a name="l00094"></a>00094         }
+<div class="fragment"><pre class="fragment"><a name="l00096"></a>00096                                 {
+<a name="l00097"></a>00097                 this-&gt;<a class="code" href="class_valueable_idx.html#99854decc2d2ad3bb8dbe030d2c15ed0">Value</a> = val;
+<a name="l00098"></a>00098         }
 </pre></div>
 <p>
 
@@ -316,9 +317,9 @@ template&lt;typename T, typename Lookuper&gt; </div>
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00100"></a>00100                                    {
-<a name="l00101"></a>00101                 this-&gt;<a class="code" href="class_valueable_idx.html#99854decc2d2ad3bb8dbe030d2c15ed0">Value</a> = *val;
-<a name="l00102"></a>00102         }
+<div class="fragment"><pre class="fragment"><a name="l00104"></a>00104                                    {
+<a name="l00105"></a>00105                 this-&gt;<a class="code" href="class_valueable_idx.html#99854decc2d2ad3bb8dbe030d2c15ed0">Value</a> = *val;
+<a name="l00106"></a>00106         }
 </pre></div>
 <p>
 
@@ -345,7 +346,7 @@ template&lt;typename T, typename Lookuper&gt; </div>
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>Utilities/<a class="el" href="_template_8h.html">Template.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Mon Mar 1 23:35:19 2010 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed May 12 23:21:01 2010 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

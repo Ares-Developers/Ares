@@ -9,6 +9,7 @@
   <div class="tabs">
     <ul>
       <li><a href="index.html"><span>Main&nbsp;Page</span></a></li>
+      <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li><a href="dirs.html"><span>Directories</span></a></li>
@@ -106,7 +107,7 @@
 <a name="l00028"></a>00028                                                 <a class="code" href="class_building_type_ext_1_1_ext_data.html">BuildingTypeExt::ExtData</a>* pTypeData = <a class="code" href="class_building_type_ext.html#9643fa629dd6d2a20eeefa4942d8612a">BuildingTypeExt::ExtMap</a>.<a class="code" href="class_container.html#90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(B-&gt;Type);
 <a name="l00029"></a>00029                                                 <a class="code" href="class_house_ext_1_1_ext_data.html">HouseExt::ExtData</a> *pHouseData = <a class="code" href="class_house_ext.html#4a73e500fabd21a7359c5247c31d4c03">HouseExt::ExtMap</a>.<a class="code" href="class_container.html#90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(B-&gt;Owner);
 <a name="l00030"></a>00030                                                 <span class="keywordflow">if</span>(pTypeData-&gt;<a class="code" href="class_building_type_ext_1_1_ext_data.html#51503707d3c7be1bcd829f893acdd21e">Firewall_Is</a> &amp;&amp; pHouseData-&gt;<a class="code" href="class_house_ext_1_1_ext_data.html#f2e91b1fc2de13ab1e96ff1242cab060">FirewallActive</a>) {
-<a name="l00031"></a>00031                                                         <a class="code" href="class_firestorm_finder_applicator.html#a75fbf7d22d3811c1ec9f394d7afd576">target</a> = *curCell-&gt;get_MapCoords();
+<a name="l00031"></a>00031                                                         <a class="code" href="class_firestorm_finder_applicator.html#a75fbf7d22d3811c1ec9f394d7afd576">target</a> = curCell-&gt;MapCoords;
 <a name="l00032"></a>00032                                                         <a class="code" href="class_firestorm_finder_applicator.html#8c87d6665e75f378f047a8b7c733e4d4">found</a> = 1;
 <a name="l00033"></a>00033                                                 }
 <a name="l00034"></a>00034                                         }
@@ -167,7 +168,7 @@
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>Misc/<a class="el" href="_applicators_8h.html">Applicators.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Mon Mar 1 23:35:18 2010 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed May 12 23:21:00 2010 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

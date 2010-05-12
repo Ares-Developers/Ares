@@ -9,6 +9,7 @@
   <div class="tabs">
     <ul>
       <li><a href="index.html"><span>Main&nbsp;Page</span></a></li>
+      <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li><a href="dirs.html"><span>Directories</span></a></li>
@@ -108,6 +109,15 @@ AircraftTypeClass &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a cla
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="class_custom_palette.html">CustomPalette</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_s_w_type_ext_1_1_ext_data.html#4d991a1e027066a28b72989416f5ae68">CameoPal</a></td></tr>
 
+<tr><td class="memItemLeft" nowrap align="right" valign="top">DynamicVectorClass<br class="typebreak">
+&lt; TechnoTypeClass * &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_s_w_type_ext_1_1_ext_data.html#3d552881448b2d16ae659b502e1cdc5a">SW_Deliverables</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="class_valueable.html">Valueable</a>&lt; bool &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_s_w_type_ext_1_1_ext_data.html#fcf74fc38e15dad306919158221a9470">SW_DeliverBuildups</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="class_valueable.html">Valueable</a>&lt; WarheadTypeClass * &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_s_w_type_ext_1_1_ext_data.html#35aa944634414c550906abbddb4570f6">GWarhead_WH</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="class_valueable.html">Valueable</a>&lt; int &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_s_w_type_ext_1_1_ext_data.html#bb7ba7090530360ce91633add120ee33">GWarhead_Damage</a></td></tr>
+
 </table>
 <hr><h2>Constructor &amp; Destructor Documentation</h2>
 <a class="anchor" name="390c72bb4dd989262255d9eb7d8ce74b"></a><!-- doxytag: member="SWTypeExt::ExtData::ExtData" ref="390c72bb4dd989262255d9eb7d8ce74b" args="(const DWORD Canary, TT *const OwnerObject)" -->
@@ -136,26 +146,29 @@ AircraftTypeClass &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a cla
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00074"></a>00074                                                                    : <a class="code" href="class_extension.html">Extension&lt;TT&gt;</a>(<a class="code" href="class_extension.html#2f0c543d5bceafd46d103be4f87a5abe">Canary</a>, OwnerObject),
-<a name="l00075"></a>00075                         <a class="code" href="class_s_w_type_ext_1_1_ext_data.html#d53cc569bd443ec7d0eed664c51a48b4">SpyPlane_TypeIndex</a> (0),
-<a name="l00076"></a>00076                         <a class="code" href="class_s_w_type_ext_1_1_ext_data.html#6ae06ab09e93b869ea58c044b3322654">SpyPlane_Count</a> (1),
-<a name="l00077"></a>00077                         <a class="code" href="class_s_w_type_ext_1_1_ext_data.html#878ff4b4600dc64326daa53626abbf63">SpyPlane_Mission</a> (mission_AttackAgain),
-<a name="l00078"></a>00078                         <a class="code" href="class_s_w_type_ext_1_1_ext_data.html#27104ed232b78d3ee5e4db0e15c8b588">Nuke_Siren</a> (-1),
-<a name="l00079"></a>00079                         <a class="code" href="class_s_w_type_ext_1_1_ext_data.html#2aaab4072496c13cce0d00da3e8ff7e2">Sonar_Range</a> (0),
-<a name="l00080"></a>00080                         <a class="code" href="class_s_w_type_ext_1_1_ext_data.html#09e24bcd2f9c88708f1ebcdc4348f4cf">Sonar_Delay</a> (0),
-<a name="l00081"></a>00081                         <a class="code" href="class_s_w_type_ext_1_1_ext_data.html#b357dd98aade724dcaf6e0fe73157593">Money_Amount</a> (0),
-<a name="l00082"></a>00082                         <a class="code" href="class_s_w_type_ext_1_1_ext_data.html#bd6ac388cf50cbbce5690312206e1e10">EVA_Ready</a> (-1),
-<a name="l00083"></a>00083                         <a class="code" href="class_s_w_type_ext_1_1_ext_data.html#f2b8501ef35eb62d452896a9c6021df2">EVA_Activated</a> (-1),
-<a name="l00084"></a>00084                         <a class="code" href="class_s_w_type_ext_1_1_ext_data.html#ef5297e5f2d74e481194c456e74d0890">EVA_Detected</a> (-1),
-<a name="l00085"></a>00085                         <a class="code" href="class_s_w_type_ext_1_1_ext_data.html#3fe464e075ec308e6ac72052a719d4d3">SW_Sound</a> (-1),
-<a name="l00086"></a>00086                         <a class="code" href="class_s_w_type_ext_1_1_ext_data.html#391996e9135a9d4276151fb2e7c0a858">SW_Anim</a> (NULL),
-<a name="l00087"></a>00087                         <a class="code" href="class_s_w_type_ext_1_1_ext_data.html#35fde7d5f126eb6408c750e523a0e2bc">SW_AnimHeight</a> (0),
-<a name="l00088"></a>00088                         <a class="code" href="class_s_w_type_ext_1_1_ext_data.html#98362d9e542c873c071350e226dd7046">SW_TypeCustom</a> (<span class="keyword">false</span>),
-<a name="l00089"></a>00089                         <a class="code" href="class_s_w_type_ext_1_1_ext_data.html#c30e4e47d96c50dd8825acd0817c1bd8">SW_AutoFire</a> (<span class="keyword">false</span>),
-<a name="l00090"></a>00090                         <a class="code" href="class_s_w_type_ext_1_1_ext_data.html#bdd598d5c5eb2c9ecc274706985138de">SW_FireToShroud</a> (<span class="keyword">true</span>),
-<a name="l00091"></a>00091                         <a class="code" href="class_s_w_type_ext_1_1_ext_data.html#326b14693dd11c548b4df18df3b6853b">SW_RadarEvent</a> (<span class="keyword">false</span>),
-<a name="l00092"></a>00092                         <a class="code" href="class_s_w_type_ext_1_1_ext_data.html#4d991a1e027066a28b72989416f5ae68">CameoPal</a>()
-<a name="l00093"></a>00093                         { };
+<div class="fragment"><pre class="fragment"><a name="l00077"></a>00077                                                                    : <a class="code" href="class_extension.html">Extension&lt;TT&gt;</a>(<a class="code" href="class_extension.html#2f0c543d5bceafd46d103be4f87a5abe">Canary</a>, OwnerObject),
+<a name="l00078"></a>00078                         <a class="code" href="class_s_w_type_ext_1_1_ext_data.html#d53cc569bd443ec7d0eed664c51a48b4">SpyPlane_TypeIndex</a> (0),
+<a name="l00079"></a>00079                         <a class="code" href="class_s_w_type_ext_1_1_ext_data.html#6ae06ab09e93b869ea58c044b3322654">SpyPlane_Count</a> (1),
+<a name="l00080"></a>00080                         <a class="code" href="class_s_w_type_ext_1_1_ext_data.html#878ff4b4600dc64326daa53626abbf63">SpyPlane_Mission</a> (mission_AttackAgain),
+<a name="l00081"></a>00081                         <a class="code" href="class_s_w_type_ext_1_1_ext_data.html#27104ed232b78d3ee5e4db0e15c8b588">Nuke_Siren</a> (-1),
+<a name="l00082"></a>00082                         <a class="code" href="class_s_w_type_ext_1_1_ext_data.html#2aaab4072496c13cce0d00da3e8ff7e2">Sonar_Range</a> (0),
+<a name="l00083"></a>00083                         <a class="code" href="class_s_w_type_ext_1_1_ext_data.html#09e24bcd2f9c88708f1ebcdc4348f4cf">Sonar_Delay</a> (0),
+<a name="l00084"></a>00084                         <a class="code" href="class_s_w_type_ext_1_1_ext_data.html#b357dd98aade724dcaf6e0fe73157593">Money_Amount</a> (0),
+<a name="l00085"></a>00085                         <a class="code" href="class_s_w_type_ext_1_1_ext_data.html#bd6ac388cf50cbbce5690312206e1e10">EVA_Ready</a> (-1),
+<a name="l00086"></a>00086                         <a class="code" href="class_s_w_type_ext_1_1_ext_data.html#f2b8501ef35eb62d452896a9c6021df2">EVA_Activated</a> (-1),
+<a name="l00087"></a>00087                         <a class="code" href="class_s_w_type_ext_1_1_ext_data.html#ef5297e5f2d74e481194c456e74d0890">EVA_Detected</a> (-1),
+<a name="l00088"></a>00088                         <a class="code" href="class_s_w_type_ext_1_1_ext_data.html#3fe464e075ec308e6ac72052a719d4d3">SW_Sound</a> (-1),
+<a name="l00089"></a>00089                         <a class="code" href="class_s_w_type_ext_1_1_ext_data.html#391996e9135a9d4276151fb2e7c0a858">SW_Anim</a> (NULL),
+<a name="l00090"></a>00090                         <a class="code" href="class_s_w_type_ext_1_1_ext_data.html#35fde7d5f126eb6408c750e523a0e2bc">SW_AnimHeight</a> (0),
+<a name="l00091"></a>00091                         <a class="code" href="class_s_w_type_ext_1_1_ext_data.html#98362d9e542c873c071350e226dd7046">SW_TypeCustom</a> (<span class="keyword">false</span>),
+<a name="l00092"></a>00092                         <a class="code" href="class_s_w_type_ext_1_1_ext_data.html#c30e4e47d96c50dd8825acd0817c1bd8">SW_AutoFire</a> (<span class="keyword">false</span>),
+<a name="l00093"></a>00093                         <a class="code" href="class_s_w_type_ext_1_1_ext_data.html#bdd598d5c5eb2c9ecc274706985138de">SW_FireToShroud</a> (<span class="keyword">true</span>),
+<a name="l00094"></a>00094                         <a class="code" href="class_s_w_type_ext_1_1_ext_data.html#326b14693dd11c548b4df18df3b6853b">SW_RadarEvent</a> (<span class="keyword">false</span>),
+<a name="l00095"></a>00095                         <a class="code" href="class_s_w_type_ext_1_1_ext_data.html#4d991a1e027066a28b72989416f5ae68">CameoPal</a>(),
+<a name="l00096"></a>00096                         <a class="code" href="class_s_w_type_ext_1_1_ext_data.html#fcf74fc38e15dad306919158221a9470">SW_DeliverBuildups</a> (<span class="keyword">false</span>),
+<a name="l00097"></a>00097                         <a class="code" href="class_s_w_type_ext_1_1_ext_data.html#35aa944634414c550906abbddb4570f6">GWarhead_WH</a>(NULL),
+<a name="l00098"></a>00098                         <a class="code" href="class_s_w_type_ext_1_1_ext_data.html#bb7ba7090530360ce91633add120ee33">GWarhead_Damage</a>(0)
+<a name="l00099"></a>00099                         { };
 </pre></div>
 <p>
 
@@ -177,7 +190,7 @@ AircraftTypeClass &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a cla
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00095"></a>00095 { };
+<div class="fragment"><pre class="fragment"><a name="l00101"></a>00101 { };
 </pre></div>
 <p>
 
@@ -223,9 +236,7 @@ AircraftTypeClass &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a cla
 <a name="l00032"></a>00032         Cursor-&gt;MiniCount = 1;
 <a name="l00033"></a>00033         Cursor-&gt;HotX = hotspx_center;
 <a name="l00034"></a>00034         Cursor-&gt;HotY = hotspy_middle;
-<a name="l00035"></a>00035 
-<a name="l00036"></a>00036         this-&gt;<a class="code" href="class_extension.html#43a1ac11c4b59b629cac89f9e9df88e4">_Initialized</a> = <a class="code" href="___container_8hpp.html#9443389dd7829ff977a768ff6f42582080f9ee0171431ab641b78321386ed0ad">is_Constanted</a>;
-<a name="l00037"></a>00037 }
+<a name="l00035"></a>00035 }
 </pre></div>
 <p>
 
@@ -248,11 +259,10 @@ AircraftTypeClass &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a cla
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00040"></a>00040 {
-<a name="l00041"></a>00041         this-&gt;<a class="code" href="class_s_w_type_ext_1_1_ext_data.html#d53cc569bd443ec7d0eed664c51a48b4">SpyPlane_TypeIndex</a> = AircraftTypeClass::FindIndex(<span class="stringliteral">"SPYP"</span>);
-<a name="l00042"></a>00042         this-&gt;<a class="code" href="class_s_w_type_ext_1_1_ext_data.html#27104ed232b78d3ee5e4db0e15c8b588">Nuke_Siren</a> = RulesClass::Global()-&gt;DigSound;
-<a name="l00043"></a>00043         this-&gt;<a class="code" href="class_extension.html#43a1ac11c4b59b629cac89f9e9df88e4">_Initialized</a> = <a class="code" href="___container_8hpp.html#9443389dd7829ff977a768ff6f4258208d37e48049db83d4d1978458c589100f">is_Ruled</a>;
-<a name="l00044"></a>00044 }
+<div class="fragment"><pre class="fragment"><a name="l00038"></a>00038 {
+<a name="l00039"></a>00039         this-&gt;<a class="code" href="class_s_w_type_ext_1_1_ext_data.html#d53cc569bd443ec7d0eed664c51a48b4">SpyPlane_TypeIndex</a> = AircraftTypeClass::FindIndex(<span class="stringliteral">"SPYP"</span>);
+<a name="l00040"></a>00040         this-&gt;<a class="code" href="class_s_w_type_ext_1_1_ext_data.html#27104ed232b78d3ee5e4db0e15c8b588">Nuke_Siren</a> = RulesClass::Global()-&gt;DigSound;
+<a name="l00041"></a>00041 }
 </pre></div>
 <p>
 
@@ -277,8 +287,8 @@ AircraftTypeClass &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a cla
 <p>
 
 <p>Implements <a class="el" href="class_extension.html#9e6b2ac570eddadb2ca3c01668da88b8">Extension&lt; TT &gt;</a>.</p>
-<div class="fragment"><pre class="fragment"><a name="l00103"></a>00103                                                           {
-<a name="l00104"></a>00104                 }
+<div class="fragment"><pre class="fragment"><a name="l00109"></a>00109                                                           {
+<a name="l00110"></a>00110                 }
 </pre></div>
 <p>
 
@@ -310,59 +320,59 @@ AircraftTypeClass &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a cla
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00047"></a>00047 {
-<a name="l00048"></a>00048         <span class="keyword">const</span> <span class="keywordtype">char</span> * section = pThis-&gt;get_ID();
-<a name="l00049"></a>00049 
-<a name="l00050"></a>00050         <span class="keywordflow">if</span>(!pINI-&gt;GetSection(section)) {
-<a name="l00051"></a>00051                 <span class="keywordflow">return</span>;
-<a name="l00052"></a>00052         }
-<a name="l00053"></a>00053 
-<a name="l00054"></a>00054         <a class="code" href="class_i_n_i___e_x.html">INI_EX</a> exINI(pINI);
-<a name="l00055"></a>00055 
-<a name="l00056"></a>00056         this-&gt;<a class="code" href="class_s_w_type_ext_1_1_ext_data.html#6ae06ab09e93b869ea58c044b3322654">SpyPlane_Count</a>.<a class="code" href="class_valueable.html#0f0c57826adca78b4d46a69b5344a03b">Read</a>(&amp;exINI, section, <span class="stringliteral">"SpyPlane.Count"</span>);
-<a name="l00057"></a>00057 
-<a name="l00058"></a>00058         this-&gt;<a class="code" href="class_s_w_type_ext_1_1_ext_data.html#d53cc569bd443ec7d0eed664c51a48b4">SpyPlane_TypeIndex</a>.<a class="code" href="class_valueable_idx.html#c16db559b91f92e874356a63f13ebad2">Read</a>(&amp;exINI, section, <span class="stringliteral">"SpyPlane.Type"</span>);
-<a name="l00059"></a>00059 
-<a name="l00060"></a>00060         this-&gt;<a class="code" href="class_s_w_type_ext_1_1_ext_data.html#878ff4b4600dc64326daa53626abbf63">SpyPlane_Mission</a>.<a class="code" href="class_valueable_idx.html#c16db559b91f92e874356a63f13ebad2">Read</a>(&amp;exINI, section, <span class="stringliteral">"SpyPlane.Mission"</span>);
-<a name="l00061"></a>00061 
-<a name="l00062"></a>00062         this-&gt;<a class="code" href="class_s_w_type_ext_1_1_ext_data.html#27104ed232b78d3ee5e4db0e15c8b588">Nuke_Siren</a>.<a class="code" href="class_valueable_idx.html#c16db559b91f92e874356a63f13ebad2">Read</a>(&amp;exINI, section, <span class="stringliteral">"Nuke.Sound"</span>);
-<a name="l00063"></a>00063         this-&gt;<a class="code" href="class_s_w_type_ext_1_1_ext_data.html#bd6ac388cf50cbbce5690312206e1e10">EVA_Ready</a>.<a class="code" href="class_valueable_idx.html#c16db559b91f92e874356a63f13ebad2">Read</a>(&amp;exINI, section, <span class="stringliteral">"EVA.Ready"</span>);
-<a name="l00064"></a>00064         this-&gt;<a class="code" href="class_s_w_type_ext_1_1_ext_data.html#f2b8501ef35eb62d452896a9c6021df2">EVA_Activated</a>.<a class="code" href="class_valueable_idx.html#c16db559b91f92e874356a63f13ebad2">Read</a>(&amp;exINI, section, <span class="stringliteral">"EVA.Activated"</span>);
-<a name="l00065"></a>00065         this-&gt;<a class="code" href="class_s_w_type_ext_1_1_ext_data.html#ef5297e5f2d74e481194c456e74d0890">EVA_Detected</a>.<a class="code" href="class_valueable_idx.html#c16db559b91f92e874356a63f13ebad2">Read</a>(&amp;exINI, section, <span class="stringliteral">"EVA.Detected"</span>);
-<a name="l00066"></a>00066 
-<a name="l00067"></a>00067         <span class="keywordflow">if</span>(exINI.ReadString(section, <span class="stringliteral">"Action"</span>) &amp;&amp; !strcmp(exINI.value(), <span class="stringliteral">"Custom"</span>)) {
-<a name="l00068"></a>00068                 pThis-&gt;Action = <a class="code" href="_s_w_type_2_body_8h.html#3828d4bdcec55d055849f3503ab93410">SW_YES_CURSOR</a>;
-<a name="l00069"></a>00069         }
-<a name="l00070"></a>00070 
-<a name="l00071"></a>00071         <span class="keywordflow">if</span>(exINI.ReadString(section, <span class="stringliteral">"Type"</span>)) {
-<a name="l00072"></a>00072                 <span class="keywordtype">int</span> customType = <a class="code" href="class_new_s_w_type.html#6f6659b52c8a26c8e83340cdfbef43f9">NewSWType::FindIndex</a>(exINI.value());
-<a name="l00073"></a>00073                 <span class="keywordflow">if</span>(customType &gt; -1) {
-<a name="l00074"></a>00074                         pThis-&gt;Type = customType;
-<a name="l00075"></a>00075                 }
-<a name="l00076"></a>00076         }
-<a name="l00077"></a>00077 
-<a name="l00078"></a>00078         this-&gt;<a class="code" href="class_s_w_type_ext_1_1_ext_data.html#bdd598d5c5eb2c9ecc274706985138de">SW_FireToShroud</a>.<a class="code" href="class_valueable.html#0f0c57826adca78b4d46a69b5344a03b">Read</a>(&amp;exINI, section, <span class="stringliteral">"Super.FireIntoShroud"</span>);
-<a name="l00079"></a>00079         this-&gt;<a class="code" href="class_s_w_type_ext_1_1_ext_data.html#c30e4e47d96c50dd8825acd0817c1bd8">SW_AutoFire</a>.<a class="code" href="class_valueable.html#0f0c57826adca78b4d46a69b5344a03b">Read</a>(&amp;exINI, section, <span class="stringliteral">"Super.AutoFire"</span>);
-<a name="l00080"></a>00080         this-&gt;<a class="code" href="class_s_w_type_ext_1_1_ext_data.html#326b14693dd11c548b4df18df3b6853b">SW_RadarEvent</a>.<a class="code" href="class_valueable.html#0f0c57826adca78b4d46a69b5344a03b">Read</a>(&amp;exINI, section, <span class="stringliteral">"Super.CreateRadarEvent"</span>);
-<a name="l00081"></a>00081 
-<a name="l00082"></a>00082         this-&gt;<a class="code" href="class_s_w_type_ext_1_1_ext_data.html#b357dd98aade724dcaf6e0fe73157593">Money_Amount</a>.<a class="code" href="class_valueable.html#0f0c57826adca78b4d46a69b5344a03b">Read</a>(&amp;exINI, section, <span class="stringliteral">"Money.Amount"</span>);
+<div class="fragment"><pre class="fragment"><a name="l00044"></a>00044 {
+<a name="l00045"></a>00045         <span class="keyword">const</span> <span class="keywordtype">char</span> * section = pThis-&gt;get_ID();
+<a name="l00046"></a>00046 
+<a name="l00047"></a>00047         <span class="keywordflow">if</span>(!pINI-&gt;GetSection(section)) {
+<a name="l00048"></a>00048                 <span class="keywordflow">return</span>;
+<a name="l00049"></a>00049         }
+<a name="l00050"></a>00050 
+<a name="l00051"></a>00051         <a class="code" href="class_i_n_i___e_x.html">INI_EX</a> exINI(pINI);
+<a name="l00052"></a>00052 
+<a name="l00053"></a>00053         this-&gt;<a class="code" href="class_s_w_type_ext_1_1_ext_data.html#6ae06ab09e93b869ea58c044b3322654">SpyPlane_Count</a>.<a class="code" href="class_valueable.html#0f0c57826adca78b4d46a69b5344a03b">Read</a>(&amp;exINI, section, <span class="stringliteral">"SpyPlane.Count"</span>);
+<a name="l00054"></a>00054 
+<a name="l00055"></a>00055         this-&gt;<a class="code" href="class_s_w_type_ext_1_1_ext_data.html#d53cc569bd443ec7d0eed664c51a48b4">SpyPlane_TypeIndex</a>.<a class="code" href="class_valueable_idx.html#c16db559b91f92e874356a63f13ebad2">Read</a>(&amp;exINI, section, <span class="stringliteral">"SpyPlane.Type"</span>);
+<a name="l00056"></a>00056 
+<a name="l00057"></a>00057         this-&gt;<a class="code" href="class_s_w_type_ext_1_1_ext_data.html#878ff4b4600dc64326daa53626abbf63">SpyPlane_Mission</a>.<a class="code" href="class_valueable_idx.html#c16db559b91f92e874356a63f13ebad2">Read</a>(&amp;exINI, section, <span class="stringliteral">"SpyPlane.Mission"</span>);
+<a name="l00058"></a>00058 
+<a name="l00059"></a>00059         this-&gt;<a class="code" href="class_s_w_type_ext_1_1_ext_data.html#27104ed232b78d3ee5e4db0e15c8b588">Nuke_Siren</a>.<a class="code" href="class_valueable_idx.html#c16db559b91f92e874356a63f13ebad2">Read</a>(&amp;exINI, section, <span class="stringliteral">"Nuke.Sound"</span>);
+<a name="l00060"></a>00060         this-&gt;<a class="code" href="class_s_w_type_ext_1_1_ext_data.html#bd6ac388cf50cbbce5690312206e1e10">EVA_Ready</a>.<a class="code" href="class_valueable_idx.html#c16db559b91f92e874356a63f13ebad2">Read</a>(&amp;exINI, section, <span class="stringliteral">"EVA.Ready"</span>);
+<a name="l00061"></a>00061         this-&gt;<a class="code" href="class_s_w_type_ext_1_1_ext_data.html#f2b8501ef35eb62d452896a9c6021df2">EVA_Activated</a>.<a class="code" href="class_valueable_idx.html#c16db559b91f92e874356a63f13ebad2">Read</a>(&amp;exINI, section, <span class="stringliteral">"EVA.Activated"</span>);
+<a name="l00062"></a>00062         this-&gt;<a class="code" href="class_s_w_type_ext_1_1_ext_data.html#ef5297e5f2d74e481194c456e74d0890">EVA_Detected</a>.<a class="code" href="class_valueable_idx.html#c16db559b91f92e874356a63f13ebad2">Read</a>(&amp;exINI, section, <span class="stringliteral">"EVA.Detected"</span>);
+<a name="l00063"></a>00063 
+<a name="l00064"></a>00064         <span class="keywordflow">if</span>(exINI.ReadString(section, <span class="stringliteral">"Action"</span>) &amp;&amp; !strcmp(exINI.value(), <span class="stringliteral">"Custom"</span>)) {
+<a name="l00065"></a>00065                 pThis-&gt;Action = <a class="code" href="_actions_8h.html#3828d4bdcec55d055849f3503ab93410">SW_YES_CURSOR</a>;
+<a name="l00066"></a>00066         }
+<a name="l00067"></a>00067 
+<a name="l00068"></a>00068         <span class="keywordflow">if</span>(exINI.ReadString(section, <span class="stringliteral">"Type"</span>)) {
+<a name="l00069"></a>00069                 <span class="keywordtype">int</span> customType = <a class="code" href="class_new_s_w_type.html#6f6659b52c8a26c8e83340cdfbef43f9">NewSWType::FindIndex</a>(exINI.value());
+<a name="l00070"></a>00070                 <span class="keywordflow">if</span>(customType &gt; -1) {
+<a name="l00071"></a>00071                         pThis-&gt;Type = customType;
+<a name="l00072"></a>00072                 }
+<a name="l00073"></a>00073         }
+<a name="l00074"></a>00074 
+<a name="l00075"></a>00075         this-&gt;<a class="code" href="class_s_w_type_ext_1_1_ext_data.html#bdd598d5c5eb2c9ecc274706985138de">SW_FireToShroud</a>.<a class="code" href="class_valueable.html#0f0c57826adca78b4d46a69b5344a03b">Read</a>(&amp;exINI, section, <span class="stringliteral">"Super.FireIntoShroud"</span>);
+<a name="l00076"></a>00076         this-&gt;<a class="code" href="class_s_w_type_ext_1_1_ext_data.html#c30e4e47d96c50dd8825acd0817c1bd8">SW_AutoFire</a>.<a class="code" href="class_valueable.html#0f0c57826adca78b4d46a69b5344a03b">Read</a>(&amp;exINI, section, <span class="stringliteral">"Super.AutoFire"</span>);
+<a name="l00077"></a>00077         this-&gt;<a class="code" href="class_s_w_type_ext_1_1_ext_data.html#326b14693dd11c548b4df18df3b6853b">SW_RadarEvent</a>.<a class="code" href="class_valueable.html#0f0c57826adca78b4d46a69b5344a03b">Read</a>(&amp;exINI, section, <span class="stringliteral">"Super.CreateRadarEvent"</span>);
+<a name="l00078"></a>00078 
+<a name="l00079"></a>00079         this-&gt;<a class="code" href="class_s_w_type_ext_1_1_ext_data.html#b357dd98aade724dcaf6e0fe73157593">Money_Amount</a>.<a class="code" href="class_valueable.html#0f0c57826adca78b4d46a69b5344a03b">Read</a>(&amp;exINI, section, <span class="stringliteral">"Money.Amount"</span>);
+<a name="l00080"></a>00080 
+<a name="l00081"></a>00081         this-&gt;<a class="code" href="class_s_w_type_ext_1_1_ext_data.html#391996e9135a9d4276151fb2e7c0a858">SW_Anim</a>.<a class="code" href="class_valueable.html#ce02cef5e194a4738d03707ce1c44646">Parse</a>(&amp;exINI, section, <span class="stringliteral">"SW.Animation"</span>);
+<a name="l00082"></a>00082         this-&gt;<a class="code" href="class_s_w_type_ext_1_1_ext_data.html#35fde7d5f126eb6408c750e523a0e2bc">SW_AnimHeight</a>.<a class="code" href="class_valueable.html#0f0c57826adca78b4d46a69b5344a03b">Read</a>(&amp;exINI, section, <span class="stringliteral">"SW.AnimationHeight"</span>);
 <a name="l00083"></a>00083 
-<a name="l00084"></a>00084         this-&gt;<a class="code" href="class_s_w_type_ext_1_1_ext_data.html#391996e9135a9d4276151fb2e7c0a858">SW_Anim</a>.<a class="code" href="class_valueable.html#ce02cef5e194a4738d03707ce1c44646">Parse</a>(&amp;exINI, section, <span class="stringliteral">"SW.Animation"</span>);
-<a name="l00085"></a>00085         this-&gt;<a class="code" href="class_s_w_type_ext_1_1_ext_data.html#35fde7d5f126eb6408c750e523a0e2bc">SW_AnimHeight</a>.<a class="code" href="class_valueable.html#0f0c57826adca78b4d46a69b5344a03b">Read</a>(&amp;exINI, section, <span class="stringliteral">"SW.AnimationHeight"</span>);
-<a name="l00086"></a>00086 
-<a name="l00087"></a>00087         this-&gt;<a class="code" href="class_s_w_type_ext_1_1_ext_data.html#3fe464e075ec308e6ac72052a719d4d3">SW_Sound</a>.<a class="code" href="class_valueable_idx.html#c16db559b91f92e874356a63f13ebad2">Read</a>(&amp;exINI, section, <span class="stringliteral">"SW.Sound"</span>);
+<a name="l00084"></a>00084         this-&gt;<a class="code" href="class_s_w_type_ext_1_1_ext_data.html#3fe464e075ec308e6ac72052a719d4d3">SW_Sound</a>.<a class="code" href="class_valueable_idx.html#c16db559b91f92e874356a63f13ebad2">Read</a>(&amp;exINI, section, <span class="stringliteral">"SW.Sound"</span>);
+<a name="l00085"></a>00085 
+<a name="l00086"></a>00086         this-&gt;<a class="code" href="class_s_w_type_ext_1_1_ext_data.html#fae1c1d08642129069e7fd655e6993bb">SW_Cursor</a>.<a class="code" href="class_valueable.html#0f0c57826adca78b4d46a69b5344a03b">Read</a>(&amp;exINI, section, <span class="stringliteral">"Cursor"</span>);
+<a name="l00087"></a>00087         this-&gt;<a class="code" href="class_s_w_type_ext_1_1_ext_data.html#8ce6698a37b01fecf6d281ee5d8f47d2">SW_NoCursor</a>.<a class="code" href="class_valueable.html#0f0c57826adca78b4d46a69b5344a03b">Read</a>(&amp;exINI, section, <span class="stringliteral">"NoCursor"</span>);
 <a name="l00088"></a>00088 
-<a name="l00089"></a>00089         this-&gt;<a class="code" href="class_s_w_type_ext_1_1_ext_data.html#fae1c1d08642129069e7fd655e6993bb">SW_Cursor</a>.<a class="code" href="class_valueable.html#0f0c57826adca78b4d46a69b5344a03b">Read</a>(&amp;exINI, section, <span class="stringliteral">"Cursor"</span>);
-<a name="l00090"></a>00090         this-&gt;<a class="code" href="class_s_w_type_ext_1_1_ext_data.html#8ce6698a37b01fecf6d281ee5d8f47d2">SW_NoCursor</a>.<a class="code" href="class_valueable.html#0f0c57826adca78b4d46a69b5344a03b">Read</a>(&amp;exINI, section, <span class="stringliteral">"NoCursor"</span>);
-<a name="l00091"></a>00091 
-<a name="l00092"></a>00092         <span class="keywordtype">int</span> Type = pThis-&gt;Type - <a class="code" href="_s_w_type_2_body_8h.html#6ad9458fa6e603ce35865007ed97f044">FIRST_SW_TYPE</a>;
-<a name="l00093"></a>00093         <span class="keywordflow">if</span>(Type &gt;= 0 &amp;&amp; Type &lt; <a class="code" href="class_new_s_w_type.html#cf4d83ac95f241dfd8a8c0e091d5f325">NewSWType::Array</a>.Count ) {
-<a name="l00094"></a>00094                 <a class="code" href="class_new_s_w_type.html">NewSWType</a> *swt = <a class="code" href="class_new_s_w_type.html#6d958ce28c85b64691c52b374eec1bd3">NewSWType::GetNthItem</a>(pThis-&gt;Type);
-<a name="l00095"></a>00095                 swt-&gt;<a class="code" href="class_new_s_w_type.html#9da6e9a259267304401d5baa246f25c2">LoadFromINI</a>(<span class="keyword">this</span>, pThis, pINI);
-<a name="l00096"></a>00096         }
-<a name="l00097"></a>00097 
-<a name="l00098"></a>00098         this-&gt;<a class="code" href="class_s_w_type_ext_1_1_ext_data.html#4d991a1e027066a28b72989416f5ae68">CameoPal</a>.<a class="code" href="class_custom_palette.html#4a1c89f2ebe9a62f4692d31ac01d6b7c">LoadFromINI</a>(pINI, pThis-&gt;ID, <span class="stringliteral">"SidebarPalette"</span>);
-<a name="l00099"></a>00099 }
+<a name="l00089"></a>00089         <span class="keywordtype">int</span> Type = pThis-&gt;Type - <a class="code" href="_s_w_type_2_body_8h.html#6ad9458fa6e603ce35865007ed97f044">FIRST_SW_TYPE</a>;
+<a name="l00090"></a>00090         <span class="keywordflow">if</span>(Type &gt;= 0 &amp;&amp; Type &lt; <a class="code" href="class_new_s_w_type.html#cf4d83ac95f241dfd8a8c0e091d5f325">NewSWType::Array</a>.Count ) {
+<a name="l00091"></a>00091                 <a class="code" href="class_new_s_w_type.html">NewSWType</a> *swt = <a class="code" href="class_new_s_w_type.html#6d958ce28c85b64691c52b374eec1bd3">NewSWType::GetNthItem</a>(pThis-&gt;Type);
+<a name="l00092"></a>00092                 swt-&gt;<a class="code" href="class_new_s_w_type.html#9da6e9a259267304401d5baa246f25c2">LoadFromINI</a>(<span class="keyword">this</span>, pThis, pINI);
+<a name="l00093"></a>00093         }
+<a name="l00094"></a>00094 
+<a name="l00095"></a>00095         this-&gt;<a class="code" href="class_s_w_type_ext_1_1_ext_data.html#4d991a1e027066a28b72989416f5ae68">CameoPal</a>.<a class="code" href="class_custom_palette.html#4a1c89f2ebe9a62f4692d31ac01d6b7c">LoadFromINI</a>(pINI, pThis-&gt;ID, <span class="stringliteral">"SidebarPalette"</span>);
+<a name="l00096"></a>00096 }
 </pre></div>
 <p>
 
@@ -386,7 +396,7 @@ AircraftTypeClass &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a cla
 <p>
 
 <p>Implements <a class="el" href="class_extension.html#44ddedd12613b24b7b03d21982782047">Extension&lt; TT &gt;</a>.</p>
-<div class="fragment"><pre class="fragment"><a name="l00097"></a>00097 { <span class="keywordflow">return</span> <span class="keyword">sizeof</span>(*this); };
+<div class="fragment"><pre class="fragment"><a name="l00103"></a>00103 { <span class="keywordflow">return</span> <span class="keyword">sizeof</span>(*this); };
 </pre></div>
 <p>
 
@@ -444,6 +454,36 @@ AircraftTypeClass &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a cla
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="class_valueable_idx.html">ValueableIdx</a>&lt;int, VoxClass&gt; SWTypeExt::SWTypeExt::ExtData::EVA_Ready          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+
+</div>
+</div><p>
+<a class="anchor" name="bb7ba7090530360ce91633add120ee33"></a><!-- doxytag: member="SWTypeExt::ExtData::GWarhead_Damage" ref="bb7ba7090530360ce91633add120ee33" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_valueable.html">Valueable</a>&lt;int&gt; SWTypeExt::SWTypeExt::ExtData::GWarhead_Damage          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+
+</div>
+</div><p>
+<a class="anchor" name="35aa944634414c550906abbddb4570f6"></a><!-- doxytag: member="SWTypeExt::ExtData::GWarhead_WH" ref="35aa944634414c550906abbddb4570f6" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_valueable.html">Valueable</a>&lt;WarheadTypeClass *&gt; SWTypeExt::SWTypeExt::ExtData::GWarhead_WH          </td>
         </tr>
       </table>
 </div>
@@ -618,6 +658,36 @@ AircraftTypeClass &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a cla
 
 </div>
 </div><p>
+<a class="anchor" name="3d552881448b2d16ae659b502e1cdc5a"></a><!-- doxytag: member="SWTypeExt::ExtData::SW_Deliverables" ref="3d552881448b2d16ae659b502e1cdc5a" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">DynamicVectorClass&lt;TechnoTypeClass *&gt; SWTypeExt::SWTypeExt::ExtData::SW_Deliverables          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+
+</div>
+</div><p>
+<a class="anchor" name="fcf74fc38e15dad306919158221a9470"></a><!-- doxytag: member="SWTypeExt::ExtData::SW_DeliverBuildups" ref="fcf74fc38e15dad306919158221a9470" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_valueable.html">Valueable</a>&lt;bool&gt; SWTypeExt::SWTypeExt::ExtData::SW_DeliverBuildups          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+
+</div>
+</div><p>
 <a class="anchor" name="bdd598d5c5eb2c9ecc274706985138de"></a><!-- doxytag: member="SWTypeExt::ExtData::SW_FireToShroud" ref="bdd598d5c5eb2c9ecc274706985138de" args="" -->
 <div class="memitem">
 <div class="memproto">
@@ -696,7 +766,7 @@ AircraftTypeClass &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a cla
 <hr>The documentation for this class was generated from the following files:<ul>
 <li>Ext/SWType/<a class="el" href="_s_w_type_2_body_8h.html">Body.h</a><li>Ext/SWType/<a class="el" href="_s_w_type_2_body_8cpp.html">Body.cpp</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Mon Mar 1 23:35:19 2010 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed May 12 23:21:01 2010 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

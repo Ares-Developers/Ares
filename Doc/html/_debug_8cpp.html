@@ -9,6 +9,7 @@
   <div class="tabs">
     <ul>
       <li><a href="index.html"><span>Main&nbsp;Page</span></a></li>
+      <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li><a href="dirs.html"><span>Directories</span></a></li>
@@ -38,14 +39,59 @@
 <code>#include &lt;Unsorted.h&gt;</code><br>
 <code>#include &lt;MouseClass.h&gt;</code><br>
 <code>#include &lt;WWMouseClass.h&gt;</code><br>
+<code>#include &quot;<a class="el" href="_ares_8version_8h.html">Ares.version.h</a>&quot;</code><br>
 <table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
+<tr><td colspan="2"><br><h2>Defines</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">#define&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="_debug_8cpp.html#1129d7e0bed7c31561c8664cfe73ad07">DELIM</a>&nbsp;&nbsp;&nbsp;&quot;---------------------\n&quot;</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">#define&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="_debug_8cpp.html#7c1c6ec1eebbe421d905ebf84361ebcd">BLACK_SURFACE</a>(s)</td></tr>
+
 <tr><td colspan="2"><br><h2>Functions</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="_debug_8cpp.html#244710be0827ecd6ec822d7a03462697">void</a> (_cdecl *Debug::Log)(const char *pFormat</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="_debug_8cpp.html#5b55f8272fb23413e47b749b348ee547">__declspec</a> (dllexport) DWORD __cdecl Exception_Dialog(REGISTERS *R)</td></tr>
 
 </table>
+<hr><h2>Define Documentation</h2>
+<a class="anchor" name="7c1c6ec1eebbe421d905ebf84361ebcd"></a><!-- doxytag: member="Debug.cpp::BLACK_SURFACE" ref="7c1c6ec1eebbe421d905ebf84361ebcd" args="(s)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define BLACK_SURFACE          </td>
+          <td>(</td>
+          <td class="paramtype">s&nbsp;</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+<b>Value:</b><div class="fragment"><pre class="fragment"><span class="keywordflow">if</span>(DSurface::s) { \
+                        DSurface::s-&gt;Fill(0); \
+                }
+</pre></div>
+</div>
+</div><p>
+<a class="anchor" name="1129d7e0bed7c31561c8664cfe73ad07"></a><!-- doxytag: member="Debug.cpp::DELIM" ref="1129d7e0bed7c31561c8664cfe73ad07" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define DELIM&nbsp;&nbsp;&nbsp;&quot;---------------------\n&quot;          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+
+</div>
+</div><p>
 <hr><h2>Function Documentation</h2>
 <a class="anchor" name="5b55f8272fb23413e47b749b348ee547"></a><!-- doxytag: member="Debug.cpp::__declspec" ref="5b55f8272fb23413e47b749b348ee547" args="(dllexport) DWORD __cdecl Exception_Dialog(REGISTERS *R)" -->
 <div class="memitem">
@@ -64,10 +110,10 @@
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00289"></a>00289 {
-<a name="l00290"></a>00290         <a class="code" href="class_debug.html#7ae1f0e4f27680a16506ecb144ba20db">Debug::FreeMouse</a>();
-<a name="l00291"></a>00291         <span class="keywordflow">return</span> 0;
-<a name="l00292"></a>00292 }
+<div class="fragment"><pre class="fragment"><a name="l00365"></a>00365 {
+<a name="l00366"></a>00366         <a class="code" href="class_debug.html#7ae1f0e4f27680a16506ecb144ba20db">Debug::FreeMouse</a>();
+<a name="l00367"></a>00367         <span class="keywordflow">return</span> 0;
+<a name="l00368"></a>00368 }
 </pre></div>
 <p>
 
@@ -94,7 +140,7 @@
 </div>
 </div><p>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Mon Mar 1 23:35:17 2010 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed May 12 23:21:00 2010 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

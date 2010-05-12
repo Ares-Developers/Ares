@@ -9,6 +9,7 @@
   <div class="tabs">
     <ul>
       <li><a href="index.html"><span>Main&nbsp;Page</span></a></li>
+      <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li><a href="dirs.html"><span>Directories</span></a></li>
@@ -86,30 +87,31 @@
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00254"></a>00254 {
-<a name="l00255"></a>00255         std::vector&lt;int&gt; vecLegible;
-<a name="l00256"></a>00256         HouseTypeClass* pCountry;
-<a name="l00257"></a>00257 
-<a name="l00258"></a>00258         <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; HouseTypeClass::Array-&gt;Count; i++) {
-<a name="l00259"></a>00259                 pCountry = HouseTypeClass::Array-&gt;Items[i];
-<a name="l00260"></a>00260                 <span class="keywordflow">if</span>(pCountry-&gt;Multiplay) {
-<a name="l00261"></a>00261                         <span class="keywordflow">if</span>(<a class="code" href="class_house_type_ext_1_1_ext_data.html">HouseTypeExt::ExtData</a> *pData = <a class="code" href="class_house_type_ext.html#f44f9c59ad5eb8101d45233ef7adbb51">HouseTypeExt::ExtMap</a>.Find(pCountry)) {
-<a name="l00262"></a>00262                                 <span class="keywordflow">for</span>(<span class="keywordtype">int</span> k = 0; k &lt; pData-&gt;RandomSelectionWeight; k++) {
-<a name="l00263"></a>00263                                         vecLegible.push_back(i);
-<a name="l00264"></a>00264                                 }
-<a name="l00265"></a>00265                         }
-<a name="l00266"></a>00266                 }
-<a name="l00267"></a>00267         }
-<a name="l00268"></a>00268 
-<a name="l00269"></a>00269         <span class="keywordflow">if</span>(vecLegible.size() &gt; 0) {
-<a name="l00270"></a>00270                 <span class="keywordtype">int</span> pick = ScenarioClass::Instance-&gt;Random.RandomRanged(0, vecLegible.size() - 1);
-<a name="l00271"></a>00271 
-<a name="l00272"></a>00272                 <span class="keywordflow">return</span> vecLegible.at(pick);
-<a name="l00273"></a>00273         } <span class="keywordflow">else</span> {
-<a name="l00274"></a>00274                 <a class="code" href="class_debug.html#c71444646f841bbeb30195fb9b3a5001">Debug::FatalError</a>(<span class="stringliteral">"No countries eligible for random selection!"</span>);
-<a name="l00275"></a>00275         }
-<a name="l00276"></a>00276         <span class="keywordflow">return</span> 0;
-<a name="l00277"></a>00277 }
+<div class="fragment"><pre class="fragment"><a name="l00226"></a>00226                                     {
+<a name="l00227"></a>00227         std::vector&lt;int&gt; vecLegible;
+<a name="l00228"></a>00228         HouseTypeClass* pCountry;
+<a name="l00229"></a>00229 
+<a name="l00230"></a>00230         <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; HouseTypeClass::Array-&gt;Count; i++) {
+<a name="l00231"></a>00231                 pCountry = HouseTypeClass::Array-&gt;Items[i];
+<a name="l00232"></a>00232                 <span class="keywordflow">if</span> (pCountry-&gt;Multiplay) {
+<a name="l00233"></a>00233                         <span class="keywordflow">if</span> (<a class="code" href="class_house_type_ext_1_1_ext_data.html">HouseTypeExt::ExtData</a> *pData = <a class="code" href="class_house_type_ext.html#f44f9c59ad5eb8101d45233ef7adbb51">HouseTypeExt::ExtMap</a>.Find(pCountry)) {
+<a name="l00234"></a>00234                                 <span class="keywordflow">for</span> (<span class="keywordtype">int</span> k = 0; k &lt; pData-&gt;RandomSelectionWeight; k++) {
+<a name="l00235"></a>00235                                         vecLegible.push_back(i);
+<a name="l00236"></a>00236                                 }
+<a name="l00237"></a>00237                         }
+<a name="l00238"></a>00238                 }
+<a name="l00239"></a>00239         }
+<a name="l00240"></a>00240 
+<a name="l00241"></a>00241         <span class="keywordflow">if</span> (vecLegible.size() &gt; 0) {
+<a name="l00242"></a>00242                 <span class="keywordtype">int</span> pick = ScenarioClass::Instance-&gt;Random.RandomRanged(0,
+<a name="l00243"></a>00243                                 vecLegible.size() - 1);
+<a name="l00244"></a>00244 
+<a name="l00245"></a>00245                 <span class="keywordflow">return</span> vecLegible.at(pick);
+<a name="l00246"></a>00246         } <span class="keywordflow">else</span> {
+<a name="l00247"></a>00247                 <a class="code" href="class_debug.html#f5877607385240e065c60bed324530ff">Debug::FatalErrorAndExit</a>(<span class="stringliteral">"No countries eligible for random selection!"</span>);
+<a name="l00248"></a>00248         }
+<a name="l00249"></a>00249         <span class="keywordflow">return</span> 0;
+<a name="l00250"></a>00250 }
 </pre></div>
 <p>
 
@@ -134,7 +136,7 @@
 <hr>The documentation for this class was generated from the following files:<ul>
 <li>Ext/HouseType/<a class="el" href="_house_type_2_body_8h.html">Body.h</a><li>Ext/HouseType/<a class="el" href="_house_type_2_body_8cpp.html">Body.cpp</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Mon Mar 1 23:35:18 2010 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed May 12 23:21:00 2010 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

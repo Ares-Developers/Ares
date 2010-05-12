@@ -9,6 +9,7 @@
   <div class="tabs">
     <ul>
       <li><a href="index.html"><span>Main&nbsp;Page</span></a></li>
+      <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li><a href="dirs.html"><span>Directories</span></a></li>
@@ -104,43 +105,43 @@
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00102"></a>00102 {
-<a name="l00103"></a>00103         <a class="code" href="class_s_w_type_ext_1_1_ext_data.html">SWTypeExt::ExtData</a> *pData = <a class="code" href="class_s_w_type_ext.html#6906468c9e4ae4d421cba9cb572fb6ec">SWTypeExt::ExtMap</a>.<a class="code" href="class_container.html#90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(pThis-&gt;Type);
-<a name="l00104"></a>00104 
-<a name="l00105"></a>00105         <span class="keywordflow">if</span>(pData-&gt;<a class="code" href="class_s_w_type_ext_1_1_ext_data.html#f2b8501ef35eb62d452896a9c6021df2">EVA_Activated</a> != -1) {
-<a name="l00106"></a>00106                 VoxClass::PlayIndex(pData-&gt;<a class="code" href="class_s_w_type_ext_1_1_ext_data.html#f2b8501ef35eb62d452896a9c6021df2">EVA_Activated</a>);
-<a name="l00107"></a>00107         }
-<a name="l00108"></a>00108 
-<a name="l00109"></a>00109         <span class="keywordtype">int</span> Money_Amount = pData-&gt;<a class="code" href="class_s_w_type_ext_1_1_ext_data.html#b357dd98aade724dcaf6e0fe73157593">Money_Amount</a>;
-<a name="l00110"></a>00110         <span class="keywordflow">if</span>(Money_Amount &gt; 0) {
-<a name="l00111"></a>00111                 DEBUGLOG(<span class="stringliteral">"House %d gets %d credits\n"</span>, pThis-&gt;Owner-&gt;ArrayIndex, Money_Amount);
-<a name="l00112"></a>00112                 pThis-&gt;Owner-&gt;GiveMoney(Money_Amount);
-<a name="l00113"></a>00113         } <span class="keywordflow">else</span> <span class="keywordflow">if</span>(Money_Amount &lt; 0) {
-<a name="l00114"></a>00114                 DEBUGLOG(<span class="stringliteral">"House %d loses %d credits\n"</span>, pThis-&gt;Owner-&gt;ArrayIndex, -Money_Amount);
-<a name="l00115"></a>00115                 pThis-&gt;Owner-&gt;TakeMoney(-Money_Amount);
-<a name="l00116"></a>00116         }
+<div class="fragment"><pre class="fragment"><a name="l00099"></a>00099 {
+<a name="l00100"></a>00100         <a class="code" href="class_s_w_type_ext_1_1_ext_data.html">SWTypeExt::ExtData</a> *pData = <a class="code" href="class_s_w_type_ext.html#6906468c9e4ae4d421cba9cb572fb6ec">SWTypeExt::ExtMap</a>.<a class="code" href="class_container.html#90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(pThis-&gt;Type);
+<a name="l00101"></a>00101 
+<a name="l00102"></a>00102         <span class="keywordflow">if</span>(pData-&gt;<a class="code" href="class_s_w_type_ext_1_1_ext_data.html#f2b8501ef35eb62d452896a9c6021df2">EVA_Activated</a> != -1) {
+<a name="l00103"></a>00103                 VoxClass::PlayIndex(pData-&gt;<a class="code" href="class_s_w_type_ext_1_1_ext_data.html#f2b8501ef35eb62d452896a9c6021df2">EVA_Activated</a>);
+<a name="l00104"></a>00104         }
+<a name="l00105"></a>00105 
+<a name="l00106"></a>00106         <span class="keywordtype">int</span> Money_Amount = pData-&gt;<a class="code" href="class_s_w_type_ext_1_1_ext_data.html#b357dd98aade724dcaf6e0fe73157593">Money_Amount</a>;
+<a name="l00107"></a>00107         <span class="keywordflow">if</span>(Money_Amount &gt; 0) {
+<a name="l00108"></a>00108                 DEBUGLOG(<span class="stringliteral">"House %d gets %d credits\n"</span>, pThis-&gt;Owner-&gt;ArrayIndex, Money_Amount);
+<a name="l00109"></a>00109                 pThis-&gt;Owner-&gt;GiveMoney(Money_Amount);
+<a name="l00110"></a>00110         } <span class="keywordflow">else</span> <span class="keywordflow">if</span>(Money_Amount &lt; 0) {
+<a name="l00111"></a>00111                 DEBUGLOG(<span class="stringliteral">"House %d loses %d credits\n"</span>, pThis-&gt;Owner-&gt;ArrayIndex, -Money_Amount);
+<a name="l00112"></a>00112                 pThis-&gt;Owner-&gt;TakeMoney(-Money_Amount);
+<a name="l00113"></a>00113         }
+<a name="l00114"></a>00114 
+<a name="l00115"></a>00115         CoordStruct coords;
+<a name="l00116"></a>00116         MapClass::Instance-&gt;GetCellAt(pCoords)-&gt;GetCoords(&amp;coords);
 <a name="l00117"></a>00117 
-<a name="l00118"></a>00118         CoordStruct coords;
-<a name="l00119"></a>00119         MapClass::Instance-&gt;GetCellAt(pCoords)-&gt;GetCoords(&amp;coords);
-<a name="l00120"></a>00120 
-<a name="l00121"></a>00121         <span class="keywordflow">if</span>(pData-&gt;<a class="code" href="class_s_w_type_ext_1_1_ext_data.html#391996e9135a9d4276151fb2e7c0a858">SW_Anim</a> != NULL) {
-<a name="l00122"></a>00122                 coords.Z += pData-&gt;<a class="code" href="class_s_w_type_ext_1_1_ext_data.html#35fde7d5f126eb6408c750e523a0e2bc">SW_AnimHeight</a>;
-<a name="l00123"></a>00123                 AnimClass *placeholder;
-<a name="l00124"></a>00124                 GAME_ALLOC(AnimClass, placeholder, pData-&gt;<a class="code" href="class_s_w_type_ext_1_1_ext_data.html#391996e9135a9d4276151fb2e7c0a858">SW_Anim</a>, &amp;coords);
-<a name="l00125"></a>00125         }
-<a name="l00126"></a>00126 
-<a name="l00127"></a>00127         <span class="keywordflow">if</span>(pData-&gt;<a class="code" href="class_s_w_type_ext_1_1_ext_data.html#3fe464e075ec308e6ac72052a719d4d3">SW_Sound</a> != -1) {
-<a name="l00128"></a>00128                 VocClass::PlayAt(pData-&gt;<a class="code" href="class_s_w_type_ext_1_1_ext_data.html#3fe464e075ec308e6ac72052a719d4d3">SW_Sound</a>, &amp;coords, NULL);
-<a name="l00129"></a>00129         }
-<a name="l00130"></a>00130 
-<a name="l00131"></a>00131         <span class="keywordflow">if</span>(pData-&gt;<a class="code" href="class_s_w_type_ext_1_1_ext_data.html#326b14693dd11c548b4df18df3b6853b">SW_RadarEvent</a>) {
-<a name="l00132"></a>00132                 RadarEventClass::Create(RADAREVENT_SUPERWEAPONLAUNCHED, *pCoords);
-<a name="l00133"></a>00133         }
-<a name="l00134"></a>00134 
-<a name="l00135"></a>00135         <span class="keywordtype">int</span> TypeIdx = pThis-&gt;Type-&gt;Type;
-<a name="l00136"></a>00136         RET_UNLESS(TypeIdx &gt;= <a class="code" href="_s_w_type_2_body_8h.html#6ad9458fa6e603ce35865007ed97f044">FIRST_SW_TYPE</a>);
-<a name="l00137"></a>00137         <span class="keywordflow">return</span> <a class="code" href="class_new_s_w_type.html#6d958ce28c85b64691c52b374eec1bd3">NewSWType::GetNthItem</a>(TypeIdx)-&gt;<a class="code" href="class_new_s_w_type.html#aacde31e8112886999de397a948837d6">Launch</a>(pThis, pCoords, IsPlayer);
-<a name="l00138"></a>00138 }
+<a name="l00118"></a>00118         <span class="keywordflow">if</span>(pData-&gt;<a class="code" href="class_s_w_type_ext_1_1_ext_data.html#391996e9135a9d4276151fb2e7c0a858">SW_Anim</a> != NULL) {
+<a name="l00119"></a>00119                 coords.Z += pData-&gt;<a class="code" href="class_s_w_type_ext_1_1_ext_data.html#35fde7d5f126eb6408c750e523a0e2bc">SW_AnimHeight</a>;
+<a name="l00120"></a>00120                 AnimClass *placeholder;
+<a name="l00121"></a>00121                 GAME_ALLOC(AnimClass, placeholder, pData-&gt;<a class="code" href="class_s_w_type_ext_1_1_ext_data.html#391996e9135a9d4276151fb2e7c0a858">SW_Anim</a>, &amp;coords);
+<a name="l00122"></a>00122         }
+<a name="l00123"></a>00123 
+<a name="l00124"></a>00124         <span class="keywordflow">if</span>(pData-&gt;<a class="code" href="class_s_w_type_ext_1_1_ext_data.html#3fe464e075ec308e6ac72052a719d4d3">SW_Sound</a> != -1) {
+<a name="l00125"></a>00125                 VocClass::PlayAt(pData-&gt;<a class="code" href="class_s_w_type_ext_1_1_ext_data.html#3fe464e075ec308e6ac72052a719d4d3">SW_Sound</a>, &amp;coords, NULL);
+<a name="l00126"></a>00126         }
+<a name="l00127"></a>00127 
+<a name="l00128"></a>00128         <span class="keywordflow">if</span>(pData-&gt;<a class="code" href="class_s_w_type_ext_1_1_ext_data.html#326b14693dd11c548b4df18df3b6853b">SW_RadarEvent</a>) {
+<a name="l00129"></a>00129                 RadarEventClass::Create(RADAREVENT_SUPERWEAPONLAUNCHED, *pCoords);
+<a name="l00130"></a>00130         }
+<a name="l00131"></a>00131 
+<a name="l00132"></a>00132         <span class="keywordtype">int</span> TypeIdx = pThis-&gt;Type-&gt;Type;
+<a name="l00133"></a>00133         RET_UNLESS(TypeIdx &gt;= <a class="code" href="_s_w_type_2_body_8h.html#6ad9458fa6e603ce35865007ed97f044">FIRST_SW_TYPE</a>);
+<a name="l00134"></a>00134         <span class="keywordflow">return</span> <a class="code" href="class_new_s_w_type.html#6d958ce28c85b64691c52b374eec1bd3">NewSWType::GetNthItem</a>(TypeIdx)-&gt;<a class="code" href="class_new_s_w_type.html#aacde31e8112886999de397a948837d6">Launch</a>(pThis, pCoords, IsPlayer);
+<a name="l00135"></a>00135 }
 </pre></div>
 <p>
 
@@ -180,7 +181,7 @@
 <hr>The documentation for this class was generated from the following files:<ul>
 <li>Ext/SWType/<a class="el" href="_s_w_type_2_body_8h.html">Body.h</a><li>Ext/SWType/<a class="el" href="_s_w_type_2_body_8cpp.html">Body.cpp</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Mon Mar 1 23:35:18 2010 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed May 12 23:21:01 2010 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

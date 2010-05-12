@@ -9,6 +9,7 @@
   <div class="tabs">
     <ul>
       <li><a href="index.html"><span>Main&nbsp;Page</span></a></li>
+      <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li><a href="dirs.html"><span>Directories</span></a></li>
@@ -71,35 +72,41 @@
 <a name="l00014"></a>00014         <a class="code" href="class_bullet_type_ext_1_1_ext_data.html">BulletTypeExt::ExtData</a> *pBulletData = <a class="code" href="class_bullet_type_ext.html#7dc0a4583e92987bd0b670ed627aef26">BulletTypeExt::ExtMap</a>.<a class="code" href="class_container.html#90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(Bullet-&gt;Type);
 <a name="l00015"></a>00015         BuildingClass *BuildingInIt = MyCell-&gt;GetBuilding();
 <a name="l00016"></a>00016         <span class="keywordflow">if</span>(pBulletData-&gt;<a class="code" href="class_bullet_type_ext_1_1_ext_data.html#b27cf3868840849f145fe03d9d5c453a">SubjectToSolid</a> &amp;&amp; BuildingInIt &amp;&amp; Bullet-&gt;Owner != BuildingInIt) {
-<a name="l00017"></a>00017                 <a class="code" href="class_building_type_ext_1_1_ext_data.html">BuildingTypeExt::ExtData</a> *pBuildingData = <a class="code" href="class_building_type_ext.html#9643fa629dd6d2a20eeefa4942d8612a">BuildingTypeExt::ExtMap</a>.<a class="code" href="class_container.html#90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(BuildingInIt-&gt;Type);
-<a name="l00018"></a>00018                 CoordStruct MyXYZ;
-<a name="l00019"></a>00019                 MyCell-&gt;GetCoords(&amp;MyXYZ);
-<a name="l00020"></a>00020 
-<a name="l00021"></a>00021                 <span class="comment">// use this delta offset to pick specific foundation cell's height from height map when it's implemented</span>
-<a name="l00022"></a>00022                 CellStruct MyXY, BldXY, DeltaXY;
-<a name="l00023"></a>00023                 Bullet-&gt;GetMapCoords(&amp;MyXY);
-<a name="l00024"></a>00024                 BuildingInIt-&gt;GetMapCoords(&amp;BldXY);
-<a name="l00025"></a>00025                 DeltaXY = MyXY - BldXY;
+<a name="l00017"></a>00017                 <span class="keyword">auto</span> *pBuildingTypeData = <a class="code" href="class_building_type_ext.html#9643fa629dd6d2a20eeefa4942d8612a">BuildingTypeExt::ExtMap</a>.<a class="code" href="class_container.html#90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(BuildingInIt-&gt;Type);
+<a name="l00018"></a>00018                 <span class="keywordflow">if</span>(<span class="keywordtype">int</span> solidHeight = pBuildingTypeData-&gt;Solid_Height) {
+<a name="l00019"></a>00019                         <span class="keywordflow">if</span>(solidHeight &lt; 0) {
+<a name="l00020"></a>00020                                 solidHeight = BuildingInIt-&gt;Type-&gt;Height * 256;
+<a name="l00021"></a>00021                         } <span class="keywordflow">else</span> {
+<a name="l00022"></a>00022                                 solidHeight *= 256;
+<a name="l00023"></a>00023                         }
+<a name="l00024"></a>00024                         CoordStruct MyXYZ;
+<a name="l00025"></a>00025                         MyCell-&gt;GetCoords(&amp;MyXYZ);
 <a name="l00026"></a>00026 
-<a name="l00027"></a>00027                 <span class="keywordtype">int</span> MyHeight = Bullet-&gt;get_Location()-&gt;Z;
-<a name="l00028"></a>00028                 <span class="keywordtype">int</span> BldHeight = MapClass::Global()-&gt;GetCellFloorHeight(&amp;MyXYZ) + pBuildingData-&gt;<a class="code" href="class_building_type_ext_1_1_ext_data.html#a3768c28cb107973d736eb978297e340">Solid_Height</a> * 256;
-<a name="l00029"></a>00029                 <span class="keywordflow">if</span>(MyHeight &lt;= BldHeight) {
-<a name="l00030"></a>00030 <span class="comment">//                      Debug::Log("Bullet at %d hits building of height %d == boom\n", MyHeight, BldHeight);</span>
-<a name="l00031"></a>00031                         Bullet-&gt;SetTarget((ObjectClass *)MyCell);
-<a name="l00032"></a>00032                         Bullet-&gt;SpawnNextAnim = 1;
-<a name="l00033"></a>00033                         Bullet-&gt;NextAnim = NULL;
-<a name="l00034"></a>00034                 }
-<a name="l00035"></a>00035         }
-<a name="l00036"></a>00036 
-<a name="l00037"></a>00037         <span class="keywordflow">return</span> 0;
-<a name="l00038"></a>00038 }
+<a name="l00027"></a>00027                         <span class="comment">// use this delta offset to pick specific foundation cell's height from height map when it's implemented</span>
+<a name="l00028"></a>00028                         CellStruct MyXY, BldXY, DeltaXY;
+<a name="l00029"></a>00029                         Bullet-&gt;GetMapCoords(&amp;MyXY);
+<a name="l00030"></a>00030                         BuildingInIt-&gt;GetMapCoords(&amp;BldXY);
+<a name="l00031"></a>00031                         DeltaXY = MyXY - BldXY;
+<a name="l00032"></a>00032 
+<a name="l00033"></a>00033                         <span class="keywordtype">int</span> MyHeight = Bullet-&gt;Location.Z;
+<a name="l00034"></a>00034                         <span class="keywordtype">int</span> BldHeight = MapClass::Instance-&gt;GetCellFloorHeight(&amp;MyXYZ) + solidHeight;
+<a name="l00035"></a>00035                         <span class="keywordflow">if</span>(MyHeight &lt;= BldHeight) {
+<a name="l00036"></a>00036                                 Bullet-&gt;SetTarget((ObjectClass *)MyCell);
+<a name="l00037"></a>00037                                 Bullet-&gt;SpawnNextAnim = 1;
+<a name="l00038"></a>00038                                 Bullet-&gt;NextAnim = NULL;
+<a name="l00039"></a>00039                         }
+<a name="l00040"></a>00040                 }
+<a name="l00041"></a>00041         }
+<a name="l00042"></a>00042 
+<a name="l00043"></a>00043         <span class="keywordflow">return</span> 0;
+<a name="l00044"></a>00044 }
 </pre></div>
 <p>
 
 </div>
 </div><p>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Mon Mar 1 23:35:17 2010 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed May 12 23:21:00 2010 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

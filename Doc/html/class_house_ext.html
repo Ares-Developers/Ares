@@ -9,6 +9,7 @@
   <div class="tabs">
     <ul>
       <li><a href="index.html"><span>Main&nbsp;Page</span></a></li>
+      <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li><a href="dirs.html"><span>Directories</span></a></li>
@@ -57,8 +58,6 @@
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">static signed int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_house_ext.html#1398e2ed89a5f517c53f86fdb5278682">PrereqValidate</a> (HouseClass *pHouse, TechnoTypeClass *pItem, bool BuildLimitOnly, bool IncludeQueued)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">static void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_house_ext.html#99228ac2c4fc594ee7fd558254933283">Firestorm_SetState</a> (HouseClass *pHouse, bool Active)</td></tr>
-
 <tr><td colspan="2"><br><h2>Static Public Attributes</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">static <a class="el" href="class_container.html">Container</a>&lt; <a class="el" href="class_house_ext.html">HouseExt</a> &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_house_ext.html#4a73e500fabd21a7359c5247c31d4c03">ExtMap</a></td></tr>
 
@@ -106,14 +105,14 @@
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00089"></a>00089 {
-<a name="l00090"></a>00090         <span class="keywordtype">int</span> BuildLimit = pItem-&gt;BuildLimit;
-<a name="l00091"></a>00091         <span class="keywordflow">if</span>(BuildLimit &gt;= 0) {
-<a name="l00092"></a>00092                 <span class="keywordflow">return</span> BuildLimit &gt; pHouse-&gt;CountOwnedNow(pItem);
-<a name="l00093"></a>00093         } <span class="keywordflow">else</span> {
-<a name="l00094"></a>00094                 <span class="keywordflow">return</span> abs(BuildLimit) &gt; pHouse-&gt;CountOwnedEver(pItem);
-<a name="l00095"></a>00095         }
-<a name="l00096"></a>00096 }
+<div class="fragment"><pre class="fragment"><a name="l00095"></a>00095 {
+<a name="l00096"></a>00096         <span class="keywordtype">int</span> BuildLimit = pItem-&gt;BuildLimit;
+<a name="l00097"></a>00097         <span class="keywordflow">if</span>(BuildLimit &gt;= 0) {
+<a name="l00098"></a>00098                 <span class="keywordflow">return</span> BuildLimit &gt; pHouse-&gt;CountOwnedNow(pItem);
+<a name="l00099"></a>00099         } <span class="keywordflow">else</span> {
+<a name="l00100"></a>00100                 <span class="keywordflow">return</span> abs(BuildLimit) &gt; pHouse-&gt;CountOwnedEver(pItem);
+<a name="l00101"></a>00101         }
+<a name="l00102"></a>00102 }
 </pre></div>
 <p>
 
@@ -151,73 +150,16 @@
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00077"></a>00077 {
-<a name="l00078"></a>00078         <span class="keywordtype">int</span> BuildLimit = pItem-&gt;BuildLimit;
-<a name="l00079"></a>00079         <span class="keywordtype">int</span> Remaining = <a class="code" href="class_house_ext.html#40c4c481f640504871b355d2b8b2a10a">HouseExt::BuildLimitRemaining</a>(pHouse, pItem);
-<a name="l00080"></a>00080         <span class="keywordflow">if</span>(BuildLimit &gt; 0) {
-<a name="l00081"></a>00081                 <span class="keywordflow">if</span>(Remaining &lt;= 0 &amp;&amp; IncludeQueued) {
-<a name="l00082"></a>00082                         <span class="keywordflow">return</span> FactoryClass::FindThisOwnerAndProduct(pHouse, pItem) ? 1 : -1;
-<a name="l00083"></a>00083                 }
-<a name="l00084"></a>00084         }
-<a name="l00085"></a>00085         <span class="keywordflow">return</span> Remaining &gt; 0;
-<a name="l00086"></a>00086 }
-</pre></div>
-<p>
-
-</div>
-</div><p>
-<a class="anchor" name="99228ac2c4fc594ee7fd558254933283"></a><!-- doxytag: member="HouseExt::Firestorm_SetState" ref="99228ac2c4fc594ee7fd558254933283" args="(HouseClass *pHouse, bool Active)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void HouseExt::Firestorm_SetState           </td>
-          <td>(</td>
-          <td class="paramtype">HouseClass *&nbsp;</td>
-          <td class="paramname"> <em>pHouse</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool&nbsp;</td>
-          <td class="paramname"> <em>Active</em></td><td>&nbsp;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td><td><code> [static]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-<div class="fragment"><pre class="fragment"><a name="l00121"></a>00121                                                                  {
-<a name="l00122"></a>00122         <a class="code" href="class_house_ext_1_1_ext_data.html">HouseExt::ExtData</a>* pData = <a class="code" href="class_house_ext.html#4a73e500fabd21a7359c5247c31d4c03">HouseExt::ExtMap</a>.<a class="code" href="class_container.html#90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(pHouse);
-<a name="l00123"></a>00123 
-<a name="l00124"></a>00124         <span class="keywordflow">if</span>(pData-&gt;<a class="code" href="class_house_ext_1_1_ext_data.html#f2e91b1fc2de13ab1e96ff1242cab060">FirewallActive</a> == Active) {
-<a name="l00125"></a>00125                 <span class="keywordflow">return</span>;
-<a name="l00126"></a>00126         }
-<a name="l00127"></a>00127 
-<a name="l00128"></a>00128         pData-&gt;<a class="code" href="class_house_ext_1_1_ext_data.html#f2e91b1fc2de13ab1e96ff1242cab060">FirewallActive</a> = Active;
-<a name="l00129"></a>00129 
-<a name="l00130"></a>00130         DynamicVectorClass&lt;CellStruct&gt; AffectedCoords;
-<a name="l00131"></a>00131 
-<a name="l00132"></a>00132         <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; BuildingClass::Array-&gt;Count; ++i) {
-<a name="l00133"></a>00133                 BuildingClass *B = BuildingClass::Array-&gt;Items[i];
-<a name="l00134"></a>00134                 <span class="keywordflow">if</span>(B-&gt;Owner == pHouse) {
-<a name="l00135"></a>00135                         <a class="code" href="class_building_type_ext_1_1_ext_data.html">BuildingTypeExt::ExtData</a> *pBuildTypeData = <a class="code" href="class_building_type_ext.html#9643fa629dd6d2a20eeefa4942d8612a">BuildingTypeExt::ExtMap</a>.<a class="code" href="class_container.html#90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(B-&gt;Type);
-<a name="l00136"></a>00136                         <span class="keywordflow">if</span>(pBuildTypeData-&gt;<a class="code" href="class_building_type_ext_1_1_ext_data.html#51503707d3c7be1bcd829f893acdd21e">Firewall_Is</a>) {
-<a name="l00137"></a>00137                                 CellStruct temp;
-<a name="l00138"></a>00138                                 B-&gt;GetMapCoords(&amp;temp);
-<a name="l00139"></a>00139                                 AffectedCoords.AddItem(temp);
-<a name="l00140"></a>00140                         }
-<a name="l00141"></a>00141                 }
-<a name="l00142"></a>00142         }
-<a name="l00143"></a>00143 
-<a name="l00144"></a>00144         MapClass::Global()-&gt;Update_Pathfinding_1();
-<a name="l00145"></a>00145         MapClass::Global()-&gt;Update_Pathfinding_2(&amp;AffectedCoords);
-<a name="l00146"></a>00146 };
+<div class="fragment"><pre class="fragment"><a name="l00083"></a>00083 {
+<a name="l00084"></a>00084         <span class="keywordtype">int</span> BuildLimit = pItem-&gt;BuildLimit;
+<a name="l00085"></a>00085         <span class="keywordtype">int</span> Remaining = <a class="code" href="class_house_ext.html#40c4c481f640504871b355d2b8b2a10a">HouseExt::BuildLimitRemaining</a>(pHouse, pItem);
+<a name="l00086"></a>00086         <span class="keywordflow">if</span>(BuildLimit &gt; 0) {
+<a name="l00087"></a>00087                 <span class="keywordflow">if</span>(Remaining &lt;= 0 &amp;&amp; IncludeQueued) {
+<a name="l00088"></a>00088                         <span class="keywordflow">return</span> FactoryClass::FindThisOwnerAndProduct(pHouse, pItem) ? 1 : -1;
+<a name="l00089"></a>00089                 }
+<a name="l00090"></a>00090         }
+<a name="l00091"></a>00091         <span class="keywordflow">return</span> Remaining &gt; 0;
+<a name="l00092"></a>00092 }
 </pre></div>
 <p>
 
@@ -249,20 +191,20 @@
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00061"></a>00061 {
-<a name="l00062"></a>00062         <a class="code" href="class_techno_type_ext_1_1_ext_data.html">TechnoTypeExt::ExtData</a>* pData = <a class="code" href="class_techno_type_ext.html#cc5f01db1b341572a92ad754a7d15c48">TechnoTypeExt::ExtMap</a>.<a class="code" href="class_container.html#90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(pItem);
-<a name="l00063"></a>00063         <span class="keywordflow">if</span>(!pItem) {
-<a name="l00064"></a>00064                 <span class="keywordflow">return</span> 0;
-<a name="l00065"></a>00065         }
-<a name="l00066"></a>00066 
-<a name="l00067"></a>00067         <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; pData-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#695fd0f821a0fa6f300787a17f18c0cc">PrerequisiteLists</a>.Count; ++i) {
-<a name="l00068"></a>00068                 <span class="keywordflow">if</span>(<a class="code" href="class_prereqs.html#a69fb7c496ff46974722a0004e2bd9c2">Prereqs::HouseOwnsAll</a>(pHouse, pData-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#695fd0f821a0fa6f300787a17f18c0cc">PrerequisiteLists</a>[i])) {
-<a name="l00069"></a>00069                         <span class="keywordflow">return</span> 1;
-<a name="l00070"></a>00070                 }
+<div class="fragment"><pre class="fragment"><a name="l00067"></a>00067 {
+<a name="l00068"></a>00068         <a class="code" href="class_techno_type_ext_1_1_ext_data.html">TechnoTypeExt::ExtData</a>* pData = <a class="code" href="class_techno_type_ext.html#cc5f01db1b341572a92ad754a7d15c48">TechnoTypeExt::ExtMap</a>.<a class="code" href="class_container.html#90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(pItem);
+<a name="l00069"></a>00069         <span class="keywordflow">if</span>(!pItem) {
+<a name="l00070"></a>00070                 <span class="keywordflow">return</span> 0;
 <a name="l00071"></a>00071         }
 <a name="l00072"></a>00072 
-<a name="l00073"></a>00073         <span class="keywordflow">return</span> 0;
-<a name="l00074"></a>00074 }
+<a name="l00073"></a>00073         <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; pData-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#695fd0f821a0fa6f300787a17f18c0cc">PrerequisiteLists</a>.Count; ++i) {
+<a name="l00074"></a>00074                 <span class="keywordflow">if</span>(<a class="code" href="class_prereqs.html#a69fb7c496ff46974722a0004e2bd9c2">Prereqs::HouseOwnsAll</a>(pHouse, pData-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#695fd0f821a0fa6f300787a17f18c0cc">PrerequisiteLists</a>[i])) {
+<a name="l00075"></a>00075                         <span class="keywordflow">return</span> 1;
+<a name="l00076"></a>00076                 }
+<a name="l00077"></a>00077         }
+<a name="l00078"></a>00078 
+<a name="l00079"></a>00079         <span class="keywordflow">return</span> 0;
+<a name="l00080"></a>00080 }
 </pre></div>
 <p>
 
@@ -306,26 +248,26 @@
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00100"></a>00100 {
-<a name="l00101"></a>00101         <span class="keywordflow">if</span>(!BuildLimitOnly) {
-<a name="l00102"></a>00102                 <span class="keywordtype">signed</span> <span class="keywordtype">int</span> ReqsMet = <a class="code" href="class_house_ext.html#0c9fd6da3b20fa2e9494f3fbd9a5ad84">HouseExt::RequirementsMet</a>(pHouse, pItem);
-<a name="l00103"></a>00103                 <span class="keywordflow">if</span>(!ReqsMet) {
-<a name="l00104"></a>00104                         <span class="keywordflow">return</span> 0;
-<a name="l00105"></a>00105                 }
-<a name="l00106"></a>00106 
-<a name="l00107"></a>00107                 <span class="keywordflow">if</span>(!pHouse-&gt;IsHumanoid()) {
-<a name="l00108"></a>00108                         <span class="keywordflow">return</span> 1;
-<a name="l00109"></a>00109                 }
-<a name="l00110"></a>00110 
-<a name="l00111"></a>00111                 <span class="keywordflow">if</span>(ReqsMet == 1) {
-<a name="l00112"></a>00112                         <span class="keywordflow">if</span>(!<a class="code" href="class_house_ext.html#d0377616e7f77897e6d91510ac3af3fa">HouseExt::PrerequisitesMet</a>(pHouse, pItem)) {
-<a name="l00113"></a>00113                                 <span class="keywordflow">return</span> 0;
-<a name="l00114"></a>00114                         }
+<div class="fragment"><pre class="fragment"><a name="l00106"></a>00106 {
+<a name="l00107"></a>00107         <span class="keywordflow">if</span>(!BuildLimitOnly) {
+<a name="l00108"></a>00108                 <span class="keywordtype">signed</span> <span class="keywordtype">int</span> ReqsMet = <a class="code" href="class_house_ext.html#0c9fd6da3b20fa2e9494f3fbd9a5ad84">HouseExt::RequirementsMet</a>(pHouse, pItem);
+<a name="l00109"></a>00109                 <span class="keywordflow">if</span>(!ReqsMet) {
+<a name="l00110"></a>00110                         <span class="keywordflow">return</span> 0;
+<a name="l00111"></a>00111                 }
+<a name="l00112"></a>00112 
+<a name="l00113"></a>00113                 <span class="keywordflow">if</span>(!pHouse-&gt;IsHumanoid()) {
+<a name="l00114"></a>00114                         <span class="keywordflow">return</span> 1;
 <a name="l00115"></a>00115                 }
-<a name="l00116"></a>00116         }
-<a name="l00117"></a>00117 
-<a name="l00118"></a>00118         <span class="keywordflow">return</span> <a class="code" href="class_house_ext.html#7dd6d22280607b03662dcb8c4ab5b0d8">HouseExt::CheckBuildLimit</a>(pHouse, pItem, IncludeQueued);
-<a name="l00119"></a>00119 }
+<a name="l00116"></a>00116 
+<a name="l00117"></a>00117                 <span class="keywordflow">if</span>(ReqsMet == 1) {
+<a name="l00118"></a>00118                         <span class="keywordflow">if</span>(!<a class="code" href="class_house_ext.html#d0377616e7f77897e6d91510ac3af3fa">HouseExt::PrerequisitesMet</a>(pHouse, pItem)) {
+<a name="l00119"></a>00119                                 <span class="keywordflow">return</span> 0;
+<a name="l00120"></a>00120                         }
+<a name="l00121"></a>00121                 }
+<a name="l00122"></a>00122         }
+<a name="l00123"></a>00123 
+<a name="l00124"></a>00124         <span class="keywordflow">return</span> <a class="code" href="class_house_ext.html#7dd6d22280607b03662dcb8c4ab5b0d8">HouseExt::CheckBuildLimit</a>(pHouse, pItem, IncludeQueued);
+<a name="l00125"></a>00125 }
 </pre></div>
 <p>
 
@@ -357,49 +299,54 @@
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00016"></a>00016 {
-<a name="l00017"></a>00017         <span class="keywordflow">if</span>(pItem-&gt;Unbuildable) {
-<a name="l00018"></a>00018                 <span class="keywordflow">return</span> 0;
-<a name="l00019"></a>00019         }
-<a name="l00020"></a>00020 
-<a name="l00021"></a>00021         <a class="code" href="class_techno_type_ext_1_1_ext_data.html">TechnoTypeExt::ExtData</a>* pData = <a class="code" href="class_techno_type_ext.html#cc5f01db1b341572a92ad754a7d15c48">TechnoTypeExt::ExtMap</a>.<a class="code" href="class_container.html#90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(pItem);
-<a name="l00022"></a>00022         <span class="keywordflow">if</span>(!pItem) {
-<a name="l00023"></a>00023                 <span class="keywordflow">return</span> 0;
-<a name="l00024"></a>00024         }
-<a name="l00025"></a>00025 <span class="comment">//      TechnoTypeClassExt::TechnoTypeClassData *pData = TechnoTypeClassExt::Ext_p[pItem];</span>
-<a name="l00026"></a>00026 
-<a name="l00027"></a>00027         <span class="comment">// this has to happen before the first possible "can build" response or NCO happens</span>
-<a name="l00028"></a>00028         <span class="keywordflow">if</span>(pItem-&gt;WhatAmI() != abs_BuildingType &amp;&amp; !pHouse-&gt;HasFactoryForObject(pItem)) { <span class="keywordflow">return</span> 0; }
-<a name="l00029"></a>00029 
-<a name="l00030"></a>00030         <span class="keywordflow">if</span>(!(pData-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#5877ea4d76df432fb436b58ae773886a">PrerequisiteTheaters</a> &amp; (1 &lt;&lt; ScenarioClass::Global()-&gt;Theater))) { <span class="keywordflow">return</span> 0; }
-<a name="l00031"></a>00031         <span class="keywordflow">if</span>(<a class="code" href="class_prereqs.html#f10d7112e1a1bae584aee8e513010975">Prereqs::HouseOwnsAny</a>(pHouse, &amp;pData-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#0841fef4241c01c3e454b1e7365a889a">PrerequisiteNegatives</a>)) { <span class="keywordflow">return</span> 0; }
-<a name="l00032"></a>00032 
-<a name="l00033"></a>00033         <span class="comment">// yes, the game checks it here</span>
-<a name="l00034"></a>00034         <span class="comment">// hack value - skip real prereq check</span>
-<a name="l00035"></a>00035         <span class="keywordflow">if</span>(<a class="code" href="class_prereqs.html#f10d7112e1a1bae584aee8e513010975">Prereqs::HouseOwnsAny</a>(pHouse, pItem-&gt;get_PrerequisiteOverride())) { <span class="keywordflow">return</span> -1; }
-<a name="l00036"></a>00036 
-<a name="l00037"></a>00037         <span class="keywordflow">if</span>(pHouse-&gt;HasFromSecretLab(pItem)) { <span class="keywordflow">return</span> -1; }
+<div class="fragment"><pre class="fragment"><a name="l00017"></a>00017 {
+<a name="l00018"></a>00018         <span class="keywordflow">if</span>(pItem-&gt;Unbuildable) {
+<a name="l00019"></a>00019                 <span class="keywordflow">return</span> 0;
+<a name="l00020"></a>00020         }
+<a name="l00021"></a>00021 
+<a name="l00022"></a>00022         <a class="code" href="class_techno_type_ext_1_1_ext_data.html">TechnoTypeExt::ExtData</a>* pData = <a class="code" href="class_techno_type_ext.html#cc5f01db1b341572a92ad754a7d15c48">TechnoTypeExt::ExtMap</a>.<a class="code" href="class_container.html#90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(pItem);
+<a name="l00023"></a>00023         <span class="keywordflow">if</span>(!pItem) {
+<a name="l00024"></a>00024                 <span class="keywordflow">return</span> 0;
+<a name="l00025"></a>00025         }
+<a name="l00026"></a>00026 <span class="comment">//      TechnoTypeClassExt::TechnoTypeClassData *pData = TechnoTypeClassExt::Ext_p[pItem];</span>
+<a name="l00027"></a>00027         <a class="code" href="class_house_ext_1_1_ext_data.html">HouseExt::ExtData</a>* pHouseExt = <a class="code" href="class_house_ext.html#4a73e500fabd21a7359c5247c31d4c03">HouseExt::ExtMap</a>.<a class="code" href="class_container.html#90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(pHouse);
+<a name="l00028"></a>00028 
+<a name="l00029"></a>00029         <span class="comment">// this has to happen before the first possible "can build" response or NCO happens</span>
+<a name="l00030"></a>00030         <span class="keywordflow">if</span>(pItem-&gt;WhatAmI() != abs_BuildingType &amp;&amp; !pHouse-&gt;HasFactoryForObject(pItem)) { <span class="keywordflow">return</span> 0; }
+<a name="l00031"></a>00031 
+<a name="l00032"></a>00032         <span class="keywordflow">if</span>(!(pData-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#5877ea4d76df432fb436b58ae773886a">PrerequisiteTheaters</a> &amp; (1 &lt;&lt; ScenarioClass::Instance-&gt;Theater))) { <span class="keywordflow">return</span> 0; }
+<a name="l00033"></a>00033         <span class="keywordflow">if</span>(<a class="code" href="class_prereqs.html#f10d7112e1a1bae584aee8e513010975">Prereqs::HouseOwnsAny</a>(pHouse, &amp;pData-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#0841fef4241c01c3e454b1e7365a889a">PrerequisiteNegatives</a>)) { <span class="keywordflow">return</span> 0; }
+<a name="l00034"></a>00034 
+<a name="l00035"></a>00035         <span class="keywordflow">if</span>(pData-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#c36e97736cba86dc13caa155021780c6">RequiredStolenTech</a>.any()) {
+<a name="l00036"></a>00036                 <span class="keywordflow">if</span>((pHouseExt-&gt;<a class="code" href="class_house_ext_1_1_ext_data.html#ce1912ce3550a6fc71ac04f280251412">StolenTech</a> &amp; pData-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#c36e97736cba86dc13caa155021780c6">RequiredStolenTech</a>) != pData-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#c36e97736cba86dc13caa155021780c6">RequiredStolenTech</a>) { <span class="keywordflow">return</span> 0; }
+<a name="l00037"></a>00037         }
 <a name="l00038"></a>00038 
-<a name="l00039"></a>00039         <span class="keywordflow">if</span>(pItem-&gt;TechLevel == -1) { <span class="keywordflow">return</span> 0; }
-<a name="l00040"></a>00040 
-<a name="l00041"></a>00041         <span class="keywordflow">if</span>(!pHouse-&gt;HasAllStolenTech(pItem)) { <span class="keywordflow">return</span> 0; }
+<a name="l00039"></a>00039         <span class="comment">// yes, the game checks it here</span>
+<a name="l00040"></a>00040         <span class="comment">// hack value - skip real prereq check</span>
+<a name="l00041"></a>00041         <span class="keywordflow">if</span>(<a class="code" href="class_prereqs.html#f10d7112e1a1bae584aee8e513010975">Prereqs::HouseOwnsAny</a>(pHouse, &amp;pItem-&gt;PrerequisiteOverride)) { <span class="keywordflow">return</span> -1; }
 <a name="l00042"></a>00042 
-<a name="l00043"></a>00043         <span class="keywordflow">if</span>(!pHouse-&gt;InRequiredHouses(pItem) || pHouse-&gt;InForbiddenHouses(pItem)) { <span class="keywordflow">return</span> 0; }
+<a name="l00043"></a>00043         <span class="keywordflow">if</span>(pHouse-&gt;HasFromSecretLab(pItem)) { <span class="keywordflow">return</span> -1; }
 <a name="l00044"></a>00044 
-<a name="l00045"></a>00045         <span class="keywordflow">if</span>(!Unsorted::SWAllowed) {
-<a name="l00046"></a>00046                 <span class="keywordflow">if</span>(BuildingTypeClass *pBld = specific_cast&lt;BuildingTypeClass*&gt;(pItem)) {
-<a name="l00047"></a>00047                         <span class="keywordflow">if</span>(pBld-&gt;SuperWeapon != -1) {
-<a name="l00048"></a>00048                                 <span class="keywordflow">if</span>(RulesClass::Instance-&gt;BuildTech.FindItemIndex(&amp;pBld) != -1) {
-<a name="l00049"></a>00049                                         <span class="keywordflow">if</span>(pHouse-&gt;get_Supers()-&gt;GetItem(pBld-&gt;SuperWeapon)-&gt;Type-&gt;DisableableFromShell) {
-<a name="l00050"></a>00050                                                 <span class="keywordflow">return</span> 0;
-<a name="l00051"></a>00051                                         }
-<a name="l00052"></a>00052                                 }
-<a name="l00053"></a>00053                         }
-<a name="l00054"></a>00054                 }
-<a name="l00055"></a>00055         }
-<a name="l00056"></a>00056 
-<a name="l00057"></a>00057         <span class="keywordflow">return</span> (pHouse-&gt;TechLevel &gt;= pItem-&gt;TechLevel) ? 1 : 0;
-<a name="l00058"></a>00058 }
+<a name="l00045"></a>00045         <span class="keywordflow">if</span>(pHouse-&gt;IsHumanoid() &amp;&amp; pItem-&gt;TechLevel == -1) { <span class="keywordflow">return</span> 0; }
+<a name="l00046"></a>00046 
+<a name="l00047"></a>00047         <span class="keywordflow">if</span>(!pHouse-&gt;HasAllStolenTech(pItem)) { <span class="keywordflow">return</span> 0; }
+<a name="l00048"></a>00048 
+<a name="l00049"></a>00049         <span class="keywordflow">if</span>(!pHouse-&gt;InRequiredHouses(pItem) || pHouse-&gt;InForbiddenHouses(pItem)) { <span class="keywordflow">return</span> 0; }
+<a name="l00050"></a>00050 
+<a name="l00051"></a>00051         <span class="keywordflow">if</span>(!Unsorted::SWAllowed) {
+<a name="l00052"></a>00052                 <span class="keywordflow">if</span>(BuildingTypeClass *pBld = specific_cast&lt;BuildingTypeClass*&gt;(pItem)) {
+<a name="l00053"></a>00053                         <span class="keywordflow">if</span>(pBld-&gt;SuperWeapon != -1) {
+<a name="l00054"></a>00054                                 <span class="keywordflow">if</span>(RulesClass::Instance-&gt;BuildTech.FindItemIndex(&amp;pBld) == -1) {
+<a name="l00055"></a>00055                                         <span class="keywordflow">if</span>(pHouse-&gt;Supers.GetItem(pBld-&gt;SuperWeapon)-&gt;Type-&gt;DisableableFromShell) {
+<a name="l00056"></a>00056                                                 <span class="keywordflow">return</span> 0;
+<a name="l00057"></a>00057                                         }
+<a name="l00058"></a>00058                                 }
+<a name="l00059"></a>00059                         }
+<a name="l00060"></a>00060                 }
+<a name="l00061"></a>00061         }
+<a name="l00062"></a>00062 
+<a name="l00063"></a>00063         <span class="keywordflow">return</span> (pHouse-&gt;TechLevel &gt;= pItem-&gt;TechLevel) ? 1 : 0;
+<a name="l00064"></a>00064 }
 </pre></div>
 <p>
 
@@ -424,7 +371,7 @@
 <hr>The documentation for this class was generated from the following files:<ul>
 <li>Ext/House/<a class="el" href="_house_2_body_8h.html">Body.h</a><li>Ext/House/<a class="el" href="_house_2_body_8cpp.html">Body.cpp</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Mon Mar 1 23:35:18 2010 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed May 12 23:21:00 2010 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

@@ -9,6 +9,7 @@
   <div class="tabs">
     <ul>
       <li><a href="index.html"><span>Main&nbsp;Page</span></a></li>
+      <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li><a href="dirs.html"><span>Directories</span></a></li>
@@ -43,18 +44,61 @@
 <a href="struct_warhead_type_ext_1_1_verses_data-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_warhead_type_ext_1_1_verses_data.html#daf8ce16eff3920cb5547119242f1dd7">VersesData</a> (double VS=1.0, bool FF=true, bool Retal=true, bool Acquire=true)</td></tr>
+
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_warhead_type_ext_1_1_verses_data.html#d48c3c0d6a7cf6f1c5f85a37f64f0055">operator==</a> (const <a class="el" href="struct_warhead_type_ext_1_1_verses_data.html">VersesData</a> &amp;RHS) const </td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_warhead_type_ext_1_1_verses_data.html#555658f7be53389ad25eb3fd3fb7153c">Parse</a> (const char *str)</td></tr>
 
 <tr><td colspan="2"><br><h2>Public Attributes</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">double&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_warhead_type_ext_1_1_verses_data.html#535267669cd8da0c5889e74c335ac149">Verses</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_warhead_type_ext_1_1_verses_data.html#2f6c453bfac6357611b4a1f40033c42b">ForceFire</a></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_warhead_type_ext_1_1_verses_data.html#8b152fe67ecb899a454d469438394547">Retaliate</a></td></tr>
-
-<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_warhead_type_ext_1_1_verses_data.html#9d7fe8d3685b8228d03cd93996564219">PassiveAcquire</a></td></tr>
-
 </table>
+<hr><h2>Constructor &amp; Destructor Documentation</h2>
+<a class="anchor" name="daf8ce16eff3920cb5547119242f1dd7"></a><!-- doxytag: member="WarheadTypeExt::VersesData::VersesData" ref="daf8ce16eff3920cb5547119242f1dd7" args="(double VS=1.0, bool FF=true, bool Retal=true, bool Acquire=true)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">WarheadTypeExt::WarheadTypeExt::VersesData::VersesData           </td>
+          <td>(</td>
+          <td class="paramtype">double&nbsp;</td>
+          <td class="paramname"> <em>VS</em> = <code>1.0</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&nbsp;</td>
+          <td class="paramname"> <em>FF</em> = <code>true</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&nbsp;</td>
+          <td class="paramname"> <em>Retal</em> = <code>true</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&nbsp;</td>
+          <td class="paramname"> <em>Acquire</em> = <code>true</code></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+<div class="fragment"><pre class="fragment"><a name="l00039"></a>00039 : <a class="code" href="struct_warhead_type_ext_1_1_verses_data.html#535267669cd8da0c5889e74c335ac149">Verses</a>(VS), WarheadFlags(FF, Retal, Acquire) {};
+</pre></div>
+<p>
+
+</div>
+</div><p>
 <hr><h2>Member Function Documentation</h2>
 <a class="anchor" name="d48c3c0d6a7cf6f1c5f85a37f64f0055"></a><!-- doxytag: member="WarheadTypeExt::VersesData::operator==" ref="d48c3c0d6a7cf6f1c5f85a37f64f0055" args="(const VersesData &amp;RHS) const " -->
 <div class="memitem">
@@ -73,60 +117,40 @@
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00039"></a>00039                                                               {
-<a name="l00040"></a>00040                         <span class="keywordflow">return</span> (CLOSE_ENOUGH(this-&gt;<a class="code" href="struct_warhead_type_ext_1_1_verses_data.html#535267669cd8da0c5889e74c335ac149">Verses</a>, RHS.Verses));
-<a name="l00041"></a>00041                 };
+<div class="fragment"><pre class="fragment"><a name="l00041"></a>00041                                                               {
+<a name="l00042"></a>00042                         <span class="keywordflow">return</span> (CLOSE_ENOUGH(this-&gt;<a class="code" href="struct_warhead_type_ext_1_1_verses_data.html#535267669cd8da0c5889e74c335ac149">Verses</a>, RHS.Verses));
+<a name="l00043"></a>00043                 };
+</pre></div>
+<p>
+
+</div>
+</div><p>
+<a class="anchor" name="555658f7be53389ad25eb3fd3fb7153c"></a><!-- doxytag: member="WarheadTypeExt::VersesData::Parse" ref="555658f7be53389ad25eb3fd3fb7153c" args="(const char *str)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void WarheadTypeExt::WarheadTypeExt::VersesData::Parse           </td>
+          <td>(</td>
+          <td class="paramtype">const char *&nbsp;</td>
+          <td class="paramname"> <em>str</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+<div class="fragment"><pre class="fragment"><a name="l00045"></a>00045                                             {
+<a name="l00046"></a>00046                         this-&gt;<a class="code" href="struct_warhead_type_ext_1_1_verses_data.html#535267669cd8da0c5889e74c335ac149">Verses</a> = Conversions::Str2Armor(<a class="code" href="_ares_8h.html#8269f97b2652fc717949a982d7b4f02a">str</a>, <span class="keyword">this</span>);
+<a name="l00047"></a>00047                 }
 </pre></div>
 <p>
 
 </div>
 </div><p>
 <hr><h2>Member Data Documentation</h2>
-<a class="anchor" name="2f6c453bfac6357611b4a1f40033c42b"></a><!-- doxytag: member="WarheadTypeExt::VersesData::ForceFire" ref="2f6c453bfac6357611b4a1f40033c42b" args="" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool WarheadTypeExt::WarheadTypeExt::VersesData::ForceFire          </td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-
-</div>
-</div><p>
-<a class="anchor" name="9d7fe8d3685b8228d03cd93996564219"></a><!-- doxytag: member="WarheadTypeExt::VersesData::PassiveAcquire" ref="9d7fe8d3685b8228d03cd93996564219" args="" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool WarheadTypeExt::WarheadTypeExt::VersesData::PassiveAcquire          </td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-
-</div>
-</div><p>
-<a class="anchor" name="8b152fe67ecb899a454d469438394547"></a><!-- doxytag: member="WarheadTypeExt::VersesData::Retaliate" ref="8b152fe67ecb899a454d469438394547" args="" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool WarheadTypeExt::WarheadTypeExt::VersesData::Retaliate          </td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-
-</div>
-</div><p>
 <a class="anchor" name="535267669cd8da0c5889e74c335ac149"></a><!-- doxytag: member="WarheadTypeExt::VersesData::Verses" ref="535267669cd8da0c5889e74c335ac149" args="" -->
 <div class="memitem">
 <div class="memproto">
@@ -145,7 +169,7 @@
 <hr>The documentation for this struct was generated from the following file:<ul>
 <li>Ext/WarheadType/<a class="el" href="_warhead_type_2_body_8h.html">Body.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Mon Mar 1 23:35:19 2010 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed May 12 23:21:01 2010 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

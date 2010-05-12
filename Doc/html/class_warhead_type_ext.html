@@ -9,6 +9,7 @@
   <div class="tabs">
     <ul>
       <li><a href="index.html"><span>Main&nbsp;Page</span></a></li>
+      <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li><a href="dirs.html"><span>Directories</span></a></li>
@@ -48,10 +49,26 @@
 <tr><td colspan="2"><br><h2>Public Types</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">typedef WarheadTypeClass&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_warhead_type_ext.html#d1fd304abf77078a6f84d208799cccde">TT</a></td></tr>
 
+<tr><td colspan="2"><br><h2>Static Public Member Functions</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">static void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_warhead_type_ext.html#5951a09eedf72597612b76bb577ffa43">applyRipples</a> (WarheadTypeClass *pWH, CoordStruct *coords)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">static void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_warhead_type_ext.html#f2272e87dd28aacec34ed76c370b5d9c">applyIronCurtain</a> (WarheadTypeClass *pWH, CoordStruct *coords, HouseClass *House)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">static void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_warhead_type_ext.html#e19b7d69b59de1189034e7c45b853003">applyEMP</a> (WarheadTypeClass *pWH, CoordStruct *coords, TechnoClass *source)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">static bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_warhead_type_ext.html#fa850635099e33d03bbd86113d61a180">applyPermaMC</a> (WarheadTypeClass *pWH, CoordStruct *coords, HouseClass *House, ObjectClass *Source)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">static void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_warhead_type_ext.html#d64e94493d423f7bc44085d5e058ca74">applyOccupantDamage</a> (BulletClass *)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">static bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_warhead_type_ext.html#a48823644e4bd1b79a7ef4b917131191">canWarheadAffectTarget</a> (TechnoClass *, HouseClass *, WarheadTypeClass *)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Gets whether a Techno can be affected by a warhead fired by a house.  <a href="#a48823644e4bd1b79a7ef4b917131191"></a><br></td></tr>
 <tr><td colspan="2"><br><h2>Static Public Attributes</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">static <a class="el" href="class_container.html">Container</a>&lt; <a class="el" href="class_warhead_type_ext.html">WarheadTypeExt</a> &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_warhead_type_ext.html#b2eb86c684fe6f15f9f95a9aa171e7dd">ExtMap</a></td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">static WarheadTypeClass *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_warhead_type_ext.html#fbff5b910621e6f75eb73fe3979bf6fd">Temporal_WH</a> = NULL</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">static WarheadTypeClass *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_warhead_type_ext.html#48f6450719825d02a606fd799bc95d0f">EMP_WH</a> = NULL</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">static <a class="el" href="classhash__map.html">hash_map</a>&lt; IonBlastClass <br class="typebreak">
 *, <a class="el" href="class_warhead_type_ext_1_1_ext_data.html">WarheadTypeExt::ExtData</a> * &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_warhead_type_ext.html#cf825684a729d296341ad9aa6d869d38">IonExt</a></td></tr>
@@ -73,7 +90,300 @@
 
 </div>
 </div><p>
+<hr><h2>Member Function Documentation</h2>
+<a class="anchor" name="e19b7d69b59de1189034e7c45b853003"></a><!-- doxytag: member="WarheadTypeExt::applyEMP" ref="e19b7d69b59de1189034e7c45b853003" args="(WarheadTypeClass *pWH, CoordStruct *coords, TechnoClass *source)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void WarheadTypeExt::applyEMP           </td>
+          <td>(</td>
+          <td class="paramtype">WarheadTypeClass *&nbsp;</td>
+          <td class="paramname"> <em>pWH</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">CoordStruct *&nbsp;</td>
+          <td class="paramname"> <em>coords</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">TechnoClass *&nbsp;</td>
+          <td class="paramname"> <em>source</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td><code> [inline, static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+<div class="fragment"><pre class="fragment"><a name="l00122"></a>00122                                                                                                {
+<a name="l00123"></a>00123                 <span class="keywordflow">if</span>(<span class="keyword">auto</span> pWHExt = <a class="code" href="class_warhead_type_ext.html#b2eb86c684fe6f15f9f95a9aa171e7dd">WarheadTypeExt::ExtMap</a>.Find(pWH)) {
+<a name="l00124"></a>00124                         pWHExt-&gt;applyEMP(coords, source);
+<a name="l00125"></a>00125                 }
+<a name="l00126"></a>00126         }
+</pre></div>
+<p>
+
+</div>
+</div><p>
+<a class="anchor" name="f2272e87dd28aacec34ed76c370b5d9c"></a><!-- doxytag: member="WarheadTypeExt::applyIronCurtain" ref="f2272e87dd28aacec34ed76c370b5d9c" args="(WarheadTypeClass *pWH, CoordStruct *coords, HouseClass *House)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void WarheadTypeExt::applyIronCurtain           </td>
+          <td>(</td>
+          <td class="paramtype">WarheadTypeClass *&nbsp;</td>
+          <td class="paramname"> <em>pWH</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">CoordStruct *&nbsp;</td>
+          <td class="paramname"> <em>coords</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">HouseClass *&nbsp;</td>
+          <td class="paramname"> <em>House</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td><code> [inline, static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+<div class="fragment"><pre class="fragment"><a name="l00117"></a>00117                                                                                                       {
+<a name="l00118"></a>00118                 <span class="keywordflow">if</span>(<span class="keyword">auto</span> pWHExt = <a class="code" href="class_warhead_type_ext.html#b2eb86c684fe6f15f9f95a9aa171e7dd">WarheadTypeExt::ExtMap</a>.Find(pWH)) {
+<a name="l00119"></a>00119                         pWHExt-&gt;applyIronCurtain(coords, House);
+<a name="l00120"></a>00120                 }
+<a name="l00121"></a>00121         }
+</pre></div>
+<p>
+
+</div>
+</div><p>
+<a class="anchor" name="d64e94493d423f7bc44085d5e058ca74"></a><!-- doxytag: member="WarheadTypeExt::applyOccupantDamage" ref="d64e94493d423f7bc44085d5e058ca74" args="(BulletClass *)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void WarheadTypeExt::applyOccupantDamage           </td>
+          <td>(</td>
+          <td class="paramtype">BulletClass *&nbsp;</td>
+          <td class="paramname"> <em>Bullet</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+This function checks if the projectile transporting the warhead should pass through the building's walls and deliver the warhead to the occupants instead. If so, it performs that effect. <dl class="note" compact><dt><b>Note:</b></dt><dd>Moved here from hook BulletClass_Fire. <p>
+This cannot logically be triggered in situations where the warhead is not delivered by a projectile, such as the GenericWarhead super weapon. </dd></dl>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>Bullet</em>&nbsp;</td><td>The projectile </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b><a class="el" href="todo.html#_todo000001">Todo:</a></b></dt><dd>This should probably be moved to /Ext/Bullet/ instead, I just maintained the previous structure to ease transition. Since UC.DaMO (#778) in 0.5 will require a reimplementation of this logic anyway, we can probably just leave it here until then. </dd></dl>
+<div class="fragment"><pre class="fragment"><a name="l00227"></a>00227                                                             {
+<a name="l00228"></a>00228         <span class="keywordflow">if</span> (Bullet-&gt;Target) {
+<a name="l00229"></a>00229                 <a class="code" href="class_bullet_ext_1_1_ext_data.html">BulletExt::ExtData</a>* TheBulletExt = <a class="code" href="class_bullet_ext.html#d7ff43ebb912ebd0b4c3bd8c8c36a49d">BulletExt::ExtMap</a>.<a class="code" href="class_container.html#90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(Bullet);
+<a name="l00230"></a>00230                 <span class="keywordflow">if</span> (TheBulletExt-&gt;<a class="code" href="class_bullet_ext_1_1_ext_data.html#a3afac5846ade163b708d9d5b9007e53" title="Does the entire PassThrough logic, checks &amp;amp; damage.">DamageOccupants</a>()) {
+<a name="l00231"></a>00231                         <span class="comment">// the occupants have been damaged, do not damage the building (the original target)</span>
+<a name="l00232"></a>00232                         Bullet-&gt;Health = 0;
+<a name="l00233"></a>00233                         Bullet-&gt;DamageMultiplier = 0;
+<a name="l00234"></a>00234                         Bullet-&gt;Remove();
+<a name="l00235"></a>00235                 }
+<a name="l00236"></a>00236         }
+<a name="l00237"></a>00237 }
+</pre></div>
+<p>
+
+</div>
+</div><p>
+<a class="anchor" name="fa850635099e33d03bbd86113d61a180"></a><!-- doxytag: member="WarheadTypeExt::applyPermaMC" ref="fa850635099e33d03bbd86113d61a180" args="(WarheadTypeClass *pWH, CoordStruct *coords, HouseClass *House, ObjectClass *Source)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">static bool WarheadTypeExt::applyPermaMC           </td>
+          <td>(</td>
+          <td class="paramtype">WarheadTypeClass *&nbsp;</td>
+          <td class="paramname"> <em>pWH</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">CoordStruct *&nbsp;</td>
+          <td class="paramname"> <em>coords</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">HouseClass *&nbsp;</td>
+          <td class="paramname"> <em>House</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">ObjectClass *&nbsp;</td>
+          <td class="paramname"> <em>Source</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td><code> [inline, static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+<div class="fragment"><pre class="fragment"><a name="l00127"></a>00127                                                                                                                         {
+<a name="l00128"></a>00128                 <span class="keywordflow">if</span>(<span class="keyword">auto</span> pWHExt = <a class="code" href="class_warhead_type_ext.html#b2eb86c684fe6f15f9f95a9aa171e7dd">WarheadTypeExt::ExtMap</a>.Find(pWH)) {
+<a name="l00129"></a>00129                         pWHExt-&gt;applyPermaMC(coords, House, Source);
+<a name="l00130"></a>00130                 }
+<a name="l00131"></a>00131         }
+</pre></div>
+<p>
+
+</div>
+</div><p>
+<a class="anchor" name="5951a09eedf72597612b76bb577ffa43"></a><!-- doxytag: member="WarheadTypeExt::applyRipples" ref="5951a09eedf72597612b76bb577ffa43" args="(WarheadTypeClass *pWH, CoordStruct *coords)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void WarheadTypeExt::applyRipples           </td>
+          <td>(</td>
+          <td class="paramtype">WarheadTypeClass *&nbsp;</td>
+          <td class="paramname"> <em>pWH</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">CoordStruct *&nbsp;</td>
+          <td class="paramname"> <em>coords</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td><code> [inline, static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+<div class="fragment"><pre class="fragment"><a name="l00112"></a>00112                                                                               {
+<a name="l00113"></a>00113                 <span class="keywordflow">if</span>(<span class="keyword">auto</span> pWHExt = <a class="code" href="class_warhead_type_ext.html#b2eb86c684fe6f15f9f95a9aa171e7dd">WarheadTypeExt::ExtMap</a>.Find(pWH)) {
+<a name="l00114"></a>00114                         pWHExt-&gt;applyRipples(coords);
+<a name="l00115"></a>00115                 }
+<a name="l00116"></a>00116         }
+</pre></div>
+<p>
+
+</div>
+</div><p>
+<a class="anchor" name="a48823644e4bd1b79a7ef4b917131191"></a><!-- doxytag: member="WarheadTypeExt::canWarheadAffectTarget" ref="a48823644e4bd1b79a7ef4b917131191" args="(TechnoClass *, HouseClass *, WarheadTypeClass *)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool WarheadTypeExt::canWarheadAffectTarget           </td>
+          <td>(</td>
+          <td class="paramtype">TechnoClass *&nbsp;</td>
+          <td class="paramname"> <em>Target</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">HouseClass *&nbsp;</td>
+          <td class="paramname"> <em>SourceHouse</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">WarheadTypeClass *&nbsp;</td>
+          <td class="paramname"> <em>WH</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Gets whether a Techno can be affected by a warhead fired by a house. 
+<p>
+A warhead will not affect allies if AffectsAllies is not set and will not affect enemies if AffectsEnemies is not set.<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>Target</em>&nbsp;</td><td>The Techno WH is fired at. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>SourceHouse</em>&nbsp;</td><td>The house that fired WH.</td></tr>
+  </table>
+</dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>True if WH can affect Target, false otherwise.</dd></dl>
+<dl class="author" compact><dt><b>Author:</b></dt><dd>AlexB </dd></dl>
+<dl class="date" compact><dt><b>Date:</b></dt><dd>2010-04-27 </dd></dl>
+<div class="fragment"><pre class="fragment"><a name="l00252"></a>00252                                                                                                                 {
+<a name="l00253"></a>00253         <span class="keywordflow">if</span> (SourceHouse &amp;&amp; Target &amp;&amp; WH) {
+<a name="l00254"></a>00254                 <span class="comment">// owner and target house are allied and this warhead</span>
+<a name="l00255"></a>00255                 <span class="comment">// is set to not hurt any allies.</span>
+<a name="l00256"></a>00256                 <span class="keywordtype">bool</span> alliedWithTarget = SourceHouse-&gt;IsAlliedWith(Target-&gt;Owner);
+<a name="l00257"></a>00257                 <span class="keywordflow">if</span> (alliedWithTarget &amp;&amp; !WH-&gt;AffectsAllies) {
+<a name="l00258"></a>00258                         <span class="keywordflow">return</span> <span class="keyword">false</span>;
+<a name="l00259"></a>00259                 }
+<a name="l00260"></a>00260 
+<a name="l00261"></a>00261                 <span class="comment">// this warhead's pulse is designed to fly around</span>
+<a name="l00262"></a>00262                 <span class="comment">// enemy units. useful for healing.</span>
+<a name="l00263"></a>00263                 <a class="code" href="class_warhead_type_ext_1_1_ext_data.html">WarheadTypeExt::ExtData</a> *pWHdata = <a class="code" href="class_warhead_type_ext.html#b2eb86c684fe6f15f9f95a9aa171e7dd">WarheadTypeExt::ExtMap</a>.<a class="code" href="class_container.html#90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(WH);
+<a name="l00264"></a>00264                 <span class="keywordflow">if</span> (!alliedWithTarget &amp;&amp; !pWHdata-&gt;<a class="code" href="class_warhead_type_ext_1_1_ext_data.html#0e9d0430da05071560027364fc76523c">AffectsEnemies</a>) {
+<a name="l00265"></a>00265                         <span class="keywordflow">return</span> <span class="keyword">false</span>;
+<a name="l00266"></a>00266                 }
+<a name="l00267"></a>00267         }
+<a name="l00268"></a>00268 
+<a name="l00269"></a>00269         <span class="keywordflow">return</span> <span class="keyword">true</span>;
+<a name="l00270"></a>00270 }
+</pre></div>
+<p>
+
+</div>
+</div><p>
 <hr><h2>Member Data Documentation</h2>
+<a class="anchor" name="48f6450719825d02a606fd799bc95d0f"></a><!-- doxytag: member="WarheadTypeExt::EMP_WH" ref="48f6450719825d02a606fd799bc95d0f" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">WarheadTypeClass * <a class="el" href="class_warhead_type_ext.html#48f6450719825d02a606fd799bc95d0f">WarheadTypeExt::EMP_WH</a> = NULL<code> [static]</code>          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+
+</div>
+</div><p>
 <a class="anchor" name="b2eb86c684fe6f15f9f95a9aa171e7dd"></a><!-- doxytag: member="WarheadTypeExt::ExtMap" ref="b2eb86c684fe6f15f9f95a9aa171e7dd" args="" -->
 <div class="memitem">
 <div class="memproto">
@@ -122,7 +432,7 @@
 <hr>The documentation for this class was generated from the following files:<ul>
 <li>Ext/WarheadType/<a class="el" href="_warhead_type_2_body_8h.html">Body.h</a><li>Ext/WarheadType/<a class="el" href="_warhead_type_2_body_8cpp.html">Body.cpp</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Mon Mar 1 23:35:19 2010 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed May 12 23:21:01 2010 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

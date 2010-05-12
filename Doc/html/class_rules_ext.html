@@ -9,6 +9,7 @@
   <div class="tabs">
     <ul>
       <li><a href="index.html"><span>Main&nbsp;Page</span></a></li>
+      <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li><a href="dirs.html"><span>Directories</span></a></li>
@@ -97,12 +98,12 @@
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00015"></a>00015 {
-<a name="l00016"></a>00016         <span class="keywordflow">if</span>(<a class="code" href="class_rules_ext.html#be6873747689fadaebf105339dcfafe4">Data</a>) {
-<a name="l00017"></a>00017                 <a class="code" href="class_rules_ext.html#27161559ccd7ac2f3b85af312837617a">Remove</a>(pThis);
-<a name="l00018"></a>00018         }
-<a name="l00019"></a>00019         <a class="code" href="class_rules_ext.html#be6873747689fadaebf105339dcfafe4">Data</a> = <span class="keyword">new</span> <a class="code" href="class_rules_ext_1_1_ext_data.html">RulesExt::ExtData</a>(<a class="code" href="class_extension.html#2f0c543d5bceafd46d103be4f87a5abe">RulesExt::ExtData::Canary</a>, pThis);
-<a name="l00020"></a>00020 }
+<div class="fragment"><pre class="fragment"><a name="l00014"></a>00014                                          {
+<a name="l00015"></a>00015         <span class="keywordflow">if</span> (<a class="code" href="class_rules_ext.html#be6873747689fadaebf105339dcfafe4">Data</a>) {
+<a name="l00016"></a>00016                 <a class="code" href="class_rules_ext.html#27161559ccd7ac2f3b85af312837617a">Remove</a>(pThis);
+<a name="l00017"></a>00017         }
+<a name="l00018"></a>00018         <a class="code" href="class_rules_ext.html#be6873747689fadaebf105339dcfafe4">Data</a> = <span class="keyword">new</span> <a class="code" href="class_rules_ext_1_1_ext_data.html">RulesExt::ExtData</a>(<a class="code" href="class_extension.html#2f0c543d5bceafd46d103be4f87a5abe">RulesExt::ExtData::Canary</a>, pThis);
+<a name="l00019"></a>00019 }
 </pre></div>
 <p>
 
@@ -124,9 +125,9 @@
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00057"></a>00057         {
-<a name="l00058"></a>00058                 <span class="keywordflow">return</span> <a class="code" href="class_rules_ext.html#be6873747689fadaebf105339dcfafe4">Data</a>;
-<a name="l00059"></a>00059         };
+<div class="fragment"><pre class="fragment"><a name="l00056"></a>00056         {
+<a name="l00057"></a>00057                 <span class="keywordflow">return</span> <a class="code" href="class_rules_ext.html#be6873747689fadaebf105339dcfafe4">Data</a>;
+<a name="l00058"></a>00058         };
 </pre></div>
 <p>
 
@@ -158,9 +159,9 @@
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00047"></a>00047 {
-<a name="l00048"></a>00048         <a class="code" href="class_rules_ext.html#be6873747689fadaebf105339dcfafe4">Data</a>-&gt;<a class="code" href="class_rules_ext_1_1_ext_data.html#ede72aaba8d2d7f62a526c8162aed7e6">LoadAfterTypeData</a>(pThis, pINI);
-<a name="l00049"></a>00049 }
+<div class="fragment"><pre class="fragment"><a name="l00042"></a>00042                                                                     {
+<a name="l00043"></a>00043         <a class="code" href="class_rules_ext.html#be6873747689fadaebf105339dcfafe4">Data</a>-&gt;<a class="code" href="class_rules_ext_1_1_ext_data.html#ede72aaba8d2d7f62a526c8162aed7e6">LoadAfterTypeData</a>(pThis, pINI);
+<a name="l00044"></a>00044 }
 </pre></div>
 <p>
 
@@ -192,15 +193,15 @@
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00036"></a>00036 {
-<a name="l00037"></a>00037         <a class="code" href="class_enumerable.html#14ff50fd2c17da40f8b25200098d3820">GenericPrerequisite::LoadFromINIList</a>(pINI);
-<a name="l00038"></a>00038         <a class="code" href="class_enumerable.html#14ff50fd2c17da40f8b25200098d3820">ArmorType::LoadFromINIList</a>(pINI);
-<a name="l00039"></a>00039 
-<a name="l00040"></a>00040         <a class="code" href="class_side_ext.html#aee100e7b0dd767fb420a3b3c5456f0f">SideExt::ExtMap</a>.<a class="code" href="class_container.html#d47004f6b3da7289197ed4a399a1ad77">LoadAllFromINI</a>(pINI);
-<a name="l00041"></a>00041         <a class="code" href="class_house_type_ext.html#f44f9c59ad5eb8101d45233ef7adbb51">HouseTypeExt::ExtMap</a>.<a class="code" href="class_container.html#d47004f6b3da7289197ed4a399a1ad77">LoadAllFromINI</a>(pINI);
-<a name="l00042"></a>00042 
-<a name="l00043"></a>00043         <a class="code" href="class_rules_ext.html#be6873747689fadaebf105339dcfafe4">Data</a>-&gt;<a class="code" href="class_rules_ext_1_1_ext_data.html#aaea5840f384a4199333c7af34113bbb">LoadBeforeTypeData</a>(pThis, pINI);
-<a name="l00044"></a>00044 }
+<div class="fragment"><pre class="fragment"><a name="l00032"></a>00032                                                                      {
+<a name="l00033"></a>00033         <a class="code" href="class_enumerable.html#14ff50fd2c17da40f8b25200098d3820">GenericPrerequisite::LoadFromINIList</a>(pINI);
+<a name="l00034"></a>00034         <a class="code" href="class_enumerable.html#14ff50fd2c17da40f8b25200098d3820">ArmorType::LoadFromINIList</a>(pINI);
+<a name="l00035"></a>00035 
+<a name="l00036"></a>00036         <a class="code" href="class_side_ext.html#aee100e7b0dd767fb420a3b3c5456f0f">SideExt::ExtMap</a>.<a class="code" href="class_container.html#d47004f6b3da7289197ed4a399a1ad77">LoadAllFromINI</a>(pINI);
+<a name="l00037"></a>00037         <a class="code" href="class_house_type_ext.html#f44f9c59ad5eb8101d45233ef7adbb51">HouseTypeExt::ExtMap</a>.<a class="code" href="class_container.html#d47004f6b3da7289197ed4a399a1ad77">LoadAllFromINI</a>(pINI);
+<a name="l00038"></a>00038 
+<a name="l00039"></a>00039         <a class="code" href="class_rules_ext.html#be6873747689fadaebf105339dcfafe4">Data</a>-&gt;<a class="code" href="class_rules_ext_1_1_ext_data.html#aaea5840f384a4199333c7af34113bbb">LoadBeforeTypeData</a>(pThis, pINI);
+<a name="l00040"></a>00040 }
 </pre></div>
 <p>
 
@@ -232,9 +233,9 @@
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00031"></a>00031 {
-<a name="l00032"></a>00032         <a class="code" href="class_rules_ext.html#be6873747689fadaebf105339dcfafe4">Data</a>-&gt;<a class="code" href="class_extension.html#e353309568be130aef6fc541e4a95224">LoadFromINI</a>(pThis, pINI);
-<a name="l00033"></a>00033 }
+<div class="fragment"><pre class="fragment"><a name="l00028"></a>00028                                                                   {
+<a name="l00029"></a>00029         <a class="code" href="class_rules_ext.html#be6873747689fadaebf105339dcfafe4">Data</a>-&gt;<a class="code" href="class_extension.html#e353309568be130aef6fc541e4a95224">LoadFromINI</a>(pThis, pINI);
+<a name="l00030"></a>00030 }
 </pre></div>
 <p>
 
@@ -257,12 +258,12 @@
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00023"></a>00023 {
-<a name="l00024"></a>00024         <span class="keywordflow">if</span>(<a class="code" href="class_rules_ext.html#be6873747689fadaebf105339dcfafe4">Data</a>) {
-<a name="l00025"></a>00025                 <span class="keyword">delete</span> <a class="code" href="class_rules_ext.html#be6873747689fadaebf105339dcfafe4">Data</a>;
-<a name="l00026"></a>00026                 <a class="code" href="class_rules_ext.html#be6873747689fadaebf105339dcfafe4">Data</a> = NULL;
-<a name="l00027"></a>00027         }
-<a name="l00028"></a>00028 }
+<div class="fragment"><pre class="fragment"><a name="l00021"></a>00021                                        {
+<a name="l00022"></a>00022         <span class="keywordflow">if</span> (<a class="code" href="class_rules_ext.html#be6873747689fadaebf105339dcfafe4">Data</a>) {
+<a name="l00023"></a>00023                 <span class="keyword">delete</span> <a class="code" href="class_rules_ext.html#be6873747689fadaebf105339dcfafe4">Data</a>;
+<a name="l00024"></a>00024                 <a class="code" href="class_rules_ext.html#be6873747689fadaebf105339dcfafe4">Data</a> = NULL;
+<a name="l00025"></a>00025         }
+<a name="l00026"></a>00026 }
 </pre></div>
 <p>
 
@@ -287,7 +288,7 @@
 <hr>The documentation for this class was generated from the following files:<ul>
 <li>Ext/Rules/<a class="el" href="_rules_2_body_8h.html">Body.h</a><li>Ext/Rules/<a class="el" href="_rules_2_body_8cpp.html">Body.cpp</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Mon Mar 1 23:35:18 2010 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed May 12 23:21:01 2010 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

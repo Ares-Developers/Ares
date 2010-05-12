@@ -9,6 +9,7 @@
   <div class="tabs">
     <ul>
       <li><a href="index.html"><span>Main&nbsp;Page</span></a></li>
+      <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li><a href="dirs.html"><span>Directories</span></a></li>
@@ -37,6 +38,20 @@
 <h1>Body.cpp File Reference</h1><code>#include &quot;<a class="el" href="_warhead_type_2_body_8h.html">Body.h</a>&quot;</code><br>
 <code>#include &lt;WeaponTypeClass.h&gt;</code><br>
 <code>#include &quot;<a class="el" href="_armor_types_8h.html">../../Enum/ArmorTypes.h</a>&quot;</code><br>
+<code>#include &quot;<a class="el" href="_techno_2_body_8h.html">../Techno/Body.h</a>&quot;</code><br>
+<code>#include &quot;<a class="el" href="_e_m_pulse_8h.html">Misc/EMPulse.h</a>&quot;</code><br>
+<code>#include &lt;WarheadTypeClass.h&gt;</code><br>
+<code>#include &lt;GeneralStructures.h&gt;</code><br>
+<code>#include &lt;HouseClass.h&gt;</code><br>
+<code>#include &lt;ObjectClass.h&gt;</code><br>
+<code>#include &lt;BulletClass.h&gt;</code><br>
+<code>#include &lt;IonBlastClass.h&gt;</code><br>
+<code>#include &lt;CellClass.h&gt;</code><br>
+<code>#include &lt;TechnoClass.h&gt;</code><br>
+<code>#include &lt;TechnoTypeClass.h&gt;</code><br>
+<code>#include &lt;EMPulseClass.h&gt;</code><br>
+<code>#include &lt;AnimClass.h&gt;</code><br>
+<code>#include &quot;<a class="el" href="_bullet_2_body_8h.html">../Bullet/Body.h</a>&quot;</code><br>
 <code>#include &lt;Helpers/Template.h&gt;</code><br>
 <table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
@@ -62,19 +77,19 @@
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00104"></a>00104 {
-<a name="l00105"></a>00105         GET(WarheadTypeClass*, pItem, EBP);
-<a name="l00106"></a>00106 
-<a name="l00107"></a>00107         <a class="code" href="class_warhead_type_ext.html#b2eb86c684fe6f15f9f95a9aa171e7dd">WarheadTypeExt::ExtMap</a>.<a class="code" href="class_container.html#73c02e221290552e7bf07d91e801c256">FindOrAllocate</a>(pItem);
-<a name="l00108"></a>00108         <span class="keywordflow">return</span> 0;
-<a name="l00109"></a>00109 }
+<div class="fragment"><pre class="fragment"><a name="l00276"></a>00276 {
+<a name="l00277"></a>00277         GET(WarheadTypeClass*, pItem, EBP);
+<a name="l00278"></a>00278 
+<a name="l00279"></a>00279         <a class="code" href="class_warhead_type_ext.html#b2eb86c684fe6f15f9f95a9aa171e7dd">WarheadTypeExt::ExtMap</a>.<a class="code" href="class_container.html#73c02e221290552e7bf07d91e801c256">FindOrAllocate</a>(pItem);
+<a name="l00280"></a>00280         <span class="keywordflow">return</span> 0;
+<a name="l00281"></a>00281 }
 </pre></div>
 <p>
 
 </div>
 </div><p>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Mon Mar 1 23:35:17 2010 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed May 12 23:21:00 2010 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

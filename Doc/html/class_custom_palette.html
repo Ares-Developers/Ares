@@ -9,6 +9,7 @@
   <div class="tabs">
     <ul>
       <li><a href="index.html"><span>Main&nbsp;Page</span></a></li>
+      <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li><a href="dirs.html"><span>Directories</span></a></li>
@@ -97,8 +98,8 @@
 
 <p>
 <div class="fragment"><pre class="fragment"><a name="l00022"></a>00022                          {
-<a name="l00023"></a>00023                 <span class="keyword">delete</span> this-&gt;<a class="code" href="class_custom_palette.html#348ef0302052345a2b6c6dc868bd299e">Convert</a>;
-<a name="l00024"></a>00024                 <span class="keyword">delete</span> this-&gt;<a class="code" href="class_custom_palette.html#fc5d7ae77bbb218424aef6ca38a23499">Palette</a>;
+<a name="l00023"></a>00023                 GAME_DEALLOC(this-&gt;<a class="code" href="class_custom_palette.html#348ef0302052345a2b6c6dc868bd299e">Convert</a>);
+<a name="l00024"></a>00024                 GAME_DEALLOC(this-&gt;<a class="code" href="class_custom_palette.html#fc5d7ae77bbb218424aef6ca38a23499">Palette</a>);
 <a name="l00025"></a>00025         }
 </pre></div>
 <p>
@@ -140,8 +141,8 @@
 <p>
 <div class="fragment"><pre class="fragment"><a name="l00027"></a>00027                                                                                    {
 <a name="l00028"></a>00028                 <span class="keywordflow">if</span>(pINI-&gt;ReadString(pSection, pKey, <span class="stringliteral">""</span>, <a class="code" href="class_ares.html#d4af8279307df25dd1e696f7380beb39">Ares::readBuffer</a>, <a class="code" href="class_ares.html#dc3a89d98277ea17bef774907bdd8dc8">Ares::readLength</a>)) {
-<a name="l00029"></a>00029                         <span class="keyword">delete</span> this-&gt;<a class="code" href="class_custom_palette.html#fc5d7ae77bbb218424aef6ca38a23499">Palette</a>;
-<a name="l00030"></a>00030                         <span class="keyword">delete</span> this-&gt;<a class="code" href="class_custom_palette.html#348ef0302052345a2b6c6dc868bd299e">Convert</a>;
+<a name="l00029"></a>00029                         GAME_DEALLOC(this-&gt;<a class="code" href="class_custom_palette.html#fc5d7ae77bbb218424aef6ca38a23499">Palette</a>);
+<a name="l00030"></a>00030                         GAME_DEALLOC(this-&gt;<a class="code" href="class_custom_palette.html#348ef0302052345a2b6c6dc868bd299e">Convert</a>);
 <a name="l00031"></a>00031                         ConvertClass::CreateFromFile(<a class="code" href="class_ares.html#d4af8279307df25dd1e696f7380beb39">Ares::readBuffer</a>, &amp;this-&gt;<a class="code" href="class_custom_palette.html#fc5d7ae77bbb218424aef6ca38a23499">Palette</a>, &amp;this-&gt;<a class="code" href="class_custom_palette.html#348ef0302052345a2b6c6dc868bd299e">Convert</a>);
 <a name="l00032"></a>00032                         <span class="keywordflow">return</span> <span class="keyword">true</span>;
 <a name="l00033"></a>00033                 }
@@ -186,7 +187,7 @@
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>Utilities/<a class="el" href="_constructs_8h.html">Constructs.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Mon Mar 1 23:35:18 2010 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed May 12 23:21:00 2010 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

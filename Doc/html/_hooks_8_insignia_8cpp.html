@@ -9,6 +9,7 @@
   <div class="tabs">
     <ul>
       <li><a href="index.html"><span>Main&nbsp;Page</span></a></li>
+      <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li><a href="dirs.html"><span>Directories</span></a></li>
@@ -78,7 +79,7 @@
 <a name="l00020"></a>00020                 iFile = fCustom;
 <a name="l00021"></a>00021                 iFrame = 0;
 <a name="l00022"></a>00022         } <span class="keywordflow">else</span> {
-<a name="l00023"></a>00023                 VeterancyStruct *XP = T-&gt;get_Veterancy();
+<a name="l00023"></a>00023                 VeterancyStruct *XP = &amp;T-&gt;Veterancy;
 <a name="l00024"></a>00024                 <span class="keywordflow">if</span>(XP-&gt;IsElite()) {
 <a name="l00025"></a>00025                         iFrame = 15;
 <a name="l00026"></a>00026                 } <span class="keywordflow">else</span> <span class="keywordflow">if</span>(XP-&gt;IsVeteran()) {
@@ -106,7 +107,7 @@
 </div>
 </div><p>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Mon Mar 1 23:35:17 2010 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed May 12 23:21:00 2010 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

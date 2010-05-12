@@ -9,6 +9,7 @@
   <div class="tabs">
     <ul>
       <li><a href="index.html"><span>Main&nbsp;Page</span></a></li>
+      <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li><a href="dirs.html"><span>Directories</span></a></li>
@@ -36,7 +37,11 @@
 <div class="contents">
 <h1>Hooks.cpp File Reference</h1><code>#include &lt;InfantryClass.h&gt;</code><br>
 <code>#include &lt;IonBlastClass.h&gt;</code><br>
+<code>#include &lt;ScenarioClass.h&gt;</code><br>
 <code>#include &lt;WeaponTypeClass.h&gt;</code><br>
+<code>#include &lt;HouseTypeClass.h&gt;</code><br>
+<code>#include &lt;HouseClass.h&gt;</code><br>
+<code>#include &lt;SideClass.h&gt;</code><br>
 <code>#include &quot;<a class="el" href="_warhead_type_2_body_8h.html">Body.h</a>&quot;</code><br>
 <code>#include &quot;<a class="el" href="_bullet_2_body_8h.html">../Bullet/Body.h</a>&quot;</code><br>
 <code>#include &quot;<a class="el" href="_armor_types_8h.html">../../Enum/ArmorTypes.h</a>&quot;</code><br>
@@ -64,127 +69,42 @@
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00011"></a>00011                                          {
-<a name="l00012"></a>00012         GET(BulletClass *, Bullet, ESI);
-<a name="l00013"></a>00013         WarheadTypeClass *pThis = Bullet-&gt;WH;
-<a name="l00014"></a>00014 
-<a name="l00015"></a>00015         <a class="code" href="class_warhead_type_ext_1_1_ext_data.html">WarheadTypeExt::ExtData</a> *pData = <a class="code" href="class_warhead_type_ext.html#b2eb86c684fe6f15f9f95a9aa171e7dd">WarheadTypeExt::ExtMap</a>.<a class="code" href="class_container.html#90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(pThis);
-<a name="l00016"></a>00016 
-<a name="l00017"></a>00017         <span class="comment">/*      Request #397 - AffectsEnemies</span>
-<a name="l00018"></a>00018 <span class="comment">                Not sure where to implement this best</span>
-<a name="l00019"></a>00019 <span class="comment">                placing it here since we seem to handle warhead application stuff here,</span>
-<a name="l00020"></a>00020 <span class="comment">                and there's no need to do everything else if it's not supposed to affect the target anyway */</span>
-<a name="l00021"></a>00021         <span class="keywordflow">if</span> (!pData-&gt;<a class="code" href="class_warhead_type_ext_1_1_ext_data.html#0e9d0430da05071560027364fc76523c">AffectsEnemies</a>
-<a name="l00022"></a>00022                 &amp;&amp; Bullet-&gt;Target
-<a name="l00023"></a>00023                 &amp;&amp; !Bullet-&gt;Target-&gt;Owner-&gt;IsAlliedWith(Bullet-&gt;Owner)) { <span class="comment">// need to check what IsAlliedWith returns for self - for fire on own people</span>
-<a name="l00024"></a>00024                         <span class="comment">// if it doesn't affect enemies, but the target and the owner aren't allies, kill the bullet and exit</span>
-<a name="l00025"></a>00025                         <span class="comment">// below is the less-pretty way to do it, since we won't get a warhead-anim</span>
-<a name="l00026"></a>00026                         Bullet-&gt;Health = 0;
-<a name="l00027"></a>00027                         Bullet-&gt;DamageMultiplier = 0;
-<a name="l00028"></a>00028                         Bullet-&gt;Remove();
-<a name="l00029"></a>00029                         <span class="keywordflow">return</span> 0;
-<a name="l00030"></a>00030         }
-<a name="l00031"></a>00031 
-<a name="l00032"></a>00032         CoordStruct coords;
-<a name="l00033"></a>00033         <span class="keywordflow">if</span> (Bullet-&gt;Target) {
-<a name="l00034"></a>00034                 Bullet-&gt;Target-&gt;GetCoords(&amp;coords);
-<a name="l00035"></a>00035         } <span class="keywordflow">else</span> {
-<a name="l00036"></a>00036                 Bullet-&gt;GetCoords(&amp;coords);
-<a name="l00037"></a>00037         }
-<a name="l00038"></a>00038         CellStruct cellCoords = MapClass::Instance-&gt;GetCellAt(&amp;coords)-&gt;MapCoords;
-<a name="l00039"></a>00039 
-<a name="l00040"></a>00040         <span class="keywordflow">if</span> (pData-&gt;<a class="code" href="class_warhead_type_ext_1_1_ext_data.html#473cf3b919a34e8caf2860e9f05fe69b">Ripple_Radius</a>) {
-<a name="l00041"></a>00041                 IonBlastClass *IB;
-<a name="l00042"></a>00042                 GAME_ALLOC(IonBlastClass, IB, coords);
-<a name="l00043"></a>00043                 <a class="code" href="class_warhead_type_ext.html#cf825684a729d296341ad9aa6d869d38">WarheadTypeExt::IonExt</a>[IB] = pData;
-<a name="l00044"></a>00044         }
-<a name="l00045"></a>00045 
-<a name="l00046"></a>00046         <span class="keywordflow">if</span> (pData-&gt;<a class="code" href="class_warhead_type_ext_1_1_ext_data.html#989a1063a343d29046e1b9e2999003fc">IC_Duration</a> != 0) {
-<a name="l00047"></a>00047                 <span class="keywordtype">int</span> countCells = CellSpread::NumCells(<span class="keywordtype">int</span>(Bullet-&gt;WH-&gt;CellSpread));
-<a name="l00048"></a>00048                 <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; countCells; ++i) {
-<a name="l00049"></a>00049                         CellStruct tmpCell = CellSpread::GetCell(i);
-<a name="l00050"></a>00050                         tmpCell += cellCoords;
-<a name="l00051"></a>00051                         CellClass *c = MapClass::Global()-&gt;GetCellAt(&amp;tmpCell);
-<a name="l00052"></a>00052                         <span class="keywordflow">for</span> (ObjectClass *curObj = c-&gt;GetContent(); curObj; curObj
-<a name="l00053"></a>00053                                         = curObj-&gt;NextObject) {
-<a name="l00054"></a>00054                                 <span class="keywordflow">if</span> (TechnoClass *curTechno = generic_cast&lt;TechnoClass *&gt;(curObj)) {
-<a name="l00055"></a>00055                                         <span class="keywordflow">if</span> (curTechno-&gt;IronCurtainTimer.Ignorable()) {
-<a name="l00056"></a>00056                                                 <span class="keywordflow">if</span> (pData-&gt;<a class="code" href="class_warhead_type_ext_1_1_ext_data.html#989a1063a343d29046e1b9e2999003fc">IC_Duration</a> &gt; 0) {
-<a name="l00057"></a>00057                                                         curTechno-&gt;IronCurtain(pData-&gt;<a class="code" href="class_warhead_type_ext_1_1_ext_data.html#989a1063a343d29046e1b9e2999003fc">IC_Duration</a>,
-<a name="l00058"></a>00058                                                                         Bullet-&gt;Owner-&gt;Owner, 0);
-<a name="l00059"></a>00059                                                 }
-<a name="l00060"></a>00060                                         } <span class="keywordflow">else</span> {
-<a name="l00061"></a>00061                                                 <span class="keywordflow">if</span> (pData-&gt;<a class="code" href="class_warhead_type_ext_1_1_ext_data.html#989a1063a343d29046e1b9e2999003fc">IC_Duration</a> &gt; 0) {
-<a name="l00062"></a>00062                                                         curTechno-&gt;IronCurtainTimer.TimeLeft
-<a name="l00063"></a>00063                                                                         += pData-&gt;<a class="code" href="class_warhead_type_ext_1_1_ext_data.html#989a1063a343d29046e1b9e2999003fc">IC_Duration</a>;
-<a name="l00064"></a>00064                                                 } <span class="keywordflow">else</span> {
-<a name="l00065"></a>00065                                                         <span class="keywordflow">if</span> (curTechno-&gt;IronCurtainTimer.TimeLeft &lt;= abs(
-<a name="l00066"></a>00066                                                                         pData-&gt;<a class="code" href="class_warhead_type_ext_1_1_ext_data.html#989a1063a343d29046e1b9e2999003fc">IC_Duration</a>)) {
-<a name="l00067"></a>00067                                                                 curTechno-&gt;IronCurtainTimer.TimeLeft = 1;
-<a name="l00068"></a>00068                                                         } <span class="keywordflow">else</span> {
-<a name="l00069"></a>00069                                                                 curTechno-&gt;IronCurtainTimer.TimeLeft
-<a name="l00070"></a>00070                                                                                 += pData-&gt;<a class="code" href="class_warhead_type_ext_1_1_ext_data.html#989a1063a343d29046e1b9e2999003fc">IC_Duration</a>;
-<a name="l00071"></a>00071                                                         }
-<a name="l00072"></a>00072                                                 }
-<a name="l00073"></a>00073                                         }
-<a name="l00074"></a>00074                                 }
-<a name="l00075"></a>00075                         }
-<a name="l00076"></a>00076                 }
-<a name="l00077"></a>00077         }
-<a name="l00078"></a>00078 
-<a name="l00079"></a>00079         <span class="keywordflow">if</span> (Bullet-&gt;Target) {
-<a name="l00080"></a>00080                 <span class="keywordflow">if</span> (TechnoClass *pTarget = specific_cast&lt;TechnoClass *&gt;(Bullet-&gt;Target)) {
-<a name="l00081"></a>00081                         TechnoTypeClass *pType = pTarget-&gt;GetTechnoType();
-<a name="l00082"></a>00082 
-<a name="l00083"></a>00083                         <span class="keywordflow">if</span> (pData-&gt;<a class="code" href="class_warhead_type_ext_1_1_ext_data.html#94e6b628222742c7b45bcee95aeb04be">EMP_Duration</a>) {
-<a name="l00084"></a>00084                                 EMPulseClass *placeholder;
-<a name="l00085"></a>00085                                 GAME_ALLOC(EMPulseClass, placeholder, Bullet-&gt;Target-&gt;GetCell()-&gt;MapCoords, int(pThis-&gt;CellSpread), pData-&gt;<a class="code" href="class_warhead_type_ext_1_1_ext_data.html#94e6b628222742c7b45bcee95aeb04be">EMP_Duration</a>, 0);
-<a name="l00086"></a>00086                         }
-<a name="l00087"></a>00087 
-<a name="l00088"></a>00088                         <span class="keywordflow">if</span> (pData-&gt;<a class="code" href="class_warhead_type_ext_1_1_ext_data.html#ac67934f4029e1e865f4907ecbc76bb5">MindControl_Permanent</a>) {
-<a name="l00089"></a>00089                                 <span class="keywordflow">if</span> (!pType || pType-&gt;ImmuneToPsionics) {
-<a name="l00090"></a>00090                                         <span class="keywordflow">return</span> 0;
-<a name="l00091"></a>00091                                 }
-<a name="l00092"></a>00092                                 <span class="keywordflow">if</span> (pTarget-&gt;MindControlledBy) {
-<a name="l00093"></a>00093                                         pTarget-&gt;MindControlledBy-&gt;CaptureManager-&gt;FreeUnit(pTarget);
-<a name="l00094"></a>00094                                 }
-<a name="l00095"></a>00095                                 pTarget-&gt;SetOwningHouse(Bullet-&gt;Owner-&gt;Owner, 1);
-<a name="l00096"></a>00096                                 pTarget-&gt;MindControlledByAUnit = 1;
-<a name="l00097"></a>00097                                 pTarget-&gt;QueueMission(mission_Guard, 0);
-<a name="l00098"></a>00098 
-<a name="l00099"></a>00099                                 coords.Z += pType-&gt;MindControlRingOffset;
-<a name="l00100"></a>00100 
-<a name="l00101"></a>00101                                 AnimClass *MCAnim;
-<a name="l00102"></a>00102                                 GAME_ALLOC(AnimClass, MCAnim, RulesClass::Instance-&gt;PermaControlledAnimationType, &amp;coords);
-<a name="l00103"></a>00103                                 AnimClass *oldMC = pTarget-&gt;MindControlRingAnim;
-<a name="l00104"></a>00104                                 <span class="keywordflow">if</span> (oldMC) {
-<a name="l00105"></a>00105                                         oldMC-&gt;UnInit();
-<a name="l00106"></a>00106                                 }
-<a name="l00107"></a>00107                                 pTarget-&gt;MindControlRingAnim = MCAnim;
-<a name="l00108"></a>00108                                 MCAnim-&gt;SetOwnerObject(pTarget);
-<a name="l00109"></a>00109 
-<a name="l00110"></a>00110                                 <span class="keywordflow">return</span> 0x469AA4;
-<a name="l00111"></a>00111                         }
-<a name="l00112"></a>00112                 }
-<a name="l00113"></a>00113 
-<a name="l00114"></a>00114                 <a class="code" href="class_bullet_ext_1_1_ext_data.html">BulletExt::ExtData</a>* TheBulletExt = <a class="code" href="class_bullet_ext.html#d7ff43ebb912ebd0b4c3bd8c8c36a49d">BulletExt::ExtMap</a>.<a class="code" href="class_container.html#90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(Bullet);
-<a name="l00115"></a>00115                 <span class="keywordflow">if</span> (TheBulletExt-&gt;<a class="code" href="class_bullet_ext_1_1_ext_data.html#a3afac5846ade163b708d9d5b9007e53" title="Does the entire PassThrough logic, checks &amp;amp; damage.">DamageOccupants</a>()) {
-<a name="l00116"></a>00116                         <span class="comment">// the occupants have been damaged, do not damage the building (the original target)</span>
-<a name="l00117"></a>00117                         Bullet-&gt;Health = 0;
-<a name="l00118"></a>00118                         Bullet-&gt;DamageMultiplier = 0;
-<a name="l00119"></a>00119                         Bullet-&gt;Remove();
-<a name="l00120"></a>00120                 }
-<a name="l00121"></a>00121         }
-<a name="l00122"></a>00122 
-<a name="l00123"></a>00123         <span class="keywordflow">return</span> 0;
-<a name="l00124"></a>00124 }
+<div class="fragment"><pre class="fragment"><a name="l00015"></a>00015                                          {
+<a name="l00016"></a>00016         GET(BulletClass *, Bullet, ESI);
+<a name="l00017"></a>00017         <span class="comment">//LEA_STACK(CoordStruct *, detonationXYZ, 0xAC); // looks unused?</span>
+<a name="l00018"></a>00018         WarheadTypeClass *pThis = Bullet-&gt;WH;
+<a name="l00019"></a>00019 
+<a name="l00020"></a>00020         CoordStruct coords;
+<a name="l00021"></a>00021         <span class="keywordflow">if</span> (Bullet-&gt;Target) {
+<a name="l00022"></a>00022                 Bullet-&gt;Target-&gt;GetCoords(&amp;coords);
+<a name="l00023"></a>00023         } <span class="keywordflow">else</span> {
+<a name="l00024"></a>00024                 Bullet-&gt;GetCoords(&amp;coords);
+<a name="l00025"></a>00025         }
+<a name="l00026"></a>00026 
+<a name="l00027"></a>00027         <span class="keyword">auto</span> pWHExt = <a class="code" href="class_warhead_type_ext.html#b2eb86c684fe6f15f9f95a9aa171e7dd">WarheadTypeExt::ExtMap</a>.<a class="code" href="class_container.html#90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(pThis);
+<a name="l00028"></a>00028 
+<a name="l00029"></a>00029         HouseClass *OwnerHouse = (Bullet-&gt;Owner)
+<a name="l00030"></a>00030                 ? Bullet-&gt;Owner-&gt;Owner
+<a name="l00031"></a>00031                 : NULL
+<a name="l00032"></a>00032         ;
+<a name="l00033"></a>00033 
+<a name="l00034"></a>00034         pWHExt-&gt;applyRipples(&amp;coords);
+<a name="l00035"></a>00035         pWHExt-&gt;applyIronCurtain(&amp;coords, OwnerHouse);
+<a name="l00036"></a>00036         pWHExt-&gt;applyEMP(&amp;coords, Bullet-&gt;Owner);
+<a name="l00037"></a>00037         <a class="code" href="class_warhead_type_ext.html#d64e94493d423f7bc44085d5e058ca74">WarheadTypeExt::applyOccupantDamage</a>(Bullet);
+<a name="l00038"></a>00038 
+<a name="l00039"></a>00039         <span class="keywordflow">return</span> (OwnerHouse &amp;&amp; pWHExt-&gt;applyPermaMC(&amp;coords, OwnerHouse, Bullet-&gt;Target))
+<a name="l00040"></a>00040                 ? 0x469AA4
+<a name="l00041"></a>00041                 : 0
+<a name="l00042"></a>00042         ;
+<a name="l00043"></a>00043 }
 </pre></div>
 <p>
 
 </div>
 </div><p>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Mon Mar 1 23:35:17 2010 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed May 12 23:21:00 2010 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>
