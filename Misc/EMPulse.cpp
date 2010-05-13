@@ -41,7 +41,7 @@ void EMPulse::CreateEMPulse(WarheadTypeExt::ExtData * Warhead, CellStruct Coords
 
 	// the not quite so fast way. skip everything not in the air.
 	for (int i=0; i<TechnoClass::Array->Count; ++i) {
-		TechnoClass *Techno = (TechnoClass*)TechnoClass::Array->GetItem(i);
+		TechnoClass *Techno = TechnoClass::Array->GetItem(i);
 		if (Techno->IsInAir()) {
 			if (Techno->GetCell()->MapCoords.DistanceFrom(cellCoords) <= Warhead->AttachedToObject->CellSpread) {
 				deliverEMPDamage(Techno, Firer, Warhead);

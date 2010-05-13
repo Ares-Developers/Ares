@@ -197,26 +197,31 @@ DEFINE_HOOK(6FA4C6, TechnoClass_Update_ZeroOutTarget, 5)
 
 DEFINE_HOOK(46934D, IvanBombs_Spread, 6)
 {
-	GET(BulletClass *, bullet, ESI);
-	double cSpread = bullet->WH->CellSpread;
+	GET(BulletClass *, pBullet, ESI);
+	double cSpread = pBullet->WH->CellSpread;
 
-	RET_UNLESS(bullet->Target);
+	RET_UNLESS(pBullet->Target);
 
-	TechnoClass *pOwner = reinterpret_cast<TechnoClass *>(bullet->Owner);
+	TechnoClass *pOwner = generic_cast<TechnoClass *>(pBullet->Owner);
+	if(!pOwner) {
+		return 0;
+	}
 
-	TechnoClass *pTarget = reinterpret_cast<TechnoClass *>(bullet->Target);
-	CoordStruct tgtLoc = pTarget->Location;
+	TechnoClass *pTarget = generic_cast<TechnoClass *>(pBullet->Target);
 
 	// just real target
 	if(cSpread < 0.5) {
-		BombListClass::Instance->Plant(pOwner, pTarget);
+		if(pTarget) {
+			BombListClass::Instance->Plant(pOwner, pTarget);
+		}
 		return 0;
 	}
 
 	int Spread = int(cSpread);
 
 	CoordStruct tgtCoords;
-	pTarget->GetCoords(&tgtCoords);
+	pBullet->GetTargetCoords(&tgtCoords);
+
 	CellStruct centerCoords = MapClass::Instance->GetCellAt(&tgtCoords)->MapCoords;
 
 	class IvanBombSpreadApplicator : public CellSpreadApplicator {

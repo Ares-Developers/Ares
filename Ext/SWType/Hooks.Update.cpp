@@ -1,4 +1,5 @@
 #include "Body.h"
+#include "../House/Body.h"
 #include "../Techno/Body.h"
 #include <MouseClass.h>
 
@@ -30,13 +31,13 @@ DEFINE_HOOK(50AF10, HouseClass_CheckSWs, 5)
 		for(int idxBld = 0; idxBld < pThis->Buildings.Count; ++idxBld) {
 			BuildingClass * pBld = pThis->Buildings.GetItem(idxBld);
 			if(pBld->IsAlive && !pBld->InLimbo) {
+				TechnoExt::ExtData *pExt = TechnoExt::ExtMap.Find(pBld);
 
 				// the super weapon status update lambda.
 				auto UpdateStatus = [=](int idxSW) {
 					if(idxSW > -1) {
 						Statuses[idxSW].Available = true;
 						if(!Statuses[idxSW].PowerSourced) {
-							TechnoExt::ExtData *pExt = TechnoExt::ExtMap.Find(pBld);
 							Statuses[idxSW].PowerSourced = pBld->HasPower
 								&& pExt->IsOperated()
 								&& !pBld->IsUnderEMP();
@@ -130,16 +131,76 @@ DEFINE_HOOK(50AF10, HouseClass_CheckSWs, 5)
 // a ChargeDrain SW expired - fire it to trigger status update
 DEFINE_HOOK(6CBD86, SuperClass_Progress_Charged, 7)
 {
-	GET(SuperClass *, Super, ESI);
-	Super->Launch(&Super->ChronoMapCoords, Super->Owner == HouseClass::Player);
+	GET(SuperClass *, pSuper, ESI);
+	HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(pSuper->Owner);
+	pHouseData->SetFirestormState(0);
+
 	return 0;
 }
 
 // a ChargeDrain SW was clicked while it was active - fire to trigger status update
 DEFINE_HOOK(6CB979, SuperClass_ClickFire, 6)
 {
-	GET(SuperClass *, Super, ESI);
-	Super->Launch(&Super->ChronoMapCoords, Super->Owner == HouseClass::Player);
+	GET(SuperClass *, pSuper, ESI);
+	HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(pSuper->Owner);
+	pHouseData->SetFirestormState(0);
 
 	return 0;
+}
+
+// SW was lost (source went away)
+DEFINE_HOOK(6CB7BA, SuperClass_Lose, 6)
+{
+	GET(SuperClass *, pSuper, ECX);
+	if(pSuper->Type->UseChargeDrain) {
+		HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(pSuper->Owner);
+		pHouseData->SetFirestormState(0);
+	}
+
+	return 0;
+}
+
+// rewriting OnHold to support ChargeDrain
+DEFINE_HOOK(6CB4D0, SuperClass_SetOnHold, 6)
+{
+	GET(SuperClass *, pSuper, ECX);
+	GET_STACK(byte, OnHold, 0x4);
+	OnHold = !!OnHold;
+	if(!pSuper->Granted || pSuper->Quantity || !pSuper->unknown_bool_60) {
+		R->EAX(0);
+	} else if(OnHold == pSuper->IsOnHold) {
+		R->EAX(0);
+	} else {
+		if(OnHold || pSuper->Type->ManualControl) {
+			int TimeStart = pSuper->RechargeTimer.StartTime;
+			if(TimeStart != -1) {
+				int TimeLeft = pSuper->RechargeTimer.TimeLeft;
+				int TimeElapsed = Unsorted::CurrentFrame - TimeStart;
+				if(TimeElapsed >= TimeLeft) {
+					TimeLeft = 0;
+				} else {
+					TimeLeft -= TimeElapsed;
+				}
+				pSuper->RechargeTimer.TimeLeft = TimeLeft;
+				pSuper->RechargeTimer.StartTime = -1;
+			}
+		} else {
+			if(pSuper->RechargeTimer.StartTime == -1) {
+				pSuper->RechargeTimer.StartTime = Unsorted::CurrentFrame;
+			}
+		}
+		pSuper->IsOnHold = OnHold;
+		if(pSuper->Type->UseChargeDrain) {
+			HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(pSuper->Owner);
+			if(OnHold) {
+				pHouseData->SetFirestormState(0);
+				pSuper->ChargeDrainState = -1;
+			} else {
+				pSuper->ChargeDrainState = 0;
+				pSuper->RechargeTimer.Start(pSuper->Type->RechargeTime);
+			}
+		}
+		R->EAX(1);
+	}
+	return 0x6CB555;
 }
