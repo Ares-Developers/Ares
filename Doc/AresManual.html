@@ -203,12 +203,12 @@
 	<h2>Introduction</h2>
 	<p><span class="gamename">Ares</span> is the new tool to extend the capabilities of <span class="gamename">Yuri's Revenge</span>. It was conceived by pd near the end of 2007, and is currently in an early development and testing cycle.</p>
 	<p>This documentation is aimed primarily at <span class="gamename">Ares</span> testers, as <span class="gamename">Ares</span> is a work in progress and subject to many further changes. However, the documentation is also aimed at mod authors wishing to make use of the new functionality that <span class="gamename">Ares</span> offers.</p>
-	<p><span class="gamename">Ares</span> is incorporated into <span class="gamename">Yuri's Revenge</span> via the use of Syringe, a program developed by pd to 'inject' DLL code into a running executable without modifying the executable itself. In this case, the <span class="gamename">Ares</span> DLL is injected into the <span class="gamename">Yuri's Revenge 1.001</span> main executable, gamemd.exe.</p>
-	<p>Syringe can be run directly via a command line prompt, or automatically using Launch Base. See the respective documentations of those programs for further details.</p>
+	<p><span class="gamename">Ares</span> is incorporated into <span class="gamename">Yuri's Revenge</span> via the use of <span class="gamename">Syringe</span>, a program developed by pd to 'inject' DLL code into a running executable without modifying the executable itself. In this case, the <span class="gamename">Ares</span> DLL is injected into the <span class="gamename">Yuri's Revenge 1.001</span> main executable, <span class="filename">gamemd.exe</span>.</p>
+	<p><span class="gamename">Syringe</span> can be run directly via a command line prompt, or automatically using <span class="gamename">Launch Base</span>. See the respective documentations of those programs for further details.</p>
 	<div style="clear:both;"> </div>
 
 	<h3>Compatibility Notes</h3>
-	<h4>RockPatch/NPatch</h4>
+	<h4><span class="gamename">RockPatch/NPatch</span></h4>
 	<p><span class="gamename">Ares</span> is not intended to be used in conjunction with any third party patch that modifies the executable of the game. This is due to fairly obvious technical reasons that were best summarized by Renegade: [paraphrase] <q cite="Renegade">You can't use the USA maps on your GPS to navigate through Russia.</q><br>
 	...because sooner or later you will drive down a road that doesn't exist, and off a cliff.</p>
 
@@ -1029,7 +1029,7 @@
 	Operator logic cannot be used on AircraftTypes for 2 reasons:<br>
 	1. Aircraft are produced in a place where the Operator cannot board them. You can issue a move order to an Operator-less aircraft but they will immediately crash.<br>
 	2. Assuming you manage to get an aircraft to a place where the Operator can board it, if the aircraft can attack then the act of attacking will cause the passengers (including the Operator) to parachute from the aircraft - whereupon it will crash.<br>
-	<span class="note">NB: The AI is incapable of using Operators. You should prevent the AI from building anything that requires an Operator.</span><dfn class="new">Vehicles and buildings can be made to require an operator (driver) before they will function.</dfn></p>
+	<span class="note">NB: The AI behaves unpredicatably when faced with units that require Operators and may not be subject to certain effects. You should prevent the AI from building anything that requires an Operator.</span><dfn class="new">Vehicles and buildings can be made to require an operator (driver) before they will function.</dfn></p>
 
 	<h3>Solid Buildings</h3>
 	<p>Buildings can now be made 'solid' to projectiles, meaning that projectiles will detonate when hitting a building rather than passing through it.<br>
