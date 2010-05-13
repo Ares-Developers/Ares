@@ -48,9 +48,13 @@ void EMPulse::CreateEMPulse(WarheadTypeExt::ExtData * Warhead, CellStruct Coords
 			}
 		}
 	}
+
+	if (verbose) {
+		Debug::Log("[CreateEMPulse] Done.\n");
+	}
 }
 
-//! Deals EMP damage the object..
+//! Deals EMP damage the object.
 /*!
 	Applies, removes or alters the EMP effect on a given unit.
 

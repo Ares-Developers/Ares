@@ -89,15 +89,33 @@ void UnitDeliveryStateMachine::PlaceUnits() {
 				CoordStruct XYZ;
 				cell->GetCoordsWithBridge(&XYZ);
 
-				if(Placed = Item->Put(&XYZ, (cellIdx & 7))) {
-					if(ItemBuilding) {
-						if (pData->SW_DeliverBuildups) {
-							ItemBuilding->UpdateOwner(this->Super->Owner);
-							ItemBuilding->unknown_bool_6DD = 1;
-						}
-					} else {
-						if(Type->BalloonHover || Type->JumpJet) {
-							Item->Scatter(0xB1CFE8, 1, 0);
+				bool validCell = true;
+				if(cell->OverlayTypeIndex != -1) {
+					// disallow placing on rocks, rubble and walls
+					OverlayTypeClass *Overlay = OverlayTypeClass::Array->GetItem(cell->OverlayTypeIndex);
+					validCell = !Overlay->Wall && !Overlay->IsARock && !Overlay->IsRubble;
+				}
+				if(AircraftClass * ItemAircraft = specific_cast<AircraftClass *>(Item)) {
+					// for aircraft: cell must be empty: non-water, non-cliff, non-shore, non-anything
+					validCell &= !cell->GetContent() && !cell->Tile_Is_Cliff()
+						&& !cell->Tile_Is_DestroyableCliff() && !cell->Tile_Is_Shore()
+						&& !cell->Tile_Is_Water() && !cell->ContainsBridge();
+				}
+
+				if(validCell) {
+					if(Placed = Item->Put(&XYZ, (cellIdx & 7))) {
+						if(ItemBuilding) {
+							if (pData->SW_DeliverBuildups) {
+								ItemBuilding->UpdateOwner(this->Super->Owner);
+								ItemBuilding->unknown_bool_6DD = 1;
+							}
+						} else {
+							if(Type->BalloonHover || Type->JumpJet) {
+								Item->Scatter(0xB1CFE8, 1, 0);
+							}
+							if(cell->ContainsBridge()) {
+								Item->OnBridge = true;
+							}
 						}
 					}
 				}
