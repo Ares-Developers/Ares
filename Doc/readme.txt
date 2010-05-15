@@ -20,7 +20,7 @@ Since you are reading this readme, it is assumed you have already
 downloaded the Ares Standalone Package.
 
 1. Extract the Ares Standalone Package into your YR game directory.
-   Make sure Syringe.exe, Ares.dll and Ares.dll.inj are all directly
+   Make sure Syringe.exe, Ares.dll, Ares.dll.inj and ares.mix are all directly
    in that directory, not in a sub-folder.
 
 2. Ensure that you have installed the following runtime files from Microsoft:
@@ -33,9 +33,6 @@ downloaded the Ares Standalone Package.
        Syringe "gamemd.exe"
    and press Enter. 
    Or make a bat file to do that for you... no difference.
-
-This information originally appeared at 
-http://forums.renegadeprojects.com/showthread.php?tid=1067&pid=12468#pid12468
 
 
 RUNNING ARES THROUGH LAUNCH BASE
@@ -108,8 +105,6 @@ UseAres=yes
    Ares with Launch Base then please post them in the forums. Problems/questions 
    with Launch Base in general please post in the Launch Base beta test thread.
 
-This information originally appeared at 
-http://forums.renegadeprojects.com/showthread.php?tid=1048&pid=12337#pid12337
 
 --------------------------------------------------------------------------------
 

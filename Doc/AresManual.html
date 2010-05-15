@@ -945,6 +945,8 @@ magic=11%</pre>
 	</dl>
 
 	<h4>New Super Weapon Types</h4>
+	<p><span class="note">NB: The AI cannot use the new SuperWeapon Types yet. Control similar to RockPatch's <code>AITargetingType=</code> will be added soon.</span></p>
+
 	<h5><code>Type=SonarPulse</code></h5>
 	<p>The Sonar Pulse is a variation of the original Red Alert Sonar Pulse - it can only be fired into water cells and will cause any cloaked units situated on a water cell to temporarily decloak.</p>
 	<dl class="flaglist">
@@ -1346,7 +1348,23 @@ AIRFORCE=GAAIRC,AMRADR</pre>
 	<p><span class="gamename">Ares</span> will give you the option to produce a crash dump file to assist in determining the cause of the error. This file will be stored in a Debug folder within the main game directory. Note that the crash dump file is very large and may only be readable by the <span class="gamename">Ares</span> developers. Like <span class="filename">except.txt</span>, this file will include a timestamp in the filename.</p>
 	<p>If you have turned on debug logging (see Command Line Arguments and Keyboard Commands) then the game will produce a debug.log file in the aforementioned Debug folder. Like <span class="filename">except.txt</span>, this file will include a timestamp in the filename. The log file may contain useful information for helping diagnose problems with your mod or <span class="gamename">Ares</span> itself.</p>
 	<p>In the event of an Internal Error, <span class="gamename">Ares</span> can sometimes tell you what caused the error. For example:</p>
-	<p align="center"><img src="./manual_images/ie.png" alt="Screenshot of an Ares Internal Error dialog showing the cause of an Internal Error" style="border: none;"></p>
+	<p align="center">
+		<img src="./manual_images/crash0.png" alt="Screenshot of an Ares Internal Error dialog showing the cause of an Internal Error" style="border: none;">
+		<br />
+		Here, Ares can determine what caused the error.
+	</p>
+		<hr />
+	<p align="center">
+		<img src="./manual_images/crash1.png" alt="Screenshot of an Ares Internal Error dialog showing an unsolved Internal Error" style="border: none;">
+		<br />
+		Here, the error cannot be figured out - Ares offers to create a full crash report.
+	</p>
+		<hr />
+	<p align="center">
+		<img src="./manual_images/crash2.png" alt="Screenshot of an Ares Internal Error dialog after recording an Internal Error" style="border: none;">
+		<br />
+		The crash report has been generated. Ares will close after showing this message.
+	</p>
 
 	<p>Some potential errors may now be triggered when loading rather than waiting for the error to crop up in game.<dfn class="new">Improved Internal Error handling and debug logs to assist with debugging mods/Ares.</dfn></p>
 	
