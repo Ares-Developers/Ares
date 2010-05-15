@@ -249,10 +249,6 @@
 	<p>When a unit kills an enemy unit it gains experience which can lead to that unit becoming veteran or elite. Killing friendly units (your own or your allies') does not earn experience in this way.<br>
 	However, <em>Temporal</em> warheads (warheads with <code>Temporal=yes</code> set) <em>did</em> use to earn experience when killing friendly units. This is no longer the case. <dfn class="bugfix">Temporal warheads no longer gain experience when used against allies</dfn></p>
 
-	<h4>Temporal Warheads Still Affect Objects That Are Not Warpable</h4>
-	<p>Attacking a mind controlling unit or structure with a <code>Temporal=yes</code> warhead would free the captured units even if the target is not warpable (TechnoTypes with <code>Warpable=no</code> set).<br>
-	Also, spawning units would have their spawned aircraft destroyed. This is no longer happens. <dfn class="bugfix">Temporal warheads no longer affect objects that are not warpable</dfn></p>
-
 	<h4>'Absolute-Damage' Prism Support Modifier</h4>
 	<p>Whenever a game mode or map declared the <code>[General]</code> section without re-stating the <code>PrismSupportModifier</code>, the <code>PrismSupportModifier</code> from <span class="filename">rulesmd.ini</span> would get multiplied by 100, thus causing supported Prism Towers to deal seemingly 'instant-kill' damage.</p>
 	<p>This bug is now fixed, however it should be noted that several official maps used to exhibit this bug and so are 'fixed' by the UMP by re-stating <code>PrismSupportModifier</code> which means that these maps are now set at the original 150%, regardless of what your mod may set it to (so if you are incorporating the UMP into your mod and change the modifier as well then you will need to amend the 'fixed' UMP maps accordingly).<dfn class="bugfix">Prism support modifier fixed for game modes/maps.</dfn></p>
@@ -419,8 +415,9 @@
 	<h4>Amphibious Objects Sink When Chronoshifted Onto Water</h4>
 	<p>When an amphibious (not hover) object - that is, one that can normally enter water cells without problem - was chronoshifted onto water by the Chrono Sphere, it would sink. <span class="gamename">Ares</span> corrects this so that all amphibious objects can be chronoshifted onto water without sinking.<dfn class="bugfix">Amphibious objects no longer sink when chronoshifted onto water.</dfn></p>
 
-	<h4>Mind-Controlled Units Freed By Ineffective Temporal Attacks</h4>
-	<p>If <code>Warpable=yes</code> was set on, say, the Master Mind, and the Master Mind was attacked by a Chrono Legionnaire, then any units mind-controlled by the Master Mind would be freed, even though the Master Mind itself was not frozen. <span class="gamename"><span class="gamename">Ares</span></span> fixes this so that the mind-controlled units are not freed.<dfn class="bugfix">Mind-controlled units are no longer freed by ineffective temporal attacks (against Warpable=no).</dfn></p>
+	<h4>Temporal Warheads Still Affect Objects That Are Not Warpable</h4>
+	<p>Attacking a mind controlling unit or structure with a <code>Temporal=yes</code> warhead would free the captured units even if the target is not warpable (TechnoTypes with <code>Warpable=no</code> set).<br>
+	Also, spawning units would have their aircrafts destroyed. This is no longer happens. <dfn class="bugfix">Temporal warheads no longer affect objects that are not warpable</dfn></p>
 	
 	<h4>Hardcoded Wall/Gate Interactions</h4>
 	<p>In <span class="gamename">Tiberian Sun</span> you could place buildable gates on top of existing walls. This logic still exists in Yuri's Revenge. However, the logic was hardcoded to only work with GAWALL and NAWALL, so it wouldn't work with Yuri's wall (YAWALL) or, indeed, any other walls you might add to the game. <span class="gamename">Ares</span> changes this so that all overlays with <code>Wall=yes</code> set can have gates "slammed" onto them.<br><span class="note">NB: The automatic joining of walls to the gates still only works for GAWALL and NAWALL however this will be fixed in future.</span><dfn class="bugfix">Gates can be slammed onto any walls, not just GAWALL or NAWALL.</dfn></p>
@@ -1229,7 +1226,8 @@ AIRFORCE=GAAIRC,AMRADR</pre>
 		<dd>Specifies the palette to use for the super weapon's <code>SidebarImage</code>, in the format "filename.pal".
 		Defaults to cameo.pal.<dfn class="new">Custom palettes for cameos.</dfn><var class="rules SuperWeapon filename cameo.pal">SidebarPalette=</var></dd>
 	</dl>
-	
+  <p><span class="note">NB: The cameo must not use the color at index 0 of the palette. It will be transparent in-game.</span></p>
+
 	<h3>Spy Behavior</h3>
 	<p><span class="gamename">Yuri's Revenge</span> only permits a Spy to achieve one effect on infiltrating, which is determined by a hard-coded order of precedence. Spy infiltration logic has been rewritten in <span class="gamename">Ares</span> to be more flexible, including some new effects that a Spy can achieve.</p>
 	<p>All of the following flags default to no or zero.</p>
