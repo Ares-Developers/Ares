@@ -1,0 +1,178 @@
+BODY {
+	font-size: 11pt;
+	font-family: Helvetica, "Nimbus Sans L", Arial, "DejaVu Sans", sans-serif;
+	background-color: #666666;
+	color: #444444;
+	margin: 0px;
+	padding: 0px;
+}
+A {
+	text-decoration: none;
+}
+UL.nobullets, OL.nobullets, DL.nobullets {
+	list-style-type: none;
+}
+DL.flaglist DT {
+	font-weight: bold;
+	font-family: monospace;
+	font-size: 10pt;
+	color: #333333;
+	background-color: #F8F8F8;
+}
+DL.flaglist DD {
+	font-size: small;
+	margin-bottom: 1em;
+}
+H1, H2, H3, H4, H5, H6 {
+	margin-bottom: 0.3em;
+}
+H2 {
+	border-top: 1px dashed #777777;
+	color: #333333;
+}
+P {
+	margin-top: 0.1em;
+}
+DFN, VAR {
+	display: none;
+}
+CODE {
+	background-color: #EEEEEE;
+	color: #333333;
+}
+CAPTION {
+	font-weight: bold;
+	font-size: larger;
+}
+A, A:link {
+	color: #0093dd;
+	text-decoration: none;
+}
+A:visited {
+	color: #0080c4;
+}
+A:hover {
+	color: #009ceb;
+	text-decoration: underline;
+}
+A:active {
+	color: #00a5f7;
+}
+table.flagslist {
+	width: 95%;
+	border: 1px solid #AAAAAA;
+	border-collapse: collapse;
+	margin-bottom: 1em;
+}
+table.flagslist td {
+	padding: 0.1em 0.5em;
+	border-style: solid;
+	border-color: #AAAAAA;
+	border-width: 0px;
+}
+table.flagslist tr.section td {
+	padding-top: 0.5em;
+	border-top-width: 1px;
+	border-right-width: 0px;
+	border-left-width: 0px;
+	background-color: #F8F8F8;
+}
+table.flagslist td:first-child {
+	border-right-width: 1px;
+}
+table.flagslist td:last-child {
+	border-left-width: 1px;
+}
+#wrapper {
+	background-color: #FEFEFE;
+	max-width: 960px;
+	margin-left: auto;
+	margin-right: auto;
+	-moz-box-shadow: 0px 0px 25px black;
+	-webkit-box-shadow: 0px 0px 25px black;
+	box-shadow: 0px 0px 25px black;
+	padding: 1em;
+	border: 1px solid #000000;
+}
+#wrapper IMG {
+	border: 3px double #333333;
+	display: block;
+	margin: 1em auto 1em auto;
+}
+#toplink {
+	position: fixed;
+	bottom: 4px;
+	right: 4px;
+}
+#toplink, #toplink A, #toplink A:link, #toplink A:visited {
+	color: #61c2f2;
+}
+#toctoggle {
+	font-weight: bold;
+}
+#ares_version_selector {
+	float: right;
+}
+#toc:focus {
+	display: block;
+}
+#wrapper IMG#flowchart_png {
+	display: none;
+}
+#flowchart_svg {
+	display: block;
+}
+.red {
+	color: red;
+}
+.note {
+	/*font-weight: bold;*/
+	color: #DD4400;
+	font-size: 90%;
+	font-style: italic;
+}
+.toc-H2 {
+	font-weight: bold;
+}
+.toc-H3 {
+	margin-left: 2em;
+}
+.toc-H4 {
+	margin-left: 4em;
+	font-size: small;
+}
+.toc-H5 {
+	margin-left: 6em;
+	font-size: x-small;
+}
+.pseudo {
+	display: none;
+}
+.ares02 {
+	display: none;
+	border: 1px dashed Gray;
+	padding: 0.3em;
+}
+.gamename {
+	font-variant: small-caps;
+}
+.filename {
+	font-family: monospace;
+}
+.type {
+	font-family: monospace;
+}
+.tt {
+	font-family: monospace;
+}
+.inset {
+	margin-left: 2em;
+}
+.blockcenter {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
+div.ares02 H4 {
+	margin-top: 0em;
+}

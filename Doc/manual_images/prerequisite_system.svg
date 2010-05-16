@@ -31,10 +31,10 @@
      showgrid="false"
      inkscape:zoom="1"
      inkscape:cx="389.5"
-     inkscape:cy="437.47444"
+     inkscape:cy="517.47444"
      inkscape:window-x="-5"
      inkscape:window-y="0"
-     inkscape:current-layer="boxes"
+     inkscape:current-layer="prerequisite_system_flowchart"
      showguides="true"
      inkscape:snap-global="true" /><metadata
      id="metadata2408"><rdf:RDF><cc:Work
@@ -430,7 +430,7 @@
      id="boxes"
      inkscape:groupmode="layer"
      inkscape:label="Prerequisite System"
-     style="font-size:10px;display:inline"
+     style="font-size:9px;display:inline"
      transform="matrix(1.25,0,0,-1.25,0,972.5)"><g
        id="box_1"
        inkscape:label="#g4645"><path
@@ -705,7 +705,7 @@
    transform="scale(1,-1)"
    x="252"
    y="-187"
-   style="font-size:120.00579834%;font-weight:bold;text-anchor:middle">Buildable</text>
+   style="font-size:120.01953125%;font-weight:bold;text-anchor:middle">Buildable</text>
 
 <text
    id="text3382"
@@ -725,7 +725,7 @@
    transform="scale(1,-1)"
    x="99"
    y="-187"
-   style="font-size:120.0088501%;font-weight:bold;text-anchor:middle">Unbuildable</text>
+   style="font-size:120.02258301%;font-weight:bold;text-anchor:middle">Unbuildable</text>
 
 <text
    id="text_gray_cameo"
@@ -745,7 +745,7 @@
    transform="scale(1,-1)"
    y="-187"
    x="405"
-   style="font-size:120.01037598%;font-weight:bold;text-anchor:middle">Unbuildable</text>
+   style="font-size:120.02410889%;font-weight:bold;text-anchor:middle">Unbuildable</text>
 
 <text
    id="text_hide_cameo"
