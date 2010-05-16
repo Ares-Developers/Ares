@@ -30,12 +30,13 @@
      id="base"
      showgrid="false"
      inkscape:zoom="1"
-     inkscape:cx="570.46976"
-     inkscape:cy="444.8074"
+     inkscape:cx="389.5"
+     inkscape:cy="437.47444"
      inkscape:window-x="-5"
      inkscape:window-y="0"
      inkscape:current-layer="boxes"
-     showguides="true" /><metadata
+     showguides="true"
+     inkscape:snap-global="true" /><metadata
      id="metadata2408"><rdf:RDF><cc:Work
          rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" /></cc:Work></rdf:RDF></metadata><defs
@@ -429,909 +430,345 @@
      id="boxes"
      inkscape:groupmode="layer"
      inkscape:label="Prerequisite System"
-     transform="matrix(1.25,0,0,-1.25,0,972.5)"
-     style="display:inline"><g
+     style="font-size:10px;display:inline"
+     transform="matrix(1.25,0,0,-1.25,0,972.5)"><g
        id="box_1"
        inkscape:label="#g4645"><path
-         inkscape:label="#path2426"
-         id="box_reqthea"
-         style="fill:#ffccff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.80000001;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         d="M 53.7,724.6 L 450.4,724.6 L 450.4,743.3 L 53.7,743.3 L 53.7,724.6 z" /><g
-         transform="translate(0,1.6)"
-         id="g2428"><text
-   id="text2430"
-   transform="matrix(1,0,0,-1,90.3,729.6)"><tspan
-     id="tspan2432"
-     sodipodi:role="line"
-     y="0"
-     x="0 7.1999998 12.8 16.1 19.4 25 30.6 33.400002 36.099998 44.5 50 55.599998 58.400002 61.099998 66.699997 72.199997 77.800003 80.599998 86.199997 89.5 92.300003 94.5 96.699997 101.7 104.4 110 115.6 118.4 124 129.5 135.10001 137.2 142.8 147.8 150.60001"
-     style="font-size:10px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationSans;-inkscape-font-specification:LiberationSans-Regular">Current map theater listed against </tspan></text>
-
-
-
-
-
+   inkscape:label="#path2426"
+   id="box_reqthea"
+   style="fill:#ffccff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.80000001;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+   d="M 53.7,724.6 L 450.4,724.6 L 450.4,743.3 L 53.7,743.3 L 53.7,724.6 z" /><text
+   id="text_map_theater"
+   transform="scale(1,-1)"
+   style="text-anchor:middle"
+   x="252"
+   y="-730.40002">Current map theater listed against <tspan
+   id="flag_1"
+   style="fill:#011eff;font-family:monospace"
+   sodipodi:role="inline">Prerequisite.RequiredTheaters</tspan></text>
 
 </g><g
-         transform="translate(0,1.6)"
-         id="g2436"
-         style="fill:#011eff;fill-opacity:1"><text
-   id="text2438"
-   transform="matrix(1,0,0,-1,243.7,729.6)"
-   style="fill:#011eff;fill-opacity:1"><tspan
-     id="tspan2440"
-     sodipodi:role="line"
-     y="0"
-     x="0 6 12 18 24 30 36 42 48 54 60 66 72 78 84 90 96 102 108 114 120 126 132 138 144 150 156 162 168"
-     style="font-size:10px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#011eff;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationMono;-inkscape-font-specification:LiberationMono-Regular">Prerequisite.RequiredTheaters</tspan></text>
-
-
-
-
-
-
-</g></g><g
        id="box_2"
        inkscape:label="#g4635"><path
-         inkscape:label="#path2488"
-         id="box_regneg"
-         style="fill:#ffccff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.80000001;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         d="M 53.7,688.6 L 450.4,688.6 L 450.4,707.3 L 53.7,707.3 L 53.7,688.6 z" /><g
-         transform="translate(0,1.6)"
-         id="g2490"><text
-   id="text2492"
-   transform="matrix(1,0,0,-1,105.4,693.6)"><tspan
-     id="tspan2494"
-     sodipodi:role="line"
-     y="0"
-     x="0 6.6999998 8.8999996 14.5 19.4 25 28.4 31.1 36.700001 43.799999 49.400002 54.5 57.299999 62.799999 68.400002 73.900002 76.699997 82.300003 85.599998 88.400002 96.699997 102.3 105.6 111.2 113.9 119.5 125.1 127.2 132.8 137.8 140.60001 145.60001 148.39999 151.2 154.5 160 168.39999"
-     style="font-size:10px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationSans;-inkscape-font-specification:LiberationSans-Regular">Player owns one or more objects from </tspan></text>
-
-
-
-
-
+   inkscape:label="#path2488"
+   id="box_regneg"
+   style="fill:#ffccff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.80000001;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+   d="M 53.7,688.6 L 450.4,688.6 L 450.4,707.3 L 53.7,707.3 L 53.7,688.6 z" /><text
+   id="text_req_neg"
+   transform="scale(1,-1)"
+   style="text-anchor:middle"
+   x="252"
+   y="-694.53052">Player owns one or more objects from <tspan
+   id="flag_2"
+   sodipodi:role="inline"
+   style="fill:#011eff;font-family:monospace">Prerequisite.Negative</tspan></text>
 
 </g><g
-         transform="translate(0,1.6)"
-         id="g2498"
-         style="fill:#011eff;fill-opacity:1"><text
-   id="text2500"
-   transform="matrix(1,0,0,-1,276.6,693.6)"
-   style="fill:#011eff;fill-opacity:1"><tspan
-     id="tspan2502"
-     sodipodi:role="line"
-     y="0"
-     x="0 6 12 18 24 30 36 42 48 54 60 66 72 78 84 90 96 102 108 114 120"
-     style="font-size:10px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#011eff;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationMono;-inkscape-font-specification:LiberationMono-Regular">Prerequisite.Negative</tspan></text>
-
-
-
-
-
-
-</g></g><g
        id="box_3"
        inkscape:label="#g4625"><path
-         inkscape:label="#path2512"
-         id="box_regover"
-         style="fill:#ccecff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.80000001;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         d="M 53.7,652.6 L 450.4,652.6 L 450.4,671.3 L 53.7,671.3 L 53.7,652.6 z" /><g
-         id="g2514"
-         transform="translate(0,1.6)"><text
-   id="text2516"
-   transform="matrix(1,0,0,-1,108.4,657.6)"><tspan
-     id="tspan2518"
-     sodipodi:role="line"
-     y="0"
-     x="0 6.6999998 8.8999996 14.5 19.4 25 28.4 31.1 36.700001 43.799999 49.400002 54.5 57.299999 62.799999 68.400002 73.900002 76.699997 82.300003 85.599998 88.400002 96.699997 102.3 105.6 111.2 113.9 119.5 125.1 127.2 132.8 137.8 140.60001 145.60001 148.39999 151.2 154.5 160 168.39999"
-     style="font-size:10px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationSans;-inkscape-font-specification:LiberationSans-Regular">Player owns one or more objects from </tspan></text>
-
-
-
-
-
+   inkscape:label="#path2512"
+   id="box_reqover"
+   style="fill:#ccecff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.80000001;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+   d="M 53.7,652.6 L 450.4,652.6 L 450.4,671.3 L 53.7,671.3 L 53.7,652.6 z" /><text
+   id="text_req_over"
+   transform="scale(1,-1)"
+   style="text-anchor:middle"
+   x="252"
+   y="-658.58362">Player owns one or more objects from <tspan
+   id="flag_3"
+   sodipodi:role="inline"
+   style="fill:#011eff;font-family:monospace">PrerequisiteOverride</tspan></text>
 
 </g><g
-         transform="translate(0,1.6)"
-         id="g2522"
-         style="fill:#e600ae;fill-opacity:1"><text
-   id="text2524"
-   transform="matrix(1,0,0,-1,279.6,657.6)"
-   style="fill:#e600ae;fill-opacity:1"><tspan
-     id="tspan2526"
-     sodipodi:role="line"
-     y="0"
-     x="0 6 12 18 24 30 36 42 48 54 60 66 72 78 84 90 96 102 108 114"
-     style="font-size:10px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#e600ae;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationMono;-inkscape-font-specification:LiberationMono-Regular">PrerequisiteOverride</tspan></text>
-
-
-
-
-
-
-</g></g><g
        id="box_4"
        inkscape:label="#g4619"><path
-         inkscape:label="#path2560"
-         id="box_seclab"
-         style="fill:#ccecff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.80000001;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         d="M 53.7,616.6 L 450.4,616.6 L 450.4,635.3 L 53.7,635.3 L 53.7,616.6 z" /><g
-         transform="translate(0,1.6)"
-         id="g2562"><text
-   id="text2564"
-   transform="matrix(1,0,0,-1,172.3,621.6)"><tspan
-     id="tspan2566"
-     sodipodi:role="line"
-     y="0"
-     x="0 7.8000002 13.4 15.5 21.1 26.1 28.9 31.700001 38.799999 44.400002 49.5 52.299999 57.900002 65 70.599998 73.900002 79.400002 85 90.599998 93.400002 99 103.9 106.7 112.3 115 121.7 127.3 132.3 135.60001 141.10001 143.89999 146.7 152.3 157.8"
-     style="font-size:10px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationSans;-inkscape-font-specification:LiberationSans-Regular">Object was awarded by a Secret Lab</tspan></text>
+   inkscape:label="#path2560"
+   id="box_seclab"
+   style="fill:#ccecff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.80000001;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+   d="M 53.7,616.6 L 450.4,616.6 L 450.4,635.3 L 53.7,635.3 L 53.7,616.6 z" /><text
+   id="text_sec_lab"
+   transform="scale(1,-1)"
+   style="text-anchor:middle"
+   x="252"
+   y="-622.91144">Object was awarded by a Secret Lab</text>
 
-
-
-
-
-
-</g></g><g
+</g><g
        id="box_5"
        inkscape:label="#g4612"><path
-         inkscape:label="#path2576"
-         id="box_techlev-1"
-         style="fill:#ccecff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.80000001;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         d="M 53.7,580.6 L 450.4,580.6 L 450.4,599.3 L 53.7,599.3 L 53.7,580.6 z" /><g
-         id="g2580"
-         style="fill:#e600ae;fill-opacity:1"><text
-   id="text2582"
-   transform="matrix(1,0,0,-1,218,586.6)"
-   style="fill:#e600ae;fill-opacity:1"><tspan
-     id="tspan2584"
-     sodipodi:role="line"
-     y="0"
-     x="0 6 12 18 24 30 36 42 48 54 60 66"
-     style="font-size:10px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#e600ae;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationMono;-inkscape-font-specification:LiberationMono-Regular">TechLevel=-1</tspan></text>
+   inkscape:label="#path2576"
+   id="box_techlvl-1"
+   style="fill:#ccecff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.80000001;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+   d="M 53.7,580.6 L 450.4,580.6 L 450.4,599.3 L 53.7,599.3 L 53.7,580.6 z" /><text
+   id="text_techlvl-1"
+   transform="scale(1,-1)"
+   style="text-anchor:middle;fill:#e600ae;font-family:monospace"
+   x="252"
+   y="-586.27216">TechLevel=-1</text>
 
-
-
-
-
-
-</g></g><g
+</g><g
        id="box_6"
        inkscape:label="#g4606"><path
-         inkscape:label="#path2594"
-         id="box_necstoltech"
-         style="fill:#ccecff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.80000001;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         d="M 53.7,544.6 L 450.4,544.6 L 450.4,563.3 L 53.7,563.3 L 53.7,544.6 z" /><g
-         transform="translate(0,1.6)"
-         id="g2596"><text
-   id="text2598"
-   transform="matrix(1,0,0,-1,174.2,549.6)"><tspan
-     id="tspan2600"
-     sodipodi:role="line"
-     y="0"
-     x="0 6.6999998 8.8999996 14.5 19.4 25 28.4 31.1 36.700001 42.299999 47.299999 50 55.599998 57.799999 60 62.799999 68.400002 73.900002 78.900002 84.5 89.5 94.5 100.1 103.4 108.4 111.2 116.1 118.9 124.5 126.7 132.2 137.8 140.60001 143.39999 148.89999 153.89999"
-     style="font-size:10px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationSans;-inkscape-font-specification:LiberationSans-Regular">Player has all necessary stolen tech</tspan></text>
+   inkscape:label="#path2594"
+   id="box_necstoltech"
+   style="fill:#ccecff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.80000001;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+   d="M 53.7,544.6 L 450.4,544.6 L 450.4,563.3 L 53.7,563.3 L 53.7,544.6 z" /><text
+   id="text_stol_tec"
+   transform="scale(1,-1)"
+   style="text-anchor:middle"
+   x="252"
+   y="-550.5">Player has all necessary stolen tech</text>
 
-
-
-
-
-
-</g></g><g
+</g><g
        id="box_7"
        inkscape:label="#g4596"><path
-         inkscape:label="#path2610"
-         id="box_reqhouse"
-         style="fill:#ccecff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.80000001;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         d="M 53.7,508.6 L 450.4,508.6 L 450.4,527.3 L 53.7,527.3 L 53.7,508.6 z" /><g
-         transform="translate(0,1.6)"
-         id="g2612"><text
-   id="text2614"
-   transform="matrix(1,0,0,-1,139.6,513.6)"><tspan
-     id="tspan2616"
-     sodipodi:role="line"
-     y="0"
-     x="0 6.6999998 8.8999996 14.5 19.4 25 28.299999 30.200001 35.299999 38.099998 43 48.599998 54.099998 59.700001 62.5 65.800003 70.800003 73.599998 75.800003 80.800003 83.599998 85.800003 88 93 95.800003 101.4 107 109.7 115.3 120.8 126.4 128.60001 134.2 139.2 142"
-     style="font-size:10px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationSans;-inkscape-font-specification:LiberationSans-Regular">Player's country is listed against </tspan></text>
-
-
-
-
-
+   inkscape:label="#path2610"
+   id="box_reqhouse"
+   style="fill:#ccecff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.80000001;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+   d="M 53.7,508.6 L 450.4,508.6 L 450.4,527.3 L 53.7,527.3 L 53.7,508.6 z" /><text
+   id="text_req_house"
+   transform="scale(1,-1)"
+   style="text-anchor:middle"
+   x="252"
+   y="-515">Player's country is listed against <tspan
+   id="flag_4"
+   sodipodi:role="inline"
+   style="fill:#e600ae;font-family:monospace">RequiredHouses</tspan></text>
 
 </g><g
-         transform="translate(0,1.6)"
-         id="g2620"
-         style="fill:#e600ae;fill-opacity:1"><text
-   id="text2622"
-   transform="matrix(1,0,0,-1,284.3,513.6)"
-   style="fill:#e600ae;fill-opacity:1"><tspan
-     id="tspan2624"
-     sodipodi:role="line"
-     y="0"
-     x="0 6 12 18 24 30 36 42 48 54 60 66 72 78"
-     style="font-size:10px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#e600ae;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationMono;-inkscape-font-specification:LiberationMono-Regular">RequiredHouses</tspan></text>
-
-
-
-
-
-
-</g></g><g
        id="box_8"
        inkscape:label="#g4586"><path
-         inkscape:label="#path2634"
-         id="box_forbhouse"
-         style="fill:#ccecff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.80000001;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         d="M 53.7,472.6 L 450.4,472.6 L 450.4,491.3 L 53.7,491.3 L 53.7,472.6 z" /><g
-         transform="translate(0,1.6)"
-         id="g2636"><text
-   id="text2638"
-   transform="matrix(1,0,0,-1,136.6,477.6)"><tspan
-     id="tspan2640"
-     sodipodi:role="line"
-     y="0"
-     x="0 6.6999998 8.8999996 14.5 19.4 25 28.299999 30.200001 35.299999 38.099998 43 48.599998 54.099998 59.700001 62.5 65.800003 70.800003 73.599998 75.800003 80.800003 83.599998 85.800003 88 93 95.800003 101.4 107 109.7 115.3 120.8 126.4 128.60001 134.2 139.2 142"
-     style="font-size:10px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationSans;-inkscape-font-specification:LiberationSans-Regular">Player's country is listed against </tspan></text>
-
-
-
-
-
+   inkscape:label="#path2634"
+   id="box_forbhouse"
+   style="fill:#ccecff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.80000001;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+   d="M 53.7,472.6 L 450.4,472.6 L 450.4,491.3 L 53.7,491.3 L 53.7,472.6 z" /><text
+   id="text_forb_house"
+   transform="scale(1,-1)"
+   style="text-anchor:middle"
+   x="252"
+   y="-478.58359">Player's country is listed against <tspan
+   id="flag_5"
+   sodipodi:role="inline"
+   style="fill:#e600ae;font-family:monospace">ForbiddenHouses</tspan></text>
 
 </g><g
-         transform="translate(0,1.6)"
-         id="g2644"
-         style="fill:#e600ae;fill-opacity:1"><text
-   id="text2646"
-   transform="matrix(1,0,0,-1,281.3,477.6)"
-   style="fill:#e600ae;fill-opacity:1"><tspan
-     id="tspan2648"
-     sodipodi:role="line"
-     y="0"
-     x="0 6 12 18 24 30 36 42 48 54 60 66 72 78 84"
-     style="font-size:10px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#e600ae;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationMono;-inkscape-font-specification:LiberationMono-Regular">ForbiddenHouses</tspan></text>
-
-
-
-
-
-
-</g></g><g
        id="box_9"
        inkscape:label="#g4555"><path
-         inkscape:label="#path2658"
-         id="box_buildtech"
-         style="fill:#ccecff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.80000001;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         d="M 53.7,418.6 L 450.4,418.6 L 450.4,455.3 L 53.7,455.3 L 53.7,418.6 z" /><g
-         id="g2660"><text
-   id="text2662"
-   transform="matrix(1,0,0,-1,85.1,440.7)"><tspan
-     id="tspan2664"
-     sodipodi:role="line"
-     y="0"
-     x="0 7.6999998 13.3 15.5 21.1 26.1 28.9 31.6 33.799999 38.900002 41.599998 47.200001 52.700001 55.5 58.299999 60.5 62.700001 67.699997 70.5 76.099998 81.699997 84.400002 90 95.5 101.1 103.3 108.9 113.9 116.7"
-     style="font-size:10px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationSans;-inkscape-font-specification:LiberationSans-Regular">Object is not listed against </tspan></text>
+   inkscape:label="#path2658"
+   id="box_buildtech"
+   style="fill:#ccecff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.80000001;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+   d="M 53.7,418.6 L 450.4,418.6 L 450.4,455.3 L 53.7,455.3 L 53.7,418.6 z" /><text
+   id="text_buildtech"
+   transform="scale(1,-1)"
+   style="text-anchor:middle"
+   x="252"
+   y="-440">Object is not listed against <tspan
+   id="flag_6"
+   sodipodi:role="inline"
+   style="fill:#e600ae;font-family:monospace">[AI]</tspan>►<tspan
+   id="flag_7"
+   sodipodi:role="inline"
+   style="fill:#e600ae;font-family:monospace">BuildTech</tspan>, object has a <tspan
+   id="flag_8"
+   sodipodi:role="inline"
+   style="fill:#e600ae;font-family:monospace">SuperWeapon</tspan>,</text>
 
-
-
-
-
-
-</g><g
-         id="g2668"
-         style="fill:#e600ae;fill-opacity:1"><text
-   id="text2670"
-   transform="matrix(1,0,0,-1,204.5,440.7)"
-   style="fill:#e600ae;fill-opacity:1"><tspan
-     id="tspan2672"
-     sodipodi:role="line"
-     y="0"
-     x="0 6 12 18"
-     style="font-size:10px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#e600ae;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationMono;-inkscape-font-specification:LiberationMono-Regular">[AI]</tspan></text>
-
-
-
-
-
+<text
+   id="text_disableable"
+   transform="scale(1,-1)"
+   style="text-anchor:middle"
+   x="252"
+   y="-427">and that super weapon has <tspan
+   id="flag_9"
+   sodipodi:role="inline"
+   style="fill:#e600ae;font-family:monospace">DisableableFromShell=yes</tspan> set</text>
 
 </g><g
-         id="g2676"
-         transform="translate(0.6315091,-0.8119403)"><text
-   transform="matrix(1,0,0,-1,228.5,440.7)"
-   id="text2678"><tspan
-     style="font-size:10px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:OpenSymbol;-inkscape-font-specification:OpenSymbol"
-     x="0"
-     y="0"
-     id="tspan2680">►</tspan></text>
-
-
-
-
-
-
-</g><g
-         id="g2684"
-         style="fill:#e600ae;fill-opacity:1"><text
-   id="text2686"
-   transform="matrix(1,0,0,-1,237.8,440.7)"
-   style="fill:#e600ae;fill-opacity:1"><tspan
-     id="tspan2688"
-     sodipodi:role="line"
-     y="0"
-     x="0 6 12 18 24 30 36 42 48"
-     style="font-size:10px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#e600ae;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationMono;-inkscape-font-specification:LiberationMono-Regular">BuildTech</tspan></text>
-
-
-
-
-
-
-</g><g
-         id="g2690"><text
-   id="text2692"
-   transform="matrix(1,0,0,-1,291.8,440.7)"><tspan
-     id="tspan2694"
-     sodipodi:role="line"
-     y="0"
-     x="0 2.8 5.5999999 11.1 16.700001 18.9 24.5 29.5 32.299999 35 40.599998 46.099998 51.099998 53.900002 59.5"
-     style="font-size:10px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationSans;-inkscape-font-specification:LiberationSans-Regular">, object has a </tspan></text>
-
-
-
-
-
-
-</g><g
-         id="g2704"><text
-   transform="matrix(1,0,0,-1,420.1,440.7)"
-   id="text2706"><tspan
-     style="font-size:10px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationSans;-inkscape-font-specification:LiberationSans-Regular"
-     x="0"
-     y="0"
-     id="tspan2708">,</tspan></text>
-
-
-
-
-
-
-</g><g
-         id="g2698"
-         style="fill:#e600ae;fill-opacity:1"><text
-   id="text2700"
-   transform="matrix(1,0,0,-1,354.1,440.7)"
-   style="fill:#e600ae;fill-opacity:1"><tspan
-     id="tspan2702"
-     sodipodi:role="line"
-     y="0"
-     x="0 6 12 18 24 30 36 42 48 54 60"
-     style="font-size:10px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#e600ae;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationMono;-inkscape-font-specification:LiberationMono-Regular">SuperWeapon</tspan></text>
-
-
-
-
-
-
-</g><g
-         id="g2710"><text
-   id="text2712"
-   transform="matrix(1,0,0,-1,112.3,428.3)"><tspan
-     id="tspan2714"
-     sodipodi:role="line"
-     y="0"
-     x="0 5.5 11.1 16.700001 19.4 22.200001 27.700001 33.299999 36.099998 38.900002 43.799999 49.400002 54.900002 60.5 63.900002 66.699997 73.800003 79.400002 85 90.5 96.099998 101.7 104.4 110 115.6 120.6"
-     style="font-size:10px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationSans;-inkscape-font-specification:LiberationSans-Regular">and that super weapon has </tspan></text>
-
-
-
-
-
-
-</g><g
-         id="g2718"
-         style="fill:#e600ae;fill-opacity:1"><text
-   id="text2720"
-   transform="matrix(1,0,0,-1,235.6,428.3)"
-   style="fill:#e600ae;fill-opacity:1"><tspan
-     id="tspan2722"
-     sodipodi:role="line"
-     y="0"
-     x="0 6 12 18 24 30 36 42 48 54 60 66 72 78 84 90 96 102 108 114 120 126 132 138"
-     style="font-size:10px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#e600ae;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationMono;-inkscape-font-specification:LiberationMono-Regular">DisableableFromShell=yes</tspan></text>
-
-
-
-
-
-
-</g><g
-         id="g2724"><text
-   id="text2726"
-   transform="matrix(1,0,0,-1,382.4,428.3)"><tspan
-     id="tspan2728"
-     sodipodi:role="line"
-     y="0"
-     x="0 5 10.5"
-     style="font-size:10px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationSans;-inkscape-font-specification:LiberationSans-Regular">set</tspan></text>
-
-
-
-
-
-
-</g></g><g
        id="box_10"
        inkscape:label="#g4537"><path
-         inkscape:label="#path3012"
-         id="box_mptechlvl"
-         style="fill:#ccecff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.80000001;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         d="M 53.7,382.6 L 450.4,382.6 L 450.4,401.3 L 53.7,401.3 L 53.7,382.6 z" /><g
-         transform="translate(0,1.6)"
-         id="g3016"
-         style="fill:#e600ae;fill-opacity:1"><text
-   id="text3018"
-   transform="matrix(1,0,0,-1,61.6,386.7)"
-   style="fill:#e600ae;fill-opacity:1"><tspan
-     id="tspan3020"
-     sodipodi:role="line"
-     y="0"
-     x="0 6 12 18 24 30 36 42 48"
-     style="font-size:10px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#e600ae;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationMono;-inkscape-font-specification:LiberationMono-Regular">TechLevel</tspan></text>
-
-
-
-
-
+   inkscape:label="#path3012"
+   id="box_mptechlvl"
+   style="fill:#ccecff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.80000001;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+   d="M 53.7,382.6 L 450.4,382.6 L 450.4,401.3 L 53.7,401.3 L 53.7,382.6 z" /><text
+   id="text_mp_techlvl"
+   transform="scale(1,-1)"
+   style="text-anchor:middle"
+   x="252"
+   y="-388.99509"><tspan
+   id="flag_10"
+   sodipodi:role="inline"
+   style="fill:#e600ae;font-family:monospace">TechLevel</tspan>is less than or equal to <tspan
+   id="flag_11"
+   sodipodi:role="inline"
+   style="fill:#e600ae;font-family:monospace">[MultiplayerDialogSettings]</tspan>►<tspan
+   id="flag_12"
+   sodipodi:role="inline"
+   style="font-size:10px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#e600ae;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationMono;-inkscape-font-specification:LiberationMono-Regular">TechLevel</tspan></text>
 
 </g><g
-         transform="translate(0,1.6)"
-         id="g3022"><text
-   id="text3024"
-   transform="matrix(1,0,0,-1,118.4,386.7)"><tspan
-     id="tspan3026"
-     sodipodi:role="line"
-     y="0"
-     x="0 2.2 7.1999998 10 12.1 17.700001 22.700001 27.700001 30.5 33.299999 38.799999 44.400002 50 52.700001 58.299999 61.599998 64.400002 70 75.5 81 86.599998 88.900002 91.599998 94.400002 100"
-     style="font-size:10px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationSans;-inkscape-font-specification:LiberationSans-Regular">is less than or equal to </tspan></text>
-
-
-
-
-
-
-</g><g
-         transform="translate(0,1.6)"
-         id="g3030"
-         style="fill:#e600ae;fill-opacity:1"><text
-   id="text3032"
-   transform="matrix(1,0,0,-1,221.1,386.7)"
-   style="fill:#e600ae;fill-opacity:1"><tspan
-     id="tspan3034"
-     sodipodi:role="line"
-     y="0"
-     x="0 6 12 18 24 30 36 42 48 54 60 66 72 78 84 90 96 102 108 114 120 126 132 138 144 150 156"
-     style="font-size:10px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#e600ae;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationMono;-inkscape-font-specification:LiberationMono-Regular">[MultiplayerDialogSettings]</tspan></text>
-
-
-
-
-
-
-</g><g
-         id="g3038"
-         transform="translate(0,0.9359867)"><text
-   transform="matrix(1,0,0,-1,383.1,386.7)"
-   id="text3040"><tspan
-     style="font-size:10px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:OpenSymbol;-inkscape-font-specification:OpenSymbol"
-     x="0"
-     y="0"
-     id="tspan3042">►</tspan></text>
-
-
-
-
-
-
-</g><g
-         transform="translate(0,1.6)"
-         id="g3046"
-         style="fill:#e600ae;fill-opacity:1"><text
-   id="text3048"
-   transform="matrix(1,0,0,-1,392.4,386.7)"
-   style="fill:#e600ae;fill-opacity:1"><tspan
-     id="tspan3050"
-     sodipodi:role="line"
-     y="0"
-     x="0 6 12 18 24 30 36 42 48"
-     style="font-size:10px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#e600ae;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationMono;-inkscape-font-specification:LiberationMono-Regular">TechLevel</tspan></text>
-
-
-
-
-
-
-</g></g><g
        id="box_11"
        inkscape:label="#g4531"><path
-         inkscape:label="#path3084"
-         id="box_human"
-         style="fill:#ccecff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.80000001;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         d="M 53.7,346.6 L 450.4,346.6 L 450.4,365.3 L 53.7,365.3 L 53.7,346.6 z" /><g
-         transform="translate(0,1.6)"
-         id="g3086"><text
-   id="text3088"
-   transform="matrix(1,0,0,-1,113.1,351.6)"><tspan
-     id="tspan3090"
-     sodipodi:role="line"
-     y="0"
-     x="0 6.6999998 8.8999996 14.5 19.4 25 28.4 31.1 33.299999 38.400002 41.099998 46.700001 52.200001 60.599998 66.099998 71.699997 75 80 85.599998 91.099998 93.900002 97.199997 102.8 105 107.2 112.8 118.4 121.2 124.5 130.10001 135.10001 137.8 143.39999 148.89999 154.5 160.10001 165 170.60001 176.2 179 181.7 187.3 190.10001 195 200.60001 208.89999 214.5 220.10001 222.8 228.39999 231.7 235.10001 240 245.60001 251.2 254 257.29999 262.89999 265.10001 267.29999 272.79999 278.39999"
-     style="font-size:10px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationSans;-inkscape-font-specification:LiberationSans-Regular">Player is human-controlled (as opposed to computer-controlled)</tspan></text>
+   inkscape:label="#path3084"
+   id="box_human"
+   style="fill:#ccecff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.80000001;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+   d="M 53.7,346.6 L 450.4,346.6 L 450.4,365.3 L 53.7,365.3 L 53.7,346.6 z" /><text
+   id="text_human"
+   transform="scale(1,-1)"
+   style="text-anchor:middle"
+   x="252"
+   y="-353">Player is human-controlled (as opposed to computer-controlled)</text>
 
-
-
-
-
-
-</g></g><g
+</g><g
        id="box_12"
        inkscape:label="#g4507"><path
-         inkscape:label="#path3148"
-         id="box_prereq"
-         style="fill:#ffccff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.80000001;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         d="M 53.7,292.5 L 450.4,292.5 L 450.4,329.2 L 53.7,329.2 L 53.7,292.5 z" /><g
-         id="g3150"><text
-   id="text3152"
-   transform="matrix(1,0,0,-1,112.4,315.4)"><tspan
-     id="tspan3154"
-     sodipodi:role="line"
-     y="0"
-     x="0 6.6999998 8.8999996 14.5 19.4 25 28.4 31.1 36.700001 43.799999 49.400002 54.5 57.299999 62.799999 65.599998 68.400002 70.599998 76.099998 81.699997 86.699997 89.5 92.300003 97.800003 103.4 108.9 111.7 117.3 120 122.8 128.39999 133.89999 138.89999 144.5 147.3 152.8 158.39999 160.60001 166.2 171.10001 173.89999 176.7 179.60001 182.8 188.39999 196.7"
-     style="font-size:10px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationSans;-inkscape-font-specification:LiberationSans-Regular">Player owns at least one of each object from </tspan></text>
+   inkscape:label="#path3148"
+   id="box_prereq"
+   style="fill:#ffccff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.80000001;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+   d="M 53.7,292.5 L 450.4,292.5 L 450.4,329.2 L 53.7,329.2 L 53.7,292.5 z" /><text
+   id="text_prereq"
+   transform="scale(1,-1)"
+   style="text-anchor:middle"
+   x="252"
+   y="-314">Player owns at least one of each object from <tspan
+   id="flag_13"
+   sodipodi:role="inline"
+   style="fill:#011eff;font-family:monospace">Prerequisite</tspan> or</text>
 
-
-
-
-
-
-</g><g
-         id="g3158"
-         style="fill:#011eff;fill-opacity:1"><text
-   id="text3160"
-   transform="matrix(1,0,0,-1,311.9,315.4)"
-   style="fill:#011eff;fill-opacity:1"><tspan
-     id="tspan3162"
-     sodipodi:role="line"
-     y="0"
-     x="0 6 12 18 24 30 36 42 48 54 60 66"
-     style="font-size:10px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#011eff;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationMono;-inkscape-font-specification:LiberationMono-Regular">Prerequisite</tspan></text>
-
-
-
-
-
+<text
+   transform="scale(1,-1)"
+   id="text_prereq_list"
+   x="252"
+   y="-301"
+   style="text-anchor:middle"><tspan
+   style="fill:#011eff;font-family:monospace"
+   sodipodi:role="inline"
+   id="tspan3923">Prerequisite.List#</tspan> where # is between 1 and <tspan
+   style="fill:#011eff;font-family:monospace"
+   sodipodi:role="inline"
+   id="flag_15">Prerequisite.Lists</tspan></text>
 
 </g><g
-         id="g3164"><text
-   id="text3166"
-   transform="matrix(1,0,0,-1,386.7,315.4)"><tspan
-     id="tspan3168"
-     sodipodi:role="line"
-     y="0"
-     x="0 5.5"
-     style="font-size:10px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationSans;-inkscape-font-specification:LiberationSans-Regular">or</tspan></text>
-
-
-
-
-
-
-</g><g
-         id="g3174"
-         style="fill:#011eff;fill-opacity:1"><text
-   id="text3176"
-   transform="matrix(1,0,0,-1,86.3,303)"
-   style="fill:#011eff;fill-opacity:1"><tspan
-     id="tspan3178"
-     sodipodi:role="line"
-     y="0"
-     x="0 6 12 18 24 30 36 42 48 54 60 66 72 78 84 90 96 102"
-     style="font-size:10px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#011eff;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationMono;-inkscape-font-specification:LiberationMono-Regular">Prerequisite.List#</tspan></text>
-
-
-
-
-
-
-</g><g
-         id="g3180"><text
-   id="text3182"
-   transform="matrix(1,0,0,-1,197.1,303)"><tspan
-     id="tspan3184"
-     sodipodi:role="line"
-     y="0"
-     x="0 7.0999999 12.7 18.299999 21.6 27.200001 30 35.5 38.299999 40.5 45.5 48.299999 53.799999 59.400002 62.200001 69.300003 74.900002 80.5 86.099998 88.900002 94.400002 97.199997 102.7 108.3 113.9"
-     style="font-size:10px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationSans;-inkscape-font-specification:LiberationSans-Regular">where # is between 1 and </tspan></text>
-
-
-
-
-
-
-</g><g
-         id="g3188"
-         style="fill:#011eff;fill-opacity:1"><text
-   id="text3190"
-   transform="matrix(1,0,0,-1,313.7,303)"
-   style="fill:#011eff;fill-opacity:1"><tspan
-     id="tspan3192"
-     sodipodi:role="line"
-     y="0"
-     x="0 6 12 18 24 30 36 42 48 54 60 66 72 78 84 90 96 102"
-     style="font-size:10px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#011eff;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationMono;-inkscape-font-specification:LiberationMono-Regular">Prerequisite.Lists</tspan></text>
-
-
-
-
-
-
-</g></g><g
        id="box_13"
        inkscape:label="#g4497"><path
-         inkscape:label="#path3226"
-         id="box_bl_positive"
-         style="fill:#ccecff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.80000001;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         d="M 53.7,256.6 L 450.4,256.6 L 450.4,275.3 L 53.7,275.3 L 53.7,256.6 z" /><g
-         transform="translate(0,1.6)"
-         id="g3230"
-         style="fill:#e600ae;fill-opacity:1"><text
-   id="text3232"
-   transform="matrix(1,0,0,-1,200.6,261.6)"
-   style="fill:#e600ae;fill-opacity:1"><tspan
-     id="tspan3234"
-     sodipodi:role="line"
-     y="0"
-     x="0 6 12 18 24 30 36 42 48 54"
-     style="font-size:10px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#e600ae;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationMono;-inkscape-font-specification:LiberationMono-Regular">BulidLimit</tspan></text>
-
-
-
-
-
+   inkscape:label="#path3226"
+   id="box_bl_positive"
+   style="fill:#ccecff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.80000001;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+   d="M 53.7,256.6 L 450.4,256.6 L 450.4,275.3 L 53.7,275.3 L 53.7,256.6 z" /><text
+   id="text_buildlimit"
+   transform="scale(1,-1)"
+   style="text-anchor:middle"
+   x="252"
+   y="-262.58362"><tspan
+   id="flag_14"
+   sodipodi:role="inline"
+   style="fill:#e600ae;font-family:monospace">BuildLimit</tspan> is positive</text>
 
 </g><g
-         transform="translate(0,1.6)"
-         id="g3236"><text
-   id="text3238"
-   transform="matrix(1,0,0,-1,263.4,261.6)"><tspan
-     id="tspan3240"
-     sodipodi:role="line"
-     y="0"
-     x="0 2.2 7.1999998 10 15.6 21.1 26.1 28.299999 31.1 33.299999 38.200001"
-     style="font-size:10px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationSans;-inkscape-font-specification:LiberationSans-Regular">is positive</tspan></text>
-
-
-
-
-
-
-</g></g><g
        id="box_14"
        inkscape:label="#g4477"><path
-         inkscape:label="#path3274"
-         id="box_bl_reached_yes"
-         style="fill:#ccecff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.80000001;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         d="M 53.7,220.6 L 243.4,220.6 L 243.4,239.3 L 53.7,239.3 L 53.7,220.6 z" /><g
-         transform="translate(0,1.6)"
-         id="g3278"
-         style="fill:#e600ae;fill-opacity:1"><text
-   id="text3280"
-   transform="matrix(1,0,0,-1,101,225.6)"
-   style="fill:#e600ae;fill-opacity:1"><tspan
-     id="tspan3282"
-     sodipodi:role="line"
-     y="0"
-     x="0 6 12 18 24 30 36 42 48 54"
-     style="font-size:10px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#e600ae;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationMono;-inkscape-font-specification:LiberationMono-Regular">BuildLimit</tspan></text>
-
-
-
-
-
+   inkscape:label="#path3274"
+   id="box_bl_reached_yes"
+   style="fill:#ccecff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.80000001;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+   d="M 53.7,220.6 L 243.4,220.6 L 243.4,239.3 L 53.7,239.3 L 53.7,220.6 z" /><text
+   id="text_buildlimit_reached_yes"
+   transform="scale(1,-1)"
+   style="text-anchor:middle"
+   x="144"
+   y="-227"><tspan
+   id="flag_16"
+   sodipodi:role="inline"
+   style="fill:#e600ae;font-family:monospace">BuildLimit</tspan> reached</text>
 
 </g><g
-         transform="translate(0,1.6)"
-         id="g3284"><text
-   id="text3286"
-   transform="matrix(1,0,0,-1,163.8,225.6)"><tspan
-     id="tspan3288"
-     sodipodi:role="line"
-     y="0"
-     x="0 3.3 8.8999996 14.5 19.4 25 30.5"
-     style="font-size:10px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationSans;-inkscape-font-specification:LiberationSans-Regular">reached</tspan></text>
-
-
-
-
-
-
-</g></g><g
        id="box_15"
        inkscape:label="#g4487"><path
-         inkscape:label="#path3322"
-         id="box_bl_reached_no"
-         style="fill:#ccecff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.80000001;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         d="M 260.7,220.6 L 450.4,220.6 L 450.4,239.3 L 260.7,239.3 L 260.7,220.6 z" /><g
-         transform="translate(0,1.6)"
-         id="g3326"
-         style="fill:#e600ae;fill-opacity:1"><text
-   id="text3328"
-   transform="matrix(1,0,0,-1,308,225.6)"
-   style="fill:#e600ae;fill-opacity:1"><tspan
-     id="tspan3330"
-     sodipodi:role="line"
-     y="0"
-     x="0 6 12 18 24 30 36 42 48 54"
-     style="font-size:10px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#e600ae;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationMono;-inkscape-font-specification:LiberationMono-Regular">BuildLimit</tspan></text>
-
-
-
-
-
+   inkscape:label="#path3322"
+   id="box_bl_reached_no"
+   style="fill:#ccecff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.80000001;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+   d="M 260.7,220.6 L 450.4,220.6 L 450.4,239.3 L 260.7,239.3 L 260.7,220.6 z" /><text
+   id="text_buildlimit_reached_no"
+   transform="scale(1,-1)"
+   style="text-anchor:middle"
+   x="360"
+   y="-227"><tspan
+   id="flag_17"
+   sodipodi:role="inline"
+   style="fill:#e600ae;font-family:monospace">BuildLimit</tspan> reached</text>
 
 </g><g
-         transform="translate(0,1.6)"
-         id="g3332"><text
-   id="text3334"
-   transform="matrix(1,0,0,-1,370.8,225.6)"><tspan
-     id="tspan3336"
-     sodipodi:role="line"
-     y="0"
-     x="0 3.3 8.8999996 14.5 19.4 25 30.5"
-     style="font-size:10px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationSans;-inkscape-font-specification:LiberationSans-Regular">reached</tspan></text>
-
-
-
-
-
-
-</g></g><g
        id="box_17"
        inkscape:label="#g4459"><path
-         inkscape:label="#path3372"
-         id="box_buildable"
-         style="fill:#ccffcc;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.80000001;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         d="M 152.7,166.6 L 351.4,166.6 L 351.4,203.3 L 152.7,203.3 L 152.7,166.6 z" /><g
-         id="g3374"><text
+   inkscape:label="#path3372"
+   id="box_buildable"
+   style="fill:#ccffcc;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.80000001;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+   d="M 152.7,166.6 L 351.4,166.6 L 351.4,203.3 L 152.7,203.3 L 152.7,166.6 z" /><text
    id="text3376"
    transform="scale(1,-1)"
-   x="233.39999"
-   y="-188"><tspan
-     id="tspan3378"
-     sodipodi:role="line"
-     y="-188"
-     x="233.39999 240.10001 245.7 247.89999 250.10001 255.60001 261.20001 266.79999 269"
-     style="font-size:10px;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationSans;-inkscape-font-specification:LiberationSans-Regular">Buildable</tspan></text>
+   x="252"
+   y="-187"
+   style="font-size:120.00579834%;font-weight:bold;text-anchor:middle">Buildable</text>
 
-
-
-
-
-
-</g><g
-         id="g3380"><text
+<text
    id="text3382"
    transform="scale(1,-1)"
-   x="224"
-   y="-176.5"><tspan
-     id="tspan3384"
-     sodipodi:role="line"
-     y="-176.5"
-     x="224 230.60001 236.2 241.8 249 251.8 258.89999 264.5 272.79999 278.39999"
-     style="font-size:10px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationSans;-inkscape-font-specification:LiberationSans-Regular">Show Cameo</tspan></text>
+   x="252"
+   y="-175"
+   style="text-anchor:middle">Show Cameo</text>
 
-
-
-
-
-
-</g></g><g
+</g><g
        id="box_16"
        inkscape:label="#g4468"><path
-         inkscape:label="#path3418"
-         id="box_unbuildable_grey"
-         style="fill:#ffffcc;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.80000001;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         d="M 53.7,166.6 L 144.4,166.6 L 144.4,203.3 L 53.7,203.3 L 53.7,166.6 z" /><g
-         id="g3420"><text
-   id="text3422"
+   inkscape:label="#path3418"
+   id="box_unbuildable_grey"
+   style="fill:#ffffcc;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.80000001;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+   d="M 53.7,166.6 L 144.4,166.6 L 144.4,203.3 L 53.7,203.3 L 53.7,166.6 z" /><text
+   id="text_unbuildable_gray"
    transform="scale(1,-1)"
-   x="73"
-   y="-188"><tspan
-     id="tspan3424"
-     sodipodi:role="line"
-     y="-188"
-     x="73 80.200005 85.700005 91.300003 96.900002 99.099998 101.3 106.8 112.4 118 120.2"
-     style="font-size:10px;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationSans;-inkscape-font-specification:LiberationSans-Regular">Unbuildable</tspan></text>
+   x="99"
+   y="-187"
+   style="font-size:120.0088501%;font-weight:bold;text-anchor:middle">Unbuildable</text>
 
-
-
-
-
+<text
+   id="text_gray_cameo"
+   transform="scale(1,-1)"
+   x="99"
+   y="-175"
+   style="text-anchor:middle">Gray Cameo</text>
 
 </g><g
-         id="g3426"><text
-   id="text3428"
-   transform="scale(1,-1)"
-   x="71"
-   y="-176.5"><tspan
-     id="tspan3430"
-     sodipodi:role="line"
-     y="-176.5"
-     x="71 78.800003 82.099998 87.700005 92.700005 95.5 102.7 108.2 116.6 122.1"
-     style="font-size:10px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationSans;-inkscape-font-specification:LiberationSans-Regular">Gray Cameo</tspan></text>
-
-
-
-
-
-
-</g></g><g
        id="box_18"
        inkscape:label="#g4450"><path
-         inkscape:label="#path3440"
-         id="box_unbuildable_hide"
-         style="fill:#ff9999;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.80000001;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         d="M 359.7,166.6 L 450.4,166.6 L 450.4,203.3 L 359.7,203.3 L 359.7,166.6 z" /><g
-         id="g3442"><text
-   id="text3444"
+   inkscape:label="#path3440"
+   id="box_unbuildable_hide"
+   style="fill:#ff9999;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.80000001;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+   d="M 359.7,166.6 L 450.4,166.6 L 450.4,203.3 L 359.7,203.3 L 359.7,166.6 z" /><text
+   id="text_unbuildable_hide"
    transform="scale(1,-1)"
-   x="380.60001"
-   y="-188"><tspan
-     id="tspan3446"
-     sodipodi:role="line"
-     y="-188"
-     x="380.60001 387.79999 393.29999 398.89999 404.5 406.70001 408.89999 414.39999 420 425.60001 427.79999"
-     style="font-size:10px;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationSans;-inkscape-font-specification:LiberationSans-Regular">Unbuildable</tspan></text>
+   y="-187"
+   x="405"
+   style="font-size:120.01037598%;font-weight:bold;text-anchor:middle">Unbuildable</text>
 
-
-
-
-
-
-</g><g
-         id="g3448"><text
-   id="text3450"
+<text
+   id="text_hide_cameo"
    transform="scale(1,-1)"
-   x="379.20001"
-   y="-176.5"><tspan
-     id="tspan3452"
-     sodipodi:role="line"
-     y="-176.5"
-     x="379.20001 386.39999 388.60001 394.10001 399.70001 402.5 409.70001 415.29999 423.60001 429.20001"
-     style="font-size:10px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationSans;-inkscape-font-specification:LiberationSans-Regular">Hide Cameo</tspan></text>
+   x="405"
+   y="-175"
+   style="text-anchor:middle">Hide Cameo</text>
 
-
-
-
-
-
-</g></g></g><g
+</g></g><g
      inkscape:groupmode="layer"
      id="lines"
      inkscape:label="Arrows &amp; Labels"
-     style="display:inline"
+     style="font-size:8px;display:inline"
      transform="translate(0,-80)"><g
        id="lines_middle_yes_1"
        inkscape:label="#g18043"><g
          id="g2476"
          transform="matrix(1.25,0,0,-1.25,2,1056.5)"><text
-           id="text2484"
-           transform="matrix(1,0,0,-1,254.404,717.5)"><tspan
-             id="tspan2486"
-             sodipodi:role="line"
-             y="0"
-             x="0 5.1999998 10.504"
-             style="font-size:8px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#008000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationSans;-inkscape-font-specification:LiberationSans-Regular">YES</tspan></text>
+   id="text2484"
+   transform="matrix(1,0,0,-1,254.404,717.5)"
+   style="fill:#008000">YES</text>
+
+
 </g><path
          sodipodi:nodetypes="cc"
          id="path4916"
@@ -1356,6 +793,8 @@
 
 
 
+
+
 </g></g><path
          style="opacity:0.98999999;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#008000;stroke-width:0.99831343px;stroke-linecap:butt;stroke-linejoin:miter;marker-end:url(#TriangleOutLW);stroke-opacity:1"
          d="M 314.99241,191.2397 L 314.99241,208.14263"
@@ -1374,6 +813,8 @@
      y="0"
      x="0 5.8000002"
      style="font-size:8px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#ff0000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationSans;-inkscape-font-specification:LiberationSans-Regular">NO</tspan></text>
+
+
 
 
 
@@ -1405,6 +846,8 @@
 
 
 
+
+
 </g></g><path
          style="opacity:0.98999999;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#ff0000;stroke-width:0.99831343px;stroke-linecap:butt;stroke-linejoin:miter;marker-end:url(#TriangleOutLWI);stroke-opacity:1"
          d="M 314.99241,281.2397 L 314.99241,298.14263"
@@ -1424,6 +867,8 @@
      y="0"
      x="0 5.8000002"
      style="font-size:8px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#008000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationSans;-inkscape-font-specification:LiberationSans-Regular">NO</tspan></text>
+
+
 
 
 
@@ -1455,6 +900,8 @@
 
 
 
+
+
 </g></g><path
          style="opacity:0.98999999;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#008000;stroke-width:0.99831343px;stroke-linecap:butt;stroke-linejoin:miter;marker-end:url(#TriangleOutLW);stroke-opacity:1"
          d="M 314.99241,371.2397 L 314.99241,388.14263"
@@ -1474,6 +921,8 @@
      y="0"
      x="0 5.1999998 10.504"
      style="font-size:8px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#008000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationSans;-inkscape-font-specification:LiberationSans-Regular">YES</tspan></text>
+
+
 
 
 
@@ -1505,6 +954,8 @@
 
 
 
+
+
 </g></g><path
          style="opacity:0.98999999;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#008000;stroke-width:0.99831343px;stroke-linecap:butt;stroke-linejoin:miter;marker-end:url(#TriangleOutLW);stroke-opacity:1"
          d="M 314.99241,461.2397 L 314.99241,478.14263"
@@ -1524,6 +975,8 @@
      y="0"
      x="0 5.8000002"
      style="font-size:8px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#008000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationSans;-inkscape-font-specification:LiberationSans-Regular">NO</tspan></text>
+
+
 
 
 
@@ -1555,6 +1008,8 @@
 
 
 
+
+
 </g></g><path
          style="opacity:0.98999999;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#008000;stroke-width:0.99831343px;stroke-linecap:butt;stroke-linejoin:miter;marker-end:url(#TriangleOutLW);stroke-opacity:1"
          d="M 314.99241,573.7397 L 314.99241,590.64263"
@@ -1574,6 +1029,8 @@
      y="0"
      x="0 5.1999998 10.504"
      style="font-size:8px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#ff0000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationSans;-inkscape-font-specification:LiberationSans-Regular">YES</tspan></text>
+
+
 
 
 
@@ -1605,6 +1062,8 @@
 
 
 
+
+
 </g></g><path
          style="opacity:0.98999999;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#008000;stroke-width:0.99831343px;stroke-linecap:butt;stroke-linejoin:miter;marker-end:url(#TriangleOutLW);stroke-opacity:1"
          d="M 314.99241,686.3897 L 314.99241,703.29263"
@@ -1624,6 +1083,8 @@
      y="0"
      x="0 5.1999998 10.504"
      style="font-size:8px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#008000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationSans;-inkscape-font-specification:LiberationSans-Regular">YES</tspan></text>
+
+
 
 
 
@@ -1656,6 +1117,8 @@
 
 
 
+
+
 </g></g><path
          style="opacity:0.98999999;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#ff0000;stroke-width:0.99831343px;stroke-linecap:butt;stroke-linejoin:miter;marker-end:url(#TriangleOutLWV);stroke-opacity:1"
          d="M 449.99241,731.2397 L 449.99241,748.14263"
@@ -1675,6 +1138,8 @@
      y="0"
      x="0 5.1999998 10.504"
      style="font-size:8px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#ff0000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationSans;-inkscape-font-specification:LiberationSans-Regular">YES</tspan></text>
+
+
 
 
 
@@ -1706,6 +1171,8 @@
 
 
 
+
+
 </g></g><path
          sodipodi:nodetypes="cc"
          id="path13914"
@@ -1731,6 +1198,8 @@
 
 
 
+
+
 </g></g><path
          style="opacity:0.98999999;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#008000;stroke-width:0.99831343px;stroke-linecap:butt;stroke-linejoin:miter;marker-end:url(#TriangleOutLW);stroke-opacity:1"
          d="M 382.49241,776.2397 L 382.49241,793.14263"
@@ -1750,6 +1219,8 @@
      y="0"
      x="0 5.1999998 10.504"
      style="font-size:8px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#ff0000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationSans;-inkscape-font-specification:LiberationSans-Regular">YES</tspan></text>
+
+
 
 
 
@@ -1782,6 +1253,8 @@
 
 
 
+
+
 </g></g></g><g
          id="g2548"
          style="display:inline"
@@ -1795,6 +1268,8 @@
      y="0"
      x="0 5.1999998 10.6"
      style="font-size:8px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#008000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationSans;-inkscape-font-specification:LiberationSans-Regular">YES</tspan></text>
+
+
 
 
 
@@ -1830,6 +1305,8 @@
 
 
 
+
+
 </g></g><path
          sodipodi:nodetypes="ccccc"
          id="path16188"
@@ -1856,6 +1333,8 @@
 
 
 
+
+
 </g></g></g><g
          id="g2762"
          style="display:inline"
@@ -1870,6 +1349,8 @@
      y="0"
      x="0 5.1999998 10.6"
      style="font-size:8px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#ff0000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationSans;-inkscape-font-specification:LiberationSans-Regular">YES</tspan></text>
+
+
 
 
 
@@ -1896,6 +1377,8 @@
 
 
 
+
+
 </g></g></g><g
          id="g2870"
          style="display:inline"
@@ -1910,6 +1393,8 @@
      y="0"
      x="0 5.8000002"
      style="font-size:8px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#ff0000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationSans;-inkscape-font-specification:LiberationSans-Regular">NO</tspan></text>
+
+
 
 
 
@@ -1936,6 +1421,8 @@
 
 
 
+
+
 </g></g></g><g
          id="g2922"
          style="display:inline"
@@ -1950,6 +1437,8 @@
      y="0"
      x="0 5.8000002"
      style="font-size:8px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#ff0000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationSans;-inkscape-font-specification:LiberationSans-Regular">NO</tspan></text>
+
+
 
 
 
@@ -1976,6 +1465,8 @@
 
 
 
+
+
 </g></g></g><g
          id="g3136"
          style="display:inline"
@@ -1989,6 +1480,8 @@
      y="0"
      x="0 5.8000002"
      style="font-size:8px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#ff0000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationSans;-inkscape-font-specification:LiberationSans-Regular">NO</tspan></text>
+
+
 
 
 
@@ -2009,6 +1502,8 @@
      y="0"
      x="0 5.8000002"
      style="font-size:8px;font-variant:normal;font-weight:normal;writing-mode:lr-tb;fill:#ff0000;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:LiberationSans;-inkscape-font-specification:LiberationSans-Regular">NO</tspan></text>
+
+
 
 
 

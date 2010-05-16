@@ -6,180 +6,17 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<title>Ares 0.1 Manual</title>
 	<script type="text/javascript" src="./jquery-1.4.2.min.js"></script>
-	<style type="text/css">
-		BODY {
-			font-size: 11pt;
-			font-family: Helvetica, "Nimbus Sans L", Arial, "DejaVu Sans", sans-serif;
-			background-color: #666666;
-			color: #444444;
-			margin: 0px;
-			padding: 0px;
-		}
-		A {
-			text-decoration: none;
-		}
-		UL.nobullets, OL.nobullets, DL.nobullets {
-			list-style-type: none;
-		}
-		DL.flaglist DT {
-			font-weight: bold;
-			font-family: monospace;
-			font-size: 10pt;
-			color: #333333;
-			background-color: #F8F8F8;
-		}
-		DL.flaglist DD {
-			font-size: small;
-			margin-bottom: 1em;
-		}
-		H1, H2, H3, H4, H5, H6 {
-			margin-bottom: 0.3em;
-		}
-		H2 {
-			border-top: 1px dashed #777777;
-			color: #333333;
-		}
-		P {
-			margin-top: 0.1em;
-		}
-		DFN, VAR {
-			display: none;
-		}
-		CODE {
-			background-color: #EEEEEE;
-			color: #333333;
-		}
-		CAPTION {
-			font-weight: bold;
-			font-size: larger;
-		}
-		A, A:link {
-			color: #0093dd;
-			text-decoration: none;
-		}
-		A:visited {
-			color: #0080c4;
-		}
-		A:hover {
-			color: #009ceb;
-			text-decoration: underline;
-		}
-		A:active {
-			color: #00a5f7;
-		}
-		table.flagslist {
-			width: 95%;
-			border: 1px solid #AAAAAA;
-			border-collapse: collapse;
-			margin-bottom: 1em;
-		}
-		table.flagslist td {
-			padding: 0.1em 0.5em;
-			border-style: solid;
-			border-color: #AAAAAA;
-			border-width: 0px;
-		}
-		table.flagslist tr.section td {
-			padding-top: 0.5em;
-			border-top-width: 1px;
-			border-right-width: 0px;
-			border-left-width: 0px;
-			background-color: #F8F8F8;
-		}
-		table.flagslist td:first-child {
-			border-right-width: 1px;
-		}
-		table.flagslist td:last-child {
-			border-left-width: 1px;
-		}
-		#wrapper {
-			background-color: #FEFEFE;
-			max-width: 960px;
-			margin-left: auto;
-			margin-right: auto;
-			-moz-box-shadow: 0px 0px 25px black;
-			-webkit-box-shadow: 0px 0px 25px black;
-			box-shadow: 0px 0px 25px black;
-			padding: 1em;
-			border: 1px solid #000000;
-		}
-		#wrapper IMG {
-			border: 3px double #333333;
-			display: block;
-			margin: 1em auto 1em auto;
-		}
-		#toplink {
-			position: fixed;
-			bottom: 4px;
-			right: 4px;
-		}
-		#toplink, #toplink A, #toplink A:link, #toplink A:visited {
-			color: #61c2f2;
-		}
-		#toctoggle {
-			font-weight: bold;
-		}
-		#ares_version_selector {
-			float: right;
-		}
-		#toc:focus {
-			display: block;
-		}
-		.red {
-			color: red;
-		}
-		.note {
-			/*font-weight: bold;*/
-			color: #DD4400;
-			font-size: 90%;
-			font-style: italic;
-		}
-		.toc-H2 {
-			font-weight: bold;
-		}
-		.toc-H3 {
-			margin-left: 2em;
-		}
-		.toc-H4 {
-			margin-left: 4em;
-			font-size: small;
-		}
-		.toc-H5 {
-			margin-left: 6em;
-			font-size: x-small;
-		}
-		.pseudo {
-			display: none;
-		}
-		.ares02 {
-			display: none;
-			border: 1px dashed Gray;
-			padding: 0.3em;
-		}
-		.gamename {
-			font-variant: small-caps;
-		}
-		.filename {
-			font-family: monospace;
-		}
-		.type {
-			font-family: monospace;
-		}
-		.tt {
-			font-family: monospace;
-		}
-		.inset {
-			margin-left: 2em;
-		}
-		.blockcenter {
-			display: block;
-			margin-left: auto;
-			margin-right: auto;
-		}
-		div.ares02 H4 {
-			margin-top: 0em;
-		}
-	</style>
+	<link rel="stylesheet" type="text/css" href="./AresManualStyle.css">
+	<!--[if lt IE 9]>
+		<style type="text/css">
+			#wrapper IMG#flowchart_png {
+				display: block;
+			}
+			#flowchart_svg {
+				display: none;
+			}
+		</style>
+	<![endif]-->
 </head>
 <body>
 <!--
@@ -1166,8 +1003,11 @@ CanBeOccupied=no</pre>
 		<dd>The list of stealable technology types that must be stolen before this object can be built. See <a href="#StolenTechnology">Stolen Technology</a> for more information.<dfn class="new inset">New StolenTech requirements.</dfn><var class="rules TechnoType list_of_integers">Prerequisite.StolenTechs=</var></dd>
 	</dl>
 	<p>Below is a flowchart of the current prerequisite system. Blue sections are unchanged from the original system. Pink sections have been modified or added by <span class="gamename">Ares</span>.</p>
-	<!-- <p class="center"><img src="./manual_images/prerequisite_system.png" alt="Flowchart of the current prerequisite system" style="border: none;"></p> -->
-	<object class="blockcenter" data="./manual_images/prerequisite_system.svg" type="image/svg+xml"><param name="src" value="./manual_images/prerequisite_system.svg"></object>
+	<img id="flowchart_png" src="./manual_images/prerequisite_system.png" alt="Flowchart of the current prerequisite system" style="border: none;"></p>
+	<object id="flowchart_svg" class="blockcenter" data="./manual_images/prerequisite_system.svg" type="image/svg+xml" width="655px" height="830px"><param name="src" value="./manual_images/prerequisite_system.svg"></object>
+	<!--[if lt IE 9]>
+		<p><strong>If you had a less crappy browser, you could see this flowchart in a vector format (SVG), rather than a bitmap (PNG). <a href="http://getfirefox.com/">Time to switch.</a></strong></p>
+	<![endif]-->
 
 	<h4>Generic Prerequisite Groups</h4>
 	<p>You can now create custom generic prerequisite groups like the existing <code>POWER</code> (<code>PrerequisitePower</code>), <code>FACTORY</code> (<code>PrerequisiteFactory</code>), <code>BARRACKS</code> (<code>PrerequisiteBarracks</code>), <code>RADAR</code> (<code>PrerequisiteRadar</code>), <code>TECH</code> (<code>PrerequisiteTech</code>) and <code>PROC</code> (<code>PrerequisiteProc</code> and <code>PrerequisiteProcAlternate</code>) groups.</p>
