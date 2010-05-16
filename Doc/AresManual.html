@@ -165,8 +165,16 @@
 		.type {
 			font-family: monospace;
 		}
+		.tt {
+			font-family: monospace;
+		}
 		.inset {
 			margin-left: 2em;
+		}
+		.blockcenter {
+			display: block;
+			margin-left: auto;
+			margin-right: auto;
 		}
 		div.ares02 H4 {
 			margin-top: 0em;
@@ -872,7 +880,9 @@ magic=11%</pre>
 		<dt>[SuperWeapon]&#9658;Cursor.HotSpot= (HotSpot X, HotSpot Y)</dt>
 		<dd>Specifies the coordinates on the cursor that are considered to be the 'tip' &ndash; that is, the point from which the click event will handled. HotSpot X should be one of "Left", "Center" or "Middle". HotSpot Y should be one of "Top", "Middle" or "Bottom".<br>
 		For example, <code>Cursor.HotSpot=Left,Top</code> will treat the top-left corner of the cursor as the tip. Default is "Center,Middle".</dd>
-		<p>All of the above "<code>Cursor.</code>" flags have a corresponding "<code>NoCursor.</code>" flag, which allows you to specify the cursor that will be displayed then the mouse pointer is positioned over a point where the super weapon cannot be fired (e.g. the Force Shield cannot be fired over empty ground, so will display an alternate cursor to indicate this).<var class="rules SuperWeapon list_of_2 enumerationsCenter_Middle">Cursor.HotSpot=</var></p>
+	</dl>
+	<p>All of the above "<code>Cursor.</code>" flags have a corresponding "<code>NoCursor.</code>" flag, which allows you to specify the cursor that will be displayed then the mouse pointer is positioned over a point where the super weapon cannot be fired (e.g. the Force Shield cannot be fired over empty ground, so will display an alternate cursor to indicate this).<var class="rules SuperWeapon list_of_2 enumerationsCenter_Middle">Cursor.HotSpot=</var></p>
+	<dl class="flaglist">
 		<dt>[SuperWeapon]&#9658;NoCursor.Frame=<br>
 		[SuperWeapon]&#9658;NoCursor.Count=<br>
 		[SuperWeapon]&#9658;NoCursor.Interval=<br>
@@ -928,7 +938,7 @@ magic=11%</pre>
 	<h5><code>Type=SpyPlane</code></h5>
 	<dl class="flaglist">
 		<dt>[SuperWeapon]&#9658;SpyPlane.Type= (AircraftType)</dt>
-		<dd>The <span class="type">AircraftType</span> that will be sent as a spy plane. Defaults to SPYP.<var class="rules SuperWeapon <span class="type">AircraftType</span> SPYP">SpyPlane.Type=</var></dd>
+		<dd>The <span class="type">AircraftType</span> that will be sent as a spy plane. Defaults to SPYP.<var class="rules SuperWeapon AircraftType SPYP">SpyPlane.Type=</var></dd>
 		<dt>[SuperWeapon]&#9658;SpyPlane.Count= (integer)</dt>
 		<dd>The number of spy planes to be sent out. Defaults to 1.<var class="rules SuperWeapon integer xxxnum1">SpyPlane.Count=</var></dd>
 		<dt>[SuperWeapon]&#9658;SpyPlane.Mission= (mission)</dt>
@@ -1084,7 +1094,7 @@ magic=11%</pre>
 	</dl>
 	<p>SubjectToTrenches was very much intended for trenches - a Grenadier, for example, would easily be able to drop their grenade into an open trench and would therefore definitely harm the occupants.<br>
 	<span class="note">NB: The name 'SubjectToTrenches' is misleading if you are not thinking about trenches. This has an effect on all occupiable buildings with UC.PassThrough > 0%.</span></p>
-	<p align="center">
+	<p class="center">
 		<img style="border-width: 3px;" src="./manual_images/subjecttotrenches.png" alt="Illustration of different SubjectToTrenches values">
 		<img style="border-width: 3px;" src="./manual_images/subjecttotrenches_passthrough.png" alt="Illustration of different UC.PassThrough values">
 	</p>
@@ -1156,7 +1166,8 @@ CanBeOccupied=no</pre>
 		<dd>The list of stealable technology types that must be stolen before this object can be built. See <a href="#StolenTechnology">Stolen Technology</a> for more information.<dfn class="new inset">New StolenTech requirements.</dfn><var class="rules TechnoType list_of_integers">Prerequisite.StolenTechs=</var></dd>
 	</dl>
 	<p>Below is a flowchart of the current prerequisite system. Blue sections are unchanged from the original system. Pink sections have been modified or added by <span class="gamename">Ares</span>.</p>
-	<p align="center"><img src="./manual_images/prerequisite_system.png" alt="Flowchart of the current prerequisite system" style="border: none;"></p>
+	<!-- <p class="center"><img src="./manual_images/prerequisite_system.png" alt="Flowchart of the current prerequisite system" style="border: none;"></p> -->
+	<object class="blockcenter" data="./manual_images/prerequisite_system.svg" type="image/svg+xml"><param name="src" value="./manual_images/prerequisite_system.svg"></object>
 
 	<h4>Generic Prerequisite Groups</h4>
 	<p>You can now create custom generic prerequisite groups like the existing <code>POWER</code> (<code>PrerequisitePower</code>), <code>FACTORY</code> (<code>PrerequisiteFactory</code>), <code>BARRACKS</code> (<code>PrerequisiteBarracks</code>), <code>RADAR</code> (<code>PrerequisiteRadar</code>), <code>TECH</code> (<code>PrerequisiteTech</code>) and <code>PROC</code> (<code>PrerequisiteProc</code> and <code>PrerequisiteProcAlternate</code>) groups.</p>
@@ -1282,7 +1293,7 @@ AIRFORCE=GAAIRC,AMRADR</pre>
 		<dt>[BuildingType]&#9658;SpyEffect.RevealProduction= (boolean) <span style="color:blue">*NEW EFFECT*</span></dt>
 		<dd>
 			Whether or not spying this enemy factory will allow you to see what the enemy is presently building from that factory. Once the building has been spied, select the building and the cameo of the unit that is being produced will be displayed over the building.
-			<p align="center"><img src="./manual_images/production_spying.png" alt="Screenshot of a current production being revealed"></p>
+			<p class="center"><img src="./manual_images/production_spying.png" alt="Screenshot of a current production being revealed"></p>
 			<dfn class="new">New effect: Reveal production cameo (shows you what the enemy are currently building).</dfn>
 			<var class="rules TechnoType boolean no">SpyEffect.RevealProduction=</var>
 		</dd>
@@ -1293,7 +1304,7 @@ AIRFORCE=GAAIRC,AMRADR</pre>
 	<dl class="flaglist">
 		<dt>[TechnoType]&#9658;AlternateTheaterArt= (boolean)</dt>
 		<dd>Specifies whether or not this SHP-based unit can have alternate art depending on the theater of the current map. For example, setting <code>Image=JUNK</code> and <code>AlternateTheaterArt=yes</code> on a unit will make the unit load <span class="filename">artmd.ini</span> section <code>[JUNKA]</code> on arctic, <code>[JUNKD]</code> on desert, and so on according to theater. If any of those sections do not exist then the unit will fall back to <code>[JUNK]</code>. So quite similar to <code>AlternateArcticArt</code>, just automatic and smarter. Defaults to no.<br>
-		<span class="note">NB: This only works for SHP-based units. Voxels do not use this system and cannot have theater-specifc art (you'd have to use <a href="#Prerequisites">Prerequisite.RequiredTheaters</a></code> to achieve that).</span><var class="rules TechnoType boolean no">AlternateTheaterArt=</var></dd>
+		<span class="note">NB: This only works for SHP-based units. Voxels do not use this system and cannot have theater-specifc art (you'd have to use <a href="#Prerequisites" class="tt">Prerequisite.RequiredTheaters</a> to achieve that).</span><var class="rules TechnoType boolean no">AlternateTheaterArt=</var></dd>
 	</dl></div>
 
 	<h3>Miscellaneous Modding Enhancements</h3>
@@ -1346,21 +1357,21 @@ AIRFORCE=GAAIRC,AMRADR</pre>
 	<p><span class="gamename">Ares</span> will give you the option to produce a crash dump file to assist in determining the cause of the error. This file will be stored in a Debug folder within the main game directory. Note that the crash dump file is very large and may only be readable by the <span class="gamename">Ares</span> developers. Like <span class="filename">except.txt</span>, this file will include a timestamp in the filename.</p>
 	<p>If you have turned on debug logging (see Command Line Arguments and Keyboard Commands) then the game will produce a debug.log file in the aforementioned Debug folder. Like <span class="filename">except.txt</span>, this file will include a timestamp in the filename. The log file may contain useful information for helping diagnose problems with your mod or <span class="gamename">Ares</span> itself.</p>
 	<p>In the event of an Internal Error, <span class="gamename">Ares</span> can sometimes tell you what caused the error. For example:</p>
-	<p align="center">
+	<p class="center">
 		<img src="./manual_images/crash0.png" alt="Screenshot of an Ares Internal Error dialog showing the cause of an Internal Error" style="border: none;">
-		<br />
+		<br>
 		Here, Ares can determine what caused the error.
 	</p>
-		<hr />
-	<p align="center">
+		<hr>
+	<p class="center">
 		<img src="./manual_images/crash1.png" alt="Screenshot of an Ares Internal Error dialog showing an unsolved Internal Error" style="border: none;">
-		<br />
+		<br>
 		Here, the error cannot be figured out - Ares offers to create a full crash report.
 	</p>
-		<hr />
-	<p align="center">
+		<hr>
+	<p class="center">
 		<img src="./manual_images/crash2.png" alt="Screenshot of an Ares Internal Error dialog after recording an Internal Error" style="border: none;">
-		<br />
+		<br>
 		The crash report has been generated. Ares will close after showing this message.
 	</p>
 
@@ -1379,7 +1390,7 @@ AIRFORCE=GAAIRC,AMRADR</pre>
 		<li><strong>Vehicles:</strong> TRUCKA, TRUCKB, COP, EUROC, SUVW, SUVB, FTRK, AMBU</li>
 		<li><strong>Infantry:</strong> CIV1, CIV2, CIV3, CIVA, CIVB, CIVC</li>
 	</ul>
-	<p><dfn class="new inset">Place Urban Areas option.</dfn><dfn class="new inset">Bridges over rivers.</dfn><dfn class="new inset">New terrain style: Archipelago.</dfn><dfn class="new inset">New tileset: Desert.</dfn><span class="note">NB: urban areas generated in the minimap preview do not always correspond to content generated ingame, especially in Desert maps. This is still being investigated.</span></p>
+	<p><dfn class="new inset">Place Urban Areas option.</dfn><dfn class="new inset">Bridges over rivers.</dfn><dfn class="new inset">New terrain style: Archipelago.</dfn><dfn class="new inset">New tileset: Desert.</dfn><span class="note">NB: Urban areas generated in the minimap preview do not always correspond to content generated ingame, especially in Desert maps &ndash; this is still being investigated.<br>In addition, there are reports of this feature not working at all with certain settings. (Known issue: <a href="http://bugs.renegadeprojects.com/view.php?id=794">#794</a>)</span></p>
 	<h3>Keyboard Commands (Hotkeys)</h3>
 	<p><span class="gamename">Ares</span> includes several new commands that can be issued in game via the use of keyboard hotkeys. Note that the labels for these hotkeys are presently hard-coded, unlike the standard <span class="gamename">Yuri's Revenge</span> hotkeys (which use the string table).</p>
 	
@@ -1420,7 +1431,7 @@ AIRFORCE=GAAIRC,AMRADR</pre>
 DirectX.Force= (hardware|emulation)
 Surface.$surface.Memory= (System|VRAM)
 Surface.$surface.Force3D= (true|false)</pre>
-	<p>...where $surface is one of Composite, Alternate, Hidden, Sidebar or Tile.</p>
+	<p>...where <span class="tt">$surface</span> is one of <span class="tt">Composite</span>, <span class="tt">Alternate</span>, <span class="tt">Hidden</span>, <span class="tt">Sidebar</span> or <span class="tt">Tile</span>.</p>
 	<p><span class="note">NB: enabling Force3D forces Memory into VRAM mode.</span><br>
 	<span class="note">NB: Ares.ini is not intended to be included or edited by mods, as this file may include various other settings in future that the end-user wishes to set themselves. Launch Base does not permit mods to include ares.ini, and also provides its own interface to allow the user to modify the above graphical settings.</span><dfn class="new">Graphics/Surface drawing options can be configured by the user (advanced users only).</dfn></p>
 	
