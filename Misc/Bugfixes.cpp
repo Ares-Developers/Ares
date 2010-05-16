@@ -453,7 +453,12 @@ A_FINE_HOOK(5FA41D, GameOptionsClass_CTOR, 5)
 }
 */
 
-DEFINE_HOOK(5601E3, OptionsDlg_WndProc, 0)
+DEFINE_HOOK(56017A, OptionsDlg_WndProc_RemoveResLimit, 5)
+{
+	return 0x560183;
+}
+
+DEFINE_HOOK(5601E3, OptionsDlg_WndProc_RemoveHiResCheck, 0)
 {
 	// skip the allowhires check entirely - all supported 16bit modes are accepted, should make net resolution limit stfu
 	return 0x5601FC;
