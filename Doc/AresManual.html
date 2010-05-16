@@ -1484,7 +1484,7 @@ Surface.$surface.Force3D= (true|false)</pre>
 					
 					// file section type default
 					switch(attributes.length) {
-						case 4: flags[curSection][curIdx].default = parseFlagData(attributes[3]);
+						case 4: flags[curSection][curIdx]["default"] = parseFlagData(attributes[3]);
 						case 3: flags[curSection][curIdx].type = parseFlagData(attributes[2]);
 						case 2: flags[curSection][curIdx].name = curFlag;
 							break;
@@ -1501,7 +1501,7 @@ Surface.$surface.Force3D= (true|false)</pre>
 				flags[section].ares ? $('<tr class="section"><td>[' + section + ']<\/td><td>new section<\/td><td><\/td><\/tr>').appendTo(table) : $('<tr class="section"><td colspan="3">[' + section + ']<\/td><\/tr>').appendTo(table);
 				for (var i = 0; i < flags[section].length; ++i) {
 					var typ = flags[section][i].type ? flags[section][i].type : "";
-					var def = flags[section][i].default ? flags[section][i].default : "";
+					var def = flags[section][i]["default"] ? flags[section][i]["default"] : "";
 					$("<tr><td>" + flags[section][i].name + "<\/td><td>" + typ + "<\/td><td>" + def + "<\/td><\/tr>").appendTo(table);
 				}
 			}
