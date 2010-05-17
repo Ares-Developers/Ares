@@ -1,6 +1,33 @@
 #include "Body.h"
 #include <BulletClass.h>
 
+/*
+ * whoo this is a complex logic:
+ * when a building enters the Attack mission, it (after handling a special case of SAM=yes) does the following:
+ * int error = this->GetFireError(target, secondary);
+ * if(error == FireError::Facing) {
+ *  // turn to face the right way, return and retry next frame
+ * }
+ * switch(error) {
+ * 	case FireError::OK:
+ * 	// if the building has upgrades, fire them and return
+ * 	// if the building is not a Prism, set its DelayedFireDelay or fire its weapon if it doesn't have one. return
+ * 	// otherwise do the stuff in the Attack_IsPrism hook below
+ * 	return;
+ *
+ * 	case FireError::Rearm:
+ *  return and retry 2 frames later;
+ *
+ *  // other stuff
+ * }
+ *
+ * GetFireError returns FireError::Rearm if the asking building has DelayedFireDelay set
+ * which is set once the prism has exhausted its search of potential slaves, or reached maximum slave amount
+ * and gets decremented each frame inside UpdatePrism
+ *
+ *
+ */
+
 DEFINE_HOOK(44B2FE, BuildingClass_Mi_Attack_IsPrism, 6)
 {
 	GET(BuildingClass *, B, ESI);
@@ -11,29 +38,32 @@ DEFINE_HOOK(44B2FE, BuildingClass_Mi_Attack_IsPrism, 6)
 	enum { IsPrism = 0x44B310, IsNotPrism = 0x44B630, IsCustomPrism = 0x44B6D6};
 
 	if(B->Type == RulesClass::Instance->PrismType) {
+		bool TimeToStartCharge = false;
+		if(B->SupportingPrisms < RulesClass::Instance->PrismSupportMax) {
+			TimeToStartCharge = true;
+			// find a slave
+			int nearestDistance = 0x7FFFFFFF;
+			BuildingClass * nearestPrism = NULL;
 
-		// find a slave
-		int nearestDistance = 0x7FFFFFFF;
-		BuildingClass * nearestPrism = NULL;
+			CoordStruct MyPosition, curPosition;
 
-		CoordStruct MyPosition, curPosition;
+			B->GetPosition_2(&MyPosition);
 
-		B->GetPosition_2(&MyPosition);
+			int Range = B->GetWeaponRange(1);
 
-		int Range = B->GetWeaponRange(1);
-
-		for(int i = 0; i < B->Owner->Buildings.Count; ++i) {
-			if(BuildingClass * curBld = B->Owner->Buildings[i]) {
-				if(curBld->IsAlive && curBld->Type == RulesClass::Instance->PrismType) {
-					if(curBld->ReloadTimer.Ignorable()) {
-						if(curBld != B && !curBld->PrismReloadDelay) {
-							if(!curBld->IsBeingDrained() && curBld->GetCurrentMission() != mission_Attack) {
-								curBld->GetPosition_2(&curPosition);
-								int Distance = MyPosition.DistanceFrom(curPosition);
-								if(Distance <= Range) {
-									if(!nearestPrism || Distance < nearestDistance) {
-										nearestPrism = curBld;
-										nearestDistance = Distance;
+			for(int i = 0; i < B->Owner->Buildings.Count; ++i) {
+				if(BuildingClass * curBld = B->Owner->Buildings[i]) {
+					if(curBld->IsAlive && curBld->Type == RulesClass::Instance->PrismType) {
+						if(curBld->ReloadTimer.Ignorable()) {
+							if(curBld != B && !curBld->PrismReloadDelay) {
+								if(!curBld->IsBeingDrained() && curBld->GetCurrentMission() != mission_Attack) {
+									curBld->GetPosition_2(&curPosition);
+									int Distance = MyPosition.DistanceFrom(curPosition);
+									if(Distance <= Range) {
+										if(!nearestPrism || Distance < nearestDistance) {
+											nearestPrism = curBld;
+											nearestDistance = Distance;
+										}
 									}
 								}
 							}
@@ -41,26 +71,29 @@ DEFINE_HOOK(44B2FE, BuildingClass_Mi_Attack_IsPrism, 6)
 					}
 				}
 			}
+
+			if(nearestPrism) {
+				TimeToStartCharge = false;
+				++B->SupportingPrisms;
+				CoordStruct FLH, Base = {0, 0, 0};
+				B->GetFLH(&FLH, 0, Base);
+				nearestPrism->PrismReloadDelay = nearestPrism->Type->DelayedFireDelay;
+				nearestPrism->PrismStage = pcs_Slave;
+				nearestPrism->PrismTargetCoords = FLH;
+				nearestPrism->DestroyNthAnim(BuildingAnimSlot::Active);
+				nearestPrism->PlayNthAnim(BuildingAnimSlot::Special);
+			}
 		}
 
-		if(nearestPrism) {
-			++B->SupportingPrisms;
-			CoordStruct FLH, Base = {0, 0, 0};
-			B->GetFLH(&FLH, 0, Base);
-			nearestPrism->PrismReloadDelay = nearestPrism->Type->DelayedFireDelay;
-			nearestPrism->PrismStage = pcs_Slave;
-			nearestPrism->PrismTargetCoords = FLH;
-			nearestPrism->DestroyNthAnim(BuildingAnimSlot::Active);
-			nearestPrism->PlayNthAnim(BuildingAnimSlot::Special);
+		if(TimeToStartCharge) {
+			// set up master - it seems this happens (and resets the Delay) each time the function is triggered which is every 1 frame...
+			B->PrismReloadDelay = B->Type->DelayedFireDelay;
+			B->PrismStage = pcs_Master;
+			B->PrismTargetCoords.X = 0;
+			B->PrismTargetCoords.Y = B->PrismTargetCoords.Z = 0; // these are set to uninitialized vars really, but don't seem to be used for master
+			B->DestroyNthAnim(BuildingAnimSlot::Active);
+			B->PlayNthAnim(BuildingAnimSlot::Special);
 		}
-
-		// set up master - it seems this happens (and resets the Delay) each time the function is triggered which is every 1 frame...
-		B->PrismReloadDelay = B->Type->DelayedFireDelay;
-		B->PrismStage = pcs_Master;
-		B->PrismTargetCoords.X = 0;
-		B->PrismTargetCoords.Y = B->PrismTargetCoords.Z = 0; // these are set to uninitialized vars really, but don't seem to be used for master
-		B->DestroyNthAnim(BuildingAnimSlot::Active);
-		B->PlayNthAnim(BuildingAnimSlot::Special);
 	}
 
 	return IsNotPrism;
