@@ -44,6 +44,13 @@ DEFINE_HOOK(653B3A, RadarClass_GetMouseAction_CustomSWAction, 5)
 {
 	int idxSWType = Unsorted::CurrentSWType;
 	if(idxSWType > -1) {
+		GET_STACK(byte, EventFlags, 0x58);
+
+		MouseEvent E(EventFlags);
+		if(E & (MouseEvent::RightDown | MouseEvent::RightUp)) {
+			return 0x653D6F;
+		}
+
 		SuperWeaponTypeClass *pThis = SuperWeaponTypeClass::Array->GetItem(idxSWType);
 		SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pThis);
 

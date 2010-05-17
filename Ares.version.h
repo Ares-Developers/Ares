@@ -3,7 +3,7 @@
 
 #define VERSION_MAJOR 0
 #define VERSION_MINOR 1
-#define VERSION_REVISION 538
+#define VERSION_REVISION 543
 
 #define SAVEGAME_MAGIC ((VERSION_MAJOR << 24) | (VERSION_MINOR << 16) | (VERSION_REVISION))
 
@@ -11,7 +11,7 @@
 #define str_(x) #x
 
 #define VERSION_PREFIX "Yuri's Revenge 1.001 + Ares version "
-#define VERSION_STR str(VERSION_MAJOR) "." str(VERSION_MINOR) " RC13"
+#define VERSION_STR str(VERSION_MAJOR) "." str(VERSION_MINOR)
 
 // "Yuri's Revenge 1.001 + Ares version: $ver"
 #define VERSION_STRING VERSION_PREFIX VERSION_STR
