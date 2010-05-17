@@ -74,9 +74,9 @@ DEFINE_HOOK(687B21, Scenario_Start8, 5)
 
 DEFINE_HOOK(531413, Game_Start, 5)
 {
-	DSurface::Hidden->DrawText(L"Ares is active.", 10, 460, COLOR_GREEN);
-	DSurface::Hidden->DrawText(L"This is a testing version, NOT a final product.", 20, 480, COLOR_RED);
-	DSurface::Hidden->DrawText(L"Bugs are to be expected.", 20, 500, COLOR_RED);
+	DSurface::Hidden->DrawText(L"Ares is active.", 10, /*460*/500, COLOR_GREEN);
+//	DSurface::Hidden->DrawText(L"This is a testing version, NOT a final product.", 20, 480, COLOR_RED);
+//	DSurface::Hidden->DrawText(L"Bugs are to be expected.", 20, 500, COLOR_RED);
 	DSurface::Hidden->DrawText(L"Ares is © pd, DCoder, Electro, Renegade and AlexB 2007 - 2010.", 10, 520, COLOR_GREEN);
 
 	wchar_t wVersion[256];
