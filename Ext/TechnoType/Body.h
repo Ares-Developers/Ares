@@ -77,6 +77,12 @@ public:
 		bool VeteranAbilityEMPIMMUNE;
 		bool EliteAbilityEMPIMMUNE;
 
+		// new on 05.04.10 for #733 (KillDriver/"Jarmen Kell")
+		bool ProtectedDriver; //!< Whether the driver of this vehicle cannot be killed, i.e. whether this vehicle is immune to KillDriver. Request #733.
+		bool CanDrive; //!< Whether this TechnoType can act as the driver of vehicles whose driver has been killed. Request #733.
+
+		bool AlternateTheaterArt;
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			Survivors_PilotChance (NULL),
 			Survivors_PassengerChance (NULL),
@@ -106,7 +112,10 @@ public:
 			ImmuneToEMPSet (false),
 			ImmuneToEMP (false),
 			VeteranAbilityEMPIMMUNE (false),
-			EliteAbilityEMPIMMUNE (false)
+			EliteAbilityEMPIMMUNE (false),
+			ProtectedDriver(false),
+			CanDrive (false),
+			AlternateTheaterArt (false)
 			{ this->Insignia.SetAll(NULL); };
 
 		virtual ~ExtData() {};
