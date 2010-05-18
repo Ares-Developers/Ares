@@ -279,7 +279,7 @@ bool WarheadTypeExt::canWarheadAffectTarget(TechnoClass * Target, HouseClass * S
 	\date 05.04.10
 	\todo This needs to be refactored to work with the generic warhead SW. I want to create a generic cellspread function first.
 */
-bool WarheadTypeExt::applyKillDriver(BulletClass* Bullet) {
+bool WarheadTypeExt::ExtData::applyKillDriver(BulletClass* Bullet) {
 	if(!Bullet->Target || !this->KillDriver) {
 		return false;
 	} else if(TechnoClass *pTarget = generic_cast<TechnoClass *>(Bullet->Target)) {
@@ -313,6 +313,7 @@ bool WarheadTypeExt::applyKillDriver(BulletClass* Bullet) {
 			return false;
 		}
 	}
+	return false;
 }
 
 // =============================
