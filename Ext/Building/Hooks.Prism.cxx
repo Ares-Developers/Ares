@@ -1,5 +1,6 @@
 #include "Body.h"
 #include <BulletClass.h>
+#include <LaserDrawClass.h>
 
 /*
  * whoo this is a complex logic:
@@ -77,7 +78,7 @@ DEFINE_HOOK(44B2FE, BuildingClass_Mi_Attack_IsPrism, 6)
 				++B->SupportingPrisms;
 				CoordStruct FLH, Base = {0, 0, 0};
 				B->GetFLH(&FLH, 0, Base);
-				nearestPrism->PrismReloadDelay = nearestPrism->Type->DelayedFireDelay;
+				nearestPrism->DelayBeforeFiring = nearestPrism->Type->DelayedFireDelay;
 				nearestPrism->PrismStage = pcs_Slave;
 				nearestPrism->PrismTargetCoords = FLH;
 				nearestPrism->DestroyNthAnim(BuildingAnimSlot::Active);
@@ -87,7 +88,7 @@ DEFINE_HOOK(44B2FE, BuildingClass_Mi_Attack_IsPrism, 6)
 
 		if(TimeToStartCharge) {
 			// set up master - it seems this happens (and resets the Delay) each time the function is triggered which is every 1 frame...
-			B->PrismReloadDelay = B->Type->DelayedFireDelay;
+			B->DelayBeforeFiring = B->Type->DelayedFireDelay;
 			B->PrismStage = pcs_Master;
 			B->PrismTargetCoords.X = 0;
 			B->PrismTargetCoords.Y = B->PrismTargetCoords.Z = 0; // these are set to uninitialized vars really, but don't seem to be used for master
@@ -114,8 +115,8 @@ DEFINE_HOOK(4503F0, BuildingClass_Update_Prism, 9)
 	int end = 0x4504E2;
 	GET(BuildingClass *, pThis, ECX);
 	if(int PrismStage = pThis->PrismStage) {
-		--pThis->PrismReloadDelay;
-		if(pThis->PrismReloadDelay <= 0) {
+		--pThis->DelayBeforeFiring;
+		if(pThis->DelayBeforeFiring <= 0) {
 			if(PrismStage == pcs_Slave) {
 				pThis->FireLaser(pThis->PrismTargetCoords);
 				pThis->PrismStage = pcs_Idle;
@@ -138,3 +139,29 @@ DEFINE_HOOK(4503F0, BuildingClass_Update_Prism, 9)
 	}
 	return end;
 }
+
+
+DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
+{
+	GET(BuildingClass *, B, ECX);
+	LEA_STACK(CoordStruct *, TargetXYZ, 0x4);
+
+	CoordStruct SourceXYZ, Base = {0, 0, 0};
+	B->GetFLH(&SourceXYZ, 0, Base);
+
+	ColorStruct blank = {0, 0, 0};
+
+	LaserDrawClass * LaserBeam;
+	GAME_ALLOC(LaserDrawClass, LaserBeam, SourceXYZ, TargetXYZ, B->Owner->LaserColor, blank, blank, RulesClass::Instance->PrismSupportDuration);
+
+	if(LaserBeam) {
+		LaserBeam->IsHouseColor = true;
+		LaserBeam->field_1C = 3;
+	}
+
+	B->SupportingPrisms = 0;
+	B->ReloadTimer.Start(RulesClass::Instance->PrismSupportDelay);
+
+	return 0x44ACE2;
+}
+
