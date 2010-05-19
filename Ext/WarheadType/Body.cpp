@@ -169,8 +169,7 @@ void WarheadTypeExt::ExtData::applyIronCurtain(CoordStruct *coords, HouseClass* 
 void WarheadTypeExt::ExtData::applyEMP(CoordStruct *coords, TechnoClass *source) {
 	if (this->EMP_Duration) {
 		// launch our rewritten EMP.
-		CellStruct cellCoords = MapClass::Instance->GetCellAt(coords)->MapCoords;
-		EMPulse::CreateEMPulse(this, cellCoords, source);
+		EMPulse::CreateEMPulse(this, coords, source);
 	}
 }
 

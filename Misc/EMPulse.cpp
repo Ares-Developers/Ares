@@ -1,6 +1,7 @@
 #include "EMPulse.h"
 #include "../Ext/Techno/Body.h"
 #include "../Ext/TechnoType/Body.h"
+#include <set>
 
 //! Enables verbose debug output for some WarheadTypeExt functions.
 bool EMPulse::verbose = true;
@@ -11,13 +12,17 @@ bool EMPulse::verbose = true;
 	deactivated temporarily. Their special functions stop working until the
 	EMP ceases. Flying Aircraft crashes.
 
+	CellSpread is handled as described in
+	http://modenc.renegadeprojects.com/CellSpread.
+
 	\param EMPulse The electromagnetic pulse to create.
+	\param Coords The location the projectile detonated.
 	\param Firer The Techno that fired the pulse.
 
 	\author AlexB
-	\date 2010-05-04
+	\date 2010-05-19
 */
-void EMPulse::CreateEMPulse(WarheadTypeExt::ExtData * Warhead, CellStruct Coords, TechnoClass *Firer) {
+void EMPulse::CreateEMPulse(WarheadTypeExt::ExtData * Warhead, CoordStruct *Coords, TechnoClass *Firer) {
 	if (!Warhead) {
 		Debug::DevLog(Debug::Error, "Trying to CreateEMPulse() with Warhead pointing to NULL. Funny.\n");
 		return;
@@ -27,15 +32,20 @@ void EMPulse::CreateEMPulse(WarheadTypeExt::ExtData * Warhead, CellStruct Coords
 		Debug::Log("[CreateEMPulse] Duration: %d, Cap: %d\n", Warhead->EMP_Duration, Warhead->EMP_Cap);
 	}
 
+	// set of possibly affected objects. every object can be here only once.
+	std::set<TechnoClass*> *set = new std::set<TechnoClass*>();
+
 	// the quick way. only look at stuff residing on the very cells we are affecting.
-	CellStruct cellCoords = MapClass::Instance->GetCellAt(&Coords)->MapCoords;
+	CellStruct cellCoords = MapClass::Instance->GetCellAt(Coords)->MapCoords;
 	int countCells = CellSpread::NumCells((int)(Warhead->AttachedToObject->CellSpread + 0.99));
 	for (int i = 0; i < countCells; ++i) {
 		CellStruct tmpCell = CellSpread::GetCell(i);
 		tmpCell += cellCoords;
 		CellClass *c = MapClass::Instance->GetCellAt(&tmpCell);
 		for (ObjectClass *curObj = c->GetContent(); curObj; curObj = curObj->NextObject) {
-			deliverEMPDamage(curObj, Firer, Warhead);
+			if(TechnoClass *Techno = generic_cast<TechnoClass*>(curObj)) {
+				set->insert(Techno);
+			}
 		}
 	}
 
@@ -43,11 +53,38 @@ void EMPulse::CreateEMPulse(WarheadTypeExt::ExtData * Warhead, CellStruct Coords
 	for (int i=0; i<TechnoClass::Array->Count; ++i) {
 		TechnoClass *Techno = TechnoClass::Array->GetItem(i);
 		if (Techno->IsInAir()) {
-			if (Techno->GetCell()->MapCoords.DistanceFrom(cellCoords) <= Warhead->AttachedToObject->CellSpread) {
-				deliverEMPDamage(Techno, Firer, Warhead);
+			if(Techno->Location.DistanceFrom(*Coords) <= Warhead->AttachedToObject->CellSpread * 256) {
+				set->insert(Techno);
 			}
 		}
 	}
+
+	// cause EMP damage on every object
+	for(std::set<TechnoClass*>::iterator iterator = set->begin(); iterator != set->end(); iterator++) {
+		TechnoClass *Techno = *iterator;
+
+		// ignore buildings that are not visible, like ambient light posts
+		if(BuildingTypeClass *BT = specific_cast<BuildingTypeClass*>(Techno->GetTechnoType())) {
+			if(BT->InvisibleInGame) {
+				continue;
+			}
+		}
+
+		// reduce the distance for flying aircraft
+		float dist = Techno->Location.DistanceFrom(*Coords);
+		if((Techno->WhatAmI() == abs_Aircraft) && Techno->IsInAir()) {
+			dist *= 0.5;
+		}
+
+		// measure distance and blow it
+		if(dist <= Warhead->AttachedToObject->CellSpread * 256) {
+			deliverEMPDamage(Techno, Firer, Warhead);
+		}
+	}
+
+	// tidy up
+	set->clear();
+	delete set;
 
 	if (verbose) {
 		Debug::Log("[CreateEMPulse] Done.\n");

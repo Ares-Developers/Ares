@@ -419,6 +419,13 @@ DEFINE_HOOK(51CE9A, InfantryClass_Idle, 5)
 {
 	GET(InfantryClass *, I, ESI);
 	TechnoTypeExt::ExtData *pData = TechnoTypeExt::ExtMap.Find(I->GetTechnoType());
+
+	// don't play idle when paralyzed
+	if(I->IsUnderEMP()) {
+		R->BL(false);
+		return 0x51CECD;
+	}
+
 	R->EDI(R->EAX()); // argh
 	R->BL(pData->Is_Cow); // aaaargh! again!
 	return pData->Is_Cow ? 0x51CEAE : 0x51CECD;

@@ -8,8 +8,7 @@
 class EMPulse
 {
 public:
-	static void CreateEMPulse(EMPulseClass *Legacy, TechnoClass *Firer);
-	static void CreateEMPulse(WarheadTypeExt::ExtData *Warhead, CellStruct Target, TechnoClass *Firer);
+	static void CreateEMPulse(WarheadTypeExt::ExtData *Warhead, CoordStruct *Target, TechnoClass *Firer);
 	static void DisableEMPEffect(TechnoClass *Techno);
 	static bool IsTypeEMPProne(TechnoTypeClass *Type);
 	static bool IsDeactivationAdvisable(TechnoClass *Techno);
