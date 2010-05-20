@@ -26,6 +26,42 @@ class BuildingTypeExt
 public:
 	typedef BuildingTypeClass TT;
 
+	class cPrismForwarding {
+		public:
+		//properties
+		enum eEnabled {NO, YES, FORWARD, ATTACK} Enabled;	//is this tower a prism tower? FORWARD means can support, but not attack. ATTACK means can attack but not support.
+		DynamicVectorClass<BuildingTypeClass *> Targets;	//the types of buiding that this tower can forward to
+		signed int MaxFeeds;					//max number of towers that can feed this tower
+		signed int MaxChainLength;				//max length of any given (preceding) branch of the network
+		signed int MaxNetworkSize;				//max number of towers that can be in the network
+		double SupportModifier; 				//Per-building PrismSupportModifier
+		signed int DamageAdd; 					//amount of flat damage to add to the firing beam (before multiplier)
+		signed int ForwardingRange;				//range that can forward over
+		int SupportDelay;					//Per-building PrismSupportDelay
+		int SupportDuration;					//Per-building PrismSupportDuration
+		bool ToAllies;						//can this tower support allies' towers or not
+		int MyHeight;						//Per-building PrismSupportHeight
+		bool BreakSupport;					//can the slave tower become a master tower at the last second
+		int ChargeDelay;					//the amount to delay start of charging per backward chain
+
+		//methods
+		void Initialize(BuildingTypeClass* );
+		void LoadFromINIFile(BuildingTypeClass *, CCINIClass *);
+
+		// future considerations - move these to BuildingExt's PrismForwarding and refactor first arg
+		static int AcquireSlaves_MultiStage(BuildingClass *, BuildingClass *, int, int, int *, int *);
+		static int AcquireSlaves_SingleStage(BuildingClass *, BuildingClass *, int, int, int *, int *);
+		static bool ValidateSupportTower(BuildingClass *, BuildingClass *, BuildingClass *);
+		static int SetPrismChargeDelay(BuildingClass *);
+		static void RemoveSlave(BuildingClass *);
+		static void OrphanSlave(BuildingClass *);
+
+		// constructor
+		cPrismForwarding() : Enabled(NO), MaxFeeds(0), MaxChainLength(0), MaxNetworkSize(0), SupportModifier(0.0)
+		, DamageAdd(0), ForwardingRange(0), SupportDelay(0), SupportDuration(0), ToAllies(false), MyHeight(0), BreakSupport(false),
+		ChargeDelay(0) {};
+	};
+
 	class ExtData : public Extension<TT>
 	{
 	public:
@@ -75,6 +111,8 @@ public:
 		Valueable<int> StolenMoneyPercentage;
 		Valueable<int> PowerOutageDuration;
 
+		cPrismForwarding PrismForwarding;
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			Solid_Height (0),
 			IsCustom (false),
@@ -101,7 +139,8 @@ public:
 			StolenTechIndex (-1),
 			StolenMoneyAmount (0),
 			StolenMoneyPercentage (0),
-			PowerOutageDuration (0)
+			PowerOutageDuration (0),
+			PrismForwarding()
 			{ };
 
 		virtual ~ExtData() {

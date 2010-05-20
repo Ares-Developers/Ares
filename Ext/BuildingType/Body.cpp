@@ -39,6 +39,8 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 	char* pArtID = pThis->ImageFile;
 	char* pID = pThis->ID;
 
+	this->PrismForwarding.LoadFromINIFile(pThis, pINI);
+
 	if(pThis->UnitRepair && pThis->Factory == abs_AircraftType) {
 		Debug::FatalErrorAndExit(
 			"BuildingType [%s] has both UnitRepair=yes and Factory=AircraftType.\n"
