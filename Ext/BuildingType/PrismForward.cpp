@@ -107,7 +107,7 @@ int BuildingTypeExt::cPrismForwarding::AcquireSlaves_SingleStage
 
 	if ((pTargetTypeData->PrismForwarding.MaxFeeds == 0)
 			|| (pMasterTypeData->PrismForwarding.MaxChainLength != -1 && pMasterTypeData->PrismForwarding.MaxChainLength < chain)
-			|| (pMasterTypeData->PrismForwarding.MaxNetworkSize >= *NetworkSize)) {
+			|| (pMasterTypeData->PrismForwarding.MaxNetworkSize <= *NetworkSize)) {
 		return 0;
 	}
 
@@ -190,7 +190,7 @@ bool BuildingTypeExt::cPrismForwarding::ValidateSupportTower(BuildingClass *Mast
 								HouseClass *pMasterHouse = MasterTower->Owner;
 								HouseClass *pTargetHouse = TargetTower->Owner;
 								HouseClass *pSlaveHouse = SlaveTower->Owner;
-								if ((pSlaveHouse == pTargetHouse && pSlaveHouse == pMasterHours)
+								if ((pSlaveHouse == pTargetHouse && pSlaveHouse == pMasterHouse)
 									|| (pSlaveTypeData->PrismForwarding.ToAllies
 											&& pSlaveHouse->IsAlliedWith(pTargetHouse) && pSlaveHouse->IsAlliedWith(pMasterHouse))) {
 									//ownership/alliance rules satisfied
@@ -250,7 +250,7 @@ void BuildingTypeExt::cPrismForwarding::RemoveSlave(BuildingClass *SlaveTower) {
 			}
 		}
 		//assuming that this tower has been shut down so all charging activity ceases
-		pSlaveData->PrismChargeDelay = 0;
+		pSlaveData->PrismForwarding.PrismChargeDelay = 0;
 		SlaveTower->DelayBeforeFiring = 0;
 		pSlaveData->PrismForwarding.ModifierReserve = 0.0;
 		pSlaveData->PrismForwarding.DamageReserve = 0;
@@ -265,10 +265,10 @@ void BuildingTypeExt::cPrismForwarding::OrphanSlave(BuildingClass *SlaveTower) {
 		BuildingExt::ExtData *pSlaveData = BuildingExt::ExtMap.Find(SlaveTower);
 		BuildingTypeClass *pSlaveType = SlaveTower->Type;
 		BuildingTypeExt::ExtData *pSlaveTypeData = BuildingTypeExt::ExtMap.Find(pSlaveType);
-		if (pSlaveData->PrismChargeDelay) {
+		if (pSlaveData->PrismForwarding.PrismChargeDelay) {
 			//hasn't started charging yet, so can go idle immediately
 			SlaveTower->PrismStage = pcs_Idle;
-			pSlaveData->PrismChargeDelay = 0;
+			pSlaveData->PrismForwarding.PrismChargeDelay = 0;
 			SlaveTower->DelayBeforeFiring = 0;
 			pSlaveData->PrismForwarding.ModifierReserve = 0.0;
 			pSlaveData->PrismForwarding.DamageReserve = 0;

@@ -7,6 +7,7 @@ DEFINE_HOOK(44B2FE, BuildingClass_Mi_Attack_IsPrism, 6)
 {
 	GET(BuildingClass *, B, ESI);
 	GET(int, idxWeapon, EBP); //which weapon was chosen to attack the target with
+	R->EAX<BuildingTypeClass *>(B->Type);
 
 	enum { IsPrism = 0x44B310, IsNotPrism = 0x44B630, IsCustomPrism = 0x44B6D6};
 
