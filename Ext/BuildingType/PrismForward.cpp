@@ -36,32 +36,35 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 		}
 	}
 
-	if(pINI->ReadString(pID, "PrismForwarding.Targets", "", Ares::readBuffer, Ares::readLength)) {
-		this->Targets.Clear();
-		for(char *cur = strtok(Ares::readBuffer, ","); cur && *cur; cur = strtok(NULL, ",")) {
-			BuildingTypeClass * target = BuildingTypeClass::Find(cur);
-			if(target) {
-				this->Targets.AddItem(target);
+	if (this->Enabled != NO) {
+		if(pINI->ReadString(pID, "PrismForwarding.Targets", "", Ares::readBuffer, Ares::readLength)) {
+			this->Targets.Clear();
+			for(char *cur = strtok(Ares::readBuffer, ","); cur && *cur; cur = strtok(NULL, ",")) {
+				BuildingTypeClass * target = BuildingTypeClass::Find(cur);
+				if(target) {
+					this->Targets.AddItem(target);
+				}
 			}
 		}
-	}
 
-	this->MaxFeeds = pINI->ReadInteger(pID, "PrismForwarding.MaxFeeds", this->MaxFeeds);
-	this->MaxChainLength = pINI->ReadInteger(pID, "PrismForwarding.MaxChainLength", this->MaxChainLength);
-	this->MaxNetworkSize = pINI->ReadInteger(pID, "PrismForwarding.MaxNetworkSize", this->MaxNetworkSize);
-	this->SupportModifier = pINI->ReadDouble(pID, "PrismForwarding.SupportModifier", this->SupportModifier);
-	this->DamageAdd = pINI->ReadInteger(pID, "PrismForwarding.DamageAdd", this->DamageAdd);
-	this->ForwardingRange = pINI->ReadInteger(pID, "PrismForwarding.ForwardingRange", this->ForwardingRange);
-	this->SupportDelay = pINI->ReadInteger(pID, "PrismForwarding.SupportDelay", this->SupportDelay);
-	this->ToAllies = pINI->ReadBool(pID, "PrismForwarding.ToAllies", this->ToAllies);
-	//this->IntensityAdd = pINI->ReadDouble(pID, "PrismForwarding.IntensityAdd", this->IntensityAdd);
-	this->MyHeight = pINI->ReadInteger(pID, "PrismForwarding.MyHeight", this->MyHeight);
-	this->BreakSupport = pINI->ReadBool(pID, "PrismForwarding.BreakSupport", this->BreakSupport);
-	int ChargeDelay = pINI->ReadInteger(pID, "PrismForwarding.ChargeDelay", this->ChargeDelay);
-	if (ChargeDelay >= 1) {
-		this->ChargeDelay = ChargeDelay;
-	} else {
-		Debug::Log("%s has an invalid PrismForwarding.ChargeDelay (%d), overriding to 1.\n", pThis->ID, ChargeDelay);
+		this->MaxFeeds = pINI->ReadInteger(pID, "PrismForwarding.MaxFeeds", this->MaxFeeds);
+		this->MaxChainLength = pINI->ReadInteger(pID, "PrismForwarding.MaxChainLength", this->MaxChainLength);
+		this->MaxNetworkSize = pINI->ReadInteger(pID, "PrismForwarding.MaxNetworkSize", this->MaxNetworkSize);
+		this->SupportModifier = pINI->ReadDouble(pID, "PrismForwarding.SupportModifier", this->SupportModifier);
+		this->DamageAdd = pINI->ReadInteger(pID, "PrismForwarding.DamageAdd", this->DamageAdd);
+		this->ForwardingRange = pINI->ReadInteger(pID, "PrismForwarding.ForwardingRange", this->ForwardingRange);
+		this->SupportDelay = pINI->ReadInteger(pID, "PrismForwarding.SupportDelay", this->SupportDelay);
+		this->ToAllies = pINI->ReadBool(pID, "PrismForwarding.ToAllies", this->ToAllies);
+		this->MyHeight = pINI->ReadInteger(pID, "PrismForwarding.MyHeight", this->MyHeight);
+		this->BreakSupport = pINI->ReadBool(pID, "PrismForwarding.BreakSupport", this->BreakSupport);
+
+		int ChargeDelay = pINI->ReadInteger(pID, "PrismForwarding.ChargeDelay", this->ChargeDelay);
+		if (ChargeDelay >= 1) {
+			this->ChargeDelay = ChargeDelay;
+		} else {
+			Debug::Log("%s has an invalid PrismForwarding.ChargeDelay (%d), overriding to 1.\n", pThis->ID, ChargeDelay);
+		}
+
 	}
 }
 
@@ -107,7 +110,8 @@ int BuildingTypeExt::cPrismForwarding::AcquireSlaves_SingleStage
 
 	if ((pTargetTypeData->PrismForwarding.MaxFeeds == 0)
 			|| (pMasterTypeData->PrismForwarding.MaxChainLength != -1 && pMasterTypeData->PrismForwarding.MaxChainLength < chain)
-			|| (pMasterTypeData->PrismForwarding.MaxNetworkSize <= *NetworkSize)) {
+			|| (pMasterTypeData->PrismForwarding.MaxNetworkSize != -1 && pMasterTypeData->PrismForwarding.MaxNetworkSize <= *NetworkSize)) {
+		Debug::Log("PrismForwarding: singlestage aborted");
 		return 0;
 	}
 
@@ -117,7 +121,9 @@ int BuildingTypeExt::cPrismForwarding::AcquireSlaves_SingleStage
 	for (int i = 0; i < BuildingClass::Array->Count; ++i) {
 		//if (BuildingClass *SlaveTower = B->Owner->Buildings[i]) {
 		if (BuildingClass *SlaveTower = (BuildingClass*)BuildingClass::Array->GetItem(i)) {
+			Debug::Log("PrismForwarding: checking if SlaveTower is eligible at stage %d, chain %d\n", stage, chain);
 			if (ValidateSupportTower(MasterTower, TargetTower, SlaveTower)) {
+				Debug::Log("PrismForwarding: SlaveTower confirmed eligible");
 				EligibleTowers.AddItem(SlaveTower);
 			}
 		}
@@ -127,6 +133,7 @@ int BuildingTypeExt::cPrismForwarding::AcquireSlaves_SingleStage
 	int iFeeds = 0;
 	int MaxFeeds = pTargetTypeData->PrismForwarding.MaxFeeds;
 	int MaxNetworkSize = pMasterTypeData->PrismForwarding.MaxNetworkSize;
+	Debug::Log("PrismForwarding: singlestage checkpoint 01");
 	while (EligibleTowers.Count != 0 && (MaxFeeds == -1 || iFeeds < MaxFeeds) && (MaxNetworkSize == -1 || *NetworkSize < MaxNetworkSize)) {
 		int nearestDistance = 0x7FFFFFFF;
 		BuildingClass * nearestPrism = NULL;
@@ -141,6 +148,7 @@ int BuildingTypeExt::cPrismForwarding::AcquireSlaves_SingleStage
 				nearestDistance = Distance;
 			}
 		}
+		Debug::Log("PrismForwarding: singlestage checkpoint 02");
 		//we have a slave tower! do the bizzo
 		signed int idx = EligibleTowers.FindItemIndex(&nearestPrism);
 		if(idx != -1) {
@@ -185,7 +193,9 @@ bool BuildingTypeExt::cPrismForwarding::ValidateSupportTower(BuildingClass *Mast
 						if (pSlaveTypeData->PrismForwarding.Enabled == YES || pSlaveTypeData->PrismForwarding.Enabled == FORWARD) {
 							//building is a prism tower
 							BuildingTypeClass *pTargetType = TargetTower->Type;
+							Debug::Log("PrismForwarding: validate checkpoint 01");
 							if (pSlaveTypeData->PrismForwarding.Targets.FindItemIndex(&pTargetType) != -1) {
+								Debug::Log("PrismForwarding: validate checkpoint 02");
 								//valid type to forward from
 								HouseClass *pMasterHouse = MasterTower->Owner;
 								HouseClass *pTargetHouse = TargetTower->Owner;
@@ -194,6 +204,7 @@ bool BuildingTypeExt::cPrismForwarding::ValidateSupportTower(BuildingClass *Mast
 									|| (pSlaveTypeData->PrismForwarding.ToAllies
 											&& pSlaveHouse->IsAlliedWith(pTargetHouse) && pSlaveHouse->IsAlliedWith(pMasterHouse))) {
 									//ownership/alliance rules satisfied
+									Debug::Log("PrismForwarding: validate checkpoint 03");
 									CellStruct tarCoords = TargetTower->GetCell()->MapCoords;
 									CoordStruct MyPosition, curPosition;
 									TargetTower->GetPosition_2(&MyPosition);
@@ -201,6 +212,7 @@ bool BuildingTypeExt::cPrismForwarding::ValidateSupportTower(BuildingClass *Mast
 									int Distance = MyPosition.DistanceFrom(curPosition);
 									if(Distance <= pSlaveTypeData->PrismForwarding.ForwardingRange) {
 										//within range
+										Debug::Log("PrismForwarding: validate checkpoint 04");
 										return true;
 									}
 								}
