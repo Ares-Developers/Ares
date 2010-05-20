@@ -20,7 +20,7 @@ bool EMPulse::verbose = true;
 	\param Firer The Techno that fired the pulse.
 
 	\author AlexB
-	\date 2010-05-19
+	\date 2010-05-20
 */
 void EMPulse::CreateEMPulse(WarheadTypeExt::ExtData * Warhead, CoordStruct *Coords, TechnoClass *Firer) {
 	if (!Warhead) {
@@ -70,8 +70,12 @@ void EMPulse::CreateEMPulse(WarheadTypeExt::ExtData * Warhead, CoordStruct *Coor
 			}
 		}
 
+		// get distance from impact site
+		CoordStruct target;
+		Techno->GetCoords(&target);
+		double dist = target.DistanceFrom(*Coords);
+
 		// reduce the distance for flying aircraft
-		float dist = Techno->Location.DistanceFrom(*Coords);
 		if((Techno->WhatAmI() == abs_Aircraft) && Techno->IsInAir()) {
 			dist *= 0.5;
 		}
@@ -148,10 +152,10 @@ void EMPulse::deliverEMPDamage(ObjectClass *object, TechnoClass *Firer, WarheadT
 				}
 			} else if (oldValue != newValue) {
 				// At least update the radar, if this is one.
-				updateRadarBlackout(curTechno);
 				if (verbose) {
 					Debug::Log("[deliverEMPDamage] Step 5c\n");
 				}
+				updateRadarBlackout(curTechno);
 			}
 		}
 	}
@@ -220,12 +224,12 @@ bool EMPulse::isEMPImmune(TechnoClass * Target, HouseClass * SourceHouse) {
 	// There is no other way to use (for example) BuildingTypeClass members from
 	// TechnoTypeClass Initialize to check if this Techno is EMP-prone. Cache the result
 	// here.
-	if(!pData->ImmuneToEMPSet.Get()) {
-		pData->ImmuneToEMP.Set(!EMPulse::IsTypeEMPProne(Target->GetTechnoType()));
-		pData->ImmuneToEMPSet.Set(true);
+	if(!pData->ImmuneToEMPSet) {
+		pData->ImmuneToEMP = !EMPulse::IsTypeEMPProne(Target->GetTechnoType());
+		pData->ImmuneToEMPSet = true;
 	}
 
-	if (pData->ImmuneToEMP.Get()) {
+	if (pData->ImmuneToEMP) {
 		if (verbose) {
 			Debug::Log("[isEMPImmune] \"%s\" is ImmuneToEMP.\n", Target->get_ID());
 		}
