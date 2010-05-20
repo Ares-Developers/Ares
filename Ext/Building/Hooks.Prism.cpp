@@ -28,7 +28,7 @@ DEFINE_HOOK(44B2FE, BuildingClass_Mi_Attack_IsPrism, 6)
 
 			//set up slaves
 			int NetworkSize = 0;
-			int stage = 1;
+			int stage = 0;
 
 			//when it reaches zero we can't acquire any more slaves
 			while (BuildingTypeExt::cPrismForwarding::AcquireSlaves_MultiStage(B, B, stage++, 0, &NetworkSize, &LongestChain) != 0) {}
@@ -79,7 +79,7 @@ DEFINE_HOOK(4503F0, BuildingClass_Update_Prism, 9)
 	GET(BuildingClass *, pThis, ECX);
 	if(int PrismStage = pThis->PrismStage) {
 		BuildingExt::ExtData *pData = BuildingExt::ExtMap.Find(pThis);
-		if (pThis->DelayBeforeFiring <= 0) {
+		if (pData->PrismForwarding.PrismChargeDelay <= 0) {
 			--pThis->DelayBeforeFiring;
 			if(pThis->DelayBeforeFiring <= 0) {
 				if(PrismStage == pcs_Slave) {
@@ -116,7 +116,7 @@ DEFINE_HOOK(4503F0, BuildingClass_Update_Prism, 9)
 			}
 		} else {
 			//still in delayed charge so not actually charging yet
-			--pThis->DelayBeforeFiring;
+			--pData->PrismForwarding.PrismChargeDelay;
 			pThis->DestroyNthAnim(BuildingAnimSlot::Active);
 			pThis->PlayNthAnim(BuildingAnimSlot::Special);
 		}

@@ -187,12 +187,12 @@ bool BuildingTypeExt::cPrismForwarding::ValidateSupportTower(BuildingClass *Mast
 							BuildingTypeClass *pTargetType = TargetTower->Type;
 							if (pSlaveTypeData->PrismForwarding.Targets.FindItemIndex(&pTargetType) != -1) {
 								//valid type to forward from
-								HouseClass *pMasterHours = MasterTower->Owner;
+								HouseClass *pMasterHouse = MasterTower->Owner;
 								HouseClass *pTargetHouse = TargetTower->Owner;
 								HouseClass *pSlaveHouse = SlaveTower->Owner;
 								if ((pSlaveHouse == pTargetHouse && pSlaveHouse == pMasterHours)
 									|| (pSlaveTypeData->PrismForwarding.ToAllies
-											&& pSlaveHouse->IsAlliedWith(pTargetHouse) && pSlaveHouse->IsAlliedWith(pMasterHours))) {
+											&& pSlaveHouse->IsAlliedWith(pTargetHouse) && pSlaveHouse->IsAlliedWith(pMasterHouse))) {
 									//ownership/alliance rules satisfied
 									CellStruct tarCoords = TargetTower->GetCell()->MapCoords;
 									CoordStruct MyPosition, curPosition;
@@ -250,6 +250,7 @@ void BuildingTypeExt::cPrismForwarding::RemoveSlave(BuildingClass *SlaveTower) {
 			}
 		}
 		//assuming that this tower has been shut down so all charging activity ceases
+		pSlaveData->PrismChargeDelay = 0;
 		SlaveTower->DelayBeforeFiring = 0;
 		pSlaveData->PrismForwarding.ModifierReserve = 0.0;
 		pSlaveData->PrismForwarding.DamageReserve = 0;
@@ -264,9 +265,10 @@ void BuildingTypeExt::cPrismForwarding::OrphanSlave(BuildingClass *SlaveTower) {
 		BuildingExt::ExtData *pSlaveData = BuildingExt::ExtMap.Find(SlaveTower);
 		BuildingTypeClass *pSlaveType = SlaveTower->Type;
 		BuildingTypeExt::ExtData *pSlaveTypeData = BuildingTypeExt::ExtMap.Find(pSlaveType);
-		if (SlaveTower->DelayBeforeFiring) {
+		if (pSlaveData->PrismChargeDelay) {
 			//hasn't started charging yet, so can go idle immediately
 			SlaveTower->PrismStage = pcs_Idle;
+			pSlaveData->PrismChargeDelay = 0;
 			SlaveTower->DelayBeforeFiring = 0;
 			pSlaveData->PrismForwarding.ModifierReserve = 0.0;
 			pSlaveData->PrismForwarding.DamageReserve = 0;
