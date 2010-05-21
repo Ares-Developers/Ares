@@ -67,6 +67,9 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 		}
 
 	}
+	if (strcmp(pID, "ATESLA") == 0) {
+		Debug::Log("ATESLA: MNS=%d, SM=%d, CD=%d\n", this->MaxNetworkSize, this->SupportModifier, this->ChargeDelay);
+	}
 }
 
 int BuildingTypeExt::cPrismForwarding::AcquireSlaves_MultiStage(BuildingClass *MasterTower, BuildingClass *TargetTower, int stage, int chain, int *NetworkSize, int *LongestChain) {
