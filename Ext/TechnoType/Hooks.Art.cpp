@@ -49,7 +49,7 @@ DEFINE_HOOK(5F9070, ObjectTypeClass_Load2DArt, 0)
 				strncpy(pType->ImageFile, basename, 0x19);
 			}
 		}
-	} else if(pType->AlternateArcticArt && scenarioTheater == th_Snow && !pType->IsImageAllocated) {
+	} else if(pType->AlternateArcticArt && scenarioTheater == th_Snow && !pType->ImageIsOutdated) { //outdated? you think I know what it means? hahahaha
 		if(!pType->ArcticArtInUse) {
 			_snprintf(basename, 256, "%sA", pType->ImageFile);
 			strncpy(pType->ImageFile, basename, 0x19);
@@ -73,13 +73,13 @@ DEFINE_HOOK(5F9070, ObjectTypeClass_Load2DArt, 0)
 		}
 	}
 
-	if(pType->IsImageAllocated) {
+	if(pType->ImageIsOutdated) {
 		if(pType->Image) {
 			GAME_DEALLOC(pType->Image);
 		}
 	}
 	pType->Image = NULL;
-	pType->IsImageAllocated = false;
+	pType->ImageIsOutdated = false;
 
 	switch(pType->WhatAmI()) {
 		case SmudgeTypeClass::AbsID:
@@ -110,4 +110,21 @@ DEFINE_HOOK(5F9070, ObjectTypeClass_Load2DArt, 0)
 	}
 
 	return 0x5F92C3;
+}
+
+DEFINE_HOOK(5F96B0, ObjectTypeClass_TheaterSpecificID, 6)
+{
+	GET(char *, basename, ECX);
+	GET(signed int, idxTheater, EDX);
+
+	if(idxTheater != -1) {
+		char c0 = basename[0];
+		char c1 = basename[1] & ~0x20; // evil hack to uppercase
+		if(isalpha(c0)) {
+			if(c1 == 'A' || c1 == 'T') {
+				basename[1] = Theater::Array[idxTheater].Letter[0];
+			}
+		}
+	}
+	return 0x5F9702;
 }
