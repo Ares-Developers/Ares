@@ -14,7 +14,16 @@ void BuildingTypeExt::cPrismForwarding::Initialize(BuildingTypeClass *pThis) {
 	this->MaxNetworkSize = RulesClass::Instance->PrismSupportMax;
 	this->SupportModifier = RulesClass::Instance->PrismSupportModifier;
 	this->DamageAdd = 0;
-	this->ForwardingRange = pThis->get_Weapon(1)->Range;
+
+	if(WeaponTypeClass* Secondary = pThis->get_Weapon(1)) {
+		this->ForwardingRange = Secondary->Range;
+	} else if(WeaponTypeClass* Primary = pThis->get_Weapon(0)) {
+		this->ForwardingRange = Primary->Range;
+	} else {
+		this->ForwardingRange = 0;
+	}
+
+	this->ForwardingRange = 0;
 	this->SupportDelay = RulesClass::Instance->PrismSupportDelay;
 	this->ToAllies = false;
 	this->MyHeight = RulesClass::Instance->PrismSupportHeight;
