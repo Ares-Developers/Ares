@@ -15,9 +15,6 @@ std::vector<std::string> BuildingTypeExt::ExtData::trenchKinds;
 
 void BuildingTypeExt::ExtData::Initialize(BuildingTypeClass *pThis)
 {
-	
-	this->PrismForwarding->Initialize(pThis);
-
 	if(pThis->SecretLab) {
 		this->Secret_Boons.Clear();
 		DynamicVectorClass<TechnoTypeClass *> *Options
@@ -36,6 +33,8 @@ void BuildingTypeExt::ExtData::Initialize(BuildingTypeClass *pThis)
 			this->Secret_Boons.AddItem(Options->GetItem(i));
 		}
 	}
+
+	this->PrismForwarding.Initialize(pThis);
 }
 
 void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINIClass* pINI)
