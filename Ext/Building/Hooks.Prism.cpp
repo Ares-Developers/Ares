@@ -17,6 +17,7 @@ DEFINE_HOOK(44B2FE, BuildingClass_Mi_Attack_IsPrism, 6)
 	if (pMasterTypeData->PrismForwarding.Enabled == BuildingTypeExt::cPrismForwarding::YES
 		|| pMasterTypeData->PrismForwarding.Enabled == BuildingTypeExt::cPrismForwarding::ATTACK) {
 
+		Debug::Log("PrismForwarding: Setting up a new Master tower");
 		if (B->PrismStage == pcs_Idle) {
 			B->PrismStage = pcs_Master;
 			B->DelayBeforeFiring = B->Type->DelayedFireDelay;
@@ -32,12 +33,14 @@ DEFINE_HOOK(44B2FE, BuildingClass_Mi_Attack_IsPrism, 6)
 			int stage = 0;
 
 			//when it reaches zero we can't acquire any more slaves
+			Debug::Log("PrismForwarding: initial multistage calling with stage %d", stage);
 			while (BuildingTypeExt::cPrismForwarding::AcquireSlaves_MultiStage(B, B, stage++, 0, &NetworkSize, &LongestChain) != 0) {}
 
 			//now we have all the towers we know the longest chain, and can set all the towers' charge delays
 			BuildingTypeExt::cPrismForwarding::SetPrismChargeDelay(B);
 
 		} else if (B->PrismStage == pcs_Slave) {
+			Debug::Log("PrismForwarding: Converting Slave to Master");
 			//a slave tower is changing into a master tower at the last second
 			B->PrismStage = pcs_Master;
 			BuildingExt::ExtData *pMasterData = BuildingExt::ExtMap.Find(B);
@@ -57,19 +60,25 @@ DEFINE_HOOK(447FAE, BuildingClass_GetObjectActivityState, 6)
 	GET(BuildingClass *, B, ESI);
 	enum { BusyCharging = 0x447FB8, NotBusyCharging = 0x447FC3};
 
+	Debug::Log("PrismForwarding: GOAS");
 	if(B->DelayBeforeFiring > 0) {
+		Debug::Log("PrismForwarding: GOAS->DBF");
 		//if this is a slave prism tower, then it might still be able to become a master tower at this time
 		BuildingTypeClass *pType = B->Type;
 		BuildingTypeExt::ExtData *pTypeData = BuildingTypeExt::ExtMap.Find(pType);
 		if (pTypeData->PrismForwarding.Enabled == BuildingTypeExt::cPrismForwarding::YES
 				|| pTypeData->PrismForwarding.Enabled == BuildingTypeExt::cPrismForwarding::ATTACK) {
 			//is a prism tower
+			Debug::Log("PrismForwarding: GOAS->DBF->IsPrism");
 			if (B->PrismStage == pcs_Slave && pTypeData->PrismForwarding.BreakSupport) {
+				Debug::Log("PrismForwarding: GOAS->DBF->IsPrism->NotBusy");
 				return NotBusyCharging;
 			}
 		}
+		Debug::Log("PrismForwarding: GOAS->DBF->Busy");
 		return BusyCharging;
 	}
+	Debug::Log("PrismForwarding: GOAS->NotBusy");
 	return NotBusyCharging;
 }
 
@@ -301,7 +310,7 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 /*DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 {
 	GET(BuildingClass *, B, ECX);
-	LEA_STACK(CoordStruct *, TargetXYZ, 0x4);
+	LEA_STACK(CoordStruct *, pTargetXYZ, 0x4);
 
 	CoordStruct SourceXYZ, Base = {0, 0, 0};
 	B->GetFLH(&SourceXYZ, 0, Base);
@@ -309,7 +318,7 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 	ColorStruct blank = {0, 0, 0};
 
 	LaserDrawClass * LaserBeam;
-	GAME_ALLOC(LaserDrawClass, LaserBeam, SourceXYZ, TargetXYZ, B->Owner->LaserColor, blank, blank, RulesClass::Instance->PrismSupportDuration);
+	GAME_ALLOC(LaserDrawClass, LaserBeam, SourceXYZ, *pTargetXYZ, B->Owner->LaserColor, blank, blank, RulesClass::Instance->PrismSupportDuration);
 
 	if(LaserBeam) {
 		LaserBeam->IsHouseColor = true;

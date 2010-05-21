@@ -58,6 +58,7 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 		this->MyHeight = pINI->ReadInteger(pID, "PrismForwarding.MyHeight", this->MyHeight);
 		this->BreakSupport = pINI->ReadBool(pID, "PrismForwarding.BreakSupport", this->BreakSupport);
 
+		Debug::Log("current ChargeDelay = %d", this->ChargeDelay);
 		int ChargeDelay = pINI->ReadInteger(pID, "PrismForwarding.ChargeDelay", this->ChargeDelay);
 		if (ChargeDelay >= 1) {
 			this->ChargeDelay = ChargeDelay;
@@ -84,6 +85,7 @@ int BuildingTypeExt::cPrismForwarding::AcquireSlaves_MultiStage(BuildingClass *M
 	// |
 	// 6---7--8
 	// ...which would not be as good.
+	Debug::Log("PrismForwarding: multistage called with stage %d, chain %d", stage, chain);
 	int countSlaves = 0;
 	if (stage == 0) {
 		countSlaves += AcquireSlaves_SingleStage(MasterTower, TargetTower, stage, (chain + 1), NetworkSize, LongestChain);
@@ -96,6 +98,7 @@ int BuildingTypeExt::cPrismForwarding::AcquireSlaves_MultiStage(BuildingClass *M
 			++senderIdx;
 		}
 	}
+	Debug::Log("PrismForwarding: multistage returning %d", countSlaves);
 	return countSlaves;
 }
 
