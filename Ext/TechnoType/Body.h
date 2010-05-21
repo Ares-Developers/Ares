@@ -76,6 +76,7 @@ public:
 		bool ImmuneToEMP;
 		bool VeteranAbilityEMPIMMUNE;
 		bool EliteAbilityEMPIMMUNE;
+		int EMPThreshold;
 
 		// new on 05.04.10 for #733 (KillDriver/"Jarmen Kell")
 		bool ProtectedDriver; //!< Whether the driver of this vehicle cannot be killed, i.e. whether this vehicle is immune to KillDriver. Request #733.
@@ -111,6 +112,7 @@ public:
 			RequiredStolenTech(0ull),
 			ImmuneToEMPSet (false),
 			ImmuneToEMP (false),
+			EMPThreshold (-1),
 			VeteranAbilityEMPIMMUNE (false),
 			EliteAbilityEMPIMMUNE (false),
 			ProtectedDriver(false),

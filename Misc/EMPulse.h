@@ -26,6 +26,7 @@ protected:
 	static void updateSlaveManager(TechnoClass *);
 	static bool enableEMPEffect(TechnoClass *, ObjectClass *);
 	static void announceAttack(TechnoClass *);
+	static bool thresholdExceeded(TechnoClass *);
 	static bool verbose;
 };
 

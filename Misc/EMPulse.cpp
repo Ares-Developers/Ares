@@ -120,9 +120,18 @@ void EMPulse::deliverEMPDamage(ObjectClass *object, TechnoClass *Firer, WarheadT
 				Debug::Log("[deliverEMPDamage] Step 2: %s\n",
 						curTechno->get_ID());
 			}
+
+			// respect verses
+			int Duration = Warhead->EMP_Duration;
+			if(false) {
+				Duration = (int)(Duration * Warhead->Verses[curTechno->GetTechnoType()->Armor].Verses);
+			} else if(abs(Warhead->Verses[curTechno->GetTechnoType()->Armor].Verses) < 0.001) {
+				return;
+			}
+
 			// get the new capped value
 			int oldValue = curTechno->EMPLockRemaining;
-			int newValue = getCappedDuration(oldValue, Warhead->EMP_Duration, Warhead->EMP_Cap);
+			int newValue = getCappedDuration(oldValue, Duration, Warhead->EMP_Cap);
 
 			if (verbose) {
 				Debug::Log("[deliverEMPDamage] Step 3: %d\n",
@@ -156,6 +165,34 @@ void EMPulse::deliverEMPDamage(ObjectClass *object, TechnoClass *Firer, WarheadT
 					Debug::Log("[deliverEMPDamage] Step 5c\n");
 				}
 				updateRadarBlackout(curTechno);
+			}
+
+			// is techno destroyed by EMP?
+			if (thresholdExceeded(curTechno)) {
+				curTechno->Destroyed(Firer);
+				if (curTechno->IsInAir()) {
+					curTechno->Crash(Firer);
+				} else {
+					curTechno->Destroy();
+					curTechno->Remove();
+					curTechno->UnInit();
+				}
+				
+				// play unit voice
+				if (curTechno->Owner == HouseClass::Player) {
+					TechnoTypeClass *TT = curTechno->GetTechnoType();
+					if (curTechno->IsInAir()) {
+						VocClass::PlayAt(TT->VoiceCrashing, &curTechno->Location, NULL);
+					}
+
+					if (TT->VoiceDie.Count) {
+						VocClass::PlayAt(TT->VoiceDie[rand() % TT->VoiceDie.Count], &curTechno->Location, NULL);
+					}
+
+					if (TT->DieSound.Count) {
+						VocClass::PlayAt(TT->DieSound[rand() % TT->DieSound.Count], &curTechno->Location, NULL);
+					}
+				}
 			}
 		}
 	}
@@ -611,6 +648,33 @@ void EMPulse::announceAttack(TechnoClass * Techno) {
 	}
 }
 
+//! Checks whether a Techno should be considered destroyed.
+/*!
+	A techno can be destroyed by excessive EMP damage. If the treshold
+	is positive it acts as a upper limit. If it is negative it is only
+	a limit if the unit is in the air.
+
+	\param Victim The Techno that is under EMP effect.
+	
+	\returns True if Victim has taken too much EMP damage, False otherwise.
+
+	\author AlexB
+	\date 2010-05-20
+*/
+bool EMPulse::thresholdExceeded(TechnoClass * Victim) {
+	TechnoTypeExt::ExtData *pData = TechnoTypeExt::ExtMap.Find(Victim->GetTechnoType());
+
+	Debug::Log("[thresholdExceeded] %s: %d %d\n", Victim->get_ID(), pData->EMPThreshold, Victim->EMPLockRemaining);
+
+	if ((pData->EMPThreshold != 0) && (Victim->EMPLockRemaining > (DWORD)abs(pData->EMPThreshold))) {
+		if ((pData->EMPThreshold > 0) || Victim->IsInAir()) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 //! Sets all properties to disable a Techno.
 /*!
 	Disables Buildings and crashes flying Aircrafts. Foots get deactivated.
@@ -629,7 +693,7 @@ void EMPulse::announceAttack(TechnoClass * Techno) {
 	\returns True if Victim has been destroyed by the EMP effect, False otherwise.
 
 	\author AlexB
-	\date 2010-05-04
+	\date 2010-05-21
 */
 bool EMPulse::enableEMPEffect(TechnoClass * Victim, ObjectClass * Source) {
 	Victim->Owner->ShouldRecheckTechTree = true;
@@ -645,7 +709,9 @@ bool EMPulse::enableEMPEffect(TechnoClass * Victim, ObjectClass * Source) {
 				if (EMPulse::verbose) {
 					Debug::Log("[enableEMPEffect] Plane crash: %s\n", Aircraft->get_ID());
 				}
-				VocClass::PlayAt(Aircraft->Type->VoiceCrashing, &Aircraft->Location, NULL);
+				if (Victim->Owner == HouseClass::Player) {
+					VocClass::PlayAt(Aircraft->Type->VoiceCrashing, &Aircraft->Location, NULL);
+				}
 				Aircraft->Crash(Source);
 				Aircraft->Destroyed(Source);
 				return true;
