@@ -36,7 +36,7 @@ public:
 		signed int MaxNetworkSize;				//max number of towers that can be in the network
 		double SupportModifier; 				//Per-building PrismSupportModifier
 		signed int DamageAdd; 					//amount of flat damage to add to the firing beam (before multiplier)
-		signed int ForwardingRange;				//range that can forward over
+		signed int SupportRange;				//range that can forward over
 		int SupportDelay;					//Per-building PrismSupportDelay
 		int SupportDuration;					//Per-building PrismSupportDuration
 		bool ToAllies;						//can this tower support allies' towers or not
@@ -58,7 +58,7 @@ public:
 
 		// constructor
 		cPrismForwarding() : Enabled(NO), MaxFeeds(0), MaxChainLength(0), MaxNetworkSize(0), SupportModifier(0.0)
-		, DamageAdd(0), ForwardingRange(0), SupportDelay(0), SupportDuration(0), ToAllies(false), MyHeight(0), BreakSupport(false),
+		, DamageAdd(0), SupportRange(0), SupportDelay(0), SupportDuration(0), ToAllies(false), MyHeight(0), BreakSupport(false),
 		ChargeDelay(0) {};
 	};
 

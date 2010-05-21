@@ -16,14 +16,13 @@ void BuildingTypeExt::cPrismForwarding::Initialize(BuildingTypeClass *pThis) {
 	this->DamageAdd = 0;
 
 	if(WeaponTypeClass* Secondary = pThis->get_Secondary()) {
-		this->ForwardingRange = Secondary->Range;
+		this->SupportRange = Secondary->Range;
 	} else if(WeaponTypeClass* Primary = pThis->get_Primary()) {
-		this->ForwardingRange = Primary->Range;
+		this->SupportRange = Primary->Range;
 	} else {
-		this->ForwardingRange = 0;
+		this->SupportRange = 0;
 	}
 
-	this->ForwardingRange = 0;
 	this->SupportDelay = RulesClass::Instance->PrismSupportDelay;
 	this->ToAllies = false;
 	this->MyHeight = RulesClass::Instance->PrismSupportHeight;
@@ -61,7 +60,7 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 		this->MaxNetworkSize = pINI->ReadInteger(pID, "PrismForwarding.MaxNetworkSize", this->MaxNetworkSize);
 		this->SupportModifier = pINI->ReadDouble(pID, "PrismForwarding.SupportModifier", this->SupportModifier);
 		this->DamageAdd = pINI->ReadInteger(pID, "PrismForwarding.DamageAdd", this->DamageAdd);
-		this->ForwardingRange = pINI->ReadInteger(pID, "PrismForwarding.ForwardingRange", this->ForwardingRange);
+		this->SupportRange = pINI->ReadInteger(pID, "PrismForwarding.SupportRange", this->SupportRange);
 		this->SupportDelay = pINI->ReadInteger(pID, "PrismForwarding.SupportDelay", this->SupportDelay);
 		this->ToAllies = pINI->ReadBool(pID, "PrismForwarding.ToAllies", this->ToAllies);
 		this->MyHeight = pINI->ReadInteger(pID, "PrismForwarding.MyHeight", this->MyHeight);
@@ -77,7 +76,7 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 
 	}
 	if (strcmp(pID, "ATESLA") == 0) {
-		Debug::Log("ATESLA: MNS=%d, SM=%d, CD=%d\n", this->MaxNetworkSize, this->SupportModifier, this->ChargeDelay);
+		Debug::Log("ATESLA: MNS=%d, SM=%f, CD=%u\n", this->MaxNetworkSize, this->SupportModifier, this->ChargeDelay);
 	}
 }
 
@@ -225,7 +224,8 @@ bool BuildingTypeExt::cPrismForwarding::ValidateSupportTower(BuildingClass *Mast
 									TargetTower->GetPosition_2(&MyPosition);
 									SlaveTower->GetPosition_2(&curPosition);
 									int Distance = MyPosition.DistanceFrom(curPosition);
-									if(Distance <= pSlaveTypeData->PrismForwarding.ForwardingRange) {
+									Debug::Log("[PrismForwarding] Distance=%u, SupportRange=%d", Distance, pSlaveTypeData->PrismForwarding.SupportRange);
+									if(pSlaveTypeData->PrismForwarding.SupportRange == -1 || Distance <= pSlaveTypeData->PrismForwarding.SupportRange) {
 										//within range
 										Debug::Log("PrismForwarding: validate checkpoint 04\n");
 										return true;
