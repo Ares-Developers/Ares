@@ -17,7 +17,7 @@ DEFINE_HOOK(44B2FE, BuildingClass_Mi_Attack_IsPrism, 6)
 	if (pMasterTypeData->PrismForwarding.Enabled == BuildingTypeExt::cPrismForwarding::YES
 		|| pMasterTypeData->PrismForwarding.Enabled == BuildingTypeExt::cPrismForwarding::ATTACK) {
 
-		Debug::Log("PrismForwarding: Setting up a new Master tower");
+		Debug::Log("PrismForwarding: Setting up a new Master tower\n");
 		if (B->PrismStage == pcs_Idle) {
 			B->PrismStage = pcs_Master;
 			B->DelayBeforeFiring = B->Type->DelayedFireDelay;
@@ -33,14 +33,14 @@ DEFINE_HOOK(44B2FE, BuildingClass_Mi_Attack_IsPrism, 6)
 			int stage = 0;
 
 			//when it reaches zero we can't acquire any more slaves
-			Debug::Log("PrismForwarding: initial multistage calling with stage %d", stage);
+			Debug::Log("PrismForwarding: initial multistage calling with stage %d\n", stage);
 			while (BuildingTypeExt::cPrismForwarding::AcquireSlaves_MultiStage(B, B, stage++, 0, &NetworkSize, &LongestChain) != 0) {}
 
 			//now we have all the towers we know the longest chain, and can set all the towers' charge delays
 			BuildingTypeExt::cPrismForwarding::SetPrismChargeDelay(B);
 
 		} else if (B->PrismStage == pcs_Slave) {
-			Debug::Log("PrismForwarding: Converting Slave to Master");
+			Debug::Log("PrismForwarding: Converting Slave to Master\n");
 			//a slave tower is changing into a master tower at the last second
 			B->PrismStage = pcs_Master;
 			BuildingExt::ExtData *pMasterData = BuildingExt::ExtMap.Find(B);
@@ -60,25 +60,25 @@ DEFINE_HOOK(447FAE, BuildingClass_GetObjectActivityState, 6)
 	GET(BuildingClass *, B, ESI);
 	enum { BusyCharging = 0x447FB8, NotBusyCharging = 0x447FC3};
 
-	Debug::Log("PrismForwarding: GOAS");
+	Debug::Log("PrismForwarding: GOAS\n");
 	if(B->DelayBeforeFiring > 0) {
-		Debug::Log("PrismForwarding: GOAS->DBF");
+		Debug::Log("PrismForwarding: GOAS->DBF\n");
 		//if this is a slave prism tower, then it might still be able to become a master tower at this time
 		BuildingTypeClass *pType = B->Type;
 		BuildingTypeExt::ExtData *pTypeData = BuildingTypeExt::ExtMap.Find(pType);
 		if (pTypeData->PrismForwarding.Enabled == BuildingTypeExt::cPrismForwarding::YES
 				|| pTypeData->PrismForwarding.Enabled == BuildingTypeExt::cPrismForwarding::ATTACK) {
 			//is a prism tower
-			Debug::Log("PrismForwarding: GOAS->DBF->IsPrism");
+			Debug::Log("PrismForwarding: GOAS->DBF->IsPrism\n");
 			if (B->PrismStage == pcs_Slave && pTypeData->PrismForwarding.BreakSupport) {
-				Debug::Log("PrismForwarding: GOAS->DBF->IsPrism->NotBusy");
+				Debug::Log("PrismForwarding: GOAS->DBF->IsPrism->NotBusy\n");
 				return NotBusyCharging;
 			}
 		}
-		Debug::Log("PrismForwarding: GOAS->DBF->Busy");
+		Debug::Log("PrismForwarding: GOAS->DBF->Busy\n");
 		return BusyCharging;
 	}
-	Debug::Log("PrismForwarding: GOAS->NotBusy");
+	Debug::Log("PrismForwarding: GOAS->NotBusy\n");
 	return NotBusyCharging;
 }
 
