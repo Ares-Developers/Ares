@@ -15,9 +15,9 @@ void BuildingTypeExt::cPrismForwarding::Initialize(BuildingTypeClass *pThis) {
 	this->SupportModifier = RulesClass::Instance->PrismSupportModifier;
 	this->DamageAdd = 0;
 
-	if(WeaponTypeClass* Secondary = pThis->get_Weapon(1)) {
+	if(WeaponTypeClass* Secondary = pThis->get_Secondary()) {
 		this->ForwardingRange = Secondary->Range;
-	} else if(WeaponTypeClass* Primary = pThis->get_Weapon(0)) {
+	} else if(WeaponTypeClass* Primary = pThis->get_Primary()) {
 		this->ForwardingRange = Primary->Range;
 	} else {
 		this->ForwardingRange = 0;
