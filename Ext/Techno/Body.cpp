@@ -11,7 +11,7 @@ Container<TechnoExt> TechnoExt::ExtMap;
 template<> TechnoExt::TT *Container<TechnoExt>::SavingObject = NULL;
 template<> IStream *Container<TechnoExt>::SavingStream = NULL;
 
-FireError TechnoExt::FiringStateCache = -1;
+FireError::Value TechnoExt::FiringStateCache = -1;
 
 bool TechnoExt::NeedsRegap = false;
 

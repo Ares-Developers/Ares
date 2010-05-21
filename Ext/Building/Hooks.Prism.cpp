@@ -85,7 +85,6 @@ DEFINE_HOOK(447FAE, BuildingClass_GetObjectActivityState, 6)
 //NB: PrismTargetCoords is not a coord struct, it's some kind of garbage whose first dword is the used weapon index and two others are undefined...
 DEFINE_HOOK(4503F0, BuildingClass_Update_Prism, 9)
 {
-	int end = 0x4504E2;
 	GET(BuildingClass *, pThis, ECX);
 	if(int PrismStage = pThis->PrismStage) {
 		BuildingExt::ExtData *pData = BuildingExt::ExtMap.Find(pThis);
@@ -104,9 +103,9 @@ DEFINE_HOOK(4503F0, BuildingClass_Update_Prism, 9)
 					}
 				}
 				if(PrismStage == pcs_Master) {
-					if(pThis->Target) {
-						if(pThis->GetFireError(pThis->Target, pThis->PrismTargetCoords.X, true) == FireError::OK) {
-							if(BulletClass *LaserBeam = pThis->Fire(pThis->Target, pThis->PrismTargetCoords.X)) {
+					if(ObjectClass *Target = pThis->Target) {
+						if(pThis->GetFireError(Target, pThis->PrismTargetCoords.X, true) == FireError::OK) {
+							if(BulletClass *LaserBeam = pThis->Fire(Target, pThis->PrismTargetCoords.X)) {
 								BuildingTypeClass *pType = pThis->Type;
 								BuildingTypeExt::ExtData *pTypeData = BuildingTypeExt::ExtMap.Find(pType);
 								double DamageMult = pTypeData->PrismForwarding.SupportModifier + pData->PrismForwarding.ModifierReserve;
@@ -131,7 +130,7 @@ DEFINE_HOOK(4503F0, BuildingClass_Update_Prism, 9)
 			pThis->PlayNthAnim(BuildingAnimSlot::Special);
 		}
 	}
-	return end;
+	return 0x4504E2;
 }
 
 DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)

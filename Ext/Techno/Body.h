@@ -78,7 +78,7 @@ public:
 
 	static BuildingLightClass * ActiveBuildingLight;
 
-	static FireError FiringStateCache;
+	static FireError::Value FiringStateCache;
 
 	static bool NeedsRegap;
 
