@@ -122,10 +122,14 @@ int BuildingTypeExt::cPrismForwarding::AcquireSlaves_SingleStage
 	BuildingTypeClass *pTargetType = TargetTower->Type;
 	BuildingTypeExt::ExtData *pTargetTypeData = BuildingTypeExt::ExtMap.Find(pTargetType);
 
-	if ((pTargetTypeData->PrismForwarding.MaxFeeds == 0)
-			|| (pMasterTypeData->PrismForwarding.MaxChainLength != -1 && pMasterTypeData->PrismForwarding.MaxChainLength < chain)
-			|| (pMasterTypeData->PrismForwarding.MaxNetworkSize != -1 && pMasterTypeData->PrismForwarding.MaxNetworkSize <= *NetworkSize)) {
-		Debug::Log("PrismForwarding: singlestage aborted\n");
+	signed int MaxFeeds = pTargetTypeData->PrismForwarding.MaxFeeds;
+	signed int MaxNetworkSize = pMasterTypeData->PrismForwarding.MaxNetworkSize;
+	signed int MaxChainLength = pMasterTypeData->PrismForwarding.MaxChainLength;
+
+	if (MaxFeeds == 0
+			|| (MaxChainLength != -1 && MaxChainLength < chain)
+			|| (MaxNetworkSize != -1 && MaxNetworkSize <= *NetworkSize)) {
+		Debug::Log("PrismForwarding: singlestage aborted. MaxFeeds=%d, CL=%d/%d, MNS=%d/%d\n", MaxFeeds, chain, MaxChainLength, *NetworkSize, MaxNetworkSize);
 		return 0;
 	}
 
@@ -135,9 +139,8 @@ int BuildingTypeExt::cPrismForwarding::AcquireSlaves_SingleStage
 	for (int i = 0; i < BuildingClass::Array->Count; ++i) {
 		//if (BuildingClass *SlaveTower = B->Owner->Buildings[i]) {
 		if (BuildingClass *SlaveTower = (BuildingClass*)BuildingClass::Array->GetItem(i)) {
-			Debug::Log("PrismForwarding: checking if SlaveTower is eligible at stage %d, chain %d\n", stage, chain);
 			if (ValidateSupportTower(MasterTower, TargetTower, SlaveTower)) {
-				Debug::Log("PrismForwarding: SlaveTower confirmed eligible\n");
+				Debug::Log("PrismForwarding: SlaveTower confirmed eligible at stage %d, chain %d\n", stage, chain);
 				EligibleTowers.AddItem(SlaveTower);
 			}
 		}
@@ -145,8 +148,6 @@ int BuildingTypeExt::cPrismForwarding::AcquireSlaves_SingleStage
 
 	//now enslave the towers in order of proximity
 	int iFeeds = 0;
-	int MaxFeeds = pTargetTypeData->PrismForwarding.MaxFeeds;
-	int MaxNetworkSize = pMasterTypeData->PrismForwarding.MaxNetworkSize;
 	Debug::Log("PrismForwarding: singlestage checkpoint 01\n");
 	while (EligibleTowers.Count != 0 && (MaxFeeds == -1 || iFeeds < MaxFeeds) && (MaxNetworkSize == -1 || *NetworkSize < MaxNetworkSize)) {
 		int nearestDistance = 0x7FFFFFFF;
@@ -182,6 +183,11 @@ int BuildingTypeExt::cPrismForwarding::AcquireSlaves_SingleStage
 		BuildingExt::ExtData *pSlaveData = BuildingExt::ExtMap.Find(nearestPrism);
 		BuildingExt::ExtData *pTargetData = BuildingExt::ExtMap.Find(TargetTower);
 		pSlaveData->PrismForwarding.SupportTarget = TargetTower;
+		if (BuildingClass *pTEST = pSlaveData->PrismForwarding.SupportTarget) {
+			Debug::Log("SupportTarget set ok");
+		} else {
+			Debug::Log("FAILED to set SupportTarget!");
+		}
 		pTargetData->PrismForwarding.Senders.AddItem(nearestPrism);
 	}
 
@@ -227,7 +233,6 @@ bool BuildingTypeExt::cPrismForwarding::ValidateSupportTower(BuildingClass *Mast
 									Debug::Log("[PrismForwarding] Distance=%u, SupportRange=%d", Distance, pSlaveTypeData->PrismForwarding.SupportRange);
 									if(pSlaveTypeData->PrismForwarding.SupportRange == -1 || Distance <= pSlaveTypeData->PrismForwarding.SupportRange) {
 										//within range
-										Debug::Log("PrismForwarding: validate checkpoint 04\n");
 										return true;
 									}
 								}
