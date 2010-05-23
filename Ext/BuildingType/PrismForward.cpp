@@ -208,7 +208,8 @@ bool BuildingTypeExt::cPrismForwarding::ValidateSupportTower(BuildingClass *Mast
 		if(SlaveTower->ReloadTimer.Ignorable()) {
 			if(SlaveTower != TargetTower) {
 				if (!SlaveTower->DelayBeforeFiring) {
-					if(!SlaveTower->IsBeingDrained() && SlaveTower->GetCurrentMission() != mission_Attack) {
+					int SlaveMission = SlaveTower->GetCurrentMission()
+					if(!SlaveTower->IsBeingDrained() && SlaveMission != mission_Attack && SlaveMission != mission_Construction && SlaveMission != mission_Selling) {
 						BuildingExt::ExtData *pSlaveData = BuildingExt::ExtMap.Find(SlaveTower);
 						BuildingTypeClass *pSlaveType = SlaveTower->Type;
 						BuildingTypeExt::ExtData *pSlaveTypeData = BuildingTypeExt::ExtMap.Find(pSlaveType);
