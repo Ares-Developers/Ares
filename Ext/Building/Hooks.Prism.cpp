@@ -92,12 +92,15 @@ DEFINE_HOOK(4503F0, BuildingClass_Update_Prism, 9)
 			--pThis->DelayBeforeFiring;
 			if(pThis->DelayBeforeFiring <= 0) {
 				if(PrismStage == pcs_Slave) {
+					Debug::Log("[Prismforwarding] Slave ready to fire.");
 					if (BuildingClass *pTarget = pData->PrismForwarding.SupportTarget) {
+						Debug::Log("[Prismforwarding] Slave has a SupportTarget.");
 						BuildingExt::ExtData *pTargetData = BuildingExt::ExtMap.Find(pTarget);
 						BuildingTypeClass *pType = pThis->Type;
 						BuildingTypeExt::ExtData *pTypeData = BuildingTypeExt::ExtMap.Find(pType);
 						pTargetData->PrismForwarding.ModifierReserve += (pTypeData->PrismForwarding.SupportModifier + pData->PrismForwarding.ModifierReserve);
 						pTargetData->PrismForwarding.DamageReserve += (pTypeData->PrismForwarding.DamageAdd  + pData->PrismForwarding.DamageReserve);
+						Debug::Log("[Prismforwarding] Slave laser firing.");
 						pThis->FireLaser(pThis->PrismTargetCoords);
 
 					}
@@ -147,6 +150,7 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 	ColorStruct blank(0, 0, 0);
 
 	LaserDrawClass * LaserBeam;
+	Debug::Log("[Prismforwarding] allocing laser draw class.");
 	GAME_ALLOC(LaserDrawClass, LaserBeam, SourceXYZ, *pTargetXYZ, B->Owner->LaserColor, blank, blank, pTypeData->PrismForwarding.SupportDuration);
 
 	if(LaserBeam) {
