@@ -56,7 +56,7 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 				this->SupportRange = Primary->Range;
 			}
 		} else if (this->SupportRange != -1) {
-			this->SupportRange *= 256 //stored in leptons, not cells
+			this->SupportRange = this->SupportRange * 256; //stored in leptons, not cells
 		}
 		Debug::Log("[PrismForwarding] SR is now %f\n", this->SupportRange);
 

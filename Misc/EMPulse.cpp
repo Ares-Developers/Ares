@@ -664,7 +664,9 @@ void EMPulse::announceAttack(TechnoClass * Techno) {
 bool EMPulse::thresholdExceeded(TechnoClass * Victim) {
 	TechnoTypeExt::ExtData *pData = TechnoTypeExt::ExtMap.Find(Victim->GetTechnoType());
 
-	Debug::Log("[thresholdExceeded] %s: %d %d\n", Victim->get_ID(), pData->EMPThreshold, Victim->EMPLockRemaining);
+	if (verbose) {
+		Debug::Log("[thresholdExceeded] %s: %d %d\n", Victim->get_ID(), pData->EMPThreshold, Victim->EMPLockRemaining);
+	}
 
 	if ((pData->EMPThreshold != 0) && (Victim->EMPLockRemaining > (DWORD)abs(pData->EMPThreshold))) {
 		if ((pData->EMPThreshold > 0) || Victim->IsInAir()) {
