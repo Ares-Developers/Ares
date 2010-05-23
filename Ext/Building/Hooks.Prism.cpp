@@ -17,7 +17,6 @@ DEFINE_HOOK(44B2FE, BuildingClass_Mi_Attack_IsPrism, 6)
 	if (pMasterTypeData->PrismForwarding.Enabled == BuildingTypeExt::cPrismForwarding::YES
 		|| pMasterTypeData->PrismForwarding.Enabled == BuildingTypeExt::cPrismForwarding::ATTACK) {
 
-		Debug::Log("PrismForwarding: Setting up a new Master tower\n");
 		if (B->PrismStage == pcs_Idle) {
 			B->PrismStage = pcs_Master;
 			B->DelayBeforeFiring = B->Type->DelayedFireDelay;
@@ -33,7 +32,6 @@ DEFINE_HOOK(44B2FE, BuildingClass_Mi_Attack_IsPrism, 6)
 			int stage = 0;
 
 			//when it reaches zero we can't acquire any more slaves
-			Debug::Log("PrismForwarding: initial multistage calling with stage %d\n", stage);
 			while (BuildingTypeExt::cPrismForwarding::AcquireSlaves_MultiStage(B, B, stage++, 0, &NetworkSize, &LongestChain) != 0) {}
 
 			//now we have all the towers we know the longest chain, and can set all the towers' charge delays
@@ -60,25 +58,19 @@ DEFINE_HOOK(447FAE, BuildingClass_GetObjectActivityState, 6)
 	GET(BuildingClass *, B, ESI);
 	enum { BusyCharging = 0x447FB8, NotBusyCharging = 0x447FC3};
 
-	Debug::Log("PrismForwarding: GOAS\n");
 	if(B->DelayBeforeFiring > 0) {
-		Debug::Log("PrismForwarding: GOAS->DBF\n");
 		//if this is a slave prism tower, then it might still be able to become a master tower at this time
 		BuildingTypeClass *pType = B->Type;
 		BuildingTypeExt::ExtData *pTypeData = BuildingTypeExt::ExtMap.Find(pType);
 		if (pTypeData->PrismForwarding.Enabled == BuildingTypeExt::cPrismForwarding::YES
 				|| pTypeData->PrismForwarding.Enabled == BuildingTypeExt::cPrismForwarding::ATTACK) {
 			//is a prism tower
-			Debug::Log("PrismForwarding: GOAS->DBF->IsPrism\n");
 			if (B->PrismStage == pcs_Slave && pTypeData->PrismForwarding.BreakSupport) {
-				Debug::Log("PrismForwarding: GOAS->DBF->IsPrism->NotBusy\n");
 				return NotBusyCharging;
 			}
 		}
-		Debug::Log("PrismForwarding: GOAS->DBF->Busy\n");
 		return BusyCharging;
 	}
-	Debug::Log("PrismForwarding: GOAS->NotBusy\n");
 	return NotBusyCharging;
 }
 
@@ -92,15 +84,13 @@ DEFINE_HOOK(4503F0, BuildingClass_Update_Prism, 9)
 			--pThis->DelayBeforeFiring;
 			if(pThis->DelayBeforeFiring <= 0) {
 				if(PrismStage == pcs_Slave) {
-					Debug::Log("[Prismforwarding] Slave ready to fire.\n");
 					if (BuildingClass *pTarget = pData->PrismForwarding.SupportTarget) {
-						Debug::Log("[Prismforwarding] Slave has a SupportTarget.\n");
 						BuildingExt::ExtData *pTargetData = BuildingExt::ExtMap.Find(pTarget);
 						BuildingTypeClass *pType = pThis->Type;
 						BuildingTypeExt::ExtData *pTypeData = BuildingTypeExt::ExtMap.Find(pType);
+						Debug::Log("[PrismForwarding] Slave firing. SM1=%f SM2=%f\n", pTypeData->PrismForwarding.SupportModifier.Get(), pData->PrismForwarding.ModifierReserve);
 						pTargetData->PrismForwarding.ModifierReserve += (pTypeData->PrismForwarding.SupportModifier.Get() + pData->PrismForwarding.ModifierReserve);
 						pTargetData->PrismForwarding.DamageReserve += (pTypeData->PrismForwarding.DamageAdd.Get()  + pData->PrismForwarding.DamageReserve);
-						Debug::Log("[Prismforwarding] Slave laser firing.\n");
 						pThis->FireLaser(pThis->PrismTargetCoords);
 
 					}
@@ -150,7 +140,6 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 	ColorStruct blank(0, 0, 0);
 
 	LaserDrawClass * LaserBeam;
-	Debug::Log("[Prismforwarding] allocing laser draw class.");
 	GAME_ALLOC(LaserDrawClass, LaserBeam, SourceXYZ, *pTargetXYZ, B->Owner->LaserColor, blank, blank, pTypeData->PrismForwarding.SupportDuration);
 
 	if(LaserBeam) {
