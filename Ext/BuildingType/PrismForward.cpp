@@ -151,7 +151,7 @@ int BuildingTypeExt::cPrismForwarding::AcquireSlaves_SingleStage
 		//if (BuildingClass *SlaveTower = B->Owner->Buildings[i]) {
 		if (BuildingClass *SlaveTower = BuildingClass::Array->GetItem(i)) {
 			if (ValidateSupportTower(MasterTower, TargetTower, SlaveTower)) {
-				Debug::Log("PrismForwarding: SlaveTower confirmed eligible at stage %d, chain %d\n", stage, chain);
+				Debug::Log("[PrismForwarding] SlaveTower confirmed eligible at stage %d, chain %d\n", stage, chain);
 				SlaveTower->GetPosition_2(&curPosition);
 				int Distance = MyPosition.DistanceFrom(curPosition);
 
@@ -161,17 +161,22 @@ int BuildingTypeExt::cPrismForwarding::AcquireSlaves_SingleStage
 		}
 	}
 
+	Debug::Log("[PrismForwarding] Vector built. ETS=%u\n", EligibleTowers.size());
+
 	std::sort(EligibleTowers.begin(), EligibleTowers.end());
 	//std::reverse(EligibleTowers.begin(), EligibleTowers.end());
+	
+	Debug::Log("[PrismForwarding] Vector sorted. ETS=%u\n", EligibleTowers.size());
 
 	//now enslave the towers in order of proximity
 	int iFeeds = 0;
 	while (EligibleTowers.size() != 0 && (MaxFeeds == -1 || iFeeds < MaxFeeds) && (MaxNetworkSize == -1 || *NetworkSize < MaxNetworkSize)) {
 		BuildingClass * nearestPrism = EligibleTowers[0].Tower;
 		EligibleTowers.erase(EligibleTowers.begin());
+		Debug::Log("[PrismForwarding] Element erased. ETS=%u\n", EligibleTowers.size());
 		//we have a slave tower! do the bizzo
 		++iFeeds;
-		++NetworkSize;
+		++(*NetworkSize);
 		++TargetTower->SupportingPrisms; //Ares doesn't actually use this, but maintaining it anyway (as direct feeds only)
 		CoordStruct FLH, Base = {0, 0, 0};
 		TargetTower->GetFLH(&FLH, 0, Base);
@@ -185,7 +190,7 @@ int BuildingTypeExt::cPrismForwarding::AcquireSlaves_SingleStage
 		BuildingExt::ExtData *pTargetData = BuildingExt::ExtMap.Find(TargetTower);
 		pSlaveData->PrismForwarding.SupportTarget = TargetTower;
 		pTargetData->PrismForwarding.Senders.AddItem(nearestPrism);
-		Debug::Log("PrismForwarding] Enslave loop end. ETS=%u F=%u MF=%d NS=%u MNS=%d\n", EligibleTowers.size(), iFeeds, MaxFeeds, *NetworkSize, MaxNetworkSize);
+		Debug::Log("[PrismForwarding] Enslave loop end. ETS=%u F=%u MF=%d NS=%u MNS=%d\n", EligibleTowers.size(), iFeeds, MaxFeeds, *NetworkSize, MaxNetworkSize);
 	}
 
 	if (iFeeds != 0 && chain > *LongestChain) {
