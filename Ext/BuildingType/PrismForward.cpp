@@ -210,30 +210,32 @@ bool BuildingTypeExt::cPrismForwarding::ValidateSupportTower(BuildingClass *Mast
 				if (!SlaveTower->DelayBeforeFiring) {
 					int SlaveMission = SlaveTower->GetCurrentMission()
 					if(!SlaveTower->IsBeingDrained() && SlaveMission != mission_Attack && SlaveMission != mission_Construction && SlaveMission != mission_Selling) {
-						BuildingExt::ExtData *pSlaveData = BuildingExt::ExtMap.Find(SlaveTower);
-						BuildingTypeClass *pSlaveType = SlaveTower->Type;
-						BuildingTypeExt::ExtData *pSlaveTypeData = BuildingTypeExt::ExtMap.Find(pSlaveType);
-						if (pSlaveTypeData->PrismForwarding.Enabled == YES || pSlaveTypeData->PrismForwarding.Enabled == FORWARD) {
-							//building is a prism tower
-							BuildingTypeClass *pTargetType = TargetTower->Type;
-							if (pSlaveTypeData->PrismForwarding.Targets.FindItemIndex(&pTargetType) != -1) {
-								//valid type to forward from
-								HouseClass *pMasterHouse = MasterTower->Owner;
-								HouseClass *pTargetHouse = TargetTower->Owner;
-								HouseClass *pSlaveHouse = SlaveTower->Owner;
-								if ((pSlaveHouse == pTargetHouse && pSlaveHouse == pMasterHouse)
-									|| (pSlaveTypeData->PrismForwarding.ToAllies
-											&& pSlaveHouse->IsAlliedWith(pTargetHouse) && pSlaveHouse->IsAlliedWith(pMasterHouse))) {
-									//ownership/alliance rules satisfied
-									CellStruct tarCoords = TargetTower->GetCell()->MapCoords;
-									CoordStruct MyPosition, curPosition;
-									TargetTower->GetPosition_2(&MyPosition);
-									SlaveTower->GetPosition_2(&curPosition);
-									int Distance = MyPosition.DistanceFrom(curPosition);
-									Debug::Log("[PrismForwarding] Distance=%u, SupportRange=%d\n", Distance, pSlaveTypeData->PrismForwarding.SupportRange);
-									if(pSlaveTypeData->PrismForwarding.SupportRange == -1 || Distance <= pSlaveTypeData->PrismForwarding.SupportRange) {
-										//within range
-										return true;
+						if (TechnoExt::ExtData::IsOperated() && TechnoExt::ExtData::IsPowered() && !Techno::IsUnderEMP()) {
+							BuildingExt::ExtData *pSlaveData = BuildingExt::ExtMap.Find(SlaveTower);
+							BuildingTypeClass *pSlaveType = SlaveTower->Type;
+							BuildingTypeExt::ExtData *pSlaveTypeData = BuildingTypeExt::ExtMap.Find(pSlaveType);
+							if (pSlaveTypeData->PrismForwarding.Enabled == YES || pSlaveTypeData->PrismForwarding.Enabled == FORWARD) {
+								//building is a prism tower
+								BuildingTypeClass *pTargetType = TargetTower->Type;
+								if (pSlaveTypeData->PrismForwarding.Targets.FindItemIndex(&pTargetType) != -1) {
+									//valid type to forward from
+									HouseClass *pMasterHouse = MasterTower->Owner;
+									HouseClass *pTargetHouse = TargetTower->Owner;
+									HouseClass *pSlaveHouse = SlaveTower->Owner;
+									if ((pSlaveHouse == pTargetHouse && pSlaveHouse == pMasterHouse)
+										|| (pSlaveTypeData->PrismForwarding.ToAllies
+												&& pSlaveHouse->IsAlliedWith(pTargetHouse) && pSlaveHouse->IsAlliedWith(pMasterHouse))) {
+										//ownership/alliance rules satisfied
+										CellStruct tarCoords = TargetTower->GetCell()->MapCoords;
+										CoordStruct MyPosition, curPosition;
+										TargetTower->GetPosition_2(&MyPosition);
+										SlaveTower->GetPosition_2(&curPosition);
+										int Distance = MyPosition.DistanceFrom(curPosition);
+										Debug::Log("[PrismForwarding] Distance=%u, SupportRange=%d\n", Distance, pSlaveTypeData->PrismForwarding.SupportRange);
+										if(pSlaveTypeData->PrismForwarding.SupportRange == -1 || Distance <= pSlaveTypeData->PrismForwarding.SupportRange) {
+											//within range
+											return true;
+										}
 									}
 								}
 							}
