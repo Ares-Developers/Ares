@@ -661,22 +661,30 @@ DEFINE_HOOK(718871, TeleportLocomotionClass_UnfreezeObject_SinkOrSwim, 7)
 	return 0x7188B1;
 }
 
-/*
-A_FINE_HOOK(50965E, HouseClass_CanInstantiateTeam, 5)
+// this is checked right before the TeamClass is instantiated - 
+// it does not mean the AI will abandon this team if another team wants BuildLimit'ed units at the same time
+DEFINE_HOOK(50965E, HouseClass_CanInstantiateTeam, 5)
 {
-	GET(TeamTypeClass *, TeamType, EAX);
-	GET(TechnoTypeClass *, Type, EBX);
+	GET(DWORD, ptrTask, EAX);
+	GET(DWORD, ptrOffset, ECX);
+
+	ptrTask += ptrOffset;
+	TaskForceEntryStruct * ptrEntry = reinterpret_cast<TaskForceEntryStruct *>(ptrTask); // evil! but works, don't ask me why
+
 	GET(HouseClass *, Owner, EBP);
 	enum { BuildLimitAllows = 0x5096BD, Absolutely = 0x509671, NoWay = 0x5096F1} CanBuild = NoWay;
-	if(Type) {
+	if(TechnoTypeClass * Type = ptrEntry->Type) {
 		if(Type->GetFactoryType(true, true, false, Owner)) {
-			if(HouseExt::BuildLimitRemaining(Owner, Type) > 0) {
+			if(Ares::GlobalControls::AllowBypassBuildLimit[Owner->AIDifficulty]) {
 				CanBuild = BuildLimitAllows;
+			} else if(HouseExt::BuildLimitRemaining(Owner, Type) > ptrEntry->Amount) {
+				CanBuild = BuildLimitAllows;
+			} else {
+				CanBuild = NoWay;
 			}
 		} else {
 			CanBuild = BuildLimitAllows;
 		}
 	}
-	return OK ? 0x509671 : 0x5096F1;
+	return CanBuild;
 }
-*/

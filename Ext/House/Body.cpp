@@ -111,7 +111,11 @@ signed int HouseExt::PrereqValidate
 		}
 
 		if(!pHouse->IsHumanoid()) {
-			return 1;
+			if(Ares::GlobalControls::AllowBypassBuildLimit[pHouse->AIDifficulty]) {
+				return 1;
+			} else {
+				return HouseExt::CheckBuildLimit(pHouse, pItem, IncludeQueued);
+			}
 		}
 
 		if(ReqsMet == 1) {

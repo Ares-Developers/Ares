@@ -92,15 +92,15 @@ DEFINE_HOOK(4503F0, BuildingClass_Update_Prism, 9)
 			--pThis->DelayBeforeFiring;
 			if(pThis->DelayBeforeFiring <= 0) {
 				if(PrismStage == pcs_Slave) {
-					Debug::Log("[Prismforwarding] Slave ready to fire.");
+					Debug::Log("[Prismforwarding] Slave ready to fire.\n");
 					if (BuildingClass *pTarget = pData->PrismForwarding.SupportTarget) {
-						Debug::Log("[Prismforwarding] Slave has a SupportTarget.");
+						Debug::Log("[Prismforwarding] Slave has a SupportTarget.\n");
 						BuildingExt::ExtData *pTargetData = BuildingExt::ExtMap.Find(pTarget);
 						BuildingTypeClass *pType = pThis->Type;
 						BuildingTypeExt::ExtData *pTypeData = BuildingTypeExt::ExtMap.Find(pType);
-						pTargetData->PrismForwarding.ModifierReserve += (pTypeData->PrismForwarding.SupportModifier + pData->PrismForwarding.ModifierReserve);
-						pTargetData->PrismForwarding.DamageReserve += (pTypeData->PrismForwarding.DamageAdd  + pData->PrismForwarding.DamageReserve);
-						Debug::Log("[Prismforwarding] Slave laser firing.");
+						pTargetData->PrismForwarding.ModifierReserve += (pTypeData->PrismForwarding.SupportModifier.Get() + pData->PrismForwarding.ModifierReserve);
+						pTargetData->PrismForwarding.DamageReserve += (pTypeData->PrismForwarding.DamageAdd.Get()  + pData->PrismForwarding.DamageReserve);
+						Debug::Log("[Prismforwarding] Slave laser firing.\n");
 						pThis->FireLaser(pThis->PrismTargetCoords);
 
 					}
@@ -111,9 +111,9 @@ DEFINE_HOOK(4503F0, BuildingClass_Update_Prism, 9)
 							if(BulletClass *LaserBeam = pThis->Fire(Target, pThis->PrismTargetCoords.X)) {
 								BuildingTypeClass *pType = pThis->Type;
 								BuildingTypeExt::ExtData *pTypeData = BuildingTypeExt::ExtMap.Find(pType);
-								double DamageMult = pTypeData->PrismForwarding.SupportModifier + pData->PrismForwarding.ModifierReserve;
+								double DamageMult = pTypeData->PrismForwarding.SupportModifier.Get() + pData->PrismForwarding.ModifierReserve;
 								LaserBeam->DamageMultiplier = ((DamageMult + 100) * 256) / 100; //apparently this is divided by 256 elsewhere
-								LaserBeam->Health += pTypeData->PrismForwarding.DamageAdd  + pData->PrismForwarding.DamageReserve;
+								LaserBeam->Health += pTypeData->PrismForwarding.DamageAdd.Get()  + pData->PrismForwarding.DamageReserve;
 							}
 						}
 					}

@@ -259,6 +259,14 @@ void Valueable<int>::Read(INI_EX *parser, const char* pSection, const char* pKey
 };
 
 template<>
+void Valueable<float>::Read(INI_EX *parser, const char* pSection, const char* pKey) {
+	double buffer = this->Get();
+	if(parser->ReadDouble(pSection, pKey, &buffer)) {
+		this->Set(static_cast<float>(buffer));
+	}
+};
+
+template<>
 void Valueable<double>::Read(INI_EX *parser, const char* pSection, const char* pKey) {
 	double buffer = this->Get();
 	if(parser->ReadDouble(pSection, pKey, &buffer)) {

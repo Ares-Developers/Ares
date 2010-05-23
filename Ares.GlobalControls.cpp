@@ -16,12 +16,22 @@ Ares::GlobalControls::SurfaceConfig Ares::GlobalControls::GFX_S_Primary = {0xFF,
 Ares::GlobalControls::SurfaceConfig Ares::GlobalControls::GFX_S_Sidebar = {0xFF, 0xFF};
 Ares::GlobalControls::SurfaceConfig Ares::GlobalControls::GFX_S_Tile = {0xFF, 0xFF};
 
+std::bitset<3> Ares::GlobalControls::AllowBypassBuildLimit(0ull);
+
+
 //define DDCREATE_HARDWAREONLY  0x00000001l
 //define DDCREATE_EMULATIONONLY 0x00000002l
 
 void Ares::GlobalControls::Load(CCINIClass *pINI) {
 	Initialized = 1;
 	AllowParallelAIQueues = pINI->ReadBool("GlobalControls", "AllowParallelAIQueues", AllowParallelAIQueues);
+
+	if(pINI->ReadString("GlobalControls", "AllowBypassBuildLimit", "", Ares::readBuffer, Ares::readLength)) {
+		int idx = 0;
+		for(char * cur = strtok(Ares::readBuffer, ","); cur && *cur && idx <= 2; cur = strtok(NULL, ","), ++idx) {
+			AllowBypassBuildLimit[idx] = _strcmpi(cur, "Yes") == 0;
+		}
+	}
 }
 
 void Ares::GlobalControls::LoadConfig() {

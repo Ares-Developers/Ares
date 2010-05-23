@@ -31,18 +31,18 @@ public:
 		//properties
 		enum eEnabled {NO, YES, FORWARD, ATTACK} Enabled;	//is this tower a prism tower? FORWARD means can support, but not attack. ATTACK means can attack but not support.
 		DynamicVectorClass<BuildingTypeClass *> Targets;	//the types of buiding that this tower can forward to
-		signed int MaxFeeds;					//max number of towers that can feed this tower
-		signed int MaxChainLength;				//max length of any given (preceding) branch of the network
-		signed int MaxNetworkSize;				//max number of towers that can be in the network
-		double SupportModifier; 				//Per-building PrismSupportModifier
-		signed int DamageAdd; 					//amount of flat damage to add to the firing beam (before multiplier)
-		signed int SupportRange;				//range that can forward over
-		int SupportDelay;					//Per-building PrismSupportDelay
-		int SupportDuration;					//Per-building PrismSupportDuration
-		bool ToAllies;						//can this tower support allies' towers or not
-		int MyHeight;						//Per-building PrismSupportHeight
-		bool BreakSupport;					//can the slave tower become a master tower at the last second
-		int ChargeDelay;					//the amount to delay start of charging per backward chain
+		Customizable<signed int> MaxFeeds;					//max number of towers that can feed this tower
+		Valueable<signed int> MaxChainLength;				//max length of any given (preceding) branch of the network
+		Customizable<signed int> MaxNetworkSize;				//max number of towers that can be in the network
+		Valueable<signed int> SupportRange;				//range that can forward over
+		Customizable<float> SupportModifier; 				//Per-building PrismSupportModifier
+		Valueable<signed int> DamageAdd; 					//amount of flat damage to add to the firing beam (before multiplier)
+		Customizable<int> SupportDelay;					//Per-building PrismSupportDelay
+		Customizable<int> SupportDuration;					//Per-building PrismSupportDuration
+		Customizable<int> MyHeight;						//Per-building PrismSupportHeight
+		Valueable<int> ChargeDelay;					//the amount to delay start of charging per backward chain
+		Valueable<bool> ToAllies;						//can this tower support allies' towers or not
+		Valueable<bool> BreakSupport;					//can the slave tower become a master tower at the last second
 
 		//methods
 		void Initialize(BuildingTypeClass* );
@@ -57,9 +57,20 @@ public:
 		static void OrphanSlave(BuildingClass *);
 
 		// constructor
-		cPrismForwarding() : Enabled(NO), MaxFeeds(0), MaxChainLength(0), MaxNetworkSize(0), SupportModifier(0.0)
-		, DamageAdd(0), SupportRange(0), SupportDelay(0), SupportDuration(0), ToAllies(false), MyHeight(0), BreakSupport(false),
-		ChargeDelay(0) {};
+		cPrismForwarding() : Enabled(NO),
+			MaxFeeds(&RulesClass::Instance->PrismSupportMax),
+			MaxChainLength(1),
+			MaxNetworkSize(&RulesClass::Instance->PrismSupportMax),
+			SupportRange(0),
+			SupportModifier(&RulesClass::Instance->PrismSupportModifier),
+			DamageAdd(0),
+			SupportDelay(&RulesClass::Instance->PrismSupportDelay),
+			SupportDuration(&RulesClass::Instance->PrismSupportDuration),
+			MyHeight(&RulesClass::Instance->PrismSupportHeight),
+			ChargeDelay(1),
+			ToAllies(false),
+			BreakSupport(false)
+		{};
 	};
 
 	class ExtData : public Extension<TT>

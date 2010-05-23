@@ -3,31 +3,15 @@
 #include <BulletClass.h>
 #include <LaserDrawClass.h>
 
+#include <vector>
+#include <algorithm>
+
 void BuildingTypeExt::cPrismForwarding::Initialize(BuildingTypeClass *pThis) {
 	this->Enabled = NO;
 	if (pThis == RulesClass::Instance->PrismType) {
 		this->Enabled = YES;
 	}
 	this->Targets.AddItem(pThis);
-	this->MaxFeeds = RulesClass::Instance->PrismSupportMax;
-	this->MaxChainLength = 1;
-	this->MaxNetworkSize = RulesClass::Instance->PrismSupportMax;
-	this->SupportModifier = RulesClass::Instance->PrismSupportModifier;
-	this->DamageAdd = 0;
-
-	if(WeaponTypeClass* Secondary = pThis->get_Secondary()) {
-		this->SupportRange = Secondary->Range;
-	} else if(WeaponTypeClass* Primary = pThis->get_Primary()) {
-		this->SupportRange = Primary->Range;
-	} else {
-		this->SupportRange = 0;
-	}
-
-	this->SupportDelay = RulesClass::Instance->PrismSupportDelay;
-	this->ToAllies = false;
-	this->MyHeight = RulesClass::Instance->PrismSupportHeight;
-	this->BreakSupport = false;
-	this->ChargeDelay = 1;
 }
 
 void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis, CCINIClass* pINI) {
@@ -55,21 +39,32 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 			}
 		}
 
-		this->MaxFeeds = pINI->ReadInteger(pID, "PrismForwarding.MaxFeeds", this->MaxFeeds);
-		this->MaxChainLength = pINI->ReadInteger(pID, "PrismForwarding.MaxChainLength", this->MaxChainLength);
-		this->MaxNetworkSize = pINI->ReadInteger(pID, "PrismForwarding.MaxNetworkSize", this->MaxNetworkSize);
-		this->SupportModifier = pINI->ReadDouble(pID, "PrismForwarding.SupportModifier", this->SupportModifier);
-		this->DamageAdd = pINI->ReadInteger(pID, "PrismForwarding.DamageAdd", this->DamageAdd);
-		this->SupportRange = pINI->ReadInteger(pID, "PrismForwarding.SupportRange", this->SupportRange);
-		this->SupportDelay = pINI->ReadInteger(pID, "PrismForwarding.SupportDelay", this->SupportDelay);
-		this->ToAllies = pINI->ReadBool(pID, "PrismForwarding.ToAllies", this->ToAllies);
-		this->MyHeight = pINI->ReadInteger(pID, "PrismForwarding.MyHeight", this->MyHeight);
-		this->BreakSupport = pINI->ReadBool(pID, "PrismForwarding.BreakSupport", this->BreakSupport);
+		INI_EX exINI(pINI);
+
+		this->MaxFeeds.Read(&exINI, pID, "PrismForwarding.MaxFeeds");
+		this->MaxChainLength.Read(&exINI, pID, "PrismForwarding.MaxChainLength");
+		this->MaxNetworkSize.Read(&exINI, pID, "PrismForwarding.MaxNetworkSize");
+		this->SupportModifier.Read(&exINI, pID, "PrismForwarding.SupportModifier");
+		this->DamageAdd.Read(&exINI, pID, "PrismForwarding.DamageAdd");
+		this->SupportRange.Read(&exINI, pID, "PrismForwarding.SupportRange");
+
+		if(this->SupportRange == 0) {
+			if(WeaponTypeClass* Secondary = pThis->get_Secondary()) {
+				this->SupportRange = Secondary->Range;
+			} else if(WeaponTypeClass* Primary = pThis->get_Primary()) {
+				this->SupportRange = Primary->Range;
+			}
+		}
+
+		this->SupportDelay.Read(&exINI, pID, "PrismForwarding.SupportDelay");
+		this->ToAllies.Read(&exINI, pID, "PrismForwarding.ToAllies");
+		this->MyHeight.Read(&exINI, pID, "PrismForwarding.MyHeight");
+		this->BreakSupport.Read(&exINI, pID, "PrismForwarding.BreakSupport");
 
 		Debug::Log("current ChargeDelay = %d\n", this->ChargeDelay);
 		int ChargeDelay = pINI->ReadInteger(pID, "PrismForwarding.ChargeDelay", this->ChargeDelay);
 		if (ChargeDelay >= 1) {
-			this->ChargeDelay = ChargeDelay;
+			this->ChargeDelay.Set(ChargeDelay);
 		} else {
 			Debug::Log("%s has an invalid PrismForwarding.ChargeDelay (%d), overriding to 1.\n", pThis->ID, ChargeDelay);
 		}
@@ -133,42 +128,46 @@ int BuildingTypeExt::cPrismForwarding::AcquireSlaves_SingleStage
 		return 0;
 	}
 
+	struct PrismTargetData {
+		BuildingClass * Tower;
+		int Distance;
+
+		bool operator < (PrismTargetData const &rhs) {
+			return this->Distance < rhs.Distance;
+		}
+	};
+
+	CoordStruct MyPosition, curPosition;;
+	TargetTower->GetPosition_2(&MyPosition);
+
 	//first, find eligible towers
-	DynamicVectorClass<BuildingClass*> EligibleTowers;
+	std::vector<PrismTargetData> EligibleTowers;
 	//for(int i = 0; i < TargetTower->Owner->Buildings.Count; ++i) {
 	for (int i = 0; i < BuildingClass::Array->Count; ++i) {
 		//if (BuildingClass *SlaveTower = B->Owner->Buildings[i]) {
-		if (BuildingClass *SlaveTower = (BuildingClass*)BuildingClass::Array->GetItem(i)) {
+		if (BuildingClass *SlaveTower = BuildingClass::Array->GetItem(i)) {
 			if (ValidateSupportTower(MasterTower, TargetTower, SlaveTower)) {
 				Debug::Log("PrismForwarding: SlaveTower confirmed eligible at stage %d, chain %d\n", stage, chain);
-				EligibleTowers.AddItem(SlaveTower);
+				SlaveTower->GetPosition_2(&curPosition);
+				int Distance = MyPosition.DistanceFrom(curPosition);
+
+				PrismTargetData pd = {SlaveTower, Distance};
+				EligibleTowers.push_back(pd);
 			}
 		}
 	}
 
+	std::sort(EligibleTowers.begin(), EligibleTowers.end());
+	//std::reverse(EligibleTowers.begin(), EligibleTowers.end());
+
 	//now enslave the towers in order of proximity
 	int iFeeds = 0;
 	Debug::Log("PrismForwarding: singlestage checkpoint 01\n");
-	while (EligibleTowers.Count != 0 && (MaxFeeds == -1 || iFeeds < MaxFeeds) && (MaxNetworkSize == -1 || *NetworkSize < MaxNetworkSize)) {
-		int nearestDistance = 0x7FFFFFFF;
-		BuildingClass * nearestPrism = NULL;
-		for (int i = 0; i < EligibleTowers.Count; ++i) {
-			BuildingClass *SlaveTower = EligibleTowers.GetItem(i);
-			CoordStruct MyPosition, curPosition;
-			TargetTower->GetPosition_2(&MyPosition);
-			SlaveTower->GetPosition_2(&curPosition);
-			int Distance = MyPosition.DistanceFrom(curPosition);
-			if(!nearestPrism || Distance < nearestDistance) {
-				nearestPrism = SlaveTower;
-				nearestDistance = Distance;
-			}
-		}
-		Debug::Log("PrismForwarding: singlestage checkpoint 02\n");
+	while (EligibleTowers.size() != 0 && (MaxFeeds == -1 || iFeeds < MaxFeeds) && (MaxNetworkSize == -1 || *NetworkSize < MaxNetworkSize)) {
+		BuildingClass * nearestPrism = EligibleTowers[0].Tower;
+		EligibleTowers.erase(EligibleTowers.begin());
 		//we have a slave tower! do the bizzo
-		signed int idx = EligibleTowers.FindItemIndex(&nearestPrism);
-		if(idx != -1) {
-			EligibleTowers.RemoveItem(idx);
-		}
+		Debug::Log("PrismForwarding: singlestage checkpoint 02\n");
 		++iFeeds;
 		++NetworkSize;
 		++TargetTower->SupportingPrisms; //Ares doesn't actually use this, but maintaining it anyway (as direct feeds only)

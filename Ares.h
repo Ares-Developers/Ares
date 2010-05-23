@@ -6,6 +6,8 @@
 #define str_(x) #x
 //endif
 
+#include <bitset>
+
 #include <xcompile.h>
 //include <YRPP.h>
 #include <Helpers/Macro.h>
@@ -89,6 +91,8 @@ public:
 		static bool AllowParallelAIQueues;
 
 		static byte GFX_DX_Force;
+
+		static std::bitset<3> AllowBypassBuildLimit;
 
 		class SurfaceConfig {
 		public:
