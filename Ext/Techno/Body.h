@@ -70,6 +70,10 @@ public:
 
 		bool IsOperated();
 		bool IsPowered();
+
+		unsigned int AlphaFrame(SHPStruct * Image);
+
+		bool DrawVisualFX();
 	};
 
 	static Container<TechnoExt> ExtMap;

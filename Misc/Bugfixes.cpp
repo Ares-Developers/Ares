@@ -103,10 +103,12 @@ DEFINE_HOOK(71AF76, TemporalClass_Fire_UnwarpableB, 9) {
 
 	// now it has been checked: this is warpable.
 	// free captured and destroy spawned units.
-	if (T->SpawnManager)
+	if (T->SpawnManager) {
 		T->SpawnManager->KillNodes();
-	if (T->CaptureManager)
+	}
+	if (T->CaptureManager) {
 		T->CaptureManager->FreeAll();
+	}
 
 	// always resume normally.
 	return 0;
@@ -658,3 +660,23 @@ DEFINE_HOOK(718871, TeleportLocomotionClass_UnfreezeObject_SinkOrSwim, 7)
 	}
 	return 0x7188B1;
 }
+
+/*
+A_FINE_HOOK(50965E, HouseClass_CanInstantiateTeam, 5)
+{
+	GET(TeamTypeClass *, TeamType, EAX);
+	GET(TechnoTypeClass *, Type, EBX);
+	GET(HouseClass *, Owner, EBP);
+	enum { BuildLimitAllows = 0x5096BD, Absolutely = 0x509671, NoWay = 0x5096F1} CanBuild = NoWay;
+	if(Type) {
+		if(Type->GetFactoryType(true, true, false, Owner)) {
+			if(HouseExt::BuildLimitRemaining(Owner, Type) > 0) {
+				CanBuild = BuildLimitAllows;
+			}
+		} else {
+			CanBuild = BuildLimitAllows;
+		}
+	}
+	return OK ? 0x509671 : 0x5096F1;
+}
+*/

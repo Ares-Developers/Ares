@@ -13,8 +13,7 @@ DEFINE_HOOK(5260A2, IteratorChar_Process_Method1, 6)
 	GET(CCINIClass::INIEntry*, entry, ESI);
 	GET_STACK(CCINIClass::INISection*, section, 0x40);
 
-	if(strcmp(entry->Key, IniIteratorChar::iteratorChar) == 0)
-	{
+	if(strcmp(entry->Key, IniIteratorChar::iteratorChar) == 0) {
 		sprintf(IniIteratorChar::buffer, "%d", IniIteratorChar::iteratorValue++);
 
 		CRT::free(entry->Key);
@@ -33,8 +32,7 @@ DEFINE_HOOK(525D23, IteratorChar_Process_Method2, 5)
 	LEA_STACK(char*, key, 0x78)
 	LEA_STACK(char*, section, 0x278);
 
-	if(strcmp(key, IniIteratorChar::iteratorChar) == 0)
-	{
+	if(strcmp(key, IniIteratorChar::iteratorChar) == 0) {
 		strcpy(IniIteratorChar::buffer, value);
 		sprintf(key, "%d", IniIteratorChar::iteratorValue++);
 
@@ -50,7 +48,7 @@ DEFINE_HOOK(525D23, IteratorChar_Process_Method2, 5)
 
 //Uncomment this hook to have all INI sections and their entries printed to the log!
 /*
-DEFINE_HOOK(474230, IteratorChar_SectionInfo, 5)
+A_FINE_HOOK(474230, IteratorChar_SectionInfo, 5)
 {
 	GET(CCINIClass*, ini, ESI);
 

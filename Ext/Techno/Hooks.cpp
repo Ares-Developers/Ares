@@ -500,7 +500,7 @@ DEFINE_HOOK(73C725, UnitClass_DrawSHP_DrawShadowEarlier, 6)
 {
 	GET(UnitClass *, U, EBP);
 
-	if(U->CloakState || U->Type->Underwater) { // TODO: other conditions where it would not make sense to draw shadow
+	if(U->CloakState || U->Type->Underwater) { // TODO: other conditions where it would not make sense to draw shadow - VisualCharacter?
 		return 0;
 	}
 
