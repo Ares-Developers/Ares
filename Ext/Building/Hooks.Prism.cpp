@@ -74,7 +74,7 @@ DEFINE_HOOK(447FAE, BuildingClass_GetObjectActivityState, 6)
 	return NotBusyCharging;
 }
 
-//NB: PrismTargetCoords is not a coord struct, it's some kind of garbage whose first dword is the used weapon index and two others are undefined...
+//NB: PrismTargetCoords is not just a coord struct, it's a union whose first dword is the used weapon index and two others are undefined...
 DEFINE_HOOK(4503F0, BuildingClass_Update_Prism, 9)
 {
 	GET(BuildingClass *, pThis, ECX);
@@ -88,9 +88,12 @@ DEFINE_HOOK(4503F0, BuildingClass_Update_Prism, 9)
 						BuildingExt::ExtData *pTargetData = BuildingExt::ExtMap.Find(pTarget);
 						BuildingTypeClass *pType = pThis->Type;
 						BuildingTypeExt::ExtData *pTypeData = BuildingTypeExt::ExtMap.Find(pType);
-						Debug::Log("[PrismForwarding] Slave firing. SM1=%f SM2=%f\n", pTypeData->PrismForwarding.SupportModifier.Get(), pData->PrismForwarding.ModifierReserve);
-						pTargetData->PrismForwarding.ModifierReserve += (pTypeData->PrismForwarding.SupportModifier.Get() + pData->PrismForwarding.ModifierReserve);
-						pTargetData->PrismForwarding.DamageReserve += (pTypeData->PrismForwarding.DamageAdd.Get()  + pData->PrismForwarding.DamageReserve);
+						Debug::Log("[PrismForwarding] Slave firing. SM1=%f SM2=%f\n",
+							pTypeData->PrismForwarding.SupportModifier.Get(), pData->PrismForwarding.ModifierReserve);
+						pTargetData->PrismForwarding.ModifierReserve +=
+							(pTypeData->PrismForwarding.SupportModifier.Get() + pData->PrismForwarding.ModifierReserve);
+						pTargetData->PrismForwarding.DamageReserve +=
+							(pTypeData->PrismForwarding.DamageAdd.Get()  + pData->PrismForwarding.DamageReserve);
 						pThis->FireLaser(pThis->PrismTargetCoords);
 
 					}
@@ -140,7 +143,8 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 	ColorStruct blank(0, 0, 0);
 
 	LaserDrawClass * LaserBeam;
-	GAME_ALLOC(LaserDrawClass, LaserBeam, SourceXYZ, *pTargetXYZ, B->Owner->LaserColor, blank, blank, pTypeData->PrismForwarding.SupportDuration);
+	GAME_ALLOC(LaserDrawClass, LaserBeam, SourceXYZ, *pTargetXYZ,
+		B->Owner->LaserColor, blank, blank, pTypeData->PrismForwarding.SupportDuration);
 
 	if(LaserBeam) {
 		LaserBeam->IsHouseColor = true;

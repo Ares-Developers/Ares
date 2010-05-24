@@ -1,5 +1,6 @@
 #include "Body.h"
 #include "../Building/Body.h"
+#include "../Techno/Body.h"
 #include <BulletClass.h>
 #include <LaserDrawClass.h>
 
@@ -45,7 +46,7 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 		this->MaxChainLength.Read(&exINI, pID, "PrismForwarding.MaxChainLength");
 		this->MaxNetworkSize.Read(&exINI, pID, "PrismForwarding.MaxNetworkSize");
 		this->SupportModifier.Read(&exINI, pID, "PrismForwarding.SupportModifier");
-		Debug::Log("[PrismForwarding] SM is now %f\n", this->SupportModifier);
+		Debug::Log("[PrismForwarding] SM is now %f\n", this->SupportModifier.Get());
 		this->DamageAdd.Read(&exINI, pID, "PrismForwarding.DamageAdd");
 		this->SupportRange.Read(&exINI, pID, "PrismForwarding.SupportRange");
 
@@ -58,14 +59,14 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 		} else if (this->SupportRange != -1) {
 			this->SupportRange = this->SupportRange * 256; //stored in leptons, not cells
 		}
-		Debug::Log("[PrismForwarding] SR is now %f\n", this->SupportRange);
+		Debug::Log("[PrismForwarding] SR is now %d\n", this->SupportRange);
 
 		this->SupportDelay.Read(&exINI, pID, "PrismForwarding.SupportDelay");
 		this->ToAllies.Read(&exINI, pID, "PrismForwarding.ToAllies");
 		this->MyHeight.Read(&exINI, pID, "PrismForwarding.MyHeight");
 		this->BreakSupport.Read(&exINI, pID, "PrismForwarding.BreakSupport");
 
-		Debug::Log("[PrismForwarding] current ChargeDelay = %d\n", this->ChargeDelay);
+		Debug::Log("[PrismForwarding] current ChargeDelay = %d\n", this->ChargeDelay.Get());
 		int ChargeDelay = pINI->ReadInteger(pID, "PrismForwarding.ChargeDelay", this->ChargeDelay);
 		if (ChargeDelay >= 1) {
 			this->ChargeDelay.Set(ChargeDelay);
@@ -75,11 +76,13 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 
 	}
 	if (strcmp(pID, "ATESLA") == 0) {
-		Debug::Log("[PrismForwarding] ATESLA: MNS=%d, SM=%f, CD=%u\n", this->MaxNetworkSize, this->SupportModifier, this->ChargeDelay);
+		Debug::Log("[PrismForwarding] ATESLA: MNS=%d, SM=%f, CD=%u\n",
+			this->MaxNetworkSize.Get(), this->SupportModifier.Get(), this->ChargeDelay.Get());
 	}
 }
 
-int BuildingTypeExt::cPrismForwarding::AcquireSlaves_MultiStage(BuildingClass *MasterTower, BuildingClass *TargetTower, int stage, int chain, int *NetworkSize, int *LongestChain) {
+int BuildingTypeExt::cPrismForwarding::AcquireSlaves_MultiStage
+	(BuildingClass *MasterTower, BuildingClass *TargetTower, int stage, int chain, int *NetworkSize, int *LongestChain) {
 	//get all slaves for a specific stage in the prism chain
 	//this is done for all sibling chains in parallel, so we prefer multiple short chains over one really long chain
 	//towers should be added in the following way:
@@ -128,7 +131,8 @@ int BuildingTypeExt::cPrismForwarding::AcquireSlaves_SingleStage
 	if (MaxFeeds == 0
 			|| (MaxChainLength != -1 && MaxChainLength < chain)
 			|| (MaxNetworkSize != -1 && MaxNetworkSize <= *NetworkSize)) {
-		Debug::Log("[PrismForwarding]: singlestage aborted. MaxFeeds=%d, CL=%d/%d, MNS=%d/%d\n", MaxFeeds, chain, MaxChainLength, *NetworkSize, MaxNetworkSize);
+		Debug::Log("[PrismForwarding]: singlestage aborted. MaxFeeds=%d, CL=%d/%d, MNS=%d/%d\n",
+			MaxFeeds, chain, MaxChainLength, *NetworkSize, MaxNetworkSize);
 		return 0;
 	}
 
@@ -141,7 +145,7 @@ int BuildingTypeExt::cPrismForwarding::AcquireSlaves_SingleStage
 		}
 	};
 
-	CoordStruct MyPosition, curPosition;;
+	CoordStruct MyPosition, curPosition;
 	TargetTower->GetPosition_2(&MyPosition);
 
 	//first, find eligible towers
@@ -190,7 +194,8 @@ int BuildingTypeExt::cPrismForwarding::AcquireSlaves_SingleStage
 		BuildingExt::ExtData *pTargetData = BuildingExt::ExtMap.Find(TargetTower);
 		pSlaveData->PrismForwarding.SupportTarget = TargetTower;
 		pTargetData->PrismForwarding.Senders.AddItem(nearestPrism);
-		Debug::Log("[PrismForwarding] Enslave loop end. ETS=%u F=%u MF=%d NS=%u MNS=%d\n", EligibleTowers.size(), iFeeds, MaxFeeds, *NetworkSize, MaxNetworkSize);
+		Debug::Log("[PrismForwarding] Enslave loop end. ETS=%u F=%u MF=%d NS=%u MNS=%d\n",
+			EligibleTowers.size(), iFeeds, MaxFeeds, *NetworkSize, MaxNetworkSize);
 	}
 
 	if (iFeeds != 0 && chain > *LongestChain) {
@@ -200,7 +205,8 @@ int BuildingTypeExt::cPrismForwarding::AcquireSlaves_SingleStage
 	return iFeeds;
 }
 
-bool BuildingTypeExt::cPrismForwarding::ValidateSupportTower(BuildingClass *MasterTower, BuildingClass *TargetTower, BuildingClass *SlaveTower) {
+bool BuildingTypeExt::cPrismForwarding::ValidateSupportTower(
+		BuildingClass *MasterTower, BuildingClass *TargetTower, BuildingClass *SlaveTower) {
 	//MasterTower = the firing tower. This might be the same as TargetTower, it might not.
 	//TargetTower = the tower that we are forwarding to
 	//SlaveTower = the tower being considered to support TargetTower
@@ -208,9 +214,11 @@ bool BuildingTypeExt::cPrismForwarding::ValidateSupportTower(BuildingClass *Mast
 		if(SlaveTower->ReloadTimer.Ignorable()) {
 			if(SlaveTower != TargetTower) {
 				if (!SlaveTower->DelayBeforeFiring) {
-					int SlaveMission = SlaveTower->GetCurrentMission()
-					if(!SlaveTower->IsBeingDrained() && SlaveMission != mission_Attack && SlaveMission != mission_Construction && SlaveMission != mission_Selling) {
-						if (TechnoExt::ExtData::IsOperated() && TechnoExt::ExtData::IsPowered() && !Techno::IsUnderEMP()) {
+					int SlaveMission = SlaveTower->GetCurrentMission();
+					if(!SlaveTower->IsBeingDrained() && SlaveMission != mission_Attack
+						&& SlaveMission != mission_Construction && SlaveMission != mission_Selling) {
+						TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(SlaveTower);
+						if (pData->IsOperated() && pData->IsPowered() && !SlaveTower->IsUnderEMP()) {
 							BuildingExt::ExtData *pSlaveData = BuildingExt::ExtMap.Find(SlaveTower);
 							BuildingTypeClass *pSlaveType = SlaveTower->Type;
 							BuildingTypeExt::ExtData *pSlaveTypeData = BuildingTypeExt::ExtMap.Find(pSlaveType);
@@ -231,8 +239,10 @@ bool BuildingTypeExt::cPrismForwarding::ValidateSupportTower(BuildingClass *Mast
 										TargetTower->GetPosition_2(&MyPosition);
 										SlaveTower->GetPosition_2(&curPosition);
 										int Distance = MyPosition.DistanceFrom(curPosition);
-										Debug::Log("[PrismForwarding] Distance=%u, SupportRange=%d\n", Distance, pSlaveTypeData->PrismForwarding.SupportRange);
-										if(pSlaveTypeData->PrismForwarding.SupportRange == -1 || Distance <= pSlaveTypeData->PrismForwarding.SupportRange) {
+										Debug::Log("[PrismForwarding] Distance=%u, SupportRange=%d\n",
+											Distance, pSlaveTypeData->PrismForwarding.SupportRange.Get());
+										if(pSlaveTypeData->PrismForwarding.SupportRange == -1
+											|| Distance <= pSlaveTypeData->PrismForwarding.SupportRange) {
 											//within range
 											return true;
 										}
