@@ -22,7 +22,7 @@ public:
 	typedef typename CompoundT<T>::BaseT MyBase;
 	Valueable(T Default = T()) : Value(Default) {};
 
-	operator T () {
+	operator T () const {
 		return this->Get();
 	}
 
@@ -35,18 +35,18 @@ public:
 	}
 
 	bool operator != (T other) const {
-		return this->Value != other;
+		return this->Get() != other;
 	};
 
-	bool operator ! () {
+	bool operator ! () const {
 		return this->Get() == 0;
 	};
 
-	virtual T Get() {
+	virtual T Get() const {
 		return this->Value;
 	}
 
-	virtual T* GetEx() {
+	virtual T * GetEx() {
 		return &this->Value;
 	}
 
@@ -77,7 +77,7 @@ protected:
 public:
 	ValueableIdx(T Default) : Value(Default) {};
 
-	operator T () {
+	operator T () const {
 		return this->Get();
 	}
 
@@ -89,7 +89,7 @@ public:
 		return this->GetEx();
 	}
 
-	virtual T Get() {
+	virtual T Get() const {
 		return this->Value;
 	}
 
@@ -135,7 +135,7 @@ public:
 		}
 	}
 
-	virtual T Get() {
+	virtual T Get() const {
 		return this->Customized
 		 ? this->Value
 		 : this->Default ? *this->Default : T()
@@ -167,6 +167,15 @@ public:
 			this->Customized = true;
 		}
 	}
+
+	bool operator != (T other) const {
+		return this->Get() != other;
+	};
+
+	bool operator ! () const {
+		return this->Get() == 0;
+	};
+
 };
 
 /*

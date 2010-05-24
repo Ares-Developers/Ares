@@ -45,21 +45,15 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 		this->MaxFeeds.Read(&exINI, pID, "PrismForwarding.MaxFeeds");
 		this->MaxChainLength.Read(&exINI, pID, "PrismForwarding.MaxChainLength");
 		this->MaxNetworkSize.Read(&exINI, pID, "PrismForwarding.MaxNetworkSize");
+		Debug::Log("[PrismForwarding] SM was %d\n", this->SupportModifier.Get());
 		this->SupportModifier.Read(&exINI, pID, "PrismForwarding.SupportModifier");
-		Debug::Log("[PrismForwarding] SM is now %f\n", this->SupportModifier.Get());
+		Debug::Log("[PrismForwarding] SM is now %d\n", this->SupportModifier.Get());
 		this->DamageAdd.Read(&exINI, pID, "PrismForwarding.DamageAdd");
 		this->SupportRange.Read(&exINI, pID, "PrismForwarding.SupportRange");
 
-		if(this->SupportRange == 0) {
-			if(WeaponTypeClass* Secondary = pThis->get_Secondary()) {
-				this->SupportRange = Secondary->Range;
-			} else if(WeaponTypeClass* Primary = pThis->get_Primary()) {
-				this->SupportRange = Primary->Range;
-			}
-		} else if (this->SupportRange != -1) {
+		if (this->SupportRange != -1) {
 			this->SupportRange = this->SupportRange * 256; //stored in leptons, not cells
 		}
-		Debug::Log("[PrismForwarding] SR is now %d\n", this->SupportRange);
 
 		this->SupportDelay.Read(&exINI, pID, "PrismForwarding.SupportDelay");
 		this->ToAllies.Read(&exINI, pID, "PrismForwarding.ToAllies");
@@ -76,9 +70,21 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 
 	}
 	if (strcmp(pID, "ATESLA") == 0) {
-		Debug::Log("[PrismForwarding] ATESLA: MNS=%d, SM=%f, CD=%u\n",
+		Debug::Log("[PrismForwarding] ATESLA: MNS=%d, SM=%d, CD=%u\n",
 			this->MaxNetworkSize.Get(), this->SupportModifier.Get(), this->ChargeDelay.Get());
 	}
+}
+
+signed int BuildingTypeExt::cPrismForwarding::GetSupportRange(BuildingTypeClass *pThis) {
+	if(this->SupportRange != 0) {
+		return this->SupportRange;
+	}
+	if(WeaponTypeClass* Secondary = pThis->get_Secondary()) {
+		return Secondary->Range;
+	} else if(WeaponTypeClass* Primary = pThis->get_Primary()) {
+		return Primary->Range;
+	}
+	return 0;
 }
 
 int BuildingTypeExt::cPrismForwarding::AcquireSlaves_MultiStage
@@ -240,9 +246,9 @@ bool BuildingTypeExt::cPrismForwarding::ValidateSupportTower(
 										SlaveTower->GetPosition_2(&curPosition);
 										int Distance = MyPosition.DistanceFrom(curPosition);
 										Debug::Log("[PrismForwarding] Distance=%u, SupportRange=%d\n",
-											Distance, pSlaveTypeData->PrismForwarding.SupportRange.Get());
+											Distance, pSlaveTypeData->PrismForwarding.GetSupportRange(pSlaveType));
 										if(pSlaveTypeData->PrismForwarding.SupportRange == -1
-											|| Distance <= pSlaveTypeData->PrismForwarding.SupportRange) {
+											|| Distance <= pSlaveTypeData->PrismForwarding.GetSupportRange(pSlaveType)) {
 											//within range
 											return true;
 										}

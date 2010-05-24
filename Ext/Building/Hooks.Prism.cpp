@@ -88,7 +88,7 @@ DEFINE_HOOK(4503F0, BuildingClass_Update_Prism, 9)
 						BuildingExt::ExtData *pTargetData = BuildingExt::ExtMap.Find(pTarget);
 						BuildingTypeClass *pType = pThis->Type;
 						BuildingTypeExt::ExtData *pTypeData = BuildingTypeExt::ExtMap.Find(pType);
-						Debug::Log("[PrismForwarding] Slave firing. SM1=%f SM2=%f\n",
+						Debug::Log("[PrismForwarding] Slave firing. SM=%d MR=%lf\n",
 							pTypeData->PrismForwarding.SupportModifier.Get(), pData->PrismForwarding.ModifierReserve);
 						pTargetData->PrismForwarding.ModifierReserve +=
 							(pTypeData->PrismForwarding.SupportModifier.Get() + pData->PrismForwarding.ModifierReserve);

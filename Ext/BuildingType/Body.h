@@ -35,7 +35,7 @@ public:
 		Valueable<signed int> MaxChainLength;				//max length of any given (preceding) branch of the network
 		Customizable<signed int> MaxNetworkSize;				//max number of towers that can be in the network
 		Valueable<signed int> SupportRange;				//range that can forward over
-		Customizable<float> SupportModifier; 				//Per-building PrismSupportModifier
+		Customizable<int> SupportModifier; 				//Per-building PrismSupportModifier
 		Valueable<signed int> DamageAdd; 					//amount of flat damage to add to the firing beam (before multiplier)
 		Customizable<int> SupportDelay;					//Per-building PrismSupportDelay
 		Customizable<int> SupportDuration;					//Per-building PrismSupportDuration
@@ -55,6 +55,8 @@ public:
 		static int SetPrismChargeDelay(BuildingClass *);
 		static void RemoveSlave(BuildingClass *);
 		static void OrphanSlave(BuildingClass *);
+
+		signed int GetSupportRange(BuildingTypeClass *);
 
 		// constructor
 		cPrismForwarding() : Enabled(NO),
