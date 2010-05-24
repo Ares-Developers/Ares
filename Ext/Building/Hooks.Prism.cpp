@@ -104,8 +104,7 @@ DEFINE_HOOK(4503F0, BuildingClass_Update_Prism, 9)
 							if(BulletClass *LaserBeam = pThis->Fire(Target, pThis->PrismTargetCoords.X)) {
 								BuildingTypeClass *pType = pThis->Type;
 								BuildingTypeExt::ExtData *pTypeData = BuildingTypeExt::ExtMap.Find(pType);
-								double DamageMult = pTypeData->PrismForwarding.SupportModifier.Get() + pData->PrismForwarding.ModifierReserve;
-								LaserBeam->DamageMultiplier = ((DamageMult + 100) * 256) / 100; //apparently this is divided by 256 elsewhere
+								LaserBeam->DamageMultiplier = ((pData->PrismForwarding.ModifierReserve + 100) * 256) / 100; //apparently this is divided by 256 elsewhere
 								LaserBeam->Health += pTypeData->PrismForwarding.DamageAdd.Get()  + pData->PrismForwarding.DamageReserve;
 							}
 						}

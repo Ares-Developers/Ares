@@ -279,10 +279,10 @@ int BuildingTypeExt::cPrismForwarding::SetPrismChargeDelay(BuildingClass *Target
 	BuildingTypeClass *pTargetType = TargetTower->Type;
 	BuildingTypeExt::ExtData *pTargetTypeData = BuildingTypeExt::ExtMap.Find(pTargetType);
 	if (senderIdx != 0) {
-		//this is not the end of the chain so it must delay
+		//this is not the end of the chain so it must delay by it's own amount, plus the amount that came before
 		thisDelay += pTargetTypeData->PrismForwarding.ChargeDelay;
 	}
-	pTargetData->PrismForwarding.PrismChargeDelay = thisDelay;
+	pTargetData->PrismForwarding.PrismChargeDelay = thisDelay; //will always be zero for end of chain
 	return thisDelay;
 }
 
