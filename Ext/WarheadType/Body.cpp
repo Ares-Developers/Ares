@@ -18,6 +18,7 @@
 #include "../Bullet/Body.h"
 
 #include <Helpers/Template.h>
+#include <set>
 
 template<> const DWORD Extension<WarheadTypeClass>::Canary = 0x22222222;
 Container<WarheadTypeExt> WarheadTypeExt::ExtMap;
@@ -133,31 +134,41 @@ void WarheadTypeExt::ExtData::applyIronCurtain(CoordStruct *coords, HouseClass* 
 	CellStruct cellCoords = MapClass::Instance->GetCellAt(coords)->MapCoords;
 
 	if (this->IC_Duration != 0) {
+		std::set<TechnoClass*> *set = new std::set<TechnoClass*>();
 		int countCells = CellSpread::NumCells(int(this->AttachedToObject->CellSpread));
 		for (int i = 0; i < countCells; ++i) {
 			CellStruct tmpCell = CellSpread::GetCell(i);
 			tmpCell += cellCoords;
 			CellClass *c = MapClass::Instance->GetCellAt(&tmpCell);
 			for (ObjectClass *curObj = c->GetContent(); curObj; curObj = curObj->NextObject) {
-				if (TechnoClass *curTechno = generic_cast<TechnoClass *>(curObj)) {
-					if (curTechno->IronCurtainTimer.Ignorable()) {
-						if (this->IC_Duration > 0) {
-							curTechno->IronCurtain(this->IC_Duration, Owner, 0);
-						}
+				if(TechnoClass *curTechno = generic_cast<TechnoClass*>(curObj)) {
+					set->insert(curTechno);
+				}
+			}
+		}
+
+		for(std::set<TechnoClass*>::iterator iterator = set->begin(); iterator != set->end(); iterator++) {
+			if (TechnoClass *curTechno = *iterator) {
+				if (curTechno->IronCurtainTimer.Ignorable()) {
+					if (this->IC_Duration > 0) {
+						curTechno->IronCurtain(this->IC_Duration, Owner, 0);
+					}
+				} else {
+					if (this->IC_Duration > 0) {
+						curTechno->IronCurtainTimer.TimeLeft += this->IC_Duration;
 					} else {
-						if (this->IC_Duration > 0) {
-							curTechno->IronCurtainTimer.TimeLeft += this->IC_Duration;
+						if (curTechno->IronCurtainTimer.TimeLeft <= abs(this->IC_Duration)) {
+							curTechno->IronCurtainTimer.TimeLeft = 1;
 						} else {
-							if (curTechno->IronCurtainTimer.TimeLeft <= abs(this->IC_Duration)) {
-								curTechno->IronCurtainTimer.TimeLeft = 1;
-							} else {
-								curTechno->IronCurtainTimer.TimeLeft += this->IC_Duration;
-							}
+							curTechno->IronCurtainTimer.TimeLeft += this->IC_Duration;
 						}
 					}
 				}
 			}
 		}
+
+		set->clear();
+		delete set;
 	}
 }
 
