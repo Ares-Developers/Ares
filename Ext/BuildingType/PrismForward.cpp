@@ -261,15 +261,25 @@ bool BuildingTypeExt::cPrismForwarding::ValidateSupportTower(
 
 void BuildingTypeExt::cPrismForwarding::SetChargeDelay
 	(BuildingClass * TargetTower, int LongestChain) {
-	DWORD *LongestCDelay = new DWORD[LongestChain];
+	DWORD *LongestCDelay = new DWORD[LongestChain + 1];
 	LongestCDelay[0] = 0;
-	DWORD *LongestFDelay = new DWORD[LongestChain];
+	DWORD *LongestFDelay = new DWORD[LongestChain + 1];
 	LongestFDelay[0] = 0;
+	
+	Debug::Log("[PrismForwarding] LongestChain=%u\n", LongestChain);
+
 	int endChain = LongestChain;
 	while (endChain >= 0) {
 		SetChargeDelay_Get(TargetTower, 0, endChain, LongestChain, LongestCDelay, LongestFDelay);
 		--endChain;
 	}
+	
+	int temp = 0;
+	while (temp != LongestChain) {
+		Debug::Log("[PrismForwarding] Delay Array: %u\n", LongestCDelay[temp]);
+		++temp;
+	}
+
 	SetChargeDelay_Set(TargetTower, 0, LongestCDelay, LongestFDelay);
 	delete [] LongestFDelay;
 	delete [] LongestCDelay;
