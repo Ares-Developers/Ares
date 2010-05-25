@@ -35,7 +35,7 @@ DEFINE_HOOK(44B2FE, BuildingClass_Mi_Attack_IsPrism, 6)
 			while (BuildingTypeExt::cPrismForwarding::AcquireSlaves_MultiStage(B, B, stage++, 0, &NetworkSize, &LongestChain) != 0) {}
 
 			//now we have all the towers we know the longest chain, and can set all the towers' charge delays
-			BuildingTypeExt::cPrismForwarding::SetPrismChargeDelay(B);
+			BuildingTypeExt::cPrismForwarding::SetChargeDelay(B, LongestChain);
 
 		} else if (B->PrismStage == pcs_Slave) {
 			Debug::Log("PrismForwarding: Converting Slave to Master\n");
