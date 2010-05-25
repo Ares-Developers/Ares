@@ -52,7 +52,9 @@ public:
 		static int AcquireSlaves_MultiStage(BuildingClass *, BuildingClass *, int, int, int *, int *);
 		static int AcquireSlaves_SingleStage(BuildingClass *, BuildingClass *, int, int, int *, int *);
 		static bool ValidateSupportTower(BuildingClass *, BuildingClass *, BuildingClass *);
-		static int SetPrismChargeDelay(BuildingClass *);
+		static void SetChargeDelay(BuildingClass *, int);
+		static void SetChargeDelay_Get(BuildingClass * , int , int , int , DWORD *, DWORD *);
+		static void SetChargeDelay_Set(BuildingClass * , int , DWORD *, DWORD *);
 		static void RemoveSlave(BuildingClass *);
 		static void OrphanSlave(BuildingClass *);
 
