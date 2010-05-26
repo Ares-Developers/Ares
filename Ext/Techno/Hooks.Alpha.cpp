@@ -4,6 +4,9 @@
 #include <TacticalClass.h>
 
 hash_AlphaExt TechnoExt::AlphaExt;
+// conventions for hashmaps like this:
+// the value's CTOR is the only thing allowed to .insert() or [] stuff
+// the value's (SD)DTOR is the only thing allowed to .erase() stuff
 
 DEFINE_HOOK(420960, AlphaShapeClass_CTOR, 5)
 {
@@ -11,7 +14,6 @@ DEFINE_HOOK(420960, AlphaShapeClass_CTOR, 5)
 	GET(AlphaShapeClass *, AS, ECX);
 	hash_AlphaExt::iterator i = TechnoExt::AlphaExt.find(O);
 	if(i != TechnoExt::AlphaExt.end()) {
-//		TechnoExt::AlphaExt.erase(i);
 		delete i->second;
 	}
 	TechnoExt::AlphaExt[O] = AS;
@@ -35,7 +37,6 @@ DEFINE_HOOK(5F3D5B, ObjectClass_DTOR, A)
 	hash_AlphaExt::iterator i = TechnoExt::AlphaExt.find(O);
 	if(i != TechnoExt::AlphaExt.end()) {
 		delete i->second;
-		TechnoExt::AlphaExt.erase(i);
 	}
 	return 0;
 }
@@ -96,7 +97,6 @@ DEFINE_HOOK(5F3E70, ObjectClass_Update, 5)
 		hash_AlphaExt::iterator i = TechnoExt::AlphaExt.find(Source);
 		if(i != TechnoExt::AlphaExt.end()) {
 			delete i->second;
-			TechnoExt::AlphaExt.erase(i);
 		}
 		return 0;
 	}

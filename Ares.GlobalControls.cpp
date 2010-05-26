@@ -29,7 +29,8 @@ void Ares::GlobalControls::Load(CCINIClass *pINI) {
 	if(pINI->ReadString("GlobalControls", "AllowBypassBuildLimit", "", Ares::readBuffer, Ares::readLength)) {
 		int idx = 0;
 		for(char * cur = strtok(Ares::readBuffer, ","); cur && *cur && idx <= 2; cur = strtok(NULL, ","), ++idx) {
-			AllowBypassBuildLimit[idx] = _strcmpi(cur, "Yes") == 0;
+			int diffIdx = 2 - idx; // remapping so that HouseClass::AIDifficulty can be used as an index
+			AllowBypassBuildLimit[diffIdx] = _strcmpi(cur, "Yes") == 0;
 		}
 	}
 }
