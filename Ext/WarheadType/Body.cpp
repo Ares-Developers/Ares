@@ -293,6 +293,9 @@ bool WarheadTypeExt::ExtData::applyKillDriver(BulletClass* Bullet) {
 	if(!Bullet->Target || !this->KillDriver) {
 		return false;
 	} else if(TechnoClass *pTarget = generic_cast<TechnoClass *>(Bullet->Target)) {
+		if(pTarget->IsIronCurtained()) {
+			return false;
+		}
 		TechnoTypeClass *pTargetType = pTarget->GetTechnoType();
 		TechnoTypeExt::ExtData* TargetTypeExt = TechnoTypeExt::ExtMap.Find(pTargetType);
 
@@ -316,8 +319,27 @@ bool WarheadTypeExt::ExtData::applyKillDriver(BulletClass* Bullet) {
 				}
 			}
 
+			// If this unit mind controls stuff, we should free the controllees, since they still belong to the previous owner
+			if(pTarget->CaptureManager) {
+				pTarget->CaptureManager->FreeAll();
+			}
+
+			// BelongsToATeam()
+			// If this unit spawns stuff, we should kill the spawns, since they still belong to the previous owner
+			if(pTarget->SpawnManager) {
+				pTarget->SpawnManager->KillNodes();
+			}
+
+			// If this unit enslaves stuff, we should free the slaves, since they still belong to the previous owner
+			if(pTarget->SlaveManager) {
+				pTarget->SlaveManager->Killed(Bullet->Owner);
+			}
+
+			pTarget->IsImmobilized = true; // no idea if this will work
+
 			// Hand over to Civilian/Special house
 			pTarget->SetOwningHouse(HouseClass::FindByCountryIndex(HouseTypeClass::FindIndexOfName("Special")));
+			pTarget->Mission_Sleep();
 			return true;
 		} else {
 			return false;
