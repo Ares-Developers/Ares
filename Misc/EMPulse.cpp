@@ -308,7 +308,7 @@ bool EMPulse::isEMPImmune(TechnoClass * Target, HouseClass * SourceHouse) {
 	being affected by them.
 
 	Currently, EMPs can be temporarily averted if Target is under the influence of
-	the Iron Curtain.
+	the Iron Curtain or it is attacked by a Temporal warhead.
 
 	\param Target The Techno the EMP is fired at.
 	\param SourceHouse The house that fired the EMP.
@@ -316,9 +316,14 @@ bool EMPulse::isEMPImmune(TechnoClass * Target, HouseClass * SourceHouse) {
 	\returns True if Target is immune to EMP, false otherwise.
 
 	\author AlexB
-	\date 2010-05-02
+	\date 2010-05-26
 */
 bool EMPulse::isCurrentlyEMPImmune(TechnoClass * Target, HouseClass * SourceHouse) {
+	// objects currently doing some time travel are exempt
+	if (Target->BeingWarpedOut) {
+		return true;
+	}
+
 	// iron curtained objects can not be affected by EMPs
 	if (Target->IsIronCurtained()) {
 		return true;

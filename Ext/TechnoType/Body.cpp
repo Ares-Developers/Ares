@@ -209,7 +209,18 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	bool EMPTemp = pINI->ReadBool(section, "ImmuneToEMP", false);
 	this->ImmuneToEMP = EMPTemp;
 	this->ImmuneToEMPSet = (EMPTemp == pINI->ReadBool(section, "ImmuneToEMP", true));
-	this->EMPThreshold = pINI->ReadInteger(section, "EMPThreshold", this->EMPThreshold);
+
+	if(pINI->ReadString(section, "EMPThreshold", "inair", Ares::readBuffer, Ares::readLength)) {
+		if(_strcmpi(Ares::readBuffer, "inair") == 0) {
+			this->EMPThreshold = -1;
+		} else if((_strcmpi(Ares::readBuffer, "yes") == 0) || (_strcmpi(Ares::readBuffer, "true") == 0)) {
+			this->EMPThreshold = 1;
+		} else if((_strcmpi(Ares::readBuffer, "no") == 0) || (_strcmpi(Ares::readBuffer, "false") == 0)) {
+			this->EMPThreshold = 0;
+		} else {
+			this->EMPThreshold = pINI->ReadInteger(section, "EMPThreshold", this->EMPThreshold);
+		}
+	}
 
 	if(pINI->ReadString(section, "VeteranAbilities", "", Ares::readBuffer, Ares::readLength)) {
 		for(char *cur = strtok(Ares::readBuffer, ","); cur; cur = strtok(NULL, ",")) {

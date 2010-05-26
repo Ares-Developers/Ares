@@ -293,15 +293,16 @@ bool WarheadTypeExt::ExtData::applyKillDriver(BulletClass* Bullet) {
 	if(!Bullet->Target || !this->KillDriver) {
 		return false;
 	} else if(TechnoClass *pTarget = generic_cast<TechnoClass *>(Bullet->Target)) {
+		// don't penetrate the Iron Curtain
 		if(pTarget->IsIronCurtained()) {
 			return false;
 		}
 		TechnoTypeClass *pTargetType = pTarget->GetTechnoType();
 		TechnoTypeExt::ExtData* TargetTypeExt = TechnoTypeExt::ExtMap.Find(pTargetType);
 
-		// conditions: Warhead is KillDriver, target is Vehicle or Aircraft, but not protected and not a living being
-		if(((pTarget->WhatAmI() == abs_Unit) || (pTarget->WhatAmI() == abs_Aircraft))
-		  && !(TargetTypeExt->ProtectedDriver || pTargetType->Organic || pTargetType->Natural)) {
+		// conditions: Warhead is KillDriver, target is Vehicle, but not protected and not a living being
+		if((pTarget->WhatAmI() == abs_Unit) && !pTarget->BeingWarpedOut && !(TargetTypeExt->ProtectedDriver
+			|| pTargetType->Organic || pTargetType->Natural)) {
 
 			// If this vehicle uses Operator=, we have to take care of actual "physical" drivers, rather than theoretical ones
 			if(TargetTypeExt->IsAPromiscuousWhoreAndLetsAnyoneRideIt || TargetTypeExt->Operator) {
@@ -328,6 +329,8 @@ bool WarheadTypeExt::ExtData::applyKillDriver(BulletClass* Bullet) {
 			// If this unit spawns stuff, we should kill the spawns, since they still belong to the previous owner
 			if(pTarget->SpawnManager) {
 				pTarget->SpawnManager->KillNodes();
+				pTarget->SpawnManager->Target = NULL;
+				pTarget->SpawnManager->Destination = NULL;
 			}
 
 			// If this unit enslaves stuff, we should free the slaves, since they still belong to the previous owner
@@ -335,11 +338,9 @@ bool WarheadTypeExt::ExtData::applyKillDriver(BulletClass* Bullet) {
 				pTarget->SlaveManager->Killed(Bullet->Owner);
 			}
 
-			pTarget->IsImmobilized = true; // no idea if this will work
-
 			// Hand over to Civilian/Special house
 			pTarget->SetOwningHouse(HouseClass::FindByCountryIndex(HouseTypeClass::FindIndexOfName("Special")));
-			pTarget->Mission_Sleep();
+			pTarget->QueueMission(mission_Sticky, true);
 			return true;
 		} else {
 			return false;

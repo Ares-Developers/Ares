@@ -46,3 +46,16 @@ DEFINE_HOOK(44A04C, BuildingClass_Unload_CopyEMPDuration, 6) {
 
 	return 0;
 }
+
+DEFINE_HOOK(51E3B0, InfantryClass_GetCursorOverObject_EMP, 7) {
+	GET(InfantryClass *, pInfantry, ECX);
+	GET_STACK(TechnoClass *, pTarget, 0x4);
+
+	// infantry should really not be able to deploy then EMP'd.
+	if((pInfantry == pTarget) && pInfantry->Type->Deployer && pInfantry->IsUnderEMP()) {
+		R->EAX(act_NoDeploy);
+		return 0x51F187;
+	}
+
+	return 0;
+}
