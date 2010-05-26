@@ -156,3 +156,11 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 	return 0x44ACE2;
 }
 
+DEFINE_HOOK(4424EF, BuildingClass_ReceiveDamage_PrismForward, 6)
+{
+	GET(BuildingClass *, B, ECX);
+
+	BuildingTypeExt::cPrismForwarding::RemoveSlave(B);
+
+	return 0;
+}

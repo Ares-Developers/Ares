@@ -219,7 +219,7 @@ bool BuildingTypeExt::cPrismForwarding::ValidateSupportTower(
 					if(!SlaveTower->IsBeingDrained() && SlaveMission != mission_Attack
 						&& SlaveMission != mission_Construction && SlaveMission != mission_Selling) {
 						TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(SlaveTower);
-						if (pData->IsOperated() && pData->IsPowered() && !SlaveTower->IsUnderEMP()) {
+						if (pData->IsOperated() && pData->IsPowered() && !SlaveTower->IsUnderEMP() &&!SlaveTower->IsBeingWarped) {
 							BuildingExt::ExtData *pSlaveData = BuildingExt::ExtMap.Find(SlaveTower);
 							BuildingTypeClass *pSlaveType = SlaveTower->Type;
 							BuildingTypeExt::ExtData *pSlaveTypeData = BuildingTypeExt::ExtMap.Find(pSlaveType);
