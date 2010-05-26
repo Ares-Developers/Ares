@@ -261,10 +261,11 @@ bool BuildingTypeExt::cPrismForwarding::ValidateSupportTower(
 
 void BuildingTypeExt::cPrismForwarding::SetChargeDelay
 	(BuildingClass * TargetTower, int LongestChain) {
-	DWORD *LongestCDelay = new DWORD[LongestChain + 1];
-	LongestCDelay[0] = 0;
-	DWORD *LongestFDelay = new DWORD[LongestChain + 1];
-	LongestFDelay[0] = 0;
+	int ArrayLen = LongestChain + 1;
+	DWORD *LongestCDelay = new DWORD[ArrayLen];
+	memset(LongestCDelay, 0, ArrayLen * sizeof(DWORD));
+	DWORD *LongestFDelay = new DWORD[ArrayLen];
+	memset(LongestFDelay, 0, ArrayLen * sizeof(DWORD));
 	
 	Debug::Log("[PrismForwarding] LongestChain=%u\n", LongestChain);
 
