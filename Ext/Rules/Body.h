@@ -27,7 +27,8 @@ class RulesExt
 
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			ElectricDeath(NULL),
-			EngineerDamage (0.0F)
+			EngineerDamage (0.0F),
+			EngineerDamageCursor (MouseCursor::First[51])
 			{ };
 
 		virtual ~ExtData() {

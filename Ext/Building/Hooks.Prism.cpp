@@ -158,7 +158,7 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 
 DEFINE_HOOK(4424EF, BuildingClass_ReceiveDamage_PrismForward, 6)
 {
-	GET(BuildingClass *, B, ECX);
+	GET(BuildingClass *, B, ESI);
 
 	BuildingTypeExt::cPrismForwarding::RemoveSlave(B);
 

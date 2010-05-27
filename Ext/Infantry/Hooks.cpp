@@ -119,7 +119,6 @@ DEFINE_HOOK(51E5E1, InfantryClass_GetCursorOverObject_MultiEngineerB, 7) {
 	// damage if multi engineer and target isn't that low on health
 	if(GameModeOptionsClass::Instance->MultiEngineer) {
 		GET(TechnoClass *, T, ECX);
-		Debug::Log("InfantryClass_GetCursorOverObject_MultiEngineerB: %f %f %d\n", T->GetHealthPercentage(), RulesClass::Global()->EngineerCaptureLevel, T->GetHealthPercentage() >= RulesClass::Global()->EngineerCaptureLevel);
 		if(T->GetHealthPercentage() > RulesClass::Global()->EngineerCaptureLevel) {
 			ret = (RulesExt::Global()->EngineerDamage > 0 ? act_Damage : act_NoEnter);
 			if(ret == act_Damage) {
