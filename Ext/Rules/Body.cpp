@@ -4,6 +4,7 @@
 #include "../../Enum/Prerequisites.h"
 #include "../../Enum/ArmorTypes.h"
 #include "../../Enum/RadTypes.h"
+#include <GameModeOptionsClass.h>
 
 template<> const DWORD Extension<RulesClass>::Canary = 0x12341234;
 RulesExt::ExtData * RulesExt::Data = NULL;
@@ -82,6 +83,11 @@ void RulesExt::ExtData::LoadAfterTypeData(RulesClass *pThis, CCINIClass *pINI) {
 		WeaponTypeClass::Array->GetItem(i)->LoadFromINI(pINI);
 	}
 
+	pData->EngineerDamage = pINI->ReadDouble("General", "EngineerDamage", pData->EngineerDamage);
+	pData->EngineerDamageCursor.Read(&exINI, "General", "EngineerDamageCursor");
+
+	// should be variably changed by rules/ui/game mode later
+	GameModeOptionsClass::Instance->MultiEngineer = true;
 }
 
 // =============================

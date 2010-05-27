@@ -22,7 +22,6 @@ DEFINE_HOOK(679A15, RulesData_LoadBeforeTypeData, 6)
 	return 0;
 }
 
-
 DEFINE_HOOK(679CAF, RulesData_LoadAfterTypeData, 5)
 {
 	RulesClass* pItem = RulesClass::Global();
@@ -46,3 +45,15 @@ DEFINE_HOOK(518744, InfantryClass_ReceiveDamage_ElectricDeath, 6)
 	return 0x51874D;
 }
 
+DEFINE_HOOK(671DF1, RulesClass_Addition_General_MultiEngineer, 7) {
+	GET(RulesClass*, pRules, ESI);
+	GET(CCINIClass*, pINI, EDI);
+
+	// read the engineer capture level ourselves. we default to 100%,
+	// the game defaulted to 0% so engineers could only capture buildings
+	// when they have been destroyed.
+	pRules->EngineerCaptureLevel = pINI->ReadDouble("General", "EngineerCaptureLevel", 1.0f);
+	pRules->EngineerCaptureLevel_ = pRules->EngineerCaptureLevel;
+
+	return 0x671E3B;
+}

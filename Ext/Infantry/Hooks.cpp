@@ -5,6 +5,9 @@
 #include "../BuildingType/Body.h"
 #include "../Techno/Body.h"
 #include "Body.h"
+#include "../Rules/Body.h"
+#include <GameModeOptionsClass.h>
+#include <Misc/Actions.h>
 
 // #664: Advanced Rubble - reconstruction part: Check
 /*
@@ -103,4 +106,43 @@ DEFINE_HOOK(51D799, InfantryClass_PlayAnim_WaterSound, 7)
 		? 0x51D8BF
 		: 0x51D7A6
 	;
+}
+
+DEFINE_HOOK(51E5C0, InfantryClass_GetCursorOverObject_MultiEngineerA, 6) {
+	// skip old logic's way to determine the cursor
+	return 0x51E5D9;
+}
+
+DEFINE_HOOK(51E5E1, InfantryClass_GetCursorOverObject_MultiEngineerB, 7) {
+	eAction ret = act_Capture;
+
+	// damage if multi engineer and target isn't that low on health
+	if(GameModeOptionsClass::Instance->MultiEngineer) {
+		GET(TechnoClass *, T, ECX);
+		Debug::Log("InfantryClass_GetCursorOverObject_MultiEngineerB: %f %f %d\n", T->GetHealthPercentage(), RulesClass::Global()->EngineerCaptureLevel, T->GetHealthPercentage() >= RulesClass::Global()->EngineerCaptureLevel);
+		if(T->GetHealthPercentage() > RulesClass::Global()->EngineerCaptureLevel) {
+			ret = (RulesExt::Global()->EngineerDamage > 0 ? act_Damage : act_NoEnter);
+			if(ret == act_Damage) {
+				Actions::Set(RulesExt::Global()->EngineerDamageCursor);
+			}
+		}
+	}
+
+	//// return our action
+	R->EAX(ret);
+	return 0;
+}
+
+DEFINE_HOOK(519DB6, InfantryClass_UpdatePosition_MultiEngineer, 7) {
+	GET(InfantryClass *, pEngi, ESI);
+	GET(TechnoClass *, pTarget, EDI);
+	if(pTarget->GetHealthPercentage() > RulesClass::Global()->EngineerCaptureLevel) {
+		// damage
+		int Damage = ceil(pTarget->GetTechnoType()->Strength * RulesExt::Global()->EngineerDamage);
+		pTarget->ReceiveDamage(&Damage, 0, RulesClass::Global()->C4Warhead, pEngi, 1, 0, 0);
+		return 0x51A010;
+	} else {
+		// capture
+		return 0x519EAA;
+	}
 }

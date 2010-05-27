@@ -22,9 +22,12 @@ class RulesExt
 	{
 		public:
 		Valueable<AnimTypeClass* >ElectricDeath;
+		double EngineerDamage;
+		Valueable<MouseCursor> EngineerDamageCursor;
 
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
-			ElectricDeath(NULL)
+			ElectricDeath(NULL),
+			EngineerDamage (0.0F)
 			{ };
 
 		virtual ~ExtData() {
