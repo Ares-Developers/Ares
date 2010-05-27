@@ -51,7 +51,7 @@ void TechnoExt::SpawnSurvivors(TechnoClass *pThis, TechnoClass *pKiller, bool Se
 
 					destLoc.Z = loc.Z;
 
-					if(!TechnoExt::ParadropSurvivor(Pilot, &destLoc, Select)) {
+					if(!TechnoExt::EjectSurvivor(Pilot, &destLoc, Select)) {
 						Pilot->RegisterDestruction(pKiller); //(TechnoClass *)R->get_StackVar32(0x54));
 						GAME_DEALLOC(Pilot);
 					}
@@ -85,7 +85,7 @@ void TechnoExt::SpawnSurvivors(TechnoClass *pThis, TechnoClass *pKiller, bool Se
 
 			destLoc.Z = loc.Z;
 
-			toDelete = !TechnoExt::ParadropSurvivor(passenger, &destLoc, Select);
+			toDelete = !TechnoExt::EjectSurvivor(passenger, &destLoc, Select);
 		}
 		if(toDelete) {
 			passenger->RegisterDestruction(pKiller); //(TechnoClass *)R->get_StackVar32(0x54));
@@ -95,8 +95,12 @@ void TechnoExt::SpawnSurvivors(TechnoClass *pThis, TechnoClass *pKiller, bool Se
 
 	pSelfData->Survivors_Done = 1;
 }
-
-bool TechnoExt::ParadropSurvivor(FootClass *Survivor, CoordStruct *loc, bool Select)
+/**
+	\param Survivor Passenger to eject
+	\param loc Where to put the passenger
+	\param Select Whether to select the Passenger afterwards
+*/
+bool TechnoExt::EjectSurvivor(FootClass *Survivor, CoordStruct *loc, bool Select)
 {
 	bool success;
 	int floorZ = MapClass::Instance->GetCellFloorHeight(loc);
@@ -114,7 +118,58 @@ bool TechnoExt::ParadropSurvivor(FootClass *Survivor, CoordStruct *loc, bool Sel
 		Survivor->Select();
 	}
 	return 1;
-	// TODO: Tag
+	//! \todo Tag
+}
+
+/**
+	This function ejects a given number of passengers from the passed transporter.
+
+	\param pThis Pointer to the transporter
+	\param howMany How many passengers to eject - pass negative number for "all"
+	\author Renegade
+	\date 27.05.2010
+*/
+static void TechnoExt::EjectPassengers(TechnoClass *pThis, signed short howMany) {
+	if(howMany == 0 || !pThis->Passengers.NumPassengers) {
+		return;
+	}
+
+	short limit = (howMany < 0 || howMany > pThis->Passengers.NumPassengers) ? pThis->Passengers.NumPassengers : howMany;
+
+	for(short i = 0; (i < limit) && pThis->Passengers.FirstPassenger; ++i) {
+		CoordStruct destination;
+		TechnoExt::GetPutLocation(pThis->Location, destination);
+
+		FootClass *passenger = pThis->Passengers.RemoveFirstPassenger();
+		passenger->Put(destination, ScenarioClass::Instance->Random.RandomRanged(0, 7));
+	}
+	return;
+}
+
+
+/**
+	This function drops the coordinates of an infantry subposition into the target parameter.
+	Could probably work for vehicles as well, though they'd be off-center.
+
+	\param current The current position of the transporter, the starting point to look from
+	\param target A CoordStruct to save the finally computed position to
+	\author Renegade
+	\date 27.05.2010
+*/
+static void TechnoExt::GetPutLocation(CoordStruct const &current, CoordStruct &target) {
+	// this whole thing does not at all account for cells which are completely occupied.
+	CoordStruct tmpLoc = current;
+	CellStruct tmpCoords = CellSpread::GetCell(ScenarioClass::Instance->Random.RandomRanged(0, 7));
+
+	tmpLoc.X += tmpCoords.X * 128;
+	tmpLoc.Y += tmpCoords.Y * 128;
+
+	CellClass * tmpCell = MapClass::Instance->GetCellAt(&tmpLoc);
+
+	tmpCell->FindInfantrySubposition(&target, &tmpLoc, 0, 0, 0);
+
+	target.Z = current.Z;
+	return;
 }
 
 //! Breaks the link between DrainTarget and DrainingMe.

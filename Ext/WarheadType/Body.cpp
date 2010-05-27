@@ -16,6 +16,7 @@
 #include <EMPulseClass.h>
 #include <AnimClass.h>
 #include "../Bullet/Body.h"
+#include <FootClass.h>
 
 #include <Helpers/Template.h>
 #include <set>
@@ -285,7 +286,7 @@ bool WarheadTypeExt::canWarheadAffectTarget(TechnoClass * Target, HouseClass * S
 /*! This function checks if the KillDriver effect should be applied, and, if so, applies it.
 	\param Bullet Pointer to the bullet
 	\return true if the effect was applied, false if not
-	\author Renegade
+	\author Renegade & AlexB
 	\date 05.04.10
 	\todo This needs to be refactored to work with the generic warhead SW. I want to create a generic cellspread function first.
 */
@@ -293,26 +294,57 @@ bool WarheadTypeExt::ExtData::applyKillDriver(BulletClass* Bullet) {
 	if(!Bullet->Target || !this->KillDriver) {
 		return false;
 	} else if(TechnoClass *pTarget = generic_cast<TechnoClass *>(Bullet->Target)) {
-		// don't penetrate the Iron Curtain
+		// don't penetrate the Iron Curtain // typedef IronCurtain ChastityBelt
 		if(pTarget->IsIronCurtained()) {
 			return false;
 		}
 		TechnoTypeClass *pTargetType = pTarget->GetTechnoType();
 		TechnoTypeExt::ExtData* TargetTypeExt = TechnoTypeExt::ExtMap.Find(pTargetType);
 
-		// conditions: Warhead is KillDriver, target is Vehicle, but not protected and not a living being
-		if((pTarget->WhatAmI() == abs_Unit) && !pTarget->BeingWarpedOut && !(TargetTypeExt->ProtectedDriver
-			|| pTargetType->Organic || pTargetType->Natural)) {
+		// conditions: Warhead is KillDriver, target is Vehicle or Aircraft, but not protected and not a living being
+		if(((pTarget->WhatAmI() == abs_Unit) || (pTarget->WhatAmI() == abs_Aircraft))
+			&& !(pTarget->BeingWarpedOut || TargetTypeExt->ProtectedDriver || pTargetType->Organic || pTargetType->Natural)) {
+
+			// if this aircraft is expected to dock to anything, don't allow killing its pilot
+			// (reason being: the game thinks you lost the aircraft that just turned, and assumes you have free aircraft space,
+			// allowing you to build more aircraft, for the docking spot that is still occupied by the previous plane.)
+			if((pTarget->WhatAmI() == abs_Aircraft) && (pTarget->Type->AirportBound || pTarget->Type->Dock.Count)) { // relying on short-circuit evaluation here - nest this if necessary
+				return false;
+			}
 
 			// If this vehicle uses Operator=, we have to take care of actual "physical" drivers, rather than theoretical ones
-			if(TargetTypeExt->IsAPromiscuousWhoreAndLetsAnyoneRideIt || TargetTypeExt->Operator) {
-				//! \todo Change this to "kill one driver and eject everyone else"
+			if(TargetTypeExt->IsAPromiscuousWhoreAndLetsAnyoneRideIt && FootClass *passenger = pTarget->Passengers.RemoveFirstPassenger()) {
+				// kill first passenger
+				passenger->RegisterDestruction(Bullet->Owner);
+				passenger->UnInit();
+			} else if(TargetTypeExt->Operator) {
+				// kill first passenger of Operator= kind
+
+				// temp holder for the preceeding non-operators
+				PassengersClass worthlessOnes;
+
+				// copy out worthless passengers until we find the driver cowardly hiding among them, then kill him
 				while(pTarget->Passengers.FirstPassenger) {
-					FootClass *passenger = pTarget->Passengers.RemoveFirstPassenger();
-					passenger->RegisterDestruction(Bullet->Owner);
-					passenger->UnInit();
+					if(pTarget->Passengers.FirstPassenger->Type == TargetTypeExt->Operator) {
+						FootClass *passenger = pTarget->Passengers.RemoveFirstPassenger();
+						passenger->RegisterDestruction(Bullet->Owner);
+						passenger->UnInit();
+						break;
+					}
+					worthlessOnes.AddPassenger(pTarget->Passengers.RemoveFirstPassenger());
+				}
+
+				// copy the worthless scum back in
+				while(worthlessOnes.FirstPassenger) {
+					pTarget->Passengers.AddPassenger(worthlessOnes.RemoveFirstPassenger());
 				}
 			}
+
+			// if passengers remain in the vehicle, operator-using or not, they should leave
+			if(pTarget->Passengers.NumPassengers) {
+				TechnoExt::EjectPassengers(pTarget, -1);
+			}
+
 			// If this unit is driving under influence, we have to free it first
 			if(TechnoClass *Controller = pTarget->MindControlledBy) {
 				if(CaptureManagerClass *MC = Controller->CaptureManager) {
@@ -340,7 +372,7 @@ bool WarheadTypeExt::ExtData::applyKillDriver(BulletClass* Bullet) {
 
 			// Hand over to Civilian/Special house
 			pTarget->SetOwningHouse(HouseClass::FindByCountryIndex(HouseTypeClass::FindIndexOfName("Special")));
-			pTarget->QueueMission(mission_Sticky, true);
+			pTarget->QueueMission(mission_Sticky, true); // What kind of "sticky" mission is that, exactly? >_>
 			return true;
 		} else {
 			return false;

@@ -87,7 +87,9 @@ public:
 	static bool NeedsRegap;
 
 	static void SpawnSurvivors(TechnoClass *pThis, TechnoClass *pKiller, bool Select);
-	static bool ParadropSurvivor(FootClass *Survivor, CoordStruct *loc, bool Select);
+	static bool EjectSurvivor(FootClass *Survivor, CoordStruct *loc, bool Select);
+	static void EjectPassengers(TechnoClass *, signed short);
+	static void GetPutLocation(CoordStruct const &, CoordStruct &);
 
 	static void StopDraining(TechnoClass *Drainer, TechnoClass *Drainee);
 /*
