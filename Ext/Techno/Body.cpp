@@ -129,7 +129,7 @@ bool TechnoExt::EjectSurvivor(FootClass *Survivor, CoordStruct *loc, bool Select
 	\author Renegade
 	\date 27.05.2010
 */
-static void TechnoExt::EjectPassengers(TechnoClass *pThis, signed short howMany) {
+void TechnoExt::EjectPassengers(TechnoClass *pThis, signed short howMany) {
 	if(howMany == 0 || !pThis->Passengers.NumPassengers) {
 		return;
 	}
@@ -141,7 +141,7 @@ static void TechnoExt::EjectPassengers(TechnoClass *pThis, signed short howMany)
 		TechnoExt::GetPutLocation(pThis->Location, destination);
 
 		FootClass *passenger = pThis->Passengers.RemoveFirstPassenger();
-		passenger->Put(destination, ScenarioClass::Instance->Random.RandomRanged(0, 7));
+		passenger->Put(&destination, ScenarioClass::Instance->Random.RandomRanged(0, 7));
 	}
 	return;
 }
@@ -156,7 +156,7 @@ static void TechnoExt::EjectPassengers(TechnoClass *pThis, signed short howMany)
 	\author Renegade
 	\date 27.05.2010
 */
-static void TechnoExt::GetPutLocation(CoordStruct const &current, CoordStruct &target) {
+void TechnoExt::GetPutLocation(CoordStruct const &current, CoordStruct &target) {
 	// this whole thing does not at all account for cells which are completely occupied.
 	CoordStruct tmpLoc = current;
 	CellStruct tmpCoords = CellSpread::GetCell(ScenarioClass::Instance->Random.RandomRanged(0, 7));

@@ -308,15 +308,19 @@ bool WarheadTypeExt::ExtData::applyKillDriver(BulletClass* Bullet) {
 			// if this aircraft is expected to dock to anything, don't allow killing its pilot
 			// (reason being: the game thinks you lost the aircraft that just turned, and assumes you have free aircraft space,
 			// allowing you to build more aircraft, for the docking spot that is still occupied by the previous plane.)
-			if((pTarget->WhatAmI() == abs_Aircraft) && (pTarget->Type->AirportBound || pTarget->Type->Dock.Count)) { // relying on short-circuit evaluation here - nest this if necessary
-				return false;
+			if(AircraftClass * pTargetAircraft = specific_cast<AircraftClass *>(pTarget)) { // relying on short-circuit evaluation here - nest this if necessary
+				if(pTargetAircraft->Type->AirportBound || pTargetAircraft->Type->Dock.Count) {
+					return false;
+				}
 			}
 
 			// If this vehicle uses Operator=, we have to take care of actual "physical" drivers, rather than theoretical ones
-			if(TargetTypeExt->IsAPromiscuousWhoreAndLetsAnyoneRideIt && FootClass *passenger = pTarget->Passengers.RemoveFirstPassenger()) {
+			FootClass *passenger = NULL;
+			if(TargetTypeExt->IsAPromiscuousWhoreAndLetsAnyoneRideIt && (passenger = pTarget->Passengers.RemoveFirstPassenger())) {
 				// kill first passenger
 				passenger->RegisterDestruction(Bullet->Owner);
 				passenger->UnInit();
+
 			} else if(TargetTypeExt->Operator) {
 				// kill first passenger of Operator= kind
 
@@ -325,7 +329,7 @@ bool WarheadTypeExt::ExtData::applyKillDriver(BulletClass* Bullet) {
 
 				// copy out worthless passengers until we find the driver cowardly hiding among them, then kill him
 				while(pTarget->Passengers.FirstPassenger) {
-					if(pTarget->Passengers.FirstPassenger->Type == TargetTypeExt->Operator) {
+					if(pTarget->Passengers.FirstPassenger->GetTechnoType() == TargetTypeExt->Operator) {
 						FootClass *passenger = pTarget->Passengers.RemoveFirstPassenger();
 						passenger->RegisterDestruction(Bullet->Owner);
 						passenger->UnInit();
