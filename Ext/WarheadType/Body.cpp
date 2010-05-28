@@ -13,6 +13,7 @@
 #include <CellClass.h>
 #include <TechnoClass.h>
 #include <TechnoTypeClass.h>
+#include <SlaveManagerClass.h>
 #include <EMPulseClass.h>
 #include <AnimClass.h>
 #include "../Bullet/Body.h"
@@ -375,8 +376,9 @@ bool WarheadTypeExt::ExtData::applyKillDriver(BulletClass* Bullet) {
 			// <DCoder> unlink
 			// <Renegade> so on principle, I could just re-link it?
 			// <DCoder> yes you can
-			if(pTarget->SlaveManager) {
-				pTarget->SlaveManager->Killed(Bullet->Owner);
+			if(SlaveManagerClass * pSlaveManager = pTarget->SlaveManager) {
+				pSlaveManager->Killed(Bullet->Owner);
+				pSlaveManager->ZeroOutSlaves();
 				pTarget->SlaveManager->Owner = pTarget;
 			}
 
