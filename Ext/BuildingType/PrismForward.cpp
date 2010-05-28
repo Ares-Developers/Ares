@@ -45,9 +45,7 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 		this->MaxFeeds.Read(&exINI, pID, "PrismForwarding.MaxFeeds");
 		this->MaxChainLength.Read(&exINI, pID, "PrismForwarding.MaxChainLength");
 		this->MaxNetworkSize.Read(&exINI, pID, "PrismForwarding.MaxNetworkSize");
-		Debug::Log("[PrismForwarding] SM was %d\n", this->SupportModifier.Get());
 		this->SupportModifier.Read(&exINI, pID, "PrismForwarding.SupportModifier");
-		Debug::Log("[PrismForwarding] SM is now %d\n", this->SupportModifier.Get());
 		this->DamageAdd.Read(&exINI, pID, "PrismForwarding.DamageAdd");
 		this->SupportRange.Read(&exINI, pID, "PrismForwarding.SupportRange");
 
@@ -99,7 +97,6 @@ int BuildingTypeExt::cPrismForwarding::AcquireSlaves_MultiStage
 	// |
 	// 6---7--8
 	// ...which would not be as good.
-	Debug::Log("[PrismForwarding]: multistage called with stage %d, chain %d\n", stage, chain);
 	int countSlaves = 0;
 	if (stage == 0) {
 		countSlaves += AcquireSlaves_SingleStage(MasterTower, TargetTower, stage, (chain + 1), NetworkSize, LongestChain);
@@ -112,7 +109,6 @@ int BuildingTypeExt::cPrismForwarding::AcquireSlaves_MultiStage
 			++senderIdx;
 		}
 	}
-	Debug::Log("[PrismForwarding]: multistage returning %d\n", countSlaves);
 	return countSlaves;
 }
 
@@ -132,8 +128,6 @@ int BuildingTypeExt::cPrismForwarding::AcquireSlaves_SingleStage
 	if (MaxFeeds == 0
 			|| (MaxChainLength != -1 && MaxChainLength < chain)
 			|| (MaxNetworkSize != -1 && MaxNetworkSize <= *NetworkSize)) {
-		Debug::Log("[PrismForwarding]: singlestage aborted. MaxFeeds=%d, CL=%d/%d, MNS=%d/%d\n",
-			MaxFeeds, chain, MaxChainLength, *NetworkSize, MaxNetworkSize);
 		return 0;
 	}
 
@@ -156,7 +150,6 @@ int BuildingTypeExt::cPrismForwarding::AcquireSlaves_SingleStage
 		//if (BuildingClass *SlaveTower = B->Owner->Buildings[i]) {
 		if (BuildingClass *SlaveTower = BuildingClass::Array->GetItem(i)) {
 			if (ValidateSupportTower(MasterTower, TargetTower, SlaveTower)) {
-				Debug::Log("[PrismForwarding] SlaveTower confirmed eligible at stage %d, chain %d\n", stage, chain);
 				SlaveTower->GetPosition_2(&curPosition);
 				int Distance = MyPosition.DistanceFrom(curPosition);
 
@@ -166,19 +159,14 @@ int BuildingTypeExt::cPrismForwarding::AcquireSlaves_SingleStage
 		}
 	}
 
-	Debug::Log("[PrismForwarding] Vector built. ETS=%u\n", EligibleTowers.size());
-
 	std::sort(EligibleTowers.begin(), EligibleTowers.end());
 	//std::reverse(EligibleTowers.begin(), EligibleTowers.end());
 	
-	Debug::Log("[PrismForwarding] Vector sorted. ETS=%u\n", EligibleTowers.size());
-
 	//now enslave the towers in order of proximity
 	int iFeeds = 0;
 	while (EligibleTowers.size() != 0 && (MaxFeeds == -1 || iFeeds < MaxFeeds) && (MaxNetworkSize == -1 || *NetworkSize < MaxNetworkSize)) {
 		BuildingClass * nearestPrism = EligibleTowers[0].Tower;
 		EligibleTowers.erase(EligibleTowers.begin());
-		Debug::Log("[PrismForwarding] Element erased. ETS=%u\n", EligibleTowers.size());
 		//we have a slave tower! do the bizzo
 		++iFeeds;
 		++(*NetworkSize);
@@ -195,8 +183,6 @@ int BuildingTypeExt::cPrismForwarding::AcquireSlaves_SingleStage
 		BuildingExt::ExtData *pTargetData = BuildingExt::ExtMap.Find(TargetTower);
 		pSlaveData->PrismForwarding.SupportTarget = TargetTower;
 		pTargetData->PrismForwarding.Senders.AddItem(nearestPrism);
-		Debug::Log("[PrismForwarding] Enslave loop end. ETS=%u F=%u MF=%d NS=%u MNS=%d\n",
-			EligibleTowers.size(), iFeeds, MaxFeeds, *NetworkSize, MaxNetworkSize);
 	}
 
 	if (iFeeds != 0 && chain > *LongestChain) {
@@ -267,8 +253,6 @@ void BuildingTypeExt::cPrismForwarding::SetChargeDelay
 	DWORD *LongestFDelay = new DWORD[ArrayLen];
 	memset(LongestFDelay, 0, ArrayLen * sizeof(DWORD));
 	
-	Debug::Log("[PrismForwarding] LongestChain=%u\n", LongestChain);
-
 	int endChain = LongestChain;
 	while (endChain >= 0) {
 		SetChargeDelay_Get(TargetTower, 0, endChain, LongestChain, LongestCDelay, LongestFDelay);
@@ -277,7 +261,6 @@ void BuildingTypeExt::cPrismForwarding::SetChargeDelay
 	
 	int temp = 0;
 	while (temp != LongestChain) {
-		Debug::Log("[PrismForwarding] Delay Array: %u\n", LongestCDelay[temp]);
 		++temp;
 	}
 
@@ -327,7 +310,7 @@ void BuildingTypeExt::cPrismForwarding::SetChargeDelay_Set
 
 //Need to find out all the places that this should be called and call it!
 //Death of tower, temporal, EMP, loss of power
-void BuildingTypeExt::cPrismForwarding::RemoveSlave(BuildingClass *SlaveTower) {
+void BuildingTypeExt::cPrismForwarding::RemoveSlave(BuildingClass *SlaveTower, bool bCease) {
 	if (int PrismStage = SlaveTower->PrismStage) {
 		BuildingExt::ExtData *pSlaveData = BuildingExt::ExtMap.Find(SlaveTower);
 		OrphanSlave(SlaveTower);
@@ -338,14 +321,15 @@ void BuildingTypeExt::cPrismForwarding::RemoveSlave(BuildingClass *SlaveTower) {
 				pTargetData->PrismForwarding.Senders.RemoveItem(idx);
 			}
 		}
-		//assuming that this tower has been shut down so all charging activity ceases
-		pSlaveData->PrismForwarding.PrismChargeDelay = 0;
-		SlaveTower->DelayBeforeFiring = 0;
-		pSlaveData->PrismForwarding.ModifierReserve = 0.0;
-		pSlaveData->PrismForwarding.DamageReserve = 0;
-		SlaveTower->DestroyNthAnim(BuildingAnimSlot::Special);
-		//SlaveTower->PlayNthAnim(BuildingAnimSlot::Active); //do we need this?
-		SlaveTower->PrismStage = pcs_Idle;
+		if (bCease) {
+			pSlaveData->PrismForwarding.PrismChargeDelay = 0;
+			SlaveTower->DelayBeforeFiring = 0;
+			pSlaveData->PrismForwarding.ModifierReserve = 0.0;
+			pSlaveData->PrismForwarding.DamageReserve = 0;
+			SlaveTower->DestroyNthAnim(BuildingAnimSlot::Special);
+			//SlaveTower->PlayNthAnim(BuildingAnimSlot::Active); //do we need this?
+			SlaveTower->PrismStage = pcs_Idle;
+		}
 	}
 }
 

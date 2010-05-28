@@ -156,11 +156,55 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 	return 0x44ACE2;
 }
 
-DEFINE_HOOK(4424EF, BuildingClass_ReceiveDamage_PrismForward, 6)
+//these are all for cleaning up when a prism tower becomes unavailable
+DEFINE_HOOK(4424EF, PrismForward_BuildingDestroyed, 6)
 {
 	GET(BuildingClass *, B, ESI);
+	BuildingTypeExt::cPrismForwarding::RemoveSlave(B, true);
+	return 0;
+}
 
-	BuildingTypeExt::cPrismForwarding::RemoveSlave(B);
+DEFINE_HOOK(447113, PrismForward_BuildingSold, 6)
+{
+	GET(BuildingClass *, B, ESI);
+	BuildingTypeExt::cPrismForwarding::RemoveSlave(B, true);
+	return 0;
+}
+
+DEFINE_HOOK(448277, PrismForward_BuildingChangeOwner, 5)
+{
+	GET(BuildingClass *, B, ESI);
+	GET_STACK(HouseClass *, newOwner, 0x5C);
+	
+	HouseClass * oldOwner = B->Owner;
+
+	if (newOwner != oldOwner) {
+		BuildingTypeClass *pType = B->Type;
+		BuildingTypeExt::ExtData *pTypeData = BuildingTypeExt::ExtMap.Find(pType);
+
+		if (pTypeData->PrismForwarding.ToAllies) {
+			BuildingClass *LastTarget = B;
+			BuildingClass *FirstTarget = NULL;
+			while (LastTarget) {
+				BuildingExt::ExtData *pData = BuildingExt::ExtMap.Find(LastTarget);
+				BuildingClass *NextTarget = pData->PrismForwarding.SupportTarget;
+				if (!FirstTarget) {
+					FirstTarget = NextTarget;
+				}
+				if (!NextTarget) {
+					//LastTarget is now the master (firing) tower
+					if (newOwner->IsAlliedWith(LastTarget->Owner) && newOwner->IsAlliedWith(FirstTarget->Owner)) {
+						//alliances check out so this slave tower can keep on charging.
+						return 0;
+					}
+				}
+				LastTarget = NextTarget;
+			}
+		}
+		//if we reach this point then the alliance checks have failed
+		BuildingTypeExt::cPrismForwarding::RemoveSlave(B, false);
+		
+	}
 
 	return 0;
 }
