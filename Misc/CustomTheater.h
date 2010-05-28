@@ -20,7 +20,6 @@ class BuildingTypeClass;
 	If the list contains a theater ID that already comes with the game, it will be auto-configured before the respective ini section is read.
 	
 	TODO:
-	- Hook loading and unloading in RulesExt.
 	- Are these savegame relevant?
 	
 	~pd
@@ -37,8 +36,8 @@ public:
 	static CustomTheater* Find(const char* name);
 	static int FindIndex(const char* name);
 	
-	static void LoadFromINIList(CCINIClass* ini); //TODO: should be invoked by RulesExt
-	static void CleanUp(); //TODO: needs to be invoked from somewhere
+	static void LoadFromINIList(CCINIClass* ini);
+	static void CleanUp();
 
 private:
 	void ReadIntArray(CCINIClass* ini, const char* section, const char* key, DynamicVectorClass<int>* array);
@@ -82,7 +81,7 @@ public:
 	DynamicVectorClass<int> RMG_AmbientRed;
 	DynamicVectorClass<int> RMG_AmbientGreen;
 	DynamicVectorClass<int> RMG_AmbientBlue;
-	DynamicVectorClass<BuildingTypeClass*> RMG_OrePatchLamps;
+	DynamicVectorClass<BuildingTypeClass*> RMG_OrePatchLamps; //used at all?
 	
 	void LoadFromINI(CCINIClass* ini);
 };
