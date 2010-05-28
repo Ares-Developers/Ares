@@ -370,13 +370,19 @@ bool WarheadTypeExt::ExtData::applyKillDriver(BulletClass* Bullet) {
 			}
 
 			// If this unit enslaves stuff, we should free the slaves, since they still belong to the previous owner
+			// <DCoder> SlaveManagerClass::Killed() sets the manager's Owner to NULL
+			// <Renegade> okay, does Killed() also destroy the slave manager, or just unlink it from the unit?
+			// <DCoder> unlink
+			// <Renegade> so on principle, I could just re-link it?
+			// <DCoder> yes you can
 			if(pTarget->SlaveManager) {
 				pTarget->SlaveManager->Killed(Bullet->Owner);
+				pTarget->SlaveManager->Owner = pTarget;
 			}
 
 			// Hand over to Civilian/Special house
 			pTarget->SetOwningHouse(HouseClass::FindByCountryIndex(HouseTypeClass::FindIndexOfName("Special")));
-			pTarget->QueueMission(mission_Sticky, true); // What kind of "sticky" mission is that, exactly? >_>
+			pTarget->QueueMission(mission_Sticky, true);
 			return true;
 		} else {
 			return false;
