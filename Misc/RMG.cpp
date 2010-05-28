@@ -24,8 +24,10 @@ DEFINE_HOOK(596FFE, RMG_EnableArchipelago, 0)
 	return 0x597008;
 }
 
+/*
+//EnableDesert isn't necessary anymore, we now use RMG.Available from the new theater data, see CustomTheater.cpp
 //0x5970EA
-DEFINE_HOOK(5970EA, RMG_EnableDesert, 9)
+A_FINE_HOOK(5970EA, RMG_EnableDesert, 9)
 {
 	GET(HWND, hWnd, EDI);
 
@@ -46,6 +48,7 @@ DEFINE_HOOK(5970EA, RMG_EnableDesert, 9)
 
 	return 0;
 }
+*/
 
 DEFINE_HOOK(596C81, MapSeedClass_DialogFunc_GetData, 5)
 {
@@ -57,6 +60,7 @@ DEFINE_HOOK(596C81, MapSeedClass_DialogFunc_GetData, 5)
 	return 0;
 }
 
+//speeds up preview drawing by insane amounts
 DEFINE_HOOK(5FED00, OverlayTypeClass_GetRadarColor, 0)
 {
 	GET(OverlayTypeClass*, ovType, ECX);
@@ -72,6 +76,7 @@ DEFINE_HOOK(5982D5, MapSeedClass_LoadFromINI, 6)
 		GET(CCINIClass *, pINI, EDI);
 		RMG::UrbanAreas = pINI->ReadBool("General", "GenerateUrbanAreas", RMG::UrbanAreas);
 
+		//I can should this be theater-related in the future... ~pd
 		if(!pINI->GetSection("Urban")) {
 			// no [Urban] section - use our defaults; ASSUMES default rules...
 
