@@ -6,6 +6,9 @@
 
 #include "Body.h"
 
+#include "../Rules/Body.h"
+#include <GameModeOptionsClass.h>
+
 Container<InfantryExt> InfantryExt::ExtMap;
 
 bool InfantryExt::ExtData::IsOccupant() {
@@ -18,4 +21,35 @@ bool InfantryExt::ExtData::IsOccupant() {
 	} else {
 		return false; // if there is no building, he can't occupy one
 	}
+}
+
+//! Gets the action an engineer will take when entering an enemy building.
+/*!
+	This function accounts for the multi-engineer feature.
+
+	\param pBld The Building the engineer enters.
+
+	\author AlexB
+	\date 2010-05-28
+*/
+eAction InfantryExt::GetEngineerEnterEnemyBuildingAction(BuildingClass *pBld) {
+	// damage if multi engineer and target isn't that low on health. this
+	// only affects multiplay and only if it is enabled.
+	if(GameModeOptionsClass::Instance->MPModeIndex && GameModeOptionsClass::Instance->MultiEngineer) {
+
+		// check to always capture tech structures. a structure counts
+		// as tech if its initial owner is a multiplayer-passive country.
+		if(HouseTypeClass * pCountry = pBld->OwningPlayer2->Type) {
+			if(!RulesExt::Global()->EngineerAlwaysCaptureTech || !pCountry->MultiplayPassive) {
+		
+				// no civil structure. apply new logic.
+				if(pBld->GetHealthPercentage() > RulesClass::Global()->EngineerCaptureLevel) {
+					return (RulesExt::Global()->EngineerDamage > 0 ? act_Damage : act_NoEnter);
+				}
+			}
+		}
+	}
+
+	// default.
+	return act_Capture;
 }

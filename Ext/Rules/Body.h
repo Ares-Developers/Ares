@@ -23,11 +23,13 @@ class RulesExt
 		public:
 		Valueable<AnimTypeClass* >ElectricDeath;
 		double EngineerDamage;
+		bool EngineerAlwaysCaptureTech;
 		Valueable<MouseCursor> EngineerDamageCursor;
 
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			ElectricDeath(NULL),
 			EngineerDamage (0.0F),
+			EngineerAlwaysCaptureTech (true),
 			EngineerDamageCursor (MouseCursor::First[51])
 			{ };
 
