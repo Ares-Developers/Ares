@@ -172,13 +172,15 @@ Inheritance diagram for TechnoTypeExt::TechnoTypeExt::ExtData:</div>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">std::bitset&lt; 32 &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_techno_type_ext_1_1_ext_data.html#c36e97736cba86dc13caa155021780c6">RequiredStolenTech</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="class_valueable.html">Valueable</a>&lt; bool &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_techno_type_ext_1_1_ext_data.html#eba1fedd61202a0ec59a03f9a43c79e4">ImmuneToEMPSet</a></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_techno_type_ext_1_1_ext_data.html#b5d24ee2a760bfd6da810dee4610dd31">ImmuneToEMPSet</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="class_valueable.html">Valueable</a>&lt; bool &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_techno_type_ext_1_1_ext_data.html#aa458aaee443bf25663f66ab537c0576">ImmuneToEMP</a></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_techno_type_ext_1_1_ext_data.html#7313727d1b8e4c0f6b4d3a60150215e7">ImmuneToEMP</a></td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_techno_type_ext_1_1_ext_data.html#3e84dd16f4eebc772e0d6d849fc589ec">VeteranAbilityEMPIMMUNE</a></td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_techno_type_ext_1_1_ext_data.html#2116994c254b89f1ad9f3e6659e18d5a">EliteAbilityEMPIMMUNE</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_techno_type_ext_1_1_ext_data.html#01a75dbe28a842e258e3ffc2ff1260a1">EMPThreshold</a></td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_techno_type_ext_1_1_ext_data.html#cd98530ef34dc48a3d4b8ff4e7a7bd91">ProtectedDriver</a></td></tr>
 
@@ -216,40 +218,41 @@ Inheritance diagram for TechnoTypeExt::TechnoTypeExt::ExtData:</div>
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00086"></a>00086                                                                    : <a class="code" href="class_extension.html">Extension&lt;TT&gt;</a>(<a class="code" href="class_extension.html#2f0c543d5bceafd46d103be4f87a5abe">Canary</a>, OwnerObject),
-<a name="l00087"></a>00087                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#602692ec44303698d83964130e820a26">Survivors_PilotChance</a> (NULL),
-<a name="l00088"></a>00088                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#ad0fcc85d2b4dfce250f7eee7f602892">Survivors_PassengerChance</a> (NULL),
-<a name="l00089"></a>00089                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#78f692482ea81301d28708837b978147" title="Defines the number of pilots inside this vehicle if Crewed=yes; maximum number of...">Survivors_PilotCount</a> (0),
-<a name="l00090"></a>00090                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#5877ea4d76df432fb436b58ae773886a">PrerequisiteTheaters</a> (0xFFFFFFFF),
-<a name="l00091"></a>00091                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#ebe77a45e9d457a7c3967c2eaec71957">Secret_RequiredHouses</a> (0),
-<a name="l00092"></a>00092                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#55af0d2a547ebba3467dde830ba3ab2e">Secret_ForbiddenHouses</a> (0),
-<a name="l00093"></a>00093                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#d2c9b37a4900856680af3a16ef2a8801">Is_Deso</a> (<span class="keyword">false</span>),
-<a name="l00094"></a>00094                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#927a41cb40591b9cae5775b3adc4e930">Is_Deso_Radiation</a> (<span class="keyword">false</span>),
-<a name="l00095"></a>00095                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#29101eac537cf89f3241163b0c117a6c">Is_Cow</a> (<span class="keyword">false</span>),
-<a name="l00096"></a>00096                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#41dc8ddc0251366c449e4eefd56c4fe9">Is_Spotlighted</a> (<span class="keyword">false</span>),
-<a name="l00097"></a>00097                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#b89b7da259bc6cc4c06274da1612c226">Spot_Height</a> (200),
-<a name="l00098"></a>00098                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#fed19cb03b9b50c69166296ee89d7f20">Spot_Distance</a> (1024),
-<a name="l00099"></a>00099                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#6417504d7b4fcaf1cddfea9086531e78">Spot_AttachedTo</a> (<a class="code" href="class_techno_type_ext.html#a72efc1aeaf8cdf1b63b8603633c6b7b8bbb079312ca3714e2aadfe9a0334da3">sa_Body</a>),
-<a name="l00100"></a>00100                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#4d3cf4f81e148538c6150db273c75e8e">Spot_DisableR</a> (<span class="keyword">false</span>),
-<a name="l00101"></a>00101                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#31f760b8bad138db01de5f3a29d71781">Spot_DisableG</a> (<span class="keyword">false</span>),
-<a name="l00102"></a>00102                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#84966afd9c705cc55091c967875bff42">Spot_DisableB</a> (<span class="keyword">false</span>),
-<a name="l00103"></a>00103                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#afefd0328b0ee74b058e6ee09c41c28d">Spot_Reverse</a> (<span class="keyword">false</span>),
-<a name="l00104"></a>00104                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#7d8f1f46c8ebf217860382b69e430abd">Is_Bomb</a> (<span class="keyword">false</span>),
-<a name="l00105"></a>00105                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#30a9aecc206ee45b23e74cc7e611504b">WaterAlt</a> (<span class="keyword">false</span>),
-<a name="l00106"></a>00106                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#f84d6821a7e7f529e6645c9e6919d772">Insignia</a> (NULL),
-<a name="l00107"></a>00107                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#8bb3b580b74c434d544d303e84c55087">Parachute_Anim</a>(&amp;RulesClass::Instance-&gt;Parachute),
-<a name="l00108"></a>00108                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#b41fcd7290a799fc82fb2604baa140b9" title="Saves a pointer to an InfantryType required to be a passenger of this unit in order...">Operator</a> (NULL),
-<a name="l00109"></a>00109                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#c781caa8e68d2f58952ab9da9df5a19b" title="If this is true, Operator= is not checked, and the object will work with any passenger...">IsAPromiscuousWhoreAndLetsAnyoneRideIt</a> (<span class="keyword">false</span>),
-<a name="l00110"></a>00110                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#156493617404a7f6240e26326f132d8c">CameoPal</a>(),
-<a name="l00111"></a>00111                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#c36e97736cba86dc13caa155021780c6">RequiredStolenTech</a>(0ull),
-<a name="l00112"></a>00112                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#eba1fedd61202a0ec59a03f9a43c79e4">ImmuneToEMPSet</a> (<span class="keyword">false</span>),
-<a name="l00113"></a>00113                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#aa458aaee443bf25663f66ab537c0576">ImmuneToEMP</a> (<span class="keyword">false</span>),
-<a name="l00114"></a>00114                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#3e84dd16f4eebc772e0d6d849fc589ec">VeteranAbilityEMPIMMUNE</a> (<span class="keyword">false</span>),
-<a name="l00115"></a>00115                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#2116994c254b89f1ad9f3e6659e18d5a">EliteAbilityEMPIMMUNE</a> (<span class="keyword">false</span>),
-<a name="l00116"></a>00116                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#cd98530ef34dc48a3d4b8ff4e7a7bd91" title="Whether the driver of this vehicle cannot be killed, i.e. whether this vehicle is...">ProtectedDriver</a>(<span class="keyword">false</span>),
-<a name="l00117"></a>00117                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#b2420d9c2c48e532cff4cac81c1ea724" title="Whether this TechnoType can act as the driver of vehicles whose driver has been killed...">CanDrive</a> (<span class="keyword">false</span>),
-<a name="l00118"></a>00118                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#b6b4afe340badc3c386598fde3e88e78">AlternateTheaterArt</a> (<span class="keyword">false</span>)
-<a name="l00119"></a>00119                         { this-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#f84d6821a7e7f529e6645c9e6919d772">Insignia</a>.<a class="code" href="class_promotable.html#39204a3c8cc8094a01c1672389bb7fd1">SetAll</a>(NULL); };
+<div class="fragment"><pre class="fragment"><a name="l00087"></a>00087                                                                    : <a class="code" href="class_extension.html">Extension&lt;TT&gt;</a>(<a class="code" href="class_extension.html#2f0c543d5bceafd46d103be4f87a5abe">Canary</a>, OwnerObject),
+<a name="l00088"></a>00088                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#602692ec44303698d83964130e820a26">Survivors_PilotChance</a> (NULL),
+<a name="l00089"></a>00089                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#ad0fcc85d2b4dfce250f7eee7f602892">Survivors_PassengerChance</a> (NULL),
+<a name="l00090"></a>00090                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#78f692482ea81301d28708837b978147" title="Defines the number of pilots inside this vehicle if Crewed=yes; maximum number of...">Survivors_PilotCount</a> (0),
+<a name="l00091"></a>00091                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#5877ea4d76df432fb436b58ae773886a">PrerequisiteTheaters</a> (0xFFFFFFFF),
+<a name="l00092"></a>00092                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#ebe77a45e9d457a7c3967c2eaec71957">Secret_RequiredHouses</a> (0),
+<a name="l00093"></a>00093                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#55af0d2a547ebba3467dde830ba3ab2e">Secret_ForbiddenHouses</a> (0),
+<a name="l00094"></a>00094                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#d2c9b37a4900856680af3a16ef2a8801">Is_Deso</a> (<span class="keyword">false</span>),
+<a name="l00095"></a>00095                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#927a41cb40591b9cae5775b3adc4e930">Is_Deso_Radiation</a> (<span class="keyword">false</span>),
+<a name="l00096"></a>00096                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#29101eac537cf89f3241163b0c117a6c">Is_Cow</a> (<span class="keyword">false</span>),
+<a name="l00097"></a>00097                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#41dc8ddc0251366c449e4eefd56c4fe9">Is_Spotlighted</a> (<span class="keyword">false</span>),
+<a name="l00098"></a>00098                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#b89b7da259bc6cc4c06274da1612c226">Spot_Height</a> (200),
+<a name="l00099"></a>00099                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#fed19cb03b9b50c69166296ee89d7f20">Spot_Distance</a> (1024),
+<a name="l00100"></a>00100                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#6417504d7b4fcaf1cddfea9086531e78">Spot_AttachedTo</a> (<a class="code" href="class_techno_type_ext.html#a72efc1aeaf8cdf1b63b8603633c6b7b8bbb079312ca3714e2aadfe9a0334da3">sa_Body</a>),
+<a name="l00101"></a>00101                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#4d3cf4f81e148538c6150db273c75e8e">Spot_DisableR</a> (<span class="keyword">false</span>),
+<a name="l00102"></a>00102                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#31f760b8bad138db01de5f3a29d71781">Spot_DisableG</a> (<span class="keyword">false</span>),
+<a name="l00103"></a>00103                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#84966afd9c705cc55091c967875bff42">Spot_DisableB</a> (<span class="keyword">false</span>),
+<a name="l00104"></a>00104                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#afefd0328b0ee74b058e6ee09c41c28d">Spot_Reverse</a> (<span class="keyword">false</span>),
+<a name="l00105"></a>00105                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#7d8f1f46c8ebf217860382b69e430abd">Is_Bomb</a> (<span class="keyword">false</span>),
+<a name="l00106"></a>00106                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#30a9aecc206ee45b23e74cc7e611504b">WaterAlt</a> (<span class="keyword">false</span>),
+<a name="l00107"></a>00107                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#f84d6821a7e7f529e6645c9e6919d772">Insignia</a> (NULL),
+<a name="l00108"></a>00108                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#8bb3b580b74c434d544d303e84c55087">Parachute_Anim</a>(&amp;RulesClass::Instance-&gt;Parachute),
+<a name="l00109"></a>00109                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#b41fcd7290a799fc82fb2604baa140b9" title="Saves a pointer to an InfantryType required to be a passenger of this unit in order...">Operator</a> (NULL),
+<a name="l00110"></a>00110                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#c781caa8e68d2f58952ab9da9df5a19b" title="If this is true, Operator= is not checked, and the object will work with any passenger...">IsAPromiscuousWhoreAndLetsAnyoneRideIt</a> (<span class="keyword">false</span>),
+<a name="l00111"></a>00111                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#156493617404a7f6240e26326f132d8c">CameoPal</a>(),
+<a name="l00112"></a>00112                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#c36e97736cba86dc13caa155021780c6">RequiredStolenTech</a>(0ull),
+<a name="l00113"></a>00113                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#b5d24ee2a760bfd6da810dee4610dd31">ImmuneToEMPSet</a> (<span class="keyword">false</span>),
+<a name="l00114"></a>00114                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#7313727d1b8e4c0f6b4d3a60150215e7">ImmuneToEMP</a> (<span class="keyword">false</span>),
+<a name="l00115"></a>00115                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#01a75dbe28a842e258e3ffc2ff1260a1">EMPThreshold</a> (-1),
+<a name="l00116"></a>00116                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#3e84dd16f4eebc772e0d6d849fc589ec">VeteranAbilityEMPIMMUNE</a> (<span class="keyword">false</span>),
+<a name="l00117"></a>00117                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#2116994c254b89f1ad9f3e6659e18d5a">EliteAbilityEMPIMMUNE</a> (<span class="keyword">false</span>),
+<a name="l00118"></a>00118                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#cd98530ef34dc48a3d4b8ff4e7a7bd91" title="Whether the driver of this vehicle cannot be killed, i.e. whether this vehicle is...">ProtectedDriver</a>(<span class="keyword">false</span>),
+<a name="l00119"></a>00119                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#b2420d9c2c48e532cff4cac81c1ea724" title="Whether this TechnoType can act as the driver of vehicles whose driver has been killed...">CanDrive</a> (<span class="keyword">false</span>),
+<a name="l00120"></a>00120                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#b6b4afe340badc3c386598fde3e88e78">AlternateTheaterArt</a> (<span class="keyword">false</span>)
+<a name="l00121"></a>00121                         { this-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#f84d6821a7e7f529e6645c9e6919d772">Insignia</a>.<a class="code" href="class_promotable.html#39204a3c8cc8094a01c1672389bb7fd1">SetAll</a>(NULL); };
 </pre></div>
 <p>
 
@@ -271,7 +274,7 @@ Inheritance diagram for TechnoTypeExt::TechnoTypeExt::ExtData:</div>
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00121"></a>00121 {};
+<div class="fragment"><pre class="fragment"><a name="l00123"></a>00123 {};
 </pre></div>
 <p>
 
@@ -342,9 +345,9 @@ Inheritance diagram for TechnoTypeExt::TechnoTypeExt::ExtData:</div>
 <p>
 
 <p>Implements <a class="el" href="class_extension.html#9e6b2ac570eddadb2ca3c01668da88b8">Extension&lt; TT &gt;</a>.</p>
-<div class="fragment"><pre class="fragment"><a name="l00128"></a>00128                                                           {
-<a name="l00129"></a>00129                         AnnounceInvalidPointer(<a class="code" href="class_techno_type_ext_1_1_ext_data.html#b41fcd7290a799fc82fb2604baa140b9" title="Saves a pointer to an InfantryType required to be a passenger of this unit in order...">Operator</a>, ptr);
-<a name="l00130"></a>00130                 }
+<div class="fragment"><pre class="fragment"><a name="l00130"></a>00130                                                           {
+<a name="l00131"></a>00131                         AnnounceInvalidPointer(<a class="code" href="class_techno_type_ext_1_1_ext_data.html#b41fcd7290a799fc82fb2604baa140b9" title="Saves a pointer to an InfantryType required to be a passenger of this unit in order...">Operator</a>, ptr);
+<a name="l00132"></a>00132                 }
 </pre></div>
 <p>
 
@@ -505,33 +508,45 @@ Inheritance diagram for TechnoTypeExt::TechnoTypeExt::ExtData:</div>
 <a name="l00207"></a>00207         <span class="comment">// EMP immunity. The default for each type is decided by the EMPulse class,</span>
 <a name="l00208"></a>00208         <span class="comment">// the first time a unit of this TechnoType is EMP'd.</span>
 <a name="l00209"></a>00209         <span class="keywordtype">bool</span> EMPTemp = pINI-&gt;ReadBool(section, <span class="stringliteral">"ImmuneToEMP"</span>, <span class="keyword">false</span>);
-<a name="l00210"></a>00210         this-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#aa458aaee443bf25663f66ab537c0576">ImmuneToEMP</a>.<a class="code" href="class_valueable.html#eb909ed95d6e70f8afa5e609c9725e08">Set</a>(EMPTemp);
-<a name="l00211"></a>00211         this-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#eba1fedd61202a0ec59a03f9a43c79e4">ImmuneToEMPSet</a>.<a class="code" href="class_valueable.html#eb909ed95d6e70f8afa5e609c9725e08">Set</a>((EMPTemp == pINI-&gt;ReadBool(section, <span class="stringliteral">"ImmuneToEMP"</span>, <span class="keyword">true</span>)));
+<a name="l00210"></a>00210         this-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#7313727d1b8e4c0f6b4d3a60150215e7">ImmuneToEMP</a> = EMPTemp;
+<a name="l00211"></a>00211         this-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#b5d24ee2a760bfd6da810dee4610dd31">ImmuneToEMPSet</a> = (EMPTemp == pINI-&gt;ReadBool(section, <span class="stringliteral">"ImmuneToEMP"</span>, <span class="keyword">true</span>));
 <a name="l00212"></a>00212 
-<a name="l00213"></a>00213         <span class="keywordflow">if</span>(pINI-&gt;ReadString(section, <span class="stringliteral">"VeteranAbilities"</span>, <span class="stringliteral">""</span>, <a class="code" href="class_ares.html#d4af8279307df25dd1e696f7380beb39">Ares::readBuffer</a>, <a class="code" href="class_ares.html#dc3a89d98277ea17bef774907bdd8dc8">Ares::readLength</a>)) {
-<a name="l00214"></a>00214                 <span class="keywordflow">for</span>(<span class="keywordtype">char</span> *cur = strtok(<a class="code" href="class_ares.html#d4af8279307df25dd1e696f7380beb39">Ares::readBuffer</a>, <span class="stringliteral">","</span>); cur; cur = strtok(NULL, <span class="stringliteral">","</span>)) {
-<a name="l00215"></a>00215                         <span class="keywordflow">if</span>(!_strcmpi(cur, <span class="stringliteral">"empimmune"</span>)) {
-<a name="l00216"></a>00216                                 this-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#3e84dd16f4eebc772e0d6d849fc589ec">VeteranAbilityEMPIMMUNE</a> = <span class="keyword">true</span>;
-<a name="l00217"></a>00217                                 this-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#2116994c254b89f1ad9f3e6659e18d5a">EliteAbilityEMPIMMUNE</a> = <span class="keyword">true</span>;
-<a name="l00218"></a>00218                         }
-<a name="l00219"></a>00219                 }
-<a name="l00220"></a>00220         }
-<a name="l00221"></a>00221 
-<a name="l00222"></a>00222         <span class="keywordflow">if</span>(pINI-&gt;ReadString(section, <span class="stringliteral">"EliteAbilities"</span>, <span class="stringliteral">""</span>, <a class="code" href="class_ares.html#d4af8279307df25dd1e696f7380beb39">Ares::readBuffer</a>, <a class="code" href="class_ares.html#dc3a89d98277ea17bef774907bdd8dc8">Ares::readLength</a>)) {
-<a name="l00223"></a>00223                 <span class="keywordflow">for</span>(<span class="keywordtype">char</span> *cur = strtok(<a class="code" href="class_ares.html#d4af8279307df25dd1e696f7380beb39">Ares::readBuffer</a>, <span class="stringliteral">","</span>); cur; cur = strtok(NULL, <span class="stringliteral">","</span>)) {
-<a name="l00224"></a>00224                         <span class="keywordflow">if</span>(!_strcmpi(cur, <span class="stringliteral">"empimmune"</span>)) {
-<a name="l00225"></a>00225                                 this-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#2116994c254b89f1ad9f3e6659e18d5a">EliteAbilityEMPIMMUNE</a> = <span class="keyword">true</span>;
-<a name="l00226"></a>00226                         }
-<a name="l00227"></a>00227                 }
-<a name="l00228"></a>00228         }
-<a name="l00229"></a>00229 
-<a name="l00230"></a>00230         <span class="comment">// #733</span>
-<a name="l00231"></a>00231         this-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#cd98530ef34dc48a3d4b8ff4e7a7bd91" title="Whether the driver of this vehicle cannot be killed, i.e. whether this vehicle is...">ProtectedDriver</a> = pINI-&gt;ReadBool(section, <span class="stringliteral">"ProtectedDriver"</span>, this-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#cd98530ef34dc48a3d4b8ff4e7a7bd91" title="Whether the driver of this vehicle cannot be killed, i.e. whether this vehicle is...">ProtectedDriver</a>);
-<a name="l00232"></a>00232         this-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#b2420d9c2c48e532cff4cac81c1ea724" title="Whether this TechnoType can act as the driver of vehicles whose driver has been killed...">CanDrive</a> = pINI-&gt;ReadBool(section, <span class="stringliteral">"CanDrive"</span>, this-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#b2420d9c2c48e532cff4cac81c1ea724" title="Whether this TechnoType can act as the driver of vehicles whose driver has been killed...">CanDrive</a>);
+<a name="l00213"></a>00213         <span class="keywordflow">if</span>(pINI-&gt;ReadString(section, <span class="stringliteral">"EMPThreshold"</span>, <span class="stringliteral">"inair"</span>, <a class="code" href="class_ares.html#d4af8279307df25dd1e696f7380beb39">Ares::readBuffer</a>, <a class="code" href="class_ares.html#dc3a89d98277ea17bef774907bdd8dc8">Ares::readLength</a>)) {
+<a name="l00214"></a>00214                 <span class="keywordflow">if</span>(_strcmpi(<a class="code" href="class_ares.html#d4af8279307df25dd1e696f7380beb39">Ares::readBuffer</a>, <span class="stringliteral">"inair"</span>) == 0) {
+<a name="l00215"></a>00215                         this-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#01a75dbe28a842e258e3ffc2ff1260a1">EMPThreshold</a> = -1;
+<a name="l00216"></a>00216                 } <span class="keywordflow">else</span> <span class="keywordflow">if</span>((_strcmpi(<a class="code" href="class_ares.html#d4af8279307df25dd1e696f7380beb39">Ares::readBuffer</a>, <span class="stringliteral">"yes"</span>) == 0) || (_strcmpi(<a class="code" href="class_ares.html#d4af8279307df25dd1e696f7380beb39">Ares::readBuffer</a>, <span class="stringliteral">"true"</span>) == 0)) {
+<a name="l00217"></a>00217                         this-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#01a75dbe28a842e258e3ffc2ff1260a1">EMPThreshold</a> = 1;
+<a name="l00218"></a>00218                 } <span class="keywordflow">else</span> <span class="keywordflow">if</span>((_strcmpi(<a class="code" href="class_ares.html#d4af8279307df25dd1e696f7380beb39">Ares::readBuffer</a>, <span class="stringliteral">"no"</span>) == 0) || (_strcmpi(<a class="code" href="class_ares.html#d4af8279307df25dd1e696f7380beb39">Ares::readBuffer</a>, <span class="stringliteral">"false"</span>) == 0)) {
+<a name="l00219"></a>00219                         this-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#01a75dbe28a842e258e3ffc2ff1260a1">EMPThreshold</a> = 0;
+<a name="l00220"></a>00220                 } <span class="keywordflow">else</span> {
+<a name="l00221"></a>00221                         this-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#01a75dbe28a842e258e3ffc2ff1260a1">EMPThreshold</a> = pINI-&gt;ReadInteger(section, <span class="stringliteral">"EMPThreshold"</span>, this-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#01a75dbe28a842e258e3ffc2ff1260a1">EMPThreshold</a>);
+<a name="l00222"></a>00222                 }
+<a name="l00223"></a>00223         }
+<a name="l00224"></a>00224 
+<a name="l00225"></a>00225         <span class="keywordflow">if</span>(pINI-&gt;ReadString(section, <span class="stringliteral">"VeteranAbilities"</span>, <span class="stringliteral">""</span>, <a class="code" href="class_ares.html#d4af8279307df25dd1e696f7380beb39">Ares::readBuffer</a>, <a class="code" href="class_ares.html#dc3a89d98277ea17bef774907bdd8dc8">Ares::readLength</a>)) {
+<a name="l00226"></a>00226                 <span class="keywordflow">for</span>(<span class="keywordtype">char</span> *cur = strtok(<a class="code" href="class_ares.html#d4af8279307df25dd1e696f7380beb39">Ares::readBuffer</a>, <span class="stringliteral">","</span>); cur; cur = strtok(NULL, <span class="stringliteral">","</span>)) {
+<a name="l00227"></a>00227                         <span class="keywordflow">if</span>(!_strcmpi(cur, <span class="stringliteral">"empimmune"</span>)) {
+<a name="l00228"></a>00228                                 this-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#3e84dd16f4eebc772e0d6d849fc589ec">VeteranAbilityEMPIMMUNE</a> = <span class="keyword">true</span>;
+<a name="l00229"></a>00229                                 this-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#2116994c254b89f1ad9f3e6659e18d5a">EliteAbilityEMPIMMUNE</a> = <span class="keyword">true</span>;
+<a name="l00230"></a>00230                         }
+<a name="l00231"></a>00231                 }
+<a name="l00232"></a>00232         }
 <a name="l00233"></a>00233 
-<a name="l00234"></a>00234         <span class="comment">// quick fix - remove after the rest of weapon selector code is done</span>
-<a name="l00235"></a>00235         <span class="keywordflow">return</span>;
-<a name="l00236"></a>00236 }
+<a name="l00234"></a>00234         <span class="keywordflow">if</span>(pINI-&gt;ReadString(section, <span class="stringliteral">"EliteAbilities"</span>, <span class="stringliteral">""</span>, <a class="code" href="class_ares.html#d4af8279307df25dd1e696f7380beb39">Ares::readBuffer</a>, <a class="code" href="class_ares.html#dc3a89d98277ea17bef774907bdd8dc8">Ares::readLength</a>)) {
+<a name="l00235"></a>00235                 <span class="keywordflow">for</span>(<span class="keywordtype">char</span> *cur = strtok(<a class="code" href="class_ares.html#d4af8279307df25dd1e696f7380beb39">Ares::readBuffer</a>, <span class="stringliteral">","</span>); cur; cur = strtok(NULL, <span class="stringliteral">","</span>)) {
+<a name="l00236"></a>00236                         <span class="keywordflow">if</span>(!_strcmpi(cur, <span class="stringliteral">"empimmune"</span>)) {
+<a name="l00237"></a>00237                                 this-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#2116994c254b89f1ad9f3e6659e18d5a">EliteAbilityEMPIMMUNE</a> = <span class="keyword">true</span>;
+<a name="l00238"></a>00238                         }
+<a name="l00239"></a>00239                 }
+<a name="l00240"></a>00240         }
+<a name="l00241"></a>00241 
+<a name="l00242"></a>00242         <span class="comment">// #733</span>
+<a name="l00243"></a>00243         this-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#cd98530ef34dc48a3d4b8ff4e7a7bd91" title="Whether the driver of this vehicle cannot be killed, i.e. whether this vehicle is...">ProtectedDriver</a> = pINI-&gt;ReadBool(section, <span class="stringliteral">"ProtectedDriver"</span>, this-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#cd98530ef34dc48a3d4b8ff4e7a7bd91" title="Whether the driver of this vehicle cannot be killed, i.e. whether this vehicle is...">ProtectedDriver</a>);
+<a name="l00244"></a>00244         this-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#b2420d9c2c48e532cff4cac81c1ea724" title="Whether this TechnoType can act as the driver of vehicles whose driver has been killed...">CanDrive</a> = pINI-&gt;ReadBool(section, <span class="stringliteral">"CanDrive"</span>, this-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#b2420d9c2c48e532cff4cac81c1ea724" title="Whether this TechnoType can act as the driver of vehicles whose driver has been killed...">CanDrive</a>);
+<a name="l00245"></a>00245 
+<a name="l00246"></a>00246         <span class="comment">// quick fix - remove after the rest of weapon selector code is done</span>
+<a name="l00247"></a>00247         <span class="keywordflow">return</span>;
+<a name="l00248"></a>00248 }
 </pre></div>
 <p>
 
@@ -555,7 +570,7 @@ Inheritance diagram for TechnoTypeExt::TechnoTypeExt::ExtData:</div>
 <p>
 
 <p>Implements <a class="el" href="class_extension.html#44ddedd12613b24b7b03d21982782047">Extension&lt; TT &gt;</a>.</p>
-<div class="fragment"><pre class="fragment"><a name="l00123"></a>00123 { <span class="keywordflow">return</span> <span class="keyword">sizeof</span>(*this); };
+<div class="fragment"><pre class="fragment"><a name="l00125"></a>00125 { <span class="keywordflow">return</span> <span class="keyword">sizeof</span>(*this); };
 </pre></div>
 <p>
 
@@ -639,12 +654,12 @@ Whether this TechnoType can act as the driver of vehicles whose driver has been 
 
 </div>
 </div><p>
-<a class="anchor" name="aa458aaee443bf25663f66ab537c0576"></a><!-- doxytag: member="TechnoTypeExt::ExtData::ImmuneToEMP" ref="aa458aaee443bf25663f66ab537c0576" args="" -->
+<a class="anchor" name="01a75dbe28a842e258e3ffc2ff1260a1"></a><!-- doxytag: member="TechnoTypeExt::ExtData::EMPThreshold" ref="01a75dbe28a842e258e3ffc2ff1260a1" args="" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="class_valueable.html">Valueable</a>&lt;bool&gt; TechnoTypeExt::TechnoTypeExt::ExtData::ImmuneToEMP          </td>
+          <td class="memname">int TechnoTypeExt::TechnoTypeExt::ExtData::EMPThreshold          </td>
         </tr>
       </table>
 </div>
@@ -654,12 +669,27 @@ Whether this TechnoType can act as the driver of vehicles whose driver has been 
 
 </div>
 </div><p>
-<a class="anchor" name="eba1fedd61202a0ec59a03f9a43c79e4"></a><!-- doxytag: member="TechnoTypeExt::ExtData::ImmuneToEMPSet" ref="eba1fedd61202a0ec59a03f9a43c79e4" args="" -->
+<a class="anchor" name="7313727d1b8e4c0f6b4d3a60150215e7"></a><!-- doxytag: member="TechnoTypeExt::ExtData::ImmuneToEMP" ref="7313727d1b8e4c0f6b4d3a60150215e7" args="" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="class_valueable.html">Valueable</a>&lt;bool&gt; TechnoTypeExt::TechnoTypeExt::ExtData::ImmuneToEMPSet          </td>
+          <td class="memname">bool TechnoTypeExt::TechnoTypeExt::ExtData::ImmuneToEMP          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+
+</div>
+</div><p>
+<a class="anchor" name="b5d24ee2a760bfd6da810dee4610dd31"></a><!-- doxytag: member="TechnoTypeExt::ExtData::ImmuneToEMPSet" ref="b5d24ee2a760bfd6da810dee4610dd31" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool TechnoTypeExt::TechnoTypeExt::ExtData::ImmuneToEMPSet          </td>
         </tr>
       </table>
 </div>
@@ -1132,7 +1162,7 @@ Defines the number of pilots inside this vehicle if Crewed=yes; maximum number o
 <hr>The documentation for this class was generated from the following files:<ul>
 <li>Ext/TechnoType/<a class="el" href="_techno_type_2_body_8h.html">Body.h</a><li>Ext/TechnoType/<a class="el" href="_techno_type_2_body_8cpp.html">Body.cpp</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue May 18 03:51:10 2010 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Sat May 29 11:15:58 2010 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

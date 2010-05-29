@@ -90,10 +90,13 @@ window.onload = initDynSections;
 <code>#include &lt;CellClass.h&gt;</code><br>
 <code>#include &lt;TechnoClass.h&gt;</code><br>
 <code>#include &lt;TechnoTypeClass.h&gt;</code><br>
+<code>#include &lt;SlaveManagerClass.h&gt;</code><br>
 <code>#include &lt;EMPulseClass.h&gt;</code><br>
 <code>#include &lt;AnimClass.h&gt;</code><br>
 <code>#include &quot;<a class="el" href="_bullet_2_body_8h.html">../Bullet/Body.h</a>&quot;</code><br>
+<code>#include &lt;FootClass.h&gt;</code><br>
 <code>#include &lt;Helpers/Template.h&gt;</code><br>
+<code>#include &lt;set&gt;</code><br>
 <table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Functions</h2></td></tr>
@@ -118,19 +121,19 @@ window.onload = initDynSections;
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00323"></a>00323 {
-<a name="l00324"></a>00324         GET(WarheadTypeClass*, pItem, EBP);
-<a name="l00325"></a>00325 
-<a name="l00326"></a>00326         <a class="code" href="class_warhead_type_ext.html#b2eb86c684fe6f15f9f95a9aa171e7dd">WarheadTypeExt::ExtMap</a>.<a class="code" href="class_container.html#73c02e221290552e7bf07d91e801c256">FindOrAllocate</a>(pItem);
-<a name="l00327"></a>00327         <span class="keywordflow">return</span> 0;
-<a name="l00328"></a>00328 }
+<div class="fragment"><pre class="fragment"><a name="l00400"></a>00400 {
+<a name="l00401"></a>00401         GET(WarheadTypeClass*, pItem, EBP);
+<a name="l00402"></a>00402 
+<a name="l00403"></a>00403         <a class="code" href="class_warhead_type_ext.html#b2eb86c684fe6f15f9f95a9aa171e7dd">WarheadTypeExt::ExtMap</a>.<a class="code" href="class_container.html#73c02e221290552e7bf07d91e801c256">FindOrAllocate</a>(pItem);
+<a name="l00404"></a>00404         <span class="keywordflow">return</span> 0;
+<a name="l00405"></a>00405 }
 </pre></div>
 <p>
 
 </div>
 </div><p>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue May 18 03:51:08 2010 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Sat May 29 11:15:57 2010 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

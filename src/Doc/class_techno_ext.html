@@ -91,7 +91,11 @@ window.onload = initDynSections;
 <tr><td colspan="2"><br><h2>Static Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">static void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_techno_ext.html#d34ee729a8d65cc603a7ca7dc9796a26">SpawnSurvivors</a> (TechnoClass *pThis, TechnoClass *pKiller, bool Select)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">static bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_techno_ext.html#7d4485d7aae9182a5461af705278eadc">ParadropSurvivor</a> (FootClass *Survivor, CoordStruct *loc, bool Select)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">static bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_techno_ext.html#ff0f55f57aeafe411bcce757946c9706">EjectSurvivor</a> (FootClass *Survivor, CoordStruct *loc, bool Select)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">static void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_techno_ext.html#c831189e514a5e8e0e9269d7595e5834">EjectPassengers</a> (TechnoClass *, signed short)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">static void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_techno_ext.html#eca8840d39bd4e6a693d458b8b85d646">GetPutLocation</a> (CoordStruct const &amp;, CoordStruct &amp;)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">static void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_techno_ext.html#ae9631478226ada4d987ce91607d1481">StopDraining</a> (TechnoClass *Drainer, TechnoClass *Drainee)</td></tr>
 
@@ -107,7 +111,7 @@ window.onload = initDynSections;
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">static BuildingLightClass *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_techno_ext.html#f257e89b8b2cb018402f9a6b1c25956f">ActiveBuildingLight</a> = NULL</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">static FireError&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_techno_ext.html#3af090234190adb36352d45da32c38d1">FiringStateCache</a> = -1</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">static FireError::Value&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_techno_ext.html#22321c8b1bcf7640745ae8c64bd1c9de">FiringStateCache</a> = FireError::NotAValue</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">static bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_techno_ext.html#3ff06595758c870b0d7775f41a3226ef">NeedsRegap</a> = false</td></tr>
 
@@ -129,12 +133,68 @@ window.onload = initDynSections;
 </div>
 </div><p>
 <hr><h2>Member Function Documentation</h2>
-<a class="anchor" name="7d4485d7aae9182a5461af705278eadc"></a><!-- doxytag: member="TechnoExt::ParadropSurvivor" ref="7d4485d7aae9182a5461af705278eadc" args="(FootClass *Survivor, CoordStruct *loc, bool Select)" -->
+<a class="anchor" name="c831189e514a5e8e0e9269d7595e5834"></a><!-- doxytag: member="TechnoExt::EjectPassengers" ref="c831189e514a5e8e0e9269d7595e5834" args="(TechnoClass *, signed short)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">bool TechnoExt::ParadropSurvivor           </td>
+          <td class="memname">void TechnoExt::EjectPassengers           </td>
+          <td>(</td>
+          <td class="paramtype">TechnoClass *&nbsp;</td>
+          <td class="paramname"> <em>pThis</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">signed short&nbsp;</td>
+          <td class="paramname"> <em>howMany</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+This function ejects a given number of passengers from the passed transporter.<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>pThis</em>&nbsp;</td><td>Pointer to the transporter </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>howMany</em>&nbsp;</td><td>How many passengers to eject - pass negative number for "all" </td></tr>
+  </table>
+</dl>
+<dl class="author" compact><dt><b>Author:</b></dt><dd>Renegade </dd></dl>
+<dl class="date" compact><dt><b>Date:</b></dt><dd>27.05.2010 </dd></dl>
+<div class="fragment"><pre class="fragment"><a name="l00132"></a>00132                                                                         {
+<a name="l00133"></a>00133         <span class="keywordflow">if</span>(howMany == 0 || !pThis-&gt;Passengers.NumPassengers) {
+<a name="l00134"></a>00134                 <span class="keywordflow">return</span>;
+<a name="l00135"></a>00135         }
+<a name="l00136"></a>00136 
+<a name="l00137"></a>00137         <span class="keywordtype">short</span> limit = (howMany &lt; 0 || howMany &gt; pThis-&gt;Passengers.NumPassengers) ? pThis-&gt;Passengers.NumPassengers : howMany;
+<a name="l00138"></a>00138 
+<a name="l00139"></a>00139         <span class="keywordflow">for</span>(<span class="keywordtype">short</span> i = 0; (i &lt; limit) &amp;&amp; pThis-&gt;Passengers.FirstPassenger; ++i) {
+<a name="l00140"></a>00140                 CoordStruct destination;
+<a name="l00141"></a>00141                 <a class="code" href="class_techno_ext.html#eca8840d39bd4e6a693d458b8b85d646">TechnoExt::GetPutLocation</a>(pThis-&gt;Location, destination);
+<a name="l00142"></a>00142 
+<a name="l00143"></a>00143                 FootClass *passenger = pThis-&gt;Passengers.RemoveFirstPassenger();
+<a name="l00144"></a>00144                 passenger-&gt;Put(&amp;destination, ScenarioClass::Instance-&gt;Random.RandomRanged(0, 7));
+<a name="l00145"></a>00145         }
+<a name="l00146"></a>00146         <span class="keywordflow">return</span>;
+<a name="l00147"></a>00147 }
+</pre></div>
+<p>
+
+</div>
+</div><p>
+<a class="anchor" name="ff0f55f57aeafe411bcce757946c9706"></a><!-- doxytag: member="TechnoExt::EjectSurvivor" ref="ff0f55f57aeafe411bcce757946c9706" args="(FootClass *Survivor, CoordStruct *loc, bool Select)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool TechnoExt::EjectSurvivor           </td>
           <td>(</td>
           <td class="paramtype">FootClass *&nbsp;</td>
           <td class="paramname"> <em>Survivor</em>, </td>
@@ -161,25 +221,89 @@ window.onload = initDynSections;
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00100"></a>00100 {
-<a name="l00101"></a>00101         <span class="keywordtype">bool</span> success;
-<a name="l00102"></a>00102         <span class="keywordtype">int</span> floorZ = MapClass::Instance-&gt;GetCellFloorHeight(loc);
-<a name="l00103"></a>00103         ++Unsorted::IKnowWhatImDoing;
-<a name="l00104"></a>00104         <span class="keywordflow">if</span>(loc-&gt;Z - floorZ &gt; 100) {
-<a name="l00105"></a>00105                 success = Survivor-&gt;SpawnParachuted(loc);
-<a name="l00106"></a>00106         } <span class="keywordflow">else</span> {
-<a name="l00107"></a>00107                 success = Survivor-&gt;Put(loc, ScenarioClass::Instance-&gt;Random.RandomRanged(0, 7));
-<a name="l00108"></a>00108         }
-<a name="l00109"></a>00109         --Unsorted::IKnowWhatImDoing;
-<a name="l00110"></a>00110         RET_UNLESS(success);
-<a name="l00111"></a>00111         Survivor-&gt;Scatter(0xB1CFE8, 1, 0);
-<a name="l00112"></a>00112         Survivor-&gt;QueueMission(Survivor-&gt;Owner-&gt;ControlledByHuman() ? mission_Guard : mission_Hunt, 0);
-<a name="l00113"></a>00113         <span class="keywordflow">if</span>(Select) {
-<a name="l00114"></a>00114                 Survivor-&gt;Select();
-<a name="l00115"></a>00115         }
-<a name="l00116"></a>00116         <span class="keywordflow">return</span> 1;
-<a name="l00117"></a>00117         <span class="comment">// TODO: Tag</span>
-<a name="l00118"></a>00118 }
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>Survivor</em>&nbsp;</td><td>Passenger to eject </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>loc</em>&nbsp;</td><td>Where to put the passenger </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>Select</em>&nbsp;</td><td>Whether to select the Passenger afterwards </td></tr>
+  </table>
+</dl>
+
+<p>
+<dl compact><dt><b><a class="el" href="todo.html#_todo000001">Todo:</a></b></dt><dd>Tag </dd></dl>
+<div class="fragment"><pre class="fragment"><a name="l00104"></a>00104 {
+<a name="l00105"></a>00105         <span class="keywordtype">bool</span> success;
+<a name="l00106"></a>00106         <span class="keywordtype">int</span> floorZ = MapClass::Instance-&gt;GetCellFloorHeight(loc);
+<a name="l00107"></a>00107         ++Unsorted::IKnowWhatImDoing;
+<a name="l00108"></a>00108         <span class="keywordflow">if</span>(loc-&gt;Z - floorZ &gt; 100) {
+<a name="l00109"></a>00109                 success = Survivor-&gt;SpawnParachuted(loc);
+<a name="l00110"></a>00110         } <span class="keywordflow">else</span> {
+<a name="l00111"></a>00111                 success = Survivor-&gt;Put(loc, ScenarioClass::Instance-&gt;Random.RandomRanged(0, 7));
+<a name="l00112"></a>00112         }
+<a name="l00113"></a>00113         --Unsorted::IKnowWhatImDoing;
+<a name="l00114"></a>00114         RET_UNLESS(success);
+<a name="l00115"></a>00115         Survivor-&gt;Scatter(0xB1CFE8, 1, 0);
+<a name="l00116"></a>00116         Survivor-&gt;QueueMission(Survivor-&gt;Owner-&gt;ControlledByHuman() ? mission_Guard : mission_Hunt, 0);
+<a name="l00117"></a>00117         <span class="keywordflow">if</span>(Select) {
+<a name="l00118"></a>00118                 Survivor-&gt;Select();
+<a name="l00119"></a>00119         }
+<a name="l00120"></a>00120         <span class="keywordflow">return</span> 1;
+<a name="l00122"></a>00122 }
+</pre></div>
+<p>
+
+</div>
+</div><p>
+<a class="anchor" name="eca8840d39bd4e6a693d458b8b85d646"></a><!-- doxytag: member="TechnoExt::GetPutLocation" ref="eca8840d39bd4e6a693d458b8b85d646" args="(CoordStruct const &amp;, CoordStruct &amp;)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void TechnoExt::GetPutLocation           </td>
+          <td>(</td>
+          <td class="paramtype">CoordStruct const &amp;&nbsp;</td>
+          <td class="paramname"> <em>current</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">CoordStruct &amp;&nbsp;</td>
+          <td class="paramname"> <em>target</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+This function drops the coordinates of an infantry subposition into the target parameter. Could probably work for vehicles as well, though they'd be off-center.<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>current</em>&nbsp;</td><td>The current position of the transporter, the starting point to look from </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>target</em>&nbsp;</td><td>A CoordStruct to save the finally computed position to </td></tr>
+  </table>
+</dl>
+<dl class="author" compact><dt><b>Author:</b></dt><dd>Renegade </dd></dl>
+<dl class="date" compact><dt><b>Date:</b></dt><dd>27.05.2010 </dd></dl>
+<div class="fragment"><pre class="fragment"><a name="l00159"></a>00159                                                                               {
+<a name="l00160"></a>00160         <span class="comment">// this whole thing does not at all account for cells which are completely occupied.</span>
+<a name="l00161"></a>00161         CoordStruct tmpLoc = current;
+<a name="l00162"></a>00162         CellStruct tmpCoords = CellSpread::GetCell(ScenarioClass::Instance-&gt;Random.RandomRanged(0, 7));
+<a name="l00163"></a>00163 
+<a name="l00164"></a>00164         tmpLoc.X += tmpCoords.X * 128;
+<a name="l00165"></a>00165         tmpLoc.Y += tmpCoords.Y * 128;
+<a name="l00166"></a>00166 
+<a name="l00167"></a>00167         CellClass * tmpCell = MapClass::Instance-&gt;GetCellAt(&amp;tmpLoc);
+<a name="l00168"></a>00168 
+<a name="l00169"></a>00169         tmpCell-&gt;FindInfantrySubposition(&amp;target, &amp;tmpLoc, 0, 0, 0);
+<a name="l00170"></a>00170 
+<a name="l00171"></a>00171         target.Z = current.Z;
+<a name="l00172"></a>00172         <span class="keywordflow">return</span>;
+<a name="l00173"></a>00173 }
 </pre></div>
 <p>
 
@@ -252,7 +376,7 @@ window.onload = initDynSections;
 <a name="l00051"></a>00051 
 <a name="l00052"></a>00052                                         destLoc.Z = loc.Z;
 <a name="l00053"></a>00053 
-<a name="l00054"></a>00054                                         <span class="keywordflow">if</span>(!<a class="code" href="class_techno_ext.html#7d4485d7aae9182a5461af705278eadc">TechnoExt::ParadropSurvivor</a>(Pilot, &amp;destLoc, Select)) {
+<a name="l00054"></a>00054                                         <span class="keywordflow">if</span>(!<a class="code" href="class_techno_ext.html#ff0f55f57aeafe411bcce757946c9706">TechnoExt::EjectSurvivor</a>(Pilot, &amp;destLoc, Select)) {
 <a name="l00055"></a>00055                                                 Pilot-&gt;RegisterDestruction(pKiller); <span class="comment">//(TechnoClass *)R-&gt;get_StackVar32(0x54));</span>
 <a name="l00056"></a>00056                                                 GAME_DEALLOC(Pilot);
 <a name="l00057"></a>00057                                         }
@@ -286,7 +410,7 @@ window.onload = initDynSections;
 <a name="l00085"></a>00085 
 <a name="l00086"></a>00086                         destLoc.Z = loc.Z;
 <a name="l00087"></a>00087 
-<a name="l00088"></a>00088                         toDelete = !<a class="code" href="class_techno_ext.html#7d4485d7aae9182a5461af705278eadc">TechnoExt::ParadropSurvivor</a>(passenger, &amp;destLoc, Select);
+<a name="l00088"></a>00088                         toDelete = !<a class="code" href="class_techno_ext.html#ff0f55f57aeafe411bcce757946c9706">TechnoExt::EjectSurvivor</a>(passenger, &amp;destLoc, Select);
 <a name="l00089"></a>00089                 }
 <a name="l00090"></a>00090                 <span class="keywordflow">if</span>(toDelete) {
 <a name="l00091"></a>00091                         passenger-&gt;RegisterDestruction(pKiller); <span class="comment">//(TechnoClass *)R-&gt;get_StackVar32(0x54));</span>
@@ -338,33 +462,33 @@ The links between the drainer and its victim are removed and the draining animat
 </dl>
 <dl class="author" compact><dt><b>Author:</b></dt><dd>AlexB </dd></dl>
 <dl class="date" compact><dt><b>Date:</b></dt><dd>2010-04-27 </dd></dl>
-<div class="fragment"><pre class="fragment"><a name="l00131"></a>00131                                                                        {
-<a name="l00132"></a>00132         <span class="comment">// fill the gaps</span>
-<a name="l00133"></a>00133         <span class="keywordflow">if</span>(Drainer &amp;&amp; !Drainee)
-<a name="l00134"></a>00134                 Drainee = Drainer-&gt;DrainTarget;
-<a name="l00135"></a>00135 
-<a name="l00136"></a>00136         <span class="keywordflow">if</span>(!Drainer &amp;&amp; Drainee)
-<a name="l00137"></a>00137                 Drainer = Drainee-&gt;DrainingMe;
-<a name="l00138"></a>00138 
-<a name="l00139"></a>00139         <span class="comment">// sanity check, then end draining.</span>
-<a name="l00140"></a>00140         <span class="keywordflow">if</span>(Drainer &amp;&amp; Drainee) {
-<a name="l00141"></a>00141                 <span class="comment">// stop the animation.</span>
-<a name="l00142"></a>00142                 <span class="keywordflow">if</span> (Drainer-&gt;DrainAnim) {
-<a name="l00143"></a>00143                         Drainer-&gt;DrainAnim-&gt;UnInit();
-<a name="l00144"></a>00144                         Drainer-&gt;DrainAnim = NULL;
-<a name="l00145"></a>00145                 }
-<a name="l00146"></a>00146 
-<a name="l00147"></a>00147                 <span class="comment">// remove links.</span>
-<a name="l00148"></a>00148                 Drainee-&gt;DrainingMe = NULL;
-<a name="l00149"></a>00149                 Drainer-&gt;DrainTarget = NULL;
-<a name="l00150"></a>00150 
-<a name="l00151"></a>00151                 <span class="comment">// tell the game to recheck the drained</span>
-<a name="l00152"></a>00152                 <span class="comment">// player's tech level.</span>
-<a name="l00153"></a>00153                 <span class="keywordflow">if</span> (Drainee-&gt;Owner) {
-<a name="l00154"></a>00154                         Drainee-&gt;Owner-&gt;ShouldRecheckTechTree = <span class="keyword">true</span>;
-<a name="l00155"></a>00155                 }
-<a name="l00156"></a>00156         }
-<a name="l00157"></a>00157 }
+<div class="fragment"><pre class="fragment"><a name="l00186"></a>00186                                                                        {
+<a name="l00187"></a>00187         <span class="comment">// fill the gaps</span>
+<a name="l00188"></a>00188         <span class="keywordflow">if</span>(Drainer &amp;&amp; !Drainee)
+<a name="l00189"></a>00189                 Drainee = Drainer-&gt;DrainTarget;
+<a name="l00190"></a>00190 
+<a name="l00191"></a>00191         <span class="keywordflow">if</span>(!Drainer &amp;&amp; Drainee)
+<a name="l00192"></a>00192                 Drainer = Drainee-&gt;DrainingMe;
+<a name="l00193"></a>00193 
+<a name="l00194"></a>00194         <span class="comment">// sanity check, then end draining.</span>
+<a name="l00195"></a>00195         <span class="keywordflow">if</span>(Drainer &amp;&amp; Drainee) {
+<a name="l00196"></a>00196                 <span class="comment">// stop the animation.</span>
+<a name="l00197"></a>00197                 <span class="keywordflow">if</span> (Drainer-&gt;DrainAnim) {
+<a name="l00198"></a>00198                         Drainer-&gt;DrainAnim-&gt;UnInit();
+<a name="l00199"></a>00199                         Drainer-&gt;DrainAnim = NULL;
+<a name="l00200"></a>00200                 }
+<a name="l00201"></a>00201 
+<a name="l00202"></a>00202                 <span class="comment">// remove links.</span>
+<a name="l00203"></a>00203                 Drainee-&gt;DrainingMe = NULL;
+<a name="l00204"></a>00204                 Drainer-&gt;DrainTarget = NULL;
+<a name="l00205"></a>00205 
+<a name="l00206"></a>00206                 <span class="comment">// tell the game to recheck the drained</span>
+<a name="l00207"></a>00207                 <span class="comment">// player's tech level.</span>
+<a name="l00208"></a>00208                 <span class="keywordflow">if</span> (Drainee-&gt;Owner) {
+<a name="l00209"></a>00209                         Drainee-&gt;Owner-&gt;ShouldRecheckTechTree = <span class="keyword">true</span>;
+<a name="l00210"></a>00210                 }
+<a name="l00211"></a>00211         }
+<a name="l00212"></a>00212 }
 </pre></div>
 <p>
 
@@ -416,12 +540,12 @@ The links between the drainer and its victim are removed and the draining animat
 
 </div>
 </div><p>
-<a class="anchor" name="3af090234190adb36352d45da32c38d1"></a><!-- doxytag: member="TechnoExt::FiringStateCache" ref="3af090234190adb36352d45da32c38d1" args="" -->
+<a class="anchor" name="22321c8b1bcf7640745ae8c64bd1c9de"></a><!-- doxytag: member="TechnoExt::FiringStateCache" ref="22321c8b1bcf7640745ae8c64bd1c9de" args="" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">FireError <a class="el" href="class_techno_ext.html#3af090234190adb36352d45da32c38d1">TechnoExt::FiringStateCache</a> = -1<code> [static]</code>          </td>
+          <td class="memname">FireError::Value <a class="el" href="class_techno_ext.html#22321c8b1bcf7640745ae8c64bd1c9de">TechnoExt::FiringStateCache</a> = FireError::NotAValue<code> [static]</code>          </td>
         </tr>
       </table>
 </div>
@@ -464,7 +588,7 @@ The links between the drainer and its victim are removed and the draining animat
 <hr>The documentation for this class was generated from the following files:<ul>
 <li>Ext/Techno/<a class="el" href="_techno_2_body_8h.html">Body.h</a><li>Ext/Techno/<a class="el" href="_techno_2_body_8cpp.html">Body.cpp</a><li>Ext/Techno/<a class="el" href="_hooks_8_alpha_8cpp.html">Hooks.Alpha.cpp</a><li>Ext/Techno/<a class="el" href="_hooks_8_spotlights_8cpp.html">Hooks.Spotlights.cpp</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue May 18 03:51:10 2010 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Sat May 29 11:15:58 2010 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

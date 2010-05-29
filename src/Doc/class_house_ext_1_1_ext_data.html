@@ -241,33 +241,33 @@ Inheritance diagram for HouseExt::HouseExt::ExtData:</div>
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00127"></a>00127                                                    {
-<a name="l00128"></a>00128         HouseClass *pHouse = this-&gt;<a class="code" href="class_extension.html#72742b36a0db81d6697da473dfe8281d">AttachedToObject</a>;
-<a name="l00129"></a>00129         <a class="code" href="class_house_ext_1_1_ext_data.html">HouseExt::ExtData</a>* pData = <a class="code" href="class_house_ext.html#4a73e500fabd21a7359c5247c31d4c03">HouseExt::ExtMap</a>.<a class="code" href="class_container.html#90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(pHouse);
-<a name="l00130"></a>00130 
-<a name="l00131"></a>00131         <span class="keywordflow">if</span>(pData-&gt;<a class="code" href="class_house_ext_1_1_ext_data.html#f2e91b1fc2de13ab1e96ff1242cab060">FirewallActive</a> == Active) {
-<a name="l00132"></a>00132                 <span class="keywordflow">return</span>;
-<a name="l00133"></a>00133         }
+<div class="fragment"><pre class="fragment"><a name="l00131"></a>00131                                                    {
+<a name="l00132"></a>00132         HouseClass *pHouse = this-&gt;<a class="code" href="class_extension.html#72742b36a0db81d6697da473dfe8281d">AttachedToObject</a>;
+<a name="l00133"></a>00133         <a class="code" href="class_house_ext_1_1_ext_data.html">HouseExt::ExtData</a>* pData = <a class="code" href="class_house_ext.html#4a73e500fabd21a7359c5247c31d4c03">HouseExt::ExtMap</a>.<a class="code" href="class_container.html#90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(pHouse);
 <a name="l00134"></a>00134 
-<a name="l00135"></a>00135         pData-&gt;<a class="code" href="class_house_ext_1_1_ext_data.html#f2e91b1fc2de13ab1e96ff1242cab060">FirewallActive</a> = Active;
-<a name="l00136"></a>00136 
-<a name="l00137"></a>00137         DynamicVectorClass&lt;CellStruct&gt; AffectedCoords;
+<a name="l00135"></a>00135         <span class="keywordflow">if</span>(pData-&gt;<a class="code" href="class_house_ext_1_1_ext_data.html#f2e91b1fc2de13ab1e96ff1242cab060">FirewallActive</a> == Active) {
+<a name="l00136"></a>00136                 <span class="keywordflow">return</span>;
+<a name="l00137"></a>00137         }
 <a name="l00138"></a>00138 
-<a name="l00139"></a>00139         <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; pHouse-&gt;Buildings.Count; ++i) {
-<a name="l00140"></a>00140                 BuildingClass *B = pHouse-&gt;Buildings[i];
-<a name="l00141"></a>00141                 <a class="code" href="class_building_type_ext_1_1_ext_data.html">BuildingTypeExt::ExtData</a> *pBuildTypeData = <a class="code" href="class_building_type_ext.html#9643fa629dd6d2a20eeefa4942d8612a">BuildingTypeExt::ExtMap</a>.<a class="code" href="class_container.html#90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(B-&gt;Type);
-<a name="l00142"></a>00142                 <span class="keywordflow">if</span>(pBuildTypeData-&gt;<a class="code" href="class_building_type_ext_1_1_ext_data.html#51503707d3c7be1bcd829f893acdd21e">Firewall_Is</a>) {
-<a name="l00143"></a>00143                         <a class="code" href="class_building_ext_1_1_ext_data.html">BuildingExt::ExtData</a> * pData = <a class="code" href="class_building_ext.html#bae25aca766faa296092dea1dc69cff7">BuildingExt::ExtMap</a>.<a class="code" href="class_container.html#90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(B);
-<a name="l00144"></a>00144                         pData-&gt;<a class="code" href="class_building_ext_1_1_ext_data.html#93ddc852a6c29c34bc69d746797ecae5">UpdateFirewall</a>();
-<a name="l00145"></a>00145                         CellStruct temp;
-<a name="l00146"></a>00146                         B-&gt;GetMapCoords(&amp;temp);
-<a name="l00147"></a>00147                         AffectedCoords.AddItem(temp);
-<a name="l00148"></a>00148                 }
-<a name="l00149"></a>00149         }
-<a name="l00150"></a>00150 
-<a name="l00151"></a>00151         MapClass::Instance-&gt;Update_Pathfinding_1();
-<a name="l00152"></a>00152         MapClass::Instance-&gt;Update_Pathfinding_2(&amp;AffectedCoords);
-<a name="l00153"></a>00153 };
+<a name="l00139"></a>00139         pData-&gt;<a class="code" href="class_house_ext_1_1_ext_data.html#f2e91b1fc2de13ab1e96ff1242cab060">FirewallActive</a> = Active;
+<a name="l00140"></a>00140 
+<a name="l00141"></a>00141         DynamicVectorClass&lt;CellStruct&gt; AffectedCoords;
+<a name="l00142"></a>00142 
+<a name="l00143"></a>00143         <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; pHouse-&gt;Buildings.Count; ++i) {
+<a name="l00144"></a>00144                 BuildingClass *B = pHouse-&gt;Buildings[i];
+<a name="l00145"></a>00145                 <a class="code" href="class_building_type_ext_1_1_ext_data.html">BuildingTypeExt::ExtData</a> *pBuildTypeData = <a class="code" href="class_building_type_ext.html#9643fa629dd6d2a20eeefa4942d8612a">BuildingTypeExt::ExtMap</a>.<a class="code" href="class_container.html#90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(B-&gt;Type);
+<a name="l00146"></a>00146                 <span class="keywordflow">if</span>(pBuildTypeData-&gt;<a class="code" href="class_building_type_ext_1_1_ext_data.html#51503707d3c7be1bcd829f893acdd21e">Firewall_Is</a>) {
+<a name="l00147"></a>00147                         <a class="code" href="class_building_ext_1_1_ext_data.html">BuildingExt::ExtData</a> * pData = <a class="code" href="class_building_ext.html#bae25aca766faa296092dea1dc69cff7">BuildingExt::ExtMap</a>.<a class="code" href="class_container.html#90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(B);
+<a name="l00148"></a>00148                         pData-&gt;<a class="code" href="class_building_ext_1_1_ext_data.html#93ddc852a6c29c34bc69d746797ecae5">UpdateFirewall</a>();
+<a name="l00149"></a>00149                         CellStruct temp;
+<a name="l00150"></a>00150                         B-&gt;GetMapCoords(&amp;temp);
+<a name="l00151"></a>00151                         AffectedCoords.AddItem(temp);
+<a name="l00152"></a>00152                 }
+<a name="l00153"></a>00153         }
+<a name="l00154"></a>00154 
+<a name="l00155"></a>00155         MapClass::Instance-&gt;Update_Pathfinding_1();
+<a name="l00156"></a>00156         MapClass::Instance-&gt;Update_Pathfinding_2(&amp;AffectedCoords);
+<a name="l00157"></a>00157 };
 </pre></div>
 <p>
 
@@ -436,7 +436,7 @@ Inheritance diagram for HouseExt::HouseExt::ExtData:</div>
 <hr>The documentation for this class was generated from the following files:<ul>
 <li>Ext/House/<a class="el" href="_house_2_body_8h.html">Body.h</a><li>Ext/House/<a class="el" href="_house_2_body_8cpp.html">Body.cpp</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue May 18 03:51:10 2010 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Sat May 29 11:15:58 2010 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

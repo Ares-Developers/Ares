@@ -96,7 +96,7 @@ Inheritance diagram for Customizable&lt; T &gt;:</div>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_customizable.html#0756e376a0207e8dc7a835b8d42ae34c">Bind</a> (T *to)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual T&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_customizable.html#334587c69d7acc490366c91633365849">Get</a> ()</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual T&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_customizable.html#3dc2b0918c34c90837994b776f52139c">Get</a> () const </td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_customizable.html#c6afc74f9f6ee25258faadba11a7f7f1">Set</a> (T val)</td></tr>
 
@@ -105,6 +105,10 @@ Inheritance diagram for Customizable&lt; T &gt;:</div>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_customizable.html#1639246ae5ea3914b1d30cf378593ee7">SetEx</a> (T *val)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_customizable.html#0413bf26561b7474595cac5e07ec53b9">Lock</a> ()</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_customizable.html#a5af5edc00d009d1ec7ddb55671dbfb0">operator!=</a> (T other) const </td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_customizable.html#5e434aba43baa5cacfeb628a52dde8dd">operator!</a> () const </td></tr>
 
 <tr><td colspan="2"><br><h2>Private Attributes</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_customizable.html#b947092510a84ab6265e29e1afecbb82">Customized</a></td></tr>
@@ -171,7 +175,7 @@ template&lt;typename T&gt; </div>
 
 </div>
 </div><p>
-<a class="anchor" name="334587c69d7acc490366c91633365849"></a><!-- doxytag: member="Customizable::Get" ref="334587c69d7acc490366c91633365849" args="()" -->
+<a class="anchor" name="3dc2b0918c34c90837994b776f52139c"></a><!-- doxytag: member="Customizable::Get" ref="3dc2b0918c34c90837994b776f52139c" args="() const " -->
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
@@ -182,7 +186,7 @@ template&lt;typename T&gt; </div>
           <td>(</td>
           <td class="paramname">          </td>
           <td>&nbsp;)&nbsp;</td>
-          <td><code> [inline, virtual]</code></td>
+          <td> const<code> [inline, virtual]</code></td>
         </tr>
       </table>
 </div>
@@ -190,8 +194,8 @@ template&lt;typename T&gt; </div>
 
 <p>
 
-<p>Reimplemented from <a class="el" href="class_valueable.html#4f5eae470563f06f257cbc81df24f7a9">Valueable&lt; T &gt;</a>.</p>
-<div class="fragment"><pre class="fragment"><a name="l00138"></a>00138                         {
+<p>Reimplemented from <a class="el" href="class_valueable.html#2e7156efef9fa4f180a95b7f80cf8129">Valueable&lt; T &gt;</a>.</p>
+<div class="fragment"><pre class="fragment"><a name="l00138"></a>00138                               {
 <a name="l00139"></a>00139                 <span class="keywordflow">return</span> this-&gt;<a class="code" href="class_customizable.html#b947092510a84ab6265e29e1afecbb82">Customized</a>
 <a name="l00140"></a>00140                  ? this-&gt;<a class="code" href="class_valueable.html#d35b03b172acfd867aa88954bbfc955e">Value</a>
 <a name="l00141"></a>00141                  : this-&gt;<a class="code" href="class_customizable.html#0fcde73f4fb2c2c6d84a4fa08f4fbe02">Default</a> ? *this-&gt;<a class="code" href="class_customizable.html#0fcde73f4fb2c2c6d84a4fa08f4fbe02">Default</a> : T()
@@ -259,6 +263,63 @@ template&lt;typename T&gt; </div>
 <a name="l00167"></a>00167                         this-&gt;<a class="code" href="class_customizable.html#b947092510a84ab6265e29e1afecbb82">Customized</a> = <span class="keyword">true</span>;
 <a name="l00168"></a>00168                 }
 <a name="l00169"></a>00169         }
+</pre></div>
+<p>
+
+</div>
+</div><p>
+<a class="anchor" name="5e434aba43baa5cacfeb628a52dde8dd"></a><!-- doxytag: member="Customizable::operator!" ref="5e434aba43baa5cacfeb628a52dde8dd" args="() const " -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="class_customizable.html">Customizable</a>&lt; T &gt;::operator!           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td> const<code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+
+<p>Reimplemented from <a class="el" href="class_valueable.html#6074cd9e9f755f37c8e9defcf674a78b">Valueable&lt; T &gt;</a>.</p>
+<div class="fragment"><pre class="fragment"><a name="l00175"></a>00175                                  {
+<a name="l00176"></a>00176                 <span class="keywordflow">return</span> this-&gt;<a class="code" href="class_customizable.html#3dc2b0918c34c90837994b776f52139c">Get</a>() == 0;
+<a name="l00177"></a>00177         };
+</pre></div>
+<p>
+
+</div>
+</div><p>
+<a class="anchor" name="a5af5edc00d009d1ec7ddb55671dbfb0"></a><!-- doxytag: member="Customizable::operator!=" ref="a5af5edc00d009d1ec7ddb55671dbfb0" args="(T other) const " -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="class_customizable.html">Customizable</a>&lt; T &gt;::operator!=           </td>
+          <td>(</td>
+          <td class="paramtype">T&nbsp;</td>
+          <td class="paramname"> <em>other</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td> const<code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+
+<p>Reimplemented from <a class="el" href="class_valueable.html#83f8f9c217842e5b72c2445dba04973f">Valueable&lt; T &gt;</a>.</p>
+<div class="fragment"><pre class="fragment"><a name="l00171"></a>00171                                          {
+<a name="l00172"></a>00172                 <span class="keywordflow">return</span> this-&gt;<a class="code" href="class_customizable.html#3dc2b0918c34c90837994b776f52139c">Get</a>() != other;
+<a name="l00173"></a>00173         };
 </pre></div>
 <p>
 
@@ -362,7 +423,7 @@ template&lt;typename T&gt; </div>
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>Utilities/<a class="el" href="_template_8h.html">Template.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue May 18 03:51:09 2010 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Sat May 29 11:15:58 2010 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

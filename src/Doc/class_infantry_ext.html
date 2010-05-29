@@ -88,6 +88,10 @@ window.onload = initDynSections;
 <tr><td colspan="2"><br><h2>Public Types</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">typedef InfantryClass&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_infantry_ext.html#f6568dffb109a714a6883cb40c22db61">TT</a></td></tr>
 
+<tr><td colspan="2"><br><h2>Static Public Member Functions</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">static eAction&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_infantry_ext.html#0d57000df3924b7d01e0eedd31419db9">GetEngineerEnterEnemyBuildingAction</a> (BuildingClass *pBld)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Gets the action an engineer will take when entering an enemy building.  <a href="#0d57000df3924b7d01e0eedd31419db9"></a><br></td></tr>
 <tr><td colspan="2"><br><h2>Static Public Attributes</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">static <a class="el" href="class_container.html">Container</a>&lt; <a class="el" href="class_infantry_ext.html">InfantryExt</a> &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_infantry_ext.html#e3cd9af7cacd08f156ac0423f0c03ebc">ExtMap</a></td></tr>
 
@@ -104,6 +108,64 @@ window.onload = initDynSections;
 </div>
 <div class="memdoc">
 
+<p>
+
+</div>
+</div><p>
+<hr><h2>Member Function Documentation</h2>
+<a class="anchor" name="0d57000df3924b7d01e0eedd31419db9"></a><!-- doxytag: member="InfantryExt::GetEngineerEnterEnemyBuildingAction" ref="0d57000df3924b7d01e0eedd31419db9" args="(BuildingClass *pBld)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">eAction InfantryExt::GetEngineerEnterEnemyBuildingAction           </td>
+          <td>(</td>
+          <td class="paramtype">BuildingClass *&nbsp;</td>
+          <td class="paramname"> <em>pBld</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Gets the action an engineer will take when entering an enemy building. 
+<p>
+This function accounts for the multi-engineer feature.<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>pBld</em>&nbsp;</td><td>The Building the engineer enters.</td></tr>
+  </table>
+</dl>
+<dl class="author" compact><dt><b>Author:</b></dt><dd>AlexB </dd></dl>
+<dl class="date" compact><dt><b>Date:</b></dt><dd>2010-05-28 </dd></dl>
+<div class="fragment"><pre class="fragment"><a name="l00035"></a>00035                                                                             {
+<a name="l00036"></a>00036         <span class="comment">// damage if multi engineer and target isn't that low on health. this</span>
+<a name="l00037"></a>00037         <span class="comment">// only affects multiplay and only if it is enabled.</span>
+<a name="l00038"></a>00038         <span class="keywordflow">if</span>(GameModeOptionsClass::Instance-&gt;MPModeIndex &amp;&amp; GameModeOptionsClass::Instance-&gt;MultiEngineer) {
+<a name="l00039"></a>00039 
+<a name="l00040"></a>00040                 <span class="comment">// check to always capture tech structures. a structure counts</span>
+<a name="l00041"></a>00041                 <span class="comment">// as tech if its initial owner is a multiplayer-passive country.</span>
+<a name="l00042"></a>00042                 <span class="keywordtype">bool</span> isTech = <span class="keyword">false</span>;
+<a name="l00043"></a>00043                 <span class="keywordflow">if</span>(HouseClass * pHouse = pBld-&gt;OwningPlayer2) {
+<a name="l00044"></a>00044                         <span class="keywordflow">if</span>(HouseTypeClass * pCountry = pHouse-&gt;Type) {
+<a name="l00045"></a>00045                                 isTech = pCountry-&gt;MultiplayPassive;
+<a name="l00046"></a>00046                         }
+<a name="l00047"></a>00047                 }
+<a name="l00048"></a>00048 
+<a name="l00049"></a>00049                 <span class="keywordflow">if</span>(!<a class="code" href="class_rules_ext.html#ef4b728a1334d1980e765d8fbdc63cb5">RulesExt::Global</a>()-&gt;EngineerAlwaysCaptureTech || !isTech) {
+<a name="l00050"></a>00050                         <span class="comment">// no civil structure. apply new logic.</span>
+<a name="l00051"></a>00051                         <span class="keywordflow">if</span>(pBld-&gt;GetHealthPercentage() &gt; RulesClass::Global()-&gt;EngineerCaptureLevel) {
+<a name="l00052"></a>00052                                 <span class="keywordflow">return</span> (<a class="code" href="class_rules_ext.html#ef4b728a1334d1980e765d8fbdc63cb5">RulesExt::Global</a>()-&gt;EngineerDamage &gt; 0 ? act_Damage : act_NoEnter);
+<a name="l00053"></a>00053                         }
+<a name="l00054"></a>00054                 }
+<a name="l00055"></a>00055         }
+<a name="l00056"></a>00056 
+<a name="l00057"></a>00057         <span class="comment">// default.</span>
+<a name="l00058"></a>00058         <span class="keywordflow">return</span> act_Capture;
+<a name="l00059"></a>00059 }
+</pre></div>
 <p>
 
 </div>
@@ -127,7 +189,7 @@ window.onload = initDynSections;
 <hr>The documentation for this class was generated from the following files:<ul>
 <li>Ext/Infantry/<a class="el" href="_infantry_2_body_8h.html">Body.h</a><li>Ext/Infantry/<a class="el" href="_infantry_2_body_8cpp.html">Body.cpp</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue May 18 03:51:10 2010 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Sat May 29 11:15:58 2010 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

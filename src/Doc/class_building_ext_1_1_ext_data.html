@@ -141,6 +141,8 @@ Inheritance diagram for BuildingExt::BuildingExt::ExtData:</div>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_building_ext_1_1_ext_data.html#7979cb23cb460430680ac03b35ca23f1">ignoreNextEVA</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">This is used when returning raided buildings, to decide whether to play EVA announcements about building capture.  <a href="#7979cb23cb460430680ac03b35ca23f1"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="class_building_ext_1_1c_prism_forwarding.html">cPrismForwarding</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_building_ext_1_1_ext_data.html#17fa3d91f003a8ec0e48bed89bfb1ca2">PrismForwarding</a></td></tr>
+
 </table>
 <hr><h2>Constructor &amp; Destructor Documentation</h2>
 <a class="anchor" name="36abc8490d38f5f8105f29c138f0d958"></a><!-- doxytag: member="BuildingExt::ExtData::ExtData" ref="36abc8490d38f5f8105f29c138f0d958" args="(const DWORD Canary, TT *const OwnerObject)" -->
@@ -169,9 +171,9 @@ Inheritance diagram for BuildingExt::BuildingExt::ExtData:</div>
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00031"></a>00031                                                                    : <a class="code" href="class_extension.html">Extension&lt;TT&gt;</a>(<a class="code" href="class_extension.html#2f0c543d5bceafd46d103be4f87a5abe">Canary</a>, OwnerObject),
-<a name="l00032"></a>00032                         <a class="code" href="class_building_ext_1_1_ext_data.html#7270bd5eb03823bf3ed264a38e645455" title="Contains the house which owned this building prior to it being raided and turned...">OwnerBeforeRaid</a>(NULL), <a class="code" href="class_building_ext_1_1_ext_data.html#f8a542bf713fcbfc1bf81a7cfa5ed2c1" title="Whether this building is currently occupied by someone not the actual owner of the...">isCurrentlyRaided</a>(<span class="keyword">false</span>), <a class="code" href="class_building_ext_1_1_ext_data.html#7979cb23cb460430680ac03b35ca23f1" title="This is used when returning raided buildings, to decide whether to play EVA announcements...">ignoreNextEVA</a>(<span class="keyword">false</span>)
-<a name="l00033"></a>00033                         { };
+<div class="fragment"><pre class="fragment"><a name="l00045"></a>00045                                                                    : <a class="code" href="class_extension.html">Extension&lt;TT&gt;</a>(<a class="code" href="class_extension.html#2f0c543d5bceafd46d103be4f87a5abe">Canary</a>, OwnerObject),
+<a name="l00046"></a>00046                         <a class="code" href="class_building_ext_1_1_ext_data.html#7270bd5eb03823bf3ed264a38e645455" title="Contains the house which owned this building prior to it being raided and turned...">OwnerBeforeRaid</a>(NULL), <a class="code" href="class_building_ext_1_1_ext_data.html#f8a542bf713fcbfc1bf81a7cfa5ed2c1" title="Whether this building is currently occupied by someone not the actual owner of the...">isCurrentlyRaided</a>(<span class="keyword">false</span>), <a class="code" href="class_building_ext_1_1_ext_data.html#7979cb23cb460430680ac03b35ca23f1" title="This is used when returning raided buildings, to decide whether to play EVA announcements...">ignoreNextEVA</a>(<span class="keyword">false</span>), <a class="code" href="class_building_ext_1_1_ext_data.html#17fa3d91f003a8ec0e48bed89bfb1ca2">PrismForwarding</a>()
+<a name="l00047"></a>00047                         { };
 </pre></div>
 <p>
 
@@ -193,8 +195,8 @@ Inheritance diagram for BuildingExt::BuildingExt::ExtData:</div>
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00035"></a>00035                                    {
-<a name="l00036"></a>00036                 }
+<div class="fragment"><pre class="fragment"><a name="l00049"></a>00049                                    {
+<a name="l00050"></a>00050                 }
 </pre></div>
 <p>
 
@@ -695,9 +697,9 @@ Checks if the building is empty but still marked as raided, and returns the buil
 <p>
 
 <p>Implements <a class="el" href="class_extension.html#9e6b2ac570eddadb2ca3c01668da88b8">Extension&lt; TT &gt;</a>.</p>
-<div class="fragment"><pre class="fragment"><a name="l00040"></a>00040                                                           {
-<a name="l00041"></a>00041                         AnnounceInvalidPointer(<a class="code" href="class_building_ext_1_1_ext_data.html#7270bd5eb03823bf3ed264a38e645455" title="Contains the house which owned this building prior to it being raided and turned...">OwnerBeforeRaid</a>, ptr);
-<a name="l00042"></a>00042                 }
+<div class="fragment"><pre class="fragment"><a name="l00054"></a>00054                                                           {
+<a name="l00055"></a>00055                         AnnounceInvalidPointer(<a class="code" href="class_building_ext_1_1_ext_data.html#7270bd5eb03823bf3ed264a38e645455" title="Contains the house which owned this building prior to it being raided and turned...">OwnerBeforeRaid</a>, ptr);
+<a name="l00056"></a>00056                 }
 </pre></div>
 <p>
 
@@ -864,7 +866,7 @@ This function checks if the current and the target building are both of the same
 <p>
 
 <p>Implements <a class="el" href="class_extension.html#44ddedd12613b24b7b03d21982782047">Extension&lt; TT &gt;</a>.</p>
-<div class="fragment"><pre class="fragment"><a name="l00038"></a>00038 { <span class="keywordflow">return</span> <span class="keyword">sizeof</span>(*this); };
+<div class="fragment"><pre class="fragment"><a name="l00052"></a>00052 { <span class="keywordflow">return</span> <span class="keyword">sizeof</span>(*this); };
 </pre></div>
 <p>
 
@@ -993,10 +995,25 @@ Contains the house which owned this building prior to it being raided and turned
 
 </div>
 </div><p>
+<a class="anchor" name="17fa3d91f003a8ec0e48bed89bfb1ca2"></a><!-- doxytag: member="BuildingExt::ExtData::PrismForwarding" ref="17fa3d91f003a8ec0e48bed89bfb1ca2" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_building_ext_1_1c_prism_forwarding.html">cPrismForwarding</a> BuildingExt::BuildingExt::ExtData::PrismForwarding          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+
+</div>
+</div><p>
 <hr>The documentation for this class was generated from the following files:<ul>
 <li>Ext/Building/<a class="el" href="_building_2_body_8h.html">Body.h</a><li>Ext/Building/<a class="el" href="_building_2_body_8cpp.html">Body.cpp</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue May 18 03:51:09 2010 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Sat May 29 11:15:57 2010 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

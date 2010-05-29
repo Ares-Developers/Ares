@@ -85,13 +85,13 @@ window.onload = initDynSections;
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_valueable_idx.html#41f928bf1f5d6fb93a2bf4402a36c9b2">ValueableIdx</a> (T Default)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_valueable_idx.html#c8b8794e1f6d79ea577fd8bce97669a0">operator T</a> ()</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_valueable_idx.html#207daece32142cb031f1d4f5fec21601">operator T</a> () const </td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_valueable_idx.html#6ac4acf8c7a0526316dbb8a8eb4bfb5f">operator T *</a> ()</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">T *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_valueable_idx.html#68b0765f9d4ecf7035e0ae242061ed71">operator&amp;</a> ()</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual T&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_valueable_idx.html#00764b0af7a266052d1360f8a49199a1">Get</a> ()</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual T&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_valueable_idx.html#bf43c90a5ddb01aaac8a688a52858114">Get</a> () const </td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_valueable_idx.html#daa6cbdaf6e5b073684d3ac0ca8f3a74">Set</a> (T val)</td></tr>
 
@@ -135,7 +135,7 @@ template&lt;typename T, typename Lookuper&gt; </div>
 </div>
 </div><p>
 <hr><h2>Member Function Documentation</h2>
-<a class="anchor" name="00764b0af7a266052d1360f8a49199a1"></a><!-- doxytag: member="ValueableIdx::Get" ref="00764b0af7a266052d1360f8a49199a1" args="()" -->
+<a class="anchor" name="bf43c90a5ddb01aaac8a688a52858114"></a><!-- doxytag: member="ValueableIdx::Get" ref="bf43c90a5ddb01aaac8a688a52858114" args="() const " -->
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
@@ -146,14 +146,14 @@ template&lt;typename T, typename Lookuper&gt; </div>
           <td>(</td>
           <td class="paramname">          </td>
           <td>&nbsp;)&nbsp;</td>
-          <td><code> [inline, virtual]</code></td>
+          <td> const<code> [inline, virtual]</code></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00092"></a>00092                         {
+<div class="fragment"><pre class="fragment"><a name="l00092"></a>00092                               {
 <a name="l00093"></a>00093                 <span class="keywordflow">return</span> this-&gt;<a class="code" href="class_valueable_idx.html#99854decc2d2ad3bb8dbe030d2c15ed0">Value</a>;
 <a name="l00094"></a>00094         }
 </pre></div>
@@ -187,7 +187,7 @@ template&lt;typename T, typename Lookuper&gt; </div>
 
 </div>
 </div><p>
-<a class="anchor" name="c8b8794e1f6d79ea577fd8bce97669a0"></a><!-- doxytag: member="ValueableIdx::operator T" ref="c8b8794e1f6d79ea577fd8bce97669a0" args="()" -->
+<a class="anchor" name="207daece32142cb031f1d4f5fec21601"></a><!-- doxytag: member="ValueableIdx::operator T" ref="207daece32142cb031f1d4f5fec21601" args="() const " -->
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
@@ -198,15 +198,15 @@ template&lt;typename T, typename Lookuper&gt; </div>
           <td>(</td>
           <td class="paramname">          </td>
           <td>&nbsp;)&nbsp;</td>
-          <td><code> [inline]</code></td>
+          <td> const<code> [inline]</code></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00080"></a>00080                       {
-<a name="l00081"></a>00081                 <span class="keywordflow">return</span> this-&gt;<a class="code" href="class_valueable_idx.html#00764b0af7a266052d1360f8a49199a1">Get</a>();
+<div class="fragment"><pre class="fragment"><a name="l00080"></a>00080                             {
+<a name="l00081"></a>00081                 <span class="keywordflow">return</span> this-&gt;<a class="code" href="class_valueable_idx.html#bf43c90a5ddb01aaac8a688a52858114">Get</a>();
 <a name="l00082"></a>00082         }
 </pre></div>
 <p>
@@ -387,7 +387,7 @@ template&lt;typename T, typename Lookuper&gt; </div>
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>Utilities/<a class="el" href="_template_8h.html">Template.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue May 18 03:51:10 2010 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Sat May 29 11:15:58 2010 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

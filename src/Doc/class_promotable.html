@@ -129,7 +129,7 @@ template&lt;typename T&gt; </div>
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00187"></a>00187 : <a class="code" href="class_promotable.html#6dc51aff1d1c02e5668240a4ae9b2b65">_BindTo</a>(Object) {};
+<div class="fragment"><pre class="fragment"><a name="l00196"></a>00196 : <a class="code" href="class_promotable.html#6dc51aff1d1c02e5668240a4ae9b2b65">_BindTo</a>(Object) {};
 </pre></div>
 <p>
 
@@ -155,10 +155,10 @@ template&lt;typename T&gt; </div>
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00188"></a>00188                                                     {
-<a name="l00189"></a>00189                 this-&gt;<a class="code" href="class_promotable.html#6dc51aff1d1c02e5668240a4ae9b2b65">_BindTo</a> = Object;
-<a name="l00190"></a>00190                 <span class="keywordflow">return</span> <span class="keyword">this</span>;
-<a name="l00191"></a>00191         }
+<div class="fragment"><pre class="fragment"><a name="l00197"></a>00197                                                     {
+<a name="l00198"></a>00198                 this-&gt;<a class="code" href="class_promotable.html#6dc51aff1d1c02e5668240a4ae9b2b65">_BindTo</a> = Object;
+<a name="l00199"></a>00199                 <span class="keywordflow">return</span> <span class="keyword">this</span>;
+<a name="l00200"></a>00200         }
 </pre></div>
 <p>
 
@@ -182,9 +182,9 @@ template&lt;typename T&gt; </div>
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00237"></a>00237                 {
-<a name="l00238"></a>00238                 <span class="keywordflow">return</span> *this-&gt;<a class="code" href="class_promotable.html#9705e0e28ead18d8c6089077ee1ec9aa">GetEx</a>();
-<a name="l00239"></a>00239         }
+<div class="fragment"><pre class="fragment"><a name="l00246"></a>00246                 {
+<a name="l00247"></a>00247                 <span class="keywordflow">return</span> *this-&gt;<a class="code" href="class_promotable.html#9705e0e28ead18d8c6089077ee1ec9aa">GetEx</a>();
+<a name="l00248"></a>00248         }
 </pre></div>
 <p>
 
@@ -208,20 +208,20 @@ template&lt;typename T&gt; </div>
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00222"></a>00222                    {
-<a name="l00223"></a>00223                 <span class="keywordflow">if</span>(!this-&gt;<a class="code" href="class_promotable.html#6dc51aff1d1c02e5668240a4ae9b2b65">_BindTo</a>) {
-<a name="l00224"></a>00224                         Debug::Log(<span class="stringliteral">"Promotable&lt;T&gt; invoked without an owner!\n"</span>);
-<a name="l00225"></a>00225                         <span class="keywordflow">throw</span> std::logic_error(<span class="stringliteral">"Promotable&lt;T&gt; invoked without an owner!\n"</span>);
-<a name="l00226"></a>00226                 }
-<a name="l00227"></a>00227                 VeterancyStruct *XP = &amp;this-&gt;<a class="code" href="class_promotable.html#6dc51aff1d1c02e5668240a4ae9b2b65">_BindTo</a>-&gt;Veterancy;
-<a name="l00228"></a>00228                 <span class="keywordflow">if</span>(XP-&gt;IsElite()) {
-<a name="l00229"></a>00229                         <span class="keywordflow">return</span> &amp;this-&gt;<a class="code" href="class_promotable.html#7739f6bb3f728636d3d86c9b8504b627">Elite</a>;
-<a name="l00230"></a>00230                 }
-<a name="l00231"></a>00231                 <span class="keywordflow">if</span>(XP-&gt;IsVeteran()) {
-<a name="l00232"></a>00232                         <span class="keywordflow">return</span> &amp;this-&gt;<a class="code" href="class_promotable.html#6e39ea5ee1d40402e5e1bbe2e4eed124">Veteran</a>;
-<a name="l00233"></a>00233                 }
-<a name="l00234"></a>00234                 <span class="keywordflow">return</span> &amp;this-&gt;<a class="code" href="class_promotable.html#3686af12b920db9a695245231c4cbdf1">Rookie</a>;
-<a name="l00235"></a>00235         }
+<div class="fragment"><pre class="fragment"><a name="l00231"></a>00231                    {
+<a name="l00232"></a>00232                 <span class="keywordflow">if</span>(!this-&gt;<a class="code" href="class_promotable.html#6dc51aff1d1c02e5668240a4ae9b2b65">_BindTo</a>) {
+<a name="l00233"></a>00233                         Debug::Log(<span class="stringliteral">"Promotable&lt;T&gt; invoked without an owner!\n"</span>);
+<a name="l00234"></a>00234                         <span class="keywordflow">throw</span> std::logic_error(<span class="stringliteral">"Promotable&lt;T&gt; invoked without an owner!\n"</span>);
+<a name="l00235"></a>00235                 }
+<a name="l00236"></a>00236                 VeterancyStruct *XP = &amp;this-&gt;<a class="code" href="class_promotable.html#6dc51aff1d1c02e5668240a4ae9b2b65">_BindTo</a>-&gt;Veterancy;
+<a name="l00237"></a>00237                 <span class="keywordflow">if</span>(XP-&gt;IsElite()) {
+<a name="l00238"></a>00238                         <span class="keywordflow">return</span> &amp;this-&gt;<a class="code" href="class_promotable.html#7739f6bb3f728636d3d86c9b8504b627">Elite</a>;
+<a name="l00239"></a>00239                 }
+<a name="l00240"></a>00240                 <span class="keywordflow">if</span>(XP-&gt;IsVeteran()) {
+<a name="l00241"></a>00241                         <span class="keywordflow">return</span> &amp;this-&gt;<a class="code" href="class_promotable.html#6e39ea5ee1d40402e5e1bbe2e4eed124">Veteran</a>;
+<a name="l00242"></a>00242                 }
+<a name="l00243"></a>00243                 <span class="keywordflow">return</span> &amp;this-&gt;<a class="code" href="class_promotable.html#3686af12b920db9a695245231c4cbdf1">Rookie</a>;
+<a name="l00244"></a>00244         }
 </pre></div>
 <p>
 
@@ -261,30 +261,30 @@ template&lt;typename T&gt; </div>
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00197"></a>00197                                                                                       {
-<a name="l00198"></a>00198                 <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> buflen = strlen(BaseFlag) + 8;
-<a name="l00199"></a>00199                 <span class="keywordtype">char</span> *FlagName = <span class="keyword">new</span> <span class="keywordtype">char</span>[buflen];
-<a name="l00200"></a>00200 
-<a name="l00201"></a>00201                 <a class="code" href="class_customizable.html">Customizable&lt;T&gt;</a> Placeholder;
-<a name="l00202"></a>00202                 <a class="code" href="class_i_n_i___e_x.html">INI_EX</a> exINI(pINI);
-<a name="l00203"></a>00203                 Placeholder.<a class="code" href="class_customizable.html#c6afc74f9f6ee25258faadba11a7f7f1">Set</a>(this-&gt;<a class="code" href="class_promotable.html#3686af12b920db9a695245231c4cbdf1">Rookie</a>);
-<a name="l00204"></a>00204 
-<a name="l00205"></a>00205                 _snprintf(FlagName, buflen, BaseFlag, <span class="stringliteral">"Rookie"</span>);
-<a name="l00206"></a>00206                 Placeholder.<a class="code" href="class_valueable.html#0f0c57826adca78b4d46a69b5344a03b">Read</a>(&amp;exINI, Section, FlagName);
-<a name="l00207"></a>00207                 this-&gt;<a class="code" href="class_promotable.html#3686af12b920db9a695245231c4cbdf1">Rookie</a> = Placeholder.<a class="code" href="class_customizable.html#334587c69d7acc490366c91633365849">Get</a>();
-<a name="l00208"></a>00208 
-<a name="l00209"></a>00209                 Placeholder.<a class="code" href="class_customizable.html#c6afc74f9f6ee25258faadba11a7f7f1">Set</a>(this-&gt;<a class="code" href="class_promotable.html#6e39ea5ee1d40402e5e1bbe2e4eed124">Veteran</a>);
-<a name="l00210"></a>00210                 _snprintf(FlagName, buflen, BaseFlag, <span class="stringliteral">"Veteran"</span>);
-<a name="l00211"></a>00211                 Placeholder.<a class="code" href="class_valueable.html#0f0c57826adca78b4d46a69b5344a03b">Read</a>(&amp;exINI, Section, FlagName);
-<a name="l00212"></a>00212                 this-&gt;<a class="code" href="class_promotable.html#6e39ea5ee1d40402e5e1bbe2e4eed124">Veteran</a> = Placeholder.<a class="code" href="class_customizable.html#334587c69d7acc490366c91633365849">Get</a>();
+<div class="fragment"><pre class="fragment"><a name="l00206"></a>00206                                                                                       {
+<a name="l00207"></a>00207                 <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> buflen = strlen(BaseFlag) + 8;
+<a name="l00208"></a>00208                 <span class="keywordtype">char</span> *FlagName = <span class="keyword">new</span> <span class="keywordtype">char</span>[buflen];
+<a name="l00209"></a>00209 
+<a name="l00210"></a>00210                 <a class="code" href="class_customizable.html">Customizable&lt;T&gt;</a> Placeholder;
+<a name="l00211"></a>00211                 <a class="code" href="class_i_n_i___e_x.html">INI_EX</a> exINI(pINI);
+<a name="l00212"></a>00212                 Placeholder.<a class="code" href="class_customizable.html#c6afc74f9f6ee25258faadba11a7f7f1">Set</a>(this-&gt;<a class="code" href="class_promotable.html#3686af12b920db9a695245231c4cbdf1">Rookie</a>);
 <a name="l00213"></a>00213 
-<a name="l00214"></a>00214                 Placeholder.<a class="code" href="class_customizable.html#c6afc74f9f6ee25258faadba11a7f7f1">Set</a>(this-&gt;<a class="code" href="class_promotable.html#7739f6bb3f728636d3d86c9b8504b627">Elite</a>);
-<a name="l00215"></a>00215                 _snprintf(FlagName, buflen, BaseFlag, <span class="stringliteral">"Elite"</span>);
-<a name="l00216"></a>00216                 Placeholder.<a class="code" href="class_valueable.html#0f0c57826adca78b4d46a69b5344a03b">Read</a>(&amp;exINI, Section, FlagName);
-<a name="l00217"></a>00217                 this-&gt;<a class="code" href="class_promotable.html#7739f6bb3f728636d3d86c9b8504b627">Elite</a> = Placeholder.<a class="code" href="class_customizable.html#334587c69d7acc490366c91633365849">Get</a>();
-<a name="l00218"></a>00218 
-<a name="l00219"></a>00219                 <span class="keyword">delete</span>[] FlagName;
-<a name="l00220"></a>00220         }
+<a name="l00214"></a>00214                 _snprintf(FlagName, buflen, BaseFlag, <span class="stringliteral">"Rookie"</span>);
+<a name="l00215"></a>00215                 Placeholder.<a class="code" href="class_valueable.html#0f0c57826adca78b4d46a69b5344a03b">Read</a>(&amp;exINI, Section, FlagName);
+<a name="l00216"></a>00216                 this-&gt;<a class="code" href="class_promotable.html#3686af12b920db9a695245231c4cbdf1">Rookie</a> = Placeholder.<a class="code" href="class_customizable.html#3dc2b0918c34c90837994b776f52139c">Get</a>();
+<a name="l00217"></a>00217 
+<a name="l00218"></a>00218                 Placeholder.<a class="code" href="class_customizable.html#c6afc74f9f6ee25258faadba11a7f7f1">Set</a>(this-&gt;<a class="code" href="class_promotable.html#6e39ea5ee1d40402e5e1bbe2e4eed124">Veteran</a>);
+<a name="l00219"></a>00219                 _snprintf(FlagName, buflen, BaseFlag, <span class="stringliteral">"Veteran"</span>);
+<a name="l00220"></a>00220                 Placeholder.<a class="code" href="class_valueable.html#0f0c57826adca78b4d46a69b5344a03b">Read</a>(&amp;exINI, Section, FlagName);
+<a name="l00221"></a>00221                 this-&gt;<a class="code" href="class_promotable.html#6e39ea5ee1d40402e5e1bbe2e4eed124">Veteran</a> = Placeholder.<a class="code" href="class_customizable.html#3dc2b0918c34c90837994b776f52139c">Get</a>();
+<a name="l00222"></a>00222 
+<a name="l00223"></a>00223                 Placeholder.<a class="code" href="class_customizable.html#c6afc74f9f6ee25258faadba11a7f7f1">Set</a>(this-&gt;<a class="code" href="class_promotable.html#7739f6bb3f728636d3d86c9b8504b627">Elite</a>);
+<a name="l00224"></a>00224                 _snprintf(FlagName, buflen, BaseFlag, <span class="stringliteral">"Elite"</span>);
+<a name="l00225"></a>00225                 Placeholder.<a class="code" href="class_valueable.html#0f0c57826adca78b4d46a69b5344a03b">Read</a>(&amp;exINI, Section, FlagName);
+<a name="l00226"></a>00226                 this-&gt;<a class="code" href="class_promotable.html#7739f6bb3f728636d3d86c9b8504b627">Elite</a> = Placeholder.<a class="code" href="class_customizable.html#3dc2b0918c34c90837994b776f52139c">Get</a>();
+<a name="l00227"></a>00227 
+<a name="l00228"></a>00228                 <span class="keyword">delete</span>[] FlagName;
+<a name="l00229"></a>00229         }
 </pre></div>
 <p>
 
@@ -309,9 +309,9 @@ template&lt;typename T&gt; </div>
 <div class="memdoc">
 
 <p>
-<div class="fragment"><pre class="fragment"><a name="l00193"></a>00193                            {
-<a name="l00194"></a>00194                 this-&gt;<a class="code" href="class_promotable.html#7739f6bb3f728636d3d86c9b8504b627">Elite</a> = this-&gt;<a class="code" href="class_promotable.html#6e39ea5ee1d40402e5e1bbe2e4eed124">Veteran</a> = this-&gt;<a class="code" href="class_promotable.html#3686af12b920db9a695245231c4cbdf1">Rookie</a> = val;
-<a name="l00195"></a>00195         }
+<div class="fragment"><pre class="fragment"><a name="l00202"></a>00202                            {
+<a name="l00203"></a>00203                 this-&gt;<a class="code" href="class_promotable.html#7739f6bb3f728636d3d86c9b8504b627">Elite</a> = this-&gt;<a class="code" href="class_promotable.html#6e39ea5ee1d40402e5e1bbe2e4eed124">Veteran</a> = this-&gt;<a class="code" href="class_promotable.html#3686af12b920db9a695245231c4cbdf1">Rookie</a> = val;
+<a name="l00204"></a>00204         }
 </pre></div>
 <p>
 
@@ -389,7 +389,7 @@ template&lt;typename T&gt; </div>
 <hr>The documentation for this class was generated from the following file:<ul>
 <li>Utilities/<a class="el" href="_template_8h.html">Template.h</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue May 18 03:51:10 2010 for Ares by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Sat May 29 11:15:58 2010 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>
