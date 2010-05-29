@@ -75,6 +75,9 @@ DEFINE_HOOK(60411B, Game_DialogFunc_Subtext_Load, 5)
 			case ARES_CHK_RMG_URBAN_AREAS:
 				Dialogs::StatusString = "STT:RMGUrbanAreas";
 				break;
+			case ARES_CHK_MULTIENGINEER:
+				Dialogs::StatusString = "STT:MultiEngineer";
+				break;
 			default:
 				Dialogs::StatusString = "GUI:Debug";
 		}
