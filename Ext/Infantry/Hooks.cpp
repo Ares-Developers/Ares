@@ -107,7 +107,7 @@ DEFINE_HOOK(51D799, InfantryClass_PlayAnim_WaterSound, 7)
 	;
 }
 
-DEFINE_HOOK(51E5C0, InfantryClass_GetCursorOverObject_MultiEngineerA, 6) {
+DEFINE_HOOK(51E5B9, InfantryClass_GetCursorOverObject_MultiEngineerA, 7) {
 	// skip old logic's way to determine the cursor
 	return 0x51E5D9;
 }

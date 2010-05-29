@@ -39,13 +39,18 @@ eAction InfantryExt::GetEngineerEnterEnemyBuildingAction(BuildingClass *pBld) {
 
 		// check to always capture tech structures. a structure counts
 		// as tech if its initial owner is a multiplayer-passive country.
-		if(HouseTypeClass * pCountry = pBld->OwningPlayer2->Type) {
-			if(!RulesExt::Global()->EngineerAlwaysCaptureTech || !pCountry->MultiplayPassive) {
-		
-				// no civil structure. apply new logic.
-				if(pBld->GetHealthPercentage() > RulesClass::Global()->EngineerCaptureLevel) {
-					return (RulesExt::Global()->EngineerDamage > 0 ? act_Damage : act_NoEnter);
-				}
+		bool isTech = false;
+		if(HouseClass * pHouse = (HouseClass*)pBld->OwningPlayer2) {
+			Debug::Log("[GetEngineerEnterEnemyBuildingAction] OwningPlayer2: %p\n", pHouse);
+			if(HouseTypeClass * pCountry = pHouse->Type) {
+				isTech = pCountry->MultiplayPassive;
+			}
+		}
+
+		if(!RulesExt::Global()->EngineerAlwaysCaptureTech || !isTech) {
+			// no civil structure. apply new logic.
+			if(pBld->GetHealthPercentage() > RulesClass::Global()->EngineerCaptureLevel) {
+				return (RulesExt::Global()->EngineerDamage > 0 ? act_Damage : act_NoEnter);
 			}
 		}
 	}
