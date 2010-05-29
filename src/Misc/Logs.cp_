@@ -1,0 +1,322 @@
+#include <AnimClass.h>
+#include <BulletClass.h>
+#include <CCINIClass.h>
+#include <CellSpread.h>
+#include <HouseClass.h>
+#include <InfantryClass.h>
+#include <LightSourceClass.h>
+#include <LocomotionClass.h>
+#include <LoadProgressManager.h>
+#include <MapClass.h>
+#include <MixFileClass.h>
+#include <TacticalClass.h>
+#include <TechnoClass.h>
+#include <TemporalClass.h>
+#include <UnitTypeClass.h>
+#include <WarheadTypeClass.h>
+
+#include "Debug.h"
+#include "../Ares.h"
+#include "../Ext/Rules/Body.h"
+#include "../Ext/BuildingType/Body.h"
+#include "../Ext/BulletType/Body.h"
+#include "../Ext/Techno/Body.h"
+#include "../Ext/TechnoType/Body.h"
+#include "../Ext/House/Body.h"
+#include "../Ext/Side/Body.h"
+#include "../Ext/HouseType/Body.h"
+#include "../Ext/WeaponType/Body.h"
+#include "../Ext/WarheadType/Body.h"
+
+#include <Helpers/Macro.h>
+#include <Helpers/Template.h>
+
+DEFINE_HOOK(45DD0E, BuildingTypeClass_InitFoundationOutlines, 5)
+{
+	CellStruct *Cell = (CellStruct *)0x89C900;
+	Debug::Log("Dumping\n");
+	Debug::Log("Foundations:\n");
+	for(int i = 0; i < 22; ++i) {
+		Debug::Log("Foundation #%d:\n\t", i);
+		for(int j = 0; j < 30; ++j) {
+			Debug::Log("(%d, %d) ", Cell->X, Cell->Y);
+			++Cell;
+		}
+		Debug::Log("\n");
+	}
+
+	Debug::Log("Outlines:\n");
+	Cell = (CellStruct *)0x89D368;
+
+	for(int i = 0; i < 22; ++i) {
+		Debug::Log("Foundation #%d:\n\t", i);
+		for(int j = 0; j < 30; ++j) {
+			Debug::Log("(%d, %d) ", Cell->X, Cell->Y);
+			++Cell;
+		}
+		Debug::Log("\n");
+	}
+
+	Debug::Log("Done.\n");
+	return 0;
+}
+
+DEFINE_HOOK(444594, BuildingClass_KickOutUnit_DebugExitCoords, 6)
+{
+	GET(BuildingClass *, Factory, ESI);
+	GET(TechnoClass *, Production, EDI);
+
+	CoordStruct exitCoords, coords, *objCoords;
+	CellStruct cellCoords;
+
+	Factory->GetExitCoords(&exitCoords, 0);
+	Factory->GetCoords(&coords);
+	Factory->GetMapCoords(&cellCoords);
+	objCoords = Production->get_Location();
+
+	Debug::Log("==============\n");
+	
+	Debug::Log("0Exit coords: (%X, %X, %X)\n", exitCoords.X / 256, exitCoords.Y / 256, exitCoords.Z / 256);
+	Debug::Log("0Coords: (%X, %X, %X)\n", coords.X / 256, coords.Y / 256, coords.Z / 256);
+	Debug::Log("0Cell Coords: (%X, %X)\n", cellCoords.X, cellCoords.Y);
+	Debug::Log("0Location: (%X, %X, %X)\n", objCoords->X / 256, objCoords->Y / 256, objCoords->Z / 256);
+
+	GET(byte, result, EAX);
+	return result ? 0x44459A : 0x444EDE;
+}
+
+DEFINE_HOOK(44DE68, BuildingClass_Unload_InitExit, 6)
+{
+	GET(BuildingClass *, Factory, EBP);
+	GET(TechnoClass *, Production, EAX);
+
+	if(Production) {
+		CoordStruct exitCoords, coords, *objCoords;
+		CellStruct cellCoords;
+
+		Factory->GetExitCoords(&exitCoords, 0);
+		Factory->GetCoords(&coords);
+		Factory->GetMapCoords(&cellCoords);
+		objCoords = Production->get_Location();
+
+		Debug::Log("1Exit coords: (%d, %d, %d)\n", exitCoords.X / 256, exitCoords.Y / 256, exitCoords.Z / 256);
+		Debug::Log("1Coords: (%d, %d, %d)\n", coords.X / 256, coords.Y / 256, coords.Z / 256);
+		Debug::Log("1Cell Coords: (%d, %d)\n", cellCoords.X, cellCoords.Y);
+		Debug::Log("1Location: (%d, %d, %d)\n", objCoords->X / 256, objCoords->Y / 256, objCoords->Z / 256);
+	}
+
+	return 0;
+}
+
+DEFINE_HOOK(44DF52, BuildingClass_Unload_SetDest, 6)
+{
+	Debug::Log("Set Destination: (%X)\n", R->get_EAX());
+	return 0;
+}
+
+
+DEFINE_HOOK(44DF81, BuildingClass_Unload_DriveLoco, 6)
+{
+	GET_STACK(TechnoClass *, Production, 0x20);
+	LEA_STACK(CoordStruct *, objCoords, 0x34);
+
+	CoordStruct *unitCoords = Production->get_Location();
+	Debug::Log("UnitLocation: (%d, %d, %d)\n", unitCoords->X / 256, unitCoords->Y / 256, unitCoords->Z / 256);
+	Debug::Log("DriveToLocation: (%d, %d, %d)\n", objCoords->X / 256, objCoords->Y / 256, objCoords->Z / 256);
+	return 0;
+}
+
+
+DEFINE_HOOK(44E140, BuildingClass_Unload_ForceDriveLoco, 6)
+{
+	LEA_STACK(CoordStruct *, objCoords, 0x34);
+
+	Debug::Log("ForceDriveToLocation: (%d, %d, %d)\n", objCoords->X / 256, objCoords->Y / 256, objCoords->Z / 256);
+	return 0;
+}
+
+DEFINE_HOOK(65657A, sub_6563B0, 1)
+{
+	for(int i = 0; i < 22; ++i) {
+		DynamicVectorClass<Point2D> * vec = RadarClass::Global()->get_unknown_points_array_1278(i);
+		Debug::Log("Dumping vector #%d:\n", i);
+		for(int j = 0; j < vec->Count; ++j) {
+			Point2D p = vec->Items[j];
+			Debug::Log("(%x, %x) ", p.X, p.Y);
+		}
+	}
+
+	return 0;
+}
+
+DEFINE_HOOK(44DF91, BuildingClass_Unload_ForceTrack, 6)
+{
+	GET_STACK(TechnoClass *, Production, 0x34);
+	if(Production->Owner == HouseClass::Player()) {
+		R->set_StackVar32(0x4, Ares::TrackIndex);
+		Debug::Log("Force Track %d\n", Ares::TrackIndex);
+	}
+	return 0;
+}
+
+DEFINE_HOOK(69A3BC, PKTNode_CTOR, 6)
+{
+	GET_STACK(char *, mapname, 0x21C);
+	Debug::Log("\tAdding map %s\n", mapname);
+	return 0;
+}
+
+DEFINE_HOOK(699B2D, Game_ParsePKTs, 5)
+{
+	GET(char *, filename, ESI);
+	Debug::Log("Adding PKT %s\n", filename);
+	return 0;
+}
+
+#define stack_len 0xC0
+
+DEFINE_HOOK(4C98B0, FactoryClass_CTOR, 5)
+{
+	Debug::Log("Factory::CTOR(%X)\n", R->get_ECX());
+	Debug::DumpStack(R, stack_len);
+	return 0;
+}
+
+DEFINE_HOOK(4CA770, FactoryClass_SDDTOR, 6)
+{
+	Debug::Log("Factory::DTOR(%X)\n", R->get_ECX());
+	Debug::DumpStack(R, stack_len);
+	return 0;
+}
+
+DEFINE_HOOK(4FA5A8, HouseClass_BeginProductionOf, 5)
+{
+	GET(HouseClass *, H, EDI);
+	GET(TechnoTypeClass *, TT, EBP);
+	if(H == HouseClass::Player) {
+		Debug::Log("Player House begins construction of %s in factory %X\n", TT->get_ID(), R->get_ESI());
+		Debug::DumpStack(R, stack_len);
+		Debug::DumpObj((byte *)&H->Primary_ForAircraft, 36);
+	}
+	return 0;
+}
+
+DEFINE_HOOK(4FAA1F, HouseClass_AbandonProductionOf, 8)
+{
+	GET(HouseClass *, H, ECX);
+	if(H == HouseClass::Player) {
+		Debug::Log("Player House Abandons production of absID %d\n", R->get_StackVar32(0x1C));
+		Debug::DumpStack(R, stack_len);
+		Debug::DumpObj((byte *)&H->Primary_ForAircraft, 36);
+	}
+	return 0;
+}
+
+DEFINE_HOOK(4FABB8, HouseClass_AbandonProductionOf2, 6)
+{
+	GET(HouseClass *, H, EDI);
+	if(H == HouseClass::Player) {
+		Debug::Log("Player House DTORs factory %X\n", R->get_ESI());
+		Debug::DumpStack(R, stack_len);
+		Debug::DumpObj((byte *)&H->Primary_ForAircraft, 36);
+	}
+	return 0;
+}
+
+DEFINE_HOOK(50929A, HouseClass_Update_Factories_Queues, 6)
+{
+	GET(HouseClass *, H, EBP);
+	if(H == HouseClass::Player) {
+		Debug::Log("Player House borks DTOR of factory %X\n", R->get_ESI());
+		Debug::DumpStack(R, stack_len);
+		Debug::DumpObj((byte *)&H->Primary_ForAircraft, 36);
+	}
+	return 0;
+}
+
+DEFINE_HOOK(44EC5E, BuildingClass_Remove, 6)
+{
+	GET(TechnoTypeClass *, TT, EAX);
+	GET(BuildingClass *, B, ESI);
+	Debug::Log("Deletion of building %s (%X) - erasing product %s\n", B->get_ID(), B, TT->get_ID());
+	Debug::DumpStack(R, stack_len);
+	Debug::DumpObj((byte *)&B->Owner->Primary_ForAircraft, 36);
+	return 0;
+}
+
+DEFINE_HOOK(459F28, BuildingClass_SDDTOR, 5)
+{
+	Debug::Log("~BuildingClass(%X)\n", R->get_ESI());
+	Debug::DumpStack(R, stack_len);
+	return 0;
+}
+
+
+DEFINE_HOOK(509140, HouseClass_Update_Factories_Queues_2, 5)
+{
+	GET(HouseClass *, H, ECX);
+	if(H == HouseClass::Player) {
+		Debug::Log("Player House updating factory queues, caller is %d/%d/%d\n", R->get_StackVar32(0x4), R->get_StackVar32(0x8), R->get_StackVar32(0xC));
+	}
+	return 0;
+}
+
+DEFINE_HOOK(5091A1, HouseClass_Update_Factories_Queues_3, 8)
+{
+	GET(FactoryClass *, Fact, ESI);
+	GET(HouseClass *, H, EBP);
+	if(H == HouseClass::Player) {
+		Debug::Log("Player House updating factory %X", Fact);
+		if(Fact) {
+			Debug::DumpObj((byte*)Fact, sizeof(*Fact));
+		}
+	}
+	return Fact ? 0x5091A9 : 0x5092A3;
+}
+
+DEFINE_HOOK(51EE27, InfantryClass_GetCursorOverObject, 6)
+{
+	GET(int, Response, EAX);
+	Debug::Log("Got %d\n", Response);
+	switch(Response) {
+		case 1:
+			return 0x51EE36; // OK
+		case 10:
+			return 0x51EE2F; // not OK
+		default:
+			return 0x51EE3B; // wait what
+	}
+}
+
+DEFINE_HOOK(489A01, DamageArea_Each, 6)
+{
+	GET(TechnoClass *, T, ESI);
+	GET(int, Distance, EDI);
+	GET_STACK(int, Cutoff, 0x68);
+
+	Debug::Log("About to deal damage to %s, which is %d leptons away from blast point (cutoff distance is %d)\n", T->get_ID(), Distance, Cutoff);
+
+	return 0;
+}
+
+DEFINE_HOOK(489ABC, DamageArea_Affected, 5)
+{
+	Debug::Log("\tDealt damage\n");
+	return 0;
+}
+
+DEFINE_HOOK(414BB9, AircraftClass_Update, 6)
+{
+	GET(AircraftClass *, A, ESI);
+	Debug::Log("Aircraft %s in mission %d, status %d, distance from target %d\n", A->get_ID(), A->CurrentMission, A->MissionStatus, A->DistanceFrom(A->Target));
+	return 0;
+}
+
+DEFINE_HOOK(5F4FDD, ObjectClass_Put_ffs, 5)
+{
+	GET(ObjectClass *, O, ESI);
+	GET(int, Layer, EAX);
+	Debug::Log("Putting object %X into layer %d\n", O, Layer);
+	Debug::Log("(%d)\n", O->WhatAmI());
+	return 0;
+}

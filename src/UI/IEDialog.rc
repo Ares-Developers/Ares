@@ -1,0 +1,15 @@
+#include <windows.h>
+#include "registered.h"
+
+247 DIALOG 0, 0, 252, 132
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION
+CAPTION "Yuri's Revenge (Ares active)"
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+FONT 8, "MS Sans Serif"
+{
+   CONTROL "Ares has encountered an internal error and is unable to continue normally.", -1, STATIC, SS_CENTER | WS_CHILD | WS_VISIBLE, 7, 9, 238, 8 
+   CONTROL "Please visit our website at http://ares.strategy-x.com\nfor updates and support.", -1, STATIC, SS_CENTER | WS_CHILD | WS_VISIBLE, 7, 25, 238, 18 
+   CONTROL "OK", 1153, BUTTON, BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 83, 107, 79, 14 
+
+  CONTROL "The cause for this error could not be determined.\r\nGrab the files except.txt, debug.txt, syringe.log from your game folder\r\nand post them at http://forums.renegadeprojects.com so we can fix it.", ARES_TXT_IE_DETAILS, EDIT, ES_LEFT | ES_MULTILINE | ES_NOHIDESEL | ES_READONLY | ES_WANTRETURN | WS_CHILD | WS_VISIBLE | WS_BORDER | WS_VSCROLL | WS_HSCROLL , 7, 45, 238, 60 
+}
