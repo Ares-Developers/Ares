@@ -164,7 +164,7 @@ DEFINE_HOOK(6CB7BA, SuperClass_Lose, 6)
 DEFINE_HOOK(6CB4D0, SuperClass_SetOnHold, 6)
 {
 	GET(SuperClass *, pSuper, ECX);
-	GET_STACK(byte, OnHold, 0x4);
+	GET_STACK(bool, OnHold, 0x4);
 	OnHold = !!OnHold;
 	if(!pSuper->Granted || pSuper->Quantity || !pSuper->unknown_bool_60) {
 		R->EAX(0);
@@ -194,7 +194,7 @@ DEFINE_HOOK(6CB4D0, SuperClass_SetOnHold, 6)
 			HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(pSuper->Owner);
 			if(OnHold) {
 				pHouseData->SetFirestormState(0);
-				pSuper->ChargeDrainState = -1;
+				pSuper->ChargeDrainState = 0xFFFFFFFF;
 			} else {
 				pSuper->ChargeDrainState = 0;
 				pSuper->RechargeTimer.Start(pSuper->Type->RechargeTime);

@@ -29,10 +29,10 @@ DEFINE_HOOK(6CEF84, SuperWeaponTypeClass_GetCursorOverObject, 7)
 
 		if(Action == SW_YES_CURSOR) {
 			SWTypeExt::CurrentSWType = pThis;
-			Actions::Set(&pData->SW_Cursor, pData->SW_FireToShroud);
+			Actions::Set(&pData->SW_Cursor, pData->SW_FireToShroud.Get());
 		} else {
 			SWTypeExt::CurrentSWType = NULL;
-			Actions::Set(&pData->SW_NoCursor, pData->SW_FireToShroud);
+			Actions::Set(&pData->SW_NoCursor, pData->SW_FireToShroud.Get());
 		}
 		return 0x6CEFD9;
 	}
@@ -76,10 +76,10 @@ DEFINE_HOOK(653B3A, RadarClass_GetMouseAction_CustomSWAction, 5)
 
 			if(Action == SW_YES_CURSOR) {
 				SWTypeExt::CurrentSWType = pThis;
-				Actions::Set(&pData->SW_Cursor, pData->SW_FireToShroud);
+				Actions::Set(&pData->SW_Cursor, pData->SW_FireToShroud.Get());
 			} else {
 				SWTypeExt::CurrentSWType = NULL;
-				Actions::Set(&pData->SW_NoCursor, pData->SW_FireToShroud);
+				Actions::Set(&pData->SW_NoCursor, pData->SW_FireToShroud.Get());
 			}
 			return 0x653CA3;
 		}
