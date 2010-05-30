@@ -19,6 +19,9 @@ Theater* CustomTheater::FindStock(const char* name)
 
 CustomTheater* CustomTheater::Get(int i)
 {
+	if(CustomTheater::Array.Count == 0)
+		CustomTheater::LoadFromINIList(CCINIClass::INI_Rules);
+
 	if(i >= 0 && i < CustomTheater::Array.Count)
 		return CustomTheater::Array[i];
 	else
@@ -27,6 +30,9 @@ CustomTheater* CustomTheater::Get(int i)
 
 CustomTheater* CustomTheater::Find(const char* name)
 {
+	if(CustomTheater::Array.Count == 0)
+		CustomTheater::LoadFromINIList(CCINIClass::INI_Rules);
+
 	for(int i = 0; i < CustomTheater::Array.Count; i++)
 	{
 		if(_strcmpi(Array[i]->Identifier, name) == 0)
