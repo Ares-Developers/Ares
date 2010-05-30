@@ -688,3 +688,26 @@ DEFINE_HOOK(50965E, HouseClass_CanInstantiateTeam, 5)
 	}
 	return CanBuild;
 }
+
+/*
+ * Fixing issue #954
+ */
+DEFINE_HOOK(621B80, DSurface_FillRectWithColor, 5)
+{
+	GET(RectangleStruct*, rect, ECX);
+	GET(Surface*, surface, EDX);
+
+	int surfaceWidth = surface->GetWidth();
+	int surfaceHeight = surface->GetHeight();
+
+	//make sure the rectangle to fill is within the surface's boundaries, this should do the trick
+	rect->X = (rect->X >= 0) ? rect->X : 0;
+	rect->Y = (rect->Y >= 0) ? rect->Y : 0;
+	rect->Width = (rect->X + rect->Width <= surfaceWidth) ? rect->Width : surfaceWidth - rect->X;
+	rect->Height = (rect->Y + rect->Height <= surfaceHeight) ? rect->Height : surfaceHeight - rect->Y;
+
+	if(rect->Width == 0 || rect->Height == 0)
+		return 0x621D26;
+	else
+		return 0;
+}
