@@ -505,25 +505,27 @@ DEFINE_HOOK(73C725, UnitClass_DrawSHP_DrawShadowEarlier, 6)
 	}
 
 	GET(SHPStruct *, Image, EDI);
-	GET(int, FrameToDraw, EBX);
-	GET_STACK(Point2D, coords, 0x12C);
-	LEA_STACK(RectangleStruct *, BoundingRect, 0x134);
 
-	if(U->unknown_bool_420) {
-		coords.Y -= 14;
+	if(Image) { // bug #960
+		GET(int, FrameToDraw, EBX);
+		GET_STACK(Point2D, coords, 0x12C);
+		LEA_STACK(RectangleStruct *, BoundingRect, 0x134);
+
+		if(U->unknown_bool_420) {
+			coords.Y -= 14;
+		}
+
+		Point2D XYAdjust = {0, 0};
+		U->Locomotor->Shadow_Point(&XYAdjust);
+		coords += XYAdjust;
+
+		int ZAdjust = U->GetZAdjustment() - 2;
+
+		FrameToDraw += Image->Frames / 2;
+
+		DSurface::Hidden_2->DrawSHP(FileSystem::THEATER_PAL, Image, FrameToDraw, &coords, BoundingRect, 0x2E01,
+				0, ZAdjust, 0, 1000, 0, 0, 0, 0, 0);
 	}
-
-	Point2D XYAdjust = {0, 0};
-	U->Locomotor->Shadow_Point(&XYAdjust);
-	coords += XYAdjust;
-
-	int ZAdjust = U->GetZAdjustment() - 2;
-
-	FrameToDraw += Image->Frames / 2;
-
-	DSurface::Hidden_2->DrawSHP(FileSystem::THEATER_PAL, Image, FrameToDraw, &coords, BoundingRect, 0x2E01,
-			0, ZAdjust, 0, 1000, 0, 0, 0, 0, 0);
-
 	return 0;
 }
 

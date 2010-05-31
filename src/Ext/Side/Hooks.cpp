@@ -1,6 +1,7 @@
 #include "Body.h"
 
 #include <SuperClass.h>
+#include <ProgressScreenClass.h>
 
 //0x4F8C97
 DEFINE_HOOK(4F8C97, Sides_BuildConst, 6)
@@ -115,6 +116,36 @@ DEFINE_HOOK(451358, Sides_SurvivorDivisor, 6)
 		return 0;
 	}
 }
+
+/*
+ * this is as good as it can get without tearing the scenario reader apart
+ * - find house early, set color from its data...
+ * but finding house needs the house array to be ready
+ * instantiating house needs data from rules
+ * instantiating rules takes shitloads of time, we can't show a blank screen so long
+A_FINE_HOOK(687586, INIClass_ReadScenario, 7)
+{
+	GET(LoadProgressManager *, Mgr, EAX);
+	if(SessionClass::Instance->GameMode == GameMode::Campaign) {
+		GET_STACK(CCINIClass *, pINI, STACK_OFFS(0x174, 0x15C));
+
+		HouseClass::LoadFromINIList(pINI); // comment out this line to make it work everywhere except for the very first scenario you try
+
+		pINI->ReadString("Basic", "Player", "Americans", Ares::readBuffer, Ares::readLength);
+		int idxHouse = HouseClass::FindIndexByName(Ares::readBuffer);
+		Debug::Log("Side was %d and iH = %d\n", ProgressScreenClass::Instance->GetSide(), idxHouse);
+		if(idxHouse > -1 && idxHouse < HouseClass::Array->Count) {
+			int idxSide = HouseClass::Array->GetItem(idxHouse)->Type->SideIndex;
+
+			ProgressScreenClass::Instance->SetSide(idxSide);
+			Debug::Log("Side is now %d\n", idxSide);
+		}
+	}
+
+	Mgr->Draw();
+	return 0x68758D;
+}
+*/
 
 // WRONG! Stoopidwood passes CD= instead of Side= into singleplayer campaigns, TODO: fix that shit
 DEFINE_HOOK(642B36, Sides_LoadTextColor1, 5)

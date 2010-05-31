@@ -54,8 +54,7 @@ DEFINE_HOOK(4FEA60, HouseClass_AI_UnitProduction, 0)
 
 			bool bPlayerControl;
 
-			//TODO : Session::Global()->get_GameMode()
-			if(*(eGameMode*)0xA8B238 == gm_Campaign) {
+			if(SessionClass::Instance->GameMode == GameMode::Campaign) {
 				bPlayerControl = pThis->CurrentPlayer || pThis->PlayerControl;
 			} else {
 				bPlayerControl = pThis->CurrentPlayer;

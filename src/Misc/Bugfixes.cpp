@@ -435,8 +435,8 @@ A_FINE_HOOK(48439A, CellClass_GetColourComponents, 5)
 
 DEFINE_HOOK(6873AB, INIClass_ReadScenario_EarlyLoadRules, 5)
 {
-	switch(Unsorted::GameMode) {
-		case gm_Campaign:
+	switch(SessionClass::Instance->GameMode) {
+		case GameMode::Campaign:
 			RulesClass::Global()->Read_Sides(CCINIClass::INI_Rules);
 			SideExt::ExtMap.LoadAllFromINI(CCINIClass::INI_Rules);
 		default:
@@ -668,7 +668,7 @@ DEFINE_HOOK(50965E, HouseClass_CanInstantiateTeam, 5)
 	GET(DWORD, ptrTask, EAX);
 	GET(DWORD, ptrOffset, ECX);
 
-	ptrTask += ptrOffset;
+	ptrTask += (ptrOffset - 4); // pointer math!
 	TaskForceEntryStruct * ptrEntry = reinterpret_cast<TaskForceEntryStruct *>(ptrTask); // evil! but works, don't ask me why
 
 	GET(HouseClass *, Owner, EBP);
@@ -677,10 +677,14 @@ DEFINE_HOOK(50965E, HouseClass_CanInstantiateTeam, 5)
 		if(Type->GetFactoryType(true, true, false, Owner)) {
 			if(Ares::GlobalControls::AllowBypassBuildLimit[Owner->AIDifficulty]) {
 				CanBuild = BuildLimitAllows;
-			} else if(HouseExt::BuildLimitRemaining(Owner, Type) > ptrEntry->Amount) {
-				CanBuild = BuildLimitAllows;
 			} else {
-				CanBuild = NoWay;
+				int remainLimit = HouseExt::BuildLimitRemaining(Owner, Type);
+				Debug::Log("House %s can build %d (want: %d) instances of %s\n", Owner->PlainName, remainLimit, ptrEntry->Amount, Type->ID);
+				if(remainLimit >= ptrEntry->Amount) {
+					CanBuild = BuildLimitAllows;
+				} else {
+					CanBuild = NoWay;
+				}
 			}
 		} else {
 			CanBuild = BuildLimitAllows;

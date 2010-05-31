@@ -95,10 +95,12 @@ signed int HouseExt::BuildLimitRemaining(HouseClass *pHouse, TechnoTypeClass *pI
 {
 	int BuildLimit = pItem->BuildLimit;
 	if(BuildLimit >= 0) {
-		return BuildLimit - pHouse->CountOwnedNow(pItem);
+		BuildLimit -= pHouse->CountOwnedNow(pItem);
 	} else {
-		return abs(BuildLimit) - pHouse->CountOwnedEver(pItem);
+		BuildLimit = abs(BuildLimit);
+		BuildLimit -= pHouse->CountOwnedEver(pItem);
 	}
+	return min(BuildLimit, 0x7FFFFFFF);
 }
 
 signed int HouseExt::PrereqValidate
