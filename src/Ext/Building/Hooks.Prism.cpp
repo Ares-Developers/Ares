@@ -189,8 +189,14 @@ DEFINE_HOOK(448277, PrismForward_BuildingChangeOwner, 5)
 				BuildingExt::ExtData *pData = BuildingExt::ExtMap.Find(LastTarget);
 				BuildingClass *NextTarget = pData->PrismForwarding.SupportTarget;
 				if (!FirstTarget) {
+					if(!NextTarget) {
+						// no first target and nothing to support - we're idling away
+						// not enslaved so no need to remove
+						return 0;
+					}
 					FirstTarget = NextTarget;
 				}
+
 				if (!NextTarget) {
 					//LastTarget is now the master (firing) tower
 					if (newOwner->IsAlliedWith(LastTarget->Owner) && newOwner->IsAlliedWith(FirstTarget->Owner)) {
