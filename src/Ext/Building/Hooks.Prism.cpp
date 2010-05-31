@@ -43,6 +43,8 @@ DEFINE_HOOK(44B2FE, BuildingClass_Mi_Attack_IsPrism, 6)
 			B->PrismStage = pcs_Master;
 			BuildingExt::ExtData *pMasterData = BuildingExt::ExtMap.Find(B);
 			pMasterData->PrismForwarding.SupportTarget = NULL;
+			B->PrismTargetCoords.X = 0;
+			B->PrismTargetCoords.Y = B->PrismTargetCoords.Z = 0;
 
 		}
 
@@ -157,6 +159,7 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 }
 
 //these are all for cleaning up when a prism tower becomes unavailable
+
 DEFINE_HOOK(4424EF, PrismForward_BuildingDestroyed, 6)
 {
 	GET(BuildingClass *, B, ESI);
@@ -190,8 +193,8 @@ DEFINE_HOOK(448277, PrismForward_BuildingChangeOwner, 5)
 				BuildingClass *NextTarget = pData->PrismForwarding.SupportTarget;
 				if (!FirstTarget) {
 					if(!NextTarget) {
-						// no first target and nothing to support - we're idling away
-						// not enslaved so no need to remove
+						//no first target so either this is a master tower, an idle tower, or not a prism tower at all
+						//no need to remove
 						return 0;
 					}
 					FirstTarget = NextTarget;
@@ -208,9 +211,17 @@ DEFINE_HOOK(448277, PrismForward_BuildingChangeOwner, 5)
 			}
 		}
 		//if we reach this point then the alliance checks have failed
-		BuildingTypeExt::cPrismForwarding::RemoveSlave(B, false);
+		BuildingTypeExt::cPrismForwarding::RemoveSlave(B, false); //false because animation should continue / slave is busy but won't now fire
 		
 	}
 
+	return 0;
+}
+
+DEFINE_HOOK(71AF76, PrismForward_BuildingWarped, 9) {
+	GET(TechnoClass *, T, EDI);
+	if (BuildingClass * B = specific_cast<BuildingClass *>(T)) {
+		BuildingTypeExt::cPrismForwarding::RemoveSlave(B, true);
+	}
 	return 0;
 }
