@@ -1,6 +1,7 @@
 #include "EMPulse.h"
 #include "../Ext/Techno/Body.h"
 #include "../Ext/TechnoType/Body.h"
+#include "../Ext/BuildingType/Body.h"
 #include <set>
 
 //! Enables verbose debug output for some WarheadTypeExt functions.
