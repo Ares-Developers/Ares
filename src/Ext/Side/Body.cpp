@@ -1,4 +1,5 @@
 #include "Body.h"
+#include "Ares.CRT.h"
 #include <ScenarioClass.h>
 
 //Static init
@@ -135,7 +136,7 @@ void SideExt::ExtData::LoadFromINIFile(SideClass *pThis, CCINIClass *pINI)
 	this->DefaultDisguise.Parse(&exINI, section, "DefaultDisguise", 1);
 
 	if(pINI->ReadString(section, "EVA.Tag", "", Ares::readBuffer, 0x20)) {
-		strncpy(this->EVATag, Ares::readBuffer, 0x20);
+		AresCRT::strCopy(this->EVATag, Ares::readBuffer, 0x20);
 	}
 
 	if(pINI->ReadString(section, "LoadScreenText.Color", "", Ares::readBuffer, 0x80)) {

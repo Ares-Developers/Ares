@@ -4,6 +4,7 @@
 #include <CCFileClass.h>
 #include <VocClass.h>
 #include "../Ares.h"
+#include "../Ares.CRT.h"
 
 // assuming nobody has 128k legit samples in their game
 #define MINIMUM_ARES_SAMPLE 0x20000
@@ -91,8 +92,9 @@ DEFINE_HOOK(4016F7, Ares_Audio_LoadWAV, 5)	//50% rewrite of Audio::LoadWAV
 
 		//Replace the construction of the RawFileClass with one of a CCFileClass
 		char filename[0x100] = "\0";
-		strncpy(filename, SampleName, 0x100);
+		AresCRT::strCopy(filename, SampleName, 0x100 - 5);
 		strcat(filename, ".wav");
+		filename[0xFF] = 0;
 
 		CCFileClass* pFile;
 		GAME_ALLOC(CCFileClass, pFile, filename);

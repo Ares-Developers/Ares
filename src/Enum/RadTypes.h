@@ -7,6 +7,7 @@
 #include <RulesClass.h>
 
 #include "_Enumerator.hpp"
+#include "../Ares.CRT.h"
 #include "../Utilities/Template.h"
 
 #ifdef DEBUGBUILD
@@ -44,7 +45,7 @@ public:
 		Light_Factor(&RulesClass::Instance->RadLightFactor),
 		Tint_Factor(&RulesClass::Instance->RadTintFactor)
 	{
-		strncpy(this->Name, Title, 32);
+		AresCRT::strCopy(this->Name, Title, 32);
 		Array.AddItem(this);
 	}
 

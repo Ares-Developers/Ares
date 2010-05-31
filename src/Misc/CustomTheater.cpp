@@ -2,93 +2,89 @@
 #include <MapSeedClass.h>
 #include <ScenarioClass.h>
 #include <StringTable.h>
+
+#include "Ares.CRT.h"
 #include "Debug.h"
 #include "CustomTheater.h"
 
 DynamicVectorClass<CustomTheater*> CustomTheater::Array;
 
-Theater* CustomTheater::FindStock(const char* name)
-{
+Theater* CustomTheater::FindStock(const char* name) {
 	for(int i = 0; i < 6; i++)
 	{
-		if(_strcmpi(Theater::Array[i].Identifier, name) == 0)
+		if(_strcmpi(Theater::Array[i].Identifier, name) == 0) {
 			return &Theater::Array[i];
+		}
 	}
 	return NULL;
 }
 
-CustomTheater* CustomTheater::Get(int i)
-{
-	if(CustomTheater::Array.Count == 0)
+CustomTheater* CustomTheater::Get(int i) {
+	if(CustomTheater::Array.Count == 0) {
 		CustomTheater::LoadFromINIList(CCINIClass::INI_Rules);
+	}
 
-	if(i >= 0 && i < CustomTheater::Array.Count)
+	if(i >= 0 && i < CustomTheater::Array.Count) {
 		return CustomTheater::Array[i];
-	else
+	} else {
 		return NULL;
+	}
 }
 
-CustomTheater* CustomTheater::Find(const char* name)
-{
-	if(CustomTheater::Array.Count == 0)
+CustomTheater* CustomTheater::Find(const char* name) {
+	if(CustomTheater::Array.Count == 0) {
 		CustomTheater::LoadFromINIList(CCINIClass::INI_Rules);
+	}
 
-	for(int i = 0; i < CustomTheater::Array.Count; i++)
-	{
-		if(_strcmpi(Array[i]->Identifier, name) == 0)
+	for(int i = 0; i < CustomTheater::Array.Count; i++) {
+		if(_strcmpi(Array[i]->Identifier, name) == 0) {
 			return Array[i];
+		}
 	}
 	return NULL;
 }
 
-int CustomTheater::FindIndex(const char* name)
-{
-	for(int i = 0; i < CustomTheater::Array.Count; i++)
-	{
-		if(_strcmpi(Array[i]->Identifier, name) == 0)
+int CustomTheater::FindIndex(const char* name) {
+	for(int i = 0; i < CustomTheater::Array.Count; i++) {
+		if(_strcmpi(Array[i]->Identifier, name) == 0) {
 			return i;
+		}
 	}
 	return -1;
 }
 
-void CustomTheater::LoadFromINIList(CCINIClass* ini)
-{
+void CustomTheater::LoadFromINIList(CCINIClass* ini) {
 	static char section[] = "Theaters";
 
 	Debug::Log("Initializing theaters...\n");
-	if(ini->GetSection(section))
-	{
+	if(ini->GetSection(section)) {
 		char buffer[0x10] = "\0";
 		size_t bufferSize = 0x10;
 
 		int n = ini->GetKeyCount(section);
-		for(int i = 0; i < n; ++i)
-		{
+		for(int i = 0; i < n; ++i) {
 			const char* key = ini->GetKeyName(section, i);
-			if(ini->ReadString(section, key, "", buffer, bufferSize))
-			{
+			if(ini->ReadString(section, key, "", buffer, bufferSize)) {
 				//check if already exists
-				if(!CustomTheater::Find(buffer))
-				{
+				if(!CustomTheater::Find(buffer)) {
 					CustomTheater* theater;
 				
 					//find stock theater
 					Theater* stockTheater = CustomTheater::FindStock(buffer);
-					if(stockTheater)
+					if(stockTheater) {
 						theater = new CustomTheater(stockTheater);
-					else
+					} else {
 						theater = new CustomTheater(buffer);
-					
+					}
 					CustomTheater::Array.AddItem(theater);
 				}
 			}
 		}
-	}
-	else if(Array.Count == 0)
-	{
+	} else if(Array.Count == 0) {
 		//add stock theaters
-		for(int i = 0; i < 6; i++)
+		for(int i = 0; i < 6; i++) {
 			CustomTheater::Array.AddItem(new CustomTheater(&Theater::Array[i]));
+		}
 		
 		//set defaults for new stuff
 		CustomTheater::Array[0]->RMG_Available = true; //temperate
@@ -96,68 +92,70 @@ void CustomTheater::LoadFromINIList(CCINIClass* ini)
 		CustomTheater::Array[3]->RMG_Available = true; //desert
 	}
 	
-	for(int i = 0; i < CustomTheater::Array.Count; i++)
-	{
+	for(int i = 0; i < CustomTheater::Array.Count; i++) {
 		Debug::Log("\t%s\n", CustomTheater::Array[i]->Identifier);
 		CustomTheater::Array[i]->LoadFromINI(ini);
 	}
 }
 
-void CustomTheater::CleanUp()
-{
-	for(int i = 0; i < CustomTheater::Array.Count; i++)
-	{
-		if(CustomTheater::Array[i])
+void CustomTheater::CleanUp() {
+	for(int i = 0; i < CustomTheater::Array.Count; i++) {
+		if(CustomTheater::Array[i]) {
 			delete CustomTheater::Array[i];
+		}
 	}
 	CustomTheater::Array.Clear();
 }
 
-void CustomTheater::ReadIntArray(CCINIClass* ini, const char* section, const char* key, DynamicVectorClass<int>* array)
-{
-	if(ini->ReadString(section, key, "", Ares::readBuffer, Ares::readLength))
-	{
-		for(char* x = strtok(Ares::readBuffer, ","); x; x = strtok(NULL, ","))
+void CustomTheater::ReadIntArray(CCINIClass* ini, const char* section, const char* key, DynamicVectorClass<int>* array) {
+	if(ini->ReadString(section, key, "", Ares::readBuffer, Ares::readLength)) {
+		for(char* x = strtok(Ares::readBuffer, ","); x; x = strtok(NULL, ",")) {
 			array->AddItem(atoi(x));
+		}
 	}
 }
 
 #define READ_ABSTRACTTYPE_ARRAY(ini, section, key, type, array) \
-	if(ini ## ->ReadString(section, key, "", Ares::readBuffer, Ares::readLength)) \
-	{ \
-		for(char* x = strtok(Ares::readBuffer, ","); x; x = strtok(NULL, ",")) \
-		{ \
+	if(ini ## ->ReadString(section, key, "", Ares::readBuffer, Ares::readLength)) { \
+		for(char* x = strtok(Ares::readBuffer, ","); x; x = strtok(NULL, ",")) { \
 			type * p = type ## ::Find(x); \
-			if(p) \
+			if(p) { \
 				array ## .AddItem(p); \
+			} \
 		} \
 	}
 
-void CustomTheater::LoadFromINI(CCINIClass* ini)
-{
+void CustomTheater::LoadFromINI(CCINIClass* ini) {
 	char* buffer = Ares::readBuffer;
 	size_t bufferSize = Ares::readLength;
 	
-	if(ini->ReadString(this->Identifier, "UIName", "", buffer, bufferSize))
-		strncpy(this->UIName, buffer, 0x0F);
+	if(ini->ReadString(this->Identifier, "UIName", "", buffer, bufferSize)) {
+		AresCRT::strCopy(this->UIName, buffer, 0x20);
+	}
 	
-	if(ini->ReadString(this->Identifier, "File.Config", "", buffer, bufferSize))
-		strncpy(this->ControlFileName, buffer, 0x09);
+	if(ini->ReadString(this->Identifier, "File.Config", "", buffer, bufferSize)) {
+		AresCRT::strCopy(this->ControlFileName, buffer, 0x0A);
+	}
 	
-	if(ini->ReadString(this->Identifier, "File.Mix", "", buffer, bufferSize))
-		strncpy(this->ArtFileName, buffer, 0x09);
+	if(ini->ReadString(this->Identifier, "File.Mix", "", buffer, bufferSize)) {
+		AresCRT::strCopy(this->ArtFileName, buffer, 0x0A);
+	}
 	
-	if(ini->ReadString(this->Identifier, "File.Palette", "", buffer, bufferSize))
-		strncpy(this->PaletteFileName, buffer, 0x09);
+	if(ini->ReadString(this->Identifier, "File.Palette", "", buffer, bufferSize)) {
+		AresCRT::strCopy(this->PaletteFileName, buffer, 0x0A);
+	}
 	
-	if(ini->ReadString(this->Identifier, "File.Extension", "", buffer, bufferSize))
-		strncpy(this->Extension, buffer, 0x04);
+	if(ini->ReadString(this->Identifier, "File.Extension", "", buffer, bufferSize)) {
+		AresCRT::strCopy(this->Extension, buffer, 0x04);
+	}
 	
-	if(ini->ReadString(this->Identifier, "File.MMExtension", "", buffer, bufferSize))
-		strncpy(this->MMExtension, buffer, 0x04);
+	if(ini->ReadString(this->Identifier, "File.MMExtension", "", buffer, bufferSize)) {
+		AresCRT::strCopy(this->MMExtension, buffer, 0x04);
+	}
 
-	if(ini->ReadString(this->Identifier, "NewTheaterPrefix", "", buffer, bufferSize))
-		strncpy(this->Letter, buffer, 0x01);
+	if(ini->ReadString(this->Identifier, "NewTheaterPrefix", "", buffer, bufferSize)) {
+		AresCRT::strCopy(this->Letter, buffer, 0x02);
+	}
 	
 	this->RadarTerrainBrightness = (float)ini->ReadDouble(this->Identifier, "RadarTerrainBrightness", this->RadarTerrainBrightness);
 	
@@ -171,8 +169,7 @@ void CustomTheater::LoadFromINI(CCINIClass* ini)
 	
 	//new stuff
 	this->RMG_Available = ini->ReadBool(this->Identifier, "RMG.Available", this->RMG_Available);
-	if(this->RMG_Available)
-	{
+	if(this->RMG_Available) {
 		ReadIntArray(ini, this->Identifier, "RMG.AmbientLight", &this->RMG_AmbientLight);
 		ReadIntArray(ini, this->Identifier, "RMG.AmbientRed", &this->RMG_AmbientRed);
 		ReadIntArray(ini, this->Identifier, "RMG.AmbientGreen", &this->RMG_AmbientGreen);
@@ -225,16 +222,14 @@ DEFINE_HOOK(5FEB94, CustomTheater_Delegate_OverlayTypes2, 6) { POINTER_VOODOO_EX
 DEFINE_HOOK(5FEE42, CustomTheater_Delegate_OverlayTypes3, 6) { POINTER_VOODOO_EX(CURRENT_THEATER, EDX); return 0; }
 DEFINE_HOOK(6B57A7, CustomTheater_Delegate_SmudgeTypes2, 6) { POINTER_VOODOO_EX(CURRENT_THEATER, ECX); return 0; }
 
-DEFINE_HOOK(6275F4, CustomTheater_Delegate_PaletteCollection, 6)
-{
+DEFINE_HOOK(6275F4, CustomTheater_Delegate_PaletteCollection, 6) {
 	GET(int*, indexp, EBP);
 	POINTER_VOODOO_EX(*indexp, EDI);
 	return 0;
 }
 
 //not coverable using my voodoo :(
-DEFINE_HOOK(74D45A, CustomTheater_Delegate_Veinhole, 0)
-{
+DEFINE_HOOK(74D45A, CustomTheater_Delegate_Veinhole, 0) {
 	GET(int, index, ECX);
 	R->EAX<char*>(CustomTheater::Get(index)->Extension);
 	R->ECX<DWORD>(R->ESP());
@@ -245,34 +240,30 @@ DEFINE_HOOK(74D45A, CustomTheater_Delegate_Veinhole, 0)
 #undef POINTER_VOODOO
 #undef POINTER_VOODOO_EX
 
-DEFINE_HOOK(6722F0, CustomTeater_Init, 5)
-{
+DEFINE_HOOK(6722F0, CustomTeater_Init, 5) {
 	GET_STACK(CCINIClass*, ini, 0x04);
 	CustomTheater::LoadFromINIList(ini);
 	return 0;
 }
 
-DEFINE_HOOK(6BEAC3, CustomTheater_Clear, 6)
-{
+DEFINE_HOOK(6BEAC3, CustomTheater_Clear, 6) {
 	CustomTheater::CleanUp();
 	return 0;
 }
 
 //RMG stuff
 
-DEFINE_HOOK(5970B1, RMG_CustomTheater_FillTheaterList, 5)
-{
+DEFINE_HOOK(5970B1, RMG_CustomTheater_FillTheaterList, 5) {
 	GET(HWND, hWnd, EDI); //listbox handle
 	
 	const wchar_t* defaultSelection = NULL;
-	for(int i = 0; i < CustomTheater::Array.Count; i++)
-	{
-		if(CustomTheater::Array[i]->RMG_Available)
-		{
+	for(int i = 0; i < CustomTheater::Array.Count; i++) {
+		if(CustomTheater::Array[i]->RMG_Available) {
 			const wchar_t* displayName = StringTable::LoadString(CustomTheater::Array[i]->UIName);
 			
-			if(!defaultSelection)
+			if(!defaultSelection) {
 				defaultSelection = displayName;
+			}
 		
 			//list the item
 			LRESULT result = SendMessageA(hWnd, WW_CB_ADDITEM, 0, (LPARAM)displayName); //text display
@@ -289,18 +280,14 @@ DEFINE_HOOK(5970B1, RMG_CustomTheater_FillTheaterList, 5)
 	return 0x59712A;
 }
 
-DEFINE_HOOK(599863, RMG_CustomTheater_AmbientLight, 5)
-{
+DEFINE_HOOK(599863, RMG_CustomTheater_AmbientLight, 5) {
 	GET(MapSeedClass*, mapSeed, EDI);
 	
 	CustomTheater* theater = CustomTheater::Get(mapSeed->Theater);
-	if(theater && theater->RMG_AmbientLight.Count >= 4)
-	{
+	if(theater && theater->RMG_AmbientLight.Count >= 4) {
 		R->EDX<int>(theater->RMG_AmbientLight[mapSeed->Time]);
 		return 0x59987E;
-	}
-	else
-	{
+	} else {
 		return 0;
 	}
 }
@@ -311,11 +298,7 @@ DEFINE_HOOK(59A56B, RMG_CustomTheater_AmbientLightColor, 5)
 	
 	CustomTheater* theater = CustomTheater::Get(mapSeed->Theater);
 	if(theater &&
-		theater->RMG_AmbientRed.Count >= 4 &&
-		theater->RMG_AmbientGreen.Count >= 4 &&
-		theater->RMG_AmbientBlue.Count >= 4
-	)
-	{
+		theater->RMG_AmbientRed.Count >= 4 && theater->RMG_AmbientGreen.Count >= 4 && theater->RMG_AmbientBlue.Count >= 4) {
 		ScenarioClass& scenario = *ScenarioClass::Instance;
 		int time = mapSeed->Time;
 		
@@ -324,9 +307,7 @@ DEFINE_HOOK(59A56B, RMG_CustomTheater_AmbientLightColor, 5)
 		scenario.Blue = theater->RMG_AmbientBlue[time];
 		
 		return 0x59A5F2;
-	}
-	else
-	{
+	} else {
 		return 0;
 	}
 }

@@ -7,6 +7,7 @@
 #include <PCX.h>
 #include <StringTable.h>
 
+#include "Ares.CRT.h"
 #include "../_Container.hpp"
 
 class HouseTypeExt

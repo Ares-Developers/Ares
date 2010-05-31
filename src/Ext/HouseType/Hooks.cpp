@@ -29,7 +29,7 @@ DEFINE_HOOK(553A05, HTExt_GetLSSpecialName, 6)
 	HouseTypeClass* pThis = HouseTypeClass::Array->Items[n];
 
 	if(HouseTypeExt::ExtData *pData = HouseTypeExt::ExtMap.Find(pThis)) {
-		R->EAX(StringTable::LoadString(pData->LSSpecialName));
+		R->EAX(StringTable::LoadString(pData->LSSpecialName)); // limited to wchar_t[110]
 		return 0x553B3B;
 	}
 
@@ -42,7 +42,7 @@ DEFINE_HOOK(553D06, HTExt_GetLSBrief, 6)
 	HouseTypeClass* pThis = HouseTypeClass::Array->Items[n];
 
 	if(HouseTypeExt::ExtData *pData = HouseTypeExt::ExtMap.Find(pThis)) {
-		R->ESI(StringTable::LoadString(pData->LSBrief));
+		R->ESI(StringTable::LoadString(pData->LSBrief)); // limited to some tiny amount
 		return 0x553E54;
 	}
 

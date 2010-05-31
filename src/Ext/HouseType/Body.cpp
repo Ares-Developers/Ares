@@ -1,6 +1,7 @@
 #include "Body.h"
 #include "../HouseType/Body.h"
 #include "../../Ares.h"
+#include "../../Ares.CRT.h"
 #include <ScenarioClass.h>
 
 template<> const DWORD Extension<HouseTypeClass>::Canary = 0xAFFEAFFE;
@@ -156,36 +157,36 @@ void HouseTypeExt::ExtData::LoadFromRulesFile(HouseTypeClass *pThis, CCINIClass 
 	this->InitializeConstants(pThis);
 
 	if (pINI->ReadString(pID, "File.Flag", "", Ares::readBuffer, Ares::readLength)) {
-		strncpy(this->FlagFile, Ares::readBuffer, 0x20);
+		AresCRT::strCopy(this->FlagFile, Ares::readBuffer, 0x20);
 		PCX::Instance->LoadFile(this->FlagFile);
 	}
 
 	if (pINI->ReadString(pID, "File.LoadScreen", "", Ares::readBuffer, Ares::readLength)) {
-		strncpy(this->LSFile, Ares::readBuffer, 0x20);
+		AresCRT::strCopy(this->LSFile, Ares::readBuffer, 0x20);
 	}
 
 	if (pINI->ReadString(pID, "File.LoadScreenPAL", "", Ares::readBuffer, Ares::readLength)) {
-		strncpy(this->LSPALFile, Ares::readBuffer, 0x20);
+		AresCRT::strCopy(this->LSPALFile, Ares::readBuffer, 0x20);
 	}
 
 	if (pINI->ReadString(pID, "File.Taunt", "", Ares::readBuffer, Ares::readLength)) {
-		strncpy(this->TauntFile, Ares::readBuffer, 0x20);
+		AresCRT::strCopy(this->TauntFile, Ares::readBuffer, 0x20);
 	}
 
 	if (pINI->ReadString(pID, "LoadScreenText.Name", "", Ares::readBuffer, Ares::readLength)) {
-		strncpy(this->LSName, Ares::readBuffer, 0x20);
+		AresCRT::strCopy(this->LSName, Ares::readBuffer, 0x20);
 	}
 
 	if (pINI->ReadString(pID, "LoadScreenText.SpecialName", "", Ares::readBuffer, Ares::readLength)) {
-		strncpy(this->LSSpecialName, Ares::readBuffer, 0x20);
+		AresCRT::strCopy(this->LSSpecialName, Ares::readBuffer, 0x20);
 	}
 
 	if (pINI->ReadString(pID, "LoadScreenText.Brief", "", Ares::readBuffer, Ares::readLength)) {
-		strncpy(this->LSBrief, Ares::readBuffer, 0x20);
+		AresCRT::strCopy(this->LSBrief, Ares::readBuffer, 0x20);
 	}
 
 	if (pINI->ReadString(pID, "MenuText.Status", "", Ares::readBuffer, Ares::readLength)) {
-		strncpy(this->StatusText, Ares::readBuffer, 0x20);
+		AresCRT::strCopy(this->StatusText, Ares::readBuffer, 0x20);
 	}
 }
 

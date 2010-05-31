@@ -2,6 +2,8 @@
 #include "../../Misc/CustomTheater.h"
 #include "../../Misc/Debug.h"
 
+#include "Ares.CRT.h"
+
 #include <GeneralDefinitions.h>
 #include <Theater.h>
 #include <TerrainTypeClass.h>
@@ -47,18 +49,17 @@ DEFINE_HOOK(5F9070, ObjectTypeClass_Load2DArt, 0)
 					pType->ArcticArtInUse = false;
 					_snprintf(basename, 256, "%s", pType->ImageFile);
 				}
-				strncpy(pType->ImageFile, basename, 0x19);
+				AresCRT::strCopy(pType->ImageFile, basename, 0x19);
 			}
 		}
 	} else if(pType->AlternateArcticArt && scenarioTheater == th_Snow && !pType->ImageIsOutdated) { //outdated? you think I know what it means? hahahaha
 		if(!pType->ArcticArtInUse) {
 			_snprintf(basename, 256, "%sA", pType->ImageFile);
-			strncpy(pType->ImageFile, basename, 0x19);
+			AresCRT::strCopy(pType->ImageFile, basename, 0x19);
 			pType->ArcticArtInUse = true;
 		}
 	} else {
-		strncpy(basename, pType->ImageFile, 0x1A);
-		basename[0x19] = 0;
+		AresCRT::strCopy(basename, pType->ImageFile, 0x1A);
 		pType->ArcticArtInUse = false;
 	}
 

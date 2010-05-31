@@ -2,6 +2,7 @@
 #define CUSTOMTHEATER_H
 
 #include "../Ares.h"
+#include "../Ares.CRT.h"
 #include "../Utilities/Template.h"
 #include <Theater.h>
 
@@ -44,7 +45,7 @@ private:
 
 	CustomTheater(const char* id)
 	{
-		strncpy(this->Identifier, id, 0x09);
+		AresCRT::strCopy(this->Identifier, id, 0x10);
 
 		//Temperate defaults
 		this->RadarTerrainBrightness = 1.0f;

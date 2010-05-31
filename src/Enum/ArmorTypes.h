@@ -9,6 +9,7 @@
 
 #include "../Ext/WarheadType/Body.h"
 #include "../Ares.h"
+#include "../Ares.CRT.h"
 
 #include "_Enumerator.hpp"
 
@@ -21,7 +22,7 @@ class ArmorType  : public Enumerable<ArmorType>
 		WarheadTypeExt::VersesData DefaultVerses;
 
 	ArmorType(const char *Title) {
-		strncpy(this->Name, Title, 31);
+		AresCRT::strCopy(this->Name, Title, 31);
 		DefaultIndex = -1;
 		Array.AddItem(this);
 	}

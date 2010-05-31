@@ -6,6 +6,7 @@
 #include <UnitTypeClass.h>
 
 #include "_Enumerator.hpp"
+#include "../Ares.CRT.h"
 
 #ifdef DEBUGBUILD
 #include "../Misc/Debug.h"
@@ -24,7 +25,7 @@ public:
 
 	GenericPrerequisite(const char *Title)
 	{
-		strncpy(this->Name, Title, 32);
+		AresCRT::strCopy(this->Name, Title, 32);
 		Array.AddItem(this);
 	}
 
