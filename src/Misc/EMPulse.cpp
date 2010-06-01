@@ -5,7 +5,7 @@
 #include <set>
 
 //! Enables verbose debug output for some WarheadTypeExt functions.
-bool EMPulse::verbose = true;
+bool EMPulse::verbose = false;
 
 //! Paralyses all units using an EMP cellspread weapon.
 /*!

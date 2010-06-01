@@ -1,5 +1,6 @@
 #include "Body.h"
 #include "../TechnoType/Body.h"
+#include "../BuildingType/Body.h"
 #include "../../Misc/Debug.h"
 
 #include <SpecificStructures.h>
@@ -72,7 +73,7 @@ DEFINE_HOOK(6F9E76, TechnoClass_Update_CheckOperators, 6)
 			}
 		} else { // doesn't have an operator, so...
 			if(!pThis->Deactivated) { // ...if it's not off yet, turn it off!
-				if (BuildingClass * PrismTower = specific_cast<BuildingClass *>(T)) {
+				if (BuildingClass * PrismTower = specific_cast<BuildingClass *>(pThis)) {
 					BuildingTypeExt::cPrismForwarding::RemoveFromNetwork(PrismTower, true);
 				}
 				pThis->Deactivate();
