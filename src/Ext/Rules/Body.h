@@ -25,13 +25,18 @@ class RulesExt
 		double EngineerDamage;
 		bool EngineerAlwaysCaptureTech;
 		Valueable<MouseCursor> EngineerDamageCursor;
+		bool MultiEngineer[2];
 
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			ElectricDeath(NULL),
 			EngineerDamage (0.0F),
 			EngineerAlwaysCaptureTech (true),
 			EngineerDamageCursor (MouseCursor::First[51])
-			{ };
+			{
+				MultiEngineer[0] = false; // Skirmish
+				MultiEngineer[1] = false; // LAN
+				MultiEngineer[2] = false; // WOnline
+			};
 
 		virtual ~ExtData() {
 		}

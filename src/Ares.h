@@ -81,14 +81,16 @@ public:
 	public:
 		static CCINIClass * INI;
 
-		static void OpenConfig();
-		static void CloseConfig();
+		static CCINIClass* OpenConfig(const char*);
+		static void CloseConfig(CCINIClass**);
 		static void LoadConfig();
 
-		static void Load(CCINIClass *pINI);
+		static void Load(CCINIClass*);
+		static void LoadFromRules(CCINIClass*);
 
 		static bool Initialized;
 		static bool AllowParallelAIQueues;
+		static bool AllowMultiEngineer;
 
 		static byte GFX_DX_Force;
 

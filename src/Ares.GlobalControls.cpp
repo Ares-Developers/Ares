@@ -3,6 +3,7 @@
 
 bool Ares::GlobalControls::Initialized = 0;
 bool Ares::GlobalControls::AllowParallelAIQueues = 1;
+bool Ares::GlobalControls::AllowMultiEngineer = 0;
 
 byte Ares::GlobalControls::GFX_DX_Force = 0;
 
@@ -33,6 +34,10 @@ void Ares::GlobalControls::Load(CCINIClass *pINI) {
 			AllowBypassBuildLimit[diffIdx] = _strcmpi(cur, "Yes") == 0;
 		}
 	}
+}
+
+void Ares::GlobalControls::LoadFromRules(CCINIClass *pINI) {
+	AllowMultiEngineer = pINI->ReadBool("General", "AllowMultiEngineer", AllowMultiEngineer);
 }
 
 void Ares::GlobalControls::LoadConfig() {
@@ -71,22 +76,40 @@ void Ares::GlobalControls::LoadConfig() {
 
 DEFINE_HOOK(6BC0CD, _LoadRA2MD, 5)
 {
-	Ares::GlobalControls::OpenConfig();
+	Ares::GlobalControls::INI = Ares::GlobalControls::OpenConfig("Ares.ini");
 	Ares::GlobalControls::LoadConfig();
 	return 0;
 }
 
-void Ares::GlobalControls::OpenConfig() {
+DEFINE_HOOK(5FACDF, _Options_LoadFromINI, 5)
+{
+	// open the rules file
+	Debug::Log("--------- Loading Ares global settings -----------\n");
+	CCINIClass *pINI = Ares::GlobalControls::OpenConfig("rulesmd.ini");
+	
+	// load and output settings
+	Ares::GlobalControls::LoadFromRules(pINI);
+	Debug::Log("AllowMultiEngineer is %s\n", (Ares::GlobalControls::AllowMultiEngineer ? "ON" : "OFF"));
+
+	// clean up
+	Ares::GlobalControls::CloseConfig(&pINI);
+	return 0;
+}
+
+CCINIClass* Ares::GlobalControls::OpenConfig(const char* file) {
+	CCINIClass* INI;
 	GAME_ALLOC(CCINIClass, INI);
 	CCFileClass *cfg;
-	GAME_ALLOC(CCFileClass, cfg, "Ares.ini");
+	GAME_ALLOC(CCFileClass, cfg, file);
 	if(cfg->Exists(NULL)) {
 		INI->ReadCCFile(cfg);
 	}
 	GAME_DEALLOC(cfg);
+
+	return INI;
 }
 
-void Ares::GlobalControls::CloseConfig() {
-	GAME_DEALLOC(INI);
-	INI = NULL;
+void Ares::GlobalControls::CloseConfig(CCINIClass** ppINI) {
+	GAME_DEALLOC(&ppINI);
+	*ppINI = NULL;
 }

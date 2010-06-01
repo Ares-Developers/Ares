@@ -86,9 +86,6 @@ void RulesExt::ExtData::LoadAfterTypeData(RulesClass *pThis, CCINIClass *pINI) {
 	pData->EngineerDamage = pINI->ReadDouble("General", "EngineerDamage", pData->EngineerDamage);
 	pData->EngineerAlwaysCaptureTech = pINI->ReadBool("General", "EngineerAlwaysCaptureTech", pData->EngineerAlwaysCaptureTech);
 	pData->EngineerDamageCursor.Read(&exINI, "General", "EngineerDamageCursor");
-
-	// should be variably changed by rules/ui/game mode later
-	GameModeOptionsClass::Instance->MultiEngineer = true;
 }
 
 // =============================

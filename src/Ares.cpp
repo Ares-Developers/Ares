@@ -113,7 +113,7 @@ void __stdcall Ares::ExeRun()
 
 void __stdcall Ares::ExeTerminate()
 {
-	GlobalControls::CloseConfig();
+	GlobalControls::CloseConfig(&Ares::GlobalControls::INI);
 	Debug::LogFileClose(111);
 }
 
