@@ -198,13 +198,13 @@ bool BuildingTypeExt::cPrismForwarding::ValidateSupportTower(
 	//TargetTower = the tower that we are forwarding to
 	//SlaveTower = the tower being considered to support TargetTower
 	if(SlaveTower->IsAlive) {
+		BuildingTypeClass *pSlaveType = SlaveTower->Type;
+		BuildingTypeExt::ExtData *pSlaveTypeData = BuildingTypeExt::ExtMap.Find(pSlaveType);
 		if (pSlaveTypeData->PrismForwarding.Enabled == YES || pSlaveTypeData->PrismForwarding.Enabled == FORWARD) {
 			//building is a prism tower
 			//get all the data we need
 			TechnoExt::ExtData *pTechnoData = TechnoExt::ExtMap.Find(SlaveTower);
-			BuildingTypeClass *pSlaveType = SlaveTower->Type;
 			BuildingExt::ExtData *pSlaveData = BuildingExt::ExtMap.Find(SlaveTower);
-			BuildingTypeExt::ExtData *pSlaveTypeData = BuildingTypeExt::ExtMap.Find(pSlaveType);
 			int SlaveMission = SlaveTower->GetCurrentMission();
 			//now check all the rules
 			if(SlaveTower->ReloadTimer.Ignorable()
@@ -219,7 +219,7 @@ bool BuildingTypeExt::cPrismForwarding::ValidateSupportTower(
 				&& pTechnoData->IsOperated() //operator logic
 				&& SlaveTower->IsPowerOnline() //base-powered or overpowerer-powered
 				&& !SlaveTower->IsUnderEMP() //EMP logic - I think this should already be checked by IsPowerOnline() but included just to be sure
-			{
+			) {
 				BuildingTypeClass *pTargetType = TargetTower->Type;
 				if (pSlaveTypeData->PrismForwarding.Targets.FindItemIndex(&pTargetType) != -1) {
 					//valid type to forward from
@@ -282,7 +282,7 @@ void BuildingTypeExt::cPrismForwarding::SetChargeDelay_Get
 		if (chain != LongestChain) {
 			BuildingTypeExt::ExtData *pTypeData = BuildingTypeExt::ExtMap.Find(TargetTower->Type);
 			//update the delays for this chain
-			int thisDelay = pTypeData->PrismForwarding.ChargeDelay.Get() + LongestCDelay[chain + 1];
+			unsigned int thisDelay = pTypeData->PrismForwarding.ChargeDelay.Get() + LongestCDelay[chain + 1];
 			if ( thisDelay > LongestCDelay[chain]) {
 				LongestCDelay[chain] = thisDelay;
 			}
@@ -344,7 +344,7 @@ void BuildingTypeExt::cPrismForwarding::RemoveSlave(BuildingClass *SlaveTower, b
 		//finally, remove all the preceding slaves from the network
 		int senderIdx = 0;
 		while(senderIdx < pSlaveData->PrismForwarding.Senders.Count) {
-			if (BuildingClass *NextTower = pTargetData->PrismForwarding.Senders[senderIdx]) {
+			if (BuildingClass *NextTower = pSlaveData->PrismForwarding.Senders[senderIdx]) {
 				RemoveSlave(NextTower, false);
 				++senderIdx;
 			}
