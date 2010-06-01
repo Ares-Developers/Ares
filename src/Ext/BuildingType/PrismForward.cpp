@@ -176,8 +176,6 @@ int BuildingTypeExt::cPrismForwarding::AcquireSlaves_SingleStage
 		nearestPrism->DelayBeforeFiring = nearestPrism->Type->DelayedFireDelay;
 		nearestPrism->PrismStage = pcs_Slave;
 		nearestPrism->PrismTargetCoords = FLH;
-		nearestPrism->DestroyNthAnim(BuildingAnimSlot::Active);
-		nearestPrism->PlayNthAnim(BuildingAnimSlot::Special);
 
 		BuildingExt::ExtData *pSlaveData = BuildingExt::ExtMap.Find(nearestPrism);
 		BuildingExt::ExtData *pTargetData = BuildingExt::ExtMap.Find(TargetTower);
@@ -305,6 +303,13 @@ void BuildingTypeExt::cPrismForwarding::SetChargeDelay_Set
 	(BuildingClass * TargetTower, int chain, DWORD *LongestCDelay, DWORD *LongestFDelay) {
 	BuildingExt::ExtData *pTargetData = BuildingExt::ExtMap.Find(TargetTower);
 	pTargetData->PrismForwarding.PrismChargeDelay = (LongestFDelay[chain] - TargetTower->DelayBeforeFiring) + LongestCDelay[chain];
+	if (pTargetData->PrismForwarding.PrismChargeDelay == 0) {
+		//no delay, so start animations now
+		if (TargetTower->Type->BuildingAnim[BuildingAnimSlot::Special].Anim[0]) { //only if it actually has a special anim
+			TargetTower->DestroyNthAnim(BuildingAnimSlot::Active);
+			TargetTower->PlayNthAnim(BuildingAnimSlot::Special);
+		}
+	}
 	int senderIdx = 0;
 	while (senderIdx < pTargetData->PrismForwarding.Senders.Count) {
 		BuildingClass *Sender = pTargetData->PrismForwarding.Senders[senderIdx];
@@ -312,6 +317,7 @@ void BuildingTypeExt::cPrismForwarding::SetChargeDelay_Set
 		++senderIdx;
 	}
 }
+
 
 //Whenever a building is incapacitated, this method should be called to take it out of any prism network
 //destruction, change sides, mind-control, sold, warped, emp, undeployed, low power, drained, lost operator

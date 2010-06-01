@@ -24,8 +24,6 @@ DEFINE_HOOK(44B2FE, BuildingClass_Mi_Attack_IsPrism, 6)
 			B->DelayBeforeFiring = B->Type->DelayedFireDelay;
 			B->PrismTargetCoords.X = 0;
 			B->PrismTargetCoords.Y = B->PrismTargetCoords.Z = 0;
-			B->DestroyNthAnim(BuildingAnimSlot::Active);
-			B->PlayNthAnim(BuildingAnimSlot::Special);
 			pMasterData->PrismForwarding.ModifierReserve = 0.0;
 			pMasterData->PrismForwarding.DamageReserve = 0;
 
@@ -130,8 +128,10 @@ DEFINE_HOOK(4503F0, BuildingClass_Update_Prism, 9)
 			--pData->PrismForwarding.PrismChargeDelay;
 			if (pData->PrismForwarding.PrismChargeDelay <= 0) {
 				//now it's time to start charging
-				pThis->DestroyNthAnim(BuildingAnimSlot::Active);
-				pThis->PlayNthAnim(BuildingAnimSlot::Special);
+				if (pThis->Type->BuildingAnim[BuildingAnimSlot::Special].Anim[0]) { //only if it actually has a special anim
+					pThis->DestroyNthAnim(BuildingAnimSlot::Active);
+					pThis->PlayNthAnim(BuildingAnimSlot::Special);
+				}
 			}
 		}
 	}
