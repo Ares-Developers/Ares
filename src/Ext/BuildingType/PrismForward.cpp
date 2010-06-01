@@ -198,44 +198,50 @@ bool BuildingTypeExt::cPrismForwarding::ValidateSupportTower(
 	//TargetTower = the tower that we are forwarding to
 	//SlaveTower = the tower being considered to support TargetTower
 	if(SlaveTower->IsAlive) {
-		if(SlaveTower->ReloadTimer.Ignorable()) {
-			if(SlaveTower != TargetTower) {
-				if (!SlaveTower->DelayBeforeFiring) {
-					int SlaveMission = SlaveTower->GetCurrentMission();
-					if(!SlaveTower->IsBeingDrained() && SlaveMission != mission_Attack
-						&& SlaveMission != mission_Construction && SlaveMission != mission_Selling) {
-						TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(SlaveTower);
-						if (pData->IsOperated() && pData->IsPowered() && !SlaveTower->IsUnderEMP() &&!SlaveTower->IsBeingWarpedOut()) {
-							BuildingExt::ExtData *pSlaveData = BuildingExt::ExtMap.Find(SlaveTower);
-							BuildingTypeClass *pSlaveType = SlaveTower->Type;
-							BuildingTypeExt::ExtData *pSlaveTypeData = BuildingTypeExt::ExtMap.Find(pSlaveType);
-							if (pSlaveTypeData->PrismForwarding.Enabled == YES || pSlaveTypeData->PrismForwarding.Enabled == FORWARD) {
-								//building is a prism tower
-								BuildingTypeClass *pTargetType = TargetTower->Type;
-								if (pSlaveTypeData->PrismForwarding.Targets.FindItemIndex(&pTargetType) != -1) {
-									//valid type to forward from
-									HouseClass *pMasterHouse = MasterTower->Owner;
-									HouseClass *pTargetHouse = TargetTower->Owner;
-									HouseClass *pSlaveHouse = SlaveTower->Owner;
-									if ((pSlaveHouse == pTargetHouse && pSlaveHouse == pMasterHouse)
-										|| (pSlaveTypeData->PrismForwarding.ToAllies
-												&& pSlaveHouse->IsAlliedWith(pTargetHouse) && pSlaveHouse->IsAlliedWith(pMasterHouse))) {
-										//ownership/alliance rules satisfied
-										CellStruct tarCoords = TargetTower->GetCell()->MapCoords;
-										CoordStruct MyPosition, curPosition;
-										TargetTower->GetPosition_2(&MyPosition);
-										SlaveTower->GetPosition_2(&curPosition);
-										int Distance = MyPosition.DistanceFrom(curPosition);
-										Debug::Log("[PrismForwarding] Distance=%u, SupportRange=%d\n",
-											Distance, pSlaveTypeData->PrismForwarding.GetSupportRange(pSlaveType));
-										if(pSlaveTypeData->PrismForwarding.SupportRange == -1
-											|| Distance <= pSlaveTypeData->PrismForwarding.GetSupportRange(pSlaveType)) {
-											//within range
-											return true;
-										}
-									}
-								}
-							}
+		if (pSlaveTypeData->PrismForwarding.Enabled == YES || pSlaveTypeData->PrismForwarding.Enabled == FORWARD) {
+			//building is a prism tower
+			//get all the data we need
+			TechnoExt::ExtData *pTechnoData = TechnoExt::ExtMap.Find(SlaveTower);
+			BuildingTypeClass *pSlaveType = SlaveTower->Type;
+			BuildingExt::ExtData *pSlaveData = BuildingExt::ExtMap.Find(SlaveTower);
+			BuildingTypeExt::ExtData *pSlaveTypeData = BuildingTypeExt::ExtMap.Find(pSlaveType);
+			int SlaveMission = SlaveTower->GetCurrentMission();
+			//now check all the rules
+			if(SlaveTower->ReloadTimer.Ignorable()
+				&& SlaveTower != TargetTower
+				&& !SlaveTower->DelayBeforeFiring
+				&& !SlaveTower->IsBeingDrained()
+				&& !SlaveTower->IsBeingWarpedOut()
+				&& SlaveMission != mission_Attack
+				&& SlaveMission != mission_Construction
+				&& SlaveMission != mission_Selling
+				&& pTechnoData->IsPowered() //robot control logic
+				&& pTechnoData->IsOperated() //operator logic
+				&& SlaveTower->IsPowerOnline() //base-powered or overpowerer-powered
+				&& !SlaveTower->IsUnderEMP() //EMP logic - I think this should already be checked by IsPowerOnline() but included just to be sure
+			{
+				BuildingTypeClass *pTargetType = TargetTower->Type;
+				if (pSlaveTypeData->PrismForwarding.Targets.FindItemIndex(&pTargetType) != -1) {
+					//valid type to forward from
+					HouseClass *pMasterHouse = MasterTower->Owner;
+					HouseClass *pTargetHouse = TargetTower->Owner;
+					HouseClass *pSlaveHouse = SlaveTower->Owner;
+					if ((pSlaveHouse == pTargetHouse && pSlaveHouse == pMasterHouse)
+						|| (pSlaveTypeData->PrismForwarding.ToAllies
+							&& pSlaveHouse->IsAlliedWith(pTargetHouse)
+							&& pSlaveHouse->IsAlliedWith(pMasterHouse))) {
+						//ownership/alliance rules satisfied
+						CellStruct tarCoords = TargetTower->GetCell()->MapCoords;
+						CoordStruct MyPosition, curPosition;
+						TargetTower->GetPosition_2(&MyPosition);
+						SlaveTower->GetPosition_2(&curPosition);
+						int Distance = MyPosition.DistanceFrom(curPosition);
+						Debug::Log("[PrismForwarding] Distance=%u, SupportRange=%d\n",
+							Distance, pSlaveTypeData->PrismForwarding.GetSupportRange(pSlaveType));
+						if(pSlaveTypeData->PrismForwarding.SupportRange == -1
+							|| Distance <= pSlaveTypeData->PrismForwarding.GetSupportRange(pSlaveType)) {
+							//within range
+							return true;
 						}
 					}
 				}
@@ -307,57 +313,40 @@ void BuildingTypeExt::cPrismForwarding::SetChargeDelay_Set
 	}
 }
 
-
 //Whenever a building is incapacitated, this method should be called to take it out of any prism network
 //destruction, change sides, mind-control, sold, warped, emp, undeployed, low power, drained, lost operator
 void BuildingTypeExt::cPrismForwarding::RemoveSlave(BuildingClass *SlaveTower, bool bCease) {
 	if (int PrismStage = SlaveTower->PrismStage) {
+		//is a slave or a master tower
 		BuildingExt::ExtData *pSlaveData = BuildingExt::ExtMap.Find(SlaveTower);
-		OrphanSlave(SlaveTower);
+		BuildingTypeClass *pSlaveType = SlaveTower->Type;
+		BuildingTypeExt::ExtData *pSlaveTypeData = BuildingTypeExt::ExtMap.Find(pSlaveType);
+		if (pSlaveData->PrismForwarding.PrismChargeDelay || bCease) {
+			//either hasn't started charging yet or animations have been reset so should go idle immediately
+			SlaveTower->PrismStage = pcs_Idle;
+			pSlaveData->PrismForwarding.PrismChargeDelay = 0;
+			SlaveTower->DelayBeforeFiring = 0;
+			pSlaveData->PrismForwarding.ModifierReserve = 0.0;
+			pSlaveData->PrismForwarding.DamageReserve = 0;
+			//animations should be controlled by whatever incapacitated the tower so no need to mess with anims here
+		}
 		if (BuildingClass *TargetTower = pSlaveData->PrismForwarding.SupportTarget) {
+			//there is a target tower (so this is a slave rather than a master)
 			BuildingExt::ExtData *pTargetData = BuildingExt::ExtMap.Find(TargetTower);
 			signed int idx = pTargetData->PrismForwarding.Senders.FindItemIndex(&SlaveTower);
 			if(idx != -1) {
 				pTargetData->PrismForwarding.Senders.RemoveItem(idx);
 			}
-		}
-		if (bCease) {
-			pSlaveData->PrismForwarding.PrismChargeDelay = 0;
-			SlaveTower->DelayBeforeFiring = 0;
-			pSlaveData->PrismForwarding.ModifierReserve = 0.0;
-			pSlaveData->PrismForwarding.DamageReserve = 0;
-			SlaveTower->DestroyNthAnim(BuildingAnimSlot::Special);
-			//SlaveTower->PlayNthAnim(BuildingAnimSlot::Active); //do we need this?
-			SlaveTower->PrismStage = pcs_Idle;
-		}
-	}
-}
-
-void BuildingTypeExt::cPrismForwarding::OrphanSlave(BuildingClass *SlaveTower) {
-	if (int PrismStage = SlaveTower->PrismStage) {
-		BuildingExt::ExtData *pSlaveData = BuildingExt::ExtMap.Find(SlaveTower);
-		BuildingTypeClass *pSlaveType = SlaveTower->Type;
-		BuildingTypeExt::ExtData *pSlaveTypeData = BuildingTypeExt::ExtMap.Find(pSlaveType);
-		if (pSlaveData->PrismForwarding.PrismChargeDelay) {
-			//hasn't started charging yet, so can go idle immediately
-			SlaveTower->PrismStage = pcs_Idle;
-			pSlaveData->PrismForwarding.PrismChargeDelay = 0;
-			SlaveTower->DelayBeforeFiring = 0;
-			pSlaveData->PrismForwarding.ModifierReserve = 0.0;
-			pSlaveData->PrismForwarding.DamageReserve = 0;
-			SlaveTower->DestroyNthAnim(BuildingAnimSlot::Special);
-			//SlaveTower->PlayNthAnim(BuildingAnimSlot::Active); //do we need this?
-		} //else this is already charging so allow anim to continue
-		if (BuildingClass *TargetTower = pSlaveData->PrismForwarding.SupportTarget) {
-			BuildingExt::ExtData *pTargetData = BuildingExt::ExtMap.Find(TargetTower);
 			--TargetTower->SupportingPrisms;  //Ares doesn't actually use this, but maintaining it anyway (as direct feeds only)
-			pSlaveData->PrismForwarding.SupportTarget = NULL; //thus making this slave tower an orphan
-			int senderIdx = 0;
-			while(senderIdx < pSlaveData->PrismForwarding.Senders.Count) {
-				if (BuildingClass *NextTower = pTargetData->PrismForwarding.Senders[senderIdx]) {
-					OrphanSlave(NextTower);
-					++senderIdx;
-				}
+			//slave tower is no longer reference by the target
+			pSlaveData->PrismForwarding.SupportTarget = NULL; //slave tower no longer references the target
+		}
+		//finally, remove all the preceding slaves from the network
+		int senderIdx = 0;
+		while(senderIdx < pSlaveData->PrismForwarding.Senders.Count) {
+			if (BuildingClass *NextTower = pTargetData->PrismForwarding.Senders[senderIdx]) {
+				RemoveSlave(NextTower, false);
+				++senderIdx;
 			}
 		}
 	}

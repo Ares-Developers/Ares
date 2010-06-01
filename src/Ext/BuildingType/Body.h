@@ -56,7 +56,6 @@ public:
 		static void SetChargeDelay_Get(BuildingClass * , int , int , int , DWORD *, DWORD *);
 		static void SetChargeDelay_Set(BuildingClass * , int , DWORD *, DWORD *);
 		static void RemoveSlave(BuildingClass *, bool);
-		static void OrphanSlave(BuildingClass *);
 
 		signed int GetSupportRange(BuildingTypeClass *);
 

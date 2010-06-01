@@ -17,6 +17,8 @@ DEFINE_HOOK(44B2FE, BuildingClass_Mi_Attack_IsPrism, 6)
 	if (pMasterTypeData->PrismForwarding.Enabled == BuildingTypeExt::cPrismForwarding::YES
 		|| pMasterTypeData->PrismForwarding.Enabled == BuildingTypeExt::cPrismForwarding::ATTACK) {
 
+		BuildingExt::ExtData *pMasterData = BuildingExt::ExtMap.Find(B);
+
 		if (B->PrismStage == pcs_Idle) {
 			B->PrismStage = pcs_Master;
 			B->DelayBeforeFiring = B->Type->DelayedFireDelay;
@@ -24,6 +26,8 @@ DEFINE_HOOK(44B2FE, BuildingClass_Mi_Attack_IsPrism, 6)
 			B->PrismTargetCoords.Y = B->PrismTargetCoords.Z = 0;
 			B->DestroyNthAnim(BuildingAnimSlot::Active);
 			B->PlayNthAnim(BuildingAnimSlot::Special);
+			pMasterData->PrismForwarding.ModifierReserve = 0.0;
+			pMasterData->PrismForwarding.DamageReserve = 0;
 
 			int LongestChain = 0;
 
@@ -41,10 +45,11 @@ DEFINE_HOOK(44B2FE, BuildingClass_Mi_Attack_IsPrism, 6)
 			Debug::Log("PrismForwarding: Converting Slave to Master\n");
 			//a slave tower is changing into a master tower at the last second
 			B->PrismStage = pcs_Master;
-			BuildingExt::ExtData *pMasterData = BuildingExt::ExtMap.Find(B);
-			pMasterData->PrismForwarding.SupportTarget = NULL;
 			B->PrismTargetCoords.X = 0;
 			B->PrismTargetCoords.Y = B->PrismTargetCoords.Z = 0;
+			pMasterData->PrismForwarding.ModifierReserve = 0.0;
+			pMasterData->PrismForwarding.DamageReserve = 0;
+			pMasterData->PrismForwarding.SupportTarget = NULL;
 
 		}
 
@@ -123,8 +128,11 @@ DEFINE_HOOK(4503F0, BuildingClass_Update_Prism, 9)
 		} else {
 			//still in delayed charge so not actually charging yet
 			--pData->PrismForwarding.PrismChargeDelay;
-			pThis->DestroyNthAnim(BuildingAnimSlot::Active);
-			pThis->PlayNthAnim(BuildingAnimSlot::Special);
+			if (pData->PrismForwarding.PrismChargeDelay <= 0) {
+				//now it's time to start charging
+				pThis->DestroyNthAnim(BuildingAnimSlot::Active);
+				pThis->PlayNthAnim(BuildingAnimSlot::Special);
+			}
 		}
 	}
 	return 0x4504E2;
