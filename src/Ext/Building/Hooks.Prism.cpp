@@ -233,3 +233,27 @@ DEFINE_HOOK(71AF76, PrismForward_BuildingWarped, 9) {
 	}
 	return 0;
 }
+
+
+DEFINE_HOOK(70FD9A, TechnoClass_Drain, 6)
+{
+	GET(TechnoClass *, Drainer, ESI);
+	GET(TechnoClass *, Drainee, EDI);
+
+	if(Drainee->DrainingMe != Drainer) { // else we're already being drained, nothing to do
+		if (BuildingClass * B = specific_cast<BuildingClass *>(Drainee)) {
+
+		}
+	}
+
+	return 0;
+}
+
+DEFINE_HOOK(454B3D, BuildingClass_UpdatePowered, 6)
+{
+	GET(BuildingClass *, B, ESI);
+	// this building just realised it needs to go offline
+	// it unregistered itself from powered unit controls but hasn't done anything else yet
+
+	return 0;
+}
