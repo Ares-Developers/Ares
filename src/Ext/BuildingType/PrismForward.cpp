@@ -321,7 +321,7 @@ void BuildingTypeExt::cPrismForwarding::SetChargeDelay_Set
 
 //Whenever a building is incapacitated, this method should be called to take it out of any prism network
 //destruction, change sides, mind-control, sold, warped, emp, undeployed, low power, drained, lost operator
-void BuildingTypeExt::cPrismForwarding::RemoveSlave(BuildingClass *SlaveTower, bool bCease) {
+void BuildingTypeExt::cPrismForwarding::RemoveFromNetwork(BuildingClass *SlaveTower, bool bCease) {
 	if (int PrismStage = SlaveTower->PrismStage) {
 		//is a slave or a master tower
 		BuildingExt::ExtData *pSlaveData = BuildingExt::ExtMap.Find(SlaveTower);
@@ -351,7 +351,7 @@ void BuildingTypeExt::cPrismForwarding::RemoveSlave(BuildingClass *SlaveTower, b
 		int senderIdx = 0;
 		while(senderIdx < pSlaveData->PrismForwarding.Senders.Count) {
 			if (BuildingClass *NextTower = pSlaveData->PrismForwarding.Senders[senderIdx]) {
-				RemoveSlave(NextTower, false);
+				RemoveFromNetwork(NextTower, false);
 				++senderIdx;
 			}
 		}

@@ -710,7 +710,7 @@ bool EMPulse::enableEMPEffect(TechnoClass * Victim, ObjectClass * Source) {
 	if (BuildingClass * Building = specific_cast<BuildingClass *>(Victim)) {
 		Building->DisableStuff();
 		updateRadarBlackout(Building);
-		BuildingTypeExt::cPrismForwarding::RemoveSlave(Building, true); //take building out of prism network and reset all slave activity
+		BuildingTypeExt::cPrismForwarding::RemoveFromNetwork(Building, true); //take building out of prism network and reset all slave activity
 	} else {
 		if (AircraftClass * Aircraft = specific_cast<AircraftClass *>(Victim)) {
 			// crash flying aircraft

@@ -72,6 +72,9 @@ DEFINE_HOOK(6F9E76, TechnoClass_Update_CheckOperators, 6)
 			}
 		} else { // doesn't have an operator, so...
 			if(!pThis->Deactivated) { // ...if it's not off yet, turn it off!
+				if (BuildingClass * PrismTower = specific_cast<BuildingClass *>(T)) {
+					BuildingTypeExt::cPrismForwarding::RemoveFromNetwork(PrismTower, true);
+				}
 				pThis->Deactivate();
 				pThis->Owner->ShouldRecheckTechTree = true; // #885
 			}
