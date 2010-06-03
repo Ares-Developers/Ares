@@ -59,6 +59,8 @@ class HouseExt
 		}
 
 		void SetFirestormState(bool Active);
+
+		void ReplanBase();
 	};
 
 	static Container<HouseExt> ExtMap;
