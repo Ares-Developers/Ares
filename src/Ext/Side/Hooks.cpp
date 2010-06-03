@@ -300,3 +300,20 @@ DEFINE_HOOK(67F281, LoadGame_LateSkipSides, 7)
 {
 	return 0x67F2BF;
 }
+
+DEFINE_HOOK(41E893, AITriggerTypeClass_ConditionMet_SideIndex, 0)
+{
+	GET(HouseClass *, House, EDI);
+	GET(int, triggerSide, EAX);
+
+	enum Eligible { Yes = 0x41E8D7, No = 0x41E8A1 };
+	if(!triggerSide) {
+		return Yes;
+	}
+
+	--triggerSide;
+	return(triggerSide == House->SideIndex)
+		? Yes
+		: No
+	;
+}
