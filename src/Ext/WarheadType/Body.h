@@ -71,6 +71,8 @@ public:
 
 		bool KillDriver; //!< Whether this warhead turns the target vehicle over to the special side ("kills the driver"). Request #733.
 
+		Valueable<bool> Malicious;
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			MindControl_Permanent (false),
 			Ripple_Radius (0),
@@ -81,7 +83,8 @@ public:
 			Temporal_WarpAway (&RulesClass::Global()->WarpAway),
 			AffectsEnemies (true),
 			InfDeathAnim (NULL),
-			KillDriver (false)
+			KillDriver (false),
+			Malicious (true)
 			{
 				for(int i = 0; i < 11; ++i) {
 					VersesData vs;

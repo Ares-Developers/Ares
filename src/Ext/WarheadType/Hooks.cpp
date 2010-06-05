@@ -76,3 +76,32 @@ DEFINE_HOOK(517FC1, InfantryClass_ReceiveDamage_DeployedDamage, 6) {
 		: 0x518016
 	;
 }
+/*
+ * Fixing issue #722
+ */
+
+DEFINE_HOOK(7384BD, UnitClass_ReceiveDamage_OreMinerUnderAttack, 6)
+{
+	GET_STACK(WarheadTypeClass *, WH, STACK_OFFS(0x44, -0xC));
+
+	auto pData = WarheadTypeExt::ExtMap.Find(WH);
+	return (pData->Malicious)
+		? 0
+		: 0x738535
+	;
+}
+
+DEFINE_HOOK(4F94A5, HouseClass_BuildingUnderAttack, 6)
+{
+	GET_STACK(DWORD, Caller, 0x14);
+	if(Caller == 0x442980) {
+		Debug::DumpStack(R, 0xF0, 0xA0);
+		GET_STACK(WarheadTypeClass *, WH, 0x14 + 0xA4 + 0xC);
+		if(auto pData = WarheadTypeExt::ExtMap.Find(WH)) {
+			if(!pData->Malicious) {
+				return 0x4F95D4;
+			}
+		}
+	}
+	return 0;
+}
