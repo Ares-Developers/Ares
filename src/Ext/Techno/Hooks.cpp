@@ -168,6 +168,10 @@ DEFINE_HOOK(6F407D, TechnoClass_Init_1, 6)
 		F->ParasiteImUsing = Parasite;
 	}
 
+	if(T->WhatAmI() == InfantryClass::AbsID) {
+		pData->InfJumpjet_BalloonHovering = TT->BalloonHover;
+	}
+
 	return 0x6F4102;
 }
 

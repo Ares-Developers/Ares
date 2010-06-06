@@ -296,6 +296,27 @@ bool TechnoExt::ExtData::IsPowered() {
 	}
 }
 
+
+bool TechnoExt::IsBalloonHovering(TechnoClass *pThis)
+{
+	if(InfantryClass * Inf = specific_cast<InfantryClass *>(pThis)) {
+		if(Inf->Type->DeployToLand) {
+			auto pData = TechnoExt::ExtMap.Find(Inf);
+			return pData->InfJumpjet_BalloonHovering;
+		}
+		return Inf->Type->BalloonHover;
+	}
+	return pThis->GetTechnoType()->BalloonHover;
+}
+
+bool TechnoExt::IsBalloonHovering(DWORD Locomotor)
+{
+	Locomotor += 0xC;
+
+	FootClass ** Object = reinterpret_cast<FootClass **>(Locomotor); // pointer voodoo
+
+	return TechnoExt::IsBalloonHovering(*Object);
+}
 // =============================
 // load/save
 

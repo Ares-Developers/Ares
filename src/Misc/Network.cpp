@@ -27,6 +27,11 @@ DEFINE_HOOK(4C6CCD, Networking_RespondToEvent, 0)
 		}
 	}
 
+/*
+	const char ** EventTypes = reinterpret_cast<const char **>(0x82091C);
+	Debug::Log("[Network]: Received event %d (%s)\n", EventKind, EventTypes[EventKind]);
+*/
+
 	--EventKind;
 	R->EAX(EventKind);
 	return (EventKind > 0x2D)

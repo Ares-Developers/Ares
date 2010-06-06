@@ -37,6 +37,7 @@ public:
 		BYTE idxSlot_Parasite;
 
 		bool Survivors_Done;
+		bool InfJumpjet_BalloonHovering;
 
 		TimerStruct CloakSkipTimer;
 		SHPStruct * Insignia_Image;
@@ -51,7 +52,8 @@ public:
 			idxSlot_Beam (0),
 			idxSlot_Warp (0),
 			idxSlot_Parasite(0),
-			Survivors_Done (0),
+			Survivors_Done (false),
+			InfJumpjet_BalloonHovering (false),
 			Insignia_Image (NULL),
 			GarrisonedIn (NULL),
 			EMPSparkleAnim (NULL),
@@ -97,6 +99,9 @@ public:
 	static bool EvalWeaponAgainst(TechnoClass *pThis, TechnoClass *pTarget, WeaponTypeClass* W);
 	static float EvalVersesAgainst(TechnoClass *pThis, TechnoClass *pTarget, WeaponTypeClass* W);
 */
+
+	static bool IsBalloonHovering(TechnoClass * pThis);
+	static bool IsBalloonHovering(DWORD Locomotor);
 };
 
 typedef hash_map<ObjectClass *, AlphaShapeClass *> hash_AlphaExt;

@@ -35,6 +35,9 @@ public:
 	static Container<InfantryExt> ExtMap;
 
 	static eAction GetEngineerEnterEnemyBuildingAction(BuildingClass *pBld);
+
+	static DWORD EvalBalloonHoverInf(TechnoClass * pThis, DWORD Yes, DWORD No, DWORD Dunno = 0);
+	static DWORD EvalBalloonHoverInf(DWORD Locomotor, DWORD Yes, DWORD No, DWORD Dunno = 0);
 };
 
 #endif
