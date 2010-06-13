@@ -131,8 +131,10 @@ CCINIClass* Ares::OpenConfig(const char* file) {
 }
 
 void Ares::CloseConfig(CCINIClass** ppINI) {
-	GAME_DEALLOC(&ppINI);
-	*ppINI = NULL;
+	if(ppINI && *ppINI) {
+		GAME_DEALLOC(*ppINI);
+		*ppINI = NULL;
+	}
 }
 
 //A new SendPDPlane function
