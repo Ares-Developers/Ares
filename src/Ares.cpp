@@ -113,8 +113,26 @@ void __stdcall Ares::ExeRun()
 
 void __stdcall Ares::ExeTerminate()
 {
-	GlobalControls::CloseConfig(&Ares::GlobalControls::INI);
+	CloseConfig(&Ares::GlobalControls::INI);
 	Debug::LogFileClose(111);
+}
+
+CCINIClass* Ares::OpenConfig(const char* file) {
+	CCINIClass* pINI;
+	GAME_ALLOC(CCINIClass, pINI);
+	CCFileClass *cfg;
+	GAME_ALLOC(CCFileClass, cfg, file);
+	if(cfg->Exists(NULL)) {
+		pINI->ReadCCFile(cfg);
+	}
+	GAME_DEALLOC(cfg);
+
+	return pINI;
+}
+
+void Ares::CloseConfig(CCINIClass** ppINI) {
+	GAME_DEALLOC(&ppINI);
+	*ppINI = NULL;
 }
 
 //A new SendPDPlane function

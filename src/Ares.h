@@ -57,6 +57,9 @@ public:
 	static void InitOwnResources();
 	static void UninitOwnResources();
 
+	static CCINIClass* OpenConfig(const char*);
+	static void CloseConfig(CCINIClass**);
+
 	//Callbacks
 	static void __stdcall CmdLineParse(char**,int);
 
@@ -81,8 +84,6 @@ public:
 	public:
 		static CCINIClass * INI;
 
-		static CCINIClass* OpenConfig(const char*);
-		static void CloseConfig(CCINIClass**);
 		static void LoadConfig();
 
 		static void Load(CCINIClass*);
@@ -90,7 +91,6 @@ public:
 
 		static bool Initialized;
 		static bool AllowParallelAIQueues;
-		static bool AllowMultiEngineer;
 
 		static byte GFX_DX_Force;
 
@@ -109,6 +109,16 @@ public:
 		static SurfaceConfig GFX_S_Primary;
 		static SurfaceConfig GFX_S_Sidebar;
 		static SurfaceConfig GFX_S_Tile;
+	};
+
+	class UISettings {
+	private:
+		UISettings() {};
+	public:
+		static void Load(CCINIClass*);
+
+		static bool Initialized;
+		static bool AllowMultiEngineer;
 	};
 
 	static bool RunningOnWindows7OrVista();
