@@ -1,8 +1,10 @@
 #include "Interface.h"
 #include "../Ares.h"
+#include "../Ext/Campaign/Body.h"
 
 #include <StringTable.h>
 #include <MessageBox.h>
+#include <VocClass.h>
 #include <Strsafe.h>
 
 int Interface::lastDialogTemplateID = 0;
@@ -100,6 +102,88 @@ void Interface::swapItems(HWND hDlg, int nIDDlgItem1, int nIDDlgItem2) {
 
 void Interface::updateMenu(HWND hDlg) {
 	int iID = Interface::lastDialogTemplateID;
+
+	if((iID == 148) && Ares::UISettings::CampaignList) {
+		auto hide = [hDlg](int nIDDlgItem) {
+			if(HWND hItem = GetDlgItem(hDlg, nIDDlgItem)) {
+				ShowWindow(hItem, SW_HIDE);
+			}
+		};
+
+		auto show = [hDlg](int nIDDlgItem) {
+			if(HWND hItem = GetDlgItem(hDlg, nIDDlgItem)) {
+				ShowWindow(hItem, SW_SHOW);
+			}
+		};
+
+		auto offset = [hDlg](int nIDDlgItem, int x, int y) {
+			if(HWND hItem = GetDlgItem(hDlg, nIDDlgItem)) {
+				POINT ptDlg = {0, 0};
+				ScreenToClient(hDlg, &ptDlg);
+
+				RECT rcItem;
+				GetWindowRect(hItem, &rcItem);
+
+				OffsetRect(&rcItem, x, y);
+				moveItem(hItem, rcItem, ptDlg);
+			}
+		};
+
+		if(HWND hItem = GetDlgItem(hDlg, 1109)) {
+			// extensive stuff
+			show(1109);
+			show(1038);
+			hide(1770);
+			hide(1772);
+
+			POINT ptDlg = {0, 0};
+			ScreenToClient(hDlg, &ptDlg);
+
+			// use the position of the Allied button to place the
+			// new campaign selection list.
+			RECT rcItem = {125, 34, 125 + 174, 34 + 87};
+			if(HWND hAllImage = GetDlgItem(hDlg, 1770)) {
+				GetWindowRect(hAllImage, &rcItem);
+			}
+			offset(1959, 0, -rcItem.bottom + rcItem.top);
+
+			// center the list above the difficulty selection. the list may
+			// contain seven items, after that, a scroll bar will appear.
+			// acount for its width, too.
+			int offList = (CampaignExt::countVisible() < 8 ? -2 : -12);
+			OffsetRect(&rcItem, offList, 32);
+			moveItem(hItem, rcItem, ptDlg);
+			
+			// let the Allied label be the caption
+			if(HWND hAllLabel = GetDlgItem(hDlg, 1959)) {
+				SendMessageA(hAllLabel, 0x4B2, 0, (LPARAM)StringTable::LoadStringA("GUI:SelectCampaign"));
+			}
+
+			// call the load button "Play"
+			if(HWND hLoad = GetDlgItem(hDlg, 1038)) {
+				SendMessageA(hLoad, 0x4B2, 0, (LPARAM)StringTable::LoadStringA("GUI:Play"));
+			}
+
+			// move the soviet label to a new location and reuse
+			// it to show the selected campaigns summary.
+			if(HWND hSovImage = GetDlgItem(hDlg, 1772)) {
+				GetWindowRect(hSovImage, &rcItem);
+				if(HWND hSovLabel = GetDlgItem(hDlg, 1960)) {
+					// remove default text and move label
+					SendMessageA(hSovLabel, 0x4B2, 0, (LPARAM)L"");
+					moveItem(hSovLabel, rcItem, ptDlg);
+					
+					// left align text
+					DWORD style = GetWindowLong(hSovLabel, GWL_STYLE);
+					style = SS_LEFT | WS_CHILD | WS_VISIBLE;
+					SetWindowLong(hSovLabel, GWL_STYLE, style);
+				}
+			}
+
+			// reset the selection cache
+			CampaignExt::lastSelectedCampaign = -1;
+		}
+	}
 
 	// main menu
 	if(iID == 226) {
@@ -252,4 +336,99 @@ DEFINE_HOOK(52D809, MoviesAndCredits_hDlg_ViewCreditsButtonClick, 6) {
 	GET(int*, pAction, EAX);
 	return (Interface::invokeClickAction(Ares::UISettings::ViewCreditsButton,
 		"VIEWCREDITSBUTTON", pAction, 4) ? 0x52D80F : 0);
+}
+
+// Hook up the new campaign list. Instead of using the index in the list
+// to load the selected campaign we use the item data to remember which
+// index to use. This makes it possible to support a mixed list of
+// debug/release campaigns.
+
+// We do not select the first item in the list as the game would do. This
+// allows us to play the campaign selection sound when the user clicks it
+// and not when the dialog is shown or not at all.
+DEFINE_HOOK(52F00B, CampaignMenu_hDlg_PopulateCampaignList, 5) {
+	GET(HWND, hDlg, ESI);
+	GET(HWND, hList, EBP);
+
+	// use button selection screen?
+	if(!Ares::UISettings::CampaignList) {
+		return 0;
+	}
+
+	// fill in the campaigns list
+	for(int i=0; i<CampaignExt::Array.Count; ++i) {
+		CampaignExt::ExtData *pData = CampaignExt::Array.GetItem(i);
+		if(pData && pData->isVisible()) {
+			int newIndex = SendMessageA(hList, 0x4CD, 0, (WPARAM)pData->AttachedToObject->Description);
+			SendMessageA(hList, LB_SETITEMDATA, newIndex, i);
+		}
+	}
+
+	// disable the play button as there is nothing selected. we don't select
+	// the first campaign here so the user will get the introduction sound.
+	if(HWND hItem = GetDlgItem(hDlg, 1038)) {
+		EnableWindow(hItem, false);
+	}
+
+	return 0x52F07F;
+}
+
+DEFINE_HOOK(52EC18, CampaignClass_hDlg_PreHandleGeneral, 5) {
+	GET(HWND, hDlg, ESI);
+	GET(int, msg, EBX);
+	GET(int, wParam, EDI);
+	GET(int, lParam, EBP);
+
+	// catch the selection change event of the campaign list
+	if(msg == WM_COMMAND) {
+		int iID = LOWORD(lParam);
+		int iCmd = HIWORD(lParam);
+		if((iID == 1109) && (iCmd == LBN_SELCHANGE)) {
+			int index = SendDlgItemMessageA(hDlg, 1109, LB_GETCURSEL, 0, 0);
+			int idxCampaign = SendDlgItemMessageA(hDlg, 1109, LB_GETITEMDATA, index, 0);
+
+			if(CampaignExt::lastSelectedCampaign != idxCampaign) {
+				// play the hover sound
+				CampaignExt::ExtData* pData = CampaignExt::Array.GetItem(idxCampaign);
+				if(pData) {
+					int idxSound = VocClass::FindIndex(pData->HoverSound);
+					if(idxSound > -1) {
+						VocClass::PlayGlobal(idxSound, 1.0f, 8192, 0);
+					}
+
+					// set the summary text
+					if(HWND hSovLabel = GetDlgItem(hDlg, 1960)) {
+						const wchar_t* summary = NULL;
+						if(*pData->Summary) {
+							summary = StringTable::LoadStringA(pData->Summary);
+						}
+						SendMessageA(hSovLabel, 0x4B2, 0, (LPARAM)summary);
+					}
+				}
+
+				// cache the selected index
+				CampaignExt::lastSelectedCampaign = idxCampaign;
+			}
+
+			// enable the play button
+			if(HWND hItem = GetDlgItem(hDlg, 1038)) {
+				EnableWindow(hItem, (index >= 0));
+			}
+		}
+	}
+
+	return 0;
+}
+
+DEFINE_HOOK(52ED21, CampaignClass_hDlg_ClickedPlay, 9) {
+	GET(HWND, hDlg, ESI);
+
+	// find out which campaign is selected
+	int idxItem = SendDlgItemMessageA(hDlg, 1109, LB_GETCURSEL, 0, 0);
+	int idxCampaign = SendDlgItemMessageA(hDlg, 1109, LB_GETITEMDATA, idxItem, 0);
+
+	// set it ourselves
+	R->EAX(idxCampaign);
+
+	return 0x52ED2D;
 }

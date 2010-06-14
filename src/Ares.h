@@ -129,6 +129,8 @@ public:
 		static Interface::eUIAction PlayMoviesButton;
 		static Interface::eUIAction ViewCreditsButton;
 		static bool AllowMultiEngineer;
+		static bool CampaignList;
+		static bool ShowDebugCampaigns;
 	};
 
 	static bool RunningOnWindows7OrVista();
