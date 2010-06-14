@@ -15,6 +15,7 @@
 #include <CCINIClass.h>
 #include <MixFileClass.h>
 
+#include "Misc/Interface.h"
 #include "Misc/Debug.h"
 
 #include <AircraftTypeClass.h>
@@ -118,6 +119,15 @@ public:
 		static void Load(CCINIClass*);
 
 		static bool Initialized;
+		static Interface::eUIAction SinglePlayerButton;
+		static Interface::eUIAction WWOnlineButton;
+		static Interface::eUIAction NetworkButton;
+		static Interface::eUIAction MoviesAndCreditsButton;
+		static Interface::eUIAction CampaignButton;
+		static Interface::eUIAction SkirmishButton;
+		static Interface::eUIAction SneakPeaksButton;
+		static Interface::eUIAction PlayMoviesButton;
+		static Interface::eUIAction ViewCreditsButton;
 		static bool AllowMultiEngineer;
 	};
 
