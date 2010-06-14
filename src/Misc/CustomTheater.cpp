@@ -45,6 +45,10 @@ CustomTheater* CustomTheater::Find(const char* name) {
 }
 
 int CustomTheater::FindIndex(const char* name) {
+	if(CustomTheater::Array.Count == 0) {
+		CustomTheater::LoadFromINIList(CCINIClass::INI_Rules);
+	}
+
 	for(int i = 0; i < CustomTheater::Array.Count; i++) {
 		if(_strcmpi(Array[i]->Identifier, name) == 0) {
 			return i;
