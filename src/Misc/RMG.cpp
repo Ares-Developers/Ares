@@ -24,10 +24,9 @@ DEFINE_HOOK(596FFE, RMG_EnableArchipelago, 0)
 	return 0x597008;
 }
 
-/*
-//EnableDesert isn't necessary anymore, we now use RMG.Available from the new theater data, see CustomTheater.cpp
+
 //0x5970EA
-A_FINE_HOOK(5970EA, RMG_EnableDesert, 9)
+DEFINE_HOOK(5970EA, RMG_EnableDesert, 9)
 {
 	GET(HWND, hWnd, EDI);
 
@@ -48,7 +47,6 @@ A_FINE_HOOK(5970EA, RMG_EnableDesert, 9)
 
 	return 0;
 }
-*/
 
 DEFINE_HOOK(596C81, MapSeedClass_DialogFunc_GetData, 5)
 {

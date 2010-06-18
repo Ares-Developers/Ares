@@ -1,5 +1,4 @@
 #include "Body.h"
-#include "../../Misc/CustomTheater.h"
 #include "../../Misc/Debug.h"
 
 #include "Ares.CRT.h"
@@ -124,8 +123,7 @@ DEFINE_HOOK(5F96B0, ObjectTypeClass_TheaterSpecificID, 6)
 		char c1 = basename[1] & ~0x20; // evil hack to uppercase
 		if(isalpha(c0)) {
 			if(c1 == 'A' || c1 == 'T') {
-				//basename[1] = Theater::Array[idxTheater].Letter[0];
-				basename[1] = CustomTheater::Get(idxTheater)->Letter[0];
+				basename[1] = Theater::Array[idxTheater].Letter[0];
 			}
 		}
 	}
