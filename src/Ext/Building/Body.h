@@ -16,20 +16,6 @@ class BuildingExt
 public:
 	typedef BuildingClass TT;
 
-	class cPrismForwarding {
-		public:
-		DynamicVectorClass<BuildingClass*> Senders;		//the prism towers that are forwarding to this one
-		BuildingClass* SupportTarget;				//what tower am I sending to?
-		int PrismChargeDelay;					//current delay charge
-		double ModifierReserve;					//current modifier reservoir
-		int DamageReserve;					//current flat reservoir
-
-		// constructor
-		cPrismForwarding() : SupportTarget(NULL), PrismChargeDelay(0), ModifierReserve(0.0), DamageReserve(0) {
-			this->Senders.Clear();
-		};
-	};
-
 	class ExtData : public Extension<TT>
 	{
 	private:
@@ -40,10 +26,9 @@ public:
 		bool ignoreNextEVA; //!< This is used when returning raided buildings, to decide whether to play EVA announcements about building capture.
 
 		bool InfiltratedBy(HouseClass *Enterer);
-		cPrismForwarding PrismForwarding;
 	public:
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
-			OwnerBeforeRaid(NULL), isCurrentlyRaided(false), ignoreNextEVA(false), PrismForwarding()
+			OwnerBeforeRaid(NULL), isCurrentlyRaided(false), ignoreNextEVA(false)
 			{ };
 
 		virtual ~ExtData() {
