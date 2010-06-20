@@ -147,11 +147,6 @@ private:
 	typedef typename T::ExtData   E_T;
 	typedef hash_map<S_T*, E_T*>  C_Map;
 
-	unsigned int CTOR_Count;
-	unsigned int DTOR_Count;
-	unsigned int Lookup_Failure_Count;
-	unsigned int Lookup_Success_Count;
-
 public:
 	static S_T * SavingObject;
 	static IStream * SavingStream;
@@ -176,12 +171,7 @@ protected:
 	}
 
 public:
-	Container() :
-		CTOR_Count(0),
-		DTOR_Count(0),
-		Lookup_Failure_Count(0),
-		Lookup_Success_Count(0)
-	{
+	Container() {
 	}
 
 	virtual ~Container() {
@@ -196,7 +186,6 @@ public:
 		}
 		typename C_Map::iterator i = this->find(key);
 		if(i == this->end()) {
-			++CTOR_Count;
 			E_T * val = new E_T(/*typename*/ E_T::Canary, key);
 			val->InitializeConstants(key);
 			i = this->insert(typename C_Map::value_type(key, val)).first;
@@ -207,10 +196,8 @@ public:
 	E_T *Find(S_T* key) {
 		typename C_Map::iterator i = this->find(key);
 		if(i == this->end()) {
-			++Lookup_Failure_Count;
 			return NULL;
 		}
-		++Lookup_Success_Count;
 		return i->second;
 	}
 
@@ -219,7 +206,6 @@ public:
 		if(i != this->end()) {
 			delete i->second;
 			erase(i);
-			++DTOR_Count;
 		}
 	}
 
@@ -227,7 +213,6 @@ public:
 		if(i != this->end()) {
 			delete i->second;
 			erase(i);
-			++DTOR_Count;
 		}
 	}
 
@@ -325,15 +310,6 @@ public:
 #endif
 		return buffer;
 	};
-
-	void Stat() {
-		const std::type_info &info = typeid(*this);
-		Debug::Log("Stats for container %s:\n", info.name());
-
-		Debug::Log("|%08d|%08d|%08d/%08d|%08d|%08d|\n",
-			CTOR_Count, DTOR_Count, Lookup_Success_Count, Lookup_Failure_Count, this->size(), S_T::Array->Count);
-	}
-
 };
 
 #endif
