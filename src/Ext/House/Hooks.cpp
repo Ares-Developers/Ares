@@ -32,14 +32,19 @@ DEFINE_HOOK(4F7870, HouseClass_PrereqValidator, 7)
 	return 0x4F8361;
 }
 
-// upgrades as prereqs, facepalm of epic proportions
-// not needed anymore since the whole function's been replaced
-/*
-A_FINE_HOOK(4F7E49, HouseClass_CanBuildHowMany_Upgrades, 5)
+
+DEFINE_HOOK(505360, HouseClass_PrerequisitesForTechnoTypeAreListed, 5)
 {
-		return R->get_EAX() < 3 ? 0x4F7E41 : 0x4F7E34;
+	GET(HouseClass *, pHouse, ECX);
+
+	GET_STACK(TechnoTypeClass *, pItem, 0x4);
+	GET_STACK(DynamicVectorClass<BuildingTypeClass *> *, pBuildingsToCheck, 0x8);
+
+	R->EAX(HouseExt::PrerequisitesListed(pBuildingsToCheck, pItem));
+
+	return 0x505486;
 }
-*/
+
 
 /*
  * Attention: This is a rewrite of the "is this house defeated yet?" check that should clear up the

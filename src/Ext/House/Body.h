@@ -2,6 +2,8 @@
 #define HOUSE_EXT_H
 
 #include "../_Container.hpp"
+#include "../../Enum/Prerequisites.h"
+
 #include <Helpers/Template.h>
 
 #include <FactoryClass.h>
@@ -68,6 +70,7 @@ class HouseExt
 
 	static signed int RequirementsMet(HouseClass *pHouse, TechnoTypeClass *pItem);
 	static bool PrerequisitesMet(HouseClass *pHouse, TechnoTypeClass *pItem);
+	static bool PrerequisitesListed(Prereqs::BTypeList *List, TechnoTypeClass *pItem);
 
 	static signed int PrereqValidate
 		(HouseClass *pHouse, TechnoTypeClass *pItem, bool BuildLimitOnly, bool IncludeQueued);

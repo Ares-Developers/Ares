@@ -44,11 +44,22 @@ public:
 	static void Parse(char* buffer, DynamicVectorClass<int> *vec);
 
 	static bool HouseOwnsGeneric(HouseClass *pHouse, signed int Index);
-	static bool HouseOwnsBuilding(HouseClass *pHouse, signed int Index);
+	static bool HouseOwnsSpecific(HouseClass *pHouse, signed int Index);
 	static bool HouseOwnsPrereq(HouseClass *pHouse, signed int Index);
 
 	static bool HouseOwnsAll(HouseClass *pHouse, DynamicVectorClass<int> *list);
 	static bool HouseOwnsAny(HouseClass *pHouse, DynamicVectorClass<int> *list);
+
+
+	typedef DynamicVectorClass<BuildingTypeClass *> BTypeList;
+
+	static bool ListContainsGeneric(BTypeList * List, signed int Index);
+	static bool ListContainsSpecific(BTypeList * List, signed int Index);
+	static bool ListContainsPrereq(BTypeList * List, signed int Index);
+
+	static bool ListContainsAll(BTypeList * List, DynamicVectorClass<int> *Requirements);
+	static bool ListContainsAny(BTypeList * List, DynamicVectorClass<int> *Requirements);
+
 };
 
 #endif

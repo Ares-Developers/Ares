@@ -65,13 +65,29 @@ signed int HouseExt::RequirementsMet(HouseClass *pHouse, TechnoTypeClass *pItem)
 
 bool HouseExt::PrerequisitesMet(HouseClass *pHouse, TechnoTypeClass *pItem)
 {
-	TechnoTypeExt::ExtData* pData = TechnoTypeExt::ExtMap.Find(pItem);
 	if(!pItem) {
 		return 0;
 	}
+	TechnoTypeExt::ExtData* pData = TechnoTypeExt::ExtMap.Find(pItem);
 
 	for(int i = 0; i < pData->PrerequisiteLists.Count; ++i) {
 		if(Prereqs::HouseOwnsAll(pHouse, pData->PrerequisiteLists[i])) {
+			return 1;
+		}
+	}
+
+	return 0;
+}
+
+bool HouseExt::PrerequisitesListed(Prereqs::BTypeList *List, TechnoTypeClass *pItem)
+{
+	if(!pItem) {
+		return 0;
+	}
+	TechnoTypeExt::ExtData* pData = TechnoTypeExt::ExtMap.Find(pItem);
+
+	for(int i = 0; i < pData->PrerequisiteLists.Count; ++i) {
+		if(Prereqs::ListContainsAll(List, pData->PrerequisiteLists[i])) {
 			return 1;
 		}
 	}
