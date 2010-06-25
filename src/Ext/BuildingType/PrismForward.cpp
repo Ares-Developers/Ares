@@ -284,9 +284,9 @@ void BuildingTypeExt::cPrismForwarding::SetChargeDelay_Get
 			if ( thisDelay > LongestCDelay[chain]) {
 				LongestCDelay[chain] = thisDelay;
 			}
-			if ( TargetTower->DelayBeforeFiring > LongestFDelay[chain]) {
-				LongestFDelay[chain] = TargetTower->DelayBeforeFiring;
-			}
+		}
+		if ( TargetTower->DelayBeforeFiring > LongestFDelay[chain]) {
+			LongestFDelay[chain] = TargetTower->DelayBeforeFiring;
 		}
 	} else {
 		//ascend to the next chain
