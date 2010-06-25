@@ -48,11 +48,6 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 		this->SupportModifier.Read(&exINI, pID, "PrismForwarding.SupportModifier");
 		this->DamageAdd.Read(&exINI, pID, "PrismForwarding.DamageAdd");
 		this->SupportRange.Read(&exINI, pID, "PrismForwarding.SupportRange");
-
-		if (this->SupportRange != -1) {
-			this->SupportRange = this->SupportRange * 256; //stored in leptons, not cells
-		}
-
 		this->SupportDelay.Read(&exINI, pID, "PrismForwarding.SupportDelay");
 		this->ToAllies.Read(&exINI, pID, "PrismForwarding.ToAllies");
 		this->MyHeight.Read(&exINI, pID, "PrismForwarding.MyHeight");
@@ -261,7 +256,7 @@ void BuildingTypeExt::cPrismForwarding::SetChargeDelay
 	memset(LongestFDelay, 0, ArrayLen * sizeof(DWORD));
 	
 	int temp = 0;
-	while (temp != LongestChain) {
+	while (temp <= LongestChain) {
 		LongestCDelay[temp] = 0;
 		LongestFDelay[temp] = 0;
 		++temp;
