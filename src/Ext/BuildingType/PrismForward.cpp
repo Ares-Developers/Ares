@@ -303,7 +303,7 @@ void BuildingTypeExt::cPrismForwarding::SetChargeDelay_Set
 	(BuildingClass * TargetTower, int chain, DWORD *LongestCDelay, DWORD *LongestFDelay) {
 	BuildingExt::ExtData *pTargetData = BuildingExt::ExtMap.Find(TargetTower);
 	pTargetData->PrismForwarding.PrismChargeDelay = (LongestFDelay[chain] - TargetTower->DelayBeforeFiring) + LongestCDelay[chain];
-	Debug::Log("PrismForwarding: SCD_S chain=%d PCD=%d LCD[c]=%d\n", chain, PrismForwarding.PrismChargeDelay, LongestCDelay[chain]);
+	Debug::Log("PrismForwarding: SCD_S chain=%d PCD=%d LCD[c]=%d\n", chain, pTargetData->PrismForwarding.PrismChargeDelay, LongestCDelay[chain]);
 	if (pTargetData->PrismForwarding.PrismChargeDelay == 0) {
 		//no delay, so start animations now
 		if (TargetTower->Type->BuildingAnim[BuildingAnimSlot::Special].Anim[0]) { //only if it actually has a special anim
