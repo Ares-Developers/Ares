@@ -262,8 +262,8 @@ void BuildingTypeExt::cPrismForwarding::SetChargeDelay
 	
 	int temp = 0;
 	while (temp != LongestChain) {
-		LongestCDelay[chain] = 0;
-		LongestFDelay[chain] = 0;
+		LongestCDelay[temp] = 0;
+		LongestFDelay[temp] = 0;
 		++temp;
 	}
 
