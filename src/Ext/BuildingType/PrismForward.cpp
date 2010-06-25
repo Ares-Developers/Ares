@@ -69,8 +69,8 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 }
 
 signed int BuildingTypeExt::cPrismForwarding::GetSupportRange(BuildingTypeClass *pThis) {
-	if (this->SupportRange == -1 {
-		return -1
+	if (this->SupportRange == -1) {
+		return -1;
 	}
 	if(this->SupportRange != 0) {
 		return this->SupportRange * 256; //we store SupportRange in cells rather than leptons
