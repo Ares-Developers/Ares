@@ -69,13 +69,16 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 }
 
 signed int BuildingTypeExt::cPrismForwarding::GetSupportRange(BuildingTypeClass *pThis) {
+	if (this->SupportRange == -1 {
+		return -1
+	}
 	if(this->SupportRange != 0) {
-		return this->SupportRange;
+		return this->SupportRange * 256; //we store SupportRange in cells rather than leptons
 	}
 	if(WeaponTypeClass* Secondary = pThis->get_Secondary()) {
-		return Secondary->Range;
+		return Secondary->Range; //weapon range is already stored in leptons
 	} else if(WeaponTypeClass* Primary = pThis->get_Primary()) {
-		return Primary->Range;
+		return Primary->Range; //weapon range is already stored in leptons
 	}
 	return 0;
 }
@@ -257,15 +260,17 @@ void BuildingTypeExt::cPrismForwarding::SetChargeDelay
 	DWORD *LongestFDelay = new DWORD[ArrayLen];
 	memset(LongestFDelay, 0, ArrayLen * sizeof(DWORD));
 	
+	int temp = 0;
+	while (temp != LongestChain) {
+		LongestCDelay[chain] = 0;
+		LongestFDelay[chain] = 0;
+		++temp;
+	}
+
 	int endChain = LongestChain;
 	while (endChain >= 0) {
 		SetChargeDelay_Get(TargetTower, 0, endChain, LongestChain, LongestCDelay, LongestFDelay);
 		--endChain;
-	}
-	
-	int temp = 0;
-	while (temp != LongestChain) {
-		++temp;
 	}
 
 	SetChargeDelay_Set(TargetTower, 0, LongestCDelay, LongestFDelay);

@@ -158,6 +158,14 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 	if(LaserBeam) {
 		LaserBeam->IsHouseColor = true;
 		LaserBeam->field_1C = 3;
+
+		//allow support weapon to control some beam effects
+		if(WeaponTypeClass* Secondary = pType->get_Secondary()) {
+			LaserBeam->IsHouseColor = Secondary->IsHouseColor;
+		} else if(WeaponTypeClass* Primary = pType->get_Primary()) {
+			LaserBeam->IsHouseColor = Primary->IsHouseColor;
+		}
+		
 	}
 
 	B->SupportingPrisms = 0;
