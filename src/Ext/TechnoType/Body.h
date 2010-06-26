@@ -72,7 +72,6 @@ public:
 
 		std::bitset<32> RequiredStolenTech;
 
-		bool ImmuneToEMPSet;
 		bool ImmuneToEMP;
 		bool VeteranAbilityEMPIMMUNE;
 		bool EliteAbilityEMPIMMUNE;
@@ -110,7 +109,6 @@ public:
 			IsAPromiscuousWhoreAndLetsAnyoneRideIt (false),
 			CameoPal(),
 			RequiredStolenTech(0ull),
-			ImmuneToEMPSet (false),
 			ImmuneToEMP (false),
 			EMPThreshold (-1),
 			VeteranAbilityEMPIMMUNE (false),
@@ -137,6 +135,7 @@ public:
 	static void PointerGotInvalid(void *ptr);
 
 //	static void ReadWeapon(WeaponStruct *pWeapon, const char *prefix, const char *section, CCINIClass *pINI);
+	static void InferEMPImmunity(TechnoTypeClass *Type, CCINIClass *pINI);
 };
 
 #endif

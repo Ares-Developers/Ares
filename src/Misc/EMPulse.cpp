@@ -259,14 +259,6 @@ bool EMPulse::isEMPImmune(TechnoClass * Target, HouseClass * SourceHouse) {
 	// this can be overridden by a flag on the techno.
 	TechnoTypeExt::ExtData *pData = TechnoTypeExt::ExtMap.Find(Target->GetTechnoType());
 
-	// There is no other way to use (for example) BuildingTypeClass members from
-	// TechnoTypeClass Initialize to check if this Techno is EMP-prone. Cache the result
-	// here.
-	if(!pData->ImmuneToEMPSet) {
-		pData->ImmuneToEMP = !EMPulse::IsTypeEMPProne(Target->GetTechnoType());
-		pData->ImmuneToEMPSet = true;
-	}
-
 	if (pData->ImmuneToEMP) {
 		if (verbose) {
 			Debug::Log("[isEMPImmune] \"%s\" is ImmuneToEMP.\n", Target->get_ID());

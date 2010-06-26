@@ -204,11 +204,8 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 		}
 	}
 
-	// EMP immunity. The default for each type is decided by the EMPulse class,
-	// the first time a unit of this TechnoType is EMP'd.
-	bool EMPTemp = pINI->ReadBool(section, "ImmuneToEMP", false);
-	this->ImmuneToEMP = EMPTemp;
-	this->ImmuneToEMPSet = (EMPTemp == pINI->ReadBool(section, "ImmuneToEMP", true));
+	// EMP immunity will be inferred after all type data has been read.
+	// Not all needed properties have been parsed here. For instance: Cyborg.
 
 	if(pINI->ReadString(section, "EMPThreshold", "inair", Ares::readBuffer, Ares::readLength)) {
 		if(_strcmpi(Ares::readBuffer, "inair") == 0) {
@@ -336,6 +333,14 @@ void TechnoTypeClassExt::ReadWeapon(WeaponStruct *pWeapon, const char *prefix, c
 }
 */
 
+void TechnoTypeExt::InferEMPImmunity(TechnoTypeClass *Type, CCINIClass *pINI) {
+	TechnoTypeExt::ExtData *pData = TechnoTypeExt::ExtMap.Find(Type);
+
+	// EMP immunity. The default for each type is decided by the EMPulse class.
+	bool EMPImmunityDefault = !EMPulse::IsTypeEMPProne(Type);
+	pData->ImmuneToEMP = pINI->ReadBool(Type->ID, "ImmuneToEMP", EMPImmunityDefault);
+}
+
 void Container<TechnoTypeExt>::InvalidatePointer(void *ptr) {
 }
 
@@ -447,5 +452,33 @@ DEFINE_HOOK_AGAIN(716132, TechnoTypeClass_LoadFromINI, 5)
 	GET_STACK(CCINIClass*, pINI, 0x380);
 
 	TechnoTypeExt::ExtMap.LoadFromINI(pItem, pINI);
+	return 0;
+}
+
+// infer the EMP immunity here. this is the earliest address to get
+// this information reliably.
+DEFINE_HOOK(679CAF, RulesClass_LoadAfterTypeData_InferEMPImmunity, 5) {
+	GET(CCINIClass*, pINI, ESI);
+
+	// The EMP immunity has a rather complex rule set to infer whether
+	// a TechnoType is immune from its properties. Here all properties
+	// have been parsed.
+	for(int i=0; i<BuildingTypeClass::Array->Count; ++i) {
+		BuildingTypeClass* pTBld = BuildingTypeClass::Array->GetItem(i);
+		TechnoTypeExt::InferEMPImmunity(pTBld, pINI);
+	}
+	for(int i=0; i<AircraftTypeClass::Array->Count; ++i) {
+		AircraftTypeClass* pTAir = AircraftTypeClass::Array->GetItem(i);
+		TechnoTypeExt::InferEMPImmunity(pTAir, pINI);
+	}
+	for(int i=0; i<UnitTypeClass::Array->Count; ++i) {
+		UnitTypeClass* pTUnit = UnitTypeClass::Array->GetItem(i);
+		TechnoTypeExt::InferEMPImmunity(pTUnit, pINI);
+	}
+	for(int i=0; i<InfantryTypeClass::Array->Count; ++i) {
+		InfantryTypeClass* pTInf = InfantryTypeClass::Array->GetItem(i);
+		TechnoTypeExt::InferEMPImmunity(pTInf, pINI);
+	}
+
 	return 0;
 }
