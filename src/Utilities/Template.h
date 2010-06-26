@@ -135,6 +135,13 @@ public:
 		}
 	}
 
+	void BindEx(T to) {
+		if(!this->Customized) {
+			this->Value = to;
+			this->Default = &this->Value;
+		}
+	}
+
 	virtual T Get() const {
 		return this->Customized
 		 ? this->Value

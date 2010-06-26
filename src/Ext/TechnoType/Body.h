@@ -72,7 +72,7 @@ public:
 
 		std::bitset<32> RequiredStolenTech;
 
-		bool ImmuneToEMP;
+		Customizable<bool> ImmuneToEMP;
 		bool VeteranAbilityEMPIMMUNE;
 		bool EliteAbilityEMPIMMUNE;
 		int EMPThreshold;
@@ -109,7 +109,6 @@ public:
 			IsAPromiscuousWhoreAndLetsAnyoneRideIt (false),
 			CameoPal(),
 			RequiredStolenTech(0ull),
-			ImmuneToEMP (false),
 			EMPThreshold (-1),
 			VeteranAbilityEMPIMMUNE (false),
 			EliteAbilityEMPIMMUNE (false),

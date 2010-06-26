@@ -337,8 +337,8 @@ void TechnoTypeExt::InferEMPImmunity(TechnoTypeClass *Type, CCINIClass *pINI) {
 	TechnoTypeExt::ExtData *pData = TechnoTypeExt::ExtMap.Find(Type);
 
 	// EMP immunity. The default for each type is decided by the EMPulse class.
-	bool EMPImmunityDefault = !EMPulse::IsTypeEMPProne(Type);
-	pData->ImmuneToEMP = pINI->ReadBool(Type->ID, "ImmuneToEMP", EMPImmunityDefault);
+	pData->ImmuneToEMP.BindEx(!EMPulse::IsTypeEMPProne(Type));
+	pData->ImmuneToEMP.Set(pINI->ReadBool(Type->ID, "ImmuneToEMP", pData->ImmuneToEMP.Get()));
 }
 
 void Container<TechnoTypeExt>::InvalidatePointer(void *ptr) {
