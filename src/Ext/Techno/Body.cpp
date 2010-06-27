@@ -229,6 +229,16 @@ bool TechnoExt::ExtData::DrawVisualFX() {
 	return false;
 }
 
+UnitTypeClass * TechnoExt::ExtData::GetUnitType() {
+	if(UnitClass * U = specific_cast<UnitClass *>(this->AttachedToObject)) {
+		TechnoTypeExt::ExtData * pData = TechnoTypeExt::ExtMap.Find(U->Type);
+		if(pData->WaterImage && !U->OnBridge && U->GetCell()->LandType == lt_Water) {
+			return pData->WaterImage;
+		}
+	}
+	return NULL;
+}
+
 void Container<TechnoExt>::InvalidatePointer(void *ptr) {
 	AnnounceInvalidPointerMap(TechnoExt::AlphaExt, ptr);
 	AnnounceInvalidPointerMap(TechnoExt::SpotlightExt, ptr);

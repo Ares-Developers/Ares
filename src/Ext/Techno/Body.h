@@ -74,6 +74,8 @@ public:
 		unsigned int AlphaFrame(SHPStruct * Image);
 
 		bool DrawVisualFX();
+
+		UnitTypeClass * GetUnitType();
 	};
 
 	static Container<TechnoExt> ExtMap;

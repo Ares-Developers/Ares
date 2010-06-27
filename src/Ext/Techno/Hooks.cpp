@@ -396,19 +396,6 @@ bool TechnoClassExt::EvalWeaponAgainst(TechnoClass *pThis, TechnoClass *pTarget,
 }
 */
 
-/* #604 - customizable parachutes */
-DEFINE_HOOK(5F5ADD, Parachute_Animation, 6)
-{
-	GET(TechnoClass *, T, ESI);
-	RET_UNLESS(generic_cast<FootClass *>(T));
-	TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(T->GetTechnoType());
-	if(pTypeData->Is_Bomb) {
-		T->IsABomb = 1;
-	}
-	R->EDX<AnimTypeClass *>(pTypeData->Parachute_Anim);
-	return 0x5F5AE3;
-}
-
 DEFINE_HOOK(51F76D, InfantryClass_Unload, 5)
 {
 	GET(TechnoClass *, I, ESI);
@@ -463,19 +450,6 @@ EXPORT_FUNC(InfantryClass_UpdateDeploy2)
 	return 0;
 }
 
-DEFINE_HOOK(73B672, UnitClass_DrawVXL, 6)
-{
-	GET(UnitClass *, U, EBP);
-	TechnoTypeExt::ExtData *pData = TechnoTypeExt::ExtMap.Find(U->Type);
-	if(pData->WaterAlt) {
-		if(!U->OnBridge && U->GetCell()->LandType == lt_Water) {
-			R->EAX(0);
-			return 0x73B68B;
-		}
-	}
-	return 0;
-}
-
 // stops movement sound from being played while unit is being pulled by a magnetron (see terror drone)
 DEFINE_HOOK(7101CF, FootClass_ImbueLocomotor, 7)
 {
@@ -495,50 +469,6 @@ DEFINE_HOOK(4DAA68, FootClass_Update_MoveSound, 6)
 		return 0x4DAAEE;
 	}
 	return 0x4DAA70;
-}
-
-DEFINE_HOOK(73C725, UnitClass_DrawSHP_DrawShadowEarlier, 6)
-{
-	GET(UnitClass *, U, EBP);
-
-	DWORD retAddr = (U->IsClearlyVisibleTo(HouseClass::Player))
-		? 0
-		: 0x73CE0D
-	;
-
-	if(U->CloakState || U->Type->Underwater) { // TODO: other conditions where it would not make sense to draw shadow - VisualCharacter?
-		return retAddr;
-	}
-
-	GET(SHPStruct *, Image, EDI);
-
-	if(Image) { // bug #960
-		GET(int, FrameToDraw, EBX);
-		GET_STACK(Point2D, coords, 0x12C);
-		LEA_STACK(RectangleStruct *, BoundingRect, 0x134);
-
-		if(U->unknown_bool_420) {
-			coords.Y -= 14;
-		}
-
-		Point2D XYAdjust = {0, 0};
-		U->Locomotor->Shadow_Point(&XYAdjust);
-		coords += XYAdjust;
-
-		int ZAdjust = U->GetZAdjustment() - 2;
-
-		FrameToDraw += Image->Frames / 2;
-
-		DSurface::Hidden_2->DrawSHP(FileSystem::THEATER_PAL, Image, FrameToDraw, &coords, BoundingRect, 0x2E01,
-				0, ZAdjust, 0, 1000, 0, 0, 0, 0, 0);
-	}
-
-	return retAddr;
-}
-
-DEFINE_HOOK(73C733, UnitClass_DrawSHP_SkipTurretedShadow, 7)
-{
-	return 0x73C7AC;
 }
 
 /* #397 - AffectsEnemies */

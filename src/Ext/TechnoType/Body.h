@@ -55,8 +55,6 @@ public:
 
 		bool Is_Bomb;
 
-		bool WaterAlt;
-
 		// these are not implemented at all yet
 		DynamicVectorClass<WeaponStruct> Weapons;
 		DynamicVectorClass<WeaponStruct> EliteWeapons;
@@ -86,6 +84,8 @@ public:
 
 		ValueableIdx<int, VocClass> VoiceRepair;
 
+		Customizable<UnitTypeClass *> WaterImage;
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			Survivors_PilotChance (NULL),
 			Survivors_PassengerChance (NULL),
@@ -105,7 +105,6 @@ public:
 			Spot_DisableB (false),
 			Spot_Reverse (false),
 			Is_Bomb (false),
-			WaterAlt (false),
 			Insignia (NULL),
 			Parachute_Anim(&RulesClass::Instance->Parachute),
 			Operator (NULL),
@@ -118,7 +117,8 @@ public:
 			ProtectedDriver(false),
 			CanDrive (false),
 			AlternateTheaterArt (false),
-			VoiceRepair (-1)
+			VoiceRepair (-1),
+			WaterImage (NULL)
 			{ this->Insignia.SetAll(NULL); };
 
 		virtual ~ExtData() {};
