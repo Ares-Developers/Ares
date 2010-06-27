@@ -2,6 +2,7 @@
 #define TECHNOTYPE_EXT_H
 
 #include <TechnoTypeClass.h>
+#include <VocClass.h>
 
 #include "../../Ares.h"
 #include "../_Container.hpp"
@@ -83,6 +84,8 @@ public:
 
 		bool AlternateTheaterArt;
 
+		ValueableIdx<int, VocClass> VoiceRepair;
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			Survivors_PilotChance (NULL),
 			Survivors_PassengerChance (NULL),
@@ -114,7 +117,8 @@ public:
 			EliteAbilityEMPIMMUNE (false),
 			ProtectedDriver(false),
 			CanDrive (false),
-			AlternateTheaterArt (false)
+			AlternateTheaterArt (false),
+			VoiceRepair (-1)
 			{ this->Insignia.SetAll(NULL); };
 
 		virtual ~ExtData() {};

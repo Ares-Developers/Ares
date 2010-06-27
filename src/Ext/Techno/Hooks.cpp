@@ -569,3 +569,21 @@ DEFINE_HOOK(701C97, TechnoClass_ReceiveDamage_AffectsEnemies, 6)
 
 	return CanAffect ? 0 : 0x701CC2;
 }
+
+DEFINE_HOOK(7090D0, TechnoClass_SelectFiringVoice_IFVRepair, 5)
+{
+	GET(TechnoClass *, Firer, ESI);
+	TechnoTypeClass * FirerType = Firer->GetTechnoType();
+	auto pData = TechnoTypeExt::ExtMap.Find(FirerType);
+
+	int idxVoice = pData->VoiceRepair;
+	if(idxVoice == -1) {
+		if(_strcmpi(FirerType->ID, "FV")) {
+			// the game does this
+			return 0x7090ED;
+		}
+		idxVoice = RulesClass::Instance->VoiceIFVRepair;
+	}
+	R->EDI<int>(idxVoice);
+	return 0x70914A;
+}
