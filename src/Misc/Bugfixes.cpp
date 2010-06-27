@@ -433,8 +433,8 @@ A_FINE_HOOK(48439A, CellClass_GetColourComponents, 5)
 
 DEFINE_HOOK(6873AB, INIClass_ReadScenario_EarlyLoadRules, 5)
 {
-	switch(Unsorted::GameMode) {
-		case gm_Campaign:
+	switch(SessionClass::Instance->GameMode) {
+		case GameMode::Campaign:
 			RulesClass::Global()->Read_Sides(CCINIClass::INI_Rules);
 			SideExt::ExtMap.LoadAllFromINI(CCINIClass::INI_Rules);
 		default:

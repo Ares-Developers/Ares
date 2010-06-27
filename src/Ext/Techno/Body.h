@@ -70,6 +70,10 @@ public:
 
 		bool IsOperated();
 		bool IsPowered();
+
+		unsigned int AlphaFrame(SHPStruct * Image);
+
+		bool DrawVisualFX();
 	};
 
 	static Container<TechnoExt> ExtMap;
@@ -78,7 +82,7 @@ public:
 
 	static BuildingLightClass * ActiveBuildingLight;
 
-	static FireError FiringStateCache;
+	static FireError::Value FiringStateCache;
 
 	static bool NeedsRegap;
 

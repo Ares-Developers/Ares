@@ -254,16 +254,16 @@ DEFINE_HOOK(6FCD1D, TechnoClass_GetObjectActivityState_CanTargetFirewall, 5)
 		Src->ShouldLoseTargetNow = 1;
 		TechnoExt::FiringStateCache = FireError::ILLEGAL;
 	} else {
-		TechnoExt::FiringStateCache = -1;
+		TechnoExt::FiringStateCache = FireError::NotAValue;
 	}
 	return 0;
 }
 
 DEFINE_HOOK(6FCD23, TechnoClass_GetObjectActivityState_OverrideFirewall, 6)
 {
-	if(TechnoExt::FiringStateCache != -1) {
+	if(TechnoExt::FiringStateCache != FireError::NotAValue) {
 		R->EAX(TechnoExt::FiringStateCache);
-		TechnoExt::FiringStateCache = -1;
+		TechnoExt::FiringStateCache = FireError::NotAValue;
 	}
 
 	return 0;

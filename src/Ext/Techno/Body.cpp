@@ -11,7 +11,7 @@ Container<TechnoExt> TechnoExt::ExtMap;
 template<> TechnoExt::TT *Container<TechnoExt>::SavingObject = NULL;
 template<> IStream *Container<TechnoExt>::SavingStream = NULL;
 
-FireError TechnoExt::FiringStateCache = -1;
+FireError::Value TechnoExt::FiringStateCache  = FireError::NotAValue;
 
 bool TechnoExt::NeedsRegap = false;
 
@@ -154,6 +154,24 @@ void TechnoExt::StopDraining(TechnoClass *Drainer, TechnoClass *Drainee) {
 			Drainee->Owner->ShouldRecheckTechTree = true;
 		}
 	}
+}
+
+unsigned int TechnoExt::ExtData::AlphaFrame(SHPStruct *Image) {
+	int countFrames = Conversions::Int2Highest(Image->Frames);
+	DWORD Facing;
+	this->AttachedToObject->Facing.GetFacing(&Facing);
+	WORD F = (WORD)Facing;
+	return (F >> (16 - countFrames));
+}
+
+bool TechnoExt::ExtData::DrawVisualFX() {
+	TechnoClass * Object = this->AttachedToObject;
+	if(Object->VisualCharacter(true, Object->Owner) == VisualType::Normal) {
+		if(!Object->Disguised) {
+			return true;
+		}
+	}
+	return false;
 }
 
 void Container<TechnoExt>::InvalidatePointer(void *ptr) {
