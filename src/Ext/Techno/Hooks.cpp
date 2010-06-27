@@ -501,8 +501,13 @@ DEFINE_HOOK(73C725, UnitClass_DrawSHP_DrawShadowEarlier, 6)
 {
 	GET(UnitClass *, U, EBP);
 
+	DWORD retAddr = (U->IsClearlyVisibleTo(HouseClass::Player))
+		? 0
+		: 0x73CE0D
+	;
+
 	if(U->CloakState || U->Type->Underwater) { // TODO: other conditions where it would not make sense to draw shadow - VisualCharacter?
-		return 0;
+		return retAddr;
 	}
 
 	GET(SHPStruct *, Image, EDI);
@@ -527,7 +532,8 @@ DEFINE_HOOK(73C725, UnitClass_DrawSHP_DrawShadowEarlier, 6)
 		DSurface::Hidden_2->DrawSHP(FileSystem::THEATER_PAL, Image, FrameToDraw, &coords, BoundingRect, 0x2E01,
 				0, ZAdjust, 0, 1000, 0, 0, 0, 0, 0);
 	}
-	return 0;
+
+	return retAddr;
 }
 
 DEFINE_HOOK(73C733, UnitClass_DrawSHP_SkipTurretedShadow, 7)
