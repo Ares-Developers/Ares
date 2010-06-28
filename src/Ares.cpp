@@ -62,6 +62,7 @@ void __stdcall Ares::RegisterCommands()
 	MakeCommand<MapSnapshotCommandClass>();
 	MakeCommand<TestSomethingCommandClass>();
 	MakeCommand<DumperTypesCommandClass>();
+	MakeCommand<MemoryDumperCommandClass>();
 	MakeCommand<DebuggingCommandClass>();
 }
 

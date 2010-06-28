@@ -47,7 +47,7 @@ public:
 	static void FatalErrorAndExit(const char *Message, ...);
 	static int __stdcall FatalDialog_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-	static void FullDump(MINIDUMP_EXCEPTION_INFORMATION *pException);
+	static void FullDump(MINIDUMP_EXCEPTION_INFORMATION *pException, wchar_t * generatedFilename = NULL);
 
 	static void DevLog(Debug::Severity severity, const char* Format, ...);
 };
