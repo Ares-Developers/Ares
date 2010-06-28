@@ -193,7 +193,6 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 		this->RubbleDestroyed->Capturable = false;
 		this->RubbleDestroyed->TogglePower = false;
 		this->RubbleDestroyed->Unsellable = true;
-		this->RubbleDestroyed->ClickRepairable = false;
 		this->RubbleDestroyed->CanBeOccupied = false;
 	}
 
@@ -212,6 +211,16 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 		this->PowerOutageDuration.Read(&exINI, pID, "SpyEffect.PowerOutageDuration");
 		this->StolenMoneyAmount.Read(&exINI, pID, "SpyEffect.StolenMoneyAmount");
 		this->StolenMoneyPercentage.Read(&exINI, pID, "SpyEffect.StolenMoneyPercentage");
+	}
+}
+
+void BuildingTypeExt::ExtData::CompleteInitialization(BuildingTypeClass *pThis) {
+	// enforce same foundations for rubble/intact building pairs
+	if(this->RubbleDestroyed && !BuildingTypeExt::IsFoundationEqual(this->AttachedToObject, this->RubbleDestroyed)) {
+		Debug::FatalErrorAndExit("BuildingType %s and its Rubble.Destroyed %s don't have the same foundation.", this->AttachedToObject->ID, this->RubbleDestroyed->ID);
+	}
+	if(this->RubbleIntact && !BuildingTypeExt::IsFoundationEqual(this->AttachedToObject, this->RubbleIntact)) {
+		Debug::FatalErrorAndExit("BuildingType %s and its Rubble.Intact %s don't have the same foundation.", this->AttachedToObject->ID, this->RubbleIntact->ID);
 	}
 }
 
@@ -265,6 +274,46 @@ void BuildingTypeExt::UpdateSecretLabOptions(BuildingClass *pThis)
 	DEBUGLOG("Secret Lab rolled %s for %s\n", Result->ID, pType->ID);
 	pData->Secret_Placed = true;
 	pThis->SecretProduction = Result;
+}
+
+// Naive function to return whether two buildings have tha same foundation.
+bool BuildingTypeExt::IsFoundationEqual(BuildingTypeClass *pTBldA, BuildingTypeClass *pTBldB) {
+	if(pTBldA && pTBldB) {
+		// must have same foundation id
+		if(pTBldA->Foundation != pTBldB->Foundation) {
+			return false;
+		}
+
+		// non-custom foundations need no special handling
+		if(pTBldA->Foundation != FOUNDATION_CUSTOM) {
+			return true;
+		}
+
+		// custom foundation
+		BuildingTypeExt::ExtData *pDataA = BuildingTypeExt::ExtMap.Find(pTBldA);
+		BuildingTypeExt::ExtData *pDataB = BuildingTypeExt::ExtMap.Find(pTBldB);
+		if(pDataA->CustomWidth == pDataB->CustomWidth) {
+			if(pDataA->CustomHeight == pDataB->CustomHeight) {
+				// compare unsorted arrays the hard way: O(n²)
+				int length = (pDataA->CustomHeight * pDataA->CustomHeight + 1);
+				for(int i=0; i<length; ++i) {
+					bool found = false;
+					for(int j=0; j<length; ++j) {
+						if((pDataA->CustomData[i].X == pDataB->CustomData[j].X) && (pDataA->CustomData[i].Y == pDataB->CustomData[j].Y)) {
+							found = true;
+							break;
+						}
+					}
+					if(!found) {
+						return false;
+					}
+				}
+				// found everyting.
+				return true;
+			}
+		}
+	}
+	return false;
 }
 
 // Short check: Is the building of a linkable kind at all?

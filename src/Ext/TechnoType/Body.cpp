@@ -1,4 +1,5 @@
 #include "Body.h"
+#include "../BuildingType/Body.h"
 #include "../Side/Body.h"
 #include "../../Enum/Prerequisites.h"
 #include "../../Misc/Debug.h"
@@ -468,6 +469,10 @@ DEFINE_HOOK(679CAF, RulesClass_LoadAfterTypeData_InferEMPImmunity, 5) {
 	for(int i=0; i<BuildingTypeClass::Array->Count; ++i) {
 		BuildingTypeClass* pTBld = BuildingTypeClass::Array->GetItem(i);
 		TechnoTypeExt::InferEMPImmunity(pTBld, pINI);
+
+		if(BuildingTypeExt::ExtData *pData = BuildingTypeExt::ExtMap.Find(pTBld)) {
+			pData->CompleteInitialization(pTBld);
+		}
 	}
 	for(int i=0; i<AircraftTypeClass::Array->Count; ++i) {
 		AircraftTypeClass* pTAir = AircraftTypeClass::Array->GetItem(i);

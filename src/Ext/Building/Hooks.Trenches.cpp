@@ -64,7 +64,9 @@ DEFINE_HOOK(441F12, BuildingClass_Destroy_RubbleYell, 6)
 	if(!pThis->C4Timer.Ignorable()) {
 		// If this object has a rubble building set, turn, otherwise die
 		if(destrBuildTE->RubbleDestroyed) {
+			++Unsorted::IKnowWhatImDoing;
 			BuildingAresData->RubbleYell();
+			--Unsorted::IKnowWhatImDoing;
 		} else {
 			pThis->UnInit();
 			pThis->AfterDestruction();
@@ -76,6 +78,24 @@ DEFINE_HOOK(441F12, BuildingClass_Destroy_RubbleYell, 6)
 		pThis->UnInit();
 		pThis->AfterDestruction();
 	}*/
+	return 0;
+}
+
+// remove all units from the rubble
+DEFINE_HOOK(441F2C, BuildingClass_Destroy_KickOutOfRubble, 5) {
+	GET(BuildingClass*, pBld, ESI);
+	
+	// find out whether this destroyed building would turn into rubble
+	if(BuildingTypeExt::ExtData *pTData = BuildingTypeExt::ExtMap.Find(pBld->Type)) {
+		if(pTData->RubbleDestroyed) {
+			if(BuildingExt::ExtData *pData = BuildingExt::ExtMap.Find(pBld)) {
+				// this is not the rubble, but the old intact building.
+				// since we force the same foundation this is no problem.
+				pData->KickOutOfRubble();
+			}
+		}
+	}
+
 	return 0;
 }
 

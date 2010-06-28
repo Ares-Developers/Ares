@@ -113,6 +113,7 @@ public:
 
 		virtual void LoadFromINIFile(TT *pThis, CCINIClass *pINI);
 		virtual void Initialize(TT *pThis);
+		virtual void CompleteInitialization(TT *pThis);
 
 		virtual void InvalidatePointer(void *ptr) {
 			AnnounceInvalidPointer(RubbleIntact, ptr);
@@ -126,6 +127,7 @@ public:
 //	static ExtData ExtMap;
 
 	static void UpdateSecretLabOptions(BuildingClass *pThis);
+	static bool IsFoundationEqual(BuildingTypeClass *pTBldA, BuildingTypeClass *pTBldB);
 };
 
 #endif
