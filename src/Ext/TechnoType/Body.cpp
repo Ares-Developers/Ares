@@ -208,7 +208,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	// EMP immunity will be inferred after all type data has been read.
 	// Not all needed properties have been parsed here. For instance: Cyborg.
 
-	if(pINI->ReadString(section, "EMPThreshold", "inair", Ares::readBuffer, Ares::readLength)) {
+	if(pINI->ReadString(section, "EMP.Threshold", "inair", Ares::readBuffer, Ares::readLength)) {
 		if(_strcmpi(Ares::readBuffer, "inair") == 0) {
 			this->EMPThreshold = -1;
 		} else if((_strcmpi(Ares::readBuffer, "yes") == 0) || (_strcmpi(Ares::readBuffer, "true") == 0)) {
@@ -216,7 +216,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 		} else if((_strcmpi(Ares::readBuffer, "no") == 0) || (_strcmpi(Ares::readBuffer, "false") == 0)) {
 			this->EMPThreshold = 0;
 		} else {
-			this->EMPThreshold = pINI->ReadInteger(section, "EMPThreshold", this->EMPThreshold);
+			this->EMPThreshold = pINI->ReadInteger(section, "EMP.Threshold", this->EMPThreshold);
 		}
 	}
 

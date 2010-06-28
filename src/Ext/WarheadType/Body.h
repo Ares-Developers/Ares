@@ -55,10 +55,10 @@ public:
 		int Ripple_Radius;
 
 		int EMP_Duration;
-
 		int EMP_Cap;
 
 		int IC_Duration;
+		int IC_Cap;
 
 		DynamicVectorClass<VersesData> Verses;
 		double DeployedDamage;
@@ -79,6 +79,7 @@ public:
 			EMP_Duration (0),
 			EMP_Cap (-1),
 			IC_Duration (0),
+			IC_Cap (-1),
 			DeployedDamage (1.00),
 			Temporal_WarpAway (&RulesClass::Global()->WarpAway),
 			AffectsEnemies (true),
@@ -102,7 +103,7 @@ public:
 		}
 
 		void applyRipples(CoordStruct *);
-		void applyIronCurtain(CoordStruct *, HouseClass *);
+		void applyIronCurtain(CoordStruct *, HouseClass *, int);
 		void applyEMP(CoordStruct *, TechnoClass *);
 		bool applyPermaMC(CoordStruct *, HouseClass *, ObjectClass *);
 
@@ -122,9 +123,9 @@ public:
 			pWHExt->applyRipples(coords);
 		}
 	}
-	static void applyIronCurtain(WarheadTypeClass * pWH, CoordStruct* coords, HouseClass * House) {
+	static void applyIronCurtain(WarheadTypeClass * pWH, CoordStruct* coords, HouseClass * House, int damage) {
 		if(auto pWHExt = WarheadTypeExt::ExtMap.Find(pWH)) {
-			pWHExt->applyIronCurtain(coords, House);
+			pWHExt->applyIronCurtain(coords, House, damage);
 		}
 	}
 	static void applyEMP(WarheadTypeClass * pWH, CoordStruct* coords, TechnoClass *source) {
