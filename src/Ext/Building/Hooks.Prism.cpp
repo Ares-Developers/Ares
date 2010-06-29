@@ -161,9 +161,9 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 
 		//allow support weapon to control some beam effects
 		WeaponTypeClass* weapon;
-		if (weapon = pType->get_Secondary() || weapon = pType->get_Primary()) {
+		if ((weapon == pType->get_Secondary()) || (weapon == pType->get_Primary())) {
 			LaserBeam->IsHouseColor = weapon->IsHouseColor;
-			if !(weapon->IsHouseColor) {
+			if (!weapon->IsHouseColor) {
 				LaserBeam->InnerColor = weapon->LaserInnerColor;
 				LaserBeam->OuterColor = weapon->LaserOuterColor;
 				LaserBeam->OuterSpread = weapon->LaserOuterSpread;
