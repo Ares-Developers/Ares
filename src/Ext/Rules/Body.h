@@ -27,11 +27,20 @@ class RulesExt
 		Valueable<MouseCursor> EngineerDamageCursor;
 		bool MultiEngineer[2];
 
+		Valueable<AnimTypeClass *> FirestormActiveAnim, FirestormIdleAnim, FirestormGroundAnim, FirestormAirAnim;
+
+		Customizable<WarheadTypeClass *> FirestormWH;
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			ElectricDeath(NULL),
 			EngineerDamage (0.0F),
 			EngineerAlwaysCaptureTech (true),
-			EngineerDamageCursor (MouseCursor::First[51])
+			EngineerDamageCursor (MouseCursor::First[51]),
+			FirestormActiveAnim(NULL),
+			FirestormIdleAnim(NULL),
+			FirestormGroundAnim(NULL),
+			FirestormAirAnim(NULL),
+			FirestormWH(&RulesClass::Instance->C4Warhead)
 			{
 				MultiEngineer[0] = false; // Skirmish
 				MultiEngineer[1] = false; // LAN

@@ -77,7 +77,9 @@ void RulesExt::ExtData::LoadAfterTypeData(RulesClass *pThis, CCINIClass *pINI) {
 
 	INI_EX exINI(pINI);
 
-	pData->ElectricDeath.Parse(&exINI, "AudioVisual", "InfantryElectrocuted");
+	const char strAV[] = "AudioVisual";
+
+	pData->ElectricDeath.Parse(&exINI, strAV, "InfantryElectrocuted");
 
 	for (int i = 0; i < WeaponTypeClass::Array->Count; ++i) {
 		WeaponTypeClass::Array->GetItem(i)->LoadFromINI(pINI);
@@ -86,6 +88,13 @@ void RulesExt::ExtData::LoadAfterTypeData(RulesClass *pThis, CCINIClass *pINI) {
 	pData->EngineerDamage = pINI->ReadDouble("General", "EngineerDamage", pData->EngineerDamage);
 	pData->EngineerAlwaysCaptureTech = pINI->ReadBool("General", "EngineerAlwaysCaptureTech", pData->EngineerAlwaysCaptureTech);
 	pData->EngineerDamageCursor.Read(&exINI, "General", "EngineerDamageCursor");
+
+	pData->FirestormActiveAnim.Parse(&exINI, strAV, "FirestormActiveAnim");
+	pData->FirestormIdleAnim.Parse(&exINI, strAV, "FirestormIdleAnim");
+	pData->FirestormGroundAnim.Parse(&exINI, strAV, "FirestormGroundAnim");
+	pData->FirestormAirAnim.Parse(&exINI, strAV, "FirestormAirAnim");
+
+	pData->FirestormWH.Parse(&exINI, "General", "FirestormWH");
 }
 
 // =============================

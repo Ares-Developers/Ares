@@ -1,6 +1,7 @@
 #include "Body.h"
 #include "../BuildingType/Body.h"
 #include "../House/Body.h"
+#include "../Rules/Body.h"
 
 #include <AnimClass.h>
 #include <BuildingClass.h>
@@ -632,7 +633,7 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 	return true;
 }
 
-void BuildingExt::ExtData::UpdateFirewall() {
+void BuildingExt::ExtData::UpdateFirewall(bool changesState) {
 	BuildingClass *B = this->AttachedToObject;
 	BuildingTypeClass *BT = B->Type;
 	HouseClass *H = B->Owner;
@@ -659,22 +660,54 @@ void BuildingExt::ExtData::UpdateFirewall() {
 		B->SetLayer(lyr_Ground); // HACK - repaints properly
 	}
 
-	if(!FS) {
+	int corners = (FWFrame & 0xF); // 1111b
+	bool isCorner = (corners != 5 && corners != 10); // (0101b || 1010b) == part of a straight line
+
+	bool activates = changesState && FS;
+	bool deactivates = changesState && !FS;
+
+	if(changesState) {
+		if(!FS || !isCorner || this->FirestormActiveAnim) {
+			if(this->FirestormActiveAnim) {
+				GAME_DEALLOC(this->FirestormActiveAnim);
+				this->FirestormActiveAnim = 0;
+			}
+		} else {
+			if(AnimTypeClass *FSA = RulesExt::Global()->FirestormActiveAnim) {
+				CoordStruct XYZ;
+				B->GetCoords(&XYZ);
+				XYZ.X -= 128;
+				XYZ.Y -= 128;
+				GAME_ALLOC(AnimClass, this->FirestormActiveAnim, FSA, &XYZ);
+			}
+		}
+	}
+
+	if(deactivates) {
+		if(B->FirestormAnim) {
+			GAME_DEALLOC(B->FirestormAnim);
+			B->FirestormAnim = 0;
+		}
+		return;
+	} else if(!FS) {
 		return;
 	}
 
+	// only get here if we're activating or already active
+
 	if(!(Unsorted::CurrentFrame % 7) && ScenarioClass::Instance->Random.RandomRanged(0, 15) == 1) {
-		int corners = (FWFrame & 0xF); // 1111b
-		if(AnimClass *IdleAnim = B->FirestormAnim) {
-			GAME_DEALLOC(IdleAnim);
-			B->FirestormAnim = 0;
+		if(B->FirestormAnim) {
+			if(B->FirestormAnim) {
+				GAME_DEALLOC(B->FirestormAnim);
+				B->FirestormAnim = 0;
+			}
 		}
-		if(corners != 5 && corners != 10) {  // (0101b || 1010b) == part of a straight line
+		if(isCorner) {
 			CoordStruct XYZ;
 			B->GetCoords(&XYZ);
 			XYZ.X -= 768;
 			XYZ.Y -= 768;
-			if(AnimTypeClass *FSA = AnimTypeClass::Find("FSIDLE")) {
+			if(AnimTypeClass *FSA = RulesExt::Global()->FirestormIdleAnim) {
 				GAME_ALLOC(AnimClass, B->FirestormAnim, FSA, &XYZ);
 			}
 		}
@@ -696,9 +729,12 @@ void BuildingExt::ExtData::ImmolateVictim(ObjectClass * Victim) {
 		CoordStruct XYZ;
 		Victim->GetCoords(&XYZ);
 		int Damage = Victim->Health;
-		Victim->ReceiveDamage(&Damage, 0, RulesClass::Instance->C4Warhead/* todo */, 0, 1, 0, pThis->Owner);
 
-		if(AnimTypeClass *FSAnim = AnimTypeClass::Find(Victim->IsInAir() ? "FSAIR" : "FSGRND")) {
+		auto pRulesData = RulesExt::Global();
+
+		Victim->ReceiveDamage(&Damage, 0, pRulesData->FirestormWH, 0, 1, 0, pThis->Owner);
+
+		if(AnimTypeClass *FSAnim = (Victim->IsInAir() ? pRulesData->FirestormAirAnim : pRulesData->FirestormGroundAnim)) {
 			AnimClass * placeholder;
 			GAME_ALLOC(AnimClass, placeholder, FSAnim, &XYZ);
 		}

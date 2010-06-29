@@ -163,7 +163,7 @@ void HouseExt::ExtData::SetFirestormState(bool Active) {
 		BuildingTypeExt::ExtData *pBuildTypeData = BuildingTypeExt::ExtMap.Find(B->Type);
 		if(pBuildTypeData->Firewall_Is) {
 			BuildingExt::ExtData * pData = BuildingExt::ExtMap.Find(B);
-			pData->UpdateFirewall();
+			pData->UpdateFirewall(true);
 			CellStruct temp;
 			B->GetMapCoords(&temp);
 			AffectedCoords.AddItem(temp);

@@ -3,6 +3,7 @@
 
 #include <CCINIClass.h>
 #include <BuildingClass.h>
+#include <AnimClass.h>
 
 #include "../_Container.hpp"
 #include "../../Ares.h"
@@ -26,18 +27,25 @@ public:
 		bool ignoreNextEVA; //!< This is used when returning raided buildings, to decide whether to play EVA announcements about building capture.
 
 		bool InfiltratedBy(HouseClass *Enterer);
+
+		AnimClass* FirestormActiveAnim;
 	public:
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
-			OwnerBeforeRaid(NULL), isCurrentlyRaided(false), ignoreNextEVA(false)
+			OwnerBeforeRaid(NULL), isCurrentlyRaided(false), ignoreNextEVA(false), FirestormActiveAnim(NULL)
 			{ };
 
 		virtual ~ExtData() {
+			if(this->FirestormActiveAnim) {
+				GAME_DEALLOC(this->FirestormActiveAnim);
+				FirestormActiveAnim = NULL;
+			}
 		}
 
 		virtual size_t Size() const { return sizeof(*this); };
 
 		virtual void InvalidatePointer(void *ptr) {
 			AnnounceInvalidPointer(OwnerBeforeRaid, ptr);
+			AnnounceInvalidPointer(FirestormActiveAnim, ptr);
 		}
 
 		// related to Advanced Rubble
@@ -56,7 +64,7 @@ public:
 		// related to raidable buildings
 		void evalRaidStatus(); //!< Checks if the building is empty but still marked as raided, and returns the building to its previous owner, if so.
 
-		void UpdateFirewall();
+		void UpdateFirewall(bool changesState = false);
 		void ImmolateVictims();
 		void ImmolateVictim(ObjectClass * Victim);
 	};
