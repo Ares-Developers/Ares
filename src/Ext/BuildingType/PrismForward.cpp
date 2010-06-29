@@ -185,6 +185,8 @@ int BuildingTypeExt::cPrismForwarding::AcquireSlaves_SingleStage
 		++(*LongestChain);
 	}
 
+	Debug::Log("[Prism Forwarding] AcquireSlaves_SingleStage returning %d for tower %p, which now has %d SupportingPrisms.\n", iFeeds, TargetTower, TargetTower->SupportingPrisms);
+		
 	return iFeeds;
 }
 
