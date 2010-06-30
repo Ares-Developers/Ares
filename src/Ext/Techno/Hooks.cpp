@@ -145,11 +145,11 @@ DEFINE_HOOK(6F407D, TechnoClass_Init_1, 6)
 
 		if(WH1 && WH1->Temporal && Temporal == NULL) {
 			GAME_ALLOC(TemporalClass, Temporal, T);
-			Temporal->WarpRemaining = W1->Damage;
+			Temporal->WarpPerStep = W1->Damage;
 			pData->idxSlot_Warp = (BYTE)i;
 		} else if(WH2 && WH2->Temporal && Temporal == NULL) {
 			GAME_ALLOC(TemporalClass, Temporal, T);
-			Temporal->WarpRemaining = W2->Damage;
+			Temporal->WarpPerStep = W2->Damage;
 			pData->idxSlot_Warp = (BYTE)i;
 		}
 

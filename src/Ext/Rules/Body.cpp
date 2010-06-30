@@ -94,7 +94,7 @@ void RulesExt::ExtData::LoadAfterTypeData(RulesClass *pThis, CCINIClass *pINI) {
 	pData->FirestormGroundAnim.Parse(&exINI, strAV, "FirestormGroundAnim");
 	pData->FirestormAirAnim.Parse(&exINI, strAV, "FirestormAirAnim");
 
-	pData->FirestormWH.Parse(&exINI, "General", "FirestormWH");
+	pData->FirestormWH.Parse(&exINI, "CombatDamage", "FirestormWarhead");
 }
 
 // =============================
