@@ -74,7 +74,10 @@ public:
 		Customizable<bool> ImmuneToEMP;
 		bool VeteranAbilityEMPIMMUNE;
 		bool EliteAbilityEMPIMMUNE;
-		int EMPThreshold;
+		int EMP_Threshold;
+		float EMP_Modifier;
+
+		float IC_Modifier;
 
 		// new on 05.04.10 for #733 (KillDriver/"Jarmen Kell")
 		bool ProtectedDriver; //!< Whether the driver of this vehicle cannot be killed, i.e. whether this vehicle is immune to KillDriver. Request #733.
@@ -111,7 +114,9 @@ public:
 			IsAPromiscuousWhoreAndLetsAnyoneRideIt (false),
 			CameoPal(),
 			RequiredStolenTech(0ull),
-			EMPThreshold (-1),
+			IC_Modifier (1.0F),
+			EMP_Threshold (-1),
+			EMP_Modifier (1.0F),
 			VeteranAbilityEMPIMMUNE (false),
 			EliteAbilityEMPIMMUNE (false),
 			ProtectedDriver(false),

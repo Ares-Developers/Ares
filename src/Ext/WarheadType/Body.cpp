@@ -2,6 +2,7 @@
 #include <WeaponTypeClass.h>
 #include "../../Enum/ArmorTypes.h"
 #include "../Techno/Body.h"
+#include "../TechnoType/Body.h"
 #include "Misc/EMPulse.h"
 
 #include <WarheadTypeClass.h>
@@ -162,14 +163,24 @@ void WarheadTypeExt::ExtData::applyIronCurtain(CoordStruct *coords, HouseClass* 
 				// affects enemies or allies respectively?
 				if(WarheadTypeExt::canWarheadAffectTarget(curTechno, Owner, this->AttachedToObject)) {
 
+					// duration modifier
+					int duration = this->IC_Duration;
+
+					// modifiy good durations only
+					if(duration > 0) {
+						if(TechnoTypeExt::ExtData *pData = TechnoTypeExt::ExtMap.Find(curTechno->GetTechnoType())) {
+							duration = (int)(duration * pData->IC_Modifier);
+						}
+					}
+
 					// respect verses the boolean way
 					if(abs(this->Verses[curTechno->GetTechnoType()->Armor].Verses) < 0.001) {
 						break;
 					}
 
 					// get the values
-					int oldValue = (curTechno->IronCurtainTimer.Ignorable() ? 0 : curTechno->IronCurtainTimer.TimeLeft);
-					int newValue = Helpers::Alex::getCappedDuration(oldValue, this->IC_Duration, this->IC_Cap);
+					int oldValue = (curTechno->IronCurtainTimer.Ignorable() ? 0 : curTechno->IronCurtainTimer.GetTimeLeft());
+					int newValue = Helpers::Alex::getCappedDuration(oldValue, duration, this->IC_Cap);
 
 					// update iron curtain
 					if(oldValue <= 0) {
@@ -182,17 +193,20 @@ void WarheadTypeExt::ExtData::applyIronCurtain(CoordStruct *coords, HouseClass* 
 
 							// unit may be destroyed already.
 							if(curTechno->IsAlive) {
-								curTechno->IronCurtain(newValue, Owner, 0);
+								// start and prevent the multiplier from being applied twice
+								curTechno->IronCurtain(newValue, Owner, false);
+								curTechno->IronCurtainTimer.Start(newValue);
 							}
 						}
 					} else {
 						// iron curtain effect is already on.
 						if(newValue > 0) {
-							// set new length
-							curTechno->IronCurtainTimer.TimeLeft = newValue;
+							// set new length and reset tint stage
+							curTechno->IronCurtainTimer.Start(newValue);
+							curTechno->IronTintStage = 4;
 						} else {
 							// turn iron curtain off
-							curTechno->IronCurtainTimer.TimeLeft = 1;
+							curTechno->IronCurtainTimer.Stop();
 						}
 					}
 				}

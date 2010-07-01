@@ -57,7 +57,7 @@ void EMPulse::CreateEMPulse(WarheadTypeExt::ExtData *Warhead, CoordStruct *Coord
 	\param object The Techno that should get affected by EMP.
 
 	\author AlexB
-	\date 2010-05-03
+	\date 2010-06-30
 */
 void EMPulse::deliverEMPDamage(ObjectClass *object, TechnoClass *Firer, WarheadTypeExt::ExtData *Warhead) {
 	// fill the gaps
@@ -76,17 +76,26 @@ void EMPulse::deliverEMPDamage(ObjectClass *object, TechnoClass *Firer, WarheadT
 						curTechno->get_ID());
 			}
 
+			// get the target-specific multiplier
+			float modifier = 1.0F;
+			if(TechnoTypeExt::ExtData* pExt = TechnoTypeExt::ExtMap.Find(curTechno->GetTechnoType())) {
+				// modifier only affects bad things
+				if(Warhead->EMP_Duration > 0) {
+					modifier = pExt->EMP_Modifier;
+				}
+			}
+
 			// respect verses
-			int Duration = Warhead->EMP_Duration;
+			int duration = (int)(Warhead->EMP_Duration * modifier);
 			if(supportVerses) {
-				Duration = (int)(Duration * Warhead->Verses[curTechno->GetTechnoType()->Armor].Verses);
+				duration = (int)(duration * Warhead->Verses[curTechno->GetTechnoType()->Armor].Verses);
 			} else if(abs(Warhead->Verses[curTechno->GetTechnoType()->Armor].Verses) < 0.001) {
 				return;
 			}
 
 			// get the new capped value
 			int oldValue = curTechno->EMPLockRemaining;
-			int newValue = Helpers::Alex::getCappedDuration(oldValue, Duration, Warhead->EMP_Cap);
+			int newValue = Helpers::Alex::getCappedDuration(oldValue, duration, Warhead->EMP_Cap);
 
 			if (verbose) {
 				Debug::Log("[deliverEMPDamage] Step 3: %d\n",
@@ -570,11 +579,11 @@ bool EMPulse::thresholdExceeded(TechnoClass * Victim) {
 	TechnoTypeExt::ExtData *pData = TechnoTypeExt::ExtMap.Find(Victim->GetTechnoType());
 
 	if (verbose) {
-		Debug::Log("[thresholdExceeded] %s: %d %d\n", Victim->get_ID(), pData->EMPThreshold, Victim->EMPLockRemaining);
+		Debug::Log("[thresholdExceeded] %s: %d %d\n", Victim->get_ID(), pData->EMP_Threshold, Victim->EMPLockRemaining);
 	}
 
-	if ((pData->EMPThreshold != 0) && (Victim->EMPLockRemaining > (DWORD)abs(pData->EMPThreshold))) {
-		if ((pData->EMPThreshold > 0) || Victim->IsInAir()) {
+	if ((pData->EMP_Threshold != 0) && (Victim->EMPLockRemaining > (DWORD)abs(pData->EMP_Threshold))) {
+		if ((pData->EMP_Threshold > 0) || Victim->IsInAir()) {
 			return true;
 		}
 	}

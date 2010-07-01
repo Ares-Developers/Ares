@@ -79,6 +79,16 @@ DEFINE_HOOK(6F9E76, TechnoClass_Update_CheckOperators, 6)
 		}
 	}
 
+	// prevent disabled units from driving around.
+	if(pThis->Deactivated) {
+		if(UnitClass* pUnit = specific_cast<UnitClass*>(pThis)) {
+			if(pUnit->Locomotor->Is_Moving() && pUnit->Destination) {
+				pUnit->SetDestination(NULL, true);
+				pUnit->StopMoving();
+			}
+		}
+	}
+
 	/* 	using 0x6F9E7C instead makes this function override the original game one's entirely -
 		don't activate that unless you handle _everything_ originally handled by the game */
 	return 0;
@@ -522,4 +532,25 @@ DEFINE_HOOK(7090D0, TechnoClass_SelectFiringVoice_IFVRepair, 5)
 	}
 	R->EDI<int>(idxVoice);
 	return 0x70914A;
+}
+
+// Support per unit modification of Iron Curtain effect duration
+DEFINE_HOOK(70E2D2, TechnoClass_IronCurtain_Modifiy, 6) {
+	GET(TechnoClass*, pThis, ECX);
+	GET(int, duration, EDX);
+	GET_STACK(bool, force, 0x1C);
+
+	// if it's no force shield then it's the iron curtain.
+	if(!force) {
+		if(TechnoTypeExt::ExtData *pData = TechnoTypeExt::ExtMap.Find(pThis->GetTechnoType())) {
+			duration = (int)(duration * pData->IC_Modifier);
+		}
+
+		pThis->IronCurtainTimer.TimeLeft = duration;
+		pThis->IronTintStage = 0;
+	
+		return 0x70E2DB;
+	}
+
+	return 0;
 }

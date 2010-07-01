@@ -208,15 +208,17 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	// EMP immunity will be inferred after all type data has been read.
 	// Not all needed properties have been parsed here. For instance: Cyborg.
 
+	this->EMP_Modifier = (float)pINI->ReadDouble(section, "EMP.Modifier", this->EMP_Modifier);
+
 	if(pINI->ReadString(section, "EMP.Threshold", "inair", Ares::readBuffer, Ares::readLength)) {
 		if(_strcmpi(Ares::readBuffer, "inair") == 0) {
-			this->EMPThreshold = -1;
+			this->EMP_Threshold = -1;
 		} else if((_strcmpi(Ares::readBuffer, "yes") == 0) || (_strcmpi(Ares::readBuffer, "true") == 0)) {
-			this->EMPThreshold = 1;
+			this->EMP_Threshold = 1;
 		} else if((_strcmpi(Ares::readBuffer, "no") == 0) || (_strcmpi(Ares::readBuffer, "false") == 0)) {
-			this->EMPThreshold = 0;
+			this->EMP_Threshold = 0;
 		} else {
-			this->EMPThreshold = pINI->ReadInteger(section, "EMP.Threshold", this->EMPThreshold);
+			this->EMP_Threshold = pINI->ReadInteger(section, "EMP.Threshold", this->EMP_Threshold);
 		}
 	}
 
@@ -242,6 +244,8 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	this->CanDrive = pINI->ReadBool(section, "CanDrive", this->CanDrive);
 
 	this->VoiceRepair.Read(&exINI, section, "VoiceIFVRepair");
+
+	this->IC_Modifier = (float)pINI->ReadDouble(section, "IronCurtain.Modifier", this->IC_Modifier);
 
 	// quick fix - remove after the rest of weapon selector code is done
 	return;
