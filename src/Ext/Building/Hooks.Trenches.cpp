@@ -54,30 +54,20 @@ DEFINE_HOOK(457D58, BuildingClass_CanBeOccupied_SpecificOccupiers, 6)
 
 // #664: Advanced Rubble - turning into rubble part
 // moved to before the survivors get unlimboed, per sanity's requirements
-//A_FINE_HOOK(44266B, BuildingClass_ReceiveDamage_AfterPreDeathSequence, 6)
+// TODO review
 DEFINE_HOOK(441F12, BuildingClass_Destroy_RubbleYell, 6)
 {
 	GET(BuildingClass *, pThis, ESI);
 	BuildingExt::ExtData* BuildingAresData = BuildingExt::ExtMap.Find(pThis);
 	BuildingTypeExt::ExtData* destrBuildTE = BuildingTypeExt::ExtMap.Find(pThis->Type);
 
-	if(!pThis->C4Timer.Ignorable()) {
-		// If this object has a rubble building set, turn, otherwise die
-		if(destrBuildTE->RubbleDestroyed) {
-			++Unsorted::IKnowWhatImDoing;
-			BuildingAresData->RubbleYell();
-			--Unsorted::IKnowWhatImDoing;
-		} else {
-			pThis->UnInit();
-			pThis->AfterDestruction();
-		}
+	// If this object has a rubble building set, turn
+	if(destrBuildTE->RubbleDestroyed) {
+		++Unsorted::IKnowWhatImDoing;
+		BuildingAresData->RubbleYell();
+		--Unsorted::IKnowWhatImDoing;
 	}
 
-	/* original code
-	if(pThis->C4Timer.IsDone()) {
-		pThis->UnInit();
-		pThis->AfterDestruction();
-	}*/
 	return 0;
 }
 

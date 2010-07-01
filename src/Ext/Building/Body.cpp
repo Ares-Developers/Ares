@@ -89,7 +89,7 @@ bool BuildingExt::ExtData::RubbleYell(bool beingRepaired) {
 		}
 
 		newState = specific_cast<BuildingClass *>(pTypeData->RubbleIntact->CreateObject(currentBuilding->Owner));
-		newState->Health = static_cast<int>max((newState->Type->Strength / 100), 1); // see description above
+		newState->Health = static_cast<int>(max((newState->Type->Strength / 100), 1)); // see description above
 		newState->IsAlive = true; // assuming this is in the sense of "is not destroyed"
 		// Location should not be changed by removal
 		if(!newState->Put(&currentBuilding->Location, currentBuilding->Facing)) {
@@ -97,7 +97,7 @@ bool BuildingExt::ExtData::RubbleYell(bool beingRepaired) {
 			GAME_DEALLOC(newState);
 			return false;
 		}
-		currentBuilding->UnInit();
+		// currentBuilding->UnInit(); DON'T DO THIS
 
 	} else { // if we're not here to repair that thing, obviously, we're gonna crush it
 		if(!pTypeData->RubbleDestroyed) {
