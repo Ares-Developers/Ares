@@ -3,6 +3,7 @@
 #include "../../Ares.h"
 #include "../../Ares.CRT.h"
 #include <ScenarioClass.h>
+#include <ColorScheme.h>
 
 template<> const DWORD Extension<HouseTypeClass>::Canary = 0xAFFEAFFE;
 Container<HouseTypeExt> HouseTypeExt::ExtMap;
@@ -132,18 +133,28 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 
 void HouseTypeExt::ExtData::Initialize(HouseTypeClass *pThis) {
 	this->Powerplants.Clear();
+	this->ParaDrop.Clear();
+	this->ParaDropNum.Clear();
 
 	BuildingTypeClass * pPower = NULL;
 
 	switch (pThis->SideIndex) {
 	case 0:
 		pPower = RulesClass::Instance->GDIPowerPlant;
+		this->LoadTextColor = ColorScheme::Find("AlliedLoad");
 		break;
 	case 1:
 		pPower = RulesClass::Instance->NodRegularPower;
+		this->LoadTextColor = ColorScheme::Find("SovietLoad");
 		break;
 	case 2:
 		pPower = RulesClass::Instance->ThirdPowerPlant;
+		this->LoadTextColor = ColorScheme::Find("YuriLoad");
+		if(!this->LoadTextColor) {
+			// there is no YuriLoad in the original game. fall
+			// back to a decent value.
+			this->LoadTextColor = ColorScheme::Find("Purple");
+		}
 		break;
 	}
 	if (pPower) {
@@ -188,6 +199,12 @@ void HouseTypeExt::ExtData::LoadFromRulesFile(HouseTypeClass *pThis, CCINIClass 
 	if (pINI->ReadString(pID, "MenuText.Status", "", Ares::readBuffer, Ares::readLength)) {
 		AresCRT::strCopy(this->StatusText, Ares::readBuffer, 0x20);
 	}
+
+	if(pINI->ReadString(pID, "LoadScreenText.Color", "", Ares::readBuffer, 0x80)) {
+		if(ColorScheme* CS = ColorScheme::Find(Ares::readBuffer)) {
+			this->LoadTextColor = CS;
+		}
+	}
 }
 
 void HouseTypeExt::ExtData::LoadFromINIFile(HouseTypeClass *pThis, CCINIClass *pINI) {
@@ -218,6 +235,37 @@ void HouseTypeExt::ExtData::LoadFromINIFile(HouseTypeClass *pThis, CCINIClass *p
 			if (BuildingTypeClass *pBld = BuildingTypeClass::Find(bld)) {
 				this->Powerplants.AddItem(pBld);
 			}
+		}
+	}
+
+	char* p = NULL;
+	if(pINI->ReadString(pID, "ParaDrop.Types", "", Ares::readBuffer, Ares::readLength)) {
+		this->ParaDrop.Clear();
+
+		for(p = strtok(Ares::readBuffer, Ares::readDelims); p && *p; p = strtok(NULL, Ares::readDelims)) {
+			TechnoTypeClass* pTT = UnitTypeClass::Find(p);
+
+			if(!pTT) {
+				pTT = InfantryTypeClass::Find(p);
+			}
+
+			if(pTT) {
+				this->ParaDrop.AddItem(pTT);
+			}
+		}
+	}
+
+	if(pINI->ReadString(pID, "ParaDrop.Num", "", Ares::readBuffer, Ares::readLength)) {
+		this->ParaDropNum.Clear();
+
+		for(p = strtok(Ares::readBuffer, Ares::readDelims); p && *p; p = strtok(NULL, Ares::readDelims)) {
+			this->ParaDropNum.AddItem(atoi(p));
+		}
+	}
+
+	if(pINI->ReadString(pID, "LoadScreenText.Color", "", Ares::readBuffer, 0x80)) {
+		if(ColorScheme* CS = ColorScheme::Find(Ares::readBuffer)) {
+			this->LoadTextColor = CS;
 		}
 	}
 

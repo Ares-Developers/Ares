@@ -6,6 +6,7 @@
 #include <BuildingTypeClass.h>
 #include <PCX.h>
 #include <StringTable.h>
+#include <ColorScheme.h>
 
 #include "Ares.CRT.h"
 #include "../_Container.hpp"
@@ -26,12 +27,16 @@ class HouseTypeExt
 			char LSSpecialName[0x20]; //Stringtable label for this country's special weapon
 			char LSBrief[0x20]; //Stringtable label for this country's load brief
 			char StatusText[0x20]; //Stringtable label for this country's Skirmish STT
+			ColorScheme* LoadTextColor; //The text color used for non-Campaign modes
 			int RandomSelectionWeight; //This country gets added this many times into the list of legible countries for random selection.
 
 			DynamicVectorClass<BuildingTypeClass *> Powerplants;
+			TypeList<TechnoTypeClass*> ParaDrop;
+			TypeList<int> ParaDropNum;
 
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
-				RandomSelectionWeight (0)
+				RandomSelectionWeight (0),
+				LoadTextColor (NULL)
 			{
 				*FlagFile = 0;
 				*LSFile = 0;

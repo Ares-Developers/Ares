@@ -1,5 +1,8 @@
 #include "Body.h"
+#include "../HouseType/Body.h"
+#include "../SWType/Body.h"
 
+#include "../../Ares.CRT.h"
 #include <SuperClass.h>
 #include <ProgressScreenClass.h>
 
@@ -158,6 +161,55 @@ DEFINE_HOOK(643BB9, Sides_LoadTextColor2, 5)
 DEFINE_HOOK(642B91, Sides_LoadTextColor3, 5)
 	{ return SideExt::LoadTextColor(R, 0x68CAA9); }
 
+DEFINE_HOOK(6847B7, Sides_LoadTextColor_CacheMP, 6) {
+	GET(HouseTypeClass*, pType, EAX);
+
+	if(HouseTypeExt::ExtData *pData = HouseTypeExt::ExtMap.Find(pType)) {
+		SideExt::CurrentLoadTextColor = pData->LoadTextColor;
+	} else {
+		SideExt::CurrentLoadTextColor = NULL;
+	}
+
+	return 0;
+}
+
+DEFINE_HOOK(686D7F, Sides_LoadTextColor_CacheSP, 6) {
+	GET_STACK(INIClass*, pINI, 0x18);
+
+	char* pDefault = "";
+	char pID[4];
+	AresCRT::strCopy(pID, ScenarioClass::Instance->FileName, 4);
+
+	if(!_strcmpi(pID, "SOV")) {
+		pDefault = "SovietLoad";
+	} else if(!_strcmpi(pID, "YUR")) {
+		pDefault = "YuriLoad";
+	} else if(!_strcmpi(pID, "TUT")) {
+		pDefault = "LightGrey";
+	} else {
+		pDefault = "AlliedLoad";
+	}
+
+	if(pINI->ReadString(ScenarioClass::Instance->FileName, "LoadScreenText.Color", pDefault, Ares::readBuffer, 0x80)) {
+		if(ColorScheme* pCS = ColorScheme::Find(Ares::readBuffer)) {
+			SideExt::CurrentLoadTextColor = pCS;
+		}
+	}
+
+	return 0;
+}
+
+// issue 906: do not draw a box below the label text if there is none.
+DEFINE_HOOK(553E54, LoadProgressMgr_Draw_SkipShadowOnNullString, 6) {
+	GET(wchar_t*, pBrief, ESI);
+
+	if(!pBrief || !wcslen(pBrief)) {
+		return 0x554027;
+	}
+
+	return 0;
+}
+
 //0x534FB1
 DEFINE_HOOK(534FB1, Sides_MixFileIndex, 5)
 {
@@ -190,14 +242,65 @@ DEFINE_HOOK(6CD3C1, Sides_ParaDrop, 9)
 	HouseClass * pHouse = SW->Owner;
 	GET(CellClass *, Cell, EBP);
 
-	SideClass* pSide = SideClass::Array->GetItem(pHouse->SideIndex);
-	if(SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide)) {
+	TypeList<TechnoTypeClass*> *pParaDrop = NULL;
+	TypeList<int> *pParaDropNum = NULL;
+
+	// all houses may override the para drop
+	if(HouseTypeExt::ExtData *pExt = HouseTypeExt::ExtMap.Find(pHouse->Type)) {
+		if(pExt->ParaDrop.Count) {
+			pParaDrop = &pExt->ParaDrop;
+			pParaDropNum = &pExt->ParaDropNum;
+		}
+	}
+
+	// fall back to side specific para drop
+	if(!pParaDrop || !pParaDrop->Count) {
+		SideClass* pSide = SideClass::Array->GetItem(pHouse->SideIndex);
+		if(SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide)) {
+			pParaDrop = &pData->ParaDrop;
+			pParaDropNum = &pData->ParaDropNum;
+		}
+	}
+
+	// order plane to drop stuff
+	if(pParaDrop && pParaDropNum) {
 		Ares::SendPDPlane(
 			pHouse,
 			Cell,
 			AircraftTypeClass::Array->GetItem(R->ESI()),
-			&pData->ParaDrop,
-			&pData->ParaDropNum);
+			pParaDrop,
+			pParaDropNum);
+
+		return 0x6CD500;
+	}
+	return 0;
+}
+
+DEFINE_HOOK(6CD602, Sides_AmerParaDrop, 5)
+{
+	GET(SuperClass *, SW, EBX);
+	HouseClass * pHouse = SW->Owner;
+	GET(CellClass *, Cell, EDI);
+
+	TypeList<TechnoTypeClass*> *pParaDrop = NULL;
+	TypeList<int> *pParaDropNum = NULL;
+
+	// per-SW paradrop team
+	if(SWTypeExt::ExtData *pExt = SWTypeExt::ExtMap.Find(SW->Type)) {
+		if(pExt->AmerParaDrop.Count) {
+			pParaDrop = &pExt->AmerParaDrop;
+			pParaDropNum = &pExt->AmerParaDropNum;
+		}
+	}
+
+	// order plane to drop stuff
+	if(pParaDrop && pParaDropNum) {
+		Ares::SendPDPlane(
+			pHouse,
+			Cell,
+			AircraftTypeClass::Array->GetItem(R->EBP()),
+			pParaDrop,
+			pParaDropNum);
 
 		return 0x6CD500;
 	}

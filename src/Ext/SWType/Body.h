@@ -41,6 +41,10 @@ public:
 		// Nuke
 		ValueableIdx<int, VocClass> Nuke_Siren;
 
+		// American ParaDrop
+		TypeList<TechnoTypeClass*> AmerParaDrop;
+		TypeList<int> AmerParaDropNum;
+
 		// Sonar
 		Valueable<int> Sonar_Range;
 		Valueable<int> Sonar_Delay;

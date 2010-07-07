@@ -30,15 +30,13 @@ class SideExt
 		Customizable<int> SurvivorDivisor;
 		TypeList<BuildingTypeClass*> BaseDefenses;
 		TypeList<int> BaseDefenseCounts;
-		ColorScheme* LoadTextColor;
 		TypeList<TechnoTypeClass*> ParaDrop;
 		TypeList<int> ParaDropNum;
 		int SidebarMixFileIndex;
 		bool SidebarYuriFileNames;
 		char EVATag[0x20];	//TODO
 
-		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
-			LoadTextColor (NULL)
+		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject)
 		{
 			*EVATag = 0;
 		};
@@ -71,6 +69,7 @@ class SideExt
 	static Container<SideExt> ExtMap;
 
 	static hash_map<VoxClass*, DynamicVectorClass<VoxFileNameStruct> > EVAFiles;
+	static ColorScheme* CurrentLoadTextColor;
 
 	static DWORD BaseDefenses(REGISTERS* R, DWORD dwReturnAddress);
 	static DWORD Disguise(REGISTERS* R, DWORD dwReturnAddress, bool bUseESI);

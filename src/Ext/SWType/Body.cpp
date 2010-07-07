@@ -1,5 +1,6 @@
 #include "Body.h"
 #include "../../Misc/SWTypes.h"
+#include "../../Ares.h"
 
 template<> const DWORD Extension<SuperWeaponTypeClass>::Canary = 0x55555555;
 Container<SWTypeExt> SWTypeExt::ExtMap;
@@ -38,6 +39,18 @@ void SWTypeExt::ExtData::InitializeRuled(SuperWeaponTypeClass *pThis)
 {
 	this->SpyPlane_TypeIndex = AircraftTypeClass::FindIndex("SPYP");
 	this->Nuke_Siren = RulesClass::Global()->DigSound;
+
+	this->AmerParaDrop.Clear();
+	this->AmerParaDropNum.Clear();
+	if(pThis->Type == 6) {
+		for(int i = 0; i < RulesClass::Instance->AmerParaDropInf.Count; ++i) {
+			this->AmerParaDrop.AddItem((RulesClass::Instance->AmerParaDropInf.GetItem(i)));
+		}
+
+		for(int i = 0; i < RulesClass::Instance->AmerParaDropNum.Count; ++i) {
+			this->AmerParaDropNum.AddItem(RulesClass::Instance->AmerParaDropNum.GetItem(i));
+		}
+	}
 }
 
 void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass *pINI)
@@ -93,6 +106,31 @@ void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass
 	}
 
 	this->CameoPal.LoadFromINI(pINI, pThis->ID, "SidebarPalette");
+
+	char* p = NULL;
+	if(pINI->ReadString(pThis->ID, "ParaDrop.Types", "", Ares::readBuffer, Ares::readLength)) {
+		this->AmerParaDrop.Clear();
+
+		for(p = strtok(Ares::readBuffer, Ares::readDelims); p && *p; p = strtok(NULL, Ares::readDelims)) {
+			TechnoTypeClass* pTT = UnitTypeClass::Find(p);
+
+			if(!pTT) {
+				pTT = InfantryTypeClass::Find(p);
+			}
+
+			if(pTT) {
+				this->AmerParaDrop.AddItem(pTT);
+			}
+		}
+	}
+
+	if(pINI->ReadString(pThis->ID, "ParaDrop.Num", "", Ares::readBuffer, Ares::readLength)) {
+		this->AmerParaDropNum.Clear();
+
+		for(p = strtok(Ares::readBuffer, Ares::readDelims); p && *p; p = strtok(NULL, Ares::readDelims)) {
+			this->AmerParaDropNum.AddItem(atoi(p));
+		}
+	}
 }
 
 bool __stdcall SWTypeExt::SuperClass_Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
