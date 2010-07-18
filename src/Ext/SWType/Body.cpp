@@ -1,3 +1,5 @@
+#include <PCX.h>
+
 #include "Body.h"
 #include "../../Misc/SWTypes.h"
 #include "../../Ares.h"
@@ -130,6 +132,11 @@ void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass
 		for(p = strtok(Ares::readBuffer, Ares::readDelims); p && *p; p = strtok(NULL, Ares::readDelims)) {
 			this->AmerParaDropNum.AddItem(atoi(p));
 		}
+	}
+
+	if(pINI->ReadString(section, "SidebarPCX", "", Ares::readBuffer, Ares::readLength)) {
+		AresCRT::strCopy(this->SidebarPCX, Ares::readBuffer, 0x20);
+		PCX::Instance->LoadFile(this->SidebarPCX);
 	}
 }
 

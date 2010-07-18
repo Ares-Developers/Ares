@@ -6,6 +6,7 @@
 #include "../../Misc/EMPulse.h"
 
 #include <AnimTypeClass.h>
+#include <PCX.h>
 #include <Theater.h>
 
 template<> const DWORD Extension<TechnoTypeClass>::Canary = 0x44444444;
@@ -247,6 +248,16 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 
 	this->IC_Modifier = (float)pINI->ReadDouble(section, "IronCurtain.Modifier", this->IC_Modifier);
 
+	if(CCINIClass::INI_Art->ReadString(pThis->ImageFile, "CameoPCX", "", Ares::readBuffer, Ares::readLength)) {
+		AresCRT::strCopy(this->CameoPCX, Ares::readBuffer, 0x20);
+		PCX::Instance->LoadFile(this->CameoPCX);
+	}
+
+	if(CCINIClass::INI_Art->ReadString(pThis->ImageFile, "AltCameoPCX", "", Ares::readBuffer, Ares::readLength)) {
+		AresCRT::strCopy(this->AltCameoPCX, Ares::readBuffer, 0x20);
+		PCX::Instance->LoadFile(this->AltCameoPCX);
+	}
+
 	// quick fix - remove after the rest of weapon selector code is done
 	return;
 }
@@ -349,6 +360,44 @@ void TechnoTypeExt::InferEMPImmunity(TechnoTypeClass *Type, CCINIClass *pINI) {
 }
 
 void Container<TechnoTypeExt>::InvalidatePointer(void *ptr) {
+}
+
+bool TechnoTypeExt::ExtData::CameoIsElite()
+{
+	HouseClass * House = HouseClass::Player;
+	HouseTypeClass *Country = House->Type;
+
+	TechnoTypeClass * const T = this->AttachedToObject;
+
+	SHPStruct *Cameo = T->Cameo;
+	SHPStruct *Alt = T->AltCameo;
+
+	if(!Alt) {
+		return false;
+	}
+
+	switch(T->WhatAmI()) {
+		case abs_InfantryType:
+			if(House->BarracksInfiltrated && !T->Naval && T->Trainable) {
+				return true;
+			} else {
+				return Country->VeteranInfantry.FindItemIndex((InfantryTypeClass **)&T) != -1;
+			}
+		case abs_UnitType:
+			if(House->WarFactoryInfiltrated && !T->Naval && T->Trainable) {
+				return true;
+			} else {
+				return Country->VeteranUnits.FindItemIndex((UnitTypeClass **)&T) != -1;
+			}
+		case abs_AircraftType:
+			return Country->VeteranAircraft.FindItemIndex((AircraftTypeClass **)&T) != -1;
+		case abs_BuildingType:
+			if(TechnoTypeClass *Item = T->UndeploysInto) {
+				return Country->VeteranUnits.FindItemIndex((UnitTypeClass **)&Item) != -1;
+			}
+	}
+
+	return false;
 }
 
 // =============================
@@ -493,3 +542,4 @@ DEFINE_HOOK(679CAF, RulesClass_LoadAfterTypeData_InferEMPImmunity, 5) {
 
 	return 0;
 }
+

@@ -12,6 +12,7 @@
 #include <VocClass.h>
 #include <VoxClass.h>
 
+#include "../../Ares.CRT.h"
 #include "../../Misc/Actions.h"
 #include "../../Utilities/Template.h"
 #include "../../Utilities/Constructs.h"
@@ -78,6 +79,8 @@ public:
 		Valueable<WarheadTypeClass *> GWarhead_WH;
 		Valueable<int> GWarhead_Damage;
 
+		char SidebarPCX[0x20];
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			SpyPlane_TypeIndex (0),
 			SpyPlane_Count (1),
@@ -100,7 +103,9 @@ public:
 			SW_DeliverBuildups (false),
 			GWarhead_WH(NULL),
 			GWarhead_Damage(0)
-			{ };
+			{
+				*SidebarPCX = 0;
+			};
 
 		virtual ~ExtData() { };
 

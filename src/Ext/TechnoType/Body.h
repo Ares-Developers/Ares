@@ -89,6 +89,9 @@ public:
 
 		Customizable<UnitTypeClass *> WaterImage;
 
+		char CameoPCX[0x20];
+		char AltCameoPCX[0x20];
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			Survivors_PilotChance (NULL),
 			Survivors_PassengerChance (NULL),
@@ -124,7 +127,10 @@ public:
 			AlternateTheaterArt (false),
 			VoiceRepair (-1),
 			WaterImage (NULL)
-			{ this->Insignia.SetAll(NULL); };
+			{
+				this->Insignia.SetAll(NULL);
+				*this->CameoPCX = *this->AltCameoPCX = 0;
+			};
 
 		virtual ~ExtData() {};
 
@@ -136,6 +142,8 @@ public:
 		virtual void InvalidatePointer(void *ptr) {
 			AnnounceInvalidPointer(Operator, ptr);
 		}
+
+		bool CameoIsElite();
 };
 
 	static Container<TechnoTypeExt> ExtMap;
