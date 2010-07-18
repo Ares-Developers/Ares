@@ -46,6 +46,8 @@ public:
 		AnimClass *EMPSparkleAnim;
 		eMission EMPLastMission;
 
+		bool ShadowDrawnManually;
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			idxSlot_Wave (0),
 			idxSlot_Beam (0),
@@ -55,7 +57,8 @@ public:
 			Insignia_Image (NULL),
 			GarrisonedIn (NULL),
 			EMPSparkleAnim (NULL),
-			EMPLastMission (mission_None)
+			EMPLastMission (mission_None),
+			ShadowDrawnManually (false)
 			{
 				this->CloakSkipTimer.Stop();
 			};

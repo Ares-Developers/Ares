@@ -18,12 +18,23 @@ DEFINE_HOOK(73C725, UnitClass_DrawSHP_DrawShadowEarlier, 6)
 {
 	GET(UnitClass *, U, EBP);
 
+	auto pData = TechnoExt::ExtMap.Find(U);
+
 	DWORD retAddr = (U->IsClearlyVisibleTo(HouseClass::Player))
 		? 0
 		: 0x73CE0D
 	;
 
-	if(U->CloakState || U->Type->Underwater) { // TODO: other conditions where it would not make sense to draw shadow - VisualCharacter?
+	// TODO: other conditions where it would not make sense to draw shadow
+	switch(U->VisualCharacter(NULL, NULL)) {
+		case VisualType::Normal:
+		case VisualType::Indistinct:
+			break;
+		default:
+			return retAddr;
+	}
+
+	if(U->CloakState || U->Type->Underwater || U->Type->SmallVisceroid || U->Type->LargeVisceroid) {
 		return retAddr;
 	}
 
@@ -48,6 +59,8 @@ DEFINE_HOOK(73C725, UnitClass_DrawSHP_DrawShadowEarlier, 6)
 
 		DSurface::Hidden_2->DrawSHP(FileSystem::THEATER_PAL, Image, FrameToDraw, &coords, BoundingRect, 0x2E01,
 				0, ZAdjust, 0, 1000, 0, 0, 0, 0, 0);
+
+		pData->ShadowDrawnManually = true;
 	}
 
 	return retAddr;
@@ -56,6 +69,17 @@ DEFINE_HOOK(73C725, UnitClass_DrawSHP_DrawShadowEarlier, 6)
 DEFINE_HOOK(73C733, UnitClass_DrawSHP_SkipTurretedShadow, 7)
 {
 	return 0x73C7AC;
+}
+
+DEFINE_HOOK(705FF3, TechnoClass_Draw_A_SHP_File_SkipUnitShadow, 6)
+{
+	GET(TechnoClass *, T, ESI);
+	auto pData = TechnoExt::ExtMap.Find(T);
+	if(pData->ShadowDrawnManually) {
+		pData->ShadowDrawnManually = false;
+		return 0x706007;
+	}
+	return 0;
 }
 
 /*
