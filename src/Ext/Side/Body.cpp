@@ -22,6 +22,8 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 	this->ParaDrop.Clear();
 	this->ParaDropNum.Clear();
 
+	this->ParaDropPlane = AircraftTypeClass::FindIndex("PDPLANE");
+
 	if(!_strcmpi(pID, "Nod")) { //Soviets
 
 		for(int i = 0; i < RulesClass::Instance->SovietBaseDefenseCounts.Count; ++i) {
@@ -136,6 +138,10 @@ void SideExt::ExtData::LoadFromINIFile(SideClass *pThis, CCINIClass *pINI)
 	if(pINI->ReadString(section, "EVA.Tag", "", Ares::readBuffer, 0x20)) {
 		AresCRT::strCopy(this->EVATag, Ares::readBuffer, 0x20);
 	}
+
+	this->Parachute_Anim.Parse(&exINI, section, "Parachute.Anim");
+
+	this->ParaDropPlane.Read(&exINI, section, "ParaDrop.Aircraft");
 
 	if(pINI->ReadString(section, "ParaDrop.Types", "", Ares::readBuffer, Ares::readLength)) {
 		this->ParaDrop.Clear();

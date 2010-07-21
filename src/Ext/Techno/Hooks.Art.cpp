@@ -1,5 +1,6 @@
 #include "Body.h"
 #include "../TechnoType/Body.h"
+#include "../HouseType/Body.h"
 
 /* #604 - customizable parachutes */
 DEFINE_HOOK(5F5ADD, Parachute_Animation, 6)
@@ -10,7 +11,15 @@ DEFINE_HOOK(5F5ADD, Parachute_Animation, 6)
 	if(pTypeData->Is_Bomb) {
 		T->IsABomb = 1;
 	}
-	R->EDX<AnimTypeClass *>(pTypeData->Parachute_Anim);
+
+	AnimTypeClass* pAnim = pTypeData->Parachute_Anim;
+	if(!pAnim) {
+		if(HouseTypeExt::ExtData *pData = HouseTypeExt::ExtMap.Find(T->Owner->Type)) {
+			pAnim = pData->GetParachuteAnim();
+		}
+	}
+
+	R->EDX<AnimTypeClass *>(pAnim);
 	return 0x5F5AE3;
 }
 

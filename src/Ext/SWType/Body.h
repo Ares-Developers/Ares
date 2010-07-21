@@ -45,6 +45,7 @@ public:
 		// American ParaDrop
 		TypeList<TechnoTypeClass*> AmerParaDrop;
 		TypeList<int> AmerParaDropNum;
+		ValueableIdx<int, AircraftTypeClass> ParaDropPlane;
 
 		// Sonar
 		Valueable<int> Sonar_Range;
@@ -85,6 +86,7 @@ public:
 			SpyPlane_TypeIndex (0),
 			SpyPlane_Count (1),
 			SpyPlane_Mission (mission_AttackAgain),
+			ParaDropPlane (-1),
 			Nuke_Siren (-1),
 			Sonar_Range (0),
 			Sonar_Delay (0),
@@ -117,6 +119,8 @@ public:
 
 		virtual void InvalidatePointer(void *ptr) {
 		}
+
+		AircraftTypeClass* GetParadropPlane(HouseClass*);
 	};
 
 	static Container<SWTypeExt> ExtMap;
@@ -124,6 +128,13 @@ public:
 	static SuperWeaponTypeClass *CurrentSWType;
 
 	bool static __stdcall SuperClass_Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer);
+};
+
+class ParadropPlane {
+public:
+	AircraftTypeClass *pAircraft;
+	TypeList<TechnoTypeClass*> pTypes;
+	TypeList<int> pNum;
 };
 
 #endif

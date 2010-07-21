@@ -244,22 +244,15 @@ DEFINE_HOOK(6CD3C1, Sides_ParaDrop, 9)
 
 	TypeList<TechnoTypeClass*> *pParaDrop = NULL;
 	TypeList<int> *pParaDropNum = NULL;
+	AircraftTypeClass* pParaDropPlane = NULL;
 
 	// all houses may override the para drop
 	if(HouseTypeExt::ExtData *pExt = HouseTypeExt::ExtMap.Find(pHouse->Type)) {
-		if(pExt->ParaDrop.Count) {
-			pParaDrop = &pExt->ParaDrop;
-			pParaDropNum = &pExt->ParaDropNum;
+		if(!pExt->GetParadropContent(&pParaDrop, &pParaDropNum)) {
+			Debug::Log("[ParaDrop] House %s and its side don't have default paradrops defined or the definition is faulty.\n", pHouse->Type->ID);
+			return 0;
 		}
-	}
-
-	// fall back to side specific para drop
-	if(!pParaDrop || !pParaDrop->Count) {
-		SideClass* pSide = SideClass::Array->GetItem(pHouse->SideIndex);
-		if(SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide)) {
-			pParaDrop = &pData->ParaDrop;
-			pParaDropNum = &pData->ParaDropNum;
-		}
+		pParaDropPlane = pExt->GetParadropPlane();
 	}
 
 	// order plane to drop stuff
@@ -267,7 +260,7 @@ DEFINE_HOOK(6CD3C1, Sides_ParaDrop, 9)
 		Ares::SendPDPlane(
 			pHouse,
 			Cell,
-			AircraftTypeClass::Array->GetItem(R->ESI()),
+			pParaDropPlane,
 			pParaDrop,
 			pParaDropNum);
 
@@ -284,21 +277,31 @@ DEFINE_HOOK(6CD602, Sides_AmerParaDrop, 5)
 
 	TypeList<TechnoTypeClass*> *pParaDrop = NULL;
 	TypeList<int> *pParaDropNum = NULL;
+	AircraftTypeClass* pParaDropPlane = NULL;
 
-	// per-SW paradrop team
+	// per-SW paradrop properties
 	if(SWTypeExt::ExtData *pExt = SWTypeExt::ExtMap.Find(SW->Type)) {
 		if(pExt->AmerParaDrop.Count) {
 			pParaDrop = &pExt->AmerParaDrop;
 			pParaDropNum = &pExt->AmerParaDropNum;
 		}
+
+		pParaDropPlane = pExt->GetParadropPlane(pHouse);
+	}
+
+	// houses and sides fallback
+	if(!pParaDropPlane) {
+		if(HouseTypeExt::ExtData *pExt = HouseTypeExt::ExtMap.Find(pHouse->Type)) {
+			pParaDropPlane = pExt->GetParadropPlane();
+		}
 	}
 
 	// order plane to drop stuff
-	if(pParaDrop && pParaDropNum) {
+	if(pParaDrop && pParaDropNum && pParaDropPlane) {
 		Ares::SendPDPlane(
 			pHouse,
 			Cell,
-			AircraftTypeClass::Array->GetItem(R->EBP()),
+			pParaDropPlane,
 			pParaDrop,
 			pParaDropNum);
 

@@ -61,7 +61,7 @@ public:
 
 		Promotable<SHPStruct *> Insignia;
 
-		Customizable<AnimTypeClass*> Parachute_Anim;
+		Valueable<AnimTypeClass*> Parachute_Anim;
 
 		// new on 08.11.09 for #342 (Operator=)
 		InfantryTypeClass * Operator; //!< Saves a pointer to an InfantryType required to be a passenger of this unit in order for it to work. Defaults to NULL. \sa TechnoClass_Update_CheckOperators, bool IsAPromiscuousWhoreAndLetsAnyoneRideIt
@@ -112,7 +112,7 @@ public:
 			Spot_Reverse (false),
 			Is_Bomb (false),
 			Insignia (NULL),
-			Parachute_Anim(&RulesClass::Instance->Parachute),
+			Parachute_Anim (NULL),
 			Operator (NULL),
 			IsAPromiscuousWhoreAndLetsAnyoneRideIt (false),
 			CameoPal(),

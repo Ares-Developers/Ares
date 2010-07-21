@@ -2,6 +2,8 @@
 
 #include "Body.h"
 #include "../../Misc/SWTypes.h"
+#include "../HouseType/Body.h"
+#include "../Side/Body.h"
 #include "../../Ares.h"
 
 template<> const DWORD Extension<SuperWeaponTypeClass>::Canary = 0x55555555;
@@ -109,6 +111,8 @@ void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass
 
 	this->CameoPal.LoadFromINI(pINI, pThis->ID, "SidebarPalette");
 
+	this->ParaDropPlane.Read(&exINI, section, "ParaDrop.Aircraft");
+
 	char* p = NULL;
 	if(pINI->ReadString(pThis->ID, "ParaDrop.Types", "", Ares::readBuffer, Ares::readLength)) {
 		this->AmerParaDrop.Clear();
@@ -137,6 +141,30 @@ void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass
 	if(pINI->ReadString(section, "SidebarPCX", "", Ares::readBuffer, Ares::readLength)) {
 		AresCRT::strCopy(this->SidebarPCX, Ares::readBuffer, 0x20);
 		PCX::Instance->LoadFile(this->SidebarPCX);
+	}
+}
+
+AircraftTypeClass* SWTypeExt::ExtData::GetParadropPlane(HouseClass* pHouse) {
+	// tries to get the house's default plane and falls back to
+	// the sides default plane.
+
+	// later here will be more country specific stuff.
+	int iPlane = this->ParaDropPlane;
+
+	if(AircraftTypeClass::Array->ValidIndex(iPlane)) {
+		return AircraftTypeClass::Array->GetItem(iPlane);
+	} else {
+		// get the house's default paradrop plane
+		if(pHouse) {
+			if(HouseTypeExt::ExtData *pData = HouseTypeExt::ExtMap.Find(pHouse->Type)) {
+				return pData->GetParadropPlane();
+			}
+
+			// this should not happen
+			Debug::Log("[GetParadropPlane] Superweapon %s could not determine an aircraft for house %s.\n", this->AttachedToObject->ID, pHouse->Type->ID);
+		}
+
+		return NULL;
 	}
 }
 

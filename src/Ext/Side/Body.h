@@ -32,11 +32,15 @@ class SideExt
 		TypeList<int> BaseDefenseCounts;
 		TypeList<TechnoTypeClass*> ParaDrop;
 		TypeList<int> ParaDropNum;
+		ValueableIdx<int, AircraftTypeClass> ParaDropPlane;
+		Customizable<AnimTypeClass*> Parachute_Anim;
 		int SidebarMixFileIndex;
 		bool SidebarYuriFileNames;
 		char EVATag[0x20];	//TODO
 
-		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject)
+		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
+			ParaDropPlane (-1),
+			Parachute_Anim (&RulesClass::Instance->Parachute)
 		{
 			*EVATag = 0;
 		};

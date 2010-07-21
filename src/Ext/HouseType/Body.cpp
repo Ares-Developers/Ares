@@ -1,5 +1,5 @@
 #include "Body.h"
-#include "../HouseType/Body.h"
+#include "../Side/Body.h"
 #include "../../Ares.h"
 #include "../../Ares.CRT.h"
 #include <ScenarioClass.h>
@@ -238,6 +238,12 @@ void HouseTypeExt::ExtData::LoadFromINIFile(HouseTypeClass *pThis, CCINIClass *p
 		}
 	}
 
+	INI_EX exINI(pINI);
+
+	this->Parachute_Anim.Parse(&exINI, pID, "Parachute.Anim");
+	
+	this->ParaDropPlane.Read(&exINI, pID, "ParaDrop.Aircraft");
+
 	char* p = NULL;
 	if(pINI->ReadString(pID, "ParaDrop.Types", "", Ares::readBuffer, Ares::readLength)) {
 		this->ParaDrop.Clear();
@@ -270,6 +276,78 @@ void HouseTypeExt::ExtData::LoadFromINIFile(HouseTypeClass *pThis, CCINIClass *p
 	}
 
 	this->RandomSelectionWeight = pINI->ReadInteger(pID, "RandomSelectionWeight", this->RandomSelectionWeight);
+}
+
+AnimTypeClass* HouseTypeExt::ExtData::GetParachuteAnim() {
+	// country-specific parachute
+	if(this->Parachute_Anim.Get()) {
+		return this->Parachute_Anim;
+	}
+
+	// side-specific with fallback to rules
+	int iSide = this->AttachedToObject->SideIndex;
+	if(SideClass::Array->ValidIndex(iSide)) {
+		if(SideExt::ExtData *pData = SideExt::ExtMap.Find(SideClass::Array->GetItem(iSide))) {
+			if(pData->Parachute_Anim.Get()) {
+				return pData->Parachute_Anim;
+			}
+		} else {
+			Debug::Log("[GetParachuteAnim] House %s and its side have no valid parachute defined. Rules fallback failed.\n", this->AttachedToObject->ID);
+		}
+	}
+	
+	// this should not happen for non-civilian sides
+	return AnimTypeClass::Find("PARACH");
+}
+
+AircraftTypeClass* HouseTypeExt::ExtData::GetParadropPlane() {
+	// tries to get the house's default plane and falls back to
+	// the sides default plane.
+	int iPlane = this->ParaDropPlane;
+
+	int iSide = this->AttachedToObject->SideIndex;
+	if((iPlane < 0) && (iSide >= 0)) {
+		if(SideExt::ExtData *pData = SideExt::ExtMap.Find(SideClass::Array->GetItem(iSide))) {
+			iPlane = pData->ParaDropPlane;
+		}
+	}
+
+	// didn't help. default to the PDPlane like the game does.
+	if(iPlane < 0) {
+		iPlane = AircraftTypeClass::FindIndex("PDPLANE");
+	}
+
+	if(AircraftTypeClass::Array->ValidIndex(iPlane)) {
+		return AircraftTypeClass::Array->GetItem(iPlane);
+	} else {
+		Debug::Log("[GetParadropPlane] House %s and its side have no valid paradrop plane defined. Rules fallback failed.\n", this->AttachedToObject->ID);
+		return NULL;
+	}
+}
+
+bool HouseTypeExt::ExtData::GetParadropContent(TypeList<TechnoTypeClass*> **pTypes, TypeList<int> **pNum) {
+	// no point in dereferencing null
+	if(!pTypes || !pNum) {
+		return false;
+	}
+
+	// tries to get the house's default contents and falls back to
+	// the sides default contents.
+	if(this->ParaDrop.Count) {
+		*pTypes = &this->ParaDrop;
+		*pNum = &this->ParaDropNum;
+	}
+
+	// fall back to side specific para drop
+	if(!pTypes || !(*pTypes)->Count) {
+		SideClass* pSide = SideClass::Array->GetItem(this->AttachedToObject->SideIndex);
+		if(SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide)) {
+			*pTypes = &pData->ParaDrop;
+			*pNum = &pData->ParaDropNum;
+		}
+	}
+
+	return (pTypes && pNum);
 }
 
 int HouseTypeExt::PickRandomCountry() {

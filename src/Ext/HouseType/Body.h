@@ -8,6 +8,7 @@
 #include <StringTable.h>
 #include <ColorScheme.h>
 
+#include "../../Utilities/Template.h"
 #include "Ares.CRT.h"
 #include "../_Container.hpp"
 
@@ -33,9 +34,13 @@ class HouseTypeExt
 			DynamicVectorClass<BuildingTypeClass *> Powerplants;
 			TypeList<TechnoTypeClass*> ParaDrop;
 			TypeList<int> ParaDropNum;
+			ValueableIdx<int, AircraftTypeClass> ParaDropPlane;
+			Valueable<AnimTypeClass*> Parachute_Anim;
 
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 				RandomSelectionWeight (0),
+				ParaDropPlane (-1),
+				Parachute_Anim (NULL),
 				LoadTextColor (NULL)
 			{
 				*FlagFile = 0;
@@ -61,6 +66,10 @@ class HouseTypeExt
 
 		virtual void InvalidatePointer(void *ptr) {
 		}
+
+		AircraftTypeClass* GetParadropPlane();
+		bool GetParadropContent(TypeList<TechnoTypeClass*>**, TypeList<int>**);
+		AnimTypeClass* GetParachuteAnim();
 	};
 
 	static Container<HouseTypeExt> ExtMap;
