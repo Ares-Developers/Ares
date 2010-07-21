@@ -275,6 +275,12 @@ DEFINE_HOOK(6CD602, Sides_AmerParaDrop, 5)
 	HouseClass * pHouse = SW->Owner;
 	GET(CellClass *, Cell, EDI);
 
+	if(SWTypeExt::ExtData* pData = SWTypeExt::ExtMap.Find(SW->Type)) {
+		if(pData->SendParadrop(pHouse, Cell)) {
+			return 0x6CD500;
+		}
+	}
+
 	TypeList<TechnoTypeClass*> *pParaDrop = NULL;
 	TypeList<int> *pParaDropNum = NULL;
 	AircraftTypeClass* pParaDropPlane = NULL;
@@ -286,7 +292,7 @@ DEFINE_HOOK(6CD602, Sides_AmerParaDrop, 5)
 			pParaDropNum = &pExt->AmerParaDropNum;
 		}
 
-		pParaDropPlane = pExt->GetParadropPlane(pHouse);
+		pParaDropPlane = pExt->GetParadropPlane(pHouse, 0);
 	}
 
 	// houses and sides fallback

@@ -26,6 +26,8 @@
 
 #include "../_Container.hpp"
 
+class ParadropPlane;
+
 class SWTypeExt
 {
 public:
@@ -46,6 +48,9 @@ public:
 		TypeList<TechnoTypeClass*> AmerParaDrop;
 		TypeList<int> AmerParaDropNum;
 		ValueableIdx<int, AircraftTypeClass> ParaDropPlane;
+
+		// Generic Paradrop
+		DynamicVectorClass<ParadropPlane*> *ParaDrop;
 
 		// Sonar
 		Valueable<int> Sonar_Range;
@@ -120,7 +125,10 @@ public:
 		virtual void InvalidatePointer(void *ptr) {
 		}
 
-		AircraftTypeClass* GetParadropPlane(HouseClass*);
+		bool SendParadrop(HouseClass*, CellClass*);
+		AircraftTypeClass* GetParadropPlane(HouseClass*,int);
+		int GetParadropCount(HouseClass*);
+		bool GetParadropContents(HouseClass*, int, TypeList<TechnoTypeClass*>**, TypeList<int>**);
 	};
 
 	static Container<SWTypeExt> ExtMap;

@@ -5,6 +5,7 @@
 #include "../HouseType/Body.h"
 #include "../Side/Body.h"
 #include "../../Ares.h"
+#include "../../Ares.CRT.h"
 
 template<> const DWORD Extension<SuperWeaponTypeClass>::Canary = 0x55555555;
 Container<SWTypeExt> SWTypeExt::ExtMap;
@@ -54,6 +55,14 @@ void SWTypeExt::ExtData::InitializeRuled(SuperWeaponTypeClass *pThis)
 		for(int i = 0; i < RulesClass::Instance->AmerParaDropNum.Count; ++i) {
 			this->AmerParaDropNum.AddItem(RulesClass::Instance->AmerParaDropNum.GetItem(i));
 		}
+	}
+
+	// set up paradrop members
+	int type = this->AttachedToObject->Type;
+	if((type == 5) || (type == 6)) {
+		// create an array to hold a vector for each side and country
+		int max = SideClass::Array->Count + HouseTypeClass::Array->Count + 1;
+		ParaDrop = new DynamicVectorClass<ParadropPlane*>[max];
 	}
 }
 
@@ -142,30 +151,297 @@ void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass
 		AresCRT::strCopy(this->SidebarPCX, Ares::readBuffer, 0x20);
 		PCX::Instance->LoadFile(this->SidebarPCX);
 	}
+
+	char base[0x40];
+
+	auto CreateParaDropBase = [](char* pID, char* pBuffer) {
+		// but a string like "Paradrop.Americans" into the buffer
+		if(pBuffer) {
+			AresCRT::strCopy(pBuffer, "ParaDrop", 9);
+			if(pID && strlen(pID)) {
+				AresCRT::strCopy(&pBuffer[8], ".", 2);
+				AresCRT::strCopy(&pBuffer[9], pID, 0x18);
+			}
+		}
+	};
+
+	auto ParseParaDrop = [&](char* pID, int Plane, ParadropPlane* pPlane) {
+		if(pPlane) {
+			// create the plane part of this request. this will be
+			// an empty string for the first plane for this is the default.
+			char plane[0x10] = "";
+			if(Plane) {
+				AresCRT::strCopy(plane, ".Plane", 0x10);
+				_itoa(Plane + 1, &plane[6], 10);
+			}
+		
+			// construct the full tag name base
+			char base[0x40], key[0x40];
+			_snprintf(base, 0x40, "%s%s", pID, plane);
+
+			// parse the plane contents
+			_snprintf(key, 0x40, "%s.Aircraft", base);
+			if(pINI->ReadString(section, key, "", Ares::readBuffer, Ares::readLength)) {
+				pPlane->pAircraft = AircraftTypeClass::Find(Ares::readBuffer);
+			}
+
+			// a list of UnitTypes and InfantryTypes
+			_snprintf(key, 0x40, "%s.Types", base);
+			if(pINI->ReadString(section, key, "", Ares::readBuffer, Ares::readLength)) {
+				pPlane->pTypes.Clear();
+
+				for(p = strtok(Ares::readBuffer, Ares::readDelims); p && *p; p = strtok(NULL, Ares::readDelims)) {
+					TechnoTypeClass* pTT = UnitTypeClass::Find(p);
+
+					if(!pTT) {
+						pTT = InfantryTypeClass::Find(p);
+					}
+
+					if(pTT) {
+						pPlane->pTypes.AddItem(pTT);
+					}
+				}
+			}
+
+			// the number how many times each item is created
+			_snprintf(key, 0x40, "%s.Num", base);
+			if(pINI->ReadString(section, key, "", Ares::readBuffer, Ares::readLength)) {
+				pPlane->pNum.Clear();
+
+				for(p = strtok(Ares::readBuffer, Ares::readDelims); p && *p; p = strtok(NULL, Ares::readDelims)) {
+					pPlane->pNum.AddItem(atoi(p));
+				}
+			}
+		}
+	};
+
+	auto GetSpecificParadrop = [&](char *pID, int defCount, DynamicVectorClass<ParadropPlane*>* ret) {
+		// get the number of planes for this house or side
+		char key[0x40];
+		_snprintf(key, 0x40, "%s.Count", pID);
+		int count = pINI->ReadInteger(section, key, defCount);
+
+		// parse every plane
+		ret->SetCapacity(count, NULL);
+		for(int i=0; i<count; ++i) {
+			if(i>=ret->Count) {
+				ret->AddItem(new ParadropPlane());
+			}
+			ParseParaDrop(base, i, ret->Items[i]);
+		}
+	};
+
+	int type = this->AttachedToObject->Type;
+	if((type == 5) || (type == 6)) {
+
+		// default
+		CreateParaDropBase(NULL, base);
+		GetSpecificParadrop(base, 1, &ParaDrop[0]);
+
+		// put all sides into the array
+		for(int i=0; i<SideClass::Array->Count; ++i) {
+			SideClass *pSide = SideClass::Array->GetItem(i);
+			CreateParaDropBase(pSide->ID, base);
+			GetSpecificParadrop(base, ParaDrop[0].Count, &ParaDrop[i+1]);
+		}
+
+		// put all countries into the array
+		for(int i=0; i<HouseTypeClass::Array->Count; ++i) {
+			HouseTypeClass *pTHouse = HouseTypeClass::Array->GetItem(i);
+			CreateParaDropBase(pTHouse->ID, base);
+			GetSpecificParadrop(base, ParaDrop[pTHouse->SideIndex+1].Count, &ParaDrop[i+SideClass::Array->Count+1]);
+		}
+	}
 }
 
-AircraftTypeClass* SWTypeExt::ExtData::GetParadropPlane(HouseClass* pHouse) {
+AircraftTypeClass* SWTypeExt::ExtData::GetParadropPlane(HouseClass* pHouse, int plane=0) {
 	// tries to get the house's default plane and falls back to
-	// the sides default plane.
+	// the side's default plane. then the general default plane.
+	if(pHouse) {
+		int indices[3] = {0, 0, 0};
+		indices[0] = pHouse->Type->ArrayIndex + SideClass::Array->Count;
+		indices[1] = pHouse->Type->SideIndex + 1;
 
-	// later here will be more country specific stuff.
-	int iPlane = this->ParaDropPlane;
+		// try the specific plane and then, if that fails, the first one.
+		for(int j=1; j>=0; --j) {
+			for(int i=0; i<3; ++i) {
+				DynamicVectorClass<ParadropPlane*> planes = this->ParaDrop[indices[i]];
+				if(planes.Count) {
+					int index = plane * j;
+					if(planes.ValidIndex(index)) {
+						if(ParadropPlane* pPlane = planes.GetItem(index)) {
+							if(AircraftTypeClass* pTAircraft = pPlane->pAircraft) {
+								return pTAircraft;
+							}
+						}
+					}
+				}
+			}
+		}
 
-	if(AircraftTypeClass::Array->ValidIndex(iPlane)) {
-		return AircraftTypeClass::Array->GetItem(iPlane);
-	} else {
 		// get the house's default paradrop plane
+		if(HouseTypeExt::ExtData *pData = HouseTypeExt::ExtMap.Find(pHouse->Type)) {
+			return pData->GetParadropPlane();
+		}
+
+		// this should not happen
+		Debug::Log("[GetParadropPlane] Superweapon %s could not determine an aircraft for house %s.\n", this->AttachedToObject->ID, pHouse->Type->ID);
+	}
+
+	return NULL;
+}
+
+int SWTypeExt::ExtData::GetParadropCount(HouseClass* pHouse) {
+	int index = 0;
+	
+	if(pHouse) {
+		index = pHouse->Type->ArrayIndex + SideClass::Array->Count;
+	}
+
+	return ParaDrop[index].Count;
+}
+
+bool SWTypeExt::ExtData::GetParadropContents(HouseClass* pHouse, int iPlane, TypeList<TechnoTypeClass*>** ppTypes, TypeList<int>** ppNum) {
+	if(ppTypes && ppNum) {
 		if(pHouse) {
+			int indices[3] = {0, 0, 0};
+			indices[0] = pHouse->Type->ArrayIndex + SideClass::Array->Count;
+			indices[1] = pHouse->Type->SideIndex + 1;
+
+			// try the specific plane and then, if that fails, the first one.
+			for(int j=1; j>=0; --j) {
+				for(int i=0; i<3; ++i) {
+					DynamicVectorClass<ParadropPlane*> planes = this->ParaDrop[indices[i]];
+					if(planes.Count) {
+						int index = iPlane * j;
+						if(planes.ValidIndex(index)) {
+							if(ParadropPlane* pPlane = planes.GetItem(index)) {
+								if(AircraftTypeClass* pTAircraft = pPlane->pAircraft) {
+									//return pTAircraft;
+								}
+							}
+						}
+					}
+				}
+			}
+
+			// get the house's default paradrop plane
 			if(HouseTypeExt::ExtData *pData = HouseTypeExt::ExtMap.Find(pHouse->Type)) {
-				return pData->GetParadropPlane();
+				return pData->GetParadropContent(ppTypes, ppNum);
 			}
 
 			// this should not happen
-			Debug::Log("[GetParadropPlane] Superweapon %s could not determine an aircraft for house %s.\n", this->AttachedToObject->ID, pHouse->Type->ID);
+			Debug::Log("[GetParadropContents] Superweapon %s could not determine contents for house %s, plane %d.\n", this->AttachedToObject->ID, pHouse->Type->ID, iPlane);
 		}
 
-		return NULL;
+		*ppTypes = NULL;
+		*ppNum = NULL;
 	}
+
+	return false;
+}
+
+bool SWTypeExt::ExtData::SendParadrop(HouseClass* pHouse, CellClass* pCell) {
+	// sanity
+	if(!pHouse || !pCell) {
+		return false;
+	}
+
+	// these are fallback values if the SW doesn't define them
+	AircraftTypeClass* pFallbackPlane = NULL;
+	TypeList<TechnoTypeClass*> *pFallbackTypes = NULL;
+	TypeList<int> *pFallbackNum = NULL;
+
+	// how many planes shall we launch?
+	int count = this->GetParadropCount(pHouse);
+
+	// assemble each plane and its contents
+	for(int i=0; i<count; ++i) { // i = index of plane
+		TypeList<TechnoTypeClass*> *pParaDrop = NULL;
+		TypeList<int> *pParaDropNum = NULL;
+		AircraftTypeClass* pParaDropPlane = NULL;
+
+		int indices[3] = {0, 0, 0};
+		indices[0] = pHouse->Type->ArrayIndex + SideClass::Array->Count + 1;
+		indices[1] = pHouse->Type->SideIndex + 1;
+
+		// try the planes in order of precedence:
+		// * country, explicit plane
+		// * side, explicit plane
+		// * default, explict plane
+		// * country, default plane
+		// * side, default plane
+		// * default, default plane
+		// * fill spaces with data from house/side/rules
+		for(int j=1; j>=0; --j) { // factor 1 or 0: "plane * j" => "plane" or "0" (default)
+			for(int k=0; k<3; ++k) { // index in the indices array
+
+				// only do something if there is data missing
+				if(!(pParaDrop && pParaDropNum && pParaDropPlane)) {
+					// get the country/side-specific plane list
+					DynamicVectorClass<ParadropPlane*> *planes = &this->ParaDrop[indices[k]];
+
+					// get the plane at specified index
+					int index = i * j;
+					if(planes->ValidIndex(index)) {
+						if(ParadropPlane* pPlane = planes->GetItem(index)) {
+
+							// get the contents, if not already set
+							if(!pParaDrop || !pParaDropNum) {
+								if((pPlane->pTypes.Count != 0) && (pPlane->pNum.Count != 0)) {
+									pParaDrop = &pPlane->pTypes;
+									pParaDropNum = &pPlane->pNum;
+								}
+							}
+
+							// get the airplane, if it isn't set already
+							if(!pParaDropPlane) {
+								if(AircraftTypeClass* pTAircraft = pPlane->pAircraft) {
+									pParaDropPlane = pTAircraft;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		// fallback for types and nums
+		if(!pParaDrop || !pParaDropNum) {
+			if(!pFallbackTypes || !pFallbackNum) {
+				if(HouseTypeExt::ExtData *pData = HouseTypeExt::ExtMap.Find(pHouse->Type)) {
+					pData->GetParadropContent(&pFallbackTypes, &pFallbackNum);
+				}
+			}
+
+			pParaDrop = pFallbackTypes;
+			pParaDropNum = pFallbackNum;
+		}
+
+
+		// house fallback for the plane
+		if(!pParaDropPlane) {
+			if(!pFallbackPlane) {
+				if(HouseTypeExt::ExtData *pData = HouseTypeExt::ExtMap.Find(pHouse->Type)) {
+					pFallbackPlane = pData->GetParadropPlane();
+				}
+			}
+
+			pParaDropPlane = pFallbackPlane;
+		}
+
+		// finally, send the plane
+		if(pParaDrop && pParaDropNum && pParaDropPlane) {
+			Ares::SendPDPlane(
+				pHouse,
+				pCell,
+				pParaDropPlane,
+				pParaDrop,
+				pParaDropNum);
+		}
+	}
+
+	return true;
 }
 
 bool __stdcall SWTypeExt::SuperClass_Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
