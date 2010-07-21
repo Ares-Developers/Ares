@@ -339,7 +339,7 @@ bool HouseTypeExt::ExtData::GetParadropContent(TypeList<TechnoTypeClass*> **pTyp
 	}
 
 	// fall back to side specific para drop
-	if(!pTypes || !(*pTypes)->Count) {
+	if(!*pTypes || !(*pTypes)->Count) {
 		SideClass* pSide = SideClass::Array->GetItem(this->AttachedToObject->SideIndex);
 		if(SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide)) {
 			*pTypes = &pData->ParaDrop;
@@ -347,7 +347,7 @@ bool HouseTypeExt::ExtData::GetParadropContent(TypeList<TechnoTypeClass*> **pTyp
 		}
 	}
 
-	return (pTypes && pNum);
+	return (*pTypes && *pNum);
 }
 
 int HouseTypeExt::PickRandomCountry() {

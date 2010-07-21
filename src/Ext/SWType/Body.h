@@ -44,13 +44,9 @@ public:
 		// Nuke
 		ValueableIdx<int, VocClass> Nuke_Siren;
 
-		// American ParaDrop
-		TypeList<TechnoTypeClass*> AmerParaDrop;
-		TypeList<int> AmerParaDropNum;
-		ValueableIdx<int, AircraftTypeClass> ParaDropPlane;
-
 		// Generic Paradrop
 		DynamicVectorClass<ParadropPlane*> *ParaDrop;
+		DynamicVectorClass<ParadropPlane*> ParaDropPlanes;
 
 		// Sonar
 		Valueable<int> Sonar_Range;
@@ -91,7 +87,6 @@ public:
 			SpyPlane_TypeIndex (0),
 			SpyPlane_Count (1),
 			SpyPlane_Mission (mission_AttackAgain),
-			ParaDropPlane (-1),
 			Nuke_Siren (-1),
 			Sonar_Range (0),
 			Sonar_Delay (0),
@@ -126,9 +121,6 @@ public:
 		}
 
 		bool SendParadrop(HouseClass*, CellClass*);
-		AircraftTypeClass* GetParadropPlane(HouseClass*,int);
-		int GetParadropCount(HouseClass*);
-		bool GetParadropContents(HouseClass*, int, TypeList<TechnoTypeClass*>**, TypeList<int>**);
 	};
 
 	static Container<SWTypeExt> ExtMap;

@@ -242,30 +242,13 @@ DEFINE_HOOK(6CD3C1, Sides_ParaDrop, 9)
 	HouseClass * pHouse = SW->Owner;
 	GET(CellClass *, Cell, EBP);
 
-	TypeList<TechnoTypeClass*> *pParaDrop = NULL;
-	TypeList<int> *pParaDropNum = NULL;
-	AircraftTypeClass* pParaDropPlane = NULL;
-
-	// all houses may override the para drop
-	if(HouseTypeExt::ExtData *pExt = HouseTypeExt::ExtMap.Find(pHouse->Type)) {
-		if(!pExt->GetParadropContent(&pParaDrop, &pParaDropNum)) {
-			Debug::Log("[ParaDrop] House %s and its side don't have default paradrops defined or the definition is faulty.\n", pHouse->Type->ID);
-			return 0;
+	// switch to Ares paradrop handling
+	if(SWTypeExt::ExtData* pData = SWTypeExt::ExtMap.Find(SW->Type)) {
+		if(pData->SendParadrop(pHouse, Cell)) {
+			return 0x6CD500;
 		}
-		pParaDropPlane = pExt->GetParadropPlane();
 	}
 
-	// order plane to drop stuff
-	if(pParaDrop && pParaDropNum) {
-		Ares::SendPDPlane(
-			pHouse,
-			Cell,
-			pParaDropPlane,
-			pParaDrop,
-			pParaDropNum);
-
-		return 0x6CD500;
-	}
 	return 0;
 }
 
@@ -274,45 +257,14 @@ DEFINE_HOOK(6CD602, Sides_AmerParaDrop, 5)
 	GET(SuperClass *, SW, EBX);
 	HouseClass * pHouse = SW->Owner;
 	GET(CellClass *, Cell, EDI);
-
+	
+	// switch to Ares paradrop handling
 	if(SWTypeExt::ExtData* pData = SWTypeExt::ExtMap.Find(SW->Type)) {
 		if(pData->SendParadrop(pHouse, Cell)) {
 			return 0x6CD500;
 		}
 	}
 
-	TypeList<TechnoTypeClass*> *pParaDrop = NULL;
-	TypeList<int> *pParaDropNum = NULL;
-	AircraftTypeClass* pParaDropPlane = NULL;
-
-	// per-SW paradrop properties
-	if(SWTypeExt::ExtData *pExt = SWTypeExt::ExtMap.Find(SW->Type)) {
-		if(pExt->AmerParaDrop.Count) {
-			pParaDrop = &pExt->AmerParaDrop;
-			pParaDropNum = &pExt->AmerParaDropNum;
-		}
-
-		pParaDropPlane = pExt->GetParadropPlane(pHouse, 0);
-	}
-
-	// houses and sides fallback
-	if(!pParaDropPlane) {
-		if(HouseTypeExt::ExtData *pExt = HouseTypeExt::ExtMap.Find(pHouse->Type)) {
-			pParaDropPlane = pExt->GetParadropPlane();
-		}
-	}
-
-	// order plane to drop stuff
-	if(pParaDrop && pParaDropNum && pParaDropPlane) {
-		Ares::SendPDPlane(
-			pHouse,
-			Cell,
-			pParaDropPlane,
-			pParaDrop,
-			pParaDropNum);
-
-		return 0x6CD500;
-	}
 	return 0;
 }
 
