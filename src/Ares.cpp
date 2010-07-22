@@ -177,7 +177,7 @@ void Ares::SendPDPlane(HouseClass* pOwner, CellClass* pTarget, AircraftTypeClass
 		CoordStruct spawn_crd = {(spawn_cell.X << 8) + 128, (spawn_cell.Y << 8) + 128, 0};
 
 		++Unsorted::IKnowWhatImDoing;
-		bool bSpawned = pPlane->Put(&spawn_crd, dir_N);
+		bool bSpawned = pPlane->Put(&spawn_crd, Direction::North);
 		--Unsorted::IKnowWhatImDoing;
 
 		if(bSpawned) {
