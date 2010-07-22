@@ -9,12 +9,12 @@ DEFINE_HOOK(547043, IsometricTileTypeClass_ReadFromFile, 6)
 	GET(IsometricTileTypeClass *, pTileType, ESI);
 
 	if(FileSize == 0) {
-		const char * filename = pTileType->FileName;
-		if(strlen(filename) >= 14) {
-			Debug::FatalError("Maximum allowed length for tile names, excluding the extension, is 9 characters."
-					"The tile called '%s' exceeds this limit - the game cannot proceed.", filename);
+		const char * tile = pTileType->ID;
+		if(strlen(tile) > 9) {
+			Debug::FatalErrorAndExit("Maximum allowed length for tile names, excluding the extension, is 9 characters.\n"
+					"The tileset using filename '%s' exceeds this limit - the game cannot proceed.", tile);
 		} else {
-			Debug::FatalError("The tile called '%s' could not be loaded for some reason - make sure the file exists.", filename);
+			Debug::FatalErrorAndExit("The tileset '%s' contains a file that could not be loaded for some reason - make sure the file exists.", tile);
 		}
 	}
 	return 0;
