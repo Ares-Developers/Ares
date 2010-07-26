@@ -35,11 +35,14 @@ DEFINE_HOOK(6AD8A4, Skirmish_DialogFunc_MultiEngineer, 7) {
 			bool enabled = (SendMessageA(hDlgItem, BM_GETCHECK, 0, 0) != 0);
 			RulesExt::Global()->MultiEngineer[0] = enabled;
 			GameModeOptionsClass::Instance->MultiEngineer = enabled;
-			return 0x6AD8AB;
 		}
+	} else {
+		GameModeOptionsClass::Instance->MultiEngineer = false;
 	}
 
-	return 0;
+	// recreate the MapPreviewDrawer destructor check
+	GET(void*, pMPD, ESI);
+	return (pMPD ? 0x6AD8AD : 0x6AD8C7);
 }
 
 // initialize the skirmish dialog to check or uncheck the multi engineer checkbox

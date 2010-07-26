@@ -74,6 +74,7 @@ public:
 
 		CustomPalette CameoPal;
 
+		// Unit Delivery
 		DynamicVectorClass<TechnoTypeClass *> SW_Deliverables;
 		Valueable<bool> SW_DeliverBuildups;
 
@@ -135,6 +136,10 @@ public:
 	AircraftTypeClass *pAircraft;
 	TypeList<TechnoTypeClass*> pTypes;
 	TypeList<int> pNum;
+
+	ParadropPlane() : pAircraft (NULL)
+	{
+	}
 };
 
 #endif
