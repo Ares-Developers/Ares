@@ -310,6 +310,36 @@ bool TechnoExt::ExtData::IsPowered() {
 	}
 }
 
+/*
+ * Object should NOT be placed on the map (->Remove() it or don't Put in the first place)
+ * otherwise Bad Things (TM) will happen. Again.
+ */
+bool TechnoExt::CreateWithDroppod(FootClass *Object, CoordStruct *XYZ) {
+	auto MyCell = MapClass::Instance->GetCellAt(XYZ);
+	if(Object->IsCellOccupied(MyCell, -1, -1, 0, 0)) {
+//		Debug::Log("Cell occupied... poof!\n");
+		return false;
+	} else {
+//		Debug::Log("Destinating %s @ {%d, %d, %d}\n", Object->GetType()->ID, XYZ->X, XYZ->Y, XYZ->Z);
+		LocomotionClass::ChangeLocomotorTo(Object, &LocomotionClass::CLSIDs::Droppod);
+		CoordStruct xyz = *XYZ;
+		xyz.Z = 0;
+		Object->SetLocation(&xyz);
+		Object->SetDestination(MyCell, 1);
+		Object->Locomotor->Move_To(*XYZ);
+		FacingStruct::Facet Facing = {0, 0, 0};
+		Object->Facing.SetFacing(&Facing);
+		if(!Object->InLimbo) {
+			Object->See(0, 0);
+			Object->QueueMission(mission_Guard, 0);
+			Object->NextMission();
+			return true;
+		}
+		//Debug::Log("InLimbo... failed?\n");
+		return false;
+	}
+}
+
 // =============================
 // load/save
 
@@ -361,4 +391,3 @@ DEFINE_HOOK(70C264, TechnoClass_Save_Suffix, 5)
 	TechnoExt::ExtMap.SaveStatic();
 	return 0;
 }
-
