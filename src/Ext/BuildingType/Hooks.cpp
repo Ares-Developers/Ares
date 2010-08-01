@@ -5,40 +5,6 @@
 // =============================
 // other hooks
 
-//hook at 0x45EC90
-DEFINE_HOOK(45EC90, Foundations_GetFoundationWidth, 6)
-{
-	GET(BuildingTypeClass*, pThis, ECX);
-	BuildingTypeExt::ExtData* pData = BuildingTypeExt::ExtMap.Find(pThis);
-
-	if(pData->IsCustom) {
-		R->EAX(pData->CustomWidth);
-		return 0x45EC9D;
-	}
-
-	return 0;
-}
-
-DEFINE_HOOK(45ECA0, Foundations_GetFoundationHeight, 6)
-{
-	GET(BuildingTypeClass*, pThis, ECX);
-	BuildingTypeExt::ExtData* pData = BuildingTypeExt::ExtMap.Find(pThis);
-
-	if(pData->IsCustom) {
-		bool bIncludeBib = (R->Stack8(0x4) != 0);
-		
-		int fH = pData->CustomHeight;
-		if(bIncludeBib && pThis->Bib) {
-			++fH;
-		}
-
-		R->EAX(fH);
-		return 0x45ECDA;
-	}
-
-	return 0;
-}
-
 DEFINE_HOOK(445F80, BuildingClass_ChangeOwnership, 5)
 {
 	GET(BuildingClass *, pThis, ESI);

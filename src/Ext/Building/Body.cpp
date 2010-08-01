@@ -706,6 +706,27 @@ void BuildingExt::ExtData::ImmolateVictim(ObjectClass * Victim) {
 	}
 }
 
+DWORD BuildingExt::FoundationLength(CellStruct * StartCell) {
+	DWORD Len = 0;
+	bool End = false;
+	do {
+		++Len;
+		End = StartCell->X == 32767 && StartCell->Y == 32767;
+		++StartCell;
+	} while(!End);
+	return Len;
+}
+
+void BuildingExt::Cleanup() {
+	if(BuildingExt::TempFoundationData1) {
+		delete[] BuildingExt::TempFoundationData1;
+		BuildingExt::TempFoundationData1 = NULL;
+	}
+	if(BuildingExt::TempFoundationData2) {
+		delete[] BuildingExt::TempFoundationData2;
+		BuildingExt::TempFoundationData2 = NULL;
+	}
+}
 // =============================
 // container hooks
 
