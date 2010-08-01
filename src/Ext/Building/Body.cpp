@@ -627,7 +627,7 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 	}
 
 	if(effectApplied) {
-		EnteredBuilding->SetLayer(lyr_Ground);
+		EnteredBuilding->SetLayer(Layer::Ground);
 	}
 	return true;
 }
@@ -656,7 +656,7 @@ void BuildingExt::ExtData::UpdateFirewall() {
 		}
 		B->FirestormWallFrame = FWFrame;
 		B->GetCell()->Setup(0xFFFFFFFF);
-		B->SetLayer(lyr_Ground); // HACK - repaints properly
+		B->SetLayer(Layer::Ground); // HACK - repaints properly
 	}
 
 	if(!FS) {

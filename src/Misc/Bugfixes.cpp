@@ -691,3 +691,17 @@ DEFINE_HOOK(52BA78, _YR_GameInit_Pre, 5)
 
 	return 0;
 }
+
+DEFINE_HOOK(469467, BulletClass_DetonateAt_CanTemporalTarget, 5)
+{
+	GET(TechnoClass *, Target, ECX);
+	Layer::Value lyr = Target->InWhichLayer();
+	switch(lyr) {
+		case Layer::Ground:
+		case Layer::Air:
+		case Layer::Top:
+			return 0x469475;
+		default:
+			return 0x469AA4;
+	}
+}
