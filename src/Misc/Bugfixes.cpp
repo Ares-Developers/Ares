@@ -692,7 +692,8 @@ DEFINE_HOOK(52BA78, _YR_GameInit_Pre, 5)
 	return 0;
 }
 
-DEFINE_HOOK(469467, BulletClass_DetonateAt_CanTemporalTarget, 5)
+/*
+A_FINE_HOOK(469467, BulletClass_DetonateAt_CanTemporalTarget, 5)
 {
 	GET(TechnoClass *, Target, ECX);
 	Layer::Value lyr = Target->InWhichLayer();
@@ -705,3 +706,4 @@ DEFINE_HOOK(469467, BulletClass_DetonateAt_CanTemporalTarget, 5)
 			return 0x469AA4;
 	}
 }
+*/

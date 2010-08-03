@@ -77,9 +77,6 @@ public:
 	static CellStruct *TempFoundationData1;
 	static CellStruct *TempFoundationData2;
 
-	static byte* TempFoundationOccupyData1;
-	static byte* TempFoundationOccupyData2;
-
 	static DWORD FoundationLength(CellStruct * StartCell);
 
 	static void Cleanup();

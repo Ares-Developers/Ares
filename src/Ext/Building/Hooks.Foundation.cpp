@@ -1,11 +1,11 @@
 #include "Body.h"
 #include "../BuildingType/Body.h"
 
+#include <algorithm>
+#include <vector>
+
 CellStruct * BuildingExt::TempFoundationData1 = NULL;
 CellStruct * BuildingExt::TempFoundationData2 = NULL;
-
-byte* BuildingExt::TempFoundationOccupyData1 = NULL;
-byte* BuildingExt::TempFoundationOccupyData2 = NULL;
 
 DEFINE_HOOK(45EC90, Foundations_GetFoundationWidth, 6)
 {
@@ -49,39 +49,43 @@ DEFINE_HOOK(568411, MapClass_AddContentAt_Foundation_P1, 0)
 	return 0x568432;
 }
 
-DEFINE_HOOK(568565, MapClass_AddContentAt_Foundation_P2, 0)
+DEFINE_HOOK(568565, MapClass_AddContentAt_Foundation_OccupyHeight, 5)
 {
 	GET(BuildingClass *, pThis, EDI);
+	GET(int, ShadowHeight, EBP);
+	GET_STACK(CellStruct *, MainCoords, 0x8B4);
 
 	CellStruct * Foundation = pThis->GetFoundationData(false);
 	DWORD Len = BuildingExt::FoundationLength(Foundation);
-	Len *= 64;
-	BuildingExt::TempFoundationOccupyData1 = new byte[Len];
-	memset(BuildingExt::TempFoundationOccupyData1, 0, Len * sizeof(byte));
 
-	R->EBX<CellStruct *>(Foundation);
+	std::vector<CellStruct> AffectedCells;
 
-	return 0x568579;
-}
+	AffectedCells.reserve(Len * ShadowHeight);
 
-DEFINE_HOOK(568605, MapClass_AddContentAt_Foundation_P3, 0)
-{
-	GET(int, Offset, EAX);
-	byte * Ptr = reinterpret_cast<byte *>(BuildingExt::TempFoundationOccupyData1);
+	CellStruct * CurrentFCell = Foundation;
 
-	Ptr += Offset;
-	R->CL(*Ptr);
-	R->EAX<byte *>(Ptr);
+	while(CurrentFCell->X != 32767 && CurrentFCell->Y != 32767) {
+		CellStruct ActualCell = *MainCoords + *CurrentFCell;
+		for(int i = ShadowHeight; i > 0; --i) {
+			AffectedCells.push_back(ActualCell);
+			--ActualCell.X;
+			--ActualCell.Y;
+		}
+		++CurrentFCell;
+	}
 
-	return 0x568613;
-}
+	std::sort(AffectedCells.begin(), AffectedCells.end(), [](const CellStruct &lhs, const CellStruct &rhs) -> bool {
+		return lhs.X > rhs.X || lhs.X == rhs.X && lhs.Y > rhs.Y;
+	});
+	auto it = std::unique(AffectedCells.begin(), AffectedCells.end());
+	AffectedCells.resize(it - AffectedCells.begin());
 
-DEFINE_HOOK(5687E3, MapClass_AddContentAt_Foundation_P4, 6)
-{
-	delete[] BuildingExt::TempFoundationOccupyData1;
-	BuildingExt::TempFoundationOccupyData1 = NULL;
+	std::for_each(AffectedCells.begin(), AffectedCells.end(), [pThis](CellStruct coords) {
+		CellClass * Cell = MapClass::Instance->GetCellAt(&coords);
+		++Cell->OccupyHeightsCoveringMe;
+	});
 
-	return 0;
+	return 0x568697;
 }
 
 DEFINE_HOOK(568841, MapClass_RemoveContentAt_Foundation_P1, 0)
@@ -93,37 +97,47 @@ DEFINE_HOOK(568841, MapClass_RemoveContentAt_Foundation_P1, 0)
 	return 0x568862;
 }
 
-DEFINE_HOOK(568997, MapClass_RemoveContentAt_Foundation_P2, 0)
+DEFINE_HOOK(568997, MapClass_RemoveContentAt_Foundation_OccupyHeight, 5)
 {
 	GET(BuildingClass *, pThis, EDX);
+	GET(int, ShadowHeight, EBP);
+	GET_STACK(CellStruct *, MainCoords, 0x8B4);
 
 	CellStruct * Foundation = pThis->GetFoundationData(false);
 	DWORD Len = BuildingExt::FoundationLength(Foundation);
-	Len *= 64;
-	BuildingExt::TempFoundationOccupyData2 = new byte[Len];
-	memset(BuildingExt::TempFoundationOccupyData2, 0, Len * sizeof(byte));
 
-	R->EBX<CellStruct *>(Foundation);
+	std::vector<CellStruct> AffectedCells;
 
-	return 0x5689AB;
+	AffectedCells.reserve(Len * ShadowHeight);
+
+	CellStruct * CurrentFCell = Foundation;
+
+	while(CurrentFCell->X != 32767 && CurrentFCell->Y != 32767) {
+		CellStruct ActualCell = *MainCoords + *CurrentFCell;
+		for(int i = ShadowHeight; i > 0; --i) {
+			AffectedCells.push_back(ActualCell);
+			--ActualCell.X;
+			--ActualCell.Y;
+		}
+		++CurrentFCell;
+	}
+
+	std::sort(AffectedCells.begin(), AffectedCells.end(), [](const CellStruct &lhs, const CellStruct &rhs) -> bool {
+		return lhs.X > rhs.X || lhs.X == rhs.X && lhs.Y > rhs.Y;
+	});
+	auto it = std::unique(AffectedCells.begin(), AffectedCells.end());
+	AffectedCells.resize(it - AffectedCells.begin());
+
+	std::for_each(AffectedCells.begin(), AffectedCells.end(), [pThis](CellStruct coords) {
+		CellClass * Cell = MapClass::Instance->GetCellAt(&coords);
+		if(Cell->OccupyHeightsCoveringMe > 0) {
+			--Cell->OccupyHeightsCoveringMe;
+		}
+	});
+
+	return 0x568ADC;
 }
 
-DEFINE_HOOK(568A37, MapClass_RemoveContentAt_Foundation_P3, 0)
-{
-	GET(int, Offset, EAX);
-	byte * Ptr = BuildingExt::TempFoundationOccupyData2 + Offset;
-	R->CL(*Ptr);
-	R->EAX<byte *>(Ptr);
-
-	return 0x568A45;
-}
-
-DEFINE_HOOK(568B98, MapClass_RemoveContentAt_Foundation_P4, 6)
-{
-	delete[] BuildingExt::TempFoundationOccupyData2;
-	BuildingExt::TempFoundationOccupyData2 = NULL;
-	return 0;
-}
 
 DEFINE_HOOK(4A8C77, MapClass_ProcessFoundation1_UnlimitBuffer, 5)
 {
