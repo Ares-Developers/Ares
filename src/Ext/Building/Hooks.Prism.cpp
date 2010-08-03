@@ -151,29 +151,56 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 
 	ColorStruct blank(0, 0, 0);
 
-	LaserDrawClass * LaserBeam;
-	GAME_ALLOC(LaserDrawClass, LaserBeam, SourceXYZ, *pTargetXYZ,
-		B->Owner->LaserColor, blank, blank, pTypeData->PrismForwarding.SupportDuration);
-
-	if(LaserBeam) {
-		LaserBeam->IsHouseColor = true;
-		LaserBeam->field_1C = 3;
-
-		//allow support weapon to control some beam effects
-		WeaponTypeClass* weapon;
-		if ((weapon == pType->get_Secondary()) || (weapon == pType->get_Primary())) {
-			LaserBeam->IsHouseColor = weapon->IsHouseColor;
-			if (!weapon->IsHouseColor) {
-				LaserBeam->InnerColor = weapon->LaserInnerColor;
-				LaserBeam->OuterColor = weapon->LaserOuterColor;
-				LaserBeam->OuterSpread = weapon->LaserOuterSpread;
+	WeaponTypeClass * supportWeapon = pTypeData->PrismForwarding.SupportWeapon;
+	if (supportWeapon) {
+		WeaponTypeExt::ExtData *supportWeaponData = WeaponTypeExt::ExtMap.Find(supportWeapon);
+		if (supportWeapon->IsLaser)
+			LaserDrawClass * LaserBeam;
+			if (supportWeapon->IsHouseColor) {
+				GAME_ALLOC(LaserDrawClass, LaserBeam, SourceXYZ, *pTargetXYZ, B->Owner->LaserColor, blank, blank, supportWeapon->LaserDuration);
+			} else {
+				GAME_ALLOC(LaserDrawClass, LaserBeam, SourceXYZ, *pTargetXYZ, supportWeapon->LaserOuterColor, supportWeapon->LaserOuterSpread, supportWeapon->LaserDuration);
+			}
+			if(LaserBeam) {
+				LaserBeam->IsHouseColor = supportWeapon->IsHouseColor;
+				LaserBeam->field_1C = supportWeaponData->LaserThickness;
 			}
 		}
-		
+		if (supportWeapon->IsRadBeam) {
+			RadBeam* supportRadBeam;
+			GAME_ALLOC(RadBeam, supportRadBeam, 0);
+			if (supportRadBeam) {
+				supportRadBeam.SetCoordsSource(SourceXYZ);
+				supportRadBeam.SetCoordsTarget(*pTargetXYZ);
+				if (supportWeaponData->Beam_IsHouseColor) {
+					supportRadBeam->Color = B->Owner->LaserColor;
+				} else {
+					supportRadBeam->Color = supportWeaponData->Beam_Color;
+				}
+				supportRadBeam->Period = supportWeaponData->Beam_Duration;
+				supportRadBeam->Amplitude = supportWeaponData->Beam_Amplitude;
+			}
+		}
+		if (supportWeapon->IsMagBeam || supportWeapon->IsSonic || supportWeapon->Wave_IsLaser || supportWeapon->Wave_IsBigLaser) {
+			//ask DCoder how the heck to create these various beam effects
+		}
+		if (supportWeapon->IsElectricBolt) {
+			//ditto
+		}
+		B->ReloadTimer.Start(supportWeapon->ROF);
+	
+	} else {
+		//just the default support beam
+		LaserDrawClass * LaserBeam;
+		GAME_ALLOC(LaserDrawClass, LaserBeam, SourceXYZ, *pTargetXYZ, B->Owner->LaserColor, blank, blank, RulesClass::Instance->PrismSupportDuration);
+		if(LaserBeam) {
+			LaserBeam->IsHouseColor = true;
+			LaserBeam->field_1C = 3;
+		}
+		B->ReloadTimer.Start(RulesClass::Instance->PrismSupportDelay);
 	}
 
-	B->SupportingPrisms = 0;
-	B->ReloadTimer.Start(pTypeData->PrismForwarding.SupportDelay);
+	B->SupportingPrisms = 0; //not sure why this is done here. Westwood-isms!
 
 	return 0x44ACE2;
 }

@@ -47,11 +47,25 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 		this->MaxNetworkSize.Read(&exINI, pID, "PrismForwarding.MaxNetworkSize");
 		this->SupportModifier.Read(&exINI, pID, "PrismForwarding.SupportModifier");
 		this->DamageAdd.Read(&exINI, pID, "PrismForwarding.DamageAdd");
-		this->SupportRange.Read(&exINI, pID, "PrismForwarding.SupportRange");
 		this->SupportDelay.Read(&exINI, pID, "PrismForwarding.SupportDelay");
 		this->ToAllies.Read(&exINI, pID, "PrismForwarding.ToAllies");
 		this->MyHeight.Read(&exINI, pID, "PrismForwarding.MyHeight");
 		this->BreakSupport.Read(&exINI, pID, "PrismForwarding.BreakSupport");
+
+		char * sWeapon = pINI->ReadString(pID, "PrismForwarding.SupportWeapon", "", Ares::readBuffer, Ares::readLength);
+		if (WeaponTypeClass * cWeapon = WeaponTypeClass::Find(sWeapon)) {
+			this->SupportWeapon.Set(cWeapon);
+			this->SupportRange.Set(cWeapon.Range);
+		}
+		else {
+			this->SupportWeapon.Set(NULL);
+			if (WeaponTypeClass * cPrimary = this->AttachedToObject->Primary) {
+				this->SupportRange.Set(cPrimary.Range);
+			}
+			else {
+				this->SupportRange.Set(0);
+			}
+		}
 
 		int ChargeDelay = pINI->ReadInteger(pID, "PrismForwarding.ChargeDelay", this->ChargeDelay);
 		if (ChargeDelay >= 1) {
@@ -63,7 +77,7 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 	}
 }
 
-signed int BuildingTypeExt::cPrismForwarding::GetSupportRange(BuildingTypeClass *pThis) {
+/*signed int BuildingTypeExt::cPrismForwarding::GetSupportRange(BuildingTypeClass *pThis) {
 	if (this->SupportRange == -1) {
 		return -1;
 	}
@@ -76,7 +90,7 @@ signed int BuildingTypeExt::cPrismForwarding::GetSupportRange(BuildingTypeClass 
 		return Primary->Range; //weapon range is already stored in leptons
 	}
 	return 0;
-}
+}*/
 
 int BuildingTypeExt::cPrismForwarding::AcquireSlaves_MultiStage
 	(BuildingClass *MasterTower, BuildingClass *TargetTower, int stage, int chain, int *NetworkSize, int *LongestChain) {
