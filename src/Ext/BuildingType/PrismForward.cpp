@@ -52,17 +52,20 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 		this->MyHeight.Read(&exINI, pID, "PrismForwarding.MyHeight");
 		this->BreakSupport.Read(&exINI, pID, "PrismForwarding.BreakSupport");
 
-		char * sWeapon = pINI->ReadString(pID, "PrismForwarding.SupportWeapon", "", Ares::readBuffer, Ares::readLength);
-		if (WeaponTypeClass * cWeapon = WeaponTypeClass::Find(sWeapon)) {
-			this->SupportWeapon.Set(cWeapon);
-			this->SupportRange.Set(cWeapon.Range);
-		}
-		else {
-			this->SupportWeapon.Set(NULL);
-			if (WeaponTypeClass * cPrimary = this->AttachedToObject->Primary) {
-				this->SupportRange.Set(cPrimary.Range);
+		bool found = false;
+		if(pINI->ReadString(pID, "PrismForwarding.SupportWeapon", "", Ares::readBuffer, Ares::readLength)) {
+			if (WeaponTypeClass * cWeapon = WeaponTypeClass::Find(Ares::readBuffer)) {
+				found = true;
+				this->SupportWeapon.Set(cWeapon);
+				this->SupportRange.Set(cWeapon->Range);
 			}
-			else {
+		}
+
+		if(!found) {
+			this->SupportWeapon.Set(NULL);
+			if (WeaponTypeClass * cPrimary = pThis->get_Primary()) {
+				this->SupportRange.Set(cPrimary->Range);
+			} else {
 				this->SupportRange.Set(0);
 			}
 		}
@@ -249,9 +252,9 @@ bool BuildingTypeExt::cPrismForwarding::ValidateSupportTower(
 						SlaveTower->GetPosition_2(&curPosition);
 						int Distance = MyPosition.DistanceFrom(curPosition);
 						Debug::Log("[PrismForwarding] Distance=%u, SupportRange=%d\n",
-							Distance, pSlaveTypeData->PrismForwarding.GetSupportRange(pSlaveType));
+							Distance, pSlaveTypeData->PrismForwarding.SupportRange);
 						if(pSlaveTypeData->PrismForwarding.SupportRange == -1
-							|| Distance <= pSlaveTypeData->PrismForwarding.GetSupportRange(pSlaveType)) {
+							|| Distance <= pSlaveTypeData->PrismForwarding.SupportRange) {
 							//within range
 							return true;
 						}

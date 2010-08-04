@@ -2,19 +2,18 @@
 #include "../Ext/Techno/Body.h"
 #include "../Ext/TechnoType/Body.h"
 #include "../Ext/BuildingType/Body.h"
+#include "../Utilities/Helpers.Alex.h"
 #include <set>
 
 //! Enables verbose debug output for some WarheadTypeExt functions.
 bool EMPulse::verbose = false;
+bool EMPulse::supportVerses = false;
 
 //! Paralyses all units using an EMP cellspread weapon.
 /*!
 	All Technos in the EMPulse's target cells get affected by an EMP and get
 	deactivated temporarily. Their special functions stop working until the
 	EMP ceases. Flying Aircraft crashes.
-
-	CellSpread is handled as described in
-	http://modenc.renegadeprojects.com/CellSpread.
 
 	\param EMPulse The electromagnetic pulse to create.
 	\param Coords The location the projectile detonated.
@@ -23,7 +22,7 @@ bool EMPulse::verbose = false;
 	\author AlexB
 	\date 2010-05-20
 */
-void EMPulse::CreateEMPulse(WarheadTypeExt::ExtData * Warhead, CoordStruct *Coords, TechnoClass *Firer) {
+void EMPulse::CreateEMPulse(WarheadTypeExt::ExtData *Warhead, CoordStruct *Coords, TechnoClass *Firer) {
 	if (!Warhead) {
 		Debug::DevLog(Debug::Error, "Trying to CreateEMPulse() with Warhead pointing to NULL. Funny.\n");
 		return;
@@ -33,63 +32,18 @@ void EMPulse::CreateEMPulse(WarheadTypeExt::ExtData * Warhead, CoordStruct *Coor
 		Debug::Log("[CreateEMPulse] Duration: %d, Cap: %d\n", Warhead->EMP_Duration, Warhead->EMP_Cap);
 	}
 
-	// set of possibly affected objects. every object can be here only once.
-	std::set<TechnoClass*> *set = new std::set<TechnoClass*>();
+	// set of affected objects. every object can be here only once.
+	DynamicVectorClass<TechnoClass*> *items = Helpers::Alex::getCellSpreadItems(Coords,
+		Warhead->AttachedToObject->CellSpread, true);
 
-	// the quick way. only look at stuff residing on the very cells we are affecting.
-	CellStruct cellCoords = MapClass::Instance->GetCellAt(Coords)->MapCoords;
-	int countCells = CellSpread::NumCells((int)(Warhead->AttachedToObject->CellSpread + 0.99));
-	for (int i = 0; i < countCells; ++i) {
-		CellStruct tmpCell = CellSpread::GetCell(i);
-		tmpCell += cellCoords;
-		CellClass *c = MapClass::Instance->GetCellAt(&tmpCell);
-		for (ObjectClass *curObj = c->GetContent(); curObj; curObj = curObj->NextObject) {
-			if(TechnoClass *Techno = generic_cast<TechnoClass*>(curObj)) {
-				set->insert(Techno);
-			}
-		}
-	}
-
-	// the not quite so fast way. skip everything not in the air.
-	for (int i=0; i<TechnoClass::Array->Count; ++i) {
-		TechnoClass *Techno = TechnoClass::Array->GetItem(i);
-		if (Techno->IsInAir()) {
-			if(Techno->Location.DistanceFrom(*Coords) <= Warhead->AttachedToObject->CellSpread * 256) {
-				set->insert(Techno);
-			}
-		}
-	}
-
-	// cause EMP damage on every object
-	for(std::set<TechnoClass*>::iterator iterator = set->begin(); iterator != set->end(); iterator++) {
-		TechnoClass *Techno = *iterator;
-
-		// ignore buildings that are not visible, like ambient light posts
-		if(BuildingTypeClass *BT = specific_cast<BuildingTypeClass*>(Techno->GetTechnoType())) {
-			if(BT->InvisibleInGame) {
-				continue;
-			}
-		}
-
-		// get distance from impact site
-		CoordStruct target;
-		Techno->GetCoords(&target);
-		double dist = target.DistanceFrom(*Coords);
-
-		// reduce the distance for flying aircraft
-		if((Techno->WhatAmI() == abs_Aircraft) && Techno->IsInAir()) {
-			dist *= 0.5;
-		}
-
-		// measure distance and blow it
-		if(dist <= Warhead->AttachedToObject->CellSpread * 256) {
-			deliverEMPDamage(Techno, Firer, Warhead);
-		}
+	// affect each object
+	for(int i=0; i<items->Count; ++i) {
+		deliverEMPDamage(items->GetItem(i), Firer, Warhead);
 	}
 
 	// tidy up
-	set->clear();
-	delete set;
+	items->Clear();
+	delete items;
 
 	if (verbose) {
 		Debug::Log("[CreateEMPulse] Done.\n");
@@ -103,7 +57,7 @@ void EMPulse::CreateEMPulse(WarheadTypeExt::ExtData * Warhead, CoordStruct *Coor
 	\param object The Techno that should get affected by EMP.
 
 	\author AlexB
-	\date 2010-05-03
+	\date 2010-06-30
 */
 void EMPulse::deliverEMPDamage(ObjectClass *object, TechnoClass *Firer, WarheadTypeExt::ExtData *Warhead) {
 	// fill the gaps
@@ -122,17 +76,26 @@ void EMPulse::deliverEMPDamage(ObjectClass *object, TechnoClass *Firer, WarheadT
 						curTechno->get_ID());
 			}
 
+			// get the target-specific multiplier
+			float modifier = 1.0F;
+			if(TechnoTypeExt::ExtData* pExt = TechnoTypeExt::ExtMap.Find(curTechno->GetTechnoType())) {
+				// modifier only affects bad things
+				if(Warhead->EMP_Duration > 0) {
+					modifier = pExt->EMP_Modifier;
+				}
+			}
+
 			// respect verses
-			int Duration = Warhead->EMP_Duration;
-			if(false) {
-				Duration = (int)(Duration * Warhead->Verses[curTechno->GetTechnoType()->Armor].Verses);
+			int duration = (int)(Warhead->EMP_Duration * modifier);
+			if(supportVerses) {
+				duration = (int)(duration * Warhead->Verses[curTechno->GetTechnoType()->Armor].Verses);
 			} else if(abs(Warhead->Verses[curTechno->GetTechnoType()->Armor].Verses) < 0.001) {
 				return;
 			}
 
 			// get the new capped value
 			int oldValue = curTechno->EMPLockRemaining;
-			int newValue = getCappedDuration(oldValue, Duration, Warhead->EMP_Cap);
+			int newValue = Helpers::Alex::getCappedDuration(oldValue, duration, Warhead->EMP_Cap);
 
 			if (verbose) {
 				Debug::Log("[deliverEMPDamage] Step 3: %d\n",
@@ -259,15 +222,7 @@ bool EMPulse::isEMPImmune(TechnoClass * Target, HouseClass * SourceHouse) {
 	// this can be overridden by a flag on the techno.
 	TechnoTypeExt::ExtData *pData = TechnoTypeExt::ExtMap.Find(Target->GetTechnoType());
 
-	// There is no other way to use (for example) BuildingTypeClass members from
-	// TechnoTypeClass Initialize to check if this Techno is EMP-prone. Cache the result
-	// here.
-	if(!pData->ImmuneToEMPSet) {
-		pData->ImmuneToEMP = !EMPulse::IsTypeEMPProne(Target->GetTechnoType());
-		pData->ImmuneToEMPSet = true;
-	}
-
-	if (pData->ImmuneToEMP) {
+	if (pData->ImmuneToEMP.Get()) {
 		if (verbose) {
 			Debug::Log("[isEMPImmune] \"%s\" is ImmuneToEMP.\n", Target->get_ID());
 		}
@@ -436,53 +391,6 @@ bool EMPulse::IsDeactivationAdvisable(TechnoClass * Target) {
 		Debug::Log("[IsDeactivationAdvisable] %s should be disabled. Mission: %d\n", Target->get_ID(), Target->CurrentMission);
 	}
 	return true;
-}
-
-//! Gets the new duration the EMP effect will last.
-/*!
-	The new EMP lock frames count is calculated the following way:
-
-	If Duration is positive it will inflict EMP damage. If Cap is larger than zero,
-	the maximum amount of frames will be defined by Cap. If the current value
-	already is larger than that, in will not be reduced. If Cap is zero, then
-	the duration can add up infinitely. If Cap is less than zero, duration will
-	be set to Duration, if the current value is not higher already.
-
-	If Duration is negative, the EMP effect will be reduced. A negative Cap
-	reduces the current value by Duration. A positive or zero Cap will do the
-	same, but additionally shorten it to Cap if the result would be higher than
-	that. Thus, a Cap of zero removes the current EMP effect altogether.
-
-	\param CurrentValue The Technos current remaining time.
-	\param Duration The duration the EMP uses.
-	\param Cap The maximum Duration this EMP can cause.
-
-	\returns The new EMP lock frames count.
-
-	\author AlexB
-	\date 2010-04-27
-*/
-int EMPulse::getCappedDuration(int CurrentValue, int Duration, int Cap) {
-	// Usually, the new duration is just added.
-	int ProposedDuration = CurrentValue + Duration;
-
-	if (Duration > 0) {
-		// Positive damage.
-		if (Cap < 0) {
-			// Do not stack. Use the maximum value.
-			return max(Duration, CurrentValue);
-		} else if (Cap > 0) {
-			// Cap the duration.
-			int cappedValue = min(ProposedDuration, Cap);
-			return max(CurrentValue, cappedValue);
-		} else {
-			// There is no cap. Allow the duration to stack up.
-			return ProposedDuration;
-		}
-	} else {
-		// Negative damage.
-		return (Cap < 0 ? ProposedDuration : min(ProposedDuration, Cap));
-	}
 }
 
 //! Updates the radar outage for the owning player to match the current EMP effect duration.
@@ -671,11 +579,11 @@ bool EMPulse::thresholdExceeded(TechnoClass * Victim) {
 	TechnoTypeExt::ExtData *pData = TechnoTypeExt::ExtMap.Find(Victim->GetTechnoType());
 
 	if (verbose) {
-		Debug::Log("[thresholdExceeded] %s: %d %d\n", Victim->get_ID(), pData->EMPThreshold, Victim->EMPLockRemaining);
+		Debug::Log("[thresholdExceeded] %s: %d %d\n", Victim->get_ID(), pData->EMP_Threshold, Victim->EMPLockRemaining);
 	}
 
-	if ((pData->EMPThreshold != 0) && (Victim->EMPLockRemaining > (DWORD)abs(pData->EMPThreshold))) {
-		if ((pData->EMPThreshold > 0) || Victim->IsInAir()) {
+	if ((pData->EMP_Threshold != 0) && (Victim->EMPLockRemaining > (DWORD)abs(pData->EMP_Threshold))) {
+		if ((pData->EMP_Threshold > 0) || Victim->IsInAir()) {
 			return true;
 		}
 	}

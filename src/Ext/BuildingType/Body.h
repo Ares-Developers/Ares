@@ -6,6 +6,7 @@
 #include <InfantryTypeClass.h>
 #include <Randomizer.h>
 #include <UnitTypeClass.h>
+#include <WeaponTypeClass.h>
 
 #include "../_Container.hpp"
 #include "../../Ares.h"
@@ -43,6 +44,7 @@ public:
 		Valueable<int> ChargeDelay;					//the amount to delay start of charging per backward chain
 		Valueable<bool> ToAllies;						//can this tower support allies' towers or not
 		Valueable<bool> BreakSupport;					//can the slave tower become a master tower at the last second
+		Valueable<WeaponTypeClass *>SupportWeapon;
 
 		//methods
 		void Initialize(BuildingTypeClass* );
@@ -57,7 +59,7 @@ public:
 		static void SetChargeDelay_Set(BuildingClass * , int , DWORD *, DWORD *);
 		static void RemoveFromNetwork(BuildingClass *, bool);
 
-		signed int GetSupportRange(BuildingTypeClass *);
+//		signed int GetSupportRange(BuildingTypeClass *);
 
 		// constructor
 		cPrismForwarding() : Enabled(NO),
@@ -72,7 +74,8 @@ public:
 			MyHeight(&RulesClass::Instance->PrismSupportHeight),
 			ChargeDelay(1),
 			ToAllies(false),
-			BreakSupport(false)
+			BreakSupport(false),
+			SupportWeapon(NULL)
 		{};
 	};
 
@@ -166,6 +169,7 @@ public:
 
 		virtual void LoadFromINIFile(TT *pThis, CCINIClass *pINI);
 		virtual void Initialize(TT *pThis);
+		virtual void CompleteInitialization(TT *pThis);
 
 		virtual void InvalidatePointer(void *ptr) {
 			AnnounceInvalidPointer(RubbleIntact, ptr);
@@ -179,6 +183,7 @@ public:
 //	static ExtData ExtMap;
 
 	static void UpdateSecretLabOptions(BuildingClass *pThis);
+	static bool IsFoundationEqual(BuildingTypeClass *pTBldA, BuildingTypeClass *pTBldB);
 };
 
 #endif

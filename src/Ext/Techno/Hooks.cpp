@@ -82,6 +82,16 @@ DEFINE_HOOK(6F9E76, TechnoClass_Update_CheckOperators, 6)
 		}
 	}
 
+	// prevent disabled units from driving around.
+	if(pThis->Deactivated) {
+		if(UnitClass* pUnit = specific_cast<UnitClass*>(pThis)) {
+			if(pUnit->Locomotor->Is_Moving() && pUnit->Destination) {
+				pUnit->SetDestination(NULL, true);
+				pUnit->StopMoving();
+			}
+		}
+	}
+
 	/* 	using 0x6F9E7C instead makes this function override the original game one's entirely -
 		don't activate that unless you handle _everything_ originally handled by the game */
 	return 0;
@@ -148,11 +158,11 @@ DEFINE_HOOK(6F407D, TechnoClass_Init_1, 6)
 
 		if(WH1 && WH1->Temporal && Temporal == NULL) {
 			GAME_ALLOC(TemporalClass, Temporal, T);
-			Temporal->WarpRemaining = W1->Damage;
+			Temporal->WarpPerStep = W1->Damage;
 			pData->idxSlot_Warp = (BYTE)i;
 		} else if(WH2 && WH2->Temporal && Temporal == NULL) {
 			GAME_ALLOC(TemporalClass, Temporal, T);
-			Temporal->WarpRemaining = W2->Damage;
+			Temporal->WarpPerStep = W2->Damage;
 			pData->idxSlot_Warp = (BYTE)i;
 		}
 
@@ -399,19 +409,6 @@ bool TechnoClassExt::EvalWeaponAgainst(TechnoClass *pThis, TechnoClass *pTarget,
 }
 */
 
-/* #604 - customizable parachutes */
-DEFINE_HOOK(5F5ADD, Parachute_Animation, 6)
-{
-	GET(TechnoClass *, T, ESI);
-	RET_UNLESS(generic_cast<FootClass *>(T));
-	TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(T->GetTechnoType());
-	if(pTypeData->Is_Bomb) {
-		T->IsABomb = 1;
-	}
-	R->EDX<AnimTypeClass *>(pTypeData->Parachute_Anim);
-	return 0x5F5AE3;
-}
-
 DEFINE_HOOK(51F76D, InfantryClass_Unload, 5)
 {
 	GET(TechnoClass *, I, ESI);
@@ -466,19 +463,6 @@ EXPORT_FUNC(InfantryClass_UpdateDeploy2)
 	return 0;
 }
 
-DEFINE_HOOK(73B672, UnitClass_DrawVXL, 6)
-{
-	GET(UnitClass *, U, EBP);
-	TechnoTypeExt::ExtData *pData = TechnoTypeExt::ExtMap.Find(U->Type);
-	if(pData->WaterAlt) {
-		if(!U->OnBridge && U->GetCell()->LandType == lt_Water) {
-			R->EAX(0);
-			return 0x73B68B;
-		}
-	}
-	return 0;
-}
-
 // stops movement sound from being played while unit is being pulled by a magnetron (see terror drone)
 DEFINE_HOOK(7101CF, FootClass_ImbueLocomotor, 7)
 {
@@ -498,44 +482,6 @@ DEFINE_HOOK(4DAA68, FootClass_Update_MoveSound, 6)
 		return 0x4DAAEE;
 	}
 	return 0x4DAA70;
-}
-
-DEFINE_HOOK(73C725, UnitClass_DrawSHP_DrawShadowEarlier, 6)
-{
-	GET(UnitClass *, U, EBP);
-
-	if(U->CloakState || U->Type->Underwater) { // TODO: other conditions where it would not make sense to draw shadow - VisualCharacter?
-		return 0;
-	}
-
-	GET(SHPStruct *, Image, EDI);
-
-	if(Image) { // bug #960
-		GET(int, FrameToDraw, EBX);
-		GET_STACK(Point2D, coords, 0x12C);
-		LEA_STACK(RectangleStruct *, BoundingRect, 0x134);
-
-		if(U->unknown_bool_420) {
-			coords.Y -= 14;
-		}
-
-		Point2D XYAdjust = {0, 0};
-		U->Locomotor->Shadow_Point(&XYAdjust);
-		coords += XYAdjust;
-
-		int ZAdjust = U->GetZAdjustment() - 2;
-
-		FrameToDraw += Image->Frames / 2;
-
-		DSurface::Hidden_2->DrawSHP(FileSystem::THEATER_PAL, Image, FrameToDraw, &coords, BoundingRect, 0x2E01,
-				0, ZAdjust, 0, 1000, 0, 0, 0, 0, 0);
-	}
-	return 0;
-}
-
-DEFINE_HOOK(73C733, UnitClass_DrawSHP_SkipTurretedShadow, 7)
-{
-	return 0x73C7AC;
 }
 
 /* #397 - AffectsEnemies */
@@ -571,4 +517,43 @@ DEFINE_HOOK(701C97, TechnoClass_ReceiveDamage_AffectsEnemies, 6)
 	}
 
 	return CanAffect ? 0 : 0x701CC2;
+}
+
+DEFINE_HOOK(7090D0, TechnoClass_SelectFiringVoice_IFVRepair, 5)
+{
+	GET(TechnoClass *, Firer, ESI);
+	TechnoTypeClass * FirerType = Firer->GetTechnoType();
+	auto pData = TechnoTypeExt::ExtMap.Find(FirerType);
+
+	int idxVoice = pData->VoiceRepair;
+	if(idxVoice == -1) {
+		if(_strcmpi(FirerType->ID, "FV")) {
+			// the game does this
+			return 0x7090ED;
+		}
+		idxVoice = RulesClass::Instance->VoiceIFVRepair;
+	}
+	R->EDI<int>(idxVoice);
+	return 0x70914A;
+}
+
+// Support per unit modification of Iron Curtain effect duration
+DEFINE_HOOK(70E2D2, TechnoClass_IronCurtain_Modifiy, 6) {
+	GET(TechnoClass*, pThis, ECX);
+	GET(int, duration, EDX);
+	GET_STACK(bool, force, 0x1C);
+
+	// if it's no force shield then it's the iron curtain.
+	if(!force) {
+		if(TechnoTypeExt::ExtData *pData = TechnoTypeExt::ExtMap.Find(pThis->GetTechnoType())) {
+			duration = (int)(duration * pData->IC_Modifier);
+		}
+
+		pThis->IronCurtainTimer.TimeLeft = duration;
+		pThis->IronTintStage = 0;
+	
+		return 0x70E2DB;
+	}
+
+	return 0;
 }

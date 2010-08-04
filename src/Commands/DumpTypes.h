@@ -87,7 +87,7 @@ public:
 			Debug::Log("%X = %s\n", X->get_ID(), X->IsEnabled ? "yes" : "no");
 		}
 
-		MessageListClass::PrintMessage(L"Type data dumped");
+		MessageListClass::Instance->PrintMessage(L"Type data dumped");
 	}
 
 	//Constructor

@@ -2,6 +2,7 @@
 #include <WeaponTypeClass.h>
 #include "../../Enum/ArmorTypes.h"
 #include "../Techno/Body.h"
+#include "../TechnoType/Body.h"
 #include "Misc/EMPulse.h"
 
 #include <WarheadTypeClass.h>
@@ -18,6 +19,7 @@
 #include <AnimClass.h>
 #include "../Bullet/Body.h"
 #include <FootClass.h>
+#include "../../Utilities/Helpers.Alex.h"
 
 #include <Helpers/Template.h>
 #include <set>
@@ -66,6 +68,7 @@ void WarheadTypeExt::ExtData::LoadFromINIFile(WarheadTypeClass *pThis, CCINIClas
 	this->EMP_Cap = pINI->ReadInteger(section, "EMP.Cap", this->EMP_Cap);
 
 	this->IC_Duration = pINI->ReadInteger(section, "IronCurtain.Duration", this->IC_Duration);
+	this->IC_Cap = pINI->ReadInteger(section, "IronCurtain.Cap", this->IC_Cap);
 
 	if(pThis->Temporal) {
 		this->Temporal_WarpAway.Parse(&exINI, section, "Temporal.WarpAway");
@@ -128,51 +131,90 @@ void WarheadTypeExt::ExtData::applyRipples(CoordStruct *coords) {
 	}
 }
 
+// Applies this warhead's Iron Curtain effect.
 /*!
-	This function checks if the passed warhead has IronCurtain.Duration set, and, if so, applies the effect.
+	This function checks if the passed warhead has IronCurtain.Duration set,
+	and, if so, applies the effect.
+
+	Units will be damaged before the Iron Curtain gets effective. AffectAllies
+	and AffectEnemies are respected. Verses support is limited: If it is 0%,
+	the unit won't get affected, otherwise, it will be 100% affected.
+
 	\note Moved here from hook BulletClass_Fire.
+
 	\param coords The coordinates of the warhead impact, the center of the Iron Curtain area.
 	\param Owner Owner of the Iron Curtain effect, i.e. the one triggering this.
+	\param damage The damage the firing weapon deals before the Iron Curtain effect starts.
+
+	\date 2010-06-28
 */
-void WarheadTypeExt::ExtData::applyIronCurtain(CoordStruct *coords, HouseClass* Owner) {
+void WarheadTypeExt::ExtData::applyIronCurtain(CoordStruct *coords, HouseClass* Owner, int damage) {
 	CellStruct cellCoords = MapClass::Instance->GetCellAt(coords)->MapCoords;
 
-	if (this->IC_Duration != 0) {
-		std::set<TechnoClass*> *set = new std::set<TechnoClass*>();
-		int countCells = CellSpread::NumCells(int(this->AttachedToObject->CellSpread));
-		for (int i = 0; i < countCells; ++i) {
-			CellStruct tmpCell = CellSpread::GetCell(i);
-			tmpCell += cellCoords;
-			CellClass *c = MapClass::Instance->GetCellAt(&tmpCell);
-			for (ObjectClass *curObj = c->GetContent(); curObj; curObj = curObj->NextObject) {
-				if(TechnoClass *curTechno = generic_cast<TechnoClass*>(curObj)) {
-					set->insert(curTechno);
-				}
-			}
-		}
+	if(this->IC_Duration != 0) {
+		// set of affected objects. every object can be here only once.
+		DynamicVectorClass<TechnoClass*> *items = Helpers::Alex::getCellSpreadItems(coords,
+			this->AttachedToObject->CellSpread, true);
 
-		for(std::set<TechnoClass*>::iterator iterator = set->begin(); iterator != set->end(); iterator++) {
-			if (TechnoClass *curTechno = *iterator) {
-				if (curTechno->IronCurtainTimer.Ignorable()) {
-					if (this->IC_Duration > 0) {
-						curTechno->IronCurtain(this->IC_Duration, Owner, 0);
+		// affect each object
+		for(int i=0; i<items->Count; ++i) {
+			if(TechnoClass *curTechno = items->GetItem(i)) {
+
+				// affects enemies or allies respectively?
+				if(WarheadTypeExt::canWarheadAffectTarget(curTechno, Owner, this->AttachedToObject)) {
+
+					// duration modifier
+					int duration = this->IC_Duration;
+
+					// modifiy good durations only
+					if(duration > 0) {
+						if(TechnoTypeExt::ExtData *pData = TechnoTypeExt::ExtMap.Find(curTechno->GetTechnoType())) {
+							duration = (int)(duration * pData->IC_Modifier);
+						}
 					}
-				} else {
-					if (this->IC_Duration > 0) {
-						curTechno->IronCurtainTimer.TimeLeft += this->IC_Duration;
+
+					// respect verses the boolean way
+					if(abs(this->Verses[curTechno->GetTechnoType()->Armor].Verses) < 0.001) {
+						break;
+					}
+
+					// get the values
+					int oldValue = (curTechno->IronCurtainTimer.Ignorable() ? 0 : curTechno->IronCurtainTimer.GetTimeLeft());
+					int newValue = Helpers::Alex::getCappedDuration(oldValue, duration, this->IC_Cap);
+
+					// update iron curtain
+					if(oldValue <= 0) {
+						// start iron curtain effect?
+						if(newValue > 0) {
+							// damage the victim before ICing it
+							if(damage) {
+								curTechno->ReceiveDamage(&damage, 0, this->AttachedToObject, NULL, true, false, Owner);
+							}
+
+							// unit may be destroyed already.
+							if(curTechno->IsAlive) {
+								// start and prevent the multiplier from being applied twice
+								curTechno->IronCurtain(newValue, Owner, false);
+								curTechno->IronCurtainTimer.Start(newValue);
+							}
+						}
 					} else {
-						if (curTechno->IronCurtainTimer.TimeLeft <= abs(this->IC_Duration)) {
-							curTechno->IronCurtainTimer.TimeLeft = 1;
+						// iron curtain effect is already on.
+						if(newValue > 0) {
+							// set new length and reset tint stage
+							curTechno->IronCurtainTimer.Start(newValue);
+							curTechno->IronTintStage = 4;
 						} else {
-							curTechno->IronCurtainTimer.TimeLeft += this->IC_Duration;
+							// turn iron curtain off
+							curTechno->IronCurtainTimer.Stop();
 						}
 					}
 				}
 			}
 		}
 
-		set->clear();
-		delete set;
+		items->Clear();
+		delete items;
 	}
 }
 

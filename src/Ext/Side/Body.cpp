@@ -5,6 +5,7 @@
 //Static init
 template<> const DWORD Extension<SideClass>::Canary = 0x87654321;
 Container<SideExt> SideExt::ExtMap;
+ColorScheme *SideExt::CurrentLoadTextColor = NULL;
 
 template<> SideExt::TT *Container<SideExt>::SavingObject = NULL;
 template<> IStream *Container<SideExt>::SavingStream = NULL;
@@ -21,6 +22,8 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 	this->ParaDrop.Clear();
 	this->ParaDropNum.Clear();
 
+	this->ParaDropPlane = AircraftTypeClass::FindIndex("PDPLANE");
+
 	if(!_strcmpi(pID, "Nod")) { //Soviets
 
 		for(int i = 0; i < RulesClass::Instance->SovietBaseDefenseCounts.Count; ++i) {
@@ -36,7 +39,6 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 		this->SurvivorDivisor.Bind(&RulesClass::Instance->SovietSurvivorDivisor);
 
 		strcpy(this->EVATag, "Russian");
-		this->LoadTextColor = ColorScheme::Find("SovietLoad");
 
 		for(int i = 0; i < RulesClass::Instance->SovParaDropInf.Count; ++i) {
 			this->ParaDrop.AddItem((RulesClass::Instance->SovParaDropInf.GetItem(i)));
@@ -64,7 +66,6 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 		this->SurvivorDivisor.Bind(&RulesClass::Instance->ThirdSurvivorDivisor);
 
 		strcpy(this->EVATag, "Yuri");
-		this->LoadTextColor = ColorScheme::Find("SovietLoad");
 
 		for(int i = 0; i < RulesClass::Instance->YuriParaDropInf.Count; ++i) {
 			this->ParaDrop.AddItem(RulesClass::Instance->YuriParaDropInf.GetItem(i));
@@ -92,7 +93,6 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 		this->SurvivorDivisor.Bind(&RulesClass::Instance->AlliedSurvivorDivisor);
 
 		strcpy(this->EVATag, "Allied");
-		this->LoadTextColor = ColorScheme::Find("AlliedLoad");
 
 		for(int i = 0; i < RulesClass::Instance->AllyParaDropInf.Count; ++i) {
 			this->ParaDrop.AddItem(RulesClass::Instance->AllyParaDropInf.GetItem(i));
@@ -139,11 +139,9 @@ void SideExt::ExtData::LoadFromINIFile(SideClass *pThis, CCINIClass *pINI)
 		AresCRT::strCopy(this->EVATag, Ares::readBuffer, 0x20);
 	}
 
-	if(pINI->ReadString(section, "LoadScreenText.Color", "", Ares::readBuffer, 0x80)) {
-		if(ColorScheme* CS = ColorScheme::Find(Ares::readBuffer)) {
-			this->LoadTextColor = CS;
-		}
-	}
+	this->Parachute_Anim.Parse(&exINI, section, "Parachute.Anim");
+
+	this->ParaDropPlane.Read(&exINI, section, "ParaDrop.Aircraft");
 
 	if(pINI->ReadString(section, "ParaDrop.Types", "", Ares::readBuffer, Ares::readLength)) {
 		this->ParaDrop.Clear();
@@ -205,11 +203,9 @@ DWORD SideExt::Disguise(REGISTERS* R, DWORD dwReturnAddress, bool bUseESI)
 
 DWORD SideExt::LoadTextColor(REGISTERS* R, DWORD dwReturnAddress)
 {
-	int n = R->EAX();
-	SideClass* pSide = SideClass::Array->GetItem(n);
-	SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide);
-	if(pData && pData->LoadTextColor) {
-		R->EAX(pData->LoadTextColor);
+	// if there is a cached LoadTextColor, use that.
+	if(SideExt::CurrentLoadTextColor) {
+		R->EAX(SideExt::CurrentLoadTextColor);
 		return dwReturnAddress;
 	} else {
 		return 0;

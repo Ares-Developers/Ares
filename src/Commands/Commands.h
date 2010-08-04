@@ -24,7 +24,7 @@ public:
 
 	virtual void Execute(DWORD dwUnk)
 	{
-		MessageListClass::PrintMessage(L"Test Function executed!");
+		MessageListClass::Instance->PrintMessage(L"Test Function executed!");
 	}
 
 	//Constructor
@@ -44,6 +44,7 @@ void MakeCommand() {
 #include "Commands/MapSnapshot.h"
 //include "Commands/FrameByFrame.h"
 #include "Commands/DumpTypes.h"
+#include "Commands/DumpMemory.h"
 #include "Commands/Debugging.h"
 //include "Commands/Logging.h"
 

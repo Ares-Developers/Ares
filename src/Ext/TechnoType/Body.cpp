@@ -1,10 +1,12 @@
 #include "Body.h"
+#include "../BuildingType/Body.h"
 #include "../Side/Body.h"
 #include "../../Enum/Prerequisites.h"
 #include "../../Misc/Debug.h"
 #include "../../Misc/EMPulse.h"
 
 #include <AnimTypeClass.h>
+#include <PCX.h>
 #include <Theater.h>
 
 template<> const DWORD Extension<TechnoTypeClass>::Canary = 0x44444444;
@@ -204,21 +206,20 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 		}
 	}
 
-	// EMP immunity. The default for each type is decided by the EMPulse class,
-	// the first time a unit of this TechnoType is EMP'd.
-	bool EMPTemp = pINI->ReadBool(section, "ImmuneToEMP", false);
-	this->ImmuneToEMP = EMPTemp;
-	this->ImmuneToEMPSet = (EMPTemp == pINI->ReadBool(section, "ImmuneToEMP", true));
+	// EMP immunity will be inferred after all type data has been read.
+	// Not all needed properties have been parsed here. For instance: Cyborg.
 
-	if(pINI->ReadString(section, "EMPThreshold", "inair", Ares::readBuffer, Ares::readLength)) {
+	this->EMP_Modifier = (float)pINI->ReadDouble(section, "EMP.Modifier", this->EMP_Modifier);
+
+	if(pINI->ReadString(section, "EMP.Threshold", "inair", Ares::readBuffer, Ares::readLength)) {
 		if(_strcmpi(Ares::readBuffer, "inair") == 0) {
-			this->EMPThreshold = -1;
+			this->EMP_Threshold = -1;
 		} else if((_strcmpi(Ares::readBuffer, "yes") == 0) || (_strcmpi(Ares::readBuffer, "true") == 0)) {
-			this->EMPThreshold = 1;
+			this->EMP_Threshold = 1;
 		} else if((_strcmpi(Ares::readBuffer, "no") == 0) || (_strcmpi(Ares::readBuffer, "false") == 0)) {
-			this->EMPThreshold = 0;
+			this->EMP_Threshold = 0;
 		} else {
-			this->EMPThreshold = pINI->ReadInteger(section, "EMPThreshold", this->EMPThreshold);
+			this->EMP_Threshold = pINI->ReadInteger(section, "EMP.Threshold", this->EMP_Threshold);
 		}
 	}
 
@@ -242,6 +243,20 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	// #733
 	this->ProtectedDriver = pINI->ReadBool(section, "ProtectedDriver", this->ProtectedDriver);
 	this->CanDrive = pINI->ReadBool(section, "CanDrive", this->CanDrive);
+
+	this->VoiceRepair.Read(&exINI, section, "VoiceIFVRepair");
+
+	this->IC_Modifier = (float)pINI->ReadDouble(section, "IronCurtain.Modifier", this->IC_Modifier);
+
+	if(CCINIClass::INI_Art->ReadString(pThis->ImageFile, "CameoPCX", "", Ares::readBuffer, Ares::readLength)) {
+		AresCRT::strCopy(this->CameoPCX, Ares::readBuffer, 0x20);
+		PCX::Instance->LoadFile(this->CameoPCX);
+	}
+
+	if(CCINIClass::INI_Art->ReadString(pThis->ImageFile, "AltCameoPCX", "", Ares::readBuffer, Ares::readLength)) {
+		AresCRT::strCopy(this->AltCameoPCX, Ares::readBuffer, 0x20);
+		PCX::Instance->LoadFile(this->AltCameoPCX);
+	}
 
 	// quick fix - remove after the rest of weapon selector code is done
 	return;
@@ -336,7 +351,53 @@ void TechnoTypeClassExt::ReadWeapon(WeaponStruct *pWeapon, const char *prefix, c
 }
 */
 
+void TechnoTypeExt::InferEMPImmunity(TechnoTypeClass *Type, CCINIClass *pINI) {
+	TechnoTypeExt::ExtData *pData = TechnoTypeExt::ExtMap.Find(Type);
+
+	// EMP immunity. The default for each type is decided by the EMPulse class.
+	pData->ImmuneToEMP.BindEx(!EMPulse::IsTypeEMPProne(Type));
+	pData->ImmuneToEMP.Set(pINI->ReadBool(Type->ID, "ImmuneToEMP", pData->ImmuneToEMP.Get()));
+}
+
 void Container<TechnoTypeExt>::InvalidatePointer(void *ptr) {
+}
+
+bool TechnoTypeExt::ExtData::CameoIsElite()
+{
+	HouseClass * House = HouseClass::Player;
+	HouseTypeClass *Country = House->Type;
+
+	TechnoTypeClass * const T = this->AttachedToObject;
+
+	SHPStruct *Cameo = T->Cameo;
+	SHPStruct *Alt = T->AltCameo;
+
+	if(!Alt) {
+		return false;
+	}
+
+	switch(T->WhatAmI()) {
+		case abs_InfantryType:
+			if(House->BarracksInfiltrated && !T->Naval && T->Trainable) {
+				return true;
+			} else {
+				return Country->VeteranInfantry.FindItemIndex((InfantryTypeClass **)&T) != -1;
+			}
+		case abs_UnitType:
+			if(House->WarFactoryInfiltrated && !T->Naval && T->Trainable) {
+				return true;
+			} else {
+				return Country->VeteranUnits.FindItemIndex((UnitTypeClass **)&T) != -1;
+			}
+		case abs_AircraftType:
+			return Country->VeteranAircraft.FindItemIndex((AircraftTypeClass **)&T) != -1;
+		case abs_BuildingType:
+			if(TechnoTypeClass *Item = T->UndeploysInto) {
+				return Country->VeteranUnits.FindItemIndex((UnitTypeClass **)&Item) != -1;
+			}
+	}
+
+	return false;
 }
 
 // =============================
@@ -449,3 +510,36 @@ DEFINE_HOOK_AGAIN(716132, TechnoTypeClass_LoadFromINI, 5)
 	TechnoTypeExt::ExtMap.LoadFromINI(pItem, pINI);
 	return 0;
 }
+
+// infer the EMP immunity here. this is the earliest address to get
+// this information reliably.
+DEFINE_HOOK(679CAF, RulesClass_LoadAfterTypeData_InferEMPImmunity, 5) {
+	GET(CCINIClass*, pINI, ESI);
+
+	// The EMP immunity has a rather complex rule set to infer whether
+	// a TechnoType is immune from its properties. Here all properties
+	// have been parsed.
+	for(int i=0; i<BuildingTypeClass::Array->Count; ++i) {
+		BuildingTypeClass* pTBld = BuildingTypeClass::Array->GetItem(i);
+		TechnoTypeExt::InferEMPImmunity(pTBld, pINI);
+
+		if(BuildingTypeExt::ExtData *pData = BuildingTypeExt::ExtMap.Find(pTBld)) {
+			pData->CompleteInitialization(pTBld);
+		}
+	}
+	for(int i=0; i<AircraftTypeClass::Array->Count; ++i) {
+		AircraftTypeClass* pTAir = AircraftTypeClass::Array->GetItem(i);
+		TechnoTypeExt::InferEMPImmunity(pTAir, pINI);
+	}
+	for(int i=0; i<UnitTypeClass::Array->Count; ++i) {
+		UnitTypeClass* pTUnit = UnitTypeClass::Array->GetItem(i);
+		TechnoTypeExt::InferEMPImmunity(pTUnit, pINI);
+	}
+	for(int i=0; i<InfantryTypeClass::Array->Count; ++i) {
+		InfantryTypeClass* pTInf = InfantryTypeClass::Array->GetItem(i);
+		TechnoTypeExt::InferEMPImmunity(pTInf, pINI);
+	}
+
+	return 0;
+}
+

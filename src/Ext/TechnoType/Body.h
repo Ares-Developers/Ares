@@ -2,6 +2,7 @@
 #define TECHNOTYPE_EXT_H
 
 #include <TechnoTypeClass.h>
+#include <VocClass.h>
 
 #include "../../Ares.h"
 #include "../_Container.hpp"
@@ -54,15 +55,13 @@ public:
 
 		bool Is_Bomb;
 
-		bool WaterAlt;
-
 		// these are not implemented at all yet
 		DynamicVectorClass<WeaponStruct> Weapons;
 		DynamicVectorClass<WeaponStruct> EliteWeapons;
 
 		Promotable<SHPStruct *> Insignia;
 
-		Customizable<AnimTypeClass*> Parachute_Anim;
+		Valueable<AnimTypeClass*> Parachute_Anim;
 
 		// new on 08.11.09 for #342 (Operator=)
 		InfantryTypeClass * Operator; //!< Saves a pointer to an InfantryType required to be a passenger of this unit in order for it to work. Defaults to NULL. \sa TechnoClass_Update_CheckOperators, bool IsAPromiscuousWhoreAndLetsAnyoneRideIt
@@ -72,17 +71,26 @@ public:
 
 		std::bitset<32> RequiredStolenTech;
 
-		bool ImmuneToEMPSet;
-		bool ImmuneToEMP;
+		Customizable<bool> ImmuneToEMP;
 		bool VeteranAbilityEMPIMMUNE;
 		bool EliteAbilityEMPIMMUNE;
-		int EMPThreshold;
+		int EMP_Threshold;
+		float EMP_Modifier;
+
+		float IC_Modifier;
 
 		// new on 05.04.10 for #733 (KillDriver/"Jarmen Kell")
 		bool ProtectedDriver; //!< Whether the driver of this vehicle cannot be killed, i.e. whether this vehicle is immune to KillDriver. Request #733.
 		bool CanDrive; //!< Whether this TechnoType can act as the driver of vehicles whose driver has been killed. Request #733.
 
 		bool AlternateTheaterArt;
+
+		ValueableIdx<int, VocClass> VoiceRepair;
+
+		Customizable<UnitTypeClass *> WaterImage;
+
+		char CameoPCX[0x20];
+		char AltCameoPCX[0x20];
 
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			Survivors_PilotChance (NULL),
@@ -103,22 +111,26 @@ public:
 			Spot_DisableB (false),
 			Spot_Reverse (false),
 			Is_Bomb (false),
-			WaterAlt (false),
 			Insignia (NULL),
-			Parachute_Anim(&RulesClass::Instance->Parachute),
+			Parachute_Anim (NULL),
 			Operator (NULL),
 			IsAPromiscuousWhoreAndLetsAnyoneRideIt (false),
 			CameoPal(),
 			RequiredStolenTech(0ull),
-			ImmuneToEMPSet (false),
-			ImmuneToEMP (false),
-			EMPThreshold (-1),
+			IC_Modifier (1.0F),
+			EMP_Threshold (-1),
+			EMP_Modifier (1.0F),
 			VeteranAbilityEMPIMMUNE (false),
 			EliteAbilityEMPIMMUNE (false),
 			ProtectedDriver(false),
 			CanDrive (false),
-			AlternateTheaterArt (false)
-			{ this->Insignia.SetAll(NULL); };
+			AlternateTheaterArt (false),
+			VoiceRepair (-1),
+			WaterImage (NULL)
+			{
+				this->Insignia.SetAll(NULL);
+				*this->CameoPCX = *this->AltCameoPCX = 0;
+			};
 
 		virtual ~ExtData() {};
 
@@ -130,6 +142,8 @@ public:
 		virtual void InvalidatePointer(void *ptr) {
 			AnnounceInvalidPointer(Operator, ptr);
 		}
+
+		bool CameoIsElite();
 };
 
 	static Container<TechnoTypeExt> ExtMap;
@@ -137,6 +151,7 @@ public:
 	static void PointerGotInvalid(void *ptr);
 
 //	static void ReadWeapon(WeaponStruct *pWeapon, const char *prefix, const char *section, CCINIClass *pINI);
+	static void InferEMPImmunity(TechnoTypeClass *Type, CCINIClass *pINI);
 };
 
 #endif

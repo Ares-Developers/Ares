@@ -661,38 +661,6 @@ DEFINE_HOOK(718871, TeleportLocomotionClass_UnfreezeObject_SinkOrSwim, 7)
 	return 0x7188B1;
 }
 
-// this is checked right before the TeamClass is instantiated - 
-// it does not mean the AI will abandon this team if another team wants BuildLimit'ed units at the same time
-DEFINE_HOOK(50965E, HouseClass_CanInstantiateTeam, 5)
-{
-	GET(DWORD, ptrTask, EAX);
-	GET(DWORD, ptrOffset, ECX);
-
-	ptrTask += (ptrOffset - 4); // pointer math!
-	TaskForceEntryStruct * ptrEntry = reinterpret_cast<TaskForceEntryStruct *>(ptrTask); // evil! but works, don't ask me why
-
-	GET(HouseClass *, Owner, EBP);
-	enum { BuildLimitAllows = 0x5096BD, Absolutely = 0x509671, NoWay = 0x5096F1} CanBuild = NoWay;
-	if(TechnoTypeClass * Type = ptrEntry->Type) {
-		if(Type->GetFactoryType(true, true, false, Owner)) {
-			if(Ares::GlobalControls::AllowBypassBuildLimit[Owner->AIDifficulty]) {
-				CanBuild = BuildLimitAllows;
-			} else {
-				int remainLimit = HouseExt::BuildLimitRemaining(Owner, Type);
-				Debug::Log("House %s can build %d (want: %d) instances of %s\n", Owner->PlainName, remainLimit, ptrEntry->Amount, Type->ID);
-				if(remainLimit >= ptrEntry->Amount) {
-					CanBuild = BuildLimitAllows;
-				} else {
-					CanBuild = NoWay;
-				}
-			}
-		} else {
-			CanBuild = BuildLimitAllows;
-		}
-	}
-	return CanBuild;
-}
-
 /*
  * Fixing issue #954
  */
@@ -714,4 +682,12 @@ DEFINE_HOOK(621B80, DSurface_FillRectWithColor, 5)
 		return 0x621D26;
 	else
 		return 0;
+}
+
+DEFINE_HOOK(52BA78, _YR_GameInit_Pre, 5)
+{
+	// issue #198: animate the paradrop cursor
+	MouseCursor::First[47].Interval = 4;
+
+	return 0;
 }

@@ -31,8 +31,13 @@ DEFINE_HOOK(46920B, BulletClass_Fire, 6) {
 		: NULL
 	;
 
+	int damage = 0;
+	if(Bullet->WeaponType) {
+		damage = Bullet->WeaponType->Damage;
+	}
+
 	pWHExt->applyRipples(&coords);
-	pWHExt->applyIronCurtain(&coords, OwnerHouse);
+	pWHExt->applyIronCurtain(&coords, OwnerHouse, damage);
 	pWHExt->applyEMP(&coords, Bullet->Owner);
 	WarheadTypeExt::applyOccupantDamage(Bullet);
 	pWHExt->applyKillDriver(Bullet);

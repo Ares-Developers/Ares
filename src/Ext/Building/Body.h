@@ -56,7 +56,8 @@ public:
 		}
 
 		// related to Advanced Rubble
-		void RubbleYell(bool beingRepaired = false); // This function triggers back and forth between rubble states.
+		bool RubbleYell(bool beingRepaired = false); // This function triggers back and forth between rubble states.
+		void KickOutOfRubble();
 
 		// related to trench traversal
 		bool canTraverseTo(BuildingClass* targetBuilding); // Returns true if people can move from the current building to the target building, otherwise false.

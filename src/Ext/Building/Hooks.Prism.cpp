@@ -1,5 +1,6 @@
 #include "Body.h"
 #include "../BuildingType/Body.h"
+#include "../WeaponType/Body.h"
 #include <BulletClass.h>
 #include <LaserDrawClass.h>
 
@@ -109,7 +110,9 @@ DEFINE_HOOK(4503F0, BuildingClass_Update_Prism, 9)
 							if(BulletClass *LaserBeam = pThis->Fire(Target, pThis->PrismTargetCoords.X)) {
 								BuildingTypeClass *pType = pThis->Type;
 								BuildingTypeExt::ExtData *pTypeData = BuildingTypeExt::ExtMap.Find(pType);
-								LaserBeam->DamageMultiplier = ((pData->PrismForwarding.ModifierReserve + 100) * 256) / 100; //apparently this is divided by 256 elsewhere
+
+								//apparently this is divided by 256 elsewhere
+								LaserBeam->DamageMultiplier = ((pData->PrismForwarding.ModifierReserve + 100) * 256) / 100;
 								LaserBeam->Health += pTypeData->PrismForwarding.DamageAdd.Get()  + pData->PrismForwarding.DamageReserve;
 							}
 						}
@@ -154,24 +157,26 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 	WeaponTypeClass * supportWeapon = pTypeData->PrismForwarding.SupportWeapon;
 	if (supportWeapon) {
 		WeaponTypeExt::ExtData *supportWeaponData = WeaponTypeExt::ExtMap.Find(supportWeapon);
-		if (supportWeapon->IsLaser)
-			LaserDrawClass * LaserBeam;
+		if (supportWeapon->IsLaser) {
+			LaserDrawClass * LaserBeam = NULL;
 			if (supportWeapon->IsHouseColor) {
 				GAME_ALLOC(LaserDrawClass, LaserBeam, SourceXYZ, *pTargetXYZ, B->Owner->LaserColor, blank, blank, supportWeapon->LaserDuration);
 			} else {
-				GAME_ALLOC(LaserDrawClass, LaserBeam, SourceXYZ, *pTargetXYZ, supportWeapon->LaserOuterColor, supportWeapon->LaserOuterSpread, supportWeapon->LaserDuration);
+				GAME_ALLOC(LaserDrawClass, LaserBeam, SourceXYZ, *pTargetXYZ,
+					supportWeapon->LaserInnerColor, supportWeapon->LaserOuterColor, supportWeapon->LaserOuterSpread,
+					supportWeapon->LaserDuration);
 			}
 			if(LaserBeam) {
 				LaserBeam->IsHouseColor = supportWeapon->IsHouseColor;
-				LaserBeam->field_1C = supportWeaponData->LaserThickness;
+				LaserBeam->Thickness = supportWeaponData->Laser_Thickness;
 			}
 		}
 		if (supportWeapon->IsRadBeam) {
 			RadBeam* supportRadBeam;
 			GAME_ALLOC(RadBeam, supportRadBeam, 0);
 			if (supportRadBeam) {
-				supportRadBeam.SetCoordsSource(SourceXYZ);
-				supportRadBeam.SetCoordsTarget(*pTargetXYZ);
+				supportRadBeam->SetCoordsSource(&SourceXYZ);
+				supportRadBeam->SetCoordsTarget(pTargetXYZ);
 				if (supportWeaponData->Beam_IsHouseColor) {
 					supportRadBeam->Color = B->Owner->LaserColor;
 				} else {
@@ -181,7 +186,7 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 				supportRadBeam->Amplitude = supportWeaponData->Beam_Amplitude;
 			}
 		}
-		if (supportWeapon->IsMagBeam || supportWeapon->IsSonic || supportWeapon->Wave_IsLaser || supportWeapon->Wave_IsBigLaser) {
+		if (supportWeapon->IsMagBeam || supportWeapon->IsSonic || supportWeaponData->Wave_IsLaser || supportWeaponData->Wave_IsBigLaser) {
 			//ask DCoder how the heck to create these various beam effects
 		}
 		if (supportWeapon->IsElectricBolt) {
@@ -195,7 +200,7 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 		GAME_ALLOC(LaserDrawClass, LaserBeam, SourceXYZ, *pTargetXYZ, B->Owner->LaserColor, blank, blank, RulesClass::Instance->PrismSupportDuration);
 		if(LaserBeam) {
 			LaserBeam->IsHouseColor = true;
-			LaserBeam->field_1C = 3;
+			LaserBeam->Thickness = 3;
 		}
 		B->ReloadTimer.Start(RulesClass::Instance->PrismSupportDelay);
 	}
