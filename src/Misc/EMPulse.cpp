@@ -103,7 +103,7 @@ void EMPulse::deliverEMPDamage(ObjectClass *object, TechnoClass *Firer, WarheadT
 			}
 
 			// can not be less than zero
-			curTechno->EMPLockRemaining = max(0, newValue);
+			curTechno->EMPLockRemaining = std::max(0, newValue);
 			if (verbose) {
 				Debug::Log("[deliverEMPDamage] Step 4: %d\n",
 						newValue);

@@ -116,7 +116,7 @@ signed int HouseExt::BuildLimitRemaining(HouseClass *pHouse, TechnoTypeClass *pI
 		BuildLimit = abs(BuildLimit);
 		BuildLimit -= pHouse->CountOwnedEver(pItem);
 	}
-	return min(BuildLimit, 0x7FFFFFFF);
+	return std::min(BuildLimit, 0x7FFFFFFF);
 }
 
 signed int HouseExt::PrereqValidate

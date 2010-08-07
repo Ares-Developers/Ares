@@ -225,7 +225,7 @@ bool WeaponTypeExt::ModifyWaveColor(WORD *src, WORD *dst, int Intensity, WaveCla
 // ugly hack to fix byte wraparound problems
 #define upcolor(c) \
 	int _ ## c = initial. c + (Intensity * CurrentColor-> c ) / 256; \
-	_ ## c = min(_ ## c, 255); \
+	_ ## c = std::min(_ ## c, 255); \
 	modified. c = (BYTE)_ ## c;
 
 	upcolor(R);

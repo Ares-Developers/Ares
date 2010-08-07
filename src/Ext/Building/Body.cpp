@@ -89,7 +89,7 @@ bool BuildingExt::ExtData::RubbleYell(bool beingRepaired) {
 		}
 
 		newState = specific_cast<BuildingClass *>(pTypeData->RubbleIntact->CreateObject(currentBuilding->Owner));
-		newState->Health = static_cast<int>(max((newState->Type->Strength / 100), 1)); // see description above
+		newState->Health = static_cast<int>(std::max((newState->Type->Strength / 100), 1)); // see description above
 		newState->IsAlive = true; // assuming this is in the sense of "is not destroyed"
 		// Location should not be changed by removal
 		if(!newState->Put(&currentBuilding->Location, currentBuilding->Facing)) {
@@ -554,7 +554,7 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 		bounty = int(available * pTypeExt->StolenMoneyPercentage);
 	}
 	if(bounty > 0) {
-		bounty = min(bounty, available);
+		bounty = std::min(bounty, available);
 		Owner->TakeMoney(bounty);
 		Enterer->GiveMoney(bounty);
 		if(evaForOwner) {

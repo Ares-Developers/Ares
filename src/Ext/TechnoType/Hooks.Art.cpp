@@ -107,7 +107,7 @@ DEFINE_HOOK(5F9070, ObjectTypeClass_Load2DArt, 0)
 	}
 
 	if(SHPStruct *SHP = pType->Image) {
-		pType->MaxDimension = max(max(SHP->Width, SHP->Height), 8);
+		pType->MaxDimension = std::max<short>(std::max<short>(SHP->Width, SHP->Height), 8);
 	}
 
 	return 0x5F92C3;
