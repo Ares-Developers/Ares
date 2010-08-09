@@ -35,11 +35,8 @@ public:
 		Customizable<signed int> MaxFeeds;					//max number of towers that can feed this tower
 		Valueable<signed int> MaxChainLength;				//max length of any given (preceding) branch of the network
 		Customizable<signed int> MaxNetworkSize;				//max number of towers that can be in the network
-		Valueable<signed int> SupportRange;				//range that can forward over
 		Customizable<int> SupportModifier; 				//Per-building PrismSupportModifier
 		Valueable<signed int> DamageAdd; 					//amount of flat damage to add to the firing beam (before multiplier)
-		Customizable<int> SupportDelay;					//Per-building PrismSupportDelay
-		Customizable<int> SupportDuration;					//Per-building PrismSupportDuration
 		Customizable<int> MyHeight;						//Per-building PrismSupportHeight
 		Valueable<int> ChargeDelay;					//the amount to delay start of charging per backward chain
 		Valueable<bool> ToAllies;						//can this tower support allies' towers or not
@@ -59,18 +56,13 @@ public:
 		static void SetChargeDelay_Set(BuildingClass * , int , DWORD *, DWORD *);
 		static void RemoveFromNetwork(BuildingClass *, bool);
 
-//		signed int GetSupportRange(BuildingTypeClass *);
-
 		// constructor
 		cPrismForwarding() : Enabled(NO),
 			MaxFeeds(&RulesClass::Instance->PrismSupportMax),
 			MaxChainLength(1),
 			MaxNetworkSize(&RulesClass::Instance->PrismSupportMax),
-			SupportRange(0),
 			SupportModifier(&RulesClass::Instance->PrismSupportModifier),
 			DamageAdd(0),
-			SupportDelay(&RulesClass::Instance->PrismSupportDelay),
-			SupportDuration(&RulesClass::Instance->PrismSupportDuration),
 			MyHeight(&RulesClass::Instance->PrismSupportHeight),
 			ChargeDelay(1),
 			ToAllies(false),

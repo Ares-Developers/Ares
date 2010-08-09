@@ -52,21 +52,10 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 		this->MyHeight.Read(&exINI, pID, "PrismForwarding.MyHeight");
 		this->BreakSupport.Read(&exINI, pID, "PrismForwarding.BreakSupport");
 
-		bool found = false;
 		if(pINI->ReadString(pID, "PrismForwarding.SupportWeapon", "", Ares::readBuffer, Ares::readLength)) {
 			if (WeaponTypeClass * cWeapon = WeaponTypeClass::Find(Ares::readBuffer)) {
 				found = true;
 				this->SupportWeapon.Set(cWeapon);
-				this->SupportRange.Set(cWeapon->Range);
-			}
-		}
-
-		if(!found) {
-			this->SupportWeapon.Set(NULL);
-			if (WeaponTypeClass * cPrimary = pThis->get_Primary()) {
-				this->SupportRange.Set(cPrimary->Range);
-			} else {
-				this->SupportRange.Set(0);
 			}
 		}
 
@@ -79,21 +68,6 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 
 	}
 }
-
-/*signed int BuildingTypeExt::cPrismForwarding::GetSupportRange(BuildingTypeClass *pThis) {
-	if (this->SupportRange == -1) {
-		return -1;
-	}
-	if(this->SupportRange != 0) {
-		return this->SupportRange * 256; //we store SupportRange in cells rather than leptons
-	}
-	if(WeaponTypeClass* Secondary = pThis->get_Secondary()) {
-		return Secondary->Range; //weapon range is already stored in leptons
-	} else if(WeaponTypeClass* Primary = pThis->get_Primary()) {
-		return Primary->Range; //weapon range is already stored in leptons
-	}
-	return 0;
-}*/
 
 int BuildingTypeExt::cPrismForwarding::AcquireSlaves_MultiStage
 	(BuildingClass *MasterTower, BuildingClass *TargetTower, int stage, int chain, int *NetworkSize, int *LongestChain) {
@@ -251,12 +225,23 @@ bool BuildingTypeExt::cPrismForwarding::ValidateSupportTower(
 						TargetTower->GetPosition_2(&MyPosition);
 						SlaveTower->GetPosition_2(&curPosition);
 						int Distance = MyPosition.DistanceFrom(curPosition);
-						Debug::Log("[PrismForwarding] Distance=%u, SupportRange=%d\n",
-							Distance, pSlaveTypeData->PrismForwarding.SupportRange);
-						if(pSlaveTypeData->PrismForwarding.SupportRange == -1
-							|| Distance <= pSlaveTypeData->PrismForwarding.SupportRange) {
-							//within range
-							return true;
+						int SupportRange = 0;
+						if (pSlaveTypeData->SupportWeapon) {
+							if (Distance < pSlaveTypeData->SupportWeapon->MinimumRange) {
+								return false; //below minimum range
+							}
+							if (pSlaveTypeData->SupportWeapon->Range != 0) {
+								SupportRange = pSlaveTypeData->SupportWeapon->Range;
+							}
+						}
+						if (SupportRange == 0) {
+							//not specified on SupportWeapon so use Primary + 1 cell (Marshall chose to add the +1 cell default - see manual for reason)
+							if (WeaponTypeClass * cPrimary = SlaveTower->get_Primary()) {
+								SupportRange = cPrimary->Range + 256; //256 leptons == 1 cell
+							}
+						}
+						if(SupportRange < 0	|| Distance <= SupportRange) {
+							return true; //within range
 						}
 					}
 				}
