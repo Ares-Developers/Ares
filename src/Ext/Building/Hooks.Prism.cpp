@@ -157,6 +157,7 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 	WeaponTypeClass * supportWeapon = pTypeData->PrismForwarding.SupportWeapon;
 	if (supportWeapon) {
 		WeaponTypeExt::ExtData *supportWeaponData = WeaponTypeExt::ExtMap.Find(supportWeapon);
+		//IsLaser
 		if (supportWeapon->IsLaser) {
 			LaserDrawClass * LaserBeam = NULL;
 			if (supportWeapon->IsHouseColor) {
@@ -171,6 +172,7 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 				LaserBeam->Thickness = supportWeaponData->Laser_Thickness;
 			}
 		}
+		//IsRadBeam
 		if (supportWeapon->IsRadBeam) {
 			RadBeam* supportRadBeam;
 			GAME_ALLOC(RadBeam, supportRadBeam, 0);
@@ -186,12 +188,19 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 				supportRadBeam->Amplitude = supportWeaponData->Beam_Amplitude;
 			}
 		}
+		//IsMagBeam/IsSonic/Wave_IsLaser/Wave_IsBigLaser
 		if (supportWeapon->IsMagBeam || supportWeapon->IsSonic || supportWeaponData->Wave_IsLaser || supportWeaponData->Wave_IsBigLaser) {
 			//ask DCoder how the heck to create these various beam effects
 		}
+		//IsElectricBolt
 		if (supportWeapon->IsElectricBolt) {
 			//ditto
 		}
+		//Report
+		if (supportWeapon->Report != -1) {
+			VocClass::PlayAt(supportWeapon->Report, SourceXYZ, NULL);
+		}
+		//ROF
 		B->ReloadTimer.Start(supportWeapon->ROF);
 	
 	} else {
