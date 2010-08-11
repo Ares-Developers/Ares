@@ -38,6 +38,7 @@ public:
 		Customizable<int> SupportModifier; 				//Per-building PrismSupportModifier
 		Valueable<signed int> DamageAdd; 					//amount of flat damage to add to the firing beam (before multiplier)
 		Customizable<int> MyHeight;						//Per-building PrismSupportHeight
+		Customizable<signed int> Intensity;						//amount to adjust beam thickness by when supported
 		Valueable<int> ChargeDelay;					//the amount to delay start of charging per backward chain
 		Valueable<bool> ToAllies;						//can this tower support allies' towers or not
 		Valueable<bool> BreakSupport;					//can the slave tower become a master tower at the last second
@@ -64,6 +65,7 @@ public:
 			SupportModifier(&RulesClass::Instance->PrismSupportModifier),
 			DamageAdd(0),
 			MyHeight(&RulesClass::Instance->PrismSupportHeight),
+			Intensity(-2),
 			ChargeDelay(1),
 			ToAllies(false),
 			BreakSupport(false),

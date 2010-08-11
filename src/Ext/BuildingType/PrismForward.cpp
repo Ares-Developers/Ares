@@ -51,6 +51,7 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 		this->ToAllies.Read(&exINI, pID, "PrismForwarding.ToAllies");
 		this->MyHeight.Read(&exINI, pID, "PrismForwarding.MyHeight");
 		this->BreakSupport.Read(&exINI, pID, "PrismForwarding.BreakSupport");
+		this->Intensity.Read(&exINI, pID, "PrismForwarding.Intensity");
 
 		if(pINI->ReadString(pID, "PrismForwarding.SupportWeapon", "", Ares::readBuffer, Ares::readLength)) {
 			if (WeaponTypeClass * cWeapon = WeaponTypeClass::Find(Ares::readBuffer)) {
@@ -159,7 +160,7 @@ int BuildingTypeExt::cPrismForwarding::AcquireSlaves_SingleStage
 		//we have a slave tower! do the bizzo
 		++iFeeds;
 		++(*NetworkSize);
-		++TargetTower->SupportingPrisms; //Ares doesn't actually use this, but maintaining it anyway (as direct feeds only)
+		//++TargetTower->SupportingPrisms; //Ares is now using this for longest backward chain of this tower, so don't set it here
 		CoordStruct FLH, Base = {0, 0, 0};
 		TargetTower->GetFLH(&FLH, 0, Base);
 		nearestPrism->DelayBeforeFiring = nearestPrism->Type->DelayedFireDelay;
@@ -272,7 +273,7 @@ void BuildingTypeExt::cPrismForwarding::SetChargeDelay
 		--endChain;
 	}
 
-	SetChargeDelay_Set(TargetTower, 0, LongestCDelay, LongestFDelay);
+	SetChargeDelay_Set(TargetTower, 0, LongestCDelay, LongestFDelay, LongestChain);
 	delete [] LongestFDelay;
 	delete [] LongestCDelay;
 }
@@ -303,11 +304,13 @@ void BuildingTypeExt::cPrismForwarding::SetChargeDelay_Get
 	}
 }
 
+//here we are only passing in LongestChain so we can set SupportingPrisms to the chain length. this has nothing to do with the charge delay which we have already calculated
 void BuildingTypeExt::cPrismForwarding::SetChargeDelay_Set
-	(BuildingClass * TargetTower, int chain, DWORD *LongestCDelay, DWORD *LongestFDelay) {
+	(BuildingClass * TargetTower, int chain, DWORD *LongestCDelay, DWORD *LongestFDelay, int LongestChain) {
 	BuildingExt::ExtData *pTargetData = BuildingExt::ExtMap.Find(TargetTower);
 	pTargetData->PrismForwarding.PrismChargeDelay = (LongestFDelay[chain] - TargetTower->DelayBeforeFiring) + LongestCDelay[chain];
 	Debug::Log("PrismForwarding: SCD_S chain=%d PCD=%d LCD[c]=%d\n", chain, pTargetData->PrismForwarding.PrismChargeDelay, LongestCDelay[chain]);
+	TargetTower->SupportingPrisms = (LongestChain - chain);
 	if (pTargetData->PrismForwarding.PrismChargeDelay == 0) {
 		//no delay, so start animations now
 		if (TargetTower->Type->BuildingAnim[BuildingAnimSlot::Special].Anim[0]) { //only if it actually has a special anim

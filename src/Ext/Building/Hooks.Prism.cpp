@@ -122,7 +122,7 @@ DEFINE_HOOK(4503F0, BuildingClass_Update_Prism, 9)
 				pData->PrismForwarding.ModifierReserve = 0.0;
 				pData->PrismForwarding.DamageReserve = 0;
 				pData->PrismForwarding.Senders.Clear();
-				pThis->SupportingPrisms = 0; //Ares doesn't actually use this, but maintaining it anyway (as direct feeds only)
+				pThis->SupportingPrisms = 0; //Ares sets this to the longest backward chain
 				pData->PrismForwarding.SupportTarget = NULL;
 				pThis->PrismStage = pcs_Idle;
 			}
@@ -155,11 +155,11 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 	ColorStruct blank(0, 0, 0);
 
 	WeaponTypeClass * supportWeapon = pTypeData->PrismForwarding.SupportWeapon;
+	LaserDrawClass * LaserBeam;
 	if (supportWeapon) {
 		WeaponTypeExt::ExtData *supportWeaponData = WeaponTypeExt::ExtMap.Find(supportWeapon);
 		//IsLaser
 		if (supportWeapon->IsLaser) {
-			LaserDrawClass * LaserBeam = NULL;
 			if (supportWeapon->IsHouseColor) {
 				GAME_ALLOC(LaserDrawClass, LaserBeam, SourceXYZ, *pTargetXYZ, B->Owner->LaserColor, blank, blank, supportWeapon->LaserDuration);
 			} else {
@@ -169,7 +169,12 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 			}
 			if(LaserBeam) {
 				LaserBeam->IsHouseColor = supportWeapon->IsHouseColor;
-				LaserBeam->Thickness = supportWeaponData->Laser_Thickness;
+				//basic thickness (intensity additions are added later)
+				if (supportWeaponData->Laser_Thickness == -1) {
+					LaserBeam->Thickness = 3; //original default
+				} else {
+					LaserBeam->Thickness = supportWeaponData->Laser_Thickness;
+				}
 			}
 		}
 		//IsRadBeam
@@ -205,7 +210,6 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 	
 	} else {
 		//just the default support beam
-		LaserDrawClass * LaserBeam;
 		GAME_ALLOC(LaserDrawClass, LaserBeam, SourceXYZ, *pTargetXYZ, B->Owner->LaserColor, blank, blank, RulesClass::Instance->PrismSupportDuration);
 		if(LaserBeam) {
 			LaserBeam->IsHouseColor = true;
@@ -214,7 +218,15 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 		B->ReloadTimer.Start(RulesClass::Instance->PrismSupportDelay);
 	}
 
-	B->SupportingPrisms = 0; //not sure why this is done here. Westwood-isms!
+	//Intensity adjustment for LaserBeam
+	if (LaserBeam) {
+		if (pTypeData->PrismForwarding.Intensity > 0) {
+			BuildingExt::ExtData *pData = BuildingExt::ExtMap.Find(B);
+			LaserBeam->Thickness += (pTypeData->PrismForwarding.Intensity * B->SupportingPrisms);
+		}
+	}
+
+	B->SupportingPrisms = 0; //not sure why Westwood set this here. We're setting it in BuildingClass_Update_Prism
 
 	return 0x44ACE2;
 }

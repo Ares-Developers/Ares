@@ -56,7 +56,7 @@ public:
 		Customizable<ColorStruct> Wave_Color;
 		bool   Wave_Reverse[5];
 
-		Customizable<int> Laser_Thickness;
+		Customizable<signed int> Laser_Thickness;
 /*
 		int    Wave_InitialIntensity;
 		int    Wave_IntensityStep;
@@ -103,7 +103,7 @@ public:
 			Ivan_FlickerRate (&RulesClass::Instance->IvanIconFlickerRate),
 			Rad_Type (NULL)
 			{
-				this->Laser_Thickness.Set(1);
+				this->Laser_Thickness.Set(-1);
 //				this->Beam_Color = ColorStruct(255, 255, 255);
 //				this->Wave_Color = ColorStruct(255, 255, 255);
 				for(int i = 0; i < 5; ++i) {
