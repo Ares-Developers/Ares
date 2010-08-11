@@ -222,7 +222,7 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 	if (LaserBeam) {
 		if (pTypeData->PrismForwarding.Intensity > 0) {
 			BuildingExt::ExtData *pData = BuildingExt::ExtMap.Find(B);
-			LaserBeam->Thickness += (pTypeData->PrismForwarding.Intensity * B->SupportingPrisms);
+			LaserBeam->Thickness += (pTypeData->PrismForwarding.Intensity * (B->SupportingPrisms -1));
 		}
 	}
 
