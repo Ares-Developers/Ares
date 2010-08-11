@@ -174,7 +174,7 @@ DEFINE_HOOK(6847B7, Sides_LoadTextColor_CacheMP, 6) {
 }
 
 DEFINE_HOOK(686D7F, Sides_LoadTextColor_CacheSP, 6) {
-	GET_STACK(INIClass*, pINI, 0x18);
+	LEA_STACK(INIClass*, pINI, 0x1C);
 
 	char* pDefault = "";
 	char pID[4];
