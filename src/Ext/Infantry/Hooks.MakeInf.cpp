@@ -57,7 +57,12 @@ DEFINE_HOOK(51849A, InfantryClass_ReceiveDamage_DeathAnim, 5)
 	AnimClass *Anim = NULL;
 	GAME_ALLOC(AnimClass, Anim, I->Type->DeathAnims[InfDeath], &I->Location);
 
-	AnimTypeExt::SetMakeInfOwner(Anim, I->Owner, I->Owner, Arguments->Attacker->Owner);
+	HouseClass *Invoker = (Arguments->Attacker)
+		? Arguments->Attacker->Owner
+		: Arguments->SourceHouse
+	;
+
+	AnimTypeExt::SetMakeInfOwner(Anim, I->Owner, I->Owner, Invoker);
 
 	R->EAX<AnimClass *>(Anim);
 	return 0x5184F2;
