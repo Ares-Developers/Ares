@@ -143,7 +143,34 @@ signed int HouseExt::PrereqValidate
 		}
 	}
 
+	if(!HouseExt::HasNeededFactory(pHouse, pItem)) {
+		Debug::DevLog(Debug::Error, "[NCO Bug detected] "
+			"House %ls meets all requirements to build %s, but doesn't have a suitable factory!\n",
+			pHouse->UIName, pItem->ID);
+		return 0;
+	}
+
 	return HouseExt::CheckBuildLimit(pHouse, pItem, IncludeQueued);
+}
+
+bool HouseExt::HasNeededFactory(HouseClass *pHouse, TechnoTypeClass *pItem) {
+	DWORD ItemOwners = pItem->GetOwners();
+	eAbstractType WhatAmI = pItem->WhatAmI();
+
+	for(int i = 0; i < pHouse->Buildings.Count; ++i) {
+		auto pBld = pHouse->Buildings[i];
+		if(!pBld->InLimbo && pBld->HasPower) {
+			if(pBld->Type->Factory == WhatAmI) {
+				if(pBld->GetCurrentMission() != mission_Selling && pBld->QueuedMission != mission_Selling) {
+					if((pBld->Type->GetOwners() & ItemOwners) != 0) {
+						return true;
+					}
+				}
+			}
+		}
+	}
+
+	return false;
 }
 
 void HouseExt::ExtData::SetFirestormState(bool Active) {

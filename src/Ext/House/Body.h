@@ -72,6 +72,8 @@ class HouseExt
 	static bool PrerequisitesMet(HouseClass *pHouse, TechnoTypeClass *pItem);
 	static bool PrerequisitesListed(Prereqs::BTypeList *List, TechnoTypeClass *pItem);
 
+	static bool HasNeededFactory(HouseClass *pHouse, TechnoTypeClass *pItem);
+
 	static signed int PrereqValidate
 		(HouseClass *pHouse, TechnoTypeClass *pItem, bool BuildLimitOnly, bool IncludeQueued);
 };
