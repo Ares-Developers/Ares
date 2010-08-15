@@ -293,27 +293,27 @@ DEFINE_HOOK(6F7561, Arcing_Aircraft, 5)
 	return 0;
 
 /*
-DEFINE_HOOK(6F4AB0, TechnoClass_ReceivedRadioCommand, 8)
+A_FINE_HOOK(6F4AB0, TechnoClass_ReceivedRadioCommand, 8)
 {
 	XL('T');
 }
 
-DEFINE_HOOK(4D8FB0, FootClass_ReceivedRadioCommand, 5)
+A_FINE_HOOK(4D8FB0, FootClass_ReceivedRadioCommand, 5)
 {
 	XL('F');
 }
 
-DEFINE_HOOK(43C2D0, BuildingClass_ReceivedRadioCommand, 5)
+A_FINE_HOOK(43C2D0, BuildingClass_ReceivedRadioCommand, 5)
 {
 	XL('B');
 }
 
-DEFINE_HOOK(4190B0, AircraftClass_ReceivedRadioCommand, 5)
+A_FINE_HOOK(4190B0, AircraftClass_ReceivedRadioCommand, 5)
 {
 	XL('A');
 }
 
-DEFINE_HOOK(737430, UnitClass_ReceivedRadioCommand, 5)
+A_FINE_HOOK(737430, UnitClass_ReceivedRadioCommand, 5)
 {
 	XL('U');
 }
@@ -692,8 +692,7 @@ DEFINE_HOOK(52BA78, _YR_GameInit_Pre, 5)
 	return 0;
 }
 
-/*
-A_FINE_HOOK(469467, BulletClass_DetonateAt_CanTemporalTarget, 5)
+DEFINE_HOOK(469467, BulletClass_DetonateAt_CanTemporalTarget, 5)
 {
 	GET(TechnoClass *, Target, ECX);
 	Layer::Value lyr = Target->InWhichLayer();
@@ -706,7 +705,6 @@ A_FINE_HOOK(469467, BulletClass_DetonateAt_CanTemporalTarget, 5)
 			return 0x469AA4;
 	}
 }
-*/
 
 /* #183 - cloakable on Buildings and Aircraft */
 DEFINE_HOOK(442CE0, BuildingClass_Init_Cloakable, 6)
@@ -730,4 +728,3 @@ DEFINE_HOOK(413FA3, AircraftClass_Init_Cloakable, 5)
 
 	return 0;
 }
-
