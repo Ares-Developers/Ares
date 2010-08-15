@@ -46,8 +46,8 @@ A_FINE_HOOK(73A1BC, UnitClass_UpdatePosition, 7)
 	return 0;
 }
 
-/* #320 - objects are being instantiated (See also fix #277 in Bugfixes.cpp) */
-/* #183 - cloakable on Buildings and Aircraft */
+/* #320 - objects are being instantiated (merge these into fixes for #183 in Bugfixes.cpp) */
+/* see also #277 */
 A_FINE_HOOK(442CE0, BuildingClass_Init_Veterancy, 6)
 {
 	GET(BuildingClass *, Item, ESI);

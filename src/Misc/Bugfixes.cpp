@@ -707,3 +707,27 @@ A_FINE_HOOK(469467, BulletClass_DetonateAt_CanTemporalTarget, 5)
 	}
 }
 */
+
+/* #183 - cloakable on Buildings and Aircraft */
+DEFINE_HOOK(442CE0, BuildingClass_Init_Cloakable, 6)
+{
+	GET(BuildingClass *, Item, ESI);
+
+	if(Item->Type->Cloakable) {
+		Item->Cloakable = true;
+	}
+
+	return 0;
+}
+
+DEFINE_HOOK(413FA3, AircraftClass_Init_Cloakable, 5)
+{
+	GET(AircraftClass *, Item, ESI);
+
+	if(Item->Type->Cloakable) {
+		Item->Cloakable = true;
+	}
+
+	return 0;
+}
+
