@@ -1,6 +1,7 @@
 #include "Body.h"
 #include "../Techno/Body.h"
 #include <LaserDrawClass.h>
+#include "../BuildingType/Body.h"
 
 DEFINE_HOOK(6FD438, TechnoClass_FireLaser, 6)
 {

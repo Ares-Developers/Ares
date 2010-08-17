@@ -7,7 +7,7 @@
 #include <CCINIClass.h>
 #include <GeneralStructures.h>
 
-#include "Ares.h"
+#include "..\Ares.h"
 
 class CustomPalette {
 public:

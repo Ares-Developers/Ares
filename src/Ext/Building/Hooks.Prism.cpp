@@ -202,8 +202,12 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 			//ditto
 		}
 		//Report
-		if (supportWeapon->Report != -1) {
-			VocClass::PlayAt(supportWeapon->Report, SourceXYZ, NULL);
+		if(supportWeapon->Report.Count > 0) {
+			int ReportIndex = ScenarioClass::Instance->Random.RandomRanged(0, supportWeapon->Report.Count - 1);
+			int SoundArrayIndex = supportWeapon->Report.GetItem(ReportIndex);
+			if(SoundArrayIndex != -1) {
+				VocClass::PlayAt(SoundArrayIndex, &SourceXYZ, NULL);
+			}
 		}
 		//ROF
 		B->ReloadTimer.Start(supportWeapon->ROF);

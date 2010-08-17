@@ -3,7 +3,7 @@
 #include <MouseClass.h>
 #include <WWMouseClass.h>
 #include <CRT.h>
-#include "Ares.version.h"
+#include "../Ares.version.h"
 
 bool Debug::bLog = true;
 FILE *Debug::pLogFile = NULL;

@@ -47,7 +47,6 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 		this->MaxNetworkSize.Read(&exINI, pID, "PrismForwarding.MaxNetworkSize");
 		this->SupportModifier.Read(&exINI, pID, "PrismForwarding.SupportModifier");
 		this->DamageAdd.Read(&exINI, pID, "PrismForwarding.DamageAdd");
-		this->SupportDelay.Read(&exINI, pID, "PrismForwarding.SupportDelay");
 		this->ToAllies.Read(&exINI, pID, "PrismForwarding.ToAllies");
 		this->MyHeight.Read(&exINI, pID, "PrismForwarding.MyHeight");
 		this->BreakSupport.Read(&exINI, pID, "PrismForwarding.BreakSupport");
@@ -55,7 +54,6 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 
 		if(pINI->ReadString(pID, "PrismForwarding.SupportWeapon", "", Ares::readBuffer, Ares::readLength)) {
 			if (WeaponTypeClass * cWeapon = WeaponTypeClass::Find(Ares::readBuffer)) {
-				found = true;
 				this->SupportWeapon.Set(cWeapon);
 			}
 		}
@@ -227,17 +225,17 @@ bool BuildingTypeExt::cPrismForwarding::ValidateSupportTower(
 						SlaveTower->GetPosition_2(&curPosition);
 						int Distance = MyPosition.DistanceFrom(curPosition);
 						int SupportRange = 0;
-						if (pSlaveTypeData->SupportWeapon) {
-							if (Distance < pSlaveTypeData->SupportWeapon->MinimumRange) {
+						if (WeaponTypeClass * supportWeapon = pSlaveTypeData->PrismForwarding.SupportWeapon.Get()) {
+							if (Distance < supportWeapon->MinimumRange) {
 								return false; //below minimum range
 							}
-							if (pSlaveTypeData->SupportWeapon->Range != 0) {
-								SupportRange = pSlaveTypeData->SupportWeapon->Range;
+							if (supportWeapon->Range != 0) {
+								SupportRange = supportWeapon->Range;
 							}
 						}
 						if (SupportRange == 0) {
 							//not specified on SupportWeapon so use Primary + 1 cell (Marshall chose to add the +1 cell default - see manual for reason)
-							if (WeaponTypeClass * cPrimary = SlaveTower->get_Primary()) {
+							if (WeaponTypeClass * cPrimary = pSlaveType->get_Primary()) {
 								SupportRange = cPrimary->Range + 256; //256 leptons == 1 cell
 							}
 						}
@@ -321,7 +319,7 @@ void BuildingTypeExt::cPrismForwarding::SetChargeDelay_Set
 	int senderIdx = 0;
 	while (senderIdx < pTargetData->PrismForwarding.Senders.Count) {
 		BuildingClass *Sender = pTargetData->PrismForwarding.Senders[senderIdx];
-		SetChargeDelay_Set(Sender, (chain + 1), LongestCDelay, LongestFDelay);
+		SetChargeDelay_Set(Sender, (chain + 1), LongestCDelay, LongestFDelay, LongestChain);
 		++senderIdx;
 	}
 }

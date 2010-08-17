@@ -28,7 +28,7 @@
 #include "../Ext/WeaponType/Body.h"
 #include "../Ext/WarheadType/Body.h"
 
-#include <Utilities/Template.h>
+#include "../Utilities/Template.h"
 
 #ifdef DEBUGBUILD
 #include "../Ext/WarheadType/Body.h"

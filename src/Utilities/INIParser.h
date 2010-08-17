@@ -1,7 +1,7 @@
 #ifndef ARES_INI_PARSER_H
 #define ARES_INI_PARSER_H
 
-#include "Ares.h"
+#include "..\Ares.h"
 #include <CCINIClass.h>
 
 class INI_EX {
