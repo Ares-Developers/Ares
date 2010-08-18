@@ -166,7 +166,7 @@ void WarheadTypeExt::ExtData::applyIronCurtain(CoordStruct *coords, HouseClass* 
 					// duration modifier
 					int duration = this->IC_Duration;
 
-					// modifiy good durations only
+					// modify good durations only
 					if(duration > 0) {
 						if(TechnoTypeExt::ExtData *pData = TechnoTypeExt::ExtMap.Find(curTechno->GetTechnoType())) {
 							duration = (int)(duration * pData->IC_Modifier);

@@ -328,7 +328,7 @@ void Valueable<MouseCursor>::Read(INI_EX *parser, const char* pSection, const ch
 	Cursor->Count = Placeholder.Get();
 
 	_snprintf(pFlagName, 32, "%s.Interval", pKey);
-	Placeholder.Set(Cursor->Count);
+	Placeholder.Set(Cursor->Interval);
 	Placeholder.Read(parser, pSection, pFlagName);
 	Cursor->Interval = Placeholder.Get();
 

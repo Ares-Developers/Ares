@@ -469,8 +469,7 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 	bool evaForEnterer = Enterer->ControlledByPlayer() && raiseEva;
 	bool effectApplied = false;
 
-
-	if(pTypeExt->ResetRadar) {
+	if(pTypeExt->ResetRadar.Get()) {
 		Owner->ReshroudMap();
 		if(!Owner->SpySatActive && evaForOwner) {
 			VoxClass::Play("EVA_RadarSabotaged");
@@ -510,7 +509,7 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 	}
 
 
-	if(pTypeExt->ResetSW) {
+	if(pTypeExt->ResetSW.Get()) {
 		bool somethingReset = false;
 		int swIdx = EnteredType->SuperWeapon;
 		if(swIdx != -1) {
@@ -567,7 +566,7 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 	}
 
 
-	if(pTypeExt->GainVeterancy) {
+	if(pTypeExt->GainVeterancy.Get()) {
 		bool promotionStolen = true;
 
 		switch(EnteredType->Factory) {
@@ -607,7 +606,7 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 
 		Addition 04.03.10: People complained about it not being optional. Now it is.
 	*/
-	if(pTypeExt->RevealProduction) {
+	if(pTypeExt->RevealProduction.Get()) {
 		EnteredBuilding->DisplayProductionTo.Add(Enterer);
 		if(evaForOwner || evaForEnterer) {
 			VoxClass::Play("EVA_BuildingInfiltrated");
@@ -615,7 +614,7 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 		effectApplied = true;
 	}
 
-	if(pTypeExt->RevealRadar) {
+	if(pTypeExt->RevealRadar.Get()) {
 		EnteredBuilding->DisplayProductionTo.Add(Enterer);
 		BuildingExt::UpdateDisplayTo(EnteredBuilding);
 		if(evaForOwner || evaForEnterer) {
