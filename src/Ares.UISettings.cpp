@@ -8,7 +8,7 @@ Interface::eUIAction Ares::UISettings::NetworkButton = Interface::uia_Default;
 Interface::eUIAction Ares::UISettings::MoviesAndCreditsButton = Interface::uia_Default;
 Interface::eUIAction Ares::UISettings::CampaignButton = Interface::uia_Default;
 Interface::eUIAction Ares::UISettings::SkirmishButton = Interface::uia_Default;
-Interface::eUIAction Ares::UISettings::SneakPeaksButton = Interface::uia_Default;
+Interface::eUIAction Ares::UISettings::SneakPeeksButton = Interface::uia_Default;
 Interface::eUIAction Ares::UISettings::PlayMoviesButton = Interface::uia_Default;
 Interface::eUIAction Ares::UISettings::ViewCreditsButton = Interface::uia_Default;
 bool Ares::UISettings::AllowMultiEngineer = false;
@@ -34,7 +34,7 @@ void Ares::UISettings::Load(CCINIClass *pINI) {
 	ReadUIAction("MoviesAndCreditsButton", MoviesAndCreditsButton);
 	ReadUIAction("CampaignButton", CampaignButton);
 	ReadUIAction("SkirmishButton", SkirmishButton);
-	ReadUIAction("SneakPeaksButton", SneakPeaksButton);
+	ReadUIAction("SneakPeeksButton", SneakPeeksButton);
 	ReadUIAction("PlayMoviesButton", PlayMoviesButton);
 	ReadUIAction("ViewCreditsButton", ViewCreditsButton);
 

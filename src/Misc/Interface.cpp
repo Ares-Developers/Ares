@@ -34,7 +34,7 @@ bool Interface::invokeClickAction(eUIAction action, char* name, int* pResult, in
 		return ret(6);
 	}
 
-	if(action == Interface::uia_SneakPeak) {
+	if(action == Interface::uia_SneakPeek) {
 		// show the preview video
 		return ret(13);
 	}
@@ -210,7 +210,7 @@ void Interface::updateMenu(HWND hDlg) {
 
 	// movies and credits menu
 	if(iID == 257) {
-		struct Interface::MenuItem items[] = {{0x68D, Ares::UISettings::SneakPeaksButton},
+		struct Interface::MenuItem items[] = {{0x68D, Ares::UISettings::SneakPeeksButton},
 			{0x68E, Ares::UISettings::PlayMoviesButton}, {0x68F, Ares::UISettings::ViewCreditsButton}};
 		Interface::updateMenuItems(hDlg, items, 3);
 	}
@@ -240,8 +240,8 @@ Interface::eUIAction Interface::parseUIAction(char* value, Interface::eUIAction 
 		return Interface::uia_Hide;
 	} else if(!_strcmpi(value, "credits")) {
 		return Interface::uia_Credits;
-	} else if(!_strcmpi(value, "sneakpeak")) {
-		return Interface::uia_SneakPeak;
+	} else if(!_strcmpi(value, "sneakpeek")) {
+		return Interface::uia_SneakPeek;
 	}
 	return def;
 }
@@ -320,10 +320,10 @@ DEFINE_HOOK(52D713, SinglePlayer_hDlg_SkirmishButtonClick, 6) {
 		"SKIRMISHBUTTON", pAction, 1) ? 0x52D719 : 0);
 }
 
-DEFINE_HOOK(52D7ED, MoviesAndCredits_hDlg_SneakPeaksButtonClick, 6) {
+DEFINE_HOOK(52D7ED, MoviesAndCredits_hDlg_SneakPeeksButtonClick, 6) {
 	GET(int*, pAction, EAX);
-	return (Interface::invokeClickAction(Ares::UISettings::SneakPeaksButton,
-		"SNEAKPEAKSBUTTON", pAction, 4) ? 0x52D7F3 : 0);
+	return (Interface::invokeClickAction(Ares::UISettings::SneakPeeksButton,
+		"SNEAKPEEKSBUTTON", pAction, 4) ? 0x52D7F3 : 0);
 }
 
 DEFINE_HOOK(52D7FB, MoviesAndCredits_hDlg_PlayMoviesButtonClick, 6) {

@@ -15,7 +15,7 @@ public:
 		uia_Message = 1,
 		uia_Disable = 2,
 		uia_Hide = 3,
-		uia_SneakPeak = 13,
+		uia_SneakPeek = 13,
 		uia_Credits = 15
 	};
 
