@@ -212,6 +212,13 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 		this->StolenMoneyAmount.Read(&exINI, pID, "SpyEffect.StolenMoneyAmount");
 		this->StolenMoneyPercentage.Read(&exINI, pID, "SpyEffect.StolenMoneyPercentage");
 	}
+
+	// #218 Specific Occupiers
+	this->CanBeOccupiedBy.Read(&exINI, pID, "CanBeOccupiedBy");
+	if(!this->CanBeOccupiedBy.GetEx()->empty()) {
+		// having a specific occupier list implies that this building is supposed to be occupiable
+		pThis->CanBeOccupied = true;
+	}
 }
 
 void BuildingTypeExt::ExtData::CompleteInitialization(BuildingTypeClass *pThis) {

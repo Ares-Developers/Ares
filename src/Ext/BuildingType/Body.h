@@ -75,6 +75,9 @@ public:
 		Valueable<int> StolenMoneyPercentage;
 		Valueable<int> PowerOutageDuration;
 
+		// #218 Specific Occupiers
+		Valuable<std::vector<AbstractTypeClass *> > CanBeOccupiedBy;
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			Solid_Height (0),
 			IsCustom (false),
