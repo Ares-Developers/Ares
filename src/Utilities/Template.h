@@ -362,56 +362,76 @@ void Valueable<MouseCursor>::Read(INI_EX *parser, const char* pSection, const ch
 	}
 };
 
+template<class T>
+class ValueableVector : public std::vector<T> {
+public:
+	typedef T MyType;
+	typedef typename CompoundT<T>::BaseT MyBase;
+
+	void Read(INI_EX *parser, const char* pSection, const char* pKey) {
+		if(parser->ReadString(pSection, pKey)) {
+			// if we were able to get the flag in question, take it apart and check the tokens...
+			// ...against the various object types; if we find one, place it in the value list
+			for(char *cur = strtok(Ares::readBuffer, ","); cur; cur = strtok(NULL, ",")) {
+				if(T thisObject = MyBase::Find(cur)) {
+					this->push_back(thisObject);
+					continue;
+				}
+			}
+		}
+	}
+
+	/** This will return true for Valuable<std::vector<AbstractTypeClass *> > Foo == AbstractTypeClass * Bar
+		if Bar is among the objects listed in Foo.
+
+		This way, we can do stuff like
+			if(SomeExt->AllowedUnits == someUnit) { ...
+		even if AllowedUnits is a list.
+	*/
+	bool operator== (AbstractTypeClass * other) const {
+		if(this->empty()) {
+			return false;
+		}
+
+		int listSize = this->size();
+		for( int i = 0; i < listSize; ++i ) {
+			if(this->at(i) == other) {
+				return true;
+			}
+		}
+
+		// if we ended up here, other is not among the listed object types
+		return false;
+	}
+};
+
 template<>
-void Valuable<std::vector<AbstractTypeClass *> >::Read(INI_EX *parser, const char* pSection, const char* pKey) {
+void ValueableVector<TechnoTypeClass *>::Read(INI_EX *parser, const char* pSection, const char* pKey) {
 	if(parser->ReadString(pSection, pKey)) {
 		// if we were able to get the flag in question, take it apart and check the tokens...
 		// ...against the various object types; if we find one, place it in the value list
 		for(char *cur = strtok(Ares::readBuffer, ","); cur; cur = strtok(NULL, ",")) {
-			AbstractTypeClass *thisObject = NULL;
-			if(thisObject = dynamic_cast<AbstractTypeClass *> (InfantryTypeClass::Find(cur))) {
-				this->Value.push_back(thisObject);
+			TechnoTypeClass * thisObject = NULL;
+			if(thisObject = AircraftTypeClass::Find(cur)) {
+				this->push_back(thisObject);
 				continue;
 			}
-			if(thisObject = dynamic_cast<AbstractTypeClass *> (UnitTypeClass::Find(cur))) {
-				this->Value.push_back(thisObject);
+			if(thisObject = BuildingTypeClass::Find(cur)) {
+				this->push_back(thisObject);
 				continue;
 			}
-			if(thisObject = dynamic_cast<AbstractTypeClass *> (AircraftTypeClass::Find(cur))) {
-				this->Value.push_back(thisObject);
+			if(thisObject = InfantryTypeClass::Find(cur)) {
+				this->push_back(thisObject);
 				continue;
 			}
-			if(thisObject = dynamic_cast<AbstractTypeClass *> (BuildingTypeClass::Find(cur))) {
-				this->Value.push_back(thisObject);
+			if(thisObject = UnitTypeClass::Find(cur)) {
+				this->push_back(thisObject);
 				continue;
 			}
 		}
 	}
 }
 
-/** This will return true for Valuable<std::vector<AbstractTypeClass *> > Foo == AbstractTypeClass * Bar
-	if Bar is among the objects listed in Foo.
-
-	This way, we can do stuff like
-		if(SomeExt->AllowedUnits == someUnit) { ...
-	even if AllowedUnits is a list.
-*/
-template<>
-bool Valuable<std::vector<AbstractTypeClass *> >::operator== (AbstractTypeClass * other) const {
-	if(this->Value.empty()) {
-		return false;
-	}
-
-	int listSize = this->Value.size();
-	for( int i = 0; i < listSize; ++i ) {
-		if(this->Value.at(i) == other) {
-			return true;
-		}
-	}
-
-	// if we ended up here, other is not among the listed object types
-	return false;
-}
 
 //template class Valueable<bool>;
 //template class Valueable<int>;

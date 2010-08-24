@@ -27,8 +27,7 @@ DEFINE_HOOK(457D58, BuildingClass_CanBeOccupied_SpecificOccupiers, 6)
 		bool isRaidable = (pBuildTypeExt->BunkerRaidable && isEmpty); // if it's not empty, it cannot be raided anymore, 'cause it already was
 		bool sameOwner = (pThis->Owner == pInf->Owner);
 
-		// if CanBeOccupiedBy isn't empty, we have to check if this soldier is allowed in
-		bool allowedOccupier = this->CanBeOccupiedBy.GetEx()->empty() ? true : (this->CanBeOccupiedBy == pInf);
+		bool allowedOccupier = pBuildTypeExt->CanBeOccupiedBy(pInf);
 
 		if(!isFull && !isIneligible && allowedOccupier) {
 		/*	The building switches owners after the first occupant enters,

@@ -2,6 +2,8 @@
 #include "../TechnoType/Body.h"
 #include "../House/Body.h"
 
+#include <InfantryClass.h>
+
 template<> const DWORD Extension<BuildingTypeClass>::Canary = 0x11111111;
 Container<BuildingTypeExt> BuildingTypeExt::ExtMap;
 
@@ -214,8 +216,8 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 	}
 
 	// #218 Specific Occupiers
-	this->CanBeOccupiedBy.Read(&exINI, pID, "CanBeOccupiedBy");
-	if(!this->CanBeOccupiedBy.GetEx()->empty()) {
+	this->AllowedOccupiers.Read(&exINI, pID, "CanBeOccupiedBy");
+	if(!this->AllowedOccupiers.empty()) {
 		// having a specific occupier list implies that this building is supposed to be occupiable
 		pThis->CanBeOccupied = true;
 	}
@@ -328,6 +330,11 @@ bool BuildingTypeExt::ExtData::IsLinkable() {
 	return this->Firewall_Is || (this->IsTrench > -1);
 }
 
+bool BuildingTypeExt::ExtData::CanBeOccupiedBy(InfantryClass *whom) {
+	// if CanBeOccupiedBy isn't empty, we have to check if this soldier is allowed in
+	return this->AllowedOccupiers.empty() || (this->AllowedOccupiers == whom->Type);
+}
+
 // =============================
 // load/save
 
@@ -431,3 +438,4 @@ DEFINE_HOOK_AGAIN(464A56, BuildingTypeClass_LoadFromINI, A)
 	BuildingTypeExt::ExtMap.LoadFromINI(pItem, pINI);
 	return 0;
 }
+

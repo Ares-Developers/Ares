@@ -76,7 +76,7 @@ public:
 		Valueable<int> PowerOutageDuration;
 
 		// #218 Specific Occupiers
-		Valuable<std::vector<AbstractTypeClass *> > CanBeOccupiedBy;
+		ValueableVector<InfantryTypeClass *> AllowedOccupiers;
 
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			Solid_Height (0),
@@ -104,7 +104,8 @@ public:
 			StolenTechIndex (-1),
 			StolenMoneyAmount (0),
 			StolenMoneyPercentage (0),
-			PowerOutageDuration (0)
+			PowerOutageDuration (0),
+			AllowedOccupiers ()
 			{ };
 
 		virtual ~ExtData() {
@@ -124,6 +125,8 @@ public:
 		}
 
 		bool IsLinkable();
+
+		bool CanBeOccupiedBy(InfantryClass *whom);
 	};
 
 	static Container<BuildingTypeExt> ExtMap;
