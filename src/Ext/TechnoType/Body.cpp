@@ -23,6 +23,7 @@ void TechnoTypeExt::ExtData::Initialize(TechnoTypeClass *pThis) {
 	this->Survivors_PassengerChance.SetAll(-1); // was (int)RulesClass::Global()->CrewEscape * 100); - changed to -1 to indicate "100% if this is a land transport"
 
 	this->Survivors_Pilots.SetCapacity(SideClass::Array->Count, NULL);
+	this->Survivors_Pilots.Count = SideClass::Array->Count;
 
 	this->Survivors_PilotCount = pThis->Crewed; // should be 0 if false, 1 if true
 
@@ -89,6 +90,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 
 	// survivors
 	this->Survivors_Pilots.SetCapacity(SideClass::Array->Count, NULL);
+	this->Survivors_Pilots.Count = SideClass::Array->Count;
 
 	this->Survivors_PilotCount = pINI->ReadInteger(section, "Survivor.Pilots", this->Survivors_PilotCount);
 
