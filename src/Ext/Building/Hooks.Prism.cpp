@@ -23,7 +23,14 @@ DEFINE_HOOK(44B2FE, BuildingClass_Mi_Attack_IsPrism, 6)
 		if (B->PrismStage == pcs_Idle) {
 			B->PrismStage = pcs_Master;
 			B->DelayBeforeFiring = B->Type->DelayedFireDelay;
+
 			B->PrismTargetCoords.X = 0;
+			if (pMasterType->get_Secondary()) {
+				if (B->IsOverpowered) {
+					B->PrismTargetCoords.X = 1;
+				}
+			}
+
 			B->PrismTargetCoords.Y = B->PrismTargetCoords.Z = 0;
 			pMasterData->PrismForwarding.ModifierReserve = 0.0;
 			pMasterData->PrismForwarding.DamageReserve = 0;
@@ -45,6 +52,11 @@ DEFINE_HOOK(44B2FE, BuildingClass_Mi_Attack_IsPrism, 6)
 			//a slave tower is changing into a master tower at the last second
 			B->PrismStage = pcs_Master;
 			B->PrismTargetCoords.X = 0;
+			if (pMasterType->get_Secondary()) {
+				if (B->IsOverpowered) {
+					B->PrismTargetCoords.X = 1;
+				}
+			}
 			B->PrismTargetCoords.Y = B->PrismTargetCoords.Z = 0;
 			pMasterData->PrismForwarding.ModifierReserve = 0.0;
 			pMasterData->PrismForwarding.DamageReserve = 0;

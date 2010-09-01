@@ -42,7 +42,7 @@ public:
 		Valueable<int> ChargeDelay;					//the amount to delay start of charging per backward chain
 		Valueable<bool> ToAllies;						//can this tower support allies' towers or not
 		Valueable<bool> BreakSupport;					//can the slave tower become a master tower at the last second
-		Valueable<WeaponTypeClass *> SupportWeapon;
+		Customizable<WeaponTypeClass *> SupportWeapon;
 
 		//methods
 		void Initialize(BuildingTypeClass* );

@@ -53,9 +53,14 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 		this->Intensity.Read(&exINI, pID, "PrismForwarding.Intensity");
 
 		if(pINI->ReadString(pID, "PrismForwarding.SupportWeapon", "", Ares::readBuffer, Ares::readLength)) {
-			if (WeaponTypeClass * cWeapon = WeaponTypeClass::Find(Ares::readBuffer)) {
+			if (WeaponTypeClass * cWeapon = WeaponTypeClass::FindOrAllocate(Ares::readBuffer)) {
+				Debug::Log("[Prism Forwarding] Support Weapon found. weaponcount=%d\n", WeaponTypeClass::Array->Count);
 				this->SupportWeapon.Set(cWeapon);
+			} else {
+				Debug::Log("[Prism Forwarding] Support Weapon not found! weaponcount=%d\n", WeaponTypeClass::Array->Count);
 			}
+		} else {
+			Debug::Log("[Prism Forwarding] Support Weapon not read from buffer!\n");
 		}
 
 		int ChargeDelay = pINI->ReadInteger(pID, "PrismForwarding.ChargeDelay", this->ChargeDelay);
