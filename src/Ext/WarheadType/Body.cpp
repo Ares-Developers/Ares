@@ -160,6 +160,11 @@ void WarheadTypeExt::ExtData::applyIronCurtain(CoordStruct *coords, HouseClass* 
 		for(int i=0; i<items->Count; ++i) {
 			if(TechnoClass *curTechno = items->GetItem(i)) {
 
+				// don't protect the dead
+				if(curTechno->InLimbo || !curTechno->IsAlive || !curTechno->Health) {
+					continue;
+				}
+
 				// affects enemies or allies respectively?
 				if(WarheadTypeExt::canWarheadAffectTarget(curTechno, Owner, this->AttachedToObject)) {
 
