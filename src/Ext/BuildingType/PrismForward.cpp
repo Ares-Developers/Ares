@@ -53,9 +53,20 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 		this->Intensity.Read(&exINI, pID, "PrismForwarding.Intensity");
 
 		if(pINI->ReadString(pID, "PrismForwarding.SupportWeapon", "", Ares::readBuffer, Ares::readLength)) {
-			if (WeaponTypeClass * cWeapon = WeaponTypeClass::FindOrAllocate(Ares::readBuffer)) {
+			if (WeaponTypeClass *cWeapon = WeaponTypeClass::FindOrAllocate(Ares::readBuffer)) {
 				Debug::Log("[Prism Forwarding] Support Weapon found. weaponcount=%d\n", WeaponTypeClass::Array->Count);
-				this->SupportWeapon.Set(cWeapon);
+				this->SupportWeaponIndex = this->GetUnusedWeaponSlot(pThis);
+				Debug::Log("[Prism Forwarding] weapon index = %d\n", this->SupportWeaponIndex);
+				if (this->SupportWeaponIndex == -1) {
+					char* pID = pThis->ID;
+					Debug::FatalErrorAndExit(
+						"BuildingType [%s] is a Prism Tower however there are no free\n"
+						"weapon slots to assign the Support Weapon to.", pID);
+				}
+				cWeapon->NeverUse = true; //the modder shouldn't be expected to have to set this
+				WarheadTypeClass *cWarhead;
+				cWeapon->Warhead = cWarhead; //or this
+				pThis->set_Weapon(this->SupportWeaponIndex, cWeapon);
 			} else {
 				Debug::Log("[Prism Forwarding] Support Weapon not found! weaponcount=%d\n", WeaponTypeClass::Array->Count);
 			}
@@ -71,6 +82,18 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 		}
 
 	}
+}
+
+signed int BuildingTypeExt::cPrismForwarding::GetUnusedWeaponSlot(BuildingTypeClass *pThis) {
+	int idxWeapon = 2;
+	while (idxWeapon <= 12 && pThis->get_Weapon(idxWeapon)) {
+		++idxWeapon;
+	}
+	signed int retVal = -1;
+	if (idxWeapon <= 12) {
+		retVal = idxWeapon;
+	}
+	return retVal;
 }
 
 int BuildingTypeExt::cPrismForwarding::AcquireSlaves_MultiStage
@@ -230,7 +253,7 @@ bool BuildingTypeExt::cPrismForwarding::ValidateSupportTower(
 						SlaveTower->GetPosition_2(&curPosition);
 						int Distance = MyPosition.DistanceFrom(curPosition);
 						int SupportRange = 0;
-						if (WeaponTypeClass * supportWeapon = pSlaveTypeData->PrismForwarding.SupportWeapon.Get()) {
+						if (WeaponTypeClass * supportWeapon = pSlaveType->get_Weapon(pSlaveTypeData->PrismForwarding.SupportWeaponIndex)) {
 							if (Distance < supportWeapon->MinimumRange) {
 								return false; //below minimum range
 							}

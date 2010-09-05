@@ -42,9 +42,10 @@ public:
 		Valueable<int> ChargeDelay;					//the amount to delay start of charging per backward chain
 		Valueable<bool> ToAllies;						//can this tower support allies' towers or not
 		Valueable<bool> BreakSupport;					//can the slave tower become a master tower at the last second
-		Customizable<WeaponTypeClass *> SupportWeapon;
+		Valueable<signed int> SupportWeaponIndex;
 
 		//methods
+		signed int GetUnusedWeaponSlot(BuildingTypeClass* );
 		void Initialize(BuildingTypeClass* );
 		void LoadFromINIFile(BuildingTypeClass *, CCINIClass *);
 
@@ -69,7 +70,7 @@ public:
 			ChargeDelay(1),
 			ToAllies(false),
 			BreakSupport(false),
-			SupportWeapon(NULL)
+			SupportWeaponIndex(-1)
 		{};
 	};
 
