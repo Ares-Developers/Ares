@@ -166,10 +166,16 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 
 	ColorStruct blank(0, 0, 0);
 
-	int supportWeaponIndex = pTypeData->PrismForwarding.SupportWeaponIndex;
+	int idxSupport = -1;
+	if (B->Veterancy.IsElite()) {
+		idxSupport = pTypeData->PrismForwarding.EliteSupportWeaponIndex;
+	} else {
+		idxSupport = pTypeData->PrismForwarding.SupportWeaponIndex;
+	}
+
 	WeaponTypeClass * supportWeapon = NULL;
-	if (supportWeaponIndex != -1) {
-		supportWeapon = pType->get_Weapon(supportWeaponIndex);
+	if (idxSupport != -1) {
+		supportWeapon = pType->get_Weapon(idxSupport);
 	}
 	LaserDrawClass * LaserBeam;
 	if (supportWeapon) {
@@ -198,9 +204,10 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 		if (supportWeapon->IsRadBeam) {
 			Debug::Log("[Prism Forwarding] IsRadBeam!\n");
 			RadBeam* supportRadBeam;
-			GAME_ALLOC(RadBeam, supportRadBeam, 0);
+			;GAME_ALLOC(RadBeam, supportRadBeam, 0);
+			supportRadBeam->Allocate(0);
 			if (supportRadBeam) {
-				Debug::Log("[Prism Forwarding] Alloc'd!\n");
+				Debug::Log("[Prism Forwarding] Allocated!\n");
 				supportRadBeam->Owner = B;
 				supportRadBeam->SetCoordsSource(&SourceXYZ);
 				supportRadBeam->SetCoordsTarget(pTargetXYZ);
@@ -225,7 +232,7 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 			if (supportEBolt) {
 				Debug::Log("[Prism Forwarding] Alloc'd!\n");
 				supportEBolt->Owner = B;
-				supportEBolt->WeaponSlot = supportWeaponIndex;
+				supportEBolt->WeaponSlot = idxSupport;
 				supportEBolt->AlternateColor = supportWeapon->IsAlternateColor;
 				//what is Lifetime?
 				//what about that unknown_18 that might be duration?

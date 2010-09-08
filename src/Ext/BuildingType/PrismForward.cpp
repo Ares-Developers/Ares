@@ -51,29 +51,7 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 		this->MyHeight.Read(&exINI, pID, "PrismForwarding.MyHeight");
 		this->BreakSupport.Read(&exINI, pID, "PrismForwarding.BreakSupport");
 		this->Intensity.Read(&exINI, pID, "PrismForwarding.Intensity");
-
-		if(pINI->ReadString(pID, "PrismForwarding.SupportWeapon", "", Ares::readBuffer, Ares::readLength)) {
-			if (WeaponTypeClass *cWeapon = WeaponTypeClass::FindOrAllocate(Ares::readBuffer)) {
-				Debug::Log("[Prism Forwarding] Support Weapon found. weaponcount=%d\n", WeaponTypeClass::Array->Count);
-				this->SupportWeaponIndex = this->GetUnusedWeaponSlot(pThis);
-				Debug::Log("[Prism Forwarding] weapon index = %d\n", this->SupportWeaponIndex);
-				if (this->SupportWeaponIndex == -1) {
-					char* pID = pThis->ID;
-					Debug::FatalErrorAndExit(
-						"BuildingType [%s] is a Prism Tower however there are no free\n"
-						"weapon slots to assign the Support Weapon to.", pID);
-				}
-				cWeapon->NeverUse = true; //the modder shouldn't be expected to have to set this
-				WarheadTypeClass *cWarhead;
-				cWeapon->Warhead = cWarhead; //or this
-				pThis->set_Weapon(this->SupportWeaponIndex, cWeapon);
-			} else {
-				Debug::Log("[Prism Forwarding] Support Weapon not found! weaponcount=%d\n", WeaponTypeClass::Array->Count);
-			}
-		} else {
-			Debug::Log("[Prism Forwarding] Support Weapon not read from buffer!\n");
-		}
-
+		
 		int ChargeDelay = pINI->ReadInteger(pID, "PrismForwarding.ChargeDelay", this->ChargeDelay);
 		if (ChargeDelay >= 1) {
 			this->ChargeDelay.Set(ChargeDelay);
@@ -81,19 +59,66 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 			Debug::Log("[Developer Error] %s has an invalid PrismForwarding.ChargeDelay (%d), overriding to 1.\n", pThis->ID, ChargeDelay);
 		}
 
+		if(pINI->ReadString(pID, "PrismForwarding.SupportWeapon", "", Ares::readBuffer, Ares::readLength)) {
+			if (WeaponTypeClass *cWeapon = WeaponTypeClass::FindOrAllocate(Ares::readBuffer)) {
+				int idxWeapon = this->GetUnusedWeaponSlot(pThis, 0); //rookie weapons
+				if (idxWeapon == -1) {
+					char* pID = pThis->ID;
+					Debug::FatalErrorAndExit(
+						"BuildingType [%s] is a Prism Tower however there are no free\n"
+						"weapon slots to assign the support weapon to.", pID);
+				}
+				this->SupportWeaponIndex = idxWeapon;
+				cWeapon->NeverUse = true; //the modder shouldn't be expected to have to set this
+				WarheadTypeClass *cWarhead;
+				cWeapon->Warhead = cWarhead; //or this
+				CoordStruct supportFLH;
+				pThis->set_Weapon(idxWeapon, cWeapon);
+				//now get the FLH
+				supportFLH = pThis->get_WeaponFLH(13); //AlternateFLH0
+				if (supportFLH.X == 0 && supportFLH.Y == 0 && supportFLH.Z == 0) {
+					//assuming that, for Prism Towers, this means the FLH was not set.
+					supportFLH = pThis->get_WeaponFLH(0); //Primary
+				}
+				pThis->set_WeaponFLH(idxWeapon, supportFLH);
+			}
+		}
+
+		if(pINI->ReadString(pID, "PrismForwarding.EliteSupportWeapon", "", Ares::readBuffer, Ares::readLength)) {
+			if (WeaponTypeClass *cWeapon = WeaponTypeClass::FindOrAllocate(Ares::readBuffer)) {
+				int idxWeapon = this->GetUnusedWeaponSlot(pThis, 1); //elite weapons
+				if (idxWeapon == -1) {
+					char* pID = pThis->ID;
+					Debug::FatalErrorAndExit(
+						"BuildingType [%s] is a Prism Tower however there are no free\n"
+						"weapon slots to assign the elite support weapon to.", pID);
+				}
+				this->EliteSupportWeaponIndex = idxWeapon;
+				cWeapon->NeverUse = true; //the modder shouldn't be expected to have to set this
+				WarheadTypeClass *cWarhead;
+				cWeapon->Warhead = cWarhead; //or this
+				CoordStruct supportFLH;
+				pThis->set_EliteWeapon(idxWeapon, cWeapon);
+				//now get the FLH
+				supportFLH = pThis->get_WeaponFLH(14); //AlternateFLH1
+				if (supportFLH.X == 0 && supportFLH.Y == 0 && supportFLH.Z == 0) {
+					//assuming that, for Prism Towers, this means the FLH was not set.
+					supportFLH = pThis->get_EliteWeaponFLH(0); //ElitePrimary
+				}
+				pThis->set_EliteWeaponFLH(idxWeapon, supportFLH);
+			}
+		}
+
 	}
 }
 
-signed int BuildingTypeExt::cPrismForwarding::GetUnusedWeaponSlot(BuildingTypeClass *pThis) {
-	int idxWeapon = 2;
-	while (idxWeapon <= 12 && pThis->get_Weapon(idxWeapon)) {
-		++idxWeapon;
+signed int BuildingTypeExt::cPrismForwarding::GetUnusedWeaponSlot(BuildingTypeClass *pThis, int elite) {
+	int idxWeapon = 1;
+	while ( ++idxWeapon <= 12 && ( (elite == 0 && pThis->get_Weapon(idxWeapon)) || (elite == 1 && pThis->get_EliteWeapon(idxWeapon)) ) ) {}
+	if (idxWeapon <= 12) { //13-18 is AlternateFLH0-4
+		return idxWeapon;
 	}
-	signed int retVal = -1;
-	if (idxWeapon <= 12) {
-		retVal = idxWeapon;
-	}
-	return retVal;
+	return -1;
 }
 
 int BuildingTypeExt::cPrismForwarding::AcquireSlaves_MultiStage
@@ -253,11 +278,17 @@ bool BuildingTypeExt::cPrismForwarding::ValidateSupportTower(
 						SlaveTower->GetPosition_2(&curPosition);
 						int Distance = MyPosition.DistanceFrom(curPosition);
 						int SupportRange = 0;
-						if (WeaponTypeClass * supportWeapon = pSlaveType->get_Weapon(pSlaveTypeData->PrismForwarding.SupportWeaponIndex)) {
-							if (Distance < supportWeapon->MinimumRange) {
-								return false; //below minimum range
-							}
-							if (supportWeapon->Range != 0) {
+						int idxSupport = -1;
+						if (SlaveTower->Veterancy.IsElite()) {
+							idxSupport = pSlaveTypeData->PrismForwarding.EliteSupportWeaponIndex;
+						} else {
+							idxSupport = pSlaveTypeData->PrismForwarding.SupportWeaponIndex;
+						}
+						if (idxSupport != -1) {
+							if (WeaponTypeClass * supportWeapon = pSlaveType->get_Weapon(idxSupport)) {
+								if (Distance < supportWeapon->MinimumRange) {
+									return false; //below minimum range
+								}
 								SupportRange = supportWeapon->Range;
 							}
 						}

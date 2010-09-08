@@ -43,9 +43,10 @@ public:
 		Valueable<bool> ToAllies;						//can this tower support allies' towers or not
 		Valueable<bool> BreakSupport;					//can the slave tower become a master tower at the last second
 		Valueable<signed int> SupportWeaponIndex;
+		Valueable<signed int> EliteSupportWeaponIndex;
 
 		//methods
-		signed int GetUnusedWeaponSlot(BuildingTypeClass* );
+		signed int GetUnusedWeaponSlot(BuildingTypeClass*, int);
 		void Initialize(BuildingTypeClass* );
 		void LoadFromINIFile(BuildingTypeClass *, CCINIClass *);
 
