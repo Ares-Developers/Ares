@@ -203,9 +203,9 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 		Debug::Log("[Prism Forwarding] Checking IsRadBeam...\n");
 		if (supportWeapon->IsRadBeam) {
 			Debug::Log("[Prism Forwarding] IsRadBeam!\n");
-			RadBeam* supportRadBeam;
-			;GAME_ALLOC(RadBeam, supportRadBeam, 0);
-			supportRadBeam->Allocate(0);
+			RadBeam* supportRadBeam(0);
+			//GAME_ALLOC(RadBeam, supportRadBeam, 0);
+			//supportRadBeam->Allocate(0);
 			if (supportRadBeam) {
 				Debug::Log("[Prism Forwarding] Allocated!\n");
 				supportRadBeam->Owner = B;
@@ -221,6 +221,7 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 				Debug::Log("[Prism Forwarding] beamcolor = R(%d)G(%d)B(%d)!\n", supportRadBeam->Color.R, supportRadBeam->Color.G, supportRadBeam->Color.B);
 				supportRadBeam->Period = supportWeaponData->Beam_Duration;
 				supportRadBeam->Amplitude = supportWeaponData->Beam_Amplitude;
+				supportRadBeam->Allocate(0);
 			}
 		}
 		//IsElectricBolt
@@ -234,9 +235,7 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 				supportEBolt->Owner = B;
 				supportEBolt->WeaponSlot = idxSupport;
 				supportEBolt->AlternateColor = supportWeapon->IsAlternateColor;
-				//what is Lifetime?
-				//what about that unknown_18 that might be duration?
-				supportEBolt->Fire(SourceXYZ, *pTargetXYZ, 15); //3rd arg is DWORD arg18 ???
+				supportEBolt->Fire(SourceXYZ, *pTargetXYZ, 0); //messing with 3rd arg seems to make bolts more jumpy, and parts of them disappear
 			}
 		}
 		//Report
