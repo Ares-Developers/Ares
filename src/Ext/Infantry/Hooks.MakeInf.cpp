@@ -87,3 +87,31 @@ DEFINE_HOOK(6E232E, ActionClass_PlayAnimAt, 5)
 
 	return 0x6E2368;
 }
+
+
+DEFINE_HOOK(469C9C, BulletClass_DetonateAt_DamageAnimSelected, 5)
+{
+	GET(AnimClass *, Anim, EAX);
+
+	if(Anim) {
+		GET(BulletClass *, Bullet, ESI);
+
+		HouseClass *pInvoker = (Bullet->Owner)
+			? Bullet->Owner->Owner
+			: NULL
+		;
+
+		HouseClass *pVictim = NULL;
+
+		if(TechnoClass * Target = generic_cast<TechnoClass *>(Bullet->Target)) {
+			pVictim = Target->Owner;
+		}
+
+		if(Anim->Type->MakeInfantry > -1) {
+			AnimTypeExt::SetMakeInfOwner(Anim, pInvoker, pVictim, pInvoker);
+		}
+	}
+
+	return 0;
+}
+
