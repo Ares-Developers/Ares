@@ -2,6 +2,8 @@
 #include "../TechnoType/Body.h"
 #include "../House/Body.h"
 
+#include <InfantryClass.h>
+
 template<> const DWORD Extension<BuildingTypeClass>::Canary = 0x11111111;
 Container<BuildingTypeExt> BuildingTypeExt::ExtMap;
 
@@ -33,7 +35,6 @@ void BuildingTypeExt::ExtData::Initialize(BuildingTypeClass *pThis)
 			this->Secret_Boons.AddItem(Options->GetItem(i));
 		}
 	}
-
 	this->PrismForwarding.Initialize(pThis);
 }
 
@@ -216,6 +217,13 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 		this->StolenMoneyAmount.Read(&exINI, pID, "SpyEffect.StolenMoneyAmount");
 		this->StolenMoneyPercentage.Read(&exINI, pID, "SpyEffect.StolenMoneyPercentage");
 	}
+
+	// #218 Specific Occupiers
+	this->AllowedOccupiers.Read(&exINI, pID, "CanBeOccupiedBy");
+	if(!this->AllowedOccupiers.empty()) {
+		// having a specific occupier list implies that this building is supposed to be occupiable
+		pThis->CanBeOccupied = true;
+	}
 }
 
 void BuildingTypeExt::ExtData::CompleteInitialization(BuildingTypeClass *pThis) {
@@ -325,6 +333,11 @@ bool BuildingTypeExt::ExtData::IsLinkable() {
 	return this->Firewall_Is || (this->IsTrench > -1);
 }
 
+bool BuildingTypeExt::ExtData::CanBeOccupiedBy(InfantryClass *whom) {
+	// if CanBeOccupiedBy isn't empty, we have to check if this soldier is allowed in
+	return this->AllowedOccupiers.empty() || (this->AllowedOccupiers == whom->Type);
+}
+
 // =============================
 // load/save
 
@@ -428,3 +441,4 @@ DEFINE_HOOK_AGAIN(464A56, BuildingTypeClass_LoadFromINI, A)
 	BuildingTypeExt::ExtMap.LoadFromINI(pItem, pINI);
 	return 0;
 }
+

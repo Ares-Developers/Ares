@@ -35,4 +35,53 @@ public:
 	};
 };
 
+// vector of char* with builtin storage
+template<class T>
+class VectorNames {
+protected:
+	DynamicVectorClass<char *> Strings;
+	char * Buffer;
+
+public:
+	char* operator [](int Index) {
+		if(Index < 0 || Index > this->Strings.Count) {
+			return NULL;
+		}
+		return this->Strings.GetItem(Index);
+	}
+
+	T * FindItem(int Index) {
+		return T::Find((*this)[Index]);
+	}
+
+	const DynamicVectorClass<char *> & Entries() const{
+		return this->Strings;
+	}
+
+	char ** ToString() {
+		return this->Strings.Items;
+	}
+
+	int Count() const {
+		return this->Strings.Count;
+	}
+
+	VectorNames<T>(const char * Buf = NULL) {
+		this->Buffer = _strdup(Buf);
+	}
+
+	void Tokenize(const char * Buf = NULL) {
+		if(Buf) {
+			if(this->Buffer) {
+				free(this->Buffer);
+			}
+			this->Buffer = _strdup(Buf);
+		}
+		this->Strings.Clear();
+		for(char * cur = strtok(this->Buffer, ","); cur && *cur; cur = strtok(NULL, ",")) {
+			this->Strings.AddItem(cur);
+		}
+	}
+};
+
 #endif

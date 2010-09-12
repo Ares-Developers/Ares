@@ -39,18 +39,18 @@ public:
 				// Positive damage.
 				if (Cap < 0) {
 					// Do not stack. Use the maximum value.
-					return max(Duration, CurrentValue);
+					return std::max(Duration, CurrentValue);
 				} else if (Cap > 0) {
 					// Cap the duration.
-					int cappedValue = min(ProposedDuration, Cap);
-					return max(CurrentValue, cappedValue);
+					int cappedValue = std::min(ProposedDuration, Cap);
+					return std::max(CurrentValue, cappedValue);
 				} else {
 					// There is no cap. Allow the duration to stack up.
 					return ProposedDuration;
 				}
 			} else {
 				// Negative damage.
-				return (Cap < 0 ? ProposedDuration : min(ProposedDuration, Cap));
+				return (Cap < 0 ? ProposedDuration : std::min(ProposedDuration, Cap));
 			}
 		}
 

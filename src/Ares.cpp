@@ -326,6 +326,7 @@ DEFINE_HOOK(7258D0, AnnounceInvalidPointer, 6)
 DEFINE_HOOK(685659, Scenario_ClearClasses, a)
 {
 	BuildingExt::ExtMap.Empty();
+	BuildingExt::Cleanup();
 	BuildingTypeExt::ExtMap.Empty();
 //	BulletExt::ExtMap.Empty();
 	BulletTypeExt::ExtMap.Empty();

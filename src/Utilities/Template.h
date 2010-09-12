@@ -2,6 +2,7 @@
 #define ARES_TEMPLATE_H
 
 #include <stdexcept>
+#include <cstring>
 
 #include <MouseClass.h>
 #include <TechnoClass.h>
@@ -175,6 +176,10 @@ public:
 		}
 	}
 
+	bool operator == (T other) const {
+		return this->Get() == other;
+	};
+
 	bool operator != (T other) const {
 		return this->Get() != other;
 	};
@@ -328,7 +333,7 @@ void Valueable<MouseCursor>::Read(INI_EX *parser, const char* pSection, const ch
 	Cursor->Count = Placeholder.Get();
 
 	_snprintf(pFlagName, 32, "%s.Interval", pKey);
-	Placeholder.Set(Cursor->Count);
+	Placeholder.Set(Cursor->Interval);
 	Placeholder.Read(parser, pSection, pFlagName);
 	Cursor->Interval = Placeholder.Get();
 
@@ -356,6 +361,77 @@ void Valueable<MouseCursor>::Read(INI_EX *parser, const char* pSection, const ch
 		else if(!strcmp(hoty, "Bottom")) this->Value.HotY = hotspy_bottom;
 	}
 };
+
+template<class T>
+class ValueableVector : public std::vector<T> {
+public:
+	typedef T MyType;
+	typedef typename CompoundT<T>::BaseT MyBase;
+
+	void Read(INI_EX *parser, const char* pSection, const char* pKey) {
+		if(parser->ReadString(pSection, pKey)) {
+			// if we were able to get the flag in question, take it apart and check the tokens...
+			// ...against the various object types; if we find one, place it in the value list
+			for(char *cur = strtok(Ares::readBuffer, ","); cur; cur = strtok(NULL, ",")) {
+				if(T thisObject = MyBase::Find(cur)) {
+					this->push_back(thisObject);
+					continue;
+				}
+			}
+		}
+	}
+
+	/** This will return true for Valuable<std::vector<AbstractTypeClass *> > Foo == AbstractTypeClass * Bar
+		if Bar is among the objects listed in Foo.
+
+		This way, we can do stuff like
+			if(SomeExt->AllowedUnits == someUnit) { ...
+		even if AllowedUnits is a list.
+	*/
+	bool operator== (AbstractTypeClass * other) const {
+		if(this->empty()) {
+			return false;
+		}
+
+		int listSize = this->size();
+		for( int i = 0; i < listSize; ++i ) {
+			if(this->at(i) == other) {
+				return true;
+			}
+		}
+
+		// if we ended up here, other is not among the listed object types
+		return false;
+	}
+};
+
+template<>
+void ValueableVector<TechnoTypeClass *>::Read(INI_EX *parser, const char* pSection, const char* pKey) {
+	if(parser->ReadString(pSection, pKey)) {
+		// if we were able to get the flag in question, take it apart and check the tokens...
+		// ...against the various object types; if we find one, place it in the value list
+		for(char *cur = strtok(Ares::readBuffer, ","); cur; cur = strtok(NULL, ",")) {
+			TechnoTypeClass * thisObject = NULL;
+			if(thisObject = AircraftTypeClass::Find(cur)) {
+				this->push_back(thisObject);
+				continue;
+			}
+			if(thisObject = BuildingTypeClass::Find(cur)) {
+				this->push_back(thisObject);
+				continue;
+			}
+			if(thisObject = InfantryTypeClass::Find(cur)) {
+				this->push_back(thisObject);
+				continue;
+			}
+			if(thisObject = UnitTypeClass::Find(cur)) {
+				this->push_back(thisObject);
+				continue;
+			}
+		}
+	}
+}
+
 
 //template class Valueable<bool>;
 //template class Valueable<int>;

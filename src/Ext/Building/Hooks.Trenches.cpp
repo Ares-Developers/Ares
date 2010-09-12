@@ -10,7 +10,7 @@
 
 #include <cmath>
 
-/* 	#218 - specific occupiers // comes in 0.2
+/* 	#218 - specific occupiers
 	#665 - raidable buildings */
 DEFINE_HOOK(457D58, BuildingClass_CanBeOccupied_SpecificOccupiers, 6)
 {
@@ -23,16 +23,17 @@ DEFINE_HOOK(457D58, BuildingClass_CanBeOccupied_SpecificOccupiers, 6)
 		bool isFull = (pThis->GetOccupantCount() == pThis->Type->MaxNumberOccupants);
 		bool isEmpty = (pThis->GetOccupantCount() == 0); // yes, yes, !pThis->GetOccupantCount() - leave it this way for semantics :P
 		bool isIneligible = (pThis->IsRedHP() || pInf->IsMindControlled());
+		bool isNeutral = pThis->Owner->IsNeutral();
+		bool isRaidable = (pBuildTypeExt->BunkerRaidable && isEmpty); // if it's not empty, it cannot be raided anymore, 'cause it already was
+		bool sameOwner = (pThis->Owner == pInf->Owner);
 
-		if(!isFull && !isIneligible) {
-			if(pThis->Owner != pInf->Owner) {
-				/*	The building switches owners after the first occupant enters,
-					so this check should not interfere with the player who captured it,
-					only prevent others from entering it while it's occupied. (Bug #699) */
-				can_occupy = (pThis->Owner->IsNeutral() || (pBuildTypeExt->BunkerRaidable && isEmpty));
-			} else {
-				can_occupy = true;
-			}
+		bool allowedOccupier = pBuildTypeExt->CanBeOccupiedBy(pInf);
+
+		if(!isFull && !isIneligible && allowedOccupier) {
+		/*	The building switches owners after the first occupant enters,
+			so this check should not interfere with the player who captured it,
+			only prevent others from entering it while it's occupied. (Bug #699) */
+			can_occupy = sameOwner ? true : (isNeutral || isRaidable);
 		}
 	}
 
@@ -74,7 +75,7 @@ DEFINE_HOOK(441F12, BuildingClass_Destroy_RubbleYell, 6)
 // remove all units from the rubble
 DEFINE_HOOK(441F2C, BuildingClass_Destroy_KickOutOfRubble, 5) {
 	GET(BuildingClass*, pBld, ESI);
-	
+
 	// find out whether this destroyed building would turn into rubble
 	if(BuildingTypeExt::ExtData *pTData = BuildingTypeExt::ExtMap.Find(pBld->Type)) {
 		if(pTData->RubbleDestroyed) {

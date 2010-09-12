@@ -30,7 +30,7 @@ DEFINE_HOOK(6FF4DE, TechnoClass_Fire_IsLaser, 6) {
 	if(BuildingClass* pBld = specific_cast<BuildingClass*>(pThis)) {
 		WeaponTypeClass* pTWeapon = pBld->GetTurretWeapon()->WeaponType;
 
-		if(LaserDrawClass* pLaser = pBld->CreateLaser(pTarget, idxWeapon, pTWeapon, &TechnoClass::DefaultCoords())) {
+		if(LaserDrawClass* pLaser = pBld->CreateLaser(pTarget, idxWeapon, pTWeapon, &TechnoClass::DefaultCoords)) {
 			
 			//default thickness for buildings. this was 3 for PrismType (rising to 5 for supported prism) but no idea what it was for non-PrismType - setting to 3 for all BuildingTypes now.
 			if (Thickness == -1) {
@@ -60,7 +60,7 @@ DEFINE_HOOK(6FF4DE, TechnoClass_Fire_IsLaser, 6) {
 			}
 		}
 	} else {
-		if(LaserDrawClass* pLaser = pThis->CreateLaser(pTarget, idxWeapon, pFiringWeaponType, &TechnoClass::DefaultCoords())) {
+		if(LaserDrawClass* pLaser = pThis->CreateLaser(pTarget, idxWeapon, pFiringWeaponType, &TechnoClass::DefaultCoords)) {
 			if (Thickness == -1) {
 				pLaser->Thickness = 2;
 			} else {

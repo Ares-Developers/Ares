@@ -97,6 +97,8 @@ public:
 	static void GetPutLocation(CoordStruct const &, CoordStruct &);
 
 	static void StopDraining(TechnoClass *Drainer, TechnoClass *Drainee);
+
+	static bool CreateWithDroppod(FootClass *Object, CoordStruct *XYZ);
 /*
 	static int SelectWeaponAgainst(TechnoClass *pThis, TechnoClass *pTarget);
 	static bool EvalWeaponAgainst(TechnoClass *pThis, TechnoClass *pTarget, WeaponTypeClass* W);

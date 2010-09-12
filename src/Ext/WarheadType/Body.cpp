@@ -3,7 +3,7 @@
 #include "../../Enum/ArmorTypes.h"
 #include "../Techno/Body.h"
 #include "../TechnoType/Body.h"
-#include "../../Misc/EMPulse.h"
+#include "Misc/EMPulse.h"
 
 #include <WarheadTypeClass.h>
 #include <GeneralStructures.h>
@@ -160,13 +160,18 @@ void WarheadTypeExt::ExtData::applyIronCurtain(CoordStruct *coords, HouseClass* 
 		for(int i=0; i<items->Count; ++i) {
 			if(TechnoClass *curTechno = items->GetItem(i)) {
 
+				// don't protect the dead
+				if(curTechno->InLimbo || !curTechno->IsAlive || !curTechno->Health) {
+					continue;
+				}
+
 				// affects enemies or allies respectively?
 				if(WarheadTypeExt::canWarheadAffectTarget(curTechno, Owner, this->AttachedToObject)) {
 
 					// duration modifier
 					int duration = this->IC_Duration;
 
-					// modifiy good durations only
+					// modify good durations only
 					if(duration > 0) {
 						if(TechnoTypeExt::ExtData *pData = TechnoTypeExt::ExtMap.Find(curTechno->GetTechnoType())) {
 							duration = (int)(duration * pData->IC_Modifier);

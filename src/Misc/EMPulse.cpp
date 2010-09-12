@@ -103,7 +103,7 @@ void EMPulse::deliverEMPDamage(ObjectClass *object, TechnoClass *Firer, WarheadT
 			}
 
 			// can not be less than zero
-			curTechno->EMPLockRemaining = max(0, newValue);
+			curTechno->EMPLockRemaining = std::max(0, newValue);
 			if (verbose) {
 				Debug::Log("[deliverEMPDamage] Step 4: %d\n",
 						newValue);
@@ -618,7 +618,6 @@ bool EMPulse::enableEMPEffect(TechnoClass * Victim, ObjectClass * Source) {
 	if (BuildingClass * Building = specific_cast<BuildingClass *>(Victim)) {
 		Building->DisableStuff();
 		updateRadarBlackout(Building);
-		BuildingTypeExt::cPrismForwarding::RemoveFromNetwork(Building, true); //take building out of prism network and reset all slave activity
 	} else {
 		if (AircraftClass * Aircraft = specific_cast<AircraftClass *>(Victim)) {
 			// crash flying aircraft

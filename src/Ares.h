@@ -125,7 +125,7 @@ public:
 		static Interface::eUIAction MoviesAndCreditsButton;
 		static Interface::eUIAction CampaignButton;
 		static Interface::eUIAction SkirmishButton;
-		static Interface::eUIAction SneakPeaksButton;
+		static Interface::eUIAction SneakPeeksButton;
 		static Interface::eUIAction PlayMoviesButton;
 		static Interface::eUIAction ViewCreditsButton;
 		static bool AllowMultiEngineer;

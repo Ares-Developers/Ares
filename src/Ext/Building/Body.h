@@ -30,6 +30,7 @@ public:
 		};
 	};
 
+
 	class ExtData : public Extension<TT>
 	{
 	private:
@@ -88,6 +89,13 @@ public:
 	static signed int GetImageFrameIndex(BuildingClass *pThis);
 
 	static void KickOutHospitalArmory(BuildingClass *pThis);
+
+	static CellStruct *TempFoundationData1;
+	static CellStruct *TempFoundationData2;
+
+	static DWORD FoundationLength(CellStruct * StartCell);
+
+	static void Cleanup();
 };
 
 #endif

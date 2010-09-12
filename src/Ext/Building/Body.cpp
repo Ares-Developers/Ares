@@ -89,7 +89,7 @@ bool BuildingExt::ExtData::RubbleYell(bool beingRepaired) {
 		}
 
 		newState = specific_cast<BuildingClass *>(pTypeData->RubbleIntact->CreateObject(currentBuilding->Owner));
-		newState->Health = static_cast<int>(max((newState->Type->Strength / 100), 1)); // see description above
+		newState->Health = static_cast<int>(std::max((newState->Type->Strength / 100), 1)); // see description above
 		newState->IsAlive = true; // assuming this is in the sense of "is not destroyed"
 		// Location should not be changed by removal
 		if(!newState->Put(&currentBuilding->Location, currentBuilding->Facing)) {
@@ -469,8 +469,7 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 	bool evaForEnterer = Enterer->ControlledByPlayer() && raiseEva;
 	bool effectApplied = false;
 
-
-	if(pTypeExt->ResetRadar) {
+	if(pTypeExt->ResetRadar.Get()) {
 		Owner->ReshroudMap();
 		if(!Owner->SpySatActive && evaForOwner) {
 			VoxClass::Play("EVA_RadarSabotaged");
@@ -510,7 +509,7 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 	}
 
 
-	if(pTypeExt->ResetSW) {
+	if(pTypeExt->ResetSW.Get()) {
 		bool somethingReset = false;
 		int swIdx = EnteredType->SuperWeapon;
 		if(swIdx != -1) {
@@ -554,7 +553,7 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 		bounty = int(available * pTypeExt->StolenMoneyPercentage);
 	}
 	if(bounty > 0) {
-		bounty = min(bounty, available);
+		bounty = std::min(bounty, available);
 		Owner->TakeMoney(bounty);
 		Enterer->GiveMoney(bounty);
 		if(evaForOwner) {
@@ -567,7 +566,7 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 	}
 
 
-	if(pTypeExt->GainVeterancy) {
+	if(pTypeExt->GainVeterancy.Get()) {
 		bool promotionStolen = true;
 
 		switch(EnteredType->Factory) {
@@ -607,7 +606,7 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 
 		Addition 04.03.10: People complained about it not being optional. Now it is.
 	*/
-	if(pTypeExt->RevealProduction) {
+	if(pTypeExt->RevealProduction.Get()) {
 		EnteredBuilding->DisplayProductionTo.Add(Enterer);
 		if(evaForOwner || evaForEnterer) {
 			VoxClass::Play("EVA_BuildingInfiltrated");
@@ -615,7 +614,7 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 		effectApplied = true;
 	}
 
-	if(pTypeExt->RevealRadar) {
+	if(pTypeExt->RevealRadar.Get()) {
 		EnteredBuilding->DisplayProductionTo.Add(Enterer);
 		BuildingExt::UpdateDisplayTo(EnteredBuilding);
 		if(evaForOwner || evaForEnterer) {
@@ -706,6 +705,27 @@ void BuildingExt::ExtData::ImmolateVictim(ObjectClass * Victim) {
 	}
 }
 
+DWORD BuildingExt::FoundationLength(CellStruct * StartCell) {
+	DWORD Len = 0;
+	bool End = false;
+	do {
+		++Len;
+		End = StartCell->X == 32767 && StartCell->Y == 32767;
+		++StartCell;
+	} while(!End);
+	return Len;
+}
+
+void BuildingExt::Cleanup() {
+	if(BuildingExt::TempFoundationData1) {
+		delete[] BuildingExt::TempFoundationData1;
+		BuildingExt::TempFoundationData1 = NULL;
+	}
+	if(BuildingExt::TempFoundationData2) {
+		delete[] BuildingExt::TempFoundationData2;
+		BuildingExt::TempFoundationData2 = NULL;
+	}
+}
 // =============================
 // container hooks
 

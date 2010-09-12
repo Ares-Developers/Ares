@@ -203,12 +203,12 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 		Debug::Log("[Prism Forwarding] Checking IsRadBeam...\n");
 		if (supportWeapon->IsRadBeam) {
 			Debug::Log("[Prism Forwarding] IsRadBeam!\n");
-			RadBeam* supportRadBeam(0);
 			//GAME_ALLOC(RadBeam, supportRadBeam, 0);
 			//supportRadBeam->Allocate(0);
+			RadBeam* supportRadBeam = RadBeam::Allocate(RadBeamType::RadBeam);
 			if (supportRadBeam) {
 				Debug::Log("[Prism Forwarding] Allocated!\n");
-				supportRadBeam->Owner = B;
+//				supportRadBeam->Owner = B;
 				supportRadBeam->SetCoordsSource(&SourceXYZ);
 				supportRadBeam->SetCoordsTarget(pTargetXYZ);
 				if (supportWeaponData->Beam_IsHouseColor) {
@@ -221,7 +221,8 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 				Debug::Log("[Prism Forwarding] beamcolor = R(%d)G(%d)B(%d)!\n", supportRadBeam->Color.R, supportRadBeam->Color.G, supportRadBeam->Color.B);
 				supportRadBeam->Period = supportWeaponData->Beam_Duration;
 				supportRadBeam->Amplitude = supportWeaponData->Beam_Amplitude;
-				supportRadBeam->Allocate(0);
+
+				Debug::DumpObj((byte *)supportRadBeam, sizeof(RadBeam));
 			}
 		}
 		//IsElectricBolt
@@ -248,7 +249,6 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 		}
 		//ROF
 		B->ReloadTimer.Start(supportWeapon->ROF);
-	
 	} else {
 		//just the default support beam
 		GAME_ALLOC(LaserDrawClass, LaserBeam, SourceXYZ, *pTargetXYZ, B->Owner->LaserColor, blank, blank, RulesClass::Instance->PrismSupportDuration);

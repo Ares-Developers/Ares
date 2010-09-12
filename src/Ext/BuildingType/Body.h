@@ -124,6 +124,9 @@ public:
 		Valueable<int> StolenMoneyPercentage;
 		Valueable<int> PowerOutageDuration;
 
+		// #218 Specific Occupiers
+		ValueableVector<InfantryTypeClass *> AllowedOccupiers;
+		
 		cPrismForwarding PrismForwarding;
 
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
@@ -153,6 +156,7 @@ public:
 			StolenMoneyAmount (0),
 			StolenMoneyPercentage (0),
 			PowerOutageDuration (0),
+			AllowedOccupiers (),
 			PrismForwarding()
 			{ };
 
@@ -173,6 +177,8 @@ public:
 		}
 
 		bool IsLinkable();
+
+		bool CanBeOccupiedBy(InfantryClass *whom);
 	};
 
 	static Container<BuildingTypeExt> ExtMap;

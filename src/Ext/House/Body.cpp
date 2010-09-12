@@ -65,13 +65,29 @@ signed int HouseExt::RequirementsMet(HouseClass *pHouse, TechnoTypeClass *pItem)
 
 bool HouseExt::PrerequisitesMet(HouseClass *pHouse, TechnoTypeClass *pItem)
 {
-	TechnoTypeExt::ExtData* pData = TechnoTypeExt::ExtMap.Find(pItem);
 	if(!pItem) {
 		return 0;
 	}
+	TechnoTypeExt::ExtData* pData = TechnoTypeExt::ExtMap.Find(pItem);
 
 	for(int i = 0; i < pData->PrerequisiteLists.Count; ++i) {
 		if(Prereqs::HouseOwnsAll(pHouse, pData->PrerequisiteLists[i])) {
+			return 1;
+		}
+	}
+
+	return 0;
+}
+
+bool HouseExt::PrerequisitesListed(Prereqs::BTypeList *List, TechnoTypeClass *pItem)
+{
+	if(!pItem) {
+		return 0;
+	}
+	TechnoTypeExt::ExtData* pData = TechnoTypeExt::ExtMap.Find(pItem);
+
+	for(int i = 0; i < pData->PrerequisiteLists.Count; ++i) {
+		if(Prereqs::ListContainsAll(List, pData->PrerequisiteLists[i])) {
 			return 1;
 		}
 	}
@@ -100,7 +116,7 @@ signed int HouseExt::BuildLimitRemaining(HouseClass *pHouse, TechnoTypeClass *pI
 		BuildLimit = abs(BuildLimit);
 		BuildLimit -= pHouse->CountOwnedEver(pItem);
 	}
-	return min(BuildLimit, 0x7FFFFFFF);
+	return std::min(BuildLimit, 0x7FFFFFFF);
 }
 
 signed int HouseExt::PrereqValidate
@@ -127,7 +143,34 @@ signed int HouseExt::PrereqValidate
 		}
 	}
 
+	if(!HouseExt::HasNeededFactory(pHouse, pItem)) {
+		Debug::DevLog(Debug::Error, "[NCO Bug detected] "
+			"House %ls meets all requirements to build %s, but doesn't have a suitable factory!\n",
+			pHouse->UIName, pItem->ID);
+		return 0;
+	}
+
 	return HouseExt::CheckBuildLimit(pHouse, pItem, IncludeQueued);
+}
+
+bool HouseExt::HasNeededFactory(HouseClass *pHouse, TechnoTypeClass *pItem) {
+	DWORD ItemOwners = pItem->GetOwners();
+	eAbstractType WhatAmI = pItem->WhatAmI();
+
+	for(int i = 0; i < pHouse->Buildings.Count; ++i) {
+		auto pBld = pHouse->Buildings[i];
+		if(!pBld->InLimbo && pBld->HasPower) {
+			if(pBld->Type->Factory == WhatAmI) {
+				if(pBld->GetCurrentMission() != mission_Selling && pBld->QueuedMission != mission_Selling) {
+					if((pBld->Type->GetOwners() & ItemOwners) != 0) {
+						return true;
+					}
+				}
+			}
+		}
+	}
+
+	return false;
 }
 
 void HouseExt::ExtData::SetFirestormState(bool Active) {
