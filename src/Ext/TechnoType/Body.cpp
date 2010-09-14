@@ -523,25 +523,16 @@ DEFINE_HOOK(679CAF, RulesClass_LoadAfterTypeData_InferEMPImmunity, 5) {
 	// The EMP immunity has a rather complex rule set to infer whether
 	// a TechnoType is immune from its properties. Here all properties
 	// have been parsed.
+	for(int i=0; i<TechnoTypeClass::Array->Count; ++i) {
+		TechnoTypeClass* pType = TechnoTypeClass::Array->GetItem(i);
+		TechnoTypeExt::InferEMPImmunity(pType, pINI);
+	}
+
 	for(int i=0; i<BuildingTypeClass::Array->Count; ++i) {
 		BuildingTypeClass* pTBld = BuildingTypeClass::Array->GetItem(i);
-		TechnoTypeExt::InferEMPImmunity(pTBld, pINI);
-
 		if(BuildingTypeExt::ExtData *pData = BuildingTypeExt::ExtMap.Find(pTBld)) {
 			pData->CompleteInitialization(pTBld);
 		}
-	}
-	for(int i=0; i<AircraftTypeClass::Array->Count; ++i) {
-		AircraftTypeClass* pTAir = AircraftTypeClass::Array->GetItem(i);
-		TechnoTypeExt::InferEMPImmunity(pTAir, pINI);
-	}
-	for(int i=0; i<UnitTypeClass::Array->Count; ++i) {
-		UnitTypeClass* pTUnit = UnitTypeClass::Array->GetItem(i);
-		TechnoTypeExt::InferEMPImmunity(pTUnit, pINI);
-	}
-	for(int i=0; i<InfantryTypeClass::Array->Count; ++i) {
-		InfantryTypeClass* pTInf = InfantryTypeClass::Array->GetItem(i);
-		TechnoTypeExt::InferEMPImmunity(pTInf, pINI);
 	}
 
 	return 0;

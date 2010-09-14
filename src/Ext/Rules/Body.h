@@ -31,7 +31,7 @@ class RulesExt
 			ElectricDeath(NULL),
 			EngineerDamage (0.0F),
 			EngineerAlwaysCaptureTech (true),
-			EngineerDamageCursor (MouseCursor::First[51])
+			EngineerDamageCursor (MouseCursor::First[MouseCursorType::Detonate])
 			{
 				MultiEngineer[0] = false; // Skirmish
 				MultiEngineer[1] = false; // LAN

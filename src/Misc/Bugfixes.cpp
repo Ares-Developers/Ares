@@ -687,10 +687,10 @@ DEFINE_HOOK(621B80, DSurface_FillRectWithColor, 5)
 DEFINE_HOOK(52BA78, _YR_GameInit_Pre, 5)
 {
 	// issue #198: animate the paradrop cursor
-	MouseCursor::First[47].Interval = 4;
+	MouseCursor::First[MouseCursorType::ParaDrop].Interval = 4;
 
 	// issue #214: also animate the chronosphere cursor
-	MouseCursor::First[58].Interval = 4;
+	MouseCursor::First[MouseCursorType::Chronosphere].Interval = 4;
 
 	return 0;
 }

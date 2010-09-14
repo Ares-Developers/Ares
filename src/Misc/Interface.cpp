@@ -376,7 +376,6 @@ DEFINE_HOOK(52F00B, CampaignMenu_hDlg_PopulateCampaignList, 5) {
 DEFINE_HOOK(52EC18, CampaignClass_hDlg_PreHandleGeneral, 5) {
 	GET(HWND, hDlg, ESI);
 	GET(int, msg, EBX);
-	GET(int, wParam, EDI);
 	GET(int, lParam, EBP);
 
 	// catch the selection change event of the campaign list

@@ -49,7 +49,7 @@ void BuildingExt::UpdateDisplayTo(BuildingClass *pThis) {
 				}
 			}
 		}
-		MapClass::Instance->sub_4F42F0(2);
+		MapClass::Instance->RedrawSidebar(2);
 	}
 }
 
@@ -649,7 +649,7 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 			VoxClass::Play("EVA_BuildingInfiltrated");
 		}
 		MapClass::Instance->sub_657CE0();
-		MapClass::Instance->sub_4F42F0(2);
+		MapClass::Instance->RedrawSidebar(2);
 		effectApplied = true;
 	}
 
