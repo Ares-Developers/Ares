@@ -89,9 +89,13 @@ DEFINE_HOOK(6E232E, ActionClass_PlayAnimAt, 5)
 }
 
 
-DEFINE_HOOK(469C9C, BulletClass_DetonateAt_DamageAnimSelected, 5)
+DEFINE_HOOK(469C4E, BulletClass_DetonateAt_DamageAnimSelected, 5)
 {
-	GET(AnimClass *, Anim, EAX);
+	GET(AnimTypeClass *, AnimType, EBX);
+	LEA_STACK(CoordStruct *, XYZ, 0x64);
+
+	AnimClass * Anim;
+	GAME_ALLOC(AnimClass, Anim, AnimType, XYZ, 0, 1, 0x2600, -15, 0);
 
 	if(Anim) {
 		GET(BulletClass *, Bullet, ESI);
@@ -112,6 +116,7 @@ DEFINE_HOOK(469C9C, BulletClass_DetonateAt_DamageAnimSelected, 5)
 		}
 	}
 
-	return 0;
+	R->EAX<AnimClass *>(Anim);
+	return 0x469C98;
 }
 
