@@ -8,7 +8,7 @@
 #include <InfantryTypeClass.h>
 #include <BuildingTypeClass.h>
 #include "Debug.h"
-#include "Utilities/Constructs.h"
+#include "../Utilities/Constructs.h"
 
 class RMG {
 public:

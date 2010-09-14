@@ -200,42 +200,30 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 			}
 		}
 		//IsRadBeam
-		Debug::Log("[Prism Forwarding] Checking IsRadBeam...\n");
 		if (supportWeapon->IsRadBeam) {
-			Debug::Log("[Prism Forwarding] IsRadBeam!\n");
-			//GAME_ALLOC(RadBeam, supportRadBeam, 0);
-			//supportRadBeam->Allocate(0);
 			RadBeam* supportRadBeam = RadBeam::Allocate(RadBeamType::RadBeam);
 			if (supportRadBeam) {
-				Debug::Log("[Prism Forwarding] Allocated!\n");
-//				supportRadBeam->Owner = B;
 				supportRadBeam->SetCoordsSource(&SourceXYZ);
 				supportRadBeam->SetCoordsTarget(pTargetXYZ);
 				if (supportWeaponData->Beam_IsHouseColor) {
 					supportRadBeam->Color = B->Owner->LaserColor;
-					Debug::Log("[Prism Forwarding] RadBeam housecolor\n");
 				} else {
 					supportRadBeam->Color = supportWeaponData->Beam_Color;
-					Debug::Log("[Prism Forwarding] RadBeam not housecolor\n");
 				}
-				Debug::Log("[Prism Forwarding] beamcolor = R(%d)G(%d)B(%d)!\n", supportRadBeam->Color.R, supportRadBeam->Color.G, supportRadBeam->Color.B);
 				supportRadBeam->Period = supportWeaponData->Beam_Duration;
 				supportRadBeam->Amplitude = supportWeaponData->Beam_Amplitude;
-
-				Debug::DumpObj((byte *)supportRadBeam, sizeof(RadBeam));
+				//Debug::DumpObj((byte *)supportRadBeam, sizeof(RadBeam));
 			}
 		}
 		//IsElectricBolt
-		Debug::Log("[Prism Forwarding] Checking IsElectricBolt...\n");
 		if (supportWeapon->IsElectricBolt) {
-			Debug::Log("[Prism Forwarding] IsElectricBolt!\n");
 			EBolt* supportEBolt;
 			GAME_ALLOC(EBolt, supportEBolt);
 			if (supportEBolt) {
-				Debug::Log("[Prism Forwarding] Alloc'd!\n");
 				supportEBolt->Owner = B;
 				supportEBolt->WeaponSlot = idxSupport;
 				supportEBolt->AlternateColor = supportWeapon->IsAlternateColor;
+				WeaponTypeExt::BoltExt[supportEBolt] = WeaponTypeExt::ExtMap.Find(supportWeapon);
 				supportEBolt->Fire(SourceXYZ, *pTargetXYZ, 0); //messing with 3rd arg seems to make bolts more jumpy, and parts of them disappear
 			}
 		}
