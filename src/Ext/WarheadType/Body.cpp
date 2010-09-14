@@ -36,6 +36,12 @@ WarheadTypeClass * WarheadTypeExt::Temporal_WH = NULL;
 
 WarheadTypeClass * WarheadTypeExt::EMP_WH = NULL;
 
+void WarheadTypeExt::ExtData::Initialize(WarheadTypeClass *pThis) {
+	if(!_strcmpi(pThis->ID, "NUKE")) {
+		this->PreImpactAnim = AnimTypeClass::FindIndex("NUKEBALL");
+	}
+}
+
 void WarheadTypeExt::ExtData::LoadFromINIFile(WarheadTypeClass *pThis, CCINIClass *pINI)
 {
 	const char * section = pThis->ID;
@@ -81,6 +87,8 @@ void WarheadTypeExt::ExtData::LoadFromINIFile(WarheadTypeClass *pThis, CCINIClas
 	this->AffectsEnemies = pINI->ReadBool(section, "AffectsEnemies", this->AffectsEnemies);
 
 	this->InfDeathAnim.Parse(&exINI, section, "InfDeathAnim");
+	
+	this->PreImpactAnim.Read(&exINI, pThis->ID, "PreImpactAnim");
 
 	this->KillDriver = pINI->ReadBool(section, "KillDriver", this->KillDriver);
 
@@ -98,7 +106,7 @@ void Container<WarheadTypeExt>::Save(WarheadTypeClass *pThis, IStream *pStm) {
 	WarheadTypeExt::ExtData* pData = this->SaveKey(pThis, pStm);
 
 	if(pData) {
-		ULONG out;
+		//ULONG out;
 		pData->Verses.Save(pStm);
 	}
 }

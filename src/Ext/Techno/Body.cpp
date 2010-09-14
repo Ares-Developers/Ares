@@ -1,5 +1,6 @@
 #include "Body.h"
 #include "../TechnoType/Body.h"
+#include "../../Misc/SWTypes.h"
 
 #include <HouseClass.h>
 #include <BuildingClass.h>
@@ -26,6 +27,7 @@ void TechnoExt::SpawnSurvivors(TechnoClass *pThis, TechnoClass *pKiller, bool Se
 	RETZ_UNLESS(!pSelfData->Survivors_Done);
 
 	CoordStruct loc = pThis->Location;
+
 
 	int chance = pData->Survivors_PilotChance.BindTo(pThis)->Get();
 	// remove check for Crewed if it is accounted for outside of this function
@@ -247,6 +249,7 @@ void Container<TechnoExt>::InvalidatePointer(void *ptr) {
 	AnnounceInvalidPointerMap(TechnoExt::AlphaExt, ptr);
 	AnnounceInvalidPointerMap(TechnoExt::SpotlightExt, ptr);
 	AnnounceInvalidPointer(TechnoExt::ActiveBuildingLight, ptr);
+	SWStateMachine::InvalidatePointer(ptr);
 }
 
 /*! This function checks if this object can currently be used, in terms of having or needing an operator.

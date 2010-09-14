@@ -79,6 +79,9 @@ public:
 
 		float IC_Modifier;
 
+		Valueable<bool> Chronoshift_Allow;
+		Valueable<bool> Chronoshift_IsVehicle;
+
 		// new on 05.04.10 for #733 (KillDriver/"Jarmen Kell")
 		bool ProtectedDriver; //!< Whether the driver of this vehicle cannot be killed, i.e. whether this vehicle is immune to KillDriver. Request #733.
 		bool CanDrive; //!< Whether this TechnoType can act as the driver of vehicles whose driver has been killed. Request #733.
@@ -120,6 +123,8 @@ public:
 			IsAPromiscuousWhoreAndLetsAnyoneRideIt (false),
 			CameoPal(),
 			RequiredStolenTech(0ull),
+			Chronoshift_Allow (true),
+			Chronoshift_IsVehicle (false),
 			IC_Modifier (1.0F),
 			EMP_Threshold (-1),
 			EMP_Modifier (1.0F),

@@ -236,38 +236,6 @@ DEFINE_HOOK(72F370, Sides_MixFileYuriFiles2, 7)
 DEFINE_HOOK(72FBC0, Sides_MixFileYuriFiles3, 5)
 	{ return SideExt::MixFileYuriFiles(R, 0x72FBCE, 0x72FBF5); }
 
-DEFINE_HOOK(6CD3C1, Sides_ParaDrop, 9)
-{
-	GET(SuperClass *, SW, EBX);
-	HouseClass * pHouse = SW->Owner;
-	GET(CellClass *, Cell, EBP);
-
-	// switch to Ares paradrop handling
-	if(SWTypeExt::ExtData* pData = SWTypeExt::ExtMap.Find(SW->Type)) {
-		if(pData->SendParadrop(pHouse, Cell)) {
-			return 0x6CD500;
-		}
-	}
-
-	return 0;
-}
-
-DEFINE_HOOK(6CD602, Sides_AmerParaDrop, 5)
-{
-	GET(SuperClass *, SW, EBX);
-	HouseClass * pHouse = SW->Owner;
-	GET(CellClass *, Cell, EDI);
-	
-	// switch to Ares paradrop handling
-	if(SWTypeExt::ExtData* pData = SWTypeExt::ExtMap.Find(SW->Type)) {
-		if(pData->SendParadrop(pHouse, Cell)) {
-			return 0x6CD500;
-		}
-	}
-
-	return 0;
-}
-
 /*
 //0x752F46
 XPORT Sides_LoadVoxFromINI(REGISTERS* R)

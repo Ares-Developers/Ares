@@ -5,6 +5,7 @@
 #include <BulletTypeClass.h>
 
 #include "../_Container.hpp"
+#include "../../Utilities/Template.h"
 #include "../../Ares.h"
 
 #include "../../Misc/Debug.h"

@@ -14,6 +14,8 @@
 
 #include "../../Ares.CRT.h"
 #include "../../Misc/Actions.h"
+//#include "../../Misc/SWTypes.h"
+#include "../../Utilities/Enums.h"
 #include "../../Utilities/Template.h"
 #include "../../Utilities/Constructs.h"
 
@@ -27,6 +29,7 @@
 #include "../_Container.hpp"
 
 class ParadropPlane;
+class NewSWType;
 
 class SWTypeExt
 {
@@ -41,15 +44,67 @@ public:
 		Valueable<int> SpyPlane_Count;
 		ValueableIdx<int, MissionClass> SpyPlane_Mission;
 
+		// Lightning Storm
+		Valueable<int> Weather_Duration;
+		Valueable<int> Weather_HitDelay;
+		Valueable<int> Weather_ScatterDelay;
+		Valueable<int> Weather_Separation;
+		Valueable<int> Weather_CloudHeight;
+		Valueable<int> Weather_RadarOutage;
+		Valueable<int> Weather_DebrisMin;
+		Valueable<int> Weather_DebrisMax;
+		Valueable<bool> Weather_PrintText;
+		Valueable<bool> Weather_IgnoreLightningRod;
+		Valueable<AnimTypeClass*> Weather_BoltExplosion;
+		TypeList<AnimTypeClass*> Weather_Clouds;
+		TypeList<AnimTypeClass*> Weather_Bolts;
+		TypeList<AnimTypeClass*> Weather_Debris;
+		TypeList<int> Weather_Sounds;
+
 		// Nuke
-		ValueableIdx<int, VocClass> Nuke_Siren;
+		Valueable<WeaponTypeClass*> Nuke_Payload;
+		Valueable<AnimTypeClass*> Nuke_PsiWarning;
+		Valueable<AnimTypeClass*> Nuke_TakeOff;
 
 		// Generic Paradrop
 		DynamicVectorClass<ParadropPlane*> *ParaDrop;
 		DynamicVectorClass<ParadropPlane*> ParaDropPlanes;
 
+		// Generic Protection
+		Customizable<int> Protect_Duration;
+		Customizable<int> Protect_PlayFadeSoundTime;
+		Customizable<int> Protect_PowerOutageDuration;
+		Valueable<bool> Protect_IsForceShield;
+
+		// Chronosphere
+		Valueable<AnimTypeClass *> Chronosphere_BlastSrc;
+		Valueable<AnimTypeClass *> Chronosphere_BlastDest;
+		Valueable<bool> Chronosphere_KillOrganic;
+		Valueable<bool> Chronosphere_KillTeleporters;
+		Valueable<bool> Chronosphere_AffectUndeployable;
+		Valueable<bool> Chronosphere_AffectBuildings;
+		Valueable<bool> Chronosphere_AffectUnwarpable;
+		Valueable<bool> Chronosphere_AffectIronCurtain;
+
+		// Genetic Mutator
+		Valueable<bool> Mutate_Explosion;
+		Valueable<bool> Mutate_IgnoreCyborg;
+		Valueable<bool> Mutate_IgnoreNotHuman;
+		Valueable<bool> Mutate_KillNatural;
+
+		// Psychic Dominator
+		Valueable<bool> Dominator_Capture;
+		Valueable<int> Dominator_FireAtPercentage;
+		Valueable<int> Dominator_FirstAnimHeight;
+		Valueable<int> Dominator_SecondAnimHeight;
+		Customizable<AnimTypeClass*> Dominator_FirstAnim;
+		Customizable<AnimTypeClass*> Dominator_SecondAnim;
+		Customizable<AnimTypeClass*> Dominator_ControlAnim;
+		Valueable<bool> Dominator_Ripple;
+		Valueable<bool> Dominator_CaptureMindControlled;
+		Valueable<bool> Dominator_CaptureImmuneToPsionics;
+		
 		// Sonar
-		Valueable<int> Sonar_Range;
 		Valueable<int> Sonar_Delay;
 
 		// Money
@@ -62,8 +117,10 @@ public:
 
 		// anim/sound
 		ValueableIdx<int, VocClass> SW_Sound;
+		ValueableIdx<int, VocClass> SW_ActivationSound;
 		Valueable<AnimTypeClass *> SW_Anim;
 		Valueable<int> SW_AnimHeight;
+		Valueable<SuperWeaponAffectedHouse::Value> SW_AnimVisibility;
 
 		Valueable<bool> SW_TypeCustom;
 		Valueable<bool> SW_AutoFire;
@@ -71,6 +128,38 @@ public:
 		Valueable<bool> SW_RadarEvent;
 		Valueable<MouseCursor> SW_Cursor;
 		Valueable<MouseCursor> SW_NoCursor;
+		char SW_PostDependent[0x18];
+		Valueable<SuperWeaponAITargetingMode::Value> SW_AITargetingType;
+
+		Valueable<float> SW_WidthOrRange;
+		Valueable<int> SW_Height;
+		Valueable<SuperWeaponAffectedHouse::Value> SW_AffectsHouse;
+		Valueable<SuperWeaponTarget::Value> SW_AffectsTarget;
+		Valueable<SuperWeaponTarget::Value> SW_RequiresTarget;
+		Customizable<WarheadTypeClass *> SW_Warhead;
+		Valueable<int> SW_Damage;
+		Valueable<int> SW_Deferment;
+
+		// Lighting
+		Valueable<bool> Lighting_Enabled;
+		Customizable<int> Lighting_Ambient;
+		Customizable<int> Lighting_Green;
+		Customizable<int> Lighting_Blue;
+		Customizable<int> Lighting_Red;
+
+		// Messages
+		char Message_Launch[0x20];
+		char Message_Activate[0x20];
+		char Message_Abort[0x20];
+		Valueable<int> Message_ColorScheme;
+		Valueable<bool> Message_FirerColor;
+
+		// Texts
+		char Text_Preparing[0x20];
+		char Text_Hold[0x20];
+		char Text_Ready[0x20];
+		char Text_Charging[0x20];
+		char Text_On[0x20];
 
 		CustomPalette CameoPal;
 
@@ -78,36 +167,54 @@ public:
 		DynamicVectorClass<TechnoTypeClass *> SW_Deliverables;
 		Valueable<bool> SW_DeliverBuildups;
 
-		// SW: Generic Warhead
-		Valueable<WarheadTypeClass *> GWarhead_WH;
-		Valueable<int> GWarhead_Damage;
-
 		char SidebarPCX[0x20];
+
+		int HandledByNewSWType;
 
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			SpyPlane_TypeIndex (0),
 			SpyPlane_Count (1),
 			SpyPlane_Mission (mission_AttackAgain),
-			Nuke_Siren (-1),
-			Sonar_Range (0),
+			Weather_CloudHeight (-1),
+			Nuke_PsiWarning (NULL),
 			Sonar_Delay (0),
+			SW_ActivationSound (-1),
 			Money_Amount (0),
 			EVA_Ready (-1),
 			EVA_Activated (-1),
 			EVA_Detected (-1),
+			Message_ColorScheme (-1),
+			Message_FirerColor (false),
+			Lighting_Enabled (true),
 			SW_Sound (-1),
 			SW_Anim (NULL),
 			SW_AnimHeight (0),
+			SW_AnimVisibility (0),
 			SW_TypeCustom (false),
 			SW_AutoFire (false),
+			SW_AffectsHouse (SuperWeaponAffectedHouse::All),
+			SW_AffectsTarget (SuperWeaponTarget::All),
+			SW_RequiresTarget (SuperWeaponTarget::None),
+			SW_AITargetingType (SuperWeaponAITargetingMode::None),
 			SW_FireToShroud (true),
 			SW_RadarEvent (false),
+			SW_WidthOrRange (-1),
+			SW_Height (-1),
+			HandledByNewSWType (-1),
 			CameoPal(),
 			SW_DeliverBuildups (false),
-			GWarhead_WH(NULL),
-			GWarhead_Damage(0)
+			SW_Damage(0)
 			{
 				*SidebarPCX = 0;
+				*SW_PostDependent = 0;
+				*Message_Launch = 0;
+				*Message_Activate = 0;
+				*Message_Abort = 0;
+				*Text_Preparing = 0;
+				*Text_Ready = 0;
+				*Text_Hold = 0;
+				*Text_Charging = 0;
+				*Text_On = 0;
 			};
 
 		virtual ~ExtData() { };
@@ -118,17 +225,33 @@ public:
 		virtual void InitializeConstants(TT *pThis);
 		virtual void InitializeRuled(TT *pThis);
 
+		bool ChangeLighting();
+		bool IsAnimVisible(HouseClass* pFirer);
+		bool CanFireAt(CellStruct *pCoords);
+		bool IsHouseAffected(HouseClass* pFirer, HouseClass* pHouse);
+		bool IsTechnoAffected(TechnoClass* pTechno);
+		void PrintMessage(char* Message, HouseClass* pFirer);
+		NewSWType* GetNewSWType();
+
 		virtual void InvalidatePointer(void *ptr) {
 		}
 
-		bool SendParadrop(HouseClass*, CellClass*);
+	private:
+		static SuperWeaponAffectedHouse::Value GetRelation(HouseClass* pFirer, HouseClass* pHouse);
+		bool IsCellEligible(CellClass* pCell, SuperWeaponTarget::Value allowed);
+		bool IsTechnoEligible(TechnoClass* pTechno, SuperWeaponTarget::Value allowed);
 	};
 
 	static Container<SWTypeExt> ExtMap;
 
 	static SuperWeaponTypeClass *CurrentSWType;
 
+	bool static Launch(SuperClass* pThis, NewSWType* pData, CellStruct* pCoords, byte IsPlayer);
 	bool static __stdcall SuperClass_Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer);
+	void static ClearChronoAnim(SuperClass *pThis);
+	void static CreateChronoAnim(SuperClass *pThis, CoordStruct *pCoords, AnimTypeClass *pAnimType);
+	bool static ChangeLighting(SuperClass *pThis);
+	bool static ChangeLighting(SuperWeaponTypeClass *pThis);
 };
 
 class ParadropPlane {

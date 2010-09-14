@@ -38,6 +38,8 @@ class HouseExt
 			bool FirewallActive;
 			int FirewallRecalc;
 
+			int SWLastIndex;
+
 			BuildingClass *Factory_BuildingType;
 			BuildingClass *Factory_InfantryType;
 			BuildingClass *Factory_VehicleType;
@@ -55,6 +57,7 @@ class HouseExt
 			Factory_VehicleType(NULL),
 			Factory_NavyType(NULL),
 			Factory_AircraftType(NULL),
+			SWLastIndex(0),
 			StolenTech(0ull)
 		{
 		};

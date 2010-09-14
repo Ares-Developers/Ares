@@ -250,6 +250,9 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 
 	this->IC_Modifier = (float)pINI->ReadDouble(section, "IronCurtain.Modifier", this->IC_Modifier);
 
+	this->Chronoshift_Allow.Read(&exINI, section, "Chronoshift.Allow");
+	this->Chronoshift_IsVehicle.Read(&exINI, section, "Chronoshift.IsVehicle");
+
 	if(CCINIClass::INI_Art->ReadString(pThis->ImageFile, "CameoPCX", "", Ares::readBuffer, Ares::readLength)) {
 		AresCRT::strCopy(this->CameoPCX, Ares::readBuffer, 0x20);
 		PCX::Instance->LoadFile(this->CameoPCX);

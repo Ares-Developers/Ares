@@ -1,6 +1,11 @@
 #include "UnitDelivery.h"
 #include "../../Ext/Techno/Body.h"
 
+void SW_UnitDelivery::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)
+{
+	pData->SW_AITargetingType = SuperWeaponAITargetingMode::ParaDrop;
+}
+
 void SW_UnitDelivery::LoadFromINI(
 	SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI)
 {
@@ -10,7 +15,7 @@ void SW_UnitDelivery::LoadFromINI(
 		return;
 	}
 
-	if(pINI->ReadString(section, "SW.Deliver", "", Ares::readBuffer, Ares::readLength)) {
+	if(pINI->ReadString(section, "Deliver.Types", "", Ares::readBuffer, Ares::readLength)) {
 		pData->SW_Deliverables.Clear();
 		for(char *cur = strtok(Ares::readBuffer, ","); cur && *cur; cur = strtok(NULL, ",")) {
 			TechnoTypeClass * Type = InfantryTypeClass::Find(cur);
@@ -30,7 +35,7 @@ void SW_UnitDelivery::LoadFromINI(
 	}
 
 	INI_EX exINI(pINI);
-	pData->SW_DeliverBuildups.Read(&exINI, section, "SW.DeliverBuildups");
+	pData->SW_DeliverBuildups.Read(&exINI, section, "Deliver.Buildups");
 }
 
 bool SW_UnitDelivery::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)

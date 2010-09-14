@@ -17,9 +17,9 @@ class SW_SonarPulse : NewSWType
 		virtual const char * GetTypeString()
 			{ return "SonarPulse"; }
 
+	virtual void Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW);
 	virtual void LoadFromINI(
 		SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI);
-	virtual bool CanFireAt(CellStruct *pCoords);
 	virtual bool Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer);
 };
 #endif

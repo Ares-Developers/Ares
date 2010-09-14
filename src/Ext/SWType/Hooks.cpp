@@ -1,13 +1,25 @@
 #include "Body.h"
 #include "../../Misc/SWTypes.h"
+#include "../House/Body.h"
+
+#include <StringTable.h>
 
 DEFINE_HOOK(6CEF84, SuperWeaponTypeClass_GetCursorOverObject, 7)
 {
 	GET(SuperWeaponTypeClass*, pThis, ECX);
 
 	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pThis);
+	int type = pThis->Type;
 
-	if(pThis->Action == SW_YES_CURSOR) {
+	bool customCursor = (pThis->Action == SW_YES_CURSOR);
+	if(!customCursor) {
+		if(pData->HandledByNewSWType > -1) {
+			type = pData->HandledByNewSWType;
+			customCursor = true;
+		}
+	}
+
+	if(customCursor) {
 		GET_STACK(CellStruct *, pMapCoords, 0x0C);
 
 		int Action = SW_YES_CURSOR;
@@ -21,7 +33,7 @@ DEFINE_HOOK(6CEF84, SuperWeaponTypeClass_GetCursorOverObject, 7)
 			}
 		}
 
-		if(pThis->Type >= FIRST_SW_TYPE && !NewSWType::GetNthItem(pThis->Type)->CanFireAt(pMapCoords)) {
+		if(type >= FIRST_SW_TYPE && !NewSWType::GetNthItem(type)->CanFireAt(pData, pMapCoords)) {
 			Action = SW_NO_CURSOR;
 		}
 
@@ -53,8 +65,17 @@ DEFINE_HOOK(653B3A, RadarClass_GetMouseAction_CustomSWAction, 5)
 
 		SuperWeaponTypeClass *pThis = SuperWeaponTypeClass::Array->GetItem(idxSWType);
 		SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pThis);
+		int type = pThis->Type;
 
-		if(pThis->Action == SW_YES_CURSOR) {
+		bool customCursor = (pThis->Action == SW_YES_CURSOR);
+		if(!customCursor) {
+			if(pData->HandledByNewSWType > -1) {
+				type = pData->HandledByNewSWType;
+				customCursor = true;
+			}
+		}
+
+		if(customCursor) {
 			GET_STACK(CellStruct, pMapCoords, STACK_OFFS(0x54, 0x3C));
 
 			int Action = SW_YES_CURSOR;
@@ -68,7 +89,7 @@ DEFINE_HOOK(653B3A, RadarClass_GetMouseAction_CustomSWAction, 5)
 				}
 			}
 
-			if(pThis->Type >= FIRST_SW_TYPE && !NewSWType::GetNthItem(pThis->Type)->CanFireAt(&pMapCoords)) {
+			if(type >= FIRST_SW_TYPE && !NewSWType::GetNthItem(type)->CanFireAt(pData, &pMapCoords)) {
 				Action = SW_NO_CURSOR;
 			}
 
@@ -104,39 +125,6 @@ XPORT_FUNC(SidebarClass_ProcessCameoClick)
 }
 */
 
-// decouple SpyPlane from SPYP
-DEFINE_HOOK(6CD67A, SuperClass_Launch_SpyPlane_FindType, 0)
-{
-	GET(SuperClass *, Super, EBX);
-	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(Super->Type);
-
-	R->EAX<int>(pData->SpyPlane_TypeIndex);
-	return 0x6CD684;
-}
-
-// decouple SpyPlane from allied paradrop counts
-DEFINE_HOOK(6CD6A6, SuperClass_Launch_SpyPlane_Fire, 6)
-{
-	GET(SuperClass *, Super, EBX);
-	GET(CellClass *,TargetCell, EDI);
-	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(Super->Type);
-
-	Super->Owner->SendSpyPlanes(
-		pData->SpyPlane_TypeIndex, pData->SpyPlane_Count, pData->SpyPlane_Mission, TargetCell, NULL);
-
-	return 0x6CD6E9;
-}
-
-// decouple nuke siren from DigSound
-DEFINE_HOOK(6CDDE3, SuperClass_Launch_Nuke_Siren, 6)
-{
-	GET(SuperClass *, Super, EBX);
-	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(Super->Type);
-
-	R->ECX(pData->Nuke_Siren);
-	return 0x6CDDE9;
-}
-
 // 6CEE96, 5
 DEFINE_HOOK(6CEE96, SuperWeaponTypeClass_GetTypeIndex, 5)
 {
@@ -155,7 +143,19 @@ DEFINE_HOOK(4AC20C, DisplayClass_LMBUp, 7)
 {
 	int Action = R->Stack32(0x9C);
 	if(Action < SW_NO_CURSOR) {
-		SuperWeaponTypeClass * pSW = SuperWeaponTypeClass::FindFirstOfAction(Action);
+		// get the actual firing SW type instead of just the first type of the
+		// requested action. this allows clones to work. we have to check that
+		// the action matches the action of the found type as the no-cursor
+		// represents a different action and we don't want to start a force
+		// shield when the UI says no.
+		SuperWeaponTypeClass * pSW = NULL;
+		if(SuperWeaponTypeClass::Array->ValidIndex(Unsorted::CurrentSWType)) {
+			pSW = SuperWeaponTypeClass::Array->GetItem(Unsorted::CurrentSWType);
+			if(pSW && (pSW->Action != Action)) {
+				pSW = NULL;
+			}
+		}
+
 		R->EAX(pSW);
 		return pSW ? 0x4AC21C : 0x4AC294;
 	}
@@ -282,8 +282,6 @@ DEFINE_HOOK(50B319, HouseClass_UpdateSWs, 6)
 	return 0;
 }
 
-// EVA_Activated is complex, will do later
-
 // AI SW targeting submarines
 DEFINE_HOOK(50CFAA, HouseClass_PickOffensiveSWTarget, 0)
 {
@@ -292,12 +290,33 @@ DEFINE_HOOK(50CFAA, HouseClass_PickOffensiveSWTarget, 0)
 	return 0x50CFC9;
 }
 
+// psydom and lightning storm premature exit route
+DEFINE_HOOK(6CBA9E, SuperClass_ClickFire_Abort, 7)
+{
+	GET(SuperClass *, pSuper, ESI);
+	SuperWeaponTypeClass* pType = pSuper->Type;
+	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pType);
+
+	GET_STACK(bool, IsPlayer, 0x20);
+
+	if(NewSWType* pNSW = pData->GetNewSWType()) {
+		if(pNSW->AbortFire(pSuper, IsPlayer)) {
+			return 0x6CBABF;
+		}
+	}
+
+	return 0;
+}
+
 // ARGH!
 DEFINE_HOOK(6CC390, SuperClass_Launch, 6)
 {
 	GET(SuperClass *, pSuper, ECX);
 	GET_STACK(CellStruct*, pCoords, 0x4);
 	GET_STACK(byte, IsPlayer, 0x8);
+
+	Debug::Log("[LAUNCH] %s\n", pSuper->Type->ID);
+
 	bool handled = SWTypeExt::SuperClass_Launch(pSuper, pCoords, IsPlayer);
 
 	return handled ? 0x6CDE40 : 0;
@@ -345,4 +364,199 @@ DEFINE_HOOK(4576BA, BuildingClass_SW2Available, 6)
 		? 0x4576D6
 		: 0x4576DB
 	;
+}
+
+DEFINE_HOOK(4FAE72, HouseClass_SWFire_PreDependent, 6)
+{
+	GET(HouseClass*, pThis, EBX);
+
+	// find the predependent SW. decouple this from the chronosphere.
+	// don't use a fixed SW type but the very one acutually fired last.
+	SuperClass* pSource = NULL;
+	if(HouseExt::ExtData *pExt = HouseExt::ExtMap.Find(pThis)) {
+		if(pThis->Supers.ValidIndex(pExt->SWLastIndex)) {
+			pSource = pThis->Supers.GetItem(pExt->SWLastIndex);
+		}
+	}
+
+	R->ESI(pSource);
+
+	return 0x4FAE7B;
+}
+
+DEFINE_HOOK(6CC2B0, SuperClass_NameReadiness, 5) {
+	GET(SuperClass*, pThis, ECX);
+	SuperWeaponTypeClass *pSW = pThis->Type;
+	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSW);
+
+	// complete rewrite of this method.
+
+	char* key = pData->Text_Preparing;
+	if(pThis->IsOnHold) {
+		// on hold
+		key = pData->Text_Hold;
+	} else {
+		if(pThis->Type->UseChargeDrain) {
+			switch(pThis->ChargeDrainState) {
+			case 0:
+				// still charging
+				key = pData->Text_Charging;
+				break;
+			case 1:
+				// ready
+				key = pData->Text_Ready;
+				break;
+			case 2:
+				// currently on
+				key = pData->Text_On;
+				break;
+			}
+
+		} else {
+			// ready
+			if(pThis->IsCharged) {
+				key = pData->Text_Ready;
+			}
+		}
+	}
+
+	const wchar_t* text = NULL;
+	if(key && *key) {
+		text = StringTable::LoadStringA(key);
+		if(text && !*text) {
+			text = NULL;
+		}
+	}
+	R->EAX(text);
+	return 0x6CC352;
+}
+
+DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
+	GET(HouseClass*, pThis, ECX);
+
+	// this method iterates over every available SW and checks
+	// whether it should be fired automatically. the original
+	// method would abort if this house is human-controlled.
+	bool AIFire = !pThis->IsHumanoid();
+
+	for(int i=0; i<pThis->Supers.Count; ++i) {
+		if(SuperClass* pSuper = pThis->Supers.GetItem(i)) {
+			SWTypeExt::ExtData* pExt = SWTypeExt::ExtMap.Find(pSuper->Type);
+
+			// fire if this is AI owned or the SW has auto fire set.
+			if(AIFire || pExt->SW_AutoFire.Get()) {
+
+				if(pSuper->IsCharged) {
+					CellStruct Cell = HouseClass::DefaultIonCannonCoords;
+					auto LaunchSW = [&](CellStruct *Cell) {
+						int idxSW = pThis->Supers.FindItemIndex(&pSuper);
+						pThis->Fire_SW(idxSW, Cell);
+					};
+
+					// all the different AI targeting modes
+					switch(pExt->SW_AITargetingType.Get()) {
+					case SuperWeaponAITargetingMode::Nuke:
+						if(pThis->EnemyHouseIndex != -1) {
+							if(pThis->PreferredTargetCell == HouseClass::DefaultIonCannonCoords) {
+								Cell = *(pThis->PreferredTargetWaypoint == 1
+									? pThis->PickIonCannonTarget(Cell)
+									: pThis->sub_50D170(&Cell, pThis->PreferredTargetWaypoint));
+							} else {
+								Cell = pThis->PreferredTargetCell;
+							}
+
+							if(Cell != HouseClass::DefaultIonCannonCoords) {
+								LaunchSW(&Cell);
+							}
+						}
+						break;
+
+					case SuperWeaponAITargetingMode::LightningStorm:
+						pThis->Fire_LightningStorm(pSuper);
+						break;
+
+					case SuperWeaponAITargetingMode::PsychicDominator:
+						pThis->Fire_PsyDom(pSuper);
+						break;
+
+					case SuperWeaponAITargetingMode::ParaDrop:
+						pThis->Fire_ParaDrop(pSuper);
+						break;
+
+					case SuperWeaponAITargetingMode::GeneticMutator:
+						pThis->Fire_GenMutator(pSuper);
+						break;
+
+					case SuperWeaponAITargetingMode::ForceShield:
+						if(pThis->PreferredDefensiveCell == HouseClass::DefaultIonCannonCoords) {
+							if(pThis->PreferredDefensiveCell2 == HouseClass::DefaultIonCannonCoords
+								&& RulesClass::Instance->AISuperDefenseFrames + pThis->PreferredDefensiveCellStartTime > Unsorted::CurrentFrame) {
+								Cell = pThis->PreferredDefensiveCell2;
+							}
+						} else {
+							Cell = pThis->PreferredDefensiveCell;
+						}
+
+						if(Cell != HouseClass::DefaultIonCannonCoords) {
+							LaunchSW(&Cell);
+							pThis->PreferredDefensiveCell = HouseClass::DefaultIonCannonCoords;
+						}
+						break;
+
+					case SuperWeaponAITargetingMode::Offensive:
+						pThis->PickIonCannonTarget(Cell);
+						LaunchSW(&Cell);
+
+					case SuperWeaponAITargetingMode::NoTarget:
+						LaunchSW(&Cell);
+
+					case SuperWeaponAITargetingMode::Stealth:
+						// find one of the cloaked enemy technos, posing the largest threat.
+						DynamicVectorClass<TechnoClass*> list;
+						int currentValue = 0;
+						for(int j=0; j<TechnoClass::Array->Count; ++j) {
+							if(TechnoClass* pTechno = TechnoClass::Array->GetItem(j)) {
+								if(pTechno->CloakState) {
+									if(pExt->IsTechnoAffected(pTechno)) {
+										int thisValue = pTechno->ThreatPosed;
+										if(currentValue > thisValue) {
+											list.Clear();
+											currentValue = thisValue;
+										}
+										if(currentValue == thisValue) {
+											list.AddItem(pTechno);
+										}
+									}
+								}
+							}
+						}
+						if(list.Count) {
+							int rnd = ScenarioClass::Instance->Random.RandomRanged(0, list.Count - 1);
+							Cell = list.GetItem(rnd)->GetCell()->MapCoords;
+							LaunchSW(&Cell);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return 0x509AE7;
+}
+
+DEFINE_HOOK(4F9004, HouseClass_Update_TrySWFire, 7) {
+	GET(HouseClass*, pThis, ESI);
+	bool isHuman = R->AL() != 0;
+
+	if(!isHuman) {
+		if(!pThis->Type->MultiplayPassive) {
+			return 0x4F9015;
+		}
+
+	} else {
+		// update the SWs for human players to support auto firing.
+		pThis->AI_TryFireSW();
+	}
+
+	return 0x4F9038;
 }

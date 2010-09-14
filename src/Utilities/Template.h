@@ -8,6 +8,7 @@
 #include <TechnoClass.h>
 #include <Helpers/Type.h>
 #include "INIParser.h"
+#include "Enums.h"
 
 /**
  * More fancy templates!

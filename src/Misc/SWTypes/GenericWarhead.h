@@ -17,9 +17,7 @@ class SW_GenericWarhead : NewSWType
 		virtual const char * GetTypeString()
 			{ return "GenericWarhead"; }
 
-	virtual void LoadFromINI(
-		SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI);
-	//virtual bool CanFireAt(CellStruct *pCoords); // we'll be using NewSWType's
+	virtual void Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW);
 	virtual bool Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer);
 };
 #endif
