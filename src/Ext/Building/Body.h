@@ -59,6 +59,8 @@ public:
 		void UpdateFirewall();
 		void ImmolateVictims();
 		void ImmolateVictim(ObjectClass * Victim);
+
+		bool ReverseEngineer(TechnoClass * Victim); //!< Returns true if Victim wasn't buildable and now should be
 	};
 
 	static Container<BuildingExt> ExtMap;

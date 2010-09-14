@@ -260,6 +260,8 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 		PCX::Instance->LoadFile(this->AltCameoPCX);
 	}
 
+	this->CanBeReversed.Read(&exINI, section, "CanBeReversed");
+
 	// quick fix - remove after the rest of weapon selector code is done
 	return;
 }

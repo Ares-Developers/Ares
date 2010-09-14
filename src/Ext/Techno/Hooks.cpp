@@ -1,5 +1,6 @@
 #include "Body.h"
 #include "../TechnoType/Body.h"
+#include "../Building/Body.h"
 #include "../BuildingType/Body.h"
 #include "../../Misc/Debug.h"
 
@@ -535,7 +536,7 @@ DEFINE_HOOK(7090D0, TechnoClass_SelectFiringVoice_IFVRepair, 5)
 }
 
 // Support per unit modification of Iron Curtain effect duration
-DEFINE_HOOK(70E2D2, TechnoClass_IronCurtain_Modifiy, 6) {
+DEFINE_HOOK(70E2D2, TechnoClass_IronCurtain_Modify, 6) {
 	GET(TechnoClass*, pThis, ECX);
 	GET(int, duration, EDX);
 	GET_STACK(bool, force, 0x1C);
@@ -550,6 +551,41 @@ DEFINE_HOOK(70E2D2, TechnoClass_IronCurtain_Modifiy, 6) {
 		pThis->IronTintStage = 0;
 	
 		return 0x70E2DB;
+	}
+
+	return 0;
+}
+
+
+DEFINE_HOOK(5198AD, InfantryClass_UpdatePosition_EnteredGrinder, 6)
+{
+	GET(InfantryClass *, Infantry, ESI);
+	GET(BuildingClass *, Grinder, EBX);
+
+	BuildingExt::ExtData *pData = BuildingExt::ExtMap.Find(Grinder);
+
+	if(pData->ReverseEngineer(Infantry)) {
+		if(Infantry->Owner->ControlledByPlayer()) {
+			VoxClass::Play("EVA_ReverseEngineeredInfantry");
+			VoxClass::Play("EVA_NewTechnologyAcquired");
+		}
+	}
+
+	return 0;
+}
+
+DEFINE_HOOK(73A1BC, UnitClass_UpdatePosition_EnteredGrinder, 7)
+{
+	GET(UnitClass *, Vehicle, EBP);
+	GET(BuildingClass *, Grinder, EBX);
+
+	BuildingExt::ExtData *pData = BuildingExt::ExtMap.Find(Grinder);
+
+	if(pData->ReverseEngineer(Vehicle)) {
+		if(Vehicle->Owner->ControlledByPlayer()) {
+			VoxClass::Play("EVA_ReverseEngineeredVehicle");
+			VoxClass::Play("EVA_NewTechnologyAcquired");
+		}
 	}
 
 	return 0;

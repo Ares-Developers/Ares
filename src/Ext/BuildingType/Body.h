@@ -70,6 +70,7 @@ public:
 		Valueable<bool> ResetRadar;
 		Valueable<bool> RevealRadar;
 		Valueable<bool> GainVeterancy;
+		Valueable<bool> UnReverseEngineer;
 		Valueable<int> StolenTechIndex;
 		Valueable<int> StolenMoneyAmount;
 		Valueable<int> StolenMoneyPercentage;
@@ -77,6 +78,8 @@ public:
 
 		// #218 Specific Occupiers
 		ValueableVector<InfantryTypeClass *> AllowedOccupiers;
+
+		Valueable<bool> ReverseEngineersVictims;
 
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			Solid_Height (0),
@@ -101,11 +104,14 @@ public:
 			ResetRadar (false),
 			RevealRadar (false),
 			GainVeterancy (false),
+			UnReverseEngineer (false),
 			StolenTechIndex (-1),
 			StolenMoneyAmount (0),
 			StolenMoneyPercentage (0),
 			PowerOutageDuration (0),
-			AllowedOccupiers ()
+			AllowedOccupiers (),
+
+			ReverseEngineersVictims (false)
 			{ };
 
 		virtual ~ExtData() {

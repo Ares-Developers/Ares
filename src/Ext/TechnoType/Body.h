@@ -92,6 +92,9 @@ public:
 		char CameoPCX[0x20];
 		char AltCameoPCX[0x20];
 
+		DynamicVectorClass<bool> ReversedByHouses;
+		Valueable<bool> CanBeReversed;
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			Survivors_PilotChance (NULL),
 			Survivors_PassengerChance (NULL),
@@ -126,10 +129,13 @@ public:
 			CanDrive (false),
 			AlternateTheaterArt (false),
 			VoiceRepair (-1),
-			WaterImage (NULL)
+			WaterImage (NULL),
+			CanBeReversed (true)
 			{
 				this->Insignia.SetAll(NULL);
 				*this->CameoPCX = *this->AltCameoPCX = 0;
+				this->ReversedByHouses.SetCapacity(32, NULL);
+				this->ReversedByHouses.CapacityIncrement = 32;
 			};
 
 		virtual ~ExtData() {};
