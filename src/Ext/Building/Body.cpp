@@ -513,11 +513,14 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 	if(pTypeExt->UnReverseEngineer.Get()) {
 		int idx = HouseClass::Array->FindItemIndex(&Owner);
 
+		Debug::Log("Undoing all Reverse Engineering achieved by house %ls (#%d)\n", Owner->UIName, idx);
+
 		if(idx != -1) {
 			for(int i = 0; i < TechnoTypeClass::Array->Count; ++i) {
 				TechnoTypeClass * Type = TechnoTypeClass::Array->GetItem(i);
 				TechnoTypeExt::ExtData * TypeData = TechnoTypeExt::ExtMap.Find(Type);
 				if(TypeData->ReversedByHouses.ValidIndex(idx)) {
+					Debug::Log("Zeroing out RevEng of %s\n", Type->ID);
 					TypeData->ReversedByHouses[idx] = false;
 				}
 			}
