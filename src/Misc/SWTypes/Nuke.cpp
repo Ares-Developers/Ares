@@ -25,6 +25,7 @@ void SW_NuclearMissile::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeCla
 	pData->Nuke_Payload = WeaponTypeClass::FindOrAllocate("NukePayload");
 	pData->Nuke_TakeOff = RulesClass::Instance->NukeTakeOff;
 	pData->Nuke_PsiWarning = AnimTypeClass::Find("PSIWARN");
+	pData->Nuke_SiloLaunch = true;
 
 	pData->EVA_Detected = VoxClass::FindIndex("EVA_NuclearSiloDetected");
 	pData->EVA_Ready = VoxClass::FindIndex("EVA_NuclearMissileReady");
@@ -53,6 +54,7 @@ void SW_NuclearMissile::LoadFromINI(
 	pData->Nuke_Payload.Parse(&exINI, section, "Nuke.Payload", true);
 	pData->Nuke_TakeOff.Parse(&exINI, section, "Nuke.TakeOff");
 	pData->Nuke_PsiWarning.Parse(&exINI, section, "Nuke.PsiWarning");
+	pData->Nuke_PsiWarning.Parse(&exINI, section, "Nuke.SiloLaunch");
 }
 
 bool SW_NuclearMissile::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
@@ -70,7 +72,7 @@ bool SW_NuclearMissile::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPl
 			// collected from crates. second, the normal way firing from a silo.
 			BuildingClass* pSilo = NULL;
 				
-			if(!pThis->Granted || !pThis->Quantity) {
+			if((!pThis->Granted || !pThis->Quantity) && pData->Nuke_SiloLaunch.Get()) {
 				
 				// find a building type that can fire this SWType and verify the
 				// player has it. don't give up, just try the other types as well.

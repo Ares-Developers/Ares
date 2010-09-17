@@ -27,6 +27,7 @@ void SW_LightningStorm::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeCla
 	pData->Weather_DebrisMin = 2;
 	pData->Weather_DebrisMax = 4;
 	pData->Weather_IgnoreLightningRod = false;
+	pData->Weather_ScatterCount = 1;
 
 	pData->Weather_BoltExplosion = RulesClass::Instance->WeatherConBoltExplosion;
 	for(int i=0; i<RulesClass::Instance->WeatherConBolts.Count; ++i) {
@@ -81,6 +82,7 @@ void SW_LightningStorm::LoadFromINI(
 	pData->Weather_RadarOutage.Read(&exINI, section, "Lightning.RadarOutage");
 	pData->Weather_HitDelay.Read(&exINI, section, "Lightning.HitDelay");
 	pData->Weather_ScatterDelay.Read(&exINI, section, "Lightning.ScatterDelay");
+	pData->Weather_ScatterCount.Read(&exINI, section, "Lightning.ScatterCount");
 	pData->Weather_Separation.Read(&exINI, section, "Lightning.Separation");
 	pData->Weather_PrintText.Read(&exINI, section, "Lightning.PrintText");
 	pData->Weather_IgnoreLightningRod.Read(&exINI, section, "Lightning.IgnoreLightningRod");

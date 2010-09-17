@@ -250,9 +250,82 @@ DEFINE_HOOK(539EB0, LightningStorm_Start, 5) {
 	return 0;
 }
 
-DEFINE_HOOK(53A8C6, LightningStorm_Update, 5) 
-DEFINE_HOOK_AGAIN(53A8FF, LightningStorm_Update, 5) {
+// this is a complete rewrite of LightningStorm::Update.
+DEFINE_HOOK(53A6C0, LightningStorm_Update, 5) {
 	if(SuperClass* pSuper = SW_LightningStorm::CurrentLightningStorm) {
+		
+		// switch lightning (most likely for nuke)
+		int* tmp1 = (int*)0x827FC8;
+		int* tmp2 = (int*)0x827FCC;
+		if(*tmp2 != -1) {
+			int a = *tmp1 + *tmp2;
+			if(a < Unsorted::CurrentFrame) {
+				int status = LightningStorm::Status();
+				if(status == 1) {
+					LightningStorm::Status(2);
+					*tmp1 = Unsorted::CurrentFrame;
+					*tmp2 = 15;
+					ScenarioClass::Instance->UpdateLighting();
+					MapClass::Instance->RedrawSidebar(1);
+				} else if(status == 2) {
+					LightningStorm::Status(0);
+				}
+			}
+		} 
+
+		// update other screen effects
+		PsyDom::Update();
+		ChronoScreenEffect::Update();
+
+		// remove all clouds from list that did strike already
+		DynamicVectorClass<AnimClass*>* pAnims0 = (DynamicVectorClass<AnimClass*>*)(0xA9FA18);
+		if(pAnims0->Count > 0) {
+			for(int i=pAnims0->Count-1; i>=0; --i) {
+				if(AnimClass *pAnim = pAnims0->GetItem(i)) {
+					if(pAnim->CurrentFrame >= pAnim->Type->GetImage()->Frames / 2) {
+						pAnims0->RemoveItem(i);
+					}
+				}
+			}
+		}
+
+		// find the clouds that should strike right now
+		DynamicVectorClass<AnimClass*>* pAnims1 = (DynamicVectorClass<AnimClass*>*)(0xA9FA60);
+		for(int i=pAnims1->Count-1; i>=0; --i) {
+			if(AnimClass *pAnim = pAnims1->GetItem(i)) {
+				if(pAnim->CurrentFrame >= pAnim->Type->GetImage()->Frames / 2) {
+					CoordStruct crdStrike;
+					pAnim->GetCoords(&crdStrike);
+					LightningStorm::Strike2(crdStrike);
+					pAnims1->RemoveItem(i);
+				}
+			}
+		}
+
+		DynamicVectorClass<AnimClass*>* pAnims2 = (DynamicVectorClass<AnimClass*>*)(0xA9F9D0);
+		if(pAnims2->Count <= 0) {
+			// end the lightning storm
+			if(LightningStorm::TimeToEnd()) {
+				if(LightningStorm::Active()) {
+					CellStruct empty = {0, 0};
+					LightningStorm::Active(false);
+					LightningStorm::Owner(NULL);
+					LightningStorm::Coords(empty);
+					SW_LightningStorm::CurrentLightningStorm = NULL;
+					ScenarioClass::Instance->UpdateLighting();
+				}
+				LightningStorm::TimeToEnd(false);
+			}
+		} else {
+			for(int i=pAnims2->Count-1; i>=0; --i) {
+				if(AnimClass *pAnim = pAnims2->GetItem(i)) {
+					if(pAnim->CurrentFrame >= pAnim->Type->GetImage()->Frames - 1) {
+						pAnims2->RemoveItem(i);
+					}
+				}
+			}
+		}
+
 		CellStruct LSCell = LightningStorm::Coords();
 
 		SuperWeaponTypeClass *pType = pSuper->Type;
@@ -304,60 +377,64 @@ DEFINE_HOOK_AGAIN(53A8FF, LightningStorm_Update, 5) {
 					// generate a new place to strike
 					CellStruct cell;
 					if(height > 0 && width > 0 && MapClass::Instance->CellExists(&LSCell)) {
-						bool found = true;
-						for(int i=0; i<5; ++i) {
-							cell = LSCell;
-							cell.X += (short)ScenarioClass::Instance->Random.RandomRanged(-width / 2, width / 2);
-							cell.Y += (short)ScenarioClass::Instance->Random.RandomRanged(-height / 2, height / 2);
-
-							// don't even try if this is invalid
-							if(MapClass::Instance->CellExists(&cell)) {
-								// out of range?
-								if(!isRectangle) {
-									if(cell.DistanceFrom(LSCell) > pData->SW_WidthOrRange) {
-										continue;
-									}
-								}
-
-								// if we respect lightning rods, start looking for one.
-								if(!pData->Weather_IgnoreLightningRod.Get()) {
-									// if, by coincidence, this is a rod, hit it.
-									CellClass *pImpactCell = MapClass::Instance->GetCellAt(&cell);
-									if(BuildingClass *pBld = pImpactCell->GetBuilding()) {
-										if(pBld->Type->LightningRod) {
-											break;
+						for(int k=pData->Weather_ScatterCount.Get(); k>0; --k) {
+							bool found = true;
+							for(int i=0; i<5; ++i) {
+								cell = LSCell;
+								cell.X += (short)ScenarioClass::Instance->Random.RandomRanged(-width / 2, width / 2);
+								cell.Y += (short)ScenarioClass::Instance->Random.RandomRanged(-height / 2, height / 2);
+	
+								// don't even try if this is invalid
+								if(MapClass::Instance->CellExists(&cell)) {
+									// out of range?
+									if(!isRectangle) {
+										if(cell.DistanceFrom(LSCell) > pData->SW_WidthOrRange.Get()) {
+											continue;
 										}
 									}
 
-									// if a lightning rod is next to this, hit that instead. naive.
-									CoordStruct nullCoords;
-									if(ObjectClass* pObj = pImpactCell->FindObjectNearestTo(&nullCoords, false, pImpactCell->GetBuilding())) {
-										if(BuildingClass *pBld = specific_cast<BuildingClass*>(pObj)) {
+									// if we respect lightning rods, start looking for one.
+									if(!pData->Weather_IgnoreLightningRod.Get()) {
+										// if, by coincidence, this is a rod, hit it.
+										CellClass *pImpactCell = MapClass::Instance->GetCellAt(&cell);
+										if(BuildingClass *pBld = pImpactCell->GetBuilding()) {
 											if(pBld->Type->LightningRod) {
-												cell = MapClass::Instance->GetCellAt(&pBld->Location)->MapCoords;
+												break;
+											}
+										}
+
+										// if a lightning rod is next to this, hit that instead. naive.
+										CoordStruct nullCoords;
+										if(ObjectClass* pObj = pImpactCell->FindObjectNearestTo(&nullCoords, false, pImpactCell->GetBuilding())) {
+											if(BuildingClass *pBld = specific_cast<BuildingClass*>(pObj)) {
+												if(pBld->Type->LightningRod) {
+													cell = MapClass::Instance->GetCellAt(&pBld->Location)->MapCoords;
+													break;
+												}
+											}
+										}
+									}
+
+									// is this spot far away from another cloud?
+									if(pData->Weather_Separation > 0) {
+										DynamicVectorClass<AnimClass*>* pAnims = (DynamicVectorClass<AnimClass*>*)(0xA9F9D0);
+										for(int k=0; k<pAnims->Count; ++k) {
+											// assume success and disprove.
+											CellStruct *pCell2 = &pAnims->GetItem(k)->GetCell()->MapCoords;
+											int dist = std::abs(pCell2->X - cell.X) + std::abs(pCell2->Y - cell.Y);
+											if(dist < pData->Weather_Separation.Get()) {
+												found = false;
 												break;
 											}
 										}
 									}
 								}
-
-								// is this spot far away from another cloud?
-								if(pData->Weather_Separation > 0) {
-									DynamicVectorClass<AnimClass*>* pAnims = (DynamicVectorClass<AnimClass*>*)(0xA9F9D0);
-									for(int k=0; k<pAnims->Count; ++k) {
-										// assume success and disprove.
-										if(cell.DistanceFrom(pAnims->GetItem(k)->GetCell()->MapCoords) < pData->Weather_Separation) {
-											found = false;
-											break;
-										}
-									}
-								}
 							}
-						}
 
-						// found a valid position. strike there.
-						if(found) {
-							LightningStorm::Strike(cell);
+							// found a valid position. strike there.
+							if(found) {
+								LightningStorm::Strike(cell);
+							}
 						}
 					}
 				}
@@ -368,7 +445,7 @@ DEFINE_HOOK_AGAIN(53A8FF, LightningStorm_Update, 5) {
 		}
 
 		// jump over everything
-		return 0x53AB45;
+		return 0x53AB4C;
 	}
 
 	// still support old logic for triggers

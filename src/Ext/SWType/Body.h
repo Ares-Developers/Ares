@@ -48,6 +48,7 @@ public:
 		Valueable<int> Weather_Duration;
 		Valueable<int> Weather_HitDelay;
 		Valueable<int> Weather_ScatterDelay;
+		Valueable<int> Weather_ScatterCount;
 		Valueable<int> Weather_Separation;
 		Valueable<int> Weather_CloudHeight;
 		Valueable<int> Weather_RadarOutage;
@@ -65,6 +66,7 @@ public:
 		Valueable<WeaponTypeClass*> Nuke_Payload;
 		Valueable<AnimTypeClass*> Nuke_PsiWarning;
 		Valueable<AnimTypeClass*> Nuke_TakeOff;
+		Valueable<bool> Nuke_SiloLaunch;
 
 		// Generic Paradrop
 		DynamicVectorClass<ParadropPlane*> *ParaDrop;
@@ -176,6 +178,7 @@ public:
 			SpyPlane_Count (1),
 			SpyPlane_Mission (mission_AttackAgain),
 			Weather_CloudHeight (-1),
+			Weather_ScatterCount (1),
 			Nuke_PsiWarning (NULL),
 			Sonar_Delay (0),
 			SW_ActivationSound (-1),
