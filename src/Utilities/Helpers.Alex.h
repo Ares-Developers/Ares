@@ -176,7 +176,7 @@ public:
 
 			auto actionIfInRange = [&](CellClass* pCell) -> bool {
 				// if it is near enough, do action
-				if(cell->DistanceFrom(pCell->MapCoords) <= radius * 256) {
+				if(cell->DistanceFrom(pCell->MapCoords) <= radius) {
 					if(action(pCell)) {
 						++ret;
 					} else {

@@ -47,46 +47,6 @@ bool SW_Reveal::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
 				return true;
 			}
 		);
-		
-		//bool isRectangle = ((height > 0) && ((height * width) > 0));
-
-		//// is this a circular range?
-		//// then the radius goes in every direction.
-		//if(!isRectangle) {
-		//	width *= 2;
-		//	height = width;
-		//}
-
-		//// the cursor marks the center of the area
-		//CellStruct Offset;
-		//Offset.X = (short)(pCoords->X - (width / 2));
-		//Offset.Y = (short)(pCoords->Y - (height / 2));
-
-		//// take a look at every cell in the rectangle
-		//for(int i=0; i<(width*height); ++i) {
-		//	// get the specific cell coordinates
-		//	CellStruct Cell;
-		//	Cell.X = (short)(i % width);
-		//	Cell.Y = (short)(i / width);
-		//	Cell += Offset;
-
-		//	if(!isRectangle) {
-		//		// only if cell is in range
-		//		if(pCoords->DistanceFrom(Cell) > pData->SW_WidthOrRange.Get()) {
-		//			continue;
-		//		}
-		//	}
-
-		//	CellClass* pCell = MapClass::Instance->GetCellAt(&Cell);
-		//	CoordStruct Crd2;
-		//	pCell->GetCoords(&Crd2);
-
-		//	// default way to reveal, but reveal one cell at a time.
-		//	if(pCell != MapClass::InvalidCell()) {
-		//		MapClass::Instance->RevealArea2(&Crd2, 1, pThis->Owner, 0, 0, 0, 0, 0);
-		//		MapClass::Instance->RevealArea2(&Crd2, 1, pThis->Owner, 0, 0, 0, 0, 1);
-		//	}
-		//}
 	}
 
 	return true;

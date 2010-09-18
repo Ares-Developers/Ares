@@ -268,6 +268,7 @@ DEFINE_HOOK(53A6C0, LightningStorm_Update, 5) {
 					ScenarioClass::Instance->UpdateLighting();
 					MapClass::Instance->RedrawSidebar(1);
 				} else if(status == 2) {
+					SW_NuclearMissile::CurrentNukeType = NULL;
 					LightningStorm::Status(0);
 				}
 			}
@@ -370,6 +371,7 @@ DEFINE_HOOK(53A6C0, LightningStorm_Update, 5) {
 
 					// is circular range?
 					if(height < 0) {
+						width *= 2;
 						height = width;
 						isRectangle = false;
 					}
@@ -378,13 +380,14 @@ DEFINE_HOOK(53A6C0, LightningStorm_Update, 5) {
 					CellStruct cell;
 					if(height > 0 && width > 0 && MapClass::Instance->CellExists(&LSCell)) {
 						for(int k=pData->Weather_ScatterCount.Get(); k>0; --k) {
-							bool found = true;
+							bool found;
 							for(int i=0; i<5; ++i) {
 								cell = LSCell;
 								cell.X += (short)ScenarioClass::Instance->Random.RandomRanged(-width / 2, width / 2);
 								cell.Y += (short)ScenarioClass::Instance->Random.RandomRanged(-height / 2, height / 2);
 	
 								// don't even try if this is invalid
+								found = false;
 								if(MapClass::Instance->CellExists(&cell)) {
 									// out of range?
 									if(!isRectangle) {
@@ -392,6 +395,9 @@ DEFINE_HOOK(53A6C0, LightningStorm_Update, 5) {
 											continue;
 										}
 									}
+
+									// assume valid
+									found = true;
 
 									// if we respect lightning rods, start looking for one.
 									if(!pData->Weather_IgnoreLightningRod.Get()) {
@@ -427,6 +433,11 @@ DEFINE_HOOK(53A6C0, LightningStorm_Update, 5) {
 												break;
 											}
 										}
+									}
+
+									// valid cell.
+									if(found) {
+										break;
 									}
 								}
 							}

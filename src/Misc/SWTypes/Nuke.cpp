@@ -1,6 +1,8 @@
 #include "Nuke.h"
 #include "../../Ares.h"
 
+#include "../../Ext/Bullet/Body.h"
+
 #include <WarheadTypeClass.h>
 #include <BulletTypeClass.h>
 #include <ScenarioClass.h>
@@ -54,7 +56,7 @@ void SW_NuclearMissile::LoadFromINI(
 	pData->Nuke_Payload.Parse(&exINI, section, "Nuke.Payload", true);
 	pData->Nuke_TakeOff.Parse(&exINI, section, "Nuke.TakeOff");
 	pData->Nuke_PsiWarning.Parse(&exINI, section, "Nuke.PsiWarning");
-	pData->Nuke_PsiWarning.Parse(&exINI, section, "Nuke.SiloLaunch");
+	pData->Nuke_SiloLaunch.Read(&exINI, section, "Nuke.SiloLaunch");
 }
 
 bool SW_NuclearMissile::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
@@ -79,7 +81,7 @@ bool SW_NuclearMissile::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPl
 				for(int i=0; i<BuildingTypeClass::Array->Count; ++i) {
 					BuildingTypeClass *pTBld = BuildingTypeClass::Array->GetItem(i);
 					if(pTBld->NukeSilo) {
-						if(pTBld->SuperWeapon == pType->Type || pTBld->SuperWeapon2 == pType->Type) {
+						if(pTBld->SuperWeapon == pType->ArrayIndex || pTBld->SuperWeapon2 == pType->ArrayIndex) {
 							// valid silo. let's see whether the firer got it.
 							if(pSilo = pThis->Owner->FindBuildingOfType(pTBld->ArrayIndex, -1)) {
 								break;
@@ -108,10 +110,19 @@ bool SW_NuclearMissile::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPl
 				// if we reached this, there is no silo launch. still launch a missile.
 				if(WeaponTypeClass *pWeapon = pData->Nuke_Payload) {
 					if(BulletTypeClass *pProjectile = pWeapon->Projectile) {
-						if(BulletClass* pBullet = pProjectile->CreateBullet(pCell, NULL, pData->SW_Damage, pData->SW_Warhead, pWeapon->Speed, pWeapon->Bright)) {
+						// get damage and warhead. they are not available during
+						// initialisation, so we gotta fall back now if they are invalid.
+						int damage = (pData->SW_Damage < 0 ? pWeapon->Damage : pData->SW_Damage.Get());
+						WarheadTypeClass *pWarhead = (!pData->SW_Warhead ? pWeapon->Warhead : pData->SW_Warhead.Get());
+
+						if(BulletClass* pBullet = pProjectile->CreateBullet(pCell, NULL, damage, pWarhead, pWeapon->Speed, pWeapon->Bright)) {
 							pBullet->SetWeaponType(pWeapon);
 							if(pData->Nuke_PsiWarning.Get()) {
 								pThis->Owner->PsiWarn(pCell, pBullet, pData->Nuke_PsiWarning.Get()->ID);
+							}
+
+							if(BulletExt::ExtData *pData = BulletExt::ExtMap.Find(pBullet)) {
+								pData->NukeSW = pType;
 							}
 								
 							// aim the bullet downward and put
