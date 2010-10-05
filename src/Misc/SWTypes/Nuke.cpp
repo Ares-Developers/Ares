@@ -57,6 +57,17 @@ void SW_NuclearMissile::LoadFromINI(
 	pData->Nuke_TakeOff.Parse(&exINI, section, "Nuke.TakeOff");
 	pData->Nuke_PsiWarning.Parse(&exINI, section, "Nuke.PsiWarning");
 	pData->Nuke_SiloLaunch.Read(&exINI, section, "Nuke.SiloLaunch");
+
+	Debug::Log("[Nuke] basics %s: ", section);
+	Debug::Log("%s, ", pData->SW_Warhead.Get() ? pData->SW_Warhead.Get()->ID : "<empty>");
+	Debug::Log("%d, ", pData->SW_Damage.Get());
+	Debug::Log("%s\n", pData->AttachedToObject->WeaponType ? pData->AttachedToObject->WeaponType->ID : "<empty>");
+
+	Debug::Log("[Nuke] parsing %s: ", section);
+	Debug::Log("%s, ", pData->Nuke_Payload.Get() ? pData->Nuke_Payload.Get()->ID : "<empty>");
+	Debug::Log("%s, ", pData->Nuke_TakeOff.Get() ? pData->Nuke_TakeOff.Get()->ID : "<empty>");
+	Debug::Log("%s, ", pData->Nuke_PsiWarning.Get() ? pData->Nuke_PsiWarning.Get()->ID : "<empty>");
+	Debug::Log("%d\n", pData->Nuke_SiloLaunch.Get());	
 }
 
 bool SW_NuclearMissile::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
@@ -87,7 +98,6 @@ bool SW_NuclearMissile::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPl
 								break;
 							}
 						}
-
 					}
 				}
 			}
@@ -115,12 +125,14 @@ bool SW_NuclearMissile::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPl
 						int damage = (pData->SW_Damage < 0 ? pWeapon->Damage : pData->SW_Damage.Get());
 						WarheadTypeClass *pWarhead = (!pData->SW_Warhead ? pWeapon->Warhead : pData->SW_Warhead.Get());
 
+						// create a bullet and the psi warning
 						if(BulletClass* pBullet = pProjectile->CreateBullet(pCell, NULL, damage, pWarhead, pWeapon->Speed, pWeapon->Bright)) {
 							pBullet->SetWeaponType(pWeapon);
 							if(pData->Nuke_PsiWarning.Get()) {
 								pThis->Owner->PsiWarn(pCell, pBullet, pData->Nuke_PsiWarning.Get()->ID);
 							}
 
+							// remember the fired SW type
 							if(BulletExt::ExtData *pData = BulletExt::ExtMap.Find(pBullet)) {
 								pData->NukeSW = pType;
 							}

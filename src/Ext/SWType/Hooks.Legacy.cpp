@@ -216,7 +216,7 @@ DEFINE_HOOK(539EB0, LightningStorm_Start, 5) {
 				if(pData->Weather_RadarOutage > 0) {
 					for(int i=0; i<HouseClass::Array->Count; ++i) {
 						HouseClass* pHouse = HouseClass::Array->GetItem(i);
-						if(pData->IsHouseAffected(pOwner, pHouse)) {
+						if(pData->IsHouseAffected(pOwner, pHouse, pData->Weather_RadarOutageAffects)) {
 							if(!pHouse->Defeated) {
 								pHouse->CreateRadarOutage(pData->Weather_RadarOutage);
 							}
@@ -725,6 +725,11 @@ DEFINE_HOOK(46B371, BulletClass_NukeMaker, 5) {
 						// initialisation, so we gotta fall back now if they are invalid.
 						int damage = (pExt->SW_Damage < 0 ? pPayload->Damage : pExt->SW_Damage.Get());
 						WarheadTypeClass *pWarhead = (!pExt->SW_Warhead ? pPayload->Warhead : pExt->SW_Warhead.Get());
+
+						Debug::Log("Payload = %s\n", pPayload->ID);
+						Debug::Log("Payload WH = %s\n", pPayload->Warhead->ID);
+						Debug::Log("Payload Projectile = %s\n", pPayload->Projectile->ID);
+						Debug::Log("Warhead = %s\n", pWarhead->ID);
 
 						// put the new values into the registers
 						R->Stack(0x30, R->EAX());

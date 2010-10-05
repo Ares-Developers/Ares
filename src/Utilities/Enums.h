@@ -14,7 +14,9 @@ public:
 		ForceShield = 0x6,
 		NoTarget = 0x7,
 		Offensive = 0x8,
-		Stealth = 0x9
+		Stealth = 0x9,
+		Self = 0xA,
+		Base = 0xB
 	};
 };
 

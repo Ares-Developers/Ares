@@ -108,22 +108,78 @@ DEFINE_HOOK(653B3A, RadarClass_GetMouseAction_CustomSWAction, 5)
 	return 0;
 }
 
-/*
-// 6AAF92, 6
-XPORT_FUNC(SidebarClass_ProcessCameoClick)
-{
-	DWORD idx = R->get_ESI();
-	SuperWeaponTypeClass *pThis = SuperWeaponTypeClass::Array->GetItem(idx);
-//	int TypeIdx = pThis->get_Type();
+DEFINE_HOOK(6AAEDF, SidebarClass_ProcessCameoClick_SuperWeapons, 6) {
+	GET(int, idxSW, ESI);
+	SuperClass* pSuper = HouseClass::Player->Supers.GetItem(idxSW);
 
-	SWTypeExt::CurrentSWType = pThis;
-	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pThis);
+	if(SWTypeExt::ExtData* pData = SWTypeExt::ExtMap.Find(pSuper->Type)) {
+		// if this SW is only auto-firable, discard any clicks.
+		// if AutoFire is off, the sw would not be firable at all,
+		// thus we ignore the setting in that case.
+		bool manual = !pData->SW_ManualFire.Get() && pData->SW_AutoFire.Get();
+		bool unstoppable = pSuper->Type->UseChargeDrain && pSuper->ChargeDrainState == 2
+			&& pData->SW_Unstoppable.Get();
 
-//	Actions::Set(&pData->SW_Cursor);
+		// play impatient voice, if this isn't charged yet
+		if(!pSuper->CanFire() && !manual) {
+			VoxClass::PlayIndex(pData->EVA_Impatient);
+			return 0x6AAFB1;
+		}
+
+		// prevent firing the SW if the player doesn't have sufficient
+		// funds. play an EVA message in that case.
+		if(pData->Money_Amount < 0) {
+			if(HouseClass::Player->Available_Money() < -pData->Money_Amount.Get()) {
+				VoxClass::PlayIndex(pData->EVA_InsufficientFunds);
+				pData->PrintMessage(pData->Message_InsufficientFunds, HouseClass::Player);
+				return 0x6AAFB1;
+			}
+		}
+		
+		// disallow manuals and active unstoppables
+		if(manual || unstoppable) {
+			return 0x6AAFB1;
+		}
+
+		return 0x6AAEF7;
+	}
 
 	return 0;
 }
-*/
+
+DEFINE_HOOK(6A932B, CameoClass_GetTip_MoneySW, 6) {
+	GET(SuperWeaponTypeClass*, pSW, EAX);
+
+	if(SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSW)) {
+		if(pData->Money_Amount < 0) {
+			wchar_t* pTip = (wchar_t*)0xB07BC4;
+
+			// account for no-name SWs
+			if(*(byte*)0x884B8C || !wcslen(pSW->UIName)) {
+				const wchar_t* pFormat = StringTable::LoadStringA("TXT_MONEY_FORMAT_1");
+				swprintf(pTip, 0x20, pFormat, -pData->Money_Amount.Get());
+			} else {
+				// then, this must be brand SWs
+				const wchar_t* pFormat = StringTable::LoadStringA("TXT_MONEY_FORMAT_2");
+				swprintf(pTip, 0x20, pFormat, pSW->UIName, -pData->Money_Amount.Get());
+			}
+
+			// replace space by new line
+			for(int i=wcslen(pTip); i>=0; --i) {
+				if(pTip[i] == 0x20) {
+					pTip[i] = 0xA;
+					break;
+				}
+			}
+
+			// put it there
+			R->EAX(pTip);
+			return 0x6A93E5;
+		}
+	}
+
+	return 0;
+}
 
 // 6CEE96, 5
 DEFINE_HOOK(6CEE96, SuperWeaponTypeClass_GetTypeIndex, 5)
@@ -268,17 +324,20 @@ DEFINE_HOOK(6CC0EA, SuperClass_AnnounceQuantity, 9)
 	return 0;
 }
 
-DEFINE_HOOK(50B319, HouseClass_UpdateSWs, 6)
+// hide the cameo? (only if this is an auto-firing SW)
+DEFINE_HOOK(50B319, HouseClass_UpdateSWs_ShowCameo, 6)
 {
-//	GET(SuperClass *, Super, ECX);
 	GET(HouseClass *, H, EBP);
 	GET(int, Index, EDI);
 	SuperClass *Super = H->Supers.GetItem(Index);
 	SuperWeaponTypeClass *pSW = Super->Type;
-	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSW);
-	if(pData->SW_AutoFire) {
-	//	Fire! requires networking event woodoo or fake mouse clicks, bah
+
+	if(SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSW)) {
+		if(pData->SW_AutoFire.Get() && !pData->SW_ShowCameo.Get()) {
+			return 0x50B358;
+		}
 	}
+
 	return 0;
 }
 
@@ -299,6 +358,16 @@ DEFINE_HOOK(6CBA9E, SuperClass_ClickFire_Abort, 7)
 
 	GET_STACK(bool, IsPlayer, 0x20);
 
+	// auto-abort if no money
+	if(pData->Money_Amount < 0) {
+		if(HouseClass::Player->Available_Money() < -pData->Money_Amount.Get()) {
+			VoxClass::PlayIndex(pData->EVA_InsufficientFunds);
+			pData->PrintMessage(pData->Message_InsufficientFunds, pSuper->Owner);
+			return 0x6CBABF;
+		}
+	}
+
+	// can this super weapon fire now?
 	if(NewSWType* pNSW = pData->GetNewSWType()) {
 		if(pNSW->AbortFire(pSuper, IsPlayer)) {
 			return 0x6CBABF;
@@ -320,20 +389,6 @@ DEFINE_HOOK(6CC390, SuperClass_Launch, 6)
 	bool handled = SWTypeExt::SuperClass_Launch(pSuper, pCoords, IsPlayer);
 
 	return handled ? 0x6CDE40 : 0;
-}
-
-DEFINE_HOOK(6CC360, SuperClass_IsReadyToFire, 5)
-{
-	GET(SuperClass *, pThis, ECX);
-	SuperWeaponTypeClass *pSW = pThis->Type;
-	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSW);
-
-	if(pData->Money_Amount) {
-		if(pThis->Owner->Available_Money() < pData->Money_Amount) {
-			return 0x6CC381;
-		}
-	}
-	return 0;
 }
 
 DEFINE_HOOK(44691B, BuildingClass_4DC_SWAvailable, 6)
@@ -407,8 +462,8 @@ DEFINE_HOOK(6CC2B0, SuperClass_NameReadiness, 5) {
 				key = pData->Text_Ready;
 				break;
 			case 2:
-				// currently on
-				key = pData->Text_On;
+				// currently active
+				key = pData->Text_Active;
 				break;
 			}
 
@@ -453,87 +508,144 @@ DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
 						pThis->Fire_SW(idxSW, Cell);
 					};
 
+					// don't try to fire if we obviously haven't enough money
+					if(pExt->Money_Amount < 0) {
+						if(HouseClass::Player->Available_Money() < -pExt->Money_Amount.Get()) {
+							continue;
+						}
+					}
+
 					// all the different AI targeting modes
 					switch(pExt->SW_AITargetingType.Get()) {
 					case SuperWeaponAITargetingMode::Nuke:
-						if(pThis->EnemyHouseIndex != -1) {
-							if(pThis->PreferredTargetCell == HouseClass::DefaultIonCannonCoords) {
-								Cell = *(pThis->PreferredTargetWaypoint == 1
-									? pThis->PickIonCannonTarget(Cell)
-									: pThis->sub_50D170(&Cell, pThis->PreferredTargetWaypoint));
+						{
+							if(pThis->EnemyHouseIndex != -1) {
+								if(pThis->PreferredTargetCell == HouseClass::DefaultIonCannonCoords) {
+									Cell = *(pThis->PreferredTargetWaypoint == 1
+										? pThis->PickIonCannonTarget(Cell)
+										: pThis->sub_50D170(&Cell, pThis->PreferredTargetWaypoint));
+								} else {
+									Cell = pThis->PreferredTargetCell;
+								}
+
+								if(Cell != HouseClass::DefaultIonCannonCoords) {
+									LaunchSW(&Cell);
+								}
+							}
+							break;
+						}
+
+					case SuperWeaponAITargetingMode::LightningStorm:
+						{
+							pThis->Fire_LightningStorm(pSuper);
+							break;
+						}
+
+					case SuperWeaponAITargetingMode::PsychicDominator:
+						{
+							pThis->Fire_PsyDom(pSuper);
+							break;
+						}
+
+					case SuperWeaponAITargetingMode::ParaDrop:
+						{
+							pThis->Fire_ParaDrop(pSuper);
+							break;
+						}
+
+					case SuperWeaponAITargetingMode::GeneticMutator:
+						{
+							pThis->Fire_GenMutator(pSuper);
+							break;
+						}
+
+					case SuperWeaponAITargetingMode::ForceShield:
+						{
+							if(pThis->PreferredDefensiveCell == HouseClass::DefaultIonCannonCoords) {
+								if(pThis->PreferredDefensiveCell2 == HouseClass::DefaultIonCannonCoords
+									&& RulesClass::Instance->AISuperDefenseFrames + pThis->PreferredDefensiveCellStartTime > Unsorted::CurrentFrame) {
+									Cell = pThis->PreferredDefensiveCell2;
+								}
 							} else {
-								Cell = pThis->PreferredTargetCell;
+								Cell = pThis->PreferredDefensiveCell;
 							}
 
 							if(Cell != HouseClass::DefaultIonCannonCoords) {
 								LaunchSW(&Cell);
+								pThis->PreferredDefensiveCell = HouseClass::DefaultIonCannonCoords;
 							}
+							break;
 						}
-						break;
-
-					case SuperWeaponAITargetingMode::LightningStorm:
-						pThis->Fire_LightningStorm(pSuper);
-						break;
-
-					case SuperWeaponAITargetingMode::PsychicDominator:
-						pThis->Fire_PsyDom(pSuper);
-						break;
-
-					case SuperWeaponAITargetingMode::ParaDrop:
-						pThis->Fire_ParaDrop(pSuper);
-						break;
-
-					case SuperWeaponAITargetingMode::GeneticMutator:
-						pThis->Fire_GenMutator(pSuper);
-						break;
-
-					case SuperWeaponAITargetingMode::ForceShield:
-						if(pThis->PreferredDefensiveCell == HouseClass::DefaultIonCannonCoords) {
-							if(pThis->PreferredDefensiveCell2 == HouseClass::DefaultIonCannonCoords
-								&& RulesClass::Instance->AISuperDefenseFrames + pThis->PreferredDefensiveCellStartTime > Unsorted::CurrentFrame) {
-								Cell = pThis->PreferredDefensiveCell2;
-							}
-						} else {
-							Cell = pThis->PreferredDefensiveCell;
-						}
-
-						if(Cell != HouseClass::DefaultIonCannonCoords) {
-							LaunchSW(&Cell);
-							pThis->PreferredDefensiveCell = HouseClass::DefaultIonCannonCoords;
-						}
-						break;
 
 					case SuperWeaponAITargetingMode::Offensive:
-						pThis->PickIonCannonTarget(Cell);
-						LaunchSW(&Cell);
+						{
+							pThis->PickIonCannonTarget(Cell);
+							LaunchSW(&Cell);
+							break;
+						}
 
 					case SuperWeaponAITargetingMode::NoTarget:
-						LaunchSW(&Cell);
+						{
+							LaunchSW(&Cell);
+							break;
+						}
 
 					case SuperWeaponAITargetingMode::Stealth:
-						// find one of the cloaked enemy technos, posing the largest threat.
-						DynamicVectorClass<TechnoClass*> list;
-						int currentValue = 0;
-						for(int j=0; j<TechnoClass::Array->Count; ++j) {
-							if(TechnoClass* pTechno = TechnoClass::Array->GetItem(j)) {
-								if(pTechno->CloakState) {
-									if(pExt->IsTechnoAffected(pTechno)) {
-										int thisValue = pTechno->ThreatPosed;
-										if(currentValue > thisValue) {
-											list.Clear();
-											currentValue = thisValue;
-										}
-										if(currentValue == thisValue) {
-											list.AddItem(pTechno);
+						{
+							// find one of the cloaked enemy technos, posing the largest threat.
+							DynamicVectorClass<TechnoClass*> list;
+							int currentValue = 0;
+							for(int j=0; j<TechnoClass::Array->Count; ++j) {
+								if(TechnoClass* pTechno = TechnoClass::Array->GetItem(j)) {
+									if(pTechno->CloakState) {
+										if(pExt->IsTechnoAffected(pTechno)) {
+											int thisValue = pTechno->ThreatPosed;
+											if(currentValue > thisValue) {
+												list.Clear();
+												currentValue = thisValue;
+											}
+											if(currentValue == thisValue) {
+												list.AddItem(pTechno);
+											}
 										}
 									}
 								}
 							}
+							if(list.Count) {
+								int rnd = ScenarioClass::Instance->Random.RandomRanged(0, list.Count - 1);
+								Cell = list.GetItem(rnd)->GetCell()->MapCoords;
+								LaunchSW(&Cell);
+							}
+							break;
 						}
-						if(list.Count) {
-							int rnd = ScenarioClass::Instance->Random.RandomRanged(0, list.Count - 1);
-							Cell = list.GetItem(rnd)->GetCell()->MapCoords;
+
+					case SuperWeaponAITargetingMode::Base:
+						{
+							// fire at the SW's owner's base cell
+							Cell = pThis->Base_Center();
 							LaunchSW(&Cell);
+							break;
+						}
+
+					case SuperWeaponAITargetingMode::Self:
+						{
+							// find the first building providing pSuper
+							SuperWeaponTypeClass *pType = pSuper->Type;
+							BuildingClass *pBld = NULL;
+							for(int i=0; i<BuildingTypeClass::Array->Count; ++i) {
+								BuildingTypeClass *pTBld = BuildingTypeClass::Array->GetItem(i);
+								if(pTBld->SuperWeapon == pType->ArrayIndex || pTBld->SuperWeapon2 == pType->ArrayIndex) {
+									if(pBld = pThis->FindBuildingOfType(pTBld->ArrayIndex, -1)) {
+										break;
+									}
+								}
+							}
+							if(pBld) {
+								Cell = pBld->GetCell()->MapCoords;
+								LaunchSW(&Cell);
+							}
+
+							break;
 						}
 					}
 				}
@@ -559,4 +671,110 @@ DEFINE_HOOK(4F9004, HouseClass_Update_TrySWFire, 7) {
 	}
 
 	return 0x4F9038;
+}
+
+DEFINE_HOOK(6CBF5B, SuperClass_GetCameoChargeState_ChargeDrainRatio, 9) {
+	GET_STACK(int, rechargeTime1, 0x10);
+	GET_STACK(int, rechargeTime2, 0x14);
+	GET_STACK(int, timeLeft, 0xC);
+	
+	GET(SuperWeaponTypeClass*, pType, EBX);
+	if(SWTypeExt::ExtData* pData = SWTypeExt::ExtMap.Find(pType)) {
+
+		// use per-SW charge-to-drain ratio.
+		double percentage = 0.0;
+		double ratio = pData->SW_ChargeToDrainRatio;
+		if(std::abs(rechargeTime2 * ratio) > 0.001) {
+			percentage = 1.0 - (rechargeTime1 * ratio - timeLeft) / (rechargeTime2 * ratio);
+		}
+
+		// up to 55 steps
+		int charge = Game::F2I(percentage * 54.0);
+		R->EAX(charge);
+		return 0x6CC053;
+	}
+
+	return 0;
+}
+
+DEFINE_HOOK(0x6CC053, SuperClass_GetCameoChargeState_FixFullyCharged, 5) {
+	GET(int, charge, EAX);
+
+	// some smartass capped this at 53, causing the last
+	// wedge of darken.shp never to disappear.
+	R->EAX(std::min(charge, 54));
+	return 0x6CC066;
+}
+
+DEFINE_HOOK(6CB995, SuperClass_ClickFire_ChargeDrainRatioA, 8) {
+	GET_STACK(int, rechargeTime, 0x24);
+	GET_STACK(int, timeLeft, 0x20);
+
+	// recreate the SW from a pointer to its CreationTimer
+	GET(SuperClass*, pSuper, ESI);
+	pSuper = (SuperClass*)((char*)pSuper - 30);
+
+	if(SWTypeExt::ExtData* pData = SWTypeExt::ExtMap.Find(pSuper->Type)) {
+		double ratio = pData->SW_ChargeToDrainRatio;
+		double remaining = rechargeTime - timeLeft / ratio;
+		int frames = Game::F2I(remaining);
+	
+		R->EAX(frames);
+		return 0x6CB9B0;
+	}
+
+	return 0;
+}
+
+DEFINE_HOOK(6CBA19, SuperClass_ClickFire_ChargeDrainRatioB, A) {
+	GET(int, length, EDI);
+	GET(SuperClass*, pSuper, ESI);
+
+	if(SWTypeExt::ExtData* pData = SWTypeExt::ExtMap.Find(pSuper->Type)) {
+		double ratio = pData->SW_ChargeToDrainRatio;
+		double remaining = length * ratio;
+		int frames = Game::F2I(remaining);
+	
+		R->EAX(frames);
+		return 0x6CBA28;
+	}
+
+	return 0;
+}
+
+DEFINE_HOOK(6CBD6B, SuperClass_Update_DrainMoney, 8) {
+	// draining weapon active. take or give money. stop, 
+	// if player has insufficient funds.
+	GET(SuperClass*, pSuper, ESI);
+	GET(int, timeLeft, EAX);
+
+	if(timeLeft > 0 && pSuper->Type->UseChargeDrain && pSuper->ChargeDrainState == 2) {
+		if(SWTypeExt::ExtData* pData = SWTypeExt::ExtMap.Find(pSuper->Type)) {
+			int money = pData->Money_DrainAmount;
+			if(money != 0 && pData->Money_DrainDelay > 0) {
+				if(!(timeLeft % pData->Money_DrainDelay)) {
+
+					// only abort if SW drains money and there is none
+					if(pData->Money_DrainAmount < 0) {
+						if(pSuper->Owner->Available_Money() < -money) {
+							if(pSuper->Owner->IsHumanoid()) {
+								VoxClass::PlayIndex(pData->EVA_InsufficientFunds);
+								pData->PrintMessage(pData->Message_InsufficientFunds, HouseClass::Player);
+							}
+							return 0x6CBD73;
+						}
+					}
+
+					// apply drain money
+					if(money > 0) {
+						pSuper->Owner->GiveMoney(money);
+					} else {
+						pSuper->Owner->TakeMoney(-money);
+					}
+				}
+			}
+		}
+	}
+
+	return (timeLeft ? 0x6CBE7C : 0x6CBD73);
 }

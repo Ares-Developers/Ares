@@ -61,6 +61,7 @@ public:
 		TypeList<AnimTypeClass*> Weather_Bolts;
 		TypeList<AnimTypeClass*> Weather_Debris;
 		TypeList<int> Weather_Sounds;
+		Valueable<SuperWeaponAffectedHouse::Value> Weather_RadarOutageAffects;
 
 		// Nuke
 		Valueable<WeaponTypeClass*> Nuke_Payload;
@@ -111,11 +112,15 @@ public:
 
 		// Money
 		Valueable<int> Money_Amount;
+		Valueable<int> Money_DrainAmount;
+		Valueable<int> Money_DrainDelay;
 
 		// Generic
 		ValueableIdx<int, VoxClass> EVA_Ready;
 		ValueableIdx<int, VoxClass> EVA_Activated;
 		ValueableIdx<int, VoxClass> EVA_Detected;
+		ValueableIdx<int, VoxClass> EVA_Impatient;
+		ValueableIdx<int, VoxClass> EVA_InsufficientFunds;
 
 		// anim/sound
 		ValueableIdx<int, VocClass> SW_Sound;
@@ -126,12 +131,16 @@ public:
 
 		Valueable<bool> SW_TypeCustom;
 		Valueable<bool> SW_AutoFire;
+		Valueable<bool> SW_ManualFire;
 		Valueable<bool> SW_FireToShroud;
 		Valueable<bool> SW_RadarEvent;
+		Valueable<bool> SW_ShowCameo;
+		Valueable<bool> SW_Unstoppable;
 		Valueable<MouseCursor> SW_Cursor;
 		Valueable<MouseCursor> SW_NoCursor;
 		char SW_PostDependent[0x18];
 		Valueable<SuperWeaponAITargetingMode::Value> SW_AITargetingType;
+		Customizable<double> SW_ChargeToDrainRatio;
 
 		Valueable<float> SW_WidthOrRange;
 		Valueable<int> SW_Height;
@@ -153,6 +162,7 @@ public:
 		char Message_Launch[0x20];
 		char Message_Activate[0x20];
 		char Message_Abort[0x20];
+		char Message_InsufficientFunds[0x20];
 		Valueable<int> Message_ColorScheme;
 		Valueable<bool> Message_FirerColor;
 
@@ -161,7 +171,7 @@ public:
 		char Text_Hold[0x20];
 		char Text_Ready[0x20];
 		char Text_Charging[0x20];
-		char Text_On[0x20];
+		char Text_Active[0x20];
 
 		CustomPalette CameoPal;
 
@@ -182,10 +192,15 @@ public:
 			Nuke_PsiWarning (NULL),
 			Sonar_Delay (0),
 			SW_ActivationSound (-1),
+			SW_ChargeToDrainRatio (&RulesClass::Instance->ChargeToDrainRatio),
 			Money_Amount (0),
+			Money_DrainAmount (0),
+			Money_DrainDelay (0),
 			EVA_Ready (-1),
 			EVA_Activated (-1),
 			EVA_Detected (-1),
+			EVA_Impatient (-1),
+			EVA_InsufficientFunds (-1),
 			Message_ColorScheme (-1),
 			Message_FirerColor (false),
 			Lighting_Enabled (true),
@@ -195,6 +210,9 @@ public:
 			SW_AnimVisibility (0),
 			SW_TypeCustom (false),
 			SW_AutoFire (false),
+			SW_ManualFire (true),
+			SW_ShowCameo (true),
+			SW_Unstoppable (false),
 			SW_AffectsHouse (SuperWeaponAffectedHouse::All),
 			SW_AffectsTarget (SuperWeaponTarget::All),
 			SW_RequiresTarget (SuperWeaponTarget::None),
@@ -213,11 +231,12 @@ public:
 				*Message_Launch = 0;
 				*Message_Activate = 0;
 				*Message_Abort = 0;
+				*Message_InsufficientFunds = 0;
 				*Text_Preparing = 0;
 				*Text_Ready = 0;
 				*Text_Hold = 0;
 				*Text_Charging = 0;
-				*Text_On = 0;
+				*Text_Active = 0;
 			};
 
 		virtual ~ExtData() { };
@@ -232,6 +251,7 @@ public:
 		bool IsAnimVisible(HouseClass* pFirer);
 		bool CanFireAt(CellStruct *pCoords);
 		bool IsHouseAffected(HouseClass* pFirer, HouseClass* pHouse);
+		bool IsHouseAffected(HouseClass* pFirer, HouseClass* pHouse, SuperWeaponAffectedHouse::Value value);
 		bool IsTechnoAffected(TechnoClass* pTechno);
 		void PrintMessage(char* Message, HouseClass* pFirer);
 		NewSWType* GetNewSWType();

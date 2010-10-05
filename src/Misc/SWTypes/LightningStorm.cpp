@@ -50,6 +50,8 @@ void SW_LightningStorm::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeCla
 	pData->Weather_Separation = RulesClass::Instance->LightningSeparation;
 	pData->Weather_PrintText = RulesClass::Instance->LightningPrintText;
 
+	pData->Weather_RadarOutageAffects = SuperWeaponAffectedHouse::Enemies;
+
 	pData->EVA_Detected = VoxClass::FindIndex("EVA_WeatherDeviceReady");
 	pData->EVA_Ready = VoxClass::FindIndex("EVA_LightningStormReady");
 	pData->EVA_Activated = VoxClass::FindIndex("EVA_LightningStormCreated");
@@ -64,7 +66,6 @@ void SW_LightningStorm::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeCla
 	pData->Lighting_Blue = &ScenarioClass::Instance->IonBlue;
 
 	pData->SW_AITargetingType = SuperWeaponAITargetingMode::LightningStorm;
-	pData->SW_AffectsHouse = SuperWeaponAffectedHouse::Enemies;
 	pData->SW_Cursor = MouseCursor::First[MouseCursorType::LightningStorm];
 }
 

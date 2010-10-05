@@ -47,7 +47,9 @@ void SWTypeExt::ExtData::InitializeConstants(SuperWeaponTypeClass *pThis)
 	AresCRT::strCopy(this->Text_Ready, "TXT_READY", 0x20);
 	AresCRT::strCopy(this->Text_Hold, "TXT_HOLD", 0x20);
 	AresCRT::strCopy(this->Text_Charging, "TXT_CHARGING", 0x20);
-	AresCRT::strCopy(this->Text_On, "TXT_FIRESTORM_ON", 0x20);
+	AresCRT::strCopy(this->Text_Active, "TXT_FIRESTORM_ON", 0x20);
+
+	EVA_InsufficientFunds = VoxClass::FindIndex("EVA_InsufficientFunds");
 
 	SW_AffectsHouse = SuperWeaponAffectedHouse::All;
 	SW_AnimVisibility = SuperWeaponAffectedHouse::All;
@@ -117,6 +119,10 @@ void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass
 				value = SuperWeaponAITargetingMode::Offensive;
 			} else if(!_strcmpi(Ares::readBuffer, "stealth")) {
 				value = SuperWeaponAITargetingMode::Stealth;
+			} else if(!_strcmpi(Ares::readBuffer, "base")) {
+				value = SuperWeaponAITargetingMode::Base;
+			} else if(!_strcmpi(Ares::readBuffer, "self")) {
+				value = SuperWeaponAITargetingMode::Self;
 			}
 		}
 	};
@@ -169,12 +175,19 @@ void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass
 	this->EVA_Ready.Read(&exINI, section, "EVA.Ready");
 	this->EVA_Activated.Read(&exINI, section, "EVA.Activated");
 	this->EVA_Detected.Read(&exINI, section, "EVA.Detected");
+	this->EVA_Impatient.Read(&exINI, section, "EVA.Impatient");
+	this->EVA_InsufficientFunds.Read(&exINI, section, "EVA.InsufficientFunds");
 
 	this->SW_FireToShroud.Read(&exINI, section, "SW.FireIntoShroud");
 	this->SW_AutoFire.Read(&exINI, section, "SW.AutoFire");
+	this->SW_ManualFire.Read(&exINI, section, "SW.ManualFire");
 	this->SW_RadarEvent.Read(&exINI, section, "SW.CreateRadarEvent");
+	this->SW_ShowCameo.Read(&exINI, section, "SW.ShowCameo");
+	this->SW_Unstoppable.Read(&exINI, section, "SW.Unstoppable");
 
 	this->Money_Amount.Read(&exINI, section, "Money.Amount");
+	this->Money_DrainAmount.Read(&exINI, section, "Money.DrainAmount");
+	this->Money_DrainDelay.Read(&exINI, section, "Money.DrainDelay");
 
 	this->SW_Sound.Read(&exINI, section, "SW.Sound");
 	this->SW_ActivationSound.Read(&exINI, section, "SW.ActivationSound");
@@ -182,13 +195,17 @@ void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass
 	this->SW_Anim.Parse(&exINI, section, "SW.Animation");
 	this->SW_AnimHeight.Read(&exINI, section, "SW.AnimationHeight");
 
-	ReadSuperWeaponAffectedHouse("SW.AnimationVisibility", *this->SW_AITargetingType);
-	ReadSuperWeaponAffectedHouse("SW.AffectsHouse", *this->SW_AITargetingType);
+	ReadSuperWeaponAffectedHouse("SW.AnimationVisibility", *this->SW_AnimVisibility);
+	ReadSuperWeaponAffectedHouse("SW.AffectsHouse", *this->SW_AffectsHouse);
 	ReadSuperWeaponAITargeting("SW.AITargeting", *this->SW_AITargetingType);
 	ReadSuperWeaponTarget("SW.AffectsTarget", *this->SW_AffectsTarget);
 	ReadSuperWeaponTarget("SW.RequiresTarget", *this->SW_RequiresTarget);
 
+	// this thing is only here because there is no global enum parser yet
+	ReadSuperWeaponAffectedHouse("Lightning.RadarOutageAffects", *this->Weather_RadarOutageAffects);
+
 	this->SW_Deferment.Read(&exINI, section, "SW.Deferment");
+	this->SW_ChargeToDrainRatio.Read(&exINI, section, "SW.ChargeToDrainRatio");
 
 	this->SW_Cursor.Read(&exINI, section, "Cursor");
 	this->SW_NoCursor.Read(&exINI, section, "NoCursor");
@@ -231,12 +248,13 @@ void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass
 	readString(this->Message_Launch, "Message.Launch");
 	readString(this->Message_Activate, "Message.Activate");
 	readString(this->Message_Abort, "Message.Abort");
+	readString(this->Message_InsufficientFunds, "Message.InsufficientFunds");
 
 	readString(this->Text_Preparing, "Text.Preparing");
 	readString(this->Text_Ready, "Text.Ready");
 	readString(this->Text_Hold, "Text.Hold");
 	readString(this->Text_Charging, "Text.Charging");
-	readString(this->Text_On, "Text.On");
+	readString(this->Text_Active, "Text.Active");
 
 	// the fallback is handled in the PreDependent SW's code
 	if(pINI->ReadString(section, "SW.PostDependent", Ares::readDefval, Ares::readBuffer, Ares::readLength)) {
@@ -273,8 +291,12 @@ bool SWTypeExt::ExtData::IsAnimVisible(HouseClass* pFirer) {
 
 // does pFirer's SW affects object belonging to pHouse?
 bool SWTypeExt::ExtData::IsHouseAffected(HouseClass* pFirer, HouseClass* pHouse) {
+	return IsHouseAffected(pFirer, pHouse, this->SW_AffectsHouse);
+}
+
+bool SWTypeExt::ExtData::IsHouseAffected(HouseClass* pFirer, HouseClass* pHouse, SuperWeaponAffectedHouse::Value value) {
 	SuperWeaponAffectedHouse::Value relation = GetRelation(pFirer, pHouse);
-	return (this->SW_AffectsHouse & relation) == relation;
+	return (value & relation) == relation;
 }
 
 SuperWeaponAffectedHouse::Value SWTypeExt::ExtData::GetRelation(HouseClass* pFirer, HouseClass* pHouse) {
