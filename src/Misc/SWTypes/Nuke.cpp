@@ -119,14 +119,11 @@ bool SW_NuclearMissile::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPl
 				Debug::Log("Nuke launched manually.\n");
 				// if we reached this, there is no silo launch. still launch a missile.
 				if(WeaponTypeClass *pWeapon = pData->Nuke_Payload) {
-					Debug::Log("[Nuke] launch: payload %p, %s.\n", pWeapon, pWeapon->ID);
 					if(BulletTypeClass *pProjectile = pWeapon->Projectile) {
-						Debug::Log("[Nuke] launch: projectile %p, %s.\n", pProjectile, pProjectile->ID);
 						// get damage and warhead. they are not available during
 						// initialisation, so we gotta fall back now if they are invalid.
 						int damage = (pData->SW_Damage < 0 ? pWeapon->Damage : pData->SW_Damage.Get());
 						WarheadTypeClass *pWarhead = (!pData->SW_Warhead ? pWeapon->Warhead : pData->SW_Warhead.Get());
-						Debug::Log("[Nuke] launch: warhead %p, %s, %p, %p.\n", pWarhead, pWarhead->ID, pWeapon->Warhead, pData->SW_Warhead.Get());
 
 						// create a bullet and the psi warning
 						if(BulletClass* pBullet = pProjectile->CreateBullet(pCell, NULL, damage, pWarhead, pWeapon->Speed, pWeapon->Bright)) {
@@ -162,7 +159,7 @@ bool SW_NuclearMissile::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPl
 			if(fired) {
 				VocClass::PlayAt(pData->SW_ActivationSound, &target, NULL);
 				pThis->Owner->ShouldRecheckTechTree = true;
-				return true;			
+				return true;
 			}
 
 		}

@@ -639,7 +639,6 @@ DEFINE_HOOK(48A59A, MapClass_SelectDamageAnimation_LightningWarhead, 5) {
 DEFINE_HOOK(44C9FF, BuildingClass_Missile_PsiWarn, 6) {
 	GET(BuildingClass*, pThis, ESI);
 	int type = pThis->FiringSWType;
-	Debug::Log("[Nuke] warn %d, %d\n", type, SuperWeaponTypeClass::Array->Count);
 
 	if(SuperWeaponTypeClass::Array->ValidIndex(type)) {
 		if(SuperWeaponTypeClass* pSW = SuperWeaponTypeClass::Array->GetItem(type)) {
@@ -654,7 +653,6 @@ DEFINE_HOOK(44C9FF, BuildingClass_Missile_PsiWarn, 6) {
 				Debug::Log("PsiWarn skipped\n");
 				return 0x44CA7A;
 			}
-			Debug::Log("[Nuke] No ExtData found to warn!?\n");
 		}
 	}
 
@@ -667,7 +665,6 @@ DEFINE_HOOK(44CABA, BuildingClass_Missile_CreateBullet, 6) {
 	GET(BuildingClass*, pThis, ESI);
 
 	int type = pThis->FiringSWType;
-	Debug::Log("[Nuke] create a bullet for %d, %d\n", type, SuperWeaponTypeClass::Array->Count);
 
 	if(SuperWeaponTypeClass::Array->ValidIndex(type)) {
 		if(SuperWeaponTypeClass* pSW = SuperWeaponTypeClass::Array->GetItem(type)) {
@@ -683,18 +680,11 @@ DEFINE_HOOK(44CABA, BuildingClass_Missile_CreateBullet, 6) {
 						
 						return 0x44CAF2;
 					}
-					Debug::Log("[Nuke] create a bullet: Creation failed.\n");
-					return 0;
 				}
-				Debug::Log("[Nuke] create a bullet: Weapon empty.\n");
-				return 0;
 			}
-			Debug::Log("[Nuke] create a bullet: No ExtData found.\n");
-			return 0;
 		}
 	}
 
-	Debug::Log("[Nuke] create a bullet: invalid nuke type.\n");
 	return 0;
 }
 
@@ -703,7 +693,6 @@ DEFINE_HOOK(44CC8B, BuildingClass_Missile_NukeTakeOff, 6) {
 	GET(BuildingClass*, pThis, ESI);
 
 	int type = pThis->FiringSWType;
-	Debug::Log("[Nuke] takeoff %d, %d\n", type, SuperWeaponTypeClass::Array->Count);
 
 	if(SuperWeaponTypeClass::Array->ValidIndex(type)) {
 		if(SuperWeaponTypeClass* pSW = SuperWeaponTypeClass::Array->GetItem(type)) {
@@ -717,7 +706,6 @@ DEFINE_HOOK(44CC8B, BuildingClass_Missile_NukeTakeOff, 6) {
 		}
 	}
 
-	Debug::Log("[Nuke] create a bullet: invalid nuke type.\n");
 	return 0;
 }
 
@@ -725,10 +713,7 @@ DEFINE_HOOK(44CC8B, BuildingClass_Missile_NukeTakeOff, 6) {
 DEFINE_HOOK(46B371, BulletClass_NukeMaker, 5) {
 	GET(BulletClass*, pBullet, EBP);
 
-	Debug::Log("[Nuke] maker: bullet %p, %p.\n", pBullet, (pBullet ? pBullet->WeaponType : NULL));
-
 	if(pBullet && pBullet->WeaponType) {
-		Debug::Log("[Nuke] maker: bullet name %s.\n", pBullet->WeaponType->ID);
 		if(BulletExt::ExtData *pData = BulletExt::ExtMap.Find(pBullet)) {
 			if(SuperWeaponTypeClass *pSW = pData->NukeSW) {
 				if(SWTypeExt::ExtData* pExt = SWTypeExt::ExtMap.Find(pSW)) {
@@ -761,17 +746,10 @@ DEFINE_HOOK(46B371, BulletClass_NukeMaker, 5) {
 						Debug::Log("[%s] has no payload weapon type, or it is invalid.\n", pSW->ID);
 					}
 				}
-				Debug::Log("[Nuke] maker: No SWTypeExt::ExtData found.\n");
-				return 0;
 			}
-			Debug::Log("[Nuke] maker: That thing got no SW.\n");
-			return 0;
 		}
-		Debug::Log("[Nuke] maker: No BulletExt::ExtData found.\n");
-		return 0;
 	}
 
-	Debug::Log("[Nuke] maker: invalid nuke type.\n");
 	return 0;
 }
 
@@ -780,12 +758,8 @@ DEFINE_HOOK(46B423, BulletClass_NukeMaker_PropagateSW, 6) {
 	GET(BulletClass*, pBullet, EBP);
 	GET(BulletClass*, pNuke, EDI);
 
-	Debug::Log("[Nuke] propagate: %p, %p.\n", pBullet, pNuke);
-
 	if(BulletExt::ExtData *pData = BulletExt::ExtMap.Find(pBullet)) {
-		Debug::Log("[Nuke] propagate 1.\n");
 		if(BulletExt::ExtData *pExt = BulletExt::ExtMap.Find(pNuke)) {
-			Debug::Log("[Nuke] propagate 2.\n");
 			pExt->NukeSW = pData->NukeSW;
 		}
 	}
@@ -801,15 +775,12 @@ DEFINE_HOOK(467E59, BulletClass_Update_NukeBall, 5) {
 	// will get this behavior.
 	GET(BulletClass*, pBullet, EBP);
 
-	Debug::Log("[Nuke] impact %p %s.\n", pBullet, pBullet->Type->ID);
-
 	if(WarheadTypeExt::ExtData* pExt = WarheadTypeExt::ExtMap.Find(pBullet->WH)) {
 		if(pExt->PreImpactAnim != -1) {
 			// copy what the original function does, but only do it if
 			// this is a SW launched bullet.
 			if(BulletExt::ExtData* pData = BulletExt::ExtMap.Find(pBullet)) {
 				SW_NuclearMissile::CurrentNukeType = pData->NukeSW;
-				Debug::Log("[Nuke] %p %s.\n", pData->NukeSW, pData->NukeSW->ID);
 
 				if(pData->NukeSW) {
 					if(pBullet->GetHeight() < 0) {

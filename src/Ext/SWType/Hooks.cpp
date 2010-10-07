@@ -632,13 +632,10 @@ DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
 							// find the first building providing pSuper
 							SuperWeaponTypeClass *pType = pSuper->Type;
 							BuildingClass *pBld = NULL;
-							Debug::Log("[AITryFireSW] doing self-stuff with %s (%d).\n", pType->ID, pType->ArrayIndex);
 							for(int j=0; j<BuildingTypeClass::Array->Count; ++j) {
 								BuildingTypeClass *pTBld = BuildingTypeClass::Array->GetItem(j);
 								if(pTBld->SuperWeapon == pType->ArrayIndex || pTBld->SuperWeapon2 == pType->ArrayIndex) {
-									Debug::Log("[AITryFireSW] trying to find one of %s (%d).\n", pTBld->ID, pTBld->ArrayIndex);
 									if(pBld = pThis->FindBuildingOfType(pTBld->ArrayIndex, -1)) {
-										Debug::Log("Success. Found %p\n", pBld);
 										break;
 									}
 								}
@@ -646,8 +643,6 @@ DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
 							if(pBld) {
 								Cell = pBld->GetCell()->MapCoords;
 								LaunchSW(&Cell);
-							} else {
-								Debug::Log("[AITryFireSW] No building found that can fire %s.\n", pType->ID);
 							}
 
 							break;
