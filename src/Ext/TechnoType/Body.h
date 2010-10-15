@@ -95,6 +95,8 @@ public:
 		DynamicVectorClass<bool> ReversedByHouses;
 		Valueable<bool> CanBeReversed;
 
+		Valueable<int> RadarJamRadius; //!< Distance in cells to scan for & jam radars
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			Survivors_PilotChance (NULL),
 			Survivors_PassengerChance (NULL),
@@ -130,7 +132,8 @@ public:
 			AlternateTheaterArt (false),
 			VoiceRepair (-1),
 			WaterImage (NULL),
-			CanBeReversed (true)
+			CanBeReversed (true),
+			RadarJamRadius (0)
 			{
 				this->Insignia.SetAll(NULL);
 				*this->CameoPCX = *this->AltCameoPCX = 0;

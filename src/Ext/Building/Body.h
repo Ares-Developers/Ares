@@ -3,6 +3,8 @@
 
 #include <CCINIClass.h>
 #include <BuildingClass.h>
+#include <TechnoClass.h>
+#include <set>
 
 #include "../_Container.hpp"
 #include "../../Ares.h"
@@ -26,6 +28,9 @@ public:
 		bool ignoreNextEVA; //!< This is used when returning raided buildings, to decide whether to play EVA announcements about building capture.
 
 		bool InfiltratedBy(HouseClass *Enterer);
+
+		std::set<TechnoClass *> RegisteredJammers; //!< Set of Radar Jammers which have registered themselves to be in range of this building. (Related to issue #305)
+
 	public:
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			OwnerBeforeRaid(NULL), isCurrentlyRaided(false), ignoreNextEVA(false)

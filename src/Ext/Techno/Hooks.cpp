@@ -3,6 +3,7 @@
 #include "../Building/Body.h"
 #include "../BuildingType/Body.h"
 #include "../../Misc/Debug.h"
+#include "../../Misc/JammerClass.h"
 
 #include <SpecificStructures.h>
 
@@ -52,6 +53,7 @@ DEFINE_HOOK(6F9E76, TechnoClass_Update_CheckOperators, 6)
 	GET(TechnoClass *, pThis, ESI); // object this is called on
 	//TechnoTypeClass *Type = pThis->GetTechnoType();
 	//TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(Type);
+	TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(pThis->GetTechnoType());
 	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(pThis);
 
 	// Related to operators/drivers, issue #342
@@ -87,6 +89,20 @@ DEFINE_HOOK(6F9E76, TechnoClass_Update_CheckOperators, 6)
 				pUnit->SetDestination(NULL, true);
 				pUnit->StopMoving();
 			}
+		}
+
+		// dropping Radar Jammers (#305) here for now; should check if another TechnoClass::Update hook might be better ~Ren
+		if(pData->RadarJam) { // RadarJam should only be non-null if the object is an active radar jammer
+			pData->RadarJam->UnjamAll();
+		}
+	} else {
+		// dropping Radar Jammers (#305) here for now; should check if another TechnoClass::Update hook might be better ~Ren
+		if(!!pTypeData->RadarJamRadius) {
+			if(!pData->RadarJam) {
+				pData->RadarJam = new JammerClass(pThis, pData);
+			}
+
+			pData->RadarJam->Update();
 		}
 	}
 
@@ -549,7 +565,7 @@ DEFINE_HOOK(70E2D2, TechnoClass_IronCurtain_Modify, 6) {
 
 		pThis->IronCurtainTimer.TimeLeft = duration;
 		pThis->IronTintStage = 0;
-	
+
 		return 0x70E2DB;
 	}
 
@@ -586,6 +602,20 @@ DEFINE_HOOK(73A1BC, UnitClass_UpdatePosition_EnteredGrinder, 7)
 			VoxClass::Play("EVA_ReverseEngineeredVehicle");
 			VoxClass::Play("EVA_NewTechnologyAcquired");
 		}
+	}
+
+	return 0;
+}
+
+DEFINE_HOOK(6F6AC9, TechnoClass_Remove, 6) {
+	GET(TechnoClass *, pThis, ESI);
+	TechnoExt::ExtData* TechnoExt = TechnoExt::ExtMap.Find(pThis);
+
+	// if the removed object is a radar jammer, unjam all jammed radars
+	if(TechnoExt->RadarJam) {
+		TechnoExt->RadarJam->UnjamAll();
+		delete TechnoExt->RadarJam;
+		TechnoExt->RadarJam = NULL;
 	}
 
 	return 0;

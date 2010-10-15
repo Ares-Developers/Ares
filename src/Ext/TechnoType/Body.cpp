@@ -262,6 +262,9 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 
 	this->CanBeReversed.Read(&exINI, section, "CanBeReversed");
 
+	// #305
+	this->RadarJamRadius.Read(&exINI, section, "RadarJamRadius");
+
 	// quick fix - remove after the rest of weapon selector code is done
 	return;
 }
