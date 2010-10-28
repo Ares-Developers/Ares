@@ -158,7 +158,7 @@ DEFINE_HOOK(6BD886, CSF_LoadExtraFiles, 5)
 DEFINE_HOOK(734E83, CSF_LoadString_1, 6)
 {
 	GET(char *, Name, EBX);
-	if(strlen(Name) > 6 && !strncmp(Name, "NOSTR:", 6)) {
+	if(strlen(Name) >= 6 && !strncmp(Name, "NOSTR:", 6)) {
 		CSFString *NewString;
 		GAME_ALLOC(CSFString, NewString);
 		wsprintfW(NewString->Text, L"%hs", &Name[6]);

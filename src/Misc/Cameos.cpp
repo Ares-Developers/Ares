@@ -1,6 +1,8 @@
 #include "../Ext/TechnoType/Body.h"
 #include "../Ext/SWType/Body.h"
 
+#include <PCX.h>
+
 // bugfix #277 revisited: VeteranInfantry and friends don't show promoted cameos
 DEFINE_HOOK(712045, TechnoTypeClass_GetCameo, 5)
 {
@@ -8,42 +10,22 @@ DEFINE_HOOK(712045, TechnoTypeClass_GetCameo, 5)
 	retfunc<SHPStruct *> ret(R, 0x7120C6);
 
 	GET(TechnoTypeClass *, T, ECX);
-	GET(HouseClass *, House, EAX);
-	HouseTypeClass *Country = House->Type;
 
 	SHPStruct *Cameo = T->Cameo;
 	SHPStruct *Alt = T->AltCameo;
 
-	if(!Alt) {
-		return ret(Cameo);
-	}
+	auto pData = TechnoTypeExt::ExtMap.Find(T);
 
-	switch(T->WhatAmI()) {
-		case abs_InfantryType:
-			if(House->BarracksInfiltrated && !T->Naval && T->Trainable) {
-				return ret(Alt);
-			} else {
-				return ret(Country->VeteranInfantry.FindItemIndex((InfantryTypeClass **)&T) == -1 ? Cameo : Alt);
-			}
-		case abs_UnitType:
-			if(House->WarFactoryInfiltrated && !T->Naval && T->Trainable) {
-				return ret(Alt);
-			} else {
-				return ret(Country->VeteranUnits.FindItemIndex((UnitTypeClass **)&T) == -1 ? Cameo : Alt);
-			}
-		case abs_AircraftType:
-			return ret(Country->VeteranAircraft.FindItemIndex((AircraftTypeClass **)&T) == -1 ? Cameo : Alt);
-		case abs_BuildingType:
-			if(TechnoTypeClass *Item = T->UndeploysInto) {
-				return ret(Country->VeteranUnits.FindItemIndex((UnitTypeClass **)&Item) == -1 ? Cameo : Alt);
-			}
-	}
-
-	return ret(Cameo);
+	return ret(
+		(pData->CameoIsElite())
+			? Alt
+			: Cameo
+	);
 }
 
 // a global var ewww
 ConvertClass * CurrentDrawnConvert = NULL;
+BSurface * CameoPCX = NULL;
 
 DEFINE_HOOK(6A9948, TabCameoListClass_Draw_SW, 6)
 {
@@ -73,4 +55,55 @@ DEFINE_HOOK(6A9A2A, TabCameoListClass_Draw_Main, 6)
 	}
 	R->EDX<ConvertClass *>(pPalette);
 	return 0x6A9A30;
+}
+
+
+DEFINE_HOOK(6A9952, TabCameoListClass_Draw_GetSWPCX, 6)
+{
+	GET(SuperWeaponTypeClass *, pSW, EAX);
+	auto pData = SWTypeExt::ExtMap.Find(pSW);
+	CameoPCX = (*pData->SidebarPCX)
+		? PCX::Instance->GetSurface(pData->SidebarPCX)
+		: NULL
+	;
+
+	return 0;
+}
+
+DEFINE_HOOK(6A980A, TabCameoListClass_Draw_GetTechnoPCX, 8)
+{
+	GET(TechnoTypeClass *, pType, EBX);
+
+	auto pData = TechnoTypeExt::ExtMap.Find(pType);
+
+	const char * pcxFilename = (pData->CameoIsElite() && *pData->AltCameoPCX)
+		? pData->AltCameoPCX
+		: pData->CameoPCX
+	;
+
+	CameoPCX = (*pcxFilename)
+		? PCX::Instance->GetSurface(pcxFilename)
+		: NULL
+	;
+
+	return 0;
+}
+
+DEFINE_HOOK(6A99F3, TabCameoListClass_Draw_SkipSHPForPCX, 6)
+{
+	return (CameoPCX)
+		? 0x6A9A43
+		: 0;
+}
+
+DEFINE_HOOK(6A9A43, TabCameoListClass_Draw_DrawPCX, 6)
+{
+	if(CameoPCX) {
+		GET(int, TLX, ESI);
+		GET(int, TLY, EBP);
+		RectangleStruct bounds = { TLX, TLY, 60, 48 };
+		PCX::Instance->BlitToSurface(&bounds, DSurface::Sidebar, CameoPCX);
+		CameoPCX = NULL;
+	}
+	return 0;
 }

@@ -5,20 +5,22 @@ int Includes::LastReadIndex = -1;
 DynamicVectorClass<CCINIClass*> Includes::LoadedINIs;
 DynamicVectorClass<char*> Includes::LoadedINIFiles;
 
-// 474200, 6
 DEFINE_HOOK(474200, CCINIClass_ReadCCFile1, 6)
 {
-	Includes::LoadedINIs.AddItem(R->ECX<CCINIClass *>());
-	Includes::LoadedINIFiles.AddItem(_strdup(R->EAX<CCFileClass*>()->GetFileName()));
+	GET(CCINIClass *, pINI, ECX);
+	GET(CCFileClass *, pFile, EAX);
+
+	const char * filename = pFile->GetFileName();
+
+	Includes::LoadedINIs.AddItem(pINI);
+	Includes::LoadedINIFiles.AddItem(_strdup(filename));
 	return 0;
 }
 
-// 474314, 6
 DEFINE_HOOK(474314, CCINIClass_ReadCCFile2, 6)
 {
 	char buffer[0x80];
 	CCINIClass *xINI = Includes::LoadedINIs[Includes::LoadedINIs.Count - 1];
-	const char *key;
 
 	if(!xINI) {
 		return 0;
@@ -28,7 +30,7 @@ DEFINE_HOOK(474314, CCINIClass_ReadCCFile2, 6)
 
 	int len = xINI->GetKeyCount(section);
 	for(int i = Includes::LastReadIndex; i < len; i = Includes::LastReadIndex) {
-		key = xINI->GetKeyName(section, i);
+		const char *key = xINI->GetKeyName(section, i);
 		++Includes::LastReadIndex;
 		if(xINI->ReadString(section, key, "", buffer, 0x80)) {
 			bool canLoad = 1;
@@ -50,10 +52,6 @@ DEFINE_HOOK(474314, CCINIClass_ReadCCFile2, 6)
 		}
 	}
 
-	if(!len) {
-		Includes::LastReadIndex = -1;
-	}
-
 	Includes::LoadedINIs.RemoveItem(Includes::LoadedINIs.Count - 1);
 	if(!Includes::LoadedINIs.Count) {
 		for(int j = Includes::LoadedINIs.Count - 1; j > 0; --j) {
@@ -63,6 +61,7 @@ DEFINE_HOOK(474314, CCINIClass_ReadCCFile2, 6)
 			free(Includes::LoadedINIFiles[j]);
 			Includes::LoadedINIFiles.RemoveItem(j);
 		}
+		Includes::LastReadIndex = -1;
 		return 0;
 	}
 	return 0;

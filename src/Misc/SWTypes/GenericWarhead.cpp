@@ -40,7 +40,7 @@ bool SW_GenericWarhead::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPl
 	// crush, kill, destroy
 	// NULL -> TechnoClass* SourceObject
 	pWHExt->applyRipples(&coords);
-	pWHExt->applyIronCurtain(&coords, pThis->Owner);
+	pWHExt->applyIronCurtain(&coords, pThis->Owner, pData->GWarhead_Damage);
 
 	BuildingClass *Firer = NULL;
 	HouseClass *FirerHouse = pThis->Owner;

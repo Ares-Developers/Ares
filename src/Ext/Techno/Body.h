@@ -2,7 +2,6 @@
 #define TECHNO_EXT_H
 
 #include <xcompile.h>
-#include <vector>
 #include <algorithm>
 
 #include <AircraftClass.h>
@@ -19,8 +18,12 @@
 
 #include "../WarheadType/Body.h"
 #include "../WeaponType/Body.h"
+#include "../TechnoType/Body.h"
 
 #include "../_Container.hpp"
+
+//#include "../../Misc/JammerClass.h"
+class JammerClass;
 
 class TechnoExt
 {
@@ -47,6 +50,11 @@ public:
 		AnimClass *EMPSparkleAnim;
 		eMission EMPLastMission;
 
+		bool ShadowDrawnManually;
+
+		// 305 Radar Jammers
+		JammerClass* RadarJam;
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			idxSlot_Wave (0),
 			idxSlot_Beam (0),
@@ -57,12 +65,21 @@ public:
 			Insignia_Image (NULL),
 			GarrisonedIn (NULL),
 			EMPSparkleAnim (NULL),
-			EMPLastMission (mission_None)
+			EMPLastMission (mission_None),
+			ShadowDrawnManually (false),
+			RadarJam(NULL)
 			{
 				this->CloakSkipTimer.Stop();
+				// hope this works with the timing - I assume it does, since Types should be created before derivates thereof
+				//TechnoTypeExt::ExtData* TypeExt = TechnoTypeExt::ExtMap.Find(this->AttachedToObject->GetTechnoType());
+				/*if(TypeExt->RadarJamRadius) {
+					RadarJam = new JammerClass(this->AttachedToObject, this); // now in hooks -> TechnoClass_Update_CheckOperators
+				}*/
 			};
 
-		virtual ~ExtData() { };
+		virtual ~ExtData() {
+			//delete RadarJam; // now in hooks -> TechnoClass_Remove
+		};
 
 		virtual size_t Size() const { return sizeof(*this); };
 
@@ -76,6 +93,8 @@ public:
 		unsigned int AlphaFrame(SHPStruct * Image);
 
 		bool DrawVisualFX();
+
+		UnitTypeClass * GetUnitType();
 	};
 
 	static Container<TechnoExt> ExtMap;
@@ -94,6 +113,8 @@ public:
 	static void GetPutLocation(CoordStruct const &, CoordStruct &);
 
 	static void StopDraining(TechnoClass *Drainer, TechnoClass *Drainee);
+
+	static bool CreateWithDroppod(FootClass *Object, CoordStruct *XYZ);
 /*
 	static int SelectWeaponAgainst(TechnoClass *pThis, TechnoClass *pTarget);
 	static bool EvalWeaponAgainst(TechnoClass *pThis, TechnoClass *pTarget, WeaponTypeClass* W);

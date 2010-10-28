@@ -1,5 +1,4 @@
 #include "Body.h"
-#include "../../Misc/CustomTheater.h"
 #include "../../Misc/Debug.h"
 
 #include "Ares.CRT.h"
@@ -108,7 +107,7 @@ DEFINE_HOOK(5F9070, ObjectTypeClass_Load2DArt, 0)
 	}
 
 	if(SHPStruct *SHP = pType->Image) {
-		pType->MaxDimension = max(max(SHP->Width, SHP->Height), 8);
+		pType->MaxDimension = std::max<short>(std::max<short>(SHP->Width, SHP->Height), 8);
 	}
 
 	return 0x5F92C3;
@@ -124,8 +123,7 @@ DEFINE_HOOK(5F96B0, ObjectTypeClass_TheaterSpecificID, 6)
 		char c1 = basename[1] & ~0x20; // evil hack to uppercase
 		if(isalpha(c0)) {
 			if(c1 == 'A' || c1 == 'T') {
-				//basename[1] = Theater::Array[idxTheater].Letter[0];
-				basename[1] = CustomTheater::Get(idxTheater)->Letter[0];
+				basename[1] = Theater::Array[idxTheater].Letter[0];
 			}
 		}
 	}

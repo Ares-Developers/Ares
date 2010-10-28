@@ -2,6 +2,7 @@
 #include <Unsorted.h>
 #include <MouseClass.h>
 #include <WWMouseClass.h>
+#include <CRT.h>
 #include "Ares.version.h"
 
 bool Debug::bLog = true;
@@ -262,7 +263,7 @@ LONG WINAPI Debug::ExceptionHandler(int code, LPEXCEPTION_POINTERS pExs)
 	}
 };
 
-void Debug::FullDump(MINIDUMP_EXCEPTION_INFORMATION *pException) {
+void Debug::FullDump(MINIDUMP_EXCEPTION_INFORMATION *pException, wchar_t * generatedFilename) {
 	wchar_t filename[MAX_PATH];
 	wchar_t path[MAX_PATH];
 	SYSTEMTIME time;
@@ -276,8 +277,12 @@ void Debug::FullDump(MINIDUMP_EXCEPTION_INFORMATION *pException) {
 	swprintf(filename, MAX_PATH, L"%s\\debug\\extcrashdump.%04u%02u%02u-%02u%02u%02u.dmp",
 		path, time.wYear, time.wMonth, time.wDay, time.wHour, time.wMinute, time.wSecond);
 
+	if(generatedFilename) {
+		CRT::wcsncpy(generatedFilename, filename, MAX_PATH - 1);
+	}
+
 	HANDLE dumpFile = CreateFileW(filename, GENERIC_READ | GENERIC_WRITE,
-					FILE_SHARE_WRITE | FILE_SHARE_READ, NULL, CREATE_ALWAYS, FILE_FLAG_WRITE_THROUGH, NULL);
+		FILE_SHARE_WRITE | FILE_SHARE_READ, NULL, CREATE_ALWAYS, FILE_FLAG_WRITE_THROUGH, NULL);
 
 	MINIDUMP_TYPE type = (MINIDUMP_TYPE)MiniDumpWithFullMemory;
 

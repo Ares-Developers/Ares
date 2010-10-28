@@ -11,10 +11,10 @@
 bool RMG::UrbanAreas = 0;
 bool RMG::UrbanAreasRead = 0;
 
-DynamicVectorClass<char*> RMG::UrbanStructures;
 int RMG::UrbanStructuresReadSoFar;
-DynamicVectorClass<char*> RMG::UrbanVehicles;
-DynamicVectorClass<char*> RMG::UrbanInfantry;
+VectorNames<BuildingTypeClass> RMG::UrbanStructures;
+VectorNames<UnitTypeClass> RMG::UrbanVehicles;
+VectorNames<InfantryTypeClass> RMG::UrbanInfantry;
 
 //0x596FFE
 DEFINE_HOOK(596FFE, RMG_EnableArchipelago, 0)
@@ -24,10 +24,9 @@ DEFINE_HOOK(596FFE, RMG_EnableArchipelago, 0)
 	return 0x597008;
 }
 
-/*
-//EnableDesert isn't necessary anymore, we now use RMG.Available from the new theater data, see CustomTheater.cpp
+
 //0x5970EA
-A_FINE_HOOK(5970EA, RMG_EnableDesert, 9)
+DEFINE_HOOK(5970EA, RMG_EnableDesert, 9)
 {
 	GET(HWND, hWnd, EDI);
 
@@ -48,7 +47,6 @@ A_FINE_HOOK(5970EA, RMG_EnableDesert, 9)
 
 	return 0;
 }
-*/
 
 DEFINE_HOOK(596C81, MapSeedClass_DialogFunc_GetData, 5)
 {
@@ -77,54 +75,21 @@ DEFINE_HOOK(5982D5, MapSeedClass_LoadFromINI, 6)
 		RMG::UrbanAreas = pINI->ReadBool("General", "GenerateUrbanAreas", RMG::UrbanAreas);
 
 		//I can should this be theater-related in the future... ~pd
-		if(!pINI->GetSection("Urban")) {
-			// no [Urban] section - use our defaults; ASSUMES default rules...
 
-			RMG::UrbanStructures.Clear();
-			char *defStructures [] = {"CABUNK01", "CABUNK02", "CAARMY01", "CAARMY02", "CAARMY03", "CAARMY04", "CACHIG03", "CANEWY01", "CANEWY14", "CANWY09", "CANWY26", "CANWY25", "CATEXS07", 0};
-			for(char ** cur = defStructures; *cur && **cur; ++cur) {
-				RMG::UrbanStructures.AddItem(*cur);
-			}
+		pINI->ReadString("Urban", "Structures",
+			"CABUNK01,CABUNK02,CAARMY01,CAARMY02,CAARMY03,CAARMY04,CACHIG03,CANEWY01,CANEWY14,CANWY09,CANWY26,CANWY25,CATEXS07",
+			Ares::readBuffer, Ares::readLength);
+		RMG::UrbanStructures.Tokenize(Ares::readBuffer);
 
-			RMG::UrbanVehicles.Clear();
-			char *defVehicles[] = {"TRUCKA", "TRUCKB", "COP", "EUROC", "SUVW", "SUVB", "FTRK", "AMBU", 0};
-			for(char ** cur = defVehicles; *cur && **cur; ++cur) {
-				RMG::UrbanVehicles.AddItem(*cur);
-			}
+		pINI->ReadString("Urban", "Infantry",
+			"CIV1,CIV2,CIV3,CIVA,CIVB,CIVC",
+			Ares::readBuffer, Ares::readLength);
+		RMG::UrbanInfantry.Tokenize(Ares::readBuffer);
 
-			RMG::UrbanInfantry.Clear();
-			char *defInfantry[] = {"CIV1", "CIV2", "CIV3", "CIVA", "CIVB", "CIVC", 0};
-			for(char ** cur = defInfantry; *cur && **cur; ++cur) {
-				RMG::UrbanInfantry.AddItem(*cur);
-			}
-		} else {
-			if(pINI->ReadString("Urban", "Structures", "", Ares::readBuffer, Ares::readLength)) {
-				RMG::UrbanStructures.Clear();
-				for(char * cur = strtok(Ares::readBuffer, ","); cur && *cur; cur = strtok(NULL, ",")) {
-					if(BuildingTypeClass::FindIndex(cur) != -1) {
-						RMG::UrbanStructures.AddItem(cur);
-					}
-				}
-			}
-
-			if(pINI->ReadString("Urban", "Infantry", "", Ares::readBuffer, Ares::readLength)) {
-				RMG::UrbanInfantry.Clear();
-				for(char * cur = strtok(Ares::readBuffer, ","); cur && *cur; cur = strtok(NULL, ",")) {
-					if(InfantryTypeClass::FindIndex(cur) != -1) {
-						RMG::UrbanInfantry.AddItem(cur);
-					}
-				}
-			}
-
-			if(pINI->ReadString("Urban", "Vehicles", "", Ares::readBuffer, Ares::readLength)) {
-				RMG::UrbanVehicles.Clear();
-				for(char * cur = strtok(Ares::readBuffer, ","); cur && *cur; cur = strtok(NULL, ",")) {
-					if(UnitTypeClass::FindIndex(cur) != -1) {
-						RMG::UrbanVehicles.AddItem(cur);
-					}
-				}
-			}
-		}
+		pINI->ReadString("Urban", "Vehicles",
+			"TRUCKA,TRUCKB,COP,EUROC,SUVW,SUVB,FTRK,AMBU"
+			, Ares::readBuffer, Ares::readLength);
+		RMG::UrbanVehicles.Tokenize(Ares::readBuffer);
 
 		RMG::UrbanAreasRead = 1;
 	}
@@ -144,25 +109,34 @@ DEFINE_HOOK(598FB8, RMG_GenerateUrban, 5)
 DEFINE_HOOK(5A65CA, MapSeedClass_Generate_PlaceUrbanStructures_Start, 5)
 {
 	RMG::UrbanStructuresReadSoFar = 0;
-	if(!RMG::UrbanStructures.Count) {
+	if(!RMG::UrbanStructures.Count()) {
 		return 0x5A68F1; // no structures - nothing to do
 	}
-	R->ESI<char **>(RMG::UrbanStructures.Items);
+	R->ESI<char **>(RMG::UrbanStructures.ToString());
 	return 0x5A65D5;
 }
 
 DEFINE_HOOK(5A6619, MapSeedClass_Generate_PlaceUrbanStructures_Loop, 6)
 {
 	++RMG::UrbanStructuresReadSoFar;
-	return (RMG::UrbanStructures.Count > RMG::UrbanStructuresReadSoFar)
+	return (RMG::UrbanStructures.Count() > RMG::UrbanStructuresReadSoFar)
 		? 0x5A65D1
 		: 0x5A6621
 	;
 }
 
+DEFINE_HOOK(5A66B0, MapSeedClass_Generate_PlaceUrbanStructures_SanityCheck, 5)
+{
+	GET(int, Index, EAX);
+	return (Index > -1)
+		? 0
+		: 0x5A68D8
+	;
+}
+
 DEFINE_HOOK(5A6998, MapSeedClass_Generate_PlaceUrbanFoots, 5)
 {
-	int Length = RMG::UrbanInfantry.Count + RMG::UrbanVehicles.Count;
+	int Length = RMG::UrbanInfantry.Count() + RMG::UrbanVehicles.Count();
 	if(Length == 0) {
 		return 0x5A6B96; // no possible items - nothing to do
 	}
@@ -171,13 +145,19 @@ DEFINE_HOOK(5A6998, MapSeedClass_Generate_PlaceUrbanFoots, 5)
 
 	GET(HouseClass *, Owner, EBP);
 	ObjectClass *Item = NULL;
-	if(Index < RMG::UrbanInfantry.Count) {
-		InfantryTypeClass *IType = InfantryTypeClass::Find(RMG::UrbanInfantry[Index]);
-		Item = IType->CreateObject(Owner);
+	if(Index < RMG::UrbanInfantry.Count()) {
+		if(InfantryTypeClass *IType = RMG::UrbanInfantry.FindItem(Index)) {
+			Item = IType->CreateObject(Owner);
+		} else {
+			Debug::Log("Unknown InfantryType %s in RMG config!\n", RMG::UrbanInfantry[Index]);
+		}
 	} else {
-		Index -= RMG::UrbanInfantry.Count;
-		UnitTypeClass *UType = UnitTypeClass::Find(RMG::UrbanVehicles[Index]);
-		Item = UType->CreateObject(Owner);
+		Index -= RMG::UrbanInfantry.Count();
+		if(UnitTypeClass *UType = RMG::UrbanVehicles.FindItem(Index)) {
+			Item = UType->CreateObject(Owner);
+		} else {
+			Debug::Log("Unknown VehicleType %s in RMG config!\n", RMG::UrbanVehicles[Index]);
+		}
 	}
 	R->ESI<ObjectClass *>(Item);
 

@@ -10,7 +10,7 @@
 
 #include <cmath>
 
-/* 	#218 - specific occupiers // comes in 0.2
+/* 	#218 - specific occupiers
 	#665 - raidable buildings */
 DEFINE_HOOK(457D58, BuildingClass_CanBeOccupied_SpecificOccupiers, 6)
 {
@@ -23,16 +23,17 @@ DEFINE_HOOK(457D58, BuildingClass_CanBeOccupied_SpecificOccupiers, 6)
 		bool isFull = (pThis->GetOccupantCount() == pThis->Type->MaxNumberOccupants);
 		bool isEmpty = (pThis->GetOccupantCount() == 0); // yes, yes, !pThis->GetOccupantCount() - leave it this way for semantics :P
 		bool isIneligible = (pThis->IsRedHP() || pInf->IsMindControlled());
+		bool isNeutral = pThis->Owner->IsNeutral();
+		bool isRaidable = (pBuildTypeExt->BunkerRaidable && isEmpty); // if it's not empty, it cannot be raided anymore, 'cause it already was
+		bool sameOwner = (pThis->Owner == pInf->Owner);
 
-		if(!isFull && !isIneligible) {
-			if(pThis->Owner != pInf->Owner) {
-				/*	The building switches owners after the first occupant enters,
-					so this check should not interfere with the player who captured it,
-					only prevent others from entering it while it's occupied. (Bug #699) */
-				can_occupy = (pThis->Owner->IsNeutral() || (pBuildTypeExt->BunkerRaidable && isEmpty));
-			} else {
-				can_occupy = true;
-			}
+		bool allowedOccupier = pBuildTypeExt->CanBeOccupiedBy(pInf);
+
+		if(!isFull && !isIneligible && allowedOccupier) {
+		/*	The building switches owners after the first occupant enters,
+			so this check should not interfere with the player who captured it,
+			only prevent others from entering it while it's occupied. (Bug #699) */
+			can_occupy = sameOwner ? true : (isNeutral || isRaidable);
 		}
 	}
 
@@ -54,28 +55,38 @@ DEFINE_HOOK(457D58, BuildingClass_CanBeOccupied_SpecificOccupiers, 6)
 
 // #664: Advanced Rubble - turning into rubble part
 // moved to before the survivors get unlimboed, per sanity's requirements
-//A_FINE_HOOK(44266B, BuildingClass_ReceiveDamage_AfterPreDeathSequence, 6)
+// TODO review
 DEFINE_HOOK(441F12, BuildingClass_Destroy_RubbleYell, 6)
 {
 	GET(BuildingClass *, pThis, ESI);
 	BuildingExt::ExtData* BuildingAresData = BuildingExt::ExtMap.Find(pThis);
 	BuildingTypeExt::ExtData* destrBuildTE = BuildingTypeExt::ExtMap.Find(pThis->Type);
 
-	if(!pThis->C4Timer.Ignorable()) {
-		// If this object has a rubble building set, turn, otherwise die
-		if(destrBuildTE->RubbleDestroyed) {
-			BuildingAresData->RubbleYell();
-		} else {
-			pThis->UnInit();
-			pThis->AfterDestruction();
+	// If this object has a rubble building set, turn
+	if(destrBuildTE->RubbleDestroyed) {
+		++Unsorted::IKnowWhatImDoing;
+		BuildingAresData->RubbleYell();
+		--Unsorted::IKnowWhatImDoing;
+	}
+
+	return 0;
+}
+
+// remove all units from the rubble
+DEFINE_HOOK(441F2C, BuildingClass_Destroy_KickOutOfRubble, 5) {
+	GET(BuildingClass*, pBld, ESI);
+
+	// find out whether this destroyed building would turn into rubble
+	if(BuildingTypeExt::ExtData *pTData = BuildingTypeExt::ExtMap.Find(pBld->Type)) {
+		if(pTData->RubbleDestroyed) {
+			if(BuildingExt::ExtData *pData = BuildingExt::ExtMap.Find(pBld)) {
+				// this is not the rubble, but the old intact building.
+				// since we force the same foundation this is no problem.
+				pData->KickOutOfRubble();
+			}
 		}
 	}
 
-	/* original code
-	if(pThis->C4Timer.IsDone()) {
-		pThis->UnInit();
-		pThis->AfterDestruction();
-	}*/
 	return 0;
 }
 

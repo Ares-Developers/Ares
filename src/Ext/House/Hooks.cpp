@@ -1,4 +1,5 @@
 #include "Body.h"
+#include "../Building/Body.h"
 #include "../TechnoType/Body.h"
 
 #include <StringTable.h>
@@ -32,14 +33,19 @@ DEFINE_HOOK(4F7870, HouseClass_PrereqValidator, 7)
 	return 0x4F8361;
 }
 
-// upgrades as prereqs, facepalm of epic proportions
-// not needed anymore since the whole function's been replaced
-/*
-A_FINE_HOOK(4F7E49, HouseClass_CanBuildHowMany_Upgrades, 5)
+
+DEFINE_HOOK(505360, HouseClass_PrerequisitesForTechnoTypeAreListed, 5)
 {
-		return R->get_EAX() < 3 ? 0x4F7E41 : 0x4F7E34;
+	GET(HouseClass *, pHouse, ECX);
+
+	GET_STACK(TechnoTypeClass *, pItem, 0x4);
+	GET_STACK(DynamicVectorClass<BuildingTypeClass *> *, pBuildingsToCheck, 0x8);
+
+	R->EAX(HouseExt::PrerequisitesListed(pBuildingsToCheck, pItem));
+
+	return 0x505486;
 }
-*/
+
 
 /*
  * Attention: This is a rewrite of the "is this house defeated yet?" check that should clear up the
@@ -152,4 +158,59 @@ DEFINE_HOOK(4F62FF, HouseClass_CTOR_FixNameOverflow, 6)
 	H->UIName[20] = 0;
 
 	return 0x4F6312;
+}
+
+// this is checked right before the TeamClass is instantiated -
+// it does not mean the AI will abandon this team if another team wants BuildLimit'ed units at the same time
+DEFINE_HOOK(50965E, HouseClass_CanInstantiateTeam, 5)
+{
+	GET(DWORD, ptrTask, EAX);
+	GET(DWORD, ptrOffset, ECX);
+
+	ptrTask += (ptrOffset - 4); // pointer math!
+	TaskForceEntryStruct * ptrEntry = reinterpret_cast<TaskForceEntryStruct *>(ptrTask); // evil! but works, don't ask me why
+
+	GET(HouseClass *, Owner, EBP);
+	enum { BuildLimitAllows = 0x5096BD, Absolutely = 0x509671, NoWay = 0x5096F1} CanBuild = NoWay;
+	if(TechnoTypeClass * Type = ptrEntry->Type) {
+		if(Type->GetFactoryType(true, true, false, Owner)) {
+			if(Ares::GlobalControls::AllowBypassBuildLimit[Owner->AIDifficulty]) {
+				CanBuild = BuildLimitAllows;
+			} else {
+				int remainLimit = HouseExt::BuildLimitRemaining(Owner, Type);
+				if(remainLimit >= ptrEntry->Amount) {
+					CanBuild = BuildLimitAllows;
+				} else {
+					CanBuild = NoWay;
+				}
+			}
+		} else {
+			CanBuild = BuildLimitAllows;
+		}
+	}
+	return CanBuild;
+}
+
+DEFINE_HOOK(508EBC, HouseClass_Radar_Update_CheckJammed, 6)
+{
+	enum {Eligible = 0, Jammed = 0x508F08};
+	GET(BuildingClass *, Radar, EAX);
+	BuildingExt::ExtData* TheBuildingExt = BuildingExt::ExtMap.Find(Radar);
+
+	return (!TheBuildingExt->RegisteredJammers.empty())
+		? Jammed
+		: Eligible
+	;
+}
+
+DEFINE_HOOK(508F91, HouseClass_SpySat_Update_CheckJammed, 6)
+{
+	enum {Eligible = 0, Jammed = 0x508FF6};
+	GET(BuildingClass *, SpySat, ECX);
+	BuildingExt::ExtData* TheBuildingExt = BuildingExt::ExtMap.Find(SpySat);
+
+	return (!TheBuildingExt->RegisteredJammers.empty())
+		? Jammed
+		: Eligible
+	;
 }

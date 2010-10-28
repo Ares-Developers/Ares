@@ -293,27 +293,27 @@ DEFINE_HOOK(6F7561, Arcing_Aircraft, 5)
 	return 0;
 
 /*
-DEFINE_HOOK(6F4AB0, TechnoClass_ReceivedRadioCommand, 8)
+A_FINE_HOOK(6F4AB0, TechnoClass_ReceivedRadioCommand, 8)
 {
 	XL('T');
 }
 
-DEFINE_HOOK(4D8FB0, FootClass_ReceivedRadioCommand, 5)
+A_FINE_HOOK(4D8FB0, FootClass_ReceivedRadioCommand, 5)
 {
 	XL('F');
 }
 
-DEFINE_HOOK(43C2D0, BuildingClass_ReceivedRadioCommand, 5)
+A_FINE_HOOK(43C2D0, BuildingClass_ReceivedRadioCommand, 5)
 {
 	XL('B');
 }
 
-DEFINE_HOOK(4190B0, AircraftClass_ReceivedRadioCommand, 5)
+A_FINE_HOOK(4190B0, AircraftClass_ReceivedRadioCommand, 5)
 {
 	XL('A');
 }
 
-DEFINE_HOOK(737430, UnitClass_ReceivedRadioCommand, 5)
+A_FINE_HOOK(737430, UnitClass_ReceivedRadioCommand, 5)
 {
 	XL('U');
 }
@@ -661,38 +661,6 @@ DEFINE_HOOK(718871, TeleportLocomotionClass_UnfreezeObject_SinkOrSwim, 7)
 	return 0x7188B1;
 }
 
-// this is checked right before the TeamClass is instantiated - 
-// it does not mean the AI will abandon this team if another team wants BuildLimit'ed units at the same time
-DEFINE_HOOK(50965E, HouseClass_CanInstantiateTeam, 5)
-{
-	GET(DWORD, ptrTask, EAX);
-	GET(DWORD, ptrOffset, ECX);
-
-	ptrTask += (ptrOffset - 4); // pointer math!
-	TaskForceEntryStruct * ptrEntry = reinterpret_cast<TaskForceEntryStruct *>(ptrTask); // evil! but works, don't ask me why
-
-	GET(HouseClass *, Owner, EBP);
-	enum { BuildLimitAllows = 0x5096BD, Absolutely = 0x509671, NoWay = 0x5096F1} CanBuild = NoWay;
-	if(TechnoTypeClass * Type = ptrEntry->Type) {
-		if(Type->GetFactoryType(true, true, false, Owner)) {
-			if(Ares::GlobalControls::AllowBypassBuildLimit[Owner->AIDifficulty]) {
-				CanBuild = BuildLimitAllows;
-			} else {
-				int remainLimit = HouseExt::BuildLimitRemaining(Owner, Type);
-				Debug::Log("House %s can build %d (want: %d) instances of %s\n", Owner->PlainName, remainLimit, ptrEntry->Amount, Type->ID);
-				if(remainLimit >= ptrEntry->Amount) {
-					CanBuild = BuildLimitAllows;
-				} else {
-					CanBuild = NoWay;
-				}
-			}
-		} else {
-			CanBuild = BuildLimitAllows;
-		}
-	}
-	return CanBuild;
-}
-
 /*
  * Fixing issue #954
  */
@@ -714,4 +682,52 @@ DEFINE_HOOK(621B80, DSurface_FillRectWithColor, 5)
 		return 0x621D26;
 	else
 		return 0;
+}
+
+DEFINE_HOOK(52BA78, _YR_GameInit_Pre, 5)
+{
+	// issue #198: animate the paradrop cursor
+	MouseCursor::First[MouseCursorType::ParaDrop].Interval = 4;
+
+	// issue #214: also animate the chronosphere cursor
+	MouseCursor::First[MouseCursorType::Chronosphere].Interval = 4;
+
+	return 0;
+}
+
+DEFINE_HOOK(469467, BulletClass_DetonateAt_CanTemporalTarget, 5)
+{
+	GET(TechnoClass *, Target, ECX);
+	Layer::Value lyr = Target->InWhichLayer();
+	switch(lyr) {
+		case Layer::Ground:
+		case Layer::Air:
+		case Layer::Top:
+			return 0x469475;
+		default:
+			return 0x469AA4;
+	}
+}
+
+/* #183 - cloakable on Buildings and Aircraft */
+DEFINE_HOOK(442CE0, BuildingClass_Init_Cloakable, 6)
+{
+	GET(BuildingClass *, Item, ESI);
+
+	if(Item->Type->Cloakable) {
+		Item->Cloakable = true;
+	}
+
+	return 0;
+}
+
+DEFINE_HOOK(413FA3, AircraftClass_Init_Cloakable, 5)
+{
+	GET(AircraftClass *, Item, ESI);
+
+	if(Item->Type->Cloakable) {
+		Item->Cloakable = true;
+	}
+
+	return 0;
 }

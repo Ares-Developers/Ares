@@ -9,24 +9,18 @@
 #include <Misc/Actions.h>
 
 // #664: Advanced Rubble - reconstruction part: Check
-/*
-A_FINE_HOOK(51E635, InfantryClass_GetCursorOverObject_EngineerOverFriendlyBuilding, 5)
-{
-	GET(BuildingClass *, Target, ESI);
+DEFINE_HOOK(51E63A, InfantryClass_GetCursorOverObject_EngineerOverFriendlyBuilding, 6) {
+	GET(BuildingClass *, pTarget, ESI);
 	GET(InfantryClass *, pThis, EDI);
-	FPUControl fp(R->get_EAX()); // (Target->GetHealthPercentage() == RulesClass::Instance->ConditionIdeal)
-	switch(control) {
-		case Rebuild:
-			// fall through - not decided about UI handling yet
-		case DecideNormally:
-		default:
-		return fp.isEqual()
-		 ? 0x51E63A
-		 : 0x51E659
-		;
+
+	if(BuildingTypeExt::ExtData* pData = BuildingTypeExt::ExtMap.Find(pTarget->Type)) {
+		if(pData->RubbleIntact && pTarget->Owner->IsAlliedWith(pThis)) {
+			return 0x51E659;
+		}
 	}
+
+	return 0;
 }
-*/
 
 // #664: Advanced Rubble - reconstruction part: Reconstruction
 DEFINE_HOOK(519FAF, InfantryClass_UpdatePosition_EngineerRepairsFriendly, 6)
@@ -42,7 +36,12 @@ DEFINE_HOOK(519FAF, InfantryClass_UpdatePosition_EngineerRepairsFriendly, 6)
 		do_normal_repair = false;
 		bool wasSelected = pThis->IsSelected;
 		pThis->Remove();
-		TargetExtData->RubbleYell(true);
+		if(!TargetExtData->RubbleYell(true)) {
+			++Unsorted::IKnowWhatImDoing;
+			Target->Put(&Target->Location, Target->Facing);
+			--Unsorted::IKnowWhatImDoing;
+			VoxClass::Play("EVA_CannotDeployHere");
+		}
 		CellStruct Cell;
 		pThis->GetMapCoords(&Cell);
 		Target->KickOutUnit(pThis, &Cell);

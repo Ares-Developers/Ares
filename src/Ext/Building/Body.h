@@ -3,6 +3,8 @@
 
 #include <CCINIClass.h>
 #include <BuildingClass.h>
+#include <TechnoClass.h>
+#include <set>
 
 #include "../_Container.hpp"
 #include "../../Ares.h"
@@ -16,20 +18,6 @@ class BuildingExt
 public:
 	typedef BuildingClass TT;
 
-	class cPrismForwarding {
-		public:
-		DynamicVectorClass<BuildingClass*> Senders;		//the prism towers that are forwarding to this one
-		BuildingClass* SupportTarget;				//what tower am I sending to?
-		int PrismChargeDelay;					//current delay charge
-		double ModifierReserve;					//current modifier reservoir
-		int DamageReserve;					//current flat reservoir
-
-		// constructor
-		cPrismForwarding() : SupportTarget(NULL), PrismChargeDelay(0), ModifierReserve(0.0), DamageReserve(0) {
-			this->Senders.Clear();
-		};
-	};
-
 	class ExtData : public Extension<TT>
 	{
 	private:
@@ -40,10 +28,12 @@ public:
 		bool ignoreNextEVA; //!< This is used when returning raided buildings, to decide whether to play EVA announcements about building capture.
 
 		bool InfiltratedBy(HouseClass *Enterer);
-		cPrismForwarding PrismForwarding;
+
+		std::set<TechnoClass *> RegisteredJammers; //!< Set of Radar Jammers which have registered themselves to be in range of this building. (Related to issue #305)
+
 	public:
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
-			OwnerBeforeRaid(NULL), isCurrentlyRaided(false), ignoreNextEVA(false), PrismForwarding()
+			OwnerBeforeRaid(NULL), isCurrentlyRaided(false), ignoreNextEVA(false)
 			{ };
 
 		virtual ~ExtData() {
@@ -56,7 +46,8 @@ public:
 		}
 
 		// related to Advanced Rubble
-		void RubbleYell(bool beingRepaired = false); // This function triggers back and forth between rubble states.
+		bool RubbleYell(bool beingRepaired = false); // This function triggers back and forth between rubble states.
+		void KickOutOfRubble();
 
 		// related to trench traversal
 		bool canTraverseTo(BuildingClass* targetBuilding); // Returns true if people can move from the current building to the target building, otherwise false.
@@ -73,6 +64,8 @@ public:
 		void UpdateFirewall();
 		void ImmolateVictims();
 		void ImmolateVictim(ObjectClass * Victim);
+
+		bool ReverseEngineer(TechnoClass * Victim); //!< Returns true if Victim wasn't buildable and now should be
 	};
 
 	static Container<BuildingExt> ExtMap;
@@ -87,6 +80,13 @@ public:
 	static signed int GetImageFrameIndex(BuildingClass *pThis);
 
 	static void KickOutHospitalArmory(BuildingClass *pThis);
+
+	static CellStruct *TempFoundationData1;
+	static CellStruct *TempFoundationData2;
+
+	static DWORD FoundationLength(CellStruct * StartCell);
+
+	static void Cleanup();
 };
 
 #endif

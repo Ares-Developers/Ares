@@ -10,6 +10,8 @@
 #include <MixFileClass.h>
 #include <ParticleSystemTypeClass.h>
 #include <SmudgeTypeClass.h>
+#include <SidebarClass.h>
+#include <StringTable.h>
 #include <TechnoClass.h>
 #include <TemporalClass.h>
 #include <TerrainTypeClass.h>
@@ -18,6 +20,7 @@
 
 #include "Debug.h"
 #include "../Ares.h"
+#include "../Ares.CRT.h"
 
 #include "../Utilities/Macro.h"
 
@@ -276,4 +279,25 @@ DEFINE_HOOK(727544, TriggerTypeClass_LoadFromINI_Strtok_Actions, 5)
 {
 	R->EDX(Ares::readBuffer);
 	return 0;
+}
+
+
+DEFINE_HOOK(6A9348, CameoClass_GetTip_FixLength, 9)
+{
+	DWORD HideObjectName = R->AL();
+
+	GET(TechnoTypeClass *, Object, ESI);
+
+	int Cost = Object->GetActualCost(HouseClass::Player);
+	if(HideObjectName) {
+		const wchar_t * Format = StringTable::LoadString("TXT_MONEY_FORMAT_1");
+		_snwprintf(SidebarClass::TooltipBuffer, SidebarClass::TooltipLength, Format, Cost);
+	} else {
+		const wchar_t * UIName = Object->UIName;
+		const wchar_t * Format = StringTable::LoadString("TXT_MONEY_FORMAT_2");
+		_snwprintf(SidebarClass::TooltipBuffer, SidebarClass::TooltipLength, Format, UIName, Cost);
+	}
+	SidebarClass::TooltipBuffer[SidebarClass::TooltipLength - 1] = 0;
+
+	return 0x6A93B2;
 }

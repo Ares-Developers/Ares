@@ -45,7 +45,7 @@ public:
 
 		wchar_t msg[0x40] = L"\0";
 		wsprintfW(msg, L"Map Snapshot saved as '%hs'.", buffer);
-		MessageListClass::PrintMessage(msg);
+		MessageListClass::Instance->PrintMessage(msg);
 	}
 
 	//Constructor

@@ -6,6 +6,7 @@
 #include <HouseClass.h>
 #include <SideClass.h>
 #include "Body.h"
+#include "../Techno/Body.h"
 #include "../Bullet/Body.h"
 #include "../../Enum/ArmorTypes.h"
 
@@ -31,11 +32,28 @@ DEFINE_HOOK(46920B, BulletClass_Fire, 6) {
 		: NULL
 	;
 
+	int damage = 0;
+	if(Bullet->WeaponType) {
+		damage = Bullet->WeaponType->Damage;
+	}
+
 	pWHExt->applyRipples(&coords);
-	pWHExt->applyIronCurtain(&coords, OwnerHouse);
+	pWHExt->applyIronCurtain(&coords, OwnerHouse, damage);
 	pWHExt->applyEMP(&coords, Bullet->Owner);
 	WarheadTypeExt::applyOccupantDamage(Bullet);
 	pWHExt->applyKillDriver(Bullet);
+
+/*
+ * this is a little demo I made to test DP
+	if(_strcmpi(Bullet->Type->ID, "Cannon") == 0) {
+		UnitClass * Drop = reinterpret_cast<UnitClass *>(UnitTypeClass::Find("APOC")->CreateObject(HouseClass::Player));
+		CoordStruct XYZ = coords;
+		XYZ.Z += 800;
+		if(!TechnoExt::CreateWithDroppod(Drop, &XYZ)) {
+			Drop->UnInit();
+		}
+	}
+*/
 
 	return (OwnerHouse && pWHExt->applyPermaMC(&coords, OwnerHouse, Bullet->Target))
 		? 0x469AA4

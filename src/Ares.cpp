@@ -62,6 +62,7 @@ void __stdcall Ares::RegisterCommands()
 	MakeCommand<MapSnapshotCommandClass>();
 	MakeCommand<TestSomethingCommandClass>();
 	MakeCommand<DumperTypesCommandClass>();
+	MakeCommand<MemoryDumperCommandClass>();
 	MakeCommand<DebuggingCommandClass>();
 }
 
@@ -113,8 +114,28 @@ void __stdcall Ares::ExeRun()
 
 void __stdcall Ares::ExeTerminate()
 {
-	GlobalControls::CloseConfig(&Ares::GlobalControls::INI);
+	CloseConfig(&Ares::GlobalControls::INI);
 	Debug::LogFileClose(111);
+}
+
+CCINIClass* Ares::OpenConfig(const char* file) {
+	CCINIClass* pINI;
+	GAME_ALLOC(CCINIClass, pINI);
+	CCFileClass *cfg;
+	GAME_ALLOC(CCFileClass, cfg, file);
+	if(cfg->Exists(NULL)) {
+		pINI->ReadCCFile(cfg);
+	}
+	GAME_DEALLOC(cfg);
+
+	return pINI;
+}
+
+void Ares::CloseConfig(CCINIClass** ppINI) {
+	if(ppINI && *ppINI) {
+		GAME_DEALLOC(*ppINI);
+		*ppINI = NULL;
+	}
 }
 
 //A new SendPDPlane function
@@ -156,7 +177,7 @@ void Ares::SendPDPlane(HouseClass* pOwner, CellClass* pTarget, AircraftTypeClass
 		CoordStruct spawn_crd = {(spawn_cell.X << 8) + 128, (spawn_cell.Y << 8) + 128, 0};
 
 		++Unsorted::IKnowWhatImDoing;
-		bool bSpawned = pPlane->Put(&spawn_crd, dir_N);
+		bool bSpawned = pPlane->Put(&spawn_crd, Direction::North);
 		--Unsorted::IKnowWhatImDoing;
 
 		if(bSpawned) {
@@ -305,6 +326,7 @@ DEFINE_HOOK(7258D0, AnnounceInvalidPointer, 6)
 DEFINE_HOOK(685659, Scenario_ClearClasses, a)
 {
 	BuildingExt::ExtMap.Empty();
+	BuildingExt::Cleanup();
 	BuildingTypeExt::ExtMap.Empty();
 //	BulletExt::ExtMap.Empty();
 	BulletTypeExt::ExtMap.Empty();
