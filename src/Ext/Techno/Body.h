@@ -41,6 +41,8 @@ public:
 
 		bool Survivors_Done;
 		bool InfJumpjet_BalloonHovering;
+		bool InfJumpjet_PendingDeploy;
+		bool InfJumpjet_PendingHover;
 
 		TimerStruct CloakSkipTimer;
 		SHPStruct * Insignia_Image;
@@ -62,6 +64,8 @@ public:
 			idxSlot_Parasite(0),
 			Survivors_Done (false),
 			InfJumpjet_BalloonHovering (false),
+			InfJumpjet_PendingDeploy (false),
+			InfJumpjet_PendingHover (false),
 			Insignia_Image (NULL),
 			GarrisonedIn (NULL),
 			EMPSparkleAnim (NULL),

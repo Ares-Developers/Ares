@@ -145,7 +145,7 @@ DEFINE_HOOK(54CA3C, JumpjetLocomotionClass_ProcessState4_L1, 6)
 DEFINE_HOOK(54B1C3, JumpjetLocomotionClass_ILocomotion_MoveTo_L1, 6)
 {
 	Debug::Log("MoveTo\n");
-	Debug::DumpStack(R, 0xF0);
+//	Debug::DumpStack(R, 0xF0);
 
 	GET_STACK(DWORD, Locomotor, 0x14);
 	Locomotor += 0x8;
@@ -257,7 +257,7 @@ DEFINE_HOOK(51E462, InfantryClass_GetCursorOverObject_SelfDeploy, 6)
 	GET(InfantryClass *, Inf, EDI);
 	GET(eAction, Act, EBP);
 
-	if(Act = act_Self_Deploy) {
+	if(Act == act_Self_Deploy) {
 		if(Inf->Type->DeployToLand) {
 			return 0x51E458; // always show the deploy cursor when hovering over self
 		}
@@ -272,6 +272,12 @@ DEFINE_HOOK(51F6EB, InfantryClass_Unload_Hovering, 6)
 		Debug::Log("Deploying hover!\n");
 		auto pData = TechnoExt::ExtMap.Find(Inf);
 		pData->InfJumpjet_BalloonHovering = !pData->InfJumpjet_BalloonHovering;
+		if(!pData->InfJumpjet_BalloonHovering) {
+			pData->InfJumpjet_PendingDeploy = true;
+		} else {
+			pData->InfJumpjet_PendingHover = true;
+		}
+		Debug::Log("Hover state: BH = %d, PD = %d, PH = %d!\n", pData->InfJumpjet_BalloonHovering, pData->InfJumpjet_PendingDeploy, pData->InfJumpjet_PendingHover);
 		Inf->ForceMission(mission_Guard);
 		Inf->SetDestination(Inf->GetCell(), true);
 		R->EAX(1);
@@ -317,3 +323,66 @@ A_FINE_HOOK(730B9C, DeployCommandClass_Execute_ToggleHoverToo, 7)
 	return 0x730BDC;
 }
 */
+
+
+DEFINE_HOOK(4DA87A, InfantryClass_Update_AfterLocomotion, 6)
+{
+	GET(FootClass *, pFoot, ESI);
+
+	if(!pFoot->IsAlive) {
+		return 0x4DAF00;
+	}
+
+	if(InfantryClass * pThis = specific_cast<InfantryClass *>(pFoot)) {
+		if(pThis->Type->DeployToLand) {
+			if(pThis->GetHeight() < 1) {
+				auto pData = TechnoExt::ExtMap.Find(pThis);
+				if(pData->InfJumpjet_PendingDeploy) {
+					Debug::Log("Mutating Locomotor on %s\n", pThis->Type->ID);
+					LocomotionClass::ChangeLocomotorTo(pThis, &LocomotionClass::CLSIDs::Walk);
+					pData->InfJumpjet_PendingDeploy = false;
+				}
+			}
+		}
+	}
+
+	return 0x4DA886;
+}
+
+DEFINE_HOOK(75AC87, WalkLocomotionClass_ILocomotion_Process_KickHoverUp, 7)
+{
+	GET(DWORD, Loco2, ESI);
+	DWORD Loco = Loco2 - 4;
+	LocomotionClass * pLoco = reinterpret_cast<LocomotionClass *>(Loco);
+	DWORD Obj = Loco2 + 8;
+	FootClass ** Object = reinterpret_cast<FootClass **>(Obj); // pointer voodoo
+	if(InfantryClass *pInf = specific_cast<InfantryClass *>(*Object)) {
+		if(pInf->Type->JumpJet) {
+			Debug::Log("Kickup %s\n", pInf->Type->ID);
+			auto pData = TechnoExt::ExtMap.Find(pInf);
+			if(pData->InfJumpjet_PendingHover) {
+				Debug::Log("Loco swap\n");
+				CoordStruct XYZ = pInf->Location;
+				pInf->Remove();
+				pLoco->AddRef();
+
+				ILocomotion ** pILoco = &pLoco->LinkedTo->Locomotor;
+				ReleaseIf(*pILoco);
+				*pILoco = NULL;
+
+				IPiggyback * pPiggy = reinterpret_cast<IPiggyback *>(Loco2 + 0x14);
+				pPiggy->End_Piggyback(pILoco);
+
+				if(!pInf->Put(&XYZ, 0)) {
+					int Damage = pInf->Health;
+					pInf->ReceiveDamage(&Damage, 0, RulesClass::Instance->C4Warhead, NULL, true, true, NULL);
+					pLoco->Release();
+				}
+
+				pData->InfJumpjet_PendingHover = false;
+			}
+		}
+	}
+
+	return 0;
+}
