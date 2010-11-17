@@ -61,6 +61,8 @@ public:
 	static CCINIClass* OpenConfig(const char*);
 	static void CloseConfig(CCINIClass**);
 
+	static void InitNoCDMode();
+
 	//Callbacks
 	static void __stdcall CmdLineParse(char**,int);
 
