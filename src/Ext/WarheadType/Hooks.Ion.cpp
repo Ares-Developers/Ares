@@ -25,7 +25,7 @@ DEFINE_HOOK(53CBF5, IonBlastClass_Update_Duration, 5)
 
 	int Ripple_Radius;
 	if(WarheadTypeExt::IonExt.find(IB) == WarheadTypeExt::IonExt.end()) {
-		Ripple_Radius = 0;
+		Ripple_Radius = 79;
 	} else {
 		WarheadTypeExt::ExtData *pData = WarheadTypeExt::IonExt[IB];
 		Ripple_Radius = std::min(79, pData->Ripple_Radius + 1);

@@ -61,7 +61,7 @@ public:
 		TypeList<AnimTypeClass*> Weather_Bolts;
 		TypeList<AnimTypeClass*> Weather_Debris;
 		TypeList<int> Weather_Sounds;
-		Valueable<SuperWeaponAffectedHouse::Value> Weather_RadarOutageAffects;
+		ValueableEnum<SuperWeaponAffectedHouse> Weather_RadarOutageAffects;
 
 		// Nuke
 		Valueable<WeaponTypeClass*> Nuke_Payload;
@@ -127,7 +127,7 @@ public:
 		ValueableIdx<int, VocClass> SW_ActivationSound;
 		Valueable<AnimTypeClass *> SW_Anim;
 		Valueable<int> SW_AnimHeight;
-		Valueable<SuperWeaponAffectedHouse::Value> SW_AnimVisibility;
+		ValueableEnum<SuperWeaponAffectedHouse> SW_AnimVisibility;
 
 		Valueable<bool> SW_TypeCustom;
 		Valueable<bool> SW_AutoFire;
@@ -139,14 +139,14 @@ public:
 		Valueable<MouseCursor> SW_Cursor;
 		Valueable<MouseCursor> SW_NoCursor;
 		char SW_PostDependent[0x18];
-		Valueable<SuperWeaponAITargetingMode::Value> SW_AITargetingType;
+		ValueableEnum<SuperWeaponAITargetingMode> SW_AITargetingType;
 		Customizable<double> SW_ChargeToDrainRatio;
 
 		Valueable<float> SW_WidthOrRange;
 		Valueable<int> SW_Height;
-		Valueable<SuperWeaponAffectedHouse::Value> SW_AffectsHouse;
-		Valueable<SuperWeaponTarget::Value> SW_AffectsTarget;
-		Valueable<SuperWeaponTarget::Value> SW_RequiresTarget;
+		ValueableEnum<SuperWeaponAffectedHouse> SW_AffectsHouse;
+		ValueableEnum<SuperWeaponTarget> SW_AffectsTarget;
+		ValueableEnum<SuperWeaponTarget> SW_RequiresTarget;
 		Customizable<WarheadTypeClass *> SW_Warhead;
 		Valueable<int> SW_Damage;
 		Valueable<int> SW_Deferment;

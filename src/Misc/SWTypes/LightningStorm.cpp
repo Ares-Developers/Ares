@@ -56,8 +56,8 @@ void SW_LightningStorm::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeCla
 	pData->EVA_Ready = VoxClass::FindIndex("EVA_LightningStormReady");
 	pData->EVA_Activated = VoxClass::FindIndex("EVA_LightningStormCreated");
 
-	AresCRT::strCopy(pData->Message_Launch, "TXT_LIGHTNING_STORM", 0x20);
-	AresCRT::strCopy(pData->Message_Activate, "TXT_LIGHTNING_STORM_APPROACHING", 0x20);
+	AresCRT::strCopy(pData->Message_Launch, "TXT_LIGHTNING_STORM_APPROACHING", 0x20);
+	AresCRT::strCopy(pData->Message_Activate, "TXT_LIGHTNING_STORM", 0x20);
 	AresCRT::strCopy(pData->Message_Abort, "Msg:LightningStormActive", 0x20);
 
 	pData->Lighting_Ambient = &ScenarioClass::Instance->IonAmbient;
@@ -91,6 +91,7 @@ void SW_LightningStorm::LoadFromINI(
 	pData->Weather_DebrisMax.Read(&exINI, section, "Lightning.DebrisMax");
 	pData->Weather_CloudHeight.Read(&exINI, section, "Lightning.CloudHeight");
 	pData->Weather_BoltExplosion.Parse(&exINI, section, "Lightning.BoltExplosion");
+	pData->Weather_RadarOutageAffects.Read(&exINI, section, "Lightning.RadarOutageAffects");
 
 	if(pINI->ReadString(section, "Lightning.Clouds", Ares::readDefval, Ares::readBuffer, Ares::readLength)) {
 		pData->Weather_Clouds.Clear();

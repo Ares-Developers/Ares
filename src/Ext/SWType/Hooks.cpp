@@ -634,7 +634,7 @@ DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
 							BuildingClass *pBld = NULL;
 							for(int j=0; j<BuildingTypeClass::Array->Count; ++j) {
 								BuildingTypeClass *pTBld = BuildingTypeClass::Array->GetItem(j);
-								if(pTBld->SuperWeapon == pType->ArrayIndex || pTBld->SuperWeapon2 == pType->ArrayIndex) {
+								if((pTBld->SuperWeapon == pType->ArrayIndex) || (pTBld->SuperWeapon2 == pType->ArrayIndex)) {
 									if(pBld = pThis->FindBuildingOfType(pTBld->ArrayIndex, -1)) {
 										break;
 									}

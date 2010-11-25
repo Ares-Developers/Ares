@@ -249,7 +249,6 @@ void Container<TechnoExt>::InvalidatePointer(void *ptr) {
 	AnnounceInvalidPointerMap(TechnoExt::AlphaExt, ptr);
 	AnnounceInvalidPointerMap(TechnoExt::SpotlightExt, ptr);
 	AnnounceInvalidPointer(TechnoExt::ActiveBuildingLight, ptr);
-	SWStateMachine::InvalidatePointer(ptr);
 }
 
 /*! This function checks if this object can currently be used, in terms of having or needing an operator.
@@ -367,6 +366,7 @@ DEFINE_HOOK(6F4500, TechnoClass_DTOR, 5)
 {
 	GET(TechnoClass*, pItem, ECX);
 
+	SWStateMachine::InvalidatePointer(pItem);
 	TechnoExt::ExtMap.Remove(pItem);
 	return 0;
 }

@@ -96,81 +96,6 @@ void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass
 		}
 	}
 
-	// some parser functions
-	auto ReadSuperWeaponAITargeting = [&](char* key, SuperWeaponAITargetingMode::Value &value) {
-		if(pINI->ReadString(section, key, Ares::readDefval, Ares::readBuffer, Ares::readLength)) {
-			if(!_strcmpi(Ares::readBuffer, "none")) {
-				value = SuperWeaponAITargetingMode::None;
-			} else if(!_strcmpi(Ares::readBuffer, "nuke")) {
-				value = SuperWeaponAITargetingMode::Nuke;
-			} else if(!_strcmpi(Ares::readBuffer, "lightningstorm")) {
-				value = SuperWeaponAITargetingMode::LightningStorm;
-			} else if(!_strcmpi(Ares::readBuffer, "psychicdominator")) {
-				value = SuperWeaponAITargetingMode::PsychicDominator;
-			} else if(!_strcmpi(Ares::readBuffer, "paradrop")) {
-				value = SuperWeaponAITargetingMode::ParaDrop;
-			} else if(!_strcmpi(Ares::readBuffer, "geneticmutator")) {
-				value = SuperWeaponAITargetingMode::GeneticMutator;
-			} else if(!_strcmpi(Ares::readBuffer, "forceshield")) {
-				value = SuperWeaponAITargetingMode::ForceShield;
-			} else if(!_strcmpi(Ares::readBuffer, "notarget")) {
-				value = SuperWeaponAITargetingMode::NoTarget;
-			} else if(!_strcmpi(Ares::readBuffer, "offensive")) {
-				value = SuperWeaponAITargetingMode::Offensive;
-			} else if(!_strcmpi(Ares::readBuffer, "stealth")) {
-				value = SuperWeaponAITargetingMode::Stealth;
-			} else if(!_strcmpi(Ares::readBuffer, "base")) {
-				value = SuperWeaponAITargetingMode::Base;
-			} else if(!_strcmpi(Ares::readBuffer, "self")) {
-				value = SuperWeaponAITargetingMode::Self;
-			}
-		}
-	};
-
-	auto ReadSuperWeaponTarget = [&](char* key, SuperWeaponTarget::Value &value) {
-		if(pINI->ReadString(section, key, Ares::readDefval, Ares::readBuffer, Ares::readLength)) {
-			SuperWeaponTarget::Value ret = SuperWeaponTarget::None;
-			for(char *cur = strtok(Ares::readBuffer, Ares::readDelims); cur; cur = strtok(NULL, Ares::readDelims)) {
-				if(!_strcmpi(Ares::readBuffer, "land")) {
-					ret |= SuperWeaponTarget::Land;
-				} else if(!_strcmpi(Ares::readBuffer, "water")) {
-					ret |= SuperWeaponTarget::Water;
-				} else if(!_strcmpi(Ares::readBuffer, "empty")) {
-					ret |= SuperWeaponTarget::NoContent;
-				} else if(!_strcmpi(Ares::readBuffer, "infantry")) {
-					ret |= SuperWeaponTarget::Infantry;
-				} else if(!_strcmpi(Ares::readBuffer, "units")) {
-					ret |= SuperWeaponTarget::Unit;
-				} else if(!_strcmpi(Ares::readBuffer, "buildings")) {
-					ret |= SuperWeaponTarget::Building;
-				}
-			}
-			value = ret;
-		}
-	};
-
-	auto ReadSuperWeaponAffectedHouse = [&](char* key, SuperWeaponAffectedHouse::Value &value) {
-		if(pINI->ReadString(section, key, Ares::readDefval, Ares::readBuffer, Ares::readLength)) {
-			SuperWeaponAffectedHouse::Value ret = SuperWeaponAffectedHouse::None;
-			for(char *cur = strtok(Ares::readBuffer, Ares::readDelims); cur; cur = strtok(NULL, Ares::readDelims)) {
-				if(!_strcmpi(Ares::readBuffer, "owner")) {
-					ret |= SuperWeaponAffectedHouse::Owner;
-				} else if(!_strcmpi(Ares::readBuffer, "allies")) {
-					ret = SuperWeaponAffectedHouse::Allies;
-				} else if(!_strcmpi(Ares::readBuffer, "enemies")) {
-					ret = SuperWeaponAffectedHouse::Enemies;
-				} else if(!_strcmpi(Ares::readBuffer, "team")) {
-					ret = SuperWeaponAffectedHouse::Team;
-				} else if(!_strcmpi(Ares::readBuffer, "others")) {
-					ret = SuperWeaponAffectedHouse::NotOwner;
-				} else if(!_strcmpi(Ares::readBuffer, "all")) {
-					ret = SuperWeaponAffectedHouse::All;
-				}
-			}
-			value = ret;
-		}
-	};
-
 	// read general properties
 	this->EVA_Ready.Read(&exINI, section, "EVA.Ready");
 	this->EVA_Activated.Read(&exINI, section, "EVA.Activated");
@@ -195,14 +120,11 @@ void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass
 	this->SW_Anim.Parse(&exINI, section, "SW.Animation");
 	this->SW_AnimHeight.Read(&exINI, section, "SW.AnimationHeight");
 
-	ReadSuperWeaponAffectedHouse("SW.AnimationVisibility", *this->SW_AnimVisibility);
-	ReadSuperWeaponAffectedHouse("SW.AffectsHouse", *this->SW_AffectsHouse);
-	ReadSuperWeaponAITargeting("SW.AITargeting", *this->SW_AITargetingType);
-	ReadSuperWeaponTarget("SW.AffectsTarget", *this->SW_AffectsTarget);
-	ReadSuperWeaponTarget("SW.RequiresTarget", *this->SW_RequiresTarget);
-
-	// this thing is only here because there is no global enum parser yet
-	ReadSuperWeaponAffectedHouse("Lightning.RadarOutageAffects", *this->Weather_RadarOutageAffects);
+	this->SW_AnimVisibility.Read(&exINI, section, "SW.AnimationVisibility");
+	this->SW_AffectsHouse.Read(&exINI, section, "SW.AffectsHouse");
+	this->SW_AITargetingType.Read(&exINI, section, "SW.AITargeting");
+	this->SW_AffectsTarget.Read(&exINI, section, "SW.AffectsTarget");
+	this->SW_RequiresTarget.Read(&exINI, section, "SW.RequiresTarget");
 
 	this->SW_Deferment.Read(&exINI, section, "SW.Deferment");
 	this->SW_ChargeToDrainRatio.Read(&exINI, section, "SW.ChargeToDrainRatio");
@@ -457,7 +379,10 @@ bool SWTypeExt::Launch(SuperClass* pThis, NewSWType* pSW, CellStruct* pCoords, b
 			}
 
 			if(HouseExt::ExtData *pExt = HouseExt::ExtMap.Find(pThis->Owner)) {
-				// post-click actions
+				// post-click actions. AutoFire SWs cannot support this. Consider
+				// two Chronospheres auto-firing (the second may be launched manually).
+				// the ChronoWarp would chose the source selected last, because it
+				// would overwrite the previous (unfired) SW's index.
 				if(!(flags & SuperWeaponFlags::PostClick) && !pData->SW_AutoFire) {
 					pExt->SWLastIndex = idxThis;
 				}

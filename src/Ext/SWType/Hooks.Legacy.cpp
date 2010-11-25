@@ -371,7 +371,6 @@ DEFINE_HOOK(53A6C0, LightningStorm_Update, 5) {
 
 					// is circular range?
 					if(height < 0) {
-						width *= 2;
 						height = width;
 						isRectangle = false;
 					}
@@ -381,7 +380,7 @@ DEFINE_HOOK(53A6C0, LightningStorm_Update, 5) {
 					if(height > 0 && width > 0 && MapClass::Instance->CellExists(&LSCell)) {
 						for(int k=pData->Weather_ScatterCount.Get(); k>0; --k) {
 							bool found;
-							for(int i=0; i<5; ++i) {
+							for(int i=0; i<3; ++i) {
 								cell = LSCell;
 								cell.X += (short)ScenarioClass::Instance->Random.RandomRanged(-width / 2, width / 2);
 								cell.Y += (short)ScenarioClass::Instance->Random.RandomRanged(-height / 2, height / 2);
