@@ -703,10 +703,18 @@ void EMPulse::DisableEMPEffect(TechnoClass * Victim) {
 	// update the animation
 	UpdateSparkleAnim(Victim);
 
-	// get harvesters back to work.
-	if (UnitClass * Unit = specific_cast<UnitClass *>(Victim)) {
-		if (Unit->Type->Harvester || Unit->Type->ResourceGatherer) {
-			Unit->QueueMission(pData->EMPLastMission, true);
+	// get harvesters back to work and ai units to hunt
+	if (FootClass * Foot = generic_cast<FootClass *>(Victim)) {
+		bool hasMission = false;
+		if (UnitClass * Unit = specific_cast<UnitClass *>(Victim)) {
+			if (Unit->Type->Harvester || Unit->Type->ResourceGatherer) {
+				Unit->QueueMission(pData->EMPLastMission, true);
+				hasMission = true;
+			}
+		}
+
+		if(!hasMission && !Foot->Owner->ControlledByHuman()) {
+			Foot->QueueMission(mission_Hunt, false);
 		}
 	}
 }
