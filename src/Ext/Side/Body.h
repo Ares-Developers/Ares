@@ -30,6 +30,8 @@ class SideExt
 		Customizable<int> SurvivorDivisor;
 		TypeList<BuildingTypeClass*> BaseDefenses;
 		TypeList<int> BaseDefenseCounts;
+		TypeList<InfantryTypeClass*>* ParaDropFallbackTypes;
+		TypeList<int>* ParaDropFallbackNum;
 		TypeList<TechnoTypeClass*> ParaDrop;
 		TypeList<int> ParaDropNum;
 		ValueableIdx<int, AircraftTypeClass> ParaDropPlane;

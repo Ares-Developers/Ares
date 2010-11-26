@@ -40,13 +40,8 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 
 		strcpy(this->EVATag, "Russian");
 
-		for(int i = 0; i < RulesClass::Instance->SovParaDropInf.Count; ++i) {
-			this->ParaDrop.AddItem((RulesClass::Instance->SovParaDropInf.GetItem(i)));
-		}
-
-		for(int i = 0; i < RulesClass::Instance->SovParaDropNum.Count; ++i) {
-			this->ParaDropNum.AddItem(RulesClass::Instance->SovParaDropNum.GetItem(i));
-		}
+		this->ParaDropFallbackTypes = &RulesClass::Instance->SovParaDropInf;
+		this->ParaDropFallbackNum = &RulesClass::Instance->SovParaDropNum;
 
 		this->SidebarMixFileIndex = 2;
 		this->SidebarYuriFileNames = false;
@@ -67,13 +62,8 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 
 		strcpy(this->EVATag, "Yuri");
 
-		for(int i = 0; i < RulesClass::Instance->YuriParaDropInf.Count; ++i) {
-			this->ParaDrop.AddItem(RulesClass::Instance->YuriParaDropInf.GetItem(i));
-		}
-
-		for(int i = 0; i < RulesClass::Instance->YuriParaDropNum.Count; ++i) {
-			this->ParaDropNum.AddItem(RulesClass::Instance->YuriParaDropNum.GetItem(i));
-		}
+		this->ParaDropFallbackTypes = &RulesClass::Instance->YuriParaDropInf;
+		this->ParaDropFallbackNum = &RulesClass::Instance->YuriParaDropNum;
 
 		this->SidebarMixFileIndex = 2;
 		this->SidebarYuriFileNames = true;
@@ -94,13 +84,8 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 
 		strcpy(this->EVATag, "Allied");
 
-		for(int i = 0; i < RulesClass::Instance->AllyParaDropInf.Count; ++i) {
-			this->ParaDrop.AddItem(RulesClass::Instance->AllyParaDropInf.GetItem(i));
-		}
-
-		for(int i = 0; i < RulesClass::Instance->AllyParaDropNum.Count; ++i) {
-			this->ParaDropNum.AddItem(RulesClass::Instance->AllyParaDropNum.GetItem(i));
-		}
+		this->ParaDropFallbackTypes = &RulesClass::Instance->AllyParaDropInf;
+		this->ParaDropFallbackNum = &RulesClass::Instance->AllyParaDropNum;
 
 		this->SidebarMixFileIndex = 1;
 		this->SidebarYuriFileNames = false;
@@ -145,6 +130,7 @@ void SideExt::ExtData::LoadFromINIFile(SideClass *pThis, CCINIClass *pINI)
 
 	if(pINI->ReadString(section, "ParaDrop.Types", "", Ares::readBuffer, Ares::readLength)) {
 		this->ParaDrop.Clear();
+		this->ParaDropFallbackTypes = NULL;
 
 		for(p = strtok(Ares::readBuffer, Ares::readDelims); p && *p; p = strtok(NULL, Ares::readDelims)) {
 			TechnoTypeClass* pTT = UnitTypeClass::Find(p);
@@ -161,6 +147,7 @@ void SideExt::ExtData::LoadFromINIFile(SideClass *pThis, CCINIClass *pINI)
 
 	if(pINI->ReadString(section, "ParaDrop.Num", "", Ares::readBuffer, Ares::readLength)) {
 		this->ParaDropNum.Clear();
+		this->ParaDropFallbackNum = NULL;
 
 		for(p = strtok(Ares::readBuffer, Ares::readDelims); p && *p; p = strtok(NULL, Ares::readDelims)) {
 			this->ParaDropNum.AddItem(atoi(p));
