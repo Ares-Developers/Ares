@@ -393,39 +393,21 @@ bool EMPulse::IsDeactivationAdvisable(TechnoClass * Target) {
 	return true;
 }
 
-//! Updates the radar outage for the owning player to match the current EMP effect duration.
+//! Updates the radar outage for the owning player.
 /*!
-	The radar outage duration will be set to the number of frames the current
-	EMP effect lasts. If there is no EMP in effect, the radar is set to come
-	back online.
+	If this is a structure providing radar or spy satellite abilities the
+	original check for radar facilities is invoked by setting a flag.
 
-	\param Techno The Techno that might be a Radar structure.
+	\param Techno The Techno that might be a Radar or SpySat structure.
 
 	\author AlexB
-	\date 2010-04-27
+	\date 2010-11-28
 */
 void EMPulse::updateRadarBlackout(TechnoClass * Techno) {
 	if (BuildingClass * Building = specific_cast<BuildingClass *>(Techno)) {
 		if (!Building->Type->InvisibleInGame) {
-			if (Building->Type->Radar) {
-				if (verbose) {
-					Debug::Log("[updateRadarBlackout] Before: %d, %d\n",
-							Building->EMPLockRemaining,
-							Building->Owner->RadarBlackoutTimer.TimeLeft);
-				}
-				if (Building->EMPLockRemaining > 0) {
-					Building->Owner->CreateRadarOutage(Building->EMPLockRemaining);
-					if (verbose) {
-						Debug::Log("[enableEMPEffect] Radar down for: %d\n", Building->EMPLockRemaining);
-					}
-				} else {
-					Building->Owner->RadarBlackoutTimer.TimeLeft = 0;
-					Building->Owner->RadarBlackout = true; // trigger the radar outage check
-				}
-				if (verbose) {
-					Debug::Log("[updateRadarBlackout] After: %d\n",
-							Building->Owner->RadarBlackoutTimer.TimeLeft);
-				}
+			if (Building->Type->Radar || Building->Type->SpySat) {
+				Building->Owner->RadarBlackout = true;
 			}
 		}
 	}

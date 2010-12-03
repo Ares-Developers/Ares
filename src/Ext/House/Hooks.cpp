@@ -191,25 +191,27 @@ DEFINE_HOOK(50965E, HouseClass_CanInstantiateTeam, 5)
 	return CanBuild;
 }
 
-DEFINE_HOOK(508EBC, HouseClass_Radar_Update_CheckJammed, 6)
+DEFINE_HOOK(508EBC, HouseClass_Radar_Update_CheckEligible, 6)
 {
 	enum {Eligible = 0, Jammed = 0x508F08};
 	GET(BuildingClass *, Radar, EAX);
 	BuildingExt::ExtData* TheBuildingExt = BuildingExt::ExtMap.Find(Radar);
 
-	return (!TheBuildingExt->RegisteredJammers.empty())
+	return (!TheBuildingExt->RegisteredJammers.empty()
+					|| Radar->EMPLockRemaining)
 		? Jammed
 		: Eligible
 	;
 }
 
-DEFINE_HOOK(508F91, HouseClass_SpySat_Update_CheckJammed, 6)
+DEFINE_HOOK(508F91, HouseClass_SpySat_Update_CheckEligible, 6)
 {
 	enum {Eligible = 0, Jammed = 0x508FF6};
 	GET(BuildingClass *, SpySat, ECX);
 	BuildingExt::ExtData* TheBuildingExt = BuildingExt::ExtMap.Find(SpySat);
 
-	return (!TheBuildingExt->RegisteredJammers.empty())
+	return (!TheBuildingExt->RegisteredJammers.empty()
+					|| SpySat->EMPLockRemaining)
 		? Jammed
 		: Eligible
 	;
