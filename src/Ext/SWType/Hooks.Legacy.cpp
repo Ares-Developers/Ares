@@ -82,7 +82,13 @@ DEFINE_HOOK(53B080, PsyDom_Fire, 5) {
 						return true;
 					}
 
-					// ignore ImmuneToPsionics, if wished.
+					// ignore permanently mind-controlled
+					if(pTechno->MindControlledByAUnit && !pTechno->MindControlledBy
+						&& !pData->Dominator_CapturePermaMindControlled) {
+							return true;
+					}
+
+					// ignore ImmuneToPsionics, if wished
 					if(pType->ImmuneToPsionics && !pData->Dominator_CaptureImmuneToPsionics) {
 						return true;
 					}
@@ -92,8 +98,13 @@ DEFINE_HOOK(53B080, PsyDom_Fire, 5) {
 						pTechno->MindControlledBy->CaptureManager->FreeUnit(pTechno);
 					}
 
-					// capture this unit permanently
+					// capture this unit, maybe permanently
 					pTechno->SetOwningHouse(pFirer);
+
+					if(pData->Dominator_PermanentCapture.Get()) {
+						// setting this will disallow another mind-controller to capture this
+						pTechno->MindControlledByAUnit = true;
+					}
 
 					// create a permanent capture anim
 					if(pData->Dominator_ControlAnim.Get()) {

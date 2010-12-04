@@ -105,7 +105,9 @@ public:
 		Customizable<AnimTypeClass*> Dominator_ControlAnim;
 		Valueable<bool> Dominator_Ripple;
 		Valueable<bool> Dominator_CaptureMindControlled;
+		Valueable<bool> Dominator_CapturePermaMindControlled;
 		Valueable<bool> Dominator_CaptureImmuneToPsionics;
+		Valueable<bool> Dominator_PermanentCapture;
 		
 		// Sonar
 		Valueable<int> Sonar_Delay;

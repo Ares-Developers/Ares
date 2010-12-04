@@ -28,7 +28,9 @@ void SW_PsychicDominator::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeC
 	pData->Dominator_Ripple = true;
 	pData->Dominator_Capture = true;
 	pData->Dominator_CaptureMindControlled = true;
+	pData->Dominator_CapturePermaMindControlled = true;
 	pData->Dominator_CaptureImmuneToPsionics = false;
+	pData->Dominator_PermanentCapture = true;
 
 	pData->EVA_Detected = VoxClass::FindIndex("EVA_PsychicDominatorDetected");
 	pData->EVA_Ready = VoxClass::FindIndex("EVA_PsychicDominatorReady");
@@ -65,7 +67,9 @@ void SW_PsychicDominator::LoadFromINI(
 	pData->Dominator_Capture.Read(&exINI, section, "Dominator.Capture");
 	pData->Dominator_Ripple.Read(&exINI, section, "Dominator.Ripple");
 	pData->Dominator_CaptureMindControlled.Read(&exINI, section, "Dominator.CaptureMindControlled");
+	pData->Dominator_CapturePermaMindControlled.Read(&exINI, section, "Dominator.CapturePermaMindControlled");
 	pData->Dominator_CaptureImmuneToPsionics.Read(&exINI, section, "Dominator.CaptureImmuneToPsionics");
+	pData->Dominator_PermanentCapture.Read(&exINI, section, "Dominator.PermanentCapture");
 }
 
 bool SW_PsychicDominator::AbortFire(SuperClass* pSW, bool IsPlayer) {
