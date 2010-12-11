@@ -21,7 +21,7 @@ DEFINE_HOOK(6ACEE0, Skirmish_DialogFunc_UpdateMultiEngineer, 6) {
 
 	// copy the setting to a location the game actually uses
 	GameModeOptionsClass::Instance->MultiEngineer =
-		!Ares::GlobalControls::AllowMultiEngineer || RulesExt::Global()->MultiEngineer[0];
+		!Ares::UISettings::AllowMultiEngineer || RulesExt::Global()->MultiEngineer[0];
 	return 0;
 }
 
@@ -29,17 +29,20 @@ DEFINE_HOOK(6ACEE0, Skirmish_DialogFunc_UpdateMultiEngineer, 6) {
 DEFINE_HOOK(6AD8A4, Skirmish_DialogFunc_MultiEngineer, 7) {
 	GET(HWND, hDlg, EBP);
 
-	if(Ares::GlobalControls::AllowMultiEngineer) {
+	if(Ares::UISettings::AllowMultiEngineer) {
 		HWND hDlgItem = GetDlgItem(hDlg, ARES_CHK_MULTIENGINEER);
 		if(hDlgItem) {
 			bool enabled = (SendMessageA(hDlgItem, BM_GETCHECK, 0, 0) != 0);
 			RulesExt::Global()->MultiEngineer[0] = enabled;
 			GameModeOptionsClass::Instance->MultiEngineer = enabled;
-			return 0x6AD8AB;
 		}
+	} else {
+		GameModeOptionsClass::Instance->MultiEngineer = false;
 	}
 
-	return 0;
+	// recreate the MapPreviewDrawer destructor check
+	GET(void*, pMPD, ESI);
+	return (pMPD ? 0x6AD8AD : 0x6AD8C7);
 }
 
 // initialize the skirmish dialog to check or uncheck the multi engineer checkbox
@@ -50,7 +53,7 @@ DEFINE_HOOK(6AEE6A, Skirmish_InitializeDialog_MultiEngineer, 5) {
 	HWND hDlgItem = GetDlgItem(hDlg, ARES_CHK_MULTIENGINEER);
 	if (hDlgItem) {
 		// show or hide the menu and update the checkbox
-		ShowWindow(hDlgItem, (Ares::GlobalControls::AllowMultiEngineer ? SW_SHOW : SW_HIDE));
+		ShowWindow(hDlgItem, (Ares::UISettings::AllowMultiEngineer ? SW_SHOW : SW_HIDE));
 		SendMessageA(hDlgItem, BM_SETCHECK, RulesExt::Global()->MultiEngineer[0] != 0, 0);
 	}
 

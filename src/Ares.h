@@ -15,6 +15,7 @@
 #include <CCINIClass.h>
 #include <MixFileClass.h>
 
+#include "Misc/Interface.h"
 #include "Misc/Debug.h"
 
 #include <AircraftTypeClass.h>
@@ -57,6 +58,11 @@ public:
 	static void InitOwnResources();
 	static void UninitOwnResources();
 
+	static CCINIClass* OpenConfig(const char*);
+	static void CloseConfig(CCINIClass**);
+
+	static void InitNoCDMode();
+
 	//Callbacks
 	static void __stdcall CmdLineParse(char**,int);
 
@@ -81,8 +87,6 @@ public:
 	public:
 		static CCINIClass * INI;
 
-		static CCINIClass* OpenConfig(const char*);
-		static void CloseConfig(CCINIClass**);
 		static void LoadConfig();
 
 		static void Load(CCINIClass*);
@@ -90,7 +94,6 @@ public:
 
 		static bool Initialized;
 		static bool AllowParallelAIQueues;
-		static bool AllowMultiEngineer;
 
 		static byte GFX_DX_Force;
 
@@ -109,6 +112,27 @@ public:
 		static SurfaceConfig GFX_S_Primary;
 		static SurfaceConfig GFX_S_Sidebar;
 		static SurfaceConfig GFX_S_Tile;
+	};
+
+	class UISettings {
+	private:
+		UISettings() {};
+	public:
+		static void Load(CCINIClass*);
+
+		static bool Initialized;
+		static Interface::eUIAction SinglePlayerButton;
+		static Interface::eUIAction WWOnlineButton;
+		static Interface::eUIAction NetworkButton;
+		static Interface::eUIAction MoviesAndCreditsButton;
+		static Interface::eUIAction CampaignButton;
+		static Interface::eUIAction SkirmishButton;
+		static Interface::eUIAction SneakPeeksButton;
+		static Interface::eUIAction PlayMoviesButton;
+		static Interface::eUIAction ViewCreditsButton;
+		static bool AllowMultiEngineer;
+		static bool CampaignList;
+		static bool ShowDebugCampaigns;
 	};
 
 	static bool RunningOnWindows7OrVista();

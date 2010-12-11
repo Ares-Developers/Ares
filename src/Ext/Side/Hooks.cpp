@@ -1,5 +1,8 @@
 #include "Body.h"
+#include "../HouseType/Body.h"
+#include "../SWType/Body.h"
 
+#include "../../Ares.CRT.h"
 #include <SuperClass.h>
 #include <ProgressScreenClass.h>
 
@@ -158,6 +161,55 @@ DEFINE_HOOK(643BB9, Sides_LoadTextColor2, 5)
 DEFINE_HOOK(642B91, Sides_LoadTextColor3, 5)
 	{ return SideExt::LoadTextColor(R, 0x68CAA9); }
 
+DEFINE_HOOK(6847B7, Sides_LoadTextColor_CacheMP, 6) {
+	GET(HouseTypeClass*, pType, EAX);
+
+	if(HouseTypeExt::ExtData *pData = HouseTypeExt::ExtMap.Find(pType)) {
+		SideExt::CurrentLoadTextColor = pData->LoadTextColor;
+	} else {
+		SideExt::CurrentLoadTextColor = NULL;
+	}
+
+	return 0;
+}
+
+DEFINE_HOOK(686D7F, Sides_LoadTextColor_CacheSP, 6) {
+	LEA_STACK(INIClass*, pINI, 0x1C);
+
+	char* pDefault = "";
+	char pID[4];
+	AresCRT::strCopy(pID, ScenarioClass::Instance->FileName, 4);
+
+	if(!_strcmpi(pID, "SOV")) {
+		pDefault = "SovietLoad";
+	} else if(!_strcmpi(pID, "YUR")) {
+		pDefault = "YuriLoad";
+	} else if(!_strcmpi(pID, "TUT")) {
+		pDefault = "LightGrey";
+	} else {
+		pDefault = "AlliedLoad";
+	}
+
+	if(pINI->ReadString(ScenarioClass::Instance->FileName, "LoadScreenText.Color", pDefault, Ares::readBuffer, 0x80)) {
+		if(ColorScheme* pCS = ColorScheme::Find(Ares::readBuffer)) {
+			SideExt::CurrentLoadTextColor = pCS;
+		}
+	}
+
+	return 0;
+}
+
+// issue 906: do not draw a box below the label text if there is none.
+DEFINE_HOOK(553E54, LoadProgressMgr_Draw_SkipShadowOnNullString, 6) {
+	GET(wchar_t*, pBrief, ESI);
+
+	if(!pBrief || !wcslen(pBrief)) {
+		return 0x554027;
+	}
+
+	return 0;
+}
+
 //0x534FB1
 DEFINE_HOOK(534FB1, Sides_MixFileIndex, 5)
 {
@@ -190,17 +242,29 @@ DEFINE_HOOK(6CD3C1, Sides_ParaDrop, 9)
 	HouseClass * pHouse = SW->Owner;
 	GET(CellClass *, Cell, EBP);
 
-	SideClass* pSide = SideClass::Array->GetItem(pHouse->SideIndex);
-	if(SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide)) {
-		Ares::SendPDPlane(
-			pHouse,
-			Cell,
-			AircraftTypeClass::Array->GetItem(R->ESI()),
-			&pData->ParaDrop,
-			&pData->ParaDropNum);
-
-		return 0x6CD500;
+	// switch to Ares paradrop handling
+	if(SWTypeExt::ExtData* pData = SWTypeExt::ExtMap.Find(SW->Type)) {
+		if(pData->SendParadrop(pHouse, Cell)) {
+			return 0x6CD500;
+		}
 	}
+
+	return 0;
+}
+
+DEFINE_HOOK(6CD602, Sides_AmerParaDrop, 5)
+{
+	GET(SuperClass *, SW, EBX);
+	HouseClass * pHouse = SW->Owner;
+	GET(CellClass *, Cell, EDI);
+	
+	// switch to Ares paradrop handling
+	if(SWTypeExt::ExtData* pData = SWTypeExt::ExtMap.Find(SW->Type)) {
+		if(pData->SendParadrop(pHouse, Cell)) {
+			return 0x6CD500;
+		}
+	}
+
 	return 0;
 }
 
@@ -299,4 +363,21 @@ DEFINE_HOOK(67E74A, LoadGame_EarlyLoadSides, 5)
 DEFINE_HOOK(67F281, LoadGame_LateSkipSides, 7)
 {
 	return 0x67F2BF;
+}
+
+DEFINE_HOOK(41E893, AITriggerTypeClass_ConditionMet_SideIndex, 0)
+{
+	GET(HouseClass *, House, EDI);
+	GET(int, triggerSide, EAX);
+
+	enum Eligible { Yes = 0x41E8D7, No = 0x41E8A1 };
+	if(!triggerSide) {
+		return Yes;
+	}
+
+	--triggerSide;
+	return(triggerSide == House->SideIndex)
+		? Yes
+		: No
+	;
 }

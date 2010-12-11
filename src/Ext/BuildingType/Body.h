@@ -26,56 +26,6 @@ class BuildingTypeExt
 public:
 	typedef BuildingTypeClass TT;
 
-	class cPrismForwarding {
-		public:
-		//properties
-		enum eEnabled {NO, YES, FORWARD, ATTACK} Enabled;	//is this tower a prism tower? FORWARD means can support, but not attack. ATTACK means can attack but not support.
-		DynamicVectorClass<BuildingTypeClass *> Targets;	//the types of buiding that this tower can forward to
-		Customizable<signed int> MaxFeeds;					//max number of towers that can feed this tower
-		Valueable<signed int> MaxChainLength;				//max length of any given (preceding) branch of the network
-		Customizable<signed int> MaxNetworkSize;				//max number of towers that can be in the network
-		Valueable<signed int> SupportRange;				//range that can forward over
-		Customizable<int> SupportModifier; 				//Per-building PrismSupportModifier
-		Valueable<signed int> DamageAdd; 					//amount of flat damage to add to the firing beam (before multiplier)
-		Customizable<int> SupportDelay;					//Per-building PrismSupportDelay
-		Customizable<int> SupportDuration;					//Per-building PrismSupportDuration
-		Customizable<int> MyHeight;						//Per-building PrismSupportHeight
-		Valueable<int> ChargeDelay;					//the amount to delay start of charging per backward chain
-		Valueable<bool> ToAllies;						//can this tower support allies' towers or not
-		Valueable<bool> BreakSupport;					//can the slave tower become a master tower at the last second
-
-		//methods
-		void Initialize(BuildingTypeClass* );
-		void LoadFromINIFile(BuildingTypeClass *, CCINIClass *);
-
-		// future considerations - move these to BuildingExt's PrismForwarding and refactor first arg
-		static int AcquireSlaves_MultiStage(BuildingClass *, BuildingClass *, int, int, int *, int *);
-		static int AcquireSlaves_SingleStage(BuildingClass *, BuildingClass *, int, int, int *, int *);
-		static bool ValidateSupportTower(BuildingClass *, BuildingClass *, BuildingClass *);
-		static void SetChargeDelay(BuildingClass *, int);
-		static void SetChargeDelay_Get(BuildingClass * , int , int , int , DWORD *, DWORD *);
-		static void SetChargeDelay_Set(BuildingClass * , int , DWORD *, DWORD *);
-		static void RemoveFromNetwork(BuildingClass *, bool);
-
-		signed int GetSupportRange(BuildingTypeClass *);
-
-		// constructor
-		cPrismForwarding() : Enabled(NO),
-			MaxFeeds(&RulesClass::Instance->PrismSupportMax),
-			MaxChainLength(1),
-			MaxNetworkSize(&RulesClass::Instance->PrismSupportMax),
-			SupportRange(0),
-			SupportModifier(&RulesClass::Instance->PrismSupportModifier),
-			DamageAdd(0),
-			SupportDelay(&RulesClass::Instance->PrismSupportDelay),
-			SupportDuration(&RulesClass::Instance->PrismSupportDuration),
-			MyHeight(&RulesClass::Instance->PrismSupportHeight),
-			ChargeDelay(1),
-			ToAllies(false),
-			BreakSupport(false)
-		{};
-	};
-
 	class ExtData : public Extension<TT>
 	{
 	public:
@@ -120,12 +70,16 @@ public:
 		Valueable<bool> ResetRadar;
 		Valueable<bool> RevealRadar;
 		Valueable<bool> GainVeterancy;
+		Valueable<bool> UnReverseEngineer;
 		Valueable<int> StolenTechIndex;
 		Valueable<int> StolenMoneyAmount;
 		Valueable<int> StolenMoneyPercentage;
 		Valueable<int> PowerOutageDuration;
 
-		cPrismForwarding PrismForwarding;
+		// #218 Specific Occupiers
+		ValueableVector<InfantryTypeClass *> AllowedOccupiers;
+
+		Valueable<bool> ReverseEngineersVictims;
 
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			Solid_Height (0),
@@ -150,11 +104,14 @@ public:
 			ResetRadar (false),
 			RevealRadar (false),
 			GainVeterancy (false),
+			UnReverseEngineer (false),
 			StolenTechIndex (-1),
 			StolenMoneyAmount (0),
 			StolenMoneyPercentage (0),
 			PowerOutageDuration (0),
-			PrismForwarding()
+			AllowedOccupiers (),
+
+			ReverseEngineersVictims (false)
 			{ };
 
 		virtual ~ExtData() {
@@ -166,6 +123,7 @@ public:
 
 		virtual void LoadFromINIFile(TT *pThis, CCINIClass *pINI);
 		virtual void Initialize(TT *pThis);
+		virtual void CompleteInitialization(TT *pThis);
 
 		virtual void InvalidatePointer(void *ptr) {
 			AnnounceInvalidPointer(RubbleIntact, ptr);
@@ -173,12 +131,15 @@ public:
 		}
 
 		bool IsLinkable();
+
+		bool CanBeOccupiedBy(InfantryClass *whom);
 	};
 
 	static Container<BuildingTypeExt> ExtMap;
 //	static ExtData ExtMap;
 
 	static void UpdateSecretLabOptions(BuildingClass *pThis);
+	static bool IsFoundationEqual(BuildingTypeClass *pTBldA, BuildingTypeClass *pTBldB);
 };
 
 #endif

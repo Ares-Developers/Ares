@@ -166,8 +166,8 @@ void HouseExt::ExtData::ReplanBase() {
 		BaseNodeClass Node;
 		Node.BuildingTypeIndex = 0;
 		Node.MapCoords.X = Node.MapCoords.Y = 0;
-		Node.unknown_8 = 0;
-		Node.unknown_C = 0; // meaningful
+		Node.Attempts = 0;
+		Node.Placed = 0; // meaningful
 		bool validNode = false;
 		signed int plannedBuildingIdx = reinterpret_cast<signed int>(plannedBuilding); // yeehaaaaaaaaaaaaaaw
 		if(plannedBuildingIdx >= 0 || plannedBuildingIdx < -4) {
@@ -191,4 +191,13 @@ DEFINE_HOOK(5054B0, HouseClass_GenerateAIBuildList, 6)
 	auto pData = HouseExt::ExtMap.Find(pHouse);
 	pData->ReplanBase();
 	return 0x505F72;
+}
+
+DEFINE_HOOK(4F65BF, HouseClass_4F6540, 6)
+{
+	GET(UnitTypeClass *, BaseUnit, ECX);
+	return (BaseUnit)
+		? 0
+		: 0x4F65DA
+	;
 }

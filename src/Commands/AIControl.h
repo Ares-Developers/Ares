@@ -35,7 +35,7 @@ public:
 			P->AIDifficulty = 0;	//brutal!
 
 			//notify
-			MessageListClass::PrintMessage(L"AI assumed control!");
+			MessageListClass::Instance->PrintMessage(L"AI assumed control!");
 
 		} else {
 
@@ -43,7 +43,7 @@ public:
 			P->CurrentPlayer = P->PlayerControl = true;
 
 			//notify
-			MessageListClass::PrintMessage(L"Player assumed control!");
+			MessageListClass::Instance->PrintMessage(L"Player assumed control!");
 		}
 	}
 

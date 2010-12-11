@@ -68,7 +68,7 @@ bool Prereqs::HouseOwnsGeneric(HouseClass *pHouse, signed int Index)
 	if(Index < GenericPrerequisite::Array.Count) {
 		DynamicVectorClass<int> *dvc = &GenericPrerequisite::Array.GetItem(Index)->Prereqs;
 		for(int i = 0; i < dvc->Count; ++i) {
-			if(HouseOwnsBuilding(pHouse, dvc->GetItem(i))) {
+			if(HouseOwnsSpecific(pHouse, dvc->GetItem(i))) {
 				return true;
 			}
 		}
@@ -84,7 +84,7 @@ bool Prereqs::HouseOwnsGeneric(HouseClass *pHouse, signed int Index)
 	return false;
 }
 
-bool Prereqs::HouseOwnsBuilding(HouseClass *pHouse, int Index)
+bool Prereqs::HouseOwnsSpecific(HouseClass *pHouse, int Index)
 {
 	BuildingTypeClass *BType = BuildingTypeClass::Array->GetItem(Index);
 	char *powerup = BType->PowersUpBuilding;
@@ -114,8 +114,9 @@ bool Prereqs::HouseOwnsBuilding(HouseClass *pHouse, int Index)
 bool Prereqs::HouseOwnsPrereq(HouseClass *pHouse, signed int Index)
 {
 	return Index < 0
-	  ? HouseOwnsGeneric(pHouse, Index)
-	  : HouseOwnsBuilding(pHouse, Index);
+		? HouseOwnsGeneric(pHouse, Index)
+		: HouseOwnsSpecific(pHouse, Index)
+	;
 }
 
 bool Prereqs::HouseOwnsAll(HouseClass *pHouse, DynamicVectorClass<int> *list)
@@ -137,3 +138,52 @@ bool Prereqs::HouseOwnsAny(HouseClass *pHouse, DynamicVectorClass<int> *list)
 	}
 	return false;
 }
+
+bool Prereqs::ListContainsSpecific(BTypeList *List, signed int Index)
+{
+	BuildingTypeClass * Target = BuildingTypeClass::Array->GetItem(Index);
+	return List->FindItemIndex(&Target) != -1;
+}
+
+bool Prereqs::ListContainsGeneric(BTypeList *List, signed int Index)
+{
+	Index = - 1 - Index; // hack - POWER is -1 , this way converts to 0, and onwards
+	if(Index < GenericPrerequisite::Array.Count) {
+		DynamicVectorClass<int> *dvc = &GenericPrerequisite::Array.GetItem(Index)->Prereqs;
+		for(int i = 0; i < dvc->Count; ++i) {
+			if(ListContainsSpecific(List, dvc->GetItem(i))) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+bool Prereqs::ListContainsPrereq(BTypeList *List, signed int Index)
+{
+	return Index < 0
+		? ListContainsGeneric(List, Index)
+		: ListContainsSpecific(List, Index)
+	;
+}
+
+bool Prereqs::ListContainsAll(BTypeList *List, DynamicVectorClass<int> *Requirements)
+{
+	for(int i = 0; i < Requirements->Count; ++i) {
+		if(!ListContainsPrereq(List, Requirements->GetItem(i))) {
+			return false;
+		}
+	}
+	return true;
+}
+
+bool Prereqs::ListContainsAny(BTypeList *List, DynamicVectorClass<int> *Requirements)
+{
+	for(int i = 0; i < Requirements->Count; ++i) {
+		if(ListContainsPrereq(List, Requirements->GetItem(i))) {
+			return true;
+		}
+	}
+	return false;
+}
+

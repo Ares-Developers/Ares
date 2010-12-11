@@ -12,7 +12,8 @@ DEFINE_HOOK(732D10, TacticalClass_CollectSelectedIDs, 5)
 	return 0;
 }
 
-DEFINE_HOOK(5F8480, ObjectTypeClass_Load3DArt, 6)
+/*
+A_FINE_HOOK(5F8480, ObjectTypeClass_Load3DArt, 6)
 {
 	GET(ObjectTypeClass *, O, ESI);
 	if(O->WhatAmI() == abs_UnitType) {
@@ -23,19 +24,17 @@ DEFINE_HOOK(5F8480, ObjectTypeClass_Load3DArt, 6)
 	}
 	return 0;
 }
-
+*/
 
 DEFINE_HOOK(715320, TechnoTypeClass_LoadFromINI_EarlyReader, 6)
 {
 	GET(CCINIClass *, pINI, EDI);
 	GET(TechnoTypeClass *, pType, EBP);
 
+	INI_EX exINI(pINI);
 	TechnoTypeExt::ExtData *pData = TechnoTypeExt::ExtMap.Find(pType);
 
-	if(pINI->ReadString(pType->ID, "WaterVoxel", "", Ares::readBuffer, Ares::readLength)) {
-		pData->WaterAlt = 1;
-//		_strncpy
-	}
+	pData->WaterImage.Parse(&exINI, pType->ID, "WaterImage");
 
 	return 0;
 }

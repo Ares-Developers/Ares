@@ -3,6 +3,7 @@
 
 #include <HouseClass.h>
 #include <BuildingClass.h>
+#include <GeneralStructures.h>
 #include <Helpers/Template.h>
 
 template<> const DWORD Extension<TechnoClass>::Canary = 0x55555555;
@@ -34,26 +35,30 @@ void TechnoExt::SpawnSurvivors(TechnoClass *pThis, TechnoClass *pKiller, bool Se
 	if(Type->Crewed && chance) {
 		for(int i = 0; i < pData->Survivors_PilotCount; ++i) {
 			if(ScenarioClass::Instance->Random.RandomRanged(1, 100) <= chance) {
-				if(InfantryTypeClass *PilotType = pData->Survivors_Pilots[pOwner->SideIndex]) {
-					InfantryClass *Pilot = reinterpret_cast<InfantryClass *>(PilotType->CreateObject(pOwner));
+				signed int idx = pOwner->SideIndex;
+				auto Pilots = &pData->Survivors_Pilots;
+				if(Pilots->ValidIndex(idx)) {
+					if(InfantryTypeClass *PilotType = Pilots->GetItem(idx)) {
+						InfantryClass *Pilot = reinterpret_cast<InfantryClass *>(PilotType->CreateObject(pOwner));
 
-					Pilot->Health = (PilotType->Strength / 2);
-					Pilot->Veterancy.Veterancy = pThis->Veterancy.Veterancy;
-					CoordStruct destLoc, tmpLoc = loc;
-					CellStruct tmpCoords = CellSpread::GetCell(ScenarioClass::Instance->Random.RandomRanged(0, 7));
+						Pilot->Health = (PilotType->Strength / 2);
+						Pilot->Veterancy.Veterancy = pThis->Veterancy.Veterancy;
+						CoordStruct destLoc, tmpLoc = loc;
+						CellStruct tmpCoords = CellSpread::GetCell(ScenarioClass::Instance->Random.RandomRanged(0, 7));
 
-					tmpLoc.X += tmpCoords.X * 144;
-					tmpLoc.Y += tmpCoords.Y * 144;
+						tmpLoc.X += tmpCoords.X * 144;
+						tmpLoc.Y += tmpCoords.Y * 144;
 
-					CellClass * tmpCell = MapClass::Instance->GetCellAt(&tmpLoc);
+						CellClass * tmpCell = MapClass::Instance->GetCellAt(&tmpLoc);
 
-					tmpCell->FindInfantrySubposition(&destLoc, &tmpLoc, 0, 0, 0);
+						tmpCell->FindInfantrySubposition(&destLoc, &tmpLoc, 0, 0, 0);
 
-					destLoc.Z = loc.Z;
+						destLoc.Z = loc.Z;
 
-					if(!TechnoExt::EjectSurvivor(Pilot, &destLoc, Select)) {
-						Pilot->RegisterDestruction(pKiller); //(TechnoClass *)R->get_StackVar32(0x54));
-						GAME_DEALLOC(Pilot);
+						if(!TechnoExt::EjectSurvivor(Pilot, &destLoc, Select)) {
+							Pilot->RegisterDestruction(pKiller); //(TechnoClass *)R->get_StackVar32(0x54));
+							GAME_DEALLOC(Pilot);
+						}
 					}
 				}
 			}
@@ -229,6 +234,16 @@ bool TechnoExt::ExtData::DrawVisualFX() {
 	return false;
 }
 
+UnitTypeClass * TechnoExt::ExtData::GetUnitType() {
+	if(UnitClass * U = specific_cast<UnitClass *>(this->AttachedToObject)) {
+		TechnoTypeExt::ExtData * pData = TechnoTypeExt::ExtMap.Find(U->Type);
+		if(pData->WaterImage && !U->OnBridge && U->GetCell()->LandType == lt_Water) {
+			return pData->WaterImage;
+		}
+	}
+	return NULL;
+}
+
 void Container<TechnoExt>::InvalidatePointer(void *ptr) {
 	AnnounceInvalidPointerMap(TechnoExt::AlphaExt, ptr);
 	AnnounceInvalidPointerMap(TechnoExt::SpotlightExt, ptr);
@@ -296,6 +311,36 @@ bool TechnoExt::ExtData::IsPowered() {
 	}
 }
 
+/*
+ * Object should NOT be placed on the map (->Remove() it or don't Put in the first place)
+ * otherwise Bad Things (TM) will happen. Again.
+ */
+bool TechnoExt::CreateWithDroppod(FootClass *Object, CoordStruct *XYZ) {
+	auto MyCell = MapClass::Instance->GetCellAt(XYZ);
+	if(Object->IsCellOccupied(MyCell, -1, -1, 0, 0)) {
+//		Debug::Log("Cell occupied... poof!\n");
+		return false;
+	} else {
+//		Debug::Log("Destinating %s @ {%d, %d, %d}\n", Object->GetType()->ID, XYZ->X, XYZ->Y, XYZ->Z);
+		LocomotionClass::ChangeLocomotorTo(Object, &LocomotionClass::CLSIDs::Droppod);
+		CoordStruct xyz = *XYZ;
+		xyz.Z = 0;
+		Object->SetLocation(&xyz);
+		Object->SetDestination(MyCell, 1);
+		Object->Locomotor->Move_To(*XYZ);
+		FacingStruct::Facet Facing = {0, 0, 0};
+		Object->Facing.SetFacing(&Facing);
+		if(!Object->InLimbo) {
+			Object->See(0, 0);
+			Object->QueueMission(mission_Guard, 0);
+			Object->NextMission();
+			return true;
+		}
+		//Debug::Log("InLimbo... failed?\n");
+		return false;
+	}
+}
+
 // =============================
 // load/save
 
@@ -347,4 +392,3 @@ DEFINE_HOOK(70C264, TechnoClass_Save_Suffix, 5)
 	TechnoExt::ExtMap.SaveStatic();
 	return 0;
 }
-

@@ -63,6 +63,16 @@ void RulesExt::ExtData::LoadBeforeTypeData(RulesClass *pThis, CCINIClass *pINI) 
 			WeaponTypeClass::FindOrAllocate(Ares::readBuffer);
 		}
 	}
+
+	RulesExt::ExtData *pData = RulesExt::Global();
+
+	if (!pData) {
+		return;
+	}
+
+	INI_EX exINI(pINI);
+
+	pData->CanMakeStuffUp.Read(&exINI, "General", "CanMakeStuffUp");
 }
 
 // this should load everything that TypeData is not dependant on

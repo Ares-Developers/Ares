@@ -1,5 +1,6 @@
 #include "Body.h"
 #include "../BuildingType/Body.h"
+#include "../TechnoType/Body.h"
 #include "../House/Body.h"
 
 #include <AnimClass.h>
@@ -48,7 +49,7 @@ void BuildingExt::UpdateDisplayTo(BuildingClass *pThis) {
 				}
 			}
 		}
-		MapClass::Instance->sub_4F42F0(2);
+		MapClass::Instance->RedrawSidebar(2);
 	}
 }
 
@@ -61,8 +62,6 @@ void BuildingExt::UpdateDisplayTo(BuildingClass *pThis) {
 
 	Rubble is set to full health on placing, since, no matter what we do in the backend, to the player, each pile of rubble is a new one.
 	The reconstructed building, on the other hand, is set to 1% of it's health, since it was just no reconstructed, and not freshly built or repaired yet.
-	UPDATE: Due to practical concerns, rubble health will be set to 99% of its health and be prevented from being click-repairable,
-	in order to ensure Engineers always get a repair cursor and can enter to repair.
 
 	Lastly, the function will set the current building as the alternate state on the other state, to ensure that, if the other state gets triggered back,
 	it is connected to this state. (e.g. when a building is turned into rubble, the normal state will set itself as the normal state of the rubble,
@@ -70,10 +69,12 @@ void BuildingExt::UpdateDisplayTo(BuildingClass *pThis) {
 
 	\param beingRepaired if set to true, the function will turn the building back into its normal state. If false or unset, the building will be turned into rubble.
 
+	\returns true if the new state could be deployed, false otherwise.
+
 	\author Renegade
 	\date 16.12.09+
 */
-void BuildingExt::ExtData::RubbleYell(bool beingRepaired) {
+bool BuildingExt::ExtData::RubbleYell(bool beingRepaired) {
 	BuildingClass* currentBuilding = this->AttachedToObject;
 	BuildingTypeExt::ExtData* pTypeData = BuildingTypeExt::ExtMap.Find(currentBuilding->Type);
 	BuildingClass* newState = NULL;
@@ -85,28 +86,28 @@ void BuildingExt::ExtData::RubbleYell(bool beingRepaired) {
 		if(!pTypeData->RubbleIntact) {
 			Debug::Log("Warning! Advanced Rubble was supposed to be reconstructed but Ares could not obtain its normal state. \
 			Check if [%s]Rubble.Intact is set (correctly).\n", currentBuilding->Type->ID);
-			return;
+			return true;
 		}
 
 		newState = specific_cast<BuildingClass *>(pTypeData->RubbleIntact->CreateObject(currentBuilding->Owner));
-		newState->Health = static_cast<int>(newState->Type->Strength / 100); // see description above
+		newState->Health = static_cast<int>(std::max((newState->Type->Strength / 100), 1)); // see description above
 		newState->IsAlive = true; // assuming this is in the sense of "is not destroyed"
 		// Location should not be changed by removal
 		if(!newState->Put(&currentBuilding->Location, currentBuilding->Facing)) {
 			Debug::Log("Advanced Rubble: Failed to place normal state on map!\n");
 			GAME_DEALLOC(newState);
+			return false;
 		}
-		currentBuilding->UnInit();
+		// currentBuilding->UnInit(); DON'T DO THIS
 
 	} else { // if we're not here to repair that thing, obviously, we're gonna crush it
 		if(!pTypeData->RubbleDestroyed) {
 			Debug::Log("Warning! Building was supposed to be turned into Advanced Rubble but Ares could not obtain its rubble state. \
 			Check if [%s]Rubble.Destroyed is set (correctly).\n", currentBuilding->Type->ID);
-			return;
+			return true;
 		}
 
 		newState = specific_cast<BuildingClass *>(pTypeData->RubbleDestroyed->CreateObject(currentBuilding->Owner));
-		newState->Health = static_cast<int>(newState->Type->Strength * 0.99); // see description above
 		// Location should not be changed by removal
 		if(!newState->Put(&currentBuilding->Location, currentBuilding->Facing)) {
 			Debug::Log("Advanced Rubble: Failed to place rubble state on map!\n");
@@ -114,7 +115,75 @@ void BuildingExt::ExtData::RubbleYell(bool beingRepaired) {
 		}
 	}
 
-	return;
+	return true;
+}
+
+//! Bumps all Technos that reside on a building's foundation out of the way.
+/*!
+	All units on the building's foundation are kicked out.
+
+	\author AlexB
+	\date 2010-06-27
+*/
+void BuildingExt::ExtData::KickOutOfRubble() {
+	BuildingClass* pBld = this->AttachedToObject;
+
+	if(BuildingTypeExt::ExtData *pData = BuildingTypeExt::ExtMap.Find(pBld->Type)) {
+		// get the number of cells and a pointer to the cell data
+		int length = 0, height = 0, width = 0;
+		CellStruct *data = NULL;
+		if(pData->IsCustom) {
+			width = pData->CustomWidth;
+			height = pData->CustomHeight;
+			data = pData->CustomData;
+		} else {
+			// these are length constants derived from the fnd_* constants
+			int fnd_widths[] = {1, 2, 1, 2, 2, 3, 3, 3, 4, 3, 1, 3, 4, 1, 1, 2, 2, 5, 4, 3, 6, 0};
+			int fnd_heights[] = {1, 1, 2, 2, 3, 2, 3, 5, 2, 3, 3, 1, 3, 4, 5, 6, 5, 3, 4, 4, 4, 0};
+			width = fnd_widths[pBld->Type->Foundation];
+			height = fnd_heights[pBld->Type->Foundation];
+			data = pBld->Type->FoundationData;
+		}
+		length = height * width;
+
+		// iterate over all cells and remove all infantry
+		DynamicVectorClass<TechnoClass*> *list = new DynamicVectorClass<TechnoClass*>();
+		DynamicVectorClass<bool> *sel = new DynamicVectorClass<bool>();
+		CellStruct location = MapClass::Instance->GetCellAt(&pBld->Location)->MapCoords;
+		for(int i=0; i<length; ++i) {
+			CellStruct pos = data[i];
+			if((pos.X != 0x7FFF) && (pos.Y != 0x7FFF)) {
+				pos += location;
+
+				// remove every techno that resides on this cell
+				CellClass* cell = MapClass::Instance->GetCellAt(&pos);
+				for(ObjectClass* pObj = cell->GetContent(); pObj; pObj = pObj->NextObject) {
+					if(TechnoClass* pTech = generic_cast<FootClass*>(pObj)) {
+						bool bSel = pTech->IsSelected;
+						if(pTech->Remove()) {
+							list->AddItem(pTech);
+							sel->AddItem(bSel);
+						}
+					}
+				}
+			} else {
+				// invalid cell.
+				break;
+			}
+		}
+
+		// this part kicks out all units we found in the rubble
+		for(int i=0; i<list->Count; ++i) {
+			TechnoClass* pTech = list->GetItem(i);
+			pBld->KickOutUnit(pTech, &location);
+			if(sel->GetItem(i)) {
+				pTech->Select();
+			}
+		}
+
+		delete list;
+		delete sel;
+	}
 }
 
 // #666: IsTrench/Traversal
@@ -401,8 +470,7 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 	bool evaForEnterer = Enterer->ControlledByPlayer() && raiseEva;
 	bool effectApplied = false;
 
-
-	if(pTypeExt->ResetRadar) {
+	if(pTypeExt->ResetRadar.Get()) {
 		Owner->ReshroudMap();
 		if(!Owner->SpySatActive && evaForOwner) {
 			VoxClass::Play("EVA_RadarSabotaged");
@@ -442,7 +510,34 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 	}
 
 
-	if(pTypeExt->ResetSW) {
+	if(pTypeExt->UnReverseEngineer.Get()) {
+		int idx = HouseClass::Array->FindItemIndex(&Owner);
+
+		Debug::Log("Undoing all Reverse Engineering achieved by house %ls (#%d)\n", Owner->UIName, idx);
+
+		if(idx != -1) {
+			for(int i = 0; i < TechnoTypeClass::Array->Count; ++i) {
+				TechnoTypeClass * Type = TechnoTypeClass::Array->GetItem(i);
+				TechnoTypeExt::ExtData * TypeData = TechnoTypeExt::ExtMap.Find(Type);
+				if(TypeData->ReversedByHouses.ValidIndex(idx)) {
+					Debug::Log("Zeroing out RevEng of %s\n", Type->ID);
+					TypeData->ReversedByHouses[idx] = false;
+				}
+			}
+			Owner->ShouldRecheckTechTree = true;
+		}
+
+		if(evaForOwner) {
+			VoxClass::Play("EVA_BuildingInfiltrated");
+		}
+		if(evaForEnterer) {
+			VoxClass::Play("EVA_BuildingInfiltrated");
+		}
+		effectApplied = true;
+	}
+
+
+	if(pTypeExt->ResetSW.Get()) {
 		bool somethingReset = false;
 		int swIdx = EnteredType->SuperWeapon;
 		if(swIdx != -1) {
@@ -486,7 +581,7 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 		bounty = int(available * pTypeExt->StolenMoneyPercentage);
 	}
 	if(bounty > 0) {
-		bounty = min(bounty, available);
+		bounty = std::min(bounty, available);
 		Owner->TakeMoney(bounty);
 		Enterer->GiveMoney(bounty);
 		if(evaForOwner) {
@@ -499,7 +594,7 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 	}
 
 
-	if(pTypeExt->GainVeterancy) {
+	if(pTypeExt->GainVeterancy.Get()) {
 		bool promotionStolen = true;
 
 		switch(EnteredType->Factory) {
@@ -539,7 +634,7 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 
 		Addition 04.03.10: People complained about it not being optional. Now it is.
 	*/
-	if(pTypeExt->RevealProduction) {
+	if(pTypeExt->RevealProduction.Get()) {
 		EnteredBuilding->DisplayProductionTo.Add(Enterer);
 		if(evaForOwner || evaForEnterer) {
 			VoxClass::Play("EVA_BuildingInfiltrated");
@@ -547,19 +642,19 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 		effectApplied = true;
 	}
 
-	if(pTypeExt->RevealRadar) {
+	if(pTypeExt->RevealRadar.Get()) {
 		EnteredBuilding->DisplayProductionTo.Add(Enterer);
 		BuildingExt::UpdateDisplayTo(EnteredBuilding);
 		if(evaForOwner || evaForEnterer) {
 			VoxClass::Play("EVA_BuildingInfiltrated");
 		}
 		MapClass::Instance->sub_657CE0();
-		MapClass::Instance->sub_4F42F0(2);
+		MapClass::Instance->RedrawSidebar(2);
 		effectApplied = true;
 	}
 
 	if(effectApplied) {
-		EnteredBuilding->SetLayer(lyr_Ground);
+		EnteredBuilding->SetLayer(Layer::Ground);
 	}
 	return true;
 }
@@ -588,7 +683,7 @@ void BuildingExt::ExtData::UpdateFirewall() {
 		}
 		B->FirestormWallFrame = FWFrame;
 		B->GetCell()->Setup(0xFFFFFFFF);
-		B->SetLayer(lyr_Ground); // HACK - repaints properly
+		B->SetLayer(Layer::Ground); // HACK - repaints properly
 	}
 
 	if(!FS) {
@@ -636,6 +731,62 @@ void BuildingExt::ExtData::ImmolateVictim(ObjectClass * Victim) {
 		}
 
 	}
+}
+
+DWORD BuildingExt::FoundationLength(CellStruct * StartCell) {
+	DWORD Len = 0;
+	bool End = false;
+	do {
+		++Len;
+		End = StartCell->X == 32767 && StartCell->Y == 32767;
+		++StartCell;
+	} while(!End);
+	return Len;
+}
+
+void BuildingExt::Cleanup() {
+	if(BuildingExt::TempFoundationData1) {
+		delete[] BuildingExt::TempFoundationData1;
+		BuildingExt::TempFoundationData1 = NULL;
+	}
+	if(BuildingExt::TempFoundationData2) {
+		delete[] BuildingExt::TempFoundationData2;
+		BuildingExt::TempFoundationData2 = NULL;
+	}
+}
+
+bool BuildingExt::ExtData::ReverseEngineer(TechnoClass *Victim) {
+	BuildingTypeExt::ExtData *pReverseData = BuildingTypeExt::ExtMap.Find(this->AttachedToObject->Type);
+	if(!pReverseData->ReverseEngineersVictims) {
+		return false;
+	}
+
+	TechnoTypeClass * VictimType = Victim->GetTechnoType();
+	TechnoTypeExt::ExtData *pVictimData = TechnoTypeExt::ExtMap.Find(VictimType);
+
+	if(!pVictimData->CanBeReversed) {
+		return false;
+	}
+
+	HouseClass *Owner = this->AttachedToObject->Owner;
+
+	int idx = HouseClass::Array->FindItemIndex(&Owner);
+
+	if(pVictimData->ReversedByHouses.ValidIndex(idx)) {
+		if(!pVictimData->ReversedByHouses[idx]) {
+
+			bool WasBuildable = HouseExt::PrereqValidate(Owner, VictimType, false, true) == 1;
+			pVictimData->ReversedByHouses[idx] = true;
+			if(!WasBuildable) {
+				bool IsBuildable = HouseExt::RequirementsMet(Owner, VictimType) != HouseExt::Forbidden;
+				if(IsBuildable) {
+					Owner->ShouldRecheckTechTree = true;
+					return true;
+				}
+			}
+		}
+	}
+	return false;
 }
 
 // =============================

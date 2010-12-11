@@ -12,6 +12,7 @@
 #include <VocClass.h>
 #include <VoxClass.h>
 
+#include "../../Ares.CRT.h"
 #include "../../Misc/Actions.h"
 #include "../../Utilities/Template.h"
 #include "../../Utilities/Constructs.h"
@@ -24,6 +25,8 @@
 #define FIRST_SW_TYPE 12
 
 #include "../_Container.hpp"
+
+class ParadropPlane;
 
 class SWTypeExt
 {
@@ -40,6 +43,10 @@ public:
 
 		// Nuke
 		ValueableIdx<int, VocClass> Nuke_Siren;
+
+		// Generic Paradrop
+		DynamicVectorClass<ParadropPlane*> *ParaDrop;
+		DynamicVectorClass<ParadropPlane*> ParaDropPlanes;
 
 		// Sonar
 		Valueable<int> Sonar_Range;
@@ -67,12 +74,15 @@ public:
 
 		CustomPalette CameoPal;
 
+		// Unit Delivery
 		DynamicVectorClass<TechnoTypeClass *> SW_Deliverables;
 		Valueable<bool> SW_DeliverBuildups;
 
 		// SW: Generic Warhead
 		Valueable<WarheadTypeClass *> GWarhead_WH;
 		Valueable<int> GWarhead_Damage;
+
+		char SidebarPCX[0x20];
 
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			SpyPlane_TypeIndex (0),
@@ -96,7 +106,9 @@ public:
 			SW_DeliverBuildups (false),
 			GWarhead_WH(NULL),
 			GWarhead_Damage(0)
-			{ };
+			{
+				*SidebarPCX = 0;
+			};
 
 		virtual ~ExtData() { };
 
@@ -108,6 +120,8 @@ public:
 
 		virtual void InvalidatePointer(void *ptr) {
 		}
+
+		bool SendParadrop(HouseClass*, CellClass*);
 	};
 
 	static Container<SWTypeExt> ExtMap;
@@ -115,6 +129,17 @@ public:
 	static SuperWeaponTypeClass *CurrentSWType;
 
 	bool static __stdcall SuperClass_Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer);
+};
+
+class ParadropPlane {
+public:
+	AircraftTypeClass *pAircraft;
+	TypeList<TechnoTypeClass*> pTypes;
+	TypeList<int> pNum;
+
+	ParadropPlane() : pAircraft (NULL)
+	{
+	}
 };
 
 #endif

@@ -200,7 +200,7 @@ DEFINE_HOOK(46934D, IvanBombs_Spread, 6)
 	GET(BulletClass *, pBullet, ESI);
 	double cSpread = pBullet->WH->CellSpread;
 
-	RET_UNLESS(pBullet->Target);
+	RET_UNLESS(pBullet->Owner && pBullet->Target);
 
 	TechnoClass *pOwner = generic_cast<TechnoClass *>(pBullet->Owner);
 	if(!pOwner) {

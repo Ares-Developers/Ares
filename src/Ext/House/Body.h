@@ -2,6 +2,8 @@
 #define HOUSE_EXT_H
 
 #include "../_Container.hpp"
+#include "../../Enum/Prerequisites.h"
+
 #include <Helpers/Template.h>
 
 #include <FactoryClass.h>
@@ -15,6 +17,19 @@ class HouseExt
 {
 	public:
 	typedef HouseClass TT;
+
+	enum RequirementStatus {
+		Forbidden = 1, // forbidden by special conditions (e.g. reqhouses) that's not likely to change in this session
+		Incomplete = 2, // missing something (approp factory)
+		Complete = 3, // OK
+		Overridden = 4, // magic condition met, bypass prereq check
+	};
+
+	enum BuildLimitStatus {
+		ReachedPermanently = -1, // remove cameo
+		ReachedTemporarily = 0, // black out cameo
+		NotReached = 1, // don't do anything
+	};
 
 	class ExtData : public Extension<TT>
 	{
@@ -66,10 +81,13 @@ class HouseExt
 	static Container<HouseExt> ExtMap;
 
 	static signed int BuildLimitRemaining(HouseClass *pHouse, TechnoTypeClass *pItem);
-	static signed int CheckBuildLimit(HouseClass *pHouse, TechnoTypeClass *pItem, bool IncludeQueued);
+	static BuildLimitStatus CheckBuildLimit(HouseClass *pHouse, TechnoTypeClass *pItem, bool IncludeQueued);
 
-	static signed int RequirementsMet(HouseClass *pHouse, TechnoTypeClass *pItem);
+	static RequirementStatus RequirementsMet(HouseClass *pHouse, TechnoTypeClass *pItem);
 	static bool PrerequisitesMet(HouseClass *pHouse, TechnoTypeClass *pItem);
+	static bool PrerequisitesListed(Prereqs::BTypeList *List, TechnoTypeClass *pItem);
+
+	static bool HasNeededFactory(HouseClass *pHouse, TechnoTypeClass *pItem);
 
 	static signed int PrereqValidate
 		(HouseClass *pHouse, TechnoTypeClass *pItem, bool BuildLimitOnly, bool IncludeQueued);

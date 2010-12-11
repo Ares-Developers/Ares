@@ -27,11 +27,14 @@ class RulesExt
 		Valueable<MouseCursor> EngineerDamageCursor;
 		bool MultiEngineer[2];
 
+		Valueable<bool> CanMakeStuffUp;
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			ElectricDeath(NULL),
 			EngineerDamage (0.0F),
 			EngineerAlwaysCaptureTech (true),
-			EngineerDamageCursor (MouseCursor::First[51])
+			EngineerDamageCursor (MouseCursor::First[MouseCursorType::Detonate]),
+			CanMakeStuffUp(false)
 			{
 				MultiEngineer[0] = false; // Skirmish
 				MultiEngineer[1] = false; // LAN

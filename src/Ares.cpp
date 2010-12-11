@@ -6,6 +6,7 @@
 //include "CallCenter.h"
 #include <StaticInits.cpp>
 #include <Unsorted.h>
+#include <GetCDClass.h>
 
 #include <new>
 
@@ -62,6 +63,7 @@ void __stdcall Ares::RegisterCommands()
 	MakeCommand<MapSnapshotCommandClass>();
 	MakeCommand<TestSomethingCommandClass>();
 	MakeCommand<DumperTypesCommandClass>();
+	MakeCommand<MemoryDumperCommandClass>();
 	MakeCommand<DebuggingCommandClass>();
 }
 
@@ -95,6 +97,8 @@ void __stdcall Ares::CmdLineParse(char** ppArgs,int nNumArgs)
 		Debug::LogFileOpen();
 		Debug::Log("Initialized " VERSION_STRVER "\n");
 	}
+
+	InitNoCDMode();
 }
 
 void __stdcall Ares::PostGameInit()
@@ -113,8 +117,50 @@ void __stdcall Ares::ExeRun()
 
 void __stdcall Ares::ExeTerminate()
 {
-	GlobalControls::CloseConfig(&Ares::GlobalControls::INI);
+	CloseConfig(&Ares::GlobalControls::INI);
 	Debug::LogFileClose(111);
+}
+
+CCINIClass* Ares::OpenConfig(const char* file) {
+	CCINIClass* pINI;
+	GAME_ALLOC(CCINIClass, pINI);
+	CCFileClass *cfg;
+	GAME_ALLOC(CCFileClass, cfg, file);
+	if(cfg->Exists(NULL)) {
+		pINI->ReadCCFile(cfg);
+	}
+	GAME_DEALLOC(cfg);
+
+	return pINI;
+}
+
+void Ares::InitNoCDMode() {
+	if(!GetCDClass::Instance->Count) {
+		Debug::Log("No CD drives detected. Switching to NoCD mode.\n");
+		bNoCD = true;
+	}
+	
+	if(bNoCD) {
+		Debug::Log("Optimizing list of CD drives for NoCD mode.\n");
+		memset(GetCDClass::Instance->Drives, -1, 26);
+
+		char drv[] = "a:\\";
+		for(int i=0; i<26; ++i) {
+			drv[0] = 'a' + (i + 2) % 26;
+			if(GetDriveTypeA(drv) == DRIVE_FIXED) {
+				GetCDClass::Instance->Drives[0] = (i + 2) % 26;
+				GetCDClass::Instance->Count = 1;
+				break;
+			}
+		}
+	}
+}
+
+void Ares::CloseConfig(CCINIClass** ppINI) {
+	if(ppINI && *ppINI) {
+		GAME_DEALLOC(*ppINI);
+		*ppINI = NULL;
+	}
 }
 
 //A new SendPDPlane function
@@ -156,7 +202,7 @@ void Ares::SendPDPlane(HouseClass* pOwner, CellClass* pTarget, AircraftTypeClass
 		CoordStruct spawn_crd = {(spawn_cell.X << 8) + 128, (spawn_cell.Y << 8) + 128, 0};
 
 		++Unsorted::IKnowWhatImDoing;
-		bool bSpawned = pPlane->Put(&spawn_crd, dir_N);
+		bool bSpawned = pPlane->Put(&spawn_crd, Direction::North);
 		--Unsorted::IKnowWhatImDoing;
 
 		if(bSpawned) {
@@ -305,6 +351,7 @@ DEFINE_HOOK(7258D0, AnnounceInvalidPointer, 6)
 DEFINE_HOOK(685659, Scenario_ClearClasses, a)
 {
 	BuildingExt::ExtMap.Empty();
+	BuildingExt::Cleanup();
 	BuildingTypeExt::ExtMap.Empty();
 //	BulletExt::ExtMap.Empty();
 	BulletTypeExt::ExtMap.Empty();

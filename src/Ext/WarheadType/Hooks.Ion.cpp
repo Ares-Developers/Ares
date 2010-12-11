@@ -21,7 +21,6 @@ DEFINE_HOOK(53CC0D, IonBlastClass_Update_DTOR, 5)
 
 DEFINE_HOOK(53CBF5, IonBlastClass_Update_Duration, 5)
 {
-	GET(int, Idx, EAX);
 	GET(IonBlastClass *, IB, EBX);
 
 	int Ripple_Radius;
@@ -29,11 +28,13 @@ DEFINE_HOOK(53CBF5, IonBlastClass_Update_Duration, 5)
 		Ripple_Radius = 0;
 	} else {
 		WarheadTypeExt::ExtData *pData = WarheadTypeExt::IonExt[IB];
-		Ripple_Radius = pData->Ripple_Radius;
+		Ripple_Radius = std::min(79, pData->Ripple_Radius + 1);
 	}
 
-	return (Idx < Ripple_Radius)
-		? 0x53CC3A
-		: 0x53CBFA
-	;
+	if(IB->Lifetime < Ripple_Radius) {
+//		++IB->Lifetime;
+		return 0x53CC3A;
+	} else {
+		return 0x53CBFA;
+	}
 }

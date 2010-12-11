@@ -13,62 +13,68 @@ template<> IStream *Container<HouseExt>::SavingStream = NULL;
 // =============================
 // member funcs
 
-signed int HouseExt::RequirementsMet(HouseClass *pHouse, TechnoTypeClass *pItem)
+HouseExt::RequirementStatus HouseExt::RequirementsMet(HouseClass *pHouse, TechnoTypeClass *pItem)
 {
 	if(pItem->Unbuildable) {
-		return 0;
+		return Forbidden;
 	}
 
 	TechnoTypeExt::ExtData* pData = TechnoTypeExt::ExtMap.Find(pItem);
 	if(!pItem) {
-		return 0;
+		return Forbidden;
 	}
 //	TechnoTypeClassExt::TechnoTypeClassData *pData = TechnoTypeClassExt::Ext_p[pItem];
 	HouseExt::ExtData* pHouseExt = HouseExt::ExtMap.Find(pHouse);
 
 	// this has to happen before the first possible "can build" response or NCO happens
-	if(pItem->WhatAmI() != abs_BuildingType && !pHouse->HasFactoryForObject(pItem)) { return 0; }
+	if(pItem->WhatAmI() != abs_BuildingType && !pHouse->HasFactoryForObject(pItem)) { return Incomplete; }
 
-	if(!(pData->PrerequisiteTheaters & (1 << ScenarioClass::Instance->Theater))) { return 0; }
-	if(Prereqs::HouseOwnsAny(pHouse, &pData->PrerequisiteNegatives)) { return 0; }
+	if(!(pData->PrerequisiteTheaters & (1 << ScenarioClass::Instance->Theater))) { return Forbidden; }
+	if(Prereqs::HouseOwnsAny(pHouse, &pData->PrerequisiteNegatives)) { return Forbidden; }
+
+	int idx = HouseClass::Array->FindItemIndex(&pHouse);
+
+	if(pData->ReversedByHouses.ValidIndex(idx) && pData->ReversedByHouses[idx]) {
+		return Overridden;
+	}
 
 	if(pData->RequiredStolenTech.any()) {
-		if((pHouseExt->StolenTech & pData->RequiredStolenTech) != pData->RequiredStolenTech) { return 0; }
+		if((pHouseExt->StolenTech & pData->RequiredStolenTech) != pData->RequiredStolenTech) { return Incomplete; }
 	}
 
 	// yes, the game checks it here
 	// hack value - skip real prereq check
-	if(Prereqs::HouseOwnsAny(pHouse, &pItem->PrerequisiteOverride)) { return -1; }
+	if(Prereqs::HouseOwnsAny(pHouse, &pItem->PrerequisiteOverride)) { return Overridden; }
 
-	if(pHouse->HasFromSecretLab(pItem)) { return -1; }
+	if(pHouse->HasFromSecretLab(pItem)) { return Overridden; }
 
-	if(pHouse->IsHumanoid() && pItem->TechLevel == -1) { return 0; }
+	if(pHouse->IsHumanoid() && pItem->TechLevel == -1) { return Incomplete; }
 
-	if(!pHouse->HasAllStolenTech(pItem)) { return 0; }
+	if(!pHouse->HasAllStolenTech(pItem)) { return Incomplete; }
 
-	if(!pHouse->InRequiredHouses(pItem) || pHouse->InForbiddenHouses(pItem)) { return 0; }
+	if(!pHouse->InRequiredHouses(pItem) || pHouse->InForbiddenHouses(pItem)) { return Forbidden; }
 
 	if(!Unsorted::SWAllowed) {
 		if(BuildingTypeClass *pBld = specific_cast<BuildingTypeClass*>(pItem)) {
 			if(pBld->SuperWeapon != -1) {
 				if(RulesClass::Instance->BuildTech.FindItemIndex(&pBld) == -1) {
 					if(pHouse->Supers.GetItem(pBld->SuperWeapon)->Type->DisableableFromShell) {
-						return 0;
+						return Forbidden;
 					}
 				}
 			}
 		}
 	}
 
-	return (pHouse->TechLevel >= pItem->TechLevel) ? 1 : 0;
+	return (pHouse->TechLevel >= pItem->TechLevel) ? Complete : Incomplete;
 }
 
 bool HouseExt::PrerequisitesMet(HouseClass *pHouse, TechnoTypeClass *pItem)
 {
-	TechnoTypeExt::ExtData* pData = TechnoTypeExt::ExtMap.Find(pItem);
 	if(!pItem) {
 		return 0;
 	}
+	TechnoTypeExt::ExtData* pData = TechnoTypeExt::ExtMap.Find(pItem);
 
 	for(int i = 0; i < pData->PrerequisiteLists.Count; ++i) {
 		if(Prereqs::HouseOwnsAll(pHouse, pData->PrerequisiteLists[i])) {
@@ -79,16 +85,38 @@ bool HouseExt::PrerequisitesMet(HouseClass *pHouse, TechnoTypeClass *pItem)
 	return 0;
 }
 
-signed int HouseExt::CheckBuildLimit(HouseClass *pHouse, TechnoTypeClass *pItem, bool IncludeQueued)
+bool HouseExt::PrerequisitesListed(Prereqs::BTypeList *List, TechnoTypeClass *pItem)
+{
+	if(!pItem) {
+		return 0;
+	}
+	TechnoTypeExt::ExtData* pData = TechnoTypeExt::ExtMap.Find(pItem);
+
+	for(int i = 0; i < pData->PrerequisiteLists.Count; ++i) {
+		if(Prereqs::ListContainsAll(List, pData->PrerequisiteLists[i])) {
+			return 1;
+		}
+	}
+
+	return 0;
+}
+
+HouseExt::BuildLimitStatus HouseExt::CheckBuildLimit(HouseClass *pHouse, TechnoTypeClass *pItem, bool IncludeQueued)
 {
 	int BuildLimit = pItem->BuildLimit;
 	int Remaining = HouseExt::BuildLimitRemaining(pHouse, pItem);
 	if(BuildLimit > 0) {
 		if(Remaining <= 0 && IncludeQueued) {
-			return FactoryClass::FindThisOwnerAndProduct(pHouse, pItem) ? 1 : -1;
+			return FactoryClass::FindThisOwnerAndProduct(pHouse, pItem)
+				? NotReached
+				: ReachedPermanently
+			;
 		}
 	}
-	return Remaining > 0;
+	return (Remaining > 0)
+		? NotReached
+		: ReachedTemporarily
+	;
 }
 
 signed int HouseExt::BuildLimitRemaining(HouseClass *pHouse, TechnoTypeClass *pItem)
@@ -100,15 +128,15 @@ signed int HouseExt::BuildLimitRemaining(HouseClass *pHouse, TechnoTypeClass *pI
 		BuildLimit = abs(BuildLimit);
 		BuildLimit -= pHouse->CountOwnedEver(pItem);
 	}
-	return min(BuildLimit, 0x7FFFFFFF);
+	return std::min(BuildLimit, 0x7FFFFFFF);
 }
 
 signed int HouseExt::PrereqValidate
 	(HouseClass *pHouse, TechnoTypeClass *pItem, bool BuildLimitOnly, bool IncludeQueued)
 {
 	if(!BuildLimitOnly) {
-		signed int ReqsMet = HouseExt::RequirementsMet(pHouse, pItem);
-		if(!ReqsMet) {
+		RequirementStatus ReqsMet = HouseExt::RequirementsMet(pHouse, pItem);
+		if(ReqsMet == Forbidden || ReqsMet == Incomplete) {
 			return 0;
 		}
 
@@ -116,18 +144,45 @@ signed int HouseExt::PrereqValidate
 			if(Ares::GlobalControls::AllowBypassBuildLimit[pHouse->AIDifficulty]) {
 				return 1;
 			} else {
-				return HouseExt::CheckBuildLimit(pHouse, pItem, IncludeQueued);
+				return (signed int)HouseExt::CheckBuildLimit(pHouse, pItem, IncludeQueued);
 			}
 		}
 
-		if(ReqsMet == 1) {
+		if(ReqsMet == Complete) {
 			if(!HouseExt::PrerequisitesMet(pHouse, pItem)) {
 				return 0;
 			}
 		}
 	}
 
-	return HouseExt::CheckBuildLimit(pHouse, pItem, IncludeQueued);
+	if(!HouseExt::HasNeededFactory(pHouse, pItem)) {
+		Debug::DevLog(Debug::Error, "[NCO Bug detected] "
+			"House %ls meets all requirements to build %s, but doesn't have a suitable factory!\n",
+			pHouse->UIName, pItem->ID);
+		return 0;
+	}
+
+	return (signed int)HouseExt::CheckBuildLimit(pHouse, pItem, IncludeQueued);
+}
+
+bool HouseExt::HasNeededFactory(HouseClass *pHouse, TechnoTypeClass *pItem) {
+	DWORD ItemOwners = pItem->GetOwners();
+	eAbstractType WhatAmI = pItem->WhatAmI();
+
+	for(int i = 0; i < pHouse->Buildings.Count; ++i) {
+		auto pBld = pHouse->Buildings[i];
+		if(!pBld->InLimbo && pBld->HasPower) {
+			if(pBld->Type->Factory == WhatAmI) {
+				if(pBld->GetCurrentMission() != mission_Selling && pBld->QueuedMission != mission_Selling) {
+					if((pBld->Type->GetOwners() & ItemOwners) != 0) {
+						return true;
+					}
+				}
+			}
+		}
+	}
+
+	return false;
 }
 
 void HouseExt::ExtData::SetFirestormState(bool Active) {
@@ -180,12 +235,28 @@ DEFINE_HOOK(4F6532, HouseClass_CTOR, 5)
 	GET(HouseClass*, pItem, EAX);
 
 	HouseExt::ExtMap.FindOrAllocate(pItem);
+
+	for(int i = 0; i < TechnoTypeClass::Array->Count; ++i) {
+		TechnoTypeClass * Type = TechnoTypeClass::Array->GetItem(i);
+		TechnoTypeExt::ExtData * TypeData = TechnoTypeExt::ExtMap.Find(Type);
+		TypeData->ReversedByHouses.AddItem(false);
+	}
 	return 0;
 }
 
 DEFINE_HOOK(4F7140, HouseClass_DTOR, 6)
 {
 	GET(HouseClass*, pItem, ECX);
+
+	int idx = HouseClass::Array->FindItemIndex(&pItem);
+
+	if(idx != -1) {
+		for(int i = 0; i < TechnoTypeClass::Array->Count; ++i) {
+			TechnoTypeClass * Type = TechnoTypeClass::Array->GetItem(i);
+			TechnoTypeExt::ExtData * TypeData = TechnoTypeExt::ExtMap.Find(Type);
+			TypeData->ReversedByHouses.RemoveItem(idx);
+		}
+	}
 
 	HouseExt::ExtMap.Remove(pItem);
 	return 0;
