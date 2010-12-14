@@ -265,6 +265,9 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	// #305
 	this->RadarJamRadius.Read(&exINI, section, "RadarJamRadius");
 
+	// #1208
+	this->PassengerTurret.Read(&exINI, section, "PassengerTurret");
+
 	// quick fix - remove after the rest of weapon selector code is done
 	return;
 }

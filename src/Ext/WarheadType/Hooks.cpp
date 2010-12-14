@@ -8,6 +8,7 @@
 #include "Body.h"
 #include "../Techno/Body.h"
 #include "../Bullet/Body.h"
+#include "../WeaponType/Body.h"
 #include "../../Enum/ArmorTypes.h"
 
 // feature #384: Permanent MindControl Warheads + feature #200: EMP Warheads
@@ -33,15 +34,29 @@ DEFINE_HOOK(46920B, BulletClass_Fire, 6) {
 	;
 
 	int damage = 0;
+	WeaponTypeExt::ExtData* WeaponTypeExt = NULL;
 	if(Bullet->WeaponType) {
 		damage = Bullet->WeaponType->Damage;
+		WeaponTypeExt = WeaponTypeExt::ExtMap.Find(Bullet->WeaponType);
 	}
 
+	// these effects should be applied no matter what happens to the target
 	pWHExt->applyRipples(&coords);
-	pWHExt->applyIronCurtain(&coords, OwnerHouse, damage);
-	pWHExt->applyEMP(&coords, Bullet->Owner);
-	WarheadTypeExt::applyOccupantDamage(Bullet);
-	pWHExt->applyKillDriver(Bullet);
+
+	bool targetStillOnMap = true;
+	if(WeaponTypeExt) {
+		targetStillOnMap = !WeaponTypeExt->conductAbduction(Bullet);
+	}
+
+	// if the target gets abducted, there's nothing there to apply IC, EMP, etc. to
+	// mind that conductAbduction() neuters the bullet, so if you wish to change
+	// this check, you have to fix that as well
+	if(targetStillOnMap) {
+		pWHExt->applyIronCurtain(&coords, OwnerHouse, damage);
+		pWHExt->applyEMP(&coords, Bullet->Owner);
+		WarheadTypeExt::applyOccupantDamage(Bullet);
+		pWHExt->applyKillDriver(Bullet);
+	}
 
 /*
  * this is a little demo I made to test DP

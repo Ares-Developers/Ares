@@ -95,7 +95,11 @@ public:
 		DynamicVectorClass<bool> ReversedByHouses;
 		Valueable<bool> CanBeReversed;
 
+		// issue #305
 		Valueable<int> RadarJamRadius; //!< Distance in cells to scan for & jam radars
+
+		// issue #1208
+		Valueable<bool> PassengerTurret; //!< Whether this unit's turret changes based on the number of people in its passenger hold.
 
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			Survivors_PilotChance (NULL),
@@ -133,7 +137,8 @@ public:
 			VoiceRepair (-1),
 			WaterImage (NULL),
 			CanBeReversed (true),
-			RadarJamRadius (0)
+			RadarJamRadius (0),
+			PassengerTurret (false)
 			{
 				this->Insignia.SetAll(NULL);
 				*this->CameoPCX = *this->AltCameoPCX = 0;
