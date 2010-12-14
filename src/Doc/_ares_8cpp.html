@@ -211,6 +211,7 @@ window.onload = initDynSections;
 <code>#include &lt;LineTrail.h&gt;</code><br/>
 <code>#include &lt;VoxClass.h&gt;</code><br/>
 <code>#include &lt;WarheadTypeClass.h&gt;</code><br/>
+<code>#include &lt;GetCDClass.h&gt;</code><br/>
 <code>#include &lt;new&gt;</code><br/>
 <code>#include &lt;set&gt;</code><br/>
 <code>#include &quot;../_Container.hpp&quot;</code><br/>
@@ -279,23 +280,23 @@ window.onload = initDynSections;
 </div>
 <div class="memdoc">
 
-<p><div class="fragment"><pre class="fragment"><a name="l00327"></a>00327 {
-<a name="l00328"></a>00328         <a class="code" href="class_building_ext.html#abae25aca766faa296092dea1dc69cff7">BuildingExt::ExtMap</a>.<a class="code" href="class_container.html#a105aa8d04208a57b2fd88332b36d824d">Empty</a>();
-<a name="l00329"></a>00329         <a class="code" href="class_building_ext.html#a56f6b4694e7eeaf4e5939cb2373177ae">BuildingExt::Cleanup</a>();
-<a name="l00330"></a>00330         <a class="code" href="class_building_type_ext.html#a9643fa629dd6d2a20eeefa4942d8612a">BuildingTypeExt::ExtMap</a>.<a class="code" href="class_container.html#a105aa8d04208a57b2fd88332b36d824d">Empty</a>();
-<a name="l00331"></a>00331 <span class="comment">//      BulletExt::ExtMap.Empty();</span>
-<a name="l00332"></a>00332         <a class="code" href="class_bullet_type_ext.html#a7dc0a4583e92987bd0b670ed627aef26">BulletTypeExt::ExtMap</a>.<a class="code" href="class_container.html#a105aa8d04208a57b2fd88332b36d824d">Empty</a>();
-<a name="l00333"></a>00333         <a class="code" href="class_house_ext.html#a4a73e500fabd21a7359c5247c31d4c03">HouseExt::ExtMap</a>.<a class="code" href="class_container.html#a105aa8d04208a57b2fd88332b36d824d">Empty</a>();
-<a name="l00334"></a>00334         <a class="code" href="class_house_type_ext.html#af44f9c59ad5eb8101d45233ef7adbb51">HouseTypeExt::ExtMap</a>.<a class="code" href="class_container.html#a105aa8d04208a57b2fd88332b36d824d">Empty</a>();
-<a name="l00335"></a>00335         <a class="code" href="class_side_ext.html#aaee100e7b0dd767fb420a3b3c5456f0f">SideExt::ExtMap</a>.<a class="code" href="class_container.html#a105aa8d04208a57b2fd88332b36d824d">Empty</a>();
-<a name="l00336"></a>00336         <a class="code" href="class_s_w_type_ext.html#a6906468c9e4ae4d421cba9cb572fb6ec">SWTypeExt::ExtMap</a>.<a class="code" href="class_container.html#a105aa8d04208a57b2fd88332b36d824d">Empty</a>();
-<a name="l00337"></a>00337         <a class="code" href="class_techno_ext.html#a3cdb7f8ccc49548f0b621ff80df0e8fb">TechnoExt::ExtMap</a>.<a class="code" href="class_container.html#a105aa8d04208a57b2fd88332b36d824d">Empty</a>();
-<a name="l00338"></a>00338         <a class="code" href="class_techno_type_ext.html#acc5f01db1b341572a92ad754a7d15c48">TechnoTypeExt::ExtMap</a>.<a class="code" href="class_container.html#a105aa8d04208a57b2fd88332b36d824d">Empty</a>();
-<a name="l00339"></a>00339         <a class="code" href="class_warhead_type_ext.html#ab2eb86c684fe6f15f9f95a9aa171e7dd">WarheadTypeExt::ExtMap</a>.<a class="code" href="class_container.html#a105aa8d04208a57b2fd88332b36d824d">Empty</a>();
-<a name="l00340"></a>00340         <a class="code" href="class_weapon_type_ext.html#a6e448392133b3079a9490b5c5fabdd09">WeaponTypeExt::ExtMap</a>.<a class="code" href="class_container.html#a105aa8d04208a57b2fd88332b36d824d">Empty</a>();
-<a name="l00341"></a>00341 
-<a name="l00342"></a>00342         <span class="keywordflow">return</span> 0;
-<a name="l00343"></a>00343 }
+<p><div class="fragment"><pre class="fragment"><a name="l00352"></a>00352 {
+<a name="l00353"></a>00353         <a class="code" href="class_building_ext.html#abae25aca766faa296092dea1dc69cff7">BuildingExt::ExtMap</a>.<a class="code" href="class_container.html#a105aa8d04208a57b2fd88332b36d824d">Empty</a>();
+<a name="l00354"></a>00354         <a class="code" href="class_building_ext.html#a56f6b4694e7eeaf4e5939cb2373177ae">BuildingExt::Cleanup</a>();
+<a name="l00355"></a>00355         <a class="code" href="class_building_type_ext.html#a9643fa629dd6d2a20eeefa4942d8612a">BuildingTypeExt::ExtMap</a>.<a class="code" href="class_container.html#a105aa8d04208a57b2fd88332b36d824d">Empty</a>();
+<a name="l00356"></a>00356 <span class="comment">//      BulletExt::ExtMap.Empty();</span>
+<a name="l00357"></a>00357         <a class="code" href="class_bullet_type_ext.html#a7dc0a4583e92987bd0b670ed627aef26">BulletTypeExt::ExtMap</a>.<a class="code" href="class_container.html#a105aa8d04208a57b2fd88332b36d824d">Empty</a>();
+<a name="l00358"></a>00358         <a class="code" href="class_house_ext.html#a4a73e500fabd21a7359c5247c31d4c03">HouseExt::ExtMap</a>.<a class="code" href="class_container.html#a105aa8d04208a57b2fd88332b36d824d">Empty</a>();
+<a name="l00359"></a>00359         <a class="code" href="class_house_type_ext.html#af44f9c59ad5eb8101d45233ef7adbb51">HouseTypeExt::ExtMap</a>.<a class="code" href="class_container.html#a105aa8d04208a57b2fd88332b36d824d">Empty</a>();
+<a name="l00360"></a>00360         <a class="code" href="class_side_ext.html#aaee100e7b0dd767fb420a3b3c5456f0f">SideExt::ExtMap</a>.<a class="code" href="class_container.html#a105aa8d04208a57b2fd88332b36d824d">Empty</a>();
+<a name="l00361"></a>00361         <a class="code" href="class_s_w_type_ext.html#a6906468c9e4ae4d421cba9cb572fb6ec">SWTypeExt::ExtMap</a>.<a class="code" href="class_container.html#a105aa8d04208a57b2fd88332b36d824d">Empty</a>();
+<a name="l00362"></a>00362         <a class="code" href="class_techno_ext.html#a3cdb7f8ccc49548f0b621ff80df0e8fb">TechnoExt::ExtMap</a>.<a class="code" href="class_container.html#a105aa8d04208a57b2fd88332b36d824d">Empty</a>();
+<a name="l00363"></a>00363         <a class="code" href="class_techno_type_ext.html#acc5f01db1b341572a92ad754a7d15c48">TechnoTypeExt::ExtMap</a>.<a class="code" href="class_container.html#a105aa8d04208a57b2fd88332b36d824d">Empty</a>();
+<a name="l00364"></a>00364         <a class="code" href="class_warhead_type_ext.html#ab2eb86c684fe6f15f9f95a9aa171e7dd">WarheadTypeExt::ExtMap</a>.<a class="code" href="class_container.html#a105aa8d04208a57b2fd88332b36d824d">Empty</a>();
+<a name="l00365"></a>00365         <a class="code" href="class_weapon_type_ext.html#a6e448392133b3079a9490b5c5fabdd09">WeaponTypeExt::ExtMap</a>.<a class="code" href="class_container.html#a105aa8d04208a57b2fd88332b36d824d">Empty</a>();
+<a name="l00366"></a>00366 
+<a name="l00367"></a>00367         <span class="keywordflow">return</span> 0;
+<a name="l00368"></a>00368 }
 </pre></div></p>
 
 </div>
@@ -331,27 +332,27 @@ window.onload = initDynSections;
 </div>
 <div class="memdoc">
 
-<p><div class="fragment"><pre class="fragment"><a name="l00304"></a>00304 {
-<a name="l00305"></a>00305         GET(<span class="keywordtype">void</span> *, DEATH, ECX);
-<a name="l00306"></a>00306 
-<a name="l00307"></a>00307 <span class="comment">//      Debug::Log(&quot;PointerGotInvalid: %X\n&quot;, DEATH);</span>
-<a name="l00308"></a>00308 
-<a name="l00309"></a>00309         <a class="code" href="___container_8hpp.html#adb2c40458b5aa8e748d368203eb33682">INVALID_CTR</a>(<a class="code" href="class_building_ext.html">BuildingExt</a>, DEATH);
-<a name="l00310"></a>00310         <a class="code" href="___container_8hpp.html#adb2c40458b5aa8e748d368203eb33682">INVALID_CTR</a>(<a class="code" href="class_building_type_ext.html">BuildingTypeExt</a>, DEATH);
-<a name="l00311"></a>00311         <a class="code" href="___container_8hpp.html#adb2c40458b5aa8e748d368203eb33682">INVALID_CTR</a>(<a class="code" href="class_bullet_ext.html">BulletExt</a>, DEATH);
-<a name="l00312"></a>00312         <a class="code" href="___container_8hpp.html#adb2c40458b5aa8e748d368203eb33682">INVALID_CTR</a>(<a class="code" href="class_bullet_type_ext.html">BulletTypeExt</a>, DEATH);
-<a name="l00313"></a>00313         <a class="code" href="___container_8hpp.html#adb2c40458b5aa8e748d368203eb33682">INVALID_CTR</a>(<a class="code" href="class_house_ext.html">HouseExt</a>, DEATH);
-<a name="l00314"></a>00314         <a class="code" href="___container_8hpp.html#adb2c40458b5aa8e748d368203eb33682">INVALID_CTR</a>(<a class="code" href="class_house_type_ext.html">HouseTypeExt</a>, DEATH);
-<a name="l00315"></a>00315         <a class="code" href="___container_8hpp.html#adb2c40458b5aa8e748d368203eb33682">INVALID_CTR</a>(<a class="code" href="class_infantry_ext.html">InfantryExt</a>, DEATH);
-<a name="l00316"></a>00316         <a class="code" href="___container_8hpp.html#adb2c40458b5aa8e748d368203eb33682">INVALID_CTR</a>(<a class="code" href="class_side_ext.html">SideExt</a>, DEATH);
-<a name="l00317"></a>00317         <a class="code" href="___container_8hpp.html#adb2c40458b5aa8e748d368203eb33682">INVALID_CTR</a>(<a class="code" href="class_s_w_type_ext.html">SWTypeExt</a>, DEATH);
-<a name="l00318"></a>00318         <a class="code" href="___container_8hpp.html#adb2c40458b5aa8e748d368203eb33682">INVALID_CTR</a>(<a class="code" href="class_techno_ext.html">TechnoExt</a>, DEATH);
-<a name="l00319"></a>00319         <a class="code" href="___container_8hpp.html#adb2c40458b5aa8e748d368203eb33682">INVALID_CTR</a>(<a class="code" href="class_techno_type_ext.html">TechnoTypeExt</a>, DEATH);
-<a name="l00320"></a>00320         <a class="code" href="___container_8hpp.html#adb2c40458b5aa8e748d368203eb33682">INVALID_CTR</a>(<a class="code" href="class_warhead_type_ext.html">WarheadTypeExt</a>, DEATH);
-<a name="l00321"></a>00321         <a class="code" href="___container_8hpp.html#adb2c40458b5aa8e748d368203eb33682">INVALID_CTR</a>(<a class="code" href="class_weapon_type_ext.html">WeaponTypeExt</a>, DEATH);
-<a name="l00322"></a>00322 
-<a name="l00323"></a>00323         <span class="keywordflow">return</span> 0;
-<a name="l00324"></a>00324 }
+<p><div class="fragment"><pre class="fragment"><a name="l00329"></a>00329 {
+<a name="l00330"></a>00330         GET(<span class="keywordtype">void</span> *, DEATH, ECX);
+<a name="l00331"></a>00331 
+<a name="l00332"></a>00332 <span class="comment">//      Debug::Log(&quot;PointerGotInvalid: %X\n&quot;, DEATH);</span>
+<a name="l00333"></a>00333 
+<a name="l00334"></a>00334         <a class="code" href="___container_8hpp.html#adb2c40458b5aa8e748d368203eb33682">INVALID_CTR</a>(<a class="code" href="class_building_ext.html">BuildingExt</a>, DEATH);
+<a name="l00335"></a>00335         <a class="code" href="___container_8hpp.html#adb2c40458b5aa8e748d368203eb33682">INVALID_CTR</a>(<a class="code" href="class_building_type_ext.html">BuildingTypeExt</a>, DEATH);
+<a name="l00336"></a>00336         <a class="code" href="___container_8hpp.html#adb2c40458b5aa8e748d368203eb33682">INVALID_CTR</a>(<a class="code" href="class_bullet_ext.html">BulletExt</a>, DEATH);
+<a name="l00337"></a>00337         <a class="code" href="___container_8hpp.html#adb2c40458b5aa8e748d368203eb33682">INVALID_CTR</a>(<a class="code" href="class_bullet_type_ext.html">BulletTypeExt</a>, DEATH);
+<a name="l00338"></a>00338         <a class="code" href="___container_8hpp.html#adb2c40458b5aa8e748d368203eb33682">INVALID_CTR</a>(<a class="code" href="class_house_ext.html">HouseExt</a>, DEATH);
+<a name="l00339"></a>00339         <a class="code" href="___container_8hpp.html#adb2c40458b5aa8e748d368203eb33682">INVALID_CTR</a>(<a class="code" href="class_house_type_ext.html">HouseTypeExt</a>, DEATH);
+<a name="l00340"></a>00340         <a class="code" href="___container_8hpp.html#adb2c40458b5aa8e748d368203eb33682">INVALID_CTR</a>(<a class="code" href="class_infantry_ext.html">InfantryExt</a>, DEATH);
+<a name="l00341"></a>00341         <a class="code" href="___container_8hpp.html#adb2c40458b5aa8e748d368203eb33682">INVALID_CTR</a>(<a class="code" href="class_side_ext.html">SideExt</a>, DEATH);
+<a name="l00342"></a>00342         <a class="code" href="___container_8hpp.html#adb2c40458b5aa8e748d368203eb33682">INVALID_CTR</a>(<a class="code" href="class_s_w_type_ext.html">SWTypeExt</a>, DEATH);
+<a name="l00343"></a>00343         <a class="code" href="___container_8hpp.html#adb2c40458b5aa8e748d368203eb33682">INVALID_CTR</a>(<a class="code" href="class_techno_ext.html">TechnoExt</a>, DEATH);
+<a name="l00344"></a>00344         <a class="code" href="___container_8hpp.html#adb2c40458b5aa8e748d368203eb33682">INVALID_CTR</a>(<a class="code" href="class_techno_type_ext.html">TechnoTypeExt</a>, DEATH);
+<a name="l00345"></a>00345         <a class="code" href="___container_8hpp.html#adb2c40458b5aa8e748d368203eb33682">INVALID_CTR</a>(<a class="code" href="class_warhead_type_ext.html">WarheadTypeExt</a>, DEATH);
+<a name="l00346"></a>00346         <a class="code" href="___container_8hpp.html#adb2c40458b5aa8e748d368203eb33682">INVALID_CTR</a>(<a class="code" href="class_weapon_type_ext.html">WeaponTypeExt</a>, DEATH);
+<a name="l00347"></a>00347 
+<a name="l00348"></a>00348         <span class="keywordflow">return</span> 0;
+<a name="l00349"></a>00349 }
 </pre></div></p>
 
 </div>
@@ -387,14 +388,14 @@ window.onload = initDynSections;
 </div>
 <div class="memdoc">
 
-<p><div class="fragment"><pre class="fragment"><a name="l00293"></a>00293 {
-<a name="l00294"></a>00294         <a class="code" href="class_ares.html#a096a217a2f44f2f89c72b4f7f557abb5">Ares::RegisterCommands</a>();
-<a name="l00295"></a>00295 
-<a name="l00296"></a>00296         DWORD *D;
-<a name="l00297"></a>00297         GAME_ALLOC(DWORD, D);
-<a name="l00298"></a>00298         R-&gt;EAX&lt;DWORD *&gt;(D);     <span class="comment">//Allocate SetUnitTabCommandClass</span>
-<a name="l00299"></a>00299         <span class="keywordflow">return</span> 0x533062;
-<a name="l00300"></a>00300 }
+<p><div class="fragment"><pre class="fragment"><a name="l00318"></a>00318 {
+<a name="l00319"></a>00319         <a class="code" href="class_ares.html#a096a217a2f44f2f89c72b4f7f557abb5">Ares::RegisterCommands</a>();
+<a name="l00320"></a>00320 
+<a name="l00321"></a>00321         DWORD *D;
+<a name="l00322"></a>00322         GAME_ALLOC(DWORD, D);
+<a name="l00323"></a>00323         R-&gt;EAX&lt;DWORD *&gt;(D);     <span class="comment">//Allocate SetUnitTabCommandClass</span>
+<a name="l00324"></a>00324         <span class="keywordflow">return</span> 0x533062;
+<a name="l00325"></a>00325 }
 </pre></div></p>
 
 </div>
@@ -430,13 +431,13 @@ window.onload = initDynSections;
 </div>
 <div class="memdoc">
 
-<p><div class="fragment"><pre class="fragment"><a name="l00284"></a>00284 {
-<a name="l00285"></a>00285         GET(<span class="keywordtype">char</span>**, ppArgs, ESI);
-<a name="l00286"></a>00286         GET(<span class="keywordtype">int</span>, nNumArgs, EDI);
-<a name="l00287"></a>00287 
-<a name="l00288"></a>00288         <a class="code" href="class_ares.html#a613b86774ddad23c7c34c5fc6bd0d87c">Ares::CmdLineParse</a>(ppArgs,nNumArgs);
-<a name="l00289"></a>00289         <span class="keywordflow">return</span> 0;
-<a name="l00290"></a>00290 }
+<p><div class="fragment"><pre class="fragment"><a name="l00309"></a>00309 {
+<a name="l00310"></a>00310         GET(<span class="keywordtype">char</span>**, ppArgs, ESI);
+<a name="l00311"></a>00311         GET(<span class="keywordtype">int</span>, nNumArgs, EDI);
+<a name="l00312"></a>00312 
+<a name="l00313"></a>00313         <a class="code" href="class_ares.html#a613b86774ddad23c7c34c5fc6bd0d87c">Ares::CmdLineParse</a>(ppArgs,nNumArgs);
+<a name="l00314"></a>00314         <span class="keywordflow">return</span> 0;
+<a name="l00315"></a>00315 }
 </pre></div></p>
 
 </div>
@@ -472,10 +473,10 @@ window.onload = initDynSections;
 </div>
 <div class="memdoc">
 
-<p><div class="fragment"><pre class="fragment"><a name="l00278"></a>00278 {
-<a name="l00279"></a>00279         <a class="code" href="class_ares.html#a9e5dcb6b158814196b166ef84d968007">Ares::PostGameInit</a>();
-<a name="l00280"></a>00280         <span class="keywordflow">return</span> 0;
-<a name="l00281"></a>00281 }
+<p><div class="fragment"><pre class="fragment"><a name="l00303"></a>00303 {
+<a name="l00304"></a>00304         <a class="code" href="class_ares.html#a9e5dcb6b158814196b166ef84d968007">Ares::PostGameInit</a>();
+<a name="l00305"></a>00305         <span class="keywordflow">return</span> 0;
+<a name="l00306"></a>00306 }
 </pre></div></p>
 
 </div>
@@ -511,11 +512,11 @@ window.onload = initDynSections;
 </div>
 <div class="memdoc">
 
-<p><div class="fragment"><pre class="fragment"><a name="l00271"></a>00271 {
-<a name="l00272"></a>00272         <a class="code" href="class_ares.html#a57b6b5a02d1223dc243dc4cf3322f9e9">Ares::ExeTerminate</a>();
-<a name="l00273"></a>00273         GET(<span class="keywordtype">int</span>, result, EAX);
-<a name="l00274"></a>00274         ExitProcess(result); <span class="comment">//teehee</span>
-<a name="l00275"></a>00275 }
+<p><div class="fragment"><pre class="fragment"><a name="l00296"></a>00296 {
+<a name="l00297"></a>00297         <a class="code" href="class_ares.html#a57b6b5a02d1223dc243dc4cf3322f9e9">Ares::ExeTerminate</a>();
+<a name="l00298"></a>00298         GET(<span class="keywordtype">int</span>, result, EAX);
+<a name="l00299"></a>00299         ExitProcess(result); <span class="comment">//teehee</span>
+<a name="l00300"></a>00300 }
 </pre></div></p>
 
 </div>
@@ -551,10 +552,10 @@ window.onload = initDynSections;
 </div>
 <div class="memdoc">
 
-<p><div class="fragment"><pre class="fragment"><a name="l00265"></a>00265 {
-<a name="l00266"></a>00266         <a class="code" href="class_ares.html#afb8c3532e9cd64a3713ac0de6a8cdbb5">Ares::ExeRun</a>();
-<a name="l00267"></a>00267         <span class="keywordflow">return</span> 0;
-<a name="l00268"></a>00268 }
+<p><div class="fragment"><pre class="fragment"><a name="l00290"></a>00290 {
+<a name="l00291"></a>00291         <a class="code" href="class_ares.html#afb8c3532e9cd64a3713ac0de6a8cdbb5">Ares::ExeRun</a>();
+<a name="l00292"></a>00292         <span class="keywordflow">return</span> 0;
+<a name="l00293"></a>00293 }
 </pre></div></p>
 
 </div>
@@ -590,9 +591,9 @@ window.onload = initDynSections;
 </div>
 <div class="memdoc">
 
-<p><div class="fragment"><pre class="fragment"><a name="l00239"></a>00239 {
-<a name="l00240"></a>00240         <span class="keywordflow">return</span> 0x6AD16C;
-<a name="l00241"></a>00241 }
+<p><div class="fragment"><pre class="fragment"><a name="l00264"></a>00264 {
+<a name="l00265"></a>00265         <span class="keywordflow">return</span> 0x6AD16C;
+<a name="l00266"></a>00266 }
 </pre></div></p>
 
 </div>
@@ -628,12 +629,12 @@ window.onload = initDynSections;
 </div>
 <div class="memdoc">
 
-<p><div class="fragment"><pre class="fragment"><a name="l00230"></a>00230 {
-<a name="l00231"></a>00231         <span class="keywordflow">return</span> (<a class="code" href="class_ares.html#a519e50df4f355b0861f35d0dfa8be704">Ares::bNoLogo</a>)
-<a name="l00232"></a>00232                 ? 0x52C5F3
-<a name="l00233"></a>00233                 : 0
-<a name="l00234"></a>00234         ;
-<a name="l00235"></a>00235 }
+<p><div class="fragment"><pre class="fragment"><a name="l00255"></a>00255 {
+<a name="l00256"></a>00256         <span class="keywordflow">return</span> (<a class="code" href="class_ares.html#a519e50df4f355b0861f35d0dfa8be704">Ares::bNoLogo</a>)
+<a name="l00257"></a>00257                 ? 0x52C5F3
+<a name="l00258"></a>00258                 : 0
+<a name="l00259"></a>00259         ;
+<a name="l00260"></a>00260 }
 </pre></div></p>
 
 </div>
@@ -669,22 +670,22 @@ window.onload = initDynSections;
 </div>
 <div class="memdoc">
 
-<p><div class="fragment"><pre class="fragment"><a name="l00209"></a>00209 {
-<a name="l00210"></a>00210         <span class="keywordflow">switch</span>(dwReason) {
-<a name="l00211"></a>00211                 <span class="keywordflow">case</span> DLL_PROCESS_ATTACH:
-<a name="l00212"></a>00212                         <a class="code" href="class_ares.html#acdb0ebd090cdcc9ed1adb3c81be23804">Ares::hInstance</a> = hInstance;
-<a name="l00213"></a>00213 <span class="comment">//                      Debug::LogFileOpen();</span>
-<a name="l00214"></a>00214 <span class="comment">//                      Debug::Log(&quot;ATTACH\n&quot;);</span>
-<a name="l00215"></a>00215                         <a class="code" href="class_debug.html#abecf9f0a1ebed66e8f81df03fe5aaaf7">Debug::LogFileRemove</a>();
-<a name="l00216"></a>00216                         <span class="keywordflow">break</span>;
-<a name="l00217"></a>00217                 <span class="keywordflow">case</span> DLL_PROCESS_DETACH:
-<a name="l00218"></a>00218 <span class="comment">//                      Debug::Log(&quot;DETACH\n&quot;);</span>
-<a name="l00219"></a>00219 <span class="comment">//                      Debug::LogFileClose();</span>
-<a name="l00220"></a>00220                         <span class="keywordflow">break</span>;
-<a name="l00221"></a>00221         }
-<a name="l00222"></a>00222 
-<a name="l00223"></a>00223         <span class="keywordflow">return</span> <span class="keyword">true</span>;
-<a name="l00224"></a>00224 }
+<p><div class="fragment"><pre class="fragment"><a name="l00234"></a>00234 {
+<a name="l00235"></a>00235         <span class="keywordflow">switch</span>(dwReason) {
+<a name="l00236"></a>00236                 <span class="keywordflow">case</span> DLL_PROCESS_ATTACH:
+<a name="l00237"></a>00237                         <a class="code" href="class_ares.html#acdb0ebd090cdcc9ed1adb3c81be23804">Ares::hInstance</a> = hInstance;
+<a name="l00238"></a>00238 <span class="comment">//                      Debug::LogFileOpen();</span>
+<a name="l00239"></a>00239 <span class="comment">//                      Debug::Log(&quot;ATTACH\n&quot;);</span>
+<a name="l00240"></a>00240                         <a class="code" href="class_debug.html#abecf9f0a1ebed66e8f81df03fe5aaaf7">Debug::LogFileRemove</a>();
+<a name="l00241"></a>00241                         <span class="keywordflow">break</span>;
+<a name="l00242"></a>00242                 <span class="keywordflow">case</span> DLL_PROCESS_DETACH:
+<a name="l00243"></a>00243 <span class="comment">//                      Debug::Log(&quot;DETACH\n&quot;);</span>
+<a name="l00244"></a>00244 <span class="comment">//                      Debug::LogFileClose();</span>
+<a name="l00245"></a>00245                         <span class="keywordflow">break</span>;
+<a name="l00246"></a>00246         }
+<a name="l00247"></a>00247 
+<a name="l00248"></a>00248         <span class="keywordflow">return</span> <span class="keyword">true</span>;
+<a name="l00249"></a>00249 }
 </pre></div></p>
 
 </div>
@@ -704,7 +705,7 @@ window.onload = initDynSections;
 </iframe>
 </div>
 
-<hr class="footer"/><address style="text-align: right;"><small>Generated on Fri Oct 15 20:59:44 2010 for Ares by&nbsp;
+<hr class="footer"/><address style="text-align: right;"><small>Generated on Tue Dec 14 21:10:38 2010 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.3 </small></address>
 </body>

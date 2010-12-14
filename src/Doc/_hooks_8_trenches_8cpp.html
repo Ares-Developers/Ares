@@ -143,20 +143,20 @@ window.onload = initDynSections;
 </div>
 <div class="memdoc">
 
-<p><div class="fragment"><pre class="fragment"><a name="l00288"></a>00288 {
-<a name="l00289"></a>00289         GET(BuildingClass *, pBld, ESI);
-<a name="l00290"></a>00290         GET(HouseClass *, pNewOwner, EBX);
-<a name="l00291"></a>00291         <span class="keyword">enum</span> wasHandled { Yes = 0x44848F, No = 0} Handled = No;
-<a name="l00292"></a>00292 
-<a name="l00293"></a>00293         <a class="code" href="class_building_ext_1_1_ext_data.html">BuildingExt::ExtData</a>* bldExt = <a class="code" href="class_building_ext.html#abae25aca766faa296092dea1dc69cff7">BuildingExt::ExtMap</a>.<a class="code" href="class_container.html#a90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(pBld);
-<a name="l00294"></a>00294 
-<a name="l00295"></a>00295         <span class="keywordflow">if</span>(bldExt-&gt;<a class="code" href="class_building_ext_1_1_ext_data.html#a0d8c28c2f33fc5710e8aa2dd8da374e0" title="This is used when returning raided buildings, to decide whether to play EVA announcements...">ignoreNextEVA</a>) {
-<a name="l00296"></a>00296                 Handled = Yes;
-<a name="l00297"></a>00297                 bldExt-&gt;<a class="code" href="class_building_ext_1_1_ext_data.html#a0d8c28c2f33fc5710e8aa2dd8da374e0" title="This is used when returning raided buildings, to decide whether to play EVA announcements...">ignoreNextEVA</a> = <span class="keyword">false</span>;
-<a name="l00298"></a>00298         }
-<a name="l00299"></a>00299 
-<a name="l00300"></a>00300         <span class="keywordflow">return</span> Handled;
-<a name="l00301"></a>00301 }
+<p><div class="fragment"><pre class="fragment"><a name="l00291"></a>00291 {
+<a name="l00292"></a>00292         GET(BuildingClass *, pBld, ESI);
+<a name="l00293"></a>00293         GET(HouseClass *, pNewOwner, EBX);
+<a name="l00294"></a>00294         <span class="keyword">enum</span> wasHandled { Yes = 0x44848F, No = 0} Handled = No;
+<a name="l00295"></a>00295 
+<a name="l00296"></a>00296         <a class="code" href="class_building_ext_1_1_ext_data.html">BuildingExt::ExtData</a>* bldExt = <a class="code" href="class_building_ext.html#abae25aca766faa296092dea1dc69cff7">BuildingExt::ExtMap</a>.<a class="code" href="class_container.html#a90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(pBld);
+<a name="l00297"></a>00297 
+<a name="l00298"></a>00298         <span class="keywordflow">if</span>(bldExt-&gt;<a class="code" href="class_building_ext_1_1_ext_data.html#a0d8c28c2f33fc5710e8aa2dd8da374e0" title="This is used when returning raided buildings, to decide whether to play EVA announcements...">ignoreNextEVA</a>) {
+<a name="l00299"></a>00299                 Handled = Yes;
+<a name="l00300"></a>00300                 bldExt-&gt;<a class="code" href="class_building_ext_1_1_ext_data.html#a0d8c28c2f33fc5710e8aa2dd8da374e0" title="This is used when returning raided buildings, to decide whether to play EVA announcements...">ignoreNextEVA</a> = <span class="keyword">false</span>;
+<a name="l00301"></a>00301         }
+<a name="l00302"></a>00302 
+<a name="l00303"></a>00303         <span class="keywordflow">return</span> Handled;
+<a name="l00304"></a>00304 }
 </pre></div></p>
 
 </div>
@@ -192,14 +192,14 @@ window.onload = initDynSections;
 </div>
 <div class="memdoc">
 
-<p><div class="fragment"><pre class="fragment"><a name="l00249"></a>00249 {
-<a name="l00250"></a>00250         GET(BuildingClass *, pBld, ESI);
-<a name="l00251"></a>00251         <a class="code" href="class_building_ext_1_1_ext_data.html">BuildingExt::ExtData</a>* buildingExtData = <a class="code" href="class_building_ext.html#abae25aca766faa296092dea1dc69cff7">BuildingExt::ExtMap</a>.<a class="code" href="class_container.html#a90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(pBld);
-<a name="l00252"></a>00252 
-<a name="l00253"></a>00253         buildingExtData-&gt;<a class="code" href="class_building_ext_1_1_ext_data.html#a35389a02d691eda3df45bb34487bd967" title="Checks if the building is empty but still marked as raided, and returns the building...">evalRaidStatus</a>();
-<a name="l00254"></a>00254 
-<a name="l00255"></a>00255         <span class="keywordflow">return</span> 0;
-<a name="l00256"></a>00256 }
+<p><div class="fragment"><pre class="fragment"><a name="l00252"></a>00252 {
+<a name="l00253"></a>00253         GET(BuildingClass *, pBld, ESI);
+<a name="l00254"></a>00254         <a class="code" href="class_building_ext_1_1_ext_data.html">BuildingExt::ExtData</a>* buildingExtData = <a class="code" href="class_building_ext.html#abae25aca766faa296092dea1dc69cff7">BuildingExt::ExtMap</a>.<a class="code" href="class_container.html#a90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(pBld);
+<a name="l00255"></a>00255 
+<a name="l00256"></a>00256         buildingExtData-&gt;<a class="code" href="class_building_ext_1_1_ext_data.html#a35389a02d691eda3df45bb34487bd967" title="Checks if the building is empty but still marked as raided, and returns the building...">evalRaidStatus</a>();
+<a name="l00257"></a>00257 
+<a name="l00258"></a>00258         <span class="keywordflow">return</span> 0;
+<a name="l00259"></a>00259 }
 </pre></div></p>
 
 </div>
@@ -235,14 +235,14 @@ window.onload = initDynSections;
 </div>
 <div class="memdoc">
 
-<p><div class="fragment"><pre class="fragment"><a name="l00236"></a>00236 {
-<a name="l00237"></a>00237     GET(BuildingClass *, pBld, ESI);
-<a name="l00238"></a>00238     <a class="code" href="class_building_ext_1_1_ext_data.html">BuildingExt::ExtData</a>* buildingExtData = <a class="code" href="class_building_ext.html#abae25aca766faa296092dea1dc69cff7">BuildingExt::ExtMap</a>.<a class="code" href="class_container.html#a90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(pBld);
-<a name="l00239"></a>00239 
-<a name="l00240"></a>00240     buildingExtData-&gt;<a class="code" href="class_building_ext_1_1_ext_data.html#a35389a02d691eda3df45bb34487bd967" title="Checks if the building is empty but still marked as raided, and returns the building...">evalRaidStatus</a>();
-<a name="l00241"></a>00241 
-<a name="l00242"></a>00242     <span class="keywordflow">return</span> 0;
-<a name="l00243"></a>00243 }
+<p><div class="fragment"><pre class="fragment"><a name="l00239"></a>00239 {
+<a name="l00240"></a>00240     GET(BuildingClass *, pBld, ESI);
+<a name="l00241"></a>00241     <a class="code" href="class_building_ext_1_1_ext_data.html">BuildingExt::ExtData</a>* buildingExtData = <a class="code" href="class_building_ext.html#abae25aca766faa296092dea1dc69cff7">BuildingExt::ExtMap</a>.<a class="code" href="class_container.html#a90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(pBld);
+<a name="l00242"></a>00242 
+<a name="l00243"></a>00243     buildingExtData-&gt;<a class="code" href="class_building_ext_1_1_ext_data.html#a35389a02d691eda3df45bb34487bd967" title="Checks if the building is empty but still marked as raided, and returns the building...">evalRaidStatus</a>();
+<a name="l00244"></a>00244 
+<a name="l00245"></a>00245     <span class="keywordflow">return</span> 0;
+<a name="l00246"></a>00246 }
 </pre></div></p>
 
 </div>
@@ -278,15 +278,15 @@ window.onload = initDynSections;
 </div>
 <div class="memdoc">
 
-<p><div class="fragment"><pre class="fragment"><a name="l00222"></a>00222 {
-<a name="l00223"></a>00223     GET(BuildingClass *, pBld, ESI);
-<a name="l00224"></a>00224     GET(<span class="keywordtype">int</span>, idxOccupant, EDI);
-<a name="l00225"></a>00225     <span class="comment">// I don&#39;t think anyone ever actually tested Assaulter=yes with raiding, putting this here &#39;cause it&#39;s likely needed</span>
-<a name="l00226"></a>00226         <a class="code" href="class_building_ext_1_1_ext_data.html">BuildingExt::ExtData</a>* buildingExtData = <a class="code" href="class_building_ext.html#abae25aca766faa296092dea1dc69cff7">BuildingExt::ExtMap</a>.<a class="code" href="class_container.html#a90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(pBld);
-<a name="l00227"></a>00227     buildingExtData-&gt;<a class="code" href="class_building_ext_1_1_ext_data.html#a35389a02d691eda3df45bb34487bd967" title="Checks if the building is empty but still marked as raided, and returns the building...">evalRaidStatus</a>();
-<a name="l00228"></a>00228 
-<a name="l00229"></a>00229     <span class="keywordflow">return</span> 0;
-<a name="l00230"></a>00230 }
+<p><div class="fragment"><pre class="fragment"><a name="l00225"></a>00225 {
+<a name="l00226"></a>00226     GET(BuildingClass *, pBld, ESI);
+<a name="l00227"></a>00227     GET(<span class="keywordtype">int</span>, idxOccupant, EDI);
+<a name="l00228"></a>00228     <span class="comment">// I don&#39;t think anyone ever actually tested Assaulter=yes with raiding, putting this here &#39;cause it&#39;s likely needed</span>
+<a name="l00229"></a>00229         <a class="code" href="class_building_ext_1_1_ext_data.html">BuildingExt::ExtData</a>* buildingExtData = <a class="code" href="class_building_ext.html#abae25aca766faa296092dea1dc69cff7">BuildingExt::ExtMap</a>.<a class="code" href="class_container.html#a90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(pBld);
+<a name="l00230"></a>00230     buildingExtData-&gt;<a class="code" href="class_building_ext_1_1_ext_data.html#a35389a02d691eda3df45bb34487bd967" title="Checks if the building is empty but still marked as raided, and returns the building...">evalRaidStatus</a>();
+<a name="l00231"></a>00231 
+<a name="l00232"></a>00232     <span class="keywordflow">return</span> 0;
+<a name="l00233"></a>00233 }
 </pre></div></p>
 
 </div>
@@ -332,14 +332,17 @@ window.onload = initDynSections;
 <a name="l00176"></a>00176 
 <a name="l00177"></a>00177         <span class="comment">// if building and owner are from different players, and the building is not in raided state</span>
 <a name="l00178"></a>00178         <span class="comment">// change the building&#39;s owner and mark it as raided</span>
-<a name="l00179"></a>00179         <span class="comment">// but only if that&#39;s even necessary - no need to raid neutral houses.</span>
-<a name="l00180"></a>00180         <span class="keywordflow">if</span>((pBld-&gt;Owner != pInf-&gt;Owner) &amp;&amp; !pBld-&gt;Owner-&gt;IsNeutral() &amp;&amp; !buildingExtData-&gt;<a class="code" href="class_building_ext_1_1_ext_data.html#afa7ba845c44fb28da0ffdf2b7b7c5667" title="Whether this building is currently occupied by someone not the actual owner of the...">isCurrentlyRaided</a>) {
-<a name="l00181"></a>00181                 buildingExtData-&gt;<a class="code" href="class_building_ext_1_1_ext_data.html#afead3304480fed76856d3e8048dc020d" title="Contains the house which owned this building prior to it being raided and turned...">OwnerBeforeRaid</a> = pBld-&gt;Owner;
-<a name="l00182"></a>00182                 buildingExtData-&gt;<a class="code" href="class_building_ext_1_1_ext_data.html#afa7ba845c44fb28da0ffdf2b7b7c5667" title="Whether this building is currently occupied by someone not the actual owner of the...">isCurrentlyRaided</a> = <span class="keyword">true</span>;
-<a name="l00183"></a>00183                 pBld-&gt;SetOwningHouse(pInf-&gt;Owner);
-<a name="l00184"></a>00184         }
-<a name="l00185"></a>00185         <span class="keywordflow">return</span> 0;
-<a name="l00186"></a>00186 }
+<a name="l00179"></a>00179         <span class="comment">// but only if that&#39;s even necessary - no need to raid urban combat buildings.</span>
+<a name="l00180"></a>00180         <span class="comment">// 27.11.2010 changed to include fix for #1305</span>
+<a name="l00181"></a>00181         <span class="keywordtype">bool</span> differentOwners = (pBld-&gt;Owner != pInf-&gt;Owner);
+<a name="l00182"></a>00182         <span class="keywordtype">bool</span> ucBuilding = (pBld-&gt;Owner-&gt;IsNeutral() &amp;&amp; (pBld-&gt;GetTechnoType()-&gt;TechLevel == -1));
+<a name="l00183"></a>00183         <span class="keywordflow">if</span>(differentOwners &amp;&amp; !ucBuilding &amp;&amp; !buildingExtData-&gt;<a class="code" href="class_building_ext_1_1_ext_data.html#afa7ba845c44fb28da0ffdf2b7b7c5667" title="Whether this building is currently occupied by someone not the actual owner of the...">isCurrentlyRaided</a>) {
+<a name="l00184"></a>00184                 buildingExtData-&gt;<a class="code" href="class_building_ext_1_1_ext_data.html#afead3304480fed76856d3e8048dc020d" title="Contains the house which owned this building prior to it being raided and turned...">OwnerBeforeRaid</a> = pBld-&gt;Owner;
+<a name="l00185"></a>00185                 buildingExtData-&gt;<a class="code" href="class_building_ext_1_1_ext_data.html#afa7ba845c44fb28da0ffdf2b7b7c5667" title="Whether this building is currently occupied by someone not the actual owner of the...">isCurrentlyRaided</a> = <span class="keyword">true</span>;
+<a name="l00186"></a>00186                 pBld-&gt;SetOwningHouse(pInf-&gt;Owner);
+<a name="l00187"></a>00187         }
+<a name="l00188"></a>00188         <span class="keywordflow">return</span> 0;
+<a name="l00189"></a>00189 }
 </pre></div></p>
 
 </div>
@@ -695,7 +698,7 @@ window.onload = initDynSections;
 </iframe>
 </div>
 
-<hr class="footer"/><address style="text-align: right;"><small>Generated on Fri Oct 15 20:59:45 2010 for Ares by&nbsp;
+<hr class="footer"/><address style="text-align: right;"><small>Generated on Tue Dec 14 21:10:39 2010 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.3 </small></address>
 </body>

@@ -120,6 +120,7 @@ Inheritance diagram for RulesExt::ExtData:</div>
 <tr><td class="memItemLeft" align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_rules_ext_1_1_ext_data.html#a0618310dab9425e49693108e6f868c50">EngineerAlwaysCaptureTech</a></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_valueable.html">Valueable</a>&lt; MouseCursor &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_rules_ext_1_1_ext_data.html#a63a020c478e2fe7ef788c6d89d8d3f68">EngineerDamageCursor</a></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_rules_ext_1_1_ext_data.html#abc23a7718e62b3c160883a12d87eeeea">MultiEngineer</a> [2]</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_valueable.html">Valueable</a>&lt; bool &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_rules_ext_1_1_ext_data.html#a312715f354fe78c8670212150301bd95">CanMakeStuffUp</a></td></tr>
 </table>
 <hr/><h2>Constructor &amp; Destructor Documentation</h2>
 <a class="anchor" id="a6067d9e06286a0e9093460df2b811ec7"></a><!-- doxytag: member="RulesExt::ExtData::ExtData" ref="a6067d9e06286a0e9093460df2b811ec7" args="(const DWORD Canary, TT *const OwnerObject)" -->
@@ -147,16 +148,17 @@ Inheritance diagram for RulesExt::ExtData:</div>
 </div>
 <div class="memdoc">
 
-<p><div class="fragment"><pre class="fragment"><a name="l00030"></a>00030                                                                    : <a class="code" href="class_extension.html">Extension&lt;TT&gt;</a>(<a class="code" href="class_extension.html#a2f0c543d5bceafd46d103be4f87a5abe">Canary</a>, OwnerObject),
-<a name="l00031"></a>00031                         <a class="code" href="class_rules_ext_1_1_ext_data.html#a1f6c907634fffa5acd763921f115c60c">ElectricDeath</a>(NULL),
-<a name="l00032"></a>00032                         <a class="code" href="class_rules_ext_1_1_ext_data.html#a243895cffb3039e922a2854e9e134e1a">EngineerDamage</a> (0.0F),
-<a name="l00033"></a>00033                         <a class="code" href="class_rules_ext_1_1_ext_data.html#a0618310dab9425e49693108e6f868c50">EngineerAlwaysCaptureTech</a> (<span class="keyword">true</span>),
-<a name="l00034"></a>00034                         <a class="code" href="class_rules_ext_1_1_ext_data.html#a63a020c478e2fe7ef788c6d89d8d3f68">EngineerDamageCursor</a> (MouseCursor::First[MouseCursorType::Detonate])
-<a name="l00035"></a>00035                         {
-<a name="l00036"></a>00036                                 <a class="code" href="class_rules_ext_1_1_ext_data.html#abc23a7718e62b3c160883a12d87eeeea">MultiEngineer</a>[0] = <span class="keyword">false</span>; <span class="comment">// Skirmish</span>
-<a name="l00037"></a>00037                                 <a class="code" href="class_rules_ext_1_1_ext_data.html#abc23a7718e62b3c160883a12d87eeeea">MultiEngineer</a>[1] = <span class="keyword">false</span>; <span class="comment">// LAN</span>
-<a name="l00038"></a>00038                                 <a class="code" href="class_rules_ext_1_1_ext_data.html#abc23a7718e62b3c160883a12d87eeeea">MultiEngineer</a>[2] = <span class="keyword">false</span>; <span class="comment">// WOnline</span>
-<a name="l00039"></a>00039                         };
+<p><div class="fragment"><pre class="fragment"><a name="l00032"></a>00032                                                                    : <a class="code" href="class_extension.html">Extension&lt;TT&gt;</a>(<a class="code" href="class_extension.html#a2f0c543d5bceafd46d103be4f87a5abe">Canary</a>, OwnerObject),
+<a name="l00033"></a>00033                         <a class="code" href="class_rules_ext_1_1_ext_data.html#a1f6c907634fffa5acd763921f115c60c">ElectricDeath</a>(NULL),
+<a name="l00034"></a>00034                         <a class="code" href="class_rules_ext_1_1_ext_data.html#a243895cffb3039e922a2854e9e134e1a">EngineerDamage</a> (0.0F),
+<a name="l00035"></a>00035                         <a class="code" href="class_rules_ext_1_1_ext_data.html#a0618310dab9425e49693108e6f868c50">EngineerAlwaysCaptureTech</a> (<span class="keyword">true</span>),
+<a name="l00036"></a>00036                         <a class="code" href="class_rules_ext_1_1_ext_data.html#a63a020c478e2fe7ef788c6d89d8d3f68">EngineerDamageCursor</a> (MouseCursor::First[MouseCursorType::Detonate]),
+<a name="l00037"></a>00037                         <a class="code" href="class_rules_ext_1_1_ext_data.html#a312715f354fe78c8670212150301bd95">CanMakeStuffUp</a>(<span class="keyword">false</span>)
+<a name="l00038"></a>00038                         {
+<a name="l00039"></a>00039                                 <a class="code" href="class_rules_ext_1_1_ext_data.html#abc23a7718e62b3c160883a12d87eeeea">MultiEngineer</a>[0] = <span class="keyword">false</span>; <span class="comment">// Skirmish</span>
+<a name="l00040"></a>00040                                 <a class="code" href="class_rules_ext_1_1_ext_data.html#abc23a7718e62b3c160883a12d87eeeea">MultiEngineer</a>[1] = <span class="keyword">false</span>; <span class="comment">// LAN</span>
+<a name="l00041"></a>00041                                 <a class="code" href="class_rules_ext_1_1_ext_data.html#abc23a7718e62b3c160883a12d87eeeea">MultiEngineer</a>[2] = <span class="keyword">false</span>; <span class="comment">// WOnline</span>
+<a name="l00042"></a>00042                         };
 </pre></div></p>
 
 </div>
@@ -176,8 +178,8 @@ Inheritance diagram for RulesExt::ExtData:</div>
 </div>
 <div class="memdoc">
 
-<p><div class="fragment"><pre class="fragment"><a name="l00041"></a>00041                                    {
-<a name="l00042"></a>00042                 }
+<p><div class="fragment"><pre class="fragment"><a name="l00044"></a>00044                                    {
+<a name="l00045"></a>00045                 }
 </pre></div></p>
 
 </div>
@@ -225,8 +227,8 @@ Inheritance diagram for RulesExt::ExtData:</div>
 
 <p>Implements <a class="el" href="class_extension.html#a9e6b2ac570eddadb2ca3c01668da88b8">Extension&lt; TT &gt;</a>.</p>
 
-<p><div class="fragment"><pre class="fragment"><a name="l00051"></a>00051                                                           {
-<a name="l00052"></a>00052                 }
+<p><div class="fragment"><pre class="fragment"><a name="l00054"></a>00054                                                           {
+<a name="l00055"></a>00055                 }
 </pre></div></p>
 
 </div>
@@ -256,25 +258,25 @@ Inheritance diagram for RulesExt::ExtData:</div>
 </div>
 <div class="memdoc">
 
-<p><div class="fragment"><pre class="fragment"><a name="l00071"></a>00071                                                                            {
-<a name="l00072"></a>00072         <a class="code" href="class_rules_ext_1_1_ext_data.html">RulesExt::ExtData</a> *pData = <a class="code" href="class_rules_ext.html#aef4b728a1334d1980e765d8fbdc63cb5">RulesExt::Global</a>();
-<a name="l00073"></a>00073 
-<a name="l00074"></a>00074         <span class="keywordflow">if</span> (!pData) {
-<a name="l00075"></a>00075                 <span class="keywordflow">return</span>;
-<a name="l00076"></a>00076         }
-<a name="l00077"></a>00077 
-<a name="l00078"></a>00078         <a class="code" href="class_i_n_i___e_x.html">INI_EX</a> exINI(pINI);
-<a name="l00079"></a>00079 
-<a name="l00080"></a>00080         pData-&gt;<a class="code" href="class_rules_ext_1_1_ext_data.html#a1f6c907634fffa5acd763921f115c60c">ElectricDeath</a>.<a class="code" href="class_valueable.html#ace02cef5e194a4738d03707ce1c44646">Parse</a>(&amp;exINI, <span class="stringliteral">&quot;AudioVisual&quot;</span>, <span class="stringliteral">&quot;InfantryElectrocuted&quot;</span>);
-<a name="l00081"></a>00081 
-<a name="l00082"></a>00082         <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; WeaponTypeClass::Array-&gt;Count; ++i) {
-<a name="l00083"></a>00083                 WeaponTypeClass::Array-&gt;GetItem(i)-&gt;LoadFromINI(pINI);
-<a name="l00084"></a>00084         }
-<a name="l00085"></a>00085 
-<a name="l00086"></a>00086         pData-&gt;<a class="code" href="class_rules_ext_1_1_ext_data.html#a243895cffb3039e922a2854e9e134e1a">EngineerDamage</a> = pINI-&gt;ReadDouble(<span class="stringliteral">&quot;General&quot;</span>, <span class="stringliteral">&quot;EngineerDamage&quot;</span>, pData-&gt;<a class="code" href="class_rules_ext_1_1_ext_data.html#a243895cffb3039e922a2854e9e134e1a">EngineerDamage</a>);
-<a name="l00087"></a>00087         pData-&gt;<a class="code" href="class_rules_ext_1_1_ext_data.html#a0618310dab9425e49693108e6f868c50">EngineerAlwaysCaptureTech</a> = pINI-&gt;ReadBool(<span class="stringliteral">&quot;General&quot;</span>, <span class="stringliteral">&quot;EngineerAlwaysCaptureTech&quot;</span>, pData-&gt;<a class="code" href="class_rules_ext_1_1_ext_data.html#a0618310dab9425e49693108e6f868c50">EngineerAlwaysCaptureTech</a>);
-<a name="l00088"></a>00088         pData-&gt;<a class="code" href="class_rules_ext_1_1_ext_data.html#a63a020c478e2fe7ef788c6d89d8d3f68">EngineerDamageCursor</a>.<a class="code" href="class_valueable.html#a0f0c57826adca78b4d46a69b5344a03b">Read</a>(&amp;exINI, <span class="stringliteral">&quot;General&quot;</span>, <span class="stringliteral">&quot;EngineerDamageCursor&quot;</span>);
-<a name="l00089"></a>00089 }
+<p><div class="fragment"><pre class="fragment"><a name="l00081"></a>00081                                                                            {
+<a name="l00082"></a>00082         <a class="code" href="class_rules_ext_1_1_ext_data.html">RulesExt::ExtData</a> *pData = <a class="code" href="class_rules_ext.html#aef4b728a1334d1980e765d8fbdc63cb5">RulesExt::Global</a>();
+<a name="l00083"></a>00083 
+<a name="l00084"></a>00084         <span class="keywordflow">if</span> (!pData) {
+<a name="l00085"></a>00085                 <span class="keywordflow">return</span>;
+<a name="l00086"></a>00086         }
+<a name="l00087"></a>00087 
+<a name="l00088"></a>00088         <a class="code" href="class_i_n_i___e_x.html">INI_EX</a> exINI(pINI);
+<a name="l00089"></a>00089 
+<a name="l00090"></a>00090         pData-&gt;<a class="code" href="class_rules_ext_1_1_ext_data.html#a1f6c907634fffa5acd763921f115c60c">ElectricDeath</a>.<a class="code" href="class_valueable.html#ace02cef5e194a4738d03707ce1c44646">Parse</a>(&amp;exINI, <span class="stringliteral">&quot;AudioVisual&quot;</span>, <span class="stringliteral">&quot;InfantryElectrocuted&quot;</span>);
+<a name="l00091"></a>00091 
+<a name="l00092"></a>00092         <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; WeaponTypeClass::Array-&gt;Count; ++i) {
+<a name="l00093"></a>00093                 WeaponTypeClass::Array-&gt;GetItem(i)-&gt;LoadFromINI(pINI);
+<a name="l00094"></a>00094         }
+<a name="l00095"></a>00095 
+<a name="l00096"></a>00096         pData-&gt;<a class="code" href="class_rules_ext_1_1_ext_data.html#a243895cffb3039e922a2854e9e134e1a">EngineerDamage</a> = pINI-&gt;ReadDouble(<span class="stringliteral">&quot;General&quot;</span>, <span class="stringliteral">&quot;EngineerDamage&quot;</span>, pData-&gt;<a class="code" href="class_rules_ext_1_1_ext_data.html#a243895cffb3039e922a2854e9e134e1a">EngineerDamage</a>);
+<a name="l00097"></a>00097         pData-&gt;<a class="code" href="class_rules_ext_1_1_ext_data.html#a0618310dab9425e49693108e6f868c50">EngineerAlwaysCaptureTech</a> = pINI-&gt;ReadBool(<span class="stringliteral">&quot;General&quot;</span>, <span class="stringliteral">&quot;EngineerAlwaysCaptureTech&quot;</span>, pData-&gt;<a class="code" href="class_rules_ext_1_1_ext_data.html#a0618310dab9425e49693108e6f868c50">EngineerAlwaysCaptureTech</a>);
+<a name="l00098"></a>00098         pData-&gt;<a class="code" href="class_rules_ext_1_1_ext_data.html#a63a020c478e2fe7ef788c6d89d8d3f68">EngineerDamageCursor</a>.<a class="code" href="class_valueable.html#a0f0c57826adca78b4d46a69b5344a03b">Read</a>(&amp;exINI, <span class="stringliteral">&quot;General&quot;</span>, <span class="stringliteral">&quot;EngineerDamageCursor&quot;</span>);
+<a name="l00099"></a>00099 }
 </pre></div></p>
 
 </div>
@@ -314,7 +316,17 @@ Inheritance diagram for RulesExt::ExtData:</div>
 <a name="l00063"></a>00063                         WeaponTypeClass::FindOrAllocate(<a class="code" href="class_ares.html#a55c2fe642b451f2535b29a62120385bf">Ares::readBuffer</a>);
 <a name="l00064"></a>00064                 }
 <a name="l00065"></a>00065         }
-<a name="l00066"></a>00066 }
+<a name="l00066"></a>00066 
+<a name="l00067"></a>00067         <a class="code" href="class_rules_ext_1_1_ext_data.html">RulesExt::ExtData</a> *pData = <a class="code" href="class_rules_ext.html#aef4b728a1334d1980e765d8fbdc63cb5">RulesExt::Global</a>();
+<a name="l00068"></a>00068 
+<a name="l00069"></a>00069         <span class="keywordflow">if</span> (!pData) {
+<a name="l00070"></a>00070                 <span class="keywordflow">return</span>;
+<a name="l00071"></a>00071         }
+<a name="l00072"></a>00072 
+<a name="l00073"></a>00073         <a class="code" href="class_i_n_i___e_x.html">INI_EX</a> exINI(pINI);
+<a name="l00074"></a>00074 
+<a name="l00075"></a>00075         pData-&gt;<a class="code" href="class_rules_ext_1_1_ext_data.html#a312715f354fe78c8670212150301bd95">CanMakeStuffUp</a>.<a class="code" href="class_valueable.html#a0f0c57826adca78b4d46a69b5344a03b">Read</a>(&amp;exINI, <span class="stringliteral">&quot;General&quot;</span>, <span class="stringliteral">&quot;CanMakeStuffUp&quot;</span>);
+<a name="l00076"></a>00076 }
 </pre></div></p>
 
 </div>
@@ -368,12 +380,25 @@ Inheritance diagram for RulesExt::ExtData:</div>
 
 <p>Implements <a class="el" href="class_extension.html#a44ddedd12613b24b7b03d21982782047">Extension&lt; TT &gt;</a>.</p>
 
-<p><div class="fragment"><pre class="fragment"><a name="l00044"></a>00044 { <span class="keywordflow">return</span> <span class="keyword">sizeof</span>(*this); };
+<p><div class="fragment"><pre class="fragment"><a name="l00047"></a>00047 { <span class="keywordflow">return</span> <span class="keyword">sizeof</span>(*this); };
 </pre></div></p>
 
 </div>
 </div>
 <hr/><h2>Member Data Documentation</h2>
+<a class="anchor" id="a312715f354fe78c8670212150301bd95"></a><!-- doxytag: member="RulesExt::ExtData::CanMakeStuffUp" ref="a312715f354fe78c8670212150301bd95" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_valueable.html">Valueable</a>&lt;bool&gt; <a class="el" href="class_rules_ext_1_1_ext_data.html#a312715f354fe78c8670212150301bd95">RulesExt::ExtData::CanMakeStuffUp</a></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
 <a class="anchor" id="a1f6c907634fffa5acd763921f115c60c"></a><!-- doxytag: member="RulesExt::ExtData::ElectricDeath" ref="a1f6c907634fffa5acd763921f115c60c" args="" -->
 <div class="memitem">
 <div class="memproto">
@@ -458,7 +483,7 @@ Inheritance diagram for RulesExt::ExtData:</div>
 </iframe>
 </div>
 
-<hr class="footer"/><address style="text-align: right;"><small>Generated on Fri Oct 15 20:59:48 2010 for Ares by&nbsp;
+<hr class="footer"/><address style="text-align: right;"><small>Generated on Tue Dec 14 21:10:41 2010 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.3 </small></address>
 </body>

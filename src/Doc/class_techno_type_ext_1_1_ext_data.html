@@ -167,6 +167,8 @@ Inheritance diagram for TechnoTypeExt::ExtData:</div>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_valueable.html">Valueable</a>&lt; bool &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_techno_type_ext_1_1_ext_data.html#aa9157bd8e827f81b9efc6d73e3ab9d73">CanBeReversed</a></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_valueable.html">Valueable</a>&lt; int &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_techno_type_ext_1_1_ext_data.html#a53b845b45ac6fcd8bef51266ae5751fd">RadarJamRadius</a></td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Distance in cells to scan for &amp; jam radars.  <a href="#a53b845b45ac6fcd8bef51266ae5751fd"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_valueable.html">Valueable</a>&lt; bool &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_techno_type_ext_1_1_ext_data.html#aaa5688b5487c554f856cff329e222307">PassengerTurret</a></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Whether this unit's turret changes based on the number of people in its passenger hold.  <a href="#aaa5688b5487c554f856cff329e222307"></a><br/></td></tr>
 </table>
 <hr/><h2>Constructor &amp; Destructor Documentation</h2>
 <a class="anchor" id="a507a7425b20bd88dfdfedc460fca8708"></a><!-- doxytag: member="TechnoTypeExt::ExtData::ExtData" ref="a507a7425b20bd88dfdfedc460fca8708" args="(const DWORD Canary, TT *const OwnerObject)" -->
@@ -194,49 +196,50 @@ Inheritance diagram for TechnoTypeExt::ExtData:</div>
 </div>
 <div class="memdoc">
 
-<p><div class="fragment"><pre class="fragment"><a name="l00100"></a>00100                                                                    : <a class="code" href="class_extension.html">Extension&lt;TT&gt;</a>(<a class="code" href="class_extension.html#a2f0c543d5bceafd46d103be4f87a5abe">Canary</a>, OwnerObject),
-<a name="l00101"></a>00101                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#a9a2c9fd095a7962e4a393bf615a48d63">Survivors_PilotChance</a> (NULL),
-<a name="l00102"></a>00102                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#a81df9c8353e1a24779efe47af5e430d1">Survivors_PassengerChance</a> (NULL),
-<a name="l00103"></a>00103                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#a52b0e8c5fec7e5591c2c5d8b7a3c762b" title="Defines the number of pilots inside this vehicle if Crewed=yes; maximum number of...">Survivors_PilotCount</a> (0),
-<a name="l00104"></a>00104                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#aaf04307ab8b38a96d1bcac2906c8bf32">PrerequisiteTheaters</a> (0xFFFFFFFF),
-<a name="l00105"></a>00105                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#a6f4df0585b186cd83a6a82cdcdadb326">Secret_RequiredHouses</a> (0),
-<a name="l00106"></a>00106                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#a7db836e1d87d292697f61f0dd364498f">Secret_ForbiddenHouses</a> (0),
-<a name="l00107"></a>00107                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#a326087b571b4e91e6c0056bb039c43d5">Is_Deso</a> (<span class="keyword">false</span>),
-<a name="l00108"></a>00108                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#a15bea2278beaf13ec188d6e40e17ac74">Is_Deso_Radiation</a> (<span class="keyword">false</span>),
-<a name="l00109"></a>00109                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#a30f8bc4af232e93bde8bdb3defa88123">Is_Cow</a> (<span class="keyword">false</span>),
-<a name="l00110"></a>00110                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#a09c96b455b2291c78114c60323eb7091">Is_Spotlighted</a> (<span class="keyword">false</span>),
-<a name="l00111"></a>00111                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#aaea42814f0ea527e83541e805422e709">Spot_Height</a> (200),
-<a name="l00112"></a>00112                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#a3778880080c3b634ae6127366d0ea50b">Spot_Distance</a> (1024),
-<a name="l00113"></a>00113                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#adc96146a71014c03f4c509f7e538bd6f">Spot_AttachedTo</a> (<a class="code" href="class_techno_type_ext.html#aa72efc1aeaf8cdf1b63b8603633c6b7ba8bbb079312ca3714e2aadfe9a0334da3">sa_Body</a>),
-<a name="l00114"></a>00114                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#ad3065f6719790a622e424e2fd8809fa3">Spot_DisableR</a> (<span class="keyword">false</span>),
-<a name="l00115"></a>00115                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#aacc5e95d36b0b5c9f76365d4d0efdef7">Spot_DisableG</a> (<span class="keyword">false</span>),
-<a name="l00116"></a>00116                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#a94be8ed6ba52df16e7d32496cbc38a38">Spot_DisableB</a> (<span class="keyword">false</span>),
-<a name="l00117"></a>00117                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#ad7cff96aa9aa951fe3f7c038986f51a2">Spot_Reverse</a> (<span class="keyword">false</span>),
-<a name="l00118"></a>00118                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#a6fc3bd5667bde97bec32235bfade435c">Is_Bomb</a> (<span class="keyword">false</span>),
-<a name="l00119"></a>00119                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#a0838eac291e8c729a7be9ed178c8ff9b">Insignia</a> (NULL),
-<a name="l00120"></a>00120                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#a251b2f36daab6e876c8dab1d8fbffc44">Parachute_Anim</a> (NULL),
-<a name="l00121"></a>00121                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#a9c7a82cfed88f6b04d5f355226fdbae7" title="Saves a pointer to an InfantryType required to be a passenger of this unit in order...">Operator</a> (NULL),
-<a name="l00122"></a>00122                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#a9d7d48897efd8d144c0786ab3619a989" title="If this is true, Operator= is not checked, and the object will work with any passenger...">IsAPromiscuousWhoreAndLetsAnyoneRideIt</a> (<span class="keyword">false</span>),
-<a name="l00123"></a>00123                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#a4de35028f87eb3c515803637703330f0">CameoPal</a>(),
-<a name="l00124"></a>00124                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#a5a3e99434fcebc97a77da54cf7d31fa9">RequiredStolenTech</a>(0ull),
-<a name="l00125"></a>00125                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#a93873d4359a898a04c93bb560e87b6ed">IC_Modifier</a> (1.0F),
-<a name="l00126"></a>00126                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#a79f0a604e71aea21b3c1d417956aa11c">EMP_Threshold</a> (-1),
-<a name="l00127"></a>00127                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#ac11e3a7a3a9653ca7839db80eb5ff5bb">EMP_Modifier</a> (1.0F),
-<a name="l00128"></a>00128                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#a680b463facf7ba391169c75e1bee709f">VeteranAbilityEMPIMMUNE</a> (<span class="keyword">false</span>),
-<a name="l00129"></a>00129                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#a1b537536ee2ebe9b15e8591f22810036">EliteAbilityEMPIMMUNE</a> (<span class="keyword">false</span>),
-<a name="l00130"></a>00130                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#a2ba0b34e43f1fb5d843b04f4eaf55a67" title="Whether the driver of this vehicle cannot be killed, i.e. whether this vehicle is...">ProtectedDriver</a>(<span class="keyword">false</span>),
-<a name="l00131"></a>00131                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#af9ec926be281a07b91dbcb4eb01fcebc" title="Whether this TechnoType can act as the driver of vehicles whose driver has been killed...">CanDrive</a> (<span class="keyword">false</span>),
-<a name="l00132"></a>00132                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#ab7bad225203aec908813dd2dcef03b1c">AlternateTheaterArt</a> (<span class="keyword">false</span>),
-<a name="l00133"></a>00133                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#ada99178f709d10d8a1f7238ba8e7d59c">VoiceRepair</a> (-1),
-<a name="l00134"></a>00134                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#a8986c20f423e843d836c22ae8e234cd8">WaterImage</a> (NULL),
-<a name="l00135"></a>00135                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#aa9157bd8e827f81b9efc6d73e3ab9d73">CanBeReversed</a> (<span class="keyword">true</span>),
-<a name="l00136"></a>00136                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#a53b845b45ac6fcd8bef51266ae5751fd" title="Distance in cells to scan for &amp;amp; jam radars.">RadarJamRadius</a> (0)
-<a name="l00137"></a>00137                         {
-<a name="l00138"></a>00138                                 this-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#a0838eac291e8c729a7be9ed178c8ff9b">Insignia</a>.<a class="code" href="class_promotable.html#a39204a3c8cc8094a01c1672389bb7fd1">SetAll</a>(NULL);
-<a name="l00139"></a>00139                                 *this-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#aa03809f2b587804f9b0fd1ad8cac794b">CameoPCX</a> = *this-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#a2599866b93b2a695ee76da64376ce1a2">AltCameoPCX</a> = 0;
-<a name="l00140"></a>00140                                 this-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#aa04bc25ff69390fa0a1b3e1ea3ac1a90">ReversedByHouses</a>.SetCapacity(32, NULL);
-<a name="l00141"></a>00141                                 this-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#aa04bc25ff69390fa0a1b3e1ea3ac1a90">ReversedByHouses</a>.CapacityIncrement = 32;
-<a name="l00142"></a>00142                         };
+<p><div class="fragment"><pre class="fragment"><a name="l00104"></a>00104                                                                    : <a class="code" href="class_extension.html">Extension&lt;TT&gt;</a>(<a class="code" href="class_extension.html#a2f0c543d5bceafd46d103be4f87a5abe">Canary</a>, OwnerObject),
+<a name="l00105"></a>00105                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#a9a2c9fd095a7962e4a393bf615a48d63">Survivors_PilotChance</a> (NULL),
+<a name="l00106"></a>00106                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#a81df9c8353e1a24779efe47af5e430d1">Survivors_PassengerChance</a> (NULL),
+<a name="l00107"></a>00107                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#a52b0e8c5fec7e5591c2c5d8b7a3c762b" title="Defines the number of pilots inside this vehicle if Crewed=yes; maximum number of...">Survivors_PilotCount</a> (0),
+<a name="l00108"></a>00108                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#aaf04307ab8b38a96d1bcac2906c8bf32">PrerequisiteTheaters</a> (0xFFFFFFFF),
+<a name="l00109"></a>00109                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#a6f4df0585b186cd83a6a82cdcdadb326">Secret_RequiredHouses</a> (0),
+<a name="l00110"></a>00110                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#a7db836e1d87d292697f61f0dd364498f">Secret_ForbiddenHouses</a> (0),
+<a name="l00111"></a>00111                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#a326087b571b4e91e6c0056bb039c43d5">Is_Deso</a> (<span class="keyword">false</span>),
+<a name="l00112"></a>00112                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#a15bea2278beaf13ec188d6e40e17ac74">Is_Deso_Radiation</a> (<span class="keyword">false</span>),
+<a name="l00113"></a>00113                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#a30f8bc4af232e93bde8bdb3defa88123">Is_Cow</a> (<span class="keyword">false</span>),
+<a name="l00114"></a>00114                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#a09c96b455b2291c78114c60323eb7091">Is_Spotlighted</a> (<span class="keyword">false</span>),
+<a name="l00115"></a>00115                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#aaea42814f0ea527e83541e805422e709">Spot_Height</a> (200),
+<a name="l00116"></a>00116                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#a3778880080c3b634ae6127366d0ea50b">Spot_Distance</a> (1024),
+<a name="l00117"></a>00117                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#adc96146a71014c03f4c509f7e538bd6f">Spot_AttachedTo</a> (<a class="code" href="class_techno_type_ext.html#aa72efc1aeaf8cdf1b63b8603633c6b7ba8bbb079312ca3714e2aadfe9a0334da3">sa_Body</a>),
+<a name="l00118"></a>00118                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#ad3065f6719790a622e424e2fd8809fa3">Spot_DisableR</a> (<span class="keyword">false</span>),
+<a name="l00119"></a>00119                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#aacc5e95d36b0b5c9f76365d4d0efdef7">Spot_DisableG</a> (<span class="keyword">false</span>),
+<a name="l00120"></a>00120                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#a94be8ed6ba52df16e7d32496cbc38a38">Spot_DisableB</a> (<span class="keyword">false</span>),
+<a name="l00121"></a>00121                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#ad7cff96aa9aa951fe3f7c038986f51a2">Spot_Reverse</a> (<span class="keyword">false</span>),
+<a name="l00122"></a>00122                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#a6fc3bd5667bde97bec32235bfade435c">Is_Bomb</a> (<span class="keyword">false</span>),
+<a name="l00123"></a>00123                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#a0838eac291e8c729a7be9ed178c8ff9b">Insignia</a> (NULL),
+<a name="l00124"></a>00124                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#a251b2f36daab6e876c8dab1d8fbffc44">Parachute_Anim</a> (NULL),
+<a name="l00125"></a>00125                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#a9c7a82cfed88f6b04d5f355226fdbae7" title="Saves a pointer to an InfantryType required to be a passenger of this unit in order...">Operator</a> (NULL),
+<a name="l00126"></a>00126                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#a9d7d48897efd8d144c0786ab3619a989" title="If this is true, Operator= is not checked, and the object will work with any passenger...">IsAPromiscuousWhoreAndLetsAnyoneRideIt</a> (<span class="keyword">false</span>),
+<a name="l00127"></a>00127                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#a4de35028f87eb3c515803637703330f0">CameoPal</a>(),
+<a name="l00128"></a>00128                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#a5a3e99434fcebc97a77da54cf7d31fa9">RequiredStolenTech</a>(0ull),
+<a name="l00129"></a>00129                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#a93873d4359a898a04c93bb560e87b6ed">IC_Modifier</a> (1.0F),
+<a name="l00130"></a>00130                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#a79f0a604e71aea21b3c1d417956aa11c">EMP_Threshold</a> (-1),
+<a name="l00131"></a>00131                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#ac11e3a7a3a9653ca7839db80eb5ff5bb">EMP_Modifier</a> (1.0F),
+<a name="l00132"></a>00132                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#a680b463facf7ba391169c75e1bee709f">VeteranAbilityEMPIMMUNE</a> (<span class="keyword">false</span>),
+<a name="l00133"></a>00133                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#a1b537536ee2ebe9b15e8591f22810036">EliteAbilityEMPIMMUNE</a> (<span class="keyword">false</span>),
+<a name="l00134"></a>00134                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#a2ba0b34e43f1fb5d843b04f4eaf55a67" title="Whether the driver of this vehicle cannot be killed, i.e. whether this vehicle is...">ProtectedDriver</a>(<span class="keyword">false</span>),
+<a name="l00135"></a>00135                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#af9ec926be281a07b91dbcb4eb01fcebc" title="Whether this TechnoType can act as the driver of vehicles whose driver has been killed...">CanDrive</a> (<span class="keyword">false</span>),
+<a name="l00136"></a>00136                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#ab7bad225203aec908813dd2dcef03b1c">AlternateTheaterArt</a> (<span class="keyword">false</span>),
+<a name="l00137"></a>00137                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#ada99178f709d10d8a1f7238ba8e7d59c">VoiceRepair</a> (-1),
+<a name="l00138"></a>00138                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#a8986c20f423e843d836c22ae8e234cd8">WaterImage</a> (NULL),
+<a name="l00139"></a>00139                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#aa9157bd8e827f81b9efc6d73e3ab9d73">CanBeReversed</a> (<span class="keyword">true</span>),
+<a name="l00140"></a>00140                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#a53b845b45ac6fcd8bef51266ae5751fd" title="Distance in cells to scan for &amp;amp; jam radars.">RadarJamRadius</a> (0),
+<a name="l00141"></a>00141                         <a class="code" href="class_techno_type_ext_1_1_ext_data.html#aaa5688b5487c554f856cff329e222307" title="Whether this unit&amp;#39;s turret changes based on the number of people in its passenger...">PassengerTurret</a> (<span class="keyword">false</span>)
+<a name="l00142"></a>00142                         {
+<a name="l00143"></a>00143                                 this-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#a0838eac291e8c729a7be9ed178c8ff9b">Insignia</a>.<a class="code" href="class_promotable.html#a39204a3c8cc8094a01c1672389bb7fd1">SetAll</a>(NULL);
+<a name="l00144"></a>00144                                 *this-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#aa03809f2b587804f9b0fd1ad8cac794b">CameoPCX</a> = *this-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#a2599866b93b2a695ee76da64376ce1a2">AltCameoPCX</a> = 0;
+<a name="l00145"></a>00145                                 this-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#aa04bc25ff69390fa0a1b3e1ea3ac1a90">ReversedByHouses</a>.SetCapacity(32, NULL);
+<a name="l00146"></a>00146                                 this-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#aa04bc25ff69390fa0a1b3e1ea3ac1a90">ReversedByHouses</a>.CapacityIncrement = 32;
+<a name="l00147"></a>00147                         };
 </pre></div></p>
 
 </div>
@@ -256,7 +259,7 @@ Inheritance diagram for TechnoTypeExt::ExtData:</div>
 </div>
 <div class="memdoc">
 
-<p><div class="fragment"><pre class="fragment"><a name="l00144"></a>00144 {};
+<p><div class="fragment"><pre class="fragment"><a name="l00149"></a>00149 {};
 </pre></div></p>
 
 </div>
@@ -277,42 +280,42 @@ Inheritance diagram for TechnoTypeExt::ExtData:</div>
 </div>
 <div class="memdoc">
 
-<p><div class="fragment"><pre class="fragment"><a name="l00373"></a>00373 {
-<a name="l00374"></a>00374         HouseClass * House = HouseClass::Player;
-<a name="l00375"></a>00375         HouseTypeClass *Country = House-&gt;Type;
-<a name="l00376"></a>00376 
-<a name="l00377"></a>00377         TechnoTypeClass * <span class="keyword">const</span> T = this-&gt;<a class="code" href="class_extension.html#a72742b36a0db81d6697da473dfe8281d">AttachedToObject</a>;
-<a name="l00378"></a>00378 
-<a name="l00379"></a>00379         SHPStruct *Cameo = T-&gt;Cameo;
-<a name="l00380"></a>00380         SHPStruct *Alt = T-&gt;AltCameo;
+<p><div class="fragment"><pre class="fragment"><a name="l00376"></a>00376 {
+<a name="l00377"></a>00377         HouseClass * House = HouseClass::Player;
+<a name="l00378"></a>00378         HouseTypeClass *Country = House-&gt;Type;
+<a name="l00379"></a>00379 
+<a name="l00380"></a>00380         TechnoTypeClass * <span class="keyword">const</span> T = this-&gt;<a class="code" href="class_extension.html#a72742b36a0db81d6697da473dfe8281d">AttachedToObject</a>;
 <a name="l00381"></a>00381 
-<a name="l00382"></a>00382         <span class="keywordflow">if</span>(!Alt) {
-<a name="l00383"></a>00383                 <span class="keywordflow">return</span> <span class="keyword">false</span>;
-<a name="l00384"></a>00384         }
-<a name="l00385"></a>00385 
-<a name="l00386"></a>00386         <span class="keywordflow">switch</span>(T-&gt;WhatAmI()) {
-<a name="l00387"></a>00387                 <span class="keywordflow">case</span> abs_InfantryType:
-<a name="l00388"></a>00388                         <span class="keywordflow">if</span>(House-&gt;BarracksInfiltrated &amp;&amp; !T-&gt;Naval &amp;&amp; T-&gt;Trainable) {
-<a name="l00389"></a>00389                                 <span class="keywordflow">return</span> <span class="keyword">true</span>;
-<a name="l00390"></a>00390                         } <span class="keywordflow">else</span> {
-<a name="l00391"></a>00391                                 <span class="keywordflow">return</span> Country-&gt;VeteranInfantry.FindItemIndex((InfantryTypeClass **)&amp;T) != -1;
-<a name="l00392"></a>00392                         }
-<a name="l00393"></a>00393                 <span class="keywordflow">case</span> abs_UnitType:
-<a name="l00394"></a>00394                         <span class="keywordflow">if</span>(House-&gt;WarFactoryInfiltrated &amp;&amp; !T-&gt;Naval &amp;&amp; T-&gt;Trainable) {
-<a name="l00395"></a>00395                                 <span class="keywordflow">return</span> <span class="keyword">true</span>;
-<a name="l00396"></a>00396                         } <span class="keywordflow">else</span> {
-<a name="l00397"></a>00397                                 <span class="keywordflow">return</span> Country-&gt;VeteranUnits.FindItemIndex((UnitTypeClass **)&amp;T) != -1;
-<a name="l00398"></a>00398                         }
-<a name="l00399"></a>00399                 <span class="keywordflow">case</span> abs_AircraftType:
-<a name="l00400"></a>00400                         <span class="keywordflow">return</span> Country-&gt;VeteranAircraft.FindItemIndex((AircraftTypeClass **)&amp;T) != -1;
-<a name="l00401"></a>00401                 <span class="keywordflow">case</span> abs_BuildingType:
-<a name="l00402"></a>00402                         <span class="keywordflow">if</span>(TechnoTypeClass *Item = T-&gt;UndeploysInto) {
-<a name="l00403"></a>00403                                 <span class="keywordflow">return</span> Country-&gt;VeteranUnits.FindItemIndex((UnitTypeClass **)&amp;Item) != -1;
-<a name="l00404"></a>00404                         }
-<a name="l00405"></a>00405         }
-<a name="l00406"></a>00406 
-<a name="l00407"></a>00407         <span class="keywordflow">return</span> <span class="keyword">false</span>;
-<a name="l00408"></a>00408 }
+<a name="l00382"></a>00382         SHPStruct *Cameo = T-&gt;Cameo;
+<a name="l00383"></a>00383         SHPStruct *Alt = T-&gt;AltCameo;
+<a name="l00384"></a>00384 
+<a name="l00385"></a>00385         <span class="keywordflow">if</span>(!Alt) {
+<a name="l00386"></a>00386                 <span class="keywordflow">return</span> <span class="keyword">false</span>;
+<a name="l00387"></a>00387         }
+<a name="l00388"></a>00388 
+<a name="l00389"></a>00389         <span class="keywordflow">switch</span>(T-&gt;WhatAmI()) {
+<a name="l00390"></a>00390                 <span class="keywordflow">case</span> abs_InfantryType:
+<a name="l00391"></a>00391                         <span class="keywordflow">if</span>(House-&gt;BarracksInfiltrated &amp;&amp; !T-&gt;Naval &amp;&amp; T-&gt;Trainable) {
+<a name="l00392"></a>00392                                 <span class="keywordflow">return</span> <span class="keyword">true</span>;
+<a name="l00393"></a>00393                         } <span class="keywordflow">else</span> {
+<a name="l00394"></a>00394                                 <span class="keywordflow">return</span> Country-&gt;VeteranInfantry.FindItemIndex((InfantryTypeClass **)&amp;T) != -1;
+<a name="l00395"></a>00395                         }
+<a name="l00396"></a>00396                 <span class="keywordflow">case</span> abs_UnitType:
+<a name="l00397"></a>00397                         <span class="keywordflow">if</span>(House-&gt;WarFactoryInfiltrated &amp;&amp; !T-&gt;Naval &amp;&amp; T-&gt;Trainable) {
+<a name="l00398"></a>00398                                 <span class="keywordflow">return</span> <span class="keyword">true</span>;
+<a name="l00399"></a>00399                         } <span class="keywordflow">else</span> {
+<a name="l00400"></a>00400                                 <span class="keywordflow">return</span> Country-&gt;VeteranUnits.FindItemIndex((UnitTypeClass **)&amp;T) != -1;
+<a name="l00401"></a>00401                         }
+<a name="l00402"></a>00402                 <span class="keywordflow">case</span> abs_AircraftType:
+<a name="l00403"></a>00403                         <span class="keywordflow">return</span> Country-&gt;VeteranAircraft.FindItemIndex((AircraftTypeClass **)&amp;T) != -1;
+<a name="l00404"></a>00404                 <span class="keywordflow">case</span> abs_BuildingType:
+<a name="l00405"></a>00405                         <span class="keywordflow">if</span>(TechnoTypeClass *Item = T-&gt;UndeploysInto) {
+<a name="l00406"></a>00406                                 <span class="keywordflow">return</span> Country-&gt;VeteranUnits.FindItemIndex((UnitTypeClass **)&amp;Item) != -1;
+<a name="l00407"></a>00407                         }
+<a name="l00408"></a>00408         }
+<a name="l00409"></a>00409 
+<a name="l00410"></a>00410         <span class="keywordflow">return</span> <span class="keyword">false</span>;
+<a name="l00411"></a>00411 }
 </pre></div></p>
 
 </div>
@@ -379,9 +382,9 @@ Inheritance diagram for TechnoTypeExt::ExtData:</div>
 
 <p>Implements <a class="el" href="class_extension.html#a9e6b2ac570eddadb2ca3c01668da88b8">Extension&lt; TT &gt;</a>.</p>
 
-<p><div class="fragment"><pre class="fragment"><a name="l00151"></a>00151                                                           {
-<a name="l00152"></a>00152                         AnnounceInvalidPointer(<a class="code" href="class_techno_type_ext_1_1_ext_data.html#a9c7a82cfed88f6b04d5f355226fdbae7" title="Saves a pointer to an InfantryType required to be a passenger of this unit in order...">Operator</a>, ptr);
-<a name="l00153"></a>00153                 }
+<p><div class="fragment"><pre class="fragment"><a name="l00156"></a>00156                                                           {
+<a name="l00157"></a>00157                         AnnounceInvalidPointer(<a class="code" href="class_techno_type_ext_1_1_ext_data.html#a9c7a82cfed88f6b04d5f355226fdbae7" title="Saves a pointer to an InfantryType required to be a passenger of this unit in order...">Operator</a>, ptr);
+<a name="l00158"></a>00158                 }
 </pre></div></p>
 
 </div>
@@ -595,9 +598,12 @@ Inheritance diagram for TechnoTypeExt::ExtData:</div>
 <a name="l00265"></a>00265         <span class="comment">// #305</span>
 <a name="l00266"></a>00266         this-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#a53b845b45ac6fcd8bef51266ae5751fd" title="Distance in cells to scan for &amp;amp; jam radars.">RadarJamRadius</a>.<a class="code" href="class_valueable.html#a0f0c57826adca78b4d46a69b5344a03b">Read</a>(&amp;exINI, section, <span class="stringliteral">&quot;RadarJamRadius&quot;</span>);
 <a name="l00267"></a>00267 
-<a name="l00268"></a>00268         <span class="comment">// quick fix - remove after the rest of weapon selector code is done</span>
-<a name="l00269"></a>00269         <span class="keywordflow">return</span>;
-<a name="l00270"></a>00270 }
+<a name="l00268"></a>00268         <span class="comment">// #1208</span>
+<a name="l00269"></a>00269         this-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#aaa5688b5487c554f856cff329e222307" title="Whether this unit&amp;#39;s turret changes based on the number of people in its passenger...">PassengerTurret</a>.<a class="code" href="class_valueable.html#a0f0c57826adca78b4d46a69b5344a03b">Read</a>(&amp;exINI, section, <span class="stringliteral">&quot;PassengerTurret&quot;</span>);
+<a name="l00270"></a>00270 
+<a name="l00271"></a>00271         <span class="comment">// quick fix - remove after the rest of weapon selector code is done</span>
+<a name="l00272"></a>00272         <span class="keywordflow">return</span>;
+<a name="l00273"></a>00273 }
 </pre></div></p>
 
 </div>
@@ -619,7 +625,7 @@ Inheritance diagram for TechnoTypeExt::ExtData:</div>
 
 <p>Implements <a class="el" href="class_extension.html#a44ddedd12613b24b7b03d21982782047">Extension&lt; TT &gt;</a>.</p>
 
-<p><div class="fragment"><pre class="fragment"><a name="l00146"></a>00146 { <span class="keywordflow">return</span> <span class="keyword">sizeof</span>(*this); };
+<p><div class="fragment"><pre class="fragment"><a name="l00151"></a>00151 { <span class="keywordflow">return</span> <span class="keyword">sizeof</span>(*this); };
 </pre></div></p>
 
 </div>
@@ -903,6 +909,21 @@ Inheritance diagram for TechnoTypeExt::ExtData:</div>
       </table>
 </div>
 <div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="aaa5688b5487c554f856cff329e222307"></a><!-- doxytag: member="TechnoTypeExt::ExtData::PassengerTurret" ref="aaa5688b5487c554f856cff329e222307" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_valueable.html">Valueable</a>&lt;bool&gt; <a class="el" href="class_techno_type_ext_1_1_ext_data.html#aaa5688b5487c554f856cff329e222307">TechnoTypeExt::ExtData::PassengerTurret</a></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Whether this unit's turret changes based on the number of people in its passenger hold. </p>
 
 </div>
 </div>
@@ -1243,7 +1264,7 @@ Inheritance diagram for TechnoTypeExt::ExtData:</div>
 </iframe>
 </div>
 
-<hr class="footer"/><address style="text-align: right;"><small>Generated on Fri Oct 15 20:59:49 2010 for Ares by&nbsp;
+<hr class="footer"/><address style="text-align: right;"><small>Generated on Tue Dec 14 21:10:41 2010 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.3 </small></address>
 </body>

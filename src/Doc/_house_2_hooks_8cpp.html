@@ -111,11 +111,11 @@ window.onload = initDynSections;
 <tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="_house_2_hooks_8cpp.html#af264add7b32a0d0523b3287d143b613e">DEFINE_HOOK</a> (500CC5, HouseClass_InitFromINI_FixBufferLimits, 6)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="_house_2_hooks_8cpp.html#a5b352318bf342e067a77d555dbc342f7">DEFINE_HOOK</a> (4F62FF, HouseClass_CTOR_FixNameOverflow, 6)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="_house_2_hooks_8cpp.html#a10f408873850141a241c785dd4b3662e">DEFINE_HOOK</a> (50965E, HouseClass_CanInstantiateTeam, 5)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="_house_2_hooks_8cpp.html#a839c5abd7d96482315433f8d9cdbcca5">DEFINE_HOOK</a> (508EBC, HouseClass_Radar_Update_CheckJammed, 6)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="_house_2_hooks_8cpp.html#a8290d222b8ab6dd3a67c687e275f864b">DEFINE_HOOK</a> (508F91, HouseClass_SpySat_Update_CheckJammed, 6)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="_house_2_hooks_8cpp.html#a80098f7e8f3af6b83ff1c6f4550ccff7">DEFINE_HOOK</a> (508EBC, HouseClass_Radar_Update_CheckEligible, 6)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="_house_2_hooks_8cpp.html#a9568a4da20603de6b7abf2e71c232013">DEFINE_HOOK</a> (508F91, HouseClass_SpySat_Update_CheckEligible, 6)</td></tr>
 </table>
 <hr/><h2>Function Documentation</h2>
-<a class="anchor" id="a8290d222b8ab6dd3a67c687e275f864b"></a><!-- doxytag: member="Hooks.cpp::DEFINE_HOOK" ref="a8290d222b8ab6dd3a67c687e275f864b" args="(508F91, HouseClass_SpySat_Update_CheckJammed, 6)" -->
+<a class="anchor" id="a9568a4da20603de6b7abf2e71c232013"></a><!-- doxytag: member="Hooks.cpp::DEFINE_HOOK" ref="a9568a4da20603de6b7abf2e71c232013" args="(508F91, HouseClass_SpySat_Update_CheckEligible, 6)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -128,7 +128,7 @@ window.onload = initDynSections;
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">HouseClass_SpySat_Update_CheckJammed&nbsp;</td>
+          <td class="paramtype">HouseClass_SpySat_Update_CheckEligible&nbsp;</td>
           <td class="paramname">, </td>
         </tr>
         <tr>
@@ -146,21 +146,22 @@ window.onload = initDynSections;
 </div>
 <div class="memdoc">
 
-<p><div class="fragment"><pre class="fragment"><a name="l00207"></a>00207 {
-<a name="l00208"></a>00208         <span class="keyword">enum</span> {Eligible = 0, Jammed = 0x508FF6};
-<a name="l00209"></a>00209         GET(BuildingClass *, SpySat, ECX);
-<a name="l00210"></a>00210         <a class="code" href="class_building_ext_1_1_ext_data.html">BuildingExt::ExtData</a>* TheBuildingExt = <a class="code" href="class_building_ext.html#abae25aca766faa296092dea1dc69cff7">BuildingExt::ExtMap</a>.<a class="code" href="class_container.html#a90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(SpySat);
-<a name="l00211"></a>00211 
-<a name="l00212"></a>00212         <span class="keywordflow">return</span> (!TheBuildingExt-&gt;<a class="code" href="class_building_ext_1_1_ext_data.html#ad7f420d1c0f2af081419b11913a5a17f" title="Set of Radar Jammers which have registered themselves to be in range of this building...">RegisteredJammers</a>.empty())
-<a name="l00213"></a>00213                 ? Jammed
-<a name="l00214"></a>00214                 : Eligible
-<a name="l00215"></a>00215         ;
-<a name="l00216"></a>00216 }
+<p><div class="fragment"><pre class="fragment"><a name="l00208"></a>00208 {
+<a name="l00209"></a>00209         <span class="keyword">enum</span> {Eligible = 0, Jammed = 0x508FF6};
+<a name="l00210"></a>00210         GET(BuildingClass *, SpySat, ECX);
+<a name="l00211"></a>00211         <a class="code" href="class_building_ext_1_1_ext_data.html">BuildingExt::ExtData</a>* TheBuildingExt = <a class="code" href="class_building_ext.html#abae25aca766faa296092dea1dc69cff7">BuildingExt::ExtMap</a>.<a class="code" href="class_container.html#a90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(SpySat);
+<a name="l00212"></a>00212 
+<a name="l00213"></a>00213         <span class="keywordflow">return</span> (!TheBuildingExt-&gt;<a class="code" href="class_building_ext_1_1_ext_data.html#ad7f420d1c0f2af081419b11913a5a17f" title="Set of Radar Jammers which have registered themselves to be in range of this building...">RegisteredJammers</a>.empty()
+<a name="l00214"></a>00214                                         || SpySat-&gt;EMPLockRemaining)
+<a name="l00215"></a>00215                 ? Jammed
+<a name="l00216"></a>00216                 : Eligible
+<a name="l00217"></a>00217         ;
+<a name="l00218"></a>00218 }
 </pre></div></p>
 
 </div>
 </div>
-<a class="anchor" id="a839c5abd7d96482315433f8d9cdbcca5"></a><!-- doxytag: member="Hooks.cpp::DEFINE_HOOK" ref="a839c5abd7d96482315433f8d9cdbcca5" args="(508EBC, HouseClass_Radar_Update_CheckJammed, 6)" -->
+<a class="anchor" id="a80098f7e8f3af6b83ff1c6f4550ccff7"></a><!-- doxytag: member="Hooks.cpp::DEFINE_HOOK" ref="a80098f7e8f3af6b83ff1c6f4550ccff7" args="(508EBC, HouseClass_Radar_Update_CheckEligible, 6)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -173,7 +174,7 @@ window.onload = initDynSections;
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">HouseClass_Radar_Update_CheckJammed&nbsp;</td>
+          <td class="paramtype">HouseClass_Radar_Update_CheckEligible&nbsp;</td>
           <td class="paramname">, </td>
         </tr>
         <tr>
@@ -196,11 +197,12 @@ window.onload = initDynSections;
 <a name="l00197"></a>00197         GET(BuildingClass *, Radar, EAX);
 <a name="l00198"></a>00198         <a class="code" href="class_building_ext_1_1_ext_data.html">BuildingExt::ExtData</a>* TheBuildingExt = <a class="code" href="class_building_ext.html#abae25aca766faa296092dea1dc69cff7">BuildingExt::ExtMap</a>.<a class="code" href="class_container.html#a90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(Radar);
 <a name="l00199"></a>00199 
-<a name="l00200"></a>00200         <span class="keywordflow">return</span> (!TheBuildingExt-&gt;<a class="code" href="class_building_ext_1_1_ext_data.html#ad7f420d1c0f2af081419b11913a5a17f" title="Set of Radar Jammers which have registered themselves to be in range of this building...">RegisteredJammers</a>.empty())
-<a name="l00201"></a>00201                 ? Jammed
-<a name="l00202"></a>00202                 : Eligible
-<a name="l00203"></a>00203         ;
-<a name="l00204"></a>00204 }
+<a name="l00200"></a>00200         <span class="keywordflow">return</span> (!TheBuildingExt-&gt;<a class="code" href="class_building_ext_1_1_ext_data.html#ad7f420d1c0f2af081419b11913a5a17f" title="Set of Radar Jammers which have registered themselves to be in range of this building...">RegisteredJammers</a>.empty()
+<a name="l00201"></a>00201                                         || Radar-&gt;EMPLockRemaining)
+<a name="l00202"></a>00202                 ? Jammed
+<a name="l00203"></a>00203                 : Eligible
+<a name="l00204"></a>00204         ;
+<a name="l00205"></a>00205 }
 </pre></div></p>
 
 </div>
@@ -616,7 +618,7 @@ window.onload = initDynSections;
 </iframe>
 </div>
 
-<hr class="footer"/><address style="text-align: right;"><small>Generated on Fri Oct 15 20:59:44 2010 for Ares by&nbsp;
+<hr class="footer"/><address style="text-align: right;"><small>Generated on Tue Dec 14 21:10:39 2010 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.3 </small></address>
 </body>

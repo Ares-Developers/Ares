@@ -89,6 +89,11 @@ window.onload = initDynSections;
 </div>
 <div class="contents">
 <h1>Body.cpp File Reference</h1><code>#include &quot;<a class="el" href="_weapon_type_2_body_8h.html">Body.h</a>&quot;</code><br/>
+<code>#include &lt;BulletClass.h&gt;</code><br/>
+<code>#include &lt;FootClass.h&gt;</code><br/>
+<code>#include &lt;TechnoClass.h&gt;</code><br/>
+<code>#include &lt;TechnoTypeClass.h&gt;</code><br/>
+<code>#include &lt;LocomotionClass.h&gt;</code><br/>
 <table border="0" cellpadding="0" cellspacing="0">
 <tr><td colspan="2"><h2>Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="_weapon_type_2_body_8cpp.html#ac358b23831733dffb92e21c5b92646d0">DEFINE_HOOK</a> (771EE9, WeaponTypeClass_CTOR, 5)</td></tr>
@@ -162,12 +167,12 @@ window.onload = initDynSections;
 </div>
 <div class="memdoc">
 
-<p><div class="fragment"><pre class="fragment"><a name="l00226"></a>00226 {
-<a name="l00227"></a>00227         GET(WeaponTypeClass*, pItem, ECX);
-<a name="l00228"></a>00228 
-<a name="l00229"></a>00229         <a class="code" href="class_weapon_type_ext.html#a6e448392133b3079a9490b5c5fabdd09">WeaponTypeExt::ExtMap</a>.<a class="code" href="class_container.html#a4946b3178e75af51b79cf1704919f6b5">Remove</a>(pItem);
-<a name="l00230"></a>00230         <span class="keywordflow">return</span> 0;
-<a name="l00231"></a>00231 }
+<p><div class="fragment"><pre class="fragment"><a name="l00318"></a>00318 {
+<a name="l00319"></a>00319         GET(WeaponTypeClass*, pItem, ECX);
+<a name="l00320"></a>00320 
+<a name="l00321"></a>00321         <a class="code" href="class_weapon_type_ext.html#a6e448392133b3079a9490b5c5fabdd09">WeaponTypeExt::ExtMap</a>.<a class="code" href="class_container.html#a4946b3178e75af51b79cf1704919f6b5">Remove</a>(pItem);
+<a name="l00322"></a>00322         <span class="keywordflow">return</span> 0;
+<a name="l00323"></a>00323 }
 </pre></div></p>
 
 </div>
@@ -203,12 +208,12 @@ window.onload = initDynSections;
 </div>
 <div class="memdoc">
 
-<p><div class="fragment"><pre class="fragment"><a name="l00217"></a>00217 {
-<a name="l00218"></a>00218         GET(WeaponTypeClass*, pItem, ESI);
-<a name="l00219"></a>00219 
-<a name="l00220"></a>00220         <a class="code" href="class_weapon_type_ext.html#a6e448392133b3079a9490b5c5fabdd09">WeaponTypeExt::ExtMap</a>.<a class="code" href="class_container.html#a73c02e221290552e7bf07d91e801c256">FindOrAllocate</a>(pItem);
-<a name="l00221"></a>00221         <span class="keywordflow">return</span> 0;
-<a name="l00222"></a>00222 }
+<p><div class="fragment"><pre class="fragment"><a name="l00309"></a>00309 {
+<a name="l00310"></a>00310         GET(WeaponTypeClass*, pItem, ESI);
+<a name="l00311"></a>00311 
+<a name="l00312"></a>00312         <a class="code" href="class_weapon_type_ext.html#a6e448392133b3079a9490b5c5fabdd09">WeaponTypeExt::ExtMap</a>.<a class="code" href="class_container.html#a73c02e221290552e7bf07d91e801c256">FindOrAllocate</a>(pItem);
+<a name="l00313"></a>00313         <span class="keywordflow">return</span> 0;
+<a name="l00314"></a>00314 }
 </pre></div></p>
 
 </div>
@@ -242,7 +247,7 @@ window.onload = initDynSections;
 </iframe>
 </div>
 
-<hr class="footer"/><address style="text-align: right;"><small>Generated on Fri Oct 15 20:59:44 2010 for Ares by&nbsp;
+<hr class="footer"/><address style="text-align: right;"><small>Generated on Tue Dec 14 21:10:39 2010 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.3 </small></address>
 </body>

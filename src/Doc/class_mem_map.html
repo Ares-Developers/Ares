@@ -142,17 +142,17 @@ window.onload = initDynSections;
 </div>
 <div class="memdoc">
 
-<p><div class="fragment"><pre class="fragment"><a name="l00145"></a>00145                                                      {
-<a name="l00146"></a>00146                 DWORD addr = (DWORD)_addr;
-<a name="l00147"></a>00147                 memmap::iterator i = <a class="code" href="class_mem_map.html#aa8666588a669bc53e7cc55f6b5ea1a85">AllocMap</a>.find(addr);
-<a name="l00148"></a>00148                 <span class="keywordflow">if</span>(i != <a class="code" href="class_mem_map.html#aa8666588a669bc53e7cc55f6b5ea1a85">AllocMap</a>.end()) {
-<a name="l00149"></a>00149 <span class="preprocessor">#ifdef MEMORY_LOGGING</span>
-<a name="l00150"></a>00150 <span class="preprocessor"></span>                        Debug::Log(<span class="stringliteral">&quot;Reallocated a used block of 0x%X bytes @ 0x%X!\n&quot;</span>, amount, addr);
-<a name="l00151"></a>00151 <span class="preprocessor">#endif</span>
-<a name="l00152"></a>00152 <span class="preprocessor"></span>                }
-<a name="l00153"></a>00153                 <a class="code" href="class_mem_map.html#aa8666588a669bc53e7cc55f6b5ea1a85">AllocMap</a>[addr] = amount;
-<a name="l00154"></a>00154                 <a class="code" href="class_mem_map.html#a7dbb9b6435859db4aea7b683bd84d670">Total</a> += amount;
-<a name="l00155"></a>00155         }
+<p><div class="fragment"><pre class="fragment"><a name="l00147"></a>00147                                                      {
+<a name="l00148"></a>00148                 DWORD addr = (DWORD)_addr;
+<a name="l00149"></a>00149                 memmap::iterator i = <a class="code" href="class_mem_map.html#aa8666588a669bc53e7cc55f6b5ea1a85">AllocMap</a>.find(addr);
+<a name="l00150"></a>00150                 <span class="keywordflow">if</span>(i != <a class="code" href="class_mem_map.html#aa8666588a669bc53e7cc55f6b5ea1a85">AllocMap</a>.end()) {
+<a name="l00151"></a>00151 <span class="preprocessor">#ifdef MEMORY_LOGGING</span>
+<a name="l00152"></a>00152 <span class="preprocessor"></span>                        Debug::Log(<span class="stringliteral">&quot;Reallocated a used block of 0x%X bytes @ 0x%X!\n&quot;</span>, amount, addr);
+<a name="l00153"></a>00153 <span class="preprocessor">#endif</span>
+<a name="l00154"></a>00154 <span class="preprocessor"></span>                }
+<a name="l00155"></a>00155                 <a class="code" href="class_mem_map.html#aa8666588a669bc53e7cc55f6b5ea1a85">AllocMap</a>[addr] = amount;
+<a name="l00156"></a>00156                 <a class="code" href="class_mem_map.html#a7dbb9b6435859db4aea7b683bd84d670">Total</a> += amount;
+<a name="l00157"></a>00157         }
 </pre></div></p>
 
 </div>
@@ -173,21 +173,21 @@ window.onload = initDynSections;
 </div>
 <div class="memdoc">
 
-<p><div class="fragment"><pre class="fragment"><a name="l00157"></a>00157                                            {
-<a name="l00158"></a>00158                 DWORD addr = (DWORD)_addr;
-<a name="l00159"></a>00159                 memmap::iterator i = <a class="code" href="class_mem_map.html#aa8666588a669bc53e7cc55f6b5ea1a85">AllocMap</a>.find(addr);
-<a name="l00160"></a>00160                 <span class="keywordflow">if</span>(i == <a class="code" href="class_mem_map.html#aa8666588a669bc53e7cc55f6b5ea1a85">AllocMap</a>.end()) {
-<a name="l00161"></a>00161 <span class="preprocessor">#ifdef MEMORY_LOGGING</span>
-<a name="l00162"></a>00162 <span class="preprocessor"></span>                        Debug::Log(<span class="stringliteral">&quot;Deallocated a dud block @ 0x%X!\n&quot;</span>, addr);
-<a name="l00163"></a>00163 <span class="preprocessor">#endif</span>
-<a name="l00164"></a>00164 <span class="preprocessor"></span>                        <span class="keywordflow">return</span> 0;
-<a name="l00165"></a>00165                 } <span class="keywordflow">else</span> {
-<a name="l00166"></a>00166                         <span class="keywordtype">size_t</span> amount = <a class="code" href="class_mem_map.html#aa8666588a669bc53e7cc55f6b5ea1a85">AllocMap</a>[addr];
-<a name="l00167"></a>00167                         <a class="code" href="class_mem_map.html#a7dbb9b6435859db4aea7b683bd84d670">Total</a> -= amount;
-<a name="l00168"></a>00168                         <a class="code" href="class_mem_map.html#aa8666588a669bc53e7cc55f6b5ea1a85">AllocMap</a>.erase(addr);
-<a name="l00169"></a>00169                         <span class="keywordflow">return</span> amount;
-<a name="l00170"></a>00170                 }
-<a name="l00171"></a>00171         }
+<p><div class="fragment"><pre class="fragment"><a name="l00159"></a>00159                                            {
+<a name="l00160"></a>00160                 DWORD addr = (DWORD)_addr;
+<a name="l00161"></a>00161                 memmap::iterator i = <a class="code" href="class_mem_map.html#aa8666588a669bc53e7cc55f6b5ea1a85">AllocMap</a>.find(addr);
+<a name="l00162"></a>00162                 <span class="keywordflow">if</span>(i == <a class="code" href="class_mem_map.html#aa8666588a669bc53e7cc55f6b5ea1a85">AllocMap</a>.end()) {
+<a name="l00163"></a>00163 <span class="preprocessor">#ifdef MEMORY_LOGGING</span>
+<a name="l00164"></a>00164 <span class="preprocessor"></span>                        Debug::Log(<span class="stringliteral">&quot;Deallocated a dud block @ 0x%X!\n&quot;</span>, addr);
+<a name="l00165"></a>00165 <span class="preprocessor">#endif</span>
+<a name="l00166"></a>00166 <span class="preprocessor"></span>                        <span class="keywordflow">return</span> 0;
+<a name="l00167"></a>00167                 } <span class="keywordflow">else</span> {
+<a name="l00168"></a>00168                         <span class="keywordtype">size_t</span> amount = <a class="code" href="class_mem_map.html#aa8666588a669bc53e7cc55f6b5ea1a85">AllocMap</a>[addr];
+<a name="l00169"></a>00169                         <a class="code" href="class_mem_map.html#a7dbb9b6435859db4aea7b683bd84d670">Total</a> -= amount;
+<a name="l00170"></a>00170                         <a class="code" href="class_mem_map.html#aa8666588a669bc53e7cc55f6b5ea1a85">AllocMap</a>.erase(addr);
+<a name="l00171"></a>00171                         <span class="keywordflow">return</span> amount;
+<a name="l00172"></a>00172                 }
+<a name="l00173"></a>00173         }
 </pre></div></p>
 
 </div>
@@ -238,7 +238,7 @@ window.onload = initDynSections;
 </iframe>
 </div>
 
-<hr class="footer"/><address style="text-align: right;"><small>Generated on Fri Oct 15 20:59:48 2010 for Ares by&nbsp;
+<hr class="footer"/><address style="text-align: right;"><small>Generated on Tue Dec 14 21:10:41 2010 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.3 </small></address>
 </body>

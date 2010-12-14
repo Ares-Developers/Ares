@@ -174,13 +174,13 @@ window.onload = initDynSections;
 </div>
 <div class="memdoc">
 
-<p><div class="fragment"><pre class="fragment"><a name="l00361"></a>00361                                                                             {
-<a name="l00362"></a>00362         <a class="code" href="class_techno_type_ext_1_1_ext_data.html">TechnoTypeExt::ExtData</a> *pData = <a class="code" href="class_techno_type_ext.html#acc5f01db1b341572a92ad754a7d15c48">TechnoTypeExt::ExtMap</a>.<a class="code" href="class_container.html#a90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(Type);
-<a name="l00363"></a>00363 
-<a name="l00364"></a>00364         <span class="comment">// EMP immunity. The default for each type is decided by the EMPulse class.</span>
-<a name="l00365"></a>00365         pData-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#ac2a2a29b93e918487a7f415b40c1974a">ImmuneToEMP</a>.<a class="code" href="class_customizable.html#a520e7ccc157f57b4f8c29fbaf9ea00a1">BindEx</a>(!<a class="code" href="class_e_m_pulse.html#acae411b2800c152fdb7647c912a421e0" title="Gets whether an EMP would have an effect on a TechnoType.">EMPulse::IsTypeEMPProne</a>(Type));
-<a name="l00366"></a>00366         pData-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#ac2a2a29b93e918487a7f415b40c1974a">ImmuneToEMP</a>.<a class="code" href="class_customizable.html#ac6afc74f9f6ee25258faadba11a7f7f1">Set</a>(pINI-&gt;ReadBool(Type-&gt;ID, <span class="stringliteral">&quot;ImmuneToEMP&quot;</span>, pData-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#ac2a2a29b93e918487a7f415b40c1974a">ImmuneToEMP</a>.<a class="code" href="class_customizable.html#a3dc2b0918c34c90837994b776f52139c">Get</a>()));
-<a name="l00367"></a>00367 }
+<p><div class="fragment"><pre class="fragment"><a name="l00364"></a>00364                                                                             {
+<a name="l00365"></a>00365         <a class="code" href="class_techno_type_ext_1_1_ext_data.html">TechnoTypeExt::ExtData</a> *pData = <a class="code" href="class_techno_type_ext.html#acc5f01db1b341572a92ad754a7d15c48">TechnoTypeExt::ExtMap</a>.<a class="code" href="class_container.html#a90ddec0f8fb14f5a9894e128c2f938fc">Find</a>(Type);
+<a name="l00366"></a>00366 
+<a name="l00367"></a>00367         <span class="comment">// EMP immunity. The default for each type is decided by the EMPulse class.</span>
+<a name="l00368"></a>00368         pData-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#ac2a2a29b93e918487a7f415b40c1974a">ImmuneToEMP</a>.<a class="code" href="class_customizable.html#a520e7ccc157f57b4f8c29fbaf9ea00a1">BindEx</a>(!<a class="code" href="class_e_m_pulse.html#acae411b2800c152fdb7647c912a421e0" title="Gets whether an EMP would have an effect on a TechnoType.">EMPulse::IsTypeEMPProne</a>(Type));
+<a name="l00369"></a>00369         pData-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#ac2a2a29b93e918487a7f415b40c1974a">ImmuneToEMP</a>.<a class="code" href="class_customizable.html#ac6afc74f9f6ee25258faadba11a7f7f1">Set</a>(pINI-&gt;ReadBool(Type-&gt;ID, <span class="stringliteral">&quot;ImmuneToEMP&quot;</span>, pData-&gt;<a class="code" href="class_techno_type_ext_1_1_ext_data.html#ac2a2a29b93e918487a7f415b40c1974a">ImmuneToEMP</a>.<a class="code" href="class_customizable.html#a3dc2b0918c34c90837994b776f52139c">Get</a>()));
+<a name="l00370"></a>00370 }
 </pre></div></p>
 
 </div>
@@ -236,7 +236,7 @@ window.onload = initDynSections;
 </iframe>
 </div>
 
-<hr class="footer"/><address style="text-align: right;"><small>Generated on Fri Oct 15 20:59:49 2010 for Ares by&nbsp;
+<hr class="footer"/><address style="text-align: right;"><small>Generated on Tue Dec 14 21:10:41 2010 for Ares by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.3 </small></address>
 </body>
