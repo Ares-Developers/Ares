@@ -19,11 +19,13 @@ DEFINE_HOOK(50AF10, HouseClass_CheckSWs, 5)
 	struct SWStatus {
 		bool Available;
 		bool PowerSourced;
+		bool Charging;
 	};
 	SWStatus *Statuses = new SWStatus[pThis->Supers.Count];
 	for(int i = 0; i < pThis->Supers.Count; ++i) {
 		Statuses[i].Available = false;
 		Statuses[i].PowerSourced = false;
+		Statuses[i].Charging = false;
 	}
 
 	// look at every sane building this player owns, if it is not defeated already.
@@ -37,10 +39,23 @@ DEFINE_HOOK(50AF10, HouseClass_CheckSWs, 5)
 				auto UpdateStatus = [=](int idxSW) {
 					if(idxSW > -1) {
 						Statuses[idxSW].Available = true;
-						if(!Statuses[idxSW].PowerSourced) {
-							Statuses[idxSW].PowerSourced = pBld->HasPower
+						if(!Statuses[idxSW].PowerSourced || !Statuses[idxSW].Charging) {
+							bool validBuilding = pBld->HasPower
 								&& pExt->IsOperated()
 								&& !pBld->IsUnderEMP();
+							
+							if(!Statuses[idxSW].PowerSourced) {
+								Statuses[idxSW].PowerSourced = validBuilding;
+							}
+
+							if(!Statuses[idxSW].Charging) {
+								Statuses[idxSW].Charging = validBuilding
+									&& !pBld->IsBeingWarpedOut()
+									&& (pBld->CurrentMission != mission_Selling)
+									&& (pBld->QueuedMission != mission_Selling)
+									&& (pBld->CurrentMission != mission_Construction)
+									&& (pBld->QueuedMission != mission_Construction);
+							}
 						}
 					}
 				};
@@ -99,6 +114,10 @@ DEFINE_HOOK(50AF10, HouseClass_CheckSWs, 5)
 				bool update = false;
 				if(!Statuses[idxSW].Available || pThis->Defeated) {
 					update = (pSW->Lose() && HouseClass::Player);
+				} else if(Statuses[idxSW].Charging && !pSW->IsPowered()) {
+					update = pSW->SetOnHold(false);
+				} else if(!Statuses[idxSW].Charging && !pSW->IsPowered()) {
+					update = pSW->SetOnHold(true);
 				} else if(!Statuses[idxSW].PowerSourced) {
 					update = (pSW->IsPowered() && pSW->SetOnHold(true));
 				} else {
