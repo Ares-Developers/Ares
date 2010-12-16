@@ -317,10 +317,14 @@ void ChronoWarpStateMachine::Update() {
 					pBld->SetLayer(Layer::Ground);
 
 					if(!success) {
-						// destroy
-						int damage = pBld->Type->Strength;
-						pBld->ReceiveDamage(&damage, 0,
-							RulesClass::Instance->C4Warhead, NULL, true, true, this->Super->Owner);
+						if(SWTypeExt::ExtData *pExt = SWTypeExt::ExtMap.Find(this->Super->Type)) {
+							// destroy (buildings only if they are supposed to)
+							if(pContainer.isVehicle || pExt->Chronosphere_BlowUnplaceable.Get()) {
+								int damage = pBld->Type->Strength;
+								pBld->ReceiveDamage(&damage, 0,
+									RulesClass::Instance->C4Warhead, NULL, true, true, this->Super->Owner);
+							}
+						}
 					}
 				}
 			}

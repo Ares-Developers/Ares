@@ -88,6 +88,7 @@ public:
 		Valueable<bool> Chronosphere_AffectBuildings;
 		Valueable<bool> Chronosphere_AffectUnwarpable;
 		Valueable<bool> Chronosphere_AffectIronCurtain;
+		Valueable<bool> Chronosphere_BlowUnplaceable;
 
 		// Genetic Mutator
 		Valueable<bool> Mutate_Explosion;

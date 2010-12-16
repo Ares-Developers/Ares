@@ -26,6 +26,7 @@ void SW_ChronoSphere::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass
 	pData->Chronosphere_AffectUnwarpable = true;
 	pData->Chronosphere_AffectUndeployable = false;
 	pData->Chronosphere_AffectBuildings = false;
+	pData->Chronosphere_BlowUnplaceable = true;
 
 	pData->Chronosphere_BlastSrc = RulesClass::Instance->ChronoBlast;
 	pData->Chronosphere_BlastDest = RulesClass::Instance->ChronoBlastDest;
@@ -54,12 +55,13 @@ void SW_ChronoSphere::LoadFromINI(
 	pData->Chronosphere_AffectIronCurtain.Read(&exINI, section, "Chronosphere.AffectIronCurtain");
 	pData->Chronosphere_AffectUnwarpable.Read(&exINI, section, "Chronosphere.AffectUnwarpable");
 	pData->Chronosphere_AffectUndeployable.Read(&exINI, section, "Chronosphere.AffectUndeployable");
+	pData->Chronosphere_BlowUnplaceable.Read(&exINI, section, "Chronosphere.BlowUnplaceable");
 
 	pData->Chronosphere_BlastSrc.Parse(&exINI, section, "Chronosphere.BlastSrc");
 	pData->Chronosphere_BlastDest.Parse(&exINI, section, "Chronosphere.BlastDest");
 
 	// we handle the distinction between buildings and deployed vehicles ourselves
-	pData->Chronosphere_AffectBuildings = (pData->SW_AffectsTarget.Get() && SuperWeaponTarget::Building);
+	pData->Chronosphere_AffectBuildings = ((pData->SW_AffectsTarget.Get() & SuperWeaponTarget::Building) != 0);
 	pData->SW_AffectsTarget = (pData->SW_AffectsTarget.Get() | SuperWeaponTarget::Building);
 }
 

@@ -78,17 +78,17 @@ public:
 		if(key && value) {
 			Value ret = SuperWeaponTarget::None;
 			for(char *cur = strtok(key, ","); cur; cur = strtok(NULL, Ares::readDelims)) {
-				if(!_strcmpi(key, "land")) {
+				if(!_strcmpi(cur, "land")) {
 					ret |= SuperWeaponTarget::Land;
-				} else if(!_strcmpi(key, "water")) {
+				} else if(!_strcmpi(cur, "water")) {
 					ret |= SuperWeaponTarget::Water;
-				} else if(!_strcmpi(key, "empty")) {
+				} else if(!_strcmpi(cur, "empty")) {
 					ret |= SuperWeaponTarget::NoContent;
-				} else if(!_strcmpi(key, "infantry")) {
+				} else if(!_strcmpi(cur, "infantry")) {
 					ret |= SuperWeaponTarget::Infantry;
-				} else if(!_strcmpi(key, "units")) {
+				} else if(!_strcmpi(cur, "units")) {
 					ret |= SuperWeaponTarget::Unit;
-				} else if(!_strcmpi(key, "buildings")) {
+				} else if(!_strcmpi(cur, "buildings")) {
 					ret |= SuperWeaponTarget::Building;
 				}
 			}
@@ -117,17 +117,17 @@ public:
 		if(key && value) {
 			Value ret = SuperWeaponAffectedHouse::None;
 			for(char *cur = strtok(key, ","); cur; cur = strtok(NULL, ",")) {
-				if(!_strcmpi(key, "owner")) {
+				if(!_strcmpi(cur, "owner")) {
 					ret |= SuperWeaponAffectedHouse::Owner;
-				} else if(!_strcmpi(key, "allies")) {
+				} else if(!_strcmpi(cur, "allies")) {
 					ret |= SuperWeaponAffectedHouse::Allies;
-				} else if(!_strcmpi(key, "enemies")) {
+				} else if(!_strcmpi(cur, "enemies")) {
 					ret |= SuperWeaponAffectedHouse::Enemies;
-				} else if(!_strcmpi(key, "team")) {
+				} else if(!_strcmpi(cur, "team")) {
 					ret |= SuperWeaponAffectedHouse::Team;
-				} else if(!_strcmpi(key, "others")) {
+				} else if(!_strcmpi(cur, "others")) {
 					ret |= SuperWeaponAffectedHouse::NotOwner;
-				} else if(!_strcmpi(key, "all")) {
+				} else if(!_strcmpi(cur, "all")) {
 					ret |= SuperWeaponAffectedHouse::All;
 				}
 			}
