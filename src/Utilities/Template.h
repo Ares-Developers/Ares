@@ -190,6 +190,72 @@ public:
 
 };
 
+template<typename T, typename Lookuper>
+class CustomizableIdx : public ValueableIdx<T, Lookuper> {
+	bool Customized;
+	T*   Default;
+public:
+	CustomizableIdx(T* alias = NULL) : ValueableIdx<T, Lookuper>(T()), Customized(false), Default(alias) {};
+
+	void Bind(T* to) {
+		if(!this->Customized) {
+			this->Default = to;
+		}
+	}
+
+	void BindEx(T to) {
+		if(!this->Customized) {
+			this->Value = to;
+			this->Default = &this->Value;
+		}
+	}
+
+	virtual T Get() const {
+		return this->Customized
+		 ? this->Value
+		 : this->Default ? *this->Default : T()
+		;
+	}
+
+	virtual void Set(T val) {
+		this->Customized = true;
+		this->Value = val;
+	}
+
+	virtual T* GetEx() {
+		return this->Customized
+		 ? &this->Value
+		 : this->Default
+		;
+	}
+
+	virtual void SetEx(T* val) {
+		this->Customized = true;
+		this->Value = *val;
+	}
+
+	void Lock() {
+		if(!this->Customized) {
+			if(this->Default) {
+				this->Value = *this->Default;
+			}
+			this->Customized = true;
+		}
+	}
+
+	bool operator == (T other) const {
+		return this->Get() == other;
+	};
+
+	bool operator != (T other) const {
+		return this->Get() != other;
+	};
+
+	bool operator ! () const {
+		return this->Get() == 0;
+	};
+
+};
 /*
  * This template is for something that varies depending on a unit's Veterancy Level
  * Promotable<int> PilotChance; // class def

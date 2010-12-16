@@ -65,8 +65,8 @@ public:
 		bool Ivan_Detachable;
 		Customizable<int> Ivan_Damage;
 		Customizable<int> Ivan_Delay;
-		Customizable<int> Ivan_TickingSound;
-		Customizable<int> Ivan_AttachSound;
+		CustomizableIdx<int, VocClass> Ivan_TickingSound;
+		CustomizableIdx<int, VocClass> Ivan_AttachSound;
 		Customizable<WarheadTypeClass *> Ivan_WH;
 		Customizable<SHPStruct *> Ivan_Image;
 		Customizable<int> Ivan_FlickerRate;
