@@ -100,11 +100,7 @@ DEFINE_HOOK(53B080, PsyDom_Fire, 5) {
 
 					// capture this unit, maybe permanently
 					pTechno->SetOwningHouse(pFirer);
-
-					if(pData->Dominator_PermanentCapture.Get()) {
-						// setting this will disallow another mind-controller to capture this
-						pTechno->MindControlledByAUnit = true;
-					}
+					pTechno->MindControlledByAUnit = pData->Dominator_PermanentCapture;
 
 					// create a permanent capture anim
 					if(pData->Dominator_ControlAnim.Get()) {
