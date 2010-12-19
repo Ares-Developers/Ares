@@ -145,6 +145,8 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 			TechnoTypeClass *pTechno = TechnoTypeClass::Find(cur);
 			if(pTechno) {
 				this->Secret_Boons.AddItem(pTechno);
+			} else {
+				Debug::INIParseFailed(pID, "SecretLab.PossibleBoons", cur);
 			}
 		}
 	}

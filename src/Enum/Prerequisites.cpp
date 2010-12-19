@@ -24,13 +24,9 @@ void GenericPrerequisite::LoadFromINI(CCINIClass *pINI)
 	DynamicVectorClass<int> *dvc = &this->Prereqs;
 
 	_snprintf(generalbuf, 0x80, "Prerequisite%s", name);
-	if(pINI->ReadString("General", generalbuf, "", Ares::readBuffer, Ares::readLength)) {
-		Prereqs::Parse(Ares::readBuffer, dvc);
-	}
+	Prereqs::Parse(pINI, "General", generalbuf, dvc);
 
-	if(pINI->ReadString(section, this->Name, "", Ares::readBuffer, Ares::readLength)) {
-		Prereqs::Parse(Ares::readBuffer, dvc);
-	}
+	Prereqs::Parse(pINI, section, this->Name, dvc);
 }
 
 void GenericPrerequisite::AddDefaults()
@@ -43,21 +39,24 @@ void GenericPrerequisite::AddDefaults()
 	FindOrAllocate("PROC");
 }
 
-void Prereqs::Parse(char* buffer, DynamicVectorClass<int> *vec)
+void Prereqs::Parse(CCINIClass *pINI, const char *section, const char *key, DynamicVectorClass<int> *vec)
 {
-	vec->Clear();
-	for(char *cur = strtok(buffer, ","); cur; cur = strtok(NULL, ",")) {
-		int idx = BuildingTypeClass::FindIndex(cur);
-		if(idx > -1) {
-			vec->AddItem(idx);
-		} else {
-			idx = GenericPrerequisite::FindIndex(cur);
+	if(pINI->ReadString(section, key, "", Ares::readBuffer, Ares::readLength)) {
+		vec->Clear();
+		for(char *cur = strtok(Ares::readBuffer, ","); cur; cur = strtok(NULL, ",")) {
+			int idx = BuildingTypeClass::FindIndex(cur);
 			if(idx > -1) {
-				vec->AddItem(-1 - idx);
+				vec->AddItem(idx);
+			} else {
+				idx = GenericPrerequisite::FindIndex(cur);
+				if(idx > -1) {
+					vec->AddItem(-1 - idx);
+				} else {
+					Debug::INIParseFailed(section, key, cur);
+				}
 			}
 		}
 	}
-
 }
 
 	// helper funcs

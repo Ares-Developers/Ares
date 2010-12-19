@@ -31,6 +31,7 @@ HANDLE Ares::hInstance = 0;
 bool Ares::bNoLogo = false;
 bool Ares::bNoCD = false;
 bool Ares::bTestingRun = false;
+bool Ares::bStrictParser = false;
 
 DWORD Ares::readLength = BUFLEN;
 char Ares::readBuffer[BUFLEN];
@@ -89,6 +90,8 @@ void __stdcall Ares::CmdLineParse(char** ppArgs,int nNumArgs)
 				bNoLogo = true;
 			} else if(strcmp(pArg, "-TESTRUN") == 0) {
 				bTestingRun = true;
+			} else if(strcmp(pArg, "-STRICT") == 0) {
+				bStrictParser = true;
 			}
 		}
 	}

@@ -47,6 +47,8 @@ public:
 	static bool bLog;
 	static FILE* pLogFile;
 
+	static bool bStrictParser;
+
 	static int TrackIndex;
 
 	static DWORD readLength;

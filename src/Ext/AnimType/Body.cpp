@@ -24,6 +24,8 @@ void AnimTypeExt::ExtData::LoadFromINIFile(AnimTypeClass *pThis, CCINIClass *pIN
 			this->MakeInfantryOwner = ExtData::NEUTRAL;
 		} else if(strcmp(Ares::readBuffer, "random") == 0) {
 			this->MakeInfantryOwner = ExtData::RANDOM;
+		} else {
+			Debug::INIParseFailed(pThis->ID, "MakeInfantryOwner", Ares::readBuffer);
 		}
 	}
 }

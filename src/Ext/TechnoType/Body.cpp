@@ -101,7 +101,9 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	for(int i = 0; i < SideClass::Array->Count; ++i) {
 		_snprintf(flag, 256, "Survivor.Side%d", i);
 		if(pINI->ReadString(section, flag, "", Ares::readBuffer, Ares::readLength)) {
-			this->Survivors_Pilots[i] = InfantryTypeClass::Find(Ares::readBuffer);
+			if(!(this->Survivors_Pilots[i] = InfantryTypeClass::Find(Ares::readBuffer))) {
+				Debug::INIParseFailed(section, flag, Ares::readBuffer);
+			}
 		}
 	}
 
@@ -117,25 +119,19 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	}
 
 	DynamicVectorClass<int> *dvc = this->PrerequisiteLists.GetItem(0);
-	if(pINI->ReadString(section, "Prerequisite", "", Ares::readBuffer, Ares::readLength)) {
-		Prereqs::Parse(Ares::readBuffer, dvc);
-	}
-	if(pINI->ReadString(section, "PrerequisiteOverride", "", Ares::readBuffer, Ares::readLength)) {
-		dvc = &pThis->PrerequisiteOverride;
-		Prereqs::Parse(Ares::readBuffer, dvc);
-	}
+	Prereqs::Parse(pINI, section, "Prerequisite", dvc);
+
+	dvc = &pThis->PrerequisiteOverride;
+	Prereqs::Parse(pINI, section, "PrerequisiteOverride", dvc);
+
 	for(int i = 0; i < this->PrerequisiteLists.Count; ++i) {
 		_snprintf(flag, 256, "Prerequisite.List%d", i);
-		if(pINI->ReadString(section, flag, "", Ares::readBuffer, Ares::readLength)) {
-			dvc = this->PrerequisiteLists.GetItem(i);
-			Prereqs::Parse(Ares::readBuffer, dvc);
-		}
+		dvc = this->PrerequisiteLists.GetItem(i);
+		Prereqs::Parse(pINI, section, flag, dvc);
 	}
 
 	dvc = &this->PrerequisiteNegatives;
-	if(pINI->ReadString(section, "Prerequisite.Negative", "", Ares::readBuffer, Ares::readLength)) {
-		Prereqs::Parse(Ares::readBuffer, dvc);
-	}
+	Prereqs::Parse(pINI, section, "Prerequisite.Negative", dvc);
 
 	if(pINI->ReadString(section, "Prerequisite.RequiredTheaters", "", Ares::readBuffer, Ares::readLength)) {
 		this->PrerequisiteTheaters = 0;
@@ -143,6 +139,8 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 			signed int idx = Theater::FindIndex(cur);
 			if(idx != -1) {
 				this->PrerequisiteTheaters |= (1 << idx);
+			} else {
+				Debug::INIParseFailed(section, "Prerequisite.RequiredTheaters", cur);
 			}
 		}
 	}
@@ -168,6 +166,8 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 			this->Spot_AttachedTo = sa_Turret;
 		} else if(!_strcmpi(Ares::readBuffer, "barrel")) {
 			this->Spot_AttachedTo = sa_Barrel;
+		} else {
+			Debug::INIParseFailed(section, "Spotlight.AttachedTo", Ares::readBuffer);
 		}
 	}
 	this->Spot_DisableR = pINI->ReadBool(section, "Spotlight.DisableRed", this->Spot_DisableR);
@@ -192,7 +192,11 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	if(pINI->ReadString(section, "Operator", "", Ares::readBuffer, Ares::readLength)) { // try to read the flag
 		this->IsAPromiscuousWhoreAndLetsAnyoneRideIt = (strcmp(Ares::readBuffer, "_ANY_") == 0); // set whether this type accepts all operators
 		if(!this->IsAPromiscuousWhoreAndLetsAnyoneRideIt) { // if not, find the specific operator it allows
-			this->Operator = InfantryTypeClass::Find(Ares::readBuffer);
+			if(auto Operator = InfantryTypeClass::Find(Ares::readBuffer)) {
+				this->Operator = Operator;
+			} else {
+				Debug::INIParseFailed(section, "Operator", Ares::readBuffer);
+			}
 		}
 	}
 
@@ -204,6 +208,8 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 			signed int idx = atoi(cur);
 			if(idx > -1 && idx < 32) {
 				this->RequiredStolenTech.set(idx);
+			} else {
+				Debug::INIParseFailed(section, "Prerequisite.StolenTechs", cur, "Expected a number between 0 and 31 inclusive");
 			}
 		}
 	}
@@ -252,12 +258,16 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 
 	if(CCINIClass::INI_Art->ReadString(pThis->ImageFile, "CameoPCX", "", Ares::readBuffer, Ares::readLength)) {
 		AresCRT::strCopy(this->CameoPCX, Ares::readBuffer, 0x20);
-		PCX::Instance->LoadFile(this->CameoPCX);
+		if(!PCX::Instance->LoadFile(this->CameoPCX)) {
+			Debug::INIParseFailed(pThis->ImageFile, "CameoPCX", this->CameoPCX);
+		}
 	}
 
 	if(CCINIClass::INI_Art->ReadString(pThis->ImageFile, "AltCameoPCX", "", Ares::readBuffer, Ares::readLength)) {
 		AresCRT::strCopy(this->AltCameoPCX, Ares::readBuffer, 0x20);
-		PCX::Instance->LoadFile(this->AltCameoPCX);
+		if(!PCX::Instance->LoadFile(this->AltCameoPCX)) {
+			Debug::INIParseFailed(pThis->ImageFile, "AltCameoPCX", this->AltCameoPCX);
+		}
 	}
 
 	this->CanBeReversed.Read(&exINI, section, "CanBeReversed");
@@ -379,10 +389,7 @@ bool TechnoTypeExt::ExtData::CameoIsElite()
 
 	TechnoTypeClass * const T = this->AttachedToObject;
 
-	SHPStruct *Cameo = T->Cameo;
-	SHPStruct *Alt = T->AltCameo;
-
-	if(!Alt) {
+	if(!T->AltCameo) {
 		return false;
 	}
 
