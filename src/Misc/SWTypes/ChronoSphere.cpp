@@ -52,9 +52,9 @@ void SW_ChronoSphere::LoadFromINI(
 
 	pData->Chronosphere_KillOrganic.Read(&exINI, section, "Chronosphere.KillOrganic");
 	pData->Chronosphere_KillTeleporters.Read(&exINI, section, "Chronosphere.KillTeleporters");
-	pData->Chronosphere_AffectIronCurtain.Read(&exINI, section, "Chronosphere.AffectIronCurtain");
-	pData->Chronosphere_AffectUnwarpable.Read(&exINI, section, "Chronosphere.AffectUnwarpable");
-	pData->Chronosphere_AffectUndeployable.Read(&exINI, section, "Chronosphere.AffectUndeployable");
+	pData->Chronosphere_AffectIronCurtain.Read(&exINI, section, "Chronosphere.AffectsIronCurtain");
+	pData->Chronosphere_AffectUnwarpable.Read(&exINI, section, "Chronosphere.AffectsUnwarpable");
+	pData->Chronosphere_AffectUndeployable.Read(&exINI, section, "Chronosphere.AffectsUndeployable");
 	pData->Chronosphere_BlowUnplaceable.Read(&exINI, section, "Chronosphere.BlowUnplaceable");
 
 	pData->Chronosphere_BlastSrc.Parse(&exINI, section, "Chronosphere.BlastSrc");
