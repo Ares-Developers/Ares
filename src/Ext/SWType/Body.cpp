@@ -91,6 +91,7 @@ void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass
 
 	// if this is handled by a NewSWType, initialize it.
 	if(idxNewSWType != -1) {
+		pThis->Action = SW_YES_CURSOR;
 		if(NewSWType *swt = NewSWType::GetNthItem(idxNewSWType)) {
 			swt->Initialize(this, pThis);
 		}

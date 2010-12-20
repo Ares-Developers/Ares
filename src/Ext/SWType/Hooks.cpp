@@ -9,21 +9,15 @@ DEFINE_HOOK(6CEF84, SuperWeaponTypeClass_GetCursorOverObject, 7)
 	GET(SuperWeaponTypeClass*, pThis, ECX);
 
 	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pThis);
-	int type = pThis->Type;
+	int type = (pData->HandledByNewSWType > -1) ? pData->HandledByNewSWType : pThis->Type;
+	bool customType = (type >= FIRST_SW_TYPE);
 
-	bool customCursor = (pThis->Action == SW_YES_CURSOR);
-	if(!customCursor) {
-		if(pData->HandledByNewSWType > -1) {
-			type = pData->HandledByNewSWType;
-			customCursor = true;
-		}
-	}
-
-	if(customCursor) {
+	if((pThis->Action == SW_YES_CURSOR) || customType) {
 		GET_STACK(CellStruct *, pMapCoords, 0x0C);
 
 		int Action = SW_YES_CURSOR;
 
+		// prevent firing into shroud
 		if(!pData->SW_FireToShroud.Get()) {
 			CellClass* pCell = MapClass::Instance->GetCellAt(pMapCoords);
 			CoordStruct Crd;
@@ -33,8 +27,11 @@ DEFINE_HOOK(6CEF84, SuperWeaponTypeClass_GetCursorOverObject, 7)
 			}
 		}
 
-		if(type >= FIRST_SW_TYPE && !NewSWType::GetNthItem(type)->CanFireAt(pData, pMapCoords)) {
-			Action = SW_NO_CURSOR;
+		// new SW types have to check whether the coordinates are valid.
+		if(Action == SW_YES_CURSOR) {
+			if(customType && !NewSWType::GetNthItem(type)->CanFireAt(pData, pMapCoords)) {
+				Action = SW_NO_CURSOR;
+			}
 		}
 
 		R->EAX(Action);
@@ -65,21 +62,15 @@ DEFINE_HOOK(653B3A, RadarClass_GetMouseAction_CustomSWAction, 5)
 
 		SuperWeaponTypeClass *pThis = SuperWeaponTypeClass::Array->GetItem(idxSWType);
 		SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pThis);
-		int type = pThis->Type;
+		int type = (pData->HandledByNewSWType > -1) ? pData->HandledByNewSWType : pThis->Type;
+		bool customType = (type >= FIRST_SW_TYPE);
 
-		bool customCursor = (pThis->Action == SW_YES_CURSOR);
-		if(!customCursor) {
-			if(pData->HandledByNewSWType > -1) {
-				type = pData->HandledByNewSWType;
-				customCursor = true;
-			}
-		}
-
-		if(customCursor) {
+		if((pThis->Action == SW_YES_CURSOR) || customType) {
 			GET_STACK(CellStruct, pMapCoords, STACK_OFFS(0x54, 0x3C));
 
 			int Action = SW_YES_CURSOR;
 
+			// prevent firing into shroud
 			if(!pData->SW_FireToShroud.Get()) {
 				CellClass* pCell = MapClass::Instance->GetCellAt(&pMapCoords);
 				CoordStruct Crd;
@@ -89,8 +80,11 @@ DEFINE_HOOK(653B3A, RadarClass_GetMouseAction_CustomSWAction, 5)
 				}
 			}
 
-			if(type >= FIRST_SW_TYPE && !NewSWType::GetNthItem(type)->CanFireAt(pData, &pMapCoords)) {
-				Action = SW_NO_CURSOR;
+			// new SW types have to check whether the coordinates are valid.
+			if(Action == SW_YES_CURSOR) {
+				if(customType && !NewSWType::GetNthItem(type)->CanFireAt(pData, &pMapCoords)) {
+					Action = SW_NO_CURSOR;
+				}
 			}
 
 			R->ESI(Action);
@@ -200,10 +194,11 @@ DEFINE_HOOK(4AC20C, DisplayClass_LMBUp, 7)
 	int Action = R->Stack32(0x9C);
 	if(Action < SW_NO_CURSOR) {
 		// get the actual firing SW type instead of just the first type of the
-		// requested action. this allows clones to work. we have to check that
-		// the action matches the action of the found type as the no-cursor
-		// represents a different action and we don't want to start a force
-		// shield when the UI says no.
+		// requested action. this allows clones to work for legacy SWs (the new
+		// ones use SW_*_CURSORs). we have to check that the action matches the
+		// action of the found type as the no-cursor represents a different
+		// action and we don't want to start a force shield even tough the UI
+		// says no.
 		SuperWeaponTypeClass * pSW = NULL;
 		if(SuperWeaponTypeClass::Array->ValidIndex(Unsorted::CurrentSWType)) {
 			pSW = SuperWeaponTypeClass::Array->GetItem(Unsorted::CurrentSWType);
@@ -221,7 +216,6 @@ DEFINE_HOOK(4AC20C, DisplayClass_LMBUp, 7)
 	}
 
 	R->EAX(SWTypeExt::CurrentSWType);
-
 	return 0x4AC21C;
 }
 
