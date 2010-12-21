@@ -16,6 +16,11 @@ bool SW_NuclearMissile::HandlesType(int type)
 	return (type == SuperWeaponType::Nuke);
 }
 
+SuperWeaponFlags::Value SW_NuclearMissile::Flags()
+{
+	return SuperWeaponFlags::NoEvent;
+}
+
 void SW_NuclearMissile::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)
 {
 	// invalid values so NukePayload properties can override them.
@@ -157,6 +162,13 @@ bool SW_NuclearMissile::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPl
 			}
 
 			if(fired) {
+				// allies can see the target location before the enemy does
+				if(pData->SW_RadarEvent.Get()) {
+					if(pThis->Owner->IsAlliedWith(HouseClass::Player)) {
+						RadarEventClass::Create(RADAREVENT_SUPERWEAPONLAUNCHED, *pCoords);
+					}
+				}
+
 				VocClass::PlayAt(pData->SW_ActivationSound, &target, NULL);
 				pThis->Owner->ShouldRecheckTechTree = true;
 				return true;

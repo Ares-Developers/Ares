@@ -221,7 +221,7 @@ public:
 			SW_RequiresTarget (SuperWeaponTarget::None),
 			SW_AITargetingType (SuperWeaponAITargetingMode::None),
 			SW_FireToShroud (true),
-			SW_RadarEvent (false),
+			SW_RadarEvent (true),
 			SW_WidthOrRange (-1),
 			SW_Height (-1),
 			HandledByNewSWType (-1),

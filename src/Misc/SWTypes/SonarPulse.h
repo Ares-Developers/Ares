@@ -21,5 +21,6 @@ class SW_SonarPulse : NewSWType
 	virtual void LoadFromINI(
 		SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI);
 	virtual bool Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer);
+	virtual SuperWeaponFlags::Value Flags();
 };
 #endif

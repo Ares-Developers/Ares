@@ -2,11 +2,17 @@
 #include "../../Ext/Techno/Body.h"
 #include "../../Utilities/Helpers.Alex.h"
 
+SuperWeaponFlags::Value SW_SonarPulse::Flags()
+{
+	return SuperWeaponFlags::NoEvent;
+}
+
 void SW_SonarPulse::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)
 {
 	// some defaults
 	pData->SW_WidthOrRange = 10;
 	pData->SW_Height = -1;
+	pData->SW_RadarEvent = false;
 
 	pData->Sonar_Delay = 60;
 
@@ -82,6 +88,11 @@ bool SW_SonarPulse::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 		if(Helpers::Alex::DistinctCollector<ObjectClass*> *items = new Helpers::Alex::DistinctCollector<ObjectClass*>()) {
 			Helpers::Alex::forEachObjectInRange(pCoords, width, height, items->getCollector());
 			items->forEach(Detect);
+		}
+
+		// radar event only if this isn't full map sonar
+		if(pData->SW_RadarEvent.Get()) {
+			RadarEventClass::Create(RADAREVENT_SUPERWEAPONLAUNCHED, *pCoords);
 		}
 	}
 

@@ -23,6 +23,7 @@ class SW_PsychicDominator : NewSWType
 		virtual bool AbortFire(SuperClass* pSW, bool IsPlayer);
 		virtual bool Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer);
 		virtual bool HandlesType(int type);
+		virtual SuperWeaponFlags::Value Flags();
 
 		static SuperClass* CurrentPsyDom;
 

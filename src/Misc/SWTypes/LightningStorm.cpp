@@ -12,7 +12,7 @@ bool SW_LightningStorm::HandlesType(int type)
 
 SuperWeaponFlags::Value SW_LightningStorm::Flags()
 {
-	return SuperWeaponFlags::NoMessage;
+	return SuperWeaponFlags::NoMessage | SuperWeaponFlags::NoEvent;
 }
 
 void SW_LightningStorm::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)

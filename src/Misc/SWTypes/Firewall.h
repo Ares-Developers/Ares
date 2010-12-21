@@ -18,6 +18,7 @@ class SW_Firewall : NewSWType {
 		virtual void LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI) {
 			pSW->Action = 0;
 			pSW->UseChargeDrain = true;
+			pData->SW_RadarEvent = false;
 			// what can we possibly configure here... warhead/damage inflicted? anims?
 		};
 		virtual bool Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer);

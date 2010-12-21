@@ -574,7 +574,9 @@ DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
 					case SuperWeaponAITargetingMode::Offensive:
 						{
 							pThis->PickIonCannonTarget(Cell);
-							LaunchSW(&Cell);
+							if(Cell != HouseClass::DefaultIonCannonCoords) {
+								LaunchSW(&Cell);
+							}
 							break;
 						}
 

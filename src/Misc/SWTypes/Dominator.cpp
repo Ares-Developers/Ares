@@ -11,6 +11,11 @@ bool SW_PsychicDominator::HandlesType(int type)
 	return (type == SuperWeaponType::PsychicDominator);
 }
 
+SuperWeaponFlags::Value SW_PsychicDominator::Flags()
+{
+	return SuperWeaponFlags::NoEvent;
+}
+
 void SW_PsychicDominator::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)
 {
 	// Defaults to PsychicDominator values

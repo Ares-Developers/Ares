@@ -11,6 +11,7 @@ void SW_Reveal::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)
 {
 	pData->SW_WidthOrRange = (float)RulesClass::Instance->PsychicRevealRadius;
 	pData->SW_Sound = RulesClass::Instance->PsychicRevealActivateSound;
+	pData->SW_RadarEvent = false;
 
 	if(pSW->Type == SuperWeaponType::PsychicReveal) {
 		// real default values, that is, force max cellspread range of 10
@@ -18,7 +19,7 @@ void SW_Reveal::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)
 	}
 
 	pData->EVA_Ready = VoxClass::FindIndex("EVA_PsychicRevealReady");
-	
+
 	pData->SW_AITargetingType = SuperWeaponAITargetingMode::ParaDrop;
 	pData->SW_Cursor = MouseCursor::First[MouseCursorType::PsychicReveal];
 }

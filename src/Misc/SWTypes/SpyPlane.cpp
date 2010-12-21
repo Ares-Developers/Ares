@@ -13,6 +13,8 @@ void SW_SpyPlane::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pS
 	pData->SpyPlane_Count = 1;
 	pData->SpyPlane_Mission = mission_AttackAgain;
 
+	pData->SW_RadarEvent = false;
+
 	pData->EVA_Ready = VoxClass::FindIndex("EVA_SpyPlaneReady");
 	
 	pData->SW_AITargetingType = SuperWeaponAITargetingMode::ParaDrop;

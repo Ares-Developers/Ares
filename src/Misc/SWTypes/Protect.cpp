@@ -17,6 +17,7 @@ void SW_Protect::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW
 	if(type == SuperWeaponType::ForceShield) {
 		// force shield
 		pData->Protect_IsForceShield = true;
+		pData->SW_RadarEvent = false;
 
 		pData->Protect_Duration = &RulesClass::Instance->ForceShieldDuration;
 		pData->Protect_PlayFadeSoundTime = &RulesClass::Instance->ForceShieldPlayFadeSoundTime;
