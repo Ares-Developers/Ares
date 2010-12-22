@@ -90,6 +90,8 @@ public:
 					ret |= SuperWeaponTarget::Unit;
 				} else if(!_strcmpi(cur, "buildings")) {
 					ret |= SuperWeaponTarget::Building;
+				} else if(!_strcmpi(cur, "all")) {
+					ret |= SuperWeaponTarget::All;
 				}
 			}
 			*value = ret;

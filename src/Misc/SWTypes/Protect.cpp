@@ -30,7 +30,9 @@ void SW_Protect::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW
 		pData->SW_AITargetingType = SuperWeaponAITargetingMode::ForceShield;
 		pData->SW_AffectsHouse = SuperWeaponAffectedHouse::Team;
 		pData->SW_AffectsTarget = SuperWeaponTarget::Building;
+		pData->SW_RequiresHouse = SuperWeaponAffectedHouse::Team;
 		pData->SW_RequiresTarget = SuperWeaponTarget::Building;
+
 		pData->SW_Cursor = MouseCursor::First[MouseCursorType::ForceShield];
 		pData->SW_NoCursor = MouseCursor::First[MouseCursorType::NoForceShield];
 	} else {

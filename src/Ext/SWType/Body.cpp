@@ -126,6 +126,7 @@ void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass
 	this->SW_AITargetingType.Read(&exINI, section, "SW.AITargeting");
 	this->SW_AffectsTarget.Read(&exINI, section, "SW.AffectsTarget");
 	this->SW_RequiresTarget.Read(&exINI, section, "SW.RequiresTarget");
+	this->SW_RequiresHouse.Read(&exINI, section, "SW.RequiresHouse");
 
 	this->SW_Deferment.Read(&exINI, section, "SW.Deferment");
 	this->SW_ChargeToDrainRatio.Read(&exINI, section, "SW.ChargeToDrainRatio");
@@ -295,8 +296,10 @@ bool SWTypeExt::ExtData::CanFireAt(CellStruct *pCoords) {
 
 		// check for techno type match
 		TechnoClass *pTechno = generic_cast<TechnoClass*>(pCell->GetContent());
-		if(pTechno && !IsHouseAffected(HouseClass::Player, pTechno->Owner)) {
-			return false;
+		if(pTechno && this->SW_RequiresHouse != SuperWeaponAffectedHouse::None) {
+			if(!IsHouseAffected(HouseClass::Player, pTechno->Owner, this->SW_RequiresHouse)) {
+				return false;
+			}
 		}
 
 		if(!IsTechnoEligible(pTechno, this->SW_RequiresTarget)) {

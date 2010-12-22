@@ -499,10 +499,10 @@ DEFINE_HOOK(53A140, LightningStorm_Strike, 7) {
 			if(pData->Weather_CloudHeight < 0) {
 				if(pData->Weather_Bolts.Count) {
 					AnimTypeClass* pBoltAnim = pData->Weather_Bolts.GetItem(0);
-					pData->Weather_CloudHeight = pBoltAnim->GetImage()->Height;
+					pData->Weather_CloudHeight = (int)Game::F2I(((pBoltAnim->GetImage()->Height / 2) - 0.5) * *(double*)(0xB0CDD8));
 				}
 			}
-			Coords.Z += (int)Game::F2I(((pData->Weather_CloudHeight / 2) - 0.5) * *(double*)(0xB0CDD8));
+			Coords.Z += pData->Weather_CloudHeight;
 
 			// create it and do hacky book keeping.
 			AnimClass* pAnim = NULL;

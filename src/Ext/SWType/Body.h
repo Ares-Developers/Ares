@@ -148,6 +148,7 @@ public:
 		Valueable<float> SW_WidthOrRange;
 		Valueable<int> SW_Height;
 		ValueableEnum<SuperWeaponAffectedHouse> SW_AffectsHouse;
+		ValueableEnum<SuperWeaponAffectedHouse> SW_RequiresHouse;
 		ValueableEnum<SuperWeaponTarget> SW_AffectsTarget;
 		ValueableEnum<SuperWeaponTarget> SW_RequiresTarget;
 		Customizable<WarheadTypeClass *> SW_Warhead;
@@ -217,6 +218,7 @@ public:
 			SW_ShowCameo (true),
 			SW_Unstoppable (false),
 			SW_AffectsHouse (SuperWeaponAffectedHouse::All),
+			SW_RequiresHouse (SuperWeaponAffectedHouse::None),
 			SW_AffectsTarget (SuperWeaponTarget::All),
 			SW_RequiresTarget (SuperWeaponTarget::None),
 			SW_AITargetingType (SuperWeaponAITargetingMode::None),
