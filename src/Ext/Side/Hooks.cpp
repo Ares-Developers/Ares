@@ -212,7 +212,7 @@ DEFINE_HOOK(553E54, LoadProgressMgr_Draw_SkipShadowOnNullString, 6) {
 }
 
 // do not draw a box for the country name.
-DEFINE_HOOK(553820, LoadProgressMgr_Draw_SkipShadowOnNullString2, 6) {
+DEFINE_HOOK(553820, LoadProgressMgr_Draw_SkipShadowOnNullString2, 5) {
 	GET(wchar_t*, pCountry, EDI);
 
 	if(!pCountry || !wcslen(pCountry)) {
