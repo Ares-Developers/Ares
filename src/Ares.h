@@ -135,6 +135,7 @@ public:
 		static bool AllowMultiEngineer;
 		static bool CampaignList;
 		static bool ShowDebugCampaigns;
+		static Interface::CampaignData Campaigns[4];
 	};
 
 	static bool RunningOnWindows7OrVista();
