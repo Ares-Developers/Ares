@@ -84,6 +84,14 @@ public:
 		bool CanDrive; //!< Whether this TechnoType can act as the driver of vehicles whose driver has been killed. Request #733.
 
 		bool AlternateTheaterArt;
+		
+		bool PassengersGainExperience;
+		bool ExperienceFromPassengers;
+		float PassengerExperienceModifier;
+		float MindControlExperienceSelfModifier;
+		float MindControlExperienceVictimModifier;
+		bool ExperienceFromAirstrike;
+		float AirstrikeExperienceModifier;
 
 		ValueableIdx<int, VocClass> VoiceRepair;
 
@@ -134,6 +142,13 @@ public:
 			ProtectedDriver(false),
 			CanDrive (false),
 			AlternateTheaterArt (false),
+			PassengersGainExperience (false),
+			ExperienceFromPassengers (true),
+			ExperienceFromAirstrike (false),
+			AirstrikeExperienceModifier (1.0F),
+			PassengerExperienceModifier (1.0F),
+			MindControlExperienceSelfModifier (0.0F),
+			MindControlExperienceVictimModifier (1.0F),
 			VoiceRepair (-1),
 			WaterImage (NULL),
 			CanBeReversed (true),

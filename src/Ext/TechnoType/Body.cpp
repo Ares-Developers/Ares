@@ -252,6 +252,15 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	this->ProtectedDriver = pINI->ReadBool(section, "ProtectedDriver", this->ProtectedDriver);
 	this->CanDrive = pINI->ReadBool(section, "CanDrive", this->CanDrive);
 
+	// #346, #464, #970, #1014
+	this->PassengersGainExperience = pINI->ReadBool(section, "Experience.PromotePassengers", this->PassengersGainExperience);
+	this->ExperienceFromPassengers = pINI->ReadBool(section, "Experience.FromPassengers", this->ExperienceFromPassengers);
+	this->PassengerExperienceModifier = (float)pINI->ReadDouble(section, "Experience.PassengerModifier", this->PassengerExperienceModifier);
+	this->MindControlExperienceSelfModifier = (float)pINI->ReadDouble(section, "Experience.MindControlSelfModifier", this->MindControlExperienceSelfModifier);
+	this->MindControlExperienceVictimModifier = (float)pINI->ReadDouble(section, "Experience.MindControlVictimModifier", this->MindControlExperienceVictimModifier);
+	this->ExperienceFromAirstrike = pINI->ReadBool(section, "Experience.FromAirstrike", this->ExperienceFromAirstrike);
+	this->AirstrikeExperienceModifier = (float)pINI->ReadDouble(section, "Experience.AirstrikeModifier", this->AirstrikeExperienceModifier);
+
 	this->VoiceRepair.Read(&exINI, section, "VoiceIFVRepair");
 
 	this->IC_Modifier = (float)pINI->ReadDouble(section, "IronCurtain.Modifier", this->IC_Modifier);
