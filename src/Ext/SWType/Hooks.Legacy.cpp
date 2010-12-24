@@ -150,9 +150,10 @@ DEFINE_HOOK(53B080, PsyDom_Fire, 5) {
 
 DEFINE_HOOK(53C321, ScenarioClass_UpdateLighting_PsyDom, 5) {
 	if(SuperClass *pSuper = SW_PsychicDominator::CurrentPsyDom) {
-		SWTypeExt::ChangeLighting(pSuper);
-		R->EAX(1);
-		return 0x53C43F;
+		if(SWTypeExt::ChangeLighting(pSuper)) {
+			R->EAX(1);
+			return 0x53C43F;
+		}
 	}
 
 	return 0;
@@ -160,9 +161,10 @@ DEFINE_HOOK(53C321, ScenarioClass_UpdateLighting_PsyDom, 5) {
 
 DEFINE_HOOK(53C2A6, ScenarioClass_UpdateLighting_LightningStorm, 5) {
 	if(SuperClass *pSuper = SW_LightningStorm::CurrentLightningStorm) {
-		SWTypeExt::ChangeLighting(pSuper);
-		R->EAX(1);
-		return 0x53C43F;
+		if(SWTypeExt::ChangeLighting(pSuper)) {
+			R->EAX(1);
+			return 0x53C43F;
+		}
 	}
 
 	return 0;
@@ -170,9 +172,10 @@ DEFINE_HOOK(53C2A6, ScenarioClass_UpdateLighting_LightningStorm, 5) {
 
 DEFINE_HOOK(53C3B1, ScenarioClass_UpdateLighting_Nuke, 5) {
 	if(SuperWeaponTypeClass *pType = SW_NuclearMissile::CurrentNukeType) {
-		SWTypeExt::ChangeLighting(pType);
-		R->EAX(1);
-		return 0x53C43F;
+		if(SWTypeExt::ChangeLighting(pType)) {
+			R->EAX(1);
+			return 0x53C43F;
+		}
 	}
 
 	return 0;
@@ -287,7 +290,7 @@ DEFINE_HOOK(53A6C0, LightningStorm_Update, 5) {
 					LightningStorm::Status(0);
 				}
 			}
-		} 
+		}
 
 		// update other screen effects
 		PsyDom::Update();
