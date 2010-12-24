@@ -46,7 +46,7 @@ DEFINE_HOOK(6F9E50, TechnoClass_Update, 5)
 
 	// #1208
 	if(TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(Source->GetTechnoType())) {
-		if(pTypeData->PassengerTurret) {
+		if(pTypeData->PassengerTurret.Get()) {
 			// 18 = 1 8 = A H = Adolf Hitler. Clearly we can't allow it to come to that.
 			int passengerNumber = (Source->Passengers.NumPassengers <= 17) ? Source->Passengers.NumPassengers : 17;
 			int maxTurret = Source->GetTechnoType()->TurretCount - 1;
