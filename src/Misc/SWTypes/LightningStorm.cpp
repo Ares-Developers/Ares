@@ -98,6 +98,8 @@ void SW_LightningStorm::LoadFromINI(
 		for(char * cur = strtok(Ares::readBuffer, Ares::readDelims); cur && *cur; cur = strtok(NULL, Ares::readDelims)) {
 			if(AnimTypeClass *pAnim = AnimTypeClass::Find(cur)) {
 				pData->Weather_Clouds.AddItem(pAnim);
+			} else {
+				Debug::INIParseFailed(section, "Lightning.Clouds", cur, "Value contains invalid item.");
 			}
 		}
 	}
@@ -107,6 +109,8 @@ void SW_LightningStorm::LoadFromINI(
 		for(char * cur = strtok(Ares::readBuffer, Ares::readDelims); cur && *cur; cur = strtok(NULL, Ares::readDelims)) {
 			if(AnimTypeClass *pAnim = AnimTypeClass::Find(cur)) {
 				pData->Weather_Bolts.AddItem(pAnim);
+			} else {
+				Debug::INIParseFailed(section, "Lightning.Bolts", cur, "Value contains invalid item.");
 			}
 		}
 	}
@@ -116,6 +120,8 @@ void SW_LightningStorm::LoadFromINI(
 		for(char * cur = strtok(Ares::readBuffer, Ares::readDelims); cur && *cur; cur = strtok(NULL, Ares::readDelims)) {
 			if(AnimTypeClass *pAnim = AnimTypeClass::Find(cur)) {
 				pData->Weather_Debris.AddItem(pAnim);
+			} else {
+				Debug::INIParseFailed(section, "Lightning.Debris", cur, "Value contains invalid item.");
 			}
 		}
 	}
@@ -126,6 +132,8 @@ void SW_LightningStorm::LoadFromINI(
 			int idx = VocClass::FindIndex(cur);
 			if(idx != -1) {
 				pData->Weather_Sounds.AddItem(idx);
+			} else {
+				Debug::INIParseFailed(section, "Lightning.Sounds", cur, "Value contains invalid item.");
 			}
 		}
 	}

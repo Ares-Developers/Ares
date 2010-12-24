@@ -28,6 +28,9 @@ void SW_UnitDelivery::LoadFromINI(
 			if(!Type) {
 				Type = BuildingTypeClass::Find(cur);
 			}
+			if(!Type) {
+				Debug::INIParseFailed(section, "Deliver.Types", cur, "Expected valid TechnoType ID.");
+			}
 			if(Type) {
 				pData->SW_Deliverables.AddItem(Type);
 			}

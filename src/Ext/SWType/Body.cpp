@@ -167,6 +167,9 @@ void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass
 	this->Message_FirerColor.Read(&exINI, section, "Message.FirerColor");
 	if(pINI->ReadString(section, "Message.Color", Ares::readDefval, Ares::readBuffer, Ares::readLength)) {
 		this->Message_ColorScheme = ColorScheme::FindIndex(Ares::readBuffer);
+		if(!this->Message_ColorScheme) {
+			Debug::INIParseFailed(section, "Message.Color", Ares::readBuffer, "Expected a valid color scheme name.");
+		}
 	}
 
 	readString(this->Message_Launch, "Message.Launch");
