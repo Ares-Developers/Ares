@@ -85,6 +85,8 @@ void SW_ParaDrop::LoadFromINI(
 			if(AircraftTypeClass* pTAircraft = AircraftTypeClass::Find(Ares::readBuffer)) {
 				pPlane = new ParadropPlane();
 				pPlane->pAircraft = pTAircraft;
+			} else {
+				Debug::INIParseFailed(section, key, Ares::readBuffer);
 			}
 		}
 
@@ -108,6 +110,8 @@ void SW_ParaDrop::LoadFromINI(
 
 				if(pTT) {
 					pPlane->pTypes.AddItem(pTT);
+				} else {
+					Debug::INIParseFailed(section, key, p);
 				}
 			}
 		}

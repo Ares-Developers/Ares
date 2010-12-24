@@ -41,7 +41,7 @@ public:
 class Prereqs
 {
 public:
-	static void Parse(char* buffer, DynamicVectorClass<int> *vec);
+	static void Parse(CCINIClass *pINI, const char* section, const char *key, DynamicVectorClass<int> *vec);
 
 	static bool HouseOwnsGeneric(HouseClass *pHouse, signed int Index);
 	static bool HouseOwnsSpecific(HouseClass *pHouse, signed int Index);

@@ -199,12 +199,24 @@ DEFINE_HOOK(686D7F, Sides_LoadTextColor_CacheSP, 6) {
 	return 0;
 }
 
-// issue 906: do not draw a box below the label text if there is none.
+// issue 906
+// do not draw a box below the label text if there is none.
 DEFINE_HOOK(553E54, LoadProgressMgr_Draw_SkipShadowOnNullString, 6) {
 	GET(wchar_t*, pBrief, ESI);
 
 	if(!pBrief || !wcslen(pBrief)) {
 		return 0x554027;
+	}
+
+	return 0;
+}
+
+// do not draw a box for the country name.
+DEFINE_HOOK(553820, LoadProgressMgr_Draw_SkipShadowOnNullString2, 5) {
+	GET(wchar_t*, pCountry, EDI);
+
+	if(!pCountry || !wcslen(pCountry)) {
+		return 0x5539E4;
 	}
 
 	return 0;

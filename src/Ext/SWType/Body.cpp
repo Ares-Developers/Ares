@@ -203,7 +203,9 @@ void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass
 
 	if(pINI->ReadString(section, "SidebarPCX", "", Ares::readBuffer, Ares::readLength)) {
 		AresCRT::strCopy(this->SidebarPCX, Ares::readBuffer, 0x20);
-		PCX::Instance->LoadFile(this->SidebarPCX);
+		if(!PCX::Instance->LoadFile(this->SidebarPCX)) {
+			Debug::INIParseFailed(section, "SidebarPCX", this->SidebarPCX);
+		}
 	}
 }
 

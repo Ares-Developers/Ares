@@ -30,6 +30,8 @@
 
 #include <Utilities/Template.h>
 
+#include <cstdlib>
+
 #ifdef DEBUGBUILD
 #include "../Ext/WarheadType/Body.h"
 #include "../Enum/ArmorTypes.h"
@@ -729,5 +731,23 @@ DEFINE_HOOK(413FA3, AircraftClass_Init_Cloakable, 5)
 		Item->Cloakable = true;
 	}
 
+	return 0;
+}
+
+DEFINE_HOOK(48A507, SelectDamageAnimation_FixNegatives, 5)
+{
+	GET(int, Damage, EDI);
+	Damage = abs(Damage);
+	R->EDI(Damage);
+	return 0;
+}
+
+/* #1354 - Aircraft and empty SovParaDropInf list */
+DEFINE_HOOK(41D887, AirstrikeClass_Fire, 6)
+{
+	if(!RulesClass::Instance->SovParaDropInf.Count) {
+		R->ECX(-1);
+		return 0x41D895;
+	}
 	return 0;
 }

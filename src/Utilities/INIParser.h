@@ -28,6 +28,10 @@ public:
 		return Ares::readBuffer;
 	}
 
+	bool declared() const {
+		return !!Ares::readBuffer[0];
+	}
+
 
 	// bool
 	bool ReadBool(const char* pSection, const char* pKey, bool* bBuffer) {

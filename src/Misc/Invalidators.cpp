@@ -15,8 +15,10 @@ DEFINE_HOOK(477007, INIClass_GetSpeedType, 8)
 			UnitTypeClass::LoadFromINI overrides it to (this->Crusher ? Track : Wheel) just before reading its SpeedType
 			so we should not alert if we're responding to a TType read and our subject is a UnitType, or all VehicleTypes without an explicit ST declaration will get dinged
 		*/
-		if(caller != 0x7121E5 || R->EBP<TechnoTypeClass *>()->WhatAmI() != abs_UnitType) {
-			Debug::DevLog(Debug::Notice, "[%s]SpeedType=%s is not a valid value!\n", Section, Value);
+		if(strlen(Value)) {
+			if(caller != 0x7121E5 || R->EBP<TechnoTypeClass *>()->WhatAmI() != abs_UnitType) {
+				Debug::INIParseFailed(Section, "SpeedType", Value);
+			}
 		}
 	}
 	return 0;
@@ -27,9 +29,9 @@ DEFINE_HOOK(474E8E, INIClass_GetMovementZone, 5)
 	if(R->EAX() == -1) {
 		GET_STACK(const char *, Section, 0x2C);
 		LEA_STACK(const char *, Value, 0x8);
-//		if(_strcmpi(Value, "<none>")) {
-			Debug::DevLog(Debug::Notice, "[%s]MovementZone=%s is not a valid value!\n", Section, Value);
-//		}
+		if(strlen(Value)) {
+			Debug::INIParseFailed(Section, "MovementZone", Value);
+		}
 	}
 	return 0;
 }
@@ -39,9 +41,9 @@ DEFINE_HOOK(47542A, INIClass_GetArmorType, 6)
 	if(R->EAX() == -1) {
 		GET_STACK(const char *, Section, 0x8C);
 		LEA_STACK(const char *, Value, 0x8);
-//		if(_strcmpi(Value, "<none>")) {
-			Debug::DevLog(Debug::Notice, "[%s]Armor=%s is not a valid value!\n", Section, Value);
-//		}
+		if(strlen(Value)) {
+			Debug::INIParseFailed(Section, "Armor", Value);
+		}
 	}
 	return 0;
 }
@@ -52,7 +54,7 @@ DEFINE_HOOK(474DEE, INIClass_GetFoundation, 7)
 		GET_STACK(const char *, Section, 0x2C);
 		LEA_STACK(const char *, Value, 0x8);
 		if(_strcmpi(Value, "Custom")) {
-			Debug::DevLog(Debug::Notice, "[%s]Foundation=%s is not a valid value!\n", Section, Value);
+			Debug::INIParseFailed(Section, "Foundation", Value);
 		}
 	}
 	return 0;
@@ -96,6 +98,11 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 				"- The weapon's name was misspelled.\n"
 			, Item->get_ID());
 		}
+	}
+
+	if(Ares::bStrictParser && Debug::bParserErrorDetected) {
+		Debug::FatalErrorAndExit("One or more errors were detected while parsing the INI files.\r\n"
+				"Please review the contents of the debug log and correct them.");
 	}
 
 	return 0;

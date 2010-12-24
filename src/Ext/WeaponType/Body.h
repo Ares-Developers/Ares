@@ -65,8 +65,8 @@ public:
 		bool Ivan_Detachable;
 		Customizable<int> Ivan_Damage;
 		Customizable<int> Ivan_Delay;
-		Customizable<int> Ivan_TickingSound;
-		Customizable<int> Ivan_AttachSound;
+		CustomizableIdx<int, VocClass> Ivan_TickingSound;
+		CustomizableIdx<int, VocClass> Ivan_AttachSound;
 		Customizable<WarheadTypeClass *> Ivan_WH;
 		Customizable<SHPStruct *> Ivan_Image;
 		Customizable<int> Ivan_FlickerRate;
@@ -75,6 +75,9 @@ public:
 
 //		MouseCursor Cursor_Attack;
 //		bool Cursor_Custom;
+
+		// #680 Chrono Prison
+		Valueable<bool> Abductor; //!< Will this weapon force eligible targets into the passenger hold of the shooter?
 
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			Weapon_Loaded (false),
@@ -98,7 +101,8 @@ public:
 			Ivan_WH (&RulesClass::Instance->IvanWarhead),
 			Ivan_Image (&RulesClass::Instance->BOMBCURS_SHP),
 			Ivan_FlickerRate (&RulesClass::Instance->IvanIconFlickerRate),
-			Rad_Type (NULL)
+			Rad_Type (NULL),
+			Abductor(false)
 			{
 //				this->Beam_Color = ColorStruct(255, 255, 255);
 //				this->Wave_Color = ColorStruct(255, 255, 255);
@@ -119,6 +123,8 @@ public:
 		bool IsWave(WeaponTypeClass *pThis) {
 			return pThis->IsSonic || pThis->IsMagBeam || this->Wave_IsLaser || this->Wave_IsBigLaser;
 		}
+
+		bool conductAbduction(BulletClass *);
 	};
 
 /*

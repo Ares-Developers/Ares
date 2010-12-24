@@ -24,8 +24,8 @@ public:
 		GAME_DEALLOC(this->Palette);
 	}
 
-	bool LoadFromINI(CCINIClass *pINI, const char *pSection, const char *pKey) {
-		if(pINI->ReadString(pSection, pKey, "", Ares::readBuffer, Ares::readLength)) {
+	bool LoadFromINI(CCINIClass *pINI, const char *pSection, const char *pKey, const char *pDefault="") {
+		if(pINI->ReadString(pSection, pKey, pDefault, Ares::readBuffer, Ares::readLength)) {
 			GAME_DEALLOC(this->Palette);
 			GAME_DEALLOC(this->Convert);
 			ConvertClass::CreateFromFile(Ares::readBuffer, &this->Palette, &this->Convert);

@@ -1,6 +1,7 @@
 #include "Interface.h"
 #include "../Ares.h"
 #include "../Ext/Campaign/Body.h"
+#include "../Utilities/Constructs.h"
 
 #include <StringTable.h>
 #include <MessageBox.h>
@@ -12,7 +13,25 @@ int Interface::nextAction = -1;
 int Interface::nextReturnMenu = -1;
 const wchar_t* Interface::nextMessageText = NULL;
 
+int Interface::slots[4]; // holds index-of-campaign+1
+
+//! Overrides the default action and queue the user defined one.
+/*!
+	Called from within the button click event to override the game's
+	default action. Sets the user defined action and/or the message.
+
+	\param action The eUIAction to perform.
+	\param name The button name to get the message string of.
+	\param pResult A pointer to the game dialog's user info.
+	\param nextMenu The menu to go to after showing the message.
+
+	\returns True if action has been overridden, false otherwise.
+
+	\author AlexB
+	\date 2010-06-20
+*/
 bool Interface::invokeClickAction(eUIAction action, char* name, int* pResult, int nextMenu) {
+	// reset
 	nextAction = -1;
 	nextReturnMenu = -1;
 	nextMessageText = NULL;
@@ -44,9 +63,22 @@ bool Interface::invokeClickAction(eUIAction action, char* name, int* pResult, in
 		return ret(15);
 	}
 
+	// do default stuff
 	return false;
 }
 
+//! Disables, hides and moves menu items so there are no gaps in the menu navigation.
+/*!
+	Menu items will be disabled or hidden. For the latter, all succeeding
+	items are moved to the next free position, closing all gaps.
+
+	\param hDlg The dialog to update.
+	\param items An array of MenuItems to update.
+	\param count Length of items.
+
+	\author AlexB
+	\date 2010-06-20
+*/
 void Interface::updateMenuItems(HWND hDlg, MenuItem* items, int count) {
 	// account for dialog nc size
 	POINT ptDlg = {0, 0};
@@ -79,12 +111,37 @@ void Interface::updateMenuItems(HWND hDlg, MenuItem* items, int count) {
 	delete [] &rcOriginal;
 }
 
+//! Moves a menu item to a new location using an optional offset.
+/*!
+	Helper function to move an dialog item and offset in one go.
+	The offset is needed to account for non-client areas of the
+	windowed game.
+
+	\param hItem Handle of the item to update.
+	\param rcItem The item's new bounds.
+	\param ptOffset Special offset.
+
+	\author AlexB
+	\date 2010-06-20
+*/
 void Interface::moveItem(HWND hItem, RECT rcItem, POINT ptOffset) {
 	OffsetRect(&rcItem, ptOffset.x, ptOffset.y);
 	MoveWindow(hItem, rcItem.left, rcItem.top, 
 		rcItem.right - rcItem.left, rcItem.bottom - rcItem.top, false);
 }
 
+//! Swaps the bounds of two dialog items.
+/*!
+	Both button's bounds are swapped. This can be used to fix unintuitive
+	menu button order if some items are hidden.
+
+	\param hDlg The dialog to update.
+	\param nIDDlgItem1 Item one.
+	\param nIDDlgItem2 Item two.
+
+	\author AlexB
+	\date 2010-06-20
+*/
 void Interface::swapItems(HWND hDlg, int nIDDlgItem1, int nIDDlgItem2) {
 	HWND hFirst = GetDlgItem(hDlg, nIDDlgItem1);
 	HWND hSecond = GetDlgItem(hDlg, nIDDlgItem2);
@@ -100,22 +157,36 @@ void Interface::swapItems(HWND hDlg, int nIDDlgItem1, int nIDDlgItem2) {
 	}
 }
 
+//! Updates the dialogs after creation to better fit the user's needs.
+/*!
+	This function does dialog dependent stuff. Some controls are moved,
+	or disabled, new Ares controls are hidden if not explicitly enabled.
+
+	\param hDlg The dialog to update.
+	
+	\author AlexB
+	\date 2010-06-20
+*/
 void Interface::updateMenu(HWND hDlg) {
 	int iID = Interface::lastDialogTemplateID;
 
-	if((iID == 148) && Ares::UISettings::CampaignList) {
+	// campaign selection
+	if(iID == 148) {
+		// hide item by iID
 		auto hide = [hDlg](int nIDDlgItem) {
 			if(HWND hItem = GetDlgItem(hDlg, nIDDlgItem)) {
 				ShowWindow(hItem, SW_HIDE);
 			}
 		};
 
+		// show item by iID
 		auto show = [hDlg](int nIDDlgItem) {
 			if(HWND hItem = GetDlgItem(hDlg, nIDDlgItem)) {
 				ShowWindow(hItem, SW_SHOW);
 			}
 		};
 
+		// move item by some pixels
 		auto offset = [hDlg](int nIDDlgItem, int x, int y) {
 			if(HWND hItem = GetDlgItem(hDlg, nIDDlgItem)) {
 				POINT ptDlg = {0, 0};
@@ -129,59 +200,157 @@ void Interface::updateMenu(HWND hDlg) {
 			}
 		};
 
-		if(HWND hItem = GetDlgItem(hDlg, 1109)) {
-			// extensive stuff
-			show(1109);
-			show(1038);
-			hide(1770);
-			hide(1772);
+		POINT ptDlg = {0, 0};
+		ScreenToClient(hDlg, &ptDlg);
 
-			POINT ptDlg = {0, 0};
-			ScreenToClient(hDlg, &ptDlg);
+		// new campaign list versus default click selection
+		if(Ares::UISettings::CampaignList) {
+			if(HWND hItem = GetDlgItem(hDlg, 1109)) {
+				// extensive stuff
+				show(1109);
+				show(1038);
+				hide(1770);
+				hide(1772);
+				hide(1771);
+				hide(1773);
 
-			// use the position of the Allied button to place the
-			// new campaign selection list.
+				// use the position of the Allied button to place the
+				// new campaign selection list.
+				RECT rcItem = {125, 34, 125 + 174, 34 + 87};
+				if(HWND hAllImage = GetDlgItem(hDlg, 1770)) {
+					GetWindowRect(hAllImage, &rcItem);
+				}
+				offset(1959, 0, -rcItem.bottom + rcItem.top);
+
+				// center the list above the difficulty selection. the list may
+				// contain seven items, after that, a scroll bar will appear.
+				// acount for its width, too.
+				int offList = (CampaignExt::countVisible() < 8 ? -2 : -12);
+				OffsetRect(&rcItem, offList, 32);
+				moveItem(hItem, rcItem, ptDlg);
+			
+				// let the Allied label be the caption
+				if(HWND hAllLabel = GetDlgItem(hDlg, 1959)) {
+					SendMessageA(hAllLabel, 0x4B2, 0, (LPARAM)StringTable::LoadStringA("GUI:SelectCampaign"));
+				}
+
+				// call the load button "Play"
+				if(HWND hLoad = GetDlgItem(hDlg, 1038)) {
+					SendMessageA(hLoad, 0x4B2, 0, (LPARAM)StringTable::LoadStringA("GUI:Play"));
+				}
+
+				// move the soviet label to a new location and reuse
+				// it to show the selected campaigns summary.
+				if(HWND hSovImage = GetDlgItem(hDlg, 1772)) {
+					GetWindowRect(hSovImage, &rcItem);
+					if(HWND hSovLabel = GetDlgItem(hDlg, 1960)) {
+						// remove default text and move label
+						SendMessageA(hSovLabel, 0x4B2, 0, (LPARAM)L"");
+						moveItem(hSovLabel, rcItem, ptDlg);
+					
+						// left align text
+						DWORD style = GetWindowLong(hSovLabel, GWL_STYLE);
+						style = SS_LEFT | WS_CHILD | WS_VISIBLE;
+						SetWindowLong(hSovLabel, GWL_STYLE, style);
+					}
+				}
+
+				// reset the selection cache
+				CampaignExt::lastSelectedCampaign = -1;
+			}
+		} else {
+			// default way with starting a campaign by clicking on its image.
+
+			// The allied image defines the image size.
 			RECT rcItem = {125, 34, 125 + 174, 34 + 87};
 			if(HWND hAllImage = GetDlgItem(hDlg, 1770)) {
 				GetWindowRect(hAllImage, &rcItem);
 			}
-			offset(1959, 0, -rcItem.bottom + rcItem.top);
+			SIZE szImage;
+			szImage.cx = (int)((rcItem.right - rcItem.left) * .8);
+			szImage.cy = (int)((rcItem.bottom - rcItem.top) * 1.0);
 
-			// center the list above the difficulty selection. the list may
-			// contain seven items, after that, a scroll bar will appear.
-			// acount for its width, too.
-			int offList = (CampaignExt::countVisible() < 8 ? -2 : -12);
-			OffsetRect(&rcItem, offList, 32);
-			moveItem(hItem, rcItem, ptDlg);
-			
-			// let the Allied label be the caption
-			if(HWND hAllLabel = GetDlgItem(hDlg, 1959)) {
-				SendMessageA(hAllLabel, 0x4B2, 0, (LPARAM)StringTable::LoadStringA("GUI:SelectCampaign"));
+			// the soviet image's top is used for the second row
+			RECT rcSovImage = {0, 216, 0, 0};
+			if(HWND hSovImage = GetDlgItem(hDlg, 1772)) {
+				GetWindowRect(hSovImage, &rcSovImage);
 			}
+			int row2Offset = rcSovImage.top - rcItem.top;
 
 			// call the load button "Play"
 			if(HWND hLoad = GetDlgItem(hDlg, 1038)) {
 				SendMessageA(hLoad, 0x4B2, 0, (LPARAM)StringTable::LoadStringA("GUI:PlayMission"));
 			}
 
-			// move the soviet label to a new location and reuse
-			// it to show the selected campaigns summary.
-			if(HWND hSovImage = GetDlgItem(hDlg, 1772)) {
-				GetWindowRect(hSovImage, &rcItem);
-				if(HWND hSovLabel = GetDlgItem(hDlg, 1960)) {
-					// remove default text and move label
-					SendMessageA(hSovLabel, 0x4B2, 0, (LPARAM)L"");
-					moveItem(hSovLabel, rcItem, ptDlg);
-					
-					// left align text
-					DWORD style = GetWindowLong(hSovLabel, GWL_STYLE);
-					style = SS_LEFT | WS_CHILD | WS_VISIBLE;
-					SetWindowLong(hSovLabel, GWL_STYLE, style);
-				}
-			}
+			// position values
+			RECT rcWidth = rcItem;
+			OffsetRect(&rcWidth, ptDlg.x, ptDlg.y);
+			int width = rcWidth.left + rcWidth.right;
 
-			// reset the selection cache
-			CampaignExt::lastSelectedCampaign = -1;
+			int lefts[3];
+			lefts[0] = (width - szImage.cx) / 2;
+			lefts[1] = (width - 2 * szImage.cx) / 3;
+			lefts[2] = width - lefts[1] - szImage.cx;
+
+			// create seven slot rects
+			auto setRect = [&](RECT *rcRect, int x, int y) {
+				rcRect->left = x - ptDlg.x;
+				rcRect->top = y;
+				rcRect->right = rcRect->left + szImage.cx;
+				rcRect->bottom = rcRect->top + szImage.cy;
+			};
+
+			RECT *rcSlots = new RECT[7];
+			setRect(&rcSlots[0], lefts[0], rcItem.top);
+			setRect(&rcSlots[1], lefts[0], rcItem.top + row2Offset);
+			setRect(&rcSlots[2], lefts[1], rcItem.top);
+			setRect(&rcSlots[3], lefts[2], rcItem.top);
+			setRect(&rcSlots[4], lefts[1], rcItem.top + row2Offset);
+			setRect(&rcSlots[5], lefts[2], rcItem.top + row2Offset);
+			setRect(&rcSlots[6], -szImage.cx, -szImage.cy);
+
+			// move the images to their new locations
+			auto fillSlot = [&](int iIDDlgItem, int slot, int iIDLabel) {
+				if(HWND hItem = GetDlgItem(hDlg, iIDDlgItem)) {
+					moveItem(hItem, rcSlots[slot], ptDlg);
+				}
+
+				if(HWND hLabel = GetDlgItem(hDlg, iIDLabel)) {
+					if(slot < 6) {
+						RECT rcLabel = rcSlots[slot];
+						OffsetRect(&rcLabel, 0, (rcLabel.bottom - rcLabel.top));
+						rcLabel.bottom = rcLabel.top + 20;
+
+						// make the subtitle a little wider
+						int widen = (int)(slot < 2 ? (width - rcLabel.right + rcLabel.left) / 2 : 15);
+						rcLabel.left -= widen;
+						rcLabel.right += widen;
+
+						moveItem(hLabel, rcLabel, ptDlg);
+						ShowWindow(hLabel, SW_SHOW);
+					}
+					else {
+						ShowWindow(hLabel, SW_HIDE);
+					}
+				}
+			};
+
+			// move image and label. auto-center, if there is no neighbour.
+			auto moveToPlace = [&](int iID, int index, int neighbour, int slot, int center, int iIDLabel) {
+				if(slots[index]) {
+					fillSlot(iID, (slots[neighbour] ? slot : center), iIDLabel);
+				} else {
+					fillSlot(iID, 6, iIDLabel);
+				}
+			};
+
+			// move click zones and labels
+			moveToPlace(1770, 0, 1, 2, 0, 1959);
+			moveToPlace(1772, 1, 0, 3, 0, 1960);
+			moveToPlace(1771, 2, 3, 4, 1, 1961);
+			moveToPlace(1773, 3, 2, 5, 1, 1962);
+
+			delete [] &rcSlots;
 		}
 	}
 
@@ -231,6 +400,18 @@ void Interface::updateMenu(HWND hDlg) {
 	}
 }
 
+//! Parses an eUIAction from a string.
+/*!
+	Converts the string to an eUIAction.
+
+	\param value The string to parse.
+	\param def The eUIAction returned for invalid values.
+
+	\returns Parsed eUIAction if value is valid, def otherwise.
+
+	\author AlexB
+	\date 2010-06-20
+*/
 Interface::eUIAction Interface::parseUIAction(char* value, Interface::eUIAction def) {
 	if(!_strcmpi(value, "message")) {
 		return Interface::uia_Message;
@@ -244,6 +425,30 @@ Interface::eUIAction Interface::parseUIAction(char* value, Interface::eUIAction 
 		return Interface::uia_SneakPeek;
 	}
 	return def;
+}
+
+//! Converts a control ID to its corresponding index in slots.
+/*!
+	Converts an control ID to a slot index.
+
+	\param iID The control ID.
+
+	\returns The index in the slot array.
+
+	\author AlexB
+	\date 2010-06-20
+*/
+int Interface::getSlotIndex(int iID) {
+	if(iID == 1770) {
+		return 0;
+	} else if (iID == 1772) {
+		return 1;
+	} else if (iID == 1771) {
+		return 2;
+	} else if (iID == 1773) {
+		return 3;
+	}
+	return -1;
 }
 
 // cache the template id for later use
@@ -373,7 +578,8 @@ DEFINE_HOOK(52F00B, CampaignMenu_hDlg_PopulateCampaignList, 5) {
 	return 0x52F07F;
 }
 
-DEFINE_HOOK(52EC18, CampaignClass_hDlg_PreHandleGeneral, 5) {
+// catch selecting a new campaign from the list
+DEFINE_HOOK(52EC18, CampaignMenu_hDlg_PreHandleGeneral, 5) {
 	GET(HWND, hDlg, ESI);
 	GET(int, msg, EBX);
 	GET(int, lParam, EBP);
@@ -419,7 +625,8 @@ DEFINE_HOOK(52EC18, CampaignClass_hDlg_PreHandleGeneral, 5) {
 	return 0;
 }
 
-DEFINE_HOOK(52ED21, CampaignClass_hDlg_ClickedPlay, 9) {
+// start the mission
+DEFINE_HOOK(52ED21, CampaignMenu_hDlg_ClickedPlay, 9) {
 	GET(HWND, hDlg, ESI);
 
 	// find out which campaign is selected
@@ -430,4 +637,198 @@ DEFINE_HOOK(52ED21, CampaignClass_hDlg_ClickedPlay, 9) {
 	R->EAX(idxCampaign);
 
 	return 0x52ED2D;
+}
+
+// the extended default campaign selection menu.
+// Red Alert 2 supported three campaigns in its campaign selection menu.
+// Yuri's Revenge removed the tutorial. Ares adds two new buttons which
+// can have their own images and color palettes.
+
+// play mouse click sound
+DEFINE_HOOK(52EF39, CampaignMenu_hDlg_ImageMouseDown, 5) {
+	GET(int, iID, EAX);
+
+	// this is an image button. play click sound.
+	int idxSlot = Interface::getSlotIndex(iID);
+	if(idxSlot > -1) {
+		int idxCampaign = Interface::slots[idxSlot]-1;
+		if((idxCampaign > -1) && *Ares::UISettings::Campaigns[idxCampaign].Battle) {
+			return 0x52EF52;
+		}
+	}
+
+	return 0x52F3DC;
+}
+
+// select the hover sound to be played
+DEFINE_HOOK(52EE04, CampaignMenu_hDlg_SelectHoverSound, 6) {
+	GET(HWND, hDlg, ESI);
+	GET(int, iID, EBX);
+	GET(int, lastiID, EAX);
+
+	int idxSlot = Interface::getSlotIndex(iID);
+	if(idxSlot > -1) {
+		if(iID != lastiID) {
+			// get the campaign hovered above
+			int idxCampaign = Interface::slots[idxSlot]-1;
+
+			char* campaignID = NULL;
+			if(idxCampaign > -1) {
+				campaignID = Ares::UISettings::Campaigns[idxCampaign].Battle;
+			}
+
+			// find the campaign hover sound
+			if(campaignID && *campaignID) {
+				int sound = -1;
+				int idxBattle = CampaignClass::FindIndex(campaignID);
+				if(idxBattle > -1) {
+					if(CampaignExt::ExtData *pData = CampaignExt::Array.GetItem(idxBattle)) {
+						sound = VocClass::FindIndex(pData->HoverSound);
+					}
+				}
+
+				// the actual book keeping
+				SendDlgItemMessageA(hDlg, iID, 0x4D3, 0, 0);
+				*(DWORD*)(0x825C20) = sound;
+
+				return 0x52EE2D;
+			}
+		}
+		return 0x52F3DC;
+	}
+
+	return 0;
+}
+
+// override the campaign the game would choose
+DEFINE_HOOK(52F232, CampaignMenu_hDlg_StartCampaign, 6) {
+	GET(int, iID, EBP);
+
+	// get the campaign hovered above
+	int idxSlot = Interface::getSlotIndex(iID);
+	char* campaignID = NULL;
+	if(idxSlot > -1) {
+		int idxCampaign = Interface::slots[idxSlot]-1;
+		campaignID = Ares::UISettings::Campaigns[idxCampaign].Battle;
+	}
+
+	R->ECX(campaignID);
+	return 0x52F260;
+}
+
+// converter
+DEFINE_HOOK(60378B, CampaignMenu_ChooseButtonPalette, 6) {
+	GET(int, iID, EDI);
+
+	int idxSlot = Interface::getSlotIndex(iID);
+
+	if(idxSlot > -1) {
+		int idxCampaign = Interface::slots[idxSlot]-1;
+		if(Ares::UISettings::Campaigns[idxCampaign].Palette->Convert) {
+			R->EAX(Ares::UISettings::Campaigns[idxCampaign].Palette->Convert);
+			return 0x603798;
+		}
+	}
+	return 0x6037FE;
+}
+
+// buttom image
+DEFINE_HOOK(603A2E, CampaignMenu_ChooseButtonImage, 6) {
+	GET(int, iID, EAX);
+
+	int idxSlot = Interface::getSlotIndex(iID);
+
+	if(idxSlot > -1) {
+		int idxCampaign = Interface::slots[idxSlot]-1;
+		R->EAX(Ares::UISettings::Campaigns[idxCampaign].Image);		
+		return 0x603A3A;
+	}
+
+	return 0x603A35;
+}
+
+// support button background images for every button
+DEFINE_HOOK(60A90A, CampaignMenu_StaticButtonImage, 5) {
+	GET(HWND, iID, EAX);
+
+	return ((Interface::getSlotIndex((int)iID) > -1) ? 0x60A982 : 0x60A9ED);
+}
+
+// animation duration
+DEFINE_HOOK(60357E, CampaignMenu_SetAnimationDuration, 5) {
+	GET(HWND, iID, EAX);
+
+	return ((Interface::getSlotIndex((int)iID) > -1) ? 0x6035C5 : 0x6035E6);
+}
+
+// initialize stuff like the order and images
+DEFINE_HOOK(52F191, CampaignMenu_InitializeMoreButtons, 5) {
+	GET(HWND, hDlg, ESI);
+
+	if(!Ares::UISettings::CampaignList) {
+		// register buttons as campaign buttons
+		SendDlgItemMessageA(hDlg, 1773, 0x4D5u, 0, 0);
+		SendDlgItemMessageA(hDlg, 1773, 0x4D4u, 0, 0);
+
+		if(HWND hItem = GetDlgItem(hDlg, 1771)) {
+			PostMessageA(hItem, 0x4D7u, 0, (LPARAM)hDlg);
+		}
+
+		if(HWND hItem = GetDlgItem(hDlg, 1773)) {
+			PostMessageA(hItem, 0x4D7u, 0, (LPARAM)hDlg);
+		}
+
+		// create the order in which the campaigns will appear.
+		// this matters for three campaigns as it seems the
+		// usual item count should be 1-2 and not 2-1.
+		if(Ares::UISettings::Campaigns[3].Valid) {
+			// in order of appearance
+			for(int i=0; i<4; ++i) {
+				Interface::slots[i] = i + 1;
+			}
+		} else {
+			// at most three campaigns. special order.
+			int order[4] = {1, 0, 2, 3};
+			for(int i=0; i<4; ++i) {
+				Interface::slots[i] = order[i];
+			}
+		}
+
+		// remove the ones that are not there
+		for(int i=0; i<4; ++i) {
+			int idxCampaign = Interface::slots[i] - 1;
+			if(!Ares::UISettings::Campaigns[idxCampaign].Valid) {
+				// disable slot
+				Interface::slots[i] = 0;
+			} else {
+				// update the subline text
+				if(HWND hItem = GetDlgItem(hDlg, i + 1959)) {
+				  SendMessageA(hItem, 0x4B2u, 0, (LPARAM)StringTable::LoadStringA(Ares::UISettings::Campaigns[idxCampaign].Subline));
+				}
+			}
+		}
+	}
+
+	return 0;
+}
+
+// if this is a campaign button, handle the tooltip ourselves
+DEFINE_HOOK(6041ED, DialogFunc_SubText_CampaignIconA, 5) {
+	GET(int, iID, EAX);
+
+	int idxSlot = Interface::getSlotIndex(iID);
+	if(idxSlot > -1) {
+		int idxCampaign = Interface::slots[idxSlot]-1;
+		if((idxCampaign > -1) && *Ares::UISettings::Campaigns[idxCampaign].ToolTip) {
+			R->EAX(Ares::UISettings::Campaigns[idxCampaign].ToolTip);
+			return 0x6041F4;
+		}
+	}
+
+	return 0x60421D;
+}
+
+// already set. skip this.
+DEFINE_HOOK(6041F5, DialogFunc_CampaignMenu_CampaignIconB, 5) {
+	return 0x6041FA;
 }

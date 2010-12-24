@@ -173,8 +173,8 @@ DEFINE_HOOK(436459, BuildingLightClass_Update, 6)
 	static const double Facing2Rad = (2 * 3.14) / 0xFFFF;
 	GET(BuildingLightClass *, BL, EDI);
 	TechnoClass *Owner = BL->OwnerObject;
-	TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(Owner->GetTechnoType());
 	if(Owner && Owner->WhatAmI() != abs_Building) {
+		TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(Owner->GetTechnoType());
 		CoordStruct Loc = Owner->Location;
 		DWORD Facing;
 		switch(pTypeData->Spot_AttachedTo) {
@@ -197,11 +197,15 @@ DEFINE_HOOK(436459, BuildingLightClass_Update, 6)
 		BL->field_C4 = Loc;
 //		double zer0 = 0.0;
 		__asm { fldz }
-		return R->AL()
-		 ? 0x436461
-		 : 0x4364C8;
+	} else {
+		double Angle = RulesClass::Instance->SpotlightAngle;
+		__asm { fld Angle }
 	}
-	return 0;
+
+	return R->AL()
+		? 0x436461
+		: 0x4364C8
+	;
 }
 
 DEFINE_HOOK(435BE0, BuildingLightClass_Draw_Start, 6)

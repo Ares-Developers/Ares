@@ -4,6 +4,7 @@
 
 #include <HouseClass.h>
 #include <BuildingClass.h>
+#include <GeneralStructures.h>
 #include <Helpers/Template.h>
 
 template<> const DWORD Extension<TechnoClass>::Canary = 0x55555555;
