@@ -774,3 +774,35 @@ DEFINE_HOOK(6CBD6B, SuperClass_Update_DrainMoney, 8) {
 
 	return (timeLeft ? 0x6CBE7C : 0x6CBD73);
 }
+
+// used only to find the nuke for ICBM crates. only supports nukes fully.
+DEFINE_HOOK(6CEEB0, SuperWeaponTypeClass_FindFirstOfAction, 8) {
+	GET(int, action, ECX);
+
+	R->EAX(0);
+
+	// this implementation is as stupid as short sighted, but it should work
+	// for the moment. as there are no actions any more, this has to be
+	// reworked if powerups are expanded. for now, it only has to find a nuke.
+	for(int i=0; i<SuperWeaponTypeClass::Array->Count; ++i) {
+		if(SuperWeaponTypeClass* pType = SuperWeaponTypeClass::Array->GetItem(i)) {
+			if(pType->Action == action) {
+				R->EAX(pType);
+				break;
+			} else {
+				if(SWTypeExt::ExtData* pExt = SWTypeExt::ExtMap.Find(pType)) {
+					if(pExt->HandledByNewSWType > -1) {
+						if(NewSWType *swt = NewSWType::GetNthItem(pExt->HandledByNewSWType)) {
+							if(swt->HandlesType(SuperWeaponType::Nuke)) {
+								R->EAX(pType);
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return 0x6CEEE5;
+}
