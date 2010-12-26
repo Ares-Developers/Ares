@@ -105,5 +105,60 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 				"Please review the contents of the debug log and correct them.");
 	}
 
+	// #1000
+	if((RulesExt::ExtData *AresGeneral = RulesExt::Global()) &&
+		AresGeneral->CanMakeStuffUp && // counting on lazy evaluation
+		(RulesClass* StockGeneral = RulesClass::Global())
+	) { // well, the modder *said* we can make stuff up, so...
+		StockGeneral->VeteranRatio = ScenarioClass::Instance->Random.RandomRanged(1, 100) / 100.0;
+		StockGeneral->BuildSpeed = ScenarioClass::Instance->Random.RandomRanged(1, 350) / 100.0;
+		StockGeneral->BuildupTime = ScenarioClass::Instance->Random.RandomRanged(1, 50) / 100.0;
+		StockGeneral->RefundPercent = ScenarioClass::Instance->Random.RandomRanged(1, 900) / 100.0;
+		StockGeneral->GrowthRate /= ScenarioClass::Instance->Random.RandomRanged(1, 5);
+		StockGeneral->GameSpeedBias += ScenarioClass::Instance->Random.RandomRanged(-40, 40) / 100.0;
+		StockGeneral->Stray = ScenarioClass::Instance->Random.RandomRanged(1, 5);
+		StockGeneral->FlightLevel = ScenarioClass::Instance->Random.RandomRanged(900, 2500);
+		StockGeneral->ParachuteMaxFallRate *= -1;
+
+		// for extra WTF-ness:
+		int monkey = InfantryTypeClass::FindIndex("JOSH");
+		int camel = InfantryTypeClass::FindIndex("CAML");
+		int cow = InfantryTypeClass::FindIndex("COW");
+		bool zooTime = ScenarioClass::Instance->Random.RandomRanged(1, 5) == 3;
+		if((monkey != -1) && zooTime) {
+			StockGeneral->AlliedCrew = InfantryTypeClass::Array->GetItem(monkey);
+		}
+		zooTime = ScenarioClass::Instance->Random.RandomRanged(1, 5) == 3;
+		if((camel != -1) && zooTime) {
+			StockGeneral->SovietCrew = InfantryTypeClass::Array->GetItem(camel);
+		}
+		zooTime = ScenarioClass::Instance->Random.RandomRanged(1, 5) == 3;
+		if((cow != -1) && zooTime) {
+			StockGeneral->ThirdCrew = InfantryTypeClass::Array->GetItem(cow);
+		}
+		//-
+
+		StockGeneral->HoverHeight += ScenarioClass::Instance->Random.RandomRanged(-30, 30);
+		StockGeneral->WindDirection = ScenarioClass::Instance->Random.RandomRanged(0, 7);
+		StockGeneral->MaximumQueuedObjects += ScenarioClass::Instance->Random.RandomRanged(-5, 5);
+		StockGeneral->MaxWaypointPathLength += ScenarioClass::Instance->Random.RandomRanged(-5, 5);
+		StockGeneral->CruiseHeight += ScenarioClass::Instance->Random.RandomRanged(-200, 200);
+
+		StockGeneral->LaserTargetColor += ScenarioClass::Instance->Random.RandomRanged(-1, 1);
+		StockGeneral->IronCurtainColor += ScenarioClass::Instance->Random.RandomRanged(-1, 1);
+		StockGeneral->BerserkColor += ScenarioClass::Instance->Random.RandomRanged(-1, 1);
+		StockGeneral->ForceShieldColor += ScenarioClass::Instance->Random.RandomRanged(-1, 1);
+
+		StockGeneral->PoseDir = ScenarioClass::Instance->Random.RandomRanged(0, 255);
+		StockGeneral->DeployDir = ScenarioClass::Instance->Random.RandomRanged(0, 255);
+
+		StockGeneral->Gravity += ScenarioClass::Instance->Random.RandomRanged(-2, 2);
+		StockGeneral->IvanTimedDelay += ScenarioClass::Instance->Random.RandomRanged(-150, 150);
+
+		StockGeneral->PlayerAutoCrush = ScenarioClass::Instance->Random.RandomRanged(1, 3) == 3;
+		StockGeneral->PlayerReturnFire = ScenarioClass::Instance->Random.RandomRanged(1, 3) == 3;
+		StockGeneral->PlayerScatter = ScenarioClass::Instance->Random.RandomRanged(1, 3) == 3;
+	}
+
 	return 0;
 }
