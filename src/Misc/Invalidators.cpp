@@ -1,6 +1,8 @@
 #include <CCINIClass.h>
 #include <TechnoTypeClass.h>
 #include <WeaponTypeClass.h>
+#include <AnimClass.h>
+#include <InfantryClass.h>
 #include <ScenarioClass.h>
 #include "Debug.h"
 #include "../Ext/Rules/Body.h"
@@ -109,7 +111,7 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 
 	// #1000
 	if(RulesExt::ExtData *AresGeneral = RulesExt::Global()) {
-		if(AresGeneral->CanMakeStuffUp) { // counting on lazy evaluation
+		if(!!AresGeneral->CanMakeStuffUp) {
 			if(RulesClass* StockGeneral = RulesClass::Global()) { // well, the modder *said* we can make stuff up, so...
 				Randomizer *r = &ScenarioClass::Instance->Random;
 
@@ -124,6 +126,7 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 
 				if(r->RandomRanged(1, 10) == 3) {
 					StockGeneral->ParachuteMaxFallRate *= -1;
+					StockGeneral->NoParachuteMaxFallRate -= 5;
 				}
 
 				// for extra WTF-ness:
@@ -184,3 +187,46 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 
 	return 0;
 }
+
+DEFINE_HOOK(55AFB3, LogicClass_Update_1000, 6)
+{
+
+	if(RulesExt::ExtData *AresGeneral = RulesExt::Global()) {
+		if(!!AresGeneral->CanMakeStuffUp) {
+			if(Unsorted::CurrentFrame % 90 == 0) {
+
+				auto RandomRanged = [](int Min, int Max) {
+					return ScenarioClass::Instance->Random.RandomRanged(Min, Max);
+				};
+
+				for(int i = 0; i < InfantryClass::Array->Count; ++i) {
+					auto Inf = InfantryClass::Array->GetItem(i);
+					if(Inf->IsFallingDown) {
+						if(auto paraAnim = Inf->Parachute) {
+							int limit = RandomRanged(-300, 300) + 3000;
+							if(Inf->GetHeight() >= limit) {
+								paraAnim->RemainingIterations = 0;
+								Inf->HasParachute = false;
+								Inf->FallRate = -1;
+								Inf->IsABomb = true; // ffffuuuu....
+							}
+						}
+
+						continue;
+					}
+
+					if(Inf->Fetch_ID() % 500 == Unsorted::CurrentFrame % 500) { // I have no idea how often this happens, btw
+						if(RandomRanged(1, 100) <= 2) {
+							Inf->Panic();
+						} else if(RandomRanged(1, 100) >= 98) {
+							Inf->UnPanic();
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return 0;
+}
+
