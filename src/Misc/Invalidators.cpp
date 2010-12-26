@@ -1,6 +1,7 @@
 #include <CCINIClass.h>
 #include <TechnoTypeClass.h>
 #include <WeaponTypeClass.h>
+#include <Randomizer.h>
 #include "Debug.h"
 
 DEFINE_HOOK(477007, INIClass_GetSpeedType, 8)
@@ -60,6 +61,8 @@ DEFINE_HOOK(474DEE, INIClass_GetFoundation, 7)
 	return 0;
 }
 
+int getRandomColor(int, Randomizer*);
+
 DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 {
 	/*
@@ -110,55 +113,74 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 		AresGeneral->CanMakeStuffUp && // counting on lazy evaluation
 		(RulesClass* StockGeneral = RulesClass::Global())
 	) { // well, the modder *said* we can make stuff up, so...
-		StockGeneral->VeteranRatio = ScenarioClass::Instance->Random.RandomRanged(1, 100) / 100.0;
-		StockGeneral->BuildSpeed = ScenarioClass::Instance->Random.RandomRanged(1, 350) / 100.0;
-		StockGeneral->BuildupTime = ScenarioClass::Instance->Random.RandomRanged(1, 50) / 100.0;
-		StockGeneral->RefundPercent = ScenarioClass::Instance->Random.RandomRanged(1, 900) / 100.0;
-		StockGeneral->GrowthRate /= ScenarioClass::Instance->Random.RandomRanged(1, 5);
-		StockGeneral->GameSpeedBias += ScenarioClass::Instance->Random.RandomRanged(-40, 40) / 100.0;
-		StockGeneral->Stray = ScenarioClass::Instance->Random.RandomRanged(1, 5);
-		StockGeneral->FlightLevel = ScenarioClass::Instance->Random.RandomRanged(900, 2500);
-		StockGeneral->ParachuteMaxFallRate *= -1;
+		Randomizer *r = &ScenarioClass::Instance->Random;
+
+		StockGeneral->VeteranRatio = r->RandomRanged(1, 500) / 100.0;
+		StockGeneral->BuildSpeed = r->RandomRanged(1, 350) / 100.0;
+		StockGeneral->BuildupTime = r->RandomRanged(1, 50) / 100.0;
+		StockGeneral->RefundPercent = r->RandomRanged(1, 900) / 100.0;
+		StockGeneral->GrowthRate /= r->RandomRanged(1, 5);
+		//StockGeneral->GameSpeedBias += r->RandomRanged(-40, 40) / 100.0;
+		StockGeneral->Stray = r->RandomRanged(1, 5);
+		StockGeneral->FlightLevel = r->RandomRanged(900, 2500);
+
+		if(r->RandomRanged(1, 10) == 3) {
+			StockGeneral->ParachuteMaxFallRate *= -1;
+		}
 
 		// for extra WTF-ness:
 		int monkey = InfantryTypeClass::FindIndex("JOSH");
 		int camel = InfantryTypeClass::FindIndex("CAML");
 		int cow = InfantryTypeClass::FindIndex("COW");
-		bool zooTime = ScenarioClass::Instance->Random.RandomRanged(1, 5) == 3;
+		bool zooTime = r->RandomRanged(1, 5) == 3;
 		if((monkey != -1) && zooTime) {
 			StockGeneral->AlliedCrew = InfantryTypeClass::Array->GetItem(monkey);
 		}
-		zooTime = ScenarioClass::Instance->Random.RandomRanged(1, 5) == 3;
+		zooTime = r->RandomRanged(1, 5) == 3;
 		if((camel != -1) && zooTime) {
 			StockGeneral->SovietCrew = InfantryTypeClass::Array->GetItem(camel);
 		}
-		zooTime = ScenarioClass::Instance->Random.RandomRanged(1, 5) == 3;
+		zooTime = r->RandomRanged(1, 5) == 3;
 		if((cow != -1) && zooTime) {
 			StockGeneral->ThirdCrew = InfantryTypeClass::Array->GetItem(cow);
 		}
 		//-
 
-		StockGeneral->HoverHeight += ScenarioClass::Instance->Random.RandomRanged(-30, 30);
-		StockGeneral->WindDirection = ScenarioClass::Instance->Random.RandomRanged(0, 7);
-		StockGeneral->MaximumQueuedObjects += ScenarioClass::Instance->Random.RandomRanged(-5, 5);
-		StockGeneral->MaxWaypointPathLength += ScenarioClass::Instance->Random.RandomRanged(-5, 5);
-		StockGeneral->CruiseHeight += ScenarioClass::Instance->Random.RandomRanged(-200, 200);
+		StockGeneral->HoverHeight += r->RandomRanged(-30, 30);
+		StockGeneral->WindDirection = r->RandomRanged(0, 7);
+		StockGeneral->MaximumQueuedObjects += r->RandomRanged(-5, 5);
+		StockGeneral->MaxWaypointPathLength += r->RandomRanged(-5, 5);
+		StockGeneral->CruiseHeight += r->RandomRanged(-200, 200);
 
-		StockGeneral->LaserTargetColor += ScenarioClass::Instance->Random.RandomRanged(-1, 1);
-		StockGeneral->IronCurtainColor += ScenarioClass::Instance->Random.RandomRanged(-1, 1);
-		StockGeneral->BerserkColor += ScenarioClass::Instance->Random.RandomRanged(-1, 1);
-		StockGeneral->ForceShieldColor += ScenarioClass::Instance->Random.RandomRanged(-1, 1);
+		StockGeneral->LaserTargetColor = getRandomColor(StockGeneral->LaserTargetColor, r);
+		StockGeneral->IronCurtainColor = getRandomColor(StockGeneral->IronCurtainColor, r);
+		StockGeneral->BerserkColor = getRandomColor(StockGeneral->BerserkColor, r);
+		StockGeneral->ForceShieldColor = getRandomColor(StockGeneral->ForceShieldColor, r);
 
-		StockGeneral->PoseDir = ScenarioClass::Instance->Random.RandomRanged(0, 255);
-		StockGeneral->DeployDir = ScenarioClass::Instance->Random.RandomRanged(0, 255);
+		StockGeneral->PoseDir = r->RandomRanged(0, 255);
+		StockGeneral->DeployDir = r->RandomRanged(0, 255);
 
-		StockGeneral->Gravity += ScenarioClass::Instance->Random.RandomRanged(-2, 2);
-		StockGeneral->IvanTimedDelay += ScenarioClass::Instance->Random.RandomRanged(-150, 150);
+		StockGeneral->Gravity += r->RandomRanged(-2, 2);
+		StockGeneral->IvanTimedDelay += r->RandomRanged(-150, 150);
 
-		StockGeneral->PlayerAutoCrush = ScenarioClass::Instance->Random.RandomRanged(1, 3) == 3;
-		StockGeneral->PlayerReturnFire = ScenarioClass::Instance->Random.RandomRanged(1, 3) == 3;
-		StockGeneral->PlayerScatter = ScenarioClass::Instance->Random.RandomRanged(1, 3) == 3;
+		StockGeneral->PlayerAutoCrush = r->RandomRanged(1, 3) == 3;
+		StockGeneral->PlayerReturnFire = r->RandomRanged(1, 3) == 3;
+		StockGeneral->PlayerScatter = r->RandomRanged(1, 3) == 3;
 	}
 
 	return 0;
+}
+
+inline int getRandomColor(int curCol, Randomizer* pR) {
+	// assuming the default range of 0-13
+	switch(curCol) {
+		case 0: return curCol + pR->RandomRanged(0, 1);
+		case 13: return curCol + pR->RandomRanged(-1, 0);
+		default:
+			if((curCol > 0) && (curCol < 13)) {
+				return curCol + pR->RandomRanged(-1, 1);
+			} else {
+				return curCol;
+			}
+	}
 }
