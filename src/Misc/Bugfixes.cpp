@@ -693,6 +693,9 @@ DEFINE_HOOK(52BA78, _YR_GameInit_Pre, 5)
 
 	// issue #214: also animate the chronosphere cursor
 	MouseCursor::First[MouseCursorType::Chronosphere].Interval = 4;
+	
+	// issue #1380: the iron curtain cursor
+	MouseCursor::First[MouseCursorType::IronCurtain].Interval = 4;
 
 	return 0;
 }
