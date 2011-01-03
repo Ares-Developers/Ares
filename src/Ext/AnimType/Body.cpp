@@ -28,6 +28,8 @@ void AnimTypeExt::ExtData::LoadFromINIFile(AnimTypeClass *pThis, CCINIClass *pIN
 			Debug::INIParseFailed(pThis->ID, "MakeInfantryOwner", Ares::readBuffer);
 		}
 	}
+
+	this->Palette.LoadFromINI(pINI, pThis->ID, "CustomPalette");
 }
 
 void AnimTypeExt::SetMakeInfOwner(AnimClass *pAnim, HouseClass *pInvoker, HouseClass *pVictim, HouseClass *pKiller)

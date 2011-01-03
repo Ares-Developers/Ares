@@ -4,8 +4,12 @@
 // custom paletted cameos
 // TODO: add a static vector to buffer instances of the same Palette file?
 #include <ConvertClass.h>
+#include <ScenarioClass.h>
+#include <Theater.h>
 #include <CCINIClass.h>
 #include <GeneralStructures.h>
+
+#include <cstring>
 
 #include "Ares.h"
 
@@ -19,13 +23,19 @@ public:
 		Palette(NULL)
 	{};
 
-	~CustomPalette() {
+	virtual ~CustomPalette() {
 		GAME_DEALLOC(this->Convert);
 		GAME_DEALLOC(this->Palette);
 	}
 
-	bool LoadFromINI(CCINIClass *pINI, const char *pSection, const char *pKey, const char *pDefault="") {
+	virtual bool LoadFromINI(CCINIClass *pINI, const char *pSection, const char *pKey, const char *pDefault="") {
 		if(pINI->ReadString(pSection, pKey, pDefault, Ares::readBuffer, Ares::readLength)) {
+			if(char * suffix = strstr(Ares::readBuffer, "~~~")) {
+				const char * theaterSpecific = Theater::Array[ScenarioClass::Instance->Theater].Extension;
+				suffix[0] = theaterSpecific[0];
+				suffix[1] = theaterSpecific[1];
+				suffix[2] = theaterSpecific[2];
+			}
 			GAME_DEALLOC(this->Palette);
 			GAME_DEALLOC(this->Convert);
 			ConvertClass::CreateFromFile(Ares::readBuffer, &this->Palette, &this->Convert);
