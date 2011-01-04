@@ -23,12 +23,12 @@ public:
 		Palette(NULL)
 	{};
 
-	virtual ~CustomPalette() {
+	~CustomPalette() {
 		GAME_DEALLOC(this->Convert);
 		GAME_DEALLOC(this->Palette);
 	}
 
-	virtual bool LoadFromINI(CCINIClass *pINI, const char *pSection, const char *pKey, const char *pDefault="") {
+	bool LoadFromINI(CCINIClass *pINI, const char *pSection, const char *pKey, const char *pDefault="") {
 		if(pINI->ReadString(pSection, pKey, pDefault, Ares::readBuffer, Ares::readLength)) {
 			if(char * suffix = strstr(Ares::readBuffer, "~~~")) {
 				const char * theaterSpecific = Theater::Array[ScenarioClass::Instance->Theater].Extension;
@@ -39,7 +39,7 @@ public:
 			GAME_DEALLOC(this->Palette);
 			GAME_DEALLOC(this->Convert);
 			ConvertClass::CreateFromFile(Ares::readBuffer, &this->Palette, &this->Convert);
-			return true;
+			return !!this->Convert;
 		}
 		return false;
 	};
