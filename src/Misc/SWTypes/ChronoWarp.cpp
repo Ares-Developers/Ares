@@ -46,20 +46,15 @@ bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 			}
 
 			// cell and coords calculations
+			CellClass *pCellSource = MapClass::Instance->GetCellAt(&pSource->ChronoMapCoords);
 			CellClass *pCellTarget = MapClass::Instance->GetCellAt(pCoords);
 
 			CoordStruct coordsSource;
-			pCellTarget->GetCoords(&coordsSource);
-			if(pCellTarget->ContainsBridge()) {
-				coordsSource.Z += CellClass::BridgeHeight();
-			}
+			pCellSource->GetCoordsWithBridge(&coordsSource);
 			coordsSource.Z += pData->SW_AnimHeight;
 
 			CoordStruct coordsTarget;
-			pCellTarget->GetCoords(&coordsTarget);
-			if(pCellTarget->Flags & cf_Bridge) {
-				coordsTarget.Z += pCellTarget->BridgeHeight();
-			}
+			pCellTarget->GetCoordsWithBridge(&coordsTarget);
 			coordsTarget.Z += pData->SW_AnimHeight;
 
 			// Update animations

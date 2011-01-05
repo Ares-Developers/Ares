@@ -842,3 +842,32 @@ DEFINE_HOOK(467E59, BulletClass_Update_NukeBall, 5) {
 
 	return 0;
 }
+
+// iron curtained units would crush themselves
+DEFINE_HOOK(7187DA, TeleportLocomotionClass_Unwarp_PreventSelfCrush, 6) {
+	GET(TechnoClass*, pTeleporter, EDI);
+	GET(TechnoClass*, pContent, ECX);
+	return (pTeleporter == pContent) ? 0x71880A : 0;
+}
+
+// sink stuff that simply cannot exist on water
+DEFINE_HOOK(7188F2, TeleportLocomotionClass_Unwarp_SinkJumpJets, 7) {
+	GET(CellClass*, pCell, EAX);
+	GET(TechnoClass**, pTechno, ESI);
+
+	if(pCell->Tile_Is_Wet()) {
+		if(UnitClass* pUnit = specific_cast<UnitClass*>(pTechno[3])) {
+			if(pUnit->Deactivated) {
+				// this thing does not float
+				R->BL(0);
+			}
+
+			// manually sink it
+			if(pUnit->Type->JumpJet) {
+				return 0x718A66;
+			}
+		}
+	}
+
+	return 0;
+}
