@@ -101,7 +101,9 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	for(int i = 0; i < SideClass::Array->Count; ++i) {
 		_snprintf(flag, 256, "Survivor.Side%d", i);
 		if(pINI->ReadString(section, flag, "", Ares::readBuffer, Ares::readLength)) {
-			this->Survivors_Pilots[i] = InfantryTypeClass::Find(Ares::readBuffer);
+			if(!(this->Survivors_Pilots[i] = InfantryTypeClass::Find(Ares::readBuffer))) {
+				Debug::INIParseFailed(section, flag, Ares::readBuffer);
+			}
 		}
 	}
 
@@ -117,25 +119,19 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	}
 
 	DynamicVectorClass<int> *dvc = this->PrerequisiteLists.GetItem(0);
-	if(pINI->ReadString(section, "Prerequisite", "", Ares::readBuffer, Ares::readLength)) {
-		Prereqs::Parse(Ares::readBuffer, dvc);
-	}
-	if(pINI->ReadString(section, "PrerequisiteOverride", "", Ares::readBuffer, Ares::readLength)) {
-		dvc = &pThis->PrerequisiteOverride;
-		Prereqs::Parse(Ares::readBuffer, dvc);
-	}
+	Prereqs::Parse(pINI, section, "Prerequisite", dvc);
+
+	dvc = &pThis->PrerequisiteOverride;
+	Prereqs::Parse(pINI, section, "PrerequisiteOverride", dvc);
+
 	for(int i = 0; i < this->PrerequisiteLists.Count; ++i) {
 		_snprintf(flag, 256, "Prerequisite.List%d", i);
-		if(pINI->ReadString(section, flag, "", Ares::readBuffer, Ares::readLength)) {
-			dvc = this->PrerequisiteLists.GetItem(i);
-			Prereqs::Parse(Ares::readBuffer, dvc);
-		}
+		dvc = this->PrerequisiteLists.GetItem(i);
+		Prereqs::Parse(pINI, section, flag, dvc);
 	}
 
 	dvc = &this->PrerequisiteNegatives;
-	if(pINI->ReadString(section, "Prerequisite.Negative", "", Ares::readBuffer, Ares::readLength)) {
-		Prereqs::Parse(Ares::readBuffer, dvc);
-	}
+	Prereqs::Parse(pINI, section, "Prerequisite.Negative", dvc);
 
 	if(pINI->ReadString(section, "Prerequisite.RequiredTheaters", "", Ares::readBuffer, Ares::readLength)) {
 		this->PrerequisiteTheaters = 0;
@@ -143,6 +139,8 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 			signed int idx = Theater::FindIndex(cur);
 			if(idx != -1) {
 				this->PrerequisiteTheaters |= (1 << idx);
+			} else {
+				Debug::INIParseFailed(section, "Prerequisite.RequiredTheaters", cur);
 			}
 		}
 	}
@@ -168,6 +166,8 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 			this->Spot_AttachedTo = sa_Turret;
 		} else if(!_strcmpi(Ares::readBuffer, "barrel")) {
 			this->Spot_AttachedTo = sa_Barrel;
+		} else {
+			Debug::INIParseFailed(section, "Spotlight.AttachedTo", Ares::readBuffer);
 		}
 	}
 	this->Spot_DisableR = pINI->ReadBool(section, "Spotlight.DisableRed", this->Spot_DisableR);
@@ -192,7 +192,11 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	if(pINI->ReadString(section, "Operator", "", Ares::readBuffer, Ares::readLength)) { // try to read the flag
 		this->IsAPromiscuousWhoreAndLetsAnyoneRideIt = (strcmp(Ares::readBuffer, "_ANY_") == 0); // set whether this type accepts all operators
 		if(!this->IsAPromiscuousWhoreAndLetsAnyoneRideIt) { // if not, find the specific operator it allows
-			this->Operator = InfantryTypeClass::Find(Ares::readBuffer);
+			if(auto Operator = InfantryTypeClass::Find(Ares::readBuffer)) {
+				this->Operator = Operator;
+			} else {
+				Debug::INIParseFailed(section, "Operator", Ares::readBuffer);
+			}
 		}
 	}
 
@@ -204,6 +208,8 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 			signed int idx = atoi(cur);
 			if(idx > -1 && idx < 32) {
 				this->RequiredStolenTech.set(idx);
+			} else {
+				Debug::INIParseFailed(section, "Prerequisite.StolenTechs", cur, "Expected a number between 0 and 31 inclusive");
 			}
 		}
 	}
@@ -246,19 +252,42 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	this->ProtectedDriver = pINI->ReadBool(section, "ProtectedDriver", this->ProtectedDriver);
 	this->CanDrive = pINI->ReadBool(section, "CanDrive", this->CanDrive);
 
+	// #346, #464, #970, #1014
+	this->PassengersGainExperience = pINI->ReadBool(section, "Experience.PromotePassengers", this->PassengersGainExperience);
+	this->ExperienceFromPassengers = pINI->ReadBool(section, "Experience.FromPassengers", this->ExperienceFromPassengers);
+	this->PassengerExperienceModifier = (float)pINI->ReadDouble(section, "Experience.PassengerModifier", this->PassengerExperienceModifier);
+	this->MindControlExperienceSelfModifier = (float)pINI->ReadDouble(section, "Experience.MindControlSelfModifier", this->MindControlExperienceSelfModifier);
+	this->MindControlExperienceVictimModifier = (float)pINI->ReadDouble(section, "Experience.MindControlVictimModifier", this->MindControlExperienceVictimModifier);
+	this->ExperienceFromAirstrike = pINI->ReadBool(section, "Experience.FromAirstrike", this->ExperienceFromAirstrike);
+	this->AirstrikeExperienceModifier = (float)pINI->ReadDouble(section, "Experience.AirstrikeModifier", this->AirstrikeExperienceModifier);
+
 	this->VoiceRepair.Read(&exINI, section, "VoiceIFVRepair");
 
 	this->IC_Modifier = (float)pINI->ReadDouble(section, "IronCurtain.Modifier", this->IC_Modifier);
 
 	if(CCINIClass::INI_Art->ReadString(pThis->ImageFile, "CameoPCX", "", Ares::readBuffer, Ares::readLength)) {
 		AresCRT::strCopy(this->CameoPCX, Ares::readBuffer, 0x20);
-		PCX::Instance->LoadFile(this->CameoPCX);
+		_strlwr_s(this->CameoPCX, 0x20);
+		if(!PCX::Instance->LoadFile(this->CameoPCX)) {
+			Debug::INIParseFailed(pThis->ImageFile, "CameoPCX", this->CameoPCX);
+		}
 	}
 
 	if(CCINIClass::INI_Art->ReadString(pThis->ImageFile, "AltCameoPCX", "", Ares::readBuffer, Ares::readLength)) {
 		AresCRT::strCopy(this->AltCameoPCX, Ares::readBuffer, 0x20);
-		PCX::Instance->LoadFile(this->AltCameoPCX);
+		_strlwr_s(this->AltCameoPCX, 0x20);
+		if(!PCX::Instance->LoadFile(this->AltCameoPCX)) {
+			Debug::INIParseFailed(pThis->ImageFile, "AltCameoPCX", this->AltCameoPCX);
+		}
 	}
+
+	this->CanBeReversed.Read(&exINI, section, "CanBeReversed");
+
+	// #305
+	this->RadarJamRadius.Read(&exINI, section, "RadarJamRadius");
+
+	// #1208
+	this->PassengerTurret.Read(&exINI, section, "PassengerTurret");
 
 	// quick fix - remove after the rest of weapon selector code is done
 	return;
@@ -370,11 +399,9 @@ bool TechnoTypeExt::ExtData::CameoIsElite()
 	HouseTypeClass *Country = House->Type;
 
 	TechnoTypeClass * const T = this->AttachedToObject;
+	TechnoTypeExt::ExtData* pExt = TechnoTypeExt::ExtMap.Find(T);
 
-	SHPStruct *Cameo = T->Cameo;
-	SHPStruct *Alt = T->AltCameo;
-
-	if(!Alt) {
+	if(!T->AltCameo && !*pExt->AltCameoPCX) {
 		return false;
 	}
 
@@ -521,25 +548,16 @@ DEFINE_HOOK(679CAF, RulesClass_LoadAfterTypeData_InferEMPImmunity, 5) {
 	// The EMP immunity has a rather complex rule set to infer whether
 	// a TechnoType is immune from its properties. Here all properties
 	// have been parsed.
+	for(int i=0; i<TechnoTypeClass::Array->Count; ++i) {
+		TechnoTypeClass* pType = TechnoTypeClass::Array->GetItem(i);
+		TechnoTypeExt::InferEMPImmunity(pType, pINI);
+	}
+
 	for(int i=0; i<BuildingTypeClass::Array->Count; ++i) {
 		BuildingTypeClass* pTBld = BuildingTypeClass::Array->GetItem(i);
-		TechnoTypeExt::InferEMPImmunity(pTBld, pINI);
-
 		if(BuildingTypeExt::ExtData *pData = BuildingTypeExt::ExtMap.Find(pTBld)) {
 			pData->CompleteInitialization(pTBld);
 		}
-	}
-	for(int i=0; i<AircraftTypeClass::Array->Count; ++i) {
-		AircraftTypeClass* pTAir = AircraftTypeClass::Array->GetItem(i);
-		TechnoTypeExt::InferEMPImmunity(pTAir, pINI);
-	}
-	for(int i=0; i<UnitTypeClass::Array->Count; ++i) {
-		UnitTypeClass* pTUnit = UnitTypeClass::Array->GetItem(i);
-		TechnoTypeExt::InferEMPImmunity(pTUnit, pINI);
-	}
-	for(int i=0; i<InfantryTypeClass::Array->Count; ++i) {
-		InfantryTypeClass* pTInf = InfantryTypeClass::Array->GetItem(i);
-		TechnoTypeExt::InferEMPImmunity(pTInf, pINI);
 	}
 
 	return 0;

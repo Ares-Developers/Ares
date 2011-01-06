@@ -47,6 +47,8 @@ public:
 	static bool bLog;
 	static FILE* pLogFile;
 
+	static bool bStrictParser;
+
 	static int TrackIndex;
 
 	static DWORD readLength;
@@ -60,6 +62,8 @@ public:
 
 	static CCINIClass* OpenConfig(const char*);
 	static void CloseConfig(CCINIClass**);
+
+	static void InitNoCDMode();
 
 	//Callbacks
 	static void __stdcall CmdLineParse(char**,int);
@@ -131,6 +135,7 @@ public:
 		static bool AllowMultiEngineer;
 		static bool CampaignList;
 		static bool ShowDebugCampaigns;
+		static Interface::CampaignData Campaigns[4];
 	};
 
 	static bool RunningOnWindows7OrVista();

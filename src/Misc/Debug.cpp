@@ -6,6 +6,9 @@
 #include "..\Ares.version.h"
 
 bool Debug::bLog = true;
+bool Debug::bTrackParserErrors = false;
+bool Debug::bParserErrorDetected = false;
+
 FILE *Debug::pLogFile = NULL;
 wchar_t Debug::LogFileName[MAX_PATH] = L"\0";
 wchar_t Debug::LogFileTempName[MAX_PATH] = L"\0";
@@ -14,6 +17,9 @@ void (_cdecl* Debug::Log)(const char* pFormat, ...) =
 	(void (__cdecl *)(const char *,...))0x4068E0;
 
 void Debug::DevLog(Debug::Severity severity, const char* Format, ...) {
+	if(Debug::bTrackParserErrors) {
+		Debug::bParserErrorDetected = true;
+	}
 	if(!pLogFile) {
 		return;
 	}
@@ -366,6 +372,17 @@ void Debug::FatalErrorAndExit(const char *Message, ...) {
 	ExitProcess(1);
 }
 
+void Debug::INIParseFailed(const char *section, const char *flag, const char *value, const char *Message) {
+	if(Debug::bTrackParserErrors) {
+		const char * LogMessage = (Message == NULL)
+			? "Failed to parse INI file content: [%s]%s=%s\n"
+			: "Failed to parse INI file content: [%s]%s=%s (%s)\n"
+		;
+
+		Debug::DevLog(Debug::Warning, LogMessage, section, flag, value, Message);
+	}
+}
+
 DEFINE_HOOK(4C850B, Exception_Dialog, 5)
 {
 	Debug::FreeMouse();
@@ -394,3 +411,13 @@ DEFINE_HOOK(4C8FE0, Exception_Handler, 9)
 	Debug::ExceptionHandler(code, pExs);
 }
 //endif
+
+DEFINE_HOOK(534A4D, Theater_Init_ResetLogStatus, 6)
+{
+	// any errors triggered before this line are irrelevant
+	// caused by reading the section while only certain flags from it are needed
+	// and before other global lists are initialized
+	Debug::bTrackParserErrors = true;
+
+	return 0;
+}

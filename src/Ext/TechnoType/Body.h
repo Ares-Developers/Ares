@@ -84,6 +84,14 @@ public:
 		bool CanDrive; //!< Whether this TechnoType can act as the driver of vehicles whose driver has been killed. Request #733.
 
 		bool AlternateTheaterArt;
+		
+		bool PassengersGainExperience;
+		bool ExperienceFromPassengers;
+		float PassengerExperienceModifier;
+		float MindControlExperienceSelfModifier;
+		float MindControlExperienceVictimModifier;
+		bool ExperienceFromAirstrike;
+		float AirstrikeExperienceModifier;
 
 		ValueableIdx<int, VocClass> VoiceRepair;
 
@@ -91,6 +99,15 @@ public:
 
 		char CameoPCX[0x20];
 		char AltCameoPCX[0x20];
+
+		DynamicVectorClass<bool> ReversedByHouses;
+		Valueable<bool> CanBeReversed;
+
+		// issue #305
+		Valueable<int> RadarJamRadius; //!< Distance in cells to scan for & jam radars
+
+		// issue #1208
+		Valueable<bool> PassengerTurret; //!< Whether this unit's turret changes based on the number of people in its passenger hold.
 
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			Survivors_PilotChance (NULL),
@@ -125,11 +142,23 @@ public:
 			ProtectedDriver(false),
 			CanDrive (false),
 			AlternateTheaterArt (false),
+			PassengersGainExperience (false),
+			ExperienceFromPassengers (true),
+			ExperienceFromAirstrike (false),
+			AirstrikeExperienceModifier (1.0F),
+			PassengerExperienceModifier (1.0F),
+			MindControlExperienceSelfModifier (0.0F),
+			MindControlExperienceVictimModifier (1.0F),
 			VoiceRepair (-1),
-			WaterImage (NULL)
+			WaterImage (NULL),
+			CanBeReversed (true),
+			RadarJamRadius (0),
+			PassengerTurret (false)
 			{
 				this->Insignia.SetAll(NULL);
 				*this->CameoPCX = *this->AltCameoPCX = 0;
+				this->ReversedByHouses.SetCapacity(32, NULL);
+				this->ReversedByHouses.CapacityIncrement = 32;
 			};
 
 		virtual ~ExtData() {};

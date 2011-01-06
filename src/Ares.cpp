@@ -6,6 +6,7 @@
 //include "CallCenter.h"
 #include <StaticInits.cpp>
 #include <Unsorted.h>
+#include <GetCDClass.h>
 
 #include <new>
 
@@ -30,6 +31,7 @@ HANDLE Ares::hInstance = 0;
 bool Ares::bNoLogo = false;
 bool Ares::bNoCD = false;
 bool Ares::bTestingRun = false;
+bool Ares::bStrictParser = false;
 
 DWORD Ares::readLength = BUFLEN;
 char Ares::readBuffer[BUFLEN];
@@ -88,6 +90,8 @@ void __stdcall Ares::CmdLineParse(char** ppArgs,int nNumArgs)
 				bNoLogo = true;
 			} else if(strcmp(pArg, "-TESTRUN") == 0) {
 				bTestingRun = true;
+			} else if(strcmp(pArg, "-STRICT") == 0) {
+				bStrictParser = true;
 			}
 		}
 	}
@@ -96,6 +100,8 @@ void __stdcall Ares::CmdLineParse(char** ppArgs,int nNumArgs)
 		Debug::LogFileOpen();
 		Debug::Log("Initialized " VERSION_STRVER "\n");
 	}
+
+	InitNoCDMode();
 }
 
 void __stdcall Ares::PostGameInit()
@@ -129,6 +135,28 @@ CCINIClass* Ares::OpenConfig(const char* file) {
 	GAME_DEALLOC(cfg);
 
 	return pINI;
+}
+
+void Ares::InitNoCDMode() {
+	if(!GetCDClass::Instance->Count) {
+		Debug::Log("No CD drives detected. Switching to NoCD mode.\n");
+		bNoCD = true;
+	}
+	
+	if(bNoCD) {
+		Debug::Log("Optimizing list of CD drives for NoCD mode.\n");
+		memset(GetCDClass::Instance->Drives, -1, 26);
+
+		char drv[] = "a:\\";
+		for(int i=0; i<26; ++i) {
+			drv[0] = 'a' + (i + 2) % 26;
+			if(GetDriveTypeA(drv) == DRIVE_FIXED) {
+				GetCDClass::Instance->Drives[0] = (i + 2) % 26;
+				GetCDClass::Instance->Count = 1;
+				break;
+			}
+		}
+	}
 }
 
 void Ares::CloseConfig(CCINIClass** ppINI) {

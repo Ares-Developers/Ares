@@ -155,6 +155,8 @@ void SideExt::ExtData::LoadFromINIFile(SideClass *pThis, CCINIClass *pINI)
 
 			if(pTT) {
 				this->ParaDrop.AddItem(pTT);
+			} else {
+				Debug::INIParseFailed(section, "ParaDrop.Types", p);
 			}
 		}
 	}

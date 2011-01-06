@@ -169,7 +169,9 @@ void HouseTypeExt::ExtData::LoadFromRulesFile(HouseTypeClass *pThis, CCINIClass 
 
 	if (pINI->ReadString(pID, "File.Flag", "", Ares::readBuffer, Ares::readLength)) {
 		AresCRT::strCopy(this->FlagFile, Ares::readBuffer, 0x20);
-		PCX::Instance->LoadFile(this->FlagFile);
+		if(!PCX::Instance->LoadFile(this->FlagFile)) {
+			Debug::INIParseFailed(pID, "File.Flag", this->FlagFile);
+		}
 	}
 
 	if (pINI->ReadString(pID, "File.LoadScreen", "", Ares::readBuffer, Ares::readLength)) {
@@ -211,20 +213,26 @@ void HouseTypeExt::ExtData::LoadFromINIFile(HouseTypeClass *pThis, CCINIClass *p
 	char* pID = pThis->ID;
 
 	if (!this->Powerplants.Count) {
+		const char * section = "General";
+		const char * key = NULL;
 		switch (pThis->SideIndex) {
-		case 0:
-			pINI->ReadString("General", "GDIPowerPlant", "", Ares::readBuffer, Ares::readLength);
-			break;
-		case 1:
-			pINI->ReadString("General", "NodRegularPower", "", Ares::readBuffer, Ares::readLength);
-			break;
-		case 2:
-			pINI->ReadString("General", "ThirdPowerPlant", "", Ares::readBuffer, Ares::readLength);
-			break;
+			case 0:
+				key = "GDIPowerPlant";
+				break;
+			case 1:
+				key = "NodRegularPower";
+				break;
+			case 2:
+				key = "ThirdPowerPlant";
+				break;
 		}
-		if (strlen(Ares::readBuffer)) {
-			if (BuildingTypeClass *pBld = BuildingTypeClass::Find(Ares::readBuffer)) {
-				this->Powerplants.AddItem(pBld);
+		if(key) {
+			if (pINI->ReadString(section, key, "", Ares::readBuffer, Ares::readLength)) {
+				if (BuildingTypeClass *pBld = BuildingTypeClass::Find(Ares::readBuffer)) {
+					this->Powerplants.AddItem(pBld);
+				} else {
+					Debug::INIParseFailed(section, key, Ares::readBuffer);
+				}
 			}
 		}
 	}
@@ -234,6 +242,8 @@ void HouseTypeExt::ExtData::LoadFromINIFile(HouseTypeClass *pThis, CCINIClass *p
 		for (char *bld = strtok(Ares::readBuffer, Ares::readDelims); bld; bld = strtok(NULL, Ares::readDelims)) {
 			if (BuildingTypeClass *pBld = BuildingTypeClass::Find(bld)) {
 				this->Powerplants.AddItem(pBld);
+			} else {
+				Debug::INIParseFailed(pID, "AI.PowerPlants", bld);
 			}
 		}
 	}
@@ -257,6 +267,8 @@ void HouseTypeExt::ExtData::LoadFromINIFile(HouseTypeClass *pThis, CCINIClass *p
 
 			if(pTT) {
 				this->ParaDrop.AddItem(pTT);
+			} else {
+				Debug::INIParseFailed(pID, "ParaDrop.Types", p);
 			}
 		}
 	}

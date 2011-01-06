@@ -46,14 +46,21 @@ void SWTypeExt::ExtData::InitializeRuled(SuperWeaponTypeClass *pThis)
 	this->Nuke_Siren = RulesClass::Global()->DigSound;
 
 	// set up paradrop properties
-	int type = this->AttachedToObject->Type;
-	if((type == 5) || (type == 6)) {
-		// create an array to hold a vector for each side and country
-		int max = SideClass::Array->Count + HouseTypeClass::Array->Count + 1;
-		ParaDrop = new DynamicVectorClass<ParadropPlane*>[max];
+	switch(auto type = this->AttachedToObject->Type) {
+		case SuperWeaponType::ParaDrop:
+		{
+			// create an array to hold a vector for each side and country
+			int max = SideClass::Array->Count + HouseTypeClass::Array->Count + 1;
+			ParaDrop = new DynamicVectorClass<ParadropPlane*>[max];
+			break;
+		}
 
-		// default for american paradrop
-		if(type == 6) {
+		case SuperWeaponType::AmerParaDrop:
+		{
+			// create an array to hold a vector for each side and country
+			int max = SideClass::Array->Count + HouseTypeClass::Array->Count + 1;
+			ParaDrop = new DynamicVectorClass<ParadropPlane*>[max];
+
 			// the American paradrop will be the same for every country,
 			// thus we use the SW's default here.
 			ParadropPlane* pPlane = new ParadropPlane();
@@ -67,6 +74,7 @@ void SWTypeExt::ExtData::InitializeRuled(SuperWeaponTypeClass *pThis)
 			for(int i = 0; i < RulesClass::Instance->AmerParaDropNum.Count; ++i) {
 				pPlane->pNum.AddItem(RulesClass::Instance->AmerParaDropNum.GetItem(i));
 			}
+			break;
 		}
 	}
 }
@@ -118,7 +126,7 @@ void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass
 	this->SW_NoCursor.Read(&exINI, section, "NoCursor");
 
 	int Type = pThis->Type - FIRST_SW_TYPE;
-	if(Type >= 0 && Type < NewSWType::Array.Count ) {
+	if(Type >= 0 && Type < NewSWType::Array.Count) {
 		NewSWType *swt = NewSWType::GetNthItem(pThis->Type);
 		swt->LoadFromINI(this, pThis, pINI);
 	}
@@ -127,7 +135,10 @@ void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass
 
 	if(pINI->ReadString(section, "SidebarPCX", "", Ares::readBuffer, Ares::readLength)) {
 		AresCRT::strCopy(this->SidebarPCX, Ares::readBuffer, 0x20);
-		PCX::Instance->LoadFile(this->SidebarPCX);
+		_strlwr_s(this->SidebarPCX, 0x20);
+		if(!PCX::Instance->LoadFile(this->SidebarPCX)) {
+			Debug::INIParseFailed(section, "SidebarPCX", this->SidebarPCX);
+		}
 	}
 
 	char base[0x40];
@@ -164,6 +175,8 @@ void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass
 			if(AircraftTypeClass* pTAircraft = AircraftTypeClass::Find(Ares::readBuffer)) {
 				pPlane = new ParadropPlane();
 				pPlane->pAircraft = pTAircraft;
+			} else {
+				Debug::INIParseFailed(section, key, Ares::readBuffer);
 			}
 		}
 
@@ -187,6 +200,8 @@ void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass
 
 				if(pTT) {
 					pPlane->pTypes.AddItem(pTT);
+				} else {
+					Debug::INIParseFailed(section, key, p);
 				}
 			}
 		}
@@ -232,7 +247,7 @@ void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass
 
 	// only load these for paradrops and amerparadrops
 	int type = this->AttachedToObject->Type;
-	if((type == 5) || (type == 6)) {
+	if((type == SuperWeaponType::ParaDrop) || (type == SuperWeaponType::AmerParaDrop)) {
 
 		// default
 		CreateParaDropBase(NULL, base);

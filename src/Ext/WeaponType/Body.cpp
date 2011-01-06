@@ -1,4 +1,9 @@
 #include "Body.h"
+#include <BulletClass.h>
+#include <FootClass.h>
+#include <TechnoClass.h>
+#include <TechnoTypeClass.h>
+#include <LocomotionClass.h>
 
 template<> const DWORD Extension<WeaponTypeClass>::Canary = 0x33333333;
 Container<WeaponTypeExt> WeaponTypeExt::ExtMap;
@@ -124,6 +129,93 @@ void WeaponTypeExt::ExtData::LoadFromINIFile(WeaponTypeExt::TT *pThis, CCINIClas
 		}
 	}
 */
+	// #680 Chrono Prison
+	this->Abductor.Read(&exINI, section, "Abductor");
+}
+
+// #680 Chrono Prison / Abductor
+/**
+	This function checks if an abduction should be performed,
+	and, if so, performs it, provided that is possible.
+
+	\author Renegade
+	\date 24.08.2010
+	\param[in] Bullet The projectile that hits the victim.
+	\retval true An abduction was performed. It should be assumed that the target is gone from the map at this point.
+	\retval false No abduction was performed. This can be because the weapon is not an abductor, or because an error occurred. The target should still be on the map.
+	\todo see if TechnoClass::Transporter needs to be set in here
+*/
+bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
+	// ensuring a few base parameters
+	if(!this->Abductor || !Bullet->Target || !Bullet->Owner) {
+		return false;
+	}
+
+	if(FootClass *Target = generic_cast<FootClass *>(Bullet->Target)) {
+		TechnoClass* Attacker = Bullet->Owner;
+		TechnoTypeClass* TargetType = Target->GetTechnoType();
+		TechnoTypeClass* AttackerType = Attacker->GetTechnoType();
+
+		// Don't abduct the target if it's too fat in general, or if there's not enough room left in the hold // alternatively, NumPassengers
+		if((TargetType->Size > AttackerType->SizeLimit)
+		  || (TargetType->Size > (AttackerType->Passengers - Attacker->Passengers.GetTotalSize()))) {
+			return false;
+		} else {
+			// if we ended up here, the target is of the right type, and the attacker can take it
+			// so we abduct the target...
+			Target->StopMoving();
+			Target->SetDestination(NULL, true); // Target->UpdatePosition(int) ?
+			Target->SetTarget(NULL);
+			Target->CurrentTargets.Clear(); // Target->ShouldLoseTargetNow ?
+			Target->SetFocus(NULL);
+			Target->QueueMission(mission_Sleep, true);
+			Target->OnBridge = false;
+			Target->unknown_C4 = 0; // don't ask
+			Target->unknown_5A0 = 0;
+			Target->CurrentGattlingStage = 0;
+			Target->SetCurrentWeaponStage(0);
+			// if this unit is being mind controlled, break the link
+			if(TechnoClass * MindController = Target->MindControlledBy) {
+				if(CaptureManagerClass * MC = MindController->CaptureManager) {
+					MC->FreeUnit(Target);
+				}
+			}
+			// if this unit is a mind controller, break the link
+			if(Target->CaptureManager) {
+				Target->CaptureManager->FreeAll();
+			}
+
+			// if this unit is currently in a state of temporal flux, get it back to our time-frame
+			if(Target->TemporalTargetingMe) {
+				Target->TemporalTargetingMe->Detach();
+			}
+
+			CoordStruct coordsUnitSource;
+			Target->GetCoords(&coordsUnitSource);
+			Target->Locomotor->Mark_All_Occupation_Bits(0);
+			Target->Locomotor->Force_Track(-1, coordsUnitSource);
+			Target->MarkAllOccupationBits(&coordsUnitSource);
+
+			Target->Remove();
+			Target->Transporter = Attacker;
+			if(Attacker->WhatAmI() == abs_Building) {
+				Target->Absorbed = true;
+			}
+			Attacker->AddPassenger(Target);
+			Attacker->vt_entry_11C(); // something or other
+
+			// ..and neuter the bullet, since it's not supposed to hurt the prisoner after the abduction
+			Bullet->Health = 0;
+			Bullet->DamageMultiplier = 0;
+			Bullet->Remove();
+
+			return true;
+		}
+
+	} else {
+		// the target was not a valid passenger type
+		return false;
+	}
 }
 
 void Container<WeaponTypeExt>::InvalidatePointer(void *ptr) {

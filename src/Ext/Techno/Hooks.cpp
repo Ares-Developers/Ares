@@ -1,12 +1,14 @@
 #include "Body.h"
 #include "../TechnoType/Body.h"
+#include "../Building/Body.h"
 #include "../BuildingType/Body.h"
 #include "../../Misc/Debug.h"
+#include "../../Misc/JammerClass.h"
 
 #include <SpecificStructures.h>
 
 // bugfix #297: Crewed=yes jumpjets spawn parachuted infantry on destruction, not idle
-DEFINE_HOOK(7381AE, UnitClass_ReceiveDamage, 6)
+DEFINE_HOOK(737F97, UnitClass_ReceiveDamage, 0)
 {
 	GET(TechnoClass *, t, ESI);
 	GET_STACK(TechnoClass *, Killer, 0x54);
@@ -41,6 +43,17 @@ DEFINE_HOOK(6F9E50, TechnoClass_Update, 5)
 	} else if(pData->CloakSkipTimer.GetTimeLeft() > 0) {
 		Source->Cloakable = 0;
 	}
+
+	// #1208
+	if(TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(Source->GetTechnoType())) {
+		if(pTypeData->PassengerTurret.Get()) {
+			// 18 = 1 8 = A H = Adolf Hitler. Clearly we can't allow it to come to that.
+			int passengerNumber = (Source->Passengers.NumPassengers <= 17) ? Source->Passengers.NumPassengers : 17;
+			int maxTurret = Source->GetTechnoType()->TurretCount - 1;
+			Source->CurrentTurretNumber = (passengerNumber <= maxTurret) ? passengerNumber : maxTurret;
+		}
+	}
+
 	return 0;
 }
 
@@ -51,6 +64,7 @@ DEFINE_HOOK(6F9E76, TechnoClass_Update_CheckOperators, 6)
 	GET(TechnoClass *, pThis, ESI); // object this is called on
 	//TechnoTypeClass *Type = pThis->GetTechnoType();
 	//TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(Type);
+	TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(pThis->GetTechnoType());
 	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(pThis);
 
 	// Related to operators/drivers, issue #342
@@ -86,6 +100,20 @@ DEFINE_HOOK(6F9E76, TechnoClass_Update_CheckOperators, 6)
 				pUnit->SetDestination(NULL, true);
 				pUnit->StopMoving();
 			}
+		}
+
+		// dropping Radar Jammers (#305) here for now; should check if another TechnoClass::Update hook might be better ~Ren
+		if(pData->RadarJam) { // RadarJam should only be non-null if the object is an active radar jammer
+			pData->RadarJam->UnjamAll();
+		}
+	} else {
+		// dropping Radar Jammers (#305) here for now; should check if another TechnoClass::Update hook might be better ~Ren
+		if(!!pTypeData->RadarJamRadius) {
+			if(!pData->RadarJam) {
+				pData->RadarJam = new JammerClass(pThis, pData);
+			}
+
+			pData->RadarJam->Update();
 		}
 	}
 
@@ -535,7 +563,7 @@ DEFINE_HOOK(7090D0, TechnoClass_SelectFiringVoice_IFVRepair, 5)
 }
 
 // Support per unit modification of Iron Curtain effect duration
-DEFINE_HOOK(70E2D2, TechnoClass_IronCurtain_Modifiy, 6) {
+DEFINE_HOOK(70E2D2, TechnoClass_IronCurtain_Modify, 6) {
 	GET(TechnoClass*, pThis, ECX);
 	GET(int, duration, EDX);
 	GET_STACK(bool, force, 0x1C);
@@ -548,8 +576,57 @@ DEFINE_HOOK(70E2D2, TechnoClass_IronCurtain_Modifiy, 6) {
 
 		pThis->IronCurtainTimer.TimeLeft = duration;
 		pThis->IronTintStage = 0;
-	
+
 		return 0x70E2DB;
+	}
+
+	return 0;
+}
+
+
+DEFINE_HOOK(5198AD, InfantryClass_UpdatePosition_EnteredGrinder, 6)
+{
+	GET(InfantryClass *, Infantry, ESI);
+	GET(BuildingClass *, Grinder, EBX);
+
+	BuildingExt::ExtData *pData = BuildingExt::ExtMap.Find(Grinder);
+
+	if(pData->ReverseEngineer(Infantry)) {
+		if(Infantry->Owner->ControlledByPlayer()) {
+			VoxClass::Play("EVA_ReverseEngineeredInfantry");
+			VoxClass::Play("EVA_NewTechnologyAcquired");
+		}
+	}
+
+	return 0;
+}
+
+DEFINE_HOOK(73A1BC, UnitClass_UpdatePosition_EnteredGrinder, 7)
+{
+	GET(UnitClass *, Vehicle, EBP);
+	GET(BuildingClass *, Grinder, EBX);
+
+	BuildingExt::ExtData *pData = BuildingExt::ExtMap.Find(Grinder);
+
+	if(pData->ReverseEngineer(Vehicle)) {
+		if(Vehicle->Owner->ControlledByPlayer()) {
+			VoxClass::Play("EVA_ReverseEngineeredVehicle");
+			VoxClass::Play("EVA_NewTechnologyAcquired");
+		}
+	}
+
+	return 0;
+}
+
+DEFINE_HOOK(6F6AC9, TechnoClass_Remove, 6) {
+	GET(TechnoClass *, pThis, ESI);
+	TechnoExt::ExtData* TechnoExt = TechnoExt::ExtMap.Find(pThis);
+
+	// if the removed object is a radar jammer, unjam all jammed radars
+	if(TechnoExt->RadarJam) {
+		TechnoExt->RadarJam->UnjamAll();
+		delete TechnoExt->RadarJam;
+		TechnoExt->RadarJam = NULL;
 	}
 
 	return 0;

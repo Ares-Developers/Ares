@@ -3,6 +3,7 @@
 
 #include <HouseClass.h>
 #include <BuildingClass.h>
+#include <GeneralStructures.h>
 #include <Helpers/Template.h>
 
 template<> const DWORD Extension<TechnoClass>::Canary = 0x55555555;
@@ -31,6 +32,7 @@ void TechnoExt::SpawnSurvivors(TechnoClass *pThis, TechnoClass *pKiller, bool Se
 	// remove check for Crewed if it is accounted for outside of this function
 	// checks if Crewed=yes is set and there is a chance pilots survive, and, if yes...
 	// ...attempts to spawn one Survivors_PilotCount times
+
 	if(Type->Crewed && chance) {
 		for(int i = 0; i < pData->Survivors_PilotCount; ++i) {
 			if(ScenarioClass::Instance->Random.RandomRanged(1, 100) <= chance) {

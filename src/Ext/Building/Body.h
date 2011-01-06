@@ -3,6 +3,8 @@
 
 #include <CCINIClass.h>
 #include <BuildingClass.h>
+#include <TechnoClass.h>
+#include <set>
 
 #include "../_Container.hpp"
 #include "../../Ares.h"
@@ -42,6 +44,9 @@ public:
 
 		bool InfiltratedBy(HouseClass *Enterer);
 		cPrismForwarding PrismForwarding;
+
+		std::set<TechnoClass *> RegisteredJammers; //!< Set of Radar Jammers which have registered themselves to be in range of this building. (Related to issue #305)
+
 	public:
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			OwnerBeforeRaid(NULL), isCurrentlyRaided(false), ignoreNextEVA(false), PrismForwarding()
@@ -75,6 +80,8 @@ public:
 		void UpdateFirewall();
 		void ImmolateVictims();
 		void ImmolateVictim(ObjectClass * Victim);
+
+		bool ReverseEngineer(TechnoClass * Victim); //!< Returns true if Victim wasn't buildable and now should be
 	};
 
 	static Container<BuildingExt> ExtMap;

@@ -3,6 +3,9 @@
 
 #include <Windows.h>
 
+class CustomPalette;
+struct SHPStruct;
+
 class Interface
 {
 private:
@@ -24,15 +27,27 @@ public:
 		eUIAction uiaAction;
 	};
 
+	struct CampaignData {
+		char Battle[0x18];
+		char Subline[0x1F];
+		char ToolTip[0x1F];
+		CustomPalette* Palette;
+		SHPStruct* Image;
+		bool Valid;
+	};
+
 	static int lastDialogTemplateID;
 	static int nextReturnMenu;
 	static int nextAction;
-	const static wchar_t* nextMessageText;
+	static const wchar_t* nextMessageText;
+
+	static int slots[4];
 
 	static bool invokeClickAction(eUIAction, char*, int*, int);
 	static void updateMenuItems(HWND, MenuItem*, int);
 	static void updateMenu(HWND hDlg);
 	static eUIAction parseUIAction(char*, eUIAction);
+	static int getSlotIndex(int);
 
 private:
 	static void moveItem(HWND, RECT, POINT);

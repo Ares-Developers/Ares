@@ -176,8 +176,11 @@ DEFINE_HOOK(52297F, InfantryClass_GarrisonBuilding_OccupierEntered, 5)
 
 	// if building and owner are from different players, and the building is not in raided state
 	// change the building's owner and mark it as raided
-	// but only if that's even necessary - no need to raid neutral houses.
-	if((pBld->Owner != pInf->Owner) && !pBld->Owner->IsNeutral() && !buildingExtData->isCurrentlyRaided) {
+	// but only if that's even necessary - no need to raid urban combat buildings.
+	// 27.11.2010 changed to include fix for #1305
+	bool differentOwners = (pBld->Owner != pInf->Owner);
+	bool ucBuilding = (pBld->Owner->IsNeutral() && (pBld->GetTechnoType()->TechLevel == -1));
+	if(differentOwners && !ucBuilding && !buildingExtData->isCurrentlyRaided) {
 		buildingExtData->OwnerBeforeRaid = pBld->Owner;
 		buildingExtData->isCurrentlyRaided = true;
 		pBld->SetOwningHouse(pInf->Owner);

@@ -31,8 +31,9 @@ DEFINE_HOOK(438FD1, BombListClass_Add2, 5)
 	GET(TechnoClass *, Owner, EBP);
 	WeaponTypeClass *Source = Bullet->WeaponType;
 	WeaponTypeExt::ExtData *pData = WeaponTypeExt::ExtMap.Find(Source);
+	Debug::Log("Owner is player = %d, AttachSound = %d\n", Owner->Owner->ControlledByPlayer(), pData->Ivan_AttachSound.Get());
 	if(Owner->Owner->ControlledByPlayer() && pData->Ivan_AttachSound != -1) {
-		VocClass::PlayAt(pData->Ivan_AttachSound, &Bomb->TargetUnit->Location, &Bomb->Audio);
+		VocClass::PlayAt(pData->Ivan_AttachSound, &Bomb->TargetUnit->Location, NULL);
 	}
 
 	return 0;

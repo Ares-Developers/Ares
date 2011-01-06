@@ -65,7 +65,12 @@ public:
 
 	void Parse(INI_EX *parser, const char* pSection, const char* pKey, bool Allocate = 0) {
 		if(parser->ReadString(pSection, pKey)) {
-			this->Set((Allocate ? MyBase::FindOrAllocate : MyBase::Find)(parser->value()));
+			const char * val = parser->value();
+			if(auto parsed = (Allocate ? MyBase::FindOrAllocate : MyBase::Find)(val)) {
+				this->Set(parsed);
+			} else {
+				Debug::INIParseFailed(pSection, pKey, val);
+			}
 		}
 	}
 };
@@ -108,9 +113,12 @@ public:
 
 	void Read(INI_EX *parser, const char* pSection, const char* pKey) {
 		if(parser->ReadString(pSection, pKey)) {
-			int idx = Lookuper::FindIndex(parser->value());
+			const char * val = parser->value();
+			int idx = Lookuper::FindIndex(val);
 			if(idx != -1) {
 				this->Set(idx);
+			} else {
+				Debug::INIParseFailed(pSection, pKey, val);
 			}
 		}
 	}
@@ -190,6 +198,72 @@ public:
 
 };
 
+template<typename T, typename Lookuper>
+class CustomizableIdx : public ValueableIdx<T, Lookuper> {
+	bool Customized;
+	T*   Default;
+public:
+	CustomizableIdx(T* alias = NULL) : ValueableIdx<T, Lookuper>(T()), Customized(false), Default(alias) {};
+
+	void Bind(T* to) {
+		if(!this->Customized) {
+			this->Default = to;
+		}
+	}
+
+	void BindEx(T to) {
+		if(!this->Customized) {
+			this->Value = to;
+			this->Default = &this->Value;
+		}
+	}
+
+	virtual T Get() const {
+		return this->Customized
+		 ? this->Value
+		 : this->Default ? *this->Default : T()
+		;
+	}
+
+	virtual void Set(T val) {
+		this->Customized = true;
+		this->Value = val;
+	}
+
+	virtual T* GetEx() {
+		return this->Customized
+		 ? &this->Value
+		 : this->Default
+		;
+	}
+
+	virtual void SetEx(T* val) {
+		this->Customized = true;
+		this->Value = *val;
+	}
+
+	void Lock() {
+		if(!this->Customized) {
+			if(this->Default) {
+				this->Value = *this->Default;
+			}
+			this->Customized = true;
+		}
+	}
+
+	bool operator == (T other) const {
+		return this->Get() == other;
+	};
+
+	bool operator != (T other) const {
+		return this->Get() != other;
+	};
+
+	bool operator ! () const {
+		return this->Get() == 0;
+	};
+
+};
 /*
  * This template is for something that varies depending on a unit's Veterancy Level
  * Promotable<int> PilotChance; // class def
@@ -268,6 +342,8 @@ void Valueable<bool>::Read(INI_EX *parser, const char* pSection, const char* pKe
 	bool buffer = this->Get();
 	if(parser->ReadBool(pSection, pKey, &buffer)) {
 		this->Set(buffer);
+	} else if(parser->declared()) {
+		Debug::INIParseFailed(pSection, pKey, parser->value(), "Expected a valid boolean value [1, true, yes, 0, false, no]");
 	}
 };
 
@@ -276,6 +352,8 @@ void Valueable<int>::Read(INI_EX *parser, const char* pSection, const char* pKey
 	int buffer = this->Get();
 	if(parser->ReadInteger(pSection, pKey, &buffer)) {
 		this->Set(buffer);
+	} else if(parser->declared()) {
+		Debug::INIParseFailed(pSection, pKey, parser->value(), "Expected a valid number");
 	}
 };
 
@@ -284,6 +362,8 @@ void Valueable<float>::Read(INI_EX *parser, const char* pSection, const char* pK
 	double buffer = this->Get();
 	if(parser->ReadDouble(pSection, pKey, &buffer)) {
 		this->Set(static_cast<float>(buffer));
+	} else if(parser->declared()) {
+		Debug::INIParseFailed(pSection, pKey, parser->value(), "Expected a valid floating point number");
 	}
 };
 
@@ -292,6 +372,8 @@ void Valueable<double>::Read(INI_EX *parser, const char* pSection, const char* p
 	double buffer = this->Get();
 	if(parser->ReadDouble(pSection, pKey, &buffer)) {
 		this->Set(buffer);
+	} else if(parser->declared()) {
+		Debug::INIParseFailed(pSection, pKey, parser->value(), "Expected a valid floating point number");
 	}
 };
 
@@ -300,6 +382,8 @@ void Valueable<ColorStruct>::Read(INI_EX *parser, const char* pSection, const ch
 	ColorStruct buffer = this->Get();
 	if(parser->Read3Bytes(pSection, pKey, (byte*)&buffer)) {
 		this->Set(buffer);
+	} else if(parser->declared()) {
+		Debug::INIParseFailed(pSection, pKey, parser->value(), "Expected a valid R,G,B color");
 	}
 };
 
@@ -307,10 +391,12 @@ template<>
 void Valueable<SHPStruct *>::Read(INI_EX *parser, const char* pSection, const char* pKey) {
 	if(parser->ReadString(pSection, pKey)) {
 		char flag[256];
-		_snprintf(flag, 256, "%s.shp", parser->value());
-		SHPStruct *image = FileSystem::LoadSHPFile(flag);
-		if(image) {
+		const char * val = parser->value();
+		_snprintf(flag, 256, "%s.shp", val);
+		if(SHPStruct *image = FileSystem::LoadSHPFile(flag)) {
 			this->Set(image);
+		} else {
+			Debug::DevLog(Debug::Warning, "Failed to find file %s referenced by [%s]%s=%s", flag, pSection, pKey, val);
 		}
 	}
 };
@@ -428,6 +514,7 @@ void ValueableVector<TechnoTypeClass *>::Read(INI_EX *parser, const char* pSecti
 				this->push_back(thisObject);
 				continue;
 			}
+			Debug::INIParseFailed(pSection, pKey, cur);
 		}
 	}
 }

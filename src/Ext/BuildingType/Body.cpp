@@ -148,6 +148,8 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 			TechnoTypeClass *pTechno = TechnoTypeClass::Find(cur);
 			if(pTechno) {
 				this->Secret_Boons.AddItem(pTechno);
+			} else {
+				Debug::INIParseFailed(pID, "SecretLab.PossibleBoons", cur);
 			}
 		}
 	}
@@ -216,6 +218,7 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 		this->PowerOutageDuration.Read(&exINI, pID, "SpyEffect.PowerOutageDuration");
 		this->StolenMoneyAmount.Read(&exINI, pID, "SpyEffect.StolenMoneyAmount");
 		this->StolenMoneyPercentage.Read(&exINI, pID, "SpyEffect.StolenMoneyPercentage");
+		this->UnReverseEngineer.Read(&exINI, pID, "SpyEffect.UndoReverseEngineer");
 	}
 
 	// #218 Specific Occupiers
@@ -224,6 +227,8 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 		// having a specific occupier list implies that this building is supposed to be occupiable
 		pThis->CanBeOccupied = true;
 	}
+
+	this->ReverseEngineersVictims.Read(&exINI, pID, "ReverseEngineersVictims");
 }
 
 void BuildingTypeExt::ExtData::CompleteInitialization(BuildingTypeClass *pThis) {
@@ -268,7 +273,14 @@ void BuildingTypeExt::UpdateSecretLabOptions(BuildingClass *pThis)
 		TechnoTypeExt::ExtData* pTech = TechnoTypeExt::ExtMap.Find(Option);
 
 		if((pTech->Secret_RequiredHouses & OwnerBits) && !(pTech->Secret_ForbiddenHouses & OwnerBits)) {
-			if(!HouseExt::RequirementsMet(Owner, Option)) {
+			bool ShouldAdd = false;
+			switch(HouseExt::RequirementsMet(Owner, Option)) {
+				case HouseExt::Forbidden:
+				case HouseExt::Incomplete:
+					ShouldAdd = true;
+					break;
+			}
+			if(ShouldAdd) {
 				Options.AddItem(Option);
 			}
 		}

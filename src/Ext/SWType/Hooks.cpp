@@ -321,7 +321,7 @@ DEFINE_HOOK(44691B, BuildingClass_4DC_SWAvailable, 6)
 {
 	GET(BuildingClass *, Structure, EBP);
 	GET(BuildingTypeClass *, AuxBuilding, EAX);
-	return Structure->Owner->CountOwnedNow(AuxBuilding) > 0
+	return Structure->Owner->CountOwnedAndPresent(AuxBuilding) > 0
 		? 0x446937
 		: 0x44699A
 	;
@@ -331,9 +331,9 @@ DEFINE_HOOK(45765A, BuildingClass_SWAvailable, 6)
 {
 	GET(BuildingClass *, Structure, ESI);
 	GET(BuildingTypeClass *, AuxBuilding, EAX);
-	return Structure->Owner->CountOwnedNow(AuxBuilding) > 0
-		? 0x457676
-		: 0x45767B
+	return Structure->Owner->CountOwnedAndPresent(AuxBuilding) > 0
+		? 0x45767B
+		: 0x457676
 	;
 }
 
@@ -341,8 +341,8 @@ DEFINE_HOOK(4576BA, BuildingClass_SW2Available, 6)
 {
 	GET(BuildingClass *, Structure, ESI);
 	GET(BuildingTypeClass *, AuxBuilding, EAX);
-	return Structure->Owner->CountOwnedNow(AuxBuilding) > 0
-		? 0x4576D6
-		: 0x4576DB
+	return Structure->Owner->CountOwnedAndPresent(AuxBuilding) > 0
+		? 0x4576DB
+		: 0x4576D6
 	;
 }

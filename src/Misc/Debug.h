@@ -50,6 +50,11 @@ public:
 	static void FullDump(MINIDUMP_EXCEPTION_INFORMATION *pException, wchar_t * generatedFilename = NULL);
 
 	static void DevLog(Debug::Severity severity, const char* Format, ...);
+
+	static bool bTrackParserErrors;
+	static bool bParserErrorDetected;
+
+	static void INIParseFailed(const char *section, const char *flag, const char *value, const char *Message = NULL);
 };
 
 #endif

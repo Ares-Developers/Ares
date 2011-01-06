@@ -1,5 +1,6 @@
 #include "Body.h"
 #include "../BuildingType/Body.h"
+#include "../TechnoType/Body.h"
 #include "../House/Body.h"
 
 #include <AnimClass.h>
@@ -48,7 +49,7 @@ void BuildingExt::UpdateDisplayTo(BuildingClass *pThis) {
 				}
 			}
 		}
-		MapClass::Instance->sub_4F42F0(2);
+		MapClass::Instance->RedrawSidebar(2);
 	}
 }
 
@@ -509,6 +510,33 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 	}
 
 
+	if(pTypeExt->UnReverseEngineer.Get()) {
+		int idx = HouseClass::Array->FindItemIndex(&Owner);
+
+		Debug::Log("Undoing all Reverse Engineering achieved by house %ls (#%d)\n", Owner->UIName, idx);
+
+		if(idx != -1) {
+			for(int i = 0; i < TechnoTypeClass::Array->Count; ++i) {
+				TechnoTypeClass * Type = TechnoTypeClass::Array->GetItem(i);
+				TechnoTypeExt::ExtData * TypeData = TechnoTypeExt::ExtMap.Find(Type);
+				if(TypeData->ReversedByHouses.ValidIndex(idx)) {
+					Debug::Log("Zeroing out RevEng of %s\n", Type->ID);
+					TypeData->ReversedByHouses[idx] = false;
+				}
+			}
+			Owner->ShouldRecheckTechTree = true;
+		}
+
+		if(evaForOwner) {
+			VoxClass::Play("EVA_BuildingInfiltrated");
+		}
+		if(evaForEnterer) {
+			VoxClass::Play("EVA_BuildingInfiltrated");
+		}
+		effectApplied = true;
+	}
+
+
 	if(pTypeExt->ResetSW.Get()) {
 		bool somethingReset = false;
 		int swIdx = EnteredType->SuperWeapon;
@@ -621,7 +649,7 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 			VoxClass::Play("EVA_BuildingInfiltrated");
 		}
 		MapClass::Instance->sub_657CE0();
-		MapClass::Instance->sub_4F42F0(2);
+		MapClass::Instance->RedrawSidebar(2);
 		effectApplied = true;
 	}
 
@@ -726,6 +754,41 @@ void BuildingExt::Cleanup() {
 		BuildingExt::TempFoundationData2 = NULL;
 	}
 }
+
+bool BuildingExt::ExtData::ReverseEngineer(TechnoClass *Victim) {
+	BuildingTypeExt::ExtData *pReverseData = BuildingTypeExt::ExtMap.Find(this->AttachedToObject->Type);
+	if(!pReverseData->ReverseEngineersVictims) {
+		return false;
+	}
+
+	TechnoTypeClass * VictimType = Victim->GetTechnoType();
+	TechnoTypeExt::ExtData *pVictimData = TechnoTypeExt::ExtMap.Find(VictimType);
+
+	if(!pVictimData->CanBeReversed) {
+		return false;
+	}
+
+	HouseClass *Owner = this->AttachedToObject->Owner;
+
+	int idx = HouseClass::Array->FindItemIndex(&Owner);
+
+	if(pVictimData->ReversedByHouses.ValidIndex(idx)) {
+		if(!pVictimData->ReversedByHouses[idx]) {
+
+			bool WasBuildable = HouseExt::PrereqValidate(Owner, VictimType, false, true) == 1;
+			pVictimData->ReversedByHouses[idx] = true;
+			if(!WasBuildable) {
+				bool IsBuildable = HouseExt::RequirementsMet(Owner, VictimType) != HouseExt::Forbidden;
+				if(IsBuildable) {
+					Owner->ShouldRecheckTechTree = true;
+					return true;
+				}
+			}
+		}
+	}
+	return false;
+}
+
 // =============================
 // container hooks
 
