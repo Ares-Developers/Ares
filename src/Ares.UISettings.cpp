@@ -149,7 +149,7 @@ void Ares::UISettings::Load(CCINIClass *pINI) {
 		}
 
 		sprintf_s(buffer, 0x20, "%s.DisplayColor", name);
-		value->colorRGB = ParseColorInt(section, buffer, colorRGB);
+		value->colorRGB = ParseColorInt(section2, buffer, colorRGB);
 
 		value->colorSchemeIndex = -1;
 		value->selectedIndex = -1;
