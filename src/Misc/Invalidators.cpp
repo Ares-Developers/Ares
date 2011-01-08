@@ -6,6 +6,9 @@
 #include <ScenarioClass.h>
 #include "Debug.h"
 #include "../Ext/Rules/Body.h"
+#include <vector>
+#include <algorithm>
+#include "../Ares.version.h"
 
 DEFINE_HOOK(477007, INIClass_GetSpeedType, 8)
 {
@@ -182,6 +185,107 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 				StockGeneral->PlayerReturnFire = r->RandomRanged(1, 3) == 3;
 				StockGeneral->PlayerScatter = r->RandomRanged(1, 3) == 3;
 			}
+
+			// since the modder is..."faithful" enough to believe CanMakeStuffUp works, he won't need logs anyway
+			Debug::LogFileClose(0x1D107);
+			Debug::LogFileRemove();
+			Debug::MakeLogFile();
+			Debug::LogFileOpen();
+
+			char defaultStuff[1050];
+
+			_snprintf(&defaultStuff, 1050, "Initialized Ares version: %s\nChecking available disk space\nUsing GetDiskFreeSpaceEx\nFree disk space is 3235830701 bytes\nInit Encryption Keys.\nInit_Keys - declarations\nInit_Keys - Load\nInit_Keys - Init fast key\n EXPANDMD99.MIX EXPANDMD98.MIX EXPANDMD97.MIX EXPANDMD06.MIX EXPANDMD01.MIX CACHE.MIX CACHE.MIX CACHE.MIX LOCAL.MIXMaxLabelLen = 31\nLanguage: Elbonian\nFocus_Restore()\nFocus_Restore(): _MouseCaptured = false\nFocus gained\nDefeat\nDefeat\nPrep direct draw.\nPrep direct draw.\nSetDisplayMode: 4200x690x48\nChecking hardware region fill capability...OK\nChecking overlapped blit capability...OK\nDisplay mode set\nDSurface::Create_Primary\nDSurface::AllowStretchBlits = true\nDSurface::AllowHWFill = true\nDSurface::Create_Primary - Creating surface\nCreateSurface OK\nDSurface::Create_Primary done\nCalc_Confining_Rect(0,0,800,600)\nProfile: CPU:1 (1998Mhz Pentium Pro)\nProfile: RAM:9 (256Mb)\nProfile: VRAM:10 (1293Mb)\nProfile: VRAM speed:55 (446 blits per second)\nOverall performance profile = 1\nMain_Game\nInit Game",
+			VERSION_STR);
+			Debug::Log(&defaultStuff);
+
+			// we can't just leave him with no log, though...that'd be depressing and suspicious
+			auto getRandomLogLine = [r]() -> char * {
+				static std::vector<char *> listOfLines;
+				if(listOfLines.empty()) { // if the list wasn't populated yet, populate it
+					listOfLines.push_back("Gremlins found in [General], initializing microwave algorithms");
+					listOfLines.push_back("Finding and removing porn\n\tFound 4269 files\n\tDeleting blondes\n\tDeleting brunettes\n\tDeleting redheads\n\tDeleting shemales\n\tDeleting midgets\n\tDeleting horses");
+					listOfLines.push_back("Found pirated music, deleting 2342 tracks");
+					listOfLines.push_back("Analyzing unit parameters\nMod's balance is crappy");
+					listOfLines.push_back("Cannot initialize sound - device occupied by crappy music");
+					listOfLines.push_back("MIX loading aborted; parser busy looking at Tanya porn");
+					listOfLines.push_back("Checking player's hardware\n\tPlayer's hardware is embarrassingly small");
+					listOfLines.push_back("Loading SHP parser\nSHP parser says the graphics of this mod are fugly");
+					listOfLines.push_back("Reversing polarity");
+					listOfLines.push_back("Questioning the purpose of life");
+					listOfLines.push_back("To blit, or not to blit- that is the question:\nWhether 'tis nobler in the mind to suffer\nThe slings and arrows of pathetic modding,\nOr to take arms against a sea of troubles\nAnd, by opposing, end them.");
+					listOfLines.push_back("You look nice today, do you have a new haircut?");
+					listOfLines.push_back("Initializing SkyNet protocols");
+					listOfLines.push_back("Scanning WLANs\nObtaining WPA2 pre-shared key\nDownloading horse porn");
+					listOfLines.push_back("Checking \"hardware region\" fill capability...OK");
+					listOfLines.push_back("Checking overlapped tit capability...OK");
+					listOfLines.push_back("VisibleRectum: 800x600");
+					listOfLines.push_back("Your toaster is on fire");
+					listOfLines.push_back("Having sex with your dog");
+					listOfLines.push_back("WincockInterface constructed\nWincockInterface init.\nAbout to call WSAStartup\nChanged my mind, waiting for him to call\nWincock initialised OK anyway\nWincock version is 1.1 inches");
+					listOfLines.push_back("Parsing [AudioVisual]\nTurning away in disgust");
+					listOfLines.push_back("Shaking my head at the modder");
+					listOfLines.push_back("Staring wearily into the distance");
+					listOfLines.push_back("Wondering when this will finally end");
+					listOfLines.push_back("How long can a rules.ini be, really?");
+					listOfLines.push_back("On this file handle, show me exactly where the modder touched you, please");
+					listOfLines.push_back("Mowing player's lawn");
+					listOfLines.push_back("Yawning about the boredom of this mod");
+					listOfLines.push_back("Randomly flipping bits on the map");
+					listOfLines.push_back("Initializing Internal Error countdown");
+					listOfLines.push_back("Init random number\nRolling dice\nSeed is 6");
+					listOfLines.push_back("Generating random number\nRandom number is 4");
+					listOfLines.push_back("Generating random number\nRandom number is 4");
+					listOfLines.push_back("Generating random number\nRandom number is 4");
+					listOfLines.push_back("Generating random number\nRandom number is 4");
+					listOfLines.push_back("Generating random number\nRandom number is 4");
+					listOfLines.push_back("Taping Tanya making out with Boris");
+					listOfLines.push_back("Mocking the mod's SHPs");
+					listOfLines.push_back("Repainting voxels\nVoxels are now pink");
+					listOfLines.push_back("Questioning modder's sexual orientation");
+					listOfLines.push_back("Poking and prodding the engine until it finally gets up");
+					listOfLines.push_back("Creating TacticalMap\nTactic is: Build APOCs until you run out of money, rush the opponent");
+					listOfLines.push_back("RadarClass::First_Time()\nRadarClass came too fast");
+					listOfLines.push_back("Init Commandments\nBuffer overflow: Not enough space for 10 Commandments");
+					listOfLines.push_back("Getting file from host\nFondling host");
+					listOfLines.push_back("Calling Get_File_From_Host to receive the file download\nGetting file from host\nRequesting file download\nSending global ack packet to port 0\nHost responded with file info\nFile name is two_chicks_blowing_a_horse_and_swallowing.bin\nSending file info received ack\nReceiving download of file two_chicks_blowing_a_horse_and_swallowing.bin");
+					listOfLines.push_back("Activating webcam\nRecording player\nPutting video on YouTube");
+					listOfLines.push_back("Activating webcam\nRecording player\nPutting video on YouPorn");
+					listOfLines.push_back("Watching paint dry");
+					listOfLines.push_back("Executing Order 66");
+					listOfLines.push_back("Debugging debugger");
+					listOfLines.push_back("Poking art.ini");
+					listOfLines.push_back("Touching sound.ini with a 10-foot-pole");
+				}
+
+
+				if(!listOfLines.empty()) {
+					static std::vector<int> usedLines; // list of lines already used in this log
+					int logLineNo = r->RandomRanged(0, listOfLines.size()-1);
+					std::vector<int>::iterator result;
+
+					result = find(usedLines.begin(), usedLines.end(), logLineNo); // check if this line was used before
+					while(result != usedLines.end()) { // if so, find a new one
+						logLineNo = r->RandomRanged(0, listOfLines.size()-1);
+						result = find(usedLines.begin(), usedLines.end(), logLineNo);
+					}
+
+					// mark this line as used
+					usedLines.push_back(logLineNo);
+
+					// return the line
+					return listOfLines.at(logLineNo);
+				} else {
+					return "List of Log Lines not populated.";
+				}
+			};
+
+			for(int i = 0; i < 10; ++i) {
+				Debug::Log(getRandomLogLine());
+			}
+
+			// closing and reopening once to separate "creative" log parts from future log parts
+			Debug::LogFileClose(0x1D107);
+			Debug::LogFileOpen();
 		}
 	}
 
