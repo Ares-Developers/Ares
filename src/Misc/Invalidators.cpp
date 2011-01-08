@@ -115,8 +115,8 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 	// #1000
 	if(RulesExt::ExtData *AresGeneral = RulesExt::Global()) {
 		if(!!AresGeneral->CanMakeStuffUp) {
+			Randomizer *r = &ScenarioClass::Instance->Random;
 			if(RulesClass* StockGeneral = RulesClass::Global()) { // well, the modder *said* we can make stuff up, so...
-				Randomizer *r = &ScenarioClass::Instance->Random;
 
 				StockGeneral->VeteranRatio = r->RandomRanged(1, 500) / 100.0;
 				StockGeneral->BuildSpeed = r->RandomRanged(1, 350) / 100.0;
@@ -194,9 +194,43 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 
 			char defaultStuff[1050];
 
-			_snprintf(&defaultStuff, 1050, "Initialized Ares version: %s\nChecking available disk space\nUsing GetDiskFreeSpaceEx\nFree disk space is 3235830701 bytes\nInit Encryption Keys.\nInit_Keys - declarations\nInit_Keys - Load\nInit_Keys - Init fast key\n EXPANDMD99.MIX EXPANDMD98.MIX EXPANDMD97.MIX EXPANDMD06.MIX EXPANDMD01.MIX CACHE.MIX CACHE.MIX CACHE.MIX LOCAL.MIXMaxLabelLen = 31\nLanguage: Elbonian\nFocus_Restore()\nFocus_Restore(): _MouseCaptured = false\nFocus gained\nDefeat\nDefeat\nPrep direct draw.\nPrep direct draw.\nSetDisplayMode: 4200x690x48\nChecking hardware region fill capability...OK\nChecking overlapped blit capability...OK\nDisplay mode set\nDSurface::Create_Primary\nDSurface::AllowStretchBlits = true\nDSurface::AllowHWFill = true\nDSurface::Create_Primary - Creating surface\nCreateSurface OK\nDSurface::Create_Primary done\nCalc_Confining_Rect(0,0,800,600)\nProfile: CPU:1 (1998Mhz Pentium Pro)\nProfile: RAM:9 (256Mb)\nProfile: VRAM:10 (1293Mb)\nProfile: VRAM speed:55 (446 blits per second)\nOverall performance profile = 1\nMain_Game\nInit Game",
-			VERSION_STR);
-			Debug::Log(&defaultStuff);
+			Debug::Log("Initialized Ares version: %s\n"
+					"Checking available disk space\n"
+					"Using GetDiskFreeSpaceEx\n"
+					"Free disk space is 3235830701 bytes\n"
+					"Init Encryption Keys.\n"
+					"Init_Keys - declarations\n"
+					"Init_Keys - Load\n"
+					"Init_Keys - Init fast key\n"
+					"EXPANDMD99.MIX EXPANDMD98.MIX EXPANDMD97.MIX EXPANDMD06.MIX EXPANDMD01.MIX CACHE.MIX CACHE.MIX CACHE.MIX LOCAL.MIXMaxLabelLen = 31\n"
+					"Language: Elbonian\n"
+					"Focus_Restore()\n"
+					"Focus_Restore(): _MouseCaptured = false\n"
+					"Focus gained\n"
+					"Defeat\n"
+					"Defeat\n"
+					"Prep direct draw.\n"
+					"Prep direct draw.\n"
+					"SetDisplayMode: 4200x690x48\n"
+					"Checking hardware region fill capability...OK\n"
+					"Checking overlapped blit capability...OK\n"
+					"Display mode set\n"
+					"DSurface::Create_Primary\n"
+					"DSurface::AllowStretchBlits = true\n"
+					"DSurface::AllowHWFill = true\n"
+					"DSurface::Create_Primary - Creating surface\n"
+					"CreateSurface OK\n"
+					"DSurface::Create_Primary done\n"
+					"Calc_Confining_Rect(0,0,800,600)\n"
+					"Profile: CPU:1 (1998Mhz Pentium Pro)\n"
+					"Profile: RAM:9 (256Mb)\n"
+					"Profile: VRAM:10 (1293Mb)\n"
+					"Profile: VRAM speed:55 (446 blits per second)\n"
+					"Overall performance profile = 1\n"
+					"Main_Game\n"
+					"Init Game",
+
+					VERSION_STR);
 
 			// we can't just leave him with no log, though...that'd be depressing and suspicious
 			auto getRandomLogLine = [r]() -> char * {
@@ -280,7 +314,7 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 			};
 
 			for(int i = 0; i < 10; ++i) {
-				Debug::Log(getRandomLogLine());
+				Debug::Log("%s\n", getRandomLogLine());
 			}
 
 			// closing and reopening once to separate "creative" log parts from future log parts
