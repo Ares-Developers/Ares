@@ -710,7 +710,9 @@ DEFINE_HOOK(52F232, CampaignMenu_hDlg_StartCampaign, 6) {
 	char* campaignID = NULL;
 	if(idxSlot > -1) {
 		int idxCampaign = Interface::slots[idxSlot]-1;
-		campaignID = Ares::UISettings::Campaigns[idxCampaign].Battle;
+		if(idxCampaign > -1) {
+			campaignID = Ares::UISettings::Campaigns[idxCampaign].Battle;
+		}
 	}
 
 	R->ECX(campaignID);
@@ -725,7 +727,7 @@ DEFINE_HOOK(60378B, CampaignMenu_ChooseButtonPalette, 6) {
 
 	if(idxSlot > -1) {
 		int idxCampaign = Interface::slots[idxSlot]-1;
-		if(Ares::UISettings::Campaigns[idxCampaign].Palette->Convert) {
+		if(idxCampaign > -1 && Ares::UISettings::Campaigns[idxCampaign].Palette->Convert) {
 			R->EAX(Ares::UISettings::Campaigns[idxCampaign].Palette->Convert);
 			return 0x603798;
 		}
@@ -741,8 +743,10 @@ DEFINE_HOOK(603A2E, CampaignMenu_ChooseButtonImage, 6) {
 
 	if(idxSlot > -1) {
 		int idxCampaign = Interface::slots[idxSlot]-1;
-		R->EAX(Ares::UISettings::Campaigns[idxCampaign].Image);		
-		return 0x603A3A;
+		if(idxCampaign > -1) {
+			R->EAX(Ares::UISettings::Campaigns[idxCampaign].Image);
+			return 0x603A3A;
+		}
 	}
 
 	return 0x603A35;
