@@ -286,7 +286,7 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 					"Debugging debugger",
 					"Poking art.ini",
 					"Touching sound.ini with a 10-foot-pole"
-				}
+				};
 				int listSize = sizeof(listOfLines) / sizeof(listOfLines[0]); // get item count of listOfLines
 
 				static std::vector<int> usedLines; // list of lines already used in this log
