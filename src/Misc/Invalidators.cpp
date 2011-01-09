@@ -190,8 +190,6 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 			Debug::LogFileClose(0x1D107);
 			Debug::LogFileOpen(); // this annihilates the previous log contents
 
-			char defaultStuff[1050];
-
 			Debug::Log("Initialized Ares version: %s\n"
 					"Checking available disk space\n"
 					"Using GetDiskFreeSpaceEx\n"
@@ -231,8 +229,8 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 					VERSION_STR);
 
 			// we can't just leave him with no log, though...that'd be depressing and suspicious
-			auto getRandomLogLine = [r]() -> char * {
-				const char * listOfLines[] = {
+			auto getRandomLogLine = [r]() -> const char * {
+				static const char * listOfLines[] = {
 					"Gremlins found in [General], initializing microwave algorithms",
 					"Finding and removing porn\nFound 4269 files\nDeleting blondes\nDeleting brunettes\nDeleting redheads\nDeleting shemales\nDeleting midgets\nDeleting horses",
 					"Found pirated music, deleting 2342 tracks",
