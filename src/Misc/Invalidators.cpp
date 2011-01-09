@@ -188,9 +188,7 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 
 			// since the modder is..."faithful" enough to believe CanMakeStuffUp works, he won't need logs anyway
 			Debug::LogFileClose(0x1D107);
-			Debug::LogFileRemove();
-			Debug::MakeLogFile();
-			Debug::LogFileOpen();
+			Debug::LogFileOpen(); // this annihilates the previous log contents
 
 			char defaultStuff[1050];
 
@@ -234,92 +232,83 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 
 			// we can't just leave him with no log, though...that'd be depressing and suspicious
 			auto getRandomLogLine = [r]() -> char * {
-				static std::vector<char *> listOfLines;
-				if(listOfLines.empty()) { // if the list wasn't populated yet, populate it
-					listOfLines.push_back("Gremlins found in [General], initializing microwave algorithms");
-					listOfLines.push_back("Finding and removing porn\n\tFound 4269 files\n\tDeleting blondes\n\tDeleting brunettes\n\tDeleting redheads\n\tDeleting shemales\n\tDeleting midgets\n\tDeleting horses");
-					listOfLines.push_back("Found pirated music, deleting 2342 tracks");
-					listOfLines.push_back("Analyzing unit parameters\nMod's balance is crappy");
-					listOfLines.push_back("Cannot initialize sound - device occupied by crappy music");
-					listOfLines.push_back("MIX loading aborted; parser busy looking at Tanya porn");
-					listOfLines.push_back("Checking player's hardware\n\tPlayer's hardware is embarrassingly small");
-					listOfLines.push_back("Loading SHP parser\nSHP parser says the graphics of this mod are fugly");
-					listOfLines.push_back("Reversing polarity");
-					listOfLines.push_back("Questioning the purpose of life");
-					listOfLines.push_back("To blit, or not to blit- that is the question:\nWhether 'tis nobler in the mind to suffer\nThe slings and arrows of pathetic modding,\nOr to take arms against a sea of troubles\nAnd, by opposing, end them.");
-					listOfLines.push_back("You look nice today, do you have a new haircut?");
-					listOfLines.push_back("Initializing SkyNet protocols");
-					listOfLines.push_back("Scanning WLANs\nObtaining WPA2 pre-shared key\nDownloading horse porn");
-					listOfLines.push_back("Checking \"hardware region\" fill capability...OK");
-					listOfLines.push_back("Checking overlapped tit capability...OK");
-					listOfLines.push_back("VisibleRectum: 800x600");
-					listOfLines.push_back("Your toaster is on fire");
-					listOfLines.push_back("Having sex with your dog");
-					listOfLines.push_back("WincockInterface constructed\nWincockInterface init.\nAbout to call WSAStartup\nChanged my mind, waiting for him to call\nWincock initialised OK anyway\nWincock version is 1.1 inches");
-					listOfLines.push_back("Parsing [AudioVisual]\nTurning away in disgust");
-					listOfLines.push_back("Shaking my head at the modder");
-					listOfLines.push_back("Staring wearily into the distance");
-					listOfLines.push_back("Wondering when this will finally end");
-					listOfLines.push_back("How long can a rules.ini be, really?");
-					listOfLines.push_back("On this file handle, show me exactly where the modder touched you, please");
-					listOfLines.push_back("Mowing player's lawn");
-					listOfLines.push_back("Yawning about the boredom of this mod");
-					listOfLines.push_back("Randomly flipping bits on the map");
-					listOfLines.push_back("Initializing Internal Error countdown");
-					listOfLines.push_back("Init random number\nRolling dice\nSeed is 6");
-					listOfLines.push_back("Generating random number\nRandom number is 4");
-					listOfLines.push_back("Generating random number\nRandom number is 4");
-					listOfLines.push_back("Generating random number\nRandom number is 4");
-					listOfLines.push_back("Generating random number\nRandom number is 4");
-					listOfLines.push_back("Generating random number\nRandom number is 4");
-					listOfLines.push_back("Taping Tanya making out with Boris");
-					listOfLines.push_back("Mocking the mod's SHPs");
-					listOfLines.push_back("Repainting voxels\nVoxels are now pink");
-					listOfLines.push_back("Questioning modder's sexual orientation");
-					listOfLines.push_back("Poking and prodding the engine until it finally gets up");
-					listOfLines.push_back("Creating TacticalMap\nTactic is: Build APOCs until you run out of money, rush the opponent");
-					listOfLines.push_back("RadarClass::First_Time()\nRadarClass came too fast");
-					listOfLines.push_back("Init Commandments\nBuffer overflow: Not enough space for 10 Commandments");
-					listOfLines.push_back("Getting file from host\nFondling host");
-					listOfLines.push_back("Calling Get_File_From_Host to receive the file download\nGetting file from host\nRequesting file download\nSending global ack packet to port 0\nHost responded with file info\nFile name is two_chicks_blowing_a_horse_and_swallowing.bin\nSending file info received ack\nReceiving download of file two_chicks_blowing_a_horse_and_swallowing.bin");
-					listOfLines.push_back("Activating webcam\nRecording player\nPutting video on YouTube");
-					listOfLines.push_back("Activating webcam\nRecording player\nPutting video on YouPorn");
-					listOfLines.push_back("Watching paint dry");
-					listOfLines.push_back("Executing Order 66");
-					listOfLines.push_back("Debugging debugger");
-					listOfLines.push_back("Poking art.ini");
-					listOfLines.push_back("Touching sound.ini with a 10-foot-pole");
+				const char * listOfLines[] = {
+					"Gremlins found in [General], initializing microwave algorithms",
+					"Finding and removing porn\nFound 4269 files\nDeleting blondes\nDeleting brunettes\nDeleting redheads\nDeleting shemales\nDeleting midgets\nDeleting horses",
+					"Found pirated music, deleting 2342 tracks",
+					"Analyzing unit parameters\nMod's balance is crappy",
+					"Cannot initialize sound - device occupied by crappy music",
+					"MIX loading aborted; parser busy looking at Tanya porn",
+					"Checking player's hardware\nPlayer's hardware is embarrassingly small",
+					"Loading SHP parser\nSHP parser says the graphics of this mod are fugly",
+					"Reversing polarity",
+					"Questioning the purpose of life",
+					"To blit, or not to blit- that is the question:\nWhether 'tis nobler in the mind to suffer\nThe slings and arrows of pathetic modding,\nOr to take arms against a sea of troubles\nAnd, by opposing, end them.",
+					"You look nice today, do you have a new haircut?",
+					"Initializing SkyNet protocols",
+					"Scanning WLANs\nObtaining WPA2 pre-shared key\nDownloading horse porn",
+					"Checking \"hardware region\" fill capability...OK",
+					"Checking overlapped tit capability...OK",
+					"VisibleRectum: 800x600",
+					"Your toaster is on fire",
+					"Having sex with your dog",
+					"WincockInterface constructed\nWincockInterface init.\nAbout to call WSAStartup\nChanged my mind, waiting for him to call\nWincock initialised OK anyway\nWincock version is 1.1 inches",
+					"Parsing [AudioVisual]\nTurning away in disgust",
+					"Shaking my head at the modder",
+					"Staring wearily into the distance",
+					"Wondering when this will finally end",
+					"How long can a rules.ini be, really?",
+					"On this file handle, show me exactly where the modder touched you, please",
+					"Mowing player's lawn",
+					"Yawning about the boredom of this mod",
+					"Randomly flipping bits on the map",
+					"Initializing Internal Error countdown",
+					"Init random number\nRolling dice\nSeed is 6",
+					"Generating random number\nRandom number is 4",
+					"Generating random number\nRandom number is 4",
+					"Generating random number\nRandom number is 4",
+					"Generating random number\nRandom number is 4",
+					"Generating random number\nRandom number is 4",
+					"Taping Tanya making out with Boris",
+					"Mocking the mod's SHPs",
+					"Repainting voxels\nVoxels are now pink",
+					"Questioning modder's sexual orientation",
+					"Poking and prodding the engine until it finally gets up",
+					"Creating TacticalMap\nTactic is: Build APOCs until you run out of money, rush the opponent",
+					"RadarClass::First_Time()\nRadarClass came too fast",
+					"Init Commandments\nBuffer overflow: Not enough space for 10 Commandments",
+					"Getting file from host\nFondling host",
+					"Calling Get_File_From_Host to receive the file download\nGetting file from host\nRequesting file download\nSending global ack packet to port 0\nHost responded with file info\nFile name is two_chicks_blowing_a_horse_and_swallowing.bin\nSending file info received ack\nReceiving download of file two_chicks_blowing_a_horse_and_swallowing.bin",
+					"Activating webcam\nRecording player\nPutting video on YouTube",
+					"Activating webcam\nRecording player\nPutting video on YouPorn",
+					"Watching paint dry",
+					"Executing Order 66",
+					"Debugging debugger",
+					"Poking art.ini",
+					"Touching sound.ini with a 10-foot-pole"
+				}
+				int listSize = sizeof(listOfLines) / sizeof(listOfLines[0]); // get item count of listOfLines
+
+				static std::vector<int> usedLines; // list of lines already used in this log
+				int logLineNo = r->RandomRanged(0, listSize-1);
+				std::vector<int>::iterator result;
+
+				result = find(usedLines.begin(), usedLines.end(), logLineNo); // check if this line was used before
+				while(result != usedLines.end()) { // if so, find a new one
+					logLineNo = r->RandomRanged(0, listSize-1);
+					result = find(usedLines.begin(), usedLines.end(), logLineNo);
 				}
 
+				// mark this line as used
+				usedLines.push_back(logLineNo);
 
-				if(!listOfLines.empty()) {
-					static std::vector<int> usedLines; // list of lines already used in this log
-					int logLineNo = r->RandomRanged(0, listOfLines.size()-1);
-					std::vector<int>::iterator result;
-
-					result = find(usedLines.begin(), usedLines.end(), logLineNo); // check if this line was used before
-					while(result != usedLines.end()) { // if so, find a new one
-						logLineNo = r->RandomRanged(0, listOfLines.size()-1);
-						result = find(usedLines.begin(), usedLines.end(), logLineNo);
-					}
-
-					// mark this line as used
-					usedLines.push_back(logLineNo);
-
-					// return the line
-					return listOfLines.at(logLineNo);
-				} else {
-					return "List of Log Lines not populated.";
-				}
+				// return the line
+				return listOfLines[logLineNo];
 			};
 
 			for(int i = 0; i < 10; ++i) {
 				Debug::Log("%s\n", getRandomLogLine());
 			}
-
-			// closing and reopening once to separate "creative" log parts from future log parts
-			Debug::LogFileClose(0x1D107);
-			Debug::LogFileOpen();
 		}
 	}
 
