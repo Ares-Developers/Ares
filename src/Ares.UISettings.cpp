@@ -35,14 +35,14 @@ int Ares::UISettings::uiColorTextCombobox;
 int Ares::UISettings::uiColorTextGroupbox;
 int Ares::UISettings::uiColorTextSlider;
 int Ares::UISettings::uiColorTextEdit;
+int Ares::UISettings::uiColorTextObserver;
 int Ares::UISettings::uiColorCaret;
 int Ares::UISettings::uiColorSelection;
 int Ares::UISettings::uiColorSelectionCombobox;
 int Ares::UISettings::uiColorSelectionList;
+int Ares::UISettings::uiColorSelectionObserver;
 int Ares::UISettings::uiColorBorder1;
 int Ares::UISettings::uiColorBorder2;
-int Ares::UISettings::uiColorObserverSide;
-int Ares::UISettings::uiColorObserverOpen;
 int Ares::UISettings::uiColorDisabled;
 int Ares::UISettings::uiColorDisabledLabel;
 int Ares::UISettings::uiColorDisabledButton;
@@ -50,6 +50,7 @@ int Ares::UISettings::uiColorDisabledCombobox;
 int Ares::UISettings::uiColorDisabledCheckbox;
 int Ares::UISettings::uiColorDisabledSlider;
 int Ares::UISettings::uiColorDisabledList;
+int Ares::UISettings::uiColorDisabledObserver;
 
 void Ares::UISettings::Load(CCINIClass *pINI) {
 	if(pINI == NULL) {
@@ -195,14 +196,14 @@ void Ares::UISettings::Load(CCINIClass *pINI) {
 	uiColorTextGroupbox = ParseColorInt(section, "Color.Groupbox.Text", uiColorText);
 	uiColorTextSlider = ParseColorInt(section, "Color.Slider.Text", uiColorText);
 	uiColorTextEdit = ParseColorInt(section, "Color.Edit.Text", uiColorText);
+	uiColorTextObserver = ParseColorInt(section, "Color.Observer.Text", 0xEEEEEE);
 	uiColorCaret = ParseColorInt(section, "Color.Caret", 0xFFFF);
 	uiColorSelection = ParseColorInt(section, "Color.Selection", 0xFF);
 	uiColorSelectionCombobox = ParseColorInt(section, "Color.Combobox.Selection", uiColorSelection);
 	uiColorSelectionList = ParseColorInt(section, "Color.List.Selection", uiColorSelection);
+	uiColorSelectionObserver = ParseColorInt(section, "Color.Observer.Selection", 0x626262);
 	uiColorBorder1 = ParseColorInt(section, "Color.Border1", 0xC5BEA7);
 	uiColorBorder2 = ParseColorInt(section, "Color.Border2", 0x807A68);
-	uiColorObserverSide = ParseColorInt(section, "Color.ObserverSide", 0x8F8F8F);
-	uiColorObserverOpen = ParseColorInt(section, "Color.ObserverOpen", 0xEEEEEE);
 	uiColorDisabled = ParseColorInt(section, "Color.Disabled", 0x9F);
 	uiColorDisabledLabel = ParseColorInt(section, "Color.Label.Disabled", uiColorDisabled);
 	uiColorDisabledCombobox = ParseColorInt(section, "Color.Combobox.Disabled", uiColorDisabled);
@@ -210,6 +211,7 @@ void Ares::UISettings::Load(CCINIClass *pINI) {
 	uiColorDisabledButton = ParseColorInt(section, "Color.Button.Disabled", 0xA7);
 	uiColorDisabledCheckbox = ParseColorInt(section, "Color.Checkbox.Disabled", uiColorDisabled);
 	uiColorDisabledList = ParseColorInt(section, "Color.List.Disabled", uiColorDisabled);
+	uiColorDisabledObserver = ParseColorInt(section, "Color.Observer.Disabled", 0x8F8F8F);
 
 	Initialized = true;
 }

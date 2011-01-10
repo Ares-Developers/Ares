@@ -1001,8 +1001,9 @@ DEFINE_HOOK(60FAD7, Ownerdraw_PostProcessColors, A) {
 	*(int*)0xAC4604 = Ares::UISettings::uiColorSelection;
 	*(int*)0xAC1B98 = Ares::UISettings::uiColorBorder1;
 	*(int*)0xAC1B94 = Ares::UISettings::uiColorBorder2;
-	*(int*)0xAC1AF8 = Ares::UISettings::uiColorObserverSide;
-	*(int*)0xAC1CB0 = Ares::UISettings::uiColorObserverOpen;
+	*(int*)0xAC1AF8 = Ares::UISettings::uiColorDisabledObserver;
+	*(int*)0xAC1CB0 = Ares::UISettings::uiColorTextObserver;
+	*(int*)0xAC4880 = Ares::UISettings::uiColorSelectionObserver;
 	*(int*)0xAC1CB4 = Ares::UISettings::uiColorDisabled;
 
 	// skip initialization
@@ -1060,9 +1061,14 @@ DEFINE_HOOK(619A5F, Handle_Listbox_Messages_DisabledB, 6) {
 	return 0x619A65;
 }
 
-DEFINE_HOOK(619270, Handle_Listbox_Messages_Selection, 5) {
+DEFINE_HOOK(619270, Handle_Listbox_Messages_SelectionA, 5) {
 	R->EAX(Ares::UISettings::uiColorSelectionList);
 	return 0x619275;
+}
+
+DEFINE_HOOK(619288, Handle_Listbox_Messages_SelectionB, 6) {
+	R->DL(Ares::UISettings::uiColorSelectionList >> 16);
+	return 0x61928E;
 }
 
 DEFINE_HOOK(617A2B, Handle_Combobox_Messages_Color, 6) {
@@ -1075,9 +1081,14 @@ DEFINE_HOOK(617A57, Handle_Combobox_Messages_Disabled, 6) {
 	return 0x617A5D;
 }
 
-DEFINE_HOOK(60DDA6, Handle_Combobox_Messages_Selection, 5) {
+DEFINE_HOOK(60DDA6, Handle_Combobox_Dropdown_Messages_SelectionA, 5) {
 	R->EAX(Ares::UISettings::uiColorSelectionCombobox);
 	return 0x60DDAB;
+}
+
+DEFINE_HOOK(60DDB6, Handle_Combobox_Dropdown_Messages_SelectionB, 6) {
+	R->DL(Ares::UISettings::uiColorSelectionCombobox >> 16);
+	return 0x60DDBC;
 }
 
 DEFINE_HOOK(61E2A5, Handle_Slider_Messages_Color, 5) {
@@ -1098,4 +1109,24 @@ DEFINE_HOOK(61E8A0, Handle_GroupBox_Messages_Color, 6) {
 DEFINE_HOOK(614FF2, Handle_NewEdit_Messages_Color, 6) {
 	R->EDX(Ares::UISettings::uiColorTextEdit);
 	return 0x614FF8;
+}
+
+DEFINE_HOOK(69B949, Game_ProcessRandomPlayers_ColorsA, 6) {
+	R->EAX(ScenarioClass::Instance->Random.RandomRanged(0, Ares::UISettings::ColorCount - 1));
+	return 0x69B95E;
+}
+
+DEFINE_HOOK(69BA13, Game_ProcessRandomPlayers_ColorsB, 6) {
+	R->EAX(ScenarioClass::Instance->Random.RandomRanged(0, Ares::UISettings::ColorCount - 1));
+	return 0x69BA28;
+}
+
+DEFINE_HOOK(69B69B, GameModeClass_PickRandomColor_Unlimited, 6) {
+	R->EAX(ScenarioClass::Instance->Random.RandomRanged(0, Ares::UISettings::ColorCount - 1));
+	return 0x69B6AF;
+}
+
+DEFINE_HOOK(69B7FF, GameModeClass_SetColor_Unlimited, 6) {
+	R->EAX(ScenarioClass::Instance->Random.RandomRanged(0, Ares::UISettings::ColorCount - 1));
+	return 0x69B813;
 }

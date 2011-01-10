@@ -151,14 +151,14 @@ public:
 		static int uiColorTextGroupbox;
 		static int uiColorTextEdit;
 		static int uiColorTextSlider;
+		static int uiColorTextObserver;
 		static int uiColorCaret;
 		static int uiColorSelection;
 		static int uiColorSelectionCombobox;
 		static int uiColorSelectionList;
+		static int uiColorSelectionObserver;
 		static int uiColorBorder1;
 		static int uiColorBorder2;
-		static int uiColorObserverSide;
-		static int uiColorObserverOpen;
 		static int uiColorDisabled;
 		static int uiColorDisabledLabel;
 		static int uiColorDisabledButton;
@@ -166,6 +166,7 @@ public:
 		static int uiColorDisabledCheckbox;
 		static int uiColorDisabledList;
 		static int uiColorDisabledSlider;
+		static int uiColorDisabledObserver;
 	};
 
 	static bool RunningOnWindows7OrVista();
