@@ -224,7 +224,7 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 					"Profile: VRAM speed:55 (446 blits per second)\n"
 					"Overall performance profile = 1\n"
 					"Main_Game\n"
-					"Init Game",
+					"Init Game\n",
 
 					VERSION_STR);
 
