@@ -22,7 +22,7 @@ DEFINE_HOOK(6FF4DE, TechnoClass_Fire_IsLaser, 6) {
 	GET(TechnoClass*, pThis, ECX);
 	GET(TechnoClass*, pTarget, EDI);
 	GET(WeaponTypeClass*, pFiringWeaponType, EBX);
-	GET_STACK(int, idxWeapon, 0x18);
+	GET_STACK(int, idxWeapon, STACK_OFFS(0xB8, -0xC));
 
 	auto pData = WeaponTypeExt::ExtMap.Find(pFiringWeaponType);
 	int Thickness = pData->Laser_Thickness;
