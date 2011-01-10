@@ -22,7 +22,8 @@ DEFINE_HOOK(6FF4DE, TechnoClass_Fire_IsLaser, 6) {
 	GET(TechnoClass*, pThis, ECX);
 	GET(TechnoClass*, pTarget, EDI);
 	GET(WeaponTypeClass*, pFiringWeaponType, EBX);
-	GET_STACK(int, idxWeapon, STACK_OFFS(0xB8, -0xC));
+
+	int idxWeapon = R->Base<int>(0xC); // don't use stack offsets - function uses on-the-fly stack realignments which mean offsets are not constants
 
 	auto pData = WeaponTypeExt::ExtMap.Find(pFiringWeaponType);
 	int Thickness = pData->Laser_Thickness;
