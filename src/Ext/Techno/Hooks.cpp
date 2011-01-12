@@ -94,7 +94,7 @@ DEFINE_HOOK(6F9E76, TechnoClass_Update_CheckOperators, 6)
 	}
 
 	// prevent disabled units from driving around.
-	if(pThis->Deactivated) {
+	if(pThis->Deactivated && !pThis->LocomotorSource) {
 		if(UnitClass* pUnit = specific_cast<UnitClass*>(pThis)) {
 			if(pUnit->Locomotor->Is_Moving() && pUnit->Destination) {
 				pUnit->SetDestination(NULL, true);
