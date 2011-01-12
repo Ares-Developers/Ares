@@ -754,3 +754,17 @@ DEFINE_HOOK(41D887, AirstrikeClass_Fire, 6)
 	}
 	return 0;
 }
+
+// issue #1282: remap wall using its owner's colors
+DEFINE_HOOK(47F9A4, DrawOverlay_WallRemap, 6) {
+	GET(CellClass*, pCell, ESI);
+	
+	int idx = pCell->WallOwnerIndex;
+	
+	if(idx >= 0) {
+		HouseClass* pOwner = HouseClass::Array->GetItem(idx);
+		R->EDX(pOwner);
+		return 0x47F9AA;
+	}
+	return 0;
+}
