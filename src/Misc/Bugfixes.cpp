@@ -768,3 +768,58 @@ DEFINE_HOOK(47F9A4, DrawOverlay_WallRemap, 6) {
 	}
 	return 0;
 }
+
+
+DEFINE_HOOK(418478, AircraftClass_Mi_Attack_Untarget1, 6)
+{
+	GET(AircraftClass *, A, ESI);
+	return A->Target
+		? 0
+		: 0x4184C2
+	;
+}
+
+DEFINE_HOOK(4186D7, AircraftClass_Mi_Attack_Untarget2, 6)
+{
+	GET(AircraftClass *, A, ESI);
+	return A->Target
+		? 0
+		: 0x418720
+	;
+}
+
+DEFINE_HOOK(418826, AircraftClass_Mi_Attack_Untarget3, 6)
+{
+	GET(AircraftClass *, A, ESI);
+	return A->Target
+		? 0
+		: 0x418883
+	;
+}
+
+DEFINE_HOOK(418935, AircraftClass_Mi_Attack_Untarget4, 6)
+{
+	GET(AircraftClass *, A, ESI);
+	return A->Target
+		? 0
+		: 0x418992
+	;
+}
+
+DEFINE_HOOK(418A44, AircraftClass_Mi_Attack_Untarget5, 6)
+{
+	GET(AircraftClass *, A, ESI);
+	return A->Target
+		? 0
+		: 0x418AA1
+	;
+}
+
+DEFINE_HOOK(418B40, AircraftClass_Mi_Attack_Untarget6, 6)
+{
+	GET(AircraftClass *, A, ESI);
+	return A->Target
+		? 0
+		: 0x418B8A
+	;
+}
