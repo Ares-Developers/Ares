@@ -20,6 +20,18 @@ template<> IStream *Container<SWTypeExt>::SavingStream = NULL;
 
 SuperWeaponTypeClass *SWTypeExt::CurrentSWType = NULL;
 
+SWTypeExt::ExtData::~ExtData() {
+	if(this->ParaDrop) {
+		this->ParaDrop->Clear();
+		this->ParaDrop = NULL;
+	}
+
+	for(int i=this->ParaDropPlanes.Count-1; i>=0; --i) {
+		delete this->ParaDropPlanes.Items[i];
+		this->ParaDropPlanes.Items[i] = NULL;
+	}
+};
+
 void SWTypeExt::ExtData::InitializeConstants(SuperWeaponTypeClass *pThis)
 {
 	if(!NewSWType::Array.Count) {
@@ -59,7 +71,7 @@ void SWTypeExt::ExtData::InitializeRuled(SuperWeaponTypeClass *pThis)
 {
 }
 
-void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass *pINI)
+void SWTypeExt::ExtData::LoadFromRulesFile(SuperWeaponTypeClass *pThis, CCINIClass *pINI)
 {
 	const char * section = pThis->get_ID();
 
@@ -96,6 +108,18 @@ void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass
 			swt->Initialize(this, pThis);
 		}
 	}
+	this->LastAction = pThis->Action;
+}
+
+void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass *pINI)
+{
+	const char * section = pThis->get_ID();
+
+	if(!pINI->GetSection(section)) {
+		return;
+	}
+
+	INI_EX exINI(pINI);
 
 	// read general properties
 	this->EVA_Ready.Read(&exINI, section, "EVA.Ready");
@@ -188,11 +212,16 @@ void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass
 		AresCRT::strCopy(this->SW_PostDependent, Ares::readBuffer, 0x18);
 	}
 
+	// find a NewSWType that handles this original one.
+	int idxNewSWType = ((pThis->Type < FIRST_SW_TYPE) ? this->HandledByNewSWType : pThis->Type);
+
 	// initialize the NewSWType that handles this SWType.
 	int Type = idxNewSWType - FIRST_SW_TYPE;
 	if(Type >= 0 && Type < NewSWType::Array.Count) {
+		pThis->Action = this->LastAction;
 		NewSWType *swt = NewSWType::GetNthItem(idxNewSWType);
 		swt->LoadFromINI(this, pThis, pINI);
+		this->LastAction = pThis->Action;
 
 		// whatever the user does, we take care of the stupid tags.
 		// there is no need to have them not hardcoded.

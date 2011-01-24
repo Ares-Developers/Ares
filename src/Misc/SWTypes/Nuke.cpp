@@ -99,7 +99,7 @@ bool SW_NuclearMissile::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPl
 					if(pTBld->NukeSilo) {
 						if(pTBld->SuperWeapon == pType->ArrayIndex || pTBld->SuperWeapon2 == pType->ArrayIndex) {
 							// valid silo. let's see whether the firer got it.
-							if(pSilo = pThis->Owner->FindBuildingOfType(pTBld->ArrayIndex, -1)) {
+							if((pSilo = pThis->Owner->FindBuildingOfType(pTBld->ArrayIndex, -1)) != NULL) {
 								break;
 							}
 						}

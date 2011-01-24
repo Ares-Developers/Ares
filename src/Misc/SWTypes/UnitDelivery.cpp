@@ -111,7 +111,7 @@ void UnitDeliveryStateMachine::PlaceUnits() {
 				}
 
 				if(validCell) {
-					if(Placed = Item->Put(&XYZ, (cellIdx & 7))) {
+					if((Placed = Item->Put(&XYZ, (cellIdx & 7))) == true) {
 						if(ItemBuilding) {
 							if (pData->SW_DeliverBuildups) {
 								ItemBuilding->UpdateOwner(this->Super->Owner);

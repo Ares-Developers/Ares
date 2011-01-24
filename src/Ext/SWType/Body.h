@@ -186,6 +186,7 @@ public:
 		char SidebarPCX[0x20];
 
 		int HandledByNewSWType;
+		int LastAction;
 
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			SpyPlane_TypeIndex (0),
@@ -227,6 +228,7 @@ public:
 			SW_WidthOrRange (-1),
 			SW_Height (-1),
 			HandledByNewSWType (-1),
+			ParaDrop (NULL),
 			CameoPal(),
 			SW_DeliverBuildups (false),
 			SW_Damage(0)
@@ -244,10 +246,11 @@ public:
 				*Text_Active = 0;
 			};
 
-		virtual ~ExtData() { };
+		virtual ~ExtData();
 
 		virtual size_t Size() const { return sizeof(*this); };
 
+		virtual void LoadFromRulesFile(TT *pThis, CCINIClass *pINI);
 		virtual void LoadFromINIFile(TT *pThis, CCINIClass *pINI);
 		virtual void InitializeConstants(TT *pThis);
 		virtual void InitializeRuled(TT *pThis);
