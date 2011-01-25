@@ -52,7 +52,7 @@ DEFINE_HOOK(53B080, PsyDom_Fire, 5) {
 
 		// kill
 		if(pData->SW_Damage > 0 && pData->SW_Warhead.Get()) {
-			MapClass::Instance->DamageArea(&coords, pData->SW_Damage, 0, pData->SW_Warhead, 1, pFirer);
+			MapClass::Instance->DamageArea(&coords, pData->SW_Damage, NULL, pData->SW_Warhead, true, pFirer);
 		}
 
 		// capture

@@ -69,7 +69,7 @@ bool SW_GeneticMutator::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPl
 	Cell->GetCoordsWithBridge(&coords);
 	
 	if(pThis->IsCharged) {
-		if(pData->Mutate_Explosion) {
+		if(pData->Mutate_Explosion.Get()) {
 			// single shot using cellspread warhead
 			MapClass::DamageArea(&coords, pData->SW_Damage, NULL, pData->SW_Warhead, 0, pThis->Owner);
 		} else {
