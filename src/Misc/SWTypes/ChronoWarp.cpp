@@ -178,10 +178,14 @@ bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 				// get the cells and coordinates
 				CoordStruct coordsUnitSource;
 				pTechno->GetCoords(&coordsUnitSource);
-				CoordStruct coordsUnitTarget;
+				CoordStruct coordsUnitTarget = coordsUnitSource;
 				CellStruct cellUnitTarget = pTechno->GetCell()->MapCoords - pSource->ChronoMapCoords + *pCoords;
 				CellClass* pCellUnitTarget = MapClass::Instance->GetCellAt(&cellUnitTarget);
-				pCellUnitTarget->GetCoordsWithBridge(&coordsUnitTarget);
+				
+				// move the unit to the new position
+				coordsUnitTarget.X = coordsUnitSource.X + (pCoords->X - pSource->ChronoMapCoords.X) * 256;
+				coordsUnitTarget.Y = coordsUnitSource.Y + (pCoords->Y - pSource->ChronoMapCoords.Y) * 256;
+				pCellUnitTarget->FixHeight(&coordsUnitTarget);
 
 				if(FootClass *pFoot = generic_cast<FootClass*>(pObj)) {
 					// clean up the unit's current cell
@@ -216,6 +220,13 @@ bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 					pBld->Owner->PowerBlackout = true;
 					pBld->DisableTemporal();
 					pBld->SetLayer(Layer::Ground);
+
+					if(pBld->Type->CloakGenerator && pBld->CloakRadius) {
+						pBld->HasCloakingData = -1;
+						pBld->IsSensed = true;
+						pBld->CloakRadius = 1;
+						pBld->UpdateTimers();
+					}
 
 					// register for chronoshift
 					ChronoWarpStateMachine::ChronoWarpContainer Container(pBld, cellUnitTarget, pBld->Location, IsVehicle);

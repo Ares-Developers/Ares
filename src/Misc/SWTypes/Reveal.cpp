@@ -14,7 +14,9 @@ void SW_Reveal::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)
 	pData->SW_RadarEvent = false;
 
 	// real default values, that is, force max cellspread range of 10
-	pData->SW_WidthOrRange = std::max<float>(pData->SW_WidthOrRange, 10);
+	if(RulesClass::Instance->PsychicRevealRadius > 10) {
+		pData->SW_WidthOrRange = 10.0f;
+	}
 
 	pData->EVA_Ready = VoxClass::FindIndex("EVA_PsychicRevealReady");
 

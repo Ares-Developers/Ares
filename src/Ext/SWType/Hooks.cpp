@@ -283,8 +283,10 @@ DEFINE_HOOK(446937, BuildingClass_AnnounceSW, 6)
 	SuperWeaponTypeClass *pSW = SuperWeaponTypeClass::Array->GetItem(swTIdx);
 	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSW);
 
-	if(pData->EVA_Detected != -1) {
-		VoxClass::PlayIndex(pData->EVA_Detected);
+	if(pData->EVA_Detected != -1 || pData->HandledByNewSWType != -1) {
+		if(pData->EVA_Detected != -1) {
+			VoxClass::PlayIndex(pData->EVA_Detected);
+		}
 		return 0x44699A;
 	}
 	return 0;
@@ -297,8 +299,10 @@ DEFINE_HOOK(6CBDD7, SuperClass_AnnounceReady, 6)
 	GET(SuperWeaponTypeClass *, pThis, EAX);
 	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pThis);
 
-	if(pData->EVA_Ready != -1) {
-		VoxClass::PlayIndex(pData->EVA_Ready);
+	if(pData->EVA_Ready != -1 || pData->HandledByNewSWType != -1) {
+		if(pData->EVA_Ready != -1) {
+			VoxClass::PlayIndex(pData->EVA_Ready);
+		}
 		return 0x6CBE68;
 	}
 	return 0;
@@ -311,8 +315,10 @@ DEFINE_HOOK(6CC0EA, SuperClass_AnnounceQuantity, 9)
 	SuperWeaponTypeClass *pSW = pThis->Type;
 	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSW);
 
-	if(pData->EVA_Ready != -1) {
-		VoxClass::PlayIndex(pData->EVA_Ready);
+	if(pData->EVA_Ready != -1 || pData->HandledByNewSWType != -1) {
+		if(pData->EVA_Ready != -1) {
+			VoxClass::PlayIndex(pData->EVA_Ready);
+		}
 		return 0x6CC17E;
 	}
 	return 0;

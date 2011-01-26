@@ -119,7 +119,11 @@ public:
 			if(idx != -1) {
 				this->Set(idx);
 			} else {
-				Debug::INIParseFailed(pSection, pKey, val);
+				if(_strcmpi(val, "<none>") && _strcmpi(val, "none")) {
+					Debug::INIParseFailed(pSection, pKey, val);
+				} else {
+					this->Set(idx);
+				}
 			}
 		}
 	}
