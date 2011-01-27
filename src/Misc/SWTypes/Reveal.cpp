@@ -9,6 +9,10 @@ bool SW_Reveal::HandlesType(int type)
 
 void SW_Reveal::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)
 {
+	// a quick hack to make this value available earlier. to completely fix this,
+	// a rewrite of the range handling.
+	RulesClass::Instance->PsychicRevealRadius = CCINIClass::INI_Rules->ReadInteger("CombatDamage", "PsychicRevealRadius", 3);
+
 	pData->SW_WidthOrRange = (float)RulesClass::Instance->PsychicRevealRadius;
 	pData->SW_Sound = RulesClass::Instance->PsychicRevealActivateSound;
 	pData->SW_RadarEvent = false;
