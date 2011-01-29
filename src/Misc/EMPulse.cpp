@@ -600,6 +600,11 @@ bool EMPulse::enableEMPEffect(TechnoClass * Victim, ObjectClass * Source) {
 	if (BuildingClass * Building = specific_cast<BuildingClass *>(Victim)) {
 		Building->DisableStuff();
 		updateRadarBlackout(Building);
+
+		BuildingTypeClass * pType = Building->Type;
+		if (pType->Factory) {
+			Building->Owner->Update_FactoriesQueues(pType->Factory, pType->Naval, 0);
+		}
 	} else {
 		if (AircraftClass * Aircraft = specific_cast<AircraftClass *>(Victim)) {
 			// crash flying aircraft
@@ -620,10 +625,24 @@ bool EMPulse::enableEMPEffect(TechnoClass * Victim, ObjectClass * Source) {
 	// cache the last mission this thing did
 	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(Victim);
 	pData->EMPLastMission = Victim->CurrentMission;
+	
+	// remove the unit from its team
+	if (FootClass * Foot = generic_cast<FootClass *>(Victim)) {
+		if (Foot->BelongsToATeam()) {
+			Foot->Team->LiberateMember(Foot);
+		}
+	}
 
-	// deactivate and sparkle.
+	// deactivate and sparkle
 	if (!Victim->Deactivated && IsDeactivationAdvisable(Victim)) {
+		bool selected = Victim->IsSelected;
 		Victim->Deactivate();
+		if(selected) {
+			bool feedback = Unsorted::MoveFeedback;
+			Unsorted::MoveFeedback = false;
+			Victim->Select();
+			Unsorted::MoveFeedback = feedback;
+		}
 	}
 
 	// release all captured units.
@@ -668,6 +687,11 @@ void EMPulse::DisableEMPEffect(TechnoClass * Victim) {
 				Building->EnableStuff();
 			}
 			updateRadarBlackout(Building);
+
+			BuildingTypeClass * pType = Building->Type;
+			if (pType->Factory) {
+				Building->Owner->Update_FactoriesQueues(pType->Factory, pType->Naval, 0);
+			}
 		}
 	}
 

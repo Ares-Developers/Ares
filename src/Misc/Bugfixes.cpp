@@ -697,6 +697,9 @@ DEFINE_HOOK(52BA78, _YR_GameInit_Pre, 5)
 	// issue #1380: the iron curtain cursor
 	MouseCursor::First[MouseCursorType::IronCurtain].Interval = 4;
 
+	// animate the engineer damage cursor
+	MouseCursor::First[MouseCursorType::Detonate].Interval = 4;
+
 	return 0;
 }
 
@@ -822,4 +825,11 @@ DEFINE_HOOK(418B40, AircraftClass_Mi_Attack_Untarget6, 6)
 		? 0
 		: 0x418B8A
 	;
+}
+
+// issue #1437: crash when warping out buildings infantry wants to garrison
+DEFINE_HOOK(71AA52, TemporalClass_Update_AnnounceInvalidPointer, 8) {
+	GET(TechnoClass*, pVictim, ECX);
+	pVictim->IsAlive = false;
+	return 0;
 }
