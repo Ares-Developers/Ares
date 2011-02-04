@@ -6,6 +6,9 @@
 #include <ScenarioClass.h>
 #include "Debug.h"
 #include "../Ext/Rules/Body.h"
+#include <vector>
+#include <algorithm>
+#include "../Ares.version.h"
 
 DEFINE_HOOK(477007, INIClass_GetSpeedType, 8)
 {
@@ -112,8 +115,8 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 	// #1000
 	if(RulesExt::ExtData *AresGeneral = RulesExt::Global()) {
 		if(!!AresGeneral->CanMakeStuffUp) {
+			Randomizer *r = &ScenarioClass::Instance->Random;
 			if(RulesClass* StockGeneral = RulesClass::Global()) { // well, the modder *said* we can make stuff up, so...
-				Randomizer *r = &ScenarioClass::Instance->Random;
 
 				StockGeneral->VeteranRatio = r->RandomRanged(1, 500) / 100.0;
 				StockGeneral->BuildSpeed = r->RandomRanged(1, 350) / 100.0;
@@ -181,6 +184,128 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 				StockGeneral->PlayerAutoCrush = r->RandomRanged(1, 3) == 3;
 				StockGeneral->PlayerReturnFire = r->RandomRanged(1, 3) == 3;
 				StockGeneral->PlayerScatter = r->RandomRanged(1, 3) == 3;
+			}
+
+			// since the modder is..."faithful" enough to believe CanMakeStuffUp works, he won't need logs anyway
+			Debug::LogFileClose(0x1D107);
+			Debug::LogFileOpen(); // this annihilates the previous log contents
+
+			Debug::Log("Initialized Ares version: %s\n"
+					"Checking available disk space\n"
+					"Using GetDiskFreeSpaceEx\n"
+					"Free disk space is 3235830701 bytes\n"
+					"Init Encryption Keys.\n"
+					"Init_Keys - declarations\n"
+					"Init_Keys - Load\n"
+					"Init_Keys - Init fast key\n"
+					"EXPANDMD99.MIX EXPANDMD98.MIX EXPANDMD97.MIX EXPANDMD06.MIX EXPANDMD01.MIX CACHE.MIX CACHE.MIX CACHE.MIX LOCAL.MIXMaxLabelLen = 31\n"
+					"Language: Elbonian\n"
+					"Focus_Restore()\n"
+					"Focus_Restore(): _MouseCaptured = false\n"
+					"Focus gained\n"
+					"Defeat\n"
+					"Defeat\n"
+					"Prep direct draw.\n"
+					"Prep direct draw.\n"
+					"SetDisplayMode: 4200x690x48\n"
+					"Checking hardware region fill capability...OK\n"
+					"Checking overlapped blit capability...OK\n"
+					"Display mode set\n"
+					"DSurface::Create_Primary\n"
+					"DSurface::AllowStretchBlits = true\n"
+					"DSurface::AllowHWFill = true\n"
+					"DSurface::Create_Primary - Creating surface\n"
+					"CreateSurface OK\n"
+					"DSurface::Create_Primary done\n"
+					"Calc_Confining_Rect(0,0,800,600)\n"
+					"Profile: CPU:1 (1998Mhz Pentium Pro)\n"
+					"Profile: RAM:9 (256Mb)\n"
+					"Profile: VRAM:10 (1293Mb)\n"
+					"Profile: VRAM speed:55 (446 blits per second)\n"
+					"Overall performance profile = 1\n"
+					"Main_Game\n"
+					"Init Game\n",
+
+					VERSION_STR);
+
+			// we can't just leave him with no log, though...that'd be depressing and suspicious
+			auto getRandomLogLine = [r]() -> const char * {
+				static const char * listOfLines[] = {
+					"Gremlins found in [General], initializing microwave algorithms",
+					"Finding and removing porn\nFound 4269 files\nDeleting blondes\nDeleting brunettes\nDeleting redheads\nDeleting shemales\nDeleting midgets\nDeleting horses",
+					"Found pirated music, deleting 2342 tracks",
+					"Analyzing unit parameters\nMod's balance is crappy",
+					"Cannot initialize sound - device occupied by crappy music",
+					"MIX loading aborted; parser busy looking at Tanya porn",
+					"Checking player's hardware\nPlayer's hardware is embarrassingly small",
+					"Loading SHP parser\nSHP parser says the graphics of this mod are fugly",
+					"Reversing polarity",
+					"Questioning the purpose of life",
+					"To blit, or not to blit- that is the question:\nWhether 'tis nobler in the mind to suffer\nThe slings and arrows of pathetic modding,\nOr to take arms against a sea of troubles\nAnd, by opposing, end them.",
+					"You look nice today, do you have a new haircut?",
+					"Initializing SkyNet protocols",
+					"Scanning WLANs\nObtaining WPA2 pre-shared key\nDownloading horse porn",
+					"Checking \"hardware region\" fill capability...OK",
+					"Checking overlapped tit capability...OK",
+					"VisibleRectum: 800x600",
+					"Your toaster is on fire",
+					"Having sex with your dog",
+					"WincockInterface constructed\nWincockInterface init.\nAbout to call WSAStartup\nChanged my mind, waiting for him to call\nWincock initialised OK anyway\nWincock version is 1.1 inches",
+					"Parsing [AudioVisual]\nTurning away in disgust",
+					"Shaking my head at the modder",
+					"Staring wearily into the distance",
+					"Wondering when this will finally end",
+					"How long can a rules.ini be, really?",
+					"On this file handle, show me exactly where the modder touched you, please",
+					"Mowing player's lawn",
+					"Yawning about the boredom of this mod",
+					"Randomly flipping bits on the map",
+					"Initializing Internal Error countdown",
+					"Init random number\nRolling dice\nSeed is 6",
+					"Generating random number\nRandom number is 4",
+					"Generating random number\nRandom number is 4",
+					"Generating random number\nRandom number is 4",
+					"Generating random number\nRandom number is 4",
+					"Generating random number\nRandom number is 4",
+					"Taping Tanya making out with Boris",
+					"Mocking the mod's SHPs",
+					"Repainting voxels\nVoxels are now pink",
+					"Questioning modder's sexual orientation",
+					"Poking and prodding the engine until it finally gets up",
+					"Creating TacticalMap\nTactic is: Build APOCs until you run out of money, rush the opponent",
+					"RadarClass::First_Time()\nRadarClass came too fast",
+					"Init Commandments\nBuffer overflow: Not enough space for 10 Commandments",
+					"Getting file from host\nFondling host",
+					"Calling Get_File_From_Host to receive the file download\nGetting file from host\nRequesting file download\nSending global ack packet to port 0\nHost responded with file info\nFile name is two_chicks_blowing_a_horse_and_swallowing.bin\nSending file info received ack\nReceiving download of file two_chicks_blowing_a_horse_and_swallowing.bin",
+					"Activating webcam\nRecording player\nPutting video on YouTube",
+					"Activating webcam\nRecording player\nPutting video on YouPorn",
+					"Watching paint dry",
+					"Executing Order 66",
+					"Debugging debugger",
+					"Poking art.ini",
+					"Touching sound.ini with a 10-foot-pole"
+				};
+				int listSize = sizeof(listOfLines) / sizeof(listOfLines[0]); // get item count of listOfLines
+
+				static std::vector<int> usedLines; // list of lines already used in this log
+				int logLineNo = r->RandomRanged(0, listSize-1);
+				std::vector<int>::iterator result;
+
+				result = find(usedLines.begin(), usedLines.end(), logLineNo); // check if this line was used before
+				while(result != usedLines.end()) { // if so, find a new one
+					logLineNo = r->RandomRanged(0, listSize-1);
+					result = find(usedLines.begin(), usedLines.end(), logLineNo);
+				}
+
+				// mark this line as used
+				usedLines.push_back(logLineNo);
+
+				// return the line
+				return listOfLines[logLineNo];
+			};
+
+			for(int i = 0; i < 10; ++i) {
+				Debug::Log("%s\n", getRandomLogLine());
 			}
 		}
 	}

@@ -59,3 +59,36 @@ DEFINE_HOOK(51E3B0, InfantryClass_GetCursorOverObject_EMP, 7) {
 
 	return 0;
 }
+
+DEFINE_HOOK(73D219, UnitClass_Draw_OreGatherAnim, 6) {
+	GET(TechnoClass*, pTechno, ECX);
+
+	// disabled ore gatherers should not appear working.
+	if(pTechno->IsWarpingIn() || pTechno->IsUnderEMP()) {
+		return 0x73D28E;
+	}
+
+	return 0x73D223;
+}
+
+DEFINE_HOOK(5F7933, TechnoTypeClass_FindFactory_ExcludeDisabled, 6) {
+	GET(BuildingClass*, pBld, ESI);
+
+	// add the EMP check to the limbo check
+	if(pBld->InLimbo || pBld->IsUnderEMP()) {
+		return 0x5F7A57;
+	}
+
+	return 0x5F7941;
+}
+
+DEFINE_HOOK(4456E5, BuildingClass_UpdateConstructionOptions_ExcludeDisabled, 6) {
+	GET(BuildingClass*, pBld, ECX);
+
+	// add the EMP check to the limbo check
+	if(pBld->InLimbo || pBld->IsUnderEMP()) {
+		return 0x44583E;
+	}
+
+	return 0x4456F3;
+}
