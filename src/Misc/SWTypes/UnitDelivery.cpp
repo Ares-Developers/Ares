@@ -109,8 +109,14 @@ void UnitDeliveryStateMachine::PlaceUnits() {
 						&& !cell->Tile_Is_DestroyableCliff() && !cell->Tile_Is_Shore()
 						&& !cell->Tile_Is_Water() && !cell->ContainsBridge();
 				}
+				if(Type->Naval) {
+					// naval types look stupid on bridges
+					validCell = (!cell->ContainsBridge() && cell->LandType != lt_Road)
+						|| Type->SpeedType == st_Hover;
+				}
 
 				if(validCell) {
+					Item->OnBridge = cell->ContainsBridge();
 					if((Placed = Item->Put(&XYZ, (cellIdx & 7))) == true) {
 						if(ItemBuilding) {
 							if (pData->SW_DeliverBuildups) {
@@ -120,9 +126,6 @@ void UnitDeliveryStateMachine::PlaceUnits() {
 						} else {
 							if(Type->BalloonHover || Type->JumpJet) {
 								Item->Scatter(0xB1CFE8, 1, 0);
-							}
-							if(cell->ContainsBridge()) {
-								Item->OnBridge = true;
 							}
 						}
 					}

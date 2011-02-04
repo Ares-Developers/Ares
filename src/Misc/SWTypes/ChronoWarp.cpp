@@ -168,10 +168,30 @@ bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 					}
 				}
 
-				// unit will be destroyed or chronoported. in every case the bunker will be empty.
+				// disconnect bunker and contents
 				if(pTechno->BunkerLinkedItem) {
 					if(BuildingClass *pBunkerLink = specific_cast<BuildingClass*>(pTechno->BunkerLinkedItem)) {
+						// unit will be destroyed or chronoported. in every case the bunker will be empty.
 						pBunkerLink->ClearBunker();
+					} else if(BuildingClass *pBunkerLink = specific_cast<BuildingClass*>(pTechno)) {
+						// the bunker leaves...
+						pBunkerLink->UnloadBunker();
+						pBunkerLink->EmptyBunker();
+					}
+				}
+
+				// building specific preparations
+				if(BuildingClass* pBld = specific_cast<BuildingClass*>(pObj)) {
+					// tell all linked units to get off
+					pBld->SendToEachLink(rc_0D);
+					pBld->SendToEachLink(rc_Exit);
+
+					// shut down cloak generation
+					if(pBld->Type->CloakGenerator && pBld->CloakRadius) {
+						pBld->HasCloakingData = -1;
+						pBld->IsSensed = true;
+						pBld->CloakRadius = 1;
+						pBld->UpdateTimers();
 					}
 				}
 
@@ -220,13 +240,6 @@ bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 					pBld->Owner->PowerBlackout = true;
 					pBld->DisableTemporal();
 					pBld->SetLayer(Layer::Ground);
-
-					if(pBld->Type->CloakGenerator && pBld->CloakRadius) {
-						pBld->HasCloakingData = -1;
-						pBld->IsSensed = true;
-						pBld->CloakRadius = 1;
-						pBld->UpdateTimers();
-					}
 
 					// register for chronoshift
 					ChronoWarpStateMachine::ChronoWarpContainer Container(pBld, cellUnitTarget, pBld->Location, IsVehicle);

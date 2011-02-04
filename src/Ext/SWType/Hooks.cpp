@@ -579,9 +579,11 @@ DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
 
 					case SuperWeaponAITargetingMode::Offensive:
 						{
-							pThis->PickIonCannonTarget(Cell);
-							if(Cell != HouseClass::DefaultIonCannonCoords) {
-								LaunchSW(&Cell);
+							if(pThis->EnemyHouseIndex != -1 && pExt->IsHouseAffected(pThis, HouseClass::Array->GetItem(pThis->EnemyHouseIndex))) {
+								pThis->PickIonCannonTarget(Cell);
+								if(Cell != HouseClass::DefaultIonCannonCoords) {
+									LaunchSW(&Cell);
+								}
 							}
 							break;
 						}
@@ -600,14 +602,16 @@ DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
 							for(int j=0; j<TechnoClass::Array->Count; ++j) {
 								if(TechnoClass* pTechno = TechnoClass::Array->GetItem(j)) {
 									if(pTechno->CloakState) {
-										if(pExt->IsTechnoAffected(pTechno)) {
-											int thisValue = pTechno->ThreatPosed;
-											if(currentValue > thisValue) {
-												list.Clear();
-												currentValue = thisValue;
-											}
-											if(currentValue == thisValue) {
-												list.AddItem(pTechno);
+										if(pExt->IsHouseAffected(pThis, pTechno->Owner)) {
+											if(pExt->IsTechnoAffected(pTechno)) {
+												int thisValue = pTechno->ThreatPosed;
+												if(currentValue > thisValue) {
+													list.Clear();
+													currentValue = thisValue;
+												}
+												if(currentValue == thisValue) {
+													list.AddItem(pTechno);
+												}
 											}
 										}
 									}
