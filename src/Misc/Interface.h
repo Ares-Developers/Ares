@@ -36,6 +36,15 @@ public:
 		bool Valid;
 	};
 
+	struct ColorData {
+		wchar_t* id;
+		int colorRGB;
+		int selectedIndex;
+		char colorSchemeIndex;
+		char colorScheme[0x20];
+		const wchar_t* sttToolTipSublineText;
+	};
+
 	static int lastDialogTemplateID;
 	static int nextReturnMenu;
 	static int nextAction;

@@ -136,6 +136,37 @@ public:
 		static bool CampaignList;
 		static bool ShowDebugCampaigns;
 		static Interface::CampaignData Campaigns[4];
+
+		static const int maxColorCount = 16;
+		static int ColorCount;
+		static Interface::ColorData Colors[maxColorCount+1];
+
+		static int uiColorText;
+		static int uiColorTextButton;
+		static int uiColorTextCheckbox;
+		static int uiColorTextRadio;
+		static int uiColorTextLabel;
+		static int uiColorTextList;
+		static int uiColorTextCombobox;
+		static int uiColorTextGroupbox;
+		static int uiColorTextEdit;
+		static int uiColorTextSlider;
+		static int uiColorTextObserver;
+		static int uiColorCaret;
+		static int uiColorSelection;
+		static int uiColorSelectionCombobox;
+		static int uiColorSelectionList;
+		static int uiColorSelectionObserver;
+		static int uiColorBorder1;
+		static int uiColorBorder2;
+		static int uiColorDisabled;
+		static int uiColorDisabledLabel;
+		static int uiColorDisabledButton;
+		static int uiColorDisabledCombobox;
+		static int uiColorDisabledCheckbox;
+		static int uiColorDisabledList;
+		static int uiColorDisabledSlider;
+		static int uiColorDisabledObserver;
 	};
 
 	static bool RunningOnWindows7OrVista();
