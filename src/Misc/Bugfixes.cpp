@@ -697,6 +697,9 @@ DEFINE_HOOK(52BA78, _YR_GameInit_Pre, 5)
 	// issue #1380: the iron curtain cursor
 	MouseCursor::First[MouseCursorType::IronCurtain].Interval = 4;
 
+	// animate the engineer damage cursor
+	MouseCursor::First[MouseCursorType::Detonate].Interval = 4;
+
 	return 0;
 }
 
@@ -752,5 +755,81 @@ DEFINE_HOOK(41D887, AirstrikeClass_Fire, 6)
 		R->ECX(-1);
 		return 0x41D895;
 	}
+	return 0;
+}
+
+// issue #1282: remap wall using its owner's colors
+DEFINE_HOOK(47F9A4, DrawOverlay_WallRemap, 6) {
+	GET(CellClass*, pCell, ESI);
+	
+	int idx = pCell->WallOwnerIndex;
+	
+	if(idx >= 0) {
+		HouseClass* pOwner = HouseClass::Array->GetItem(idx);
+		R->EDX(pOwner);
+		return 0x47F9AA;
+	}
+	return 0;
+}
+
+
+DEFINE_HOOK(418478, AircraftClass_Mi_Attack_Untarget1, 6)
+{
+	GET(AircraftClass *, A, ESI);
+	return A->Target
+		? 0
+		: 0x4184C2
+	;
+}
+
+DEFINE_HOOK(4186D7, AircraftClass_Mi_Attack_Untarget2, 6)
+{
+	GET(AircraftClass *, A, ESI);
+	return A->Target
+		? 0
+		: 0x418720
+	;
+}
+
+DEFINE_HOOK(418826, AircraftClass_Mi_Attack_Untarget3, 6)
+{
+	GET(AircraftClass *, A, ESI);
+	return A->Target
+		? 0
+		: 0x418883
+	;
+}
+
+DEFINE_HOOK(418935, AircraftClass_Mi_Attack_Untarget4, 6)
+{
+	GET(AircraftClass *, A, ESI);
+	return A->Target
+		? 0
+		: 0x418992
+	;
+}
+
+DEFINE_HOOK(418A44, AircraftClass_Mi_Attack_Untarget5, 6)
+{
+	GET(AircraftClass *, A, ESI);
+	return A->Target
+		? 0
+		: 0x418AA1
+	;
+}
+
+DEFINE_HOOK(418B40, AircraftClass_Mi_Attack_Untarget6, 6)
+{
+	GET(AircraftClass *, A, ESI);
+	return A->Target
+		? 0
+		: 0x418B8A
+	;
+}
+
+// issue #1437: crash when warping out buildings infantry wants to garrison
+DEFINE_HOOK(71AA52, TemporalClass_Update_AnnounceInvalidPointer, 8) {
+	GET(TechnoClass*, pVictim, ECX);
+	pVictim->IsAlive = false;
 	return 0;
 }

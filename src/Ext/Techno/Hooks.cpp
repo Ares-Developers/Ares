@@ -96,7 +96,7 @@ DEFINE_HOOK(6F9E76, TechnoClass_Update_CheckOperators, 6)
 	// prevent disabled units from driving around.
 	if(pThis->Deactivated) {
 		if(UnitClass* pUnit = specific_cast<UnitClass*>(pThis)) {
-			if(pUnit->Locomotor->Is_Moving() && pUnit->Destination) {
+			if(pUnit->Locomotor->Is_Moving() && pUnit->Destination && !pThis->LocomotorSource) {
 				pUnit->SetDestination(NULL, true);
 				pUnit->StopMoving();
 			}
@@ -520,6 +520,28 @@ DEFINE_HOOK(701C97, TechnoClass_ReceiveDamage_AffectsEnemies, 6)
 	WarheadTypeExt::ExtData *WHTypeExt = WarheadTypeExt::ExtMap.Find(pThis);
 
 	if(Arguments->Attacker) {
+		/* Ren, 08.01.2011:
+			Just documenting how/why this works, since I just stared at it for ten minutes trying to
+			figure out why this makes sense:
+			
+			AffectsEnemies=yes is the default case (weapons usually affect the enemy), so if that's true,
+			we can affect the target (this might later be changed by AffectsAllies).
+			AffectsEnemies=no means we cannot attack enemies, i.e. we can only attack allies;
+			ergo, CanAffect is only true if victim and target are allied.
+			Thanks to lazy evaluation, the latter condition is only ever checked if AffectsEnemies is set to no, which is not the default.
+			
+			The question of how this works came up because the current treatment of Neutral is technically wrong:
+			Semantically, AffectsEnemies=no only means "you cannot attack enemies", but our code renders it as "you cannot attack non-allies";
+			this obviously means that AffectsEnemies=no includes being unable to attack Neutral, despite the fact that Neutral is, well, neutral - not our enemy.
+			
+			In the specific situation this came up in, the current behavior was desired and no one else complained so far,
+			so I'm not proposing a change at this point. 
+			In fact, since this flag is AffectsAllies's evil twin, it is very most likely that practically *all* users of 
+			AffectsEnemies assume this behavior; he who sets AffectsEnemies=no likely does so with the intention of limiting damage to allied troops.
+			I just wanted this behavior and the logic behind it to be documented for the future.
+			
+			Note that, in the specific case of AffectsEnemies=no, AffectsAllies=no, this will rear its ugly head as a bug: Neutral should be affected, but won't be.
+		 */
 		CanAffect = WHTypeExt->AffectsEnemies || Victim->Owner->IsAlliedWith(Arguments->Attacker->Owner);
 
 		if(Arguments->Attacker->Owner != Arguments->SourceHouse) {
