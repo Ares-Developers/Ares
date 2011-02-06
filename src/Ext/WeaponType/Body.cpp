@@ -29,7 +29,7 @@ void WeaponTypeExt::ExtData::LoadFromINIFile(WeaponTypeExt::TT *pThis, CCINIClas
 	}
 
 	if(pThis->IsRadBeam || pThis->IsRadEruption) {
-		if(pThis->Warhead->Temporal) {
+		if(pThis->Warhead && pThis->Warhead->Temporal) { //Marshall added the check for Warhead because PrismForwarding.SupportWeapon does not require a Warhead
 			// Well, a RadEruption Temporal will look pretty funny, but this is what WW uses
 			this->Beam_Color.Bind(&RulesClass::Instance->ChronoBeamColor);
 		}
@@ -87,6 +87,8 @@ void WeaponTypeExt::ExtData::LoadFromINIFile(WeaponTypeExt::TT *pThis, CCINIClas
 		this->Bolt_Color2.Read(&exINI, section, "Bolt.Color2");
 		this->Bolt_Color3.Read(&exINI, section, "Bolt.Color3");
 	}
+
+	this->Laser_Thickness.Read(&exINI, section, "LaserThickness");
 
 //	pData->Wave_InitialIntensity = pINI->ReadInteger(section, "Wave.InitialIntensity", pData->Wave_InitialIntensity);
 //	pData->Wave_IntensityStep    = pINI->ReadInteger(section, "Wave.IntensityStep", pData->Wave_IntensityStep);

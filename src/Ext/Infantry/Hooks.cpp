@@ -6,7 +6,7 @@
 #include "../Techno/Body.h"
 #include "Body.h"
 #include "../Rules/Body.h"
-#include <Misc/Actions.h>
+#include "../../Misc/Actions.h"
 
 // #664: Advanced Rubble - reconstruction part: Check
 DEFINE_HOOK(51E63A, InfantryClass_GetCursorOverObject_EngineerOverFriendlyBuilding, 6) {

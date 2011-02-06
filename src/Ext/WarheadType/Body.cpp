@@ -3,7 +3,7 @@
 #include "../../Enum/ArmorTypes.h"
 #include "../Techno/Body.h"
 #include "../TechnoType/Body.h"
-#include "Misc/EMPulse.h"
+#include "../../Misc/EMPulse.h"
 
 #include <WarheadTypeClass.h>
 #include <GeneralStructures.h>

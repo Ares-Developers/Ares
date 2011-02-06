@@ -35,12 +35,15 @@ void BuildingTypeExt::ExtData::Initialize(BuildingTypeClass *pThis)
 			this->Secret_Boons.AddItem(Options->GetItem(i));
 		}
 	}
+	this->PrismForwarding.Initialize(pThis);
 }
 
 void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINIClass* pINI)
 {
 	char* pArtID = pThis->ImageFile;
 	char* pID = pThis->ID;
+
+	this->PrismForwarding.LoadFromINIFile(pThis, pINI);
 
 	if(pThis->UnitRepair && pThis->Factory == abs_AircraftType) {
 		Debug::FatalErrorAndExit(

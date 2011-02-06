@@ -2,7 +2,7 @@
 #define ARES_TEST_SCAFFOLD_H
 
 #include <Unsorted.h>
-#include "Ares.h"
+#include "../Ares.h"
 #include "Debug.h"
 
 class TestScaffold {
