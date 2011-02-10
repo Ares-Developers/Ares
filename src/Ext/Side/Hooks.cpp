@@ -222,6 +222,17 @@ DEFINE_HOOK(553820, LoadProgressMgr_Draw_SkipShadowOnNullString2, 5) {
 	return 0;
 }
 
+// do not draw a box for an empty LoadingEx string
+DEFINE_HOOK(55403D, LoadProgressMgr_Draw_SkipShadowOnNullString3, 6) {
+	GET(wchar_t*, pLoading, EAX);
+
+	if(!pLoading || !wcslen(pLoading)) {
+		return 0x554097;
+	}
+
+	return 0;
+}
+
 //0x534FB1
 DEFINE_HOOK(534FB1, Sides_MixFileIndex, 5)
 {

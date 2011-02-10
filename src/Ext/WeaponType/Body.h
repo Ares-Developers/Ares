@@ -55,6 +55,8 @@ public:
 		bool   Wave_IsBigLaser;
 		Customizable<ColorStruct> Wave_Color;
 		bool   Wave_Reverse[5];
+
+		Customizable<signed int> Laser_Thickness;
 /*
 		int    Wave_InitialIntensity;
 		int    Wave_IntensityStep;
@@ -92,6 +94,7 @@ public:
 			Wave_IsLaser (false),
 			Wave_IsBigLaser (false),
 			Wave_Color (NULL),
+			Laser_Thickness (NULL),
 			Ivan_KillsBridges (true),
 			Ivan_Detachable (true),
 			Ivan_Damage (&RulesClass::Instance->IvanDamage),
@@ -104,6 +107,7 @@ public:
 			Rad_Type (NULL),
 			Abductor(false)
 			{
+				this->Laser_Thickness.Set(-1);
 //				this->Beam_Color = ColorStruct(255, 255, 255);
 //				this->Wave_Color = ColorStruct(255, 255, 255);
 				for(int i = 0; i < 5; ++i) {

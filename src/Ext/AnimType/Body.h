@@ -7,6 +7,7 @@
 #include <HouseClass.h>
 
 #include "../_Container.hpp"
+#include "../../Utilities/Constructs.h"
 
 class AnimTypeExt
 {
@@ -19,8 +20,11 @@ public:
 
 		enum {INVOKER, KILLER, VICTIM, NEUTRAL, RANDOM} MakeInfantryOwner;
 
+		CustomPalette Palette;
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
-			MakeInfantryOwner (INVOKER)
+			MakeInfantryOwner (INVOKER),
+			Palette()
 			{ };
 
 		virtual ~ExtData() {

@@ -9,7 +9,7 @@
 #include <ColorScheme.h>
 
 #include "../../Utilities/Template.h"
-#include "Ares.CRT.h"
+#include "../../Ares.CRT.h"
 #include "../_Container.hpp"
 
 class HouseTypeExt
@@ -30,6 +30,7 @@ class HouseTypeExt
 			char StatusText[0x20]; //Stringtable label for this country's Skirmish STT
 			ColorScheme* LoadTextColor; //The text color used for non-Campaign modes
 			int RandomSelectionWeight; //This country gets added this many times into the list of legible countries for random selection.
+			int CountryListIndex; //The index this country will appear in the selection list.
 
 			DynamicVectorClass<BuildingTypeClass *> Powerplants;
 			TypeList<TechnoTypeClass*> ParaDrop;
@@ -39,6 +40,7 @@ class HouseTypeExt
 
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 				RandomSelectionWeight (0),
+				CountryListIndex (0),
 				ParaDropPlane (-1),
 				Parachute_Anim (NULL),
 				LoadTextColor (NULL)

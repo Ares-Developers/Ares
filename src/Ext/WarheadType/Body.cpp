@@ -3,7 +3,7 @@
 #include "../../Enum/ArmorTypes.h"
 #include "../Techno/Body.h"
 #include "../TechnoType/Body.h"
-#include "Misc/EMPulse.h"
+#include "../../Misc/EMPulse.h"
 
 #include <WarheadTypeClass.h>
 #include <GeneralStructures.h>
@@ -188,7 +188,7 @@ void WarheadTypeExt::ExtData::applyIronCurtain(CoordStruct *coords, HouseClass* 
 
 					// respect verses the boolean way
 					if(abs(this->Verses[curTechno->GetTechnoType()->Armor].Verses) < 0.001) {
-						break;
+						continue;
 					}
 
 					// get the values
@@ -419,7 +419,13 @@ bool WarheadTypeExt::ExtData::applyKillDriver(BulletClass* Bullet) {
 				pTarget->CaptureManager->FreeAll();
 			}
 
-			// BelongsToATeam()
+			// This unit will be freed of its duties
+			if(FootClass * pFoot = generic_cast<FootClass *>(pTarget)) {
+				if(pFoot->BelongsToATeam()) {
+					pFoot->Team->LiberateMember(pFoot);
+				}
+			}
+
 			// If this unit spawns stuff, we should kill the spawns, since they still belong to the previous owner
 			if(pTarget->SpawnManager) {
 				pTarget->SpawnManager->KillNodes();

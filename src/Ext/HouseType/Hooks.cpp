@@ -1,6 +1,6 @@
 #include "Body.h"
 #include "../House/Body.h"
-#include "Ares.h"
+#include "../../Ares.h"
 #include <Audio.h>
 #include <ScenarioClass.h>
 
@@ -197,4 +197,40 @@ DEFINE_HOOK(4FE782, HTExt_PickPowerplant, 6)
 
 	R->EDI(pResult);
 	return 0x4FE893;
+}
+
+// issue #521: sort order for countries / countries can be hidden
+DEFINE_HOOK(4E3A6A, hWnd_PopulateWithCountryNames, 6) {
+	GET(HWND, hWnd, ESI);
+	
+	std::vector<HouseTypeExt::ExtData*> Eligible;
+
+	for(int i=0; i<HouseTypeClass::Array->Count; ++i) {
+		if(HouseTypeClass* pCountry = HouseTypeClass::Array->GetItem(i)) {
+			if(pCountry->Multiplay && pCountry->UIName && *pCountry->UIName) {
+				HouseTypeExt::ExtData *pExt = HouseTypeExt::ExtMap.Find(pCountry);
+
+				if(pExt->CountryListIndex >= 0) {
+					Eligible.push_back(pExt);
+				}
+			}
+		}
+	}
+
+	auto sortCountries = [](const HouseTypeExt::ExtData* a, const HouseTypeExt::ExtData* b) -> bool {
+		if(a->CountryListIndex != b->CountryListIndex) {
+			return a->CountryListIndex < b->CountryListIndex;
+		} else {
+			return a->AttachedToObject->ArrayIndex2 < b->AttachedToObject->ArrayIndex2;
+		}
+	};
+
+	std::sort(Eligible.begin(), Eligible.end(), sortCountries);
+
+	for(std::vector<HouseTypeExt::ExtData*>::iterator iterator = Eligible.begin(); iterator != Eligible.end(); iterator++) {
+		int idx = SendMessageA(hWnd, 0x4C2u, 0, (LPARAM)(*iterator)->AttachedToObject->UIName);
+		SendMessageA(hWnd, CB_SETITEMDATA, idx, (*iterator)->AttachedToObject->ArrayIndex2);
+	}
+	
+	return 0x4E3ACF;
 }

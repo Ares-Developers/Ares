@@ -129,6 +129,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		strcpy(this->TauntFile, "taunts\\tauam%02i.wav");
 	}
 	this->RandomSelectionWeight = 1;
+	this->CountryListIndex = 100;
 }
 
 void HouseTypeExt::ExtData::Initialize(HouseTypeClass *pThis) {
@@ -288,6 +289,7 @@ void HouseTypeExt::ExtData::LoadFromINIFile(HouseTypeClass *pThis, CCINIClass *p
 	}
 
 	this->RandomSelectionWeight = pINI->ReadInteger(pID, "RandomSelectionWeight", this->RandomSelectionWeight);
+		this->CountryListIndex = pINI->ReadInteger(pID, "ListIndex", this->CountryListIndex);
 }
 
 AnimTypeClass* HouseTypeExt::ExtData::GetParachuteAnim() {
