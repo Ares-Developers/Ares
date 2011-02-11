@@ -196,6 +196,8 @@ void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass
 		}
 	}
 
+	readString(this->Message_Detected, "Message.Detected");
+	readString(this->Message_Ready, "Message.Ready");
 	readString(this->Message_Launch, "Message.Launch");
 	readString(this->Message_Activate, "Message.Activate");
 	readString(this->Message_Abort, "Message.Abort");
@@ -543,11 +545,16 @@ bool SWTypeExt::ChangeLighting(SuperWeaponTypeClass *pThis) {
 
 bool SWTypeExt::ExtData::ChangeLighting() {
 	if(this->Lighting_Enabled.Get()) {
-		ScenarioClass::Instance->AmbientTarget = this->Lighting_Ambient;
-		int cG = 1000 * this->Lighting_Green / 100;
-		int cB = 1000 * this->Lighting_Blue / 100;
-		int cR = 1000 * this->Lighting_Red / 100;
-    	ScenarioClass::Instance->RecalcLighting(cR, cG, cB, 1);
+		auto getValue = [](int value, int def) -> int {
+			return (value < 0) ? def : value;
+		};
+
+		ScenarioClass* scen = ScenarioClass::Instance;
+		scen->AmbientTarget = getValue(this->Lighting_Ambient, scen->AmbientOriginal);
+		int cG = 1000 * getValue(this->Lighting_Green, scen->Green) / 100;
+		int cB = 1000 * getValue(this->Lighting_Blue, scen->Blue)  / 100;
+		int cR = 1000 * getValue(this->Lighting_Red, scen->Red)  / 100;
+		scen->RecalcLighting(cR, cG, cB, 1);
 		return true;
 	}
 

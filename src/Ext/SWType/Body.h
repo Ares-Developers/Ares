@@ -89,6 +89,7 @@ public:
 		Valueable<bool> Chronosphere_AffectUnwarpable;
 		Valueable<bool> Chronosphere_AffectIronCurtain;
 		Valueable<bool> Chronosphere_BlowUnplaceable;
+		Valueable<bool> Chronosphere_ReconsiderBuildings;
 
 		// Genetic Mutator
 		Valueable<bool> Mutate_Explosion;
@@ -163,6 +164,8 @@ public:
 		Customizable<int> Lighting_Red;
 
 		// Messages
+		char Message_Detected[0x20];
+		char Message_Ready[0x20];
 		char Message_Launch[0x20];
 		char Message_Activate[0x20];
 		char Message_Abort[0x20];
@@ -235,6 +238,8 @@ public:
 			{
 				*SidebarPCX = 0;
 				*SW_PostDependent = 0;
+				*Message_Detected = 0;
+				*Message_Ready = 0;
 				*Message_Launch = 0;
 				*Message_Activate = 0;
 				*Message_Abort = 0;

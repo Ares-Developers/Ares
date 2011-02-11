@@ -27,6 +27,7 @@ void SW_ChronoSphere::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass
 	pData->Chronosphere_AffectUndeployable = false;
 	pData->Chronosphere_AffectBuildings = false;
 	pData->Chronosphere_BlowUnplaceable = true;
+	pData->Chronosphere_ReconsiderBuildings = true;
 
 	pData->Chronosphere_BlastSrc = RulesClass::Instance->ChronoBlast;
 	pData->Chronosphere_BlastDest = RulesClass::Instance->ChronoBlastDest;
@@ -56,6 +57,7 @@ void SW_ChronoSphere::LoadFromINI(
 	pData->Chronosphere_AffectUnwarpable.Read(&exINI, section, "Chronosphere.AffectsUnwarpable");
 	pData->Chronosphere_AffectUndeployable.Read(&exINI, section, "Chronosphere.AffectsUndeployable");
 	pData->Chronosphere_BlowUnplaceable.Read(&exINI, section, "Chronosphere.BlowUnplaceable");
+	pData->Chronosphere_ReconsiderBuildings.Read(&exINI, section, "Chronosphere.ReconsiderBuildings");
 
 	pData->Chronosphere_BlastSrc.Parse(&exINI, section, "Chronosphere.BlastSrc");
 	pData->Chronosphere_BlastDest.Parse(&exINI, section, "Chronosphere.BlastDest");

@@ -283,6 +283,8 @@ DEFINE_HOOK(446937, BuildingClass_AnnounceSW, 6)
 	SuperWeaponTypeClass *pSW = SuperWeaponTypeClass::Array->GetItem(swTIdx);
 	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSW);
 
+	pData->PrintMessage(pData->Message_Detected, pBuild->Owner);
+
 	if(pData->EVA_Detected != -1 || pData->HandledByNewSWType != -1) {
 		if(pData->EVA_Detected != -1) {
 			VoxClass::PlayIndex(pData->EVA_Detected);
@@ -298,6 +300,8 @@ DEFINE_HOOK(6CBDD7, SuperClass_AnnounceReady, 6)
 {
 	GET(SuperWeaponTypeClass *, pThis, EAX);
 	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pThis);
+
+	pData->PrintMessage(pData->Message_Ready, HouseClass::Player);
 
 	if(pData->EVA_Ready != -1 || pData->HandledByNewSWType != -1) {
 		if(pData->EVA_Ready != -1) {

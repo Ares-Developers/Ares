@@ -90,27 +90,28 @@ bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 					return true;
 				}
 
-				// short way out for buildings
-				bool IsVehicle = pExt->Chronoshift_IsVehicle.Get();
+				// differentiate between buildings and vehicle-type buildings
+				bool IsVehicle = false;
 				if(BuildingClass* pBld = specific_cast<BuildingClass*>(pObj)) {
-					bool Handle = false;
-					if(pBld->Type->UndeploysInto) {
-						IsVehicle = true;
+					// use "smart" detection of vehicular building types?
+					if(pData->Chronosphere_ReconsiderBuildings.Get()) {
+						IsVehicle = pExt->Chronoshift_IsVehicle.Get();
+					}
 
-						if(pData->Chronosphere_AffectUndeployable.Get()) {
-							// this thing undeploys and we handle all undeployers
-							Handle = true;
+					// always let undeployers pass if all undeployers are affected
+					if(!pData->Chronosphere_AffectUndeployable || !pBld->Type->UndeploysInto) {
+						// we don't handle buildings and this is a real one
+						if(!IsVehicle && !pData->Chronosphere_AffectBuildings) {
+							return true;
 						}
-					}
 
-					// if we don't handle buildings, get out now.
-					if(!Handle && !pData->Chronosphere_AffectBuildings.Get()) {
-						return true;
-					}
-
-					// if this is a vehicle and we don't handle them, get out
-					if(IsVehicle && !(pData->SW_AffectsTarget & SuperWeaponTarget::Unit)) {
-						return true;
+						// this is a vehicle in disguise and we don't handle them
+						if(IsVehicle && !(pData->SW_AffectsTarget & SuperWeaponTarget::Unit)) {
+							return true;
+						}
+					} else {
+						// force vehicle placement rules
+						IsVehicle = true;
 					}
 				}
 

@@ -109,7 +109,7 @@ void UnitDeliveryStateMachine::PlaceUnits() {
 						&& !cell->Tile_Is_DestroyableCliff() && !cell->Tile_Is_Shore()
 						&& !cell->Tile_Is_Water() && !cell->ContainsBridge();
 				}
-				if(Type->Naval) {
+				if(Type->Naval && validCell) {
 					// naval types look stupid on bridges
 					validCell = (!cell->ContainsBridge() && cell->LandType != lt_Road)
 						|| Type->SpeedType == st_Hover;
