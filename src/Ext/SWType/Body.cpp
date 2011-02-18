@@ -62,9 +62,6 @@ void SWTypeExt::ExtData::InitializeConstants(SuperWeaponTypeClass *pThis)
 	AresCRT::strCopy(this->Text_Active, "TXT_FIRESTORM_ON", 0x20);
 
 	EVA_InsufficientFunds = VoxClass::FindIndex("EVA_InsufficientFunds");
-
-	SW_AffectsHouse = SuperWeaponAffectedHouse::All;
-	SW_AnimVisibility = SuperWeaponAffectedHouse::All;
 }
 
 void SWTypeExt::ExtData::InitializeRuled(SuperWeaponTypeClass *pThis)
@@ -386,11 +383,10 @@ bool SWTypeExt::Launch(SuperClass* pThis, NewSWType* pSW, CellStruct* pCoords, b
 			pTarget->GetCoordsWithBridge(&coords);
 
 			if((pData->SW_Anim.Get() != NULL) && !(flags & SuperWeaponFlags::NoAnim)) {
-				if(pData->IsAnimVisible(pThis->Owner)) {
-					coords.Z += pData->SW_AnimHeight;
-					AnimClass *placeholder;
-					GAME_ALLOC(AnimClass, placeholder, pData->SW_Anim, &coords);
-				}
+				coords.Z += pData->SW_AnimHeight;
+				AnimClass *placeholder;
+				GAME_ALLOC(AnimClass, placeholder, pData->SW_Anim, &coords);
+				placeholder->Invisible = !pData->IsAnimVisible(pThis->Owner);
 			}
 
 			if((pData->SW_Sound != -1) && !(flags & SuperWeaponFlags::NoSound)) {
@@ -474,21 +470,6 @@ void SWTypeExt::ExtData::PrintMessage(char* pMessage, HouseClass* pFirer) {
 	}
 }
 
-bool __stdcall SWTypeExt::SuperClass_Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
-{
-	SuperWeaponTypeClass *pSW = pThis->Type;
-	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSW);
-
-	//int TypeIdx = (pData->HandledByNewSWType != -1 ? pData->HandledByNewSWType : pSW->Type);
-	//RET_UNLESS(TypeIdx >= FIRST_SW_TYPE);
-
-	if(NewSWType* pNSW = pData->GetNewSWType()) {
-		return SWTypeExt::Launch(pThis, pNSW, pCoords, IsPlayer);
-	}
-
-	return false;
-}
-
 void SWTypeExt::ClearChronoAnim(SuperClass *pThis)
 {
 	DynamicVectorClass<SuperClass*>* pSupers = (DynamicVectorClass<SuperClass*>*)0xB0F5B8;
@@ -521,6 +502,8 @@ void SWTypeExt::CreateChronoAnim(SuperClass *pThis, CoordStruct *pCoords, AnimTy
 		AnimClass* pAnim = NULL;
 		GAME_ALLOC(AnimClass, pAnim, pAnimType, pCoords);
 		if(pAnim) {
+			SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pThis->Type);
+			pAnim->Invisible = !pData->IsAnimVisible(pThis->Owner);
 			pThis->Animation = pAnim;
 			pSupers->AddItem(pThis);
 		}

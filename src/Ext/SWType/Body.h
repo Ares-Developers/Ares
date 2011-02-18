@@ -215,7 +215,7 @@ public:
 			SW_Sound (-1),
 			SW_Anim (NULL),
 			SW_AnimHeight (0),
-			SW_AnimVisibility (0),
+			SW_AnimVisibility (SuperWeaponAffectedHouse::All),
 			SW_TypeCustom (false),
 			SW_AutoFire (false),
 			SW_ManualFire (true),
@@ -283,7 +283,6 @@ public:
 	static SuperWeaponTypeClass *CurrentSWType;
 
 	bool static Launch(SuperClass* pThis, NewSWType* pData, CellStruct* pCoords, byte IsPlayer);
-	bool static __stdcall SuperClass_Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer);
 	void static ClearChronoAnim(SuperClass *pThis);
 	void static CreateChronoAnim(SuperClass *pThis, CoordStruct *pCoords, AnimTypeClass *pAnimType);
 	bool static ChangeLighting(SuperClass *pThis);

@@ -61,8 +61,12 @@ bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 			SWTypeExt::ClearChronoAnim(pThis);
 
 			AnimClass *pAnim = NULL;
-			GAME_ALLOC(AnimClass, pAnim, pData->Chronosphere_BlastSrc.Get(), &coordsSource);
-			GAME_ALLOC(AnimClass, pAnim, pData->Chronosphere_BlastDest.Get(), &coordsTarget);
+			if(pData->Chronosphere_BlastSrc.Get()) {
+				GAME_ALLOC(AnimClass, pAnim, pData->Chronosphere_BlastSrc.Get(), &coordsSource);
+			}
+			if(pData->Chronosphere_BlastDest.Get()) {
+				GAME_ALLOC(AnimClass, pAnim, pData->Chronosphere_BlastDest.Get(), &coordsTarget);
+			}
 
 			DynamicVectorClass<ChronoWarpStateMachine::ChronoWarpContainer> RegisteredBuildings;
 

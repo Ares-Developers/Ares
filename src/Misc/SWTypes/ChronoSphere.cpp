@@ -89,9 +89,7 @@ bool SW_ChronoSphere::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlay
 		// recoded to support customizable anims
 		// and visibility for allies, too.
 		if(pData->SW_Anim.Get()) {
-			if(pData->IsAnimVisible(pThis->Owner)) {
-				SWTypeExt::CreateChronoAnim(pThis, &coords, pData->SW_Anim);
-			}
+			SWTypeExt::CreateChronoAnim(pThis, &coords, pData->SW_Anim);
 		}
 
 		if(IsPlayer) {
