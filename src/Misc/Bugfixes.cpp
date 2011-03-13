@@ -544,7 +544,9 @@ DEFINE_HOOK(505BE1, HouseClass_GenerateAIBuildList_C2, 7)
 DEFINE_HOOK(4242CA, AnimClass_Update_FixIE_TrailerSeperation, 6)
 {
 	GET(AnimTypeClass *, AT, EAX);
-	return AT->TrailerSeperation >= 1
+	int trailSep = AT->TrailerSeperation;
+	R->ECX(trailSep);
+	return trailSep >= 1
 	 ? 0x4242D5
 	 : 0x424322
 	;
