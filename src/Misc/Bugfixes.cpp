@@ -833,3 +833,15 @@ DEFINE_HOOK(71AA52, TemporalClass_Update_AnnounceInvalidPointer, 8) {
 	pVictim->IsAlive = false;
 	return 0;
 }
+
+// issue 1520: logging stupid shit crashes the game
+DEFINE_HOOK(4CA437, FactoryClass_GetCRC, 0)
+{
+	GET(FactoryClass *, pThis, ECX);
+	GET_STACK(DWORD, pCRC, 0xC);
+
+	R->ESI<FactoryClass *>(pThis);
+	R->EDI(pCRC);
+
+	return 0x4CA501;
+}
