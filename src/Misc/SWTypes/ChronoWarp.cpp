@@ -260,7 +260,7 @@ bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 				items->forEach(Chronoport);
 
 				if(RegisteredBuildings.Count) {
-					this->newStateMachine(RulesClass::Instance->ChronoDelay, *pCoords, pSource, this, &RegisteredBuildings);
+					this->newStateMachine(RulesClass::Instance->ChronoDelay + 1, *pCoords, pSource, this, &RegisteredBuildings);
 				}
 			}
 
@@ -285,7 +285,7 @@ void ChronoWarpStateMachine::Update() {
 				Container.pBld->SetLayer(Layer::Ground);
 			}
 		}
-	} else if(passed == this->Duration) {
+	} else if(passed == this->Duration - 1) {
 		// copy the array so items can't get invalidated
 		DynamicVectorClass<ChronoWarpContainer> buildings;
 		for(int i=0; i<this->Buildings.Count; ++i) {
@@ -295,8 +295,8 @@ void ChronoWarpStateMachine::Update() {
 
 		// remove all buildings from the map at once
 		for(int i=0; i<buildings.Count; ++i) {
-			ChronoWarpContainer pContainer = buildings.GetItem(i);
-			pContainer.pBld->Remove();
+			ChronoWarpContainer* pContainer = &buildings.Items[i];
+			pContainer->pBld->Remove();
 		}
 
 		// bring back all buildings
@@ -318,7 +318,7 @@ void ChronoWarpStateMachine::Update() {
 						pNewCell->GetCoordsWithBridge(&coordsNew);
 
 						if(pBld->Type->CanCreateHere(&cellNew, 0)) {
-							if(pBld->Put(&coordsNew, pBld->Facing)) {
+							if(pBld->Put(&coordsNew, Direction::North)) {
 								success = true;
 								break;
 							}
@@ -329,7 +329,7 @@ void ChronoWarpStateMachine::Update() {
 					if(!success) {
 						// put it back where it was
 						++Unsorted::IKnowWhatImDoing;
-						pBld->Put(&pContainer.origin, pBld->Facing);
+						pBld->Put(&pContainer.origin, Direction::North);
 						--Unsorted::IKnowWhatImDoing;
 					}
 
@@ -353,6 +353,10 @@ void ChronoWarpStateMachine::Update() {
 				}
 			}
 		}
+	} else if(passed == this->Duration) {
+		Super->Owner->PowerBlackout = true;
+		Super->Owner->ShouldRecheckTechTree = true;
+		Super->Owner->RadarBlackout = true;
 	}
 }
 

@@ -115,9 +115,9 @@ DEFINE_HOOK(50AF10, HouseClass_CheckSWs, 5)
 				if(!Statuses[idxSW].Available || pThis->Defeated) {
 					update = (pSW->Lose() && HouseClass::Player);
 				} else if(Statuses[idxSW].Charging && !pSW->IsPowered()) {
-					update = pSW->SetOnHold(false);
+					update = pSW->IsOnHold && pSW->SetOnHold(false);
 				} else if(!Statuses[idxSW].Charging && !pSW->IsPowered()) {
-					update = pSW->SetOnHold(true);
+					update = !pSW->IsOnHold && pSW->SetOnHold(true);
 				} else if(!Statuses[idxSW].PowerSourced) {
 					update = (pSW->IsPowered() && pSW->SetOnHold(true));
 				} else {

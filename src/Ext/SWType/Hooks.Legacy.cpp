@@ -726,6 +726,16 @@ DEFINE_HOOK(44CC8B, BuildingClass_Missile_NukeTakeOff, 6) {
 	return 0;
 }
 
+// remove ZAdjust hardcoding
+DEFINE_HOOK(44CC9D, BuildingClass_Missile_NukeTakeOffB, A) {
+	GET(AnimClass*, pAnim, EAX);
+
+	if(!pAnim->ZAdjust) {
+		pAnim->ZAdjust = -100;
+	}
+	return 0x44CCA7;
+}
+
 // create a downward pointing missile if the launched one leaves the map.
 DEFINE_HOOK(46B371, BulletClass_NukeMaker, 5) {
 	GET(BulletClass*, pBullet, EBP);

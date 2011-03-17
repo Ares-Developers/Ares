@@ -570,13 +570,13 @@ DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
 
 					case SuperWeaponAITargetingMode::ForceShield:
 						{
-							if(pThis->PreferredDefensiveCell == HouseClass::DefaultIonCannonCoords) {
-								if(pThis->PreferredDefensiveCell2 == HouseClass::DefaultIonCannonCoords
+							if(pThis->PreferredDefensiveCell2 == HouseClass::DefaultIonCannonCoords) {
+								if(pThis->PreferredDefensiveCell != HouseClass::DefaultIonCannonCoords
 									&& RulesClass::Instance->AISuperDefenseFrames + pThis->PreferredDefensiveCellStartTime > Unsorted::CurrentFrame) {
-									Cell = pThis->PreferredDefensiveCell2;
+									Cell = pThis->PreferredDefensiveCell;
 								}
 							} else {
-								Cell = pThis->PreferredDefensiveCell;
+								Cell = pThis->PreferredDefensiveCell2;
 							}
 
 							if(Cell != HouseClass::DefaultIonCannonCoords) {
