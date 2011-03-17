@@ -25,7 +25,7 @@ class RulesExt
 		double EngineerDamage;
 		bool EngineerAlwaysCaptureTech;
 		Valueable<MouseCursor> EngineerDamageCursor;
-		bool MultiEngineer[2];
+		bool MultiEngineer[3];
 
 		Valueable<bool> CanMakeStuffUp;
 

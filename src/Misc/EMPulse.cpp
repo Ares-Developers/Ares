@@ -134,7 +134,7 @@ void EMPulse::deliverEMPDamage(ObjectClass *object, TechnoClass *Firer, WarheadT
 			// is techno destroyed by EMP?
 			if (thresholdExceeded(curTechno)) {
 				curTechno->Destroyed(Firer);
-				if (curTechno->IsInAir()) {
+				if (curTechno->IsInAir() && curTechno->WhatAmI() == abs_Aircraft) {
 					curTechno->Crash(Firer);
 				} else {
 					curTechno->Destroy();
@@ -548,7 +548,7 @@ void EMPulse::announceAttack(TechnoClass * Techno) {
 /*!
 	A techno can be destroyed by excessive EMP damage. If the treshold
 	is positive it acts as a upper limit. If it is negative it is only
-	a limit if the unit is in the air.
+	a limit if the unit is in the air (parachuting doesn't count).
 
 	\param Victim The Techno that is under EMP effect.
 	
@@ -565,7 +565,7 @@ bool EMPulse::thresholdExceeded(TechnoClass * Victim) {
 	}
 
 	if ((pData->EMP_Threshold != 0) && (Victim->EMPLockRemaining > (DWORD)abs(pData->EMP_Threshold))) {
-		if ((pData->EMP_Threshold > 0) || Victim->IsInAir()) {
+		if ((pData->EMP_Threshold > 0) || (Victim->IsInAir() && !Victim->HasParachute)) {
 			return true;
 		}
 	}
@@ -714,6 +714,11 @@ void EMPulse::DisableEMPEffect(TechnoClass * Victim) {
 		bool hasMission = false;
 		if (UnitClass * Unit = specific_cast<UnitClass *>(Victim)) {
 			if (Unit->Type->Harvester || Unit->Type->ResourceGatherer) {
+				// prevent unloading harvesters from being irritated.
+				if (pData->EMPLastMission == mission_Guard) {
+					pData->EMPLastMission = mission_Enter;
+				}
+
 				Unit->QueueMission(pData->EMPLastMission, true);
 				hasMission = true;
 			}
