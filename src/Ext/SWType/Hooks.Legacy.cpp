@@ -153,6 +153,8 @@ DEFINE_HOOK(53C321, ScenarioClass_UpdateLighting_PsyDom, 5) {
 		if(SWTypeExt::ChangeLighting(pSuper)) {
 			R->EAX(1);
 			return 0x53C43F;
+		} else {
+			return 0x53C38E;
 		}
 	}
 
@@ -164,6 +166,8 @@ DEFINE_HOOK(53C2A6, ScenarioClass_UpdateLighting_LightningStorm, 5) {
 		if(SWTypeExt::ChangeLighting(pSuper)) {
 			R->EAX(1);
 			return 0x53C43F;
+		} else {
+			return 0x53C313;
 		}
 	}
 
@@ -175,6 +179,8 @@ DEFINE_HOOK(53C3B1, ScenarioClass_UpdateLighting_Nuke, 5) {
 		if(SWTypeExt::ChangeLighting(pType)) {
 			R->EAX(1);
 			return 0x53C43F;
+		} else {
+			return 0x53C29D;
 		}
 	}
 
