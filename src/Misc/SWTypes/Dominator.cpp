@@ -205,13 +205,14 @@ void PsychicDominatorStateMachine::Update() {
 	case PsychicDominatorStatus::Over:
 		{
 			// wait for the light to go away.
-			if(ScenarioClass::Instance->AmbientCurrent != ScenarioClass::Instance->AmbientOriginal) {
+			if(ScenarioClass::Instance->AmbientCurrent != ScenarioClass::Instance->AmbientTarget) {
 				return;
 			}
 
 			// clean up
 			SW_PsychicDominator::CurrentPsyDom = NULL;
 			PsyDom::Status(PsychicDominatorStatus::Inactive);
+			ScenarioClass::UpdateLighting();
 			this->Clock.TimeLeft = 0;
 		}
 	}
