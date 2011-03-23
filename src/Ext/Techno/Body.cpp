@@ -1,5 +1,6 @@
 #include "Body.h"
 #include "../TechnoType/Body.h"
+#include "../../Misc/PoweredUnitClass.h"
 
 #include <HouseClass.h>
 #include <BuildingClass.h>
@@ -306,6 +307,9 @@ bool TechnoExt::ExtData::IsPowered() {
 		}
 		// if we reach this, we found no building that currently powers this object
 		return false;
+	// #617
+	} else if(this->PoweredUnit) {
+		return this->PoweredUnit->IsPowered();
 	} else {
 		// object doesn't need a particular powering structure, therefore, for the purposes of the game, it IS powered
 		return true;

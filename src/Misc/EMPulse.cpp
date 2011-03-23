@@ -62,7 +62,7 @@ void EMPulse::CreateEMPulse(WarheadTypeExt::ExtData *Warhead, CoordStruct *Coord
 void EMPulse::deliverEMPDamage(ObjectClass *object, TechnoClass *Firer, WarheadTypeExt::ExtData *Warhead) {
 	// fill the gaps
 	HouseClass *pHouse = (Firer ? Firer->Owner : NULL);
-	
+
 	if (TechnoClass * curTechno = generic_cast<TechnoClass *> (object)) {
 		if (verbose) {
 			Debug::Log("[deliverEMPDamage] Step 1: %s => %s\n",
@@ -141,7 +141,7 @@ void EMPulse::deliverEMPDamage(ObjectClass *object, TechnoClass *Firer, WarheadT
 					curTechno->Remove();
 					curTechno->UnInit();
 				}
-				
+
 				// play unit voice
 				if (curTechno->Owner == HouseClass::Player) {
 					TechnoTypeClass *TT = curTechno->GetTechnoType();
@@ -426,7 +426,7 @@ void EMPulse::updateRadarBlackout(TechnoClass * Techno) {
 */
 void EMPulse::updateSpawnManager(TechnoClass * Techno, ObjectClass * Source = NULL) {
 	if (SpawnManagerClass *SM = Techno->SpawnManager) {
-		
+
 		if (Techno->EMPLockRemaining > 0) {
 			// crash all spawned units that are visible. else, they'd land somewhere else.
 			for (int i=0; i < SM->SpawnedNodes.Count; ++i) {
@@ -459,7 +459,7 @@ void EMPulse::updateSpawnManager(TechnoClass * Techno, ObjectClass * Source = NU
 */
 void EMPulse::updateSlaveManager(TechnoClass * Techno) {
 	if (SlaveManagerClass *SM = Techno->SlaveManager) {
-		
+
 		if (Techno->EMPLockRemaining > 0) {
 			// pause the timers so spawning and regenerating is deferred.
 			SM->RespawnTimer.StartTime = -1;
@@ -551,7 +551,7 @@ void EMPulse::announceAttack(TechnoClass * Techno) {
 	a limit if the unit is in the air (parachuting doesn't count).
 
 	\param Victim The Techno that is under EMP effect.
-	
+
 	\returns True if Victim has taken too much EMP damage, False otherwise.
 
 	\author AlexB
@@ -622,19 +622,19 @@ bool EMPulse::enableEMPEffect(TechnoClass * Victim, ObjectClass * Source) {
 		}
 	}
 
-	// cache the last mission this thing did
-	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(Victim);
-	pData->EMPLastMission = Victim->CurrentMission;
-	
-	// remove the unit from its team
-	if (FootClass * Foot = generic_cast<FootClass *>(Victim)) {
-		if (Foot->BelongsToATeam()) {
-			Foot->Team->LiberateMember(Foot);
-		}
-	}
-
 	// deactivate and sparkle
 	if (!Victim->Deactivated && IsDeactivationAdvisable(Victim)) {
+		// cache the last mission this thing did
+		TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(Victim);
+		pData->EMPLastMission = Victim->CurrentMission;
+
+		// remove the unit from its team
+		if (FootClass * Foot = generic_cast<FootClass *>(Victim)) {
+			if (Foot->BelongsToATeam()) {
+				Foot->Team->LiberateMember(Foot);
+			}
+		}
+
 		bool selected = Victim->IsSelected;
 		Victim->Deactivate();
 		if(selected) {
@@ -643,22 +643,22 @@ bool EMPulse::enableEMPEffect(TechnoClass * Victim, ObjectClass * Source) {
 			Victim->Select();
 			Unsorted::MoveFeedback = feedback;
 		}
+
+		// release all captured units.
+		if (Victim->CaptureManager) {
+			Victim->CaptureManager->FreeAll();
+		}
+
+		// update managers.
+		updateSpawnManager(Victim, Source);
+		updateSlaveManager(Victim);
+
+		// set the sparkle animation.
+		UpdateSparkleAnim(Victim);
 	}
-
-	// release all captured units.
-	if (Victim->CaptureManager) {
-		Victim->CaptureManager->FreeAll();
-	}
-
-	// update managers.
-	updateSpawnManager(Victim, Source);
-	updateSlaveManager(Victim);
-
-	// set the sparkle animation.
-	UpdateSparkleAnim(Victim);
 
 	// warn the player
-	announceAttack(Victim);
+	if(Source) announceAttack(Victim);
 
 	// the unit still lives.
 	return false;
@@ -677,10 +677,10 @@ bool EMPulse::enableEMPEffect(TechnoClass * Victim, ObjectClass * Source) {
 */
 void EMPulse::DisableEMPEffect(TechnoClass * Victim) {
 	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(Victim);
-	bool HasPower = true;
+	bool HasPower = pData->IsPowered() && pData->IsOperated();
 
 	if (BuildingClass * Building = specific_cast<BuildingClass *>(Victim)) {
-		HasPower = Building->HasPower && !(Building->Owner->PowerDrain > Building->Owner->PowerOutput) ;
+		HasPower = HasPower && Building->IsPowerOnline(); //Building->HasPower && !(Building->Owner->PowerDrain > Building->Owner->PowerOutput) ;
 
 		if (!Building->Type->InvisibleInGame) {
 			if (HasPower) {
@@ -700,32 +700,32 @@ void EMPulse::DisableEMPEffect(TechnoClass * Victim) {
 
 	if (Victim->Deactivated && HasPower) {
 		Victim->Reactivate();
-	}
 
-	// allow to spawn units again.
-	updateSpawnManager(Victim);
-	updateSlaveManager(Victim);
+		// allow to spawn units again.
+		updateSpawnManager(Victim);
+		updateSlaveManager(Victim);
 
-	// update the animation
-	UpdateSparkleAnim(Victim);
+		// update the animation
+		UpdateSparkleAnim(Victim);
 
-	// get harvesters back to work and ai units to hunt
-	if (FootClass * Foot = generic_cast<FootClass *>(Victim)) {
-		bool hasMission = false;
-		if (UnitClass * Unit = specific_cast<UnitClass *>(Victim)) {
-			if (Unit->Type->Harvester || Unit->Type->ResourceGatherer) {
-				// prevent unloading harvesters from being irritated.
-				if (pData->EMPLastMission == mission_Guard) {
-					pData->EMPLastMission = mission_Enter;
+		// get harvesters back to work and ai units to hunt
+		if (FootClass * Foot = generic_cast<FootClass *>(Victim)) {
+			bool hasMission = false;
+			if (UnitClass * Unit = specific_cast<UnitClass *>(Victim)) {
+				if (Unit->Type->Harvester || Unit->Type->ResourceGatherer) {
+					// prevent unloading harvesters from being irritated.
+					if (pData->EMPLastMission == mission_Guard) {
+						pData->EMPLastMission = mission_Enter;
+					}
+
+					Unit->QueueMission(pData->EMPLastMission, true);
+					hasMission = true;
 				}
-
-				Unit->QueueMission(pData->EMPLastMission, true);
-				hasMission = true;
 			}
-		}
 
-		if(!hasMission && !Foot->Owner->ControlledByHuman()) {
-			Foot->QueueMission(mission_Hunt, false);
+			if(!hasMission && !Foot->Owner->ControlledByHuman()) {
+				Foot->QueueMission(mission_Hunt, false);
+			}
 		}
 	}
 }
