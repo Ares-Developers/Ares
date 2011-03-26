@@ -8,6 +8,7 @@
 #include <TechnoClass.h>
 #include <Helpers/Type.h>
 #include "INIParser.h"
+#include "Enums.h"
 
 /**
  * More fancy templates!
@@ -118,7 +119,11 @@ public:
 			if(idx != -1) {
 				this->Set(idx);
 			} else {
-				Debug::INIParseFailed(pSection, pKey, val);
+				if(_strcmpi(val, "<none>") && _strcmpi(val, "none")) {
+					Debug::INIParseFailed(pSection, pKey, val);
+				} else {
+					this->Set(idx);
+				}
 			}
 		}
 	}
@@ -518,6 +523,62 @@ void ValueableVector<TechnoTypeClass *>::Read(INI_EX *parser, const char* pSecti
 		}
 	}
 }
+
+template<typename T>
+class ValueableEnum {
+public:
+	typedef typename T::Value V;
+	//typedef typename CompoundT<T>::BaseT MyBase;
+protected:
+	V    Value;
+public:
+	ValueableEnum(V Default = V()) : Value(Default) {};
+
+	operator V () const {
+		return this->Get();
+	}
+
+	operator V* () {
+		return this->GetEx();
+	}
+
+	V* operator & () {
+		return this->GetEx();
+	}
+
+	bool operator != (T other) const {
+		return this->Get() != other;
+	};
+
+	bool operator ! () const {
+		return this->Get() == 0;
+	};
+
+	virtual V Get() const {
+		return this->Value;
+	}
+
+	virtual V * GetEx() {
+		return &this->Value;
+	}
+
+	virtual void Set(V val) {
+		this->Value = val;
+	}
+
+	virtual void SetEx(V* val) {
+		this->Value = *val;
+	}
+
+	void Read(INI_EX *parser, const char* pSection, const char* pKey) {
+		if(parser->ReadString(pSection, pKey)) {
+			V buffer = this->Get();
+			if(T::Parse(Ares::readBuffer, &buffer)) {
+				this->Set(buffer);
+			}
+		}
+	};
+};
 
 
 //template class Valueable<bool>;

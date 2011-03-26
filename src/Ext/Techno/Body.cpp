@@ -1,5 +1,6 @@
 #include "Body.h"
 #include "../TechnoType/Body.h"
+#include "../../Misc/SWTypes.h"
 #include "../../Misc/PoweredUnitClass.h"
 
 #include <HouseClass.h>
@@ -370,6 +371,7 @@ DEFINE_HOOK(6F4500, TechnoClass_DTOR, 5)
 {
 	GET(TechnoClass*, pItem, ECX);
 
+	SWStateMachine::InvalidatePointer(pItem);
 	TechnoExt::ExtMap.Remove(pItem);
 	return 0;
 }

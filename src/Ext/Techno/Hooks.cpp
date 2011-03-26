@@ -14,7 +14,6 @@ DEFINE_HOOK(737F97, UnitClass_ReceiveDamage, 0)
 	GET(TechnoClass *, t, ESI);
 	GET_STACK(TechnoClass *, Killer, 0x54);
 	GET_STACK(bool, select, 0x13);
-
 	TechnoExt::SpawnSurvivors(t, Killer, select);
 
 	return 0x73838A;
@@ -24,7 +23,6 @@ DEFINE_HOOK(737F97, UnitClass_ReceiveDamage, 0)
 DEFINE_HOOK(41668B, AircraftClass_ReceiveDamage, 6)
 {
 	GET(AircraftClass *, a, ESI);
-
 	GET_STACK(TechnoClass *, Killer, 0x28);
 	bool select = a->IsSelected && a->Owner->ControlledByPlayer();
 	TechnoExt::SpawnSurvivors(a, Killer, select);
@@ -67,7 +65,6 @@ DEFINE_HOOK(6F9E50, TechnoClass_Update, 5)
 	return 0;
 }
 
-
 //! TechnoClass::Update is called every frame; returning 0 tells it to execute the original function's code as well.
 DEFINE_HOOK(6F9E76, TechnoClass_Update_CheckOperators, 6)
 {
@@ -90,8 +87,17 @@ DEFINE_HOOK(6F9E76, TechnoClass_Update_CheckOperators, 6)
 		(Which is potentially abusable, but let's hope no one figures that out.)
 	*/
 	if(!pTheBuildingBelow || ((pTheBuildingBelow == pThis) && (pTheBuildingBelow->IsPowerOnline()))) {
+		bool Override = false;
+		if(FootClass *pFoot = generic_cast<FootClass*>(pThis)) {
+			if(!pTheBuildingBelow) {
+				// immobile, though not disabled. like hover tanks after
+				// a repair depot has been sold or warped away.
+				Override = (pFoot->Locomotor->Is_Powered() == pThis->Deactivated);
+			}
+		}
+
 		if(pData->IsOperated()) { // either does have an operator or doesn't need one, so...
-			if( pThis->Deactivated && pData->IsPowered() && !pThis->IsUnderEMP() ) { // ...if it's currently off, turn it on! (oooh baby)
+			if( (pThis->Deactivated && pData->IsPowered() && !pThis->IsUnderEMP()) || Override ) { // ...if it's currently off, turn it on! (oooh baby)
 				pThis->Reactivate();
 				pThis->Owner->ShouldRecheckTechTree = true; // #885
 			}

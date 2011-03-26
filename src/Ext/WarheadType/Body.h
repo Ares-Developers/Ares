@@ -69,6 +69,8 @@ public:
 
 		Valueable<AnimTypeClass*> InfDeathAnim;
 
+		ValueableIdx<int, AnimTypeClass> PreImpactAnim;
+
 		bool KillDriver; //!< Whether this warhead turns the target vehicle over to the special side ("kills the driver"). Request #733.
 
 		Valueable<bool> Malicious;
@@ -84,6 +86,7 @@ public:
 			Temporal_WarpAway (&RulesClass::Global()->WarpAway),
 			AffectsEnemies (true),
 			InfDeathAnim (NULL),
+			PreImpactAnim (-1),
 			KillDriver (false),
 			Malicious (true)
 			{
@@ -96,6 +99,8 @@ public:
 		virtual ~ExtData() { };
 
 		virtual size_t Size() const { return sizeof(*this); };
+
+		virtual void Initialize(TT *pThis);
 
 		virtual void LoadFromINIFile(TT *pThis, CCINIClass *pINI);
 

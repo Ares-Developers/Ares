@@ -97,6 +97,9 @@ public:
 		// new firestorm wall
 		bool Firewall_Is;
 
+		// lightning rod
+		double LightningRod_Modifier;
+
 		// added on 11.11.09 for #221 and children (Trenches)
 		double UCPassThrough; 					//!< How many percent of the shots pass through the building to the occupants? 0.0 = 0%, 1.0 = 100%; Defaults to 0.0.
 		double UCFatalRate; 					//!< Chance of an occupant getting killed instantly when a bullet passes through. 0.0 = 0%, 1.0 = 100%; Defaults to 0.0.
@@ -148,6 +151,7 @@ public:
 			IsTrench (-1),
 			RubbleIntact (NULL),
 			RubbleDestroyed (NULL),
+			LightningRod_Modifier (1.0),
 
 			InfiltrateCustom (false),
 			RevealProduction (false),

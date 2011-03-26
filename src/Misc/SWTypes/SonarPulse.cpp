@@ -1,5 +1,26 @@
 #include "SonarPulse.h"
 #include "../../Ext/Techno/Body.h"
+#include "../../Utilities/Helpers.Alex.h"
+
+SuperWeaponFlags::Value SW_SonarPulse::Flags()
+{
+	return SuperWeaponFlags::NoEvent;
+}
+
+void SW_SonarPulse::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)
+{
+	// some defaults
+	pData->SW_WidthOrRange = 10;
+	pData->SW_Height = -1;
+	pData->SW_RadarEvent = false;
+
+	pData->Sonar_Delay = 60;
+
+	pData->SW_AITargetingType = SuperWeaponAITargetingMode::Stealth;
+	pData->SW_AffectsHouse = SuperWeaponAffectedHouse::Enemies;
+	pData->SW_AffectsTarget = SuperWeaponTarget::Water;
+	pData->SW_RequiresTarget = SuperWeaponTarget::Water;
+}
 
 void SW_SonarPulse::LoadFromINI(
 	SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI)
@@ -10,14 +31,12 @@ void SW_SonarPulse::LoadFromINI(
 		return;
 	}
 
-	pData->Sonar_Range = pINI->ReadInteger(section, "SonarPulse.Range", pData->Sonar_Range);
 	pData->Sonar_Delay = pINI->ReadInteger(section, "SonarPulse.Delay", pData->Sonar_Delay);
-}
 
-bool SW_SonarPulse::CanFireAt(CellStruct *pCoords)
-{
-	CellClass *pCell = MapClass::Global()->GetCellAt(pCoords);
-	return (pCell && pCell->LandType == lt_Water);
+	// full map detection?
+	if(pData->SW_WidthOrRange < 0) {
+		pSW->Action = 0;
+	}
 }
 
 bool SW_SonarPulse::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
@@ -26,37 +45,56 @@ bool SW_SonarPulse::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pType);
 
 	if(!pData) {
-		return 0;
+		return false;
 	}
 
-	CoordStruct coords;
-	MapClass::Global()->GetCellAt(pCoords)->GetCoords(&coords);
-
-	int countCells = CellSpread::NumCells(pData->Sonar_Range);
-	for(int i = 0; i < countCells; ++i) {
-		CellStruct tmpCell = CellSpread::GetCell(i);
-		tmpCell += *pCoords;
-		CellClass *c = MapClass::Global()->GetCellAt(&tmpCell);
-		if(c->LandType != lt_Water) {
-			continue;
-		}
-		for(ObjectClass *curObj = c->FirstObject; curObj; curObj = curObj->NextObject) {
-			if(!(curObj->AbstractFlags & ABSFLAGS_ISTECHNO)) {
-				continue;
+	auto Detect = [&](ObjectClass* pObj) -> bool {
+		if(TechnoClass* pTechno = generic_cast<TechnoClass*>(pObj)) {
+			// is this thing affected at all?
+			if(!pData->IsHouseAffected(pThis->Owner, pTechno->Owner)) {
+				return true;
 			}
-			TechnoClass *curT = reinterpret_cast<TechnoClass *>(curObj);
-			if(curT->CloakState) {
-				curT->Uncloak(1);
-				curT->IsSensed = 1;
-				curT->Cloakable = 0;
-				TechnoExt::ExtData *pTechno = TechnoExt::ExtMap.Find(curT);
+
+			if(!pData->IsTechnoAffected(pTechno)) {
+				return true;
+			}
+
+			// actually detect this
+			if(pTechno->CloakState) {
+				pTechno->Uncloak(1);
+				pTechno->IsSensed = 1;
+				pTechno->Cloakable = 0;
+				TechnoExt::ExtData *pExt = TechnoExt::ExtMap.Find(pTechno);
 				if(pTechno) {
-					pTechno->CloakSkipTimer.Start(pData->Sonar_Delay);
+					pExt->CloakSkipTimer.Start(pData->Sonar_Delay);
 				}
 			}
 		}
+
+		return true;
+	};
+
+	float width = pData->SW_WidthOrRange;
+	int height = pData->SW_Height;
+
+	if(width < 0) {
+		// decloak everything regardless of ranges
+		for(int i=0; i<TechnoClass::Array->Count; ++i) {
+			Detect(TechnoClass::Array->GetItem(i));
+		}
+
+	} else {
+		// decloak everything in range
+		if(Helpers::Alex::DistinctCollector<ObjectClass*> *items = new Helpers::Alex::DistinctCollector<ObjectClass*>()) {
+			Helpers::Alex::forEachObjectInRange(pCoords, width, height, items->getCollector());
+			items->forEach(Detect);
+		}
+
+		// radar event only if this isn't full map sonar
+		if(pData->SW_RadarEvent.Get()) {
+			RadarEventClass::Create(RADAREVENT_SUPERWEAPONLAUNCHED, *pCoords);
+		}
 	}
 
-	Unsorted::CurrentSWType = -1;
-	return 1;
+	return true;
 }

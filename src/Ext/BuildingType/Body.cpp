@@ -203,6 +203,8 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 		this->RubbleDestroyed->CanBeOccupied = false;
 	}
 
+	this->LightningRod_Modifier = pINI->ReadDouble(pID, "LightningRod.Modifier", this->LightningRod_Modifier);
+
 //	this->LegacyRadarEffect = pINI->ReadBool(pID, "SpyEffect.LegacyRadar", this->LegacyRadarEffect);
 //	this->DisplayProduction = pINI->ReadBool(pID, "SpyEffect.DisplayProduction", this->DisplayProduction);
 

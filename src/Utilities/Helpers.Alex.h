@@ -1,7 +1,10 @@
 #ifndef HELPERS_ALEX_H
 #define HELPERS_ALEX_H
 
+#include <CellSpread.h>
+
 #include <set>
+#include <functional>
 
 class Helpers {
 public:
@@ -132,6 +135,155 @@ public:
 
 			return ret;
 		}
+
+		static int forEach(CellStruct *cell, int width, int height, std::tr1::function<bool (CellClass*)> action) {
+			int ret = 0;
+
+			// the coords mark the center of the area
+			CellStruct Offset;
+			Offset.X = (short)(cell->X - (width / 2));
+			Offset.Y = (short)(cell->Y - (height / 2));
+
+			// take a look at each cell in the rectangle
+			int cellCount = (width * height);
+			for(int i=0; i<cellCount; ++i) {
+
+				// get the specific cell coordinates
+				CellStruct Cell;
+				Cell.X = (short)(i % width);
+				Cell.Y = (short)(i / width);
+				Cell += Offset;
+
+				// get this cell and call the action function
+				CellClass* pCell = MapClass::Instance->GetCellAt(&Cell);
+				if(pCell != MapClass::InvalidCell()) {
+					if(action(pCell)) {
+						++ret;
+					} else {
+						break;
+					}
+				}
+			}
+
+			return ret;
+		}
+
+		static int forEach(CellStruct *cell, float radius, std::tr1::function<bool (CellClass*)> action) {
+			int ret = 0;
+
+			// radius in every direction
+			int range = (int)(radius + 0.99) * 2 + 1;
+
+			auto actionIfInRange = [&](CellClass* pCell) -> bool {
+				// if it is near enough, do action
+				if(cell->DistanceFrom(pCell->MapCoords) <= radius) {
+					if(action(pCell)) {
+						++ret;
+					} else {
+						return false;
+					}
+				}
+
+				return true;
+			};
+
+			// get all cells in a square around the target
+			forEach(cell, range, range, actionIfInRange);
+
+			return ret;
+		}
+
+		static int forEachCellInRange(CellStruct *cell, float widthOrRange, int height, std::tr1::function<bool (CellClass*)> action) {
+			if((height > 0) && ((height * widthOrRange) > 0)) {
+				// rectangle
+				return forEach(cell, (int)widthOrRange, height, action);
+			} else if(widthOrRange > 0) {
+				// circle
+				return forEach(cell, widthOrRange, action);
+			}
+			return -1;
+		}
+
+		static int forEachObjectInRange(CellStruct *cell, float widthOrRange, int height, std::tr1::function<bool (ObjectClass*)> action) {
+			int ret = 0;
+
+			int maxDistance = (int)widthOrRange;
+
+			// get target cell cords
+			CoordStruct coords;
+			CellClass* pTarget = MapClass::Instance->GetCellAt(cell);
+			pTarget->GetCoords(&coords);
+
+			// function to check the exact range
+			auto actionIfInRange = [&](CellClass* pCell) -> bool {
+
+				// get the cell contents
+				for(ObjectClass* pContent = pCell->GetContent(); pContent; pContent = pContent->NextObject) {
+					CoordStruct tmpCoords;
+					pContent->GetCoords(&tmpCoords);
+
+					// if it is near enough, do action
+					if(coords.DistanceFrom(tmpCoords) <= maxDistance * 256) {
+						if(action(pContent)) {
+							++ret;
+						} else {
+							return false;
+						}
+					}				
+				}
+
+				return true;
+			};
+
+			if((height > 0) && ((height * (int)widthOrRange) > 0)) {
+				// rectangle
+				maxDistance += height;
+				return forEach(cell, (int)widthOrRange, height, actionIfInRange);
+			} else if(widthOrRange > 0) {
+				// circle, with thick border
+				return forEach(cell, widthOrRange + 1, actionIfInRange);
+			}
+
+			return ret;
+		}
+
+		template<typename T>
+		class DistinctCollector {
+		public:
+			std::set<T> *Value;
+
+			DistinctCollector() {
+				Value = new std::set<T>();
+			}
+
+			~DistinctCollector() {
+				if(Value) {
+					Value->Clear();
+					delete Value;
+					Value = NULL;
+				}
+			}
+
+			bool Collect(T value) {
+				Value->insert(value);
+				return true;
+			}
+
+			std::tr1::function<bool (T)> getCollector() {
+				return [&](T obj) -> bool { return Collect(obj); };
+			}
+
+			void forEach(std::tr1::function<bool (T)> action) {
+				if(action) {
+					for(std::set<T>::iterator iterator = Value->begin(); iterator != Value->end(); iterator++) {
+						T Obj = *iterator;
+						if(!action(Obj)) {
+							return;
+						}
+					}
+				}
+			}
+		};
 	};
 };
 

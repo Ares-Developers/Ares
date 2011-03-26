@@ -3,6 +3,7 @@
 
 #include <CCINIClass.h>
 #include <BulletClass.h>
+#include <SuperWeaponTypeClass.h>
 
 #include "../_Container.hpp"
 #include "../../Ares.h"
@@ -19,9 +20,10 @@ public:
 	class ExtData : public Extension<TT>
 	{
 	public:
+		SuperWeaponTypeClass *NukeSW;
 
-
-		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension(Canary, OwnerObject)
+		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension(Canary, OwnerObject),
+			NukeSW (NULL)
 			{ };
 
 		virtual ~ExtData() {

@@ -2,10 +2,15 @@
 
 #include "Body.h"
 #include "../../Misc/SWTypes.h"
+#include "../House/Body.h"
 #include "../HouseType/Body.h"
 #include "../Side/Body.h"
 #include "../../Ares.h"
 #include "../../Ares.CRT.h"
+#include "../../Utilities/Enums.h"
+
+#include <WarheadTypeClass.h>
+#include <MessageListClass.h>
 
 template<> const DWORD Extension<SuperWeaponTypeClass>::Canary = 0x55555555;
 Container<SWTypeExt> SWTypeExt::ExtMap;
@@ -14,6 +19,18 @@ template<> SWTypeExt::TT *Container<SWTypeExt>::SavingObject = NULL;
 template<> IStream *Container<SWTypeExt>::SavingStream = NULL;
 
 SuperWeaponTypeClass *SWTypeExt::CurrentSWType = NULL;
+
+SWTypeExt::ExtData::~ExtData() {
+	if(this->ParaDrop) {
+		this->ParaDrop->Clear();
+		this->ParaDrop = NULL;
+	}
+
+	for(int i=this->ParaDropPlanes.Count-1; i>=0; --i) {
+		delete this->ParaDropPlanes.Items[i];
+		this->ParaDropPlanes.Items[i] = NULL;
+	}
+};
 
 void SWTypeExt::ExtData::InitializeConstants(SuperWeaponTypeClass *pThis)
 {
@@ -38,45 +55,57 @@ void SWTypeExt::ExtData::InitializeConstants(SuperWeaponTypeClass *pThis)
 	Cursor->MiniCount = 1;
 	Cursor->HotX = hotspx_center;
 	Cursor->HotY = hotspy_middle;
+
+	AresCRT::strCopy(this->Text_Ready, "TXT_READY", 0x20);
+	AresCRT::strCopy(this->Text_Hold, "TXT_HOLD", 0x20);
+	AresCRT::strCopy(this->Text_Charging, "TXT_CHARGING", 0x20);
+	AresCRT::strCopy(this->Text_Active, "TXT_FIRESTORM_ON", 0x20);
+
+	EVA_InsufficientFunds = VoxClass::FindIndex("EVA_InsufficientFunds");
 }
 
 void SWTypeExt::ExtData::InitializeRuled(SuperWeaponTypeClass *pThis)
 {
-	this->SpyPlane_TypeIndex = AircraftTypeClass::FindIndex("SPYP");
-	this->Nuke_Siren = RulesClass::Global()->DigSound;
+}
 
-	// set up paradrop properties
-	switch(auto type = this->AttachedToObject->Type) {
-		case SuperWeaponType::ParaDrop:
-		{
-			// create an array to hold a vector for each side and country
-			int max = SideClass::Array->Count + HouseTypeClass::Array->Count + 1;
-			ParaDrop = new DynamicVectorClass<ParadropPlane*>[max];
-			break;
-		}
+void SWTypeExt::ExtData::LoadFromRulesFile(SuperWeaponTypeClass *pThis, CCINIClass *pINI)
+{
+	const char * section = pThis->get_ID();
 
-		case SuperWeaponType::AmerParaDrop:
-		{
-			// create an array to hold a vector for each side and country
-			int max = SideClass::Array->Count + HouseTypeClass::Array->Count + 1;
-			ParaDrop = new DynamicVectorClass<ParadropPlane*>[max];
+	if(!pINI->GetSection(section)) {
+		return;
+	}
 
-			// the American paradrop will be the same for every country,
-			// thus we use the SW's default here.
-			ParadropPlane* pPlane = new ParadropPlane();
-			this->ParaDropPlanes.AddItem(pPlane);
-			ParaDrop[0].AddItem(pPlane);
+	INI_EX exINI(pINI);
 
-			for(int i = 0; i < RulesClass::Instance->AmerParaDropInf.Count; ++i) {
-				pPlane->pTypes.AddItem((RulesClass::Instance->AmerParaDropInf.GetItem(i)));
-			}
+	if(exINI.ReadString(section, "Action") && !_strcmpi(exINI.value(), "Custom")) {
+		pThis->Action = SW_YES_CURSOR;
+	}
 
-			for(int i = 0; i < RulesClass::Instance->AmerParaDropNum.Count; ++i) {
-				pPlane->pNum.AddItem(RulesClass::Instance->AmerParaDropNum.GetItem(i));
-			}
-			break;
+	if(exINI.ReadString(section, "Type")) {
+		int customType = NewSWType::FindIndex(exINI.value());
+		if(customType > -1) {
+			pThis->Type = customType;
 		}
 	}
+
+	// find a NewSWType that handles this original one.
+	int idxNewSWType = -1;
+	if(pThis->Type < FIRST_SW_TYPE) {
+		this->HandledByNewSWType = NewSWType::FindHandler(pThis->Type);
+		idxNewSWType = this->HandledByNewSWType;
+	} else {
+		idxNewSWType = pThis->Type;
+	}
+
+	// if this is handled by a NewSWType, initialize it.
+	if(idxNewSWType != -1) {
+		pThis->Action = SW_YES_CURSOR;
+		if(NewSWType *swt = NewSWType::GetNthItem(idxNewSWType)) {
+			swt->Initialize(this, pThis);
+		}
+	}
+	this->LastAction = pThis->Action;
 }
 
 void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass *pINI)
@@ -89,340 +118,430 @@ void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass
 
 	INI_EX exINI(pINI);
 
-	this->SpyPlane_Count.Read(&exINI, section, "SpyPlane.Count");
-
-	this->SpyPlane_TypeIndex.Read(&exINI, section, "SpyPlane.Type");
-
-	this->SpyPlane_Mission.Read(&exINI, section, "SpyPlane.Mission");
-
-	this->Nuke_Siren.Read(&exINI, section, "Nuke.Sound");
+	// read general properties
 	this->EVA_Ready.Read(&exINI, section, "EVA.Ready");
 	this->EVA_Activated.Read(&exINI, section, "EVA.Activated");
 	this->EVA_Detected.Read(&exINI, section, "EVA.Detected");
+	this->EVA_Impatient.Read(&exINI, section, "EVA.Impatient");
+	this->EVA_InsufficientFunds.Read(&exINI, section, "EVA.InsufficientFunds");
 
-	if(exINI.ReadString(section, "Action") && !strcmp(exINI.value(), "Custom")) {
-		pThis->Action = SW_YES_CURSOR;
-	}
-
-	if(exINI.ReadString(section, "Type")) {
-		int customType = NewSWType::FindIndex(exINI.value());
-		if(customType > -1) {
-			pThis->Type = customType;
-		}
-	}
-
-	this->SW_FireToShroud.Read(&exINI, section, "Super.FireIntoShroud");
-	this->SW_AutoFire.Read(&exINI, section, "Super.AutoFire");
-	this->SW_RadarEvent.Read(&exINI, section, "Super.CreateRadarEvent");
+	this->SW_FireToShroud.Read(&exINI, section, "SW.FireIntoShroud");
+	this->SW_AutoFire.Read(&exINI, section, "SW.AutoFire");
+	this->SW_ManualFire.Read(&exINI, section, "SW.ManualFire");
+	this->SW_RadarEvent.Read(&exINI, section, "SW.CreateRadarEvent");
+	this->SW_ShowCameo.Read(&exINI, section, "SW.ShowCameo");
+	this->SW_Unstoppable.Read(&exINI, section, "SW.Unstoppable");
 
 	this->Money_Amount.Read(&exINI, section, "Money.Amount");
+	this->Money_DrainAmount.Read(&exINI, section, "Money.DrainAmount");
+	this->Money_DrainDelay.Read(&exINI, section, "Money.DrainDelay");
+
+	this->SW_Sound.Read(&exINI, section, "SW.Sound");
+	this->SW_ActivationSound.Read(&exINI, section, "SW.ActivationSound");
 
 	this->SW_Anim.Parse(&exINI, section, "SW.Animation");
 	this->SW_AnimHeight.Read(&exINI, section, "SW.AnimationHeight");
 
-	this->SW_Sound.Read(&exINI, section, "SW.Sound");
+	this->SW_AnimVisibility.Read(&exINI, section, "SW.AnimationVisibility");
+	this->SW_AffectsHouse.Read(&exINI, section, "SW.AffectsHouse");
+	this->SW_AITargetingType.Read(&exINI, section, "SW.AITargeting");
+	this->SW_AffectsTarget.Read(&exINI, section, "SW.AffectsTarget");
+	this->SW_RequiresTarget.Read(&exINI, section, "SW.RequiresTarget");
+	this->SW_RequiresHouse.Read(&exINI, section, "SW.RequiresHouse");
+
+	this->SW_Deferment.Read(&exINI, section, "SW.Deferment");
+	this->SW_ChargeToDrainRatio.Read(&exINI, section, "SW.ChargeToDrainRatio");
 
 	this->SW_Cursor.Read(&exINI, section, "Cursor");
 	this->SW_NoCursor.Read(&exINI, section, "NoCursor");
 
-	int Type = pThis->Type - FIRST_SW_TYPE;
+	this->SW_Warhead.Parse(&exINI, section, "SW.Warhead");
+	this->SW_Damage.Read(&exINI, section, "SW.Damage");
+
+	if(pINI->ReadString(section, "SW.Range", Ares::readDefval, Ares::readBuffer, Ares::readLength)) {
+		char* p = strtok(Ares::readBuffer, Ares::readDelims);
+		if(p && *p) {
+			this->SW_WidthOrRange = (float)atof(p);
+			this->SW_Height = -1;
+
+			p = strtok(NULL, Ares::readDelims);
+			if(p && *p) {
+				this->SW_Height = atoi(p);
+			}
+		}
+	}
+
+	// lighting
+	this->Lighting_Enabled.Read(&exINI, section, "Light.Enabled");
+	this->Lighting_Ambient.Read(&exINI, section, "Light.Ambient");
+	this->Lighting_Red.Read(&exINI, section, "Light.Red");
+	this->Lighting_Green.Read(&exINI, section, "Light.Green");
+	this->Lighting_Blue.Read(&exINI, section, "Light.Blue");
+
+	auto readString = [&](char* value, char* key) {
+		if(pINI->ReadString(section, key, Ares::readDefval, Ares::readBuffer, Ares::readLength)) {
+			AresCRT::strCopy(value, Ares::readBuffer, 0x20);
+		}
+	};
+
+	// messages and their properties
+	this->Message_FirerColor.Read(&exINI, section, "Message.FirerColor");
+	if(pINI->ReadString(section, "Message.Color", Ares::readDefval, Ares::readBuffer, Ares::readLength)) {
+		this->Message_ColorScheme = ColorScheme::FindIndex(Ares::readBuffer);
+		if(!this->Message_ColorScheme) {
+			Debug::INIParseFailed(section, "Message.Color", Ares::readBuffer, "Expected a valid color scheme name.");
+		}
+	}
+
+	readString(this->Message_Detected, "Message.Detected");
+	readString(this->Message_Ready, "Message.Ready");
+	readString(this->Message_Launch, "Message.Launch");
+	readString(this->Message_Activate, "Message.Activate");
+	readString(this->Message_Abort, "Message.Abort");
+	readString(this->Message_InsufficientFunds, "Message.InsufficientFunds");
+
+	readString(this->Text_Preparing, "Text.Preparing");
+	readString(this->Text_Ready, "Text.Ready");
+	readString(this->Text_Hold, "Text.Hold");
+	readString(this->Text_Charging, "Text.Charging");
+	readString(this->Text_Active, "Text.Active");
+
+	// the fallback is handled in the PreDependent SW's code
+	if(pINI->ReadString(section, "SW.PostDependent", Ares::readDefval, Ares::readBuffer, Ares::readLength)) {
+		AresCRT::strCopy(this->SW_PostDependent, Ares::readBuffer, 0x18);
+	}
+
+	// find a NewSWType that handles this original one.
+	int idxNewSWType = ((pThis->Type < FIRST_SW_TYPE) ? this->HandledByNewSWType : pThis->Type);
+
+	// initialize the NewSWType that handles this SWType.
+	int Type = idxNewSWType - FIRST_SW_TYPE;
 	if(Type >= 0 && Type < NewSWType::Array.Count) {
-		NewSWType *swt = NewSWType::GetNthItem(pThis->Type);
+		pThis->Action = this->LastAction;
+		NewSWType *swt = NewSWType::GetNthItem(idxNewSWType);
 		swt->LoadFromINI(this, pThis, pINI);
+		this->LastAction = pThis->Action;
+
+		// whatever the user does, we take care of the stupid tags.
+		// there is no need to have them not hardcoded.
+		SuperWeaponFlags::Value flags = swt->Flags();
+		pThis->PreClick = ((flags & SuperWeaponFlags::PreClick) != 0);
+		pThis->PostClick = ((flags & SuperWeaponFlags::PostClick) != 0);
+		pThis->PreDependent = -1;
 	}
 
 	this->CameoPal.LoadFromINI(pINI, pThis->ID, "SidebarPalette");
 
 	if(pINI->ReadString(section, "SidebarPCX", "", Ares::readBuffer, Ares::readLength)) {
 		AresCRT::strCopy(this->SidebarPCX, Ares::readBuffer, 0x20);
-		_strlwr_s(this->SidebarPCX, 0x20);
 		if(!PCX::Instance->LoadFile(this->SidebarPCX)) {
 			Debug::INIParseFailed(section, "SidebarPCX", this->SidebarPCX);
 		}
 	}
-
-	char base[0x40];
-
-	auto CreateParaDropBase = [](char* pID, char* pBuffer) {
-		// but a string like "Paradrop.Americans" into the buffer
-		if(pBuffer) {
-			AresCRT::strCopy(pBuffer, "ParaDrop", 9);
-			if(pID && strlen(pID)) {
-				AresCRT::strCopy(&pBuffer[8], ".", 2);
-				AresCRT::strCopy(&pBuffer[9], pID, 0x18);
-			}
-		}
-	};
-
-	auto ParseParaDrop = [&](char* pID, int Plane) -> ParadropPlane* {
-		ParadropPlane* pPlane = NULL;
-
-		// create the plane part of this request. this will be
-		// an empty string for the first plane for this is the default.
-		char plane[0x10] = "";
-		if(Plane) {
-			AresCRT::strCopy(plane, ".Plane", 0x10);
-			_itoa(Plane + 1, &plane[6], 10);
-		}
-		
-		// construct the full tag name base
-		char base[0x40], key[0x40];
-		_snprintf(base, 0x40, "%s%s", pID, plane);
-
-		// parse the plane contents
-		_snprintf(key, 0x40, "%s.Aircraft", base);
-		if(pINI->ReadString(section, key, "", Ares::readBuffer, Ares::readLength)) {
-			if(AircraftTypeClass* pTAircraft = AircraftTypeClass::Find(Ares::readBuffer)) {
-				pPlane = new ParadropPlane();
-				pPlane->pAircraft = pTAircraft;
-			} else {
-				Debug::INIParseFailed(section, key, Ares::readBuffer);
-			}
-		}
-
-		// a list of UnitTypes and InfantryTypes
-		_snprintf(key, 0x40, "%s.Types", base);
-		if(pINI->ReadString(section, key, "", Ares::readBuffer, Ares::readLength)) {
-			// create new plane if there is none yet
-			if(!pPlane) {
-				pPlane = new ParadropPlane();
-			}
-
-			// parse the types
-			pPlane->pTypes.Clear();
-
-			for(char* p = strtok(Ares::readBuffer, Ares::readDelims); p && *p; p = strtok(NULL, Ares::readDelims)) {
-				TechnoTypeClass* pTT = UnitTypeClass::Find(p);
-
-				if(!pTT) {
-					pTT = InfantryTypeClass::Find(p);
-				}
-
-				if(pTT) {
-					pPlane->pTypes.AddItem(pTT);
-				} else {
-					Debug::INIParseFailed(section, key, p);
-				}
-			}
-		}
-
-		// don't parse nums if there are no types
-		if(!pPlane || !pPlane->pTypes.Count) {
-			return pPlane;
-		}
-
-		// the number how many times each item is created
-		_snprintf(key, 0x40, "%s.Num", base);
-		if(pINI->ReadString(section, key, "", Ares::readBuffer, Ares::readLength)) {
-			pPlane->pNum.Clear();
-
-			for(char* p = strtok(Ares::readBuffer, Ares::readDelims); p && *p; p = strtok(NULL, Ares::readDelims)) {
-				pPlane->pNum.AddItem(atoi(p));
-			}
-		}
-
-		return pPlane;
-	};
-
-	auto GetParadropPlane = [&](char *pID, int defCount, DynamicVectorClass<ParadropPlane*>* ret) {
-		// get the number of planes for this house or side
-		char key[0x40];
-		_snprintf(key, 0x40, "%s.Count", pID);
-		int count = pINI->ReadInteger(section, key, defCount);
-
-		// parse every plane
-		ret->SetCapacity(count, NULL);
-		for(int i=0; i<count; ++i) {
-			if(i>=ret->Count) {
-				ret->AddItem(NULL);
-			}
-			
-			ParadropPlane* pPlane = ParseParaDrop(base, i);
-			if(pPlane) {
-				this->ParaDropPlanes.AddItem(pPlane);
-				ret->Items[i] = pPlane;
-			}
-		}
-	};
-
-	// only load these for paradrops and amerparadrops
-	int type = this->AttachedToObject->Type;
-	if((type == SuperWeaponType::ParaDrop) || (type == SuperWeaponType::AmerParaDrop)) {
-
-		// default
-		CreateParaDropBase(NULL, base);
-		GetParadropPlane(base, 1, &ParaDrop[0]);
-
-		// put all sides into the array
-		for(int i=0; i<SideClass::Array->Count; ++i) {
-			SideClass *pSide = SideClass::Array->GetItem(i);
-			CreateParaDropBase(pSide->ID, base);
-			GetParadropPlane(base, ParaDrop[0].Count, &ParaDrop[i+1]);
-		}
-
-		// put all countries into the array
-		for(int i=0; i<HouseTypeClass::Array->Count; ++i) {
-			HouseTypeClass *pTHouse = HouseTypeClass::Array->GetItem(i);
-			CreateParaDropBase(pTHouse->ID, base);
-			GetParadropPlane(base, ParaDrop[pTHouse->SideIndex+1].Count, &ParaDrop[i+SideClass::Array->Count+1]);
-		}
-	}
 }
 
-// Sends the paradrop planes for the given country to the cell specified.
-/*
-	Every house can have several planes defined. If a plane is not defined by a
-	house, this falls back to the side's planes defined for this SW. If that
-	fails also it falls back to this SW's default paradrop. If that also fails,
-	the paradrop defined by the house is used.
+// can i see the animation of pFirer's SW?
+bool SWTypeExt::ExtData::IsAnimVisible(HouseClass* pFirer) {
+	SuperWeaponAffectedHouse::Value relation = GetRelation(pFirer, HouseClass::Player);
+	return (this->SW_AnimVisibility & relation) == relation;
+}
 
-	\param pHouse The owner of this super weapon.
-	\param pCell The paradrop target cell.
-	
-	\author AlexB
-	\date 2010-07-19
-*/
-bool SWTypeExt::ExtData::SendParadrop(HouseClass* pHouse, CellClass* pCell) {
-	// sanity
-	if(!pHouse || !pCell) {
-		return false;
+// does pFirer's SW affects object belonging to pHouse?
+bool SWTypeExt::ExtData::IsHouseAffected(HouseClass* pFirer, HouseClass* pHouse) {
+	return IsHouseAffected(pFirer, pHouse, this->SW_AffectsHouse);
+}
+
+bool SWTypeExt::ExtData::IsHouseAffected(HouseClass* pFirer, HouseClass* pHouse, SuperWeaponAffectedHouse::Value value) {
+	SuperWeaponAffectedHouse::Value relation = GetRelation(pFirer, pHouse);
+	return (value & relation) == relation;
+}
+
+SuperWeaponAffectedHouse::Value SWTypeExt::ExtData::GetRelation(HouseClass* pFirer, HouseClass* pHouse) {
+	// that's me!
+	if(pFirer == pHouse) {
+		return SuperWeaponAffectedHouse::Owner;
 	}
 
-	// these are fallback values if the SW doesn't define them
-	AircraftTypeClass* pFallbackPlane = NULL;
-	TypeList<TechnoTypeClass*> *pFallbackTypes = NULL;
-	TypeList<int> *pFallbackNum = NULL;
-
-	// how many planes shall we launch?
-	int index = pHouse->Type->ArrayIndex + SideClass::Array->Count;
-	int count = ParaDrop[index].Count;
-
-	// assemble each plane and its contents
-	for(int i=0; i<count; ++i) { // i = index of plane
-		TypeList<TechnoTypeClass*> *pParaDrop = NULL;
-		TypeList<int> *pParaDropNum = NULL;
-		AircraftTypeClass* pParaDropPlane = NULL;
-
-		int indices[3] = {0, 0, 0};
-		indices[0] = pHouse->Type->ArrayIndex + SideClass::Array->Count + 1;
-		indices[1] = pHouse->Type->SideIndex + 1;
-
-		// try the planes in order of precedence:
-		// * country, explicit plane
-		// * side, explicit plane
-		// * default, explict plane
-		// * country, default plane
-		// * side, default plane
-		// * default, default plane
-		// * fill spaces with data from house/side/rules
-		for(int j=1; j>=0; --j) { // factor 1 or 0: "plane * j" => "plane" or "0" (default)
-			for(int k=0; k<3; ++k) { // index in the indices array
-
-				// only do something if there is data missing
-				if(!(pParaDrop && pParaDropNum && pParaDropPlane)) {
-					// get the country/side-specific plane list
-					DynamicVectorClass<ParadropPlane*> *planes = &this->ParaDrop[indices[k]];
-
-					// get the plane at specified index
-					int index = i * j;
-					if(planes->ValidIndex(index)) {
-						if(ParadropPlane* pPlane = planes->GetItem(index)) {
-
-							// get the contents, if not already set
-							if(!pParaDrop || !pParaDropNum) {
-								if((pPlane->pTypes.Count != 0) && (pPlane->pNum.Count != 0)) {
-									pParaDrop = &pPlane->pTypes;
-									pParaDropNum = &pPlane->pNum;
-								}
-							}
-
-							// get the airplane, if it isn't set already
-							if(!pParaDropPlane) {
-								if(AircraftTypeClass* pTAircraft = pPlane->pAircraft) {
-									pParaDropPlane = pTAircraft;
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-
-		// fallback for types and nums
-		if(!pParaDrop || !pParaDropNum) {
-			if(!pFallbackTypes || !pFallbackNum) {
-				if(HouseTypeExt::ExtData *pData = HouseTypeExt::ExtMap.Find(pHouse->Type)) {
-					pData->GetParadropContent(&pFallbackTypes, &pFallbackNum);
-				}
-			}
-
-			pParaDrop = pFallbackTypes;
-			pParaDropNum = pFallbackNum;
-		}
-
-
-		// house fallback for the plane
-		if(!pParaDropPlane) {
-			if(!pFallbackPlane) {
-				if(HouseTypeExt::ExtData *pData = HouseTypeExt::ExtMap.Find(pHouse->Type)) {
-					pFallbackPlane = pData->GetParadropPlane();
-				}
-			}
-
-			pParaDropPlane = pFallbackPlane;
-		}
-
-		// finally, send the plane
-		if(pParaDrop && pParaDropNum && pParaDropPlane) {
-			Ares::SendPDPlane(
-				pHouse,
-				pCell,
-				pParaDropPlane,
-				pParaDrop,
-				pParaDropNum);
-		}
+	if(pFirer->IsAlliedWith(pHouse)) {
+		// only friendly houses
+		return SuperWeaponAffectedHouse::Allies;
 	}
 
+	// the bad guys
+	return SuperWeaponAffectedHouse::Enemies;
+}
+
+bool SWTypeExt::ExtData::IsCellEligible(CellClass* pCell, SuperWeaponTarget::Value allowed) {
+	if(allowed & SuperWeaponTarget::AllCells) {
+		bool isWater = (pCell->LandType == lt_Water);
+		if(isWater && !(allowed & SuperWeaponTarget::Water)) {
+			// doesn't support water
+			return false;
+		} else if(!isWater && !(allowed & SuperWeaponTarget::Land)) {
+			// doesn't support non-water
+			return false;
+		}
+	}
 	return true;
 }
 
-bool __stdcall SWTypeExt::SuperClass_Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
-{
-	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pThis->Type);
+bool SWTypeExt::ExtData::IsTechnoEligible(TechnoClass* pTechno, SuperWeaponTarget::Value allowed) {
+	if(allowed & SuperWeaponTarget::AllContents) {
+		if(pTechno) {
+			eAbstractType abs_Techno = pTechno->WhatAmI();
+			if((abs_Techno == abs_Infantry) && !(allowed & SuperWeaponTarget::Infantry)) {
+				return false;
+			} else if(((abs_Techno == abs_Unit) || (abs_Techno == abs_Aircraft)) && !(allowed & SuperWeaponTarget::Unit)) {
+				return false;
+			} else if((abs_Techno == abs_Building) && !(allowed & SuperWeaponTarget::Building)) {
+				return false;
+			}
+		} else {
+			// is the target cell allowed to be empty?
+			return (allowed & SuperWeaponTarget::NoContent) != 0;
+		}
+	}
+	return true;
+}
 
-	if(pData->EVA_Activated != -1) {
-		VoxClass::PlayIndex(pData->EVA_Activated);
+bool SWTypeExt::ExtData::IsTechnoAffected(TechnoClass* pTechno) {
+	// check land and water cells
+	if(!IsCellEligible(pTechno->GetCell(), this->SW_AffectsTarget)) {
+		return false;
 	}
 
-	int Money_Amount = pData->Money_Amount;
-	if(Money_Amount > 0) {
-		DEBUGLOG("House %d gets %d credits\n", pThis->Owner->ArrayIndex, Money_Amount);
-		pThis->Owner->GiveMoney(Money_Amount);
-	} else if(Money_Amount < 0) {
-		DEBUGLOG("House %d loses %d credits\n", pThis->Owner->ArrayIndex, -Money_Amount);
-		pThis->Owner->TakeMoney(-Money_Amount);
+	// check for specific techno type
+	if(!IsTechnoEligible(pTechno, this->SW_AffectsTarget)) {
+		return false;
 	}
 
-	CoordStruct coords;
-	MapClass::Instance->GetCellAt(pCoords)->GetCoords(&coords);
+	// no restriction
+	return true;
+}
 
-	if(pData->SW_Anim != NULL) {
-		coords.Z += pData->SW_AnimHeight;
-		AnimClass *placeholder;
-		GAME_ALLOC(AnimClass, placeholder, pData->SW_Anim, &coords);
+bool SWTypeExt::ExtData::CanFireAt(CellStruct *pCoords) {
+	if(CellClass *pCell = MapClass::Instance->GetCellAt(pCoords)) {
+
+		// check cell type
+		if(!IsCellEligible(pCell, this->SW_RequiresTarget)) {
+			return false;
+		}
+
+		// check for techno type match
+		TechnoClass *pTechno = generic_cast<TechnoClass*>(pCell->GetContent());
+		if(pTechno && this->SW_RequiresHouse != SuperWeaponAffectedHouse::None) {
+			if(!IsHouseAffected(HouseClass::Player, pTechno->Owner, this->SW_RequiresHouse)) {
+				return false;
+			}
+		}
+
+		if(!IsTechnoEligible(pTechno, this->SW_RequiresTarget)) {
+			return false;
+		}
 	}
 
-	if(pData->SW_Sound != -1) {
-		VocClass::PlayAt(pData->SW_Sound, &coords, NULL);
+	// no restriction
+	return true;
+}
+
+bool SWTypeExt::Launch(SuperClass* pThis, NewSWType* pSW, CellStruct* pCoords, byte IsPlayer) {
+	if(SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pThis->Type)) {
+
+		// launch the SW, then play sounds and animations. if the SW isn't launched
+		// nothing will be played.
+		if(pSW->Launch(pThis, pCoords, IsPlayer)) {
+			SuperWeaponFlags::Value flags = pSW->Flags();
+
+			if(flags & SuperWeaponFlags::PostClick) {
+				// use the properties of the originally fired SW
+				if(HouseExt::ExtData *pExt = HouseExt::ExtMap.Find(pThis->Owner)) {
+					if(pThis->Owner->Supers.ValidIndex(pExt->SWLastIndex)) {
+						pThis = pThis->Owner->Supers.GetItem(pExt->SWLastIndex);
+						pData = SWTypeExt::ExtMap.Find(pThis->Type);
+					}
+				}
+			}
+
+			if(!Unsorted::MuteSWLaunches && (pData->EVA_Activated != -1) && !(flags & SuperWeaponFlags::NoEVA)) {
+				VoxClass::PlayIndex(pData->EVA_Activated);
+			}
+			
+			if(!(flags & SuperWeaponFlags::NoMoney)) {
+				int Money_Amount = pData->Money_Amount;
+				if(Money_Amount > 0) {
+					DEBUGLOG("House %d gets %d credits\n", pThis->Owner->ArrayIndex, Money_Amount);
+					pThis->Owner->GiveMoney(Money_Amount);
+				} else if(Money_Amount < 0) {
+					DEBUGLOG("House %d loses %d credits\n", pThis->Owner->ArrayIndex, -Money_Amount);
+					pThis->Owner->TakeMoney(-Money_Amount);
+				}
+			}
+
+			CellClass *pTarget = MapClass::Instance->GetCellAt(pCoords);
+
+			CoordStruct coords;
+			pTarget->GetCoordsWithBridge(&coords);
+
+			if((pData->SW_Anim.Get() != NULL) && !(flags & SuperWeaponFlags::NoAnim)) {
+				coords.Z += pData->SW_AnimHeight;
+				AnimClass *placeholder;
+				GAME_ALLOC(AnimClass, placeholder, pData->SW_Anim, &coords);
+				placeholder->Invisible = !pData->IsAnimVisible(pThis->Owner);
+			}
+
+			if((pData->SW_Sound != -1) && !(flags & SuperWeaponFlags::NoSound)) {
+				VocClass::PlayAt(pData->SW_Sound, &coords, NULL);
+			}
+
+			if(pData->SW_RadarEvent.Get() && !(flags & SuperWeaponFlags::NoEvent)) {
+				RadarEventClass::Create(RADAREVENT_SUPERWEAPONLAUNCHED, *pCoords);
+			}
+
+			if(pData->Message_Launch && !(flags & SuperWeaponFlags::NoMessage)) {
+				pData->PrintMessage(pData->Message_Launch, pThis->Owner);
+			}
+
+			// this sw has been fired. clean up.
+			int idxThis = pThis->Owner->Supers.FindItemIndex(&pThis);
+			if(IsPlayer && !(flags & SuperWeaponFlags::NoCleanup)) {
+				if(idxThis == Unsorted::CurrentSWType || (flags & SuperWeaponFlags::PostClick)) {
+					Unsorted::CurrentSWType = -1;
+				}
+
+				// do not play ready sound. this thing just got off.
+				if(pData->EVA_Ready != -1) {
+					VoxClass::SilenceIndex(pData->EVA_Ready);
+				}
+			}
+
+			if(HouseExt::ExtData *pExt = HouseExt::ExtMap.Find(pThis->Owner)) {
+				// post-click actions. AutoFire SWs cannot support this. Consider
+				// two Chronospheres auto-firing (the second may be launched manually).
+				// the ChronoWarp would chose the source selected last, because it
+				// would overwrite the previous (unfired) SW's index.
+				if(!(flags & SuperWeaponFlags::PostClick) && !pData->SW_AutoFire) {
+					pExt->SWLastIndex = idxThis;
+				}
+			}
+	
+			return true;
+		}
 	}
 
-	if(pData->SW_RadarEvent) {
-		RadarEventClass::Create(RADAREVENT_SUPERWEAPONLAUNCHED, *pCoords);
-	}
+	return false;
+}
 
-	int TypeIdx = pThis->Type->Type;
+NewSWType* SWTypeExt::ExtData::GetNewSWType() {
+	int TypeIdx = (this->HandledByNewSWType != -1 ? this->HandledByNewSWType : this->AttachedToObject->Type);
 	RET_UNLESS(TypeIdx >= FIRST_SW_TYPE);
-	return NewSWType::GetNthItem(TypeIdx)->Launch(pThis, pCoords, IsPlayer);
+
+	if(NewSWType* pSW = NewSWType::GetNthItem(TypeIdx)) {
+		return pSW;
+	}
+
+	return NULL;
+}
+
+void SWTypeExt::ExtData::PrintMessage(char* pMessage, HouseClass* pFirer) {
+	if(!pMessage || !*pMessage) {
+		return;
+	}
+
+	int color = ColorScheme::FindIndex("Gold");
+	if(this->Message_FirerColor.Get()) {
+		// firer color
+		if(pFirer) {
+			color = pFirer->ColorSchemeIndex;
+		}
+	} else {
+		if(this->Message_ColorScheme > -1) {
+			// user defined color
+			color = this->Message_ColorScheme;
+		} else if(HouseClass::Player) {
+			// default way: the current player's color
+			color = HouseClass::Player->ColorSchemeIndex;
+		}
+	}
+
+	// print the message
+	const wchar_t* label = StringTable::LoadStringA(pMessage);
+	if(label && *label) {
+		MessageListClass::Instance->PrintMessage(label, color);
+	}
+}
+
+void SWTypeExt::ClearChronoAnim(SuperClass *pThis)
+{
+	DynamicVectorClass<SuperClass*>* pSupers = (DynamicVectorClass<SuperClass*>*)0xB0F5B8;
+
+	if(pThis->Animation) {
+		pThis->Animation->RemainingIterations = 0;
+		pThis->Animation = NULL;
+		int idx = pSupers->FindItemIndex(&pThis);
+		if(idx != -1) {
+			pSupers->RemoveItem(idx);
+		}
+	}
+
+	if(pThis->unknown_bool_6C) {
+		int idx = pSupers->FindItemIndex(&pThis);
+		if(idx != -1) {
+			pSupers->RemoveItem(idx);
+		}
+		pThis->unknown_bool_6C = false;
+	}
+}
+
+void SWTypeExt::CreateChronoAnim(SuperClass *pThis, CoordStruct *pCoords, AnimTypeClass *pAnimType)
+{
+	DynamicVectorClass<SuperClass*>* pSupers = (DynamicVectorClass<SuperClass*>*)0xB0F5B8;
+
+	ClearChronoAnim(pThis);
+	
+	if(pAnimType && pCoords) {
+		AnimClass* pAnim = NULL;
+		GAME_ALLOC(AnimClass, pAnim, pAnimType, pCoords);
+		if(pAnim) {
+			SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pThis->Type);
+			pAnim->Invisible = !pData->IsAnimVisible(pThis->Owner);
+			pThis->Animation = pAnim;
+			pSupers->AddItem(pThis);
+		}
+	}
+}
+
+bool SWTypeExt::ChangeLighting(SuperClass *pThis) {
+	if(pThis) {
+		return ChangeLighting(pThis->Type);
+	}
+	return false;
+}
+
+bool SWTypeExt::ChangeLighting(SuperWeaponTypeClass *pThis) {
+	if(pThis) {
+		if(SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pThis)) {
+			return pData->ChangeLighting();
+		}
+	}
+	return false;
+}
+
+bool SWTypeExt::ExtData::ChangeLighting() {
+	if(this->Lighting_Enabled.Get()) {
+		auto getValue = [](int value, int def) -> int {
+			return (value < 0) ? def : value;
+		};
+
+		ScenarioClass* scen = ScenarioClass::Instance;
+		scen->AmbientTarget = getValue(this->Lighting_Ambient, scen->AmbientOriginal);
+		int cG = 1000 * getValue(this->Lighting_Green, scen->Green) / 100;
+		int cB = 1000 * getValue(this->Lighting_Blue, scen->Blue)  / 100;
+		int cR = 1000 * getValue(this->Lighting_Red, scen->Red)  / 100;
+		scen->RecalcLighting(cR, cG, cB, 1);
+		return true;
+	}
+
+	return false;
 }
 
 void Container<SWTypeExt>::InvalidatePointer(void *ptr) {

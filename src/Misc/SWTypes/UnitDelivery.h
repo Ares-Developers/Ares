@@ -19,6 +19,7 @@ class SW_UnitDelivery : NewSWType
 
 	virtual void LoadFromINI(
 		SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI);
+	virtual void Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW);
 	virtual bool Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer);
 
 	typedef UnitDeliveryStateMachine TStateMachine;

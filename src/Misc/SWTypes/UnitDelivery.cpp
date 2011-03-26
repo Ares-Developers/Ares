@@ -1,6 +1,11 @@
 #include "UnitDelivery.h"
 #include "../../Ext/Techno/Body.h"
 
+void SW_UnitDelivery::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)
+{
+	pData->SW_AITargetingType = SuperWeaponAITargetingMode::ParaDrop;
+}
+
 void SW_UnitDelivery::LoadFromINI(
 	SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI)
 {
@@ -10,7 +15,7 @@ void SW_UnitDelivery::LoadFromINI(
 		return;
 	}
 
-	if(pINI->ReadString(section, "SW.Deliver", "", Ares::readBuffer, Ares::readLength)) {
+	if(pINI->ReadString(section, "Deliver.Types", "", Ares::readBuffer, Ares::readLength)) {
 		pData->SW_Deliverables.Clear();
 		for(char *cur = strtok(Ares::readBuffer, ","); cur && *cur; cur = strtok(NULL, ",")) {
 			TechnoTypeClass * Type = InfantryTypeClass::Find(cur);
@@ -23,6 +28,9 @@ void SW_UnitDelivery::LoadFromINI(
 			if(!Type) {
 				Type = BuildingTypeClass::Find(cur);
 			}
+			if(!Type) {
+				Debug::INIParseFailed(section, "Deliver.Types", cur, "Expected valid TechnoType ID.");
+			}
 			if(Type) {
 				pData->SW_Deliverables.AddItem(Type);
 			}
@@ -30,7 +38,7 @@ void SW_UnitDelivery::LoadFromINI(
 	}
 
 	INI_EX exINI(pINI);
-	pData->SW_DeliverBuildups.Read(&exINI, section, "SW.DeliverBuildups");
+	pData->SW_DeliverBuildups.Read(&exINI, section, "Deliver.Buildups");
 }
 
 bool SW_UnitDelivery::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
@@ -101,9 +109,15 @@ void UnitDeliveryStateMachine::PlaceUnits() {
 						&& !cell->Tile_Is_DestroyableCliff() && !cell->Tile_Is_Shore()
 						&& !cell->Tile_Is_Water() && !cell->ContainsBridge();
 				}
+				if(Type->Naval && validCell) {
+					// naval types look stupid on bridges
+					validCell = (!cell->ContainsBridge() && cell->LandType != lt_Road)
+						|| Type->SpeedType == st_Hover;
+				}
 
 				if(validCell) {
-					if(Placed = Item->Put(&XYZ, (cellIdx & 7))) {
+					Item->OnBridge = cell->ContainsBridge();
+					if((Placed = Item->Put(&XYZ, (cellIdx & 7))) == true) {
 						if(ItemBuilding) {
 							if (pData->SW_DeliverBuildups) {
 								ItemBuilding->UpdateOwner(this->Super->Owner);
@@ -112,9 +126,6 @@ void UnitDeliveryStateMachine::PlaceUnits() {
 						} else {
 							if(Type->BalloonHover || Type->JumpJet) {
 								Item->Scatter(0xB1CFE8, 1, 0);
-							}
-							if(cell->ContainsBridge()) {
-								Item->OnBridge = true;
 							}
 						}
 					}
