@@ -24,6 +24,7 @@
 
 //#include "../../Misc/JammerClass.h"
 class JammerClass;
+class PoweredUnitClass;
 
 class TechnoExt
 {
@@ -53,6 +54,9 @@ public:
 
 		// 305 Radar Jammers
 		JammerClass* RadarJam;
+		
+		// issue #617 powered units
+		PoweredUnitClass* PoweredUnit;
 
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			idxSlot_Wave (0),
@@ -65,7 +69,8 @@ public:
 			EMPSparkleAnim (NULL),
 			EMPLastMission (mission_None),
 			ShadowDrawnManually (false),
-			RadarJam(NULL)
+			RadarJam(NULL),
+			PoweredUnit(NULL)
 			{
 				this->CloakSkipTimer.Stop();
 				// hope this works with the timing - I assume it does, since Types should be created before derivates thereof

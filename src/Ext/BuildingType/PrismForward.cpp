@@ -413,11 +413,9 @@ void BuildingTypeExt::cPrismForwarding::RemoveFromNetwork(BuildingClass *SlaveTo
 			pSlaveData->PrismForwarding.SupportTarget = NULL; //slave tower no longer references the target
 		}
 		//finally, remove all the preceding slaves from the network
-		int senderIdx = 0;
-		while(senderIdx < pSlaveData->PrismForwarding.Senders.Count) {
-			if (BuildingClass *NextTower = pSlaveData->PrismForwarding.Senders[senderIdx]) {
+		for(int senderIdx = pSlaveData->PrismForwarding.Senders.Count; senderIdx; senderIdx--) {
+			if (BuildingClass *NextTower = pSlaveData->PrismForwarding.Senders[senderIdx-1]) {
 				RemoveFromNetwork(NextTower, false);
-				++senderIdx;
 			}
 		}
 	}

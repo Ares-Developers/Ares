@@ -43,6 +43,7 @@ void MakeCommand() {
 #include "Commands/AIControl.h"
 #include "Commands/MapSnapshot.h"
 //include "Commands/FrameByFrame.h"
+#include "Commands/AIBasePlan.h"
 #include "Commands/DumpTypes.h"
 #include "Commands/DumpMemory.h"
 #include "Commands/Debugging.h"

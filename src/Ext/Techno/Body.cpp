@@ -1,6 +1,7 @@
 #include "Body.h"
 #include "../TechnoType/Body.h"
 #include "../../Misc/SWTypes.h"
+#include "../../Misc/PoweredUnitClass.h"
 
 #include <HouseClass.h>
 #include <BuildingClass.h>
@@ -28,7 +29,6 @@ void TechnoExt::SpawnSurvivors(TechnoClass *pThis, TechnoClass *pKiller, bool Se
 	RETZ_UNLESS(!pSelfData->Survivors_Done);
 
 	CoordStruct loc = pThis->Location;
-
 
 	int chance = pData->Survivors_PilotChance.BindTo(pThis)->Get();
 	// remove check for Crewed if it is accounted for outside of this function
@@ -308,6 +308,9 @@ bool TechnoExt::ExtData::IsPowered() {
 		}
 		// if we reach this, we found no building that currently powers this object
 		return false;
+	// #617
+	} else if(this->PoweredUnit) {
+		return this->PoweredUnit->IsPowered();
 	} else {
 		// object doesn't need a particular powering structure, therefore, for the purposes of the game, it IS powered
 		return true;

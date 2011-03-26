@@ -4,6 +4,7 @@
 #include "../BuildingType/Body.h"
 #include "../../Misc/Debug.h"
 #include "../../Misc/JammerClass.h"
+#include "../../Misc/PoweredUnitClass.h"
 
 #include <SpecificStructures.h>
 
@@ -34,6 +35,7 @@ DEFINE_HOOK(6F9E50, TechnoClass_Update, 5)
 	GET(TechnoClass *, Source, ECX);
 
 	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(Source);
+	TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(Source->GetTechnoType());
 
 	if(pData->CloakSkipTimer.IsDone()) {
 		pData->CloakSkipTimer.Stop();
@@ -43,13 +45,21 @@ DEFINE_HOOK(6F9E50, TechnoClass_Update, 5)
 	}
 
 	// #1208
-	if(TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(Source->GetTechnoType())) {
+	if(pTypeData) {
 		if(pTypeData->PassengerTurret.Get()) {
 			// 18 = 1 8 = A H = Adolf Hitler. Clearly we can't allow it to come to that.
 			int passengerNumber = (Source->Passengers.NumPassengers <= 17) ? Source->Passengers.NumPassengers : 17;
 			int maxTurret = Source->GetTechnoType()->TurretCount - 1;
 			Source->CurrentTurretNumber = (passengerNumber <= maxTurret) ? passengerNumber : maxTurret;
 		}
+	}
+	
+	// #617 powered units
+	if( pTypeData->PoweredBy.Count ) {
+		if(!pData->PoweredUnit) {
+			pData->PoweredUnit = new PoweredUnitClass(Source, pTypeData);
+		}
+		pData->PoweredUnit->Update();
 	}
 
 	return 0;
@@ -87,7 +97,7 @@ DEFINE_HOOK(6F9E76, TechnoClass_Update_CheckOperators, 6)
 		}
 
 		if(pData->IsOperated()) { // either does have an operator or doesn't need one, so...
-			if(pThis->Deactivated || Override) { // ...if it's currently off, turn it on! (oooh baby)
+			if( (pThis->Deactivated && pData->IsPowered() && !pThis->IsUnderEMP()) || Override ) { // ...if it's currently off, turn it on! (oooh baby)
 				pThis->Reactivate();
 				pThis->Owner->ShouldRecheckTechTree = true; // #885
 			}
@@ -655,6 +665,13 @@ DEFINE_HOOK(6F6AC9, TechnoClass_Remove, 6) {
 		TechnoExt->RadarJam->UnjamAll();
 		delete TechnoExt->RadarJam;
 		TechnoExt->RadarJam = NULL;
+	}
+	
+	// #617 powered units
+	if(TechnoExt->PoweredUnit)
+	{
+		delete TechnoExt->PoweredUnit;
+		TechnoExt->PoweredUnit = NULL;
 	}
 
 	return 0;

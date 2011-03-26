@@ -291,6 +291,18 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 
 	// #1208
 	this->PassengerTurret.Read(&exINI, section, "PassengerTurret");
+	
+	// #617 powered units
+	if( pINI->ReadString(section, "PoweredBy", "", Ares::readBuffer, Ares::readLength) ) {
+		for(char *cur = strtok(Ares::readBuffer, ","); cur; cur = strtok(NULL, ",")) {
+			BuildingTypeClass* b = BuildingTypeClass::Find(cur);
+			if(b) {
+				this->PoweredBy.AddItem(b);
+			} else {
+				Debug::INIParseFailed(pThis->ImageFile, "PoweredBy", "BuildingType not found");
+			}
+		}
+	}
 
 	// quick fix - remove after the rest of weapon selector code is done
 	return;

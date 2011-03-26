@@ -2,6 +2,7 @@
 #define TECHNOTYPE_EXT_H
 
 #include <TechnoTypeClass.h>
+#include <BuildingTypeClass.h>
 #include <VocClass.h>
 
 #include "../../Ares.h"
@@ -111,6 +112,9 @@ public:
 
 		// issue #1208
 		Valueable<bool> PassengerTurret; //!< Whether this unit's turret changes based on the number of people in its passenger hold.
+
+		// issue #617
+		DynamicVectorClass<BuildingTypeClass*> PoweredBy;  //!< The buildingtype this unit is powered by or NULL.
 
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			Survivors_PilotChance (NULL),

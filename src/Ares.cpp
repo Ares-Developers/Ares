@@ -66,6 +66,7 @@ void __stdcall Ares::RegisterCommands()
 	MakeCommand<DumperTypesCommandClass>();
 	MakeCommand<MemoryDumperCommandClass>();
 	MakeCommand<DebuggingCommandClass>();
+	MakeCommand<AIBasePlanCommandClass>();
 }
 
 void __stdcall Ares::CmdLineParse(char** ppArgs,int nNumArgs)
