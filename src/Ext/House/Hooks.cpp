@@ -40,8 +40,13 @@ DEFINE_HOOK(505360, HouseClass_PrerequisitesForTechnoTypeAreListed, 5)
 
 	GET_STACK(TechnoTypeClass *, pItem, 0x4);
 	GET_STACK(DynamicVectorClass<BuildingTypeClass *> *, pBuildingsToCheck, 0x8);
+	GET_STACK(int, pListCount, 0xC);
+	auto realCount = pBuildingsToCheck->Count;
+	pBuildingsToCheck->Count = pListCount;
 
 	R->EAX(HouseExt::PrerequisitesListed(pBuildingsToCheck, pItem));
+
+	pBuildingsToCheck->Count = realCount;
 
 	return 0x505486;
 }
