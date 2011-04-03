@@ -82,14 +82,9 @@ DEFINE_HOOK(441D25, BuildingClass_Destroy, 0A)
 }
 
 // bugfix #379: Temporal friendly kills give veterancy
-DEFINE_HOOK(71A92A, TemporalClass_Update_AvoidFriendlies, 5)
-{
-	GET(TemporalClass *, Temp, ESI);
-
-	HouseClass *hv = Temp->Target->Owner;
-	HouseClass *ho = Temp->Owner->Owner;
-
-	return ho->IsAlliedWith(hv) ? 0x71A97D : 0;
+// bugfix #1266: Temporal kills gain double experience
+DEFINE_HOOK(71A922, TemporalClass_Update, 6) {
+	return 0x71A97D;
 }
 
 // bugfix #874 A: Temporal warheads affect Warpable=no units
