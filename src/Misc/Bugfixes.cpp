@@ -842,3 +842,16 @@ DEFINE_HOOK(4CA437, FactoryClass_GetCRC, 0)
 
 	return 0x4CA501;
 }
+
+// issue #1532
+DEFINE_HOOK(749088, Count_ResetWithGivenCount, 6)
+{
+	GET(unsigned int, Width, EAX);
+	if(Width > 512) {
+		Debug::DevLog(Debug::Warning, "One of the internal counters attempted to overflow "
+			"(given width of %d exceeds maximum allowed width of 512).\n"
+			"The counter width has been reset to 512, but this can result in unpredictable behaviour and crashes.\n", Width);
+		R->EAX(512);
+	}
+	return 0;
+}

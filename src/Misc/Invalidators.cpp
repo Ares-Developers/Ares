@@ -107,6 +107,23 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 		}
 	}
 
+	{ // new scope to keep typedef tidy
+		typedef std::pair<const char *, int> LimitedClass;
+
+		std::vector<LimitedClass> LimitedClasses;
+		LimitedClasses.push_back(LimitedClass("BuildingTypes", BuildingTypeClass::Array->Count));
+		LimitedClasses.push_back(LimitedClass("VehicleTypes", UnitTypeClass::Array->Count));
+		LimitedClasses.push_back(LimitedClass("InfantryTypes", InfantryTypeClass::Array->Count));
+		LimitedClasses.push_back(LimitedClass("AircraftTypes", AircraftTypeClass::Array->Count));
+
+		for(auto it = LimitedClasses.begin(); it != LimitedClasses.end(); ++it) {
+			if(it->second > 512) {
+				Debug::DevLog(Debug::Warning, "The [%s] list contains more than 512 entries."
+					"This might result in unexpected behaviour and crashes.\n", it->first);
+			}
+		}
+	}
+
 	if(Ares::bStrictParser && Debug::bParserErrorDetected) {
 		Debug::FatalErrorAndExit("One or more errors were detected while parsing the INI files.\r\n"
 				"Please review the contents of the debug log and correct them.");
