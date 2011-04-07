@@ -62,6 +62,13 @@ void SW_ChronoSphere::LoadFromINI(
 	pData->Chronosphere_BlastSrc.Parse(&exINI, section, "Chronosphere.BlastSrc");
 	pData->Chronosphere_BlastDest.Parse(&exINI, section, "Chronosphere.BlastDest");
 
+	// reconstruct the original value, then re-read (otherwise buildings will be affected if
+	// the SW section is defined in game mode inis or maps without restating SW.AffectsTarget)
+	if(!pData->Chronosphere_AffectBuildings) {
+		pData->SW_AffectsTarget = (pData->SW_AffectsTarget.Get() & ~SuperWeaponTarget::Building);
+	}
+	pData->SW_AffectsTarget.Read(&exINI, section, "SW.AffectsTarget");
+
 	// we handle the distinction between buildings and deployed vehicles ourselves
 	pData->Chronosphere_AffectBuildings = ((pData->SW_AffectsTarget.Get() & SuperWeaponTarget::Building) != 0);
 	pData->SW_AffectsTarget = (pData->SW_AffectsTarget.Get() | SuperWeaponTarget::Building);
