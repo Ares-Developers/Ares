@@ -351,7 +351,7 @@ bool WarheadTypeExt::canWarheadAffectTarget(TechnoClass * Target, HouseClass * S
 bool WarheadTypeExt::ExtData::applyKillDriver(BulletClass* Bullet) {
 	if(!Bullet->Target || !this->KillDriver) {
 		return false;
-	} else if(TechnoClass *pTarget = generic_cast<TechnoClass *>(Bullet->Target)) {
+	} else if(FootClass *pTarget = generic_cast<FootClass *>(Bullet->Target)) {
 		// don't penetrate the Iron Curtain // typedef IronCurtain ChastityBelt
 		if(pTarget->IsIronCurtained()) {
 			return false;
@@ -374,31 +374,20 @@ bool WarheadTypeExt::ExtData::applyKillDriver(BulletClass* Bullet) {
 
 			// If this vehicle uses Operator=, we have to take care of actual "physical" drivers, rather than theoretical ones
 			FootClass *passenger = NULL;
-			if(TargetTypeExt->IsAPromiscuousWhoreAndLetsAnyoneRideIt && (passenger = pTarget->Passengers.RemoveFirstPassenger())) {
+			if(TargetTypeExt->IsAPromiscuousWhoreAndLetsAnyoneRideIt && (passenger = pTarget->RemoveFirstPassenger())) {
 				// kill first passenger
 				passenger->RegisterDestruction(Bullet->Owner);
 				passenger->UnInit();
 
 			} else if(TargetTypeExt->Operator) {
-				// kill first passenger of Operator= kind
-
-				// temp holder for the preceeding non-operators
-				PassengersClass worthlessOnes;
-
-				// copy out worthless passengers until we find the driver cowardly hiding among them, then kill him
-				while(pTarget->Passengers.FirstPassenger) {
-					if(pTarget->Passengers.FirstPassenger->GetTechnoType() == TargetTypeExt->Operator) {
-						FootClass *passenger = pTarget->Passengers.RemoveFirstPassenger();
+				// find the driver cowardly hiding among the passengers, then kill him
+				for(passenger = pTarget->Passengers.FirstPassenger; passenger; passenger = generic_cast<FootClass*>(passenger->NextObject)) {
+					if(passenger->GetTechnoType() == TargetTypeExt->Operator) {
+						pTarget->RemovePassenger(passenger);
 						passenger->RegisterDestruction(Bullet->Owner);
 						passenger->UnInit();
 						break;
 					}
-					worthlessOnes.AddPassenger(pTarget->Passengers.RemoveFirstPassenger());
-				}
-
-				// copy the worthless scum back in
-				while(worthlessOnes.FirstPassenger) {
-					pTarget->Passengers.AddPassenger(worthlessOnes.RemoveFirstPassenger());
 				}
 			}
 

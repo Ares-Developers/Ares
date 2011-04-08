@@ -18,7 +18,7 @@ FireError::Value TechnoExt::FiringStateCache = FireError::NotAValue;
 
 bool TechnoExt::NeedsRegap = false;
 
-void TechnoExt::SpawnSurvivors(TechnoClass *pThis, TechnoClass *pKiller, bool Select)
+void TechnoExt::SpawnSurvivors(FootClass *pThis, TechnoClass *pKiller, bool Select, bool IgnoreDefenses)
 {
 	TechnoTypeClass *Type = pThis->GetTechnoType();
 
@@ -35,7 +35,7 @@ void TechnoExt::SpawnSurvivors(TechnoClass *pThis, TechnoClass *pKiller, bool Se
 	// checks if Crewed=yes is set and there is a chance pilots survive, and, if yes...
 	// ...attempts to spawn one Survivors_PilotCount times
 
-	if(Type->Crewed && chance) {
+	if(Type->Crewed && chance && !IgnoreDefenses) {
 		for(int i = 0; i < pData->Survivors_PilotCount; ++i) {
 			if(ScenarioClass::Instance->Random.RandomRanged(1, 100) <= chance) {
 				signed int idx = pOwner->SideIndex;
@@ -72,7 +72,7 @@ void TechnoExt::SpawnSurvivors(TechnoClass *pThis, TechnoClass *pKiller, bool Se
 
 	while(pThis->Passengers.FirstPassenger) {
 		bool toDelete = 1;
-		FootClass *passenger = pThis->Passengers.RemoveFirstPassenger();
+		FootClass *passenger = pThis->RemoveFirstPassenger();
 		bool toSpawn = false;
 		if(chance > 0) {
 			toSpawn = ScenarioClass::Instance->Random.RandomRanged(1, 100) <= chance;
@@ -80,7 +80,7 @@ void TechnoExt::SpawnSurvivors(TechnoClass *pThis, TechnoClass *pKiller, bool Se
 			int occupation = passenger->IsCellOccupied(pThis->GetCell(), -1, -1, 0, 1);
 			toSpawn = (occupation == 0 || occupation == 2);
 		}
-		if(toSpawn) {
+		if(toSpawn && !IgnoreDefenses) {
 			CoordStruct destLoc, tmpLoc = loc;
 			CellStruct tmpCoords = CellSpread::GetCell(ScenarioClass::Instance->Random.RandomRanged(0, 7));
 
@@ -111,15 +111,20 @@ void TechnoExt::SpawnSurvivors(TechnoClass *pThis, TechnoClass *pKiller, bool Se
 bool TechnoExt::EjectSurvivor(FootClass *Survivor, CoordStruct *loc, bool Select)
 {
 	bool success;
-	int floorZ = MapClass::Instance->GetCellFloorHeight(loc);
-	++Unsorted::IKnowWhatImDoing;
-	if(loc->Z - floorZ > 100) {
+	CoordStruct tmpCoords;
+	CellClass * pCell = MapClass::Instance->GetCellAt(loc);
+	pCell->GetCoordsWithBridge(&tmpCoords);
+	Survivor->OnBridge = pCell->ContainsBridge();
+
+	int floorZ = tmpCoords.Z;
+	if(loc->Z - floorZ > 208) {
 		success = Survivor->SpawnParachuted(loc);
 	} else {
+		loc->Z = floorZ;
 		success = Survivor->Put(loc, ScenarioClass::Instance->Random.RandomRanged(0, 7));
 	}
-	--Unsorted::IKnowWhatImDoing;
 	RET_UNLESS(success);
+	Survivor->Transporter = NULL;
 	Survivor->Scatter(0xB1CFE8, 1, 0);
 	Survivor->QueueMission(Survivor->Owner->ControlledByHuman() ? mission_Guard : mission_Hunt, 0);
 	if(Select) {
@@ -137,7 +142,7 @@ bool TechnoExt::EjectSurvivor(FootClass *Survivor, CoordStruct *loc, bool Select
 	\author Renegade
 	\date 27.05.2010
 */
-void TechnoExt::EjectPassengers(TechnoClass *pThis, signed short howMany) {
+void TechnoExt::EjectPassengers(FootClass *pThis, signed short howMany) {
 	if(howMany == 0 || !pThis->Passengers.NumPassengers) {
 		return;
 	}
@@ -148,8 +153,10 @@ void TechnoExt::EjectPassengers(TechnoClass *pThis, signed short howMany) {
 		CoordStruct destination;
 		TechnoExt::GetPutLocation(pThis->Location, destination);
 
-		FootClass *passenger = pThis->Passengers.RemoveFirstPassenger();
-		passenger->Put(&destination, ScenarioClass::Instance->Random.RandomRanged(0, 7));
+		FootClass *passenger = pThis->RemoveFirstPassenger();
+		if(!passenger->Put(&destination, ScenarioClass::Instance->Random.RandomRanged(0, 7))) {
+			passenger->UnInit();
+		}
 	}
 	return;
 }

@@ -11,10 +11,11 @@
 // bugfix #297: Crewed=yes jumpjets spawn parachuted infantry on destruction, not idle
 DEFINE_HOOK(737F97, UnitClass_ReceiveDamage, 0)
 {
-	GET(TechnoClass *, t, ESI);
+	GET(UnitClass *, t, ESI);
 	GET_STACK(TechnoClass *, Killer, 0x54);
 	GET_STACK(bool, select, 0x13);
-	TechnoExt::SpawnSurvivors(t, Killer, select);
+	GET_STACK(bool, ignoreDefenses, 0x58);
+	TechnoExt::SpawnSurvivors(t, Killer, select, ignoreDefenses);
 
 	return 0x73838A;
 }
@@ -24,8 +25,9 @@ DEFINE_HOOK(41668B, AircraftClass_ReceiveDamage, 6)
 {
 	GET(AircraftClass *, a, ESI);
 	GET_STACK(TechnoClass *, Killer, 0x28);
+	GET_STACK(int, ignoreDefenses, 0x20);
 	bool select = a->IsSelected && a->Owner->ControlledByPlayer();
-	TechnoExt::SpawnSurvivors(a, Killer, select);
+	TechnoExt::SpawnSurvivors(a, Killer, select, ignoreDefenses != 0);
 
 	return 0;
 }

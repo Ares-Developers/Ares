@@ -110,9 +110,9 @@ public:
 
 	static bool NeedsRegap;
 
-	static void SpawnSurvivors(TechnoClass *pThis, TechnoClass *pKiller, bool Select);
+	static void SpawnSurvivors(FootClass *pThis, TechnoClass *pKiller, bool Select, bool IgnoreDefenses);
 	static bool EjectSurvivor(FootClass *Survivor, CoordStruct *loc, bool Select);
-	static void EjectPassengers(TechnoClass *, signed short);
+	static void EjectPassengers(FootClass *, signed short);
 	static void GetPutLocation(CoordStruct const &, CoordStruct &);
 
 	static void StopDraining(TechnoClass *Drainer, TechnoClass *Drainee);
