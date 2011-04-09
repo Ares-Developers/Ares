@@ -328,109 +328,55 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 			}
 		}
 	}
+	return 0;
+}
 
-	// #917
+// #917
+DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateAIBuildables, 6) {
 	bool allIsWell = true;
-	std::string neuteredHouse = "";
-	std::string whateverBlewUp = "";
 	for(int i = 0; i < HouseClass::Array->Count; ++i) {
-		HouseClass* curHouse = HouseClass::Array->Items[i];
+		HouseClass* curHouse = HouseClass::Array->GetItem(i);
 		if(!curHouse->ControlledByHuman() && !curHouse->IsNeutral()) {
-			// there may be a lot of casting needed here, because WW likes inventing new vectors
-			if(curHouse->FirstBuildableFromArray(RulesClass::Instance->BaseUnit) == NULL) { // this doesn't work because WW sucks
-				allIsWell = false;
-				neuteredHouse = curHouse->Name();
-				whateverBlewUp = "BaseUnit";
-				break;
+			auto pArray = &RulesClass::Instance->BaseUnit;
+			bool canBuild = false;
+			for(int i = 0; i < pArray->Count; ++i) {
+				auto Item = pArray->GetItem(i);
+				if(curHouse->CanExpectToBuild(Item)) {
+					canBuild = true;
+					break;
+				}
 			}
-			if(curHouse->FirstBuildableFromArray(RulesClass::Instance->Shipyard) == NULL) {
+			if(!canBuild) {
+				Debug::DevLog(Debug::Error, "House %s cannot build any object in %s. The AI ain't smart enough for that."
+					, curHouse->Name(), "BaseUnit");
 				allIsWell = false;
-				neuteredHouse = curHouse->Name();
-				whateverBlewUp = "Shipyard";
-				break;
 			}
-			if(curHouse->FirstBuildableFromArray(RulesClass::Instance->BuildConst) == NULL) {
-				allIsWell = false;
-				neuteredHouse = curHouse->Name();
-				whateverBlewUp = "BuildConst";
-				break;
-			}
-			if(curHouse->FirstBuildableFromArray(RulesClass::Instance->BuildPower) == NULL) {
-				allIsWell = false;
-				neuteredHouse = curHouse->Name();
-				whateverBlewUp = "BuildPower";
-				break;
-			}
-			if(curHouse->FirstBuildableFromArray(RulesClass::Instance->BuildRefinery) == NULL) {
-				allIsWell = false;
-				neuteredHouse = curHouse->Name();
-				whateverBlewUp = "BuildRefinery";
-				break;
-			}
-			if(curHouse->FirstBuildableFromArray(RulesClass::Instance->BuildBarracks) == NULL) {
-				allIsWell = false;
-				neuteredHouse = curHouse->Name();
-				whateverBlewUp = "BuildBarracks";
-				break;
-			}
-			if(curHouse->FirstBuildableFromArray(RulesClass::Instance->BuildTech) == NULL) {
-				allIsWell = false;
-				neuteredHouse = curHouse->Name();
-				whateverBlewUp = "BuildTech";
-				break;
-			}
-			if(curHouse->FirstBuildableFromArray(RulesClass::Instance->BuildWeapons) == NULL) {
-				allIsWell = false;
-				neuteredHouse = curHouse->Name();
-				whateverBlewUp = "BuildWeapons";
-				break;
-			}
-			if(curHouse->FirstBuildableFromArray(RulesClass::Instance->BuildRadar) == NULL) {
-				allIsWell = false;
-				neuteredHouse = curHouse->Name();
-				whateverBlewUp = "BuildRadar";
-				break;
-			}
-			if(curHouse->FirstBuildableFromArray(RulesClass::Instance->ConcreteWalls) == NULL) {
-				allIsWell = false;
-				neuteredHouse = curHouse->Name();
-				whateverBlewUp = "ConcreteWalls";
-				break;
-			}
-			if(curHouse->FirstBuildableFromArray(RulesClass::Instance->BuildNavalYard) == NULL) {
-				allIsWell = false;
-				neuteredHouse = curHouse->Name();
-				whateverBlewUp = "BuildNavalYard";
-				break;
-			}
-			if(curHouse->FirstBuildableFromArray(RulesClass::Instance->BuildDummy) == NULL) {
-				allIsWell = false;
-				neuteredHouse = curHouse->Name();
-				whateverBlewUp = "BuildDummy";
-				break;
-			}
-			if(curHouse->FirstBuildableFromArray(RulesClass::Instance->AlliedBaseDefenses) == NULL) {
-				allIsWell = false;
-				neuteredHouse = curHouse->Name();
-				whateverBlewUp = "AlliedBaseDefenses";
-				break;
-			}
-			if(curHouse->FirstBuildableFromArray(RulesClass::Instance->SovietBaseDefenses) == NULL) {
-				allIsWell = false;
-				neuteredHouse = curHouse->Name();
-				whateverBlewUp = "SovietBaseDefenses";
-				break;
-			}
-			if(curHouse->FirstBuildableFromArray(RulesClass::Instance->ThirdBaseDefenses) == NULL) {
-				allIsWell = false;
-				neuteredHouse = curHouse->Name();
-				whateverBlewUp = "ThirdBaseDefenses";
-				break;
-			}
+
+			auto CheckList = [curHouse, &allIsWell](DynamicVectorClass<BuildingTypeClass *> *const List, char * const ListName) -> void {
+				if(!curHouse->FirstBuildableFromArray(List)) {
+					Debug::DevLog(Debug::Error, "House %s cannot build any object in %s. The AI ain't smart enough for that."
+						, curHouse->Name(), ListName);
+					allIsWell = false;
+				}
+			};
+
+			CheckList(&RulesClass::Instance->Shipyard, "Shipyard");
+			CheckList(&RulesClass::Instance->BuildConst, "BuildConst");
+			CheckList(&RulesClass::Instance->BuildPower, "BuildPower");
+			CheckList(&RulesClass::Instance->BuildRefinery, "BuildRefinery");
+			CheckList(&RulesClass::Instance->BuildBarracks, "BuildBarracks");
+			CheckList(&RulesClass::Instance->BuildTech, "BuildTech");
+			CheckList(&RulesClass::Instance->BuildWeapons, "BuildWeapons");
+			CheckList(&RulesClass::Instance->BuildRadar, "BuildRadar");
+			CheckList(&RulesClass::Instance->ConcreteWalls, "ConcreteWalls");
+			CheckList(&RulesClass::Instance->BuildNavalYard, "BuildNavalYard");
+			CheckList(&RulesClass::Instance->BuildDummy, "BuildDummy");
+			CheckList(&RulesClass::Instance->AlliedBaseDefenses, "AlliedBaseDefenses");
+			CheckList(&RulesClass::Instance->SovietBaseDefenses, "SovietBaseDefenses");
+			CheckList(&RulesClass::Instance->ThirdBaseDefenses, "ThirdBaseDefenses");
 		}
 	}
 	if(!allIsWell) {
-		Debug::DevLog(Debug::Error, "House %s cannot build any object in %s. The AI ain't smart enough for that.", neuteredHouse, whateverBlewUp);
 		Debug::FatalErrorAndExit("One or more errors were detected while parsing the INI files.\r\n"
 			"Please review the contents of the debug log and correct them.");
 	}
