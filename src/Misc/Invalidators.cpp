@@ -4,10 +4,12 @@
 #include <AnimClass.h>
 #include <InfantryClass.h>
 #include <ScenarioClass.h>
+#include <HouseClass.h>
 #include "Debug.h"
 #include "../Ext/Rules/Body.h"
 #include <vector>
 #include <algorithm>
+#include <string>
 #include "../Ares.version.h"
 
 DEFINE_HOOK(477007, INIClass_GetSpeedType, 8)
@@ -327,6 +329,111 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 		}
 	}
 
+	// #917
+	bool allIsWell = true;
+	std::string neuteredHouse = "";
+	std::string whateverBlewUp = "";
+	for(int i = 0; i < HouseClass::Array->Count; ++i) {
+		HouseClass* curHouse = HouseClass::Array->Items[i];
+		if(!curHouse->ControlledByHuman() && !curHouse->IsNeutral()) {
+			// there may be a lot of casting needed here, because WW likes inventing new vectors
+			if(curHouse->FirstBuildableFromArray(RulesClass::Instance->BaseUnit) == NULL) { // this doesn't work because WW sucks
+				allIsWell = false;
+				neuteredHouse = curHouse->Name();
+				whateverBlewUp = "BaseUnit";
+				break;
+			}
+			if(curHouse->FirstBuildableFromArray(RulesClass::Instance->Shipyard) == NULL) {
+				allIsWell = false;
+				neuteredHouse = curHouse->Name();
+				whateverBlewUp = "Shipyard";
+				break;
+			}
+			if(curHouse->FirstBuildableFromArray(RulesClass::Instance->BuildConst) == NULL) {
+				allIsWell = false;
+				neuteredHouse = curHouse->Name();
+				whateverBlewUp = "BuildConst";
+				break;
+			}
+			if(curHouse->FirstBuildableFromArray(RulesClass::Instance->BuildPower) == NULL) {
+				allIsWell = false;
+				neuteredHouse = curHouse->Name();
+				whateverBlewUp = "BuildPower";
+				break;
+			}
+			if(curHouse->FirstBuildableFromArray(RulesClass::Instance->BuildRefinery) == NULL) {
+				allIsWell = false;
+				neuteredHouse = curHouse->Name();
+				whateverBlewUp = "BuildRefinery";
+				break;
+			}
+			if(curHouse->FirstBuildableFromArray(RulesClass::Instance->BuildBarracks) == NULL) {
+				allIsWell = false;
+				neuteredHouse = curHouse->Name();
+				whateverBlewUp = "BuildBarracks";
+				break;
+			}
+			if(curHouse->FirstBuildableFromArray(RulesClass::Instance->BuildTech) == NULL) {
+				allIsWell = false;
+				neuteredHouse = curHouse->Name();
+				whateverBlewUp = "BuildTech";
+				break;
+			}
+			if(curHouse->FirstBuildableFromArray(RulesClass::Instance->BuildWeapons) == NULL) {
+				allIsWell = false;
+				neuteredHouse = curHouse->Name();
+				whateverBlewUp = "BuildWeapons";
+				break;
+			}
+			if(curHouse->FirstBuildableFromArray(RulesClass::Instance->BuildRadar) == NULL) {
+				allIsWell = false;
+				neuteredHouse = curHouse->Name();
+				whateverBlewUp = "BuildRadar";
+				break;
+			}
+			if(curHouse->FirstBuildableFromArray(RulesClass::Instance->ConcreteWalls) == NULL) {
+				allIsWell = false;
+				neuteredHouse = curHouse->Name();
+				whateverBlewUp = "ConcreteWalls";
+				break;
+			}
+			if(curHouse->FirstBuildableFromArray(RulesClass::Instance->BuildNavalYard) == NULL) {
+				allIsWell = false;
+				neuteredHouse = curHouse->Name();
+				whateverBlewUp = "BuildNavalYard";
+				break;
+			}
+			if(curHouse->FirstBuildableFromArray(RulesClass::Instance->BuildDummy) == NULL) {
+				allIsWell = false;
+				neuteredHouse = curHouse->Name();
+				whateverBlewUp = "BuildDummy";
+				break;
+			}
+			if(curHouse->FirstBuildableFromArray(RulesClass::Instance->AlliedBaseDefenses) == NULL) {
+				allIsWell = false;
+				neuteredHouse = curHouse->Name();
+				whateverBlewUp = "AlliedBaseDefenses";
+				break;
+			}
+			if(curHouse->FirstBuildableFromArray(RulesClass::Instance->SovietBaseDefenses) == NULL) {
+				allIsWell = false;
+				neuteredHouse = curHouse->Name();
+				whateverBlewUp = "SovietBaseDefenses";
+				break;
+			}
+			if(curHouse->FirstBuildableFromArray(RulesClass::Instance->ThirdBaseDefenses) == NULL) {
+				allIsWell = false;
+				neuteredHouse = curHouse->Name();
+				whateverBlewUp = "ThirdBaseDefenses";
+				break;
+			}
+		}
+	}
+	if(!allIsWell) {
+		Debug::DevLog(Debug::Error, "House %s cannot build any object in %s. The AI ain't smart enough for that.", neuteredHouse, whateverBlewUp);
+		Debug::FatalErrorAndExit("One or more errors were detected while parsing the INI files.\r\n"
+			"Please review the contents of the debug log and correct them.");
+	}
 	return 0;
 }
 
