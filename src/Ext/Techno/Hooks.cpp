@@ -686,3 +686,30 @@ DEFINE_HOOK(6F6AC9, TechnoClass_Remove, 6) {
 
 	return 0;
 }
+
+// bug #1290: carryall size limit
+DEFINE_HOOK(417D75, AircraftClass_GetCursorOverObject_CanTote, 5)
+{
+	GET(AircraftClass *, pCarryall, ESI);
+	GET(UnitClass *, pTarget, EDI);
+
+	auto pCarryallData = TechnoTypeExt::ExtMap.Find(pCarryall->Type);
+
+	return (pCarryallData->CarryallCanLift(pTarget))
+		? 0
+		: 0x417DF6
+	;
+}
+
+DEFINE_HOOK(416E37, AircraftClass_Mi_MoveCarryall_CanTote, 5)
+{
+	GET(AircraftClass *, pCarryall, ESI);
+	GET(UnitClass *, pTarget, EDI);
+
+	auto pCarryallData = TechnoTypeExt::ExtMap.Find(pCarryall->Type);
+
+	return (pCarryallData->CarryallCanLift(pTarget))
+		? 0
+		: 0x416EC9
+	;
+}

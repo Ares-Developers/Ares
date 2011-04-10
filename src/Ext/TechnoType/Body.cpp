@@ -304,6 +304,9 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 		}
 	}
 
+	this->CarryallAllowed.Read(&exINI, section, "Carryall.Allowed");
+	this->CarryallSizeLimit.Read(&exINI, section, "Carryall.SizeLimit");
+
 	// quick fix - remove after the rest of weapon selector code is done
 	return;
 }
@@ -444,6 +447,28 @@ bool TechnoTypeExt::ExtData::CameoIsElite()
 	return false;
 }
 
+bool TechnoTypeExt::ExtData::CarryallCanLift(UnitClass * Target) {
+	if(Target->ParasiteEatingMe) {
+		return false;
+	}
+	auto TargetData = TechnoTypeExt::ExtMap.Find(Target->Type);
+	UnitTypeClass *TargetType = Target->Type;
+	bool canCarry = !TargetType->Organic && !TargetType->NonVehicle;
+	if(TargetData->CarryallAllowed.isset()) {
+		canCarry = TargetData->CarryallAllowed;
+	}
+	if(!canCarry) {
+		return false;
+	}
+	if(this->CarryallSizeLimit.isset()) {
+		int maxSize = this->CarryallSizeLimit;
+		if(maxSize != -1) {
+			return maxSize >= static_cast<TechnoTypeClass *>(Target->Type)->Size;
+		}
+	}
+	return true;
+
+}
 // =============================
 // load/save
 
