@@ -177,7 +177,7 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 	if (idxSupport != -1) {
 		supportWeapon = pType->get_Weapon(idxSupport);
 	}
-	LaserDrawClass * LaserBeam;
+	LaserDrawClass * LaserBeam = NULL;
 	if (supportWeapon) {
 		WeaponTypeExt::ExtData *supportWeaponData = WeaponTypeExt::ExtMap.Find(supportWeapon);
 		//IsLaser
