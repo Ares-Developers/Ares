@@ -355,36 +355,42 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateAIBuildables, 6) {
 			}
 
 			auto CheckList = [curHouse, &allIsWell, errorMsg]
-					(DynamicVectorClass<BuildingTypeClass *> *const List, char * const ListName) -> void {
+					(DynamicVectorClass<BuildingTypeClass *> *const List, char * const ListName, bool Fatal) -> void {
 				if(!curHouse->FirstBuildableFromArray(List)) {
 					Debug::DevLog(Debug::Error, errorMsg, curHouse->Type->ID, ListName);
-					allIsWell = false;
+					Debug::Log("\tThe list %s contains the following items:\n", ListName);
+					for(int i = 0; i < List->Count; ++i) {
+						Debug::Log("\t#%02d: %s\n", i, List->GetItem(i)->ID);
+					}
+					if(Fatal) {
+						allIsWell = false;
+					}
 				}
 			};
 
-			CheckList(&RulesClass::Instance->Shipyard, "Shipyard");
-			CheckList(&RulesClass::Instance->BuildConst, "BuildConst");
-			CheckList(&RulesClass::Instance->BuildPower, "BuildPower");
-			CheckList(&RulesClass::Instance->BuildRefinery, "BuildRefinery");
-			CheckList(&RulesClass::Instance->BuildBarracks, "BuildBarracks");
-			CheckList(&RulesClass::Instance->BuildTech, "BuildTech");
-			CheckList(&RulesClass::Instance->BuildWeapons, "BuildWeapons");
-			CheckList(&RulesClass::Instance->BuildRadar, "BuildRadar");
-			CheckList(&RulesClass::Instance->ConcreteWalls, "ConcreteWalls");
-			CheckList(&RulesClass::Instance->BuildNavalYard, "BuildNavalYard");
-			CheckList(&RulesClass::Instance->BuildDummy, "BuildDummy");
+			CheckList(&RulesClass::Instance->Shipyard, "Shipyard", true);
+			CheckList(&RulesClass::Instance->BuildConst, "BuildConst", true);
+			CheckList(&RulesClass::Instance->BuildPower, "BuildPower", true);
+			CheckList(&RulesClass::Instance->BuildRefinery, "BuildRefinery", true);
+			CheckList(&RulesClass::Instance->BuildBarracks, "BuildBarracks", true);
+			CheckList(&RulesClass::Instance->BuildTech, "BuildTech", true);
+			CheckList(&RulesClass::Instance->BuildWeapons, "BuildWeapons", true);
+			CheckList(&RulesClass::Instance->BuildRadar, "BuildRadar", false);
+			CheckList(&RulesClass::Instance->ConcreteWalls, "ConcreteWalls", false);
+			CheckList(&RulesClass::Instance->BuildNavalYard, "BuildNavalYard", true);
+			CheckList(&RulesClass::Instance->BuildDummy, "BuildDummy", false);
 
 			auto pCountryData = HouseTypeExt::ExtMap.Find(curHouse->Type);
-			CheckList(&pCountryData->Powerplants, "Powerplants");
+			CheckList(&pCountryData->Powerplants, "Powerplants", true);
 
 			auto pSide = SideClass::Array->GetItem(curHouse->Type->SideIndex);
 			auto pSideData = SideExt::ExtMap.Find(pSide);
-			CheckList(&pSideData->BaseDefenses, "BaseDefenses");
+			CheckList(&pSideData->BaseDefenses, "Base Defenses", false);
 		}
 	}
 	if(!allIsWell) {
-		Debug::FatalErrorAndExit("One or more errors were detected while parsing the INI files.\r\n"
-			"Please review the contents of the debug log and correct them.");
+//		Debug::FatalErrorAndExit("One or more errors were detected while parsing the INI files.\r\n"
+//			"Please review the contents of the debug log and correct them.");
 	}
 	return 0;
 }
