@@ -28,10 +28,12 @@ DEFINE_HOOK(6FF4DE, TechnoClass_Fire_IsLaser, 6) {
 	auto pData = WeaponTypeExt::ExtMap.Find(pFiringWeaponType);
 	int Thickness = pData->Laser_Thickness;
 
+	LaserDrawClass *pLaser = NULL;
+
 	if(BuildingClass* pBld = specific_cast<BuildingClass*>(pThis)) {
 		WeaponTypeClass* pTWeapon = pBld->GetTurretWeapon()->WeaponType;
 
-		if(LaserDrawClass* pLaser = pBld->CreateLaser(pTarget, idxWeapon, pTWeapon, &TechnoClass::DefaultCoords)) {
+		if(pLaser = pBld->CreateLaser(pTarget, idxWeapon, pTWeapon, &TechnoClass::DefaultCoords)) {
 			
 			//default thickness for buildings. this was 3 for PrismType (rising to 5 for supported prism) but no idea what it was for non-PrismType - setting to 3 for all BuildingTypes now.
 			if (Thickness == -1) {
@@ -51,17 +53,15 @@ DEFINE_HOOK(6FF4DE, TechnoClass_Fire_IsLaser, 6) {
 				if (pBld->SupportingPrisms > 0) { //Ares sets this to the longest backward chain
 					//is being supported... so increase beam intensity
 					if (pBldTypeData->PrismForwarding.Intensity < 0) {
-						pLaser->field_21 = 1; //this appears to change the RGB values for OuterColor (1=double, 0=halve)
 						pLaser->Thickness -= pBldTypeData->PrismForwarding.Intensity; //add on absolute intensity
 					} else if (pBldTypeData->PrismForwarding.Intensity > 0) {
-						pLaser->field_21 = 1; //this appears to change the RGB values for OuterColor (1=double, 0=halve)
 						pLaser->Thickness += (pBldTypeData->PrismForwarding.Intensity * pBld->SupportingPrisms);
 					}
 				}
 			}
 		}
 	} else {
-		if(LaserDrawClass* pLaser = pThis->CreateLaser(pTarget, idxWeapon, pFiringWeaponType, &TechnoClass::DefaultCoords)) {
+		if(pLaser = pThis->CreateLaser(pTarget, idxWeapon, pFiringWeaponType, &TechnoClass::DefaultCoords)) {
 			if (Thickness == -1) {
 				pLaser->Thickness = 2;
 			} else {
@@ -70,42 +70,11 @@ DEFINE_HOOK(6FF4DE, TechnoClass_Fire_IsLaser, 6) {
 		}
 	}
 
-	// skip all default handling
-	return 0x6FF656;
-}
-
-/* Original transcribe (by AlexB and DCoder)
-DEFINE_HOOK(6FF4DE, TechnoClass_Fire_IsLaser, 6) {
-	GET(TechnoClass*, pThis, ECX);
-	GET(TechnoClass*, pTarget, EDI);
-	GET(WeaponTypeClass*, pFiringWeaponType, EBX);
-	GET_STACK(int, idxWeapon, 0x18);
-	
-	if(BuildingClass* pBld = specific_cast<BuildingClass*>(pThis)) {
-		WeaponTypeClass* pTWeapon = pBld->GetTurretWeapon()->WeaponType;
-
-		if(LaserDrawClass* pLaser = pBld->CreateLaser(pTarget, idxWeapon, pTWeapon, &TechnoClass::DefaultCoords())) {
-			if(pBld->Type == RulesClass::Instance->PrismType) {
-				pLaser->Thickness = 3;
-				if(pBld->SupportingPrisms > 0) {
-					pLaser->field_21 = 1;
-					pLaser->Thickness = 5;
-				}
-			}
-		}
-	} else {
-		if(LaserDrawClass* pLaser = pThis->CreateLaser(pTarget, idxWeapon, pFiringWeaponType, &TechnoClass::DefaultCoords())) {
-			if(pFiringWeaponType->IsHouseColor) {
-				pLaser->Thickness = 2;
-			}
-		}
+	if(pLaser) {
+		// required for Thickness to work right
+		pLaser->field_21 = 1; //this appears to change the RGB values for OuterColor (1=double, 0=halve)
 	}
 
 	// skip all default handling
 	return 0x6FF656;
 }
-*/
-
-
-
-

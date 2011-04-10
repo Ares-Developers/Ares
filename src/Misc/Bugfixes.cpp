@@ -855,3 +855,25 @@ DEFINE_HOOK(749088, Count_ResetWithGivenCount, 6)
 	}
 	return 0;
 }
+
+DEFINE_HOOK(417D75, AircraftClass_GetCursorOverObject_CanTote, 5)
+{
+	GET(AircraftClass *, pCarryall, ESI);
+	GET(UnitClass *, pTarget, EDI);
+
+	return (/*pTarget->Type->Naval || */pTarget->Type->NonVehicle)
+		? 0x417DF6
+		: 0
+	;
+}
+
+DEFINE_HOOK(416E37, AircraftClass_Mi_MoveCarryall_CanTote, 5)
+{
+	GET(AircraftClass *, pCarryall, ESI);
+	GET(UnitClass *, pTarget, EDI);
+
+	return (/*pTarget->Type->Naval || */pTarget->Type->NonVehicle)
+		? 0x416EC9
+		: 0
+	;
+}
