@@ -7,6 +7,8 @@
 #include <HouseClass.h>
 #include "Debug.h"
 #include "../Ext/Rules/Body.h"
+#include "../Ext/HouseType/Body.h"
+#include "../Ext/Side/Body.h"
 #include <vector>
 #include <algorithm>
 #include <string>
@@ -334,6 +336,7 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 // #917
 DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateAIBuildables, 6) {
 	bool allIsWell = true;
+	const char *errorMsg = "AI House of country [%s] cannot build any object in %s. The AI ain't smart enough for that.\n";
 	for(int i = 0; i < HouseClass::Array->Count; ++i) {
 		HouseClass* curHouse = HouseClass::Array->GetItem(i);
 		if(!curHouse->ControlledByHuman() && !curHouse->IsNeutral()) {
@@ -347,15 +350,14 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateAIBuildables, 6) {
 				}
 			}
 			if(!canBuild) {
-				Debug::DevLog(Debug::Error, "House %s cannot build any object in %s. The AI ain't smart enough for that."
-					, curHouse->Name(), "BaseUnit");
+				Debug::DevLog(Debug::Error, errorMsg, curHouse->Type->ID, "BaseUnit");
 				allIsWell = false;
 			}
 
-			auto CheckList = [curHouse, &allIsWell](DynamicVectorClass<BuildingTypeClass *> *const List, char * const ListName) -> void {
+			auto CheckList = [curHouse, &allIsWell, errorMsg]
+					(DynamicVectorClass<BuildingTypeClass *> *const List, char * const ListName) -> void {
 				if(!curHouse->FirstBuildableFromArray(List)) {
-					Debug::DevLog(Debug::Error, "House %s cannot build any object in %s. The AI ain't smart enough for that."
-						, curHouse->Name(), ListName);
+					Debug::DevLog(Debug::Error, errorMsg, curHouse->Type->ID, ListName);
 					allIsWell = false;
 				}
 			};
@@ -371,9 +373,13 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateAIBuildables, 6) {
 			CheckList(&RulesClass::Instance->ConcreteWalls, "ConcreteWalls");
 			CheckList(&RulesClass::Instance->BuildNavalYard, "BuildNavalYard");
 			CheckList(&RulesClass::Instance->BuildDummy, "BuildDummy");
-			CheckList(&RulesClass::Instance->AlliedBaseDefenses, "AlliedBaseDefenses");
-			CheckList(&RulesClass::Instance->SovietBaseDefenses, "SovietBaseDefenses");
-			CheckList(&RulesClass::Instance->ThirdBaseDefenses, "ThirdBaseDefenses");
+
+			auto pCountryData = HouseTypeExt::ExtMap.Find(curHouse->Type);
+			CheckList(&pCountryData->Powerplants, "Powerplants");
+
+			auto pSide = SideClass::Array->GetItem(curHouse->Type->SideIndex);
+			auto pSideData = SideExt::ExtMap.Find(pSide);
+			CheckList(&pSideData->BaseDefenses, "BaseDefenses");
 		}
 	}
 	if(!allIsWell) {
