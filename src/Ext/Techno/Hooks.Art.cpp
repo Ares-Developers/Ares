@@ -54,7 +54,7 @@ DEFINE_HOOK(73C725, UnitClass_DrawSHP_DrawShadowEarlier, 6)
 		GET_STACK(Point2D, coords, 0x12C);
 		LEA_STACK(RectangleStruct *, BoundingRect, 0x134);
 
-		if(U->unknown_bool_420) {
+		if(U->IsOnCarryall) {
 			coords.Y -= 14;
 		}
 

@@ -446,10 +446,11 @@ void Valueable<MouseCursor>::Read(INI_EX *parser, const char* pSection, const ch
 		else if(!strcmp(hotx, "Center")) this->Value.HotX = hotspx_center;
 		else if(!strcmp(hotx, "Right")) this->Value.HotX = hotspx_right;
 
-		char *hoty = strtok(NULL, ",");
-		if(!strcmp(hoty, "Top")) this->Value.HotY = hotspy_top;
-		else if(!strcmp(hoty, "Middle")) this->Value.HotY = hotspy_middle;
-		else if(!strcmp(hoty, "Bottom")) this->Value.HotY = hotspy_bottom;
+		if(char *hoty = strtok(NULL, ",")) {
+			if(!strcmp(hoty, "Top")) this->Value.HotY = hotspy_top;
+			else if(!strcmp(hoty, "Middle")) this->Value.HotY = hotspy_middle;
+			else if(!strcmp(hoty, "Bottom")) this->Value.HotY = hotspy_bottom;
+		}
 	}
 };
 

@@ -158,6 +158,14 @@ DEFINE_HOOK(415CA6, AircraftClass_Paradrop, 6)
 	return 0x415DE3;
 }
 
+// #1232: fix for dropping units out of flying Carryalls
+DEFINE_HOOK(415DF6, AircraftClass_Paradrop_Carryall, 6)
+{
+	GET(FootClass *, pTechno, ESI);
+	pTechno->IsOnCarryall = false;
+	return 0;
+}
+
 DEFINE_HOOK(6F407D, TechnoClass_Init_1, 6)
 {
 	GET(TechnoClass *, T, ESI);
