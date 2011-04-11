@@ -861,13 +861,15 @@ DEFINE_HOOK(749088, Count_ResetWithGivenCount, 6)
 DEFINE_HOOK(65D8FB, TeamTypeClass_ValidateHouse, 6)
 DEFINE_HOOK_AGAIN(65EC4A, TeamTypeClass_ValidateHouse, 6)
 {
-	// house exists and is still in multiplayer game
 	GET(TeamTypeClass*, pThis, ECX);
 	HouseClass* pHouse = pThis->GetHouse();
-	if(pHouse && (!pHouse->Defeated || !SessionClass::Instance->GameMode)) {
+
+	// house exists; it's either declared explicitly (not Player@X) or a in campaign mode
+	// (we don't second guess those), or it's still alive in a multiplayer game
+	if(pHouse && (pThis->Owner || !SessionClass::Instance->GameMode || !pHouse->Defeated)) {
 		return 0;
 	}
 
 	// no.
-	return (R->get_Origin() == 0x65D8FB ? 0x65DD1B : 0x65F301);
+	return (R->get_Origin() == 0x65D8FB) ? 0x65DD1B : 0x65F301;
 }
