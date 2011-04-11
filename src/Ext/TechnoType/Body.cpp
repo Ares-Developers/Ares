@@ -455,7 +455,7 @@ bool TechnoTypeExt::ExtData::CarryallCanLift(UnitClass * Target) {
 	UnitTypeClass *TargetType = Target->Type;
 	bool canCarry = !TargetType->Organic && !TargetType->NonVehicle;
 	if(TargetData->CarryallAllowed.isset()) {
-		canCarry = TargetData->CarryallAllowed;
+		canCarry = !!TargetData->CarryallAllowed;
 	}
 	if(!canCarry) {
 		return false;
