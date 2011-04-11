@@ -855,3 +855,19 @@ DEFINE_HOOK(749088, Count_ResetWithGivenCount, 6)
 	}
 	return 0;
 }
+
+// #1260: reinforcements via actions 7 and 80, and chrono reinforcements
+// via action 107 cause crash if house doesn't exist
+DEFINE_HOOK(65D8FB, TeamTypeClass_ValidateHouse, 6)
+DEFINE_HOOK_AGAIN(65EC4A, TeamTypeClass_ValidateHouse, 6)
+{
+	// house exists and is still in multiplayer game
+	GET(TeamTypeClass*, pThis, ECX);
+	HouseClass* pHouse = pThis->GetHouse();
+	if(pHouse && (!pHouse->Defeated || !SessionClass::Instance->GameMode)) {
+		return 0;
+	}
+
+	// no.
+	return (R->get_Origin() == 0x65D8FB ? 0x65DD1B : 0x65F301);
+}

@@ -7,6 +7,7 @@
 #include <TechnoClass.h>
 #include <TechnoTypeClass.h>
 #include <Randomizer.h>
+#include <MapSeedClass.h>
 
 bool RMG::UrbanAreas = 0;
 bool RMG::UrbanAreasRead = 0;
@@ -48,12 +49,57 @@ DEFINE_HOOK(5970EA, RMG_EnableDesert, 9)
 	return 0;
 }
 
+// #882 select from all available options and randomize urban areas
+DEFINE_HOOK(596786, MapSeedClass_DialogFunc_SurpriseMe, 9)
+{
+	GET(HWND, hDlg, EBP);
+	HWND hDlgItem = 0;
+	Randomizer* pRand = Randomizer::Global();
+	MapSeedClass* pMapSeed = MapSeedClass::Global();
+
+	// selects map terrain type from all the items in the combobox
+	if(hDlgItem = GetDlgItem(hDlg, 0x405)) {
+		int count = SendMessageA(hDlgItem, CB_GETCOUNT, 0, 0);
+		int index = pRand->RandomRanged(0, count - 1);
+		int itemdata = SendMessageA(hDlgItem, CB_GETITEMDATA, index, 0);
+		pMapSeed->MapType = itemdata;
+	}
+
+	// selects theater / climate from all the items in the combobox
+	if(hDlgItem = GetDlgItem(hDlg, 0x407)) {
+		int count = SendMessageA(hDlgItem, CB_GETCOUNT, 0, 0);
+		int index = pRand->RandomRanged(0, count - 1);
+		int itemdata = SendMessageA(hDlgItem, CB_GETITEMDATA, index, 0);
+		pMapSeed->Theater = itemdata;
+	}
+
+	// randomize creation of urban areas
+	if(hDlgItem = GetDlgItem(hDlg, ARES_CHK_RMG_URBAN_AREAS)) {
+		int enabled = pRand->RandomRanged(1, 100);
+		RMG::UrbanAreas = (enabled > 50);
+	}
+
+	// recreate random value for "map time of the day"
+	R->EAX(pRand->RandomRanged(0, 3));
+	return 0x5967C1;
+}
+
 DEFINE_HOOK(596C81, MapSeedClass_DialogFunc_GetData, 5)
 {
 	GET(HWND, hDlg, EBP);
 	HWND hDlgItem = GetDlgItem(hDlg, ARES_CHK_RMG_URBAN_AREAS);
 	if(hDlgItem) {
 		RMG::UrbanAreas = (1 == SendMessageA(hDlgItem, BM_GETCHECK, 0, 0));
+	}
+	return 0;
+}
+
+DEFINE_HOOK(5971EA, MapSeedClass_DialogFunc_SetData, 5)
+{
+	GET(HWND, hDlg, EBX);
+	HWND hDlgItem = GetDlgItem(hDlg, ARES_CHK_RMG_URBAN_AREAS);
+	if(hDlgItem) {
+		SendMessageA(hDlgItem, BM_SETCHECK, (RMG::UrbanAreas ? 1 : 0), 0);
 	}
 	return 0;
 }
