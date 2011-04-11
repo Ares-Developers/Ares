@@ -592,22 +592,65 @@ DEFINE_HOOK(701C97, TechnoClass_ReceiveDamage_AffectsEnemies, 6)
 	return CanAffect ? 0 : 0x701CC2;
 }
 
-DEFINE_HOOK(7090D0, TechnoClass_SelectFiringVoice_IFVRepair, 5)
-{
-	GET(TechnoClass *, Firer, ESI);
-	TechnoTypeClass * FirerType = Firer->GetTechnoType();
-	auto pData = TechnoTypeExt::ExtMap.Find(FirerType);
+// select the most appropriate firing voice and also account
+// for empty lists, so you actually won't lose functionality
+// when a unit becomes elite.
+DEFINE_HOOK(7090A8, TechnoClass_SelectFiringVoice, 0) {
+	GET(TechnoClass*, pThis, ESI);
+	GET(TechnoClass*, pTarget, ECX);
 
-	int idxVoice = pData->VoiceRepair;
-	if(idxVoice == -1) {
-		if(_strcmpi(FirerType->ID, "FV")) {
-			// the game does this
-			return 0x7090ED;
+	TechnoTypeClass* pType = pThis->GetTechnoType();
+	TechnoTypeExt::ExtData* pData = TechnoTypeExt::ExtMap.Find(pType);
+
+	int idxVoice = -1;
+
+	int idxWeapon = pThis->SelectWeapon(pTarget);
+	WeaponTypeClass* pWeapon = pThis->GetWeapon(idxWeapon)->WeaponType;
+
+	// repair
+	if(pWeapon && pWeapon->Damage < 0) {
+		idxVoice = pData->VoiceRepair;
+		if(idxVoice < 0) {
+			idxVoice = RulesClass::Instance->VoiceIFVRepair;
 		}
-		idxVoice = RulesClass::Instance->VoiceIFVRepair;
 	}
-	R->EDI<int>(idxVoice);
-	return 0x70914A;
+
+	// don't mix them up, but fall back to rookie voice if there
+	// is no elite voice.
+	if(idxVoice < 0) {
+		if(idxWeapon) {
+			// secondary	
+			if(pThis->Veterancy.IsElite()) {
+				idxVoice = pType->VoiceSecondaryEliteWeaponAttack;
+			}
+
+			if(idxVoice < 0) {
+				idxVoice = pType->VoiceSecondaryWeaponAttack;
+			}
+		} else {
+			// primary
+			if(pThis->Veterancy.IsElite()) {
+				idxVoice = pType->VoicePrimaryEliteWeaponAttack;
+			}
+
+			if(idxVoice < 0) {
+				idxVoice = pType->VoicePrimaryWeaponAttack;
+			}
+		}
+	}
+
+	// generic attack voice
+	if(idxVoice < 0 && pType->VoiceAttack.Count) {
+		unsigned int idxRandom = Randomizer::Global()->Random();
+		idxVoice = pType->VoiceAttack.GetItem(idxRandom % pType->VoiceAttack.Count);
+	}
+
+	// play voice
+	if(idxVoice > -1) {
+		pThis->QueueVoice(idxVoice);
+	}
+
+	return 0x7091C5;
 }
 
 // Support per unit modification of Iron Curtain effect duration
@@ -660,6 +703,14 @@ DEFINE_HOOK(73A1BC, UnitClass_UpdatePosition_EnteredGrinder, 7)
 		if(Vehicle->Owner->ControlledByPlayer()) {
 			VoxClass::Play("EVA_ReverseEngineeredVehicle");
 			VoxClass::Play("EVA_NewTechnologyAcquired");
+		}
+	}
+
+	// #368: refund hijackers
+	if(Vehicle->HijackerInfantryType != -1) {
+		if(InfantryTypeClass *Hijacker = InfantryTypeClass::Array->GetItem(Vehicle->HijackerInfantryType)) {
+			int refund = Hijacker->GetRefund(Vehicle->Owner, 0);
+			Grinder->Owner->GiveMoney(refund);
 		}
 	}
 
