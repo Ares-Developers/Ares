@@ -52,6 +52,8 @@ public:
 
 		bool ShadowDrawnManually;
 
+		int HijackerHealth;
+
 		// 305 Radar Jammers
 		JammerClass* RadarJam;
 		
@@ -66,6 +68,7 @@ public:
 			Survivors_Done (0),
 			Insignia_Image (NULL),
 			GarrisonedIn (NULL),
+			HijackerHealth (-1),
 			EMPSparkleAnim (NULL),
 			EMPLastMission (mission_None),
 			ShadowDrawnManually (false),
@@ -93,6 +96,8 @@ public:
 		bool IsOperated();
 		bool IsPowered();
 
+		AresAction::Value GetActionHijack(TechnoClass *pTarget);
+
 		unsigned int AlphaFrame(SHPStruct * Image);
 
 		bool DrawVisualFX();
@@ -113,7 +118,10 @@ public:
 	static void SpawnSurvivors(FootClass *pThis, TechnoClass *pKiller, bool Select, bool IgnoreDefenses);
 	static bool EjectSurvivor(FootClass *Survivor, CoordStruct *loc, bool Select);
 	static void EjectPassengers(FootClass *, signed short);
-	static void GetPutLocation(CoordStruct const &, CoordStruct &);
+	static void GetPutLocation(CoordStruct const &, CoordStruct &, int);
+	static bool EjectRandomly(FootClass*, CoordStruct const &, int, bool);
+	// If available, removes the hijacker from its victim and creates an InfantryClass instance.
+	static InfantryClass* RecoverHijacker(FootClass *pThis);
 
 	static void StopDraining(TechnoClass *Drainer, TechnoClass *Drainee);
 

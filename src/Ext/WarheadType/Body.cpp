@@ -396,11 +396,21 @@ bool WarheadTypeExt::ExtData::applyKillDriver(BulletClass* Bullet) {
 				TechnoExt::EjectPassengers(pTarget, -1);
 			}
 
+			// remove the hijacker
+			pTarget->HijackerInfantryType = -1;
+
 			// If this unit is driving under influence, we have to free it first
+			pTarget->MindControlledByAUnit = false;
 			if(TechnoClass *Controller = pTarget->MindControlledBy) {
 				if(CaptureManagerClass *MC = Controller->CaptureManager) {
 					MC->FreeUnit(pTarget);
 				}
+			}
+
+			// remove the mind-control ring anim
+			if(pTarget->MindControlRingAnim) {
+				pTarget->MindControlRingAnim->RemainingIterations = 0;
+				pTarget->MindControlRingAnim = NULL;
 			}
 
 			// If this unit mind controls stuff, we should free the controllees, since they still belong to the previous owner

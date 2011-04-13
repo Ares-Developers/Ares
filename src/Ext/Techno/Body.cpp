@@ -35,32 +35,53 @@ void TechnoExt::SpawnSurvivors(FootClass *pThis, TechnoClass *pKiller, bool Sele
 	// checks if Crewed=yes is set and there is a chance pilots survive, and, if yes...
 	// ...attempts to spawn one Survivors_PilotCount times
 
-	if(Type->Crewed && chance && !IgnoreDefenses) {
-		for(int i = 0; i < pData->Survivors_PilotCount; ++i) {
-			if(ScenarioClass::Instance->Random.RandomRanged(1, 100) <= chance) {
-				signed int idx = pOwner->SideIndex;
-				auto Pilots = &pData->Survivors_Pilots;
-				if(Pilots->ValidIndex(idx)) {
-					if(InfantryTypeClass *PilotType = Pilots->GetItem(idx)) {
-						InfantryClass *Pilot = reinterpret_cast<InfantryClass *>(PilotType->CreateObject(pOwner));
+	if(!IgnoreDefenses) {
+		int PilotCount = pData->Survivors_PilotCount;
 
-						Pilot->Health = (PilotType->Strength / 2);
-						Pilot->Veterancy.Veterancy = pThis->Veterancy.Veterancy;
-						CoordStruct destLoc, tmpLoc = loc;
-						CellStruct tmpCoords = CellSpread::GetCell(ScenarioClass::Instance->Random.RandomRanged(0, 7));
+		if(InfantryClass *Hijacker = RecoverHijacker(pThis)) {
+			TechnoTypeExt::ExtData* pExt = TechnoTypeExt::ExtMap.Find(Hijacker->Type);
 
-						tmpLoc.X += tmpCoords.X * 144;
-						tmpLoc.Y += tmpCoords.Y * 144;
+			if(!EjectRandomly(Hijacker, loc, 144, Select)) {
+				Hijacker->RegisterDestruction(pKiller);
+				GAME_DEALLOC(Hijacker);
+			} else {
+				// the hijacker will now be controlled instead of the unit
+				if(TechnoClass* pController = pThis->MindControlledBy) {
+					pThis->OriginallyOwnedByHouse = pController->Owner; // kill will affect controller's house
+					++Unsorted::IKnowWhatImDoing; // disables sound effects
+					pController->CaptureManager->FreeUnit(pThis);
+					pController->CaptureManager->CaptureUnit(Hijacker); // does the immunetopsionics check for us
+					--Unsorted::IKnowWhatImDoing;
+					Hijacker->QueueMission(mission_Guard, true); // override the fate the AI decided upon
+					
+					VocClass::PlayAt(pExt->HijackerLeaveSound, &pThis->Location, 0);
+				}
 
-						CellClass * tmpCell = MapClass::Instance->GetCellAt(&tmpLoc);
+				// lower than 0: kill all, otherwise, kill n pilots
+				PilotCount = ((pExt->HijackerKillPilots < 0) ? 0 : (PilotCount - pExt->HijackerKillPilots));
+			}
+		}
 
-						tmpCell->FindInfantrySubposition(&destLoc, &tmpLoc, 0, 0, 0);
+		if(Type->Crewed && chance) {
+			for(int i = 0; i < PilotCount; ++i) {
+				if(ScenarioClass::Instance->Random.RandomRanged(1, 100) <= chance) {
+					InfantryTypeClass *PilotType = NULL;
+					signed int idx = pOwner->SideIndex;
+					auto Pilots = &pData->Survivors_Pilots;
+					if(Pilots->ValidIndex(idx)) {
+						if(InfantryTypeClass *PilotType = Pilots->GetItem(idx)) {
+							InfantryClass *Pilot = reinterpret_cast<InfantryClass *>(PilotType->CreateObject(pOwner));
+							Pilot->Health = (PilotType->Strength / 2);
+							Pilot->Veterancy.Veterancy = pThis->Veterancy.Veterancy;
 
-						destLoc.Z = loc.Z;
-
-						if(!TechnoExt::EjectSurvivor(Pilot, &destLoc, Select)) {
-							Pilot->RegisterDestruction(pKiller); //(TechnoClass *)R->get_StackVar32(0x54));
-							GAME_DEALLOC(Pilot);
+							if(!EjectRandomly(Pilot, loc, 144, Select)) {
+								Pilot->RegisterDestruction(pKiller); //(TechnoClass *)R->get_StackVar32(0x54));
+								GAME_DEALLOC(Pilot);
+							} else {
+								if(pThis->AttachedTag && pThis->AttachedTag->IsTriggerRepeating()) {
+									Pilot->ReplaceTag(pThis->AttachedTag);
+								}
+							}
 						}
 					}
 				}
@@ -81,19 +102,7 @@ void TechnoExt::SpawnSurvivors(FootClass *pThis, TechnoClass *pKiller, bool Sele
 			toSpawn = (occupation == 0 || occupation == 2);
 		}
 		if(toSpawn && !IgnoreDefenses) {
-			CoordStruct destLoc, tmpLoc = loc;
-			CellStruct tmpCoords = CellSpread::GetCell(ScenarioClass::Instance->Random.RandomRanged(0, 7));
-
-			tmpLoc.X += tmpCoords.X * 128;
-			tmpLoc.Y += tmpCoords.Y * 128;
-
-			CellClass * tmpCell = MapClass::Instance->GetCellAt(&tmpLoc);
-
-			tmpCell->FindInfantrySubposition(&destLoc, &tmpLoc, 0, 0, 0);
-
-			destLoc.Z = loc.Z;
-
-			toDelete = !TechnoExt::EjectSurvivor(passenger, &destLoc, Select);
+			toDelete = !EjectRandomly(passenger, loc, 128, Select);
 		}
 		if(toDelete) {
 			passenger->RegisterDestruction(pKiller); //(TechnoClass *)R->get_StackVar32(0x54));
@@ -150,11 +159,8 @@ void TechnoExt::EjectPassengers(FootClass *pThis, signed short howMany) {
 	short limit = (howMany < 0 || howMany > pThis->Passengers.NumPassengers) ? pThis->Passengers.NumPassengers : howMany;
 
 	for(short i = 0; (i < limit) && pThis->Passengers.FirstPassenger; ++i) {
-		CoordStruct destination;
-		TechnoExt::GetPutLocation(pThis->Location, destination);
-
 		FootClass *passenger = pThis->RemoveFirstPassenger();
-		if(!passenger->Put(&destination, ScenarioClass::Instance->Random.RandomRanged(0, 7))) {
+		if(!EjectRandomly(passenger, pThis->Location, 128, false)) {
 			passenger->UnInit();
 		}
 	}
@@ -168,16 +174,17 @@ void TechnoExt::EjectPassengers(FootClass *pThis, signed short howMany) {
 
 	\param current The current position of the transporter, the starting point to look from
 	\param target A CoordStruct to save the finally computed position to
+	\param distance The distance in leptons from the current position
 	\author Renegade
 	\date 27.05.2010
 */
-void TechnoExt::GetPutLocation(CoordStruct const &current, CoordStruct &target) {
+void TechnoExt::GetPutLocation(CoordStruct const &current, CoordStruct &target, int distance) {
 	// this whole thing does not at all account for cells which are completely occupied.
 	CoordStruct tmpLoc = current;
 	CellStruct tmpCoords = CellSpread::GetCell(ScenarioClass::Instance->Random.RandomRanged(0, 7));
 
-	tmpLoc.X += tmpCoords.X * 128;
-	tmpLoc.Y += tmpCoords.Y * 128;
+	tmpLoc.X += tmpCoords.X * distance;
+	tmpLoc.Y += tmpCoords.Y * distance;
 
 	CellClass * tmpCell = MapClass::Instance->GetCellAt(&tmpLoc);
 
@@ -185,6 +192,22 @@ void TechnoExt::GetPutLocation(CoordStruct const &current, CoordStruct &target) 
 
 	target.Z = current.Z;
 	return;
+}
+
+//! Places a unit next to a given location on the battlefield.
+/**
+	
+	\param pEjectee The FootClass to be ejected.
+	\param location The current position of the transporter, the starting point to look from
+	\param distance The distance in leptons from the current position
+	\param select Whether the placed FootClass should be selected
+	\author AlexB
+	\date 12.04.2011
+*/
+bool TechnoExt::EjectRandomly(FootClass* pEjectee, CoordStruct const &location, int distance, bool select) {
+	CoordStruct destLoc;
+	GetPutLocation(location, destLoc, distance);
+	return TechnoExt::EjectSurvivor(pEjectee, &destLoc, select);
 }
 
 //! Breaks the link between DrainTarget and DrainingMe.
@@ -352,6 +375,103 @@ bool TechnoExt::CreateWithDroppod(FootClass *Object, CoordStruct *XYZ) {
 		//Debug::Log("InLimbo... failed?\n");
 		return false;
 	}
+}
+
+// If available, creates an InfantryClass instance and removes the hijacker from the victim.
+InfantryClass* TechnoExt::RecoverHijacker(FootClass* pThis) {
+	InfantryClass* Hijacker = NULL;
+	if(pThis && pThis->HijackerInfantryType != -1) {
+		if(InfantryTypeClass* HijackerType = InfantryTypeClass::Array->GetItem(pThis->HijackerInfantryType)) {
+			TechnoExt::ExtData* pExt = TechnoExt::ExtMap.Find(pThis);
+			TechnoTypeExt::ExtData* pTypeExt = TechnoTypeExt::ExtMap.Find(HijackerType);
+			if(!pTypeExt->HijackerOneTime) {
+				HouseClass* HijackerOwner = pThis->MindControlledBy ? pThis->OriginallyOwnedByHouse : pThis->Owner;
+				Hijacker = reinterpret_cast<InfantryClass *>(HijackerType->CreateObject(HijackerOwner));
+				Hijacker->Health = std::max(pExt->HijackerHealth / 2, 5);
+			}
+			pThis->HijackerInfantryType = -1;
+			pExt->HijackerHealth = -1;
+		}
+	}
+	return Hijacker;
+}
+
+// this isn't called VehicleThief action, because it also includes other logic
+// related to infantry getting into an vehicle like CanDrive.
+AresAction::Value TechnoExt::ExtData::GetActionHijack(TechnoClass* pTarget) {
+	InfantryClass* pThis = specific_cast<InfantryClass*>(this->AttachedToObject);
+	if(!pThis || !pTarget || !pThis->IsAlive || !pTarget->IsAlive) {
+		return AresAction::None;
+	}
+
+	InfantryTypeClass* pType = pThis->Type;
+	TechnoTypeClass* pTargetType = pTarget->GetTechnoType();
+	TechnoTypeExt::ExtData* pTypeExt = TechnoTypeExt::ExtMap.Find(pType);
+
+	// this can't steal vehicles
+	if(!pType->VehicleThief && !pTypeExt->CanDrive) {
+		return AresAction::None;
+	}
+
+	// I'm in a state that forbids capturing
+	if(!this->IsOperated()) {
+		return AresAction::None;
+	}
+	if(pType->Deployer) {
+		eSequence sequence = pThis->SequenceAnim;
+		if(sequence == seq_Deploy || sequence == seq_Deployed
+			|| sequence == seq_DeployedFire || sequence == seq_DeployedIdle) {
+				return AresAction::None;
+		}
+	}
+
+	// target type is not eligible (hijackers can also enter strange buildings)
+	eAbstractType absTarget = pTarget->WhatAmI();
+	if(absTarget != abs_Aircraft && absTarget != abs_Unit
+		&& (!pType->VehicleThief || absTarget != abs_Building)) {
+			return AresAction::None;
+	}
+
+	// target is bad
+	if(pTarget->CurrentMission == mission_Selling || pTarget->IsBeingWarpedOut()
+		|| pTargetType->IsTrain || !pTarget->IsStrange() || pTargetType->BalloonHover
+		//|| (absTarget == abs_Unit && ((UnitTypeClass*)pTargetType)->NonVehicle) replaced by Hijacker.Allowed
+		|| !pTarget->IsOnFloor()) {
+			return AresAction::None;
+	}
+
+	// a thief that can't break mind control loses without trying further
+	if(pType->VehicleThief) { 
+		if(pTarget->IsMindControlled() && !pTypeExt->HijackerBreakMindControl) {
+			return AresAction::None;
+		}
+	}
+
+	 //drivers can drive, but only stuff owned by Special. if a driver is a vehicle thief
+	 //also, it can reclaim units even if they are immune to hijacking (see below)
+	bool specialOwned = !_strcmpi(pTarget->Owner->Type->ID, "Special");
+	if(specialOwned && pTypeExt->CanDrive) {
+		return AresAction::Drive;
+	}
+
+	// hijacking only affects enemies
+	if(pType->VehicleThief) {
+		// can't steal allied unit (CanDrive and special already handled)
+		if(pThis->Owner->IsAlliedWith(pTarget->Owner)) {
+			return AresAction::None;
+		}
+
+		TechnoTypeExt::ExtData* pTargetTypeExt = TechnoTypeExt::ExtMap.Find(pTargetType);
+		if(!pTargetTypeExt->HijackerAllowed) {
+			return AresAction::None;
+		}
+
+		// allowed to steal from enemy
+		return AresAction::Hijack;
+	}
+
+	// no hijacking ability
+	return AresAction::None;
 }
 
 // =============================

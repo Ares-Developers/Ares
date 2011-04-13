@@ -157,4 +157,14 @@ public:
 	};
 };
 
+class AresAction {
+public:
+	typedef int Value;
+	enum {
+		None = 0,
+		Hijack = 1,
+		Drive = 2
+	};
+};
+
 #endif

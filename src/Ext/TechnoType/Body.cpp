@@ -263,6 +263,13 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 
 	this->VoiceRepair.Read(&exINI, section, "VoiceIFVRepair");
 
+	this->HijackerEnterSound.Read(&exINI, section, "VehicleThief.EnterSound");
+	this->HijackerLeaveSound.Read(&exINI, section, "VehicleThief.LeaveSound");
+	this->HijackerKillPilots.Read(&exINI, section, "VehicleThief.KillPilots");
+	this->HijackerBreakMindControl.Read(&exINI, section, "VehicleThief.BreakMindControl");
+	this->HijackerAllowed.Read(&exINI, section, "VehicleThief.Allowed");
+	this->HijackerOneTime.Read(&exINI, section, "VehicleThief.OneTime");
+
 	this->IC_Modifier = (float)pINI->ReadDouble(section, "IronCurtain.Modifier", this->IC_Modifier);
 
 	this->Chronoshift_Allow.Read(&exINI, section, "Chronoshift.Allow");

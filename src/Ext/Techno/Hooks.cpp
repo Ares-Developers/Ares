@@ -674,22 +674,168 @@ DEFINE_HOOK(70E2D2, TechnoClass_IronCurtain_Modify, 6) {
 	return 0;
 }
 
-
-DEFINE_HOOK(5198AD, InfantryClass_UpdatePosition_EnteredGrinder, 6)
+DEFINE_HOOK(51E7BF, InfantryClass_GetCursorOverObject_CanCapture, 6)
 {
-	GET(InfantryClass *, Infantry, ESI);
-	GET(BuildingClass *, Grinder, EBX);
+	GET(InfantryClass *, pSelected, EDI);
+	GET(ObjectClass *, pTarget, ESI);
 
-	BuildingExt::ExtData *pData = BuildingExt::ExtMap.Find(Grinder);
+	enum { 
+		Capture = 0x51E84B,  // the game will return an Enter cursor no questions asked
+		DontCapture = 0x51E85A, // the game will assume this is not a VehicleThief and will check for other cursors normally
+		Select = 0x51E7EF, // select target instead of ordering this
+		DontMindMe = 0, // the game will check if this is a VehicleThief
+	} DoWhat = DontMindMe;
 
-	if(pData->ReverseEngineer(Infantry)) {
-		if(Infantry->Owner->ControlledByPlayer()) {
-			VoxClass::Play("EVA_ReverseEngineeredInfantry");
-			VoxClass::Play("EVA_NewTechnologyAcquired");
+	if(TechnoClass* pTechno = generic_cast<TechnoClass*>(pTarget)) {
+		if(pTechno->GetTechnoType()->IsTrain) {
+			DoWhat = Select;
+		} else {
+			TechnoExt::ExtData* pExt = TechnoExt::ExtMap.Find(pSelected);
+			TechnoTypeExt::ExtData* pTypeExt = TechnoTypeExt::ExtMap.Find(pSelected->Type);
+			if(pSelected->Type->VehicleThief || pTypeExt->CanDrive) {
+				DoWhat = (pExt->GetActionHijack(pTechno) ? Capture : DontCapture);
+			}
 		}
 	}
 
-	return 0;
+	return DoWhat;
+}
+
+// change all the special things infantry do, like vehicle thief, infiltration,
+// bridge repair, enter transports or bio reactors, ...
+DEFINE_HOOK(519675, InfantryClass_UpdatePosition_BeforeInfantrySpecific, a)
+{
+	// called after FootClass:UpdatePosition has been called and before
+	// all specific infantry handling takes place.
+	enum { 
+		Return = 0x51AA01, // skip the original logic
+		Destroy = 0x51A010, // uninits this infantry and returns
+		Handle = 0 // resume the original function
+	} DoWhat = Handle;
+
+	GET(InfantryClass*, pThis, ESI);
+
+	if(pThis) {
+		InfantryTypeClass* pType = pThis->Type;
+		TechnoExt::ExtData* pExt = TechnoExt::ExtMap.Find(pThis);
+		TechnoTypeExt::ExtData* pTypeExt = TechnoTypeExt::ExtMap.Find(pType);
+
+		// steal vehicles / reclaim KillDriver'd units using CanDrive
+		if(pThis->CurrentMission == mission_Capture) {
+			if(TechnoClass* pDest = generic_cast<TechnoClass*>(pThis->Destination)) {
+				// this is the possible target we stand on
+				CellClass* pCell = pThis->GetCell();
+				TechnoClass* pTarget = pCell->GetUnit(pThis->OnBridge);
+				if(!pTarget) {
+					pTarget = pCell->GetAircraft(pThis->OnBridge);
+					if(!pTarget) {
+						pTarget = pCell->GetBuilding();
+						if(pTarget && !pTarget->IsStrange()) {
+							pTarget = NULL;
+						}
+					}
+				}
+
+				// reached its destination?
+				if(pTarget && pTarget == pDest) {
+					AresAction::Value action = pExt->GetActionHijack(pTarget);
+
+					// abort capturing this thing, it looked
+					// better from over there...
+					if(!action) {
+						pThis->SetDestination(NULL, true);
+						CoordStruct crd;
+						pDest->GetCoords(&crd);
+						pThis->Scatter((DWORD)&crd, 1, 0);
+						return Return;
+					}
+
+					// prepare for a smooth transition. free the destination from
+					// any mind control. #762
+					if(pDest->MindControlledBy) {
+						pDest->MindControlledBy->CaptureManager->FreeUnit(pDest);
+					}
+					pDest->MindControlledByAUnit = false;
+					if(pDest->MindControlRingAnim) {
+						pDest->MindControlRingAnim->RemainingIterations = 0;
+						pDest->MindControlRingAnim = NULL;
+					}
+
+					bool asPassenger = false;
+					if(action == AresAction::Drive) {
+						TechnoTypeExt::ExtData* pDestTypeExt = TechnoTypeExt::ExtMap.Find(pDest->GetTechnoType());
+						if(pDestTypeExt->Operator || pDestTypeExt->IsAPromiscuousWhoreAndLetsAnyoneRideIt) {
+							asPassenger = true;
+						}
+					}
+
+					if(!asPassenger) {
+						// raise some events in case the hijacker/driver will be
+						// swallowed by the vehicle.
+						if(pDest->AttachedTag) {
+							pDest->AttachedTag->RaiseEvent(TriggerEvent::DestroyedByAnything, pThis, *(CellStruct*)0xA8F1E0, 0, 0);
+						}
+						pDest->Owner->unknown_bool_244 = true;
+						if(pThis->AttachedTag) {
+							if(pThis->AttachedTag->IsTriggerRepeating()) {
+								pDest->ReplaceTag(pThis->AttachedTag);
+							}
+						}
+					} else {
+						// raise some events in case the driver enters
+						// a vehicle that needs an Operator
+						if(pDest->AttachedTag) {
+							pDest->AttachedTag->RaiseEvent(TriggerEvent::EnteredBy, pThis, *(CellStruct*)0xA8F1E0, 0, 0);
+						}
+					}
+
+					// if the hijacker is mind-controlled, free it,
+					// too, and attach to the new target. #762
+					TechnoClass* controller = pThis->MindControlledBy;
+					if(controller) {
+						++Unsorted::IKnowWhatImDoing;
+						controller->CaptureManager->FreeUnit(pThis);
+						--Unsorted::IKnowWhatImDoing;
+					}
+
+					// let's make a steal
+					pDest->SetOwningHouse(pThis->Owner, 1);
+					pDest->GotHijacked();
+					VocClass::PlayAt(pTypeExt->HijackerEnterSound, &pDest->Location, 0);
+
+					// save the hijacker's properties
+					if(action == AresAction::Hijack) {
+						TechnoExt::ExtData* pDestExt = TechnoExt::ExtMap.Find(pDest);
+						pDest->HijackerInfantryType = pType->ArrayIndex;
+						pDestExt->HijackerHealth = pThis->Health;
+					}
+
+					// hook up the original mind-controller with the target #762
+					if(controller) {
+						++Unsorted::IKnowWhatImDoing;
+						controller->CaptureManager->CaptureUnit(pDest);
+						--Unsorted::IKnowWhatImDoing;
+					}
+
+					// the hijacker enters and closes the door.
+					DoWhat = Destroy;
+					
+					// only for the drive action: if the target requires an operator,
+					// we add the driver to the passengers list instead of deleting it.
+					// this does not check passenger count or size limits.
+					if(asPassenger) {
+						pDest->AddPassenger(pThis);
+						pThis->AbortMotion();
+						DoWhat = Return;
+					}
+
+					pDest->QueueMission(mission_Guard, false);
+				}
+			}
+		}
+	}
+
+	return DoWhat;
 }
 
 DEFINE_HOOK(73A1BC, UnitClass_UpdatePosition_EnteredGrinder, 7)
