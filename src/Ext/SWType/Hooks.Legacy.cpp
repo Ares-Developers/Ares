@@ -4,6 +4,7 @@
 #include "../../Misc/SWTypes.h"
 #include "../WarheadType/Body.h"
 #include "../BuildingType/Body.h"
+#include "../../Ext/Techno/Body.h"
 #include "../../Misc/SWTypes/Nuke.h"
 #include "../../Utilities/Helpers.Alex.h"
 #include "../../Misc/SWTypes/Dominator.h"
@@ -70,6 +71,12 @@ DEFINE_HOOK(53B080, PsyDom_Fire, 5) {
 
 					// ignore BalloonHover and inair units.
 					if(pType->BalloonHover || pTechno->IsInAir()) {
+						return true;
+					}
+
+					// ignore units with no drivers
+					TechnoExt::ExtData* pExt = TechnoExt::ExtMap.Find(pTechno);
+					if(pExt->DriverKilled) {
 						return true;
 					}
 

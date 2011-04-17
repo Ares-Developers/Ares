@@ -25,19 +25,16 @@ void TechnoExt::SpawnSurvivors(FootClass *pThis, TechnoClass *pKiller, bool Sele
 	HouseClass *pOwner = pThis->Owner;
 	TechnoTypeExt::ExtData *pData = TechnoTypeExt::ExtMap.Find(Type);
 	TechnoExt::ExtData *pSelfData = TechnoExt::ExtMap.Find(pThis);
-//	RETZ_UNLESS(pData->Survivors_PilotChance || pData->Survivors_PassengerChance);
-	RETZ_UNLESS(!pSelfData->Survivors_Done);
 
 	CoordStruct loc = pThis->Location;
+	int chance = 0;
 
-	int chance = pData->Survivors_PilotChance.BindTo(pThis)->Get();
-	// remove check for Crewed if it is accounted for outside of this function
-	// checks if Crewed=yes is set and there is a chance pilots survive, and, if yes...
-	// ...attempts to spawn one Survivors_PilotCount times
-
-	if(!IgnoreDefenses) {
+	// always eject passengers, but crew only if not already processed.
+	if(!pSelfData->Survivors_Done && !pSelfData->DriverKilled && !IgnoreDefenses) {
+		// save this, because the hijacker can kill people
 		int PilotCount = pData->Survivors_PilotCount;
 
+		// process the hijacker
 		if(InfantryClass *Hijacker = RecoverHijacker(pThis)) {
 			TechnoTypeExt::ExtData* pExt = TechnoTypeExt::ExtMap.Find(Hijacker->Type);
 
@@ -47,21 +44,21 @@ void TechnoExt::SpawnSurvivors(FootClass *pThis, TechnoClass *pKiller, bool Sele
 			} else {
 				// the hijacker will now be controlled instead of the unit
 				if(TechnoClass* pController = pThis->MindControlledBy) {
-					pThis->OriginallyOwnedByHouse = pController->Owner; // kill will affect controller's house
 					++Unsorted::IKnowWhatImDoing; // disables sound effects
 					pController->CaptureManager->FreeUnit(pThis);
 					pController->CaptureManager->CaptureUnit(Hijacker); // does the immunetopsionics check for us
 					--Unsorted::IKnowWhatImDoing;
 					Hijacker->QueueMission(mission_Guard, true); // override the fate the AI decided upon
 					
-					VocClass::PlayAt(pExt->HijackerLeaveSound, &pThis->Location, 0);
 				}
+				VocClass::PlayAt(pExt->HijackerLeaveSound, &pThis->Location, 0);
 
 				// lower than 0: kill all, otherwise, kill n pilots
 				PilotCount = ((pExt->HijackerKillPilots < 0) ? 0 : (PilotCount - pExt->HijackerKillPilots));
 			}
 		}
 
+		// possibly eject up to PilotChance crew members
 		if(Type->Crewed && chance) {
 			for(int i = 0; i < PilotCount; ++i) {
 				if(ScenarioClass::Instance->Random.RandomRanged(1, 100) <= chance) {
@@ -89,8 +86,11 @@ void TechnoExt::SpawnSurvivors(FootClass *pThis, TechnoClass *pKiller, bool Sele
 		}
 	}
 
+	// passenger escape chances
 	chance = pData->Survivors_PassengerChance.BindTo(pThis)->Get();
 
+	// eject or kill all passengers. if defenses are to be ignored, passengers
+	// killed no matter what the odds are.
 	while(pThis->Passengers.FirstPassenger) {
 		bool toDelete = 1;
 		FootClass *passenger = pThis->RemoveFirstPassenger();
@@ -110,6 +110,7 @@ void TechnoExt::SpawnSurvivors(FootClass *pThis, TechnoClass *pKiller, bool Sele
 		}
 	}
 
+	// do not ever do this again for this unit
 	pSelfData->Survivors_Done = 1;
 }
 /**
@@ -384,8 +385,8 @@ InfantryClass* TechnoExt::RecoverHijacker(FootClass* pThis) {
 		if(InfantryTypeClass* HijackerType = InfantryTypeClass::Array->GetItem(pThis->HijackerInfantryType)) {
 			TechnoExt::ExtData* pExt = TechnoExt::ExtMap.Find(pThis);
 			TechnoTypeExt::ExtData* pTypeExt = TechnoTypeExt::ExtMap.Find(HijackerType);
-			if(!pTypeExt->HijackerOneTime) {
-				HouseClass* HijackerOwner = pThis->MindControlledBy ? pThis->OriginallyOwnedByHouse : pThis->Owner;
+			HouseClass* HijackerOwner = pExt->HijackerHouse ? pExt->HijackerHouse : pThis->Owner;
+			if(!pTypeExt->HijackerOneTime && HijackerOwner && !HijackerOwner->Defeated) {
 				Hijacker = reinterpret_cast<InfantryClass *>(HijackerType->CreateObject(HijackerOwner));
 				Hijacker->Health = std::max(pExt->HijackerHealth / 2, 5);
 			}
@@ -457,7 +458,7 @@ AresAction::Value TechnoExt::ExtData::GetActionHijack(TechnoClass* pTarget) {
 	// hijacking only affects enemies
 	if(pType->VehicleThief) {
 		// can't steal allied unit (CanDrive and special already handled)
-		if(pThis->Owner->IsAlliedWith(pTarget->Owner)) {
+		if(pThis->Owner->IsAlliedWith(pTarget->Owner) || specialOwned) {
 			return AresAction::None;
 		}
 

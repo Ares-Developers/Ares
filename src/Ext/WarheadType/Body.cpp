@@ -400,16 +400,17 @@ bool WarheadTypeExt::ExtData::applyKillDriver(BulletClass* Bullet) {
 			pTarget->HijackerInfantryType = -1;
 
 			// If this unit is driving under influence, we have to free it first
-			pTarget->MindControlledByAUnit = false;
 			if(TechnoClass *Controller = pTarget->MindControlledBy) {
 				if(CaptureManagerClass *MC = Controller->CaptureManager) {
 					MC->FreeUnit(pTarget);
 				}
 			}
+			pTarget->MindControlledByAUnit = false;
+			pTarget->MindControlledByHouse = NULL;
 
 			// remove the mind-control ring anim
 			if(pTarget->MindControlRingAnim) {
-				pTarget->MindControlRingAnim->RemainingIterations = 0;
+				pTarget->MindControlRingAnim->UnInit();
 				pTarget->MindControlRingAnim = NULL;
 			}
 
@@ -442,11 +443,15 @@ bool WarheadTypeExt::ExtData::applyKillDriver(BulletClass* Bullet) {
 				pSlaveManager->Killed(Bullet->Owner);
 				pSlaveManager->ZeroOutSlaves();
 				pTarget->SlaveManager->Owner = pTarget;
+				pTarget->SlaveManager->SuspendWork();
 			}
+
+			TechnoExt::ExtData* TargetExt = TechnoExt::ExtMap.Find(pTarget);
+			TargetExt->DriverKilled = true;
 
 			// Hand over to Civilian/Special house
 			pTarget->SetOwningHouse(HouseClass::FindByCountryIndex(HouseTypeClass::FindIndexOfName("Special")));
-			pTarget->QueueMission(mission_Sticky, true);
+			pTarget->QueueMission(mission_Harmless, true);
 			return true;
 		} else {
 			return false;

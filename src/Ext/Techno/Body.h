@@ -52,7 +52,10 @@ public:
 
 		bool ShadowDrawnManually;
 
+		bool DriverKilled;
+
 		int HijackerHealth;
+		HouseClass* HijackerHouse;
 
 		// 305 Radar Jammers
 		JammerClass* RadarJam;
@@ -69,6 +72,8 @@ public:
 			Insignia_Image (NULL),
 			GarrisonedIn (NULL),
 			HijackerHealth (-1),
+			HijackerHouse (NULL),
+			DriverKilled (false),
 			EMPSparkleAnim (NULL),
 			EMPLastMission (mission_None),
 			ShadowDrawnManually (false),
