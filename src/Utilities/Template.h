@@ -367,7 +367,8 @@ void Valueable<BYTE>::Read(INI_EX *parser, const char* pSection, const char* pKe
 	int buffer = this->Get();
 	if(parser->ReadInteger(pSection, pKey, &buffer)) {
 		if(buffer <= 255 && buffer >= 0) {
-			this->Set(buffer);
+			const BYTE result((BYTE)buffer); // shut up shut up shut up C4244
+			this->Set(result);
 		} else {
 			Debug::INIParseFailed(pSection, pKey, parser->value(), "Expected a valid number between 0 and 255 inclusive.");
 		}
