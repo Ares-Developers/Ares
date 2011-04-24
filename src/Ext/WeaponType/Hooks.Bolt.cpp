@@ -46,8 +46,12 @@ DEFINE_HOOK(4C24BE, EBolt_Draw_Color1, 5)
 	if(pData) {
 		WORD Packed = 0;
 		if(!!pData->Bolt_IsHouseColor) {
-			ColorStruct tmp(Bolt->Owner->Owner->LaserColor);
-			Packed = Drawing::Color16bit(&tmp);
+			if(auto OwnerTechno = Bolt->Owner) {
+				if(auto OwnerHouse = OwnerTechno->Owner) {
+					ColorStruct tmp(OwnerHouse->LaserColor);
+					Packed = Drawing::Color16bit(&tmp);
+				}
+			}
 		} else if(ColorStruct *clr = pData->Bolt_Color1) {
 			Packed = Drawing::Color16bit(clr);
 		}
@@ -68,12 +72,16 @@ DEFINE_HOOK(4C25CB, EBolt_Draw_Color2, 5)
 	if(pData) {
 		WORD Packed = 0;
 		if(!!pData->Bolt_IsHouseColor) {
-			signed char delta(pData->Bolt_ColorSpread);
-			ColorStruct tmp(Bolt->Owner->Owner->LaserColor);
-			Saturate(tmp.R, delta);
-			Saturate(tmp.G, delta);
-			Saturate(tmp.B, delta);
-			Packed = Drawing::Color16bit(&tmp);
+			if(auto OwnerTechno = Bolt->Owner) {
+				if(auto OwnerHouse = OwnerTechno->Owner) {
+					ColorStruct tmp(OwnerHouse->LaserColor);
+					signed char delta(pData->Bolt_ColorSpread);
+					Saturate(tmp.R, delta);
+					Saturate(tmp.G, delta);
+					Saturate(tmp.B, delta);
+					Packed = Drawing::Color16bit(&tmp);
+				}
+			}
 		} else if(ColorStruct *clr = pData->Bolt_Color2) {
 			Packed = Drawing::Color16bit(clr);
 		}
@@ -95,12 +103,16 @@ DEFINE_HOOK(4C26C7, EBolt_Draw_Color3, 5)
 	if(pData) {
 		WORD Packed = 0;
 		if(!!pData->Bolt_IsHouseColor) {
-			signed char delta(-pData->Bolt_ColorSpread);
-			ColorStruct tmp(Bolt->Owner->Owner->LaserColor);
-			Saturate(tmp.R, delta);
-			Saturate(tmp.G, delta);
-			Saturate(tmp.B, delta);
-			Packed = Drawing::Color16bit(&tmp);
+			if(auto OwnerTechno = Bolt->Owner) {
+				if(auto OwnerHouse = OwnerTechno->Owner) {
+					ColorStruct tmp(OwnerHouse->LaserColor);
+					signed char delta(-pData->Bolt_ColorSpread);
+					Saturate(tmp.R, delta);
+					Saturate(tmp.G, delta);
+					Saturate(tmp.B, delta);
+					Packed = Drawing::Color16bit(&tmp);
+				}
+			}
 		} else if(ColorStruct *clr = pData->Bolt_Color2) {
 			Packed = Drawing::Color16bit(clr);
 		}
