@@ -363,6 +363,20 @@ void Valueable<int>::Read(INI_EX *parser, const char* pSection, const char* pKey
 };
 
 template<>
+void Valueable<BYTE>::Read(INI_EX *parser, const char* pSection, const char* pKey) {
+	int buffer = this->Get();
+	if(parser->ReadInteger(pSection, pKey, &buffer)) {
+		if(buffer <= 255 && buffer >= 0) {
+			this->Set(buffer);
+		} else {
+			Debug::INIParseFailed(pSection, pKey, parser->value(), "Expected a valid number between 0 and 255 inclusive.");
+		}
+	} else if(parser->declared()) {
+		Debug::INIParseFailed(pSection, pKey, parser->value(), "Expected a valid number");
+	}
+};
+
+template<>
 void Valueable<float>::Read(INI_EX *parser, const char* pSection, const char* pKey) {
 	double buffer = this->Get();
 	if(parser->ReadDouble(pSection, pKey, &buffer)) {

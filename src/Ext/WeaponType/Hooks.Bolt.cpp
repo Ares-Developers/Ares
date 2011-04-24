@@ -1,6 +1,18 @@
 #include "Body.h"
 #include "../Techno/Body.h"
 
+static BYTE Saturate(BYTE &val, const signed char delta) {
+	unsigned int res(val + delta);
+	if(delta > 0 && res < val) {
+		res = 255;
+	} else if(delta < 0 && res > val) {
+		res = 0;
+	}
+	const BYTE result(res);
+	val = result;
+	return result;
+};
+
 DEFINE_HOOK(6FD480, TechnoClass_FireEBolt, 6)
 {
 //	GET(TechnoClass *, OwnerUnit, EDI);
@@ -32,8 +44,15 @@ DEFINE_HOOK(4C24BE, EBolt_Draw_Color1, 5)
 	WeaponTypeExt::ExtData *pData = WeaponTypeExt::BoltExt[Bolt];
 
 	if(pData) {
-		if(ColorStruct * clr = pData->Bolt_Color1) {
-			R->EAX(Drawing::Color16bit(clr));
+		WORD Packed = 0;
+		if(!!pData->Bolt_IsHouseColor) {
+			ColorStruct tmp(Bolt->Owner->Owner->LaserColor);
+			Packed = Drawing::Color16bit(&tmp);
+		} else if(ColorStruct *clr = pData->Bolt_Color1) {
+			Packed = Drawing::Color16bit(clr);
+		}
+		if(Packed) {
+			R->EAX(Packed);
 			return 0x4C24E4;
 		}
 	}
@@ -47,8 +66,19 @@ DEFINE_HOOK(4C25CB, EBolt_Draw_Color2, 5)
 	WeaponTypeExt::ExtData *pData = WeaponTypeExt::BoltExt[Bolt];
 
 	if(pData) {
-		if(ColorStruct * clr = pData->Bolt_Color2) {
-			R->Stack<int>(0x18, Drawing::Color16bit(clr));
+		WORD Packed = 0;
+		if(!!pData->Bolt_IsHouseColor) {
+			signed char delta(pData->Bolt_ColorSpread);
+			ColorStruct tmp(Bolt->Owner->Owner->LaserColor);
+			Saturate(tmp.R, delta);
+			Saturate(tmp.G, delta);
+			Saturate(tmp.B, delta);
+			Packed = Drawing::Color16bit(&tmp);
+		} else if(ColorStruct *clr = pData->Bolt_Color2) {
+			Packed = Drawing::Color16bit(clr);
+		}
+		if(Packed) {
+			R->Stack<int>(0x18, Packed);
 			return 0x4C25FD;
 		}
 	}
@@ -63,9 +93,20 @@ DEFINE_HOOK(4C26C7, EBolt_Draw_Color3, 5)
 	WeaponTypeExt::ExtData *pData = WeaponTypeExt::BoltExt[Bolt];
 
 	if(pData) {
-		if(ColorStruct * clr = pData->Bolt_Color3) {
+		WORD Packed = 0;
+		if(!!pData->Bolt_IsHouseColor) {
+			signed char delta(-pData->Bolt_ColorSpread);
+			ColorStruct tmp(Bolt->Owner->Owner->LaserColor);
+			Saturate(tmp.R, delta);
+			Saturate(tmp.G, delta);
+			Saturate(tmp.B, delta);
+			Packed = Drawing::Color16bit(&tmp);
+		} else if(ColorStruct *clr = pData->Bolt_Color2) {
+			Packed = Drawing::Color16bit(clr);
+		}
+		if(Packed) {
 			R->EBX(R->EBX() - 2);
-			R->EAX(Drawing::Color16bit(clr));
+			R->EAX(Packed);
 			return 0x4C26EE;
 		}
 	}
