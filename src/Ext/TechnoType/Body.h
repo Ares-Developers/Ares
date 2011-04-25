@@ -116,6 +116,15 @@ public:
 		// issue #617
 		DynamicVectorClass<BuildingTypeClass*> PoweredBy;  //!< The buildingtype this unit is powered by or NULL.
 
+		//#203 Bounty
+		Valueable<bool> Bounty_Message;
+		Valueable<bool> Bounty_FriendlyMessage;
+		Valueable<float> Bounty_Modifier;
+		Valueable<float> Bounty_FriendlyModifier;
+		Valueable<bool> ImmuneToBounty;
+		// #1523 also Money Conversion -> Pillage
+		Valueable<bool> Bounty_Pillager;
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			Survivors_PilotChance (NULL),
 			Survivors_PassengerChance (NULL),
@@ -162,7 +171,13 @@ public:
 			WaterImage (NULL),
 			CanBeReversed (true),
 			RadarJamRadius (0),
-			PassengerTurret (false)
+			PassengerTurret (false),
+			Bounty_Message (false),
+			Bounty_FriendlyMessage (false),
+			Bounty_Modifier (0),
+			Bounty_FriendlyModifier (0),
+			ImmuneToBounty (false),
+			Bounty_Pillager (false)
 			{
 				this->Insignia.SetAll(NULL);
 				*this->CameoPCX = *this->AltCameoPCX = 0;
