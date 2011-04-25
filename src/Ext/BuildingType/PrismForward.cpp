@@ -70,8 +70,6 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 				}
 				this->SupportWeaponIndex = idxWeapon;
 				cWeapon->NeverUse = true; //the modder shouldn't be expected to have to set this
-				WarheadTypeClass *cWarhead;
-				cWeapon->Warhead = cWarhead; //or this
 				CoordStruct supportFLH;
 				pThis->set_Weapon(idxWeapon, cWeapon);
 				//now get the FLH
@@ -95,8 +93,6 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 				}
 				this->EliteSupportWeaponIndex = idxWeapon;
 				cWeapon->NeverUse = true; //the modder shouldn't be expected to have to set this
-				WarheadTypeClass *cWarhead;
-				cWeapon->Warhead = cWarhead; //or this
 				CoordStruct supportFLH;
 				pThis->set_EliteWeapon(idxWeapon, cWeapon);
 				//now get the FLH
@@ -112,9 +108,17 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 	}
 }
 
-signed int BuildingTypeExt::cPrismForwarding::GetUnusedWeaponSlot(BuildingTypeClass *pThis, int elite) {
+signed int BuildingTypeExt::cPrismForwarding::GetUnusedWeaponSlot(BuildingTypeClass *pThis, bool elite) {
 	int idxWeapon = 1;
-	while ( ++idxWeapon <= 12 && ( (elite == 0 && pThis->get_Weapon(idxWeapon)) || (elite == 1 && pThis->get_EliteWeapon(idxWeapon)) ) ) {}
+	while (++idxWeapon <= 12) {
+		auto Weapon = elite
+			? pThis->get_EliteWeapon(idxWeapon)
+			: pThis->get_Weapon(idxWeapon)
+		;
+		if(!Weapon) {
+				break;
+		}
+	}
 	if (idxWeapon <= 12) { //13-18 is AlternateFLH0-4
 		return idxWeapon;
 	}
