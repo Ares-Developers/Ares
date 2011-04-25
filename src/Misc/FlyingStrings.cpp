@@ -23,7 +23,7 @@ DynamicVectorClass<FlyingStrings::Item> FlyingStrings::data;
 
 //int xp;
 
-DEFINE_HOOK(702E64,RecordTheKill_CalculateBountyXP,6){
+DEFINE_HOOK(702E64, RecordTheKill_CalculateBountyXP, 6) {
 
 	//Get object being killed
 	GET(TechnoClass *, Victim, ESI);
@@ -87,9 +87,8 @@ DEFINE_HOOK(702E64,RecordTheKill_CalculateBountyXP,6){
 }
 
 
-// 1523, Get money per Damage!
-DEFINE_HOOK(701DCC,BountyPillage,7) //Thank Joshy for the hook
-	{
+// 1523, Get money per Damage! Thank Joshy for the hook
+DEFINE_HOOK(701DCC, BountyPillage, 7) {
 	//Get object being damaged
 	GET(TechnoClass *, Victim, ESI);
 	TechnoTypeClass * pTypeVictim = Victim->GetTechnoType();
@@ -158,13 +157,13 @@ DEFINE_HOOK(701DCC,BountyPillage,7) //Thank Joshy for the hook
 }
 
 
-DEFINE_HOOK(4F4558,loc_4F4480,5){
+DEFINE_HOOK(4F4558, loc_4F4480, 5) {
 	FlyingStrings::UpdateAll();
 	return 0;
 }
 
 /*
-DEFINE_HOOK(5C9A44,loc_568A0A,6){
+DEFINE_HOOK(5C9A44, loc_568A0A, 6){
 	CCFileClass file("RA2MD.INI");
 	CCINIClass pINI;
 	pINI.ReadCCFile(&file);
