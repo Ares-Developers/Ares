@@ -119,8 +119,8 @@ public:
 		//#203 Bounty
 		Valueable<bool> Bounty_Message;
 		Valueable<bool> Bounty_FriendlyMessage;
-		Valueable<float> Bounty_Modifier;
-		Valueable<float> Bounty_FriendlyModifier;
+		Valueable<double> Bounty_Modifier;
+		Valueable<double> Bounty_FriendlyModifier;
 		Valueable<bool> ImmuneToBounty;
 		// #1523 also Money Conversion -> Pillage
 		Valueable<bool> Bounty_Pillager;

@@ -309,13 +309,13 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	}
 
 	// #203 Bounty
-	this->Bounty_Message = pINI->ReadBool(section, "Bounty.Message", this->Bounty_Message);
-	this->Bounty_FriendlyMessage = pINI->ReadBool(section, "Bounty.FriendlyMessage", this->Bounty_FriendlyMessage);
-	this->Bounty_Modifier = (float)pINI->ReadDouble(section, "Bounty.Modifier", this->Bounty_Modifier);
-	this->Bounty_FriendlyModifier = (float)pINI->ReadDouble(section, "Bounty.FriendlyModifier", this->Bounty_FriendlyModifier);
-	this->ImmuneToBounty = pINI->ReadBool(section, "ImmuneToBounty", this->ImmuneToBounty);
+	this->Bounty_Message.Read(&exINI, section, "Bounty.Message");
+	this->Bounty_FriendlyMessage.Read(&exINI, section, "Bounty.FriendlyMessage");
+	this->Bounty_Modifier.Read(&exINI, section, "Bounty.Modifier");
+	this->Bounty_FriendlyModifier.Read(&exINI, section, "Bounty.FriendlyModifier");
+	this->ImmuneToBounty.Read(&exINI, section, "ImmuneToBounty");
 	// #1523 Money-Conversion per applied Damage... tag will be Bounty.Pillager
-	this->Bounty_Pillager = pINI->ReadBool(section, "Bounty.Pillager", this->Bounty_Pillager);
+	this->Bounty_Pillager.Read(&exINI, section, "Bounty.Pillager");
 
 	// quick fix - remove after the rest of weapon selector code is done
 	return;
