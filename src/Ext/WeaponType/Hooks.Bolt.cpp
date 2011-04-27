@@ -15,13 +15,25 @@ static BYTE Saturate(BYTE &val, const signed char delta) {
 
 DEFINE_HOOK(6FD480, TechnoClass_FireEBolt, 6)
 {
-//	GET(TechnoClass *, OwnerUnit, EDI);
+	GET(TechnoClass *, OwnerUnit, EDI);
 	GET_STACK(WeaponTypeClass *, Weapon, 0x38);
 
 	GET(EBolt *, Bolt, EAX);
 
 	if(Weapon && Bolt) {
 		WeaponTypeExt::BoltExt[Bolt] = WeaponTypeExt::ExtMap.Find(Weapon);
+		WeaponTypeExt::ExtData *BoltAres = WeaponTypeExt::ExtMap.Find(Weapon);
+		if (OwnerUnit) {
+			if(!!BoltAres->Bolt_IsHouseColor) {
+				if (BoltAres->Bolt_UseLaserColor) {
+					BoltAres->Bolt_HouseColorBase = OwnerUnit->Owner->LaserColor;
+				} else {
+					BoltAres->Bolt_HouseColorBase = OwnerUnit->Owner->Color;
+				}
+			}
+		} else {
+			BoltAres->Bolt_IsHouseColor = false; //If HouseColor can't be obtained, remove it from the weapon
+		}
 	}
 	return 0;
 }
@@ -46,12 +58,8 @@ DEFINE_HOOK(4C24BE, EBolt_Draw_Color1, 5)
 	if(pData) {
 		WORD Packed = 0;
 		if(!!pData->Bolt_IsHouseColor) {
-			if(auto OwnerTechno = Bolt->Owner) {
-				if(auto OwnerHouse = OwnerTechno->Owner) {
-					ColorStruct tmp(OwnerHouse->LaserColor);
-					Packed = Drawing::Color16bit(&tmp);
-				}
-			}
+			ColorStruct tmp(pData->Bolt_HouseColorBase);
+			Packed = Drawing::Color16bit(&tmp);
 		} else if(ColorStruct *clr = pData->Bolt_Color1) {
 			Packed = Drawing::Color16bit(clr);
 		}
@@ -72,16 +80,12 @@ DEFINE_HOOK(4C25CB, EBolt_Draw_Color2, 5)
 	if(pData) {
 		WORD Packed = 0;
 		if(!!pData->Bolt_IsHouseColor) {
-			if(auto OwnerTechno = Bolt->Owner) {
-				if(auto OwnerHouse = OwnerTechno->Owner) {
-					ColorStruct tmp(OwnerHouse->LaserColor);
-					signed char delta(pData->Bolt_ColorSpread);
-					Saturate(tmp.R, delta);
-					Saturate(tmp.G, delta);
-					Saturate(tmp.B, delta);
-					Packed = Drawing::Color16bit(&tmp);
-				}
-			}
+			ColorStruct tmp(pData->Bolt_HouseColorBase);
+			signed char delta(pData->Bolt_ColorSpread);
+			Saturate(tmp.R, delta);
+			Saturate(tmp.G, delta);
+			Saturate(tmp.B, delta);
+			Packed = Drawing::Color16bit(&tmp);
 		} else if(ColorStruct *clr = pData->Bolt_Color2) {
 			Packed = Drawing::Color16bit(clr);
 		}
@@ -103,16 +107,12 @@ DEFINE_HOOK(4C26C7, EBolt_Draw_Color3, 5)
 	if(pData) {
 		WORD Packed = 0;
 		if(!!pData->Bolt_IsHouseColor) {
-			if(auto OwnerTechno = Bolt->Owner) {
-				if(auto OwnerHouse = OwnerTechno->Owner) {
-					ColorStruct tmp(OwnerHouse->LaserColor);
-					signed char delta(-pData->Bolt_ColorSpread);
-					Saturate(tmp.R, delta);
-					Saturate(tmp.G, delta);
-					Saturate(tmp.B, delta);
-					Packed = Drawing::Color16bit(&tmp);
-				}
-			}
+			ColorStruct tmp(pData->Bolt_HouseColorBase);
+			signed char delta(-pData->Bolt_ColorSpread);
+			Saturate(tmp.R, delta);
+			Saturate(tmp.G, delta);
+			Saturate(tmp.B, delta);
+			Packed = Drawing::Color16bit(&tmp);
 		} else if(ColorStruct *clr = pData->Bolt_Color2) {
 			Packed = Drawing::Color16bit(clr);
 		}
