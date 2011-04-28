@@ -1,14 +1,14 @@
 #include "Body.h"
 #include "../Techno/Body.h"
 
-static BYTE Saturate(BYTE &val, const signed char delta) {
-	unsigned int res(val + delta);
-	if(delta > 0 && res < val) {
-		res = 255;
-	} else if(delta < 0 && res > val) {
+static BYTE Saturate(BYTE &val, const unsigned char delta) {
+	signed int res= val + delta;
+	if(res < 0) {
 		res = 0;
+	} else if(res > 255) {
+		res = 255;
 	}
-	const BYTE result(res);
+	const BYTE result = res-1;
 	val = result;
 	return result;
 };
@@ -24,12 +24,8 @@ DEFINE_HOOK(6FD480, TechnoClass_FireEBolt, 6)
 		WeaponTypeExt::BoltExt[Bolt] = WeaponTypeExt::ExtMap.Find(Weapon);
 		WeaponTypeExt::ExtData *BoltAres = WeaponTypeExt::ExtMap.Find(Weapon);
 		if (OwnerUnit) {
-			if(!!BoltAres->Bolt_IsHouseColor) {
-				if (BoltAres->Bolt_UseLaserColor) {
-					BoltAres->Bolt_HouseColorBase = OwnerUnit->Owner->LaserColor;
-				} else {
-					BoltAres->Bolt_HouseColorBase = OwnerUnit->Owner->Color;
-				}
+			if(BoltAres->Bolt_IsHouseColor) {
+				BoltAres->Bolt_HouseColorBase = OwnerUnit->Owner->Color;
 			}
 		} else {
 			BoltAres->Bolt_IsHouseColor = false; //If HouseColor can't be obtained, remove it from the weapon
@@ -81,7 +77,7 @@ DEFINE_HOOK(4C25CB, EBolt_Draw_Color2, 5)
 		WORD Packed = 0;
 		if(!!pData->Bolt_IsHouseColor) {
 			ColorStruct tmp(pData->Bolt_HouseColorBase);
-			signed char delta(pData->Bolt_ColorSpread);
+			unsigned char delta(pData->Bolt_ColorSpread);
 			Saturate(tmp.R, delta);
 			Saturate(tmp.G, delta);
 			Saturate(tmp.B, delta);
@@ -108,7 +104,7 @@ DEFINE_HOOK(4C26C7, EBolt_Draw_Color3, 5)
 		WORD Packed = 0;
 		if(!!pData->Bolt_IsHouseColor) {
 			ColorStruct tmp(pData->Bolt_HouseColorBase);
-			signed char delta(-pData->Bolt_ColorSpread);
+			unsigned char delta(-pData->Bolt_ColorSpread);
 			Saturate(tmp.R, delta);
 			Saturate(tmp.G, delta);
 			Saturate(tmp.B, delta);

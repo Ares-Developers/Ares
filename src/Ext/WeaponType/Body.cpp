@@ -86,12 +86,10 @@ void WeaponTypeExt::ExtData::LoadFromINIFile(WeaponTypeExt::TT *pThis, CCINIClas
 		this->Bolt_IsHouseColor.Read(&exINI, section, "Bolt.IsHouseColor");
 		if(!!this->Bolt_IsHouseColor) {
 			this->Bolt_ColorSpread.Read(&exINI, section, "Bolt.ColorSpread");
-			this->Bolt_UseLaserColor.Read(&exINI, section, "Bolt.UseLaserColor");
-		} else {
-			this->Bolt_Color1.Read(&exINI, section, "Bolt.Color1");
-			this->Bolt_Color2.Read(&exINI, section, "Bolt.Color2");
-			this->Bolt_Color3.Read(&exINI, section, "Bolt.Color3");
 		}
+		this->Bolt_Color1.Read(&exINI, section, "Bolt.Color1"); //if the HouseColor is not available
+		this->Bolt_Color2.Read(&exINI, section, "Bolt.Color2");
+		this->Bolt_Color3.Read(&exINI, section, "Bolt.Color3");
 	}
 
 	this->Laser_Thickness.Read(&exINI, section, "LaserThickness");
