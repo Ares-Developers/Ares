@@ -48,7 +48,6 @@ DEFINE_HOOK(44B2FE, BuildingClass_Mi_Attack_IsPrism, 6)
 			BuildingTypeExt::cPrismForwarding::SetChargeDelay(B, LongestChain);
 
 		} else if (B->PrismStage == pcs_Slave) {
-			Debug::Log("PrismForwarding: Converting Slave to Master\n");
 			//a slave tower is changing into a master tower at the last second
 			B->PrismStage = pcs_Master;
 			B->PrismTargetCoords.X = 0;
@@ -106,8 +105,7 @@ DEFINE_HOOK(4503F0, BuildingClass_Update_Prism, 9)
 						BuildingExt::ExtData *pTargetData = BuildingExt::ExtMap.Find(pTarget);
 						BuildingTypeClass *pType = pThis->Type;
 						BuildingTypeExt::ExtData *pTypeData = BuildingTypeExt::ExtMap.Find(pType);
-						Debug::Log("[PrismForwarding] Slave firing. SM=%d MR=%lf\n",
-							pTypeData->PrismForwarding.SupportModifier.Get(), pData->PrismForwarding.ModifierReserve);
+						//slave firing
 						pTargetData->PrismForwarding.ModifierReserve +=
 							(pTypeData->PrismForwarding.SupportModifier.Get() + pData->PrismForwarding.ModifierReserve);
 						pTargetData->PrismForwarding.DamageReserve +=

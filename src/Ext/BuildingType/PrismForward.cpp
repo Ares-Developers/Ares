@@ -232,8 +232,6 @@ int BuildingTypeExt::cPrismForwarding::AcquireSlaves_SingleStage
 		++(*LongestChain);
 	}
 
-	Debug::Log("[Prism Forwarding] AcquireSlaves_SingleStage returning %d for tower %p, which now has %d SupportingPrisms.\n", iFeeds, TargetTower, TargetTower->SupportingPrisms);
-		
 	return iFeeds;
 }
 
@@ -370,7 +368,6 @@ void BuildingTypeExt::cPrismForwarding::SetChargeDelay_Set
 	(BuildingClass * TargetTower, int chain, DWORD *LongestCDelay, DWORD *LongestFDelay, int LongestChain) {
 	BuildingExt::ExtData *pTargetData = BuildingExt::ExtMap.Find(TargetTower);
 	pTargetData->PrismForwarding.PrismChargeDelay = (LongestFDelay[chain] - TargetTower->DelayBeforeFiring) + LongestCDelay[chain];
-	Debug::Log("PrismForwarding: SCD_S chain=%d PCD=%d LCD[c]=%d\n", chain, pTargetData->PrismForwarding.PrismChargeDelay, LongestCDelay[chain]);
 	TargetTower->SupportingPrisms = (LongestChain - chain);
 	if (pTargetData->PrismForwarding.PrismChargeDelay == 0) {
 		//no delay, so start animations now
