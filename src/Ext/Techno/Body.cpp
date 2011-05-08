@@ -132,7 +132,7 @@ bool TechnoExt::EjectSurvivor(FootClass *Survivor, CoordStruct *loc, bool Select
 
 
 	Survivor->LastMapCoords = pCell->MapCoords;
-	// don't ask, don't tell
+	// don't ask, don't tell (ripped from 0x51A84F)
 	if(Chuted) {
 		bool scat(Survivor->OnBridge);
 		DWORD *flagsOfSomeKind = reinterpret_cast<DWORD *>(pCell->unknown_121 + 3);
