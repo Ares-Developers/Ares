@@ -336,6 +336,7 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 // #917
 DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateAIBuildables, 6) {
 	const char *errorMsg = "AI House of country [%s] cannot build any object in %s. The AI ain't smart enough for that.\n";
+	bool AllIsWell(true);
 	for(int i = 0; i < HouseClass::Array->Count; ++i) {
 		HouseClass* curHouse = HouseClass::Array->GetItem(i);
 		if(!curHouse->ControlledByHuman() && !curHouse->IsNeutral()) {
@@ -349,12 +350,14 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateAIBuildables, 6) {
 				}
 			}
 			if(!canBuild) {
+				AllIsWell = false;
 				Debug::DevLog(Debug::Error, errorMsg, curHouse->Type->ID, "BaseUnit");
 			}
 
-			auto CheckList = [curHouse, errorMsg]
+			auto CheckList = [curHouse, errorMsg, &AllIsWell]
 					(DynamicVectorClass<BuildingTypeClass *> *const List, char * const ListName) -> void {
 				if(!curHouse->FirstBuildableFromArray(List)) {
+					AllIsWell = false;
 					Debug::DevLog(Debug::Error, errorMsg, curHouse->Type->ID, ListName);
 				}
 			};
@@ -380,6 +383,11 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateAIBuildables, 6) {
 //			auto pSideData = SideExt::ExtMap.Find(pSide);
 //			CheckList(&pSideData->BaseDefenses, "Base Defenses");
 		}
+	}
+
+	if(!AllIsWell) {
+		Debug::FatalErrorAndExit("One or more errors were detected while parsing the INI files.\r\n"
+			"Please review the contents of the debug log and correct them.");
 	}
 	return 0;
 }
