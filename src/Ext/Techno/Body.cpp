@@ -43,6 +43,8 @@ void TechnoExt::SpawnSurvivors(FootClass *pThis, TechnoClass *pKiller, bool Sele
 				if(Pilots->ValidIndex(idx)) {
 					if(InfantryTypeClass *PilotType = Pilots->GetItem(idx)) {
 						InfantryClass *Pilot = reinterpret_cast<InfantryClass *>(PilotType->CreateObject(pOwner));
+						// HouseClass::CreateParadrop does this when building passengers for a paradrop... it might be a wise thing to mimic!
+						Pilot->Remove();
 
 						Pilot->Health = (PilotType->Strength / 2);
 						Pilot->Veterancy.Veterancy = pThis->Veterancy.Veterancy;
@@ -117,16 +119,33 @@ bool TechnoExt::EjectSurvivor(FootClass *Survivor, CoordStruct *loc, bool Select
 	Survivor->OnBridge = pCell->ContainsBridge();
 
 	int floorZ = tmpCoords.Z;
+	bool Chuted(false);
 	if(loc->Z - floorZ > 208) {
 		success = Survivor->SpawnParachuted(loc);
+		Chuted = true;
 	} else {
 		loc->Z = floorZ;
 		success = Survivor->Put(loc, ScenarioClass::Instance->Random.RandomRanged(0, 7));
 	}
 	RET_UNLESS(success);
 	Survivor->Transporter = NULL;
-	Survivor->Scatter(0xB1CFE8, 1, 0);
-	Survivor->QueueMission(Survivor->Owner->ControlledByHuman() ? mission_Guard : mission_Hunt, 0);
+
+
+	Survivor->LastMapCoords = pCell->MapCoords;
+	// don't ask, don't tell
+	if(Chuted) {
+		bool scat(Survivor->OnBridge);
+		DWORD *flagsOfSomeKind = reinterpret_cast<DWORD *>(pCell->unknown_121 + 3);
+		if((flagsOfSomeKind[scat] & 0x1C) == 0x1C) {
+			pCell->ScatterContent(0xA8F200, 1, 1, scat);
+		}
+	} else {
+		Survivor->Scatter(0xB1CFE8, 1, 0);
+		Survivor->QueueMission(Survivor->Owner->ControlledByHuman() ? mission_Guard : mission_Hunt, 0);
+	}
+	Survivor->unknown_bool_690 = Survivor->unknown_bool_691 = false;
+
+
 	if(Select) {
 		Survivor->Select();
 	}
