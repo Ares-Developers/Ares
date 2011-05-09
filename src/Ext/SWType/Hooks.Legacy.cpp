@@ -107,6 +107,12 @@ DEFINE_HOOK(53B080, PsyDom_Fire, 5) {
 					pTechno->SetOwningHouse(pFirer);
 					pTechno->MindControlledByAUnit = pData->Dominator_PermanentCapture.Get();
 
+					// remove old permanent mind control anim
+					if(pTechno->MindControlRingAnim) {
+						pTechno->MindControlRingAnim->UnInit();
+						pTechno->MindControlRingAnim = NULL;
+					}
+
 					// create a permanent capture anim
 					if(pData->Dominator_ControlAnim.Get()) {
 						CoordStruct animCoords;
