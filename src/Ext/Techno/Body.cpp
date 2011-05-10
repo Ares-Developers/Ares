@@ -475,6 +475,122 @@ AresAction::Value TechnoExt::ExtData::GetActionHijack(TechnoClass* pTarget) {
 	return AresAction::None;
 }
 
+// perform the most appropriate hijack action
+bool TechnoExt::ExtData::PerformActionHijack(TechnoClass* pTarget) {
+	// was the hijacker lost in the process?
+	bool ret = false;
+
+	if(InfantryClass* pThis = specific_cast<InfantryClass*>(this->AttachedToObject)) {
+		InfantryTypeClass* pType = pThis->Type;
+		TechnoExt::ExtData* pExt = TechnoExt::ExtMap.Find(pThis);
+		TechnoTypeExt::ExtData* pTypeExt = TechnoTypeExt::ExtMap.Find(pType);
+
+		AresAction::Value action = pExt->GetActionHijack(pTarget);
+
+		// abort capturing this thing, it looked
+		// better from over there...
+		if(!action) {
+			pThis->SetDestination(NULL, true);
+			CoordStruct crd;
+			pTarget->GetCoords(&crd);
+			pThis->Scatter((DWORD)&crd, 1, 0);
+			return false;
+		}
+
+		// prepare for a smooth transition. free the destination from
+		// any mind control. #762
+		if(pTarget->MindControlledBy) {
+			pTarget->MindControlledBy->CaptureManager->FreeUnit(pTarget);
+		}
+		pTarget->MindControlledByAUnit = false;
+		if(pTarget->MindControlRingAnim) {
+			pTarget->MindControlRingAnim->UnInit();
+			pTarget->MindControlRingAnim = NULL;
+		}
+
+		bool asPassenger = false;
+		if(action == AresAction::Drive) {
+			TechnoTypeExt::ExtData* pDestTypeExt = TechnoTypeExt::ExtMap.Find(pTarget->GetTechnoType());
+			if(pDestTypeExt->Operator || pDestTypeExt->IsAPromiscuousWhoreAndLetsAnyoneRideIt) {
+				asPassenger = true;
+			}
+		}
+
+		if(!asPassenger) {
+			// raise some events in case the hijacker/driver will be
+			// swallowed by the vehicle.
+			if(pTarget->AttachedTag) {
+				pTarget->AttachedTag->RaiseEvent(TriggerEvent::DestroyedByAnything, pThis, *(CellStruct*)0xA8F1E0, 0, 0);
+			}
+			pTarget->Owner->unknown_bool_244 = true;
+			if(pThis->AttachedTag) {
+				if(pThis->AttachedTag->IsTriggerRepeating()) {
+					pTarget->ReplaceTag(pThis->AttachedTag);
+				}
+			}
+		} else {
+			// raise some events in case the driver enters
+			// a vehicle that needs an Operator
+			if(pTarget->AttachedTag) {
+				pTarget->AttachedTag->RaiseEvent(TriggerEvent::EnteredBy, pThis, *(CellStruct*)0xA8F1E0, 0, 0);
+			}
+		}
+
+		// if the hijacker is mind-controlled, free it,
+		// too, and attach to the new target. #762
+		TechnoClass* controller = pThis->MindControlledBy;
+		if(controller) {
+			++Unsorted::IKnowWhatImDoing;
+			controller->CaptureManager->FreeUnit(pThis);
+			--Unsorted::IKnowWhatImDoing;
+		}
+
+		// let's make a steal
+		pTarget->SetOwningHouse(pThis->Owner, 1);
+		pTarget->GotHijacked();
+		VocClass::PlayAt(pTypeExt->HijackerEnterSound, &pTarget->Location, 0);
+
+		// remove the driverless-marker
+		TechnoExt::ExtData* pDestExt = TechnoExt::ExtMap.Find(pTarget);
+		pDestExt->DriverKilled = false;
+
+		// save the hijacker's properties
+		if(action == AresAction::Hijack) {
+			pTarget->HijackerInfantryType = pType->ArrayIndex;
+			pDestExt->HijackerHouse = pThis->Owner;
+			pDestExt->HijackerHealth = pThis->Health;
+		}
+
+		// hook up the original mind-controller with the target #762
+		if(controller) {
+			++Unsorted::IKnowWhatImDoing;
+			controller->CaptureManager->CaptureUnit(pTarget);
+			--Unsorted::IKnowWhatImDoing;
+		}
+
+		// reboot the slave manager
+		if(pTarget->SlaveManager) {
+			pTarget->SlaveManager->ResumeWork();
+		}
+
+		// the hijacker enters and closes the door.
+		ret = true;
+
+		// only for the drive action: if the target requires an operator,
+		// we add the driver to the passengers list instead of deleting it.
+		// this does not check passenger count or size limits.
+		if(asPassenger) {
+			pTarget->AddPassenger(pThis);
+			pThis->AbortMotion();
+			ret = false;
+		}
+
+		pTarget->QueueMission(mission_Guard, true);
+	}
+
+	return ret;
+}
+
 // =============================
 // load/save
 
