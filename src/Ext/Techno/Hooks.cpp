@@ -577,7 +577,7 @@ DEFINE_HOOK(701C97, TechnoClass_ReceiveDamage_AffectsEnemies, 6)
 				Arguments->SourceHouse,
 				(Arguments->SourceHouse ? Arguments->SourceHouse->Type->ID : "null")
 				);
-			Debug::DumpStack(R, 0xE0, 0xC0);
+			Debug::DumpStack(R, 0x180, 0xC0);
 		}
 
 	} else if(Arguments->SourceHouse) {
