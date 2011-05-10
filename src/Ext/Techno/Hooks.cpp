@@ -710,6 +710,7 @@ DEFINE_HOOK(519675, InfantryClass_UpdatePosition_BeforeInfantrySpecific, a)
 	enum { 
 		Return = 0x51AA01, // skip the original logic
 		Destroy = 0x51A010, // uninits this infantry and returns
+		Follow = 0x51A4BF, // follow the target unit
 		Handle = 0 // resume the original function
 	} DoWhat = Handle;
 
@@ -839,6 +840,10 @@ DEFINE_HOOK(519675, InfantryClass_UpdatePosition_BeforeInfantrySpecific, a)
 					}
 
 					pDest->QueueMission(mission_Guard, true);
+				} else {
+					// skips the original vehicle thief handling and resumes when the
+					// game is about to update the target location.
+					DoWhat = Follow;
 				}
 			}
 		}
