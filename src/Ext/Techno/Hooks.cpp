@@ -741,7 +741,6 @@ DEFINE_HOOK(519675, InfantryClass_UpdatePosition_BeforeInfantrySpecific, A)
 	enum { 
 		Return = 0x51AA01, // skip the original logic
 		Destroy = 0x51A010, // uninits this infantry and returns
-		Resume = 0x51A4BF, // does all the other update stuff
 		Handle = 0 // resume the original function
 	} DoWhat = Handle;
 
@@ -770,9 +769,6 @@ DEFINE_HOOK(519675, InfantryClass_UpdatePosition_BeforeInfantrySpecific, A)
 					TechnoExt::ExtData* pExt = TechnoExt::ExtMap.Find(pThis);
 					bool finalize = pExt->PerformActionHijack(pTarget);
 					DoWhat = finalize ? Destroy : Return;
-				} else {
-					// just skips the original vehicle thief handling.
-					DoWhat = Resume;
 				}
 			}
 		}
