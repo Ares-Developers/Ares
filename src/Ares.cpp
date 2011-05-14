@@ -25,6 +25,7 @@
 #include "Ext/WeaponType/Body.h"
 
 #include "Misc/Debug.h"
+#include "Misc/EMPulse.h"
 
 //Init Statics
 HANDLE Ares::hInstance = 0;
@@ -76,6 +77,7 @@ void __stdcall Ares::CmdLineParse(char** ppArgs,int nNumArgs)
 	Debug::bLog = false;
 	bNoCD = false;
 	bNoLogo = false;
+	EMPulse::verbose = false;
 
 	// > 1 because the exe path itself counts as an argument, too!
 	if(nNumArgs > 1) {
@@ -93,6 +95,8 @@ void __stdcall Ares::CmdLineParse(char** ppArgs,int nNumArgs)
 				bTestingRun = true;
 			} else if(strcmp(pArg, "-STRICT") == 0) {
 				bStrictParser = true;
+			} else if(strcmp(pArg, "-LOG-EMP") == 0) {
+				EMPulse::verbose = true;
 			}
 		}
 	}

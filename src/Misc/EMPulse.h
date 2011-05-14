@@ -27,6 +27,8 @@ protected:
 	static void announceAttack(TechnoClass *);
 	static bool thresholdExceeded(TechnoClass *);
 	static bool supportVerses;
+
+public:
 	static bool verbose;
 };
 

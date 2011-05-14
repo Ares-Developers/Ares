@@ -9,6 +9,7 @@
 #include "../Ext/Rules/Body.h"
 #include "../Ext/HouseType/Body.h"
 #include "../Ext/Side/Body.h"
+#include "../Ext/TechnoType/Body.h"
 #include <vector>
 #include <algorithm>
 #include <string>
@@ -79,6 +80,7 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 		(e.g., to make sure crevio hasn't stuck a MovementZone=Retarded on anything)
 		to reduce chances of crashing later
 	*/
+
 	for(int i = 0; i < TechnoTypeClass::Array->Count; ++i) {
 		TechnoTypeClass *Item = reinterpret_cast<TechnoTypeClass *>(TechnoTypeClass::Array->Items[i]);
 
@@ -98,6 +100,19 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 
 		if(Item->Passengers > 0 && Item->SizeLimit < 1) {
 			Debug::DevLog(Debug::Error, "[%s]Passengers=%d and SizeLimit=%d!\n", Item->ID, Item->Passengers, Item->SizeLimit);
+		}
+
+		auto pData = TechnoTypeExt::ExtMap.Find(Item);
+		if(Item->PoweredUnit && pData->PoweredBy.Count) {
+			Debug::DevLog(Debug::Error, "[%s] uses both PoweredUnit=yes and PoweredBy=!\n", Item->ID);
+			Item->PoweredUnit = false;
+		}
+		if(auto PowersUnit = Item->PowersUnit) {
+			auto pExtraData = TechnoTypeExt::ExtMap.Find(PowersUnit);
+			if(pExtraData->PoweredBy.Count) {
+				Debug::DevLog(Debug::Error, "[%s]PowersUnit=%s, but [%s] uses PoweredBy=!\n", Item->ID, PowersUnit->ID, PowersUnit->ID);
+				Item->PowersUnit = NULL;
+			}
 		}
 	}
 
