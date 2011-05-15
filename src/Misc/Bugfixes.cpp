@@ -924,13 +924,13 @@ DEFINE_HOOK(7396AD, UnitClass_Deploy_CreateBuilding, 6)
 	return 0x7396B3;
 }
 
-
 DEFINE_HOOK(739956, UnitClass_Deploy_ReestablishMindControl, 6)
 {
 	GET(UnitClass *, pUnit, EBP);
 	GET(BuildingClass *, pStructure, EBX);
 
 	TechnoExt::TransferMindControl(pUnit, pStructure);
+	TechnoExt::TransferIvanBomb(pUnit, pStructure);
 
 	return 0;
 }
@@ -948,6 +948,35 @@ DEFINE_HOOK(44A03C, BuildingClass_Mi_Selling_ReestablishMindControl, 6)
 	GET(UnitClass *, pUnit, EBX);
 
 	TechnoExt::TransferMindControl(pStructure, pUnit);
+	TechnoExt::TransferIvanBomb(pStructure, pUnit);
 
+	return 0;
+}
+
+DEFINE_HOOK(4471D5, BuildingClass_Sell_DetonateNoBuildup, 6)
+{
+	GET(BuildingClass *, pStructure, ESI);
+	if(auto Bomb = pStructure->AttachedBomb) {
+		Bomb->Detonate();
+	}
+
+	return 0;
+}
+
+DEFINE_HOOK(44A1FF, BuildingClass_Mi_Selling_DetonatePostBuildup, 6) {
+	GET(BuildingClass *, pStructure, EBP);
+	if(auto Bomb = pStructure->AttachedBomb) {
+		Bomb->Detonate();
+	}
+
+	return 0;
+}
+
+DEFINE_HOOK(4D9F7B, FootClass_Sell_Detonate, 6)
+{
+	GET(FootClass *, pSellee, ESI);
+	if(auto Bomb = pSellee->AttachedBomb) {
+		Bomb->Detonate();
+	}
 	return 0;
 }

@@ -120,6 +120,7 @@ public:
 	static bool CreateWithDroppod(FootClass *Object, CoordStruct *XYZ);
 
 	static void TransferMindControl(TechnoClass *From, TechnoClass *To);
+	static void TransferIvanBomb(TechnoClass *From, TechnoClass *To);
 /*
 	static int SelectWeaponAgainst(TechnoClass *pThis, TechnoClass *pTarget);
 	static bool EvalWeaponAgainst(TechnoClass *pThis, TechnoClass *pTarget, WeaponTypeClass* W);
