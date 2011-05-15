@@ -644,6 +644,10 @@ bool EMPulse::enableEMPEffect(TechnoClass * Victim, ObjectClass * Source) {
 			Unsorted::MoveFeedback = feedback;
 		}
 
+		if(generic_cast<FootClass *>(Victim)) {
+			Victim->QueueMission(mission_Sleep, true);
+		}
+
 		// release all captured units.
 		if (Victim->CaptureManager) {
 			Victim->CaptureManager->FreeAll();

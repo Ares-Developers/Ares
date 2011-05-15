@@ -739,3 +739,4 @@ DEFINE_HOOK(6F6AC9, TechnoClass_Remove, 6) {
 
 	return 0;
 }
+
