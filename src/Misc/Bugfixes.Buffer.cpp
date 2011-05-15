@@ -9,6 +9,7 @@
 #include <MapClass.h>
 #include <MixFileClass.h>
 #include <ParticleSystemTypeClass.h>
+#include <ScenarioClass.h>
 #include <SmudgeTypeClass.h>
 #include <SidebarClass.h>
 #include <StringTable.h>
@@ -356,4 +357,22 @@ DEFINE_HOOK(6A9348, CameoClass_GetTip_FixLength, 9)
 	SidebarClass::TooltipBuffer[SidebarClass::TooltipLength - 1] = 0;
 
 	return 0x6A93B2;
+}
+
+DEFINE_HOOK(70CAD8, TechnoClass_DealParticleDamage_DontDestroyCliff, 9)
+{
+	return 0x70CB30;
+}
+
+DEFINE_HOOK(489562, DamageArea_DestroyCliff, 6)
+{
+	GET(CellClass *, pCell, EAX);
+
+	if(pCell->Tile_Is_DestroyableCliff()) {
+		if(ScenarioClass::Instance->Random.RandomRanged(0, 99) < RulesClass::Instance->CollapseChance) {
+			MapClass::Instance->DestroyCliff(pCell);
+		}
+	}
+
+	return 0;
 }
