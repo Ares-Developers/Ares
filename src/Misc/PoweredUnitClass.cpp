@@ -30,13 +30,13 @@ void PoweredUnitClass::PowerUp()
 {
 	TechnoExt::ExtData* e = TechnoExt::ExtMap.Find(this->Techno);
 	if( !this->Techno->IsUnderEMP() && e->IsOperated() ) {
-		EMPulse::DisableEMPEffect(this->Techno);
+		EMPulse::DisableEMPEffect2(this->Techno);
 	}
 }
 
 void PoweredUnitClass::PowerDown()
 {
-	if( EMPulse::IsDeactivationAdvisable(this->Techno) && !EMPulse::enableEMPEffect(this->Techno, NULL) ) {
+	if( EMPulse::IsDeactivationAdvisable(this->Techno) && !EMPulse::EnableEMPEffect2(this->Techno) ) {
 		// for EMP.Threshold=inair
 		if( this->Ext->EMP_Threshold == -1 && this->Techno->IsInAir() )	{
 			this->Techno->Destroyed(NULL);
