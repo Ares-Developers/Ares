@@ -38,7 +38,7 @@ void PoweredUnitClass::PowerDown()
 {
 	if( EMPulse::IsDeactivationAdvisable(this->Techno) && !EMPulse::EnableEMPEffect2(this->Techno) ) {
 		// for EMP.Threshold=inair
-		if( this->Ext->EMP_Threshold == -1 && this->Techno->IsInAir() )	{
+		if( this->Ext->EMP_Threshold < 0 && this->Techno->IsInAir() )	{
 			this->Techno->Destroyed(NULL);
 			this->Techno->Crash(NULL);
 			
