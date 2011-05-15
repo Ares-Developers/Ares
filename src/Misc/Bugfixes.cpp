@@ -915,3 +915,4 @@ DEFINE_HOOK(62C2ED, ParticleClass_Update_Gas, 6)
 	}
 	return 0;
 }
+
