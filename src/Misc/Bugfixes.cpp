@@ -916,3 +916,38 @@ DEFINE_HOOK(62C2ED, ParticleClass_Update_Gas, 6)
 	return 0;
 }
 
+
+DEFINE_HOOK(7396AD, UnitClass_Deploy_CreateBuilding, 6)
+{
+	GET(UnitClass *, pUnit, EBP);
+	R->EDX<HouseClass *>(pUnit->GetOriginalOwner());
+	return 0x7396B3;
+}
+
+
+DEFINE_HOOK(739956, UnitClass_Deploy_ReestablishMindControl, 6)
+{
+	GET(UnitClass *, pUnit, EBP);
+	GET(BuildingClass *, pStructure, EBX);
+
+	TechnoExt::TransferMindControl(pUnit, pStructure);
+
+	return 0;
+}
+
+DEFINE_HOOK(449E2E, BuildingClass_Mi_Selling_CreateUnit, 6)
+{
+	GET(BuildingClass *, pStructure, EBP);
+	R->ECX<HouseClass *>(pStructure->GetOriginalOwner());
+	return 0x449E34;
+}
+
+DEFINE_HOOK(44A03C, BuildingClass_Mi_Selling_ReestablishMindControl, 6)
+{
+	GET(BuildingClass *, pStructure, EBP);
+	GET(UnitClass *, pUnit, EBX);
+
+	TechnoExt::TransferMindControl(pStructure, pUnit);
+
+	return 0;
+}

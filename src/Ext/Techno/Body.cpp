@@ -373,6 +373,43 @@ bool TechnoExt::CreateWithDroppod(FootClass *Object, CoordStruct *XYZ) {
 	}
 }
 
+void TechnoExt::TransferMindControl(TechnoClass *From, TechnoClass *To) {
+	if(auto Controller = From->MindControlledBy) {
+		if(auto Manager = Controller->CaptureManager) { // shouldn't be necessary, but WW uses it...
+			bool FoundNode(false);
+			for(int i = 0; i < Manager->ControlNodes.Count; ++i) {
+				auto Node = Manager->ControlNodes[i];
+				if(Node->Unit == From) {
+					Node->Unit = To;
+					To->SetOwningHouse(From->GetOwningHouse(), 0);
+					To->MindControlledBy = Controller;
+					From->MindControlledBy = NULL;
+					auto M = To->CurrentMission;
+					if(M != mission_Selling && M != mission_Construction && M != mission_Unload) {
+						To->vt_entry_3D0();
+					}
+					FoundNode = true;
+					break;
+				}
+			}
+			if(!FoundNode) { // say the link was broken beforehand, by inconsistently ordered code...
+				Manager->CaptureUnit(To);
+			}
+		}
+	} else if(auto MCHouse = From->MindControlledByHouse) {
+		To->MindControlledByHouse = MCHouse;
+		From->MindControlledByHouse = NULL;
+	}
+	if(auto Anim = From->MindControlRingAnim) {
+		auto ToAnim = &To->MindControlRingAnim;
+		if(*ToAnim) {
+			(*ToAnim)->TimeToDie = 1;
+		}
+		*ToAnim = Anim;
+		Anim->SetOwnerObject(To);
+	}
+}
+
 // =============================
 // load/save
 
