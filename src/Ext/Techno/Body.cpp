@@ -373,6 +373,24 @@ bool TechnoExt::CreateWithDroppod(FootClass *Object, CoordStruct *XYZ) {
 	}
 }
 
+bool TechnoExt::ExtData::IsDeactivated() const {
+	return this->AttachedToObject->Deactivated;
+}
+
+eAction TechnoExt::ExtData::GetDeactivatedAction(ObjectClass *Hovered) const {
+	if(!Hovered) {
+		return act_None;
+	}
+	if(auto tHovered = generic_cast<TechnoClass *>(Hovered)) {
+		if(this->AttachedToObject->Owner->IsAlliedWith(tHovered)) {
+			if(tHovered->IsSelectable()) {
+				return act_Select;
+			}
+		}
+	}
+	return act_None;
+}
+
 // =============================
 // load/save
 

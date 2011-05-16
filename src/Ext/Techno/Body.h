@@ -98,6 +98,10 @@ public:
 		bool DrawVisualFX();
 
 		UnitTypeClass * GetUnitType();
+
+		bool IsDeactivated() const;
+
+		eAction GetDeactivatedAction(ObjectClass *Hovered = NULL) const;
 	};
 
 	static Container<TechnoExt> ExtMap;
