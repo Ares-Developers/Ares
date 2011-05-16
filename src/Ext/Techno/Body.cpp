@@ -375,6 +375,7 @@ bool TechnoExt::CreateWithDroppod(FootClass *Object, CoordStruct *XYZ) {
 
 void TechnoExt::TransferMindControl(TechnoClass *From, TechnoClass *To) {
 	if(auto Controller = From->MindControlledBy) {
+		++Unsorted::IKnowWhatImDoing;
 		if(auto Manager = Controller->CaptureManager) { // shouldn't be necessary, but WW uses it...
 			bool FoundNode(false);
 			for(int i = 0; i < Manager->ControlNodes.Count; ++i) {
@@ -396,6 +397,7 @@ void TechnoExt::TransferMindControl(TechnoClass *From, TechnoClass *To) {
 				Manager->CaptureUnit(To);
 			}
 		}
+		--Unsorted::IKnowWhatImDoing;
 	} else if(auto MCHouse = From->MindControlledByHouse) {
 		To->MindControlledByHouse = MCHouse;
 		From->MindControlledByHouse = NULL;

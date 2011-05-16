@@ -932,6 +932,8 @@ DEFINE_HOOK(739956, UnitClass_Deploy_ReestablishMindControl, 6)
 	TechnoExt::TransferMindControl(pUnit, pStructure);
 	TechnoExt::TransferIvanBomb(pUnit, pStructure);
 
+	pStructure->QueueMission(mission_Construction, 0);
+
 	return 0;
 }
 
@@ -950,6 +952,17 @@ DEFINE_HOOK(44A03C, BuildingClass_Mi_Selling_ReestablishMindControl, 6)
 	TechnoExt::TransferMindControl(pStructure, pUnit);
 	TechnoExt::TransferIvanBomb(pStructure, pUnit);
 
+	return 0;
+}
+
+DEFINE_HOOK(47243F, CaptureManagerClass_DecideUnitFate_BuildingFate, 6) {
+	GET(TechnoClass *, pVictim, EBX);
+	if(specific_cast<BuildingClass *>(pVictim)) {
+		// 1. add to team and other fates don't really make sense for buildings
+		// 2. BuildingClass::Mission_Hunt() implementation is to do nothing!
+		pVictim->QueueMission(mission_Guard, 0);
+		return 0x472604;
+	}
 	return 0;
 }
 
