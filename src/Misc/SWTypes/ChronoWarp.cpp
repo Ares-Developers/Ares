@@ -299,6 +299,7 @@ void ChronoWarpStateMachine::Update() {
 		for(int i=0; i<buildings.Count; ++i) {
 			ChronoWarpContainer* pContainer = &buildings.Items[i];
 			pContainer->pBld->Remove();
+			pContainer->pBld->ActuallyPlacedOnMap = false;
 		}
 
 		// bring back all buildings
