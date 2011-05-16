@@ -13,7 +13,10 @@ public:
 	static bool IsTypeEMPProne(TechnoTypeClass *Type);
 	static bool IsDeactivationAdvisable(TechnoClass *Techno);
 	static void UpdateSparkleAnim(TechnoClass *Techno);
-	static bool enableEMPEffect(TechnoClass *, ObjectClass *);
+
+	// two dummy functions not used by EMP
+	static void DisableEMPEffect2(TechnoClass *Techno);
+	static bool EnableEMPEffect2(TechnoClass *Techno);
 
 protected:
 	static void deliverEMPDamage(ObjectClass *, TechnoClass *, WarheadTypeExt::ExtData *);
@@ -24,6 +27,7 @@ protected:
 	static void updateRadarBlackout(TechnoClass *);
 	static void updateSpawnManager(TechnoClass *, ObjectClass *);
 	static void updateSlaveManager(TechnoClass *);
+	static bool enableEMPEffect(TechnoClass *, ObjectClass *);
 	static void announceAttack(TechnoClass *);
 	static bool thresholdExceeded(TechnoClass *);
 	static bool supportVerses;

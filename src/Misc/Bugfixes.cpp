@@ -979,7 +979,9 @@ DEFINE_HOOK(70173B, TechnoClass_ChangeOwnership_ChangeSlaveOwnership, 5) {
 		auto &Nodes = Slaver->SlaveNodes;
 		for(int i = Nodes.Count - 1; i >= 0; --i) {
 			if(auto Node = Nodes[i]) {
-				Node->Slave->SetOwningHouse(pTechno->Owner, 0);
+				if(auto SlaveUnit = Node->Slave) {
+					SlaveUnit->SetOwningHouse(pTechno->Owner, 0);
+				}
 			}
 		}
 	}
