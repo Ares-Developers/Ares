@@ -116,6 +116,7 @@ bool SW_GeneticMutator::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPl
 			if(Helpers::Alex::DistinctCollector<ObjectClass*> *items = new Helpers::Alex::DistinctCollector<ObjectClass*>()) {
 				Helpers::Alex::forEachObjectInRange(pCoords, pData->SW_WidthOrRange, pData->SW_Height, items->getCollector());
 				items->forEach(Mutate);
+				delete items;
 			}
 		}
 	}

@@ -258,7 +258,7 @@ public:
 
 			~DistinctCollector() {
 				if(Value) {
-					Value->Clear();
+					Value->clear();
 					delete Value;
 					Value = NULL;
 				}

@@ -262,6 +262,8 @@ bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 				if(RegisteredBuildings.Count) {
 					this->newStateMachine(RulesClass::Instance->ChronoDelay + 1, *pCoords, pSource, this, &RegisteredBuildings);
 				}
+
+				delete items;
 			}
 
 			return true;
