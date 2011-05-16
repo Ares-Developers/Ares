@@ -966,6 +966,26 @@ DEFINE_HOOK(47243F, CaptureManagerClass_DecideUnitFate_BuildingFate, 6) {
 	return 0;
 }
 
+DEFINE_HOOK(6AF5D7, SlaveManagerClass_ReplaceWhichBelongsToUnit_ChangeOwnership, 6) {
+	GET(InfantryClass *, pSlave, EAX);
+	GET(SlaveManagerClass *, pSlaveManager, ESI);
+	pSlave->SetOwningHouse(pSlaveManager->Owner->Owner, 0);
+	return 0;
+}
+
+DEFINE_HOOK(70173B, TechnoClass_ChangeOwnership_ChangeSlaveOwnership, 5) {
+	GET(TechnoClass *, pTechno, ESI);
+	if(auto Slaver = pTechno->SlaveManager) {
+		auto &Nodes = Slaver->SlaveNodes;
+		for(int i = Nodes.Count - 1; i >= 0; --i) {
+			if(auto Node = Nodes[i]) {
+				Node->Slave->SetOwningHouse(pTechno->Owner, 0);
+			}
+		}
+	}
+	return 0;
+}
+
 DEFINE_HOOK(4471D5, BuildingClass_Sell_DetonateNoBuildup, 6)
 {
 	GET(BuildingClass *, pStructure, ESI);
