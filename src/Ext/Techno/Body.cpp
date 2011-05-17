@@ -1,5 +1,6 @@
 #include "Body.h"
 #include "../TechnoType/Body.h"
+#include "../HouseType/Body.h"
 #include "../../Misc/SWTypes.h"
 #include "../../Misc/PoweredUnitClass.h"
 
@@ -352,6 +353,45 @@ bool TechnoExt::CreateWithDroppod(FootClass *Object, CoordStruct *XYZ) {
 		//Debug::Log("InLimbo... failed?\n");
 		return false;
 	}
+}
+
+template<typename T>
+T TechnoExt::ExtData::GetBountyValue(Nullable<T> BountyClass::*pMember) const {
+	auto &myBountyVal = this->GetTypeExt()->Bounty.*pMember;
+	if(myBountyVal.isset()) {
+		return myBountyVal.Get();
+	}
+	auto pCountryData = HouseTypeExt::ExtMap.Find(this->AttachedToObject->GetOwningHouse()->Type);
+	auto &countryBountyVal = pCountryData->Bounty.*pMember;
+	return countryBountyVal.Get();
+};
+
+bool TechnoExt::ExtData::Get_Bounty_Message() const {
+	return this->GetBountyValue(&BountyClass::Message);
+}
+
+bool TechnoExt::ExtData::Get_Bounty_FriendlyMessage() const {
+	return this->GetBountyValue(&BountyClass::FriendlyMessage);
+}
+
+double TechnoExt::ExtData::Get_Bounty_Modifier() const {
+	return this->GetBountyValue(&BountyClass::Modifier);
+}
+
+double TechnoExt::ExtData::Get_Bounty_FriendlyModifier() const {
+	return this->GetBountyValue(&BountyClass::FriendlyModifier);
+}
+
+bool TechnoExt::ExtData::Get_Bounty_Pillager() const {
+	return this->GetBountyValue(&BountyClass::Pillager);
+}
+
+double TechnoExt::ExtData::Get_Bounty_CostMultiplier() const {
+	return this->GetBountyValue(&BountyClass::CostMultiplier);
+}
+
+double TechnoExt::ExtData::Get_Bounty_PillageMultiplier() const {
+	return this->GetBountyValue(&BountyClass::PillageMultiplier);
 }
 
 // =============================

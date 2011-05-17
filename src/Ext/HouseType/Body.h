@@ -8,6 +8,7 @@
 #include <StringTable.h>
 #include <ColorScheme.h>
 
+#include "../../Misc/BountyClass.h"
 #include "../../Utilities/Template.h"
 #include "../../Ares.CRT.h"
 #include "../_Container.hpp"
@@ -38,12 +39,16 @@ class HouseTypeExt
 			ValueableIdx<int, AircraftTypeClass> ParaDropPlane;
 			Valueable<AnimTypeClass*> Parachute_Anim;
 
+			//issue 1588, Bounty tags per country, whole logic starts in TechnoType and FlyingStrings
+			BountyClass Bounty;
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 				RandomSelectionWeight (0),
 				CountryListIndex (0),
 				ParaDropPlane (-1),
 				Parachute_Anim (NULL),
-				LoadTextColor (NULL)
+				LoadTextColor (NULL),
+				Bounty(true, true, 0, 0, false, 1, 1)
 			{
 				*FlagFile = 0;
 				*LSFile = 0;

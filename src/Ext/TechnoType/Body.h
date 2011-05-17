@@ -7,6 +7,7 @@
 
 #include "../../Ares.h"
 #include "../_Container.hpp"
+#include "../../Misc/BountyClass.h"
 #include "../../Utilities/Template.h"
 #include "../../Utilities/Constructs.h"
 
@@ -117,13 +118,8 @@ public:
 		DynamicVectorClass<BuildingTypeClass*> PoweredBy;  //!< The buildingtype this unit is powered by or NULL.
 
 		//#203 Bounty
-		Nullable<bool> Bounty_Message;
-		Nullable<bool> Bounty_FriendlyMessage;
-		Nullable<double> Bounty_Modifier;
-		Nullable<double> Bounty_FriendlyModifier;
-		Nullable<bool> ImmuneToBounty;
-		// #1523 also Money Conversion -> Pillage
-		Nullable<bool> Bounty_Pillager;
+
+		BountyClass Bounty;
 
 		Nullable<bool> CarryallAllowed;
 		Nullable<int> CarryallSizeLimit;
@@ -176,12 +172,7 @@ public:
 			RadarJamRadius (0),
 			PassengerTurret (false),
 
-			Bounty_Message (false),
-			Bounty_FriendlyMessage (false),
-			Bounty_Modifier (0),
-			Bounty_FriendlyModifier (0),
-			ImmuneToBounty (false),
-			Bounty_Pillager (false),
+			Bounty(),
 
 			CarryallAllowed(),
 			CarryallSizeLimit ()

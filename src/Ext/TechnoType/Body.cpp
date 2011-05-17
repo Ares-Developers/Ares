@@ -308,14 +308,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 		}
 	}
 
-	// #203 Bounty
-	this->Bounty_Message.Read(&exINI, section, "Bounty.Message");
-	this->Bounty_FriendlyMessage.Read(&exINI, section, "Bounty.FriendlyMessage");
-	this->Bounty_Modifier.Read(&exINI, section, "Bounty.Modifier");
-	this->Bounty_FriendlyModifier.Read(&exINI, section, "Bounty.FriendlyModifier");
-	this->ImmuneToBounty.Read(&exINI, section, "ImmuneToBounty");
-	// #1523 Money-Conversion per applied Damage... tag will be Bounty.Pillager
-	this->Bounty_Pillager.Read(&exINI, section, "Bounty.Pillager");
+	this->Bounty.Read(&exINI, section);
 
 	this->CarryallAllowed.Read(&exINI, section, "Carryall.Allowed");
 	this->CarryallSizeLimit.Read(&exINI, section, "Carryall.SizeLimit");

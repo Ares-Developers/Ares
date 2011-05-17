@@ -33,6 +33,8 @@ public:
 
 	class ExtData : public Extension<TT>
 	{
+		mutable TechnoTypeExt::TT * TypeData;
+		mutable TechnoTypeExt::ExtData * TypeExt;
 	public:
 		// weapon slots fsblargh
 		BYTE idxSlot_Wave;
@@ -59,6 +61,8 @@ public:
 		PoweredUnitClass* PoweredUnit;
 
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
+			TypeData (NULL),
+			TypeExt(NULL),
 			idxSlot_Wave (0),
 			idxSlot_Beam (0),
 			idxSlot_Warp (0),
@@ -98,6 +102,35 @@ public:
 		bool DrawVisualFX();
 
 		UnitTypeClass * GetUnitType();
+
+		TechnoTypeExt::TT * GetTypeData() const {
+			if(!this->TypeData) {
+				this->TypeData = this->AttachedToObject->GetTechnoType();
+			}
+			return this->TypeData;
+		}
+
+		TechnoTypeExt::ExtData * GetTypeExt() const {
+			if(!this->TypeExt) {
+				this->TypeExt = TechnoTypeExt::ExtMap.Find(this->GetTypeData());
+			}
+			return this->TypeExt;
+		}
+
+	protected:
+		template<typename T>
+		T GetBountyValue(Nullable<T> BountyClass::*pMember) const;
+
+	public:
+		bool Get_Bounty_Message() const;
+		bool Get_Bounty_FriendlyMessage() const;
+		double Get_Bounty_Modifier() const;
+		double Get_Bounty_FriendlyModifier() const;
+		// #1523 also Money Conversion -> Pillage
+		bool Get_Bounty_Pillager() const;
+		double Get_Bounty_CostMultiplier() const;
+		double Get_Bounty_PillageMultiplier() const;
+
 	};
 
 	static Container<TechnoExt> ExtMap;

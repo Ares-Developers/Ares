@@ -289,7 +289,9 @@ void HouseTypeExt::ExtData::LoadFromINIFile(HouseTypeClass *pThis, CCINIClass *p
 	}
 
 	this->RandomSelectionWeight = pINI->ReadInteger(pID, "RandomSelectionWeight", this->RandomSelectionWeight);
-		this->CountryListIndex = pINI->ReadInteger(pID, "ListIndex", this->CountryListIndex);
+	this->CountryListIndex = pINI->ReadInteger(pID, "ListIndex", this->CountryListIndex);
+
+	this->Bounty.Read(&exINI, pID);
 }
 
 AnimTypeClass* HouseTypeExt::ExtData::GetParachuteAnim() {
