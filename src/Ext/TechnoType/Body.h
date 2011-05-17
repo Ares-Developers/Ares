@@ -117,13 +117,16 @@ public:
 		DynamicVectorClass<BuildingTypeClass*> PoweredBy;  //!< The buildingtype this unit is powered by or NULL.
 
 		//#203 Bounty
-		Valueable<bool> Bounty_Message;
-		Valueable<bool> Bounty_FriendlyMessage;
-		Valueable<double> Bounty_Modifier;
-		Valueable<double> Bounty_FriendlyModifier;
-		Valueable<bool> ImmuneToBounty;
+		Nullable<bool> Bounty_Message;
+		Nullable<bool> Bounty_FriendlyMessage;
+		Nullable<double> Bounty_Modifier;
+		Nullable<double> Bounty_FriendlyModifier;
+		Nullable<bool> ImmuneToBounty;
 		// #1523 also Money Conversion -> Pillage
-		Valueable<bool> Bounty_Pillager;
+		Nullable<bool> Bounty_Pillager;
+
+		Nullable<bool> CarryallAllowed;
+		Nullable<int> CarryallSizeLimit;
 
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			Survivors_PilotChance (NULL),
@@ -172,12 +175,17 @@ public:
 			CanBeReversed (true),
 			RadarJamRadius (0),
 			PassengerTurret (false),
+
 			Bounty_Message (false),
 			Bounty_FriendlyMessage (false),
 			Bounty_Modifier (0),
 			Bounty_FriendlyModifier (0),
 			ImmuneToBounty (false),
-			Bounty_Pillager (false)
+			Bounty_Pillager (false),
+
+			CarryallAllowed(),
+			CarryallSizeLimit ()
+
 			{
 				this->Insignia.SetAll(NULL);
 				*this->CameoPCX = *this->AltCameoPCX = 0;
@@ -197,6 +205,8 @@ public:
 		}
 
 		bool CameoIsElite();
+
+		bool CarryallCanLift(UnitClass * Target);
 };
 
 	static Container<TechnoTypeExt> ExtMap;
