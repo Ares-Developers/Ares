@@ -913,8 +913,15 @@ DEFINE_HOOK(446AAF, BuildingClass_Place_SkipFreeUnits, 6)
 
 DEFINE_HOOK(71AE85, TemporalClass_CanWarpTarget_PreventChronoBuilding, A)
 {
-	// is this building about to be chronoshifted?
+	// prevent warping buildings that are about to be chronoshifted.
+	// if such building is attacked, it will be removed by the chronosphere
+	// and it won't come back and the affected player can't be defeated.
 	GET(BuildingClass*, pBld, ESI);
-	BuildingExt::ExtData* pExt = BuildingExt::ExtMap.Find(pBld);
-	return pExt->AboutToChronoshift ? 0x71AE93 : 0;
+	if(BuildingExt::ExtData* pExt = BuildingExt::ExtMap.Find(pBld)) {
+		if(pExt->AboutToChronoshift) {
+			return 0x71AE93;
+		}
+	}
+
+	return 0;
 }
