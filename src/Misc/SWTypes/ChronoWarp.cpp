@@ -1,6 +1,7 @@
 #include "ChronoWarp.h"
 #include "../../Ares.h"
 #include "../../Ext/House/Body.h"
+#include "../../Ext/Building/Body.h"
 #include "../../Ext/TechnoType/Body.h"
 #include "../../Utilities/Helpers.Alex.h"
 
@@ -246,6 +247,9 @@ bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 					pBld->DisableTemporal();
 					pBld->SetLayer(Layer::Ground);
 
+					BuildingExt::ExtData* pBldExt = BuildingExt::ExtMap.Find(pBld);
+					pBldExt->AboutToChronoshift = true;
+
 					// register for chronoshift
 					ChronoWarpStateMachine::ChronoWarpContainer Container(pBld, cellUnitTarget, pBld->Location, IsVehicle);
 					RegisteredBuildings.AddItem(Container);
@@ -338,10 +342,14 @@ void ChronoWarpStateMachine::Update() {
 
 					// chronoshift ends
 					pBld->BeingWarpedOut = false;
+					pBld->ActuallyPlacedOnMap = true;
 					pBld->Owner->PowerBlackout = true;
 					pBld->Owner->ShouldRecheckTechTree = true;
 					pBld->EnableTemporal();
 					pBld->SetLayer(Layer::Ground);
+
+					BuildingExt::ExtData* pBldExt = BuildingExt::ExtMap.Find(pBld);
+					pBldExt->AboutToChronoshift = false;
 
 					if(!success) {
 						if(SWTypeExt::ExtData *pExt = SWTypeExt::ExtMap.Find(this->Super->Type)) {

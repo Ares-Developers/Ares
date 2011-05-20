@@ -42,6 +42,9 @@ public:
 		bool isCurrentlyRaided; //!< Whether this building is currently occupied by someone not the actual owner of the structure.
 		bool ignoreNextEVA; //!< This is used when returning raided buildings, to decide whether to play EVA announcements about building capture.
 
+		bool FreeUnits_Done; //!< Prevent free units and aircraft to be created multiple times. Set when the free units have been granted.
+		bool AboutToChronoshift; //!< This building is going to be shifted. It should not be attacked with temporal weapons now. Otherwise it would disappear.
+
 		bool InfiltratedBy(HouseClass *Enterer);
 		cPrismForwarding PrismForwarding;
 
@@ -49,7 +52,7 @@ public:
 
 	public:
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
-			OwnerBeforeRaid(NULL), isCurrentlyRaided(false), ignoreNextEVA(false), PrismForwarding()
+			OwnerBeforeRaid(NULL), isCurrentlyRaided(false), ignoreNextEVA(false), PrismForwarding(), FreeUnits_Done(false), AboutToChronoshift(false)
 			{ };
 
 		virtual ~ExtData() {

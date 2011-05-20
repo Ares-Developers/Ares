@@ -1,6 +1,7 @@
 #include "Body.h"
 #include "../Bullet/Body.h"
 #include "../SWType/Body.h"
+#include "../Building/Body.h"
 #include "../../Misc/SWTypes.h"
 #include "../WarheadType/Body.h"
 #include "../BuildingType/Body.h"
@@ -893,4 +894,27 @@ DEFINE_HOOK(7188F2, TeleportLocomotionClass_Unwarp_SinkJumpJets, 7) {
 	}
 
 	return 0;
+}
+
+DEFINE_HOOK(446AAF, BuildingClass_Place_SkipFreeUnits, 6)
+{
+	// allow free units and non-separate aircraft to be created
+	// only once.
+	GET(BuildingClass*, pBld, EBP);
+	BuildingExt::ExtData* pExt = BuildingExt::ExtMap.Find(pBld);
+	if(!pExt->FreeUnits_Done) {
+		pExt->FreeUnits_Done = true;
+		return 0;
+	}
+
+	// skip handling free units
+	return 0x446FB6;
+}
+
+DEFINE_HOOK(71AE85, TemporalClass_CanWarpTarget_PreventChronoBuilding, A)
+{
+	// is this building about to be chronoshifted?
+	GET(BuildingClass*, pBld, ESI);
+	BuildingExt::ExtData* pExt = BuildingExt::ExtMap.Find(pBld);
+	return pExt->AboutToChronoshift ? 0x71AE93 : 0;
 }
