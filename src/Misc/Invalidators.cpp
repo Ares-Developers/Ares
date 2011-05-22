@@ -348,65 +348,6 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 	return 0;
 }
 
-// #917
-DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateAIBuildables, 6) {
-	const char *errorMsg = "AI House of country [%s] cannot build any object in %s. The AI ain't smart enough for that.\n";
-	bool AllIsWell(true);
-	for(int i = 0; i < HouseClass::Array->Count; ++i) {
-		HouseClass* curHouse = HouseClass::Array->GetItem(i);
-		if(!curHouse->ControlledByHuman() && !curHouse->IsNeutral()) {
-			auto pArray = &RulesClass::Instance->BaseUnit;
-			bool canBuild = false;
-			for(int i = 0; i < pArray->Count; ++i) {
-				auto Item = pArray->GetItem(i);
-				if(curHouse->CanExpectToBuild(Item)) {
-					canBuild = true;
-					break;
-				}
-			}
-			if(!canBuild) {
-				AllIsWell = false;
-				Debug::DevLog(Debug::Error, errorMsg, curHouse->Type->ID, "BaseUnit");
-			}
-
-			auto CheckList = [curHouse, errorMsg, &AllIsWell]
-					(DynamicVectorClass<BuildingTypeClass *> *const List, char * const ListName) -> void {
-				if(!curHouse->FirstBuildableFromArray(List)) {
-					AllIsWell = false;
-					Debug::DevLog(Debug::Error, errorMsg, curHouse->Type->ID, ListName);
-				}
-			};
-
-			// commented out lists that do not cause a crash, according to testers
-			CheckList(&RulesClass::Instance->Shipyard, "Shipyard");
-			CheckList(&RulesClass::Instance->BuildPower, "BuildPower");
-			CheckList(&RulesClass::Instance->BuildRefinery, "BuildRefinery");
-			CheckList(&RulesClass::Instance->BuildWeapons, "BuildWeapons");
-
-//			CheckList(&RulesClass::Instance->BuildConst, "BuildConst");
-//			CheckList(&RulesClass::Instance->BuildBarracks, "BuildBarracks");
-//			CheckList(&RulesClass::Instance->BuildTech, "BuildTech");
-//			CheckList(&RulesClass::Instance->BuildRadar, "BuildRadar");
-//			CheckList(&RulesClass::Instance->ConcreteWalls, "ConcreteWalls");
-//			CheckList(&RulesClass::Instance->BuildDummy, "BuildDummy");
-//			CheckList(&RulesClass::Instance->BuildNavalYard, "BuildNavalYard");
-
-			auto pCountryData = HouseTypeExt::ExtMap.Find(curHouse->Type);
-			CheckList(&pCountryData->Powerplants, "Powerplants");
-
-//			auto pSide = SideClass::Array->GetItem(curHouse->Type->SideIndex);
-//			auto pSideData = SideExt::ExtMap.Find(pSide);
-//			CheckList(&pSideData->BaseDefenses, "Base Defenses");
-		}
-	}
-
-	if(!AllIsWell) {
-		Debug::FatalErrorAndExit("One or more errors were detected while parsing the INI files.\r\n"
-			"Please review the contents of the debug log and correct them.");
-	}
-	return 0;
-}
-
 DEFINE_HOOK(55AFB3, LogicClass_Update_1000, 6)
 {
 

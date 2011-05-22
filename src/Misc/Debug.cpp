@@ -421,3 +421,11 @@ DEFINE_HOOK(534A4D, Theater_Init_ResetLogStatus, 6)
 
 	return 0;
 }
+
+
+DEFINE_HOOK(687C56, INIClass_ReadScenario_ResetLogStatus, 5)
+{
+	// reset this so next scenario startup log is cleaner
+	Debug::bTrackParserErrors = false;
+	return 0;
+}

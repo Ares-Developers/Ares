@@ -77,6 +77,8 @@ class HouseExt
 		}
 
 		void SetFirestormState(bool Active);
+
+		bool CheckBasePlanSanity();
 	};
 
 	static Container<HouseExt> ExtMap;
