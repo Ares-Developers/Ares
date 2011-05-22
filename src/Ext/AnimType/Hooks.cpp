@@ -11,7 +11,7 @@ DEFINE_HOOK(423122, AnimClass_Draw_SetPalette, 6)
 
 	if(pData->Palette.Convert) {
 		*Palette = pData->Palette.Convert;
-		return 0x423358;
+		return 0x4232F4;
 	}
 
 	return 0;
