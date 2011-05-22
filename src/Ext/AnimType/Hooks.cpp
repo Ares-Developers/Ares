@@ -2,16 +2,16 @@
 #include <AnimClass.h>
 #include <BulletClass.h>
 
-DEFINE_HOOK(423122, AnimClass_Draw_SetPalette, 6)
+
+DEFINE_HOOK(4232CE, AnimClass_Draw_SetPalette, 6)
 {
 	GET(AnimTypeClass *, AnimType, EAX);
-	LEA_STACK(ConvertClass **, Palette, 0x30);
 
 	auto pData = AnimTypeExt::ExtMap.Find(AnimType);
 
 	if(pData->Palette.Convert) {
-		*Palette = pData->Palette.Convert;
-		return 0x4232F4;
+		R->ECX<ConvertClass *>(pData->Palette.Convert);
+		return 0x4232D4;
 	}
 
 	return 0;
