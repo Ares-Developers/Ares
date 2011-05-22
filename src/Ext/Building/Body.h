@@ -6,6 +6,7 @@
 #include <TechnoClass.h>
 #include <set>
 
+#include "../BuildingType/Body.h"
 #include "../_Container.hpp"
 #include "../../Ares.h"
 
@@ -56,6 +57,7 @@ public:
 			{ };
 
 		virtual ~ExtData() {
+			BuildingTypeExt::cPrismForwarding::RemoveFromNetwork(this->AttachedToObject, true);
 		}
 
 		virtual size_t Size() const { return sizeof(*this); };

@@ -59,6 +59,11 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 			Debug::Log("[Developer Error] %s has an invalid PrismForwarding.ChargeDelay (%d), overriding to 1.\n", pThis->ID, ChargeDelay);
 		}
 
+		auto SuperWH = RulesClass::Instance->C4Warhead;
+		if(!SuperWH) {
+			SuperWH = WarheadTypeClass::Find("Super");
+		}
+
 		if(pINI->ReadString(pID, "PrismForwarding.SupportWeapon", "", Ares::readBuffer, Ares::readLength)) {
 			if (WeaponTypeClass *cWeapon = WeaponTypeClass::FindOrAllocate(Ares::readBuffer)) {
 				int idxWeapon = this->GetUnusedWeaponSlot(pThis, 0); //rookie weapons
@@ -69,6 +74,9 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 						"weapon slots to assign the support weapon to.", pID);
 				}
 				this->SupportWeaponIndex = idxWeapon;
+				if(!cWeapon->Warhead) {
+					cWeapon->Warhead = SuperWH;
+				}
 				cWeapon->NeverUse = true; //the modder shouldn't be expected to have to set this
 				CoordStruct supportFLH;
 				pThis->set_Weapon(idxWeapon, cWeapon);
@@ -92,6 +100,9 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 						"weapon slots to assign the elite support weapon to.", pID);
 				}
 				this->EliteSupportWeaponIndex = idxWeapon;
+				if(!cWeapon->Warhead) {
+					cWeapon->Warhead = SuperWH;
+				}
 				cWeapon->NeverUse = true; //the modder shouldn't be expected to have to set this
 				CoordStruct supportFLH;
 				pThis->set_EliteWeapon(idxWeapon, cWeapon);
