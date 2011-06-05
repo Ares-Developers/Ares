@@ -834,6 +834,9 @@ void BuildingExt::ExtData::KickOutClones(TechnoClass * Production) {
 	if(CloningSources.Count || IsUnit) {
 		for(int i = 0; i < AllBuildings.Count; ++i) {
 			auto B = AllBuildings[i];
+			if(B->InLimbo) {
+				continue;
+			}
 			auto BType = B->Type;
 
 			bool ShouldClone(false);

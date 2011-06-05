@@ -10,6 +10,7 @@
 #include "../Ext/HouseType/Body.h"
 #include "../Ext/Side/Body.h"
 #include "../Ext/TechnoType/Body.h"
+#include "../Ext/BuildingType/Body.h"
 #include <vector>
 #include <algorithm>
 #include <string>
@@ -112,6 +113,26 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 			if(pExtraData->PoweredBy.Count) {
 				Debug::DevLog(Debug::Error, "[%s]PowersUnit=%s, but [%s] uses PoweredBy=!\n", Item->ID, PowersUnit->ID, PowersUnit->ID);
 				Item->PowersUnit = NULL;
+			}
+		}
+
+		for(signed int i = pData->ClonedAt.Count - 1; i >= 0; --i) {
+			auto Cloner = pData->ClonedAt[i];
+			if(Cloner->Factory) {
+				pData->ClonedAt.RemoveItem(i);
+				Debug::DevLog(Debug::Error, "[%s]ClonedAt includes %s, but %s has Factory= settings. This combination is not supported.\n"
+						"(Protip: Factory= is not what controls unit exit behaviour, WeaponsFactory= and GDI/Nod/YuriBarracks= is.)\n"
+					, Item->ID, Cloner->ID, Cloner->ID);
+			}
+		}
+
+		if(!IsFoot) {
+			auto BItem = specific_cast<BuildingTypeClass *>(Item);
+			auto pBData = BuildingTypeExt::ExtMap.Find(BItem);
+			if(!!pBData->CloningFacility && BItem->Factory) {
+				pBData->CloningFacility = false;
+				Debug::DevLog(Debug::Error, "[%s] cannot have both CloningFacility= and Factory=.\n"
+					, Item->ID);
 			}
 		}
 	}
