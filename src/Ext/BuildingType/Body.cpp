@@ -231,6 +231,8 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 	}
 
 	this->ReverseEngineersVictims.Read(&exINI, pID, "ReverseEngineersVictims");
+
+	this->CloningFacility.Read(&exINI, pID, "CloningFacility");
 }
 
 void BuildingTypeExt::ExtData::CompleteInitialization(BuildingTypeClass *pThis) {

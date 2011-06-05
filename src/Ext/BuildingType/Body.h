@@ -135,6 +135,9 @@ public:
 
 		Valueable<bool> ReverseEngineersVictims;
 
+		// clones vehicles
+		Valueable<bool> CloningFacility;
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			Solid_Height (0),
 			IsCustom (false),
@@ -166,7 +169,8 @@ public:
 			PowerOutageDuration (0),
 			AllowedOccupiers (),
 			PrismForwarding(),
-			ReverseEngineersVictims (false)
+			ReverseEngineersVictims (false),
+			CloningFacility (false)
 			{ };
 
 		virtual ~ExtData() {

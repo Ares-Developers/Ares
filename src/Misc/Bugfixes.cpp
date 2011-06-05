@@ -204,24 +204,6 @@ A_FINE_HOOK(74036E, FooClass_GetCursorOverObject, 5)
 }
 */
 
-// alternative factory search - instead of same [Type], use any of same Factory= and Naval=
-DEFINE_HOOK(4444E2, BuildingClass_KickOutUnit, 6)
-{
-	GET(BuildingClass *, Src, ESI);
-	GET(BuildingClass *, Tst, EBP);
-
-	if(Src != Tst
-	 && Tst->GetCurrentMission() == mission_Guard
-	 && Tst->Type->Factory == Src->Type->Factory
-	 && Tst->Type->Naval == Src->Type->Naval
-	 && !Tst->Factory)
-	{
-		return 0x44451F;
-	}
-
-	return 0x444508;
-}
-
 // 42461D, 6
 // 42463A, 6
 // correct warhead for animation damage
