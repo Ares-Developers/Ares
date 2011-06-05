@@ -812,7 +812,9 @@ void BuildingExt::ExtData::KickOutClones(TechnoClass * Production) {
 
 	auto KickOutClone = [KickOutCoords, ProductionType, FactoryOwner](BuildingClass *B) -> void {
 		auto Clone = reinterpret_cast<TechnoClass *>(ProductionType->CreateObject(FactoryOwner));
-		B->KickOutUnit(Clone, KickOutCoords);
+		if(!B->KickOutUnit(Clone, KickOutCoords)) {
+			Clone->UnInit();
+		}
 	};
 
 	bool IsUnit(true);
