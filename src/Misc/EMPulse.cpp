@@ -133,30 +133,7 @@ void EMPulse::deliverEMPDamage(ObjectClass *object, TechnoClass *Firer, WarheadT
 
 			// is techno destroyed by EMP?
 			if (thresholdExceeded(curTechno)) {
-				curTechno->Destroyed(Firer);
-				if (curTechno->IsInAir() && curTechno->WhatAmI() == abs_Aircraft) {
-					curTechno->Crash(Firer);
-				} else {
-					curTechno->Destroy();
-					curTechno->Remove();
-					curTechno->UnInit();
-				}
-
-				// play unit voice
-				if (curTechno->Owner == HouseClass::Player) {
-					TechnoTypeClass *TT = curTechno->GetTechnoType();
-					if (curTechno->IsInAir()) {
-						VocClass::PlayAt(TT->VoiceCrashing, &curTechno->Location, NULL);
-					}
-
-					if (TT->VoiceDie.Count) {
-						VocClass::PlayAt(TT->VoiceDie[rand() % TT->VoiceDie.Count], &curTechno->Location, NULL);
-					}
-
-					if (TT->DieSound.Count) {
-						VocClass::PlayAt(TT->DieSound[rand() % TT->DieSound.Count], &curTechno->Location, NULL);
-					}
-				}
+				TechnoExt::Destroy(curTechno, Firer);
 			}
 		}
 	}
@@ -456,7 +433,7 @@ void EMPulse::updateSpawnManager(TechnoClass * Techno, ObjectClass * Source = NU
 				SpawnNode *spawn = SM->SpawnedNodes.GetItem(i);
 				// kill every spawned unit that is in the air. exempt missiles.
 				if(!spawn->IsSpawnMissile && spawn->Unit && spawn->Status >= 0 && spawn->Status <= 4) {
-					spawn->Unit->Crash(Source);
+					TechnoExt::Destroy(spawn->Unit, generic_cast<TechnoClass*>(Source));
 				}
 			}
 
@@ -639,11 +616,7 @@ bool EMPulse::enableEMPEffect(TechnoClass * Victim, ObjectClass * Source) {
 				if (EMPulse::verbose) {
 					Debug::Log("[enableEMPEffect] Plane crash: %s\n", Aircraft->get_ID());
 				}
-				if (Victim->Owner == HouseClass::Player) {
-					VocClass::PlayAt(Aircraft->Type->VoiceCrashing, &Aircraft->Location, NULL);
-				}
-				Aircraft->Crash(Source);
-				Aircraft->Destroyed(Source);
+				TechnoExt::Destroy(Victim, generic_cast<TechnoClass*>(Source));
 				return true;
 			}
 		}
