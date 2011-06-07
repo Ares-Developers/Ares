@@ -92,7 +92,7 @@ public:
 				// the not quite so fast way. skip everything not in the air.
 				for(int i=0; i<TechnoClass::Array->Count; ++i) {
 					TechnoClass *Techno = TechnoClass::Array->GetItem(i);
-					if(Techno->IsInAir()) {
+					if(Techno->GetHeight() > 0) {
 						// rough estimation
 						if(Techno->Location.DistanceFrom(*coords) <= spread * 256) {
 							set->insert(Techno);

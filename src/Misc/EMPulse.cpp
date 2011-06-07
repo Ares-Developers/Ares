@@ -285,6 +285,29 @@ bool EMPulse::isCurrentlyEMPImmune(TechnoClass * Target, HouseClass * SourceHous
 		return true;
 	}
 
+	if(Target->WhatAmI() == abs_Unit) {
+		if(BuildingClass* pBld = MapClass::Instance->GetCellAt(&Target->Location)->GetBuilding()) {
+			if(pBld->Type->WeaponsFactory) {
+				if(pBld->IsUnderEMP() || pBld == Target->GetNthLink(0)) {
+					if (EMPulse::verbose) {
+						Debug::Log("[isCurrentlyEMPImmune] %s should not be disabled. Still in war factory: %s\n", Target->get_ID(), pBld->get_ID());
+					}
+					return true;
+				}
+
+				// units requiring an operator can't deactivate on the bib
+				// because nobody could enter it afterwards.
+				TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(Target);
+				if(!pData->IsOperated()) {
+					if (EMPulse::verbose) {
+						Debug::Log("[isCurrentlyEMPImmune] %s should not be disabled. Would be unoperated on bib: %s\n", Target->get_ID(), pBld->get_ID());
+					}
+					return true;
+				}
+			}
+		}
+	}
+
 	// the current status does allow this target to
 	// be affected by EMPs. It may be immune, though.
 	return isEMPImmune(Target, SourceHouse);
@@ -612,7 +635,7 @@ bool EMPulse::enableEMPEffect(TechnoClass * Victim, ObjectClass * Source) {
 	} else {
 		if (AircraftClass * Aircraft = specific_cast<AircraftClass *>(Victim)) {
 			// crash flying aircraft
-			if (Aircraft->IsInAir()) {
+			if (Aircraft->GetHeight() > 0) {
 				if (EMPulse::verbose) {
 					Debug::Log("[enableEMPEffect] Plane crash: %s\n", Aircraft->get_ID());
 				}
