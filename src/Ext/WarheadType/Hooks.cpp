@@ -118,9 +118,9 @@ DEFINE_HOOK(7384BD, UnitClass_ReceiveDamage_OreMinerUnderAttack, 6)
 	GET_STACK(WarheadTypeClass *, WH, STACK_OFFS(0x44, -0xC));
 
 	auto pData = WarheadTypeExt::ExtMap.Find(WH);
-	return (pData->Malicious)
-		? 0
-		: 0x738535
+	return !pData->Malicious
+		? 0x738535
+		: 0
 	;
 }
 
