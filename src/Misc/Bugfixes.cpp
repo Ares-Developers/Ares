@@ -212,6 +212,7 @@ DEFINE_HOOK(4444E2, BuildingClass_KickOutUnit, 6)
 
 	if(Src != Tst
 	 && Tst->GetCurrentMission() == mission_Guard
+	 && !Tst->IsUnderEMP() // issue #1571
 	 && Tst->Type->Factory == Src->Type->Factory
 	 && Tst->Type->Naval == Src->Type->Naval
 	 && !Tst->Factory)
