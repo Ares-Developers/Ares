@@ -27,7 +27,7 @@ void TechnoExt::SpawnSurvivors(FootClass *pThis, TechnoClass *pKiller, bool Sele
 	TechnoExt::ExtData *pSelfData = TechnoExt::ExtMap.Find(pThis);
 
 	CoordStruct loc = pThis->Location;
-	int chance = 0;
+	int chance = pData->Survivors_PilotChance.BindTo(pThis)->Get();
 
 	// always eject passengers, but crew only if not already processed.
 	if(!pSelfData->Survivors_Done && !pSelfData->DriverKilled && !IgnoreDefenses) {
@@ -120,7 +120,8 @@ void TechnoExt::SpawnSurvivors(FootClass *pThis, TechnoClass *pKiller, bool Sele
 */
 bool TechnoExt::EjectSurvivor(FootClass *Survivor, CoordStruct *loc, bool Select)
 {
-	bool success;
+	bool success = false;
+	bool chuted = false;
 	CoordStruct tmpCoords;
 	CellClass * pCell = MapClass::Instance->GetCellAt(loc);
 	pCell->GetCoordsWithBridge(&tmpCoords);
@@ -128,15 +129,32 @@ bool TechnoExt::EjectSurvivor(FootClass *Survivor, CoordStruct *loc, bool Select
 
 	int floorZ = tmpCoords.Z;
 	if(loc->Z - floorZ > 208) {
+		// HouseClass::CreateParadrop does this when building passengers for a paradrop... it might be a wise thing to mimic!
+		Survivor->Remove();
+
 		success = Survivor->SpawnParachuted(loc);
+		chuted = true;
 	} else {
 		loc->Z = floorZ;
 		success = Survivor->Put(loc, ScenarioClass::Instance->Random.RandomRanged(0, 7));
 	}
 	RET_UNLESS(success);
 	Survivor->Transporter = NULL;
-	Survivor->Scatter(0xB1CFE8, 1, 0);
-	Survivor->QueueMission(Survivor->Owner->ControlledByHuman() ? mission_Guard : mission_Hunt, 0);
+	Survivor->LastMapCoords = pCell->MapCoords;
+
+	// don't ask, don't tell
+	if(chuted) {
+		bool scat = Survivor->OnBridge;
+		DWORD *flagsOfSomeKind = reinterpret_cast<DWORD *>(pCell->unknown_121 + 3);
+		if((flagsOfSomeKind[scat] & 0x1C) == 0x1C) {
+			pCell->ScatterContent(0xA8F200, 1, 1, scat);
+		}
+	} else {
+		Survivor->Scatter(0xB1CFE8, 1, 0);
+		Survivor->QueueMission(Survivor->Owner->ControlledByHuman() ? mission_Guard : mission_Hunt, 0);
+	}
+	Survivor->unknown_bool_690 = Survivor->unknown_bool_691 = false;
+
 	if(Select) {
 		Survivor->Select();
 	}
