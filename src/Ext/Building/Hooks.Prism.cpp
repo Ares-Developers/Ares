@@ -48,7 +48,6 @@ DEFINE_HOOK(44B2FE, BuildingClass_Mi_Attack_IsPrism, 6)
 			BuildingTypeExt::cPrismForwarding::SetChargeDelay(B, LongestChain);
 
 		} else if (B->PrismStage == pcs_Slave) {
-			Debug::Log("PrismForwarding: Converting Slave to Master\n");
 			//a slave tower is changing into a master tower at the last second
 			B->PrismStage = pcs_Master;
 			B->PrismTargetCoords.X = 0;
@@ -106,8 +105,7 @@ DEFINE_HOOK(4503F0, BuildingClass_Update_Prism, 9)
 						BuildingExt::ExtData *pTargetData = BuildingExt::ExtMap.Find(pTarget);
 						BuildingTypeClass *pType = pThis->Type;
 						BuildingTypeExt::ExtData *pTypeData = BuildingTypeExt::ExtMap.Find(pType);
-						Debug::Log("[PrismForwarding] Slave firing. SM=%d MR=%lf\n",
-							pTypeData->PrismForwarding.SupportModifier.Get(), pData->PrismForwarding.ModifierReserve);
+						//slave firing
 						pTargetData->PrismForwarding.ModifierReserve +=
 							(pTypeData->PrismForwarding.SupportModifier.Get() + pData->PrismForwarding.ModifierReserve);
 						pTargetData->PrismForwarding.DamageReserve +=
@@ -220,8 +218,6 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 			EBolt* supportEBolt;
 			GAME_ALLOC(EBolt, supportEBolt);
 			if (supportEBolt) {
-				supportEBolt->Owner = B;
-				supportEBolt->WeaponSlot = idxSupport;
 				supportEBolt->AlternateColor = supportWeapon->IsAlternateColor;
 				WeaponTypeExt::BoltExt[supportEBolt] = WeaponTypeExt::ExtMap.Find(supportWeapon);
 				supportEBolt->Fire(SourceXYZ, *pTargetXYZ, 0); //messing with 3rd arg seems to make bolts more jumpy, and parts of them disappear
@@ -346,6 +342,13 @@ DEFINE_HOOK(454B3D, PrismForward_BuildingPowerDown, 6)
 	GET(BuildingClass *, B, ESI);
 	// this building just realised it needs to go offline
 	// it unregistered itself from powered unit controls but hasn't done anything else yet
+	BuildingTypeExt::cPrismForwarding::RemoveFromNetwork(B, true);
+	return 0;
+}
+
+DEFINE_HOOK(44EBF0, PrismForward_BuildingRemoved, 5)
+{
+	GET(BuildingClass *, B, ECX);
 	BuildingTypeExt::cPrismForwarding::RemoveFromNetwork(B, true);
 	return 0;
 }

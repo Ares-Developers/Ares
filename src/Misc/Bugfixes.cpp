@@ -212,6 +212,7 @@ DEFINE_HOOK(4444E2, BuildingClass_KickOutUnit, 6)
 
 	if(Src != Tst
 	 && Tst->GetCurrentMission() == mission_Guard
+	 && !Tst->IsUnderEMP() // issue #1571
 	 && Tst->Type->Factory == Src->Type->Factory
 	 && Tst->Type->Naval == Src->Type->Naval
 	 && !Tst->Factory)
@@ -508,33 +509,6 @@ A_FINE_HOOK(67E75B, LoadGame_StallUI, 6)
 }
 */
 
-
-DEFINE_HOOK(505B36, HouseClass_GenerateAIBuildList_C0, 8)
-{
-	LEA_STACK(DynamicVectorClass<BuildingTypeClass *> *, PlannedBase, 0x14);
-	return PlannedBase->Count < 1
-	 ? 0x505C95
-	 : 0
-	;
-}
-
-DEFINE_HOOK(505B92, HouseClass_GenerateAIBuildList_C1, 7)
-{
-	LEA_STACK(DynamicVectorClass<BuildingTypeClass *> *, PlannedBase, 0x14);
-	return PlannedBase->Count < 2
-	 ? 0x505C95
-	 : 0
-	;
-}
-
-DEFINE_HOOK(505BE1, HouseClass_GenerateAIBuildList_C2, 7)
-{
-	LEA_STACK(DynamicVectorClass<BuildingTypeClass *> *, PlannedBase, 0x14);
-	return PlannedBase->Count < 3
-	 ? 0x505C95
-	 : 0
-	;
-}
 
 DEFINE_HOOK(4242CA, AnimClass_Update_FixIE_TrailerSeperation, 6)
 {
@@ -872,4 +846,46 @@ DEFINE_HOOK_AGAIN(65EC4A, TeamTypeClass_ValidateHouse, 6)
 
 	// no.
 	return (R->get_Origin() == 0x65D8FB) ? 0x65DD1B : 0x65F301;
+}
+
+DEFINE_HOOK(70CBDA, TechnoClass_DealParticleDamage, 6)
+{
+	GET(TechnoClass *, pSource, EDX);
+	R->Stack<HouseClass *>(0xC, pSource->Owner);
+	return 0;
+}
+
+DEFINE_HOOK(62CDE8, ParticleClass_Update_Fire, 5)
+{
+	GET(ParticleClass *, pParticle, ESI);
+	if(auto System = pParticle->ParticleSystem) {
+		if(auto Owner = System->Owner) {
+			R->Stack<TechnoClass *>(0x4, Owner);
+			R->Stack<HouseClass *>(0x10, Owner->Owner);
+		}
+	}
+	return 0;
+}
+
+DEFINE_HOOK(62C2ED, ParticleClass_Update_Gas, 6)
+{
+	GET(ParticleClass *, pParticle, EBP);
+	if(auto System = pParticle->ParticleSystem) {
+		if(auto wtf = System->unknown_FC) {
+			auto pWTF = reinterpret_cast<HouseClass *>(wtf);
+			auto idx = HouseClass::Array->FindItemIndex(&pWTF);
+			auto pHouseWTF = (idx == -1)
+				? NULL
+				: HouseClass::Array->GetItem(idx)
+			;
+			Debug::Log("ParticleSystem [%s] has field 0xFC set to %p, which matches pointer for house %s\n",
+				System->Type->ID, wtf, pHouseWTF ? pHouseWTF->Type->ID : "UNKNOWN"
+			);
+		}
+		if(auto Owner = System->Owner) {
+			R->Stack<TechnoClass *>(0x0, Owner);
+			R->Stack<HouseClass *>(0xC, Owner->Owner);
+		}
+	}
+	return 0;
 }

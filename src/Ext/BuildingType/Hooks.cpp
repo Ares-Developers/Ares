@@ -7,7 +7,7 @@
 
 DEFINE_HOOK(445F80, BuildingClass_ChangeOwnership, 5)
 {
-	GET(BuildingClass *, pThis, ESI);
+	GET(BuildingClass *, pThis, ECX);
 	if(pThis->Type->SecretLab) {
 		BuildingTypeExt::UpdateSecretLabOptions(pThis);
 	}

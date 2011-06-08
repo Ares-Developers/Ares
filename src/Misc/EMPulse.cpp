@@ -133,30 +133,7 @@ void EMPulse::deliverEMPDamage(ObjectClass *object, TechnoClass *Firer, WarheadT
 
 			// is techno destroyed by EMP?
 			if (thresholdExceeded(curTechno)) {
-				curTechno->Destroyed(Firer);
-				if (curTechno->IsInAir() && curTechno->WhatAmI() == abs_Aircraft) {
-					curTechno->Crash(Firer);
-				} else {
-					curTechno->Destroy();
-					curTechno->Remove();
-					curTechno->UnInit();
-				}
-
-				// play unit voice
-				if (curTechno->Owner == HouseClass::Player) {
-					TechnoTypeClass *TT = curTechno->GetTechnoType();
-					if (curTechno->IsInAir()) {
-						VocClass::PlayAt(TT->VoiceCrashing, &curTechno->Location, NULL);
-					}
-
-					if (TT->VoiceDie.Count) {
-						VocClass::PlayAt(TT->VoiceDie[rand() % TT->VoiceDie.Count], &curTechno->Location, NULL);
-					}
-
-					if (TT->DieSound.Count) {
-						VocClass::PlayAt(TT->DieSound[rand() % TT->DieSound.Count], &curTechno->Location, NULL);
-					}
-				}
+				TechnoExt::Destroy(curTechno, Firer);
 			}
 		}
 	}
@@ -283,6 +260,29 @@ bool EMPulse::isCurrentlyEMPImmune(TechnoClass * Target, HouseClass * SourceHous
 	// iron curtained objects can not be affected by EMPs
 	if (Target->IsIronCurtained()) {
 		return true;
+	}
+
+	if(Target->WhatAmI() == abs_Unit) {
+		if(BuildingClass* pBld = MapClass::Instance->GetCellAt(&Target->Location)->GetBuilding()) {
+			if(pBld->Type->WeaponsFactory) {
+				if(pBld->IsUnderEMP() || pBld == Target->GetNthLink(0)) {
+					if (EMPulse::verbose) {
+						Debug::Log("[isCurrentlyEMPImmune] %s should not be disabled. Still in war factory: %s\n", Target->get_ID(), pBld->get_ID());
+					}
+					return true;
+				}
+
+				// units requiring an operator can't deactivate on the bib
+				// because nobody could enter it afterwards.
+				TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(Target);
+				if(!pData->IsOperated()) {
+					if (EMPulse::verbose) {
+						Debug::Log("[isCurrentlyEMPImmune] %s should not be disabled. Would be unoperated on bib: %s\n", Target->get_ID(), pBld->get_ID());
+					}
+					return true;
+				}
+			}
+		}
 	}
 
 	// the current status does allow this target to
@@ -433,7 +433,7 @@ void EMPulse::updateSpawnManager(TechnoClass * Techno, ObjectClass * Source = NU
 				SpawnNode *spawn = SM->SpawnedNodes.GetItem(i);
 				// kill every spawned unit that is in the air. exempt missiles.
 				if(!spawn->IsSpawnMissile && spawn->Unit && spawn->Status >= 0 && spawn->Status <= 4) {
-					spawn->Unit->Crash(Source);
+					TechnoExt::Destroy(spawn->Unit, generic_cast<TechnoClass*>(Source));
 				}
 			}
 
@@ -459,13 +459,12 @@ void EMPulse::updateSpawnManager(TechnoClass * Techno, ObjectClass * Source = NU
 */
 void EMPulse::updateSlaveManager(TechnoClass * Techno) {
 	if (SlaveManagerClass *SM = Techno->SlaveManager) {
-
 		if (Techno->EMPLockRemaining > 0) {
 			// pause the timers so spawning and regenerating is deferred.
-			SM->RespawnTimer.StartTime = -1;
+			SM->SuspendWork();
 		} else {
 			// resume slaving around.
-			SM->RespawnTimer.StartIfEmpty();
+			SM->ResumeWork();
 		}
 	}
 }
@@ -585,6 +584,11 @@ bool EMPulse::thresholdExceeded(TechnoClass * Victim) {
 	If Victim mind controls any units, they are freed. Spawned units are
 	killed.
 
+	This function may be called only once, and only if the victim hasn't been
+	EMP-disabled yet. This function might not deactivate the victim right away,
+	but it has to do all the other stuff now, or Slave Miners won't stop working.
+	Or other bad stuff happens.
+
 	\param Victim The Techno that is under EMP effect.
 	\param Source The house to credit kills to.
 
@@ -608,15 +612,152 @@ bool EMPulse::enableEMPEffect(TechnoClass * Victim, ObjectClass * Source) {
 	} else {
 		if (AircraftClass * Aircraft = specific_cast<AircraftClass *>(Victim)) {
 			// crash flying aircraft
-			if (Aircraft->IsInAir()) {
+			if (Aircraft->GetHeight() > 0) {
 				if (EMPulse::verbose) {
 					Debug::Log("[enableEMPEffect] Plane crash: %s\n", Aircraft->get_ID());
+				}
+				TechnoExt::Destroy(Victim, generic_cast<TechnoClass*>(Source));
+				return true;
+			}
+		}
+	}
+
+	// cache the last mission this thing did
+	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(Victim);
+	pData->EMPLastMission = Victim->CurrentMission;
+	
+	// remove the unit from its team
+	if (FootClass * Foot = generic_cast<FootClass *>(Victim)) {
+		if (Foot->BelongsToATeam()) {
+			Foot->Team->LiberateMember(Foot);
+		}
+	}
+
+	// deactivate and sparkle
+	if (!Victim->Deactivated && IsDeactivationAdvisable(Victim)) {
+		bool selected = Victim->IsSelected;
+		Victim->Deactivate();
+		if(selected) {
+			bool feedback = Unsorted::MoveFeedback;
+			Unsorted::MoveFeedback = false;
+			Victim->Select();
+			Unsorted::MoveFeedback = feedback;
+		}
+	}
+
+	// release all captured units.
+	if (Victim->CaptureManager) {
+		Victim->CaptureManager->FreeAll();
+	}
+
+	// update managers.
+	updateSpawnManager(Victim, Source);
+	updateSlaveManager(Victim);
+
+	// set the sparkle animation.
+	UpdateSparkleAnim(Victim);
+
+	// warn the player
+	announceAttack(Victim);
+
+	// the unit still lives.
+	return false;
+}
+
+//! Sets all properties to re-enable a Techno.
+/*!
+	Reactivates the Techno. The EMP sparkle animation is stopped.
+
+	This function may be called only once, and only if the EMP effect
+	is on.
+
+	\param Victim The Techno that shall have its EMP effects removed.
+
+	\author AlexB
+	\date 2010-05-03
+*/
+void EMPulse::DisableEMPEffect(TechnoClass * Victim) {
+	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(Victim);
+	bool HasPower = true;
+
+	if (BuildingClass * Building = specific_cast<BuildingClass *>(Victim)) {
+		HasPower = HasPower && Building->IsPowerOnline();
+
+		if (!Building->Type->InvisibleInGame) {
+			if (HasPower) {
+				Building->EnableStuff();
+			}
+			updateRadarBlackout(Building);
+
+			BuildingTypeClass * pType = Building->Type;
+			if (pType->Factory) {
+				Building->Owner->Update_FactoriesQueues(pType->Factory, pType->Naval, 0);
+			}
+		}
+	}
+
+	Victim->Owner->ShouldRecheckTechTree = true;
+	Victim->Owner->PowerBlackout = true;
+
+	if (Victim->Deactivated && HasPower) {
+		Victim->Reactivate();
+	}
+
+	// allow to spawn units again.
+	updateSpawnManager(Victim);
+	updateSlaveManager(Victim);
+
+	// update the animation
+	UpdateSparkleAnim(Victim);
+
+	// get harvesters back to work and ai units to hunt
+	if (FootClass * Foot = generic_cast<FootClass *>(Victim)) {
+		bool hasMission = false;
+		if (UnitClass * Unit = specific_cast<UnitClass *>(Victim)) {
+			if (Unit->Type->Harvester || Unit->Type->ResourceGatherer) {
+				// prevent unloading harvesters from being irritated.
+				if (pData->EMPLastMission == mission_Guard) {
+					pData->EMPLastMission = mission_Enter;
+				}
+
+				Unit->QueueMission(pData->EMPLastMission, true);
+				hasMission = true;
+			}
+		}
+
+		if(!hasMission && !Foot->Owner->ControlledByHuman()) {
+			Foot->QueueMission(mission_Hunt, false);
+		}
+	}
+}
+
+// the functions below are not related to EMP. they aren't official
+// and certainly don't endorse you to use them. 2011-05-14 AlexB
+
+bool EMPulse::EnableEMPEffect2(TechnoClass * Victim) {
+	Victim->Owner->ShouldRecheckTechTree = true;
+	Victim->Owner->PowerBlackout = true;
+
+	if (BuildingClass * Building = specific_cast<BuildingClass *>(Victim)) {
+		Building->DisableStuff();
+		updateRadarBlackout(Building);
+
+		BuildingTypeClass * pType = Building->Type;
+		if (pType->Factory) {
+			Building->Owner->Update_FactoriesQueues(pType->Factory, pType->Naval, 0);
+		}
+	} else {
+		if (AircraftClass * Aircraft = specific_cast<AircraftClass *>(Victim)) {
+			// crash flying aircraft
+			if (Aircraft->IsInAir()) {
+				if (EMPulse::verbose) {
+					Debug::Log("[EnableEMPEffect2] Plane crash: %s\n", Aircraft->get_ID());
 				}
 				if (Victim->Owner == HouseClass::Player) {
 					VocClass::PlayAt(Aircraft->Type->VoiceCrashing, &Aircraft->Location, NULL);
 				}
-				Aircraft->Crash(Source);
-				Aircraft->Destroyed(Source);
+				Aircraft->Crash(NULL);
+				Aircraft->Destroyed(NULL);
 				return true;
 			}
 		}
@@ -644,38 +785,28 @@ bool EMPulse::enableEMPEffect(TechnoClass * Victim, ObjectClass * Source) {
 			Unsorted::MoveFeedback = feedback;
 		}
 
+		if(generic_cast<FootClass *>(Victim)) {
+			Victim->QueueMission(mission_Sleep, true);
+		}
+
 		// release all captured units.
 		if (Victim->CaptureManager) {
 			Victim->CaptureManager->FreeAll();
 		}
 
 		// update managers.
-		updateSpawnManager(Victim, Source);
+		updateSpawnManager(Victim, NULL);
 		updateSlaveManager(Victim);
 
 		// set the sparkle animation.
 		UpdateSparkleAnim(Victim);
 	}
 
-	// warn the player
-	if(Source) announceAttack(Victim);
-
 	// the unit still lives.
 	return false;
 }
 
-//! Sets all properties to re-enable a Techno.
-/*!
-	Reactivates the Techno. The EMP sparkle animation is stopped.
-
-	Radars come back online. Spawners are allowed to resume their work.
-
-	\param Victim The Techno that shall have its EMP effects removed.
-
-	\author AlexB
-	\date 2010-05-03
-*/
-void EMPulse::DisableEMPEffect(TechnoClass * Victim) {
+void EMPulse::DisableEMPEffect2(TechnoClass * Victim) {
 	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(Victim);
 	bool HasPower = pData->IsPowered() && pData->IsOperated();
 

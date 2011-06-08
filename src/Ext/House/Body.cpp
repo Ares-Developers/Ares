@@ -1,4 +1,5 @@
 #include "Body.h"
+#include "../HouseType/Body.h"
 #include "../Building/Body.h"
 #include "../BuildingType/Body.h"
 #include "../TechnoType/Body.h"
@@ -212,6 +213,66 @@ void HouseExt::ExtData::SetFirestormState(bool Active) {
 	MapClass::Instance->Update_Pathfinding_1();
 	MapClass::Instance->Update_Pathfinding_2(&AffectedCoords);
 };
+
+/**
+ * moved the fix for #917 here - check a house's ability to handle base plan before it actually tries to generate a base plan, not at game start
+ * (we have no idea what houses at game start are supposed to be able to do base planning, so mission maps fuck up)
+ */
+bool HouseExt::ExtData::CheckBasePlanSanity() {
+	auto House = this->AttachedToObject;
+	// this shouldn't happen, but you never know
+	if(House->ControlledByHuman() || House->IsNeutral()) {
+		return true;
+	}
+
+	const char *errorMsg = "AI House of country [%s] cannot build any object in %s. The AI ain't smart enough for that.\n";
+	bool AllIsWell(true);
+
+	auto pArray = &RulesClass::Instance->BaseUnit;
+	bool canBuild = false;
+	for(int i = 0; i < pArray->Count; ++i) {
+		auto Item = pArray->GetItem(i);
+		if(House->CanExpectToBuild(Item)) {
+			canBuild = true;
+			break;
+		}
+	}
+	if(!canBuild) {
+		AllIsWell = false;
+		Debug::DevLog(Debug::Error, errorMsg, House->Type->ID, "BaseUnit");
+	}
+
+	auto CheckList = [House, errorMsg, &AllIsWell]
+			(DynamicVectorClass<BuildingTypeClass *> *const List, char * const ListName) -> void {
+		if(!House->FirstBuildableFromArray(List)) {
+			AllIsWell = false;
+			Debug::DevLog(Debug::Error, errorMsg, House->Type->ID, ListName);
+		}
+	};
+
+	// commented out lists that do not cause a crash, according to testers
+//	CheckList(&RulesClass::Instance->Shipyard, "Shipyard");
+	CheckList(&RulesClass::Instance->BuildPower, "BuildPower");
+	CheckList(&RulesClass::Instance->BuildRefinery, "BuildRefinery");
+	CheckList(&RulesClass::Instance->BuildWeapons, "BuildWeapons");
+
+//			CheckList(&RulesClass::Instance->BuildConst, "BuildConst");
+//			CheckList(&RulesClass::Instance->BuildBarracks, "BuildBarracks");
+//			CheckList(&RulesClass::Instance->BuildTech, "BuildTech");
+//			CheckList(&RulesClass::Instance->BuildRadar, "BuildRadar");
+//			CheckList(&RulesClass::Instance->ConcreteWalls, "ConcreteWalls");
+//			CheckList(&RulesClass::Instance->BuildDummy, "BuildDummy");
+//			CheckList(&RulesClass::Instance->BuildNavalYard, "BuildNavalYard");
+
+	auto pCountryData = HouseTypeExt::ExtMap.Find(House->Type);
+	CheckList(&pCountryData->Powerplants, "Powerplants");
+
+//			auto pSide = SideClass::Array->GetItem(curHouse->Type->SideIndex);
+//			auto pSideData = SideExt::ExtMap.Find(pSide);
+//			CheckList(&pSideData->BaseDefenses, "Base Defenses");
+
+	return AllIsWell;
+}
 
 // =============================
 // load/save

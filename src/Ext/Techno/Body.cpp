@@ -378,6 +378,38 @@ bool TechnoExt::CreateWithDroppod(FootClass *Object, CoordStruct *XYZ) {
 	}
 }
 
+// destroy a given techno by dealing absolute damage
+void TechnoExt::Destroy(TechnoClass* pTechno, TechnoClass* pKiller, HouseClass* pKillerHouse, WarheadTypeClass* pWarhead) {
+	if(!pKillerHouse && pKiller) {
+		pKillerHouse = pKiller->Owner;
+	}
+
+	if(!pWarhead) {
+		pWarhead = RulesClass::Instance->C4Warhead;
+	}
+
+	int health = pTechno->Health;
+	pTechno->ReceiveDamage(&health, 0, pWarhead, pKiller, TRUE, FALSE, pKillerHouse);
+}
+
+bool TechnoExt::ExtData::IsDeactivated() const {
+	return this->AttachedToObject->Deactivated;
+}
+
+eAction TechnoExt::ExtData::GetDeactivatedAction(ObjectClass *Hovered) const {
+	if(!Hovered) {
+		return act_None;
+	}
+	if(auto tHovered = generic_cast<TechnoClass *>(Hovered)) {
+		if(this->AttachedToObject->Owner->IsAlliedWith(tHovered)) {
+			if(tHovered->IsSelectable()) {
+				return act_Select;
+			}
+		}
+	}
+	return act_None;
+}
+
 // If available, creates an InfantryClass instance and removes the hijacker from the victim.
 InfantryClass* TechnoExt::RecoverHijacker(FootClass* pThis) {
 	InfantryClass* Hijacker = NULL;
