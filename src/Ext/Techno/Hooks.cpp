@@ -684,7 +684,11 @@ DEFINE_HOOK(5202F9, InfantryClass_UpdateVehicleThief_Check, 6)
 
 	// good old WW checks for Thief. idiots.
 	if(!pThis->Type->VehicleThief) {
-		return 0x5206A1;
+		// also allow for drivers, because vehicles may still drive around. usually they are not.
+		TechnoTypeExt::ExtData* pTypeExt = TechnoTypeExt::ExtMap.Find(pThis->Type);
+		if(!pTypeExt->CanDrive) {
+			return 0x5206A1;
+		}
 	}
 
 	return 0x52030D;

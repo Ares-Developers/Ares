@@ -464,7 +464,7 @@ AresAction::Value TechnoExt::ExtData::GetActionHijack(TechnoClass* pTarget) {
 		return AresAction::None;
 	}
 
-	// I'm in a state that forbids capturing
+	// i'm in a state that forbids capturing
 	if(!this->IsOperated()) {
 		return AresAction::None;
 	}
@@ -489,6 +489,11 @@ AresAction::Value TechnoExt::ExtData::GetActionHijack(TechnoClass* pTarget) {
 		//|| (absTarget == abs_Unit && ((UnitTypeClass*)pTargetType)->NonVehicle) replaced by Hijacker.Allowed
 		|| !pTarget->IsOnFloor()) {
 			return AresAction::None;
+	}
+
+	// bunkered units can't be hijacked.
+	if(pTarget->BunkerLinkedItem) {
+		return AresAction::None;
 	}
 
 	// a thief that can't break mind control loses without trying further
