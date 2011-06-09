@@ -11,17 +11,13 @@ bool SW_ParaDrop::HandlesType(int type)
 
 void SW_ParaDrop::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)
 {
-	// create an array to hold a vector for each side and country
-	int max = SideClass::Array->Count + HouseTypeClass::Array->Count + 1;
-	pData->ParaDrop = new DynamicVectorClass<ParadropPlane*>[max];
-
 	// default for american paradrop
 	if(pSW->Type == SuperWeaponType::AmerParaDrop) {
 		// the American paradrop will be the same for every country,
 		// thus we use the SW's default here.
 		ParadropPlane* pPlane = new ParadropPlane();
 		pData->ParaDropPlanes.AddItem(pPlane);
-		pData->ParaDrop[0].AddItem(pPlane);
+		pData->ParaDrop[NULL].AddItem(pPlane);
 
 		for(int i = 0; i < RulesClass::Instance->AmerParaDropInf.Count; ++i) {
 			pPlane->pTypes.AddItem((RulesClass::Instance->AmerParaDropInf.GetItem(i)));
@@ -162,20 +158,20 @@ void SW_ParaDrop::LoadFromINI(
 
 	// default
 	CreateParaDropBase(NULL, base);
-	GetParadropPlane(base, 1, &pData->ParaDrop[0]);
+	GetParadropPlane(base, 1, &pData->ParaDrop[NULL]);
 
 	// put all sides into the array
 	for(int i=0; i<SideClass::Array->Count; ++i) {
 		SideClass *pSide = SideClass::Array->GetItem(i);
 		CreateParaDropBase(pSide->ID, base);
-		GetParadropPlane(base, pData->ParaDrop[0].Count, &pData->ParaDrop[i+1]);
+		GetParadropPlane(base, pData->ParaDrop[NULL].Count, &pData->ParaDrop[pSide]);
 	}
 
 	// put all countries into the array
 	for(int i=0; i<HouseTypeClass::Array->Count; ++i) {
 		HouseTypeClass *pTHouse = HouseTypeClass::Array->GetItem(i);
 		CreateParaDropBase(pTHouse->ID, base);
-		GetParadropPlane(base, pData->ParaDrop[pTHouse->SideIndex+1].Count, &pData->ParaDrop[i+SideClass::Array->Count+1]);
+		GetParadropPlane(base, pData->ParaDrop[SideClass::Array->GetItem(pTHouse->SideIndex)].Count, &pData->ParaDrop[pTHouse]);
 	}
 }
 
@@ -237,19 +233,33 @@ bool SW_ParaDrop::SendParadrop(SuperClass* pThis, CellClass* pCell) {
 	TypeList<TechnoTypeClass*> *pFallbackTypes = NULL;
 	TypeList<int> *pFallbackNum = NULL;
 
+	// get the paradrop list without creating a new value
+	auto GetParadropPlanes = [pData](AbstractTypeClass* pKey) -> DynamicVectorClass<ParadropPlane*>* {
+		if(pData->ParaDrop.find(pKey) == pData->ParaDrop.end()) {
+			return NULL;
+		}
+		return &pData->ParaDrop[pKey];
+	};
+
+	// use paradrop lists from house, side and default
+	DynamicVectorClass<ParadropPlane*>* drops[3];
+	drops[0] = GetParadropPlanes(pHouse->Type);
+	drops[1] = GetParadropPlanes(SideClass::Array->GetItem(pHouse->Type->SideIndex));
+	drops[2] = GetParadropPlanes(NULL);
+
 	// how many planes shall we launch?
-	int index = pHouse->Type->ArrayIndex + SideClass::Array->Count;
-	int count = pData->ParaDrop[index].Count;
+	int count = 0;
+	for(int i=0; i<3; ++i) {
+		if(drops[i]) {
+			count = drops[i]->Count;
+		}
+	}
 
 	// assemble each plane and its contents
 	for(int i=0; i<count; ++i) { // i = index of plane
 		TypeList<TechnoTypeClass*> *pParaDrop = NULL;
 		TypeList<int> *pParaDropNum = NULL;
 		AircraftTypeClass* pParaDropPlane = NULL;
-
-		int indices[3] = {0, 0, 0};
-		indices[0] = pHouse->Type->ArrayIndex + SideClass::Array->Count + 1;
-		indices[1] = pHouse->Type->SideIndex + 1;
 
 		// try the planes in order of precedence:
 		// * country, explicit plane
@@ -258,14 +268,17 @@ bool SW_ParaDrop::SendParadrop(SuperClass* pThis, CellClass* pCell) {
 		// * country, default plane
 		// * side, default plane
 		// * default, default plane
-		// * fill spaces with data from house/side/rules
+		// * fill gaps with data from house/side/rules
 		for(int j=1; j>=0; --j) { // factor 1 or 0: "plane * j" => "plane" or "0" (default)
-			for(int k=0; k<3; ++k) { // index in the indices array
+			for(int k=0; k<3; ++k) { // index in the "drops" array
 
 				// only do something if there is data missing
 				if(!(pParaDrop && pParaDropNum && pParaDropPlane)) {
 					// get the country/side-specific plane list
-					DynamicVectorClass<ParadropPlane*> *planes = &pData->ParaDrop[indices[k]];
+					DynamicVectorClass<ParadropPlane*> *planes = drops[k];
+					if(!planes) {
+						continue;
+					}
 
 					// get the plane at specified index
 					int index = i * j;

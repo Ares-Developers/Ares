@@ -21,10 +21,7 @@ template<> IStream *Container<SWTypeExt>::SavingStream = NULL;
 SuperWeaponTypeClass *SWTypeExt::CurrentSWType = NULL;
 
 SWTypeExt::ExtData::~ExtData() {
-	if(this->ParaDrop) {
-		this->ParaDrop->Clear();
-		this->ParaDrop = NULL;
-	}
+	this->ParaDrop.clear();
 
 	for(int i=this->ParaDropPlanes.Count-1; i>=0; --i) {
 		delete this->ParaDropPlanes.Items[i];

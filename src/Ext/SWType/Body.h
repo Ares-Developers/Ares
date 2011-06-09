@@ -70,7 +70,7 @@ public:
 		Valueable<bool> Nuke_SiloLaunch;
 
 		// Generic Paradrop
-		DynamicVectorClass<ParadropPlane*> *ParaDrop;
+		hash_map<AbstractTypeClass*, DynamicVectorClass<ParadropPlane*>> ParaDrop;
 		DynamicVectorClass<ParadropPlane*> ParaDropPlanes;
 
 		// Generic Protection
@@ -231,7 +231,6 @@ public:
 			SW_WidthOrRange (-1),
 			SW_Height (-1),
 			HandledByNewSWType (-1),
-			ParaDrop (NULL),
 			CameoPal(),
 			SW_DeliverBuildups (false),
 			SW_Damage(0)
