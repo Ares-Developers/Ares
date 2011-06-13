@@ -98,6 +98,11 @@ bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 				// differentiate between buildings and vehicle-type buildings
 				bool IsVehicle = false;
 				if(BuildingClass* pBld = specific_cast<BuildingClass*>(pObj)) {
+					// always ignore bridge repair huts
+					if(pBld->Type->BridgeRepairHut) {
+						return true;
+					}
+
 					// use "smart" detection of vehicular building types?
 					if(pData->Chronosphere_ReconsiderBuildings.Get()) {
 						IsVehicle = pExt->Chronoshift_IsVehicle.Get();
@@ -337,12 +342,12 @@ void ChronoWarpStateMachine::Update() {
 						// put it back where it was
 						++Unsorted::IKnowWhatImDoing;
 						pBld->Put(&pContainer.origin, Direction::North);
+						pBld->Place(false);
 						--Unsorted::IKnowWhatImDoing;
 					}
 
 					// chronoshift ends
 					pBld->BeingWarpedOut = false;
-					pBld->ActuallyPlacedOnMap = true;
 					pBld->Owner->PowerBlackout = true;
 					pBld->Owner->ShouldRecheckTechTree = true;
 					pBld->EnableTemporal();
@@ -357,7 +362,7 @@ void ChronoWarpStateMachine::Update() {
 							if(pContainer.isVehicle || pExt->Chronosphere_BlowUnplaceable.Get()) {
 								int damage = pBld->Type->Strength;
 								pBld->ReceiveDamage(&damage, 0,
-									RulesClass::Instance->C4Warhead, NULL, true, true, this->Super->Owner);
+									RulesClass::Instance->C4Warhead, NULL, TRUE, TRUE, this->Super->Owner);
 							}
 						}
 					}
