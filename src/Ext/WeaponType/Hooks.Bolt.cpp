@@ -76,11 +76,18 @@ DEFINE_HOOK(4C25CB, EBolt_Draw_Color2, 5)
 	if(pData) {
 		WORD Packed = 0;
 		if(!!pData->Bolt_IsHouseColor) {
-			ColorStruct tmp(pData->Bolt_HouseColorBase);
-			int delta = pData->Bolt_ColorSpread;
-			Saturate(tmp.R, delta);
-			Saturate(tmp.G, delta);
-			Saturate(tmp.B, delta);
+			ColorStruct tmp;
+			if (pData->Bolt_ColorSpread==-1) {
+				tmp.R=248;
+				tmp.G=252;
+				tmp.B=248;
+			} else {
+				tmp=pData->Bolt_HouseColorBase;
+				int delta = pData->Bolt_ColorSpread;
+				Saturate(tmp.R, delta);
+				Saturate(tmp.G, delta);
+				Saturate(tmp.B, delta);
+			}
 			Packed = Drawing::Color16bit(&tmp);
 		} else if(ColorStruct *clr = pData->Bolt_Color2) {
 			Packed = Drawing::Color16bit(clr);
@@ -104,10 +111,12 @@ DEFINE_HOOK(4C26C7, EBolt_Draw_Color3, 5)
 		WORD Packed = 0;
 		if(!!pData->Bolt_IsHouseColor) {
 			ColorStruct tmp(pData->Bolt_HouseColorBase);
-			int delta = -pData->Bolt_ColorSpread;
-			Saturate(tmp.R, delta);
-			Saturate(tmp.G, delta);
-			Saturate(tmp.B, delta);
+			if (pData->Bolt_ColorSpread!=-1) {
+				int delta = -pData->Bolt_ColorSpread;
+				Saturate(tmp.R, delta);
+				Saturate(tmp.G, delta);
+				Saturate(tmp.B, delta);
+			}
 			Packed = Drawing::Color16bit(&tmp);
 		} else if(ColorStruct *clr = pData->Bolt_Color3) {
 			Packed = Drawing::Color16bit(clr);

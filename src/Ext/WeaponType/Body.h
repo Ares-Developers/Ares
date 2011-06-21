@@ -18,6 +18,7 @@
 #include <ScenarioClass.h>
 #include <MouseClass.h>
 
+
 #include "../../Enum/RadTypes.h"
 
 #include "../../Misc/Debug.h"
@@ -49,7 +50,7 @@ public:
 		Customizable<ColorStruct> Bolt_Color2;
 		Customizable<ColorStruct> Bolt_Color3;
 		Valueable<bool> Bolt_IsHouseColor;
-		Valueable<BYTE> Bolt_ColorSpread;
+		Valueable<int> Bolt_ColorSpread;
 		ColorStruct Bolt_HouseColorBase;
 
 		// TS Lasers
