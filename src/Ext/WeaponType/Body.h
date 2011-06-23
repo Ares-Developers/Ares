@@ -80,7 +80,9 @@ public:
 
 		// #680 Chrono Prison
 		Valueable<bool> Abductor; //!< Will this weapon force eligible targets into the passenger hold of the shooter?
-
+		Valueable<AnimTypeClass *> Abductor_AnimType;
+		Valueable <bool> Abductor_ChangeOwner; 
+		
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			Weapon_Loaded (false),
 			Beam_Color (&RulesClass::Instance->RadColor),
@@ -105,7 +107,9 @@ public:
 			Ivan_Image (&RulesClass::Instance->BOMBCURS_SHP),
 			Ivan_FlickerRate (&RulesClass::Instance->IvanIconFlickerRate),
 			Rad_Type (NULL),
-			Abductor(false)
+			Abductor(false),
+			Abductor_AnimType(NULL),
+			Abductor_ChangeOwner(false) 
 			{
 				this->Laser_Thickness.Set(-1);
 //				this->Beam_Color = ColorStruct(255, 255, 255);
