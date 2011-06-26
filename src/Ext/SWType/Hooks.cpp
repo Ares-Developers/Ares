@@ -365,8 +365,10 @@ DEFINE_HOOK(6CBA9E, SuperClass_ClickFire_Abort, 7)
 	// auto-abort if no money
 	if(pData->Money_Amount < 0) {
 		if(pSuper->Owner->Available_Money() < -pData->Money_Amount.Get()) {
-			VoxClass::PlayIndex(pData->EVA_InsufficientFunds);
-			pData->PrintMessage(pData->Message_InsufficientFunds, pSuper->Owner);
+			if(pSuper->Owner == HouseClass::Player) {
+				VoxClass::PlayIndex(pData->EVA_InsufficientFunds);
+				pData->PrintMessage(pData->Message_InsufficientFunds, pSuper->Owner);
+			}
 			return 0x6CBABF;
 		}
 	}

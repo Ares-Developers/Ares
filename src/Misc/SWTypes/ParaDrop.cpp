@@ -160,14 +160,14 @@ void SW_ParaDrop::LoadFromINI(
 	CreateParaDropBase(NULL, base);
 	GetParadropPlane(base, 1, &pData->ParaDrop[NULL]);
 
-	// put all sides into the array
+	// put all sides into the hash table
 	for(int i=0; i<SideClass::Array->Count; ++i) {
 		SideClass *pSide = SideClass::Array->GetItem(i);
 		CreateParaDropBase(pSide->ID, base);
 		GetParadropPlane(base, pData->ParaDrop[NULL].Count, &pData->ParaDrop[pSide]);
 	}
 
-	// put all countries into the array
+	// put all countries into the hash table
 	for(int i=0; i<HouseTypeClass::Array->Count; ++i) {
 		HouseTypeClass *pTHouse = HouseTypeClass::Array->GetItem(i);
 		CreateParaDropBase(pTHouse->ID, base);
@@ -252,6 +252,7 @@ bool SW_ParaDrop::SendParadrop(SuperClass* pThis, CellClass* pCell) {
 	for(int i=0; i<3; ++i) {
 		if(drops[i]) {
 			count = drops[i]->Count;
+			break;
 		}
 	}
 
@@ -316,7 +317,6 @@ bool SW_ParaDrop::SendParadrop(SuperClass* pThis, CellClass* pCell) {
 			pParaDrop = pFallbackTypes;
 			pParaDropNum = pFallbackNum;
 		}
-
 
 		// house fallback for the plane
 		if(!pParaDropPlane) {
