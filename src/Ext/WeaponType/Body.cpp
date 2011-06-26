@@ -135,6 +135,7 @@ void WeaponTypeExt::ExtData::LoadFromINIFile(WeaponTypeExt::TT *pThis, CCINIClas
 	this->Abductor.Read(&exINI, section, "Abductor");
 	this->Abductor_AnimType.Parse(&exINI, section, "Abductor.Anim");
 	this->Abductor_ChangeOwner.Read(&exINI, section, "Abductor.ChangeOwner");
+	this->Abductor_AbductBelowPercent.Read(&exINI, section, "Abductor.AbductBelowPercent");
 }
 
 // #680 Chrono Prison / Abductor
@@ -158,13 +159,24 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 	if(FootClass *Target = generic_cast<FootClass *>(Bullet->Target)) {
 		TechnoClass* Attacker = Bullet->Owner;
 		TechnoTypeClass* TargetType = Target->GetTechnoType();
+		TechnoTypeExt::ExtData* TargetTypeExt = TechnoTypeExt::ExtMap.Find(TargetType);
 		TechnoTypeClass* AttackerType = Attacker->GetTechnoType();
 
 		//issue 1362
+		if (!!TargetTypeExt->ImmuneToAbduction){
+			return false;
+		}
+		
 		if(!WarheadTypeExt::canWarheadAffectTarget(Target, Attacker->Owner, Bullet->WH)) {
 			return false;
 		}
+
 		if(Target->IsIronCurtained()) {
+			return false;
+		}
+
+		//Don't abduct the target if it has more life then the abducting percent
+		if (this->Abductor_AbductBelowPercent < (Target->Health*1.0 / TargetType->Strength)){
 			return false;
 		}
 
@@ -172,7 +184,9 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 		if((TargetType->Size > AttackerType->SizeLimit)
 		  || (TargetType->Size > (AttackerType->Passengers - Attacker->Passengers.GetTotalSize()))) {
 			return false;
+
 		} else {
+
 			// if we ended up here, the target is of the right type, and the attacker can take it
 			// so we abduct the target...
 			Target->StopMoving();
@@ -186,12 +200,14 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 			Target->unknown_5A0 = 0;
 			Target->CurrentGattlingStage = 0;
 			Target->SetCurrentWeaponStage(0);
+
 			// if this unit is being mind controlled, break the link
 			if(TechnoClass * MindController = Target->MindControlledBy) {
 				if(CaptureManagerClass * MC = MindController->CaptureManager) {
 					MC->FreeUnit(Target);
 				}
 			}
+
 			// if this unit is a mind controller, break the link
 			if(Target->CaptureManager) {
 				Target->CaptureManager->FreeAll();
@@ -240,16 +256,8 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 			Target->MarkAllOccupationBits(&coordsUnitSource);
 
 			//if it's owner meant to be changed, do it here
-			if (!!this->Abductor_ChangeOwner){
-				// Debug::Log("[Abductor] ChangeOwner is set to yes, preparing to changing owner...\n"); Tesla reported this works, so debugging is no longer needed
-				if (!TargetType->ImmuneToPsionics) {
-					Target->SetOwningHouse(Attacker->Owner);
-					// Debug::Log("[Abductor] Target isn't immune to psionics, captured!\n");
-				} else {
-					// Debug::Log("[Abductor] Target is immune to psionics, only abducted!\n");
-				}
-			// } else {
-				// Debug::Log("[Abductor] ChangeOwner is set to no, skipping...\n");
+			if (!!this->Abductor_ChangeOwner && !TargetType->ImmuneToPsionics){
+				Target->SetOwningHouse(Attacker->Owner);
 			}
 
 			Target->Remove();
@@ -270,6 +278,7 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 		}
 
 	} else {
+
 		// the target was not a valid passenger type
 		return false;
 	}
