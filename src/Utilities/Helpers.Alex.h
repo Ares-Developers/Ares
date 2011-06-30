@@ -10,16 +10,21 @@ class Helpers {
 public:
 	class Alex {
 	public:
-		//! Comparers to be used with sets.
-		template<typename T>
+		//! Default comparer for sets using the lower-than operator.
+		template<typename T, typename Enable = void>
 		struct StrictWeakComparer {
 			bool operator() (const T& lhs, const T& rhs) const {
 				return lhs < rhs;
 			}
 		};
 
-		template<>
-		struct StrictWeakComparer<ObjectClass*> {
+		//! Specialized comparer for all objects derived from ObjectClass.
+		/*!
+			This specialization compares the unique ID each ObjectClass has.
+			It ensures the objects are sorted the same way on every computer.
+		*/
+		template<typename T>
+		struct StrictWeakComparer<T, typename std::enable_if<std::is_base_of<ObjectClass, typename std::remove_pointer<typename T>::type>::value>::type> {
 			bool operator() (const ObjectClass* lhs, const ObjectClass* rhs) const {
 				return lhs->UniqueID < rhs->UniqueID;
 			}
