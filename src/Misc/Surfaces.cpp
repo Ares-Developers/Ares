@@ -209,3 +209,8 @@ DEFINE_HOOK(537BC0, Game_MakeScreenshot, 0)
 	return 0x537DC9;
 }
 
+
+DEFINE_HOOK(78997B, sub_789960_RemoveWOLResolutionCheck, 0)
+{
+	return 0x789A58;
+}
