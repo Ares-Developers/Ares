@@ -475,7 +475,7 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 		if(!Owner->SpySatActive && evaForOwner) {
 			VoxClass::Play("EVA_RadarSabotaged");
 		}
-		if(!Enterer->SpySatActive && evaForEnterer) {
+		if(!Owner->SpySatActive && evaForEnterer) {
 			VoxClass::Play("EVA_BuildingInfRadarSabotaged");
 		}
 		effectApplied = true;

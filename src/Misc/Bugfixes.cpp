@@ -212,6 +212,7 @@ DEFINE_HOOK(4444E2, BuildingClass_KickOutUnit, 6)
 
 	if(Src != Tst
 	 && Tst->GetCurrentMission() == mission_Guard
+	 && !Tst->IsUnderEMP() // issue #1571
 	 && Tst->Type->Factory == Src->Type->Factory
 	 && Tst->Type->Naval == Src->Type->Naval
 	 && !Tst->Factory)
@@ -508,33 +509,6 @@ A_FINE_HOOK(67E75B, LoadGame_StallUI, 6)
 }
 */
 
-
-DEFINE_HOOK(505B36, HouseClass_GenerateAIBuildList_C0, 8)
-{
-	LEA_STACK(DynamicVectorClass<BuildingTypeClass *> *, PlannedBase, 0x14);
-	return PlannedBase->Count < 1
-	 ? 0x505C95
-	 : 0
-	;
-}
-
-DEFINE_HOOK(505B92, HouseClass_GenerateAIBuildList_C1, 7)
-{
-	LEA_STACK(DynamicVectorClass<BuildingTypeClass *> *, PlannedBase, 0x14);
-	return PlannedBase->Count < 2
-	 ? 0x505C95
-	 : 0
-	;
-}
-
-DEFINE_HOOK(505BE1, HouseClass_GenerateAIBuildList_C2, 7)
-{
-	LEA_STACK(DynamicVectorClass<BuildingTypeClass *> *, PlannedBase, 0x14);
-	return PlannedBase->Count < 3
-	 ? 0x505C95
-	 : 0
-	;
-}
 
 DEFINE_HOOK(4242CA, AnimClass_Update_FixIE_TrailerSeperation, 6)
 {

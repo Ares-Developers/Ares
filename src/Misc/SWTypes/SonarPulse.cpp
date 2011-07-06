@@ -88,6 +88,7 @@ bool SW_SonarPulse::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 		if(Helpers::Alex::DistinctCollector<ObjectClass*> *items = new Helpers::Alex::DistinctCollector<ObjectClass*>()) {
 			Helpers::Alex::forEachObjectInRange(pCoords, width, height, items->getCollector());
 			items->forEach(Detect);
+			delete items;
 		}
 
 		// radar event only if this isn't full map sonar

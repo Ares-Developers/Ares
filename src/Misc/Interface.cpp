@@ -425,7 +425,7 @@ Interface::eUIAction Interface::parseUIAction(char* value, Interface::eUIAction 
 	} else if(!_strcmpi(value, "sneakpeek")) {
 		return Interface::uia_SneakPeek;
 	} else if(_strcmpi(value, "default")) {
-		Debug::DevLog(Debug::Severity::Warning, "Unrecognized UI action value: %s\n", value);
+		Debug::DevLog(Debug::Warning, "Unrecognized UI action value: %s\n", value);
 	}
 	return def;
 }

@@ -373,6 +373,20 @@ bool TechnoExt::CreateWithDroppod(FootClass *Object, CoordStruct *XYZ) {
 	}
 }
 
+// destroy a given techno by dealing absolute damage
+void TechnoExt::Destroy(TechnoClass* pTechno, TechnoClass* pKiller, HouseClass* pKillerHouse, WarheadTypeClass* pWarhead) {
+	if(!pKillerHouse && pKiller) {
+		pKillerHouse = pKiller->Owner;
+	}
+
+	if(!pWarhead) {
+		pWarhead = RulesClass::Instance->C4Warhead;
+	}
+
+	int health = pTechno->Health;
+	pTechno->ReceiveDamage(&health, 0, pWarhead, pKiller, TRUE, FALSE, pKillerHouse);
+}
+
 void TechnoExt::TransferMindControl(TechnoClass *From, TechnoClass *To) {
 	if(auto Controller = From->MindControlledBy) {
 		++Unsorted::IKnowWhatImDoing;

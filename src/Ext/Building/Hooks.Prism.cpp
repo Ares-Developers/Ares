@@ -347,3 +347,10 @@ DEFINE_HOOK(454B3D, PrismForward_BuildingPowerDown, 6)
 	BuildingTypeExt::cPrismForwarding::RemoveFromNetwork(B, true);
 	return 0;
 }
+
+DEFINE_HOOK(44EBF0, PrismForward_BuildingRemoved, 5)
+{
+	GET(BuildingClass *, B, ECX);
+	BuildingTypeExt::cPrismForwarding::RemoveFromNetwork(B, true);
+	return 0;
+}
