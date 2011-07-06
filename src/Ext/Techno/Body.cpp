@@ -385,10 +385,12 @@ void TechnoExt::TransferMindControl(TechnoClass *From, TechnoClass *To) {
 					To->SetOwningHouse(From->GetOwningHouse(), 0);
 					To->MindControlledBy = Controller;
 					From->MindControlledBy = NULL;
-					To->CurrentMission = mission_Guard;
 					auto M = To->CurrentMission;
-					if(M != mission_Selling && M != mission_Construction && M != mission_Unload) {
-						To->vt_entry_3D0();
+					if(M != mission_Selling && M != mission_Construction) {
+						auto AsUnit = specific_cast<UnitClass *>(To);
+						if(!AsUnit || !AsUnit->Type->IsSimpleDeployer || M != mission_Unload) {
+							To->vt_entry_3D0();
+						}
 					}
 					FoundNode = true;
 					break;

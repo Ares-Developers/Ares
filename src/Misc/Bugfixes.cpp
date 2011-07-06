@@ -962,6 +962,13 @@ DEFINE_HOOK(47243F, CaptureManagerClass_DecideUnitFate_BuildingFate, 6) {
 		// 2. BuildingClass::Mission_Hunt() implementation is to do nothing!
 		pVictim->QueueMission(mission_Guard, 0);
 		return 0x472604;
+	} else if (auto pUnit = specific_cast<UnitClass *>(pVictim)) {
+		if(pUnit->Type->DeploysInto) {
+			if(RulesClass::Instance->BuildConst.FindItemIndex(&pUnit->Type->DeploysInto) == -1) {
+				pVictim->QueueMission(mission_Guard, 0);
+				return 0x472604;
+			}
+		}
 	}
 	return 0;
 }
