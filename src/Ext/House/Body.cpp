@@ -228,6 +228,8 @@ bool HouseExt::ExtData::CheckBasePlanSanity() {
 	const char *errorMsg = "AI House of country [%s] cannot build any object in %s. The AI ain't smart enough for that.\n";
 	bool AllIsWell(true);
 
+	// if you don't have a base unit buildable, how did you get to base planning?
+	// only through crates or map actions, so have to validate base unit in other situations
 	auto pArray = &RulesClass::Instance->BaseUnit;
 	bool canBuild = false;
 	for(int i = 0; i < pArray->Count; ++i) {

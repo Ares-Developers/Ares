@@ -254,8 +254,11 @@ LONG WINAPI Debug::ExceptionHandler(int code, LPEXCEPTION_POINTERS pExs)
 				SetClassLong(Game::hWnd, GCL_HCURSOR, (LONG)loadCursor);
 				SetCursor(loadCursor);
 				Debug::FatalError("The cause of this error could not be determined.\r\n"
+					"%s"
 					"A crash dump should have been created in your game's \\debug subfolder.\r\n"
-					"You can submit that to the developers (along with debug.txt and syringe.log).");
+					"You can submit that to the developers (along with debug.txt and syringe.log)."
+						, Debug::bParserErrorDetected ? "(One or more parser errors have been detected that might be responsible. Check the debug logs.)\r\n" : ""
+				);
 			}
 			ExitProcess(pExs->ExceptionRecord->ExceptionCode); // Exit.
 			break;

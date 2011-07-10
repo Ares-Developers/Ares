@@ -137,13 +137,20 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 
 		for(auto it = LimitedClasses.begin(); it != LimitedClasses.end(); ++it) {
 			if(it->second > 512) {
-				Debug::DevLog(Debug::Warning, "The [%s] list contains more than 512 entries."
+				Debug::DevLog(Debug::Warning, "The [%s] list contains more than 512 entries. "
 					"This might result in unexpected behaviour and crashes.\n", it->first);
 			}
 		}
 	}
 
-	if(Ares::bStrictParser && Debug::bParserErrorDetected) {
+ 	for(auto i = 0; i < RulesClass::Instance->BuildConst.Count; ++i) {
+ 		auto BC = RulesClass::Instance->BuildConst.GetItem(i);
+ 		if(!BC->AIBuildThis) {
+			Debug::DevLog(Debug::Warning, "[AI]BuildConst= includes [%s], which doesn't have AIBuildThis=yes!\n", BC->ID);
+ 		}
+ 	}
+
+ 	if(Ares::bStrictParser && Debug::bParserErrorDetected) {
 		Debug::FatalErrorAndExit("One or more errors were detected while parsing the INI files.\r\n"
 				"Please review the contents of the debug log and correct them.");
 	}
