@@ -141,7 +141,7 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 
 		for(auto it = LimitedClasses.begin(); it != LimitedClasses.end(); ++it) {
 			if(it->second > 512) {
-				Debug::DevLog(Debug::Warning, "The [%s] list contains more than 512 entries."
+				Debug::DevLog(Debug::Warning, "The [%s] list contains more than 512 entries. "
 					"This might result in unexpected behaviour and crashes.\n", it->first);
 			}
 		}

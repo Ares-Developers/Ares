@@ -67,3 +67,71 @@ DEFINE_HOOK(505CF1, HouseClass_GenerateAIBuildList_PadWithN1, 5)
 		: 0x505D8D
 	;
 }
+
+// don't crash if you can't find a base unit
+// I imagine we'll have a pile of hooks like this sooner or later
+DEFINE_HOOK(4F65BF, HouseClass_CanAffordBase, 6)
+{
+	GET(UnitTypeClass*, pBaseUnit, ECX);
+	if(pBaseUnit) {
+		return 0;
+	}
+//	GET(HouseClass *, pHouse, ESI);
+//	Debug::DevLog(Debug::Error, "AI House of country [%s] cannot build anything from [General]BaseUnit=.\n", pHouse->Type->ID);
+	return 0x4F65DA;
+}
+
+DEFINE_HOOK(5D705E, MPGameMode_SpawnBaseUnit, 6)
+{
+	enum { hasBaseUnit = 0x5D7084, hasNoBaseUnit = 0x5D70DB };
+
+	GET(HouseClass *, pHouse, EDI);
+	GET(UnitTypeClass *, pBaseUnit, EAX);
+	if(!pBaseUnit) {
+		Debug::DevLog(Debug::Error, "House of country [%s] cannot build anything from [General]BaseUnit=.\n", pHouse->Type->ID);
+		return hasNoBaseUnit;
+	}
+
+	auto Unit = reinterpret_cast<UnitClass *>(pBaseUnit->CreateObject(pHouse));
+	R->ESI<UnitClass *>(Unit);
+	return hasBaseUnit;
+}
+
+DEFINE_HOOK(688B37, MPGameModeClass_CreateStartingUnits_B, 5)
+{
+	enum { hasBaseUnit = 0x688B75, hasNoBaseUnit = 0x688C09 };
+
+	GET_STACK(HouseClass *, pHouse, 0x10);
+
+	auto pArray = &RulesClass::Instance->BaseUnit;
+	bool canBuild = false;
+	UnitTypeClass* Item = NULL;
+	for(int i = 0; i < pArray->Count; ++i) {
+		Item = pArray->GetItem(i);
+		if(pHouse->CanExpectToBuild(Item)) {
+			canBuild = true;
+			break;
+		}
+	}
+	if(!canBuild) {
+		Debug::DevLog(Debug::Error, "House of country [%s] cannot build anything from [General]BaseUnit=. \n", pHouse->Type->ID);
+
+		return hasNoBaseUnit;
+	}
+
+	auto Unit = reinterpret_cast<UnitClass *>(Item->CreateObject(pHouse));
+	R->ESI<UnitClass *>(Unit);
+	R->EBP(0);
+	R->EDI<HouseClass *>(pHouse);
+	return hasBaseUnit;
+}
+
+DEFINE_HOOK(5D721A, MPGameMode_CreateStartingUnits, 5)
+{
+	GET_STACK(int, UnitCount, 0x40);
+	GET_STACK(HouseClass*, pHouse, 0x4C);
+	if(!UnitCount) {
+		Debug::DevLog(Debug::Error, "House of country [%s] cannot build anything from [General]BaseUnit=. \n", pHouse->Type->ID);
+	}
+	return 0;
+}

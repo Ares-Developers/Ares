@@ -399,12 +399,13 @@ void TechnoExt::TransferMindControl(TechnoClass *From, TechnoClass *To) {
 					To->SetOwningHouse(From->GetOwningHouse(), 0);
 					To->MindControlledBy = Controller;
 					From->MindControlledBy = NULL;
-					To->QueueMission(mission_Guard, true);
 					FoundNode = true;
 					break;
 				}
 			}
 			if(!FoundNode) { // say the link was broken beforehand, by inconsistently ordered code...
+				Debug::Log("Transferring %s's MC link from %s to %s manually, problems might occur...\n"
+					, Controller->get_ID(), From->get_ID(), To->get_ID());
 				Manager->CaptureUnit(To);
 			}
 		}
