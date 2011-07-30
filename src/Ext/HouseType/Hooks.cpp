@@ -117,8 +117,6 @@ DEFINE_HOOK(553412, HTExt_LSFile, 0)
 	int n = R->EBX();
 	HouseTypeClass* pThis = HouseTypeClass::Array->Items[n];
 
-	Debug::Log("Loading LSFile for country #%d ([%s])\n", n, pThis->ID);
-
 	char* pLSFile = NULL;
 
 	if(HouseTypeExt::ExtData *pData = HouseTypeExt::ExtMap.Find(pThis)) {
@@ -128,12 +126,6 @@ DEFINE_HOOK(553412, HTExt_LSFile, 0)
 	} else {
 		return 0x553421;
 	}
-
-	GET(char *, sz, ECX);
-	char prediction[32];
-	_snprintf(prediction, 32, pLSFile, sz);
-
-	Debug::Log("Predicting usage of LSFile %s\n", prediction);
 
 	R->EDX(pLSFile);
 	return 0x55342C;
