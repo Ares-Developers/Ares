@@ -358,10 +358,10 @@ bool TechnoExt::CreateWithDroppod(FootClass *Object, CoordStruct *XYZ) {
 template<typename T>
 T TechnoExt::ExtData::GetBountyValue(Nullable<T> BountyClass::*pMember) const {
 	auto &myBountyVal = this->GetTypeExt()->Bounty.*pMember;
-	if(myBountyVal.isset()) {
+	if(!!myBountyVal.isset()) {
 		return myBountyVal.Get();
 	}
-	auto pCountryData = HouseTypeExt::ExtMap.Find(this->AttachedToObject->GetOwningHouse()->Type);
+	auto pCountryData = HouseTypeExt::ExtMap.Find(this->AttachedToObject->Owner->Type);
 	auto &countryBountyVal = pCountryData->Bounty.*pMember;
 	return countryBountyVal.Get();
 };

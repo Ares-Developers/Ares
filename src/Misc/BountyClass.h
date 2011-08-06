@@ -17,15 +17,16 @@ public:
 
 	BountyClass(bool Msg = false, bool FriendlyMsg = false,
 			double Mod = 0, double FriendlyMod = 0, bool IsPillager = false,
-			double CostMult = 0, double PillageMult = 0):
-		Message (Msg),
-		FriendlyMessage (FriendlyMsg),
-		Modifier (Mod),
-		FriendlyModifier (FriendlyMod),
-		Pillager (IsPillager),
-		CostMultiplier (CostMult),
-		PillageMultiplier (PillageMult)
+			double CostMult = 0, double PillageMult = 0)
+		
 	{
+		Message.SetDefault(Msg);
+		FriendlyMessage.SetDefault(FriendlyMsg);
+		Modifier.SetDefault (Mod);
+		FriendlyModifier.SetDefault (FriendlyMod);
+		Pillager.SetDefault (IsPillager);
+		CostMultiplier.SetDefault (CostMult);
+		PillageMultiplier.SetDefault (PillageMult);
 	};
 
 	void Read(INI_EX *exINI, const char * section) {

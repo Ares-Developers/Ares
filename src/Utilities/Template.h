@@ -151,6 +151,11 @@ public:
 		this->HasValue = true;
 	}
 
+	virtual void SetDefault(T val) {
+		Valueable<T>::Set(val);
+		this->HasValue = false;
+	}
+
 	void Reset() {
 		Valueable<T>::Set(T());
 		this->HasValue = false;

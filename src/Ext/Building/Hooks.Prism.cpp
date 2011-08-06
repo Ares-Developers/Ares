@@ -220,7 +220,7 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 			EBolt* supportEBolt;
 			GAME_ALLOC(EBolt, supportEBolt);
 			if (supportEBolt) {
-				supportEBolt->Owner = B;
+				//supportEBolt->Owner = B;
 				supportEBolt->WeaponSlot = idxSupport;
 				supportEBolt->AlternateColor = supportWeapon->IsAlternateColor;
 				WeaponTypeExt::BoltExt[supportEBolt] = WeaponTypeExt::ExtMap.Find(supportWeapon);
