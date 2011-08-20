@@ -827,7 +827,7 @@ DEFINE_HOOK(6CEEB0, SuperWeaponTypeClass_FindFirstOfAction, 8) {
 
 	// put a hint into the debug log to explain why we will crash now.
 	if(!R->EAX()) {
-		Debug::FatalErrorAndExit("Failed finding a Type=Nuke super weapon to be granted by ICBM crate.");
+		Debug::FatalErrorAndExit("Failed finding an Action=Nuke or Type=MultiMissile super weapon to be granted by ICBM crate.");
 	}
 
 	return 0x6CEEE5;
