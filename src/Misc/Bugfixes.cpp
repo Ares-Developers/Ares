@@ -889,3 +889,11 @@ DEFINE_HOOK(62C2ED, ParticleClass_Update_Gas, 6)
 	}
 	return 0;
 }
+
+// #1708: this mofo was raising an event without checking whether
+// there is a valid tag. this is the only faulty call of this kind.
+DEFINE_HOOK(4692A2, BulletClass_DetonateAt_RaiseAttackedByHouse, 6)
+{
+	GET(ObjectClass*, pVictim, EDI);
+	return pVictim->AttachedTag ? 0 : 0x4692BD;
+}
