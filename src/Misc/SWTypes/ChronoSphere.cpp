@@ -9,7 +9,8 @@ bool SW_ChronoSphere::HandlesType(int type)
 SuperWeaponFlags::Value SW_ChronoSphere::Flags()
 {
 	return SuperWeaponFlags::NoAnim | SuperWeaponFlags::NoEVA | SuperWeaponFlags::NoMoney
-		| SuperWeaponFlags::NoEvent | SuperWeaponFlags::NoCleanup | SuperWeaponFlags::PreClick;
+		| SuperWeaponFlags::NoEvent | SuperWeaponFlags::NoCleanup | SuperWeaponFlags::NoMessage
+		| SuperWeaponFlags::PreClick;
 }
 
 void SW_ChronoSphere::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)
