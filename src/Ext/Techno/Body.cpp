@@ -485,7 +485,8 @@ AresAction::Value TechnoExt::ExtData::GetActionHijack(TechnoClass* pTarget) {
 
 	// target is bad
 	if(pTarget->CurrentMission == mission_Selling || pTarget->IsBeingWarpedOut()
-		|| pTargetType->IsTrain || !pTarget->IsStrange() || pTargetType->BalloonHover
+		|| pTargetType->IsTrain || pTargetType->BalloonHover
+		|| (absTarget != abs_Unit && !pTarget->IsStrange())
 		//|| (absTarget == abs_Unit && ((UnitTypeClass*)pTargetType)->NonVehicle) replaced by Hijacker.Allowed
 		|| !pTarget->IsOnFloor()) {
 			return AresAction::None;
