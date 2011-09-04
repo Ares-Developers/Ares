@@ -35,6 +35,44 @@ DEFINE_HOOK(4C6CCD, Networking_RespondToEvent, 0)
 	;
 }
 
+
+DEFINE_HOOK(64CCBF, DoList_ReplaceReconMessage, 6)
+{
+	// mimic an increment because decrement happens in the middle of function cleanup and can't be erased nicely
+	int &TempMutex = *(int *)(0xA8DAB4);
+	++TempMutex;
+
+	Debug::Log("Reconnection error detected!");
+	if(MessageBoxW(Game::hWnd, L"Yuri's Revenge has detected a desynchronization!\n"
+			L"Would you like to create a full error report for the developers?\n"
+			L"Be advised that reports from at least two players are needed.", L"Reconnection Error!", MB_YESNO | MB_ICONERROR) == IDYES) {
+		HCURSOR loadCursor = LoadCursor(NULL, IDC_WAIT);
+		SetClassLong(Game::hWnd, GCL_HCURSOR, (LONG)loadCursor);
+		SetCursor(loadCursor);
+		Debug::Log("Making a memory snapshot\n");
+
+		MINIDUMP_EXCEPTION_INFORMATION expParam;
+		expParam.ThreadId = GetCurrentThreadId();
+		expParam.ExceptionPointers = NULL;
+		expParam.ClientPointers = FALSE;
+
+		Debug::FullDump(&expParam);
+
+		loadCursor = LoadCursor(NULL, IDC_ARROW);
+		SetClassLong(Game::hWnd, GCL_HCURSOR, (LONG)loadCursor);
+		SetCursor(loadCursor);
+		Debug::FatalError("A desynchronization has occurred.\r\n"
+			"%s"
+			"A crash dump should have been created in your game's \\debug subfolder.\r\n"
+			"Please submit that to the developers along with SYNC*.txt, debug.txt and syringe.log."
+				, Debug::bParserErrorDetected ? "(One or more parser errors have been detected that might be responsible. Check the debug logs.)\r\n" : ""
+		);
+	}
+
+	return 0x64CD11;
+}
+
+
 /*
  how to raise your own events
 	NetworkEvent * Event = new NetworkEvent();
