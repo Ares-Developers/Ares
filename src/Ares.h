@@ -49,6 +49,8 @@ public:
 
 	static bool bStrictParser;
 
+	static bool bAllowAIControl;
+
 	static int TrackIndex;
 
 	static DWORD readLength;

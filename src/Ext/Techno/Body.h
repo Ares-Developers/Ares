@@ -98,6 +98,10 @@ public:
 		bool DrawVisualFX();
 
 		UnitTypeClass * GetUnitType();
+
+		bool IsDeactivated() const;
+
+		eAction GetDeactivatedAction(ObjectClass *Hovered = NULL) const;
 	};
 
 	static Container<TechnoExt> ExtMap;
@@ -118,6 +122,8 @@ public:
 	static void StopDraining(TechnoClass *Drainer, TechnoClass *Drainee);
 
 	static bool CreateWithDroppod(FootClass *Object, CoordStruct *XYZ);
+	
+	static void Destroy(TechnoClass* pTechno, TechnoClass* pKiller = NULL, HouseClass* pKillerHouse = NULL, WarheadTypeClass* pWarhead = NULL);
 /*
 	static int SelectWeaponAgainst(TechnoClass *pThis, TechnoClass *pTarget);
 	static bool EvalWeaponAgainst(TechnoClass *pThis, TechnoClass *pTarget, WeaponTypeClass* W);

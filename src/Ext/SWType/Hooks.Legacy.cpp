@@ -1,6 +1,7 @@
 #include "Body.h"
 #include "../Bullet/Body.h"
 #include "../SWType/Body.h"
+#include "../Building/Body.h"
 #include "../../Misc/SWTypes.h"
 #include "../WarheadType/Body.h"
 #include "../BuildingType/Body.h"
@@ -107,6 +108,12 @@ DEFINE_HOOK(53B080, PsyDom_Fire, 5) {
 					pTechno->SetOwningHouse(pFirer);
 					pTechno->MindControlledByAUnit = pData->Dominator_PermanentCapture.Get();
 
+					// remove old permanent mind control anim
+					if(pTechno->MindControlRingAnim) {
+						pTechno->MindControlRingAnim->UnInit();
+						pTechno->MindControlRingAnim = NULL;
+					}
+
 					// create a permanent capture anim
 					if(pData->Dominator_ControlAnim.Get()) {
 						CoordStruct animCoords;
@@ -131,6 +138,7 @@ DEFINE_HOOK(53B080, PsyDom_Fire, 5) {
 			if(Helpers::Alex::DistinctCollector<ObjectClass*> *items = new Helpers::Alex::DistinctCollector<ObjectClass*>()) {
 				Helpers::Alex::forEachObjectInRange(&cell, pData->SW_WidthOrRange, pData->SW_Height, items->getCollector());
 				items->forEach(Dominate);
+				delete items;
 			}
 
 			// the AI sends all new minions to hunt
@@ -882,6 +890,36 @@ DEFINE_HOOK(7188F2, TeleportLocomotionClass_Unwarp_SinkJumpJets, 7) {
 			if(pUnit->Type->SpeedType == st_Hover && pUnit->Type->JumpJet) {
 				return 0x718A66;
 			}
+		}
+	}
+
+	return 0;
+}
+
+DEFINE_HOOK(446AAF, BuildingClass_Place_SkipFreeUnits, 6)
+{
+	// allow free units and non-separate aircraft to be created
+	// only once.
+	GET(BuildingClass*, pBld, EBP);
+	BuildingExt::ExtData* pExt = BuildingExt::ExtMap.Find(pBld);
+	if(!pExt->FreeUnits_Done) {
+		pExt->FreeUnits_Done = true;
+		return 0;
+	}
+
+	// skip handling free units
+	return 0x446FB6;
+}
+
+DEFINE_HOOK(71AE85, TemporalClass_CanWarpTarget_PreventChronoBuilding, A)
+{
+	// prevent warping buildings that are about to be chronoshifted.
+	// if such building is attacked, it will be removed by the chronosphere
+	// and it won't come back and the affected player can't be defeated.
+	GET(BuildingClass*, pBld, ESI);
+	if(BuildingExt::ExtData* pExt = BuildingExt::ExtMap.Find(pBld)) {
+		if(pExt->AboutToChronoshift) {
+			return 0x71AE93;
 		}
 	}
 

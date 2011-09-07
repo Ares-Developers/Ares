@@ -21,10 +21,7 @@ template<> IStream *Container<SWTypeExt>::SavingStream = NULL;
 SuperWeaponTypeClass *SWTypeExt::CurrentSWType = NULL;
 
 SWTypeExt::ExtData::~ExtData() {
-	if(this->ParaDrop) {
-		this->ParaDrop->Clear();
-		this->ParaDrop = NULL;
-	}
+	this->ParaDrop.clear();
 
 	for(int i=this->ParaDropPlanes.Count-1; i>=0; --i) {
 		delete this->ParaDropPlanes.Items[i];
@@ -234,6 +231,7 @@ void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass
 
 	if(pINI->ReadString(section, "SidebarPCX", "", Ares::readBuffer, Ares::readLength)) {
 		AresCRT::strCopy(this->SidebarPCX, Ares::readBuffer, 0x20);
+		_strlwr_s(this->SidebarPCX, 0x20);
 		if(!PCX::Instance->LoadFile(this->SidebarPCX)) {
 			Debug::INIParseFailed(section, "SidebarPCX", this->SidebarPCX);
 		}
@@ -404,8 +402,16 @@ bool SWTypeExt::Launch(SuperClass* pThis, NewSWType* pSW, CellStruct* pCoords, b
 			// this sw has been fired. clean up.
 			int idxThis = pThis->Owner->Supers.FindItemIndex(&pThis);
 			if(IsPlayer && !(flags & SuperWeaponFlags::NoCleanup)) {
-				if(idxThis == Unsorted::CurrentSWType || (flags & SuperWeaponFlags::PostClick)) {
-					Unsorted::CurrentSWType = -1;
+				// what's this? we reset the selected SW only for the player on this
+				// computer, so others don't deselect it when firing simultaneously.
+				// and we only do this, if this type's index is the current one, because
+				// auto-firing might happen while the player still selects a target.
+				// PostClick SWs do have a different type index, so they need to be
+				// special cased, but they can't auto-fire anyhow.
+				if(pThis->Owner == HouseClass::Player) {
+					if(idxThis == Unsorted::CurrentSWType || (flags & SuperWeaponFlags::PostClick)) {
+						Unsorted::CurrentSWType = -1;
+					}
 				}
 
 				// do not play ready sound. this thing just got off.

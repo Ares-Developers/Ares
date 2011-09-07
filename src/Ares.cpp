@@ -25,6 +25,7 @@
 #include "Ext/WeaponType/Body.h"
 
 #include "Misc/Debug.h"
+#include "Misc/EMPulse.h"
 
 //Init Statics
 HANDLE Ares::hInstance = 0;
@@ -32,6 +33,7 @@ bool Ares::bNoLogo = false;
 bool Ares::bNoCD = false;
 bool Ares::bTestingRun = false;
 bool Ares::bStrictParser = false;
+bool Ares::bAllowAIControl = false;
 
 DWORD Ares::readLength = BUFLEN;
 char Ares::readBuffer[BUFLEN];
@@ -60,7 +62,9 @@ void Ares::UninitOwnResources()
 //Implementations
 void __stdcall Ares::RegisterCommands()
 {
-	MakeCommand<AIControlCommandClass>();
+	if(bAllowAIControl) {
+		MakeCommand<AIControlCommandClass>();
+	}
 	MakeCommand<MapSnapshotCommandClass>();
 	MakeCommand<TestSomethingCommandClass>();
 	MakeCommand<DumperTypesCommandClass>();
@@ -76,6 +80,7 @@ void __stdcall Ares::CmdLineParse(char** ppArgs,int nNumArgs)
 	Debug::bLog = false;
 	bNoCD = false;
 	bNoLogo = false;
+	EMPulse::verbose = false;
 
 	// > 1 because the exe path itself counts as an argument, too!
 	if(nNumArgs > 1) {
@@ -93,6 +98,10 @@ void __stdcall Ares::CmdLineParse(char** ppArgs,int nNumArgs)
 				bTestingRun = true;
 			} else if(strcmp(pArg, "-STRICT") == 0) {
 				bStrictParser = true;
+			} else if(strcmp(pArg, "-LOG-EMP") == 0) {
+				EMPulse::verbose = true;
+			} else if(strcmp(pArg,"-AI-CONTROL") == 0) {
+				bAllowAIControl = true;
 			}
 		}
 	}

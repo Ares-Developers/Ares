@@ -49,7 +49,7 @@ eAction InfantryExt::GetEngineerEnterEnemyBuildingAction(BuildingClass *pBld) {
 		if(!RulesExt::Global()->EngineerAlwaysCaptureTech || !isTech) {
 			// no civil structure. apply new logic.
 			if(pBld->GetHealthPercentage() > RulesClass::Global()->EngineerCaptureLevel) {
-				return (RulesExt::Global()->EngineerDamage > 0 ? act_Damage : act_NoEnter);
+				return (RulesExt::Global()->EngineerDamage > 0) ? act_Damage : act_NoEnter;
 			}
 		}
 	}

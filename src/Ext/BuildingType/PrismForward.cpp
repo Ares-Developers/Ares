@@ -59,6 +59,11 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 			Debug::Log("[Developer Error] %s has an invalid PrismForwarding.ChargeDelay (%d), overriding to 1.\n", pThis->ID, ChargeDelay);
 		}
 
+		auto SuperWH = RulesClass::Instance->C4Warhead;
+		if(!SuperWH) {
+			SuperWH = WarheadTypeClass::Find("Super");
+		}
+
 		if(pINI->ReadString(pID, "PrismForwarding.SupportWeapon", "", Ares::readBuffer, Ares::readLength)) {
 			if (WeaponTypeClass *cWeapon = WeaponTypeClass::FindOrAllocate(Ares::readBuffer)) {
 				int idxWeapon = this->GetUnusedWeaponSlot(pThis, 0); //rookie weapons
@@ -69,9 +74,10 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 						"weapon slots to assign the support weapon to.", pID);
 				}
 				this->SupportWeaponIndex = idxWeapon;
+				if(!cWeapon->Warhead) {
+					cWeapon->Warhead = SuperWH;
+				}
 				cWeapon->NeverUse = true; //the modder shouldn't be expected to have to set this
-				WarheadTypeClass *cWarhead;
-				cWeapon->Warhead = cWarhead; //or this
 				CoordStruct supportFLH;
 				pThis->set_Weapon(idxWeapon, cWeapon);
 				//now get the FLH
@@ -94,9 +100,10 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 						"weapon slots to assign the elite support weapon to.", pID);
 				}
 				this->EliteSupportWeaponIndex = idxWeapon;
+				if(!cWeapon->Warhead) {
+					cWeapon->Warhead = SuperWH;
+				}
 				cWeapon->NeverUse = true; //the modder shouldn't be expected to have to set this
-				WarheadTypeClass *cWarhead;
-				cWeapon->Warhead = cWarhead; //or this
 				CoordStruct supportFLH;
 				pThis->set_EliteWeapon(idxWeapon, cWeapon);
 				//now get the FLH
@@ -112,9 +119,17 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 	}
 }
 
-signed int BuildingTypeExt::cPrismForwarding::GetUnusedWeaponSlot(BuildingTypeClass *pThis, int elite) {
+signed int BuildingTypeExt::cPrismForwarding::GetUnusedWeaponSlot(BuildingTypeClass *pThis, bool elite) {
 	int idxWeapon = 1;
-	while ( ++idxWeapon <= 12 && ( (elite == 0 && pThis->get_Weapon(idxWeapon)) || (elite == 1 && pThis->get_EliteWeapon(idxWeapon)) ) ) {}
+	while (++idxWeapon <= 12) {
+		auto Weapon = elite
+			? pThis->get_EliteWeapon(idxWeapon)
+			: pThis->get_Weapon(idxWeapon)
+		;
+		if(!Weapon) {
+				break;
+		}
+	}
 	if (idxWeapon <= 12) { //13-18 is AlternateFLH0-4
 		return idxWeapon;
 	}
@@ -228,8 +243,6 @@ int BuildingTypeExt::cPrismForwarding::AcquireSlaves_SingleStage
 		++(*LongestChain);
 	}
 
-	Debug::Log("[Prism Forwarding] AcquireSlaves_SingleStage returning %d for tower %p, which now has %d SupportingPrisms.\n", iFeeds, TargetTower, TargetTower->SupportingPrisms);
-		
 	return iFeeds;
 }
 
@@ -366,7 +379,6 @@ void BuildingTypeExt::cPrismForwarding::SetChargeDelay_Set
 	(BuildingClass * TargetTower, int chain, DWORD *LongestCDelay, DWORD *LongestFDelay, int LongestChain) {
 	BuildingExt::ExtData *pTargetData = BuildingExt::ExtMap.Find(TargetTower);
 	pTargetData->PrismForwarding.PrismChargeDelay = (LongestFDelay[chain] - TargetTower->DelayBeforeFiring) + LongestCDelay[chain];
-	Debug::Log("PrismForwarding: SCD_S chain=%d PCD=%d LCD[c]=%d\n", chain, pTargetData->PrismForwarding.PrismChargeDelay, LongestCDelay[chain]);
 	TargetTower->SupportingPrisms = (LongestChain - chain);
 	if (pTargetData->PrismForwarding.PrismChargeDelay == 0) {
 		//no delay, so start animations now

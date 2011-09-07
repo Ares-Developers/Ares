@@ -3,12 +3,14 @@
 #include <WeaponTypeClass.h>
 #include <AnimClass.h>
 #include <InfantryClass.h>
+#include <OverlayTypeClass.h>
 #include <ScenarioClass.h>
 #include <HouseClass.h>
 #include "Debug.h"
 #include "../Ext/Rules/Body.h"
 #include "../Ext/HouseType/Body.h"
 #include "../Ext/Side/Body.h"
+#include "../Ext/TechnoType/Body.h"
 #include <vector>
 #include <algorithm>
 #include <string>
@@ -79,6 +81,7 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 		(e.g., to make sure crevio hasn't stuck a MovementZone=Retarded on anything)
 		to reduce chances of crashing later
 	*/
+
 	for(int i = 0; i < TechnoTypeClass::Array->Count; ++i) {
 		TechnoTypeClass *Item = reinterpret_cast<TechnoTypeClass *>(TechnoTypeClass::Array->Items[i]);
 
@@ -98,6 +101,19 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 
 		if(Item->Passengers > 0 && Item->SizeLimit < 1) {
 			Debug::DevLog(Debug::Error, "[%s]Passengers=%d and SizeLimit=%d!\n", Item->ID, Item->Passengers, Item->SizeLimit);
+		}
+
+		auto pData = TechnoTypeExt::ExtMap.Find(Item);
+		if(Item->PoweredUnit && pData->PoweredBy.Count) {
+			Debug::DevLog(Debug::Error, "[%s] uses both PoweredUnit=yes and PoweredBy=!\n", Item->ID);
+			Item->PoweredUnit = false;
+		}
+		if(auto PowersUnit = Item->PowersUnit) {
+			auto pExtraData = TechnoTypeExt::ExtMap.Find(PowersUnit);
+			if(pExtraData->PoweredBy.Count) {
+				Debug::DevLog(Debug::Error, "[%s]PowersUnit=%s, but [%s] uses PoweredBy=!\n", Item->ID, PowersUnit->ID, PowersUnit->ID);
+				Item->PowersUnit = NULL;
+			}
 		}
 	}
 
@@ -122,10 +138,21 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 
 		for(auto it = LimitedClasses.begin(); it != LimitedClasses.end(); ++it) {
 			if(it->second > 512) {
-				Debug::DevLog(Debug::Warning, "The [%s] list contains more than 512 entries."
+				Debug::DevLog(Debug::Warning, "The [%s] list contains more than 512 entries. "
 					"This might result in unexpected behaviour and crashes.\n", it->first);
 			}
 		}
+	}
+
+	for(auto i = 0; i < RulesClass::Instance->BuildConst.Count; ++i) {
+		auto BC = RulesClass::Instance->BuildConst.GetItem(i);
+		if(!BC->AIBuildThis) {
+		Debug::DevLog(Debug::Warning, "[AI]BuildConst= includes [%s], which doesn't have AIBuildThis=yes!\n", BC->ID);
+		}
+	}
+
+	if(OverlayTypeClass::Array->Count > 255) {
+		Debug::DevLog(Debug::Warning, "Only 255 OverlayTypes are supported.\n");
 	}
 
 	if(Ares::bStrictParser && Debug::bParserErrorDetected) {
@@ -333,57 +360,6 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 	return 0;
 }
 
-// #917
-DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateAIBuildables, 6) {
-	const char *errorMsg = "AI House of country [%s] cannot build any object in %s. The AI ain't smart enough for that.\n";
-	for(int i = 0; i < HouseClass::Array->Count; ++i) {
-		HouseClass* curHouse = HouseClass::Array->GetItem(i);
-		if(!curHouse->ControlledByHuman() && !curHouse->IsNeutral()) {
-			auto pArray = &RulesClass::Instance->BaseUnit;
-			bool canBuild = false;
-			for(int i = 0; i < pArray->Count; ++i) {
-				auto Item = pArray->GetItem(i);
-				if(curHouse->CanExpectToBuild(Item)) {
-					canBuild = true;
-					break;
-				}
-			}
-			if(!canBuild) {
-				Debug::DevLog(Debug::Error, errorMsg, curHouse->Type->ID, "BaseUnit");
-			}
-
-			auto CheckList = [curHouse, errorMsg]
-					(DynamicVectorClass<BuildingTypeClass *> *const List, char * const ListName) -> void {
-				if(!curHouse->FirstBuildableFromArray(List)) {
-					Debug::DevLog(Debug::Error, errorMsg, curHouse->Type->ID, ListName);
-				}
-			};
-
-			// commented out lists that do not cause a crash, according to testers
-			CheckList(&RulesClass::Instance->Shipyard, "Shipyard");
-			CheckList(&RulesClass::Instance->BuildPower, "BuildPower");
-			CheckList(&RulesClass::Instance->BuildRefinery, "BuildRefinery");
-			CheckList(&RulesClass::Instance->BuildWeapons, "BuildWeapons");
-
-//			CheckList(&RulesClass::Instance->BuildConst, "BuildConst");
-//			CheckList(&RulesClass::Instance->BuildBarracks, "BuildBarracks");
-//			CheckList(&RulesClass::Instance->BuildTech, "BuildTech");
-//			CheckList(&RulesClass::Instance->BuildRadar, "BuildRadar");
-//			CheckList(&RulesClass::Instance->ConcreteWalls, "ConcreteWalls");
-//			CheckList(&RulesClass::Instance->BuildDummy, "BuildDummy");
-//			CheckList(&RulesClass::Instance->BuildNavalYard, "BuildNavalYard");
-
-			auto pCountryData = HouseTypeExt::ExtMap.Find(curHouse->Type);
-			CheckList(&pCountryData->Powerplants, "Powerplants");
-
-//			auto pSide = SideClass::Array->GetItem(curHouse->Type->SideIndex);
-//			auto pSideData = SideExt::ExtMap.Find(pSide);
-//			CheckList(&pSideData->BaseDefenses, "Base Defenses");
-		}
-	}
-	return 0;
-}
-
 DEFINE_HOOK(55AFB3, LogicClass_Update_1000, 6)
 {
 
@@ -426,3 +402,25 @@ DEFINE_HOOK(55AFB3, LogicClass_Update_1000, 6)
 	return 0;
 }
 
+DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateBuildCat, 6) {
+	for(int i = 0; i < BuildingTypeClass::Array->Count; ++i) {
+		auto B = BuildingTypeClass::Array->GetItem(i);
+		if(B->TechLevel < 0 || B->TechLevel > RulesClass::Instance->TechLevel) {
+			continue;
+		}
+		if(B->BuildCat == bcat_DontCare) {
+			B->BuildCat = ((B->SuperWeapon != -1) || B->IsBaseDefense || B->Wall)
+				? bcat_Combat
+				: bcat_Infrastructure
+			;
+			const char *catName = (B->BuildCat == bcat_Combat)
+				? "Combat"
+				: "Infrastructure"
+			;
+			Debug::DevLog(Debug::Warning, "Building Type [%s] does not have a valid BuildCat set!\n"
+				"It was reset to %s, but you should really specify it explicitly.\n"
+				, B->ID, catName);
+		}
+	}
+	return 0;
+}

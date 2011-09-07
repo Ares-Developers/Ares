@@ -4,6 +4,7 @@
 #include <TechnoClass.h>
 #include <TechnoTypeClass.h>
 #include <LocomotionClass.h>
+#include "../WarheadType/Body.h"
 
 template<> const DWORD Extension<WeaponTypeClass>::Canary = 0x33333333;
 Container<WeaponTypeExt> WeaponTypeExt::ExtMap;
@@ -155,6 +156,14 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 		TechnoClass* Attacker = Bullet->Owner;
 		TechnoTypeClass* TargetType = Target->GetTechnoType();
 		TechnoTypeClass* AttackerType = Attacker->GetTechnoType();
+
+		//issue 1362
+		if(!WarheadTypeExt::canWarheadAffectTarget(Target, Attacker->Owner, Bullet->WH)) {
+			return false;
+		}
+		if(Target->IsIronCurtained()) {
+			return false;
+		}
 
 		// Don't abduct the target if it's too fat in general, or if there's not enough room left in the hold // alternatively, NumPassengers
 		if((TargetType->Size > AttackerType->SizeLimit)

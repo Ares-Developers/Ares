@@ -10,6 +10,26 @@ class Helpers {
 public:
 	class Alex {
 	public:
+		//! Default comparer for sets using the lower-than operator.
+		template<typename T, typename Enable = void>
+		struct StrictWeakComparer {
+			bool operator() (const T& lhs, const T& rhs) const {
+				return lhs < rhs;
+			}
+		};
+
+		//! Specialized comparer for all objects derived from ObjectClass.
+		/*!
+			This specialization compares the unique ID each ObjectClass has.
+			It ensures the objects are sorted the same way on every computer.
+		*/
+		template<typename T>
+		struct StrictWeakComparer<T, typename std::enable_if<std::is_base_of<ObjectClass, typename std::remove_pointer<typename T>::type>::value>::type> {
+			bool operator() (const ObjectClass* lhs, const ObjectClass* rhs) const {
+				return lhs->UniqueID < rhs->UniqueID;
+			}
+		};
+
 		//! Gets the new duration a stackable or absolute effect will last.
 		/*!
 			The new frames count is calculated the following way:
@@ -71,7 +91,7 @@ public:
 		*/
 		static DynamicVectorClass<TechnoClass*>* getCellSpreadItems(CoordStruct *coords, float spread, bool includeInAir=false) {
 			// set of possibly affected objects. every object can be here only once.
-			std::set<TechnoClass*> *set = new std::set<TechnoClass*>();
+			auto set = new std::set<TechnoClass*, StrictWeakComparer<ObjectClass*> >();
 
 			// the quick way. only look at stuff residing on the very cells we are affecting.
 			CellStruct cellCoords = MapClass::Instance->GetCellAt(coords)->MapCoords;
@@ -92,7 +112,7 @@ public:
 				// the not quite so fast way. skip everything not in the air.
 				for(int i=0; i<TechnoClass::Array->Count; ++i) {
 					TechnoClass *Techno = TechnoClass::Array->GetItem(i);
-					if(Techno->IsInAir()) {
+					if(Techno->GetHeight() > 0) {
 						// rough estimation
 						if(Techno->Location.DistanceFrom(*coords) <= spread * 256) {
 							set->insert(Techno);
@@ -103,7 +123,7 @@ public:
 
 			// look closer. the final selection. put all affected items in a vector.
 			DynamicVectorClass<TechnoClass*> *ret = new DynamicVectorClass<TechnoClass*>();
-			for(std::set<TechnoClass*>::iterator iterator = set->begin(); iterator != set->end(); iterator++) {
+			for(auto iterator = set->begin(); iterator != set->end(); iterator++) {
 				TechnoClass *Techno = *iterator;
 
 				// ignore buildings that are not visible, like ambient light posts
@@ -250,22 +270,10 @@ public:
 		template<typename T>
 		class DistinctCollector {
 		public:
-			std::set<T> *Value;
-
-			DistinctCollector() {
-				Value = new std::set<T>();
-			}
-
-			~DistinctCollector() {
-				if(Value) {
-					Value->Clear();
-					delete Value;
-					Value = NULL;
-				}
-			}
+			std::set<T, StrictWeakComparer<T> > Value;
 
 			bool Collect(T value) {
-				Value->insert(value);
+				Value.insert(value);
 				return true;
 			}
 
@@ -275,7 +283,7 @@ public:
 
 			void forEach(std::tr1::function<bool (T)> action) {
 				if(action) {
-					for(std::set<T>::iterator iterator = Value->begin(); iterator != Value->end(); iterator++) {
+					for(auto iterator = Value.begin(); iterator != Value.end(); iterator++) {
 						T Obj = *iterator;
 						if(!action(Obj)) {
 							return;

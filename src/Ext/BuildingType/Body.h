@@ -46,7 +46,7 @@ public:
 		Valueable<signed int> EliteSupportWeaponIndex;
 
 		//methods
-		signed int GetUnusedWeaponSlot(BuildingTypeClass*, int);
+		signed int GetUnusedWeaponSlot(BuildingTypeClass*, bool);
 		void Initialize(BuildingTypeClass* );
 		void LoadFromINIFile(BuildingTypeClass *, CCINIClass *);
 
