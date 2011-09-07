@@ -45,7 +45,6 @@ bool SW_UnitDelivery::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlay
 {
 	this->newStateMachine(150, *pCoords, pThis);
 
-	Unsorted::CurrentSWType = -1;
 	return 1;
 }
 

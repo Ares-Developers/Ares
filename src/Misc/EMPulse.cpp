@@ -432,7 +432,7 @@ void EMPulse::updateSpawnManager(TechnoClass * Techno, ObjectClass * Source = NU
 			for (int i=0; i < SM->SpawnedNodes.Count; ++i) {
 				SpawnNode *spawn = SM->SpawnedNodes.GetItem(i);
 				// kill every spawned unit that is in the air. exempt missiles.
-				if(!spawn->IsSpawnMissile && spawn->Unit && spawn->Status >= 0 && spawn->Status <= 4) {
+				if(!spawn->IsSpawnMissile && spawn->Unit && spawn->Status >= 1 && spawn->Status <= 4) {
 					TechnoExt::Destroy(spawn->Unit, generic_cast<TechnoClass*>(Source));
 				}
 			}

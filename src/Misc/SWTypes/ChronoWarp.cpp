@@ -7,6 +7,7 @@
 
 #include <LocomotionClass.h>
 #include <BulletClass.h>
+#include <LightSourceClass.h>
 
 bool SW_ChronoWarp::HandlesType(int type)
 {
@@ -98,6 +99,11 @@ bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 				// differentiate between buildings and vehicle-type buildings
 				bool IsVehicle = false;
 				if(BuildingClass* pBld = specific_cast<BuildingClass*>(pObj)) {
+					// always ignore bridge repair huts
+					if(pBld->Type->BridgeRepairHut) {
+						return true;
+					}
+
 					// use "smart" detection of vehicular building types?
 					if(pData->Chronosphere_ReconsiderBuildings.Get()) {
 						IsVehicle = pExt->Chronoshift_IsVehicle.Get();
@@ -191,6 +197,13 @@ bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 					// tell all linked units to get off
 					pBld->SendToEachLink(rc_0D);
 					pBld->SendToEachLink(rc_Exit);
+
+					// destroy the building light source
+					if(pBld->LightSource) {
+						pBld->LightSource->Deactivate();
+						GAME_DEALLOC(pBld->LightSource);
+						pBld->LightSource = NULL;
+					}
 
 					// shut down cloak generation
 					if(pBld->Type->CloakGenerator && pBld->CloakRadius) {
@@ -337,12 +350,12 @@ void ChronoWarpStateMachine::Update() {
 						// put it back where it was
 						++Unsorted::IKnowWhatImDoing;
 						pBld->Put(&pContainer.origin, Direction::North);
+						pBld->Place(false);
 						--Unsorted::IKnowWhatImDoing;
 					}
 
 					// chronoshift ends
 					pBld->BeingWarpedOut = false;
-					pBld->ActuallyPlacedOnMap = true;
 					pBld->Owner->PowerBlackout = true;
 					pBld->Owner->ShouldRecheckTechTree = true;
 					pBld->EnableTemporal();
@@ -357,7 +370,7 @@ void ChronoWarpStateMachine::Update() {
 							if(pContainer.isVehicle || pExt->Chronosphere_BlowUnplaceable.Get()) {
 								int damage = pBld->Type->Strength;
 								pBld->ReceiveDamage(&damage, 0,
-									RulesClass::Instance->C4Warhead, NULL, true, true, this->Super->Owner);
+									RulesClass::Instance->C4Warhead, NULL, TRUE, TRUE, this->Super->Owner);
 							}
 						}
 					}
