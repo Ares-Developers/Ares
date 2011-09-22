@@ -151,7 +151,7 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 	for(auto i = 0; i < RulesClass::Instance->BuildConst.Count; ++i) {
 		auto BC = RulesClass::Instance->BuildConst.GetItem(i);
 		if(!BC->AIBuildThis) {
-		Debug::DevLog(Debug::Warning, "[AI]BuildConst= includes [%s], which doesn't have AIBuildThis=yes!\n", BC->ID);
+			Debug::DevLog(Debug::Warning, "[AI]BuildConst= includes [%s], which doesn't have AIBuildThis=yes!\n", BC->ID);
 		}
 	}
 
