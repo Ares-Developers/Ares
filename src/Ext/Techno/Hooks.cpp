@@ -570,6 +570,7 @@ DEFINE_HOOK(701C97, TechnoClass_ReceiveDamage_AffectsEnemies, 6)
 		 */
 		CanAffect = WHTypeExt->AffectsEnemies || Victim->Owner->IsAlliedWith(Arguments->Attacker->Owner);
 
+#ifdef DEBUGBUILD
 		if(Arguments->Attacker->Owner != Arguments->SourceHouse) {
 			Debug::Log("Info: During AffectsEnemies parsing, Attacker's Owner was %p [%s], but SourceHouse was %p [%s].",
 				Arguments->Attacker->Owner,
@@ -579,6 +580,7 @@ DEFINE_HOOK(701C97, TechnoClass_ReceiveDamage_AffectsEnemies, 6)
 				);
 			Debug::DumpStack(R, 0x180, 0xC0);
 		}
+#endif
 
 	} else if(Arguments->SourceHouse) {
 		// fallback, in case future ways of damage dealing don't include an attacker, e.g. stuff like GenericWarhead

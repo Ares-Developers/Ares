@@ -26,10 +26,10 @@ int Ares::UISettings::ColorCount = 8;
 Interface::ColorData Ares::UISettings::Colors[maxColorCount+1];
 
 int Ares::UISettings::uiColorText;
-int Ares::UISettings::uiColorTextButton;
+int Ares::UISettings::uiColorTextButton = 0xFFFF; // #1644: needed for CD prompt
 int Ares::UISettings::uiColorTextCheckbox;
 int Ares::UISettings::uiColorTextRadio;
-int Ares::UISettings::uiColorTextLabel;
+int Ares::UISettings::uiColorTextLabel = 0xFFFF; // #1644: needed for CD prompt
 int Ares::UISettings::uiColorTextList;
 int Ares::UISettings::uiColorTextCombobox;
 int Ares::UISettings::uiColorTextGroupbox;

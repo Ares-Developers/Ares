@@ -3,6 +3,7 @@
 #include <WeaponTypeClass.h>
 #include <AnimClass.h>
 #include <InfantryClass.h>
+#include <OverlayTypeClass.h>
 #include <ScenarioClass.h>
 #include <HouseClass.h>
 #include "Debug.h"
@@ -150,8 +151,12 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 	for(auto i = 0; i < RulesClass::Instance->BuildConst.Count; ++i) {
 		auto BC = RulesClass::Instance->BuildConst.GetItem(i);
 		if(!BC->AIBuildThis) {
-			Debug::DevLog(Debug::Warning, "[AI]BuildConst= includes [%s], which doesn't have AIBuildThis=yes!", BC->ID);
+		Debug::DevLog(Debug::Warning, "[AI]BuildConst= includes [%s], which doesn't have AIBuildThis=yes!\n", BC->ID);
 		}
+	}
+
+	if(OverlayTypeClass::Array->Count > 255) {
+		Debug::DevLog(Debug::Warning, "Only 255 OverlayTypes are supported.\n");
 	}
 
 	if(Ares::bStrictParser && Debug::bParserErrorDetected) {

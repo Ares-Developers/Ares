@@ -7,6 +7,7 @@
 
 #include <LocomotionClass.h>
 #include <BulletClass.h>
+#include <LightSourceClass.h>
 
 bool SW_ChronoWarp::HandlesType(int type)
 {
@@ -196,6 +197,13 @@ bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 					// tell all linked units to get off
 					pBld->SendToEachLink(rc_0D);
 					pBld->SendToEachLink(rc_Exit);
+
+					// destroy the building light source
+					if(pBld->LightSource) {
+						pBld->LightSource->Deactivate();
+						GAME_DEALLOC(pBld->LightSource);
+						pBld->LightSource = NULL;
+					}
 
 					// shut down cloak generation
 					if(pBld->Type->CloakGenerator && pBld->CloakRadius) {
