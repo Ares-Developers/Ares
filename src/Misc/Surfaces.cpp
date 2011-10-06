@@ -209,3 +209,18 @@ DEFINE_HOOK(537BC0, Game_MakeScreenshot, 0)
 	return 0x537DC9;
 }
 
+DEFINE_HOOK(4F4583, GScreenClass_DrawOnTop_TheDarkSideOfTheMoon, 6)
+{
+	if(!Ares::bStable) {
+		Ares::bStableNotification = true;
+
+		auto wanted = Drawing::GetTextDimensions(Ares::StabilityWarning);
+
+		auto h = DSurface::Composite->GetHeight();
+		RectangleStruct rect = {0, h - wanted.Height - 32 /** adv comm bar */, wanted.Width, wanted.Height};
+
+		DSurface::Composite->FillRect(&rect, COLOR_BLACK);
+		DSurface::Composite->DrawTextA(Ares::StabilityWarning, 0, rect.Y, COLOR_RED);
+	}
+	return 0;
+}
