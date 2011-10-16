@@ -38,6 +38,8 @@ public:
 			}
 			GAME_DEALLOC(this->Palette);
 			GAME_DEALLOC(this->Convert);
+			this->Palette = NULL;
+			this->Convert = NULL;
 			ConvertClass::CreateFromFile(Ares::readBuffer, &this->Palette, &this->Convert);
 			return !!this->Convert;
 		}

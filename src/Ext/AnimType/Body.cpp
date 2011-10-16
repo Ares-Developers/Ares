@@ -80,7 +80,7 @@ DEFINE_HOOK(42784B, AnimTypeClass_CTOR, 5)
 	return 0;
 }
 
-DEFINE_HOOK(427888, AnimTypeClass_DTOR, 5)
+DEFINE_HOOK(428EA8, AnimTypeClass_SDDTOR, 5)
 {
 	GET(AnimTypeClass*, pItem, ECX);
 
