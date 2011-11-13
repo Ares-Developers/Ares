@@ -319,6 +319,8 @@ DEFINE_HOOK(6CC0EA, SuperClass_AnnounceQuantity, 9)
 	SuperWeaponTypeClass *pSW = pThis->Type;
 	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSW);
 
+	pData->PrintMessage(pData->Message_Ready, HouseClass::Player);
+
 	if(pData->EVA_Ready != -1 || pData->HandledByNewSWType != -1) {
 		if(pData->EVA_Ready != -1) {
 			VoxClass::PlayIndex(pData->EVA_Ready);
@@ -615,8 +617,8 @@ DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
 									if(pTechno->CloakState) {
 										if(pExt->IsHouseAffected(pThis, pTechno->Owner)) {
 											if(pExt->IsTechnoAffected(pTechno)) {
-												int thisValue = pTechno->ThreatPosed;
-												if(currentValue > thisValue) {
+												int thisValue = pTechno->GetTechnoType()->ThreatPosed;
+												if(currentValue < thisValue) {
 													list.Clear();
 													currentValue = thisValue;
 												}
@@ -714,7 +716,7 @@ DEFINE_HOOK(6CBF5B, SuperClass_GetCameoChargeState_ChargeDrainRatio, 9) {
 	return 0;
 }
 
-DEFINE_HOOK(0x6CC053, SuperClass_GetCameoChargeState_FixFullyCharged, 5) {
+DEFINE_HOOK(6CC053, SuperClass_GetCameoChargeState_FixFullyCharged, 5) {
 	GET(int, charge, EAX);
 
 	// some smartass capped this at 53, causing the last

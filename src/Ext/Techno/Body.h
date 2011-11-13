@@ -58,6 +58,12 @@ public:
 		// issue #617 powered units
 		PoweredUnitClass* PoweredUnit;
 
+		//#1573, #1623, #255 Stat-modifiers/ongoing animations
+		DynamicVectorClass <AttachEffectClass *> AttachedEffects;
+
+		//boolean for #1623
+		bool AttachedTechnoEffect_isset;
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			idxSlot_Wave (0),
 			idxSlot_Beam (0),
@@ -70,7 +76,8 @@ public:
 			EMPLastMission (mission_None),
 			ShadowDrawnManually (false),
 			RadarJam(NULL),
-			PoweredUnit(NULL)
+			PoweredUnit(NULL),
+			AttachedTechnoEffect_isset (false)
 			{
 				this->CloakSkipTimer.Stop();
 				// hope this works with the timing - I assume it does, since Types should be created before derivates thereof
@@ -102,6 +109,7 @@ public:
 		bool IsDeactivated() const;
 
 		eAction GetDeactivatedAction(ObjectClass *Hovered = NULL) const;
+
 	};
 
 	static Container<TechnoExt> ExtMap;
@@ -125,7 +133,11 @@ public:
 
 	static void TransferMindControl(TechnoClass *From, TechnoClass *To);
 	static void TransferIvanBomb(TechnoClass *From, TechnoClass *To);
+	static void TransferAttachedEffects(TechnoClass *From, TechnoClass *To);
 	
+	static void RecalculateStats(TechnoClass *pTechno);
+	static bool CanICloakByDefault(TechnoClass *pTechno);
+
 	static void Destroy(TechnoClass* pTechno, TechnoClass* pKiller = NULL, HouseClass* pKillerHouse = NULL, WarheadTypeClass* pWarhead = NULL);
 /*
 	static int SelectWeaponAgainst(TechnoClass *pThis, TechnoClass *pTarget);

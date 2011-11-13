@@ -53,6 +53,12 @@ public:
 
 	static int TrackIndex;
 
+	static bool bStable;
+	static bool bStableNotification;
+	static void UpdateStability();
+
+	static const wchar_t StabilityWarning[BUFLEN];
+
 	static DWORD readLength;
 	static char readBuffer[BUFLEN];
 	static const char readDelims[4];

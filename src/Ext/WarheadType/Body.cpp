@@ -93,6 +93,8 @@ void WarheadTypeExt::ExtData::LoadFromINIFile(WarheadTypeClass *pThis, CCINIClas
 	this->KillDriver = pINI->ReadBool(section, "KillDriver", this->KillDriver);
 
 	this->Malicious.Read(&exINI, section, "Malicious");
+
+	this->AttachedEffect.Read(&exINI, section);
 };
 
 void Container<WarheadTypeExt>::InvalidatePointer(void *ptr) {
@@ -443,6 +445,47 @@ bool WarheadTypeExt::ExtData::applyKillDriver(BulletClass* Bullet) {
 		}
 	}
 	return false;
+}
+
+//AttachedEffects, request #1573, #255
+//copy-pasted from AlexB's applyIC
+//since CellSpread effect is needed due to MO's proposed cloak SW (which is the reason why I was bugged with this), it has it.
+//Graion Dilach, ~2011-10-14... I forgot the exact date :S
+
+void WarheadTypeExt::ExtData::applyAttachedEffect(CoordStruct *coords, HouseClass* Owner) {
+		if (!!this->AttachedEffect.Duration){
+			CellStruct cellCoords = MapClass::Instance->GetCellAt(coords)->MapCoords;
+			// set of affected objects. every object can be here only once.
+			DynamicVectorClass<TechnoClass*> *items = Helpers::Alex::getCellSpreadItems(coords,
+			this->AttachedToObject->CellSpread, true);
+
+
+
+			// affect each object
+			for(int i=0; i<items->Count; ++i) {
+				if(TechnoClass *curTechno = items->GetItem(i)) {
+					// don't attach to dead
+					if(curTechno->InLimbo || !curTechno->IsAlive || !curTechno->Health) {
+						continue;
+					}
+
+					
+					if(WarheadTypeExt::canWarheadAffectTarget(curTechno, Owner, this->AttachedToObject)) {
+						if(abs(this->Verses[curTechno->GetTechnoType()->Armor].Verses) < 0.001) {
+							continue;
+						}
+						this->AttachedEffect.Attach(curTechno, this->AttachedEffect.Duration);
+						
+					}
+					
+		
+			}
+		}
+		items->Clear();
+		delete items;
+
+	}
+
 }
 
 // =============================

@@ -9,6 +9,8 @@
 #include "../_Container.hpp"
 #include "../../Utilities/Template.h"
 #include "../../Utilities/Constructs.h"
+#include "../../Misc/AttachEffect.h"
+
 
 #include <bitset>
 
@@ -116,6 +118,9 @@ public:
 		// issue #617
 		DynamicVectorClass<BuildingTypeClass*> PoweredBy;  //!< The buildingtype this unit is powered by or NULL.
 
+		//issue #1623
+		AttachEffectTypeClass AttachedTechnoEffect; //The AttachedEffect which should been on the Techno from the start.
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			Survivors_PilotChance (NULL),
 			Survivors_PassengerChance (NULL),
@@ -162,7 +167,8 @@ public:
 			WaterImage (NULL),
 			CanBeReversed (true),
 			RadarJamRadius (0),
-			PassengerTurret (false)
+			PassengerTurret (false),
+			AttachedTechnoEffect()
 			{
 				this->Insignia.SetAll(NULL);
 				*this->CameoPCX = *this->AltCameoPCX = 0;

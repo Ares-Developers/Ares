@@ -304,6 +304,9 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 		}
 	}
 
+	//#1623 - AttachEffect on unit-creation
+	this->AttachedTechnoEffect.Read(&exINI, section);
+
 	// quick fix - remove after the rest of weapon selector code is done
 	return;
 }

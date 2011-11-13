@@ -435,6 +435,93 @@ void TechnoExt::TransferIvanBomb(TechnoClass *From, TechnoClass *To) {
 	}
 }
 
+void TechnoExt::TransferAttachedEffects(TechnoClass *From, TechnoClass *To) {
+		auto FromExt = TechnoExt::ExtMap.Find(From);
+		auto ToExt = TechnoExt::ExtMap.Find(To);
+		ToExt->AttachedEffects.Clear();
+		if (FromExt->AttachedEffects.Count != 0) {
+			
+			// while recreation itself isn't the best idea, less hassle and more reliable
+			// list gets intact in the end
+			for (int i=0; i<FromExt->AttachedEffects.Count; i++){
+				FromExt->AttachedEffects.GetItem(i)->Type->Attach(To, FromExt->AttachedEffects.GetItem(i)->ActualDuration);
+				FromExt->AttachedEffects.GetItem(i)->Destroy();
+				delete FromExt->AttachedEffects.GetItem(i);
+			
+			}
+			FromExt->AttachedEffects.Clear();
+			FromExt->AttachedTechnoEffect_isset=false;
+			TechnoExt::RecalculateStats(To);
+		}
+	
+}
+
+/*! This function recalculates the stats modifiable by crates and update them (aimed for request #255)
+	\todo code that crate effects not get ignored
+	\author Graion Dilach
+	\date 2011-10-12
+*/
+
+void TechnoExt::RecalculateStats(TechnoClass *pTechno){
+	auto pTechnoExt = TechnoExt::ExtMap.Find(pTechno);
+	double Firepower = 1, Armor = 1, Speed = 1; //if there's hooks for crate-stuff, they could be the base for this
+	bool Cloak = TechnoExt::CanICloakByDefault(pTechno);
+
+	Debug::Log("[AttachEffect]Recalculating stats of %s...\n", pTechno->get_ID());
+
+	if (pTechnoExt->AttachedEffects.Count > 0){		//QDB #666... -_- 
+		for (int i=0; i < pTechnoExt->AttachedEffects.Count; i++){
+
+			Firepower *= pTechnoExt->AttachedEffects.GetItem(i)->Type->FirepowerMultiplier;
+			Speed *= pTechnoExt->AttachedEffects.GetItem(i)->Type->SpeedMultiplier;
+			Armor *= pTechnoExt->AttachedEffects.GetItem(i)->Type->ArmorMultiplier;
+			Cloak = Cloak || pTechnoExt->AttachedEffects.GetItem(i)->Type->Cloakable;
+		
+		}
+	}
+
+	pTechno->FirepowerMultiplier = Firepower;
+	pTechno->ArmorMultiplier = Armor;
+
+	/*if (pTechno->Cloakable && !Cloak){
+		pTechno->Uncloak(false);
+		pTechno->Cloakable = Cloak;
+		
+	} else {*/
+		pTechno->Cloakable = Cloak;
+	//}
+
+	if(FootClass *Foot = generic_cast<FootClass *>(pTechno)) {
+		Foot->SpeedMultiplier = Speed;
+	}
+
+	Debug::Log("[AttachEffect]Calculation was successful.\n", pTechno->get_ID());
+}
+
+/*! This function calculates that the unit wold be cloaked by default
+	\author Graion Dilach
+	\date 2011-10-16
+*/
+
+
+bool TechnoExt::CanICloakByDefault(TechnoClass *pTechno){
+	Debug::Log("[AttachEffect]Can %s cloak by default?\n", pTechno->get_ID());
+	if (pTechno->GetTechnoType()->Cloakable){
+		return true;
+	}
+
+	if (pTechno->Veterancy.IsVeteran() && pTechno->GetTechnoType()->VeteranAbilities.CLOAK){
+		return true;
+	}
+
+	if (pTechno->Veterancy.IsElite() && (pTechno->GetTechnoType()->VeteranAbilities.CLOAK || pTechno->GetTechnoType()->EliteAbilities.CLOAK)){
+		return true;
+	}
+
+	return false;
+}
+
+
 bool TechnoExt::ExtData::IsDeactivated() const {
 	return this->AttachedToObject->Deactivated;
 }

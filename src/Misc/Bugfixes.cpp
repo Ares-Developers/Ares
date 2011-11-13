@@ -913,6 +913,7 @@ DEFINE_HOOK(739956, UnitClass_Deploy_ReestablishMindControl, 6)
 
 	TechnoExt::TransferMindControl(pUnit, pStructure);
 	TechnoExt::TransferIvanBomb(pUnit, pStructure);
+	TechnoExt::TransferAttachedEffects(pUnit, pStructure);
 
 	pStructure->QueueMission(mission_Construction, 0);
 
@@ -933,6 +934,7 @@ DEFINE_HOOK(44A03C, BuildingClass_Mi_Selling_ReestablishMindControl, 6)
 
 	TechnoExt::TransferMindControl(pStructure, pUnit);
 	TechnoExt::TransferIvanBomb(pStructure, pUnit);
+	TechnoExt::TransferAttachedEffects(pStructure, pUnit);
 
 	return 0;
 }

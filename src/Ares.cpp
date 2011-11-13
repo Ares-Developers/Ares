@@ -34,11 +34,15 @@ bool Ares::bNoCD = false;
 bool Ares::bTestingRun = false;
 bool Ares::bStrictParser = false;
 bool Ares::bAllowAIControl = false;
+bool Ares::bStable = false;
+bool Ares::bStableNotification = false;
 
 DWORD Ares::readLength = BUFLEN;
 char Ares::readBuffer[BUFLEN];
 const char Ares::readDelims[4] = ",";
 const char Ares::readDefval[4] = "";
+
+const wchar_t Ares::StabilityWarning[BUFLEN] = L"This version of Ares (" VERSION_WSTR L") is not considered stable.";
 
 MixFileClass *Ares::aresMIX = NULL;
 
@@ -440,4 +444,18 @@ bool Ares::RunningOnWindows7OrVista() {
 		W7 = (osvi.dwMajorVersion == 6)/* && (osvi.dwMinorVersion >= 1)*/;
 	}
 	return W7;
+}
+
+void Ares::UpdateStability() {
+	if(Ares::bStable) {
+		return;
+	}
+	if(Unsorted::CurrentFrame < 900) {
+		return;
+	}
+	if(!Ares::bStableNotification) {
+		Debug::FatalErrorAndExit("This version of Ares is not considered stable, but for some reason the warning text isn't showing.\n"
+			"This suggests that your version of Ares has been tampered with "
+			"and the original developers cannot be held responsible for any problems you might experience.");
+	}
 }
