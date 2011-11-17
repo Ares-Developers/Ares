@@ -10,7 +10,7 @@
 class AttachEffectTypeClass {
 public:
 
-	const char* ID;
+	char ID[24]; // as westwood once said, 24 chars ought to be enough for any ID
 	Valueable<int> Duration;
 	Valueable<bool> Cumulative;
 	
@@ -23,42 +23,25 @@ public:
 	Valueable<double> SpeedMultiplier;
 	Valueable<bool> Cloakable;
 
-
 	virtual void Attach(TechnoClass* Target, int Duration);
 
-	AttachEffectTypeClass(){
-		this->Cumulative = false;
-		this->Duration = 0;
-		this->AnimType = NULL;
-		this->FirepowerMultiplier = 1;
-		this->ArmorMultiplier = 1;
-		this->SpeedMultiplier = 1;
-		this->Cloakable = false;
+	AttachEffectTypeClass(): Cumulative(false),
+		Duration(0),
+		AnimType(NULL),
+		FirepowerMultiplier(1),
+		ArmorMultiplier(1),
+		SpeedMultiplier(1),
+		Cloakable(false)
+		{
+			this->ID[0] = 0;
+		};
 
-
-	};
-
-	void Read(INI_EX *exINI, const char * section) {
-		
-		this->ID = section;
-		this->Duration.Read(exINI, section, "AttachEffect.Duration");
-		this->Cumulative.Read(exINI, section, "AttachEffect.Cumulative");
-		this->AnimType.Parse(exINI, section, "AttachEffect.Animation");
-		this->FirepowerMultiplier.Read(exINI, section, "AttachEffect.FirepowerMultiplier");
-		this->ArmorMultiplier.Read(exINI, section, "AttachEffect.ArmorMultiplier");
-		this->SpeedMultiplier.Read(exINI, section, "AttachEffect.SpeedMultiplier");
-		this->Cloakable.Read(exINI, section, "AttachEffect.Cloakable");
-
-
-	}
+	void Read(INI_EX *exINI, const char * section);
 };
 
 class AttachEffectClass {
 public:
-	AttachEffectClass(AttachEffectTypeClass* AEType, int Timer){
-	this->Type = AEType;
-	this->ActualDuration = Timer;
-	this->Animation = NULL;
+	AttachEffectClass(AttachEffectTypeClass* AEType, int Timer): Type(AEType), Animation(NULL), ActualDuration(Timer) {
 	}
 
 	AttachEffectTypeClass * Type;
@@ -66,7 +49,10 @@ public:
 	int ActualDuration;
 
 	void Destroy();
-};
 
+	void InvalidateAnimPointer(AnimClass *ptr);
+
+	void KillAnim();
+};
 
 #endif

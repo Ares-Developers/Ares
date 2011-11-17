@@ -93,8 +93,10 @@ public:
 
 		virtual size_t Size() const { return sizeof(*this); };
 
+		// when any pointer in the game expires, this is called - be sure to tell everyone we own to invalidate it
 		virtual void InvalidatePointer(void *ptr) {
 			AnnounceInvalidPointer(this->GarrisonedIn, ptr);
+			this->InvalidateFXAnimPointer(reinterpret_cast<AnimClass *>(ptr));
 		}
 
 		bool IsOperated();
@@ -110,6 +112,7 @@ public:
 
 		eAction GetDeactivatedAction(ObjectClass *Hovered = NULL) const;
 
+		void InvalidateFXAnimPointer(AnimClass *ptr);
 	};
 
 	static Container<TechnoExt> ExtMap;

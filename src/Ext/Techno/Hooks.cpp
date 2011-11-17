@@ -57,7 +57,7 @@ DEFINE_HOOK(6F9E50, TechnoClass_Update, 5)
 	}
 	
 	// #617 powered units
-	if( pTypeData->PoweredBy.Count ) {
+	if( pTypeData->PoweredBy.Count) {
 		if(!pData->PoweredUnit) {
 			pData->PoweredUnit = new PoweredUnitClass(Source, pTypeData);
 		}
@@ -68,31 +68,30 @@ DEFINE_HOOK(6F9E50, TechnoClass_Update, 5)
 	//#1573, #1623, #255 - updating attached effects
 	if (pData->AttachedEffects.Count) {
 		Debug::Log("[AttachEffect]AttachEffect update of %s...\n", Source->get_ID());
-		for (int i=pData->AttachedEffects.Count; i>0; --i) {
-			auto Effect = pData->AttachedEffects.GetItem(i-1);
+		for (int i = pData->AttachedEffects.Count; i > 0; --i) {
+			auto Effect = pData->AttachedEffects.GetItem(i - 1);
 			--Effect->ActualDuration;
 			if(!Effect->ActualDuration) {			//Bloody crashes - apparently if cloaked and attached, during delete it might crash.
-				Debug::Log("[AttachEffect] %d. item expired, removing...\n", i);
+				Debug::Log("[AttachEffect] %d. item expired, removing...\n", i - 1);
 				Effect->Destroy();
-				if (Effect->Type->ID == Source->GetTechnoType()->ID) {		//#1623, hardcodes Cumulative to false
-					pData->AttachedTechnoEffect_isset=false;
+				if (!strcmp(Effect->Type->ID, Source->GetTechnoType()->ID)) {		//#1623, hardcodes Cumulative to false
+					pData->AttachedTechnoEffect_isset = false;
 				}
 				delete Effect;
-				pData->AttachedEffects.RemoveItem(i-1);
+				pData->AttachedEffects.RemoveItem(i - 1);
 				TechnoExt::RecalculateStats(Source);	//and update the unit's properties
-				Debug::Log("[AttachEffect] Remove was successful.\n", i);
-				}
-
+				Debug::Log("[AttachEffect] Remove #%d was successful.\n", i - 1);
+			}
 		}
 		Debug::Log("[AttachEffect]Update was succesful.\n");
 	}
 	
 	//#1623 - generating AttachedEffect from Type
-	if (!!pTypeData->AttachedTechnoEffect.Duration && !pData->AttachedTechnoEffect_isset){
+	if (!!pTypeData->AttachedTechnoEffect.Duration && !pData->AttachedTechnoEffect_isset) {
 		Debug::Log("[AttachEffect]Missing Type effect of %s...\n", Source->get_ID());
 		pTypeData->AttachedTechnoEffect.Attach(Source, pTypeData->AttachedTechnoEffect.Duration);
-		pData->AttachedTechnoEffect_isset=true;
-		Debug::Log("[AttachEffect]Readded.\n", Source->get_ID());
+		pData->AttachedTechnoEffect_isset = true;
+		Debug::Log("[AttachEffect]Readded to %s.\n", Source->get_ID());
 	}
 
 	return 0;
@@ -772,14 +771,16 @@ DEFINE_HOOK(6F6AC9, TechnoClass_Remove, 6) {
 	}
 
 	//#1573, #1623, #255 attached effects
-	if (TechnoExt->AttachedEffects.Count){
-		for (int i=TechnoExt->AttachedEffects.Count; i>0; --i) {
-			Debug::Log("[AttachEffect] Removing %d. item from %s\n", i-1, pThis->GetTechnoType()->ID);
-			TechnoExt->AttachedEffects.GetItem(i-1)->Destroy();
-			delete TechnoExt->AttachedEffects.GetItem(i-1);
-			TechnoExt->AttachedEffects.RemoveItem(i-1);
+	if (TechnoExt->AttachedEffects.Count) {
+		auto pID = pThis->GetTechnoType()->ID;
+		for (int i = TechnoExt->AttachedEffects.Count; i>0; --i) {
+			Debug::Log("[AttachEffect] Removing %d. item from %s\n", i - 1, pID);
+			auto Item = TechnoExt->AttachedEffects.GetItem(i - 1);
+			Item->Destroy();
+			delete Item;
+//			TechnoExt->AttachedEffects.RemoveItem(i-1); the array is being cleared afterwards anyway, so don't bother
 		}
-		Debug::Log("[AttachEffect] Deleting array of %s\n", pThis->GetTechnoType()->ID);
+		Debug::Log("[AttachEffect] Deleting array of %s\n", pID);
 		TechnoExt->AttachedEffects.Clear();
 		TechnoExt->AttachedTechnoEffect_isset = false;
 		TechnoExt::RecalculateStats(pThis);
