@@ -235,6 +235,7 @@ void WarheadTypeExt::ExtData::applyIronCurtain(CoordStruct *coords, HouseClass* 
 	This function checks if the passed warhead has EMP.Duration set, and, if so, applies the effect.
 	\note Moved here from hook BulletClass_Fire.
 	\param coords The coordinates of the warhead impact, the center of the EMP area.
+	\param source The unit that launched the EMP.
 */
 void WarheadTypeExt::ExtData::applyEMP(CoordStruct *coords, TechnoClass *source) {
 	if (this->EMP_Duration) {
@@ -314,6 +315,7 @@ void WarheadTypeExt::applyOccupantDamage(BulletClass* Bullet) {
 
 	\param Target The Techno WH is fired at.
 	\param SourceHouse The house that fired WH.
+	\param WH The fired warhead.
 
 	\returns True if WH can affect Target, false otherwise.
 
