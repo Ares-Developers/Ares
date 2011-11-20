@@ -217,7 +217,7 @@ DEFINE_HOOK(78997B, sub_789960_RemoveWOLResolutionCheck, 0)
 DEFINE_HOOK(4F4583, GScreenClass_DrawOnTop_TheDarkSideOfTheMoon, 6)
 {
 	if(!Ares::bStable) {
-		Ares::bStableNotification = true
+		Ares::bStableNotification = true;
 
 		auto wanted = Drawing::GetTextDimensions(Ares::StabilityWarning);
 

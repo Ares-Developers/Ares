@@ -23,6 +23,9 @@ public:
 	Valueable<double> SpeedMultiplier;
 	Valueable<bool> Cloakable;
 
+	//#1623-only tags
+	Valueable<int> Delay;
+
 	virtual void Attach(TechnoClass* Target, int Duration);
 
 	AttachEffectTypeClass(): Cumulative(false),

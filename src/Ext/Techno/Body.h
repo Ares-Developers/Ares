@@ -61,8 +61,9 @@ public:
 		//#1573, #1623, #255 Stat-modifiers/ongoing animations
 		DynamicVectorClass <AttachEffectClass *> AttachedEffects;
 
-		//boolean for #1623
+		//stuff for #1623
 		bool AttachedTechnoEffect_isset;
+		int AttachedTechnoEffect_Delay;
 
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			idxSlot_Wave (0),
@@ -77,7 +78,8 @@ public:
 			ShadowDrawnManually (false),
 			RadarJam(NULL),
 			PoweredUnit(NULL),
-			AttachedTechnoEffect_isset (false)
+			AttachedTechnoEffect_isset (false),
+			AttachedTechnoEffect_Delay (0)
 			{
 				this->CloakSkipTimer.Stop();
 				// hope this works with the timing - I assume it does, since Types should be created before derivates thereof

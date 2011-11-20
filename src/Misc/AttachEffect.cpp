@@ -20,7 +20,7 @@ To-to-to-todo: Get a disassembler to update the hook (44A03C, BuildingClass_Mi_S
 within Bugfixes.cpp to be set before TechnoClass::Remove, killing all effects on the way
 */
 
-void AttachEffectClass::Read(INI_EX *exINI, const char * section) {
+void AttachEffectTypeClass::Read(INI_EX *exINI, const char * section) {
 	AresCRT::strCopy(this->ID, section, 24);
 	this->Duration.Read(exINI, section, "AttachEffect.Duration");
 	this->Cumulative.Read(exINI, section, "AttachEffect.Cumulative");
@@ -63,7 +63,7 @@ void AttachEffectTypeClass::Attach(TechnoClass* Target, int Duration) {
 	TechnoExt::RecalculateStats(Target);
 }
 
-void AttachEffectClass::InvalidateFXAnimPointer(AnimClass *ptr) {
+void AttachEffectClass::InvalidateAnimPointer(AnimClass *ptr) {
 	if(this->Animation == ptr) {
 		this->KillAnim();
 	}

@@ -466,7 +466,7 @@ void TechnoExt::RecalculateStats(TechnoClass *pTechno) {
 	double Firepower = 1, Armor = 1, Speed = 1; //if there's hooks for crate-stuff, they could be the base for this
 	bool Cloak = TechnoExt::CanICloakByDefault(pTechno);
 
-	Debug::Log("[AttachEffect]Recalculating stats of %s...\n", pTechno->get_ID());
+	//Debug::Log("[AttachEffect]Recalculating stats of %s...\n", pTechno->get_ID());
 
 	for (int i = 0; i < pTechnoExt->AttachedEffects.Count; i++) {
 		auto Item = pTechnoExt->AttachedEffects.GetItem(i);
@@ -492,7 +492,7 @@ void TechnoExt::RecalculateStats(TechnoClass *pTechno) {
 		Foot->SpeedMultiplier = Speed;
 	}
 
-	Debug::Log("[AttachEffect]Calculation was successful.\n", pTechno->get_ID());
+	//Debug::Log("[AttachEffect]Calculation was successful.\n", pTechno->get_ID());
 }
 
 /*! This function calculates whether the unit wold be cloaked by default
@@ -500,7 +500,7 @@ void TechnoExt::RecalculateStats(TechnoClass *pTechno) {
 	\date 2011-10-16
 */
 bool TechnoExt::CanICloakByDefault(TechnoClass *pTechno) {
-	Debug::Log("[AttachEffect]Can %s cloak by default?\n", pTechno->get_ID());
+	//Debug::Log("[AttachEffect]Can %s cloak by default?\n", pTechno->get_ID());
 	auto tType = pTechno->GetTechnoType();
 	if(tType->Cloakable) {
 		return true;
