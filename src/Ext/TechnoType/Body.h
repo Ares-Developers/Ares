@@ -3,6 +3,7 @@
 
 #include <TechnoTypeClass.h>
 #include <BuildingTypeClass.h>
+#include <WarheadTypeClass.h>
 #include <VocClass.h>
 
 #include "../../Ares.h"
@@ -132,8 +133,13 @@ public:
 
 		Valueable<bool> ImmuneToAbduction; //680, 1362
 
-		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
-			Survivors_PilotChance (NULL),
+		// custom missiles
+		Valueable<bool> IsCustomMissile;
+		Valueable<RocketStruct> CustomMissileData;
+		Valueable<WarheadTypeClass*> CustomMissileWarhead;
+		Valueable<WarheadTypeClass*> CustomMissileEliteWarhead;
+
+		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),			Survivors_PilotChance (NULL),
 			Survivors_PassengerChance (NULL),
 			Survivors_PilotCount (-1),
 			PrerequisiteTheaters (0xFFFFFFFF),
@@ -174,6 +180,10 @@ public:
 			PassengerExperienceModifier (1.0F),
 			MindControlExperienceSelfModifier (0.0F),
 			MindControlExperienceVictimModifier (1.0F),
+			IsCustomMissile (false),
+			CustomMissileData (),
+			CustomMissileWarhead (NULL),
+			CustomMissileEliteWarhead (NULL),
 			VoiceRepair (-1),
 			HijackerEnterSound (-1),
 			HijackerLeaveSound (-1),

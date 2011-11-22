@@ -350,8 +350,14 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	// #680, 1362
 	this->ImmuneToAbduction.Read(&exINI, section, "ImmuneToAbduction");
 
-	// quick fix - remove after the rest of weapon selector code is done
-	return;
+	// #245 custom missiles
+	this->IsCustomMissile.Read(&exINI, section, "Missile.Custom");
+	this->CustomMissileData.Read(&exINI, section, NULL);
+	this->CustomMissileData.GetEx()->Type = specific_cast<AircraftTypeClass*>(pThis);
+	this->CustomMissileWarhead.Parse(&exINI, section, "Missile.Warhead", true);
+	this->CustomMissileEliteWarhead.Parse(&exINI, section, "Missile.EliteWarhead", true);
+
+	// quick fix - remove after the rest of weapon selector code is done	return;
 }
 
 /*

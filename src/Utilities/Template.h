@@ -498,6 +498,71 @@ void Valueable<MouseCursor>::Read(INI_EX *parser, const char* pSection, const ch
 	}
 };
 
+template<>
+void Valueable<RocketStruct>::Read(INI_EX *parser, const char* pSection, const char* pKey) {
+	Customizable<bool> BoolPlaceholder;
+	Customizable<int> IntPlaceholder;
+	Customizable<float> FloatPlaceholder;
+
+	RocketStruct* rocket = this->GetEx();
+
+	IntPlaceholder.Set(rocket->PauseFrames);
+	IntPlaceholder.Read(parser, pSection, "Missile.PauseFrames");
+	rocket->PauseFrames = IntPlaceholder.Get();
+
+	IntPlaceholder.Set(rocket->TiltFrames);
+	IntPlaceholder.Read(parser, pSection, "Missile.TiltFrames");
+	rocket->TiltFrames = IntPlaceholder.Get();
+
+	FloatPlaceholder.Set(rocket->PitchInitial);
+	FloatPlaceholder.Read(parser, pSection, "Missile.PitchInitial");
+	rocket->PitchInitial = FloatPlaceholder.Get();
+
+	FloatPlaceholder.Set(rocket->PitchFinal);
+	FloatPlaceholder.Read(parser, pSection, "Missile.PitchFinal");
+	rocket->PitchFinal = FloatPlaceholder.Get();
+
+	FloatPlaceholder.Set(rocket->TurnRate);
+	FloatPlaceholder.Read(parser, pSection, "Missile.TurnRate");
+	rocket->TurnRate = FloatPlaceholder.Get();
+
+	// sic! integer read like a float.
+	FloatPlaceholder.Set(static_cast<float>(rocket->RaiseRate));
+	FloatPlaceholder.Read(parser, pSection, "Missile.RaiseRate");
+	rocket->RaiseRate = static_cast<int>(Game::F2I(FloatPlaceholder.Get()));
+
+	FloatPlaceholder.Set(rocket->Acceleration);
+	FloatPlaceholder.Read(parser, pSection, "Missile.Acceleration");
+	rocket->Acceleration = FloatPlaceholder.Get();
+
+	IntPlaceholder.Set(rocket->Altitude);
+	IntPlaceholder.Read(parser, pSection, "Missile.Altitude");
+	rocket->Altitude = IntPlaceholder.Get();
+
+	IntPlaceholder.Set(rocket->Damage);
+	IntPlaceholder.Read(parser, pSection, "Missile.Damage");
+	rocket->Damage = IntPlaceholder.Get();
+	
+	IntPlaceholder.Set(rocket->EliteDamage);
+	IntPlaceholder.Read(parser, pSection, "Missile.EliteDamage");
+	rocket->EliteDamage = IntPlaceholder.Get();
+	
+	IntPlaceholder.Set(rocket->BodyLength);
+	IntPlaceholder.Read(parser, pSection, "Missile.BodyLength");
+	rocket->BodyLength = IntPlaceholder.Get();
+
+	BoolPlaceholder.Set(rocket->LazyCurve);
+	BoolPlaceholder.Read(parser, pSection, "Missile.LazyCurve");
+	rocket->LazyCurve = BoolPlaceholder.Get();
+
+	if(parser->ReadString(pSection, "Missile.Type")) {
+		rocket->Type = AircraftTypeClass::Find(Ares::readBuffer);
+		if(!rocket->Type) {
+			Debug::INIParseFailed(pSection, pKey, Ares::readBuffer, "Not an AircraftType.");
+		}
+	}
+};
+
 template<class T>
 class ValueableVector : public std::vector<T> {
 public:
