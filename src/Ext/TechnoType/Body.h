@@ -108,6 +108,8 @@ public:
 		Valueable<double> AirstrikeExperienceModifier;
 
 		ValueableIdx<VocClass> VoiceRepair;
+		NullableIdx<VocClass> VoiceAirstrikeAttack;
+		NullableIdx<VocClass> VoiceAirstrikeAbort;
 
 		ValueableIdx<VocClass> HijackerEnterSound;
 		ValueableIdx<VocClass> HijackerLeaveSound;

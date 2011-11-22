@@ -1552,3 +1552,46 @@ DEFINE_HOOK(6B783B, SpawnManagerClass_Update_SpawnHigh, 5)
 	R->EAX(pDest);
 	return 0;
 }
+
+// issue #279: per unit AirstrikeAttackVoice and AirstrikeAbortSound
+DEFINE_HOOK(41D940, AirstrikeClass_Fire_AirstrikeAttackVoice, 5)
+{
+	GET(AirstrikeClass*, pAirstrike, EDI);
+
+	// get default from rules
+	int index = RulesClass::Instance->AirstrikeAttackVoice;
+
+	// get from aircraft
+	auto pAircraftExt = TechnoTypeExt::ExtMap.Find(pAirstrike->FirstObject->GetTechnoType());
+	index = pAircraftExt->VoiceAirstrikeAttack.Get(index);
+
+	// get from designator
+	if(auto pOwner = pAirstrike->Owner) {
+		auto pOwnerExt = TechnoTypeExt::ExtMap.Find(pOwner->GetTechnoType());
+		index = pOwnerExt->VoiceAirstrikeAttack.Get(index);
+	}
+
+	VocClass::PlayAt(index, pAirstrike->FirstObject->Location, nullptr);
+	return 0x41D970;
+}
+
+DEFINE_HOOK(41D5AE, AirstrikeClass_PointerGotInvalid_AirstrikeAbortSound, 9)
+{
+	GET(AirstrikeClass*, pAirstrike, ESI);
+
+	// get default from rules
+	int index = RulesClass::Instance->AirstrikeAbortSound;
+
+	// get from aircraft
+	auto pAircraftExt = TechnoTypeExt::ExtMap.Find(pAirstrike->FirstObject->GetTechnoType());
+	index = pAircraftExt->VoiceAirstrikeAbort.Get(index);
+
+	// get from designator
+	if(auto pOwner = pAirstrike->Owner) {
+		auto pOwnerExt = TechnoTypeExt::ExtMap.Find(pOwner->GetTechnoType());
+		index = pOwnerExt->VoiceAirstrikeAbort.Get(index);
+	}
+
+	VocClass::PlayAt(index, pAirstrike->FirstObject->Location, nullptr);
+	return 0x41D5E0;
+}

@@ -277,6 +277,9 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 
 	this->VoiceRepair.Read(exINI, section, "VoiceIFVRepair");
 
+	this->VoiceAirstrikeAttack.Read(exINI, section, "VoiceAirstrikeAttack");
+	this->VoiceAirstrikeAbort.Read(exINI, section, "VoiceAirstrikeAbort");
+
 	this->HijackerEnterSound.Read(exINI, section, "VehicleThief.EnterSound");
 	this->HijackerLeaveSound.Read(exINI, section, "VehicleThief.LeaveSound");
 	this->HijackerKillPilots.Read(exINI, section, "VehicleThief.KillPilots");
