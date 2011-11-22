@@ -3,6 +3,7 @@
 
 #include <AircraftClass.h>
 #include <LocomotionClass.h>
+#include <SpawnManagerClass.h>
 
 DEFINE_HOOK(6622E0, RocketLocomotionClass_ILocomotion_Process_CustomMissile, 6)
 {
@@ -64,6 +65,52 @@ DEFINE_HOOK(6634F6, RocketLocomotionClass_ILocomotion_DrawMatrix_CustomMissile, 
 		if(pExt->IsCustomMissile.Get()) {
 			R->EAX(&pExt->CustomMissileData);
 			return 0x66351B;
+		}
+	}
+
+	return 0;
+}
+
+DEFINE_HOOK(6B6D60, SpawnManagerClass_CTOR_CustomMissile, 6)
+{
+	GET(SpawnManagerClass*, pSpawnManager, ESI);
+	if(TechnoTypeExt::ExtData* pExt = TechnoTypeExt::ExtMap.Find(pSpawnManager->SpawnType)) {
+		if(pExt->IsCustomMissile.Get()) {
+			return 0x6B6D86;
+		}
+	}
+
+	return 0;
+}
+
+DEFINE_HOOK(6B78F8, SpawnManagerClass_Update_CustomMissile, 6)
+{
+	GET(TechnoTypeClass*, pSpawnType, EAX);
+	if(TechnoTypeExt::ExtData* pExt = TechnoTypeExt::ExtMap.Find(pSpawnType)) {
+		if(pExt->IsCustomMissile.Get()) {
+			return 0x6B791F;
+		}
+	}
+
+	return 0;
+}
+
+DEFINE_HOOK(6B7A72, SpawnManagerClass_Update_CustomMissile2, 6)
+{
+	GET(SpawnManagerClass*, pSpawnManager, ESI);
+	GET(int, idxSpawn, EDI);
+	GET(TechnoTypeClass*, pSpawnType, EDX);
+	GET_STACK(int, unk, 0x60);
+
+	if(TechnoTypeExt::ExtData* pExt = TechnoTypeExt::ExtMap.Find(pSpawnType)) {
+		if(pExt->IsCustomMissile.Get()) {
+			RocketStruct* pRocket = pExt->CustomMissileData.GetEx();
+
+			TimerStruct* pTimer = &pSpawnManager->SpawnedNodes.GetItem(idxSpawn)->SpawnTimer;
+			pTimer->Start(pRocket->PauseFrames + pRocket->TiltFrames);
+			pTimer->unknown = 0;
+
+			return 0x6B7B03;
 		}
 	}
 
