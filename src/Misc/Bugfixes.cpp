@@ -883,6 +883,13 @@ DEFINE_HOOK(4692A2, BulletClass_DetonateAt_RaiseAttackedByHouse, 6)
 	return pVictim->AttachedTag ? 0 : 0x4692BD;
 }
 
+// destroying a building (no health left) resulted in a single green pip shown
+// in the health bar for a split second. this makes the last pip red.
+DEFINE_HOOK(6F661D, TechnoClass_DrawHealthBar_DestroyedBuilding_RedPip, 7)
+{
+	GET(BuildingClass*, pBld, ESI);
+	return (pBld->Health <= 0 || pBld->IsRedHP()) ? 0x6F6628 : 0x6F6630;
+}
 
 DEFINE_HOOK(47243F, CaptureManagerClass_DecideUnitFate_BuildingFate, 6) {
 	GET(TechnoClass *, pVictim, EBX);
