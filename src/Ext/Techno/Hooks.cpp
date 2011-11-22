@@ -1258,3 +1258,12 @@ DEFINE_HOOK(4D98C0, FootClass_Destroyed, A) {
 
 	return 0x4D9918;
 }
+
+// issue #????: linking units for type selection
+DEFINE_HOOK(732C49, TechnoClass_IDMatches, 6) {
+	GET(TechnoClass*, pThis, ESI);
+	GET(const char*, pID, EAX);
+
+	const char* id = TechnoTypeExt::GetGroupingID(pThis->GetTechnoType());
+	return _strcmpi(id, pID) ? 0x732C85 : 0x732C53;
+}

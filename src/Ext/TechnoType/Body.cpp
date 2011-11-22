@@ -354,6 +354,15 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 
 	this->EVA_UnitLost.Read(&exINI, section, "EVA.Lost");
 
+	// #???? linking units for type selection
+	if(pINI->ReadString(section, "GroupAs", "", Ares::readBuffer, Ares::readLength)) {
+		if(VALIDTAG(Ares::readBuffer)) {
+			AresCRT::strCopy(this->GroupAs, Ares::readBuffer, 0x20);
+		} else {
+			*this->GroupAs = 0;
+		}
+	}
+
 	// quick fix - remove after the rest of weapon selector code is done
 	return;
 }
@@ -446,6 +455,15 @@ void TechnoTypeClassExt::ReadWeapon(WeaponStruct *pWeapon, const char *prefix, c
 	pWeapon->TurretLocked = pArtINI->ReadBool(section, flag, pWeapon->TurretLocked);
 }
 */
+
+const char* TechnoTypeExt::GetGroupingID(ObjectTypeClass* pType) {
+	if(TechnoTypeExt::ExtData* pExt = TechnoTypeExt::ExtMap.Find((TechnoTypeClass*)pType)) {
+		if(*pExt->GroupAs) {
+			return pExt->GroupAs;
+		}
+	}
+	return pType->ID;
+}
 
 void Container<TechnoTypeExt>::InvalidatePointer(void *ptr, bool bRemoved) {
 }

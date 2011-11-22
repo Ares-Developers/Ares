@@ -32,12 +32,15 @@ class RulesExt
 
 		Valueable<bool> EnemyVeterancy;
 
+		Valueable<bool> TypeSelectUseDeploy;
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			ElectricDeath(NULL),
 			EngineerDamage (0.0F),
 			EngineerAlwaysCaptureTech (true),
 			EngineerDamageCursor (MouseCursor::First[MouseCursorType::Detonate]),
 			EnemyVeterancy(true),
+			TypeSelectUseDeploy(true),
 			CanMakeStuffUp(false)
 			{
 				MultiEngineer[0] = false; // Skirmish

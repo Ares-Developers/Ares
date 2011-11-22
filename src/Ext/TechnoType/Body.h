@@ -115,6 +115,8 @@ public:
 		char CameoPCX[0x20];
 		char AltCameoPCX[0x20];
 
+		char GroupAs[0x20];
+
 		DynamicVectorClass<bool> ReversedByHouses;
 		Valueable<bool> CanBeReversed;
 
@@ -227,6 +229,7 @@ public:
 				*this->CameoPCX = *this->AltCameoPCX = 0;
 				this->ReversedByHouses.SetCapacity(32, NULL);
 				this->ReversedByHouses.CapacityIncrement = 32;
+				*this->GroupAs = 0;
 			};
 
 		virtual ~ExtData() {};
@@ -250,6 +253,7 @@ public:
 	static Container<TechnoTypeExt> ExtMap;
 
 //	static void ReadWeapon(WeaponStruct *pWeapon, const char *prefix, const char *section, CCINIClass *pINI);
+	static const char* GetGroupingID(ObjectTypeClass* pType);
 };
 
 #endif
