@@ -1,4 +1,5 @@
 #include "Body.h"
+#include "../Rules/Body.h"
 #include "../TechnoType/Body.h"
 #include "../Building/Body.h"
 #include "../BuildingType/Body.h"
@@ -1718,4 +1719,27 @@ DEFINE_HOOK(6FF28F, TechnoClass_Fire_BerserkROFMultiplier, 6)
 
 	R->EAX(ROF);
 	return 0x6FF29E;
+}
+
+// issue #1324: enemy repair wrench visible when it shouldn't
+DEFINE_HOOK(6F528D, TechnoClass_DrawExtras_Wrench, 7) {
+	GET(BuildingClass*, pBld, EAX);
+
+	// fixes the wrench playing over a temporally challenged building.
+	if(pBld->IsBeingWarpedOut() || pBld->WarpingOut) {
+		return 0x6F5347;
+	}
+
+	// owner and allies are always allowed to see the wrench.
+	if(pBld->Owner->IsAlliedWith(HouseClass::Player)) {
+		return 0;
+	}
+
+	// disabled by rules? cloaked enemies will never show.
+	if(pBld->CloakState || !RulesExt::Global()->EnemyWrench) {
+		return 0x6F5347;
+	}
+
+	// meh.
+	return 0;
 }

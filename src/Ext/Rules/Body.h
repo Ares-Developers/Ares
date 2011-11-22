@@ -43,6 +43,7 @@ class RulesExt
 		Nullable<int> CloakHeight;
 
 		Valueable<bool> EnemyInsignia;
+		Valueable<bool> EnemyWrench;
 
 		Valueable<bool> ReturnStructures;
 
@@ -85,6 +86,7 @@ class RulesExt
 			DecloakSound(),
 			CloakHeight(),
 			EnemyInsignia(true),
+			EnemyWrench (true),
 			ReturnStructures(false),
 			TypeSelectUseDeploy(true),
 			TeamRetaliate(false),

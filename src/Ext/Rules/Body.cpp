@@ -121,6 +121,8 @@ void RulesExt::ExtData::LoadAfterTypeData(RulesClass *pThis, CCINIClass *pINI) {
 	pData->EngineerAlwaysCaptureTech.Read(exINI, "General", "EngineerAlwaysCaptureTech");
 	pData->EngineerDamageCursor.Read(exINI, "General", "EngineerDamageCursor");
 
+	pData->EnemyWrench.Read(exINI, "General", "EnemyWrench");
+
 	pData->HunterSeekerBuildings.Read(exINI, "SpecialWeapons", "HSBuilding");
 	pData->HunterSeekerDetonateProximity.Read(exINI, "General", "HunterSeekerDetonateProximity");
 	pData->HunterSeekerDescendProximity.Read(exINI, "General", "HunterSeekerDescendProximity");
