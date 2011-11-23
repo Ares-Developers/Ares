@@ -131,3 +131,13 @@ DEFINE_HOOK(444D26, BuildingClass_KickOutUnit_ArmoryExitBug, 6)
 	R->AL(pType->Hospital || pType->Armory);
 	return 0x444D2C;
 }
+
+// do not crash if the EMP cannon primary has no Report sound
+DEFINE_HOOK(44D4CA, BuildingClass_Mi_Missile_NoReport, 9)
+{
+	GET(TechnoTypeClass*, pType, EAX);
+	GET(WeaponTypeClass*, pWeapon, EBP);
+
+	bool play = !pType->IsGattling && pWeapon->Report.Count;
+	return play ? 0x44D4D4 : 0x44D51F;
+}
