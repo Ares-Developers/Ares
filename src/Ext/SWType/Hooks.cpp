@@ -391,6 +391,21 @@ DEFINE_HOOK(6CBA9E, SuperClass_ClickFire_Abort, 7)
 	return 0;
 }
 
+DEFINE_HOOK(6CBB0D, SuperClass_ClickFire_ResetAfterLaunch, 6)
+{
+	GET(SuperClass*, pSW, ESI);
+	GET(SuperWeaponTypeClass*, pType, EAX);
+
+	// do as the original game set it, but do not reset
+	// the ready state for PreClick SWs neither. they will
+	// be reset after the PostClick SW fired.
+	if(pType && !pType->PostClick && !pType->PreClick) {
+		pSW->IsCharged = false;
+	}
+
+	return 0x6CBB18;
+}
+
 // ARGH!
 DEFINE_HOOK(6CC390, SuperClass_Launch, 6)
 {
