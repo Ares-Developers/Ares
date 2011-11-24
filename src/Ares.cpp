@@ -73,6 +73,7 @@ void __stdcall Ares::RegisterCommands()
 	MakeCommand<DebuggingCommandClass>();
 	MakeCommand<AIBasePlanCommandClass>();
 	MakeCommand<FPSCounterCommandClass>();
+	MakeCommand<TogglePowerCommandClass>();
 }
 
 void __stdcall Ares::CmdLineParse(char** ppArgs, int nNumArgs)

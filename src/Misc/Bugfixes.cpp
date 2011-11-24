@@ -16,6 +16,7 @@
 #include <WarheadTypeClass.h>
 
 #include "Debug.h"
+#include "Actions.h"
 #include "../Ares.h"
 #include "../Ext/Rules/Body.h"
 #include "../Ext/BuildingType/Body.h"
@@ -1206,4 +1207,14 @@ DEFINE_HOOK(52070F, InfantryClass_UpdateFiringState_Uncloak, 5)
 	}
 
 	return 0x52094C;
+}
+
+DEFINE_HOOK(69281E, DisplayClass_ChooseAction_NoTogglePower, A) {
+	Actions::Set(&MouseCursor::First[MouseCursorType::Disallowed]);
+	return 0;
+}
+
+DEFINE_HOOK(692893, DisplayClass_ChooseAction_TogglePower, 8) {
+	Actions::Set(&MouseCursor::First[MouseCursorType::Power]);
+	return 0;
 }

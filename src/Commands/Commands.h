@@ -72,5 +72,6 @@ void MakeCommand() {
 #include "Commands/Debugging.h"
 //include "Commands/Logging.h"
 #include "Commands/FPSCounter.h"
+#include "Commands/TogglePower.h"
 
 #endif
