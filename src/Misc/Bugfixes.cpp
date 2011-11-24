@@ -1210,11 +1210,11 @@ DEFINE_HOOK(52070F, InfantryClass_UpdateFiringState_Uncloak, 5)
 }
 
 DEFINE_HOOK(69281E, DisplayClass_ChooseAction_NoTogglePower, A) {
-	Actions::Set(&MouseCursor::First[MouseCursorType::Disallowed]);
+	Actions::Set(&RulesExt::Global()->TogglePowerNoCursor);
 	return 0;
 }
 
 DEFINE_HOOK(692893, DisplayClass_ChooseAction_TogglePower, 8) {
-	Actions::Set(&MouseCursor::First[MouseCursorType::Power]);
+	Actions::Set(&RulesExt::Global()->TogglePowerCursor);
 	return 0;
 }

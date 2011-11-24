@@ -31,6 +31,9 @@ class RulesExt
 		Valueable<MouseCursor> EngineerDamageCursor;
 		bool MultiEngineer[3];
 
+		Valueable<MouseCursor> TogglePowerCursor;
+		Valueable<MouseCursor> TogglePowerNoCursor;
+
 		Valueable<bool> CanMakeStuffUp;
 
 		Valueable<bool> Tiberium_DamageEnabled;
@@ -79,6 +82,8 @@ class RulesExt
 			EngineerDamage (0.0),
 			EngineerAlwaysCaptureTech (true),
 			EngineerDamageCursor (MouseCursor::First[MouseCursorType::Detonate]),
+			TogglePowerCursor (MouseCursor::First[MouseCursorType::Power]),
+			TogglePowerNoCursor (MouseCursor::First[MouseCursorType::Disallowed]),
 			Tiberium_DamageEnabled (false),
 			Tiberium_HealEnabled (false),
 			Tiberium_ExplosiveWarhead (nullptr),
