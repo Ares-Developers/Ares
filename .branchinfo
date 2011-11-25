@@ -1,0 +1,7 @@
+[branch]
+Name=Ares New Graphics Tweaks
+Description=This is a testing branch for new graphics tweaks.
+BranchRevision=1161
+TargetVersion=0.2
+Stable=no
+ReadyForTesting=yes
