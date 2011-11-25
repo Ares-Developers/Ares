@@ -1,0 +1,7 @@
+[branch]
+Name=Carryall Fixes
+Description=Branch for developing Carryall logic fixes
+BranchRevision=1117
+TargetVersion=0.2
+Stable=no
+ReadyForTesting=yes
