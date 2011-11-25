@@ -1,0 +1,7 @@
+[branch]
+Name=Vehicle Thief
+Description=The branch for hijackers, vehicle thieves and people who can drive.
+BranchRevision=1163
+TargetVersion=0.2
+Stable=no
+ReadyForTesting=yes
