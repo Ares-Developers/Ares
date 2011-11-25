@@ -1,0 +1,7 @@
+[branch]
+Name=Branch for various minor fixes
+Description=Branch for various fixes which may or may not get into 0.2.
+BranchRevision=1167
+TargetVersion=0.2
+Stable=no
+ReadyForTesting=no
