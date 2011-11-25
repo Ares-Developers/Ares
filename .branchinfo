@@ -1,0 +1,7 @@
+[branch]
+Name=Issue 947: Custom Theaters
+Description=Allow addition, removal and configuration of theaters.
+BranchRevision=675
+TargetVersion=0.2
+Stable=no
+ReadyForTesting=no
