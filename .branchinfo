@@ -1,0 +1,7 @@
+[branch]
+Name=Extended Sequences
+Description=This branch contains the implementation of issue 328, extended Sequence= support for UnitTypes and more.
+BranchRevision=732
+TargetVersion=0.2
+Stable=no
+ReadyForTesting=no
