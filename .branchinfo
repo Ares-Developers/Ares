@@ -1,0 +1,7 @@
+[branch]
+Name=Issue 380: DeployToLand
+Description=Allow DeployToLand= to work on Jumpjets.
+BranchRevision=859
+TargetVersion=0.2
+Stable=no
+ReadyForTesting=no
