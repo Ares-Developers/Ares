@@ -1,0 +1,7 @@
+[branch]
+Name=AI Base Planning
+Description=Improvements to AI base planning.
+BranchRevision=883
+TargetVersion=0.2
+Stable=no
+ReadyForTesting=no
