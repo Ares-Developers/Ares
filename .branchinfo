@@ -1,0 +1,7 @@
+[branch]
+Name=Ares 0.2 Updates
+Description=This repository will provide emergency bugfixes for Ares 0.2, if necessary.
+BranchRevision=440
+TargetVersion=0.2
+Stable=yes
+ReadyForTesting=yes
