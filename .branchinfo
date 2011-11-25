@@ -1,0 +1,7 @@
+[branch]
+Name=Bounty Logic
+Description=Kill people, get money.
+BranchRevision=1147
+TargetVersion=0.2
+Stable=no
+ReadyForTesting=yes
