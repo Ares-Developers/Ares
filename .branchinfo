@@ -1,0 +1,7 @@
+[branch]
+Name=Firestorm SW
+Description=This branch should be used to develop the Firestorm Superweapon.
+BranchRevision=726
+TargetVersion=0.2
+Stable=no
+ReadyForTesting=yes
