@@ -1,0 +1,7 @@
+[branch]
+Name=Issue 634: Different factory exit points
+Description=Branch for implenting factory exits, issue 634.
+BranchRevision=1117
+TargetVersion=0.2
+Stable=no
+ReadyForTesting=yes
