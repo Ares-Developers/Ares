@@ -1,6 +1,6 @@
 [branch]
 Name=AttachEffect
-Description=To be filled by Graion
+Description=Issues #1573, #1623, 255: stat-modifiers/animations attached to units
 BranchRevision=1
 TargetVersion=0.3
 Stable=no
