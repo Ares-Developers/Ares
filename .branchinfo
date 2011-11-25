@@ -1,0 +1,7 @@
+[branch]
+Name=Issue 1362: Abductor Fixes
+Description=Branch for implementing issue 1362, fixing/enhancing the Abductor logic.
+BranchRevision=1124
+TargetVersion=0.3
+Stable=no
+ReadyForTesting=yes
