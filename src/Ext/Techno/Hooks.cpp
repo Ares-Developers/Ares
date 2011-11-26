@@ -1752,9 +1752,17 @@ DEFINE_HOOK(6F525B, TechnoClass_DrawExtras_PowerOff, 5)
 
 	if(auto pBld = abstract_cast<BuildingClass*>(pTechno)) {
 
+		// display repair animation?
+		bool showRepair = pBld->IsBeingRepaired;
+
 		// display power off marker only for current player's buildings
-		if(!pBld->HasPower && pBld->Owner->ControlledByPlayer()) {
-			CellStruct cell = pBld->GetMapCoords();
+		bool showPower = FileSystem::POWEROFF_SHP
+			&& !pBld->HasPower
+			&& pBld->Owner->ControlledByPlayer();
+
+		// display any?
+		if(showPower || showRepair) {
+			auto cell = pBld->GetMapCoords();
 
 			if(!MapClass::Instance->GetCellAt(cell)->IsShrouded()) {
 				CoordStruct crd;
@@ -1763,10 +1771,17 @@ DEFINE_HOOK(6F525B, TechnoClass_DrawExtras_PowerOff, 5)
 				Point2D point;
 				TacticalClass::Instance->CoordsToClient(&crd, &point);
 
-				// offset the marker
-				if(pBld->IsBeingRepaired) {
-					point.X += 10;
-					point.Y += 10;
+				// offset the markers
+				Point2D ptRepair = point;
+				if(showPower) {
+					ptRepair.X -= 7;
+					ptRepair.Y -= 7;
+				}
+
+				Point2D ptPower = point;
+				if(showRepair) {
+					ptPower.X += 18;
+					ptPower.Y += 18;
 				}
 
 				// animation display speed
@@ -1775,13 +1790,21 @@ DEFINE_HOOK(6F525B, TechnoClass_DrawExtras_PowerOff, 5)
 					speed = 2;
 				}
 
-				// draw the marker
-				int frame = 6 * Unsorted::CurrentFrame % speed / (speed - 1);
-				DSurface::Hidden_2->DrawSHP(FileSystem::MOUSE_PAL, FileSystem::POWEROFF_SHP,
-					frame, &point, pRect, 0xE00, 0, 0, 0, 1000, 0, 0, 0, 0, 0);
+				// draw the markers
+				if(showRepair) {
+					int frame = (Unsorted::CurrentFrame / speed) % FileSystem::WRENCH_SHP->Frames;
+					DSurface::Hidden_2->DrawSHP(FileSystem::MOUSE_PAL, FileSystem::WRENCH_SHP,
+						frame, &ptRepair, pRect, 0xE00, 0, 0, 0, 1000, 0, 0, 0, 0, 0);
+				}
+
+				if(showPower) {
+					int frame = (Unsorted::CurrentFrame / speed) % FileSystem::POWEROFF_SHP->Frames;
+					DSurface::Hidden_2->DrawSHP(FileSystem::MOUSE_PAL, FileSystem::POWEROFF_SHP,
+						frame, &ptPower, pRect, 0xE00, 0, 0, 0, 1000, 0, 0, 0, 0, 0);
+				}
 			}
 		}
 	}
 
-	return 0;
+	return 0x6F5347;
 }
