@@ -11,6 +11,7 @@
 #include "../../Misc/PoweredUnitClass.h"
 
 #include <AircraftClass.h>
+#include <GameOptionsClass.h>
 #include <HouseClass.h>
 #include <InfantryClass.h>
 #include <SpecificStructures.h>
@@ -1741,5 +1742,46 @@ DEFINE_HOOK(6F528D, TechnoClass_DrawExtras_Wrench, 7) {
 	}
 
 	// meh.
+	return 0;
+}
+
+DEFINE_HOOK(6F525B, TechnoClass_DrawExtras_PowerOff, 5)
+{
+	GET(TechnoClass*, pTechno, EBP);
+	GET_STACK(RectangleStruct*, pRect, 0xA0);
+
+	if(auto pBld = abstract_cast<BuildingClass*>(pTechno)) {
+
+		// display power off marker only for current player's buildings
+		if(!pBld->HasPower && pBld->Owner->ControlledByPlayer()) {
+			CellStruct cell = pBld->GetMapCoords();
+
+			if(!MapClass::Instance->GetCellAt(cell)->IsShrouded()) {
+				CoordStruct crd;
+				pBld->GetPosition_2(&crd);
+
+				Point2D point;
+				TacticalClass::Instance->CoordsToClient(&crd, &point);
+
+				// offset the marker
+				if(pBld->IsBeingRepaired) {
+					point.X += 10;
+					point.Y += 10;
+				}
+
+				// animation display speed
+				int speed = GameOptionsClass::Instance->GetAnimSpeed(14) / 4;
+				if(speed < 2) {
+					speed = 2;
+				}
+
+				// draw the marker
+				int frame = 6 * Unsorted::CurrentFrame % speed / (speed - 1);
+				DSurface::Hidden_2->DrawSHP(FileSystem::MOUSE_PAL, FileSystem::POWEROFF_SHP,
+					frame, &point, pRect, 0xE00, 0, 0, 0, 1000, 0, 0, 0, 0, 0);
+			}
+		}
+	}
+
 	return 0;
 }
