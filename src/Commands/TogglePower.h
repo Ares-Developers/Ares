@@ -1,6 +1,8 @@
 #ifndef CMD_TOGGLEPOWER_H
 #define CMD_TOGGLEPOWER_H
 
+#include "../Ext/Rules/Body.h"
+
 #include <MapClass.h>
 #include <DisplayClass.h>
 
@@ -25,7 +27,9 @@ public:
 
 	virtual void Execute(DWORD dwUnk)
 	{
-		MapClass::Instance->SetTogglePowerMode(-1);
+		if(RulesExt::Global()->TogglePowerAllowed) {
+			MapClass::Instance->SetTogglePowerMode(-1);
+		}
 	}
 
 	//Constructor
