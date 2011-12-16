@@ -444,7 +444,7 @@ void TechnoExt::TransferAttachedEffects(TechnoClass *From, TechnoClass *To) {
 		// list gets intact in the end
 		for (int i=0; i < FromExt->AttachedEffects.Count; i++) {
 			auto FromItem = FromExt->AttachedEffects.GetItem(i);
-			FromItem->Type->Attach(To, FromItem->ActualDuration);
+			FromItem->Type->Attach(To, FromItem->ActualDuration, FromItem->Invoker, FromItem->ActualDamageDelay);
 			FromItem->Destroy();
 			delete FromItem;
 		}
@@ -480,13 +480,8 @@ void TechnoExt::RecalculateStats(TechnoClass *pTechno) {
 	pTechno->FirepowerMultiplier = Firepower;
 	pTechno->ArmorMultiplier = Armor;
 
-	/*if (pTechno->Cloakable && !Cloak){
-		pTechno->Uncloak(false);
-		pTechno->Cloakable = Cloak;
-		
-	} else {*/
-		pTechno->Cloakable = Cloak;
-	//}
+	pTechno->Cloakable = Cloak;
+
 
 	if(FootClass *Foot = generic_cast<FootClass *>(pTechno)) {
 		Foot->SpeedMultiplier = Speed;

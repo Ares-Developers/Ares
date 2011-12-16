@@ -38,7 +38,7 @@ bool SW_GenericWarhead::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPl
 	}
 
 	pWHExt->applyEMP(&coords, Firer);
-	pWHExt->applyAttachedEffect(&coords, pThis->Owner);
+	pWHExt->applyAttachedEffect(&coords, Firer);
 
 	if(!pWHExt->applyPermaMC(&coords, pThis->Owner, Cell->GetContent())) {
 		MapClass::DamageArea(&coords, pData->SW_Damage, Firer, pData->SW_Warhead, 1, pThis->Owner);

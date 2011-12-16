@@ -15,7 +15,7 @@ In a nutshell:
 	relatively flexible way to interact with the unit's properties (as many as possible)
 	to create as many as possible interesting effects
 
-Todo: something with that crash in cloak contra animation - crap, Documentation and crates
+Todo: something with that crash in cloak contra animation - crap (D did it), Documentation and crates
 To-to-to-todo: Get a disassembler to update the hook (44A03C, BuildingClass_Mi_Selling_ReestablishMindControl, 6)
 within Bugfixes.cpp to be set before TechnoClass::Remove, killing all effects on the way
 */
@@ -25,14 +25,21 @@ void AttachEffectTypeClass::Read(INI_EX *exINI, const char * section) {
 	this->Duration.Read(exINI, section, "AttachEffect.Duration");
 	this->Cumulative.Read(exINI, section, "AttachEffect.Cumulative");
 	this->AnimType.Parse(exINI, section, "AttachEffect.Animation");
+	this->AnimResetOnReapply.Read(exINI, section, "AttachEffect.AnimResetOnReapply");
 	this->FirepowerMultiplier.Read(exINI, section, "AttachEffect.FirepowerMultiplier");
 	this->ArmorMultiplier.Read(exINI, section, "AttachEffect.ArmorMultiplier");
 	this->SpeedMultiplier.Read(exINI, section, "AttachEffect.SpeedMultiplier");
 	this->Cloakable.Read(exINI, section, "AttachEffect.Cloakable");
+
+	this->Damage.Read(exINI, section, "AttachEffect.Damage");
+	this->DamageDelay.Read(exINI, section, "AttachEffect.DamageDelay");
+	this->Warhead.Parse(exINI, section, "AttachEffect.Warhead");
+
+	this->Delay.Read(exINI, section, "AttachEffect.Delay");
 }
 
 
-void AttachEffectTypeClass::Attach(TechnoClass* Target, int Duration) {
+void AttachEffectTypeClass::Attach(TechnoClass* Target, int Duration, TechnoClass* Invoker, int DamageDelay) {
 	if (!Target) {return;}
 
 	TechnoExt::ExtData *TargetExt = TechnoExt::ExtMap.Find(Target);
@@ -42,14 +49,25 @@ void AttachEffectTypeClass::Attach(TechnoClass* Target, int Duration) {
 			auto Item = TargetExt->AttachedEffects.GetItem(i);
 			if (!strcmp(this->ID, Item->Type->ID)) {
 				Item->ActualDuration = Item->Type->Duration;
+
+				if (!!this->AnimType && !!this->AnimResetOnReapply) {
+					Item->KillAnim();
+					GAME_ALLOC(AnimClass, Item->Animation, this->AnimType, &Target->Location);
+					Item->Animation->SetOwnerObject(Target);
+					Item->Animation->RemainingIterations = -1;
+				}
+
 				return;
 			}
 		}
 	}
 
 	// there goes the actual attaching
-	auto Attaching = new AttachEffectClass(this, Duration);
+	auto Attaching = new AttachEffectClass(this, Duration, DamageDelay);
 	TargetExt->AttachedEffects.AddItem(Attaching);
+
+	// update the unit with the attached effect
+	TechnoExt::RecalculateStats(Target);
 
 	// animation
 	if (!!this->AnimType) {
@@ -59,8 +77,12 @@ void AttachEffectTypeClass::Attach(TechnoClass* Target, int Duration) {
 		Attaching->Animation->RemainingIterations = -1;
 	}
 	
-	// update the unit with the attached effect
-	TechnoExt::RecalculateStats(Target);
+	if (Invoker) {
+		Attaching->Invoker = Invoker;
+	} else {
+		Attaching->Invoker = NULL;
+	}
+
 }
 
 void AttachEffectClass::InvalidateAnimPointer(AnimClass *ptr) {
@@ -87,4 +109,73 @@ void AttachEffectClass::KillAnim() {
 //remove the effects from the unit
 void AttachEffectClass::Destroy() {
 	this->KillAnim();
+}
+
+bool AttachEffectClass::Update(TechnoClass *Source) {
+
+	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(Source);
+	TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(Source->GetTechnoType());
+
+	if (pData->AttachedEffects.Count) {
+		//Debug::Log("[AttachEffect]AttachEffect update of %s...\n", Source->get_ID());
+		for (int i = pData->AttachedEffects.Count; i > 0; --i) {
+			auto Effect = pData->AttachedEffects.GetItem(i - 1);
+			--Effect->ActualDuration;
+
+			//#408, residual damage
+			/* unfinished, crash if unit gets killed and was targeted
+			if (!!Effect->Type->Damage) {
+				if (Effect->ActualDamageDelay) {
+					Effect->ActualDamageDelay--;
+				} else {
+					if (Effect->Invoker) {
+						Source->ReceiveDamage(Effect->Type->Damage, 0, Effect->Type->Warhead, Effect->Invoker, false, false, Effect->Invoker->Owner);
+					} else {
+						Source->ReceiveDamage(Effect->Type->Damage, 0, Effect->Type->Warhead, Source, false, false, Source->Owner);
+					}
+
+					if(Source->InLimbo || !Source->IsAlive || !Source->Health) {
+						//check if the unit is still alive, if residual damage killed it, no reason to continue
+						return false;
+					}
+
+					Effect->ActualDamageDelay = Effect->Type->DamageDelay;
+				}
+
+			}*/
+
+
+			if(!Effect->ActualDuration) {			//Bloody crashes - apparently if cloaked and attached, during delete it might crash - FIXED
+				//Debug::Log("[AttachEffect] %d. item expired, removing...\n", i - 1);
+				Effect->Destroy();
+
+				if (!strcmp(Effect->Type->ID, Source->GetTechnoType()->ID)) {		//#1623, hardcodes Cumulative to false
+					pData->AttachedTechnoEffect_isset = false;
+					pData->AttachedTechnoEffect_Delay = Effect->Type->Delay;
+				}
+
+				delete Effect;
+				pData->AttachedEffects.RemoveItem(i - 1);
+				TechnoExt::RecalculateStats(Source);	//and update the unit's properties
+				//Debug::Log("[AttachEffect] Remove #%d was successful.\n", i - 1);
+			}
+
+		}
+		//Debug::Log("[AttachEffect]Update was successful.\n");
+	}
+	
+	//#1623 - generating AttachedEffect from Type
+	if (!!pTypeData->AttachedTechnoEffect.Duration && !pData->AttachedTechnoEffect_isset) {
+		if (!pData->AttachedTechnoEffect_Delay){
+
+			//Debug::Log("[AttachEffect]Missing Type effect of %s...\n", Source->get_ID());
+			pTypeData->AttachedTechnoEffect.Attach(Source, pTypeData->AttachedTechnoEffect.Duration, Source, pTypeData->AttachedTechnoEffect.DamageDelay);
+			pData->AttachedTechnoEffect_isset = true;
+			//Debug::Log("[AttachEffect]Readded to %s.\n", Source->get_ID());
+
+		} else {
+			pData->AttachedTechnoEffect_Delay--;
+		}
+	}
+	return true; //the unit is still alive
 }

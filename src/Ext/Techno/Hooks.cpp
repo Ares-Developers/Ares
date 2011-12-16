@@ -65,34 +65,7 @@ DEFINE_HOOK(6F9E50, TechnoClass_Update, 5)
 	}
 
 
-	//#1573, #1623, #255 - updating attached effects
-	if (pData->AttachedEffects.Count) {
-		//Debug::Log("[AttachEffect]AttachEffect update of %s...\n", Source->get_ID());
-		for (int i = pData->AttachedEffects.Count; i > 0; --i) {
-			auto Effect = pData->AttachedEffects.GetItem(i - 1);
-			--Effect->ActualDuration;
-			if(!Effect->ActualDuration) {			//Bloody crashes - apparently if cloaked and attached, during delete it might crash.
-				//Debug::Log("[AttachEffect] %d. item expired, removing...\n", i - 1);
-				Effect->Destroy();
-				if (!strcmp(Effect->Type->ID, Source->GetTechnoType()->ID)) {		//#1623, hardcodes Cumulative to false
-					pData->AttachedTechnoEffect_isset = false;
-				}
-				delete Effect;
-				pData->AttachedEffects.RemoveItem(i - 1);
-				TechnoExt::RecalculateStats(Source);	//and update the unit's properties
-				//Debug::Log("[AttachEffect] Remove #%d was successful.\n", i - 1);
-			}
-		}
-		//Debug::Log("[AttachEffect]Update was succesful.\n");
-	}
-	
-	//#1623 - generating AttachedEffect from Type
-	if (!!pTypeData->AttachedTechnoEffect.Duration && !pData->AttachedTechnoEffect_isset) {
-			//Debug::Log("[AttachEffect]Missing Type effect of %s...\n", Source->get_ID());
-			pTypeData->AttachedTechnoEffect.Attach(Source, pTypeData->AttachedTechnoEffect.Duration);
-			pData->AttachedTechnoEffect_isset = true;
-			//Debug::Log("[AttachEffect]Readded to %s.\n", Source->get_ID());
-	}
+	auto AmIAlive = AttachEffectClass::Update(Source);
 
 	return 0;
 }

@@ -16,6 +16,7 @@ public:
 	
 	//#1573, #1623 animations on units
 	Valueable<AnimTypeClass *> AnimType;
+	Valueable<bool> AnimResetOnReapply;
 
 	//#255, crate stat modifiers on weapons
 	Valueable<double> FirepowerMultiplier;
@@ -23,18 +24,28 @@ public:
 	Valueable<double> SpeedMultiplier;
 	Valueable<bool> Cloakable;
 
+	//#408, residual damage
+	Valueable<WarheadTypeClass *> Warhead;
+	Valueable<int> Damage;
+	Valueable<int> DamageDelay;
+
 	//#1623-only tags
 	Valueable<int> Delay;
 
-	virtual void Attach(TechnoClass* Target, int Duration);
+	virtual void Attach(TechnoClass* Target, int Duration, TechnoClass* Invoker, int DamageDelay);
 
 	AttachEffectTypeClass(): Cumulative(false),
 		Duration(0),
 		AnimType(NULL),
+		AnimResetOnReapply(false),
 		FirepowerMultiplier(1),
 		ArmorMultiplier(1),
 		SpeedMultiplier(1),
-		Cloakable(false)
+		Cloakable(false),
+		Warhead(RulesClass::Global()->C4Warhead),
+		Damage(0),
+		DamageDelay(0),
+		Delay(0)
 		{
 			this->ID[0] = 0;
 		};
@@ -44,18 +55,23 @@ public:
 
 class AttachEffectClass {
 public:
-	AttachEffectClass(AttachEffectTypeClass* AEType, int Timer): Type(AEType), Animation(NULL), ActualDuration(Timer) {
+	AttachEffectClass(AttachEffectTypeClass* AEType, int Timer, int DamageDelay): Type(AEType), Animation(NULL), ActualDuration(Timer), ActualDamageDelay(DamageDelay) {
 	}
 
 	AttachEffectTypeClass * Type;
 	AnimClass * Animation;
 	int ActualDuration;
 
+	TechnoClass * Invoker;
+	int ActualDamageDelay;
+
 	void Destroy();
 
 	void InvalidateAnimPointer(AnimClass *ptr);
 
 	void KillAnim();
+
+	static bool Update(TechnoClass *Source);
 };
 
 #endif
