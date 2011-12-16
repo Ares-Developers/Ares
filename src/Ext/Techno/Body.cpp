@@ -474,7 +474,7 @@ void TechnoExt::RecalculateStats(TechnoClass *pTechno) {
 		Firepower *= iType->FirepowerMultiplier;
 		Speed *= iType->SpeedMultiplier;
 		Armor *= iType->ArmorMultiplier;
-		Cloak = Cloak || iType->Cloakable;
+		Cloak = Cloak || !!iType->Cloakable;
 	}
 
 	pTechno->FirepowerMultiplier = Firepower;
