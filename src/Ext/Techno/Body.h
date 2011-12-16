@@ -64,6 +64,8 @@ public:
 		//stuff for #1623
 		bool AttachedTechnoEffect_isset;
 		int AttachedTechnoEffect_Delay;
+		
+		TemporalClass * MyOriginalTemporal;
 
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			idxSlot_Wave (0),
@@ -79,7 +81,8 @@ public:
 			RadarJam(NULL),
 			PoweredUnit(NULL),
 			AttachedTechnoEffect_isset (false),
-			AttachedTechnoEffect_Delay (0)
+			AttachedTechnoEffect_Delay (0),
+			MyOriginalTemporal(NULL)
 			{
 				this->CloakSkipTimer.Stop();
 				// hope this works with the timing - I assume it does, since Types should be created before derivates thereof
@@ -99,6 +102,7 @@ public:
 		virtual void InvalidatePointer(void *ptr) {
 			AnnounceInvalidPointer(this->GarrisonedIn, ptr);
 			this->InvalidateFXAnimPointer(reinterpret_cast<AnimClass *>(ptr));
+			AnnounceInvalidPointer(this->MyOriginalTemporal, ptr);
 		}
 
 		bool IsOperated();
