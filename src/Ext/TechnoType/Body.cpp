@@ -294,15 +294,47 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	
 	// #617 powered units
 	if( pINI->ReadString(section, "PoweredBy", "", Ares::readBuffer, Ares::readLength) ) {
+		this->PoweredBy.Clear();
 		for(char *cur = strtok(Ares::readBuffer, ","); cur; cur = strtok(NULL, ",")) {
 			BuildingTypeClass* b = BuildingTypeClass::Find(cur);
 			if(b) {
 				this->PoweredBy.AddItem(b);
 			} else {
-				Debug::INIParseFailed(pThis->ImageFile, "PoweredBy", "BuildingType not found");
+				Debug::INIParseFailed(section, "PoweredBy", cur, "BuildingType [%s] not found");
 			}
 		}
 	}
+
+	if(pINI->ReadString(section, "BuiltAt", "", Ares::readBuffer, Ares::readLength) ) {
+		this->BuiltAt.Clear();
+		if(_strcmpi(Ares::readBuffer, "<none>") && _strcmpi(Ares::readBuffer, "none")) {
+			for(auto cur = strtok(Ares::readBuffer, ","); cur; cur = strtok(NULL, ",")) {
+				auto b = BuildingTypeClass::Find(cur);
+				if(b) {
+					this->BuiltAt.AddItem(b);
+				} else {
+					Debug::INIParseFailed(section, "BuiltAt", cur);
+				}
+			}
+		}
+	}
+
+	this->Cloneable.Read(&exINI, section, "Cloneable");
+
+	if(pINI->ReadString(section, "ClonedAt", "", Ares::readBuffer, Ares::readLength) ) {
+		this->ClonedAt.Clear();
+		if(_strcmpi(Ares::readBuffer, "<none>") && _strcmpi(Ares::readBuffer, "none")) {
+			for(auto cur = strtok(Ares::readBuffer, ","); cur; cur = strtok(NULL, ",")) {
+				auto b = BuildingTypeClass::Find(cur);
+				if(b) {
+					this->ClonedAt.AddItem(b);
+				} else {
+					Debug::INIParseFailed(section, "ClonedAt", cur);
+				}
+			}
+		}
+	}
+
 
 	// quick fix - remove after the rest of weapon selector code is done
 	return;
@@ -442,6 +474,10 @@ bool TechnoTypeExt::ExtData::CameoIsElite()
 	}
 
 	return false;
+}
+
+bool TechnoTypeExt::ExtData::CanBeBuiltAt(BuildingTypeClass * FactoryType) {
+	return !this->BuiltAt.Count || this->BuiltAt.FindItemIndex(&FactoryType) != -1;
 }
 
 // =============================

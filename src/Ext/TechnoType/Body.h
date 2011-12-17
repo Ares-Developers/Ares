@@ -116,6 +116,10 @@ public:
 		// issue #617
 		DynamicVectorClass<BuildingTypeClass*> PoweredBy;  //!< The buildingtype this unit is powered by or NULL.
 
+		DynamicVectorClass<BuildingTypeClass *> BuiltAt;
+		Valueable<bool> Cloneable;
+		DynamicVectorClass<BuildingTypeClass *> ClonedAt;
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			Survivors_PilotChance (NULL),
 			Survivors_PassengerChance (NULL),
@@ -162,7 +166,8 @@ public:
 			WaterImage (NULL),
 			CanBeReversed (true),
 			RadarJamRadius (0),
-			PassengerTurret (false)
+			PassengerTurret (false),
+			Cloneable (true)
 			{
 				this->Insignia.SetAll(NULL);
 				*this->CameoPCX = *this->AltCameoPCX = 0;
@@ -182,6 +187,8 @@ public:
 		}
 
 		bool CameoIsElite();
+
+		bool CanBeBuiltAt(BuildingTypeClass * FactoryType);
 };
 
 	static Container<TechnoTypeExt> ExtMap;

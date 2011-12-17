@@ -87,6 +87,8 @@ public:
 		void ImmolateVictim(ObjectClass * Victim);
 
 		bool ReverseEngineer(TechnoClass * Victim); //!< Returns true if Victim wasn't buildable and now should be
+
+		void KickOutClones(TechnoClass * Production);
 	};
 
 	static Container<BuildingExt> ExtMap;
