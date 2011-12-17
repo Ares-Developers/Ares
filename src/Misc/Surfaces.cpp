@@ -8,79 +8,11 @@
 #include "../Ext/TechnoType/Body.h"
 #include "../Ext/SWType/Body.h"
 
-DEFINE_HOOK(533FD0, AllocateSurfaces, 0)
-{
-	GET(RectangleStruct *, rect_Hidden, ECX);
-	GET(RectangleStruct *, rect_Composite, EDX);
-	GET_STACK(RectangleStruct *, rect_Tile, 0x4);
-	GET_STACK(RectangleStruct *, rect_Sidebar, 0x8);
-	GET_STACK(byte, flag, 0xC);
-
-	RectangleStruct *rect_Alternate = rect_Hidden;
-
-#define DELSURFACE(surface) \
-	if(surface) { \
-		GAME_DEALLOC(surface); \
-		surface = 0; \
-	}
-
-	DELSURFACE(DSurface::Alternate);
-	DELSURFACE(DSurface::Hidden);
-	DELSURFACE(DSurface::Composite);
-	DELSURFACE(DSurface::Tile);
-	DELSURFACE(DSurface::Sidebar);
-
-#define ALLOCSURFACE(surface, mem, f3d) \
-	if(rect_ ## surface->Width > 0 && rect_ ## surface->Height > 0) { \
-		Ares::GlobalControls::SurfaceConfig *SConfig = &Ares::GlobalControls::GFX_S_ ## surface; \
-		byte Memory =  SConfig->Memory; \
-		if(Memory == 0xFF) { \
-			Memory = mem; \
-		} \
-		byte Force3D =  SConfig->Force3D; \
-		if(Force3D == 0xFF) { \
-			Force3D = f3d; \
-		} \
-		DSurface *S; \
-		GAME_ALLOC(DSurface, S, rect_ ## surface->Width, rect_ ## surface->Height, !!Memory, !!Force3D); \
-		if(!S) { \
-			Debug::FatalErrorAndExit("Failed to allocate " str(surface) " - cannot continue."); \
-		} \
-		DSurface:: ## surface = S; \
-		S->Fill(0); \
-	}
-
-	if(flag) {
-		ALLOCSURFACE(Hidden, 0, 0);
-	}
-
-	ALLOCSURFACE(Composite, !Game::bVideoBackBuffer, 1);
-	ALLOCSURFACE(Tile, !Game::bVideoBackBuffer, 1);
-
-	if(DSurface::Composite->VRAMmed ^ DSurface::Tile->VRAMmed) {
-		DELSURFACE(DSurface::Composite);
-		DELSURFACE(DSurface::Tile);
-		GAME_ALLOC(DSurface, DSurface::Composite, rect_Composite->Width, rect_Composite->Height, 1, 1);
-		GAME_ALLOC(DSurface, DSurface::Tile, rect_Tile->Width, rect_Tile->Height, 1, 1);
-	}
-
-	ALLOCSURFACE(Sidebar, !Game::bAllowVRAMSidebar, 0);
-
-	if(!flag) {
-		ALLOCSURFACE(Hidden, 0, 0);
-	}
-
-	ALLOCSURFACE(Alternate, 1, 0);
-
-	return 0x53443E;
-}
-
 DEFINE_HOOK(7C89D4, DirectDrawCreate, 6)
 {
 	R->Stack<DWORD>(0x4, Ares::GlobalControls::GFX_DX_Force);
 	return 0;
 }
-
 
 DEFINE_HOOK(7B9510, WWMouseClass_DrawCursor_V1, 6)
 //A_FINE_HOOK_AGAIN(7B94B2, WWMouseClass_DrawCursor_V1, 6)
@@ -228,4 +160,9 @@ DEFINE_HOOK(4F4583, GScreenClass_DrawOnTop_TheDarkSideOfTheMoon, 6)
 DEFINE_HOOK(78997B, sub_789960_RemoveWOLResolutionCheck, 0)
 {
 	return 0x789A58;
+}
+
+DEFINE_HOOK(4BA61B, DSurface_CTOR_SkipVRAM, 6)
+{
+	return 0x4BA623;
 }
