@@ -766,7 +766,7 @@ DEFINE_HOOK(741206, UnitClass_GetFireError, 6)
 {
 	GET(UnitClass *, Unit, ESI);
 	auto Type = Unit->Type;
-	if(!Type->TurretCount > 0 || Type->IsGattling) {
+	if(!Type->TurretCount || Type->IsGattling) {
 		return 0x741229;
 	}
 	auto idxW = Unit->SelectWeapon(NULL);
