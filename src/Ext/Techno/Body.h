@@ -127,7 +127,6 @@ public:
 
 	static bool CreateWithDroppod(FootClass *Object, CoordStruct *XYZ);
 
-	static void TransferMindControl(TechnoClass *From, TechnoClass *To);
 	static void TransferIvanBomb(TechnoClass *From, TechnoClass *To);
 	
 	static void Destroy(TechnoClass* pTechno, TechnoClass* pKiller = NULL, HouseClass* pKillerHouse = NULL, WarheadTypeClass* pWarhead = NULL);

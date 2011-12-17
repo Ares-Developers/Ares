@@ -387,43 +387,6 @@ void TechnoExt::Destroy(TechnoClass* pTechno, TechnoClass* pKiller, HouseClass* 
 	pTechno->ReceiveDamage(&health, 0, pWarhead, pKiller, TRUE, FALSE, pKillerHouse);
 }
 
-void TechnoExt::TransferMindControl(TechnoClass *From, TechnoClass *To) {
-	if(auto Controller = From->MindControlledBy) {
-		++Unsorted::IKnowWhatImDoing;
-		if(auto Manager = Controller->CaptureManager) { // shouldn't be necessary, but WW uses it...
-			bool FoundNode(false);
-			for(int i = 0; i < Manager->ControlNodes.Count; ++i) {
-				auto Node = Manager->ControlNodes[i];
-				if(Node->Unit == From) {
-					Node->Unit = To;
-					To->SetOwningHouse(From->GetOwningHouse(), 0);
-					To->MindControlledBy = Controller;
-					From->MindControlledBy = NULL;
-					FoundNode = true;
-					break;
-				}
-			}
-			if(!FoundNode) { // say the link was broken beforehand, by inconsistently ordered code...
-				Debug::Log("Transferring %s's MC link from %s to %s manually, problems might occur...\n"
-					, Controller->get_ID(), From->get_ID(), To->get_ID());
-				Manager->CaptureUnit(To);
-			}
-		}
-		--Unsorted::IKnowWhatImDoing;
-	} else if(auto MCHouse = From->MindControlledByHouse) {
-		To->MindControlledByHouse = MCHouse;
-		From->MindControlledByHouse = NULL;
-	}
-	if(auto Anim = From->MindControlRingAnim) {
-		auto ToAnim = &To->MindControlRingAnim;
-		if(*ToAnim) {
-			(*ToAnim)->TimeToDie = 1;
-		}
-		*ToAnim = Anim;
-		Anim->SetOwnerObject(To);
-	}
-}
-
 void TechnoExt::TransferIvanBomb(TechnoClass *From, TechnoClass *To) {
 	if(auto Bomb = From->AttachedBomb) {
 		From->AttachedBomb = NULL;

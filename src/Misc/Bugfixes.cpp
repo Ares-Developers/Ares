@@ -899,44 +899,6 @@ DEFINE_HOOK(4692A2, BulletClass_DetonateAt_RaiseAttackedByHouse, 6)
 }
 
 
-DEFINE_HOOK(7396AD, UnitClass_Deploy_CreateBuilding, 6)
-{
-	GET(UnitClass *, pUnit, EBP);
-	R->EDX<HouseClass *>(pUnit->GetOriginalOwner());
-	return 0x7396B3;
-}
-
-DEFINE_HOOK(739956, UnitClass_Deploy_ReestablishMindControl, 6)
-{
-	GET(UnitClass *, pUnit, EBP);
-	GET(BuildingClass *, pStructure, EBX);
-
-	TechnoExt::TransferMindControl(pUnit, pStructure);
-	TechnoExt::TransferIvanBomb(pUnit, pStructure);
-
-	pStructure->QueueMission(mission_Construction, 0);
-
-	return 0;
-}
-
-DEFINE_HOOK(449E2E, BuildingClass_Mi_Selling_CreateUnit, 6)
-{
-	GET(BuildingClass *, pStructure, EBP);
-	R->ECX<HouseClass *>(pStructure->GetOriginalOwner());
-	return 0x449E34;
-}
-
-DEFINE_HOOK(44A03C, BuildingClass_Mi_Selling_ReestablishMindControl, 6)
-{
-	GET(BuildingClass *, pStructure, EBP);
-	GET(UnitClass *, pUnit, EBX);
-
-	TechnoExt::TransferMindControl(pStructure, pUnit);
-	TechnoExt::TransferIvanBomb(pStructure, pUnit);
-
-	return 0;
-}
-
 DEFINE_HOOK(47243F, CaptureManagerClass_DecideUnitFate_BuildingFate, 6) {
 	GET(TechnoClass *, pVictim, EBX);
 	if(specific_cast<BuildingClass *>(pVictim)) {
@@ -944,35 +906,6 @@ DEFINE_HOOK(47243F, CaptureManagerClass_DecideUnitFate_BuildingFate, 6) {
 		// 2. BuildingClass::Mission_Hunt() implementation is to do nothing!
 		pVictim->QueueMission(mission_Guard, 0);
 		return 0x472604;
-	} else if (auto pUnit = specific_cast<UnitClass *>(pVictim)) {
-		if(pUnit->Type->DeploysInto) {
-			if(RulesClass::Instance->BuildConst.FindItemIndex(&pUnit->Type->DeploysInto) == -1) {
-				pVictim->QueueMission(mission_Guard, 0);
-				return 0x472604;
-			}
-		}
-	}
-	return 0;
-}
-
-DEFINE_HOOK(6AF5D7, SlaveManagerClass_ReplaceWhichBelongsToUnit_ChangeOwnership, 6) {
-	GET(InfantryClass *, pSlave, EAX);
-	GET(SlaveManagerClass *, pSlaveManager, ESI);
-	pSlave->SetOwningHouse(pSlaveManager->Owner->Owner, 0);
-	return 0;
-}
-
-DEFINE_HOOK(70173B, TechnoClass_ChangeOwnership_ChangeSlaveOwnership, 5) {
-	GET(TechnoClass *, pTechno, ESI);
-	if(auto Slaver = pTechno->SlaveManager) {
-		auto &Nodes = Slaver->SlaveNodes;
-		for(int i = Nodes.Count - 1; i >= 0; --i) {
-			if(auto Node = Nodes[i]) {
-				if(auto SlaveUnit = Node->Slave) {
-					SlaveUnit->SetOwningHouse(pTechno->Owner, 0);
-				}
-			}
-		}
 	}
 	return 0;
 }
