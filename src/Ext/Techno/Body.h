@@ -58,6 +58,8 @@ public:
 		// issue #617 powered units
 		PoweredUnitClass* PoweredUnit;
 
+		TemporalClass * MyOriginalTemporal;
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			idxSlot_Wave (0),
 			idxSlot_Beam (0),
@@ -70,7 +72,8 @@ public:
 			EMPLastMission (mission_None),
 			ShadowDrawnManually (false),
 			RadarJam(NULL),
-			PoweredUnit(NULL)
+			PoweredUnit(NULL),
+			MyOriginalTemporal(NULL)
 			{
 				this->CloakSkipTimer.Stop();
 				// hope this works with the timing - I assume it does, since Types should be created before derivates thereof
@@ -88,6 +91,7 @@ public:
 
 		virtual void InvalidatePointer(void *ptr) {
 			AnnounceInvalidPointer(this->GarrisonedIn, ptr);
+			AnnounceInvalidPointer(this->MyOriginalTemporal, ptr);
 		}
 
 		bool IsOperated();
@@ -122,6 +126,8 @@ public:
 	static void StopDraining(TechnoClass *Drainer, TechnoClass *Drainee);
 
 	static bool CreateWithDroppod(FootClass *Object, CoordStruct *XYZ);
+
+	static void TransferIvanBomb(TechnoClass *From, TechnoClass *To);
 	
 	static void Destroy(TechnoClass* pTechno, TechnoClass* pKiller = NULL, HouseClass* pKillerHouse = NULL, WarheadTypeClass* pWarhead = NULL);
 /*

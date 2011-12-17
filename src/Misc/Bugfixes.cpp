@@ -897,3 +897,43 @@ DEFINE_HOOK(4692A2, BulletClass_DetonateAt_RaiseAttackedByHouse, 6)
 	GET(ObjectClass*, pVictim, EDI);
 	return pVictim->AttachedTag ? 0 : 0x4692BD;
 }
+
+
+DEFINE_HOOK(47243F, CaptureManagerClass_DecideUnitFate_BuildingFate, 6) {
+	GET(TechnoClass *, pVictim, EBX);
+	if(specific_cast<BuildingClass *>(pVictim)) {
+		// 1. add to team and other fates don't really make sense for buildings
+		// 2. BuildingClass::Mission_Hunt() implementation is to do nothing!
+		pVictim->QueueMission(mission_Guard, 0);
+		return 0x472604;
+	}
+	return 0;
+}
+
+DEFINE_HOOK(4471D5, BuildingClass_Sell_DetonateNoBuildup, 6)
+{
+	GET(BuildingClass *, pStructure, ESI);
+	if(auto Bomb = pStructure->AttachedBomb) {
+		Bomb->Detonate();
+	}
+
+	return 0;
+}
+
+DEFINE_HOOK(44A1FF, BuildingClass_Mi_Selling_DetonatePostBuildup, 6) {
+	GET(BuildingClass *, pStructure, EBP);
+	if(auto Bomb = pStructure->AttachedBomb) {
+		Bomb->Detonate();
+	}
+
+	return 0;
+}
+
+DEFINE_HOOK(4D9F7B, FootClass_Sell_Detonate, 6)
+{
+	GET(FootClass *, pSellee, ESI);
+	if(auto Bomb = pSellee->AttachedBomb) {
+		Bomb->Detonate();
+	}
+	return 0;
+}

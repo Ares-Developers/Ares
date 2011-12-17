@@ -16,6 +16,10 @@
 #include <string>
 #include "../Ares.version.h"
 
+static bool IsNonemptyValue(const char *Value) {
+	return strlen(Value) && _strcmpi(Value, "<none>") && _strcmpi(Value, "none");
+};
+
 DEFINE_HOOK(477007, INIClass_GetSpeedType, 8)
 {
 	if(R->EAX() == -1) {
@@ -28,7 +32,7 @@ DEFINE_HOOK(477007, INIClass_GetSpeedType, 8)
 			UnitTypeClass::LoadFromINI overrides it to (this->Crusher ? Track : Wheel) just before reading its SpeedType
 			so we should not alert if we're responding to a TType read and our subject is a UnitType, or all VehicleTypes without an explicit ST declaration will get dinged
 		*/
-		if(strlen(Value)) {
+		if(IsNonemptyValue(Value)) {
 			if(caller != 0x7121E5 || R->EBP<TechnoTypeClass *>()->WhatAmI() != abs_UnitType) {
 				Debug::INIParseFailed(Section, "SpeedType", Value);
 			}
@@ -42,7 +46,7 @@ DEFINE_HOOK(474E8E, INIClass_GetMovementZone, 5)
 	if(R->EAX() == -1) {
 		GET_STACK(const char *, Section, 0x2C);
 		LEA_STACK(const char *, Value, 0x8);
-		if(strlen(Value)) {
+		if(IsNonemptyValue(Value)) {
 			Debug::INIParseFailed(Section, "MovementZone", Value);
 		}
 	}
@@ -54,7 +58,7 @@ DEFINE_HOOK(47542A, INIClass_GetArmorType, 6)
 	if(R->EAX() == -1) {
 		GET_STACK(const char *, Section, 0x8C);
 		LEA_STACK(const char *, Value, 0x8);
-		if(strlen(Value)) {
+		if(IsNonemptyValue(Value)) {
 			Debug::INIParseFailed(Section, "Armor", Value);
 		}
 	}
@@ -66,7 +70,7 @@ DEFINE_HOOK(474DEE, INIClass_GetFoundation, 7)
 	if(R->EAX() == -1) {
 		GET_STACK(const char *, Section, 0x2C);
 		LEA_STACK(const char *, Value, 0x8);
-		if(_strcmpi(Value, "Custom")) {
+		if(IsNonemptyValue(Value) && _strcmpi(Value, "Custom")) {
 			Debug::INIParseFailed(Section, "Foundation", Value);
 		}
 	}
@@ -147,7 +151,7 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 	for(auto i = 0; i < RulesClass::Instance->BuildConst.Count; ++i) {
 		auto BC = RulesClass::Instance->BuildConst.GetItem(i);
 		if(!BC->AIBuildThis) {
-		Debug::DevLog(Debug::Warning, "[AI]BuildConst= includes [%s], which doesn't have AIBuildThis=yes!\n", BC->ID);
+			Debug::DevLog(Debug::Warning, "[AI]BuildConst= includes [%s], which doesn't have AIBuildThis=yes!\n", BC->ID);
 		}
 	}
 

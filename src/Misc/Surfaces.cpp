@@ -224,3 +224,8 @@ DEFINE_HOOK(4F4583, GScreenClass_DrawOnTop_TheDarkSideOfTheMoon, 6)
 	}
 	return 0;
 }
+
+DEFINE_HOOK(78997B, sub_789960_RemoveWOLResolutionCheck, 0)
+{
+	return 0x789A58;
+}

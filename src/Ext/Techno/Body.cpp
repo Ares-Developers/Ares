@@ -387,6 +387,17 @@ void TechnoExt::Destroy(TechnoClass* pTechno, TechnoClass* pKiller, HouseClass* 
 	pTechno->ReceiveDamage(&health, 0, pWarhead, pKiller, TRUE, FALSE, pKillerHouse);
 }
 
+void TechnoExt::TransferIvanBomb(TechnoClass *From, TechnoClass *To) {
+	if(auto Bomb = From->AttachedBomb) {
+		From->AttachedBomb = NULL;
+		Bomb->TargetUnit = To;
+		To->AttachedBomb = Bomb;
+		To->BombVisible = From->BombVisible;
+		// if there already was a bomb attached to target unit, it's gone now...
+		// it shouldn't happen though, this is used for (un)deploying objects only
+	}
+}
+
 bool TechnoExt::ExtData::IsDeactivated() const {
 	return this->AttachedToObject->Deactivated;
 }
