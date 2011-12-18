@@ -120,6 +120,9 @@ public:
 		Valueable<bool> Cloneable;
 		DynamicVectorClass<BuildingTypeClass *> ClonedAt;
 
+		Nullable<bool> CarryallAllowed;
+		Nullable<int> CarryallSizeLimit;
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			Survivors_PilotChance (NULL),
 			Survivors_PassengerChance (NULL),
@@ -167,7 +170,9 @@ public:
 			CanBeReversed (true),
 			RadarJamRadius (0),
 			PassengerTurret (false),
-			Cloneable (true)
+			Cloneable (true),
+			CarryallAllowed(),
+			CarryallSizeLimit ()
 			{
 				this->Insignia.SetAll(NULL);
 				*this->CameoPCX = *this->AltCameoPCX = 0;
@@ -189,6 +194,8 @@ public:
 		bool CameoIsElite();
 
 		bool CanBeBuiltAt(BuildingTypeClass * FactoryType);
+
+		bool CarryallCanLift(UnitClass * Target);
 };
 
 	static Container<TechnoTypeExt> ExtMap;

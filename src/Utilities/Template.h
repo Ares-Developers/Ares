@@ -129,6 +129,35 @@ public:
 	}
 };
 
+template<typename T>
+class Nullable : public Valueable<T> {
+protected:
+	bool HasValue;
+public:
+	Nullable(): Valueable<T>(T()), HasValue(false) {};
+	Nullable(T Val): Valueable<T>(Val), HasValue(true) {};
+
+	bool isset() const {
+		return this->HasValue;
+	}
+
+	virtual void Set(T val) {
+		Valueable<T>::Set(val);
+		this->HasValue = true;
+	}
+
+	virtual void SetEx(T* val) {
+		Valueable<T>::SetEx(val);
+		this->HasValue = true;
+	}
+
+	void Reset() {
+		Valueable<T>::Set(T());
+		this->HasValue = false;
+	}
+};
+
+
 /*
  * This one is for data that defaults to some original flag value but can be overwritten with custom values
  * Bind() it to a data address from where to take the value

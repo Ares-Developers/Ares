@@ -742,7 +742,6 @@ DEFINE_HOOK(6F6AC9, TechnoClass_Remove, 6) {
 	return 0;
 }
 
-
 DEFINE_HOOK(74642C, UnitClass_ReceiveGunner, 6)
 {
 	GET(UnitClass *, Unit, ESI);
@@ -775,4 +774,54 @@ DEFINE_HOOK(741206, UnitClass_GetFireError, 6)
 		? 0x741210
 		: 0x741229
 	;
+}
+
+// bug #1290: carryall size limit
+DEFINE_HOOK(417D75, AircraftClass_GetCursorOverObject_CanTote, 5)
+{
+	GET(AircraftClass *, pCarryall, ESI);
+	GET(UnitClass *, pTarget, EDI);
+
+	auto pCarryallData = TechnoTypeExt::ExtMap.Find(pCarryall->Type);
+
+	return (pCarryallData->CarryallCanLift(pTarget))
+		? 0
+		: 0x417DF6
+	;
+}
+
+DEFINE_HOOK(416E37, AircraftClass_Mi_MoveCarryall_CanTote, 5)
+{
+	GET(AircraftClass *, pCarryall, ESI);
+	GET(UnitClass *, pTarget, EDI);
+
+	auto pCarryallData = TechnoTypeExt::ExtMap.Find(pCarryall->Type);
+
+	return (pCarryallData->CarryallCanLift(pTarget))
+		? 0
+		: 0x416EC9
+	;
+}
+
+DEFINE_HOOK(416C4D, AircraftClass_Carryall_Unload_DestroyCargo, 5)
+{
+	GET(AircraftClass* , pCarryall, EDI);
+	GET(UnitClass *, pCargo, ESI);
+
+	int Damage = pCargo->Health;
+	pCargo->ReceiveDamage(&Damage, 0, RulesClass::Instance->C4Warhead, NULL, true, true, NULL);
+
+	Damage = pCarryall->Health;
+	pCarryall->ReceiveDamage(&Damage, 0, RulesClass::Instance->C4Warhead, NULL, true, true, NULL);
+
+	return 0x416C53;
+}
+
+DEFINE_HOOK(416C94, AircraftClass_Carryall_Unload_UpdateCargo, 6)
+{
+	GET(UnitClass *, pCargo, ESI);
+
+	pCargo->UpdatePosition(2);
+
+	return 0;
 }
