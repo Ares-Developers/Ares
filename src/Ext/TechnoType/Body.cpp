@@ -338,6 +338,9 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	this->CarryallAllowed.Read(&exINI, section, "Carryall.Allowed");
 	this->CarryallSizeLimit.Read(&exINI, section, "Carryall.SizeLimit");
 
+	// #680, 1362
+	this->ImmuneToAbduction.Read(&exINI, section, "ImmuneToAbduction");
+
 	// quick fix - remove after the rest of weapon selector code is done
 	return;
 }

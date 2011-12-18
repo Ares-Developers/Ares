@@ -123,6 +123,8 @@ public:
 		Nullable<bool> CarryallAllowed;
 		Nullable<int> CarryallSizeLimit;
 
+		Valueable<bool> ImmuneToAbduction; //680, 1362
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			Survivors_PilotChance (NULL),
 			Survivors_PassengerChance (NULL),
@@ -172,7 +174,8 @@ public:
 			PassengerTurret (false),
 			Cloneable (true),
 			CarryallAllowed(),
-			CarryallSizeLimit ()
+			CarryallSizeLimit (),
+			ImmuneToAbduction(false)
 			{
 				this->Insignia.SetAll(NULL);
 				*this->CameoPCX = *this->AltCameoPCX = 0;
