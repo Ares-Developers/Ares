@@ -10,7 +10,7 @@
 #include <CCFileClass.h>
 #include <StringTable.h>
 
-#define CSF_MAX_ENTRIES 8000
+#define CSF_MAX_ENTRIES 20000
 
 class CSFLoader
 {
