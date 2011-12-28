@@ -68,10 +68,9 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 			if (WeaponTypeClass *cWeapon = WeaponTypeClass::FindOrAllocate(Ares::readBuffer)) {
 				int idxWeapon = this->GetUnusedWeaponSlot(pThis, 0); //rookie weapons
 				if (idxWeapon == -1) {
-					char* pID = pThis->ID;
 					Debug::FatalErrorAndExit(
 						"BuildingType [%s] is a Prism Tower however there are no free\n"
-						"weapon slots to assign the support weapon to.", pID);
+						"weapon slots to assign the support weapon to.", pThis->ID);
 				}
 				this->SupportWeaponIndex = idxWeapon;
 				if(!cWeapon->Warhead) {
@@ -94,10 +93,9 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 			if (WeaponTypeClass *cWeapon = WeaponTypeClass::FindOrAllocate(Ares::readBuffer)) {
 				int idxWeapon = this->GetUnusedWeaponSlot(pThis, 1); //elite weapons
 				if (idxWeapon == -1) {
-					char* pID = pThis->ID;
 					Debug::FatalErrorAndExit(
 						"BuildingType [%s] is a Prism Tower however there are no free\n"
-						"weapon slots to assign the elite support weapon to.", pID);
+						"weapon slots to assign the elite support weapon to.", pThis->ID);
 				}
 				this->EliteSupportWeaponIndex = idxWeapon;
 				if(!cWeapon->Warhead) {

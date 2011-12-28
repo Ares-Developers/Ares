@@ -22,29 +22,23 @@ public:
 
 	virtual void Execute(DWORD dwUnk)
 	{
-		int i = 0;
-		
-		FILE* F = NULL;
-		char buffer[0x10] = "\0";
+		char fName[0x80];
 
-		do
-		{
-			if(F)fclose(F);
+		SYSTEMTIME time;
+		GetLocalTime(&time);
 
-			_snprintf(buffer, 16, "Map%04d.yrm", i++);
-			F = fopen(buffer, "rb");
-		}while(F != NULL);
+		_snprintf(fName, 0x80, "Map.%04u%02u%02u-%02u%02u%02u-%05u.yrm",
+			time.wYear, time.wMonth, time.wDay, time.wHour, time.wMinute, time.wSecond, time.wMilliseconds);
 
-		DEBUGLOG("\t\t%s", buffer);
-
-		char* pBuffer = buffer;
+		char* pBuffer = fName;
 
 		SET_REG8(dl, 0);
 		SET_REG32(ecx, pBuffer);
 		CALL(0x687CE0);
 
-		wchar_t msg[0x40] = L"\0";
-		wsprintfW(msg, L"Map Snapshot saved as '%hs'.", buffer);
+		wchar_t msg[0xA0] = L"\0";
+		wsprintfW(msg, L"Map Snapshot saved as '%hs'.", fName);
+
 		MessageListClass::Instance->PrintMessage(msg);
 	}
 
