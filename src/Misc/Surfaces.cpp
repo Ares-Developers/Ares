@@ -120,20 +120,19 @@ DEFINE_HOOK(537BC0, Game_MakeScreenshot, 0)
 //			Surface->BlitPart(&DestRect, DSurface::Primary, &ClipRect, 0, 1);
 
 			if(WORD * buffer = reinterpret_cast<WORD *>(Surface->Lock(0, 0))) {
-				int idx = -1;
-				char fname[16];
-				CCFileClass *ScreenShot = NULL;
-				do {
-					if(ScreenShot) {
-						delete ScreenShot;
-						ScreenShot = NULL;
-					}
-					++idx;
-					_snprintf(fname, 16, "SCRN%04d.bmp", idx);
-					ScreenShot = new CCFileClass(fname);
-				} while(ScreenShot->Exists(0));
 
-				ScreenShot->OpenEx(fname, eFileMode::Write);
+				char fName[0x80];
+
+				SYSTEMTIME time;
+				GetLocalTime(&time);
+
+				_snprintf(fName, 0x80, "SCRN.%04u%02u%02u-%02u%02u%02u-%05u.BMP",
+					time.wYear, time.wMonth, time.wDay, time.wHour, time.wMinute, time.wSecond, time.wMilliseconds);
+
+				CCFileClass *ScreenShot = NULL;
+				GAME_ALLOC(CCFileClass, ScreenShot, "\0");
+
+				ScreenShot->OpenEx(fName, eFileMode::Write);
 
 				#pragma pack(push, 1)
 				struct bmpfile_full_header {
@@ -195,9 +194,9 @@ DEFINE_HOOK(537BC0, Game_MakeScreenshot, 0)
 				ScreenShot->WriteBytes(pixelData, arrayLen * 2);
 				ScreenShot->Close();
 				delete[] pixelData;
-				delete ScreenShot;
+				GAME_DEALLOC(ScreenShot);
 
-				Debug::Log("Wrote screenshot to file %s\n", fname);
+				Debug::Log("Wrote screenshot to file %s\n", fName);
 				Surface->Unlock();
 			}
 

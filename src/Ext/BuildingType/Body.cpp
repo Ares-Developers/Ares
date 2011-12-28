@@ -100,14 +100,24 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 			CellStruct* pCurrent = pFoundationData;
 			char key[0x20];
 
+			auto ParsePoint = [](CellStruct* &pCell, const char* str) -> void {
+				short x = 0, y = 0;
+				switch(sscanf(str, "%d,%d", &x, &y)) {
+				case 0:
+					x = 0;
+					// fallthrough
+				case 1:
+					y = 0;
+				}
+				pCell->X = x;
+				pCell->Y = y;
+				++pCell;
+			};
+
 			for(int i = 0; i < this->CustomWidth * this->CustomHeight; ++i) {
-				_snprintf(key, 32, "Foundation.%d", i);
+				_snprintf(key, 31, "Foundation.%d", i);
 				if(pArtINI->ReadString(pArtID, key, "", str, 0x80)) {
-					short x = 0, y = 0;
-					sscanf(str, "%d,%d", &x, &y);
-					pCurrent->X = x;
-					pCurrent->Y = y;
-					++pCurrent;
+					ParsePoint(pCurrent, str);
 				} else {
 					break;
 				}
@@ -119,13 +129,9 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 
 			pCurrent = pOutlineData;
 			for(int i = 0; i < this->OutlineLength; ++i) {
-				_snprintf(key, 32, "FoundationOutline.%d", i);
+				_snprintf(key, 31, "FoundationOutline.%d", i);
 				if(pArtINI->ReadString(pArtID, key, "", str, 0x80)) {
-					short x = 0, y = 0;
-					sscanf(str, "%d,%d", &x, &y);
-					pCurrent->X = x;
-					pCurrent->Y = y;
-					++pCurrent;
+					ParsePoint(pCurrent, str);
 				} else {
 					//Set end vector
 					// can't break, some stupid functions access fixed offsets without checking if that offset is within the valid range

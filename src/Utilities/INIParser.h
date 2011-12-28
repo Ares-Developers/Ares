@@ -71,17 +71,19 @@ public:
 
 		const char *pValue = this->buffer();
 
+		char *pFmt = NULL;
+
 		if(*pValue == '$') {
-			sscanf(pValue, "$%d", &buffer);
-			return buffer;
+			pFmt = "$%d";
+		} else if(tolower(pValue[strlen(pValue) - 2]) == 'h') {
+			pFmt = "%xh";
+		} else {
+			pFmt = "%d";
 		}
 
-		if(tolower(pValue[strlen(pValue) - 2]) == 'h') {
-			sscanf(pValue, "%xh", &buffer);
-			return buffer;
+		if(sscanf(pValue, pFmt, &buffer) != 1) {
+			buffer = nDefault;
 		}
-
-		sscanf(pValue, "%d", &buffer);
 		return buffer;
 	}
 
@@ -95,7 +97,14 @@ public:
 	}
 
 	int* Parse2Integers(int *buffer) {
-		sscanf(this->buffer(), "%d,%d", &buffer[0], &buffer[1]);
+		int nDefault[2] = { buffer[0], buffer[1] };
+		switch(sscanf(this->buffer(), "%d,%d", &buffer[0], &buffer[1])) {
+			case 0:
+				buffer[0] = nDefault[0];
+				// fallthrough
+			case 1:
+				buffer[1] = nDefault[1];
+		}
 		return buffer;
 	}
 
@@ -109,7 +118,17 @@ public:
 	}
 
 	int* Parse3Integers(int *buffer) {
-		sscanf(this->buffer(), "%d,%d,%d", &buffer[0], &buffer[1], &buffer[2]);
+		int nDefault[3] = { buffer[0], buffer[1], buffer[2] };
+		switch(sscanf(this->buffer(), "%d,%d,%d", &buffer[0], &buffer[1], &buffer[2])) {
+		case 0:
+			buffer[0] = nDefault[0];
+			// fallthrough
+		case 1:
+			buffer[1] = nDefault[1];
+			// fallthrough
+		case 2:
+			buffer[2] = nDefault[2];
+		}
 		return buffer;
 	}
 
@@ -123,7 +142,20 @@ public:
 	}
 
 	int* Parse4Integers(int *buffer) {
-		sscanf(this->buffer(), "%d,%d,%d,%d", &buffer[0], &buffer[1], &buffer[2], &buffer[3]);
+		int nDefault[4] = { buffer[0], buffer[1], buffer[2], buffer[3] };
+		switch(sscanf(this->buffer(), "%d,%d,%d,%d", &buffer[0], &buffer[1], &buffer[2], &buffer[3])) {
+		case 0:
+			buffer[0] = nDefault[0];
+			// fallthrough
+		case 1:
+			buffer[1] = nDefault[1];
+			// fallthrough
+		case 2:
+			buffer[2] = nDefault[2];
+			// fallthrough
+		case 3:
+			buffer[3] = nDefault[3];
+		}
 		return buffer;
 	}
 
@@ -137,12 +169,19 @@ public:
 	}
 
 	byte* Parse3Bytes(byte *buffer) {
-		int iBuffer [3];
-		iBuffer[0] = buffer[0];
-		iBuffer[1] = buffer[1];
-		iBuffer[2] = buffer[2];
+		byte nDefault[3] = { buffer[0], buffer[1], buffer[2] };
+		int iBuffer[3] = { buffer[0], buffer[1], buffer[2] };
 
-		sscanf(this->buffer(), "%d,%d,%d", &iBuffer[0], &iBuffer[1], &iBuffer[2]);
+		switch(sscanf(this->buffer(), "%d,%d,%d", &iBuffer[0], &iBuffer[1], &iBuffer[2])) {
+			case 0:
+				buffer[0] = nDefault[0];
+				// fallthrough
+			case 1:
+				buffer[1] = nDefault[1];
+				// fallthrough
+			case 2:
+				buffer[2] = nDefault[2];
+		}
 
 		buffer[0] = (byte)iBuffer[0];
 		buffer[1] = (byte)iBuffer[1];
@@ -161,9 +200,12 @@ public:
 
 	double ParseDouble(double nDefault) {
 		double buffer = nDefault;
-		sscanf(this->buffer(), "%lf", &buffer);
-		if(strchr(this->buffer(), '%')) {
-			buffer *= 0.01;
+		if(sscanf(this->buffer(), "%lf", &buffer) == 1) {
+			if(strchr(this->buffer(), '%')) {
+				buffer *= 0.01;
+			}
+		} else {
+			buffer = nDefault;
 		}
 		return buffer;
 	}
