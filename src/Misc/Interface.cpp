@@ -803,14 +803,16 @@ DEFINE_HOOK(52F191, CampaignMenu_InitializeMoreButtons, 5) {
 
 		// remove the ones that are not there
 		for(int i=0; i<4; ++i) {
-			int idxCampaign = Interface::slots[i] - 1;
-			if(!Ares::UISettings::Campaigns[idxCampaign].Valid) {
-				// disable slot
-				Interface::slots[i] = 0;
-			} else {
-				// update the subline text
-				if(HWND hItem = GetDlgItem(hDlg, i + 1959)) {
-				  SendMessageA(hItem, 0x4B2u, 0, (LPARAM)StringTable::LoadStringA(Ares::UISettings::Campaigns[idxCampaign].Subline));
+			if(Interface::slots[i] > 0) {
+				int idxCampaign = Interface::slots[i] - 1;
+				if(!Ares::UISettings::Campaigns[idxCampaign].Valid) {
+					// disable slot
+					Interface::slots[i] = 0;
+				} else {
+					// update the subline text
+					if(HWND hItem = GetDlgItem(hDlg, i + 1959)) {
+						SendMessageA(hItem, 0x4B2u, 0, (LPARAM)StringTable::LoadStringA(Ares::UISettings::Campaigns[idxCampaign].Subline));
+					}
 				}
 			}
 		}

@@ -185,10 +185,10 @@ bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 					if(BuildingClass *pBunkerLink = specific_cast<BuildingClass*>(pTechno->BunkerLinkedItem)) {
 						// unit will be destroyed or chronoported. in every case the bunker will be empty.
 						pBunkerLink->ClearBunker();
-					} else if(BuildingClass *pBunkerLink = specific_cast<BuildingClass*>(pTechno)) {
+					} else if(BuildingClass *pBunker = specific_cast<BuildingClass*>(pTechno)) {
 						// the bunker leaves...
-						pBunkerLink->UnloadBunker();
-						pBunkerLink->EmptyBunker();
+						pBunker->UnloadBunker();
+						pBunker->EmptyBunker();
 					}
 				}
 

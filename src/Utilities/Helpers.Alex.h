@@ -91,7 +91,7 @@ public:
 		*/
 		static DynamicVectorClass<TechnoClass*>* getCellSpreadItems(CoordStruct *coords, float spread, bool includeInAir=false) {
 			// set of possibly affected objects. every object can be here only once.
-			auto set = new std::set<TechnoClass*, StrictWeakComparer<ObjectClass*> >();
+			std::set<TechnoClass*, StrictWeakComparer<ObjectClass*> > set;
 
 			// the quick way. only look at stuff residing on the very cells we are affecting.
 			CellStruct cellCoords = MapClass::Instance->GetCellAt(coords)->MapCoords;
@@ -102,7 +102,7 @@ public:
 				CellClass *c = MapClass::Instance->GetCellAt(&tmpCell);
 				for(ObjectClass *curObj = c->GetContent(); curObj; curObj = curObj->NextObject) {
 					if(TechnoClass *Techno = generic_cast<TechnoClass*>(curObj)) {
-						set->insert(Techno);
+						set.insert(Techno);
 					}
 				}
 			}
@@ -115,7 +115,7 @@ public:
 					if(Techno->GetHeight() > 0) {
 						// rough estimation
 						if(Techno->Location.DistanceFrom(*coords) <= spread * 256) {
-							set->insert(Techno);
+							set.insert(Techno);
 						}
 					}
 				}
@@ -123,7 +123,7 @@ public:
 
 			// look closer. the final selection. put all affected items in a vector.
 			DynamicVectorClass<TechnoClass*> *ret = new DynamicVectorClass<TechnoClass*>();
-			for(auto iterator = set->begin(); iterator != set->end(); iterator++) {
+			for(auto iterator = set.begin(); iterator != set.end(); iterator++) {
 				TechnoClass *Techno = *iterator;
 
 				// ignore buildings that are not visible, like ambient light posts
@@ -150,8 +150,7 @@ public:
 			}
 
 			// tidy up
-			set->clear();
-			delete set;
+			set.clear();
 
 			return ret;
 		}
