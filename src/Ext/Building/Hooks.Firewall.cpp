@@ -8,7 +8,7 @@
 #include "../House/Body.h"
 #include "../Techno/Body.h"
 
-DEFINE_HOOK(4FB257, HouseClass_UnitFromFactory_Firewall, 6)
+DEFINE_HOOK(0x4FB257, HouseClass_UnitFromFactory_Firewall, 0x6)
 {
 	GET(BuildingClass *, B, ESI);
 	GET(HouseClass *, H, EBP);
@@ -21,7 +21,7 @@ DEFINE_HOOK(4FB257, HouseClass_UnitFromFactory_Firewall, 6)
 }
 
 
-DEFINE_HOOK(445355, BuildingClass_KickOutUnit_Firewall, 6)
+DEFINE_HOOK(0x445355, BuildingClass_KickOutUnit_Firewall, 0x6)
 {
 	GET(BuildingClass *, Factory, ESI);
 
@@ -35,7 +35,7 @@ DEFINE_HOOK(445355, BuildingClass_KickOutUnit_Firewall, 6)
 }
 
 // placement linking
-DEFINE_HOOK(6D5455, sub_6D5030, 6)
+DEFINE_HOOK(0x6D5455, sub_6D5030, 0x6)
 {
 	GET(BuildingTypeClass *, BT, EAX);
 	BuildingTypeExt::ExtData* pTypeData = BuildingTypeExt::ExtMap.Find(BT);
@@ -46,7 +46,7 @@ DEFINE_HOOK(6D5455, sub_6D5030, 6)
 }
 
 // placement linking
-DEFINE_HOOK(6D5A5C, sub_6D59D0, 6)
+DEFINE_HOOK(0x6D5A5C, sub_6D59D0, 0x6)
 {
 	GET(BuildingTypeClass *, BT, EDX);
 	BuildingTypeExt::ExtData* pTypeData = BuildingTypeExt::ExtMap.Find(BT);
@@ -57,7 +57,7 @@ DEFINE_HOOK(6D5A5C, sub_6D59D0, 6)
 }
 
 // frame to draw
-DEFINE_HOOK(43EFB3, BuildingClass_GetStaticImageFrame, 6)
+DEFINE_HOOK(0x43EFB3, BuildingClass_GetStaticImageFrame, 0x6)
 {
 	GET(BuildingClass *, B, ESI);
 
@@ -73,7 +73,7 @@ DEFINE_HOOK(43EFB3, BuildingClass_GetStaticImageFrame, 6)
 }
 
 // ignore damage
-DEFINE_HOOK(442230, BuildingClass_ReceiveDamage_FSW, 6)
+DEFINE_HOOK(0x442230, BuildingClass_ReceiveDamage_FSW, 0x6)
 {
 	GET(BuildingClass *, pThis, ECX);
 	GET_STACK(int *, Damage, 0x4);
@@ -89,7 +89,7 @@ DEFINE_HOOK(442230, BuildingClass_ReceiveDamage_FSW, 6)
 }
 
 // main update
-DEFINE_HOOK(43FC39, BuildingClass_Update_FSW, 6)
+DEFINE_HOOK(0x43FC39, BuildingClass_Update_FSW, 0x6)
 {
 	GET(BuildingClass*, B, ESI);
 
@@ -100,7 +100,7 @@ DEFINE_HOOK(43FC39, BuildingClass_Update_FSW, 6)
 }
 
 // pathfinding 1
-DEFINE_HOOK(483D8E, CellClass_Setup_Slave, 6)
+DEFINE_HOOK(0x483D8E, CellClass_Setup_Slave, 0x6)
 {
 	GET(BuildingClass *, B, ESI);
 	BuildingTypeExt::ExtData* pTypeData = BuildingTypeExt::ExtMap.Find(B->Type);
@@ -120,7 +120,7 @@ DEFINE_HOOK(483D8E, CellClass_Setup_Slave, 6)
 }
 
 // pathfinding 2
-DEFINE_HOOK(51BD4C, InfantryClass_Update, 6)
+DEFINE_HOOK(0x51BD4C, InfantryClass_Update, 0x6)
 {
 	GET(BuildingClass *, B, EDI);
 	BuildingTypeExt::ExtData* pTypeData = BuildingTypeExt::ExtMap.Find(B->Type);
@@ -137,7 +137,7 @@ DEFINE_HOOK(51BD4C, InfantryClass_Update, 6)
 }
 
 // pathfinding 3
-DEFINE_HOOK(51C4C8, InfantryClass_IsCellOccupied, 6)
+DEFINE_HOOK(0x51C4C8, InfantryClass_IsCellOccupied, 0x6)
 {
 	GET(BuildingClass *, B, ESI);
 	BuildingTypeExt::ExtData* pTypeData = BuildingTypeExt::ExtMap.Find(B->Type);
@@ -154,7 +154,7 @@ DEFINE_HOOK(51C4C8, InfantryClass_IsCellOccupied, 6)
 }
 
 // pathfinding 4
-DEFINE_HOOK(73F7B0, UnitClass_IsCellOccupied, 6)
+DEFINE_HOOK(0x73F7B0, UnitClass_IsCellOccupied, 0x6)
 {
 	GET(BuildingClass *, B, ESI);
 	BuildingTypeExt::ExtData* pTypeData = BuildingTypeExt::ExtMap.Find(B->Type);
@@ -172,7 +172,7 @@ DEFINE_HOOK(73F7B0, UnitClass_IsCellOccupied, 6)
 }
 
 // pathfinding 5
-DEFINE_HOOK(58819F, MapClass_SomePathfinding_1, 6)
+DEFINE_HOOK(0x58819F, MapClass_SomePathfinding_1, 0x6)
 {
 	GET(BuildingClass *, B, EAX);
 	BuildingTypeExt::ExtData* pTypeData = BuildingTypeExt::ExtMap.Find(B->Type);
@@ -186,7 +186,7 @@ DEFINE_HOOK(58819F, MapClass_SomePathfinding_1, 6)
 }
 
 // pathfinding 6
-DEFINE_HOOK(58828C, MapClass_SomePathfinding_2, 6)
+DEFINE_HOOK(0x58828C, MapClass_SomePathfinding_2, 0x6)
 {
 	GET(BuildingClass *, B, EAX);
 	BuildingTypeExt::ExtData* pTypeData = BuildingTypeExt::ExtMap.Find(B->Type);
@@ -200,7 +200,7 @@ DEFINE_HOOK(58828C, MapClass_SomePathfinding_2, 6)
 }
 
 // pathfinding 7
-DEFINE_HOOK(5884A4, MapClass_SomePathfinding_3, 6)
+DEFINE_HOOK(0x5884A4, MapClass_SomePathfinding_3, 0x6)
 {
 	GET(BuildingClass *, B, EAX);
 	BuildingTypeExt::ExtData* pTypeData = BuildingTypeExt::ExtMap.Find(B->Type);
@@ -214,7 +214,7 @@ DEFINE_HOOK(5884A4, MapClass_SomePathfinding_3, 6)
 }
 
 // targeting state
-DEFINE_HOOK(6FC0C5, TechnoClass_GetObjectActivityState_Firewall, 6)
+DEFINE_HOOK(0x6FC0C5, TechnoClass_GetObjectActivityState_Firewall, 0x6)
 {
 	GET(TechnoClass *, Tgt, EBX);
 	if(BuildingClass *B = specific_cast<BuildingClass*>(Tgt)) {
@@ -228,7 +228,7 @@ DEFINE_HOOK(6FC0C5, TechnoClass_GetObjectActivityState_Firewall, 6)
 	return 0;
 }
 
-DEFINE_HOOK(6FCD1D, TechnoClass_GetObjectActivityState_CanTargetFirewall, 5)
+DEFINE_HOOK(0x6FCD1D, TechnoClass_GetObjectActivityState_CanTargetFirewall, 0x5)
 {
 	GET(TechnoClass *, Src, ESI);
 	GET_STACK(TechnoClass *, Tgt, 0x24);
@@ -259,7 +259,7 @@ DEFINE_HOOK(6FCD1D, TechnoClass_GetObjectActivityState_CanTargetFirewall, 5)
 	return 0;
 }
 
-DEFINE_HOOK(6FCD23, TechnoClass_GetObjectActivityState_OverrideFirewall, 6)
+DEFINE_HOOK(0x6FCD23, TechnoClass_GetObjectActivityState_OverrideFirewall, 0x6)
 {
 	if(TechnoExt::FiringStateCache != FireError::NotAValue) {
 		R->EAX(TechnoExt::FiringStateCache);
@@ -269,7 +269,7 @@ DEFINE_HOOK(6FCD23, TechnoClass_GetObjectActivityState_OverrideFirewall, 6)
 	return 0;
 }
 
-DEFINE_HOOK(6F64CB, TechnoClass_DrawHealthBar, 6)
+DEFINE_HOOK(0x6F64CB, TechnoClass_DrawHealthBar, 0x6)
 {
 	GET(BuildingClass *, B, ESI);
 	BuildingTypeExt::ExtData * pData = BuildingTypeExt::ExtMap.Find(B->Type);
@@ -279,7 +279,7 @@ DEFINE_HOOK(6F64CB, TechnoClass_DrawHealthBar, 6)
 	;
 }
 
-DEFINE_HOOK(71B126, TemporalClass_Fire, 7)
+DEFINE_HOOK(0x71B126, TemporalClass_Fire, 0x7)
 {
 	GET(BuildingClass *, B, EDI);
 	BuildingTypeExt::ExtData * pData = BuildingTypeExt::ExtMap.Find(B->Type);
@@ -304,7 +304,7 @@ DEFINE_HOOK(71B126, TemporalClass_Fire, 7)
 	return 0;
 }
 
-DEFINE_HOOK(4DA53E, FootClass_Update, 6)
+DEFINE_HOOK(0x4DA53E, FootClass_Update, 0x6)
 {
 	GET(FootClass *, F, ESI);
 

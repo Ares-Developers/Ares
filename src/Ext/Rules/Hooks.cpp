@@ -1,7 +1,7 @@
 #include "Body.h"
 #include "../../Ares.h"
 
-DEFINE_HOOK(668BF0, RulesClass_Addition, 5)
+DEFINE_HOOK(0x668BF0, RulesClass_Addition, 0x5)
 {
 	GET(RulesClass*, pItem, ECX);
 	GET_STACK(CCINIClass*, pINI, 0x4);
@@ -12,7 +12,7 @@ DEFINE_HOOK(668BF0, RulesClass_Addition, 5)
 	return 0;
 }
 
-DEFINE_HOOK(679A15, RulesData_LoadBeforeTypeData, 6)
+DEFINE_HOOK(0x679A15, RulesData_LoadBeforeTypeData, 0x6)
 {
 	GET(RulesClass*, pItem, ECX);
 	GET_STACK(CCINIClass*, pINI, 0x4);
@@ -22,7 +22,7 @@ DEFINE_HOOK(679A15, RulesData_LoadBeforeTypeData, 6)
 	return 0;
 }
 
-DEFINE_HOOK(679CAF, RulesData_LoadAfterTypeData, 5)
+DEFINE_HOOK(0x679CAF, RulesData_LoadAfterTypeData, 0x5)
 {
 	RulesClass* pItem = RulesClass::Global();
 	GET(CCINIClass*, pINI, ESI);
@@ -31,7 +31,7 @@ DEFINE_HOOK(679CAF, RulesData_LoadAfterTypeData, 5)
 	return 0;
 }
 
-DEFINE_HOOK(518744, InfantryClass_ReceiveDamage_ElectricDeath, 6)
+DEFINE_HOOK(0x518744, InfantryClass_ReceiveDamage_ElectricDeath, 0x6)
 {
 	AnimTypeClass *El = RulesExt::Global()->ElectricDeath;
 	if(!El) {

@@ -85,7 +85,7 @@ static void ParseListIndices(DWORD &Composite, CCINIClass * pINI, const char *se
 
 /* issue 193 - increasing the buffer length for certain flag parsing */
 
-DEFINE_HOOK(511D16, Buf_CountryVeteran, 9)
+DEFINE_HOOK(0x511D16, Buf_CountryVeteran, 0x9)
 {
 	GET(HouseTypeClass *, H, EBX);
 	GET(CCINIClass *, pINI, ESI);
@@ -101,7 +101,7 @@ DEFINE_HOOK(511D16, Buf_CountryVeteran, 9)
 // one hook to overwrite all lists and in the sequence skip them
 
 // ============= [General] =============
-DEFINE_HOOK(66D55E, Buf_General, 6)
+DEFINE_HOOK(0x66D55E, Buf_General, 0x6)
 {
 	GET(RulesClass *, pRules, ESI);
 	GET(CCINIClass *, pINI, EDI);
@@ -141,17 +141,17 @@ DEFINE_HOOK(66D55E, Buf_General, 6)
 	return 0;
 }
 
-DEFINE_HOOK(67062F, Buf_AnimToInf_Paradrop, 6)
+DEFINE_HOOK(0x67062F, Buf_AnimToInf_Paradrop, 0x6)
 {
 	return 0x6707FE;
 }
 
-DEFINE_HOOK(66FA13, Buf_SecretBoons, 6)
+DEFINE_HOOK(0x66FA13, Buf_SecretBoons, 0x6)
 {
 	return 0x66FAD6;
 }
 
-DEFINE_HOOK(66F7C0, Buf_PPA, 9)
+DEFINE_HOOK(0x66F7C0, Buf_PPA, 0x9)
 {
 	GET(RulesClass *, Rules, ESI);
 
@@ -161,13 +161,13 @@ DEFINE_HOOK(66F7C0, Buf_PPA, 9)
 	return 0x66F9FA;
 }
 
-DEFINE_HOOK(66F589, Buf_Shipyard, 6)
+DEFINE_HOOK(0x66F589, Buf_Shipyard, 0x6)
 {
 	return 0x66F68C;
 }
 
 
-DEFINE_HOOK(66F34B, Buf_RepairBay, 5)
+DEFINE_HOOK(0x66F34B, Buf_RepairBay, 0x5)
 {
 	GET(RulesClass *, Rules, ESI);
 
@@ -177,18 +177,18 @@ DEFINE_HOOK(66F34B, Buf_RepairBay, 5)
 }
 
 
-DEFINE_HOOK(66DD13, Buf_WeatherArt, 6)
+DEFINE_HOOK(0x66DD13, Buf_WeatherArt, 0x6)
 {
 	return 0x66DF19;
 }
 
-DEFINE_HOOK(66DB93, Buf_BridgeExplosions, 6)
+DEFINE_HOOK(0x66DB93, Buf_BridgeExplosions, 0x6)
 {
 	return 0x66DC96;
 }
 
 // ============= [CombatDamage] =============
-DEFINE_HOOK(66BC71, Buf_CombatDamage, 9)
+DEFINE_HOOK(0x66BC71, Buf_CombatDamage, 0x9)
 {
 	GET(RulesClass *, pRules, ESI);
 	GET(CCINIClass *, pINI, EDI);
@@ -208,7 +208,7 @@ DEFINE_HOOK(66BC71, Buf_CombatDamage, 9)
 
 // ============= [AI] =============
 
-DEFINE_HOOK(672B0E, Buf_AI, 6)
+DEFINE_HOOK(0x672B0E, Buf_AI, 0x6)
 {
 	GET(RulesClass *, pRules, ESI);
 	GET(CCINIClass *, pINI, EDI);
@@ -242,7 +242,7 @@ DEFINE_HOOK(672B0E, Buf_AI, 6)
 
 
 // == TechnoType ==
-DEFINE_HOOK(7121A3, Buf_TechnoType, 6)
+DEFINE_HOOK(0x7121A3, Buf_TechnoType, 0x6)
 {
 	GET(TechnoTypeClass *, T, EBP);
 	GET(const char *, section, EBX);
@@ -265,17 +265,17 @@ DEFINE_HOOK(7121A3, Buf_TechnoType, 6)
 	return 0;
 }
 
-DEFINE_HOOK(7149E1, Buf_Owner, 6)
+DEFINE_HOOK(0x7149E1, Buf_Owner, 0x6)
 {
 	return 0x7149FB;
 }
 
-DEFINE_HOOK(714522, Buf_OwnHouses, 6)
+DEFINE_HOOK(0x714522, Buf_OwnHouses, 0x6)
 {
 	return 0x714570;
 }
 
-DEFINE_HOOK(713171, Buf_Dock, 9)
+DEFINE_HOOK(0x713171, Buf_Dock, 0x9)
 {
 	GET(TechnoTypeClass *, T, EBP);
 	GET(int, Category, EAX);
@@ -284,7 +284,7 @@ DEFINE_HOOK(713171, Buf_Dock, 9)
 	return 0x713264;
 }
 
-DEFINE_HOOK(713BF1, Buf_DmgpartSys, 6)
+DEFINE_HOOK(0x713BF1, Buf_DmgpartSys, 0x6)
 {
 	GET(TechnoTypeClass *, T, EBP);
 	GET(ParticleSystemTypeClass *, SPS, EAX);
@@ -295,7 +295,7 @@ DEFINE_HOOK(713BF1, Buf_DmgpartSys, 6)
 
 
 // == WarheadType ==
-DEFINE_HOOK(75D660, Buf_Warhead, 9)
+DEFINE_HOOK(0x75D660, Buf_Warhead, 0x9)
 {
 	GET(WarheadTypeClass *, WH, ESI);
 	GET(const char *, section, EBP);
@@ -311,35 +311,35 @@ DEFINE_HOOK(75D660, Buf_Warhead, 9)
 }
 
 // == Map Scripting ==
-DEFINE_HOOK(7274AF, TriggerTypeClass_LoadFromINI_Read_Events, 5)
+DEFINE_HOOK(0x7274AF, TriggerTypeClass_LoadFromINI_Read_Events, 0x5)
 {
 	R->Stack(0x0, Ares::readBuffer);
 	R->Stack(0x4, Ares::readLength);
 	return 0;
 }
 
-DEFINE_HOOK(7274C8, TriggerTypeClass_LoadFromINI_Strtok_Events, 5)
+DEFINE_HOOK(0x7274C8, TriggerTypeClass_LoadFromINI_Strtok_Events, 0x5)
 {
 	R->ECX(Ares::readBuffer);
 	return 0;
 }
 
 
-DEFINE_HOOK(727529, TriggerTypeClass_LoadFromINI_Read_Actions, 5)
+DEFINE_HOOK(0x727529, TriggerTypeClass_LoadFromINI_Read_Actions, 0x5)
 {
 	R->Stack(0x0, Ares::readBuffer);
 	R->Stack(0x4, Ares::readLength);
 	return 0;
 }
 
-DEFINE_HOOK(727544, TriggerTypeClass_LoadFromINI_Strtok_Actions, 5)
+DEFINE_HOOK(0x727544, TriggerTypeClass_LoadFromINI_Strtok_Actions, 0x5)
 {
 	R->EDX(Ares::readBuffer);
 	return 0;
 }
 
 
-DEFINE_HOOK(6A9348, CameoClass_GetTip_FixLength, 9)
+DEFINE_HOOK(0x6A9348, CameoClass_GetTip_FixLength, 0x9)
 {
 	DWORD HideObjectName = R->AL();
 
@@ -359,12 +359,12 @@ DEFINE_HOOK(6A9348, CameoClass_GetTip_FixLength, 9)
 	return 0x6A93B2;
 }
 
-DEFINE_HOOK(70CAD8, TechnoClass_DealParticleDamage_DontDestroyCliff, 9)
+DEFINE_HOOK(0x70CAD8, TechnoClass_DealParticleDamage_DontDestroyCliff, 0x9)
 {
 	return 0x70CB30;
 }
 
-DEFINE_HOOK(489562, DamageArea_DestroyCliff, 6)
+DEFINE_HOOK(0x489562, DamageArea_DestroyCliff, 0x6)
 {
 	GET(CellClass *, pCell, EAX);
 

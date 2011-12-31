@@ -3,7 +3,7 @@
 
 // #346, #464, #970, #1014
 // handle all veterancy gains ourselves
-DEFINE_HOOK(702E9D, TechnoClass_RegisterDestruction_Veterancy, 6) {
+DEFINE_HOOK(0x702E9D, TechnoClass_RegisterDestruction_Veterancy, 0x6) {
 	GET(TechnoClass*, pKiller, EDI);
 	GET(TechnoClass*, pVictim, ESI);
 	GET(int, VictimCost, EBP);

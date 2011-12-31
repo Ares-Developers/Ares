@@ -7,7 +7,7 @@
 CellStruct * BuildingExt::TempFoundationData1 = NULL;
 CellStruct * BuildingExt::TempFoundationData2 = NULL;
 
-DEFINE_HOOK(45EC90, Foundations_GetFoundationWidth, 6)
+DEFINE_HOOK(0x45EC90, Foundations_GetFoundationWidth, 0x6)
 {
 	GET(BuildingTypeClass*, pThis, ECX);
 	BuildingTypeExt::ExtData* pData = BuildingTypeExt::ExtMap.Find(pThis);
@@ -20,7 +20,7 @@ DEFINE_HOOK(45EC90, Foundations_GetFoundationWidth, 6)
 	return 0;
 }
 
-DEFINE_HOOK(45ECA0, Foundations_GetFoundationHeight, 6)
+DEFINE_HOOK(0x45ECA0, Foundations_GetFoundationHeight, 0x6)
 {
 	GET(BuildingTypeClass*, pThis, ECX);
 	BuildingTypeExt::ExtData* pData = BuildingTypeExt::ExtMap.Find(pThis);
@@ -40,7 +40,7 @@ DEFINE_HOOK(45ECA0, Foundations_GetFoundationHeight, 6)
 	return 0;
 }
 
-DEFINE_HOOK(568411, MapClass_AddContentAt_Foundation_P1, 0)
+DEFINE_HOOK(0x568411, MapClass_AddContentAt_Foundation_P1, 0x0)
 {
 	GET(BuildingClass *, pThis, EDI);
 
@@ -49,7 +49,7 @@ DEFINE_HOOK(568411, MapClass_AddContentAt_Foundation_P1, 0)
 	return 0x568432;
 }
 
-DEFINE_HOOK(568565, MapClass_AddContentAt_Foundation_OccupyHeight, 5)
+DEFINE_HOOK(0x568565, MapClass_AddContentAt_Foundation_OccupyHeight, 0x5)
 {
 	GET(BuildingClass *, pThis, EDI);
 	GET(int, ShadowHeight, EBP);
@@ -88,7 +88,7 @@ DEFINE_HOOK(568565, MapClass_AddContentAt_Foundation_OccupyHeight, 5)
 	return 0x568697;
 }
 
-DEFINE_HOOK(568841, MapClass_RemoveContentAt_Foundation_P1, 0)
+DEFINE_HOOK(0x568841, MapClass_RemoveContentAt_Foundation_P1, 0x0)
 {
 	GET(BuildingClass *, pThis, EDI);
 
@@ -97,7 +97,7 @@ DEFINE_HOOK(568841, MapClass_RemoveContentAt_Foundation_P1, 0)
 	return 0x568862;
 }
 
-DEFINE_HOOK(568997, MapClass_RemoveContentAt_Foundation_OccupyHeight, 5)
+DEFINE_HOOK(0x568997, MapClass_RemoveContentAt_Foundation_OccupyHeight, 0x5)
 {
 	GET(BuildingClass *, pThis, EDX);
 	GET(int, ShadowHeight, EBP);
@@ -139,7 +139,7 @@ DEFINE_HOOK(568997, MapClass_RemoveContentAt_Foundation_OccupyHeight, 5)
 }
 
 
-DEFINE_HOOK(4A8C77, MapClass_ProcessFoundation1_UnlimitBuffer, 5)
+DEFINE_HOOK(0x4A8C77, MapClass_ProcessFoundation1_UnlimitBuffer, 0x5)
 {
 	GET_STACK(CellStruct *, Foundation, 0x18);
 	GET(DisplayClass *, Display, EBX);
@@ -163,7 +163,7 @@ DEFINE_HOOK(4A8C77, MapClass_ProcessFoundation1_UnlimitBuffer, 5)
 	return 0x4A8C9E;
 }
 
-DEFINE_HOOK(4A8DD7, MapClass_ProcessFoundation2_UnlimitBuffer, 5)
+DEFINE_HOOK(0x4A8DD7, MapClass_ProcessFoundation2_UnlimitBuffer, 0x5)
 {
 	GET_STACK(CellStruct *, Foundation, 0x18);
 	GET(DisplayClass *, Display, EBX);

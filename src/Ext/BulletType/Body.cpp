@@ -23,7 +23,7 @@ void BulletTypeExt::ExtData::LoadFromINIFile(BulletTypeClass *pThis, CCINIClass*
 // =============================
 // container hooks
 
-DEFINE_HOOK(46BDD9, BulletTypeClass_CTOR, 5)
+DEFINE_HOOK(0x46BDD9, BulletTypeClass_CTOR, 0x5)
 {
 	GET(BulletTypeClass*, pItem, EAX);
 
@@ -31,7 +31,7 @@ DEFINE_HOOK(46BDD9, BulletTypeClass_CTOR, 5)
 	return 0;
 }
 
-DEFINE_HOOK(46C890, BulletTypeClass_SDDTOR, 6)
+DEFINE_HOOK(0x46C890, BulletTypeClass_SDDTOR, 0x6)
 {
 	GET(BulletTypeClass*, pItem, ECX);
 
@@ -39,8 +39,8 @@ DEFINE_HOOK(46C890, BulletTypeClass_SDDTOR, 6)
 	return 0;
 }
 
-DEFINE_HOOK(46C6A0, BulletTypeClass_SaveLoad_Prefix, 5)
-DEFINE_HOOK_AGAIN(46C730, BulletTypeClass_SaveLoad_Prefix, 8)
+DEFINE_HOOK_AGAIN(0x46C730, BulletTypeClass_SaveLoad_Prefix, 0x8)
+DEFINE_HOOK(0x46C6A0, BulletTypeClass_SaveLoad_Prefix, 0x5)
 {
 	GET_STACK(BulletTypeExt::TT*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
@@ -51,20 +51,20 @@ DEFINE_HOOK_AGAIN(46C730, BulletTypeClass_SaveLoad_Prefix, 8)
 	return 0;
 }
 
-DEFINE_HOOK(46C722, BulletTypeClass_Load_Suffix, 4)
+DEFINE_HOOK(0x46C722, BulletTypeClass_Load_Suffix, 0x4)
 {
 	BulletTypeExt::ExtMap.LoadStatic();
 	return 0;
 }
 
-DEFINE_HOOK(46C74A, BulletTypeClass_Save_Suffix, 3)
+DEFINE_HOOK(0x46C74A, BulletTypeClass_Save_Suffix, 0x3)
 {
 	BulletTypeExt::ExtMap.SaveStatic();
 	return 0;
 }
 
-DEFINE_HOOK(46C41C, BulletTypeClass_LoadFromINI, A)
-DEFINE_HOOK_AGAIN(46C429, BulletTypeClass_LoadFromINI, A)
+DEFINE_HOOK_AGAIN(0x46C429, BulletTypeClass_LoadFromINI, 0xA)
+DEFINE_HOOK(0x46C41C, BulletTypeClass_LoadFromINI, 0xA)
 {
 	GET(BulletTypeClass*, pItem, ESI);
 	GET_STACK(CCINIClass*, pINI, 0x90);

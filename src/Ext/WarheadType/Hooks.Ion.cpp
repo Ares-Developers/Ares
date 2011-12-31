@@ -1,6 +1,6 @@
 #include "Body.h"
 
-DEFINE_HOOK(53CC6E, IonBlastClass_Update, 6)
+DEFINE_HOOK(0x53CC6E, IonBlastClass_Update, 0x6)
 {
 	GET(IonBlastClass *, IB, EBX);
 	return (WarheadTypeExt::IonExt.find(IB) == WarheadTypeExt::IonExt.end())
@@ -9,7 +9,7 @@ DEFINE_HOOK(53CC6E, IonBlastClass_Update, 6)
 	;
 }
 
-DEFINE_HOOK(53CC0D, IonBlastClass_Update_DTOR, 5)
+DEFINE_HOOK(0x53CC0D, IonBlastClass_Update_DTOR, 0x5)
 {
 	GET(IonBlastClass *, IB, EBX);
 	hash_ionExt::iterator i = WarheadTypeExt::IonExt.find(IB);
@@ -19,7 +19,7 @@ DEFINE_HOOK(53CC0D, IonBlastClass_Update_DTOR, 5)
 	return 0;
 }
 
-DEFINE_HOOK(53CBF5, IonBlastClass_Update_Duration, 5)
+DEFINE_HOOK(0x53CBF5, IonBlastClass_Update_Duration, 0x5)
 {
 	GET(IonBlastClass *, IB, EBX);
 

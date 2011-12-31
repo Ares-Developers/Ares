@@ -5,7 +5,7 @@
 // =============================
 // multiqueue hooks
 
-DEFINE_HOOK(4502F4, BuildingClass_Update_Factory, 6)
+DEFINE_HOOK(0x4502F4, BuildingClass_Update_Factory, 0x6)
 {
 	GET(BuildingClass *, B, ESI);
 	HouseClass * H = B->Owner;
@@ -40,7 +40,7 @@ DEFINE_HOOK(4502F4, BuildingClass_Update_Factory, 6)
 	return 0;
 }
 
-DEFINE_HOOK(4CA07A, FactoryClass_AbandonProduction, 8)
+DEFINE_HOOK(0x4CA07A, FactoryClass_AbandonProduction, 0x8)
 {
 	GET(FactoryClass *, F, ESI);
 	HouseClass * H = F->Owner;
@@ -67,7 +67,7 @@ DEFINE_HOOK(4CA07A, FactoryClass_AbandonProduction, 8)
 	return 0;
 }
 
-DEFINE_HOOK(444119, BuildingClass_KickOutUnit_UnitType, 6)
+DEFINE_HOOK(0x444119, BuildingClass_KickOutUnit_UnitType, 0x6)
 {
 	GET(UnitClass *, U, EDI);
 
@@ -82,7 +82,7 @@ DEFINE_HOOK(444119, BuildingClass_KickOutUnit_UnitType, 6)
 }
 
 
-DEFINE_HOOK(444131, BuildingClass_KickOutUnit_InfantryType, 6)
+DEFINE_HOOK(0x444131, BuildingClass_KickOutUnit_InfantryType, 0x6)
 {
 	GET(HouseClass  *, H, EAX);
 
@@ -90,7 +90,7 @@ DEFINE_HOOK(444131, BuildingClass_KickOutUnit_InfantryType, 6)
 	return 0;
 }
 
-DEFINE_HOOK(44531F, BuildingClass_KickOutUnit_BuildingType, A)
+DEFINE_HOOK(0x44531F, BuildingClass_KickOutUnit_BuildingType, 0xA)
 {
 	GET(HouseClass  *, H, EAX);
 
@@ -98,7 +98,7 @@ DEFINE_HOOK(44531F, BuildingClass_KickOutUnit_BuildingType, A)
 	return 0;
 }
 
-DEFINE_HOOK(443CCA, BuildingClass_KickOutUnit_AircraftType, A)
+DEFINE_HOOK(0x443CCA, BuildingClass_KickOutUnit_AircraftType, 0xA)
 {
 	GET(HouseClass  *, H, EDX);
 

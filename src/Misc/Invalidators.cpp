@@ -21,7 +21,7 @@ static bool IsNonemptyValue(const char *Value) {
 	return strlen(Value) && _strcmpi(Value, "<none>") && _strcmpi(Value, "none");
 };
 
-DEFINE_HOOK(477007, INIClass_GetSpeedType, 8)
+DEFINE_HOOK(0x477007, INIClass_GetSpeedType, 0x8)
 {
 	if(R->EAX() == -1) {
 		GET_STACK(const char *, Section, 0x8C);
@@ -42,7 +42,7 @@ DEFINE_HOOK(477007, INIClass_GetSpeedType, 8)
 	return 0;
 }
 
-DEFINE_HOOK(474E8E, INIClass_GetMovementZone, 5)
+DEFINE_HOOK(0x474E8E, INIClass_GetMovementZone, 0x5)
 {
 	if(R->EAX() == -1) {
 		GET_STACK(const char *, Section, 0x2C);
@@ -54,7 +54,7 @@ DEFINE_HOOK(474E8E, INIClass_GetMovementZone, 5)
 	return 0;
 }
 
-DEFINE_HOOK(47542A, INIClass_GetArmorType, 6)
+DEFINE_HOOK(0x47542A, INIClass_GetArmorType, 0x6)
 {
 	if(R->EAX() == -1) {
 		GET_STACK(const char *, Section, 0x8C);
@@ -66,7 +66,7 @@ DEFINE_HOOK(47542A, INIClass_GetArmorType, 6)
 	return 0;
 }
 
-DEFINE_HOOK(474DEE, INIClass_GetFoundation, 7)
+DEFINE_HOOK(0x474DEE, INIClass_GetFoundation, 0x7)
 {
 	if(R->EAX() == -1) {
 		GET_STACK(const char *, Section, 0x2C);
@@ -78,7 +78,7 @@ DEFINE_HOOK(474DEE, INIClass_GetFoundation, 7)
 	return 0;
 }
 
-DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
+DEFINE_HOOK(0x687C16, INIClass_ReadScenario_ValidateThings, 0x6)
 {
 	/*
 		all the INI files have been read
@@ -385,7 +385,7 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 	return 0;
 }
 
-DEFINE_HOOK(55AFB3, LogicClass_Update_1000, 6)
+DEFINE_HOOK(0x55AFB3, LogicClass_Update_1000, 0x6)
 {
 
 	if(RulesExt::ExtData *AresGeneral = RulesExt::Global()) {
@@ -427,7 +427,7 @@ DEFINE_HOOK(55AFB3, LogicClass_Update_1000, 6)
 	return 0;
 }
 
-DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateBuildCat, 6) {
+DEFINE_HOOK(0x687C16, INIClass_ReadScenario_ValidateBuildCat, 0x6) {
 	for(int i = 0; i < BuildingTypeClass::Array->Count; ++i) {
 		auto B = BuildingTypeClass::Array->GetItem(i);
 		if(B->TechLevel < 0 || B->TechLevel > RulesClass::Instance->TechLevel) {

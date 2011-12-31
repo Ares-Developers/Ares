@@ -569,7 +569,7 @@ void Container<TechnoTypeExt>::Load(TechnoTypeClass *pThis, IStream *pStm) {
 // =============================
 // container hooks
 
-DEFINE_HOOK(711835, TechnoTypeClass_CTOR, 5)
+DEFINE_HOOK(0x711835, TechnoTypeClass_CTOR, 0x5)
 {
 	GET(TechnoTypeClass*, pItem, ESI);
 
@@ -577,7 +577,7 @@ DEFINE_HOOK(711835, TechnoTypeClass_CTOR, 5)
 	return 0;
 }
 
-DEFINE_HOOK(711AE0, TechnoTypeClass_DTOR, 5)
+DEFINE_HOOK(0x711AE0, TechnoTypeClass_DTOR, 0x5)
 {
 	GET(TechnoTypeClass*, pItem, ECX);
 
@@ -585,8 +585,8 @@ DEFINE_HOOK(711AE0, TechnoTypeClass_DTOR, 5)
 	return 0;
 }
 
-DEFINE_HOOK(7162F0, TechnoTypeClass_SaveLoad_Prefix, 6)
-DEFINE_HOOK_AGAIN(716DC0, TechnoTypeClass_SaveLoad_Prefix, 5)
+DEFINE_HOOK_AGAIN(0x716DC0, TechnoTypeClass_SaveLoad_Prefix, 0x5)
+DEFINE_HOOK(0x7162F0, TechnoTypeClass_SaveLoad_Prefix, 0x6)
 {
 	GET_STACK(TechnoTypeExt::TT*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
@@ -597,20 +597,20 @@ DEFINE_HOOK_AGAIN(716DC0, TechnoTypeClass_SaveLoad_Prefix, 5)
 	return 0;
 }
 
-DEFINE_HOOK(716DAC, TechnoTypeClass_Load_Suffix, A)
+DEFINE_HOOK(0x716DAC, TechnoTypeClass_Load_Suffix, 0xA)
 {
 	TechnoTypeExt::ExtMap.LoadStatic();
 	return 0;
 }
 
-DEFINE_HOOK(717094, TechnoTypeClass_Save_Suffix, 5)
+DEFINE_HOOK(0x717094, TechnoTypeClass_Save_Suffix, 0x5)
 {
 	TechnoTypeExt::ExtMap.SaveStatic();
 	return 0;
 }
 
-DEFINE_HOOK(716123, TechnoTypeClass_LoadFromINI, 5)
-DEFINE_HOOK_AGAIN(716132, TechnoTypeClass_LoadFromINI, 5)
+DEFINE_HOOK_AGAIN(0x716132, TechnoTypeClass_LoadFromINI, 0x5)
+DEFINE_HOOK(0x716123, TechnoTypeClass_LoadFromINI, 0x5)
 {
 	GET(TechnoTypeClass*, pItem, EBP);
 	GET_STACK(CCINIClass*, pINI, 0x380);
@@ -621,7 +621,7 @@ DEFINE_HOOK_AGAIN(716132, TechnoTypeClass_LoadFromINI, 5)
 
 // infer the EMP immunity here. this is the earliest address to get
 // this information reliably.
-DEFINE_HOOK(679CAF, RulesClass_LoadAfterTypeData_InferEMPImmunity, 5) {
+DEFINE_HOOK(0x679CAF, RulesClass_LoadAfterTypeData_InferEMPImmunity, 0x5) {
 	GET(CCINIClass*, pINI, ESI);
 
 	// The EMP immunity has a rather complex rule set to infer whether

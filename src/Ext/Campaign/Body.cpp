@@ -37,7 +37,7 @@ void CampaignExt::ExtData::LoadFromINIFile(CampaignClass *pThis, CCINIClass *pIN
 	}
 }
 
-DEFINE_HOOK(46D090, CampaignClass_DTOR, 6)
+DEFINE_HOOK(0x46D090, CampaignClass_DTOR, 0x6)
 {
 	GET(CampaignClass*, pItem, ECX);
 	CampaignExt::ExtMap.Remove(pItem);
@@ -45,13 +45,13 @@ DEFINE_HOOK(46D090, CampaignClass_DTOR, 6)
 }
 
 // clear our own array before readding the items again
-DEFINE_HOOK(46CE10, CampaignClass_LoadFromINIList, 5) {
+DEFINE_HOOK(0x46CE10, CampaignClass_LoadFromINIList, 0x5) {
 	CampaignExt::Array.Clear();
 	return 0;
 }
 
 // read Ares properties and maintain our own array
-DEFINE_HOOK(46CD56, CampaignClass_LoadFromINI, 7)
+DEFINE_HOOK(0x46CD56, CampaignClass_LoadFromINI, 0x7)
 {
 	GET(CCINIClass*, pINI, EDI);
 	GET(CampaignClass*, pThis, EBX);

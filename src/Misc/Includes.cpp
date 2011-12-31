@@ -5,7 +5,7 @@ int Includes::LastReadIndex = -1;
 DynamicVectorClass<CCINIClass*> Includes::LoadedINIs;
 DynamicVectorClass<char*> Includes::LoadedINIFiles;
 
-DEFINE_HOOK(474200, CCINIClass_ReadCCFile1, 6)
+DEFINE_HOOK(0x474200, CCINIClass_ReadCCFile1, 0x6)
 {
 	GET(CCINIClass *, pINI, ECX);
 	GET(CCFileClass *, pFile, EAX);
@@ -17,7 +17,7 @@ DEFINE_HOOK(474200, CCINIClass_ReadCCFile1, 6)
 	return 0;
 }
 
-DEFINE_HOOK(474314, CCINIClass_ReadCCFile2, 6)
+DEFINE_HOOK(0x474314, CCINIClass_ReadCCFile2, 0x6)
 {
 	char buffer[0x80];
 	CCINIClass *xINI = Includes::LoadedINIs[Includes::LoadedINIs.Count - 1];

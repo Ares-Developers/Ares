@@ -11,7 +11,7 @@
 // change the lambda UpdateStatus. Available means this super weapon exists at
 // all. Setting it to false removes the super weapon. PowerSourced controls
 // whether the super weapon charges or can be used.
-DEFINE_HOOK(50AF10, HouseClass_CheckSWs, 5)
+DEFINE_HOOK(0x50AF10, HouseClass_CheckSWs, 0x5)
 {
 	GET(HouseClass *, pThis, ECX);
 
@@ -148,7 +148,7 @@ DEFINE_HOOK(50AF10, HouseClass_CheckSWs, 5)
 }
 
 // a ChargeDrain SW expired - fire it to trigger status update
-DEFINE_HOOK(6CBD86, SuperClass_Progress_Charged, 7)
+DEFINE_HOOK(0x6CBD86, SuperClass_Progress_Charged, 0x7)
 {
 	GET(SuperClass *, pSuper, ESI);
 	HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(pSuper->Owner);
@@ -158,7 +158,7 @@ DEFINE_HOOK(6CBD86, SuperClass_Progress_Charged, 7)
 }
 
 // a ChargeDrain SW was clicked while it was active - fire to trigger status update
-DEFINE_HOOK(6CB979, SuperClass_ClickFire, 6)
+DEFINE_HOOK(0x6CB979, SuperClass_ClickFire, 0x6)
 {
 	GET(SuperClass *, pSuper, ESI);
 	HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(pSuper->Owner);
@@ -168,7 +168,7 @@ DEFINE_HOOK(6CB979, SuperClass_ClickFire, 6)
 }
 
 // SW was lost (source went away)
-DEFINE_HOOK(6CB7BA, SuperClass_Lose, 6)
+DEFINE_HOOK(0x6CB7BA, SuperClass_Lose, 0x6)
 {
 	GET(SuperClass *, pSuper, ECX);
 	if(pSuper->Type->UseChargeDrain) {
@@ -180,7 +180,7 @@ DEFINE_HOOK(6CB7BA, SuperClass_Lose, 6)
 }
 
 // rewriting OnHold to support ChargeDrain
-DEFINE_HOOK(6CB4D0, SuperClass_SetOnHold, 6)
+DEFINE_HOOK(0x6CB4D0, SuperClass_SetOnHold, 0x6)
 {
 	GET(SuperClass *, pSuper, ECX);
 	GET_STACK(bool, OnHold, 0x4);

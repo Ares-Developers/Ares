@@ -31,7 +31,7 @@ void TestScaffold::GameCastTest() {
 }
 
 
-DEFINE_HOOK(48CCC0, Main_Game, 8)
+DEFINE_HOOK(0x48CCC0, Main_Game, 0x8)
 {
 	if(Ares::bTestingRun) {
 //		TestScaffold::FloatToIntTest();

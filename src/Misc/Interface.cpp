@@ -455,21 +455,21 @@ int Interface::getSlotIndex(int iID) {
 }
 
 // cache the template id for later use
-DEFINE_HOOK(62267F, Dialog_Show_GetTemplate, 6) {
+DEFINE_HOOK(0x62267F, Dialog_Show_GetTemplate, 0x6) {
 	GET(int, iID, EBP);
 	Interface::lastDialogTemplateID = iID;
 	return 0;
 }
 
 // manipulate the dialog after creation
-DEFINE_HOOK(6226EE, Dialog_Show_UpdateControls, 6) {
+DEFINE_HOOK(0x6226EE, Dialog_Show_UpdateControls, 0x6) {
 	GET(HWND, hDlg, ESI);
 	Interface::updateMenu(hDlg);
 	return 0;
 }
 
 // show message
-DEFINE_HOOK(52DDBA, Frontend_WndProc_MessageBox, 5) {
+DEFINE_HOOK(0x52DDBA, Frontend_WndProc_MessageBox, 0x5) {
 	if(Interface::nextMessageText) {
 		const wchar_t* ok = StringTable::LoadStringA("TXT_OK");
 		MessageBox::Show(Interface::nextMessageText, ok, NULL);
@@ -481,7 +481,7 @@ DEFINE_HOOK(52DDBA, Frontend_WndProc_MessageBox, 5) {
 }
 
 // go to the return menu instead of the menu Westwood would like to see here.
-DEFINE_HOOK(52E446, Frontend_WndProc_JustAfterAction, 6) {
+DEFINE_HOOK(0x52E446, Frontend_WndProc_JustAfterAction, 0x6) {
 	GET(int, thisAction, ESI);
 	if((Interface::nextAction != thisAction) && (Interface::nextReturnMenu >= 0)) {
 		R->ESI(Interface::nextReturnMenu);
@@ -492,55 +492,55 @@ DEFINE_HOOK(52E446, Frontend_WndProc_JustAfterAction, 6) {
 }
 
 // hooks for different buttons
-DEFINE_HOOK(53208D, Main_hDlg_SinglePlayerButtonClick, 6) {
+DEFINE_HOOK(0x53208D, Main_hDlg_SinglePlayerButtonClick, 0x6) {
 	GET(int*, pAction, EAX);
 	return (Interface::invokeClickAction(Ares::UISettings::SinglePlayerButton,
 		"SINGLEPLAYERBUTTON", pAction, 18) ? 0x532093 : 0);
 }
 
-DEFINE_HOOK(5320C2, Main_hDlg_WWOnlineButtonClick, 6) {
+DEFINE_HOOK(0x5320C2, Main_hDlg_WWOnlineButtonClick, 0x6) {
 	GET(int*, pAction, EAX);
 	return (Interface::invokeClickAction(Ares::UISettings::WWOnlineButton,
 		"WWONLINEBUTTON", pAction, 18) ? 0x5320C8 : 0);
 }
 
-DEFINE_HOOK(532051, Main_hDlg_NetworkButtonClick, 6) {
+DEFINE_HOOK(0x532051, Main_hDlg_NetworkButtonClick, 0x6) {
 	GET(int*, pAction, EAX);
 	return (Interface::invokeClickAction(Ares::UISettings::NetworkButton,
 		"NETWORKBUTTON", pAction, 18) ? 0x532057 : 0);
 }
 
-DEFINE_HOOK(5320AE, Main_hDlg_MoviesAndCreditsButtonClick, 6) {
+DEFINE_HOOK(0x5320AE, Main_hDlg_MoviesAndCreditsButtonClick, 0x6) {
 	GET(int*, pAction, EAX);
 	return (Interface::invokeClickAction(Ares::UISettings::MoviesAndCreditsButton,
 		"MOVIESANDCREDITSBUTTON", pAction, 18) ? 0x5320B4 : 0);
 }
 
-DEFINE_HOOK(52D724, SinglePlayer_hDlg_CampaignButtonClick, 6) {
+DEFINE_HOOK(0x52D724, SinglePlayer_hDlg_CampaignButtonClick, 0x6) {
 	GET(int*, pAction, EAX);
 	return (Interface::invokeClickAction(Ares::UISettings::CampaignButton,
 		"CAMPAIGNBUTTON", pAction, 1) ? 0x52D72A : 0);
 }
 
-DEFINE_HOOK(52D713, SinglePlayer_hDlg_SkirmishButtonClick, 6) {
+DEFINE_HOOK(0x52D713, SinglePlayer_hDlg_SkirmishButtonClick, 0x6) {
 	GET(int*, pAction, EAX);
 	return (Interface::invokeClickAction(Ares::UISettings::SkirmishButton,
 		"SKIRMISHBUTTON", pAction, 1) ? 0x52D719 : 0);
 }
 
-DEFINE_HOOK(52D7ED, MoviesAndCredits_hDlg_SneakPeeksButtonClick, 6) {
+DEFINE_HOOK(0x52D7ED, MoviesAndCredits_hDlg_SneakPeeksButtonClick, 0x6) {
 	GET(int*, pAction, EAX);
 	return (Interface::invokeClickAction(Ares::UISettings::SneakPeeksButton,
 		"SNEAKPEEKSBUTTON", pAction, 4) ? 0x52D7F3 : 0);
 }
 
-DEFINE_HOOK(52D7FB, MoviesAndCredits_hDlg_PlayMoviesButtonClick, 6) {
+DEFINE_HOOK(0x52D7FB, MoviesAndCredits_hDlg_PlayMoviesButtonClick, 0x6) {
 	GET(int*, pAction, EAX);
 	return (Interface::invokeClickAction(Ares::UISettings::PlayMoviesButton,
 		"PLAYMOVIESBUTTON", pAction, 4) ? 0x52D801 : 0);
 }
 
-DEFINE_HOOK(52D809, MoviesAndCredits_hDlg_ViewCreditsButtonClick, 6) {
+DEFINE_HOOK(0x52D809, MoviesAndCredits_hDlg_ViewCreditsButtonClick, 0x6) {
 	GET(int*, pAction, EAX);
 	return (Interface::invokeClickAction(Ares::UISettings::ViewCreditsButton,
 		"VIEWCREDITSBUTTON", pAction, 4) ? 0x52D80F : 0);
@@ -554,7 +554,7 @@ DEFINE_HOOK(52D809, MoviesAndCredits_hDlg_ViewCreditsButtonClick, 6) {
 // We do not select the first item in the list as the game would do. This
 // allows us to play the campaign selection sound when the user clicks it
 // and not when the dialog is shown or not at all.
-DEFINE_HOOK(52F00B, CampaignMenu_hDlg_PopulateCampaignList, 5) {
+DEFINE_HOOK(0x52F00B, CampaignMenu_hDlg_PopulateCampaignList, 0x5) {
 	GET(HWND, hDlg, ESI);
 	GET(HWND, hList, EBP);
 
@@ -582,7 +582,7 @@ DEFINE_HOOK(52F00B, CampaignMenu_hDlg_PopulateCampaignList, 5) {
 }
 
 // catch selecting a new campaign from the list
-DEFINE_HOOK(52EC18, CampaignMenu_hDlg_PreHandleGeneral, 5) {
+DEFINE_HOOK(0x52EC18, CampaignMenu_hDlg_PreHandleGeneral, 0x5) {
 	GET(HWND, hDlg, ESI);
 	GET(int, msg, EBX);
 	GET(int, lParam, EBP);
@@ -629,7 +629,7 @@ DEFINE_HOOK(52EC18, CampaignMenu_hDlg_PreHandleGeneral, 5) {
 }
 
 // start the mission
-DEFINE_HOOK(52ED21, CampaignMenu_hDlg_ClickedPlay, 9) {
+DEFINE_HOOK(0x52ED21, CampaignMenu_hDlg_ClickedPlay, 0x9) {
 	GET(HWND, hDlg, ESI);
 
 	// find out which campaign is selected
@@ -648,7 +648,7 @@ DEFINE_HOOK(52ED21, CampaignMenu_hDlg_ClickedPlay, 9) {
 // can have their own images and color palettes.
 
 // play mouse click sound
-DEFINE_HOOK(52EF39, CampaignMenu_hDlg_ImageMouseDown, 5) {
+DEFINE_HOOK(0x52EF39, CampaignMenu_hDlg_ImageMouseDown, 0x5) {
 	GET(int, iID, EAX);
 
 	// this is an image button. play click sound.
@@ -664,7 +664,7 @@ DEFINE_HOOK(52EF39, CampaignMenu_hDlg_ImageMouseDown, 5) {
 }
 
 // select the hover sound to be played
-DEFINE_HOOK(52EE04, CampaignMenu_hDlg_SelectHoverSound, 6) {
+DEFINE_HOOK(0x52EE04, CampaignMenu_hDlg_SelectHoverSound, 0x6) {
 	GET(HWND, hDlg, ESI);
 	GET(int, iID, EBX);
 	GET(int, lastiID, EAX);
@@ -704,7 +704,7 @@ DEFINE_HOOK(52EE04, CampaignMenu_hDlg_SelectHoverSound, 6) {
 }
 
 // override the campaign the game would choose
-DEFINE_HOOK(52F232, CampaignMenu_hDlg_StartCampaign, 6) {
+DEFINE_HOOK(0x52F232, CampaignMenu_hDlg_StartCampaign, 0x6) {
 	GET(int, iID, EBP);
 
 	// get the campaign hovered above
@@ -722,7 +722,7 @@ DEFINE_HOOK(52F232, CampaignMenu_hDlg_StartCampaign, 6) {
 }
 
 // converter
-DEFINE_HOOK(60378B, CampaignMenu_ChooseButtonPalette, 6) {
+DEFINE_HOOK(0x60378B, CampaignMenu_ChooseButtonPalette, 0x6) {
 	GET(int, iID, EDI);
 
 	int idxSlot = Interface::getSlotIndex(iID);
@@ -738,7 +738,7 @@ DEFINE_HOOK(60378B, CampaignMenu_ChooseButtonPalette, 6) {
 }
 
 // buttom image
-DEFINE_HOOK(603A2E, CampaignMenu_ChooseButtonImage, 6) {
+DEFINE_HOOK(0x603A2E, CampaignMenu_ChooseButtonImage, 0x6) {
 	GET(int, iID, EAX);
 
 	int idxSlot = Interface::getSlotIndex(iID);
@@ -755,21 +755,21 @@ DEFINE_HOOK(603A2E, CampaignMenu_ChooseButtonImage, 6) {
 }
 
 // support button background images for every button
-DEFINE_HOOK(60A90A, CampaignMenu_StaticButtonImage, 5) {
+DEFINE_HOOK(0x60A90A, CampaignMenu_StaticButtonImage, 0x5) {
 	GET(HWND, iID, EAX);
 
 	return ((Interface::getSlotIndex((int)iID) > -1) ? 0x60A982 : 0x60A9ED);
 }
 
 // animation duration
-DEFINE_HOOK(60357E, CampaignMenu_SetAnimationDuration, 5) {
+DEFINE_HOOK(0x60357E, CampaignMenu_SetAnimationDuration, 0x5) {
 	GET(HWND, iID, EAX);
 
 	return ((Interface::getSlotIndex((int)iID) > -1) ? 0x6035C5 : 0x6035E6);
 }
 
 // initialize stuff like the order and images
-DEFINE_HOOK(52F191, CampaignMenu_InitializeMoreButtons, 5) {
+DEFINE_HOOK(0x52F191, CampaignMenu_InitializeMoreButtons, 0x5) {
 	GET(HWND, hDlg, ESI);
 
 	if(!Ares::UISettings::CampaignList) {
@@ -820,7 +820,7 @@ DEFINE_HOOK(52F191, CampaignMenu_InitializeMoreButtons, 5) {
 }
 
 // if this is a campaign button, handle the tooltip ourselves
-DEFINE_HOOK(6041ED, DialogFunc_SubText_CampaignIconA, 5) {
+DEFINE_HOOK(0x6041ED, DialogFunc_SubText_CampaignIconA, 0x5) {
 	GET(int, iID, EAX);
 
 	int idxSlot = Interface::getSlotIndex(iID);
@@ -836,12 +836,12 @@ DEFINE_HOOK(6041ED, DialogFunc_SubText_CampaignIconA, 5) {
 }
 
 // already set. skip this.
-DEFINE_HOOK(6041F5, DialogFunc_CampaignMenu_CampaignIconB, 5) {
+DEFINE_HOOK(0x6041F5, DialogFunc_CampaignMenu_CampaignIconB, 0x5) {
 	return 0x6041FA;
 }
 
 // convert player color slot index to color scheme index
-DEFINE_HOOK(69A310, Game_GetLinkedColor, 7) {
+DEFINE_HOOK(0x69A310, Game_GetLinkedColor, 0x7) {
 	GET_STACK(int, idx, 0x4);
 
 	// get the slot
@@ -872,7 +872,7 @@ DEFINE_HOOK(69A310, Game_GetLinkedColor, 7) {
 }
 
 // return the tool tip describing this color
-DEFINE_HOOK(4E42A0, GameSetup_GetColorTooltip, 5) {
+DEFINE_HOOK(0x4E42A0, GameSetup_GetColorTooltip, 0x5) {
 	GET(int, idx, ECX);
 
 	const wchar_t* ret = NULL;
@@ -889,7 +889,7 @@ DEFINE_HOOK(4E42A0, GameSetup_GetColorTooltip, 5) {
 }
 
 // handle adding colors to combo box
-DEFINE_HOOK(4E46BB, hWnd_PopulateWithColors, 7) {
+DEFINE_HOOK(0x4E46BB, hWnd_PopulateWithColors, 0x7) {
 	GET(HWND, hWnd, ESI);
 	GET_STACK(int, idxSlot, 0x14);
 
@@ -917,7 +917,7 @@ DEFINE_HOOK(4E46BB, hWnd_PopulateWithColors, 7) {
 }
 
 // update the color in the combo drop-down lists
-DEFINE_HOOK(4E4A41, hWnd_DrawColors_A, 7) {
+DEFINE_HOOK(0x4E4A41, hWnd_DrawColors_A, 0x7) {
 	GET(int, curSel, EAX);
 
 	int idx = -1;
@@ -935,7 +935,7 @@ DEFINE_HOOK(4E4A41, hWnd_DrawColors_A, 7) {
 	return 0x4E4A6D;
 }
 
-DEFINE_HOOK(4E4B47, hWnd_DrawColors_B, 7) {
+DEFINE_HOOK(0x4E4B47, hWnd_DrawColors_B, 0x7) {
 	GET(int, idx, EBP);
 	GET(int, value, ESI);
 
@@ -944,7 +944,7 @@ DEFINE_HOOK(4E4B47, hWnd_DrawColors_B, 7) {
 	return 0x4E4B4E;
 }
 
-DEFINE_HOOK(4E4556, hWnd_GetSlotColorIndex, 7) {
+DEFINE_HOOK(0x4E4556, hWnd_GetSlotColorIndex, 0x7) {
 	GET(int, slot, ECX);
 
 	int ret = -1;
@@ -959,14 +959,14 @@ DEFINE_HOOK(4E4556, hWnd_GetSlotColorIndex, 7) {
 	return 0x4E4570;
 }
 
-DEFINE_HOOK(4E4580, hWnd_IsAvailableColor, 5) {
+DEFINE_HOOK(0x4E4580, hWnd_IsAvailableColor, 0x5) {
 	GET(int, slot, ECX);
 
 	R->AL(Ares::UISettings::Colors[slot+1].selectedIndex == -1);
 	return 0x4E4592;
 }
 
-DEFINE_HOOK(4E4C9D, hWnd_WhateverColors_A, 7) {
+DEFINE_HOOK(0x4E4C9D, hWnd_WhateverColors_A, 0x7) {
 	GET(int, curSel, EAX);
 
 	int idx = -1;
@@ -984,7 +984,7 @@ DEFINE_HOOK(4E4C9D, hWnd_WhateverColors_A, 7) {
 	return 0x4E4CC9;
 }
 
-DEFINE_HOOK(4E4D67, hWnd_WhateverColors_B, 7) {
+DEFINE_HOOK(0x4E4D67, hWnd_WhateverColors_B, 0x7) {
 	GET(int, idx, EAX);
 	GET(int, value, ESI);
 
@@ -993,7 +993,7 @@ DEFINE_HOOK(4E4D67, hWnd_WhateverColors_B, 7) {
 	return 0x4E4D6E;
 }
 
-DEFINE_HOOK(60FAD7, Ownerdraw_PostProcessColors, A) {
+DEFINE_HOOK(0x60FAD7, Ownerdraw_PostProcessColors, 0xA) {
 	// copy original instruction
 	*(int*)0xAC1B90 = 0x443716;
 
@@ -1013,122 +1013,122 @@ DEFINE_HOOK(60FAD7, Ownerdraw_PostProcessColors, A) {
 	return inited ? 0x60FB5D : 0x60FAE3;
 }
 
-DEFINE_HOOK(612DA9, Handle_Button_Messages_Color, 6) {
+DEFINE_HOOK(0x612DA9, Handle_Button_Messages_Color, 0x6) {
 	R->EDI(Ares::UISettings::uiColorTextButton);
 	return 0x612DAF;
 }
 
-DEFINE_HOOK(613072, Handle_Button_Messages_DisabledColor, 7) {
+DEFINE_HOOK(0x613072, Handle_Button_Messages_DisabledColor, 0x7) {
 	R->EDI(Ares::UISettings::uiColorDisabledButton);
 	return 0x613138;
 }
 
-DEFINE_HOOK(61664C, Handle_Checkbox_Messages_Color, 5) {
+DEFINE_HOOK(0x61664C, Handle_Checkbox_Messages_Color, 0x5) {
 	R->EAX(Ares::UISettings::uiColorTextCheckbox);
 	return 0x616651;
 }
 
-DEFINE_HOOK(616655, Handle_Checkbox_Messages_Disabled, 5) {
+DEFINE_HOOK(0x616655, Handle_Checkbox_Messages_Disabled, 0x5) {
 	R->EAX(Ares::UISettings::uiColorDisabledCheckbox);
 	return 0x61665A;
 }
 
-DEFINE_HOOK(616AF0, Handle_RadioButton_Messages_Color, 6) {
+DEFINE_HOOK(0x616AF0, Handle_RadioButton_Messages_Color, 0x6) {
 	R->ECX(Ares::UISettings::uiColorTextRadio);
 	return 0x616AF6;
 }
 
-DEFINE_HOOK(615DF7, Handle_Static_Messages_Color, 6) {
+DEFINE_HOOK(0x615DF7, Handle_Static_Messages_Color, 0x6) {
 	R->ECX(Ares::UISettings::uiColorTextLabel);
 	return 0x615DFD;
 }
 
-DEFINE_HOOK(615AB7, Handle_Static_Messages_Disabled, 6) {
+DEFINE_HOOK(0x615AB7, Handle_Static_Messages_Disabled, 0x6) {
 	R->ECX(Ares::UISettings::uiColorDisabledLabel);
 	return 0x615ABD;
 }
 
-DEFINE_HOOK(619A4F, Handle_Listbox_Messages_Color, 6) {
+DEFINE_HOOK(0x619A4F, Handle_Listbox_Messages_Color, 0x6) {
 	R->ESI(Ares::UISettings::uiColorTextList);
 	return 0x619A55;
 }
 
-DEFINE_HOOK(6198D3, Handle_Listbox_Messages_DisabledA, 6) {
+DEFINE_HOOK(0x6198D3, Handle_Listbox_Messages_DisabledA, 0x6) {
 	R->EBX(Ares::UISettings::uiColorDisabledList);
 	return 0x6198D9;
 }
 
-DEFINE_HOOK(619A5F, Handle_Listbox_Messages_DisabledB, 6) {
+DEFINE_HOOK(0x619A5F, Handle_Listbox_Messages_DisabledB, 0x6) {
 	R->ESI(Ares::UISettings::uiColorDisabledList);
 	return 0x619A65;
 }
 
-DEFINE_HOOK(619270, Handle_Listbox_Messages_SelectionA, 5) {
+DEFINE_HOOK(0x619270, Handle_Listbox_Messages_SelectionA, 0x5) {
 	R->EAX(Ares::UISettings::uiColorSelectionList);
 	return 0x619275;
 }
 
-DEFINE_HOOK(619288, Handle_Listbox_Messages_SelectionB, 6) {
+DEFINE_HOOK(0x619288, Handle_Listbox_Messages_SelectionB, 0x6) {
 	R->DL(Ares::UISettings::uiColorSelectionList >> 16);
 	return 0x61928E;
 }
 
-DEFINE_HOOK(617A2B, Handle_Combobox_Messages_Color, 6) {
+DEFINE_HOOK(0x617A2B, Handle_Combobox_Messages_Color, 0x6) {
 	R->EBX(Ares::UISettings::uiColorTextCombobox);
 	return 0x617A31;
 }
 
-DEFINE_HOOK(617A57, Handle_Combobox_Messages_Disabled, 6) {
+DEFINE_HOOK(0x617A57, Handle_Combobox_Messages_Disabled, 0x6) {
 	R->EBX(Ares::UISettings::uiColorDisabledCombobox);
 	return 0x617A5D;
 }
 
-DEFINE_HOOK(60DDA6, Handle_Combobox_Dropdown_Messages_SelectionA, 5) {
+DEFINE_HOOK(0x60DDA6, Handle_Combobox_Dropdown_Messages_SelectionA, 0x5) {
 	R->EAX(Ares::UISettings::uiColorSelectionCombobox);
 	return 0x60DDAB;
 }
 
-DEFINE_HOOK(60DDB6, Handle_Combobox_Dropdown_Messages_SelectionB, 6) {
+DEFINE_HOOK(0x60DDB6, Handle_Combobox_Dropdown_Messages_SelectionB, 0x6) {
 	R->DL(Ares::UISettings::uiColorSelectionCombobox >> 16);
 	return 0x60DDBC;
 }
 
-DEFINE_HOOK(61E2A5, Handle_Slider_Messages_Color, 5) {
+DEFINE_HOOK(0x61E2A5, Handle_Slider_Messages_Color, 0x5) {
 	R->EAX(Ares::UISettings::uiColorTextSlider);
 	return 0x61E2AA;
 }
 
-DEFINE_HOOK(61E2B1, Handle_Slider_Messages_Disabled, 5) {
+DEFINE_HOOK(0x61E2B1, Handle_Slider_Messages_Disabled, 0x5) {
 	R->EAX(Ares::UISettings::uiColorDisabledSlider);
 	return 0x61E2B6;
 }
 
-DEFINE_HOOK(61E8A0, Handle_GroupBox_Messages_Color, 6) {
+DEFINE_HOOK(0x61E8A0, Handle_GroupBox_Messages_Color, 0x6) {
 	R->ECX(Ares::UISettings::uiColorTextGroupbox);
 	return 0x61E8A6;
 }
 
-DEFINE_HOOK(614FF2, Handle_NewEdit_Messages_Color, 6) {
+DEFINE_HOOK(0x614FF2, Handle_NewEdit_Messages_Color, 0x6) {
 	R->EDX(Ares::UISettings::uiColorTextEdit);
 	return 0x614FF8;
 }
 
-DEFINE_HOOK(69B949, Game_ProcessRandomPlayers_ColorsA, 6) {
+DEFINE_HOOK(0x69B949, Game_ProcessRandomPlayers_ColorsA, 0x6) {
 	R->EAX(ScenarioClass::Instance->Random.RandomRanged(0, Ares::UISettings::ColorCount - 1));
 	return 0x69B95E;
 }
 
-DEFINE_HOOK(69BA13, Game_ProcessRandomPlayers_ColorsB, 6) {
+DEFINE_HOOK(0x69BA13, Game_ProcessRandomPlayers_ColorsB, 0x6) {
 	R->EAX(ScenarioClass::Instance->Random.RandomRanged(0, Ares::UISettings::ColorCount - 1));
 	return 0x69BA28;
 }
 
-DEFINE_HOOK(69B69B, GameModeClass_PickRandomColor_Unlimited, 6) {
+DEFINE_HOOK(0x69B69B, GameModeClass_PickRandomColor_Unlimited, 0x6) {
 	R->EAX(ScenarioClass::Instance->Random.RandomRanged(0, Ares::UISettings::ColorCount - 1));
 	return 0x69B6AF;
 }
 
-DEFINE_HOOK(69B7FF, GameModeClass_SetColor_Unlimited, 6) {
+DEFINE_HOOK(0x69B7FF, GameModeClass_SetColor_Unlimited, 0x6) {
 	R->EAX(ScenarioClass::Instance->Random.RandomRanged(0, Ares::UISettings::ColorCount - 1));
 	return 0x69B813;
 }

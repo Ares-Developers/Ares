@@ -6,7 +6,7 @@
 #include "../BuildingType/Body.h"
 
 // forced solid buildings - implement selection depending on projectile/building settings and heightmaps
-DEFINE_HOOK(4666F7, BulletClass_Update, 6)
+DEFINE_HOOK(0x4666F7, BulletClass_Update, 0x6)
 {
 	GET(BulletClass *, Bullet, EBP);
 
@@ -43,7 +43,7 @@ DEFINE_HOOK(4666F7, BulletClass_Update, 6)
 	return 0;
 }
 
-DEFINE_HOOK(46867F, BulletClass_SetMovement_Parachute, 5)
+DEFINE_HOOK(0x46867F, BulletClass_SetMovement_Parachute, 0x5)
 {
 	GET(CoordStruct *, XYZ, EAX);
 	GET(BulletClass *, Bullet, ECX);

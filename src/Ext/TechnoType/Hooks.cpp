@@ -8,7 +8,7 @@
 // other hooks
 
 
-DEFINE_HOOK(732D10, TacticalClass_CollectSelectedIDs, 5)
+DEFINE_HOOK(0x732D10, TacticalClass_CollectSelectedIDs, 0x5)
 {
 	return 0;
 }
@@ -27,7 +27,7 @@ A_FINE_HOOK(5F8480, ObjectTypeClass_Load3DArt, 6)
 }
 */
 
-DEFINE_HOOK(715320, TechnoTypeClass_LoadFromINI_EarlyReader, 6)
+DEFINE_HOOK(0x715320, TechnoTypeClass_LoadFromINI_EarlyReader, 0x6)
 {
 	GET(CCINIClass *, pINI, EDI);
 	GET(TechnoTypeClass *, pType, EBP);
@@ -41,7 +41,7 @@ DEFINE_HOOK(715320, TechnoTypeClass_LoadFromINI_EarlyReader, 6)
 }
 
 
-DEFINE_HOOK(5F79B0, TechnoTypeClass_FindFactory, 6)
+DEFINE_HOOK(0x5F79B0, TechnoTypeClass_FindFactory, 0x6)
 {
 	enum { Eligible = 0x5F79C7, Ineligible = 0x5F7A57 };
 
@@ -56,7 +56,7 @@ DEFINE_HOOK(5F79B0, TechnoTypeClass_FindFactory, 6)
 	;
 }
 
-DEFINE_HOOK(4444E2, BuildingClass_KickOutUnit_FindAlternateKickout, 6)
+DEFINE_HOOK(0x4444E2, BuildingClass_KickOutUnit_FindAlternateKickout, 0x6)
 {
 	GET(BuildingClass *, Src, ESI);
 	GET(BuildingClass *, Tst, EBP);
@@ -78,7 +78,7 @@ DEFINE_HOOK(4444E2, BuildingClass_KickOutUnit_FindAlternateKickout, 6)
 }
 
 
-DEFINE_HOOK(444159, BuildingClass_KickOutUnit_Clone, 6) {
+DEFINE_HOOK(0x444159, BuildingClass_KickOutUnit_Clone, 0x6) {
 	GET(TechnoClass *, Production, EDI);
 	GET(BuildingClass *, Factory, ESI);
 
@@ -88,7 +88,7 @@ DEFINE_HOOK(444159, BuildingClass_KickOutUnit_Clone, 6) {
 	return 0;
 }
 
-DEFINE_HOOK(4449DF, BuildingClass_KickOutUnit_PreventClone, 6)
+DEFINE_HOOK(0x4449DF, BuildingClass_KickOutUnit_PreventClone, 0x6)
 {
 	return 0x444A53;
 }

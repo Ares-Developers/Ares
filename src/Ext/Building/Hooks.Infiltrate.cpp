@@ -5,7 +5,7 @@
 
 /* #633 - spy building infiltration */
 // wrapper around the entire function
-DEFINE_HOOK(4571E0, BuildingClass_Infiltrate, 5)
+DEFINE_HOOK(0x4571E0, BuildingClass_Infiltrate, 0x5)
 {
 	GET(BuildingClass *, EnteredBuilding, ECX);
 	GET_STACK(HouseClass *, Enterer, 0x4);
@@ -19,15 +19,15 @@ DEFINE_HOOK(4571E0, BuildingClass_Infiltrate, 5)
 }
 
 // #814: force sidebar repaint for standard spy effects
-DEFINE_HOOK(457533, BuildingClass_Infiltrate_Standard, 6)
-DEFINE_HOOK_AGAIN(4574D2, BuildingClass_Infiltrate_Standard, 6)
+DEFINE_HOOK_AGAIN(0x4574D2, BuildingClass_Infiltrate_Standard, 0x6)
+DEFINE_HOOK(0x457533, BuildingClass_Infiltrate_Standard, 0x6)
 {
 	MouseClass::Instance->SidebarNeedsRepaint();
 	return R->get_Origin() + 6;
 }
 
 // check before drawing the tooltip
-DEFINE_HOOK(43E7EF, BuildingClass_DrawVisible_P1, 5)
+DEFINE_HOOK(0x43E7EF, BuildingClass_DrawVisible_P1, 0x5)
 {
 	GET(BuildingClass *, B, ESI);
 	BuildingTypeExt::ExtData *pType = BuildingTypeExt::ExtMap.Find(B->Type);
@@ -38,7 +38,7 @@ DEFINE_HOOK(43E7EF, BuildingClass_DrawVisible_P1, 5)
 }
 
 // check before drawing production cameo
-DEFINE_HOOK(43E832, BuildingClass_DrawVisible_P2, 6)
+DEFINE_HOOK(0x43E832, BuildingClass_DrawVisible_P2, 0x6)
 {
 	GET(BuildingClass *, B, ESI);
 	BuildingTypeExt::ExtData *pType = BuildingTypeExt::ExtMap.Find(B->Type);
@@ -49,7 +49,7 @@ DEFINE_HOOK(43E832, BuildingClass_DrawVisible_P2, 6)
 }
 
 // fix palette for spied factory production cameo drawing
-DEFINE_HOOK(43E8D1, BuildingClass_DrawVisible_P3, 8)
+DEFINE_HOOK(0x43E8D1, BuildingClass_DrawVisible_P3, 0x8)
 {
 	GET(TechnoTypeClass *, Type, EAX);
 	TechnoTypeExt::ExtData *pData = TechnoTypeExt::ExtMap.Find(Type);
@@ -59,7 +59,7 @@ DEFINE_HOOK(43E8D1, BuildingClass_DrawVisible_P3, 8)
 }
 
 // if this is a radar, change the owner's house bitfields responsible for radar reveals
-DEFINE_HOOK(44161C, BuildingClass_Destroy_OldSpy1, 6)
+DEFINE_HOOK(0x44161C, BuildingClass_Destroy_OldSpy1, 0x6)
 {
 	GET(BuildingClass *, B, ESI);
 	B->DisplayProductionTo.Clear();
@@ -68,7 +68,7 @@ DEFINE_HOOK(44161C, BuildingClass_Destroy_OldSpy1, 6)
 }
 
 // if this is a radar, change the owner's house bitfields responsible for radar reveals
-DEFINE_HOOK(448312, BuildingClass_ChangeOwnership_OldSpy1, a)
+DEFINE_HOOK(0x448312, BuildingClass_ChangeOwnership_OldSpy1, 0xa)
 {
 	GET(HouseClass *, newOwner, EBX);
 	GET(BuildingClass *, B, ESI);
@@ -81,7 +81,7 @@ DEFINE_HOOK(448312, BuildingClass_ChangeOwnership_OldSpy1, a)
 }
 
 // if this is a radar, drop the new owner from the bitfield
-DEFINE_HOOK(448D95, BuildingClass_ChangeOwnership_OldSpy2, 8)
+DEFINE_HOOK(0x448D95, BuildingClass_ChangeOwnership_OldSpy2, 0x8)
 {
 	GET(HouseClass *, newOwner, EDI);
 	GET(BuildingClass *, B, ESI);
@@ -93,14 +93,14 @@ DEFINE_HOOK(448D95, BuildingClass_ChangeOwnership_OldSpy2, 8)
 	return 0x448DB9;
 }
 
-DEFINE_HOOK(44F7A0, BuildingClass_UpdateDisplayTo, 0)
+DEFINE_HOOK(0x44F7A0, BuildingClass_UpdateDisplayTo, 0x0)
 {
 	GET(BuildingClass *, B, ECX);
 	BuildingExt::UpdateDisplayTo(B);
 	return 0x44F813;
 }
 
-DEFINE_HOOK(509303, HouseClass_AllyWith_unused, 0)
+DEFINE_HOOK(0x509303, HouseClass_AllyWith_unused, 0x0)
 {
 	GET(HouseClass *, pThis, ESI);
 	GET(HouseClass *, pThat, EAX);
@@ -109,7 +109,7 @@ DEFINE_HOOK(509303, HouseClass_AllyWith_unused, 0)
 	return 0x509319;
 }
 
-DEFINE_HOOK(56757F, MapClass_RevealArea0_DisplayTo, 0)
+DEFINE_HOOK(0x56757F, MapClass_RevealArea0_DisplayTo, 0x0)
 {
 	GET(HouseClass *, pThis, EDI);
 	GET(HouseClass *, pThat, EAX);
@@ -120,7 +120,7 @@ DEFINE_HOOK(56757F, MapClass_RevealArea0_DisplayTo, 0)
 	;
 }
 
-DEFINE_HOOK(567AC1, MapClass_RevealArea1_DisplayTo, 0)
+DEFINE_HOOK(0x567AC1, MapClass_RevealArea1_DisplayTo, 0x0)
 {
 	GET(HouseClass *, pThis, EBX);
 	GET(HouseClass *, pThat, EAX);

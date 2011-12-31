@@ -38,7 +38,7 @@
 #endif
 
 // fix for ultra-fast processors overrunning the performance evaluator function
-DEFINE_HOOK(5CB0B1, QueryPerformance, 5)
+DEFINE_HOOK(0x5CB0B1, QueryPerformance, 0x5)
 {
 	if(!R->EAX()) {
 		R->EAX(1);
@@ -46,56 +46,56 @@ DEFINE_HOOK(5CB0B1, QueryPerformance, 5)
 	return 0;
 }
 
-DEFINE_HOOK(6BD7E3, Expand_MIX_Reorg, 5)
+DEFINE_HOOK(0x6BD7E3, Expand_MIX_Reorg, 0x5)
 {
 	MixFileClass::Bootstrap();
 	return 0;
 }
 
-DEFINE_HOOK(52BB64, Expand_MIX_Deorg, 5)
+DEFINE_HOOK(0x52BB64, Expand_MIX_Deorg, 0x5)
 {
 	R->AL(1);
 	return 0x52BB69;
 }
 
-DEFINE_HOOK(53029E, Load_Bootstrap_AresMIX, 5)
+DEFINE_HOOK(0x53029E, Load_Bootstrap_AresMIX, 0x5)
 {
 	Ares::InitOwnResources();
 	return 0;
 }
 
-DEFINE_HOOK(6BE9BD, sub_6BE1C0, 6)
+DEFINE_HOOK(0x6BE9BD, sub_6BE1C0, 0x6)
 {
 	Ares::UninitOwnResources();
 	return 0;
 }
 
-DEFINE_HOOK(715857, TechnoTypeClass_LoadFromINI_LimitPalettes, 5)
+DEFINE_HOOK(0x715857, TechnoTypeClass_LoadFromINI_LimitPalettes, 0x5)
 {
 	return 0x715876;
 }
 
 // bugfix #231: DestroyAnims don't remap and cause reconnection errors
-DEFINE_HOOK(441D25, BuildingClass_Destroy, 0A)
+DEFINE_HOOK(0x441D25, BuildingClass_Destroy, 0x0A)
 {
 	return 0x441D37;
 }
 
 // bugfix #379: Temporal friendly kills give veterancy
 // bugfix #1266: Temporal kills gain double experience
-DEFINE_HOOK(71A922, TemporalClass_Update, 6) {
+DEFINE_HOOK(0x71A922, TemporalClass_Update, 0x6) {
 	return 0x71A97D;
 }
 
 // bugfix #874 A: Temporal warheads affect Warpable=no units
-DEFINE_HOOK(71AF2B, TemporalClass_Fire_UnwarpableA, A) {
+DEFINE_HOOK(0x71AF2B, TemporalClass_Fire_UnwarpableA, 0xA) {
 	// skip freeing captured and destroying spawned units,
 	// as it is not clear here if this is warpable at all.
 	return 0x71AF4D;
 }
 
 // bugfix #874 B: Temporal warheads affect Warpable=no units
-DEFINE_HOOK(71AF76, TemporalClass_Fire_UnwarpableB, 9) {
+DEFINE_HOOK(0x71AF76, TemporalClass_Fire_UnwarpableB, 0x9) {
 	GET(TechnoClass *, T, EDI);
 
 	// now it has been checked: this is warpable.
@@ -112,7 +112,7 @@ DEFINE_HOOK(71AF76, TemporalClass_Fire_UnwarpableB, 9) {
 }
 
 // Insignificant=yes or DontScore=yes prevent EVA_UnitLost on unit destruction
-DEFINE_HOOK(4D98DD, Insignificant_UnitLost, 6)
+DEFINE_HOOK(0x4D98DD, Insignificant_UnitLost, 0x6)
 {
 	GET(TechnoClass *, t, ESI);
 	TechnoTypeClass *T = t->GetTechnoType();
@@ -121,7 +121,7 @@ DEFINE_HOOK(4D98DD, Insignificant_UnitLost, 6)
 }
 
 // MakeInfantry that fails to place will just end the source animation and cleanup instead of memleaking to game end
-DEFINE_HOOK(424B23, AnimClass_Update, 6)
+DEFINE_HOOK(0x424B23, AnimClass_Update, 0x6)
 {
 	GET(InfantryClass *, I, EDI);
 	I->UnInit();
@@ -131,32 +131,32 @@ DEFINE_HOOK(424B23, AnimClass_Update, 6)
 	return 0x424B29;
 }
 
-DEFINE_HOOK(6BB9DD, WinMain_LogNonsense, 5)
+DEFINE_HOOK(0x6BB9DD, WinMain_LogNonsense, 0x5)
 {
 	return 0x6BBE2B;
 }
 
 // bugfix #187: Westwood idiocy
-DEFINE_HOOK(531726, StupidPips1, 5)
+DEFINE_HOOK(0x531726, StupidPips1, 0x5)
 {
 	return 0x53173A;
 }
 
 // bugfix #187: Westwood idiocy
-DEFINE_HOOK(53173F, StupidPips2, 5)
+DEFINE_HOOK(0x53173F, StupidPips2, 0x5)
 {
 	return 0x531749;
 }
 
 // bugfix #187: Westwood idiocy
-DEFINE_HOOK(5F698F, ObjectClass_GetCell, 5)
+DEFINE_HOOK(0x5F698F, ObjectClass_GetCell, 0x5)
 {
 	return 0x5F69B2;
 }
 
 // UNTESTED!!
 // bugfix #388: Units firing from inside a transport do not obey DecloakToFire
-DEFINE_HOOK(6FCA30, TechnoClass_GetWeaponState, 6)
+DEFINE_HOOK(0x6FCA30, TechnoClass_GetWeaponState, 0x6)
 {
 	GET(TechnoClass *, Techno, ESI);
 	TechnoClass *Transport = Techno->Transporter;
@@ -165,7 +165,7 @@ DEFINE_HOOK(6FCA30, TechnoClass_GetWeaponState, 6)
 }
 
 // PrismSupportModifier repair
-DEFINE_HOOK(671152, RulesClass_Addition_General, 6)
+DEFINE_HOOK(0x671152, RulesClass_Addition_General, 0x6)
 {
 	GET(RulesClass *, Rules, ESI);
 	Rules->PrismSupportModifier /= 100;
@@ -173,7 +173,7 @@ DEFINE_HOOK(671152, RulesClass_Addition_General, 6)
 }
 
 // Overpowerer no longer just infantry
-DEFINE_HOOK(4693B0, BulletClass_Fire_Overpower, 6)
+DEFINE_HOOK(0x4693B0, BulletClass_Fire_Overpower, 0x6)
 {
 	GET(TechnoClass *, pT, ECX);
 	switch(pT->WhatAmI())
@@ -207,8 +207,8 @@ A_FINE_HOOK(74036E, FooClass_GetCursorOverObject, 5)
 // 42461D, 6
 // 42463A, 6
 // correct warhead for animation damage
-DEFINE_HOOK(42461D, AnimClass_Update_Damage, 6)
-DEFINE_HOOK_AGAIN(42463A, AnimClass_Update_Damage, 6)
+DEFINE_HOOK_AGAIN(0x42463A, AnimClass_Update_Damage, 0x6)
+DEFINE_HOOK(0x42461D, AnimClass_Update_Damage, 0x6)
 {
 	GET(AnimClass *, Anim, ESI);
 	WarheadTypeClass *W = Anim->Type->Warhead;
@@ -243,7 +243,7 @@ XPORT_FUNC(TechnoClass_SelectFiringVoice)
 */
 
 // stop aircraft from losing target when it's in air
-DEFINE_HOOK(414D36, AACombat, 5)
+DEFINE_HOOK(0x414D36, AACombat, 0x5)
 {
 	return 0x414D4D;
 }
@@ -251,7 +251,7 @@ DEFINE_HOOK(414D36, AACombat, 5)
 // westwood does firingUnit->WhatAmI() == abs_AircraftType
 // which naturally never works
 // let's see what this change does
-DEFINE_HOOK(6F7561, Arcing_Aircraft, 5)
+DEFINE_HOOK(0x6F7561, Arcing_Aircraft, 0x5)
 {
 	GET(int, T, EAX);
 	GET(int *, X, ESI);
@@ -344,7 +344,7 @@ A_FINE_HOOK(48DED0, ShakeScreen, 1)
 }
 */
 
-DEFINE_HOOK(6CF3CF, sub_6CF350, 8)
+DEFINE_HOOK(0x6CF3CF, sub_6CF350, 0x8)
 {
 	GET(DWORD, A, EAX);
 	GET(DWORD *, B, ECX);
@@ -412,7 +412,7 @@ A_FINE_HOOK(48439A, CellClass_GetColourComponents, 5)
 }
 */
 
-DEFINE_HOOK(6873AB, INIClass_ReadScenario_EarlyLoadRules, 5)
+DEFINE_HOOK(0x6873AB, INIClass_ReadScenario_EarlyLoadRules, 0x5)
 {
 	switch(SessionClass::Instance->GameMode) {
 		case GameMode::Campaign:
@@ -434,12 +434,12 @@ A_FINE_HOOK(5FA41D, GameOptionsClass_CTOR, 5)
 }
 */
 
-DEFINE_HOOK(56017A, OptionsDlg_WndProc_RemoveResLimit, 5)
+DEFINE_HOOK(0x56017A, OptionsDlg_WndProc_RemoveResLimit, 0x5)
 {
 	return 0x560183;
 }
 
-DEFINE_HOOK(5601E3, OptionsDlg_WndProc_RemoveHiResCheck, 0)
+DEFINE_HOOK(0x5601E3, OptionsDlg_WndProc_RemoveHiResCheck, 0x0)
 {
 	// skip the allowhires check entirely - all supported 16bit modes are accepted, should make net resolution limit stfu
 	return 0x5601FC;
@@ -456,7 +456,7 @@ A_FINE_HOOK(5FAD09, Options_LoadFromINI, 5)
 }
 */
 
-DEFINE_HOOK(455E4C, HouseClass_FindRepairBay, 9)
+DEFINE_HOOK(0x455E4C, HouseClass_FindRepairBay, 0x9)
 {
 	GET(UnitClass *, Unit, ECX);
 	GET(BuildingClass *, Bay, ESI);
@@ -491,7 +491,7 @@ A_FINE_HOOK(67E75B, LoadGame_StallUI, 6)
 */
 
 
-DEFINE_HOOK(4242CA, AnimClass_Update_FixIE_TrailerSeperation, 6)
+DEFINE_HOOK(0x4242CA, AnimClass_Update_FixIE_TrailerSeperation, 0x6)
 {
 	GET(AnimTypeClass *, AT, EAX);
 	int trailSep = AT->TrailerSeperation;
@@ -502,7 +502,7 @@ DEFINE_HOOK(4242CA, AnimClass_Update_FixIE_TrailerSeperation, 6)
 	;
 }
 
-DEFINE_HOOK(441C21, BuildingClass_Destroy_ShakeScreenZero, 6)
+DEFINE_HOOK(0x441C21, BuildingClass_Destroy_ShakeScreenZero, 0x6)
 {
 	return RulesClass::Instance->ShakeScreen
 	 ? 0
@@ -510,14 +510,14 @@ DEFINE_HOOK(441C21, BuildingClass_Destroy_ShakeScreenZero, 6)
 	;
 }
 
-DEFINE_HOOK(699C1C, Game_ParsePKTs_ClearFile, 7)
+DEFINE_HOOK(0x699C1C, Game_ParsePKTs_ClearFile, 0x7)
 {
 	LEA_STACK(CCINIClass *, pINI, 0x24);
 	pINI->Clear(NULL, NULL);
 	return 0;
 }
 
-DEFINE_HOOK(7440BD, UnitClass_Remove, 6)
+DEFINE_HOOK(0x7440BD, UnitClass_Remove, 0x6)
 {
 	GET(UnitClass *, U, ESI);
 	TechnoClass *Bunker = U->BunkerLinkedItem;
@@ -527,7 +527,7 @@ DEFINE_HOOK(7440BD, UnitClass_Remove, 6)
 	return 0;
 }
 
-DEFINE_HOOK(50928C, HouseClass_Update_Factories_Queues_SkipBrokenDTOR, 5)
+DEFINE_HOOK(0x50928C, HouseClass_Update_Factories_Queues_SkipBrokenDTOR, 0x5)
 {
 	return 0x5092A3;
 }
@@ -535,7 +535,7 @@ DEFINE_HOOK(50928C, HouseClass_Update_Factories_Queues_SkipBrokenDTOR, 5)
 //westwood is stupid!
 // every frame they create a vector<TeamClass *> , copy all the teams from ::Array into it, iterate with ->Update(), delete
 // so this is OMG OPTIMIZED I guess
-DEFINE_HOOK(55B502, LogicClass_Update_UpdateAITeamsFaster, 5)
+DEFINE_HOOK(0x55B502, LogicClass_Update_UpdateAITeamsFaster, 0x5)
 {
 	for(int i = TeamClass::Array->Count - 1; i >= 0; --i) {
 		TeamClass::Array->GetItem(i)->Update();
@@ -544,7 +544,7 @@ DEFINE_HOOK(55B502, LogicClass_Update_UpdateAITeamsFaster, 5)
 }
 
 // Guard command failure
-DEFINE_HOOK(730DB0, GuardCommandClass_Execute, 0)
+DEFINE_HOOK(0x730DB0, GuardCommandClass_Execute, 0x0)
 {
 	GET(TechnoClass *, T, ESI);
 	return (T->Owner != HouseClass::Player || !T->IsControllable())
@@ -554,7 +554,7 @@ DEFINE_HOOK(730DB0, GuardCommandClass_Execute, 0)
 }
 
 /* #367 - do we need to draw a link to this victim */
-DEFINE_HOOK(472198, CaptureManagerClass_DrawLinks, 6)
+DEFINE_HOOK(0x472198, CaptureManagerClass_DrawLinks, 0x6)
 {
 	enum { Draw_Maybe = 0, Draw_Yes = 0x4721E6, Draw_No = 0x472287} decision = Draw_Maybe;
 	GET(CaptureManagerClass *, Controlled, EDI);
@@ -570,7 +570,7 @@ DEFINE_HOOK(472198, CaptureManagerClass_DrawLinks, 6)
 }
 
 /* #746 - don't set parasite eject point to cell center, but set it to fall and explode like a bomb */
-DEFINE_HOOK(62A2F8, ParasiteClass_PointerGotInvalid, 6)
+DEFINE_HOOK(0x62A2F8, ParasiteClass_PointerGotInvalid, 0x6)
 {
 	GET(ParasiteClass *, Parasite, ESI);
 	GET(CoordStruct *, XYZ, EAX);
@@ -586,7 +586,7 @@ DEFINE_HOOK(62A2F8, ParasiteClass_PointerGotInvalid, 6)
 }
 
 // update parasite coords along with the host
-DEFINE_HOOK(4DB87E, FootClass_SetCoords, 6)
+DEFINE_HOOK(0x4DB87E, FootClass_SetCoords, 0x6)
 {
 	GET(FootClass *, F, ESI);
 	if(F->ParasiteEatingMe) {
@@ -596,7 +596,7 @@ DEFINE_HOOK(4DB87E, FootClass_SetCoords, 6)
 }
 
 // bug 897
-DEFINE_HOOK(718871, TeleportLocomotionClass_UnfreezeObject_SinkOrSwim, 7)
+DEFINE_HOOK(0x718871, TeleportLocomotionClass_UnfreezeObject_SinkOrSwim, 0x7)
 {
 	GET(TechnoTypeClass *, Type, EAX);
 
@@ -618,7 +618,7 @@ DEFINE_HOOK(718871, TeleportLocomotionClass_UnfreezeObject_SinkOrSwim, 7)
 /*
  * Fixing issue #954
  */
-DEFINE_HOOK(621B80, DSurface_FillRectWithColor, 5)
+DEFINE_HOOK(0x621B80, DSurface_FillRectWithColor, 0x5)
 {
 	GET(RectangleStruct*, rect, ECX);
 	GET(Surface*, surface, EDX);
@@ -638,7 +638,7 @@ DEFINE_HOOK(621B80, DSurface_FillRectWithColor, 5)
 		return 0;
 }
 
-DEFINE_HOOK(52BA78, _YR_GameInit_Pre, 5)
+DEFINE_HOOK(0x52BA78, _YR_GameInit_Pre, 0x5)
 {
 	// issue #198: animate the paradrop cursor
 	MouseCursor::First[MouseCursorType::ParaDrop].Interval = 4;
@@ -655,7 +655,7 @@ DEFINE_HOOK(52BA78, _YR_GameInit_Pre, 5)
 	return 0;
 }
 
-DEFINE_HOOK(469467, BulletClass_DetonateAt_CanTemporalTarget, 5)
+DEFINE_HOOK(0x469467, BulletClass_DetonateAt_CanTemporalTarget, 0x5)
 {
 	GET(TechnoClass *, Target, ECX);
 	Layer::Value lyr = Target->InWhichLayer();
@@ -670,7 +670,7 @@ DEFINE_HOOK(469467, BulletClass_DetonateAt_CanTemporalTarget, 5)
 }
 
 /* #183 - cloakable on Buildings and Aircraft */
-DEFINE_HOOK(442CE0, BuildingClass_Init_Cloakable, 6)
+DEFINE_HOOK(0x442CE0, BuildingClass_Init_Cloakable, 0x6)
 {
 	GET(BuildingClass *, Item, ESI);
 
@@ -681,7 +681,7 @@ DEFINE_HOOK(442CE0, BuildingClass_Init_Cloakable, 6)
 	return 0;
 }
 
-DEFINE_HOOK(413FA3, AircraftClass_Init_Cloakable, 5)
+DEFINE_HOOK(0x413FA3, AircraftClass_Init_Cloakable, 0x5)
 {
 	GET(AircraftClass *, Item, ESI);
 
@@ -692,7 +692,7 @@ DEFINE_HOOK(413FA3, AircraftClass_Init_Cloakable, 5)
 	return 0;
 }
 
-DEFINE_HOOK(48A507, SelectDamageAnimation_FixNegatives, 5)
+DEFINE_HOOK(0x48A507, SelectDamageAnimation_FixNegatives, 0x5)
 {
 	GET(int, Damage, EDI);
 	Damage = abs(Damage);
@@ -701,7 +701,7 @@ DEFINE_HOOK(48A507, SelectDamageAnimation_FixNegatives, 5)
 }
 
 /* #1354 - Aircraft and empty SovParaDropInf list */
-DEFINE_HOOK(41D887, AirstrikeClass_Fire, 6)
+DEFINE_HOOK(0x41D887, AirstrikeClass_Fire, 0x6)
 {
 	if(!RulesClass::Instance->SovParaDropInf.Count) {
 		R->ECX(-1);
@@ -711,7 +711,7 @@ DEFINE_HOOK(41D887, AirstrikeClass_Fire, 6)
 }
 
 // issue #1282: remap wall using its owner's colors
-DEFINE_HOOK(47F9A4, DrawOverlay_WallRemap, 6) {
+DEFINE_HOOK(0x47F9A4, DrawOverlay_WallRemap, 0x6) {
 	GET(CellClass*, pCell, ESI);
 	
 	int idx = pCell->WallOwnerIndex;
@@ -725,7 +725,7 @@ DEFINE_HOOK(47F9A4, DrawOverlay_WallRemap, 6) {
 }
 
 
-DEFINE_HOOK(418478, AircraftClass_Mi_Attack_Untarget1, 6)
+DEFINE_HOOK(0x418478, AircraftClass_Mi_Attack_Untarget1, 0x6)
 {
 	GET(AircraftClass *, A, ESI);
 	return A->Target
@@ -734,7 +734,7 @@ DEFINE_HOOK(418478, AircraftClass_Mi_Attack_Untarget1, 6)
 	;
 }
 
-DEFINE_HOOK(4186D7, AircraftClass_Mi_Attack_Untarget2, 6)
+DEFINE_HOOK(0x4186D7, AircraftClass_Mi_Attack_Untarget2, 0x6)
 {
 	GET(AircraftClass *, A, ESI);
 	return A->Target
@@ -743,7 +743,7 @@ DEFINE_HOOK(4186D7, AircraftClass_Mi_Attack_Untarget2, 6)
 	;
 }
 
-DEFINE_HOOK(418826, AircraftClass_Mi_Attack_Untarget3, 6)
+DEFINE_HOOK(0x418826, AircraftClass_Mi_Attack_Untarget3, 0x6)
 {
 	GET(AircraftClass *, A, ESI);
 	return A->Target
@@ -752,7 +752,7 @@ DEFINE_HOOK(418826, AircraftClass_Mi_Attack_Untarget3, 6)
 	;
 }
 
-DEFINE_HOOK(418935, AircraftClass_Mi_Attack_Untarget4, 6)
+DEFINE_HOOK(0x418935, AircraftClass_Mi_Attack_Untarget4, 0x6)
 {
 	GET(AircraftClass *, A, ESI);
 	return A->Target
@@ -761,7 +761,7 @@ DEFINE_HOOK(418935, AircraftClass_Mi_Attack_Untarget4, 6)
 	;
 }
 
-DEFINE_HOOK(418A44, AircraftClass_Mi_Attack_Untarget5, 6)
+DEFINE_HOOK(0x418A44, AircraftClass_Mi_Attack_Untarget5, 0x6)
 {
 	GET(AircraftClass *, A, ESI);
 	return A->Target
@@ -770,7 +770,7 @@ DEFINE_HOOK(418A44, AircraftClass_Mi_Attack_Untarget5, 6)
 	;
 }
 
-DEFINE_HOOK(418B40, AircraftClass_Mi_Attack_Untarget6, 6)
+DEFINE_HOOK(0x418B40, AircraftClass_Mi_Attack_Untarget6, 0x6)
 {
 	GET(AircraftClass *, A, ESI);
 	return A->Target
@@ -780,14 +780,14 @@ DEFINE_HOOK(418B40, AircraftClass_Mi_Attack_Untarget6, 6)
 }
 
 // issue #1437: crash when warping out buildings infantry wants to garrison
-DEFINE_HOOK(71AA52, TemporalClass_Update_AnnounceInvalidPointer, 8) {
+DEFINE_HOOK(0x71AA52, TemporalClass_Update_AnnounceInvalidPointer, 0x8) {
 	GET(TechnoClass*, pVictim, ECX);
 	pVictim->IsAlive = false;
 	return 0;
 }
 
 // issue 1520: logging stupid shit crashes the game
-DEFINE_HOOK(4CA437, FactoryClass_GetCRC, 0)
+DEFINE_HOOK(0x4CA437, FactoryClass_GetCRC, 0x0)
 {
 	GET(FactoryClass *, pThis, ECX);
 	GET_STACK(DWORD, pCRC, 0xC);
@@ -799,7 +799,7 @@ DEFINE_HOOK(4CA437, FactoryClass_GetCRC, 0)
 }
 
 // issue #1532
-DEFINE_HOOK(749088, Count_ResetWithGivenCount, 6)
+DEFINE_HOOK(0x749088, Count_ResetWithGivenCount, 0x6)
 {
 	GET(unsigned int, Width, EAX);
 	if(Width > 512) {
@@ -813,8 +813,8 @@ DEFINE_HOOK(749088, Count_ResetWithGivenCount, 6)
 
 // #1260: reinforcements via actions 7 and 80, and chrono reinforcements
 // via action 107 cause crash if house doesn't exist
-DEFINE_HOOK(65D8FB, TeamTypeClass_ValidateHouse, 6)
-DEFINE_HOOK_AGAIN(65EC4A, TeamTypeClass_ValidateHouse, 6)
+DEFINE_HOOK_AGAIN(0x65EC4A, TeamTypeClass_ValidateHouse, 0x6)
+DEFINE_HOOK(0x65D8FB, TeamTypeClass_ValidateHouse, 0x6)
 {
 	GET(TeamTypeClass*, pThis, ECX);
 	HouseClass* pHouse = pThis->GetHouse();
@@ -829,14 +829,14 @@ DEFINE_HOOK_AGAIN(65EC4A, TeamTypeClass_ValidateHouse, 6)
 	return (R->get_Origin() == 0x65D8FB) ? 0x65DD1B : 0x65F301;
 }
 
-DEFINE_HOOK(70CBDA, TechnoClass_DealParticleDamage, 6)
+DEFINE_HOOK(0x70CBDA, TechnoClass_DealParticleDamage, 0x6)
 {
 	GET(TechnoClass *, pSource, EDX);
 	R->Stack<HouseClass *>(0xC, pSource->Owner);
 	return 0;
 }
 
-DEFINE_HOOK(62CDE8, ParticleClass_Update_Fire, 5)
+DEFINE_HOOK(0x62CDE8, ParticleClass_Update_Fire, 0x5)
 {
 	GET(ParticleClass *, pParticle, ESI);
 	if(auto System = pParticle->ParticleSystem) {
@@ -848,7 +848,7 @@ DEFINE_HOOK(62CDE8, ParticleClass_Update_Fire, 5)
 	return 0;
 }
 
-DEFINE_HOOK(62C2ED, ParticleClass_Update_Gas, 6)
+DEFINE_HOOK(0x62C2ED, ParticleClass_Update_Gas, 0x6)
 {
 	GET(ParticleClass *, pParticle, EBP);
 	if(auto System = pParticle->ParticleSystem) {
@@ -873,14 +873,14 @@ DEFINE_HOOK(62C2ED, ParticleClass_Update_Gas, 6)
 
 // #1708: this mofo was raising an event without checking whether
 // there is a valid tag. this is the only faulty call of this kind.
-DEFINE_HOOK(4692A2, BulletClass_DetonateAt_RaiseAttackedByHouse, 6)
+DEFINE_HOOK(0x4692A2, BulletClass_DetonateAt_RaiseAttackedByHouse, 0x6)
 {
 	GET(ObjectClass*, pVictim, EDI);
 	return pVictim->AttachedTag ? 0 : 0x4692BD;
 }
 
 
-DEFINE_HOOK(47243F, CaptureManagerClass_DecideUnitFate_BuildingFate, 6) {
+DEFINE_HOOK(0x47243F, CaptureManagerClass_DecideUnitFate_BuildingFate, 0x6) {
 	GET(TechnoClass *, pVictim, EBX);
 	if(specific_cast<BuildingClass *>(pVictim)) {
 		// 1. add to team and other fates don't really make sense for buildings
@@ -891,7 +891,7 @@ DEFINE_HOOK(47243F, CaptureManagerClass_DecideUnitFate_BuildingFate, 6) {
 	return 0;
 }
 
-DEFINE_HOOK(4471D5, BuildingClass_Sell_DetonateNoBuildup, 6)
+DEFINE_HOOK(0x4471D5, BuildingClass_Sell_DetonateNoBuildup, 0x6)
 {
 	GET(BuildingClass *, pStructure, ESI);
 	if(auto Bomb = pStructure->AttachedBomb) {
@@ -901,7 +901,7 @@ DEFINE_HOOK(4471D5, BuildingClass_Sell_DetonateNoBuildup, 6)
 	return 0;
 }
 
-DEFINE_HOOK(44A1FF, BuildingClass_Mi_Selling_DetonatePostBuildup, 6) {
+DEFINE_HOOK(0x44A1FF, BuildingClass_Mi_Selling_DetonatePostBuildup, 0x6) {
 	GET(BuildingClass *, pStructure, EBP);
 	if(auto Bomb = pStructure->AttachedBomb) {
 		Bomb->Detonate();
@@ -910,7 +910,7 @@ DEFINE_HOOK(44A1FF, BuildingClass_Mi_Selling_DetonatePostBuildup, 6) {
 	return 0;
 }
 
-DEFINE_HOOK(4D9F7B, FootClass_Sell_Detonate, 6)
+DEFINE_HOOK(0x4D9F7B, FootClass_Sell_Detonate, 0x6)
 {
 	GET(FootClass *, pSellee, ESI);
 	if(auto Bomb = pSellee->AttachedBomb) {

@@ -3,7 +3,7 @@
 #include <BuildingTypeClass.h>
 
 // #917 - validate build list before it needs to be generated
-DEFINE_HOOK(5054B0, HouseClass_GenerateAIBuildList_EnsureSanity, 6)
+DEFINE_HOOK(0x5054B0, HouseClass_GenerateAIBuildList_EnsureSanity, 0x6)
 {
 	GET(HouseClass *, pHouse, ECX);
 	auto pData = HouseExt::ExtMap.Find(pHouse);
@@ -12,7 +12,7 @@ DEFINE_HOOK(5054B0, HouseClass_GenerateAIBuildList_EnsureSanity, 6)
 }
 
 // #917 - handle the case of no shipyard gracefully
-DEFINE_HOOK(50610E, HouseClass_FindPositionForBuilding_FixShipyard, 7)
+DEFINE_HOOK(0x50610E, HouseClass_FindPositionForBuilding_FixShipyard, 0x7)
 {
 	GET(BuildingTypeClass *, pShipyard, EAX);
 	if(pShipyard) {
@@ -37,7 +37,7 @@ DEFINE_HOOK(50610E, HouseClass_FindPositionForBuilding_FixShipyard, 7)
  * fixed old fix, which was quite broken itself...
  */
 
-DEFINE_HOOK(505B58, HouseClass_GenerateAIBuildList_SkipManualCopy, 6)
+DEFINE_HOOK(0x505B58, HouseClass_GenerateAIBuildList_SkipManualCopy, 0x6)
 {
 	LEA_STACK(DynamicVectorClass<BuildingTypeClass *> *, PlannedBase1, STACK_OFFS(0xA4, 0x90));
 	LEA_STACK(DynamicVectorClass<BuildingTypeClass *> *, PlannedBase2, STACK_OFFS(0xA4, 0x78));
@@ -45,14 +45,14 @@ DEFINE_HOOK(505B58, HouseClass_GenerateAIBuildList_SkipManualCopy, 6)
 	return 0x505C2C;
 }
 
-DEFINE_HOOK(505C34, HouseClass_GenerateAIBuildList_FullAutoCopy, 5)
+DEFINE_HOOK(0x505C34, HouseClass_GenerateAIBuildList_FullAutoCopy, 0x5)
 {
 	R->EDI<int>(0);
 	return 0x505C39;
 }
 
 // I am crying all inside
-DEFINE_HOOK(505CF1, HouseClass_GenerateAIBuildList_PadWithN1, 5)
+DEFINE_HOOK(0x505CF1, HouseClass_GenerateAIBuildList_PadWithN1, 0x5)
 {
 	LEA_STACK(DynamicVectorClass<BuildingTypeClass *> *, PlannedBase2, STACK_OFFS(0xA4, 0x78));
 	GET(int, DefenseCount, EAX);
@@ -70,7 +70,7 @@ DEFINE_HOOK(505CF1, HouseClass_GenerateAIBuildList_PadWithN1, 5)
 
 // don't crash if you can't find a base unit
 // I imagine we'll have a pile of hooks like this sooner or later
-DEFINE_HOOK(4F65BF, HouseClass_CanAffordBase, 6)
+DEFINE_HOOK(0x4F65BF, HouseClass_CanAffordBase, 0x6)
 {
 	GET(UnitTypeClass*, pBaseUnit, ECX);
 	if(pBaseUnit) {
@@ -81,7 +81,7 @@ DEFINE_HOOK(4F65BF, HouseClass_CanAffordBase, 6)
 	return 0x4F65DA;
 }
 
-DEFINE_HOOK(5D705E, MPGameMode_SpawnBaseUnit, 6)
+DEFINE_HOOK(0x5D705E, MPGameMode_SpawnBaseUnit, 0x6)
 {
 	enum { hasBaseUnit = 0x5D7084, hasNoBaseUnit = 0x5D70DB };
 
@@ -97,7 +97,7 @@ DEFINE_HOOK(5D705E, MPGameMode_SpawnBaseUnit, 6)
 	return hasBaseUnit;
 }
 
-DEFINE_HOOK(688B37, MPGameModeClass_CreateStartingUnits_B, 5)
+DEFINE_HOOK(0x688B37, MPGameModeClass_CreateStartingUnits_B, 0x5)
 {
 	enum { hasBaseUnit = 0x688B75, hasNoBaseUnit = 0x688C09 };
 
@@ -126,7 +126,7 @@ DEFINE_HOOK(688B37, MPGameModeClass_CreateStartingUnits_B, 5)
 	return hasBaseUnit;
 }
 
-DEFINE_HOOK(5D721A, MPGameMode_CreateStartingUnits, 5)
+DEFINE_HOOK(0x5D721A, MPGameMode_CreateStartingUnits, 0x5)
 {
 	GET_STACK(int, UnitCount, 0x40);
 	GET_STACK(HouseClass*, pHouse, 0x4C);

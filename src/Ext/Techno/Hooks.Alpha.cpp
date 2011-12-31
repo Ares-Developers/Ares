@@ -8,7 +8,7 @@ hash_AlphaExt TechnoExt::AlphaExt;
 // the value's CTOR is the only thing allowed to .insert() or [] stuff
 // the value's (SD)DTOR is the only thing allowed to .erase() stuff
 
-DEFINE_HOOK(420960, AlphaShapeClass_CTOR, 5)
+DEFINE_HOOK(0x420960, AlphaShapeClass_CTOR, 0x5)
 {
 	GET_STACK(ObjectClass *, O, 0x4);
 	GET(AlphaShapeClass *, AS, ECX);
@@ -20,7 +20,7 @@ DEFINE_HOOK(420960, AlphaShapeClass_CTOR, 5)
 	return 0;
 }
 
-DEFINE_HOOK(421730, AlphaShapeClass_SDDTOR, 8)
+DEFINE_HOOK(0x421730, AlphaShapeClass_SDDTOR, 0x8)
 {
 	GET(AlphaShapeClass *, AS, ECX);
 	ObjectClass *O = AS->AttachedTo;
@@ -31,7 +31,7 @@ DEFINE_HOOK(421730, AlphaShapeClass_SDDTOR, 8)
 	return 0;
 }
 
-DEFINE_HOOK(5F3D5B, ObjectClass_DTOR, A)
+DEFINE_HOOK(0x5F3D5B, ObjectClass_DTOR, 0xA)
 {
 	GET(ObjectClass *, O, ESI);
 	hash_AlphaExt::iterator i = TechnoExt::AlphaExt.find(O);
@@ -41,7 +41,7 @@ DEFINE_HOOK(5F3D5B, ObjectClass_DTOR, A)
 	return 0;
 }
 
-DEFINE_HOOK(5F3E70, ObjectClass_Update, 5)
+DEFINE_HOOK(0x5F3E70, ObjectClass_Update, 0x5)
 {
 	GET(ObjectClass *, Source, ECX);
 	ObjectTypeClass *SourceType = Source->GetType();
@@ -120,7 +120,7 @@ DEFINE_HOOK(5F3E70, ObjectClass_Update, 5)
 }
 
 
-DEFINE_HOOK(420F75, AlphaLightClass_UpdateScreen_ShouldDraw, 5)
+DEFINE_HOOK(0x420F75, AlphaLightClass_UpdateScreen_ShouldDraw, 0x5)
 {
 	GET(AlphaShapeClass *, A, ECX);
 	unsigned int idx = 0;
@@ -135,7 +135,7 @@ DEFINE_HOOK(420F75, AlphaLightClass_UpdateScreen_ShouldDraw, 5)
 	return 0;
 }
 
-DEFINE_HOOK(4210AC, AlphaLightClass_UpdateScreen_Header, 5)
+DEFINE_HOOK(0x4210AC, AlphaLightClass_UpdateScreen_Header, 0x5)
 {
 	GET(AlphaShapeClass *, A, EDX);
 	GET(SHPStruct *, Image, ECX);
@@ -149,7 +149,7 @@ DEFINE_HOOK(4210AC, AlphaLightClass_UpdateScreen_Header, 5)
 	return 0;
 }
 
-DEFINE_HOOK(4211AC, AlphaLightClass_UpdateScreen_Body, 8)
+DEFINE_HOOK(0x4211AC, AlphaLightClass_UpdateScreen_Body, 0x8)
 {
 	GET_STACK(int, AlphaLightIndex, STACK_OFFS(0xDC, 0xB4));
 	GET_STACK(SHPStruct *, Image, STACK_OFFS(0xDC, 0x6C));
@@ -165,7 +165,7 @@ DEFINE_HOOK(4211AC, AlphaLightClass_UpdateScreen_Body, 8)
 }
 
 
-DEFINE_HOOK(421371, TacticalClass_UpdateAlphasInRectangle_ShouldDraw, 5)
+DEFINE_HOOK(0x421371, TacticalClass_UpdateAlphasInRectangle_ShouldDraw, 0x5)
 {
 	GET(int, AlphaLightIndex, EBX);
 	AlphaShapeClass *A = AlphaShapeClass::Array->Items[AlphaLightIndex];
@@ -181,7 +181,7 @@ DEFINE_HOOK(421371, TacticalClass_UpdateAlphasInRectangle_ShouldDraw, 5)
 	return 0;
 }
 
-DEFINE_HOOK(42146E, TacticalClass_UpdateAlphasInRectangle_Header, 5)
+DEFINE_HOOK(0x42146E, TacticalClass_UpdateAlphasInRectangle_Header, 0x5)
 {
 	GET(int, AlphaLightIndex, EBX);
 	GET(RectangleStruct *, buffer, EDX);
@@ -199,7 +199,7 @@ DEFINE_HOOK(42146E, TacticalClass_UpdateAlphasInRectangle_Header, 5)
 	return 0x421478;
 }
 
-DEFINE_HOOK(42152C, TacticalClass_UpdateAlphasInRectangle_Body, 8)
+DEFINE_HOOK(0x42152C, TacticalClass_UpdateAlphasInRectangle_Body, 0x8)
 {
 	GET_STACK(int, AlphaLightIndex, STACK_OFFS(0xA4, 0x78));
 	GET(SHPStruct *, Image, ECX);
@@ -214,7 +214,7 @@ DEFINE_HOOK(42152C, TacticalClass_UpdateAlphasInRectangle_Body, 8)
 	return 0;
 }
 
-DEFINE_HOOK(71944E, TeleportLocomotionClass_ILocomotion_Process, 6)
+DEFINE_HOOK(0x71944E, TeleportLocomotionClass_ILocomotion_Process, 0x6)
 {
 	GET(FootClass *, Object, ECX);
 	GET(CoordStruct *, XYZ, EDX);

@@ -27,6 +27,8 @@
 #include "Misc/Debug.h"
 #include "Misc/EMPulse.h"
 
+declhost(GAMEMD, 0);
+
 //Init Statics
 HANDLE Ares::hInstance = 0;
 bool Ares::bNoLogo = false;
@@ -268,7 +270,7 @@ bool __stdcall DllMain(HANDLE hInstance,DWORD dwReason,LPVOID v)
 //Exports
 
 //Hook at 0x52C5E0
-DEFINE_HOOK(52C5E0, Ares_NoLogo, 7)
+DEFINE_HOOK(0x52C5E0, Ares_NoLogo, 0x7)
 {
 	return (Ares::bNoLogo)
 		? 0x52C5F3
@@ -277,7 +279,7 @@ DEFINE_HOOK(52C5E0, Ares_NoLogo, 7)
 }
 
 //0x6AD0ED
-DEFINE_HOOK(6AD0ED, Ares_AllowSinglePlay, 5)
+DEFINE_HOOK(0x6AD0ED, Ares_AllowSinglePlay, 0x5)
 {
 	return 0x6AD16C;
 }
@@ -303,26 +305,26 @@ A_FINE_HOOK(55AFB3, Armageddon_Advance, 6)
 }
 */
 
-DEFINE_HOOK(7CD810, ExeRun, 9)
+DEFINE_HOOK(0x7CD810, ExeRun, 0x9)
 {
 	Ares::ExeRun();
 	return 0;
 }
 
-DEFINE_HOOK(7CD8EF, ExeTerminate, 9)
+DEFINE_HOOK(0x7CD8EF, ExeTerminate, 0x9)
 {
 	Ares::ExeTerminate();
 	GET(int, result, EAX);
 	ExitProcess(result); //teehee
 }
 
-DEFINE_HOOK(52CAE9, _YR_PostGameInit, 5)
+DEFINE_HOOK(0x52CAE9, _YR_PostGameInit, 0x5)
 {
 	Ares::PostGameInit();
 	return 0;
 }
 
-DEFINE_HOOK(52F639, _YR_CmdLineParse, 5)
+DEFINE_HOOK(0x52F639, _YR_CmdLineParse, 0x5)
 {
 	GET(char**, ppArgs, ESI);
 	GET(int, nNumArgs, EDI);
@@ -331,7 +333,7 @@ DEFINE_HOOK(52F639, _YR_CmdLineParse, 5)
 	return 0;
 }
 
-DEFINE_HOOK(533058, CommandClassCallback_Register, 7)
+DEFINE_HOOK(0x533058, CommandClassCallback_Register, 0x7)
 {
 	Ares::RegisterCommands();
 
@@ -342,7 +344,7 @@ DEFINE_HOOK(533058, CommandClassCallback_Register, 7)
 }
 
 
-DEFINE_HOOK(7258D0, AnnounceInvalidPointer, 6)
+DEFINE_HOOK(0x7258D0, AnnounceInvalidPointer, 0x6)
 {
 	GET(void *, DEATH, ECX);
 
@@ -365,7 +367,7 @@ DEFINE_HOOK(7258D0, AnnounceInvalidPointer, 6)
 	return 0;
 }
 
-DEFINE_HOOK(685659, Scenario_ClearClasses, a)
+DEFINE_HOOK(0x685659, Scenario_ClearClasses, 0xa)
 {
 	BuildingExt::ExtMap.Empty();
 	BuildingExt::Cleanup();

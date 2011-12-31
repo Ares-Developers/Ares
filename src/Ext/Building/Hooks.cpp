@@ -11,7 +11,7 @@
 #include <cmath>
 
 /* #754 - evict Hospital/Armory contents */
-DEFINE_HOOK(448277, BuildingClass_UnloadPassengers_ChangeOwner_SellAndLeaveBomb, 5)
+DEFINE_HOOK(0x448277, BuildingClass_UnloadPassengers_ChangeOwner_SellAndLeaveBomb, 0x5)
 {
 	GET(BuildingClass *, B, ESI);
 
@@ -19,7 +19,7 @@ DEFINE_HOOK(448277, BuildingClass_UnloadPassengers_ChangeOwner_SellAndLeaveBomb,
 	return 0x448293;
 }
 
-DEFINE_HOOK(447113, BuildingClass_UnloadPassengers_ChangeOwner_Sell, 6)
+DEFINE_HOOK(0x447113, BuildingClass_UnloadPassengers_ChangeOwner_Sell, 0x6)
 {
 	GET(BuildingClass *, B, ESI);
 
@@ -27,7 +27,7 @@ DEFINE_HOOK(447113, BuildingClass_UnloadPassengers_ChangeOwner_Sell, 6)
 	return 0;
 }
 
-DEFINE_HOOK(44D8A1, BuildingClass_UnloadPassengers_Unload, 6)
+DEFINE_HOOK(0x44D8A1, BuildingClass_UnloadPassengers_Unload, 0x6)
 {
 	GET(BuildingClass *, B, EBP);
 
@@ -39,7 +39,7 @@ DEFINE_HOOK(44D8A1, BuildingClass_UnloadPassengers_Unload, 6)
 /* 	#218 - specific occupiers -- see Hooks.Trenches.cpp */
 
 // EMP'd power plants don't produce power
-DEFINE_HOOK(44E855, BuildingClass_PowerProduced_EMP, 6) {
+DEFINE_HOOK(0x44E855, BuildingClass_PowerProduced_EMP, 0x6) {
 	GET(BuildingClass*, pBld, ESI);
 	return ((pBld->EMPLockRemaining > 0) ? 0x44E873 : 0);
 }

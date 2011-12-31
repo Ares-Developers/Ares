@@ -3,7 +3,7 @@
 #include <BulletClass.h>
 
 
-DEFINE_HOOK(4232CE, AnimClass_Draw_SetPalette, 6)
+DEFINE_HOOK(0x4232CE, AnimClass_Draw_SetPalette, 0x6)
 {
 	GET(AnimTypeClass *, AnimType, EAX);
 
@@ -18,7 +18,7 @@ DEFINE_HOOK(4232CE, AnimClass_Draw_SetPalette, 6)
 }
 
 
-DEFINE_HOOK(468379, BulletClass_Draw_SetAnimPalette, 6)
+DEFINE_HOOK(0x468379, BulletClass_Draw_SetAnimPalette, 0x6)
 {
 	GET(BulletClass *, Bullet, ESI);
 	if(AnimTypeClass * AnimType = AnimTypeClass::Find(Bullet->Type->ImageFile)) {

@@ -73,7 +73,7 @@ void ArmorType::AddDefaults()
 	FindOrAllocate("special_2");
 }
 
-DEFINE_HOOK(4753F0, ArmorType_FindIndex, A)
+DEFINE_HOOK(0x4753F0, ArmorType_FindIndex, 0xA)
 {
 	GET(CCINIClass *, pINI, ECX);
 	if(!ArmorType::Array.Count) {
@@ -97,7 +97,7 @@ DEFINE_HOOK(4753F0, ArmorType_FindIndex, A)
 	return 0x475430;
 }
 
-DEFINE_HOOK(4B9A52, DropshipLoadout_PrintArmor, 5)
+DEFINE_HOOK(0x4B9A52, DropshipLoadout_PrintArmor, 0x5)
 {
 	R->Stack(0x4, ArmorType::Array[R->EDX()]);
 	return 0;

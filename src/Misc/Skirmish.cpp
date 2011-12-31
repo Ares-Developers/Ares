@@ -6,7 +6,7 @@
 #include <GameModeOptionsClass.h>
 
 // user clicked on the multi engineer checkbox
-DEFINE_HOOK(6ACEE0, Skirmish_DialogFunc_UpdateMultiEngineer, 6) {
+DEFINE_HOOK(0x6ACEE0, Skirmish_DialogFunc_UpdateMultiEngineer, 0x6) {
 	GET(HWND, hDlg, ECX);
 	GET(int, nIDDlgItem, EDX);
 	
@@ -26,7 +26,7 @@ DEFINE_HOOK(6ACEE0, Skirmish_DialogFunc_UpdateMultiEngineer, 6) {
 }
 
 // prepare the game to use or to not use the multi engineer logic
-DEFINE_HOOK(6AD8A4, Skirmish_DialogFunc_MultiEngineer, 7) {
+DEFINE_HOOK(0x6AD8A4, Skirmish_DialogFunc_MultiEngineer, 0x7) {
 	GET(HWND, hDlg, EBP);
 
 	if(Ares::UISettings::AllowMultiEngineer) {
@@ -46,7 +46,7 @@ DEFINE_HOOK(6AD8A4, Skirmish_DialogFunc_MultiEngineer, 7) {
 }
 
 // initialize the skirmish dialog to check or uncheck the multi engineer checkbox
-DEFINE_HOOK(6AEE6A, Skirmish_InitializeDialog_MultiEngineer, 5) {
+DEFINE_HOOK(0x6AEE6A, Skirmish_InitializeDialog_MultiEngineer, 0x5) {
 	GET(HWND, hDlg, EBP);
 
 	// turn on multi engineer
@@ -61,7 +61,7 @@ DEFINE_HOOK(6AEE6A, Skirmish_InitializeDialog_MultiEngineer, 5) {
 }
 
 // save the current multi engineer setting
-DEFINE_HOOK(699043, GameMode_SaveGameSettings_MultiEngineer, 5) {
+DEFINE_HOOK(0x699043, GameMode_SaveGameSettings_MultiEngineer, 0x5) {
 	GET(CCINIClass*, pINI, EDI);
 	GET(char*, pSection, ESI);
 
@@ -73,7 +73,7 @@ DEFINE_HOOK(699043, GameMode_SaveGameSettings_MultiEngineer, 5) {
 }
 
 // load the multi engineer setting from ini
-DEFINE_HOOK(69801A, Game_GetGameTypePrefs_MultiEngineer, 6) {
+DEFINE_HOOK(0x69801A, Game_GetGameTypePrefs_MultiEngineer, 0x6) {
 	GET(GameModeOptionsClass*, pOptions, EDI);
 	GET(CCINIClass*, pINI, EBX);
 	GET(char*, pSection, EBP);

@@ -3,7 +3,7 @@
 #include "../HouseType/Body.h"
 
 /* #604 - customizable parachutes */
-DEFINE_HOOK(5F5ADD, Parachute_Animation, 6)
+DEFINE_HOOK(0x5F5ADD, Parachute_Animation, 0x6)
 {
 	GET(TechnoClass *, T, ESI);
 	RET_UNLESS(generic_cast<FootClass *>(T));
@@ -23,7 +23,7 @@ DEFINE_HOOK(5F5ADD, Parachute_Animation, 6)
 	return 0x5F5AE3;
 }
 
-DEFINE_HOOK(73C725, UnitClass_DrawSHP_DrawShadowEarlier, 6)
+DEFINE_HOOK(0x73C725, UnitClass_DrawSHP_DrawShadowEarlier, 0x6)
 {
 	GET(UnitClass *, U, EBP);
 
@@ -75,12 +75,12 @@ DEFINE_HOOK(73C725, UnitClass_DrawSHP_DrawShadowEarlier, 6)
 	return retAddr;
 }
 
-DEFINE_HOOK(73C733, UnitClass_DrawSHP_SkipTurretedShadow, 7)
+DEFINE_HOOK(0x73C733, UnitClass_DrawSHP_SkipTurretedShadow, 0x7)
 {
 	return 0x73C7AC;
 }
 
-DEFINE_HOOK(705FF3, TechnoClass_Draw_A_SHP_File_SkipUnitShadow, 6)
+DEFINE_HOOK(0x705FF3, TechnoClass_Draw_A_SHP_File_SkipUnitShadow, 0x6)
 {
 	GET(TechnoClass *, T, ESI);
 	auto pData = TechnoExt::ExtMap.Find(T);
@@ -107,7 +107,7 @@ A_FINE_HOOK(73B672, UnitClass_DrawVXL, 6)
 }
 */
 
-DEFINE_HOOK(73B4A0, UnitClass_DrawVXL_WaterType, 9)
+DEFINE_HOOK(0x73B4A0, UnitClass_DrawVXL_WaterType, 0x9)
 {
 	R->ESI(0);
 	GET(UnitClass *, U, EBP);
@@ -134,7 +134,7 @@ DEFINE_HOOK(73B4A0, UnitClass_DrawVXL_WaterType, 9)
 }
 
 
-DEFINE_HOOK(73C5FC, UnitClass_DrawSHP_WaterType, 6)
+DEFINE_HOOK(0x73C5FC, UnitClass_DrawSHP_WaterType, 0x6)
 {
 	GET(UnitClass *, U, EBP);
 	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(U);
@@ -152,9 +152,9 @@ DEFINE_HOOK(73C5FC, UnitClass_DrawSHP_WaterType, 6)
 	return 0x73CE00;
 }
 
-DEFINE_HOOK(73C655, UnitClass_DrawSHP_ChangeType1, 6)
-DEFINE_HOOK_AGAIN(73C69D, UnitClass_DrawSHP_ChangeType1, 6)
-DEFINE_HOOK_AGAIN(73C702, UnitClass_DrawSHP_ChangeType1, 6)
+DEFINE_HOOK_AGAIN(0x73C69D, UnitClass_DrawSHP_ChangeType1, 0x6)
+DEFINE_HOOK_AGAIN(0x73C702, UnitClass_DrawSHP_ChangeType1, 0x6)
+DEFINE_HOOK(0x73C655, UnitClass_DrawSHP_ChangeType1, 0x6)
 {
 	GET(UnitClass *, U, EBP);
 	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(U);

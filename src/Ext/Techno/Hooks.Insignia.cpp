@@ -1,7 +1,7 @@
 #include "Body.h"
 #include "../TechnoType/Body.h"
 
-DEFINE_HOOK(70A990, TechnoClass_DrawVeterancy, 5)
+DEFINE_HOOK(0x70A990, TechnoClass_DrawVeterancy, 0x5)
 {
 	GET(TechnoClass *, T, ECX);
 	GET_STACK(Point2D *, XY, 0x4);

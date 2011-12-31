@@ -101,14 +101,14 @@ void RulesExt::ExtData::LoadAfterTypeData(RulesClass *pThis, CCINIClass *pINI) {
 // =============================
 // container hooks
 
-DEFINE_HOOK(667A1D, RulesClass_CTOR, 5) {
+DEFINE_HOOK(0x667A1D, RulesClass_CTOR, 0x5) {
 	GET(RulesClass*, pItem, ESI);
 
 	RulesExt::Allocate(pItem);
 	return 0;
 }
 
-DEFINE_HOOK(667A30, RulesClass_DTOR, 5) {
+DEFINE_HOOK(0x667A30, RulesClass_DTOR, 0x5) {
 	GET(RulesClass*, pItem, ECX);
 
 	RulesExt::Remove(pItem);

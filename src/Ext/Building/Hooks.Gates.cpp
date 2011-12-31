@@ -4,7 +4,7 @@
 #include <OverlayTypeClass.h>
 
 // removing hardcoded references to GAWALL and NAWALL as part of #709
-DEFINE_HOOK(440709, BuildingClass_Put, 6)
+DEFINE_HOOK(0x440709, BuildingClass_Put, 0x6)
 {
 	GET(CellClass *, Cell, EDI);
 	int idxOverlay = Cell->OverlayTypeIndex;
@@ -12,14 +12,14 @@ DEFINE_HOOK(440709, BuildingClass_Put, 6)
 	return Sellable ? 0x44071A : 0x440725;
 }
 
-DEFINE_HOOK(480534, CellClass_AttachesToNeighbourOverlay, 5)
+DEFINE_HOOK(0x480534, CellClass_AttachesToNeighbourOverlay, 0x5)
 {
 	GET(int, idxOverlay, EAX);
 	bool Wall = idxOverlay != -1 && OverlayTypeClass::Array->GetItem(idxOverlay)->Wall;
 	return Wall ? 0x480549 : 0x480552;
 }
 
-DEFINE_HOOK(47C8AB, CellClass_CanThisExistHere_GateOnWall, 6)
+DEFINE_HOOK(0x47C8AB, CellClass_CanThisExistHere_GateOnWall, 0x6)
 {
 	GET(CellClass *, pCell, EDI);
 	GET(HouseClass *, OverlayOwner, ESI);

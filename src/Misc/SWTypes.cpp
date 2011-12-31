@@ -35,7 +35,7 @@ void NewSWType::Init()
 	new SW_NuclearMissile();
 }
 
-DEFINE_HOOK(55AFB3, LogicClass_Update, 6)
+DEFINE_HOOK(0x55AFB3, LogicClass_Update, 0x6)
 {
 	SWStateMachine::UpdateAll();
 	Ares::UpdateStability();

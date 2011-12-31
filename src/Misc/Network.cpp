@@ -10,7 +10,7 @@
 #include <HouseClass.h>
 #include <NetworkEvents.h>
 
-DEFINE_HOOK(4C6CCD, Networking_RespondToEvent, 0)
+DEFINE_HOOK(0x4C6CCD, Networking_RespondToEvent, 0x0)
 {
 	GET(DWORD, EventKind, EAX);
 	GET(NetworkEvent *, Event, ESI);
@@ -36,7 +36,7 @@ DEFINE_HOOK(4C6CCD, Networking_RespondToEvent, 0)
 }
 
 
-DEFINE_HOOK(64CCBF, DoList_ReplaceReconMessage, 6)
+DEFINE_HOOK(0x64CCBF, DoList_ReplaceReconMessage, 0x6)
 {
 	// mimic an increment because decrement happens in the middle of function cleanup and can't be erased nicely
 	int &TempMutex = *(int *)(0xA8DAB4);

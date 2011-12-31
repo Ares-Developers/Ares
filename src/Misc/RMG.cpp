@@ -18,7 +18,7 @@ VectorNames<UnitTypeClass> RMG::UrbanVehicles;
 VectorNames<InfantryTypeClass> RMG::UrbanInfantry;
 
 //0x596FFE
-DEFINE_HOOK(596FFE, RMG_EnableArchipelago, 0)
+DEFINE_HOOK(0x596FFE, RMG_EnableArchipelago, 0x0)
 {
 	R->EBP(0);						//start at index 0 instead of 1
 	R->EBX(0x82B034);				//set the list offset to "TXT_MAP_ARCHIPELAGO"
@@ -27,7 +27,7 @@ DEFINE_HOOK(596FFE, RMG_EnableArchipelago, 0)
 
 
 //0x5970EA
-DEFINE_HOOK(5970EA, RMG_EnableDesert, 9)
+DEFINE_HOOK(0x5970EA, RMG_EnableDesert, 0x9)
 {
 	GET(HWND, hWnd, EDI);
 
@@ -50,7 +50,7 @@ DEFINE_HOOK(5970EA, RMG_EnableDesert, 9)
 }
 
 // #882 select from all available options and randomize urban areas
-DEFINE_HOOK(596786, MapSeedClass_DialogFunc_SurpriseMe, 9)
+DEFINE_HOOK(0x596786, MapSeedClass_DialogFunc_SurpriseMe, 0x9)
 {
 	GET(HWND, hDlg, EBP);
 	HWND hDlgItem = 0;
@@ -84,7 +84,7 @@ DEFINE_HOOK(596786, MapSeedClass_DialogFunc_SurpriseMe, 9)
 	return 0x5967C1;
 }
 
-DEFINE_HOOK(596C81, MapSeedClass_DialogFunc_GetData, 5)
+DEFINE_HOOK(0x596C81, MapSeedClass_DialogFunc_GetData, 0x5)
 {
 	GET(HWND, hDlg, EBP);
 	HWND hDlgItem = GetDlgItem(hDlg, ARES_CHK_RMG_URBAN_AREAS);
@@ -94,7 +94,7 @@ DEFINE_HOOK(596C81, MapSeedClass_DialogFunc_GetData, 5)
 	return 0;
 }
 
-DEFINE_HOOK(5971EA, MapSeedClass_DialogFunc_SetData, 5)
+DEFINE_HOOK(0x5971EA, MapSeedClass_DialogFunc_SetData, 0x5)
 {
 	GET(HWND, hDlg, EBX);
 	HWND hDlgItem = GetDlgItem(hDlg, ARES_CHK_RMG_URBAN_AREAS);
@@ -105,7 +105,7 @@ DEFINE_HOOK(5971EA, MapSeedClass_DialogFunc_SetData, 5)
 }
 
 //speeds up preview drawing by insane amounts
-DEFINE_HOOK(5FED00, OverlayTypeClass_GetRadarColor, 0)
+DEFINE_HOOK(0x5FED00, OverlayTypeClass_GetRadarColor, 0x0)
 {
 	GET(OverlayTypeClass*, ovType, ECX);
 	GET_STACK(ColorStruct *, color, 0x04);
@@ -114,7 +114,7 @@ DEFINE_HOOK(5FED00, OverlayTypeClass_GetRadarColor, 0)
 	return 0x5FEDDA;
 }
 
-DEFINE_HOOK(5982D5, MapSeedClass_LoadFromINI, 6)
+DEFINE_HOOK(0x5982D5, MapSeedClass_LoadFromINI, 0x6)
 {
 	if(!RMG::UrbanAreasRead) {
 		GET(CCINIClass *, pINI, EDI);
@@ -142,7 +142,7 @@ DEFINE_HOOK(5982D5, MapSeedClass_LoadFromINI, 6)
 	return 0;
 }
 
-DEFINE_HOOK(598FB8, RMG_GenerateUrban, 5)
+DEFINE_HOOK(0x598FB8, RMG_GenerateUrban, 0x5)
 {
 	if(RMG::UrbanAreas) {
 		GET(void *, pMapSeed, ESI);
@@ -152,7 +152,7 @@ DEFINE_HOOK(598FB8, RMG_GenerateUrban, 5)
 	return 0;
 }
 
-DEFINE_HOOK(5A65CA, MapSeedClass_Generate_PlaceUrbanStructures_Start, 5)
+DEFINE_HOOK(0x5A65CA, MapSeedClass_Generate_PlaceUrbanStructures_Start, 0x5)
 {
 	RMG::UrbanStructuresReadSoFar = 0;
 	if(!RMG::UrbanStructures.Count()) {
@@ -162,7 +162,7 @@ DEFINE_HOOK(5A65CA, MapSeedClass_Generate_PlaceUrbanStructures_Start, 5)
 	return 0x5A65D5;
 }
 
-DEFINE_HOOK(5A6619, MapSeedClass_Generate_PlaceUrbanStructures_Loop, 6)
+DEFINE_HOOK(0x5A6619, MapSeedClass_Generate_PlaceUrbanStructures_Loop, 0x6)
 {
 	++RMG::UrbanStructuresReadSoFar;
 	return (RMG::UrbanStructures.Count() > RMG::UrbanStructuresReadSoFar)
@@ -171,7 +171,7 @@ DEFINE_HOOK(5A6619, MapSeedClass_Generate_PlaceUrbanStructures_Loop, 6)
 	;
 }
 
-DEFINE_HOOK(5A66B0, MapSeedClass_Generate_PlaceUrbanStructures_SanityCheck, 5)
+DEFINE_HOOK(0x5A66B0, MapSeedClass_Generate_PlaceUrbanStructures_SanityCheck, 0x5)
 {
 	GET(int, Index, EAX);
 	return (Index > -1)
@@ -180,7 +180,7 @@ DEFINE_HOOK(5A66B0, MapSeedClass_Generate_PlaceUrbanStructures_SanityCheck, 5)
 	;
 }
 
-DEFINE_HOOK(5A6998, MapSeedClass_Generate_PlaceUrbanFoots, 5)
+DEFINE_HOOK(0x5A6998, MapSeedClass_Generate_PlaceUrbanFoots, 0x5)
 {
 	int Length = RMG::UrbanInfantry.Count() + RMG::UrbanVehicles.Count();
 	if(Length == 0) {
@@ -212,49 +212,49 @@ DEFINE_HOOK(5A6998, MapSeedClass_Generate_PlaceUrbanFoots, 5)
 
 // ==============================
 
-DEFINE_HOOK(5A5C6A, MapSeedClass_Generate_PlacePavedRoads_RoadEndNE, 9)
+DEFINE_HOOK(0x5A5C6A, MapSeedClass_Generate_PlacePavedRoads_RoadEndNE, 0x9)
 {
 	return 0x5A5CC8;
 }
 
-DEFINE_HOOK(5A5D6F, MapSeedClass_Generate_PlacePavedRoads_RoadEndSW, 9)
+DEFINE_HOOK(0x5A5D6F, MapSeedClass_Generate_PlacePavedRoads_RoadEndSW, 0x9)
 {
 	return 0x5A5DB8;
 }
 
-DEFINE_HOOK(5A5F6A, MapSeedClass_Generate_PlacePavedRoads_RoadEndNW, 8)
+DEFINE_HOOK(0x5A5F6A, MapSeedClass_Generate_PlacePavedRoads_RoadEndNW, 0x8)
 {
 	return 0x5A5FF8;
 }
 
-DEFINE_HOOK(5A6464, MapSeedClass_Generate_PlacePavedRoads_RoadEndSE, 9)
+DEFINE_HOOK(0x5A6464, MapSeedClass_Generate_PlacePavedRoads_RoadEndSE, 0x9)
 {
 	return 0x5A64AD;
 }
 
 // ==============================
 
-DEFINE_HOOK(59000E, RMG_FixPavedRoadEnd_Bridges_North, 0)
+DEFINE_HOOK(0x59000E, RMG_FixPavedRoadEnd_Bridges_North, 0x0)
 {
 	return 0x590087;
 }
 
-DEFINE_HOOK(5900F7, RMG_FixPavedRoadEnd_Bridges_South, 0)
+DEFINE_HOOK(0x5900F7, RMG_FixPavedRoadEnd_Bridges_South, 0x0)
 {
 	return 0x59015E;
 }
 
-DEFINE_HOOK(58FCC6, RMG_FixPavedRoadEnd_Bridges_West, 0)
+DEFINE_HOOK(0x58FCC6, RMG_FixPavedRoadEnd_Bridges_West, 0x0)
 {
 	return 0x58FD2A;
 }
 
-DEFINE_HOOK(58FBDD, RMG_FixPavedRoadEnd_Bridges_East, 0)
+DEFINE_HOOK(0x58FBDD, RMG_FixPavedRoadEnd_Bridges_East, 0x0)
 {
 	return 0x58FC55;
 }
 
-DEFINE_HOOK(58FA51, RMG_PlaceWEBridge, 6)
+DEFINE_HOOK(0x58FA51, RMG_PlaceWEBridge, 0x6)
 {
 	LEA_STACK(RectangleStruct *, pRect, 0x14);
 
@@ -264,7 +264,7 @@ DEFINE_HOOK(58FA51, RMG_PlaceWEBridge, 6)
 	 : 0;
 }
 
-DEFINE_HOOK(58FE7B, RMG_PlaceNSBridge, 8)
+DEFINE_HOOK(0x58FE7B, RMG_PlaceNSBridge, 0x8)
 {
 	LEA_STACK(RectangleStruct *, pRect, 0x14);
 
@@ -274,7 +274,7 @@ DEFINE_HOOK(58FE7B, RMG_PlaceNSBridge, 8)
 	 : 0;
 }
 
-DEFINE_HOOK(545904, IsometricTileTypeClass_CreateFromINIList_MediansFix, 7)
+DEFINE_HOOK(0x545904, IsometricTileTypeClass_CreateFromINIList_MediansFix, 0x7)
 {
 	if(R->EAX() == -1) {
 		// all theaters except snow have this set, so I'll assume that this was tripped by snow.

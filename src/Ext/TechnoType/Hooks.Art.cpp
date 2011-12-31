@@ -11,7 +11,7 @@
 #include <SmudgeTypeClass.h>
 #include <ScenarioClass.h>
 
-DEFINE_HOOK(5F9634, ObjectTypeClass_LoadFromINI, 6)
+DEFINE_HOOK(0x5F9634, ObjectTypeClass_LoadFromINI, 0x6)
 {
 	GET(ObjectTypeClass *, pType, EBX);
 	GET_STACK(CCINIClass *, pINI, STACK_OFFS(0x1B0, -4));
@@ -27,7 +27,7 @@ DEFINE_HOOK(5F9634, ObjectTypeClass_LoadFromINI, 6)
 }
 
 // SHP file loading
-DEFINE_HOOK(5F9070, ObjectTypeClass_Load2DArt, 0)
+DEFINE_HOOK(0x5F9070, ObjectTypeClass_Load2DArt, 0x0)
 {
 	GET(ObjectTypeClass *, pType, ECX);
 
@@ -113,7 +113,7 @@ DEFINE_HOOK(5F9070, ObjectTypeClass_Load2DArt, 0)
 	return 0x5F92C3;
 }
 
-DEFINE_HOOK(5F96B0, ObjectTypeClass_TheaterSpecificID, 6)
+DEFINE_HOOK(0x5F96B0, ObjectTypeClass_TheaterSpecificID, 0x6)
 {
 	GET(char *, basename, ECX);
 	GET(signed int, idxTheater, EDX);

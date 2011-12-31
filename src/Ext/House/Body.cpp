@@ -293,7 +293,7 @@ void Container<HouseExt>::Load(HouseClass *pThis, IStream *pStm) {
 // =============================
 // container hooks
 
-DEFINE_HOOK(4F6532, HouseClass_CTOR, 5)
+DEFINE_HOOK(0x4F6532, HouseClass_CTOR, 0x5)
 {
 	GET(HouseClass*, pItem, EAX);
 
@@ -307,7 +307,7 @@ DEFINE_HOOK(4F6532, HouseClass_CTOR, 5)
 	return 0;
 }
 
-DEFINE_HOOK(4F7140, HouseClass_DTOR, 6)
+DEFINE_HOOK(0x4F7140, HouseClass_DTOR, 0x6)
 {
 	GET(HouseClass*, pItem, ECX);
 
@@ -325,8 +325,8 @@ DEFINE_HOOK(4F7140, HouseClass_DTOR, 6)
 	return 0;
 }
 
-DEFINE_HOOK(503040, HouseClass_SaveLoad_Prefix, 5)
-DEFINE_HOOK_AGAIN(504080, HouseClass_SaveLoad_Prefix, 5)
+DEFINE_HOOK_AGAIN(0x504080, HouseClass_SaveLoad_Prefix, 0x5)
+DEFINE_HOOK(0x503040, HouseClass_SaveLoad_Prefix, 0x5)
 {
 	GET_STACK(HouseExt::TT*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
@@ -337,13 +337,13 @@ DEFINE_HOOK_AGAIN(504080, HouseClass_SaveLoad_Prefix, 5)
 	return 0;
 }
 
-DEFINE_HOOK(504069, HouseClass_Load_Suffix, 7)
+DEFINE_HOOK(0x504069, HouseClass_Load_Suffix, 0x7)
 {
 	HouseExt::ExtMap.LoadStatic();
 	return 0;
 }
 
-DEFINE_HOOK(5046DE, HouseClass_Save_Suffix, 7)
+DEFINE_HOOK(0x5046DE, HouseClass_Save_Suffix, 0x7)
 {
 	HouseExt::ExtMap.SaveStatic();
 	return 0;

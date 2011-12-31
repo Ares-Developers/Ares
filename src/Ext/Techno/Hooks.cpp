@@ -9,7 +9,7 @@
 #include <SpecificStructures.h>
 
 // bugfix #297: Crewed=yes jumpjets spawn parachuted infantry on destruction, not idle
-DEFINE_HOOK(737F97, UnitClass_ReceiveDamage, 0)
+DEFINE_HOOK(0x737F97, UnitClass_ReceiveDamage, 0x0)
 {
 	GET(UnitClass *, t, ESI);
 	GET_STACK(TechnoClass *, Killer, 0x54);
@@ -21,7 +21,7 @@ DEFINE_HOOK(737F97, UnitClass_ReceiveDamage, 0)
 }
 
 // bugfix #297: Crewed=yes AircraftTypes spawn parachuting infantry on death
-DEFINE_HOOK(41668B, AircraftClass_ReceiveDamage, 6)
+DEFINE_HOOK(0x41668B, AircraftClass_ReceiveDamage, 0x6)
 {
 	GET(AircraftClass *, a, ESI);
 	GET_STACK(TechnoClass *, Killer, 0x28);
@@ -32,7 +32,7 @@ DEFINE_HOOK(41668B, AircraftClass_ReceiveDamage, 6)
 	return 0;
 }
 
-DEFINE_HOOK(6F9E50, TechnoClass_Update, 5)
+DEFINE_HOOK(0x6F9E50, TechnoClass_Update, 0x5)
 {
 	GET(TechnoClass *, Source, ECX);
 
@@ -68,7 +68,7 @@ DEFINE_HOOK(6F9E50, TechnoClass_Update, 5)
 }
 
 //! TechnoClass::Update is called every frame; returning 0 tells it to execute the original function's code as well.
-DEFINE_HOOK(6F9E76, TechnoClass_Update_CheckOperators, 6)
+DEFINE_HOOK(0x6F9E76, TechnoClass_Update_CheckOperators, 0x6)
 {
 	GET(TechnoClass *, pThis, ESI); // object this is called on
 	//TechnoTypeClass *Type = pThis->GetTechnoType();
@@ -141,7 +141,7 @@ DEFINE_HOOK(6F9E76, TechnoClass_Update_CheckOperators, 6)
 }
 
 // fix for vehicle paradrop alignment
-DEFINE_HOOK(415CA6, AircraftClass_Paradrop, 6)
+DEFINE_HOOK(0x415CA6, AircraftClass_Paradrop, 0x6)
 {
 	GET(AircraftClass *, A, EDI);
 	GET(FootClass *, P, ESI);
@@ -159,14 +159,14 @@ DEFINE_HOOK(415CA6, AircraftClass_Paradrop, 6)
 }
 
 // #1232: fix for dropping units out of flying Carryalls
-DEFINE_HOOK(415DF6, AircraftClass_Paradrop_Carryall, 6)
+DEFINE_HOOK(0x415DF6, AircraftClass_Paradrop_Carryall, 0x6)
 {
 	GET(FootClass *, pTechno, ESI);
 	pTechno->IsOnCarryall = false;
 	return 0;
 }
 
-DEFINE_HOOK(6F407D, TechnoClass_Init_1, 6)
+DEFINE_HOOK(0x6F407D, TechnoClass_Init_1, 0x6)
 {
 	GET(TechnoClass *, T, ESI);
 	TechnoTypeClass * Type = T->GetTechnoType();
@@ -232,13 +232,13 @@ DEFINE_HOOK(6F407D, TechnoClass_Init_1, 6)
 	return 0x6F4102;
 }
 
-DEFINE_HOOK(6F4103, TechnoClass_Init_2, 6)
+DEFINE_HOOK(0x6F4103, TechnoClass_Init_2, 0x6)
 {
 	return 0x6F41C0;
 }
 
 // temporal per-slot
-DEFINE_HOOK(71A860, TemporalClass_UpdateA, 6)
+DEFINE_HOOK(0x71A860, TemporalClass_UpdateA, 0x6)
 {
 	GET(TemporalClass *, Temp, ESI);
 	TechnoClass *T = Temp->Owner;
@@ -249,7 +249,7 @@ DEFINE_HOOK(71A860, TemporalClass_UpdateA, 6)
 }
 
 // temporal per-slot
-DEFINE_HOOK(71AB30, TemporalClass_GetHelperDamage, 5)
+DEFINE_HOOK(0x71AB30, TemporalClass_GetHelperDamage, 0x5)
 {
 	GET(TemporalClass *, Temp, ESI);
 	TechnoClass *T = Temp->Owner;
@@ -260,7 +260,7 @@ DEFINE_HOOK(71AB30, TemporalClass_GetHelperDamage, 5)
 }
 
 // parasite per-slot
-DEFINE_HOOK(62A020, ParasiteClass_Update, A)
+DEFINE_HOOK(0x62A020, ParasiteClass_Update, 0xA)
 {
 	GET(TechnoClass *, T, ECX);
 	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(T);
@@ -269,7 +269,7 @@ DEFINE_HOOK(62A020, ParasiteClass_Update, A)
 	return 0x62A02A;
 }
 
-DEFINE_HOOK(62A7B1, Parasite_ExitUnit, 9)
+DEFINE_HOOK(0x62A7B1, Parasite_ExitUnit, 0x9)
 {
 	GET(TechnoClass *, T, ECX);
 	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(T);
@@ -278,7 +278,7 @@ DEFINE_HOOK(62A7B1, Parasite_ExitUnit, 9)
 	return 0x62A7BA;
 }
 
-DEFINE_HOOK(629804, ParasiteClass_UpdateSquiddy, 9)
+DEFINE_HOOK(0x629804, ParasiteClass_UpdateSquiddy, 0x9)
 {
 	GET(TechnoClass *, T, ECX);
 	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(T);
@@ -288,7 +288,7 @@ DEFINE_HOOK(629804, ParasiteClass_UpdateSquiddy, 9)
 }
 
 
-DEFINE_HOOK(6F3330, TechnoClass_SelectWeapon, 5)
+DEFINE_HOOK(0x6F3330, TechnoClass_SelectWeapon, 0x5)
 {
 	GET(TechnoClass *, pThis, ECX);
 	GET_STACK(TechnoClass *, pTarg, 0x4);
@@ -460,14 +460,14 @@ bool TechnoClassExt::EvalWeaponAgainst(TechnoClass *pThis, TechnoClass *pTarget,
 }
 */
 
-DEFINE_HOOK(51F76D, InfantryClass_Unload, 5)
+DEFINE_HOOK(0x51F76D, InfantryClass_Unload, 0x5)
 {
 	GET(TechnoClass *, I, ESI);
 	TechnoTypeExt::ExtData *pData = TechnoTypeExt::ExtMap.Find(I->GetTechnoType());
 	return pData->Is_Deso ? 0x51F77D : 0x51F792;
 }
 
-DEFINE_HOOK(51CE9A, InfantryClass_Idle, 5)
+DEFINE_HOOK(0x51CE9A, InfantryClass_Idle, 0x5)
 {
 	GET(InfantryClass *, I, ESI);
 	TechnoTypeExt::ExtData *pData = TechnoTypeExt::ExtMap.Find(I->GetTechnoType());
@@ -483,7 +483,7 @@ DEFINE_HOOK(51CE9A, InfantryClass_Idle, 5)
 	return pData->Is_Cow ? 0x51CEAE : 0x51CECD;
 }
 
-DEFINE_HOOK(747BBD, UnitTypeClass_LoadFromINI, 5)
+DEFINE_HOOK(0x747BBD, UnitTypeClass_LoadFromINI, 0x5)
 {
 	GET(UnitTypeClass *, U, ESI);
 
@@ -494,7 +494,7 @@ DEFINE_HOOK(747BBD, UnitTypeClass_LoadFromINI, 5)
 }
 
 // godawful hack - Desolator deploy fire is triggered by ImmuneToRadiation !
-DEFINE_HOOK(5215F9, InfantryClass_UpdateDeploy, 6)
+DEFINE_HOOK(0x5215F9, InfantryClass_UpdateDeploy, 0x6)
 {
 	GET(TechnoClass *, I, ESI);
 	return TechnoTypeExt::ExtMap.Find(I->GetTechnoType())->Is_Deso ? 0x5216B6 : 0x52160D;
@@ -515,14 +515,14 @@ EXPORT_FUNC(InfantryClass_UpdateDeploy2)
 }
 
 // stops movement sound from being played while unit is being pulled by a magnetron (see terror drone)
-DEFINE_HOOK(7101CF, FootClass_ImbueLocomotor, 7)
+DEFINE_HOOK(0x7101CF, FootClass_ImbueLocomotor, 0x7)
 {
 	GET(FootClass *, F, ESI);
 	F->Audio7.ShutUp();
 	return 0;
 }
 
-DEFINE_HOOK(4DAA68, FootClass_Update_MoveSound, 6)
+DEFINE_HOOK(0x4DAA68, FootClass_Update_MoveSound, 0x6)
 {
 	GET(FootClass *, F, ESI);
 	if(F->unknown_bool_53C) {
@@ -536,7 +536,7 @@ DEFINE_HOOK(4DAA68, FootClass_Update_MoveSound, 6)
 }
 
 /* #397 - AffectsEnemies */
-DEFINE_HOOK(701C97, TechnoClass_ReceiveDamage_AffectsEnemies, 6)
+DEFINE_HOOK(0x701C97, TechnoClass_ReceiveDamage_AffectsEnemies, 0x6)
 {
 	GET(WarheadTypeClass *, pThis, EBP);
 	GET(TechnoClass *, Victim, ESI);
@@ -597,7 +597,7 @@ DEFINE_HOOK(701C97, TechnoClass_ReceiveDamage_AffectsEnemies, 6)
 // select the most appropriate firing voice and also account
 // for undefined flags, so you actually won't lose functionality
 // when a unit becomes elite.
-DEFINE_HOOK(7090A8, TechnoClass_SelectFiringVoice, 0) {
+DEFINE_HOOK(0x7090A8, TechnoClass_SelectFiringVoice, 0x0) {
 	GET(TechnoClass*, pThis, ESI);
 	GET(TechnoClass*, pTarget, ECX);
 
@@ -658,7 +658,7 @@ DEFINE_HOOK(7090A8, TechnoClass_SelectFiringVoice, 0) {
 }
 
 // Support per unit modification of Iron Curtain effect duration
-DEFINE_HOOK(70E2D2, TechnoClass_IronCurtain_Modify, 6) {
+DEFINE_HOOK(0x70E2D2, TechnoClass_IronCurtain_Modify, 0x6) {
 	GET(TechnoClass*, pThis, ECX);
 	GET(int, duration, EDX);
 	GET_STACK(bool, force, 0x1C);
@@ -679,7 +679,7 @@ DEFINE_HOOK(70E2D2, TechnoClass_IronCurtain_Modify, 6) {
 }
 
 
-DEFINE_HOOK(5198AD, InfantryClass_UpdatePosition_EnteredGrinder, 6)
+DEFINE_HOOK(0x5198AD, InfantryClass_UpdatePosition_EnteredGrinder, 0x6)
 {
 	GET(InfantryClass *, Infantry, ESI);
 	GET(BuildingClass *, Grinder, EBX);
@@ -696,7 +696,7 @@ DEFINE_HOOK(5198AD, InfantryClass_UpdatePosition_EnteredGrinder, 6)
 	return 0;
 }
 
-DEFINE_HOOK(73A1BC, UnitClass_UpdatePosition_EnteredGrinder, 7)
+DEFINE_HOOK(0x73A1BC, UnitClass_UpdatePosition_EnteredGrinder, 0x7)
 {
 	GET(UnitClass *, Vehicle, EBP);
 	GET(BuildingClass *, Grinder, EBX);
@@ -721,7 +721,7 @@ DEFINE_HOOK(73A1BC, UnitClass_UpdatePosition_EnteredGrinder, 7)
 	return 0;
 }
 
-DEFINE_HOOK(6F6AC9, TechnoClass_Remove, 6) {
+DEFINE_HOOK(0x6F6AC9, TechnoClass_Remove, 0x6) {
 	GET(TechnoClass *, pThis, ESI);
 	TechnoExt::ExtData* TechnoExt = TechnoExt::ExtMap.Find(pThis);
 
@@ -742,7 +742,7 @@ DEFINE_HOOK(6F6AC9, TechnoClass_Remove, 6) {
 	return 0;
 }
 
-DEFINE_HOOK(74642C, UnitClass_ReceiveGunner, 6)
+DEFINE_HOOK(0x74642C, UnitClass_ReceiveGunner, 0x6)
 {
 	GET(UnitClass *, Unit, ESI);
 	auto pData = TechnoExt::ExtMap.Find(Unit);
@@ -751,7 +751,7 @@ DEFINE_HOOK(74642C, UnitClass_ReceiveGunner, 6)
 	return 0;
 }
 
-DEFINE_HOOK(74653C, UnitClass_RemoveGunner, 0)
+DEFINE_HOOK(0x74653C, UnitClass_RemoveGunner, 0x0)
 {
 	GET(UnitClass *, Unit, EDI);
 	auto pData = TechnoExt::ExtMap.Find(Unit);
@@ -761,7 +761,7 @@ DEFINE_HOOK(74653C, UnitClass_RemoveGunner, 0)
 }
 
 
-DEFINE_HOOK(741206, UnitClass_GetFireError, 6)
+DEFINE_HOOK(0x741206, UnitClass_GetFireError, 0x6)
 {
 	GET(UnitClass *, Unit, ESI);
 	auto Type = Unit->Type;
@@ -777,7 +777,7 @@ DEFINE_HOOK(741206, UnitClass_GetFireError, 6)
 }
 
 // bug #1290: carryall size limit
-DEFINE_HOOK(417D75, AircraftClass_GetCursorOverObject_CanTote, 5)
+DEFINE_HOOK(0x417D75, AircraftClass_GetCursorOverObject_CanTote, 0x5)
 {
 	GET(AircraftClass *, pCarryall, ESI);
 	GET(UnitClass *, pTarget, EDI);
@@ -790,7 +790,7 @@ DEFINE_HOOK(417D75, AircraftClass_GetCursorOverObject_CanTote, 5)
 	;
 }
 
-DEFINE_HOOK(416E37, AircraftClass_Mi_MoveCarryall_CanTote, 5)
+DEFINE_HOOK(0x416E37, AircraftClass_Mi_MoveCarryall_CanTote, 0x5)
 {
 	GET(AircraftClass *, pCarryall, ESI);
 	GET(UnitClass *, pTarget, EDI);
@@ -803,7 +803,7 @@ DEFINE_HOOK(416E37, AircraftClass_Mi_MoveCarryall_CanTote, 5)
 	;
 }
 
-DEFINE_HOOK(416C4D, AircraftClass_Carryall_Unload_DestroyCargo, 5)
+DEFINE_HOOK(0x416C4D, AircraftClass_Carryall_Unload_DestroyCargo, 0x5)
 {
 	GET(AircraftClass* , pCarryall, EDI);
 	GET(UnitClass *, pCargo, ESI);
@@ -817,7 +817,7 @@ DEFINE_HOOK(416C4D, AircraftClass_Carryall_Unload_DestroyCargo, 5)
 	return 0x416C53;
 }
 
-DEFINE_HOOK(416C94, AircraftClass_Carryall_Unload_UpdateCargo, 6)
+DEFINE_HOOK(0x416C94, AircraftClass_Carryall_Unload_UpdateCargo, 0x6)
 {
 	GET(UnitClass *, pCargo, ESI);
 

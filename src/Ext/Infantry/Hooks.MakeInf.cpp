@@ -10,7 +10,7 @@
 
 /* #188 - InfDeaths */
 
-DEFINE_HOOK(5185C8, InfantryClass_ReceiveDamage_InfDeath, 6)
+DEFINE_HOOK(0x5185C8, InfantryClass_ReceiveDamage_InfDeath, 0x6)
 {
 	GET(InfantryClass *, I, ESI);
 	LEA_STACK(args_ReceiveDamage *, Arguments, 0xD4);
@@ -45,7 +45,7 @@ DEFINE_HOOK(5185C8, InfantryClass_ReceiveDamage_InfDeath, 6)
 	;
 }
 
-DEFINE_HOOK(51849A, InfantryClass_ReceiveDamage_DeathAnim, 5)
+DEFINE_HOOK(0x51849A, InfantryClass_ReceiveDamage_DeathAnim, 0x5)
 {
 	GET(InfantryClass *, I, ESI);
 	LEA_STACK(args_ReceiveDamage *, Arguments, 0xD4);
@@ -68,7 +68,7 @@ DEFINE_HOOK(51849A, InfantryClass_ReceiveDamage_DeathAnim, 5)
 	return 0x5184F2;
 }
 
-DEFINE_HOOK(6E232E, ActionClass_PlayAnimAt, 5)
+DEFINE_HOOK(0x6E232E, ActionClass_PlayAnimAt, 0x5)
 {
 	GET(TActionClass *, pAction, ESI);
 	GET_STACK(HouseClass *, pHouse, 0x1C);
@@ -89,7 +89,7 @@ DEFINE_HOOK(6E232E, ActionClass_PlayAnimAt, 5)
 }
 
 
-DEFINE_HOOK(469C4E, BulletClass_DetonateAt_DamageAnimSelected, 5)
+DEFINE_HOOK(0x469C4E, BulletClass_DetonateAt_DamageAnimSelected, 0x5)
 {
 	GET(AnimTypeClass *, AnimType, EBX);
 	LEA_STACK(CoordStruct *, XYZ, 0x64);

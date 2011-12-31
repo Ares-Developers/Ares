@@ -22,7 +22,7 @@
 // hooks for 100 unit bug
 
 // fix the 100 unit bug for vehicles
-DEFINE_HOOK(4FEA60, HouseClass_AI_UnitProduction, 0)
+DEFINE_HOOK(0x4FEA60, HouseClass_AI_UnitProduction, 0x0)
 {
 	CRAZY_MACRO_GO_AWAY_1(0x4FEEDA, Unit);
 
@@ -83,13 +83,13 @@ DEFINE_HOOK(4FEA60, HouseClass_AI_UnitProduction, 0)
 	CRAZY_MACRO_GO_AWAY_2(Unit);
 }
 
-DEFINE_HOOK(4FEEE0, HouseClass_AI_InfantryProduction, 6)
+DEFINE_HOOK(0x4FEEE0, HouseClass_AI_InfantryProduction, 0x6)
 {
 	CRAZY_MACRO_GO_AWAY_1(0x4FF204, Infantry)
 	CRAZY_MACRO_GO_AWAY_2(Infantry)
 }
 
-DEFINE_HOOK(4FF210, HouseClass_AI_AircraftProduction, 6)
+DEFINE_HOOK(0x4FF210, HouseClass_AI_AircraftProduction, 0x6)
 {
 	CRAZY_MACRO_GO_AWAY_1(0x4FF534, Aircraft)
 	CRAZY_MACRO_GO_AWAY_2(Aircraft)

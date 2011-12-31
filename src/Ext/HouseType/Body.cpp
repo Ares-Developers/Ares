@@ -415,29 +415,29 @@ void Container<HouseTypeExt>::Load(HouseTypeClass *pThis, IStream *pStm) {
 // =============================
 // container hooks
 
-DEFINE_HOOK(511635, HouseTypeClass_CTOR_1, 5) {
+DEFINE_HOOK(0x511635, HouseTypeClass_CTOR_1, 0x5) {
 	GET(HouseTypeClass*, pItem, EAX);
 
 	HouseTypeExt::ExtMap.FindOrAllocate(pItem);
 	return 0;
 }
 
-DEFINE_HOOK(511643, HouseTypeClass_CTOR_2, 5) {
+DEFINE_HOOK(0x511643, HouseTypeClass_CTOR_2, 0x5) {
 	GET(HouseTypeClass*, pItem, EAX);
 
 	HouseTypeExt::ExtMap.FindOrAllocate(pItem);
 	return 0;
 }
 
-DEFINE_HOOK(512760, HouseTypeClass_DTOR, 6) {
+DEFINE_HOOK(0x512760, HouseTypeClass_DTOR, 0x6) {
 	GET(HouseTypeClass*, pItem, ECX);
 
 	HouseTypeExt::ExtMap.Remove(pItem);
 	return 0;
 }
 
-DEFINE_HOOK(512290, HouseTypeClass_SaveLoad_Prefix, 5)
-DEFINE_HOOK_AGAIN(512480, HouseTypeClass_SaveLoad_Prefix, 5)
+DEFINE_HOOK_AGAIN(0x512480, HouseTypeClass_SaveLoad_Prefix, 0x5)
+DEFINE_HOOK(0x512290, HouseTypeClass_SaveLoad_Prefix, 0x5)
 {
 	GET_STACK(HouseTypeExt::TT*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
@@ -448,18 +448,18 @@ DEFINE_HOOK_AGAIN(512480, HouseTypeClass_SaveLoad_Prefix, 5)
 	return 0;
 }
 
-DEFINE_HOOK(51246D, HouseTypeClass_Load_Suffix, 5) {
+DEFINE_HOOK(0x51246D, HouseTypeClass_Load_Suffix, 0x5) {
 	HouseTypeExt::ExtMap.LoadStatic();
 	return 0;
 }
 
-DEFINE_HOOK(51255C, HouseTypeClass_Save_Suffix, 5) {
+DEFINE_HOOK(0x51255C, HouseTypeClass_Save_Suffix, 0x5) {
 	HouseTypeExt::ExtMap.SaveStatic();
 	return 0;
 }
 
-DEFINE_HOOK(51214F, HouseTypeClass_LoadFromINI, 5)
-DEFINE_HOOK_AGAIN(51215A, HouseTypeClass_LoadFromINI, 5)
+DEFINE_HOOK_AGAIN(0x51215A, HouseTypeClass_LoadFromINI, 0x5)
+DEFINE_HOOK(0x51214F, HouseTypeClass_LoadFromINI, 0x5)
 {
 	GET(HouseTypeClass*, pItem, EBX);
 	GET_BASE(CCINIClass*, pINI, 0x8);

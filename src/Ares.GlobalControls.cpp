@@ -36,7 +36,7 @@ void Ares::GlobalControls::LoadConfig() {
 	}
 }
 
-DEFINE_HOOK(6BC0CD, _LoadRA2MD, 5)
+DEFINE_HOOK(0x6BC0CD, _LoadRA2MD, 0x5)
 {
 	Ares::GlobalControls::INI = Ares::OpenConfig("Ares.ini");
 	Ares::GlobalControls::LoadConfig();

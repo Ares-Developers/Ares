@@ -7,7 +7,7 @@ char IniIteratorChar::buffer[0x800] = "\0";
 
 int IniIteratorChar::iteratorValue = 0;
 
-DEFINE_HOOK(5260A2, IteratorChar_Process_Method1, 6)
+DEFINE_HOOK(0x5260A2, IteratorChar_Process_Method1, 0x6)
 {
 	GET(CCINIClass*, ini, EBP);
 	GET(CCINIClass::INIEntry*, entry, ESI);
@@ -26,7 +26,7 @@ DEFINE_HOOK(5260A2, IteratorChar_Process_Method1, 6)
 	return 0;
 }
 
-DEFINE_HOOK(525D23, IteratorChar_Process_Method2, 5)
+DEFINE_HOOK(0x525D23, IteratorChar_Process_Method2, 0x5)
 {
 	GET(char*, value, ESI);
 	LEA_STACK(char*, key, 0x78)

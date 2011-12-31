@@ -5,7 +5,7 @@
 // =============================
 // other hooks
 
-DEFINE_HOOK(445F80, BuildingClass_ChangeOwnership, 5)
+DEFINE_HOOK(0x445F80, BuildingClass_ChangeOwnership, 0x5)
 {
 	GET(BuildingClass *, pThis, ECX);
 	if(pThis->Type->SecretLab) {
@@ -15,7 +15,7 @@ DEFINE_HOOK(445F80, BuildingClass_ChangeOwnership, 5)
 	return 0;
 }
 
-DEFINE_HOOK(43FB6D, BuildingClass_Update_LFP, 6)
+DEFINE_HOOK(0x43FB6D, BuildingClass_Update_LFP, 0x6)
 {
 	GET(BuildingClass*, B, ESI);
 	if(B->Type->LaserFencePost) {
@@ -24,7 +24,7 @@ DEFINE_HOOK(43FB6D, BuildingClass_Update_LFP, 6)
 	return 0;
 }
 
-DEFINE_HOOK(465D4A, BuildingType_IsUndeployable, 6)
+DEFINE_HOOK(0x465D4A, BuildingType_IsUndeployable, 0x6)
 {
 	GET(BuildingTypeClass *, pThis, ECX);
 	if(pThis->Foundation == FOUNDATION_CUSTOM) {
@@ -36,7 +36,7 @@ DEFINE_HOOK(465D4A, BuildingType_IsUndeployable, 6)
 	return 0;
 }
 
-DEFINE_HOOK(465550, sub_465550, 6)
+DEFINE_HOOK(0x465550, sub_465550, 0x6)
 {
 	GET(BuildingTypeClass *, pThis, ECX);
 	if(pThis->Foundation == FOUNDATION_CUSTOM) {
@@ -48,7 +48,7 @@ DEFINE_HOOK(465550, sub_465550, 6)
 	return 0;
 }
 
-DEFINE_HOOK(464AF0, BuildingTypeClass_GetSizeInLeptons, 6)
+DEFINE_HOOK(0x464AF0, BuildingTypeClass_GetSizeInLeptons, 0x6)
 {
 	GET(BuildingTypeClass *, pThis, ECX);
 	if(pThis->Foundation == FOUNDATION_CUSTOM) {
@@ -64,7 +64,7 @@ DEFINE_HOOK(464AF0, BuildingTypeClass_GetSizeInLeptons, 6)
 	return 0;
 }
 
-DEFINE_HOOK(45ECE0, BuildingTypeClass_GetMaxPips, 6)
+DEFINE_HOOK(0x45ECE0, BuildingTypeClass_GetMaxPips, 0x6)
 {
 	GET(BuildingTypeClass *, pThis, ECX);
 	if(pThis->Foundation == FOUNDATION_CUSTOM) {

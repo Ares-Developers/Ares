@@ -3,7 +3,7 @@
 
 // custom beam styles
 // 6FF5F5, 6
-DEFINE_HOOK(6FF5F5, TechnoClass_Fire, 6)
+DEFINE_HOOK(0x6FF5F5, TechnoClass_Fire, 0x6)
 {
 	GET(WeaponTypeClass *, Source, EBX);
 	GET(TechnoClass *, Owner, ESI);
@@ -31,7 +31,7 @@ DEFINE_HOOK(6FF5F5, TechnoClass_Fire, 6)
 }
 
 // 75E963, 6
-DEFINE_HOOK(75E963, WaveClass_CTOR, 6)
+DEFINE_HOOK(0x75E963, WaveClass_CTOR, 0x6)
 {
 	GET(WaveClass *, Wave, ESI);
 	GET(DWORD, Type, ECX);
@@ -60,7 +60,7 @@ XPORT_FUNC(WaveClass_CTOR2)
 */
 
 // 763226, 6
-DEFINE_HOOK(763226, WaveClass_DTOR, 6)
+DEFINE_HOOK(0x763226, WaveClass_DTOR, 0x6)
 {
 	GET(WaveClass *, Wave, EDI);
 	hash_waveExt::iterator i = WeaponTypeExt::WaveExt.find(Wave);
@@ -73,7 +73,7 @@ DEFINE_HOOK(763226, WaveClass_DTOR, 6)
 
 // 760F50, 6
 // complete replacement for WaveClass::Update
-DEFINE_HOOK(760F50, WaveClass_Update, 6)
+DEFINE_HOOK(0x760F50, WaveClass_Update, 0x6)
 {
 	GET(WaveClass *, pThis, ECX);
 
@@ -149,7 +149,7 @@ XPORT_FUNC(WaveClass_UpdateLaser)
 }
 */
 
-DEFINE_HOOK(760BC2, WaveClass_Draw2, 9)
+DEFINE_HOOK(0x760BC2, WaveClass_Draw2, 0x9)
 {
 	GET(WaveClass *, Wave, EBX);
 	GET(WORD *, dest, EBP);
@@ -161,7 +161,7 @@ DEFINE_HOOK(760BC2, WaveClass_Draw2, 9)
 }
 
 // 760DE2, 6
-DEFINE_HOOK(760DE2, WaveClass_Draw3, 9)
+DEFINE_HOOK(0x760DE2, WaveClass_Draw3, 0x9)
 {
 	GET(WaveClass *, Wave, EBX);
 	GET(WORD *, dest, EDI);
@@ -173,7 +173,7 @@ DEFINE_HOOK(760DE2, WaveClass_Draw3, 9)
 }
 
 // 75EE57, 7
-DEFINE_HOOK(75EE57, WaveClass_Draw_Sonic, 7)
+DEFINE_HOOK(0x75EE57, WaveClass_Draw_Sonic, 0x7)
 {
 	GET_STACK(WaveClass *, Wave, 0x4);
 	GET(DWORD, src, EDI);
@@ -187,7 +187,7 @@ DEFINE_HOOK(75EE57, WaveClass_Draw_Sonic, 7)
 }
 
 // 7601FB, 0B
-DEFINE_HOOK(7601FB, WaveClass_Draw_Magnetron, 0B)
+DEFINE_HOOK(0x7601FB, WaveClass_Draw_Magnetron, 0x0B)
 {
 	GET_STACK(WaveClass *, Wave, 0x8);
 	GET(DWORD, src, EBX);
@@ -201,7 +201,7 @@ DEFINE_HOOK(7601FB, WaveClass_Draw_Magnetron, 0B)
 }
 
 // 760286, 5
-DEFINE_HOOK(760286, WaveClass_Draw_Magnetron2, 5)
+DEFINE_HOOK(0x760286, WaveClass_Draw_Magnetron2, 0x5)
 {
 	return 0x7602D3;
 }
@@ -239,7 +239,7 @@ bool WeaponTypeExt::ModifyWaveColor(WORD *src, WORD *dst, int Intensity, WaveCla
 }
 
 // 762C5C, 6
-DEFINE_HOOK(762C5C, WaveClass_Update_Wave, 6)
+DEFINE_HOOK(0x762C5C, WaveClass_Update_Wave, 0x6)
 {
 	GET(WaveClass *, Wave, ESI);
 	TechnoClass *Firer = Wave->Owner;
@@ -274,7 +274,7 @@ DEFINE_HOOK(762C5C, WaveClass_Update_Wave, 6)
 }
 
 // 75F38F, 6
-DEFINE_HOOK(75F38F, WaveClass_DamageCell, 6)
+DEFINE_HOOK(0x75F38F, WaveClass_DamageCell, 0x6)
 {
 	GET(WaveClass *, Wave, EBP);
 	WeaponTypeExt::ExtData *pData = WeaponTypeExt::WaveExt[Wave];
@@ -283,7 +283,7 @@ DEFINE_HOOK(75F38F, WaveClass_DamageCell, 6)
 	return 0x75F39D;
 }
 
-DEFINE_HOOK(7601C7, WaveClass_Draw_Purple, 8)
+DEFINE_HOOK(0x7601C7, WaveClass_Draw_Purple, 0x8)
 {
 	GET(int, Q, EDX);
 	if(Q > 0x15F90) {

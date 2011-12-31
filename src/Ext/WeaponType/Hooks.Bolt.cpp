@@ -13,7 +13,7 @@ void Saturate(BYTE &val, int delta) {
 	//return result;
 };
 
-DEFINE_HOOK(6FD480, TechnoClass_FireEBolt, 6)
+DEFINE_HOOK(0x6FD480, TechnoClass_FireEBolt, 0x6)
 {
 	GET(TechnoClass *, OwnerUnit, EDI);
 	GET_STACK(WeaponTypeClass *, Weapon, 0x38);
@@ -35,7 +35,7 @@ DEFINE_HOOK(6FD480, TechnoClass_FireEBolt, 6)
 }
 
 
-DEFINE_HOOK(4C2951, EBolt_DTOR, 5)
+DEFINE_HOOK(0x4C2951, EBolt_DTOR, 0x5)
 {
 	GET(EBolt *, Bolt, ECX);
 	hash_boltExt::iterator i = WeaponTypeExt::BoltExt.find(Bolt);
@@ -46,7 +46,7 @@ DEFINE_HOOK(4C2951, EBolt_DTOR, 5)
 	return 0;
 }
 
-DEFINE_HOOK(4C24BE, EBolt_Draw_Color1, 5)
+DEFINE_HOOK(0x4C24BE, EBolt_Draw_Color1, 0x5)
 {
 	GET_STACK(EBolt *, Bolt, 0x40);
 	WeaponTypeExt::ExtData *pData = WeaponTypeExt::BoltExt[Bolt];
@@ -68,7 +68,7 @@ DEFINE_HOOK(4C24BE, EBolt_Draw_Color1, 5)
 	return 0;
 }
 
-DEFINE_HOOK(4C25CB, EBolt_Draw_Color2, 5)
+DEFINE_HOOK(0x4C25CB, EBolt_Draw_Color2, 0x5)
 {
 	GET_STACK(EBolt *, Bolt, 0x40);
 	WeaponTypeExt::ExtData *pData = WeaponTypeExt::BoltExt[Bolt];
@@ -102,7 +102,7 @@ DEFINE_HOOK(4C25CB, EBolt_Draw_Color2, 5)
 }
 
 
-DEFINE_HOOK(4C26C7, EBolt_Draw_Color3, 5)
+DEFINE_HOOK(0x4C26C7, EBolt_Draw_Color3, 0x5)
 {
 	GET_STACK(EBolt *, Bolt, 0x40);
 	WeaponTypeExt::ExtData *pData = WeaponTypeExt::BoltExt[Bolt];

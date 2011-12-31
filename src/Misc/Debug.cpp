@@ -386,14 +386,14 @@ void Debug::INIParseFailed(const char *section, const char *flag, const char *va
 	}
 }
 
-DEFINE_HOOK(4C850B, Exception_Dialog, 5)
+DEFINE_HOOK(0x4C850B, Exception_Dialog, 0x5)
 {
 	Debug::FreeMouse();
 	return 0;
 }
 
-DEFINE_HOOK(4068E0, Debug_Log, 1)
-DEFINE_HOOK_AGAIN(4A4AC0, Debug_Log, 1)
+DEFINE_HOOK_AGAIN(0x4A4AC0, Debug_Log, 0x1)
+DEFINE_HOOK(0x4068E0, Debug_Log, 0x1)
 {
 	if(Debug::bLog && Debug::pLogFile)
 	{
@@ -407,7 +407,7 @@ DEFINE_HOOK_AGAIN(4A4AC0, Debug_Log, 1)
 }
 
 //ifdef DUMP_EXTENSIVE
-DEFINE_HOOK(4C8FE0, Exception_Handler, 9)
+DEFINE_HOOK(0x4C8FE0, Exception_Handler, 0x9)
 {
 	GET(int, code, ECX);
 	GET(LPEXCEPTION_POINTERS, pExs, EDX);
@@ -415,7 +415,7 @@ DEFINE_HOOK(4C8FE0, Exception_Handler, 9)
 }
 //endif
 
-DEFINE_HOOK(534A4D, Theater_Init_ResetLogStatus, 6)
+DEFINE_HOOK(0x534A4D, Theater_Init_ResetLogStatus, 0x6)
 {
 	// any errors triggered before this line are irrelevant
 	// caused by reading the section while only certain flags from it are needed
@@ -426,7 +426,7 @@ DEFINE_HOOK(534A4D, Theater_Init_ResetLogStatus, 6)
 }
 
 
-DEFINE_HOOK(687C56, INIClass_ReadScenario_ResetLogStatus, 5)
+DEFINE_HOOK(0x687C56, INIClass_ReadScenario_ResetLogStatus, 0x5)
 {
 	// reset this so next scenario startup log is cleaner
 	Debug::bTrackParserErrors = false;

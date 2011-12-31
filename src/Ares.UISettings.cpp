@@ -216,7 +216,7 @@ void Ares::UISettings::Load(CCINIClass *pINI) {
 	Initialized = true;
 }
 
-DEFINE_HOOK(5FACDF, _Options_LoadFromINI, 5)
+DEFINE_HOOK(0x5FACDF, _Options_LoadFromINI, 0x5)
 {
 	// open the rules file
 	Debug::Log("--------- Loading Ares global settings -----------\n");

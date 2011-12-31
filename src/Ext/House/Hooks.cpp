@@ -15,7 +15,7 @@
 // =============================
 // other hooks
 
-DEFINE_HOOK(4F7870, HouseClass_PrereqValidator, 7)
+DEFINE_HOOK(0x4F7870, HouseClass_PrereqValidator, 0x7)
 {
 	// int (TechnoTypeClass *item, bool BuildLimitOnly, bool includeQueued)
 	/* return
@@ -34,7 +34,7 @@ DEFINE_HOOK(4F7870, HouseClass_PrereqValidator, 7)
 }
 
 
-DEFINE_HOOK(505360, HouseClass_PrerequisitesForTechnoTypeAreListed, 5)
+DEFINE_HOOK(0x505360, HouseClass_PrerequisitesForTechnoTypeAreListed, 0x5)
 {
 	GET(HouseClass *, pHouse, ECX);
 
@@ -59,7 +59,7 @@ DEFINE_HOOK(505360, HouseClass_PrerequisitesForTechnoTypeAreListed, 5)
  * An exception was added for parasites - they will count as eligible even when in limbo...
  */
 
-DEFINE_HOOK(4F8EBD, HouseClass_Update_HasBeenDefeated, 0)
+DEFINE_HOOK(0x4F8EBD, HouseClass_Update_HasBeenDefeated, 0x0)
 {
 	GET(HouseClass *, H, ESI);
 
@@ -127,7 +127,7 @@ DEFINE_HOOK(4F8EBD, HouseClass_Update_HasBeenDefeated, 0)
 	return 0x4F8F87;
 }
 
-DEFINE_HOOK(4F645F, HouseClass_CTOR_FixSideIndices, 5)
+DEFINE_HOOK(0x4F645F, HouseClass_CTOR_FixSideIndices, 0x5)
 {
 	GET(HouseClass *, pHouse, EBP);
 	if(HouseTypeClass * pCountry = pHouse->Type) {
@@ -138,7 +138,7 @@ DEFINE_HOOK(4F645F, HouseClass_CTOR_FixSideIndices, 5)
 	return 0x4F6490;
 }
 
-DEFINE_HOOK(500CC5, HouseClass_InitFromINI_FixBufferLimits, 6)
+DEFINE_HOOK(0x500CC5, HouseClass_InitFromINI_FixBufferLimits, 0x6)
 {
 	GET(HouseClass *, H, EBX);
 
@@ -153,7 +153,7 @@ DEFINE_HOOK(500CC5, HouseClass_InitFromINI_FixBufferLimits, 6)
 	return 0x500D0D;
 }
 
-DEFINE_HOOK(4F62FF, HouseClass_CTOR_FixNameOverflow, 6)
+DEFINE_HOOK(0x4F62FF, HouseClass_CTOR_FixNameOverflow, 0x6)
 {
 	GET(HouseClass *, H, EBP);
 	GET_STACK(HouseTypeClass *, Country, 0x48);
@@ -167,7 +167,7 @@ DEFINE_HOOK(4F62FF, HouseClass_CTOR_FixNameOverflow, 6)
 
 // this is checked right before the TeamClass is instantiated -
 // it does not mean the AI will abandon this team if another team wants BuildLimit'ed units at the same time
-DEFINE_HOOK(50965E, HouseClass_CanInstantiateTeam, 5)
+DEFINE_HOOK(0x50965E, HouseClass_CanInstantiateTeam, 0x5)
 {
 	GET(DWORD, ptrTask, EAX);
 	GET(DWORD, ptrOffset, ECX);
@@ -196,7 +196,7 @@ DEFINE_HOOK(50965E, HouseClass_CanInstantiateTeam, 5)
 	return CanBuild;
 }
 
-DEFINE_HOOK(508EBC, HouseClass_Radar_Update_CheckEligible, 6)
+DEFINE_HOOK(0x508EBC, HouseClass_Radar_Update_CheckEligible, 0x6)
 {
 	enum {Eligible = 0, Jammed = 0x508F08};
 	GET(BuildingClass *, Radar, EAX);
@@ -209,7 +209,7 @@ DEFINE_HOOK(508EBC, HouseClass_Radar_Update_CheckEligible, 6)
 	;
 }
 
-DEFINE_HOOK(508F91, HouseClass_SpySat_Update_CheckEligible, 6)
+DEFINE_HOOK(0x508F91, HouseClass_SpySat_Update_CheckEligible, 0x6)
 {
 	enum {Eligible = 0, Jammed = 0x508FF6};
 	GET(BuildingClass *, SpySat, ECX);

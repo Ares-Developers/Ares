@@ -3,7 +3,7 @@
 #include "Debug.h"
 #include "../Ares.h"
 
-DEFINE_HOOK(547043, IsometricTileTypeClass_ReadFromFile, 6)
+DEFINE_HOOK(0x547043, IsometricTileTypeClass_ReadFromFile, 0x6)
 {
 	GET(int, FileSize, EBX);
 	GET(IsometricTileTypeClass *, pTileType, ESI);

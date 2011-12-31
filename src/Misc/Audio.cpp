@@ -9,7 +9,7 @@
 // assuming nobody has 128k legit samples in their game
 #define MINIMUM_ARES_SAMPLE 0x20000
 
-DEFINE_HOOK(4064A0, Ares_Audio_AddSample, 0)	//Complete rewrite of VocClass::AddSample
+DEFINE_HOOK(0x4064A0, Ares_Audio_AddSample, 0x0)	//Complete rewrite of VocClass::AddSample
 {
 	//TODO: Once a VocClass and AudioIDXData definition is available, rewrite this. -pd
 	GET(VocClass*, pVoc, ECX); //VocClass*
@@ -43,7 +43,7 @@ DEFINE_HOOK(4064A0, Ares_Audio_AddSample, 0)	//Complete rewrite of VocClass::Add
 }
 
 //Hook at 0x75144F AND 0x75048E (?? that address makes no sense)
-DEFINE_HOOK(75144F, Ares_Audio_DeleteSampleNames, 9)
+DEFINE_HOOK(0x75144F, Ares_Audio_DeleteSampleNames, 0x9)
 //FINE_HOOK_AGAIN(75048E, Ares_Audio_DeleteSampleNames, 9)
 {
 	//TODO: Once a VocClass definition is available, rewrite this. -pd
@@ -62,7 +62,7 @@ DEFINE_HOOK(75144F, Ares_Audio_DeleteSampleNames, 9)
 }
 
 
-DEFINE_HOOK(75048E, VocClass_LoadFromINI_ResetSamples, 9)
+DEFINE_HOOK(0x75048E, VocClass_LoadFromINI_ResetSamples, 0x9)
 {
 	GET(VocClass **, ppVoc, ESI);
 	if(VocClass *pVoc = *ppVoc) {
@@ -78,7 +78,7 @@ DEFINE_HOOK(75048E, VocClass_LoadFromINI_ResetSamples, 9)
 }
 
 
-DEFINE_HOOK(4016F7, Ares_Audio_LoadWAV, 5)	//50% rewrite of Audio::LoadWAV
+DEFINE_HOOK(0x4016F7, Ares_Audio_LoadWAV, 0x5)	//50% rewrite of Audio::LoadWAV
 {
 	//TODO: Once an AudioIndex definition is available, rewrite this. -pd
 	GET(int, SampleIndex, EDX);
@@ -123,7 +123,7 @@ DEFINE_HOOK(4016F7, Ares_Audio_LoadWAV, 5)	//50% rewrite of Audio::LoadWAV
 	return 0;
 }
 
-DEFINE_HOOK(401640, Ares_Audio_GetSampleInfo, 5)
+DEFINE_HOOK(0x401640, Ares_Audio_GetSampleInfo, 0x5)
 {
 	//TODO: Once an AudioSample definition is available (if ever), rewrite this. -pd
 	GET(int, SampleIndex, EDX);

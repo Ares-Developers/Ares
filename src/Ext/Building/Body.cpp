@@ -859,7 +859,7 @@ void BuildingExt::ExtData::KickOutClones(TechnoClass * Production) {
 // container hooks
 
 
-DEFINE_HOOK(43BCBD, BuildingClass_CTOR, 6)
+DEFINE_HOOK(0x43BCBD, BuildingClass_CTOR, 0x6)
 {
 	GET(BuildingClass*, pItem, ESI);
 
@@ -867,7 +867,7 @@ DEFINE_HOOK(43BCBD, BuildingClass_CTOR, 6)
 	return 0;
 }
 
-DEFINE_HOOK(43BCF7, BuildingClass_DTOR, 6)
+DEFINE_HOOK(0x43BCF7, BuildingClass_DTOR, 0x6)
 {
 	GET(BuildingClass*, pItem, ECX);
 
@@ -875,8 +875,8 @@ DEFINE_HOOK(43BCF7, BuildingClass_DTOR, 6)
 	return 0;
 }
 
-DEFINE_HOOK(453E20, BuildingClass_SaveLoad_Prefix, 5)
-DEFINE_HOOK_AGAIN(454190, BuildingClass_SaveLoad_Prefix, 5)
+DEFINE_HOOK_AGAIN(0x454190, BuildingClass_SaveLoad_Prefix, 0x5)
+DEFINE_HOOK(0x453E20, BuildingClass_SaveLoad_Prefix, 0x5)
 {
 	GET_STACK(BuildingExt::TT*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
@@ -887,13 +887,13 @@ DEFINE_HOOK_AGAIN(454190, BuildingClass_SaveLoad_Prefix, 5)
 	return 0;
 }
 
-DEFINE_HOOK(45417E, BuildingClass_Load_Suffix, 5)
+DEFINE_HOOK(0x45417E, BuildingClass_Load_Suffix, 0x5)
 {
 	BuildingExt::ExtMap.LoadStatic();
 	return 0;
 }
 
-DEFINE_HOOK(454244, BuildingClass_Save_Suffix, 7)
+DEFINE_HOOK(0x454244, BuildingClass_Save_Suffix, 0x7)
 {
 	BuildingExt::ExtMap.SaveStatic();
 	return 0;

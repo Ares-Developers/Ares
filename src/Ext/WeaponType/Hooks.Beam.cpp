@@ -1,7 +1,7 @@
 #include "Body.h"
 #include "../Techno/Body.h"
 
-DEFINE_HOOK(6FD64A, TechnoClass_FireRadBeam1, 6)
+DEFINE_HOOK(0x6FD64A, TechnoClass_FireRadBeam1, 0x6)
 {
 	byte idxWeapon = *(byte *)(R->Stack32(0x18) + 0xC); // hack! 0x18 fetches the caller's EBP, which gives us access to its locals, including idxWeapon
 	GET_STACK(TechnoClass *, Techno, 0x14);
@@ -14,7 +14,7 @@ DEFINE_HOOK(6FD64A, TechnoClass_FireRadBeam1, 6)
 
 // 6FD79C, 6
 // custom RadBeam colors
-DEFINE_HOOK(6FD79C, TechnoClass_FireRadBeam2, 6)
+DEFINE_HOOK(0x6FD79C, TechnoClass_FireRadBeam2, 0x6)
 {
 	GET(RadBeam *, Rad, ESI);
 	GET_STACK(WeaponTypeClass *, pSource, 0xC);

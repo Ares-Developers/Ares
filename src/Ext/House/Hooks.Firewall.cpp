@@ -12,8 +12,8 @@
 #include "../BulletType/Body.h"
 #include "../TechnoType/Body.h"
 
-DEFINE_HOOK(6FF008, TechnoClass_Fire_FSW, 8)
-DEFINE_HOOK_AGAIN(6FF860, TechnoClass_Fire_FSW, 8)
+DEFINE_HOOK_AGAIN(0x6FF860, TechnoClass_Fire_FSW, 0x8)
+DEFINE_HOOK(0x6FF008, TechnoClass_Fire_FSW, 0x8)
 {
 	CoordStruct src = *R->lea_Stack<CoordStruct *>(0x44);
 	CoordStruct tgt = *R->lea_Stack<CoordStruct *>(0x88);
@@ -62,7 +62,7 @@ DEFINE_HOOK_AGAIN(6FF860, TechnoClass_Fire_FSW, 8)
 	return 0;
 }
 
-DEFINE_HOOK(4F8440, HouseClass_Update_FSW_Recalc, 5)
+DEFINE_HOOK(0x4F8440, HouseClass_Update_FSW_Recalc, 0x5)
 {
 	GET(HouseClass *, H, ECX);
 	HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(H);
@@ -75,7 +75,7 @@ DEFINE_HOOK(4F8440, HouseClass_Update_FSW_Recalc, 5)
 	return 0;
 }
 
-DEFINE_HOOK(4F8C97, HouseClass_Update_FSW_LowPower, 6)
+DEFINE_HOOK(0x4F8C97, HouseClass_Update_FSW_LowPower, 0x6)
 {
 	GET(HouseClass *, H, ESI);
 	HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(H);

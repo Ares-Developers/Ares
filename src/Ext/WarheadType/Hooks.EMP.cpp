@@ -1,12 +1,12 @@
 #include "Body.h"
 #include "../../Misc/EMPulse.h"
 
-DEFINE_HOOK(5240BD, CyborgParsingMyArse, 7) {
+DEFINE_HOOK(0x5240BD, CyborgParsingMyArse, 0x7) {
 	// Otherwise the TechnoType's Cyborg tag is not parsed.
 	return 0x5240C4;
 }
 
-DEFINE_HOOK(6FAF0D, TechnoClass_Update_EMPLock, 6) {
+DEFINE_HOOK(0x6FAF0D, TechnoClass_Update_EMPLock, 0x6) {
 	GET(TechnoClass *, pThis, ESI);
 
 	// original code.
@@ -34,7 +34,7 @@ DEFINE_HOOK(6FAF0D, TechnoClass_Update_EMPLock, 6) {
 }
 
 // copy the remaining EMP duration to the unit when undeploying a building.
-DEFINE_HOOK(44A04C, BuildingClass_Unload_CopyEMPDuration, 6) {
+DEFINE_HOOK(0x44A04C, BuildingClass_Unload_CopyEMPDuration, 0x6) {
 	GET(TechnoClass *, pBuilding, EBP);
 	GET(TechnoClass *, pUnit, EBX);
 
@@ -47,7 +47,7 @@ DEFINE_HOOK(44A04C, BuildingClass_Unload_CopyEMPDuration, 6) {
 	return 0;
 }
 
-DEFINE_HOOK(51E3B0, InfantryClass_GetCursorOverObject_EMP, 7) {
+DEFINE_HOOK(0x51E3B0, InfantryClass_GetCursorOverObject_EMP, 0x7) {
 	GET(InfantryClass *, pInfantry, ECX);
 	GET_STACK(TechnoClass *, pTarget, 0x4);
 
@@ -60,7 +60,7 @@ DEFINE_HOOK(51E3B0, InfantryClass_GetCursorOverObject_EMP, 7) {
 	return 0;
 }
 
-DEFINE_HOOK(73D219, UnitClass_Draw_OreGatherAnim, 6) {
+DEFINE_HOOK(0x73D219, UnitClass_Draw_OreGatherAnim, 0x6) {
 	GET(TechnoClass*, pTechno, ECX);
 
 	// disabled ore gatherers should not appear working.
@@ -71,7 +71,7 @@ DEFINE_HOOK(73D219, UnitClass_Draw_OreGatherAnim, 6) {
 	return 0x73D223;
 }
 
-DEFINE_HOOK(5F7933, TechnoTypeClass_FindFactory_ExcludeDisabled, 6) {
+DEFINE_HOOK(0x5F7933, TechnoTypeClass_FindFactory_ExcludeDisabled, 0x6) {
 	GET(BuildingClass*, pBld, ESI);
 
 	// add the EMP check to the limbo check
@@ -82,7 +82,7 @@ DEFINE_HOOK(5F7933, TechnoTypeClass_FindFactory_ExcludeDisabled, 6) {
 	return 0x5F7941;
 }
 
-DEFINE_HOOK(4456E5, BuildingClass_UpdateConstructionOptions_ExcludeDisabled, 6) {
+DEFINE_HOOK(0x4456E5, BuildingClass_UpdateConstructionOptions_ExcludeDisabled, 0x6) {
 	GET(BuildingClass*, pBld, ECX);
 
 	// add the EMP check to the limbo check

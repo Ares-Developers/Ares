@@ -14,7 +14,7 @@
 // feature #384: Permanent MindControl Warheads + feature #200: EMP Warheads
 // attach #407 here - set TechnoClass::Flashing.Duration // that doesn't exist, according to yrpp::TechnoClass.h::struct FlashData
 // attach #561 here, reuse #407's additional hooks for colouring
-DEFINE_HOOK(46920B, BulletClass_Fire, 6) {
+DEFINE_HOOK(0x46920B, BulletClass_Fire, 0x6) {
 	GET(BulletClass *, Bullet, ESI);
 	//LEA_STACK(CoordStruct *, detonationXYZ, 0xAC); // looks unused?
 	WarheadTypeClass *pThis = Bullet->WH;
@@ -77,20 +77,20 @@ DEFINE_HOOK(46920B, BulletClass_Fire, 6) {
 }
 
 // issue 472: deglob WarpAway
-DEFINE_HOOK(71A87B, TemporalClass_Update_CacheWH, 6) {
+DEFINE_HOOK(0x71A87B, TemporalClass_Update_CacheWH, 0x6) {
 	GET(WeaponTypeClass *, W, EAX);
 	WarheadTypeExt::Temporal_WH = W->Warhead;
 	return 0;
 }
 
 // issue 472: deglob WarpAway
-DEFINE_HOOK(71A900, TemporalClass_Update_WarpAway, 6) {
+DEFINE_HOOK(0x71A900, TemporalClass_Update_WarpAway, 0x6) {
 	auto pData = WarheadTypeExt::ExtMap.Find(WarheadTypeExt::Temporal_WH);
 	R->EDX<AnimTypeClass *> (pData->Temporal_WarpAway);
 	return 0x71A906;
 }
 
-DEFINE_HOOK(517FC1, InfantryClass_ReceiveDamage_DeployedDamage, 6) {
+DEFINE_HOOK(0x517FC1, InfantryClass_ReceiveDamage_DeployedDamage, 0x6) {
 	GET(InfantryClass *, I, ESI);
 	bool IgnoreDefenses = R->BL() != 0;
 
@@ -113,7 +113,7 @@ DEFINE_HOOK(517FC1, InfantryClass_ReceiveDamage_DeployedDamage, 6) {
  * Fixing issue #722
  */
 
-DEFINE_HOOK(7384BD, UnitClass_ReceiveDamage_OreMinerUnderAttack, 6)
+DEFINE_HOOK(0x7384BD, UnitClass_ReceiveDamage_OreMinerUnderAttack, 0x6)
 {
 	GET_STACK(WarheadTypeClass *, WH, STACK_OFFS(0x44, -0xC));
 
@@ -124,7 +124,7 @@ DEFINE_HOOK(7384BD, UnitClass_ReceiveDamage_OreMinerUnderAttack, 6)
 	;
 }
 
-DEFINE_HOOK(4F94A5, HouseClass_BuildingUnderAttack, 6)
+DEFINE_HOOK(0x4F94A5, HouseClass_BuildingUnderAttack, 0x6)
 {
 	GET_STACK(DWORD, Caller, 0x14);
 	if(Caller == 0x442980) {

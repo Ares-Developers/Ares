@@ -9,7 +9,7 @@
 #include "../../Misc/Actions.h"
 
 // #664: Advanced Rubble - reconstruction part: Check
-DEFINE_HOOK(51E63A, InfantryClass_GetCursorOverObject_EngineerOverFriendlyBuilding, 6) {
+DEFINE_HOOK(0x51E63A, InfantryClass_GetCursorOverObject_EngineerOverFriendlyBuilding, 0x6) {
 	GET(BuildingClass *, pTarget, ESI);
 	GET(InfantryClass *, pThis, EDI);
 
@@ -23,7 +23,7 @@ DEFINE_HOOK(51E63A, InfantryClass_GetCursorOverObject_EngineerOverFriendlyBuildi
 }
 
 // #664: Advanced Rubble - reconstruction part: Reconstruction
-DEFINE_HOOK(519FAF, InfantryClass_UpdatePosition_EngineerRepairsFriendly, 6)
+DEFINE_HOOK(0x519FAF, InfantryClass_UpdatePosition_EngineerRepairsFriendly, 0x6)
 {
 	GET(InfantryClass *, pThis, ESI);
 	GET(BuildingClass *, Target, EDI);
@@ -53,7 +53,7 @@ DEFINE_HOOK(519FAF, InfantryClass_UpdatePosition_EngineerRepairsFriendly, 6)
 	return do_normal_repair ? 0 : 0x51A65D; //0x51A010 eats the Engineer, 0x51A65D hopefully does not
 }
 
-DEFINE_HOOK(51DF38, InfantryClass_Remove, A)
+DEFINE_HOOK(0x51DF38, InfantryClass_Remove, 0xA)
 {
 	GET(InfantryClass *, pThis, ESI);
 	TechnoExt::ExtData* pData = TechnoExt::ExtMap.Find(pThis);
@@ -72,7 +72,7 @@ DEFINE_HOOK(51DF38, InfantryClass_Remove, A)
 	return 0;
 }
 
-DEFINE_HOOK(51DFFD, InfantryClass_Put, 5)
+DEFINE_HOOK(0x51DFFD, InfantryClass_Put, 0x5)
 {
 	GET(InfantryClass *, pThis, EDI);
 	TechnoExt::ExtData* pData = TechnoExt::ExtMap.Find(pThis);
@@ -81,7 +81,7 @@ DEFINE_HOOK(51DFFD, InfantryClass_Put, 5)
 	return 0;
 }
 
-DEFINE_HOOK(518434, InfantryClass_ReceiveDamage_SkipDeathAnim, 7)
+DEFINE_HOOK(0x518434, InfantryClass_ReceiveDamage_SkipDeathAnim, 0x7)
 {
 	GET(InfantryClass *, pThis, ESI);
 	GET_STACK(ObjectClass *, pAttacker, 0xE0);
@@ -97,7 +97,7 @@ DEFINE_HOOK(518434, InfantryClass_ReceiveDamage_SkipDeathAnim, 7)
 }
 
 // should correct issue #743
-DEFINE_HOOK(51D799, InfantryClass_PlayAnim_WaterSound, 7)
+DEFINE_HOOK(0x51D799, InfantryClass_PlayAnim_WaterSound, 0x7)
 {
 	GET(InfantryClass *, I, ESI);
 	return (I->Transporter || I->Type->MovementZone != mz_AmphibiousDestroyer)
@@ -106,12 +106,12 @@ DEFINE_HOOK(51D799, InfantryClass_PlayAnim_WaterSound, 7)
 	;
 }
 
-DEFINE_HOOK(51E5BB, InfantryClass_GetCursorOverObject_MultiEngineerA, 7) {
+DEFINE_HOOK(0x51E5BB, InfantryClass_GetCursorOverObject_MultiEngineerA, 0x7) {
 	// skip old logic's way to determine the cursor
 	return 0x51E5D9;
 }
 
-DEFINE_HOOK(51E5E1, InfantryClass_GetCursorOverObject_MultiEngineerB, 7) {
+DEFINE_HOOK(0x51E5E1, InfantryClass_GetCursorOverObject_MultiEngineerB, 0x7) {
 	GET(BuildingClass *, pBld, ECX);
 	eAction ret = InfantryExt::GetEngineerEnterEnemyBuildingAction(pBld);
 
@@ -125,7 +125,7 @@ DEFINE_HOOK(51E5E1, InfantryClass_GetCursorOverObject_MultiEngineerB, 7) {
 	return 0;
 }
 
-DEFINE_HOOK(519DB6, InfantryClass_UpdatePosition_MultiEngineer, 7) {
+DEFINE_HOOK(0x519DB6, InfantryClass_UpdatePosition_MultiEngineer, 0x7) {
 	GET(InfantryClass *, pEngi, ESI);
 	GET(BuildingClass *, pBld, EDI);
 

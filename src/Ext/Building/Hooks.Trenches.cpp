@@ -12,7 +12,7 @@
 
 /* 	#218 - specific occupiers
 	#665 - raidable buildings */
-DEFINE_HOOK(457D58, BuildingClass_CanBeOccupied_SpecificOccupiers, 6)
+DEFINE_HOOK(0x457D58, BuildingClass_CanBeOccupied_SpecificOccupiers, 0x6)
 {
 	GET(BuildingClass *, pThis, ESI);
 	GET(InfantryClass *, pInf, EDI);
@@ -56,7 +56,7 @@ DEFINE_HOOK(457D58, BuildingClass_CanBeOccupied_SpecificOccupiers, 6)
 // #664: Advanced Rubble - turning into rubble part
 // moved to before the survivors get unlimboed, per sanity's requirements
 // TODO review
-DEFINE_HOOK(441F12, BuildingClass_Destroy_RubbleYell, 6)
+DEFINE_HOOK(0x441F12, BuildingClass_Destroy_RubbleYell, 0x6)
 {
 	GET(BuildingClass *, pThis, ESI);
 	BuildingExt::ExtData* BuildingAresData = BuildingExt::ExtMap.Find(pThis);
@@ -73,7 +73,7 @@ DEFINE_HOOK(441F12, BuildingClass_Destroy_RubbleYell, 6)
 }
 
 // remove all units from the rubble
-DEFINE_HOOK(441F2C, BuildingClass_Destroy_KickOutOfRubble, 5) {
+DEFINE_HOOK(0x441F2C, BuildingClass_Destroy_KickOutOfRubble, 0x5) {
 	GET(BuildingClass*, pBld, ESI);
 
 	// find out whether this destroyed building would turn into rubble
@@ -91,7 +91,7 @@ DEFINE_HOOK(441F2C, BuildingClass_Destroy_KickOutOfRubble, 5) {
 }
 
 // #666: Trench Traversal - check if traversal is possible & cursor display
-DEFINE_HOOK(44725F, BuildingClass_GetCursorOverObject_TargetABuilding, 5)
+DEFINE_HOOK(0x44725F, BuildingClass_GetCursorOverObject_TargetABuilding, 0x5)
 {
 	GET(BuildingClass *, pThis, ESI);
 	GET(TechnoClass *, T, EBP);
@@ -111,7 +111,7 @@ DEFINE_HOOK(44725F, BuildingClass_GetCursorOverObject_TargetABuilding, 5)
 	return 0;
 }
 
-DEFINE_HOOK(443414, BuildingClass_ClickedAction, 6)
+DEFINE_HOOK(0x443414, BuildingClass_ClickedAction, 0x6)
 {
 	GET(eAction, Action, EAX);
 	GET(BuildingClass *, pThis, ECX);
@@ -133,7 +133,7 @@ DEFINE_HOOK(443414, BuildingClass_ClickedAction, 6)
 }
 
 // #665: Raidable Buildings - prevent raided buildings from being sold while raided
-DEFINE_HOOK(4494D2, BuildingClass_IsSellable, 6)
+DEFINE_HOOK(0x4494D2, BuildingClass_IsSellable, 0x6)
 {
 	GET(BuildingClass *, B, ESI);
 	BuildingExt::ExtData* curBuildExt = BuildingExt::ExtMap.Find(B);
@@ -165,7 +165,7 @@ DEFINE_HOOK(4494D2, BuildingClass_IsSellable, 6)
 	ThreatToCell is updated,
 	"EVA_StructureGarrisoned" is played if applicable.
 */
-DEFINE_HOOK(52297F, InfantryClass_GarrisonBuilding_OccupierEntered, 5)
+DEFINE_HOOK(0x52297F, InfantryClass_GarrisonBuilding_OccupierEntered, 0x5)
 {
 	GET(InfantryClass *, pInf, ESI);
 	GET(BuildingClass *, pBld, EBP);
@@ -221,7 +221,7 @@ DEFINE_HOOK(52297F, InfantryClass_GarrisonBuilding_OccupierEntered, 5)
 /* Requested in issue #694
 	D: The second hook fires each time one of the occupants is killed (Assaulter). Note that it doesn't catch the damage forwarding fatal hit.
 */
-DEFINE_HOOK(4586CA, BuildingClass_KillOccupiers_EachOccupierKilled, 6)
+DEFINE_HOOK(0x4586CA, BuildingClass_KillOccupiers_EachOccupierKilled, 0x6)
 {
     GET(BuildingClass *, pBld, ESI);
     GET(int, idxOccupant, EDI);
@@ -235,7 +235,7 @@ DEFINE_HOOK(4586CA, BuildingClass_KillOccupiers_EachOccupierKilled, 6)
 /* Requested in issue #694
 	D: The third hook fires after all the occupants have been ejected (by the first hook).
 */
-DEFINE_HOOK(4581CD, BuildingClass_UnloadOccupants_AllOccupantsHaveLeft, 6)
+DEFINE_HOOK(0x4581CD, BuildingClass_UnloadOccupants_AllOccupantsHaveLeft, 0x6)
 {
     GET(BuildingClass *, pBld, ESI);
     BuildingExt::ExtData* buildingExtData = BuildingExt::ExtMap.Find(pBld);
@@ -248,7 +248,7 @@ DEFINE_HOOK(4581CD, BuildingClass_UnloadOccupants_AllOccupantsHaveLeft, 6)
 /* Requested in issue #694
 	D: The fourth hook fires after all the occupants have been killed by the second hook.
 */
-DEFINE_HOOK(458729, BuildingClass_KillOccupiers_AllOccupantsKilled, 6)
+DEFINE_HOOK(0x458729, BuildingClass_KillOccupiers_AllOccupantsKilled, 0x6)
 {
 	GET(BuildingClass *, pBld, ESI);
 	BuildingExt::ExtData* buildingExtData = BuildingExt::ExtMap.Find(pBld);
@@ -287,7 +287,7 @@ A_FINE_HOOK(457DF5, BuildingClass_UnloadOccupants_AboutToStartUnloading, 6)
 	<Renegade> at what place in the chain is that executed?
 	<DCoder> in the middle of where the building changes ownership from old player to new
 */
-DEFINE_HOOK(448401, BuildingClass_ChangeOwnership_TrenchEVA, 6)
+DEFINE_HOOK(0x448401, BuildingClass_ChangeOwnership_TrenchEVA, 0x6)
 {
 	GET(BuildingClass *, pBld, ESI);
 	GET(HouseClass *, pNewOwner, EBX);

@@ -17,7 +17,7 @@
 #include <BulletTypeClass.h>
 
 // completely replace the PsyDom::Fire() method.
-DEFINE_HOOK(53B080, PsyDom_Fire, 5) {
+DEFINE_HOOK(0x53B080, PsyDom_Fire, 0x5) {
 	if(SuperClass * pSuper = SW_PsychicDominator::CurrentPsyDom) {
 		SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSuper->Type);
 
@@ -156,7 +156,7 @@ DEFINE_HOOK(53B080, PsyDom_Fire, 5) {
 	return 0;
 }
 
-DEFINE_HOOK(53C321, ScenarioClass_UpdateLighting_PsyDom, 5) {
+DEFINE_HOOK(0x53C321, ScenarioClass_UpdateLighting_PsyDom, 0x5) {
 	if(SuperClass *pSuper = SW_PsychicDominator::CurrentPsyDom) {
 		if(SWTypeExt::ChangeLighting(pSuper)) {
 			R->EAX(1);
@@ -169,7 +169,7 @@ DEFINE_HOOK(53C321, ScenarioClass_UpdateLighting_PsyDom, 5) {
 	return 0;
 }
 
-DEFINE_HOOK(53C2A6, ScenarioClass_UpdateLighting_LightningStorm, 5) {
+DEFINE_HOOK(0x53C2A6, ScenarioClass_UpdateLighting_LightningStorm, 0x5) {
 	if(SuperClass *pSuper = SW_LightningStorm::CurrentLightningStorm) {
 		if(SWTypeExt::ChangeLighting(pSuper)) {
 			R->EAX(1);
@@ -182,7 +182,7 @@ DEFINE_HOOK(53C2A6, ScenarioClass_UpdateLighting_LightningStorm, 5) {
 	return 0;
 }
 
-DEFINE_HOOK(53C3B1, ScenarioClass_UpdateLighting_Nuke, 5) {
+DEFINE_HOOK(0x53C3B1, ScenarioClass_UpdateLighting_Nuke, 0x5) {
 	if(SuperWeaponTypeClass *pType = SW_NuclearMissile::CurrentNukeType) {
 		if(SWTypeExt::ChangeLighting(pType)) {
 			R->EAX(1);
@@ -196,12 +196,12 @@ DEFINE_HOOK(53C3B1, ScenarioClass_UpdateLighting_Nuke, 5) {
 }
 
 // skip the entire method, we handle it ourselves
-DEFINE_HOOK(53AF40, PsyDom_Update, 6) {
+DEFINE_HOOK(0x53AF40, PsyDom_Update, 0x6) {
 	return 0x53B060;
 }
 
 // this is a complete rewrite of LightningStorm::Start.
-DEFINE_HOOK(539EB0, LightningStorm_Start, 5) {
+DEFINE_HOOK(0x539EB0, LightningStorm_Start, 0x5) {
 	if(SuperClass* pSuper = SW_LightningStorm::CurrentLightningStorm) {
 		GET(int, duration, ECX);
 		GET(int, deferment, EDX);
@@ -283,7 +283,7 @@ DEFINE_HOOK(539EB0, LightningStorm_Start, 5) {
 }
 
 // this is a complete rewrite of LightningStorm::Update.
-DEFINE_HOOK(53A6C0, LightningStorm_Update, 5) {
+DEFINE_HOOK(0x53A6C0, LightningStorm_Update, 0x5) {
 	if(SuperClass* pSuper = SW_LightningStorm::CurrentLightningStorm) {
 		
 		// switch lightning (most likely for nuke)
@@ -495,7 +495,7 @@ DEFINE_HOOK(53A6C0, LightningStorm_Update, 5) {
 }
 
 // create a cloud.
-DEFINE_HOOK(53A140, LightningStorm_Strike, 7) {
+DEFINE_HOOK(0x53A140, LightningStorm_Strike, 0x7) {
 	if(SuperClass* pSuper = SW_LightningStorm::CurrentLightningStorm) {
 		GET_STACK(CellStruct, Cell, 0x4);
 
@@ -543,7 +543,7 @@ DEFINE_HOOK(53A140, LightningStorm_Strike, 7) {
 }
 
 // create bolt and damage area.
-DEFINE_HOOK(53A300, LightningStorm_Strike2, 5) {
+DEFINE_HOOK(0x53A300, LightningStorm_Strike2, 0x5) {
 	if(SuperClass* pSuper = SW_LightningStorm::CurrentLightningStorm) {
 		GET_STACK(CoordStruct, Coords, 0x4);
 
@@ -651,7 +651,7 @@ DEFINE_HOOK(53A300, LightningStorm_Strike2, 5) {
 	return 0;
 }
 
-DEFINE_HOOK(48A59A, MapClass_SelectDamageAnimation_LightningWarhead, 5) {
+DEFINE_HOOK(0x48A59A, MapClass_SelectDamageAnimation_LightningWarhead, 0x5) {
 	// override the lightning bolt explosion
 	GET(WarheadTypeClass*, pWarhead, ESI);
 	if(SuperClass* pSuper = SW_LightningStorm::CurrentLightningStorm) {
@@ -667,7 +667,7 @@ DEFINE_HOOK(48A59A, MapClass_SelectDamageAnimation_LightningWarhead, 5) {
 	return 0;
 }
 
-DEFINE_HOOK(44C9FF, BuildingClass_Missile_PsiWarn, 6) {
+DEFINE_HOOK(0x44C9FF, BuildingClass_Missile_PsiWarn, 0x6) {
 	GET(BuildingClass*, pThis, ESI);
 	int type = pThis->FiringSWType;
 
@@ -691,7 +691,7 @@ DEFINE_HOOK(44C9FF, BuildingClass_Missile_PsiWarn, 6) {
 }
 
 // upward pointing missile, launched from missile silo.
-DEFINE_HOOK(44CABA, BuildingClass_Missile_CreateBullet, 6) {
+DEFINE_HOOK(0x44CABA, BuildingClass_Missile_CreateBullet, 0x6) {
 	GET(CellClass*, pCell, EAX);
 	GET(BuildingClass*, pThis, ESI);
 
@@ -720,7 +720,7 @@ DEFINE_HOOK(44CABA, BuildingClass_Missile_CreateBullet, 6) {
 }
 
 // special takeoff anim.
-DEFINE_HOOK(44CC8B, BuildingClass_Missile_NukeTakeOff, 6) {
+DEFINE_HOOK(0x44CC8B, BuildingClass_Missile_NukeTakeOff, 0x6) {
 	GET(BuildingClass*, pThis, ESI);
 
 	int type = pThis->FiringSWType;
@@ -741,7 +741,7 @@ DEFINE_HOOK(44CC8B, BuildingClass_Missile_NukeTakeOff, 6) {
 }
 
 // remove ZAdjust hardcoding
-DEFINE_HOOK(44CC9D, BuildingClass_Missile_NukeTakeOffB, A) {
+DEFINE_HOOK(0x44CC9D, BuildingClass_Missile_NukeTakeOffB, 0xA) {
 	GET(AnimClass*, pAnim, EAX);
 
 	if(!pAnim->ZAdjust) {
@@ -751,7 +751,7 @@ DEFINE_HOOK(44CC9D, BuildingClass_Missile_NukeTakeOffB, A) {
 }
 
 // create a downward pointing missile if the launched one leaves the map.
-DEFINE_HOOK(46B371, BulletClass_NukeMaker, 5) {
+DEFINE_HOOK(0x46B371, BulletClass_NukeMaker, 0x5) {
 	GET(BulletClass*, pBullet, EBP);
 
 	if(pBullet && pBullet->WeaponType) {
@@ -795,7 +795,7 @@ DEFINE_HOOK(46B371, BulletClass_NukeMaker, 5) {
 }
 
 // just puts the launched SW pointer on the downward aiming missile.
-DEFINE_HOOK(46B423, BulletClass_NukeMaker_PropagateSW, 6) {
+DEFINE_HOOK(0x46B423, BulletClass_NukeMaker_PropagateSW, 0x6) {
 	GET(BulletClass*, pBullet, EBP);
 	GET(BulletClass*, pNuke, EDI);
 
@@ -809,7 +809,7 @@ DEFINE_HOOK(46B423, BulletClass_NukeMaker_PropagateSW, 6) {
 }
 
 // deferred explosion. create a nuke ball anim and, when that is over, go boom.
-DEFINE_HOOK(467E59, BulletClass_Update_NukeBall, 5) {
+DEFINE_HOOK(0x467E59, BulletClass_Update_NukeBall, 0x5) {
 	// changed the hardcoded way to just do this if the
 	// warhead is called NUKE to an more universal
 	// approach. every warhead having a pre-impact-anim
@@ -868,14 +868,14 @@ DEFINE_HOOK(467E59, BulletClass_Update_NukeBall, 5) {
 }
 
 // iron curtained units would crush themselves
-DEFINE_HOOK(7187DA, TeleportLocomotionClass_Unwarp_PreventSelfCrush, 6) {
+DEFINE_HOOK(0x7187DA, TeleportLocomotionClass_Unwarp_PreventSelfCrush, 0x6) {
 	GET(TechnoClass*, pTeleporter, EDI);
 	GET(TechnoClass*, pContent, ECX);
 	return (pTeleporter == pContent) ? 0x71880A : 0;
 }
 
 // sink stuff that simply cannot exist on water
-DEFINE_HOOK(7188F2, TeleportLocomotionClass_Unwarp_SinkJumpJets, 7) {
+DEFINE_HOOK(0x7188F2, TeleportLocomotionClass_Unwarp_SinkJumpJets, 0x7) {
 	GET(CellClass*, pCell, EAX);
 	GET(TechnoClass**, pTechno, ESI);
 
@@ -896,7 +896,7 @@ DEFINE_HOOK(7188F2, TeleportLocomotionClass_Unwarp_SinkJumpJets, 7) {
 	return 0;
 }
 
-DEFINE_HOOK(446AAF, BuildingClass_Place_SkipFreeUnits, 6)
+DEFINE_HOOK(0x446AAF, BuildingClass_Place_SkipFreeUnits, 0x6)
 {
 	// allow free units and non-separate aircraft to be created
 	// only once.
@@ -911,7 +911,7 @@ DEFINE_HOOK(446AAF, BuildingClass_Place_SkipFreeUnits, 6)
 	return 0x446FB6;
 }
 
-DEFINE_HOOK(71AE85, TemporalClass_CanWarpTarget_PreventChronoBuilding, A)
+DEFINE_HOOK(0x71AE85, TemporalClass_CanWarpTarget_PreventChronoBuilding, 0xA)
 {
 	// prevent warping buildings that are about to be chronoshifted.
 	// if such building is attacked, it will be removed by the chronosphere

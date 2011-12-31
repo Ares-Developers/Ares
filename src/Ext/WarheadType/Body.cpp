@@ -450,7 +450,7 @@ bool WarheadTypeExt::ExtData::applyKillDriver(BulletClass* Bullet) {
 // =============================
 // container hooks
 
-DEFINE_HOOK(75D1A9, WarheadTypeClass_CTOR, 7)
+DEFINE_HOOK(0x75D1A9, WarheadTypeClass_CTOR, 0x7)
 {
 	GET(WarheadTypeClass*, pItem, EBP);
 
@@ -458,7 +458,7 @@ DEFINE_HOOK(75D1A9, WarheadTypeClass_CTOR, 7)
 	return 0;
 }
 
-DEFINE_HOOK(75E510, WarheadTypeClass_DTOR, 6)
+DEFINE_HOOK(0x75E510, WarheadTypeClass_DTOR, 0x6)
 {
 	GET(WarheadTypeClass*, pItem, ECX);
 
@@ -466,8 +466,8 @@ DEFINE_HOOK(75E510, WarheadTypeClass_DTOR, 6)
 	return 0;
 }
 
-DEFINE_HOOK(75E0C0, WarheadTypeClass_SaveLoad_Prefix, 8)
-DEFINE_HOOK_AGAIN(75E2C0, WarheadTypeClass_SaveLoad_Prefix, 5)
+DEFINE_HOOK_AGAIN(0x75E2C0, WarheadTypeClass_SaveLoad_Prefix, 0x5)
+DEFINE_HOOK(0x75E0C0, WarheadTypeClass_SaveLoad_Prefix, 0x8)
 {
 	GET_STACK(WarheadTypeExt::TT*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
@@ -478,20 +478,20 @@ DEFINE_HOOK_AGAIN(75E2C0, WarheadTypeClass_SaveLoad_Prefix, 5)
 	return 0;
 }
 
-DEFINE_HOOK(75E2AE, WarheadTypeClass_Load_Suffix, 7)
+DEFINE_HOOK(0x75E2AE, WarheadTypeClass_Load_Suffix, 0x7)
 {
 	WarheadTypeExt::ExtMap.LoadStatic();
 	return 0;
 }
 
-DEFINE_HOOK(75E39C, WarheadTypeClass_Save_Suffix, 5)
+DEFINE_HOOK(0x75E39C, WarheadTypeClass_Save_Suffix, 0x5)
 {
 	WarheadTypeExt::ExtMap.SaveStatic();
 	return 0;
 }
 
-DEFINE_HOOK(75DEA0, WarheadTypeClass_LoadFromINI, 5)
-DEFINE_HOOK_AGAIN(75DEAF, WarheadTypeClass_LoadFromINI, 5)
+DEFINE_HOOK_AGAIN(0x75DEAF, WarheadTypeClass_LoadFromINI, 0x5)
+DEFINE_HOOK(0x75DEA0, WarheadTypeClass_LoadFromINI, 0x5)
 {
 	GET(WarheadTypeClass*, pItem, ESI);
 	GET_STACK(CCINIClass*, pINI, 0x150);

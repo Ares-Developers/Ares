@@ -377,7 +377,7 @@ void Container<WeaponTypeExt>::Load(WeaponTypeClass *pThis, IStream *pStm) {
 // =============================
 // container hooks
 
-DEFINE_HOOK(771EE9, WeaponTypeClass_CTOR, 5)
+DEFINE_HOOK(0x771EE9, WeaponTypeClass_CTOR, 0x5)
 {
 	GET(WeaponTypeClass*, pItem, ESI);
 
@@ -386,7 +386,7 @@ DEFINE_HOOK(771EE9, WeaponTypeClass_CTOR, 5)
 }
 
 
-DEFINE_HOOK(7730F0, WeaponTypeClass_DTOR, 5)
+DEFINE_HOOK(0x7730F0, WeaponTypeClass_DTOR, 0x5)
 {
 	GET(WeaponTypeClass*, pItem, ECX);
 
@@ -394,8 +394,8 @@ DEFINE_HOOK(7730F0, WeaponTypeClass_DTOR, 5)
 	return 0;
 }
 
-DEFINE_HOOK(772CD0, WeaponTypeClass_SaveLoad_Prefix, 7)
-DEFINE_HOOK_AGAIN(772EB0, WeaponTypeClass_SaveLoad_Prefix, 5)
+DEFINE_HOOK_AGAIN(0x772EB0, WeaponTypeClass_SaveLoad_Prefix, 0x5)
+DEFINE_HOOK(0x772CD0, WeaponTypeClass_SaveLoad_Prefix, 0x7)
 {
 	GET_STACK(WeaponTypeExt::TT*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
@@ -406,21 +406,21 @@ DEFINE_HOOK_AGAIN(772EB0, WeaponTypeClass_SaveLoad_Prefix, 5)
 	return 0;
 }
 
-DEFINE_HOOK(772EA6, WeaponTypeClass_Load_Suffix, 6)
+DEFINE_HOOK(0x772EA6, WeaponTypeClass_Load_Suffix, 0x6)
 {
 	WeaponTypeExt::ExtMap.LoadStatic();
 	return 0;
 }
 
-DEFINE_HOOK(772F8C, WeaponTypeClass_Save, 5)
+DEFINE_HOOK(0x772F8C, WeaponTypeClass_Save, 0x5)
 {
 	WeaponTypeExt::ExtMap.SaveStatic();
 	return 0;
 }
 
-DEFINE_HOOK(7729B0, WeaponTypeClass_LoadFromINI, 5)
-DEFINE_HOOK_AGAIN(7729C7, WeaponTypeClass_LoadFromINI, 5)
-DEFINE_HOOK_AGAIN(7729D6, WeaponTypeClass_LoadFromINI, 5)
+DEFINE_HOOK_AGAIN(0x7729C7, WeaponTypeClass_LoadFromINI, 0x5)
+DEFINE_HOOK_AGAIN(0x7729D6, WeaponTypeClass_LoadFromINI, 0x5)
+DEFINE_HOOK(0x7729B0, WeaponTypeClass_LoadFromINI, 0x5)
 {
 	GET(WeaponTypeClass*, pItem, ESI);
 	GET_STACK(CCINIClass*, pINI, 0xE4);

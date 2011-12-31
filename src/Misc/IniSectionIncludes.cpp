@@ -39,8 +39,8 @@ CCINIClass::INISection* IniSectionIncludes::PreProcess(CCINIClass* ini, char* st
 	return NULL;
 }
 
-DEFINE_HOOK(525DC1, IniSectionIncludes_PreProcess, 5)
-DEFINE_HOOK_AGAIN(525D4D, IniSectionIncludes_PreProcess, 6)
+DEFINE_HOOK_AGAIN(0x525D4D, IniSectionIncludes_PreProcess, 0x6)
+DEFINE_HOOK(0x525DC1, IniSectionIncludes_PreProcess, 0x5)
 {
 	GET_STACK(CCINIClass*, ini, 0x28);
 	LEA_STACK(char*, str, 0x78);
@@ -48,7 +48,7 @@ DEFINE_HOOK_AGAIN(525D4D, IniSectionIncludes_PreProcess, 6)
 	return 0;
 }
 
-DEFINE_HOOK(525E47, IniSectionIncludes_CopySection1, 6)
+DEFINE_HOOK(0x525E47, IniSectionIncludes_CopySection1, 0x6)
 {
 	if(IniSectionIncludes::includedSection)
 	{
@@ -60,7 +60,7 @@ DEFINE_HOOK(525E47, IniSectionIncludes_CopySection1, 6)
 	return 0;
 }
 
-DEFINE_HOOK(525C28, IniSectionIncludes_CopySection2, 0)
+DEFINE_HOOK(0x525C28, IniSectionIncludes_CopySection2, 0x0)
 {
 	LEA_STACK(char*, str, 0x79); //yes, 0x79
 	LEA_STACK(char*, sectionName, 0x278)

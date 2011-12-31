@@ -8,13 +8,13 @@
 #include "../Ext/TechnoType/Body.h"
 #include "../Ext/SWType/Body.h"
 
-DEFINE_HOOK(7C89D4, DirectDrawCreate, 6)
+DEFINE_HOOK(0x7C89D4, DirectDrawCreate, 0x6)
 {
 	R->Stack<DWORD>(0x4, Ares::GlobalControls::GFX_DX_Force);
 	return 0;
 }
 
-DEFINE_HOOK(7B9510, WWMouseClass_DrawCursor_V1, 6)
+DEFINE_HOOK(0x7B9510, WWMouseClass_DrawCursor_V1, 0x6)
 //A_FINE_HOOK_AGAIN(7B94B2, WWMouseClass_DrawCursor_V1, 6)
 {
 	void *Blitter = FileSystem::MOUSE_PAL->SelectProperBlitter(WWMouseClass::Instance->Image, WWMouseClass::Instance->ImageFrameIndex, 0);
@@ -24,7 +24,7 @@ DEFINE_HOOK(7B9510, WWMouseClass_DrawCursor_V1, 6)
 	return 0;
 }
 
-DEFINE_HOOK(537BC0, Game_MakeScreenshot, 0)
+DEFINE_HOOK(0x537BC0, Game_MakeScreenshot, 0x0)
 {
 	RECT Viewport;
 	if(Imports::GetWindowRect(Game::hWnd, &Viewport)) {
@@ -140,7 +140,7 @@ DEFINE_HOOK(537BC0, Game_MakeScreenshot, 0)
 	return 0x537DC9;
 }
 
-DEFINE_HOOK(4F4583, GScreenClass_DrawOnTop_TheDarkSideOfTheMoon, 6)
+DEFINE_HOOK(0x4F4583, GScreenClass_DrawOnTop_TheDarkSideOfTheMoon, 0x6)
 {
 	if(!Ares::bStable) {
 		Ares::bStableNotification = true;
@@ -156,12 +156,12 @@ DEFINE_HOOK(4F4583, GScreenClass_DrawOnTop_TheDarkSideOfTheMoon, 6)
 	return 0;
 }
 
-DEFINE_HOOK(78997B, sub_789960_RemoveWOLResolutionCheck, 0)
+DEFINE_HOOK(0x78997B, sub_789960_RemoveWOLResolutionCheck, 0x0)
 {
 	return 0x789A58;
 }
 
-DEFINE_HOOK(4BA61B, DSurface_CTOR_SkipVRAM, 6)
+DEFINE_HOOK(0x4BA61B, DSurface_CTOR_SkipVRAM, 0x6)
 {
 	return 0x4BA623;
 }

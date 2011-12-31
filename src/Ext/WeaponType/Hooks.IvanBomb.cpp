@@ -7,7 +7,7 @@
 
 // 438F8F, 6
 // custom ivan bomb attachment 1
-DEFINE_HOOK(438F8F, BombListClass_Add1, 6)
+DEFINE_HOOK(0x438F8F, BombListClass_Add1, 0x6)
 {
 	GET(BombClass *, Bomb, ESI);
 	GET_STACK(BulletClass*, Bullet, 0x0);
@@ -23,7 +23,7 @@ DEFINE_HOOK(438F8F, BombListClass_Add1, 6)
 
 // 438FD1, 5
 // custom ivan bomb attachment 2
-DEFINE_HOOK(438FD1, BombListClass_Add2, 5)
+DEFINE_HOOK(0x438FD1, BombListClass_Add2, 0x5)
 {
 	GET(BombClass *, Bomb, ESI);
 	GET_STACK(BulletClass*, Bullet, 0x0);
@@ -41,14 +41,14 @@ DEFINE_HOOK(438FD1, BombListClass_Add2, 5)
 
 // 438FD7, 7
 // custom ivan bomb attachment 3
-DEFINE_HOOK(438FD7, BombListClass_Add3, 7)
+DEFINE_HOOK(0x438FD7, BombListClass_Add3, 0x7)
 {
 	return 0x439022;
 }
 
 // 6F5230, 5
 // custom ivan bomb drawing 1
-DEFINE_HOOK(6F5230, TechnoClass_DrawExtras1, 5)
+DEFINE_HOOK(0x6F5230, TechnoClass_DrawExtras1, 0x5)
 {
 	GET(TechnoClass *, pThis, EBP);
 	BombClass * Bomb = pThis->AttachedBomb;
@@ -81,7 +81,7 @@ DEFINE_HOOK(6F5230, TechnoClass_DrawExtras1, 5)
 
 // 6F523C, 5
 // custom ivan bomb drawing 2
-DEFINE_HOOK(6F523C, TechnoClass_DrawExtras2, 5)
+DEFINE_HOOK(0x6F523C, TechnoClass_DrawExtras2, 0x5)
 {
 	GET(TechnoClass *, pThis, EBP);
 	BombClass * Bomb = pThis->AttachedBomb;
@@ -97,7 +97,7 @@ DEFINE_HOOK(6F523C, TechnoClass_DrawExtras2, 5)
 
 // 6FCBAD, 6
 // custom ivan bomb disarm 1
-DEFINE_HOOK(6FCBAD, TechnoClass_GetObjectActivityState_IvanBomb, 6)
+DEFINE_HOOK(0x6FCBAD, TechnoClass_GetObjectActivityState_IvanBomb, 0x6)
 {
 	GET(TechnoClass *, Target, EBP);
 	if(BombClass *Bomb = Target->AttachedBomb) {
@@ -110,7 +110,7 @@ DEFINE_HOOK(6FCBAD, TechnoClass_GetObjectActivityState_IvanBomb, 6)
 }
 
 // 51E488, 5
-DEFINE_HOOK(51E488, InfantryClass_GetCursorOverObject2, 5)
+DEFINE_HOOK(0x51E488, InfantryClass_GetCursorOverObject2, 0x5)
 {
 	GET(TechnoClass *, Target, ESI);
 	BombClass *Bomb = Target->AttachedBomb;
@@ -124,7 +124,7 @@ DEFINE_HOOK(51E488, InfantryClass_GetCursorOverObject2, 5)
 
 // 438799, 6
 // custom ivan bomb detonation 1
-DEFINE_HOOK(438799, BombClass_Detonate1, 6)
+DEFINE_HOOK(0x438799, BombClass_Detonate1, 0x6)
 {
 	GET(BombClass *, Bomb, ESI);
 
@@ -137,7 +137,7 @@ DEFINE_HOOK(438799, BombClass_Detonate1, 6)
 
 // 438843, 6
 // custom ivan bomb detonation 2
-DEFINE_HOOK(438843, BombClass_Detonate2, 6)
+DEFINE_HOOK(0x438843, BombClass_Detonate2, 0x6)
 {
 	GET(BombClass *, Bomb, ESI);
 
@@ -150,7 +150,7 @@ DEFINE_HOOK(438843, BombClass_Detonate2, 6)
 
 // 438879, 6
 // custom ivan bomb detonation 3
-DEFINE_HOOK(438879, BombClass_Detonate3, 6)
+DEFINE_HOOK(0x438879, BombClass_Detonate3, 0x6)
 {
 	GET(BombClass *, Bomb, ESI);
 
@@ -160,7 +160,7 @@ DEFINE_HOOK(438879, BombClass_Detonate3, 6)
 
 // 4393F2, 5
 // custom ivan bomb cleanup
-DEFINE_HOOK(4393F2, BombClass_SDDTOR, 5)
+DEFINE_HOOK(0x4393F2, BombClass_SDDTOR, 0x5)
 {
 	GET(BombClass *, Bomb, ECX);
 	hash_bombExt::iterator i = WeaponTypeExt::BombExt.find(Bomb);
@@ -172,7 +172,7 @@ DEFINE_HOOK(4393F2, BombClass_SDDTOR, 5)
 }
 
 // bugfix #385: Only InfantryTypes can use Ivan Bombs
-DEFINE_HOOK(438E86, IvanBombs_AttachableByAll, 5)
+DEFINE_HOOK(0x438E86, IvanBombs_AttachableByAll, 0x5)
 {
 	GET(TechnoClass *, Source, EBP);
 	switch(Source->WhatAmI()) {
@@ -190,13 +190,13 @@ DEFINE_HOOK(438E86, IvanBombs_AttachableByAll, 5)
  * Makes sense, except Aircraft that lose the target so crudely in the middle of the attack
  * (i.e. ivan bomb weapon) go wtfkerboom with an IE
  */
-DEFINE_HOOK(6FA4C6, TechnoClass_Update_ZeroOutTarget, 5)
+DEFINE_HOOK(0x6FA4C6, TechnoClass_Update_ZeroOutTarget, 0x5)
 {
 	GET(TechnoClass *, T, ESI);
 	return (T->WhatAmI() == abs_Aircraft) ? 0x6FA4D1 : 0;
 }
 
-DEFINE_HOOK(46934D, IvanBombs_Spread, 6)
+DEFINE_HOOK(0x46934D, IvanBombs_Spread, 0x6)
 {
 	GET(BulletClass *, pBullet, ESI);
 	double cSpread = pBullet->WH->CellSpread;

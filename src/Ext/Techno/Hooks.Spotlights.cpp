@@ -9,7 +9,7 @@ hash_SpotlightExt TechnoExt::SpotlightExt;
 BuildingLightClass * TechnoExt::ActiveBuildingLight = NULL;
 
 // just in case
-DEFINE_HOOK(420F40, Spotlights_UpdateFoo, 6)
+DEFINE_HOOK(0x420F40, Spotlights_UpdateFoo, 0x6)
 {
 	return Game::CurrentFrameRate >= Game::GetMinFrameRate()
 		? 0
@@ -17,14 +17,14 @@ DEFINE_HOOK(420F40, Spotlights_UpdateFoo, 6)
 }
 
 // bugfix #182: Spotlights cause an IE
-DEFINE_HOOK(5F5155, ObjectClass_Put, 6)
+DEFINE_HOOK(0x5F5155, ObjectClass_Put, 0x6)
 {
 	return R->EAX()
 		? 0
 		: 0x5F5210;
 }
 
-DEFINE_HOOK(6F6D0E, TechnoClass_Put_1, 7)
+DEFINE_HOOK(0x6F6D0E, TechnoClass_Put_1, 0x7)
 {
 	GET(TechnoClass *, T, ESI);
 	TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(T->GetTechnoType());
@@ -43,7 +43,7 @@ DEFINE_HOOK(6F6D0E, TechnoClass_Put_1, 7)
 	return 0;
 }
 
-DEFINE_HOOK(6F6F20, TechnoClass_Put_2, 6)
+DEFINE_HOOK(0x6F6F20, TechnoClass_Put_2, 0x6)
 {
 	GET(TechnoClass *, T, ESI);
 	TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(T->GetTechnoType());
@@ -62,12 +62,12 @@ DEFINE_HOOK(6F6F20, TechnoClass_Put_2, 6)
 	return 0;
 }
 
-DEFINE_HOOK(441163, BuildingClass_Put_DontSpawnSpotlight, 0)
+DEFINE_HOOK(0x441163, BuildingClass_Put_DontSpawnSpotlight, 0x0)
 {
 	return 0x441196;
 }
 
-DEFINE_HOOK(435820, BuildingLightClass_CTOR, 6)
+DEFINE_HOOK(0x435820, BuildingLightClass_CTOR, 0x6)
 {
 	GET_STACK(TechnoClass *, T, 0x4);
 	GET(BuildingLightClass *, BL, ECX);
@@ -80,7 +80,7 @@ DEFINE_HOOK(435820, BuildingLightClass_CTOR, 6)
 	return 0;
 }
 
-DEFINE_HOOK(4370C0, BuildingLightClass_SDDTOR, A)
+DEFINE_HOOK(0x4370C0, BuildingLightClass_SDDTOR, 0xA)
 {
 	GET(BuildingLightClass *, BL, ECX);
 
@@ -92,7 +92,7 @@ DEFINE_HOOK(4370C0, BuildingLightClass_SDDTOR, A)
 	return 0;
 }
 
-DEFINE_HOOK(6F4500, TechnoClass_DTOR_Spotlight, 5)
+DEFINE_HOOK(0x6F4500, TechnoClass_DTOR_Spotlight, 0x5)
 {
 	GET(TechnoClass*, pItem, ECX);
 	hash_SpotlightExt::iterator i = TechnoExt::SpotlightExt.find(pItem);
@@ -103,7 +103,7 @@ DEFINE_HOOK(6F4500, TechnoClass_DTOR_Spotlight, 5)
 	return 0;
 }
 
-DEFINE_HOOK(70FBE3, TechnoClass_Activate, 5)
+DEFINE_HOOK(0x70FBE3, TechnoClass_Activate, 0x5)
 {
 	GET(TechnoClass *, T, ECX);
 	TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(T->GetTechnoType());
@@ -139,7 +139,7 @@ DEFINE_HOOK(70FBE3, TechnoClass_Activate, 5)
 	return 0;
 }
 
-DEFINE_HOOK(70FC97, TechnoClass_Deactivate, 6)
+DEFINE_HOOK(0x70FC97, TechnoClass_Deactivate, 0x6)
 {
 	GET(TechnoClass *, T, ESI);
 	TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(T->GetTechnoType());
@@ -154,12 +154,12 @@ DEFINE_HOOK(70FC97, TechnoClass_Deactivate, 6)
 	return 0;
 }
 
-DEFINE_HOOK(435C08, BuildingLightClass_Draw_ForceType, 5)
+DEFINE_HOOK(0x435C08, BuildingLightClass_Draw_ForceType, 0x5)
 {
 	return 0x435C16;
 }
 
-DEFINE_HOOK(435C32, BuildingLightClass_Draw_PowerOnline, A)
+DEFINE_HOOK(0x435C32, BuildingLightClass_Draw_PowerOnline, 0xA)
 {
 	GET(TechnoClass *, T, EDI);
 	return (T->WhatAmI() != abs_Building || (T->IsPowerOnline() && !reinterpret_cast<BuildingClass *>(T)->IsFogged))
@@ -168,7 +168,7 @@ DEFINE_HOOK(435C32, BuildingLightClass_Draw_PowerOnline, A)
 	;
 }
 
-DEFINE_HOOK(436459, BuildingLightClass_Update, 6)
+DEFINE_HOOK(0x436459, BuildingLightClass_Update, 0x6)
 {
 	static const double Facing2Rad = (2 * 3.14) / 0xFFFF;
 	GET(BuildingLightClass *, BL, EDI);
@@ -208,14 +208,14 @@ DEFINE_HOOK(436459, BuildingLightClass_Update, 6)
 	;
 }
 
-DEFINE_HOOK(435BE0, BuildingLightClass_Draw_Start, 6)
+DEFINE_HOOK(0x435BE0, BuildingLightClass_Draw_Start, 0x6)
 {
 	GET(BuildingLightClass *, BL, ECX);
 	TechnoExt::ActiveBuildingLight = BL;
 	return 0;
 }
 
-DEFINE_HOOK(436072, BuildingLightClass_Draw_430, 6)
+DEFINE_HOOK(0x436072, BuildingLightClass_Draw_430, 0x6)
 {
 	TechnoClass *Owner = TechnoExt::ActiveBuildingLight->OwnerObject;
 	TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(Owner->GetTechnoType());
@@ -223,7 +223,7 @@ DEFINE_HOOK(436072, BuildingLightClass_Draw_430, 6)
 	return 0x436078;
 }
 
-DEFINE_HOOK(4360D8, BuildingLightClass_Draw_400, 6)
+DEFINE_HOOK(0x4360D8, BuildingLightClass_Draw_400, 0x6)
 {
 	TechnoClass *Owner = TechnoExt::ActiveBuildingLight->OwnerObject;
 	TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(Owner->GetTechnoType());
@@ -231,7 +231,7 @@ DEFINE_HOOK(4360D8, BuildingLightClass_Draw_400, 6)
 	return 0x4360DE;
 }
 
-DEFINE_HOOK(4360FF, BuildingLightClass_Draw_250, 6)
+DEFINE_HOOK(0x4360FF, BuildingLightClass_Draw_250, 0x6)
 {
 	TechnoClass *Owner = TechnoExt::ActiveBuildingLight->OwnerObject;
 	TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(Owner->GetTechnoType());
@@ -240,7 +240,7 @@ DEFINE_HOOK(4360FF, BuildingLightClass_Draw_250, 6)
 	return 0x436105;
 }
 
-DEFINE_HOOK(435CD3, SpotlightClass_CTOR, 6)
+DEFINE_HOOK(0x435CD3, SpotlightClass_CTOR, 0x6)
 {
 	GET_STACK(SpotlightClass *, Spot, 0x14);
 	GET(BuildingLightClass *, BL, ESI);

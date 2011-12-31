@@ -37,7 +37,7 @@ void CSFLoader::LoadAdditionalCSF(const char *pFileName)
 };
 
 //0x7346D0
-DEFINE_HOOK(7346D0, CSF_LoadBaseFile, 6)
+DEFINE_HOOK(0x7346D0, CSF_LoadBaseFile, 0x6)
 {
 	StringTable::set_Loaded(true);
 	CSFLoader::CSFCount = 0;
@@ -46,7 +46,7 @@ DEFINE_HOOK(7346D0, CSF_LoadBaseFile, 6)
 }
 
 //0x734823
-DEFINE_HOOK(734823, CSF_AllocateMemory, 6)
+DEFINE_HOOK(0x734823, CSF_AllocateMemory, 0x6)
 {
 	//aaaah... finally, some serious hax :)
 	//we don't allocate memory by the amount of labels in the base CSF,
@@ -77,7 +77,7 @@ DEFINE_HOOK(734823, CSF_AllocateMemory, 6)
 }
 
 //0x734A5F, 5
-DEFINE_HOOK(734A5F, CSF_AddOrOverrideLabel, 5)
+DEFINE_HOOK(0x734A5F, CSF_AddOrOverrideLabel, 0x5)
 {
 	if(CSFLoader::CSFCount > 0)
 	{
@@ -131,7 +131,7 @@ DEFINE_HOOK(734A5F, CSF_AddOrOverrideLabel, 5)
 }
 
 //0x734A97
-DEFINE_HOOK(734A97, CSF_SetIndex, 6)
+DEFINE_HOOK(0x734A97, CSF_SetIndex, 0x6)
 {
 	R->EDX(StringTable::get_Labels());
 
@@ -144,7 +144,7 @@ DEFINE_HOOK(734A97, CSF_SetIndex, 6)
 	return 0x734AA1;
 }
 
-DEFINE_HOOK(6BD886, CSF_LoadExtraFiles, 5)
+DEFINE_HOOK(0x6BD886, CSF_LoadExtraFiles, 0x5)
 {
 	CSFLoader::LoadAdditionalCSF("ares.csf");
 	char fname[32];
@@ -156,7 +156,7 @@ DEFINE_HOOK(6BD886, CSF_LoadExtraFiles, 5)
 	return 0x6BD88B;
 }
 
-DEFINE_HOOK(734E83, CSF_LoadString_1, 6)
+DEFINE_HOOK(0x734E83, CSF_LoadString_1, 0x6)
 {
 	GET(char *, Name, EBX);
 	if(strlen(Name) >= 6 && !strncmp(Name, "NOSTR:", 6)) {
@@ -174,7 +174,7 @@ DEFINE_HOOK(734E83, CSF_LoadString_1, 6)
 	return 0;
 }
 
-DEFINE_HOOK(734EC2, CSF_LoadString_2, 7)
+DEFINE_HOOK(0x734EC2, CSF_LoadString_2, 0x7)
 {
 	GET(char *, Name, EBX);
 	CSFString *NewString;

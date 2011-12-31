@@ -4,7 +4,7 @@
 #include <BulletClass.h>
 #include <LaserDrawClass.h>
 
-DEFINE_HOOK(44B2FE, BuildingClass_Mi_Attack_IsPrism, 6)
+DEFINE_HOOK(0x44B2FE, BuildingClass_Mi_Attack_IsPrism, 0x6)
 {
 	GET(BuildingClass *, B, ESI);
 	GET(int, idxWeapon, EBP); //which weapon was chosen to attack the target with
@@ -70,7 +70,7 @@ DEFINE_HOOK(44B2FE, BuildingClass_Mi_Attack_IsPrism, 6)
 	return IsNotPrism;
 }
 
-DEFINE_HOOK(447FAE, BuildingClass_GetObjectActivityState, 6)
+DEFINE_HOOK(0x447FAE, BuildingClass_GetObjectActivityState, 0x6)
 {
 	GET(BuildingClass *, B, ESI);
 	enum { BusyCharging = 0x447FB8, NotBusyCharging = 0x447FC3};
@@ -92,7 +92,7 @@ DEFINE_HOOK(447FAE, BuildingClass_GetObjectActivityState, 6)
 }
 
 //NB: PrismTargetCoords is not just a coord struct, it's a union whose first dword is the used weapon index and two others are undefined...
-DEFINE_HOOK(4503F0, BuildingClass_Update_Prism, 9)
+DEFINE_HOOK(0x4503F0, BuildingClass_Update_Prism, 0x9)
 {
 	GET(BuildingClass *, pThis, ECX);
 	if(int PrismStage = pThis->PrismStage) {
@@ -151,7 +151,7 @@ DEFINE_HOOK(4503F0, BuildingClass_Update_Prism, 9)
 	return 0x4504E2;
 }
 
-DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
+DEFINE_HOOK(0x44ABD0, BuildingClass_FireLaser, 0x5)
 {
 	GET(BuildingClass *, B, ECX);
 	LEA_STACK(CoordStruct *, pTargetXYZ, 0x4);
@@ -264,21 +264,21 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 
 //these are all for cleaning up when a prism tower becomes unavailable
 
-DEFINE_HOOK(4424EF, PrismForward_BuildingDestroyed, 6)
+DEFINE_HOOK(0x4424EF, PrismForward_BuildingDestroyed, 0x6)
 {
 	GET(BuildingClass *, B, ESI);
 	BuildingTypeExt::cPrismForwarding::RemoveFromNetwork(B, true);
 	return 0;
 }
 
-DEFINE_HOOK(447113, PrismForward_BuildingSold, 6)
+DEFINE_HOOK(0x447113, PrismForward_BuildingSold, 0x6)
 {
 	GET(BuildingClass *, B, ESI);
 	BuildingTypeExt::cPrismForwarding::RemoveFromNetwork(B, true);
 	return 0;
 }
 
-DEFINE_HOOK(448277, PrismForward_BuildingChangeOwner, 5)
+DEFINE_HOOK(0x448277, PrismForward_BuildingChangeOwner, 0x5)
 {
 	GET(BuildingClass *, B, ESI);
 	GET_STACK(HouseClass *, newOwner, 0x5C);
@@ -322,7 +322,7 @@ DEFINE_HOOK(448277, PrismForward_BuildingChangeOwner, 5)
 	return 0;
 }
 
-DEFINE_HOOK(71AF76, PrismForward_BuildingWarped, 9) {
+DEFINE_HOOK(0x71AF76, PrismForward_BuildingWarped, 0x9) {
 	GET(TechnoClass *, T, EDI);
 	if (BuildingClass * B = specific_cast<BuildingClass *>(T)) {
 		BuildingTypeExt::cPrismForwarding::RemoveFromNetwork(B, true);
@@ -331,7 +331,7 @@ DEFINE_HOOK(71AF76, PrismForward_BuildingWarped, 9) {
 }
 
 
-DEFINE_HOOK(70FD9A, PrismForward_BuildingDrain, 6)
+DEFINE_HOOK(0x70FD9A, PrismForward_BuildingDrain, 0x6)
 {
 	GET(TechnoClass *, Drainer, ESI);
 	GET(TechnoClass *, Drainee, EDI);
@@ -343,7 +343,7 @@ DEFINE_HOOK(70FD9A, PrismForward_BuildingDrain, 6)
 	return 0;
 }
 
-DEFINE_HOOK(454B3D, PrismForward_BuildingPowerDown, 6)
+DEFINE_HOOK(0x454B3D, PrismForward_BuildingPowerDown, 0x6)
 {
 	GET(BuildingClass *, B, ESI);
 	// this building just realised it needs to go offline
@@ -352,7 +352,7 @@ DEFINE_HOOK(454B3D, PrismForward_BuildingPowerDown, 6)
 	return 0;
 }
 
-DEFINE_HOOK(44EBF0, PrismForward_BuildingRemoved, 5)
+DEFINE_HOOK(0x44EBF0, PrismForward_BuildingRemoved, 0x5)
 {
 	GET(BuildingClass *, B, ECX);
 	BuildingTypeExt::cPrismForwarding::RemoveFromNetwork(B, true);

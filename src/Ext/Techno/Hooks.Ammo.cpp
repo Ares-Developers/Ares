@@ -4,7 +4,7 @@
 
 // bugfix #471: InfantryTypes and BuildingTypes don't reload their ammo properly
 
-DEFINE_HOOK(43FE8E, BuildingClass_Update_Reload, 6)
+DEFINE_HOOK(0x43FE8E, BuildingClass_Update_Reload, 0x6)
 {
 	GET(BuildingClass *, B, ESI);
 	BuildingTypeClass *BType = B->Type;
@@ -14,7 +14,7 @@ DEFINE_HOOK(43FE8E, BuildingClass_Update_Reload, 6)
 	return 0x43FEBE;
 }
 
-DEFINE_HOOK(6FCFA4, TechnoClass_GetROF_BuildingHack, 5)
+DEFINE_HOOK(0x6FCFA4, TechnoClass_GetROF_BuildingHack, 0x5)
 {
 	GET(TechnoClass *, T, ESI);
 	// actual game code: if(auto B = specific_cast<BuildingClass *>(T)) { if(T->currentAmmo > 1) { return 1; } }
@@ -23,12 +23,12 @@ DEFINE_HOOK(6FCFA4, TechnoClass_GetROF_BuildingHack, 5)
 	return 0x6FCFC1;
 }
 
-DEFINE_HOOK(5200D7, InfantryClass_UpdatePanic_DontReload, 6)
+DEFINE_HOOK(0x5200D7, InfantryClass_UpdatePanic_DontReload, 0x6)
 {
 	return 0x52010B;
 }
 
-DEFINE_HOOK(51BCB2, InfantryClass_Update_Reload, 6)
+DEFINE_HOOK(0x51BCB2, InfantryClass_Update_Reload, 0x6)
 {
 	GET(InfantryClass *, I, ESI);
 	if(I->InLimbo) {
@@ -38,7 +38,7 @@ DEFINE_HOOK(51BCB2, InfantryClass_Update_Reload, 6)
 	return 0x51BCC0;
 }
 
-DEFINE_HOOK(51DF8C, InfantryClass_Fire_RearmTimer, 6)
+DEFINE_HOOK(0x51DF8C, InfantryClass_Fire_RearmTimer, 0x6)
 {
 	GET(InfantryClass *, I, ESI);
 	int Ammo = I->Type->Ammo;
@@ -48,7 +48,7 @@ DEFINE_HOOK(51DF8C, InfantryClass_Fire_RearmTimer, 6)
 	return 0;
 }
 
-DEFINE_HOOK(6FF66C, TechnoClass_Fire_RearmTimer, 6)
+DEFINE_HOOK(0x6FF66C, TechnoClass_Fire_RearmTimer, 0x6)
 {
 	GET(TechnoClass *, T, ESI);
 	if(BuildingClass * B = specific_cast<BuildingClass *>(T)) {

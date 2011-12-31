@@ -45,7 +45,7 @@ wchar_t Dialogs::ExceptDetailedMessage[0x400] = L"\0";
 const int Dialogs::ExceptControlID = ARES_TXT_IE_DETAILS;
 
 //4A3B4B, 9 - NOTE: This overrides a call, but it's absolute, so don't worry.
-DEFINE_HOOK(4A3B4B, FetchResource, 9)
+DEFINE_HOOK(0x4A3B4B, FetchResource, 0x9)
 {
 	HMODULE hModule = (HMODULE)Ares::hInstance; //hModule and hInstance are technically the same...
 	GET(LPCTSTR, lpName, ECX);
@@ -62,7 +62,7 @@ DEFINE_HOOK(4A3B4B, FetchResource, 9)
 	return 0; //Nothing was found, try the game's own resources.
 }
 
-DEFINE_HOOK(60411B, Game_DialogFunc_Subtext_Load, 5)
+DEFINE_HOOK(0x60411B, Game_DialogFunc_Subtext_Load, 0x5)
 {
 	GET(int, DlgItemID, EAX);
 
@@ -87,7 +87,7 @@ DEFINE_HOOK(60411B, Game_DialogFunc_Subtext_Load, 5)
 }
 
 
-DEFINE_HOOK(604136, Game_DialogFunc_Subtext_Propagate, 5)
+DEFINE_HOOK(0x604136, Game_DialogFunc_Subtext_Propagate, 0x5)
 {
 	if(Dialogs::StatusString) {
 		R->EAX(Dialogs::StatusString);

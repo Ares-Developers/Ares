@@ -15,7 +15,7 @@ void Actions::Set(MouseCursor *pCursor, bool bAllowShroud)
 }
 
 //4AB44A
-DEFINE_HOOK(4AB44A, Actions_CustomCursor_NonShrouded, 9)
+DEFINE_HOOK(0x4AB44A, Actions_CustomCursor_NonShrouded, 0x9)
 {
 	MouseCursor* pCursor = Actions::MPCustom;
 	if(pCursor) {
@@ -36,7 +36,7 @@ DEFINE_HOOK(4AB44A, Actions_CustomCursor_NonShrouded, 9)
 }
 
 //4AB366
-DEFINE_HOOK(4AB366, Actions_CustomCursor_Shrouded, 9)
+DEFINE_HOOK(0x4AB366, Actions_CustomCursor_Shrouded, 0x9)
 {
 	MouseCursor* pCursor = Actions::MPCustom;
 	if(pCursor) {
@@ -61,7 +61,7 @@ DEFINE_HOOK(4AB366, Actions_CustomCursor_Shrouded, 9)
 }
 
 //5BDC8C, 7
-DEFINE_HOOK(5BDC8C, Actions_PrepareCursor, 7)
+DEFINE_HOOK(0x5BDC8C, Actions_PrepareCursor, 0x7)
 {
 	MouseCursor* pCursor;
 
@@ -82,7 +82,7 @@ DEFINE_HOOK(5BDC8C, Actions_PrepareCursor, 7)
 }
 
 //5BDD9F, 6
-DEFINE_HOOK(5BDD9F, Actions_SetCursor, 6)
+DEFINE_HOOK(0x5BDD9F, Actions_SetCursor, 0x6)
 {
 	Actions::MPCurrent = Actions::TempCursor; //got set in Actions_UseCustomCursor
 	Actions::MP = *Actions::MPCurrent;
@@ -90,7 +90,7 @@ DEFINE_HOOK(5BDD9F, Actions_SetCursor, 6)
 }
 
 //5BDADF, B
-DEFINE_HOOK(5BDADF, Actions_UseCursor, 0)
+DEFINE_HOOK(0x5BDADF, Actions_UseCursor, 0x0)
 {
 	R->EBP(&Actions::MP);
 
@@ -101,7 +101,7 @@ DEFINE_HOOK(5BDADF, Actions_UseCursor, 0)
 }
 
 //5BDDC8, 6
-DEFINE_HOOK(5BDDC8, Actions_AnimateCursor, 6)
+DEFINE_HOOK(0x5BDDC8, Actions_AnimateCursor, 0x6)
 {
 	R->EBX(&Actions::MP);
 
@@ -112,7 +112,7 @@ DEFINE_HOOK(5BDDC8, Actions_AnimateCursor, 6)
 }
 
 //5BDE64, 6
-DEFINE_HOOK(5BDE64, Actions_AnimateCursor2, 6)
+DEFINE_HOOK(0x5BDE64, Actions_AnimateCursor2, 0x6)
 {
 	R->ECX(&Actions::MP);
 
@@ -125,7 +125,7 @@ DEFINE_HOOK(5BDE64, Actions_AnimateCursor2, 6)
 }
 
 //4D7524
-DEFINE_HOOK(4D7524, Actions_AllowForFootClass, 9)
+DEFINE_HOOK(0x4D7524, Actions_AllowForFootClass, 0x9)
 {
 	//overwrote the ja, need to replicate it
 	unsigned int CursorIndex = R->EAX();
@@ -141,7 +141,7 @@ DEFINE_HOOK(4D7524, Actions_AllowForFootClass, 9)
 }
 
 //653CA6
-DEFINE_HOOK(653CA6, Actions_AllowMinimap, 5)
+DEFINE_HOOK(0x653CA6, Actions_AllowMinimap, 0x5)
 {
 	MouseCursor* pCursor = Actions::MPCustom;
 	if(pCursor) {
@@ -162,7 +162,7 @@ DEFINE_HOOK(653CA6, Actions_AllowMinimap, 5)
 }
 
 //5BDDC0, 5
-DEFINE_HOOK(5BDDC0, Actions_Reset, 5)
+DEFINE_HOOK(0x5BDDC0, Actions_Reset, 0x5)
 {
 	Actions::MPCustom = NULL;
 	return 0;
@@ -259,7 +259,7 @@ DEFINE_HOOK(5BDDC0, Actions_Reset, 5)
 //*/
 //}
 
-DEFINE_HOOK(6929FC, DisplayClass_ChooseAction_CanSell, 7)
+DEFINE_HOOK(0x6929FC, DisplayClass_ChooseAction_CanSell, 0x7)
 {
 	GET(TechnoClass *, Target, ESI);
 	switch(Target->WhatAmI()) {
@@ -275,7 +275,7 @@ DEFINE_HOOK(6929FC, DisplayClass_ChooseAction_CanSell, 7)
 	}
 }
 
-DEFINE_HOOK(4ABFBE, DisplayClass_LeftMouseButtonUp_ExecPowerToggle, 7)
+DEFINE_HOOK(0x4ABFBE, DisplayClass_LeftMouseButtonUp_ExecPowerToggle, 0x7)
 {
 	GET(TechnoClass *, Target, ESI);
 	return (Target && Target->Owner->IsHumanoid() && Target->WhatAmI() == abs_Building)

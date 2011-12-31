@@ -4,7 +4,7 @@
 
 #include <StringTable.h>
 
-DEFINE_HOOK(6CEF84, SuperWeaponTypeClass_GetCursorOverObject, 7)
+DEFINE_HOOK(0x6CEF84, SuperWeaponTypeClass_GetCursorOverObject, 0x7)
 {
 	GET(SuperWeaponTypeClass*, pThis, ECX);
 
@@ -49,7 +49,7 @@ DEFINE_HOOK(6CEF84, SuperWeaponTypeClass_GetCursorOverObject, 7)
 }
 
 
-DEFINE_HOOK(653B3A, RadarClass_GetMouseAction_CustomSWAction, 5)
+DEFINE_HOOK(0x653B3A, RadarClass_GetMouseAction_CustomSWAction, 0x5)
 {
 	int idxSWType = Unsorted::CurrentSWType;
 	if(idxSWType > -1) {
@@ -102,7 +102,7 @@ DEFINE_HOOK(653B3A, RadarClass_GetMouseAction_CustomSWAction, 5)
 	return 0;
 }
 
-DEFINE_HOOK(6AAEDF, SidebarClass_ProcessCameoClick_SuperWeapons, 6) {
+DEFINE_HOOK(0x6AAEDF, SidebarClass_ProcessCameoClick_SuperWeapons, 0x6) {
 	GET(int, idxSW, ESI);
 	SuperClass* pSuper = HouseClass::Player->Supers.GetItem(idxSW);
 
@@ -141,7 +141,7 @@ DEFINE_HOOK(6AAEDF, SidebarClass_ProcessCameoClick_SuperWeapons, 6) {
 	return 0;
 }
 
-DEFINE_HOOK(6A932B, CameoClass_GetTip_MoneySW, 6) {
+DEFINE_HOOK(0x6A932B, CameoClass_GetTip_MoneySW, 0x6) {
 	GET(SuperWeaponTypeClass*, pSW, EAX);
 
 	if(SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSW)) {
@@ -176,7 +176,7 @@ DEFINE_HOOK(6A932B, CameoClass_GetTip_MoneySW, 6) {
 }
 
 // 6CEE96, 5
-DEFINE_HOOK(6CEE96, SuperWeaponTypeClass_GetTypeIndex, 5)
+DEFINE_HOOK(0x6CEE96, SuperWeaponTypeClass_GetTypeIndex, 0x5)
 {
 	GET(const char *, TypeStr, EDI);
 	int customType = NewSWType::FindIndex(TypeStr);
@@ -189,7 +189,7 @@ DEFINE_HOOK(6CEE96, SuperWeaponTypeClass_GetTypeIndex, 5)
 
 // 4AC20C, 7
 // translates SW click to type
-DEFINE_HOOK(4AC20C, DisplayClass_LMBUp, 7)
+DEFINE_HOOK(0x4AC20C, DisplayClass_LMBUp, 0x7)
 {
 	int Action = R->Stack32(0x9C);
 	if(Action < SW_NO_CURSOR) {
@@ -221,7 +221,7 @@ DEFINE_HOOK(4AC20C, DisplayClass_LMBUp, 7)
 
 // decoupling sw anims from types
 // 446418, 6
-DEFINE_HOOK(446418, BuildingClass_Place1, 6)
+DEFINE_HOOK(0x446418, BuildingClass_Place1, 0x6)
 {
 	GET(BuildingClass *, pBuild, EBP);
 	GET(HouseClass *, pHouse, EAX);
@@ -238,13 +238,13 @@ DEFINE_HOOK(446418, BuildingClass_Place1, 6)
 }
 
 // 44656D, 6
-DEFINE_HOOK(44656D, BuildingClass_Place2, 6)
+DEFINE_HOOK(0x44656D, BuildingClass_Place2, 0x6)
 {
 	return 0x446580;
 }
 
 // 45100A, 6
-DEFINE_HOOK(45100A, BuildingClass_ProcessAnims1, 6)
+DEFINE_HOOK(0x45100A, BuildingClass_ProcessAnims1, 0x6)
 {
 	GET(BuildingClass *, pBuild, ESI);
 	GET(HouseClass *, pHouse, EAX);
@@ -262,14 +262,14 @@ DEFINE_HOOK(45100A, BuildingClass_ProcessAnims1, 6)
 }
 
 // 451132, 6
-DEFINE_HOOK(451132, BuildingClass_ProcessAnims2, 6)
+DEFINE_HOOK(0x451132, BuildingClass_ProcessAnims2, 0x6)
 {
 	return 0x451145;
 }
 
 // EVA_Detected
 // 446937, 6
-DEFINE_HOOK(446937, BuildingClass_AnnounceSW, 6)
+DEFINE_HOOK(0x446937, BuildingClass_AnnounceSW, 0x6)
 {
 	GET(BuildingClass *, pBuild, EBP);
 	int swTIdx = pBuild->Type->SuperWeapon;
@@ -296,7 +296,7 @@ DEFINE_HOOK(446937, BuildingClass_AnnounceSW, 6)
 
 // EVA_Ready
 // 6CBDD7, 6
-DEFINE_HOOK(6CBDD7, SuperClass_AnnounceReady, 6)
+DEFINE_HOOK(0x6CBDD7, SuperClass_AnnounceReady, 0x6)
 {
 	GET(SuperWeaponTypeClass *, pThis, EAX);
 	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pThis);
@@ -313,7 +313,7 @@ DEFINE_HOOK(6CBDD7, SuperClass_AnnounceReady, 6)
 }
 
 // 6CC0EA, 9
-DEFINE_HOOK(6CC0EA, SuperClass_AnnounceQuantity, 9)
+DEFINE_HOOK(0x6CC0EA, SuperClass_AnnounceQuantity, 0x9)
 {
 	GET(SuperClass *, pThis, ESI);
 	SuperWeaponTypeClass *pSW = pThis->Type;
@@ -331,7 +331,7 @@ DEFINE_HOOK(6CC0EA, SuperClass_AnnounceQuantity, 9)
 }
 
 // hide the cameo? (only if this is an auto-firing SW)
-DEFINE_HOOK(50B319, HouseClass_UpdateSWs_ShowCameo, 6)
+DEFINE_HOOK(0x50B319, HouseClass_UpdateSWs_ShowCameo, 0x6)
 {
 	GET(HouseClass *, H, EBP);
 	GET(int, Index, EDI);
@@ -348,7 +348,7 @@ DEFINE_HOOK(50B319, HouseClass_UpdateSWs_ShowCameo, 6)
 }
 
 // AI SW targeting submarines
-DEFINE_HOOK(50CFAA, HouseClass_PickOffensiveSWTarget, 0)
+DEFINE_HOOK(0x50CFAA, HouseClass_PickOffensiveSWTarget, 0x0)
 {
 	R->ESI(0);
 	R->Stack8(0x13, 1);
@@ -356,7 +356,7 @@ DEFINE_HOOK(50CFAA, HouseClass_PickOffensiveSWTarget, 0)
 }
 
 // psydom and lightning storm premature exit route
-DEFINE_HOOK(6CBA9E, SuperClass_ClickFire_Abort, 7)
+DEFINE_HOOK(0x6CBA9E, SuperClass_ClickFire_Abort, 0x7)
 {
 	GET(SuperClass *, pSuper, ESI);
 	SuperWeaponTypeClass* pType = pSuper->Type;
@@ -386,7 +386,7 @@ DEFINE_HOOK(6CBA9E, SuperClass_ClickFire_Abort, 7)
 }
 
 // ARGH!
-DEFINE_HOOK(6CC390, SuperClass_Launch, 6)
+DEFINE_HOOK(0x6CC390, SuperClass_Launch, 0x6)
 {
 	GET(SuperClass *, pSuper, ECX);
 	GET_STACK(CellStruct*, pCoords, 0x4);
@@ -404,7 +404,7 @@ DEFINE_HOOK(6CC390, SuperClass_Launch, 6)
 	return handled ? 0x6CDE40 : 0;
 }
 
-DEFINE_HOOK(44691B, BuildingClass_4DC_SWAvailable, 6)
+DEFINE_HOOK(0x44691B, BuildingClass_4DC_SWAvailable, 0x6)
 {
 	GET(BuildingClass *, Structure, EBP);
 	GET(BuildingTypeClass *, AuxBuilding, EAX);
@@ -414,7 +414,7 @@ DEFINE_HOOK(44691B, BuildingClass_4DC_SWAvailable, 6)
 	;
 }
 
-DEFINE_HOOK(45765A, BuildingClass_SWAvailable, 6)
+DEFINE_HOOK(0x45765A, BuildingClass_SWAvailable, 0x6)
 {
 	GET(BuildingClass *, Structure, ESI);
 	GET(BuildingTypeClass *, AuxBuilding, EAX);
@@ -424,7 +424,7 @@ DEFINE_HOOK(45765A, BuildingClass_SWAvailable, 6)
 	;
 }
 
-DEFINE_HOOK(4576BA, BuildingClass_SW2Available, 6)
+DEFINE_HOOK(0x4576BA, BuildingClass_SW2Available, 0x6)
 {
 	GET(BuildingClass *, Structure, ESI);
 	GET(BuildingTypeClass *, AuxBuilding, EAX);
@@ -434,7 +434,7 @@ DEFINE_HOOK(4576BA, BuildingClass_SW2Available, 6)
 	;
 }
 
-DEFINE_HOOK(4FAE72, HouseClass_SWFire_PreDependent, 6)
+DEFINE_HOOK(0x4FAE72, HouseClass_SWFire_PreDependent, 0x6)
 {
 	GET(HouseClass*, pThis, EBX);
 
@@ -452,7 +452,7 @@ DEFINE_HOOK(4FAE72, HouseClass_SWFire_PreDependent, 6)
 	return 0x4FAE7B;
 }
 
-DEFINE_HOOK(6CC2B0, SuperClass_NameReadiness, 5) {
+DEFINE_HOOK(0x6CC2B0, SuperClass_NameReadiness, 0x5) {
 	GET(SuperClass*, pThis, ECX);
 	SuperWeaponTypeClass *pSW = pThis->Type;
 	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSW);
@@ -499,7 +499,7 @@ DEFINE_HOOK(6CC2B0, SuperClass_NameReadiness, 5) {
 	return 0x6CC352;
 }
 
-DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
+DEFINE_HOOK(0x5098F0, HouseClass_Update_AI_TryFireSW, 0x5) {
 	GET(HouseClass*, pThis, ECX);
 
 	// this method iterates over every available SW and checks
@@ -675,7 +675,7 @@ DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
 	return 0x509AE7;
 }
 
-DEFINE_HOOK(4F9004, HouseClass_Update_TrySWFire, 7) {
+DEFINE_HOOK(0x4F9004, HouseClass_Update_TrySWFire, 0x7) {
 	GET(HouseClass*, pThis, ESI);
 	bool isHuman = R->AL() != 0;
 
@@ -692,7 +692,7 @@ DEFINE_HOOK(4F9004, HouseClass_Update_TrySWFire, 7) {
 	return 0x4F9038;
 }
 
-DEFINE_HOOK(6CBF5B, SuperClass_GetCameoChargeState_ChargeDrainRatio, 9) {
+DEFINE_HOOK(0x6CBF5B, SuperClass_GetCameoChargeState_ChargeDrainRatio, 0x9) {
 	GET_STACK(int, rechargeTime1, 0x10);
 	GET_STACK(int, rechargeTime2, 0x14);
 	GET_STACK(int, timeLeft, 0xC);
@@ -716,7 +716,7 @@ DEFINE_HOOK(6CBF5B, SuperClass_GetCameoChargeState_ChargeDrainRatio, 9) {
 	return 0;
 }
 
-DEFINE_HOOK(6CC053, SuperClass_GetCameoChargeState_FixFullyCharged, 5) {
+DEFINE_HOOK(0x6CC053, SuperClass_GetCameoChargeState_FixFullyCharged, 0x5) {
 	GET(int, charge, EAX);
 
 	// some smartass capped this at 53, causing the last
@@ -725,7 +725,7 @@ DEFINE_HOOK(6CC053, SuperClass_GetCameoChargeState_FixFullyCharged, 5) {
 	return 0x6CC066;
 }
 
-DEFINE_HOOK(6CB995, SuperClass_ClickFire_ChargeDrainRatioA, 8) {
+DEFINE_HOOK(0x6CB995, SuperClass_ClickFire_ChargeDrainRatioA, 0x8) {
 	GET_STACK(int, rechargeTime, 0x24);
 	GET_STACK(int, timeLeft, 0x20);
 
@@ -745,7 +745,7 @@ DEFINE_HOOK(6CB995, SuperClass_ClickFire_ChargeDrainRatioA, 8) {
 	return 0;
 }
 
-DEFINE_HOOK(6CBA19, SuperClass_ClickFire_ChargeDrainRatioB, A) {
+DEFINE_HOOK(0x6CBA19, SuperClass_ClickFire_ChargeDrainRatioB, 0xA) {
 	GET(int, length, EDI);
 	GET(SuperClass*, pSuper, ESI);
 
@@ -761,7 +761,7 @@ DEFINE_HOOK(6CBA19, SuperClass_ClickFire_ChargeDrainRatioB, A) {
 	return 0;
 }
 
-DEFINE_HOOK(6CBD6B, SuperClass_Update_DrainMoney, 8) {
+DEFINE_HOOK(0x6CBD6B, SuperClass_Update_DrainMoney, 0x8) {
 	// draining weapon active. take or give money. stop, 
 	// if player has insufficient funds.
 	GET(SuperClass*, pSuper, ESI);
@@ -799,7 +799,7 @@ DEFINE_HOOK(6CBD6B, SuperClass_Update_DrainMoney, 8) {
 }
 
 // used only to find the nuke for ICBM crates. only supports nukes fully.
-DEFINE_HOOK(6CEEB0, SuperWeaponTypeClass_FindFirstOfAction, 8) {
+DEFINE_HOOK(0x6CEEB0, SuperWeaponTypeClass_FindFirstOfAction, 0x8) {
 	GET(int, action, ECX);
 
 	R->EAX(0);

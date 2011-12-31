@@ -3,7 +3,7 @@
 #include <LaserDrawClass.h>
 #include "../BuildingType/Body.h"
 
-DEFINE_HOOK(6FD438, TechnoClass_FireLaser, 6)
+DEFINE_HOOK(0x6FD438, TechnoClass_FireLaser, 0x6)
 {
 	GET(WeaponTypeClass *, pWeapon, ECX);
 	GET(LaserDrawClass *, pBeam, EAX);
@@ -18,7 +18,7 @@ DEFINE_HOOK(6FD438, TechnoClass_FireLaser, 6)
 
 }
 
-DEFINE_HOOK(6FF4DE, TechnoClass_Fire_IsLaser, 6) {
+DEFINE_HOOK(0x6FF4DE, TechnoClass_Fire_IsLaser, 0x6) {
 	GET(TechnoClass*, pThis, ECX);
 	GET(TechnoClass*, pTarget, EDI);
 	GET(WeaponTypeClass*, pFiringWeaponType, EBX);

@@ -4,7 +4,7 @@
 #include <Audio.h>
 #include <ScenarioClass.h>
 
-DEFINE_HOOK(5536DA, HTExt_GetLSName, 0)
+DEFINE_HOOK(0x5536DA, HTExt_GetLSName, 0x0)
 {
 	int n = R->EBX();
 	HouseTypeClass* pThis = HouseTypeClass::Array->Items[n];
@@ -23,7 +23,7 @@ DEFINE_HOOK(5536DA, HTExt_GetLSName, 0)
 	return 0x553820;
 }
 
-DEFINE_HOOK(553A05, HTExt_GetLSSpecialName, 6)
+DEFINE_HOOK(0x553A05, HTExt_GetLSSpecialName, 0x6)
 {
 	int n = R->Stack32(0x38);
 	HouseTypeClass* pThis = HouseTypeClass::Array->Items[n];
@@ -36,7 +36,7 @@ DEFINE_HOOK(553A05, HTExt_GetLSSpecialName, 6)
 	return 0;
 }
 
-DEFINE_HOOK(553D06, HTExt_GetLSBrief, 6)
+DEFINE_HOOK(0x553D06, HTExt_GetLSBrief, 0x6)
 {
 	int n = R->Stack32(0x38);
 	HouseTypeClass* pThis = HouseTypeClass::Array->Items[n];
@@ -49,7 +49,7 @@ DEFINE_HOOK(553D06, HTExt_GetLSBrief, 6)
 	return 0;
 }
 
-DEFINE_HOOK(4E3579, HTExt_DrawFlag, 0)
+DEFINE_HOOK(0x4E3579, HTExt_DrawFlag, 0x0)
 {
 	int n = R->ECX();
 	HouseTypeClass* pThis = HouseTypeClass::Array->Items[n];
@@ -69,7 +69,7 @@ DEFINE_HOOK(4E3579, HTExt_DrawFlag, 0)
 	return 0x4E3686;
 }
 
-DEFINE_HOOK(72B690, HTExt_LSPAL, 0)
+DEFINE_HOOK(0x72B690, HTExt_LSPAL, 0x0)
 {
 	int n = R->EDI();
 	HouseTypeClass* pThis = HouseTypeClass::Array->Items[n];
@@ -93,7 +93,7 @@ DEFINE_HOOK(72B690, HTExt_LSPAL, 0)
 	return 0x72B804;
 }
 
-DEFINE_HOOK(4E38D8, HTExt_GetSTT, 0)
+DEFINE_HOOK(0x4E38D8, HTExt_GetSTT, 0x0)
 {
 	int n = R->ECX();
 	HouseTypeClass* pThis = HouseTypeClass::Array->Items[n];
@@ -112,7 +112,7 @@ DEFINE_HOOK(4E38D8, HTExt_GetSTT, 0)
 	return 0x4E39F1;
 }
 
-DEFINE_HOOK(553412, HTExt_LSFile, 0)
+DEFINE_HOOK(0x553412, HTExt_LSFile, 0x0)
 {
 	int n = R->EBX();
 	HouseTypeClass* pThis = HouseTypeClass::Array->Items[n];
@@ -131,7 +131,7 @@ DEFINE_HOOK(553412, HTExt_LSFile, 0)
 	return 0x55342C;
 }
 
-DEFINE_HOOK(752BA1, HTExt_GetTaunt, 6)
+DEFINE_HOOK(0x752BA1, HTExt_GetTaunt, 0x6)
 {
 	GET(TauntDataStruct, TauntData, ECX);
 //	LEA_STACK(char*, pFileName, 0);
@@ -147,36 +147,36 @@ DEFINE_HOOK(752BA1, HTExt_GetTaunt, 6)
 	return 0;
 }
 
-DEFINE_HOOK(4E3792, HTExt_Unlimit1, 0)
+DEFINE_HOOK(0x4E3792, HTExt_Unlimit1, 0x0)
 { return 0x4E37AD; }
 
-DEFINE_HOOK(4E3A9C, HTExt_Unlimit2, 0)
+DEFINE_HOOK(0x4E3A9C, HTExt_Unlimit2, 0x0)
 { return 0x4E3AA1; }
 
-DEFINE_HOOK(4E3F31, HTExt_Unlimit3, 0)
+DEFINE_HOOK(0x4E3F31, HTExt_Unlimit3, 0x0)
 { return 0x4E3F4C; }
 
-DEFINE_HOOK(4E412C, HTExt_Unlimit4, 0)
+DEFINE_HOOK(0x4E412C, HTExt_Unlimit4, 0x0)
 { return 0x4E4147; }
 
-DEFINE_HOOK(4E41A7, HTExt_Unlimit5, 0)
+DEFINE_HOOK(0x4E41A7, HTExt_Unlimit5, 0x0)
 { return 0x4E41C3; }
 
 //0x69B774
-DEFINE_HOOK(69B774, HTExt_PickRandom_Human, 0)
+DEFINE_HOOK(0x69B774, HTExt_PickRandom_Human, 0x0)
 {
 	R->EAX(HouseTypeExt::PickRandomCountry());
 	return 0x69B788;
 }
 
 //0x69B670
-DEFINE_HOOK(69B670, HTExt_PickRandom_AI, 0)
+DEFINE_HOOK(0x69B670, HTExt_PickRandom_AI, 0x0)
 {
 	R->EAX(HouseTypeExt::PickRandomCountry());
 	return 0x69B684;
 }
 
-DEFINE_HOOK(4FE782, HTExt_PickPowerplant, 6)
+DEFINE_HOOK(0x4FE782, HTExt_PickPowerplant, 0x6)
 {
 	GET(HouseClass *, H, EBP);
 	HouseTypeExt::ExtData *pData = HouseTypeExt::ExtMap.Find(H->Type);
@@ -207,7 +207,7 @@ DEFINE_HOOK(4FE782, HTExt_PickPowerplant, 6)
 }
 
 // issue #521: sort order for countries / countries can be hidden
-DEFINE_HOOK(4E3A6A, hWnd_PopulateWithCountryNames, 6) {
+DEFINE_HOOK(0x4E3A6A, hWnd_PopulateWithCountryNames, 0x6) {
 	GET(HWND, hWnd, ESI);
 	
 	std::vector<HouseTypeExt::ExtData*> Eligible;
