@@ -678,22 +678,239 @@ DEFINE_HOOK(70E2D2, TechnoClass_IronCurtain_Modify, 6) {
 	return 0;
 }
 
-
-DEFINE_HOOK(5198AD, InfantryClass_UpdatePosition_EnteredGrinder, 6)
+// update the vehicle thief's destination. needed to follow a
+// target without the requirement to also enable Thief=yes.
+DEFINE_HOOK(5202F9, InfantryClass_UpdateVehicleThief_Check, 6)
 {
-	GET(InfantryClass *, Infantry, ESI);
-	GET(BuildingClass *, Grinder, EBX);
+	GET(InfantryClass*, pThis, ESI);
 
-	BuildingExt::ExtData *pData = BuildingExt::ExtMap.Find(Grinder);
-
-	if(pData->ReverseEngineer(Infantry)) {
-		if(Infantry->Owner->ControlledByPlayer()) {
-			VoxClass::Play("EVA_ReverseEngineeredInfantry");
-			VoxClass::Play("EVA_NewTechnologyAcquired");
+	// good old WW checks for Thief. idiots.
+	if(!pThis->Type->VehicleThief) {
+		// also allow for drivers, because vehicles may still drive around. usually they are not.
+		TechnoTypeExt::ExtData* pTypeExt = TechnoTypeExt::ExtMap.Find(pThis->Type);
+		if(!pTypeExt->CanDrive) {
+			return 0x5206A1;
 		}
 	}
 
-	return 0;
+	return 0x52030D;
+}
+
+// the hijacker is close to the target. capture.
+DEFINE_HOOK(5203F7, InfantryClass_UpdateVehicleThief_Hijack, 5)
+{
+	enum {GoOn = 0x5206A1, Stop = 0x520473};
+
+	GET(InfantryClass*, pThis, ESI);
+	GET(FootClass*, pTarget, EDI);
+	TechnoExt::ExtData* pExt = TechnoExt::ExtMap.Find(pThis);
+
+	bool finalize = pExt->PerformActionHijack(pTarget);
+	if(finalize) {
+		// manually deinitialize this infantry
+		pThis->UnInit();
+	}
+	return finalize ? Stop : GoOn;
+}
+
+DEFINE_HOOK(51E7BF, InfantryClass_GetCursorOverObject_CanCapture, 6)
+{
+	GET(InfantryClass *, pSelected, EDI);
+	GET(ObjectClass *, pTarget, ESI);
+
+	enum { 
+		Capture = 0x51E84B,  // the game will return an Enter cursor no questions asked
+		DontCapture = 0x51E85A, // the game will assume this is not a VehicleThief and will check for other cursors normally
+		Select = 0x51E7EF, // select target instead of ordering this
+		DontMindMe = 0, // the game will check if this is a VehicleThief
+	} DoWhat = DontMindMe;
+
+	if(TechnoClass* pTechno = generic_cast<TechnoClass*>(pTarget)) {
+		if(pTechno->GetTechnoType()->IsTrain) {
+			DoWhat = Select;
+		} else {
+			TechnoExt::ExtData* pExt = TechnoExt::ExtMap.Find(pSelected);
+			TechnoTypeExt::ExtData* pTypeExt = TechnoTypeExt::ExtMap.Find(pSelected->Type);
+			if(pSelected->Type->VehicleThief || pTypeExt->CanDrive) {
+				DoWhat = (pExt->GetActionHijack(pTechno) ? Capture : DontCapture);
+			}
+		}
+	}
+
+	return DoWhat;
+}
+
+// change all the special things infantry do, like vehicle thief, infiltration,
+// bridge repair, enter transports or bio reactors, ...
+DEFINE_HOOK(519675, InfantryClass_UpdatePosition_BeforeInfantrySpecific, A)
+{
+	// called after FootClass:UpdatePosition has been called and before
+	// all specific infantry handling takes place.
+	enum { 
+		Return = 0x51AA01, // skip the original logic
+		Destroy = 0x51A010, // uninits this infantry and returns
+		Handle = 0 // resume the original function
+	} DoWhat = Handle;
+
+	GET(InfantryClass*, pThis, ESI);
+
+	if(pThis) {
+		// steal vehicles / reclaim KillDriver'd units using CanDrive
+		if(pThis->CurrentMission == mission_Capture) {
+			if(TechnoClass* pDest = generic_cast<TechnoClass*>(pThis->Destination)) {
+				// this is the possible target we stand on
+				CellClass* pCell = pThis->GetCell();
+				TechnoClass* pTarget = pCell->GetUnit(pThis->OnBridge);
+				if(!pTarget) {
+					pTarget = pCell->GetAircraft(pThis->OnBridge);
+					if(!pTarget) {
+						pTarget = pCell->GetBuilding();
+						if(pTarget && !pTarget->IsStrange()) {
+							pTarget = NULL;
+						}
+					}
+				}
+
+				// reached its destination?
+				if(pTarget && pTarget == pDest) {
+					// reached the target. capture.
+					TechnoExt::ExtData* pExt = TechnoExt::ExtMap.Find(pThis);
+					bool finalize = pExt->PerformActionHijack(pTarget);
+					DoWhat = finalize ? Destroy : Return;
+				}
+			}
+		}
+	}
+
+	return DoWhat;
+}
+
+DEFINE_HOOK(471C96, CaptureManagerClass_CanCapture, A)
+{
+	// this is a complete rewrite, because it might be easier to change
+	// this in a central place than spread all over the source code.
+	enum { 
+		Allowed = 0x471D2E, // this can be captured
+		Disallowed = 0x471D35 // can't be captured
+	};
+
+	GET(CaptureManagerClass*, pThis, ECX);
+	GET(TechnoClass*, pTarget, ESI);
+	TechnoClass* pCapturer = pThis->Owner;
+
+	// target exists and doesn't belong to capturing player
+	if(!pTarget || pTarget->Owner == pCapturer->Owner) {
+		return Disallowed;
+	}
+
+	// generally not capturable
+	if(pTarget->GetTechnoType()->ImmuneToPsionics) {
+		return Disallowed;
+	}
+
+	// disallow capturing bunkered units
+	if(pTarget->BunkerLinkedItem && pTarget->BunkerLinkedItem->WhatAmI() == abs_Unit) {
+		return Disallowed;
+	}
+
+	// TODO: extend this for mind-control priorities
+	if(pTarget->IsMindControlled() || pTarget->MindControlledByHouse) {
+		return Disallowed;
+	}
+
+	// free slot? (move on if infinite or single slot which will be freed if used)
+	if(!pThis->InfiniteMindControl && pThis->MaxControlNodes != 1 && pThis->ControlNodes.Count >= pThis->MaxControlNodes) {
+		return Disallowed;
+	}
+
+	// currently disallowed
+	eMission mission = pTarget->CurrentMission;
+	if(pTarget->IsIronCurtained() || mission == mission_Selling || mission == mission_Construction) {
+		return Disallowed;
+	}
+
+    // driver killed. has no mind.
+	TechnoExt::ExtData* pTargetExt = TechnoExt::ExtMap.Find(pTarget);
+	if(pTargetExt->DriverKilled) {
+		return Disallowed;
+	}
+
+	// passed all tests
+	return Allowed;
+}
+
+DEFINE_HOOK(53C450, TechnoClass_CanBePermaMC, 5)
+{
+	// complete rewrite. used by psychic dominator, ai targeting, etc.
+	GET(TechnoClass*, pThis, ECX);
+	BYTE ret = 0;
+
+	if(pThis && pThis->WhatAmI() != abs_Building
+		&& !pThis->IsIronCurtained() && !pThis->IsInAir()) {
+
+		TechnoTypeClass* pType = pThis->GetTechnoType();
+		if(!pType->ImmuneToPsionics && !pType->BalloonHover) {
+			
+			// KillDriver check
+			TechnoExt::ExtData* pExt = TechnoExt::ExtMap.Find(pThis);
+			if(!pExt->DriverKilled) {
+				ret = 1;
+			}
+		}
+	}
+
+	R->AL(ret);
+	return 0x53C4BA;
+}
+
+DEFINE_HOOK(73758A, UnitClass_ReceivedRadioCommand_QueryEnterAsPassenger_KillDriver, 6)
+{
+	// prevent units from getting the enter cursor on transports
+	// with killed drivers.
+	GET(TechnoClass*, pThis, ESI);
+	TechnoExt::ExtData* pExt = TechnoExt::ExtMap.Find(pThis);
+	return (pExt->DriverKilled ? 0x73761F : 0);
+}
+
+DEFINE_HOOK(41946B, AircraftClass_ReceivedRadioCommand_QueryEnterAsPassenger_KillDriver, 6)
+{
+	// prevent units from getting the enter cursor on transports
+	// with killed drivers.
+	GET(TechnoClass*, pThis, ESI);
+	TechnoExt::ExtData* pExt = TechnoExt::ExtMap.Find(pThis);
+	return (pExt->DriverKilled ? 0x4190DD : 0);
+}
+
+DEFINE_HOOK(6F6A58, TechnoClass_DrawHealthBar_HidePips_KillDriver, 6)
+{
+	// prevent player from seeing pips on transports with killed drivers.
+	GET(TechnoClass*, pThis, ESI);
+	TechnoExt::ExtData* pExt = TechnoExt::ExtMap.Find(pThis);
+	return (pExt->DriverKilled ? 0x6F6AB6 : 0);
+}
+
+DEFINE_HOOK(7087EB, TechnoClass_ShouldRetaliate_KillDriver, 6)
+{
+	// prevent units with killed drivers from retaliating.
+	GET(TechnoClass*, pThis, ESI);
+	TechnoExt::ExtData* pExt = TechnoExt::ExtMap.Find(pThis);
+	return (pExt->DriverKilled ? 0x708B17 : 0);
+}
+
+DEFINE_HOOK(7091D6, TechnoClass_CanPassiveAquire_KillDriver, 6)
+{
+	// prevent units with killed drivers from looking for victims.
+	GET(TechnoClass*, pThis, ESI);
+	TechnoExt::ExtData* pExt = TechnoExt::ExtMap.Find(pThis);
+	return (pExt->DriverKilled ? 0x70927D : 0);
+}
+
+DEFINE_HOOK(6F3283, TechnoClass_CanScatter_KillDriver, 8)
+{
+	// prevent units with killed drivers from scattering when attacked.
+	GET(TechnoClass*, pThis, ESI);
+	TechnoExt::ExtData* pExt = TechnoExt::ExtMap.Find(pThis);
+	return (pExt->DriverKilled ? 0x6F32C5 : 0);
 }
 
 DEFINE_HOOK(73A1BC, UnitClass_UpdatePosition_EnteredGrinder, 7)

@@ -99,6 +99,13 @@ public:
 
 		ValueableIdx<int, VocClass> VoiceRepair;
 
+		ValueableIdx<int, VocClass> HijackerEnterSound;
+		ValueableIdx<int, VocClass> HijackerLeaveSound;
+		Valueable<int> HijackerKillPilots;
+		Valueable<bool> HijackerBreakMindControl;
+		Valueable<bool> HijackerAllowed;
+		Valueable<bool> HijackerOneTime;
+
 		Customizable<UnitTypeClass *> WaterImage;
 
 		char CameoPCX[0x20];
@@ -168,6 +175,12 @@ public:
 			MindControlExperienceSelfModifier (0.0F),
 			MindControlExperienceVictimModifier (1.0F),
 			VoiceRepair (-1),
+			HijackerEnterSound (-1),
+			HijackerLeaveSound (-1),
+			HijackerKillPilots (0),
+			HijackerBreakMindControl (true),
+			HijackerAllowed (true),
+			HijackerOneTime (false),
 			WaterImage (NULL),
 			CanBeReversed (true),
 			RadarJamRadius (0),
