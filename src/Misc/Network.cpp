@@ -51,12 +51,7 @@ DEFINE_HOOK(64CCBF, DoList_ReplaceReconMessage, 6)
 		SetCursor(loadCursor);
 		Debug::Log("Making a memory snapshot\n");
 
-		MINIDUMP_EXCEPTION_INFORMATION expParam;
-		expParam.ThreadId = GetCurrentThreadId();
-		expParam.ExceptionPointers = NULL;
-		expParam.ClientPointers = FALSE;
-
-		Debug::FullDump(&expParam);
+		Debug::FullDump(NULL);
 
 		loadCursor = LoadCursor(NULL, IDC_ARROW);
 		SetClassLong(Game::hWnd, GCL_HCURSOR, (LONG)loadCursor);

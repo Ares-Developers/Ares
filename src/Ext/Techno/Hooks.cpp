@@ -958,3 +958,38 @@ DEFINE_HOOK(6F6AC9, TechnoClass_Remove, 6) {
 
 	return 0;
 }
+
+
+DEFINE_HOOK(74642C, UnitClass_ReceiveGunner, 6)
+{
+	GET(UnitClass *, Unit, ESI);
+	auto pData = TechnoExt::ExtMap.Find(Unit);
+	pData->MyOriginalTemporal = Unit->TemporalImUsing;
+	Unit->TemporalImUsing = NULL;
+	return 0;
+}
+
+DEFINE_HOOK(74653C, UnitClass_RemoveGunner, 0)
+{
+	GET(UnitClass *, Unit, EDI);
+	auto pData = TechnoExt::ExtMap.Find(Unit);
+	Unit->TemporalImUsing = pData->MyOriginalTemporal;
+	pData->MyOriginalTemporal = NULL;
+	return 0x746546;
+}
+
+
+DEFINE_HOOK(741206, UnitClass_GetFireError, 6)
+{
+	GET(UnitClass *, Unit, ESI);
+	auto Type = Unit->Type;
+	if(!Type->TurretCount || Type->IsGattling) {
+		return 0x741229;
+	}
+	auto idxW = Unit->SelectWeapon(NULL);
+	auto W = Unit->GetWeapon(idxW);
+	return (W->WeaponType && W->WeaponType->Warhead->Temporal)
+		? 0x741210
+		: 0x741229
+	;
+}

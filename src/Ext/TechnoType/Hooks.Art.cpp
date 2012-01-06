@@ -65,8 +65,8 @@ DEFINE_HOOK(5F9070, ObjectTypeClass_Load2DArt, 0)
 	_snprintf(basename, 256, "%s.%s", pType->ImageFile, (pType->Theater ? pTheaterData->Extension : "SHP"));
 
 	if(!pType->Theater && pType->NewTheater && scenarioTheater != -1) {
-		char c0 = basename[0];
-		char c1 = basename[1] & ~0x20; // evil hack to uppercase
+		unsigned char c0 = basename[0];
+		unsigned char c1 = basename[1] & ~0x20; // evil hack to uppercase
 		if(isalpha(c0)) {
 			if(c1 == 'A' || c1 == 'T') {
 				basename[1] = pTheaterData->Letter[0];

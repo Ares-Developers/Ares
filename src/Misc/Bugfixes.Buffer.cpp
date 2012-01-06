@@ -9,6 +9,7 @@
 #include <MapClass.h>
 #include <MixFileClass.h>
 #include <ParticleSystemTypeClass.h>
+#include <ScenarioClass.h>
 #include <SmudgeTypeClass.h>
 #include <SidebarClass.h>
 #include <StringTable.h>
@@ -24,17 +25,75 @@
 
 #include "../Utilities/Macro.h"
 
+template<typename T>
+static void ParseList(DynamicVectorClass<T> &List, CCINIClass * pINI, const char *section, const char *key) {
+	if(pINI->ReadString(section, key, Ares::readDefval, Ares::readBuffer, Ares::readLength)) {
+		List.Clear();
+		for(char *cur = strtok(Ares::readBuffer, Ares::readDelims); cur; cur = strtok(NULL, Ares::readDelims)) {
+			if(auto idx = CompoundT<T>::BaseT::Find(cur)) {
+				List.AddItem(idx);
+			} else {
+				Debug::INIParseFailed(section, key, cur);
+			}
+		}
+	}
+};
+
+#define PARSE_LIST(obj, key) \
+	ParseList(obj->key, pINI, section, #key);
+
+#define PARSE_RULES_LIST(key) \
+	PARSE_LIST(pRules, key);
+
+
+template<>
+static void ParseList<int>(DynamicVectorClass<int> &List, CCINIClass * pINI, const char *section, const char *key) {
+	if(pINI->ReadString(section, key, Ares::readDefval, Ares::readBuffer, Ares::readLength)) {
+		List.Clear();
+		for(char *cur = strtok(Ares::readBuffer, Ares::readDelims); cur; cur = strtok(NULL, Ares::readDelims)) {
+			int idx = atoi(cur);
+			List.AddItem(idx);
+		}
+	}
+};
+
+
+
+template<typename T>
+static void ParseListIndices(DWORD &Composite, CCINIClass * pINI, const char *section, const char *key) {
+	if(pINI->ReadString(section, key, Ares::readDefval, Ares::readBuffer, Ares::readLength)) {
+		Composite = 0;
+		for(char *cur = strtok(Ares::readBuffer, Ares::readDelims); cur; cur = strtok(NULL, Ares::readDelims)) {
+			int idx = CompoundT<T>::BaseT::FindIndex(cur);
+			if(idx > -1) {
+				Composite |= (1 << idx);
+			} else {
+				Debug::INIParseFailed(section, key, cur);
+			}
+		}
+	}
+};
+
+#define PARSE_INDICES(obj, key) \
+	ParseListIndices(obj->key, pINI, section, #key);
+
+#define PARSE_COUNTRY_INDICES(obj, key) \
+	ParseListIndices<HouseTypeClass *>(obj->key, pINI, section, #key);
+
+#define PARSE_COUNTRY_INDICES_INTO(obj, key, attr, type) \
+	ParseListIndices<HouseTypeClass *>(obj->attr, pINI, section, #key);
+
 /* issue 193 - increasing the buffer length for certain flag parsing */
 
 DEFINE_HOOK(511D16, Buf_CountryVeteran, 9)
 {
 	GET(HouseTypeClass *, H, EBX);
-	GET(CCINIClass *, INI, ESI);
+	GET(CCINIClass *, pINI, ESI);
 
 	const char *section = H->ID;
-	PARSE_VECTOR_N(section, H, VeteranInfantry, InfantryTypeClass);
-	PARSE_VECTOR_N(section, H, VeteranUnits, UnitTypeClass);
-	PARSE_VECTOR_N(section, H, VeteranAircraft, AircraftTypeClass);
+	PARSE_LIST(H, VeteranInfantry);
+	PARSE_LIST(H, VeteranUnits);
+	PARSE_LIST(H, VeteranAircraft);
 
 	return 0x51208C;
 }
@@ -44,43 +103,41 @@ DEFINE_HOOK(511D16, Buf_CountryVeteran, 9)
 // ============= [General] =============
 DEFINE_HOOK(66D55E, Buf_General, 6)
 {
-	GET(RulesClass *, Rules, ESI);
-	GET(CCINIClass *, INI, EDI);
+	GET(RulesClass *, pRules, ESI);
+	GET(CCINIClass *, pINI, EDI);
 
 	const char *section = "General";
-	PARSE_VECTOR_N(section, Rules, AmerParaDropInf, InfantryTypeClass);
-	PARSE_VECTOR_N(section, Rules, AllyParaDropInf, InfantryTypeClass);
-	PARSE_VECTOR_N(section, Rules, SovParaDropInf, InfantryTypeClass);
-	PARSE_VECTOR_N(section, Rules, YuriParaDropInf, InfantryTypeClass);
+	PARSE_RULES_LIST(AmerParaDropInf);
+	PARSE_RULES_LIST(AllyParaDropInf);
+	PARSE_RULES_LIST(SovParaDropInf);
+	PARSE_RULES_LIST(YuriParaDropInf);
 
-	PARSE_VECTOR_INT(section, AmerParaDropNum, Rules);
-	PARSE_VECTOR_INT(section, AllyParaDropNum, Rules);
-	PARSE_VECTOR_INT(section, SovParaDropNum, Rules);
-	PARSE_VECTOR_INT(section, YuriParaDropNum, Rules);
+	PARSE_RULES_LIST(AmerParaDropNum);
+	PARSE_RULES_LIST(AllyParaDropNum);
+	PARSE_RULES_LIST(SovParaDropNum);
+	PARSE_RULES_LIST(YuriParaDropNum);
 
-	PARSE_VECTOR_N(section, Rules, AnimToInfantry, InfantryTypeClass);
+	PARSE_RULES_LIST(AnimToInfantry);
 
-	PARSE_VECTOR_N(section, Rules, SecretInfantry, InfantryTypeClass);
-	PARSE_VECTOR_N(section, Rules, SecretUnits, UnitTypeClass);
-	PARSE_VECTOR_N(section, Rules, SecretBuildings, BuildingTypeClass);
-	DWORD Sum = Rules->SecretInfantry.Count
-		+ Rules->SecretUnits.Count
-		+ Rules->SecretBuildings.Count;
+	PARSE_RULES_LIST(SecretInfantry);
+	PARSE_RULES_LIST(SecretUnits);
+	PARSE_RULES_LIST(SecretBuildings);
+	pRules->SecretSum = pRules->SecretInfantry.Count
+		+ pRules->SecretUnits.Count
+		+ pRules->SecretBuildings.Count;
 
-	Rules->SecretSum = Sum;
+	PARSE_RULES_LIST(HarvesterUnit);
+	PARSE_RULES_LIST(BaseUnit);
+	PARSE_RULES_LIST(PadAircraft);
 
-	PARSE_VECTOR_N(section, Rules, HarvesterUnit, UnitTypeClass);
-	PARSE_VECTOR_N(section, Rules, BaseUnit, UnitTypeClass);
-	PARSE_VECTOR_N(section, Rules, PadAircraft, AircraftTypeClass);
+	PARSE_RULES_LIST(Shipyard);
+	PARSE_RULES_LIST(RepairBay);
 
-	PARSE_VECTOR_N(section, Rules, Shipyard, BuildingTypeClass);
-	PARSE_VECTOR_N(section, Rules, RepairBay, BuildingTypeClass);
+	PARSE_RULES_LIST(WeatherConClouds);
+	PARSE_RULES_LIST(WeatherConBolts);
+	PARSE_RULES_LIST(BridgeExplosions);
 
-	PARSE_VECTOR_N(section, Rules, WeatherConClouds, AnimTypeClass);
-	PARSE_VECTOR_N(section, Rules, WeatherConBolts, AnimTypeClass);
-	PARSE_VECTOR_N(section, Rules, BridgeExplosions, AnimTypeClass);
-
-	PARSE_VECTOR_N(section, Rules, DefaultMirageDisguises, TerrainTypeClass);
+	PARSE_RULES_LIST(DefaultMirageDisguises);
 	return 0;
 }
 
@@ -133,55 +190,52 @@ DEFINE_HOOK(66DB93, Buf_BridgeExplosions, 6)
 // ============= [CombatDamage] =============
 DEFINE_HOOK(66BC71, Buf_CombatDamage, 9)
 {
-	GET(RulesClass *, Rules, ESI);
-	GET(CCINIClass *, INI, EDI);
+	GET(RulesClass *, pRules, ESI);
+	GET(CCINIClass *, pINI, EDI);
 
-	Rules->TiberiumStrength = R->EAX();
+	pRules->TiberiumStrength = R->EAX();
 
 	const char *section = "CombatDamage";
-	PARSE_VECTOR_N(section, Rules, Scorches, SmudgeTypeClass);
-	PARSE_VECTOR_N(section, Rules, Scorches1, SmudgeTypeClass);
-	PARSE_VECTOR_N(section, Rules, Scorches2, SmudgeTypeClass);
-	PARSE_VECTOR_N(section, Rules, Scorches3, SmudgeTypeClass);
-	PARSE_VECTOR_N(section, Rules, Scorches4, SmudgeTypeClass);
+	PARSE_RULES_LIST(Scorches);
+	PARSE_RULES_LIST(Scorches1);
+	PARSE_RULES_LIST(Scorches2);
+	PARSE_RULES_LIST(Scorches3);
+	PARSE_RULES_LIST(Scorches4);
 
-	PARSE_VECTOR_N(section, Rules, SplashList, AnimTypeClass);
+	PARSE_RULES_LIST(SplashList);
 	return 0x66C287;
 }
 
 // ============= [AI] =============
 
-#define P_VEC_B(key) \
-	PARSE_VECTOR_N(section, Rules, key, BuildingTypeClass);
-
 DEFINE_HOOK(672B0E, Buf_AI, 6)
 {
-	GET(RulesClass *, Rules, ESI);
-	GET(CCINIClass *, INI, EDI);
+	GET(RulesClass *, pRules, ESI);
+	GET(CCINIClass *, pINI, EDI);
 
 	const char *section = "AI";
-	P_VEC_B(BuildConst);
-	P_VEC_B(BuildPower);
-	P_VEC_B(BuildRefinery);
-	P_VEC_B(BuildBarracks);
-	P_VEC_B(BuildTech);
-	P_VEC_B(BuildWeapons);
-	P_VEC_B(AlliedBaseDefenses);
-	P_VEC_B(SovietBaseDefenses);
-	P_VEC_B(ThirdBaseDefenses);
-	P_VEC_B(BuildDefense);
-	P_VEC_B(BuildPDefense);
-	P_VEC_B(BuildAA);
-	P_VEC_B(BuildHelipad);
-	P_VEC_B(BuildRadar);
-	P_VEC_B(ConcreteWalls);
-	P_VEC_B(NSGates);
-	P_VEC_B(EWGates);
-	P_VEC_B(BuildNavalYard);
-	P_VEC_B(BuildDummy);
-	P_VEC_B(NeutralTechBuildings);
+	PARSE_RULES_LIST(BuildConst);
+	PARSE_RULES_LIST(BuildPower);
+	PARSE_RULES_LIST(BuildRefinery);
+	PARSE_RULES_LIST(BuildBarracks);
+	PARSE_RULES_LIST(BuildTech);
+	PARSE_RULES_LIST(BuildWeapons);
+	PARSE_RULES_LIST(AlliedBaseDefenses);
+	PARSE_RULES_LIST(SovietBaseDefenses);
+	PARSE_RULES_LIST(ThirdBaseDefenses);
+	PARSE_RULES_LIST(BuildDefense);
+	PARSE_RULES_LIST(BuildPDefense);
+	PARSE_RULES_LIST(BuildAA);
+	PARSE_RULES_LIST(BuildHelipad);
+	PARSE_RULES_LIST(BuildRadar);
+	PARSE_RULES_LIST(ConcreteWalls);
+	PARSE_RULES_LIST(NSGates);
+	PARSE_RULES_LIST(EWGates);
+	PARSE_RULES_LIST(BuildNavalYard);
+	PARSE_RULES_LIST(BuildDummy);
+	PARSE_RULES_LIST(NeutralTechBuildings);
 
-	PARSE_VECTOR_INT(section, AIForcePredictionFudge, Rules);
+	PARSE_RULES_LIST(AIForcePredictionFudge);
 
 	return 0x673950;
 }
@@ -192,19 +246,19 @@ DEFINE_HOOK(7121A3, Buf_TechnoType, 6)
 {
 	GET(TechnoTypeClass *, T, EBP);
 	GET(const char *, section, EBX);
-	GET(CCINIClass *, INI, ESI);
+	GET(CCINIClass *, pINI, ESI);
 
-	PARSE_VECTOR_BIT(section, T, ForbiddenHouses, HouseTypeClass, ForbiddenHouses);
-	PARSE_VECTOR_BIT(section, T, SecretHouses, HouseTypeClass, SecretHouses);
-	PARSE_VECTOR_BIT(section, T, RequiredHouses, HouseTypeClass, RequiredHouses);
-	PARSE_VECTOR_BIT(section, T, Owner, HouseTypeClass, OwnerFlags);
+	PARSE_COUNTRY_INDICES(T, ForbiddenHouses);
+	PARSE_COUNTRY_INDICES(T, SecretHouses);
+	PARSE_COUNTRY_INDICES(T, RequiredHouses);
+	PARSE_COUNTRY_INDICES_INTO(T, Owner, OwnerFlags, HouseTypeClass);
 
-	PARSE_VECTOR_N(section, T, DamageParticleSystems, ParticleSystemTypeClass);
-	PARSE_VECTOR_N(section, T, DestroyParticleSystems, ParticleSystemTypeClass);
+	PARSE_LIST(T, DamageParticleSystems);
+	PARSE_LIST(T, DestroyParticleSystems);
 
-//	PARSE_VECTOR_N(section, T, PrerequisiteOverride, BuildingTypeClass);
+	PARSE_LIST(T, Dock);
 
-// no VoxelAnimTypeClass def yet, and therefore ints can be left alone as well
+// TODO: define VoxelAnimTypeClass
 //	PARSE_VECTOR_INT(section, T, DebrisMaximums);
 //	PARSE_VECTOR_N(section, T, DebrisTypes, VoxelAnimTypeClass);
 
@@ -221,11 +275,14 @@ DEFINE_HOOK(714522, Buf_OwnHouses, 6)
 	return 0x714570;
 }
 
-/*FINE_HOOK(71420D, Buf_PrereqOverride, 6)
+DEFINE_HOOK(713171, Buf_Dock, 9)
 {
-	return 0x714293;
+	GET(TechnoTypeClass *, T, EBP);
+	GET(int, Category, EAX);
+
+	T->Category = Category;
+	return 0x713264;
 }
-*/
 
 DEFINE_HOOK(713BF1, Buf_DmgpartSys, 6)
 {
@@ -242,11 +299,11 @@ DEFINE_HOOK(75D660, Buf_Warhead, 9)
 {
 	GET(WarheadTypeClass *, WH, ESI);
 	GET(const char *, section, EBP);
-	GET(CCINIClass *, INI, EDI);
+	GET(CCINIClass *, pINI, EDI);
 
-	PARSE_VECTOR_N(section, WH, AnimList, AnimTypeClass);
+	PARSE_LIST(WH, AnimList);
 
-// no VoxelAnimTypeClass def yet, and therefore ints can be left alone as well
+// TODO: define VoxelAnimTypeClass
 //	PARSE_VECTOR_INT(section, T, DebrisMaximums);
 //	PARSE_VECTOR_N(section, T, DebrisTypes, VoxelAnimTypeClass);
 
@@ -300,4 +357,22 @@ DEFINE_HOOK(6A9348, CameoClass_GetTip_FixLength, 9)
 	SidebarClass::TooltipBuffer[SidebarClass::TooltipLength - 1] = 0;
 
 	return 0x6A93B2;
+}
+
+DEFINE_HOOK(70CAD8, TechnoClass_DealParticleDamage_DontDestroyCliff, 9)
+{
+	return 0x70CB30;
+}
+
+DEFINE_HOOK(489562, DamageArea_DestroyCliff, 6)
+{
+	GET(CellClass *, pCell, EAX);
+
+	if(pCell->Tile_Is_DestroyableCliff()) {
+		if(ScenarioClass::Instance->Random.RandomRanged(0, 99) < RulesClass::Instance->CollapseChance) {
+			MapClass::Instance->DestroyCliff(pCell);
+		}
+	}
+
+	return 0;
 }
