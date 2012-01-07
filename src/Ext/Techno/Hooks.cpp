@@ -913,6 +913,23 @@ DEFINE_HOOK(6F3283, TechnoClass_CanScatter_KillDriver, 8)
 	return (pExt->DriverKilled ? 0x6F32C5 : 0);
 }
 
+DEFINE_HOOK(5198AD, InfantryClass_UpdatePosition_EnteredGrinder, 6)
+{
+	GET(InfantryClass *, Infantry, ESI);
+	GET(BuildingClass *, Grinder, EBX);
+
+	BuildingExt::ExtData *pData = BuildingExt::ExtMap.Find(Grinder);
+
+	if(pData->ReverseEngineer(Infantry)) {
+		if(Infantry->Owner->ControlledByPlayer()) {
+			VoxClass::Play("EVA_ReverseEngineeredInfantry");
+			VoxClass::Play("EVA_NewTechnologyAcquired");
+		}
+	}
+
+	return 0;
+}
+
 DEFINE_HOOK(73A1BC, UnitClass_UpdatePosition_EnteredGrinder, 7)
 {
 	GET(UnitClass *, Vehicle, EBP);
