@@ -304,6 +304,9 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 		}
 	}
 
+	// #680, 1362
+	this->ImmuneToAbduction.Read(&exINI, section, "ImmuneToAbduction");
+
 	// quick fix - remove after the rest of weapon selector code is done
 	return;
 }

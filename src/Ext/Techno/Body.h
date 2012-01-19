@@ -128,6 +128,8 @@ public:
 	static bool CreateWithDroppod(FootClass *Object, CoordStruct *XYZ);
 
 	static void TransferIvanBomb(TechnoClass *From, TechnoClass *To);
+	static void FreeSpecificSlave(TechnoClass *Slave, HouseClass *Affector);
+	static void DetachSpecificSpawnee (TechnoClass *Spawnee, HouseClass *NewSpawneeOwner);
 	
 	static void Destroy(TechnoClass* pTechno, TechnoClass* pKiller = NULL, HouseClass* pKillerHouse = NULL, WarheadTypeClass* pWarhead = NULL);
 /*

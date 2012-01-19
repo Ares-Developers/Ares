@@ -1,7 +1,7 @@
 [branch]
-Name=Branch for various minor fixes
-Description=Branch for various fixes which may or may not get into 0.2.
+Name=Ares 0.2 testing branch combination 3 - various-fixes and abductor-fixes
+Description=This branch is meant for testing interactions between various-fixes and abductor-fixes branches.
 BranchRevision=1167
 TargetVersion=0.2
 Stable=no
-ReadyForTesting=no
+ReadyForTesting=yes

@@ -7,6 +7,8 @@
 #include <BuildingClass.h>
 #include <GeneralStructures.h>
 #include <Helpers/Template.h>
+#include <SlaveManagerClass.h>
+#include <SpawnManagerClass.h>
 
 template<> const DWORD Extension<TechnoClass>::Canary = 0x55555555;
 Container<TechnoExt> TechnoExt::ExtMap;
@@ -414,6 +416,66 @@ eAction TechnoExt::ExtData::GetDeactivatedAction(ObjectClass *Hovered) const {
 		}
 	}
 	return act_None;
+}
+
+/*! This function detaches a specific spawned object from it's spawner.
+	The check if it's a spawned object at all should be done before this function is called.
+	Check for SpawnOwner, specifically.
+
+	\param Spawnee The spawned object
+	\param NewSpawneeOwner The house which should control the spawnee after the function
+	\author Graion Dilach
+	\date 2011-06-09
+	\todo Get an assembly-reader to document Status in YR++ and update Status accordingly
+*/
+void TechnoExt::DetachSpecificSpawnee(TechnoClass *Spawnee, HouseClass *NewSpawneeOwner){
+	
+	// setting up the nodes. Funnily, nothing else from the manager is needed
+	auto *SpawnNode = &(Spawnee->SpawnOwner->SpawnManager->SpawnedNodes);
+
+	//find the specific spawnee in the node
+	for (int i=0; i<SpawnNode->Count; ++i){
+		
+		if(Spawnee == SpawnNode->GetItem(i)->Unit) {
+			
+			SpawnNode->GetItem(i)->Unit = NULL;
+			Spawnee->SpawnOwner = NULL;
+
+			SpawnNode->GetItem(i)->Status = 7;
+
+			Spawnee->SetOwningHouse(NewSpawneeOwner);
+		}
+	}
+}
+
+/*! This function frees a specific slave from it's manager.
+	The check if it's a slave at all should be done before this function is called.
+	Check for SlaveOwner, specifically.
+
+	\param Slave The slave which should be freed
+	\param Affector The house which causes this slave to be freed (where it should be freed to)
+	\author Graion Dilach
+	\date 2011-06-09
+*/
+void TechnoExt::FreeSpecificSlave(TechnoClass *Slave, HouseClass *Affector){
+	
+	//If you're a slave, you're an InfantryClass. But since most functions use TechnoClasses and the check can be done in that level as well
+	//it's easier to set up the recasting in this function
+	//Anybody who writes 357, take note that SlaveManager uses InfantryClasses everywhere, SpawnManager uses TechnoClasses derived from AircraftTypeClasses
+	//as I wrote it in http://bugs.renegadeprojects.com/view.php?id=357#c10331
+	//So, expand that one instead, kthx.
+
+	if(InfantryClass * pSlave = specific_cast<InfantryClass *>(Slave)) {
+		auto Manager= pSlave->SlaveOwner->SlaveManager;
+
+		//LostSlave can free the unit from the miner, so we're awesome. 
+		Manager->LostSlave(pSlave);
+		pSlave->SlaveOwner = NULL;
+
+		//OK, delinked, Now relink it to the side which separated the slave from the miner
+		pSlave->SetOwningHouse(Affector);
+	}
+
 }
 
 // =============================
