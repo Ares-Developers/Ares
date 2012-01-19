@@ -1,7 +1,7 @@
 [branch]
-Name=Issue 1362: Abductor Fixes
-Description=Branch for implementing issue 1362, fixing/enhancing the Abductor logic.
+Name=Ares 0.2 testing branch combination 2: abductor-fixes and carryalls
+Description=This branch is meant to test interactions between abductors and carryalls.
 BranchRevision=1124
-TargetVersion=0.3
+TargetVersion=0.2
 Stable=no
 ReadyForTesting=yes

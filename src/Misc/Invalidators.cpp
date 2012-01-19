@@ -27,7 +27,7 @@ DEFINE_HOOK(477007, INIClass_GetSpeedType, 8)
 			UnitTypeClass::LoadFromINI overrides it to (this->Crusher ? Track : Wheel) just before reading its SpeedType
 			so we should not alert if we're responding to a TType read and our subject is a UnitType, or all VehicleTypes without an explicit ST declaration will get dinged
 		*/
-		if(strlen(Value)) {
+		if(strlen(Value) && strcmpi(Value, "<none>")) {
 			if(caller != 0x7121E5 || R->EBP<TechnoTypeClass *>()->WhatAmI() != abs_UnitType) {
 				Debug::INIParseFailed(Section, "SpeedType", Value);
 			}
