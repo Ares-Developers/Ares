@@ -1,6 +1,6 @@
 [branch]
-Name=Ares New Graphics Tweaks
-Description=This is a testing branch for new graphics tweaks.
+Name=Ares 0.2 testing branch combination 1: more-graphics and house-bolts
+Description=This branch is meant to test interactions between more-graphics and house-bolts branches.
 BranchRevision=1161
 TargetVersion=0.2
 Stable=no
