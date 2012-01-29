@@ -241,3 +241,55 @@ DEFINE_HOOK(4E3A6A, hWnd_PopulateWithCountryNames, 6) {
 	
 	return 0x4E3ACF;
 }
+
+DEFINE_HOOK(6AA0CA, TabCameoListClass_Draw_DrawObserverBackground, 6)
+{
+	enum { DrawSHP = 0x6AA0ED, DontDraw = 0x6AA159 };
+
+	GET(HouseTypeClass *, pCountry, EAX);
+
+	auto pData = HouseTypeExt::ExtMap.Find(pCountry);
+
+	if(pData->ObserverBackgroundSHP) {
+		R->EAX<SHPStruct *>(pData->ObserverBackgroundSHP);
+		return DrawSHP;
+	} else if(*pData->ObserverBackground) {
+		if(auto PCXSurface = PCX::Instance->GetSurface(pData->ObserverBackground)) {
+			GET(int, TLX, EDI);
+			GET(int, TLY, EBX);
+			RectangleStruct bounds = { TLX, TLY, pData->ObserverBackgroundWidth, pData->ObserverBackgroundHeight };
+			PCX::Instance->BlitToSurface(&bounds, DSurface::Sidebar, PCXSurface);
+		}
+		return DontDraw;
+	} else {
+		return DontDraw;
+	}
+}
+
+
+DEFINE_HOOK(6AA164, TabCameoListClass_Draw_DrawObserverFlag, 6)
+{
+	enum { DrawSHP = 0x6AA1DB, DontDraw = 0x6AA2CE };
+
+	GET(HouseTypeClass *, pCountry, EAX);
+
+	auto pData = HouseTypeExt::ExtMap.Find(pCountry);
+
+	if(pData->ObserverFlagSHP) {
+		R->ESI<SHPStruct *>(pData->ObserverBackgroundSHP);
+		R->EAX<int>(!!pData->ObserverFlagYuriPAL ? 9 : 0);
+		return DrawSHP;
+	} else if(*pData->ObserverBackground) {
+		if(auto PCXSurface = PCX::Instance->GetSurface(pData->ObserverBackground)) {
+			GET(int, TLX, EDI);
+			GET(int, TLY, EBX);
+			RectangleStruct bounds = { TLX + pData->ObserverFlagPCXX , TLY + pData->ObserverFlagPCXY,
+					pData->ObserverFlagPCXWidth, pData->ObserverFlagPCXHeight
+			};
+			PCX::Instance->BlitToSurface(&bounds, DSurface::Sidebar, PCXSurface);
+		}
+		return DontDraw;
+	} else {
+		return DontDraw;
+	}
+}

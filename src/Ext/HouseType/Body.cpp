@@ -27,6 +27,8 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		strcpy(this->LSSpecialName, "Name:Para");
 		strcpy(this->StatusText, "STT:PlayerSideAmerica");
 		strcpy(this->TauntFile, "taunts\\tauam%02i.wav");
+		strcpy(this->ObserverBackground, "obsalli.shp");
+		strcpy(this->ObserverFlag, "usai.shp");
 	} else if (!_strcmpi(pID, "Alliance")) //Korea
 	{
 		strcpy(this->FlagFile, "japi.pcx");
@@ -37,6 +39,8 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		strcpy(this->LSSpecialName, "Name:BEAGLE");
 		strcpy(this->StatusText, "STT:PlayerSideKorea");
 		strcpy(this->TauntFile, "taunts\\tauko%02i.wav");
+		strcpy(this->ObserverBackground, "obsalli.shp");
+		strcpy(this->ObserverFlag, "japi.shp");
 	} else if (!_strcmpi(pID, "French")) //France
 	{
 		strcpy(this->FlagFile, "frai.pcx");
@@ -47,6 +51,8 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		strcpy(this->LSSpecialName, "Name:GTGCAN");
 		strcpy(this->StatusText, "STT:PlayerSideFrance");
 		strcpy(this->TauntFile, "taunts\\taufr%02i.wav");
+		strcpy(this->ObserverBackground, "obsalli.shp");
+		strcpy(this->ObserverFlag, "frai.shp");
 	} else if (!_strcmpi(pID, "Germans")) //Germany
 	{
 		strcpy(this->FlagFile, "geri.pcx");
@@ -57,6 +63,8 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		strcpy(this->LSSpecialName, "Name:TNKD");
 		strcpy(this->StatusText, "STT:PlayerSideGermany");
 		strcpy(this->TauntFile, "taunts\\tauge%02i.wav");
+		strcpy(this->ObserverBackground, "obsalli.shp");
+		strcpy(this->ObserverFlag, "geri.shp");
 	} else if (!_strcmpi(pID, "British")) //United Kingdom
 	{
 		strcpy(this->FlagFile, "gbri.pcx");
@@ -67,6 +75,8 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		strcpy(this->LSSpecialName, "Name:SNIPE");
 		strcpy(this->StatusText, "STT:PlayerSideBritain");
 		strcpy(this->TauntFile, "taunts\\taubr%02i.wav");
+		strcpy(this->ObserverBackground, "obsalli.shp");
+		strcpy(this->ObserverFlag, "gbri.shp");
 	} else if (!_strcmpi(pID, "Africans")) //Libya
 	{
 		strcpy(this->FlagFile, "djbi.pcx");
@@ -77,6 +87,8 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		strcpy(this->LSSpecialName, "Name:DTRUCK");
 		strcpy(this->StatusText, "STT:PlayerSideLibya");
 		strcpy(this->TauntFile, "taunts\\tauli%02i.wav");
+		strcpy(this->ObserverBackground, "obssovi.shp");
+		strcpy(this->ObserverFlag, "djbi.shp");
 	} else if (!_strcmpi(pID, "Arabs")) //Iraq
 	{
 		strcpy(this->FlagFile, "arbi.pcx");
@@ -87,6 +99,8 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		strcpy(this->LSSpecialName, "Name:DESO");
 		strcpy(this->StatusText, "STT:PlayerSideIraq");
 		strcpy(this->TauntFile, "taunts\\tauir%02i.wav");
+		strcpy(this->ObserverBackground, "obssovi.shp");
+		strcpy(this->ObserverFlag, "arbi.shp");
 	} else if (!_strcmpi(pID, "Confederation")) //Cuba
 	{
 		strcpy(this->FlagFile, "lati.pcx");
@@ -97,6 +111,8 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		strcpy(this->LSSpecialName, "Name:TERROR");
 		strcpy(this->StatusText, "STT:PlayerSideCuba");
 		strcpy(this->TauntFile, "taunts\\taucu%02i.wav");
+		strcpy(this->ObserverBackground, "obssovi.shp");
+		strcpy(this->ObserverFlag, "lati.shp");
 	} else if (!_strcmpi(pID, "Russians")) //Russia
 	{
 		strcpy(this->FlagFile, "rusi.pcx");
@@ -107,6 +123,8 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		strcpy(this->LSSpecialName, "Name:TTNK");
 		strcpy(this->StatusText, "STT:PlayerSideRussia");
 		strcpy(this->TauntFile, "taunts\\tauru%02i.wav");
+		strcpy(this->ObserverBackground, "obssovi.shp");
+		strcpy(this->ObserverFlag, "rusi.shp");
 	} else if (!_strcmpi(pID, "YuriCountry")) //Yuri
 	{
 		strcpy(this->FlagFile, "yrii.pcx");
@@ -117,6 +135,9 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		strcpy(this->LSSpecialName, "Name:YURI");
 		strcpy(this->StatusText, "STT:PlayerSideYuriCountry");
 		strcpy(this->TauntFile, "taunts\\tauyu%02i.wav");
+		strcpy(this->ObserverBackground, "obsyuri.shp");
+		strcpy(this->ObserverFlag, "yrii.shp");
+		this->ObserverFlagYuriPAL = true;
 	} else //Unknown
 	{
 		strcpy(this->FlagFile, "rani.pcx");
@@ -175,6 +196,28 @@ void HouseTypeExt::ExtData::LoadFromRulesFile(HouseTypeClass *pThis, CCINIClass 
 		}
 	}
 
+	if (pINI->ReadString(pID, "File.ObserverFlag", "", Ares::readBuffer, Ares::readLength)) {
+		AresCRT::strCopy(this->ObserverFlag, Ares::readBuffer, 0x20);
+		if(strstr(this->ObserverFlag, ".pcx")) {
+			this->ObserverFlagSHP = NULL;
+			if(!PCX::Instance->LoadFile(this->ObserverFlag)) {
+				Debug::INIParseFailed(pID, "File.ObserverFlag", this->ObserverFlag);
+			}
+		} else {
+			if(!(this->ObserverFlagSHP = FileSystem::LoadSHPFile(this->ObserverFlag))) {
+				Debug::INIParseFailed(pID, "File.ObserverFlag", this->ObserverFlag);
+			}
+		}
+	}
+
+	if (pINI->ReadString(pID, "File.ObserverBackground", "", Ares::readBuffer, Ares::readLength)) {
+		AresCRT::strCopy(this->ObserverBackground, Ares::readBuffer, 0x20);
+		if(this->ObserverFlagSHP = FileSystem::LoadSHPFile(this->ObserverBackground)) {
+		} else {
+			Debug::INIParseFailed(pID, "File.ObserverBackground", this->ObserverBackground);
+		}
+	}
+
 	if (pINI->ReadString(pID, "File.LoadScreen", "", Ares::readBuffer, Ares::readLength)) {
 		AresCRT::strCopy(this->LSFile, Ares::readBuffer, 0x20);
 	}
@@ -208,6 +251,9 @@ void HouseTypeExt::ExtData::LoadFromRulesFile(HouseTypeClass *pThis, CCINIClass 
 			this->LoadTextColor = CS;
 		}
 	}
+
+	INI_EX exINI(pINI);
+	this->ObserverFlagYuriPAL.Read(&exINI, pID, "File.ObserverFlagAltPalette");
 }
 
 void HouseTypeExt::ExtData::LoadFromINIFile(HouseTypeClass *pThis, CCINIClass *pINI) {
@@ -289,7 +335,7 @@ void HouseTypeExt::ExtData::LoadFromINIFile(HouseTypeClass *pThis, CCINIClass *p
 	}
 
 	this->RandomSelectionWeight = pINI->ReadInteger(pID, "RandomSelectionWeight", this->RandomSelectionWeight);
-		this->CountryListIndex = pINI->ReadInteger(pID, "ListIndex", this->CountryListIndex);
+	this->CountryListIndex = pINI->ReadInteger(pID, "ListIndex", this->CountryListIndex);
 }
 
 AnimTypeClass* HouseTypeExt::ExtData::GetParachuteAnim() {
