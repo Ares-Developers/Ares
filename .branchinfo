@@ -1,6 +1,6 @@
 [branch]
 Name=DCoder's Ares 0.3 Development Branch
-Description=This branch contains some work in progress that may or may not make it into v0.3. Don't touch this unless you know what's going on.
+Description=This branch contains some work in progress that may or may not make it into v0.3. Don't touch this unless you know what's going on. <b>Seriously.</b>
 TargetVersion=0.3
 Stable=no
 ReadyForTesting=no

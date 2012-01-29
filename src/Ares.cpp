@@ -17,6 +17,7 @@
 #include "Ext/House/Body.h"
 #include "Ext/HouseType/Body.h"
 #include "Ext/Infantry/Body.h"
+#include "Ext/Rules/Body.h"
 #include "Ext/Side/Body.h"
 #include "Ext/SWType/Body.h"
 #include "Ext/Techno/Body.h"
@@ -380,6 +381,8 @@ DEFINE_HOOK(685659, Scenario_ClearClasses, a)
 	TechnoTypeExt::ExtMap.Empty();
 	WarheadTypeExt::ExtMap.Empty();
 	WeaponTypeExt::ExtMap.Empty();
+
+	RulesExt::ClearCameos();
 
 	return 0;
 }

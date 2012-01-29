@@ -5,6 +5,15 @@
 
 DynamicVectorClass<CameoDataStruct> RulesExt::TabCameos[4];
 
+void RulesExt::ClearCameos() {
+	for(auto i = 0; i < 4; ++i) {
+		auto &cameos = RulesExt::TabCameos[i];
+		cameos.Clear();
+		cameos.CapacityIncrement = 100;
+		cameos.SetCapacity(100, NULL);
+	}
+}
+
 int IndexOfTab(TabDataStruct * tab) {
 	for(auto i = 0; i < 4; ++i) {
 		auto TestTab = &MouseClass::Instance->Tabs[i];
@@ -20,12 +29,7 @@ int IndexOfTab(TabDataStruct * tab) {
 // initializing sidebar
 DEFINE_HOOK(6A4EA5, SidebarClass_CTOR_InitCameosList, 6)
 {
-	for(auto i = 0; i < 4; ++i) {
-		auto &cameos = RulesExt::TabCameos[i];
-		cameos.Clear();
-		cameos.CapacityIncrement = 100;
-		cameos.SetCapacity(100, NULL);
-	}
+	RulesExt::ClearCameos();
 
 	return 0;
 }
@@ -33,12 +37,7 @@ DEFINE_HOOK(6A4EA5, SidebarClass_CTOR_InitCameosList, 6)
 // zeroing in preparation for load
 DEFINE_HOOK(6A4FD8, SidebarClass_Load_InitCameosList, 6)
 {
-	for(auto i = 0; i < 4; ++i) {
-		auto &cameos = RulesExt::TabCameos[i];
-		cameos.Clear();
-		cameos.CapacityIncrement = 100;
-		cameos.SetCapacity(100, NULL);
-	}
+	RulesExt::ClearCameos();
 
 	return 0;
 }

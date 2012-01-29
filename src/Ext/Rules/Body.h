@@ -73,6 +73,8 @@ public:
 	};
 
 	static DynamicVectorClass<CameoDataStruct> TabCameos[4];
+
+	static void ClearCameos();
 };
 
 #endif
