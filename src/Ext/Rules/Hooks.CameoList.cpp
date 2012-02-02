@@ -349,7 +349,7 @@ DEFINE_HOOK(6A9EBA, TabCameoListClass_Draw_Test10_3, 0)
 	;
 }
 
-DEFINE_HOOK(6AAD33, SidebarClass_ProcessCameoClick_LoadCameoData1, 0)
+DEFINE_HOOK(6AAD2F, SidebarClass_ProcessCameoClick_LoadCameoData1, 0)
 {
 	GET(int, CameoIndex, ESI);
 
@@ -358,19 +358,21 @@ DEFINE_HOOK(6AAD33, SidebarClass_ProcessCameoClick_LoadCameoData1, 0)
 		return 0x6AB94F;
 	}
 
-	R->Stack<int>(0x34, CameoIndex);
+	MouseClass::Instance->SetPointer(0, false);
+
+	R->Stack<int>(STACK_OFFS(0xAC, 0x80), CameoIndex);
 
 	auto &Item = cameos.Items[CameoIndex];
-	R->Stack<int>(0x1C, Item.ItemIndex);
-	R->Stack<int>(0x2C, Item.IsAlt);
+	R->Stack<int>(STACK_OFFS(0xAC, 0x98), Item.ItemIndex);
+	R->Stack<FactoryClass *>(STACK_OFFS(0xAC, 0x94), Item.CurrentFactory);
+	R->Stack<int>(STACK_OFFS(0xAC, 0x88), Item.IsAlt);
 	R->EBP<int>(Item.ItemType);
-	R->EDX<FactoryClass *>(Item.CurrentFactory);
 
 	auto ptr = reinterpret_cast<byte *>(&Item);
 	ptr -= 0x58;
 	R->EBX<byte *>(ptr);
 
-	return 0x6AAD58;
+	return 0x6AAD66;
 }
 
 DEFINE_HOOK(6AB0B0, SidebarClass_ProcessCameoClick_LoadCameo2, 0)
