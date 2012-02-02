@@ -355,8 +355,7 @@ DEFINE_HOOK(6AAD33, SidebarClass_ProcessCameoClick_LoadCameoData1, 0)
 
 	auto &cameos = RulesExt::TabCameos[MouseClass::Instance->ActiveTabIndex];
 	if(CameoIndex >= cameos.Count) {
-		Debug::FullDump(NULL);
-		Debug::FatalErrorAndExit("Bad cameo count @ %s: max %d, request %d\n", __FUNCTION__, cameos.Count, CameoIndex);
+		return 0x6AB94F;
 	}
 
 	R->Stack<int>(0x34, CameoIndex);
