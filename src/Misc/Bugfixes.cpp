@@ -918,3 +918,23 @@ DEFINE_HOOK(4D9F7B, FootClass_Sell_Detonate, 6)
 	}
 	return 0;
 }
+
+DEFINE_HOOK(739956, UnitClass_Deploy_TransferIvanBomb, 6)
+{
+	GET(UnitClass *, pUnit, EBP);
+	GET(BuildingClass *, pStructure, EBX);
+
+	TechnoExt::TransferIvanBomb(pUnit, pStructure);
+
+	return 0;
+}
+
+DEFINE_HOOK(44A03C, BuildingClass_Mi_Selling_TransferIvanBomb, 6)
+{
+	GET(BuildingClass *, pStructure, EBP);
+	GET(UnitClass *, pUnit, EBX);
+
+	TechnoExt::TransferIvanBomb(pStructure, pUnit);
+
+	return 0;
+}
