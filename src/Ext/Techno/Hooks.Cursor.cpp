@@ -11,12 +11,15 @@ DEFINE_HOOK(6FFF03, TechnoClass_GetCursorOverObject, A)
 
 	GET(TechnoClass *, pThis, ESI);
 
-	if(pThis->Owner->ControlledByPlayer() && !pThis->IsControllable()) {
-		if(pThis->CanBeSelected()) {
-			// all four derivate classes have special cased this value and will never attempt to override it
-			Result = Cursor_ToggleSelect;
-		} else {
-			Result = Cursor_None;
+	if(generic_cast<FootClass *>(pThis)) {
+		// BuildingClass::IsControllable only permits factories and conyards, derp herp
+		if(pThis->Owner->ControlledByPlayer() && !pThis->IsControllable()) {
+			if(pThis->CanBeSelected()) {
+				// all four derivate classes have special cased this value and will never attempt to override it
+				Result = Cursor_ToggleSelect;
+			} else {
+				Result = Cursor_None;
+			}
 		}
 	}
 
