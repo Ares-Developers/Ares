@@ -75,7 +75,7 @@ public:
 
 		Valueable<bool> Malicious;
 
-		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
+		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			MindControl_Permanent (false),
 			Ripple_Radius (0),
 			EMP_Duration (0),

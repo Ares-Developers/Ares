@@ -5,7 +5,6 @@
 #include "../TechnoType/Body.h"
 #include "../../Enum/Prerequisites.h"
 
-template<> const DWORD Extension<HouseClass>::Canary = 0x12345678;
 Container<HouseExt> HouseExt::ExtMap;
 
 template<> HouseExt::TT *Container<HouseExt>::SavingObject = NULL;

@@ -10,7 +10,6 @@
 #include <SlaveManagerClass.h>
 #include <SpawnManagerClass.h>
 
-template<> const DWORD Extension<TechnoClass>::Canary = 0x55555555;
 Container<TechnoExt> TechnoExt::ExtMap;
 
 template<> TechnoExt::TT *Container<TechnoExt>::SavingObject = NULL;

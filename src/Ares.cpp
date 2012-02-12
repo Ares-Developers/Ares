@@ -462,3 +462,20 @@ void Ares::UpdateStability() {
 			"and the original developers cannot be held responsible for any problems you might experience.");
 	}
 }
+
+void Ares::SaveGame() {
+	Debug::Log("About to save the game\n");
+}
+
+HRESULT Ares::SaveGameData(IStream *pStm) {
+	Debug::Log("Finished saving the game\n");
+	return S_OK;
+}
+
+void Ares::LoadGame() {
+	Debug::Log("About to load the game\n");
+}
+
+void Ares::LoadGameData(IStream *pStm) {
+	Debug::Log("Finished loading the game\n");
+}

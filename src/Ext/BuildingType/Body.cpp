@@ -4,7 +4,6 @@
 
 #include <InfantryClass.h>
 
-template<> const DWORD Extension<BuildingTypeClass>::Canary = 0x11111111;
 Container<BuildingTypeExt> BuildingTypeExt::ExtMap;
 
 template<> BuildingTypeExt::TT *Container<BuildingTypeExt>::SavingObject = NULL;

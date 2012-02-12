@@ -40,7 +40,7 @@ class SideExt
 		bool SidebarYuriFileNames;
 		char EVATag[0x20];	//TODO
 
-		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
+		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			ParaDropPlane (-1),
 			Parachute_Anim (&RulesClass::Instance->Parachute)
 		{

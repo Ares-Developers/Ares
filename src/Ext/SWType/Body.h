@@ -191,7 +191,7 @@ public:
 		int HandledByNewSWType;
 		int LastAction;
 
-		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
+		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			SpyPlane_TypeIndex (0),
 			SpyPlane_Count (1),
 			SpyPlane_Mission (mission_AttackAgain),

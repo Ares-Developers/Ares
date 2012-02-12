@@ -3,7 +3,6 @@
 #include "./../../Ares.CRT.h"
 
 //Static init
-template<> const DWORD Extension<CampaignClass>::Canary = 0x22441133;
 Container<CampaignExt> CampaignExt::ExtMap;
 DynamicVectorClass<CampaignExt::ExtData*> CampaignExt::Array;
 int CampaignExt::lastSelectedCampaign;

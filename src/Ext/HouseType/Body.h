@@ -50,7 +50,7 @@ class HouseTypeExt
 			SHPStruct *ObserverFlagSHP;
 			Valueable<bool> ObserverFlagYuriPAL;
 
-		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
+		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 				RandomSelectionWeight (0),
 				CountryListIndex (0),
 				ParaDropPlane (-1),

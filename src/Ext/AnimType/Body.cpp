@@ -4,7 +4,6 @@
 #include <HouseClass.h>
 #include <ScenarioClass.h>
 
-template<> const DWORD Extension<AnimTypeClass>::Canary = 0xEEEEEEEE;
 Container<AnimTypeExt> AnimTypeExt::ExtMap;
 
 template<> AnimTypeExt::TT *Container<AnimTypeExt>::SavingObject = NULL;

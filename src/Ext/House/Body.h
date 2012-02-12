@@ -48,7 +48,7 @@ class HouseExt
 
 			std::bitset<32> StolenTech;
 
-		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
+		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			IonSensitive(0),
 			FirewallActive(0),
 			FirewallRecalc(0),

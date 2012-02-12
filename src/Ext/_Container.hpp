@@ -17,10 +17,11 @@ namespace __gnu_cxx {
 };
 #endif
 
+#include <new>
 #include <xcompile.h>
 #include <CCINIClass.h>
-#include <SwizzleManagerClass.h>
-
+#include "../Misc/Swizzle.h"
+#include "../Misc/Savegame.h"
 #include "../Misc/Debug.h"
 
 enum eInitState {
@@ -56,7 +57,6 @@ enum eInitState {
 
    Requires:
    	typedef TX::TT = T;
-   	const DWORD Extension<T>::Canary = (any dword value easily identifiable in a byte stream)
    	class TX::ExtData : public Extension<T> { custom_data; }
 
    Complex? Yes. That's partially why you should be happy these are premade for you.
@@ -67,27 +67,19 @@ template<typename T>
 class Extension {
 	public:
 		eInitState _Initialized;
-		T* const AttachedToObject;
-	#ifdef DEBUGBUILD
-		DWORD SavedCanary;
-	#endif
+		T* AttachedToObject;
 
-		static const DWORD Canary;
-
-		Extension(const DWORD Canary, T* const OwnerObject) :
-		_Initialized(is_Blank),
-	#ifdef DEBUGBUILD
-		SavedCanary(Canary),
-	#endif
-		AttachedToObject(OwnerObject)
+		Extension(T* const OwnerObject) :
+			_Initialized(is_Blank),
+			AttachedToObject(OwnerObject)
 		{ };
 
 		virtual ~Extension() { };
 
-		// use this implementation for all descendants
-		// I mean it
-		// sizeof(facepalm)
-		// virtual size_t Size() const { return sizeof(*this); };
+		/**
+		 * this function should determine how many bytes are needed to write this object to the savegame
+		 * should sum up
+		 */
 		virtual size_t Size() const = 0;
 
 		// major refactoring!
@@ -132,6 +124,16 @@ class Extension {
 		virtual void Initialize(T *pThis) { };
 
 		virtual void InvalidatePointer(void *ptr) = 0;
+
+		virtual void SaveToStream(AresSaveStream &pStm) {
+			AresSwizzle::SaveToStream(pStm, this->_Initialized);
+			AresSwizzle::SaveToStream(pStm, this->AttachedToObject);
+		};
+
+		virtual void LoadFromFile(IStream *pStm, size_t Size, size_t &Offset) {
+			AresSwizzle::LoadFromFile(pStm, this->_Initialized, Size, Offset);
+			AresSwizzle::LoadFromFile(pStm, this->AttachedToObject, Size, Offset);
+		};
 
 	private:
 		void operator = (Extension &RHS) {
@@ -186,7 +188,7 @@ public:
 		}
 		typename C_Map::iterator i = this->find(key);
 		if(i == this->end()) {
-			E_T * val = new E_T(/*typename*/ E_T::Canary, key);
+			E_T * val = new E_T(key);
 			val->InitializeConstants(key);
 			i = this->insert(typename C_Map::value_type(key, val)).first;
 		}
@@ -268,7 +270,11 @@ public:
 		Debug::Log("\tKey maps to %X\n", buffer);
 		if(buffer) {
 			pStm->Write(&buffer, 4, &out);
-			pStm->Write(buffer, buffer->Size(), &out);
+			AresSaveStream saver(buffer->Size());
+			buffer->SaveToStream(saver);
+			size_t sz = saver.size();
+			pStm->Write(&sz, sizeof(sz), &out);
+			pStm->Write(saver.data(), sz, &out);
 //			Debug::Log("Save used up 0x%X bytes (HRESULT 0x%X)\n", out, res);
 		}
 
@@ -299,15 +305,25 @@ public:
 			return NULL;
 		}
 		E_T* buffer = this->FindOrAllocate(key);
-		long origPtr;
+		void *origPtr;
 		pStm->Read(&origPtr, 4, &out);
-		pStm->Read(buffer, buffer->Size(), &out);
+		size_t sz;
+		pStm->Read(&sz, 4, &out);
+		size_t offset(0);
+
+		/**
+		 * this is a neat solution to class sizes mutating over time
+		 * sz indicates how many bytes were originally written into the stream
+		 * offset will be a running counter reading how many bytes were read
+		 */
+
+		buffer->LoadFromFile(pStm, sz, offset);
+		if(offset != sz) {
+			Debug::Log("LoadKey read %X bytes instead of %X!\n", offset, sz);
+		}
 		Debug::Log("LoadKey Swizzle: %X => %X\n", origPtr, buffer);
-		SwizzleManagerClass::Instance.Here_I_Am(origPtr, (void *)buffer);
-		SWIZZLE(buffer->AttachedToObject);
-#ifdef DEBUGBUILD
-			assert(buffer->SavedCanary == typename E_T::Canary);
-#endif
+		AresSwizzle::Instance.RegisterChange(origPtr, (void *)buffer);
+		AresSwizzle::Instance.RegisterPointerForChange(buffer->AttachedToObject);
 		return buffer;
 	};
 };

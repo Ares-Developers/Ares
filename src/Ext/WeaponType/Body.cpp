@@ -7,7 +7,6 @@
 #include "../WarheadType/Body.h"
 #include "../Techno/Body.h"
 
-template<> const DWORD Extension<WeaponTypeClass>::Canary = 0x33333333;
 Container<WeaponTypeExt> WeaponTypeExt::ExtMap;
 
 template<> WeaponTypeExt::TT *Container<WeaponTypeExt>::SavingObject = NULL;

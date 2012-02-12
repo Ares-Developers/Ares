@@ -6,7 +6,6 @@
 #include "../Building/Body.h"
 #include "../BuildingType/Body.h"
 
-template<> const DWORD Extension<BulletClass>::Canary = 0x87654321;
 Container<BulletExt> BulletExt::ExtMap;
 
 template<> BulletClass *Container<BulletExt>::SavingObject = NULL;

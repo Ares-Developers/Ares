@@ -22,7 +22,7 @@ public:
 
 		CustomPalette Palette;
 
-		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
+		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			MakeInfantryOwner (INVOKER),
 			Palette()
 			{ };
@@ -36,6 +36,18 @@ public:
 
 		virtual void InvalidatePointer(void *ptr) {
 		}
+
+		virtual void SaveToStream(AresSaveStream &pStm) {
+			Extension<TT>::SaveToStream(pStm);
+			AresSwizzle::SaveToStream(pStm, this->MakeInfantryOwner);
+			AresSwizzle::SaveToStream(pStm, this->Palette);
+		};
+
+		virtual void LoadFromFile(IStream *pStm, size_t Size, size_t &Offset) {
+			Extension<TT>::LoadFromFile(pStm, Size, Offset);
+			AresSwizzle::LoadFromFile(pStm, this->MakeInfantryOwner, Size, Offset);
+			AresSwizzle::LoadFromFile(pStm, this->Palette, Size, Offset);
+		};
 
 	};
 

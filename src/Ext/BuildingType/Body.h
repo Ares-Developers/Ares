@@ -138,7 +138,7 @@ public:
 		// clones vehicles
 		Valueable<bool> CloningFacility;
 
-		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
+		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			Solid_Height (0),
 			IsCustom (false),
 			CustomWidth (0),

@@ -6,7 +6,6 @@
 #include "../../Enum/RadTypes.h"
 #include <GameModeOptionsClass.h>
 
-template<> const DWORD Extension<RulesClass>::Canary = 0x12341234;
 RulesExt::ExtData * RulesExt::Data = NULL;
 
 template<> RulesExt::TT *Container<RulesExt>::SavingObject = NULL;
@@ -16,7 +15,7 @@ void RulesExt::Allocate(RulesClass *pThis) {
 	if (Data) {
 		Remove(pThis);
 	}
-	Data = new RulesExt::ExtData(RulesExt::ExtData::Canary, pThis);
+	Data = new RulesExt::ExtData(pThis);
 }
 
 void RulesExt::Remove(RulesClass *pThis) {

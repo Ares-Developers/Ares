@@ -5,7 +5,6 @@
 #include <ScenarioClass.h>
 #include <ColorScheme.h>
 
-template<> const DWORD Extension<HouseTypeClass>::Canary = 0xAFFEAFFE;
 Container<HouseTypeExt> HouseTypeExt::ExtMap;
 
 template<> HouseTypeExt::TT *Container<HouseTypeExt>::SavingObject = NULL;

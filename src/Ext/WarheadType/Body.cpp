@@ -24,7 +24,6 @@
 #include <Helpers/Template.h>
 #include <set>
 
-template<> const DWORD Extension<WarheadTypeClass>::Canary = 0x22222222;
 Container<WarheadTypeExt> WarheadTypeExt::ExtMap;
 
 template<> WarheadTypeExt::TT *Container<WarheadTypeExt>::SavingObject = NULL;

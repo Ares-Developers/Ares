@@ -3,7 +3,6 @@
 #include <ScenarioClass.h>
 
 //Static init
-template<> const DWORD Extension<SideClass>::Canary = 0x87654321;
 Container<SideExt> SideExt::ExtMap;
 ColorScheme *SideExt::CurrentLoadTextColor = NULL;
 

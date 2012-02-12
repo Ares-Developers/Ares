@@ -88,7 +88,7 @@ public:
 		Valueable <bool> Abductor_ChangeOwner;
 		Valueable<double> Abductor_AbductBelowPercent;
 		
-		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
+		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			Weapon_Loaded (false),
 			Beam_Color (&RulesClass::Instance->RadColor),
 			Beam_Duration (15),

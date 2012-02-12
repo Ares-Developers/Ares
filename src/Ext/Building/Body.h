@@ -52,7 +52,7 @@ public:
 		std::set<TechnoClass *> RegisteredJammers; //!< Set of Radar Jammers which have registered themselves to be in range of this building. (Related to issue #305)
 
 	public:
-		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
+		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			OwnerBeforeRaid(NULL), isCurrentlyRaided(false), ignoreNextEVA(false), PrismForwarding(), FreeUnits_Done(false), AboutToChronoshift(false)
 			{ };
 

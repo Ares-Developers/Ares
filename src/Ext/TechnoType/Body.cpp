@@ -9,7 +9,6 @@
 #include <PCX.h>
 #include <Theater.h>
 
-template<> const DWORD Extension<TechnoTypeClass>::Canary = 0x44444444;
 Container<TechnoTypeExt> TechnoTypeExt::ExtMap;
 
 template<> TechnoTypeExt::TT *Container<TechnoTypeExt>::SavingObject = NULL;
