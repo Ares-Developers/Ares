@@ -1,5 +1,5 @@
-#ifndef BUILDINGTYPE_EXT_H
-#define BUILDINGTYPE_EXT_H
+#ifndef ANIMTYPE_EXT_H
+#define ANIMTYPE_EXT_H
 
 #include <AnimClass.h>
 #include <AnimTypeClass.h>
@@ -30,24 +30,14 @@ public:
 		virtual ~ExtData() {
 		}
 
-		virtual size_t Size() const { return sizeof(*this); };
-
 		virtual void LoadFromINIFile(TT *pThis, CCINIClass *pINI);
 
 		virtual void InvalidatePointer(void *ptr) {
 		}
 
-		virtual void SaveToStream(AresSaveStream &pStm) {
-			Extension<TT>::SaveToStream(pStm);
-			AresSwizzle::SaveToStream(pStm, this->MakeInfantryOwner);
-			AresSwizzle::SaveToStream(pStm, this->Palette);
-		};
+		virtual void SaveToStream(AresByteStream &pStm);
 
-		virtual void LoadFromFile(IStream *pStm, size_t Size, size_t &Offset) {
-			Extension<TT>::LoadFromFile(pStm, Size, Offset);
-			AresSwizzle::LoadFromFile(pStm, this->MakeInfantryOwner, Size, Offset);
-			AresSwizzle::LoadFromFile(pStm, this->Palette, Size, Offset);
-		};
+		virtual void LoadFromStream(AresByteStream &pStm, size_t Size, size_t &Offset);
 
 	};
 

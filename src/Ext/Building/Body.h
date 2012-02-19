@@ -6,6 +6,7 @@
 #include <TechnoClass.h>
 #include <set>
 
+#include "PrismForwarding.h"
 #include "../BuildingType/Body.h"
 #include "../_Container.hpp"
 #include "../../Ares.h"
@@ -18,21 +19,6 @@ class BuildingExt
 {
 public:
 	typedef BuildingClass TT;
-
-	class cPrismForwarding {
-		public:
-		DynamicVectorClass<BuildingClass*> Senders;		//the prism towers that are forwarding to this one
-		BuildingClass* SupportTarget;				//what tower am I sending to?
-		int PrismChargeDelay;					//current delay charge
-		double ModifierReserve;					//current modifier reservoir
-		int DamageReserve;					//current flat reservoir
-
-		// constructor
-		cPrismForwarding() : SupportTarget(NULL), PrismChargeDelay(0), ModifierReserve(0.0), DamageReserve(0) {
-			this->Senders.Clear();
-		};
-	};
-
 
 	class ExtData : public Extension<TT>
 	{
@@ -47,7 +33,7 @@ public:
 		bool AboutToChronoshift; //!< This building is going to be shifted. It should not be attacked with temporal weapons now. Otherwise it would disappear.
 
 		bool InfiltratedBy(HouseClass *Enterer);
-		cPrismForwarding PrismForwarding;
+		BuildingExtras::cPrismForwarding PrismForwarding;
 
 		std::set<TechnoClass *> RegisteredJammers; //!< Set of Radar Jammers which have registered themselves to be in range of this building. (Related to issue #305)
 
@@ -57,13 +43,18 @@ public:
 			{ };
 
 		virtual ~ExtData() {
-			BuildingTypeExt::cPrismForwarding::RemoveFromNetwork(this->AttachedToObject, true);
+			BuildingTypeExtras::cPrismForwarding::RemoveFromNetwork(this->AttachedToObject, true);
 		}
 
-		virtual size_t Size() const { return sizeof(*this); };
+		virtual void SaveToStream(AresByteStream &pStm);
+
+		virtual void LoadFromStream(AresByteStream &pStm, size_t Size, size_t &Offset);
 
 		virtual void InvalidatePointer(void *ptr) {
-			AnnounceInvalidPointer(OwnerBeforeRaid, ptr);
+			AnnounceInvalidPointer(this->OwnerBeforeRaid, ptr);
+			RegisteredJammers.erase(reinterpret_cast<TechnoClass *>(ptr));
+			AnnounceInvalidPointer(this->PrismForwarding.SupportTarget, ptr);
+			AnnounceInvalidPointer(this->PrismForwarding.Senders, ptr);
 		}
 
 		// related to Advanced Rubble

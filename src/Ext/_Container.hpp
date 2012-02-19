@@ -21,7 +21,7 @@ namespace __gnu_cxx {
 #include <xcompile.h>
 #include <CCINIClass.h>
 #include "../Misc/Swizzle.h"
-#include "../Misc/Savegame.h"
+class AresByteStream;
 #include "../Misc/Debug.h"
 
 enum eInitState {
@@ -76,12 +76,6 @@ class Extension {
 
 		virtual ~Extension() { };
 
-		/**
-		 * this function should determine how many bytes are needed to write this object to the savegame
-		 * should sum up
-		 */
-		virtual size_t Size() const = 0;
-
 		// major refactoring!
 		// LoadFromINI is now a non-virtual public function that orchestrates the initialization/loading of extension data
 		// all its slaves are now protected functions
@@ -125,15 +119,9 @@ class Extension {
 
 		virtual void InvalidatePointer(void *ptr) = 0;
 
-		virtual void SaveToStream(AresSaveStream &pStm) {
-			AresSwizzle::SaveToStream(pStm, this->_Initialized);
-			AresSwizzle::SaveToStream(pStm, this->AttachedToObject);
-		};
+		virtual void SaveToStream(AresByteStream &pStm);
 
-		virtual void LoadFromFile(IStream *pStm, size_t Size, size_t &Offset) {
-			AresSwizzle::LoadFromFile(pStm, this->_Initialized, Size, Offset);
-			AresSwizzle::LoadFromFile(pStm, this->AttachedToObject, Size, Offset);
-		};
+		virtual void LoadFromStream(AresByteStream &pStm, size_t Size, size_t &Offset);
 
 	private:
 		void operator = (Extension &RHS) {
@@ -144,7 +132,7 @@ class Extension {
 //template<typename T1, typename T2>
 template<typename T>
 class Container : public hash_map<typename T::TT*, typename T::ExtData* > {
-private:
+public:
 	typedef typename T::TT        S_T;
 	typedef typename T::ExtData   E_T;
 	typedef hash_map<S_T*, E_T*>  C_Map;
@@ -257,30 +245,7 @@ public:
 		this->SaveKey(key, pStm);
 	}
 
-	E_T* SaveKey(S_T *key, IStream *pStm) {
-		ULONG out;
-
-		const std::type_info &info = typeid(key);
-		Debug::Log("Saving Key [%s] (%X)\n", info.name(), key);
-
-		if(key == NULL) {
-			return NULL;
-		}
-		E_T* buffer = this->Find(key);
-		Debug::Log("\tKey maps to %X\n", buffer);
-		if(buffer) {
-			pStm->Write(&buffer, 4, &out);
-			AresSaveStream saver(buffer->Size());
-			buffer->SaveToStream(saver);
-			size_t sz = saver.size();
-			pStm->Write(&sz, sizeof(sz), &out);
-			pStm->Write(saver.data(), sz, &out);
-//			Debug::Log("Save used up 0x%X bytes (HRESULT 0x%X)\n", out, res);
-		}
-
-		Debug::Log("\n\n");
-		return buffer;
-	};
+	E_T* SaveKey(S_T *key, IStream *pStm);
 
 	void LoadStatic() {
 		if(Container<T>::SavingObject && Container<T>::SavingStream) {
@@ -294,38 +259,85 @@ public:
 		this->LoadKey(key, pStm);
 	}
 
-	E_T* LoadKey(S_T *key, IStream *pStm) {
-		ULONG out;
+	E_T* LoadKey(S_T *key, IStream *pStm);
+};
 
-		const std::type_info &info = typeid(key);
-		Debug::Log("Loading Key [%s] (%X)\n", info.name(), key);
+#include "../Misc/Savegame.h"
 
-		if(key == NULL) {
-			Debug::Log("Load attempted for a NULL pointer! WTF!\n");
-			return NULL;
-		}
-		E_T* buffer = this->FindOrAllocate(key);
-		void *origPtr;
-		pStm->Read(&origPtr, 4, &out);
-		size_t sz;
-		pStm->Read(&sz, 4, &out);
-		size_t offset(0);
+template<typename T>
+inline void Extension<T>::SaveToStream(AresByteStream &pStm) {
+	pStm.SaveToStream(this->_Initialized);
+	pStm.SaveToStream(this->AttachedToObject);
+};
 
+template<typename T>
+inline void Extension<T>::LoadFromStream(AresByteStream &pStm, size_t Size, size_t &Offset) {
+	pStm.LoadFromStream(this->_Initialized, Size, Offset);
+	pStm.LoadFromStream(this->AttachedToObject, Size, Offset);
+};
+
+template<typename T>
+typename Container<T>::E_T* Container<T>::SaveKey(typename Container<T>::S_T *key, IStream *pStm) {
+	ULONG out;
+
+	const std::type_info &info = typeid(key);
+	Debug::Log("Saving Key [%s] (%X)\n", info.name(), key);
+
+	if(key == NULL) {
+		return NULL;
+	}
+	auto buffer = this->Find(key);
+	Debug::Log("\tKey maps to %X\n", buffer);
+	if(buffer) {
+		pStm->Write(&buffer, 4, &out);
+		AresByteStream saver(sizeof(*buffer));
+		buffer->SaveToStream(saver);
+		size_t sz = saver.size();
+		pStm->Write(&sz, sizeof(sz), &out);
+		pStm->Write(saver.data(), sz, &out);
+//			Debug::Log("Save used up 0x%X bytes (HRESULT 0x%X)\n", out, res);
+	}
+
+	Debug::Log("\n\n");
+	return buffer;
+};
+
+template<typename T>
+typename Container<T>::E_T* Container<T>::LoadKey(typename Container<T>::S_T *key, IStream *pStm) {
+	ULONG out;
+
+	const std::type_info &info = typeid(key);
+	Debug::Log("Loading Key [%s] (%X)\n", info.name(), key);
+
+	if(key == NULL) {
+		Debug::Log("Load attempted for a NULL pointer! WTF!\n");
+		return NULL;
+	}
+	auto buffer = this->FindOrAllocate(key);
+	void *origPtr;
+	pStm->Read(&origPtr, 4, &out);
+	size_t sz;
+	pStm->Read(&sz, 4, &out);
+	AresByteStream loader(sz);
+	if(loader.ReadFromStream(pStm, sz)) {
 		/**
 		 * this is a neat solution to class sizes mutating over time
 		 * sz indicates how many bytes were originally written into the stream
 		 * offset will be a running counter reading how many bytes were read
 		 */
 
-		buffer->LoadFromFile(pStm, sz, offset);
+		size_t offset(0);
+		buffer->LoadFromStream(loader, sz, offset);
 		if(offset != sz) {
 			Debug::Log("LoadKey read %X bytes instead of %X!\n", offset, sz);
 		}
 		Debug::Log("LoadKey Swizzle: %X => %X\n", origPtr, buffer);
 		AresSwizzle::Instance.RegisterChange(origPtr, (void *)buffer);
 		AresSwizzle::Instance.RegisterPointerForChange(buffer->AttachedToObject);
-		return buffer;
-	};
+	} else {
+		Debug::Log("LoadKey failed to read data from save stream?!\n");
+	}
+	return buffer;
 };
 
 #endif

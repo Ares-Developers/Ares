@@ -15,8 +15,8 @@ DEFINE_HOOK(44B2FE, BuildingClass_Mi_Attack_IsPrism, 6)
 	BuildingTypeClass *pMasterType = B->Type;
 	BuildingTypeExt::ExtData *pMasterTypeData = BuildingTypeExt::ExtMap.Find(pMasterType);
 
-	if (pMasterTypeData->PrismForwarding.Enabled == BuildingTypeExt::cPrismForwarding::YES
-		|| pMasterTypeData->PrismForwarding.Enabled == BuildingTypeExt::cPrismForwarding::ATTACK) {
+	if (pMasterTypeData->PrismForwarding.Enabled == BuildingTypeExtras::cPrismForwarding::YES
+		|| pMasterTypeData->PrismForwarding.Enabled == BuildingTypeExtras::cPrismForwarding::ATTACK) {
 
 		BuildingExt::ExtData *pMasterData = BuildingExt::ExtMap.Find(B);
 
@@ -42,10 +42,10 @@ DEFINE_HOOK(44B2FE, BuildingClass_Mi_Attack_IsPrism, 6)
 			int stage = 0;
 
 			//when it reaches zero we can't acquire any more slaves
-			while (BuildingTypeExt::cPrismForwarding::AcquireSlaves_MultiStage(B, B, stage++, 0, &NetworkSize, &LongestChain) != 0) {}
+			while (BuildingTypeExtras::cPrismForwarding::AcquireSlaves_MultiStage(B, B, stage++, 0, &NetworkSize, &LongestChain) != 0) {}
 
 			//now we have all the towers we know the longest chain, and can set all the towers' charge delays
-			BuildingTypeExt::cPrismForwarding::SetChargeDelay(B, LongestChain);
+			BuildingTypeExtras::cPrismForwarding::SetChargeDelay(B, LongestChain);
 
 		} else if (B->PrismStage == pcs_Slave) {
 			//a slave tower is changing into a master tower at the last second
@@ -79,8 +79,8 @@ DEFINE_HOOK(447FAE, BuildingClass_GetObjectActivityState, 6)
 		//if this is a slave prism tower, then it might still be able to become a master tower at this time
 		BuildingTypeClass *pType = B->Type;
 		BuildingTypeExt::ExtData *pTypeData = BuildingTypeExt::ExtMap.Find(pType);
-		if (pTypeData->PrismForwarding.Enabled == BuildingTypeExt::cPrismForwarding::YES
-				|| pTypeData->PrismForwarding.Enabled == BuildingTypeExt::cPrismForwarding::ATTACK) {
+		if (pTypeData->PrismForwarding.Enabled == BuildingTypeExtras::cPrismForwarding::YES
+				|| pTypeData->PrismForwarding.Enabled == BuildingTypeExtras::cPrismForwarding::ATTACK) {
 			//is a prism tower
 			if (B->PrismStage == pcs_Slave && pTypeData->PrismForwarding.BreakSupport) {
 				return NotBusyCharging;
@@ -267,14 +267,14 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 DEFINE_HOOK(4424EF, PrismForward_BuildingDestroyed, 6)
 {
 	GET(BuildingClass *, B, ESI);
-	BuildingTypeExt::cPrismForwarding::RemoveFromNetwork(B, true);
+	BuildingTypeExtras::cPrismForwarding::RemoveFromNetwork(B, true);
 	return 0;
 }
 
 DEFINE_HOOK(447113, PrismForward_BuildingSold, 6)
 {
 	GET(BuildingClass *, B, ESI);
-	BuildingTypeExt::cPrismForwarding::RemoveFromNetwork(B, true);
+	BuildingTypeExtras::cPrismForwarding::RemoveFromNetwork(B, true);
 	return 0;
 }
 
@@ -315,7 +315,7 @@ DEFINE_HOOK(448277, PrismForward_BuildingChangeOwner, 5)
 			}
 		}
 		//if we reach this point then the alliance checks have failed
-		BuildingTypeExt::cPrismForwarding::RemoveFromNetwork(B, false); //false because animation should continue / slave is busy but won't now fire
+		BuildingTypeExtras::cPrismForwarding::RemoveFromNetwork(B, false); //false because animation should continue / slave is busy but won't now fire
 		
 	}
 
@@ -325,7 +325,7 @@ DEFINE_HOOK(448277, PrismForward_BuildingChangeOwner, 5)
 DEFINE_HOOK(71AF76, PrismForward_BuildingWarped, 9) {
 	GET(TechnoClass *, T, EDI);
 	if (BuildingClass * B = specific_cast<BuildingClass *>(T)) {
-		BuildingTypeExt::cPrismForwarding::RemoveFromNetwork(B, true);
+		BuildingTypeExtras::cPrismForwarding::RemoveFromNetwork(B, true);
 	}
 	return 0;
 }
@@ -337,7 +337,7 @@ DEFINE_HOOK(70FD9A, PrismForward_BuildingDrain, 6)
 	GET(TechnoClass *, Drainee, EDI);
 	if(Drainee->DrainingMe != Drainer) { // else we're already being drained, nothing to do
 		if (BuildingClass * B = specific_cast<BuildingClass *>(Drainee)) {
-			BuildingTypeExt::cPrismForwarding::RemoveFromNetwork(B, true);
+			BuildingTypeExtras::cPrismForwarding::RemoveFromNetwork(B, true);
 		}
 	}
 	return 0;
@@ -348,13 +348,13 @@ DEFINE_HOOK(454B3D, PrismForward_BuildingPowerDown, 6)
 	GET(BuildingClass *, B, ESI);
 	// this building just realised it needs to go offline
 	// it unregistered itself from powered unit controls but hasn't done anything else yet
-	BuildingTypeExt::cPrismForwarding::RemoveFromNetwork(B, true);
+	BuildingTypeExtras::cPrismForwarding::RemoveFromNetwork(B, true);
 	return 0;
 }
 
 DEFINE_HOOK(44EBF0, PrismForward_BuildingRemoved, 5)
 {
 	GET(BuildingClass *, B, ECX);
-	BuildingTypeExt::cPrismForwarding::RemoveFromNetwork(B, true);
+	BuildingTypeExtras::cPrismForwarding::RemoveFromNetwork(B, true);
 	return 0;
 }

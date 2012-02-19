@@ -7,7 +7,7 @@
 #include <vector>
 #include <algorithm>
 
-void BuildingTypeExt::cPrismForwarding::Initialize(BuildingTypeClass *pThis) {
+void BuildingTypeExtras::cPrismForwarding::Initialize(BuildingTypeClass *pThis) {
 	this->Enabled = NO;
 	if (pThis == RulesClass::Instance->PrismType) {
 		this->Enabled = YES;
@@ -15,7 +15,7 @@ void BuildingTypeExt::cPrismForwarding::Initialize(BuildingTypeClass *pThis) {
 	this->Targets.AddItem(pThis);
 }
 
-void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis, CCINIClass* pINI) {
+void BuildingTypeExtras::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis, CCINIClass* pINI) {
 	const char * pID = pThis->ID;
 	if(pINI->ReadString(pID, "PrismForwarding", "", Ares::readBuffer, Ares::readLength)) {
 		if((strcmp(Ares::readBuffer, "yes") == 0) || (strcmp(Ares::readBuffer, "true") == 0)) {
@@ -117,7 +117,7 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 	}
 }
 
-signed int BuildingTypeExt::cPrismForwarding::GetUnusedWeaponSlot(BuildingTypeClass *pThis, bool elite) {
+signed int BuildingTypeExtras::cPrismForwarding::GetUnusedWeaponSlot(BuildingTypeClass *pThis, bool elite) {
 	int idxWeapon = 1;
 	while (++idxWeapon <= 12) {
 		auto Weapon = elite
@@ -134,7 +134,7 @@ signed int BuildingTypeExt::cPrismForwarding::GetUnusedWeaponSlot(BuildingTypeCl
 	return -1;
 }
 
-int BuildingTypeExt::cPrismForwarding::AcquireSlaves_MultiStage
+int BuildingTypeExtras::cPrismForwarding::AcquireSlaves_MultiStage
 	(BuildingClass *MasterTower, BuildingClass *TargetTower, int stage, int chain, int *NetworkSize, int *LongestChain) {
 	//get all slaves for a specific stage in the prism chain
 	//this is done for all sibling chains in parallel, so we prefer multiple short chains over one really long chain
@@ -166,7 +166,7 @@ int BuildingTypeExt::cPrismForwarding::AcquireSlaves_MultiStage
 	return countSlaves;
 }
 
-int BuildingTypeExt::cPrismForwarding::AcquireSlaves_SingleStage
+int BuildingTypeExtras::cPrismForwarding::AcquireSlaves_SingleStage
 	(BuildingClass *MasterTower, BuildingClass *TargetTower, int stage, int chain, int *NetworkSize, int *LongestChain) {
 	//set up immediate slaves for this particular tower
 
@@ -244,7 +244,7 @@ int BuildingTypeExt::cPrismForwarding::AcquireSlaves_SingleStage
 	return iFeeds;
 }
 
-bool BuildingTypeExt::cPrismForwarding::ValidateSupportTower(
+bool BuildingTypeExtras::cPrismForwarding::ValidateSupportTower(
 		BuildingClass *MasterTower, BuildingClass *TargetTower, BuildingClass *SlaveTower) {
 	//MasterTower = the firing tower. This might be the same as TargetTower, it might not.
 	//TargetTower = the tower that we are forwarding to
@@ -320,7 +320,7 @@ bool BuildingTypeExt::cPrismForwarding::ValidateSupportTower(
 	return false;
 }
 
-void BuildingTypeExt::cPrismForwarding::SetChargeDelay
+void BuildingTypeExtras::cPrismForwarding::SetChargeDelay
 	(BuildingClass * TargetTower, int LongestChain) {
 	int ArrayLen = LongestChain + 1;
 	DWORD *LongestCDelay = new DWORD[ArrayLen];
@@ -346,7 +346,7 @@ void BuildingTypeExt::cPrismForwarding::SetChargeDelay
 	delete [] LongestCDelay;
 }
 
-void BuildingTypeExt::cPrismForwarding::SetChargeDelay_Get
+void BuildingTypeExtras::cPrismForwarding::SetChargeDelay_Get
 	(BuildingClass * TargetTower, int chain, int endChain, int LongestChain, DWORD *LongestCDelay, DWORD *LongestFDelay) {
 	BuildingExt::ExtData *pTargetData = BuildingExt::ExtMap.Find(TargetTower);
 	if (chain == endChain) {
@@ -373,7 +373,7 @@ void BuildingTypeExt::cPrismForwarding::SetChargeDelay_Get
 }
 
 //here we are only passing in LongestChain so we can set SupportingPrisms to the chain length. this has nothing to do with the charge delay which we have already calculated
-void BuildingTypeExt::cPrismForwarding::SetChargeDelay_Set
+void BuildingTypeExtras::cPrismForwarding::SetChargeDelay_Set
 	(BuildingClass * TargetTower, int chain, DWORD *LongestCDelay, DWORD *LongestFDelay, int LongestChain) {
 	BuildingExt::ExtData *pTargetData = BuildingExt::ExtMap.Find(TargetTower);
 	pTargetData->PrismForwarding.PrismChargeDelay = (LongestFDelay[chain] - TargetTower->DelayBeforeFiring) + LongestCDelay[chain];
@@ -396,7 +396,7 @@ void BuildingTypeExt::cPrismForwarding::SetChargeDelay_Set
 
 //Whenever a building is incapacitated, this method should be called to take it out of any prism network
 //destruction, change sides, mind-control, sold, warped, emp, undeployed, low power, drained, lost operator
-void BuildingTypeExt::cPrismForwarding::RemoveFromNetwork(BuildingClass *SlaveTower, bool bCease) {
+void BuildingTypeExtras::cPrismForwarding::RemoveFromNetwork(BuildingClass *SlaveTower, bool bCease) {
 	if (int PrismStage = SlaveTower->PrismStage) {
 		//is a slave or a master tower
 		BuildingExt::ExtData *pSlaveData = BuildingExt::ExtMap.Find(SlaveTower);

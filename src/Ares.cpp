@@ -10,6 +10,7 @@
 
 #include <new>
 
+#include "Ext/AnimType/Body.h"
 #include "Ext/Building/Body.h"
 #include "Ext/BuildingType/Body.h"
 #include "Ext/Bullet/Body.h"

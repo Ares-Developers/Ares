@@ -13,10 +13,34 @@
 #include <RadarEventClass.h>
 #include <SuperClass.h>
 
+#include "../../Misc/Swizzle.h"
+
 Container<BuildingExt> BuildingExt::ExtMap;
 
 template<> BuildingClass *Container<BuildingExt>::SavingObject = NULL;
 template<> IStream *Container<BuildingExt>::SavingStream = NULL;
+
+void BuildingExt::ExtData::SaveToStream(AresByteStream &pStm) {
+	Extension<BuildingExt::TT>::SaveToStream(pStm);
+	pStm.SaveToStream(this->OwnerBeforeRaid);
+	pStm.SaveToStream(this->isCurrentlyRaided);
+	pStm.SaveToStream(this->ignoreNextEVA);
+	pStm.SaveToStream(this->FreeUnits_Done);
+	pStm.SaveToStream(this->AboutToChronoshift);
+	pStm.SaveToStream(this->PrismForwarding);
+	pStm.SaveToStream(this->RegisteredJammers);
+};
+
+void BuildingExt::ExtData::LoadFromStream(AresByteStream &pStm, size_t Size, size_t &Offset) {
+	Extension<BuildingExt::TT>::LoadFromStream(pStm, Size, Offset);
+	pStm.LoadFromStream(this->OwnerBeforeRaid, Size, Offset);
+	pStm.LoadFromStream(this->isCurrentlyRaided, Size, Offset);
+	pStm.LoadFromStream(this->ignoreNextEVA, Size, Offset);
+	pStm.LoadFromStream(this->FreeUnits_Done, Size, Offset);
+	pStm.LoadFromStream(this->AboutToChronoshift, Size, Offset);
+	pStm.LoadFromStream(this->PrismForwarding, Size, Offset);
+	pStm.LoadFromStream(this->RegisteredJammers, Size, Offset);
+};
 
 // =============================
 // member functions

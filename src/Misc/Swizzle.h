@@ -3,8 +3,8 @@
 
 #include <xcompile.h>
 #include <windows.h>
-#include "Savegame.h"
 #include "Debug.h"
+#include <ArrayClasses.h>
 
 /**
  * here be dragons
@@ -57,102 +57,36 @@ public:
 
 	template<typename T>
 	void RegisterPointerForChange(T &ptr);
-
-	template<typename T>
-	void SwizzleObject(T &Object);
-
-	template<typename T>
-	void SwizzleObject(VectorClass<T> &Object);
-
-	template<typename T>
-	void SwizzleObject(DynamicVectorClass<T> &Object);
-
-	template<typename T>
-	static HRESULT SaveToFile(IStream *pStm, const T &Value);
-
-	template<typename T>
-	static HRESULT SaveToStream(AresSaveStream &pStm, const T &Value);
-
-	template<typename T>
-	static HRESULT LoadFromFile(IStream *pStm, T &Value);
-
-	template<typename T>
-	static HRESULT LoadFromFile(IStream *pStm, T &Value, const size_t Size, size_t &Offset);
 };
 
+template<typename T>
+class ObjectSwizzler {
+public:
+	ObjectSwizzler(T &Object);
+};
 
 template<typename T>
 void AresSwizzle::RegisterPointerForChange(T &ptr) {
 	this->RegisterForChange(reinterpret_cast<void **>(&ptr));
-}
+};
 
 template<typename T>
-void AresSwizzle::SwizzleObject(T &Object) {
-
-}
+void ObjectSwizzler<T>::ObjectSwizzler(T &Object) {
+	//nop
+};
 
 template<typename T>
-void AresSwizzle::SwizzleObject(VectorClass<T> &Object) {
+void ObjectSwizzler<VectorClass<T> >::ObjectSwizzler(VectorClass<T> &Object) {
 	for (auto ii = 0; ii < Object.Capacity; ++ii) {
-		this->RegisterForChange(&(Object.Items[ii]));
+		AresSwizzle::Instance.RegisterPointerForChange(&(Object.Items[ii]));
 	}
-}
+};
 
 template<typename T>
-void AresSwizzle::SwizzleObject(DynamicVectorClass<T> &Object) {
+void ObjectSwizzler<DynamicVectorClass<T> >::ObjectSwizzler(DynamicVectorClass<T> &Object) {
 	for (auto ii = 0; ii < Object.Count; ++ii) {
-		this->RegisterForChange(&(Object.Items[ii]));
+		AresSwizzle::Instance.RegisterPointerForChange(&(Object.Items[ii]));
 	}
-}
-
-template<typename T>
-HRESULT AresSwizzle::SaveToFile(IStream *pStm, const T &Value) {
-	const auto sz = sizeof(T);
-	ULONG out;
-	auto result = pStm->Write(&Value, sz, &out);
-	if(SUCCEEDED(result)) {
-		if(sz == out) {
-			return result;
-		}
-		return E_FAIL;
-	}
-	return result;
 };
-
-template<typename T>
-HRESULT AresSwizzle::SaveToStream(AresSaveStream &pStm, const T &Value) {
-	const auto sz = sizeof(T);
-	pStm.reserve(pStm.size() + sz);
-	auto ptr = reinterpret_cast<const byte *>(&Value);
-	pStm.insert(pStm.end(), ptr, ptr + sz);
-	return S_OK;
-};
-
-template<typename T>
-HRESULT AresSwizzle::LoadFromFile(IStream *pStm, T &Value) {
-	const auto sz = sizeof(T);
-	ULONG out;
-	auto result = pStm->Read(&Value, sz, &out);
-	if(SUCCEEDED(result)) {
-		if(sz == out) {
-			return result;
-		}
-		return E_FAIL;
-	}
-	return result;
-}
-
-template<typename T>
-HRESULT AresSwizzle::LoadFromFile(IStream *pStm, T &Value, const size_t Size, size_t &Offset) {
-	const auto sz = sizeof(T);
-	if(Offset >= Size) {
-		return S_FALSE;
-	}
-	if(Offset + sz > Size) {
-		return S_FALSE;
-	}
-	Offset += sz;
-	return AresSwizzle::LoadFromFile(pStm, Value);
-}
 
 #endif
