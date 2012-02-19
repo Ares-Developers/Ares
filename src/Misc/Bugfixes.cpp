@@ -236,14 +236,32 @@ DEFINE_HOOK_AGAIN(42463A, AnimClass_Update_Damage, 6)
 			? RulesClass::Global()->FlameDamage2
 			: RulesClass::Global()->C4Warhead;
 	}
-	DWORD WH = (DWORD)W;
 
 	DWORD origin = R->get_Origin();
 	if(origin == 0x42461D) {
-		R->ECX(WH);
+		R->ECX(W);
 	} else {
-		R->EDX(WH);
+		R->EDX(W);
 	}
+
+	if (Anim->Owner) {
+		R->Stack<HouseClass *>(0x4, Anim->Owner);
+	} else {
+		if (Anim->OwnerObject) {
+			if (TechnoClass* OwnerObject = generic_cast<TechnoClass *>(Anim->OwnerObject)) {
+				R->Stack<HouseClass *>(0x4, OwnerObject->Owner);
+				//Debug::Log("Info: %s has ownerhouse set to %s.\n",
+				//Anim->Type->ID, OwnerObject->Owner->Type->ID);
+			}
+#ifdef DEBUGBUILD
+		} else {
+			Debug::Log("Info: Ownerless instance of %s.",
+			Anim->Type->ID);
+#endif
+			
+		}
+	}	
+
 	return 0; // WHAT? origin + 6;
 }
 
@@ -1006,3 +1024,4 @@ DEFINE_HOOK(4D9F7B, FootClass_Sell_Detonate, 6)
 	}
 	return 0;
 }
+
