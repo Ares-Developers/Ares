@@ -263,6 +263,13 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 
 	this->VoiceRepair.Read(&exINI, section, "VoiceIFVRepair");
 
+	this->HijackerEnterSound.Read(&exINI, section, "VehicleThief.EnterSound");
+	this->HijackerLeaveSound.Read(&exINI, section, "VehicleThief.LeaveSound");
+	this->HijackerKillPilots.Read(&exINI, section, "VehicleThief.KillPilots");
+	this->HijackerBreakMindControl.Read(&exINI, section, "VehicleThief.BreakMindControl");
+	this->HijackerAllowed.Read(&exINI, section, "VehicleThief.Allowed");
+	this->HijackerOneTime.Read(&exINI, section, "VehicleThief.OneTime");
+
 	this->IC_Modifier = (float)pINI->ReadDouble(section, "IronCurtain.Modifier", this->IC_Modifier);
 
 	this->Chronoshift_Allow.Read(&exINI, section, "Chronoshift.Allow");
@@ -294,18 +301,55 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	
 	// #617 powered units
 	if( pINI->ReadString(section, "PoweredBy", "", Ares::readBuffer, Ares::readLength) ) {
+		this->PoweredBy.Clear();
 		for(char *cur = strtok(Ares::readBuffer, ","); cur; cur = strtok(NULL, ",")) {
 			BuildingTypeClass* b = BuildingTypeClass::Find(cur);
 			if(b) {
 				this->PoweredBy.AddItem(b);
 			} else {
-				Debug::INIParseFailed(pThis->ImageFile, "PoweredBy", "BuildingType not found");
+				Debug::INIParseFailed(section, "PoweredBy", cur, "BuildingType [%s] not found");
 			}
 		}
 	}
 
 	//#1623 - AttachEffect on unit-creation
 	this->AttachedTechnoEffect.Read(&exINI, section);
+
+	if(pINI->ReadString(section, "BuiltAt", "", Ares::readBuffer, Ares::readLength) ) {
+		this->BuiltAt.Clear();
+		if(_strcmpi(Ares::readBuffer, "<none>") && _strcmpi(Ares::readBuffer, "none")) {
+			for(auto cur = strtok(Ares::readBuffer, ","); cur; cur = strtok(NULL, ",")) {
+				auto b = BuildingTypeClass::Find(cur);
+				if(b) {
+					this->BuiltAt.AddItem(b);
+				} else {
+					Debug::INIParseFailed(section, "BuiltAt", cur);
+				}
+			}
+		}
+	}
+
+	this->Cloneable.Read(&exINI, section, "Cloneable");
+
+	if(pINI->ReadString(section, "ClonedAt", "", Ares::readBuffer, Ares::readLength) ) {
+		this->ClonedAt.Clear();
+		if(_strcmpi(Ares::readBuffer, "<none>") && _strcmpi(Ares::readBuffer, "none")) {
+			for(auto cur = strtok(Ares::readBuffer, ","); cur; cur = strtok(NULL, ",")) {
+				auto b = BuildingTypeClass::Find(cur);
+				if(b) {
+					this->ClonedAt.AddItem(b);
+				} else {
+					Debug::INIParseFailed(section, "ClonedAt", cur);
+				}
+			}
+		}
+	}
+
+	this->CarryallAllowed.Read(&exINI, section, "Carryall.Allowed");
+	this->CarryallSizeLimit.Read(&exINI, section, "Carryall.SizeLimit");
+
+	// #680, 1362
+	this->ImmuneToAbduction.Read(&exINI, section, "ImmuneToAbduction");
 
 	// quick fix - remove after the rest of weapon selector code is done
 	return;
@@ -445,6 +489,33 @@ bool TechnoTypeExt::ExtData::CameoIsElite()
 	}
 
 	return false;
+}
+
+bool TechnoTypeExt::ExtData::CanBeBuiltAt(BuildingTypeClass * FactoryType) {
+	return !this->BuiltAt.Count || this->BuiltAt.FindItemIndex(&FactoryType) != -1;
+}
+
+bool TechnoTypeExt::ExtData::CarryallCanLift(UnitClass * Target) {
+	if(Target->ParasiteEatingMe) {
+		return false;
+	}
+	auto TargetData = TechnoTypeExt::ExtMap.Find(Target->Type);
+	UnitTypeClass *TargetType = Target->Type;
+	bool canCarry = !TargetType->Organic && !TargetType->NonVehicle;
+	if(TargetData->CarryallAllowed.isset()) {
+		canCarry = !!TargetData->CarryallAllowed;
+	}
+	if(!canCarry) {
+		return false;
+	}
+	if(this->CarryallSizeLimit.isset()) {
+		int maxSize = this->CarryallSizeLimit;
+		if(maxSize != -1) {
+			return maxSize >= static_cast<TechnoTypeClass *>(Target->Type)->Size;
+		}
+	}
+	return true;
+
 }
 
 // =============================

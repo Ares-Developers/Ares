@@ -52,6 +52,11 @@ public:
 
 		bool ShadowDrawnManually;
 
+		bool DriverKilled;
+
+		int HijackerHealth;
+		HouseClass* HijackerHouse;
+
 		// 305 Radar Jammers
 		JammerClass* RadarJam;
 		
@@ -75,6 +80,9 @@ public:
 			Survivors_Done (0),
 			Insignia_Image (NULL),
 			GarrisonedIn (NULL),
+			HijackerHealth (-1),
+			HijackerHouse (NULL),
+			DriverKilled (false),
 			EMPSparkleAnim (NULL),
 			EMPLastMission (mission_None),
 			ShadowDrawnManually (false),
@@ -108,6 +116,9 @@ public:
 		bool IsOperated();
 		bool IsPowered();
 
+		AresAction::Value GetActionHijack(TechnoClass *pTarget);
+		bool PerformActionHijack(TechnoClass* pTarget);
+
 		unsigned int AlphaFrame(SHPStruct * Image);
 
 		bool DrawVisualFX();
@@ -134,17 +145,22 @@ public:
 	static void SpawnSurvivors(FootClass *pThis, TechnoClass *pKiller, bool Select, bool IgnoreDefenses);
 	static bool EjectSurvivor(FootClass *Survivor, CoordStruct *loc, bool Select);
 	static void EjectPassengers(FootClass *, signed short);
-	static void GetPutLocation(CoordStruct const &, CoordStruct &);
+	static void GetPutLocation(CoordStruct const &, CoordStruct &, int);
+	static bool EjectRandomly(FootClass*, CoordStruct const &, int, bool);
+	// If available, removes the hijacker from its victim and creates an InfantryClass instance.
+	static InfantryClass* RecoverHijacker(FootClass *pThis);
 
 	static void StopDraining(TechnoClass *Drainer, TechnoClass *Drainee);
 
 	static bool CreateWithDroppod(FootClass *Object, CoordStruct *XYZ);
 
-	static void TransferMindControl(TechnoClass *From, TechnoClass *To);
 	static void TransferIvanBomb(TechnoClass *From, TechnoClass *To);
 	static void TransferAttachedEffects(TechnoClass *From, TechnoClass *To);
 	
 	static void RecalculateStats(TechnoClass *pTechno);
+
+	static void FreeSpecificSlave(TechnoClass *Slave, HouseClass *Affector);
+	static void DetachSpecificSpawnee (TechnoClass *Spawnee, HouseClass *NewSpawneeOwner);
 	static bool CanICloakByDefault(TechnoClass *pTechno);
 
 	static void Destroy(TechnoClass* pTechno, TechnoClass* pKiller = NULL, HouseClass* pKillerHouse = NULL, WarheadTypeClass* pWarhead = NULL);

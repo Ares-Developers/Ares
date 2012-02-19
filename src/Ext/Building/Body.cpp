@@ -789,6 +789,72 @@ bool BuildingExt::ExtData::ReverseEngineer(TechnoClass *Victim) {
 	return false;
 }
 
+void BuildingExt::ExtData::KickOutClones(TechnoClass * Production) {
+	auto Factory = this->AttachedToObject;
+	auto FactoryType = Factory->Type;
+
+	if(FactoryType->Cloning || (FactoryType->Factory != InfantryTypeClass::AbsID && FactoryType->Factory != UnitTypeClass::AbsID)) {
+		return;
+	}
+
+	auto ProductionType = Production->GetTechnoType();
+	auto ProductionTypeData = TechnoTypeExt::ExtMap.Find(ProductionType);
+	if(!ProductionTypeData->Cloneable) {
+		return;
+	}
+
+	auto FactoryOwner = Factory->Owner;
+	auto &AllBuildings = FactoryOwner->Buildings;
+
+	auto &CloningSources = ProductionTypeData->ClonedAt;
+
+	auto KickOutCoords = reinterpret_cast<CellStruct *>(0x89C818);
+
+	auto KickOutClone = [KickOutCoords, ProductionType, FactoryOwner](BuildingClass *B) -> void {
+		auto Clone = reinterpret_cast<TechnoClass *>(ProductionType->CreateObject(FactoryOwner));
+		if(!B->KickOutUnit(Clone, KickOutCoords)) {
+			Clone->UnInit();
+		}
+	};
+
+	bool IsUnit(true);
+
+	// keep cloning vats for backward compat, unless explicit sources are defined
+	if(FactoryType->Factory == InfantryTypeClass::AbsID) {
+		if(!CloningSources.Count) {
+			auto &CloningVats = FactoryOwner->CloningVats;
+			for(int i = 0; i < CloningVats.Count; ++i) {
+				KickOutClone(CloningVats[i]);
+			}
+		}
+		IsUnit = false;
+	}
+
+	// and clone from new sources
+	if(CloningSources.Count || IsUnit) {
+		for(int i = 0; i < AllBuildings.Count; ++i) {
+			auto B = AllBuildings[i];
+			if(B->InLimbo) {
+				continue;
+			}
+			auto BType = B->Type;
+
+			bool ShouldClone(false);
+			if(CloningSources.Count) {
+				ShouldClone = CloningSources.FindItemIndex(&BType) != -1;
+			} else if(IsUnit) {
+				auto BData = BuildingTypeExt::ExtMap.Find(BType);
+				ShouldClone = (!!BData->CloningFacility) && (BType->Naval == FactoryType->Naval);
+			}
+
+			if(ShouldClone) {
+				KickOutClone(B);
+			}
+		}
+	}
+
+}
+
 // =============================
 // container hooks
 

@@ -222,6 +222,10 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 				supportEBolt->WeaponSlot = idxSupport;
 				supportEBolt->AlternateColor = supportWeapon->IsAlternateColor;
 				WeaponTypeExt::BoltExt[supportEBolt] = WeaponTypeExt::ExtMap.Find(supportWeapon);
+				WeaponTypeExt::ExtData *BoltAres = WeaponTypeExt::ExtMap.Find(supportWeapon); //since supports doesn't send unit info, houseboltcoloring has to be done here
+				if (BoltAres->Bolt_IsHouseColor){
+					BoltAres->Bolt_HouseColorBase = B->Owner->Color;
+				}
 				supportEBolt->Fire(SourceXYZ, *pTargetXYZ, 0); //messing with 3rd arg seems to make bolts more jumpy, and parts of them disappear
 			}
 		}

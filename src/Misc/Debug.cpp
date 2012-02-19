@@ -218,7 +218,7 @@ LONG WINAPI Debug::ExceptionHandler(int code, LPEXCEPTION_POINTERS pExs)
 				fprintf(except, VERSION_STRVER);
 				fprintf(except, "\n" DELIM);
 
-				fprintf(except, "Exception code: %08X at %08X\n", pExs->ExceptionRecord->ExceptionCode, pExs->ExceptionRecord->ExceptionAddress);
+				fprintf(except, "Exception code: %08X at %08p\n", pExs->ExceptionRecord->ExceptionCode, pExs->ExceptionRecord->ExceptionAddress);
 
 				fprintf(except, "Registers:\n");
 				PCONTEXT pCtxt = pExs->ContextRecord;
@@ -229,7 +229,7 @@ LONG WINAPI Debug::ExceptionHandler(int code, LPEXCEPTION_POINTERS pExs)
 				fprintf(except, "\nStack dump:\n");
 				DWORD *ptr = (DWORD *)(pCtxt->Esp);
 				for(int i = 0; i < 0x100; ++i) {
-					fprintf(except, "%08X: %08X\n", ptr, *ptr);
+					fprintf(except, "%08p: %08X\n", ptr, *ptr);
 					++ptr;
 				}
 

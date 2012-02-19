@@ -204,25 +204,6 @@ A_FINE_HOOK(74036E, FooClass_GetCursorOverObject, 5)
 }
 */
 
-// alternative factory search - instead of same [Type], use any of same Factory= and Naval=
-DEFINE_HOOK(4444E2, BuildingClass_KickOutUnit, 6)
-{
-	GET(BuildingClass *, Src, ESI);
-	GET(BuildingClass *, Tst, EBP);
-
-	if(Src != Tst
-	 && Tst->GetCurrentMission() == mission_Guard
-	 && !Tst->IsUnderEMP() // issue #1571
-	 && Tst->Type->Factory == Src->Type->Factory
-	 && Tst->Type->Naval == Src->Type->Naval
-	 && !Tst->Factory)
-	{
-		return 0x44451F;
-	}
-
-	return 0x444508;
-}
-
 // 42461D, 6
 // 42463A, 6
 // correct warhead for animation damage
@@ -916,47 +897,6 @@ DEFINE_HOOK(4692A2, BulletClass_DetonateAt_RaiseAttackedByHouse, 6)
 	return pVictim->AttachedTag ? 0 : 0x4692BD;
 }
 
-
-DEFINE_HOOK(7396AD, UnitClass_Deploy_CreateBuilding, 6)
-{
-	GET(UnitClass *, pUnit, EBP);
-	R->EDX<HouseClass *>(pUnit->GetOriginalOwner());
-	return 0x7396B3;
-}
-
-DEFINE_HOOK(739956, UnitClass_Deploy_ReestablishMindControl, 6)
-{
-	GET(UnitClass *, pUnit, EBP);
-	GET(BuildingClass *, pStructure, EBX);
-
-	TechnoExt::TransferMindControl(pUnit, pStructure);
-	TechnoExt::TransferIvanBomb(pUnit, pStructure);
-	TechnoExt::TransferAttachedEffects(pUnit, pStructure);
-
-	pStructure->QueueMission(mission_Construction, 0);
-
-	return 0;
-}
-
-DEFINE_HOOK(449E2E, BuildingClass_Mi_Selling_CreateUnit, 6)
-{
-	GET(BuildingClass *, pStructure, EBP);
-	R->ECX<HouseClass *>(pStructure->GetOriginalOwner());
-	return 0x449E34;
-}
-
-DEFINE_HOOK(44A03C, BuildingClass_Mi_Selling_ReestablishMindControl, 6)
-{
-	GET(BuildingClass *, pStructure, EBP);
-	GET(UnitClass *, pUnit, EBX);
-
-	TechnoExt::TransferMindControl(pStructure, pUnit);
-	TechnoExt::TransferIvanBomb(pStructure, pUnit);
-	TechnoExt::TransferAttachedEffects(pStructure, pUnit);
-
-	return 0;
-}
-
 DEFINE_HOOK(47243F, CaptureManagerClass_DecideUnitFate_BuildingFate, 6) {
 	GET(TechnoClass *, pVictim, EBX);
 	if(specific_cast<BuildingClass *>(pVictim)) {
@@ -964,35 +904,6 @@ DEFINE_HOOK(47243F, CaptureManagerClass_DecideUnitFate_BuildingFate, 6) {
 		// 2. BuildingClass::Mission_Hunt() implementation is to do nothing!
 		pVictim->QueueMission(mission_Guard, 0);
 		return 0x472604;
-	} else if (auto pUnit = specific_cast<UnitClass *>(pVictim)) {
-		if(pUnit->Type->DeploysInto) {
-			if(RulesClass::Instance->BuildConst.FindItemIndex(&pUnit->Type->DeploysInto) == -1) {
-				pVictim->QueueMission(mission_Guard, 0);
-				return 0x472604;
-			}
-		}
-	}
-	return 0;
-}
-
-DEFINE_HOOK(6AF5D7, SlaveManagerClass_ReplaceWhichBelongsToUnit_ChangeOwnership, 6) {
-	GET(InfantryClass *, pSlave, EAX);
-	GET(SlaveManagerClass *, pSlaveManager, ESI);
-	pSlave->SetOwningHouse(pSlaveManager->Owner->Owner, 0);
-	return 0;
-}
-
-DEFINE_HOOK(70173B, TechnoClass_ChangeOwnership_ChangeSlaveOwnership, 5) {
-	GET(TechnoClass *, pTechno, ESI);
-	if(auto Slaver = pTechno->SlaveManager) {
-		auto &Nodes = Slaver->SlaveNodes;
-		for(int i = Nodes.Count - 1; i >= 0; --i) {
-			if(auto Node = Nodes[i]) {
-				if(auto SlaveUnit = Node->Slave) {
-					SlaveUnit->SetOwningHouse(pTechno->Owner, 0);
-				}
-			}
-		}
 	}
 	return 0;
 }
@@ -1022,6 +933,28 @@ DEFINE_HOOK(4D9F7B, FootClass_Sell_Detonate, 6)
 	if(auto Bomb = pSellee->AttachedBomb) {
 		Bomb->Detonate();
 	}
+	return 0;
+}
+
+DEFINE_HOOK(739956, UnitClass_Deploy_TransferIvanBomb, 6)
+{
+	GET(UnitClass *, pUnit, EBP);
+	GET(BuildingClass *, pStructure, EBX);
+
+	TechnoExt::TransferIvanBomb(pUnit, pStructure);
+	TechnoExt::TransferAttachedEffects(pUnit, pStructure);
+	
+	return 0;
+}
+
+DEFINE_HOOK(44A03C, BuildingClass_Mi_Selling_TransferIvanBomb, 6)
+{
+	GET(BuildingClass *, pStructure, EBP);
+	GET(UnitClass *, pUnit, EBX);
+
+	TechnoExt::TransferIvanBomb(pStructure, pUnit);
+	TechnoExt::TransferAttachedEffects(pStructure, pUnit);
+	
 	return 0;
 }
 

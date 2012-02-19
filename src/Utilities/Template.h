@@ -129,6 +129,35 @@ public:
 	}
 };
 
+template<typename T>
+class Nullable : public Valueable<T> {
+protected:
+	bool HasValue;
+public:
+	Nullable(): Valueable<T>(T()), HasValue(false) {};
+	Nullable(T Val): Valueable<T>(Val), HasValue(true) {};
+
+	bool isset() const {
+		return this->HasValue;
+	}
+
+	virtual void Set(T val) {
+		Valueable<T>::Set(val);
+		this->HasValue = true;
+	}
+
+	virtual void SetEx(T* val) {
+		Valueable<T>::SetEx(val);
+		this->HasValue = true;
+	}
+
+	void Reset() {
+		Valueable<T>::Set(T());
+		this->HasValue = false;
+	}
+};
+
+
 /*
  * This one is for data that defaults to some original flag value but can be overwritten with custom values
  * Bind() it to a data address from where to take the value
@@ -357,6 +386,21 @@ void Valueable<int>::Read(INI_EX *parser, const char* pSection, const char* pKey
 	int buffer = this->Get();
 	if(parser->ReadInteger(pSection, pKey, &buffer)) {
 		this->Set(buffer);
+	} else if(parser->declared()) {
+		Debug::INIParseFailed(pSection, pKey, parser->value(), "Expected a valid number");
+	}
+};
+
+template<>
+void Valueable<BYTE>::Read(INI_EX *parser, const char* pSection, const char* pKey) {
+	int buffer = this->Get();
+	if(parser->ReadInteger(pSection, pKey, &buffer)) {
+		if(buffer <= 255 && buffer >= 0) {
+			const BYTE result((BYTE)buffer); // shut up shut up shut up C4244
+			this->Set(result);
+		} else {
+			Debug::INIParseFailed(pSection, pKey, parser->value(), "Expected a valid number between 0 and 255 inclusive.");
+		}
 	} else if(parser->declared()) {
 		Debug::INIParseFailed(pSection, pKey, parser->value(), "Expected a valid number");
 	}

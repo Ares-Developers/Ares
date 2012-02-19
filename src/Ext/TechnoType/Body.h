@@ -101,6 +101,13 @@ public:
 
 		ValueableIdx<int, VocClass> VoiceRepair;
 
+		ValueableIdx<int, VocClass> HijackerEnterSound;
+		ValueableIdx<int, VocClass> HijackerLeaveSound;
+		Valueable<int> HijackerKillPilots;
+		Valueable<bool> HijackerBreakMindControl;
+		Valueable<bool> HijackerAllowed;
+		Valueable<bool> HijackerOneTime;
+
 		Customizable<UnitTypeClass *> WaterImage;
 
 		char CameoPCX[0x20];
@@ -120,6 +127,15 @@ public:
 
 		//issue #1623
 		AttachEffectTypeClass AttachedTechnoEffect; //The AttachedEffect which should been on the Techno from the start.
+
+		DynamicVectorClass<BuildingTypeClass *> BuiltAt;
+		Valueable<bool> Cloneable;
+		DynamicVectorClass<BuildingTypeClass *> ClonedAt;
+
+		Nullable<bool> CarryallAllowed;
+		Nullable<int> CarryallSizeLimit;
+
+		Valueable<bool> ImmuneToAbduction; //680, 1362
 
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			Survivors_PilotChance (NULL),
@@ -164,11 +180,21 @@ public:
 			MindControlExperienceSelfModifier (0.0F),
 			MindControlExperienceVictimModifier (1.0F),
 			VoiceRepair (-1),
+			HijackerEnterSound (-1),
+			HijackerLeaveSound (-1),
+			HijackerKillPilots (0),
+			HijackerBreakMindControl (true),
+			HijackerAllowed (true),
+			HijackerOneTime (false),
 			WaterImage (NULL),
 			CanBeReversed (true),
 			RadarJamRadius (0),
 			PassengerTurret (false),
-			AttachedTechnoEffect()
+			AttachedTechnoEffect(),
+			Cloneable (true),
+			CarryallAllowed(),
+			CarryallSizeLimit (),
+			ImmuneToAbduction(false)
 			{
 				this->Insignia.SetAll(NULL);
 				*this->CameoPCX = *this->AltCameoPCX = 0;
@@ -188,6 +214,10 @@ public:
 		}
 
 		bool CameoIsElite();
+
+		bool CanBeBuiltAt(BuildingTypeClass * FactoryType);
+
+		bool CarryallCanLift(UnitClass * Target);
 };
 
 	static Container<TechnoTypeExt> ExtMap;

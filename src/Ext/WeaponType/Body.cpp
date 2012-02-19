@@ -5,6 +5,7 @@
 #include <TechnoTypeClass.h>
 #include <LocomotionClass.h>
 #include "../WarheadType/Body.h"
+#include "../Techno/Body.h"
 
 template<> const DWORD Extension<WeaponTypeClass>::Canary = 0x33333333;
 Container<WeaponTypeExt> WeaponTypeExt::ExtMap;
@@ -84,7 +85,11 @@ void WeaponTypeExt::ExtData::LoadFromINIFile(WeaponTypeExt::TT *pThis, CCINIClas
 		pINI->ReadBool(section, "Wave.ReverseAgainstOthers", this->Wave_Reverse[idxOther]);
 
 	if(pThis->IsElectricBolt) {
-		this->Bolt_Color1.Read(&exINI, section, "Bolt.Color1");
+		this->Bolt_IsHouseColor.Read(&exINI, section, "Bolt.IsHouseColor");
+		if(!!this->Bolt_IsHouseColor) {
+			this->Bolt_ColorSpread.Read(&exINI, section, "Bolt.ColorSpread");
+		}
+		this->Bolt_Color1.Read(&exINI, section, "Bolt.Color1"); //if the HouseColor is not available
 		this->Bolt_Color2.Read(&exINI, section, "Bolt.Color2");
 		this->Bolt_Color3.Read(&exINI, section, "Bolt.Color3");
 	}
@@ -132,6 +137,9 @@ void WeaponTypeExt::ExtData::LoadFromINIFile(WeaponTypeExt::TT *pThis, CCINIClas
 */
 	// #680 Chrono Prison
 	this->Abductor.Read(&exINI, section, "Abductor");
+	this->Abductor_AnimType.Parse(&exINI, section, "Abductor.Anim");
+	this->Abductor_ChangeOwner.Read(&exINI, section, "Abductor.ChangeOwner");
+	this->Abductor_AbductBelowPercent.Read(&exINI, section, "Abductor.AbductBelowPercent");
 }
 
 // #680 Chrono Prison / Abductor
@@ -155,13 +163,24 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 	if(FootClass *Target = generic_cast<FootClass *>(Bullet->Target)) {
 		TechnoClass* Attacker = Bullet->Owner;
 		TechnoTypeClass* TargetType = Target->GetTechnoType();
+		TechnoTypeExt::ExtData* TargetTypeExt = TechnoTypeExt::ExtMap.Find(TargetType);
 		TechnoTypeClass* AttackerType = Attacker->GetTechnoType();
 
 		//issue 1362
+		if (!!TargetTypeExt->ImmuneToAbduction){
+			return false;
+		}
+		
 		if(!WarheadTypeExt::canWarheadAffectTarget(Target, Attacker->Owner, Bullet->WH)) {
 			return false;
 		}
+
 		if(Target->IsIronCurtained()) {
+			return false;
+		}
+
+		//Don't abduct the target if it has more life then the abducting percent
+		if (this->Abductor_AbductBelowPercent < (Target->Health*1.0 / TargetType->Strength)){
 			return false;
 		}
 
@@ -169,7 +188,9 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 		if((TargetType->Size > AttackerType->SizeLimit)
 		  || (TargetType->Size > (AttackerType->Passengers - Attacker->Passengers.GetTotalSize()))) {
 			return false;
+
 		} else {
+
 			// if we ended up here, the target is of the right type, and the attacker can take it
 			// so we abduct the target...
 			Target->StopMoving();
@@ -183,12 +204,14 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 			Target->unknown_5A0 = 0;
 			Target->CurrentGattlingStage = 0;
 			Target->SetCurrentWeaponStage(0);
+
 			// if this unit is being mind controlled, break the link
 			if(TechnoClass * MindController = Target->MindControlledBy) {
 				if(CaptureManagerClass * MC = MindController->CaptureManager) {
 					MC->FreeUnit(Target);
 				}
 			}
+
 			// if this unit is a mind controller, break the link
 			if(Target->CaptureManager) {
 				Target->CaptureManager->FreeAll();
@@ -199,13 +222,50 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 				Target->TemporalTargetingMe->Detach();
 			}
 
+			//if the target is spawned, detach it from it's spawner
+			if(Target->SpawnOwner){
+				TechnoExt::DetachSpecificSpawnee(Target, HouseClass::FindByCountryIndex(HouseTypeClass::FindIndexOfName("Special")));
+			}
+
+			// if the unit is a spawner, kill the spawns
+			if(Target->SpawnManager) {
+				Target->SpawnManager->KillNodes();
+				Target->SpawnManager->Target = NULL;
+				Target->SpawnManager->Destination = NULL;
+			}
+
+			//if the unit is a slave, it should be freed
+			if(Target->SlaveOwner){
+				TechnoExt::FreeSpecificSlave(Target, HouseClass::FindByCountryIndex(HouseTypeClass::FindIndexOfName("Special")));
+			}
+
+			// If the unit is a SlaveManager, free the slaves
+			if(SlaveManagerClass * pSlaveManager = Target->SlaveManager) {
+				pSlaveManager->Killed(Attacker);
+				pSlaveManager->ZeroOutSlaves();
+				Target->SlaveManager->Owner = Target;
+			}
+			
+			
+			// if we have an abducting animation, play it
+			if (!!this->Abductor_AnimType){
+				GAME_ALLOC(AnimClass, AnimClass* Abductor_Anim, this->Abductor_AnimType, &Bullet->posTgt);
+				//this->Abductor_Anim->Owner=Bullet->Owner->Owner;
+			}
+
 			CoordStruct coordsUnitSource;
 			Target->GetCoords(&coordsUnitSource);
 			Target->Locomotor->Mark_All_Occupation_Bits(0);
 			Target->Locomotor->Force_Track(-1, coordsUnitSource);
 			Target->MarkAllOccupationBits(&coordsUnitSource);
 
+			//if it's owner meant to be changed, do it here
+			if (!!this->Abductor_ChangeOwner && !TargetType->ImmuneToPsionics){
+				Target->SetOwningHouse(Attacker->Owner);
+			}
+
 			Target->Remove();
+
 			Target->Transporter = Attacker;
 			if(Attacker->WhatAmI() == abs_Building) {
 				Target->Absorbed = true;
@@ -222,6 +282,7 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 		}
 
 	} else {
+
 		// the target was not a valid passenger type
 		return false;
 	}
