@@ -40,7 +40,7 @@ void AttachEffectTypeClass::Read(INI_EX *exINI, const char * section) {
 
 
 void AttachEffectTypeClass::Attach(TechnoClass* Target, int Duration, TechnoClass* Invoker, int DamageDelay) {
-	if (!Target) {return;}
+	if (!Target || Target->IsIronCurtained()) {return;}
 
 	TechnoExt::ExtData *TargetExt = TechnoExt::ExtMap.Find(Target);
 
@@ -75,6 +75,7 @@ void AttachEffectTypeClass::Attach(TechnoClass* Target, int Duration, TechnoClas
 		Attaching->Animation->SetOwnerObject(Target);
 		// inbefore void pointers, hardcode the iteration to infinitely looped
 		Attaching->Animation->RemainingIterations = -1;
+		Attaching->Animation->Owner = Invoker->Owner;
 	}
 	
 	if (Invoker) {
