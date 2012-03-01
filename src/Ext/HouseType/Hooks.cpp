@@ -191,16 +191,15 @@ DEFINE_HOOK(4FE782, HTExt_PickPowerplant, 6)
 	}
 
 	BuildingTypeClass *pResult = NULL;
-	if(Eligible.size() == 0) {
-		if(pData->Powerplants.Count) {
-			pResult = pData->Powerplants[0];
-		} else {
-			Debug::Log("Country [%s] did not find any powerplants it could construct! The AI's probably going to crash now...\n", H->Type->ID);
-		}
-	} else {
+	if(Eligible.size() > 0) {
 		int idx = ScenarioClass::Instance->Random.RandomRanged(0, Eligible.size() - 1);
 		pResult = Eligible.at(idx);
+	} else if(pData->Powerplants.Count) {
+		pResult = pData->Powerplants[0];
+	} else {
+		Debug::Log("Country [%s] did not find any powerplants it could construct! The AI's probably going to crash now...\n", H->Type->ID);
 	}
+
 
 	R->EDI(pResult);
 	return 0x4FE893;
