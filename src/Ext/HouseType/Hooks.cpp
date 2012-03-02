@@ -196,6 +196,7 @@ DEFINE_HOOK(4FE782, HTExt_PickPowerplant, 6)
 		pResult = Eligible.at(idx);
 	} else if(pData->Powerplants.Count) {
 		pResult = pData->Powerplants[0];
+		Debug::Log("Country [%s] wanted to build a powerplant but does not meet prerequisites for any possible plant. Going to give it the first one on the list (%s)\n", H->Type->ID, pResult->ID);
 	} else {
 		Debug::Log("Country [%s] did not find any powerplants it could construct! The AI's probably going to crash now...\n", H->Type->ID);
 	}

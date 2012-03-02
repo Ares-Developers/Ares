@@ -306,6 +306,7 @@ void CopyVector(T HouseTypeExt::ExtData::* prop, const HouseTypeExt::ExtData *sr
 	auto &sp = src->*prop;
 	auto &dp = dst->*prop;
 	dp.SetCapacity(sp.Capacity, NULL);
+	dp.Count = sp.Count;
 	for(unsigned ix = sp.Count; ix > 0; --ix) {
 		auto idx = ix - 1;
 		dp.Items[idx] = sp.Items[idx];
