@@ -1115,6 +1115,16 @@ DEFINE_HOOK(614FF2, Handle_NewEdit_Messages_Color, 6) {
 	return 0x614FF8;
 }
 
+DEFINE_HOOK(69B97D, Game_ProcessRandomPlayers_ObserverColor, 7)
+{
+	GET(int, pStartingSpot, ESI);
+
+	// observer uses last color, beyond the actual colors
+	*(int*)(pStartingSpot + 0x53) = Ares::UISettings::ColorCount;
+
+	return 0x69B984;
+}
+
 DEFINE_HOOK(69B949, Game_ProcessRandomPlayers_ColorsA, 6) {
 	R->EAX(ScenarioClass::Instance->Random.RandomRanged(0, Ares::UISettings::ColorCount - 1));
 	return 0x69B95E;
