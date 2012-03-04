@@ -349,19 +349,19 @@ DEFINE_HOOK(7258D0, AnnounceInvalidPointer, 6)
 
 //	Debug::Log("PointerGotInvalid: %X\n", DEATH);
 
-	INVALID_CTR(BuildingExt, DEATH);
-	INVALID_CTR(BuildingTypeExt, DEATH);
-	INVALID_CTR(BulletExt, DEATH);
-	INVALID_CTR(BulletTypeExt, DEATH);
-	INVALID_CTR(HouseExt, DEATH);
-	INVALID_CTR(HouseTypeExt, DEATH);
-	INVALID_CTR(InfantryExt, DEATH);
-	INVALID_CTR(SideExt, DEATH);
-	INVALID_CTR(SWTypeExt, DEATH);
-	INVALID_CTR(TechnoExt, DEATH);
-	INVALID_CTR(TechnoTypeExt, DEATH);
-	INVALID_CTR(WarheadTypeExt, DEATH);
-	INVALID_CTR(WeaponTypeExt, DEATH);
+	BuildingExt::ExtMap.PointerGotInvalid(DEATH);
+	BuildingTypeExt::ExtMap.PointerGotInvalid(DEATH);
+	BulletExt::ExtMap.PointerGotInvalid(DEATH);
+	BulletTypeExt::ExtMap.PointerGotInvalid(DEATH);
+	HouseExt::ExtMap.PointerGotInvalid(DEATH);
+	HouseTypeExt::ExtMap.PointerGotInvalid(DEATH);
+	InfantryExt::ExtMap.PointerGotInvalid(DEATH);
+	SideExt::ExtMap.PointerGotInvalid(DEATH);
+	SWTypeExt::ExtMap.PointerGotInvalid(DEATH);
+	TechnoExt::ExtMap.PointerGotInvalid(DEATH);
+	TechnoTypeExt::ExtMap.PointerGotInvalid(DEATH);
+	WarheadTypeExt::ExtMap.PointerGotInvalid(DEATH);
+	WeaponTypeExt::ExtMap.PointerGotInvalid(DEATH);
 
 	return 0;
 }
