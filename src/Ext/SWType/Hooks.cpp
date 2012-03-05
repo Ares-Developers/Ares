@@ -141,6 +141,19 @@ DEFINE_HOOK(6AAEDF, SidebarClass_ProcessCameoClick_SuperWeapons, 6) {
 	return 0;
 }
 
+// play a customizable target selection EVA message
+DEFINE_HOOK(6AAF9D, SidebarClass_ProcessCameoClick_SelectTarget, 5)
+{
+	GET(int, index, ESI);
+	if(SuperClass* pSW = HouseClass::Player->Supers.GetItem(index)) {
+		if(SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSW->Type)) {
+			VoxClass::PlayIndex(pData->EVA_SelectTarget);
+		}
+	}
+
+	return 0x6AB95A;
+}
+
 DEFINE_HOOK(6A932B, CameoClass_GetTip_MoneySW, 6) {
 	GET(SuperWeaponTypeClass*, pSW, EAX);
 

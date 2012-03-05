@@ -125,6 +125,7 @@ public:
 		ValueableIdx<int, VoxClass> EVA_Detected;
 		ValueableIdx<int, VoxClass> EVA_Impatient;
 		ValueableIdx<int, VoxClass> EVA_InsufficientFunds;
+		ValueableIdx<int, VoxClass> EVA_SelectTarget;
 
 		// anim/sound
 		ValueableIdx<int, VocClass> SW_Sound;
@@ -215,6 +216,7 @@ public:
 			EVA_Detected (-1),
 			EVA_Impatient (-1),
 			EVA_InsufficientFunds (-1),
+			EVA_SelectTarget (-1),
 			Message_ColorScheme (-1),
 			Message_FirerColor (false),
 			Lighting_Enabled (true),

@@ -60,6 +60,7 @@ void SWTypeExt::ExtData::InitializeConstants(SuperWeaponTypeClass *pThis)
 	AresCRT::strCopy(this->Text_Active, "TXT_FIRESTORM_ON", 0x20);
 
 	EVA_InsufficientFunds = VoxClass::FindIndex("EVA_InsufficientFunds");
+	EVA_SelectTarget = VoxClass::FindIndex("EVA_SelectTarget");
 }
 
 void SWTypeExt::ExtData::InitializeRuled(SuperWeaponTypeClass *pThis)
@@ -120,6 +121,7 @@ void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass
 	this->EVA_Detected.Read(&exINI, section, "EVA.Detected");
 	this->EVA_Impatient.Read(&exINI, section, "EVA.Impatient");
 	this->EVA_InsufficientFunds.Read(&exINI, section, "EVA.InsufficientFunds");
+	this->EVA_SelectTarget.Read(&exINI, section, "EVA.SelectTarget");
 
 	this->SW_FireToShroud.Read(&exINI, section, "SW.FireIntoShroud");
 	this->SW_AutoFire.Read(&exINI, section, "SW.AutoFire");
