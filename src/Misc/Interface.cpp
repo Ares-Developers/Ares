@@ -24,8 +24,7 @@ int Interface::slots[4]; // holds index-of-campaign+1
 	\author AlexB
 	\date 2010-06-20
 */
-void Interface::updateMenu(HWND hDlg) {
-	int iID = Interface::lastDialogTemplateID;
+void Interface::updateMenu(HWND hDlg, int iID) {
 
 	// campaign selection
 	if(iID == 148) {
@@ -291,7 +290,7 @@ DEFINE_HOOK(62267F, Dialog_Show_GetTemplate, 6) {
 // manipulate the dialog after creation
 DEFINE_HOOK(6226EE, Dialog_Show_UpdateControls, 6) {
 	GET(HWND, hDlg, ESI);
-	Interface::updateMenu(hDlg);
+	Interface::updateMenu(hDlg, Interface::lastDialogTemplateID);
 	return 0;
 }
 
