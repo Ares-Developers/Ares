@@ -31,6 +31,30 @@ public:
 		cPrismForwarding() : SupportTarget(NULL), PrismChargeDelay(0), ModifierReserve(0.0), DamageReserve(0) {
 			this->Senders.Clear();
 		};
+
+		void AnnounceInvalidPointer(void * ptr, Extension<BuildingClass> *container) {
+			// based on the game's unchecked use of this pointer at 0x7258DB, I'm going to assume this cast is perfectly safe
+			auto abs = reinterpret_cast<AbstractClass *>(ptr);
+			if(auto bld = specific_cast<BuildingClass *>(abs)) {
+				if(bld == this->SupportTarget) {
+					Debug::Log("Should remove my support target\n");
+				}
+				auto senderIdx = this->Senders.FindItemIndex(&bld);
+				if(senderIdx != -1) {
+					Debug::Log("Should remove my sender #%d\n", senderIdx);
+				}
+				BuildingTypeExt::cPrismForwarding::RemoveFromNetwork(bld, true);
+				if(bld == this->SupportTarget) {
+					_snprintf(Ares::readBuffer, Ares::readLength, "Prism Forwarder (ExtData %p) failed to remove support target\n", container);
+					Debug::FatalError(true);
+				}
+				senderIdx = this->Senders.FindItemIndex(&bld);
+				if(senderIdx != -1) {
+					_snprintf(Ares::readBuffer, Ares::readLength, "Prism Forwarder (ExtData %p) failed to remove sender #%d\n", container, senderIdx);
+					Debug::FatalError(true);
+				}
+			}
+		}
 	};
 
 
@@ -64,6 +88,7 @@ public:
 
 		virtual void InvalidatePointer(void *ptr) {
 			AnnounceInvalidPointer(OwnerBeforeRaid, ptr);
+			PrismForwarding.AnnounceInvalidPointer(ptr, this);
 		}
 
 		// related to Advanced Rubble
