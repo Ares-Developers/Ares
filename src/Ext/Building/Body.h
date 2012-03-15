@@ -28,7 +28,7 @@ public:
 		int DamageReserve;					//current flat reservoir
 
 		// constructor
-		cPrismForwarding() : SupportTarget(NULL), PrismChargeDelay(0), ModifierReserve(0.0), DamageReserve(0) {
+		cPrismForwarding() : Senders(), SupportTarget(NULL), PrismChargeDelay(0), ModifierReserve(0.0), DamageReserve(0){
 			this->Senders.Clear();
 		};
 	};
