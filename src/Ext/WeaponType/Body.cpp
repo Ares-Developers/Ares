@@ -12,6 +12,10 @@ Container<WeaponTypeExt> WeaponTypeExt::ExtMap;
 template<> WeaponTypeExt::TT *Container<WeaponTypeExt>::SavingObject = NULL;
 template<> IStream *Container<WeaponTypeExt>::SavingStream = NULL;
 
+ColorStruct WeaponTypeExt::ExtData::DefaultWaveColor = ColorStruct(255, 255, 255); // placeholder
+ColorStruct WeaponTypeExt::ExtData::DefaultWaveColorMagBeam = ColorStruct(0xB0, 0, 0xD0); // rp2 values
+ColorStruct WeaponTypeExt::ExtData::DefaultWaveColorSonic = ColorStruct(0, 0, 0); // 0,0,0 is a magic value for "no custom handling"
+
 hash_bombExt WeaponTypeExt::BombExt;
 hash_waveExt WeaponTypeExt::WaveExt;
 hash_boltExt WeaponTypeExt::BoltExt;
@@ -36,12 +40,15 @@ void WeaponTypeExt::ExtData::LoadFromINIFile(WeaponTypeExt::TT *pThis, CCINIClas
 		}
 	}
 
+	// wave colors will be bound to the default values, thus a change of wave
+	// type will still point to the appropriate value, as long as the modder does not
+	// set the color by hand, in which case that value is used.
 	if(pThis->IsMagBeam) {
-		this->Wave_Color.Set(ColorStruct(0xB0, 0, 0xD0)); // rp2 values
+		this->Wave_Color.Bind(&WeaponTypeExt::ExtData::DefaultWaveColorMagBeam);
 	} else if(pThis->IsSonic) {
-		this->Wave_Color.Set(ColorStruct(0, 0, 0)); // 0,0,0 is a magic value for "no custom handling"
+		this->Wave_Color.Bind(&WeaponTypeExt::ExtData::DefaultWaveColorSonic);
 	} else {
-		this->Wave_Color.Set(ColorStruct(255, 255, 255)); // placeholder
+		this->Wave_Color.Bind(&WeaponTypeExt::ExtData::DefaultWaveColor);
 	}
 
 	if(pThis->Damage == 0 && this->Weapon_Loaded) {
