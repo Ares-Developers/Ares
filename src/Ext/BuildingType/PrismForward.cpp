@@ -18,13 +18,13 @@ void BuildingTypeExt::cPrismForwarding::Initialize(BuildingTypeClass *pThis) {
 void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis, CCINIClass* pINI) {
 	const char * pID = pThis->ID;
 	if(pINI->ReadString(pID, "PrismForwarding", "", Ares::readBuffer, Ares::readLength)) {
-		if((strcmp(Ares::readBuffer, "yes") == 0) || (strcmp(Ares::readBuffer, "true") == 0)) {
+		if((_strcmpi(Ares::readBuffer, "yes") == 0) || (_strcmpi(Ares::readBuffer, "true") == 0)) {
 			this->Enabled = YES;
-		} else if(strcmp(Ares::readBuffer, "forward") == 0) {
+		} else if(_strcmpi(Ares::readBuffer, "forward") == 0) {
 			this->Enabled = FORWARD;
-		} else if(strcmp(Ares::readBuffer, "attack") == 0) {
+		} else if(_strcmpi(Ares::readBuffer, "attack") == 0) {
 			this->Enabled = ATTACK;
-		} else if((strcmp(Ares::readBuffer, "no") == 0) || (strcmp(Ares::readBuffer, "false"))== 0) {
+		} else if((_strcmpi(Ares::readBuffer, "no") == 0) || (_strcmpi(Ares::readBuffer, "false"))== 0) {
 			this->Enabled = NO;
 		}
 	}
@@ -279,7 +279,7 @@ bool BuildingTypeExt::cPrismForwarding::ValidateSupportTower(
 					HouseClass *pTargetHouse = TargetTower->Owner;
 					HouseClass *pSlaveHouse = SlaveTower->Owner;
 					if ((pSlaveHouse == pTargetHouse && pSlaveHouse == pMasterHouse)
-						|| (pSlaveTypeData->PrismForwarding.ToAllies
+						|| (pSlaveTypeData->PrismForwarding.ToAllies.Get()
 							&& pSlaveHouse->IsAlliedWith(pTargetHouse)
 							&& pSlaveHouse->IsAlliedWith(pMasterHouse))) {
 						//ownership/alliance rules satisfied
@@ -415,8 +415,8 @@ void BuildingTypeExt::cPrismForwarding::RemoveFromNetwork(BuildingClass *SlaveTo
 		signed int idx = pTargetData->PrismForwarding.Senders.FindItemIndex(&SlaveTower);
 		if(idx != -1) {
 			pTargetData->PrismForwarding.Senders.RemoveItem(idx);
+			--TargetTower->SupportingPrisms;  //Ares doesn't actually use this, but maintaining it anyway (as direct feeds only)
 		}
-		--TargetTower->SupportingPrisms;  //Ares doesn't actually use this, but maintaining it anyway (as direct feeds only)
 		//slave tower is no longer reference by the target
 		pSlaveData->PrismForwarding.SupportTarget = NULL; //slave tower no longer references the target
 	}
