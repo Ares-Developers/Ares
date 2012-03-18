@@ -398,8 +398,14 @@ void BuildingTypeExt::cPrismForwarding::SetChargeDelay_Set
 //destruction, change sides, mind-control, sold, warped, emp, undeployed, low power, drained, lost operator
 void BuildingTypeExt::cPrismForwarding::RemoveFromNetwork(BuildingClass *SlaveTower, bool bCease) {
 	BuildingExt::ExtData *pSlaveData = BuildingExt::ExtMap.Find(SlaveTower);
+	if(!pSlaveData) {
+		return;
+	}
 	BuildingTypeClass *pSlaveType = SlaveTower->Type;
 	BuildingTypeExt::ExtData *pSlaveTypeData = BuildingTypeExt::ExtMap.Find(pSlaveType);
+	if(!pSlaveTypeData) {
+		return;
+	}
 	if (pSlaveData->PrismForwarding.PrismChargeDelay || bCease) {
 		//either hasn't started charging yet or animations have been reset so should go idle immediately
 		SlaveTower->PrismStage = pcs_Idle;
