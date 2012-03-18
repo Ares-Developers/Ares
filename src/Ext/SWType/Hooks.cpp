@@ -458,23 +458,28 @@ DEFINE_HOOK(6CC2B0, SuperClass_NameReadiness, 5) {
 	// complete rewrite of this method.
 
 	char* key = pData->Text_Preparing;
+	const wchar_t** cache = &pData->NameReadiness_Preparing;
 	if(pThis->IsOnHold) {
 		// on hold
 		key = pData->Text_Hold;
+		cache = &pData->NameReadiness_Hold;
 	} else {
 		if(pThis->Type->UseChargeDrain) {
 			switch(pThis->ChargeDrainState) {
 			case 0:
 				// still charging
 				key = pData->Text_Charging;
+				cache = &pData->NameReadiness_Charging;
 				break;
 			case 1:
 				// ready
 				key = pData->Text_Ready;
+				cache = &pData->NameReadiness_Ready;
 				break;
 			case 2:
 				// currently active
 				key = pData->Text_Active;
+				cache = &pData->NameReadiness_Active;
 				break;
 			}
 
@@ -482,16 +487,21 @@ DEFINE_HOOK(6CC2B0, SuperClass_NameReadiness, 5) {
 			// ready
 			if(pThis->IsCharged) {
 				key = pData->Text_Ready;
+				cache = &pData->NameReadiness_Ready;
 			}
 		}
 	}
 
-	const wchar_t* text = NULL;
-	if(key && *key) {
-		text = StringTable::LoadStringA(key);
-		if(text && !*text) {
-			text = NULL;
+	// the text is not cached yet
+	if(cache && !*cache) {
+		if(key && *key) {
+			*cache = StringTable::LoadStringA(key);
 		}
+	}
+
+	const wchar_t* text = (cache ? *cache : NULL);
+	if(text && !*text) {
+		text = NULL;
 	}
 	R->EAX(text);
 	return 0x6CC352;
