@@ -25,15 +25,18 @@ public:
 	Valueable<bool> Cloakable;
 
 	//#408, residual damage
+	/*
 	Valueable<WarheadTypeClass *> Warhead;
 	Valueable<int> Damage;
 	Valueable<int> DamageDelay;
+	*/
 
 	//#1623-only tags
 	Valueable<int> Delay;
 
-	virtual void Attach(TechnoClass* Target, int Duration, TechnoClass* Invoker, int DamageDelay);
-
+	virtual void Attach(TechnoClass* Target, int Duration, TechnoClass* Invoker);
+	//virtual void Attach(TechnoClass* Target, int Duration, TechnoClass* Invoker, int DamageDelay);
+	
 	AttachEffectTypeClass(): Cumulative(false),
 		Duration(0),
 		AnimType(NULL),
@@ -42,9 +45,11 @@ public:
 		ArmorMultiplier(1),
 		SpeedMultiplier(1),
 		Cloakable(false),
+		/*
 		Warhead(RulesClass::Global()->C4Warhead),
 		Damage(0),
 		DamageDelay(0),
+		*/
 		Delay(0)
 		{
 			this->ID[0] = 0;
@@ -55,7 +60,7 @@ public:
 
 class AttachEffectClass {
 public:
-	AttachEffectClass(AttachEffectTypeClass* AEType, int Timer, int DamageDelay): Type(AEType), Animation(NULL), ActualDuration(Timer), ActualDamageDelay(DamageDelay) {
+	AttachEffectClass(AttachEffectTypeClass* AEType, int Timer): Type(AEType), Animation(NULL), ActualDuration(Timer) {
 	}
 
 	AttachEffectTypeClass * Type;
@@ -63,7 +68,7 @@ public:
 	int ActualDuration;
 
 	TechnoClass * Invoker;
-	int ActualDamageDelay;
+	//int ActualDamageDelay;
 
 	void Destroy();
 

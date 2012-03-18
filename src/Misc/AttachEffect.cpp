@@ -31,15 +31,28 @@ void AttachEffectTypeClass::Read(INI_EX *exINI, const char * section) {
 	this->SpeedMultiplier.Read(exINI, section, "AttachEffect.SpeedMultiplier");
 	this->Cloakable.Read(exINI, section, "AttachEffect.Cloakable");
 
+	/*
 	this->Damage.Read(exINI, section, "AttachEffect.Damage");
 	this->DamageDelay.Read(exINI, section, "AttachEffect.DamageDelay");
 	this->Warhead.Parse(exINI, section, "AttachEffect.Warhead");
+	*/
 
 	this->Delay.Read(exINI, section, "AttachEffect.Delay");
 }
 
+/*!
+	This function attaches an effect to a target.
 
-void AttachEffectTypeClass::Attach(TechnoClass* Target, int Duration, TechnoClass* Invoker, int DamageDelay) {
+	\param Target The Techno which gets affected.
+	\param Duration The location the projectile detonated.
+	\param Invoker The Techno that casts the effect.
+
+	\author Graion Dilach
+	\date 2011-09-24+
+*/
+
+//void AttachEffectTypeClass::Attach(TechnoClass* Target, int Duration, TechnoClass* Invoker, int DamageDelay) {
+void AttachEffectTypeClass::Attach(TechnoClass* Target, int Duration, TechnoClass* Invoker) {
 	if (!Target || Target->IsIronCurtained()) {return;}
 
 	TechnoExt::ExtData *TargetExt = TechnoExt::ExtMap.Find(Target);
@@ -55,6 +68,10 @@ void AttachEffectTypeClass::Attach(TechnoClass* Target, int Duration, TechnoClas
 					GAME_ALLOC(AnimClass, Item->Animation, this->AnimType, &Target->Location);
 					Item->Animation->SetOwnerObject(Target);
 					Item->Animation->RemainingIterations = -1;
+					
+					if (Invoker->Owner) {
+						Item->Animation->Owner = Invoker->Owner;
+					}
 				}
 
 				return;
@@ -63,7 +80,7 @@ void AttachEffectTypeClass::Attach(TechnoClass* Target, int Duration, TechnoClas
 	}
 
 	// there goes the actual attaching
-	auto Attaching = new AttachEffectClass(this, Duration, DamageDelay);
+	auto Attaching = new AttachEffectClass(this, Duration);
 	TargetExt->AttachedEffects.AddItem(Attaching);
 
 	// update the unit with the attached effect
@@ -75,15 +92,18 @@ void AttachEffectTypeClass::Attach(TechnoClass* Target, int Duration, TechnoClas
 		Attaching->Animation->SetOwnerObject(Target);
 		// inbefore void pointers, hardcode the iteration to infinitely looped
 		Attaching->Animation->RemainingIterations = -1;
-		Attaching->Animation->Owner = Invoker->Owner;
+		if (Invoker->Owner) {
+			Attaching->Animation->Owner = Invoker->Owner;
+		}
 	}
 	
+	/*
 	if (Invoker) {
 		Attaching->Invoker = Invoker;
 	} else {
 		Attaching->Invoker = NULL;
 	}
-
+	*/
 }
 
 void AttachEffectClass::InvalidateAnimPointer(AnimClass *ptr) {
@@ -111,6 +131,17 @@ void AttachEffectClass::KillAnim() {
 void AttachEffectClass::Destroy() {
 	this->KillAnim();
 }
+
+/*!
+	This function updates the units' AttachEffects.
+
+	\retval boolean, to see if the unit gets killed (might just scrap 408 itself)
+
+	\param Source The currently updated Techno.
+
+	\author Graion Dilach
+	\date 2011-09-24+
+*/
 
 bool AttachEffectClass::Update(TechnoClass *Source) {
 
@@ -170,7 +201,10 @@ bool AttachEffectClass::Update(TechnoClass *Source) {
 		if (!pData->AttachedTechnoEffect_Delay){
 
 			//Debug::Log("[AttachEffect]Missing Type effect of %s...\n", Source->get_ID());
-			pTypeData->AttachedTechnoEffect.Attach(Source, pTypeData->AttachedTechnoEffect.Duration, Source, pTypeData->AttachedTechnoEffect.DamageDelay);
+			//pTypeData->AttachedTechnoEffect.Attach(Source, pTypeData->AttachedTechnoEffect.Duration, Source, pTypeData->AttachedTechnoEffect.DamageDelay);
+
+			pTypeData->AttachedTechnoEffect.Attach(Source, pTypeData->AttachedTechnoEffect.Duration, Source);
+
 			pData->AttachedTechnoEffect_isset = true;
 			//Debug::Log("[AttachEffect]Readded to %s.\n", Source->get_ID());
 

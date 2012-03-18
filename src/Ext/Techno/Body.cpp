@@ -432,7 +432,8 @@ void TechnoExt::TransferAttachedEffects(TechnoClass *From, TechnoClass *To) {
 		// list gets intact in the end
 		for (int i=0; i < FromExt->AttachedEffects.Count; i++) {
 			auto FromItem = FromExt->AttachedEffects.GetItem(i);
-			FromItem->Type->Attach(To, FromItem->ActualDuration, FromItem->Invoker, FromItem->ActualDamageDelay);
+			FromItem->Type->Attach(To, FromItem->ActualDuration, FromItem->Invoker);
+			//FromItem->Type->Attach(To, FromItem->ActualDuration, FromItem->Invoker, FromItem->ActualDamageDelay);
 			FromItem->Destroy();
 			delete FromItem;
 		}

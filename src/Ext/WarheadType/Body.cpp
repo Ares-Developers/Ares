@@ -491,10 +491,12 @@ void WarheadTypeExt::ExtData::applyAttachedEffect(CoordStruct *coords, TechnoCla
 							if(abs(this->Verses[curTechno->GetTechnoType()->Armor].Verses) < 0.001) {
 								continue;
 							}
-							this->AttachedEffect.Attach(curTechno, this->AttachedEffect.Duration, Owner, this->AttachedEffect.DamageDelay);
+							//this->AttachedEffect.Attach(curTechno, this->AttachedEffect.Duration, Owner, this->AttachedEffect.DamageDelay);
+							this->AttachedEffect.Attach(curTechno, this->AttachedEffect.Duration, Owner);
 						}	
 					} else {
-						this->AttachedEffect.Attach(curTechno, this->AttachedEffect.Duration, NULL, this->AttachedEffect.DamageDelay);
+						//this->AttachedEffect.Attach(curTechno, this->AttachedEffect.Duration, NULL, this->AttachedEffect.DamageDelay);
+						this->AttachedEffect.Attach(curTechno, this->AttachedEffect.Duration, NULL);
 					}
 					
 		
