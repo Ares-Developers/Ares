@@ -33,9 +33,10 @@ public:
 		};
 
 		void AnnounceInvalidPointer(void * ptr, Extension<BuildingClass> *container) {
-			// based on the game's unchecked use of this pointer at 0x7258DB, I'm going to assume this cast is perfectly safe
-			auto abs = reinterpret_cast<AbstractClass *>(ptr);
-			if(auto bld = specific_cast<BuildingClass *>(abs)) {
+			// verify that ptr points to an existing object that is a building without
+			// accessing any of its fields or members.
+			if(auto pExt = ExtMap.Find(static_cast<BuildingClass*>(ptr))) {
+				auto bld = pExt->AttachedToObject;
 				if(bld == this->SupportTarget) {
 					Debug::Log("Should remove my support target\n");
 				}
