@@ -57,7 +57,12 @@ public:
 			{ };
 
 		virtual ~ExtData() {
-			BuildingTypeExt::cPrismForwarding::RemoveFromNetwork(this->AttachedToObject, true);
+			if(this->PrismForwarding.SupportTarget) {
+				Debug::Log("Building ExtData (%p) failed to remove SupportTarget (%p) before destruction.\n", this, this->PrismForwarding.SupportTarget);
+			}
+			if(this->PrismForwarding.Senders.Count) {
+				Debug::Log("Building ExtData (%p) failed to remove all Senders (%d) before destruction.\n", this, this->PrismForwarding.Senders.Count);
+			}
 		}
 
 		virtual size_t Size() const { return sizeof(*this); };
