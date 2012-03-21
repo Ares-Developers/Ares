@@ -38,12 +38,15 @@ class HouseTypeExt
 			ValueableIdx<int, AircraftTypeClass> ParaDropPlane;
 			Valueable<AnimTypeClass*> Parachute_Anim;
 
+			bool SettingsInherited;
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 				RandomSelectionWeight (0),
 				CountryListIndex (0),
 				ParaDropPlane (-1),
 				Parachute_Anim (NULL),
-				LoadTextColor (NULL)
+				LoadTextColor (NULL),
+				SettingsInherited (false)
 			{
 				*FlagFile = 0;
 				*LSFile = 0;
@@ -72,6 +75,8 @@ class HouseTypeExt
 		AircraftTypeClass* GetParadropPlane();
 		bool GetParadropContent(TypeList<TechnoTypeClass*>**, TypeList<int>**);
 		AnimTypeClass* GetParachuteAnim();
+
+		void InheritSettings(HouseTypeClass *pThis);
 	};
 
 	static Container<HouseTypeExt> ExtMap;

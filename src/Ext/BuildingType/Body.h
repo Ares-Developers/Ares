@@ -61,6 +61,7 @@ public:
 
 		// constructor
 		cPrismForwarding() : Enabled(NO),
+			Targets(),
 			MaxFeeds(&RulesClass::Instance->PrismSupportMax),
 			MaxChainLength(1),
 			MaxNetworkSize(&RulesClass::Instance->PrismSupportMax),
@@ -71,7 +72,8 @@ public:
 			ChargeDelay(1),
 			ToAllies(false),
 			BreakSupport(false),
-			SupportWeaponIndex(-1)
+			SupportWeaponIndex(-1),
+			EliteSupportWeaponIndex(-1)
 		{};
 	};
 

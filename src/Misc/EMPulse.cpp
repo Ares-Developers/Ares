@@ -684,7 +684,7 @@ void EMPulse::DisableEMPEffect(TechnoClass * Victim) {
 		HasPower = HasPower && Building->IsPowerOnline();
 
 		if (!Building->Type->InvisibleInGame) {
-			if (HasPower) {
+			if (HasPower || Building->Type->LaserFencePost) {
 				Building->EnableStuff();
 			}
 			updateRadarBlackout(Building);

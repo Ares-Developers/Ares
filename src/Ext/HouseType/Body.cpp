@@ -213,6 +213,10 @@ void HouseTypeExt::ExtData::LoadFromRulesFile(HouseTypeClass *pThis, CCINIClass 
 void HouseTypeExt::ExtData::LoadFromINIFile(HouseTypeClass *pThis, CCINIClass *pINI) {
 	char* pID = pThis->ID;
 
+	if(!this->SettingsInherited && *pThis->ParentCountry && _strcmpi(pThis->ParentCountry, pThis->ID)) {
+		this->InheritSettings(pThis);
+	}
+
 	if (!this->Powerplants.Count) {
 		const char * section = "General";
 		const char * key = NULL;
@@ -290,6 +294,49 @@ void HouseTypeExt::ExtData::LoadFromINIFile(HouseTypeClass *pThis, CCINIClass *p
 
 	this->RandomSelectionWeight = pINI->ReadInteger(pID, "RandomSelectionWeight", this->RandomSelectionWeight);
 		this->CountryListIndex = pINI->ReadInteger(pID, "ListIndex", this->CountryListIndex);
+}
+
+template<size_t Len>
+void CopyString(char (HouseTypeExt::ExtData::* prop)[Len], const HouseTypeExt::ExtData *src, HouseTypeExt::ExtData *dst) {
+	AresCRT::strCopy(dst->*prop, src->*prop, Len);
+}
+
+template<typename T>
+void CopyVector(T HouseTypeExt::ExtData::* prop, const HouseTypeExt::ExtData *src, HouseTypeExt::ExtData *dst) {
+	auto &sp = src->*prop;
+	auto &dp = dst->*prop;
+	dp.SetCapacity(sp.Capacity, NULL);
+	dp.Count = sp.Count;
+	for(unsigned ix = sp.Count; ix > 0; --ix) {
+		auto idx = ix - 1;
+		dp.Items[idx] = sp.Items[idx];
+	}
+}
+
+void HouseTypeExt::ExtData::InheritSettings(HouseTypeClass *pThis) {
+	if(auto ParentCountry = HouseTypeClass::Find(pThis->ParentCountry)) {
+		if(const auto ParentData = HouseTypeExt::ExtMap.Find(ParentCountry)) {
+			CopyString(&HouseTypeExt::ExtData::FlagFile, ParentData, this);
+			CopyString(&HouseTypeExt::ExtData::LSFile, ParentData, this);
+			CopyString(&HouseTypeExt::ExtData::LSPALFile, ParentData, this);
+			CopyString(&HouseTypeExt::ExtData::TauntFile, ParentData, this);
+			CopyString(&HouseTypeExt::ExtData::LSName, ParentData, this);
+			CopyString(&HouseTypeExt::ExtData::LSSpecialName, ParentData, this);
+			CopyString(&HouseTypeExt::ExtData::LSBrief, ParentData, this);
+			CopyString(&HouseTypeExt::ExtData::StatusText, ParentData, this);
+			this->LoadTextColor = ParentData->LoadTextColor;
+			this->RandomSelectionWeight = ParentData->RandomSelectionWeight;
+			this->CountryListIndex = ParentData->CountryListIndex + 1;
+
+			this->ParaDropPlane.Set(ParentData->ParaDropPlane);
+			this->Parachute_Anim.Set(ParentData->Parachute_Anim);
+
+			CopyVector(&HouseTypeExt::ExtData::Powerplants, ParentData, this);
+			CopyVector(&HouseTypeExt::ExtData::ParaDrop, ParentData, this);
+			CopyVector(&HouseTypeExt::ExtData::ParaDropNum, ParentData, this);
+		}
+	}
+	this->SettingsInherited = true;
 }
 
 AnimTypeClass* HouseTypeExt::ExtData::GetParachuteAnim() {
@@ -467,3 +514,4 @@ DEFINE_HOOK_AGAIN(51215A, HouseTypeClass_LoadFromINI, 5)
 	HouseTypeExt::ExtMap.LoadFromINI(pItem, pINI);
 	return 0;
 }
+

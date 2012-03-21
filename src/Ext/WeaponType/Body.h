@@ -36,6 +36,11 @@ public:
 	class ExtData : public Extension<TT>
 	{
 	public:
+		// static defaults
+		static ColorStruct DefaultWaveColor;
+		static ColorStruct DefaultWaveColorSonic;
+		static ColorStruct DefaultWaveColorMagBeam;
+
 		// Generic
 		bool Weapon_Loaded;
 
