@@ -206,7 +206,6 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 			Target->CurrentTargets.Clear(); // Target->ShouldLoseTargetNow ?
 			Target->SetFocus(NULL);
 			Target->QueueMission(mission_Sleep, true);
-			Target->OnBridge = false;
 			Target->unknown_C4 = 0; // don't ask
 			Target->unknown_5A0 = 0;
 			Target->CurrentGattlingStage = 0;
@@ -272,6 +271,7 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 			}
 
 			Target->Remove();
+			Target->OnBridge = false;
 
 			Target->Transporter = Attacker;
 			if(Attacker->WhatAmI() == abs_Building) {

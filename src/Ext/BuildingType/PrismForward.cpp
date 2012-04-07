@@ -234,7 +234,9 @@ int BuildingTypeExt::cPrismForwarding::AcquireSlaves_SingleStage
 		BuildingExt::ExtData *pSlaveData = BuildingExt::ExtMap.Find(nearestPrism);
 		BuildingExt::ExtData *pTargetData = BuildingExt::ExtMap.Find(TargetTower);
 		pSlaveData->PrismForwarding.SupportTarget = TargetTower;
-		pTargetData->PrismForwarding.Senders.AddItem(nearestPrism);
+		if(pTargetData->PrismForwarding.Senders.FindItemIndex(&nearestPrism) == -1) {
+			pTargetData->PrismForwarding.Senders.AddItem(nearestPrism);
+		}
 	}
 
 	if (iFeeds != 0 && chain > *LongestChain) {
