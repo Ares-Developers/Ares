@@ -23,13 +23,13 @@ DEFINE_HOOK(6FD480, TechnoClass_FireEBolt, 6)
 	if(Weapon && Bolt) {
 		WeaponTypeExt::BoltExt[Bolt] = WeaponTypeExt::ExtMap.Find(Weapon);
 		WeaponTypeExt::ExtData *BoltAres = WeaponTypeExt::ExtMap.Find(Weapon);
+		TechnoExt::ExtData *OwnerUnitExt = TechnoExt::ExtMap.Find(OwnerUnit);
 		if (OwnerUnit) {
-			if(!!BoltAres->Bolt_IsHouseColor) {
-				BoltAres->Bolt_HouseColorBase = OwnerUnit->Owner->Color;
-			}
-		} else {
-			BoltAres->Bolt_IsHouseColor = false;
-		} //If HouseColor can't be obtained, remove it from the weapon
+			// To have updated FLH for OpenTopped Tesla Troopers
+			Bolt->Owner = OwnerUnit;
+			OwnerUnitExt->MyBolt = Bolt;
+		}
+
 	}
 	return 0;
 }
@@ -38,6 +38,10 @@ DEFINE_HOOK(6FD480, TechnoClass_FireEBolt, 6)
 DEFINE_HOOK(4C2951, EBolt_DTOR, 5)
 {
 	GET(EBolt *, Bolt, ECX);
+	if (Bolt->Owner){
+		TechnoExt::ExtData *OwnerExt = TechnoExt::ExtMap.Find(Bolt->Owner);
+		OwnerExt->MyBolt = NULL;
+	}
 	hash_boltExt::iterator i = WeaponTypeExt::BoltExt.find(Bolt);
 	if(i != WeaponTypeExt::BoltExt.end()) {
 		WeaponTypeExt::BoltExt.erase(i);
@@ -53,8 +57,8 @@ DEFINE_HOOK(4C24BE, EBolt_Draw_Color1, 5)
 
 	if(pData) {
 		WORD Packed = 0;
-		if(!!pData->Bolt_IsHouseColor) {
-			ColorStruct tmp(pData->Bolt_HouseColorBase);
+		if(!!pData->Bolt_IsHouseColor && Bolt->Owner) {
+			ColorStruct tmp(Bolt->Owner->Owner->Color);
 			Packed = Drawing::Color16bit(&tmp);
 		} else if(ColorStruct *clr = pData->Bolt_Color1) {
 			Packed = Drawing::Color16bit(clr);
@@ -75,14 +79,14 @@ DEFINE_HOOK(4C25CB, EBolt_Draw_Color2, 5)
 
 	if(pData) {
 		WORD Packed = 0;
-		if(!!pData->Bolt_IsHouseColor) {
+		if(!!pData->Bolt_IsHouseColor && Bolt->Owner) {
 			ColorStruct tmp;
 			if (pData->Bolt_ColorSpread==-1) {
 				tmp.R=248;
 				tmp.G=252;
 				tmp.B=248;
 			} else {
-				tmp=pData->Bolt_HouseColorBase;
+				tmp=Bolt->Owner->Owner->Color;
 				int delta = pData->Bolt_ColorSpread;
 				Saturate(tmp.R, delta);
 				Saturate(tmp.G, delta);
@@ -109,8 +113,8 @@ DEFINE_HOOK(4C26C7, EBolt_Draw_Color3, 5)
 
 	if(pData) {
 		WORD Packed = 0;
-		if(!!pData->Bolt_IsHouseColor) {
-			ColorStruct tmp(pData->Bolt_HouseColorBase);
+		if(!!pData->Bolt_IsHouseColor && Bolt->Owner) {
+			ColorStruct tmp(Bolt->Owner->Owner->Color);
 			if (pData->Bolt_ColorSpread!=-1) {
 				int delta = -pData->Bolt_ColorSpread;
 				Saturate(tmp.R, delta);
