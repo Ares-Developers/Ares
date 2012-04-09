@@ -231,12 +231,7 @@ int BuildingTypeExt::cPrismForwarding::AcquireSlaves_SingleStage
 		nearestPrism->PrismStage = pcs_Slave;
 		nearestPrism->PrismTargetCoords = FLH;
 
-		BuildingExt::ExtData *pSlaveData = BuildingExt::ExtMap.Find(nearestPrism);
-		BuildingExt::ExtData *pTargetData = BuildingExt::ExtMap.Find(TargetTower);
-		pSlaveData->PrismForwarding.SupportTarget = TargetTower;
-		if(pTargetData->PrismForwarding.Senders.FindItemIndex(&nearestPrism) == -1) {
-			pTargetData->PrismForwarding.Senders.AddItem(nearestPrism);
-		}
+		SetSupportTarget(nearestPrism, TargetTower);
 	}
 
 	if (iFeeds != 0 && chain > *LongestChain) {
@@ -417,17 +412,7 @@ void BuildingTypeExt::cPrismForwarding::RemoveFromNetwork(BuildingClass *SlaveTo
 		pSlaveData->PrismForwarding.DamageReserve = 0;
 		//animations should be controlled by whatever incapacitated the tower so no need to mess with anims here
 	}
-	if (BuildingClass *TargetTower = pSlaveData->PrismForwarding.SupportTarget) {
-		//there is a target tower (so this is a slave rather than a master)
-		BuildingExt::ExtData *pTargetData = BuildingExt::ExtMap.Find(TargetTower);
-		signed int idx = pTargetData->PrismForwarding.Senders.FindItemIndex(&SlaveTower);
-		if(idx != -1) {
-			pTargetData->PrismForwarding.Senders.RemoveItem(idx);
-			--TargetTower->SupportingPrisms;  //Ares doesn't actually use this, but maintaining it anyway (as direct feeds only)
-		}
-		//slave tower is no longer reference by the target
-		pSlaveData->PrismForwarding.SupportTarget = NULL; //slave tower no longer references the target
-	}
+	SetSupportTarget(SlaveTower, NULL);
 	//finally, remove all the preceding slaves from the network
 	for(int senderIdx = pSlaveData->PrismForwarding.Senders.Count; senderIdx; senderIdx--) {
 		if (BuildingClass *NextTower = pSlaveData->PrismForwarding.Senders[senderIdx-1]) {
@@ -436,3 +421,61 @@ void BuildingTypeExt::cPrismForwarding::RemoveFromNetwork(BuildingClass *SlaveTo
 	}
 }
 
+void BuildingTypeExt::cPrismForwarding::SetSupportTarget(BuildingClass *pSlaveTower, BuildingClass *pTargetTower) {
+	if(BuildingExt::ExtData *pSlaveData = BuildingExt::ExtMap.Find(pSlaveTower)) {
+		// meet the new tower, same as the old tower
+		if(pSlaveData->PrismForwarding.SupportTarget == pTargetTower) {
+			return;
+		}
+
+		// if the target tower is already set, disconnect it by removing it from the old target tower's sender list
+		if(BuildingClass *pOldTarget = pSlaveData->PrismForwarding.SupportTarget) {
+			if(BuildingExt::ExtData *pOldTargetData = BuildingExt::ExtMap.Find(pOldTarget)) {
+				int idxSlave = pOldTargetData->PrismForwarding.Senders.FindItemIndex(&pSlaveTower);
+				if(idxSlave != -1) {
+					pOldTargetData->PrismForwarding.Senders.RemoveItem(idxSlave);
+					// everywhere the comments say this is now the "longest backwards chain", but decreasing this here makes use of the original meaning. why is this needed here? AlexB 2012-04-08
+					--pOldTarget->SupportingPrisms;  //Ares doesn't actually use this, but maintaining it anyway (as direct feeds only)
+				} else {
+					Debug::DevLog(Debug::Warning, "PrismForwarding::SetSupportTarget: Old target tower (%p) did not consider this tower (%p) as its sender.\n", pOldTarget, pSlaveTower);
+				}
+			}
+			pSlaveData->PrismForwarding.SupportTarget = NULL;
+		}
+
+		// set the new tower as support target
+		if(pTargetTower) {
+			if(BuildingExt::ExtData *pTargetData = BuildingExt::ExtMap.Find(pTargetTower)) {
+				pSlaveData->PrismForwarding.SupportTarget = pTargetTower;
+
+				if(pTargetData->PrismForwarding.Senders.FindItemIndex(&pSlaveTower) == -1) {
+					pTargetData->PrismForwarding.Senders.AddItem(pSlaveTower);
+					// why isn't SupportingPrisms increased here? AlexB 2012-04-08
+				} else {
+					Debug::DevLog(Debug::Warning, "PrismForwarding::SetSupportTarget: Tower (%p) is already in new target tower's (%p) sender list.\n", pSlaveTower, pTargetTower);
+				}
+			}
+		}
+	}
+}
+
+void BuildingTypeExt::cPrismForwarding::RemoveAllSenders(BuildingClass *pTower) {
+	if(BuildingExt::ExtData *pData = BuildingExt::ExtMap.Find(pTower)) {
+		// disconnect all sender towers from their support target, which is me
+		for(int senderIdx = pData->PrismForwarding.Senders.Count; senderIdx; senderIdx--) {
+			if(BuildingClass *NextTower = pData->PrismForwarding.Senders[senderIdx-1]) {
+				SetSupportTarget(NextTower, NULL);
+			}
+		}
+
+		// log if not all senders could be removed
+		if(pData->PrismForwarding.Senders.Count) {
+			Debug::DevLog(Debug::Warning, "PrismForwarding::RemoveAllSenders: Tower (%p) still has %d senders after removal completed.\n", pTower, pData->PrismForwarding.Senders.Count);
+			for(int i=0; i<pData->PrismForwarding.Senders.Count; ++i) {
+				Debug::DevLog(Debug::Warning, "Sender %03d: %p\n", i, pData->PrismForwarding.Senders[i]);
+			}
+
+			pData->PrismForwarding.Senders.Clear();
+		}
+	}
+}

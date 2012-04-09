@@ -59,7 +59,7 @@ DEFINE_HOOK(44B2FE, BuildingClass_Mi_Attack_IsPrism, 6)
 			B->PrismTargetCoords.Y = B->PrismTargetCoords.Z = 0;
 			pMasterData->PrismForwarding.ModifierReserve = 0.0;
 			pMasterData->PrismForwarding.DamageReserve = 0;
-			pMasterData->PrismForwarding.SupportTarget = NULL;
+			BuildingTypeExt::cPrismForwarding::SetSupportTarget(B, NULL);
 
 		}
 
@@ -131,9 +131,9 @@ DEFINE_HOOK(4503F0, BuildingClass_Update_Prism, 9)
 				//This tower's job is done. Go idle.
 				pData->PrismForwarding.ModifierReserve = 0.0;
 				pData->PrismForwarding.DamageReserve = 0;
-				pData->PrismForwarding.Senders.Clear();
+				BuildingTypeExt::cPrismForwarding::RemoveAllSenders(pThis);
 				pThis->SupportingPrisms = 0; //Ares sets this to the longest backward chain
-				pData->PrismForwarding.SupportTarget = NULL;
+				BuildingTypeExt::cPrismForwarding::SetSupportTarget(pThis, NULL);
 				pThis->PrismStage = pcs_Idle;
 			}
 		} else {
