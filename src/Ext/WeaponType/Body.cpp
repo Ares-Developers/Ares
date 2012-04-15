@@ -273,6 +273,16 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 			Target->Remove();
 			Target->OnBridge = false;
 
+			// reset the current movement data for locomotors that
+			// would make the abductee fly through the map on unload.
+			// code courtesy of DCoder
+			auto pdwLoco = reinterpret_cast<DWORD *>(Target->Locomotor);
+			//Debug::Log("Locomotor ptr is %p\n", *pdwLoco);
+			if(*pdwLoco == 0x7EACFC) { // fuck you hoverbob
+				pdwLoco += 0x5;
+				pdwLoco[0] = pdwLoco[1] = pdwLoco[2] = pdwLoco[3] = pdwLoco[4] = pdwLoco[5] = 0;
+			}
+
 			Target->Transporter = Attacker;
 			if(Attacker->WhatAmI() == abs_Building) {
 				Target->Absorbed = true;
