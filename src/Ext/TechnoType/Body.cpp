@@ -194,7 +194,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 		if(!this->IsAPromiscuousWhoreAndLetsAnyoneRideIt) { // if not, find the specific operator it allows
 			if(auto Operator = InfantryTypeClass::Find(Ares::readBuffer)) {
 				this->Operator = Operator;
-			} else {
+			} else if(VALIDTAG(Ares::readBuffer)) {
 				Debug::INIParseFailed(section, "Operator", Ares::readBuffer);
 			}
 		}
@@ -208,7 +208,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 			signed int idx = atoi(cur);
 			if(idx > -1 && idx < 32) {
 				this->RequiredStolenTech.set(idx);
-			} else {
+			} else if(idx != -1) {
 				Debug::INIParseFailed(section, "Prerequisite.StolenTechs", cur, "Expected a number between 0 and 31 inclusive");
 			}
 		}

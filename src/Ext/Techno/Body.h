@@ -72,6 +72,8 @@ public:
 		
 		TemporalClass * MyOriginalTemporal;
 
+		EBolt * MyBolt;
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			idxSlot_Wave (0),
 			idxSlot_Beam (0),
@@ -90,7 +92,8 @@ public:
 			PoweredUnit(NULL),
 			AttachedTechnoEffect_isset (false),
 			AttachedTechnoEffect_Delay (0),
-			MyOriginalTemporal(NULL)
+			MyOriginalTemporal(NULL),
+			MyBolt(NULL)
 			{
 				this->CloakSkipTimer.Stop();
 				// hope this works with the timing - I assume it does, since Types should be created before derivates thereof

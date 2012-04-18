@@ -1081,4 +1081,19 @@ DEFINE_HOOK(416C94, AircraftClass_Carryall_Unload_UpdateCargo, 6)
 	return 0;
 }
 
+// support Occupier and VehicleThief on one type. if this is not done
+// the Occupier handling will leave a dangling Destination pointer.
+DEFINE_HOOK(4D9A83, FootClass_PointerGotInvalid_OccupierVehicleThief, 6)
+{
+	GET(InfantryClass*, pInfantry, ESI);
+	GET(InfantryTypeClass*, pType, EAX);
+
+	if(pType->VehicleThief) {
+		if(pInfantry->Destination->AbstractFlags & ABSFLAGS_ISFOOT) {
+			return 0x4D9AB9;
+		}
+	}
+
+	return 0;
+}
 

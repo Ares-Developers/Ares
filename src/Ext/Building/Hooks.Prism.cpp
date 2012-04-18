@@ -1,5 +1,6 @@
 #include "Body.h"
 #include "../BuildingType/Body.h"
+#include "../Techno/Body.h"
 #include "../WeaponType/Body.h"
 #include <BulletClass.h>
 #include <LaserDrawClass.h>
@@ -59,7 +60,7 @@ DEFINE_HOOK(44B2FE, BuildingClass_Mi_Attack_IsPrism, 6)
 			B->PrismTargetCoords.Y = B->PrismTargetCoords.Z = 0;
 			pMasterData->PrismForwarding.ModifierReserve = 0.0;
 			pMasterData->PrismForwarding.DamageReserve = 0;
-			pMasterData->PrismForwarding.SupportTarget = NULL;
+			BuildingTypeExt::cPrismForwarding::SetSupportTarget(B, NULL);
 
 		}
 
@@ -131,9 +132,9 @@ DEFINE_HOOK(4503F0, BuildingClass_Update_Prism, 9)
 				//This tower's job is done. Go idle.
 				pData->PrismForwarding.ModifierReserve = 0.0;
 				pData->PrismForwarding.DamageReserve = 0;
-				pData->PrismForwarding.Senders.Clear();
+				BuildingTypeExt::cPrismForwarding::RemoveAllSenders(pThis);
 				pThis->SupportingPrisms = 0; //Ares sets this to the longest backward chain
-				pData->PrismForwarding.SupportTarget = NULL;
+				BuildingTypeExt::cPrismForwarding::SetSupportTarget(pThis, NULL);
 				pThis->PrismStage = pcs_Idle;
 			}
 		} else {
@@ -219,14 +220,16 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 			EBolt* supportEBolt;
 			GAME_ALLOC(EBolt, supportEBolt);
 			if (supportEBolt) {
-			//	supportEBolt->Owner = B;
+				supportEBolt->Owner = B;
+				TechnoExt::ExtData *pBuildingExt = TechnoExt::ExtMap.Find(B);
+				pBuildingExt->MyBolt = supportEBolt;
 				supportEBolt->WeaponSlot = idxSupport;
 				supportEBolt->AlternateColor = supportWeapon->IsAlternateColor;
 				WeaponTypeExt::BoltExt[supportEBolt] = WeaponTypeExt::ExtMap.Find(supportWeapon);
 				WeaponTypeExt::ExtData *BoltAres = WeaponTypeExt::ExtMap.Find(supportWeapon); //since supports doesn't send unit info, houseboltcoloring has to be done here
-				if (BoltAres->Bolt_IsHouseColor){
-					BoltAres->Bolt_HouseColorBase = B->Owner->Color;
-				}
+			//	if (BoltAres->Bolt_IsHouseColor){
+			//		BoltAres->Bolt_HouseColorBase = B->Owner->Color;
+			//	}
 				supportEBolt->Fire(SourceXYZ, *pTargetXYZ, 0); //messing with 3rd arg seems to make bolts more jumpy, and parts of them disappear
 			}
 		}

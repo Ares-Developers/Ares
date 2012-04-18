@@ -829,6 +829,10 @@ DEFINE_HOOK(6F4500, TechnoClass_DTOR, 5)
 	GET(TechnoClass*, pItem, ECX);
 
 	SWStateMachine::InvalidatePointer(pItem);
+	TechnoExt::ExtData *pItemExt = TechnoExt::ExtMap.Find(pItem);
+	if (pItemExt->MyBolt){
+		pItemExt->MyBolt->Owner = NULL;
+	}
 	TechnoExt::ExtMap.Remove(pItem);
 	return 0;
 }
