@@ -90,10 +90,8 @@ public:
 			ShadowDrawnManually (false),
 			RadarJam(NULL),
 			PoweredUnit(NULL),
-			AttachedTechnoEffect_isset (false),
-			AttachedTechnoEffect_Delay (0),
 			MyOriginalTemporal(NULL),
-			MyBolt(NULL)
+			AttachedTechnoEffect_Delay (0)
 			{
 				this->CloakSkipTimer.Stop();
 				// hope this works with the timing - I assume it does, since Types should be created before derivates thereof
