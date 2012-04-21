@@ -189,6 +189,12 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 			Target->unknown_5A0 = 0;
 			Target->CurrentGattlingStage = 0;
 			Target->SetCurrentWeaponStage(0);
+
+			// the team should not wait for me
+			if(Target->BelongsToATeam()) {
+				Target->Team->LiberateMember(Target);
+			}
+
 			// if this unit is being mind controlled, break the link
 			if(TechnoClass * MindController = Target->MindControlledBy) {
 				if(CaptureManagerClass * MC = MindController->CaptureManager) {
