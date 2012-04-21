@@ -69,7 +69,7 @@ void AttachEffectTypeClass::Attach(TechnoClass* Target, int Duration, TechnoClas
 					Item->Animation->SetOwnerObject(Target);
 					Item->Animation->RemainingIterations = -1;
 					
-					if (Invoker->Owner) {
+					if (Invoker && Invoker->Owner) {
 						Item->Animation->Owner = Invoker->Owner;
 					}
 				}
