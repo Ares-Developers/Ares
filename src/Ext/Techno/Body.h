@@ -83,8 +83,7 @@ public:
 			ShadowDrawnManually (false),
 			RadarJam(NULL),
 			PoweredUnit(NULL),
-			MyOriginalTemporal(NULL),
-			MyBolt(NULL)
+			MyOriginalTemporal(NULL)
 			{
 				this->CloakSkipTimer.Stop();
 				// hope this works with the timing - I assume it does, since Types should be created before derivates thereof
