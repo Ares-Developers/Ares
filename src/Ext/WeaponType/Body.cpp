@@ -217,11 +217,12 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 				Target->TemporalTargetingMe->Detach();
 			}
 
-			CoordStruct coordsUnitSource;
+			CoordStruct coordsUnitSource = {0, 0, 0};
+			Target->Locomotor->Force_Track(-1, coordsUnitSource);
 			Target->GetCoords(&coordsUnitSource);
 			Target->Locomotor->Mark_All_Occupation_Bits(0);
-			Target->Locomotor->Force_Track(-1, coordsUnitSource);
 			Target->MarkAllOccupationBits(&coordsUnitSource);
+			Target->ClearPlanningTokens(NULL);
 
 			Target->Remove();
 			Target->OnBridge = false;
