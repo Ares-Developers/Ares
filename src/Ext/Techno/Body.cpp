@@ -35,6 +35,10 @@ void TechnoExt::SpawnSurvivors(FootClass *pThis, TechnoClass *pKiller, bool Sele
 	if(!pSelfData->Survivors_Done && !pSelfData->DriverKilled && !IgnoreDefenses) {
 		// save this, because the hijacker can kill people
 		int PilotCount = pData->Survivors_PilotCount;
+		if(PilotCount < 0) {
+			// default pilot count, depending on crew
+			PilotCount = (Type->Crewed ? 1 : 0);
+		}
 
 		// process the hijacker
 		if(InfantryClass *Hijacker = RecoverHijacker(pThis)) {
@@ -60,7 +64,7 @@ void TechnoExt::SpawnSurvivors(FootClass *pThis, TechnoClass *pKiller, bool Sele
 			}
 		}
 
-		// possibly eject up to PilotChance crew members
+		// possibly eject up to PilotCount crew members
 		if(Type->Crewed && chance) {
 			for(int i = 0; i < PilotCount; ++i) {
 				if(ScenarioClass::Instance->Random.RandomRanged(1, 100) <= chance) {

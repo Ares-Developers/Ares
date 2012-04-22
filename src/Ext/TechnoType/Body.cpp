@@ -25,7 +25,7 @@ void TechnoTypeExt::ExtData::Initialize(TechnoTypeClass *pThis) {
 	this->Survivors_Pilots.SetCapacity(SideClass::Array->Count, NULL);
 	this->Survivors_Pilots.Count = SideClass::Array->Count;
 
-	this->Survivors_PilotCount = pThis->Crewed; // should be 0 if false, 1 if true
+	this->Survivors_PilotCount = -1; // defaults to (crew ? 1 : 0)
 
 	for(int i = 0; i < SideClass::Array->Count; ++i) {
 		this->Survivors_Pilots[i] = SideExt::ExtMap.Find(SideClass::Array->Items[i])->Crew;
