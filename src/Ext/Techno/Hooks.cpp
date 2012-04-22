@@ -1061,6 +1061,10 @@ DEFINE_HOOK(416C94, AircraftClass_Carryall_Unload_UpdateCargo, 6)
 
 	pCargo->UpdatePosition(2);
 
+	if(pCargo->Deactivated && pCargo->Locomotor->Is_Powered()) {
+		pCargo->Locomotor->Power_Off();
+	}
+
 	return 0;
 }
 
