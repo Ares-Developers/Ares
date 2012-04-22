@@ -22,14 +22,7 @@ void TechnoTypeExt::ExtData::Initialize(TechnoTypeClass *pThis) {
 	this->Survivors_PilotChance.SetAll(int(RulesClass::Instance->CrewEscape * 100));
 	this->Survivors_PassengerChance.SetAll(-1); // was (int)RulesClass::Global()->CrewEscape * 100); - changed to -1 to indicate "100% if this is a land transport"
 
-	this->Survivors_Pilots.SetCapacity(SideClass::Array->Count, NULL);
-	this->Survivors_Pilots.Count = SideClass::Array->Count;
-
 	this->Survivors_PilotCount = -1; // defaults to (crew ? 1 : 0)
-
-	for(int i = 0; i < SideClass::Array->Count; ++i) {
-		this->Survivors_Pilots[i] = SideExt::ExtMap.Find(SideClass::Array->Items[i])->Crew;
-	}
 
 	this->PrerequisiteLists.SetCapacity(0, NULL);
 	this->PrerequisiteLists.AddItem(new DynamicVectorClass<int>);
@@ -90,6 +83,9 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 
 	// survivors
 	this->Survivors_Pilots.SetCapacity(SideClass::Array->Count, NULL);
+	for(int i=this->Survivors_Pilots.Count; i<SideClass::Array->Count; ++i) {
+		this->Survivors_Pilots[i] = SideExt::ExtMap.Find(SideClass::Array->Items[i])->Crew;
+	}
 	this->Survivors_Pilots.Count = SideClass::Array->Count;
 
 	this->Survivors_PilotCount = pINI->ReadInteger(section, "Survivor.Pilots", this->Survivors_PilotCount);
@@ -102,7 +98,9 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 		_snprintf(flag, 256, "Survivor.Side%d", i);
 		if(pINI->ReadString(section, flag, "", Ares::readBuffer, Ares::readLength)) {
 			if(!(this->Survivors_Pilots[i] = InfantryTypeClass::Find(Ares::readBuffer))) {
-				Debug::INIParseFailed(section, flag, Ares::readBuffer);
+				if(VALIDTAG(Ares::readBuffer)) {
+					Debug::INIParseFailed(section, flag, Ares::readBuffer);
+				}
 			}
 		}
 	}
