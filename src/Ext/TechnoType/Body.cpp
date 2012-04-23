@@ -19,7 +19,7 @@ template<> IStream *Container<TechnoTypeExt>::SavingStream = NULL;
 // member funcs
 
 void TechnoTypeExt::ExtData::Initialize(TechnoTypeClass *pThis) {
-	this->Survivors_PilotChance.SetAll(int(RulesClass::Instance->CrewEscape * 100));
+	this->Survivors_PilotChance.SetAll(-1); // was int(RulesClass::Instance->CrewEscape * 100), now negative values indicate "use CrewEscape"
 	this->Survivors_PassengerChance.SetAll(-1); // was (int)RulesClass::Global()->CrewEscape * 100); - changed to -1 to indicate "100% if this is a land transport"
 
 	this->Survivors_PilotCount = -1; // defaults to (crew ? 1 : 0)

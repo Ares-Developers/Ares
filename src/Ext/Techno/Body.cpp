@@ -30,6 +30,9 @@ void TechnoExt::SpawnSurvivors(FootClass *pThis, TechnoClass *pKiller, bool Sele
 
 	CoordStruct loc = pThis->Location;
 	int chance = pData->Survivors_PilotChance.BindTo(pThis)->Get();
+	if(chance < 0) {
+		chance = int(RulesClass::Instance->CrewEscape * 100);
+	}
 
 	// always eject passengers, but crew only if not already processed.
 	if(!pSelfData->Survivors_Done && !pSelfData->DriverKilled && !IgnoreDefenses) {
@@ -65,7 +68,7 @@ void TechnoExt::SpawnSurvivors(FootClass *pThis, TechnoClass *pKiller, bool Sele
 		}
 
 		// possibly eject up to PilotCount crew members
-		if(Type->Crewed && chance) {
+		if(Type->Crewed && chance > 0) {
 			signed int idx = pOwner->SideIndex;
 			auto Pilots = &pData->Survivors_Pilots;
 			if(Pilots->ValidIndex(idx)) {
