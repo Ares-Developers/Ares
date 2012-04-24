@@ -3,7 +3,6 @@
 #include "../Side/Body.h"
 #include "../../Enum/Prerequisites.h"
 #include "../../Misc/Debug.h"
-#include "../../Misc/EMPulse.h"
 
 #include <AnimTypeClass.h>
 #include <PCX.h>
@@ -212,9 +211,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 		}
 	}
 
-	// EMP immunity will be inferred after all type data has been read.
-	// Not all needed properties have been parsed here. For instance: Cyborg.
-
+	this->ImmuneToEMP.Read(&exINI, section, "ImmuneToEMP");
 	this->EMP_Modifier = (float)pINI->ReadDouble(section, "EMP.Modifier", this->EMP_Modifier);
 
 	if(pINI->ReadString(section, "EMP.Threshold", "inair", Ares::readBuffer, Ares::readLength)) {
@@ -439,14 +436,6 @@ void TechnoTypeClassExt::ReadWeapon(WeaponStruct *pWeapon, const char *prefix, c
 }
 */
 
-void TechnoTypeExt::InferEMPImmunity(TechnoTypeClass *Type, CCINIClass *pINI) {
-	TechnoTypeExt::ExtData *pData = TechnoTypeExt::ExtMap.Find(Type);
-
-	// EMP immunity. The default for each type is decided by the EMPulse class.
-	pData->ImmuneToEMP.BindEx(!EMPulse::IsTypeEMPProne(Type));
-	pData->ImmuneToEMP.Set(pINI->ReadBool(Type->ID, "ImmuneToEMP", pData->ImmuneToEMP.Get()));
-}
-
 void Container<TechnoTypeExt>::InvalidatePointer(void *ptr) {
 }
 
@@ -624,18 +613,8 @@ DEFINE_HOOK_AGAIN(716132, TechnoTypeClass_LoadFromINI, 5)
 	return 0;
 }
 
-// infer the EMP immunity here. this is the earliest address to get
-// this information reliably.
-DEFINE_HOOK(679CAF, RulesClass_LoadAfterTypeData_InferEMPImmunity, 5) {
+DEFINE_HOOK(679CAF, RulesClass_LoadAfterTypeData_CheckRubbleFoundation, 5) {
 	GET(CCINIClass*, pINI, ESI);
-
-	// The EMP immunity has a rather complex rule set to infer whether
-	// a TechnoType is immune from its properties. Here all properties
-	// have been parsed.
-	for(int i=0; i<TechnoTypeClass::Array->Count; ++i) {
-		TechnoTypeClass* pType = TechnoTypeClass::Array->GetItem(i);
-		TechnoTypeExt::InferEMPImmunity(pType, pINI);
-	}
 
 	for(int i=0; i<BuildingTypeClass::Array->Count; ++i) {
 		BuildingTypeClass* pTBld = BuildingTypeClass::Array->GetItem(i);

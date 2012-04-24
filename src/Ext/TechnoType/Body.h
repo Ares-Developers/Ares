@@ -219,7 +219,6 @@ public:
 	static void PointerGotInvalid(void *ptr);
 
 //	static void ReadWeapon(WeaponStruct *pWeapon, const char *prefix, const char *section, CCINIClass *pINI);
-	static void InferEMPImmunity(TechnoTypeClass *Type, CCINIClass *pINI);
 };
 
 #endif

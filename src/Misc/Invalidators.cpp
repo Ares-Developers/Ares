@@ -7,6 +7,7 @@
 #include <ScenarioClass.h>
 #include <HouseClass.h>
 #include "Debug.h"
+#include "EMPulse.h"
 #include "../Ext/Rules/Body.h"
 #include "../Ext/HouseType/Body.h"
 #include "../Ext/Side/Body.h"
@@ -136,6 +137,9 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 				}
 			}
 		}
+
+		// set the default value, if not already overridden
+		pData->ImmuneToEMP.BindEx(!EMPulse::IsTypeEMPProne(Item));
 
 		for(signed int i = pData->ClonedAt.Count - 1; i >= 0; --i) {
 			auto Cloner = pData->ClonedAt[i];
