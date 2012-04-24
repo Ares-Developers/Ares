@@ -84,7 +84,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	// survivors
 	this->Survivors_Pilots.SetCapacity(SideClass::Array->Count, NULL);
 	for(int i=this->Survivors_Pilots.Count; i<SideClass::Array->Count; ++i) {
-		this->Survivors_Pilots[i] = SideExt::ExtMap.Find(SideClass::Array->Items[i])->Crew;
+		this->Survivors_Pilots[i] = NULL;
 	}
 	this->Survivors_Pilots.Count = SideClass::Array->Count;
 

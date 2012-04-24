@@ -87,6 +87,12 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 		to reduce chances of crashing later
 	*/
 
+	// create an array of crew for faster lookup
+	VectorClass<InfantryTypeClass*> Crews(SideClass::Array->Count, NULL);
+	for(int i=0; i<SideClass::Array->Count; ++i) {
+		Crews[i] = SideExt::ExtMap.Find(SideClass::Array->Items[i])->Crew;
+	}
+
 	for(int i = 0; i < TechnoTypeClass::Array->Count; ++i) {
 		TechnoTypeClass *Item = reinterpret_cast<TechnoTypeClass *>(TechnoTypeClass::Array->Items[i]);
 
@@ -118,6 +124,16 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 			if(pExtraData->PoweredBy.Count) {
 				Debug::DevLog(Debug::Error, "[%s]PowersUnit=%s, but [%s] uses PoweredBy=!\n", Item->ID, PowersUnit->ID, PowersUnit->ID);
 				Item->PowersUnit = NULL;
+			}
+		}
+
+		// if empty, set survivor pilots to the corresponding side's Crew
+		{
+			int count = std::min(pData->Survivors_Pilots.Count, SideClass::Array->Count);
+			for(int j=0; j<count; ++j) {
+				if(!pData->Survivors_Pilots[j]) {
+					pData->Survivors_Pilots[j] = Crews[j];
+				}
 			}
 		}
 
