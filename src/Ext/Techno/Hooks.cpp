@@ -1234,3 +1234,18 @@ DEFINE_HOOK(746C55, UnitClass_GetUIName, 6)
 	R->EAX(pThis->ToolTipText);
 	return 0x746C76;
 }
+
+DEFINE_HOOK(6FBF7E, TechnoClass_CanBeCloakedByOthers_Hover, A)
+{
+	GET(TechnoClass*, pThis, ESI);
+
+	// magical constants to reuse a 'setle' instruction in
+	// the middle of pops. less than or equal to 0 means cloakable.
+	enum {Cloakable = 0, NotCloakable = 1} ret = NotCloakable;
+	if(pThis->GetHeight() <= RulesClass::Instance->HoverHeight) {
+		ret = Cloakable;
+	}
+	R->EAX(ret);
+
+	return 0x6FBF88;
+}
