@@ -1057,3 +1057,11 @@ DEFINE_HOOK(73D81E, UnitClass_Mi_Unload_LastPassenger, 5)
 	R->EAX(pType->Gunner ? 1 : 0);
 	return 0x73D823;
 }
+
+// stop command would still affect units going berzerk
+DEFINE_HOOK(730EE5, StopCommandClass_Execute_Berzerk, 6)
+{
+	GET(TechnoClass*, pTechno, ESI);
+
+	return pTechno->Berzerk ? 0x730EF7 : 0;
+}
