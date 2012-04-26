@@ -533,7 +533,7 @@ DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
 
 					// don't try to fire if we obviously haven't enough money
 					if(pExt->Money_Amount < 0) {
-						if(HouseClass::Player->Available_Money() < -pExt->Money_Amount.Get()) {
+						if(pThis->Available_Money() < -pExt->Money_Amount.Get()) {
 							continue;
 						}
 					}
