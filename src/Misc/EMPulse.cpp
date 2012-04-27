@@ -564,7 +564,7 @@ bool EMPulse::thresholdExceeded(TechnoClass * Victim) {
 	}
 
 	if ((pData->EMP_Threshold != 0) && (Victim->EMPLockRemaining > (DWORD)abs(pData->EMP_Threshold))) {
-		if ((pData->EMP_Threshold > 0) || (Victim->IsInAir() && !Victim->HasParachute)) {
+		if ((pData->EMP_Threshold > 0) || (Victim->IsInAir() && !Victim->Parachute)) {
 			return true;
 		}
 	}
