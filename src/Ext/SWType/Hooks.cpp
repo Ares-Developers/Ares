@@ -544,7 +544,7 @@ DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
 						{
 							if(pThis->EnemyHouseIndex != -1) {
 								if(pThis->PreferredTargetCell == HouseClass::DefaultIonCannonCoords) {
-									Cell = *(pThis->PreferredTargetWaypoint == 1
+									Cell = *((pThis->PreferredTargetWaypoint == 1)
 										? pThis->PickIonCannonTarget(Cell)
 										: pThis->sub_50D170(&Cell, pThis->PreferredTargetWaypoint));
 								} else {
@@ -689,14 +689,11 @@ DEFINE_HOOK(4F9004, HouseClass_Update_TrySWFire, 7) {
 	GET(HouseClass*, pThis, ESI);
 	bool isHuman = R->AL() != 0;
 
-	if(!isHuman) {
-		if(!pThis->Type->MultiplayPassive) {
-			return 0x4F9015;
-		}
-
-	} else {
+	if(isHuman) {
 		// update the SWs for human players to support auto firing.
 		pThis->AI_TryFireSW();
+	} else if(!pThis->Type->MultiplayPassive) {
+		return 0x4F9015;
 	}
 
 	return 0x4F9038;
