@@ -7,6 +7,7 @@
 #include <ScenarioClass.h>
 #include <HouseClass.h>
 #include "Debug.h"
+#include "EMPulse.h"
 #include "../Ext/Rules/Body.h"
 #include "../Ext/HouseType/Body.h"
 #include "../Ext/Side/Body.h"
@@ -87,6 +88,12 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 		to reduce chances of crashing later
 	*/
 
+	// create an array of crew for faster lookup
+	VectorClass<InfantryTypeClass*> Crews(SideClass::Array->Count, NULL);
+	for(int i=0; i<SideClass::Array->Count; ++i) {
+		Crews[i] = SideExt::ExtMap.Find(SideClass::Array->Items[i])->Crew;
+	}
+
 	for(int i = 0; i < TechnoTypeClass::Array->Count; ++i) {
 		TechnoTypeClass *Item = reinterpret_cast<TechnoTypeClass *>(TechnoTypeClass::Array->Items[i]);
 
@@ -120,6 +127,19 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 				Item->PowersUnit = NULL;
 			}
 		}
+
+		// if empty, set survivor pilots to the corresponding side's Crew
+		{
+			int count = std::min(pData->Survivors_Pilots.Count, SideClass::Array->Count);
+			for(int j=0; j<count; ++j) {
+				if(!pData->Survivors_Pilots[j]) {
+					pData->Survivors_Pilots[j] = Crews[j];
+				}
+			}
+		}
+
+		// set the default value, if not already overridden
+		pData->ImmuneToEMP.BindEx(!EMPulse::IsTypeEMPProne(Item));
 
 		for(signed int i = pData->ClonedAt.Count - 1; i >= 0; --i) {
 			auto Cloner = pData->ClonedAt[i];

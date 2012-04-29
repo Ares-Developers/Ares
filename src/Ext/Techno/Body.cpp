@@ -30,11 +30,18 @@ void TechnoExt::SpawnSurvivors(FootClass *pThis, TechnoClass *pKiller, bool Sele
 
 	CoordStruct loc = pThis->Location;
 	int chance = pData->Survivors_PilotChance.BindTo(pThis)->Get();
+	if(chance < 0) {
+		chance = int(RulesClass::Instance->CrewEscape * 100);
+	}
 
 	// always eject passengers, but crew only if not already processed.
 	if(!pSelfData->Survivors_Done && !pSelfData->DriverKilled && !IgnoreDefenses) {
 		// save this, because the hijacker can kill people
 		int PilotCount = pData->Survivors_PilotCount;
+		if(PilotCount < 0) {
+			// default pilot count, depending on crew
+			PilotCount = (Type->Crewed ? 1 : 0);
+		}
 
 		// process the hijacker
 		if(InfantryClass *Hijacker = RecoverHijacker(pThis)) {
@@ -60,15 +67,14 @@ void TechnoExt::SpawnSurvivors(FootClass *pThis, TechnoClass *pKiller, bool Sele
 			}
 		}
 
-		// possibly eject up to PilotChance crew members
-		if(Type->Crewed && chance) {
-			for(int i = 0; i < PilotCount; ++i) {
-				if(ScenarioClass::Instance->Random.RandomRanged(1, 100) <= chance) {
-					InfantryTypeClass *PilotType = NULL;
-					signed int idx = pOwner->SideIndex;
-					auto Pilots = &pData->Survivors_Pilots;
-					if(Pilots->ValidIndex(idx)) {
-						if(InfantryTypeClass *PilotType = Pilots->GetItem(idx)) {
+		// possibly eject up to PilotCount crew members
+		if(Type->Crewed && chance > 0) {
+			signed int idx = pOwner->SideIndex;
+			auto Pilots = &pData->Survivors_Pilots;
+			if(Pilots->ValidIndex(idx)) {
+				if(InfantryTypeClass *PilotType = Pilots->GetItem(idx)) {
+					for(int i = 0; i < PilotCount; ++i) {
+						if(ScenarioClass::Instance->Random.RandomRanged(1, 100) <= chance) {
 							InfantryClass *Pilot = reinterpret_cast<InfantryClass *>(PilotType->CreateObject(pOwner));
 							Pilot->Health = (PilotType->Strength / 2);
 							Pilot->Veterancy.Veterancy = pThis->Veterancy.Veterancy;

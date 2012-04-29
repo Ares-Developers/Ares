@@ -140,7 +140,7 @@ public:
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			Survivors_PilotChance (NULL),
 			Survivors_PassengerChance (NULL),
-			Survivors_PilotCount (0),
+			Survivors_PilotCount (-1),
 			PrerequisiteTheaters (0xFFFFFFFF),
 			Secret_RequiredHouses (0),
 			Secret_ForbiddenHouses (0),
@@ -225,7 +225,6 @@ public:
 	static void PointerGotInvalid(void *ptr);
 
 //	static void ReadWeapon(WeaponStruct *pWeapon, const char *prefix, const char *section, CCINIClass *pINI);
-	static void InferEMPImmunity(TechnoTypeClass *Type, CCINIClass *pINI);
 };
 
 #endif

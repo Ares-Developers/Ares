@@ -196,6 +196,12 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 
 			// if we ended up here, the target is of the right type, and the attacker can take it
 			// so we abduct the target...
+
+			// because we are throwing away the locomotor in a split second, piggybacking
+			// has to be stopped. otherwise we would leak the memory of the original
+			// locomotor saved in the piggy object.
+			LocomotionClass::End_Piggyback(Target->Locomotor);
+
 			Target->StopMoving();
 			Target->SetDestination(NULL, true); // Target->UpdatePosition(int) ?
 			Target->SetTarget(NULL);
@@ -206,6 +212,11 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 			Target->unknown_5A0 = 0;
 			Target->CurrentGattlingStage = 0;
 			Target->SetCurrentWeaponStage(0);
+
+			// the team should not wait for me
+			if(Target->BelongsToATeam()) {
+				Target->Team->LiberateMember(Target);
+			}
 
 			// if this unit is being mind controlled, break the link
 			if(TechnoClass * MindController = Target->MindControlledBy) {
@@ -255,11 +266,12 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 				//this->Abductor_Anim->Owner=Bullet->Owner->Owner;
 			}
 
-			CoordStruct coordsUnitSource;
+			CoordStruct coordsUnitSource = {0, 0, 0};
+			Target->Locomotor->Force_Track(-1, coordsUnitSource);
 			Target->GetCoords(&coordsUnitSource);
 			Target->Locomotor->Mark_All_Occupation_Bits(0);
-			Target->Locomotor->Force_Track(-1, coordsUnitSource);
 			Target->MarkAllOccupationBits(&coordsUnitSource);
+			Target->ClearPlanningTokens(NULL);
 
 			//if it's owner meant to be changed, do it here
 			if (!!this->Abductor_ChangeOwner && !TargetType->ImmuneToPsionics){
@@ -269,14 +281,26 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 			Target->Remove();
 			Target->OnBridge = false;
 
-			// reset the current movement data for locomotors that
-			// would make the abductee fly through the map on unload.
-			// code courtesy of DCoder
-			auto pdwLoco = reinterpret_cast<DWORD *>(Target->Locomotor);
-			//Debug::Log("Locomotor ptr is %p\n", *pdwLoco);
-			if(*pdwLoco == 0x7EACFC) { // fuck you hoverbob
-				pdwLoco += 0x5;
-				pdwLoco[0] = pdwLoco[1] = pdwLoco[2] = pdwLoco[3] = pdwLoco[4] = pdwLoco[5] = 0;
+			// throw away the current locomotor and instantiate
+			// a new one of the default type for this unit.
+			if(!Target->Locomotor) {
+				Game::RaiseError(E_POINTER);
+			}
+			ILocomotion* NewLoco = NULL;
+			if(LocomotionClass::CreateInstance(NewLoco, &TargetType->Locomotor)) {
+				LocomotionClass::Move(Target->Locomotor, NewLoco);
+				if(!Target->Locomotor) {
+					Game::RaiseError(E_POINTER);
+				}
+				Target->Locomotor->Link_To_Object(Target);
+			}
+
+			// handling for Locomotor weapons: since we took this unit from the Magnetron
+			// in an unfriendly way, set these fields here to unblock the unit
+			if(Target->IsAttackedByLocomotor || Target->IsLetGoByLocomotor) {
+				Target->IsAttackedByLocomotor = false;
+				Target->IsLetGoByLocomotor = false;
+				Target->FrozenStill = false;
 			}
 
 			Target->Transporter = Attacker;
