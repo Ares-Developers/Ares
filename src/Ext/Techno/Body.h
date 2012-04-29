@@ -91,6 +91,7 @@ public:
 			RadarJam(NULL),
 			PoweredUnit(NULL),
 			MyOriginalTemporal(NULL),
+			AttachedTechnoEffect_isset (false),
 			AttachedTechnoEffect_Delay (0)
 			{
 				this->CloakSkipTimer.Stop();

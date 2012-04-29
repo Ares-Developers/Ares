@@ -92,7 +92,7 @@ void AttachEffectTypeClass::Attach(TechnoClass* Target, int Duration, TechnoClas
 		Attaching->Animation->SetOwnerObject(Target);
 		// inbefore void pointers, hardcode the iteration to infinitely looped
 		Attaching->Animation->RemainingIterations = -1;
-		if (Invoker->Owner) {
+		if (Invoker && Invoker->Owner) {
 			Attaching->Animation->Owner = Invoker->Owner;
 		}
 	}
@@ -144,6 +144,10 @@ void AttachEffectClass::Destroy() {
 */
 
 bool AttachEffectClass::Update(TechnoClass *Source) {
+
+	if (!Source || Source->InLimbo || Source->IsImmobilized || Source->Transporter || Source->TemporalTargetingMe) {
+		return true;
+	}
 
 	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(Source);
 	TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(Source->GetTechnoType());
