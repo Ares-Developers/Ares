@@ -267,6 +267,7 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 			Target->Locomotor->Mark_All_Occupation_Bits(0);
 			Target->MarkAllOccupationBits(&coordsUnitSource);
 			Target->ClearPlanningTokens(NULL);
+			Target->Flashing.DurationRemaining = 0;
 
 			//if it's owner meant to be changed, do it here
 			if (!!this->Abductor_ChangeOwner && !TargetType->ImmuneToPsionics){
