@@ -938,3 +938,11 @@ DEFINE_HOOK(44A03C, BuildingClass_Mi_Selling_TransferIvanBomb, 6)
 
 	return 0;
 }
+
+// do not let deactivated teleporter units move, otherwise
+// they could block a cell forever 
+DEFINE_HOOK(71810D, TeleportLocomotionClass_ILocomotion_MoveTo_Deactivated, 6)
+{
+	GET(FootClass*, pFoot, ECX);
+	return (!pFoot->Deactivated && pFoot->Locomotor->Is_Powered()) ? 0 : 0x71820F;
+}
