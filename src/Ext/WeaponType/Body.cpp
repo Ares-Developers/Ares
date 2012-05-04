@@ -197,11 +197,6 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 			// if we ended up here, the target is of the right type, and the attacker can take it
 			// so we abduct the target...
 
-			// because we are throwing away the locomotor in a split second, piggybacking
-			// has to be stopped. otherwise we would leak the memory of the original
-			// locomotor saved in the piggy object.
-			LocomotionClass::End_Piggyback(Target->Locomotor);
-
 			Target->StopMoving();
 			Target->SetDestination(NULL, true); // Target->UpdatePosition(int) ?
 			Target->SetTarget(NULL);
@@ -280,6 +275,15 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 
 			Target->Remove();
 			Target->OnBridge = false;
+
+			// because we are throwing away the locomotor in a split second, piggybacking
+			// has to be stopped. otherwise we would leak the memory of the original
+			// locomotor saved in the piggy object.
+			ILocomotion* Loco = NULL;
+			do {
+				Loco = Target->Locomotor;
+				LocomotionClass::End_Piggyback(Target->Locomotor);
+			} while(Target->Locomotor && Loco != Target->Locomotor);
 
 			// throw away the current locomotor and instantiate
 			// a new one of the default type for this unit.
