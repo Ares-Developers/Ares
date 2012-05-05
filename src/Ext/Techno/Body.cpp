@@ -132,6 +132,9 @@ bool TechnoExt::EjectSurvivor(FootClass *Survivor, CoordStruct *loc, bool Select
 	bool chuted = false;
 	CoordStruct tmpCoords;
 	CellClass * pCell = MapClass::Instance->GetCellAt(loc);
+	if(pCell == MapClass::InvalidCell()) {
+		return false;
+	}
 	pCell->GetCoordsWithBridge(&tmpCoords);
 	Survivor->OnBridge = pCell->ContainsBridge();
 

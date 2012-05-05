@@ -18,7 +18,14 @@ void Ares::GlobalControls::Load(CCINIClass *pINI) {
 		int idx = 0;
 		for(char * cur = strtok(Ares::readBuffer, ","); cur && *cur && idx <= 2; cur = strtok(NULL, ","), ++idx) {
 			int diffIdx = 2 - idx; // remapping so that HouseClass::AIDifficulty can be used as an index
-			AllowBypassBuildLimit[diffIdx] = _strcmpi(cur, "Yes") == 0;
+			switch(toupper(*cur)) {
+			case '1':
+			case 'T':
+			case 'Y':
+				AllowBypassBuildLimit[diffIdx] = true;
+			default:
+				AllowBypassBuildLimit[diffIdx] = false;
+			}
 		}
 	}
 }
