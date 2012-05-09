@@ -659,7 +659,7 @@ bool TechnoExt::ExtData::PerformActionHijack(TechnoClass* pTarget) {
 			if(pTarget->AttachedTag) {
 				pTarget->AttachedTag->RaiseEvent(TriggerEvent::DestroyedByAnything, pThis, *(CellStruct*)0xA8F1E0, 0, 0);
 			}
-			pTarget->Owner->unknown_bool_244 = true;
+			pTarget->Owner->HasBeenThieved = true;
 			if(pThis->AttachedTag) {
 				if(pThis->AttachedTag->IsTriggerRepeating()) {
 					pTarget->ReplaceTag(pThis->AttachedTag);
