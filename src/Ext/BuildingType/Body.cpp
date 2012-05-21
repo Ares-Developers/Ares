@@ -259,10 +259,6 @@ void BuildingTypeExt::UpdateSecretLabOptions(BuildingClass *pThis)
 
 	DEBUGLOG("Secret Lab update for %s\n", pType->get_ID());
 
-	if(!pData->Secret_Boons.Count || (pData->Secret_Placed && !pData->Secret_RecalcOnCapture)) {
-		return;
-	}
-
 	TechnoTypeClass *Result = pType->SecretInfantry;
 	if(!Result) {
 		Result = pType->SecretUnit;
@@ -272,6 +268,10 @@ void BuildingTypeExt::UpdateSecretLabOptions(BuildingClass *pThis)
 	}
 	if(Result) {
 		pThis->SecretProduction = Result;
+		return;
+	}
+
+	if(!pData->Secret_Boons.Count || (pData->Secret_Placed && !pData->Secret_RecalcOnCapture)) {
 		return;
 	}
 
