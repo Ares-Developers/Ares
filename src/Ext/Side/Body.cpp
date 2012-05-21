@@ -5,7 +5,7 @@
 //Static init
 template<> const DWORD Extension<SideClass>::Canary = 0x87654321;
 Container<SideExt> SideExt::ExtMap;
-ColorScheme *SideExt::CurrentLoadTextColor = NULL;
+int SideExt::CurrentLoadTextColor = -1;
 
 template<> SideExt::TT *Container<SideExt>::SavingObject = NULL;
 template<> IStream *Container<SideExt>::SavingStream = NULL;
@@ -193,12 +193,14 @@ DWORD SideExt::Disguise(REGISTERS* R, DWORD dwReturnAddress, bool bUseESI)
 DWORD SideExt::LoadTextColor(REGISTERS* R, DWORD dwReturnAddress)
 {
 	// if there is a cached LoadTextColor, use that.
-	if(SideExt::CurrentLoadTextColor) {
-		R->EAX(SideExt::CurrentLoadTextColor);
+	int index = SideExt::CurrentLoadTextColor;
+	if(ColorScheme::Array->ValidIndex(index)) {
+		ColorScheme* pCS = ColorScheme::Array->GetItem(index);
+		R->EAX(pCS);
 		return dwReturnAddress;
-	} else {
-		return 0;
 	}
+
+	return 0;
 }
 
 DWORD SideExt::MixFileYuriFiles(REGISTERS* R, DWORD dwReturnAddress1, DWORD dwReturnAddress2)
