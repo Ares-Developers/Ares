@@ -292,18 +292,15 @@ DEFINE_HOOK(539EB0, LightningStorm_Start, 5) {
 // this is a complete rewrite of LightningStorm::Update.
 DEFINE_HOOK(53A6C0, LightningStorm_Update, 5) {
 	if(SuperClass* pSuper = SW_LightningStorm::CurrentLightningStorm) {
-		
-		// switch lightning (most likely for nuke)
-		int* tmp1 = (int*)0x827FC8;
-		int* tmp2 = (int*)0x827FCC;
-		if(*tmp2 != -1) {
-			int a = *tmp1 + *tmp2;
-			if(a < Unsorted::CurrentFrame) {
+
+		// switch lightning for nuke
+		if(NukeFlash::Duration() != -1) {
+			if(NukeFlash::StartTime() + NukeFlash::Duration() < Unsorted::CurrentFrame) {
 				int status = LightningStorm::Status();
 				if(status == 1) {
 					LightningStorm::Status(2);
-					*tmp1 = Unsorted::CurrentFrame;
-					*tmp2 = 15;
+					NukeFlash::StartTime(Unsorted::CurrentFrame);
+					NukeFlash::Duration(15);
 					ScenarioClass::Instance->UpdateLighting();
 					MapClass::Instance->RedrawSidebar(1);
 				} else if(status == 2) {
@@ -602,7 +599,7 @@ DEFINE_HOOK(53A300, LightningStorm_Strike2, 5) {
 					break;
 				default:
 				break;
-		        }
+				}
 			}
 
 			// account for lightning rods
@@ -844,9 +841,9 @@ DEFINE_HOOK(467E59, BulletClass_Update_NukeBall, 5) {
 					ScenarioClass::Instance->Timer4.unknown = R->Stack<int>(0x28);
 					ScenarioClass::Instance->Timer4.TimeLeft = 1;
 
-					// hacky stuff
-					*(int*)0x827FC8 = Unsorted::CurrentFrame;
-					*(int*)0x827FCC = 30;
+					// enable the nuke flash
+					NukeFlash::StartTime(Unsorted::CurrentFrame);
+					NukeFlash::Duration(30);
 
 					SWTypeExt::ChangeLighting(pData->NukeSW);
 					MapClass::Instance->RedrawSidebar(1);
