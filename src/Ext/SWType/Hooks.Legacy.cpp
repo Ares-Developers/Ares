@@ -314,33 +314,31 @@ DEFINE_HOOK(53A6C0, LightningStorm_Update, 5) {
 		PsyDom::Update();
 		ChronoScreenEffect::Update();
 
-		// remove all clouds from list that did strike already
-		DynamicVectorClass<AnimClass*>* pAnims0 = (DynamicVectorClass<AnimClass*>*)(0xA9FA18);
-		if(pAnims0->Count > 0) {
-			for(int i=pAnims0->Count-1; i>=0; --i) {
-				if(AnimClass *pAnim = pAnims0->GetItem(i)) {
+		// remove all bolts from the list that are halfway done
+		if(LightningStorm::BoltsPresent->Count > 0) {
+			for(int i=LightningStorm::BoltsPresent->Count-1; i>=0; --i) {
+				if(AnimClass *pAnim = LightningStorm::BoltsPresent->GetItem(i)) {
 					if(pAnim->CurrentFrame >= pAnim->Type->GetImage()->Frames / 2) {
-						pAnims0->RemoveItem(i);
+						LightningStorm::BoltsPresent->RemoveItem(i);
 					}
 				}
 			}
 		}
 
 		// find the clouds that should strike right now
-		DynamicVectorClass<AnimClass*>* pAnims1 = (DynamicVectorClass<AnimClass*>*)(0xA9FA60);
-		for(int i=pAnims1->Count-1; i>=0; --i) {
-			if(AnimClass *pAnim = pAnims1->GetItem(i)) {
+		for(int i=LightningStorm::CloudsManifesting->Count-1; i>=0; --i) {
+			if(AnimClass *pAnim = LightningStorm::CloudsManifesting->GetItem(i)) {
 				if(pAnim->CurrentFrame >= pAnim->Type->GetImage()->Frames / 2) {
 					CoordStruct crdStrike;
 					pAnim->GetCoords(&crdStrike);
 					LightningStorm::Strike2(crdStrike);
-					pAnims1->RemoveItem(i);
+					LightningStorm::CloudsManifesting->RemoveItem(i);
 				}
 			}
 		}
 
-		DynamicVectorClass<AnimClass*>* pAnims2 = (DynamicVectorClass<AnimClass*>*)(0xA9F9D0);
-		if(pAnims2->Count <= 0) {
+		// all currently present clouds have to disappear first
+		if(LightningStorm::CloudsPresent->Count <= 0) {
 			// end the lightning storm
 			if(LightningStorm::TimeToEnd()) {
 				if(LightningStorm::Active()) {
@@ -354,10 +352,10 @@ DEFINE_HOOK(53A6C0, LightningStorm_Update, 5) {
 				LightningStorm::TimeToEnd(false);
 			}
 		} else {
-			for(int i=pAnims2->Count-1; i>=0; --i) {
-				if(AnimClass *pAnim = pAnims2->GetItem(i)) {
+			for(int i=LightningStorm::CloudsPresent->Count-1; i>=0; --i) {
+				if(AnimClass *pAnim = LightningStorm::CloudsPresent->GetItem(i)) {
 					if(pAnim->CurrentFrame >= pAnim->Type->GetImage()->Frames - 1) {
-						pAnims2->RemoveItem(i);
+						LightningStorm::CloudsPresent->RemoveItem(i);
 					}
 				}
 			}
@@ -458,10 +456,9 @@ DEFINE_HOOK(53A6C0, LightningStorm_Update, 5) {
 
 									// is this spot far away from another cloud?
 									if(pData->Weather_Separation > 0) {
-										DynamicVectorClass<AnimClass*>* pAnims = (DynamicVectorClass<AnimClass*>*)(0xA9F9D0);
-										for(int k=0; k<pAnims->Count; ++k) {
+										for(int k=0; k<LightningStorm::CloudsPresent->Count; ++k) {
 											// assume success and disprove.
-											CellStruct *pCell2 = &pAnims->GetItem(k)->GetCell()->MapCoords;
+											CellStruct *pCell2 = &LightningStorm::CloudsPresent->GetItem(k)->GetCell()->MapCoords;
 											int dist = std::abs(pCell2->X - cell.X) + std::abs(pCell2->Y - cell.Y);
 											if(dist < pData->Weather_Separation.Get()) {
 												found = false;
@@ -512,7 +509,7 @@ DEFINE_HOOK(53A140, LightningStorm_Strike, 7) {
 		pCell->GetCoordsWithBridge(&Coords);
 		
 		// create a cloud animation
-		if(Coords != *(CoordStruct*)(0xA9FA30)) {
+		if(Coords != LightningStorm::EmptyCoords) {
 			// select the anim
 			AnimTypeClass* pAnimType = pData->Weather_Clouds.GetItem(ScenarioClass::Instance->Random.Random() % pData->Weather_Clouds.Count);
 
@@ -520,21 +517,18 @@ DEFINE_HOOK(53A140, LightningStorm_Strike, 7) {
 			if(pData->Weather_CloudHeight < 0) {
 				if(pData->Weather_Bolts.Count) {
 					AnimTypeClass* pBoltAnim = pData->Weather_Bolts.GetItem(0);
-					pData->Weather_CloudHeight = (int)Game::F2I(((pBoltAnim->GetImage()->Height / 2) - 0.5) * *(double*)(0xB0CDD8));
+					pData->Weather_CloudHeight = (int)Game::F2I(((pBoltAnim->GetImage()->Height / 2) - 0.5) * LightningStorm::CloudHeightFactor);
 				}
 			}
 			Coords.Z += pData->Weather_CloudHeight;
 
-			// create it and do hacky book keeping.
+			// create the cloud and do some book keeping.
 			AnimClass* pAnim = NULL;
 			GAME_ALLOC(AnimClass, pAnim, pAnimType, &Coords);
 
 			if(pAnim) {
-				DynamicVectorClass<AnimClass*>* pAnims1 = (DynamicVectorClass<AnimClass*>*)(0xA9FA60);
-				DynamicVectorClass<AnimClass*>* pAnims2 = (DynamicVectorClass<AnimClass*>*)(0xA9F9D0);
-
-				pAnims1->AddItem(pAnim);
-				pAnims2->AddItem(pAnim);
+				LightningStorm::CloudsManifesting->AddItem(pAnim);
+				LightningStorm::CloudsPresent->AddItem(pAnim);
 			}
 		}
 
@@ -558,7 +552,7 @@ DEFINE_HOOK(53A300, LightningStorm_Strike2, 5) {
 		CellClass* pCell = MapClass::Instance->GetCellAt(&Coords);
 		pCell->GetCoordsWithBridge(&Coords);
 
-		if(Coords != *(CoordStruct*)(0xA9FA30)) {
+		if(Coords != LightningStorm::EmptyCoords) {
 
 			// create a bolt animation
 			if(pData->Weather_Bolts.Count) {
@@ -569,8 +563,7 @@ DEFINE_HOOK(53A300, LightningStorm_Strike2, 5) {
 				GAME_ALLOC(AnimClass, pAnim, pAnimType, &Coords);
 				
 				if(pAnim) {
-					DynamicVectorClass<AnimClass*>* pAnims = (DynamicVectorClass<AnimClass*>*)(0xA9FA18);
-					pAnims->AddItem(pAnim);
+					LightningStorm::BoltsPresent->AddItem(pAnim);
 				}
 			}
 			
