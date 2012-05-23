@@ -147,8 +147,7 @@ void BuildingExt::ExtData::KickOutOfRubble() {
 		length = height * width;
 
 		// iterate over all cells and remove all infantry
-		DynamicVectorClass<TechnoClass*> *list = new DynamicVectorClass<TechnoClass*>();
-		DynamicVectorClass<bool> *sel = new DynamicVectorClass<bool>();
+		DynamicVectorClass<std::pair<FootClass*, bool>> list;
 		CellStruct location = MapClass::Instance->GetCellAt(&pBld->Location)->MapCoords;
 		for(int i=0; i<length; ++i) {
 			CellStruct pos = data[i];
@@ -158,11 +157,9 @@ void BuildingExt::ExtData::KickOutOfRubble() {
 				// remove every techno that resides on this cell
 				CellClass* cell = MapClass::Instance->GetCellAt(&pos);
 				for(ObjectClass* pObj = cell->GetContent(); pObj; pObj = pObj->NextObject) {
-					if(TechnoClass* pTech = generic_cast<FootClass*>(pObj)) {
-						bool bSel = pTech->IsSelected;
-						if(pTech->Remove()) {
-							list->AddItem(pTech);
-							sel->AddItem(bSel);
+					if(FootClass* pFoot = generic_cast<FootClass*>(pObj)) {
+						if(pFoot->Remove()) {
+							list.AddItem(std::pair<FootClass*, bool>(pFoot, pFoot->IsSelected));
 						}
 					}
 				}
@@ -173,16 +170,13 @@ void BuildingExt::ExtData::KickOutOfRubble() {
 		}
 
 		// this part kicks out all units we found in the rubble
-		for(int i=0; i<list->Count; ++i) {
-			TechnoClass* pTech = list->GetItem(i);
-			pBld->KickOutUnit(pTech, &location);
-			if(sel->GetItem(i)) {
-				pTech->Select();
+		for(int i=0; i<list.Count; ++i) {
+			std::pair<FootClass*, bool> &item = list[i];
+			pBld->KickOutUnit(item.first, &location);
+			if(item.second) {
+				item.first->Select();
 			}
 		}
-
-		delete list;
-		delete sel;
 	}
 }
 
