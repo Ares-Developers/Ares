@@ -172,9 +172,12 @@ void BuildingExt::ExtData::KickOutOfRubble() {
 		// this part kicks out all units we found in the rubble
 		for(int i=0; i<list.Count; ++i) {
 			std::pair<FootClass*, bool> &item = list[i];
-			pBld->KickOutUnit(item.first, &location);
-			if(item.second) {
-				item.first->Select();
+			if(pBld->KickOutUnit(item.first, &location)) {
+				if(item.second) {
+					item.first->Select();
+				}
+			} else {
+				item.first->UnInit();
 			}
 		}
 	}
