@@ -1,3 +1,5 @@
+#include <vector>
+
 #include <AnimClass.h>
 #include <BombListClass.h>
 #include <BulletClass.h>
@@ -13,10 +15,12 @@
 #include <SmudgeTypeClass.h>
 #include <SidebarClass.h>
 #include <StringTable.h>
+#include <TActionClass.h>
 #include <TechnoClass.h>
 #include <TemporalClass.h>
 #include <TerrainTypeClass.h>
 #include <UnitTypeClass.h>
+#include <VocClass.h>
 #include <WarheadTypeClass.h>
 
 #include "Debug.h"
@@ -375,4 +379,34 @@ DEFINE_HOOK(489562, DamageArea_DestroyCliff, 6)
 	}
 
 	return 0;
+}
+
+
+DEFINE_HOOK(6DE7A5, TActionClass_Execute_SoundAtRandomWaypoint, 0)
+{
+	GET(TActionClass *, pAction, ESI);
+	std::vector<int> eligibleWPs;
+
+	auto S = ScenarioClass::Instance;
+
+	for(auto ix = 0; ix < 702; ++ix) {
+		if(S->IsDefinedWaypoint(ix)) {
+			eligibleWPs.push_back(ix);
+		}
+	}
+
+	if(eligibleWPs.size() > 0) {
+		auto luckyWP = S->Random.RandomRanged(0, eligibleWPs.size() - 1);
+		CellStruct XY;
+		S->GetWaypointCoords(&XY, luckyWP);
+		CoordStruct XYZ;
+		CellClass::Coord2Cell(&XYZ, &XY);
+		VocClass::PlayIndexAtPos(pAction->arg_90, &XYZ);
+
+		R->AL(1);
+	} else {
+		R->AL(0);
+	}
+
+	return 0x6DE838;
 }

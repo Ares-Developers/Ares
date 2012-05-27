@@ -3,7 +3,7 @@
 
 #include <ScenarioClass.h>
 
-SuperClass* SW_LightningStorm::CurrentLightningStorm;
+SuperClass* SW_LightningStorm::CurrentLightningStorm = NULL;
 
 bool SW_LightningStorm::HandlesType(int type)
 {

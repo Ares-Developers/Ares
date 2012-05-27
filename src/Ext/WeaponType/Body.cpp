@@ -92,11 +92,7 @@ void WeaponTypeExt::ExtData::LoadFromINIFile(WeaponTypeExt::TT *pThis, CCINIClas
 		pINI->ReadBool(section, "Wave.ReverseAgainstOthers", this->Wave_Reverse[idxOther]);
 
 	if(pThis->IsElectricBolt) {
-		this->Bolt_IsHouseColor.Read(&exINI, section, "Bolt.IsHouseColor");
-		if(!!this->Bolt_IsHouseColor) {
-			this->Bolt_ColorSpread.Read(&exINI, section, "Bolt.ColorSpread");
-		}
-		this->Bolt_Color1.Read(&exINI, section, "Bolt.Color1"); //if the HouseColor is not available
+		this->Bolt_Color1.Read(&exINI, section, "Bolt.Color1");
 		this->Bolt_Color2.Read(&exINI, section, "Bolt.Color2");
 		this->Bolt_Color3.Read(&exINI, section, "Bolt.Color3");
 	}
@@ -201,11 +197,6 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 			// if we ended up here, the target is of the right type, and the attacker can take it
 			// so we abduct the target...
 
-			// because we are throwing away the locomotor in a split second, piggybacking
-			// has to be stopped. otherwise we would leak the memory of the original
-			// locomotor saved in the piggy object.
-			LocomotionClass::End_Piggyback(Target->Locomotor);
-
 			Target->StopMoving();
 			Target->SetDestination(NULL, true); // Target->UpdatePosition(int) ?
 			Target->SetTarget(NULL);
@@ -239,12 +230,44 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 				Target->TemporalTargetingMe->Detach();
 			}
 
+			//if the target is spawned, detach it from it's spawner
+			if(Target->SpawnOwner){
+				TechnoExt::DetachSpecificSpawnee(Target, HouseClass::FindByCountryIndex(HouseTypeClass::FindIndexOfName("Special")));
+			}
+
+			// if the unit is a spawner, kill the spawns
+			if(Target->SpawnManager) {
+				Target->SpawnManager->KillNodes();
+				Target->SpawnManager->Target = NULL;
+				Target->SpawnManager->Destination = NULL;
+			}
+
+			//if the unit is a slave, it should be freed
+			if(Target->SlaveOwner){
+				TechnoExt::FreeSpecificSlave(Target, HouseClass::FindByCountryIndex(HouseTypeClass::FindIndexOfName("Special")));
+			}
+
+			// If the unit is a SlaveManager, free the slaves
+			if(SlaveManagerClass * pSlaveManager = Target->SlaveManager) {
+				pSlaveManager->Killed(Attacker);
+				pSlaveManager->ZeroOutSlaves();
+				Target->SlaveManager->Owner = Target;
+			}
+			
+			
+			// if we have an abducting animation, play it
+			if (!!this->Abductor_AnimType){
+				GAME_ALLOC(AnimClass, AnimClass* Abductor_Anim, this->Abductor_AnimType, &Bullet->posTgt);
+				//this->Abductor_Anim->Owner=Bullet->Owner->Owner;
+			}
+
 			CoordStruct coordsUnitSource = {0, 0, 0};
 			Target->Locomotor->Force_Track(-1, coordsUnitSource);
 			Target->GetCoords(&coordsUnitSource);
 			Target->Locomotor->Mark_All_Occupation_Bits(0);
 			Target->MarkAllOccupationBits(&coordsUnitSource);
 			Target->ClearPlanningTokens(NULL);
+			Target->Flashing.DurationRemaining = 0;
 
 			//if it's owner meant to be changed, do it here
 			if (!!this->Abductor_ChangeOwner && !TargetType->ImmuneToPsionics){
@@ -253,6 +276,15 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 
 			Target->Remove();
 			Target->OnBridge = false;
+
+			// because we are throwing away the locomotor in a split second, piggybacking
+			// has to be stopped. otherwise we would leak the memory of the original
+			// locomotor saved in the piggy object.
+			ILocomotion* Loco = NULL;
+			do {
+				Loco = Target->Locomotor;
+				LocomotionClass::End_Piggyback(Target->Locomotor);
+			} while(Target->Locomotor && Loco != Target->Locomotor);
 
 			// throw away the current locomotor and instantiate
 			// a new one of the default type for this unit.

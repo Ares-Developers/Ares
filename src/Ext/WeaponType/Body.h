@@ -54,9 +54,6 @@ public:
 		Customizable<ColorStruct> Bolt_Color1;
 		Customizable<ColorStruct> Bolt_Color2;
 		Customizable<ColorStruct> Bolt_Color3;
-		Valueable<bool> Bolt_IsHouseColor;
-		Valueable<int> Bolt_ColorSpread;
-		ColorStruct Bolt_HouseColorBase;
 
 		// TS Lasers
 		bool   Wave_IsHouseColor;
@@ -102,9 +99,6 @@ public:
 			Bolt_Color1 (NULL),
 			Bolt_Color2 (NULL),
 			Bolt_Color3 (NULL),
-			Bolt_IsHouseColor (false),
-			Bolt_ColorSpread (0),
-			Bolt_HouseColorBase (0,0,0),
 			Wave_IsHouseColor (false),
 			Wave_IsLaser (false),
 			Wave_IsBigLaser (false),

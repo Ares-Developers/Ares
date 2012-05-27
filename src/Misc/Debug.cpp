@@ -332,6 +332,11 @@ void Debug::FreeMouse() {
 //	}
 }
 
+void Debug::Exit() {
+		Debug::Log("Exiting...\n");
+		ExitProcess(1);
+}
+
 void Debug::FatalError(bool Dump) {
 	wsprintfW(Dialogs::ExceptDetailedMessage,
 		L"Ares has encountered an internal error and is unable to continue normally. "
@@ -371,8 +376,7 @@ void Debug::FatalErrorAndExit(const char *Message, ...) {
 	va_end(args);
 
 	Debug::FatalError(false);
-	Debug::Log("Exiting...\n");
-	ExitProcess(1);
+	Debug::Exit();
 }
 
 void Debug::INIParseFailed(const char *section, const char *flag, const char *value, const char *Message) {

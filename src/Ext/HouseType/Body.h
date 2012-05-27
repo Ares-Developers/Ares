@@ -49,6 +49,7 @@ class HouseTypeExt
 			char ObserverFlag[0x20];
 			SHPStruct *ObserverFlagSHP;
 			Valueable<bool> ObserverFlagYuriPAL;
+			bool SettingsInherited;
 
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 				RandomSelectionWeight (0),
@@ -58,7 +59,8 @@ class HouseTypeExt
 				LoadTextColor (NULL),
 				ObserverBackgroundSHP (NULL),
 				ObserverFlagSHP (NULL),
-				ObserverFlagYuriPAL (false)
+				ObserverFlagYuriPAL (false),
+				SettingsInherited (false)
 			{
 				*FlagFile = 0;
 				*LSFile = 0;
@@ -89,6 +91,8 @@ class HouseTypeExt
 		AircraftTypeClass* GetParadropPlane();
 		bool GetParadropContent(TypeList<TechnoTypeClass*>**, TypeList<int>**);
 		AnimTypeClass* GetParachuteAnim();
+
+		void InheritSettings(HouseTypeClass *pThis);
 	};
 
 	static Container<HouseTypeExt> ExtMap;

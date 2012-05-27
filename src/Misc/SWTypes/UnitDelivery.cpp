@@ -83,7 +83,7 @@ void UnitDeliveryStateMachine::PlaceUnits() {
 		TechnoClass * Item = generic_cast<TechnoClass *>(Type->CreateObject(this->Super->Owner));
 		BuildingClass * ItemBuilding = specific_cast<BuildingClass *>(Item);
 
-		if(ItemBuilding && pData->SW_DeliverBuildups) {
+		if(ItemBuilding && pData->SW_DeliverBuildups.Get()) {
 			ItemBuilding->QueueMission(mission_Construction, false);
 		}
 
@@ -118,7 +118,7 @@ void UnitDeliveryStateMachine::PlaceUnits() {
 					Item->OnBridge = cell->ContainsBridge();
 					if((Placed = Item->Put(&XYZ, (cellIdx & 7))) == true) {
 						if(ItemBuilding) {
-							if (pData->SW_DeliverBuildups) {
+							if(pData->SW_DeliverBuildups.Get()) {
 								ItemBuilding->UpdateOwner(this->Super->Owner);
 								ItemBuilding->unknown_bool_6DD = 1;
 							}

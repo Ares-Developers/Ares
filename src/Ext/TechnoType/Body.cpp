@@ -3,7 +3,6 @@
 #include "../Side/Body.h"
 #include "../../Enum/Prerequisites.h"
 #include "../../Misc/Debug.h"
-#include "../../Misc/EMPulse.h"
 
 #include <AnimTypeClass.h>
 #include <PCX.h>
@@ -19,17 +18,10 @@ template<> IStream *Container<TechnoTypeExt>::SavingStream = NULL;
 // member funcs
 
 void TechnoTypeExt::ExtData::Initialize(TechnoTypeClass *pThis) {
-	this->Survivors_PilotChance.SetAll(int(RulesClass::Instance->CrewEscape * 100));
+	this->Survivors_PilotChance.SetAll(-1); // was int(RulesClass::Instance->CrewEscape * 100), now negative values indicate "use CrewEscape"
 	this->Survivors_PassengerChance.SetAll(-1); // was (int)RulesClass::Global()->CrewEscape * 100); - changed to -1 to indicate "100% if this is a land transport"
 
-	this->Survivors_Pilots.SetCapacity(SideClass::Array->Count, NULL);
-	this->Survivors_Pilots.Count = SideClass::Array->Count;
-
-	this->Survivors_PilotCount = pThis->Crewed; // should be 0 if false, 1 if true
-
-	for(int i = 0; i < SideClass::Array->Count; ++i) {
-		this->Survivors_Pilots[i] = SideExt::ExtMap.Find(SideClass::Array->Items[i])->Crew;
-	}
+	this->Survivors_PilotCount = -1; // defaults to (crew ? 1 : 0)
 
 	this->PrerequisiteLists.SetCapacity(0, NULL);
 	this->PrerequisiteLists.AddItem(new DynamicVectorClass<int>);
@@ -90,6 +82,9 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 
 	// survivors
 	this->Survivors_Pilots.SetCapacity(SideClass::Array->Count, NULL);
+	for(int i=this->Survivors_Pilots.Count; i<SideClass::Array->Count; ++i) {
+		this->Survivors_Pilots[i] = NULL;
+	}
 	this->Survivors_Pilots.Count = SideClass::Array->Count;
 
 	this->Survivors_PilotCount = pINI->ReadInteger(section, "Survivor.Pilots", this->Survivors_PilotCount);
@@ -102,7 +97,9 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 		_snprintf(flag, 256, "Survivor.Side%d", i);
 		if(pINI->ReadString(section, flag, "", Ares::readBuffer, Ares::readLength)) {
 			if(!(this->Survivors_Pilots[i] = InfantryTypeClass::Find(Ares::readBuffer))) {
-				Debug::INIParseFailed(section, flag, Ares::readBuffer);
+				if(VALIDTAG(Ares::readBuffer)) {
+					Debug::INIParseFailed(section, flag, Ares::readBuffer);
+				}
 			}
 		}
 	}
@@ -116,6 +113,13 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	++PrereqListLen;
 	while(PrereqListLen > this->PrerequisiteLists.Count) {
 		this->PrerequisiteLists.AddItem(new DynamicVectorClass<int>);
+	}
+	while(PrereqListLen < this->PrerequisiteLists.Count) {
+		int index = this->PrerequisiteLists.Count - 1;
+		if(auto list = this->PrerequisiteLists.GetItem(index)) {
+			delete list;
+		}
+		this->PrerequisiteLists.RemoveItem(index);
 	}
 
 	DynamicVectorClass<int> *dvc = this->PrerequisiteLists.GetItem(0);
@@ -214,9 +218,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 		}
 	}
 
-	// EMP immunity will be inferred after all type data has been read.
-	// Not all needed properties have been parsed here. For instance: Cyborg.
-
+	this->ImmuneToEMP.Read(&exINI, section, "ImmuneToEMP");
 	this->EMP_Modifier = (float)pINI->ReadDouble(section, "EMP.Modifier", this->EMP_Modifier);
 
 	if(pINI->ReadString(section, "EMP.Threshold", "inair", Ares::readBuffer, Ares::readLength)) {
@@ -441,14 +443,6 @@ void TechnoTypeClassExt::ReadWeapon(WeaponStruct *pWeapon, const char *prefix, c
 }
 */
 
-void TechnoTypeExt::InferEMPImmunity(TechnoTypeClass *Type, CCINIClass *pINI) {
-	TechnoTypeExt::ExtData *pData = TechnoTypeExt::ExtMap.Find(Type);
-
-	// EMP immunity. The default for each type is decided by the EMPulse class.
-	pData->ImmuneToEMP.BindEx(!EMPulse::IsTypeEMPProne(Type));
-	pData->ImmuneToEMP.Set(pINI->ReadBool(Type->ID, "ImmuneToEMP", pData->ImmuneToEMP.Get()));
-}
-
 void Container<TechnoTypeExt>::InvalidatePointer(void *ptr) {
 }
 
@@ -489,7 +483,8 @@ bool TechnoTypeExt::ExtData::CameoIsElite()
 }
 
 bool TechnoTypeExt::ExtData::CanBeBuiltAt(BuildingTypeClass * FactoryType) {
-	return !this->BuiltAt.Count || this->BuiltAt.FindItemIndex(&FactoryType) != -1;
+	auto pBExt = BuildingTypeExt::ExtMap.Find(FactoryType);
+	return (!this->BuiltAt.Count && !pBExt->Factory_ExplicitOnly) || this->BuiltAt.FindItemIndex(&FactoryType) != -1;
 }
 
 bool TechnoTypeExt::ExtData::CarryallCanLift(UnitClass * Target) {
@@ -626,18 +621,8 @@ DEFINE_HOOK_AGAIN(716132, TechnoTypeClass_LoadFromINI, 5)
 	return 0;
 }
 
-// infer the EMP immunity here. this is the earliest address to get
-// this information reliably.
-DEFINE_HOOK(679CAF, RulesClass_LoadAfterTypeData_InferEMPImmunity, 5) {
+DEFINE_HOOK(679CAF, RulesClass_LoadAfterTypeData_CheckRubbleFoundation, 5) {
 	GET(CCINIClass*, pINI, ESI);
-
-	// The EMP immunity has a rather complex rule set to infer whether
-	// a TechnoType is immune from its properties. Here all properties
-	// have been parsed.
-	for(int i=0; i<TechnoTypeClass::Array->Count; ++i) {
-		TechnoTypeClass* pType = TechnoTypeClass::Array->GetItem(i);
-		TechnoTypeExt::InferEMPImmunity(pType, pINI);
-	}
 
 	for(int i=0; i<BuildingTypeClass::Array->Count; ++i) {
 		BuildingTypeClass* pTBld = BuildingTypeClass::Array->GetItem(i);

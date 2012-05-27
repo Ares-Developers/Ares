@@ -65,6 +65,8 @@ public:
 
 		TemporalClass * MyOriginalTemporal;
 
+		EBolt * MyBolt;
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			idxSlot_Wave (0),
 			idxSlot_Beam (0),

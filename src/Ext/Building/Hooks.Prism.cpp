@@ -1,5 +1,6 @@
 #include "Body.h"
 #include "../BuildingType/Body.h"
+#include "../Techno/Body.h"
 #include "../WeaponType/Body.h"
 #include <BulletClass.h>
 #include <LaserDrawClass.h>
@@ -219,14 +220,11 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 			EBolt* supportEBolt;
 			GAME_ALLOC(EBolt, supportEBolt);
 			if (supportEBolt) {
-			//	supportEBolt->Owner = B;
+				//supportEBolt->Owner = B;
+				TechnoExt::ExtData *pBuildingExt = TechnoExt::ExtMap.Find(B);
+				pBuildingExt->MyBolt = supportEBolt;
 				supportEBolt->WeaponSlot = idxSupport;
 				supportEBolt->AlternateColor = supportWeapon->IsAlternateColor;
-				WeaponTypeExt::BoltExt[supportEBolt] = WeaponTypeExt::ExtMap.Find(supportWeapon);
-				WeaponTypeExt::ExtData *BoltAres = WeaponTypeExt::ExtMap.Find(supportWeapon); //since supports doesn't send unit info, houseboltcoloring has to be done here
-				if (BoltAres->Bolt_IsHouseColor){
-					BoltAres->Bolt_HouseColorBase = B->Owner->Color;
-				}
 				supportEBolt->Fire(SourceXYZ, *pTargetXYZ, 0); //messing with 3rd arg seems to make bolts more jumpy, and parts of them disappear
 			}
 		}

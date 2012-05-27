@@ -42,6 +42,11 @@ public:
 	static LONG WINAPI ExceptionHandler(int code, LPEXCEPTION_POINTERS pExs);
 
 	static void FreeMouse();
+
+	/** TODO: review if all these errors are needed */
+
+	static void Exit();
+
 	static void FatalError(bool Dump = false); /* takes formatted message from Ares::readBuffer */
 	static void FatalError(const char *Message, ...);
 	static void FatalErrorAndExit(const char *Message, ...);

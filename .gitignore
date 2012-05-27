@@ -167,8 +167,8 @@
 /src/UI/*.save
 
 # /src/Utilities/
-*.sdf
 *.sln
-*.suo
-*.vcxproj*
+*.sdf
 *.opensdf
+*.vcxproj*
+*.suo
