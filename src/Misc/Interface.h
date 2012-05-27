@@ -54,7 +54,7 @@ public:
 
 	static bool invokeClickAction(eUIAction, char*, int*, int);
 	static void updateMenuItems(HWND, MenuItem*, int);
-	static void updateMenu(HWND hDlg);
+	static void updateMenu(HWND hDlg, int iID);
 	static eUIAction parseUIAction(char*, eUIAction);
 	static int getSlotIndex(int);
 

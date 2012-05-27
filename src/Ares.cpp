@@ -433,6 +433,26 @@ A_FINE_HOOK(7C8B3D, operator_delete, 9)
 }
 */
 
+DEFINE_HOOK(47AE36, CDFileClass_SetFileName, 8)
+{
+	GET(void*, CDControl, EAX);
+
+	if(!CDControl || Ares::bNoCD) {
+		return 0x47AEF0;
+	}
+	return 0x47AE3E;
+}
+
+DEFINE_HOOK(47B026, FileFindOpen, 8)
+{
+	GET(void*, CDControl, EBX);
+
+	if(!CDControl || Ares::bNoCD) {
+		return 0x47B0AE;
+	}
+	return 0x47B02E;
+}
+
 bool Ares::RunningOnWindows7OrVista() {
 	static bool W7 = false;
 	static bool Checked = false;

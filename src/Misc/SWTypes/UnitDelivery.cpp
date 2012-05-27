@@ -127,6 +127,14 @@ void UnitDeliveryStateMachine::PlaceUnits() {
 								Item->Scatter(0xB1CFE8, 1, 0);
 							}
 						}
+						if(TechnoExt::ExtData* pItemData = TechnoExt::ExtMap.Find(Item)) {
+							if(!pItemData->IsPowered() || !pItemData->IsOperated()) {
+								Item->Deactivate();
+								if(ItemBuilding) {
+									Item->Owner->ShouldRecheckTechTree = true; 
+								}
+							}
+						}
 					}
 				}
 			}

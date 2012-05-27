@@ -13,6 +13,10 @@ Container<WeaponTypeExt> WeaponTypeExt::ExtMap;
 template<> WeaponTypeExt::TT *Container<WeaponTypeExt>::SavingObject = NULL;
 template<> IStream *Container<WeaponTypeExt>::SavingStream = NULL;
 
+ColorStruct WeaponTypeExt::ExtData::DefaultWaveColor = ColorStruct(255, 255, 255); // placeholder
+ColorStruct WeaponTypeExt::ExtData::DefaultWaveColorMagBeam = ColorStruct(0xB0, 0, 0xD0); // rp2 values
+ColorStruct WeaponTypeExt::ExtData::DefaultWaveColorSonic = ColorStruct(0, 0, 0); // 0,0,0 is a magic value for "no custom handling"
+
 hash_bombExt WeaponTypeExt::BombExt;
 hash_waveExt WeaponTypeExt::WaveExt;
 hash_boltExt WeaponTypeExt::BoltExt;
@@ -37,12 +41,15 @@ void WeaponTypeExt::ExtData::LoadFromINIFile(WeaponTypeExt::TT *pThis, CCINIClas
 		}
 	}
 
+	// wave colors will be bound to the default values, thus a change of wave
+	// type will still point to the appropriate value, as long as the modder does not
+	// set the color by hand, in which case that value is used.
 	if(pThis->IsMagBeam) {
-		this->Wave_Color.Set(ColorStruct(0xB0, 0, 0xD0)); // rp2 values
+		this->Wave_Color.Bind(&WeaponTypeExt::ExtData::DefaultWaveColorMagBeam);
 	} else if(pThis->IsSonic) {
-		this->Wave_Color.Set(ColorStruct(0, 0, 0)); // 0,0,0 is a magic value for "no custom handling"
+		this->Wave_Color.Bind(&WeaponTypeExt::ExtData::DefaultWaveColorSonic);
 	} else {
-		this->Wave_Color.Set(ColorStruct(255, 255, 255)); // placeholder
+		this->Wave_Color.Bind(&WeaponTypeExt::ExtData::DefaultWaveColor);
 	}
 
 	if(pThis->Damage == 0 && this->Weapon_Loaded) {
@@ -193,17 +200,27 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 
 			// if we ended up here, the target is of the right type, and the attacker can take it
 			// so we abduct the target...
+
+			// because we are throwing away the locomotor in a split second, piggybacking
+			// has to be stopped. otherwise we would leak the memory of the original
+			// locomotor saved in the piggy object.
+			LocomotionClass::End_Piggyback(Target->Locomotor);
+
 			Target->StopMoving();
 			Target->SetDestination(NULL, true); // Target->UpdatePosition(int) ?
 			Target->SetTarget(NULL);
 			Target->CurrentTargets.Clear(); // Target->ShouldLoseTargetNow ?
 			Target->SetFocus(NULL);
 			Target->QueueMission(mission_Sleep, true);
-			Target->OnBridge = false;
 			Target->unknown_C4 = 0; // don't ask
 			Target->unknown_5A0 = 0;
 			Target->CurrentGattlingStage = 0;
 			Target->SetCurrentWeaponStage(0);
+
+			// the team should not wait for me
+			if(Target->BelongsToATeam()) {
+				Target->Team->LiberateMember(Target);
+			}
 
 			// if this unit is being mind controlled, break the link
 			if(TechnoClass * MindController = Target->MindControlledBy) {
@@ -222,42 +239,12 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 				Target->TemporalTargetingMe->Detach();
 			}
 
-			//if the target is spawned, detach it from it's spawner
-			if(Target->SpawnOwner){
-				TechnoExt::DetachSpecificSpawnee(Target, HouseClass::FindByCountryIndex(HouseTypeClass::FindIndexOfName("Special")));
-			}
-
-			// if the unit is a spawner, kill the spawns
-			if(Target->SpawnManager) {
-				Target->SpawnManager->KillNodes();
-				Target->SpawnManager->Target = NULL;
-				Target->SpawnManager->Destination = NULL;
-			}
-
-			//if the unit is a slave, it should be freed
-			if(Target->SlaveOwner){
-				TechnoExt::FreeSpecificSlave(Target, HouseClass::FindByCountryIndex(HouseTypeClass::FindIndexOfName("Special")));
-			}
-
-			// If the unit is a SlaveManager, free the slaves
-			if(SlaveManagerClass * pSlaveManager = Target->SlaveManager) {
-				pSlaveManager->Killed(Attacker);
-				pSlaveManager->ZeroOutSlaves();
-				Target->SlaveManager->Owner = Target;
-			}
-			
-			
-			// if we have an abducting animation, play it
-			if (!!this->Abductor_AnimType){
-				GAME_ALLOC(AnimClass, AnimClass* Abductor_Anim, this->Abductor_AnimType, &Bullet->posTgt);
-				//this->Abductor_Anim->Owner=Bullet->Owner->Owner;
-			}
-
-			CoordStruct coordsUnitSource;
+			CoordStruct coordsUnitSource = {0, 0, 0};
+			Target->Locomotor->Force_Track(-1, coordsUnitSource);
 			Target->GetCoords(&coordsUnitSource);
 			Target->Locomotor->Mark_All_Occupation_Bits(0);
-			Target->Locomotor->Force_Track(-1, coordsUnitSource);
 			Target->MarkAllOccupationBits(&coordsUnitSource);
+			Target->ClearPlanningTokens(NULL);
 
 			//if it's owner meant to be changed, do it here
 			if (!!this->Abductor_ChangeOwner && !TargetType->ImmuneToPsionics){
@@ -265,6 +252,29 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 			}
 
 			Target->Remove();
+			Target->OnBridge = false;
+
+			// throw away the current locomotor and instantiate
+			// a new one of the default type for this unit.
+			if(!Target->Locomotor) {
+				Game::RaiseError(E_POINTER);
+			}
+			ILocomotion* NewLoco = NULL;
+			if(LocomotionClass::CreateInstance(NewLoco, &TargetType->Locomotor)) {
+				LocomotionClass::Move(Target->Locomotor, NewLoco);
+				if(!Target->Locomotor) {
+					Game::RaiseError(E_POINTER);
+				}
+				Target->Locomotor->Link_To_Object(Target);
+			}
+
+			// handling for Locomotor weapons: since we took this unit from the Magnetron
+			// in an unfriendly way, set these fields here to unblock the unit
+			if(Target->IsAttackedByLocomotor || Target->IsLetGoByLocomotor) {
+				Target->IsAttackedByLocomotor = false;
+				Target->IsLetGoByLocomotor = false;
+				Target->FrozenStill = false;
+			}
 
 			Target->Transporter = Attacker;
 			if(Attacker->WhatAmI() == abs_Building) {
