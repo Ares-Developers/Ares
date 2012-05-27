@@ -1,21 +1,7 @@
 #ifndef CONTAINER_TEMPLATE_MAGIC_H
 #define CONTAINER_TEMPLATE_MAGIC_H
 
-#ifdef _MSC_VER
 #include <typeinfo>
-#endif
-
-#ifdef __GNUC__
-#include <ext/hash_fun.h>
-namespace __gnu_cxx {
-	template<>
-	struct hash<void *> {
-		size_t operator()(void* const &v) const {
-			return reinterpret_cast<std::size_t>(v);
-		}
-	};
-};
-#endif
 
 #include <new>
 #include <xcompile.h>
@@ -135,7 +121,9 @@ class Container : public hash_map<typename T::TT*, typename T::ExtData* > {
 public:
 	typedef typename T::TT        S_T;
 	typedef typename T::ExtData   E_T;
-	typedef hash_map<S_T*, E_T*>  C_Map;
+	typedef S_T* KeyType;
+	typedef E_T* ValueType;
+	typedef hash_map<KeyType, ValueType> C_Map;
 
 public:
 	static S_T * SavingObject;
@@ -146,35 +134,32 @@ public:
 		this->InvalidateExtDataPointer(ptr);
 	}
 
-#define INVALID_CTR(type, p) \
-	type::ExtMap.PointerGotInvalid(p);
-
 protected:
 	// invalidate pointers to container's static gunk here (use full qualified names)
 	virtual void InvalidatePointer(void *ptr) {
 	};
 
 	void InvalidateExtDataPointer(void *ptr) {
-		for(typename C_Map::iterator i = this->begin(); i != this->end(); ++i) {
+		for(auto i = this->begin(); i != this->end(); ++i) {
 			i->second->InvalidatePointer(ptr);
 		}
 	}
 
 public:
-	Container() {
+	Container() : hash_map<KeyType, ValueType>() {
 	}
 
 	virtual ~Container() {
 		Empty();
 	}
 
-	E_T *FindOrAllocate(S_T* key) {
+	ValueType FindOrAllocate(KeyType const &key) {
 		if(key == NULL) {
-			const std::type_info &info = typeid(*this);
+			const auto &info = typeid(*this);
 			Debug::Log("CTOR of %s attempted for a NULL pointer! WTF!\n", info.name());
 			return NULL;
 		}
-		typename C_Map::iterator i = this->find(key);
+		auto i = this->find(key);
 		if(i == this->end()) {
 			E_T * val = new E_T(key);
 			val->InitializeConstants(key);
@@ -183,16 +168,24 @@ public:
 		return i->second;
 	}
 
-	E_T *Find(S_T* key) {
-		typename C_Map::iterator i = this->find(key);
+	ValueType Find(const KeyType &key) {
+		auto i = this->find(key);
 		if(i == this->end()) {
 			return NULL;
 		}
 		return i->second;
 	}
 
-	void Remove(S_T* key) {
-		typename C_Map::iterator i = this->find(key);
+	const ValueType Find(const KeyType &key) const {
+		auto i = this->find(key);
+		if(i == this->end()) {
+			return NULL;
+		}
+		return i->second;
+	}
+
+	void Remove(KeyType key) {
+		auto i = this->find(key);
 		if(i != this->end()) {
 			delete i->second;
 			erase(i);
@@ -207,7 +200,7 @@ public:
 	}
 
 	void Empty() {
-		for(typename C_Map::iterator i = this->begin(); i != this->end(); ) {
+		for(auto i = this->begin(); i != this->end(); ) {
 			delete i->second;
 			erase(i++);
 	//		++i;
@@ -215,20 +208,20 @@ public:
 	}
 
 	void LoadAllFromINI(CCINIClass *pINI) {
-		for(typename C_Map::iterator i = this->begin(); i != this->end(); i++) {
+		for(auto i = this->begin(); i != this->end(); i++) {
 			i->second->LoadFromINI(i->first, pINI);
 		}
 	}
 
-	void LoadFromINI(S_T*key, CCINIClass *pINI) {
-		typename C_Map::iterator i = this->find(key);
+	void LoadFromINI(KeyType key, CCINIClass *pINI) {
+		auto i = this->find(key);
 		if(i != this->end()) {
 			i->second->LoadFromINI(key, pINI);
 		}
 	}
 
 	void LoadAllFromRules(CCINIClass *pINI) {
-		for(typename C_Map::iterator i = this->begin(); i != this->end(); i++) {
+		for(auto i = this->begin(); i != this->end(); i++) {
 			i->second->LoadFromRulesFile(i->first, pINI);
 		}
 	}
@@ -241,7 +234,7 @@ public:
 		}
 	}
 
-	void Save(S_T *key, IStream *pStm) {
+	void Save(KeyType key, IStream *pStm) {
 		this->SaveKey(key, pStm);
 	}
 
@@ -255,7 +248,7 @@ public:
 		}
 	}
 
-	void Load(S_T *key, IStream *pStm) {
+	void Load(KeyType key, IStream *pStm) {
 		this->LoadKey(key, pStm);
 	}
 

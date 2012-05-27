@@ -18,13 +18,13 @@ void BuildingTypeExtras::cPrismForwarding::Initialize(BuildingTypeClass *pThis) 
 void BuildingTypeExtras::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis, CCINIClass* pINI) {
 	const char * pID = pThis->ID;
 	if(pINI->ReadString(pID, "PrismForwarding", "", Ares::readBuffer, Ares::readLength)) {
-		if((strcmp(Ares::readBuffer, "yes") == 0) || (strcmp(Ares::readBuffer, "true") == 0)) {
+		if((_strcmpi(Ares::readBuffer, "yes") == 0) || (_strcmpi(Ares::readBuffer, "true") == 0)) {
 			this->Enabled = YES;
-		} else if(strcmp(Ares::readBuffer, "forward") == 0) {
+		} else if(_strcmpi(Ares::readBuffer, "forward") == 0) {
 			this->Enabled = FORWARD;
-		} else if(strcmp(Ares::readBuffer, "attack") == 0) {
+		} else if(_strcmpi(Ares::readBuffer, "attack") == 0) {
 			this->Enabled = ATTACK;
-		} else if((strcmp(Ares::readBuffer, "no") == 0) || (strcmp(Ares::readBuffer, "false"))== 0) {
+		} else if((_strcmpi(Ares::readBuffer, "no") == 0) || (_strcmpi(Ares::readBuffer, "false"))== 0) {
 			this->Enabled = NO;
 		}
 	}
@@ -231,10 +231,7 @@ int BuildingTypeExtras::cPrismForwarding::AcquireSlaves_SingleStage
 		nearestPrism->PrismStage = pcs_Slave;
 		nearestPrism->PrismTargetCoords = FLH;
 
-		BuildingExt::ExtData *pSlaveData = BuildingExt::ExtMap.Find(nearestPrism);
-		BuildingExt::ExtData *pTargetData = BuildingExt::ExtMap.Find(TargetTower);
-		pSlaveData->PrismForwarding.SupportTarget = TargetTower;
-		pTargetData->PrismForwarding.Senders.AddItem(nearestPrism);
+		SetSupportTarget(nearestPrism, TargetTower);
 	}
 
 	if (iFeeds != 0 && chain > *LongestChain) {
@@ -279,7 +276,7 @@ bool BuildingTypeExtras::cPrismForwarding::ValidateSupportTower(
 					HouseClass *pTargetHouse = TargetTower->Owner;
 					HouseClass *pSlaveHouse = SlaveTower->Owner;
 					if ((pSlaveHouse == pTargetHouse && pSlaveHouse == pMasterHouse)
-						|| (pSlaveTypeData->PrismForwarding.ToAllies
+						|| (pSlaveTypeData->PrismForwarding.ToAllies.Get()
 							&& pSlaveHouse->IsAlliedWith(pTargetHouse)
 							&& pSlaveHouse->IsAlliedWith(pMasterHouse))) {
 						//ownership/alliance rules satisfied
@@ -397,37 +394,88 @@ void BuildingTypeExtras::cPrismForwarding::SetChargeDelay_Set
 //Whenever a building is incapacitated, this method should be called to take it out of any prism network
 //destruction, change sides, mind-control, sold, warped, emp, undeployed, low power, drained, lost operator
 void BuildingTypeExtras::cPrismForwarding::RemoveFromNetwork(BuildingClass *SlaveTower, bool bCease) {
-	if (int PrismStage = SlaveTower->PrismStage) {
-		//is a slave or a master tower
-		BuildingExt::ExtData *pSlaveData = BuildingExt::ExtMap.Find(SlaveTower);
-		BuildingTypeClass *pSlaveType = SlaveTower->Type;
-		BuildingTypeExt::ExtData *pSlaveTypeData = BuildingTypeExt::ExtMap.Find(pSlaveType);
-		if (pSlaveData->PrismForwarding.PrismChargeDelay || bCease) {
-			//either hasn't started charging yet or animations have been reset so should go idle immediately
-			SlaveTower->PrismStage = pcs_Idle;
-			pSlaveData->PrismForwarding.PrismChargeDelay = 0;
-			SlaveTower->DelayBeforeFiring = 0;
-			pSlaveData->PrismForwarding.ModifierReserve = 0.0;
-			pSlaveData->PrismForwarding.DamageReserve = 0;
-			//animations should be controlled by whatever incapacitated the tower so no need to mess with anims here
+	BuildingExt::ExtData *pSlaveData = BuildingExt::ExtMap.Find(SlaveTower);
+	if(!pSlaveData) {
+		return;
+	}
+	BuildingTypeClass *pSlaveType = SlaveTower->Type;
+	BuildingTypeExt::ExtData *pSlaveTypeData = BuildingTypeExt::ExtMap.Find(pSlaveType);
+	if(!pSlaveTypeData) {
+		return;
+	}
+	if (pSlaveData->PrismForwarding.PrismChargeDelay || bCease) {
+		//either hasn't started charging yet or animations have been reset so should go idle immediately
+		SlaveTower->PrismStage = pcs_Idle;
+		pSlaveData->PrismForwarding.PrismChargeDelay = 0;
+		SlaveTower->DelayBeforeFiring = 0;
+		pSlaveData->PrismForwarding.ModifierReserve = 0.0;
+		pSlaveData->PrismForwarding.DamageReserve = 0;
+		//animations should be controlled by whatever incapacitated the tower so no need to mess with anims here
+	}
+	SetSupportTarget(SlaveTower, NULL);
+	//finally, remove all the preceding slaves from the network
+	for(int senderIdx = pSlaveData->PrismForwarding.Senders.Count; senderIdx; senderIdx--) {
+		if (BuildingClass *NextTower = pSlaveData->PrismForwarding.Senders[senderIdx-1]) {
+			RemoveFromNetwork(NextTower, false);
 		}
-		if (BuildingClass *TargetTower = pSlaveData->PrismForwarding.SupportTarget) {
-			//there is a target tower (so this is a slave rather than a master)
-			BuildingExt::ExtData *pTargetData = BuildingExt::ExtMap.Find(TargetTower);
-			signed int idx = pTargetData->PrismForwarding.Senders.FindItemIndex(&SlaveTower);
-			if(idx != -1) {
-				pTargetData->PrismForwarding.Senders.RemoveItem(idx);
+	}
+}
+
+void BuildingTypeExtras::cPrismForwarding::SetSupportTarget(BuildingClass *pSlaveTower, BuildingClass *pTargetTower) {
+	if(BuildingExt::ExtData *pSlaveData = BuildingExt::ExtMap.Find(pSlaveTower)) {
+		// meet the new tower, same as the old tower
+		if(pSlaveData->PrismForwarding.SupportTarget == pTargetTower) {
+			return;
+		}
+
+		// if the target tower is already set, disconnect it by removing it from the old target tower's sender list
+		if(BuildingClass *pOldTarget = pSlaveData->PrismForwarding.SupportTarget) {
+			if(BuildingExt::ExtData *pOldTargetData = BuildingExt::ExtMap.Find(pOldTarget)) {
+				int idxSlave = pOldTargetData->PrismForwarding.Senders.FindItemIndex(&pSlaveTower);
+				if(idxSlave != -1) {
+					pOldTargetData->PrismForwarding.Senders.RemoveItem(idxSlave);
+					// everywhere the comments say this is now the "longest backwards chain", but decreasing this here makes use of the original meaning. why is this needed here? AlexB 2012-04-08
+					--pOldTarget->SupportingPrisms;  //Ares doesn't actually use this, but maintaining it anyway (as direct feeds only)
+				} else {
+					Debug::DevLog(Debug::Warning, "PrismForwarding::SetSupportTarget: Old target tower (%p) did not consider this tower (%p) as its sender.\n", pOldTarget, pSlaveTower);
+				}
 			}
-			--TargetTower->SupportingPrisms;  //Ares doesn't actually use this, but maintaining it anyway (as direct feeds only)
-			//slave tower is no longer reference by the target
-			pSlaveData->PrismForwarding.SupportTarget = NULL; //slave tower no longer references the target
+			pSlaveData->PrismForwarding.SupportTarget = NULL;
 		}
-		//finally, remove all the preceding slaves from the network
-		for(int senderIdx = pSlaveData->PrismForwarding.Senders.Count; senderIdx; senderIdx--) {
-			if (BuildingClass *NextTower = pSlaveData->PrismForwarding.Senders[senderIdx-1]) {
-				RemoveFromNetwork(NextTower, false);
+
+		// set the new tower as support target
+		if(pTargetTower) {
+			if(BuildingExt::ExtData *pTargetData = BuildingExt::ExtMap.Find(pTargetTower)) {
+				pSlaveData->PrismForwarding.SupportTarget = pTargetTower;
+
+				if(pTargetData->PrismForwarding.Senders.FindItemIndex(&pSlaveTower) == -1) {
+					pTargetData->PrismForwarding.Senders.AddItem(pSlaveTower);
+					// why isn't SupportingPrisms increased here? AlexB 2012-04-08
+				} else {
+					Debug::DevLog(Debug::Warning, "PrismForwarding::SetSupportTarget: Tower (%p) is already in new target tower's (%p) sender list.\n", pSlaveTower, pTargetTower);
+				}
 			}
 		}
 	}
 }
 
+void BuildingTypeExtras::cPrismForwarding::RemoveAllSenders(BuildingClass *pTower) {
+	if(BuildingExt::ExtData *pData = BuildingExt::ExtMap.Find(pTower)) {
+		// disconnect all sender towers from their support target, which is me
+		for(int senderIdx = pData->PrismForwarding.Senders.Count; senderIdx; senderIdx--) {
+			if(BuildingClass *NextTower = pData->PrismForwarding.Senders[senderIdx-1]) {
+				SetSupportTarget(NextTower, NULL);
+			}
+		}
+
+		// log if not all senders could be removed
+		if(pData->PrismForwarding.Senders.Count) {
+			Debug::DevLog(Debug::Warning, "PrismForwarding::RemoveAllSenders: Tower (%p) still has %d senders after removal completed.\n", pTower, pData->PrismForwarding.Senders.Count);
+			for(int i=0; i<pData->PrismForwarding.Senders.Count; ++i) {
+				Debug::DevLog(Debug::Warning, "Sender %03d: %p\n", i, pData->PrismForwarding.Senders[i]);
+			}
+
+			pData->PrismForwarding.Senders.Clear();
+		}
+	}
+}

@@ -9,7 +9,7 @@
 #include <BulletClass.h>
 #include <YRMath.h>
 
-SuperWeaponTypeClass* SW_NuclearMissile::CurrentNukeType;
+SuperWeaponTypeClass* SW_NuclearMissile::CurrentNukeType = NULL;
 
 bool SW_NuclearMissile::HandlesType(int type)
 {

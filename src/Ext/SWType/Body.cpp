@@ -202,6 +202,12 @@ void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass
 	readString(this->Text_Charging, "Text.Charging");
 	readString(this->Text_Active, "Text.Active");
 
+	this->NameReadiness_Preparing = NULL;
+	this->NameReadiness_Ready = NULL;
+	this->NameReadiness_Hold = NULL;
+	this->NameReadiness_Charging = NULL;
+	this->NameReadiness_Active = NULL;
+
 	// the fallback is handled in the PreDependent SW's code
 	if(pINI->ReadString(section, "SW.PostDependent", Ares::readDefval, Ares::readBuffer, Ares::readLength)) {
 		AresCRT::strCopy(this->SW_PostDependent, Ares::readBuffer, 0x18);

@@ -350,19 +350,19 @@ DEFINE_HOOK(7258D0, AnnounceInvalidPointer, 6)
 
 //	Debug::Log("PointerGotInvalid: %X\n", DEATH);
 
-	INVALID_CTR(BuildingExt, DEATH);
-	INVALID_CTR(BuildingTypeExt, DEATH);
-	INVALID_CTR(BulletExt, DEATH);
-	INVALID_CTR(BulletTypeExt, DEATH);
-	INVALID_CTR(HouseExt, DEATH);
-	INVALID_CTR(HouseTypeExt, DEATH);
-	INVALID_CTR(InfantryExt, DEATH);
-	INVALID_CTR(SideExt, DEATH);
-	INVALID_CTR(SWTypeExt, DEATH);
-	INVALID_CTR(TechnoExt, DEATH);
-	INVALID_CTR(TechnoTypeExt, DEATH);
-	INVALID_CTR(WarheadTypeExt, DEATH);
-	INVALID_CTR(WeaponTypeExt, DEATH);
+	BuildingExt::ExtMap.PointerGotInvalid(DEATH);
+	BuildingTypeExt::ExtMap.PointerGotInvalid(DEATH);
+	BulletExt::ExtMap.PointerGotInvalid(DEATH);
+	BulletTypeExt::ExtMap.PointerGotInvalid(DEATH);
+	HouseExt::ExtMap.PointerGotInvalid(DEATH);
+	HouseTypeExt::ExtMap.PointerGotInvalid(DEATH);
+	InfantryExt::ExtMap.PointerGotInvalid(DEATH);
+	SideExt::ExtMap.PointerGotInvalid(DEATH);
+	SWTypeExt::ExtMap.PointerGotInvalid(DEATH);
+	TechnoExt::ExtMap.PointerGotInvalid(DEATH);
+	TechnoTypeExt::ExtMap.PointerGotInvalid(DEATH);
+	WarheadTypeExt::ExtMap.PointerGotInvalid(DEATH);
+	WeaponTypeExt::ExtMap.PointerGotInvalid(DEATH);
 
 	return 0;
 }
@@ -433,6 +433,26 @@ A_FINE_HOOK(7C8B3D, operator_delete, 9)
 	return 0x7C8B47;
 }
 */
+
+DEFINE_HOOK(47AE36, CDFileClass_SetFileName, 8)
+{
+	GET(void*, CDControl, EAX);
+
+	if(!CDControl || Ares::bNoCD) {
+		return 0x47AEF0;
+	}
+	return 0x47AE3E;
+}
+
+DEFINE_HOOK(47B026, FileFindOpen, 8)
+{
+	GET(void*, CDControl, EBX);
+
+	if(!CDControl || Ares::bNoCD) {
+		return 0x47B0AE;
+	}
+	return 0x47B02E;
+}
 
 bool Ares::RunningOnWindows7OrVista() {
 	static bool W7 = false;

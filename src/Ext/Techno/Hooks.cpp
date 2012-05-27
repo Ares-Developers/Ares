@@ -101,12 +101,16 @@ DEFINE_HOOK(6F9E76, TechnoClass_Update_CheckOperators, 6)
 		if(pData->IsOperated()) { // either does have an operator or doesn't need one, so...
 			if( (pThis->Deactivated && pData->IsPowered() && !pThis->IsUnderEMP()) || Override ) { // ...if it's currently off, turn it on! (oooh baby)
 				pThis->Reactivate();
-				pThis->Owner->ShouldRecheckTechTree = true; // #885
+				if(pTheBuildingBelow == pThis) {
+					pThis->Owner->ShouldRecheckTechTree = true; // #885
+				}
 			}
 		} else { // doesn't have an operator, so...
 			if(!pThis->Deactivated) { // ...if it's not off yet, turn it off!
 				pThis->Deactivate();
-				pThis->Owner->ShouldRecheckTechTree = true; // #885
+				if(pTheBuildingBelow == pThis) {
+					pThis->Owner->ShouldRecheckTechTree = true; // #885
+				}
 			}
 		}
 	}
@@ -1057,5 +1061,26 @@ DEFINE_HOOK(416C94, AircraftClass_Carryall_Unload_UpdateCargo, 6)
 
 	pCargo->UpdatePosition(2);
 
+	if(pCargo->Deactivated && pCargo->Locomotor->Is_Powered()) {
+		pCargo->Locomotor->Power_Off();
+	}
+
 	return 0;
 }
+
+// support Occupier and VehicleThief on one type. if this is not done
+// the Occupier handling will leave a dangling Destination pointer.
+DEFINE_HOOK(4D9A83, FootClass_PointerGotInvalid_OccupierVehicleThief, 6)
+{
+	GET(InfantryClass*, pInfantry, ESI);
+	GET(InfantryTypeClass*, pType, EAX);
+
+	if(pType->VehicleThief) {
+		if(pInfantry->Destination->AbstractFlags & ABSFLAGS_ISFOOT) {
+			return 0x4D9AB9;
+		}
+	}
+
+	return 0;
+}
+

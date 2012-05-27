@@ -100,10 +100,13 @@ DEFINE_HOOK(6F523C, TechnoClass_DrawExtras2, 5)
 DEFINE_HOOK(6FCBAD, TechnoClass_GetObjectActivityState_IvanBomb, 6)
 {
 	GET(TechnoClass *, Target, EBP);
-	if(BombClass *Bomb = Target->AttachedBomb) {
-		WeaponTypeExt::ExtData *pData = WeaponTypeExt::BombExt[Bomb];
-		if(!pData->Ivan_Detachable) {
-			return 0x6FCBBE;
+	GET(WarheadTypeClass *, Warhead, EDI);
+	if(Warhead->BombDisarm) {
+		if(BombClass *Bomb = Target->AttachedBomb) {
+			WeaponTypeExt::ExtData *pData = WeaponTypeExt::BombExt[Bomb];
+			if(!pData->Ivan_Detachable) {
+				return 0x6FCBBE;
+			}
 		}
 	}
 	return 0;

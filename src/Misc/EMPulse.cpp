@@ -564,7 +564,7 @@ bool EMPulse::thresholdExceeded(TechnoClass * Victim) {
 	}
 
 	if ((pData->EMP_Threshold != 0) && (Victim->EMPLockRemaining > (DWORD)abs(pData->EMP_Threshold))) {
-		if ((pData->EMP_Threshold > 0) || (Victim->IsInAir() && !Victim->HasParachute)) {
+		if ((pData->EMP_Threshold > 0) || (Victim->IsInAir() && !Victim->Parachute)) {
 			return true;
 		}
 	}
@@ -684,7 +684,7 @@ void EMPulse::DisableEMPEffect(TechnoClass * Victim) {
 		HasPower = HasPower && Building->IsPowerOnline();
 
 		if (!Building->Type->InvisibleInGame) {
-			if (HasPower) {
+			if (HasPower || Building->Type->LaserFencePost) {
 				Building->EnableStuff();
 			}
 			updateRadarBlackout(Building);
@@ -749,15 +749,8 @@ bool EMPulse::EnableEMPEffect2(TechnoClass * Victim) {
 	} else {
 		if (AircraftClass * Aircraft = specific_cast<AircraftClass *>(Victim)) {
 			// crash flying aircraft
-			if (Aircraft->IsInAir()) {
-				if (EMPulse::verbose) {
-					Debug::Log("[EnableEMPEffect2] Plane crash: %s\n", Aircraft->get_ID());
-				}
-				if (Victim->Owner == HouseClass::Player) {
-					VocClass::PlayAt(Aircraft->Type->VoiceCrashing, &Aircraft->Location, NULL);
-				}
-				Aircraft->Crash(NULL);
-				Aircraft->Destroyed(NULL);
+			if (Aircraft->GetHeight() > 0) {
+				TechnoExt::Destroy(Aircraft);
 				return true;
 			}
 		}

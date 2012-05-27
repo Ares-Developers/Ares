@@ -238,6 +238,7 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 	this->ReverseEngineersVictims.Read(&exINI, pID, "ReverseEngineersVictims");
 
 	this->CloningFacility.Read(&exINI, pID, "CloningFacility");
+	this->Factory_ExplicitOnly.Read(&exINI, pID, "Factory.ExplicitOnly");
 }
 
 void BuildingTypeExt::ExtData::CompleteInitialization(BuildingTypeClass *pThis) {
@@ -257,10 +258,6 @@ void BuildingTypeExt::UpdateSecretLabOptions(BuildingClass *pThis)
 
 	DEBUGLOG("Secret Lab update for %s\n", pType->get_ID());
 
-	if(!pData->Secret_Boons.Count || (pData->Secret_Placed && !pData->Secret_RecalcOnCapture)) {
-		return;
-	}
-
 	TechnoTypeClass *Result = pType->SecretInfantry;
 	if(!Result) {
 		Result = pType->SecretUnit;
@@ -270,6 +267,10 @@ void BuildingTypeExt::UpdateSecretLabOptions(BuildingClass *pThis)
 	}
 	if(Result) {
 		pThis->SecretProduction = Result;
+		return;
+	}
+
+	if(!pData->Secret_Boons.Count || (pData->Secret_Placed && !pData->Secret_RecalcOnCapture)) {
 		return;
 	}
 

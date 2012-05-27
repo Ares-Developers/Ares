@@ -1,7 +1,7 @@
 #include "Body.h"
 #include <FactoryClass.h>
 #include <SuperClass.h>
-#include <NetworkEvents.h>
+#include <Networking.h>
 
 DynamicVectorClass<CameoDataStruct> RulesExt::TabCameos[4];
 

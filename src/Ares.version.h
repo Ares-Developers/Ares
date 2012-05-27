@@ -2,8 +2,13 @@
 #define VERSION_H
 
 #define VERSION_MAJOR 12
+<<<<<<< HEAD
 #define VERSION_MINOR 43
 #define VERSION_REVISION 496
+=======
+#define VERSION_MINOR 64
+#define VERSION_REVISION 740
+>>>>>>> dc03
 
 #define SAVEGAME_MAGIC ((VERSION_MAJOR << 24) | (VERSION_MINOR << 16) | (VERSION_REVISION))
 

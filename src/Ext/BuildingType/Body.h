@@ -91,6 +91,9 @@ public:
 		// clones vehicles
 		Valueable<bool> CloningFacility;
 
+		// use this factory only if techno states it is built here
+		Valueable<bool> Factory_ExplicitOnly;
+
 		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			Solid_Height (0),
 			IsCustom (false),
@@ -123,7 +126,8 @@ public:
 			AllowedOccupiers (),
 			PrismForwarding(),
 			ReverseEngineersVictims (false),
-			CloningFacility (false)
+			CloningFacility (false),
+			Factory_ExplicitOnly (false)
 			{ };
 
 		virtual ~ExtData() {

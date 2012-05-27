@@ -151,3 +151,21 @@ DEFINE_HOOK(51D0DD, InfantryClass_Scatter, 6)
 		: 0
 	;
 }
+
+// do not order deactivated units to move
+DEFINE_HOOK(73DBF9, UnitClass_Mi_Unload_Decactivated, 5)
+{
+	GET(FootClass*, pUnloadee, EDI);
+	LEA_STACK(CellStruct**, ppCell, 0x0);
+	LEA_STACK(CellStruct*, pPosition, 0x1C);
+
+	if(pUnloadee->Deactivated) {
+		pUnloadee->Locomotor->Power_Off();
+	}
+
+	if(!pUnloadee->Locomotor->Is_Powered()) {
+		*ppCell = pPosition;
+	}
+
+	return 0;
+}

@@ -180,6 +180,12 @@ public:
 		char Text_Charging[0x20];
 		char Text_Active[0x20];
 
+		const wchar_t* NameReadiness_Preparing;
+		const wchar_t* NameReadiness_Hold;
+		const wchar_t* NameReadiness_Ready;
+		const wchar_t* NameReadiness_Charging;
+		const wchar_t* NameReadiness_Active;
+
 		CustomPalette CameoPal;
 
 		// Unit Delivery
@@ -232,6 +238,11 @@ public:
 			SW_Height (-1),
 			HandledByNewSWType (-1),
 			CameoPal(),
+			NameReadiness_Preparing (NULL),
+			NameReadiness_Hold (NULL),
+			NameReadiness_Ready (NULL),
+			NameReadiness_Charging (NULL),
+			NameReadiness_Active (NULL),
 			SW_DeliverBuildups (false),
 			SW_Damage(0)
 			{
