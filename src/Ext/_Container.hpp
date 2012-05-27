@@ -1,21 +1,7 @@
 #ifndef CONTAINER_TEMPLATE_MAGIC_H
 #define CONTAINER_TEMPLATE_MAGIC_H
 
-#ifdef _MSC_VER
 #include <typeinfo>
-#endif
-
-#ifdef __GNUC__
-#include <ext/hash_fun.h>
-namespace __gnu_cxx {
-	template<>
-	struct hash<void *> {
-		size_t operator()(void* const &v) const {
-			return reinterpret_cast<std::size_t>(v);
-		}
-	};
-};
-#endif
 
 #include <xcompile.h>
 #include <CCINIClass.h>
