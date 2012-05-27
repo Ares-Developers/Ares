@@ -13,14 +13,14 @@ template<> IStream *Container<AnimTypeExt>::SavingStream = NULL;
 
 void AnimTypeExt::ExtData::SaveToStream(AresByteStream &pStm) {
 	Extension<AnimTypeExt::TT>::SaveToStream(pStm);
-	pStm.SaveToStream(this->MakeInfantryOwner);
-	pStm.SaveToStream(this->Palette);
+	Savegame::WriteAresStream(pStm, this->MakeInfantryOwner);
+	Savegame::WriteAresStream(pStm, this->Palette);
 };
 
-void AnimTypeExt::ExtData::LoadFromStream(AresByteStream &pStm, size_t Size, size_t &Offset) {
-	Extension<AnimTypeExt::TT>::LoadFromStream(pStm, Size, Offset);
-	pStm.LoadFromStream(this->MakeInfantryOwner, Size, Offset);
-	pStm.LoadFromStream(this->Palette, Size, Offset);
+void AnimTypeExt::ExtData::LoadFromStream(AresByteStream &pStm, size_t &Offset) {
+	Extension<AnimTypeExt::TT>::LoadFromStream(pStm, Offset);
+	Savegame::ReadAresStream(pStm, this->MakeInfantryOwner, Offset);
+	Savegame::ReadAresStream(pStm, this->Palette, Offset);
 };
 
 void AnimTypeExt::ExtData::LoadFromINIFile(AnimTypeClass *pThis, CCINIClass *pINI)

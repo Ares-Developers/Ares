@@ -1,7 +1,6 @@
 #include "Body.h"
 
 //Static init
-template<> const DWORD Extension<TEventClass>::Canary = 0x61616161;
 Container<TEventExt> TEventExt::ExtMap;
 
 template<> TEventExt::TT *Container<TEventExt>::SavingObject = NULL;

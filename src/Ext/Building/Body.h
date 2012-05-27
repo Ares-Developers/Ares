@@ -48,7 +48,7 @@ public:
 
 		virtual void SaveToStream(AresByteStream &pStm);
 
-		virtual void LoadFromStream(AresByteStream &pStm, size_t Size, size_t &Offset);
+		virtual void LoadFromStream(AresByteStream &pStm, size_t &Offset);
 
 		virtual void InvalidatePointer(void *ptr) {
 			AnnounceInvalidPointer(this->OwnerBeforeRaid, ptr);

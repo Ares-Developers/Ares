@@ -60,32 +60,34 @@ public:
 };
 
 template<typename T>
-class ObjectSwizzler {
-public:
-	ObjectSwizzler(T &Object);
-};
-
-template<typename T>
 void AresSwizzle::RegisterPointerForChange(T &ptr) {
 	this->RegisterForChange(reinterpret_cast<void **>(&ptr));
 };
 
 template<typename T>
-void ObjectSwizzler<T>::ObjectSwizzler(T &Object) {
-	//nop
+class ObjectSwizzler {
+public:
+	ObjectSwizzler(T &Object) {
+	};
 };
 
 template<typename T>
-void ObjectSwizzler<VectorClass<T> >::ObjectSwizzler(VectorClass<T> &Object) {
-	for (auto ii = 0; ii < Object.Capacity; ++ii) {
-		AresSwizzle::Instance.RegisterPointerForChange(&(Object.Items[ii]));
+class ObjectSwizzler<VectorClass<T> > {
+public:
+	ObjectSwizzler(VectorClass<T> &Object) {
+		for (auto ii = 0; ii < Object.Capacity; ++ii) {
+			AresSwizzle::Instance.RegisterPointerForChange(&(Object.Items[ii]));
+		}
 	}
 };
 
 template<typename T>
-void ObjectSwizzler<DynamicVectorClass<T> >::ObjectSwizzler(DynamicVectorClass<T> &Object) {
-	for (auto ii = 0; ii < Object.Count; ++ii) {
-		AresSwizzle::Instance.RegisterPointerForChange(&(Object.Items[ii]));
+class ObjectSwizzler<DynamicVectorClass<T> > {
+public:
+	ObjectSwizzler(DynamicVectorClass<T> &Object) {
+		for (auto ii = 0; ii < Object.Count; ++ii) {
+			AresSwizzle::Instance.RegisterPointerForChange(&(Object.Items[ii]));
+		}
 	}
 };
 

@@ -22,24 +22,24 @@ template<> IStream *Container<BuildingExt>::SavingStream = NULL;
 
 void BuildingExt::ExtData::SaveToStream(AresByteStream &pStm) {
 	Extension<BuildingExt::TT>::SaveToStream(pStm);
-	pStm.SaveToStream(this->OwnerBeforeRaid);
-	pStm.SaveToStream(this->isCurrentlyRaided);
-	pStm.SaveToStream(this->ignoreNextEVA);
-	pStm.SaveToStream(this->FreeUnits_Done);
-	pStm.SaveToStream(this->AboutToChronoshift);
-	pStm.SaveToStream(this->PrismForwarding);
-	pStm.SaveToStream(this->RegisteredJammers);
+	Savegame::WriteAresStream(pStm, this->OwnerBeforeRaid);
+	Savegame::WriteAresStream(pStm, this->isCurrentlyRaided);
+	Savegame::WriteAresStream(pStm, this->ignoreNextEVA);
+	Savegame::WriteAresStream(pStm, this->FreeUnits_Done);
+	Savegame::WriteAresStream(pStm, this->AboutToChronoshift);
+	Savegame::WriteAresStream(pStm, this->PrismForwarding);
+	Savegame::WriteAresStream(pStm, this->RegisteredJammers);
 };
 
-void BuildingExt::ExtData::LoadFromStream(AresByteStream &pStm, size_t Size, size_t &Offset) {
-	Extension<BuildingExt::TT>::LoadFromStream(pStm, Size, Offset);
-	pStm.LoadFromStream(this->OwnerBeforeRaid, Size, Offset);
-	pStm.LoadFromStream(this->isCurrentlyRaided, Size, Offset);
-	pStm.LoadFromStream(this->ignoreNextEVA, Size, Offset);
-	pStm.LoadFromStream(this->FreeUnits_Done, Size, Offset);
-	pStm.LoadFromStream(this->AboutToChronoshift, Size, Offset);
-	pStm.LoadFromStream(this->PrismForwarding, Size, Offset);
-	pStm.LoadFromStream(this->RegisteredJammers, Size, Offset);
+void BuildingExt::ExtData::LoadFromStream(AresByteStream &pStm, size_t &Offset) {
+	Extension<BuildingExt::TT>::LoadFromStream(pStm, Offset);
+	Savegame::ReadAresStream(pStm, this->OwnerBeforeRaid, Offset);
+	Savegame::ReadAresStream(pStm, this->isCurrentlyRaided, Offset);
+	Savegame::ReadAresStream(pStm, this->ignoreNextEVA, Offset);
+	Savegame::ReadAresStream(pStm, this->FreeUnits_Done, Offset);
+	Savegame::ReadAresStream(pStm, this->AboutToChronoshift, Offset);
+	Savegame::ReadAresStream(pStm, this->PrismForwarding, Offset);
+	Savegame::ReadAresStream(pStm, this->RegisteredJammers, Offset);
 };
 
 // =============================

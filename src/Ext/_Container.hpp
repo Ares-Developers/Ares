@@ -107,7 +107,7 @@ class Extension {
 
 		virtual void SaveToStream(AresByteStream &pStm);
 
-		virtual void LoadFromStream(AresByteStream &pStm, size_t Size, size_t &Offset);
+		virtual void LoadFromStream(AresByteStream &pStm, size_t &Offset);
 
 	private:
 		void operator = (Extension &RHS) {
@@ -259,14 +259,14 @@ public:
 
 template<typename T>
 inline void Extension<T>::SaveToStream(AresByteStream &pStm) {
-	pStm.SaveToStream(this->_Initialized);
-	pStm.SaveToStream(this->AttachedToObject);
+	Savegame::WriteAresStream(pStm, this->_Initialized);
+	Savegame::WriteAresStream(pStm, this->AttachedToObject);
 };
 
 template<typename T>
-inline void Extension<T>::LoadFromStream(AresByteStream &pStm, size_t Size, size_t &Offset) {
-	pStm.LoadFromStream(this->_Initialized, Size, Offset);
-	pStm.LoadFromStream(this->AttachedToObject, Size, Offset);
+inline void Extension<T>::LoadFromStream(AresByteStream &pStm, size_t &Offset) {
+	Savegame::ReadAresStream(pStm, this->_Initialized, Offset);
+	Savegame::ReadAresStream(pStm, this->AttachedToObject, Offset);
 };
 
 template<typename T>
@@ -320,7 +320,7 @@ typename Container<T>::E_T* Container<T>::LoadKey(typename Container<T>::S_T *ke
 		 */
 
 		size_t offset(0);
-		buffer->LoadFromStream(loader, sz, offset);
+		buffer->LoadFromStream(loader, offset);
 		if(offset != sz) {
 			Debug::Log("LoadKey read %X bytes instead of %X!\n", offset, sz);
 		}

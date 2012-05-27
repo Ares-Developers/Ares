@@ -12,6 +12,12 @@ public:
 		this->reserve(Reserve);
 	};
 
+	// IStream operations
+
+	/**
+	 * reads {Length} bytes from {pStm} into its storage
+	 */
+public:
 	bool ReadFromStream(IStream *pStm, const size_t Length) {
 		this->reserve(this->size() + Length);
 		auto tmp = new byte[Length];
@@ -25,17 +31,93 @@ public:
 		return result;
 	}
 
-	template<typename T>
-	bool Read(T &Value, const size_t Size) {
-		if(this->size() <= this->CurrentOffset + Size) {
-			return false;
-		}
-		auto Position = &this[this->CurrentOffset];
-		this->CurrentOffset += Size;
-		Value = *(reinterpret_cast<T *>(Position));
-		return true;
+	/**
+	 * writes all internal storage to {pStm}
+	 */
+public:
+	bool WriteToStream(IStream *pStm) {
+		ULONG out;
+		const size_t Length(this->size());
+		auto pv = reinterpret_cast<void *>(this->data());
+		auto success = pStm->Write(pv, Length, &out);
+		return SUCCEEDED(success) && out == Length;
 	}
+
+
+	// primitive save/load - should not be specialized
+
+	/**
+	 * if it has {Size} bytes left, casts the first {Size} unread bytes to a {<T>} and assigns it to {Value}
+	 * moves the internal position forward
+	 */
+public:
+	template<typename T>
+	bool Read(T &Value, const size_t Size = sizeof(T));
+
+	/**
+	 * ensures there are at least {Size} bytes left in the internal storage, casts those bytes to a {<T>} and assigns {Value} to that casted buffer
+	 * moves the internal position forward
+	 */
+public:
+	template<typename T>
+	bool Write(const T &Value, const size_t Size);
+
+
+	/**
+	 * attempts to read the data from internal storage into {Value}
+	 * updates {Offset} with the amount of data read, if successful
+	 */
+public:
+	template<typename T>
+	bool Load(T &Value, size_t &Offset);
+
+	/**
+	 * attempts to write the data from internal storage into {Value}
+	 */
+public:
+	template<typename T>
+	bool Save(const T &Value);
 };
+
+template<typename T>
+bool AresByteStream::Read(T &Value, const size_t Size) {
+	if(this->size() <= this->CurrentOffset + Size) {
+		return false;
+	}
+	auto Position = &this[this->CurrentOffset];
+	this->CurrentOffset += Size;
+	Value = *(reinterpret_cast<T *>(Position));
+	return true;
+};
+
+template<typename T>
+bool AresByteStream::Write(const T &Value, const size_t Size) {
+	if(this->size() <= this->CurrentOffset + Size) {
+		this->reserve(this->CurrentOffset + Size);
+	}
+	auto Position = &this[this->CurrentOffset];
+	this->CurrentOffset += Size;
+	*(reinterpret_cast<T *>(Position)) = Value;
+	return true;
+};
+
+template<typename T>
+bool AresByteStream::Load(T &Value, size_t &Offset) {
+	const auto sz = sizeof(T);
+	if(Offset + sz > this->size()) {
+		return false;
+	}
+	Offset += sz;
+	return this->Read(Value, sz);
+}
+
+template<typename T>
+bool AresByteStream::Save(const T &Value) {
+	return this->Write(Value, sizeof(T));
+};
+
+
+// helper classes - voodoo power
 
 template<typename T>
 class AresStreamWriter {
@@ -46,87 +128,106 @@ public:
 template<typename T>
 class AresStreamReader {
 public:
-	AresStreamReader(AresByteStream &Stm, T &Value, bool RegisterForChange = false);
+	AresStreamReader(AresByteStream &Stm, T &Value, size_t &Offset, bool RegisterForChange = false);
 };
+
+
+// helper functions for type inference
+// what an onion
+namespace Savegame {
+	template <typename T>
+	AresStreamReader<T> ReadAresStream(AresByteStream &Stm, T &Value, size_t &Offset, bool RegisterForChange = false)
+		{ return AresStreamReader<T>(Stm, Value, Offset, RegisterForChange); }
+
+	template <typename T>
+	AresStreamReader<VectorClass<T>> ReadAresStream(AresByteStream &Stm, VectorClass<T> &Value, size_t &Offset, bool RegisterForChange)
+		{ return AresStreamReader<VectorClass<T>>(Stm, Value, Offset, RegisterForChange); }
+
+	template <typename T>
+	AresStreamReader<DynamicVectorClass<T>> ReadAresStream(AresByteStream &Stm, DynamicVectorClass<T> &Value, size_t &Offset, bool RegisterForChange)
+		{ return AresStreamReader<DynamicVectorClass<T>>(Stm, Value, Offset, RegisterForChange); }
+
+	template <typename T>
+	AresStreamWriter<T> WriteAresStream(AresByteStream &Stm, const T &Value)
+		{ return AresStreamWriter<T>(Stm, Value); }
+
+	template <typename T>
+	AresStreamWriter<VectorClass<T>> WriteAresStream(AresByteStream &Stm, const VectorClass<T> &Value)
+		{ return AresStreamWriter<VectorClass<T>>(Stm, Value); }
+
+	template <typename T>
+	AresStreamWriter<DynamicVectorClass<T>> WriteAresStream(AresByteStream &Stm, const DynamicVectorClass<T> &Value)
+		{ return AresStreamWriter<DynamicVectorClass<T>>(Stm, Value); }
+};
+
 
 template<typename T>
 AresStreamWriter<T>::AresStreamWriter(AresByteStream &Stm, const T &Value) {
-	const auto sz = sizeof(T);
-	Stm.reserve(Stm.size() + sz);
-	auto ptr = reinterpret_cast<const byte *>(&Value);
-	Stm.insert(Stm.end(), ptr, ptr + sz);
+	Stm.Save(Value);
 };
 
 template<typename T>
-AresStreamReader<T>::AresStreamReader(AresByteStream &Stm, T &Value, bool RegisterForChange) {
-	const auto sz = sizeof(T);
-	Stm.Read(Value, sz);
+AresStreamReader<T>::AresStreamReader(AresByteStream &Stm, T &Value, size_t &Offset, bool RegisterForChange) {
+	Stm.Load(Value, Offset);
 	if(RegisterForChange) {
 		AresSwizzle::Instance.RegisterPointerForChange(Value);
 	}
-	return true;
 }
 
-template<typename T>
-inline bool AresByteStream::LoadFromStream(T &Value, const size_t Size, size_t &Offset, bool RegisterForChange) {
-	const auto sz = sizeof(T);
-	if(Offset >= Size) {
-		return false;
-	}
-	if(Offset + sz > Size) {
-		return false;
-	}
-	Offset += sz;
-	return this->LoadFromStream(Value, RegisterForChange);
-}
+// specializations
 
 template<typename T>
-inline bool AresByteStream::LoadValueFromStream(T &Value, const size_t Size) {
-	return this->Read(Value, Size);
-}
+class AresStreamWriter<DynamicVectorClass<T>> {
+public:
+	AresStreamWriter(AresByteStream &Stm, const DynamicVectorClass<T> &Value) {
+		Stm.Save(Value.Capacity);
+		Stm.Save(Value.IsInitialized);
+		Stm.Save(Value.Count);
+		Stm.Save(Value.CapacityIncrement);
 
-/* template specifications to save/load more complex types */
-template<typename T>
-inline bool AresByteStream::SaveToStream(const DynamicVectorClass<T> &Value) {
-	this->SaveToStream(Value.Capacity);
-	this->SaveToStream(Value.IsInitialized);
-	this->SaveToStream(Value.Count);
-	this->SaveToStream(Value.CapacityIncrement);
-
-	for(auto ix = 0; ix < Value.Count; ++ix) {
-		this->SaveToStream(Value.Items[ix]);
-	}
-
-	return true;
+		for(auto ix = 0; ix < Value.Count; ++ix) {
+			Stm.Save(Value.Items[ix]);
+		}
+	};
 };
 
 template<typename T>
-inline bool AresByteStream::LoadValueFromStream(DynamicVectorClass<T> &Value, const size_t Size) {
-	Value.Purge();
-	int Capacity;
-	this->LoadValueFromStream(Capacity, sizeof(Capacity));
-	Value.SetCapacity(Capacity);
-	int Count;
-	this->LoadValueFromStream(Count, sizeof(Count));
+class AresStreamReader<DynamicVectorClass<T>> {
+public:
+	AresStreamReader(AresByteStream &Stm, DynamicVectorClass<T> &Value, size_t &Offset, bool RegisterForChange) {
+		Value.Purge();
+		int Capacity;
+		Stm.Load(Capacity, Offset);
+		Value.SetCapacity(Capacity);
+		int Count;
+		Stm.Load(Count, Offset);
 
-	this->LoadValueFromStream(Value.CapacityIncrement, sizeof(Value.CapacityIncrement));
-	for(auto ix = 0; ix < Count; ++ix) {
-		this->LoadFromStream(Value[ix]);
+		Stm.Load(Value.CapacityIncrement, sizeof(Value.CapacityIncrement));
+		for(auto ix = 0; ix < Count; ++ix) {
+			Stm.Load(Value[ix], Offset);
+		}
+		if(RegisterForChange) {
+			for(auto ix = 0; ix < Count; ++ix) {
+				AresSwizzle::Instance.RegisterPointerForChange(Value[ix]);
+			}
+		}
 	}
-	return true;
 };
 
 #include "../Ext/BuildingType/PrismForwarding.h"
 #include "../Ext/Building/PrismForwarding.h"
 
 template<>
-inline bool AresByteStream::SaveToStream(const BuildingExtras::cPrismForwarding &Value) {
-	this->SaveToStream(Value.Senders);
-	this->SaveToStream(Value.SupportTarget);
-	this->SaveToStream(Value.PrismChargeDelay);
-	this->SaveToStream(Value.DamageReserve);
-	this->SaveToStream(Value.ModifierReserve);
-	return true;
+class AresStreamWriter<BuildingExtras::cPrismForwarding> {
+public:
+	AresStreamWriter(AresByteStream &Stm, const BuildingExtras::cPrismForwarding &Value) {
+		Savegame::WriteAresStream(Stm, Value.Senders);
+		Stm.Save(Value.SupportTarget);
+		Stm.Save(Value.PrismChargeDelay);
+		Stm.Save(Value.DamageReserve);
+		Stm.Save(Value.ModifierReserve);
+	}
 };
 
 #endif
+
