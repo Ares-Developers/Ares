@@ -80,7 +80,7 @@ DEFINE_HOOK(531413, Game_Start, 5)
 	DSurface::Hidden->DrawText(L"Ares is © pd, DCoder, Electro, Renegade and AlexB 2007 - 2012.", 10, 520, COLOR_GREEN);
 
 	wchar_t wVersion[256];
-	wsprintfW(wVersion, L"%hs", VERSION_STRVER);
+	wsprintfW(wVersion, L"%hs", DISPLAY_STRVER);
 
 	DSurface::Hidden->DrawText(wVersion, 10, 540, COLOR_RED | COLOR_GREEN);
 	return 0;
@@ -94,6 +94,6 @@ DEFINE_HOOK(74FDC0, GetModuleVersion, 5)
 
 DEFINE_HOOK(74FAE0, GetModuleInternalVersion, 5)
 {
-	R->EAX<const char *>(VERSION_STRMINI);
+	R->EAX<const char *>(DISPLAY_STRMINI);
 	return 0x74FC7B;
 }
