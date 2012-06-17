@@ -87,12 +87,10 @@ void SWTypeExt::ExtData::LoadFromRulesFile(SuperWeaponTypeClass *pThis, CCINICla
 	}
 
 	// find a NewSWType that handles this original one.
-	int idxNewSWType = -1;
+	int idxNewSWType = pThis->Type;
 	if(pThis->Type < FIRST_SW_TYPE) {
 		this->HandledByNewSWType = NewSWType::FindHandler(pThis->Type);
 		idxNewSWType = this->HandledByNewSWType;
-	} else {
-		idxNewSWType = pThis->Type;
 	}
 
 	// if this is handled by a NewSWType, initialize it.
