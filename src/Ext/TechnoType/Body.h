@@ -4,6 +4,7 @@
 #include <TechnoTypeClass.h>
 #include <BuildingTypeClass.h>
 #include <VocClass.h>
+#include <HouseTypeClass.h>
 
 #include "../../Ares.h"
 #include "../_Container.hpp"
@@ -132,6 +133,10 @@ public:
 
 		Valueable<bool> ImmuneToAbduction; //680, 1362
 
+		DynamicVectorClass<HouseTypeClass *> FactoryOwners;
+		DynamicVectorClass<HouseTypeClass *> ForbiddenFactoryOwners;
+		Valueable<bool> FactoryOwners_HaveAllPlans;
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			Survivors_PilotChance (NULL),
 			Survivors_PassengerChance (NULL),
@@ -188,7 +193,8 @@ public:
 			Cloneable (true),
 			CarryallAllowed(),
 			CarryallSizeLimit (),
-			ImmuneToAbduction(false)
+			ImmuneToAbduction(false),
+			FactoryOwners_HaveAllPlans(false)
 			{
 				this->Insignia.SetAll(NULL);
 				*this->CameoPCX = *this->AltCameoPCX = 0;

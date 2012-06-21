@@ -67,6 +67,8 @@ public:
 
 		EBolt * MyBolt;
 
+		HouseTypeClass* OriginalHouseType;
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			idxSlot_Wave (0),
 			idxSlot_Beam (0),
@@ -83,7 +85,8 @@ public:
 			ShadowDrawnManually (false),
 			RadarJam(NULL),
 			PoweredUnit(NULL),
-			MyOriginalTemporal(NULL)
+			MyOriginalTemporal(NULL),
+			OriginalHouseType(NULL)
 			{
 				this->CloakSkipTimer.Stop();
 				// hope this works with the timing - I assume it does, since Types should be created before derivates thereof

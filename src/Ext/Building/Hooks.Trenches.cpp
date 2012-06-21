@@ -2,6 +2,7 @@
 #include "../BuildingType/Body.h"
 #include "../Techno/Body.h"
 #include "../../Misc/Network.h"
+#include "../House/Body.h"
 
 #include <SpecificStructures.h>
 #include <ScenarioClass.h>
@@ -298,6 +299,23 @@ DEFINE_HOOK(448401, BuildingClass_ChangeOwnership_TrenchEVA, 6)
 	if(bldExt->ignoreNextEVA) {
 		Handled = Yes;
 		bldExt->ignoreNextEVA = false;
+	}
+
+	auto bldTTExt = TechnoTypeExt::ExtMap.Find(pBld->Type);
+	auto bldTExt = TechnoExt::ExtMap.Find(pBld);
+	auto pNewOwnerExt = HouseExt::ExtMap.Find(pNewOwner);
+
+	if (!!bldTTExt->FactoryOwners_HaveAllPlans) {
+		bool NewPlansGathered = true;
+		for (int i = 0; i < pNewOwnerExt->FactoryOwners_GatheredPlansOf.Count && NewPlansGathered; ++i) {
+			if (bldTExt->OriginalHouseType == pNewOwnerExt->FactoryOwners_GatheredPlansOf[i]) {
+				NewPlansGathered = false;
+			}
+		}
+		
+		if(NewPlansGathered){
+			pNewOwnerExt->FactoryOwners_GatheredPlansOf.AddItem(bldTExt->OriginalHouseType);
+		}
 	}
 
 	return Handled;

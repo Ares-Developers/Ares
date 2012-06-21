@@ -350,6 +350,36 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	// #680, 1362
 	this->ImmuneToAbduction.Read(&exINI, section, "ImmuneToAbduction");
 
+	if(pINI->ReadString(section, "FactoryOwners", "", Ares::readBuffer, Ares::readLength) ) {
+		this->FactoryOwners.Clear();
+		if(_strcmpi(Ares::readBuffer, "<none>") && _strcmpi(Ares::readBuffer, "none")) {
+			for(auto cur = strtok(Ares::readBuffer, ","); cur; cur = strtok(NULL, ",")) {
+				auto b = HouseTypeClass::Find(cur);
+				if(b) {
+					this->FactoryOwners.AddItem(b);
+				} else {
+					Debug::INIParseFailed(section, "FactoryOwners", cur);
+				}
+			}
+		}
+	}
+
+	if(pINI->ReadString(section, "FactoryOwners.Forbidden", "", Ares::readBuffer, Ares::readLength) ) {
+		this->ForbiddenFactoryOwners.Clear();
+		if(_strcmpi(Ares::readBuffer, "<none>") && _strcmpi(Ares::readBuffer, "none")) {
+			for(auto cur = strtok(Ares::readBuffer, ","); cur; cur = strtok(NULL, ",")) {
+				auto b = HouseTypeClass::Find(cur);
+				if(b) {
+					this->ForbiddenFactoryOwners.AddItem(b);
+				} else {
+					Debug::INIParseFailed(section, "FactoryOwners.Forbidden", cur);
+				}
+			}
+		}
+	}
+
+	this->FactoryOwners_HaveAllPlans.Read(&exINI, section, "FactoryOwners.HaveAllPlans");
+
 	// quick fix - remove after the rest of weapon selector code is done
 	return;
 }

@@ -4,6 +4,7 @@
 #include "../BuildingType/Body.h"
 #include "../TechnoType/Body.h"
 #include "../../Enum/Prerequisites.h"
+#include "../Techno/Body.h"
 
 template<> const DWORD Extension<HouseClass>::Canary = 0x12345678;
 Container<HouseExt> HouseExt::ExtMap;
@@ -194,13 +195,69 @@ bool HouseExt::FactoryForObjectExists(HouseClass *pHouse, TechnoTypeClass *pItem
 
 	for(int i = 0; i < pHouse->Buildings.Count; ++i) {
 		BuildingTypeClass *pType = pHouse->Buildings[i]->Type;
-		if(pType->Factory == WhatAmI
+		if(
+			pType->Factory == WhatAmI
 			&& pType->Naval == pItem->Naval
-			&& pExt->CanBeBuiltAt(pType)) {
+			&& pExt->CanBeBuiltAt(pType)
+			&& HouseExt::CheckFactoryOwner(pHouse, pHouse->Buildings[i], pItem)
+			&& HouseExt::CheckForbiddenFactoryOwner(pHouse, pHouse->Buildings[i], pItem)
+			) {
 			return true;
 		}
 	}
 	return false;
+}
+
+bool HouseExt::CheckFactoryOwner(HouseClass *pHouse, BuildingClass *Factory, TechnoTypeClass *pItem){
+	auto pExt = TechnoTypeExt::ExtMap.Find(pItem);
+	auto FactoryExt = TechnoExt::ExtMap.Find(Factory);
+	auto HouseExt = HouseExt::ExtMap.Find(pHouse);
+	
+	if (pExt->FactoryOwners.Count) {
+		for (int j = 0; j < HouseExt->FactoryOwners_GatheredPlansOf.Count; ++j) {
+			for (int i = 0; i < pExt->FactoryOwners.Count; ++i) {
+				if (HouseExt->FactoryOwners_GatheredPlansOf[j] == pExt->FactoryOwners[i]) {
+					return true;
+				}
+			}
+		}
+
+		for (int i = 0; i < pExt->FactoryOwners.Count; ++i) {
+			if (FactoryExt->OriginalHouseType == pExt->FactoryOwners[i]) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	return true;
+}
+
+bool HouseExt::CheckForbiddenFactoryOwner(HouseClass *pHouse, BuildingClass *Factory, TechnoTypeClass *pItem){
+	auto pExt = TechnoTypeExt::ExtMap.Find(pItem);
+	auto FactoryExt = TechnoExt::ExtMap.Find(Factory);
+	auto HouseExt = HouseExt::ExtMap.Find(pHouse);
+
+	if (pExt->ForbiddenFactoryOwners.Count) {
+		for (int j = 0; j < HouseExt->FactoryOwners_GatheredPlansOf.Count; ++j) {
+			for (int i = 0; i < pExt->FactoryOwners.Count; ++i) {
+				if (HouseExt->FactoryOwners_GatheredPlansOf[j] != pExt->ForbiddenFactoryOwners[i]) {
+					return true;
+				}
+			}
+		}
+
+		for (int i = 0; i < pExt->ForbiddenFactoryOwners.Count; ++i) {
+			if (FactoryExt->OriginalHouseType != pExt->ForbiddenFactoryOwners[i]) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	return true;
 }
 
 void HouseExt::ExtData::SetFirestormState(bool Active) {

@@ -48,6 +48,8 @@ class HouseExt
 
 			std::bitset<32> StolenTech;
 
+			DynamicVectorClass<HouseTypeClass *> FactoryOwners_GatheredPlansOf;
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			IonSensitive(0),
 			FirewallActive(0),
@@ -58,7 +60,7 @@ class HouseExt
 			Factory_NavyType(NULL),
 			Factory_AircraftType(NULL),
 			SWLastIndex(0),
-			StolenTech(0ull)
+			StolenTech(0)
 		{
 		};
 
@@ -92,6 +94,9 @@ class HouseExt
 
 	static bool HasNeededFactory(HouseClass *pHouse, TechnoTypeClass *pItem);
 	static bool FactoryForObjectExists(HouseClass *pHouse, TechnoTypeClass *pItem);
+
+	static bool CheckFactoryOwner(HouseClass *pHouse, BuildingClass *Factory, TechnoTypeClass *pItem);
+	static bool CheckForbiddenFactoryOwner(HouseClass *pHouse, BuildingClass *Factory, TechnoTypeClass *pItem);
 
 	static signed int PrereqValidate
 		(HouseClass *pHouse, TechnoTypeClass *pItem, bool BuildLimitOnly, bool IncludeQueued);

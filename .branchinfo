@@ -1,6 +1,6 @@
 [branch]
-Name=Ares 0.2 Testing Branch "Fat Man"
-Description=This branch contains all features which are scheduled to be in Ares 0.2. It should be used for gameplay and look-and-feel tests, *not* for bughunts. Use the specialized branches for that.
-TargetVersion=0.2
+Name=Graion's 0.3 Minor Features
+Description=This branch contains Graion's minor features aimed for 0.3 release. Use on your own risk.
+TargetVersion=0.3
 Stable=no
-ReadyForTesting=yes
+ReadyForTesting=no
