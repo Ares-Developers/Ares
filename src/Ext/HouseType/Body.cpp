@@ -202,12 +202,6 @@ void HouseTypeExt::ExtData::LoadFromRulesFile(HouseTypeClass *pThis, CCINIClass 
 	if (pINI->ReadString(pID, "MenuText.Status", "", Ares::readBuffer, Ares::readLength)) {
 		AresCRT::strCopy(this->StatusText, Ares::readBuffer, 0x20);
 	}
-
-	if(pINI->ReadString(pID, "LoadScreenText.Color", "", Ares::readBuffer, 0x80)) {
-		if(ColorScheme* CS = ColorScheme::Find(Ares::readBuffer)) {
-			this->LoadTextColor = CS;
-		}
-	}
 }
 
 void HouseTypeExt::ExtData::LoadFromINIFile(HouseTypeClass *pThis, CCINIClass *pINI) {
@@ -293,7 +287,7 @@ void HouseTypeExt::ExtData::LoadFromINIFile(HouseTypeClass *pThis, CCINIClass *p
 	}
 
 	this->RandomSelectionWeight = pINI->ReadInteger(pID, "RandomSelectionWeight", this->RandomSelectionWeight);
-		this->CountryListIndex = pINI->ReadInteger(pID, "ListIndex", this->CountryListIndex);
+	this->CountryListIndex = pINI->ReadInteger(pID, "ListIndex", this->CountryListIndex);
 }
 
 template<size_t Len>

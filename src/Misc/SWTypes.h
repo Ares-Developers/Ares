@@ -62,8 +62,8 @@ class NewSWType
 
 	static int FindIndex(const char *Type) {
 		for(int i = 0; i < Array.Count; ++i) {
-			if(Array.GetItem(i)->GetTypeString()) {
-				if(!strcmp(Array.GetItem(i)->GetTypeString(), Type)) {
+			if(const char* id = Array.GetItem(i)->GetTypeString()) {
+				if(!strcmp(id, Type)) {
 					return FIRST_SW_TYPE + i;
 				}
 			}

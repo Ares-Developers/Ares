@@ -4,7 +4,7 @@
 #include "../../Ext/WarheadType/Body.h"
 #include "../../Utilities/Helpers.Alex.h"
 
-SuperClass* SW_PsychicDominator::CurrentPsyDom;
+SuperClass* SW_PsychicDominator::CurrentPsyDom = NULL;
 
 bool SW_PsychicDominator::HandlesType(int type)
 {

@@ -80,9 +80,15 @@ DEFINE_HOOK(568565, MapClass_AddContentAt_Foundation_OccupyHeight, 5)
 	auto it = std::unique(AffectedCells.begin(), AffectedCells.end());
 	AffectedCells.resize(it - AffectedCells.begin());
 
-	std::for_each(AffectedCells.begin(), AffectedCells.end(), [pThis](CellStruct coords) {
-		CellClass * Cell = MapClass::Instance->GetCellAt(&coords);
-		++Cell->OccupyHeightsCoveringMe;
+	auto &Map = MapClass::Instance;
+
+	std::for_each(AffectedCells.begin(), AffectedCells.end(), [pThis, Map](CellStruct coords) {
+		int xy = (coords.Y << 9) + coords.X;
+		if(xy >= 0 && xy < 0x40000 && xy < Map->Cells.Capacity) {
+			if(auto Cell = Map->Cells[xy]) {
+				++Cell->OccupyHeightsCoveringMe;
+			}
+		}
 	});
 
 	return 0x568697;
@@ -128,10 +134,16 @@ DEFINE_HOOK(568997, MapClass_RemoveContentAt_Foundation_OccupyHeight, 5)
 	auto it = std::unique(AffectedCells.begin(), AffectedCells.end());
 	AffectedCells.resize(it - AffectedCells.begin());
 
-	std::for_each(AffectedCells.begin(), AffectedCells.end(), [pThis](CellStruct coords) {
-		CellClass * Cell = MapClass::Instance->GetCellAt(&coords);
-		if(Cell->OccupyHeightsCoveringMe > 0) {
-			--Cell->OccupyHeightsCoveringMe;
+	auto &Map = MapClass::Instance;
+
+	std::for_each(AffectedCells.begin(), AffectedCells.end(), [pThis, Map](CellStruct coords) {
+		int xy = (coords.Y << 9) + coords.X;
+		if(xy >= 0 && xy < 0x40000 && xy < Map->Cells.Capacity) {
+			if(auto Cell = Map->Cells[xy]) {
+				if(Cell->OccupyHeightsCoveringMe > 0) {
+					--Cell->OccupyHeightsCoveringMe;
+				}
+			}
 		}
 	});
 

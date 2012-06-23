@@ -114,6 +114,13 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	while(PrereqListLen > this->PrerequisiteLists.Count) {
 		this->PrerequisiteLists.AddItem(new DynamicVectorClass<int>);
 	}
+	while(PrereqListLen < this->PrerequisiteLists.Count) {
+		int index = this->PrerequisiteLists.Count - 1;
+		if(auto list = this->PrerequisiteLists.GetItem(index)) {
+			delete list;
+		}
+		this->PrerequisiteLists.RemoveItem(index);
+	}
 
 	DynamicVectorClass<int> *dvc = this->PrerequisiteLists.GetItem(0);
 	Prereqs::Parse(pINI, section, "Prerequisite", dvc);
@@ -479,7 +486,8 @@ bool TechnoTypeExt::ExtData::CameoIsElite()
 }
 
 bool TechnoTypeExt::ExtData::CanBeBuiltAt(BuildingTypeClass * FactoryType) {
-	return !this->BuiltAt.Count || this->BuiltAt.FindItemIndex(&FactoryType) != -1;
+	auto pBExt = BuildingTypeExt::ExtMap.Find(FactoryType);
+	return (!this->BuiltAt.Count && !pBExt->Factory_ExplicitOnly) || this->BuiltAt.FindItemIndex(&FactoryType) != -1;
 }
 
 bool TechnoTypeExt::ExtData::CarryallCanLift(UnitClass * Target) {

@@ -28,7 +28,7 @@ HouseExt::RequirementStatus HouseExt::RequirementsMet(HouseClass *pHouse, Techno
 	HouseExt::ExtData* pHouseExt = HouseExt::ExtMap.Find(pHouse);
 
 	// this has to happen before the first possible "can build" response or NCO happens
-	if(pItem->WhatAmI() != abs_BuildingType && !pHouse->HasFactoryForObject(pItem)) { return Incomplete; }
+	if(pItem->WhatAmI() != abs_BuildingType && !FactoryForObjectExists(pHouse, pItem)) { return Incomplete; }
 
 	if(!(pData->PrerequisiteTheaters & (1 << ScenarioClass::Instance->Theater))) { return Forbidden; }
 	if(Prereqs::HouseOwnsAny(pHouse, &pData->PrerequisiteNegatives)) { return Forbidden; }
@@ -183,6 +183,23 @@ bool HouseExt::HasNeededFactory(HouseClass *pHouse, TechnoTypeClass *pItem) {
 		}
 	}
 
+	return false;
+}
+
+// this only verifies the existence, it does not check whether the building is currently
+// in a state that allows it to kick out units. however, it respects BuiltAt.
+bool HouseExt::FactoryForObjectExists(HouseClass *pHouse, TechnoTypeClass *pItem) {
+	eAbstractType WhatAmI = pItem->WhatAmI();
+	auto pExt = TechnoTypeExt::ExtMap.Find(pItem);
+
+	for(int i = 0; i < pHouse->Buildings.Count; ++i) {
+		BuildingTypeClass *pType = pHouse->Buildings[i]->Type;
+		if(pType->Factory == WhatAmI
+			&& pType->Naval == pItem->Naval
+			&& pExt->CanBeBuiltAt(pType)) {
+			return true;
+		}
+	}
 	return false;
 }
 
