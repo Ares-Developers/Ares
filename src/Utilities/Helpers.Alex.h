@@ -248,7 +248,7 @@ public:
 						} else {
 							return false;
 						}
-					}				
+					}
 				}
 
 				return true;
@@ -257,10 +257,13 @@ public:
 			if((height > 0) && ((height * (int)widthOrRange) > 0)) {
 				// rectangle
 				maxDistance += height;
-				return forEach(cell, (int)widthOrRange, height, actionIfInRange);
+				forEach(cell, (int)widthOrRange, height, actionIfInRange);
 			} else if(widthOrRange > 0) {
 				// circle, with thick border
-				return forEach(cell, widthOrRange + 1, actionIfInRange);
+				forEach(cell, widthOrRange + 1, actionIfInRange);
+			} else {
+				// invalid input
+				ret = -1;
 			}
 
 			return ret;
