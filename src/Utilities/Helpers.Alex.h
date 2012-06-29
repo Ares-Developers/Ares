@@ -326,6 +326,64 @@ public:
 			return ret;
 		}
 
+		//! Invokes an action for every object in range and returns the count of objects affected.
+		/*!
+			This method uses the distance between the given cell's center and each object's cell's center.
+			If a cell is close to the center, all its content objects are affected. If the cell is not close
+			enough, no objects are affected.
+
+			\param cell The center cell of the area.
+			\param widthOrRange The width of the rectangle, or the radius, if height <= 0.
+			\param height The height of the rectangle. Use 0 to create a circular area.
+			\param action The action to invoke for each cell.
+
+			\returns Count of objects affected. Negative values indicate input errors.
+
+			\author AlexB
+		*/
+		static int forEachObjectInCellRange(CellStruct *cell, float widthOrRange, int height, std::tr1::function<bool (ObjectClass*)> action) {
+			int ret = 0;
+
+			int maxDistance = (int)widthOrRange;
+
+			// function to invoke the action for each object
+			auto actionIfInRange = [&](CellClass* pCell) -> bool {
+
+				// if cell is in range, all contents are in range. the value 0.5 is arbitrary.
+				// the longest distance from cell border to center is ~0.71 cells, but that would
+				// include too many cells.
+				if(cell->DistanceFrom(pCell->MapCoords) - 0.5 <= maxDistance) {
+
+					// invoke the action for all contents
+					for(ObjectClass* pContent = pCell->GetContent(); pContent; pContent = pContent->NextObject) {
+						if(action(pContent)) {
+							++ret;
+						} else {
+							return false;
+						}
+					}
+				}
+
+				return true;
+			};
+
+			if((height > 0) && ((height * (int)widthOrRange) > 0)) {
+				// rectangle. adjust maximum allowed distance to include all objects:
+				// any two points in a rectangle are closer to each oher than width+height.
+				maxDistance += height;
+				forEach(cell, (int)widthOrRange, height, actionIfInRange);
+			} else if(widthOrRange > 0) {
+				// enlarged circle to include more than needed. the final calculation
+				// is done in the lambda.
+				forEach(cell, widthOrRange + 1, actionIfInRange);
+			} else {
+				// invalid input
+				ret = -1;
+			}
+
+			return ret;
+		}
+
 		template<typename T>
 		class DistinctCollector {
 		public:
