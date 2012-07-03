@@ -384,6 +384,14 @@ public:
 			return ret;
 		}
 
+		//! Represents a set of unique items.
+		/*!
+			Items can be added using the Collect method. Even though an item
+			can be added multiple times, it is only contained once in the set.
+
+			Use either the forEach method to call a method using each item as
+			a parameter, or access the set trough the Value field directly.
+		*/
 		template<typename T>
 		class DistinctCollector {
 		public:
