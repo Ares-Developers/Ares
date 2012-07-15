@@ -125,7 +125,7 @@ DEFINE_HOOK(51E5E1, InfantryClass_GetCursorOverObject_MultiEngineerB, 7) {
 	return 0;
 }
 
-DEFINE_HOOK(519DB6, InfantryClass_UpdatePosition_MultiEngineer, 7) {
+DEFINE_HOOK(519D9C, InfantryClass_UpdatePosition_MultiEngineer, 5) {
 	GET(InfantryClass *, pEngi, ESI);
 	GET(BuildingClass *, pBld, EDI);
 

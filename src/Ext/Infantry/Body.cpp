@@ -42,7 +42,7 @@ eAction InfantryExt::GetEngineerEnterEnemyBuildingAction(BuildingClass *pBld) {
 		bool isTech = false;
 		if(HouseClass * pHouse = pBld->OwningPlayer2) {
 			if(HouseTypeClass * pCountry = pHouse->Type) {
-				isTech = pCountry->MultiplayPassive;
+				isTech = !_strcmpi(pCountry->ID, "Neutral") || !_strcmpi(pCountry->ID, "Special");
 			}
 		}
 
