@@ -158,8 +158,9 @@ void BuildingExt::ExtData::KickOutOfRubble() {
 				CellClass* cell = MapClass::Instance->GetCellAt(&pos);
 				for(ObjectClass* pObj = cell->GetContent(); pObj; pObj = pObj->NextObject) {
 					if(FootClass* pFoot = generic_cast<FootClass*>(pObj)) {
+						bool selected = pFoot->IsSelected;
 						if(pFoot->Remove()) {
-							list.AddItem(std::pair<FootClass*, bool>(pFoot, pFoot->IsSelected));
+							list.AddItem(std::pair<FootClass*, bool>(pFoot, selected));
 						}
 					}
 				}
