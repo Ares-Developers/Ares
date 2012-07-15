@@ -35,7 +35,7 @@ bool InfantryExt::ExtData::IsOccupant() {
 eAction InfantryExt::GetEngineerEnterEnemyBuildingAction(BuildingClass *pBld) {
 	// damage if multi engineer and target isn't that low on health. this
 	// only affects multiplay and only if it is enabled.
-	if(GameModeOptionsClass::Instance->MPModeIndex && GameModeOptionsClass::Instance->MultiEngineer) {
+	if(SessionClass::Instance->GameMode != GameMode::Skirmish || GameModeOptionsClass::Instance->MultiEngineer) {
 
 		// check to always capture tech structures. a structure counts
 		// as tech if its initial owner is a multiplayer-passive country.
