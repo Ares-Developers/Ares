@@ -16,7 +16,7 @@ protected:
 	*/
 	bool CheckDebugDeactivated() {
 		if(!Ares::GlobalControls::DebugKeysEnabled) {
-			if(const wchar_t* text = StringTable::LoadStringA("TXT_COMMAND_DISABLED", NULL, __LINE__, __FILE__)) {
+			if(const wchar_t* text = StringTable::LoadStringA("TXT_COMMAND_DISABLED")) {
 				wchar_t msg[0x100] = L"\0";
 				wsprintfW(msg, text, this->GetUIName());
 				MessageListClass::Instance->PrintMessage(msg);
