@@ -216,18 +216,16 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 
 	INI_EX exINI(pINI);
 	this->InfiltrateCustom.Read(&exINI, pID, "SpyEffect.Custom");
-	if(this->InfiltrateCustom) {
-		this->RevealProduction.Read(&exINI, pID, "SpyEffect.RevealProduction");
-		this->ResetSW.Read(&exINI, pID, "SpyEffect.ResetSuperweapons");
-		this->ResetRadar.Read(&exINI, pID, "SpyEffect.ResetRadar");
-		this->RevealRadar.Read(&exINI, pID, "SpyEffect.RevealRadar");
-		this->GainVeterancy.Read(&exINI, pID, "SpyEffect.UnitVeterancy");
-		this->StolenTechIndex.Read(&exINI, pID, "SpyEffect.StolenTechIndex");
-		this->PowerOutageDuration.Read(&exINI, pID, "SpyEffect.PowerOutageDuration");
-		this->StolenMoneyAmount.Read(&exINI, pID, "SpyEffect.StolenMoneyAmount");
-		this->StolenMoneyPercentage.Read(&exINI, pID, "SpyEffect.StolenMoneyPercentage");
-		this->UnReverseEngineer.Read(&exINI, pID, "SpyEffect.UndoReverseEngineer");
-	}
+	this->RevealProduction.Read(&exINI, pID, "SpyEffect.RevealProduction");
+	this->ResetSW.Read(&exINI, pID, "SpyEffect.ResetSuperweapons");
+	this->ResetRadar.Read(&exINI, pID, "SpyEffect.ResetRadar");
+	this->RevealRadar.Read(&exINI, pID, "SpyEffect.RevealRadar");
+	this->GainVeterancy.Read(&exINI, pID, "SpyEffect.UnitVeterancy");
+	this->StolenTechIndex.Read(&exINI, pID, "SpyEffect.StolenTechIndex");
+	this->PowerOutageDuration.Read(&exINI, pID, "SpyEffect.PowerOutageDuration");
+	this->StolenMoneyAmount.Read(&exINI, pID, "SpyEffect.StolenMoneyAmount");
+	this->StolenMoneyPercentage.Read(&exINI, pID, "SpyEffect.StolenMoneyPercentage");
+	this->UnReverseEngineer.Read(&exINI, pID, "SpyEffect.UndoReverseEngineer");
 
 	if(this->StolenTechIndex >= 32) {
 		Debug::DevLog(Debug::Warning, "BuildingType %s has a SpyEffect.StolenTechIndex of %d. The value has to be less than 32.\n", pID, this->StolenTechIndex.Get());
