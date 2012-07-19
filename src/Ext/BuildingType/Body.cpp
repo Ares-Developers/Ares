@@ -229,6 +229,11 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 		this->UnReverseEngineer.Read(&exINI, pID, "SpyEffect.UndoReverseEngineer");
 	}
 
+	if(this->StolenTechIndex >= 32) {
+		Debug::DevLog(Debug::Warning, "BuildingType %s has a SpyEffect.StolenTechIndex of %d. The value has to be less than 32.\n", pID, this->StolenTechIndex.Get());
+		this->StolenTechIndex = -1;
+	}
+
 	// #218 Specific Occupiers
 	this->AllowedOccupiers.Read(&exINI, pID, "CanBeOccupiedBy");
 	if(!this->AllowedOccupiers.empty()) {
