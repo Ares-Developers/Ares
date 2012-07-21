@@ -143,7 +143,7 @@ DEFINE_HOOK(53B080, PsyDom_Fire, 5) {
 
 			// every techno in this area shall be one with Yuri.
 			if(Helpers::Alex::DistinctCollector<ObjectClass*> *items = new Helpers::Alex::DistinctCollector<ObjectClass*>()) {
-				Helpers::Alex::forEachObjectInRange(&cell, pData->SW_WidthOrRange, pData->SW_Height, items->getCollector());
+				Helpers::Alex::forEachObjectInCellSpread(&cell, pData->SW_WidthOrRange, pData->SW_Height, items->getCollector());
 				items->forEach(Dominate);
 				delete items;
 			}

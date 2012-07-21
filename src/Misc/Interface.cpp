@@ -589,3 +589,24 @@ DEFINE_HOOK(6041ED, DialogFunc_SubText_CampaignIconA, 5) {
 DEFINE_HOOK(6041F5, DialogFunc_CampaignMenu_CampaignIconB, 5) {
 	return 0x6041FA;
 }
+
+// disable the loading button in the single player menu
+DEFINE_HOOK(52D6C2, Singleplayer_hDlg_DisableSaves, A)
+{
+	R->ECX(FALSE);
+	return 0x52D6CC;
+}
+
+// disable load, save and delete buttons on the ingame menu
+DEFINE_HOOK(4F17F6, sub_4F1720_DisableSaves, 6)
+{
+	GET(HWND, hDlg, EBP);
+
+	for(int item=1310; item<=1312; ++item) {
+		if(HWND hItem = GetDlgItem(hDlg, item)) {
+			EnableWindow(hItem, FALSE);
+		}
+	}
+
+	return 0x4F1834;
+}

@@ -376,3 +376,20 @@ DEFINE_HOOK(41E893, AITriggerTypeClass_ConditionMet_SideIndex, 0)
 		: No
 	;
 }
+
+DEFINE_HOOK(6DE0D3, TActionClass_Execute_HardcodeMessageColors, 6)
+{
+	int idxSide = ScenarioClass::Instance->PlayerSideIndex;
+	int idxColor = 25;
+
+	if(!idxSide) {
+		// allied
+		idxColor = 21;
+	} else if(idxSide == 1) {
+		// soviet
+		idxColor = 11;
+	}
+	
+	R->EAX(idxColor);
+	return 0x6DE0DE;
+}

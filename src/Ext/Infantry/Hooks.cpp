@@ -120,12 +120,12 @@ DEFINE_HOOK(51E5E1, InfantryClass_GetCursorOverObject_MultiEngineerB, 7) {
 		Actions::Set(RulesExt::Global()->EngineerDamageCursor);
 	}
 
-	//// return our action
+	// return our action
 	R->EAX(ret);
 	return 0;
 }
 
-DEFINE_HOOK(519DB6, InfantryClass_UpdatePosition_MultiEngineer, 7) {
+DEFINE_HOOK(519D9C, InfantryClass_UpdatePosition_MultiEngineer, 5) {
 	GET(InfantryClass *, pEngi, ESI);
 	GET(BuildingClass *, pBld, EDI);
 
