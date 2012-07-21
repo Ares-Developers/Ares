@@ -39,13 +39,8 @@ eAction InfantryExt::GetEngineerEnterEnemyBuildingAction(BuildingClass *pBld) {
 	if(SessionClass::Instance->GameMode != GameMode::Skirmish || GameModeOptionsClass::Instance->MultiEngineer) {
 
 		// check to always capture tech structures. a structure counts
-		// as tech if its initial owner is a multiplayer-passive country.
-		bool isTech = false;
-		if(HouseClass * pHouse = pBld->OwningPlayer2) {
-			if(HouseTypeClass * pCountry = pHouse->Type) {
-				isTech = !_strcmpi(pCountry->ID, "Neutral") || !_strcmpi(pCountry->ID, "Special");
-			}
-		}
+		// as tech if it has the NeedsEngineer flag set.
+		bool isTech = pBld->Type->NeedsEngineer;
 
 		if(!RulesExt::Global()->EngineerAlwaysCaptureTech || !isTech) {
 			// no civil structure. apply new logic.
