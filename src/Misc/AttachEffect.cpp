@@ -72,6 +72,7 @@ void AttachEffectTypeClass::Attach(TechnoClass* Target, int Duration, TechnoClas
 					if (Invoker && Invoker->Owner) {
 						Item->Animation->Owner = Invoker->Owner;
 					}
+					Item->AnimAlreadyKilled = false;
 				}
 
 				return;
@@ -95,6 +96,7 @@ void AttachEffectTypeClass::Attach(TechnoClass* Target, int Duration, TechnoClas
 		if (Invoker && Invoker->Owner) {
 			Attaching->Animation->Owner = Invoker->Owner;
 		}
+		Attaching->AnimAlreadyKilled = false;
 	}
 	
 	/*
@@ -113,16 +115,9 @@ void AttachEffectClass::InvalidateAnimPointer(AnimClass *ptr) {
 }
 
 void AttachEffectClass::KillAnim() {
-	if (this->Animation) {
-		this->Animation->OwnerObject = NULL;
-		this->Animation->IsPlaying = false;
-		this->Animation->TimeToDie = true;
-		//TimeToDie deletes the animation in the following frame... combining it with Remove() crashes, UnInit() crashes, GAME_DEALLOC crashes. Niiice.
-		//While the above does the same and being the most elegant resolve.
-		this->Animation->Audio1.ShutUp(); //Report
-		this->Animation->Audio2.ShutUp();
-		this->Animation->Audio3.ShutUp();
-		this->Animation->Audio4.ShutUp();
+	if (this->Animation && !this->AnimAlreadyKilled) {
+		this->AnimAlreadyKilled = true;
+		this->Animation->UnInit();
 		this->Animation = NULL;
 	}
 }
