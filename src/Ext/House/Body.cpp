@@ -56,6 +56,8 @@ HouseExt::RequirementStatus HouseExt::RequirementsMet(HouseClass *pHouse, Techno
 
 	if(!pHouse->InRequiredHouses(pItem) || pHouse->InForbiddenHouses(pItem)) { return Forbidden; }
 
+	if(!HouseExt::CheckFactoryOwners(pHouse, pItem)) { return Incomplete; }
+
 	if(!Unsorted::SWAllowed) {
 		if(BuildingTypeClass *pBld = specific_cast<BuildingTypeClass*>(pItem)) {
 			if(pBld->SuperWeapon != -1) {
@@ -199,6 +201,20 @@ bool HouseExt::FactoryForObjectExists(HouseClass *pHouse, TechnoTypeClass *pItem
 			pType->Factory == WhatAmI
 			&& pType->Naval == pItem->Naval
 			&& pExt->CanBeBuiltAt(pType)
+			&& HouseExt::CheckFactoryOwner(pHouse, pHouse->Buildings[i], pItem)
+			&& HouseExt::CheckForbiddenFactoryOwner(pHouse, pHouse->Buildings[i], pItem)
+			) {
+			return true;
+		}
+	}
+	return false;
+}
+
+bool HouseExt::CheckFactoryOwners(HouseClass *pHouse, TechnoTypeClass *pItem) {
+	eAbstractType WhatAmI = pItem->WhatAmI();
+
+	for(int i = 0; i < pHouse->Buildings.Count; ++i) {
+		if(pHouse->Buildings[i]->Type->Factory == WhatAmI
 			&& HouseExt::CheckFactoryOwner(pHouse, pHouse->Buildings[i], pItem)
 			&& HouseExt::CheckForbiddenFactoryOwner(pHouse, pHouse->Buildings[i], pItem)
 			) {

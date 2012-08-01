@@ -95,6 +95,7 @@ class HouseExt
 	static bool HasNeededFactory(HouseClass *pHouse, TechnoTypeClass *pItem);
 	static bool FactoryForObjectExists(HouseClass *pHouse, TechnoTypeClass *pItem);
 
+	static bool CheckFactoryOwners(HouseClass *pHouse, TechnoTypeClass *pItem);
 	static bool CheckFactoryOwner(HouseClass *pHouse, BuildingClass *Factory, TechnoTypeClass *pItem);
 	static bool CheckForbiddenFactoryOwner(HouseClass *pHouse, BuildingClass *Factory, TechnoTypeClass *pItem);
 
