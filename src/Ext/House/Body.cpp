@@ -201,8 +201,6 @@ bool HouseExt::FactoryForObjectExists(HouseClass *pHouse, TechnoTypeClass *pItem
 			pType->Factory == WhatAmI
 			&& pType->Naval == pItem->Naval
 			&& pExt->CanBeBuiltAt(pType)
-			&& HouseExt::CheckFactoryOwner(pHouse, pHouse->Buildings[i], pItem)
-			&& HouseExt::CheckForbiddenFactoryOwner(pHouse, pHouse->Buildings[i], pItem)
 			) {
 			return true;
 		}
@@ -255,21 +253,27 @@ bool HouseExt::CheckForbiddenFactoryOwner(HouseClass *pHouse, BuildingClass *Fac
 	auto FactoryExt = TechnoExt::ExtMap.Find(Factory);
 	auto HouseExt = HouseExt::ExtMap.Find(pHouse);
 
+	bool localbool;
 	if (pExt->ForbiddenFactoryOwners.Count) {
 		for (int j = 0; j < HouseExt->FactoryOwners_GatheredPlansOf.Count; ++j) {
-			for (int i = 0; i < pExt->FactoryOwners.Count; ++i) {
-				if (HouseExt->FactoryOwners_GatheredPlansOf[j] != pExt->ForbiddenFactoryOwners[i]) {
-					return true;
+			for (int i = 0; i < pExt->ForbiddenFactoryOwners.Count; ++i) {
+				localbool=true;
+				if (HouseExt->FactoryOwners_GatheredPlansOf[j] == pExt->ForbiddenFactoryOwners[i]) {
+					localbool=false;
+					break;
 				}
 			}
+			if (localbool) {return true;}
 		}
 
+		localbool=true;
 		for (int i = 0; i < pExt->ForbiddenFactoryOwners.Count; ++i) {
-			if (FactoryExt->OriginalHouseType != pExt->ForbiddenFactoryOwners[i]) {
-				return true;
-			}
+			if (FactoryExt->OriginalHouseType == pExt->ForbiddenFactoryOwners[i]) {
+				localbool=false;
+			}	
 		}
-
+		if (localbool) {return true;}
+		
 		return false;
 	}
 
