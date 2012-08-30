@@ -113,7 +113,8 @@ DEFINE_HOOK(734A5F, CSF_AddOrOverrideLabel, 5)
 				pExtraValues[idx] = NULL;
 			}
 
-			R->EBP((pLabel - StringTable::get_Labels())); //trick 17
+			auto ix = pLabel - StringTable::get_Labels();
+			R->EBP(ix * sizeof(CSFLabel));
 		}
 		else
 		{

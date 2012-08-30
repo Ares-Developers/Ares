@@ -39,17 +39,15 @@ DEFINE_HOOK(5F9070, ObjectTypeClass_Load2DArt, 0)
 	int scenarioTheater = ScenarioClass::Instance->Theater;
 	Theater *pTheaterData = &Theater::Array[scenarioTheater];
 
-	if(pTypeData) {
-		if(pTypeData->AlternateTheaterArt) {
-			if(!pType->ArcticArtInUse) { // this flag is not used anywhere outside this function, so I'll just hijack it
-				pType->ArcticArtInUse = true;
-				_snprintf(basename, 256, "%s%s", pType->ImageFile, pTheaterData->Letter);
-				if(!CCINIClass::INI_Art->GetSection(basename)) {
-					pType->ArcticArtInUse = false;
-					_snprintf(basename, 256, "%s", pType->ImageFile);
-				}
-				AresCRT::strCopy(pType->ImageFile, basename, 0x19);
+	if(pTypeData && pTypeData->AlternateTheaterArt) {
+		if(!pType->ArcticArtInUse) { // this flag is not used anywhere outside this function, so I'll just hijack it
+			pType->ArcticArtInUse = true;
+			_snprintf(basename, 256, "%s%s", pType->ImageFile, pTheaterData->Letter);
+			if(!CCINIClass::INI_Art->GetSection(basename)) {
+				pType->ArcticArtInUse = false;
+				_snprintf(basename, 256, "%s", pType->ImageFile);
 			}
+			AresCRT::strCopy(pType->ImageFile, basename, 0x19);
 		}
 	} else if(pType->AlternateArcticArt && scenarioTheater == th_Snow && !pType->ImageIsOutdated) { //outdated? you think I know what it means? hahahaha
 		if(!pType->ArcticArtInUse) {
@@ -65,8 +63,8 @@ DEFINE_HOOK(5F9070, ObjectTypeClass_Load2DArt, 0)
 	_snprintf(basename, 256, "%s.%s", pType->ImageFile, (pType->Theater ? pTheaterData->Extension : "SHP"));
 
 	if(!pType->Theater && pType->NewTheater && scenarioTheater != -1) {
-		char c0 = basename[0];
-		char c1 = basename[1] & ~0x20; // evil hack to uppercase
+		unsigned char c0 = basename[0];
+		unsigned char c1 = basename[1] & ~0x20; // evil hack to uppercase
 		if(isalpha(c0)) {
 			if(c1 == 'A' || c1 == 'T') {
 				basename[1] = pTheaterData->Letter[0];

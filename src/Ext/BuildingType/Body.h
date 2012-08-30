@@ -46,7 +46,7 @@ public:
 		Valueable<signed int> EliteSupportWeaponIndex;
 
 		//methods
-		signed int GetUnusedWeaponSlot(BuildingTypeClass*, int);
+		signed int GetUnusedWeaponSlot(BuildingTypeClass*, bool);
 		void Initialize(BuildingTypeClass* );
 		void LoadFromINIFile(BuildingTypeClass *, CCINIClass *);
 
@@ -58,9 +58,12 @@ public:
 		static void SetChargeDelay_Get(BuildingClass * , int , int , int , DWORD *, DWORD *);
 		static void SetChargeDelay_Set(BuildingClass * , int , DWORD *, DWORD *, int);
 		static void RemoveFromNetwork(BuildingClass *, bool);
+		static void SetSupportTarget(BuildingClass *, BuildingClass *);
+		static void RemoveAllSenders(BuildingClass *);
 
 		// constructor
 		cPrismForwarding() : Enabled(NO),
+			Targets(),
 			MaxFeeds(&RulesClass::Instance->PrismSupportMax),
 			MaxChainLength(1),
 			MaxNetworkSize(&RulesClass::Instance->PrismSupportMax),
@@ -71,7 +74,8 @@ public:
 			ChargeDelay(1),
 			ToAllies(false),
 			BreakSupport(false),
-			SupportWeaponIndex(-1)
+			SupportWeaponIndex(-1),
+			EliteSupportWeaponIndex(-1)
 		{};
 	};
 
@@ -135,6 +139,12 @@ public:
 
 		Valueable<bool> ReverseEngineersVictims;
 
+		// clones vehicles
+		Valueable<bool> CloningFacility;
+
+		// use this factory only if techno states it is built here
+		Valueable<bool> Factory_ExplicitOnly;
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			Solid_Height (0),
 			IsCustom (false),
@@ -166,7 +176,9 @@ public:
 			PowerOutageDuration (0),
 			AllowedOccupiers (),
 			PrismForwarding(),
-			ReverseEngineersVictims (false)
+			ReverseEngineersVictims (false),
+			CloningFacility (false),
+			Factory_ExplicitOnly (false)
 			{ };
 
 		virtual ~ExtData() {

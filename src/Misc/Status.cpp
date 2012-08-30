@@ -1,6 +1,12 @@
 #include "../Ares.version.h"
 #include "Status.h"
 
+#ifdef IS_RELEASE_VER
+#define RELEASE 1
+#else
+#define RELEASE 0
+#endif
+
 Point2D StatusMessages::TLPoint = { 10, 340 };
 Point2D StatusMessages::Delta = { 0, 20 };
 
@@ -74,13 +80,17 @@ DEFINE_HOOK(687B21, Scenario_Start8, 5)
 
 DEFINE_HOOK(531413, Game_Start, 5)
 {
-	DSurface::Hidden->DrawText(L"Ares is active.", 10, 460/*500*/, COLOR_GREEN);
-	DSurface::Hidden->DrawText(L"This is a testing version, NOT a final product.", 20, 480, COLOR_RED);
-	DSurface::Hidden->DrawText(L"Bugs are to be expected.", 20, 500, COLOR_RED);
-	DSurface::Hidden->DrawText(L"Ares is © pd, DCoder, Electro, Renegade and AlexB 2007 - 2011.", 10, 520, COLOR_GREEN);
+	int topActive = RELEASE ? 500 : 460;
+
+	DSurface::Hidden->DrawText(L"Ares is active.", 10, topActive, COLOR_GREEN);
+	if(!RELEASE) {
+		DSurface::Hidden->DrawText(L"This is a testing version, NOT a final product.", 20, 480, COLOR_RED);
+		DSurface::Hidden->DrawText(L"Bugs are to be expected.", 20, 500, COLOR_RED);
+	}
+	DSurface::Hidden->DrawText(L"Ares is © pd, DCoder, Electro, Renegade and AlexB 2007 - 2012.", 10, 520, COLOR_GREEN);
 
 	wchar_t wVersion[256];
-	wsprintfW(wVersion, L"%hs", VERSION_STRVER);
+	wsprintfW(wVersion, L"%hs", DISPLAY_STRVER);
 
 	DSurface::Hidden->DrawText(wVersion, 10, 540, COLOR_RED | COLOR_GREEN);
 	return 0;
@@ -94,6 +104,6 @@ DEFINE_HOOK(74FDC0, GetModuleVersion, 5)
 
 DEFINE_HOOK(74FAE0, GetModuleInternalVersion, 5)
 {
-	R->EAX<const char *>(VERSION_STRMINI);
+	R->EAX<const char *>(DISPLAY_STRMINI);
 	return 0x74FC7B;
 }

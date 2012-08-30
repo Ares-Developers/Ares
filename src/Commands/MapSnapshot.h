@@ -1,7 +1,7 @@
 #ifndef CMD_MAPSNAP_H
 #define CMD_MAPSNAP_H
 
-class MapSnapshotCommandClass : public CommandClass
+class MapSnapshotCommandClass : public AresCommandClass
 {
 public:
 	//Destructor
@@ -22,29 +22,27 @@ public:
 
 	virtual void Execute(DWORD dwUnk)
 	{
-		int i = 0;
-		
-		FILE* F = NULL;
-		char buffer[0x10] = "\0";
+		if(this->CheckDebugDeactivated()) {
+			return;
+		}
 
-		do
-		{
-			if(F)fclose(F);
+		char fName[0x80];
 
-			_snprintf(buffer, 16, "Map%04d.yrm", i++);
-			F = fopen(buffer, "rb");
-		}while(F != NULL);
+		SYSTEMTIME time;
+		GetLocalTime(&time);
 
-		DEBUGLOG("\t\t%s", buffer);
+		_snprintf(fName, 0x80, "Map.%04u%02u%02u-%02u%02u%02u-%05u.yrm",
+			time.wYear, time.wMonth, time.wDay, time.wHour, time.wMinute, time.wSecond, time.wMilliseconds);
 
-		char* pBuffer = buffer;
+		char* pBuffer = fName;
 
 		SET_REG8(dl, 0);
 		SET_REG32(ecx, pBuffer);
 		CALL(0x687CE0);
 
-		wchar_t msg[0x40] = L"\0";
-		wsprintfW(msg, L"Map Snapshot saved as '%hs'.", buffer);
+		wchar_t msg[0xA0] = L"\0";
+		wsprintfW(msg, L"Map Snapshot saved as '%hs'.", fName);
+
 		MessageListClass::Instance->PrintMessage(msg);
 	}
 

@@ -189,11 +189,18 @@ DEFINE_HOOK(4FE782, HTExt_PickPowerplant, 6)
 			Eligible.push_back(pPower);
 		}
 	}
-	if(Eligible.size() == 0) {
-		Debug::FatalErrorAndExit("Country [%s] did not find any powerplants it could construct!", H->Type->ID);
+
+	BuildingTypeClass *pResult = NULL;
+	if(Eligible.size() > 0) {
+		int idx = ScenarioClass::Instance->Random.RandomRanged(0, Eligible.size() - 1);
+		pResult = Eligible.at(idx);
+	} else if(pData->Powerplants.Count) {
+		pResult = pData->Powerplants[0];
+		Debug::Log("Country [%s] wanted to build a powerplant but does not meet prerequisites for any possible plant. Going to give it the first one on the list (%s)\n", H->Type->ID, pResult->ID);
+	} else {
+		Debug::Log("Country [%s] did not find any powerplants it could construct! The AI's probably going to crash now...\n", H->Type->ID);
 	}
-	int idx = ScenarioClass::Instance->Random.RandomRanged(0, Eligible.size() - 1);
-	BuildingTypeClass *pResult = Eligible.at(idx);
+
 
 	R->EDI(pResult);
 	return 0x4FE893;

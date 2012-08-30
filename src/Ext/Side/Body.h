@@ -75,7 +75,7 @@ class SideExt
 	static Container<SideExt> ExtMap;
 
 	static hash_map<VoxClass*, DynamicVectorClass<VoxFileNameStruct> > EVAFiles;
-	static ColorScheme* CurrentLoadTextColor;
+	static int CurrentLoadTextColor;
 
 	static DWORD BaseDefenses(REGISTERS* R, DWORD dwReturnAddress);
 	static DWORD Disguise(REGISTERS* R, DWORD dwReturnAddress, bool bUseESI);

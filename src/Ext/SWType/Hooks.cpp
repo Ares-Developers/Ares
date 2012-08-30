@@ -319,6 +319,8 @@ DEFINE_HOOK(6CC0EA, SuperClass_AnnounceQuantity, 9)
 	SuperWeaponTypeClass *pSW = pThis->Type;
 	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSW);
 
+	pData->PrintMessage(pData->Message_Ready, HouseClass::Player);
+
 	if(pData->EVA_Ready != -1 || pData->HandledByNewSWType != -1) {
 		if(pData->EVA_Ready != -1) {
 			VoxClass::PlayIndex(pData->EVA_Ready);
@@ -364,9 +366,11 @@ DEFINE_HOOK(6CBA9E, SuperClass_ClickFire_Abort, 7)
 
 	// auto-abort if no money
 	if(pData->Money_Amount < 0) {
-		if(HouseClass::Player->Available_Money() < -pData->Money_Amount.Get()) {
-			VoxClass::PlayIndex(pData->EVA_InsufficientFunds);
-			pData->PrintMessage(pData->Message_InsufficientFunds, pSuper->Owner);
+		if(pSuper->Owner->Available_Money() < -pData->Money_Amount.Get()) {
+			if(pSuper->Owner == HouseClass::Player) {
+				VoxClass::PlayIndex(pData->EVA_InsufficientFunds);
+				pData->PrintMessage(pData->Message_InsufficientFunds, pSuper->Owner);
+			}
 			return 0x6CBABF;
 		}
 	}
@@ -456,23 +460,28 @@ DEFINE_HOOK(6CC2B0, SuperClass_NameReadiness, 5) {
 	// complete rewrite of this method.
 
 	char* key = pData->Text_Preparing;
+	const wchar_t** cache = &pData->NameReadiness_Preparing;
 	if(pThis->IsOnHold) {
 		// on hold
 		key = pData->Text_Hold;
+		cache = &pData->NameReadiness_Hold;
 	} else {
 		if(pThis->Type->UseChargeDrain) {
 			switch(pThis->ChargeDrainState) {
 			case 0:
 				// still charging
 				key = pData->Text_Charging;
+				cache = &pData->NameReadiness_Charging;
 				break;
 			case 1:
 				// ready
 				key = pData->Text_Ready;
+				cache = &pData->NameReadiness_Ready;
 				break;
 			case 2:
 				// currently active
 				key = pData->Text_Active;
+				cache = &pData->NameReadiness_Active;
 				break;
 			}
 
@@ -480,16 +489,21 @@ DEFINE_HOOK(6CC2B0, SuperClass_NameReadiness, 5) {
 			// ready
 			if(pThis->IsCharged) {
 				key = pData->Text_Ready;
+				cache = &pData->NameReadiness_Ready;
 			}
 		}
 	}
 
-	const wchar_t* text = NULL;
-	if(key && *key) {
-		text = StringTable::LoadStringA(key);
-		if(text && !*text) {
-			text = NULL;
+	// the text is not cached yet
+	if(cache && !*cache) {
+		if(key && *key) {
+			*cache = StringTable::LoadStringA(key);
 		}
+	}
+
+	const wchar_t* text = (cache ? *cache : NULL);
+	if(text && !*text) {
+		text = NULL;
 	}
 	R->EAX(text);
 	return 0x6CC352;
@@ -519,7 +533,7 @@ DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
 
 					// don't try to fire if we obviously haven't enough money
 					if(pExt->Money_Amount < 0) {
-						if(HouseClass::Player->Available_Money() < -pExt->Money_Amount.Get()) {
+						if(pThis->Available_Money() < -pExt->Money_Amount.Get()) {
 							continue;
 						}
 					}
@@ -530,7 +544,7 @@ DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
 						{
 							if(pThis->EnemyHouseIndex != -1) {
 								if(pThis->PreferredTargetCell == HouseClass::DefaultIonCannonCoords) {
-									Cell = *(pThis->PreferredTargetWaypoint == 1
+									Cell = *((pThis->PreferredTargetWaypoint == 1)
 										? pThis->PickIonCannonTarget(Cell)
 										: pThis->sub_50D170(&Cell, pThis->PreferredTargetWaypoint));
 								} else {
@@ -613,8 +627,8 @@ DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
 									if(pTechno->CloakState) {
 										if(pExt->IsHouseAffected(pThis, pTechno->Owner)) {
 											if(pExt->IsTechnoAffected(pTechno)) {
-												int thisValue = pTechno->ThreatPosed;
-												if(currentValue > thisValue) {
+												int thisValue = pTechno->GetTechnoType()->ThreatPosed;
+												if(currentValue < thisValue) {
 													list.Clear();
 													currentValue = thisValue;
 												}
@@ -675,14 +689,11 @@ DEFINE_HOOK(4F9004, HouseClass_Update_TrySWFire, 7) {
 	GET(HouseClass*, pThis, ESI);
 	bool isHuman = R->AL() != 0;
 
-	if(!isHuman) {
-		if(!pThis->Type->MultiplayPassive) {
-			return 0x4F9015;
-		}
-
-	} else {
+	if(isHuman) {
 		// update the SWs for human players to support auto firing.
 		pThis->AI_TryFireSW();
+	} else if(!pThis->Type->MultiplayPassive) {
+		return 0x4F9015;
 	}
 
 	return 0x4F9038;
@@ -712,7 +723,7 @@ DEFINE_HOOK(6CBF5B, SuperClass_GetCameoChargeState_ChargeDrainRatio, 9) {
 	return 0;
 }
 
-DEFINE_HOOK(0x6CC053, SuperClass_GetCameoChargeState_FixFullyCharged, 5) {
+DEFINE_HOOK(6CC053, SuperClass_GetCameoChargeState_FixFullyCharged, 5) {
 	GET(int, charge, EAX);
 
 	// some smartass capped this at 53, causing the last
@@ -825,7 +836,7 @@ DEFINE_HOOK(6CEEB0, SuperWeaponTypeClass_FindFirstOfAction, 8) {
 
 	// put a hint into the debug log to explain why we will crash now.
 	if(!R->EAX()) {
-		Debug::FatalErrorAndExit("Failed finding a Type=Nuke super weapon to be granted by ICBM crate.");
+		Debug::FatalErrorAndExit("Failed finding an Action=Nuke or Type=MultiMissile super weapon to be granted by ICBM crate.");
 	}
 
 	return 0x6CEEE5;

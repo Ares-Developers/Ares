@@ -41,6 +41,8 @@ class HouseTypeExt
 
 			//issue 1588, Bounty tags per country, whole logic starts in TechnoType and FlyingStrings
 			BountyClass Bounty;
+			bool SettingsInherited;
+
 
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 				RandomSelectionWeight (0),
@@ -49,6 +51,7 @@ class HouseTypeExt
 				Parachute_Anim (NULL),
 				LoadTextColor (NULL),
 				Bounty(true, true, 0, 0, false, 1, 1)
+				SettingsInherited (false)
 			{
 				*FlagFile = 0;
 				*LSFile = 0;
@@ -77,6 +80,8 @@ class HouseTypeExt
 		AircraftTypeClass* GetParadropPlane();
 		bool GetParadropContent(TypeList<TechnoTypeClass*>**, TypeList<int>**);
 		AnimTypeClass* GetParachuteAnim();
+
+		void InheritSettings(HouseTypeClass *pThis);
 	};
 
 	static Container<HouseTypeExt> ExtMap;

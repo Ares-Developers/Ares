@@ -4,7 +4,7 @@
 #include "../Ares.h"
 #include "../Misc/Debug.h"
 
-class DumperTypesCommandClass : public CommandClass
+class DumperTypesCommandClass : public AresCommandClass
 {
 public:
 	//Destructor
@@ -32,6 +32,10 @@ public:
 
 	virtual void Execute(DWORD dwUnk)
 	{
+		if(this->CheckDebugDeactivated()) {
+			return;
+		}
+
 		Debug::Log("Dumping all Types\n\n");
 
 		Debug::Log("Dumping Rules Types\n\n");

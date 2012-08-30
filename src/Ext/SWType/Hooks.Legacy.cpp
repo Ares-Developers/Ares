@@ -1,9 +1,11 @@
 #include "Body.h"
 #include "../Bullet/Body.h"
 #include "../SWType/Body.h"
+#include "../Building/Body.h"
 #include "../../Misc/SWTypes.h"
 #include "../WarheadType/Body.h"
 #include "../BuildingType/Body.h"
+#include "../../Ext/Techno/Body.h"
 #include "../../Misc/SWTypes/Nuke.h"
 #include "../../Utilities/Helpers.Alex.h"
 #include "../../Misc/SWTypes/Dominator.h"
@@ -73,6 +75,12 @@ DEFINE_HOOK(53B080, PsyDom_Fire, 5) {
 						return true;
 					}
 
+					// ignore units with no drivers
+					TechnoExt::ExtData* pExt = TechnoExt::ExtMap.Find(pTechno);
+					if(pExt->DriverKilled) {
+						return true;
+					}
+
 					// SW dependent stuff
 					if(!pData->IsHouseAffected(pFirer, pTechno->Owner)) {
 						return true;
@@ -107,6 +115,12 @@ DEFINE_HOOK(53B080, PsyDom_Fire, 5) {
 					pTechno->SetOwningHouse(pFirer);
 					pTechno->MindControlledByAUnit = pData->Dominator_PermanentCapture.Get();
 
+					// remove old permanent mind control anim
+					if(pTechno->MindControlRingAnim) {
+						pTechno->MindControlRingAnim->UnInit();
+						pTechno->MindControlRingAnim = NULL;
+					}
+
 					// create a permanent capture anim
 					if(pData->Dominator_ControlAnim.Get()) {
 						CoordStruct animCoords;
@@ -129,8 +143,9 @@ DEFINE_HOOK(53B080, PsyDom_Fire, 5) {
 
 			// every techno in this area shall be one with Yuri.
 			if(Helpers::Alex::DistinctCollector<ObjectClass*> *items = new Helpers::Alex::DistinctCollector<ObjectClass*>()) {
-				Helpers::Alex::forEachObjectInRange(&cell, pData->SW_WidthOrRange, pData->SW_Height, items->getCollector());
+				Helpers::Alex::forEachObjectInCellSpread(&cell, pData->SW_WidthOrRange, pData->SW_Height, items->getCollector());
 				items->forEach(Dominate);
+				delete items;
 			}
 
 			// the AI sends all new minions to hunt
@@ -207,7 +222,7 @@ DEFINE_HOOK(539EB0, LightningStorm_Start, 5) {
 
 		// generate random coords if the passed ones are empty
 		if(Coords.X == 0 && Coords.Y == 0) {
-			for(; !MapClass::Instance->CellExists(&Coords);) {
+			while(!MapClass::Instance->CellExists(&Coords)) {
 				Coords.X = (short)ScenarioClass::Instance->Random.RandomRanged(0, MapClass::Instance->unknown_12C);
 				Coords.Y = (short)ScenarioClass::Instance->Random.RandomRanged(0, MapClass::Instance->unknown_130);
 			}
@@ -277,18 +292,15 @@ DEFINE_HOOK(539EB0, LightningStorm_Start, 5) {
 // this is a complete rewrite of LightningStorm::Update.
 DEFINE_HOOK(53A6C0, LightningStorm_Update, 5) {
 	if(SuperClass* pSuper = SW_LightningStorm::CurrentLightningStorm) {
-		
-		// switch lightning (most likely for nuke)
-		int* tmp1 = (int*)0x827FC8;
-		int* tmp2 = (int*)0x827FCC;
-		if(*tmp2 != -1) {
-			int a = *tmp1 + *tmp2;
-			if(a < Unsorted::CurrentFrame) {
+
+		// switch lightning for nuke
+		if(NukeFlash::Duration() != -1) {
+			if(NukeFlash::StartTime() + NukeFlash::Duration() < Unsorted::CurrentFrame) {
 				int status = LightningStorm::Status();
 				if(status == 1) {
 					LightningStorm::Status(2);
-					*tmp1 = Unsorted::CurrentFrame;
-					*tmp2 = 15;
+					NukeFlash::StartTime(Unsorted::CurrentFrame);
+					NukeFlash::Duration(15);
 					ScenarioClass::Instance->UpdateLighting();
 					MapClass::Instance->RedrawSidebar(1);
 				} else if(status == 2) {
@@ -302,33 +314,31 @@ DEFINE_HOOK(53A6C0, LightningStorm_Update, 5) {
 		PsyDom::Update();
 		ChronoScreenEffect::Update();
 
-		// remove all clouds from list that did strike already
-		DynamicVectorClass<AnimClass*>* pAnims0 = (DynamicVectorClass<AnimClass*>*)(0xA9FA18);
-		if(pAnims0->Count > 0) {
-			for(int i=pAnims0->Count-1; i>=0; --i) {
-				if(AnimClass *pAnim = pAnims0->GetItem(i)) {
+		// remove all bolts from the list that are halfway done
+		if(LightningStorm::BoltsPresent->Count > 0) {
+			for(int i=LightningStorm::BoltsPresent->Count-1; i>=0; --i) {
+				if(AnimClass *pAnim = LightningStorm::BoltsPresent->GetItem(i)) {
 					if(pAnim->CurrentFrame >= pAnim->Type->GetImage()->Frames / 2) {
-						pAnims0->RemoveItem(i);
+						LightningStorm::BoltsPresent->RemoveItem(i);
 					}
 				}
 			}
 		}
 
 		// find the clouds that should strike right now
-		DynamicVectorClass<AnimClass*>* pAnims1 = (DynamicVectorClass<AnimClass*>*)(0xA9FA60);
-		for(int i=pAnims1->Count-1; i>=0; --i) {
-			if(AnimClass *pAnim = pAnims1->GetItem(i)) {
+		for(int i=LightningStorm::CloudsManifesting->Count-1; i>=0; --i) {
+			if(AnimClass *pAnim = LightningStorm::CloudsManifesting->GetItem(i)) {
 				if(pAnim->CurrentFrame >= pAnim->Type->GetImage()->Frames / 2) {
 					CoordStruct crdStrike;
 					pAnim->GetCoords(&crdStrike);
 					LightningStorm::Strike2(crdStrike);
-					pAnims1->RemoveItem(i);
+					LightningStorm::CloudsManifesting->RemoveItem(i);
 				}
 			}
 		}
 
-		DynamicVectorClass<AnimClass*>* pAnims2 = (DynamicVectorClass<AnimClass*>*)(0xA9F9D0);
-		if(pAnims2->Count <= 0) {
+		// all currently present clouds have to disappear first
+		if(LightningStorm::CloudsPresent->Count <= 0) {
 			// end the lightning storm
 			if(LightningStorm::TimeToEnd()) {
 				if(LightningStorm::Active()) {
@@ -342,10 +352,10 @@ DEFINE_HOOK(53A6C0, LightningStorm_Update, 5) {
 				LightningStorm::TimeToEnd(false);
 			}
 		} else {
-			for(int i=pAnims2->Count-1; i>=0; --i) {
-				if(AnimClass *pAnim = pAnims2->GetItem(i)) {
+			for(int i=LightningStorm::CloudsPresent->Count-1; i>=0; --i) {
+				if(AnimClass *pAnim = LightningStorm::CloudsPresent->GetItem(i)) {
 					if(pAnim->CurrentFrame >= pAnim->Type->GetImage()->Frames - 1) {
-						pAnims2->RemoveItem(i);
+						LightningStorm::CloudsPresent->RemoveItem(i);
 					}
 				}
 			}
@@ -446,10 +456,9 @@ DEFINE_HOOK(53A6C0, LightningStorm_Update, 5) {
 
 									// is this spot far away from another cloud?
 									if(pData->Weather_Separation > 0) {
-										DynamicVectorClass<AnimClass*>* pAnims = (DynamicVectorClass<AnimClass*>*)(0xA9F9D0);
-										for(int k=0; k<pAnims->Count; ++k) {
+										for(int k=0; k<LightningStorm::CloudsPresent->Count; ++k) {
 											// assume success and disprove.
-											CellStruct *pCell2 = &pAnims->GetItem(k)->GetCell()->MapCoords;
+											CellStruct *pCell2 = &LightningStorm::CloudsPresent->GetItem(k)->GetCell()->MapCoords;
 											int dist = std::abs(pCell2->X - cell.X) + std::abs(pCell2->Y - cell.Y);
 											if(dist < pData->Weather_Separation.Get()) {
 												found = false;
@@ -500,7 +509,7 @@ DEFINE_HOOK(53A140, LightningStorm_Strike, 7) {
 		pCell->GetCoordsWithBridge(&Coords);
 		
 		// create a cloud animation
-		if(Coords != *(CoordStruct*)(0xA9FA30)) {
+		if(Coords != LightningStorm::EmptyCoords) {
 			// select the anim
 			AnimTypeClass* pAnimType = pData->Weather_Clouds.GetItem(ScenarioClass::Instance->Random.Random() % pData->Weather_Clouds.Count);
 
@@ -508,21 +517,18 @@ DEFINE_HOOK(53A140, LightningStorm_Strike, 7) {
 			if(pData->Weather_CloudHeight < 0) {
 				if(pData->Weather_Bolts.Count) {
 					AnimTypeClass* pBoltAnim = pData->Weather_Bolts.GetItem(0);
-					pData->Weather_CloudHeight = (int)Game::F2I(((pBoltAnim->GetImage()->Height / 2) - 0.5) * *(double*)(0xB0CDD8));
+					pData->Weather_CloudHeight = (int)Game::F2I(((pBoltAnim->GetImage()->Height / 2) - 0.5) * LightningStorm::CloudHeightFactor);
 				}
 			}
 			Coords.Z += pData->Weather_CloudHeight;
 
-			// create it and do hacky book keeping.
+			// create the cloud and do some book keeping.
 			AnimClass* pAnim = NULL;
 			GAME_ALLOC(AnimClass, pAnim, pAnimType, &Coords);
 
 			if(pAnim) {
-				DynamicVectorClass<AnimClass*>* pAnims1 = (DynamicVectorClass<AnimClass*>*)(0xA9FA60);
-				DynamicVectorClass<AnimClass*>* pAnims2 = (DynamicVectorClass<AnimClass*>*)(0xA9F9D0);
-
-				pAnims1->AddItem(pAnim);
-				pAnims2->AddItem(pAnim);
+				LightningStorm::CloudsManifesting->AddItem(pAnim);
+				LightningStorm::CloudsPresent->AddItem(pAnim);
 			}
 		}
 
@@ -546,7 +552,7 @@ DEFINE_HOOK(53A300, LightningStorm_Strike2, 5) {
 		CellClass* pCell = MapClass::Instance->GetCellAt(&Coords);
 		pCell->GetCoordsWithBridge(&Coords);
 
-		if(Coords != *(CoordStruct*)(0xA9FA30)) {
+		if(Coords != LightningStorm::EmptyCoords) {
 
 			// create a bolt animation
 			if(pData->Weather_Bolts.Count) {
@@ -557,8 +563,7 @@ DEFINE_HOOK(53A300, LightningStorm_Strike2, 5) {
 				GAME_ALLOC(AnimClass, pAnim, pAnimType, &Coords);
 				
 				if(pAnim) {
-					DynamicVectorClass<AnimClass*>* pAnims = (DynamicVectorClass<AnimClass*>*)(0xA9FA18);
-					pAnims->AddItem(pAnim);
+					LightningStorm::BoltsPresent->AddItem(pAnim);
 				}
 			}
 			
@@ -587,7 +592,7 @@ DEFINE_HOOK(53A300, LightningStorm_Strike2, 5) {
 					break;
 				default:
 				break;
-		        }
+				}
 			}
 
 			// account for lightning rods
@@ -829,9 +834,9 @@ DEFINE_HOOK(467E59, BulletClass_Update_NukeBall, 5) {
 					ScenarioClass::Instance->Timer4.unknown = R->Stack<int>(0x28);
 					ScenarioClass::Instance->Timer4.TimeLeft = 1;
 
-					// hacky stuff
-					*(int*)0x827FC8 = Unsorted::CurrentFrame;
-					*(int*)0x827FCC = 30;
+					// enable the nuke flash
+					NukeFlash::StartTime(Unsorted::CurrentFrame);
+					NukeFlash::Duration(30);
 
 					SWTypeExt::ChangeLighting(pData->NukeSW);
 					MapClass::Instance->RedrawSidebar(1);
@@ -882,6 +887,36 @@ DEFINE_HOOK(7188F2, TeleportLocomotionClass_Unwarp_SinkJumpJets, 7) {
 			if(pUnit->Type->SpeedType == st_Hover && pUnit->Type->JumpJet) {
 				return 0x718A66;
 			}
+		}
+	}
+
+	return 0;
+}
+
+DEFINE_HOOK(446AAF, BuildingClass_Place_SkipFreeUnits, 6)
+{
+	// allow free units and non-separate aircraft to be created
+	// only once.
+	GET(BuildingClass*, pBld, EBP);
+	BuildingExt::ExtData* pExt = BuildingExt::ExtMap.Find(pBld);
+	if(!pExt->FreeUnits_Done) {
+		pExt->FreeUnits_Done = true;
+		return 0;
+	}
+
+	// skip handling free units
+	return 0x446FB6;
+}
+
+DEFINE_HOOK(71AE85, TemporalClass_CanWarpTarget_PreventChronoBuilding, A)
+{
+	// prevent warping buildings that are about to be chronoshifted.
+	// if such building is attacked, it will be removed by the chronosphere
+	// and it won't come back and the affected player can't be defeated.
+	GET(BuildingClass*, pBld, ESI);
+	if(BuildingExt::ExtData* pExt = BuildingExt::ExtMap.Find(pBld)) {
+		if(pExt->AboutToChronoshift) {
+			return 0x71AE93;
 		}
 	}
 

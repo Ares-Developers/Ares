@@ -3,16 +3,24 @@
 #include <WeaponTypeClass.h>
 #include <AnimClass.h>
 #include <InfantryClass.h>
+#include <OverlayTypeClass.h>
 #include <ScenarioClass.h>
 #include <HouseClass.h>
 #include "Debug.h"
+#include "EMPulse.h"
 #include "../Ext/Rules/Body.h"
 #include "../Ext/HouseType/Body.h"
 #include "../Ext/Side/Body.h"
+#include "../Ext/TechnoType/Body.h"
+#include "../Ext/BuildingType/Body.h"
 #include <vector>
 #include <algorithm>
 #include <string>
 #include "../Ares.version.h"
+
+static bool IsNonemptyValue(const char *Value) {
+	return strlen(Value) && _strcmpi(Value, "<none>") && _strcmpi(Value, "none");
+};
 
 DEFINE_HOOK(477007, INIClass_GetSpeedType, 8)
 {
@@ -26,7 +34,7 @@ DEFINE_HOOK(477007, INIClass_GetSpeedType, 8)
 			UnitTypeClass::LoadFromINI overrides it to (this->Crusher ? Track : Wheel) just before reading its SpeedType
 			so we should not alert if we're responding to a TType read and our subject is a UnitType, or all VehicleTypes without an explicit ST declaration will get dinged
 		*/
-		if(strlen(Value) && strcmpi(Value, "<none>")) {
+		if(IsNonemptyValue(Value)) {
 			if(caller != 0x7121E5 || R->EBP<TechnoTypeClass *>()->WhatAmI() != abs_UnitType) {
 				Debug::INIParseFailed(Section, "SpeedType", Value);
 			}
@@ -40,7 +48,7 @@ DEFINE_HOOK(474E8E, INIClass_GetMovementZone, 5)
 	if(R->EAX() == -1) {
 		GET_STACK(const char *, Section, 0x2C);
 		LEA_STACK(const char *, Value, 0x8);
-		if(strlen(Value)) {
+		if(IsNonemptyValue(Value)) {
 			Debug::INIParseFailed(Section, "MovementZone", Value);
 		}
 	}
@@ -52,7 +60,7 @@ DEFINE_HOOK(47542A, INIClass_GetArmorType, 6)
 	if(R->EAX() == -1) {
 		GET_STACK(const char *, Section, 0x8C);
 		LEA_STACK(const char *, Value, 0x8);
-		if(strlen(Value)) {
+		if(IsNonemptyValue(Value)) {
 			Debug::INIParseFailed(Section, "Armor", Value);
 		}
 	}
@@ -64,7 +72,7 @@ DEFINE_HOOK(474DEE, INIClass_GetFoundation, 7)
 	if(R->EAX() == -1) {
 		GET_STACK(const char *, Section, 0x2C);
 		LEA_STACK(const char *, Value, 0x8);
-		if(_strcmpi(Value, "Custom")) {
+		if(IsNonemptyValue(Value) && _strcmpi(Value, "Custom")) {
 			Debug::INIParseFailed(Section, "Foundation", Value);
 		}
 	}
@@ -79,6 +87,13 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 		(e.g., to make sure crevio hasn't stuck a MovementZone=Retarded on anything)
 		to reduce chances of crashing later
 	*/
+
+	// create an array of crew for faster lookup
+	VectorClass<InfantryTypeClass*> Crews(SideClass::Array->Count, NULL);
+	for(int i=0; i<SideClass::Array->Count; ++i) {
+		Crews[i] = SideExt::ExtMap.Find(SideClass::Array->Items[i])->Crew;
+	}
+
 	for(int i = 0; i < TechnoTypeClass::Array->Count; ++i) {
 		TechnoTypeClass *Item = reinterpret_cast<TechnoTypeClass *>(TechnoTypeClass::Array->Items[i]);
 
@@ -98,6 +113,52 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 
 		if(Item->Passengers > 0 && Item->SizeLimit < 1) {
 			Debug::DevLog(Debug::Error, "[%s]Passengers=%d and SizeLimit=%d!\n", Item->ID, Item->Passengers, Item->SizeLimit);
+		}
+
+		auto pData = TechnoTypeExt::ExtMap.Find(Item);
+		if(Item->PoweredUnit && pData->PoweredBy.Count) {
+			Debug::DevLog(Debug::Error, "[%s] uses both PoweredUnit=yes and PoweredBy=!\n", Item->ID);
+			Item->PoweredUnit = false;
+		}
+		if(auto PowersUnit = Item->PowersUnit) {
+			auto pExtraData = TechnoTypeExt::ExtMap.Find(PowersUnit);
+			if(pExtraData->PoweredBy.Count) {
+				Debug::DevLog(Debug::Error, "[%s]PowersUnit=%s, but [%s] uses PoweredBy=!\n", Item->ID, PowersUnit->ID, PowersUnit->ID);
+				Item->PowersUnit = NULL;
+			}
+		}
+
+		// if empty, set survivor pilots to the corresponding side's Crew
+		{
+			int count = std::min(pData->Survivors_Pilots.Count, SideClass::Array->Count);
+			for(int j=0; j<count; ++j) {
+				if(!pData->Survivors_Pilots[j]) {
+					pData->Survivors_Pilots[j] = Crews[j];
+				}
+			}
+		}
+
+		// set the default value, if not already overridden
+		pData->ImmuneToEMP.BindEx(!EMPulse::IsTypeEMPProne(Item));
+
+		for(signed int i = pData->ClonedAt.Count - 1; i >= 0; --i) {
+			auto Cloner = pData->ClonedAt[i];
+			if(Cloner->Factory) {
+				pData->ClonedAt.RemoveItem(i);
+				Debug::DevLog(Debug::Error, "[%s]ClonedAt includes %s, but %s has Factory= settings. This combination is not supported.\n"
+						"(Protip: Factory= is not what controls unit exit behaviour, WeaponsFactory= and GDI/Nod/YuriBarracks= is.)\n"
+					, Item->ID, Cloner->ID, Cloner->ID);
+			}
+		}
+
+		if(!IsFoot) {
+			auto BItem = specific_cast<BuildingTypeClass *>(Item);
+			auto pBData = BuildingTypeExt::ExtMap.Find(BItem);
+			if(!!pBData->CloningFacility && BItem->Factory) {
+				pBData->CloningFacility = false;
+				Debug::DevLog(Debug::Error, "[%s] cannot have both CloningFacility= and Factory=.\n"
+					, Item->ID);
+			}
 		}
 	}
 
@@ -122,10 +183,21 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 
 		for(auto it = LimitedClasses.begin(); it != LimitedClasses.end(); ++it) {
 			if(it->second > 512) {
-				Debug::DevLog(Debug::Warning, "The [%s] list contains more than 512 entries."
+				Debug::DevLog(Debug::Warning, "The [%s] list contains more than 512 entries. "
 					"This might result in unexpected behaviour and crashes.\n", it->first);
 			}
 		}
+	}
+
+	for(auto i = 0; i < RulesClass::Instance->BuildConst.Count; ++i) {
+		auto BC = RulesClass::Instance->BuildConst.GetItem(i);
+		if(!BC->AIBuildThis) {
+			Debug::DevLog(Debug::Warning, "[AI]BuildConst= includes [%s], which doesn't have AIBuildThis=yes!\n", BC->ID);
+		}
+	}
+
+	if(OverlayTypeClass::Array->Count > 255) {
+		Debug::DevLog(Debug::Warning, "Only 255 OverlayTypes are supported.\n");
 	}
 
 	if(Ares::bStrictParser && Debug::bParserErrorDetected) {
@@ -333,67 +405,6 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 	return 0;
 }
 
-// #917
-DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateAIBuildables, 6) {
-	bool allIsWell = true;
-	const char *errorMsg = "AI House of country [%s] cannot build any object in %s. The AI ain't smart enough for that.\n";
-	for(int i = 0; i < HouseClass::Array->Count; ++i) {
-		HouseClass* curHouse = HouseClass::Array->GetItem(i);
-		if(!curHouse->ControlledByHuman() && !curHouse->IsNeutral()) {
-			auto pArray = &RulesClass::Instance->BaseUnit;
-			bool canBuild = false;
-			for(int i = 0; i < pArray->Count; ++i) {
-				auto Item = pArray->GetItem(i);
-				if(curHouse->CanExpectToBuild(Item)) {
-					canBuild = true;
-					break;
-				}
-			}
-			if(!canBuild) {
-				Debug::DevLog(Debug::Error, errorMsg, curHouse->Type->ID, "BaseUnit");
-				allIsWell = false;
-			}
-
-			auto CheckList = [curHouse, &allIsWell, errorMsg]
-					(DynamicVectorClass<BuildingTypeClass *> *const List, char * const ListName, bool Fatal) -> void {
-				if(!curHouse->FirstBuildableFromArray(List)) {
-					Debug::DevLog(Debug::Error, errorMsg, curHouse->Type->ID, ListName);
-					Debug::Log("\tThe list %s contains the following items:\n", ListName);
-					for(int i = 0; i < List->Count; ++i) {
-						Debug::Log("\t#%02d: %s\n", i, List->GetItem(i)->ID);
-					}
-					if(Fatal) {
-						allIsWell = false;
-					}
-				}
-			};
-
-			CheckList(&RulesClass::Instance->Shipyard, "Shipyard", true);
-			CheckList(&RulesClass::Instance->BuildConst, "BuildConst", true);
-			CheckList(&RulesClass::Instance->BuildPower, "BuildPower", true);
-			CheckList(&RulesClass::Instance->BuildRefinery, "BuildRefinery", true);
-			CheckList(&RulesClass::Instance->BuildBarracks, "BuildBarracks", true);
-			CheckList(&RulesClass::Instance->BuildTech, "BuildTech", true);
-			CheckList(&RulesClass::Instance->BuildWeapons, "BuildWeapons", true);
-			CheckList(&RulesClass::Instance->BuildRadar, "BuildRadar", false);
-			CheckList(&RulesClass::Instance->ConcreteWalls, "ConcreteWalls", false);
-			CheckList(&RulesClass::Instance->BuildNavalYard, "BuildNavalYard", true);
-			CheckList(&RulesClass::Instance->BuildDummy, "BuildDummy", false);
-
-			auto pCountryData = HouseTypeExt::ExtMap.Find(curHouse->Type);
-			CheckList(&pCountryData->Powerplants, "Powerplants", true);
-
-			auto pSide = SideClass::Array->GetItem(curHouse->Type->SideIndex);
-			auto pSideData = SideExt::ExtMap.Find(pSide);
-			CheckList(&pSideData->BaseDefenses, "Base Defenses", false);
-		}
-	}
-	if(!allIsWell) {
-//		Debug::FatalErrorAndExit("One or more errors were detected while parsing the INI files.\r\n"
-//			"Please review the contents of the debug log and correct them.");
-	}
-	return 0;
-}
 
 DEFINE_HOOK(55AFB3, LogicClass_Update_1000, 6)
 {
@@ -437,3 +448,25 @@ DEFINE_HOOK(55AFB3, LogicClass_Update_1000, 6)
 	return 0;
 }
 
+DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateBuildCat, 6) {
+	for(int i = 0; i < BuildingTypeClass::Array->Count; ++i) {
+		auto B = BuildingTypeClass::Array->GetItem(i);
+		if(B->TechLevel < 0 || B->TechLevel > RulesClass::Instance->TechLevel) {
+			continue;
+		}
+		if(B->BuildCat == bcat_DontCare) {
+			B->BuildCat = ((B->SuperWeapon != -1) || B->IsBaseDefense || B->Wall)
+				? bcat_Combat
+				: bcat_Infrastructure
+			;
+			const char *catName = (B->BuildCat == bcat_Combat)
+				? "Combat"
+				: "Infrastructure"
+			;
+			Debug::DevLog(Debug::Warning, "Building Type [%s] does not have a valid BuildCat set!\n"
+				"It was reset to %s, but you should really specify it explicitly.\n"
+				, B->ID, catName);
+		}
+	}
+	return 0;
+}

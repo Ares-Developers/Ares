@@ -8,79 +8,11 @@
 #include "../Ext/TechnoType/Body.h"
 #include "../Ext/SWType/Body.h"
 
-DEFINE_HOOK(533FD0, AllocateSurfaces, 0)
-{
-	GET(RectangleStruct *, rect_Hidden, ECX);
-	GET(RectangleStruct *, rect_Composite, EDX);
-	GET_STACK(RectangleStruct *, rect_Tile, 0x4);
-	GET_STACK(RectangleStruct *, rect_Sidebar, 0x8);
-	GET_STACK(byte, flag, 0xC);
-
-	RectangleStruct *rect_Alternate = rect_Hidden;
-
-#define DELSURFACE(surface) \
-	if(surface) { \
-		GAME_DEALLOC(surface); \
-		surface = 0; \
-	}
-
-	DELSURFACE(DSurface::Alternate);
-	DELSURFACE(DSurface::Hidden);
-	DELSURFACE(DSurface::Composite);
-	DELSURFACE(DSurface::Tile);
-	DELSURFACE(DSurface::Sidebar);
-
-#define ALLOCSURFACE(surface, mem, f3d) \
-	if(rect_ ## surface->Width > 0 && rect_ ## surface->Height > 0) { \
-		Ares::GlobalControls::SurfaceConfig *SConfig = &Ares::GlobalControls::GFX_S_ ## surface; \
-		byte Memory =  SConfig->Memory; \
-		if(Memory == 0xFF) { \
-			Memory = mem; \
-		} \
-		byte Force3D =  SConfig->Force3D; \
-		if(Force3D == 0xFF) { \
-			Force3D = f3d; \
-		} \
-		DSurface *S; \
-		GAME_ALLOC(DSurface, S, rect_ ## surface->Width, rect_ ## surface->Height, !!Memory, !!Force3D); \
-		if(!S) { \
-			Debug::FatalErrorAndExit("Failed to allocate " str(surface) " - cannot continue."); \
-		} \
-		DSurface:: ## surface = S; \
-		S->Fill(0); \
-	}
-
-	if(flag) {
-		ALLOCSURFACE(Hidden, 0, 0);
-	}
-
-	ALLOCSURFACE(Composite, !Game::bVideoBackBuffer, 1);
-	ALLOCSURFACE(Tile, !Game::bVideoBackBuffer, 1);
-
-	if(DSurface::Composite->VRAMmed ^ DSurface::Tile->VRAMmed) {
-		DELSURFACE(DSurface::Composite);
-		DELSURFACE(DSurface::Tile);
-		GAME_ALLOC(DSurface, DSurface::Composite, rect_Composite->Width, rect_Composite->Height, 1, 1);
-		GAME_ALLOC(DSurface, DSurface::Tile, rect_Tile->Width, rect_Tile->Height, 1, 1);
-	}
-
-	ALLOCSURFACE(Sidebar, !Game::bAllowVRAMSidebar, 0);
-
-	if(!flag) {
-		ALLOCSURFACE(Hidden, 0, 0);
-	}
-
-	ALLOCSURFACE(Alternate, 1, 0);
-
-	return 0x53443E;
-}
-
 DEFINE_HOOK(7C89D4, DirectDrawCreate, 6)
 {
 	R->Stack<DWORD>(0x4, Ares::GlobalControls::GFX_DX_Force);
 	return 0;
 }
-
 
 DEFINE_HOOK(7B9510, WWMouseClass_DrawCursor_V1, 6)
 //A_FINE_HOOK_AGAIN(7B94B2, WWMouseClass_DrawCursor_V1, 6)
@@ -120,20 +52,19 @@ DEFINE_HOOK(537BC0, Game_MakeScreenshot, 0)
 //			Surface->BlitPart(&DestRect, DSurface::Primary, &ClipRect, 0, 1);
 
 			if(WORD * buffer = reinterpret_cast<WORD *>(Surface->Lock(0, 0))) {
-				int idx = -1;
-				char fname[16];
-				CCFileClass *ScreenShot = NULL;
-				do {
-					if(ScreenShot) {
-						delete ScreenShot;
-						ScreenShot = NULL;
-					}
-					++idx;
-					_snprintf(fname, 16, "SCRN%04d.bmp", idx);
-					ScreenShot = new CCFileClass(fname);
-				} while(ScreenShot->Exists(0));
 
-				ScreenShot->OpenEx(fname, eFileMode::Write);
+				char fName[0x80];
+
+				SYSTEMTIME time;
+				GetLocalTime(&time);
+
+				_snprintf(fName, 0x80, "SCRN.%04u%02u%02u-%02u%02u%02u-%05u.BMP",
+					time.wYear, time.wMonth, time.wDay, time.wHour, time.wMinute, time.wSecond, time.wMilliseconds);
+
+				CCFileClass *ScreenShot = NULL;
+				GAME_ALLOC(CCFileClass, ScreenShot, "\0");
+
+				ScreenShot->OpenEx(fName, eFileMode::Write);
 
 				#pragma pack(push, 1)
 				struct bmpfile_full_header {
@@ -195,9 +126,9 @@ DEFINE_HOOK(537BC0, Game_MakeScreenshot, 0)
 				ScreenShot->WriteBytes(pixelData, arrayLen * 2);
 				ScreenShot->Close();
 				delete[] pixelData;
-				delete ScreenShot;
+				GAME_DEALLOC(ScreenShot);
 
-				Debug::Log("Wrote screenshot to file %s\n", fname);
+				Debug::Log("Wrote screenshot to file %s\n", fName);
 				Surface->Unlock();
 			}
 
@@ -209,3 +140,28 @@ DEFINE_HOOK(537BC0, Game_MakeScreenshot, 0)
 	return 0x537DC9;
 }
 
+DEFINE_HOOK(4F4583, GScreenClass_DrawOnTop_TheDarkSideOfTheMoon, 6)
+{
+	if(!Ares::bStable) {
+		Ares::bStableNotification = true;
+
+		auto wanted = Drawing::GetTextDimensions(Ares::StabilityWarning);
+
+		auto h = DSurface::Composite->GetHeight();
+		RectangleStruct rect = {0, h - wanted.Height - 32 /** adv comm bar */, wanted.Width, wanted.Height};
+
+		DSurface::Composite->FillRect(&rect, COLOR_BLACK);
+		DSurface::Composite->DrawTextA(Ares::StabilityWarning, 0, rect.Y, COLOR_RED);
+	}
+	return 0;
+}
+
+DEFINE_HOOK(78997B, sub_789960_RemoveWOLResolutionCheck, 0)
+{
+	return 0x789A58;
+}
+
+DEFINE_HOOK(4BA61B, DSurface_CTOR_SkipVRAM, 6)
+{
+	return 0x4BA623;
+}

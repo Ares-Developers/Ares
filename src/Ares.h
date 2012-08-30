@@ -49,7 +49,15 @@ public:
 
 	static bool bStrictParser;
 
+	static bool bAllowAIControl;
+
 	static int TrackIndex;
+
+	static bool bStable;
+	static bool bStableNotification;
+	static void UpdateStability();
+
+	static const wchar_t StabilityWarning[BUFLEN];
 
 	static DWORD readLength;
 	static char readBuffer[BUFLEN];
@@ -97,6 +105,8 @@ public:
 		static bool Initialized;
 		static bool AllowParallelAIQueues;
 
+		static bool DebugKeysEnabled;
+
 		static byte GFX_DX_Force;
 
 		static std::bitset<3> AllowBypassBuildLimit;
@@ -106,14 +116,6 @@ public:
 			byte Force3D;
 			byte Memory;
 		};
-
-		static SurfaceConfig GFX_S_Alternate;
-		static SurfaceConfig GFX_S_Composite;
-		static SurfaceConfig GFX_S_Hidden;
-		static SurfaceConfig GFX_S_Hidden_2;
-		static SurfaceConfig GFX_S_Primary;
-		static SurfaceConfig GFX_S_Sidebar;
-		static SurfaceConfig GFX_S_Tile;
 	};
 
 	class UISettings {

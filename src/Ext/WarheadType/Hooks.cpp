@@ -78,14 +78,14 @@ DEFINE_HOOK(46920B, BulletClass_Fire, 6) {
 
 // issue 472: deglob WarpAway
 DEFINE_HOOK(71A87B, TemporalClass_Update_CacheWH, 6) {
-	WarheadTypeExt::Temporal_WH = R->EAX<WeaponTypeClass *> ()->Warhead;
+	GET(WeaponTypeClass *, W, EAX);
+	WarheadTypeExt::Temporal_WH = W->Warhead;
 	return 0;
 }
 
 // issue 472: deglob WarpAway
 DEFINE_HOOK(71A900, TemporalClass_Update_WarpAway, 6) {
-	WarheadTypeExt::ExtData *pData = WarheadTypeExt::ExtMap.Find(WarheadTypeExt::Temporal_WH);
-
+	auto pData = WarheadTypeExt::ExtMap.Find(WarheadTypeExt::Temporal_WH);
 	R->EDX<AnimTypeClass *> (pData->Temporal_WarpAway);
 	return 0x71A906;
 }
@@ -118,9 +118,9 @@ DEFINE_HOOK(7384BD, UnitClass_ReceiveDamage_OreMinerUnderAttack, 6)
 	GET_STACK(WarheadTypeClass *, WH, STACK_OFFS(0x44, -0xC));
 
 	auto pData = WarheadTypeExt::ExtMap.Find(WH);
-	return (pData->Malicious)
-		? 0
-		: 0x738535
+	return !pData->Malicious
+		? 0x738535
+		: 0
 	;
 }
 
@@ -128,7 +128,7 @@ DEFINE_HOOK(4F94A5, HouseClass_BuildingUnderAttack, 6)
 {
 	GET_STACK(DWORD, Caller, 0x14);
 	if(Caller == 0x442980) {
-		Debug::DumpStack(R, 0xF0, 0xA0);
+		//Debug::DumpStack(R, 0xF0, 0xA0);
 		GET_STACK(WarheadTypeClass *, WH, 0x14 + 0xA4 + 0xC);
 		if(auto pData = WarheadTypeExt::ExtMap.Find(WH)) {
 			if(!pData->Malicious) {

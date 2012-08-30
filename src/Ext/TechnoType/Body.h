@@ -100,6 +100,13 @@ public:
 
 		ValueableIdx<int, VocClass> VoiceRepair;
 
+		ValueableIdx<int, VocClass> HijackerEnterSound;
+		ValueableIdx<int, VocClass> HijackerLeaveSound;
+		Valueable<int> HijackerKillPilots;
+		Valueable<bool> HijackerBreakMindControl;
+		Valueable<bool> HijackerAllowed;
+		Valueable<bool> HijackerOneTime;
+
 		Customizable<UnitTypeClass *> WaterImage;
 
 		char CameoPCX[0x20];
@@ -117,6 +124,9 @@ public:
 		// issue #617
 		DynamicVectorClass<BuildingTypeClass*> PoweredBy;  //!< The buildingtype this unit is powered by or NULL.
 
+		DynamicVectorClass<BuildingTypeClass *> BuiltAt;
+		Valueable<bool> Cloneable;
+		DynamicVectorClass<BuildingTypeClass *> ClonedAt;
 		//#203 Bounty
 
 		BountyClass Bounty;
@@ -124,10 +134,12 @@ public:
 		Nullable<bool> CarryallAllowed;
 		Nullable<int> CarryallSizeLimit;
 
+		Valueable<bool> ImmuneToAbduction; //680, 1362
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			Survivors_PilotChance (NULL),
 			Survivors_PassengerChance (NULL),
-			Survivors_PilotCount (0),
+			Survivors_PilotCount (-1),
 			PrerequisiteTheaters (0xFFFFFFFF),
 			Secret_RequiredHouses (0),
 			Secret_ForbiddenHouses (0),
@@ -167,10 +179,20 @@ public:
 			MindControlExperienceSelfModifier (0.0F),
 			MindControlExperienceVictimModifier (1.0F),
 			VoiceRepair (-1),
+			HijackerEnterSound (-1),
+			HijackerLeaveSound (-1),
+			HijackerKillPilots (0),
+			HijackerBreakMindControl (true),
+			HijackerAllowed (true),
+			HijackerOneTime (false),
 			WaterImage (NULL),
 			CanBeReversed (true),
 			RadarJamRadius (0),
 			PassengerTurret (false),
+			Cloneable (true),
+			CarryallAllowed(),
+			CarryallSizeLimit (),
+			ImmuneToAbduction(false)
 
 			Bounty(),
 
@@ -197,6 +219,8 @@ public:
 
 		bool CameoIsElite();
 
+		bool CanBeBuiltAt(BuildingTypeClass * FactoryType);
+
 		bool CarryallCanLift(UnitClass * Target);
 };
 
@@ -205,7 +229,6 @@ public:
 	static void PointerGotInvalid(void *ptr);
 
 //	static void ReadWeapon(WeaponStruct *pWeapon, const char *prefix, const char *section, CCINIClass *pINI);
-	static void InferEMPImmunity(TechnoTypeClass *Type, CCINIClass *pINI);
 };
 
 #endif

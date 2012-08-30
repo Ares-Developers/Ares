@@ -204,24 +204,6 @@ A_FINE_HOOK(74036E, FooClass_GetCursorOverObject, 5)
 }
 */
 
-// alternative factory search - instead of same [Type], use any of same Factory= and Naval=
-DEFINE_HOOK(4444E2, BuildingClass_KickOutUnit, 6)
-{
-	GET(BuildingClass *, Src, ESI);
-	GET(BuildingClass *, Tst, EBP);
-
-	if(Src != Tst
-	 && Tst->GetCurrentMission() == mission_Guard
-	 && Tst->Type->Factory == Src->Type->Factory
-	 && Tst->Type->Naval == Src->Type->Naval
-	 && !Tst->Factory)
-	{
-		return 0x44451F;
-	}
-
-	return 0x444508;
-}
-
 // 42461D, 6
 // 42463A, 6
 // correct warhead for animation damage
@@ -508,33 +490,6 @@ A_FINE_HOOK(67E75B, LoadGame_StallUI, 6)
 }
 */
 
-
-DEFINE_HOOK(505B36, HouseClass_GenerateAIBuildList_C0, 8)
-{
-	LEA_STACK(DynamicVectorClass<BuildingTypeClass *> *, PlannedBase, 0x14);
-	return PlannedBase->Count < 1
-	 ? 0x505C95
-	 : 0
-	;
-}
-
-DEFINE_HOOK(505B92, HouseClass_GenerateAIBuildList_C1, 7)
-{
-	LEA_STACK(DynamicVectorClass<BuildingTypeClass *> *, PlannedBase, 0x14);
-	return PlannedBase->Count < 2
-	 ? 0x505C95
-	 : 0
-	;
-}
-
-DEFINE_HOOK(505BE1, HouseClass_GenerateAIBuildList_C2, 7)
-{
-	LEA_STACK(DynamicVectorClass<BuildingTypeClass *> *, PlannedBase, 0x14);
-	return PlannedBase->Count < 3
-	 ? 0x505C95
-	 : 0
-	;
-}
 
 DEFINE_HOOK(4242CA, AnimClass_Update_FixIE_TrailerSeperation, 6)
 {
@@ -872,4 +827,136 @@ DEFINE_HOOK_AGAIN(65EC4A, TeamTypeClass_ValidateHouse, 6)
 
 	// no.
 	return (R->get_Origin() == 0x65D8FB) ? 0x65DD1B : 0x65F301;
+}
+
+DEFINE_HOOK(70CBDA, TechnoClass_DealParticleDamage, 6)
+{
+	GET(TechnoClass *, pSource, EDX);
+	R->Stack<HouseClass *>(0xC, pSource->Owner);
+	return 0;
+}
+
+DEFINE_HOOK(62CDE8, ParticleClass_Update_Fire, 5)
+{
+	GET(ParticleClass *, pParticle, ESI);
+	if(auto System = pParticle->ParticleSystem) {
+		if(auto Owner = System->Owner) {
+			R->Stack<TechnoClass *>(0x4, Owner);
+			R->Stack<HouseClass *>(0x10, Owner->Owner);
+		}
+	}
+	return 0;
+}
+
+DEFINE_HOOK(62C2ED, ParticleClass_Update_Gas, 6)
+{
+	GET(ParticleClass *, pParticle, EBP);
+	if(auto System = pParticle->ParticleSystem) {
+		if(auto wtf = System->unknown_FC) {
+			auto pWTF = reinterpret_cast<HouseClass *>(wtf);
+			auto idx = HouseClass::Array->FindItemIndex(&pWTF);
+			auto pHouseWTF = (idx == -1)
+				? NULL
+				: HouseClass::Array->GetItem(idx)
+			;
+			Debug::Log("ParticleSystem [%s] has field 0xFC set to %p, which matches pointer for house %s\n",
+				System->Type->ID, wtf, pHouseWTF ? pHouseWTF->Type->ID : "UNKNOWN"
+			);
+		}
+		if(auto Owner = System->Owner) {
+			R->Stack<TechnoClass *>(0x0, Owner);
+			R->Stack<HouseClass *>(0xC, Owner->Owner);
+		}
+	}
+	return 0;
+}
+
+// #1708: this mofo was raising an event without checking whether
+// there is a valid tag. this is the only faulty call of this kind.
+DEFINE_HOOK(4692A2, BulletClass_DetonateAt_RaiseAttackedByHouse, 6)
+{
+	GET(ObjectClass*, pVictim, EDI);
+	return pVictim->AttachedTag ? 0 : 0x4692BD;
+}
+
+
+DEFINE_HOOK(47243F, CaptureManagerClass_DecideUnitFate_BuildingFate, 6) {
+	GET(TechnoClass *, pVictim, EBX);
+	if(specific_cast<BuildingClass *>(pVictim)) {
+		// 1. add to team and other fates don't really make sense for buildings
+		// 2. BuildingClass::Mission_Hunt() implementation is to do nothing!
+		pVictim->QueueMission(mission_Guard, 0);
+		return 0x472604;
+	}
+	return 0;
+}
+
+DEFINE_HOOK(4471D5, BuildingClass_Sell_DetonateNoBuildup, 6)
+{
+	GET(BuildingClass *, pStructure, ESI);
+	if(auto Bomb = pStructure->AttachedBomb) {
+		Bomb->Detonate();
+	}
+
+	return 0;
+}
+
+DEFINE_HOOK(44A1FF, BuildingClass_Mi_Selling_DetonatePostBuildup, 6) {
+	GET(BuildingClass *, pStructure, EBP);
+	if(auto Bomb = pStructure->AttachedBomb) {
+		Bomb->Detonate();
+	}
+
+	return 0;
+}
+
+DEFINE_HOOK(4D9F7B, FootClass_Sell_Detonate, 6)
+{
+	GET(FootClass *, pSellee, ESI);
+	if(auto Bomb = pSellee->AttachedBomb) {
+		Bomb->Detonate();
+	}
+	return 0;
+}
+
+DEFINE_HOOK(739956, UnitClass_Deploy_TransferIvanBomb, 6)
+{
+	GET(UnitClass *, pUnit, EBP);
+	GET(BuildingClass *, pStructure, EBX);
+
+	TechnoExt::TransferIvanBomb(pUnit, pStructure);
+
+	return 0;
+}
+
+DEFINE_HOOK(44A03C, BuildingClass_Mi_Selling_TransferIvanBomb, 6)
+{
+	GET(BuildingClass *, pStructure, EBP);
+	GET(UnitClass *, pUnit, EBX);
+
+	TechnoExt::TransferIvanBomb(pStructure, pUnit);
+
+	return 0;
+}
+
+// do not let deactivated teleporter units move, otherwise
+// they could block a cell forever 
+DEFINE_HOOK(71810D, TeleportLocomotionClass_ILocomotion_MoveTo_Deactivated, 6)
+{
+	GET(FootClass*, pFoot, ECX);
+	return (!pFoot->Deactivated && pFoot->Locomotor->Is_Powered()) ? 0 : 0x71820F;
+}
+
+// issues 1002020, 896263, 895954: clear stale mind control pointer to prevent
+// crashes when accessing properties of the destroyed controllers.
+DEFINE_HOOK(7077EE, TechnoClass_PointerGotInvalid_ResetMindControl, 6)
+{
+	GET(TechnoClass*, pThis, ESI);
+	GET(void*, ptr, EBP);
+
+	if(pThis->MindControlledBy == ptr) {
+		pThis->MindControlledBy = NULL;
+	}
+
+	return 0;
 }

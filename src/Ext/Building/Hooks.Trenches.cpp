@@ -111,7 +111,7 @@ DEFINE_HOOK(44725F, BuildingClass_GetCursorOverObject_TargetABuilding, 5)
 	return 0;
 }
 
-DEFINE_HOOK(443414, BuildingClass_ClickedMission, 6)
+DEFINE_HOOK(443414, BuildingClass_ClickedAction, 6)
 {
 	GET(eAction, Action, EAX);
 	GET(BuildingClass *, pThis, ECX);

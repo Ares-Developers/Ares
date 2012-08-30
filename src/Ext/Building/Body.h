@@ -6,6 +6,7 @@
 #include <TechnoClass.h>
 #include <set>
 
+#include "../BuildingType/Body.h"
 #include "../_Container.hpp"
 #include "../../Ares.h"
 
@@ -27,9 +28,36 @@ public:
 		int DamageReserve;					//current flat reservoir
 
 		// constructor
-		cPrismForwarding() : SupportTarget(NULL), PrismChargeDelay(0), ModifierReserve(0.0), DamageReserve(0) {
+		cPrismForwarding() : Senders(), SupportTarget(NULL), PrismChargeDelay(0), ModifierReserve(0.0), DamageReserve(0){
 			this->Senders.Clear();
 		};
+
+		void AnnounceInvalidPointer(void * ptr, Extension<BuildingClass> *container) {
+			// verify that ptr points to an existing object that is a building without
+			// accessing any of its fields or members.
+			if(auto pExt = ExtMap.Find(static_cast<BuildingClass*>(ptr))) {
+				auto bld = pExt->AttachedToObject;
+				if(bld == this->SupportTarget) {
+					Debug::Log("Should remove my support target\n");
+				}
+				auto senderIdx = this->Senders.FindItemIndex(&bld);
+				if(senderIdx != -1) {
+					Debug::Log("Should remove my sender #%d\n", senderIdx);
+				}
+				BuildingTypeExt::cPrismForwarding::RemoveFromNetwork(bld, true);
+				if(bld == this->SupportTarget) {
+					_snprintf(Ares::readBuffer, Ares::readLength, "Prism Forwarder (ExtData %p) failed to remove support target\n", container);
+					Debug::FatalError(true);
+					Debug::Exit();
+				}
+				senderIdx = this->Senders.FindItemIndex(&bld);
+				if(senderIdx != -1) {
+					_snprintf(Ares::readBuffer, Ares::readLength, "Prism Forwarder (ExtData %p) failed to remove sender #%d\n", container, senderIdx);
+					Debug::FatalError(true);
+					Debug::Exit();
+				}
+			}
+		}
 	};
 
 
@@ -42,6 +70,9 @@ public:
 		bool isCurrentlyRaided; //!< Whether this building is currently occupied by someone not the actual owner of the structure.
 		bool ignoreNextEVA; //!< This is used when returning raided buildings, to decide whether to play EVA announcements about building capture.
 
+		bool FreeUnits_Done; //!< Prevent free units and aircraft to be created multiple times. Set when the free units have been granted.
+		bool AboutToChronoshift; //!< This building is going to be shifted. It should not be attacked with temporal weapons now. Otherwise it would disappear.
+
 		bool InfiltratedBy(HouseClass *Enterer);
 		cPrismForwarding PrismForwarding;
 
@@ -49,16 +80,23 @@ public:
 
 	public:
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
-			OwnerBeforeRaid(NULL), isCurrentlyRaided(false), ignoreNextEVA(false), PrismForwarding()
+			OwnerBeforeRaid(NULL), isCurrentlyRaided(false), ignoreNextEVA(false), PrismForwarding(), FreeUnits_Done(false), AboutToChronoshift(false)
 			{ };
 
 		virtual ~ExtData() {
+			if(this->PrismForwarding.SupportTarget) {
+				Debug::Log("Building ExtData (%p) failed to remove SupportTarget (%p) before destruction.\n", this, this->PrismForwarding.SupportTarget);
+			}
+			if(this->PrismForwarding.Senders.Count) {
+				Debug::Log("Building ExtData (%p) failed to remove all Senders (%d) before destruction.\n", this, this->PrismForwarding.Senders.Count);
+			}
 		}
 
 		virtual size_t Size() const { return sizeof(*this); };
 
 		virtual void InvalidatePointer(void *ptr) {
 			AnnounceInvalidPointer(OwnerBeforeRaid, ptr);
+			PrismForwarding.AnnounceInvalidPointer(ptr, this);
 		}
 
 		// related to Advanced Rubble
@@ -82,6 +120,8 @@ public:
 		void ImmolateVictim(ObjectClass * Victim);
 
 		bool ReverseEngineer(TechnoClass * Victim); //!< Returns true if Victim wasn't buildable and now should be
+
+		void KickOutClones(TechnoClass * Production);
 	};
 
 	static Container<BuildingExt> ExtMap;

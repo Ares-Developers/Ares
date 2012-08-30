@@ -25,6 +25,7 @@
 #include "Ext/WeaponType/Body.h"
 
 #include "Misc/Debug.h"
+#include "Misc/EMPulse.h"
 
 //Init Statics
 HANDLE Ares::hInstance = 0;
@@ -32,11 +33,16 @@ bool Ares::bNoLogo = false;
 bool Ares::bNoCD = false;
 bool Ares::bTestingRun = false;
 bool Ares::bStrictParser = false;
+bool Ares::bAllowAIControl = false;
+bool Ares::bStable = false;
+bool Ares::bStableNotification = false;
 
 DWORD Ares::readLength = BUFLEN;
 char Ares::readBuffer[BUFLEN];
 const char Ares::readDelims[4] = ",";
 const char Ares::readDefval[4] = "";
+
+const wchar_t Ares::StabilityWarning[BUFLEN] = L"This version of Ares (" VERSION_WSTR L") is not considered stable.";
 
 MixFileClass *Ares::aresMIX = NULL;
 
@@ -60,7 +66,9 @@ void Ares::UninitOwnResources()
 //Implementations
 void __stdcall Ares::RegisterCommands()
 {
-	MakeCommand<AIControlCommandClass>();
+	if(bAllowAIControl) {
+		MakeCommand<AIControlCommandClass>();
+	}
 	MakeCommand<MapSnapshotCommandClass>();
 	MakeCommand<TestSomethingCommandClass>();
 	MakeCommand<DumperTypesCommandClass>();
@@ -76,6 +84,7 @@ void __stdcall Ares::CmdLineParse(char** ppArgs,int nNumArgs)
 	Debug::bLog = false;
 	bNoCD = false;
 	bNoLogo = false;
+	EMPulse::verbose = false;
 
 	// > 1 because the exe path itself counts as an argument, too!
 	if(nNumArgs > 1) {
@@ -93,6 +102,10 @@ void __stdcall Ares::CmdLineParse(char** ppArgs,int nNumArgs)
 				bTestingRun = true;
 			} else if(strcmp(pArg, "-STRICT") == 0) {
 				bStrictParser = true;
+			} else if(strcmp(pArg, "-LOG-EMP") == 0) {
+				EMPulse::verbose = true;
+			} else if(strcmp(pArg,"-AI-CONTROL") == 0) {
+				bAllowAIControl = true;
 			}
 		}
 	}
@@ -417,6 +430,26 @@ A_FINE_HOOK(7C8B3D, operator_delete, 9)
 }
 */
 
+DEFINE_HOOK(47AE36, CDFileClass_SetFileName, 8)
+{
+	GET(void*, CDControl, EAX);
+
+	if(!CDControl || Ares::bNoCD) {
+		return 0x47AEF0;
+	}
+	return 0x47AE3E;
+}
+
+DEFINE_HOOK(47B026, FileFindOpen, 8)
+{
+	GET(void*, CDControl, EBX);
+
+	if(!CDControl || Ares::bNoCD) {
+		return 0x47B0AE;
+	}
+	return 0x47B02E;
+}
+
 bool Ares::RunningOnWindows7OrVista() {
 	static bool W7 = false;
 	static bool Checked = false;
@@ -431,4 +464,18 @@ bool Ares::RunningOnWindows7OrVista() {
 		W7 = (osvi.dwMajorVersion == 6)/* && (osvi.dwMinorVersion >= 1)*/;
 	}
 	return W7;
+}
+
+void Ares::UpdateStability() {
+	if(Ares::bStable) {
+		return;
+	}
+	if(Unsorted::CurrentFrame < 900) {
+		return;
+	}
+	if(!Ares::bStableNotification) {
+		Debug::FatalErrorAndExit("This version of Ares is not considered stable, but for some reason the warning text isn't showing.\n"
+			"This suggests that your version of Ares has been tampered with "
+			"and the original developers cannot be held responsible for any problems you might experience.");
+	}
 }

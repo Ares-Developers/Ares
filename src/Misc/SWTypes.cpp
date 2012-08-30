@@ -38,6 +38,7 @@ void NewSWType::Init()
 DEFINE_HOOK(55AFB3, LogicClass_Update, 6)
 {
 	SWStateMachine::UpdateAll();
+	Ares::UpdateStability();
 	return 0;
 }
 

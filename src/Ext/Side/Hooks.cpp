@@ -164,10 +164,12 @@ DEFINE_HOOK(642B91, Sides_LoadTextColor3, 5)
 DEFINE_HOOK(6847B7, Sides_LoadTextColor_CacheMP, 6) {
 	GET(HouseTypeClass*, pType, EAX);
 
+	SideExt::CurrentLoadTextColor = -1;
+
 	if(HouseTypeExt::ExtData *pData = HouseTypeExt::ExtMap.Find(pType)) {
-		SideExt::CurrentLoadTextColor = pData->LoadTextColor;
-	} else {
-		SideExt::CurrentLoadTextColor = NULL;
+		if(pData->LoadTextColor) {
+			SideExt::CurrentLoadTextColor = pData->LoadTextColor->ArrayIndex;
+		}
 	}
 
 	return 0;
@@ -190,9 +192,11 @@ DEFINE_HOOK(686D7F, Sides_LoadTextColor_CacheSP, 6) {
 		pDefault = "AlliedLoad";
 	}
 
+	SideExt::CurrentLoadTextColor = -1;
+
 	if(pINI->ReadString(ScenarioClass::Instance->FileName, "LoadScreenText.Color", pDefault, Ares::readBuffer, 0x80)) {
 		if(ColorScheme* pCS = ColorScheme::Find(Ares::readBuffer)) {
-			SideExt::CurrentLoadTextColor = pCS;
+			SideExt::CurrentLoadTextColor = pCS->ArrayIndex;
 		}
 	}
 
@@ -371,4 +375,21 @@ DEFINE_HOOK(41E893, AITriggerTypeClass_ConditionMet_SideIndex, 0)
 		? Yes
 		: No
 	;
+}
+
+DEFINE_HOOK(6DE0D3, TActionClass_Execute_HardcodeMessageColors, 6)
+{
+	int idxSide = ScenarioClass::Instance->PlayerSideIndex;
+	int idxColor = 25;
+
+	if(!idxSide) {
+		// allied
+		idxColor = 21;
+	} else if(idxSide == 1) {
+		// soviet
+		idxColor = 11;
+	}
+	
+	R->EAX(idxColor);
+	return 0x6DE0DE;
 }

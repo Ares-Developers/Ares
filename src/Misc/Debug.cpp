@@ -10,8 +10,8 @@ bool Debug::bTrackParserErrors = false;
 bool Debug::bParserErrorDetected = false;
 
 FILE *Debug::pLogFile = NULL;
-wchar_t Debug::LogFileName[MAX_PATH] = L"\0";
-wchar_t Debug::LogFileTempName[MAX_PATH] = L"\0";
+std::wstring Debug::LogFileName;
+std::wstring Debug::LogFileTempName;
 
 void (_cdecl* Debug::Log)(const char* pFormat, ...) =
 	(void (__cdecl *)(const char *,...))0x4068E0;
@@ -46,14 +46,14 @@ const char * Debug::SeverityString(Debug::Severity severity) {
 
 void Debug::LogFileOpen()
 {
-	MakeLogFile();
-	LogFileClose(999);
+	Debug::MakeLogFile();
+	Debug::LogFileClose(999);
 
-	pLogFile = _wfopen(LogFileTempName, L"w");
+	pLogFile = _wfopen(Debug::LogFileTempName.c_str(), L"w");
 	if(!pLogFile) {
 		wchar_t msg[100] = L"\0";
 		wsprintfW(msg, L"Log file failed to open. Error code = %X", errno);
-		MessageBoxW(Game::hWnd, LogFileTempName, msg, MB_OK | MB_ICONEXCLAMATION);
+		MessageBoxW(Game::hWnd, Debug::LogFileTempName.c_str(), msg, MB_OK | MB_ICONEXCLAMATION);
 		ExitProcess(1);
 	}
 }
@@ -63,7 +63,7 @@ void Debug::LogFileClose(int tag)
 	if(Debug::pLogFile) {
 		fprintf(Debug::pLogFile, "Closing log file on request %d", tag);
 		fclose(Debug::pLogFile);
-		CopyFileW(LogFileTempName, LogFileName, FALSE);
+		CopyFileW(Debug::LogFileTempName.c_str(), Debug::LogFileName.c_str(), FALSE);
 		Debug::pLogFile = NULL;
 	}
 }
@@ -78,14 +78,18 @@ void Debug::MakeLogFile() {
 		GetLocalTime(&time);
 		GetCurrentDirectoryW(MAX_PATH, path);
 
-		swprintf(LogFileName, MAX_PATH, L"%s\\debug", path);
-		CreateDirectoryW(LogFileName, NULL);
+		Debug::LogFileName = path;
+		Debug::LogFileName += L"\\debug";
+		
+		CreateDirectoryW(Debug::LogFileName.c_str(), NULL);
 
-		swprintf(LogFileTempName, MAX_PATH, L"%s\\debug\\debug.log",
-			path);
+		wchar_t subpath[64];
+		swprintf(subpath, 64, L"\\debug.%04u%02u%02u-%02u%02u%02u.log",
+			time.wYear, time.wMonth, time.wDay, time.wHour, time.wMinute, time.wSecond);
 
-		swprintf(LogFileName, MAX_PATH, L"%s\\debug\\debug.%04u%02u%02u-%02u%02u%02u.log",
-			path, time.wYear, time.wMonth, time.wDay, time.wHour, time.wMinute, time.wSecond);
+		Debug::LogFileTempName = Debug::LogFileName;
+		Debug::LogFileTempName += L"\\debug.log";
+		Debug::LogFileName += subpath;
 
 		made = 1;
 	}
@@ -93,8 +97,8 @@ void Debug::MakeLogFile() {
 
 void Debug::LogFileRemove()
 {
-	LogFileClose(555);
-	DeleteFileW(LogFileTempName);
+	Debug::LogFileClose(555);
+	DeleteFileW(Debug::LogFileTempName.c_str());
 }
 
 void Debug::DumpObj(byte *data, size_t len) {
@@ -160,6 +164,23 @@ void Debug::Flush() {
  * minidump
  */
 
+void Debug::PrepareSnapshotDirectory(std::wstring &buffer) {
+	wchar_t path[MAX_PATH];
+	SYSTEMTIME time;
+
+	GetLocalTime(&time);
+	GetCurrentDirectoryW(MAX_PATH, path);
+
+	buffer = path;
+	buffer += L"\\debug";
+	CreateDirectoryW(buffer.c_str(), NULL);
+
+	wchar_t subpath[64];
+	swprintf(subpath, 64, L"\\snapshot-%04u%02u%02u-%02u%02u%02u", time.wYear, time.wMonth, time.wDay, time.wHour, time.wMinute, time.wSecond);
+	buffer += subpath;
+	CreateDirectoryW(buffer.c_str(), NULL);
+}
+
 LONG WINAPI Debug::ExceptionHandler(int code, LPEXCEPTION_POINTERS pExs)
 {
 	Debug::FreeMouse();
@@ -198,27 +219,26 @@ LONG WINAPI Debug::ExceptionHandler(int code, LPEXCEPTION_POINTERS pExs)
 		case EXCEPTION_STACK_OVERFLOW:
 		case 0xE06D7363: // exception thrown and not caught
 		{
-			wchar_t filename[MAX_PATH];
-			wchar_t path[MAX_PATH];
-			SYSTEMTIME time;
+			std::wstring path;
 
-			GetLocalTime(&time);
-			GetCurrentDirectoryW(MAX_PATH, path);
+			Debug::PrepareSnapshotDirectory(path);
 
-			swprintf(filename, MAX_PATH, L"%s\\debug", path);
-			CreateDirectoryW(filename, NULL);
+			Debug::Flush();
+			if(Debug::bLog) {
+				std::wstring logCopy = path + L"\\debug.log";
+				CopyFileW(Debug::LogFileTempName.c_str(), logCopy.c_str(), FALSE);
+			}
 
-			swprintf(filename, MAX_PATH, L"%s\\debug\\except.%04u%02u%02u-%02u%02u%02u.txt",
-				path, time.wYear, time.wMonth, time.wDay, time.wHour, time.wMinute, time.wSecond);
+			std::wstring except_file = path + L"\\except.txt";
 
-			if(FILE *except = _wfopen(filename, L"w")) {
+			if(FILE *except = _wfopen(except_file.c_str(), L"w")) {
 #define DELIM "---------------------\n"
 				fprintf(except, "Internal Error encountered!\n");
 				fprintf(except, DELIM);
 				fprintf(except, VERSION_STRVER);
 				fprintf(except, "\n" DELIM);
 
-				fprintf(except, "Exception code: %08X at %08X\n", pExs->ExceptionRecord->ExceptionCode, pExs->ExceptionRecord->ExceptionAddress);
+				fprintf(except, "Exception code: %08X at %08p\n", pExs->ExceptionRecord->ExceptionCode, pExs->ExceptionRecord->ExceptionAddress);
 
 				fprintf(except, "Registers:\n");
 				PCONTEXT pCtxt = pExs->ContextRecord;
@@ -229,12 +249,12 @@ LONG WINAPI Debug::ExceptionHandler(int code, LPEXCEPTION_POINTERS pExs)
 				fprintf(except, "\nStack dump:\n");
 				DWORD *ptr = (DWORD *)(pCtxt->Esp);
 				for(int i = 0; i < 0x100; ++i) {
-					fprintf(except, "%08X: %08X\n", ptr, *ptr);
+					fprintf(except, "%08p: %08X\n", ptr, *ptr);
 					++ptr;
 				}
 
 				fclose(except);
-				Debug::Log("Exception data has been saved to file:\n%ls\n", filename);
+				Debug::Log("Exception data has been saved to file:\n%ls\n", except_file.c_str());
 			}
 
 			if(MessageBoxW(Game::hWnd, L"Yuri's Revenge has encountered a fatal error!\nWould you like to create a full crash report for the developers?", L"Fatal Error!", MB_YESNO | MB_ICONERROR) == IDYES) {
@@ -248,14 +268,17 @@ LONG WINAPI Debug::ExceptionHandler(int code, LPEXCEPTION_POINTERS pExs)
 				expParam.ExceptionPointers = pExs;
 				expParam.ClientPointers = FALSE;
 
-				Debug::FullDump(&expParam);
+				Debug::FullDump(&expParam, &path);
 
 				loadCursor = LoadCursor(NULL, IDC_ARROW);
 				SetClassLong(Game::hWnd, GCL_HCURSOR, (LONG)loadCursor);
 				SetCursor(loadCursor);
 				Debug::FatalError("The cause of this error could not be determined.\r\n"
+					"%s"
 					"A crash dump should have been created in your game's \\debug subfolder.\r\n"
-					"You can submit that to the developers (along with debug.txt and syringe.log).");
+					"You can submit that to the developers (along with debug.txt and syringe.log)."
+						, Debug::bParserErrorDetected ? "(One or more parser errors have been detected that might be responsible. Check the debug logs.)\r\n" : ""
+				);
 			}
 			ExitProcess(pExs->ExceptionRecord->ExceptionCode); // Exit.
 			break;
@@ -269,25 +292,21 @@ LONG WINAPI Debug::ExceptionHandler(int code, LPEXCEPTION_POINTERS pExs)
 	}
 };
 
-void Debug::FullDump(MINIDUMP_EXCEPTION_INFORMATION *pException, wchar_t * generatedFilename) {
-	wchar_t filename[MAX_PATH];
-	wchar_t path[MAX_PATH];
-	SYSTEMTIME time;
-
-	GetLocalTime(&time);
-	GetCurrentDirectoryW(MAX_PATH, path);
-
-	swprintf(filename, MAX_PATH, L"%s\\debug", path);
-	CreateDirectoryW(filename, NULL);
-
-	swprintf(filename, MAX_PATH, L"%s\\debug\\extcrashdump.%04u%02u%02u-%02u%02u%02u.dmp",
-		path, time.wYear, time.wMonth, time.wDay, time.wHour, time.wMinute, time.wSecond);
-
-	if(generatedFilename) {
-		CRT::wcsncpy(generatedFilename, filename, MAX_PATH - 1);
+void Debug::FullDump(MINIDUMP_EXCEPTION_INFORMATION *pException, std::wstring * destinationFolder, std::wstring * generatedFilename) {
+	std::wstring filename;
+	if(destinationFolder) {
+		filename = *destinationFolder;
+	} else {
+		Debug::PrepareSnapshotDirectory(filename);
 	}
 
-	HANDLE dumpFile = CreateFileW(filename, GENERIC_READ | GENERIC_WRITE,
+	filename += L"\\extcrashdump.dmp";
+
+	if(generatedFilename) {
+		generatedFilename->assign(filename);
+	}
+
+	HANDLE dumpFile = CreateFileW(filename.c_str(), GENERIC_READ | GENERIC_WRITE,
 		FILE_SHARE_WRITE | FILE_SHARE_READ, NULL, CREATE_ALWAYS, FILE_FLAG_WRITE_THROUGH, NULL);
 
 	MINIDUMP_TYPE type = (MINIDUMP_TYPE)MiniDumpWithFullMemory;
@@ -329,6 +348,11 @@ void Debug::FreeMouse() {
 //	}
 }
 
+void Debug::Exit() {
+		Debug::Log("Exiting...\n");
+		ExitProcess(1);
+}
+
 void Debug::FatalError(bool Dump) {
 	wsprintfW(Dialogs::ExceptDetailedMessage,
 		L"Ares has encountered an internal error and is unable to continue normally. "
@@ -368,8 +392,7 @@ void Debug::FatalErrorAndExit(const char *Message, ...) {
 	va_end(args);
 
 	Debug::FatalError(false);
-	Debug::Log("Exiting...\n");
-	ExitProcess(1);
+	Debug::Exit();
 }
 
 void Debug::INIParseFailed(const char *section, const char *flag, const char *value, const char *Message) {
@@ -419,5 +442,13 @@ DEFINE_HOOK(534A4D, Theater_Init_ResetLogStatus, 6)
 	// and before other global lists are initialized
 	Debug::bTrackParserErrors = true;
 
+	return 0;
+}
+
+
+DEFINE_HOOK(687C56, INIClass_ReadScenario_ResetLogStatus, 5)
+{
+	// reset this so next scenario startup log is cleaner
+	Debug::bTrackParserErrors = false;
 	return 0;
 }

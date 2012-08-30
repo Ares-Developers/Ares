@@ -100,14 +100,24 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 			CellStruct* pCurrent = pFoundationData;
 			char key[0x20];
 
+			auto ParsePoint = [](CellStruct* &pCell, const char* str) -> void {
+				short x = 0, y = 0;
+				switch(sscanf(str, "%d,%d", &x, &y)) {
+				case 0:
+					x = 0;
+					// fallthrough
+				case 1:
+					y = 0;
+				}
+				pCell->X = x;
+				pCell->Y = y;
+				++pCell;
+			};
+
 			for(int i = 0; i < this->CustomWidth * this->CustomHeight; ++i) {
-				_snprintf(key, 32, "Foundation.%d", i);
+				_snprintf(key, 31, "Foundation.%d", i);
 				if(pArtINI->ReadString(pArtID, key, "", str, 0x80)) {
-					short x = 0, y = 0;
-					sscanf(str, "%d,%d", &x, &y);
-					pCurrent->X = x;
-					pCurrent->Y = y;
-					++pCurrent;
+					ParsePoint(pCurrent, str);
 				} else {
 					break;
 				}
@@ -119,13 +129,9 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 
 			pCurrent = pOutlineData;
 			for(int i = 0; i < this->OutlineLength; ++i) {
-				_snprintf(key, 32, "FoundationOutline.%d", i);
+				_snprintf(key, 31, "FoundationOutline.%d", i);
 				if(pArtINI->ReadString(pArtID, key, "", str, 0x80)) {
-					short x = 0, y = 0;
-					sscanf(str, "%d,%d", &x, &y);
-					pCurrent->X = x;
-					pCurrent->Y = y;
-					++pCurrent;
+					ParsePoint(pCurrent, str);
 				} else {
 					//Set end vector
 					// can't break, some stupid functions access fixed offsets without checking if that offset is within the valid range
@@ -194,13 +200,20 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 	}
 	if(pINI->ReadString(pID, "Rubble.Intact", "", Ares::readBuffer, Ares::readLength)) {
 		this->RubbleIntact = BuildingTypeClass::Find(Ares::readBuffer);
+		if(!this->RubbleIntact && VALIDTAG(Ares::readBuffer)) {
+			Debug::INIParseFailed(pID, "Rubble.Intact", Ares::readBuffer);
+		}
 	}
 	if(pINI->ReadString(pID, "Rubble.Destroyed", "", Ares::readBuffer, Ares::readLength)) {
 		this->RubbleDestroyed = BuildingTypeClass::Find(Ares::readBuffer);
-		this->RubbleDestroyed->Capturable = false;
-		this->RubbleDestroyed->TogglePower = false;
-		this->RubbleDestroyed->Unsellable = true;
-		this->RubbleDestroyed->CanBeOccupied = false;
+		if(this->RubbleDestroyed) {
+			this->RubbleDestroyed->Capturable = false;
+			this->RubbleDestroyed->TogglePower = false;
+			this->RubbleDestroyed->Unsellable = true;
+			this->RubbleDestroyed->CanBeOccupied = false;
+		} else if(VALIDTAG(Ares::readBuffer)) {
+			Debug::INIParseFailed(pID, "Rubble.Destroyed", Ares::readBuffer);
+		}
 	}
 
 	this->LightningRod_Modifier = pINI->ReadDouble(pID, "LightningRod.Modifier", this->LightningRod_Modifier);
@@ -210,17 +223,20 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 
 	INI_EX exINI(pINI);
 	this->InfiltrateCustom.Read(&exINI, pID, "SpyEffect.Custom");
-	if(this->InfiltrateCustom) {
-		this->RevealProduction.Read(&exINI, pID, "SpyEffect.RevealProduction");
-		this->ResetSW.Read(&exINI, pID, "SpyEffect.ResetSuperweapons");
-		this->ResetRadar.Read(&exINI, pID, "SpyEffect.ResetRadar");
-		this->RevealRadar.Read(&exINI, pID, "SpyEffect.RevealRadar");
-		this->GainVeterancy.Read(&exINI, pID, "SpyEffect.UnitVeterancy");
-		this->StolenTechIndex.Read(&exINI, pID, "SpyEffect.StolenTechIndex");
-		this->PowerOutageDuration.Read(&exINI, pID, "SpyEffect.PowerOutageDuration");
-		this->StolenMoneyAmount.Read(&exINI, pID, "SpyEffect.StolenMoneyAmount");
-		this->StolenMoneyPercentage.Read(&exINI, pID, "SpyEffect.StolenMoneyPercentage");
-		this->UnReverseEngineer.Read(&exINI, pID, "SpyEffect.UndoReverseEngineer");
+	this->RevealProduction.Read(&exINI, pID, "SpyEffect.RevealProduction");
+	this->ResetSW.Read(&exINI, pID, "SpyEffect.ResetSuperweapons");
+	this->ResetRadar.Read(&exINI, pID, "SpyEffect.ResetRadar");
+	this->RevealRadar.Read(&exINI, pID, "SpyEffect.RevealRadar");
+	this->GainVeterancy.Read(&exINI, pID, "SpyEffect.UnitVeterancy");
+	this->StolenTechIndex.Read(&exINI, pID, "SpyEffect.StolenTechIndex");
+	this->PowerOutageDuration.Read(&exINI, pID, "SpyEffect.PowerOutageDuration");
+	this->StolenMoneyAmount.Read(&exINI, pID, "SpyEffect.StolenMoneyAmount");
+	this->StolenMoneyPercentage.Read(&exINI, pID, "SpyEffect.StolenMoneyPercentage");
+	this->UnReverseEngineer.Read(&exINI, pID, "SpyEffect.UndoReverseEngineer");
+
+	if(this->StolenTechIndex >= 32) {
+		Debug::DevLog(Debug::Warning, "BuildingType %s has a SpyEffect.StolenTechIndex of %d. The value has to be less than 32.\n", pID, this->StolenTechIndex.Get());
+		this->StolenTechIndex = -1;
 	}
 
 	// #218 Specific Occupiers
@@ -231,6 +247,9 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 	}
 
 	this->ReverseEngineersVictims.Read(&exINI, pID, "ReverseEngineersVictims");
+
+	this->CloningFacility.Read(&exINI, pID, "CloningFacility");
+	this->Factory_ExplicitOnly.Read(&exINI, pID, "Factory.ExplicitOnly");
 }
 
 void BuildingTypeExt::ExtData::CompleteInitialization(BuildingTypeClass *pThis) {
@@ -250,10 +269,6 @@ void BuildingTypeExt::UpdateSecretLabOptions(BuildingClass *pThis)
 
 	DEBUGLOG("Secret Lab update for %s\n", pType->get_ID());
 
-	if(!pData->Secret_Boons.Count || (pData->Secret_Placed && !pData->Secret_RecalcOnCapture)) {
-		return;
-	}
-
 	TechnoTypeClass *Result = pType->SecretInfantry;
 	if(!Result) {
 		Result = pType->SecretUnit;
@@ -263,6 +278,10 @@ void BuildingTypeExt::UpdateSecretLabOptions(BuildingClass *pThis)
 	}
 	if(Result) {
 		pThis->SecretProduction = Result;
+		return;
+	}
+
+	if(!pData->Secret_Boons.Count || (pData->Secret_Placed && !pData->Secret_RecalcOnCapture)) {
 		return;
 	}
 

@@ -54,11 +54,20 @@ public:
 
 		bool ShadowDrawnManually;
 
+		bool DriverKilled;
+
+		int HijackerHealth;
+		HouseClass* HijackerHouse;
+
 		// 305 Radar Jammers
 		JammerClass* RadarJam;
 		
 		// issue #617 powered units
 		PoweredUnitClass* PoweredUnit;
+
+		TemporalClass * MyOriginalTemporal;
+
+		EBolt * MyBolt;
 
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			TypeData (NULL),
@@ -70,11 +79,15 @@ public:
 			Survivors_Done (0),
 			Insignia_Image (NULL),
 			GarrisonedIn (NULL),
+			HijackerHealth (-1),
+			HijackerHouse (NULL),
+			DriverKilled (false),
 			EMPSparkleAnim (NULL),
 			EMPLastMission (mission_None),
 			ShadowDrawnManually (false),
 			RadarJam(NULL),
-			PoweredUnit(NULL)
+			PoweredUnit(NULL),
+			MyOriginalTemporal(NULL)
 			{
 				this->CloakSkipTimer.Stop();
 				// hope this works with the timing - I assume it does, since Types should be created before derivates thereof
@@ -92,10 +105,14 @@ public:
 
 		virtual void InvalidatePointer(void *ptr) {
 			AnnounceInvalidPointer(this->GarrisonedIn, ptr);
+			AnnounceInvalidPointer(this->MyOriginalTemporal, ptr);
 		}
 
 		bool IsOperated();
 		bool IsPowered();
+
+		AresAction::Value GetActionHijack(TechnoClass *pTarget);
+		bool PerformActionHijack(TechnoClass* pTarget);
 
 		unsigned int AlphaFrame(SHPStruct * Image);
 
@@ -103,6 +120,10 @@ public:
 
 		UnitTypeClass * GetUnitType();
 
+		bool IsDeactivated() const;
+
+		eAction GetDeactivatedAction(ObjectClass *Hovered = NULL) const;
+		
 		TechnoTypeExt::TT * GetTypeData() const {
 			if(!this->TypeData) {
 				this->TypeData = this->AttachedToObject->GetTechnoType();
@@ -146,11 +167,21 @@ public:
 	static void SpawnSurvivors(FootClass *pThis, TechnoClass *pKiller, bool Select, bool IgnoreDefenses);
 	static bool EjectSurvivor(FootClass *Survivor, CoordStruct *loc, bool Select);
 	static void EjectPassengers(FootClass *, signed short);
-	static void GetPutLocation(CoordStruct const &, CoordStruct &);
+	static void GetPutLocation(CoordStruct const &, CoordStruct &, int);
+	static bool EjectRandomly(FootClass*, CoordStruct const &, int, bool);
+	// If available, removes the hijacker from its victim and creates an InfantryClass instance.
+	static InfantryClass* RecoverHijacker(FootClass *pThis);
 
 	static void StopDraining(TechnoClass *Drainer, TechnoClass *Drainee);
 
 	static bool CreateWithDroppod(FootClass *Object, CoordStruct *XYZ);
+
+	static void TransferIvanBomb(TechnoClass *From, TechnoClass *To);
+
+	static void FreeSpecificSlave(TechnoClass *Slave, HouseClass *Affector);
+	static void DetachSpecificSpawnee (TechnoClass *Spawnee, HouseClass *NewSpawneeOwner);
+	
+	static void Destroy(TechnoClass* pTechno, TechnoClass* pKiller = NULL, HouseClass* pKillerHouse = NULL, WarheadTypeClass* pWarhead = NULL);
 /*
 	static int SelectWeaponAgainst(TechnoClass *pThis, TechnoClass *pTarget);
 	static bool EvalWeaponAgainst(TechnoClass *pThis, TechnoClass *pTarget, WeaponTypeClass* W);

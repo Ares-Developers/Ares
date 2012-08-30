@@ -1,11 +1,13 @@
 #include "ChronoWarp.h"
 #include "../../Ares.h"
 #include "../../Ext/House/Body.h"
+#include "../../Ext/Building/Body.h"
 #include "../../Ext/TechnoType/Body.h"
 #include "../../Utilities/Helpers.Alex.h"
 
 #include <LocomotionClass.h>
 #include <BulletClass.h>
+#include <LightSourceClass.h>
 
 bool SW_ChronoWarp::HandlesType(int type)
 {
@@ -97,6 +99,11 @@ bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 				// differentiate between buildings and vehicle-type buildings
 				bool IsVehicle = false;
 				if(BuildingClass* pBld = specific_cast<BuildingClass*>(pObj)) {
+					// always ignore bridge repair huts
+					if(pBld->Type->BridgeRepairHut) {
+						return true;
+					}
+
 					// use "smart" detection of vehicular building types?
 					if(pData->Chronosphere_ReconsiderBuildings.Get()) {
 						IsVehicle = pExt->Chronoshift_IsVehicle.Get();
@@ -178,10 +185,10 @@ bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 					if(BuildingClass *pBunkerLink = specific_cast<BuildingClass*>(pTechno->BunkerLinkedItem)) {
 						// unit will be destroyed or chronoported. in every case the bunker will be empty.
 						pBunkerLink->ClearBunker();
-					} else if(BuildingClass *pBunkerLink = specific_cast<BuildingClass*>(pTechno)) {
+					} else if(BuildingClass *pBunker = specific_cast<BuildingClass*>(pTechno)) {
 						// the bunker leaves...
-						pBunkerLink->UnloadBunker();
-						pBunkerLink->EmptyBunker();
+						pBunker->UnloadBunker();
+						pBunker->EmptyBunker();
 					}
 				}
 
@@ -190,6 +197,13 @@ bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 					// tell all linked units to get off
 					pBld->SendToEachLink(rc_0D);
 					pBld->SendToEachLink(rc_Exit);
+
+					// destroy the building light source
+					if(pBld->LightSource) {
+						pBld->LightSource->Deactivate();
+						GAME_DEALLOC(pBld->LightSource);
+						pBld->LightSource = NULL;
+					}
 
 					// shut down cloak generation
 					if(pBld->Type->CloakGenerator && pBld->CloakRadius) {
@@ -246,6 +260,9 @@ bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 					pBld->DisableTemporal();
 					pBld->SetLayer(Layer::Ground);
 
+					BuildingExt::ExtData* pBldExt = BuildingExt::ExtMap.Find(pBld);
+					pBldExt->AboutToChronoshift = true;
+
 					// register for chronoshift
 					ChronoWarpStateMachine::ChronoWarpContainer Container(pBld, cellUnitTarget, pBld->Location, IsVehicle);
 					RegisteredBuildings.AddItem(Container);
@@ -262,6 +279,8 @@ bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 				if(RegisteredBuildings.Count) {
 					this->newStateMachine(RulesClass::Instance->ChronoDelay + 1, *pCoords, pSource, this, &RegisteredBuildings);
 				}
+
+				delete items;
 			}
 
 			return true;
@@ -297,6 +316,7 @@ void ChronoWarpStateMachine::Update() {
 		for(int i=0; i<buildings.Count; ++i) {
 			ChronoWarpContainer* pContainer = &buildings.Items[i];
 			pContainer->pBld->Remove();
+			pContainer->pBld->ActuallyPlacedOnMap = false;
 		}
 
 		// bring back all buildings
@@ -330,6 +350,7 @@ void ChronoWarpStateMachine::Update() {
 						// put it back where it was
 						++Unsorted::IKnowWhatImDoing;
 						pBld->Put(&pContainer.origin, Direction::North);
+						pBld->Place(false);
 						--Unsorted::IKnowWhatImDoing;
 					}
 
@@ -340,13 +361,16 @@ void ChronoWarpStateMachine::Update() {
 					pBld->EnableTemporal();
 					pBld->SetLayer(Layer::Ground);
 
+					BuildingExt::ExtData* pBldExt = BuildingExt::ExtMap.Find(pBld);
+					pBldExt->AboutToChronoshift = false;
+
 					if(!success) {
 						if(SWTypeExt::ExtData *pExt = SWTypeExt::ExtMap.Find(this->Super->Type)) {
 							// destroy (buildings only if they are supposed to)
 							if(pContainer.isVehicle || pExt->Chronosphere_BlowUnplaceable.Get()) {
 								int damage = pBld->Type->Strength;
 								pBld->ReceiveDamage(&damage, 0,
-									RulesClass::Instance->C4Warhead, NULL, true, true, this->Super->Owner);
+									RulesClass::Instance->C4Warhead, NULL, TRUE, TRUE, this->Super->Owner);
 							}
 						}
 					}

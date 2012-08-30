@@ -1,5 +1,6 @@
 #include "Body.h"
 #include "../BuildingType/Body.h"
+#include "../Techno/Body.h"
 #include "../WeaponType/Body.h"
 #include <BulletClass.h>
 #include <LaserDrawClass.h>
@@ -48,7 +49,6 @@ DEFINE_HOOK(44B2FE, BuildingClass_Mi_Attack_IsPrism, 6)
 			BuildingTypeExt::cPrismForwarding::SetChargeDelay(B, LongestChain);
 
 		} else if (B->PrismStage == pcs_Slave) {
-			Debug::Log("PrismForwarding: Converting Slave to Master\n");
 			//a slave tower is changing into a master tower at the last second
 			B->PrismStage = pcs_Master;
 			B->PrismTargetCoords.X = 0;
@@ -60,7 +60,7 @@ DEFINE_HOOK(44B2FE, BuildingClass_Mi_Attack_IsPrism, 6)
 			B->PrismTargetCoords.Y = B->PrismTargetCoords.Z = 0;
 			pMasterData->PrismForwarding.ModifierReserve = 0.0;
 			pMasterData->PrismForwarding.DamageReserve = 0;
-			pMasterData->PrismForwarding.SupportTarget = NULL;
+			BuildingTypeExt::cPrismForwarding::SetSupportTarget(B, NULL);
 
 		}
 
@@ -83,7 +83,7 @@ DEFINE_HOOK(447FAE, BuildingClass_GetObjectActivityState, 6)
 		if (pTypeData->PrismForwarding.Enabled == BuildingTypeExt::cPrismForwarding::YES
 				|| pTypeData->PrismForwarding.Enabled == BuildingTypeExt::cPrismForwarding::ATTACK) {
 			//is a prism tower
-			if (B->PrismStage == pcs_Slave && pTypeData->PrismForwarding.BreakSupport) {
+			if (B->PrismStage == pcs_Slave && pTypeData->PrismForwarding.BreakSupport.Get()) {
 				return NotBusyCharging;
 			}
 		}
@@ -106,8 +106,7 @@ DEFINE_HOOK(4503F0, BuildingClass_Update_Prism, 9)
 						BuildingExt::ExtData *pTargetData = BuildingExt::ExtMap.Find(pTarget);
 						BuildingTypeClass *pType = pThis->Type;
 						BuildingTypeExt::ExtData *pTypeData = BuildingTypeExt::ExtMap.Find(pType);
-						Debug::Log("[PrismForwarding] Slave firing. SM=%d MR=%lf\n",
-							pTypeData->PrismForwarding.SupportModifier.Get(), pData->PrismForwarding.ModifierReserve);
+						//slave firing
 						pTargetData->PrismForwarding.ModifierReserve +=
 							(pTypeData->PrismForwarding.SupportModifier.Get() + pData->PrismForwarding.ModifierReserve);
 						pTargetData->PrismForwarding.DamageReserve +=
@@ -133,9 +132,9 @@ DEFINE_HOOK(4503F0, BuildingClass_Update_Prism, 9)
 				//This tower's job is done. Go idle.
 				pData->PrismForwarding.ModifierReserve = 0.0;
 				pData->PrismForwarding.DamageReserve = 0;
-				pData->PrismForwarding.Senders.Clear();
+				BuildingTypeExt::cPrismForwarding::RemoveAllSenders(pThis);
 				pThis->SupportingPrisms = 0; //Ares sets this to the longest backward chain
-				pData->PrismForwarding.SupportTarget = NULL;
+				BuildingTypeExt::cPrismForwarding::SetSupportTarget(pThis, NULL);
 				pThis->PrismStage = pcs_Idle;
 			}
 		} else {
@@ -147,6 +146,7 @@ DEFINE_HOOK(4503F0, BuildingClass_Update_Prism, 9)
 					pThis->DestroyNthAnim(BuildingAnimSlot::Active);
 					pThis->PlayNthAnim(BuildingAnimSlot::Special);
 				}
+
 			}
 		}
 	}
@@ -221,9 +221,10 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 			GAME_ALLOC(EBolt, supportEBolt);
 			if (supportEBolt) {
 				//supportEBolt->Owner = B;
+				TechnoExt::ExtData *pBuildingExt = TechnoExt::ExtMap.Find(B);
+				pBuildingExt->MyBolt = supportEBolt;
 				supportEBolt->WeaponSlot = idxSupport;
 				supportEBolt->AlternateColor = supportWeapon->IsAlternateColor;
-				WeaponTypeExt::BoltExt[supportEBolt] = WeaponTypeExt::ExtMap.Find(supportWeapon);
 				supportEBolt->Fire(SourceXYZ, *pTargetXYZ, 0); //messing with 3rd arg seems to make bolts more jumpy, and parts of them disappear
 			}
 		}
@@ -251,7 +252,7 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 	if (LaserBeam) {
 		if (pTypeData->PrismForwarding.Intensity > 0) {
 			BuildingExt::ExtData *pData = BuildingExt::ExtMap.Find(B);
-			LaserBeam->Thickness += (pTypeData->PrismForwarding.Intensity * (B->SupportingPrisms -1));
+			LaserBeam->Thickness += (pTypeData->PrismForwarding.Intensity * (B->SupportingPrisms - 1));
 		}
 	}
 
@@ -287,7 +288,7 @@ DEFINE_HOOK(448277, PrismForward_BuildingChangeOwner, 5)
 		BuildingTypeClass *pType = B->Type;
 		BuildingTypeExt::ExtData *pTypeData = BuildingTypeExt::ExtMap.Find(pType);
 
-		if (pTypeData->PrismForwarding.ToAllies) {
+		if (pTypeData->PrismForwarding.ToAllies.Get()) {
 			BuildingClass *LastTarget = B;
 			BuildingClass *FirstTarget = NULL;
 			while (LastTarget) {
@@ -346,6 +347,13 @@ DEFINE_HOOK(454B3D, PrismForward_BuildingPowerDown, 6)
 	GET(BuildingClass *, B, ESI);
 	// this building just realised it needs to go offline
 	// it unregistered itself from powered unit controls but hasn't done anything else yet
+	BuildingTypeExt::cPrismForwarding::RemoveFromNetwork(B, true);
+	return 0;
+}
+
+DEFINE_HOOK(44EBF0, PrismForward_BuildingRemoved, 5)
+{
+	GET(BuildingClass *, B, ECX);
 	BuildingTypeExt::cPrismForwarding::RemoveFromNetwork(B, true);
 	return 0;
 }
