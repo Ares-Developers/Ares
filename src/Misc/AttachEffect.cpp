@@ -176,7 +176,7 @@ bool AttachEffectClass::Update(TechnoClass *Source) {
 			}*/
 
 
-			if(!Effect->ActualDuration) {			//Bloody crashes - apparently if cloaked and attached, during delete it might crash - FIXED
+			if(!Effect->ActualDuration || (!strcmp(Effect->Type->ID, Source->GetTechnoType()->ID) && Source->Deactivated)) {			//Bloody crashes - apparently if cloaked and attached, during delete it might crash - FIXED
 				//Debug::Log("[AttachEffect] %d. item expired, removing...\n", i - 1);
 				Effect->Destroy();
 
@@ -198,14 +198,15 @@ bool AttachEffectClass::Update(TechnoClass *Source) {
 	//#1623 - generating AttachedEffect from Type
 	if (!!pTypeData->AttachedTechnoEffect.Duration && !pData->AttachedTechnoEffect_isset) {
 		if (!pData->AttachedTechnoEffect_Delay){
+			if (!Source->Deactivated){
+				//Debug::Log("[AttachEffect]Missing Type effect of %s...\n", Source->get_ID());
+				//pTypeData->AttachedTechnoEffect.Attach(Source, pTypeData->AttachedTechnoEffect.Duration, Source, pTypeData->AttachedTechnoEffect.DamageDelay);
 
-			//Debug::Log("[AttachEffect]Missing Type effect of %s...\n", Source->get_ID());
-			//pTypeData->AttachedTechnoEffect.Attach(Source, pTypeData->AttachedTechnoEffect.Duration, Source, pTypeData->AttachedTechnoEffect.DamageDelay);
+				pTypeData->AttachedTechnoEffect.Attach(Source, pTypeData->AttachedTechnoEffect.Duration, Source);
 
-			pTypeData->AttachedTechnoEffect.Attach(Source, pTypeData->AttachedTechnoEffect.Duration, Source);
-
-			pData->AttachedTechnoEffect_isset = true;
-			//Debug::Log("[AttachEffect]Readded to %s.\n", Source->get_ID());
+				pData->AttachedTechnoEffect_isset = true;
+				//Debug::Log("[AttachEffect]Readded to %s.\n", Source->get_ID());
+			}
 
 		} else {
 			pData->AttachedTechnoEffect_Delay--;
