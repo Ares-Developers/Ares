@@ -162,7 +162,8 @@ bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 				// organics are destroyed as long as they aren't teleporters
 				if(pType->Organic && pData->Chronosphere_KillOrganic.Get()) {
 					if(!pType->Teleporter || pData->Chronosphere_KillTeleporters.Get()) {
-						pTechno->ReceiveDamage(&pType->Strength, 0,
+						int strength = pType->Strength;
+						pTechno->ReceiveDamage(&strength, 0,
 							RulesClass::Instance->C4Warhead, NULL, true, false, pSource->Owner);
 						return true;
 					}
