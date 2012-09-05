@@ -61,7 +61,9 @@ DEFINE_HOOK(6F9E50, TechnoClass_Update, 5)
 		if(!pData->PoweredUnit) {
 			pData->PoweredUnit = new PoweredUnitClass(Source, pTypeData);
 		}
-		pData->PoweredUnit->Update();
+		if(!pData->PoweredUnit->Update()) {
+			TechnoExt::Destroy(Source);
+		}
 	}
 
 	return 0;
