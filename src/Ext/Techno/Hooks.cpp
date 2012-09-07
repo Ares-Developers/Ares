@@ -1086,3 +1086,11 @@ DEFINE_HOOK(4D9A83, FootClass_PointerGotInvalid_OccupierVehicleThief, 6)
 	return 0;
 }
 
+// issue #895788: cells' high occupation flags are marked only if they
+// actually contains a bridge while unmarking depends solely on object
+// height above ground. this mismatch causes the cell to become blocked.
+DEFINE_HOOK(74423D, UnitClass_UnmarkOccupationBits_CheckBridge, 6)
+{
+	GET(CellClass*, pCell, EDI);
+	return pCell->ContainsBridge() ? 0 : 0x744250;
+}
