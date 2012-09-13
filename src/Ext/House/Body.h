@@ -93,6 +93,9 @@ class HouseExt
 	static bool HasNeededFactory(HouseClass *pHouse, TechnoTypeClass *pItem);
 	static bool FactoryForObjectExists(HouseClass *pHouse, TechnoTypeClass *pItem);
 
+	static bool IsAnyFirestormActive;
+	static bool UpdateAnyFirestormActive();
+
 	static signed int PrereqValidate
 		(HouseClass *pHouse, TechnoTypeClass *pItem, bool BuildLimitOnly, bool IncludeQueued);
 };

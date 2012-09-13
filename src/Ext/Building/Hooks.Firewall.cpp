@@ -240,7 +240,8 @@ DEFINE_HOOK(6FCD1D, TechnoClass_GetObjectActivityState_CanTargetFirewall, 5)
 	}
 
 	BulletTypeExt::ExtData *pBulletData = BulletTypeExt::ExtMap.Find(Weapon->Projectile);
-	if(!pBulletData->SubjectToFirewall) {
+
+	if(!pBulletData->SubjectToFirewall || !HouseExt::IsAnyFirestormActive) {
 		return 0;
 	}
 
