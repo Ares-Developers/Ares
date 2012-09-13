@@ -852,17 +852,6 @@ DEFINE_HOOK(62C2ED, ParticleClass_Update_Gas, 6)
 {
 	GET(ParticleClass *, pParticle, EBP);
 	if(auto System = pParticle->ParticleSystem) {
-		if(auto wtf = System->unknown_FC) {
-			auto pWTF = reinterpret_cast<HouseClass *>(wtf);
-			auto idx = HouseClass::Array->FindItemIndex(&pWTF);
-			auto pHouseWTF = (idx == -1)
-				? NULL
-				: HouseClass::Array->GetItem(idx)
-			;
-			Debug::Log("ParticleSystem [%s] has field 0xFC set to %p, which matches pointer for house %s\n",
-				System->Type->ID, wtf, pHouseWTF ? pHouseWTF->Type->ID : "UNKNOWN"
-			);
-		}
 		if(auto Owner = System->Owner) {
 			R->Stack<TechnoClass *>(0x0, Owner);
 			R->Stack<HouseClass *>(0xC, Owner->Owner);
