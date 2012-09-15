@@ -156,8 +156,8 @@ bool TechnoExt::EjectSurvivor(FootClass *Survivor, CoordStruct *loc, bool Select
 	// don't ask, don't tell
 	if(chuted) {
 		bool scat = Survivor->OnBridge;
-		DWORD *flagsOfSomeKind = reinterpret_cast<DWORD *>(pCell->unknown_121 + 3);
-		if((flagsOfSomeKind[scat] & 0x1C) == 0x1C) {
+		auto occupation = scat ? pCell->AltOccupationFlags : pCell->OccupationFlags;
+		if((occupation & 0x1C) == 0x1C) {
 			pCell->ScatterContent(0xA8F200, 1, 1, scat);
 		}
 	} else {
@@ -473,7 +473,7 @@ void TechnoExt::DetachSpecificSpawnee(TechnoClass *Spawnee, HouseClass *NewSpawn
 			SpawnNode->GetItem(i)->Unit = NULL;
 			Spawnee->SpawnOwner = NULL;
 
-			SpawnNode->GetItem(i)->Status = 7;
+			SpawnNode->GetItem(i)->Status = SpawnNode::state_Dead;
 
 			Spawnee->SetOwningHouse(NewSpawneeOwner);
 		}
