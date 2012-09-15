@@ -7,7 +7,7 @@
 #include "../Ext/House/Body.h"
 #include "../Ext/HouseType/Body.h"
 
-class AIBasePlanCommandClass : public CommandClass
+class AIBasePlanCommandClass : public AresCommandClass
 {
 public:
 	//Destructor
@@ -28,6 +28,10 @@ public:
 
 	virtual void Execute(DWORD dwUnk)
 	{
+		if(this->CheckDebugDeactivated()) {
+			return;
+		}
+
 		Debug::Log("AI Base Plans:\n");
 		for(int i = 0; i < HouseClass::Array->Count; ++i) {
 			auto H = HouseClass::Array->GetItem(i);

@@ -5,6 +5,7 @@
 
 #include "..\Ares.h"
 #include <cstdio>
+#include <string>
 #include <YRPPCore.h>
 #include <Windows.h>
 #ifdef _MSC_VER
@@ -26,8 +27,8 @@ public:
 	static bool bLog;
 	static FILE* pLogFile;
 //	static FILE* pDevLogFile;
-	static wchar_t LogFileName[MAX_PATH];
-	static wchar_t LogFileTempName[MAX_PATH];
+	static std::wstring LogFileName;
+	static std::wstring LogFileTempName;
 
 	static void MakeLogFile();
 	static void LogFileOpen();
@@ -52,7 +53,8 @@ public:
 	static void FatalErrorAndExit(const char *Message, ...);
 	static int __stdcall FatalDialog_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-	static void FullDump(MINIDUMP_EXCEPTION_INFORMATION *pException, wchar_t * generatedFilename = NULL);
+	static void PrepareSnapshotDirectory(std::wstring &buffer);
+	static void FullDump(MINIDUMP_EXCEPTION_INFORMATION *pException, std::wstring * destinationFolder = NULL, std::wstring * generatedFilename = NULL);
 
 	static void DevLog(Debug::Severity severity, const char* Format, ...);
 

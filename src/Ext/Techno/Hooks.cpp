@@ -61,7 +61,9 @@ DEFINE_HOOK(6F9E50, TechnoClass_Update, 5)
 		if(!pData->PoweredUnit) {
 			pData->PoweredUnit = new PoweredUnitClass(Source, pTypeData);
 		}
-		pData->PoweredUnit->Update();
+		if(!pData->PoweredUnit->Update()) {
+			TechnoExt::Destroy(Source);
+		}
 	}
 
 	return 0;
@@ -1084,3 +1086,20 @@ DEFINE_HOOK(4D9A83, FootClass_PointerGotInvalid_OccupierVehicleThief, 6)
 	return 0;
 }
 
+// issue #895788: cells' high occupation flags are marked only if they
+// actually contains a bridge while unmarking depends solely on object
+// height above ground. this mismatch causes the cell to become blocked.
+DEFINE_HOOK(7441B6, UnitClass_MarkOccupationBits_Paradrop, 6)
+{
+	GET(UnitClass*, pThis, ECX);
+	GET(CoordStruct*, pCrd, ESI);
+
+	CellClass* pCell = MapClass::Instance->GetCellAt(pCrd);
+	int height = MapClass::Instance->GetCellFloorHeight(pCrd) + CellClass::BridgeHeight();
+
+	// also use the alt occupation if this unit is falling
+	bool alt = (pCrd->Z > height && (pCell->ContainsBridge() || pThis->IsFallingDown));
+
+	R->EDI(pCell);
+	return alt ? 0x7441E8 : 0x7441FB;
+}

@@ -1,7 +1,7 @@
 #ifndef CMD_AICTRL_H
 #define CMD_AICTRL_H
 
-class AIControlCommandClass : public CommandClass
+class AIControlCommandClass : public AresCommandClass
 {
 public:
 	//Destructor
@@ -22,6 +22,10 @@ public:
 
 	virtual void Execute(DWORD dwUnk)
 	{
+		if(this->CheckDebugDeactivated()) {
+			return;
+		}
+
 		HouseClass* P = HouseClass::Player;
 
 		if(P->CurrentPlayer && P->PlayerControl) {

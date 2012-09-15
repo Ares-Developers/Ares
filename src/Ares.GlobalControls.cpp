@@ -4,6 +4,8 @@
 bool Ares::GlobalControls::Initialized = 0;
 bool Ares::GlobalControls::AllowParallelAIQueues = 1;
 
+bool Ares::GlobalControls::DebugKeysEnabled = true;
+
 byte Ares::GlobalControls::GFX_DX_Force = 0;
 
 CCINIClass *Ares::GlobalControls::INI = NULL;
@@ -28,6 +30,12 @@ void Ares::GlobalControls::Load(CCINIClass *pINI) {
 			}
 		}
 	}
+
+	// used by the keyboard commands
+	if(pINI == CCINIClass::INI_Rules) {
+		DebugKeysEnabled = true;
+	}
+	DebugKeysEnabled = pINI->ReadBool("GlobalControls", "DebugKeysEnabled", DebugKeysEnabled);
 }
 
 void Ares::GlobalControls::LoadConfig() {
