@@ -581,7 +581,7 @@ DEFINE_HOOK(6AA711, TabCameoListClass_RecheckCameos_FilterAllowedCameos, 0)
 		auto TechnoType = ObjectTypeClass::GetTechnoType(cameo.ItemType, cameo.ItemIndex);
 		bool KeepCameo = false;
 		if(TechnoType) {
-			auto Factory = TechnoType->GetFactoryType(true, false, false, HouseClass::Player);
+			auto Factory = TechnoType->FindFactory(true, false, false, HouseClass::Player);
 			if(Factory) {
 				KeepCameo = !!Factory->Owner->CanBuild(TechnoType, false, true);
 			}
