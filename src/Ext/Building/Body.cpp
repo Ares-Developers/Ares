@@ -386,7 +386,7 @@ void BuildingExt::buildLines(BuildingClass* theBuilding, CellStruct selectedCell
 
 					if(Put) {
 						tempBuilding->QueueMission(mission_Construction, false);
-						tempBuilding->UpdateOwner(buildingOwner);
+						tempBuilding->DiscoveredBy(buildingOwner);
 						tempBuilding->unknown_bool_6DD = 1;
 					} else {
 						GAME_DEALLOC(tempBuilding);
