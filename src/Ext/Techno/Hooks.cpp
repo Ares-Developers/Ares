@@ -1103,3 +1103,32 @@ DEFINE_HOOK(7441B6, UnitClass_MarkOccupationBits_Paradrop, 6)
 	R->EDI(pCell);
 	return alt ? 0x7441E8 : 0x7441FB;
 }
+
+DEFINE_HOOK(70DEBA, TechnoClass_UpdateGattling_Cycle, 6)
+{
+	GET(TechnoClass*, pThis, ESI);
+	GET(int, lastStageValue, EAX);
+	GET_STACK(int, a2, 0x24);
+
+	auto pType = pThis->GetTechnoType();
+
+	if(pThis->GattlingValue < lastStageValue) {
+		// just increase the value
+		pThis->GattlingValue += a2 * pType->RateUp;
+	} else {
+		// if max or higher, reset cyclic gattlings
+		auto pExt = TechnoTypeExt::ExtMap.Find(pType);
+
+		if(pExt->GattlingCyclic.Get()) {
+			pThis->GattlingValue = 0;
+			pThis->CurrentGattlingStage = 0;
+			pThis->Audio4.DTOR_1();
+			pThis->unknown_bool_4B8 = false;
+		}
+	}
+
+	// recreate hooked instruction
+	R->Stack<int>(0x10, pThis->GattlingValue);
+
+	return 0x70DEEB;
+}
