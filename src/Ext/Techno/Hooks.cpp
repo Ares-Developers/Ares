@@ -1089,17 +1089,49 @@ DEFINE_HOOK(4D9A83, FootClass_PointerGotInvalid_OccupierVehicleThief, 6)
 // issue #895788: cells' high occupation flags are marked only if they
 // actually contains a bridge while unmarking depends solely on object
 // height above ground. this mismatch causes the cell to become blocked.
-DEFINE_HOOK(7441B6, UnitClass_MarkOccupationBits_Paradrop, 6)
+DEFINE_HOOK(7441B6, UnitClass_MarkOccupationBits, 6)
 {
 	GET(UnitClass*, pThis, ECX);
 	GET(CoordStruct*, pCrd, ESI);
 
 	CellClass* pCell = MapClass::Instance->GetCellAt(pCrd);
 	int height = MapClass::Instance->GetCellFloorHeight(pCrd) + CellClass::BridgeHeight();
+	bool alt = (pCrd->Z > height && pCell->ContainsBridge());
 
-	// also use the alt occupation if this unit is falling
-	bool alt = (pCrd->Z > height && (pCell->ContainsBridge() || pThis->IsFallingDown));
+	// remember which occupation bit we set
+	auto pExt = TechnoExt::ExtMap.Find(pThis);
+	pExt->AltOccupation.Set(alt);
 
-	R->EDI(pCell);
-	return alt ? 0x7441E8 : 0x7441FB;
+	if(alt) {
+		pCell->AltOccupationFlags |= 0x20;
+	} else {
+		pCell->OccupationFlags |= 0x20;
+	}
+
+	return 0x744209;
+}
+
+DEFINE_HOOK(744216, UnitClass_UnmarkOccupationBits, 6)
+{
+	GET(UnitClass*, pThis, ECX);
+	GET(CoordStruct*, pCrd, ESI);
+
+	CellClass* pCell = MapClass::Instance->GetCellAt(pCrd);
+	int height = MapClass::Instance->GetCellFloorHeight(pCrd) + CellClass::BridgeHeight();
+	bool alt = (pCrd->Z >= height);
+
+	// use the last occupation bit, if set
+	auto pExt = TechnoExt::ExtMap.Find(pThis);
+	if(pExt->AltOccupation.isset()) {
+		alt = pExt->AltOccupation.Get();
+		pExt->AltOccupation.Reset();
+	}
+
+	if(alt) {
+		pCell->AltOccupationFlags &= ~0x20;
+	} else {
+		pCell->OccupationFlags &= ~0x20;
+	}
+
+	return 0x74425E;
 }
