@@ -10,8 +10,6 @@ int SideExt::CurrentLoadTextColor = -1;
 template<> SideExt::TT *Container<SideExt>::SavingObject = NULL;
 template<> IStream *Container<SideExt>::SavingStream = NULL;
 
-hash_map<VoxClass*, DynamicVectorClass<SideExt::VoxFileNameStruct> > SideExt::EVAFiles;
-
 void SideExt::ExtData::Initialize(SideClass *pThis)
 {
 	char* pID = pThis->ID;
@@ -38,7 +36,7 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 		this->DefaultDisguise.Bind(&RulesClass::Instance->SovietDisguise);
 		this->SurvivorDivisor.Bind(&RulesClass::Instance->SovietSurvivorDivisor);
 
-		strcpy(this->EVATag, "Russian");
+		this->EVAIndex = 1;
 
 		this->ParaDropFallbackTypes = &RulesClass::Instance->SovParaDropInf;
 		this->ParaDropFallbackNum = &RulesClass::Instance->SovParaDropNum;
@@ -60,7 +58,7 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 		this->DefaultDisguise.Bind(&RulesClass::Instance->ThirdDisguise);
 		this->SurvivorDivisor.Bind(&RulesClass::Instance->ThirdSurvivorDivisor);
 
-		strcpy(this->EVATag, "Yuri");
+		this->EVAIndex = 2;
 
 		this->ParaDropFallbackTypes = &RulesClass::Instance->YuriParaDropInf;
 		this->ParaDropFallbackNum = &RulesClass::Instance->YuriParaDropNum;
@@ -82,7 +80,7 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 		this->DefaultDisguise.Bind(&RulesClass::Instance->AlliedDisguise);
 		this->SurvivorDivisor.Bind(&RulesClass::Instance->AlliedSurvivorDivisor);
 
-		strcpy(this->EVATag, "Allied");
+		this->EVAIndex = 0;
 
 		this->ParaDropFallbackTypes = &RulesClass::Instance->AllyParaDropInf;
 		this->ParaDropFallbackNum = &RulesClass::Instance->AllyParaDropNum;
@@ -120,9 +118,7 @@ void SideExt::ExtData::LoadFromINIFile(SideClass *pThis, CCINIClass *pINI)
 
 	this->DefaultDisguise.Parse(&exINI, section, "DefaultDisguise", 1);
 
-	if(pINI->ReadString(section, "EVA.Tag", "", Ares::readBuffer, 0x20)) {
-		AresCRT::strCopy(this->EVATag, Ares::readBuffer, 0x20);
-	}
+	this->EVAIndex.Read(&exINI, section, "EVA.Tag");
 
 	this->Parachute_Anim.Parse(&exINI, section, "Parachute.Anim");
 
