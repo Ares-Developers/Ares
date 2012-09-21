@@ -356,3 +356,20 @@ DEFINE_HOOK(6DE0D3, TActionClass_Execute_HardcodeMessageColors, 6)
 	R->EAX(idxColor);
 	return 0x6DE0DE;
 }
+
+DEFINE_HOOK(72F440, Game_InitializeToolTipColor, A)
+{
+	GET(int, idxSide, ECX);
+
+	if(SideClass::Array->ValidIndex(idxSide)) {
+		if(SideClass* pSide = SideClass::Array->GetItem(idxSide)) {
+			if(SideExt::ExtData* pExt = SideExt::ExtMap.Find(pSide)) {
+				ColorStruct &clrToolTip = *(ColorStruct*)0x0B0FA1C;
+				clrToolTip = pExt->ToolTipTextColor.Get();
+				return 0x72F495;
+			}
+		}
+	}
+
+	return 0;
+}

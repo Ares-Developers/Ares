@@ -44,6 +44,8 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 		this->SidebarMixFileIndex = 2;
 		this->SidebarYuriFileNames = false;
 
+		this->ToolTipTextColor = ColorStruct(255, 255, 0);
+
 	} else if(!_strcmpi(pID, "ThirdSide")) { //Yuri
 
 		for(int i = 0; i < RulesClass::Instance->ThirdBaseDefenseCounts.Count; ++i) {
@@ -66,6 +68,8 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 		this->SidebarMixFileIndex = 2;
 		this->SidebarYuriFileNames = true;
 
+		this->ToolTipTextColor = ColorStruct(255, 255, 0);
+
 	} else { //Allies or any other country
 
 		for(int i = 0; i < RulesClass::Instance->AlliedBaseDefenseCounts.Count; ++i) {
@@ -87,6 +91,8 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 
 		this->SidebarMixFileIndex = 1;
 		this->SidebarYuriFileNames = false;
+
+		this->ToolTipTextColor = ColorStruct(164, 210, 255);
 	}
 
 };
@@ -154,6 +160,7 @@ void SideExt::ExtData::LoadFromINIFile(SideClass *pThis, CCINIClass *pINI)
 
 	this->SidebarMixFileIndex =  pINI->ReadInteger(section, "Sidebar.MixFileIndex", this->SidebarMixFileIndex);
 	this->SidebarYuriFileNames = pINI->ReadBool(section, "Sidebar.YuriFileNames", this->SidebarYuriFileNames);
+	this->ToolTipTextColor.Read(&exINI, section, "ToolTipColor");
 	this->SurvivorDivisor.Read(&exINI, section, "SurvivorDivisor");
 }
 
