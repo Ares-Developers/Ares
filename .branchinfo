@@ -1,6 +1,6 @@
 [branch]
-Name=AttachEffect
-Description=Issues #1573, #1623, 255: stat-modifiers/animations attached to units
+Name=The AttachEffect system
+Description=Seaparate branch for implementing issues #1573, #1623, 255. See https://github.com/Ares-Developers/Ares/wiki/AttachEffect-system for documentation.
 BranchRevision=1
 TargetVersion=0.3
 Stable=no
