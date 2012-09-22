@@ -30,19 +30,29 @@ bool InfantryExt::ExtData::IsOccupant() {
 	\param pBld The Building the engineer enters.
 
 	\author AlexB
-	\date 2010-05-28
+	\date 2012-07-22
 */
 eAction InfantryExt::GetEngineerEnterEnemyBuildingAction(BuildingClass *pBld) {
-	// damage if multi engineer and target isn't that low on health. this
-	// only affects multiplay and only if it is enabled.
-	if(SessionClass::Instance->GameMode != GameMode::Skirmish || GameModeOptionsClass::Instance->MultiEngineer) {
+	// no other mode than skirmish allows to disable it, so we only check whether
+	// multi engineer is disabled there. for all other modes, it's always on.
+	// single player campaigns also use special multi engineer behavior.
+	bool allowDamage = SessionClass::Instance->GameMode != GameMode::Skirmish || GameModeOptionsClass::Instance->MultiEngineer;
+
+	// single player missions are currently hardcoded to "don't do damage".
+	bool campaignSupportsDamage = false; // replace this by a new rules tag.
+	if(SessionClass::Instance->GameMode == GameMode::Campaign && !campaignSupportsDamage) {
+		allowDamage = false;
+	}
+
+	// damage if multi engineer is enabled and target isn't that low on health.
+	if(allowDamage) {
 
 		// check to always capture tech structures. a structure counts
 		// as tech if its initial owner is a multiplayer-passive country.
 		bool isTech = false;
 		if(HouseClass * pHouse = pBld->OwningPlayer2) {
 			if(HouseTypeClass * pCountry = pHouse->Type) {
-				isTech = !_strcmpi(pCountry->ID, "Neutral") || !_strcmpi(pCountry->ID, "Special");
+				isTech = pCountry->MultiplayPassive;
 			}
 		}
 

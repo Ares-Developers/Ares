@@ -130,7 +130,7 @@ DEFINE_HOOK(4F94A5, HouseClass_BuildingUnderAttack, 6)
 {
 	GET_STACK(DWORD, Caller, 0x14);
 	if(Caller == 0x442980) {
-		Debug::DumpStack(R, 0xF0, 0xA0);
+		//Debug::DumpStack(R, 0xF0, 0xA0);
 		GET_STACK(WarheadTypeClass *, WH, 0x14 + 0xA4 + 0xC);
 		if(auto pData = WarheadTypeExt::ExtMap.Find(WH)) {
 			if(!pData->Malicious) {

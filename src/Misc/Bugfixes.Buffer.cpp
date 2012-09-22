@@ -401,7 +401,7 @@ DEFINE_HOOK(6DE7A5, TActionClass_Execute_SoundAtRandomWaypoint, 0)
 		S->GetWaypointCoords(&XY, luckyWP);
 		CoordStruct XYZ;
 		CellClass::Coord2Cell(&XYZ, &XY);
-		VocClass::PlayIndexAtPos(pAction->arg_90, &XYZ);
+		VocClass::PlayIndexAtPos(pAction->Value, &XYZ);
 
 		R->AL(1);
 	} else {

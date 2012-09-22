@@ -870,17 +870,6 @@ DEFINE_HOOK(62C2ED, ParticleClass_Update_Gas, 6)
 {
 	GET(ParticleClass *, pParticle, EBP);
 	if(auto System = pParticle->ParticleSystem) {
-		if(auto wtf = System->unknown_FC) {
-			auto pWTF = reinterpret_cast<HouseClass *>(wtf);
-			auto idx = HouseClass::Array->FindItemIndex(&pWTF);
-			auto pHouseWTF = (idx == -1)
-				? NULL
-				: HouseClass::Array->GetItem(idx)
-			;
-			Debug::Log("ParticleSystem [%s] has field 0xFC set to %p, which matches pointer for house %s\n",
-				System->Type->ID, wtf, pHouseWTF ? pHouseWTF->Type->ID : "UNKNOWN"
-			);
-		}
 		if(auto Owner = System->Owner) {
 			R->Stack<TechnoClass *>(0x0, Owner);
 			R->Stack<HouseClass *>(0xC, Owner->Owner);
@@ -966,14 +955,16 @@ DEFINE_HOOK(71810D, TeleportLocomotionClass_ILocomotion_MoveTo_Deactivated, 6)
 	return (!pFoot->Deactivated && pFoot->Locomotor->Is_Powered()) ? 0 : 0x71820F;
 }
 
-// issue 1002020: clear stale mind control pointer to prevent a
-// crash when drawing mind-control links to destroyed controllers.
-DEFINE_HOOK(5F530B, ObjectClass_EndOfLife_ResetMindControl, 6)
+// issues 1002020, 896263, 895954: clear stale mind control pointer to prevent
+// crashes when accessing properties of the destroyed controllers.
+DEFINE_HOOK(7077EE, TechnoClass_PointerGotInvalid_ResetMindControl, 6)
 {
-	// verify this is a techno, then remove the link
 	GET(TechnoClass*, pThis, ESI);
-	if(generic_cast<TechnoClass*>(pThis)) {
+	GET(void*, ptr, EBP);
+
+	if(pThis->MindControlledBy == ptr) {
 		pThis->MindControlledBy = NULL;
 	}
+
 	return 0;
 }

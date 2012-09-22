@@ -16,7 +16,7 @@ private:
 	
 	bool IsPoweredBy(HouseClass* Owner) const;
 	void PowerUp();
-	void PowerDown();
+	bool PowerDown();
 public:
 	PoweredUnitClass(TechnoClass* Techno, TechnoTypeExt::ExtData* Ext)
 		: Techno(Techno), Ext(Ext), LastScan(0), Powered(true) {
@@ -25,8 +25,8 @@ public:
 	~PoweredUnitClass() {
 	}
 
-	//!< Updates this Powered Unit's status.
-	void Update();
+	//!< Updates this Powered Unit's status. Returns whether the unit should stay alive.
+	bool Update();
 	
 	//!< Whether the unit has a building providing power. NOT the same as being online.
 	inline bool IsPowered() const {

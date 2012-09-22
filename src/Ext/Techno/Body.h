@@ -74,6 +74,8 @@ public:
 
 		EBolt * MyBolt;
 
+		Nullable<bool> AltOccupation; // if the unit marks cell occupation flags, this is set to whether it uses the "high" occupation members
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			idxSlot_Wave (0),
 			idxSlot_Beam (0),
@@ -91,6 +93,7 @@ public:
 			RadarJam(NULL),
 			PoweredUnit(NULL),
 			MyOriginalTemporal(NULL),
+			AltOccupation(),
 			AttachedTechnoEffect_isset (false),
 			AttachedTechnoEffect_Delay (0)
 			{

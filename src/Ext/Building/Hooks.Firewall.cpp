@@ -231,7 +231,7 @@ DEFINE_HOOK(6FC0C5, TechnoClass_GetObjectActivityState_Firewall, 6)
 DEFINE_HOOK(6FCD1D, TechnoClass_GetObjectActivityState_CanTargetFirewall, 5)
 {
 	GET(TechnoClass *, Src, ESI);
-	GET_STACK(TechnoClass *, Tgt, 0x24);
+	GET_STACK(AbstractClass *, Tgt, 0x24);
 	GET_STACK(int, idxWeapon, 0x28);
 
 	WeaponTypeClass *Weapon = Src->GetWeapon(idxWeapon)->WeaponType;
@@ -240,13 +240,17 @@ DEFINE_HOOK(6FCD1D, TechnoClass_GetObjectActivityState_CanTargetFirewall, 5)
 	}
 
 	BulletTypeExt::ExtData *pBulletData = BulletTypeExt::ExtMap.Find(Weapon->Projectile);
-	if(!pBulletData->SubjectToFirewall) {
+
+	if(!pBulletData->SubjectToFirewall || !HouseExt::IsAnyFirestormActive) {
 		return 0;
 	}
 
+	CoordStruct crdTgt;
+	Tgt->GetCoords(&crdTgt);
+
 	FirestormFinderApplicator FireFinder(Src->Owner);
 
-	CellSequence Path(&Src->Location, &Tgt->Location);
+	CellSequence Path(&Src->Location, &crdTgt);
 
 	Path.Apply(FireFinder);
 

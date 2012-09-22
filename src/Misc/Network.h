@@ -1,7 +1,7 @@
-#ifndef NETWORKING_H_
-#define NETWORKING_H_
+#ifndef ARES_NETWORKING_H_
+#define ARES_NETWORKING_H_
 
-#include <NetworkEvents.h>
+#include <Networking.h>
 
 class AresNetEvent {
 public:

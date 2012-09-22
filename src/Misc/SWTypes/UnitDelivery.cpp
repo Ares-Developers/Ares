@@ -119,7 +119,7 @@ void UnitDeliveryStateMachine::PlaceUnits() {
 					if((Placed = Item->Put(&XYZ, (cellIdx & 7))) == true) {
 						if(ItemBuilding) {
 							if(pData->SW_DeliverBuildups.Get()) {
-								ItemBuilding->UpdateOwner(this->Super->Owner);
+								ItemBuilding->DiscoveredBy(this->Super->Owner);
 								ItemBuilding->unknown_bool_6DD = 1;
 							}
 						} else {
