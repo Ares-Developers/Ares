@@ -340,17 +340,17 @@ DEFINE_HOOK(7534E0, VoxClass_SetEVAIndex, 5)
 	return 0x7534F3;
 }
 
-DEFINE_HOOK(6DE0D3, TActionClass_Execute_HardcodeMessageColors, 6)
+DEFINE_HOOK(6DE0D3, TActionClass_Execute_MessageColor, 6)
 {
 	int idxSide = ScenarioClass::Instance->PlayerSideIndex;
-	int idxColor = 25;
+	int idxColor = 0;
 
-	if(!idxSide) {
-		// allied
-		idxColor = 21;
-	} else if(idxSide == 1) {
-		// soviet
-		idxColor = 11;
+	if(SideClass::Array->ValidIndex(idxSide)) {
+		if(SideClass* pSide = SideClass::Array->GetItem(idxSide)) {
+			if(SideExt::ExtData* pExt = SideExt::ExtMap.Find(pSide)) {
+				idxColor = pExt->MessageTextColorIndex;
+			}
+		}
 	}
 	
 	R->EAX(idxColor);

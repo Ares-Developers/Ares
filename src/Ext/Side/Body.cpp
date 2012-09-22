@@ -45,6 +45,7 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 		this->SidebarYuriFileNames = false;
 
 		this->ToolTipTextColor = ColorStruct(255, 255, 0);
+		this->MessageTextColorIndex = 11;
 
 	} else if(!_strcmpi(pID, "ThirdSide")) { //Yuri
 
@@ -69,6 +70,7 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 		this->SidebarYuriFileNames = true;
 
 		this->ToolTipTextColor = ColorStruct(255, 255, 0);
+		this->MessageTextColorIndex = 25;
 
 	} else { //Allies or any other country
 
@@ -93,6 +95,7 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 		this->SidebarYuriFileNames = false;
 
 		this->ToolTipTextColor = ColorStruct(164, 210, 255);
+		this->MessageTextColorIndex = 21;
 	}
 
 };
@@ -162,6 +165,12 @@ void SideExt::ExtData::LoadFromINIFile(SideClass *pThis, CCINIClass *pINI)
 	this->SidebarYuriFileNames = pINI->ReadBool(section, "Sidebar.YuriFileNames", this->SidebarYuriFileNames);
 	this->ToolTipTextColor.Read(&exINI, section, "ToolTipColor");
 	this->SurvivorDivisor.Read(&exINI, section, "SurvivorDivisor");
+
+	if(pINI->ReadString(section, "MessageTextColor", "", Ares::readBuffer, 0x80)) {
+		if(ColorScheme* pCS = ColorScheme::Find(Ares::readBuffer)) {
+			this->MessageTextColorIndex = pCS->ArrayIndex;
+		}
+	}
 }
 
 DWORD SideExt::BaseDefenses(REGISTERS* R, DWORD dwReturnAddress)
