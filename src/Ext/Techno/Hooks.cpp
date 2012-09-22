@@ -1260,10 +1260,29 @@ DEFINE_HOOK(4D98C0, FootClass_Destroyed, A) {
 }
 
 // issue #????: linking units for type selection
-DEFINE_HOOK(732C49, TechnoClass_IDMatches, 6) {
-	GET(TechnoClass*, pThis, ESI);
-	GET(const char*, pID, EAX);
+DEFINE_HOOK(732C30, TechnoClass_IDMatches, 5)
+{
+	GET(TechnoClass*, pThis, ECX);
+	GET(DynamicVectorClass<const char*>*, pNames, EDX);
 
-	const char* id = TechnoTypeExt::GetGroupingID(pThis->GetTechnoType());
-	return _strcmpi(id, pID) ? 0x732C85 : 0x732C53;
+	TechnoTypeClass* pType = pThis->GetTechnoType();
+	auto pExt = TechnoTypeExt::ExtMap.Find(pType);
+	const char* id = pExt->GetSelectionGroupID();
+
+	bool match = false;
+
+	// find any match
+	for(auto i=pNames->begin(); i<pNames->end(); ++i) {
+		if(!_strcmpi(*i, id) && pThis->CanBeSelectedNow()) {
+
+			// buildings are exempt if they can't undeploy
+			if(pThis->WhatAmI() != BuildingClass::AbsID || pType->UndeploysInto) {
+				match = true;
+				break;
+			}
+		}
+	}
+
+	R->EAX(match ? 1 : 0);
+	return 0x732C97;
 }

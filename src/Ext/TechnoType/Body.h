@@ -248,12 +248,13 @@ public:
 		bool CanBeBuiltAt(BuildingTypeClass * FactoryType);
 
 		bool CarryallCanLift(UnitClass * Target);
+
+		const char* GetSelectionGroupID();
 };
 
 	static Container<TechnoTypeExt> ExtMap;
 
 //	static void ReadWeapon(WeaponStruct *pWeapon, const char *prefix, const char *section, CCINIClass *pINI);
-	static const char* GetGroupingID(ObjectTypeClass* pType);
 };
 
 #endif

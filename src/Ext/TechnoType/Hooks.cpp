@@ -13,28 +13,34 @@ DEFINE_HOOK(732D10, TacticalClass_CollectSelectedIDs, 5)
 	DynamicVectorClass<const char*> *pNames = NULL;
 	GAME_ALLOC(DynamicVectorClass<const char*>, pNames);
 
-	auto Add = [pNames](const char* ID) {
-		for(auto i = pNames->begin(); i != pNames->end(); ++i) {
-			if(!_strcmpi(*i, ID)) {
-				return;
+	auto Add = [pNames](TechnoTypeClass* pType) {
+		if(auto pExt = TechnoTypeExt::ExtMap.Find(pType)) {
+			const char* id = pExt->GetSelectionGroupID();
+
+			for(auto i = pNames->begin(); i != pNames->end(); ++i) {
+				if(!_strcmpi(*i, id)) {
+					return;
+				}
 			}
+
+			pNames->AddItem(id);
 		}
-		pNames->AddItem(ID);
 	};
 
 	for(auto i = ObjectClass::CurrentObjects->begin(); i != ObjectClass::CurrentObjects->end(); ++i) {
 		// add this object's id used for grouping
 		ObjectClass* pObject = *i;
-		TechnoTypeClass* pType = pObject->GetTechnoType();
-		Add(TechnoTypeExt::GetGroupingID(pType));
+		if(TechnoTypeClass* pType = pObject->GetTechnoType()) {
+			Add(pType);
 
-		// optionally do the same the original game does, but support the new grouping feature.
-		if(RulesExt::Global()->TypeSelectUseDeploy.Get()) {
-			if(pType->DeploysInto) {
-				Add(TechnoTypeExt::GetGroupingID(pType->DeploysInto));
-			}
-			if(pType->UndeploysInto) {
-				Add(TechnoTypeExt::GetGroupingID(pType->UndeploysInto));
+			// optionally do the same the original game does, but support the new grouping feature.
+			if(RulesExt::Global()->TypeSelectUseDeploy.Get()) {
+				if(pType->DeploysInto) {
+					Add(pType->DeploysInto);
+				}
+				if(pType->UndeploysInto) {
+					Add(pType->UndeploysInto);
+				}
 			}
 		}
 	}

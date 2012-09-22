@@ -456,16 +456,12 @@ void TechnoTypeClassExt::ReadWeapon(WeaponStruct *pWeapon, const char *prefix, c
 }
 */
 
-const char* TechnoTypeExt::GetGroupingID(ObjectTypeClass* pType) {
-	if(TechnoTypeExt::ExtData* pExt = TechnoTypeExt::ExtMap.Find((TechnoTypeClass*)pType)) {
-		if(*pExt->GroupAs) {
-			return pExt->GroupAs;
-		}
-	}
-	return pType->ID;
+void Container<TechnoTypeExt>::InvalidatePointer(void *ptr, bool bRemoved) {
 }
 
-void Container<TechnoTypeExt>::InvalidatePointer(void *ptr, bool bRemoved) {
+const char* TechnoTypeExt::ExtData::GetSelectionGroupID()
+{
+	return *this->GroupAs ? this->GroupAs : this->AttachedToObject->ID;
 }
 
 bool TechnoTypeExt::ExtData::CameoIsElite()
