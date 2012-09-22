@@ -1171,3 +1171,14 @@ DEFINE_HOOK(70DEBA, TechnoClass_UpdateGattling_Cycle, 6)
 
 	return 0x70DEEB;
 }
+
+// prevent crashing and sinking technos from self-healing
+DEFINE_HOOK(6FA743, TechnoClass_Update_SkipSelfHeal, A)
+{
+	GET(TechnoClass*, pThis, ESI);
+	if(pThis->IsCrashing || pThis->IsSinking) {
+		return 0x6FA941;
+	}
+	
+	return 0;
+}
