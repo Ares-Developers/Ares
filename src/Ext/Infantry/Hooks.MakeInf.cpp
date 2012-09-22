@@ -75,7 +75,7 @@ DEFINE_HOOK(6E232E, ActionClass_PlayAnimAt, 5)
 	LEA_STACK(CoordStruct *, pCoords, 0xC);
 
 	AnimClass *Anim = NULL;
-	AnimTypeClass *AnimType = AnimTypeClass::Array->GetItem(pAction->arg_90);
+	AnimTypeClass *AnimType = AnimTypeClass::Array->GetItem(pAction->Value);
 
 	GAME_ALLOC(AnimClass, Anim, AnimType, pCoords);
 

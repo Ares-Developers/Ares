@@ -1,7 +1,7 @@
 #ifndef CMD_MAPSNAP_H
 #define CMD_MAPSNAP_H
 
-class MapSnapshotCommandClass : public CommandClass
+class MapSnapshotCommandClass : public AresCommandClass
 {
 public:
 	//Destructor
@@ -22,6 +22,10 @@ public:
 
 	virtual void Execute(DWORD dwUnk)
 	{
+		if(this->CheckDebugDeactivated()) {
+			return;
+		}
+
 		char fName[0x80];
 
 		SYSTEMTIME time;

@@ -32,15 +32,14 @@ public:
 
 		MessageListClass::Instance->PrintMessage(L"Dumping process memory...");
 
-		wchar_t filename[MAX_PATH];
-		Debug::FullDump(NULL, filename);
+		std::wstring filename;
+		Debug::FullDump(NULL, NULL, &filename);
 
-		const size_t len = MAX_PATH + 0x20;
-		wchar_t Message[len];
-		_snwprintf(Message, len, L"Process memory dumped to %s", filename);
-
-		MessageListClass::Instance->PrintMessage(Message);
 		Debug::Log("Process memory dumped to %ls\n", filename);
+
+		filename = L"Process memory dumped to " + filename;
+
+		MessageListClass::Instance->PrintMessage(filename.c_str());
 
 		loadCursor = LoadCursor(NULL, IDC_ARROW);
 		SetClassLong(Game::hWnd, GCL_HCURSOR, (LONG)loadCursor);

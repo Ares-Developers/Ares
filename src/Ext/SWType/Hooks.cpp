@@ -350,8 +350,12 @@ DEFINE_HOOK(50B319, HouseClass_UpdateSWs_ShowCameo, 6)
 // AI SW targeting submarines
 DEFINE_HOOK(50CFAA, HouseClass_PickOffensiveSWTarget, 0)
 {
+	// reset weight
 	R->ESI(0);
-	R->Stack8(0x13, 1);
+
+	// mark as ineligible
+	R->Stack8(0x13, 0);
+
 	return 0x50CFC9;
 }
 

@@ -99,6 +99,9 @@ class HouseExt
 	static bool CheckFactoryOwner(HouseClass *pHouse, BuildingClass *Factory, TechnoTypeClass *pItem);
 	static bool CheckForbiddenFactoryOwner(HouseClass *pHouse, BuildingClass *Factory, TechnoTypeClass *pItem);
 
+	static bool IsAnyFirestormActive;
+	static bool UpdateAnyFirestormActive();
+
 	static signed int PrereqValidate
 		(HouseClass *pHouse, TechnoTypeClass *pItem, bool BuildLimitOnly, bool IncludeQueued);
 };

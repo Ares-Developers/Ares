@@ -313,7 +313,7 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 				Target->Absorbed = true;
 			}
 			Attacker->AddPassenger(Target);
-			Attacker->vt_entry_11C(); // something or other
+			Attacker->Undiscover();
 
 			// ..and neuter the bullet, since it's not supposed to hurt the prisoner after the abduction
 			Bullet->Health = 0;

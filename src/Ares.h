@@ -105,6 +105,8 @@ public:
 		static bool Initialized;
 		static bool AllowParallelAIQueues;
 
+		static bool DebugKeysEnabled;
+
 		static byte GFX_DX_Force;
 
 		static std::bitset<3> AllowBypassBuildLimit;

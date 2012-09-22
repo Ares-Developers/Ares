@@ -158,8 +158,9 @@ void BuildingExt::ExtData::KickOutOfRubble() {
 				CellClass* cell = MapClass::Instance->GetCellAt(&pos);
 				for(ObjectClass* pObj = cell->GetContent(); pObj; pObj = pObj->NextObject) {
 					if(FootClass* pFoot = generic_cast<FootClass*>(pObj)) {
+						bool selected = pFoot->IsSelected;
 						if(pFoot->Remove()) {
-							list.AddItem(std::pair<FootClass*, bool>(pFoot, pFoot->IsSelected));
+							list.AddItem(std::pair<FootClass*, bool>(pFoot, selected));
 						}
 					}
 				}
@@ -385,7 +386,7 @@ void BuildingExt::buildLines(BuildingClass* theBuilding, CellStruct selectedCell
 
 					if(Put) {
 						tempBuilding->QueueMission(mission_Construction, false);
-						tempBuilding->UpdateOwner(buildingOwner);
+						tempBuilding->DiscoveredBy(buildingOwner);
 						tempBuilding->unknown_bool_6DD = 1;
 					} else {
 						GAME_DEALLOC(tempBuilding);
