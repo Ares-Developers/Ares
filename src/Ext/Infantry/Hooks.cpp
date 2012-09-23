@@ -139,3 +139,26 @@ DEFINE_HOOK(519D9C, InfantryClass_UpdatePosition_MultiEngineer, 5) {
 		return 0x519EAA;
 	}
 }
+
+// #1008047: the C4 did not work correctly in YR, because some ability checks were missing
+DEFINE_HOOK(51C325, InfantryClass_IsCellOccupied_C4Ability, 6)
+{
+	GET(InfantryClass*, pThis, EBP);
+
+	return (pThis->Type->C4 || pThis->HasAbility(Abilities::C4)) ? 0x51C37D : 0x51C335;
+}
+
+DEFINE_HOOK(51A4D2, InfantryClass_UpdatePosition_C4Ability, 6)
+{
+	GET(InfantryClass*, pThis, ESI);
+
+	return (!pThis->Type->C4 && !pThis->HasAbility(Abilities::C4)) ? 0x51A7F4 : 0x51A4E6;
+}
+
+// C4 ability: this thing might not be needed. works without it, but one can't be too sure
+DEFINE_HOOK(700505, TechnoClass_GetCursorOverObject_C4Ability, 6)
+{
+	GET(InfantryClass*, pThis, ESI);
+
+	return (!pThis->Type->C4 && !pThis->HasAbility(Abilities::C4)) ? 0x700536 : 0x700515;
+}
