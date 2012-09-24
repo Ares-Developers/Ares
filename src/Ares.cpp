@@ -39,6 +39,7 @@ bool Ares::bAllowAIControl = false;
 bool Ares::bFPSCounter = false;
 bool Ares::bStable = false;
 bool Ares::bStableNotification = false;
+bool Ares::bOutputMissingStrings = false;
 
 DWORD Ares::readLength = BUFLEN;
 char Ares::readBuffer[BUFLEN];
@@ -110,6 +111,8 @@ void __stdcall Ares::CmdLineParse(char** ppArgs,int nNumArgs)
 				EMPulse::verbose = true;
 			} else if(strcmp(pArg,"-AI-CONTROL") == 0) {
 				bAllowAIControl = true;
+			} else if(strcmp(pArg,"-LOG-CSF") == 0) {
+				bOutputMissingStrings = true;
 			}
 		}
 	}

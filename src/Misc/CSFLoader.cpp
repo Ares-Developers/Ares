@@ -60,6 +60,10 @@ const wchar_t* CSFLoader::GetDynamicString(const char* pLabelName, const wchar_t
 		NewString->PreviousEntry = StringTable::LastLoadedString;
 		StringTable::LastLoadedString = NewString;
 
+		if(Ares::bOutputMissingStrings) {
+			Debug::Log("[CSFLoader] Added label \"%s\" with value \"%ls\".\n", pLabelName, NewString->Text);
+		}
+
 		DynamicStrings[pLabelName] = NewString;
 		String = NewString;
 	}
