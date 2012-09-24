@@ -196,17 +196,20 @@ void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass
 	readString(this->Message_Abort, "Message.Abort");
 	readString(this->Message_InsufficientFunds, "Message.InsufficientFunds");
 
-	readString(this->Text_Preparing, "Text.Preparing");
-	readString(this->Text_Ready, "Text.Ready");
-	readString(this->Text_Hold, "Text.Hold");
-	readString(this->Text_Charging, "Text.Charging");
-	readString(this->Text_Active, "Text.Active");
+	auto readAndCache = [&](char* value, const wchar_t** cache, char* key) {
+		readString(value, key);
+		*cache = NULL;
 
-	this->NameReadiness_Preparing = NULL;
-	this->NameReadiness_Ready = NULL;
-	this->NameReadiness_Hold = NULL;
-	this->NameReadiness_Charging = NULL;
-	this->NameReadiness_Active = NULL;
+		if(*value) {
+			*cache = StringTable::LoadStringA(value);
+		}
+	};
+
+	readAndCache(this->Text_Preparing, &this->NameReadiness_Preparing, "Text.Preparing");
+	readAndCache(this->Text_Ready, &this->NameReadiness_Ready, "Text.Ready");
+	readAndCache(this->Text_Hold, &this->NameReadiness_Hold, "Text.Hold");
+	readAndCache(this->Text_Charging, &this->NameReadiness_Charging, "Text.Charging");
+	readAndCache(this->Text_Active, &this->NameReadiness_Active, "Text.Active");
 
 	// the fallback is handled in the PreDependent SW's code
 	if(pINI->ReadString(section, "SW.PostDependent", Ares::readDefval, Ares::readBuffer, Ares::readLength)) {

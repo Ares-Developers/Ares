@@ -465,49 +465,35 @@ DEFINE_HOOK(6CC2B0, SuperClass_NameReadiness, 5) {
 
 	// complete rewrite of this method.
 
-	char* key = pData->Text_Preparing;
-	const wchar_t** cache = &pData->NameReadiness_Preparing;
+	const wchar_t* text = pData->NameReadiness_Preparing;
 	if(pThis->IsOnHold) {
 		// on hold
-		key = pData->Text_Hold;
-		cache = &pData->NameReadiness_Hold;
+		text = pData->NameReadiness_Hold;
 	} else {
 		if(pThis->Type->UseChargeDrain) {
 			switch(pThis->ChargeDrainState) {
 			case ChargeDrainState::Charging:
 				// still charging
-				key = pData->Text_Charging;
-				cache = &pData->NameReadiness_Charging;
+				text = pData->NameReadiness_Charging;
 				break;
 			case ChargeDrainState::Ready:
 				// ready
-				key = pData->Text_Ready;
-				cache = &pData->NameReadiness_Ready;
+				text = pData->NameReadiness_Ready;
 				break;
 			case ChargeDrainState::Draining:
 				// currently active
-				key = pData->Text_Active;
-				cache = &pData->NameReadiness_Active;
+				text = pData->NameReadiness_Active;
 				break;
 			}
 
 		} else {
 			// ready
 			if(pThis->IsCharged) {
-				key = pData->Text_Ready;
-				cache = &pData->NameReadiness_Ready;
+				text = pData->NameReadiness_Ready;
 			}
 		}
 	}
 
-	// the text is not cached yet
-	if(cache && !*cache) {
-		if(key && *key) {
-			*cache = StringTable::LoadStringA(key);
-		}
-	}
-
-	const wchar_t* text = (cache ? *cache : NULL);
 	if(text && !*text) {
 		text = NULL;
 	}
