@@ -1096,7 +1096,7 @@ DEFINE_HOOK(7441B6, UnitClass_MarkOccupationBits, 6)
 
 	CellClass* pCell = MapClass::Instance->GetCellAt(pCrd);
 	int height = MapClass::Instance->GetCellFloorHeight(pCrd) + CellClass::BridgeHeight();
-	bool alt = (pCrd->Z > height && pCell->ContainsBridge());
+	bool alt = (pCrd->Z >= height && pCell->ContainsBridge());
 
 	// remember which occupation bit we set
 	auto pExt = TechnoExt::ExtMap.Find(pThis);
@@ -1116,20 +1116,26 @@ DEFINE_HOOK(744216, UnitClass_UnmarkOccupationBits, 6)
 	GET(UnitClass*, pThis, ECX);
 	GET(CoordStruct*, pCrd, ESI);
 
+	enum { obNormal = 1, obAlt = 2 };
+
 	CellClass* pCell = MapClass::Instance->GetCellAt(pCrd);
 	int height = MapClass::Instance->GetCellFloorHeight(pCrd) + CellClass::BridgeHeight();
-	bool alt = (pCrd->Z >= height);
+	int alt = (pCrd->Z >= height) ? obAlt : obNormal;
 
-	// use the last occupation bit, if set
+	// also clear the last occupation bit, if set
 	auto pExt = TechnoExt::ExtMap.Find(pThis);
 	if(pExt->AltOccupation.isset()) {
-		alt = pExt->AltOccupation.Get();
+		int lastAlt = pExt->AltOccupation.Get() ? obAlt : obNormal;
+		alt |= lastAlt;
 		pExt->AltOccupation.Reset();
 	}
 
-	if(alt) {
+	if(alt & obAlt) {
 		pCell->AltOccupationFlags &= ~0x20;
-	} else {
+	}
+
+	if(alt & obNormal)
+	{
 		pCell->OccupationFlags &= ~0x20;
 	}
 
