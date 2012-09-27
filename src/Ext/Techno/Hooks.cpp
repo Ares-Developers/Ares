@@ -1249,3 +1249,20 @@ DEFINE_HOOK(6FBF7E, TechnoClass_CanBeCloakedByOthers_Hover, A)
 
 	return 0x6FBF88;
 }
+
+DEFINE_HOOK(70380A, TechnoClass_Cloak_CloakSound, 6)
+{
+	GET(TechnoClass*, pThis, ESI);
+	auto pExt = TechnoTypeExt::ExtMap.Find(pThis->GetTechnoType());
+	R->ECX(pExt->CloakSound.Get(RulesClass::Instance->CloakSound));
+	return 0x703810;
+}
+
+DEFINE_HOOK(70375B, TechnoClass_Uncloak_DecloakSound, 6)
+{
+	GET(int, ptr, ESI);
+	TechnoClass* pThis = (TechnoClass*)(ptr - 0x9C);
+	auto pExt = TechnoTypeExt::ExtMap.Find(pThis->GetTechnoType());
+	R->ECX(pExt->DecloakSound.Get(RulesClass::Instance->CloakSound));
+	return 0x703761;
+}

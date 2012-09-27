@@ -110,6 +110,9 @@ public:
 
 		Customizable<UnitTypeClass *> WaterImage;
 
+		NullableIdx<VocClass> CloakSound;
+		NullableIdx<VocClass> DecloakSound;
+
 		char CameoPCX[0x20];
 		char AltCameoPCX[0x20];
 
@@ -208,6 +211,8 @@ public:
 			HijackerAllowed (true),
 			HijackerOneTime (false),
 			WaterImage (NULL),
+			CloakSound (),
+			DecloakSound (),
 			CanBeReversed (true),
 			RadarJamRadius (0),
 			PassengerTurret (false),

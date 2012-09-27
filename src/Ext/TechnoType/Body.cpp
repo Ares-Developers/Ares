@@ -349,6 +349,10 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	// non-crashable aircraft
 	this->Crashable.Read(&exINI, section, "Crashable");
 
+	// cloak sounds
+	this->CloakSound.Read(&exINI, section, "CloakSound");
+	this->DecloakSound.Read(&exINI, section, "DecloakSound");
+
 	// quick fix - remove after the rest of weapon selector code is done
 	return;
 }
