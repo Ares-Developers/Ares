@@ -178,22 +178,20 @@ public:
 			Offset.Y = (short)(cell->Y - (height / 2));
 
 			// take a look at each cell in the rectangle
-			int cellCount = (width * height);
-			for(int i=0; i<cellCount; ++i) {
+			for(short i=0; i<height; ++i) {
+				for(short j=0; j<width; ++j) {
+					// get the specific cell coordinates
+					CellStruct Cell = {j, i};
+					Cell += Offset;
 
-				// get the specific cell coordinates
-				CellStruct Cell;
-				Cell.X = (short)(i % width);
-				Cell.Y = (short)(i / width);
-				Cell += Offset;
-
-				// get this cell and call the action function
-				CellClass* pCell = MapClass::Instance->GetCellAt(&Cell);
-				if(pCell != MapClass::InvalidCell()) {
-					if(action(pCell)) {
-						++ret;
-					} else {
-						break;
+					// get this cell and call the action function
+					CellClass* pCell = MapClass::Instance->GetCellAt(&Cell);
+					if(pCell != MapClass::InvalidCell()) {
+						if(action(pCell)) {
+							++ret;
+						} else {
+							break;
+						}
 					}
 				}
 			}
@@ -216,9 +214,6 @@ public:
 		static int forEach(CellStruct *cell, float radius, std::tr1::function<bool (CellClass*)> action) {
 			int ret = 0;
 
-			// radius in every direction. used to define a square around this circle.
-			int range = (int)(radius + 0.99) * 2 + 1;
-
 			// check whether the cell in this square are in the circle also
 			auto actionIfInRange = [&](CellClass* pCell) -> bool {
 				// if it is near enough, do action
@@ -234,8 +229,9 @@ public:
 			};
 
 			// get all cells in a square around the target.
-			// the result is ignored, because not all cells in this square are
+			// the result is discarded, because not all cells in this square are
 			// in the requested circular area, so we have to do the counting.
+			int range = (int)std::floor(radius + 0.99f) * 2 + 1;
 			forEach(cell, range, range, actionIfInRange);
 
 			return ret;
@@ -255,9 +251,11 @@ public:
 			\author AlexB
 		*/
 		static int forEachCellInRange(CellStruct *cell, float widthOrRange, int height, std::tr1::function<bool (CellClass*)> action) {
-			if((height > 0) && ((height * widthOrRange) > 0)) {
-				// rectangle
-				return forEach(cell, (int)widthOrRange, height, action);
+			if(height > 0) {
+				if((int)widthOrRange > 0) {
+					// rectangle
+					return forEach(cell, (int)widthOrRange, height, action);
+				}
 			} else if(widthOrRange > 0) {
 				// circle
 				return forEach(cell, widthOrRange, action);
@@ -309,21 +307,23 @@ public:
 				return true;
 			};
 
-			if((height > 0) && ((height * (int)widthOrRange) > 0)) {
+			bool bOK = false;
+			if(height > 0) {
 				// rectangle. adjust maximum allowed distance to include all objects:
 				// any two points in a rectangle are closer to each oher than width+height.
-				maxDistance += height;
-				forEach(cell, (int)widthOrRange, height, actionIfInRange);
+				if((int)widthOrRange > 0) {
+					maxDistance += height;
+					forEach(cell, (int)widthOrRange, height, actionIfInRange);
+					bOK = true;
+				}
 			} else if(widthOrRange > 0) {
 				// enlarged circle to include more than needed. the final calculation
 				// is done in the lambda.
 				forEach(cell, widthOrRange + 1, actionIfInRange);
-			} else {
-				// invalid input
-				ret = -1;
+				bOK = true;
 			}
 
-			return ret;
+			return bOK ? ret : -1;
 		}
 
 		//! Invokes an action for every cell in cell spread range and returns the count of cells affected.
