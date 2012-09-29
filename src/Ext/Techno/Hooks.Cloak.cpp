@@ -6,9 +6,9 @@ DEFINE_HOOK(6FB757, TechnoClass_UpdateCloak, 8)
 	GET(TechnoClass*, pThis, ESI);
 	TechnoExt::ExtData* pExt = TechnoExt::ExtMap.Find(pThis);
 
-	bool cloakable = !pExt->CloakDisallowed(false) && pExt->IsReallyCloakable();
+	bool tryCloak = !pExt->CloakDisallowed(false);
 
-	return cloakable ? 0x6FB7FD : 0x6FB75F;
+	return tryCloak ? 0x6FB7FD : 0x6FB75F;
 }
 
 DEFINE_HOOK(6FBDC0, TechnoClass_ShouldBeCloaked, 5)
@@ -16,7 +16,7 @@ DEFINE_HOOK(6FBDC0, TechnoClass_ShouldBeCloaked, 5)
 	GET(TechnoClass*, pThis, ECX);
 	TechnoExt::ExtData* pExt = TechnoExt::ExtMap.Find(pThis);
 
-	bool ret = pExt->CloakAllowed(true) && pExt->IsReallyCloakable();
+	bool ret = pExt->CloakAllowed();
 
 	R->EAX(ret ? 1 : 0);
 	return 0x6FBF93;
@@ -30,7 +30,7 @@ DEFINE_HOOK(6FBC90, TechnoClass_ShouldNotBeCloaked, 5)
 	// the original code would not disallow cloaking as long as
 	// pThis->Cloakable is set, but this prevents CloakStop from
 	// working, because it overrides IsCloakable().
-	bool ret = pExt->CloakDisallowed(true) || !pExt->IsReallyCloakable();
+	bool ret = pExt->CloakDisallowed(true);
 
 	R->EAX(ret ? 1 : 0);
 	return 0x6FBDBC;

@@ -824,34 +824,34 @@ bool TechnoExt::ExtData::IsCloakable(bool allowPassive) const
 
 	// check for active cloak
 	if(pThis->IsCloakable() || pThis->HasAbility(Abilities::CLOAK)) {
-		return true;
-	}
-
-	if(!allowPassive) {
-		return false;
+		if(this->CanSelfCloakNow()) {
+			return true;
+		}
 	}
 
 	// if not actively cloakable, search for cloak generators
-	CoordStruct crd;
-	pThis->GetCoords(&crd);
-	CellClass* pCell = MapClass::Instance->GetCellAt(&crd);
-	return pCell->CloakGen_InclHouse(pThis->Owner->ArrayIndex);
+	if(allowPassive) {
+		CoordStruct crd;
+		pThis->GetCoords(&crd);
+		CellClass* pCell = MapClass::Instance->GetCellAt(&crd);
+		return pCell->CloakGen_InclHouse(pThis->Owner->ArrayIndex);
+	}
+
+	return false;
 }
 
 /*! Gets whether the techno is allowed to cloak.
 
 	Checks all circumstances that might conflict with the unit cloaking.
 
-	\param allowPassive Allow the techno to be cloaked by others.
-
 	\return True, if the techno is allowed to cloak, false otherwise.
 
 	\author AlexB
 	\date 2012-09-28
 */
-bool TechnoExt::ExtData::CloakAllowed(bool allowPassive) const
+bool TechnoExt::ExtData::CloakAllowed() const
 {
-	if(!this->IsCloakable(allowPassive)) {
+	if(!this->IsCloakable(true)) {
 		return false;
 	}
 
@@ -920,7 +920,7 @@ bool TechnoExt::ExtData::CloakDisallowed(bool allowPassive) const
 	\author AlexB
 	\date 2012-09-28
 */
-bool TechnoExt::ExtData::IsReallyCloakable() const
+bool TechnoExt::ExtData::CanSelfCloakNow() const
 {
 	// cloaked and deactivated units are hard to find otherwise
 	return !this->DriverKilled && !this->AttachedToObject->Deactivated;

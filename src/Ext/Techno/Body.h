@@ -149,9 +149,9 @@ public:
 		void InvalidateAttachEffectPointer(void *ptr);
 
 		bool IsCloakable(bool allowPassive) const;
-		bool CloakAllowed(bool allowPassive) const;
+		bool CloakAllowed() const;
 		bool CloakDisallowed(bool allowPassive) const;
-		bool IsReallyCloakable() const;
+		bool CanSelfCloakNow() const;
 	};
 
 	static Container<TechnoExt> ExtMap;
