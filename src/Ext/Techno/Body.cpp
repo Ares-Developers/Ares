@@ -881,7 +881,7 @@ bool TechnoExt::ExtData::CloakAllowed(bool allowPassive) const
 		return false;
 	}
 
-	if(pThis->GetHeight() > 0) {
+	if(pThis->GetHeight() > RulesClass::Instance->HoverHeight) {
 		return false;
 	}
 
