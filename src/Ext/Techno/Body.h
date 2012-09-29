@@ -147,6 +147,11 @@ public:
 		eAction GetDeactivatedAction(ObjectClass *Hovered = NULL) const;
 
 		void InvalidateAttachEffectPointer(void *ptr);
+
+		bool IsCloakable(bool allowPassive) const;
+		bool CloakAllowed(bool allowPassive) const;
+		bool CloakDisallowed(bool allowPassive) const;
+		bool IsReallyCloakable() const;
 	};
 
 	static Container<TechnoExt> ExtMap;

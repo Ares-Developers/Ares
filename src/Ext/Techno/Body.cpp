@@ -806,6 +806,126 @@ bool TechnoExt::ExtData::PerformActionHijack(TechnoClass* pTarget) {
 	return ret;
 }
 
+/*! Gets whether the techno has the ability to cloak itself or is cloaked by others.
+
+	The techno may have the ability to cloak itself, gained the cloaking ability through
+	veterancy or it may be under the influence of Cloak Generators.
+
+	\param allowPassive Allow the techno to be cloaked by others.
+
+	\return True, if the techno can cloak, false otherwise.
+
+	\author AlexB
+	\date 2012-09-28
+*/
+bool TechnoExt::ExtData::IsCloakable(bool allowPassive) const
+{
+	TechnoClass* pThis = this->AttachedToObject;
+
+	// check for active cloak
+	if(pThis->IsCloakable() || pThis->HasAbility(Abilities::CLOAK)) {
+		return true;
+	}
+
+	if(!allowPassive) {
+		return false;
+	}
+
+	// if not actively cloakable, search for cloak generators
+	CoordStruct crd;
+	pThis->GetCoords(&crd);
+	CellClass* pCell = MapClass::Instance->GetCellAt(&crd);
+	return pCell->CloakGen_InclHouse(pThis->Owner->ArrayIndex);
+}
+
+/*! Gets whether the techno is allowed to cloak.
+
+	Checks all circumstances that might conflict with the unit cloaking.
+
+	\param allowPassive Allow the techno to be cloaked by others.
+
+	\return True, if the techno is allowed to cloak, false otherwise.
+
+	\author AlexB
+	\date 2012-09-28
+*/
+bool TechnoExt::ExtData::CloakAllowed(bool allowPassive) const
+{
+	if(!this->IsCloakable(allowPassive)) {
+		return false;
+	}
+
+	TechnoClass* pThis = this->AttachedToObject;
+
+	if(pThis->CloakState == CloakState::Cloaked) {
+		return false;
+	}
+
+	if(!pThis->DiskLaserTimer.Ignorable()) {
+		return false;
+	}
+
+	if(pThis->Target && pThis->IsCloseEnoughToAttack(pThis->Target)) {
+		return false;
+	}
+
+	if(pThis->WhatAmI() != BuildingClass::AbsID && pThis->CloakProgress.Value) {
+		return false;
+	}
+
+	if(!pThis->CloakDelayTimer.Ignorable()) {
+		return false;
+	}
+
+	if(pThis->LocomotorSource && pThis->AbstractFlags & ABSFLAGS_ISFOOT && ((FootClass*)pThis)->IsAttackedByLocomotor) {
+		return false;
+	}
+
+	if(pThis->GetHeight() > 0) {
+		return false;
+	}
+
+	return true;
+}
+
+/*! Gets whether the techno is disallowed to cloak.
+
+	Certain features uncloak the techno. If a techno is cloaked and this returns true,
+	it should be revealed, because something keeps it from maintaining the cloak.
+
+	\param allowPassive Allow the techno to be cloaked by others.
+
+	\return True, if the techno is disallowed to stay cloaked, false otherwise.
+
+	\author AlexB
+	\date 2012-09-28
+*/
+bool TechnoExt::ExtData::CloakDisallowed(bool allowPassive) const
+{
+	if(this->IsCloakable(allowPassive)) {
+		TechnoClass* pThis = this->AttachedToObject;
+		return pThis->IsUnderEMP() || pThis->IsParalyzed()
+			|| pThis->IsBeingWarpedOut() || pThis->IsWarpingIn();
+	}
+
+	return true;
+}
+
+/*! Gets whether the techno is allowed to cloak, only accounting for features Ares adds.
+
+	Edit this function to add new features that may prevent units from cloaking.
+
+	\return True, if the techno is allowed to cloak, false otherwise.
+
+	\author AlexB
+	\date 2012-09-28
+*/
+bool TechnoExt::ExtData::IsReallyCloakable() const
+{
+	// cloaked and deactivated units are hard to find otherwise
+	return !this->DriverKilled && !this->AttachedToObject->Deactivated;
+}
+
 // =============================
 // load/save
 
