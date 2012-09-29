@@ -27,7 +27,10 @@ DEFINE_HOOK(6FBC90, TechnoClass_ShouldNotBeCloaked, 5)
 	GET(TechnoClass*, pThis, ECX);
 	TechnoExt::ExtData* pExt = TechnoExt::ExtMap.Find(pThis);
 
-	bool ret = (!pThis->Cloakable && pExt->CloakDisallowed(true)) || !pExt->IsReallyCloakable();
+	// the original code would not disallow cloaking as long as
+	// pThis->Cloakable is set, but this prevents CloakStop from
+	// working, because it overrides IsCloakable().
+	bool ret = pExt->CloakDisallowed(true) || !pExt->IsReallyCloakable();
 
 	R->EAX(ret ? 1 : 0);
 	return 0x6FBDBC;
@@ -48,4 +51,13 @@ DEFINE_HOOK(70375B, TechnoClass_Uncloak_DecloakSound, 6)
 	auto pExt = TechnoTypeExt::ExtMap.Find(pThis->GetTechnoType());
 	R->ECX(pExt->DecloakSound.Get(RulesClass::Instance->CloakSound));
 	return 0x703761;
+}
+
+// replace Is_Moving_Now, because it doesn't check the
+// current speed in case the unit is turning.
+DEFINE_HOOK(4DBDD4, FootClass_IsCloakable_CloakStop, 6)
+{
+	GET(FootClass*, pThis, ESI);
+	R->AL(pThis->Locomotor->Is_Moving());
+	return 0x4DBDE3;
 }
