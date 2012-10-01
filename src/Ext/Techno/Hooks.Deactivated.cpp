@@ -169,3 +169,12 @@ DEFINE_HOOK(73DBF9, UnitClass_Mi_Unload_Decactivated, 5)
 
 	return 0;
 }
+
+DEFINE_HOOK(736135, UnitClass_Update_Deactivated, 6)
+{
+	GET(UnitClass*, pThis, ESI);
+	auto pExt = TechnoExt::ExtMap.Find(pThis);
+
+	// don't sparkle on EMP, Operator, ....
+	return pExt->IsPowered() ? 0x7361A9 : 0;
+}
