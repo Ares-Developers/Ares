@@ -851,7 +851,7 @@ bool TechnoExt::ExtData::IsCloakable(bool allowPassive) const
 */
 bool TechnoExt::ExtData::CloakAllowed() const
 {
-	if(!this->IsCloakable(true)) {
+	if(this->CloakDisallowed(true)) {
 		return false;
 	}
 
