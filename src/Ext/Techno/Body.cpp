@@ -905,7 +905,8 @@ bool TechnoExt::ExtData::CloakDisallowed(bool allowPassive) const
 	if(this->IsCloakable(allowPassive)) {
 		TechnoClass* pThis = this->AttachedToObject;
 		return pThis->IsUnderEMP() || pThis->IsParalyzed()
-			|| pThis->IsBeingWarpedOut() || pThis->IsWarpingIn();
+			|| pThis->IsBeingWarpedOut() || pThis->IsWarpingIn()
+			|| !this->CloakSkipTimer.Ignorable();
 	}
 
 	return true;
