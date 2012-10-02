@@ -312,13 +312,15 @@ DEFINE_HOOK(4DA53E, FootClass_Update, 6)
 {
 	GET(FootClass *, F, ESI);
 
-	CellClass *C = F->GetCell();
-	if(BuildingClass * B = C->GetBuilding()) {
-		BuildingTypeExt::ExtData* pTypeData = BuildingTypeExt::ExtMap.Find(B->Type);
-		HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(B->Owner);
-		if(pTypeData->Firewall_Is && pHouseData->FirewallActive) {
-			BuildingExt::ExtData * pData = BuildingExt::ExtMap.Find(B);
-			pData->ImmolateVictim(F);
+	if(F->IsAlive) {
+		CellClass *C = F->GetCell();
+		if(BuildingClass * B = C->GetBuilding()) {
+			BuildingTypeExt::ExtData* pTypeData = BuildingTypeExt::ExtMap.Find(B->Type);
+			HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(B->Owner);
+			if(pTypeData->Firewall_Is && pHouseData->FirewallActive) {
+				BuildingExt::ExtData * pData = BuildingExt::ExtMap.Find(B);
+				pData->ImmolateVictim(F);
+			}
 		}
 	}
 
