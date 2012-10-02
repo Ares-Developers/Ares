@@ -1,5 +1,6 @@
 #include "Body.h"
 #include "../TechnoType/Body.h"
+#include "../Rules/Body.h"
 #include "../../Misc/Debug.h"
 
 static bool IsDeactivated(TechnoClass * pThis) {
@@ -177,4 +178,31 @@ DEFINE_HOOK(736135, UnitClass_Update_Deactivated, 6)
 
 	// don't sparkle on EMP, Operator, ....
 	return pExt->IsPowered() ? 0x7361A9 : 0;
+}
+
+DEFINE_HOOK(73C143, UnitClass_DrawVXL_Deactivated, 5)
+{
+	GET(UnitClass*, pThis, ECX);
+	REF_STACK(int, Value, 0x1E0);
+
+	auto pRules = RulesExt::Global();
+	double factor = 1.0;
+
+	if(pThis->IsUnderEMP()) {
+		factor = pRules->DeactivateDim_EMP;
+	} else if(pThis->IsDeactivated()) {
+		auto pExt = TechnoExt::ExtMap.Find(pThis);
+
+		// use the operator check because it is more
+		// efficient than the powered check.
+		if(!pExt->IsOperated()) {
+			factor = pRules->DeactivateDim_Operator;
+		} else {
+			factor = pRules->DeactivateDim_Powered;
+		}
+	}
+
+	Value = static_cast<int>(Value * factor);
+
+	return 0x73C15F;
 }

@@ -52,6 +52,7 @@ void RulesExt::ExtData::LoadBeforeTypeData(RulesClass *pThis, CCINIClass *pINI) 
 	const char section[] = "WeaponTypes";
 	const char sectionGeneral[] = "General";
 	const char sectionCombatDamage[] = "CombatDamage";
+	const char sectionAV[] = "AudioVisual";
 
 	int len = pINI->GetKeyCount(section);
 	for (int i = 0; i < len; ++i) {
@@ -82,6 +83,10 @@ void RulesExt::ExtData::LoadBeforeTypeData(RulesClass *pThis, CCINIClass *pINI) 
 	pData->ReturnStructures.Read(exINI, sectionGeneral, "ReturnStructures");
 
 	pData->TypeSelectUseDeploy.Read(exINI, sectionGeneral, "TypeSelectUseDeploy");
+
+	pData->DeactivateDim_Powered.Read(exINI, sectionAV, "DeactivateDimPowered");
+	pData->DeactivateDim_EMP.Read(exINI, sectionAV, "DeactivateDimEMP");
+	pData->DeactivateDim_Operator.Read(exINI, sectionAV, "DeactivateDimOperator");
 }
 
 // this should load everything that TypeData is not dependant on

@@ -47,6 +47,10 @@ class RulesExt
 
 		Valueable<bool> TypeSelectUseDeploy;
 
+		Valueable<double> DeactivateDim_Powered;
+		Valueable<double> DeactivateDim_EMP;
+		Valueable<double> DeactivateDim_Operator;
+
 		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			ElectricDeath(nullptr),
 			EngineerDamage (0.0F),
@@ -61,6 +65,9 @@ class RulesExt
 			EnemyInsignia(true),
 			ReturnStructures(false),
 			TypeSelectUseDeploy(true),
+			DeactivateDim_Powered(0.5),
+			DeactivateDim_EMP(0.8),
+			DeactivateDim_Operator(0.65),
 			CanMakeStuffUp(false)
 			{
 				MultiEngineer[0] = false; // Skirmish
