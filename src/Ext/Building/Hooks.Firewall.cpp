@@ -7,6 +7,7 @@
 #include "../BuildingType/Body.h"
 #include "../House/Body.h"
 #include "../Techno/Body.h"
+#include "../Rules/Body.h"
 
 DEFINE_HOOK(4FB257, HouseClass_UnitFromFactory_Firewall, 6)
 {
@@ -325,7 +326,7 @@ DEFINE_HOOK(4DA53E, FootClass_Update, 6)
 	}
 
 	// tiberium heal, as in Tiberian Sun
-	if(F->IsAlive) {
+	if(F->IsAlive && RulesExt::Global()->Tiberium_HealEnabled) {
 		TechnoTypeClass* pType = F->GetTechnoType();
 		if(pType->TiberiumHeal || F->HasAbility(Abilities::TIBERIUM_HEAL)) {
 			if(F->Health > 0 && F->Health < pType->Strength) {

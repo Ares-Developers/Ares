@@ -2,6 +2,7 @@
 #include "../TechnoType/Body.h"
 #include "../Building/Body.h"
 #include "../BuildingType/Body.h"
+#include "../Rules/Body.h"
 #include "../../Misc/Debug.h"
 #include "../../Misc/JammerClass.h"
 #include "../../Misc/PoweredUnitClass.h"
@@ -1244,7 +1245,7 @@ DEFINE_HOOK(702216, TechnoClass_ReceiveDamage_TiberiumHeal, 6)
 	TechnoTypeClass* pType = pThis->GetTechnoType();
 
 	// TS did not check for HasAbility here, either
-	if(pType->TiberiumHeal) {
+	if(pType->TiberiumHeal && RulesExt::Global()->Tiberium_HealEnabled) {
 		CoordStruct crd;
 		pThis->GetCoords(&crd);
 		CellClass* pCenter = MapClass::Instance->GetCellAt(&crd);
@@ -1265,21 +1266,24 @@ DEFINE_HOOK(702216, TechnoClass_ReceiveDamage_TiberiumHeal, 6)
 DEFINE_HOOK(4D85E4, FootClass_UpdatePosition_TiberiumDamage, 9)
 {
 	GET(FootClass*, pThis, ESI);
-	TechnoTypeClass* pType = pThis->GetTechnoType();
-	TechnoTypeExt::ExtData* pExt = TechnoTypeExt::ExtMap.Find(pType);
-
-	// default is: infantry can be damaged, others cannot
-	bool enabled = (pThis->WhatAmI() != InfantryClass::AbsID);
 
 	int damage = 0;
-	if(!pExt->TiberiumProof.Get(enabled) && !pThis->HasAbility(Abilities::TIBERIUM_PROOF)) {
-		if(pThis->Health > 0) {
-			CellClass* pCell = pThis->GetCell();
-			int idxTiberium = pCell->GetContainedTiberiumIndex();
-			if(idxTiberium != -1) {
-				damage = TiberiumClass::Array->GetItem(idxTiberium)->Power / 10;
-				if(damage < 1) {
-					damage = 1;
+	if(RulesExt::Global()->Tiberium_DamageEnabled) {
+		TechnoTypeClass* pType = pThis->GetTechnoType();
+		TechnoTypeExt::ExtData* pExt = TechnoTypeExt::ExtMap.Find(pType);
+
+		// default is: infantry can be damaged, others cannot
+		bool enabled = (pThis->WhatAmI() != InfantryClass::AbsID);
+
+		if(!pExt->TiberiumProof.Get(enabled) && !pThis->HasAbility(Abilities::TIBERIUM_PROOF)) {
+			if(pThis->Health > 0) {
+				CellClass* pCell = pThis->GetCell();
+				int idxTiberium = pCell->GetContainedTiberiumIndex();
+				if(idxTiberium != -1) {
+					damage = TiberiumClass::Array->GetItem(idxTiberium)->Power / 10;
+					if(damage < 1) {
+						damage = 1;
+					}
 				}
 			}
 		}
