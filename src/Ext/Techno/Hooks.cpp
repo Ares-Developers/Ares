@@ -1338,8 +1338,13 @@ DEFINE_HOOK(702672, TechnoClass_ReceiveDamage_SpillTiberium, 5)
 		{
 			TechnoTypeClass* pType = pThis->GetTechnoType();
 
-			// assume about half full, recalc if possible
+			// don't spill more than we can hold
 			double max = 9.0;
+			if(max > pType->Storage) {
+				max = pType->Storage;
+			}
+
+			// assume about half full, recalc if possible
 			int value = static_cast<int>(max / 2);
 			if(pType->Storage > 0) {
 				value = static_cast<int>(Game::F2I(stored / pType->Storage * max));
