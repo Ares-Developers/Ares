@@ -32,6 +32,7 @@ class RulesExt
 
 		Valueable<bool> Tiberium_DamageEnabled;
 		Valueable<bool> Tiberium_HealEnabled;
+		Valueable<bool> Tiberium_SpillEnabled;
 
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			ElectricDeath(NULL),

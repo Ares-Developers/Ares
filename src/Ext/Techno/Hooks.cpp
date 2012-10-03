@@ -1320,3 +1320,51 @@ DEFINE_HOOK(4D85E4, FootClass_UpdatePosition_TiberiumDamage, 9)
 
 	return 0;
 }
+
+// spill the stored tiberium on destruction
+DEFINE_HOOK(702672, TechnoClass_ReceiveDamage_SpillTiberium, 5)
+{
+	GET(TechnoClass*, pThis, ESI);
+
+	if(pThis->AttachedBomb) {
+		pThis->AttachedBomb->Detonate();
+	}
+
+	if(RulesExt::Global()->Tiberium_SpillEnabled) {
+		float stored = pThis->Tiberium.GetTotalAmount();
+		if(pThis->WhatAmI() != BuildingClass::AbsID
+			&& stored > 0.0f
+			&& !ScenarioClass::Instance->SpecialFlags.HarvesterImmune)
+		{
+			TechnoTypeClass* pType = pThis->GetTechnoType();
+
+			// assume about half full, recalc if possible
+			double max = 9.0;
+			int value = static_cast<int>(max / 2);
+			if(pType->Storage > 0) {
+				value = static_cast<int>(Game::F2I(stored / pType->Storage * max));
+			}
+
+			// get the spill center
+			CoordStruct crd;
+			pThis->GetCoords(&crd);
+			CellClass* pCenter = MapClass::Instance->GetCellAt(&crd);
+
+			unsigned int neighbours[] = {9, 2, 7, 1, 4, 3, 0, 5, 6};
+			for(int i=0; i<9; ++i) {
+				// spill random amount
+				int amount = ScenarioClass::Instance->Random.RandomRanged(0, 2);
+				CellClass* pCell = pCenter->GetNeighbourCell(neighbours[i]);
+				pCell->IncreaseTiberium(0, amount);
+				value -= amount;
+
+				// stop if value is reached
+				if(value <= 0) {
+					break;
+				}
+			}
+		}
+	}
+
+	return 0x702684;
+}
