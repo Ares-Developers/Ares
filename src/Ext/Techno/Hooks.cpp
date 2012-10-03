@@ -7,6 +7,7 @@
 #include "../../Misc/PoweredUnitClass.h"
 
 #include <SpecificStructures.h>
+#include <TiberiumClass.h>
 
 // bugfix #297: Crewed=yes jumpjets spawn parachuted infantry on destruction, not idle
 DEFINE_HOOK(737F97, UnitClass_ReceiveDamage, 0)
@@ -1254,6 +1255,62 @@ DEFINE_HOOK(702216, TechnoClass_ReceiveDamage_TiberiumHeal, 6)
 			CellClass* pCell = pCenter->GetNeighbourCell(2*i);
 			int value = ScenarioClass::Instance->Random.RandomRanged(0, 2);
 			pCell->IncreaseTiberium(0, value);
+		}
+	}
+
+	return 0;
+}
+
+// damage the techno when it is moving over a cell containing tiberium
+DEFINE_HOOK(4D85E4, FootClass_UpdatePosition_TiberiumDamage, 9)
+{
+	GET(FootClass*, pThis, ESI);
+	TechnoTypeClass* pType = pThis->GetTechnoType();
+	TechnoTypeExt::ExtData* pExt = TechnoTypeExt::ExtMap.Find(pType);
+
+	// default is: infantry can be damaged, others cannot
+	bool enabled = (pThis->WhatAmI() != InfantryClass::AbsID);
+
+	int damage = 0;
+	if(!pExt->TiberiumProof.Get(enabled) && !pThis->HasAbility(Abilities::TIBERIUM_PROOF)) {
+		if(pThis->Health > 0) {
+			CellClass* pCell = pThis->GetCell();
+			int idxTiberium = pCell->GetContainedTiberiumIndex();
+			if(idxTiberium != -1) {
+				damage = TiberiumClass::Array->GetItem(idxTiberium)->Power / 10;
+				if(damage < 1) {
+					damage = 1;
+				}
+			}
+		}
+	}
+
+	if(damage) {
+		CoordStruct crd;
+		pThis->GetCoords(&crd);
+
+		if(pThis->ReceiveDamage(&damage, 0, RulesClass::Instance->C4Warhead, nullptr, FALSE, FALSE, nullptr) == DamageState::NowDead) {
+			// create a small visceroid if available and the cell is free
+			/*if(ScenarioClass::Instance->TiberiumDeathToVisceroid) {
+				CellClass* pCell = MapClass::Instance->GetCellAt(&crd);
+				if(!(pCell->OccupationFlags & 0x20)) {
+					int idxHouse = HouseClass::FindIndexByName("Neutral");
+					if(HouseClass* pHouse = HouseClass::FindByIndex(idxHouse)) {
+						if(UnitTypeClass* pType = RulesClass::Instance->SmallVisceroid) {
+							if(ObjectClass* pVisc = pType->CreateObject(pHouse)) {
+								++Unsorted::IKnowWhatImDoing;
+								if(!pVisc->Put(&crd, 0)) {
+									// opposed to TS, we clean up ;)
+									pVisc->UnInit();
+								}
+								--Unsorted::IKnowWhatImDoing;
+							}
+						}
+					}
+				}
+			}*/
+
+			return 0x4D8F29;
 		}
 	}
 

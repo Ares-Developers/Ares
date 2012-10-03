@@ -349,6 +349,9 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	// non-crashable aircraft
 	this->Crashable.Read(&exINI, section, "Crashable");
 
+	// tiberium
+	this->TiberiumProof.Read(&exINI, section, "TiberiumProof");
+
 	// quick fix - remove after the rest of weapon selector code is done
 	return;
 }

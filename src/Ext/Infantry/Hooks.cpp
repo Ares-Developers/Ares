@@ -1,7 +1,6 @@
 #include <InfantryClass.h>
 #include <BuildingClass.h>
 #include <SpecificStructures.h>
-#include <TiberiumClass.h>
 #include "../Building/Body.h"
 #include "../BuildingType/Body.h"
 #include "../Techno/Body.h"
@@ -139,52 +138,5 @@ DEFINE_HOOK(519D9C, InfantryClass_UpdatePosition_MultiEngineer, 5) {
 	} else {
 		return 0x519EAA;
 	}
-}
-
-// damage the infantry when it is moving over a cell containing tiberium
-DEFINE_HOOK(51A92A, InfantryClass_UpdatePosition_TiberiumDamage, 5)
-{
-	GET(InfantryClass*, pThis, ESI);
-
-	if(!pThis->Type->TiberiumProof && !pThis->HasAbility(Abilities::TIBERIUM_PROOF)) {
-		if(pThis->Health > 0) {
-			CellClass* pCell = pThis->GetCell();
-			int idxTiberium = pCell->GetContainedTiberiumIndex();
-			if(idxTiberium != -1) {
-				int damage = TiberiumClass::Array->GetItem(idxTiberium)->Power / 10;
-				if(damage < 1) {
-					damage = 1;
-				}
-
-				CoordStruct crd;
-				pThis->GetCoords(&crd);
-
-				if(pThis->ReceiveDamage(&damage, 0, RulesClass::Instance->C4Warhead, nullptr, FALSE, FALSE, nullptr) == DamageState::NowDead) {
-					// create a small visceroid if available and the cell is free
-					/*if(ScenarioClass::Instance->TiberiumDeathToVisceroid) {
-						if(!(pCell->OccupationFlags & 0x20)) {
-							int idxHouse = HouseClass::FindIndexByName("Neutral");
-							if(HouseClass* pHouse = HouseClass::FindByIndex(idxHouse)) {
-								if(UnitTypeClass* pType = RulesClass::Instance->SmallVisceroid) {
-									if(ObjectClass* pVisc = pType->CreateObject(pHouse)) {
-										++Unsorted::IKnowWhatImDoing;
-										if(!pVisc->Put(&crd, 0)) {
-											// opposed to TS, we clean up ;)
-											pVisc->UnInit();
-										}
-										--Unsorted::IKnowWhatImDoing;
-									}
-								}
-							}
-						}
-					}*/
-
-					return 0x51A9EB;
-				}
-			}
-		}
-	}
-
-	return 0;
 }
 

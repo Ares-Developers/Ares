@@ -150,6 +150,9 @@ public:
 		Valueable<AnimTypeClass*> CustomMissileTrailerAnim;
 		Valueable<int> CustomMissileTrailerSeparation;
 
+		// tiberium related
+		Nullable<bool> TiberiumProof;
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			Survivors_PilotChance (),
 			Survivors_PassengerChance (),
@@ -208,6 +211,7 @@ public:
 			HijackerAllowed (true),
 			HijackerOneTime (false),
 			WaterImage (NULL),
+			TiberiumProof (),
 			CanBeReversed (true),
 			RadarJamRadius (0),
 			PassengerTurret (false),
