@@ -324,5 +324,24 @@ DEFINE_HOOK(4DA53E, FootClass_Update, 6)
 		}
 	}
 
+	// tiberium heal, as in Tiberian Sun
+	if(F->IsAlive) {
+		TechnoTypeClass* pType = F->GetTechnoType();
+		if(pType->TiberiumHeal || F->HasAbility(Abilities::TIBERIUM_HEAL)) {
+			if(F->Health > 0 && F->Health < pType->Strength) {
+				CellClass* pCell = F->GetCell();
+				if(pCell->LandType == lt_Tiberium) {
+					if(!(Unsorted::CurrentFrame % Game::F2I(RulesClass::Instance->TiberiumHeal * 900.0))) {
+						int health = pType->GetRepairStep();
+						F->Health += health;
+						if(F->Health > pType->Strength) {
+							F->Health = pType->Strength;
+						}
+					}
+				}
+			}
+		}
+	}
+
 	return 0;
 }

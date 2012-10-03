@@ -1234,3 +1234,28 @@ DEFINE_HOOK(746C55, UnitClass_GetUIName, 6)
 	R->EAX(pThis->ToolTipText);
 	return 0x746C76;
 }
+
+// spawn tiberium when a unit dies. this is a minor part of the
+// tiberium heal feature. the actual healing happens in FootClass_Update.
+DEFINE_HOOK(702216, TechnoClass_ReceiveDamage_TiberiumHeal, 6)
+{
+	GET(TechnoClass*, pThis, ESI);
+	TechnoTypeClass* pType = pThis->GetTechnoType();
+
+	// TS did not check for HasAbility here, either
+	if(pType->TiberiumHeal) {
+		CoordStruct crd;
+		pThis->GetCoords(&crd);
+		CellClass* pCenter = MapClass::Instance->GetCellAt(&crd);
+
+		// increase the tiberium for the four neighbours and center.
+		// center is retrieved by getting a neighbour cell index >= 8
+		for(int i=0;i<5; ++i) {
+			CellClass* pCell = pCenter->GetNeighbourCell(2*i);
+			int value = ScenarioClass::Instance->Random.RandomRanged(0, 2);
+			pCell->IncreaseTiberium(0, value);
+		}
+	}
+
+	return 0;
+}
