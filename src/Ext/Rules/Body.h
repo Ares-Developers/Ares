@@ -42,6 +42,7 @@ class RulesExt
 			EngineerDamageCursor (MouseCursor::First[MouseCursorType::Detonate]),
 			Tiberium_DamageEnabled (false),
 			Tiberium_HealEnabled (false),
+			Tiberium_SpillEnabled (false),
 			Tiberium_ExplosiveWarhead (nullptr),
 			CanMakeStuffUp(false)
 			{
