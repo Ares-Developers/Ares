@@ -1373,3 +1373,35 @@ DEFINE_HOOK(702672, TechnoClass_ReceiveDamage_SpillTiberium, 5)
 
 	return 0x702684;
 }
+
+// blow up harvester units big time
+DEFINE_HOOK(738749, UnitClass_Destroy_TiberiumExplosive, 6)
+{
+	GET(UnitClass*, pThis, ESI);
+
+	if(RulesClass::Instance->TiberiumExplosive) {
+		if(!ScenarioClass::Instance->SpecialFlags.HarvesterImmune) {
+			if(pThis->Tiberium.GetTotalAmount() > 0.0f) {
+
+				// multiply the amounts with their powers and sum them up
+				int morePower = 0;
+				for(int i=0; i<TiberiumClass::Array->Count; ++i) {
+					TiberiumClass* pTiberium = TiberiumClass::Array->GetItem(i);
+					float power = pThis->Tiberium.GetAmount(i) * pTiberium->Power;
+					morePower += static_cast<int>(Game::F2I(power));
+				}
+
+				// go boom
+				WarheadTypeClass* pWH = RulesExt::Global()->Tiberium_ExplosiveWarhead;
+				if(morePower > 0 && pWH) {
+					CoordStruct crd;
+					pThis->GetCoords(&crd);
+
+					MapClass::DamageArea(&crd, morePower, pThis, pWH, false, nullptr);
+				}
+			}
+		}
+	}
+
+	return 0x7387C4;
+}

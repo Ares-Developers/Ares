@@ -33,6 +33,7 @@ class RulesExt
 		Valueable<bool> Tiberium_DamageEnabled;
 		Valueable<bool> Tiberium_HealEnabled;
 		Valueable<bool> Tiberium_SpillEnabled;
+		Valueable<WarheadTypeClass*> Tiberium_ExplosiveWarhead;
 
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			ElectricDeath(NULL),
@@ -41,6 +42,7 @@ class RulesExt
 			EngineerDamageCursor (MouseCursor::First[MouseCursorType::Detonate]),
 			Tiberium_DamageEnabled (false),
 			Tiberium_HealEnabled (false),
+			Tiberium_ExplosiveWarhead (nullptr),
 			CanMakeStuffUp(false)
 			{
 				MultiEngineer[0] = false; // Skirmish
