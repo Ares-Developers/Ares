@@ -725,6 +725,30 @@ void BuildingExt::ExtData::ImmolateVictim(ObjectClass * Victim) {
 	}
 }
 
+// Updates the activation of the sensor ability, if neccessary.
+/*!
+	The update is only performed if this is a sensor array and its state changed.
+
+	\author AlexB
+	\date 2012-10-08
+*/
+void BuildingExt::ExtData::UpdateSensorArray() {
+	BuildingClass* pBld = this->AttachedToObject;
+
+	if(pBld->Type->SensorArray) {
+		bool isActive = pBld->IsPowerOnline() && !pBld->Deactivated;
+		bool wasActive = (this->SensorArrayActiveCounter > 0);
+
+		if(isActive != wasActive) {
+			if(isActive) {
+				pBld->SensorArrayActivate();
+			} else {
+				pBld->SensorArrayDeactivate();
+			}
+		}
+	}
+}
+
 DWORD BuildingExt::FoundationLength(CellStruct * StartCell) {
 	DWORD Len = 0;
 	bool End = false;
