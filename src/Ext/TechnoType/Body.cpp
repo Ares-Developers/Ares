@@ -351,6 +351,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 
 	// tiberium
 	this->TiberiumProof.Read(&exINI, section, "TiberiumProof");
+	this->TiberiumSpill.Read(&exINI, section, "TiberiumSpill");
 
 	// quick fix - remove after the rest of weapon selector code is done
 	return;

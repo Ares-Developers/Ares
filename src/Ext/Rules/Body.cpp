@@ -78,7 +78,6 @@ void RulesExt::ExtData::LoadBeforeTypeData(RulesClass *pThis, CCINIClass *pINI) 
 
 	pData->Tiberium_DamageEnabled.Read(&exINI, sectionGeneral, "TiberiumDamageEnabled");
 	pData->Tiberium_HealEnabled.Read(&exINI, sectionGeneral, "TiberiumHealEnabled");
-	pData->Tiberium_SpillEnabled.Read(&exINI, sectionGeneral, "TiberiumSpillEnabled");
 	pData->Tiberium_ExplosiveWarhead.Parse(&exINI, sectionCombatDamage, "TiberiumExplosiveWarhead");
 }
 

@@ -1330,14 +1330,15 @@ DEFINE_HOOK(702672, TechnoClass_ReceiveDamage_SpillTiberium, 5)
 		pThis->AttachedBomb->Detonate();
 	}
 
-	if(RulesExt::Global()->Tiberium_SpillEnabled) {
+	TechnoTypeClass* pType = pThis->GetTechnoType();
+	auto pExt = TechnoTypeExt::ExtMap.Find(pType);
+
+	if(pExt->TiberiumSpill) {
 		float stored = pThis->Tiberium.GetTotalAmount();
 		if(pThis->WhatAmI() != BuildingClass::AbsID
 			&& stored > 0.0f
 			&& !ScenarioClass::Instance->SpecialFlags.HarvesterImmune)
 		{
-			TechnoTypeClass* pType = pThis->GetTechnoType();
-
 			// don't spill more than we can hold
 			double max = 9.0;
 			if(max > pType->Storage) {

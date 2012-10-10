@@ -293,9 +293,9 @@ DEFINE_HOOK(4F9610, HouseClass_GiveTiberium_Storage, A)
 DEFINE_HOOK(441B83, BuildingClass_Destroy_Refinery, 5)
 {
 	GET(BuildingClass*, pThis, ESI);
-	auto pExt = BuildingTypeExt::ExtMap.Find(pThis->Type);
+	auto pExt = TechnoTypeExt::ExtMap.Find(pThis->Type);
 
-	return !pExt->Refinery_CanSpill ? 0x441BF2 : 0;
+	return !pExt->TiberiumSpill ? 0x441BF2 : 0;
 }
 
 DEFINE_HOOK(73E4A2, UnitClass_Mi_Unload_Storage, 6)
