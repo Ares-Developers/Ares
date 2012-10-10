@@ -1065,3 +1065,15 @@ DEFINE_HOOK(730EE5, StopCommandClass_Execute_Berzerk, 6)
 
 	return pTechno->Berzerk ? 0x730EF7 : 0;
 }
+
+// powered units played their deactivation sounds even
+// when they aren't supposed to.
+DEFINE_HOOK(70FD0E, TechnoClass_Deactivate_MuteSound, 6)
+{
+	return Unsorted::IKnowWhatImDoing ? 0x70FD62 : 0;
+}
+
+DEFINE_HOOK(70FC18, TechnoClass_Activate_MuteSound, 6)
+{
+	return Unsorted::IKnowWhatImDoing ? 0x70FC7A : 0;
+}
