@@ -11,6 +11,8 @@
 #include <ArrayClasses.h>
 #include <Helpers/Template.h>
 #include <CRT.h>
+#include <VoxClass.h>
+#include <TiberiumClass.h>
 
 // =============================
 // other hooks
@@ -220,4 +222,67 @@ DEFINE_HOOK(508F91, HouseClass_SpySat_Update_CheckEligible, 6)
 		? Jammed
 		: Eligible
 	;
+}
+
+// play this annoying message every now and then
+DEFINE_HOOK(4F8C23, HouseClass_Update_SilosNeededEVA, 5)
+{
+	VoxClass::Play("EVA_SilosNeeded");
+	return 0;
+}
+
+// restored from TS
+DEFINE_HOOK(4F9610, HouseClass_GiveTiberium_Storage, A)
+{
+	GET(HouseClass*, pThis, ECX);
+	GET_STACK(float, amount, 0x4);
+	GET_STACK(int, idxType, 0x8);
+
+	pThis->SiloMoney += static_cast<int>(Game::F2I(amount * 5.0));
+
+	if(!SessionClass::Instance->GameMode || pThis->CurrentPlayer) {
+		// don't change, old values are needed for silo update
+		const int lastStorage = static_cast<int>(pThis->OwnedTiberium.GetTotalAmount());
+		const int lastTotalStorage = pThis->TotalStorage;
+
+		// this is the upper limit for stored tiberium
+		if(amount + lastStorage > lastTotalStorage) {
+			amount = static_cast<float>(lastTotalStorage - lastStorage);
+		}
+
+		// go through all buildings and fill them up until all is in there
+		for(auto i=pThis->Buildings.start(); i<pThis->Buildings.end(); ++i) {
+			if(amount <= 0.0f) {
+				break;
+			}
+
+			if(auto pBuilding = *i) {
+				int storage = pBuilding->Type->Storage;
+				if(pBuilding->IsOnMap && storage > 0) {
+
+					// put as much tiberium into this silo
+					float freeSpace = storage - pBuilding->Tiberium.GetTotalAmount();
+					if(freeSpace > 0.0f) {
+						if(freeSpace > amount) {
+							freeSpace = amount;
+						}
+
+						pBuilding->Tiberium.AddAmount(freeSpace, idxType);
+						pThis->OwnedTiberium.AddAmount(freeSpace, idxType);
+
+						amount -= freeSpace;
+					}
+				}
+			}
+		}
+
+		// redraw silos
+		pThis->UpdateAllSilos(lastStorage, lastTotalStorage);
+	} else {
+		// just add the money. this is the only original YR logic
+		auto pTib = TiberiumClass::Array->GetItem(idxType);
+		pThis->Balance += static_cast<int>(Game::F2I(amount * pTib->Value * pThis->Type->IncomeMult));
+	}
+
+	return 0x4F9664;
 }
