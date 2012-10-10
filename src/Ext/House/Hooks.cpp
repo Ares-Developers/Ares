@@ -286,3 +286,48 @@ DEFINE_HOOK(4F9610, HouseClass_GiveTiberium_Storage, A)
 
 	return 0x4F9664;
 }
+
+// this is not the best way, because only the spreading is
+// skipped instead of the entire loop, but this makes no
+// assumptions about the tiberium struct
+DEFINE_HOOK(441B83, BuildingClass_Destroy_Refinery, 5)
+{
+	GET(BuildingClass*, pThis, ESI);
+	auto pExt = BuildingTypeExt::ExtMap.Find(pThis->Type);
+
+	return !pExt->Refinery_CanSpill ? 0x441BF2 : 0;
+}
+
+DEFINE_HOOK(73E4A2, UnitClass_Mi_Unload_Storage, 6)
+{
+	// because a value gets pushed to the stack in an inconvenient
+	// location, we do our stuff and then mess with the stack so
+	// the original functions do nothing any more.
+	GET(BuildingClass*, pBld, EDI);
+	GET(int, idxTiberium, EBP);
+	LEA_STACK(float*, amountRaw, 0x1C);
+	LEA_STACK(float*, amountPurified, 0x34);
+
+	auto pExt = BuildingExt::ExtMap.Find(pBld);
+	pExt->DepositTiberium(*amountRaw, *amountPurified, idxTiberium);
+	*amountPurified = *amountRaw = 0.0f;
+
+	return 0;
+}
+
+DEFINE_HOOK(522D75, InfantryClass_Slave_UnloadAt_Storage, 6)
+{
+	GET(BuildingClass*, pBld, EAX);
+	GET(int, idxTiberium, ESI);
+	GET(OwnedTiberiumStruct*, pTiberium, EBP);
+
+	// replaces the inner loop and stores
+	// one tiberium type at a time
+	float amount = pTiberium->GetAmount(idxTiberium);
+	pTiberium->RemoveAmount(amount, idxTiberium);
+
+	auto pExt = BuildingExt::ExtMap.Find(pBld);
+	pExt->RefineTiberium(amount, idxTiberium);
+
+	return 0x522E38;
+}

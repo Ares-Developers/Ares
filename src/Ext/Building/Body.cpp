@@ -12,6 +12,7 @@
 #include <VoxClass.h>
 #include <RadarEventClass.h>
 #include <SuperClass.h>
+#include <TiberiumClass.h>
 
 template<> const DWORD Extension<BuildingClass>::Canary = 0x87654321;
 Container<BuildingExt> BuildingExt::ExtMap;
@@ -722,6 +723,74 @@ void BuildingExt::ExtData::ImmolateVictim(ObjectClass * Victim) {
 			GAME_ALLOC(AnimClass, placeholder, FSAnim, &XYZ);
 		}
 
+	}
+}
+
+// Processes an amount of tiberium of a specific type.
+/*!
+	This function calculates the value of tiberium and also
+	considers ore purifiers.
+
+	\param amount The amount of tiberium.
+	\param idxType The type of tiberium.
+
+	\author AlexB
+	\date 2012-10-10
+*/
+void BuildingExt::ExtData::RefineTiberium(float amount, int idxType) {
+	BuildingClass* pBld = this->AttachedToObject;
+	HouseClass* pHouse = pBld->GetOwningHouse();
+
+	// get the number of applicable purifiers
+	int purifiers = pHouse->NumOrePurifiers;
+	if(!pHouse->CurrentPlayer && SessionClass::Instance->GameMode) {
+		purifiers += RulesClass::Instance->AIVirtualPurifiers.GetItem(pHouse->AIDifficulty);
+	}
+
+	// bonus amount (in tiberium)
+	float purified = purifiers * RulesClass::Instance->PurifierBonus * amount;
+
+	// add the tiberium to the house's credits
+	DepositTiberium(amount, purified, idxType);
+}
+
+// Adds the value of an amount of tiberium and its bonus amount to the house's credits.
+/*!
+	Stores the tiberium's value on the houses's accounts.
+
+	\param amount The amount of raw tiberium.
+	\param bonus The bonus tiberium amount.
+	\param idxType The type of tiberium.
+
+	\author AlexB
+	\date 2012-10-10
+*/
+void BuildingExt::ExtData::DepositTiberium(float amount, float bonus, int idxType) {
+	BuildingClass* pBld = this->AttachedToObject;
+	HouseClass* pHouse = pBld->GetOwningHouse();
+	auto pTiberium = TiberiumClass::Array->GetItem(idxType);
+	int value = 0;
+
+	// always put the purified money on the bank account. otherwise ore purifiers
+	// would fill up storage with tiberium that doesn't exist. this is consistent with
+	// the original YR, because old GiveTiberium put it on the bank anyhow, despite its name.
+	if(bonus > 0.0f) {
+		value += static_cast<int>(Game::F2I(bonus * pTiberium->Value * pHouse->Type->IncomeMult));
+	}
+
+	// also add the normal tiberium to the global account?
+	if(amount > 0.0f) {
+		auto pExt = BuildingTypeExt::ExtMap.Find(pBld->Type);
+		if(!pExt->Refinery_UseStorage) {
+			value += static_cast<int>(Game::F2I(amount * pTiberium->Value * pHouse->Type->IncomeMult));
+		} else {
+			pHouse->GiveTiberium(amount, idxType);
+		}
+	}
+
+	// deposit
+	if(value > 0) {
+		pHouse->GiveMoney(value);
 	}
 }
 

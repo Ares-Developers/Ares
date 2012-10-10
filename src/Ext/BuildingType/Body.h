@@ -153,6 +153,10 @@ public:
 		NullableIdx<VocClass> GateDownSound;
 		NullableIdx<VocClass> GateUpSound;
 
+		// refinery and storage related
+		Valueable<bool> Refinery_UseStorage;
+		Valueable<bool> Refinery_CanSpill;
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			Solid_Height (0),
 			IsCustom (false),
@@ -173,6 +177,8 @@ public:
 			LightningRod_Modifier (1.0),
 			GateDownSound (),
 			GateUpSound (),
+			Refinery_UseStorage (false),
+			Refinery_CanSpill (false),
 			InfiltrateCustom (false),
 			RevealProduction (false),
 			ResetSW (false),

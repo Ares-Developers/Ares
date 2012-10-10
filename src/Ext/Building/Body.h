@@ -122,6 +122,9 @@ public:
 		bool ReverseEngineer(TechnoClass * Victim); //!< Returns true if Victim wasn't buildable and now should be
 
 		void KickOutClones(TechnoClass * Production);
+
+		void RefineTiberium(float amount, int idxType);
+		void DepositTiberium(float amount, float bonus, int idxType);
 	};
 
 	static Container<BuildingExt> ExtMap;
