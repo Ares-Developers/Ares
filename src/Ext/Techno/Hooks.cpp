@@ -1297,7 +1297,8 @@ DEFINE_HOOK(4D85E4, FootClass_UpdatePosition_TiberiumDamage, 9)
 			// create a small visceroid if available and the cell is free
 			if(ScenarioClass::Instance->TiberiumDeathToVisceroid) {
 				CellClass* pCell = MapClass::Instance->GetCellAt(&crd);
-				if(!(pCell->OccupationFlags & 0x20)) {
+				int rnd = ScenarioClass::Instance->Random.RandomRanged(0, 99);
+				if(!(pCell->OccupationFlags & 0x20) && rnd < RulesClass::Instance->TiberiumTransmogrify) {
 					int idxHouse = HouseClass::FindIndexByName("Neutral");
 					if(HouseClass* pHouse = HouseClass::FindByIndex(idxHouse)) {
 						if(UnitTypeClass* pType = RulesClass::Instance->SmallVisceroid) {
