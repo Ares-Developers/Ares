@@ -1406,3 +1406,42 @@ DEFINE_HOOK(738749, UnitClass_Destroy_TiberiumExplosive, 6)
 
 	return 0x7387C4;
 }
+
+// merge two small visceroids into one large visceroid
+DEFINE_HOOK(739F21, UnitClass_UpdatePosition_Visceroid, 6)
+{
+	GET(UnitClass*, pThis, EBP);
+
+	// fleshbag erotic
+	if(pThis->Type->SmallVisceroid) {
+		if(UnitTypeClass* pLargeType = RulesClass::Instance->LargeVisceroid) {
+			if(UnitClass* pDest = specific_cast<UnitClass*>(pThis->Destination)) {
+				if(pDest->Type->SmallVisceroid) {
+
+					// nice to meat you!
+					CoordStruct crdMe, crdHim;
+					pThis->GetCoords(&crdMe);
+					pDest->GetCoords(&crdHim);
+
+					CellStruct cellMe, cellHim;
+					CellClass::Coord2Cell(&crdMe, &cellMe);
+					CellClass::Coord2Cell(&crdHim, &cellHim);
+
+					// two become one
+					if(cellMe == cellHim) {
+						pDest->Type = pLargeType;
+						pDest->Health = pLargeType->Strength;
+
+						CellClass* pCell = MapClass::Instance->GetCellAt(&pDest->LastMapCoords);
+						pDest->UpdateThreatInCell(pCell);
+
+						pThis->UnInit();
+						return 0x73B0A5;
+					}
+				}
+			}
+		}
+	}
+
+	return 0;
+}
