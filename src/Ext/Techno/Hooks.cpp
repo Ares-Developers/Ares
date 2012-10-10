@@ -1295,7 +1295,7 @@ DEFINE_HOOK(4D85E4, FootClass_UpdatePosition_TiberiumDamage, 9)
 
 		if(pThis->ReceiveDamage(&damage, 0, RulesClass::Instance->C4Warhead, nullptr, FALSE, FALSE, nullptr) == DamageState::NowDead) {
 			// create a small visceroid if available and the cell is free
-			/*if(ScenarioClass::Instance->TiberiumDeathToVisceroid) {
+			if(ScenarioClass::Instance->TiberiumDeathToVisceroid) {
 				CellClass* pCell = MapClass::Instance->GetCellAt(&crd);
 				if(!(pCell->OccupationFlags & 0x20)) {
 					int idxHouse = HouseClass::FindIndexByName("Neutral");
@@ -1312,7 +1312,7 @@ DEFINE_HOOK(4D85E4, FootClass_UpdatePosition_TiberiumDamage, 9)
 						}
 					}
 				}
-			}*/
+			}
 
 			return 0x4D8F29;
 		}
