@@ -211,7 +211,7 @@ bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 						pBld->HasCloakingData = -1;
 						pBld->IsSensed = true;
 						pBld->CloakRadius = 1;
-						pBld->UpdateTimers();
+						pBld->UpdateCloak();
 					}
 				}
 
