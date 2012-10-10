@@ -1446,3 +1446,11 @@ DEFINE_HOOK(739F21, UnitClass_UpdatePosition_Visceroid, 6)
 
 	return 0;
 }
+
+// TiberiumTransmogrify is never initialized explitly, thus do that here
+DEFINE_HOOK(66748A, RulesClass_CTOR_TiberiumTransmogrify, 6)
+{
+	GET(RulesClass*, pThis, ESI);
+	pThis->TiberiumTransmogrify = 0;
+	return 0;
+}
