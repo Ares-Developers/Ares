@@ -209,7 +209,7 @@ bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 					// shut down cloak generation
 					if(pBld->Type->CloakGenerator && pBld->CloakRadius) {
 						pBld->HasCloakingData = -1;
-						pBld->IsSensed = true;
+						pBld->NeedsRedraw = true;
 						pBld->CloakRadius = 1;
 						pBld->UpdateCloak();
 					}
