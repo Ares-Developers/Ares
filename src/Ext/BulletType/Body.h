@@ -35,7 +35,10 @@ public:
 		// cache for the image animation's palette convert
 		OptionalStruct<ConvertClass*> ImageConvert;
 
+		Nullable<bool> AV; // Firestorm's Anti-Vehicle tag
+
 		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
+			AV (),
 			SubjectToSolid (false),
 			SubjectToFirewall (true),
 			Parachuted (false),

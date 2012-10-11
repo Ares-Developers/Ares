@@ -15,6 +15,8 @@ template<> IStream *Container<BulletTypeExt>::SavingStream = nullptr;
 
 void BulletTypeExt::ExtData::LoadFromINIFile(BulletTypeClass *pThis, CCINIClass* pINI)
 {
+	INI_EX exINI(pINI);
+
 	this->SubjectToSolid = pINI->ReadBool(pThis->ID, "SubjectToBuildings", this->SubjectToSolid);
 	this->SubjectToFirewall = pINI->ReadBool(pThis->ID, "SubjectToFirewall", this->SubjectToFirewall);
 	this->Parachuted = pINI->ReadBool(pThis->ID, "Parachuted", this->Parachuted);
@@ -22,6 +24,8 @@ void BulletTypeExt::ExtData::LoadFromINIFile(BulletTypeClass *pThis, CCINIClass*
 	this->SubjectToTrenches = pINI->ReadBool(pThis->ID, "SubjectToTrenches", this->SubjectToTrenches);
 
 	this->ImageConvert.clear();
+
+	this->AV.Read(exINI, pThis->ID, "AV");
 }
 
 // get the custom palette of the animation this bullet type uses

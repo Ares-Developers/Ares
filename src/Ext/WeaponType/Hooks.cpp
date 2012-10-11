@@ -2,6 +2,7 @@
 #include "../Techno/Body.h"
 #include <LaserDrawClass.h>
 #include "../BuildingType/Body.h"
+#include "../BulletType/Body.h"
 
 DEFINE_HOOK(6FD438, TechnoClass_FireLaser, 6)
 {
@@ -77,4 +78,33 @@ DEFINE_HOOK(6FF4DE, TechnoClass_Fire_IsLaser, 6) {
 
 	// skip all default handling
 	return 0x6FF656;
+}
+
+DEFINE_HOOK(772A90, WeaponTypeClass_GetProjectileTargetFlags, 6)
+{
+	GET(WeaponTypeClass*, pThis, ECX);
+
+	auto pProjectile = pThis->Projectile;
+	auto pExt = BulletTypeExt::ExtMap.Find(pProjectile);
+
+	int ret = 0;
+
+	// anti aircraft
+	if(pProjectile->AA) {
+		ret = ttf_Air;
+	}
+
+	// anti ground
+	if(pProjectile->AG) {
+		// original & ~vehicles
+		ret |= ttf_Buildings | ttf_Infantry | ttf_Ships;
+	}
+
+	// anti vehicle from Firestorm (defaults to AG)
+	if(pExt->AV.Get(pProjectile->AG)) {
+		ret |= ttf_Vehicles;
+	}
+
+	R->EAX(ret);
+	return 0x772AB3;
 }
