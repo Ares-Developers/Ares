@@ -36,9 +36,15 @@ public:
 		OptionalStruct<ConvertClass*> ImageConvert;
 
 		Nullable<bool> AV; // Firestorm's Anti-Vehicle tag
+		Valueable<bool> Splits;
+		Valueable<float> RetargetAccuracy;
+		Valueable<float> AirburstSpread;
 
 		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			AV (),
+			Splits (false),
+			RetargetAccuracy (0.0f),
+			AirburstSpread (1.5f),
 			SubjectToSolid (false),
 			SubjectToFirewall (true),
 			Parachuted (false),
@@ -55,6 +61,8 @@ public:
 		}
 
 		ConvertClass* GetConvert();
+
+		bool HasSplitBehavior();
 	};
 
 	static Container<BulletTypeExt> ExtMap;
