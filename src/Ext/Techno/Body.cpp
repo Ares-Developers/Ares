@@ -433,8 +433,8 @@ void TechnoExt::TransferIvanBomb(TechnoClass *From, TechnoClass *To) {
 }
 
 void TechnoExt::TransferAttachedEffects(TechnoClass *From, TechnoClass *To) {
-		auto FromExt = TechnoExt::ExtMap.Find(From);
-		auto ToExt = TechnoExt::ExtMap.Find(To);
+		TechnoExt::ExtData *FromExt = TechnoExt::ExtMap.Find(From);
+		TechnoExt::ExtData *ToExt = TechnoExt::ExtMap.Find(To);
 		ToExt->AttachedEffects.Clear();
 
 		// while recreation itself isn't the best idea, less hassle and more reliable
@@ -479,6 +479,10 @@ void TechnoExt::RecalculateStats(TechnoClass *pTechno) {
 	pTechno->ArmorMultiplier = Armor;
 
 	pTechno->Cloakable = Cloak;
+
+	if (Cloak){
+		pTechno->UpdateCloak();
+	}
 
 
 	if(FootClass *Foot = generic_cast<FootClass *>(pTechno)) {

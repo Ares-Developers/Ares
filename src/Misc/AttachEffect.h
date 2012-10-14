@@ -75,6 +75,7 @@ public:
 
 	void InvalidateAnimPointer(AnimClass *ptr);
 
+	void CreateAnim(TechnoClass *Owner);
 	void KillAnim();
 
 	static bool Update(TechnoClass *Source);

@@ -16,8 +16,7 @@ In a nutshell:
 	to create as many as possible interesting effects
 
 Todo: something with that crash in cloak contra animation - crap (D did it), Documentation and crates
-To-to-to-todo: Get a disassembler to update the hook (44A03C, BuildingClass_Mi_Selling_ReestablishMindControl, 6)
-within Bugfixes.cpp to be set before TechnoClass::Remove, killing all effects on the way
+To-to-to-todo: Get a hook in TechnoClass_Put to respawn anims killed in Remove for transported and co.
 */
 
 void AttachEffectTypeClass::Read(INI_EX *exINI, const char * section) {
@@ -64,15 +63,7 @@ void AttachEffectTypeClass::Attach(TechnoClass* Target, int Duration, TechnoClas
 				Item->ActualDuration = Item->Type->Duration;
 
 				if (!!this->AnimType && !!this->AnimResetOnReapply) {
-					Item->KillAnim();
-					GAME_ALLOC(AnimClass, Item->Animation, this->AnimType, &Target->Location);
-					Item->Animation->SetOwnerObject(Target);
-					Item->Animation->RemainingIterations = -1;
-					
-					if (Invoker && Invoker->Owner) {
-						Item->Animation->Owner = Invoker->Owner;
-					}
-					Item->AnimAlreadyKilled = false;
+					Item->CreateAnim(Target);
 				}
 
 				return;
@@ -84,34 +75,40 @@ void AttachEffectTypeClass::Attach(TechnoClass* Target, int Duration, TechnoClas
 	auto Attaching = new AttachEffectClass(this, Duration);
 	TargetExt->AttachedEffects.AddItem(Attaching);
 
-	// update the unit with the attached effect
-	TechnoExt::RecalculateStats(Target);
-
-	// animation
-	if (!!this->AnimType) {
-		GAME_ALLOC(AnimClass, Attaching->Animation, this->AnimType, &Target->Location);
-		Attaching->Animation->SetOwnerObject(Target);
-		// inbefore void pointers, hardcode the iteration to infinitely looped
-		Attaching->Animation->RemainingIterations = -1;
-		if (Invoker && Invoker->Owner) {
-			Attaching->Animation->Owner = Invoker->Owner;
-		}
-		Attaching->AnimAlreadyKilled = false;
-	}
-	
-	/*
 	if (Invoker) {
 		Attaching->Invoker = Invoker;
 	} else {
 		Attaching->Invoker = NULL;
 	}
-	*/
+
+	// update the unit with the attached effect
+	TechnoExt::RecalculateStats(Target);
+
+	// animation
+	if (!!this->AnimType) {
+		Attaching->CreateAnim(Target);
+	}
+	
 }
 
 void AttachEffectClass::InvalidateAnimPointer(AnimClass *ptr) {
 	if(this->Animation == ptr) {
 		this->KillAnim();
 	}
+}
+
+void AttachEffectClass::CreateAnim(TechnoClass *Owner) {
+	if (this->Animation){
+		this->KillAnim();
+	}
+	GAME_ALLOC(AnimClass, this->Animation, this->Type->AnimType, &Owner->Location);
+	this->Animation->SetOwnerObject(Owner);
+	this->Animation->RemainingIterations = -1;
+			
+	if (this->Invoker && this->Invoker->Owner) {
+		this->Animation->Owner = Invoker->Owner;
+	}
+	this->AnimAlreadyKilled = false;
 }
 
 void AttachEffectClass::KillAnim() {
@@ -148,6 +145,14 @@ bool AttachEffectClass::Update(TechnoClass *Source) {
 	TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(Source->GetTechnoType());
 
 	if (pData->AttachedEffects.Count) {
+
+		if(pData->AttachEffects_RecreateAnims) {
+			for (int i = pData->AttachedEffects.Count; i > 0; --i) {
+				pData->AttachedEffects.GetItem(i - 1)->CreateAnim(Source);
+			}
+			pData->AttachEffects_RecreateAnims = false;
+		}
+
 		//Debug::Log("[AttachEffect]AttachEffect update of %s...\n", Source->get_ID());
 		for (int i = pData->AttachedEffects.Count; i > 0; --i) {
 			auto Effect = pData->AttachedEffects.GetItem(i - 1);

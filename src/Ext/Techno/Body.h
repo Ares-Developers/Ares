@@ -65,6 +65,7 @@ public:
 
 		//#1573, #1623, #255 Stat-modifiers/ongoing animations
 		DynamicVectorClass <AttachEffectClass *> AttachedEffects;
+		bool AttachEffects_RecreateAnims;
 
 		//stuff for #1623
 		bool AttachedTechnoEffect_isset;
@@ -94,6 +95,7 @@ public:
 			PoweredUnit(NULL),
 			MyOriginalTemporal(NULL),
 			AltOccupation(),
+			AttachEffects_RecreateAnims(false),
 			AttachedTechnoEffect_isset (false),
 			AttachedTechnoEffect_Delay (0)
 			{

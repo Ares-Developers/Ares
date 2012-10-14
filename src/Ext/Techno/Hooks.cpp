@@ -985,18 +985,18 @@ DEFINE_HOOK(6F6AC9, TechnoClass_Remove, 6) {
 
 	//#1573, #1623, #255 attached effects
 	if (TechnoExt->AttachedEffects.Count) {
-		auto pID = pThis->GetTechnoType()->ID;
+		//auto pID = pThis->GetTechnoType()->ID;
 		for (int i = TechnoExt->AttachedEffects.Count; i>0; --i) {
 			//Debug::Log("[AttachEffect] Removing %d. item from %s\n", i - 1, pID);
 			auto Item = TechnoExt->AttachedEffects.GetItem(i - 1);
-			Item->Destroy();
-			delete Item;
-//			TechnoExt->AttachedEffects.RemoveItem(i-1); the array is being cleared afterwards anyway, so don't bother
+			Item->KillAnim();
 		}
+
+		TechnoExt->AttachEffects_RecreateAnims = true;
 		//Debug::Log("[AttachEffect] Deleting array of %s\n", pID);
-		TechnoExt->AttachedEffects.Clear();
-		TechnoExt->AttachedTechnoEffect_isset = false;
-		TechnoExt::RecalculateStats(pThis);
+		//TechnoExt->AttachedEffects.Clear();
+		//TechnoExt->AttachedTechnoEffect_isset = false;
+		//TechnoExt::RecalculateStats(pThis);
 	}
 
 	return 0;
