@@ -35,6 +35,7 @@ void TechnoTypeExt::ExtData::Initialize(TechnoTypeClass *pThis) {
 	this->Is_Cow = !strcmp(pThis->ID, "COW");
 
 	this->CustomMissileTrailerAnim = AnimTypeClass::Find("V3TRAIL");
+	this->CustomMissileTakeoffAnim = AnimTypeClass::Find("V3TAKOFF");
 }
 
 /*
@@ -358,6 +359,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	this->CustomMissileData.GetEx()->Type = specific_cast<AircraftTypeClass*>(pThis);
 	this->CustomMissileWarhead.Parse(&exINI, section, "Missile.Warhead", true);
 	this->CustomMissileEliteWarhead.Parse(&exINI, section, "Missile.EliteWarhead", true);
+	this->CustomMissileTakeoffAnim.Parse(&exINI, section, "Missile.TakeOffAnim");
 	this->CustomMissileTrailerAnim.Parse(&exINI, section, "Missile.TrailerAnim");
 	this->CustomMissileTrailerSeparation.Read(&exINI, section, "Missile.TrailerSeparation");
 

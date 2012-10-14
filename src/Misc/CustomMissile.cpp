@@ -21,7 +21,61 @@ DEFINE_HOOK(6622E0, RocketLocomotionClass_ILocomotion_Process_CustomMissile, 6)
 	return 0;
 }
 
-DEFINE_HOOK(662D85, RocketLocomotionClass_ILocomotion_Proces_CustomMissileTrailer, 6)
+DEFINE_HOOK(66238A, RocketLocomotionClass_ILocomotion_Process_CustomMissileTakeoff1, 5)
+{
+	GET(ILocomotion*, pThis, ESI);
+
+	auto pLocomotor = static_cast<RocketLocomotionClass*>(pThis);
+	AircraftClass* pOwner = specific_cast<AircraftClass*>(pLocomotor->LinkedTo);
+
+	if(TechnoTypeExt::ExtData* pExt = TechnoTypeExt::ExtMap.Find(pOwner->Type)) {
+		if(AnimTypeClass* pType = pExt->CustomMissileTakeoffAnim) {
+			AnimClass* pAnim = NULL;
+			GAME_ALLOC(AnimClass, pAnim, pType, &pOwner->Location, 2, 1, 0x600, -10, 0);
+		}
+		return 0x6623F3;
+	}
+
+	return 0;
+}
+
+DEFINE_HOOK(662512, RocketLocomotionClass_ILocomotion_Process_CustomMissileTakeoff2, 5)
+{
+	GET(ILocomotion*, pThis, ESI);
+
+	auto pLocomotor = static_cast<RocketLocomotionClass*>(pThis);
+	AircraftClass* pOwner = specific_cast<AircraftClass*>(pLocomotor->LinkedTo);
+
+	if(TechnoTypeExt::ExtData* pExt = TechnoTypeExt::ExtMap.Find(pOwner->Type)) {
+		if(AnimTypeClass* pType = pExt->CustomMissileTakeoffAnim) {
+			AnimClass* pAnim = NULL;
+			GAME_ALLOC(AnimClass, pAnim, pType, &pOwner->Location, 2, 1, 0x600, -10, 0);
+		}
+		return 0x66257B;
+	}
+
+	return 0;
+}
+
+DEFINE_HOOK(6627E5, RocketLocomotionClass_ILocomotion_Process_CustomMissileTakeoff3, 5)
+{
+	GET(ILocomotion*, pThis, ESI);
+
+	auto pLocomotor = static_cast<RocketLocomotionClass*>(pThis);
+	AircraftClass* pOwner = specific_cast<AircraftClass*>(pLocomotor->LinkedTo);
+
+	if(TechnoTypeExt::ExtData* pExt = TechnoTypeExt::ExtMap.Find(pOwner->Type)) {
+		if(AnimTypeClass* pType = pExt->CustomMissileTakeoffAnim) {
+			AnimClass* pAnim = NULL;
+			GAME_ALLOC(AnimClass, pAnim, pType, &pOwner->Location, 2, 1, 0x600, -10, 0);
+		}
+		return 0x662849;
+	}
+
+	return 0;
+}
+
+DEFINE_HOOK(662D85, RocketLocomotionClass_ILocomotion_Process_CustomMissileTrailer, 6)
 {
 	GET(ILocomotion*, pThis, ESI);
 
@@ -135,6 +189,21 @@ DEFINE_HOOK(6B7A72, SpawnManagerClass_Update_CustomMissile2, 6)
 
 			return 0x6B7B03;
 		}
+	}
+
+	return 0;
+}
+
+DEFINE_HOOK(6B752E, SpawnManagerClass_Update_CustomMissileTakeoff, 6)
+{
+	GET(AircraftClass*, pOwner, EDI);
+
+	if(TechnoTypeExt::ExtData* pExt = TechnoTypeExt::ExtMap.Find(pOwner->Type)) {
+		if(AnimTypeClass* pType = pExt->CustomMissileTakeoffAnim) {
+			AnimClass* pAnim = NULL;
+			GAME_ALLOC(AnimClass, pAnim, pType, &pOwner->Location, 2, 1, 0x600, -10, 0);
+		}
+		return 0x6B757A;
 	}
 
 	return 0;

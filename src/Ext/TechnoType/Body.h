@@ -138,6 +138,7 @@ public:
 		Valueable<RocketStruct> CustomMissileData;
 		Valueable<WarheadTypeClass*> CustomMissileWarhead;
 		Valueable<WarheadTypeClass*> CustomMissileEliteWarhead;
+		Valueable<AnimTypeClass*> CustomMissileTakeoffAnim;
 		Valueable<AnimTypeClass*> CustomMissileTrailerAnim;
 		Valueable<int> CustomMissileTrailerSeparation;
 
@@ -188,6 +189,7 @@ public:
 			CustomMissileEliteWarhead (NULL),
 			CustomMissileTrailerSeparation (3),
 			CustomMissileTrailerAnim (NULL),
+			CustomMissileTakeoffAnim (NULL),
 			VoiceRepair (-1),
 			HijackerEnterSound (-1),
 			HijackerLeaveSound (-1),
