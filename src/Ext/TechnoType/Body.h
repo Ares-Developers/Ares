@@ -138,6 +138,8 @@ public:
 		Valueable<RocketStruct> CustomMissileData;
 		Valueable<WarheadTypeClass*> CustomMissileWarhead;
 		Valueable<WarheadTypeClass*> CustomMissileEliteWarhead;
+		Valueable<AnimTypeClass*> CustomMissileTrailerAnim;
+		Valueable<int> CustomMissileTrailerSeparation;
 
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),			Survivors_PilotChance (NULL),
 			Survivors_PassengerChance (NULL),
@@ -184,6 +186,8 @@ public:
 			CustomMissileData (),
 			CustomMissileWarhead (NULL),
 			CustomMissileEliteWarhead (NULL),
+			CustomMissileTrailerSeparation (3),
+			CustomMissileTrailerAnim (NULL),
 			VoiceRepair (-1),
 			HijackerEnterSound (-1),
 			HijackerLeaveSound (-1),

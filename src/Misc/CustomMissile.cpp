@@ -1,9 +1,11 @@
 #include "../Ares.h"
 #include "../Ext/TechnoType/Body.h"
 
+#include <AnimClass.h>
 #include <AircraftClass.h>
 #include <LocomotionClass.h>
 #include <SpawnManagerClass.h>
+#include <RocketLocomotionClass.h>
 
 DEFINE_HOOK(6622E0, RocketLocomotionClass_ILocomotion_Process_CustomMissile, 6)
 {
@@ -19,11 +21,33 @@ DEFINE_HOOK(6622E0, RocketLocomotionClass_ILocomotion_Process_CustomMissile, 6)
 	return 0;
 }
 
+DEFINE_HOOK(662D85, RocketLocomotionClass_ILocomotion_Proces_CustomMissileTrailer, 6)
+{
+	GET(ILocomotion*, pThis, ESI);
+
+	auto pLocomotor = static_cast<RocketLocomotionClass*>(pThis);
+	AircraftClass* pOwner = specific_cast<AircraftClass*>(pLocomotor->LinkedTo);
+
+	if(TechnoTypeExt::ExtData* pExt = TechnoTypeExt::ExtMap.Find(pOwner->Type)) {
+		if(pLocomotor->TrailerTimer.Ignorable()) {
+			pLocomotor->TrailerTimer.Start(pExt->CustomMissileTrailerSeparation);
+
+			if(AnimTypeClass* pType = pExt->CustomMissileTrailerAnim) {
+				AnimClass* pAnim = NULL;
+				GAME_ALLOC(AnimClass, pAnim, pType, &pOwner->Location);
+			}
+		}
+		return 0x662E16;
+	}
+
+	return 0;
+}
+
 DEFINE_HOOK(66305A, RocketLocomotionClass_Explode_CustomMissile, 6)
 {
 	GET(AircraftClass*, pMissile, EDX);
 	GET(AircraftTypeClass*, pType, ECX);
-	GET(ILocomotion*, pLocomotor, ESI);
+	GET(RocketLocomotionClass*, pLocomotor, ESI);
 
 	LEA_STACK(WarheadTypeClass**, pWarhead, 0x10);
 	LEA_STACK(RocketStruct**, pRocketData, 0x14);
@@ -32,8 +56,7 @@ DEFINE_HOOK(66305A, RocketLocomotionClass_Explode_CustomMissile, 6)
 		if(pExt->IsCustomMissile.Get()) {
 			*pRocketData = &pExt->CustomMissileData;
 
-			// TODO: Create RocketLocomotorClass
-			bool isElite = *(bool*)((int)pLocomotor + 0x51);
+			bool isElite = pLocomotor->SpawnerIsElite;
 			*pWarhead = (isElite ? pExt->CustomMissileEliteWarhead.Get() : pExt->CustomMissileWarhead.Get());
 			
 			return 0x6630DD;
