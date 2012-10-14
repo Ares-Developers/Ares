@@ -62,7 +62,7 @@ bool SW_SonarPulse::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 			// actually detect this
 			if(pTechno->CloakState) {
 				pTechno->Uncloak(1);
-				pTechno->IsSensed = 1;
+				pTechno->NeedsRedraw = 1;
 				pTechno->Cloakable = 0;
 				TechnoExt::ExtData *pExt = TechnoExt::ExtMap.Find(pTechno);
 				if(pTechno) {
