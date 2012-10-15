@@ -99,9 +99,11 @@ bool TEventExt::HasOccured(TEventClass* pEvent, bool* ret) {
 	switch(pEvent->EventKind) {
 	case TriggerEvent::TechTypeExists:
 		*ret = pExt->TechTypeExists();
+		break;
 
 	case TriggerEvent::TechTypeDoesntExist:
 		*ret = pExt->TechTypeDoesNotExist();
+		break;
 
 	default:
 		return false;
