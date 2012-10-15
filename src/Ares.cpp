@@ -34,7 +34,7 @@ bool Ares::bNoCD = false;
 bool Ares::bTestingRun = false;
 bool Ares::bStrictParser = false;
 bool Ares::bAllowAIControl = false;
-bool Ares::bStable = false;
+bool Ares::bStable = true;
 bool Ares::bStableNotification = false;
 
 DWORD Ares::readLength = BUFLEN;
