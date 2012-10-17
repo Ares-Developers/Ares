@@ -360,8 +360,8 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 		this->IsCustomMissile.Read(&exINI, section, "Missile.Custom");
 		this->CustomMissileData.Read(&exINI, section, NULL);
 		this->CustomMissileData.GetEx()->Type = pAircraftType;
-		this->CustomMissileWarhead.Parse(&exINI, section, "Missile.Warhead", true);
-		this->CustomMissileEliteWarhead.Parse(&exINI, section, "Missile.EliteWarhead", true);
+		this->CustomMissileWarhead.Parse(&exINI, section, "Missile.Warhead");
+		this->CustomMissileEliteWarhead.Parse(&exINI, section, "Missile.EliteWarhead");
 		this->CustomMissileTakeoffAnim.Parse(&exINI, section, "Missile.TakeOffAnim");
 		this->CustomMissileTrailerAnim.Parse(&exINI, section, "Missile.TrailerAnim");
 		this->CustomMissileTrailerSeparation.Read(&exINI, section, "Missile.TrailerSeparation");
