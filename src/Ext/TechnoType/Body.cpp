@@ -34,8 +34,10 @@ void TechnoTypeExt::ExtData::Initialize(TechnoTypeClass *pThis) {
 	this->Is_Deso = this->Is_Deso_Radiation = !strcmp(pThis->ID, "DESO");
 	this->Is_Cow = !strcmp(pThis->ID, "COW");
 
-	this->CustomMissileTrailerAnim = AnimTypeClass::Find("V3TRAIL");
-	this->CustomMissileTakeoffAnim = AnimTypeClass::Find("V3TAKOFF");
+	if(pThis->WhatAmI() == AircraftTypeClass::AbsID) {
+		this->CustomMissileTrailerAnim = AnimTypeClass::Find("V3TRAIL");
+		this->CustomMissileTakeoffAnim = AnimTypeClass::Find("V3TAKOFF");
+	}
 }
 
 /*
@@ -354,14 +356,16 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	this->ImmuneToAbduction.Read(&exINI, section, "ImmuneToAbduction");
 
 	// #245 custom missiles
-	this->IsCustomMissile.Read(&exINI, section, "Missile.Custom");
-	this->CustomMissileData.Read(&exINI, section, NULL);
-	this->CustomMissileData.GetEx()->Type = specific_cast<AircraftTypeClass*>(pThis);
-	this->CustomMissileWarhead.Parse(&exINI, section, "Missile.Warhead", true);
-	this->CustomMissileEliteWarhead.Parse(&exINI, section, "Missile.EliteWarhead", true);
-	this->CustomMissileTakeoffAnim.Parse(&exINI, section, "Missile.TakeOffAnim");
-	this->CustomMissileTrailerAnim.Parse(&exINI, section, "Missile.TrailerAnim");
-	this->CustomMissileTrailerSeparation.Read(&exINI, section, "Missile.TrailerSeparation");
+	if(auto pAircraftType = specific_cast<AircraftTypeClass*>(pThis)) {
+		this->IsCustomMissile.Read(&exINI, section, "Missile.Custom");
+		this->CustomMissileData.Read(&exINI, section, NULL);
+		this->CustomMissileData.GetEx()->Type = pAircraftType;
+		this->CustomMissileWarhead.Parse(&exINI, section, "Missile.Warhead", true);
+		this->CustomMissileEliteWarhead.Parse(&exINI, section, "Missile.EliteWarhead", true);
+		this->CustomMissileTakeoffAnim.Parse(&exINI, section, "Missile.TakeOffAnim");
+		this->CustomMissileTrailerAnim.Parse(&exINI, section, "Missile.TrailerAnim");
+		this->CustomMissileTrailerSeparation.Read(&exINI, section, "Missile.TrailerSeparation");
+	}
 
 	// quick fix - remove after the rest of weapon selector code is done	return;
 }
