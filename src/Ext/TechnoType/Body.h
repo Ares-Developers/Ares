@@ -191,6 +191,11 @@ public:
 		Valueable<bool> Drain_Local;
 		Valueable<int> Drain_Amount;
 
+		// smoke when damaged
+		Nullable<int> SmokeChanceRed;
+		Nullable<int> SmokeChanceDead;
+		Valueable<AnimTypeClass*> SmokeAnim;
+
 		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			Survivors_PilotChance (),
 			Survivors_PassengerChance (),
@@ -213,6 +218,9 @@ public:
 			Spot_Reverse (false),
 			Drain_Local (false),
 			Drain_Amount (0),
+			SmokeChanceRed (),
+			SmokeChanceDead (),
+			SmokeAnim (nullptr),
 			Is_Bomb (false),
 			Insignia (),
 			Parachute_Anim (nullptr),

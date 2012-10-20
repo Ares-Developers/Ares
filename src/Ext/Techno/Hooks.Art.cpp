@@ -170,3 +170,24 @@ DEFINE_HOOK(73C655, UnitClass_DrawSHP_ChangeType1, 6)
 
 	return 0;
 }
+
+DEFINE_HOOK(415085, AircraftClass_Update_DamageSmoke, 7)
+{
+	GET(AircraftClass*, pThis, ESI);
+	auto pExt = TechnoTypeExt::ExtMap.Find(pThis->GetTechnoType());
+
+	if(pThis->GetHealthPercentage() < RulesClass::Instance->ConditionRed) {
+		if(pThis->GetHeight() > 0) {
+			if(AnimTypeClass* pType = pExt->SmokeAnim) {
+				int dice = ScenarioClass::Instance->Random.RandomRanged(0, 99);
+				int chance = (pThis->Health > 0) ? pExt->SmokeChanceRed.Get(10) : pExt->SmokeChanceDead.Get(80);
+
+				if(dice < chance) {
+					GameCreate<AnimClass>(pType, pThis->Location);
+				}
+			}
+		}
+	}
+
+	return 0x41512C;
+}

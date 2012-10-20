@@ -39,6 +39,8 @@ void TechnoTypeExt::ExtData::Initialize(TechnoTypeClass *pThis) {
 	if(pThis->WhatAmI() == AircraftTypeClass::AbsID) {
 		this->CustomMissileTrailerAnim = AnimTypeClass::Find("V3TRAIL");
 		this->CustomMissileTakeoffAnim = AnimTypeClass::Find("V3TAKOFF");
+
+		this->SmokeAnim = AnimTypeClass::Find("SGRYSMK1");
 	}
 
 	this->EVA_UnitLost = VoxClass::FindIndex("EVA_UnitLost");
@@ -400,6 +402,11 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	// drain settings
 	this->Drain_Local.Read(exINI, section, "Drain.Local");
 	this->Drain_Amount.Read(exINI, section, "Drain.Amount");
+
+	// smoke when damaged
+	this->SmokeAnim.Read(exINI, section, "Smoke.Anim");
+	this->SmokeChanceRed.Read(exINI, section, "Smoke.ChanceRed");
+	this->SmokeChanceDead.Read(exINI, section, "Smoke.ChanceDead");
 
 	// quick fix - remove after the rest of weapon selector code is done
 	return;
