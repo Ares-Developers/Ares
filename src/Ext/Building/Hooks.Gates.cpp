@@ -74,3 +74,20 @@ DEFINE_HOOK(47C8AB, CellClass_CanThisExistHere_GateOnWall, 6)
 	return Status;
 }
 
+DEFINE_HOOK(44E550, BuildingClass_Mi_Open_GateDown, 6)
+{
+	GET(BuildingClass*, pThis, ESI);
+	auto pExt = BuildingTypeExt::ExtMap.Find(pThis->Type);
+
+	R->ECX(pExt->GateDownSound.Get(RulesClass::Instance->GateDown));
+	return 0x44E556;
+}
+
+DEFINE_HOOK(44E61E, BuildingClass_Mi_Open_GateUp, 6)
+{
+	GET(BuildingClass*, pThis, ESI);
+	auto pExt = BuildingTypeExt::ExtMap.Find(pThis->Type);
+
+	R->ECX(pExt->GateUpSound.Get(RulesClass::Instance->GateUp));
+	return 0x44E624;
+}

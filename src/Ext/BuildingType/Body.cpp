@@ -250,6 +250,9 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 
 	this->CloningFacility.Read(&exINI, pID, "CloningFacility");
 	this->Factory_ExplicitOnly.Read(&exINI, pID, "Factory.ExplicitOnly");
+
+	this->GateDownSound.Read(&exINI, pID, "GateDownSound");
+	this->GateUpSound.Read(&exINI, pID, "GateUpSound");
 }
 
 void BuildingTypeExt::ExtData::CompleteInitialization(BuildingTypeClass *pThis) {
