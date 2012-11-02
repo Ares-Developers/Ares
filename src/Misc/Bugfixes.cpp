@@ -1077,3 +1077,16 @@ DEFINE_HOOK(70FC18, TechnoClass_Activate_MuteSound, 6)
 {
 	return Unsorted::IKnowWhatImDoing ? 0x70FC7A : 0;
 }
+
+// do not infiltrate buildings of allies
+DEFINE_HOOK(519FF8, InfantryClass_UpdatePosition_PreInfiltrate, 6)
+{
+	GET(InfantryClass*, pThis, ESI);
+	GET(BuildingClass*, pBld, EDI);
+
+	if(!pThis->Type->Agent || pThis->Owner->IsAlliedWith(pBld)) {
+		return 0x51A03E;
+	}
+
+	return 0x51A002;
+}
