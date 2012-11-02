@@ -120,6 +120,8 @@ public:
 		// new firestorm wall
 		bool Firewall_Is;
 
+		Valueable<bool> IsPassable;
+
 		// lightning rod
 		double LightningRod_Modifier;
 
@@ -181,6 +183,7 @@ public:
 			OutlineData (),
 			FoundationRadarShape (),
 			Firewall_Is (false),
+			IsPassable (false),
 			UCPassThrough (0.0),
 			UCFatalRate (0.0),
 			UCDamageMultiplier (1.0),

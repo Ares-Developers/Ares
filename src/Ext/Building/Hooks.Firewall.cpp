@@ -128,14 +128,20 @@ DEFINE_HOOK(51BD4C, InfantryClass_Update, 6)
 	BuildingTypeExt::ExtData* pTypeData = BuildingTypeExt::ExtMap.Find(B->Type);
 	HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(B->Owner);
 
+	enum {Impassable = 0x51BD7F, Ignore = 0x51BD7D, NoDecision = 0x51BD68};
+
+	if(pTypeData->IsPassable) {
+		return Ignore;
+	}
+
 	if(pTypeData->Firewall_Is) {
 		return pHouseData->FirewallActive
-			? 0x51BD7F
-			: 0x51BD7D
+			? Impassable
+			: Ignore
 		;
-	} else {
-		return 0x51BD68;
 	}
+
+	return NoDecision;
 }
 
 // pathfinding 3
@@ -145,14 +151,20 @@ DEFINE_HOOK(51C4C8, InfantryClass_IsCellOccupied, 6)
 	BuildingTypeExt::ExtData* pTypeData = BuildingTypeExt::ExtMap.Find(B->Type);
 	HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(B->Owner);
 
+	enum {Impassable = 0x51C7D0, Ignore = 0x51C70F, NoDecision = 0x51C4EB};
+
+	if(pTypeData->IsPassable) {
+		return Ignore;
+	}
+
 	if(pTypeData->Firewall_Is) {
 		return pHouseData->FirewallActive
-			? 0x51C7D0
-			: 0x51C70F
+			? Impassable
+			: Ignore
 		;
-	} else {
-		return 0x51C4EB;
 	}
+
+	return NoDecision;
 }
 
 // pathfinding 4
@@ -162,15 +174,21 @@ DEFINE_HOOK(73F7B0, UnitClass_IsCellOccupied, 6)
 	BuildingTypeExt::ExtData* pTypeData = BuildingTypeExt::ExtMap.Find(B->Type);
 	HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(B->Owner);
 
+	enum {Impassable = 0x73FCD0, Ignore = 0x73FA87, NoDecision = 0x73F7D3};
+
+	if(pTypeData->IsPassable) {
+		return Ignore;
+	}
+
 	if(pTypeData->Firewall_Is) {
 		R->EAX<HouseClass *>(B->Owner);
 		return pHouseData->FirewallActive
-			? 0x73FCD0
-			: 0x73FA87
+			? Impassable
+			: Ignore
 		;
-	} else {
-		return 0x73F7D3;
 	}
+
+	return NoDecision;
 }
 
 // pathfinding 5
