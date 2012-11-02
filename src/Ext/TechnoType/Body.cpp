@@ -408,6 +408,14 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	this->SmokeChanceRed.Read(exINI, section, "Smoke.ChanceRed");
 	this->SmokeChanceDead.Read(exINI, section, "Smoke.ChanceDead");
 
+	// hunter seeker
+	this->HunterSeekerDetonateProximity.Read(exINI, section, "HunterSeeker.DetonateProximity");
+	this->HunterSeekerDescendProximity.Read(exINI, section, "HunterSeeker.DescendProximity");
+	this->HunterSeekerAscentSpeed.Read(exINI, section, "HunterSeeker.AscentSpeed");
+	this->HunterSeekerDescentSpeed.Read(exINI, section, "HunterSeeker.DescentSpeed");
+	this->HunterSeekerEmergeSpeed.Read(exINI, section, "HunterSeeker.EmergeSpeed");
+	this->HunterSeekerIgnore.Read(exINI, section, "HunterSeeker.Ignore");
+
 	// quick fix - remove after the rest of weapon selector code is done
 	return;
 }

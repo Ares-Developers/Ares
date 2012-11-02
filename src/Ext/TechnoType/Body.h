@@ -196,6 +196,14 @@ public:
 		Nullable<int> SmokeChanceDead;
 		Valueable<AnimTypeClass*> SmokeAnim;
 
+		// hunter seeker
+		Nullable<int> HunterSeekerDetonateProximity;
+		Nullable<int> HunterSeekerDescendProximity;
+		Nullable<int> HunterSeekerAscentSpeed;
+		Nullable<int> HunterSeekerDescentSpeed;
+		Nullable<int> HunterSeekerEmergeSpeed;
+		Valueable<bool> HunterSeekerIgnore;
+
 		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			Survivors_PilotChance (),
 			Survivors_PassengerChance (),
@@ -221,6 +229,12 @@ public:
 			SmokeChanceRed (),
 			SmokeChanceDead (),
 			SmokeAnim (nullptr),
+			HunterSeekerDetonateProximity (),
+			HunterSeekerDescendProximity (),
+			HunterSeekerAscentSpeed (),
+			HunterSeekerDescentSpeed (),
+			HunterSeekerEmergeSpeed (),
+			HunterSeekerIgnore (false),
 			Is_Bomb (false),
 			Insignia (),
 			Parachute_Anim (nullptr),

@@ -316,6 +316,110 @@ bool TechnoExt::ExtData::DrawVisualFX() {
 	return false;
 }
 
+bool TechnoExt::ExtData::AcquireHunterSeekerTarget() const {
+	auto pThis = this->AttachedToObject;
+
+	if(!pThis->Target) {
+		std::vector<TechnoClass*> preferredTargets;
+		std::vector<TechnoClass*> randomTargets;
+
+		// defaults if SW isn't set
+		HouseClass* pOwner = pThis->GetOwningHouse();
+		SWTypeExt::ExtData* pSWExt = nullptr;
+		bool canPrefer = true;
+
+		// check the hunter seeker SW
+		if(SuperClass* pSuper = this->HunterSeekerSW) {
+			pOwner = pSuper->Owner;
+			pSWExt = SWTypeExt::ExtMap.Find(pSuper->Type);
+			canPrefer = !pSWExt->HunterSeeker_RandomOnly;
+		}
+
+		bool isHumanControlled = pOwner->ControlledByHuman();
+		GameMode::Value mode = SessionClass::Instance->GameMode;
+
+		// the AI in multiplayer games only attacks its favourite enemy
+		bool favouriteEnemyOnly = false;
+		HouseClass* pFavouriteEnemy = nullptr;
+		if(mode != GameMode::Campaign && pOwner->EnemyHouseIndex != -1 && !isHumanControlled) {
+			favouriteEnemyOnly = true;
+			pFavouriteEnemy = HouseClass::Array->GetItem(pOwner->EnemyHouseIndex);
+		}
+
+		for(auto i : *TechnoClass::Array) {
+
+			// is the house ok?
+			if(favouriteEnemyOnly) {
+				if(i->Owner != pFavouriteEnemy) {
+					continue;
+				}
+			} else if(!pSWExt && pOwner->IsAlliedWith(i->Owner)) {
+				// default without SW
+				continue;
+			} else if(pSWExt && !pSWExt->IsHouseAffected(pOwner, i->Owner)) {
+				// use SW
+				continue;
+			}
+
+			// techno ineligible
+			if(i->Health < 0 || i->InLimbo || !i->IsAlive) {
+				continue;
+			}
+
+			// type prevents this being a target
+			TechnoTypeClass* pType = i->GetTechnoType();
+			if(pType->Invisible || !pType->LegalTarget) {
+				continue;
+			}
+
+			// is type to be ignored?
+			auto pExt = TechnoTypeExt::ExtMap.Find(pType);
+			if(pExt->HunterSeekerIgnore) {
+				continue;
+			}
+
+			// harvester truce
+			if(ScenarioClass::Instance->SpecialFlags.HarvesterImmune) {
+				if(auto pUnitType = abstract_cast<UnitTypeClass*>(pType)) {
+					if(pUnitType->Harvester) {
+						continue;
+					}
+				}
+			}
+
+			// allow to exclude certain techno types
+			if(pSWExt && !pSWExt->IsTechnoAffected(i)) {
+				continue;
+			}
+
+			// in multiplayer games, non-civilian targets are preferred
+			// for human players
+			bool isPreferred = mode != GameMode::Campaign && isHumanControlled
+				&& !i->Owner->Type->MultiplayPassive && canPrefer;
+
+			// add to the right list
+			if(isPreferred) {
+				preferredTargets.push_back(i);
+			} else {
+				randomTargets.push_back(i);
+			}
+		}
+
+		auto &targets = (preferredTargets.size() > 0) ? preferredTargets : randomTargets;
+
+		if(int count = targets.size()) {
+			int index = ScenarioClass::Instance->Random.RandomRanged(0, count - 1);
+			TechnoClass* pTarget = targets[index];
+
+			// that's our target
+			pThis->SetTarget(pTarget);
+			return true;
+		}
+	}
+
+	return false;
+}
+
 UnitTypeClass * TechnoExt::ExtData::GetUnitType() {
 	if(UnitClass * U = specific_cast<UnitClass *>(this->AttachedToObject)) {
 		TechnoTypeExt::ExtData * pData = TechnoTypeExt::ExtMap.Find(U->Type);

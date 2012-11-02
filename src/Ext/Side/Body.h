@@ -42,12 +42,14 @@ class SideExt
 		int SidebarMixFileIndex;
 		bool SidebarYuriFileNames;
 		ValueableIdx<EVAVoices> EVAIndex;
+		Valueable<UnitTypeClass*> HunterSeeker;
 
 		int ArrayIndex;
 
 		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			ArrayIndex (-1),
 			ParaDropPlane (-1),
+			HunterSeeker (nullptr),
 			ToolTipTextColor (),
 			MessageTextColorIndex (-1),
 			EVAIndex (-1)

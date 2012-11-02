@@ -51,6 +51,14 @@ class RulesExt
 		Valueable<double> DeactivateDim_EMP;
 		Valueable<double> DeactivateDim_Operator;
 
+		// hunter seeker
+		ValueableVector<BuildingTypeClass*> HunterSeekerBuildings;
+		Valueable<int> HunterSeekerDetonateProximity;
+		Valueable<int> HunterSeekerDescendProximity;
+		Valueable<int> HunterSeekerAscentSpeed;
+		Valueable<int> HunterSeekerDescentSpeed;
+		Valueable<int> HunterSeekerEmergeSpeed;
+
 		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			ElectricDeath(nullptr),
 			EngineerDamage (0.0F),
@@ -68,6 +76,12 @@ class RulesExt
 			DeactivateDim_Powered(0.5),
 			DeactivateDim_EMP(0.8),
 			DeactivateDim_Operator(0.65),
+			HunterSeekerBuildings (),
+			HunterSeekerDetonateProximity (0),
+			HunterSeekerDescendProximity (0),
+			HunterSeekerAscentSpeed (0),
+			HunterSeekerDescentSpeed (0),
+			HunterSeekerEmergeSpeed (0),
 			CanMakeStuffUp(false)
 			{
 				MultiEngineer[0] = false; // Skirmish

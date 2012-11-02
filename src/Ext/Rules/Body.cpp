@@ -113,6 +113,13 @@ void RulesExt::ExtData::LoadAfterTypeData(RulesClass *pThis, CCINIClass *pINI) {
 	pData->EngineerDamage = pINI->ReadDouble("General", "EngineerDamage", pData->EngineerDamage);
 	pData->EngineerAlwaysCaptureTech = pINI->ReadBool("General", "EngineerAlwaysCaptureTech", pData->EngineerAlwaysCaptureTech);
 	pData->EngineerDamageCursor.Read(exINI, "General", "EngineerDamageCursor");
+
+	pData->HunterSeekerBuildings.Read(exINI, "SpecialWeapons", "HSBuilding");
+	pData->HunterSeekerDetonateProximity.Read(exINI, "General", "HunterSeekerDetonateProximity");
+	pData->HunterSeekerDescendProximity.Read(exINI, "General", "HunterSeekerDescendProximity");
+	pData->HunterSeekerAscentSpeed.Read(exINI, "General", "HunterSeekerAscentSpeed");
+	pData->HunterSeekerDescentSpeed.Read(exINI, "General", "HunterSeekerDescentSpeed");
+	pData->HunterSeekerEmergeSpeed.Read(exINI, "General", "HunterSeekerEmergeSpeed");
 }
 
 // =============================

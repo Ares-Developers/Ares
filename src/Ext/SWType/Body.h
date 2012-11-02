@@ -139,6 +139,11 @@ public:
 		// Sonar
 		Valueable<int> Sonar_Delay;
 
+		// Hunter Seeker
+		Valueable<UnitTypeClass*> HunterSeeker_Type;
+		Valueable<bool> HunterSeeker_RandomOnly;
+		ValueableVector<BuildingTypeClass*> HunterSeeker_Buildings;
+
 		// Money
 		Valueable<int> Money_Amount;
 		Valueable<int> Money_DrainAmount;
@@ -228,6 +233,9 @@ public:
 			Weather_ScatterCount (1),
 			Nuke_PsiWarning (nullptr),
 			Sonar_Delay (0),
+			HunterSeeker_Type (nullptr),
+			HunterSeeker_RandomOnly (false),
+			HunterSeeker_Buildings (),
 			Money_Amount (0),
 			Money_DrainAmount (0),
 			Money_DrainDelay (0),

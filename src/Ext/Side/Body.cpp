@@ -98,6 +98,8 @@ void SideExt::ExtData::LoadFromINIFile(SideClass *pThis, CCINIClass *pINI)
 	this->ToolTipTextColor.Read(exINI, section, "ToolTipColor");
 	this->SurvivorDivisor.Read(exINI, section, "SurvivorDivisor");
 	this->MessageTextColorIndex.Read(exINI, section, "MessageTextColor");
+
+	this->HunterSeeker.Read(exINI, section, "HunterSeeker");
 }
 
 int SideExt::ExtData::GetSurvivorDivisor() const {

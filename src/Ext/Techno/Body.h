@@ -88,6 +88,8 @@ public:
 
 		Nullable<bool> AltOccupation; // if the unit marks cell occupation flags, this is set to whether it uses the "high" occupation members
 
+		SuperClass* HunterSeekerSW; // set if a hunter seeker SW created this
+
 		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			idxSlot_Wave (0),
 			idxSlot_Beam (0),
@@ -107,6 +109,7 @@ public:
 			MyOriginalTemporal(nullptr),
 			Spotlight(nullptr),
 			AltOccupation(),
+			HunterSeekerSW(nullptr),
 			OriginalHouseType(nullptr),
 			AttachEffects_RecreateAnims(false),
 			AttachedTechnoEffect_isset (false),
@@ -157,6 +160,8 @@ public:
 		bool CanSelfCloakNow() const;
 
 		void SetSpotlight(BuildingLightClass* pSpotlight);
+
+		bool AcquireHunterSeekerTarget() const;
 	};
 
 	static Container<TechnoExt> ExtMap;
