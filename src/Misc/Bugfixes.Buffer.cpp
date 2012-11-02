@@ -342,6 +342,12 @@ DEFINE_HOOK(727544, TriggerTypeClass_LoadFromINI_Strtok_Actions, 5)
 	return 0;
 }
 
+DEFINE_HOOK(4750EC, INIClass_ReadHouseTypesList, 7)
+{
+	R->Stack(0x0, Ares::readBuffer);
+	R->Stack(0x4, Ares::readLength);
+	return 0;
+}
 
 DEFINE_HOOK(6A9348, CameoClass_GetTip_FixLength, 9)
 {
