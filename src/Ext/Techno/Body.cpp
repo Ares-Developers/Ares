@@ -106,8 +106,8 @@ void TechnoExt::SpawnSurvivors(FootClass *pThis, TechnoClass *pKiller, bool Sele
 		if(chance > 0) {
 			toSpawn = ScenarioClass::Instance->Random.RandomRanged(1, 100) <= chance;
 		} else if(chance == -1 && pThis->WhatAmI() == abs_Unit) {
-			int occupation = passenger->IsCellOccupied(pThis->GetCell(), -1, -1, 0, 1);
-			toSpawn = (occupation == 0 || occupation == 2);
+			Move::Value occupation = passenger->IsCellOccupied(pThis->GetCell(), -1, -1, 0, 1);
+			toSpawn = (occupation == Move::OK || occupation == Move::MovingBlock);
 		}
 		if(toSpawn && !IgnoreDefenses) {
 			toDelete = !EjectRandomly(passenger, loc, 128, Select);
@@ -382,7 +382,7 @@ bool TechnoExt::ExtData::IsPowered() {
  */
 bool TechnoExt::CreateWithDroppod(FootClass *Object, CoordStruct *XYZ) {
 	auto MyCell = MapClass::Instance->GetCellAt(XYZ);
-	if(Object->IsCellOccupied(MyCell, -1, -1, 0, 0)) {
+	if(Object->IsCellOccupied(MyCell, -1, -1, 0, 0) != Move::OK) {
 //		Debug::Log("Cell occupied... poof!\n");
 		return false;
 	} else {
