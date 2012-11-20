@@ -281,7 +281,7 @@ void TechnoExt::StopDraining(TechnoClass *Drainer, TechnoClass *Drainee) {
 
 unsigned int TechnoExt::ExtData::AlphaFrame(SHPStruct *Image) {
 	int countFrames = Conversions::Int2Highest(Image->Frames);
-	FacingStruct::Data Facing;
+	DirStruct Facing;
 	this->AttachedToObject->Facing.GetFacing(&Facing);
 	return (Facing.Value >> (16 - countFrames));
 }
@@ -393,7 +393,7 @@ bool TechnoExt::CreateWithDroppod(FootClass *Object, CoordStruct *XYZ) {
 		Object->SetLocation(&xyz);
 		Object->SetDestination(MyCell, 1);
 		Object->Locomotor->Move_To(*XYZ);
-		FacingStruct::Data Facing;
+		DirStruct Facing;
 		Object->Facing.SetFacing(&Facing);
 		if(!Object->InLimbo) {
 			Object->See(0, 0);

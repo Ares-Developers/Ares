@@ -176,7 +176,7 @@ DEFINE_HOOK(436459, BuildingLightClass_Update, 6)
 	if(Owner && Owner->WhatAmI() != abs_Building) {
 		TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(Owner->GetTechnoType());
 		CoordStruct Loc = Owner->Location;
-		FacingStruct::Data Facing;
+		DirStruct Facing;
 		switch(pTypeData->Spot_AttachedTo) {
 			case TechnoTypeExt::sa_Barrel:
 				Owner->BarrelFacing.GetFacing(&Facing);
