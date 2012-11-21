@@ -144,6 +144,12 @@ public:
 		Valueable<bool> HunterSeeker_RandomOnly;
 		ValueableVector<BuildingTypeClass*> HunterSeeker_Buildings;
 
+		// Drop Pod
+		Nullable<int> DropPod_Minimum;
+		Nullable<int> DropPod_Maximum;
+		Valueable<double> DropPod_Veterancy;
+		ValueableVector<TechnoTypeClass*> DropPod_Types;
+
 		// Money
 		Valueable<int> Money_Amount;
 		Valueable<int> Money_DrainAmount;
@@ -236,6 +242,10 @@ public:
 			HunterSeeker_Type (nullptr),
 			HunterSeeker_RandomOnly (false),
 			HunterSeeker_Buildings (),
+			DropPod_Minimum (0),
+			DropPod_Maximum (0),
+			DropPod_Veterancy (2.0),
+			DropPod_Types (),
 			Money_Amount (0),
 			Money_DrainAmount (0),
 			Money_DrainDelay (0),

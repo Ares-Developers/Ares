@@ -14,6 +14,7 @@
 #include "SWTypes/LightningStorm.h"
 #include "SWTypes/Nuke.h"
 #include "SWTypes/HunterSeeker.h"
+#include "SWTypes/DropPod.h"
 
 #include <algorithm>
 
@@ -41,6 +42,7 @@ void NewSWType::Init()
 	Register(std::make_unique<SW_LightningStorm>());
 	Register(std::make_unique<SW_NuclearMissile>());
 	Register(std::make_unique<SW_HunterSeeker>());
+	Register(std::make_unique<SW_DropPod>());
 }
 
 int NewSWType::FindIndex(const char* pType) {

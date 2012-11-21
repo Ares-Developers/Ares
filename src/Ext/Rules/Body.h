@@ -59,6 +59,11 @@ class RulesExt
 		Valueable<int> HunterSeekerDescentSpeed;
 		Valueable<int> HunterSeekerEmergeSpeed;
 
+		// drop pods
+		Valueable<int> DropPodMinimum;
+		Valueable<int> DropPodMaximum;
+		ValueableVector<TechnoTypeClass*> DropPodTypes;
+
 		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			ElectricDeath(nullptr),
 			EngineerDamage (0.0F),
@@ -82,6 +87,9 @@ class RulesExt
 			HunterSeekerAscentSpeed (0),
 			HunterSeekerDescentSpeed (0),
 			HunterSeekerEmergeSpeed (0),
+			DropPodMinimum (0),
+			DropPodMaximum (0),
+			DropPodTypes (),
 			CanMakeStuffUp(false)
 			{
 				MultiEngineer[0] = false; // Skirmish
