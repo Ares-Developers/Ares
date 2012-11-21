@@ -1162,3 +1162,36 @@ DEFINE_HOOK(737CE4, UnitClass_ReceiveDamage_ShipyardRepair, 6)
 	GET(BuildingTypeClass*, pType, ECX);
 	return (pType->WeaponsFactory && !pType->Naval) ? 0x737CEE : 0x737D31;
 }
+
+DEFINE_HOOK(4B5EB0, DropPodLocomotionClass_ILocomotion_Process_Smoke, 6)
+{
+	REF_STACK(const CoordStruct, Coords, 0x34);
+
+	// create trailer even without weapon, but only if it is set
+	if(!(Unsorted::CurrentFrame % 6)) {
+		auto pExt = RulesExt::Global();
+
+		// look up the smoke, if it isn't set yet
+		if(!pExt->DropPodTrailer.isset()) {
+			pExt->DropPodTrailer = AnimTypeClass::Find("SMOKEY");
+		}
+
+		if(AnimTypeClass* pType = pExt->DropPodTrailer) {
+			GameCreate<AnimClass>(pType, Coords);
+		}
+	}
+
+	// copy replaced instruction
+	auto pWeap = RulesClass::Instance->DropPodWeapon;
+	R->ESI(pWeap);
+
+	// jump behind trailer, or out
+	return pWeap ? 0x4B5F14 : 0x4B602D;
+}
+
+DEFINE_HOOK(4B5F9E, DropPodLocomotionClass_ILocomotion_Process_Report, 6)
+{
+	// do not divide by zero
+	GET(int, count, EBP);
+	return count ? 0 : 0x4B5FAD;
+}

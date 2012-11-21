@@ -63,6 +63,7 @@ class RulesExt
 		Valueable<int> DropPodMinimum;
 		Valueable<int> DropPodMaximum;
 		ValueableVector<TechnoTypeClass*> DropPodTypes;
+		Nullable<AnimTypeClass*> DropPodTrailer;
 
 		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			ElectricDeath(nullptr),
@@ -90,6 +91,7 @@ class RulesExt
 			DropPodMinimum (0),
 			DropPodMaximum (0),
 			DropPodTypes (),
+			DropPodTrailer (),
 			CanMakeStuffUp(false)
 			{
 				MultiEngineer[0] = false; // Skirmish

@@ -121,6 +121,7 @@ void RulesExt::ExtData::LoadAfterTypeData(RulesClass *pThis, CCINIClass *pINI) {
 	pData->HunterSeekerDescentSpeed.Read(exINI, "General", "HunterSeekerDescentSpeed");
 	pData->HunterSeekerEmergeSpeed.Read(exINI, "General", "HunterSeekerEmergeSpeed");
 
+	pData->DropPodTrailer.Read(exINI, "General", "DropPodTrailer");
 	pData->DropPodTypes.Read(exINI, "General", "DropPodTypes");
 	pData->DropPodMinimum.Read(exINI, "General", "DropPodMinimum");
 	pData->DropPodMaximum.Read(exINI, "General", "DropPodMaximum");
