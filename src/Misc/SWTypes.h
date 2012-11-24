@@ -27,8 +27,8 @@ public:
 	virtual ~NewSWType() {
 	};
 
-	virtual bool CanFireAt(SWTypeExt::ExtData *pSWType, const CellStruct &Coords) {
-		return pSWType->CanFireAt(Coords);
+	virtual bool CanFireAt(SWTypeExt::ExtData *pSWType, HouseClass* pOwner, const CellStruct &Coords) {
+		return pSWType->CanFireAt(pOwner, Coords);
 	}
 
 	virtual bool AbortFire(SuperClass* pSW, bool IsPlayer) {

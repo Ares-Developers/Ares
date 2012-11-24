@@ -28,7 +28,7 @@ DEFINE_HOOK(6CEF84, SuperWeaponTypeClass_GetCursorOverObject, 7)
 
 		// new SW types have to check whether the coordinates are valid.
 		if(Action == SW_YES_CURSOR) {
-			if(pType && !pType->CanFireAt(pData, *pMapCoords)) {
+			if(pType && !pType->CanFireAt(pData, HouseClass::Player, *pMapCoords)) {
 				Action = SW_NO_CURSOR;
 			}
 		}
@@ -80,7 +80,7 @@ DEFINE_HOOK(653B3A, RadarClass_GetMouseAction_CustomSWAction, 5)
 
 			// new SW types have to check whether the coordinates are valid.
 			if(Action == SW_YES_CURSOR) {
-				if(pType && !pType->CanFireAt(pData, MapCoords)) {
+				if(pType && !pType->CanFireAt(pData, HouseClass::Player, MapCoords)) {
 					Action = SW_NO_CURSOR;
 				}
 			}

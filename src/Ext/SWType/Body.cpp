@@ -298,7 +298,7 @@ bool SWTypeExt::ExtData::IsTechnoAffected(TechnoClass* pTechno) {
 	return true;
 }
 
-bool SWTypeExt::ExtData::CanFireAt(const CellStruct &Coords) {
+bool SWTypeExt::ExtData::CanFireAt(HouseClass* pOwner, const CellStruct &Coords) {
 	if(CellClass *pCell = MapClass::Instance->GetCellAt(Coords)) {
 
 		// check cell type
@@ -309,7 +309,7 @@ bool SWTypeExt::ExtData::CanFireAt(const CellStruct &Coords) {
 		// check for techno type match
 		TechnoClass *pTechno = generic_cast<TechnoClass*>(pCell->GetContent());
 		if(pTechno && this->SW_RequiresHouse != SuperWeaponAffectedHouse::None) {
-			if(!IsHouseAffected(HouseClass::Player, pTechno->Owner, this->SW_RequiresHouse)) {
+			if(!IsHouseAffected(pOwner, pTechno->Owner, this->SW_RequiresHouse)) {
 				return false;
 			}
 		}
