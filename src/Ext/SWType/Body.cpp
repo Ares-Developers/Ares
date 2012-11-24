@@ -192,6 +192,10 @@ void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass
 	this->Text_Charging.Read(exINI, section, "Text.Charging");
 	this->Text_Active.Read(exINI, section, "Text.Active");
 
+	// range related
+	this->SW_RangeMinimum.Read(exINI, section, "SW.RangeMinimum");
+	this->SW_RangeMaximum.Read(exINI, section, "SW.RangeMaximum");
+
 	// the fallback is handled in the PreDependent SW's code
 	if(pINI->ReadString(section, "SW.PostDependent", Ares::readDefval, Ares::readBuffer, Ares::readLength)) {
 		AresCRT::strCopy(this->SW_PostDependent, Ares::readBuffer);

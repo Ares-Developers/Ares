@@ -221,6 +221,10 @@ public:
 		Valueable<CSFText> Text_Charging;
 		Valueable<CSFText> Text_Active;
 
+		// Range
+		Valueable<double> SW_RangeMinimum;
+		Valueable<double> SW_RangeMaximum;
+
 		CustomPalette CameoPal;
 
 		// Unit Delivery
@@ -286,6 +290,8 @@ public:
 			SW_FireToShroud (true),
 			SW_RadarEvent (true),
 			SW_Range(),
+			SW_RangeMinimum (0.0),
+			SW_RangeMaximum (0.0),
 			HandledByNewSWType (-1),
 			CameoPal(),
 			SW_DeliverBuildups (false)

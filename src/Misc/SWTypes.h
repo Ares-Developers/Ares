@@ -36,7 +36,8 @@ public:
 	virtual ~NewSWType() = default;
 
 	virtual bool CanFireAt(SWTypeExt::ExtData *pSWType, HouseClass* pOwner, const CellStruct &Coords) {
-		return pSWType->CanFireAt(pOwner, Coords);
+		return pSWType->CanFireAt(pOwner, Coords)
+			&& HasLaunchSite(pSWType, pOwner, Coords);
 	}
 
 	virtual bool AbortFire(SuperClass* pSW, bool IsPlayer) {
@@ -87,6 +88,18 @@ public:
 		return SuperWeaponFlags::None;
 	}
 
+protected:
+	bool HasLaunchSite(SWTypeExt::ExtData* pSWType, HouseClass* pOwner, const CellStruct &Coords) const;
+
+	BuildingClass* FindLaunchSite(SWTypeExt::ExtData* pSWType, HouseClass* pOwner, const CellStruct &Coords, bool ignoreRange, int* pMemo = nullptr) const;
+
+	virtual bool IsLaunchSite(SWTypeExt::ExtData *pSWType, BuildingClass* pBuilding) const;
+
+	virtual bool IsLaunchSiteInRange(SWTypeExt::ExtData* pSWType, const CellStruct &Coords, BuildingClass* pBuilding) const;
+
+	bool IsLaunchSiteInRange(SWTypeExt::ExtData* pSWType, const CellStruct &Coords, BuildingClass* pBuilding, double minRange, double maxRange) const;
+
+public:
 	// static methods
 	static void Init();
 

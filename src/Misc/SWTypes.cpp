@@ -16,6 +16,9 @@
 #include "SWTypes/HunterSeeker.h"
 #include "SWTypes/DropPod.h"
 
+#include <BuildingClass.h>
+#include <HouseClass.h>
+
 #include <algorithm>
 
 std::vector<std::unique_ptr<NewSWType>> NewSWType::Array;
@@ -43,6 +46,71 @@ void NewSWType::Init()
 	Register(std::make_unique<SW_NuclearMissile>());
 	Register(std::make_unique<SW_HunterSeeker>());
 	Register(std::make_unique<SW_DropPod>());
+}
+
+bool NewSWType::HasLaunchSite(SWTypeExt::ExtData* pSWType, HouseClass* pOwner, const CellStruct &Coords) const
+{
+	// the quick way out: indefinite range, no range restriction
+	if(pSWType->SW_RangeMaximum == 0.0 && pSWType->SW_RangeMinimum == 0.0) {
+		return true;
+	}
+
+	return FindLaunchSite(pSWType, pOwner, Coords, false, nullptr) != nullptr;
+}
+
+BuildingClass* NewSWType::FindLaunchSite(SWTypeExt::ExtData* pSWType, HouseClass* pOwner, const CellStruct &Coords, bool ignoreRange, int* pMemo) const
+{
+	// find an appropriate building from memorized start
+	int start = (pMemo ? *pMemo : 0);
+
+	for(int i = start; i < pOwner->Buildings.Count; ++i) {
+		auto pBld = pOwner->Buildings.GetItem(i);
+
+		// update our poor man's iterator
+		if(pMemo) {
+			*pMemo = i + 1;
+		}
+
+		// if this is an appropriate building, return it
+		if(IsLaunchSite(pSWType, pBld)) {
+			if(ignoreRange || IsLaunchSiteInRange(pSWType, Coords, pBld)) {
+				return pBld;
+			}
+		}
+	}
+
+	return nullptr;
+}
+
+bool NewSWType::IsLaunchSite(SWTypeExt::ExtData* pSWType, BuildingClass* pBuilding) const
+{
+	if(pBuilding->IsAlive && pBuilding->Health && !pBuilding->InLimbo && pBuilding->IsPowerOnline()) {
+		return pBuilding->Type->HasSuperWeapon(pSWType->AttachedToObject->ArrayIndex);
+	}
+
+	return false;
+}
+
+bool NewSWType::IsLaunchSiteInRange(SWTypeExt::ExtData* pSWType, const CellStruct &Coords, BuildingClass* pBuilding) const
+{
+	// check the default ranges
+	return IsLaunchSiteInRange(pSWType, Coords, pBuilding, pSWType->SW_RangeMinimum, pSWType->SW_RangeMaximum);
+}
+
+bool NewSWType::IsLaunchSiteInRange(SWTypeExt::ExtData* pSWType, const CellStruct &Coords, BuildingClass* pBuilding, double minRange, double maxRange) const
+{
+	double distance = Coords.DistanceFrom(pBuilding->GetCell()->MapCoords);
+
+	// no max range, or below
+	if(maxRange < 0.0 || distance <= maxRange) {
+
+		// no min range, or above
+		if(minRange < 0.0 || distance >= minRange) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 int NewSWType::FindIndex(const char* pType) {
