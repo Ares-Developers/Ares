@@ -196,6 +196,18 @@ void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass
 	this->SW_RangeMinimum.Read(exINI, section, "SW.RangeMinimum");
 	this->SW_RangeMaximum.Read(exINI, section, "SW.RangeMaximum");
 
+	if(pINI->ReadString(section, "SW.Designators", Ares::readDefval, Ares::readBuffer, Ares::readLength)) {
+		this->SW_Designators.Read(exINI, section, "SW.Designators");
+		this->SW_AnyDesignator = false;
+		char* context = nullptr;
+		for(char *cur = strtok_s(Ares::readBuffer, Ares::readDelims, &context); cur; cur = strtok_s(nullptr, ",", &context)) {
+			if(!strcmp(cur, "_ANY_")) {
+				this->SW_AnyDesignator = true;
+				break;
+			}
+		}
+	}
+
 	// the fallback is handled in the PreDependent SW's code
 	if(pINI->ReadString(section, "SW.PostDependent", Ares::readDefval, Ares::readBuffer, Ares::readLength)) {
 		AresCRT::strCopy(this->SW_PostDependent, Ares::readBuffer);

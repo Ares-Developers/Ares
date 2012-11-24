@@ -208,6 +208,9 @@ public:
 		Nullable<int> HunterSeekerEmergeSpeed;
 		Valueable<bool> HunterSeekerIgnore;
 
+		// super weapon designators
+		Nullable<int> DesignatorRange;
+
 		// particles
 		Nullable<bool> DamageSparks;
 
@@ -248,6 +251,7 @@ public:
 			HunterSeekerDescentSpeed (),
 			HunterSeekerEmergeSpeed (),
 			HunterSeekerIgnore (false),
+			DesignatorRange (),
 			Is_Bomb (false),
 			Insignia (),
 			Parachute_Anim (nullptr),

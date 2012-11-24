@@ -37,7 +37,8 @@ public:
 
 	virtual bool CanFireAt(SWTypeExt::ExtData *pSWType, HouseClass* pOwner, const CellStruct &Coords) {
 		return pSWType->CanFireAt(pOwner, Coords)
-			&& HasLaunchSite(pSWType, pOwner, Coords);
+			&& HasLaunchSite(pSWType, pOwner, Coords)
+			&& HasDesignator(pSWType, pOwner, Coords);
 	}
 
 	virtual bool AbortFire(SuperClass* pSW, bool IsPlayer) {
@@ -96,6 +97,12 @@ protected:
 	bool HasLaunchSite(SWTypeExt::ExtData* pSWType, HouseClass* pOwner, const CellStruct &Coords) const;
 
 	bool IsLaunchSiteEligible(SWTypeExt::ExtData* pSWType, const CellStruct &Coords, BuildingClass* pBuilding, bool ignoreRange) const;
+
+	virtual bool IsDesignator(SWTypeExt::ExtData* pSWType, HouseClass* pOwner, TechnoClass* pTechno) const;
+
+	bool HasDesignator(SWTypeExt::ExtData* pSWType, HouseClass* pOwner, const CellStruct &Coords) const;
+
+	TechnoClass* FindDesignator(SWTypeExt::ExtData* pSWType, HouseClass* pOwner, const CellStruct &Coords, int* memo = nullptr) const;
 
 public:
 	// static methods

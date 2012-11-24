@@ -16,6 +16,8 @@
 #include "SWTypes/HunterSeeker.h"
 #include "SWTypes/DropPod.h"
 
+#include "../Ext/TechnoType/Body.h"
+
 #include <BuildingClass.h>
 #include <HouseClass.h>
 
@@ -96,6 +98,59 @@ bool NewSWType::IsLaunchSiteEligible(SWTypeExt::ExtData* pSWType, const CellStru
 	// negative range values just pass the test
 	return (minRange < 0.0 || distance >= minRange)
 		&& (maxRange < 0.0 || distance <= maxRange);
+}
+
+bool NewSWType::IsDesignator(SWTypeExt::ExtData* pSWType, HouseClass* pOwner, TechnoClass* pTechno) const
+{
+	if(pTechno->IsAlive && pTechno->Health && !pTechno->InLimbo && !pTechno->Deactivated) {
+		if(pTechno->GetOwningHouse() == pOwner) {
+			auto pType = pTechno->GetTechnoType();
+			return pSWType->SW_AnyDesignator || pSWType->SW_Designators.Contains(pType);
+		}
+	}
+
+	return false;
+}
+
+bool NewSWType::HasDesignator(SWTypeExt::ExtData* pSWType, HouseClass* pOwner, const CellStruct &Coords) const
+{
+	// does not require designators
+	if(pSWType->SW_Designators.empty() && !pSWType->SW_AnyDesignator) {
+		return true;
+	}
+
+	// a single designator in range suffices
+	return FindDesignator(pSWType, pOwner, Coords, nullptr) != nullptr;
+}
+
+TechnoClass* NewSWType::FindDesignator(SWTypeExt::ExtData* pSWType, HouseClass* pOwner, const CellStruct &Coords, int* memo) const
+{
+	// if the super weapon needs a designator, try to find one in range
+	if(!pSWType->SW_Designators.empty() || pSWType->SW_AnyDesignator) {
+
+		int start = (memo ? *memo : 0);
+		for(int i=start; i<TechnoClass::Array->Count; ++i) {
+			TechnoClass* pTechno = TechnoClass::Array->GetItem(i);
+
+			// update our poor man's iterator
+			if(memo) {
+				*memo = i + 1;
+			}
+
+			if(IsDesignator(pSWType, pOwner, pTechno)) {
+				auto pType = pTechno->GetTechnoType();
+				auto pExt = TechnoTypeExt::ExtMap.Find(pType);
+
+				// has to be closer than the designator range (which defaults to Sight)
+				auto distance = Coords.DistanceFrom(pTechno->GetCell()->MapCoords);
+				if(distance <= pExt->DesignatorRange.Get(pType->Sight)) {
+					return pTechno;
+				}
+			}
+		}
+	}
+
+	return nullptr;
 }
 
 int NewSWType::FindIndex(const char* pType) {
