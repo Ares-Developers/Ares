@@ -189,6 +189,7 @@ public:
 		Nullable<double> SW_ChargeToDrainRatio;
 
 		SWRange SW_Range;
+		Valueable<int> SW_MaxCount;
 		ValueableEnum<SuperWeaponAffectedHouse> SW_AffectsHouse;
 		ValueableEnum<SuperWeaponAffectedHouse> SW_RequiresHouse;
 		ValueableEnum<SuperWeaponTarget> SW_AffectsTarget;
@@ -254,6 +255,7 @@ public:
 			DropPod_Maximum (),
 			DropPod_Veterancy (2.0),
 			DropPod_Types (),
+			SW_MaxCount (-1),
 			Money_Amount (0),
 			Money_DrainAmount (0),
 			Money_DrainDelay (0),

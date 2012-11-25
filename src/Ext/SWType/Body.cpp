@@ -140,6 +140,8 @@ void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass
 	this->SW_RequiresTarget.Read(exINI, section, "SW.RequiresTarget");
 	this->SW_RequiresHouse.Read(exINI, section, "SW.RequiresHouse");
 
+	this->SW_MaxCount.Read(exINI, section, "SW.MaxCount");
+
 	this->SW_Deferment.Read(exINI, section, "SW.Deferment");
 	this->SW_ChargeToDrainRatio.Read(exINI, section, "SW.ChargeToDrainRatio");
 
