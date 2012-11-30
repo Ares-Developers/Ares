@@ -73,6 +73,8 @@ public:
 
 		bool KillDriver; //!< Whether this warhead turns the target vehicle over to the special side ("kills the driver"). Request #733.
 
+		Valueable<double> KillDriver_KillBelowPercent;
+
 		Valueable<bool> Malicious;
 
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
@@ -88,6 +90,7 @@ public:
 			InfDeathAnim (NULL),
 			PreImpactAnim (-1),
 			KillDriver (false),
+			KillDriver_KillBelowPercent(1.00),
 			Malicious (true)
 			{
 				for(int i = 0; i < 11; ++i) {
