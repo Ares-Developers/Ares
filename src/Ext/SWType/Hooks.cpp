@@ -146,17 +146,19 @@ DEFINE_HOOK(6A932B, CameoClass_GetTip_MoneySW, 6) {
 
 	if(SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSW)) {
 		if(pData->Money_Amount < 0) {
-			wchar_t* pTip = (wchar_t*)0xB07BC4;
+			wchar_t* pTip = SidebarClass::TooltipBuffer;
+			int length = SidebarClass::TooltipLength;
 
 			// account for no-name SWs
 			if(*(byte*)0x884B8C || !wcslen(pSW->UIName)) {
 				const wchar_t* pFormat = StringTable::LoadStringA("TXT_MONEY_FORMAT_1");
-				swprintf(pTip, 0x20, pFormat, -pData->Money_Amount.Get());
+				swprintf(pTip, length, pFormat, -pData->Money_Amount.Get());
 			} else {
 				// then, this must be brand SWs
 				const wchar_t* pFormat = StringTable::LoadStringA("TXT_MONEY_FORMAT_2");
-				swprintf(pTip, 0x20, pFormat, pSW->UIName, -pData->Money_Amount.Get());
+				swprintf(pTip, length, pFormat, pSW->UIName, -pData->Money_Amount.Get());
 			}
+			pTip[length - 1] = 0;
 
 			// replace space by new line
 			for(int i=wcslen(pTip); i>=0; --i) {
