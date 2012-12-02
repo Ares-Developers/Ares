@@ -62,7 +62,9 @@ DEFINE_HOOK(6F9E50, TechnoClass_Update, 5)
 			pData->PoweredUnit = new PoweredUnitClass(Source, pTypeData);
 		}
 		if(!pData->PoweredUnit->Update()) {
-			TechnoExt::Destroy(Source);
+			if(Source->IsAlive && Source->Health && !Source->InLimbo) {
+				TechnoExt::Destroy(Source);
+			}
 		}
 	}
 
