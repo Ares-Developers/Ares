@@ -830,9 +830,7 @@ DEFINE_HOOK(467E59, BulletClass_Update_NukeBall, 5) {
 
 					// manual light stuff
 					LightningStorm::Status(1);
-					ScenarioClass::Instance->Timer4.StartTime = Unsorted::CurrentFrame;
-					ScenarioClass::Instance->Timer4.unknown = R->Stack<int>(0x28);
-					ScenarioClass::Instance->Timer4.TimeLeft = 1;
+					ScenarioClass::Instance->AmbientTimer.Start(1);
 
 					// enable the nuke flash
 					NukeFlash::StartTime(Unsorted::CurrentFrame);
