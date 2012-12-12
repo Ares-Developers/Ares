@@ -110,7 +110,7 @@ public:
 		void applyRipples(CoordStruct *);
 		void applyIronCurtain(CoordStruct *, HouseClass *, int);
 		void applyEMP(CoordStruct *, TechnoClass *);
-		bool applyPermaMC(CoordStruct *, HouseClass *, ObjectClass *);
+		bool applyPermaMC(CoordStruct *, HouseClass *, AbstractClass *);
 
 		bool applyKillDriver(BulletClass *); // #733
 	};
@@ -138,7 +138,7 @@ public:
 			pWHExt->applyEMP(coords, source);
 		}
 	}
-	static bool applyPermaMC(WarheadTypeClass * pWH, CoordStruct* coords, HouseClass * House, ObjectClass * Source) {
+	static bool applyPermaMC(WarheadTypeClass * pWH, CoordStruct* coords, HouseClass * House, AbstractClass * Source) {
 		if(auto pWHExt = WarheadTypeExt::ExtMap.Find(pWH)) {
 			pWHExt->applyPermaMC(coords, House, Source);
 		}

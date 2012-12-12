@@ -106,8 +106,8 @@ void TechnoExt::SpawnSurvivors(FootClass *pThis, TechnoClass *pKiller, bool Sele
 		if(chance > 0) {
 			toSpawn = ScenarioClass::Instance->Random.RandomRanged(1, 100) <= chance;
 		} else if(chance == -1 && pThis->WhatAmI() == abs_Unit) {
-			int occupation = passenger->IsCellOccupied(pThis->GetCell(), -1, -1, 0, 1);
-			toSpawn = (occupation == 0 || occupation == 2);
+			Move::Value occupation = passenger->IsCellOccupied(pThis->GetCell(), -1, -1, 0, 1);
+			toSpawn = (occupation == Move::OK || occupation == Move::MovingBlock);
 		}
 		if(toSpawn && !IgnoreDefenses) {
 			toDelete = !EjectRandomly(passenger, loc, 128, Select);
@@ -281,10 +281,9 @@ void TechnoExt::StopDraining(TechnoClass *Drainer, TechnoClass *Drainee) {
 
 unsigned int TechnoExt::ExtData::AlphaFrame(SHPStruct *Image) {
 	int countFrames = Conversions::Int2Highest(Image->Frames);
-	DWORD Facing;
+	DirStruct Facing;
 	this->AttachedToObject->Facing.GetFacing(&Facing);
-	WORD F = (WORD)Facing;
-	return (F >> (16 - countFrames));
+	return (Facing.Value >> (16 - countFrames));
 }
 
 bool TechnoExt::ExtData::DrawVisualFX() {
@@ -383,7 +382,7 @@ bool TechnoExt::ExtData::IsPowered() {
  */
 bool TechnoExt::CreateWithDroppod(FootClass *Object, CoordStruct *XYZ) {
 	auto MyCell = MapClass::Instance->GetCellAt(XYZ);
-	if(Object->IsCellOccupied(MyCell, -1, -1, 0, 0)) {
+	if(Object->IsCellOccupied(MyCell, -1, -1, 0, 0) != Move::OK) {
 //		Debug::Log("Cell occupied... poof!\n");
 		return false;
 	} else {
@@ -394,7 +393,7 @@ bool TechnoExt::CreateWithDroppod(FootClass *Object, CoordStruct *XYZ) {
 		Object->SetLocation(&xyz);
 		Object->SetDestination(MyCell, 1);
 		Object->Locomotor->Move_To(*XYZ);
-		FacingStruct::Facet Facing = {0, 0, 0};
+		DirStruct Facing;
 		Object->Facing.SetFacing(&Facing);
 		if(!Object->InLimbo) {
 			Object->See(0, 0);

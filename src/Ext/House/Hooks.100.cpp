@@ -24,7 +24,15 @@
 // fix the 100 unit bug for vehicles
 DEFINE_HOOK(4FEA60, HouseClass_AI_UnitProduction, 0)
 {
-	CRAZY_MACRO_GO_AWAY_1(0x4FEEDA, Unit);
+	GET(HouseClass*, pThis, ECX);
+
+	retfunc_fixed<DWORD> ret(R, 0x4FEEDA, 0xF);
+
+	if(pThis->ProducingUnitTypeIndex != -1) {
+		return ret();
+	}
+
+	AIDifficulty::Value AIDiff = pThis->AIDifficulty;
 
 	int nParentCountryIndex = HouseTypeClass::FindIndex(pThis->Type->ParentCountry);
 	DWORD flagsOwner = 1 << nParentCountryIndex;
@@ -80,18 +88,32 @@ DEFINE_HOOK(4FEA60, HouseClass_AI_UnitProduction, 0)
 		}
 	}
 
-	CRAZY_MACRO_GO_AWAY_2(Unit);
+	GetTypeToProduce<UnitClass, UnitTypeClass>(pThis, pThis->ProducingUnitTypeIndex);
+
+	return ret();
 }
 
 DEFINE_HOOK(4FEEE0, HouseClass_AI_InfantryProduction, 6)
 {
-	CRAZY_MACRO_GO_AWAY_1(0x4FF204, Infantry)
-	CRAZY_MACRO_GO_AWAY_2(Infantry)
+	GET(HouseClass*, pThis, ECX);
+
+	if(pThis->ProducingInfantryTypeIndex == -1) {
+		GetTypeToProduce<InfantryClass, InfantryTypeClass>(pThis, pThis->ProducingInfantryTypeIndex);
+	}
+
+	R->EAX(15);
+	return 0x4FF204;
 }
 
 DEFINE_HOOK(4FF210, HouseClass_AI_AircraftProduction, 6)
 {
-	CRAZY_MACRO_GO_AWAY_1(0x4FF534, Aircraft)
-	CRAZY_MACRO_GO_AWAY_2(Aircraft)
+	GET(HouseClass*, pThis, ECX);
+
+	if(pThis->ProducingAircraftTypeIndex == -1) {
+		GetTypeToProduce<AircraftClass, AircraftTypeClass>(pThis, pThis->ProducingAircraftTypeIndex);
+	}
+
+	R->EAX(15);
+	return 0x4FF534;
 }
 

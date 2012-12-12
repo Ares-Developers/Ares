@@ -137,7 +137,7 @@ void PsychicDominatorStateMachine::Update() {
 			PsyDom::Status(PsychicDominatorStatus::Fire);
 
 			// most likely LightUpdateTimer
-			ScenarioClass::Instance->Timer4.Start(1);
+			ScenarioClass::Instance->AmbientTimer.Start(1);
 			ScenarioClass::UpdateLighting();
 
 			return;

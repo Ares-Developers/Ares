@@ -532,16 +532,24 @@ DEFINE_HOOK(50928C, HouseClass_Update_Factories_Queues_SkipBrokenDTOR, 5)
 	return 0x5092A3;
 }
 
+/*
+issue #1051260:
+commented out because of possible issues. if one team update destroys another
+team, this would change the list while iterating. because one can never know
+how many teams are deleted and whether the deleted teams are before or after
+//the current element, it is just safer to not touch it at all. 02-Dec-12 AlexB
+
 //westwood is stupid!
 // every frame they create a vector<TeamClass *> , copy all the teams from ::Array into it, iterate with ->Update(), delete
 // so this is OMG OPTIMIZED I guess
-DEFINE_HOOK(55B502, LogicClass_Update_UpdateAITeamsFaster, 5)
+A_FINE_HOOK(55B502, LogicClass_Update_UpdateAITeamsFaster, 5)
 {
 	for(int i = TeamClass::Array->Count - 1; i >= 0; --i) {
 		TeamClass::Array->GetItem(i)->Update();
 	}
 	return 0x55B5A1;
 }
+*/
 
 // Guard command failure
 DEFINE_HOOK(730DB0, GuardCommandClass_Execute, 0)
