@@ -1,6 +1,6 @@
 [branch]
-Name=Ares Development Mainline
-Description=This is the trunk or master branch of Ares's repository. It contains the current in-development code.
-TargetVersion=0.3
+Name=Ares 0.2 Testing Branch "Fat Man"
+Description=This branch contains all fixes which are scheduled to be in Ares 0.2p2.
+TargetVersion=0.2
 Stable=no
 ReadyForTesting=yes
