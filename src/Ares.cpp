@@ -140,14 +140,18 @@ void __stdcall Ares::ExeTerminate()
 }
 
 CCINIClass* Ares::OpenConfig(const char* file) {
-	CCINIClass* pINI;
-	GAME_ALLOC(CCINIClass, pINI);
-	CCFileClass *cfg;
+	CCINIClass* pINI = NULL;
+	CCFileClass *cfg = NULL;
 	GAME_ALLOC(CCFileClass, cfg, file);
-	if(cfg->Exists(NULL)) {
-		pINI->ReadCCFile(cfg);
+
+	if(cfg && cfg->Exists(NULL)) {
+		GAME_ALLOC(CCINIClass, pINI);
+
+		if(pINI) {
+			pINI->ReadCCFile(cfg);
+		}
+		GAME_DEALLOC(cfg);
 	}
-	GAME_DEALLOC(cfg);
 
 	return pINI;
 }
