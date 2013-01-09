@@ -241,3 +241,78 @@ DEFINE_HOOK(4E3A6A, hWnd_PopulateWithCountryNames, 6) {
 	
 	return 0x4E3ACF;
 }
+
+DEFINE_HOOK(6AA0CA, TabCameoListClass_Draw_DrawObserverBackground, 6)
+{
+	enum { DrawSHP = 0x6AA0ED, DontDraw = 0x6AA159 };
+
+	GET(HouseTypeClass *, pCountry, EAX);
+
+	auto pData = HouseTypeExt::ExtMap.Find(pCountry);
+
+	if(pData->ObserverBackgroundSHP) {
+		R->EAX<SHPStruct *>(pData->ObserverBackgroundSHP);
+		return DrawSHP;
+	} else if(*pData->ObserverBackground) {
+		if(auto PCXSurface = PCX::Instance->GetSurface(pData->ObserverBackground)) {
+			GET(int, TLX, EDI);
+			GET(int, TLY, EBX);
+			RectangleStruct bounds = { TLX, TLY, pData->ObserverBackgroundWidth, pData->ObserverBackgroundHeight };
+			PCX::Instance->BlitToSurface(&bounds, DSurface::Sidebar, PCXSurface);
+		}
+		return DontDraw;
+	} else {
+		return DontDraw;
+	}
+}
+
+
+DEFINE_HOOK(6AA164, TabCameoListClass_Draw_DrawObserverFlag, 6)
+{
+	enum { IDontKnowYou = 0x6AA16D, DrawSHP = 0x6AA1DB, DontDraw = 0x6AA2CE };
+
+	GET(HouseTypeClass *, pCountry, EAX);
+
+	auto pData = HouseTypeExt::ExtMap.Find(pCountry);
+
+	if(!pData) {
+		R->EAX<HouseTypeClass *>(pCountry);
+		R->ECX<int>(pCountry->ArrayIndex2 + 3);
+		return IDontKnowYou;
+	} else if(pData->ObserverFlagSHP) {
+		R->ESI<SHPStruct *>(pData->ObserverFlagSHP);
+		R->EAX<int>(!!pData->ObserverFlagYuriPAL ? 9 : 0);
+		return DrawSHP;
+	} else if(*pData->ObserverFlag) {
+		if(auto PCXSurface = PCX::Instance->GetSurface(pData->ObserverFlag)) {
+			GET(int, TLX, EDI);
+			GET(int, TLY, EBX);
+			RectangleStruct bounds = { TLX + pData->ObserverFlagPCXX , TLY + pData->ObserverFlagPCXY,
+					pData->ObserverFlagPCXWidth, pData->ObserverFlagPCXHeight
+			};
+			PCX::Instance->BlitToSurface(&bounds, DSurface::Sidebar, PCXSurface);
+		}
+		return DontDraw;
+	} else {
+		return DontDraw;
+	}
+}
+
+#if 0
+// reactivate when testing observer drawing - this will draw observer sidebar instead of your real one in singleplayer
+// cameos will not be shown but tooltips and clicking the right spaces will still work
+// observer stats will be all zeroes
+A_FINE_HOOK(6A964E, TabCameoListClass_Draw_IFilmMyself, 0)
+{
+	enum { DrawObserver = 0x6AA05B, DrawNormal = 0x6A9654 };
+
+	GET(HouseClass *, HumanHouse, EBX);
+	GET(HouseClass *, ObserverHouse, EBP);
+
+	MouseClass::Instance->DiplomacyNumHouses = 1;
+	MouseClass::Instance->DiplomacyHouses[0] = HumanHouse;
+	MouseClass::Instance->DiplomacyColors[0] = ColorScheme::Array->GetItem(HumanHouse->ColorSchemeIndex);
+
+	return DrawObserver;
+}
+#endif

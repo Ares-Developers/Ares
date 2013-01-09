@@ -5,6 +5,7 @@
 #include <WeaponTypeClass.h>
 #include <RulesClass.h>
 #include <AnimTypeClass.h>
+#include <SidebarClass.h>
 
 #include "../_Container.hpp"
 #include "../../Utilities/Template.h"
@@ -71,6 +72,9 @@ public:
 		return Data;
 	};
 
+	static DynamicVectorClass<CameoDataStruct> TabCameos[4];
+
+	static void ClearCameos();
 };
 
 #endif
