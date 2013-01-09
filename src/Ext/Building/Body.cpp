@@ -231,8 +231,8 @@ bool BuildingExt::ExtData::canTraverseTo(BuildingClass* targetBuilding) {
 		return false;
 	}
 
-	BuildingTypeExt::ExtData* currentBuildingTypeExt = BuildingTypeExt::ExtMap.Find(currentBuilding->Type);
-	BuildingTypeExt::ExtData* targetBuildingTypeExt = BuildingTypeExt::ExtMap.Find(targetBuilding->Type);
+	//BuildingTypeExt::ExtData* currentBuildingTypeExt = BuildingTypeExt::ExtMap.Find(currentBuilding->Type);
+	//BuildingTypeExt::ExtData* targetBuildingTypeExt = BuildingTypeExt::ExtMap.Find(targetBuilding->Type);
 
 	if(this->sameTrench(targetBuilding)) {
 		// if we've come here, there's room, there are people to move, and the buildings are trenches and of the same kind
@@ -339,7 +339,7 @@ void BuildingExt::buildLines(BuildingClass* theBuilding, CellStruct selectedCell
 		return;
 	}
 
-	short maxLinkDistance = theBuilding->Type->GuardRange / 256; // GuardRange governs how far the link can go, is saved in leptons
+	short maxLinkDistance = short(theBuilding->Type->GuardRange / 256); // GuardRange governs how far the link can go, is saved in leptons
 
 	for(int direction = 0; direction <= 7; direction += 2) { // the 4 straight directions of the simple compass
 		CellStruct directionOffset = CellSpread::GetNeighbourOffset(direction); // coordinates of the neighboring cell in the given direction relative to the current cell (e.g. 0,1)
