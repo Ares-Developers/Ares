@@ -358,7 +358,7 @@ void Debug::FatalError(bool Dump) {
 		L"Ares has encountered an internal error and is unable to continue normally. "
 		L"Please visit our website at http://ares.strategy-x.com for updates and support.\n\n"
 		L"%hs",
-		Ares::readBuffer, 0x400);
+		Ares::readBuffer);
 
 	Debug::Log("\nFatal Error:\n");
 	Debug::Log("%s\n", Ares::readBuffer);

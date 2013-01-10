@@ -22,7 +22,7 @@ DEFINE_HOOK(69A310, Game_GetLinkedColor, 7) {
 	int ret = 0;
 	if(slot) {
 		if(slot->colorSchemeIndex == -1) {
-			slot->colorSchemeIndex = ColorScheme::FindIndex(slot->colorScheme);
+			slot->colorSchemeIndex = (char)ColorScheme::FindIndex(slot->colorScheme);
 			if(slot->colorSchemeIndex == -1) {
 				Debug::Log("Color scheme \"%s\" not found.\n", slot->colorScheme ? slot->colorScheme : "");
 				slot->colorSchemeIndex = 4;

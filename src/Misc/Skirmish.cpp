@@ -74,7 +74,7 @@ DEFINE_HOOK(699043, GameMode_SaveGameSettings_MultiEngineer, 5) {
 
 // load the multi engineer setting from ini
 DEFINE_HOOK(69801A, Game_GetGameTypePrefs_MultiEngineer, 6) {
-	GET(GameModeOptionsClass*, pOptions, EDI);
+	//GET(GameModeOptionsClass*, pOptions, EDI);
 	GET(CCINIClass*, pINI, EBX);
 	GET(char*, pSection, EBP);
 

@@ -76,7 +76,7 @@ DEFINE_HOOK(619270, Handle_Listbox_Messages_SelectionA, 5) {
 }
 
 DEFINE_HOOK(619288, Handle_Listbox_Messages_SelectionB, 6) {
-	R->DL(Ares::UISettings::uiColorSelectionList >> 16);
+	R->DL(BYTE(Ares::UISettings::uiColorSelectionList >> 16));
 	return 0x61928E;
 }
 
@@ -96,7 +96,7 @@ DEFINE_HOOK(60DDA6, Handle_Combobox_Dropdown_Messages_SelectionA, 5) {
 }
 
 DEFINE_HOOK(60DDB6, Handle_Combobox_Dropdown_Messages_SelectionB, 6) {
-	R->DL(Ares::UISettings::uiColorSelectionCombobox >> 16);
+	R->DL(BYTE(Ares::UISettings::uiColorSelectionCombobox >> 16));
 	return 0x60DDBC;
 }
 

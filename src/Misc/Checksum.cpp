@@ -96,8 +96,8 @@ bool LogFrame(const char * LogFilename, NetworkEvent *OffendingEvent = nullptr) 
 			fprintf(LogFile, "Frame:        %X\n", OffendingEvent->Timestamp);
 			fprintf(LogFile, "ID:           %X\n", OffendingEvent->HouseIndex);
 			fprintf(LogFile, "CRC:          %X\n", OffendingEvent->Checksum);
-			fprintf(LogFile, "CommandCount: %d\n", OffendingEvent->CommandCount);
-			fprintf(LogFile, "Delay:        %d\n", OffendingEvent->Delay);
+			fprintf(LogFile, "CommandCount: %d\n", (int)OffendingEvent->CommandCount);
+			fprintf(LogFile, "Delay:        %d\n", (int)OffendingEvent->Delay);
 			fprintf(LogFile, "\n\n");
 		}
 

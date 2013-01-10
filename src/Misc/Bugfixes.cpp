@@ -566,7 +566,7 @@ DEFINE_HOOK(472198, CaptureManagerClass_DrawLinks, 6)
 {
 	enum { Draw_Maybe = 0, Draw_Yes = 0x4721E6, Draw_No = 0x472287} decision = Draw_Maybe;
 	GET(CaptureManagerClass *, Controlled, EDI);
-	GET(TechnoClass *, Item, ECX);
+	//GET(TechnoClass *, Item, ECX);
 
 	if(FootClass *F = generic_cast<FootClass *>(Controlled->Owner)) {
 		if(F->ParasiteImUsing && F->InLimbo) {
