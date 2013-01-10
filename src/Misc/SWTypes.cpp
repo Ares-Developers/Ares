@@ -46,6 +46,11 @@ void SWStateMachine::UpdateAll()
 {
 	for(int i = SWStateMachine::Array.Count - 1; i >= 0; --i) {
 		SWStateMachine* Machine = SWStateMachine::Array[i];
+
+		if(!Machine) {
+			Debug::FatalErrorAndExit("SWStateMachine was NULL at index %d.\n", i);
+		}
+
 		Machine->Update();
 		if(Machine->Finished()) {
 			SWStateMachine::Array.RemoveItem(i);
