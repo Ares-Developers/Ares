@@ -186,7 +186,7 @@ void TechnoExt::EjectPassengers(FootClass *pThis, signed short howMany) {
 		return;
 	}
 
-	short limit = (howMany < 0 || howMany > pThis->Passengers.NumPassengers) ? pThis->Passengers.NumPassengers : howMany;
+	short limit = (howMany < 0 || howMany > pThis->Passengers.NumPassengers) ? (short)pThis->Passengers.NumPassengers : howMany;
 
 	for(short i = 0; (i < limit) && pThis->Passengers.FirstPassenger; ++i) {
 		FootClass *passenger = pThis->RemoveFirstPassenger();
@@ -752,7 +752,7 @@ DEFINE_HOOK(6F4500, TechnoClass_DTOR, 5)
 	GET(TechnoClass*, pItem, ECX);
 
 	SWStateMachine::InvalidatePointer(pItem);
-	TechnoExt::ExtData *pItemExt = TechnoExt::ExtMap.Find(pItem);
+	//TechnoExt::ExtData *pItemExt = TechnoExt::ExtMap.Find(pItem);
 	TechnoExt::ExtMap.Remove(pItem);
 	return 0;
 }

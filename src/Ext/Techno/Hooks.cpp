@@ -57,7 +57,7 @@ DEFINE_HOOK(6F9E50, TechnoClass_Update, 5)
 	}
 	
 	// #617 powered units
-	if( pTypeData->PoweredBy.Count ) {
+	if(pTypeData && pTypeData->PoweredBy.Count) {
 		if(!pData->PoweredUnit) {
 			pData->PoweredUnit = new PoweredUnitClass(Source, pTypeData);
 		}
@@ -177,7 +177,7 @@ DEFINE_HOOK(6F407D, TechnoClass_Init_1, 6)
 	GET(TechnoClass *, T, ESI);
 	TechnoTypeClass * Type = T->GetTechnoType();
 	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(T);
-	TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(Type);
+	//TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(Type);
 
 	CaptureManagerClass *Capturer = NULL;
 	ParasiteClass *Parasite = NULL;
@@ -198,12 +198,13 @@ DEFINE_HOOK(6F407D, TechnoClass_Init_1, 6)
 		WarheadTypeClass *WH1 = W1 ? W1->Warhead : NULL;
 		WarheadTypeClass *WH2 = W2 ? W2->Warhead : NULL;
 
-		if((W1 && !WH1) || (W2 && !WH2)) {
+		bool IsW1Faulty = (W1 && !WH1);
+		if(IsW1Faulty || (W2 && !WH2)) {
 			Debug::FatalErrorAndExit(
 				"Constructing an instance of [%s]:\r\n%sWeapon %s (slot %d) has no Warhead!",
 					Type->ID,
-					WH1 ? "Elite " : "",
-					(WH1 ? W2 : W1)->ID,
+					IsW1Faulty ? "" : "Elite ",
+					(IsW1Faulty ? W1 : W2)->ID,
 					i);
 		}
 
@@ -296,8 +297,8 @@ DEFINE_HOOK(629804, ParasiteClass_UpdateSquiddy, 9)
 
 DEFINE_HOOK(6F3330, TechnoClass_SelectWeapon, 5)
 {
-	GET(TechnoClass *, pThis, ECX);
-	GET_STACK(TechnoClass *, pTarg, 0x4);
+	//GET(TechnoClass *, pThis, ECX);
+	//GET_STACK(TechnoClass *, pTarg, 0x4);
 
 //	DWORD Selected = TechnoClassExt::SelectWeaponAgainst(pThis, pTarg);
 //	R->EAX(Selected);

@@ -189,8 +189,8 @@ DEFINE_HOOK(436459, BuildingLightClass_Update, 6)
 		}
 
 		double Angle = Facing2Rad * Facing.Value;
-		Loc.Y -= pTypeData->Spot_Distance * Math::cos(Angle);
-		Loc.X += pTypeData->Spot_Distance * Math::sin(Angle);
+		Loc.Y -= static_cast<int>(pTypeData->Spot_Distance * Math::cos(Angle));
+		Loc.X += static_cast<int>(pTypeData->Spot_Distance * Math::sin(Angle));
 
 		BL->field_B8 = Loc;
 		BL->field_C4 = Loc;
