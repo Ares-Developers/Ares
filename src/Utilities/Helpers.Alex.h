@@ -383,7 +383,7 @@ public:
 			// make it a square containing the range circle
 			if(!isRectangle) {
 				height = maxDistance * 2 + 1;
-				widthOrRange = height;
+				widthOrRange = static_cast<float>(height);
 			}
 
 			int res = forEachCellInRange(cell, widthOrRange, height, actionIfInRange);
