@@ -36,7 +36,7 @@ DEFINE_HOOK(4F7870, HouseClass_PrereqValidator, 7)
 
 DEFINE_HOOK(505360, HouseClass_PrerequisitesForTechnoTypeAreListed, 5)
 {
-	GET(HouseClass *, pHouse, ECX);
+	//GET(HouseClass *, pHouse, ECX);
 
 	GET_STACK(TechnoTypeClass *, pItem, 0x4);
 	GET_STACK(DynamicVectorClass<BuildingTypeClass *> *, pBuildingsToCheck, 0x8);

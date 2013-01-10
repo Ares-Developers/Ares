@@ -315,7 +315,7 @@ bool HouseExt::ExtData::CheckBasePlanSanity() {
 void Container<HouseExt>::Load(HouseClass *pThis, IStream *pStm) {
 	HouseExt::ExtData* pData = this->LoadKey(pThis, pStm);
 
-	ULONG out;
+	//ULONG out;
 	SWIZZLE(pData->Factory_BuildingType);
 	SWIZZLE(pData->Factory_InfantryType);
 	SWIZZLE(pData->Factory_VehicleType);
