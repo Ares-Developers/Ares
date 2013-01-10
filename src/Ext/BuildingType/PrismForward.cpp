@@ -205,7 +205,7 @@ int BuildingTypeExt::cPrismForwarding::AcquireSlaves_SingleStage
 		if (BuildingClass *SlaveTower = BuildingClass::Array->GetItem(i)) {
 			if (ValidateSupportTower(MasterTower, TargetTower, SlaveTower)) {
 				SlaveTower->GetPosition_2(&curPosition);
-				int Distance = MyPosition.DistanceFrom(curPosition);
+				int Distance = (int)MyPosition.DistanceFrom(curPosition);
 
 				PrismTargetData pd = {SlaveTower, Distance};
 				EligibleTowers.push_back(pd);
@@ -253,7 +253,7 @@ bool BuildingTypeExt::cPrismForwarding::ValidateSupportTower(
 			//building is a prism tower
 			//get all the data we need
 			TechnoExt::ExtData *pTechnoData = TechnoExt::ExtMap.Find(SlaveTower);
-			BuildingExt::ExtData *pSlaveData = BuildingExt::ExtMap.Find(SlaveTower);
+			//BuildingExt::ExtData *pSlaveData = BuildingExt::ExtMap.Find(SlaveTower);
 			int SlaveMission = SlaveTower->GetCurrentMission();
 			//now check all the rules
 			if(SlaveTower->ReloadTimer.Ignorable()
@@ -284,7 +284,7 @@ bool BuildingTypeExt::cPrismForwarding::ValidateSupportTower(
 						CoordStruct MyPosition, curPosition;
 						TargetTower->GetPosition_2(&MyPosition);
 						SlaveTower->GetPosition_2(&curPosition);
-						int Distance = MyPosition.DistanceFrom(curPosition);
+						int Distance = (int)MyPosition.DistanceFrom(curPosition);
 						int SupportRange = 0;
 						int idxSupport = -1;
 						if (SlaveTower->Veterancy.IsElite()) {
@@ -326,7 +326,7 @@ void BuildingTypeExt::cPrismForwarding::SetChargeDelay
 	memset(LongestFDelay, 0, ArrayLen * sizeof(DWORD));
 	
 	int temp = 0;
-	while (temp <= LongestChain) {
+	while (temp < ArrayLen) {
 		LongestCDelay[temp] = 0;
 		LongestFDelay[temp] = 0;
 		++temp;
