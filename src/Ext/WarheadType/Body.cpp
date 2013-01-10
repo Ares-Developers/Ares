@@ -376,7 +376,7 @@ bool WarheadTypeExt::ExtData::applyKillDriver(BulletClass* Bullet) {
 
 			// If this vehicle uses Operator=, we have to take care of actual "physical" drivers, rather than theoretical ones
 			FootClass *passenger = NULL;
-			if(TargetTypeExt->IsAPromiscuousWhoreAndLetsAnyoneRideIt && (passenger = pTarget->RemoveFirstPassenger())) {
+			if(TargetTypeExt->IsAPromiscuousWhoreAndLetsAnyoneRideIt && (passenger = pTarget->RemoveFirstPassenger()) != NULL) {
 				// kill first passenger
 				passenger->RegisterDestruction(Bullet->Owner);
 				passenger->UnInit();
