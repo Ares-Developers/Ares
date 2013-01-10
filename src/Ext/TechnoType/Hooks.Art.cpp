@@ -119,7 +119,7 @@ DEFINE_HOOK(5F96B0, ObjectTypeClass_TheaterSpecificID, 6)
 	if(idxTheater != -1) {
 		char c0 = basename[0];
 		char c1 = basename[1] & ~0x20; // evil hack to uppercase
-		if(isalpha(c0)) {
+		if(isalpha((unsigned char)c0)) {
 			if(c1 == 'A' || c1 == 'T') {
 				basename[1] = Theater::Array[idxTheater].Letter[0];
 			}
