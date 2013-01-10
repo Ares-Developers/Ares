@@ -605,7 +605,7 @@ DEFINE_HOOK(6AA711, TabCameoListClass_RecheckCameos_FilterAllowedCameos, 0)
 			if(cameo.ItemType == BuildingTypeClass::AbsID || cameo.ItemType == BuildingClass::AbsID) {
 				MouseClass::Instance->CurrentBuilding = NULL;
 				MouseClass::Instance->CurrentBuildingType = NULL;
-				MouseClass::Instance->unknown_11AC = -1;
+				MouseClass::Instance->unknown_11AC = 0xFFFFFFFF;
 				MouseClass::Instance->SetActiveFoundation(NULL);
 			}
 			if(TechnoType) {

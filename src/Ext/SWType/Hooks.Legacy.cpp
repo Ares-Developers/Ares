@@ -456,9 +456,9 @@ DEFINE_HOOK(53A6C0, LightningStorm_Update, 5) {
 
 									// is this spot far away from another cloud?
 									if(pData->Weather_Separation > 0) {
-										for(int k=0; k<LightningStorm::CloudsPresent->Count; ++k) {
+										for(int j=0; j<LightningStorm::CloudsPresent->Count; ++j) {
 											// assume success and disprove.
-											CellStruct *pCell2 = &LightningStorm::CloudsPresent->GetItem(k)->GetCell()->MapCoords;
+											CellStruct *pCell2 = &LightningStorm::CloudsPresent->GetItem(j)->GetCell()->MapCoords;
 											int dist = std::abs(pCell2->X - cell.X) + std::abs(pCell2->Y - cell.Y);
 											if(dist < pData->Weather_Separation.Get()) {
 												found = false;
@@ -598,9 +598,9 @@ DEFINE_HOOK(53A300, LightningStorm_Strike2, 5) {
 			// account for lightning rods
 			int damage = pData->SW_Damage;
 			if(!pData->Weather_IgnoreLightningRod.Get()) {
-				if(BuildingClass* pBld = specific_cast<BuildingClass*>(pObj)) {
-					if(pBld->Type->LightningRod) {
-						if(BuildingTypeExt::ExtData *pExt = BuildingTypeExt::ExtMap.Find(pBld->Type)) {
+				if(BuildingClass* pBldObj = specific_cast<BuildingClass*>(pObj)) {
+					if(pBldObj->Type->LightningRod) {
+						if(BuildingTypeExt::ExtData *pExt = BuildingTypeExt::ExtMap.Find(pBldObj->Type)) {
 							// multiply the damage, but never go below zero.
 							damage = (int)std::max(damage * pExt->LightningRod_Modifier, 0.0);
 						}
