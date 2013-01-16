@@ -138,8 +138,8 @@ bool SW_NuclearMissile::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPl
 							}
 
 							// remember the fired SW type
-							if(BulletExt::ExtData *pData = BulletExt::ExtMap.Find(pBullet)) {
-								pData->NukeSW = pType;
+							if(BulletExt::ExtData *pBulletData = BulletExt::ExtMap.Find(pBullet)) {
+								pBulletData->NukeSW = pType;
 							}
 								
 							// aim the bullet downward and put

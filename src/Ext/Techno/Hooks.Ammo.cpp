@@ -16,7 +16,7 @@ DEFINE_HOOK(43FE8E, BuildingClass_Update_Reload, 6)
 
 DEFINE_HOOK(6FCFA4, TechnoClass_GetROF_BuildingHack, 5)
 {
-	GET(TechnoClass *, T, ESI);
+	//GET(TechnoClass *, T, ESI);
 	// actual game code: if(auto B = specific_cast<BuildingClass *>(T)) { if(T->currentAmmo > 1) { return 1; } }
 	// if the object being queried doesn't have a weapon (Armory/Hospital), it'll return 1 anyway
 

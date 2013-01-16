@@ -123,7 +123,7 @@ DEFINE_HOOK(5F3E70, ObjectClass_Update, 5)
 DEFINE_HOOK(420F75, AlphaLightClass_UpdateScreen_ShouldDraw, 5)
 {
 	GET(AlphaShapeClass *, A, ECX);
-	unsigned int idx = 0;
+
 	if(ObjectClass *O = A->AttachedTo) {
 		if(TechnoClass * T = generic_cast<TechnoClass *>(O)) {
 			TechnoExt::ExtData * pData = TechnoExt::ExtMap.Find(T);
@@ -169,7 +169,7 @@ DEFINE_HOOK(421371, TacticalClass_UpdateAlphasInRectangle_ShouldDraw, 5)
 {
 	GET(int, AlphaLightIndex, EBX);
 	AlphaShapeClass *A = AlphaShapeClass::Array->Items[AlphaLightIndex];
-	unsigned int idx = 0;
+
 	if(ObjectClass *O = A->AttachedTo) {
 		if(TechnoClass * T = generic_cast<TechnoClass *>(O)) {
 			TechnoExt::ExtData * pData = TechnoExt::ExtMap.Find(T);

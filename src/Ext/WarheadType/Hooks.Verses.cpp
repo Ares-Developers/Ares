@@ -4,16 +4,17 @@
 	GET(WarheadTypeClass *, WH, reg_wh); \
 	GET(int, Armor, reg_armor); \
 	WarheadTypeExt::ExtData *pData = WarheadTypeExt::ExtMap.Find(WH); \
-	WarheadTypeExt::VersesData *vsData = &pData->Verses[Armor]; \
-	double VS = vsData->Verses;
+	WarheadTypeExt::VersesData *vsData = &pData->Verses[Armor];
 
 #define FLD_VERSES(reg_wh, reg_armor) \
 	GET_VERSES(reg_wh, reg_armor) \
+	double VS = vsData->Verses; \
 	__asm{ fld VS }; \
 	return R->get_Origin() + 7;
 
 #define FMUL_VERSES(reg_wh, reg_armor) \
 	GET_VERSES(reg_wh, reg_armor) \
+	double VS = vsData->Verses; \
 	__asm{ fmul VS }; \
 	return R->get_Origin() + 7;
 
@@ -21,7 +22,7 @@
 DEFINE_HOOK(6F36FE, Verses_fld_0, 0)
 {
 	GET_VERSES(EAX, ECX);
-	return VS == 0.0 // vsData->ForceFire - taking this out because it has nothing to do with _forcing_ fire
+	return vsData->Verses == 0.0 // vsData->ForceFire - taking this out because it has nothing to do with _forcing_ fire
 		? 0x6F37AD
 		: 0x6F3716
 	;
@@ -30,7 +31,7 @@ DEFINE_HOOK(6F36FE, Verses_fld_0, 0)
 DEFINE_HOOK(6F3731, Verses_fld_1, 0)
 {
 	GET_VERSES(EDX, EAX);
-	return VS == 0.0
+	return vsData->Verses == 0.0
 		? 0x6F3745
 		: 0x6F3754
 	;

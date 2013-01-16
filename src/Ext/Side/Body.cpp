@@ -225,7 +225,7 @@ void Container<SideExt>::Save(SideClass *pThis, IStream *pStm) {
 	SideExt::ExtData* pData = this->SaveKey(pThis, pStm);
 
 	if(pData) {
-		ULONG out;
+		//ULONG out;
 		pData->BaseDefenses.Save(pStm);
 		pData->BaseDefenseCounts.Save(pStm);
 		pData->ParaDrop.Save(pStm);

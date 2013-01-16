@@ -224,7 +224,7 @@ DEFINE_HOOK(52297F, InfantryClass_GarrisonBuilding_OccupierEntered, 5)
 DEFINE_HOOK(4586CA, BuildingClass_KillOccupiers_EachOccupierKilled, 6)
 {
     GET(BuildingClass *, pBld, ESI);
-    GET(int, idxOccupant, EDI);
+    //GET(int, idxOccupant, EDI);
     // I don't think anyone ever actually tested Assaulter=yes with raiding, putting this here 'cause it's likely needed
 	BuildingExt::ExtData* buildingExtData = BuildingExt::ExtMap.Find(pBld);
     buildingExtData->evalRaidStatus();
@@ -290,7 +290,7 @@ A_FINE_HOOK(457DF5, BuildingClass_UnloadOccupants_AboutToStartUnloading, 6)
 DEFINE_HOOK(448401, BuildingClass_ChangeOwnership_TrenchEVA, 6)
 {
 	GET(BuildingClass *, pBld, ESI);
-	GET(HouseClass *, pNewOwner, EBX);
+	//GET(HouseClass *, pNewOwner, EBX);
 	enum wasHandled { Yes = 0x44848F, No = 0} Handled = No;
 
 	BuildingExt::ExtData* bldExt = BuildingExt::ExtMap.Find(pBld);

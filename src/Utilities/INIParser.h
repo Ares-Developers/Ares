@@ -32,6 +32,9 @@ public:
 		return !!Ares::readBuffer[0];
 	}
 
+	static bool IsBlank(const char *pValue = Ares::readBuffer) {
+		return !_strcmpi(pValue, "<none>") || !_strcmpi(pValue, "none");
+	}
 
 	// bool
 	bool ReadBool(const char* pSection, const char* pKey, bool* bBuffer) {

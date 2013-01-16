@@ -36,7 +36,7 @@ DEFINE_HOOK(4F7870, HouseClass_PrereqValidator, 7)
 
 DEFINE_HOOK(505360, HouseClass_PrerequisitesForTechnoTypeAreListed, 5)
 {
-	GET(HouseClass *, pHouse, ECX);
+	//GET(HouseClass *, pHouse, ECX);
 
 	GET_STACK(TechnoTypeClass *, pItem, 0x4);
 	GET_STACK(DynamicVectorClass<BuildingTypeClass *> *, pBuildingsToCheck, 0x8);
@@ -176,7 +176,7 @@ DEFINE_HOOK(50965E, HouseClass_CanInstantiateTeam, 5)
 	TaskForceEntryStruct * ptrEntry = reinterpret_cast<TaskForceEntryStruct *>(ptrTask); // evil! but works, don't ask me why
 
 	GET(HouseClass *, Owner, EBP);
-	enum { BuildLimitAllows = 0x5096BD, Absolutely = 0x509671, NoWay = 0x5096F1} CanBuild = NoWay;
+	enum { BuildLimitAllows = 0x5096BD, TryToRecruit = 0x509671, NoWay = 0x5096F1} CanBuild = NoWay;
 	if(TechnoTypeClass * Type = ptrEntry->Type) {
 		if(Type->FindFactory(true, true, false, Owner)) {
 			if(Ares::GlobalControls::AllowBypassBuildLimit[Owner->AIDifficulty]) {
@@ -186,11 +186,11 @@ DEFINE_HOOK(50965E, HouseClass_CanInstantiateTeam, 5)
 				if(remainLimit >= ptrEntry->Amount) {
 					CanBuild = BuildLimitAllows;
 				} else {
-					CanBuild = NoWay;
+					CanBuild = TryToRecruit;
 				}
 			}
 		} else {
-			CanBuild = BuildLimitAllows;
+			CanBuild = TryToRecruit;
 		}
 	}
 	return CanBuild;

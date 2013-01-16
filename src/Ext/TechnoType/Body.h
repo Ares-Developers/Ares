@@ -137,6 +137,8 @@ public:
 
 		Valueable<bool> ImmuneToAbduction; //680, 1362
 
+		Valueable<bool> GattlingCyclic;
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			Survivors_PilotChance (NULL),
 			Survivors_PassengerChance (NULL),
@@ -179,6 +181,7 @@ public:
 			PassengerExperienceModifier (1.0F),
 			MindControlExperienceSelfModifier (0.0F),
 			MindControlExperienceVictimModifier (1.0F),
+			GattlingCyclic (false),
 			VoiceRepair (-1),
 			HijackerEnterSound (-1),
 			HijackerLeaveSound (-1),

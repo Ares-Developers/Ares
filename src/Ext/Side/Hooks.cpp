@@ -46,7 +46,7 @@ DEFINE_HOOK(505C95, Sides_BaseDefenseCounts, 7)
 
 	SideClass* pSide = SideClass::Array->GetItem(n);
 	if(SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide)) {
-		if(pThis->AIDifficulty < pData->BaseDefenseCounts.Count) {
+		if((int)pThis->AIDifficulty < pData->BaseDefenseCounts.Count) {
 			R->EAX<int>(pData->BaseDefenseCounts.GetItem(pThis->AIDifficulty));
 			return 0x505CE9;
 		} else {

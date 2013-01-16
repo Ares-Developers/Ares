@@ -29,7 +29,9 @@ DEFINE_HOOK(4502F4, BuildingClass_Update_Factory, 6)
 				curFactory = &pData->Factory_AircraftType;
 				break;
 		}
-		if(!*curFactory) {
+		if(!curFactory) {
+			Game::RaiseError(E_POINTER);
+		} else if(!*curFactory) {
 			*curFactory = B;
 			return 0;
 		} else if(*curFactory != B) {

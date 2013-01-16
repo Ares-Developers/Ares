@@ -101,7 +101,7 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 			char key[0x20];
 
 			auto ParsePoint = [](CellStruct* &pCell, const char* str) -> void {
-				short x = 0, y = 0;
+				int x = 0, y = 0;
 				switch(sscanf(str, "%d,%d", &x, &y)) {
 				case 0:
 					x = 0;
@@ -109,8 +109,8 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 				case 1:
 					y = 0;
 				}
-				pCell->X = x;
-				pCell->Y = y;
+				pCell->X = (short)x;
+				pCell->Y = (short)y;
 				++pCell;
 			};
 

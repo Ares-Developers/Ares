@@ -750,7 +750,10 @@ bool EMPulse::EnableEMPEffect2(TechnoClass * Victim) {
 		if (AircraftClass * Aircraft = specific_cast<AircraftClass *>(Victim)) {
 			// crash flying aircraft
 			if (Aircraft->GetHeight() > 0) {
-				TechnoExt::Destroy(Aircraft);
+				// this would a) happen every time it updates and b) possibly
+				// crash because it frees the caller's memory (the PoweredUnitClass)
+				// while it is executing.
+				//TechnoExt::Destroy(Aircraft);
 				return true;
 			}
 		}
