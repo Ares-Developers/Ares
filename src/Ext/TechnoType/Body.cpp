@@ -33,6 +33,11 @@ void TechnoTypeExt::ExtData::Initialize(TechnoTypeClass *pThis) {
 
 	this->Is_Deso = this->Is_Deso_Radiation = !strcmp(pThis->ID, "DESO");
 	this->Is_Cow = !strcmp(pThis->ID, "COW");
+
+	if(pThis->WhatAmI() == AircraftTypeClass::AbsID) {
+		this->CustomMissileTrailerAnim = AnimTypeClass::Find("V3TRAIL");
+		this->CustomMissileTakeoffAnim = AnimTypeClass::Find("V3TAKOFF");
+	}
 }
 
 /*
@@ -352,6 +357,18 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 
 	// issue #896235: cyclic gattling
 	this->GattlingCyclic.Read(&exINI, section, "Gattling.Cycle");
+
+	// #245 custom missiles
+	if(auto pAircraftType = specific_cast<AircraftTypeClass*>(pThis)) {
+		this->IsCustomMissile.Read(&exINI, section, "Missile.Custom");
+		this->CustomMissileData.Read(&exINI, section, NULL);
+		this->CustomMissileData.GetEx()->Type = pAircraftType;
+		this->CustomMissileWarhead.Parse(&exINI, section, "Missile.Warhead");
+		this->CustomMissileEliteWarhead.Parse(&exINI, section, "Missile.EliteWarhead");
+		this->CustomMissileTakeoffAnim.Parse(&exINI, section, "Missile.TakeOffAnim");
+		this->CustomMissileTrailerAnim.Parse(&exINI, section, "Missile.TrailerAnim");
+		this->CustomMissileTrailerSeparation.Read(&exINI, section, "Missile.TrailerSeparation");
+	}
 
 	// quick fix - remove after the rest of weapon selector code is done
 	return;
