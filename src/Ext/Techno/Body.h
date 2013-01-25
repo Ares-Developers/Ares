@@ -70,7 +70,13 @@ public:
 		//stuff for #1623
 		bool AttachedTechnoEffect_isset;
 		int AttachedTechnoEffect_Delay;
-		
+
+		//crate fields
+		double Crate_FirepowerMultiplier;
+		double Crate_ArmorMultiplier;
+		double Crate_SpeedMultiplier;
+		bool Crate_Cloakable;
+
 		TemporalClass * MyOriginalTemporal;
 
 		EBolt * MyBolt;
@@ -97,7 +103,11 @@ public:
 			AltOccupation(),
 			AttachEffects_RecreateAnims(false),
 			AttachedTechnoEffect_isset (false),
-			AttachedTechnoEffect_Delay (0)
+			AttachedTechnoEffect_Delay (0),
+			Crate_FirepowerMultiplier(1),
+			Crate_ArmorMultiplier(1),
+			Crate_SpeedMultiplier(1),
+			Crate_Cloakable(false)
 			{
 				this->CloakSkipTimer.Stop();
 				// hope this works with the timing - I assume it does, since Types should be created before derivates thereof

@@ -85,9 +85,7 @@ void AttachEffectTypeClass::Attach(TechnoClass* Target, int Duration, TechnoClas
 	TechnoExt::RecalculateStats(Target);
 
 	// animation
-	if (!!this->AnimType) {
-		Attaching->CreateAnim(Target);
-	}
+	Attaching->CreateAnim(Target);
 	
 }
 
@@ -98,17 +96,19 @@ void AttachEffectClass::InvalidateAnimPointer(AnimClass *ptr) {
 }
 
 void AttachEffectClass::CreateAnim(TechnoClass *Owner) {
-	if (this->Animation){
-		this->KillAnim();
-	}
-	GAME_ALLOC(AnimClass, this->Animation, this->Type->AnimType, &Owner->Location);
-	this->Animation->SetOwnerObject(Owner);
-	this->Animation->RemainingIterations = -1;
+	if (!!this->Type->AnimType) {
+		if (this->Animation){
+			this->KillAnim();
+		}
+		GAME_ALLOC(AnimClass, this->Animation, this->Type->AnimType, &Owner->Location);
+		this->Animation->SetOwnerObject(Owner);
+		this->Animation->RemainingIterations = -1;
 			
-	if (this->Invoker && this->Invoker->Owner) {
-		this->Animation->Owner = Invoker->Owner;
-	}
-	this->AnimAlreadyKilled = false;
+		if (this->Invoker && this->Invoker->Owner) {
+			this->Animation->Owner = Invoker->Owner;
+		}
+		this->AnimAlreadyKilled = false;
+		}
 }
 
 void AttachEffectClass::KillAnim() {

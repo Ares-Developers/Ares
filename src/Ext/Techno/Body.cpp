@@ -460,8 +460,10 @@ void TechnoExt::TransferAttachedEffects(TechnoClass *From, TechnoClass *To) {
 
 void TechnoExt::RecalculateStats(TechnoClass *pTechno) {
 	auto pTechnoExt = TechnoExt::ExtMap.Find(pTechno);
-	double Firepower = 1, Armor = 1, Speed = 1; //if there's hooks for crate-stuff, they could be the base for this
-	bool Cloak = TechnoExt::CanICloakByDefault(pTechno);
+	double Firepower = pTechnoExt->Crate_FirepowerMultiplier,
+		Armor = pTechnoExt->Crate_ArmorMultiplier,
+		Speed = pTechnoExt->Crate_SpeedMultiplier; //if there's hooks for crate-stuff, they could be the base for this
+	bool Cloak = TechnoExt::CanICloakByDefault(pTechno) || pTechnoExt->Crate_Cloakable;
 
 	//Debug::Log("[AttachEffect]Recalculating stats of %s...\n", pTechno->get_ID());
 
@@ -478,11 +480,6 @@ void TechnoExt::RecalculateStats(TechnoClass *pTechno) {
 	pTechno->ArmorMultiplier = Armor;
 
 	pTechno->Cloakable = Cloak;
-
-	if (Cloak){
-		pTechno->UpdateCloak();
-	}
-
 
 	if(FootClass *Foot = generic_cast<FootClass *>(pTechno)) {
 		Foot->SpeedMultiplier = Speed;
