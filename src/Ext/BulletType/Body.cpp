@@ -1,5 +1,6 @@
 #include "Body.h"
 #include "../TechnoType/Body.h"
+#include "../AnimType/Body.h"
 #include "../House/Body.h"
 
 template<> const DWORD Extension<BulletTypeClass>::Canary = 0xF00DF00D;
@@ -18,6 +19,24 @@ void BulletTypeExt::ExtData::LoadFromINIFile(BulletTypeClass *pThis, CCINIClass*
 	this->Parachuted = pINI->ReadBool(pThis->ID, "Parachuted", this->Parachuted);
 
 	this->SubjectToTrenches = pINI->ReadBool(pThis->ID, "SubjectToTrenches", this->SubjectToTrenches);
+
+	this->ImageConvert.Reset();
+}
+
+// get the custom palette of the animation this bullet type uses
+ConvertClass* BulletTypeExt::ExtData::GetConvert()
+{
+	// cache the palette's convert
+	if(!this->ImageConvert.isset()) {
+		ConvertClass* Convert = nullptr;
+		if(AnimTypeClass * AnimType = AnimTypeClass::Find(this->AttachedToObject->ImageFile)) {
+			auto pData = AnimTypeExt::ExtMap.Find(AnimType);
+			Convert = pData->Palette.Convert;
+		}
+		this->ImageConvert.Set(Convert);
+	}
+
+	return this->ImageConvert;
 }
 
 // =============================
