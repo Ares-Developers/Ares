@@ -19,19 +19,16 @@ void TEventExt::ExtData::Initialize(TEventClass *pThis)
 
 	\returns The TechnoTypeClass TechnoName points to, NULL if not set or invalid.
 
-	\date 2012-05-09
+	\date 2012-05-09, 2013-02-09
 */
 TechnoTypeClass* TEventExt::ExtData::GetTechnoType()
 {
 	if(!this->TechnoType.isset()) {
-		TechnoTypeClass* pType = NULL;
-
 		const char* eventTechno = this->AttachedToObject->TechnoName;
-		for(auto i=TechnoTypeClass::Array->start(); i<TechnoTypeClass::Array->end(); ++i) {
-			if(!_stricmp((*i)->ID, eventTechno)) {
-				pType = *i;
-				break;
-			}
+		TechnoTypeClass* pType = TechnoTypeClass::Find(eventTechno);
+
+		if(!pType) {
+			Debug::DevLog(Debug::Error, "Event references non-existing techno type \"%s\".", eventTechno);
 		}
 
 		this->TechnoType.Set(pType);
