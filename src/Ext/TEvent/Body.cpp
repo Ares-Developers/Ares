@@ -40,11 +40,11 @@ TechnoTypeClass* TEventExt::ExtData::GetTechnoType()
 	return this->TechnoType;
 }
 
-// Gets whether the referenced TechnoType exist at least 'count' times on the map.
+// Gets whether the referenced TechnoType exist at least 'count' times.
 /*!
 	\returns True if TechnoType exists at least count times, false otherwise.
 
-	\date 2012-05-09
+	\date 2012-05-09, 2013-02-09
 */
 bool TEventExt::ExtData::TechTypeExists()
 {
@@ -54,7 +54,7 @@ bool TEventExt::ExtData::TechTypeExists()
 	// decreases count by the number of owned techno types. iff count is zero or less,
 	// this techno type exists at least 'count' times.
 	for(auto i=HouseClass::Array->start(); i<HouseClass::Array->end(); ++i) {
-		count -= (*i)->CountOwnedAndPresent(pType);
+		count -= (*i)->CountOwnedNow(pType);
 
 		if(count <= 0) {
 			return true;
@@ -64,11 +64,11 @@ bool TEventExt::ExtData::TechTypeExists()
 	return false;
 }
 
-// Gets whether the referenced TechnoType does not exist on the map.
+// Gets whether the referenced TechnoType does not exist.
 /*!
 	\returns True if TechnoType does not exists, false otherwise.
 
-	\date 2012-05-09
+	\date 2012-05-09, 2013-02-09
 */
 bool TEventExt::ExtData::TechTypeDoesNotExist()
 {
@@ -76,7 +76,7 @@ bool TEventExt::ExtData::TechTypeDoesNotExist()
 
 	// if any house owns this, this check fails.
 	for(auto i=HouseClass::Array->start(); i<HouseClass::Array->end(); ++i) {
-		if((*i)->CountOwnedAndPresent(pType) > 0) {
+		if((*i)->CountOwnedNow(pType) > 0) {
 			return false;
 		}
 	}
