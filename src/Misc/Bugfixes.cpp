@@ -957,3 +957,20 @@ DEFINE_HOOK(7077EE, TechnoClass_PointerGotInvalid_ResetMindControl, 6)
 
 	return 0;
 }
+
+// skip theme log lines
+DEFINE_HOOK(720DE8, Theme_Stop_NoLog, 5) // skip Theme::PlaySong
+DEFINE_HOOK_AGAIN(720C42, Theme_Stop_NoLog, 5) // skip Theme::Stop
+{
+	return R->get_Origin() + 5;
+}
+
+DEFINE_HOOK(720F37, sub_720EA0_NoLog, 5) // skip Theme::Stop
+{
+	return 0x720F3C;
+}
+
+DEFINE_HOOK(720A58, sub_7209D0_NoLog, 6) // skip Theme::AI
+{
+	return 0x720A69;
+}
