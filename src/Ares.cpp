@@ -35,6 +35,7 @@ bool Ares::bNoCD = false;
 bool Ares::bTestingRun = false;
 bool Ares::bStrictParser = false;
 bool Ares::bAllowAIControl = false;
+bool Ares::bFPSCounter = false;
 bool Ares::bStable = false;
 bool Ares::bStableNotification = false;
 
@@ -76,6 +77,7 @@ void __stdcall Ares::RegisterCommands()
 	MakeCommand<MemoryDumperCommandClass>();
 	MakeCommand<DebuggingCommandClass>();
 	MakeCommand<AIBasePlanCommandClass>();
+	MakeCommand<FPSCounterCommandClass>();
 }
 
 void __stdcall Ares::CmdLineParse(char** ppArgs,int nNumArgs)

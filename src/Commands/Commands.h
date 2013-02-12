@@ -72,5 +72,6 @@ void MakeCommand() {
 #include "Commands/DumpMemory.h"
 #include "Commands/Debugging.h"
 //include "Commands/Logging.h"
+#include "Commands/FPSCounter.h"
 
 #endif

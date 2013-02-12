@@ -51,6 +51,8 @@ public:
 
 	static bool bAllowAIControl;
 
+	static bool bFPSCounter;
+
 	static int TrackIndex;
 
 	static bool bStable;
