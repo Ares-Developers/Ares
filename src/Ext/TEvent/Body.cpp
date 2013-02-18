@@ -41,40 +41,63 @@ TechnoTypeClass* TEventExt::ExtData::GetTechnoType()
 /*!
 	\returns True if TechnoType exists at least count times, false otherwise.
 
-	\date 2012-05-09, 2013-02-09
+	\date 2012-05-09, 2013-02-09, 2013-02-17
 */
 bool TEventExt::ExtData::TechTypeExists()
 {
 	int count = this->AttachedToObject->arg;
 	TechnoTypeClass* pType = this->GetTechnoType();
 
-	// decreases count by the number of owned techno types. iff count is zero or less,
-	// this techno type exists at least 'count' times.
-	for(auto i=HouseClass::Array->start(); i<HouseClass::Array->end(); ++i) {
-		count -= (*i)->CountOwnedNow(pType);
+	if(pType->Insignificant || pType->DontScore) {
+		// check each techno and subtract one if the type matches.
+		for(auto i=TechnoClass::Array->start(); i<TechnoClass::Array->end(); ++i) {
+			if((*i)->GetTechnoType() == pType) {
+				count--;
 
-		if(count <= 0) {
-			return true;
+				if(count <= 0) {
+					return true;
+				}
+			}
+		}
+	} else {
+		// decreases count by the number of owned techno types. iff count is zero or less,
+		// this techno type exists at least 'count' times.
+		for(auto i=HouseClass::Array->start(); i<HouseClass::Array->end(); ++i) {
+			count -= (*i)->CountOwnedNow(pType);
+
+			if(count <= 0) {
+				return true;
+			}
 		}
 	}
 
-	return false;
+	return count <= 0;
 }
 
 // Gets whether the referenced TechnoType does not exist.
 /*!
 	\returns True if TechnoType does not exists, false otherwise.
 
-	\date 2012-05-09, 2013-02-09
+	\date 2012-05-09, 2013-02-09, 2013-02-17
 */
 bool TEventExt::ExtData::TechTypeDoesNotExist()
 {
 	TechnoTypeClass* pType = this->GetTechnoType();
 
-	// if any house owns this, this check fails.
-	for(auto i=HouseClass::Array->start(); i<HouseClass::Array->end(); ++i) {
-		if((*i)->CountOwnedNow(pType) > 0) {
-			return false;
+	if(pType->Insignificant || pType->DontScore) {
+		// we have to loop through all technos here, because game doesn't
+		// keep track of this type.
+		for(auto i=TechnoClass::Array->start(); i<TechnoClass::Array->end(); ++i) {
+			if((*i)->GetTechnoType() == pType) {
+				return false;
+			}
+		}		
+	} else {
+		// if any house owns this, this check fails.
+		for(auto i=HouseClass::Array->start(); i<HouseClass::Array->end(); ++i) {
+			if((*i)->CountOwnedNow(pType) > 0) {
+				return false;
+			}
 		}
 	}
 
