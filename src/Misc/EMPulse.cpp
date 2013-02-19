@@ -533,7 +533,7 @@ void EMPulse::announceAttack(TechnoClass * Techno) {
 
 		switch (rEvent) {
 			case Harvester:
-				if (RadarEventClass::Create(RADAREVENT_OREMINERUNDERATTACK, xy))
+				if (RadarEventClass::Create(RadarEventType::HarvesterAttacked, xy))
 					VoxClass::Play("EVA_OreMinerUnderAttack", -1, -1);
 				break;
 			case Base:
