@@ -40,7 +40,7 @@ DEFINE_HOOK(53B080, PsyDom_Fire, 5) {
 
 		// tell!
 		if(pData->SW_RadarEvent.Get()) {
-			RadarEventClass::Create(RADAREVENT_SUPERWEAPONLAUNCHED, cell);
+			RadarEventClass::Create(RadarEventType::SuperweaponActivated, cell);
 		}
 
 		// anim
@@ -274,7 +274,7 @@ DEFINE_HOOK(539EB0, LightningStorm_Start, 5) {
 					VocClass::PlayGlobal(pData->SW_ActivationSound, 1.0, 0);
 				}
 				if(pData->SW_RadarEvent.Get()) {
-					RadarEventClass::Create(RADAREVENT_SUPERWEAPONLAUNCHED, Coords);
+					RadarEventClass::Create(RadarEventType::SuperweaponActivated, Coords);
 				}
 
 				MapClass::Instance->RedrawSidebar(1);
@@ -845,7 +845,7 @@ DEFINE_HOOK(467E59, BulletClass_Update_NukeBall, 5) {
 							CellStruct coords;
 							pBullet->GetMapCoords(&coords);
 
-							RadarEventClass::Create(RADAREVENT_SUPERWEAPONLAUNCHED, coords);
+							RadarEventClass::Create(RadarEventType::SuperweaponActivated, coords);
 						}
 					}
 				}

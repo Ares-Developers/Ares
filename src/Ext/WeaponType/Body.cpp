@@ -257,7 +257,7 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 			
 			// if we have an abducting animation, play it
 			if (!!this->Abductor_AnimType){
-				AnimClass* Abductor_Anim = NULL;
+				AnimClass* Abductor_Anim = nullptr;
 				GAME_ALLOC(AnimClass, Abductor_Anim, this->Abductor_AnimType, &Bullet->posTgt);
 				//this->Abductor_Anim->Owner=Bullet->Owner->Owner;
 			}

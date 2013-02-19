@@ -43,8 +43,8 @@ bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 
 			// add radar events for source and target
 			if(pData->SW_RadarEvent.Get()) {
-				RadarEventClass::Create(RADAREVENT_SUPERWEAPONLAUNCHED, pSource->ChronoMapCoords);
-				RadarEventClass::Create(RADAREVENT_SUPERWEAPONLAUNCHED, *pCoords);
+				RadarEventClass::Create(RadarEventType::SuperweaponActivated, pSource->ChronoMapCoords);
+				RadarEventClass::Create(RadarEventType::SuperweaponActivated, *pCoords);
 			}
 
 			// cell and coords calculations
