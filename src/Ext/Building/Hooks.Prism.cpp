@@ -116,7 +116,7 @@ DEFINE_HOOK(4503F0, BuildingClass_Update_Prism, 9)
 					}
 				}
 				if(PrismStage == pcs_Master) {
-					if(ObjectClass *Target = pThis->Target) {
+					if(AbstractClass *Target = pThis->Target) {
 						if(pThis->GetFireError(Target, pThis->PrismTargetCoords.X, true) == FireError::OK) {
 							if(BulletClass *LaserBeam = pThis->Fire(Target, pThis->PrismTargetCoords.X)) {
 								BuildingTypeClass *pType = pThis->Type;
