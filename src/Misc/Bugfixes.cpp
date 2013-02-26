@@ -970,7 +970,7 @@ DEFINE_HOOK(720F37, sub_720EA0_NoLog, 5) // skip Theme::Stop
 	return 0x720F3C;
 }
 
-DEFINE_HOOK(720A58, sub_7209D0_NoLog, 6) // skip Theme::AI
+DEFINE_HOOK(720A61, sub_7209D0_NoLog, 5) // skip Theme::AI
 {
-	return 0x720A69;
+	return 0x720A66;
 }
