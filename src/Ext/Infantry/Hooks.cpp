@@ -117,7 +117,7 @@ DEFINE_HOOK(51E5E1, InfantryClass_GetCursorOverObject_MultiEngineerB, 7) {
 
 	// use a dedicated cursor
 	if(ret == act_Damage) {
-		Actions::Set(RulesExt::Global()->EngineerDamageCursor);
+		Actions::Set(&RulesExt::Global()->EngineerDamageCursor);
 	}
 
 	// return our action
