@@ -583,11 +583,18 @@ DEFINE_HOOK(62A2F8, ParasiteClass_PointerGotInvalid, 6)
 	GET(ParasiteClass *, Parasite, ESI);
 	GET(CoordStruct *, XYZ, EAX);
 
-	if(UnitClass *U = specific_cast<UnitClass *>(Parasite->Owner)) {
-		if(!U->Type->Naval && U->GetHeight() > 200) {
-			*XYZ = U->Location;
-			U->IsFallingDown = U->IsABomb = true;
-		}
+	auto Owner = Parasite->Owner;
+
+	bool allowed = false;
+	if(UnitClass *U = specific_cast<UnitClass *>(Owner)) {
+		allowed = !U->Type->Naval;
+	} else if(specific_cast<InfantryClass*>(Owner)) {
+		allowed = true;
+	}
+
+	if(allowed && Owner->GetHeight() > 200) {
+		*XYZ = Owner->Location;
+		Owner->IsFallingDown = Owner->IsABomb = true;
 	}
 
 	return 0;
