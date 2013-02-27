@@ -981,3 +981,20 @@ DEFINE_HOOK(720A61, sub_7209D0_NoLog, 5) // skip Theme::AI
 {
 	return 0x720A66;
 }
+
+// #908369, #1100953: units are still deployable when warping or falling
+DEFINE_HOOK(700E47, TechnoClass_CanDeploySlashUnload_Immobile, A)
+{
+	GET(UnitClass*, pThis, ESI);
+
+	CoordStruct crd;
+	CellClass * pCell = pThis->GetCell();
+	pCell->GetCoordsWithBridge(&crd);
+
+	// recreate replaced check, and also disallow if unit is still warping or dropping in.
+	if(pThis->IsUnderEMP() || pThis->IsWarpingIn() || pThis->IsFallingDown) {
+		return 0x700DCE;
+	}
+
+	return 0x700E59;
+}
