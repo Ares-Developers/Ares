@@ -39,14 +39,20 @@ TechnoTypeClass* TEventExt::ExtData::GetTechnoType()
 
 // Gets whether the referenced TechnoType exist at least 'count' times.
 /*!
+	\remark Returns false if the type cannot be resolved.
+
 	\returns True if TechnoType exists at least count times, false otherwise.
 
-	\date 2012-05-09, 2013-02-09, 2013-02-17
+	\date 2012-05-09, last updated 2013-03-03
 */
 bool TEventExt::ExtData::TechTypeExists()
 {
 	int count = this->AttachedToObject->arg;
 	TechnoTypeClass* pType = this->GetTechnoType();
+
+	if(!pType) {
+		return false;
+	}
 
 	if(pType->Insignificant || pType->DontScore) {
 		// check each techno and subtract one if the type matches.
@@ -76,13 +82,19 @@ bool TEventExt::ExtData::TechTypeExists()
 
 // Gets whether the referenced TechnoType does not exist.
 /*!
+	\remark Returns false if the type cannot be resolved.
+
 	\returns True if TechnoType does not exists, false otherwise.
 
-	\date 2012-05-09, 2013-02-09, 2013-02-17
+	\date 2012-05-09, last updated 2013-03-03
 */
 bool TEventExt::ExtData::TechTypeDoesNotExist()
 {
 	TechnoTypeClass* pType = this->GetTechnoType();
+
+	if(!pType) {
+		return false;
+	}
 
 	if(pType->Insignificant || pType->DontScore) {
 		// we have to loop through all technos here, because game doesn't
