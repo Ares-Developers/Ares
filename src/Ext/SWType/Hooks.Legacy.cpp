@@ -163,43 +163,66 @@ DEFINE_HOOK(53B080, PsyDom_Fire, 5) {
 	return 0;
 }
 
-DEFINE_HOOK(53C321, ScenarioClass_UpdateLighting_PsyDom, 5) {
-	if(SuperClass *pSuper = SW_PsychicDominator::CurrentPsyDom) {
-		if(SWTypeExt::ChangeLighting(pSuper)) {
-			R->EAX(1);
-			return 0x53C43F;
-		} else {
-			return 0x53C38E;
+// replace entire function
+DEFINE_HOOK(53C280, ScenarioClass_UpdateLighting, 5)
+{
+	bool isSpecial = true;
+	int a = 0;
+	int r = 0;
+	int g = 0;
+	int b = 0;
+
+	auto scen = ScenarioClass::Instance;
+	SuperWeaponTypeClass* pType = nullptr;
+
+	if(LightningStorm::Status() == 1 || ChronoScreenEffect::Status()) {
+		// nuke flash
+		a = scen->NukeAmbient;
+		r = scen->NukeRed;
+		g = scen->NukeGreen;
+		b = scen->NukeBlue;
+
+		pType = SW_NuclearMissile::CurrentNukeType;
+	} else if(LightningStorm::Active()) {
+		// lightning storm
+		a = scen->IonAmbient;
+		r = scen->IonRed;
+		g = scen->IonGreen;
+		b = scen->IonBlue;
+
+		if(SuperClass *pSuper = SW_LightningStorm::CurrentLightningStorm) {
+			pType = pSuper->Type;
 		}
+	} else if(PsyDom::Status() && PsyDom::Status() != PsychicDominatorStatus::Over) {
+		// psychic dominator
+		a = scen->DominatorAmbient;
+		r = scen->DominatorRed;
+		g = scen->DominatorGreen;
+		b = scen->DominatorBlue;
+
+		if(SuperClass *pSuper = SW_PsychicDominator::CurrentPsyDom) {
+			pType = pSuper->Type;
+		}
+	} else {
+		// no special lightning
+		isSpecial = false;
 	}
 
-	return 0;
-}
-
-DEFINE_HOOK(53C2A6, ScenarioClass_UpdateLighting_LightningStorm, 5) {
-	if(SuperClass *pSuper = SW_LightningStorm::CurrentLightningStorm) {
-		if(SWTypeExt::ChangeLighting(pSuper)) {
-			R->EAX(1);
-			return 0x53C43F;
-		} else {
-			return 0x53C313;
-		}
+	// update the lighting
+	if(pType) {
+		// active SW
+		SWTypeExt::ChangeLighting(pType);
+	} else if(isSpecial) {
+		// something changed the lighting
+		scen->AmbientTarget = a;
+		scen->RecalcLighting(r * 10, g * 10, b * 10, 1);
+	} else {
+		// default lighting
+		scen->AmbientTarget = scen->AmbientOriginal;
+		scen->RecalcLighting(-1, -1, -1, 0);
 	}
 
-	return 0;
-}
-
-DEFINE_HOOK(53C3B1, ScenarioClass_UpdateLighting_Nuke, 5) {
-	if(SuperWeaponTypeClass *pType = SW_NuclearMissile::CurrentNukeType) {
-		if(SWTypeExt::ChangeLighting(pType)) {
-			R->EAX(1);
-			return 0x53C43F;
-		} else {
-			return 0x53C29D;
-		}
-	}
-
-	return 0;
+	return 0x53C441;
 }
 
 // skip the entire method, we handle it ourselves
