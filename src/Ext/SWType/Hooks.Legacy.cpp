@@ -290,77 +290,77 @@ DEFINE_HOOK(539EB0, LightningStorm_Start, 5) {
 }
 
 // this is a complete rewrite of LightningStorm::Update.
-DEFINE_HOOK(53A6C0, LightningStorm_Update, 5) {
-	if(SuperClass* pSuper = SW_LightningStorm::CurrentLightningStorm) {
-
-		// switch lightning for nuke
-		if(NukeFlash::Duration() != -1) {
-			if(NukeFlash::StartTime() + NukeFlash::Duration() < Unsorted::CurrentFrame) {
-				int status = LightningStorm::Status();
-				if(status == 1) {
-					LightningStorm::Status(2);
-					NukeFlash::StartTime(Unsorted::CurrentFrame);
-					NukeFlash::Duration(15);
-					ScenarioClass::Instance->UpdateLighting();
-					MapClass::Instance->RedrawSidebar(1);
-				} else if(status == 2) {
-					SW_NuclearMissile::CurrentNukeType = NULL;
-					LightningStorm::Status(0);
-				}
+DEFINE_HOOK(53A6CF, LightningStorm_Update, 7) {
+	// switch lightning for nuke
+	if(NukeFlash::Duration() != -1) {
+		if(NukeFlash::StartTime() + NukeFlash::Duration() < Unsorted::CurrentFrame) {
+			int status = LightningStorm::Status();
+			if(status == 1) {
+				LightningStorm::Status(2);
+				NukeFlash::StartTime(Unsorted::CurrentFrame);
+				NukeFlash::Duration(15);
+				ScenarioClass::Instance->UpdateLighting();
+				MapClass::Instance->RedrawSidebar(1);
+			} else if(status == 2) {
+				SW_NuclearMissile::CurrentNukeType = NULL;
+				LightningStorm::Status(0);
 			}
 		}
+	}
 
-		// update other screen effects
-		PsyDom::Update();
-		ChronoScreenEffect::Update();
+	// update other screen effects
+	PsyDom::Update();
+	ChronoScreenEffect::Update();
 
 		// remove all bolts from the list that are halfway done
-		if(LightningStorm::BoltsPresent->Count > 0) {
-			for(int i=LightningStorm::BoltsPresent->Count-1; i>=0; --i) {
-				if(AnimClass *pAnim = LightningStorm::BoltsPresent->GetItem(i)) {
-					if(pAnim->CurrentFrame >= pAnim->Type->GetImage()->Frames / 2) {
-						LightningStorm::BoltsPresent->RemoveItem(i);
-					}
-				}
-			}
-		}
-
-		// find the clouds that should strike right now
-		for(int i=LightningStorm::CloudsManifesting->Count-1; i>=0; --i) {
-			if(AnimClass *pAnim = LightningStorm::CloudsManifesting->GetItem(i)) {
+	if(LightningStorm::BoltsPresent->Count > 0) {
+		for(int i=LightningStorm::BoltsPresent->Count-1; i>=0; --i) {
+			if(AnimClass *pAnim = LightningStorm::BoltsPresent->GetItem(i)) {
 				if(pAnim->CurrentFrame >= pAnim->Type->GetImage()->Frames / 2) {
-					CoordStruct crdStrike;
-					pAnim->GetCoords(&crdStrike);
-					LightningStorm::Strike2(crdStrike);
-					LightningStorm::CloudsManifesting->RemoveItem(i);
+					LightningStorm::BoltsPresent->RemoveItem(i);
 				}
 			}
 		}
+	}
 
-		// all currently present clouds have to disappear first
-		if(LightningStorm::CloudsPresent->Count <= 0) {
-			// end the lightning storm
-			if(LightningStorm::TimeToEnd()) {
-				if(LightningStorm::Active()) {
-					CellStruct empty = {0, 0};
-					LightningStorm::Active(false);
-					LightningStorm::Owner(NULL);
-					LightningStorm::Coords(empty);
-					SW_LightningStorm::CurrentLightningStorm = NULL;
-					ScenarioClass::Instance->UpdateLighting();
-				}
-				LightningStorm::TimeToEnd(false);
+	// find the clouds that should strike right now
+	for(int i=LightningStorm::CloudsManifesting->Count-1; i>=0; --i) {
+		if(AnimClass *pAnim = LightningStorm::CloudsManifesting->GetItem(i)) {
+			if(pAnim->CurrentFrame >= pAnim->Type->GetImage()->Frames / 2) {
+				CoordStruct crdStrike;
+				pAnim->GetCoords(&crdStrike);
+				LightningStorm::Strike2(crdStrike);
+				LightningStorm::CloudsManifesting->RemoveItem(i);
 			}
-		} else {
-			for(int i=LightningStorm::CloudsPresent->Count-1; i>=0; --i) {
-				if(AnimClass *pAnim = LightningStorm::CloudsPresent->GetItem(i)) {
-					if(pAnim->CurrentFrame >= pAnim->Type->GetImage()->Frames - 1) {
-						LightningStorm::CloudsPresent->RemoveItem(i);
-					}
+		}
+	}
+
+	// all currently present clouds have to disappear first
+	if(LightningStorm::CloudsPresent->Count <= 0) {
+		// end the lightning storm
+		if(LightningStorm::TimeToEnd()) {
+			if(LightningStorm::Active()) {
+				CellStruct empty = {0, 0};
+				LightningStorm::Active(false);
+				LightningStorm::Owner(NULL);
+				LightningStorm::Coords(empty);
+				SW_LightningStorm::CurrentLightningStorm = NULL;
+				ScenarioClass::Instance->UpdateLighting();
+			}
+			LightningStorm::TimeToEnd(false);
+		}
+	} else {
+		for(int i=LightningStorm::CloudsPresent->Count-1; i>=0; --i) {
+			if(AnimClass *pAnim = LightningStorm::CloudsPresent->GetItem(i)) {
+				if(pAnim->CurrentFrame >= pAnim->Type->GetImage()->Frames - 1) {
+					LightningStorm::CloudsPresent->RemoveItem(i);
 				}
 			}
 		}
+	}
 
+	// check for presence of Ares SW
+	if(SuperClass* pSuper = SW_LightningStorm::CurrentLightningStorm) {
 		CellStruct LSCell = LightningStorm::Coords();
 
 		SuperWeaponTypeClass *pType = pSuper->Type;
@@ -488,11 +488,11 @@ DEFINE_HOOK(53A6C0, LightningStorm_Update, 5) {
 		}
 
 		// jump over everything
-		return 0x53AB4C;
+		return 0x53AB45;
 	}
 
 	// still support old logic for triggers
-	return 0;
+	return 0x53A8FF;
 }
 
 // create a cloud.
