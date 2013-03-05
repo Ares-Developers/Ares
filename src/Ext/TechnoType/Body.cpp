@@ -361,7 +361,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	// #245 custom missiles
 	if(auto pAircraftType = specific_cast<AircraftTypeClass*>(pThis)) {
 		this->IsCustomMissile.Read(&exINI, section, "Missile.Custom");
-		this->CustomMissileData.Read(&exINI, section, NULL);
+		this->CustomMissileData.Read(&exINI, section, "Missile");
 		this->CustomMissileData.GetEx()->Type = pAircraftType;
 		this->CustomMissileWarhead.Parse(&exINI, section, "Missile.Warhead");
 		this->CustomMissileEliteWarhead.Parse(&exINI, section, "Missile.EliteWarhead");

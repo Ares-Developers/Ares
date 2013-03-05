@@ -499,64 +499,76 @@ void Valueable<RocketStruct>::Read(INI_EX *parser, const char* pSection, const c
 	Customizable<bool> BoolPlaceholder;
 	Customizable<int> IntPlaceholder;
 	Customizable<float> FloatPlaceholder;
+	Customizable<AircraftTypeClass*> TypePlaceholder;
 
 	RocketStruct* rocket = this->GetEx();
 
+	char pFlagName[0x40];
+	_snprintf(pFlagName, 0x40, "%s.PauseFrames", pKey);
 	IntPlaceholder.Set(rocket->PauseFrames);
-	IntPlaceholder.Read(parser, pSection, "Missile.PauseFrames");
+	IntPlaceholder.Read(parser, pSection, pFlagName);
 	rocket->PauseFrames = IntPlaceholder.Get();
 
+	_snprintf(pFlagName, 0x40, "%s.TiltFrames", pKey);
 	IntPlaceholder.Set(rocket->TiltFrames);
-	IntPlaceholder.Read(parser, pSection, "Missile.TiltFrames");
+	IntPlaceholder.Read(parser, pSection, pFlagName);
 	rocket->TiltFrames = IntPlaceholder.Get();
 
+	_snprintf(pFlagName, 0x40, "%s.PitchInitial", pKey);
 	FloatPlaceholder.Set(rocket->PitchInitial);
-	FloatPlaceholder.Read(parser, pSection, "Missile.PitchInitial");
+	FloatPlaceholder.Read(parser, pSection, pFlagName);
 	rocket->PitchInitial = FloatPlaceholder.Get();
 
+	_snprintf(pFlagName, 0x40, "%s.PitchFinal", pKey);
 	FloatPlaceholder.Set(rocket->PitchFinal);
-	FloatPlaceholder.Read(parser, pSection, "Missile.PitchFinal");
+	FloatPlaceholder.Read(parser, pSection, pFlagName);
 	rocket->PitchFinal = FloatPlaceholder.Get();
 
+	_snprintf(pFlagName, 0x40, "%s.TurnRate", pKey);
 	FloatPlaceholder.Set(rocket->TurnRate);
-	FloatPlaceholder.Read(parser, pSection, "Missile.TurnRate");
+	FloatPlaceholder.Read(parser, pSection, pFlagName);
 	rocket->TurnRate = FloatPlaceholder.Get();
 
 	// sic! integer read like a float.
+	_snprintf(pFlagName, 0x40, "%s.RaiseRate", pKey);
 	FloatPlaceholder.Set(static_cast<float>(rocket->RaiseRate));
-	FloatPlaceholder.Read(parser, pSection, "Missile.RaiseRate");
+	FloatPlaceholder.Read(parser, pSection, pFlagName);
 	rocket->RaiseRate = static_cast<int>(Game::F2I(FloatPlaceholder.Get()));
 
+	_snprintf(pFlagName, 0x40, "%s.Acceleration", pKey);
 	FloatPlaceholder.Set(rocket->Acceleration);
-	FloatPlaceholder.Read(parser, pSection, "Missile.Acceleration");
+	FloatPlaceholder.Read(parser, pSection, pFlagName);
 	rocket->Acceleration = FloatPlaceholder.Get();
 
+	_snprintf(pFlagName, 0x40, "%s.Altitude", pKey);
 	IntPlaceholder.Set(rocket->Altitude);
-	IntPlaceholder.Read(parser, pSection, "Missile.Altitude");
+	IntPlaceholder.Read(parser, pSection, pFlagName);
 	rocket->Altitude = IntPlaceholder.Get();
 
+	_snprintf(pFlagName, 0x40, "%s.Damage", pKey);
 	IntPlaceholder.Set(rocket->Damage);
-	IntPlaceholder.Read(parser, pSection, "Missile.Damage");
+	IntPlaceholder.Read(parser, pSection, pFlagName);
 	rocket->Damage = IntPlaceholder.Get();
 	
+	_snprintf(pFlagName, 0x40, "%s.EliteDamage", pKey);
 	IntPlaceholder.Set(rocket->EliteDamage);
-	IntPlaceholder.Read(parser, pSection, "Missile.EliteDamage");
+	IntPlaceholder.Read(parser, pSection, pFlagName);
 	rocket->EliteDamage = IntPlaceholder.Get();
 	
+	_snprintf(pFlagName, 0x40, "%s.BodyLength", pKey);
 	IntPlaceholder.Set(rocket->BodyLength);
-	IntPlaceholder.Read(parser, pSection, "Missile.BodyLength");
+	IntPlaceholder.Read(parser, pSection, pFlagName);
 	rocket->BodyLength = IntPlaceholder.Get();
 
+	_snprintf(pFlagName, 0x40, "%s.LazyCurve", pKey);
 	BoolPlaceholder.Set(rocket->LazyCurve);
-	BoolPlaceholder.Read(parser, pSection, "Missile.LazyCurve");
+	BoolPlaceholder.Read(parser, pSection, pFlagName);
 	rocket->LazyCurve = BoolPlaceholder.Get();
 
-	if(parser->ReadString(pSection, "Missile.Type")) {
-		rocket->Type = AircraftTypeClass::Find(Ares::readBuffer);
-		if(!rocket->Type) {
-			Debug::INIParseFailed(pSection, pKey, Ares::readBuffer, "Not an AircraftType.");
-		}
-	}
+	_snprintf(pFlagName, 0x40, "%s.Type", pKey);
+	TypePlaceholder.Set(rocket->Type);
+	TypePlaceholder.Parse(parser, pSection, pFlagName);
+	rocket->Type = TypePlaceholder.Get();
 };
 
 template<class T>
