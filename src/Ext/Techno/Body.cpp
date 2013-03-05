@@ -288,7 +288,7 @@ unsigned int TechnoExt::ExtData::AlphaFrame(SHPStruct *Image) {
 
 bool TechnoExt::ExtData::DrawVisualFX() {
 	TechnoClass * Object = this->AttachedToObject;
-	if(Object->VisualCharacter(true, Object->Owner) == VisualType::Normal) {
+	if(Object->VisualCharacter(VARIANT_TRUE, Object->Owner) == VisualType::Normal) {
 		if(!Object->Disguised) {
 			return true;
 		}
