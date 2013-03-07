@@ -11,6 +11,7 @@
 
 #include <WarheadTypeClass.h>
 #include <MessageListClass.h>
+#include <Notifications.h>
 
 template<> const DWORD Extension<SuperWeaponTypeClass>::Canary = 0x55555555;
 Container<SWTypeExt> SWTypeExt::ExtMap;
@@ -482,30 +483,20 @@ void SWTypeExt::ExtData::PrintMessage(char* pMessage, HouseClass* pFirer) {
 
 void SWTypeExt::ClearChronoAnim(SuperClass *pThis)
 {
-	DynamicVectorClass<SuperClass*>* pSupers = (DynamicVectorClass<SuperClass*>*)0xB0F5B8;
-
 	if(pThis->Animation) {
 		pThis->Animation->RemainingIterations = 0;
 		pThis->Animation = NULL;
-		int idx = pSupers->FindItemIndex(&pThis);
-		if(idx != -1) {
-			pSupers->RemoveItem(idx);
-		}
+		PointerExpiredNotification::NotifyInvalidAnim.Remove(pThis);
 	}
 
 	if(pThis->unknown_bool_6C) {
-		int idx = pSupers->FindItemIndex(&pThis);
-		if(idx != -1) {
-			pSupers->RemoveItem(idx);
-		}
+		PointerExpiredNotification::NotifyInvalidAnim.Remove(pThis);
 		pThis->unknown_bool_6C = false;
 	}
 }
 
 void SWTypeExt::CreateChronoAnim(SuperClass *pThis, CoordStruct *pCoords, AnimTypeClass *pAnimType)
 {
-	DynamicVectorClass<SuperClass*>* pSupers = (DynamicVectorClass<SuperClass*>*)0xB0F5B8;
-
 	ClearChronoAnim(pThis);
 	
 	if(pAnimType && pCoords) {
@@ -515,7 +506,7 @@ void SWTypeExt::CreateChronoAnim(SuperClass *pThis, CoordStruct *pCoords, AnimTy
 			SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pThis->Type);
 			pAnim->Invisible = !pData->IsAnimVisible(pThis->Owner);
 			pThis->Animation = pAnim;
-			pSupers->AddItem(pThis);
+			PointerExpiredNotification::NotifyInvalidAnim.Add(pThis);
 		}
 	}
 }
