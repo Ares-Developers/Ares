@@ -55,6 +55,8 @@ public:
 
 	static int TrackIndex;
 
+	static PVOID pExceptionHandler;
+
 	static bool bStable;
 	static bool bStableNotification;
 	static void UpdateStability();

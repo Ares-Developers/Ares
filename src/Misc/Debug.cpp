@@ -181,10 +181,11 @@ void Debug::PrepareSnapshotDirectory(std::wstring &buffer) {
 	CreateDirectoryW(buffer.c_str(), NULL);
 }
 
-LONG WINAPI Debug::ExceptionHandler(int code, LPEXCEPTION_POINTERS pExs)
+LONG CALLBACK Debug::ExceptionHandler(PEXCEPTION_POINTERS pExs)
 {
 	Debug::FreeMouse();
 	Debug::Log("Exception handler fired!\n");
+	Debug::Log("Exception %X at %p\n", pExs->ExceptionRecord->ExceptionCode, pExs->ExceptionRecord->ExceptionAddress);
 	SetWindowTextW(Game::hWnd, L"Fatal Error - Yuri's Revenge");
 //	if (IsDebuggerAttached()) return EXCEPTION_CONTINUE_SEARCH;
 	if (pExs->ExceptionRecord->ExceptionCode == ERROR_MOD_NOT_FOUND ||
@@ -429,9 +430,9 @@ DEFINE_HOOK_AGAIN(4A4AC0, Debug_Log, 1)
 //ifdef DUMP_EXTENSIVE
 DEFINE_HOOK(4C8FE0, Exception_Handler, 9)
 {
-	GET(int, code, ECX);
+	//GET(int, code, ECX);
 	GET(LPEXCEPTION_POINTERS, pExs, EDX);
-	Debug::ExceptionHandler(code, pExs);
+	Debug::ExceptionHandler(pExs);
 }
 //endif
 

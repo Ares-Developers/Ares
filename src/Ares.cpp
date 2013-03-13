@@ -30,6 +30,7 @@
 
 //Init Statics
 HANDLE Ares::hInstance = 0;
+PVOID Ares::pExceptionHandler = nullptr;
 bool Ares::bNoLogo = false;
 bool Ares::bNoCD = false;
 bool Ares::bTestingRun = false;
@@ -133,12 +134,22 @@ void __stdcall Ares::ExeRun()
 	Unsorted::Savegame_Magic = SAVEGAME_MAGIC;
 	Game::bVideoBackBuffer = false;
 	Game::bAllowVRAMSidebar = false;
+
+	// install a new exception handler, if this version of Windows supports it
+	if(GetProcAddress(GetModuleHandle(TEXT("kernel32.dll")), "AddVectoredExceptionHandler")) {
+		Ares::pExceptionHandler = AddVectoredExceptionHandler(1, Debug::ExceptionHandler);
+	}
 }
 
 void __stdcall Ares::ExeTerminate()
 {
 	CloseConfig(&Ares::GlobalControls::INI);
 	Debug::LogFileClose(111);
+
+	if(Ares::pExceptionHandler) {
+		RemoveVectoredExceptionHandler(Ares::pExceptionHandler);
+		Ares::pExceptionHandler = nullptr;
+	}
 }
 
 CCINIClass* Ares::OpenConfig(const char* file) {
