@@ -105,6 +105,18 @@ public:
 		return this->HasValue;
 	}
 
+	using Valueable<T>::Get;
+
+	T Get(T defVal) const {
+		return this->isset() ? Valueable<T>::Get() : defVal;
+	}
+
+	using Valueable<T>::GetEx;
+
+	T* GetEx(T* defVal) const {
+		return this->isset() ? Valueable<T>::GetEx() : defVal;
+	}
+
 	virtual void Set(T val) {
 		Valueable<T>::Set(val);
 		this->HasValue = true;
