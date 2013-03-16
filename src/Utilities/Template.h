@@ -28,17 +28,15 @@ public:
 		return this->Get();
 	}
 
-	operator T* () {
-		return this->GetEx();
-	}
+	// only allow this when explict works, otherwise
+	// the always-non-null pointer will be used in conditionals.
+	//explicit operator T* () {
+	//	return this->GetEx();
+	//}
 
 	T* operator & () {
 		return this->GetEx();
 	}
-
-	bool operator != (T other) const {
-		return this->Get() != other;
-	};
 
 	bool operator ! () const {
 		return this->Get() == 0;
@@ -88,9 +86,10 @@ public:
 		return this->Get();
 	}
 
-	operator T* () {
-		return this->GetEx();
-	}
+	// needs explicit
+	//explicit operator T* () {
+	//	return this->GetEx();
+	//}
 
 	T* operator & () {
 		return this->GetEx();
@@ -213,19 +212,6 @@ public:
 			this->Customized = true;
 		}
 	}
-
-	bool operator == (T other) const {
-		return this->Get() == other;
-	};
-
-	bool operator != (T other) const {
-		return this->Get() != other;
-	};
-
-	bool operator ! () const {
-		return this->Get() == 0;
-	};
-
 };
 
 template<typename T, typename Lookuper>
@@ -280,19 +266,6 @@ public:
 			this->Customized = true;
 		}
 	}
-
-	bool operator == (T other) const {
-		return this->Get() == other;
-	};
-
-	bool operator != (T other) const {
-		return this->Get() != other;
-	};
-
-	bool operator ! () const {
-		return this->Get() == 0;
-	};
-
 };
 /*
  * This template is for something that varies depending on a unit's Veterancy Level
@@ -656,17 +629,13 @@ public:
 		return this->Get();
 	}
 
-	operator V* () {
-		return this->GetEx();
-	}
+	// explicit operator V* () {
+	//	return this->GetEx();
+	//}
 
 	V* operator & () {
 		return this->GetEx();
 	}
-
-	bool operator != (T other) const {
-		return this->Get() != other;
-	};
 
 	bool operator ! () const {
 		return this->Get() == 0;
