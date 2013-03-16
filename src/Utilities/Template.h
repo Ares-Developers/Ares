@@ -585,50 +585,15 @@ void ValueableVector<TechnoTypeClass *>::Read(INI_EX *parser, const char* pSecti
 }
 
 template<typename T>
-class ValueableEnum {
+class ValueableEnum : public Valueable<typename T::Value> {
 public:
-	typedef typename T::Value V;
-	//typedef typename CompoundT<T>::BaseT MyBase;
-protected:
-	V    Value;
-public:
-	ValueableEnum(V Default = V()) : Value(Default) {};
+	typedef typename T::Value ValueType;
 
-	operator V () const {
-		return this->Get();
-	}
-
-	// explicit operator V* () {
-	//	return this->GetEx();
-	//}
-
-	V* operator & () {
-		return this->GetEx();
-	}
-
-	bool operator ! () const {
-		return this->Get() == 0;
-	};
-
-	virtual V Get() const {
-		return this->Value;
-	}
-
-	virtual V * GetEx() {
-		return &this->Value;
-	}
-
-	virtual void Set(V val) {
-		this->Value = val;
-	}
-
-	virtual void SetEx(V* val) {
-		this->Value = *val;
-	}
+	ValueableEnum(ValueType Default = ValueType()) : Valueable<ValueType>(Default) {};
 
 	void Read(INI_EX *parser, const char* pSection, const char* pKey) {
 		if(parser->ReadString(pSection, pKey)) {
-			V buffer = this->Get();
+			ValueType buffer = this->Get();
 			if(T::Parse(Ares::readBuffer, &buffer)) {
 				this->Set(buffer);
 			}
