@@ -133,6 +133,45 @@ public:
 	}
 };
 
+template<typename T, typename Lookuper>
+class NullableIdx : public ValueableIdx<T, Lookuper> {
+protected:
+	bool HasValue;
+public:
+	NullableIdx() : ValueableIdx<T, Lookuper>(T()), HasValue(false) {};
+	NullableIdx(T Val) : ValueableIdx<T, Lookuper>(Val), HasValue(true) {};
+
+	bool isset() const {
+		return this->HasValue;
+	}
+
+	using Valueable<T>::Get;
+
+	T Get(T defVal) const {
+		return this->isset() ? Valueable<T>::Get() : defVal;
+	}
+
+	using Valueable<T>::GetEx;
+
+	T* GetEx(T* defVal) const {
+		return this->isset() ? Valueable<T>::GetEx() : defVal;
+	}
+
+	virtual void Set(T val) {
+		ValueableIdx<T, Lookuper>::Set(val);
+		this->HasValue = true;
+	}
+
+	virtual void SetEx(T* val) {
+		ValueableIdx<T, Lookuper>::SetEx(val);
+		this->HasValue = true;
+	}
+
+	void Reset() {
+		Valueable<T>::Set(T());
+		this->HasValue = false;
+	}
+};
 
 /*
  * This one is for data that defaults to some original flag value but can be overwritten with custom values
