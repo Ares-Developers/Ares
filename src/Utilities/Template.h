@@ -76,40 +76,9 @@ public:
 
 // more fun
 template<typename T, typename Lookuper>
-class ValueableIdx {
-protected:
-	T    Value;
+class ValueableIdx : public Valueable<T> {
 public:
-	ValueableIdx(T Default) : Value(Default) {};
-
-	operator T () const {
-		return this->Get();
-	}
-
-	// needs explicit
-	//explicit operator T* () {
-	//	return this->GetEx();
-	//}
-
-	T* operator & () {
-		return this->GetEx();
-	}
-
-	virtual T Get() const {
-		return this->Value;
-	}
-
-	virtual void Set(T val) {
-		this->Value = val;
-	}
-
-	virtual T* GetEx() {
-		return &this->Value;
-	}
-
-	virtual void SetEx(T* val) {
-		this->Value = *val;
-	}
+	ValueableIdx(T Default) : Valueable<T>(Default) {};
 
 	void Read(INI_EX *parser, const char* pSection, const char* pKey) {
 		if(parser->ReadString(pSection, pKey)) {
