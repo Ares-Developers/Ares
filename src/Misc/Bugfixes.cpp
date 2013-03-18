@@ -998,3 +998,14 @@ DEFINE_HOOK(700E47, TechnoClass_CanDeploySlashUnload_Immobile, A)
 
 	return 0x700E59;
 }
+
+// #1156439: support new sides for AITriggerTypes
+DEFINE_HOOK(41E88D, AITriggerTypesClass_ConditionMet_Sides, 6)
+{
+	GET(AITriggerTypeClass*, pThis, ESI);
+	GET(HouseClass*, pHouse, EDI);
+
+	// required side is offset by one. zero disables the check.
+	bool allowSide = !pThis->SideIndex || pHouse->SideIndex == pThis->SideIndex - 1;
+	return allowSide ? 0x41E8D7 : 0x41E8A1;
+}
