@@ -489,9 +489,9 @@ void SWTypeExt::ClearChronoAnim(SuperClass *pThis)
 		PointerExpiredNotification::NotifyInvalidAnim.Remove(pThis);
 	}
 
-	if(pThis->unknown_bool_6C) {
+	if(pThis->AnimationGotInvalid) {
 		PointerExpiredNotification::NotifyInvalidAnim.Remove(pThis);
-		pThis->unknown_bool_6C = false;
+		pThis->AnimationGotInvalid = false;
 	}
 }
 

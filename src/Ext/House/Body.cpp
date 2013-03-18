@@ -125,7 +125,7 @@ signed int HouseExt::BuildLimitRemaining(HouseClass *pHouse, TechnoTypeClass *pI
 {
 	int BuildLimit = pItem->BuildLimit;
 	if(BuildLimit >= 0) {
-		BuildLimit -= pHouse->CountOwnedNow(pItem);
+		BuildLimit -= pHouse->CountOwnedNowTotal(pItem);
 	} else {
 		BuildLimit = abs(BuildLimit);
 		BuildLimit -= pHouse->CountOwnedEver(pItem);
