@@ -164,7 +164,7 @@ bool TechnoExt::EjectSurvivor(FootClass *Survivor, CoordStruct *loc, bool Select
 		Survivor->Scatter(0xB1CFE8, 1, 0);
 		Survivor->QueueMission(Survivor->Owner->ControlledByHuman() ? mission_Guard : mission_Hunt, 0);
 	}
-	Survivor->unknown_bool_690 = Survivor->unknown_bool_691 = false;
+	Survivor->ShouldEnterOccupiable = Survivor->ShouldGarrisonStructure = false;
 
 	if(Select) {
 		Survivor->Select();

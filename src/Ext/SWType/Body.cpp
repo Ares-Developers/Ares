@@ -493,12 +493,12 @@ void SWTypeExt::ClearChronoAnim(SuperClass *pThis)
 		}
 	}
 
-	if(pThis->unknown_bool_6C) {
+	if(pThis->AnimationGotInvalid) {
 		int idx = pSupers->FindItemIndex(&pThis);
 		if(idx != -1) {
 			pSupers->RemoveItem(idx);
 		}
-		pThis->unknown_bool_6C = false;
+		pThis->AnimationGotInvalid = false;
 	}
 }
 
