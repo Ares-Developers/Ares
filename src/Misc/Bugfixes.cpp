@@ -1009,3 +1009,44 @@ DEFINE_HOOK(41E88D, AITriggerTypesClass_ConditionMet_Sides, 6)
 	bool allowSide = !pThis->SideIndex || pHouse->SideIndex == pThis->SideIndex - 1;
 	return allowSide ? 0x41E8D7 : 0x41E8A1;
 }
+
+// #1156943, #1156937: replace the engineer check, because they were smart
+// enough to use the pointer right before checking whether it's null, and
+// even if it isn't, they build a possible infinite loop.
+DEFINE_HOOK(44A5F0, BuildingClass_Mi_Selling_EngineerFreeze, 6)
+{
+	GET(BuildingClass*, pThis, EBP);
+	GET(InfantryTypeClass*, pType, ESI);
+	LEA_STACK(bool*, pEngineerSpawned, 0x13);
+
+	if(*pEngineerSpawned && pType && pType->Engineer) {
+		// randomize until probability is below 0.01%
+		// for only the Engineer tag being returned.
+		for(int i=9; i>=0; --i) {
+			pType = !i ? nullptr : pThis->GetCrew();
+
+			if(!pType || !pType->Engineer) {
+				break;
+			}
+		}
+	}
+
+	if(pType && pType->Engineer) {
+		*pEngineerSpawned = true;
+	}
+
+	R->ESI(pType);
+	return 0x44A628;
+}
+
+// #1156943: they check for type, and for the instance, yet
+// the Log call uses the values as if nothing happened.
+DEFINE_HOOK(4430E8, BuildingClass_Demolish_LogCrash, 6)
+{
+	GET(BuildingClass*, pThis, EDI);
+	GET(InfantryClass*, pInf, ESI);
+
+	R->EDX(pThis ? pThis->Type->Name : "<none>");
+	R->EAX(pInf ? pInf->Type->Name : "<none>");
+	return 0x4430FA;
+}
