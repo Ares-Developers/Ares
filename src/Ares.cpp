@@ -136,8 +136,10 @@ void __stdcall Ares::ExeRun()
 	Game::bAllowVRAMSidebar = false;
 
 	// install a new exception handler, if this version of Windows supports it
-	if(GetProcAddress(GetModuleHandle(TEXT("kernel32.dll")), "AddVectoredExceptionHandler")) {
-		Ares::pExceptionHandler = AddVectoredExceptionHandler(1, Debug::ExceptionHandler);
+	if(HINSTANCE handle = GetModuleHandle(TEXT("kernel32.dll"))) {
+		if(GetProcAddress(handle, "AddVectoredExceptionHandler")) {
+			Ares::pExceptionHandler = AddVectoredExceptionHandler(1, Debug::ExceptionHandler);
+		}
 	}
 }
 
