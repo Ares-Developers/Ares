@@ -130,7 +130,7 @@ void WriteLog(const FootClass* it, int idx, DWORD checksum, FILE * F) {
 template<>
 void WriteLog(const InfantryClass* it, int idx, DWORD checksum, FILE * F) {
 	WriteLog<FootClass>(it, idx, checksum, F);
-	fprintf(F, "; Speed %d", Game::F2I(it->SpeedPercentage * 256));
+	fprintf(F, "; Speed %%lld", Game::F2I(it->SpeedPercentage * 256));
 }
 
 template<>
@@ -148,7 +148,7 @@ void WriteLog(const UnitClass* it, int idx, DWORD checksum, FILE * F) {
 template<>
 void WriteLog(const AircraftClass* it, int idx, DWORD checksum, FILE * F) {
 	WriteLog<FootClass>(it, idx, checksum, F);
-	fprintf(F, "; Speed %d; Height: %d", Game::F2I(it->SpeedPercentage * 256), it->GetHeight());
+	fprintf(F, "; Speed %lld; Height: %d", Game::F2I(it->SpeedPercentage * 256), it->GetHeight());
 }
 
 template<>
@@ -168,7 +168,7 @@ void WriteLog(const HouseClass* it, int idx, DWORD checksum, FILE * F) {
 
 	auto House = const_cast<HouseClass*>(it);
 
-	fprintf(F, "; CurrentPlayer: %d; ColorScheme: %s; ID: %d; HouseType: %s; Edge: %d; StartingAllies: %d; Startspot: %d,%d; Visionary: %d; MapIsClear: %d; Money: %d",
+	fprintf(F, "; CurrentPlayer: %d; ColorScheme: %s; ID: %d; HouseType: %s; Edge: %d; StartingAllies: %u; Startspot: %d,%d; Visionary: %d; MapIsClear: %d; Money: %d",
 		it->CurrentPlayer, ColorScheme::Array->GetItem(it->ColorSchemeIndex)->ID,
 		it->ArrayIndex, HouseTypeClass::Array->GetItem(it->Type->ArrayIndex)->Name,
 		it->Edge, it->StartingAllies, it->StartingCell.X, it->StartingCell.Y, it->Visionary,
@@ -246,7 +246,7 @@ bool LogFrame(const char * LogFilename, NetworkEvent *OffendingEvent = nullptr) 
 
 		fprintf(LogFile, "My Random Number: %08X\n", ScenarioClass::Instance->Random.Random());
 		fprintf(LogFile, "My Frame: %08X\n", Unsorted::CurrentFrame);
-		fprintf(LogFile, "Average FPS: %d\n", Game::F2I(FPSCounter::GetAverageFrameRate()));
+		fprintf(LogFile, "Average FPS: %lld\n", Game::F2I(FPSCounter::GetAverageFrameRate()));
 		fprintf(LogFile, "Max MaxAhead: %d\n", *(int*)0xA8B568);
 		fprintf(LogFile, "Latency setting: %d\n", *(int*)0xA8DB9C);
 		fprintf(LogFile, "Game speed setting: %d\n", GameOptionsClass::Instance->GameSpeed);

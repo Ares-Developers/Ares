@@ -166,7 +166,7 @@ DEFINE_HOOK(4F4583, GScreenClass_DrawOnTop_TheDarkSideOfTheMoon, 6)
 
 	if(Ares::bFPSCounter) {
 		wchar_t buffer[0x100] = L"\0";
-		swprintf_s(buffer, L"FPS: %-4d Avg: %.2f", FPSCounter::CurrentFrameRate, FPSCounter::GetAverageFrameRate());
+		swprintf_s(buffer, L"FPS: %-4u Avg: %.2f", FPSCounter::CurrentFrameRate, FPSCounter::GetAverageFrameRate());
 
 		DrawText(buffer, offset, COLOR_WHITE);
 	}
