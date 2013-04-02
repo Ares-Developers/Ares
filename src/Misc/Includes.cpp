@@ -54,10 +54,7 @@ DEFINE_HOOK(474314, CCINIClass_ReadCCFile2, 6)
 
 	Includes::LoadedINIs.RemoveItem(Includes::LoadedINIs.Count - 1);
 	if(!Includes::LoadedINIs.Count) {
-		for(int j = Includes::LoadedINIs.Count - 1; j > 0; --j) {
-			Includes::LoadedINIs.RemoveItem(j);
-		}
-		for(int j = Includes::LoadedINIFiles.Count - 1; j > 0; --j) {
+		for(int j = Includes::LoadedINIFiles.Count - 1; j >= 0; --j) {
 			free(Includes::LoadedINIFiles[j]);
 			Includes::LoadedINIFiles.RemoveItem(j);
 		}
