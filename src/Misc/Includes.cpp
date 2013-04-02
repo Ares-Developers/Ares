@@ -33,10 +33,10 @@ DEFINE_HOOK(474314, CCINIClass_ReadCCFile2, 6)
 		const char *key = xINI->GetKeyName(section, i);
 		++Includes::LastReadIndex;
 		if(xINI->ReadString(section, key, "", buffer, 0x80)) {
-			bool canLoad = 1;
-			for(int j = 0; j < Includes::LoadedINIFiles.Count; ++j ) {
+			bool canLoad = true;
+			for(int j = 0; j < Includes::LoadedINIFiles.Count; ++j) {
 				if(!strcmp(Includes::LoadedINIFiles[j], buffer)) {
-					canLoad = 0;
+					canLoad = false;
 					break;
 				}
 			}
@@ -59,7 +59,6 @@ DEFINE_HOOK(474314, CCINIClass_ReadCCFile2, 6)
 			Includes::LoadedINIFiles.RemoveItem(j);
 		}
 		Includes::LastReadIndex = -1;
-		return 0;
 	}
 	return 0;
 }
