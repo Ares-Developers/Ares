@@ -293,6 +293,15 @@ LONG CALLBACK Debug::ExceptionHandler(PEXCEPTION_POINTERS pExs)
 	}
 };
 
+LONG CALLBACK Debug::ExceptionFilter(PEXCEPTION_POINTERS pExs)
+{
+	if(pExs->ExceptionRecord->ExceptionCode == EXCEPTION_BREAKPOINT) {
+		return EXCEPTION_CONTINUE_SEARCH;
+	}
+
+	return Debug::ExceptionHandler(pExs);
+}
+
 void Debug::FullDump(MINIDUMP_EXCEPTION_INFORMATION *pException, std::wstring * destinationFolder, std::wstring * generatedFilename) {
 	std::wstring filename;
 	if(destinationFolder) {
