@@ -647,6 +647,8 @@ public:
 			ValueType buffer = this->Get();
 			if(T::Parse(Ares::readBuffer, &buffer)) {
 				this->Set(buffer);
+			} else if(!parser->IsBlank()) {
+				Debug::INIParseFailed(pSection, pKey, Ares::readBuffer);
 			}
 		}
 	};
