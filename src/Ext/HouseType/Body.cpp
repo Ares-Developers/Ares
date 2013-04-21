@@ -198,34 +198,46 @@ void HouseTypeExt::ExtData::LoadFromRulesFile(HouseTypeClass *pThis, CCINIClass 
 
 	if (pINI->ReadString(pID, "File.ObserverFlag", "", Ares::readBuffer, Ares::readLength)) {
 		AresCRT::strCopy(this->ObserverFlag, Ares::readBuffer, 0x20);
+		_strlwr_s(this->ObserverFlag, 0x20);
 	}
 	if(*this->ObserverFlag) {
 		if(INI_EX::IsBlank(this->ObserverFlag)) {
-			this->ObserverFlagSHP = NULL;
+			this->ObserverFlagSHP = nullptr;
 			this->ObserverFlag[0] = 0;
 		} else if(strstr(this->ObserverFlag, ".pcx")) {
-			this->ObserverFlagSHP = NULL;
+			this->ObserverFlagSHP = nullptr;
 			if(!PCX::Instance->LoadFile(this->ObserverFlag)) {
 				Debug::INIParseFailed(pID, "File.ObserverFlag", this->ObserverFlag);
+				this->ObserverFlag[0] = 0;
 			}
 		} else {
 			this->ObserverFlagSHP = FileSystem::LoadSHPFile(this->ObserverFlag);
 			if(!this->ObserverFlagSHP) {
 				Debug::INIParseFailed(pID, "File.ObserverFlag", this->ObserverFlag);
+				this->ObserverFlag[0] = 0;
 			}
 		}
 	}
 
 	if (pINI->ReadString(pID, "File.ObserverBackground", "", Ares::readBuffer, Ares::readLength)) {
 		AresCRT::strCopy(this->ObserverBackground, Ares::readBuffer, 0x20);
+		_strlwr_s(this->ObserverBackground, 0x20);
 	}
 	if(*this->ObserverBackground) {
 		if(INI_EX::IsBlank(this->ObserverBackground)) {
+			this->ObserverBackgroundSHP = nullptr;
 			this->ObserverBackground[0] = 0;
+		} else if(strstr(this->ObserverBackground, ".pcx")) {
+			this->ObserverBackgroundSHP = nullptr;
+			if(!PCX::Instance->LoadFile(this->ObserverBackground)) {
+				Debug::INIParseFailed(pID, "File.ObserverBackground", this->ObserverBackground);
+				this->ObserverBackground[0] = 0;
+			}
 		} else {
 			this->ObserverBackgroundSHP = FileSystem::LoadSHPFile(this->ObserverBackground);
 			if(!this->ObserverBackgroundSHP) {
 				Debug::INIParseFailed(pID, "File.ObserverBackground", this->ObserverBackground);
+				this->ObserverBackground[0] = 0;
 			}
 		}
 	}
