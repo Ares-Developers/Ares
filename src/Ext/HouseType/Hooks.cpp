@@ -6,12 +6,17 @@
 
 DEFINE_HOOK(553412, LoadProgressMgr_Draw_LSFile, 0)
 {
-	int n = R->EBX();
-	HouseTypeClass* pThis = HouseTypeClass::Array->Items[n];
+	GET(int, n, EBX);
 
-	char* pLSFile = NULL;
+	HouseTypeExt::ExtData* pData = nullptr;
+	if(HouseTypeClass::Array->ValidIndex(n)) {
+		HouseTypeClass* pThis = HouseTypeClass::Array->Items[n];
+		pData = HouseTypeExt::ExtMap.Find(pThis);
+	}
 
-	if(HouseTypeExt::ExtData *pData = HouseTypeExt::ExtMap.Find(pThis)) {
+	const char* pLSFile = nullptr;
+
+	if(pData) {
 		pLSFile = pData->LSFile;
 	} else if(n == 0) {
 		pLSFile = "ls%sustates.shp";
@@ -25,12 +30,17 @@ DEFINE_HOOK(553412, LoadProgressMgr_Draw_LSFile, 0)
 
 DEFINE_HOOK(5536DA, LoadProgressMgr_Draw_LSName, 0)
 {
-	int n = R->EBX();
-	HouseTypeClass* pThis = HouseTypeClass::Array->Items[n];
+	GET(int, n, EBX);
 
-	char* pLSName = NULL;
+	HouseTypeExt::ExtData* pData = nullptr;
+	if(HouseTypeClass::Array->ValidIndex(n)) {
+		HouseTypeClass* pThis = HouseTypeClass::Array->Items[n];
+		pData = HouseTypeExt::ExtMap.Find(pThis);
+	}
 
-	if(HouseTypeExt::ExtData *pData = HouseTypeExt::ExtMap.Find(pThis)) {
+	const char* pLSName = nullptr;
+
+	if(pData) {
 		pLSName = pData->LSName;
 	} else if(n == 0) {
 		pLSName = "Name:Americans";
@@ -44,10 +54,15 @@ DEFINE_HOOK(5536DA, LoadProgressMgr_Draw_LSName, 0)
 
 DEFINE_HOOK(553A05, LoadProgressMgr_Draw_LSSpecialName, 6)
 {
-	int n = R->Stack32(0x38);
-	HouseTypeClass* pThis = HouseTypeClass::Array->Items[n];
+	GET_STACK(int, n, 0x38);
 
-	if(HouseTypeExt::ExtData *pData = HouseTypeExt::ExtMap.Find(pThis)) {
+	HouseTypeExt::ExtData* pData = nullptr;
+	if(HouseTypeClass::Array->ValidIndex(n)) {
+		HouseTypeClass* pThis = HouseTypeClass::Array->Items[n];
+		pData = HouseTypeExt::ExtMap.Find(pThis);
+	}
+
+	if(pData) {
 		R->EAX(StringTable::LoadString(pData->LSSpecialName)); // limited to wchar_t[110]
 		return 0x553B3B;
 	}
@@ -57,10 +72,15 @@ DEFINE_HOOK(553A05, LoadProgressMgr_Draw_LSSpecialName, 6)
 
 DEFINE_HOOK(553D06, LoadProgressMgr_Draw_LSBrief, 6)
 {
-	int n = R->Stack32(0x38);
-	HouseTypeClass* pThis = HouseTypeClass::Array->Items[n];
+	GET_STACK(int, n, 0x38);
 
-	if(HouseTypeExt::ExtData *pData = HouseTypeExt::ExtMap.Find(pThis)) {
+	HouseTypeExt::ExtData* pData = nullptr;
+	if(HouseTypeClass::Array->ValidIndex(n)) {
+		HouseTypeClass* pThis = HouseTypeClass::Array->Items[n];
+		pData = HouseTypeExt::ExtMap.Find(pThis);
+	}
+
+	if(pData) {
 		R->ESI(StringTable::LoadString(pData->LSBrief)); // limited to some tiny amount
 		return 0x553E54;
 	}
@@ -70,12 +90,17 @@ DEFINE_HOOK(553D06, LoadProgressMgr_Draw_LSBrief, 6)
 
 DEFINE_HOOK(4E3579, HTExt_DrawFlag, 0)
 {
-	int n = R->ECX();
-	HouseTypeClass* pThis = HouseTypeClass::Array->Items[n];
+	GET(int, n, ECX);
 
-	char* pFlagFile = NULL;
+	HouseTypeExt::ExtData* pData = nullptr;
+	if(HouseTypeClass::Array->ValidIndex(n)) {
+		HouseTypeClass* pThis = HouseTypeClass::Array->Items[n];
+		pData = HouseTypeExt::ExtMap.Find(pThis);
+	}
 
-	if(HouseTypeExt::ExtData *pData = HouseTypeExt::ExtMap.Find(pThis)) {
+	const char* pFlagFile = nullptr;
+
+	if(pData) {
 		pFlagFile = pData->FlagFile;
 	} else if(n == 0) {
 		pFlagFile = "usai.pcx";
@@ -90,12 +115,17 @@ DEFINE_HOOK(4E3579, HTExt_DrawFlag, 0)
 
 DEFINE_HOOK(72B690, HTExt_LSPAL, 0)
 {
-	int n = R->EDI();
-	HouseTypeClass* pThis = HouseTypeClass::Array->Items[n];
+	GET(int, n, EDI);
 
-	char* pPALFile = NULL;
+	HouseTypeExt::ExtData* pData = nullptr;
+	if(HouseTypeClass::Array->ValidIndex(n)) {
+		HouseTypeClass* pThis = HouseTypeClass::Array->Items[n];
+		pData = HouseTypeExt::ExtMap.Find(pThis);
+	}
 
-	if(HouseTypeExt::ExtData *pData = HouseTypeExt::ExtMap.Find(pThis)) {
+	const char* pPALFile = nullptr;
+
+	if(pData) {
 		pPALFile = pData->LSPALFile;
 	} else if(n == 0) {
 		pPALFile = "mplsu.pal";	//need to recode cause I broke the code with the jump
@@ -114,12 +144,17 @@ DEFINE_HOOK(72B690, HTExt_LSPAL, 0)
 
 DEFINE_HOOK(4E38D8, HTExt_GetSTT, 0)
 {
-	int n = R->ECX();
-	HouseTypeClass* pThis = HouseTypeClass::Array->Items[n];
+	GET(int, n, ECX);
 
-	char* pSTT = NULL;
+	HouseTypeExt::ExtData* pData = nullptr;
+	if(HouseTypeClass::Array->ValidIndex(n)) {
+		HouseTypeClass* pThis = HouseTypeClass::Array->Items[n];
+		pData = HouseTypeExt::ExtMap.Find(pThis);
+	}
 
-	if(HouseTypeExt::ExtData *pData = HouseTypeExt::ExtMap.Find(pThis)) {
+	const char* pSTT = nullptr;
+
+	if(pData) {
 		pSTT = pData->StatusText;
 	} else if(n == 0) {
 		pSTT = "STT:PlayerSideAmerica";
