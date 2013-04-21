@@ -62,17 +62,17 @@ DEFINE_HOOK(553A05, LoadProgressMgr_Draw_LSSpecialName, 6)
 		pData = HouseTypeExt::ExtMap.Find(pThis);
 	}
 
-	const char* pLSSpecialName = nullptr;
+	const wchar_t* text = L"";
 
 	if(pData) {
-		pLSSpecialName = pData->LSSpecialName;
+		text = StringTable::LoadString(pData->LSSpecialName);
 	} else if(n == 0) {
-		pLSSpecialName = "Name:Para";
-	} else {
+		text = StringTable::LoadString("Name:Para");
+	} else if(n > 0 && n <= 9) {
 		return 0x5536FB;
 	}
 
-	R->EAX(StringTable::LoadString(pLSSpecialName)); // limited to wchar_t[110], must not be null
+	R->EAX(text); // limited to wchar_t[110], must not be null
 	return 0x553B3B;
 }
 
