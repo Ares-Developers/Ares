@@ -62,12 +62,18 @@ DEFINE_HOOK(553A05, LoadProgressMgr_Draw_LSSpecialName, 6)
 		pData = HouseTypeExt::ExtMap.Find(pThis);
 	}
 
+	const char* pLSSpecialName = nullptr;
+
 	if(pData) {
-		R->EAX(StringTable::LoadString(pData->LSSpecialName)); // limited to wchar_t[110]
-		return 0x553B3B;
+		pLSSpecialName = pData->LSSpecialName;
+	} else if(n == 0) {
+		pLSSpecialName = "Name:Para";
+	} else {
+		return 0x5536FB;
 	}
 
-	return 0;
+	R->EAX(StringTable::LoadString(pLSSpecialName)); // limited to wchar_t[110], must not be null
+	return 0x553B3B;
 }
 
 DEFINE_HOOK(553D06, LoadProgressMgr_Draw_LSBrief, 6)
@@ -80,12 +86,18 @@ DEFINE_HOOK(553D06, LoadProgressMgr_Draw_LSBrief, 6)
 		pData = HouseTypeExt::ExtMap.Find(pThis);
 	}
 
+	const char* LSBrief = nullptr;
+
 	if(pData) {
-		R->ESI(StringTable::LoadString(pData->LSBrief)); // limited to some tiny amount
-		return 0x553E54;
+		LSBrief = pData->LSBrief;
+	} else if(n == 0) {
+		LSBrief = "LoadBrief:USA";
+	} else {
+		return 0x553D2B;
 	}
 
-	return 0;
+	R->ESI(StringTable::LoadString(LSBrief)); // limited to some tiny amount
+	return 0x553E54;
 }
 
 DEFINE_HOOK(4E3579, HTExt_DrawFlag, 0)
