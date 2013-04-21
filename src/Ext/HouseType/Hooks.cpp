@@ -4,7 +4,26 @@
 #include <Audio.h>
 #include <ScenarioClass.h>
 
-DEFINE_HOOK(5536DA, HTExt_GetLSName, 0)
+DEFINE_HOOK(553412, LoadProgressMgr_Draw_LSFile, 0)
+{
+	int n = R->EBX();
+	HouseTypeClass* pThis = HouseTypeClass::Array->Items[n];
+
+	char* pLSFile = NULL;
+
+	if(HouseTypeExt::ExtData *pData = HouseTypeExt::ExtMap.Find(pThis)) {
+		pLSFile = pData->LSFile;
+	} else if(n == 0) {
+		pLSFile = "ls%sustates.shp";
+	} else {
+		return 0x553421;
+	}
+
+	R->EDX(pLSFile);
+	return 0x55342C;
+}
+
+DEFINE_HOOK(5536DA, LoadProgressMgr_Draw_LSName, 0)
 {
 	int n = R->EBX();
 	HouseTypeClass* pThis = HouseTypeClass::Array->Items[n];
@@ -23,7 +42,7 @@ DEFINE_HOOK(5536DA, HTExt_GetLSName, 0)
 	return 0x553820;
 }
 
-DEFINE_HOOK(553A05, HTExt_GetLSSpecialName, 6)
+DEFINE_HOOK(553A05, LoadProgressMgr_Draw_LSSpecialName, 6)
 {
 	int n = R->Stack32(0x38);
 	HouseTypeClass* pThis = HouseTypeClass::Array->Items[n];
@@ -36,7 +55,7 @@ DEFINE_HOOK(553A05, HTExt_GetLSSpecialName, 6)
 	return 0;
 }
 
-DEFINE_HOOK(553D06, HTExt_GetLSBrief, 6)
+DEFINE_HOOK(553D06, LoadProgressMgr_Draw_LSBrief, 6)
 {
 	int n = R->Stack32(0x38);
 	HouseTypeClass* pThis = HouseTypeClass::Array->Items[n];
@@ -110,25 +129,6 @@ DEFINE_HOOK(4E38D8, HTExt_GetSTT, 0)
 
 	R->EAX(StringTable::LoadString(pSTT));
 	return 0x4E39F1;
-}
-
-DEFINE_HOOK(553412, HTExt_LSFile, 0)
-{
-	int n = R->EBX();
-	HouseTypeClass* pThis = HouseTypeClass::Array->Items[n];
-
-	char* pLSFile = NULL;
-
-	if(HouseTypeExt::ExtData *pData = HouseTypeExt::ExtMap.Find(pThis)) {
-		pLSFile = pData->LSFile;
-	} else if(n == 0) {
-		pLSFile = "ls%sustates.shp";
-	} else {
-		return 0x553421;
-	}
-
-	R->EDX(pLSFile);
-	return 0x55342C;
 }
 
 DEFINE_HOOK(752BA1, HTExt_GetTaunt, 6)
