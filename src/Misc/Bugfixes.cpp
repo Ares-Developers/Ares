@@ -1039,3 +1039,14 @@ DEFINE_HOOK(4430E8, BuildingClass_Demolish_LogCrash, 6)
 	R->EAX(pInf ? pInf->Type->Name : "<none>");
 	return 0x4430FA;
 }
+
+// #1171643: keep the last passenger if this is a gunner, not just
+// when it has multiple turrets. gattling and charge turret is no
+// longer affected by this.
+DEFINE_HOOK(73D81E, UnitClass_Mi_Unload_LastPassenger, 5)
+{
+	GET(UnitClass*, pThis, ECX);
+	auto pType = pThis->GetTechnoType();
+	R->EAX(pType->Gunner ? 1 : 0);
+	return 0x73D823;
+}
