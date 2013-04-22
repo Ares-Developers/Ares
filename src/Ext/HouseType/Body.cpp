@@ -189,59 +189,45 @@ void HouseTypeExt::ExtData::LoadFromRulesFile(HouseTypeClass *pThis, CCINIClass 
 
 	this->InitializeConstants(pThis);
 
-	if (pINI->ReadString(pID, "File.Flag", "", Ares::readBuffer, Ares::readLength)) {
-		AresCRT::strCopy(this->FlagFile, Ares::readBuffer, 0x20);
-		_strlwr_s(this->FlagFile, 0x20);
-		if(!PCX::Instance->LoadFile(this->FlagFile)) {
-			Debug::INIParseFailed(pID, "File.Flag", this->FlagFile);
-		}
-	}
+	// ppShp is optional. if not set, only PCX is supported
+	auto ReadShpOrPcxImage = [&](const char* key, char* pBuffer, size_t cbBuffer, SHPStruct** ppShp) {
+		// read the key and convert it to lower case
+		if(pINI->ReadString(pID, key, pBuffer, Ares::readBuffer, Ares::readLength)) {
+			AresCRT::strCopy(pBuffer, Ares::readBuffer, cbBuffer);
+			_strlwr_s(pBuffer, cbBuffer);
 
-	if (pINI->ReadString(pID, "File.ObserverFlag", "", Ares::readBuffer, Ares::readLength)) {
-		AresCRT::strCopy(this->ObserverFlag, Ares::readBuffer, 0x20);
-		_strlwr_s(this->ObserverFlag, 0x20);
-	}
-	if(*this->ObserverFlag) {
-		if(INI_EX::IsBlank(this->ObserverFlag)) {
-			this->ObserverFlagSHP = nullptr;
-			this->ObserverFlag[0] = 0;
-		} else if(strstr(this->ObserverFlag, ".pcx")) {
-			this->ObserverFlagSHP = nullptr;
-			if(!PCX::Instance->LoadFile(this->ObserverFlag)) {
-				Debug::INIParseFailed(pID, "File.ObserverFlag", this->ObserverFlag);
-				this->ObserverFlag[0] = 0;
-			}
-		} else {
-			this->ObserverFlagSHP = FileSystem::LoadSHPFile(this->ObserverFlag);
-			if(!this->ObserverFlagSHP) {
-				Debug::INIParseFailed(pID, "File.ObserverFlag", this->ObserverFlag);
-				this->ObserverFlag[0] = 0;
+			// parse the value
+			if(INI_EX::IsBlank(pBuffer)) {
+				// explicitly set to no image
+				if(ppShp) {
+					*ppShp = nullptr;
+				}
+				pBuffer[0] = 0;
+			} else if(!ppShp || strstr(pBuffer, ".pcx")) {
+				// clear shp and load pcx
+				if(ppShp) {
+					*ppShp = nullptr;
+				}
+				if(!PCX::Instance->LoadFile(pBuffer)) {
+					// log error and clear invalid name
+					Debug::INIParseFailed(pID, key, pBuffer);
+					pBuffer[0] = 0;
+				}
+			} else if(ppShp) {
+				// allowed to load as shp
+				*ppShp = FileSystem::LoadSHPFile(pBuffer);
+				if(!*ppShp) {
+					// log error and clear invalid name
+					Debug::INIParseFailed(pID, key, pBuffer);
+					pBuffer[0] = 0;
+				}
 			}
 		}
-	}
+	};
 
-	if (pINI->ReadString(pID, "File.ObserverBackground", "", Ares::readBuffer, Ares::readLength)) {
-		AresCRT::strCopy(this->ObserverBackground, Ares::readBuffer, 0x20);
-		_strlwr_s(this->ObserverBackground, 0x20);
-	}
-	if(*this->ObserverBackground) {
-		if(INI_EX::IsBlank(this->ObserverBackground)) {
-			this->ObserverBackgroundSHP = nullptr;
-			this->ObserverBackground[0] = 0;
-		} else if(strstr(this->ObserverBackground, ".pcx")) {
-			this->ObserverBackgroundSHP = nullptr;
-			if(!PCX::Instance->LoadFile(this->ObserverBackground)) {
-				Debug::INIParseFailed(pID, "File.ObserverBackground", this->ObserverBackground);
-				this->ObserverBackground[0] = 0;
-			}
-		} else {
-			this->ObserverBackgroundSHP = FileSystem::LoadSHPFile(this->ObserverBackground);
-			if(!this->ObserverBackgroundSHP) {
-				Debug::INIParseFailed(pID, "File.ObserverBackground", this->ObserverBackground);
-				this->ObserverBackground[0] = 0;
-			}
-		}
-	}
+	ReadShpOrPcxImage("File.Flag", this->FlagFile, 0x20, nullptr);
+	ReadShpOrPcxImage("File.ObserverFlag", this->ObserverFlag, 0x20, &this->ObserverFlagSHP);
+	ReadShpOrPcxImage("File.ObserverBackground", this->ObserverBackground, 0x20, &this->ObserverBackgroundSHP);
 
 	if (pINI->ReadString(pID, "File.LoadScreen", "", Ares::readBuffer, Ares::readLength)) {
 		AresCRT::strCopy(this->LSFile, Ares::readBuffer, 0x20);
