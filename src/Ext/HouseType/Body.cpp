@@ -382,6 +382,8 @@ void HouseTypeExt::ExtData::InheritSettings(HouseTypeClass *pThis) {
 	if(auto ParentCountry = HouseTypeClass::Find(pThis->ParentCountry)) {
 		if(const auto ParentData = HouseTypeExt::ExtMap.Find(ParentCountry)) {
 			CopyString(&HouseTypeExt::ExtData::FlagFile, ParentData, this);
+			CopyString(&HouseTypeExt::ExtData::ObserverFlag, ParentData, this);
+			CopyString(&HouseTypeExt::ExtData::ObserverBackground, ParentData, this);
 			CopyString(&HouseTypeExt::ExtData::LSFile, ParentData, this);
 			CopyString(&HouseTypeExt::ExtData::LSPALFile, ParentData, this);
 			CopyString(&HouseTypeExt::ExtData::TauntFile, ParentData, this);
@@ -392,6 +394,9 @@ void HouseTypeExt::ExtData::InheritSettings(HouseTypeClass *pThis) {
 			this->LoadTextColor = ParentData->LoadTextColor;
 			this->RandomSelectionWeight = ParentData->RandomSelectionWeight;
 			this->CountryListIndex = ParentData->CountryListIndex + 1;
+			this->ObserverBackgroundSHP = ParentData->ObserverBackgroundSHP;
+			this->ObserverFlagSHP = ParentData->ObserverFlagSHP;
+			this->ObserverFlagYuriPAL = ParentData->ObserverFlagYuriPAL;
 
 			this->ParaDropPlane.Set(ParentData->ParaDropPlane);
 			this->Parachute_Anim.Set(ParentData->Parachute_Anim);
