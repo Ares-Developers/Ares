@@ -191,6 +191,7 @@ void HouseTypeExt::ExtData::LoadFromRulesFile(HouseTypeClass *pThis, CCINIClass 
 
 	if (pINI->ReadString(pID, "File.Flag", "", Ares::readBuffer, Ares::readLength)) {
 		AresCRT::strCopy(this->FlagFile, Ares::readBuffer, 0x20);
+		_strlwr_s(this->FlagFile, 0x20);
 		if(!PCX::Instance->LoadFile(this->FlagFile)) {
 			Debug::INIParseFailed(pID, "File.Flag", this->FlagFile);
 		}
