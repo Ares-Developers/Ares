@@ -40,6 +40,26 @@ DEFINE_HOOK(45ECA0, Foundations_GetFoundationHeight, 6)
 	return 0;
 }
 
+DEFINE_HOOK(656584, MapClass_GetFoundationShape, 6)
+{
+	GET(RadarClass*, pThis, ECX);
+	GET(BuildingTypeClass*, pType, EAX);
+
+	auto fnd = pType->Foundation;
+	DynamicVectorClass<Point2D>* ret = nullptr;
+
+	if(fnd >= fnd_1x1 && fnd <= fnd_0x0) {
+		// in range of default foundations
+		ret = &pThis->FoundationTypePixels[fnd];
+	} else {
+		// default if everything fails
+		ret = &pThis->FoundationTypePixels[fnd_2x2];
+	}
+
+	R->EAX(ret);
+	return 0x656595;
+}
+
 DEFINE_HOOK(568411, MapClass_AddContentAt_Foundation_P1, 0)
 {
 	GET(BuildingClass *, pThis, EDI);
