@@ -361,6 +361,68 @@ bool BuildingTypeExt::IsFoundationEqual(BuildingTypeClass *pTBldA, BuildingTypeC
 	return false;
 }
 
+//! Updates the set of points used to draw this building foundation on the radar.
+/*!
+	Implements the same logic as used by the original game. That is, buildings
+	appear as scaled and tilted rectangles. Only the foundation width and
+	height is used. Empty cells in the foundation are filled anyhow.
+
+	\author AlexB
+	\date 2013-04-25
+*/
+void BuildingTypeExt::ExtData::UpdateFoundationRadarShape() {
+	this->FoundationRadarShape.Clear();
+
+	if(this->IsCustom) {
+		auto pType = this->AttachedToObject;
+		auto pRadar = RadarClass::Global();
+
+		int width = pType->GetFoundationWidth();
+		int height = pType->GetFoundationHeight(false);
+
+		// transform between cell length and pixels on radar
+		auto Transform = [](int length, float factor) -> int {
+			float fltLength = length * factor + 0.5f;
+			float minLenght = (length == 1) ? 1.0f : 2.0f;
+
+			if(fltLength < minLenght) {
+				fltLength = minLenght;
+			}
+
+			return static_cast<int>(Game::F2I(fltLength));
+		};
+
+		// the transformed lengths
+		int pixelsX = Transform(width, pRadar->RadarSizeFactor);
+		int pixelsY = Transform(height, pRadar->RadarSizeFactor);
+
+		// heigth of the foundation tilted by 45°
+		int rows = pixelsX + pixelsY - 1;
+
+		// this draws a rectangle standing on an edge, getting
+		// wider for each line drawn. the start and end values
+		// are special-cased to not draw the pixels outside the
+		// foundation.
+		for(int i=0; i<rows; ++i) {
+			int start = -i;
+			if(i >= pixelsY) {
+				start = i - 2 * pixelsY + 2;
+			}
+
+			int end = i;
+			if(i >= pixelsX) {
+				end = 2 * pixelsX - i - 2;
+			}
+
+			// fill the line
+			for(int j=start; j<=end; ++j) {
+				Point2D pixel = {j, i};
+				this->FoundationRadarShape.AddItem(pixel);
+			}
+		}
+	}
+}
+
 // Short check: Is the building of a linkable kind at all?
 bool BuildingTypeExt::ExtData::IsLinkable() {
 	return this->Firewall_Is || (this->IsTrench > -1);
