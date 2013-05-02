@@ -275,7 +275,9 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 				Target->SetOwningHouse(Attacker->Owner);
 			}
 
-			Target->Remove();
+			if(!Target->Remove()) {
+				Debug::DevLog(Debug::Warning, "Abduction: Target unit %p (%s) could not be removed.\n", Target, Target->get_ID());
+			}
 			Target->OnBridge = false;
 
 			// because we are throwing away the locomotor in a split second, piggybacking
