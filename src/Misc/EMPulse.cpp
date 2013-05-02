@@ -326,7 +326,7 @@ bool EMPulse::IsTypeEMPProne(TechnoTypeClass * Type) {
 		}
 	} else if (InfantryTypeClass * InfantryType = specific_cast<InfantryTypeClass *>(Type)) {
 		// affected only if this is a cyborg.
-		prone = InfantryType->Cyborg_;
+		prone = InfantryType->Cyborg;
 	} else {
 		// if this is a vessel or vehicle that is organic: no effect.
 		prone = !Type->Organic;
