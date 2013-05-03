@@ -221,6 +221,9 @@ void HouseTypeExt::ExtData::LoadFromRulesFile(HouseTypeClass *pThis, CCINIClass 
 					Debug::INIParseFailed(pID, key, pBuffer);
 					pBuffer[0] = 0;
 				}
+			} else {
+				// disallowed file type
+				Debug::INIParseFailed(pID, key, pBuffer, "File type not allowed.");
 			}
 		}
 	};
