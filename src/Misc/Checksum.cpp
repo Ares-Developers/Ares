@@ -130,7 +130,7 @@ void WriteLog(const FootClass* it, int idx, DWORD checksum, FILE * F) {
 template<>
 void WriteLog(const InfantryClass* it, int idx, DWORD checksum, FILE * F) {
 	WriteLog<FootClass>(it, idx, checksum, F);
-	fprintf(F, "; Speed %%lld", Game::F2I(it->SpeedPercentage * 256));
+	fprintf(F, "; Speed %lld", Game::F2I(it->SpeedPercentage * 256));
 }
 
 template<>
