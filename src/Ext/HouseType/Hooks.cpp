@@ -69,7 +69,8 @@ DEFINE_HOOK(553A05, LoadProgressMgr_Draw_LSSpecialName, 6)
 	} else if(n == 0) {
 		text = StringTable::LoadString("Name:Para");
 	} else if(n > 0 && n <= 9) {
-		return 0x5536FB;
+		R->EAX(n);
+		return 0x553A28;
 	}
 
 	R->EAX(text); // limited to wchar_t[110], must not be null
