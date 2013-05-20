@@ -18,10 +18,6 @@
 #include <string>
 #include "../Ares.version.h"
 
-static bool IsNonemptyValue(const char *Value) {
-	return strlen(Value) && _strcmpi(Value, "<none>") && _strcmpi(Value, "none");
-};
-
 DEFINE_HOOK(477007, INIClass_GetSpeedType, 8)
 {
 	if(R->EAX() == -1) {
