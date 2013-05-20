@@ -197,7 +197,7 @@ void HouseTypeExt::ExtData::LoadFromRulesFile(HouseTypeClass *pThis, CCINIClass 
 			_strlwr_s(pBuffer, cbBuffer);
 
 			// parse the value
-			if(INI_EX::IsBlank(pBuffer)) {
+			if(INIClass::IsBlank(pBuffer)) {
 				// explicitly set to no image
 				if(ppShp) {
 					*ppShp = nullptr;

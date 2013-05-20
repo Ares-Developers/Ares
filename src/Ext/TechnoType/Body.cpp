@@ -321,7 +321,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 
 	if(pINI->ReadString(section, "BuiltAt", "", Ares::readBuffer, Ares::readLength) ) {
 		this->BuiltAt.Clear();
-		if(_strcmpi(Ares::readBuffer, "<none>") && _strcmpi(Ares::readBuffer, "none")) {
+		if(!INIClass::IsBlank(Ares::readBuffer)) {
 			for(auto cur = strtok(Ares::readBuffer, ","); cur; cur = strtok(NULL, ",")) {
 				auto b = BuildingTypeClass::Find(cur);
 				if(b) {
@@ -337,7 +337,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 
 	if(pINI->ReadString(section, "ClonedAt", "", Ares::readBuffer, Ares::readLength) ) {
 		this->ClonedAt.Clear();
-		if(_strcmpi(Ares::readBuffer, "<none>") && _strcmpi(Ares::readBuffer, "none")) {
+		if(!INIClass::IsBlank(Ares::readBuffer)) {
 			for(auto cur = strtok(Ares::readBuffer, ","); cur; cur = strtok(NULL, ",")) {
 				auto b = BuildingTypeClass::Find(cur);
 				if(b) {

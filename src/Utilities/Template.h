@@ -84,7 +84,7 @@ public:
 		if(parser->ReadString(pSection, pKey)) {
 			const char * val = parser->value();
 			int idx = Lookuper::FindIndex(val);
-			if(idx != -1 || parser->IsBlank(val)) {
+			if(idx != -1 || INIClass::IsBlank(val)) {
 				this->Set(idx);
 			} else {
 				Debug::INIParseFailed(pSection, pKey, val);
@@ -647,7 +647,7 @@ public:
 			ValueType buffer = this->Get();
 			if(T::Parse(Ares::readBuffer, &buffer)) {
 				this->Set(buffer);
-			} else if(!parser->IsBlank()) {
+			} else if(!INIClass::IsBlank(Ares::readBuffer)) {
 				Debug::INIParseFailed(pSection, pKey, Ares::readBuffer);
 			}
 		}

@@ -34,10 +34,6 @@ public:
 		return !!Ares::readBuffer[0];
 	}
 
-	static bool IsBlank(const char *pValue = Ares::readBuffer) {
-		return !_strcmpi(pValue, "<none>") || !_strcmpi(pValue, "none");
-	}
-
 	// parser template
 	template <typename T, size_t Count>
 	bool Read(const char* pSection, const char* pKey, T* pBuffer) {
