@@ -44,13 +44,10 @@ DEFINE_HOOK(477007, INIClass_GetSpeedType, 8)
 
 DEFINE_HOOK(474E8E, INIClass_GetMovementZone, 5)
 {
-	if(R->EAX() == -1) {
-		GET_STACK(const char *, Section, 0x2C);
-		LEA_STACK(const char *, Value, 0x8);
-		if(IsNonemptyValue(Value)) {
-			Debug::INIParseFailed(Section, "MovementZone", Value);
-		}
-	}
+	GET_STACK(const char *, Section, 0x2C);
+	GET_STACK(const char *, Key, 0x30);
+	LEA_STACK(const char *, Value, 0x8);
+	Debug::INIParseFailed(Section, Key, Value);
 	return 0;
 }
 
