@@ -55,18 +55,6 @@ DEFINE_HOOK(474E8E, INIClass_GetMovementZone, 5)
 	return 0;
 }
 
-DEFINE_HOOK(47542A, INIClass_GetArmorType, 6)
-{
-	if(R->EAX() == -1) {
-		GET_STACK(const char *, Section, 0x8C);
-		LEA_STACK(const char *, Value, 0x8);
-		if(IsNonemptyValue(Value)) {
-			Debug::INIParseFailed(Section, "Armor", Value);
-		}
-	}
-	return 0;
-}
-
 DEFINE_HOOK(474DEE, INIClass_GetFoundation, 7)
 {
 	if(R->EAX() == -1) {
