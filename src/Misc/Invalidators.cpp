@@ -26,6 +26,7 @@ DEFINE_HOOK(477007, INIClass_GetSpeedType, 8)
 {
 	if(R->EAX() == -1) {
 		GET_STACK(const char *, Section, 0x8C);
+		GET_STACK(const char *, Key, 0x90);
 		LEA_STACK(const char *, Value, 0x8);
 		GET_STACK(DWORD, caller, 0x88);
 		/*
@@ -34,10 +35,8 @@ DEFINE_HOOK(477007, INIClass_GetSpeedType, 8)
 			UnitTypeClass::LoadFromINI overrides it to (this->Crusher ? Track : Wheel) just before reading its SpeedType
 			so we should not alert if we're responding to a TType read and our subject is a UnitType, or all VehicleTypes without an explicit ST declaration will get dinged
 		*/
-		if(IsNonemptyValue(Value)) {
-			if(caller != 0x7121E5 || R->EBP<TechnoTypeClass *>()->WhatAmI() != abs_UnitType) {
-				Debug::INIParseFailed(Section, "SpeedType", Value);
-			}
+		if(caller != 0x7121E5 || R->EBP<TechnoTypeClass *>()->WhatAmI() != abs_UnitType) {
+			Debug::INIParseFailed(Section, Key, Value);
 		}
 	}
 	return 0;
