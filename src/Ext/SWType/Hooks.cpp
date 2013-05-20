@@ -111,7 +111,7 @@ DEFINE_HOOK(6AAEDF, SidebarClass_ProcessCameoClick_SuperWeapons, 6) {
 		// if AutoFire is off, the sw would not be firable at all,
 		// thus we ignore the setting in that case.
 		bool manual = !pData->SW_ManualFire.Get() && pData->SW_AutoFire.Get();
-		bool unstoppable = pSuper->Type->UseChargeDrain && pSuper->ChargeDrainState == 2
+		bool unstoppable = pSuper->Type->UseChargeDrain && pSuper->ChargeDrainState == ChargeDrainState::Draining
 			&& pData->SW_Unstoppable.Get();
 
 		// play impatient voice, if this isn't charged yet
@@ -474,17 +474,17 @@ DEFINE_HOOK(6CC2B0, SuperClass_NameReadiness, 5) {
 	} else {
 		if(pThis->Type->UseChargeDrain) {
 			switch(pThis->ChargeDrainState) {
-			case 0:
+			case ChargeDrainState::Charging:
 				// still charging
 				key = pData->Text_Charging;
 				cache = &pData->NameReadiness_Charging;
 				break;
-			case 1:
+			case ChargeDrainState::Ready:
 				// ready
 				key = pData->Text_Ready;
 				cache = &pData->NameReadiness_Ready;
 				break;
-			case 2:
+			case ChargeDrainState::Draining:
 				// currently active
 				key = pData->Text_Active;
 				cache = &pData->NameReadiness_Active;
@@ -780,7 +780,7 @@ DEFINE_HOOK(6CBD6B, SuperClass_Update_DrainMoney, 8) {
 	GET(SuperClass*, pSuper, ESI);
 	GET(int, timeLeft, EAX);
 
-	if(timeLeft > 0 && pSuper->Type->UseChargeDrain && pSuper->ChargeDrainState == 2) {
+	if(timeLeft > 0 && pSuper->Type->UseChargeDrain && pSuper->ChargeDrainState == ChargeDrainState::Draining) {
 		if(SWTypeExt::ExtData* pData = SWTypeExt::ExtMap.Find(pSuper->Type)) {
 			int money = pData->Money_DrainAmount;
 			if(money != 0 && pData->Money_DrainDelay > 0) {
