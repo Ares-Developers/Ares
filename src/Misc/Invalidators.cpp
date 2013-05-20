@@ -53,12 +53,11 @@ DEFINE_HOOK(474E8E, INIClass_GetMovementZone, 5)
 
 DEFINE_HOOK(474DEE, INIClass_GetFoundation, 7)
 {
-	if(R->EAX() == -1) {
-		GET_STACK(const char *, Section, 0x2C);
-		LEA_STACK(const char *, Value, 0x8);
-		if(IsNonemptyValue(Value) && _strcmpi(Value, "Custom")) {
-			Debug::INIParseFailed(Section, "Foundation", Value);
-		}
+	GET_STACK(const char *, Section, 0x2C);
+	GET_STACK(const char *, Key, 0x30);
+	LEA_STACK(const char *, Value, 0x8);
+	if(_strcmpi(Value, "Custom")) {
+		Debug::INIParseFailed(Section, Key, Value);
 	}
 	return 0;
 }
