@@ -135,12 +135,14 @@ void __stdcall Ares::ExeRun()
 	Game::bVideoBackBuffer = false;
 	Game::bAllowVRAMSidebar = false;
 
+#if _MSC_VER >= 1700
 	// install a new exception handler, if this version of Windows supports it
 	if(HINSTANCE handle = GetModuleHandle(TEXT("kernel32.dll"))) {
 		if(GetProcAddress(handle, "AddVectoredExceptionHandler")) {
 			Ares::pExceptionHandler = AddVectoredExceptionHandler(1, Debug::ExceptionFilter);
 		}
 	}
+#endif
 }
 
 void __stdcall Ares::ExeTerminate()
