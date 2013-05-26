@@ -200,7 +200,7 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 	}
 	if(pINI->ReadString(pID, "Rubble.Intact", "", Ares::readBuffer, Ares::readLength)) {
 		this->RubbleIntact = BuildingTypeClass::Find(Ares::readBuffer);
-		if(!this->RubbleIntact && VALIDTAG(Ares::readBuffer)) {
+		if(!this->RubbleIntact && !INIClass::IsBlank(Ares::readBuffer)) {
 			Debug::INIParseFailed(pID, "Rubble.Intact", Ares::readBuffer);
 		}
 	}
@@ -211,7 +211,7 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 			this->RubbleDestroyed->TogglePower = false;
 			this->RubbleDestroyed->Unsellable = true;
 			this->RubbleDestroyed->CanBeOccupied = false;
-		} else if(VALIDTAG(Ares::readBuffer)) {
+		} else if(!INIClass::IsBlank(Ares::readBuffer)) {
 			Debug::INIParseFailed(pID, "Rubble.Destroyed", Ares::readBuffer);
 		}
 	}

@@ -102,7 +102,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 		_snprintf(flag, 256, "Survivor.Side%d", i);
 		if(pINI->ReadString(section, flag, "", Ares::readBuffer, Ares::readLength)) {
 			if((this->Survivors_Pilots[i] = InfantryTypeClass::Find(Ares::readBuffer)) == NULL) {
-				if(VALIDTAG(Ares::readBuffer)) {
+				if(!INIClass::IsBlank(Ares::readBuffer)) {
 					Debug::INIParseFailed(section, flag, Ares::readBuffer);
 				}
 			}
@@ -203,7 +203,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 		if(!this->IsAPromiscuousWhoreAndLetsAnyoneRideIt) { // if not, find the specific operator it allows
 			if(auto Operator = InfantryTypeClass::Find(Ares::readBuffer)) {
 				this->Operator = Operator;
-			} else if(VALIDTAG(Ares::readBuffer)) {
+			} else if(!INIClass::IsBlank(Ares::readBuffer)) {
 				Debug::INIParseFailed(section, "Operator", Ares::readBuffer);
 			}
 		}
