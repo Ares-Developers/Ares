@@ -607,8 +607,8 @@ DEFINE_HOOK(711AE0, TechnoTypeClass_DTOR, 5)
 	return 0;
 }
 
-DEFINE_HOOK(7162F0, TechnoTypeClass_SaveLoad_Prefix, 6)
 DEFINE_HOOK_AGAIN(716DC0, TechnoTypeClass_SaveLoad_Prefix, 5)
+DEFINE_HOOK(7162F0, TechnoTypeClass_SaveLoad_Prefix, 6)
 {
 	GET_STACK(TechnoTypeExt::TT*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
@@ -631,8 +631,8 @@ DEFINE_HOOK(717094, TechnoTypeClass_Save_Suffix, 5)
 	return 0;
 }
 
-DEFINE_HOOK(716123, TechnoTypeClass_LoadFromINI, 5)
 DEFINE_HOOK_AGAIN(716132, TechnoTypeClass_LoadFromINI, 5)
+DEFINE_HOOK(716123, TechnoTypeClass_LoadFromINI, 5)
 {
 	GET(TechnoTypeClass*, pItem, EBP);
 	GET_STACK(CCINIClass*, pINI, 0x380);

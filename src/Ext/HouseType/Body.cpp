@@ -542,8 +542,8 @@ DEFINE_HOOK(512760, HouseTypeClass_DTOR, 6) {
 	return 0;
 }
 
-DEFINE_HOOK(512290, HouseTypeClass_SaveLoad_Prefix, 5)
 DEFINE_HOOK_AGAIN(512480, HouseTypeClass_SaveLoad_Prefix, 5)
+DEFINE_HOOK(512290, HouseTypeClass_SaveLoad_Prefix, 5)
 {
 	GET_STACK(HouseTypeExt::TT*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
@@ -564,8 +564,8 @@ DEFINE_HOOK(51255C, HouseTypeClass_Save_Suffix, 5) {
 	return 0;
 }
 
-DEFINE_HOOK(51214F, HouseTypeClass_LoadFromINI, 5)
 DEFINE_HOOK_AGAIN(51215A, HouseTypeClass_LoadFromINI, 5)
+DEFINE_HOOK(51214F, HouseTypeClass_LoadFromINI, 5)
 {
 	GET(HouseTypeClass*, pItem, EBX);
 	GET_BASE(CCINIClass*, pINI, 0x8);

@@ -58,8 +58,8 @@ DEFINE_HOOK(46C890, BulletTypeClass_SDDTOR, 6)
 	return 0;
 }
 
-DEFINE_HOOK(46C6A0, BulletTypeClass_SaveLoad_Prefix, 5)
 DEFINE_HOOK_AGAIN(46C730, BulletTypeClass_SaveLoad_Prefix, 8)
+DEFINE_HOOK(46C6A0, BulletTypeClass_SaveLoad_Prefix, 5)
 {
 	GET_STACK(BulletTypeExt::TT*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
@@ -82,8 +82,8 @@ DEFINE_HOOK(46C74A, BulletTypeClass_Save_Suffix, 3)
 	return 0;
 }
 
-DEFINE_HOOK(46C41C, BulletTypeClass_LoadFromINI, A)
 DEFINE_HOOK_AGAIN(46C429, BulletTypeClass_LoadFromINI, A)
+DEFINE_HOOK(46C41C, BulletTypeClass_LoadFromINI, A)
 {
 	GET(BulletTypeClass*, pItem, ESI);
 	GET_STACK(CCINIClass*, pINI, 0x90);

@@ -757,8 +757,8 @@ DEFINE_HOOK(6F4500, TechnoClass_DTOR, 5)
 	return 0;
 }
 
-DEFINE_HOOK(70BF50, TechnoClass_SaveLoad_Prefix, 5)
 DEFINE_HOOK_AGAIN(70C250, TechnoClass_SaveLoad_Prefix, 8)
+DEFINE_HOOK(70BF50, TechnoClass_SaveLoad_Prefix, 5)
 {
 	GET_STACK(TechnoExt::TT*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);

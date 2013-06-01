@@ -439,8 +439,8 @@ DEFINE_HOOK(7730F0, WeaponTypeClass_DTOR, 5)
 	return 0;
 }
 
-DEFINE_HOOK(772CD0, WeaponTypeClass_SaveLoad_Prefix, 7)
 DEFINE_HOOK_AGAIN(772EB0, WeaponTypeClass_SaveLoad_Prefix, 5)
+DEFINE_HOOK(772CD0, WeaponTypeClass_SaveLoad_Prefix, 7)
 {
 	GET_STACK(WeaponTypeExt::TT*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
@@ -463,9 +463,9 @@ DEFINE_HOOK(772F8C, WeaponTypeClass_Save, 5)
 	return 0;
 }
 
-DEFINE_HOOK(7729B0, WeaponTypeClass_LoadFromINI, 5)
 DEFINE_HOOK_AGAIN(7729C7, WeaponTypeClass_LoadFromINI, 5)
 DEFINE_HOOK_AGAIN(7729D6, WeaponTypeClass_LoadFromINI, 5)
+DEFINE_HOOK(7729B0, WeaponTypeClass_LoadFromINI, 5)
 {
 	GET(WeaponTypeClass*, pItem, ESI);
 	GET_STACK(CCINIClass*, pINI, 0xE4);

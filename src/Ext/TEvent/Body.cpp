@@ -164,8 +164,8 @@ DEFINE_HOOK(71FA80, TEventClass_SDDTOR, 6)
 	return 0;
 }
 
-DEFINE_HOOK(71F8C0, TEventClass_SaveLoad_Prefix, 5)
 DEFINE_HOOK_AGAIN(71F930, TEventClass_SaveLoad_Prefix, 8)
+DEFINE_HOOK(71F8C0, TEventClass_SaveLoad_Prefix, 5)
 {
 	GET_STACK(TEventExt::TT*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);

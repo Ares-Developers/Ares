@@ -503,8 +503,8 @@ DEFINE_HOOK(45E580, BuildingTypeClass_DTOR, 5)
 	return 0;
 }
 
-DEFINE_HOOK(465010, BuildingTypeClass_SaveLoad_Prefix, 5)
 DEFINE_HOOK_AGAIN(465300, BuildingTypeClass_SaveLoad_Prefix, 5)
+DEFINE_HOOK(465010, BuildingTypeClass_SaveLoad_Prefix, 5)
 {
 	GET_STACK(BuildingTypeExt::TT*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
@@ -527,8 +527,8 @@ DEFINE_HOOK(46536A, BuildingTypeClass_Save_Suffix, 7)
 	return 0;
 }
 
-DEFINE_HOOK(464A49, BuildingTypeClass_LoadFromINI, A)
 DEFINE_HOOK_AGAIN(464A56, BuildingTypeClass_LoadFromINI, A)
+DEFINE_HOOK(464A49, BuildingTypeClass_LoadFromINI, A)
 {
 	GET(BuildingTypeClass*, pItem, EBP);
 	GET_STACK(CCINIClass*, pINI, 0x364);

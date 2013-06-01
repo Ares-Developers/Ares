@@ -19,8 +19,8 @@ DEFINE_HOOK(4571E0, BuildingClass_Infiltrate, 5)
 }
 
 // #814: force sidebar repaint for standard spy effects
-DEFINE_HOOK(457533, BuildingClass_Infiltrate_Standard, 6)
 DEFINE_HOOK_AGAIN(4574D2, BuildingClass_Infiltrate_Standard, 6)
+DEFINE_HOOK(457533, BuildingClass_Infiltrate_Standard, 6)
 {
 	MouseClass::Instance->SidebarNeedsRepaint();
 	return R->get_Origin() + 6;

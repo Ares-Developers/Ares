@@ -207,8 +207,8 @@ A_FINE_HOOK(74036E, FooClass_GetCursorOverObject, 5)
 // 42461D, 6
 // 42463A, 6
 // correct warhead for animation damage
-DEFINE_HOOK(42461D, AnimClass_Update_Damage, 6)
 DEFINE_HOOK_AGAIN(42463A, AnimClass_Update_Damage, 6)
+DEFINE_HOOK(42461D, AnimClass_Update_Damage, 6)
 {
 	GET(AnimClass *, Anim, ESI);
 	WarheadTypeClass *W = Anim->Type->Warhead;
@@ -828,8 +828,8 @@ DEFINE_HOOK(749088, Count_ResetWithGivenCount, 6)
 
 // #1260: reinforcements via actions 7 and 80, and chrono reinforcements
 // via action 107 cause crash if house doesn't exist
-DEFINE_HOOK(65D8FB, TeamTypeClass_ValidateHouse, 6)
 DEFINE_HOOK_AGAIN(65EC4A, TeamTypeClass_ValidateHouse, 6)
+DEFINE_HOOK(65D8FB, TeamTypeClass_ValidateHouse, 6)
 {
 	GET(TeamTypeClass*, pThis, ECX);
 	HouseClass* pHouse = pThis->GetHouse();
@@ -966,8 +966,8 @@ DEFINE_HOOK(7077EE, TechnoClass_PointerGotInvalid_ResetMindControl, 6)
 }
 
 // skip theme log lines
-DEFINE_HOOK(720DE8, Theme_Stop_NoLog, 5) // skip Theme::PlaySong
 DEFINE_HOOK_AGAIN(720C42, Theme_Stop_NoLog, 5) // skip Theme::Stop
+DEFINE_HOOK(720DE8, Theme_Stop_NoLog, 5) // skip Theme::PlaySong
 {
 	return R->get_Origin() + 5;
 }

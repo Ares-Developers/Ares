@@ -577,8 +577,8 @@ DEFINE_HOOK(6CEFE0, SuperWeaponTypeClass_DTOR, 8)
 	return 0;
 }
 
-DEFINE_HOOK(6CE800, SuperWeaponTypeClass_SaveLoad_Prefix, A)
 DEFINE_HOOK_AGAIN(6CE8D0, SuperWeaponTypeClass_SaveLoad_Prefix, 8)
+DEFINE_HOOK(6CE800, SuperWeaponTypeClass_SaveLoad_Prefix, A)
 {
 	GET_STACK(SWTypeExt::TT*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
@@ -601,8 +601,8 @@ DEFINE_HOOK(6CE8EA, SuperWeaponTypeClass_Save_Suffix, 3)
 	return 0;
 }
 
-DEFINE_HOOK(6CEE43, SuperWeaponTypeClass_LoadFromINI, A)
 DEFINE_HOOK_AGAIN(6CEE50, SuperWeaponTypeClass_LoadFromINI, A)
+DEFINE_HOOK(6CEE43, SuperWeaponTypeClass_LoadFromINI, A)
 {
 	GET(SuperWeaponTypeClass*, pItem, EBP);
 	GET_STACK(CCINIClass*, pINI, 0x3FC);

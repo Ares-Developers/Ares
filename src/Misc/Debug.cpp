@@ -422,8 +422,8 @@ DEFINE_HOOK(4C850B, Exception_Dialog, 5)
 	return 0;
 }
 
-DEFINE_HOOK(4068E0, Debug_Log, 1)
 DEFINE_HOOK_AGAIN(4A4AC0, Debug_Log, 1)
+DEFINE_HOOK(4068E0, Debug_Log, 1)
 {
 	if(Debug::bLog && Debug::pLogFile)
 	{
