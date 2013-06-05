@@ -3,6 +3,7 @@
 
 void SW_UnitDelivery::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)
 {
+	pData->SW_Deferment = -1;
 	pData->SW_AITargetingType = SuperWeaponAITargetingMode::ParaDrop;
 }
 
@@ -43,23 +44,23 @@ void SW_UnitDelivery::LoadFromINI(
 
 bool SW_UnitDelivery::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
 {
-	this->newStateMachine(150, *pCoords, pThis);
+	SuperWeaponTypeClass *pSW = pThis->Type;
+	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSW);
+
+	int deferment = pData->SW_Deferment;
+	if(deferment < 0) {
+		deferment = 20;
+	}
+
+	this->newStateMachine(deferment, *pCoords, pThis);
 
 	return 1;
 }
 
 void UnitDeliveryStateMachine::Update() {
-	switch(this->TimePassed()) {
-	case 1:
-		// play anim
-		break;
-	case 20:
+	if(this->Finished()) {
 		this->PlaceUnits();
-		break;
-	case 100:
-		// write message
-		break;
-	};
+	}
 }
 
 // Replaced my own implementation with AlexB's shown below
