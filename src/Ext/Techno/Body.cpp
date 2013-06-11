@@ -488,7 +488,7 @@ void TechnoExt::RecalculateStats(TechnoClass *pTechno) {
 	//Debug::Log("[AttachEffect]Calculation was successful.\n", pTechno->get_ID());
 }
 
-/*! This function calculates whether the unit wold be cloaked by default
+/*! This function calculates whether the unit would be cloaked by default
 	\author Graion Dilach
 	\date 2011-10-16
 */

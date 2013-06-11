@@ -1,7 +1,7 @@
 [branch]
 Name=The AttachEffect system
-Description=Seaparate branch for implementing issues #1573, #1623, 255. See https://github.com/Ares-Developers/Ares/wiki/AttachEffect-system for documentation.
+Description=Separate branch for implementing issues #1573, #1623, #255. See https://github.com/Ares-Developers/Ares/wiki/AttachEffect-system for documentation.
 BranchRevision=1
-TargetVersion=0.3
+TargetVersion=0.4
 Stable=no
-ReadyForTesting=no
+ReadyForTesting=yes
