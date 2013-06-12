@@ -153,11 +153,11 @@ bool AttachEffectClass::Update(TechnoClass *Source) {
 			if (!pData->AttachEffects_RecreateAnims) {
 				for (int i = pData->AttachedEffects.Count; i > 0; --i) {
 					auto Effect = pData->AttachedEffects.GetItem(i - 1);
-					if (Effect->Animation && !!Effect->Type->TemporalHidesAnim) {
+					if (!!Effect->Type->TemporalHidesAnim) {
 						Effect->KillAnim();
 					}
-				pData->AttachEffects_RecreateAnims = true;
 				}
+				pData->AttachEffects_RecreateAnims = true;
 			}
 			return true;
 		}
