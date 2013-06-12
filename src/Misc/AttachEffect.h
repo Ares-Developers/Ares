@@ -17,7 +17,7 @@ public:
 	//#1573, #1623 animations on units
 	Valueable<AnimTypeClass *> AnimType;
 	Valueable<bool> AnimResetOnReapply;
-
+	Valueable<bool> TemporalHidesAnim;
 	//#255, crate stat modifiers on weapons
 	Valueable<double> FirepowerMultiplier;
 	Valueable<double> ArmorMultiplier;
@@ -41,6 +41,7 @@ public:
 		Duration(0),
 		AnimType(NULL),
 		AnimResetOnReapply(false),
+		TemporalHidesAnim(false),
 		FirepowerMultiplier(1),
 		ArmorMultiplier(1),
 		SpeedMultiplier(1),

@@ -25,6 +25,7 @@ void AttachEffectTypeClass::Read(INI_EX *exINI, const char * section) {
 	this->Cumulative.Read(exINI, section, "AttachEffect.Cumulative");
 	this->AnimType.Parse(exINI, section, "AttachEffect.Animation");
 	this->AnimResetOnReapply.Read(exINI, section, "AttachEffect.AnimResetOnReapply");
+	this->TemporalHidesAnim.Read(exINI, section, "AttachEffect.TemporalHidesAnim");
 	this->FirepowerMultiplier.Read(exINI, section, "AttachEffect.FirepowerMultiplier");
 	this->ArmorMultiplier.Read(exINI, section, "AttachEffect.ArmorMultiplier");
 	this->SpeedMultiplier.Read(exINI, section, "AttachEffect.SpeedMultiplier");
@@ -137,16 +138,32 @@ void AttachEffectClass::Destroy() {
 
 bool AttachEffectClass::Update(TechnoClass *Source) {
 
-	if (!Source || Source->InLimbo || Source->IsImmobilized || Source->Transporter || Source->TemporalTargetingMe) {
+	if (!Source || Source->InLimbo || Source->IsImmobilized || Source->Transporter) {
 		return true;
 	}
 
 	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(Source);
 	TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(Source->GetTechnoType());
 
+
 	if (pData->AttachedEffects.Count) {
 
-		if(pData->AttachEffects_RecreateAnims) {
+		//expanded Temporalcheck
+		if (Source->TemporalTargetingMe) {
+			if (!pData->AttachEffects_RecreateAnims) {
+				for (int i = pData->AttachedEffects.Count; i > 0; --i) {
+					auto Effect = pData->AttachedEffects.GetItem(i - 1);
+					if (Effect->Animation && !!Effect->Type->TemporalHidesAnim) {
+						Effect->KillAnim();
+					}
+				pData->AttachEffects_RecreateAnims = true;
+				}
+			}
+			return true;
+		}
+
+
+		if (pData->AttachEffects_RecreateAnims) {
 			for (int i = pData->AttachedEffects.Count; i > 0; --i) {
 				pData->AttachedEffects.GetItem(i - 1)->CreateAnim(Source);
 			}
@@ -199,7 +216,8 @@ bool AttachEffectClass::Update(TechnoClass *Source) {
 		}
 		//Debug::Log("[AttachEffect]Update was successful.\n");
 	}
-	
+
+
 	//#1623 - generating AttachedEffect from Type
 	if (!!pTypeData->AttachedTechnoEffect.Duration && !pData->AttachedTechnoEffect_isset) {
 		if (!pData->AttachedTechnoEffect_Delay){
