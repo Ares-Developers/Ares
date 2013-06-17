@@ -312,6 +312,10 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 			}
 
 			Target->Transporter = Attacker;
+			if(AttackerType->OpenTopped) {
+				Attacker->EnteredOpenTopped(Target);
+			}
+
 			if(Attacker->WhatAmI() == abs_Building) {
 				Target->Absorbed = true;
 			}
