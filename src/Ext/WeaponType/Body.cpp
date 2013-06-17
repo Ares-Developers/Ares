@@ -183,7 +183,7 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 		}
 
 		//Don't abduct the target if it has more life then the abducting percent
-		if (this->Abductor_AbductBelowPercent < (Target->Health*1.0 / TargetType->Strength)){
+		if (this->Abductor_AbductBelowPercent < Target->GetHealthPercentage()){
 			return false;
 		}
 
