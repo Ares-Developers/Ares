@@ -9,14 +9,16 @@ covering feature requests
 #1573, #1623 and #255
 
 Graion Dilach, 2011-09-24+
-Proper documentation gets done if proper code there is.
 
 In a nutshell:
 	relatively flexible way to interact with the unit's properties (as many as possible)
 	to create as many as possible interesting effects
+	what are done are the crate-simulating effects and animations
+	keep in mind, this does not contain any bugfixes within it, so everything can be applied as much as YR applies it
+	*cough* cloaked jumpjets *cough*
 
-Todo: something with that crash in cloak contra animation - crap (D did it), Documentation and crates
-To-to-to-todo: Get a hook in TechnoClass_Put to respawn anims killed in Remove for transported and co.
+	TemporalHidesAnim needs more code, retargetted for something later.
+
 */
 
 void AttachEffectTypeClass::Read(INI_EX *exINI, const char * section) {
@@ -112,15 +114,25 @@ void AttachEffectClass::CreateAnim(TechnoClass *Owner) {
 		}
 }
 
+//animation remover, boolean is needed otherwise destructor goes to infinite loop during UnInit
 void AttachEffectClass::KillAnim() {
 	if (this->Animation && !this->AnimAlreadyKilled) {
+		this->Animation->SetOwnerObject(NULL);
 		this->AnimAlreadyKilled = true;
 		this->Animation->UnInit();
 		this->Animation = NULL;
 	}
 }
 
-//remove the effects from the unit
+void AttachEffectClass::PutUnderTemporal() {
+	if (this->Animation) {
+		this->Animation->unknown_11A = true;
+		//this->Animation->Invisible = true;	//these were used as part of the Temporalfix but it didn't worked -_-
+		this->Animation->IsPlaying = false;
+	}
+}
+
+//destructor
 void AttachEffectClass::Destroy() {
 	this->KillAnim();
 }
@@ -128,7 +140,7 @@ void AttachEffectClass::Destroy() {
 /*!
 	This function updates the units' AttachEffects.
 
-	\retval boolean, to see if the unit gets killed (might just scrap 408 itself)
+	\retval boolean, to see if the unit gets killed (might just scrap 408 itself - did it)
 
 	\param Source The currently updated Techno.
 
@@ -136,10 +148,10 @@ void AttachEffectClass::Destroy() {
 	\date 2011-09-24+
 */
 
-bool AttachEffectClass::Update(TechnoClass *Source) {
+void AttachEffectClass::Update(TechnoClass *Source) {
 
 	if (!Source || Source->InLimbo || Source->IsImmobilized || Source->Transporter) {
-		return true;
+		return;
 	}
 
 	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(Source);
@@ -147,21 +159,6 @@ bool AttachEffectClass::Update(TechnoClass *Source) {
 
 
 	if (pData->AttachedEffects.Count) {
-
-		//expanded Temporalcheck
-		if (Source->TemporalTargetingMe) {
-			if (!pData->AttachEffects_RecreateAnims) {
-				for (int i = pData->AttachedEffects.Count; i > 0; --i) {
-					auto Effect = pData->AttachedEffects.GetItem(i - 1);
-					if (!!Effect->Type->TemporalHidesAnim) {
-						Effect->KillAnim();
-					}
-				}
-				pData->AttachEffects_RecreateAnims = true;
-			}
-			return true;
-		}
-
 
 		if (pData->AttachEffects_RecreateAnims) {
 			for (int i = pData->AttachedEffects.Count; i > 0; --i) {
@@ -198,7 +195,7 @@ bool AttachEffectClass::Update(TechnoClass *Source) {
 			}*/
 
 
-			if(!Effect->ActualDuration || (!strcmp(Effect->Type->ID, Source->GetTechnoType()->ID) && Source->Deactivated)) {			//Bloody crashes - apparently if cloaked and attached, during delete it might crash - FIXED
+			if(!Effect->ActualDuration || (!strcmp(Effect->Type->ID, Source->GetTechnoType()->ID) && Source->Deactivated)) {
 				//Debug::Log("[AttachEffect] %d. item expired, removing...\n", i - 1);
 				Effect->Destroy();
 
@@ -235,5 +232,5 @@ bool AttachEffectClass::Update(TechnoClass *Source) {
 			pData->AttachedTechnoEffect_Delay--;
 		}
 	}
-	return true; //the unit is still alive
+	return;
 }

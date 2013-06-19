@@ -78,8 +78,9 @@ public:
 
 	void CreateAnim(TechnoClass *Owner);
 	void KillAnim();
+	void PutUnderTemporal();
 
-	static bool Update(TechnoClass *Source);
+	static void Update(TechnoClass *Source);
 };
 
 #endif

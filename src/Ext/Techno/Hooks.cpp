@@ -67,12 +67,13 @@ DEFINE_HOOK(6F9E50, TechnoClass_Update, 5)
 	}
 
 
-	auto AmIAlive = AttachEffectClass::Update(Source);
+	AttachEffectClass::Update(Source);
 
 	return 0;
 }
 
 //! TechnoClass::Update is called every frame; returning 0 tells it to execute the original function's code as well.
+//! EXCEPT if the target is under Temporal, use the 71A860 hook for that - Graion, 2013-06-13.
 DEFINE_HOOK(6F9E76, TechnoClass_Update_CheckOperators, 6)
 {
 	GET(TechnoClass *, pThis, ESI); // object this is called on
@@ -254,6 +255,29 @@ DEFINE_HOOK(71A860, TemporalClass_UpdateA, 6)
 	GET(TemporalClass *, Temp, ESI);
 	TechnoClass *T = Temp->Owner;
 	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(T);
+
+	// Temporal should disable RadarJammers
+	auto Target = Temp->Target;
+	TechnoExt::ExtData * TargetExt = TechnoExt::ExtMap.Find(Target);
+	if(TargetExt->RadarJam) {
+		TargetExt->RadarJam->UnjamAll();
+		delete TargetExt->RadarJam;
+		TargetExt->RadarJam = NULL;
+	}
+
+	//AttachEffect handling under Temporal
+	//unfinished, needs something more to get the anim disappear
+	
+	if (!TargetExt->AttachEffects_RecreateAnims) {
+		for (int i = TargetExt->AttachedEffects.Count; i > 0; --i) {
+			auto Effect = TargetExt->AttachedEffects.GetItem(i - 1);
+			if (!!Effect->Type->TemporalHidesAnim) {
+				Effect->PutUnderTemporal();
+			}
+		}
+		TargetExt->AttachEffects_RecreateAnims = true;
+	}
+
 	WeaponStruct *W = T->GetWeapon(pData->idxSlot_Warp);
 	R->EAX<WeaponStruct *>(W);
 	return 0x71A876;
@@ -994,10 +1018,6 @@ DEFINE_HOOK(6F6AC9, TechnoClass_Remove, 6) {
 		}
 
 		TechnoExt->AttachEffects_RecreateAnims = true;
-		//Debug::Log("[AttachEffect] Deleting array of %s\n", pID);
-		//TechnoExt->AttachedEffects.Clear();
-		//TechnoExt->AttachedTechnoEffect_isset = false;
-		//TechnoExt::RecalculateStats(pThis);
 	}
 
 	return 0;
