@@ -339,7 +339,7 @@ DEFINE_HOOK(53A6CF, LightningStorm_Update, 7) {
 	if(LightningStorm::BoltsPresent->Count > 0) {
 		for(int i=LightningStorm::BoltsPresent->Count-1; i>=0; --i) {
 			if(AnimClass *pAnim = LightningStorm::BoltsPresent->GetItem(i)) {
-				if(pAnim->CurrentFrame >= pAnim->Type->GetImage()->Frames / 2) {
+				if(pAnim->Animation.Value >= pAnim->Type->GetImage()->Frames / 2) {
 					LightningStorm::BoltsPresent->RemoveItem(i);
 				}
 			}
@@ -349,7 +349,7 @@ DEFINE_HOOK(53A6CF, LightningStorm_Update, 7) {
 	// find the clouds that should strike right now
 	for(int i=LightningStorm::CloudsManifesting->Count-1; i>=0; --i) {
 		if(AnimClass *pAnim = LightningStorm::CloudsManifesting->GetItem(i)) {
-			if(pAnim->CurrentFrame >= pAnim->Type->GetImage()->Frames / 2) {
+			if(pAnim->Animation.Value >= pAnim->Type->GetImage()->Frames / 2) {
 				CoordStruct crdStrike;
 				pAnim->GetCoords(&crdStrike);
 				LightningStorm::Strike2(crdStrike);
@@ -375,7 +375,7 @@ DEFINE_HOOK(53A6CF, LightningStorm_Update, 7) {
 	} else {
 		for(int i=LightningStorm::CloudsPresent->Count-1; i>=0; --i) {
 			if(AnimClass *pAnim = LightningStorm::CloudsPresent->GetItem(i)) {
-				if(pAnim->CurrentFrame >= pAnim->Type->GetImage()->Frames - 1) {
+				if(pAnim->Animation.Value >= pAnim->Type->GetImage()->Frames - 1) {
 					LightningStorm::CloudsPresent->RemoveItem(i);
 				}
 			}
