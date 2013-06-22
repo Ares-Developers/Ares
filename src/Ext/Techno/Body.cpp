@@ -106,7 +106,7 @@ void TechnoExt::SpawnSurvivors(FootClass *pThis, TechnoClass *pKiller, bool Sele
 		if(chance > 0) {
 			toSpawn = ScenarioClass::Instance->Random.RandomRanged(1, 100) <= chance;
 		} else if(chance == -1 && pThis->WhatAmI() == abs_Unit) {
-			Move::Value occupation = passenger->IsCellOccupied(pThis->GetCell(), -1, -1, 0, 1);
+			Move::Value occupation = passenger->IsCellOccupied(pThis->GetCell(), -1, -1, nullptr, true);
 			toSpawn = (occupation == Move::OK || occupation == Move::MovingBlock);
 		}
 		if(toSpawn && !IgnoreDefenses) {
@@ -382,7 +382,7 @@ bool TechnoExt::ExtData::IsPowered() {
  */
 bool TechnoExt::CreateWithDroppod(FootClass *Object, CoordStruct *XYZ) {
 	auto MyCell = MapClass::Instance->GetCellAt(XYZ);
-	if(Object->IsCellOccupied(MyCell, -1, -1, 0, 0) != Move::OK) {
+	if(Object->IsCellOccupied(MyCell, -1, -1, nullptr, false) != Move::OK) {
 //		Debug::Log("Cell occupied... poof!\n");
 		return false;
 	} else {
@@ -549,9 +549,9 @@ AresAction::Value TechnoExt::ExtData::GetActionHijack(TechnoClass* pTarget) {
 		return AresAction::None;
 	}
 	if(pType->Deployer) {
-		eSequence sequence = pThis->SequenceAnim;
-		if(sequence == seq_Deploy || sequence == seq_Deployed
-			|| sequence == seq_DeployedFire || sequence == seq_DeployedIdle) {
+		Sequence::Value sequence = pThis->SequenceAnim;
+		if(sequence == Sequence::Deploy || sequence == Sequence::Deployed
+			|| sequence == Sequence::DeployedFire || sequence == Sequence::DeployedIdle) {
 				return AresAction::None;
 		}
 	}
