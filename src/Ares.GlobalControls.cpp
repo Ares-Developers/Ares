@@ -8,6 +8,8 @@ bool Ares::GlobalControls::DebugKeysEnabled = true;
 
 byte Ares::GlobalControls::GFX_DX_Force = 0;
 
+int Ares::GlobalControls::FlyingStringsDelay = 20;
+
 CCINIClass *Ares::GlobalControls::INI = NULL;
 
 std::bitset<3> Ares::GlobalControls::AllowBypassBuildLimit(0ull);
@@ -36,6 +38,9 @@ void Ares::GlobalControls::Load(CCINIClass *pINI) {
 		DebugKeysEnabled = true;
 	}
 	DebugKeysEnabled = pINI->ReadBool("GlobalControls", "DebugKeysEnabled", DebugKeysEnabled);
+
+	//used by the floating strings outputting Bounty at first run
+	FlyingStringsDelay = pINI->ReadInteger("GlobalControls", "FlyingStrings.Delay", FlyingStringsDelay);
 }
 
 void Ares::GlobalControls::LoadConfig() {

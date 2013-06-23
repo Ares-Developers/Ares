@@ -50,7 +50,7 @@ class HouseTypeExt
 				ParaDropPlane (-1),
 				Parachute_Anim (NULL),
 				LoadTextColor (NULL),
-				Bounty(true, true, 0, 0, false, 1, 1)
+				Bounty(true, 0, 0, false, 1, 1),
 				SettingsInherited (false)
 			{
 				*FlagFile = 0;

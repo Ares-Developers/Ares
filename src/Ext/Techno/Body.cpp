@@ -423,10 +423,6 @@ bool TechnoExt::ExtData::Get_Bounty_Message() const {
 	return this->GetBountyValue(&BountyClass::Message);
 }
 
-bool TechnoExt::ExtData::Get_Bounty_FriendlyMessage() const {
-	return this->GetBountyValue(&BountyClass::FriendlyMessage);
-}
-
 double TechnoExt::ExtData::Get_Bounty_Modifier() const {
 	return this->GetBountyValue(&BountyClass::Modifier);
 }

@@ -139,6 +139,16 @@ DEFINE_HOOK(6F9E76, TechnoClass_Update_CheckOperators, 6)
 		}
 	}
 
+	//Bounty
+	if(pData->FlyingMessage_Delay) {
+		--pData->FlyingMessage_Delay;
+	} else {
+		if (pData->Bounty_Amount) {
+			BountyClass::BountyMessageOutput(pThis);
+			pData->FlyingMessage_Delay = Ares::GlobalControls::FlyingStringsDelay;
+		}
+	}
+
 	/* 	using 0x6F9E7C instead makes this function override the original game one's entirely -
 		don't activate that unless you handle _everything_ originally handled by the game */
 	return 0;
@@ -975,6 +985,11 @@ DEFINE_HOOK(6F6AC9, TechnoClass_Remove, 6) {
 	{
 		delete TechnoExt->PoweredUnit;
 		TechnoExt->PoweredUnit = NULL;
+	}
+
+	// Bounty
+	if (TechnoExt->Bounty_Amount) {
+			BountyClass::BountyMessageOutput(pThis);
 	}
 
 	return 0;

@@ -165,3 +165,8 @@ DEFINE_HOOK(4BA61B, DSurface_CTOR_SkipVRAM, 6)
 {
 	return 0x4BA623;
 }
+
+DEFINE_HOOK(4F4558, FlyingStrings_Update, 5) {
+	FlyingStrings::UpdateAll();
+	return 0;
+}

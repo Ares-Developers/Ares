@@ -192,13 +192,8 @@ public:
 			Cloneable (true),
 			CarryallAllowed(),
 			CarryallSizeLimit (),
-			ImmuneToAbduction(false)
-
-			Bounty(),
-
-			CarryallAllowed(),
-			CarryallSizeLimit ()
-
+			ImmuneToAbduction(false),
+			Bounty()
 			{
 				this->Insignia.SetAll(NULL);
 				*this->CameoPCX = *this->AltCameoPCX = 0;

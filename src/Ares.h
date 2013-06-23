@@ -111,6 +111,8 @@ public:
 
 		static std::bitset<3> AllowBypassBuildLimit;
 
+		static int FlyingStringsDelay;
+
 		class SurfaceConfig {
 		public:
 			byte Force3D;

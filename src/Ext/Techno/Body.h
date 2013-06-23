@@ -69,6 +69,9 @@ public:
 
 		EBolt * MyBolt;
 
+		int FlyingMessage_Delay;
+		int Bounty_Amount;
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			TypeData (NULL),
 			TypeExt(NULL),
@@ -87,7 +90,9 @@ public:
 			ShadowDrawnManually (false),
 			RadarJam(NULL),
 			PoweredUnit(NULL),
-			MyOriginalTemporal(NULL)
+			MyOriginalTemporal(NULL),
+			FlyingMessage_Delay(0),
+			Bounty_Amount(0)
 			{
 				this->CloakSkipTimer.Stop();
 				// hope this works with the timing - I assume it does, since Types should be created before derivates thereof
