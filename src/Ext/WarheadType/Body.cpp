@@ -253,7 +253,7 @@ void WarheadTypeExt::ExtData::applyEMP(CoordStruct *coords, TechnoClass *source)
 	\return false if effect wasn't applied, true if it was.
 		This is important for the chain of damage effects, as, in case of true, the target is now a friendly unit.
 */
-bool WarheadTypeExt::ExtData::applyPermaMC(CoordStruct *coords, HouseClass* Owner, ObjectClass* Target) {
+bool WarheadTypeExt::ExtData::applyPermaMC(CoordStruct *coords, HouseClass* Owner, AbstractClass* Target) {
 	if (this->MindControl_Permanent && Target) {
 		if (TechnoClass *pTarget = generic_cast<TechnoClass *>(Target)) {
 			TechnoTypeClass *pType = pTarget->GetTechnoType();
@@ -376,7 +376,7 @@ bool WarheadTypeExt::ExtData::applyKillDriver(BulletClass* Bullet) {
 
 			// If this vehicle uses Operator=, we have to take care of actual "physical" drivers, rather than theoretical ones
 			FootClass *passenger = NULL;
-			if(TargetTypeExt->IsAPromiscuousWhoreAndLetsAnyoneRideIt && (passenger = pTarget->RemoveFirstPassenger())) {
+			if(TargetTypeExt->IsAPromiscuousWhoreAndLetsAnyoneRideIt && (passenger = pTarget->RemoveFirstPassenger()) != NULL) {
 				// kill first passenger
 				passenger->RegisterDestruction(Bullet->Owner);
 				passenger->UnInit();

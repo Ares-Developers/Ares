@@ -8,7 +8,7 @@
 DEFINE_HOOK(44B2FE, BuildingClass_Mi_Attack_IsPrism, 6)
 {
 	GET(BuildingClass *, B, ESI);
-	GET(int, idxWeapon, EBP); //which weapon was chosen to attack the target with
+	//GET(int, idxWeapon, EBP); //which weapon was chosen to attack the target with
 	R->EAX<BuildingTypeClass *>(B->Type);
 
 	enum { IsPrism = 0x44B310, IsNotPrism = 0x44B630, IsCustomPrism = 0x44B6D6};
@@ -123,7 +123,7 @@ DEFINE_HOOK(4503F0, BuildingClass_Update_Prism, 9)
 								BuildingTypeExt::ExtData *pTypeData = BuildingTypeExt::ExtMap.Find(pType);
 
 								//apparently this is divided by 256 elsewhere
-								LaserBeam->DamageMultiplier = ((pData->PrismForwarding.ModifierReserve + 100) * 256) / 100;
+								LaserBeam->DamageMultiplier = int((pData->PrismForwarding.ModifierReserve + 100) * 256) / 100;
 								LaserBeam->Health += pTypeData->PrismForwarding.DamageAdd.Get()  + pData->PrismForwarding.DamageReserve;
 							}
 						}
@@ -251,7 +251,7 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 	//Intensity adjustment for LaserBeam
 	if (LaserBeam) {
 		if (pTypeData->PrismForwarding.Intensity > 0) {
-			BuildingExt::ExtData *pData = BuildingExt::ExtMap.Find(B);
+			//BuildingExt::ExtData *pData = BuildingExt::ExtMap.Find(B);
 			LaserBeam->Thickness += (pTypeData->PrismForwarding.Intensity * (B->SupportingPrisms - 1));
 		}
 	}

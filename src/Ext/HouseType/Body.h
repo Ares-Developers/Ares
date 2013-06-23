@@ -21,6 +21,11 @@ class HouseTypeExt
 	class ExtData : public Extension<TT>
 	{
 		public:
+			enum { ObserverBackgroundWidth = 121, ObserverBackgroundHeight = 96 };
+
+			enum { ObserverFlagPCXX = 70, ObserverFlagPCXY = 70 };
+			enum { ObserverFlagPCXWidth = 45, ObserverFlagPCXHeight = 21 };
+
 			char FlagFile[0x20]; //Flag
 			char LSFile[0x20]; //LoadScreen
 			char LSPALFile[0x20]; //LoadScreen palette
@@ -41,6 +46,13 @@ class HouseTypeExt
 
 			//issue 1588, Bounty tags per country, whole logic starts in TechnoType and FlyingStrings
 			BountyClass Bounty;
+			
+			char ObserverBackground[0x20];
+			SHPStruct *ObserverBackgroundSHP;
+
+			char ObserverFlag[0x20];
+			SHPStruct *ObserverFlagSHP;
+			Valueable<bool> ObserverFlagYuriPAL;
 			bool SettingsInherited;
 
 
@@ -51,6 +63,9 @@ class HouseTypeExt
 				Parachute_Anim (NULL),
 				LoadTextColor (NULL),
 				Bounty(true, 0, 0, false, 1, 1),
+				ObserverBackgroundSHP (NULL),
+				ObserverFlagSHP (NULL),
+				ObserverFlagYuriPAL (false),
 				SettingsInherited (false)
 			{
 				*FlagFile = 0;
@@ -61,6 +76,8 @@ class HouseTypeExt
 				*LSSpecialName = 0;
 				*LSBrief = 0;
 				*StatusText = 0;
+				*ObserverBackground = 0;
+				*ObserverFlag = 0;
 			};
 
 		virtual ~ExtData() {

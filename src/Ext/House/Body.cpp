@@ -7,6 +7,7 @@
 
 template<> const DWORD Extension<HouseClass>::Canary = 0x12345678;
 Container<HouseExt> HouseExt::ExtMap;
+bool HouseExt::IsAnyFirestormActive = false;
 
 template<> HouseExt::TT *Container<HouseExt>::SavingObject = NULL;
 template<> IStream *Container<HouseExt>::SavingStream = NULL;
@@ -203,6 +204,20 @@ bool HouseExt::FactoryForObjectExists(HouseClass *pHouse, TechnoTypeClass *pItem
 	return false;
 }
 
+bool HouseExt::UpdateAnyFirestormActive() {
+	IsAnyFirestormActive = false;
+
+	for(int i = 0; i < HouseClass::Array->Count; ++i) {
+		HouseExt::ExtData *pData = HouseExt::ExtMap.Find(HouseClass::Array->Items[i]);
+		if(pData && pData->FirewallActive) {
+			IsAnyFirestormActive = true;
+			break;
+		}
+	}
+
+	return IsAnyFirestormActive;
+}
+
 void HouseExt::ExtData::SetFirestormState(bool Active) {
 	HouseClass *pHouse = this->AttachedToObject;
 	HouseExt::ExtData* pData = HouseExt::ExtMap.Find(pHouse);
@@ -212,6 +227,7 @@ void HouseExt::ExtData::SetFirestormState(bool Active) {
 	}
 
 	pData->FirewallActive = Active;
+	UpdateAnyFirestormActive();
 
 	DynamicVectorClass<CellStruct> AffectedCoords;
 
@@ -299,7 +315,7 @@ bool HouseExt::ExtData::CheckBasePlanSanity() {
 void Container<HouseExt>::Load(HouseClass *pThis, IStream *pStm) {
 	HouseExt::ExtData* pData = this->LoadKey(pThis, pStm);
 
-	ULONG out;
+	//ULONG out;
 	SWIZZLE(pData->Factory_BuildingType);
 	SWIZZLE(pData->Factory_InfantryType);
 	SWIZZLE(pData->Factory_VehicleType);

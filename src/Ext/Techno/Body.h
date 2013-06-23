@@ -69,6 +69,8 @@ public:
 
 		EBolt * MyBolt;
 
+		Nullable<bool> AltOccupation; // if the unit marks cell occupation flags, this is set to whether it uses the "high" occupation members
+
 		int FlyingMessage_Delay;
 		int Bounty_Amount;
 
@@ -91,6 +93,7 @@ public:
 			RadarJam(NULL),
 			PoweredUnit(NULL),
 			MyOriginalTemporal(NULL),
+			AltOccupation(),
 			FlyingMessage_Delay(0),
 			Bounty_Amount(0)
 			{

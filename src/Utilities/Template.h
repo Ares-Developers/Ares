@@ -116,14 +116,10 @@ public:
 		if(parser->ReadString(pSection, pKey)) {
 			const char * val = parser->value();
 			int idx = Lookuper::FindIndex(val);
-			if(idx != -1) {
+			if(idx != -1 || parser->IsBlank(val)) {
 				this->Set(idx);
 			} else {
-				if(_strcmpi(val, "<none>") && _strcmpi(val, "none")) {
-					Debug::INIParseFailed(pSection, pKey, val);
-				} else {
-					this->Set(idx);
-				}
+				Debug::INIParseFailed(pSection, pKey, val);
 			}
 		}
 	}

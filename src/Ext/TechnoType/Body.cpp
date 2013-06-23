@@ -100,7 +100,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	for(int i = 0; i < SideClass::Array->Count; ++i) {
 		_snprintf(flag, 256, "Survivor.Side%d", i);
 		if(pINI->ReadString(section, flag, "", Ares::readBuffer, Ares::readLength)) {
-			if(!(this->Survivors_Pilots[i] = InfantryTypeClass::Find(Ares::readBuffer))) {
+			if((this->Survivors_Pilots[i] = InfantryTypeClass::Find(Ares::readBuffer)) == NULL) {
 				if(VALIDTAG(Ares::readBuffer)) {
 					Debug::INIParseFailed(section, flag, Ares::readBuffer);
 				}
@@ -359,6 +359,9 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	this->CarryallAllowed.Read(&exINI, section, "Carryall.Allowed");
 	this->CarryallSizeLimit.Read(&exINI, section, "Carryall.SizeLimit");
 
+	// issue #896235: cyclic gattling
+	this->GattlingCyclic.Read(&exINI, section, "Gattling.Cycle");
+
 	// quick fix - remove after the rest of weapon selector code is done
 	return;
 }
@@ -526,7 +529,7 @@ void Container<TechnoTypeExt>::Save(TechnoTypeClass *pThis, IStream *pStm) {
 	TechnoTypeExt::ExtData* pData = this->SaveKey(pThis, pStm);
 
 	if(pData) {
-		ULONG out;
+		//ULONG out;
 		pData->Survivors_Pilots.Save(pStm);
 
 		pData->PrerequisiteLists.Save(pStm);
@@ -545,7 +548,7 @@ void Container<TechnoTypeExt>::Save(TechnoTypeClass *pThis, IStream *pStm) {
 void Container<TechnoTypeExt>::Load(TechnoTypeClass *pThis, IStream *pStm) {
 	TechnoTypeExt::ExtData* pData = this->LoadKey(pThis, pStm);
 
-	ULONG out;
+	//ULONG out;
 
 	pData->Survivors_Pilots.Load(pStm, 1);
 
@@ -631,7 +634,7 @@ DEFINE_HOOK_AGAIN(716132, TechnoTypeClass_LoadFromINI, 5)
 }
 
 DEFINE_HOOK(679CAF, RulesClass_LoadAfterTypeData_CheckRubbleFoundation, 5) {
-	GET(CCINIClass*, pINI, ESI);
+	//GET(CCINIClass*, pINI, ESI);
 
 	for(int i=0; i<BuildingTypeClass::Array->Count; ++i) {
 		BuildingTypeClass* pTBld = BuildingTypeClass::Array->GetItem(i);

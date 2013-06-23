@@ -9,9 +9,9 @@ int IniIteratorChar::iteratorValue = 0;
 
 DEFINE_HOOK(5260A2, IteratorChar_Process_Method1, 6)
 {
-	GET(CCINIClass*, ini, EBP);
+	//GET(CCINIClass*, ini, EBP);
 	GET(CCINIClass::INIEntry*, entry, ESI);
-	GET_STACK(CCINIClass::INISection*, section, 0x40);
+	//GET_STACK(CCINIClass::INISection*, section, 0x40);
 
 	if(strcmp(entry->Key, IniIteratorChar::iteratorChar) == 0) {
 		sprintf(IniIteratorChar::buffer, "%d", IniIteratorChar::iteratorValue++);
@@ -30,7 +30,7 @@ DEFINE_HOOK(525D23, IteratorChar_Process_Method2, 5)
 {
 	GET(char*, value, ESI);
 	LEA_STACK(char*, key, 0x78)
-	LEA_STACK(char*, section, 0x278);
+	//LEA_STACK(char*, section, 0x278);
 
 	if(strcmp(key, IniIteratorChar::iteratorChar) == 0) {
 		strcpy(IniIteratorChar::buffer, value);

@@ -532,16 +532,24 @@ DEFINE_HOOK(50928C, HouseClass_Update_Factories_Queues_SkipBrokenDTOR, 5)
 	return 0x5092A3;
 }
 
+/*
+issue #1051260:
+commented out because of possible issues. if one team update destroys another
+team, this would change the list while iterating. because one can never know
+how many teams are deleted and whether the deleted teams are before or after
+//the current element, it is just safer to not touch it at all. 02-Dec-12 AlexB
+
 //westwood is stupid!
 // every frame they create a vector<TeamClass *> , copy all the teams from ::Array into it, iterate with ->Update(), delete
 // so this is OMG OPTIMIZED I guess
-DEFINE_HOOK(55B502, LogicClass_Update_UpdateAITeamsFaster, 5)
+A_FINE_HOOK(55B502, LogicClass_Update_UpdateAITeamsFaster, 5)
 {
 	for(int i = TeamClass::Array->Count - 1; i >= 0; --i) {
 		TeamClass::Array->GetItem(i)->Update();
 	}
 	return 0x55B5A1;
 }
+*/
 
 // Guard command failure
 DEFINE_HOOK(730DB0, GuardCommandClass_Execute, 0)
@@ -558,7 +566,7 @@ DEFINE_HOOK(472198, CaptureManagerClass_DrawLinks, 6)
 {
 	enum { Draw_Maybe = 0, Draw_Yes = 0x4721E6, Draw_No = 0x472287} decision = Draw_Maybe;
 	GET(CaptureManagerClass *, Controlled, EDI);
-	GET(TechnoClass *, Item, ECX);
+	//GET(TechnoClass *, Item, ECX);
 
 	if(FootClass *F = generic_cast<FootClass *>(Controlled->Owner)) {
 		if(F->ParasiteImUsing && F->InLimbo) {
@@ -852,17 +860,6 @@ DEFINE_HOOK(62C2ED, ParticleClass_Update_Gas, 6)
 {
 	GET(ParticleClass *, pParticle, EBP);
 	if(auto System = pParticle->ParticleSystem) {
-		if(auto wtf = System->unknown_FC) {
-			auto pWTF = reinterpret_cast<HouseClass *>(wtf);
-			auto idx = HouseClass::Array->FindItemIndex(&pWTF);
-			auto pHouseWTF = (idx == -1)
-				? NULL
-				: HouseClass::Array->GetItem(idx)
-			;
-			Debug::Log("ParticleSystem [%s] has field 0xFC set to %p, which matches pointer for house %s\n",
-				System->Type->ID, wtf, pHouseWTF ? pHouseWTF->Type->ID : "UNKNOWN"
-			);
-		}
 		if(auto Owner = System->Owner) {
 			R->Stack<TechnoClass *>(0x0, Owner);
 			R->Stack<HouseClass *>(0xC, Owner->Owner);

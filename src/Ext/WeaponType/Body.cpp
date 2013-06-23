@@ -257,7 +257,8 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 			
 			// if we have an abducting animation, play it
 			if (!!this->Abductor_AnimType){
-				GAME_ALLOC(AnimClass, AnimClass* Abductor_Anim, this->Abductor_AnimType, &Bullet->posTgt);
+				AnimClass* Abductor_Anim = NULL;
+				GAME_ALLOC(AnimClass, Abductor_Anim, this->Abductor_AnimType, &Bullet->posTgt);
 				//this->Abductor_Anim->Owner=Bullet->Owner->Owner;
 			}
 
@@ -313,7 +314,7 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 				Target->Absorbed = true;
 			}
 			Attacker->AddPassenger(Target);
-			Attacker->vt_entry_11C(); // something or other
+			Attacker->Undiscover();
 
 			// ..and neuter the bullet, since it's not supposed to hurt the prisoner after the abduction
 			Bullet->Health = 0;

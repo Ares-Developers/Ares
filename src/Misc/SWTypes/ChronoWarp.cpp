@@ -162,7 +162,8 @@ bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 				// organics are destroyed as long as they aren't teleporters
 				if(pType->Organic && pData->Chronosphere_KillOrganic.Get()) {
 					if(!pType->Teleporter || pData->Chronosphere_KillTeleporters.Get()) {
-						pTechno->ReceiveDamage(&pType->Strength, 0,
+						int strength = pType->Strength;
+						pTechno->ReceiveDamage(&strength, 0,
 							RulesClass::Instance->C4Warhead, NULL, true, false, pSource->Owner);
 						return true;
 					}
@@ -208,9 +209,9 @@ bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 					// shut down cloak generation
 					if(pBld->Type->CloakGenerator && pBld->CloakRadius) {
 						pBld->HasCloakingData = -1;
-						pBld->IsSensed = true;
+						pBld->NeedsRedraw = true;
 						pBld->CloakRadius = 1;
-						pBld->UpdateTimers();
+						pBld->UpdateCloak();
 					}
 				}
 
@@ -258,7 +259,7 @@ bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 					pBld->Owner->ShouldRecheckTechTree = true;
 					pBld->Owner->PowerBlackout = true;
 					pBld->DisableTemporal();
-					pBld->SetLayer(Layer::Ground);
+					pBld->UpdatePlacement(PlacementType::Redraw);
 
 					BuildingExt::ExtData* pBldExt = BuildingExt::ExtMap.Find(pBld);
 					pBldExt->AboutToChronoshift = true;
@@ -301,7 +302,7 @@ void ChronoWarpStateMachine::Update() {
 		for(int i=0; i<this->Buildings.Count; ++i) {
 			ChronoWarpContainer Container = this->Buildings.GetItem(i);
 			if(Container.pBld) {
-				Container.pBld->SetLayer(Layer::Ground);
+				Container.pBld->UpdatePlacement(PlacementType::Redraw);
 			}
 		}
 	} else if(passed == this->Duration - 1) {
@@ -359,7 +360,7 @@ void ChronoWarpStateMachine::Update() {
 					pBld->Owner->PowerBlackout = true;
 					pBld->Owner->ShouldRecheckTechTree = true;
 					pBld->EnableTemporal();
-					pBld->SetLayer(Layer::Ground);
+					pBld->UpdatePlacement(PlacementType::Redraw);
 
 					BuildingExt::ExtData* pBldExt = BuildingExt::ExtMap.Find(pBld);
 					pBldExt->AboutToChronoshift = false;

@@ -107,8 +107,8 @@ void TechnoExt::SpawnSurvivors(FootClass *pThis, TechnoClass *pKiller, bool Sele
 		if(chance > 0) {
 			toSpawn = ScenarioClass::Instance->Random.RandomRanged(1, 100) <= chance;
 		} else if(chance == -1 && pThis->WhatAmI() == abs_Unit) {
-			int occupation = passenger->IsCellOccupied(pThis->GetCell(), -1, -1, 0, 1);
-			toSpawn = (occupation == 0 || occupation == 2);
+			Move::Value occupation = passenger->IsCellOccupied(pThis->GetCell(), -1, -1, 0, 1);
+			toSpawn = (occupation == Move::OK || occupation == Move::MovingBlock);
 		}
 		if(toSpawn && !IgnoreDefenses) {
 			toDelete = !EjectRandomly(passenger, loc, 128, Select);
@@ -157,8 +157,8 @@ bool TechnoExt::EjectSurvivor(FootClass *Survivor, CoordStruct *loc, bool Select
 	// don't ask, don't tell
 	if(chuted) {
 		bool scat = Survivor->OnBridge;
-		DWORD *flagsOfSomeKind = reinterpret_cast<DWORD *>(pCell->unknown_121 + 3);
-		if((flagsOfSomeKind[scat] & 0x1C) == 0x1C) {
+		auto occupation = scat ? pCell->AltOccupationFlags : pCell->OccupationFlags;
+		if((occupation & 0x1C) == 0x1C) {
 			pCell->ScatterContent(0xA8F200, 1, 1, scat);
 		}
 	} else {
@@ -187,7 +187,7 @@ void TechnoExt::EjectPassengers(FootClass *pThis, signed short howMany) {
 		return;
 	}
 
-	short limit = (howMany < 0 || howMany > pThis->Passengers.NumPassengers) ? pThis->Passengers.NumPassengers : howMany;
+	short limit = (howMany < 0 || howMany > pThis->Passengers.NumPassengers) ? (short)pThis->Passengers.NumPassengers : howMany;
 
 	for(short i = 0; (i < limit) && pThis->Passengers.FirstPassenger; ++i) {
 		FootClass *passenger = pThis->RemoveFirstPassenger();
@@ -282,10 +282,9 @@ void TechnoExt::StopDraining(TechnoClass *Drainer, TechnoClass *Drainee) {
 
 unsigned int TechnoExt::ExtData::AlphaFrame(SHPStruct *Image) {
 	int countFrames = Conversions::Int2Highest(Image->Frames);
-	DWORD Facing;
+	DirStruct Facing;
 	this->AttachedToObject->Facing.GetFacing(&Facing);
-	WORD F = (WORD)Facing;
-	return (F >> (16 - countFrames));
+	return (Facing.Value >> (16 - countFrames));
 }
 
 bool TechnoExt::ExtData::DrawVisualFX() {
@@ -384,7 +383,7 @@ bool TechnoExt::ExtData::IsPowered() {
  */
 bool TechnoExt::CreateWithDroppod(FootClass *Object, CoordStruct *XYZ) {
 	auto MyCell = MapClass::Instance->GetCellAt(XYZ);
-	if(Object->IsCellOccupied(MyCell, -1, -1, 0, 0)) {
+	if(Object->IsCellOccupied(MyCell, -1, -1, 0, 0) != Move::OK) {
 //		Debug::Log("Cell occupied... poof!\n");
 		return false;
 	} else {
@@ -395,7 +394,7 @@ bool TechnoExt::CreateWithDroppod(FootClass *Object, CoordStruct *XYZ) {
 		Object->SetLocation(&xyz);
 		Object->SetDestination(MyCell, 1);
 		Object->Locomotor->Move_To(*XYZ);
-		FacingStruct::Facet Facing = {0, 0, 0};
+		DirStruct Facing;
 		Object->Facing.SetFacing(&Facing);
 		if(!Object->InLimbo) {
 			Object->See(0, 0);
@@ -509,7 +508,7 @@ void TechnoExt::DetachSpecificSpawnee(TechnoClass *Spawnee, HouseClass *NewSpawn
 			SpawnNode->GetItem(i)->Unit = NULL;
 			Spawnee->SpawnOwner = NULL;
 
-			SpawnNode->GetItem(i)->Status = 7;
+			SpawnNode->GetItem(i)->Status = SpawnNode::state_Dead;
 
 			Spawnee->SetOwningHouse(NewSpawneeOwner);
 		}
@@ -789,7 +788,7 @@ DEFINE_HOOK(6F4500, TechnoClass_DTOR, 5)
 	GET(TechnoClass*, pItem, ECX);
 
 	SWStateMachine::InvalidatePointer(pItem);
-	TechnoExt::ExtData *pItemExt = TechnoExt::ExtMap.Find(pItem);
+	//TechnoExt::ExtData *pItemExt = TechnoExt::ExtMap.Find(pItem);
 	TechnoExt::ExtMap.Remove(pItem);
 	return 0;
 }

@@ -141,10 +141,10 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 		// set the default value, if not already overridden
 		pData->ImmuneToEMP.BindEx(!EMPulse::IsTypeEMPProne(Item));
 
-		for(signed int i = pData->ClonedAt.Count - 1; i >= 0; --i) {
-			auto Cloner = pData->ClonedAt[i];
+		for(signed int k = pData->ClonedAt.Count - 1; k >= 0; --k) {
+			auto Cloner = pData->ClonedAt[k];
 			if(Cloner->Factory) {
-				pData->ClonedAt.RemoveItem(i);
+				pData->ClonedAt.RemoveItem(k);
 				Debug::DevLog(Debug::Error, "[%s]ClonedAt includes %s, but %s has Factory= settings. This combination is not supported.\n"
 						"(Protip: Factory= is not what controls unit exit behaviour, WeaponsFactory= and GDI/Nod/YuriBarracks= is.)\n"
 					, Item->ID, Cloner->ID, Cloner->ID);

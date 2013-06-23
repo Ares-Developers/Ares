@@ -17,6 +17,7 @@
 #include "Ext/House/Body.h"
 #include "Ext/HouseType/Body.h"
 #include "Ext/Infantry/Body.h"
+#include "Ext/Rules/Body.h"
 #include "Ext/Side/Body.h"
 #include "Ext/SWType/Body.h"
 #include "Ext/Techno/Body.h"
@@ -139,14 +140,20 @@ void __stdcall Ares::ExeTerminate()
 }
 
 CCINIClass* Ares::OpenConfig(const char* file) {
-	CCINIClass* pINI;
+	CCINIClass* pINI = NULL;
 	GAME_ALLOC(CCINIClass, pINI);
-	CCFileClass *cfg;
-	GAME_ALLOC(CCFileClass, cfg, file);
-	if(cfg->Exists(NULL)) {
-		pINI->ReadCCFile(cfg);
+
+	if(pINI) {
+		CCFileClass *cfg = NULL;
+		GAME_ALLOC(CCFileClass, cfg, file);
+
+		if(cfg) {
+			if(cfg->Exists(NULL)) {
+				pINI->ReadCCFile(cfg);
+			}
+			GAME_DEALLOC(cfg);
+		}
 	}
-	GAME_DEALLOC(cfg);
 
 	return pINI;
 }
@@ -348,19 +355,19 @@ DEFINE_HOOK(7258D0, AnnounceInvalidPointer, 6)
 
 //	Debug::Log("PointerGotInvalid: %X\n", DEATH);
 
-	INVALID_CTR(BuildingExt, DEATH);
-	INVALID_CTR(BuildingTypeExt, DEATH);
-	INVALID_CTR(BulletExt, DEATH);
-	INVALID_CTR(BulletTypeExt, DEATH);
-	INVALID_CTR(HouseExt, DEATH);
-	INVALID_CTR(HouseTypeExt, DEATH);
-	INVALID_CTR(InfantryExt, DEATH);
-	INVALID_CTR(SideExt, DEATH);
-	INVALID_CTR(SWTypeExt, DEATH);
-	INVALID_CTR(TechnoExt, DEATH);
-	INVALID_CTR(TechnoTypeExt, DEATH);
-	INVALID_CTR(WarheadTypeExt, DEATH);
-	INVALID_CTR(WeaponTypeExt, DEATH);
+	BuildingExt::ExtMap.PointerGotInvalid(DEATH);
+	BuildingTypeExt::ExtMap.PointerGotInvalid(DEATH);
+	BulletExt::ExtMap.PointerGotInvalid(DEATH);
+	BulletTypeExt::ExtMap.PointerGotInvalid(DEATH);
+	HouseExt::ExtMap.PointerGotInvalid(DEATH);
+	HouseTypeExt::ExtMap.PointerGotInvalid(DEATH);
+	InfantryExt::ExtMap.PointerGotInvalid(DEATH);
+	SideExt::ExtMap.PointerGotInvalid(DEATH);
+	SWTypeExt::ExtMap.PointerGotInvalid(DEATH);
+	TechnoExt::ExtMap.PointerGotInvalid(DEATH);
+	TechnoTypeExt::ExtMap.PointerGotInvalid(DEATH);
+	WarheadTypeExt::ExtMap.PointerGotInvalid(DEATH);
+	WeaponTypeExt::ExtMap.PointerGotInvalid(DEATH);
 
 	return 0;
 }
@@ -380,6 +387,8 @@ DEFINE_HOOK(685659, Scenario_ClearClasses, a)
 	TechnoTypeExt::ExtMap.Empty();
 	WarheadTypeExt::ExtMap.Empty();
 	WeaponTypeExt::ExtMap.Empty();
+
+	RulesExt::ClearCameos();
 
 	return 0;
 }

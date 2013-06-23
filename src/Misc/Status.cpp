@@ -83,11 +83,11 @@ DEFINE_HOOK(531413, Game_Start, 5)
 	int topActive = RELEASE ? 500 : 460;
 
 	DSurface::Hidden->DrawText(L"Ares is active.", 10, topActive, COLOR_GREEN);
-	if(!RELEASE) {
-		DSurface::Hidden->DrawText(L"This is a testing version, NOT a final product.", 20, 480, COLOR_RED);
-		DSurface::Hidden->DrawText(L"Bugs are to be expected.", 20, 500, COLOR_RED);
-	}
-	DSurface::Hidden->DrawText(L"Ares is © pd, DCoder, Electro, Renegade and AlexB 2007 - 2012.", 10, 520, COLOR_GREEN);
+#if !RELEASE
+	DSurface::Hidden->DrawText(L"This is a testing version, NOT a final product.", 20, 480, COLOR_RED);
+	DSurface::Hidden->DrawText(L"Bugs are to be expected.", 20, 500, COLOR_RED);
+#endif
+	DSurface::Hidden->DrawText(L"Ares is © pd, DCoder, Electro, Renegade and AlexB 2007 - 2013.", 10, 520, COLOR_GREEN);
 
 	wchar_t wVersion[256];
 	wsprintfW(wVersion, L"%hs", DISPLAY_STRVER);

@@ -84,7 +84,7 @@ DEFINE_HOOK(51DFFD, InfantryClass_Put, 5)
 DEFINE_HOOK(518434, InfantryClass_ReceiveDamage_SkipDeathAnim, 7)
 {
 	GET(InfantryClass *, pThis, ESI);
-	GET_STACK(ObjectClass *, pAttacker, 0xE0);
+	//GET_STACK(ObjectClass *, pAttacker, 0xE0);
 //	InfantryExt::ExtData* trooperAres = InfantryExt::ExtMap.Find(pThis);
 //	bool skipInfDeathAnim = false; // leaving this default in case this is expanded in the future
 
@@ -132,7 +132,7 @@ DEFINE_HOOK(519D9C, InfantryClass_UpdatePosition_MultiEngineer, 5) {
 	// damage or capture
 	eAction action = InfantryExt::GetEngineerEnterEnemyBuildingAction(pBld);
 	if(action == act_Damage) {
-		int Damage = ceil(pBld->Type->Strength * RulesExt::Global()->EngineerDamage);
+		int Damage = (int)ceil(pBld->Type->Strength * RulesExt::Global()->EngineerDamage);
 		pBld->ReceiveDamage(&Damage, 0, RulesClass::Global()->C4Warhead, pEngi, 1, 0, 0);
 		return 0x51A010;
 	} else {

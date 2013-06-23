@@ -57,11 +57,13 @@ DEFINE_HOOK(6F9E50, TechnoClass_Update, 5)
 	}
 	
 	// #617 powered units
-	if( pTypeData->PoweredBy.Count ) {
+	if(pTypeData && pTypeData->PoweredBy.Count) {
 		if(!pData->PoweredUnit) {
 			pData->PoweredUnit = new PoweredUnitClass(Source, pTypeData);
 		}
-		pData->PoweredUnit->Update();
+		if(!pData->PoweredUnit->Update()) {
+			TechnoExt::Destroy(Source);
+		}
 	}
 
 	return 0;
@@ -185,7 +187,7 @@ DEFINE_HOOK(6F407D, TechnoClass_Init_1, 6)
 	GET(TechnoClass *, T, ESI);
 	TechnoTypeClass * Type = T->GetTechnoType();
 	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(T);
-	TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(Type);
+	//TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(Type);
 
 	CaptureManagerClass *Capturer = NULL;
 	ParasiteClass *Parasite = NULL;
@@ -206,12 +208,13 @@ DEFINE_HOOK(6F407D, TechnoClass_Init_1, 6)
 		WarheadTypeClass *WH1 = W1 ? W1->Warhead : NULL;
 		WarheadTypeClass *WH2 = W2 ? W2->Warhead : NULL;
 
-		if((W1 && !WH1) || (W2 && !WH2)) {
+		bool IsW1Faulty = (W1 && !WH1);
+		if(IsW1Faulty || (W2 && !WH2)) {
 			Debug::FatalErrorAndExit(
 				"Constructing an instance of [%s]:\r\n%sWeapon %s (slot %d) has no Warhead!",
 					Type->ID,
-					WH1 ? "Elite " : "",
-					(WH1 ? W2 : W1)->ID,
+					IsW1Faulty ? "" : "Elite ",
+					(IsW1Faulty ? W1 : W2)->ID,
 					i);
 		}
 
@@ -304,8 +307,8 @@ DEFINE_HOOK(629804, ParasiteClass_UpdateSquiddy, 9)
 
 DEFINE_HOOK(6F3330, TechnoClass_SelectWeapon, 5)
 {
-	GET(TechnoClass *, pThis, ECX);
-	GET_STACK(TechnoClass *, pTarg, 0x4);
+	//GET(TechnoClass *, pThis, ECX);
+	//GET_STACK(TechnoClass *, pTarg, 0x4);
 
 //	DWORD Selected = TechnoClassExt::SelectWeaponAgainst(pThis, pTarg);
 //	R->EAX(Selected);
@@ -1099,3 +1102,87 @@ DEFINE_HOOK(4D9A83, FootClass_PointerGotInvalid_OccupierVehicleThief, 6)
 	return 0;
 }
 
+// issue #895788: cells' high occupation flags are marked only if they
+// actually contains a bridge while unmarking depends solely on object
+// height above ground. this mismatch causes the cell to become blocked.
+DEFINE_HOOK(7441B6, UnitClass_MarkOccupationBits, 6)
+{
+	GET(UnitClass*, pThis, ECX);
+	GET(CoordStruct*, pCrd, ESI);
+
+	CellClass* pCell = MapClass::Instance->GetCellAt(pCrd);
+	int height = MapClass::Instance->GetCellFloorHeight(pCrd) + CellClass::BridgeHeight();
+	bool alt = (pCrd->Z >= height && pCell->ContainsBridge());
+
+	// remember which occupation bit we set
+	auto pExt = TechnoExt::ExtMap.Find(pThis);
+	pExt->AltOccupation.Set(alt);
+
+	if(alt) {
+		pCell->AltOccupationFlags |= 0x20;
+	} else {
+		pCell->OccupationFlags |= 0x20;
+	}
+
+	return 0x744209;
+}
+
+DEFINE_HOOK(744216, UnitClass_UnmarkOccupationBits, 6)
+{
+	GET(UnitClass*, pThis, ECX);
+	GET(CoordStruct*, pCrd, ESI);
+
+	enum { obNormal = 1, obAlt = 2 };
+
+	CellClass* pCell = MapClass::Instance->GetCellAt(pCrd);
+	int height = MapClass::Instance->GetCellFloorHeight(pCrd) + CellClass::BridgeHeight();
+	int alt = (pCrd->Z >= height) ? obAlt : obNormal;
+
+	// also clear the last occupation bit, if set
+	auto pExt = TechnoExt::ExtMap.Find(pThis);
+	if(pExt->AltOccupation.isset()) {
+		int lastAlt = pExt->AltOccupation.Get() ? obAlt : obNormal;
+		alt |= lastAlt;
+		pExt->AltOccupation.Reset();
+	}
+
+	if(alt & obAlt) {
+		pCell->AltOccupationFlags &= ~0x20;
+	}
+
+	if(alt & obNormal)
+	{
+		pCell->OccupationFlags &= ~0x20;
+	}
+
+	return 0x74425E;
+}
+
+DEFINE_HOOK(70DEBA, TechnoClass_UpdateGattling_Cycle, 6)
+{
+	GET(TechnoClass*, pThis, ESI);
+	GET(int, lastStageValue, EAX);
+	GET_STACK(int, a2, 0x24);
+
+	auto pType = pThis->GetTechnoType();
+
+	if(pThis->GattlingValue < lastStageValue) {
+		// just increase the value
+		pThis->GattlingValue += a2 * pType->RateUp;
+	} else {
+		// if max or higher, reset cyclic gattlings
+		auto pExt = TechnoTypeExt::ExtMap.Find(pType);
+
+		if(pExt->GattlingCyclic.Get()) {
+			pThis->GattlingValue = 0;
+			pThis->CurrentGattlingStage = 0;
+			pThis->Audio4.DTOR_1();
+			pThis->unknown_bool_4B8 = false;
+		}
+	}
+
+	// recreate hooked instruction
+	R->Stack<int>(0x10, pThis->GattlingValue);
+
+	return 0x70DEEB;
+}

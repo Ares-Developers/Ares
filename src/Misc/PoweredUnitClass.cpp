@@ -30,20 +30,24 @@ void PoweredUnitClass::PowerUp()
 	}
 }
 
-void PoweredUnitClass::PowerDown()
+bool PoweredUnitClass::PowerDown()
 {
-	if( EMPulse::IsDeactivationAdvisable(this->Techno) && !EMPulse::EnableEMPEffect2(this->Techno) ) {
+	if( EMPulse::IsDeactivationAdvisable(this->Techno) ) {
 		// destroy if EMP.Threshold would crash this unit when in air
-		if( this->Ext->EMP_Threshold && this->Techno->IsInAir() )	{
-			TechnoExt::Destroy(this->Techno);
+		if( EMPulse::EnableEMPEffect2(this->Techno) || ( this->Ext->EMP_Threshold && this->Techno->IsInAir() ) ) {
+			return false;
 		}
 	}
+
+	return true;
 }
 
-void PoweredUnitClass::Update()
+bool PoweredUnitClass::Update()
 {
-	if( (Unsorted::CurrentFrame - this->LastScan) < this->ScanInterval ) return;
-	
+	if( (Unsorted::CurrentFrame - this->LastScan) < this->ScanInterval ) return true;
+
+	if(!this->Techno->IsAlive || !this->Techno->Health || this->Techno->InLimbo) return true;
+
 	HouseClass* Owner = this->Techno->Owner;
 	bool HasPower     = this->IsPoweredBy(Owner);
 	
@@ -55,9 +59,10 @@ void PoweredUnitClass::Update()
 		// don't shutdown units inside buildings (warfac, barracks, shipyard) because that locks up the factory and the robot tank did it
 		auto WhatAmI = this->Techno->WhatAmI();
 		if((WhatAmI != InfantryClass::AbsID && WhatAmI != UnitClass::AbsID) || (!this->Techno->GetCell()->GetBuilding())) {
-			this->PowerDown();
+			return this->PowerDown();
 		}
 	}
-	
+
 	LastScan = Unsorted::CurrentFrame;
+	return true;
 }

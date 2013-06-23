@@ -143,3 +143,8 @@ FINE_HOOK(487CB0, CellClass_GetRadLevel, 5)
 	return 0x487E39;
 }
 */
+
+DEFINE_HOOK(65B5FB, RadSiteClass_Radiate_UnhardcodeSnow, 0)
+{
+	return 0x65B604;
+}

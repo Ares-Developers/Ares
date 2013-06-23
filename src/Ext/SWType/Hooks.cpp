@@ -146,17 +146,19 @@ DEFINE_HOOK(6A932B, CameoClass_GetTip_MoneySW, 6) {
 
 	if(SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSW)) {
 		if(pData->Money_Amount < 0) {
-			wchar_t* pTip = (wchar_t*)0xB07BC4;
+			wchar_t* pTip = SidebarClass::TooltipBuffer;
+			int length = SidebarClass::TooltipLength;
 
 			// account for no-name SWs
 			if(*(byte*)0x884B8C || !wcslen(pSW->UIName)) {
 				const wchar_t* pFormat = StringTable::LoadStringA("TXT_MONEY_FORMAT_1");
-				swprintf(pTip, 0x20, pFormat, -pData->Money_Amount.Get());
+				swprintf(pTip, length, pFormat, -pData->Money_Amount.Get());
 			} else {
 				// then, this must be brand SWs
 				const wchar_t* pFormat = StringTable::LoadStringA("TXT_MONEY_FORMAT_2");
-				swprintf(pTip, 0x20, pFormat, pSW->UIName, -pData->Money_Amount.Get());
+				swprintf(pTip, length, pFormat, pSW->UIName, -pData->Money_Amount.Get());
 			}
+			pTip[length - 1] = 0;
 
 			// replace space by new line
 			for(int i=wcslen(pTip); i>=0; --i) {
@@ -350,8 +352,12 @@ DEFINE_HOOK(50B319, HouseClass_UpdateSWs_ShowCameo, 6)
 // AI SW targeting submarines
 DEFINE_HOOK(50CFAA, HouseClass_PickOffensiveSWTarget, 0)
 {
+	// reset weight
 	R->ESI(0);
-	R->Stack8(0x13, 1);
+
+	// mark as ineligible
+	R->Stack8(0x13, 0);
+
 	return 0x50CFC9;
 }
 

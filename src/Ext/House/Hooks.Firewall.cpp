@@ -25,16 +25,7 @@ DEFINE_HOOK_AGAIN(6FF860, TechnoClass_Fire_FSW, 8)
 
 	BulletTypeExt::ExtData *pBulletData = BulletTypeExt::ExtMap.Find(Bullet->Type);
 
-	bool FirestormActive = 0;
-	for(int i = 0; i < HouseClass::Array->Count; ++i) {
-		HouseExt::ExtData *pData = HouseExt::ExtMap.Find(HouseClass::Array->Items[i]);
-		if(pData && pData->FirewallActive) {
-			FirestormActive = 1;
-			break;
-		}
-	}
-
-	if(!FirestormActive || !pBulletData->SubjectToFirewall) {
+	if(!pBulletData->SubjectToFirewall || !HouseExt::IsAnyFirestormActive) {
 		return 0;
 	}
 
