@@ -8,6 +8,10 @@
 #include "../Ext/TechnoType/Body.h"
 #include "../Ext/SWType/Body.h"
 
+#include "FlyingStrings.h"
+
+DynamicVectorClass<FlyingStrings::Item> FlyingStrings::data;
+
 DEFINE_HOOK(7C89D4, DirectDrawCreate, 6)
 {
 	R->Stack<DWORD>(0x4, Ares::GlobalControls::GFX_DX_Force);

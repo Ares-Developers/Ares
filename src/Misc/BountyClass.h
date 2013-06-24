@@ -19,8 +19,8 @@ public:
 		double Mod = 0,
 		double FriendlyMod = 0,
 		bool IsPillager = false,
-		double CostMult = 0,
-		double PillageMult = 0
+		double CostMult = 1,
+		double PillageMult = 1
 		)
 		
 	{

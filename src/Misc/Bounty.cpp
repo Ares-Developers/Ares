@@ -20,25 +20,22 @@ void BountyClass::CalculateBounty(TechnoClass* Attacker, TechnoClass* Victim, in
 
 	double VictimCostMult;
 
-	if(PillageDamage) {
+	if (PillageDamage) {
 		VictimCostMult = (PillageDamage*1.0) / pTypeVictim->Strength * pVictimExt->Get_Bounty_PillageMultiplier();
 	} else {
 		VictimCostMult = pVictimExt->Get_Bounty_CostMultiplier();
 	}
 
-	auto VictimActualCost = int(pTypeVictim->GetCost() * VictimCostMult);
+	int VictimActualCost;
 
 	//Alliance check
 	if (!Victim->Owner->IsAlliedWith(Attacker->Owner)) {
-		VictimActualCost *= pAttackerExt->Get_Bounty_Modifier();
+		VictimActualCost = pAttackerExt->Get_Bounty_Modifier() * pTypeVictim->GetCost() * VictimCostMult;
 	} else {
-		VictimActualCost *= pAttackerExt->Get_Bounty_FriendlyModifier() * -1;
+		VictimActualCost = pAttackerExt->Get_Bounty_FriendlyModifier() * -1.0 * pTypeVictim->GetCost() * VictimCostMult;
 	}
-
-	if (VictimActualCost != 0){
-		Attacker->Owner->GiveMoney(VictimActualCost);
-		Debug::Log("[Bounty] %ls's %s attacked %s, gained %d as Bounty.", Attacker->Owner->UIName, pTypeAttacker->ID, pTypeVictim->ID, VictimActualCost);
-						
+	
+	if (VictimActualCost != 0) {
 		if (pAttackerExt->Get_Bounty_Message()) { //output message only if we want to - Graion
 			if (pTypeAttacker->MissileSpawn && Attacker->SpawnOwner) { //V3, Dred
 				TechnoExt::ExtData * pSpawnerExt = TechnoExt::ExtMap.Find(Attacker->SpawnOwner);
@@ -46,6 +43,15 @@ void BountyClass::CalculateBounty(TechnoClass* Attacker, TechnoClass* Victim, in
 			} else {
 				pAttackerExt->Bounty_Amount += VictimActualCost;
 			}
+		}
+		
+		if (VictimActualCost > 0) {
+			Attacker->Owner->GiveMoney(VictimActualCost);
+			Debug::Log("[Bounty] %ls's %s attacked %s, gained %d as Bounty.", Attacker->Owner->UIName, pTypeAttacker->ID, pTypeVictim->ID, VictimActualCost);
+		} else {
+			VictimActualCost *= -1;
+			Attacker->Owner->TakeMoney(VictimActualCost);
+			Debug::Log("[Bounty] %ls's %s attacked %s, lost %d as Bounty.", Attacker->Owner->UIName, pTypeAttacker->ID, pTypeVictim->ID, VictimActualCost);
 		}
 	}
 }
@@ -91,8 +97,8 @@ DEFINE_HOOK(702E64, TechnoClass_CalculateBountyAtKill, 6) {
 		TechnoExt::ExtData * pKillerExt = TechnoExt::ExtMap.Find(Killer);
 
 		if (!(pKillerExt->Get_Bounty_Pillager()) &&
-			pKillerExt->Get_Bounty_Modifier() != 0 ||
-			pKillerExt->Get_Bounty_FriendlyModifier() != 0
+			(pKillerExt->Get_Bounty_Modifier() ||
+			pKillerExt->Get_Bounty_FriendlyModifier())
 			) {
 			BountyClass::CalculateBounty(Killer, Victim, 0);
 		}
@@ -115,9 +121,9 @@ DEFINE_HOOK(701DFF, TechnoClass_ReceiveDamage_BountyPillage, 7) {
 	if(Attacker) {
 		TechnoExt::ExtData *pAttackerExt =TechnoExt::ExtMap.Find(Attacker);
 
-		if (pAttackerExt->Get_Bounty_Pillager() &&
-			pAttackerExt->Get_Bounty_Modifier() != 0 ||
-			pAttackerExt->Get_Bounty_FriendlyModifier() != 0
+		if ((!!(pAttackerExt->Get_Bounty_Pillager())) &&
+			(pAttackerExt->Get_Bounty_Modifier() ||
+			pAttackerExt->Get_Bounty_FriendlyModifier())
 			) {
 			BountyClass::CalculateBounty(Attacker, Victim, *pDamage);
 		}
@@ -140,9 +146,9 @@ DEFINE_HOOK(71A922, Temporal_Kill_Pillage, 5)
 	if(Attacker) {
 		TechnoExt::ExtData *pAttackerExt =TechnoExt::ExtMap.Find(Attacker);
 
-		if (pAttackerExt->Get_Bounty_Pillager() &&
-			pAttackerExt->Get_Bounty_Modifier() != 0 ||
-			pAttackerExt->Get_Bounty_FriendlyModifier() != 0
+		if ((!!(pAttackerExt->Get_Bounty_Pillager())) &&
+			(pAttackerExt->Get_Bounty_Modifier() ||
+			pAttackerExt->Get_Bounty_FriendlyModifier())
 			) {
 			BountyClass::CalculateBounty(Attacker, Victim, Victim->Health);
 		}
@@ -161,11 +167,11 @@ DEFINE_HOOK(7418D4, UnitClass_TryCrush, 6) {
 	GET(TechnoClass *, Victim, ESI);
 
 	if(Crusher) {
-		TechnoExt::ExtData *pCrusherExt =TechnoExt::ExtMap.Find(Crusher);
+		TechnoExt::ExtData *pCrusherExt = TechnoExt::ExtMap.Find(Crusher);
 
-		if (pCrusherExt->Get_Bounty_Modifier() != 0 ||
-			pCrusherExt->Get_Bounty_FriendlyModifier() != 0) {
-			if (pCrusherExt->Get_Bounty_Pillager()) {
+		if (pCrusherExt->Get_Bounty_Modifier() ||
+			pCrusherExt->Get_Bounty_FriendlyModifier()) {
+			if (!!pCrusherExt->Get_Bounty_Pillager()) {
 				BountyClass::CalculateBounty(Crusher, Victim, Victim->Health);
 			} else {
 				BountyClass::CalculateBounty(Crusher, Victim, 0);
