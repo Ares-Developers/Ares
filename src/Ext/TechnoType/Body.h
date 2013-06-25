@@ -124,7 +124,7 @@ public:
 		// issue #617
 		ValueableVector<BuildingTypeClass*> PoweredBy;  //!< The buildingtype this unit is powered by or NULL.
 
-		DynamicVectorClass<BuildingTypeClass *> BuiltAt;
+		ValueableVector<BuildingTypeClass *> BuiltAt;
 		Valueable<bool> Cloneable;
 		DynamicVectorClass<BuildingTypeClass *> ClonedAt;
 

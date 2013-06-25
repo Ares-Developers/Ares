@@ -309,19 +309,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	// #617 powered units
 	this->PoweredBy.Read(&exINI, section, "PoweredBy");
 
-	if(pINI->ReadString(section, "BuiltAt", "", Ares::readBuffer, Ares::readLength) ) {
-		this->BuiltAt.Clear();
-		if(!INIClass::IsBlank(Ares::readBuffer)) {
-			for(auto cur = strtok(Ares::readBuffer, ","); cur; cur = strtok(NULL, ",")) {
-				auto b = BuildingTypeClass::Find(cur);
-				if(b) {
-					this->BuiltAt.AddItem(b);
-				} else {
-					Debug::INIParseFailed(section, "BuiltAt", cur);
-				}
-			}
-		}
-	}
+	this->BuiltAt.Read(&exINI, section, "BuiltAt");
 
 	this->Cloneable.Read(&exINI, section, "Cloneable");
 
@@ -494,7 +482,7 @@ bool TechnoTypeExt::ExtData::CameoIsElite()
 
 bool TechnoTypeExt::ExtData::CanBeBuiltAt(BuildingTypeClass * FactoryType) {
 	auto pBExt = BuildingTypeExt::ExtMap.Find(FactoryType);
-	return (!this->BuiltAt.Count && !pBExt->Factory_ExplicitOnly) || this->BuiltAt.FindItemIndex(&FactoryType) != -1;
+	return (!this->BuiltAt.size() && !pBExt->Factory_ExplicitOnly) || this->BuiltAt.Contains(FactoryType);
 }
 
 bool TechnoTypeExt::ExtData::CarryallCanLift(UnitClass * Target) {
