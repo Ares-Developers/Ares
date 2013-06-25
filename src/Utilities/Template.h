@@ -583,27 +583,16 @@ public:
 		}
 	}
 
-	/** This will return true for Valuable<std::vector<AbstractTypeClass *> > Foo == AbstractTypeClass * Bar
-		if Bar is among the objects listed in Foo.
+	bool Contains(const T &other) const {
+		return std::find(this->begin(), this->end(), other) != this->end();
+	}
 
-		This way, we can do stuff like
-			if(SomeExt->AllowedUnits == someUnit) { ...
-		even if AllowedUnits is a list.
-	*/
-	bool operator== (AbstractTypeClass * other) const {
-		if(this->empty()) {
-			return false;
+	int IndexOf(const T &other) const {
+		auto it = std::find(this->begin(), this->end(), other);
+		if(it != this->end()) {
+			return it - this->begin();
 		}
-
-		int listSize = this->size();
-		for( int i = 0; i < listSize; ++i ) {
-			if(this->at(i) == other) {
-				return true;
-			}
-		}
-
-		// if we ended up here, other is not among the listed object types
-		return false;
+		return -1;
 	}
 };
 

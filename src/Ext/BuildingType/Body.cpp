@@ -430,7 +430,7 @@ bool BuildingTypeExt::ExtData::IsLinkable() {
 
 bool BuildingTypeExt::ExtData::CanBeOccupiedBy(InfantryClass *whom) {
 	// if CanBeOccupiedBy isn't empty, we have to check if this soldier is allowed in
-	return this->AllowedOccupiers.empty() || (this->AllowedOccupiers == whom->Type);
+	return this->AllowedOccupiers.empty() || this->AllowedOccupiers.Contains(whom->Type);
 }
 
 // =============================
