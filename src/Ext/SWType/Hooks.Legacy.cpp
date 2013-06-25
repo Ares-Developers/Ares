@@ -539,8 +539,8 @@ DEFINE_HOOK(53A140, LightningStorm_Strike, 7) {
 
 			// infer the height this thing will be drawn at.
 			if(pData->Weather_CloudHeight < 0) {
-				if(pData->Weather_Bolts.Count) {
-					AnimTypeClass* pBoltAnim = pData->Weather_Bolts.GetItem(0);
+				if(auto it = pData->Weather_Bolts.GetElements(RulesClass::Instance->WeatherConBolts)) {
+					AnimTypeClass* pBoltAnim = it.at(0);
 					pData->Weather_CloudHeight = (int)Game::F2I(((pBoltAnim->GetImage()->Height / 2) - 0.5) * LightningStorm::CloudHeightFactor);
 				}
 			}
@@ -579,9 +579,9 @@ DEFINE_HOOK(53A300, LightningStorm_Strike2, 5) {
 		if(Coords != LightningStorm::EmptyCoords) {
 
 			// create a bolt animation
-			if(pData->Weather_Bolts.Count) {
+			if(auto it = pData->Weather_Bolts.GetElements(RulesClass::Instance->WeatherConBolts)) {
 				DWORD rnd = ScenarioClass::Instance->Random.Random();
-				AnimTypeClass* pAnimType = pData->Weather_Bolts.GetItem(rnd % pData->Weather_Bolts.Count);
+				AnimTypeClass* pAnimType = it.at(rnd % it.size());
 
 				AnimClass* pAnim = NULL;
 				GAME_ALLOC(AnimClass, pAnim, pAnimType, &Coords);

@@ -58,7 +58,7 @@ public:
 		Valueable<bool> Weather_IgnoreLightningRod;
 		Valueable<AnimTypeClass*> Weather_BoltExplosion;
 		NullableVector<AnimTypeClass*> Weather_Clouds;
-		TypeList<AnimTypeClass*> Weather_Bolts;
+		NullableVector<AnimTypeClass*> Weather_Bolts;
 		TypeList<AnimTypeClass*> Weather_Debris;
 		TypeList<int> Weather_Sounds;
 		ValueableEnum<SuperWeaponAffectedHouse> Weather_RadarOutageAffects;
