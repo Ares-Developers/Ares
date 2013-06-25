@@ -746,6 +746,22 @@ protected:
 	}
 };
 
+template<typename Lookuper>
+class NullableIdxVector : public NullableVector<int> {
+protected:
+	virtual void Split(INI_EX *parser, const char* pSection, const char* pKey, char* pValue) {
+		// split the string and look up the tokens. only valid tokens are added.
+		for(char* cur = strtok(pValue, Ares::readDelims); cur; cur = strtok(nullptr, Ares::readDelims)) {
+			int idx = Lookuper::FindIndex(cur);
+			if(idx != -1) {
+				this->push_back(idx);
+			} else if(!INIClass::IsBlank(cur)) {
+				Debug::INIParseFailed(pSection, pKey, cur);
+			}
+		}
+	}
+};
+
 template<typename T>
 class ValueableEnum : public Valueable<typename T::Value> {
 public:
