@@ -126,7 +126,7 @@ public:
 
 		ValueableVector<BuildingTypeClass *> BuiltAt;
 		Valueable<bool> Cloneable;
-		DynamicVectorClass<BuildingTypeClass *> ClonedAt;
+		ValueableVector<BuildingTypeClass *> ClonedAt;
 
 		Nullable<bool> CarryallAllowed;
 		Nullable<int> CarryallSizeLimit;

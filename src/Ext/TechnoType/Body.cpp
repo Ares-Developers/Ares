@@ -313,19 +313,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 
 	this->Cloneable.Read(&exINI, section, "Cloneable");
 
-	if(pINI->ReadString(section, "ClonedAt", "", Ares::readBuffer, Ares::readLength) ) {
-		this->ClonedAt.Clear();
-		if(!INIClass::IsBlank(Ares::readBuffer)) {
-			for(auto cur = strtok(Ares::readBuffer, ","); cur; cur = strtok(NULL, ",")) {
-				auto b = BuildingTypeClass::Find(cur);
-				if(b) {
-					this->ClonedAt.AddItem(b);
-				} else {
-					Debug::INIParseFailed(section, "ClonedAt", cur);
-				}
-			}
-		}
-	}
+	this->ClonedAt.Read(&exINI, section, "ClonedAt");
 
 	this->CarryallAllowed.Read(&exINI, section, "Carryall.Allowed");
 	this->CarryallSizeLimit.Read(&exINI, section, "Carryall.SizeLimit");
