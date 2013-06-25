@@ -592,9 +592,9 @@ DEFINE_HOOK(53A300, LightningStorm_Strike2, 5) {
 			}
 			
 			// play lightning sound
-			if(pData->Weather_Sounds.Count) {
+			if(auto it = pData->Weather_Sounds.GetElements(RulesClass::Instance->LightningSounds)) {
 				DWORD rnd = ScenarioClass::Instance->Random.Random();
-				VocClass::PlayAt(pData->Weather_Sounds.GetItem(rnd % pData->Weather_Sounds.Count), &Coords, NULL);
+				VocClass::PlayAt(it.at(rnd % it.size()), &Coords, NULL);
 			}
 						
 			bool debris = false;

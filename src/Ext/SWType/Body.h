@@ -60,7 +60,7 @@ public:
 		NullableVector<AnimTypeClass*> Weather_Clouds;
 		NullableVector<AnimTypeClass*> Weather_Bolts;
 		NullableVector<AnimTypeClass*> Weather_Debris;
-		TypeList<int> Weather_Sounds;
+		NullableIdxVector<VocClass> Weather_Sounds;
 		ValueableEnum<SuperWeaponAffectedHouse> Weather_RadarOutageAffects;
 
 		// Nuke
