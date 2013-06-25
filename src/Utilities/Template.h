@@ -655,6 +655,10 @@ public:
 		return this->_Defined;
 	}
 
+	virtual Iterator<T> GetElements() const {
+		return Iterator<T>(*this);
+	}
+
 protected:
 	virtual void Split(INI_EX *parser, const char* pSection, const char* pKey, char* pValue) {
 		// if we were able to get the flag in question, take it apart and check the tokens...
@@ -713,6 +717,16 @@ public:
 
 	bool HasValue() const {
 		return this->_HasValue;
+	}
+
+	using ValueableVector<T>::GetElements;
+
+	virtual Iterator<T> GetElements(Iterator<T> defElements) const {
+		if(!this->_HasValue) {
+			return defElements;
+		}
+
+		return ValueableVector<T>::GetElements();
 	}
 };
 
