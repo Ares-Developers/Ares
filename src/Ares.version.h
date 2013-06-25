@@ -2,11 +2,11 @@
 #define VERSION_H
 
 // define this to switch to release version
-#define IS_RELEASE_VER
+//#define IS_RELEASE_VER
 
 #define VERSION_MAJOR 13
-#define VERSION_MINOR 172
-#define VERSION_REVISION 216
+#define VERSION_MINOR 176
+#define VERSION_REVISION 150
 
 #define SAVEGAME_MAGIC ((VERSION_MAJOR << 24) | (VERSION_MINOR << 16) | (VERSION_REVISION))
 
