@@ -534,7 +534,8 @@ DEFINE_HOOK(53A140, LightningStorm_Strike, 7) {
 		// create a cloud animation
 		if(Coords != LightningStorm::EmptyCoords) {
 			// select the anim
-			AnimTypeClass* pAnimType = pData->Weather_Clouds.GetItem(ScenarioClass::Instance->Random.Random() % pData->Weather_Clouds.Count);
+			auto it = pData->Weather_Clouds.GetElements(RulesClass::Instance->WeatherConClouds);
+			AnimTypeClass* pAnimType = it.at(ScenarioClass::Instance->Random.Random() % it.size());
 
 			// infer the height this thing will be drawn at.
 			if(pData->Weather_CloudHeight < 0) {

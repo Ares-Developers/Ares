@@ -57,7 +57,7 @@ public:
 		Valueable<bool> Weather_PrintText;
 		Valueable<bool> Weather_IgnoreLightningRod;
 		Valueable<AnimTypeClass*> Weather_BoltExplosion;
-		TypeList<AnimTypeClass*> Weather_Clouds;
+		NullableVector<AnimTypeClass*> Weather_Clouds;
 		TypeList<AnimTypeClass*> Weather_Bolts;
 		TypeList<AnimTypeClass*> Weather_Debris;
 		TypeList<int> Weather_Sounds;

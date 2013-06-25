@@ -36,9 +36,6 @@ void SW_LightningStorm::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeCla
 	for(int i=0; i<RulesClass::Instance->LightningSounds.Count; ++i) {
 		pData->Weather_Sounds.AddItem(RulesClass::Instance->LightningSounds.GetItem(i));
 	}
-	for(int i=0; i<RulesClass::Instance->WeatherConClouds.Count; ++i) {
-		pData->Weather_Clouds.AddItem(RulesClass::Instance->WeatherConClouds.GetItem(i));
-	}
 	for(int i=0; i<RulesClass::Instance->MetallicDebris.Count; ++i) {
 		pData->Weather_Debris.AddItem(RulesClass::Instance->MetallicDebris.GetItem(i));
 	}
@@ -92,17 +89,7 @@ void SW_LightningStorm::LoadFromINI(
 	pData->Weather_CloudHeight.Read(&exINI, section, "Lightning.CloudHeight");
 	pData->Weather_BoltExplosion.Parse(&exINI, section, "Lightning.BoltExplosion");
 	pData->Weather_RadarOutageAffects.Read(&exINI, section, "Lightning.RadarOutageAffects");
-
-	if(pINI->ReadString(section, "Lightning.Clouds", Ares::readDefval, Ares::readBuffer, Ares::readLength)) {
-		pData->Weather_Clouds.Clear();
-		for(char * cur = strtok(Ares::readBuffer, Ares::readDelims); cur && *cur; cur = strtok(NULL, Ares::readDelims)) {
-			if(AnimTypeClass *pAnim = AnimTypeClass::Find(cur)) {
-				pData->Weather_Clouds.AddItem(pAnim);
-			} else {
-				Debug::INIParseFailed(section, "Lightning.Clouds", cur, "Value contains invalid item.");
-			}
-		}
-	}
+	pData->Weather_Clouds.Read(&exINI, section, "Lightning.Clouds");
 
 	if(pINI->ReadString(section, "Lightning.Bolts", Ares::readDefval, Ares::readBuffer, Ares::readLength)) {
 		pData->Weather_Bolts.Clear();
