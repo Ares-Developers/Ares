@@ -566,13 +566,18 @@ void Valueable<RocketStruct>::Read(INI_EX *parser, const char* pSection, const c
 
 template<class T>
 class ValueableVector : public std::vector<T> {
+protected:
+	bool _Defined;
 public:
 	typedef T MyType;
 	typedef typename CompoundT<T>::BaseT MyBase;
 
+	ValueableVector() : std::vector<T>(), _Defined(false) {};
+
 	virtual void Read(INI_EX *parser, const char* pSection, const char* pKey) {
 		if(parser->ReadString(pSection, pKey)) {
 			this->clear();
+			this->_Defined = true;
 			this->Split(parser, pSection, pKey, Ares::readBuffer);
 		}
 	}
@@ -587,6 +592,10 @@ public:
 			return it - this->begin();
 		}
 		return -1;
+	}
+
+	bool Defined() const {
+		return this->_Defined;
 	}
 
 protected:
