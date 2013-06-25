@@ -649,14 +649,14 @@ DEFINE_HOOK(53A300, LightningStorm_Strike2, 5) {
 			}
 
 			// create some debris
-			if(pData->Weather_Debris.Count) {
+			if(auto it = pData->Weather_Debris.GetElements(RulesClass::Instance->MetallicDebris)) {
 				
 				// dead infantry never generates debris.
 				if(!isInfantry && debris) {
 					int count = ScenarioClass::Instance->Random.RandomRanged(pData->Weather_DebrisMin, pData->Weather_DebrisMax);
 					for(int i=0; i<count; ++i) {
 						DWORD rnd = ScenarioClass::Instance->Random.Random();
-						AnimTypeClass *pAnimType = pData->Weather_Debris.GetItem(rnd % pData->Weather_Debris.Count);
+						AnimTypeClass *pAnimType = it.at(rnd % it.size());
 
 						AnimClass *pAnim = NULL;
 						GAME_ALLOC(AnimClass, pAnim, pAnimType, &Coords);

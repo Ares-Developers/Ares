@@ -59,7 +59,7 @@ public:
 		Valueable<AnimTypeClass*> Weather_BoltExplosion;
 		NullableVector<AnimTypeClass*> Weather_Clouds;
 		NullableVector<AnimTypeClass*> Weather_Bolts;
-		TypeList<AnimTypeClass*> Weather_Debris;
+		NullableVector<AnimTypeClass*> Weather_Debris;
 		TypeList<int> Weather_Sounds;
 		ValueableEnum<SuperWeaponAffectedHouse> Weather_RadarOutageAffects;
 
