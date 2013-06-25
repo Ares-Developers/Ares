@@ -51,15 +51,14 @@ void UnitDeliveryStateMachine::Update() {
 //have been unloaded again, when it was at index 100.
 
 void UnitDeliveryStateMachine::PlaceUnits() {
-	int unitIdx = 0;
 	SWTypeExt::ExtData *pData = this->FindExtData();
 
 	if(!pData) {
 		return;
 	}
 
-	while(unitIdx < pData->SW_Deliverables.size()) {
-		TechnoTypeClass * Type = pData->SW_Deliverables[unitIdx];
+	for(size_t i=0; i<pData->SW_Deliverables.size(); ++i) {
+		TechnoTypeClass * Type = pData->SW_Deliverables[i];
 		TechnoClass * Item = generic_cast<TechnoClass *>(Type->CreateObject(this->Super->Owner));
 		BuildingClass * ItemBuilding = specific_cast<BuildingClass *>(Item);
 
@@ -128,6 +127,5 @@ void UnitDeliveryStateMachine::PlaceUnits() {
 				break;
 			}
 		} while(!Placed);
-		++unitIdx;
 	}
 }
