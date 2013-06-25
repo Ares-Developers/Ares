@@ -307,17 +307,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	this->PassengerTurret.Read(&exINI, section, "PassengerTurret");
 	
 	// #617 powered units
-	if( pINI->ReadString(section, "PoweredBy", "", Ares::readBuffer, Ares::readLength) ) {
-		this->PoweredBy.Clear();
-		for(char *cur = strtok(Ares::readBuffer, ","); cur; cur = strtok(NULL, ",")) {
-			BuildingTypeClass* b = BuildingTypeClass::Find(cur);
-			if(b) {
-				this->PoweredBy.AddItem(b);
-			} else {
-				Debug::INIParseFailed(section, "PoweredBy", cur, "BuildingType [%s] not found");
-			}
-		}
-	}
+	this->PoweredBy.Read(&exINI, section, "PoweredBy");
 
 	if(pINI->ReadString(section, "BuiltAt", "", Ares::readBuffer, Ares::readLength) ) {
 		this->BuiltAt.Clear();

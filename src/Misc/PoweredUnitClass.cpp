@@ -12,7 +12,7 @@ bool PoweredUnitClass::IsPoweredBy(HouseClass* Owner) const
 	for(int i = 0; i < Owner->Buildings.Count; ++i)	{
 		auto Building  = Owner->Buildings.GetItem(i);
 		auto BExt = TechnoExt::ExtMap.Find(Building);
-		auto inArray = this->Ext->PoweredBy.FindItemIndex(&Building->Type) != -1;
+		auto inArray = this->Ext->PoweredBy.Contains(Building->Type);
 
 		if(inArray && !Building->BeingWarpedOut && !Building->IsUnderEMP() && BExt->IsOperated() && Building->IsPowerOnline()) {
 			return true;

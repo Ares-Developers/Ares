@@ -95,13 +95,13 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 		}
 
 		auto pData = TechnoTypeExt::ExtMap.Find(Item);
-		if(Item->PoweredUnit && pData->PoweredBy.Count) {
+		if(Item->PoweredUnit && pData->PoweredBy.size()) {
 			Debug::DevLog(Debug::Error, "[%s] uses both PoweredUnit=yes and PoweredBy=!\n", Item->ID);
 			Item->PoweredUnit = false;
 		}
 		if(auto PowersUnit = Item->PowersUnit) {
 			auto pExtraData = TechnoTypeExt::ExtMap.Find(PowersUnit);
-			if(pExtraData->PoweredBy.Count) {
+			if(pExtraData->PoweredBy.size()) {
 				Debug::DevLog(Debug::Error, "[%s]PowersUnit=%s, but [%s] uses PoweredBy=!\n", Item->ID, PowersUnit->ID, PowersUnit->ID);
 				Item->PowersUnit = NULL;
 			}

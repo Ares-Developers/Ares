@@ -122,7 +122,7 @@ public:
 		Valueable<bool> PassengerTurret; //!< Whether this unit's turret changes based on the number of people in its passenger hold.
 
 		// issue #617
-		DynamicVectorClass<BuildingTypeClass*> PoweredBy;  //!< The buildingtype this unit is powered by or NULL.
+		ValueableVector<BuildingTypeClass*> PoweredBy;  //!< The buildingtype this unit is powered by or NULL.
 
 		DynamicVectorClass<BuildingTypeClass *> BuiltAt;
 		Valueable<bool> Cloneable;
