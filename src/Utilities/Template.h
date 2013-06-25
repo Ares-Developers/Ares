@@ -570,16 +570,10 @@ public:
 	typedef T MyType;
 	typedef typename CompoundT<T>::BaseT MyBase;
 
-	void Read(INI_EX *parser, const char* pSection, const char* pKey) {
+	virtual void Read(INI_EX *parser, const char* pSection, const char* pKey) {
 		if(parser->ReadString(pSection, pKey)) {
-			// if we were able to get the flag in question, take it apart and check the tokens...
-			// ...against the various object types; if we find one, place it in the value list
-			for(char *cur = strtok(Ares::readBuffer, ","); cur; cur = strtok(NULL, ",")) {
-				if(T thisObject = MyBase::Find(cur)) {
-					this->push_back(thisObject);
-					continue;
-				}
-			}
+			this->clear();
+			this->Split(parser, pSection, pKey, Ares::readBuffer);
 		}
 	}
 
@@ -594,33 +588,38 @@ public:
 		}
 		return -1;
 	}
+
+protected:
+	virtual void Split(INI_EX *parser, const char* pSection, const char* pKey, char* pValue) {
+		// if we were able to get the flag in question, take it apart and check the tokens...
+		for(char *cur = strtok(pValue, Ares::readDelims); cur; cur = strtok(nullptr, Ares::readDelims)) {
+			Parse(parser, pSection, pKey, cur);
+		}
+	}
+
+	void Parse(INI_EX *parser, const char* pSection, const char* pKey, char* pValue) {
+		T buffer = T();
+		if(Parser<T>::Parse(pValue, &buffer)) {
+			this->push_back(buffer);
+		} else if(!INIClass::IsBlank(pValue)) {
+			Debug::INIParseFailed(pSection, pKey, pValue);
+		}
+	}
 };
 
 template<>
-void ValueableVector<TechnoTypeClass *>::Read(INI_EX *parser, const char* pSection, const char* pKey) {
-	if(parser->ReadString(pSection, pKey)) {
-		// if we were able to get the flag in question, take it apart and check the tokens...
-		// ...against the various object types; if we find one, place it in the value list
-		for(char *cur = strtok(Ares::readBuffer, ","); cur; cur = strtok(NULL, ",")) {
-			TechnoTypeClass * thisObject = NULL;
-			if(thisObject = AircraftTypeClass::Find(cur)) {
-				this->push_back(thisObject);
-				continue;
-			}
-			if(thisObject = BuildingTypeClass::Find(cur)) {
-				this->push_back(thisObject);
-				continue;
-			}
-			if(thisObject = InfantryTypeClass::Find(cur)) {
-				this->push_back(thisObject);
-				continue;
-			}
-			if(thisObject = UnitTypeClass::Find(cur)) {
-				this->push_back(thisObject);
-				continue;
-			}
-			Debug::INIParseFailed(pSection, pKey, cur);
-		}
+void ValueableVector<TechnoTypeClass *>::Parse(INI_EX *parser, const char* pSection, const char* pKey, char* pValue) {
+	// ...against the various object types; if we find one, place it in the value list
+	if(auto pType = AircraftTypeClass::Find(pValue)) {
+		this->push_back(pType);
+	} else if(auto pType = BuildingTypeClass::Find(pValue)) {
+		this->push_back(pType);
+	} else if(auto pType = InfantryTypeClass::Find(pValue)) {
+		this->push_back(pType);
+	} else if(auto pType = UnitTypeClass::Find(pValue)) {
+		this->push_back(pType);
+	} else if(!INIClass::IsBlank(pValue)) {
+		Debug::INIParseFailed(pSection, pKey, pValue);
 	}
 }
 
