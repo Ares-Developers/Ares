@@ -189,7 +189,7 @@ public:
 		CustomPalette CameoPal;
 
 		// Unit Delivery
-		DynamicVectorClass<TechnoTypeClass *> SW_Deliverables;
+		ValueableVector<TechnoTypeClass *> SW_Deliverables;
 		Valueable<bool> SW_DeliverBuildups;
 
 		char SidebarPCX[0x20];
