@@ -632,6 +632,33 @@ void ValueableVector<TechnoTypeClass *>::Parse(INI_EX *parser, const char* pSect
 	}
 }
 
+template<class T>
+class NullableVector : public ValueableVector<T> {
+protected:
+	bool _HasValue;
+public:
+	NullableVector() : ValueableVector<T>(), _HasValue(false) {};
+
+	virtual void Read(INI_EX *parser, const char* pSection, const char* pKey) {
+		if(parser->ReadString(pSection, pKey)) {
+			this->clear();
+			this->_Defined = true;
+
+			// provide a way to reset to default
+			if(!_strcmpi(Ares::readBuffer, "<default>")) {
+				this->_HasValue = false;
+			} else {
+				this->_HasValue = true;
+				this->Split(parser, pSection, pKey, Ares::readBuffer);
+			}
+		}
+	}
+
+	bool HasValue() const {
+		return this->_HasValue;
+	}
+};
+
 template<typename T>
 class ValueableEnum : public Valueable<typename T::Value> {
 public:
