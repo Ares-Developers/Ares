@@ -73,8 +73,8 @@ public:
 		bool Ivan_Detachable;
 		Customizable<int> Ivan_Damage;
 		Customizable<int> Ivan_Delay;
-		CustomizableIdx<int, VocClass> Ivan_TickingSound;
-		CustomizableIdx<int, VocClass> Ivan_AttachSound;
+		NullableIdx<VocClass> Ivan_TickingSound;
+		NullableIdx<VocClass> Ivan_AttachSound;
 		Customizable<WarheadTypeClass *> Ivan_WH;
 		Customizable<SHPStruct *> Ivan_Image;
 		Customizable<int> Ivan_FlickerRate;
@@ -108,8 +108,8 @@ public:
 			Ivan_Detachable (true),
 			Ivan_Damage (&RulesClass::Instance->IvanDamage),
 			Ivan_Delay (&RulesClass::Instance->IvanTimedDelay),
-			Ivan_TickingSound (&RulesClass::Instance->BombTickingSound),
-			Ivan_AttachSound (&RulesClass::Instance->BombAttachSound),
+			Ivan_TickingSound (),
+			Ivan_AttachSound (),
 			Ivan_WH (&RulesClass::Instance->IvanWarhead),
 			Ivan_Image (&RulesClass::Instance->BOMBCURS_SHP),
 			Ivan_FlickerRate (&RulesClass::Instance->IvanIconFlickerRate),
