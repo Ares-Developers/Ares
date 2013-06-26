@@ -98,10 +98,10 @@ public:
 		bool ExperienceFromAirstrike;
 		float AirstrikeExperienceModifier;
 
-		ValueableIdx<int, VocClass> VoiceRepair;
+		ValueableIdx<VocClass> VoiceRepair;
 
-		ValueableIdx<int, VocClass> HijackerEnterSound;
-		ValueableIdx<int, VocClass> HijackerLeaveSound;
+		ValueableIdx<VocClass> HijackerEnterSound;
+		ValueableIdx<VocClass> HijackerLeaveSound;
 		Valueable<int> HijackerKillPilots;
 		Valueable<bool> HijackerBreakMindControl;
 		Valueable<bool> HijackerAllowed;

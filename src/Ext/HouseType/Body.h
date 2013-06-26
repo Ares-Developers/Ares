@@ -40,7 +40,7 @@ class HouseTypeExt
 			DynamicVectorClass<BuildingTypeClass *> Powerplants;
 			TypeList<TechnoTypeClass*> ParaDrop;
 			TypeList<int> ParaDropNum;
-			ValueableIdx<int, AircraftTypeClass> ParaDropPlane;
+			ValueableIdx<AircraftTypeClass> ParaDropPlane;
 			Valueable<AnimTypeClass*> Parachute_Anim;
 
 			char ObserverBackground[0x20];
