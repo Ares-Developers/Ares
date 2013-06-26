@@ -75,10 +75,10 @@ public:
 };
 
 // more fun
-template<typename T, typename Lookuper>
-class ValueableIdx : public Valueable<T> {
+template<typename Lookuper>
+class ValueableIdx : public Valueable<int> {
 public:
-	ValueableIdx(T Default) : Valueable<T>(Default) {};
+	ValueableIdx(int Default) : Valueable<int>(Default) {};
 
 	void Read(INI_EX *parser, const char* pSection, const char* pKey) {
 		if(parser->ReadString(pSection, pKey)) {
