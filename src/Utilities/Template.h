@@ -264,7 +264,7 @@ public:
 		delete[] FlagName;
 	}
 
-	T* GetEx(TechnoClass* pTechno) {
+	const T* GetEx(TechnoClass* pTechno) const {
 		VeterancyStruct *XP = &pTechno->Veterancy;
 		if(XP->IsElite()) {
 			return &this->Elite;
@@ -275,7 +275,7 @@ public:
 		return &this->Rookie;
 	}
 
-	T Get(TechnoClass* pTechno) {
+	T Get(TechnoClass* pTechno) const {
 		return *this->GetEx(pTechno);
 	}
 };
