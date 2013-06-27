@@ -145,8 +145,8 @@ public:
 		Valueable<int> CustomMissileTrailerSeparation;
 
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
-			Survivors_PilotChance (NULL),
-			Survivors_PassengerChance (NULL),
+			Survivors_PilotChance (),
+			Survivors_PassengerChance (),
 			Survivors_PilotCount (-1),
 			PrerequisiteTheaters (0xFFFFFFFF),
 			Secret_RequiredHouses (0),
@@ -163,7 +163,7 @@ public:
 			Spot_DisableB (false),
 			Spot_Reverse (false),
 			Is_Bomb (false),
-			Insignia (NULL),
+			Insignia (),
 			Parachute_Anim (NULL),
 			Operator (NULL),
 			IsAPromiscuousWhoreAndLetsAnyoneRideIt (false),

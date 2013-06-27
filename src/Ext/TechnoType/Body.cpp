@@ -94,8 +94,8 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 
 	this->Survivors_PilotCount = pINI->ReadInteger(section, "Survivor.Pilots", this->Survivors_PilotCount);
 
-	this->Survivors_PilotChance.LoadFromINI(pINI, section, "Survivor.%sPilotChance");
-	this->Survivors_PassengerChance.LoadFromINI(pINI, section, "Survivor.%sPassengerChance");
+	this->Survivors_PilotChance.Read(pINI, section, "Survivor.%sPilotChance");
+	this->Survivors_PassengerChance.Read(pINI, section, "Survivor.%sPassengerChance");
 
 	char flag[256];
 	for(int i = 0; i < SideClass::Array->Count; ++i) {
@@ -194,7 +194,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 */
 
 	INI_EX exINI(pINI);
-	this->Insignia.LoadFromINI(pINI, section, "Insignia.%s");
+	this->Insignia.Read(pINI, section, "Insignia.%s");
 	this->Parachute_Anim.Parse(&exINI, section, "Parachute.Anim");
 
 	// new on 08.11.09 for #342 (Operator=)
