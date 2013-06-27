@@ -216,29 +216,22 @@ public:
 /*
  * This template is for something that varies depending on a unit's Veterancy Level
  * Promotable<int> PilotChance; // class def
- * PilotChance(NULL); // ctor init-list
- * PilotChance->BindTo(Unit); // instantiation
- * PilotChance->Get(); // usage
+ * PilotChance(); // ctor init-list
+ * PilotChance->Read(..., "Base%s"); // load from ini
+ * PilotChance->Get(Unit); // usage
  */
 template<typename T>
 class Promotable {
-	TechnoClass * _BindTo;
 public:
 	T Rookie;
 	T Veteran;
 	T Elite;
 
-	Promotable(TechnoClass * Object = NULL) : _BindTo(Object) {};
-	Promotable<T>* BindTo(TechnoClass * Object) {
-		this->_BindTo = Object;
-		return this;
-	}
-
 	void SetAll(T val) {
 		this->Elite = this->Veteran = this->Rookie = val;
 	}
 
-	void LoadFromINI(CCINIClass *pINI, const char *Section, const char *BaseFlag) {
+	void Read(CCINIClass *pINI, const char *Section, const char *BaseFlag) {
 		unsigned int buflen = strlen(BaseFlag) + 8;
 		char *FlagName = new char[buflen];
 
@@ -263,12 +256,8 @@ public:
 		delete[] FlagName;
 	}
 
-	T* GetEx() {
-		if(!this->_BindTo) {
-			Debug::Log("Promotable<T> invoked without an owner!\n");
-			throw std::logic_error("Promotable<T> invoked without an owner!\n");
-		}
-		VeterancyStruct *XP = &this->_BindTo->Veterancy;
+	T* GetEx(TechnoClass* pTechno) {
+		VeterancyStruct *XP = &pTechno->Veterancy;
 		if(XP->IsElite()) {
 			return &this->Elite;
 		}
@@ -278,8 +267,8 @@ public:
 		return &this->Rookie;
 	}
 
-	T Get() {
-		return *this->GetEx();
+	T Get(TechnoClass* pTechno) {
+		return *this->GetEx(pTechno);
 	}
 };
 
