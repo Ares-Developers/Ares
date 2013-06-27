@@ -50,6 +50,10 @@ public:
 		return &this->Value;
 	}
 
+	virtual const T * GetEx() const {
+		return &this->Value;
+	}
+
 	virtual void Set(T val) {
 		this->Value = val;
 	}
@@ -113,7 +117,11 @@ public:
 
 	using Valueable<T>::GetEx;
 
-	T* GetEx(T* defVal) const {
+	T* GetEx(T* defVal) {
+		return this->isset() ? Valueable<T>::GetEx() : defVal;
+	}
+
+	const T* GetEx(T* defVal) const {
 		return this->isset() ? Valueable<T>::GetEx() : defVal;
 	}
 
