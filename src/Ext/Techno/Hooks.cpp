@@ -266,7 +266,6 @@ DEFINE_HOOK(71A860, TemporalClass_UpdateA, 6)
 	}
 
 	//AttachEffect handling under Temporal
-	//unfinished, needs something more to get the anim disappear
 	
 	if (!TargetExt->AttachEffects_RecreateAnims) {
 		for (int i = TargetExt->AttachedEffects.Count; i > 0; --i) {
@@ -618,8 +617,10 @@ DEFINE_HOOK(701C97, TechnoClass_ReceiveDamage_AffectsEnemies, 6)
 #endif
 
 	} else if(Arguments->SourceHouse) {
-		// fallback, in case future ways of damage dealing don't include an attacker, e.g. stuff like GenericWarhead
-		CanAffect = WHTypeExt->AffectsEnemies || Victim->Owner->IsAlliedWith(Arguments->SourceHouse);
+		// fallback, in case future ways of damage dealing don't include an attacker, e.g. stuff like GenericWarhead - Ren
+		// fallback way was not implemented in WW AffectsAllies - Graion, 2013-06-29
+		CanAffect = (WHTypeExt->AffectsEnemies || Victim->Owner->IsAlliedWith(Arguments->SourceHouse))
+			&& (pThis->AffectsAllies || !(Victim->Owner->IsAlliedWith(Arguments->SourceHouse)));
 
 	} else {
 		//Debug::Log("Warning: Neither Attacker nor SourceHouse were set during AffectsEnemies parsing!");
