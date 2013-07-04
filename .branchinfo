@@ -1,6 +1,6 @@
 [branch]
-Name=Ares 0.4 Testing Branch
-Description=The Ares 0.4 development branch.
+Name=AlexB's Consolidation Branch
+Description=Minor new features, and long due updates for existing ones.
 TargetVersion=0.4
 Stable=no
 ReadyForTesting=yes
