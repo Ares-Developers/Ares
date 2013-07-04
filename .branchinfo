@@ -1,6 +1,6 @@
 [branch]
-Name=Ares 0.3 Testing Branch
-Description=This is the the proto-Ares 0.3 release branch.
-TargetVersion=0.3
+Name=Ares 0.4 Testing Branch
+Description=The Ares 0.4 development branch.
+TargetVersion=0.4
 Stable=no
 ReadyForTesting=yes
