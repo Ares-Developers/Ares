@@ -405,7 +405,7 @@ bool SWTypeExt::Launch(SuperClass* pThis, NewSWType* pSW, CellStruct* pCoords, b
 				RadarEventClass::Create(RadarEventType::SuperweaponActivated, *pCoords);
 			}
 
-			if(pData->Message_Launch && !(flags & SuperWeaponFlags::NoMessage)) {
+			if(*pData->Message_Launch && !(flags & SuperWeaponFlags::NoMessage)) {
 				pData->PrintMessage(pData->Message_Launch, pThis->Owner);
 			}
 
