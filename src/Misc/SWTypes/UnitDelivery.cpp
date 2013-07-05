@@ -59,6 +59,11 @@ bool SW_UnitDelivery::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlay
 
 void UnitDeliveryStateMachine::Update() {
 	if(this->Finished()) {
+		auto pData = this->FindExtData();
+		if(*pData->Message_Activate) {
+			pData->PrintMessage(pData->Message_Activate, this->Super->Owner);
+		}
+
 		this->PlaceUnits();
 	}
 }
