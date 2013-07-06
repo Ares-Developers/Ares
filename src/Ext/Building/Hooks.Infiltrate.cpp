@@ -58,6 +58,31 @@ DEFINE_HOOK(43E8D1, BuildingClass_DrawVisible_P3, 8)
 	return 0x43E8DF;
 }
 
+// support for pcx cameos
+DEFINE_HOOK(43E8BA, BuildingClass_DrawVisible_P4, 6)
+{
+	GET(TechnoTypeClass *, pType, EAX);
+	GET(RectangleStruct*, pBounds, EBP);
+	GET(Point2D*, pLocation, EDI);
+
+	auto pData = TechnoTypeExt::ExtMap.Find(pType);
+
+	if(*pData->CameoPCX) {
+		if(auto pPCX = PCX::Instance->GetSurface(pData->CameoPCX)) {
+			const int cameoWidth = 60;
+			const int cameoHeight = 48;
+
+			RectangleStruct cameoBounds = { 0, 0, cameoWidth, cameoHeight };
+			RectangleStruct destRect = { pLocation->X - cameoWidth / 2, pLocation->Y - cameoHeight / 2, cameoWidth, cameoHeight };
+			RectangleStruct destClip = Drawing::Intersect(&destRect, pBounds, nullptr, nullptr);
+
+			DSurface::Hidden_2->Blit(pBounds, &destClip, pPCX, &cameoBounds, &cameoBounds, true, true);
+			return  0x43E8EB;
+		}
+	}
+	return 0;
+}
+
 // if this is a radar, change the owner's house bitfields responsible for radar reveals
 DEFINE_HOOK(44161C, BuildingClass_Destroy_OldSpy1, 6)
 {
