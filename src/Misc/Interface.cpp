@@ -156,7 +156,7 @@ void Interface::updateMenu(HWND hDlg, int iID) {
 				rcRect->bottom = rcRect->top + szImage.cy;
 			};
 
-			RECT *rcSlots = new RECT[7];
+			RECT rcSlots[7];
 			setRect(&rcSlots[0], lefts[0], rcItem.top);
 			setRect(&rcSlots[1], lefts[0], rcItem.top + row2Offset);
 			setRect(&rcSlots[2], lefts[1], rcItem.top);
@@ -205,8 +205,6 @@ void Interface::updateMenu(HWND hDlg, int iID) {
 			moveToPlace(1772, 1, 0, 3, 0, 1960);
 			moveToPlace(1771, 2, 3, 4, 1, 1961);
 			moveToPlace(1773, 3, 2, 5, 1, 1962);
-
-			delete [] &rcSlots;
 		}
 	}
 

@@ -40,7 +40,8 @@ public:
 
 	static void __cdecl LogUnflushed(const char *Format, ...);
 	static void Flush();
-	static LONG WINAPI ExceptionHandler(int code, LPEXCEPTION_POINTERS pExs);
+	static LONG CALLBACK ExceptionHandler(PEXCEPTION_POINTERS pExs);
+	static LONG CALLBACK ExceptionFilter(PEXCEPTION_POINTERS pExs);
 
 	static void FreeMouse();
 

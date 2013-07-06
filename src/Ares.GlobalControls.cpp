@@ -1,4 +1,5 @@
 #include "Ares.h"
+#include "Utilities\Parser.h"
 #include <CCINIClass.h>
 
 bool Ares::GlobalControls::Initialized = 0;
@@ -17,17 +18,12 @@ void Ares::GlobalControls::Load(CCINIClass *pINI) {
 	AllowParallelAIQueues = pINI->ReadBool("GlobalControls", "AllowParallelAIQueues", AllowParallelAIQueues);
 
 	if(pINI->ReadString("GlobalControls", "AllowBypassBuildLimit", "", Ares::readBuffer, Ares::readLength)) {
-		int idx = 0;
-		for(char * cur = strtok(Ares::readBuffer, ","); cur && *cur && idx <= 2; cur = strtok(NULL, ","), ++idx) {
-			int diffIdx = 2 - idx; // remapping so that HouseClass::AIDifficulty can be used as an index
-			switch(toupper(*cur)) {
-			case '1':
-			case 'T':
-			case 'Y':
-				AllowBypassBuildLimit[diffIdx] = true;
-			default:
-				AllowBypassBuildLimit[diffIdx] = false;
-			}
+		bool temp[3] = {};
+		int read = Parser<bool, 3>::Parse(Ares::readBuffer, temp);
+
+		for(int i=0; i<read; ++i) {
+			int diffIdx = 2 - i; // remapping so that HouseClass::AIDifficulty can be used as an index
+			AllowBypassBuildLimit[diffIdx] = temp[i];
 		}
 	}
 

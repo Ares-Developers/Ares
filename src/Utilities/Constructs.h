@@ -11,7 +11,7 @@
 
 #include <cstring>
 
-#include "Ares.h"
+#include "../Ares.h"
 
 class CustomPalette {
 public:

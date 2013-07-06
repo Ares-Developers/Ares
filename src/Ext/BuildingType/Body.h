@@ -93,6 +93,8 @@ public:
 		CellStruct* CustomData;
 		CellStruct* OutlineData;
 
+		DynamicVectorClass<Point2D> FoundationRadarShape;
+
 		// new secret lab
 		DynamicVectorClass<TechnoTypeClass *> Secret_Boons;
 		bool Secret_RecalcOnCapture;
@@ -153,6 +155,7 @@ public:
 			OutlineLength (0),
 			CustomData (NULL),
 			OutlineData (NULL),
+			FoundationRadarShape (),
 			Firewall_Is (false),
 			UCPassThrough (0.0),
 			UCFatalRate (0.0),
@@ -200,6 +203,8 @@ public:
 		bool IsLinkable();
 
 		bool CanBeOccupiedBy(InfantryClass *whom);
+
+		void UpdateFoundationRadarShape();
 	};
 
 	static Container<BuildingTypeExt> ExtMap;

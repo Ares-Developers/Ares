@@ -11,6 +11,7 @@
 
 #include <WarheadTypeClass.h>
 #include <MessageListClass.h>
+#include <Notifications.h>
 
 template<> const DWORD Extension<SuperWeaponTypeClass>::Canary = 0x55555555;
 Container<SWTypeExt> SWTypeExt::ExtMap;
@@ -183,7 +184,7 @@ void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass
 	this->Message_FirerColor.Read(&exINI, section, "Message.FirerColor");
 	if(pINI->ReadString(section, "Message.Color", Ares::readDefval, Ares::readBuffer, Ares::readLength)) {
 		this->Message_ColorScheme = ColorScheme::FindIndex(Ares::readBuffer);
-		if(!this->Message_ColorScheme) {
+		if(this->Message_ColorScheme < 0) {
 			Debug::INIParseFailed(section, "Message.Color", Ares::readBuffer, "Expected a valid color scheme name.");
 		}
 	}
@@ -396,7 +397,7 @@ bool SWTypeExt::Launch(SuperClass* pThis, NewSWType* pSW, CellStruct* pCoords, b
 			}
 
 			if(pData->SW_RadarEvent.Get() && !(flags & SuperWeaponFlags::NoEvent)) {
-				RadarEventClass::Create(RADAREVENT_SUPERWEAPONLAUNCHED, *pCoords);
+				RadarEventClass::Create(RadarEventType::SuperweaponActivated, *pCoords);
 			}
 
 			if(pData->Message_Launch && !(flags & SuperWeaponFlags::NoMessage)) {
@@ -482,30 +483,20 @@ void SWTypeExt::ExtData::PrintMessage(char* pMessage, HouseClass* pFirer) {
 
 void SWTypeExt::ClearChronoAnim(SuperClass *pThis)
 {
-	DynamicVectorClass<SuperClass*>* pSupers = (DynamicVectorClass<SuperClass*>*)0xB0F5B8;
-
 	if(pThis->Animation) {
 		pThis->Animation->RemainingIterations = 0;
 		pThis->Animation = NULL;
-		int idx = pSupers->FindItemIndex(&pThis);
-		if(idx != -1) {
-			pSupers->RemoveItem(idx);
-		}
+		PointerExpiredNotification::NotifyInvalidAnim.Remove(pThis);
 	}
 
-	if(pThis->unknown_bool_6C) {
-		int idx = pSupers->FindItemIndex(&pThis);
-		if(idx != -1) {
-			pSupers->RemoveItem(idx);
-		}
-		pThis->unknown_bool_6C = false;
+	if(pThis->AnimationGotInvalid) {
+		PointerExpiredNotification::NotifyInvalidAnim.Remove(pThis);
+		pThis->AnimationGotInvalid = false;
 	}
 }
 
 void SWTypeExt::CreateChronoAnim(SuperClass *pThis, CoordStruct *pCoords, AnimTypeClass *pAnimType)
 {
-	DynamicVectorClass<SuperClass*>* pSupers = (DynamicVectorClass<SuperClass*>*)0xB0F5B8;
-
 	ClearChronoAnim(pThis);
 	
 	if(pAnimType && pCoords) {
@@ -515,7 +506,7 @@ void SWTypeExt::CreateChronoAnim(SuperClass *pThis, CoordStruct *pCoords, AnimTy
 			SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pThis->Type);
 			pAnim->Invisible = !pData->IsAnimVisible(pThis->Owner);
 			pThis->Animation = pAnim;
-			pSupers->AddItem(pThis);
+			PointerExpiredNotification::NotifyInvalidAnim.Add(pThis);
 		}
 	}
 }
@@ -586,8 +577,8 @@ DEFINE_HOOK(6CEFE0, SuperWeaponTypeClass_DTOR, 8)
 	return 0;
 }
 
-DEFINE_HOOK(6CE800, SuperWeaponTypeClass_SaveLoad_Prefix, A)
 DEFINE_HOOK_AGAIN(6CE8D0, SuperWeaponTypeClass_SaveLoad_Prefix, 8)
+DEFINE_HOOK(6CE800, SuperWeaponTypeClass_SaveLoad_Prefix, A)
 {
 	GET_STACK(SWTypeExt::TT*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
@@ -610,8 +601,8 @@ DEFINE_HOOK(6CE8EA, SuperWeaponTypeClass_Save_Suffix, 3)
 	return 0;
 }
 
-DEFINE_HOOK(6CEE43, SuperWeaponTypeClass_LoadFromINI, A)
 DEFINE_HOOK_AGAIN(6CEE50, SuperWeaponTypeClass_LoadFromINI, A)
+DEFINE_HOOK(6CEE43, SuperWeaponTypeClass_LoadFromINI, A)
 {
 	GET(SuperWeaponTypeClass*, pItem, EBP);
 	GET_STACK(CCINIClass*, pINI, 0x3FC);

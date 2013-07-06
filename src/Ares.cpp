@@ -30,11 +30,13 @@
 
 //Init Statics
 HANDLE Ares::hInstance = 0;
+PVOID Ares::pExceptionHandler = nullptr;
 bool Ares::bNoLogo = false;
 bool Ares::bNoCD = false;
 bool Ares::bTestingRun = false;
 bool Ares::bStrictParser = false;
 bool Ares::bAllowAIControl = false;
+bool Ares::bFPSCounter = false;
 bool Ares::bStable = false;
 bool Ares::bStableNotification = false;
 
@@ -76,6 +78,7 @@ void __stdcall Ares::RegisterCommands()
 	MakeCommand<MemoryDumperCommandClass>();
 	MakeCommand<DebuggingCommandClass>();
 	MakeCommand<AIBasePlanCommandClass>();
+	MakeCommand<FPSCounterCommandClass>();
 }
 
 void __stdcall Ares::CmdLineParse(char** ppArgs,int nNumArgs)
@@ -131,12 +134,26 @@ void __stdcall Ares::ExeRun()
 	Unsorted::Savegame_Magic = SAVEGAME_MAGIC;
 	Game::bVideoBackBuffer = false;
 	Game::bAllowVRAMSidebar = false;
+
+#if _MSC_VER >= 1700
+	// install a new exception handler, if this version of Windows supports it
+	if(HINSTANCE handle = GetModuleHandle(TEXT("kernel32.dll"))) {
+		if(GetProcAddress(handle, "AddVectoredExceptionHandler")) {
+			Ares::pExceptionHandler = AddVectoredExceptionHandler(1, Debug::ExceptionFilter);
+		}
+	}
+#endif
 }
 
 void __stdcall Ares::ExeTerminate()
 {
 	CloseConfig(&Ares::GlobalControls::INI);
 	Debug::LogFileClose(111);
+
+	if(Ares::pExceptionHandler) {
+		RemoveVectoredExceptionHandler(Ares::pExceptionHandler);
+		Ares::pExceptionHandler = nullptr;
+	}
 }
 
 CCINIClass* Ares::OpenConfig(const char* file) {
@@ -487,4 +504,85 @@ void Ares::UpdateStability() {
 			"This suggests that your version of Ares has been tampered with "
 			"and the original developers cannot be held responsible for any problems you might experience.");
 	}
+}
+
+#define YR_SIZE_1000 0x496110
+#define YR_SIZE_1001 0x497110
+#define YR_SIZE_1001_UC 0x497FE0
+#define YR_SIZE_NPATCH 0x5AB000
+
+#define YR_TIME_1000 0x3B846665
+#define YR_TIME_1001 0x3BDF544E
+
+#define YR_CRC_1000 0xB701D792
+#define YR_CRC_1001_CD 0x098465B3
+#define YR_CRC_1001_TFD 0xEB903080
+#define YR_CRC_1001_UC 0x1B499086
+
+SYRINGE_HANDSHAKE(pInfo)
+{
+	if(pInfo) {
+		const char* AcceptMsg = "Found Yuri's Revenge %s. Applying Ares " PRODUCT_STR ".";
+		const char* PatchDetectedMessage = "Found %s. Ares " PRODUCT_STR " is not compatible with other patches.";
+
+		const char* desc = nullptr;
+		const char* msg = nullptr;
+		bool allowed = false;
+
+		// accept tfd and cd version 1.001
+		if(pInfo->exeTimestamp == YR_TIME_1001) {
+
+			// don't accept expanded exes
+			switch(pInfo->exeFilesize) {
+			case YR_SIZE_1001:
+			case YR_SIZE_1001_UC:
+
+				// all versions allowed
+				switch(pInfo->exeCRC) {
+				case YR_CRC_1001_CD:
+					desc = "1.001 (CD)";
+					break;
+				case YR_CRC_1001_TFD:
+					desc = "1.001 (TFD)";
+					break;
+				case YR_CRC_1001_UC:
+					desc = "1.001 (UC)";
+					break;
+				default:
+					// no-cd, network port or other changes
+					desc = "1.001 (modified)";
+				}
+				msg = AcceptMsg;
+				allowed = true;
+				break;
+
+			case YR_SIZE_NPATCH:
+				// known patch size
+				desc = "RockPatch or an NPatch-derived patch";
+				msg = PatchDetectedMessage;
+				break;
+
+			default:
+				// expanded exe, unknown make
+				desc = "an unknown game patch";
+				msg = PatchDetectedMessage;
+			}
+		} else if(pInfo->exeTimestamp == YR_TIME_1000) {
+			// upgrade advice for version 1.000
+			desc = "1.000";
+			msg = "Found Yuri's Revenge 1.000 but Ares " PRODUCT_STR " requires version 1.001. Please update your copy of Yuri's Revenge first.";
+		} else {
+			// does not even compute...
+			msg = "Unknown executable. Ares " PRODUCT_STR " requires Command & Conquer Yuri's Revenge version 1.001 (gamemd.exe).";
+		}
+
+		// generate the output message
+		if(pInfo->Message) {
+			sprintf_s(pInfo->Message, pInfo->cchMessage, msg, desc);
+		}
+
+		return allowed ? S_OK : S_FALSE;
+	}
+
+	return E_POINTER;
 }

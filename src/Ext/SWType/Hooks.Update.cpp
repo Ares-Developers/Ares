@@ -213,9 +213,9 @@ DEFINE_HOOK(6CB4D0, SuperClass_SetOnHold, 6)
 			HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(pSuper->Owner);
 			if(OnHold) {
 				pHouseData->SetFirestormState(0);
-				pSuper->ChargeDrainState = 0xFFFFFFFF;
+				pSuper->ChargeDrainState = ChargeDrainState::None;
 			} else {
-				pSuper->ChargeDrainState = 0;
+				pSuper->ChargeDrainState = ChargeDrainState::Charging;
 				pSuper->RechargeTimer.Start(pSuper->Type->RechargeTime);
 			}
 		}

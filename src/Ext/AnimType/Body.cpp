@@ -88,8 +88,8 @@ DEFINE_HOOK(428EA8, AnimTypeClass_SDDTOR, 5)
 	return 0;
 }
 
-DEFINE_HOOK(428800, AnimTypeClass_SaveLoad_Prefix, A)
 DEFINE_HOOK_AGAIN(428970, AnimTypeClass_SaveLoad_Prefix, 8)
+DEFINE_HOOK(428800, AnimTypeClass_SaveLoad_Prefix, A)
 {
 	GET_STACK(AnimTypeExt::TT*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
@@ -112,8 +112,8 @@ DEFINE_HOOK(42898A, AnimTypeClass_Save_Suffix, 3)
 	return 0;
 }
 
-DEFINE_HOOK(4287DC, AnimTypeClass_LoadFromINI, A)
 DEFINE_HOOK_AGAIN(4287E9, AnimTypeClass_LoadFromINI, A)
+DEFINE_HOOK(4287DC, AnimTypeClass_LoadFromINI, A)
 {
 	GET(AnimTypeClass*, pItem, ESI);
 	GET_STACK(CCINIClass*, pINI, 0xBC);

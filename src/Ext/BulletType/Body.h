@@ -31,11 +31,15 @@ public:
 		// added on 11.11.09 for #667 (part of Trenches)
 		bool SubjectToTrenches; //! if false, this projectile/weapon *always* passes through to the occupants, regardless of UC.PassThrough
 
+		// cache for the image animation's palette convert
+		Nullable<ConvertClass*> ImageConvert;
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			SubjectToSolid (false),
 			SubjectToFirewall (true),
 			Parachuted (false),
-			SubjectToTrenches (true)
+			SubjectToTrenches (true),
+			ImageConvert ()
 			{ };
 
 		virtual ~ExtData() {
@@ -47,6 +51,8 @@ public:
 
 		virtual void InvalidatePointer(void *ptr) {
 		}
+
+		ConvertClass* GetConvert();
 	};
 
 	static Container<BulletTypeExt> ExtMap;

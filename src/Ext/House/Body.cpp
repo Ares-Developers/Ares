@@ -125,7 +125,7 @@ signed int HouseExt::BuildLimitRemaining(HouseClass *pHouse, TechnoTypeClass *pI
 {
 	int BuildLimit = pItem->BuildLimit;
 	if(BuildLimit >= 0) {
-		BuildLimit -= pHouse->CountOwnedNow(pItem);
+		BuildLimit -= pHouse->CountOwnedNowTotal(pItem);
 	} else {
 		BuildLimit = abs(BuildLimit);
 		BuildLimit -= pHouse->CountOwnedEver(pItem);
@@ -358,8 +358,8 @@ DEFINE_HOOK(4F7140, HouseClass_DTOR, 6)
 	return 0;
 }
 
-DEFINE_HOOK(503040, HouseClass_SaveLoad_Prefix, 5)
 DEFINE_HOOK_AGAIN(504080, HouseClass_SaveLoad_Prefix, 5)
+DEFINE_HOOK(503040, HouseClass_SaveLoad_Prefix, 5)
 {
 	GET_STACK(HouseExt::TT*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);

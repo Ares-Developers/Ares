@@ -207,8 +207,8 @@ A_FINE_HOOK(74036E, FooClass_GetCursorOverObject, 5)
 // 42461D, 6
 // 42463A, 6
 // correct warhead for animation damage
-DEFINE_HOOK(42461D, AnimClass_Update_Damage, 6)
 DEFINE_HOOK_AGAIN(42463A, AnimClass_Update_Damage, 6)
+DEFINE_HOOK(42461D, AnimClass_Update_Damage, 6)
 {
 	GET(AnimClass *, Anim, ESI);
 	WarheadTypeClass *W = Anim->Type->Warhead;
@@ -601,11 +601,18 @@ DEFINE_HOOK(62A2F8, ParasiteClass_PointerGotInvalid, 6)
 	GET(ParasiteClass *, Parasite, ESI);
 	GET(CoordStruct *, XYZ, EAX);
 
-	if(UnitClass *U = specific_cast<UnitClass *>(Parasite->Owner)) {
-		if(!U->Type->Naval && U->GetHeight() > 200) {
-			*XYZ = U->Location;
-			U->IsFallingDown = U->IsABomb = true;
-		}
+	auto Owner = Parasite->Owner;
+
+	bool allowed = false;
+	if(UnitClass *U = specific_cast<UnitClass *>(Owner)) {
+		allowed = !U->Type->Naval;
+	} else if(specific_cast<InfantryClass*>(Owner)) {
+		allowed = true;
+	}
+
+	if(allowed && Owner->GetHeight() > 200) {
+		*XYZ = Owner->Location;
+		Owner->IsFallingDown = Owner->IsABomb = true;
 	}
 
 	return 0;
@@ -839,8 +846,8 @@ DEFINE_HOOK(749088, Count_ResetWithGivenCount, 6)
 
 // #1260: reinforcements via actions 7 and 80, and chrono reinforcements
 // via action 107 cause crash if house doesn't exist
-DEFINE_HOOK(65D8FB, TeamTypeClass_ValidateHouse, 6)
 DEFINE_HOOK_AGAIN(65EC4A, TeamTypeClass_ValidateHouse, 6)
+DEFINE_HOOK(65D8FB, TeamTypeClass_ValidateHouse, 6)
 {
 	GET(TeamTypeClass*, pThis, ECX);
 	HouseClass* pHouse = pThis->GetHouse();
@@ -975,4 +982,90 @@ DEFINE_HOOK(7077EE, TechnoClass_PointerGotInvalid_ResetMindControl, 6)
 	}
 
 	return 0;
+}
+
+// skip theme log lines
+DEFINE_HOOK_AGAIN(720C42, Theme_Stop_NoLog, 5) // skip Theme::Stop
+DEFINE_HOOK(720DE8, Theme_Stop_NoLog, 5) // skip Theme::PlaySong
+{
+	return R->get_Origin() + 5;
+}
+
+DEFINE_HOOK(720F37, sub_720EA0_NoLog, 5) // skip Theme::Stop
+{
+	return 0x720F3C;
+}
+
+DEFINE_HOOK(720A61, sub_7209D0_NoLog, 5) // skip Theme::AI
+{
+	return 0x720A66;
+}
+
+// #908369, #1100953: units are still deployable when warping or falling
+DEFINE_HOOK(700E47, TechnoClass_CanDeploySlashUnload_Immobile, A)
+{
+	GET(UnitClass*, pThis, ESI);
+
+	CoordStruct crd;
+	CellClass * pCell = pThis->GetCell();
+	pCell->GetCoordsWithBridge(&crd);
+
+	// recreate replaced check, and also disallow if unit is still warping or dropping in.
+	if(pThis->IsUnderEMP() || pThis->IsWarpingIn() || pThis->IsFallingDown) {
+		return 0x700DCE;
+	}
+
+	return 0x700E59;
+}
+
+// #1156943, #1156937: replace the engineer check, because they were smart
+// enough to use the pointer right before checking whether it's null, and
+// even if it isn't, they build a possible infinite loop.
+DEFINE_HOOK(44A5F0, BuildingClass_Mi_Selling_EngineerFreeze, 6)
+{
+	GET(BuildingClass*, pThis, EBP);
+	GET(InfantryTypeClass*, pType, ESI);
+	LEA_STACK(bool*, pEngineerSpawned, 0x13);
+
+	if(*pEngineerSpawned && pType && pType->Engineer) {
+		// randomize until probability is below 0.01%
+		// for only the Engineer tag being returned.
+		for(int i=9; i>=0; --i) {
+			pType = !i ? nullptr : pThis->GetCrew();
+
+			if(!pType || !pType->Engineer) {
+				break;
+			}
+		}
+	}
+
+	if(pType && pType->Engineer) {
+		*pEngineerSpawned = true;
+	}
+
+	R->ESI(pType);
+	return 0x44A628;
+}
+
+// #1156943: they check for type, and for the instance, yet
+// the Log call uses the values as if nothing happened.
+DEFINE_HOOK(4430E8, BuildingClass_Demolish_LogCrash, 6)
+{
+	GET(BuildingClass*, pThis, EDI);
+	GET(InfantryClass*, pInf, ESI);
+
+	R->EDX(pThis ? pThis->Type->Name : "<none>");
+	R->EAX(pInf ? pInf->Type->Name : "<none>");
+	return 0x4430FA;
+}
+
+// #1171643: keep the last passenger if this is a gunner, not just
+// when it has multiple turrets. gattling and charge turret is no
+// longer affected by this.
+DEFINE_HOOK(73D81E, UnitClass_Mi_Unload_LastPassenger, 5)
+{
+	GET(UnitClass*, pThis, ECX);
+	auto pType = pThis->GetTechnoType();
+	R->EAX(pType->Gunner ? 1 : 0);
+	return 0x73D823;
 }

@@ -1,6 +1,7 @@
 #include <Drawing.h>
 #include <YRDDraw.h>
 #include <WWMouseClass.h>
+#include <FPSCounter.h>
 
 #include "../Ares.h"
 #include "../Utilities/Macro.h"
@@ -143,17 +144,34 @@ DEFINE_HOOK(537BC0, Game_MakeScreenshot, 0)
 
 DEFINE_HOOK(4F4583, GScreenClass_DrawOnTop_TheDarkSideOfTheMoon, 6)
 {
-	if(!Ares::bStable) {
-		Ares::bStableNotification = true;
+	const int AdvCommBarHeight = 32;
 
-		auto wanted = Drawing::GetTextDimensions(Ares::StabilityWarning);
+	int offset = AdvCommBarHeight;
+
+	auto DrawText = [](const wchar_t* string, int& offset, int color) {
+		auto wanted = Drawing::GetTextDimensions(string);
 
 		auto h = DSurface::Composite->GetHeight();
-		RectangleStruct rect = {0, h - wanted.Height - 32 /** adv comm bar */, wanted.Width, wanted.Height};
+		RectangleStruct rect = {0, h - wanted.Height - offset, wanted.Width, wanted.Height};
 
 		DSurface::Composite->FillRect(&rect, COLOR_BLACK);
-		DSurface::Composite->DrawTextA(Ares::StabilityWarning, 0, rect.Y, COLOR_RED);
+		DSurface::Composite->DrawTextA(string, 0, rect.Y, color);
+
+		offset += wanted.Height;
+	};
+
+	if(!Ares::bStable) {
+		Ares::bStableNotification = true;
+		DrawText(Ares::StabilityWarning, offset, COLOR_RED);
 	}
+
+	if(Ares::bFPSCounter) {
+		wchar_t buffer[0x100] = L"\0";
+		swprintf_s(buffer, L"FPS: %-4u Avg: %.2f", FPSCounter::CurrentFrameRate, FPSCounter::GetAverageFrameRate());
+
+		DrawText(buffer, offset, COLOR_WHITE);
+	}
+
 	return 0;
 }
 

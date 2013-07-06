@@ -51,7 +51,11 @@ public:
 
 	static bool bAllowAIControl;
 
+	static bool bFPSCounter;
+
 	static int TrackIndex;
+
+	static PVOID pExceptionHandler;
 
 	static bool bStable;
 	static bool bStableNotification;

@@ -42,6 +42,24 @@ DEFINE_HOOK(55AFB3, LogicClass_Update, 6)
 	return 0;
 }
 
+
+DEFINE_HOOK(539760, Scenario_ResetAllSuperWeapons_Custom, 5)
+{
+	// hard-reset any super weapon related globals
+	SW_LightningStorm::CurrentLightningStorm = nullptr;
+	SW_NuclearMissile::CurrentNukeType = nullptr;
+	SW_PsychicDominator::CurrentPsyDom = nullptr;
+
+	for(int i = SWStateMachine::Array.Count - 1; i >= 0; --i) {
+		if(SWStateMachine* pMachine = SWStateMachine::Array[i]){
+			SWStateMachine::Array.RemoveItem(i);
+			delete pMachine;
+		}
+	}
+
+	return 0;
+}
+
 void SWStateMachine::UpdateAll()
 {
 	for(int i = SWStateMachine::Array.Count - 1; i >= 0; --i) {

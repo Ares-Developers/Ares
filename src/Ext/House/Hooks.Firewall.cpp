@@ -12,8 +12,8 @@
 #include "../BulletType/Body.h"
 #include "../TechnoType/Body.h"
 
-DEFINE_HOOK(6FF008, TechnoClass_Fire_FSW, 8)
 DEFINE_HOOK_AGAIN(6FF860, TechnoClass_Fire_FSW, 8)
+DEFINE_HOOK(6FF008, TechnoClass_Fire_FSW, 8)
 {
 	CoordStruct src = *R->lea_Stack<CoordStruct *>(0x44);
 	CoordStruct tgt = *R->lea_Stack<CoordStruct *>(0x88);

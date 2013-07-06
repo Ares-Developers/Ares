@@ -28,17 +28,15 @@ public:
 		return this->Get();
 	}
 
-	operator T* () {
-		return this->GetEx();
-	}
+	// only allow this when explict works, otherwise
+	// the always-non-null pointer will be used in conditionals.
+	//explicit operator T* () {
+	//	return this->GetEx();
+	//}
 
 	T* operator & () {
 		return this->GetEx();
 	}
-
-	bool operator != (T other) const {
-		return this->Get() != other;
-	};
 
 	bool operator ! () const {
 		return this->Get() == 0;
@@ -78,45 +76,15 @@ public:
 
 // more fun
 template<typename T, typename Lookuper>
-class ValueableIdx {
-protected:
-	T    Value;
+class ValueableIdx : public Valueable<T> {
 public:
-	ValueableIdx(T Default) : Value(Default) {};
-
-	operator T () const {
-		return this->Get();
-	}
-
-	operator T* () {
-		return this->GetEx();
-	}
-
-	T* operator & () {
-		return this->GetEx();
-	}
-
-	virtual T Get() const {
-		return this->Value;
-	}
-
-	virtual void Set(T val) {
-		this->Value = val;
-	}
-
-	virtual T* GetEx() {
-		return &this->Value;
-	}
-
-	virtual void SetEx(T* val) {
-		this->Value = *val;
-	}
+	ValueableIdx(T Default) : Valueable<T>(Default) {};
 
 	void Read(INI_EX *parser, const char* pSection, const char* pKey) {
 		if(parser->ReadString(pSection, pKey)) {
 			const char * val = parser->value();
 			int idx = Lookuper::FindIndex(val);
-			if(idx != -1 || parser->IsBlank(val)) {
+			if(idx != -1 || INIClass::IsBlank(val)) {
 				this->Set(idx);
 			} else {
 				Debug::INIParseFailed(pSection, pKey, val);
@@ -137,6 +105,18 @@ public:
 		return this->HasValue;
 	}
 
+	using Valueable<T>::Get;
+
+	T Get(T defVal) const {
+		return this->isset() ? Valueable<T>::Get() : defVal;
+	}
+
+	using Valueable<T>::GetEx;
+
+	T* GetEx(T* defVal) const {
+		return this->isset() ? Valueable<T>::GetEx() : defVal;
+	}
+
 	virtual void Set(T val) {
 		Valueable<T>::Set(val);
 		this->HasValue = true;
@@ -153,6 +133,45 @@ public:
 	}
 };
 
+template<typename T, typename Lookuper>
+class NullableIdx : public ValueableIdx<T, Lookuper> {
+protected:
+	bool HasValue;
+public:
+	NullableIdx() : ValueableIdx<T, Lookuper>(T()), HasValue(false) {};
+	NullableIdx(T Val) : ValueableIdx<T, Lookuper>(Val), HasValue(true) {};
+
+	bool isset() const {
+		return this->HasValue;
+	}
+
+	using Valueable<T>::Get;
+
+	T Get(T defVal) const {
+		return this->isset() ? Valueable<T>::Get() : defVal;
+	}
+
+	using Valueable<T>::GetEx;
+
+	T* GetEx(T* defVal) const {
+		return this->isset() ? Valueable<T>::GetEx() : defVal;
+	}
+
+	virtual void Set(T val) {
+		ValueableIdx<T, Lookuper>::Set(val);
+		this->HasValue = true;
+	}
+
+	virtual void SetEx(T* val) {
+		ValueableIdx<T, Lookuper>::SetEx(val);
+		this->HasValue = true;
+	}
+
+	void Reset() {
+		Valueable<T>::Set(T());
+		this->HasValue = false;
+	}
+};
 
 /*
  * This one is for data that defaults to some original flag value but can be overwritten with custom values
@@ -213,19 +232,6 @@ public:
 			this->Customized = true;
 		}
 	}
-
-	bool operator == (T other) const {
-		return this->Get() == other;
-	};
-
-	bool operator != (T other) const {
-		return this->Get() != other;
-	};
-
-	bool operator ! () const {
-		return this->Get() == 0;
-	};
-
 };
 
 template<typename T, typename Lookuper>
@@ -280,19 +286,6 @@ public:
 			this->Customized = true;
 		}
 	}
-
-	bool operator == (T other) const {
-		return this->Get() == other;
-	};
-
-	bool operator != (T other) const {
-		return this->Get() != other;
-	};
-
-	bool operator ! () const {
-		return this->Get() == 0;
-	};
-
 };
 /*
  * This template is for something that varies depending on a unit's Veterancy Level
@@ -494,6 +487,83 @@ void Valueable<MouseCursor>::Read(INI_EX *parser, const char* pSection, const ch
 	}
 };
 
+template<>
+void Valueable<RocketStruct>::Read(INI_EX *parser, const char* pSection, const char* pKey) {
+	Customizable<bool> BoolPlaceholder;
+	Customizable<int> IntPlaceholder;
+	Customizable<float> FloatPlaceholder;
+	Customizable<AircraftTypeClass*> TypePlaceholder;
+
+	RocketStruct* rocket = this->GetEx();
+
+	char pFlagName[0x40];
+	_snprintf(pFlagName, 0x40, "%s.PauseFrames", pKey);
+	IntPlaceholder.Set(rocket->PauseFrames);
+	IntPlaceholder.Read(parser, pSection, pFlagName);
+	rocket->PauseFrames = IntPlaceholder.Get();
+
+	_snprintf(pFlagName, 0x40, "%s.TiltFrames", pKey);
+	IntPlaceholder.Set(rocket->TiltFrames);
+	IntPlaceholder.Read(parser, pSection, pFlagName);
+	rocket->TiltFrames = IntPlaceholder.Get();
+
+	_snprintf(pFlagName, 0x40, "%s.PitchInitial", pKey);
+	FloatPlaceholder.Set(rocket->PitchInitial);
+	FloatPlaceholder.Read(parser, pSection, pFlagName);
+	rocket->PitchInitial = FloatPlaceholder.Get();
+
+	_snprintf(pFlagName, 0x40, "%s.PitchFinal", pKey);
+	FloatPlaceholder.Set(rocket->PitchFinal);
+	FloatPlaceholder.Read(parser, pSection, pFlagName);
+	rocket->PitchFinal = FloatPlaceholder.Get();
+
+	_snprintf(pFlagName, 0x40, "%s.TurnRate", pKey);
+	FloatPlaceholder.Set(rocket->TurnRate);
+	FloatPlaceholder.Read(parser, pSection, pFlagName);
+	rocket->TurnRate = FloatPlaceholder.Get();
+
+	// sic! integer read like a float.
+	_snprintf(pFlagName, 0x40, "%s.RaiseRate", pKey);
+	FloatPlaceholder.Set(static_cast<float>(rocket->RaiseRate));
+	FloatPlaceholder.Read(parser, pSection, pFlagName);
+	rocket->RaiseRate = static_cast<int>(Game::F2I(FloatPlaceholder.Get()));
+
+	_snprintf(pFlagName, 0x40, "%s.Acceleration", pKey);
+	FloatPlaceholder.Set(rocket->Acceleration);
+	FloatPlaceholder.Read(parser, pSection, pFlagName);
+	rocket->Acceleration = FloatPlaceholder.Get();
+
+	_snprintf(pFlagName, 0x40, "%s.Altitude", pKey);
+	IntPlaceholder.Set(rocket->Altitude);
+	IntPlaceholder.Read(parser, pSection, pFlagName);
+	rocket->Altitude = IntPlaceholder.Get();
+
+	_snprintf(pFlagName, 0x40, "%s.Damage", pKey);
+	IntPlaceholder.Set(rocket->Damage);
+	IntPlaceholder.Read(parser, pSection, pFlagName);
+	rocket->Damage = IntPlaceholder.Get();
+	
+	_snprintf(pFlagName, 0x40, "%s.EliteDamage", pKey);
+	IntPlaceholder.Set(rocket->EliteDamage);
+	IntPlaceholder.Read(parser, pSection, pFlagName);
+	rocket->EliteDamage = IntPlaceholder.Get();
+	
+	_snprintf(pFlagName, 0x40, "%s.BodyLength", pKey);
+	IntPlaceholder.Set(rocket->BodyLength);
+	IntPlaceholder.Read(parser, pSection, pFlagName);
+	rocket->BodyLength = IntPlaceholder.Get();
+
+	_snprintf(pFlagName, 0x40, "%s.LazyCurve", pKey);
+	BoolPlaceholder.Set(rocket->LazyCurve);
+	BoolPlaceholder.Read(parser, pSection, pFlagName);
+	rocket->LazyCurve = BoolPlaceholder.Get();
+
+	_snprintf(pFlagName, 0x40, "%s.Type", pKey);
+	TypePlaceholder.Set(rocket->Type);
+	TypePlaceholder.Parse(parser, pSection, pFlagName);
+	rocket->Type = TypePlaceholder.Get();
+};
+
 template<class T>
 class ValueableVector : public std::vector<T> {
 public:
@@ -566,56 +636,19 @@ void ValueableVector<TechnoTypeClass *>::Read(INI_EX *parser, const char* pSecti
 }
 
 template<typename T>
-class ValueableEnum {
+class ValueableEnum : public Valueable<typename T::Value> {
 public:
-	typedef typename T::Value V;
-	//typedef typename CompoundT<T>::BaseT MyBase;
-protected:
-	V    Value;
-public:
-	ValueableEnum(V Default = V()) : Value(Default) {};
+	typedef typename T::Value ValueType;
 
-	operator V () const {
-		return this->Get();
-	}
-
-	operator V* () {
-		return this->GetEx();
-	}
-
-	V* operator & () {
-		return this->GetEx();
-	}
-
-	bool operator != (T other) const {
-		return this->Get() != other;
-	};
-
-	bool operator ! () const {
-		return this->Get() == 0;
-	};
-
-	virtual V Get() const {
-		return this->Value;
-	}
-
-	virtual V * GetEx() {
-		return &this->Value;
-	}
-
-	virtual void Set(V val) {
-		this->Value = val;
-	}
-
-	virtual void SetEx(V* val) {
-		this->Value = *val;
-	}
+	ValueableEnum(ValueType Default = ValueType()) : Valueable<ValueType>(Default) {};
 
 	void Read(INI_EX *parser, const char* pSection, const char* pKey) {
 		if(parser->ReadString(pSection, pKey)) {
-			V buffer = this->Get();
+			ValueType buffer = this->Get();
 			if(T::Parse(Ares::readBuffer, &buffer)) {
 				this->Set(buffer);
+			} else if(!INIClass::IsBlank(Ares::readBuffer)) {
+				Debug::INIParseFailed(pSection, pKey, Ares::readBuffer);
 			}
 		}
 	};

@@ -4,6 +4,17 @@
 #include <ScenarioClass.h>
 #include <ColorScheme.h>
 
+// reset the colors
+DEFINE_HOOK(4E43C0, Game_InitDropdownColors, 5)
+{
+	// mark all colors as unused (+1 for the  observer)
+	for(int i=0; i<Ares::UISettings::ColorCount + 1; ++i) {
+		Ares::UISettings::Colors[i].selectedIndex = -1;
+	}
+
+	return 0;
+}
+
 // convert player color slot index to color scheme index
 DEFINE_HOOK(69A310, Game_GetLinkedColor, 7) {
 	GET_STACK(int, idx, 0x4);

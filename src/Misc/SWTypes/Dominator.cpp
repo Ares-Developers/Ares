@@ -148,7 +148,7 @@ void PsychicDominatorStateMachine::Update() {
 			// played until we strike.
 			AnimClass* pAnim = PsyDom::Anim();
 			if(pAnim) {
-				int currentFrame = pAnim->CurrentFrame;
+				int currentFrame = pAnim->Animation.Value;
 				short frameCount = pAnim->Type->GetImage()->Frames;
 				if(frameCount * pData->Dominator_FireAtPercentage * 0.01 > currentFrame) {
 					return;
@@ -166,7 +166,7 @@ void PsychicDominatorStateMachine::Update() {
 			// 10 frames still to be played.)
 			AnimClass* pAnim = PsyDom::Anim();
 			if(pAnim) {
-				int currentFrame = pAnim->CurrentFrame;
+				int currentFrame = pAnim->Animation.Value;
 				short frameCount = pAnim->Type->GetImage()->Frames;
 
 				if(frameCount - currentFrame > 10) {
@@ -182,7 +182,7 @@ void PsychicDominatorStateMachine::Update() {
 			// wait for the last frame... WTF? 
 			AnimClass* pAnim = PsyDom::Anim();
 			if(pAnim) {
-				int currentFrame = pAnim->CurrentFrame;
+				int currentFrame = pAnim->Animation.Value;
 				short frameCount = pAnim->Type->GetImage()->Frames;
 
 				if(frameCount - currentFrame > 1) {

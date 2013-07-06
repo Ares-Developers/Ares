@@ -106,7 +106,7 @@ void TechnoExt::SpawnSurvivors(FootClass *pThis, TechnoClass *pKiller, bool Sele
 		if(chance > 0) {
 			toSpawn = ScenarioClass::Instance->Random.RandomRanged(1, 100) <= chance;
 		} else if(chance == -1 && pThis->WhatAmI() == abs_Unit) {
-			Move::Value occupation = passenger->IsCellOccupied(pThis->GetCell(), -1, -1, 0, 1);
+			Move::Value occupation = passenger->IsCellOccupied(pThis->GetCell(), -1, -1, nullptr, true);
 			toSpawn = (occupation == Move::OK || occupation == Move::MovingBlock);
 		}
 		if(toSpawn && !IgnoreDefenses) {
@@ -164,7 +164,7 @@ bool TechnoExt::EjectSurvivor(FootClass *Survivor, CoordStruct *loc, bool Select
 		Survivor->Scatter(0xB1CFE8, 1, 0);
 		Survivor->QueueMission(Survivor->Owner->ControlledByHuman() ? mission_Guard : mission_Hunt, 0);
 	}
-	Survivor->unknown_bool_690 = Survivor->unknown_bool_691 = false;
+	Survivor->ShouldEnterOccupiable = Survivor->ShouldGarrisonStructure = false;
 
 	if(Select) {
 		Survivor->Select();
@@ -288,7 +288,7 @@ unsigned int TechnoExt::ExtData::AlphaFrame(SHPStruct *Image) {
 
 bool TechnoExt::ExtData::DrawVisualFX() {
 	TechnoClass * Object = this->AttachedToObject;
-	if(Object->VisualCharacter(true, Object->Owner) == VisualType::Normal) {
+	if(Object->VisualCharacter(VARIANT_TRUE, Object->Owner) == VisualType::Normal) {
 		if(!Object->Disguised) {
 			return true;
 		}
@@ -382,7 +382,7 @@ bool TechnoExt::ExtData::IsPowered() {
  */
 bool TechnoExt::CreateWithDroppod(FootClass *Object, CoordStruct *XYZ) {
 	auto MyCell = MapClass::Instance->GetCellAt(XYZ);
-	if(Object->IsCellOccupied(MyCell, -1, -1, 0, 0) != Move::OK) {
+	if(Object->IsCellOccupied(MyCell, -1, -1, nullptr, false) != Move::OK) {
 //		Debug::Log("Cell occupied... poof!\n");
 		return false;
 	} else {
@@ -635,9 +635,9 @@ AresAction::Value TechnoExt::ExtData::GetActionHijack(TechnoClass* pTarget) {
 		return AresAction::None;
 	}
 	if(pType->Deployer) {
-		eSequence sequence = pThis->SequenceAnim;
-		if(sequence == seq_Deploy || sequence == seq_Deployed
-			|| sequence == seq_DeployedFire || sequence == seq_DeployedIdle) {
+		Sequence::Value sequence = pThis->SequenceAnim;
+		if(sequence == Sequence::Deploy || sequence == Sequence::Deployed
+			|| sequence == Sequence::DeployedFire || sequence == Sequence::DeployedIdle) {
 				return AresAction::None;
 		}
 	}
@@ -843,8 +843,8 @@ DEFINE_HOOK(6F4500, TechnoClass_DTOR, 5)
 	return 0;
 }
 
-DEFINE_HOOK(70BF50, TechnoClass_SaveLoad_Prefix, 5)
 DEFINE_HOOK_AGAIN(70C250, TechnoClass_SaveLoad_Prefix, 8)
+DEFINE_HOOK(70BF50, TechnoClass_SaveLoad_Prefix, 5)
 {
 	GET_STACK(TechnoExt::TT*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);

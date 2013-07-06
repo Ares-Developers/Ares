@@ -3,6 +3,7 @@
 
 #include <TechnoTypeClass.h>
 #include <BuildingTypeClass.h>
+#include <WarheadTypeClass.h>
 #include <VocClass.h>
 
 #include "../../Ares.h"
@@ -139,6 +140,15 @@ public:
 
 		Valueable<bool> GattlingCyclic;
 
+		// custom missiles
+		Valueable<bool> IsCustomMissile;
+		Valueable<RocketStruct> CustomMissileData;
+		Valueable<WarheadTypeClass*> CustomMissileWarhead;
+		Valueable<WarheadTypeClass*> CustomMissileEliteWarhead;
+		Valueable<AnimTypeClass*> CustomMissileTakeoffAnim;
+		Valueable<AnimTypeClass*> CustomMissileTrailerAnim;
+		Valueable<int> CustomMissileTrailerSeparation;
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			Survivors_PilotChance (NULL),
 			Survivors_PassengerChance (NULL),
@@ -182,6 +192,13 @@ public:
 			MindControlExperienceSelfModifier (0.0F),
 			MindControlExperienceVictimModifier (1.0F),
 			GattlingCyclic (false),
+			IsCustomMissile (false),
+			CustomMissileData (),
+			CustomMissileWarhead (NULL),
+			CustomMissileEliteWarhead (NULL),
+			CustomMissileTrailerSeparation (3),
+			CustomMissileTrailerAnim (NULL),
+			CustomMissileTakeoffAnim (NULL),
 			VoiceRepair (-1),
 			HijackerEnterSound (-1),
 			HijackerLeaveSound (-1),

@@ -200,7 +200,7 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 	}
 	if(pINI->ReadString(pID, "Rubble.Intact", "", Ares::readBuffer, Ares::readLength)) {
 		this->RubbleIntact = BuildingTypeClass::Find(Ares::readBuffer);
-		if(!this->RubbleIntact && VALIDTAG(Ares::readBuffer)) {
+		if(!this->RubbleIntact && !INIClass::IsBlank(Ares::readBuffer)) {
 			Debug::INIParseFailed(pID, "Rubble.Intact", Ares::readBuffer);
 		}
 	}
@@ -211,7 +211,7 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 			this->RubbleDestroyed->TogglePower = false;
 			this->RubbleDestroyed->Unsellable = true;
 			this->RubbleDestroyed->CanBeOccupied = false;
-		} else if(VALIDTAG(Ares::readBuffer)) {
+		} else if(!INIClass::IsBlank(Ares::readBuffer)) {
 			Debug::INIParseFailed(pID, "Rubble.Destroyed", Ares::readBuffer);
 		}
 	}
@@ -361,6 +361,68 @@ bool BuildingTypeExt::IsFoundationEqual(BuildingTypeClass *pTBldA, BuildingTypeC
 	return false;
 }
 
+//! Updates the set of points used to draw this building foundation on the radar.
+/*!
+	Implements the same logic as used by the original game. That is, buildings
+	appear as scaled and tilted rectangles. Only the foundation width and
+	height is used. Empty cells in the foundation are filled anyhow.
+
+	\author AlexB
+	\date 2013-04-25
+*/
+void BuildingTypeExt::ExtData::UpdateFoundationRadarShape() {
+	this->FoundationRadarShape.Clear();
+
+	if(this->IsCustom) {
+		auto pType = this->AttachedToObject;
+		auto pRadar = RadarClass::Global();
+
+		int width = pType->GetFoundationWidth();
+		int height = pType->GetFoundationHeight(false);
+
+		// transform between cell length and pixels on radar
+		auto Transform = [](int length, float factor) -> int {
+			float fltLength = length * factor + 0.5f;
+			float minLength = (length == 1) ? 1.0f : 2.0f;
+
+			if(fltLength < minLength) {
+				fltLength = minLength;
+			}
+
+			return static_cast<int>(Game::F2I(fltLength));
+		};
+
+		// the transformed lengths
+		int pixelsX = Transform(width, pRadar->RadarSizeFactor);
+		int pixelsY = Transform(height, pRadar->RadarSizeFactor);
+
+		// heigth of the foundation tilted by 45°
+		int rows = pixelsX + pixelsY - 1;
+
+		// this draws a rectangle standing on an edge, getting
+		// wider for each line drawn. the start and end values
+		// are special-cased to not draw the pixels outside the
+		// foundation.
+		for(int i=0; i<rows; ++i) {
+			int start = -i;
+			if(i >= pixelsY) {
+				start = i - 2 * pixelsY + 2;
+			}
+
+			int end = i;
+			if(i >= pixelsX) {
+				end = 2 * pixelsX - i - 2;
+			}
+
+			// fill the line
+			for(int j=start; j<=end; ++j) {
+				Point2D pixel = {j, i};
+				this->FoundationRadarShape.AddItem(pixel);
+			}
+		}
+	}
+}
+
 // Short check: Is the building of a linkable kind at all?
 bool BuildingTypeExt::ExtData::IsLinkable() {
 	return this->Firewall_Is || (this->IsTrench > -1);
@@ -441,8 +503,8 @@ DEFINE_HOOK(45E580, BuildingTypeClass_DTOR, 5)
 	return 0;
 }
 
-DEFINE_HOOK(465010, BuildingTypeClass_SaveLoad_Prefix, 5)
 DEFINE_HOOK_AGAIN(465300, BuildingTypeClass_SaveLoad_Prefix, 5)
+DEFINE_HOOK(465010, BuildingTypeClass_SaveLoad_Prefix, 5)
 {
 	GET_STACK(BuildingTypeExt::TT*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
@@ -465,8 +527,8 @@ DEFINE_HOOK(46536A, BuildingTypeClass_Save_Suffix, 7)
 	return 0;
 }
 
-DEFINE_HOOK(464A49, BuildingTypeClass_LoadFromINI, A)
 DEFINE_HOOK_AGAIN(464A56, BuildingTypeClass_LoadFromINI, A)
+DEFINE_HOOK(464A49, BuildingTypeClass_LoadFromINI, A)
 {
 	GET(BuildingTypeClass*, pItem, EBP);
 	GET_STACK(CCINIClass*, pINI, 0x364);

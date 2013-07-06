@@ -5,8 +5,8 @@
 //#define IS_RELEASE_VER
 
 #define VERSION_MAJOR 13
-#define VERSION_MINOR 180
-#define VERSION_REVISION 732
+#define VERSION_MINOR 187
+#define VERSION_REVISION 709
 #define SAVEGAME_MAGIC ((VERSION_MAJOR << 24) | (VERSION_MINOR << 16) | (VERSION_REVISION))
 
 #define wstr(x) wstr_(x)
@@ -22,9 +22,9 @@
 #ifdef IS_RELEASE_VER
 
 #define PRODUCT_MAJOR 0
-#define PRODUCT_MINOR 2
-#define PRODUCT_REVISION 2
-#define PRODUCT_STR "0.2p2"
+#define PRODUCT_MINOR 3
+#define PRODUCT_REVISION 0
+#define PRODUCT_STR "0.3"
 #define DISPLAY_STR PRODUCT_STR
 
 #else
