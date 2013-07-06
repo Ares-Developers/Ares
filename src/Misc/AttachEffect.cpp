@@ -17,7 +17,8 @@ In a nutshell:
 	keep in mind, this does not contain any bugfixes within it, so everything can be applied as much as YR applies it
 	*cough* cloaked jumpjets *cough*
 
-	TemporalHidesAnim needs more code, retargetted for something later.
+	Some commented out code were aimed for Residual Damage, #408
+	but it doesn't work as it is coded
 
 */
 
@@ -141,7 +142,7 @@ void AttachEffectClass::Destroy() {
 /*!
 	This function updates the units' AttachEffects.
 
-	\retval boolean, to see if the unit gets killed (might just scrap 408 itself - did it)
+	(retval boolean, to see if the unit gets killed (scrapped 408, it always crashed))
 
 	\param Source The currently updated Techno.
 
@@ -187,7 +188,7 @@ void AttachEffectClass::Update(TechnoClass *Source) {
 
 					if(Source->InLimbo || !Source->IsAlive || !Source->Health) {
 						//check if the unit is still alive, if residual damage killed it, no reason to continue
-						return false;
+						return false;	//this is a void atm
 					}
 
 					Effect->ActualDamageDelay = Effect->Type->DamageDelay;

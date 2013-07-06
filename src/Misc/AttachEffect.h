@@ -18,6 +18,7 @@ public:
 	Valueable<AnimTypeClass *> AnimType;
 	Valueable<bool> AnimResetOnReapply;
 	Valueable<bool> TemporalHidesAnim;
+	
 	//#255, crate stat modifiers on weapons
 	Valueable<double> FirepowerMultiplier;
 	Valueable<double> ArmorMultiplier;
