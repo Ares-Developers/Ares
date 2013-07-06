@@ -61,32 +61,6 @@ static void ParseList<int>(DynamicVectorClass<int> &List, CCINIClass * pINI, con
 	}
 };
 
-
-
-template<typename T>
-static void ParseListIndices(DWORD &Composite, CCINIClass * pINI, const char *section, const char *key) {
-	if(pINI->ReadString(section, key, Ares::readDefval, Ares::readBuffer, Ares::readLength)) {
-		Composite = 0;
-		for(char *cur = strtok(Ares::readBuffer, Ares::readDelims); cur; cur = strtok(NULL, Ares::readDelims)) {
-			int idx = CompoundT<T>::BaseT::FindIndex(cur);
-			if(idx > -1) {
-				Composite |= (1 << idx);
-			} else {
-				Debug::INIParseFailed(section, key, cur);
-			}
-		}
-	}
-};
-
-#define PARSE_INDICES(obj, key) \
-	ParseListIndices(obj->key, pINI, section, #key);
-
-#define PARSE_COUNTRY_INDICES(obj, key) \
-	ParseListIndices<HouseTypeClass *>(obj->key, pINI, section, #key);
-
-#define PARSE_COUNTRY_INDICES_INTO(obj, key, attr, type) \
-	ParseListIndices<HouseTypeClass *>(obj->attr, pINI, section, #key);
-
 /* issue 193 - increasing the buffer length for certain flag parsing */
 
 DEFINE_HOOK(511D16, Buf_CountryVeteran, 9)
@@ -252,11 +226,6 @@ DEFINE_HOOK(7121A3, Buf_TechnoType, 6)
 	GET(const char *, section, EBX);
 	GET(CCINIClass *, pINI, ESI);
 
-	PARSE_COUNTRY_INDICES(T, ForbiddenHouses);
-	PARSE_COUNTRY_INDICES(T, SecretHouses);
-	PARSE_COUNTRY_INDICES(T, RequiredHouses);
-	PARSE_COUNTRY_INDICES_INTO(T, Owner, OwnerFlags, HouseTypeClass);
-
 	PARSE_LIST(T, DamageParticleSystems);
 	PARSE_LIST(T, DestroyParticleSystems);
 
@@ -267,16 +236,6 @@ DEFINE_HOOK(7121A3, Buf_TechnoType, 6)
 //	PARSE_VECTOR_N(section, T, DebrisTypes, VoxelAnimTypeClass);
 
 	return 0;
-}
-
-DEFINE_HOOK(7149E1, Buf_Owner, 6)
-{
-	return 0x7149FB;
-}
-
-DEFINE_HOOK(714522, Buf_OwnHouses, 6)
-{
-	return 0x714570;
 }
 
 DEFINE_HOOK(713171, Buf_Dock, 9)
@@ -346,6 +305,12 @@ DEFINE_HOOK(4750EC, INIClass_ReadHouseTypesList, 7)
 {
 	R->Stack(0x0, Ares::readBuffer);
 	R->Stack(0x4, Ares::readLength);
+	return 0;
+}
+
+DEFINE_HOOK(475107, INIClass_ReadHouseTypesList_Strtok, 5)
+{
+	R->ECX(Ares::readBuffer);
 	return 0;
 }
 
