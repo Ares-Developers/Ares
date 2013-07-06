@@ -195,7 +195,7 @@ DEFINE_HOOK(42146E, TacticalClass_UpdateAlphasInRectangle_Header, 5)
 			idx = pData->AlphaFrame(Image);
 		}
 	}
-	R->EAX(Image->GetFrameHeader(buffer, idx));
+	R->EAX(Image->GetFrameBounds(buffer, idx));
 	return 0x421478;
 }
 
