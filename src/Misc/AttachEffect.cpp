@@ -117,8 +117,7 @@ void AttachEffectClass::CreateAnim(TechnoClass *Owner) {
 //animation remover, boolean is needed otherwise destructor goes to infinite loop during UnInit
 void AttachEffectClass::KillAnim() {
 	if (this->Animation && !this->AnimAlreadyKilled) {
-		this->Animation->unknown_11A = false;
-		this->Animation->unknown_11B = true;
+		this->Animation->Unpause();
 		this->Animation->SetOwnerObject(NULL);
 		this->AnimAlreadyKilled = true;
 		this->Animation->UnInit();
@@ -128,8 +127,7 @@ void AttachEffectClass::KillAnim() {
 
 void AttachEffectClass::PutUnderTemporal() {
 	if (this->Animation) {
-		this->Animation->unknown_11A = true;
-		this->Animation->unknown_11C = this->Animation->CurrentFrame;
+		this->Animation->Pause();
 		this->Animation->Invisible = true;
 		this->Animation->IsPlaying = false;
 	}
