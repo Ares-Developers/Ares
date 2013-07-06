@@ -22,6 +22,7 @@
 #include <UnitTypeClass.h>
 #include <VocClass.h>
 #include <WarheadTypeClass.h>
+#include <VoxelAnimTypeClass.h>
 
 #include "Debug.h"
 #include "../Ares.h"
@@ -231,9 +232,8 @@ DEFINE_HOOK(7121A3, Buf_TechnoType, 6)
 
 	PARSE_LIST(T, Dock);
 
-// TODO: define VoxelAnimTypeClass
-//	PARSE_VECTOR_INT(section, T, DebrisMaximums);
-//	PARSE_VECTOR_N(section, T, DebrisTypes, VoxelAnimTypeClass);
+	PARSE_LIST(T, DebrisMaximums);
+	PARSE_LIST(T, DebrisTypes);
 
 	return 0;
 }
@@ -266,9 +266,8 @@ DEFINE_HOOK(75D660, Buf_Warhead, 9)
 
 	PARSE_LIST(WH, AnimList);
 
-// TODO: define VoxelAnimTypeClass
-//	PARSE_VECTOR_INT(section, T, DebrisMaximums);
-//	PARSE_VECTOR_N(section, T, DebrisTypes, VoxelAnimTypeClass);
+	PARSE_LIST(WH, DebrisMaximums);
+	PARSE_LIST(WH, DebrisTypes);
 
 	return 0;
 }
