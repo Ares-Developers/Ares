@@ -4,6 +4,7 @@
 #include "../../Ares.CRT.h"
 #include <ScenarioClass.h>
 #include <ColorScheme.h>
+#include <DiscreteDistributionClass.h>
 
 template<> const DWORD Extension<HouseTypeClass>::Canary = 0xAFFEAFFE;
 Container<HouseTypeExt> HouseTypeExt::ExtMap;
@@ -476,29 +477,23 @@ bool HouseTypeExt::ExtData::GetParadropContent(TypeList<TechnoTypeClass*> **pTyp
 }
 
 int HouseTypeExt::PickRandomCountry() {
-	std::vector<int> vecLegible;
-	HouseTypeClass* pCountry;
+	DiscreteDistributionClass<int> items;
 
 	for (int i = 0; i < HouseTypeClass::Array->Count; i++) {
-		pCountry = HouseTypeClass::Array->Items[i];
+		HouseTypeClass* pCountry = HouseTypeClass::Array->Items[i];
 		if (pCountry->Multiplay) {
 			if (HouseTypeExt::ExtData *pData = HouseTypeExt::ExtMap.Find(pCountry)) {
-				for (int k = 0; k < pData->RandomSelectionWeight; k++) {
-					vecLegible.push_back(i);
-				}
+				items.Add(i, pData->RandomSelectionWeight);
 			}
 		}
 	}
 
-	if (vecLegible.size() > 0) {
-		int pick = ScenarioClass::Instance->Random.RandomRanged(0,
-				vecLegible.size() - 1);
-
-		return vecLegible.at(pick);
-	} else {
+	int ret = 0;
+	if(!items.Select(ScenarioClass::Instance->Random, &ret)) {
 		Debug::FatalErrorAndExit("No countries eligible for random selection!");
 	}
-	return 0;
+
+	return ret;
 }
 
 // =============================
