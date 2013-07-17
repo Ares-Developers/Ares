@@ -313,6 +313,19 @@ DEFINE_HOOK(475107, INIClass_ReadHouseTypesList_Strtok, 5)
 	return 0;
 }
 
+DEFINE_HOOK(47527C, INIClass_GetAlliesBitfield, 7)
+{
+	R->Stack(0x0, Ares::readBuffer);
+	R->Stack(0x4, Ares::readLength);
+	return 0;
+}
+
+DEFINE_HOOK(475297, INIClass_GetAlliesBitfield_Strtok, 5)
+{
+	R->ECX(Ares::readBuffer);
+	return 0;
+}
+
 DEFINE_HOOK(6A9348, CameoClass_GetTip_FixLength, 9)
 {
 	DWORD HideObjectName = R->AL();
