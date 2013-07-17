@@ -800,7 +800,7 @@ void BuildingExt::ExtData::KickOutClones(TechnoClass * Production) {
 
 	// keep cloning vats for backward compat, unless explicit sources are defined
 	if(FactoryType->Factory == InfantryTypeClass::AbsID) {
-		if(!CloningSources.Count) {
+		if(CloningSources.empty()) {
 			auto &CloningVats = FactoryOwner->CloningVats;
 			for(int i = 0; i < CloningVats.Count; ++i) {
 				KickOutClone(CloningVats[i]);
@@ -810,7 +810,7 @@ void BuildingExt::ExtData::KickOutClones(TechnoClass * Production) {
 	}
 
 	// and clone from new sources
-	if(CloningSources.Count || IsUnit) {
+	if(!CloningSources.empty() || IsUnit) {
 		for(int i = 0; i < AllBuildings.Count; ++i) {
 			auto B = AllBuildings[i];
 			if(B->InLimbo) {
@@ -819,8 +819,8 @@ void BuildingExt::ExtData::KickOutClones(TechnoClass * Production) {
 			auto BType = B->Type;
 
 			bool ShouldClone(false);
-			if(CloningSources.Count) {
-				ShouldClone = CloningSources.FindItemIndex(&BType) != -1;
+			if(!CloningSources.empty()) {
+				ShouldClone = CloningSources.Contains(BType);
 			} else if(IsUnit) {
 				auto BData = BuildingTypeExt::ExtMap.Find(BType);
 				ShouldClone = (!!BData->CloningFacility) && (BType->Naval == FactoryType->Naval);

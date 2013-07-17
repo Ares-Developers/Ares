@@ -50,6 +50,10 @@ public:
 		return &this->Value;
 	}
 
+	virtual const T * GetEx() const {
+		return &this->Value;
+	}
+
 	virtual void Set(T val) {
 		this->Value = val;
 	}
@@ -75,10 +79,10 @@ public:
 };
 
 // more fun
-template<typename T, typename Lookuper>
-class ValueableIdx : public Valueable<T> {
+template<typename Lookuper>
+class ValueableIdx : public Valueable<int> {
 public:
-	ValueableIdx(T Default) : Valueable<T>(Default) {};
+	ValueableIdx(int Default) : Valueable<int>(Default) {};
 
 	void Read(INI_EX *parser, const char* pSection, const char* pKey) {
 		if(parser->ReadString(pSection, pKey)) {
@@ -113,7 +117,11 @@ public:
 
 	using Valueable<T>::GetEx;
 
-	T* GetEx(T* defVal) const {
+	T* GetEx(T* defVal) {
+		return this->isset() ? Valueable<T>::GetEx() : defVal;
+	}
+
+	const T* GetEx(T* defVal) const {
 		return this->isset() ? Valueable<T>::GetEx() : defVal;
 	}
 
@@ -133,43 +141,22 @@ public:
 	}
 };
 
-template<typename T, typename Lookuper>
-class NullableIdx : public ValueableIdx<T, Lookuper> {
-protected:
-	bool HasValue;
+template<typename Lookuper>
+class NullableIdx : public Nullable<int> {
 public:
-	NullableIdx() : ValueableIdx<T, Lookuper>(T()), HasValue(false) {};
-	NullableIdx(T Val) : ValueableIdx<T, Lookuper>(Val), HasValue(true) {};
+	NullableIdx() : Nullable<int>() {};
+	NullableIdx(int Val) : Nullable<int>(Val) {};
 
-	bool isset() const {
-		return this->HasValue;
-	}
-
-	using Valueable<T>::Get;
-
-	T Get(T defVal) const {
-		return this->isset() ? Valueable<T>::Get() : defVal;
-	}
-
-	using Valueable<T>::GetEx;
-
-	T* GetEx(T* defVal) const {
-		return this->isset() ? Valueable<T>::GetEx() : defVal;
-	}
-
-	virtual void Set(T val) {
-		ValueableIdx<T, Lookuper>::Set(val);
-		this->HasValue = true;
-	}
-
-	virtual void SetEx(T* val) {
-		ValueableIdx<T, Lookuper>::SetEx(val);
-		this->HasValue = true;
-	}
-
-	void Reset() {
-		Valueable<T>::Set(T());
-		this->HasValue = false;
+	void Read(INI_EX *parser, const char* pSection, const char* pKey) {
+		if(parser->ReadString(pSection, pKey)) {
+			const char * val = parser->value();
+			int idx = Lookuper::FindIndex(val);
+			if(idx != -1 || INIClass::IsBlank(val)) {
+				this->Set(idx);
+			} else {
+				Debug::INIParseFailed(pSection, pKey, val);
+			}
+		}
 	}
 };
 
@@ -234,85 +221,25 @@ public:
 	}
 };
 
-template<typename T, typename Lookuper>
-class CustomizableIdx : public ValueableIdx<T, Lookuper> {
-	bool Customized;
-	T*   Default;
-public:
-	CustomizableIdx(T* alias = NULL) : ValueableIdx<T, Lookuper>(T()), Customized(false), Default(alias) {};
-
-	void Bind(T* to) {
-		if(!this->Customized) {
-			this->Default = to;
-		}
-	}
-
-	void BindEx(T to) {
-		if(!this->Customized) {
-			this->Value = to;
-			this->Default = &this->Value;
-		}
-	}
-
-	virtual T Get() const {
-		return this->Customized
-		 ? this->Value
-		 : this->Default ? *this->Default : T()
-		;
-	}
-
-	virtual void Set(T val) {
-		this->Customized = true;
-		this->Value = val;
-	}
-
-	virtual T* GetEx() {
-		return this->Customized
-		 ? &this->Value
-		 : this->Default
-		;
-	}
-
-	virtual void SetEx(T* val) {
-		this->Customized = true;
-		this->Value = *val;
-	}
-
-	void Lock() {
-		if(!this->Customized) {
-			if(this->Default) {
-				this->Value = *this->Default;
-			}
-			this->Customized = true;
-		}
-	}
-};
 /*
  * This template is for something that varies depending on a unit's Veterancy Level
  * Promotable<int> PilotChance; // class def
- * PilotChance(NULL); // ctor init-list
- * PilotChance->BindTo(Unit); // instantiation
- * PilotChance->Get(); // usage
+ * PilotChance(); // ctor init-list
+ * PilotChance->Read(..., "Base%s"); // load from ini
+ * PilotChance->Get(Unit); // usage
  */
 template<typename T>
 class Promotable {
-	TechnoClass * _BindTo;
 public:
 	T Rookie;
 	T Veteran;
 	T Elite;
 
-	Promotable(TechnoClass * Object = NULL) : _BindTo(Object) {};
-	Promotable<T>* BindTo(TechnoClass * Object) {
-		this->_BindTo = Object;
-		return this;
-	}
-
 	void SetAll(T val) {
 		this->Elite = this->Veteran = this->Rookie = val;
 	}
 
-	void LoadFromINI(CCINIClass *pINI, const char *Section, const char *BaseFlag) {
+	void Read(CCINIClass *pINI, const char *Section, const char *BaseFlag) {
 		unsigned int buflen = strlen(BaseFlag) + 8;
 		char *FlagName = new char[buflen];
 
@@ -337,12 +264,8 @@ public:
 		delete[] FlagName;
 	}
 
-	T* GetEx() {
-		if(!this->_BindTo) {
-			Debug::Log("Promotable<T> invoked without an owner!\n");
-			throw std::logic_error("Promotable<T> invoked without an owner!\n");
-		}
-		VeterancyStruct *XP = &this->_BindTo->Veterancy;
+	const T* GetEx(TechnoClass* pTechno) const {
+		VeterancyStruct *XP = &pTechno->Veterancy;
 		if(XP->IsElite()) {
 			return &this->Elite;
 		}
@@ -352,8 +275,8 @@ public:
 		return &this->Rookie;
 	}
 
-	T Get() {
-		return *this->GetEx();
+	T Get(TechnoClass* pTechno) const {
+		return *this->GetEx(pTechno);
 	}
 };
 
@@ -564,76 +487,203 @@ void Valueable<RocketStruct>::Read(INI_EX *parser, const char* pSection, const c
 	rocket->Type = TypePlaceholder.Get();
 };
 
+template<typename T>
+class Iterator {
+private:
+	const T* items;
+	size_t count;
+public:
+	Iterator() : items(nullptr), count(0) {}
+	Iterator(const T* first, const size_t count) : items(first), count(count) {}
+	Iterator(const std::vector<T> &vec) : items(vec.data()), count(vec.size()) {}
+	Iterator(const VectorClass<T> &vec) : items(vec.Items), count(vec.Capacity) {}
+	Iterator(const DynamicVectorClass<T> &vec) : items(vec.Items), count(vec.Count) {}
+
+	T at(size_t index) const {
+		return this->items[index];
+	}
+
+	size_t size() const {
+		return this->count;
+	}
+
+	const T* begin() const {
+		return this->items;
+	}
+
+	const T* end() const {
+		if(!this->valid()) {
+			return nullptr;
+		}
+
+		return &this->items[count];
+	}
+
+	bool valid() const {
+		return items != nullptr;
+	}
+
+	bool empty() const {
+		return !this->valid() || !this->count;
+	}
+
+	bool contains(T other) const {
+		return std::find(this->begin(), this->end(), other) != this->end();
+	}
+
+	operator bool () const {
+		return !this->empty();
+	}
+
+	bool operator !() const {
+		return this->empty();
+	}
+
+	const T& operator [](size_t index) const {
+		return this->items[index];
+	}
+};
+
 template<class T>
 class ValueableVector : public std::vector<T> {
+protected:
+	bool _Defined;
 public:
 	typedef T MyType;
 	typedef typename CompoundT<T>::BaseT MyBase;
 
-	void Read(INI_EX *parser, const char* pSection, const char* pKey) {
+	ValueableVector() : std::vector<T>(), _Defined(false) {};
+
+	virtual void Read(INI_EX *parser, const char* pSection, const char* pKey) {
 		if(parser->ReadString(pSection, pKey)) {
-			// if we were able to get the flag in question, take it apart and check the tokens...
-			// ...against the various object types; if we find one, place it in the value list
-			for(char *cur = strtok(Ares::readBuffer, ","); cur; cur = strtok(NULL, ",")) {
-				if(T thisObject = MyBase::Find(cur)) {
-					this->push_back(thisObject);
-					continue;
-				}
-			}
+			this->clear();
+			this->_Defined = true;
+			this->Split(parser, pSection, pKey, Ares::readBuffer);
 		}
 	}
 
-	/** This will return true for Valuable<std::vector<AbstractTypeClass *> > Foo == AbstractTypeClass * Bar
-		if Bar is among the objects listed in Foo.
+	bool Contains(const T &other) const {
+		return std::find(this->begin(), this->end(), other) != this->end();
+	}
 
-		This way, we can do stuff like
-			if(SomeExt->AllowedUnits == someUnit) { ...
-		even if AllowedUnits is a list.
-	*/
-	bool operator== (AbstractTypeClass * other) const {
-		if(this->empty()) {
-			return false;
+	int IndexOf(const T &other) const {
+		auto it = std::find(this->begin(), this->end(), other);
+		if(it != this->end()) {
+			return it - this->begin();
 		}
+		return -1;
+	}
 
-		int listSize = this->size();
-		for( int i = 0; i < listSize; ++i ) {
-			if(this->at(i) == other) {
-				return true;
-			}
+	bool Defined() const {
+		return this->_Defined;
+	}
+
+	virtual Iterator<T> GetElements() const {
+		return Iterator<T>(*this);
+	}
+
+protected:
+	virtual void Split(INI_EX *parser, const char* pSection, const char* pKey, char* pValue) {
+		// if we were able to get the flag in question, take it apart and check the tokens...
+		for(char *cur = strtok(pValue, Ares::readDelims); cur; cur = strtok(nullptr, Ares::readDelims)) {
+			Parse(parser, pSection, pKey, cur);
 		}
+	}
 
-		// if we ended up here, other is not among the listed object types
-		return false;
+	void Parse(INI_EX *parser, const char* pSection, const char* pKey, char* pValue) {
+		T buffer = T();
+		if(Parser<T>::Parse(pValue, &buffer)) {
+			this->push_back(buffer);
+		} else if(!INIClass::IsBlank(pValue)) {
+			Debug::INIParseFailed(pSection, pKey, pValue);
+		}
 	}
 };
 
 template<>
-void ValueableVector<TechnoTypeClass *>::Read(INI_EX *parser, const char* pSection, const char* pKey) {
-	if(parser->ReadString(pSection, pKey)) {
-		// if we were able to get the flag in question, take it apart and check the tokens...
-		// ...against the various object types; if we find one, place it in the value list
-		for(char *cur = strtok(Ares::readBuffer, ","); cur; cur = strtok(NULL, ",")) {
-			TechnoTypeClass * thisObject = NULL;
-			if(thisObject = AircraftTypeClass::Find(cur)) {
-				this->push_back(thisObject);
-				continue;
-			}
-			if(thisObject = BuildingTypeClass::Find(cur)) {
-				this->push_back(thisObject);
-				continue;
-			}
-			if(thisObject = InfantryTypeClass::Find(cur)) {
-				this->push_back(thisObject);
-				continue;
-			}
-			if(thisObject = UnitTypeClass::Find(cur)) {
-				this->push_back(thisObject);
-				continue;
-			}
-			Debug::INIParseFailed(pSection, pKey, cur);
-		}
+void ValueableVector<TechnoTypeClass *>::Parse(INI_EX *parser, const char* pSection, const char* pKey, char* pValue) {
+	// ...against the various object types; if we find one, place it in the value list
+	if(auto pType = AircraftTypeClass::Find(pValue)) {
+		this->push_back(pType);
+	} else if(auto pType = BuildingTypeClass::Find(pValue)) {
+		this->push_back(pType);
+	} else if(auto pType = InfantryTypeClass::Find(pValue)) {
+		this->push_back(pType);
+	} else if(auto pType = UnitTypeClass::Find(pValue)) {
+		this->push_back(pType);
+	} else if(!INIClass::IsBlank(pValue)) {
+		Debug::INIParseFailed(pSection, pKey, pValue);
 	}
 }
+
+template<class T>
+class NullableVector : public ValueableVector<T> {
+protected:
+	bool _HasValue;
+public:
+	NullableVector() : ValueableVector<T>(), _HasValue(false) {};
+
+	virtual void Read(INI_EX *parser, const char* pSection, const char* pKey) {
+		if(parser->ReadString(pSection, pKey)) {
+			this->clear();
+			this->_Defined = true;
+
+			// provide a way to reset to default
+			if(!_strcmpi(Ares::readBuffer, "<default>")) {
+				this->_HasValue = false;
+			} else {
+				this->_HasValue = true;
+				this->Split(parser, pSection, pKey, Ares::readBuffer);
+			}
+		}
+	}
+
+	bool HasValue() const {
+		return this->_HasValue;
+	}
+
+	using ValueableVector<T>::GetElements;
+
+	virtual Iterator<T> GetElements(Iterator<T> defElements) const {
+		if(!this->_HasValue) {
+			return defElements;
+		}
+
+		return ValueableVector<T>::GetElements();
+	}
+};
+
+template<typename Lookuper>
+class ValueableIdxVector : public ValueableVector<int> {
+protected:
+	virtual void Split(INI_EX *parser, const char* pSection, const char* pKey, char* pValue) {
+		// split the string and look up the tokens. only valid tokens are added.
+		for(char* cur = strtok(pValue, Ares::readDelims); cur; cur = strtok(nullptr, Ares::readDelims)) {
+			int idx = Lookuper::FindIndex(cur);
+			if(idx != -1) {
+				this->push_back(idx);
+			} else if(!INIClass::IsBlank(cur)) {
+				Debug::INIParseFailed(pSection, pKey, cur);
+			}
+		}
+	}
+};
+
+template<typename Lookuper>
+class NullableIdxVector : public NullableVector<int> {
+protected:
+	virtual void Split(INI_EX *parser, const char* pSection, const char* pKey, char* pValue) {
+		// split the string and look up the tokens. only valid tokens are added.
+		for(char* cur = strtok(pValue, Ares::readDelims); cur; cur = strtok(nullptr, Ares::readDelims)) {
+			int idx = Lookuper::FindIndex(cur);
+			if(idx != -1) {
+				this->push_back(idx);
+			} else if(!INIClass::IsBlank(cur)) {
+				Debug::INIParseFailed(pSection, pKey, cur);
+			}
+		}
+	}
+};
 
 template<typename T>
 class ValueableEnum : public Valueable<typename T::Value> {

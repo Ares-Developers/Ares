@@ -98,10 +98,10 @@ public:
 		bool ExperienceFromAirstrike;
 		float AirstrikeExperienceModifier;
 
-		ValueableIdx<int, VocClass> VoiceRepair;
+		ValueableIdx<VocClass> VoiceRepair;
 
-		ValueableIdx<int, VocClass> HijackerEnterSound;
-		ValueableIdx<int, VocClass> HijackerLeaveSound;
+		ValueableIdx<VocClass> HijackerEnterSound;
+		ValueableIdx<VocClass> HijackerLeaveSound;
 		Valueable<int> HijackerKillPilots;
 		Valueable<bool> HijackerBreakMindControl;
 		Valueable<bool> HijackerAllowed;
@@ -122,11 +122,11 @@ public:
 		Valueable<bool> PassengerTurret; //!< Whether this unit's turret changes based on the number of people in its passenger hold.
 
 		// issue #617
-		DynamicVectorClass<BuildingTypeClass*> PoweredBy;  //!< The buildingtype this unit is powered by or NULL.
+		ValueableVector<BuildingTypeClass*> PoweredBy;  //!< The buildingtype this unit is powered by or NULL.
 
-		DynamicVectorClass<BuildingTypeClass *> BuiltAt;
+		ValueableVector<BuildingTypeClass *> BuiltAt;
 		Valueable<bool> Cloneable;
-		DynamicVectorClass<BuildingTypeClass *> ClonedAt;
+		ValueableVector<BuildingTypeClass *> ClonedAt;
 
 		Nullable<bool> CarryallAllowed;
 		Nullable<int> CarryallSizeLimit;
@@ -145,8 +145,8 @@ public:
 		Valueable<int> CustomMissileTrailerSeparation;
 
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
-			Survivors_PilotChance (NULL),
-			Survivors_PassengerChance (NULL),
+			Survivors_PilotChance (),
+			Survivors_PassengerChance (),
 			Survivors_PilotCount (-1),
 			PrerequisiteTheaters (0xFFFFFFFF),
 			Secret_RequiredHouses (0),
@@ -163,7 +163,7 @@ public:
 			Spot_DisableB (false),
 			Spot_Reverse (false),
 			Is_Bomb (false),
-			Insignia (NULL),
+			Insignia (),
 			Parachute_Anim (NULL),
 			Operator (NULL),
 			IsAPromiscuousWhoreAndLetsAnyoneRideIt (false),

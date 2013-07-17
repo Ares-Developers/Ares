@@ -16,29 +16,8 @@ void SW_UnitDelivery::LoadFromINI(
 		return;
 	}
 
-	if(pINI->ReadString(section, "Deliver.Types", "", Ares::readBuffer, Ares::readLength)) {
-		pData->SW_Deliverables.Clear();
-		for(char *cur = strtok(Ares::readBuffer, ","); cur && *cur; cur = strtok(NULL, ",")) {
-			TechnoTypeClass * Type = InfantryTypeClass::Find(cur);
-			if(!Type) {
-				Type = UnitTypeClass::Find(cur);
-			}
-			if(!Type) {
-				Type = AircraftTypeClass::Find(cur);
-			}
-			if(!Type) {
-				Type = BuildingTypeClass::Find(cur);
-			}
-			if(!Type) {
-				Debug::INIParseFailed(section, "Deliver.Types", cur, "Expected valid TechnoType ID.");
-			}
-			if(Type) {
-				pData->SW_Deliverables.AddItem(Type);
-			}
-		}
-	}
-
 	INI_EX exINI(pINI);
+	pData->SW_Deliverables.Read(&exINI, section, "Deliver.Types");
 	pData->SW_DeliverBuildups.Read(&exINI, section, "Deliver.Buildups");
 }
 
@@ -84,15 +63,14 @@ void UnitDeliveryStateMachine::Update() {
 //have been unloaded again, when it was at index 100.
 
 void UnitDeliveryStateMachine::PlaceUnits() {
-	int unitIdx = 0;
 	SWTypeExt::ExtData *pData = this->FindExtData();
 
 	if(!pData) {
 		return;
 	}
 
-	while(unitIdx < pData->SW_Deliverables.Count) {
-		TechnoTypeClass * Type = pData->SW_Deliverables[unitIdx];
+	for(size_t i=0; i<pData->SW_Deliverables.size(); ++i) {
+		TechnoTypeClass * Type = pData->SW_Deliverables[i];
 		TechnoClass * Item = generic_cast<TechnoClass *>(Type->CreateObject(this->Super->Owner));
 		BuildingClass * ItemBuilding = specific_cast<BuildingClass *>(Item);
 
@@ -161,6 +139,5 @@ void UnitDeliveryStateMachine::PlaceUnits() {
 				break;
 			}
 		} while(!Placed);
-		++unitIdx;
 	}
 }

@@ -35,11 +35,11 @@ class SideExt
 		TypeList<int>* ParaDropFallbackNum;
 		TypeList<TechnoTypeClass*> ParaDrop;
 		TypeList<int> ParaDropNum;
-		ValueableIdx<int, AircraftTypeClass> ParaDropPlane;
+		ValueableIdx<AircraftTypeClass> ParaDropPlane;
 		Customizable<AnimTypeClass*> Parachute_Anim;
 		int SidebarMixFileIndex;
 		bool SidebarYuriFileNames;
-		ValueableIdx<int, EVAVoices> EVAIndex;
+		ValueableIdx<EVAVoices> EVAIndex;
 
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			ParaDropPlane (-1),

@@ -69,7 +69,7 @@ public:
 
 		Valueable<AnimTypeClass*> InfDeathAnim;
 
-		ValueableIdx<int, AnimTypeClass> PreImpactAnim;
+		ValueableIdx<AnimTypeClass> PreImpactAnim;
 
 		bool KillDriver; //!< Whether this warhead turns the target vehicle over to the special side ("kills the driver"). Request #733.
 

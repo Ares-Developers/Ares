@@ -95,13 +95,13 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 		}
 
 		auto pData = TechnoTypeExt::ExtMap.Find(Item);
-		if(Item->PoweredUnit && pData->PoweredBy.Count) {
+		if(Item->PoweredUnit && pData->PoweredBy.size()) {
 			Debug::DevLog(Debug::Error, "[%s] uses both PoweredUnit=yes and PoweredBy=!\n", Item->ID);
 			Item->PoweredUnit = false;
 		}
 		if(auto PowersUnit = Item->PowersUnit) {
 			auto pExtraData = TechnoTypeExt::ExtMap.Find(PowersUnit);
-			if(pExtraData->PoweredBy.Count) {
+			if(pExtraData->PoweredBy.size()) {
 				Debug::DevLog(Debug::Error, "[%s]PowersUnit=%s, but [%s] uses PoweredBy=!\n", Item->ID, PowersUnit->ID, PowersUnit->ID);
 				Item->PowersUnit = NULL;
 			}
@@ -120,10 +120,10 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 		// set the default value, if not already overridden
 		pData->ImmuneToEMP.BindEx(!EMPulse::IsTypeEMPProne(Item));
 
-		for(signed int k = pData->ClonedAt.Count - 1; k >= 0; --k) {
+		for(signed int k = (int)pData->ClonedAt.size() - 1; k >= 0; --k) {
 			auto Cloner = pData->ClonedAt[k];
 			if(Cloner->Factory) {
-				pData->ClonedAt.RemoveItem(k);
+				pData->ClonedAt.erase(pData->ClonedAt.begin() + k);
 				Debug::DevLog(Debug::Error, "[%s]ClonedAt includes %s, but %s has Factory= settings. This combination is not supported.\n"
 						"(Protip: Factory= is not what controls unit exit behaviour, WeaponsFactory= and GDI/Nod/YuriBarracks= is.)\n"
 					, Item->ID, Cloner->ID, Cloner->ID);

@@ -13,8 +13,7 @@ DEFINE_HOOK(70A990, TechnoClass_DrawVeterancy, 5)
 	int iFrame = -1;
 	TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(T->GetTechnoType());
 
-	pTypeData->Insignia.BindTo(T);
-	SHPStruct *fCustom = pTypeData->Insignia.Get();
+	SHPStruct *fCustom = pTypeData->Insignia.Get(T);
 
 	if(fCustom) {
 		iFile = fCustom;
