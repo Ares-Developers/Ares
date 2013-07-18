@@ -470,9 +470,10 @@ void TechnoExt::RecalculateStats(TechnoClass *pTechno) {
 	for (int i = 0; i < pTechnoExt->AttachedEffects.Count; i++) {
 		auto Item = pTechnoExt->AttachedEffects.GetItem(i);
 		auto iType = Item->Type;
-		Firepower *= iType->FirepowerMultiplier;
-		Speed *= iType->SpeedMultiplier;
-		Armor *= iType->ArmorMultiplier;
+		//do not use *= here... Valuable sends GetEx and repositions the double
+		Firepower = iType->FirepowerMultiplier * Firepower;
+		Speed = iType->SpeedMultiplier * Speed;
+		Armor = iType->ArmorMultiplier * Armor;
 		Cloak = Cloak || !!iType->Cloakable;
 	}
 
