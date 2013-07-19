@@ -124,6 +124,9 @@ void WeaponTypeExt::ExtData::LoadFromINIFile(WeaponTypeExt::TT *pThis, CCINIClas
 		this->Ivan_WH.Parse(&exINI, section, "IvanBomb.Warhead");
 
 		this->Ivan_Image.Read(&exINI, section, "IvanBomb.Image");
+
+		this->Ivan_CanDetonateTimeBomb.Read(&exINI, section, "IvanBomb.CanDetonateTimeBomb");
+		this->Ivan_CanDetonateDeathBomb.Read(&exINI, section, "IvanBomb.CanDetonateDeathBomb");
 	}
 //
 /*

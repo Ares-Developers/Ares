@@ -266,3 +266,16 @@ DEFINE_HOOK(46934D, IvanBombs_Spread, 6)
 
 	return 0;
 }
+
+// deglobalized manual detonation settings
+DEFINE_HOOK(6FFFB1, TechnoClass_GetCursorOverObject_IvanBombs, 8)
+{
+	GET(TechnoClass*, pThis, EDI);
+	auto pBomb = pThis->AttachedBomb;
+	auto pExt = WeaponTypeExt::BombExt[pBomb];
+
+	bool canDetonate = (pBomb->IsDeathBomb() == FALSE)
+		? pExt->Ivan_CanDetonateTimeBomb.Get(RulesClass::Instance->CanDetonateTimeBomb)
+		: pExt->Ivan_CanDetonateDeathBomb.Get(RulesClass::Instance->CanDetonateDeathBomb);
+	return canDetonate ? 0x6FFFCC : 0x700006;
+}
