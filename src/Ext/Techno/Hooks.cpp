@@ -29,6 +29,14 @@ DEFINE_HOOK(41668B, AircraftClass_ReceiveDamage, 6)
 	bool select = a->IsSelected && a->Owner->ControlledByPlayer();
 	TechnoExt::SpawnSurvivors(a, Killer, select, ignoreDefenses != 0);
 
+	// Crashable support for aircraft
+	if(auto pExt = TechnoTypeExt::ExtMap.Find(a->GetTechnoType())) {
+		if(!pExt->Crashable.Get(true)) {
+			R->EAX(0);
+			return 0x41669A;
+		}
+	}
+
 	return 0;
 }
 

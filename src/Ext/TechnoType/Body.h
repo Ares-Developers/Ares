@@ -135,6 +135,8 @@ public:
 
 		Valueable<bool> GattlingCyclic;
 
+		Nullable<bool> Crashable;
+
 		// custom missiles
 		Valueable<bool> IsCustomMissile;
 		Valueable<RocketStruct> CustomMissileData;

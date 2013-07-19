@@ -336,6 +336,9 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 		this->CustomMissileTrailerSeparation.Read(&exINI, section, "Missile.TrailerSeparation");
 	}
 
+	// non-crashable aircraft
+	this->Crashable.Read(&exINI, section, "Crashable");
+
 	// quick fix - remove after the rest of weapon selector code is done
 	return;
 }
