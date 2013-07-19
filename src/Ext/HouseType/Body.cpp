@@ -349,6 +349,8 @@ void HouseTypeExt::ExtData::LoadFromINIFile(HouseTypeClass *pThis, CCINIClass *p
 
 	this->RandomSelectionWeight = pINI->ReadInteger(pID, "RandomSelectionWeight", this->RandomSelectionWeight);
 	this->CountryListIndex = pINI->ReadInteger(pID, "ListIndex", this->CountryListIndex);
+
+	this->VeteranBuildings.Read(&exINI, pID, "VeteranBuildings");
 }
 
 template<size_t Len>
@@ -366,6 +368,15 @@ void CopyVector(T HouseTypeExt::ExtData::* prop, const HouseTypeExt::ExtData *sr
 		auto idx = ix - 1;
 		dp.Items[idx] = sp.Items[idx];
 	}
+}
+
+template<typename T>
+void CopyStdVector(T HouseTypeExt::ExtData::* prop, const HouseTypeExt::ExtData *src, HouseTypeExt::ExtData *dst) {
+	auto &sp = src->*prop;
+	auto &dp = dst->*prop;
+	dp.clear();
+	dp.reserve(sp.size());
+	std::copy(sp.begin(), sp.end(), std::back_inserter(dp));
 }
 
 void HouseTypeExt::ExtData::InheritSettings(HouseTypeClass *pThis) {
@@ -394,6 +405,8 @@ void HouseTypeExt::ExtData::InheritSettings(HouseTypeClass *pThis) {
 			CopyVector(&HouseTypeExt::ExtData::Powerplants, ParentData, this);
 			CopyVector(&HouseTypeExt::ExtData::ParaDrop, ParentData, this);
 			CopyVector(&HouseTypeExt::ExtData::ParaDropNum, ParentData, this);
+
+			CopyStdVector(&HouseTypeExt::ExtData::VeteranBuildings, ParentData, this);
 		}
 	}
 	this->SettingsInherited = true;

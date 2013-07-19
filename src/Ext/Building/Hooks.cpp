@@ -1,5 +1,6 @@
 #include "Body.h"
 #include "../BuildingType/Body.h"
+#include "../HouseType/Body.h"
 #include "../Techno/Body.h"
 #include "../../Misc/Network.h"
 
@@ -42,4 +43,21 @@ DEFINE_HOOK(44D8A1, BuildingClass_UnloadPassengers_Unload, 6)
 DEFINE_HOOK(44E855, BuildingClass_PowerProduced_EMP, 6) {
 	GET(BuildingClass*, pBld, ESI);
 	return ((pBld->EMPLockRemaining > 0) ? 0x44E873 : 0);
+}
+
+// VeteranBuildings
+DEFINE_HOOK(43BA48, BuildingClass_CTOR_VeteranBuildings, 6)
+{
+	GET(BuildingClass*, pThis, ESI);
+	GET(BuildingTypeClass*, pType, EAX);
+
+	if(auto pOwner = pThis->Owner) {
+		if(auto pExt = HouseTypeExt::ExtMap.Find(pOwner->Type)) {
+			if(pExt->VeteranBuildings.Contains(pType)) {
+				pThis->Veterancy.SetVeteran(true);
+			}
+		}
+	}
+
+	return 0;
 }

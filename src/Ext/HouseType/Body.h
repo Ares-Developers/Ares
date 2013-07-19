@@ -43,6 +43,8 @@ class HouseTypeExt
 			ValueableIdx<AircraftTypeClass> ParaDropPlane;
 			Valueable<AnimTypeClass*> Parachute_Anim;
 
+			ValueableVector<BuildingTypeClass*> VeteranBuildings;
+
 			char ObserverBackground[0x20];
 			SHPStruct *ObserverBackgroundSHP;
 
@@ -56,6 +58,7 @@ class HouseTypeExt
 				CountryListIndex (0),
 				ParaDropPlane (-1),
 				Parachute_Anim (NULL),
+				VeteranBuildings (),
 				LoadTextColor (NULL),
 				ObserverBackgroundSHP (NULL),
 				ObserverFlagSHP (NULL),
