@@ -74,7 +74,7 @@ DEFINE_HOOK(482E57, CellClass_CrateBeingCollected_Armor2, 6)
 	if (UnitExt->Crate_ArmorMultiplier == 1.0){
 		UnitExt->Crate_ArmorMultiplier = Pow_ArmorMultiplier;
 		TechnoExt::RecalculateStats(Unit);
-		R->AL(Unit->GetOwningHouse()->CurrentPlayer);
+		R->AL(Unit->GetOwningHouse()->PlayerControl);
 		return 0x482E89;
 	}
 	return 0x482E92;
@@ -89,7 +89,7 @@ DEFINE_HOOK(48303A, CellClass_CrateBeingCollected_Speed2, 6)
 	if (UnitExt->Crate_SpeedMultiplier == 1.0 && Unit->WhatAmI() != abs_AircraftType){
 		UnitExt->Crate_SpeedMultiplier = Pow_SpeedMultiplier;
 		TechnoExt::RecalculateStats(Unit);
-		R->CL(Unit->GetOwningHouse()->CurrentPlayer);
+		R->CL(Unit->GetOwningHouse()->PlayerControl);
 		return 0x483078;
 	}
 	return 0x483081;
@@ -103,7 +103,7 @@ DEFINE_HOOK(483226, CellClass_CrateBeingCollected_Firepower2, 6)
 	if (UnitExt->Crate_FirepowerMultiplier == 1.0){
 		UnitExt->Crate_FirepowerMultiplier = Pow_FirepowerMultiplier;
 		TechnoExt::RecalculateStats(Unit);
-		R->AL(Unit->GetOwningHouse()->CurrentPlayer);
+		R->AL(Unit->GetOwningHouse()->PlayerControl);
 		return 0x483258;
 	}
 	return 0x483261;
