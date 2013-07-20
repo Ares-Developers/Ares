@@ -19,6 +19,12 @@ class VoxClass2 : public VoxClass
 public:
 	VoxClass2(char* pName) : VoxClass(pName) {}
 
+	~VoxClass2()
+	{
+		Voices.clear();
+		this->VoxClass::~VoxClass();
+	}
+
 	std::vector<VoxFile> Voices;
 };
 
@@ -28,17 +34,17 @@ public:
 	static int FindIndex(const char* type)
 	{
 		// the default values
-		if(!strcmp(type, "Allied")) {
+		if(!_strcmpi(type, "Allied")) {
 			return 0;
-		} else if(!strcmp(type, "Russian")) {
+		} else if(!_strcmpi(type, "Russian")) {
 			return 1;
-		} else if(!strcmp(type, "Yuri")) {
+		} else if(!_strcmpi(type, "Yuri")) {
 			return 2;
 		}
 
 		// find all others
 		for(unsigned int i=0; i<Types.size(); ++i) {
-			if(!strcmp(type, Types[i])) {
+			if(!_strcmpi(type, Types[i])) {
 				return i + 3;
 			}
 		}
