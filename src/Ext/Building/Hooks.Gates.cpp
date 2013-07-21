@@ -85,7 +85,8 @@ DEFINE_HOOK(44E550, BuildingClass_Mi_Open_GateDown, 6)
 
 DEFINE_HOOK(44E61E, BuildingClass_Mi_Open_GateUp, 6)
 {
-	GET(BuildingClass*, pThis, ESI);
+	GET(DWORD, offset, ESI);
+	auto pThis = reinterpret_cast<BuildingClass*>(offset - 0x9C);
 	auto pExt = BuildingTypeExt::ExtMap.Find(pThis->Type);
 
 	R->ECX(pExt->GateUpSound.Get(RulesClass::Instance->GateUp));
