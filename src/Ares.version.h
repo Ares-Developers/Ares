@@ -5,8 +5,8 @@
 //#define IS_RELEASE_VER
 
 #define VERSION_MAJOR 13
-#define VERSION_MINOR 201
-#define VERSION_REVISION 620
+#define VERSION_MINOR 210
+#define VERSION_REVISION 1131
 #define SAVEGAME_MAGIC ((VERSION_MAJOR << 24) | (VERSION_MINOR << 16) | (VERSION_REVISION))
 
 #define wstr(x) wstr_(x)
