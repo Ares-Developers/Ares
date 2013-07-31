@@ -271,7 +271,7 @@ DEFINE_HOOK(71A860, TemporalClass_UpdateA, 6)
 		for (int i = TargetExt->AttachedEffects.Count; i > 0; --i) {
 			auto Effect = TargetExt->AttachedEffects.GetItem(i - 1);
 			if (!!Effect->Type->TemporalHidesAnim) {
-				Effect->PutUnderTemporal();
+				Effect->KillAnim();
 			}
 		}
 		TargetExt->AttachEffects_RecreateAnims = true;
@@ -304,7 +304,7 @@ DEFINE_HOOK(71AB30, TemporalClass_GetHelperDamage, 5)
 		for (int i = TargetExt->AttachedEffects.Count; i > 0; --i) {
 			auto Effect = TargetExt->AttachedEffects.GetItem(i - 1);
 			if (!!Effect->Type->TemporalHidesAnim) {
-				Effect->PutUnderTemporal();
+				Effect->KillAnim();
 			}
 		}
 		TargetExt->AttachEffects_RecreateAnims = true;

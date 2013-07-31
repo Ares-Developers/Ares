@@ -100,6 +100,9 @@ void AttachEffectClass::InvalidateAnimPointer(AnimClass *ptr) {
 }
 
 void AttachEffectClass::CreateAnim(TechnoClass *Owner) {
+	if (Owner->CloakState) {
+		return;
+	}
 	if (!!this->Type->AnimType) {
 		if (this->Animation){
 			this->KillAnim();
@@ -118,19 +121,10 @@ void AttachEffectClass::CreateAnim(TechnoClass *Owner) {
 //animation remover, boolean is needed otherwise destructor goes to infinite loop during UnInit
 void AttachEffectClass::KillAnim() {
 	if (this->Animation && !this->AnimAlreadyKilled) {
-		this->Animation->Unpause();
 		this->Animation->SetOwnerObject(NULL);
 		this->AnimAlreadyKilled = true;
 		this->Animation->UnInit();
 		this->Animation = NULL;
-	}
-}
-
-void AttachEffectClass::PutUnderTemporal() {
-	if (this->Animation) {
-		this->Animation->Pause();
-		this->Animation->Invisible = true;
-		this->Animation->IsPlaying = false;
 	}
 }
 
@@ -162,7 +156,14 @@ void AttachEffectClass::Update(TechnoClass *Source) {
 
 	if (pData->AttachedEffects.Count) {
 
-		if (pData->AttachEffects_RecreateAnims) {
+		if (!pData->AttachEffects_RecreateAnims && Source->CloakState) {
+			for (int i = pData->AttachedEffects.Count; i > 0; --i) {
+				pData->AttachedEffects.GetItem(i - 1)->KillAnim();
+			}
+			pData->AttachEffects_RecreateAnims = true;
+		}
+
+		if (pData->AttachEffects_RecreateAnims && !Source->CloakState) {
 			for (int i = pData->AttachedEffects.Count; i > 0; --i) {
 				pData->AttachedEffects.GetItem(i - 1)->CreateAnim(Source);
 			}
