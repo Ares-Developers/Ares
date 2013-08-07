@@ -100,13 +100,16 @@ void AttachEffectClass::InvalidateAnimPointer(AnimClass *ptr) {
 }
 
 void AttachEffectClass::CreateAnim(TechnoClass *Owner) {
-	if (Owner->CloakState) {
+	if (Owner->CloakState ||
+	    (Owner->TemporalTargetingMe && !!this->Type->TemporalHidesAnim)) {
 		return;
 	}
+	
 	if (!!this->Type->AnimType) {
 		if (this->Animation){
 			this->KillAnim();
 		}
+		
 		GAME_ALLOC(AnimClass, this->Animation, this->Type->AnimType, &Owner->Location);
 		this->Animation->SetOwnerObject(Owner);
 		this->Animation->RemainingIterations = -1;
