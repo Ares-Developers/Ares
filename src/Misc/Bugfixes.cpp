@@ -31,6 +31,7 @@
 #include "../Utilities/Template.h"
 
 #include <cstdlib>
+#include <array>
 
 #ifdef DEBUGBUILD
 #include "../Ext/WarheadType/Body.h"
@@ -1089,4 +1090,33 @@ DEFINE_HOOK(519FF8, InfantryClass_UpdatePosition_PreInfiltrate, 6)
 	}
 
 	return 0x51A002;
+}
+
+// replaces entire function (without the pip distortion bug)
+DEFINE_HOOK(4748A0, INIClass_GetPipIdx, 7)
+{
+	GET(INIClass*, pINI, ECX);
+	GET_STACK(const char*, pSection, 0x4);
+	GET_STACK(const char*, pKey, 0x8);
+	GET_STACK(int, fallback, 0xC);
+
+	int ret = fallback;
+	if(pINI->ReadString(pSection, pKey, Ares::readDefval, Ares::readBuffer, Ares::readLength)) {
+
+		// find the pip value with the name specified
+		auto PipTypes = reinterpret_cast<std::array<const NamedValue, 11>*>(0x81B958);
+		auto it = std::find(PipTypes->begin(), PipTypes->end(), Ares::readBuffer);
+
+		if(it != PipTypes->end()) {
+			ret = it->Value;
+
+		} else if(!Parser<int>::TryParse(Ares::readBuffer, &ret)) {
+			// parsing as integer didn't work either. invalid value
+			Debug::DevLog(Debug::Warning, "Could not parse pip at [%s]%s=\n", pSection, pKey);
+			ret = fallback;
+		}
+	}
+
+	R->EAX(ret);
+	return 0x474907;
 }
