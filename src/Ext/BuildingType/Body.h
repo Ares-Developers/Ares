@@ -128,6 +128,7 @@ public:
 		Valueable<bool> ResetSW;
 		Valueable<bool> ResetRadar;
 		Valueable<bool> RevealRadar;
+		Valueable<bool> RevealRadarPersist;
 		Valueable<bool> GainVeterancy;
 		Valueable<bool> UnReverseEngineer;
 		Valueable<int> StolenTechIndex;
@@ -177,6 +178,7 @@ public:
 			ResetSW (false),
 			ResetRadar (false),
 			RevealRadar (false),
+			RevealRadarPersist (false),
 			GainVeterancy (false),
 			UnReverseEngineer (false),
 			StolenTechIndex (-1),

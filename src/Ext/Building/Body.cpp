@@ -41,6 +41,10 @@ void BuildingExt::UpdateDisplayTo(BuildingClass *pThis) {
 	if(pThis->Type->Radar) {
 		HouseClass *H = pThis->Owner;
 		H->RadarVisibleTo.Clear();
+
+		auto HExt = HouseExt::ExtMap.Find(H);
+		H->RadarVisibleTo.data |= HExt->RadarPersist.data;
+
 		for(int i = 0; i < H->Buildings.Count; ++i) {
 			BuildingClass *currentB = H->Buildings.GetItem(i);
 			if(!currentB->InLimbo) {
@@ -622,6 +626,15 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 	}
 
 	if(pTypeExt->RevealRadar.Get()) {
+		/*	Remember the new persisting radar spy effect on the victim house itself, because
+			destroying the building would destroy the spy reveal info in the ExtData, too.
+			2013-08-12 AlexB
+		*/
+		if(pTypeExt->RevealRadarPersist) {
+			auto pOwnerExt = HouseExt::ExtMap.Find(Owner);
+			pOwnerExt->RadarPersist.Add(Enterer);
+		}
+
 		EnteredBuilding->DisplayProductionTo.Add(Enterer);
 		BuildingExt::UpdateDisplayTo(EnteredBuilding);
 		if(evaForOwner || evaForEnterer) {
