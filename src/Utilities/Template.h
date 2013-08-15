@@ -9,6 +9,7 @@
 #include <Helpers/Type.h>
 #include "INIParser.h"
 #include "Enums.h"
+#include "Constructs.h"
 
 /**
  * More fancy templates!
@@ -345,6 +346,13 @@ void Valueable<ColorStruct>::Read(INI_EX *parser, const char* pSection, const ch
 		this->Set(buffer);
 	} else if(parser->declared()) {
 		Debug::INIParseFailed(pSection, pKey, parser->value(), "Expected a valid R,G,B color");
+	}
+};
+
+template<>
+void Valueable<CSFText>::Read(INI_EX *parser, const char* pSection, const char* pKey) {
+	if(parser->ReadString(pSection, pKey)) {
+		this->Set(parser->value());
 	}
 };
 
