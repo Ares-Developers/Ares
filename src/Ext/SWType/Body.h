@@ -164,12 +164,12 @@ public:
 		Customizable<int> Lighting_Red;
 
 		// Messages
-		char Message_Detected[0x20];
-		char Message_Ready[0x20];
-		char Message_Launch[0x20];
-		char Message_Activate[0x20];
-		char Message_Abort[0x20];
-		char Message_InsufficientFunds[0x20];
+		Valueable<CSFText> Message_Detected;
+		Valueable<CSFText> Message_Ready;
+		Valueable<CSFText> Message_Launch;
+		Valueable<CSFText> Message_Activate;
+		Valueable<CSFText> Message_Abort;
+		Valueable<CSFText> Message_InsufficientFunds;
 		Valueable<int> Message_ColorScheme;
 		Valueable<bool> Message_FirerColor;
 
@@ -215,6 +215,12 @@ public:
 			EVA_Detected (-1),
 			EVA_Impatient (-1),
 			EVA_InsufficientFunds (-1),
+			Message_Detected (),
+			Message_Ready (),
+			Message_Launch (),
+			Message_Activate (),
+			Message_Abort (),
+			Message_InsufficientFunds (),
 			Message_ColorScheme (-1),
 			Message_FirerColor (false),
 			Lighting_Enabled (true),
@@ -248,12 +254,6 @@ public:
 			{
 				*SidebarPCX = 0;
 				*SW_PostDependent = 0;
-				*Message_Detected = 0;
-				*Message_Ready = 0;
-				*Message_Launch = 0;
-				*Message_Activate = 0;
-				*Message_Abort = 0;
-				*Message_InsufficientFunds = 0;
 				*Text_Preparing = 0;
 				*Text_Ready = 0;
 				*Text_Hold = 0;

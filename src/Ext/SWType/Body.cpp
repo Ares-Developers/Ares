@@ -189,12 +189,12 @@ void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass
 		}
 	}
 
-	readString(this->Message_Detected, "Message.Detected");
-	readString(this->Message_Ready, "Message.Ready");
-	readString(this->Message_Launch, "Message.Launch");
-	readString(this->Message_Activate, "Message.Activate");
-	readString(this->Message_Abort, "Message.Abort");
-	readString(this->Message_InsufficientFunds, "Message.InsufficientFunds");
+	this->Message_Detected.Read(&exINI, section, "Message.Detected");
+	this->Message_Ready.Read(&exINI, section, "Message.Ready");
+	this->Message_Launch.Read(&exINI, section, "Message.Launch");
+	this->Message_Activate.Read(&exINI, section, "Message.Activate");
+	this->Message_Abort.Read(&exINI, section, "Message.Abort");
+	this->Message_InsufficientFunds.Read(&exINI, section, "Message.InsufficientFunds");
 
 	readString(this->Text_Preparing, "Text.Preparing");
 	readString(this->Text_Ready, "Text.Ready");
@@ -400,7 +400,7 @@ bool SWTypeExt::Launch(SuperClass* pThis, NewSWType* pSW, CellStruct* pCoords, b
 				RadarEventClass::Create(RadarEventType::SuperweaponActivated, *pCoords);
 			}
 
-			if(pData->Message_Launch && !(flags & SuperWeaponFlags::NoMessage)) {
+			if(!(flags & SuperWeaponFlags::NoMessage)) {
 				pData->PrintMessage(pData->Message_Launch, pThis->Owner);
 			}
 
