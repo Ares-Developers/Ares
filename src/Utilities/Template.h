@@ -189,9 +189,9 @@ public:
 	}
 
 	virtual T Get() const {
-		return this->Customized
-		 ? this->Value
-		 : this->Default ? *this->Default : T()
+		return (!this->Customized && this->Default)
+		 ? *this->Default
+		 : this->Value;
 		;
 	}
 
