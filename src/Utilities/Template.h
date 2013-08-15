@@ -55,7 +55,7 @@ public:
 		return &this->Value;
 	}
 
-	virtual void Set(T val) {
+	virtual void Set(const T& val) {
 		this->Value = val;
 	}
 
@@ -126,7 +126,7 @@ public:
 		return this->isset() ? Valueable<T>::GetEx() : defVal;
 	}
 
-	virtual void Set(T val) {
+	virtual void Set(const T& val) {
 		Valueable<T>::Set(val);
 		this->HasValue = true;
 	}
@@ -195,7 +195,7 @@ public:
 		;
 	}
 
-	virtual void Set(T val) {
+	virtual void Set(const T& val) {
 		this->Customized = true;
 		this->Value = val;
 	}
