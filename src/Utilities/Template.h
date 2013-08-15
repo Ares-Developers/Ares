@@ -236,7 +236,7 @@ public:
 	T Veteran;
 	T Elite;
 
-	void SetAll(T val) {
+	void SetAll(const T& val) {
 		this->Elite = this->Veteran = this->Rookie = val;
 	}
 
@@ -266,18 +266,18 @@ public:
 	}
 
 	const T* GetEx(TechnoClass* pTechno) const {
-		VeterancyStruct *XP = &pTechno->Veterancy;
-		if(XP->IsElite()) {
-			return &this->Elite;
-		}
-		if(XP->IsVeteran()) {
-			return &this->Veteran;
-		}
-		return &this->Rookie;
+		return &this->Get(pTechno);
 	}
 
-	T Get(TechnoClass* pTechno) const {
-		return *this->GetEx(pTechno);
+	const T& Get(TechnoClass* pTechno) const {
+		VeterancyStruct *XP = &pTechno->Veterancy;
+		if(XP->IsElite()) {
+			return this->Elite;
+		}
+		if(XP->IsVeteran()) {
+			return this->Veteran;
+		}
+		return this->Rookie;
 	}
 };
 
