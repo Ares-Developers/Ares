@@ -181,7 +181,7 @@ public:
 		}
 	}
 
-	void BindEx(T to) {
+	void BindEx(const T& to) {
 		if(!this->Customized) {
 			this->Value = to;
 			this->Default = &this->Value;
