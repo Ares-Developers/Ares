@@ -453,8 +453,8 @@ NewSWType* SWTypeExt::ExtData::GetNewSWType() {
 	return NULL;
 }
 
-void SWTypeExt::ExtData::PrintMessage(char* pMessage, HouseClass* pFirer) {
-	if(!pMessage || !*pMessage) {
+void SWTypeExt::ExtData::PrintMessage(const CSFText& message, HouseClass* pFirer) {
+	if(message.empty()) {
 		return;
 	}
 
@@ -475,10 +475,7 @@ void SWTypeExt::ExtData::PrintMessage(char* pMessage, HouseClass* pFirer) {
 	}
 
 	// print the message
-	const wchar_t* label = StringTable::LoadStringA(pMessage);
-	if(label && *label) {
-		MessageListClass::Instance->PrintMessage(label, color);
-	}
+	MessageListClass::Instance->PrintMessage(message, color);
 }
 
 void SWTypeExt::ClearChronoAnim(SuperClass *pThis)

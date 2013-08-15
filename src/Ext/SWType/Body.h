@@ -276,7 +276,7 @@ public:
 		bool IsHouseAffected(HouseClass* pFirer, HouseClass* pHouse);
 		bool IsHouseAffected(HouseClass* pFirer, HouseClass* pHouse, SuperWeaponAffectedHouse::Value value);
 		bool IsTechnoAffected(TechnoClass* pTechno);
-		void PrintMessage(char* Message, HouseClass* pFirer);
+		void PrintMessage(const CSFText& message, HouseClass* pFirer);
 		NewSWType* GetNewSWType();
 
 		virtual void InvalidatePointer(void *ptr) {
