@@ -25,7 +25,7 @@ public:
 	typedef typename CompoundT<T>::BaseT MyBase;
 	Valueable(T Default = T()) : Value(Default) {};
 
-	operator T () const {
+	operator const T& () const {
 		return this->Get();
 	}
 
@@ -43,7 +43,7 @@ public:
 		return this->Get() == 0;
 	};
 
-	virtual T Get() const {
+	virtual const T& Get() const {
 		return this->Value;
 	}
 
@@ -112,7 +112,7 @@ public:
 
 	using Valueable<T>::Get;
 
-	T Get(T defVal) const {
+	const T& Get(const T& defVal) const {
 		return this->isset() ? Valueable<T>::Get() : defVal;
 	}
 
@@ -188,7 +188,7 @@ public:
 		}
 	}
 
-	virtual T Get() const {
+	virtual const T& Get() const {
 		return (!this->Customized && this->Default)
 		 ? *this->Default
 		 : this->Value;
