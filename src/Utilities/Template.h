@@ -122,7 +122,7 @@ public:
 		return this->isset() ? Valueable<T>::GetEx() : defVal;
 	}
 
-	const T* GetEx(T* defVal) const {
+	const T* GetEx(const T* defVal) const {
 		return this->isset() ? Valueable<T>::GetEx() : defVal;
 	}
 
