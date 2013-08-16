@@ -9,6 +9,7 @@
 #include <Helpers/Type.h>
 #include "INIParser.h"
 #include "Enums.h"
+#include "Constructs.h"
 
 /**
  * More fancy templates!
@@ -24,7 +25,7 @@ public:
 	typedef typename CompoundT<T>::BaseT MyBase;
 	Valueable(T Default = T()) : Value(Default) {};
 
-	operator T () const {
+	operator const T& () const {
 		return this->Get();
 	}
 
@@ -42,7 +43,7 @@ public:
 		return this->Get() == 0;
 	};
 
-	virtual T Get() const {
+	virtual const T& Get() const {
 		return this->Value;
 	}
 
@@ -54,7 +55,7 @@ public:
 		return &this->Value;
 	}
 
-	virtual void Set(T val) {
+	virtual void Set(const T& val) {
 		this->Value = val;
 	}
 
@@ -111,7 +112,7 @@ public:
 
 	using Valueable<T>::Get;
 
-	T Get(T defVal) const {
+	const T& Get(const T& defVal) const {
 		return this->isset() ? Valueable<T>::Get() : defVal;
 	}
 
@@ -121,11 +122,11 @@ public:
 		return this->isset() ? Valueable<T>::GetEx() : defVal;
 	}
 
-	const T* GetEx(T* defVal) const {
+	const T* GetEx(const T* defVal) const {
 		return this->isset() ? Valueable<T>::GetEx() : defVal;
 	}
 
-	virtual void Set(T val) {
+	virtual void Set(const T& val) {
 		Valueable<T>::Set(val);
 		this->HasValue = true;
 	}
@@ -180,21 +181,21 @@ public:
 		}
 	}
 
-	void BindEx(T to) {
+	void BindEx(const T& to) {
 		if(!this->Customized) {
 			this->Value = to;
 			this->Default = &this->Value;
 		}
 	}
 
-	virtual T Get() const {
-		return this->Customized
-		 ? this->Value
-		 : this->Default ? *this->Default : T()
+	virtual const T& Get() const {
+		return (!this->Customized && this->Default)
+		 ? *this->Default
+		 : this->Value;
 		;
 	}
 
-	virtual void Set(T val) {
+	virtual void Set(const T& val) {
 		this->Customized = true;
 		this->Value = val;
 	}
@@ -235,7 +236,7 @@ public:
 	T Veteran;
 	T Elite;
 
-	void SetAll(T val) {
+	void SetAll(const T& val) {
 		this->Elite = this->Veteran = this->Rookie = val;
 	}
 
@@ -265,18 +266,18 @@ public:
 	}
 
 	const T* GetEx(TechnoClass* pTechno) const {
-		VeterancyStruct *XP = &pTechno->Veterancy;
-		if(XP->IsElite()) {
-			return &this->Elite;
-		}
-		if(XP->IsVeteran()) {
-			return &this->Veteran;
-		}
-		return &this->Rookie;
+		return &this->Get(pTechno);
 	}
 
-	T Get(TechnoClass* pTechno) const {
-		return *this->GetEx(pTechno);
+	const T& Get(TechnoClass* pTechno) const {
+		VeterancyStruct *XP = &pTechno->Veterancy;
+		if(XP->IsElite()) {
+			return this->Elite;
+		}
+		if(XP->IsVeteran()) {
+			return this->Veteran;
+		}
+		return this->Rookie;
 	}
 };
 
@@ -345,6 +346,13 @@ void Valueable<ColorStruct>::Read(INI_EX *parser, const char* pSection, const ch
 		this->Set(buffer);
 	} else if(parser->declared()) {
 		Debug::INIParseFailed(pSection, pKey, parser->value(), "Expected a valid R,G,B color");
+	}
+};
+
+template<>
+void Valueable<CSFText>::Read(INI_EX *parser, const char* pSection, const char* pKey) {
+	if(parser->ReadString(pSection, pKey)) {
+		this->Set(parser->value());
 	}
 };
 

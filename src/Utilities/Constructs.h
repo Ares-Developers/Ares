@@ -8,10 +8,12 @@
 #include <Theater.h>
 #include <CCINIClass.h>
 #include <GeneralStructures.h>
+#include <StringTable.h>
 
 #include <cstring>
 
 #include "../Ares.h"
+#include "../Ares.CRT.h"
 
 class CustomPalette {
 public:
@@ -94,6 +96,48 @@ public:
 			this->Strings.AddItem(cur);
 		}
 	}
+};
+
+// provides storage for a csf label with automatic lookup.
+class CSFText {
+public:
+	CSFText(const char* label = nullptr) : Text(nullptr) {
+		*this = label;
+	}
+
+	const CSFText& operator = (const char* label) {
+		this->Label[0] = 0;
+		this->Text = nullptr;
+
+		if(label && *label) {
+			if(this->Label != label) {
+				AresCRT::strCopy(this->Label, label, 0x20);
+			}
+			this->Text = StringTable::LoadString(this->Label);
+		}
+
+		return *this;
+	}
+
+	const CSFText& operator = (const CSFText& other) {
+		if(this != &other) {
+			AresCRT::strCopy(this->Label, other.Label, 0x20);
+			this->Text = other.Text;
+		}
+
+		return *this;
+	}
+
+	operator const wchar_t* () const {
+		return this->Text;
+	}
+
+	bool empty() const {
+		return !this->Text || !*this->Text;
+	}
+
+	char Label[0x20];
+	const wchar_t* Text;
 };
 
 #endif

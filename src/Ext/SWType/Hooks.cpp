@@ -493,39 +493,36 @@ DEFINE_HOOK(6CC2B0, SuperClass_NameReadiness, 5) {
 
 	// complete rewrite of this method.
 
-	const wchar_t* text = pData->NameReadiness_Preparing;
+	CSFText* text = &pData->Text_Preparing;
 	if(pThis->IsOnHold) {
 		// on hold
-		text = pData->NameReadiness_Hold;
+		text = &pData->Text_Hold;
 	} else {
 		if(pThis->Type->UseChargeDrain) {
 			switch(pThis->ChargeDrainState) {
 			case ChargeDrainState::Charging:
 				// still charging
-				text = pData->NameReadiness_Charging;
+				text = &pData->Text_Charging;
 				break;
 			case ChargeDrainState::Ready:
 				// ready
-				text = pData->NameReadiness_Ready;
+				text = &pData->Text_Ready;
 				break;
 			case ChargeDrainState::Draining:
 				// currently active
-				text = pData->NameReadiness_Active;
+				text = &pData->Text_Active;
 				break;
 			}
 
 		} else {
 			// ready
 			if(pThis->IsCharged) {
-				text = pData->NameReadiness_Ready;
+				text = &pData->Text_Ready;
 			}
 		}
 	}
 
-	if(text && !*text) {
-		text = NULL;
-	}
-	R->EAX(text);
+	R->EAX(text->empty() ? nullptr : text->Text);
 	return 0x6CC352;
 }
 

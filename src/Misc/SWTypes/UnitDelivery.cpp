@@ -42,9 +42,8 @@ void UnitDeliveryStateMachine::Update() {
 		CellClass::Cell2Coord(&this->Coords, &coords);
 
 		auto pData = this->FindExtData();
-		if(*pData->Message_Activate) {
-			pData->PrintMessage(pData->Message_Activate, this->Super->Owner);
-		}
+
+		pData->PrintMessage(pData->Message_Activate, this->Super->Owner);
 
 		if(pData->SW_ActivationSound != -1) {
 			VocClass::PlayAt(pData->SW_ActivationSound, &coords, nullptr);
