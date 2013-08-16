@@ -435,7 +435,7 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 		return false;
 	}
 
-	if(Owner == Enterer) {
+	if(Owner == Enterer || Enterer->IsAlliedWith(Owner)) {
 		return true;
 	}
 
