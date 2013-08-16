@@ -41,7 +41,7 @@ void SW_PsychicDominator::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeC
 	pData->EVA_Ready = VoxClass::FindIndex("EVA_PsychicDominatorReady");
 	pData->EVA_Activated = VoxClass::FindIndex("EVA_PsychicDominatorActivated");
 
-	AresCRT::strCopy(pData->Message_Abort, "Msg:DominatorActive", 0x20);
+	pData->Message_Abort = CSFText("Msg:DominatorActive");
 
 	pData->Lighting_Ambient = &ScenarioClass::Instance->DominatorAmbient;
 	pData->Lighting_Red = &ScenarioClass::Instance->DominatorRed;
@@ -130,9 +130,7 @@ void PsychicDominatorStateMachine::Update() {
 				VocClass::PlayAt(pData->SW_ActivationSound, &coords, NULL);
 			}
 
-			if(*pData->Message_Activate) {
-				pData->PrintMessage(pData->Message_Activate, this->Super->Owner);
-			}
+			pData->PrintMessage(pData->Message_Activate, this->Super->Owner);
 			
 			PsyDom::Status(PsychicDominatorStatus::Fire);
 

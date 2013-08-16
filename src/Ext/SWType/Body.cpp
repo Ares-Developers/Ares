@@ -54,10 +54,10 @@ void SWTypeExt::ExtData::InitializeConstants(SuperWeaponTypeClass *pThis)
 	Cursor->HotX = hotspx_center;
 	Cursor->HotY = hotspy_middle;
 
-	AresCRT::strCopy(this->Text_Ready, "TXT_READY", 0x20);
-	AresCRT::strCopy(this->Text_Hold, "TXT_HOLD", 0x20);
-	AresCRT::strCopy(this->Text_Charging, "TXT_CHARGING", 0x20);
-	AresCRT::strCopy(this->Text_Active, "TXT_FIRESTORM_ON", 0x20);
+	this->Text_Ready = CSFText("TXT_READY");
+	this->Text_Hold = CSFText("TXT_HOLD");
+	this->Text_Charging = CSFText("TXT_CHARGING");
+	this->Text_Active = CSFText("TXT_FIRESTORM_ON");
 
 	EVA_InsufficientFunds = VoxClass::FindIndex("EVA_InsufficientFunds");
 }
@@ -174,12 +174,6 @@ void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass
 	this->Lighting_Green.Read(&exINI, section, "Light.Green");
 	this->Lighting_Blue.Read(&exINI, section, "Light.Blue");
 
-	auto readString = [&](char* value, char* key) {
-		if(pINI->ReadString(section, key, Ares::readDefval, Ares::readBuffer, Ares::readLength)) {
-			AresCRT::strCopy(value, Ares::readBuffer, 0x20);
-		}
-	};
-
 	// messages and their properties
 	this->Message_FirerColor.Read(&exINI, section, "Message.FirerColor");
 	if(pINI->ReadString(section, "Message.Color", Ares::readDefval, Ares::readBuffer, Ares::readLength)) {
@@ -189,24 +183,18 @@ void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass
 		}
 	}
 
-	readString(this->Message_Detected, "Message.Detected");
-	readString(this->Message_Ready, "Message.Ready");
-	readString(this->Message_Launch, "Message.Launch");
-	readString(this->Message_Activate, "Message.Activate");
-	readString(this->Message_Abort, "Message.Abort");
-	readString(this->Message_InsufficientFunds, "Message.InsufficientFunds");
+	this->Message_Detected.Read(&exINI, section, "Message.Detected");
+	this->Message_Ready.Read(&exINI, section, "Message.Ready");
+	this->Message_Launch.Read(&exINI, section, "Message.Launch");
+	this->Message_Activate.Read(&exINI, section, "Message.Activate");
+	this->Message_Abort.Read(&exINI, section, "Message.Abort");
+	this->Message_InsufficientFunds.Read(&exINI, section, "Message.InsufficientFunds");
 
-	readString(this->Text_Preparing, "Text.Preparing");
-	readString(this->Text_Ready, "Text.Ready");
-	readString(this->Text_Hold, "Text.Hold");
-	readString(this->Text_Charging, "Text.Charging");
-	readString(this->Text_Active, "Text.Active");
-
-	this->NameReadiness_Preparing = NULL;
-	this->NameReadiness_Ready = NULL;
-	this->NameReadiness_Hold = NULL;
-	this->NameReadiness_Charging = NULL;
-	this->NameReadiness_Active = NULL;
+	this->Text_Preparing.Read(&exINI, section, "Text.Preparing");
+	this->Text_Ready.Read(&exINI, section, "Text.Ready");
+	this->Text_Hold.Read(&exINI, section, "Text.Hold");
+	this->Text_Charging.Read(&exINI, section, "Text.Charging");
+	this->Text_Active.Read(&exINI, section, "Text.Active");
 
 	// the fallback is handled in the PreDependent SW's code
 	if(pINI->ReadString(section, "SW.PostDependent", Ares::readDefval, Ares::readBuffer, Ares::readLength)) {
@@ -400,7 +388,7 @@ bool SWTypeExt::Launch(SuperClass* pThis, NewSWType* pSW, CellStruct* pCoords, b
 				RadarEventClass::Create(RadarEventType::SuperweaponActivated, *pCoords);
 			}
 
-			if(pData->Message_Launch && !(flags & SuperWeaponFlags::NoMessage)) {
+			if(!(flags & SuperWeaponFlags::NoMessage)) {
 				pData->PrintMessage(pData->Message_Launch, pThis->Owner);
 			}
 
@@ -453,8 +441,8 @@ NewSWType* SWTypeExt::ExtData::GetNewSWType() {
 	return NULL;
 }
 
-void SWTypeExt::ExtData::PrintMessage(char* pMessage, HouseClass* pFirer) {
-	if(!pMessage || !*pMessage) {
+void SWTypeExt::ExtData::PrintMessage(const CSFText& message, HouseClass* pFirer) {
+	if(message.empty()) {
 		return;
 	}
 
@@ -475,10 +463,7 @@ void SWTypeExt::ExtData::PrintMessage(char* pMessage, HouseClass* pFirer) {
 	}
 
 	// print the message
-	const wchar_t* label = StringTable::LoadStringA(pMessage);
-	if(label && *label) {
-		MessageListClass::Instance->PrintMessage(label, color);
-	}
+	MessageListClass::Instance->PrintMessage(message, color);
 }
 
 void SWTypeExt::ClearChronoAnim(SuperClass *pThis)

@@ -43,9 +43,9 @@ void SW_LightningStorm::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeCla
 	pData->EVA_Ready = VoxClass::FindIndex("EVA_LightningStormReady");
 	pData->EVA_Activated = VoxClass::FindIndex("EVA_LightningStormCreated");
 
-	AresCRT::strCopy(pData->Message_Launch, "TXT_LIGHTNING_STORM_APPROACHING", 0x20);
-	AresCRT::strCopy(pData->Message_Activate, "TXT_LIGHTNING_STORM", 0x20);
-	AresCRT::strCopy(pData->Message_Abort, "Msg:LightningStormActive", 0x20);
+	pData->Message_Launch = CSFText("TXT_LIGHTNING_STORM_APPROACHING");
+	pData->Message_Activate = CSFText("TXT_LIGHTNING_STORM");
+	pData->Message_Abort = CSFText("Msg:LightningStormActive");
 
 	pData->Lighting_Ambient = &ScenarioClass::Instance->IonAmbient;
 	pData->Lighting_Red = &ScenarioClass::Instance->IonRed;
