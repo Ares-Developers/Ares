@@ -17,7 +17,7 @@ DEFINE_HOOK(438F8F, BombListClass_Add1, 6)
 
 	WeaponTypeExt::BombExt[Bomb] = pData;
 	Bomb->DetonationFrame = Unsorted::CurrentFrame + pData->Ivan_Delay.Get();
-	Bomb->TickSound = pData->Ivan_TickingSound;
+	Bomb->TickSound = pData->Ivan_TickingSound.Get(RulesClass::Instance->BombTickingSound);
 	return 0;
 }
 
@@ -31,9 +31,10 @@ DEFINE_HOOK(438FD1, BombListClass_Add2, 5)
 	GET(TechnoClass *, Owner, EBP);
 	WeaponTypeClass *Source = Bullet->WeaponType;
 	WeaponTypeExt::ExtData *pData = WeaponTypeExt::ExtMap.Find(Source);
-	Debug::Log("Owner is player = %d, AttachSound = %d\n", Owner->Owner->ControlledByPlayer(), pData->Ivan_AttachSound.Get());
-	if(Owner->Owner->ControlledByPlayer() && pData->Ivan_AttachSound != -1) {
-		VocClass::PlayAt(pData->Ivan_AttachSound, &Bomb->TargetUnit->Location, NULL);
+	int index = pData->Ivan_AttachSound.Get(RulesClass::Instance->BombAttachSound);
+	Debug::Log("Owner is player = %d, AttachSound = %d\n", Owner->Owner->ControlledByPlayer(), index);
+	if(Owner->Owner->ControlledByPlayer() && index != -1) {
+		VocClass::PlayAt(index, &Bomb->TargetUnit->Location, NULL);
 	}
 
 	return 0;

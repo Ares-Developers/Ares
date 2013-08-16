@@ -34,7 +34,7 @@ class SideExt
 		TypeList<int>* ParaDropFallbackNum;
 		TypeList<TechnoTypeClass*> ParaDrop;
 		TypeList<int> ParaDropNum;
-		ValueableIdx<int, AircraftTypeClass> ParaDropPlane;
+		ValueableIdx<AircraftTypeClass> ParaDropPlane;
 		Customizable<AnimTypeClass*> Parachute_Anim;
 		int SidebarMixFileIndex;
 		bool SidebarYuriFileNames;

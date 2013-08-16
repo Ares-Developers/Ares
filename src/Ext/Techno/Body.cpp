@@ -29,7 +29,7 @@ void TechnoExt::SpawnSurvivors(FootClass *pThis, TechnoClass *pKiller, bool Sele
 	TechnoExt::ExtData *pSelfData = TechnoExt::ExtMap.Find(pThis);
 
 	CoordStruct loc = pThis->Location;
-	int chance = pData->Survivors_PilotChance.BindTo(pThis)->Get();
+	int chance = pData->Survivors_PilotChance.Get(pThis);
 	if(chance < 0) {
 		chance = int(RulesClass::Instance->CrewEscape * 100);
 	}
@@ -95,7 +95,7 @@ void TechnoExt::SpawnSurvivors(FootClass *pThis, TechnoClass *pKiller, bool Sele
 	}
 
 	// passenger escape chances
-	chance = pData->Survivors_PassengerChance.BindTo(pThis)->Get();
+	chance = pData->Survivors_PassengerChance.Get(pThis);
 
 	// eject or kill all passengers. if defenses are to be ignored, passengers
 	// killed no matter what the odds are.

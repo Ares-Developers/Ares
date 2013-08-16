@@ -31,7 +31,7 @@ public:
 		public:
 		//properties
 		enum eEnabled {NO, YES, FORWARD, ATTACK} Enabled;	//is this tower a prism tower? FORWARD means can support, but not attack. ATTACK means can attack but not support.
-		DynamicVectorClass<BuildingTypeClass *> Targets;	//the types of buiding that this tower can forward to
+		ValueableVector<BuildingTypeClass *> Targets;	//the types of buiding that this tower can forward to
 		Customizable<signed int> MaxFeeds;					//max number of towers that can feed this tower
 		Valueable<signed int> MaxChainLength;				//max length of any given (preceding) branch of the network
 		Customizable<signed int> MaxNetworkSize;				//max number of towers that can be in the network

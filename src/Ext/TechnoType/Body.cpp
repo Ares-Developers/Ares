@@ -94,8 +94,8 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 
 	this->Survivors_PilotCount = pINI->ReadInteger(section, "Survivor.Pilots", this->Survivors_PilotCount);
 
-	this->Survivors_PilotChance.LoadFromINI(pINI, section, "Survivor.%sPilotChance");
-	this->Survivors_PassengerChance.LoadFromINI(pINI, section, "Survivor.%sPassengerChance");
+	this->Survivors_PilotChance.Read(pINI, section, "Survivor.%sPilotChance");
+	this->Survivors_PassengerChance.Read(pINI, section, "Survivor.%sPassengerChance");
 
 	char flag[256];
 	for(int i = 0; i < SideClass::Array->Count; ++i) {
@@ -194,7 +194,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 */
 
 	INI_EX exINI(pINI);
-	this->Insignia.LoadFromINI(pINI, section, "Insignia.%s");
+	this->Insignia.Read(pINI, section, "Insignia.%s");
 	this->Parachute_Anim.Parse(&exINI, section, "Parachute.Anim");
 
 	// new on 08.11.09 for #342 (Operator=)
@@ -307,50 +307,16 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	this->PassengerTurret.Read(&exINI, section, "PassengerTurret");
 	
 	// #617 powered units
-	if( pINI->ReadString(section, "PoweredBy", "", Ares::readBuffer, Ares::readLength) ) {
-		this->PoweredBy.Clear();
-		for(char *cur = strtok(Ares::readBuffer, ","); cur; cur = strtok(NULL, ",")) {
-			BuildingTypeClass* b = BuildingTypeClass::Find(cur);
-			if(b) {
-				this->PoweredBy.AddItem(b);
-			} else {
-				Debug::INIParseFailed(section, "PoweredBy", cur, "BuildingType [%s] not found");
-			}
-		}
-	}
+	this->PoweredBy.Read(&exINI, section, "PoweredBy");
 
 	//#1623 - AttachEffect on unit-creation
 	this->AttachedTechnoEffect.Read(&exINI, section);
 
-	if(pINI->ReadString(section, "BuiltAt", "", Ares::readBuffer, Ares::readLength) ) {
-		this->BuiltAt.Clear();
-		if(!INIClass::IsBlank(Ares::readBuffer)) {
-			for(auto cur = strtok(Ares::readBuffer, ","); cur; cur = strtok(NULL, ",")) {
-				auto b = BuildingTypeClass::Find(cur);
-				if(b) {
-					this->BuiltAt.AddItem(b);
-				} else {
-					Debug::INIParseFailed(section, "BuiltAt", cur);
-				}
-			}
-		}
-	}
+	this->BuiltAt.Read(&exINI, section, "BuiltAt");
 
 	this->Cloneable.Read(&exINI, section, "Cloneable");
 
-	if(pINI->ReadString(section, "ClonedAt", "", Ares::readBuffer, Ares::readLength) ) {
-		this->ClonedAt.Clear();
-		if(!INIClass::IsBlank(Ares::readBuffer)) {
-			for(auto cur = strtok(Ares::readBuffer, ","); cur; cur = strtok(NULL, ",")) {
-				auto b = BuildingTypeClass::Find(cur);
-				if(b) {
-					this->ClonedAt.AddItem(b);
-				} else {
-					Debug::INIParseFailed(section, "ClonedAt", cur);
-				}
-			}
-		}
-	}
+	this->ClonedAt.Read(&exINI, section, "ClonedAt");
 
 	this->CarryallAllowed.Read(&exINI, section, "Carryall.Allowed");
 	this->CarryallSizeLimit.Read(&exINI, section, "Carryall.SizeLimit");
@@ -507,7 +473,7 @@ bool TechnoTypeExt::ExtData::CameoIsElite()
 
 bool TechnoTypeExt::ExtData::CanBeBuiltAt(BuildingTypeClass * FactoryType) {
 	auto pBExt = BuildingTypeExt::ExtMap.Find(FactoryType);
-	return (!this->BuiltAt.Count && !pBExt->Factory_ExplicitOnly) || this->BuiltAt.FindItemIndex(&FactoryType) != -1;
+	return (!this->BuiltAt.size() && !pBExt->Factory_ExplicitOnly) || this->BuiltAt.Contains(FactoryType);
 }
 
 bool TechnoTypeExt::ExtData::CarryallCanLift(UnitClass * Target) {

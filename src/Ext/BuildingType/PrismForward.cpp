@@ -12,7 +12,7 @@ void BuildingTypeExt::cPrismForwarding::Initialize(BuildingTypeClass *pThis) {
 	if (pThis == RulesClass::Instance->PrismType) {
 		this->Enabled = YES;
 	}
-	this->Targets.AddItem(pThis);
+	this->Targets.push_back(pThis);
 }
 
 void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis, CCINIClass* pINI) {
@@ -30,18 +30,9 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 	}
 
 	if (this->Enabled != NO) {
-		if(pINI->ReadString(pID, "PrismForwarding.Targets", "", Ares::readBuffer, Ares::readLength)) {
-			this->Targets.Clear();
-			for(char *cur = strtok(Ares::readBuffer, ","); cur && *cur; cur = strtok(NULL, ",")) {
-				BuildingTypeClass * target = BuildingTypeClass::Find(cur);
-				if(target) {
-					this->Targets.AddItem(target);
-				}
-			}
-		}
-
 		INI_EX exINI(pINI);
 
+		this->Targets.Read(&exINI, pID, "PrismForwarding.Targets");
 		this->MaxFeeds.Read(&exINI, pID, "PrismForwarding.MaxFeeds");
 		this->MaxChainLength.Read(&exINI, pID, "PrismForwarding.MaxChainLength");
 		this->MaxNetworkSize.Read(&exINI, pID, "PrismForwarding.MaxNetworkSize");
@@ -270,7 +261,7 @@ bool BuildingTypeExt::cPrismForwarding::ValidateSupportTower(
 				&& !SlaveTower->IsUnderEMP() //EMP logic - I think this should already be checked by IsPowerOnline() but included just to be sure
 			) {
 				BuildingTypeClass *pTargetType = TargetTower->Type;
-				if (pSlaveTypeData->PrismForwarding.Targets.FindItemIndex(&pTargetType) != -1) {
+				if (pSlaveTypeData->PrismForwarding.Targets.Contains(pTargetType)) {
 					//valid type to forward from
 					HouseClass *pMasterHouse = MasterTower->Owner;
 					HouseClass *pTargetHouse = TargetTower->Owner;
