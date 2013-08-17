@@ -104,9 +104,9 @@ public:
 			AttachEffects_RecreateAnims(false),
 			AttachedTechnoEffect_isset (false),
 			AttachedTechnoEffect_Delay (0),
-			Crate_FirepowerMultiplier(1),
-			Crate_ArmorMultiplier(1),
-			Crate_SpeedMultiplier(1),
+			Crate_FirepowerMultiplier(1.0),
+			Crate_ArmorMultiplier(1.0),
+			Crate_SpeedMultiplier(1.0),
 			Crate_Cloakable(false)
 			{
 				this->CloakSkipTimer.Stop();
