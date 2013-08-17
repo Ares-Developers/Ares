@@ -79,11 +79,7 @@ void AttachEffectTypeClass::Attach(TechnoClass* Target, int Duration, TechnoClas
 	auto Attaching = new AttachEffectClass(this, Duration);
 	TargetExt->AttachedEffects.AddItem(Attaching);
 
-	if (Invoker) {
-		Attaching->Invoker = Invoker;
-	} else {
-		Attaching->Invoker = NULL;
-	}
+	Attaching->Invoker = Invoker;
 
 	// update the unit with the attached effect
 	TechnoExt::RecalculateStats(Target);
