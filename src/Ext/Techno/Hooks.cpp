@@ -66,7 +66,6 @@ DEFINE_HOOK(6F9E50, TechnoClass_Update, 5)
 		}
 	}
 
-
 	AttachEffectClass::Update(Source);
 
 	return 0;
@@ -144,7 +143,6 @@ DEFINE_HOOK(6F9E76, TechnoClass_Update_CheckOperators, 6)
 			pData->RadarJam->Update();
 		}
 	}
-
 
 	/* 	using 0x6F9E7C instead makes this function override the original game one's entirely -
 		don't activate that unless you handle _everything_ originally handled by the game */
@@ -266,7 +264,6 @@ DEFINE_HOOK(71A860, TemporalClass_UpdateA, 6)
 	}
 
 	//AttachEffect handling under Temporal
-	
 	if (!TargetExt->AttachEffects_RecreateAnims) {
 		for (int i = TargetExt->AttachedEffects.Count; i > 0; --i) {
 			auto Effect = TargetExt->AttachedEffects.GetItem(i - 1);
@@ -288,7 +285,7 @@ DEFINE_HOOK(71AB30, TemporalClass_GetHelperDamage, 5)
 	GET(TemporalClass *, Temp, ESI);
 	TechnoClass *T = Temp->Owner;
 	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(T);
-	
+
 	// Temporal should disable RadarJammers
 	auto Target = Temp->Target;
 	TechnoExt::ExtData * TargetExt = TechnoExt::ExtMap.Find(Target);
@@ -299,7 +296,6 @@ DEFINE_HOOK(71AB30, TemporalClass_GetHelperDamage, 5)
 	}
 
 	//AttachEffect handling under Temporal
-	
 	if (!TargetExt->AttachEffects_RecreateAnims) {
 		for (int i = TargetExt->AttachedEffects.Count; i > 0; --i) {
 			auto Effect = TargetExt->AttachedEffects.GetItem(i - 1);
@@ -1023,7 +1019,7 @@ DEFINE_HOOK(6F6AC9, TechnoClass_Remove, 6) {
 		delete TechnoExt->RadarJam;
 		TechnoExt->RadarJam = NULL;
 	}
-	
+
 	// #617 powered units
 	if(TechnoExt->PoweredUnit)
 	{
@@ -1045,7 +1041,6 @@ DEFINE_HOOK(6F6AC9, TechnoClass_Remove, 6) {
 
 	return 0;
 }
-
 
 DEFINE_HOOK(74642C, UnitClass_ReceiveGunner, 6)
 {

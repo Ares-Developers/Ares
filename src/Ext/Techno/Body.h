@@ -173,7 +173,7 @@ public:
 
 	static void TransferIvanBomb(TechnoClass *From, TechnoClass *To);
 	static void TransferAttachedEffects(TechnoClass *From, TechnoClass *To);
-	
+
 	static void RecalculateStats(TechnoClass *pTechno);
 
 	static void FreeSpecificSlave(TechnoClass *Slave, HouseClass *Affector);

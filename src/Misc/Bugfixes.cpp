@@ -239,9 +239,8 @@ DEFINE_HOOK(42461D, AnimClass_Update_Damage, 6)
 			Debug::Log("Info: Ownerless instance of %s.",
 			Anim->Type->ID);
 #endif
-			
 		}
-	}	
+	}
 
 	return 0; // WHAT? origin + 6;
 }

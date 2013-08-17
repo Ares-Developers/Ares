@@ -449,7 +449,6 @@ void TechnoExt::TransferAttachedEffects(TechnoClass *From, TechnoClass *To) {
 		FromExt->AttachedEffects.Clear();
 		FromExt->AttachedTechnoEffect_isset = false;
 		TechnoExt::RecalculateStats(To);
-	
 }
 
 /*! This function recalculates the stats modifiable by crates and update them (aimed for request #255)
@@ -511,7 +510,6 @@ bool TechnoExt::CanICloakByDefault(TechnoClass *pTechno) {
 	return false;
 }
 
-
 bool TechnoExt::ExtData::IsDeactivated() const {
 	return this->AttachedToObject->Deactivated;
 }
@@ -534,8 +532,8 @@ void TechnoExt::ExtData::InvalidateFXAnimPointer(AnimClass *ptr) {
 	for(auto i = 0; i < this->AttachedEffects.Count; ++i) {
 		this->AttachedEffects.GetItem(i)->InvalidateAnimPointer(ptr);
 	}
-}	
-	
+}
+
 /*! This function detaches a specific spawned object from it's spawner.
 	The check if it's a spawned object at all should be done before this function is called.
 	Check for SpawnOwner, specifically.
@@ -547,15 +545,15 @@ void TechnoExt::ExtData::InvalidateFXAnimPointer(AnimClass *ptr) {
 	\todo Get an assembly-reader to document Status in YR++ and update Status accordingly
 */
 void TechnoExt::DetachSpecificSpawnee(TechnoClass *Spawnee, HouseClass *NewSpawneeOwner){
-	
+
 	// setting up the nodes. Funnily, nothing else from the manager is needed
 	auto *SpawnNode = &(Spawnee->SpawnOwner->SpawnManager->SpawnedNodes);
 
 	//find the specific spawnee in the node
 	for (int i=0; i<SpawnNode->Count; ++i){
-		
+
 		if(Spawnee == SpawnNode->GetItem(i)->Unit) {
-			
+
 			SpawnNode->GetItem(i)->Unit = NULL;
 			Spawnee->SpawnOwner = NULL;
 
@@ -576,7 +574,7 @@ void TechnoExt::DetachSpecificSpawnee(TechnoClass *Spawnee, HouseClass *NewSpawn
 	\date 2011-06-09
 */
 void TechnoExt::FreeSpecificSlave(TechnoClass *Slave, HouseClass *Affector){
-	
+
 	//If you're a slave, you're an InfantryClass. But since most functions use TechnoClasses and the check can be done in that level as well
 	//it's easier to set up the recasting in this function
 	//Anybody who writes 357, take note that SlaveManager uses InfantryClasses everywhere, SpawnManager uses TechnoClasses derived from AircraftTypeClasses

@@ -12,7 +12,6 @@
 #include "../../Utilities/Constructs.h"
 #include "../../Misc/AttachEffect.h"
 
-
 #include <bitset>
 
 class TechnoTypeExt
