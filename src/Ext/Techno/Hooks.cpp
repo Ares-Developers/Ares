@@ -637,8 +637,7 @@ DEFINE_HOOK(701C97, TechnoClass_ReceiveDamage_AffectsEnemies, 6)
 	} else if(Arguments->SourceHouse) {
 		// fallback, in case future ways of damage dealing don't include an attacker, e.g. stuff like GenericWarhead - Ren
 		// fallback way was not implemented in WW AffectsAllies - Graion, 2013-06-29
-		CanAffect = (WHTypeExt->AffectsEnemies || Victim->Owner->IsAlliedWith(Arguments->SourceHouse))
-			&& (pThis->AffectsAllies || !(Victim->Owner->IsAlliedWith(Arguments->SourceHouse)));
+		CanAffect = Victim->Owner->IsAlliedWith(Arguments->SourceHouse) ? pThis->AffectsAllies : WHTypeExt->AffectsEnemies;
 
 	} else {
 		//Debug::Log("Warning: Neither Attacker nor SourceHouse were set during AffectsEnemies parsing!");
