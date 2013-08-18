@@ -124,15 +124,15 @@ DEFINE_HOOK(420F75, AlphaLightClass_UpdateScreen_ShouldDraw, 5)
 {
 	GET(AlphaShapeClass *, A, ECX);
 
-	if(ObjectClass *O = A->AttachedTo) {
-		if(TechnoClass * T = generic_cast<TechnoClass *>(O)) {
-			TechnoExt::ExtData * pData = TechnoExt::ExtMap.Find(T);
-			if(!pData->DrawVisualFX()) {
-				return 0x42132A;
-			}
+	bool shouldDraw = !A->IsObjectGone;
+
+	if(shouldDraw) {
+		if(TechnoClass* T = generic_cast<TechnoClass *>(A->AttachedTo)) {
+			TechnoExt::ExtData* pData = TechnoExt::ExtMap.Find(T);
+			shouldDraw = pData->DrawVisualFX();
 		}
 	}
-	return 0;
+	return shouldDraw ? 0x420F80 : 0x42132A;
 }
 
 DEFINE_HOOK(4210AC, AlphaLightClass_UpdateScreen_Header, 5)
@@ -170,15 +170,15 @@ DEFINE_HOOK(421371, TacticalClass_UpdateAlphasInRectangle_ShouldDraw, 5)
 	GET(int, AlphaLightIndex, EBX);
 	AlphaShapeClass *A = AlphaShapeClass::Array->Items[AlphaLightIndex];
 
-	if(ObjectClass *O = A->AttachedTo) {
-		if(TechnoClass * T = generic_cast<TechnoClass *>(O)) {
-			TechnoExt::ExtData * pData = TechnoExt::ExtMap.Find(T);
-			if(!pData->DrawVisualFX()) {
-				return 0x421694;
-			}
+	bool shouldDraw = !A->IsObjectGone;
+
+	if(shouldDraw) {
+		if(TechnoClass* T = generic_cast<TechnoClass *>(A->AttachedTo)) {
+			TechnoExt::ExtData* pData = TechnoExt::ExtMap.Find(T);
+			shouldDraw = pData->DrawVisualFX();
 		}
 	}
-	return 0;
+	return shouldDraw ? 0 : 0x421694;
 }
 
 DEFINE_HOOK(42146E, TacticalClass_UpdateAlphasInRectangle_Header, 5)
