@@ -43,9 +43,9 @@ public:
 		AnimType(NULL),
 		AnimResetOnReapply(false),
 		TemporalHidesAnim(false),
-		FirepowerMultiplier(1),
-		ArmorMultiplier(1),
-		SpeedMultiplier(1),
+		FirepowerMultiplier(1.0),
+		ArmorMultiplier(1.0),
+		SpeedMultiplier(1.0),
 		Cloakable(false),
 		/*
 		Warhead(RulesClass::Global()->C4Warhead),

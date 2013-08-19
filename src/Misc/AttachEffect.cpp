@@ -97,24 +97,24 @@ void AttachEffectClass::InvalidateAnimPointer(AnimClass *ptr) {
 
 void AttachEffectClass::CreateAnim(TechnoClass *Owner) {
 	if (Owner->CloakState ||
-	    (Owner->TemporalTargetingMe && !!this->Type->TemporalHidesAnim)) {
+		(Owner->TemporalTargetingMe && !!this->Type->TemporalHidesAnim)) {
 		return;
 	}
-	
+
 	if (!!this->Type->AnimType) {
 		if (this->Animation){
 			this->KillAnim();
 		}
-		
+
 		GAME_ALLOC(AnimClass, this->Animation, this->Type->AnimType, &Owner->Location);
 		this->Animation->SetOwnerObject(Owner);
-		this->Animation->RemainingIterations = -1;
-			
+		this->Animation->RemainingIterations = 0xFFu;
+
 		if (this->Invoker && this->Invoker->Owner) {
 			this->Animation->Owner = Invoker->Owner;
 		}
 		this->AnimAlreadyKilled = false;
-		}
+	}
 }
 
 //animation remover, boolean is needed otherwise destructor goes to infinite loop during UnInit
