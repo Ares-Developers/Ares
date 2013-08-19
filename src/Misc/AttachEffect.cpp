@@ -110,11 +110,13 @@ void AttachEffectClass::CreateAnim(TechnoClass *Owner) {
 		}
 
 		GAME_ALLOC(AnimClass, this->Animation, this->Type->AnimType, &Owner->Location);
-		this->Animation->SetOwnerObject(Owner);
-		this->Animation->RemainingIterations = 0xFFu;
+		if (auto pAnim = this->Animation) {
+			pAnim->SetOwnerObject(Owner);
+			pAnim->RemainingIterations = 0xFFu;
 
-		if (this->Invoker && this->Invoker->Owner) {
-			this->Animation->Owner = Invoker->Owner;
+			if (this->Invoker && this->Invoker->Owner) {
+				pAnim->Owner = this->Invoker->Owner;
+			}
 		}
 		this->AnimAlreadyKilled = false;
 	}
