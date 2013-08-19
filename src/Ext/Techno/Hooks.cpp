@@ -593,20 +593,20 @@ DEFINE_HOOK(701C97, TechnoClass_ReceiveDamage_AffectsEnemies, 6)
 	GET(WarheadTypeClass *, pThis, EBP);
 	GET(TechnoClass *, Victim, ESI);
 	LEA_STACK(args_ReceiveDamage *, Arguments, 0xC8);
+
+	// get the owner of the attacker. if there's none, use source house
+	auto pSourceHouse = Arguments->Attacker ? Arguments->Attacker->Owner : Arguments->SourceHouse;
+
+	// default for ownerless damage i.e. crates/fire particles
 	bool CanAffect = true;
 
-	WarheadTypeExt::ExtData *WHTypeExt = WarheadTypeExt::ExtMap.Find(pThis);
+	// check if allied to target, then apply either AffectsAllies or AffectsEnemies
+	if(pSourceHouse) {
+		auto pExt = WarheadTypeExt::ExtMap.Find(pThis);
+		CanAffect = Victim->Owner->IsAlliedWith(pSourceHouse) ? pThis->AffectsAllies : pExt->AffectsEnemies;
 
-	if(Arguments->Attacker) {
 		/* Ren, 08.01.2011:
-			Just documenting how/why this works, since I just stared at it for ten minutes trying to
-			figure out why this makes sense:
-			
-			AffectsEnemies=yes is the default case (weapons usually affect the enemy), so if that's true,
-			we can affect the target (this might later be changed by AffectsAllies).
-			AffectsEnemies=no means we cannot attack enemies, i.e. we can only attack allies;
-			ergo, CanAffect is only true if victim and target are allied.
-			Thanks to lazy evaluation, the latter condition is only ever checked if AffectsEnemies is set to no, which is not the default.
+			<not applicable any more \>
 			
 			The question of how this works came up because the current treatment of Neutral is technically wrong:
 			Semantically, AffectsEnemies=no only means "you cannot attack enemies", but our code renders it as "you cannot attack non-allies";
@@ -619,32 +619,18 @@ DEFINE_HOOK(701C97, TechnoClass_ReceiveDamage_AffectsEnemies, 6)
 			I just wanted this behavior and the logic behind it to be documented for the future.
 			
 			Note that, in the specific case of AffectsEnemies=no, AffectsAllies=no, this will rear its ugly head as a bug: Neutral should be affected, but won't be.
-		 */
-		CanAffect = WHTypeExt->AffectsEnemies || Victim->Owner->IsAlliedWith(Arguments->Attacker->Owner);
+			*/
 
-#ifdef DEBUGBUILD
-		if(Arguments->Attacker->Owner != Arguments->SourceHouse) {
-			Debug::Log("Info: During AffectsEnemies parsing, Attacker's Owner was %p [%s], but SourceHouse was %p [%s].",
-				Arguments->Attacker->Owner,
-				(Arguments->Attacker->Owner ? Arguments->Attacker->Owner->Type->ID : "null"),
-				Arguments->SourceHouse,
-				(Arguments->SourceHouse ? Arguments->SourceHouse->Type->ID : "null")
-				);
-			Debug::DumpStack(R, 0x180, 0xC0);
-		}
-#endif
+		/* AlexB, 2013-08-19:
+			"You're either with us, or against us" -- Old saying in Tennessee, ... or was it Texas?
 
-	} else if(Arguments->SourceHouse) {
-		// fallback, in case future ways of damage dealing don't include an attacker, e.g. stuff like GenericWarhead - Ren
-		// fallback way was not implemented in WW AffectsAllies - Graion, 2013-06-29
-		CanAffect = Victim->Owner->IsAlliedWith(Arguments->SourceHouse) ? pThis->AffectsAllies : WHTypeExt->AffectsEnemies;
-
-	} else {
-		//Debug::Log("Warning: Neither Attacker nor SourceHouse were set during AffectsEnemies parsing!");
-		// this is often the case for ownerless damage i.e. crates/fire particles, no point in logging it
+			The game has no clear concept of neutrality. If something like that is going to be added, it could be
+			in the form of a Nullable<bool> AffectsNeutral, and a CanAffect = AffectsNeutral.Get(CanAffect) if the
+			source house is neutral (however this is going to be inferred).
+		*/
 	}
 
-	return CanAffect ? 0 : 0x701CC2;
+	return CanAffect ? 0x701CD7 : 0x701CC2;
 }
 
 // select the most appropriate firing voice and also account
