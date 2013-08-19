@@ -62,12 +62,11 @@ public:
 
 class AttachEffectClass {
 public:
-	AttachEffectClass(AttachEffectTypeClass* AEType, int Timer): Type(AEType), Animation(NULL), AnimAlreadyKilled(true), ActualDuration(Timer) {
+	AttachEffectClass(AttachEffectTypeClass* AEType, int Timer): Type(AEType), Animation(NULL), ActualDuration(Timer) {
 	}
 
 	AttachEffectTypeClass * Type;
 	AnimClass * Animation;
-	bool AnimAlreadyKilled;
 	int ActualDuration;
 
 	TechnoClass * Invoker;

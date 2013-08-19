@@ -118,17 +118,15 @@ void AttachEffectClass::CreateAnim(TechnoClass *Owner) {
 				pAnim->Owner = this->Invoker->Owner;
 			}
 		}
-		this->AnimAlreadyKilled = false;
 	}
 }
 
 //animation remover, boolean is needed otherwise destructor goes to infinite loop during UnInit
 void AttachEffectClass::KillAnim() {
-	if (this->Animation && !this->AnimAlreadyKilled) {
-		this->Animation->SetOwnerObject(NULL);
-		this->AnimAlreadyKilled = true;
-		this->Animation->UnInit();
-		this->Animation = NULL;
+	if (auto pAnim = this->Animation) {
+		this->Animation = nullptr;
+		pAnim->SetOwnerObject(NULL);
+		pAnim->UnInit();
 	}
 }
 
