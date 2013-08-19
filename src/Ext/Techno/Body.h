@@ -126,7 +126,7 @@ public:
 		// when any pointer in the game expires, this is called - be sure to tell everyone we own to invalidate it
 		virtual void InvalidatePointer(void *ptr) {
 			AnnounceInvalidPointer(this->GarrisonedIn, ptr);
-			this->InvalidateFXAnimPointer(reinterpret_cast<AnimClass *>(ptr));
+			this->InvalidateAttachEffectPointer(ptr);
 			AnnounceInvalidPointer(this->MyOriginalTemporal, ptr);
 		}
 
@@ -146,7 +146,7 @@ public:
 
 		eAction GetDeactivatedAction(ObjectClass *Hovered = NULL) const;
 
-		void InvalidateFXAnimPointer(AnimClass *ptr);
+		void InvalidateAttachEffectPointer(void *ptr);
 	};
 
 	static Container<TechnoExt> ExtMap;

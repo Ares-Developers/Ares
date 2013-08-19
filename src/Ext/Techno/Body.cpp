@@ -516,9 +516,9 @@ eAction TechnoExt::ExtData::GetDeactivatedAction(ObjectClass *Hovered) const {
 	return act_None;
 }
 
-void TechnoExt::ExtData::InvalidateFXAnimPointer(AnimClass *ptr) {
+void TechnoExt::ExtData::InvalidateAttachEffectPointer(void *ptr) {
 	for(auto i = 0; i < this->AttachedEffects.Count; ++i) {
-		this->AttachedEffects.GetItem(i)->InvalidateAnimPointer(ptr);
+		this->AttachedEffects.GetItem(i)->InvalidatePointer(ptr);
 	}
 }
 

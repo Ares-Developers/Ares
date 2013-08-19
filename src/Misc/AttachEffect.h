@@ -75,7 +75,7 @@ public:
 
 	void Destroy();
 
-	void InvalidateAnimPointer(AnimClass *ptr);
+	void InvalidatePointer(void *ptr);
 
 	void CreateAnim(TechnoClass *Owner);
 	void KillAnim();

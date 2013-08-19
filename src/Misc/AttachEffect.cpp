@@ -89,7 +89,7 @@ void AttachEffectTypeClass::Attach(TechnoClass* Target, int Duration, TechnoClas
 	
 }
 
-void AttachEffectClass::InvalidateAnimPointer(AnimClass *ptr) {
+void AttachEffectClass::InvalidatePointer(void *ptr) {
 	if(this->Animation == ptr) {
 		this->KillAnim();
 	}
