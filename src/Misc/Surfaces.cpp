@@ -164,6 +164,11 @@ DEFINE_HOOK(4F4583, GScreenClass_DrawOnTop_TheDarkSideOfTheMoon, 6)
 		DrawText(Ares::StabilityWarning, offset, COLOR_RED);
 	}
 
+	static const CSFText modnote("TXT_RELEASE_NOTE");
+	if(!modnote.empty()) {
+		DrawText(modnote, offset, COLOR_RED);
+	}
+
 	if(Ares::bFPSCounter) {
 		wchar_t buffer[0x100] = L"\0";
 		swprintf_s(buffer, L"FPS: %-4u Avg: %.2f", FPSCounter::CurrentFrameRate, FPSCounter::GetAverageFrameRate());
