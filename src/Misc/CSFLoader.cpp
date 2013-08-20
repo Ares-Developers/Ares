@@ -195,7 +195,7 @@ DEFINE_HOOK(734E83, CSF_LoadString_1, 6)
 {
 	GET(char *, Name, EBX);
 
-	if(strlen(Name) >= 6 && !strncmp(Name, "NOSTR:", 6)) {
+	if(!strncmp(Name, "NOSTR:", 6)) {
 		const wchar_t* string = CSFLoader::GetDynamicString(Name, L"%hs", &Name[6]);
 
 		R->EAX(string);
