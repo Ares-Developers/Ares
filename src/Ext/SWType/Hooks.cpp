@@ -526,6 +526,25 @@ DEFINE_HOOK(6CC2B0, SuperClass_NameReadiness, 5) {
 	return 0x6CC352;
 }
 
+// #896002: darken SW cameo if player can't afford it
+DEFINE_HOOK(6A99B7, TabCameoListClass_Draw_SuperDarken, 5)
+{
+	GET(int, idxSW, EDI);
+
+	auto pSW = HouseClass::Player->Supers.GetItem(idxSW);
+	auto pExt = SWTypeExt::ExtMap.Find(pSW->Type);
+
+	bool darken = false;
+	if(pSW->IsCharged && pExt->Money_Amount < 0) {
+		if(pSW->Owner->Available_Money() < -pExt->Money_Amount) {
+			darken = true;
+		}
+	}
+
+	R->BL(darken);
+	return 0;
+}
+
 DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
 	GET(HouseClass*, pThis, ECX);
 
