@@ -10,6 +10,7 @@
 
 #include <new>
 
+#include "Ext/Abstract/Body.h"
 #include "Ext/Building/Body.h"
 #include "Ext/BuildingType/Body.h"
 #include "Ext/Bullet/Body.h"
@@ -22,6 +23,7 @@
 #include "Ext/SWType/Body.h"
 #include "Ext/Techno/Body.h"
 #include "Ext/TechnoType/Body.h"
+#include "Ext/TEvent/Body.h"
 #include "Ext/WarheadType/Body.h"
 #include "Ext/WeaponType/Body.h"
 
@@ -372,6 +374,7 @@ DEFINE_HOOK(7258D0, AnnounceInvalidPointer, 6)
 
 //	Debug::Log("PointerGotInvalid: %X\n", DEATH);
 
+	AbstractExt::ExtMap.PointerGotInvalid(DEATH);
 	BuildingExt::ExtMap.PointerGotInvalid(DEATH);
 	BuildingTypeExt::ExtMap.PointerGotInvalid(DEATH);
 	BulletExt::ExtMap.PointerGotInvalid(DEATH);
@@ -383,8 +386,11 @@ DEFINE_HOOK(7258D0, AnnounceInvalidPointer, 6)
 	SWTypeExt::ExtMap.PointerGotInvalid(DEATH);
 	TechnoExt::ExtMap.PointerGotInvalid(DEATH);
 	TechnoTypeExt::ExtMap.PointerGotInvalid(DEATH);
+	TEventExt::ExtMap.PointerGotInvalid(DEATH);
 	WarheadTypeExt::ExtMap.PointerGotInvalid(DEATH);
 	WeaponTypeExt::ExtMap.PointerGotInvalid(DEATH);
+
+	RulesExt::Global()->InvalidatePointer(DEATH);
 
 	return 0;
 }
