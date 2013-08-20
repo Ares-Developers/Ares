@@ -1,5 +1,5 @@
-#ifndef Infantry_EXT_H
-#define Infantry_EXT_H
+#ifndef INFANTRY_EXT_H
+#define INFANTRY_EXT_H
 
 #include <CCINIClass.h>
 #include <InfantryClass.h>
