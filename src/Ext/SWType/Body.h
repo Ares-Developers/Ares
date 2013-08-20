@@ -268,7 +268,7 @@ public:
 		void PrintMessage(const CSFText& message, HouseClass* pFirer);
 		NewSWType* GetNewSWType();
 
-		virtual void InvalidatePointer(void *ptr) {
+		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
 		}
 
 	private:

@@ -34,7 +34,7 @@ public:
 
 		virtual void LoadFromINIFile(TT *pThis, CCINIClass *pINI);
 
-		virtual void InvalidatePointer(void *ptr) {
+		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
 		}
 
 	};

@@ -337,7 +337,7 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 	}
 }
 
-void Container<WeaponTypeExt>::InvalidatePointer(void *ptr) {
+void Container<WeaponTypeExt>::InvalidatePointer(void *ptr, bool bRemoved) {
 	AnnounceInvalidPointerMap(WeaponTypeExt::BombExt, ptr);
 	AnnounceInvalidPointerMap(WeaponTypeExt::WaveExt, ptr);
 	AnnounceInvalidPointerMap(WeaponTypeExt::BoltExt, ptr);

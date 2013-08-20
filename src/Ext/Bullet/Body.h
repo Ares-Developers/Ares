@@ -33,7 +33,7 @@ public:
 
 		bool DamageOccupants();
 
-		virtual void InvalidatePointer(void *ptr) {
+		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
 		}
 
 	};

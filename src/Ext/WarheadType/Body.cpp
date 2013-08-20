@@ -95,7 +95,7 @@ void WarheadTypeExt::ExtData::LoadFromINIFile(WarheadTypeClass *pThis, CCINIClas
 	this->Malicious.Read(&exINI, section, "Malicious");
 };
 
-void Container<WarheadTypeExt>::InvalidatePointer(void *ptr) {
+void Container<WarheadTypeExt>::InvalidatePointer(void *ptr, bool bRemoved) {
 	AnnounceInvalidPointerMap(WarheadTypeExt::IonExt, ptr);
 	AnnounceInvalidPointer(WarheadTypeExt::Temporal_WH, ptr);
 }

@@ -94,7 +94,7 @@ public:
 
 		virtual size_t Size() const { return sizeof(*this); };
 
-		virtual void InvalidatePointer(void *ptr) {
+		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
 			AnnounceInvalidPointer(OwnerBeforeRaid, ptr);
 			PrismForwarding.AnnounceInvalidPointer(ptr, this);
 		}
