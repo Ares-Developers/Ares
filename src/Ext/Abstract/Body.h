@@ -1,5 +1,5 @@
-#ifndef Infantry_EXT_H
-#define Infantry_EXT_H
+#ifndef ABSTRACT_EXT_H
+#define ABSTRACT_EXT_H
 
 #include <CCINIClass.h>
 #include <AbstractClass.h>
@@ -31,7 +31,7 @@ public:
 
 		virtual size_t Size() const { return sizeof(*this); };
 
-		virtual void InvalidatePointer(void *ptr) {
+		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
 		}
 	};
 

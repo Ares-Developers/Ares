@@ -1,5 +1,5 @@
-#ifndef Infantry_EXT_H
-#define Infantry_EXT_H
+#ifndef INFANTRY_EXT_H
+#define INFANTRY_EXT_H
 
 #include <CCINIClass.h>
 #include <InfantryClass.h>
@@ -26,7 +26,7 @@ public:
 
 		virtual size_t Size() const { return sizeof(*this); };
 
-		virtual void InvalidatePointer(void *ptr) {
+		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
 		}
 
 		bool IsOccupant(); //!< Determines whether this InfantryClass is currently an occupant inside a BuildingClass.

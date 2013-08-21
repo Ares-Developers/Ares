@@ -124,7 +124,7 @@ public:
 		virtual size_t Size() const { return sizeof(*this); };
 
 		// when any pointer in the game expires, this is called - be sure to tell everyone we own to invalidate it
-		virtual void InvalidatePointer(void *ptr) {
+		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
 			AnnounceInvalidPointer(this->GarrisonedIn, ptr);
 			this->InvalidateAttachEffectPointer(ptr);
 			AnnounceInvalidPointer(this->MyOriginalTemporal, ptr);
