@@ -10,6 +10,7 @@
 
 #include <new>
 
+#include "Ext/Abstract/Body.h"
 #include "Ext/Building/Body.h"
 #include "Ext/BuildingType/Body.h"
 #include "Ext/Bullet/Body.h"
@@ -22,6 +23,7 @@
 #include "Ext/SWType/Body.h"
 #include "Ext/Techno/Body.h"
 #include "Ext/TechnoType/Body.h"
+#include "Ext/TEvent/Body.h"
 #include "Ext/WarheadType/Body.h"
 #include "Ext/WeaponType/Body.h"
 
@@ -372,22 +374,29 @@ DEFINE_HOOK(533058, CommandClassCallback_Register, 7)
 DEFINE_HOOK(7258D0, AnnounceInvalidPointer, 6)
 {
 	GET(void *, DEATH, ECX);
+	GET(BOOL, removed, EDX);
+
+	bool bRemoved = removed != FALSE;
 
 //	Debug::Log("PointerGotInvalid: %X\n", DEATH);
 
-	BuildingExt::ExtMap.PointerGotInvalid(DEATH);
-	BuildingTypeExt::ExtMap.PointerGotInvalid(DEATH);
-	BulletExt::ExtMap.PointerGotInvalid(DEATH);
-	BulletTypeExt::ExtMap.PointerGotInvalid(DEATH);
-	HouseExt::ExtMap.PointerGotInvalid(DEATH);
-	HouseTypeExt::ExtMap.PointerGotInvalid(DEATH);
-	InfantryExt::ExtMap.PointerGotInvalid(DEATH);
-	SideExt::ExtMap.PointerGotInvalid(DEATH);
-	SWTypeExt::ExtMap.PointerGotInvalid(DEATH);
-	TechnoExt::ExtMap.PointerGotInvalid(DEATH);
-	TechnoTypeExt::ExtMap.PointerGotInvalid(DEATH);
-	WarheadTypeExt::ExtMap.PointerGotInvalid(DEATH);
-	WeaponTypeExt::ExtMap.PointerGotInvalid(DEATH);
+	AbstractExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
+	BuildingExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
+	BuildingTypeExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
+	BulletExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
+	BulletTypeExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
+	HouseExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
+	HouseTypeExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
+	InfantryExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
+	SideExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
+	SWTypeExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
+	TechnoExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
+	TechnoTypeExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
+	TEventExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
+	WarheadTypeExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
+	WeaponTypeExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
+
+	RulesExt::Global()->InvalidatePointer(DEATH, bRemoved);
 
 	return 0;
 }

@@ -203,7 +203,7 @@ public:
 		virtual void Initialize(TT *pThis);
 		virtual void CompleteInitialization(TT *pThis);
 
-		virtual void InvalidatePointer(void *ptr) {
+		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
 			AnnounceInvalidPointer(RubbleIntact, ptr);
 			AnnounceInvalidPointer(RubbleDestroyed, ptr);
 		}

@@ -532,7 +532,7 @@ bool SWTypeExt::ExtData::ChangeLighting() {
 	return false;
 }
 
-void Container<SWTypeExt>::InvalidatePointer(void *ptr) {
+void Container<SWTypeExt>::InvalidatePointer(void *ptr, bool bRemoved) {
 	AnnounceInvalidPointer(SWTypeExt::CurrentSWType, ptr);
 }
 

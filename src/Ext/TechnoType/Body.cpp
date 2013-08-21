@@ -433,7 +433,7 @@ void TechnoTypeClassExt::ReadWeapon(WeaponStruct *pWeapon, const char *prefix, c
 }
 */
 
-void Container<TechnoTypeExt>::InvalidatePointer(void *ptr) {
+void Container<TechnoTypeExt>::InvalidatePointer(void *ptr, bool bRemoved) {
 }
 
 bool TechnoTypeExt::ExtData::CameoIsElite()

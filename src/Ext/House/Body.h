@@ -70,7 +70,7 @@ class HouseExt
 
 		virtual size_t Size() const { return sizeof(*this); };
 
-		virtual void InvalidatePointer(void *ptr) {
+		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
 			AnnounceInvalidPointer(Factory_AircraftType, ptr);
 			AnnounceInvalidPointer(Factory_BuildingType, ptr);
 			AnnounceInvalidPointer(Factory_VehicleType, ptr);

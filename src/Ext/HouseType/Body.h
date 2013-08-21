@@ -88,7 +88,7 @@ class HouseTypeExt
 		virtual void InitializeConstants(TT *pThis);
 		virtual void Initialize(TT *pThis);
 
-		virtual void InvalidatePointer(void *ptr) {
+		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
 		}
 
 		AircraftTypeClass* GetParadropPlane();
