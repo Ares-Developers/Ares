@@ -363,9 +363,9 @@ void Debug::FreeMouse() {
 //	}
 }
 
-__declspec(noreturn) void Debug::Exit() {
+__declspec(noreturn) void Debug::Exit(UINT ExitCode) {
 		Debug::Log("Exiting...\n");
-		ExitProcess(1);
+		ExitProcess(ExitCode);
 }
 
 void Debug::FatalError(bool Dump) {
