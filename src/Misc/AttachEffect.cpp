@@ -152,8 +152,9 @@ void AttachEffectClass::Update(TechnoClass *Source) {
 		return;
 	}
 
+	TechnoTypeClass *pType = Source->GetTechnoType();
 	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(Source);
-	TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(Source->GetTechnoType());
+	TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(pType);
 
 
 	if (pData->AttachedEffects.Count) {
@@ -200,11 +201,11 @@ void AttachEffectClass::Update(TechnoClass *Source) {
 			}*/
 
 
-			if(!Effect->ActualDuration || (!strcmp(Effect->Type->ID, Source->GetTechnoType()->ID) && Source->Deactivated)) {
+			if(!Effect->ActualDuration || (!strcmp(Effect->Type->ID, pType->ID) && Source->Deactivated)) {
 				//Debug::Log("[AttachEffect] %d. item expired, removing...\n", i - 1);
 				Effect->Destroy();
 
-				if (!strcmp(Effect->Type->ID, Source->GetTechnoType()->ID)) {		//#1623, hardcodes Cumulative to false
+				if (!strcmp(Effect->Type->ID, pType->ID)) {		//#1623, hardcodes Cumulative to false
 					pData->AttachedTechnoEffect_isset = false;
 					pData->AttachedTechnoEffect_Delay = Effect->Type->Delay;
 				}
