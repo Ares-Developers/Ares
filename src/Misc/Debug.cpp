@@ -190,14 +190,8 @@ __declspec(noreturn) LONG CALLBACK Debug::ExceptionHandler(PEXCEPTION_POINTERS p
 	Debug::Log("Exception handler fired!\n");
 	Debug::Log("Exception %X at %p\n", pExs->ExceptionRecord->ExceptionCode, pExs->ExceptionRecord->ExceptionAddress);
 	SetWindowTextW(Game::hWnd, L"Fatal Error - Yuri's Revenge");
+
 //	if (IsDebuggerAttached()) return EXCEPTION_CONTINUE_SEARCH;
-	if (pExs->ExceptionRecord->ExceptionCode == ERROR_MOD_NOT_FOUND ||
-		pExs->ExceptionRecord->ExceptionCode == ERROR_PROC_NOT_FOUND)
-	{
-		Debug::Log("Massive failure: Procedure or module not found!\n");
-		//tell user
-		ExitProcess(pExs->ExceptionRecord->ExceptionCode);
-	}
 
 	switch(pExs->ExceptionRecord->ExceptionCode)
 	{
@@ -284,16 +278,20 @@ __declspec(noreturn) LONG CALLBACK Debug::ExceptionHandler(PEXCEPTION_POINTERS p
 						, Debug::bParserErrorDetected ? "(One or more parser errors have been detected that might be responsible. Check the debug logs.)\r\n" : ""
 				);
 			}
-			ExitProcess(pExs->ExceptionRecord->ExceptionCode); // Exit.
 			break;
 		}
+		case ERROR_MOD_NOT_FOUND:
+		case ERROR_PROC_NOT_FOUND:
+			Debug::Log("Massive failure: Procedure or module not found!\n");
+			break;
 		default:
 			Debug::Log("Massive failure: reason unknown, have fun figuring it out\n");
 			Debug::DumpObj((byte *)pExs->ExceptionRecord, sizeof(*(pExs->ExceptionRecord)));
-			ExitProcess(pExs->ExceptionRecord->ExceptionCode); // Exit.
 //			return EXCEPTION_CONTINUE_SEARCH;
 			break;
 	}
+
+	Debug::Exit(pExs->ExceptionRecord->ExceptionCode);
 };
 
 #pragma warning(pop)
