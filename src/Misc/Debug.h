@@ -40,18 +40,18 @@ public:
 
 	static void __cdecl LogUnflushed(const char *Format, ...);
 	static void Flush();
-	static LONG CALLBACK ExceptionHandler(PEXCEPTION_POINTERS pExs);
+	static __declspec(noreturn) LONG CALLBACK ExceptionHandler(PEXCEPTION_POINTERS pExs);
 	static LONG CALLBACK ExceptionFilter(PEXCEPTION_POINTERS pExs);
 
 	static void FreeMouse();
 
 	/** TODO: review if all these errors are needed */
 
-	static void Exit();
+	static __declspec(noreturn) void Exit();
 
 	static void FatalError(bool Dump = false); /* takes formatted message from Ares::readBuffer */
 	static void FatalError(const char *Message, ...);
-	static void FatalErrorAndExit(const char *Message, ...);
+	static __declspec(noreturn) void FatalErrorAndExit(const char *Message, ...);
 	static int __stdcall FatalDialog_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 	static void PrepareSnapshotDirectory(std::wstring &buffer);

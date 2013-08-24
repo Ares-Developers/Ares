@@ -181,7 +181,10 @@ void Debug::PrepareSnapshotDirectory(std::wstring &buffer) {
 	CreateDirectoryW(buffer.c_str(), NULL);
 }
 
-LONG CALLBACK Debug::ExceptionHandler(PEXCEPTION_POINTERS pExs)
+#pragma warning(push)
+#pragma warning(disable: 4646) // this function does not return, though it isn't declared VOID
+
+__declspec(noreturn) LONG CALLBACK Debug::ExceptionHandler(PEXCEPTION_POINTERS pExs)
 {
 	Debug::FreeMouse();
 	Debug::Log("Exception handler fired!\n");
@@ -293,13 +296,15 @@ LONG CALLBACK Debug::ExceptionHandler(PEXCEPTION_POINTERS pExs)
 	}
 };
 
+#pragma warning(pop)
+
 LONG CALLBACK Debug::ExceptionFilter(PEXCEPTION_POINTERS pExs)
 {
 	if(pExs->ExceptionRecord->ExceptionCode == EXCEPTION_BREAKPOINT) {
 		return EXCEPTION_CONTINUE_SEARCH;
 	}
 
-	return Debug::ExceptionHandler(pExs);
+	Debug::ExceptionHandler(pExs);
 }
 
 void Debug::FullDump(MINIDUMP_EXCEPTION_INFORMATION *pException, std::wstring * destinationFolder, std::wstring * generatedFilename) {
@@ -358,7 +363,7 @@ void Debug::FreeMouse() {
 //	}
 }
 
-void Debug::Exit() {
+__declspec(noreturn) void Debug::Exit() {
 		Debug::Log("Exiting...\n");
 		ExitProcess(1);
 }
@@ -393,7 +398,7 @@ void Debug::FatalError(const char *Message, ...) {
 	Debug::FatalError(false);
 }
 
-void Debug::FatalErrorAndExit(const char *Message, ...) {
+__declspec(noreturn) void Debug::FatalErrorAndExit(const char *Message, ...) {
 	Debug::FreeMouse();
 
 	va_list args;
