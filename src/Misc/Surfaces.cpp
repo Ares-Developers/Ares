@@ -27,7 +27,7 @@ DEFINE_HOOK(7B9510, WWMouseClass_DrawCursor_V1, 6)
 
 DEFINE_HOOK(537BC0, Game_MakeScreenshot, 0)
 {
-	RECT Viewport;
+	RECT Viewport = {};
 	if(Imports::GetWindowRect(Game::hWnd, &Viewport)) {
 		POINT TL = {Viewport.left, Viewport.top}, BR = {Viewport.right, Viewport.bottom};
 		if(Imports::ClientToScreen(Game::hWnd, &TL) && Imports::ClientToScreen(Game::hWnd, &BR)) {
