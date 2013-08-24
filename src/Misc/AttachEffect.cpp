@@ -176,7 +176,9 @@ void AttachEffectClass::Update(TechnoClass *Source) {
 		//Debug::Log("[AttachEffect]AttachEffect update of %s...\n", Source->get_ID());
 		for (int i = pData->AttachedEffects.Count; i > 0; --i) {
 			auto Effect = pData->AttachedEffects.GetItem(i - 1);
-			--Effect->ActualDuration;
+			if(Effect->ActualDuration > 0) {
+				--Effect->ActualDuration;
+			}
 
 			//#408, residual damage
 			/* unfinished, crash if unit gets killed and was targeted
