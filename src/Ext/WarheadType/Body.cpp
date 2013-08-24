@@ -470,7 +470,7 @@ bool WarheadTypeExt::ExtData::applyKillDriver(BulletClass* Bullet) {
 //Graion Dilach, ~2011-10-14... I forgot the exact date :S
 
 void WarheadTypeExt::ExtData::applyAttachedEffect(CoordStruct *coords, TechnoClass* Owner) {
-	if (!!this->AttachedEffect.Duration){
+	if (this->AttachedEffect.Duration != 0) {
 		CellStruct cellCoords = MapClass::Instance->GetCellAt(coords)->MapCoords;
 		// set of affected objects. every object can be here only once.
 		DynamicVectorClass<TechnoClass*> *items = Helpers::Alex::getCellSpreadItems(coords,

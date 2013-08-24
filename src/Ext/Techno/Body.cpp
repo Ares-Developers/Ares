@@ -432,23 +432,23 @@ void TechnoExt::TransferIvanBomb(TechnoClass *From, TechnoClass *To) {
 }
 
 void TechnoExt::TransferAttachedEffects(TechnoClass *From, TechnoClass *To) {
-		TechnoExt::ExtData *FromExt = TechnoExt::ExtMap.Find(From);
-		TechnoExt::ExtData *ToExt = TechnoExt::ExtMap.Find(To);
-		ToExt->AttachedEffects.Clear();
+	TechnoExt::ExtData *FromExt = TechnoExt::ExtMap.Find(From);
+	TechnoExt::ExtData *ToExt = TechnoExt::ExtMap.Find(To);
+	ToExt->AttachedEffects.Clear();
 
-		// while recreation itself isn't the best idea, less hassle and more reliable
-		// list gets intact in the end
-		for (int i=0; i < FromExt->AttachedEffects.Count; i++) {
-			auto FromItem = FromExt->AttachedEffects.GetItem(i);
-			FromItem->Type->Attach(To, FromItem->ActualDuration, FromItem->Invoker);
-			//FromItem->Type->Attach(To, FromItem->ActualDuration, FromItem->Invoker, FromItem->ActualDamageDelay);
-			FromItem->Destroy();
-			delete FromItem;
-		}
+	// while recreation itself isn't the best idea, less hassle and more reliable
+	// list gets intact in the end
+	for (int i=0; i < FromExt->AttachedEffects.Count; i++) {
+		auto FromItem = FromExt->AttachedEffects.GetItem(i);
+		FromItem->Type->Attach(To, FromItem->ActualDuration, FromItem->Invoker);
+		//FromItem->Type->Attach(To, FromItem->ActualDuration, FromItem->Invoker, FromItem->ActualDamageDelay);
+		FromItem->Destroy();
+		delete FromItem;
+	}
 
-		FromExt->AttachedEffects.Clear();
-		FromExt->AttachedTechnoEffect_isset = false;
-		TechnoExt::RecalculateStats(To);
+	FromExt->AttachedEffects.Clear();
+	FromExt->AttachedTechnoEffect_isset = false;
+	TechnoExt::RecalculateStats(To);
 }
 
 /*! This function recalculates the stats modifiable by crates and update them (aimed for request #255)

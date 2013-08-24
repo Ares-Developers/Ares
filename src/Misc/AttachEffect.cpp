@@ -222,9 +222,9 @@ void AttachEffectClass::Update(TechnoClass *Source) {
 
 
 	//#1623 - generating AttachedEffect from Type
-	if (!!pTypeData->AttachedTechnoEffect.Duration && !pData->AttachedTechnoEffect_isset) {
-		if (!pData->AttachedTechnoEffect_Delay){
-			if (!Source->Deactivated){
+	if (pTypeData->AttachedTechnoEffect.Duration != 0 && !pData->AttachedTechnoEffect_isset) {
+		if (!pData->AttachedTechnoEffect_Delay) {
+			if (!Source->Deactivated) {
 				//Debug::Log("[AttachEffect]Missing Type effect of %s...\n", Source->get_ID());
 				//pTypeData->AttachedTechnoEffect.Attach(Source, pTypeData->AttachedTechnoEffect.Duration, Source, pTypeData->AttachedTechnoEffect.DamageDelay);
 
