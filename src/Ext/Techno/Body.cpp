@@ -434,6 +434,12 @@ void TechnoExt::TransferIvanBomb(TechnoClass *From, TechnoClass *To) {
 void TechnoExt::TransferAttachedEffects(TechnoClass *From, TechnoClass *To) {
 	TechnoExt::ExtData *FromExt = TechnoExt::ExtMap.Find(From);
 	TechnoExt::ExtData *ToExt = TechnoExt::ExtMap.Find(To);
+
+	for (int i=0; i < ToExt->AttachedEffects.Count; ++i) {
+		auto ToItem = ToExt->AttachedEffects.GetItem(i);
+		ToItem->Destroy();
+		delete ToItem;
+	}
 	ToExt->AttachedEffects.Clear();
 
 	// while recreation itself isn't the best idea, less hassle and more reliable
