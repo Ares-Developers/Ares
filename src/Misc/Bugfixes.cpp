@@ -358,7 +358,7 @@ DEFINE_HOOK(6CF3CF, sub_6CF350, 8)
 
 	Debug::FatalErrorAndExit("Saved data loading failed");
 
-	return 0;
+	// return 0; does not return
 }
 
 /*
