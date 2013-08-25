@@ -73,10 +73,10 @@ void SW_ParaDrop::LoadFromINI(
 		
 		// construct the full tag name base
 		char base[0x40], key[0x40];
-		_snprintf(base, 0x40, "%s%s", pID, plane);
+		_snprintf_s(base, 0x3F, "%s%s", pID, plane);
 
 		// parse the plane contents
-		_snprintf(key, 0x40, "%s.Aircraft", base);
+		_snprintf_s(key, 0x3F, "%s.Aircraft", base);
 		if(pINI->ReadString(section, key, "", Ares::readBuffer, Ares::readLength)) {
 			if(AircraftTypeClass* pTAircraft = AircraftTypeClass::Find(Ares::readBuffer)) {
 				pPlane = new ParadropPlane();
@@ -87,7 +87,7 @@ void SW_ParaDrop::LoadFromINI(
 		}
 
 		// a list of UnitTypes and InfantryTypes
-		_snprintf(key, 0x40, "%s.Types", base);
+		_snprintf_s(key, 0x3F, "%s.Types", base);
 		if(pINI->ReadString(section, key, "", Ares::readBuffer, Ares::readLength)) {
 			// create new plane if there is none yet
 			if(!pPlane) {
@@ -119,7 +119,7 @@ void SW_ParaDrop::LoadFromINI(
 		}
 
 		// the number how many times each item is created
-		_snprintf(key, 0x40, "%s.Num", base);
+		_snprintf_s(key, 0x3F, "%s.Num", base);
 		if(pINI->ReadString(section, key, "", Ares::readBuffer, Ares::readLength)) {
 			pPlane->pNum.Clear();
 
@@ -135,7 +135,7 @@ void SW_ParaDrop::LoadFromINI(
 	auto GetParadropPlane = [&](char *pID, int defCount, DynamicVectorClass<ParadropPlane*>* ret) {
 		// get the number of planes for this house or side
 		char key[0x40];
-		_snprintf(key, 0x40, "%s.Count", pID);
+		_snprintf_s(key, 0x3F, "%s.Count", pID);
 		int count = pINI->ReadInteger(section, key, defCount);
 
 		// parse every plane

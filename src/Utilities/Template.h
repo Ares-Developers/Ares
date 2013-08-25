@@ -248,17 +248,17 @@ public:
 		INI_EX exINI(pINI);
 		Placeholder.Set(this->Rookie);
 
-		_snprintf(FlagName, buflen, BaseFlag, "Rookie");
+		_snprintf_s(FlagName, buflen, buflen - 1, BaseFlag, "Rookie");
 		Placeholder.Read(&exINI, Section, FlagName);
 		this->Rookie = Placeholder.Get();
 
 		Placeholder.Set(this->Veteran);
-		_snprintf(FlagName, buflen, BaseFlag, "Veteran");
+		_snprintf_s(FlagName, buflen, buflen - 1, BaseFlag, "Veteran");
 		Placeholder.Read(&exINI, Section, FlagName);
 		this->Veteran = Placeholder.Get();
 
 		Placeholder.Set(this->Elite);
-		_snprintf(FlagName, buflen, BaseFlag, "Elite");
+		_snprintf_s(FlagName, buflen, buflen - 1, BaseFlag, "Elite");
 		Placeholder.Read(&exINI, Section, FlagName);
 		this->Elite = Placeholder.Get();
 
@@ -361,7 +361,7 @@ void Valueable<SHPStruct *>::Read(INI_EX *parser, const char* pSection, const ch
 	if(parser->ReadString(pSection, pKey)) {
 		char flag[256];
 		const char * val = parser->value();
-		_snprintf(flag, 256, "%s.shp", val);
+		_snprintf_s(flag, 255, "%s.shp", val);
 		if(SHPStruct *image = FileSystem::LoadSHPFile(flag)) {
 			this->Set(image);
 		} else {
@@ -377,32 +377,32 @@ void Valueable<MouseCursor>::Read(INI_EX *parser, const char* pSection, const ch
 	MouseCursor *Cursor = this->GetEx();
 
 	char pFlagName [32];
-	_snprintf(pFlagName, 32, "%s.Frame", pKey);
+	_snprintf_s(pFlagName, 31, "%s.Frame", pKey);
 	Placeholder.Set(Cursor->Frame);
 	Placeholder.Read(parser, pSection, pFlagName);
 	Cursor->Frame = Placeholder.Get();
 
-	_snprintf(pFlagName, 32, "%s.Count", pKey);
+	_snprintf_s(pFlagName, 31, "%s.Count", pKey);
 	Placeholder.Set(Cursor->Count);
 	Placeholder.Read(parser, pSection, pFlagName);
 	Cursor->Count = Placeholder.Get();
 
-	_snprintf(pFlagName, 32, "%s.Interval", pKey);
+	_snprintf_s(pFlagName, 31, "%s.Interval", pKey);
 	Placeholder.Set(Cursor->Interval);
 	Placeholder.Read(parser, pSection, pFlagName);
 	Cursor->Interval = Placeholder.Get();
 
-	_snprintf(pFlagName, 32, "%s.MiniFrame", pKey);
+	_snprintf_s(pFlagName, 31, "%s.MiniFrame", pKey);
 	Placeholder.Set(Cursor->MiniFrame);
 	Placeholder.Read(parser, pSection, pFlagName);
 	Cursor->MiniFrame = Placeholder.Get();
 
-	_snprintf(pFlagName, 32, "%s.MiniCount", pKey);
+	_snprintf_s(pFlagName, 31, "%s.MiniCount", pKey);
 	Placeholder.Set(Cursor->MiniCount);
 	Placeholder.Read(parser, pSection, pFlagName);
 	Cursor->MiniCount = Placeholder.Get();
 
-	_snprintf(pFlagName, 32, "%s.HotSpot", pKey);
+	_snprintf_s(pFlagName, 31, "%s.HotSpot", pKey);
 	if(parser->ReadString(pSection, pFlagName)) {
 		char *buffer = const_cast<char *>(parser->value());
 		char *context = nullptr;
@@ -429,68 +429,68 @@ void Valueable<RocketStruct>::Read(INI_EX *parser, const char* pSection, const c
 	RocketStruct* rocket = this->GetEx();
 
 	char pFlagName[0x40];
-	_snprintf(pFlagName, 0x40, "%s.PauseFrames", pKey);
+	_snprintf_s(pFlagName, 0x3F, "%s.PauseFrames", pKey);
 	IntPlaceholder.Set(rocket->PauseFrames);
 	IntPlaceholder.Read(parser, pSection, pFlagName);
 	rocket->PauseFrames = IntPlaceholder.Get();
 
-	_snprintf(pFlagName, 0x40, "%s.TiltFrames", pKey);
+	_snprintf_s(pFlagName, 0x3F, "%s.TiltFrames", pKey);
 	IntPlaceholder.Set(rocket->TiltFrames);
 	IntPlaceholder.Read(parser, pSection, pFlagName);
 	rocket->TiltFrames = IntPlaceholder.Get();
 
-	_snprintf(pFlagName, 0x40, "%s.PitchInitial", pKey);
+	_snprintf_s(pFlagName, 0x3F, "%s.PitchInitial", pKey);
 	FloatPlaceholder.Set(rocket->PitchInitial);
 	FloatPlaceholder.Read(parser, pSection, pFlagName);
 	rocket->PitchInitial = FloatPlaceholder.Get();
 
-	_snprintf(pFlagName, 0x40, "%s.PitchFinal", pKey);
+	_snprintf_s(pFlagName, 0x3F, "%s.PitchFinal", pKey);
 	FloatPlaceholder.Set(rocket->PitchFinal);
 	FloatPlaceholder.Read(parser, pSection, pFlagName);
 	rocket->PitchFinal = FloatPlaceholder.Get();
 
-	_snprintf(pFlagName, 0x40, "%s.TurnRate", pKey);
+	_snprintf_s(pFlagName, 0x3F, "%s.TurnRate", pKey);
 	FloatPlaceholder.Set(rocket->TurnRate);
 	FloatPlaceholder.Read(parser, pSection, pFlagName);
 	rocket->TurnRate = FloatPlaceholder.Get();
 
 	// sic! integer read like a float.
-	_snprintf(pFlagName, 0x40, "%s.RaiseRate", pKey);
+	_snprintf_s(pFlagName, 0x3F, "%s.RaiseRate", pKey);
 	FloatPlaceholder.Set(static_cast<float>(rocket->RaiseRate));
 	FloatPlaceholder.Read(parser, pSection, pFlagName);
 	rocket->RaiseRate = static_cast<int>(Game::F2I(FloatPlaceholder.Get()));
 
-	_snprintf(pFlagName, 0x40, "%s.Acceleration", pKey);
+	_snprintf_s(pFlagName, 0x3F, "%s.Acceleration", pKey);
 	FloatPlaceholder.Set(rocket->Acceleration);
 	FloatPlaceholder.Read(parser, pSection, pFlagName);
 	rocket->Acceleration = FloatPlaceholder.Get();
 
-	_snprintf(pFlagName, 0x40, "%s.Altitude", pKey);
+	_snprintf_s(pFlagName, 0x3F, "%s.Altitude", pKey);
 	IntPlaceholder.Set(rocket->Altitude);
 	IntPlaceholder.Read(parser, pSection, pFlagName);
 	rocket->Altitude = IntPlaceholder.Get();
 
-	_snprintf(pFlagName, 0x40, "%s.Damage", pKey);
+	_snprintf_s(pFlagName, 0x3F, "%s.Damage", pKey);
 	IntPlaceholder.Set(rocket->Damage);
 	IntPlaceholder.Read(parser, pSection, pFlagName);
 	rocket->Damage = IntPlaceholder.Get();
 	
-	_snprintf(pFlagName, 0x40, "%s.EliteDamage", pKey);
+	_snprintf_s(pFlagName, 0x3F, "%s.EliteDamage", pKey);
 	IntPlaceholder.Set(rocket->EliteDamage);
 	IntPlaceholder.Read(parser, pSection, pFlagName);
 	rocket->EliteDamage = IntPlaceholder.Get();
 	
-	_snprintf(pFlagName, 0x40, "%s.BodyLength", pKey);
+	_snprintf_s(pFlagName, 0x3F, "%s.BodyLength", pKey);
 	IntPlaceholder.Set(rocket->BodyLength);
 	IntPlaceholder.Read(parser, pSection, pFlagName);
 	rocket->BodyLength = IntPlaceholder.Get();
 
-	_snprintf(pFlagName, 0x40, "%s.LazyCurve", pKey);
+	_snprintf_s(pFlagName, 0x3F, "%s.LazyCurve", pKey);
 	BoolPlaceholder.Set(rocket->LazyCurve);
 	BoolPlaceholder.Read(parser, pSection, pFlagName);
 	rocket->LazyCurve = BoolPlaceholder.Get();
 
-	_snprintf(pFlagName, 0x40, "%s.Type", pKey);
+	_snprintf_s(pFlagName, 0x3F, "%s.Type", pKey);
 	TypePlaceholder.Set(rocket->Type);
 	TypePlaceholder.Parse(parser, pSection, pFlagName);
 	rocket->Type = TypePlaceholder.Get();

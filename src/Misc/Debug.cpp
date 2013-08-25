@@ -390,7 +390,7 @@ void Debug::FatalError(const char *Message, ...) {
 
 	va_list args;
 	va_start(args, Message);
-	vsnprintf(Ares::readBuffer, Ares::readLength, Message, args); /* note that the message will be truncated somewhere after 0x300 chars... */
+	vsnprintf_s(Ares::readBuffer, Ares::readLength - 1, Message, args); /* note that the message will be truncated somewhere after 0x300 chars... */
 	va_end(args);
 
 	Debug::FatalError(false);
@@ -401,7 +401,7 @@ __declspec(noreturn) void Debug::FatalErrorAndExit(const char *Message, ...) {
 
 	va_list args;
 	va_start(args, Message);
-	vsnprintf(Ares::readBuffer, Ares::readLength, Message, args); /* note that the message will be truncated somewhere after 0x300 chars... */
+	vsnprintf_s(Ares::readBuffer, Ares::readLength - 1, Message, args); /* note that the message will be truncated somewhere after 0x300 chars... */
 	va_end(args);
 
 	Debug::FatalError(false);

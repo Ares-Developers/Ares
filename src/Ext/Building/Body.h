@@ -46,13 +46,13 @@ public:
 				}
 				BuildingTypeExt::cPrismForwarding::RemoveFromNetwork(bld, true);
 				if(bld == this->SupportTarget) {
-					_snprintf(Ares::readBuffer, Ares::readLength, "Prism Forwarder (ExtData %p) failed to remove support target\n", container);
+					_snprintf_s(Ares::readBuffer, Ares::readLength - 1, "Prism Forwarder (ExtData %p) failed to remove support target\n", container);
 					Debug::FatalError(true);
 					Debug::Exit();
 				}
 				senderIdx = this->Senders.FindItemIndex(&bld);
 				if(senderIdx != -1) {
-					_snprintf(Ares::readBuffer, Ares::readLength, "Prism Forwarder (ExtData %p) failed to remove sender #%d\n", container, senderIdx);
+					_snprintf_s(Ares::readBuffer, Ares::readLength - 1, "Prism Forwarder (ExtData %p) failed to remove sender #%d\n", container, senderIdx);
 					Debug::FatalError(true);
 					Debug::Exit();
 				}

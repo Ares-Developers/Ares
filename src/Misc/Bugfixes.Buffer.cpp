@@ -339,11 +339,11 @@ DEFINE_HOOK(6A9348, CameoClass_GetTip_FixLength, 9)
 	int Cost = Object->GetActualCost(HouseClass::Player);
 	if(HideObjectName) {
 		const wchar_t * Format = StringTable::LoadString("TXT_MONEY_FORMAT_1");
-		_snwprintf(SidebarClass::TooltipBuffer, SidebarClass::TooltipLength, Format, Cost);
+		_snwprintf_s(SidebarClass::TooltipBuffer, SidebarClass::TooltipLength, SidebarClass::TooltipLength - 1, Format, Cost);
 	} else {
 		const wchar_t * UIName = Object->UIName;
 		const wchar_t * Format = StringTable::LoadString("TXT_MONEY_FORMAT_2");
-		_snwprintf(SidebarClass::TooltipBuffer, SidebarClass::TooltipLength, Format, UIName, Cost);
+		_snwprintf_s(SidebarClass::TooltipBuffer, SidebarClass::TooltipLength, SidebarClass::TooltipLength - 1, Format, UIName, Cost);
 	}
 	SidebarClass::TooltipBuffer[SidebarClass::TooltipLength - 1] = 0;
 

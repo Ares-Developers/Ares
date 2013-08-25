@@ -100,7 +100,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 
 	char flag[256];
 	for(int i = 0; i < SideClass::Array->Count; ++i) {
-		_snprintf(flag, 256, "Survivor.Side%d", i);
+		_snprintf_s(flag, 255, "Survivor.Side%d", i);
 		if(pINI->ReadString(section, flag, "", Ares::readBuffer, Ares::readLength)) {
 			if((this->Survivors_Pilots[i] = InfantryTypeClass::Find(Ares::readBuffer)) == NULL) {
 				if(!INIClass::IsBlank(Ares::readBuffer)) {
@@ -135,7 +135,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	Prereqs::Parse(pINI, section, "PrerequisiteOverride", dvc);
 
 	for(int i = 0; i < this->PrerequisiteLists.Count; ++i) {
-		_snprintf(flag, 256, "Prerequisite.List%d", i);
+		_snprintf_s(flag, 255, "Prerequisite.List%d", i);
 		dvc = this->PrerequisiteLists.GetItem(i);
 		Prereqs::Parse(pINI, section, flag, dvc);
 	}
