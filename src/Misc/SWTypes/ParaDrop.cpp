@@ -68,7 +68,7 @@ void SW_ParaDrop::LoadFromINI(
 		char plane[0x10] = "";
 		if(Plane) {
 			AresCRT::strCopy(plane, ".Plane", 0x10);
-			_itoa(Plane + 1, &plane[6], 10);
+			_itoa_s(Plane + 1, &plane[6], 10, 10);
 		}
 		
 		// construct the full tag name base
