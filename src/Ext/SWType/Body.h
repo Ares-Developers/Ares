@@ -125,6 +125,7 @@ public:
 		ValueableIdx<VoxClass> EVA_Detected;
 		ValueableIdx<VoxClass> EVA_Impatient;
 		ValueableIdx<VoxClass> EVA_InsufficientFunds;
+		ValueableIdx<VoxClass> EVA_SelectTarget;
 
 		// anim/sound
 		ValueableIdx<VocClass> SW_Sound;
@@ -209,6 +210,7 @@ public:
 			EVA_Detected (-1),
 			EVA_Impatient (-1),
 			EVA_InsufficientFunds (-1),
+			EVA_SelectTarget (-1),
 			Message_Detected (),
 			Message_Ready (),
 			Message_Launch (),

@@ -78,6 +78,8 @@ public:
 		Customizable<WarheadTypeClass *> Ivan_WH;
 		Customizable<SHPStruct *> Ivan_Image;
 		Customizable<int> Ivan_FlickerRate;
+		Nullable<bool> Ivan_CanDetonateTimeBomb;
+		Nullable<bool> Ivan_CanDetonateDeathBomb;
 
 		RadType * Rad_Type;
 
@@ -113,6 +115,8 @@ public:
 			Ivan_WH (&RulesClass::Instance->IvanWarhead),
 			Ivan_Image (&RulesClass::Instance->BOMBCURS_SHP),
 			Ivan_FlickerRate (&RulesClass::Instance->IvanIconFlickerRate),
+			Ivan_CanDetonateTimeBomb (),
+			Ivan_CanDetonateDeathBomb (),
 			Rad_Type (NULL),
 			Abductor(false),
 			Abductor_AnimType(NULL),

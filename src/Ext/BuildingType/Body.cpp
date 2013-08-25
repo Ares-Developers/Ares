@@ -227,6 +227,7 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 	this->ResetSW.Read(&exINI, pID, "SpyEffect.ResetSuperweapons");
 	this->ResetRadar.Read(&exINI, pID, "SpyEffect.ResetRadar");
 	this->RevealRadar.Read(&exINI, pID, "SpyEffect.RevealRadar");
+	this->RevealRadarPersist.Read(&exINI, pID, "SpyEffect.KeepRadar");
 	this->GainVeterancy.Read(&exINI, pID, "SpyEffect.UnitVeterancy");
 	this->StolenTechIndex.Read(&exINI, pID, "SpyEffect.StolenTechIndex");
 	this->PowerOutageDuration.Read(&exINI, pID, "SpyEffect.PowerOutageDuration");
@@ -250,6 +251,9 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 
 	this->CloningFacility.Read(&exINI, pID, "CloningFacility");
 	this->Factory_ExplicitOnly.Read(&exINI, pID, "Factory.ExplicitOnly");
+
+	this->GateDownSound.Read(&exINI, pID, "GateDownSound");
+	this->GateUpSound.Read(&exINI, pID, "GateUpSound");
 }
 
 void BuildingTypeExt::ExtData::CompleteInitialization(BuildingTypeClass *pThis) {

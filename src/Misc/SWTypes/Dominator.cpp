@@ -126,7 +126,7 @@ void PsychicDominatorStateMachine::Update() {
 			}
 			PsyDom::Anim(pAnim);
 		
-			if(pData->SW_ActivationSound.Get()) {
+			if(pData->SW_ActivationSound != -1) {
 				VocClass::PlayAt(pData->SW_ActivationSound, &coords, NULL);
 			}
 

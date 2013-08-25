@@ -142,11 +142,9 @@ DEFINE_HOOK(53B080, PsyDom_Fire, 5) {
 			};
 
 			// every techno in this area shall be one with Yuri.
-			if(Helpers::Alex::DistinctCollector<ObjectClass*> *items = new Helpers::Alex::DistinctCollector<ObjectClass*>()) {
-				Helpers::Alex::forEachObjectInCellSpread(&cell, pData->SW_WidthOrRange, pData->SW_Height, items->getCollector());
-				items->forEach(Dominate);
-				delete items;
-			}
+			Helpers::Alex::DistinctCollector<ObjectClass*> items;
+			Helpers::Alex::forEachObjectInCellSpread(&cell, pData->SW_WidthOrRange, pData->SW_Height, items.getCollector());
+			items.forEach(Dominate);
 
 			// the AI sends all new minions to hunt
 			if(!PsyDom::Owner()->ControlledByHuman()) {
@@ -534,13 +532,13 @@ DEFINE_HOOK(53A140, LightningStorm_Strike, 7) {
 		// create a cloud animation
 		if(Coords != LightningStorm::EmptyCoords) {
 			// select the anim
-			auto it = pData->Weather_Clouds.GetElements(RulesClass::Instance->WeatherConClouds);
-			AnimTypeClass* pAnimType = it.at(ScenarioClass::Instance->Random.Random() % it.size());
+			auto itClouds = pData->Weather_Clouds.GetElements(RulesClass::Instance->WeatherConClouds);
+			AnimTypeClass* pAnimType = itClouds.at(ScenarioClass::Instance->Random.Random() % itClouds.size());
 
 			// infer the height this thing will be drawn at.
 			if(pData->Weather_CloudHeight < 0) {
-				if(auto it = pData->Weather_Bolts.GetElements(RulesClass::Instance->WeatherConBolts)) {
-					AnimTypeClass* pBoltAnim = it.at(0);
+				if(auto itBolts = pData->Weather_Bolts.GetElements(RulesClass::Instance->WeatherConBolts)) {
+					AnimTypeClass* pBoltAnim = itBolts.at(0);
 					pData->Weather_CloudHeight = (int)Game::F2I(((pBoltAnim->GetImage()->Height / 2) - 0.5) * LightningStorm::CloudHeightFactor);
 				}
 			}

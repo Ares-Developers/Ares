@@ -141,6 +141,19 @@ DEFINE_HOOK(6AAEDF, SidebarClass_ProcessCameoClick_SuperWeapons, 6) {
 	return 0;
 }
 
+// play a customizable target selection EVA message
+DEFINE_HOOK(6AAF9D, SidebarClass_ProcessCameoClick_SelectTarget, 5)
+{
+	GET(int, index, ESI);
+	if(SuperClass* pSW = HouseClass::Player->Supers.GetItem(index)) {
+		if(SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSW->Type)) {
+			VoxClass::PlayIndex(pData->EVA_SelectTarget);
+		}
+	}
+
+	return 0x6AB95A;
+}
+
 DEFINE_HOOK(6A932B, CameoClass_GetTip_MoneySW, 6) {
 	GET(SuperWeaponTypeClass*, pSW, EAX);
 
@@ -391,6 +404,21 @@ DEFINE_HOOK(6CBA9E, SuperClass_ClickFire_Abort, 7)
 	return 0;
 }
 
+DEFINE_HOOK(6CBB0D, SuperClass_ClickFire_ResetAfterLaunch, 6)
+{
+	GET(SuperClass*, pSW, ESI);
+	GET(SuperWeaponTypeClass*, pType, EAX);
+
+	// do as the original game set it, but do not reset
+	// the ready state for PreClick SWs neither. they will
+	// be reset after the PostClick SW fired.
+	if(pType && !pType->PostClick && !pType->PreClick) {
+		pSW->IsCharged = false;
+	}
+
+	return 0x6CBB18;
+}
+
 // ARGH!
 DEFINE_HOOK(6CC390, SuperClass_Launch, 6)
 {
@@ -496,6 +524,25 @@ DEFINE_HOOK(6CC2B0, SuperClass_NameReadiness, 5) {
 
 	R->EAX(text->empty() ? nullptr : text->Text);
 	return 0x6CC352;
+}
+
+// #896002: darken SW cameo if player can't afford it
+DEFINE_HOOK(6A99B7, TabCameoListClass_Draw_SuperDarken, 5)
+{
+	GET(int, idxSW, EDI);
+
+	auto pSW = HouseClass::Player->Supers.GetItem(idxSW);
+	auto pExt = SWTypeExt::ExtMap.Find(pSW->Type);
+
+	bool darken = false;
+	if(pSW->IsCharged && pExt->Money_Amount < 0) {
+		if(pSW->Owner->Available_Money() < -pExt->Money_Amount) {
+			darken = true;
+		}
+	}
+
+	R->BL(darken);
+	return 0;
 }
 
 DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {

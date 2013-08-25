@@ -1,5 +1,6 @@
 #include "Body.h"
 #include "../BuildingType/Body.h"
+#include "../HouseType/Body.h"
 #include "../Side/Body.h"
 #include "../../Enum/Prerequisites.h"
 #include "../../Misc/Debug.h"
@@ -339,6 +340,9 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 		this->CustomMissileTrailerSeparation.Read(&exINI, section, "Missile.TrailerSeparation");
 	}
 
+	// non-crashable aircraft
+	this->Crashable.Read(&exINI, section, "Crashable");
+
 	// quick fix - remove after the rest of weapon selector code is done
 	return;
 }
@@ -465,6 +469,9 @@ bool TechnoTypeExt::ExtData::CameoIsElite()
 		case abs_BuildingType:
 			if(TechnoTypeClass *Item = T->UndeploysInto) {
 				return Country->VeteranUnits.FindItemIndex((UnitTypeClass **)&Item) != -1;
+			} else {
+				auto pData = HouseTypeExt::ExtMap.Find(Country);
+				return pData->VeteranBuildings.Contains((BuildingTypeClass*)T);
 			}
 	}
 

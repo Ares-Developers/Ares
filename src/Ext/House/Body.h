@@ -47,6 +47,7 @@ class HouseExt
 			BuildingClass *Factory_AircraftType;
 
 			std::bitset<32> StolenTech;
+			IndexBitfield<HouseClass*> RadarPersist; 
 
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			IonSensitive(0),
@@ -58,6 +59,7 @@ class HouseExt
 			Factory_NavyType(NULL),
 			Factory_AircraftType(NULL),
 			SWLastIndex(0),
+			RadarPersist(),
 			StolenTech(0ull)
 		{
 		};

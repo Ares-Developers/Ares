@@ -7,6 +7,7 @@
 #include <Randomizer.h>
 #include <UnitTypeClass.h>
 #include <WeaponTypeClass.h>
+#include <VocClass.h>
 
 #include "../_Container.hpp"
 #include "../../Ares.h"
@@ -127,6 +128,7 @@ public:
 		Valueable<bool> ResetSW;
 		Valueable<bool> ResetRadar;
 		Valueable<bool> RevealRadar;
+		Valueable<bool> RevealRadarPersist;
 		Valueable<bool> GainVeterancy;
 		Valueable<bool> UnReverseEngineer;
 		Valueable<int> StolenTechIndex;
@@ -147,6 +149,10 @@ public:
 		// use this factory only if techno states it is built here
 		Valueable<bool> Factory_ExplicitOnly;
 
+		// gates
+		NullableIdx<VocClass> GateDownSound;
+		NullableIdx<VocClass> GateUpSound;
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			Solid_Height (0),
 			IsCustom (false),
@@ -165,12 +171,14 @@ public:
 			RubbleIntact (NULL),
 			RubbleDestroyed (NULL),
 			LightningRod_Modifier (1.0),
-
+			GateDownSound (),
+			GateUpSound (),
 			InfiltrateCustom (false),
 			RevealProduction (false),
 			ResetSW (false),
 			ResetRadar (false),
 			RevealRadar (false),
+			RevealRadarPersist (false),
 			GainVeterancy (false),
 			UnReverseEngineer (false),
 			StolenTechIndex (-1),

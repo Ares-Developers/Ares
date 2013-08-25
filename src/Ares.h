@@ -53,6 +53,8 @@ public:
 
 	static bool bFPSCounter;
 
+	static bool bOutputMissingStrings;
+
 	static int TrackIndex;
 
 	static PVOID pExceptionHandler;

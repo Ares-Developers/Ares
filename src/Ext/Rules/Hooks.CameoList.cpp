@@ -23,7 +23,7 @@ int IndexOfTab(TabDataStruct * tab) {
 	}
 	Debug::FullDump(NULL);
 	Debug::FatalErrorAndExit("Failed to determine tab index of ptr %p\n", tab);
-	return -1;
+	//return -1; does not return
 };
 
 // initializing sidebar

@@ -181,20 +181,17 @@ void Debug::PrepareSnapshotDirectory(std::wstring &buffer) {
 	CreateDirectoryW(buffer.c_str(), NULL);
 }
 
-LONG CALLBACK Debug::ExceptionHandler(PEXCEPTION_POINTERS pExs)
+#pragma warning(push)
+#pragma warning(disable: 4646) // this function does not return, though it isn't declared VOID
+
+__declspec(noreturn) LONG CALLBACK Debug::ExceptionHandler(PEXCEPTION_POINTERS pExs)
 {
 	Debug::FreeMouse();
 	Debug::Log("Exception handler fired!\n");
 	Debug::Log("Exception %X at %p\n", pExs->ExceptionRecord->ExceptionCode, pExs->ExceptionRecord->ExceptionAddress);
 	SetWindowTextW(Game::hWnd, L"Fatal Error - Yuri's Revenge");
+
 //	if (IsDebuggerAttached()) return EXCEPTION_CONTINUE_SEARCH;
-	if (pExs->ExceptionRecord->ExceptionCode == ERROR_MOD_NOT_FOUND ||
-		pExs->ExceptionRecord->ExceptionCode == ERROR_PROC_NOT_FOUND)
-	{
-		Debug::Log("Massive failure: Procedure or module not found!\n");
-		//tell user
-		ExitProcess(pExs->ExceptionRecord->ExceptionCode);
-	}
 
 	switch(pExs->ExceptionRecord->ExceptionCode)
 	{
@@ -281,17 +278,23 @@ LONG CALLBACK Debug::ExceptionHandler(PEXCEPTION_POINTERS pExs)
 						, Debug::bParserErrorDetected ? "(One or more parser errors have been detected that might be responsible. Check the debug logs.)\r\n" : ""
 				);
 			}
-			ExitProcess(pExs->ExceptionRecord->ExceptionCode); // Exit.
 			break;
 		}
+		case ERROR_MOD_NOT_FOUND:
+		case ERROR_PROC_NOT_FOUND:
+			Debug::Log("Massive failure: Procedure or module not found!\n");
+			break;
 		default:
 			Debug::Log("Massive failure: reason unknown, have fun figuring it out\n");
 			Debug::DumpObj((byte *)pExs->ExceptionRecord, sizeof(*(pExs->ExceptionRecord)));
-			ExitProcess(pExs->ExceptionRecord->ExceptionCode); // Exit.
 //			return EXCEPTION_CONTINUE_SEARCH;
 			break;
 	}
+
+	Debug::Exit(pExs->ExceptionRecord->ExceptionCode);
 };
+
+#pragma warning(pop)
 
 LONG CALLBACK Debug::ExceptionFilter(PEXCEPTION_POINTERS pExs)
 {
@@ -299,7 +302,7 @@ LONG CALLBACK Debug::ExceptionFilter(PEXCEPTION_POINTERS pExs)
 		return EXCEPTION_CONTINUE_SEARCH;
 	}
 
-	return Debug::ExceptionHandler(pExs);
+	Debug::ExceptionHandler(pExs);
 }
 
 void Debug::FullDump(MINIDUMP_EXCEPTION_INFORMATION *pException, std::wstring * destinationFolder, std::wstring * generatedFilename) {
@@ -358,9 +361,9 @@ void Debug::FreeMouse() {
 //	}
 }
 
-void Debug::Exit() {
+__declspec(noreturn) void Debug::Exit(UINT ExitCode) {
 		Debug::Log("Exiting...\n");
-		ExitProcess(1);
+		ExitProcess(ExitCode);
 }
 
 void Debug::FatalError(bool Dump) {
@@ -393,7 +396,7 @@ void Debug::FatalError(const char *Message, ...) {
 	Debug::FatalError(false);
 }
 
-void Debug::FatalErrorAndExit(const char *Message, ...) {
+__declspec(noreturn) void Debug::FatalErrorAndExit(const char *Message, ...) {
 	Debug::FreeMouse();
 
 	va_list args;

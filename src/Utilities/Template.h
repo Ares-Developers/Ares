@@ -611,14 +611,14 @@ protected:
 template<>
 void ValueableVector<TechnoTypeClass *>::Parse(INI_EX *parser, const char* pSection, const char* pKey, char* pValue) {
 	// ...against the various object types; if we find one, place it in the value list
-	if(auto pType = AircraftTypeClass::Find(pValue)) {
-		this->push_back(pType);
-	} else if(auto pType = BuildingTypeClass::Find(pValue)) {
-		this->push_back(pType);
-	} else if(auto pType = InfantryTypeClass::Find(pValue)) {
-		this->push_back(pType);
-	} else if(auto pType = UnitTypeClass::Find(pValue)) {
-		this->push_back(pType);
+	if(auto pAircraftType = AircraftTypeClass::Find(pValue)) {
+		this->push_back(pAircraftType);
+	} else if(auto pBuildingType = BuildingTypeClass::Find(pValue)) {
+		this->push_back(pBuildingType);
+	} else if(auto pInfantryType = InfantryTypeClass::Find(pValue)) {
+		this->push_back(pInfantryType);
+	} else if(auto pUnitType = UnitTypeClass::Find(pValue)) {
+		this->push_back(pUnitType);
 	} else if(!INIClass::IsBlank(pValue)) {
 		Debug::INIParseFailed(pSection, pKey, pValue);
 	}

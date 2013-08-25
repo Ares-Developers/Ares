@@ -120,11 +120,9 @@ bool SW_Protect::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
 		};
 
 		// protect everything in range
-		if(Helpers::Alex::DistinctCollector<ObjectClass*> *items = new Helpers::Alex::DistinctCollector<ObjectClass*>()) {
-			Helpers::Alex::forEachObjectInRange(pCoords, width, height, items->getCollector());
-			items->forEach(IronCurtain);
-			delete items;
-		}
+		Helpers::Alex::DistinctCollector<ObjectClass*> items;
+		Helpers::Alex::forEachObjectInRange(pCoords, width, height, items.getCollector());
+		items.forEach(IronCurtain);
 	}
 
 	return true;

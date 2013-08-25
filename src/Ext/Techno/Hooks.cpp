@@ -29,6 +29,14 @@ DEFINE_HOOK(41668B, AircraftClass_ReceiveDamage, 6)
 	bool select = a->IsSelected && a->Owner->ControlledByPlayer();
 	TechnoExt::SpawnSurvivors(a, Killer, select, ignoreDefenses != 0);
 
+	// Crashable support for aircraft
+	if(auto pExt = TechnoTypeExt::ExtMap.Find(a->GetTechnoType())) {
+		if(!pExt->Crashable.Get(true)) {
+			R->EAX(0);
+			return 0x41669A;
+		}
+	}
+
 	return 0;
 }
 
@@ -1214,4 +1222,15 @@ DEFINE_HOOK(70DEBA, TechnoClass_UpdateGattling_Cycle, 6)
 	R->Stack<int>(0x10, pThis->GattlingValue);
 
 	return 0x70DEEB;
+}
+
+// prevent crashing and sinking technos from self-healing
+DEFINE_HOOK(6FA743, TechnoClass_Update_SkipSelfHeal, A)
+{
+	GET(TechnoClass*, pThis, ESI);
+	if(pThis->IsCrashing || pThis->IsSinking) {
+		return 0x6FA941;
+	}
+	
+	return 0;
 }

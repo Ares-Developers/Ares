@@ -31,6 +31,7 @@
 #include "../Utilities/Template.h"
 
 #include <cstdlib>
+#include <array>
 
 #ifdef DEBUGBUILD
 #include "../Ext/WarheadType/Body.h"
@@ -374,7 +375,7 @@ DEFINE_HOOK(6CF3CF, sub_6CF350, 8)
 
 	Debug::FatalErrorAndExit("Saved data loading failed");
 
-	return 0;
+	// return 0; does not return
 }
 
 /*
@@ -900,6 +901,14 @@ DEFINE_HOOK(4692A2, BulletClass_DetonateAt_RaiseAttackedByHouse, 6)
 	return pVictim->AttachedTag ? 0 : 0x4692BD;
 }
 
+// destroying a building (no health left) resulted in a single green pip shown
+// in the health bar for a split second. this makes the last pip red.
+DEFINE_HOOK(6F661D, TechnoClass_DrawHealthBar_DestroyedBuilding_RedPip, 7)
+{
+	GET(BuildingClass*, pBld, ESI);
+	return (pBld->Health <= 0 || pBld->IsRedHP()) ? 0x6F6628 : 0x6F6630;
+}
+
 DEFINE_HOOK(47243F, CaptureManagerClass_DecideUnitFate_BuildingFate, 6) {
 	GET(TechnoClass *, pVictim, EBX);
 	if(specific_cast<BuildingClass *>(pVictim)) {
@@ -1067,4 +1076,66 @@ DEFINE_HOOK(73D81E, UnitClass_Mi_Unload_LastPassenger, 5)
 	auto pType = pThis->GetTechnoType();
 	R->EAX(pType->Gunner ? 1 : 0);
 	return 0x73D823;
+}
+
+// stop command would still affect units going berzerk
+DEFINE_HOOK(730EE5, StopCommandClass_Execute_Berzerk, 6)
+{
+	GET(TechnoClass*, pTechno, ESI);
+
+	return pTechno->Berzerk ? 0x730EF7 : 0;
+}
+
+// powered units played their deactivation sounds even
+// when they aren't supposed to.
+DEFINE_HOOK(70FD0E, TechnoClass_Deactivate_MuteSound, 6)
+{
+	return Unsorted::IKnowWhatImDoing ? 0x70FD62 : 0;
+}
+
+DEFINE_HOOK(70FC18, TechnoClass_Activate_MuteSound, 6)
+{
+	return Unsorted::IKnowWhatImDoing ? 0x70FC7A : 0;
+}
+
+// do not infiltrate buildings of allies
+DEFINE_HOOK(519FF8, InfantryClass_UpdatePosition_PreInfiltrate, 6)
+{
+	GET(InfantryClass*, pThis, ESI);
+	GET(BuildingClass*, pBld, EDI);
+
+	if(!pThis->Type->Agent || pThis->Owner->IsAlliedWith(pBld)) {
+		return 0x51A03E;
+	}
+
+	return 0x51A002;
+}
+
+// replaces entire function (without the pip distortion bug)
+DEFINE_HOOK(4748A0, INIClass_GetPipIdx, 7)
+{
+	GET(INIClass*, pINI, ECX);
+	GET_STACK(const char*, pSection, 0x4);
+	GET_STACK(const char*, pKey, 0x8);
+	GET_STACK(int, fallback, 0xC);
+
+	int ret = fallback;
+	if(pINI->ReadString(pSection, pKey, Ares::readDefval, Ares::readBuffer, Ares::readLength)) {
+
+		// find the pip value with the name specified
+		auto PipTypes = reinterpret_cast<std::array<const NamedValue, 11>*>(0x81B958);
+		auto it = std::find(PipTypes->begin(), PipTypes->end(), Ares::readBuffer);
+
+		if(it != PipTypes->end()) {
+			ret = it->Value;
+
+		} else if(!Parser<int>::TryParse(Ares::readBuffer, &ret)) {
+			// parsing as integer didn't work either. invalid value
+			Debug::DevLog(Debug::Warning, "Could not parse pip at [%s]%s=\n", pSection, pKey);
+			ret = fallback;
+		}
+	}
+
+	R->EAX(ret);
+	return 0x474907;
 }

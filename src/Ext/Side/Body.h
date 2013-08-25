@@ -12,6 +12,7 @@
 
 #include "../../Ares.h"
 #include "../../Utilities/Template.h"
+#include "../../Misc/EVAVoices.h"
 
 class VoxClass;
 
@@ -36,15 +37,19 @@ class SideExt
 		TypeList<int> ParaDropNum;
 		ValueableIdx<AircraftTypeClass> ParaDropPlane;
 		Customizable<AnimTypeClass*> Parachute_Anim;
+		Valueable<ColorStruct> ToolTipTextColor;
+		int MessageTextColorIndex;
 		int SidebarMixFileIndex;
 		bool SidebarYuriFileNames;
-		char EVATag[0x20];	//TODO
+		ValueableIdx<EVAVoices> EVAIndex;
 
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			ParaDropPlane (-1),
-			Parachute_Anim (&RulesClass::Instance->Parachute)
+			Parachute_Anim (&RulesClass::Instance->Parachute),
+			ToolTipTextColor (),
+			MessageTextColorIndex (-1),
+			EVAIndex (-1)
 		{
-			*EVATag = 0;
 		};
 
 		virtual ~ExtData() {
@@ -59,14 +64,6 @@ class SideExt
 		}
 	};
 
-	struct VoxFileNameStruct //need to make this a struct for certain reasons
-	{
-		char FileName[0x10];
-
-		bool operator == (VoxFileNameStruct &t)
-			{ return (_strcmpi(FileName, t.FileName) == 0); }
-	};
-
 	//Hacks required in other classes:
 	//- TechnoTypeClass (Stolen Tech)
 	//- HouseClass (Stolen Tech)
@@ -74,7 +71,6 @@ class SideExt
 
 	static Container<SideExt> ExtMap;
 
-	static hash_map<VoxClass*, DynamicVectorClass<VoxFileNameStruct> > EVAFiles;
 	static int CurrentLoadTextColor;
 
 	static DWORD BaseDefenses(REGISTERS* R, DWORD dwReturnAddress);

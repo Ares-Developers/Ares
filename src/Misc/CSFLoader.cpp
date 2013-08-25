@@ -5,6 +5,7 @@
 
 int CSFLoader::CSFCount = 0;
 int CSFLoader::NextValueIndex = 0;
+std::hash_map<std::string, const CSFString*> CSFLoader::DynamicStrings;
 
 void CSFLoader::LoadAdditionalCSF(const char *pFileName)
 {
@@ -35,6 +36,40 @@ void CSFLoader::LoadAdditionalCSF(const char *pFileName)
 		GAME_DEALLOC(pFile);
 	}
 };
+
+const CSFString* CSFLoader::FindDynamic(const char* pLabelName) {
+	if(pLabelName) {
+		auto it	= DynamicStrings.find(pLabelName);
+		if(it != DynamicStrings.end()) {
+			return it->second;
+		}
+	}
+
+	// failed
+	return NULL;
+}
+
+const wchar_t* CSFLoader::GetDynamicString(const char* pLabelName, const wchar_t* pPattern, const char* pDefault) {
+	const CSFString *String = CSFLoader::FindDynamic(pLabelName);
+
+	if(!String) {
+		CSFString* NewString = NULL;
+		GAME_ALLOC(CSFString, NewString);
+		wsprintfW(NewString->Text, pPattern, pDefault);
+
+		NewString->PreviousEntry = StringTable::LastLoadedString;
+		StringTable::LastLoadedString = NewString;
+
+		if(Ares::bOutputMissingStrings) {
+			Debug::Log("[CSFLoader] Added label \"%s\" with value \"%ls\".\n", pLabelName, NewString->Text);
+		}
+
+		DynamicStrings[pLabelName] = NewString;
+		String = NewString;
+	}
+
+	return String->Text;
+}
 
 //0x7346D0
 DEFINE_HOOK(7346D0, CSF_LoadBaseFile, 6)
@@ -159,15 +194,11 @@ DEFINE_HOOK(6BD886, CSF_LoadExtraFiles, 5)
 DEFINE_HOOK(734E83, CSF_LoadString_1, 6)
 {
 	GET(char *, Name, EBX);
-	if(strlen(Name) >= 6 && !strncmp(Name, "NOSTR:", 6)) {
-		CSFString *NewString;
-		GAME_ALLOC(CSFString, NewString);
-		wsprintfW(NewString->Text, L"%hs", &Name[6]);
 
-		NewString->PreviousEntry = StringTable::LastLoadedString;
-		StringTable::LastLoadedString = NewString;
+	if(!strncmp(Name, "NOSTR:", 6)) {
+		const wchar_t* string = CSFLoader::GetDynamicString(Name, L"%hs", &Name[6]);
 
-		R->EAX(NewString->Text);
+		R->EAX(string);
 
 		return 0x734F0F;
 	}
@@ -177,15 +208,10 @@ DEFINE_HOOK(734E83, CSF_LoadString_1, 6)
 DEFINE_HOOK(734EC2, CSF_LoadString_2, 7)
 {
 	GET(char *, Name, EBX);
-	CSFString *NewString;
-	GAME_ALLOC(CSFString, NewString);
 
-	wsprintfW(NewString->Text, L"MISSING:'%hs'", Name);
+	const wchar_t* string = CSFLoader::GetDynamicString(Name, L"MISSING:'%hs'", Name);
 
-	NewString->PreviousEntry = StringTable::LastLoadedString;
-	StringTable::LastLoadedString = NewString;
-
-	R->EAX(NewString->Text);
+	R->EAX(string);
 
 	return 0x734F0F;
 }

@@ -5,6 +5,7 @@
 #include "../../Ares.CRT.h"
 #include <SuperClass.h>
 #include <ProgressScreenClass.h>
+#include <VoxClass.h>
 
 //0x4F8C97
 DEFINE_HOOK(4F8C97, Sides_BuildConst, 6)
@@ -263,60 +264,6 @@ DEFINE_HOOK(72F370, Sides_MixFileYuriFiles2, 7)
 DEFINE_HOOK(72FBC0, Sides_MixFileYuriFiles3, 5)
 	{ return SideExt::MixFileYuriFiles(R, 0x72FBCE, 0x72FBF5); }
 
-/*
-//0x752F46
-XPORT Sides_LoadVoxFromINI(REGISTERS* R)
-{
-	VoxClass* pThis = (VoxClass*)R->get_ESI();
-	CCINIClass* pINI = (CCINIClass*)R->get_EBP();
-
-	DEBUGLOG("VoxClass::LoadFromINI (%s, pINI = 0x%08X)\n", pThis->get_Name(), pINI);
-
-	DynamicVectorClass<SideExt::VoxFileNameStruct> FileNames;
-	SideExt::VoxFileNameStruct vfn;
-	char buffer[0x10] = "\0";
-
-	for(int i = 0; i < SideClass::Array->get_Count(); i++)
-	{
-		if(SideExt::Map.find((*SideClass::Array)[i]) != SideExt::Map.end())
-		{
-			pINI->ReadString(
-				pThis->get_Name(),
-				SideExt::Map[(*SideClass::Array)[i]].EVATag,
-				"",
-				buffer,
-				0x10);
-
-			strcpy(vfn.FileName, buffer);
-
-			FileNames.AddItem(vfn);
-		}
-		else
-		{
-			*vfn.FileName = 0;
-			FileNames.AddItem(vfn);	//make sure there's an entry for every side
-		}
-	}
-
-	SideExt::EVAFiles[pThis] = FileNames;
-	return 0;
-}
-*/
-
-//0x7528E8
-DEFINE_HOOK(7528E8, Sides_LoadVoxFile, 7)
-{
-	GET(VoxClass *, pThis, EBP);
-	if(SideExt::EVAFiles.find(pThis) != SideExt::EVAFiles.end()) {
-		int nSideIndex = *((int*)0xB1D4C8);
-
-		R->EDI(SideExt::EVAFiles[pThis][nSideIndex].FileName);
-		return 0x752901;
-	}
-
-	return 0;
-}
-
 /* fixes to reorder the savegame */
 DEFINE_HOOK(67D315, SaveGame_EarlySaveSides, 5)
 {
@@ -377,19 +324,52 @@ DEFINE_HOOK(41E893, AITriggerTypeClass_ConditionMet_SideIndex, 0)
 	;
 }
 
-DEFINE_HOOK(6DE0D3, TActionClass_Execute_HardcodeMessageColors, 6)
+DEFINE_HOOK(7534E0, VoxClass_SetEVAIndex, 5)
+{
+	GET(int, side, ECX);
+
+	if(side < 0) {
+		VoxClass::EVAIndex = -1;
+	} else {
+		SideClass* pSide = SideClass::Array->GetItem(side);
+		if(SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide)) {
+			VoxClass::EVAIndex = pData->EVAIndex;
+		}
+	}
+
+	return 0x7534F3;
+}
+
+DEFINE_HOOK(6DE0D3, TActionClass_Execute_MessageColor, 6)
 {
 	int idxSide = ScenarioClass::Instance->PlayerSideIndex;
-	int idxColor = 25;
+	int idxColor = 0;
 
-	if(!idxSide) {
-		// allied
-		idxColor = 21;
-	} else if(idxSide == 1) {
-		// soviet
-		idxColor = 11;
+	if(SideClass::Array->ValidIndex(idxSide)) {
+		if(SideClass* pSide = SideClass::Array->GetItem(idxSide)) {
+			if(SideExt::ExtData* pExt = SideExt::ExtMap.Find(pSide)) {
+				idxColor = pExt->MessageTextColorIndex;
+			}
+		}
 	}
 	
 	R->EAX(idxColor);
 	return 0x6DE0DE;
+}
+
+DEFINE_HOOK(72F440, Game_InitializeToolTipColor, A)
+{
+	GET(int, idxSide, ECX);
+
+	if(SideClass::Array->ValidIndex(idxSide)) {
+		if(SideClass* pSide = SideClass::Array->GetItem(idxSide)) {
+			if(SideExt::ExtData* pExt = SideExt::ExtMap.Find(pSide)) {
+				ColorStruct &clrToolTip = *(ColorStruct*)0x0B0FA1C;
+				clrToolTip = pExt->ToolTipTextColor.Get();
+				return 0x72F495;
+			}
+		}
+	}
+
+	return 0;
 }

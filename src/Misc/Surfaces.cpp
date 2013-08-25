@@ -27,7 +27,7 @@ DEFINE_HOOK(7B9510, WWMouseClass_DrawCursor_V1, 6)
 
 DEFINE_HOOK(537BC0, Game_MakeScreenshot, 0)
 {
-	RECT Viewport;
+	RECT Viewport = {};
 	if(Imports::GetWindowRect(Game::hWnd, &Viewport)) {
 		POINT TL = {Viewport.left, Viewport.top}, BR = {Viewport.right, Viewport.bottom};
 		if(Imports::ClientToScreen(Game::hWnd, &TL) && Imports::ClientToScreen(Game::hWnd, &BR)) {
@@ -162,6 +162,11 @@ DEFINE_HOOK(4F4583, GScreenClass_DrawOnTop_TheDarkSideOfTheMoon, 6)
 	if(!Ares::bStable) {
 		Ares::bStableNotification = true;
 		DrawText(Ares::StabilityWarning, offset, COLOR_RED);
+	}
+
+	static const CSFText modnote("TXT_RELEASE_NOTE");
+	if(!modnote.empty()) {
+		DrawText(modnote, offset, COLOR_RED);
 	}
 
 	if(Ares::bFPSCounter) {

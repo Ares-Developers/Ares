@@ -22,6 +22,7 @@
 #include <UnitTypeClass.h>
 #include <VocClass.h>
 #include <WarheadTypeClass.h>
+#include <VoxelAnimTypeClass.h>
 
 #include "Debug.h"
 #include "../Ares.h"
@@ -60,32 +61,6 @@ static void ParseList<int>(DynamicVectorClass<int> &List, CCINIClass * pINI, con
 		}
 	}
 };
-
-
-
-template<typename T>
-static void ParseListIndices(DWORD &Composite, CCINIClass * pINI, const char *section, const char *key) {
-	if(pINI->ReadString(section, key, Ares::readDefval, Ares::readBuffer, Ares::readLength)) {
-		Composite = 0;
-		for(char *cur = strtok(Ares::readBuffer, Ares::readDelims); cur; cur = strtok(NULL, Ares::readDelims)) {
-			int idx = CompoundT<T>::BaseT::FindIndex(cur);
-			if(idx > -1) {
-				Composite |= (1 << idx);
-			} else {
-				Debug::INIParseFailed(section, key, cur);
-			}
-		}
-	}
-};
-
-#define PARSE_INDICES(obj, key) \
-	ParseListIndices(obj->key, pINI, section, #key);
-
-#define PARSE_COUNTRY_INDICES(obj, key) \
-	ParseListIndices<HouseTypeClass *>(obj->key, pINI, section, #key);
-
-#define PARSE_COUNTRY_INDICES_INTO(obj, key, attr, type) \
-	ParseListIndices<HouseTypeClass *>(obj->attr, pINI, section, #key);
 
 /* issue 193 - increasing the buffer length for certain flag parsing */
 
@@ -252,31 +227,15 @@ DEFINE_HOOK(7121A3, Buf_TechnoType, 6)
 	GET(const char *, section, EBX);
 	GET(CCINIClass *, pINI, ESI);
 
-	PARSE_COUNTRY_INDICES(T, ForbiddenHouses);
-	PARSE_COUNTRY_INDICES(T, SecretHouses);
-	PARSE_COUNTRY_INDICES(T, RequiredHouses);
-	PARSE_COUNTRY_INDICES_INTO(T, Owner, OwnerFlags, HouseTypeClass);
-
 	PARSE_LIST(T, DamageParticleSystems);
 	PARSE_LIST(T, DestroyParticleSystems);
 
 	PARSE_LIST(T, Dock);
 
-// TODO: define VoxelAnimTypeClass
-//	PARSE_VECTOR_INT(section, T, DebrisMaximums);
-//	PARSE_VECTOR_N(section, T, DebrisTypes, VoxelAnimTypeClass);
+	PARSE_LIST(T, DebrisMaximums);
+	PARSE_LIST(T, DebrisTypes);
 
 	return 0;
-}
-
-DEFINE_HOOK(7149E1, Buf_Owner, 6)
-{
-	return 0x7149FB;
-}
-
-DEFINE_HOOK(714522, Buf_OwnHouses, 6)
-{
-	return 0x714570;
 }
 
 DEFINE_HOOK(713171, Buf_Dock, 9)
@@ -307,9 +266,8 @@ DEFINE_HOOK(75D660, Buf_Warhead, 9)
 
 	PARSE_LIST(WH, AnimList);
 
-// TODO: define VoxelAnimTypeClass
-//	PARSE_VECTOR_INT(section, T, DebrisMaximums);
-//	PARSE_VECTOR_N(section, T, DebrisTypes, VoxelAnimTypeClass);
+	PARSE_LIST(WH, DebrisMaximums);
+	PARSE_LIST(WH, DebrisTypes);
 
 	return 0;
 }
@@ -342,6 +300,31 @@ DEFINE_HOOK(727544, TriggerTypeClass_LoadFromINI_Strtok_Actions, 5)
 	return 0;
 }
 
+DEFINE_HOOK(4750EC, INIClass_ReadHouseTypesList, 7)
+{
+	R->Stack(0x0, Ares::readBuffer);
+	R->Stack(0x4, Ares::readLength);
+	return 0;
+}
+
+DEFINE_HOOK(475107, INIClass_ReadHouseTypesList_Strtok, 5)
+{
+	R->ECX(Ares::readBuffer);
+	return 0;
+}
+
+DEFINE_HOOK(47527C, INIClass_GetAlliesBitfield, 7)
+{
+	R->Stack(0x0, Ares::readBuffer);
+	R->Stack(0x4, Ares::readLength);
+	return 0;
+}
+
+DEFINE_HOOK(475297, INIClass_GetAlliesBitfield_Strtok, 5)
+{
+	R->ECX(Ares::readBuffer);
+	return 0;
+}
 
 DEFINE_HOOK(6A9348, CameoClass_GetTip_FixLength, 9)
 {
