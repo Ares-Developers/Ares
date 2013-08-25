@@ -86,8 +86,6 @@ void __stdcall Ares::RegisterCommands()
 
 void __stdcall Ares::CmdLineParse(char** ppArgs,int nNumArgs)
 {
-	char* pArg;
-
 	Debug::bLog = false;
 	bNoCD = false;
 	bNoLogo = false;
@@ -96,24 +94,23 @@ void __stdcall Ares::CmdLineParse(char** ppArgs,int nNumArgs)
 	// > 1 because the exe path itself counts as an argument, too!
 	if(nNumArgs > 1) {
 		for(int i = 1; i < nNumArgs; i++) {
-			pArg = ppArgs[i];
-			_strupr(pArg);
+			char* pArg = ppArgs[i];
 
-			if(strcmp(pArg,"-LOG") == 0) {
+			if(_stricmp(pArg,"-LOG") == 0) {
 				Debug::bLog = true;
-			} else if(strcmp(pArg,"-CD") == 0) {
+			} else if(_stricmp(pArg,"-CD") == 0) {
 				bNoCD = true;
-			} else if(strcmp(pArg,"-NOLOGO") == 0) {
+			} else if(_stricmp(pArg,"-NOLOGO") == 0) {
 				bNoLogo = true;
-			} else if(strcmp(pArg, "-TESTRUN") == 0) {
+			} else if(_stricmp(pArg, "-TESTRUN") == 0) {
 				bTestingRun = true;
-			} else if(strcmp(pArg, "-STRICT") == 0) {
+			} else if(_stricmp(pArg, "-STRICT") == 0) {
 				bStrictParser = true;
-			} else if(strcmp(pArg, "-LOG-EMP") == 0) {
+			} else if(_stricmp(pArg, "-LOG-EMP") == 0) {
 				EMPulse::verbose = true;
-			} else if(strcmp(pArg,"-AI-CONTROL") == 0) {
+			} else if(_stricmp(pArg,"-AI-CONTROL") == 0) {
 				bAllowAIControl = true;
-			} else if(strcmp(pArg,"-LOG-CSF") == 0) {
+			} else if(_stricmp(pArg,"-LOG-CSF") == 0) {
 				bOutputMissingStrings = true;
 			}
 		}
