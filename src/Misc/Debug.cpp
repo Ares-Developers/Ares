@@ -49,7 +49,7 @@ void Debug::LogFileOpen()
 	Debug::MakeLogFile();
 	Debug::LogFileClose(999);
 
-	pLogFile = _wfopen(Debug::LogFileTempName.c_str(), L"w");
+	pLogFile = _wfsopen(Debug::LogFileTempName.c_str(), L"w", _SH_DENYNO);
 	if(!pLogFile) {
 		wchar_t msg[100] = L"\0";
 		wsprintfW(msg, L"Log file failed to open. Error code = %X", errno);
@@ -229,7 +229,7 @@ __declspec(noreturn) LONG CALLBACK Debug::ExceptionHandler(PEXCEPTION_POINTERS p
 
 			std::wstring except_file = path + L"\\except.txt";
 
-			if(FILE *except = _wfopen(except_file.c_str(), L"w")) {
+			if(FILE *except = _wfsopen(except_file.c_str(), L"w", _SH_DENYNO)) {
 #define DELIM "---------------------\n"
 				fprintf(except, "Internal Error encountered!\n");
 				fprintf(except, DELIM);
