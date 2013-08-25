@@ -150,7 +150,9 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 
 	if(pINI->ReadString(pID, "SecretLab.PossibleBoons", "", Ares::readBuffer, Ares::readLength)) {
 		this->Secret_Boons.Clear();
-		for(char *cur = strtok(Ares::readBuffer, ","); cur; cur = strtok(NULL, ",")) {
+
+		char* context = nullptr;
+		for(char *cur = strtok_s(Ares::readBuffer, ",", &context); cur; cur = strtok_s(nullptr, ",", &context)) {
 			TechnoTypeClass *pTechno = TechnoTypeClass::Find(cur);
 			if(pTechno) {
 				this->Secret_Boons.AddItem(pTechno);

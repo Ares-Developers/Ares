@@ -92,7 +92,9 @@ public:
 			this->Buffer = _strdup(Buf);
 		}
 		this->Strings.Clear();
-		for(char * cur = strtok(this->Buffer, ","); cur && *cur; cur = strtok(NULL, ",")) {
+
+		char* context = nullptr;
+		for(char * cur = strtok_s(this->Buffer, ",", &context); cur && *cur; cur = strtok_s(nullptr, ",", &context)) {
 			this->Strings.AddItem(cur);
 		}
 	}

@@ -97,7 +97,8 @@ void SW_ParaDrop::LoadFromINI(
 			// parse the types
 			pPlane->pTypes.Clear();
 
-			for(char* p = strtok(Ares::readBuffer, Ares::readDelims); p && *p; p = strtok(NULL, Ares::readDelims)) {
+			char* context = nullptr;
+			for(char* p = strtok_s(Ares::readBuffer, Ares::readDelims, &context); p && *p; p = strtok_s(nullptr, Ares::readDelims, &context)) {
 				TechnoTypeClass* pTT = UnitTypeClass::Find(p);
 
 				if(!pTT) {
@@ -122,7 +123,8 @@ void SW_ParaDrop::LoadFromINI(
 		if(pINI->ReadString(section, key, "", Ares::readBuffer, Ares::readLength)) {
 			pPlane->pNum.Clear();
 
-			for(char* p = strtok(Ares::readBuffer, Ares::readDelims); p && *p; p = strtok(NULL, Ares::readDelims)) {
+			char* context = nullptr;
+			for(char* p = strtok_s(Ares::readBuffer, Ares::readDelims, &context); p && *p; p = strtok_s(nullptr, Ares::readDelims, &context)) {
 				pPlane->pNum.AddItem(atoi(p));
 			}
 		}

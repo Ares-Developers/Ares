@@ -55,7 +55,8 @@ void WarheadTypeExt::ExtData::LoadFromINIFile(WarheadTypeClass *pThis, CCINIClas
 	// writing custom verses parser just because
 	if(pINI->ReadString(section, "Verses", "", Ares::readBuffer, Ares::readLength)) {
 		int idx = 0;
-		for(char *cur = strtok(Ares::readBuffer, ","); cur; cur = strtok(NULL, ",")) {
+		char* context = nullptr;
+		for(char *cur = strtok_s(Ares::readBuffer, ",", &context); cur; cur = strtok_s(nullptr, ",", &context)) {
 			this->Verses[idx].Parse(cur);
 			++idx;
 			if(idx > 10) {

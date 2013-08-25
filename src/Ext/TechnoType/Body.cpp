@@ -145,7 +145,9 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 
 	if(pINI->ReadString(section, "Prerequisite.RequiredTheaters", "", Ares::readBuffer, Ares::readLength)) {
 		this->PrerequisiteTheaters = 0;
-		for(char *cur = strtok(Ares::readBuffer, ","); cur; cur = strtok(NULL, ",")) {
+
+		char* context = nullptr;
+		for(char *cur = strtok_s(Ares::readBuffer, ",", &context); cur; cur = strtok_s(nullptr, ",", &context)) {
 			signed int idx = Theater::FindIndex(cur);
 			if(idx != -1) {
 				this->PrerequisiteTheaters |= (1 << idx);
@@ -214,7 +216,9 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 
 	if(pINI->ReadString(section, "Prerequisite.StolenTechs", "", Ares::readBuffer, Ares::readLength)) {
 		this->RequiredStolenTech.reset();
-		for(char *cur = strtok(Ares::readBuffer, ","); cur; cur = strtok(NULL, ",")) {
+
+		char* context = nullptr;
+		for(char *cur = strtok_s(Ares::readBuffer, ",", &context); cur; cur = strtok_s(nullptr, ",", &context)) {
 			signed int idx = atoi(cur);
 			if(idx > -1 && idx < 32) {
 				this->RequiredStolenTech.set(idx);
@@ -240,7 +244,8 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	}
 
 	if(pINI->ReadString(section, "VeteranAbilities", "", Ares::readBuffer, Ares::readLength)) {
-		for(char *cur = strtok(Ares::readBuffer, ","); cur; cur = strtok(NULL, ",")) {
+		char* context = nullptr;
+		for(char *cur = strtok_s(Ares::readBuffer, ",", &context); cur; cur = strtok_s(nullptr, ",", &context)) {
 			if(!_strcmpi(cur, "empimmune")) {
 				this->VeteranAbilityEMPIMMUNE = true;
 				this->EliteAbilityEMPIMMUNE = true;
@@ -249,7 +254,8 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	}
 
 	if(pINI->ReadString(section, "EliteAbilities", "", Ares::readBuffer, Ares::readLength)) {
-		for(char *cur = strtok(Ares::readBuffer, ","); cur; cur = strtok(NULL, ",")) {
+		char* context = nullptr;
+		for(char *cur = strtok_s(Ares::readBuffer, ",", &context); cur; cur = strtok_s(nullptr, ",", &context)) {
 			if(!_strcmpi(cur, "empimmune")) {
 				this->EliteAbilityEMPIMMUNE = true;
 			}

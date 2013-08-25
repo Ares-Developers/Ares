@@ -77,7 +77,8 @@ public:
 	static bool Parse(char* key, Value* value) {
 		if(key && value) {
 			Value ret = SuperWeaponTarget::None;
-			for(char *cur = strtok(key, ","); cur; cur = strtok(NULL, Ares::readDelims)) {
+			char* context = nullptr;
+			for(char *cur = strtok_s(key, ",", &context); cur; cur = strtok_s(nullptr, Ares::readDelims, &context)) {
 				if(!_strcmpi(cur, "land")) {
 					ret |= SuperWeaponTarget::Land;
 				} else if(!_strcmpi(cur, "water")) {
@@ -118,7 +119,8 @@ public:
 	static bool Parse(char* key, Value* value) {
 		if(key && value) {
 			Value ret = SuperWeaponAffectedHouse::None;
-			for(char *cur = strtok(key, ","); cur; cur = strtok(NULL, ",")) {
+			char* context = nullptr;
+			for(char *cur = strtok_s(key, ",", &context); cur; cur = strtok_s(nullptr, ",", &context)) {
 				if(!_strcmpi(cur, "owner")) {
 					ret |= SuperWeaponAffectedHouse::Owner;
 				} else if(!_strcmpi(cur, "allies")) {

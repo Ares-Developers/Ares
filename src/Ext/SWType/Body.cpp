@@ -157,12 +157,13 @@ void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass
 	this->SW_Damage.Read(&exINI, section, "SW.Damage");
 
 	if(pINI->ReadString(section, "SW.Range", Ares::readDefval, Ares::readBuffer, Ares::readLength)) {
-		char* p = strtok(Ares::readBuffer, Ares::readDelims);
+		char* context = nullptr;
+		char* p = strtok_s(Ares::readBuffer, Ares::readDelims, &context);
 		if(p && *p) {
 			this->SW_WidthOrRange = (float)atof(p);
 			this->SW_Height = -1;
 
-			p = strtok(NULL, Ares::readDelims);
+			p = strtok_s(nullptr, Ares::readDelims, &context);
 			if(p && *p) {
 				this->SW_Height = atoi(p);
 			}

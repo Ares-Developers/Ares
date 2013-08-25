@@ -405,12 +405,13 @@ void Valueable<MouseCursor>::Read(INI_EX *parser, const char* pSection, const ch
 	_snprintf(pFlagName, 32, "%s.HotSpot", pKey);
 	if(parser->ReadString(pSection, pFlagName)) {
 		char *buffer = const_cast<char *>(parser->value());
-		char *hotx = strtok(buffer, ",");
+		char *context = nullptr;
+		char *hotx = strtok_s(buffer, ",", &context);
 		if(!strcmp(hotx, "Left")) this->Value.HotX = hotspx_left;
 		else if(!strcmp(hotx, "Center")) this->Value.HotX = hotspx_center;
 		else if(!strcmp(hotx, "Right")) this->Value.HotX = hotspx_right;
 
-		if(char *hoty = strtok(NULL, ",")) {
+		if(char *hoty = strtok_s(nullptr, ",", &context)) {
 			if(!strcmp(hoty, "Top")) this->Value.HotY = hotspy_top;
 			else if(!strcmp(hoty, "Middle")) this->Value.HotY = hotspy_middle;
 			else if(!strcmp(hoty, "Bottom")) this->Value.HotY = hotspy_bottom;
@@ -593,7 +594,8 @@ public:
 protected:
 	virtual void Split(INI_EX *parser, const char* pSection, const char* pKey, char* pValue) {
 		// if we were able to get the flag in question, take it apart and check the tokens...
-		for(char *cur = strtok(pValue, Ares::readDelims); cur; cur = strtok(nullptr, Ares::readDelims)) {
+		char* context = nullptr;
+		for(char *cur = strtok_s(pValue, Ares::readDelims, &context); cur; cur = strtok_s(nullptr, Ares::readDelims, &context)) {
 			Parse(parser, pSection, pKey, cur);
 		}
 	}
@@ -666,7 +668,8 @@ class ValueableIdxVector : public ValueableVector<int> {
 protected:
 	virtual void Split(INI_EX *parser, const char* pSection, const char* pKey, char* pValue) {
 		// split the string and look up the tokens. only valid tokens are added.
-		for(char* cur = strtok(pValue, Ares::readDelims); cur; cur = strtok(nullptr, Ares::readDelims)) {
+		char* context = nullptr;
+		for(char* cur = strtok_s(pValue, Ares::readDelims, &context); cur; cur = strtok_s(nullptr, Ares::readDelims, &context)) {
 			int idx = Lookuper::FindIndex(cur);
 			if(idx != -1) {
 				this->push_back(idx);
@@ -682,7 +685,8 @@ class NullableIdxVector : public NullableVector<int> {
 protected:
 	virtual void Split(INI_EX *parser, const char* pSection, const char* pKey, char* pValue) {
 		// split the string and look up the tokens. only valid tokens are added.
-		for(char* cur = strtok(pValue, Ares::readDelims); cur; cur = strtok(nullptr, Ares::readDelims)) {
+		char* context = nullptr;
+		for(char* cur = strtok_s(pValue, Ares::readDelims, &context); cur; cur = strtok_s(nullptr, Ares::readDelims, &context)) {
 			int idx = Lookuper::FindIndex(cur);
 			if(idx != -1) {
 				this->push_back(idx);

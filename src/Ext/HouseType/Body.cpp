@@ -299,7 +299,9 @@ void HouseTypeExt::ExtData::LoadFromINIFile(HouseTypeClass *pThis, CCINIClass *p
 
 	if (pINI->ReadString(pID, "AI.PowerPlants", "", Ares::readBuffer, Ares::readLength)) {
 		this->Powerplants.Clear();
-		for (char *bld = strtok(Ares::readBuffer, Ares::readDelims); bld; bld = strtok(NULL, Ares::readDelims)) {
+
+		char* context = nullptr;
+		for (char *bld = strtok_s(Ares::readBuffer, Ares::readDelims, &context); bld; bld = strtok_s(nullptr, Ares::readDelims, &context)) {
 			if (BuildingTypeClass *pBld = BuildingTypeClass::Find(bld)) {
 				this->Powerplants.AddItem(pBld);
 			} else {
@@ -318,7 +320,8 @@ void HouseTypeExt::ExtData::LoadFromINIFile(HouseTypeClass *pThis, CCINIClass *p
 	if(pINI->ReadString(pID, "ParaDrop.Types", "", Ares::readBuffer, Ares::readLength)) {
 		this->ParaDrop.Clear();
 
-		for(p = strtok(Ares::readBuffer, Ares::readDelims); p && *p; p = strtok(NULL, Ares::readDelims)) {
+		char* context = nullptr;
+		for(p = strtok_s(Ares::readBuffer, Ares::readDelims, &context); p && *p; p = strtok_s(nullptr, Ares::readDelims, &context)) {
 			TechnoTypeClass* pTT = UnitTypeClass::Find(p);
 
 			if(!pTT) {
@@ -336,7 +339,8 @@ void HouseTypeExt::ExtData::LoadFromINIFile(HouseTypeClass *pThis, CCINIClass *p
 	if(pINI->ReadString(pID, "ParaDrop.Num", "", Ares::readBuffer, Ares::readLength)) {
 		this->ParaDropNum.Clear();
 
-		for(p = strtok(Ares::readBuffer, Ares::readDelims); p && *p; p = strtok(NULL, Ares::readDelims)) {
+		char* context = nullptr;
+		for(p = strtok_s(Ares::readBuffer, Ares::readDelims, &context); p && *p; p = strtok_s(nullptr, Ares::readDelims, &context)) {
 			this->ParaDropNum.AddItem(atoi(p));
 		}
 	}

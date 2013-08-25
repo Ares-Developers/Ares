@@ -108,7 +108,8 @@ void SideExt::ExtData::LoadFromINIFile(SideClass *pThis, CCINIClass *pINI)
 	if(pINI->ReadString(section, "AI.BaseDefenseCounts", "", Ares::readBuffer, Ares::readLength)) {
 		this->BaseDefenseCounts.Clear();
 
-		for(p = strtok(Ares::readBuffer, Ares::readDelims); p && *p; p = strtok(NULL, Ares::readDelims)) {
+		char* context = nullptr;
+		for(p = strtok_s(Ares::readBuffer, Ares::readDelims, &context), &context; p && *p; p = strtok_s(nullptr, Ares::readDelims, &context)) {
 			this->BaseDefenseCounts.AddItem(atoi(p));
 		}
 	}
@@ -116,7 +117,8 @@ void SideExt::ExtData::LoadFromINIFile(SideClass *pThis, CCINIClass *pINI)
 	if(pINI->ReadString(section, "AI.BaseDefenses", "", Ares::readBuffer, Ares::readLength)) {
 		this->BaseDefenses.Clear();
 
-		for(p = strtok(Ares::readBuffer, Ares::readDelims); p && *p; p = strtok(NULL, Ares::readDelims)) {
+		char* context = nullptr;
+		for(p = strtok_s(Ares::readBuffer, Ares::readDelims, &context); p && *p; p = strtok_s(nullptr, Ares::readDelims, &context)) {
 			this->BaseDefenses.AddItem(BuildingTypeClass::FindOrAllocate(p));
 		}
 	}
@@ -137,7 +139,8 @@ void SideExt::ExtData::LoadFromINIFile(SideClass *pThis, CCINIClass *pINI)
 		this->ParaDrop.Clear();
 		this->ParaDropFallbackTypes = NULL;
 
-		for(p = strtok(Ares::readBuffer, Ares::readDelims); p && *p; p = strtok(NULL, Ares::readDelims)) {
+		char* context = nullptr;
+		for(p = strtok_s(Ares::readBuffer, Ares::readDelims, &context); p && *p; p = strtok_s(NULL, Ares::readDelims, &context)) {
 			TechnoTypeClass* pTT = UnitTypeClass::Find(p);
 
 			if(!pTT) {
@@ -156,7 +159,8 @@ void SideExt::ExtData::LoadFromINIFile(SideClass *pThis, CCINIClass *pINI)
 		this->ParaDropNum.Clear();
 		this->ParaDropFallbackNum = NULL;
 
-		for(p = strtok(Ares::readBuffer, Ares::readDelims); p && *p; p = strtok(NULL, Ares::readDelims)) {
+		char* context = nullptr;
+		for(p = strtok_s(Ares::readBuffer, Ares::readDelims, &context); p && *p; p = strtok_s(NULL, Ares::readDelims, &context)) {
 			this->ParaDropNum.AddItem(atoi(p));
 		}
 	}
