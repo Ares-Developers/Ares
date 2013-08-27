@@ -236,7 +236,7 @@ void AttachEffectClass::Update(TechnoClass *Source) {
 				//Debug::Log("[AttachEffect]Readded to %s.\n", Source->get_ID());
 			}
 
-		} else {
+		} else if (pData->AttachedTechnoEffect_Delay > 0) {
 			pData->AttachedTechnoEffect_Delay--;
 		}
 	}
