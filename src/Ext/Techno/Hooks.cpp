@@ -294,6 +294,7 @@ DEFINE_HOOK(71AB30, TemporalClass_GetHelperDamage, 5)
 	TechnoClass *T = Temp->Owner;
 	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(T);
 	WeaponStruct *W = T->GetWeapon(pData->idxSlot_Warp);
+	WarheadTypeExt::Temporal_WH = W->WeaponType->Warhead;
 	R->EAX<WeaponStruct *>(W);
 	return 0x71AB47;
 }

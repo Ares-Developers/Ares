@@ -78,13 +78,6 @@ DEFINE_HOOK(46920B, BulletClass_Fire, 6) {
 }
 
 // issue 472: deglob WarpAway
-DEFINE_HOOK(71A87B, TemporalClass_Update_CacheWH, 6) {
-	GET(WeaponTypeClass *, W, EAX);
-	WarheadTypeExt::Temporal_WH = W->Warhead;
-	return 0;
-}
-
-// issue 472: deglob WarpAway
 DEFINE_HOOK(71A900, TemporalClass_Update_WarpAway, 6) {
 	auto pData = WarheadTypeExt::ExtMap.Find(WarheadTypeExt::Temporal_WH);
 	R->EDX<AnimTypeClass *> (pData->Temporal_WarpAway);
