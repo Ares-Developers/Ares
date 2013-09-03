@@ -293,27 +293,6 @@ DEFINE_HOOK(71AB30, TemporalClass_GetHelperDamage, 5)
 	GET(TemporalClass *, Temp, ESI);
 	TechnoClass *T = Temp->Owner;
 	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(T);
-
-	// Temporal should disable RadarJammers
-	auto Target = Temp->Target;
-	TechnoExt::ExtData * TargetExt = TechnoExt::ExtMap.Find(Target);
-	if(TargetExt->RadarJam) {
-		TargetExt->RadarJam->UnjamAll();
-		delete TargetExt->RadarJam;
-		TargetExt->RadarJam = NULL;
-	}
-
-	//AttachEffect handling under Temporal
-	if (!TargetExt->AttachEffects_RecreateAnims) {
-		for (int i = TargetExt->AttachedEffects.Count; i > 0; --i) {
-			auto Effect = TargetExt->AttachedEffects.GetItem(i - 1);
-			if (!!Effect->Type->TemporalHidesAnim) {
-				Effect->KillAnim();
-			}
-		}
-		TargetExt->AttachEffects_RecreateAnims = true;
-	}
-	
 	WeaponStruct *W = T->GetWeapon(pData->idxSlot_Warp);
 	R->EAX<WeaponStruct *>(W);
 	return 0x71AB47;
