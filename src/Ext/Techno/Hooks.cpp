@@ -256,11 +256,9 @@ DEFINE_HOOK(6F4103, TechnoClass_Init_2, 6)
 }
 
 // temporal per-slot
-DEFINE_HOOK(71A860, TemporalClass_UpdateA, 6)
+DEFINE_HOOK(71A84E, TemporalClass_UpdateA, 5)
 {
 	GET(TemporalClass *, Temp, ESI);
-	TechnoClass *T = Temp->Owner;
-	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(T);
 
 	// Temporal should disable RadarJammers
 	auto Target = Temp->Target;
@@ -282,9 +280,10 @@ DEFINE_HOOK(71A860, TemporalClass_UpdateA, 6)
 		TargetExt->AttachEffects_RecreateAnims = true;
 	}
 
-	WeaponStruct *W = T->GetWeapon(pData->idxSlot_Warp);
-	R->EAX<WeaponStruct *>(W);
-	return 0x71A876;
+	Temp->WarpRemaining -= Temp->GetWarpPerStep(0);
+
+	R->EAX(Temp->WarpRemaining);
+	return 0x71A88D;
 }
 
 // temporal per-slot
