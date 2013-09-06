@@ -1213,3 +1213,24 @@ DEFINE_HOOK(6FA743, TechnoClass_Update_SkipSelfHeal, A)
 	
 	return 0;
 }
+
+// make the space between gunner name segment and ifv
+// name smart. it disappears if one of them is empty,
+// eliminating leading and trailing spaces.
+DEFINE_HOOK(746C55, UnitClass_GetUIName, 6)
+{
+	GET(UnitClass*, pThis, ESI);
+	GET(wchar_t*, pGunnerName, EAX);
+
+	auto pName = pThis->Type->UIName;
+
+	auto pSpace = L"";
+	if(pName && *pName && pGunnerName && *pGunnerName) {
+		pSpace = L" ";
+	}
+
+	_snwprintf_s(pThis->ToolTipText, _TRUNCATE, L"%s%s%s", pGunnerName, pSpace, pName);
+
+	R->EAX(pThis->ToolTipText);
+	return 0x746C76;
+}
