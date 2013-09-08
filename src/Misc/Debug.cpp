@@ -49,7 +49,7 @@ void Debug::LogFileOpen()
 	Debug::MakeLogFile();
 	Debug::LogFileClose(999);
 
-	pLogFile = _wfsopen(Debug::LogFileTempName.c_str(), L"w", _SH_DENYNO);
+	pLogFile = _wfsopen(Debug::LogFileTempName.c_str(), L"w", _SH_DENYWR);
 	if(!pLogFile) {
 		wchar_t msg[100] = L"\0";
 		wsprintfW(msg, L"Log file failed to open. Error code = %X", errno);
