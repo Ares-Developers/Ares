@@ -6,6 +6,15 @@ DEFINE_HOOK(6FD64A, TechnoClass_FireRadBeam1, 6)
 	byte idxWeapon = *(byte *)(R->Stack32(0x18) + 0xC); // hack! 0x18 fetches the caller's EBP, which gives us access to its locals, including idxWeapon
 	GET_STACK(TechnoClass *, Techno, 0x14);
 
+	// get the default color
+	GET(TechnoClass *, SourceUnit, EDI);
+	GET(RadBeam *, Rad, ESI);
+	if(SourceUnit && SourceUnit->Owner) {
+		Rad->Color = SourceUnit->Owner->Color;
+	} else {
+		Rad->Color = RulesClass::Instance->RadColor;
+	}
+
 	TechnoExt::ExtMap.Find(Techno)->idxSlot_Beam = idxWeapon;
 
 	R->Stack<int>(0x0, idxWeapon);
@@ -21,10 +30,7 @@ DEFINE_HOOK(6FD79C, TechnoClass_FireRadBeam2, 6)
 
 	WeaponTypeExt::ExtData *pData = WeaponTypeExt::ExtMap.Find(pSource);
 
-	if(pData->Beam_IsHouseColor) {
-		GET(TechnoClass *, SourceUnit, EDI);
-		Rad->Color = SourceUnit->Owner->Color;
-	} else {
+	if(!pData->Beam_IsHouseColor) {
 		Rad->Color = pData->Beam_Color;
 	}
 	Rad->Period = pData->Beam_Duration;
