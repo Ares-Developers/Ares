@@ -6,6 +6,8 @@
 #include <ColorScheme.h>
 #include <DiscreteDistributionClass.h>
 
+#include <iterator>
+
 template<> const DWORD Extension<HouseTypeClass>::Canary = 0xAFFEAFFE;
 Container<HouseTypeExt> HouseTypeExt::ExtMap;
 
