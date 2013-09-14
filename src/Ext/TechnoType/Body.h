@@ -243,8 +243,6 @@ public:
 
 	static Container<TechnoTypeExt> ExtMap;
 
-	static void PointerGotInvalid(void *ptr);
-
 //	static void ReadWeapon(WeaponStruct *pWeapon, const char *prefix, const char *section, CCINIClass *pINI);
 };
 
