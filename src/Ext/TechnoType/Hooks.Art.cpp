@@ -49,7 +49,7 @@ DEFINE_HOOK(5F9070, ObjectTypeClass_Load2DArt, 0)
 			}
 			AresCRT::strCopy(pType->ImageFile, basename, 0x19);
 		}
-	} else if(pType->AlternateArcticArt && scenarioTheater == th_Snow && !pType->ImageIsOutdated) { //outdated? you think I know what it means? hahahaha
+	} else if(pType->AlternateArcticArt && scenarioTheater == TheaterType::Snow && !pType->ImageIsOutdated) { //outdated? you think I know what it means? hahahaha
 		if(!pType->ArcticArtInUse) {
 			_snprintf_s(basename, 255, "%sA", pType->ImageFile);
 			AresCRT::strCopy(pType->ImageFile, basename, 0x19);

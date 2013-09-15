@@ -122,10 +122,10 @@ DEFINE_HOOK(702E9D, TechnoClass_RegisterDestruction_Veterancy, 6) {
 			// gunners need to be promoted manually, or they won't only get
 			// the experience until after they exited their transport once.
 			if(promoteImmediately) {
-				eRank newRank = pExperience->Veterancy.GetRemainingLevel();
+				Rank::Value newRank = pExperience->Veterancy.GetRemainingLevel();
 
 				if(pExperience->CurrentRanking != newRank) {
-					if(pExperience->CurrentRanking != -1) {
+					if(pExperience->CurrentRanking != Rank::Invalid) {
 						int sound = -1;
 						if(pExperience->Veterancy.IsVeteran()) {
 							sound = RulesClass::Instance->UpgradeVeteranSound;

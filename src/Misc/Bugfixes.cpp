@@ -641,7 +641,7 @@ DEFINE_HOOK(718871, TeleportLocomotionClass_UnfreezeObject_SinkOrSwim, 7)
 			R->BL(1);
 			return 0x7188B1;
 	}
-	if(Type->SpeedType == st_Hover) {
+	if(Type->SpeedType == SpeedType::Hover) {
 		// will set BL to 1 , unless this is a powered unit with no power centers <-- what if we have a powered unit that's not a hover?
 		return 0x71887A;
 	}

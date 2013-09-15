@@ -900,7 +900,7 @@ DEFINE_HOOK(7188F2, TeleportLocomotionClass_Unwarp_SinkJumpJets, 7) {
 			}
 
 			// manually sink it
-			if(pUnit->Type->SpeedType == st_Hover && pUnit->Type->JumpJet) {
+			if(pUnit->Type->SpeedType == SpeedType::Hover && pUnit->Type->JumpJet) {
 				return 0x718A66;
 			}
 		}
