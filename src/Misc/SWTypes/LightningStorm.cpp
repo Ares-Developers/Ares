@@ -87,7 +87,7 @@ void SW_LightningStorm::LoadFromINI(
 
 bool SW_LightningStorm::AbortFire(SuperClass* pSW, bool IsPlayer) {
 	// only one Lightning Storm allowed
-	if(LightningStorm::Active() || LightningStorm::HasDeferment()) {
+	if(LightningStorm::Active || LightningStorm::HasDeferment()) {
 		if(IsPlayer) {
 			SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSW->Type);
 			pData->PrintMessage(pData->Message_Abort, pSW->Owner);

@@ -22,8 +22,8 @@ DEFINE_HOOK(53B080, PsyDom_Fire, 5) {
 	if(SuperClass * pSuper = SW_PsychicDominator::CurrentPsyDom) {
 		SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSuper->Type);
 
-		HouseClass* pFirer = PsyDom::Owner();
-		CellStruct cell = PsyDom::Coords();
+		HouseClass* pFirer = PsyDom::Owner;
+		CellStruct cell = PsyDom::Coords;
 
 		CoordStruct coords;
 		CellClass *pTarget = MapClass::Instance->GetCellAt(&cell);
@@ -49,7 +49,7 @@ DEFINE_HOOK(53B080, PsyDom_Fire, 5) {
 			CoordStruct animCoords = coords;
 			animCoords.Z += pData->Dominator_SecondAnimHeight;
 			GAME_ALLOC(AnimClass, pAnim, pData->Dominator_SecondAnim, &animCoords);
-			PsyDom::Anim(pAnim);
+			PsyDom::Anim = pAnim;
 		}
 
 		// kill
@@ -147,7 +147,7 @@ DEFINE_HOOK(53B080, PsyDom_Fire, 5) {
 			items.forEach(Dominate);
 
 			// the AI sends all new minions to hunt
-			if(!PsyDom::Owner()->ControlledByHuman()) {
+			if(!PsyDom::Owner->ControlledByHuman()) {
 				for(int i=0; i<Minions.Count; ++i) {
 					FootClass* pFoot = Minions.GetItem(i);
 					pFoot->QueueMission(mission_Hunt, false);
@@ -173,7 +173,7 @@ DEFINE_HOOK(53C280, ScenarioClass_UpdateLighting, 5)
 	auto scen = ScenarioClass::Instance;
 	SuperWeaponTypeClass* pType = nullptr;
 
-	if(LightningStorm::Status() == 1 || ChronoScreenEffect::Status()) {
+	if(NukeFlash::IsFadingIn() || ChronoScreenEffect::Status) {
 		// nuke flash
 		a = scen->NukeAmbient;
 		r = scen->NukeRed;
@@ -181,7 +181,7 @@ DEFINE_HOOK(53C280, ScenarioClass_UpdateLighting, 5)
 		b = scen->NukeBlue;
 
 		pType = SW_NuclearMissile::CurrentNukeType;
-	} else if(LightningStorm::Active()) {
+	} else if(LightningStorm::Active) {
 		// lightning storm
 		a = scen->IonAmbient;
 		r = scen->IonRed;
@@ -191,7 +191,7 @@ DEFINE_HOOK(53C280, ScenarioClass_UpdateLighting, 5)
 		if(SuperClass *pSuper = SW_LightningStorm::CurrentLightningStorm) {
 			pType = pSuper->Type;
 		}
-	} else if(PsyDom::Status() && PsyDom::Status() != PsychicDominatorStatus::Over) {
+	} else if(PsyDom::Status && PsyDom::Status != PsychicDominatorStatus::Over) {
 		// psychic dominator
 		a = scen->DominatorAmbient;
 		r = scen->DominatorRed;
@@ -251,23 +251,23 @@ DEFINE_HOOK(539EB0, LightningStorm_Start, 5) {
 
 		// yes. set them even if the Lightning Storm
 		// is active.
-		LightningStorm::Coords(Coords);
-		LightningStorm::Owner(pOwner);
+		LightningStorm::Coords = Coords;
+		LightningStorm::Owner = pOwner;
 		
-		if(!LightningStorm::Active()) {
+		if(!LightningStorm::Active) {
 			if(deferment) {
 				// register this storm to start soon
-				if(!LightningStorm::Deferment() || LightningStorm::Deferment() >= deferment) {
-					LightningStorm::Deferment(deferment);
+				if(!LightningStorm::Deferment || LightningStorm::Deferment >= deferment) {
+					LightningStorm::Deferment = deferment;
 				}
-				LightningStorm::Duration(duration);
+				LightningStorm::Duration = duration;
 				ret = true;
 			} else {
 				// start the mayhem. not setting this will create an
 				// infinite loop. not tested what happens after that.
-				LightningStorm::Duration(duration);
-				LightningStorm::StartTime(Unsorted::CurrentFrame);
-				LightningStorm::Active(true);
+				LightningStorm::Duration = duration;
+				LightningStorm::StartTime = Unsorted::CurrentFrame;
+				LightningStorm::Active = true;
 
 				// blackout
 				if(pData->Weather_RadarOutage > 0) {
@@ -313,18 +313,17 @@ DEFINE_HOOK(539EB0, LightningStorm_Start, 5) {
 // this is a complete rewrite of LightningStorm::Update.
 DEFINE_HOOK(53A6CF, LightningStorm_Update, 7) {
 	// switch lightning for nuke
-	if(NukeFlash::Duration() != -1) {
-		if(NukeFlash::StartTime() + NukeFlash::Duration() < Unsorted::CurrentFrame) {
-			int status = LightningStorm::Status();
-			if(status == 1) {
-				LightningStorm::Status(2);
-				NukeFlash::StartTime(Unsorted::CurrentFrame);
-				NukeFlash::Duration(15);
+	if(NukeFlash::Duration != -1) {
+		if(NukeFlash::StartTime + NukeFlash::Duration < Unsorted::CurrentFrame) {
+			if(NukeFlash::IsFadingIn()) {
+				NukeFlash::Status = NukeFlashStatus::FadeOut;
+				NukeFlash::StartTime = Unsorted::CurrentFrame;
+				NukeFlash::Duration = 15;
 				ScenarioClass::Instance->UpdateLighting();
 				MapClass::Instance->RedrawSidebar(1);
-			} else if(status == 2) {
+			} else if(NukeFlash::IsFadingOut()) {
 				SW_NuclearMissile::CurrentNukeType = NULL;
-				LightningStorm::Status(0);
+				NukeFlash::Status = NukeFlashStatus::Inactive;
 			}
 		}
 	}
@@ -359,16 +358,15 @@ DEFINE_HOOK(53A6CF, LightningStorm_Update, 7) {
 	// all currently present clouds have to disappear first
 	if(LightningStorm::CloudsPresent->Count <= 0) {
 		// end the lightning storm
-		if(LightningStorm::TimeToEnd()) {
-			if(LightningStorm::Active()) {
-				CellStruct empty = {0, 0};
-				LightningStorm::Active(false);
-				LightningStorm::Owner(NULL);
-				LightningStorm::Coords(empty);
+		if(LightningStorm::TimeToEnd) {
+			if(LightningStorm::Active) {
+				LightningStorm::Active = false;
+				LightningStorm::Owner = nullptr;
+				LightningStorm::Coords = CellStruct::Empty;
 				SW_LightningStorm::CurrentLightningStorm = NULL;
 				ScenarioClass::Instance->UpdateLighting();
 			}
-			LightningStorm::TimeToEnd(false);
+			LightningStorm::TimeToEnd = false;
 		}
 	} else {
 		for(int i=LightningStorm::CloudsPresent->Count-1; i>=0; --i) {
@@ -382,18 +380,18 @@ DEFINE_HOOK(53A6CF, LightningStorm_Update, 7) {
 
 	// check for presence of Ares SW
 	if(SuperClass* pSuper = SW_LightningStorm::CurrentLightningStorm) {
-		CellStruct LSCell = LightningStorm::Coords();
+		CellStruct LSCell = LightningStorm::Coords;
 
 		SuperWeaponTypeClass *pType = pSuper->Type;
 		SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pType);
 
-		if(!LightningStorm::Active() || LightningStorm::TimeToEnd()) {
-			int deferment = LightningStorm::Deferment();
+		if(!LightningStorm::Active || LightningStorm::TimeToEnd) {
+			int deferment = LightningStorm::Deferment;
 
 			// still counting down?
 			if(deferment > 0) {
 				--deferment;
-				LightningStorm::Deferment(deferment);
+				LightningStorm::Deferment = deferment;
 
 				// still waiting
 				if(deferment) {
@@ -404,18 +402,17 @@ DEFINE_HOOK(53A6CF, LightningStorm_Update, 7) {
 					}
 				} else {
 					// launch the storm
-					LightningStorm::Start(LightningStorm::Duration(), 0, LSCell,
-						LightningStorm::Owner());
+					LightningStorm::Start(LightningStorm::Duration, 0, LSCell, LightningStorm::Owner);
 				}
 			}
 		} else {
 			// does this Lightning Storm go on?
-			int duration = LightningStorm::Duration();
-			if(duration == -1 || duration + LightningStorm::StartTime() >= Unsorted::CurrentFrame) {
+			int duration = LightningStorm::Duration;
+			if(duration == -1 || duration + LightningStorm::StartTime >= Unsorted::CurrentFrame) {
 
 				// deterministic damage. the very target cell.
 				if(pData->Weather_HitDelay > 0 && !(Unsorted::CurrentFrame % pData->Weather_HitDelay)) {
-					LightningStorm::Strike(LightningStorm::Coords());
+					LightningStorm::Strike(LightningStorm::Coords);
 				}
 
 				// random damage. somewhere in range.
@@ -504,7 +501,7 @@ DEFINE_HOOK(53A6CF, LightningStorm_Update, 7) {
 				}
 			} else {
 				// it's over already
-				LightningStorm::TimeToEnd(1);
+				LightningStorm::TimeToEnd = true;
 			}
 		}
 
@@ -847,16 +844,15 @@ DEFINE_HOOK(467E59, BulletClass_Update_NukeBall, 5) {
 						pBullet->SetHeight(0);
 					}
 
-					// replaces this call:
-					//(*(void (__stdcall *)())(0x53AB70))();
+					// replaces call to NukeFlash::FadeIn
 
 					// manual light stuff
-					LightningStorm::Status(1);
+					NukeFlash::Status = NukeFlashStatus::FadeIn;
 					ScenarioClass::Instance->AmbientTimer.Start(1);
 
 					// enable the nuke flash
-					NukeFlash::StartTime(Unsorted::CurrentFrame);
-					NukeFlash::Duration(30);
+					NukeFlash::StartTime = Unsorted::CurrentFrame;
+					NukeFlash::Duration = 30;
 
 					SWTypeExt::ChangeLighting(pData->NukeSW);
 					MapClass::Instance->RedrawSidebar(1);

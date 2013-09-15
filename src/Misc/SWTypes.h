@@ -175,16 +175,16 @@ class PsychicDominatorStateMachine : public SWStateMachine {
 	public:
 		PsychicDominatorStateMachine(CellStruct XY, SuperClass *pSuper, NewSWType * pSWType)
 			: SWStateMachine(MAXINT32, XY, pSuper, pSWType) {
-				PsyDom::Status(PsychicDominatorStatus::FirstAnim);
+				PsyDom::Status = PsychicDominatorStatus::FirstAnim;
 
 				// the initial deferment
 				SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSuper->Type);
 				this->Deferment = pData->SW_Deferment.Get();
 
 				// make the game happy
-				PsyDom::Owner(pSuper->Owner);
-				PsyDom::Coords(XY);
-				PsyDom::Anim(NULL);
+				PsyDom::Owner = pSuper->Owner;
+				PsyDom::Coords = XY;
+				PsyDom::Anim = nullptr;
 		};
 
 		virtual void Update();

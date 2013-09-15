@@ -111,7 +111,7 @@ void PsychicDominatorStateMachine::Update() {
 
 	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(this->Super->Type);
 
-	switch(PsyDom::Status()) {
+	switch(PsyDom::Status) {
 	case PsychicDominatorStatus::FirstAnim:
 		{
 			// here are the contents of PsyDom::Start().
@@ -124,7 +124,7 @@ void PsychicDominatorStateMachine::Update() {
 			if(pData->Dominator_FirstAnim.Get()) {
 				GAME_ALLOC(AnimClass, pAnim, pData->Dominator_FirstAnim, &coords);
 			}
-			PsyDom::Anim(pAnim);
+			PsyDom::Anim = pAnim;
 		
 			if(pData->SW_ActivationSound != -1) {
 				VocClass::PlayAt(pData->SW_ActivationSound, &coords, NULL);
@@ -132,7 +132,7 @@ void PsychicDominatorStateMachine::Update() {
 
 			pData->PrintMessage(pData->Message_Activate, this->Super->Owner);
 			
-			PsyDom::Status(PsychicDominatorStatus::Fire);
+			PsyDom::Status = PsychicDominatorStatus::Fire;
 
 			// most likely LightUpdateTimer
 			ScenarioClass::Instance->AmbientTimer.Start(1);
@@ -144,7 +144,7 @@ void PsychicDominatorStateMachine::Update() {
 		{
 			// wait for some percentage of the first anim to be
 			// played until we strike.
-			AnimClass* pAnim = PsyDom::Anim();
+			AnimClass* pAnim = PsyDom::Anim;
 			if(pAnim) {
 				int currentFrame = pAnim->Animation.Value;
 				short frameCount = pAnim->Type->GetImage()->Frames;
@@ -155,14 +155,14 @@ void PsychicDominatorStateMachine::Update() {
 
 			PsyDom::Fire();
 
-			PsyDom::Status(PsychicDominatorStatus::SecondAnim);
+			PsyDom::Status = PsychicDominatorStatus::SecondAnim;
 			return;
 		}
 	case PsychicDominatorStatus::SecondAnim:
 		{
 			// wait for the second animation to finish. (there may be up to
 			// 10 frames still to be played.)
-			AnimClass* pAnim = PsyDom::Anim();
+			AnimClass* pAnim = PsyDom::Anim;
 			if(pAnim) {
 				int currentFrame = pAnim->Animation.Value;
 				short frameCount = pAnim->Type->GetImage()->Frames;
@@ -172,13 +172,13 @@ void PsychicDominatorStateMachine::Update() {
 				}
 			}
 
-			PsyDom::Status(PsychicDominatorStatus::Reset);
+			PsyDom::Status = PsychicDominatorStatus::Reset;
 			return;
 		}
 	case PsychicDominatorStatus::Reset:
 		{
 			// wait for the last frame... WTF? 
-			AnimClass* pAnim = PsyDom::Anim();
+			AnimClass* pAnim = PsyDom::Anim;
 			if(pAnim) {
 				int currentFrame = pAnim->Animation.Value;
 				short frameCount = pAnim->Type->GetImage()->Frames;
@@ -188,14 +188,10 @@ void PsychicDominatorStateMachine::Update() {
 				}
 			}
 
-			PsyDom::Status(PsychicDominatorStatus::Over);
+			PsyDom::Status = PsychicDominatorStatus::Over;
 
-			CellStruct nullCell;
-			nullCell.X = 0;
-			nullCell.Y = 0;
-
-			PsyDom::Coords(nullCell);
-			PsyDom::Anim(NULL);
+			PsyDom::Coords = CellStruct::Empty;
+			PsyDom::Anim = nullptr;
 			ScenarioClass::UpdateLighting();
 
 			return;
@@ -209,7 +205,7 @@ void PsychicDominatorStateMachine::Update() {
 
 			// clean up
 			SW_PsychicDominator::CurrentPsyDom = NULL;
-			PsyDom::Status(PsychicDominatorStatus::Inactive);
+			PsyDom::Status = PsychicDominatorStatus::Inactive;
 			ScenarioClass::UpdateLighting();
 			this->Clock.TimeLeft = 0;
 		}
