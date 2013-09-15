@@ -580,9 +580,9 @@ DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
 						{
 							if(pThis->EnemyHouseIndex != -1) {
 								if(pThis->PreferredTargetCell == HouseClass::DefaultIonCannonCoords) {
-									Cell = *((pThis->PreferredTargetWaypoint == 1)
+									Cell = *((pThis->PreferredTargetType == TargetType::Anything)
 										? pThis->PickIonCannonTarget(Cell)
-										: pThis->sub_50D170(&Cell, pThis->PreferredTargetWaypoint));
+										: pThis->PickTargetByType(&Cell, pThis->PreferredTargetType));
 								} else {
 									Cell = pThis->PreferredTargetCell;
 								}
