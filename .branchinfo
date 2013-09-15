@@ -1,6 +1,6 @@
 [branch]
-Name=Ares 0.4 Testing Branch
-Description=The Ares 0.4 development branch.
-TargetVersion=0.4
+Name=Ares Development Mainline
+Description=This is the trunk or master branch of Ares's repository. It contains the current in-development code.
+TargetVersion=0.5
 Stable=no
 ReadyForTesting=yes
