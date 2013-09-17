@@ -1,5 +1,7 @@
 #include "Body.h"
 
+#include "../Rules/Body.h"
+
 // replace the cloak checking functions to include checks for new features
 DEFINE_HOOK(6FB757, TechnoClass_UpdateCloak, 8)
 {
@@ -49,7 +51,8 @@ DEFINE_HOOK(70375B, TechnoClass_Uncloak_DecloakSound, 6)
 	GET(int, ptr, ESI);
 	TechnoClass* pThis = (TechnoClass*)(ptr - 0x9C);
 	auto pExt = TechnoTypeExt::ExtMap.Find(pThis->GetTechnoType());
-	R->ECX(pExt->DecloakSound.Get(RulesClass::Instance->CloakSound));
+	int default = RulesExt::Global()->DecloakSound.Get(RulesClass::Instance->CloakSound);
+	R->ECX(pExt->DecloakSound.Get(default));
 	return 0x703761;
 }
 

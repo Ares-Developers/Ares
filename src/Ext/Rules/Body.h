@@ -6,6 +6,7 @@
 #include <RulesClass.h>
 #include <AnimTypeClass.h>
 #include <SidebarClass.h>
+#include <VocClass.h>
 
 #include "../_Container.hpp"
 #include "../../Utilities/Template.h"
@@ -30,11 +31,14 @@ class RulesExt
 
 		Valueable<bool> CanMakeStuffUp;
 
+		NullableIdx<VocClass> DecloakSound;
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			ElectricDeath(NULL),
 			EngineerDamage (0.0F),
 			EngineerAlwaysCaptureTech (true),
 			EngineerDamageCursor (MouseCursor::First[MouseCursorType::Detonate]),
+			DecloakSound(),
 			CanMakeStuffUp(false)
 			{
 				MultiEngineer[0] = false; // Skirmish
