@@ -829,8 +829,15 @@ bool TechnoExt::ExtData::IsCloakable(bool allowPassive) const
 		}
 	}
 
-	// if not actively cloakable, search for cloak generators
+	// if not actively cloakable
 	if(allowPassive) {
+		// cloak generators ignore everything above ground. this
+		// fixes hover units not being affected by cloak.
+		if(pThis->GetHeight() > RulesClass::Instance->HoverHeight) {
+			return false;
+		}
+
+		// search for cloak generators
 		CoordStruct crd;
 		pThis->GetCoords(&crd);
 		CellClass* pCell = MapClass::Instance->GetCellAt(&crd);
@@ -878,10 +885,6 @@ bool TechnoExt::ExtData::CloakAllowed() const
 	}
 
 	if(pThis->LocomotorSource && pThis->AbstractFlags & ABSFLAGS_ISFOOT && ((FootClass*)pThis)->IsAttackedByLocomotor) {
-		return false;
-	}
-
-	if(pThis->GetHeight() > RulesClass::Instance->HoverHeight) {
 		return false;
 	}
 
