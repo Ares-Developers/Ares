@@ -32,6 +32,7 @@ class RulesExt
 		Valueable<bool> CanMakeStuffUp;
 
 		NullableIdx<VocClass> DecloakSound;
+		Nullable<int> CloakHeight;
 
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			ElectricDeath(NULL),
@@ -39,6 +40,7 @@ class RulesExt
 			EngineerAlwaysCaptureTech (true),
 			EngineerDamageCursor (MouseCursor::First[MouseCursorType::Detonate]),
 			DecloakSound(),
+			CloakHeight(),
 			CanMakeStuffUp(false)
 			{
 				MultiEngineer[0] = false; // Skirmish

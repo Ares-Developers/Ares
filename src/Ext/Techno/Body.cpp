@@ -1,4 +1,5 @@
 #include "Body.h"
+#include "../Rules/Body.h"
 #include "../TechnoType/Body.h"
 #include "../../Misc/SWTypes.h"
 #include "../../Misc/PoweredUnitClass.h"
@@ -833,7 +834,7 @@ bool TechnoExt::ExtData::IsCloakable(bool allowPassive) const
 	if(allowPassive) {
 		// cloak generators ignore everything above ground. this
 		// fixes hover units not being affected by cloak.
-		if(pThis->GetHeight() > RulesClass::Instance->HoverHeight) {
+		if(pThis->GetHeight() > RulesExt::Global()->CloakHeight.Get(RulesClass::Instance->HoverHeight)) {
 			return false;
 		}
 
