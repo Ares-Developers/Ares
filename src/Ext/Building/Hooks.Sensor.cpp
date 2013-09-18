@@ -58,6 +58,21 @@ DEFINE_HOOK(4556E1, BuildingClass_SensorArrayDeactivate, 7)
 	return 0x45580D;
 }
 
+DEFINE_HOOK_AGAIN(4557BC, BuildingClass_SensorArray_BuildingRedraw, 6)
+DEFINE_HOOK(455923, BuildingClass_SensorArray_BuildingRedraw, 6)
+{
+	GET(CellClass*, pCell, ESI);
+
+	// mark detected buildings for redraw
+	if(auto pBld = pCell->GetBuilding()) {
+		if(pBld->Owner != HouseClass::Player && pBld->VisualCharacter(VARIANT_FALSE, nullptr) != VisualType::Normal) {
+			pBld->NeedsRedraw = true;
+		}
+	}
+
+	return 0;
+}
+
 // powered state changed
 DEFINE_HOOK_AGAIN(454B5F, BuildingClass_UpdatePowered_SensorArray, 6)
 DEFINE_HOOK(4549F8, BuildingClass_UpdatePowered_SensorArray, 6)
