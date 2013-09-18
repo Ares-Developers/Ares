@@ -79,3 +79,39 @@ DEFINE_HOOK(6F5388, TechnoClass_DrawExtras_Submerged, 6)
 	R->EAX(drawHealth);
 	return 0x6F538E;
 }
+
+// respect the remove state when updating the parasite.
+DEFINE_HOOK(4D99AA, FootClass_PointerGotInvalid_Parasite, 6)
+{
+	GET(FootClass*, pThis, ESI);
+	GET(void*, ptr, EDI);
+	GET(bool, remove, EBX);
+
+	// pass the real remove state, instead of always true. this was unused
+	// in the original game, but now propagates the real value.
+	if(auto pParasiteOwner = pThis->ParasiteEatingMe) {
+		if(pParasiteOwner->Health > 0) {
+			pParasiteOwner->ParasiteImUsing->PointerExpired(ptr, remove);
+		}
+	}
+
+	// only unset the parasite owner, if we are removed.
+	// cloaking does not count any more.
+	if(pThis == ptr && remove) {
+		pThis->ParasiteEatingMe = nullptr;
+	}
+
+	return 0x4D99D3;
+}
+
+// only eject the parasite if the unit leaves the battlefield,
+// not just when it goes out of sight.
+DEFINE_HOOK(62A283, ParasiteClass_PointerGotInvalid_Cloak, 9)
+{
+	GET(ParasiteClass*, pThis, ESI);
+	GET(void*, ptr, EAX);
+	GET_STACK(bool, remove, 0x2C);
+
+	// remove only if pointee really got removed
+	return (pThis->Victim == ptr && remove) ? 0x62A28C : 0x62A484;
+}
