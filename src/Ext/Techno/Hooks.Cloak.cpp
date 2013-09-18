@@ -64,3 +64,18 @@ DEFINE_HOOK(4DBDD4, FootClass_IsCloakable_CloakStop, 6)
 	R->AL(pThis->Locomotor->Is_Moving());
 	return 0x4DBDE3;
 }
+
+// health bar for detected submerged units
+DEFINE_HOOK(6F5388, TechnoClass_DrawExtras_Submerged, 6)
+{
+	GET(TechnoClass*, pThis, EBP);
+
+	bool drawHealth = pThis->IsSelected;
+	if(!drawHealth) {
+		// sensed submerged units
+		drawHealth = !pThis->IsSurfaced() && pThis->GetCell()->Sensors_InclHouse(HouseClass::Player->ArrayIndex);
+	}
+
+	R->EAX(drawHealth);
+	return 0x6F538E;
+}
