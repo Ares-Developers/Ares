@@ -42,16 +42,16 @@ DEFINE_HOOK(5F9070, ObjectTypeClass_Load2DArt, 0)
 	if(pTypeData && pTypeData->AlternateTheaterArt) {
 		if(!pType->ArcticArtInUse) { // this flag is not used anywhere outside this function, so I'll just hijack it
 			pType->ArcticArtInUse = true;
-			_snprintf(basename, 256, "%s%s", pType->ImageFile, pTheaterData->Letter);
+			_snprintf_s(basename, 255, "%s%s", pType->ImageFile, pTheaterData->Letter);
 			if(!CCINIClass::INI_Art->GetSection(basename)) {
 				pType->ArcticArtInUse = false;
-				_snprintf(basename, 256, "%s", pType->ImageFile);
+				_snprintf_s(basename, 255, "%s", pType->ImageFile);
 			}
 			AresCRT::strCopy(pType->ImageFile, basename, 0x19);
 		}
-	} else if(pType->AlternateArcticArt && scenarioTheater == th_Snow && !pType->ImageIsOutdated) { //outdated? you think I know what it means? hahahaha
+	} else if(pType->AlternateArcticArt && scenarioTheater == TheaterType::Snow && !pType->ImageIsOutdated) { //outdated? you think I know what it means? hahahaha
 		if(!pType->ArcticArtInUse) {
-			_snprintf(basename, 256, "%sA", pType->ImageFile);
+			_snprintf_s(basename, 255, "%sA", pType->ImageFile);
 			AresCRT::strCopy(pType->ImageFile, basename, 0x19);
 			pType->ArcticArtInUse = true;
 		}
@@ -60,7 +60,7 @@ DEFINE_HOOK(5F9070, ObjectTypeClass_Load2DArt, 0)
 		pType->ArcticArtInUse = false;
 	}
 
-	_snprintf(basename, 256, "%s.%s", pType->ImageFile, (pType->Theater ? pTheaterData->Extension : "SHP"));
+	_snprintf_s(basename, 255, "%s.%s", pType->ImageFile, (pType->Theater ? pTheaterData->Extension : "SHP"));
 
 	if(!pType->Theater && pType->NewTheater && scenarioTheater != -1) {
 		unsigned char c0 = basename[0];

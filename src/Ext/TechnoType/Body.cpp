@@ -1,5 +1,6 @@
 #include "Body.h"
 #include "../BuildingType/Body.h"
+#include "../HouseType/Body.h"
 #include "../Side/Body.h"
 #include "../../Enum/Prerequisites.h"
 #include "../../Misc/Debug.h"
@@ -33,10 +34,11 @@ void TechnoTypeExt::ExtData::Initialize(TechnoTypeClass *pThis) {
 
 	this->Is_Deso = this->Is_Deso_Radiation = !strcmp(pThis->ID, "DESO");
 	this->Is_Cow = !strcmp(pThis->ID, "COW");
-	
-	//Bounty
-	
-	
+
+	if(pThis->WhatAmI() == AircraftTypeClass::AbsID) {
+		this->CustomMissileTrailerAnim = AnimTypeClass::Find("V3TRAIL");
+		this->CustomMissileTakeoffAnim = AnimTypeClass::Find("V3TAKOFF");
+	}
 }
 
 /*
@@ -93,15 +95,15 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 
 	this->Survivors_PilotCount = pINI->ReadInteger(section, "Survivor.Pilots", this->Survivors_PilotCount);
 
-	this->Survivors_PilotChance.LoadFromINI(pINI, section, "Survivor.%sPilotChance");
-	this->Survivors_PassengerChance.LoadFromINI(pINI, section, "Survivor.%sPassengerChance");
+	this->Survivors_PilotChance.Read(pINI, section, "Survivor.%sPilotChance");
+	this->Survivors_PassengerChance.Read(pINI, section, "Survivor.%sPassengerChance");
 
 	char flag[256];
 	for(int i = 0; i < SideClass::Array->Count; ++i) {
-		_snprintf(flag, 256, "Survivor.Side%d", i);
+		_snprintf_s(flag, 255, "Survivor.Side%d", i);
 		if(pINI->ReadString(section, flag, "", Ares::readBuffer, Ares::readLength)) {
 			if((this->Survivors_Pilots[i] = InfantryTypeClass::Find(Ares::readBuffer)) == NULL) {
-				if(VALIDTAG(Ares::readBuffer)) {
+				if(!INIClass::IsBlank(Ares::readBuffer)) {
 					Debug::INIParseFailed(section, flag, Ares::readBuffer);
 				}
 			}
@@ -133,7 +135,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	Prereqs::Parse(pINI, section, "PrerequisiteOverride", dvc);
 
 	for(int i = 0; i < this->PrerequisiteLists.Count; ++i) {
-		_snprintf(flag, 256, "Prerequisite.List%d", i);
+		_snprintf_s(flag, 255, "Prerequisite.List%d", i);
 		dvc = this->PrerequisiteLists.GetItem(i);
 		Prereqs::Parse(pINI, section, flag, dvc);
 	}
@@ -143,7 +145,9 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 
 	if(pINI->ReadString(section, "Prerequisite.RequiredTheaters", "", Ares::readBuffer, Ares::readLength)) {
 		this->PrerequisiteTheaters = 0;
-		for(char *cur = strtok(Ares::readBuffer, ","); cur; cur = strtok(NULL, ",")) {
+
+		char* context = nullptr;
+		for(char *cur = strtok_s(Ares::readBuffer, ",", &context); cur; cur = strtok_s(nullptr, ",", &context)) {
 			signed int idx = Theater::FindIndex(cur);
 			if(idx != -1) {
 				this->PrerequisiteTheaters |= (1 << idx);
@@ -193,7 +197,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 */
 
 	INI_EX exINI(pINI);
-	this->Insignia.LoadFromINI(pINI, section, "Insignia.%s");
+	this->Insignia.Read(pINI, section, "Insignia.%s");
 	this->Parachute_Anim.Parse(&exINI, section, "Parachute.Anim");
 
 	// new on 08.11.09 for #342 (Operator=)
@@ -202,7 +206,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 		if(!this->IsAPromiscuousWhoreAndLetsAnyoneRideIt) { // if not, find the specific operator it allows
 			if(auto Operator = InfantryTypeClass::Find(Ares::readBuffer)) {
 				this->Operator = Operator;
-			} else if(VALIDTAG(Ares::readBuffer)) {
+			} else if(!INIClass::IsBlank(Ares::readBuffer)) {
 				Debug::INIParseFailed(section, "Operator", Ares::readBuffer);
 			}
 		}
@@ -212,7 +216,9 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 
 	if(pINI->ReadString(section, "Prerequisite.StolenTechs", "", Ares::readBuffer, Ares::readLength)) {
 		this->RequiredStolenTech.reset();
-		for(char *cur = strtok(Ares::readBuffer, ","); cur; cur = strtok(NULL, ",")) {
+
+		char* context = nullptr;
+		for(char *cur = strtok_s(Ares::readBuffer, ",", &context); cur; cur = strtok_s(nullptr, ",", &context)) {
 			signed int idx = atoi(cur);
 			if(idx > -1 && idx < 32) {
 				this->RequiredStolenTech.set(idx);
@@ -238,7 +244,8 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	}
 
 	if(pINI->ReadString(section, "VeteranAbilities", "", Ares::readBuffer, Ares::readLength)) {
-		for(char *cur = strtok(Ares::readBuffer, ","); cur; cur = strtok(NULL, ",")) {
+		char* context = nullptr;
+		for(char *cur = strtok_s(Ares::readBuffer, ",", &context); cur; cur = strtok_s(nullptr, ",", &context)) {
 			if(!_strcmpi(cur, "empimmune")) {
 				this->VeteranAbilityEMPIMMUNE = true;
 				this->EliteAbilityEMPIMMUNE = true;
@@ -247,7 +254,8 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	}
 
 	if(pINI->ReadString(section, "EliteAbilities", "", Ares::readBuffer, Ares::readLength)) {
-		for(char *cur = strtok(Ares::readBuffer, ","); cur; cur = strtok(NULL, ",")) {
+		char* context = nullptr;
+		for(char *cur = strtok_s(Ares::readBuffer, ",", &context); cur; cur = strtok_s(nullptr, ",", &context)) {
 			if(!_strcmpi(cur, "empimmune")) {
 				this->EliteAbilityEMPIMMUNE = true;
 			}
@@ -306,47 +314,16 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	this->PassengerTurret.Read(&exINI, section, "PassengerTurret");
 	
 	// #617 powered units
-	if( pINI->ReadString(section, "PoweredBy", "", Ares::readBuffer, Ares::readLength) ) {
-		this->PoweredBy.Clear();
-		for(char *cur = strtok(Ares::readBuffer, ","); cur; cur = strtok(NULL, ",")) {
-			BuildingTypeClass* b = BuildingTypeClass::Find(cur);
-			if(b) {
-				this->PoweredBy.AddItem(b);
-			} else {
-				Debug::INIParseFailed(section, "PoweredBy", cur, "BuildingType [%s] not found");
-			}
-		}
-	}
+	this->PoweredBy.Read(&exINI, section, "PoweredBy");
 
-	if(pINI->ReadString(section, "BuiltAt", "", Ares::readBuffer, Ares::readLength) ) {
-		this->BuiltAt.Clear();
-		if(_strcmpi(Ares::readBuffer, "<none>") && _strcmpi(Ares::readBuffer, "none")) {
-			for(auto cur = strtok(Ares::readBuffer, ","); cur; cur = strtok(NULL, ",")) {
-				auto b = BuildingTypeClass::Find(cur);
-				if(b) {
-					this->BuiltAt.AddItem(b);
-				} else {
-					Debug::INIParseFailed(section, "BuiltAt", cur);
-				}
-			}
-		}
-	}
+	//#1623 - AttachEffect on unit-creation
+	this->AttachedTechnoEffect.Read(&exINI, section);
+
+	this->BuiltAt.Read(&exINI, section, "BuiltAt");
 
 	this->Cloneable.Read(&exINI, section, "Cloneable");
 
-	if(pINI->ReadString(section, "ClonedAt", "", Ares::readBuffer, Ares::readLength) ) {
-		this->ClonedAt.Clear();
-		if(_strcmpi(Ares::readBuffer, "<none>") && _strcmpi(Ares::readBuffer, "none")) {
-			for(auto cur = strtok(Ares::readBuffer, ","); cur; cur = strtok(NULL, ",")) {
-				auto b = BuildingTypeClass::Find(cur);
-				if(b) {
-					this->ClonedAt.AddItem(b);
-				} else {
-					Debug::INIParseFailed(section, "ClonedAt", cur);
-				}
-			}
-		}
-	}
+	this->ClonedAt.Read(&exINI, section, "ClonedAt");
 
 	this->CarryallAllowed.Read(&exINI, section, "Carryall.Allowed");
 	this->CarryallSizeLimit.Read(&exINI, section, "Carryall.SizeLimit");
@@ -361,6 +338,21 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 
 	// issue #896235: cyclic gattling
 	this->GattlingCyclic.Read(&exINI, section, "Gattling.Cycle");
+
+	// #245 custom missiles
+	if(auto pAircraftType = specific_cast<AircraftTypeClass*>(pThis)) {
+		this->IsCustomMissile.Read(&exINI, section, "Missile.Custom");
+		this->CustomMissileData.Read(&exINI, section, "Missile");
+		this->CustomMissileData.GetEx()->Type = pAircraftType;
+		this->CustomMissileWarhead.Parse(&exINI, section, "Missile.Warhead");
+		this->CustomMissileEliteWarhead.Parse(&exINI, section, "Missile.EliteWarhead");
+		this->CustomMissileTakeoffAnim.Parse(&exINI, section, "Missile.TakeOffAnim");
+		this->CustomMissileTrailerAnim.Parse(&exINI, section, "Missile.TrailerAnim");
+		this->CustomMissileTrailerSeparation.Read(&exINI, section, "Missile.TrailerSeparation");
+	}
+
+	// non-crashable aircraft
+	this->Crashable.Read(&exINI, section, "Crashable");
 
 	// quick fix - remove after the rest of weapon selector code is done
 	return;
@@ -455,7 +447,7 @@ void TechnoTypeClassExt::ReadWeapon(WeaponStruct *pWeapon, const char *prefix, c
 }
 */
 
-void Container<TechnoTypeExt>::InvalidatePointer(void *ptr) {
+void Container<TechnoTypeExt>::InvalidatePointer(void *ptr, bool bRemoved) {
 }
 
 bool TechnoTypeExt::ExtData::CameoIsElite()
@@ -488,6 +480,9 @@ bool TechnoTypeExt::ExtData::CameoIsElite()
 		case abs_BuildingType:
 			if(TechnoTypeClass *Item = T->UndeploysInto) {
 				return Country->VeteranUnits.FindItemIndex((UnitTypeClass **)&Item) != -1;
+			} else {
+				auto pData = HouseTypeExt::ExtMap.Find(Country);
+				return pData->VeteranBuildings.Contains((BuildingTypeClass*)T);
 			}
 	}
 
@@ -496,7 +491,7 @@ bool TechnoTypeExt::ExtData::CameoIsElite()
 
 bool TechnoTypeExt::ExtData::CanBeBuiltAt(BuildingTypeClass * FactoryType) {
 	auto pBExt = BuildingTypeExt::ExtMap.Find(FactoryType);
-	return (!this->BuiltAt.Count && !pBExt->Factory_ExplicitOnly) || this->BuiltAt.FindItemIndex(&FactoryType) != -1;
+	return (!this->BuiltAt.size() && !pBExt->Factory_ExplicitOnly) || this->BuiltAt.Contains(FactoryType);
 }
 
 bool TechnoTypeExt::ExtData::CarryallCanLift(UnitClass * Target) {
@@ -599,8 +594,8 @@ DEFINE_HOOK(711AE0, TechnoTypeClass_DTOR, 5)
 	return 0;
 }
 
-DEFINE_HOOK(7162F0, TechnoTypeClass_SaveLoad_Prefix, 6)
 DEFINE_HOOK_AGAIN(716DC0, TechnoTypeClass_SaveLoad_Prefix, 5)
+DEFINE_HOOK(7162F0, TechnoTypeClass_SaveLoad_Prefix, 6)
 {
 	GET_STACK(TechnoTypeExt::TT*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
@@ -623,8 +618,8 @@ DEFINE_HOOK(717094, TechnoTypeClass_Save_Suffix, 5)
 	return 0;
 }
 
-DEFINE_HOOK(716123, TechnoTypeClass_LoadFromINI, 5)
 DEFINE_HOOK_AGAIN(716132, TechnoTypeClass_LoadFromINI, 5)
+DEFINE_HOOK(716123, TechnoTypeClass_LoadFromINI, 5)
 {
 	GET(TechnoTypeClass*, pItem, EBP);
 	GET_STACK(CCINIClass*, pINI, 0x380);

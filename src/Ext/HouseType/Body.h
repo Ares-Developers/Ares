@@ -41,8 +41,10 @@ class HouseTypeExt
 			DynamicVectorClass<BuildingTypeClass *> Powerplants;
 			TypeList<TechnoTypeClass*> ParaDrop;
 			TypeList<int> ParaDropNum;
-			ValueableIdx<int, AircraftTypeClass> ParaDropPlane;
+			ValueableIdx<AircraftTypeClass> ParaDropPlane;
 			Valueable<AnimTypeClass*> Parachute_Anim;
+
+			ValueableVector<BuildingTypeClass*> VeteranBuildings;
 
 			//issue 1588, Bounty tags per country, whole logic starts in TechnoType and FlyingStrings
 			BountyClass Bounty;
@@ -61,6 +63,7 @@ class HouseTypeExt
 				CountryListIndex (0),
 				ParaDropPlane (-1),
 				Parachute_Anim (NULL),
+				VeteranBuildings (),
 				LoadTextColor (NULL),
 				Bounty(true, 0, 0, false, 1, 1),
 				ObserverBackgroundSHP (NULL),
@@ -91,7 +94,7 @@ class HouseTypeExt
 		virtual void InitializeConstants(TT *pThis);
 		virtual void Initialize(TT *pThis);
 
-		virtual void InvalidatePointer(void *ptr) {
+		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
 		}
 
 		AircraftTypeClass* GetParadropPlane();

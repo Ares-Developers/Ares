@@ -47,6 +47,7 @@ class HouseExt
 			BuildingClass *Factory_AircraftType;
 
 			std::bitset<32> StolenTech;
+			IndexBitfield<HouseClass*> RadarPersist; 
 
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			IonSensitive(0),
@@ -58,6 +59,7 @@ class HouseExt
 			Factory_NavyType(NULL),
 			Factory_AircraftType(NULL),
 			SWLastIndex(0),
+			RadarPersist(),
 			StolenTech(0ull)
 		{
 		};
@@ -68,7 +70,7 @@ class HouseExt
 
 		virtual size_t Size() const { return sizeof(*this); };
 
-		virtual void InvalidatePointer(void *ptr) {
+		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
 			AnnounceInvalidPointer(Factory_AircraftType, ptr);
 			AnnounceInvalidPointer(Factory_BuildingType, ptr);
 			AnnounceInvalidPointer(Factory_VehicleType, ptr);

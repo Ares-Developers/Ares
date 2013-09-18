@@ -67,10 +67,7 @@ void WeaponTypeExt::ExtData::LoadFromINIFile(WeaponTypeExt::TT *pThis, CCINIClas
 	this->Beam_Duration     = pINI->ReadInteger(section, "Beam.Duration", this->Beam_Duration);
 	this->Beam_Amplitude    = pINI->ReadDouble(section, "Beam.Amplitude", this->Beam_Amplitude);
 	this->Beam_IsHouseColor = pINI->ReadBool(section, "Beam.IsHouseColor", this->Beam_IsHouseColor);
-
-	if(!this->Beam_IsHouseColor) {
-		this->Beam_Color.Read(&exINI, section, "Beam.Color");
-	}
+	this->Beam_Color.Read(&exINI, section, "Beam.Color");
 
 	this->Wave_IsLaser      = pINI->ReadBool(section, "Wave.IsLaser", this->Wave_IsLaser);
 	this->Wave_IsBigLaser   = pINI->ReadBool(section, "Wave.IsBigLaser", this->Wave_IsBigLaser);
@@ -124,6 +121,9 @@ void WeaponTypeExt::ExtData::LoadFromINIFile(WeaponTypeExt::TT *pThis, CCINIClas
 		this->Ivan_WH.Parse(&exINI, section, "IvanBomb.Warhead");
 
 		this->Ivan_Image.Read(&exINI, section, "IvanBomb.Image");
+
+		this->Ivan_CanDetonateTimeBomb.Read(&exINI, section, "IvanBomb.CanDetonateTimeBomb");
+		this->Ivan_CanDetonateDeathBomb.Read(&exINI, section, "IvanBomb.CanDetonateDeathBomb");
 	}
 //
 /*
@@ -189,7 +189,7 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 		}
 
 		//Don't abduct the target if it has more life then the abducting percent
-		if (this->Abductor_AbductBelowPercent < (Target->Health*1.0 / TargetType->Strength)){
+		if (this->Abductor_AbductBelowPercent < Target->GetHealthPercentage()){
 			return false;
 		}
 
@@ -263,7 +263,7 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 			
 			// if we have an abducting animation, play it
 			if (!!this->Abductor_AnimType){
-				AnimClass* Abductor_Anim = NULL;
+				AnimClass* Abductor_Anim = nullptr;
 				GAME_ALLOC(AnimClass, Abductor_Anim, this->Abductor_AnimType, &Bullet->posTgt);
 				//this->Abductor_Anim->Owner=Bullet->Owner->Owner;
 			}
@@ -281,7 +281,9 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 				Target->SetOwningHouse(Attacker->Owner);
 			}
 
-			Target->Remove();
+			if(!Target->Remove()) {
+				Debug::DevLog(Debug::Warning, "Abduction: Target unit %p (%s) could not be removed.\n", Target, Target->get_ID());
+			}
 			Target->OnBridge = false;
 
 			// because we are throwing away the locomotor in a split second, piggybacking
@@ -316,6 +318,10 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 			}
 
 			Target->Transporter = Attacker;
+			if(AttackerType->OpenTopped) {
+				Attacker->EnteredOpenTopped(Target);
+			}
+
 			if(Attacker->WhatAmI() == abs_Building) {
 				Target->Absorbed = true;
 			}
@@ -366,7 +372,7 @@ void WeaponTypeExt::ExtData::GiveMoney(BulletClass * Bullet) {
 	}
 }
 
-void Container<WeaponTypeExt>::InvalidatePointer(void *ptr) {
+void Container<WeaponTypeExt>::InvalidatePointer(void *ptr, bool bRemoved) {
 	AnnounceInvalidPointerMap(WeaponTypeExt::BombExt, ptr);
 	AnnounceInvalidPointerMap(WeaponTypeExt::WaveExt, ptr);
 	AnnounceInvalidPointerMap(WeaponTypeExt::BoltExt, ptr);
@@ -472,8 +478,8 @@ DEFINE_HOOK(7730F0, WeaponTypeClass_DTOR, 5)
 	return 0;
 }
 
-DEFINE_HOOK(772CD0, WeaponTypeClass_SaveLoad_Prefix, 7)
 DEFINE_HOOK_AGAIN(772EB0, WeaponTypeClass_SaveLoad_Prefix, 5)
+DEFINE_HOOK(772CD0, WeaponTypeClass_SaveLoad_Prefix, 7)
 {
 	GET_STACK(WeaponTypeExt::TT*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
@@ -496,9 +502,9 @@ DEFINE_HOOK(772F8C, WeaponTypeClass_Save, 5)
 	return 0;
 }
 
-DEFINE_HOOK(7729B0, WeaponTypeClass_LoadFromINI, 5)
 DEFINE_HOOK_AGAIN(7729C7, WeaponTypeClass_LoadFromINI, 5)
 DEFINE_HOOK_AGAIN(7729D6, WeaponTypeClass_LoadFromINI, 5)
+DEFINE_HOOK(7729B0, WeaponTypeClass_LoadFromINI, 5)
 {
 	GET(WeaponTypeClass*, pItem, ESI);
 	GET_STACK(CCINIClass*, pINI, 0xE4);

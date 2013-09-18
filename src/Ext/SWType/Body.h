@@ -40,9 +40,9 @@ public:
 	{
 	public:
 		// SpyPlane
-		ValueableIdx<int, AircraftTypeClass> SpyPlane_TypeIndex;
+		ValueableIdx<AircraftTypeClass> SpyPlane_TypeIndex;
 		Valueable<int> SpyPlane_Count;
-		ValueableIdx<int, MissionClass> SpyPlane_Mission;
+		ValueableIdx<MissionClass> SpyPlane_Mission;
 
 		// Lightning Storm
 		Valueable<int> Weather_Duration;
@@ -57,10 +57,10 @@ public:
 		Valueable<bool> Weather_PrintText;
 		Valueable<bool> Weather_IgnoreLightningRod;
 		Valueable<AnimTypeClass*> Weather_BoltExplosion;
-		TypeList<AnimTypeClass*> Weather_Clouds;
-		TypeList<AnimTypeClass*> Weather_Bolts;
-		TypeList<AnimTypeClass*> Weather_Debris;
-		TypeList<int> Weather_Sounds;
+		NullableVector<AnimTypeClass*> Weather_Clouds;
+		NullableVector<AnimTypeClass*> Weather_Bolts;
+		NullableVector<AnimTypeClass*> Weather_Debris;
+		NullableIdxVector<VocClass> Weather_Sounds;
 		ValueableEnum<SuperWeaponAffectedHouse> Weather_RadarOutageAffects;
 
 		// Nuke
@@ -120,15 +120,16 @@ public:
 		Valueable<int> Money_DrainDelay;
 
 		// Generic
-		ValueableIdx<int, VoxClass> EVA_Ready;
-		ValueableIdx<int, VoxClass> EVA_Activated;
-		ValueableIdx<int, VoxClass> EVA_Detected;
-		ValueableIdx<int, VoxClass> EVA_Impatient;
-		ValueableIdx<int, VoxClass> EVA_InsufficientFunds;
+		ValueableIdx<VoxClass> EVA_Ready;
+		ValueableIdx<VoxClass> EVA_Activated;
+		ValueableIdx<VoxClass> EVA_Detected;
+		ValueableIdx<VoxClass> EVA_Impatient;
+		ValueableIdx<VoxClass> EVA_InsufficientFunds;
+		ValueableIdx<VoxClass> EVA_SelectTarget;
 
 		// anim/sound
-		ValueableIdx<int, VocClass> SW_Sound;
-		ValueableIdx<int, VocClass> SW_ActivationSound;
+		ValueableIdx<VocClass> SW_Sound;
+		ValueableIdx<VocClass> SW_ActivationSound;
 		Valueable<AnimTypeClass *> SW_Anim;
 		Valueable<int> SW_AnimHeight;
 		ValueableEnum<SuperWeaponAffectedHouse> SW_AnimVisibility;
@@ -164,32 +165,26 @@ public:
 		Customizable<int> Lighting_Red;
 
 		// Messages
-		char Message_Detected[0x20];
-		char Message_Ready[0x20];
-		char Message_Launch[0x20];
-		char Message_Activate[0x20];
-		char Message_Abort[0x20];
-		char Message_InsufficientFunds[0x20];
+		Valueable<CSFText> Message_Detected;
+		Valueable<CSFText> Message_Ready;
+		Valueable<CSFText> Message_Launch;
+		Valueable<CSFText> Message_Activate;
+		Valueable<CSFText> Message_Abort;
+		Valueable<CSFText> Message_InsufficientFunds;
 		Valueable<int> Message_ColorScheme;
 		Valueable<bool> Message_FirerColor;
 
 		// Texts
-		char Text_Preparing[0x20];
-		char Text_Hold[0x20];
-		char Text_Ready[0x20];
-		char Text_Charging[0x20];
-		char Text_Active[0x20];
-
-		const wchar_t* NameReadiness_Preparing;
-		const wchar_t* NameReadiness_Hold;
-		const wchar_t* NameReadiness_Ready;
-		const wchar_t* NameReadiness_Charging;
-		const wchar_t* NameReadiness_Active;
+		Valueable<CSFText> Text_Preparing;
+		Valueable<CSFText> Text_Hold;
+		Valueable<CSFText> Text_Ready;
+		Valueable<CSFText> Text_Charging;
+		Valueable<CSFText> Text_Active;
 
 		CustomPalette CameoPal;
 
 		// Unit Delivery
-		DynamicVectorClass<TechnoTypeClass *> SW_Deliverables;
+		ValueableVector<TechnoTypeClass *> SW_Deliverables;
 		Valueable<bool> SW_DeliverBuildups;
 
 		char SidebarPCX[0x20];
@@ -215,8 +210,20 @@ public:
 			EVA_Detected (-1),
 			EVA_Impatient (-1),
 			EVA_InsufficientFunds (-1),
+			EVA_SelectTarget (-1),
+			Message_Detected (),
+			Message_Ready (),
+			Message_Launch (),
+			Message_Activate (),
+			Message_Abort (),
+			Message_InsufficientFunds (),
 			Message_ColorScheme (-1),
 			Message_FirerColor (false),
+			Text_Preparing (),
+			Text_Ready (),
+			Text_Hold (),
+			Text_Charging (),
+			Text_Active (),
 			Lighting_Enabled (true),
 			SW_Sound (-1),
 			SW_Anim (NULL),
@@ -238,27 +245,11 @@ public:
 			SW_Height (-1),
 			HandledByNewSWType (-1),
 			CameoPal(),
-			NameReadiness_Preparing (NULL),
-			NameReadiness_Hold (NULL),
-			NameReadiness_Ready (NULL),
-			NameReadiness_Charging (NULL),
-			NameReadiness_Active (NULL),
 			SW_DeliverBuildups (false),
 			SW_Damage(0)
 			{
 				*SidebarPCX = 0;
 				*SW_PostDependent = 0;
-				*Message_Detected = 0;
-				*Message_Ready = 0;
-				*Message_Launch = 0;
-				*Message_Activate = 0;
-				*Message_Abort = 0;
-				*Message_InsufficientFunds = 0;
-				*Text_Preparing = 0;
-				*Text_Ready = 0;
-				*Text_Hold = 0;
-				*Text_Charging = 0;
-				*Text_Active = 0;
 			};
 
 		virtual ~ExtData();
@@ -276,10 +267,10 @@ public:
 		bool IsHouseAffected(HouseClass* pFirer, HouseClass* pHouse);
 		bool IsHouseAffected(HouseClass* pFirer, HouseClass* pHouse, SuperWeaponAffectedHouse::Value value);
 		bool IsTechnoAffected(TechnoClass* pTechno);
-		void PrintMessage(char* Message, HouseClass* pFirer);
+		void PrintMessage(const CSFText& message, HouseClass* pFirer);
 		NewSWType* GetNewSWType();
 
-		virtual void InvalidatePointer(void *ptr) {
+		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
 		}
 
 	private:

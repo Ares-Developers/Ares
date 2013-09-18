@@ -41,6 +41,10 @@ void BuildingExt::UpdateDisplayTo(BuildingClass *pThis) {
 	if(pThis->Type->Radar) {
 		HouseClass *H = pThis->Owner;
 		H->RadarVisibleTo.Clear();
+
+		auto HExt = HouseExt::ExtMap.Find(H);
+		H->RadarVisibleTo.data |= HExt->RadarPersist.data;
+
 		for(int i = 0; i < H->Buildings.Count; ++i) {
 			BuildingClass *currentB = H->Buildings.GetItem(i);
 			if(!currentB->InLimbo) {
@@ -123,63 +127,44 @@ bool BuildingExt::ExtData::RubbleYell(bool beingRepaired) {
 	All units on the building's foundation are kicked out.
 
 	\author AlexB
-	\date 2010-06-27
+	\date 2013-04-24
 */
 void BuildingExt::ExtData::KickOutOfRubble() {
 	BuildingClass* pBld = this->AttachedToObject;
 
-	if(BuildingTypeExt::ExtData *pData = BuildingTypeExt::ExtMap.Find(pBld->Type)) {
-		// get the number of cells and a pointer to the cell data
-		int length = 0, height = 0, width = 0;
-		CellStruct *data = NULL;
-		if(pData->IsCustom) {
-			width = pData->CustomWidth;
-			height = pData->CustomHeight;
-			data = pData->CustomData;
+	// get the number of non-end-marker cells and a pointer to the cell data
+	CellStruct *data = pBld->Type->FoundationData;
+	size_t length = BuildingExt::FoundationLength(data) - 1;
+
+	// iterate over all cells and remove all infantry
+	typedef std::pair<FootClass*, bool> Item;
+	DynamicVectorClass<Item> list;
+	CellStruct location = MapClass::Instance->GetCellAt(&pBld->Location)->MapCoords;
+	for(size_t i=0; i<length; ++i) {
+		CellStruct pos = data[i];
+		pos += location;
+
+		// remove every techno that resides on this cell
+		CellClass* cell = MapClass::Instance->GetCellAt(&pos);
+		for(ObjectClass* pObj = cell->GetContent(); pObj; pObj = pObj->NextObject) {
+			if(FootClass* pFoot = generic_cast<FootClass*>(pObj)) {
+				bool selected = pFoot->IsSelected;
+				if(pFoot->Remove()) {
+					list.AddItem(Item(pFoot, selected));
+				}
+			}
+		}
+	}
+
+	// this part kicks out all units we found in the rubble
+	for(int i=0; i<list.Count; ++i) {
+		Item &item = list[i];
+		if(pBld->KickOutUnit(item.first, &location)) {
+			if(item.second) {
+				item.first->Select();
+			}
 		} else {
-			// these are length constants derived from the fnd_* constants
-			int fnd_widths[] = {1, 2, 1, 2, 2, 3, 3, 3, 4, 3, 1, 3, 4, 1, 1, 2, 2, 5, 4, 3, 6, 0};
-			int fnd_heights[] = {1, 1, 2, 2, 3, 2, 3, 5, 2, 3, 3, 1, 3, 4, 5, 6, 5, 3, 4, 4, 4, 0};
-			width = fnd_widths[pBld->Type->Foundation];
-			height = fnd_heights[pBld->Type->Foundation];
-			data = pBld->Type->FoundationData;
-		}
-		length = height * width;
-
-		// iterate over all cells and remove all infantry
-		DynamicVectorClass<std::pair<FootClass*, bool>> list;
-		CellStruct location = MapClass::Instance->GetCellAt(&pBld->Location)->MapCoords;
-		for(int i=0; i<length; ++i) {
-			CellStruct pos = data[i];
-			if((pos.X != 0x7FFF) && (pos.Y != 0x7FFF)) {
-				pos += location;
-
-				// remove every techno that resides on this cell
-				CellClass* cell = MapClass::Instance->GetCellAt(&pos);
-				for(ObjectClass* pObj = cell->GetContent(); pObj; pObj = pObj->NextObject) {
-					if(FootClass* pFoot = generic_cast<FootClass*>(pObj)) {
-						bool selected = pFoot->IsSelected;
-						if(pFoot->Remove()) {
-							list.AddItem(std::pair<FootClass*, bool>(pFoot, selected));
-						}
-					}
-				}
-			} else {
-				// invalid cell.
-				break;
-			}
-		}
-
-		// this part kicks out all units we found in the rubble
-		for(int i=0; i<list.Count; ++i) {
-			std::pair<FootClass*, bool> &item = list[i];
-			if(pBld->KickOutUnit(item.first, &location)) {
-				if(item.second) {
-					item.first->Select();
-				}
-			} else {
-				item.first->UnInit();
-			}
+			item.first->UnInit();
 		}
 	}
 }
@@ -450,7 +435,7 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 		return false;
 	}
 
-	if(Owner == Enterer) {
+	if(Owner == Enterer || Enterer->IsAlliedWith(Owner)) {
 		return true;
 	}
 
@@ -459,7 +444,7 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 	if(Enterer->ControlledByPlayer() || Owner->ControlledByPlayer()) {
 		CellStruct xy;
 		EnteredBuilding->GetMapCoords(&xy);
-		if(RadarEventClass::Create(RADAREVENT_STRUCTUREINFILTRATED, xy)) {
+		if(RadarEventClass::Create(RadarEventType::BuildingInfiltrated, xy)) {
 			raiseEva = true;
 		}
 	}
@@ -641,6 +626,15 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 	}
 
 	if(pTypeExt->RevealRadar.Get()) {
+		/*	Remember the new persisting radar spy effect on the victim house itself, because
+			destroying the building would destroy the spy reveal info in the ExtData, too.
+			2013-08-12 AlexB
+		*/
+		if(pTypeExt->RevealRadarPersist) {
+			auto pOwnerExt = HouseExt::ExtMap.Find(Owner);
+			pOwnerExt->RadarPersist.Add(Enterer);
+		}
+
 		EnteredBuilding->DisplayProductionTo.Add(Enterer);
 		BuildingExt::UpdateDisplayTo(EnteredBuilding);
 		if(evaForOwner || evaForEnterer) {
@@ -819,7 +813,7 @@ void BuildingExt::ExtData::KickOutClones(TechnoClass * Production) {
 
 	// keep cloning vats for backward compat, unless explicit sources are defined
 	if(FactoryType->Factory == InfantryTypeClass::AbsID) {
-		if(!CloningSources.Count) {
+		if(CloningSources.empty()) {
 			auto &CloningVats = FactoryOwner->CloningVats;
 			for(int i = 0; i < CloningVats.Count; ++i) {
 				KickOutClone(CloningVats[i]);
@@ -829,7 +823,7 @@ void BuildingExt::ExtData::KickOutClones(TechnoClass * Production) {
 	}
 
 	// and clone from new sources
-	if(CloningSources.Count || IsUnit) {
+	if(!CloningSources.empty() || IsUnit) {
 		for(int i = 0; i < AllBuildings.Count; ++i) {
 			auto B = AllBuildings[i];
 			if(B->InLimbo) {
@@ -838,8 +832,8 @@ void BuildingExt::ExtData::KickOutClones(TechnoClass * Production) {
 			auto BType = B->Type;
 
 			bool ShouldClone(false);
-			if(CloningSources.Count) {
-				ShouldClone = CloningSources.FindItemIndex(&BType) != -1;
+			if(!CloningSources.empty()) {
+				ShouldClone = CloningSources.Contains(BType);
 			} else if(IsUnit) {
 				auto BData = BuildingTypeExt::ExtMap.Find(BType);
 				ShouldClone = (!!BData->CloningFacility) && (BType->Naval == FactoryType->Naval);
@@ -873,8 +867,8 @@ DEFINE_HOOK(43BCF7, BuildingClass_DTOR, 6)
 	return 0;
 }
 
-DEFINE_HOOK(453E20, BuildingClass_SaveLoad_Prefix, 5)
 DEFINE_HOOK_AGAIN(454190, BuildingClass_SaveLoad_Prefix, 5)
+DEFINE_HOOK(453E20, BuildingClass_SaveLoad_Prefix, 5)
 {
 	GET_STACK(BuildingExt::TT*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);

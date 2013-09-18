@@ -43,7 +43,9 @@ void Prereqs::Parse(CCINIClass *pINI, const char *section, const char *key, Dyna
 {
 	if(pINI->ReadString(section, key, "", Ares::readBuffer, Ares::readLength)) {
 		vec->Clear();
-		for(char *cur = strtok(Ares::readBuffer, ","); cur; cur = strtok(NULL, ",")) {
+
+		char* context = nullptr;
+		for(char *cur = strtok_s(Ares::readBuffer, ",", &context); cur; cur = strtok_s(nullptr, ",", &context)) {
 			int idx = BuildingTypeClass::FindIndex(cur);
 			if(idx > -1) {
 				vec->AddItem(idx);

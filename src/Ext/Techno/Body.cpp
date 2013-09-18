@@ -30,7 +30,7 @@ void TechnoExt::SpawnSurvivors(FootClass *pThis, TechnoClass *pKiller, bool Sele
 	TechnoExt::ExtData *pSelfData = TechnoExt::ExtMap.Find(pThis);
 
 	CoordStruct loc = pThis->Location;
-	int chance = pData->Survivors_PilotChance.BindTo(pThis)->Get();
+	int chance = pData->Survivors_PilotChance.Get(pThis);
 	if(chance < 0) {
 		chance = int(RulesClass::Instance->CrewEscape * 100);
 	}
@@ -96,7 +96,7 @@ void TechnoExt::SpawnSurvivors(FootClass *pThis, TechnoClass *pKiller, bool Sele
 	}
 
 	// passenger escape chances
-	chance = pData->Survivors_PassengerChance.BindTo(pThis)->Get();
+	chance = pData->Survivors_PassengerChance.Get(pThis);
 
 	// eject or kill all passengers. if defenses are to be ignored, passengers
 	// killed no matter what the odds are.
@@ -107,7 +107,7 @@ void TechnoExt::SpawnSurvivors(FootClass *pThis, TechnoClass *pKiller, bool Sele
 		if(chance > 0) {
 			toSpawn = ScenarioClass::Instance->Random.RandomRanged(1, 100) <= chance;
 		} else if(chance == -1 && pThis->WhatAmI() == abs_Unit) {
-			Move::Value occupation = passenger->IsCellOccupied(pThis->GetCell(), -1, -1, 0, 1);
+			Move::Value occupation = passenger->IsCellOccupied(pThis->GetCell(), -1, -1, nullptr, true);
 			toSpawn = (occupation == Move::OK || occupation == Move::MovingBlock);
 		}
 		if(toSpawn && !IgnoreDefenses) {
@@ -165,7 +165,7 @@ bool TechnoExt::EjectSurvivor(FootClass *Survivor, CoordStruct *loc, bool Select
 		Survivor->Scatter(0xB1CFE8, 1, 0);
 		Survivor->QueueMission(Survivor->Owner->ControlledByHuman() ? mission_Guard : mission_Hunt, 0);
 	}
-	Survivor->unknown_bool_690 = Survivor->unknown_bool_691 = false;
+	Survivor->ShouldEnterOccupiable = Survivor->ShouldGarrisonStructure = false;
 
 	if(Select) {
 		Survivor->Select();
@@ -289,7 +289,7 @@ unsigned int TechnoExt::ExtData::AlphaFrame(SHPStruct *Image) {
 
 bool TechnoExt::ExtData::DrawVisualFX() {
 	TechnoClass * Object = this->AttachedToObject;
-	if(Object->VisualCharacter(true, Object->Owner) == VisualType::Normal) {
+	if(Object->VisualCharacter(VARIANT_TRUE, Object->Owner) == VisualType::Normal) {
 		if(!Object->Disguised) {
 			return true;
 		}
@@ -307,7 +307,7 @@ UnitTypeClass * TechnoExt::ExtData::GetUnitType() {
 	return NULL;
 }
 
-void Container<TechnoExt>::InvalidatePointer(void *ptr) {
+void Container<TechnoExt>::InvalidatePointer(void *ptr, bool bRemoved) {
 	AnnounceInvalidPointerMap(TechnoExt::AlphaExt, ptr);
 	AnnounceInvalidPointerMap(TechnoExt::SpotlightExt, ptr);
 	AnnounceInvalidPointer(TechnoExt::ActiveBuildingLight, ptr);
@@ -383,7 +383,7 @@ bool TechnoExt::ExtData::IsPowered() {
  */
 bool TechnoExt::CreateWithDroppod(FootClass *Object, CoordStruct *XYZ) {
 	auto MyCell = MapClass::Instance->GetCellAt(XYZ);
-	if(Object->IsCellOccupied(MyCell, -1, -1, 0, 0) != Move::OK) {
+	if(Object->IsCellOccupied(MyCell, -1, -1, nullptr, false) != Move::OK) {
 //		Debug::Log("Cell occupied... poof!\n");
 		return false;
 	} else {
@@ -467,6 +467,79 @@ void TechnoExt::TransferIvanBomb(TechnoClass *From, TechnoClass *To) {
 	}
 }
 
+void TechnoExt::TransferAttachedEffects(TechnoClass *From, TechnoClass *To) {
+	TechnoExt::ExtData *FromExt = TechnoExt::ExtMap.Find(From);
+	TechnoExt::ExtData *ToExt = TechnoExt::ExtMap.Find(To);
+
+	for (int i=0; i < ToExt->AttachedEffects.Count; ++i) {
+		auto ToItem = ToExt->AttachedEffects.GetItem(i);
+		ToItem->Destroy();
+		delete ToItem;
+	}
+	ToExt->AttachedEffects.Clear();
+
+	// while recreation itself isn't the best idea, less hassle and more reliable
+	// list gets intact in the end
+	for (int i=0; i < FromExt->AttachedEffects.Count; i++) {
+		auto FromItem = FromExt->AttachedEffects.GetItem(i);
+		FromItem->Type->Attach(To, FromItem->ActualDuration, FromItem->Invoker);
+		//FromItem->Type->Attach(To, FromItem->ActualDuration, FromItem->Invoker, FromItem->ActualDamageDelay);
+		FromItem->Destroy();
+		delete FromItem;
+	}
+
+	FromExt->AttachedEffects.Clear();
+	FromExt->AttachedTechnoEffect_isset = false;
+	TechnoExt::RecalculateStats(To);
+}
+
+/*! This function recalculates the stats modifiable by crates and update them (aimed for request #255)
+	\todo code that crate effects not get ignored
+	\author Graion Dilach
+	\date 2011-10-12
+*/
+
+void TechnoExt::RecalculateStats(TechnoClass *pTechno) {
+	auto pTechnoExt = TechnoExt::ExtMap.Find(pTechno);
+	double Firepower = pTechnoExt->Crate_FirepowerMultiplier,
+		Armor = pTechnoExt->Crate_ArmorMultiplier,
+		Speed = pTechnoExt->Crate_SpeedMultiplier; //if there's hooks for crate-stuff, they could be the base for this
+	bool Cloak = TechnoExt::CanICloakByDefault(pTechno) || pTechnoExt->Crate_Cloakable;
+
+	//Debug::Log("[AttachEffect]Recalculating stats of %s...\n", pTechno->get_ID());
+
+	for (int i = 0; i < pTechnoExt->AttachedEffects.Count; i++) {
+		auto Item = pTechnoExt->AttachedEffects.GetItem(i);
+		auto iType = Item->Type;
+		//do not use *= here... Valuable sends GetEx and repositions the double
+		Firepower = iType->FirepowerMultiplier * Firepower;
+		Speed = iType->SpeedMultiplier * Speed;
+		Armor = iType->ArmorMultiplier * Armor;
+		Cloak = Cloak || !!iType->Cloakable;
+	}
+
+	pTechno->FirepowerMultiplier = Firepower;
+	pTechno->ArmorMultiplier = Armor;
+
+	pTechno->Cloakable = Cloak;
+
+	if(FootClass *Foot = generic_cast<FootClass *>(pTechno)) {
+		Foot->SpeedMultiplier = Speed;
+	}
+
+	//Debug::Log("[AttachEffect]Calculation was successful.\n", pTechno->get_ID());
+}
+
+/*! This function calculates whether the unit would be cloaked by default
+	\author Graion Dilach
+	\date 2011-10-16
+*/
+bool TechnoExt::CanICloakByDefault(TechnoClass *pTechno) {
+	//Debug::Log("[AttachEffect]Can %s cloak by default?\n", pTechno->get_ID());
+	auto tType = pTechno->GetTechnoType();
+	return tType->Cloakable || pTechno->HasAbility(Abilities::CLOAK);
+}
+
 bool TechnoExt::ExtData::IsDeactivated() const {
 	return this->AttachedToObject->Deactivated;
 }
@@ -485,6 +558,12 @@ eAction TechnoExt::ExtData::GetDeactivatedAction(ObjectClass *Hovered) const {
 	return act_None;
 }
 
+void TechnoExt::ExtData::InvalidateAttachEffectPointer(void *ptr) {
+	for(auto i = 0; i < this->AttachedEffects.Count; ++i) {
+		this->AttachedEffects.GetItem(i)->InvalidatePointer(ptr);
+	}
+}
+
 /*! This function detaches a specific spawned object from it's spawner.
 	The check if it's a spawned object at all should be done before this function is called.
 	Check for SpawnOwner, specifically.
@@ -496,15 +575,15 @@ eAction TechnoExt::ExtData::GetDeactivatedAction(ObjectClass *Hovered) const {
 	\todo Get an assembly-reader to document Status in YR++ and update Status accordingly
 */
 void TechnoExt::DetachSpecificSpawnee(TechnoClass *Spawnee, HouseClass *NewSpawneeOwner){
-	
+
 	// setting up the nodes. Funnily, nothing else from the manager is needed
 	auto *SpawnNode = &(Spawnee->SpawnOwner->SpawnManager->SpawnedNodes);
 
 	//find the specific spawnee in the node
 	for (int i=0; i<SpawnNode->Count; ++i){
-		
+
 		if(Spawnee == SpawnNode->GetItem(i)->Unit) {
-			
+
 			SpawnNode->GetItem(i)->Unit = NULL;
 			Spawnee->SpawnOwner = NULL;
 
@@ -525,7 +604,7 @@ void TechnoExt::DetachSpecificSpawnee(TechnoClass *Spawnee, HouseClass *NewSpawn
 	\date 2011-06-09
 */
 void TechnoExt::FreeSpecificSlave(TechnoClass *Slave, HouseClass *Affector){
-	
+
 	//If you're a slave, you're an InfantryClass. But since most functions use TechnoClasses and the check can be done in that level as well
 	//it's easier to set up the recasting in this function
 	//Anybody who writes 357, take note that SlaveManager uses InfantryClasses everywhere, SpawnManager uses TechnoClasses derived from AircraftTypeClasses
@@ -585,9 +664,9 @@ AresAction::Value TechnoExt::ExtData::GetActionHijack(TechnoClass* pTarget) {
 		return AresAction::None;
 	}
 	if(pType->Deployer) {
-		eSequence sequence = pThis->SequenceAnim;
-		if(sequence == seq_Deploy || sequence == seq_Deployed
-			|| sequence == seq_DeployedFire || sequence == seq_DeployedIdle) {
+		Sequence::Value sequence = pThis->SequenceAnim;
+		if(sequence == Sequence::Deploy || sequence == Sequence::Deployed
+			|| sequence == Sequence::DeployedFire || sequence == Sequence::DeployedIdle) {
 				return AresAction::None;
 		}
 	}
@@ -793,8 +872,8 @@ DEFINE_HOOK(6F4500, TechnoClass_DTOR, 5)
 	return 0;
 }
 
-DEFINE_HOOK(70BF50, TechnoClass_SaveLoad_Prefix, 5)
 DEFINE_HOOK_AGAIN(70C250, TechnoClass_SaveLoad_Prefix, 8)
+DEFINE_HOOK(70BF50, TechnoClass_SaveLoad_Prefix, 5)
 {
 	GET_STACK(TechnoExt::TT*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);

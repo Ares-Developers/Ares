@@ -29,6 +29,14 @@ DEFINE_HOOK(41668B, AircraftClass_ReceiveDamage, 6)
 	bool select = a->IsSelected && a->Owner->ControlledByPlayer();
 	TechnoExt::SpawnSurvivors(a, Killer, select, ignoreDefenses != 0);
 
+	// Crashable support for aircraft
+	if(auto pExt = TechnoTypeExt::ExtMap.Find(a->GetTechnoType())) {
+		if(!pExt->Crashable.Get(true)) {
+			R->EAX(0);
+			return 0x41669A;
+		}
+	}
+
 	return 0;
 }
 
@@ -57,7 +65,7 @@ DEFINE_HOOK(6F9E50, TechnoClass_Update, 5)
 	}
 	
 	// #617 powered units
-	if(pTypeData && pTypeData->PoweredBy.Count) {
+	if(pTypeData && pTypeData->PoweredBy.size()) {
 		if(!pData->PoweredUnit) {
 			pData->PoweredUnit = new PoweredUnitClass(Source, pTypeData);
 		}
@@ -66,10 +74,13 @@ DEFINE_HOOK(6F9E50, TechnoClass_Update, 5)
 		}
 	}
 
+	AttachEffectClass::Update(Source);
+
 	return 0;
 }
 
 //! TechnoClass::Update is called every frame; returning 0 tells it to execute the original function's code as well.
+//! EXCEPT if the target is under Temporal, use the 71A860 hook for that - Graion, 2013-06-13.
 DEFINE_HOOK(6F9E76, TechnoClass_Update_CheckOperators, 6)
 {
 	GET(TechnoClass *, pThis, ESI); // object this is called on
@@ -255,14 +266,34 @@ DEFINE_HOOK(6F4103, TechnoClass_Init_2, 6)
 }
 
 // temporal per-slot
-DEFINE_HOOK(71A860, TemporalClass_UpdateA, 6)
+DEFINE_HOOK(71A84E, TemporalClass_UpdateA, 5)
 {
 	GET(TemporalClass *, Temp, ESI);
-	TechnoClass *T = Temp->Owner;
-	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(T);
-	WeaponStruct *W = T->GetWeapon(pData->idxSlot_Warp);
-	R->EAX<WeaponStruct *>(W);
-	return 0x71A876;
+
+	// Temporal should disable RadarJammers
+	auto Target = Temp->Target;
+	TechnoExt::ExtData * TargetExt = TechnoExt::ExtMap.Find(Target);
+	if(TargetExt->RadarJam) {
+		TargetExt->RadarJam->UnjamAll();
+		delete TargetExt->RadarJam;
+		TargetExt->RadarJam = NULL;
+	}
+
+	//AttachEffect handling under Temporal
+	if (!TargetExt->AttachEffects_RecreateAnims) {
+		for (int i = TargetExt->AttachedEffects.Count; i > 0; --i) {
+			auto Effect = TargetExt->AttachedEffects.GetItem(i - 1);
+			if (!!Effect->Type->TemporalHidesAnim) {
+				Effect->KillAnim();
+			}
+		}
+		TargetExt->AttachEffects_RecreateAnims = true;
+	}
+
+	Temp->WarpRemaining -= Temp->GetWarpPerStep(0);
+
+	R->EAX(Temp->WarpRemaining);
+	return 0x71A88D;
 }
 
 // temporal per-slot
@@ -272,6 +303,7 @@ DEFINE_HOOK(71AB30, TemporalClass_GetHelperDamage, 5)
 	TechnoClass *T = Temp->Owner;
 	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(T);
 	WeaponStruct *W = T->GetWeapon(pData->idxSlot_Warp);
+	WarheadTypeExt::Temporal_WH = W->WeaponType->Warhead;
 	R->EAX<WeaponStruct *>(W);
 	return 0x71AB47;
 }
@@ -558,20 +590,20 @@ DEFINE_HOOK(701C97, TechnoClass_ReceiveDamage_AffectsEnemies, 6)
 	GET(WarheadTypeClass *, pThis, EBP);
 	GET(TechnoClass *, Victim, ESI);
 	LEA_STACK(args_ReceiveDamage *, Arguments, 0xC8);
+
+	// get the owner of the attacker. if there's none, use source house
+	auto pSourceHouse = Arguments->Attacker ? Arguments->Attacker->Owner : Arguments->SourceHouse;
+
+	// default for ownerless damage i.e. crates/fire particles
 	bool CanAffect = true;
 
-	WarheadTypeExt::ExtData *WHTypeExt = WarheadTypeExt::ExtMap.Find(pThis);
+	// check if allied to target, then apply either AffectsAllies or AffectsEnemies
+	if(pSourceHouse) {
+		auto pExt = WarheadTypeExt::ExtMap.Find(pThis);
+		CanAffect = Victim->Owner->IsAlliedWith(pSourceHouse) ? pThis->AffectsAllies : pExt->AffectsEnemies;
 
-	if(Arguments->Attacker) {
 		/* Ren, 08.01.2011:
-			Just documenting how/why this works, since I just stared at it for ten minutes trying to
-			figure out why this makes sense:
-			
-			AffectsEnemies=yes is the default case (weapons usually affect the enemy), so if that's true,
-			we can affect the target (this might later be changed by AffectsAllies).
-			AffectsEnemies=no means we cannot attack enemies, i.e. we can only attack allies;
-			ergo, CanAffect is only true if victim and target are allied.
-			Thanks to lazy evaluation, the latter condition is only ever checked if AffectsEnemies is set to no, which is not the default.
+			<not applicable any more \>
 			
 			The question of how this works came up because the current treatment of Neutral is technically wrong:
 			Semantically, AffectsEnemies=no only means "you cannot attack enemies", but our code renders it as "you cannot attack non-allies";
@@ -584,31 +616,18 @@ DEFINE_HOOK(701C97, TechnoClass_ReceiveDamage_AffectsEnemies, 6)
 			I just wanted this behavior and the logic behind it to be documented for the future.
 			
 			Note that, in the specific case of AffectsEnemies=no, AffectsAllies=no, this will rear its ugly head as a bug: Neutral should be affected, but won't be.
-		 */
-		CanAffect = WHTypeExt->AffectsEnemies || Victim->Owner->IsAlliedWith(Arguments->Attacker->Owner);
+			*/
 
-#ifdef DEBUGBUILD
-		if(Arguments->Attacker->Owner != Arguments->SourceHouse) {
-			Debug::Log("Info: During AffectsEnemies parsing, Attacker's Owner was %p [%s], but SourceHouse was %p [%s].",
-				Arguments->Attacker->Owner,
-				(Arguments->Attacker->Owner ? Arguments->Attacker->Owner->Type->ID : "null"),
-				Arguments->SourceHouse,
-				(Arguments->SourceHouse ? Arguments->SourceHouse->Type->ID : "null")
-				);
-			Debug::DumpStack(R, 0x180, 0xC0);
-		}
-#endif
+		/* AlexB, 2013-08-19:
+			"You're either with us, or against us" -- Old saying in Tennessee, ... or was it Texas?
 
-	} else if(Arguments->SourceHouse) {
-		// fallback, in case future ways of damage dealing don't include an attacker, e.g. stuff like GenericWarhead
-		CanAffect = WHTypeExt->AffectsEnemies || Victim->Owner->IsAlliedWith(Arguments->SourceHouse);
-
-	} else {
-		//Debug::Log("Warning: Neither Attacker nor SourceHouse were set during AffectsEnemies parsing!");
-		// this is often the case for ownerless damage i.e. crates/fire particles, no point in logging it
+			The game has no clear concept of neutrality. If something like that is going to be added, it could be
+			in the form of a Nullable<bool> AffectsNeutral, and a CanAffect = AffectsNeutral.Get(CanAffect) if the
+			source house is neutral (however this is going to be inferred).
+		*/
 	}
 
-	return CanAffect ? 0 : 0x701CC2;
+	return CanAffect ? 0x701CD7 : 0x701CC2;
 }
 
 // select the most appropriate firing voice and also account
@@ -982,7 +1001,7 @@ DEFINE_HOOK(6F6AC9, TechnoClass_Remove, 6) {
 		delete TechnoExt->RadarJam;
 		TechnoExt->RadarJam = NULL;
 	}
-	
+
 	// #617 powered units
 	if(TechnoExt->PoweredUnit)
 	{
@@ -993,6 +1012,18 @@ DEFINE_HOOK(6F6AC9, TechnoClass_Remove, 6) {
 	// Bounty
 	if (TechnoExt->Bounty_Amount) {
 			BountyClass::BountyMessageOutput(pThis);
+	}
+
+	//#1573, #1623, #255 attached effects
+	if (TechnoExt->AttachedEffects.Count) {
+		//auto pID = pThis->GetTechnoType()->ID;
+		for (int i = TechnoExt->AttachedEffects.Count; i>0; --i) {
+			//Debug::Log("[AttachEffect] Removing %d. item from %s\n", i - 1, pID);
+			auto Item = TechnoExt->AttachedEffects.GetItem(i - 1);
+			Item->KillAnim();
+		}
+
+		TechnoExt->AttachEffects_RecreateAnims = true;
 	}
 
 	return 0;
@@ -1185,4 +1216,36 @@ DEFINE_HOOK(70DEBA, TechnoClass_UpdateGattling_Cycle, 6)
 	R->Stack<int>(0x10, pThis->GattlingValue);
 
 	return 0x70DEEB;
+}
+
+// prevent crashing and sinking technos from self-healing
+DEFINE_HOOK(6FA743, TechnoClass_Update_SkipSelfHeal, A)
+{
+	GET(TechnoClass*, pThis, ESI);
+	if(pThis->IsCrashing || pThis->IsSinking) {
+		return 0x6FA941;
+	}
+	
+	return 0;
+}
+
+// make the space between gunner name segment and ifv
+// name smart. it disappears if one of them is empty,
+// eliminating leading and trailing spaces.
+DEFINE_HOOK(746C55, UnitClass_GetUIName, 6)
+{
+	GET(UnitClass*, pThis, ESI);
+	GET(wchar_t*, pGunnerName, EAX);
+
+	auto pName = pThis->Type->UIName;
+
+	auto pSpace = L"";
+	if(pName && *pName && pGunnerName && *pGunnerName) {
+		pSpace = L" ";
+	}
+
+	_snwprintf_s(pThis->ToolTipText, _TRUNCATE, L"%s%s%s", pGunnerName, pSpace, pName);
+
+	R->EAX(pThis->ToolTipText);
+	return 0x746C76;
 }

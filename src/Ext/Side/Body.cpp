@@ -10,8 +10,6 @@ int SideExt::CurrentLoadTextColor = -1;
 template<> SideExt::TT *Container<SideExt>::SavingObject = NULL;
 template<> IStream *Container<SideExt>::SavingStream = NULL;
 
-hash_map<VoxClass*, DynamicVectorClass<SideExt::VoxFileNameStruct> > SideExt::EVAFiles;
-
 void SideExt::ExtData::Initialize(SideClass *pThis)
 {
 	char* pID = pThis->ID;
@@ -38,13 +36,16 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 		this->DefaultDisguise.Bind(&RulesClass::Instance->SovietDisguise);
 		this->SurvivorDivisor.Bind(&RulesClass::Instance->SovietSurvivorDivisor);
 
-		strcpy(this->EVATag, "Russian");
+		this->EVAIndex = 1;
 
 		this->ParaDropFallbackTypes = &RulesClass::Instance->SovParaDropInf;
 		this->ParaDropFallbackNum = &RulesClass::Instance->SovParaDropNum;
 
 		this->SidebarMixFileIndex = 2;
 		this->SidebarYuriFileNames = false;
+
+		this->ToolTipTextColor = ColorStruct(255, 255, 0);
+		this->MessageTextColorIndex = 11;
 
 	} else if(!_strcmpi(pID, "ThirdSide")) { //Yuri
 
@@ -60,13 +61,16 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 		this->DefaultDisguise.Bind(&RulesClass::Instance->ThirdDisguise);
 		this->SurvivorDivisor.Bind(&RulesClass::Instance->ThirdSurvivorDivisor);
 
-		strcpy(this->EVATag, "Yuri");
+		this->EVAIndex = 2;
 
 		this->ParaDropFallbackTypes = &RulesClass::Instance->YuriParaDropInf;
 		this->ParaDropFallbackNum = &RulesClass::Instance->YuriParaDropNum;
 
 		this->SidebarMixFileIndex = 2;
 		this->SidebarYuriFileNames = true;
+
+		this->ToolTipTextColor = ColorStruct(255, 255, 0);
+		this->MessageTextColorIndex = 25;
 
 	} else { //Allies or any other country
 
@@ -82,13 +86,16 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 		this->DefaultDisguise.Bind(&RulesClass::Instance->AlliedDisguise);
 		this->SurvivorDivisor.Bind(&RulesClass::Instance->AlliedSurvivorDivisor);
 
-		strcpy(this->EVATag, "Allied");
+		this->EVAIndex = 0;
 
 		this->ParaDropFallbackTypes = &RulesClass::Instance->AllyParaDropInf;
 		this->ParaDropFallbackNum = &RulesClass::Instance->AllyParaDropNum;
 
 		this->SidebarMixFileIndex = 1;
 		this->SidebarYuriFileNames = false;
+
+		this->ToolTipTextColor = ColorStruct(164, 210, 255);
+		this->MessageTextColorIndex = 21;
 	}
 
 };
@@ -101,7 +108,8 @@ void SideExt::ExtData::LoadFromINIFile(SideClass *pThis, CCINIClass *pINI)
 	if(pINI->ReadString(section, "AI.BaseDefenseCounts", "", Ares::readBuffer, Ares::readLength)) {
 		this->BaseDefenseCounts.Clear();
 
-		for(p = strtok(Ares::readBuffer, Ares::readDelims); p && *p; p = strtok(NULL, Ares::readDelims)) {
+		char* context = nullptr;
+		for(p = strtok_s(Ares::readBuffer, Ares::readDelims, &context), &context; p && *p; p = strtok_s(nullptr, Ares::readDelims, &context)) {
 			this->BaseDefenseCounts.AddItem(atoi(p));
 		}
 	}
@@ -109,7 +117,8 @@ void SideExt::ExtData::LoadFromINIFile(SideClass *pThis, CCINIClass *pINI)
 	if(pINI->ReadString(section, "AI.BaseDefenses", "", Ares::readBuffer, Ares::readLength)) {
 		this->BaseDefenses.Clear();
 
-		for(p = strtok(Ares::readBuffer, Ares::readDelims); p && *p; p = strtok(NULL, Ares::readDelims)) {
+		char* context = nullptr;
+		for(p = strtok_s(Ares::readBuffer, Ares::readDelims, &context); p && *p; p = strtok_s(nullptr, Ares::readDelims, &context)) {
 			this->BaseDefenses.AddItem(BuildingTypeClass::FindOrAllocate(p));
 		}
 	}
@@ -120,9 +129,7 @@ void SideExt::ExtData::LoadFromINIFile(SideClass *pThis, CCINIClass *pINI)
 
 	this->DefaultDisguise.Parse(&exINI, section, "DefaultDisguise", 1);
 
-	if(pINI->ReadString(section, "EVA.Tag", "", Ares::readBuffer, 0x20)) {
-		AresCRT::strCopy(this->EVATag, Ares::readBuffer, 0x20);
-	}
+	this->EVAIndex.Read(&exINI, section, "EVA.Tag");
 
 	this->Parachute_Anim.Parse(&exINI, section, "Parachute.Anim");
 
@@ -132,7 +139,8 @@ void SideExt::ExtData::LoadFromINIFile(SideClass *pThis, CCINIClass *pINI)
 		this->ParaDrop.Clear();
 		this->ParaDropFallbackTypes = NULL;
 
-		for(p = strtok(Ares::readBuffer, Ares::readDelims); p && *p; p = strtok(NULL, Ares::readDelims)) {
+		char* context = nullptr;
+		for(p = strtok_s(Ares::readBuffer, Ares::readDelims, &context); p && *p; p = strtok_s(NULL, Ares::readDelims, &context)) {
 			TechnoTypeClass* pTT = UnitTypeClass::Find(p);
 
 			if(!pTT) {
@@ -151,14 +159,22 @@ void SideExt::ExtData::LoadFromINIFile(SideClass *pThis, CCINIClass *pINI)
 		this->ParaDropNum.Clear();
 		this->ParaDropFallbackNum = NULL;
 
-		for(p = strtok(Ares::readBuffer, Ares::readDelims); p && *p; p = strtok(NULL, Ares::readDelims)) {
+		char* context = nullptr;
+		for(p = strtok_s(Ares::readBuffer, Ares::readDelims, &context); p && *p; p = strtok_s(NULL, Ares::readDelims, &context)) {
 			this->ParaDropNum.AddItem(atoi(p));
 		}
 	}
 
 	this->SidebarMixFileIndex =  pINI->ReadInteger(section, "Sidebar.MixFileIndex", this->SidebarMixFileIndex);
 	this->SidebarYuriFileNames = pINI->ReadBool(section, "Sidebar.YuriFileNames", this->SidebarYuriFileNames);
+	this->ToolTipTextColor.Read(&exINI, section, "ToolTipColor");
 	this->SurvivorDivisor.Read(&exINI, section, "SurvivorDivisor");
+
+	if(pINI->ReadString(section, "MessageTextColor", "", Ares::readBuffer, 0x80)) {
+		if(ColorScheme* pCS = ColorScheme::Find(Ares::readBuffer)) {
+			this->MessageTextColorIndex = pCS->ArrayIndex;
+		}
+	}
 }
 
 DWORD SideExt::BaseDefenses(REGISTERS* R, DWORD dwReturnAddress)
@@ -264,8 +280,8 @@ DEFINE_HOOK(6A4930, SideClass_DTOR, 6)
 	return 0;
 }
 
-DEFINE_HOOK(6A4780, SideClass_SaveLoad_Prefix, 6)
 DEFINE_HOOK_AGAIN(6A48A0, SideClass_SaveLoad_Prefix, 5)
+DEFINE_HOOK(6A4780, SideClass_SaveLoad_Prefix, 6)
 {
 	GET_STACK(SideExt::TT*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);

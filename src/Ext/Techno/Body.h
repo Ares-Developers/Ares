@@ -65,6 +65,20 @@ public:
 		// issue #617 powered units
 		PoweredUnitClass* PoweredUnit;
 
+		//#1573, #1623, #255 Stat-modifiers/ongoing animations
+		DynamicVectorClass <AttachEffectClass *> AttachedEffects;
+		bool AttachEffects_RecreateAnims;
+
+		//stuff for #1623
+		bool AttachedTechnoEffect_isset;
+		int AttachedTechnoEffect_Delay;
+
+		//crate fields
+		double Crate_FirepowerMultiplier;
+		double Crate_ArmorMultiplier;
+		double Crate_SpeedMultiplier;
+		bool Crate_Cloakable;
+
 		TemporalClass * MyOriginalTemporal;
 
 		EBolt * MyBolt;
@@ -94,6 +108,11 @@ public:
 			PoweredUnit(NULL),
 			MyOriginalTemporal(NULL),
 			AltOccupation(),
+			AttachedTechnoEffect_Delay (0),
+			Crate_FirepowerMultiplier(1.0),
+			Crate_ArmorMultiplier(1.0),
+			Crate_SpeedMultiplier(1.0),
+			Crate_Cloakable(false),
 			FlyingMessage_Delay(0),
 			Bounty_Amount(0)
 			{
@@ -111,8 +130,10 @@ public:
 
 		virtual size_t Size() const { return sizeof(*this); };
 
-		virtual void InvalidatePointer(void *ptr) {
+		// when any pointer in the game expires, this is called - be sure to tell everyone we own to invalidate it
+		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
 			AnnounceInvalidPointer(this->GarrisonedIn, ptr);
+			this->InvalidateAttachEffectPointer(ptr);
 			AnnounceInvalidPointer(this->MyOriginalTemporal, ptr);
 		}
 
@@ -131,6 +152,8 @@ public:
 		bool IsDeactivated() const;
 
 		eAction GetDeactivatedAction(ObjectClass *Hovered = NULL) const;
+
+		void InvalidateAttachEffectPointer(void *ptr);
 		
 		TechnoTypeExt::TT * GetTypeData() const {
 			if(!this->TypeData) {
@@ -185,10 +208,14 @@ public:
 	static bool CreateWithDroppod(FootClass *Object, CoordStruct *XYZ);
 
 	static void TransferIvanBomb(TechnoClass *From, TechnoClass *To);
+	static void TransferAttachedEffects(TechnoClass *From, TechnoClass *To);
+
+	static void RecalculateStats(TechnoClass *pTechno);
 
 	static void FreeSpecificSlave(TechnoClass *Slave, HouseClass *Affector);
 	static void DetachSpecificSpawnee (TechnoClass *Spawnee, HouseClass *NewSpawneeOwner);
-	
+	static bool CanICloakByDefault(TechnoClass *pTechno);
+
 	static void Destroy(TechnoClass* pTechno, TechnoClass* pKiller = NULL, HouseClass* pKillerHouse = NULL, WarheadTypeClass* pWarhead = NULL);
 /*
 	static int SelectWeaponAgainst(TechnoClass *pThis, TechnoClass *pTarget);

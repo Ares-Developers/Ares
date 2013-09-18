@@ -23,7 +23,7 @@ int IndexOfTab(TabDataStruct * tab) {
 	}
 	Debug::FullDump(NULL);
 	Debug::FatalErrorAndExit("Failed to determine tab index of ptr %p\n", tab);
-	return -1;
+	//return -1; does not return
 };
 
 // initializing sidebar
@@ -114,7 +114,7 @@ DEFINE_HOOK(6A8710, TabCameoListClass_AddCameo_ReplaceItAll, 0)
 
 	CameoDataStruct newCameo;
 	newCameo.ClearFully();
-	newCameo.ProcessingTimer.StartTime = Unsorted::CurrentFrame;
+	newCameo.Progress.Timer.StartTime = Unsorted::CurrentFrame;
 	newCameo.ItemIndex = ItemIndex;
 	newCameo.ItemType = ItemType;
 	if(ItemType == BuildingTypeClass::AbsID) {
@@ -433,11 +433,11 @@ DEFINE_HOOK(6AB577, SidebarClass_ProcessCameoClick_FixOffset3, 0)
 	R->EBP<void *>(NULL);
 
 	if(Item.unknown_10 == 1) { // hi, welcome to dumb ideas
-		if(Item.Progress > Progress) {
-			Progress = (Progress + Item.Progress) / 2;
+		if(Item.Progress.Value > Progress) {
+			Progress = (Progress + Item.Progress.Value) / 2;
 		}
 	}
-	Item.Progress = Progress;
+	Item.Progress.Value = Progress;
 
 	int Frames = SavedFactory->GetBuildTimeFrames();
 

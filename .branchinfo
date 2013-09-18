@@ -1,6 +1,6 @@
 [branch]
-Name=Bounty Logic
-Description=Kill people, get money.
-BranchRevision=1147
+Name=The Bounty system
+Description=Branch for all money-weaponry interactions. See https://github.com/Ares-Developers/Ares/wiki/Bounty-branch-doc for documentation.
+TargetVersion=0.5
 Stable=no
 ReadyForTesting=yes

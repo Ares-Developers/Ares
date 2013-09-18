@@ -18,14 +18,11 @@
 #include <string>
 #include "../Ares.version.h"
 
-static bool IsNonemptyValue(const char *Value) {
-	return strlen(Value) && _strcmpi(Value, "<none>") && _strcmpi(Value, "none");
-};
-
 DEFINE_HOOK(477007, INIClass_GetSpeedType, 8)
 {
 	if(R->EAX() == -1) {
 		GET_STACK(const char *, Section, 0x8C);
+		GET_STACK(const char *, Key, 0x90);
 		LEA_STACK(const char *, Value, 0x8);
 		GET_STACK(DWORD, caller, 0x88);
 		/*
@@ -34,10 +31,8 @@ DEFINE_HOOK(477007, INIClass_GetSpeedType, 8)
 			UnitTypeClass::LoadFromINI overrides it to (this->Crusher ? Track : Wheel) just before reading its SpeedType
 			so we should not alert if we're responding to a TType read and our subject is a UnitType, or all VehicleTypes without an explicit ST declaration will get dinged
 		*/
-		if(IsNonemptyValue(Value)) {
-			if(caller != 0x7121E5 || R->EBP<TechnoTypeClass *>()->WhatAmI() != abs_UnitType) {
-				Debug::INIParseFailed(Section, "SpeedType", Value);
-			}
+		if(caller != 0x7121E5 || R->EBP<TechnoTypeClass *>()->WhatAmI() != abs_UnitType) {
+			Debug::INIParseFailed(Section, Key, Value);
 		}
 	}
 	return 0;
@@ -45,36 +40,20 @@ DEFINE_HOOK(477007, INIClass_GetSpeedType, 8)
 
 DEFINE_HOOK(474E8E, INIClass_GetMovementZone, 5)
 {
-	if(R->EAX() == -1) {
-		GET_STACK(const char *, Section, 0x2C);
-		LEA_STACK(const char *, Value, 0x8);
-		if(IsNonemptyValue(Value)) {
-			Debug::INIParseFailed(Section, "MovementZone", Value);
-		}
-	}
-	return 0;
-}
-
-DEFINE_HOOK(47542A, INIClass_GetArmorType, 6)
-{
-	if(R->EAX() == -1) {
-		GET_STACK(const char *, Section, 0x8C);
-		LEA_STACK(const char *, Value, 0x8);
-		if(IsNonemptyValue(Value)) {
-			Debug::INIParseFailed(Section, "Armor", Value);
-		}
-	}
+	GET_STACK(const char *, Section, 0x2C);
+	GET_STACK(const char *, Key, 0x30);
+	LEA_STACK(const char *, Value, 0x8);
+	Debug::INIParseFailed(Section, Key, Value);
 	return 0;
 }
 
 DEFINE_HOOK(474DEE, INIClass_GetFoundation, 7)
 {
-	if(R->EAX() == -1) {
-		GET_STACK(const char *, Section, 0x2C);
-		LEA_STACK(const char *, Value, 0x8);
-		if(IsNonemptyValue(Value) && _strcmpi(Value, "Custom")) {
-			Debug::INIParseFailed(Section, "Foundation", Value);
-		}
+	GET_STACK(const char *, Section, 0x2C);
+	GET_STACK(const char *, Key, 0x30);
+	LEA_STACK(const char *, Value, 0x8);
+	if(_strcmpi(Value, "Custom")) {
+		Debug::INIParseFailed(Section, Key, Value);
 	}
 	return 0;
 }
@@ -116,13 +95,13 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 		}
 
 		auto pData = TechnoTypeExt::ExtMap.Find(Item);
-		if(Item->PoweredUnit && pData->PoweredBy.Count) {
+		if(Item->PoweredUnit && pData->PoweredBy.size()) {
 			Debug::DevLog(Debug::Error, "[%s] uses both PoweredUnit=yes and PoweredBy=!\n", Item->ID);
 			Item->PoweredUnit = false;
 		}
 		if(auto PowersUnit = Item->PowersUnit) {
 			auto pExtraData = TechnoTypeExt::ExtMap.Find(PowersUnit);
-			if(pExtraData->PoweredBy.Count) {
+			if(pExtraData->PoweredBy.size()) {
 				Debug::DevLog(Debug::Error, "[%s]PowersUnit=%s, but [%s] uses PoweredBy=!\n", Item->ID, PowersUnit->ID, PowersUnit->ID);
 				Item->PowersUnit = NULL;
 			}
@@ -141,10 +120,10 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 		// set the default value, if not already overridden
 		pData->ImmuneToEMP.BindEx(!EMPulse::IsTypeEMPProne(Item));
 
-		for(signed int k = pData->ClonedAt.Count - 1; k >= 0; --k) {
+		for(signed int k = (int)pData->ClonedAt.size() - 1; k >= 0; --k) {
 			auto Cloner = pData->ClonedAt[k];
 			if(Cloner->Factory) {
-				pData->ClonedAt.RemoveItem(k);
+				pData->ClonedAt.erase(pData->ClonedAt.begin() + k);
 				Debug::DevLog(Debug::Error, "[%s]ClonedAt includes %s, but %s has Factory= settings. This combination is not supported.\n"
 						"(Protip: Factory= is not what controls unit exit behaviour, WeaponsFactory= and GDI/Nod/YuriBarracks= is.)\n"
 					, Item->ID, Cloner->ID, Cloner->ID);

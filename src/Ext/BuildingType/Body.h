@@ -7,6 +7,7 @@
 #include <Randomizer.h>
 #include <UnitTypeClass.h>
 #include <WeaponTypeClass.h>
+#include <VocClass.h>
 
 #include "../_Container.hpp"
 #include "../../Ares.h"
@@ -31,7 +32,7 @@ public:
 		public:
 		//properties
 		enum eEnabled {NO, YES, FORWARD, ATTACK} Enabled;	//is this tower a prism tower? FORWARD means can support, but not attack. ATTACK means can attack but not support.
-		DynamicVectorClass<BuildingTypeClass *> Targets;	//the types of buiding that this tower can forward to
+		ValueableVector<BuildingTypeClass *> Targets;	//the types of buiding that this tower can forward to
 		Customizable<signed int> MaxFeeds;					//max number of towers that can feed this tower
 		Valueable<signed int> MaxChainLength;				//max length of any given (preceding) branch of the network
 		Customizable<signed int> MaxNetworkSize;				//max number of towers that can be in the network
@@ -93,6 +94,8 @@ public:
 		CellStruct* CustomData;
 		CellStruct* OutlineData;
 
+		DynamicVectorClass<Point2D> FoundationRadarShape;
+
 		// new secret lab
 		DynamicVectorClass<TechnoTypeClass *> Secret_Boons;
 		bool Secret_RecalcOnCapture;
@@ -125,6 +128,7 @@ public:
 		Valueable<bool> ResetSW;
 		Valueable<bool> ResetRadar;
 		Valueable<bool> RevealRadar;
+		Valueable<bool> RevealRadarPersist;
 		Valueable<bool> GainVeterancy;
 		Valueable<bool> UnReverseEngineer;
 		Valueable<int> StolenTechIndex;
@@ -145,6 +149,10 @@ public:
 		// use this factory only if techno states it is built here
 		Valueable<bool> Factory_ExplicitOnly;
 
+		// gates
+		NullableIdx<VocClass> GateDownSound;
+		NullableIdx<VocClass> GateUpSound;
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			Solid_Height (0),
 			IsCustom (false),
@@ -153,6 +161,7 @@ public:
 			OutlineLength (0),
 			CustomData (NULL),
 			OutlineData (NULL),
+			FoundationRadarShape (),
 			Firewall_Is (false),
 			UCPassThrough (0.0),
 			UCFatalRate (0.0),
@@ -162,12 +171,14 @@ public:
 			RubbleIntact (NULL),
 			RubbleDestroyed (NULL),
 			LightningRod_Modifier (1.0),
-
+			GateDownSound (),
+			GateUpSound (),
 			InfiltrateCustom (false),
 			RevealProduction (false),
 			ResetSW (false),
 			ResetRadar (false),
 			RevealRadar (false),
+			RevealRadarPersist (false),
 			GainVeterancy (false),
 			UnReverseEngineer (false),
 			StolenTechIndex (-1),
@@ -192,7 +203,7 @@ public:
 		virtual void Initialize(TT *pThis);
 		virtual void CompleteInitialization(TT *pThis);
 
-		virtual void InvalidatePointer(void *ptr) {
+		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
 			AnnounceInvalidPointer(RubbleIntact, ptr);
 			AnnounceInvalidPointer(RubbleDestroyed, ptr);
 		}
@@ -200,6 +211,8 @@ public:
 		bool IsLinkable();
 
 		bool CanBeOccupiedBy(InfantryClass *whom);
+
+		void UpdateFoundationRadarShape();
 	};
 
 	static Container<BuildingTypeExt> ExtMap;

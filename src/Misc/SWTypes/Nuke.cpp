@@ -165,7 +165,7 @@ bool SW_NuclearMissile::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPl
 				// allies can see the target location before the enemy does
 				if(pData->SW_RadarEvent.Get()) {
 					if(pThis->Owner->IsAlliedWith(HouseClass::Player)) {
-						RadarEventClass::Create(RADAREVENT_SUPERWEAPONLAUNCHED, *pCoords);
+						RadarEventClass::Create(RadarEventType::SuperweaponActivated, *pCoords);
 					}
 				}
 

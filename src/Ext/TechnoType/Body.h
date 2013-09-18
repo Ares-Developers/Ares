@@ -3,6 +3,7 @@
 
 #include <TechnoTypeClass.h>
 #include <BuildingTypeClass.h>
+#include <WarheadTypeClass.h>
 #include <VocClass.h>
 
 #include "../../Ares.h"
@@ -10,6 +11,7 @@
 #include "../../Misc/BountyClass.h"
 #include "../../Utilities/Template.h"
 #include "../../Utilities/Constructs.h"
+#include "../../Misc/AttachEffect.h"
 
 #include <bitset>
 
@@ -98,10 +100,10 @@ public:
 		bool ExperienceFromAirstrike;
 		float AirstrikeExperienceModifier;
 
-		ValueableIdx<int, VocClass> VoiceRepair;
+		ValueableIdx<VocClass> VoiceRepair;
 
-		ValueableIdx<int, VocClass> HijackerEnterSound;
-		ValueableIdx<int, VocClass> HijackerLeaveSound;
+		ValueableIdx<VocClass> HijackerEnterSound;
+		ValueableIdx<VocClass> HijackerLeaveSound;
 		Valueable<int> HijackerKillPilots;
 		Valueable<bool> HijackerBreakMindControl;
 		Valueable<bool> HijackerAllowed;
@@ -122,11 +124,14 @@ public:
 		Valueable<bool> PassengerTurret; //!< Whether this unit's turret changes based on the number of people in its passenger hold.
 
 		// issue #617
-		DynamicVectorClass<BuildingTypeClass*> PoweredBy;  //!< The buildingtype this unit is powered by or NULL.
+		ValueableVector<BuildingTypeClass*> PoweredBy;  //!< The buildingtype this unit is powered by or NULL.
 
-		DynamicVectorClass<BuildingTypeClass *> BuiltAt;
+		//issue #1623
+		AttachEffectTypeClass AttachedTechnoEffect; //The AttachedEffect which should been on the Techno from the start.
+
+		ValueableVector<BuildingTypeClass *> BuiltAt;
 		Valueable<bool> Cloneable;
-		DynamicVectorClass<BuildingTypeClass *> ClonedAt;
+		ValueableVector<BuildingTypeClass *> ClonedAt;
 		//#203 Bounty
 
 		BountyClass Bounty;
@@ -138,9 +143,20 @@ public:
 
 		Valueable<bool> GattlingCyclic;
 
+		Nullable<bool> Crashable;
+
+		// custom missiles
+		Valueable<bool> IsCustomMissile;
+		Valueable<RocketStruct> CustomMissileData;
+		Valueable<WarheadTypeClass*> CustomMissileWarhead;
+		Valueable<WarheadTypeClass*> CustomMissileEliteWarhead;
+		Valueable<AnimTypeClass*> CustomMissileTakeoffAnim;
+		Valueable<AnimTypeClass*> CustomMissileTrailerAnim;
+		Valueable<int> CustomMissileTrailerSeparation;
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
-			Survivors_PilotChance (NULL),
-			Survivors_PassengerChance (NULL),
+			Survivors_PilotChance (),
+			Survivors_PassengerChance (),
 			Survivors_PilotCount (-1),
 			PrerequisiteTheaters (0xFFFFFFFF),
 			Secret_RequiredHouses (0),
@@ -157,7 +173,7 @@ public:
 			Spot_DisableB (false),
 			Spot_Reverse (false),
 			Is_Bomb (false),
-			Insignia (NULL),
+			Insignia (),
 			Parachute_Anim (NULL),
 			Operator (NULL),
 			IsAPromiscuousWhoreAndLetsAnyoneRideIt (false),
@@ -181,6 +197,13 @@ public:
 			MindControlExperienceSelfModifier (0.0F),
 			MindControlExperienceVictimModifier (1.0F),
 			GattlingCyclic (false),
+			IsCustomMissile (false),
+			CustomMissileData (),
+			CustomMissileWarhead (NULL),
+			CustomMissileEliteWarhead (NULL),
+			CustomMissileTrailerSeparation (3),
+			CustomMissileTrailerAnim (NULL),
+			CustomMissileTakeoffAnim (NULL),
 			VoiceRepair (-1),
 			HijackerEnterSound (-1),
 			HijackerLeaveSound (-1),
@@ -192,6 +215,7 @@ public:
 			CanBeReversed (true),
 			RadarJamRadius (0),
 			PassengerTurret (false),
+			AttachedTechnoEffect(),
 			Cloneable (true),
 			CarryallAllowed(),
 			CarryallSizeLimit (),
@@ -211,7 +235,7 @@ public:
 		virtual void LoadFromINIFile(TT *pThis, CCINIClass *pINI);
 		virtual void Initialize(TT *pThis);
 
-		virtual void InvalidatePointer(void *ptr) {
+		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
 			AnnounceInvalidPointer(Operator, ptr);
 		}
 
@@ -223,8 +247,6 @@ public:
 };
 
 	static Container<TechnoTypeExt> ExtMap;
-
-	static void PointerGotInvalid(void *ptr);
 
 //	static void ReadWeapon(WeaponStruct *pWeapon, const char *prefix, const char *section, CCINIClass *pINI);
 };

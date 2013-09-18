@@ -43,8 +43,8 @@ bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 
 			// add radar events for source and target
 			if(pData->SW_RadarEvent.Get()) {
-				RadarEventClass::Create(RADAREVENT_SUPERWEAPONLAUNCHED, pSource->ChronoMapCoords);
-				RadarEventClass::Create(RADAREVENT_SUPERWEAPONLAUNCHED, *pCoords);
+				RadarEventClass::Create(RadarEventType::SuperweaponActivated, pSource->ChronoMapCoords);
+				RadarEventClass::Create(RadarEventType::SuperweaponActivated, *pCoords);
 			}
 
 			// cell and coords calculations
@@ -273,15 +273,12 @@ bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 			};
 
 			// collect every techno in this range only once. apply the Chronosphere.
-			if(Helpers::Alex::DistinctCollector<ObjectClass*> *items = new Helpers::Alex::DistinctCollector<ObjectClass*>()) {
-				Helpers::Alex::forEachObjectInRange(&pSource->ChronoMapCoords, pData->SW_WidthOrRange, pData->SW_Height, items->getCollector());
-				items->forEach(Chronoport);
+			Helpers::Alex::DistinctCollector<ObjectClass*> items;
+			Helpers::Alex::forEachObjectInRange(&pSource->ChronoMapCoords, pData->SW_WidthOrRange, pData->SW_Height, items.getCollector());
+			items.forEach(Chronoport);
 
-				if(RegisteredBuildings.Count) {
-					this->newStateMachine(RulesClass::Instance->ChronoDelay + 1, *pCoords, pSource, this, &RegisteredBuildings);
-				}
-
-				delete items;
+			if(RegisteredBuildings.Count) {
+				this->newStateMachine(RulesClass::Instance->ChronoDelay + 1, *pCoords, pSource, this, &RegisteredBuildings);
 			}
 
 			return true;

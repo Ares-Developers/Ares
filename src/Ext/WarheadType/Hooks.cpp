@@ -56,6 +56,7 @@ DEFINE_HOOK(46920B, BulletClass_Fire, 6) {
 		pWHExt->applyEMP(&coords, Bullet->Owner);
 		WarheadTypeExt::applyOccupantDamage(Bullet);
 		pWHExt->applyKillDriver(Bullet);
+		pWHExt->applyAttachedEffect(&coords, Bullet->Owner);
 	}
 
 /*
@@ -74,13 +75,6 @@ DEFINE_HOOK(46920B, BulletClass_Fire, 6) {
 		? 0x469AA4
 		: 0
 	;
-}
-
-// issue 472: deglob WarpAway
-DEFINE_HOOK(71A87B, TemporalClass_Update_CacheWH, 6) {
-	GET(WeaponTypeClass *, W, EAX);
-	WarheadTypeExt::Temporal_WH = W->Warhead;
-	return 0;
 }
 
 // issue 472: deglob WarpAway

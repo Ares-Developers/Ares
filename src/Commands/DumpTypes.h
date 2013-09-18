@@ -81,7 +81,7 @@ public:
 		for(int i = 0; i < AITriggerTypeClass::Array->Count; ++i) {
 			char Buffer[1024];
 			memset(Buffer, 0, 1024);
-			AITriggerTypeClass::Array->GetItem(i)->FormatForSaving(Buffer);
+			AITriggerTypeClass::Array->GetItem(i)->FormatForSaving(Buffer, sizeof(Buffer));
 			Debug::Log("%s\n", Buffer);
 		}
 

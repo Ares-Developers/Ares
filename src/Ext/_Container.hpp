@@ -117,7 +117,7 @@ class Extension {
 
 		virtual void Initialize(T *pThis) { };
 
-		virtual void InvalidatePointer(void *ptr) = 0;
+		virtual void InvalidatePointer(void *ptr, bool bRemoved) = 0;
 
 	private:
 		void operator = (Extension &RHS) {
@@ -139,19 +139,19 @@ public:
 	static S_T * SavingObject;
 	static IStream * SavingStream;
 
-	void PointerGotInvalid(void *ptr) {
-		this->InvalidatePointer(ptr);
-		this->InvalidateExtDataPointer(ptr);
+	void PointerGotInvalid(void *ptr, bool bRemoved) {
+		this->InvalidatePointer(ptr, bRemoved);
+		this->InvalidateExtDataPointer(ptr, bRemoved);
 	}
 
 protected:
 	// invalidate pointers to container's static gunk here (use full qualified names)
-	virtual void InvalidatePointer(void *ptr) {
+	virtual void InvalidatePointer(void *ptr, bool bRemoved) {
 	};
 
-	void InvalidateExtDataPointer(void *ptr) {
+	void InvalidateExtDataPointer(void *ptr, bool bRemoved) {
 		for(auto i = this->begin(); i != this->end(); ++i) {
-			i->second->InvalidatePointer(ptr);
+			i->second->InvalidatePointer(ptr, bRemoved);
 		}
 	}
 

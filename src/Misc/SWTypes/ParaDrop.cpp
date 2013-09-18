@@ -68,15 +68,15 @@ void SW_ParaDrop::LoadFromINI(
 		char plane[0x10] = "";
 		if(Plane) {
 			AresCRT::strCopy(plane, ".Plane", 0x10);
-			_itoa(Plane + 1, &plane[6], 10);
+			_itoa_s(Plane + 1, &plane[6], 10, 10);
 		}
 		
 		// construct the full tag name base
 		char base[0x40], key[0x40];
-		_snprintf(base, 0x40, "%s%s", pID, plane);
+		_snprintf_s(base, 0x3F, "%s%s", pID, plane);
 
 		// parse the plane contents
-		_snprintf(key, 0x40, "%s.Aircraft", base);
+		_snprintf_s(key, 0x3F, "%s.Aircraft", base);
 		if(pINI->ReadString(section, key, "", Ares::readBuffer, Ares::readLength)) {
 			if(AircraftTypeClass* pTAircraft = AircraftTypeClass::Find(Ares::readBuffer)) {
 				pPlane = new ParadropPlane();
@@ -87,7 +87,7 @@ void SW_ParaDrop::LoadFromINI(
 		}
 
 		// a list of UnitTypes and InfantryTypes
-		_snprintf(key, 0x40, "%s.Types", base);
+		_snprintf_s(key, 0x3F, "%s.Types", base);
 		if(pINI->ReadString(section, key, "", Ares::readBuffer, Ares::readLength)) {
 			// create new plane if there is none yet
 			if(!pPlane) {
@@ -97,7 +97,8 @@ void SW_ParaDrop::LoadFromINI(
 			// parse the types
 			pPlane->pTypes.Clear();
 
-			for(char* p = strtok(Ares::readBuffer, Ares::readDelims); p && *p; p = strtok(NULL, Ares::readDelims)) {
+			char* context = nullptr;
+			for(char* p = strtok_s(Ares::readBuffer, Ares::readDelims, &context); p && *p; p = strtok_s(nullptr, Ares::readDelims, &context)) {
 				TechnoTypeClass* pTT = UnitTypeClass::Find(p);
 
 				if(!pTT) {
@@ -118,11 +119,12 @@ void SW_ParaDrop::LoadFromINI(
 		}
 
 		// the number how many times each item is created
-		_snprintf(key, 0x40, "%s.Num", base);
+		_snprintf_s(key, 0x3F, "%s.Num", base);
 		if(pINI->ReadString(section, key, "", Ares::readBuffer, Ares::readLength)) {
 			pPlane->pNum.Clear();
 
-			for(char* p = strtok(Ares::readBuffer, Ares::readDelims); p && *p; p = strtok(NULL, Ares::readDelims)) {
+			char* context = nullptr;
+			for(char* p = strtok_s(Ares::readBuffer, Ares::readDelims, &context); p && *p; p = strtok_s(nullptr, Ares::readDelims, &context)) {
 				pPlane->pNum.AddItem(atoi(p));
 			}
 		}
@@ -133,7 +135,7 @@ void SW_ParaDrop::LoadFromINI(
 	auto GetParadropPlane = [&](char *pID, int defCount, DynamicVectorClass<ParadropPlane*>* ret) {
 		// get the number of planes for this house or side
 		char key[0x40];
-		_snprintf(key, 0x40, "%s.Count", pID);
+		_snprintf_s(key, 0x3F, "%s.Count", pID);
 		int count = pINI->ReadInteger(section, key, defCount);
 
 		// parse every plane

@@ -10,6 +10,7 @@
 
 #include <new>
 
+#include "Ext/Abstract/Body.h"
 #include "Ext/Building/Body.h"
 #include "Ext/BuildingType/Body.h"
 #include "Ext/Bullet/Body.h"
@@ -22,6 +23,7 @@
 #include "Ext/SWType/Body.h"
 #include "Ext/Techno/Body.h"
 #include "Ext/TechnoType/Body.h"
+#include "Ext/TEvent/Body.h"
 #include "Ext/WarheadType/Body.h"
 #include "Ext/WeaponType/Body.h"
 
@@ -30,13 +32,16 @@
 
 //Init Statics
 HANDLE Ares::hInstance = 0;
+PVOID Ares::pExceptionHandler = nullptr;
 bool Ares::bNoLogo = false;
 bool Ares::bNoCD = false;
 bool Ares::bTestingRun = false;
 bool Ares::bStrictParser = false;
 bool Ares::bAllowAIControl = false;
+bool Ares::bFPSCounter = false;
 bool Ares::bStable = false;
 bool Ares::bStableNotification = false;
+bool Ares::bOutputMissingStrings = false;
 
 DWORD Ares::readLength = BUFLEN;
 char Ares::readBuffer[BUFLEN];
@@ -76,12 +81,11 @@ void __stdcall Ares::RegisterCommands()
 	MakeCommand<MemoryDumperCommandClass>();
 	MakeCommand<DebuggingCommandClass>();
 	MakeCommand<AIBasePlanCommandClass>();
+	MakeCommand<FPSCounterCommandClass>();
 }
 
 void __stdcall Ares::CmdLineParse(char** ppArgs,int nNumArgs)
 {
-	char* pArg;
-
 	Debug::bLog = false;
 	bNoCD = false;
 	bNoLogo = false;
@@ -90,23 +94,24 @@ void __stdcall Ares::CmdLineParse(char** ppArgs,int nNumArgs)
 	// > 1 because the exe path itself counts as an argument, too!
 	if(nNumArgs > 1) {
 		for(int i = 1; i < nNumArgs; i++) {
-			pArg = ppArgs[i];
-			_strupr(pArg);
+			char* pArg = ppArgs[i];
 
-			if(strcmp(pArg,"-LOG") == 0) {
+			if(_stricmp(pArg,"-LOG") == 0) {
 				Debug::bLog = true;
-			} else if(strcmp(pArg,"-CD") == 0) {
+			} else if(_stricmp(pArg,"-CD") == 0) {
 				bNoCD = true;
-			} else if(strcmp(pArg,"-NOLOGO") == 0) {
+			} else if(_stricmp(pArg,"-NOLOGO") == 0) {
 				bNoLogo = true;
-			} else if(strcmp(pArg, "-TESTRUN") == 0) {
+			} else if(_stricmp(pArg, "-TESTRUN") == 0) {
 				bTestingRun = true;
-			} else if(strcmp(pArg, "-STRICT") == 0) {
+			} else if(_stricmp(pArg, "-STRICT") == 0) {
 				bStrictParser = true;
-			} else if(strcmp(pArg, "-LOG-EMP") == 0) {
+			} else if(_stricmp(pArg, "-LOG-EMP") == 0) {
 				EMPulse::verbose = true;
-			} else if(strcmp(pArg,"-AI-CONTROL") == 0) {
+			} else if(_stricmp(pArg,"-AI-CONTROL") == 0) {
 				bAllowAIControl = true;
+			} else if(_stricmp(pArg,"-LOG-CSF") == 0) {
+				bOutputMissingStrings = true;
 			}
 		}
 	}
@@ -131,12 +136,26 @@ void __stdcall Ares::ExeRun()
 	Unsorted::Savegame_Magic = SAVEGAME_MAGIC;
 	Game::bVideoBackBuffer = false;
 	Game::bAllowVRAMSidebar = false;
+
+#if _MSC_VER >= 1700
+	// install a new exception handler, if this version of Windows supports it
+	if(HINSTANCE handle = GetModuleHandle(TEXT("kernel32.dll"))) {
+		if(GetProcAddress(handle, "AddVectoredExceptionHandler")) {
+			Ares::pExceptionHandler = AddVectoredExceptionHandler(1, Debug::ExceptionFilter);
+		}
+	}
+#endif
 }
 
 void __stdcall Ares::ExeTerminate()
 {
 	CloseConfig(&Ares::GlobalControls::INI);
 	Debug::LogFileClose(111);
+
+	if(Ares::pExceptionHandler) {
+		RemoveVectoredExceptionHandler(Ares::pExceptionHandler);
+		Ares::pExceptionHandler = nullptr;
+	}
 }
 
 CCINIClass* Ares::OpenConfig(const char* file) {
@@ -352,22 +371,29 @@ DEFINE_HOOK(533058, CommandClassCallback_Register, 7)
 DEFINE_HOOK(7258D0, AnnounceInvalidPointer, 6)
 {
 	GET(void *, DEATH, ECX);
+	GET(BOOL, removed, EDX);
+
+	bool bRemoved = removed != FALSE;
 
 //	Debug::Log("PointerGotInvalid: %X\n", DEATH);
 
-	BuildingExt::ExtMap.PointerGotInvalid(DEATH);
-	BuildingTypeExt::ExtMap.PointerGotInvalid(DEATH);
-	BulletExt::ExtMap.PointerGotInvalid(DEATH);
-	BulletTypeExt::ExtMap.PointerGotInvalid(DEATH);
-	HouseExt::ExtMap.PointerGotInvalid(DEATH);
-	HouseTypeExt::ExtMap.PointerGotInvalid(DEATH);
-	InfantryExt::ExtMap.PointerGotInvalid(DEATH);
-	SideExt::ExtMap.PointerGotInvalid(DEATH);
-	SWTypeExt::ExtMap.PointerGotInvalid(DEATH);
-	TechnoExt::ExtMap.PointerGotInvalid(DEATH);
-	TechnoTypeExt::ExtMap.PointerGotInvalid(DEATH);
-	WarheadTypeExt::ExtMap.PointerGotInvalid(DEATH);
-	WeaponTypeExt::ExtMap.PointerGotInvalid(DEATH);
+	AbstractExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
+	BuildingExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
+	BuildingTypeExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
+	BulletExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
+	BulletTypeExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
+	HouseExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
+	HouseTypeExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
+	InfantryExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
+	SideExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
+	SWTypeExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
+	TechnoExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
+	TechnoTypeExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
+	TEventExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
+	WarheadTypeExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
+	WeaponTypeExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
+
+	RulesExt::Global()->InvalidatePointer(DEATH, bRemoved);
 
 	return 0;
 }
@@ -487,4 +513,85 @@ void Ares::UpdateStability() {
 			"This suggests that your version of Ares has been tampered with "
 			"and the original developers cannot be held responsible for any problems you might experience.");
 	}
+}
+
+#define YR_SIZE_1000 0x496110
+#define YR_SIZE_1001 0x497110
+#define YR_SIZE_1001_UC 0x497FE0
+#define YR_SIZE_NPATCH 0x5AB000
+
+#define YR_TIME_1000 0x3B846665
+#define YR_TIME_1001 0x3BDF544E
+
+#define YR_CRC_1000 0xB701D792
+#define YR_CRC_1001_CD 0x098465B3
+#define YR_CRC_1001_TFD 0xEB903080
+#define YR_CRC_1001_UC 0x1B499086
+
+SYRINGE_HANDSHAKE(pInfo)
+{
+	if(pInfo) {
+		const char* AcceptMsg = "Found Yuri's Revenge %s. Applying Ares " PRODUCT_STR ".";
+		const char* PatchDetectedMessage = "Found %s. Ares " PRODUCT_STR " is not compatible with other patches.";
+
+		const char* desc = nullptr;
+		const char* msg = nullptr;
+		bool allowed = false;
+
+		// accept tfd and cd version 1.001
+		if(pInfo->exeTimestamp == YR_TIME_1001) {
+
+			// don't accept expanded exes
+			switch(pInfo->exeFilesize) {
+			case YR_SIZE_1001:
+			case YR_SIZE_1001_UC:
+
+				// all versions allowed
+				switch(pInfo->exeCRC) {
+				case YR_CRC_1001_CD:
+					desc = "1.001 (CD)";
+					break;
+				case YR_CRC_1001_TFD:
+					desc = "1.001 (TFD)";
+					break;
+				case YR_CRC_1001_UC:
+					desc = "1.001 (UC)";
+					break;
+				default:
+					// no-cd, network port or other changes
+					desc = "1.001 (modified)";
+				}
+				msg = AcceptMsg;
+				allowed = true;
+				break;
+
+			case YR_SIZE_NPATCH:
+				// known patch size
+				desc = "RockPatch or an NPatch-derived patch";
+				msg = PatchDetectedMessage;
+				break;
+
+			default:
+				// expanded exe, unknown make
+				desc = "an unknown game patch";
+				msg = PatchDetectedMessage;
+			}
+		} else if(pInfo->exeTimestamp == YR_TIME_1000) {
+			// upgrade advice for version 1.000
+			desc = "1.000";
+			msg = "Found Yuri's Revenge 1.000 but Ares " PRODUCT_STR " requires version 1.001. Please update your copy of Yuri's Revenge first.";
+		} else {
+			// does not even compute...
+			msg = "Unknown executable. Ares " PRODUCT_STR " requires Command & Conquer Yuri's Revenge version 1.001 (gamemd.exe).";
+		}
+
+		// generate the output message
+		if(pInfo->Message) {
+			sprintf_s(pInfo->Message, pInfo->cchMessage, msg, desc);
+		}
+
+		return allowed ? S_OK : S_FALSE;
+	}
+
+	return E_POINTER;
 }

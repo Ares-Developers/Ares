@@ -55,7 +55,8 @@ void WarheadTypeExt::ExtData::LoadFromINIFile(WarheadTypeClass *pThis, CCINIClas
 	// writing custom verses parser just because
 	if(pINI->ReadString(section, "Verses", "", Ares::readBuffer, Ares::readLength)) {
 		int idx = 0;
-		for(char *cur = strtok(Ares::readBuffer, ","); cur; cur = strtok(NULL, ",")) {
+		char* context = nullptr;
+		for(char *cur = strtok_s(Ares::readBuffer, ",", &context); cur; cur = strtok_s(nullptr, ",", &context)) {
 			this->Verses[idx].Parse(cur);
 			++idx;
 			if(idx > 10) {
@@ -93,9 +94,11 @@ void WarheadTypeExt::ExtData::LoadFromINIFile(WarheadTypeClass *pThis, CCINIClas
 	this->KillDriver = pINI->ReadBool(section, "KillDriver", this->KillDriver);
 
 	this->Malicious.Read(&exINI, section, "Malicious");
+
+	this->AttachedEffect.Read(&exINI, section);
 };
 
-void Container<WarheadTypeExt>::InvalidatePointer(void *ptr) {
+void Container<WarheadTypeExt>::InvalidatePointer(void *ptr, bool bRemoved) {
 	AnnounceInvalidPointerMap(WarheadTypeExt::IonExt, ptr);
 	AnnounceInvalidPointer(WarheadTypeExt::Temporal_WH, ptr);
 }
@@ -462,6 +465,45 @@ bool WarheadTypeExt::ExtData::applyKillDriver(BulletClass* Bullet) {
 	return false;
 }
 
+//AttachedEffects, request #1573, #255
+//copy-pasted from AlexB's applyIC
+//since CellSpread effect is needed due to MO's proposed cloak SW (which is the reason why I was bugged with this), it has it.
+//Graion Dilach, ~2011-10-14... I forgot the exact date :S
+
+void WarheadTypeExt::ExtData::applyAttachedEffect(CoordStruct *coords, TechnoClass* Owner) {
+	if (this->AttachedEffect.Duration != 0) {
+		CellStruct cellCoords = MapClass::Instance->GetCellAt(coords)->MapCoords;
+		// set of affected objects. every object can be here only once.
+		DynamicVectorClass<TechnoClass*> *items = Helpers::Alex::getCellSpreadItems(coords,
+		this->AttachedToObject->CellSpread, true);
+
+		// affect each object
+		for(int i=0; i<items->Count; ++i) {
+			if(TechnoClass *curTechno = items->GetItem(i)) {
+				// don't attach to dead
+				if(curTechno->InLimbo || !curTechno->IsAlive || !curTechno->Health) {
+					continue;
+				}
+				
+				if (Owner) {
+					if(WarheadTypeExt::canWarheadAffectTarget(curTechno, Owner->Owner, this->AttachedToObject)) {
+						if(abs(this->Verses[curTechno->GetTechnoType()->Armor].Verses) < 0.001) {
+							continue;
+						}
+						//this->AttachedEffect.Attach(curTechno, this->AttachedEffect.Duration, Owner, this->AttachedEffect.DamageDelay);
+						this->AttachedEffect.Attach(curTechno, this->AttachedEffect.Duration, Owner);
+					}	
+				} else {
+					//this->AttachedEffect.Attach(curTechno, this->AttachedEffect.Duration, NULL, this->AttachedEffect.DamageDelay);
+					this->AttachedEffect.Attach(curTechno, this->AttachedEffect.Duration, NULL);
+				}	
+			}
+		}
+		items->Clear();
+		delete items;
+	}
+}
+
 // =============================
 // container hooks
 
@@ -481,8 +523,8 @@ DEFINE_HOOK(75E510, WarheadTypeClass_DTOR, 6)
 	return 0;
 }
 
-DEFINE_HOOK(75E0C0, WarheadTypeClass_SaveLoad_Prefix, 8)
 DEFINE_HOOK_AGAIN(75E2C0, WarheadTypeClass_SaveLoad_Prefix, 5)
+DEFINE_HOOK(75E0C0, WarheadTypeClass_SaveLoad_Prefix, 8)
 {
 	GET_STACK(WarheadTypeExt::TT*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
@@ -505,8 +547,8 @@ DEFINE_HOOK(75E39C, WarheadTypeClass_Save_Suffix, 5)
 	return 0;
 }
 
-DEFINE_HOOK(75DEA0, WarheadTypeClass_LoadFromINI, 5)
 DEFINE_HOOK_AGAIN(75DEAF, WarheadTypeClass_LoadFromINI, 5)
+DEFINE_HOOK(75DEA0, WarheadTypeClass_LoadFromINI, 5)
 {
 	GET(WarheadTypeClass*, pItem, ESI);
 	GET_STACK(CCINIClass*, pINI, 0x150);

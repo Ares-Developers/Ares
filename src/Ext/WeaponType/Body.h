@@ -73,11 +73,13 @@ public:
 		bool Ivan_Detachable;
 		Customizable<int> Ivan_Damage;
 		Customizable<int> Ivan_Delay;
-		CustomizableIdx<int, VocClass> Ivan_TickingSound;
-		CustomizableIdx<int, VocClass> Ivan_AttachSound;
+		NullableIdx<VocClass> Ivan_TickingSound;
+		NullableIdx<VocClass> Ivan_AttachSound;
 		Customizable<WarheadTypeClass *> Ivan_WH;
 		Customizable<SHPStruct *> Ivan_Image;
 		Customizable<int> Ivan_FlickerRate;
+		Nullable<bool> Ivan_CanDetonateTimeBomb;
+		Nullable<bool> Ivan_CanDetonateDeathBomb;
 
 		RadType * Rad_Type;
 
@@ -114,11 +116,13 @@ public:
 			Ivan_Detachable (true),
 			Ivan_Damage (&RulesClass::Instance->IvanDamage),
 			Ivan_Delay (&RulesClass::Instance->IvanTimedDelay),
-			Ivan_TickingSound (&RulesClass::Instance->BombTickingSound),
-			Ivan_AttachSound (&RulesClass::Instance->BombAttachSound),
+			Ivan_TickingSound (),
+			Ivan_AttachSound (),
 			Ivan_WH (&RulesClass::Instance->IvanWarhead),
 			Ivan_Image (&RulesClass::Instance->BOMBCURS_SHP),
 			Ivan_FlickerRate (&RulesClass::Instance->IvanIconFlickerRate),
+			Ivan_CanDetonateTimeBomb (),
+			Ivan_CanDetonateDeathBomb (),
 			Rad_Type (NULL),
 			Abductor(false),
 			Abductor_AnimType(NULL),
@@ -142,7 +146,7 @@ public:
 		virtual void LoadFromINIFile(TT *pThis, CCINIClass *pINI);
 		virtual void Initialize(TT* pThis);
 
-		virtual void InvalidatePointer(void *ptr) {
+		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
 			AnnounceInvalidPointer(Rad_Type, ptr);
 		}
 

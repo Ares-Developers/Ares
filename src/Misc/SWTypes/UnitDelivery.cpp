@@ -3,6 +3,7 @@
 
 void SW_UnitDelivery::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)
 {
+	pData->SW_Deferment = -1;
 	pData->SW_AITargetingType = SuperWeaponAITargetingMode::ParaDrop;
 }
 
@@ -15,51 +16,41 @@ void SW_UnitDelivery::LoadFromINI(
 		return;
 	}
 
-	if(pINI->ReadString(section, "Deliver.Types", "", Ares::readBuffer, Ares::readLength)) {
-		pData->SW_Deliverables.Clear();
-		for(char *cur = strtok(Ares::readBuffer, ","); cur && *cur; cur = strtok(NULL, ",")) {
-			TechnoTypeClass * Type = InfantryTypeClass::Find(cur);
-			if(!Type) {
-				Type = UnitTypeClass::Find(cur);
-			}
-			if(!Type) {
-				Type = AircraftTypeClass::Find(cur);
-			}
-			if(!Type) {
-				Type = BuildingTypeClass::Find(cur);
-			}
-			if(!Type) {
-				Debug::INIParseFailed(section, "Deliver.Types", cur, "Expected valid TechnoType ID.");
-			}
-			if(Type) {
-				pData->SW_Deliverables.AddItem(Type);
-			}
-		}
-	}
-
 	INI_EX exINI(pINI);
+	pData->SW_Deliverables.Read(&exINI, section, "Deliver.Types");
 	pData->SW_DeliverBuildups.Read(&exINI, section, "Deliver.Buildups");
 }
 
 bool SW_UnitDelivery::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
 {
-	this->newStateMachine(150, *pCoords, pThis);
+	SuperWeaponTypeClass *pSW = pThis->Type;
+	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSW);
+
+	int deferment = pData->SW_Deferment;
+	if(deferment < 0) {
+		deferment = 20;
+	}
+
+	this->newStateMachine(deferment, *pCoords, pThis);
 
 	return 1;
 }
 
 void UnitDeliveryStateMachine::Update() {
-	switch(this->TimePassed()) {
-	case 1:
-		// play anim
-		break;
-	case 20:
+	if(this->Finished()) {
+		CoordStruct coords;
+		CellClass::Cell2Coord(&this->Coords, &coords);
+
+		auto pData = this->FindExtData();
+
+		pData->PrintMessage(pData->Message_Activate, this->Super->Owner);
+
+		if(pData->SW_ActivationSound != -1) {
+			VocClass::PlayAt(pData->SW_ActivationSound, &coords, nullptr);
+		}
+
 		this->PlaceUnits();
-		break;
-	case 100:
-		// write message
-		break;
-	};
+	}
 }
 
 // Replaced my own implementation with AlexB's shown below
@@ -71,15 +62,14 @@ void UnitDeliveryStateMachine::Update() {
 //have been unloaded again, when it was at index 100.
 
 void UnitDeliveryStateMachine::PlaceUnits() {
-	int unitIdx = 0;
 	SWTypeExt::ExtData *pData = this->FindExtData();
 
 	if(!pData) {
 		return;
 	}
 
-	while(unitIdx < pData->SW_Deliverables.Count) {
-		TechnoTypeClass * Type = pData->SW_Deliverables[unitIdx];
+	for(size_t i=0; i<pData->SW_Deliverables.size(); ++i) {
+		TechnoTypeClass * Type = pData->SW_Deliverables[i];
 		TechnoClass * Item = generic_cast<TechnoClass *>(Type->CreateObject(this->Super->Owner));
 		BuildingClass * ItemBuilding = specific_cast<BuildingClass *>(Item);
 
@@ -111,7 +101,7 @@ void UnitDeliveryStateMachine::PlaceUnits() {
 				if(Type->Naval && validCell) {
 					// naval types look stupid on bridges
 					validCell = (!cell->ContainsBridge() && cell->LandType != lt_Road)
-						|| Type->SpeedType == st_Hover;
+						|| Type->SpeedType == SpeedType::Hover;
 				}
 
 				if(validCell) {
@@ -148,6 +138,5 @@ void UnitDeliveryStateMachine::PlaceUnits() {
 				break;
 			}
 		} while(!Placed);
-		++unitIdx;
 	}
 }
