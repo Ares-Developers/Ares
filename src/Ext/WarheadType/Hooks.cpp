@@ -45,6 +45,7 @@ DEFINE_HOOK(46920B, BulletClass_Fire, 6) {
 
 	bool targetStillOnMap = true;
 	if(WeaponTypeExt) {
+		WeaponTypeExt->GiveMoney(Bullet);
 		targetStillOnMap = !WeaponTypeExt->conductAbduction(Bullet);
 	}
 

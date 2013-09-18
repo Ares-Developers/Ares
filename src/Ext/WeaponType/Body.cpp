@@ -359,7 +359,11 @@ void WeaponTypeExt::ExtData::GiveMoney(BulletClass * Bullet) {
 
 	TechnoClass* Attacker = Bullet->Owner;
 
-	int MoneyGiven = 1.0 * Bullet->DamageMultiplier * this->GiveMoney_DamageMultiplier + !this->GiveMoney_Amount;
+	int MoneyGiven = 1.0
+	* Bullet->WeaponType->Damage
+	* Bullet->DamageMultiplier / 256 //int?
+	* this->GiveMoney_DamageMultiplier
+	+ this->GiveMoney_Amount;
 	Attacker->Owner->GiveMoney(MoneyGiven);
 
 	if (this->GiveMoney_Message) {
