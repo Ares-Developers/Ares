@@ -112,6 +112,7 @@ public:
 
 		NullableIdx<VocClass> CloakSound;
 		NullableIdx<VocClass> DecloakSound;
+		Valueable<bool> CloakPowered;
 
 		char CameoPCX[0x20];
 		char AltCameoPCX[0x20];
@@ -213,6 +214,7 @@ public:
 			WaterImage (NULL),
 			CloakSound (),
 			DecloakSound (),
+			CloakPowered (false),
 			CanBeReversed (true),
 			RadarJamRadius (0),
 			PassengerTurret (false),

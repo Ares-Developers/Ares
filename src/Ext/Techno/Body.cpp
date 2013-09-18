@@ -927,8 +927,24 @@ bool TechnoExt::ExtData::CloakDisallowed(bool allowPassive) const
 */
 bool TechnoExt::ExtData::CanSelfCloakNow() const
 {
+	auto pThis = this->AttachedToObject;
+
 	// cloaked and deactivated units are hard to find otherwise
-	return !this->DriverKilled && !this->AttachedToObject->Deactivated;
+	if(this->DriverKilled || pThis->Deactivated) {
+		return false;
+	}
+
+	auto pType = pThis->GetTechnoType();
+	auto pExt = TechnoTypeExt::ExtMap.Find(pType);
+
+	if(specific_cast<BuildingTypeClass*>(pType)) {
+		if(pExt->CloakPowered && !pThis->IsPowerOnline()) {
+			return false;
+		}
+	}
+
+	// allows cloak
+	return true;
 }
 
 // =============================
