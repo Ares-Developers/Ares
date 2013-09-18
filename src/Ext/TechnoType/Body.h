@@ -113,6 +113,7 @@ public:
 		NullableIdx<VocClass> CloakSound;
 		NullableIdx<VocClass> DecloakSound;
 		Valueable<bool> CloakPowered;
+		Valueable<bool> CloakAllowed;
 
 		char CameoPCX[0x20];
 		char AltCameoPCX[0x20];
@@ -215,6 +216,7 @@ public:
 			CloakSound (),
 			DecloakSound (),
 			CloakPowered (false),
+			CloakAllowed (true),
 			CanBeReversed (true),
 			RadarJamRadius (0),
 			PassengerTurret (false),

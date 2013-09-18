@@ -822,6 +822,13 @@ bool TechnoExt::ExtData::PerformActionHijack(TechnoClass* pTarget) {
 bool TechnoExt::ExtData::IsCloakable(bool allowPassive) const
 {
 	TechnoClass* pThis = this->AttachedToObject;
+	TechnoTypeClass* pType = pThis->GetTechnoType();
+	auto pTypeExt = TechnoTypeExt::ExtMap.Find(pType);
+
+	// object disallowed from cloaking
+	if(!pTypeExt->CloakAllowed) {
+		return false;
+	}
 
 	// check for active cloak
 	if(pThis->IsCloakable() || pThis->HasAbility(Abilities::CLOAK)) {

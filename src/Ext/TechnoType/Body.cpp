@@ -353,6 +353,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	this->CloakSound.Read(&exINI, section, "CloakSound");
 	this->DecloakSound.Read(&exINI, section, "DecloakSound");
 	this->CloakPowered.Read(&exINI, section, "Cloakable.Powered");
+	this->CloakAllowed.Read(&exINI, section, "Cloakable.Allowed");
 
 	// quick fix - remove after the rest of weapon selector code is done
 	return;
