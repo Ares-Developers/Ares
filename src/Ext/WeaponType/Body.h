@@ -89,6 +89,12 @@ public:
 		Valueable<AnimTypeClass *> Abductor_AnimType;
 		Valueable <bool> Abductor_ChangeOwner;
 		Valueable<double> Abductor_AbductBelowPercent;
+
+		// Generals Hacker feature
+		Valueable<double> GiveMoney_DamageMultiplier;
+		Valueable<double> GiveMoney_Amount;
+		Valueable<bool> GiveMoney_Message;
+		Valueable<bool> GiveMoney_AddExperience;
 		
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			Weapon_Loaded (false),
@@ -117,7 +123,11 @@ public:
 			Abductor(false),
 			Abductor_AnimType(NULL),
 			Abductor_ChangeOwner(false),
-			Abductor_AbductBelowPercent(1)
+			Abductor_AbductBelowPercent(1),
+			GiveMoney_DamageMultiplier(0),
+			GiveMoney_Amount(0),
+			GiveMoney_Message(true),
+			GiveMoney_AddExperience(false)
 			{
 				this->Laser_Thickness.Set(-1);
 //				this->Beam_Color = ColorStruct(255, 255, 255);
@@ -141,6 +151,8 @@ public:
 		}
 
 		bool conductAbduction(BulletClass *);
+
+		void GiveMoney(BulletClass *);
 	};
 
 /*

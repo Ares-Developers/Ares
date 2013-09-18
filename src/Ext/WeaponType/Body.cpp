@@ -143,6 +143,12 @@ void WeaponTypeExt::ExtData::LoadFromINIFile(WeaponTypeExt::TT *pThis, CCINIClas
 	this->Abductor_AnimType.Parse(&exINI, section, "Abductor.Anim");
 	this->Abductor_ChangeOwner.Read(&exINI, section, "Abductor.ChangeOwner");
 	this->Abductor_AbductBelowPercent.Read(&exINI, section, "Abductor.AbductBelowPercent");
+
+	// Generals Hacker
+	this->GiveMoney_DamageMultiplier.Read(&exINI, section, "GiveMoney.DamageMultiplier");
+	this->GiveMoney_Amount.Read(&exINI, section, "GiveMoney.Amount");
+	this->GiveMoney_Message.Read(&exINI, section, "GiveMoney.Message");
+	this->GiveMoney_AddExperience.Read(&exINI, section, "GiveMoney.AddExperience");
 }
 
 // #680 Chrono Prison / Abductor
@@ -328,6 +334,35 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 
 		// the target was not a valid passenger type
 		return false;
+	}
+}
+
+// Generals Hacker reimplementation
+/**
+	This function implements the Generals way of giving money to the player
+	It reuses some of the Bounty logic
+
+	\author Graion Dilach
+	\date 2013-06-24
+*/
+
+void WeaponTypeExt::ExtData::GiveMoney(BulletClass * Bullet) {
+	if(!(this->GiveMoney_DamageMultiplier || this->GiveMoney_Amount) || !Bullet->Owner) {
+		return;
+	}
+
+	TechnoClass* Attacker = Bullet->Owner;
+
+	int MoneyGiven = 1.0 * Bullet->DamageMultiplier * this->GiveMoney_DamageMultiplier + !this->GiveMoney_Amount;
+	Attacker->Owner->GiveMoney(MoneyGiven);
+
+	if (this->GiveMoney_Message) {
+		TechnoExt::ExtData* AttackerExt = TechnoExt::ExtMap.Find(Attacker);
+		AttackerExt->Bounty_Amount += MoneyGiven;
+	}
+
+	if (this->GiveMoney_AddExperience) {
+		Attacker->Veterancy.Add(Attacker->GetTechnoType()->GetActualCost(Attacker->Owner), MoneyGiven);
 	}
 }
 
