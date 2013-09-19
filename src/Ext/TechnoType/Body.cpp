@@ -355,6 +355,9 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	this->CloakPowered.Read(&exINI, section, "Cloakable.Powered");
 	this->CloakAllowed.Read(&exINI, section, "Cloakable.Allowed");
 
+	// sensors
+	this->SensorArray_Warn.Read(&exINI, section, "SensorArray.Warn");
+
 	// quick fix - remove after the rest of weapon selector code is done
 	return;
 }

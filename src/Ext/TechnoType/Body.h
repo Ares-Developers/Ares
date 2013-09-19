@@ -115,6 +115,8 @@ public:
 		Valueable<bool> CloakPowered;
 		Valueable<bool> CloakAllowed;
 
+		Valueable<bool> SensorArray_Warn;
+
 		char CameoPCX[0x20];
 		char AltCameoPCX[0x20];
 
@@ -217,6 +219,7 @@ public:
 			DecloakSound (),
 			CloakPowered (false),
 			CloakAllowed (true),
+			SensorArray_Warn (true),
 			CanBeReversed (true),
 			RadarJamRadius (0),
 			PassengerTurret (false),

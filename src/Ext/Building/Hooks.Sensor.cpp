@@ -1,5 +1,7 @@
 #include "Body.h"
 
+#include "../TechnoType/Body.h"
+
 #include <RadarEventClass.h>
 #include <VoxClass.h>
 
@@ -8,7 +10,10 @@ DEFINE_HOOK(70DA95, TechnoClass_RadarTrackingUpdate_AnnounceDetected, 6)
 	GET(TechnoClass*, pThis, ESI);
 	GET_STACK(int, detect, 0x10);
 
-	if(detect) {
+	auto pType = pThis->GetTechnoType();
+	auto pTypeExt = TechnoTypeExt::ExtMap.Find(pType);
+
+	if(detect && pTypeExt->SensorArray_Warn) {
 		switch(detect) {
 		case 1:
 			VoxClass::Play("EVA_CloakedUnitDetected");
