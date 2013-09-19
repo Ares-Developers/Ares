@@ -52,6 +52,14 @@ DEFINE_HOOK(481D3D, CellClass_CrateBeingCollected_Cloak1, 6)
 		return 0x481C86;
 	}
 
+	auto pType = Unit->GetTechnoType();
+	auto pTypeExt = TechnoTypeExt::ExtMap.Find(pType);
+
+	// cloaking forbidden for type
+	if(!pTypeExt->CloakAllowed) {
+		return 0x481C86;
+	}
+
 	return 0x481D52;
 }
 
