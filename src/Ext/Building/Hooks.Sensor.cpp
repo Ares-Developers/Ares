@@ -130,3 +130,17 @@ DEFINE_HOOK(4416A2, BuildingClass_Destroy_SensorArray, 6)
 	}
 	return 0;
 }
+
+// sensor arrays show SensorsSight instead of CloakRadiusInCells
+DEFINE_HOOK(4566F9, BuildingClass_GetRangeOfRadial_SensorArray, 6)
+{
+	GET(BuildingClass*, pThis, ESI);
+	auto pType =  pThis->Type;
+
+	if(pType->SensorArray) {
+		R->EAX(pType->SensorsSight);
+		return 0x45674B;
+	}
+
+	return 0x456703;
+}
