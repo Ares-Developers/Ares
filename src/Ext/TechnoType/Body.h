@@ -114,6 +114,7 @@ public:
 		NullableIdx<VocClass> DecloakSound;
 		Valueable<bool> CloakPowered;
 		Valueable<bool> CloakAllowed;
+		Nullable<int> CloakStages;
 
 		Valueable<bool> SensorArray_Warn;
 
@@ -219,6 +220,7 @@ public:
 			DecloakSound (),
 			CloakPowered (false),
 			CloakAllowed (true),
+			CloakStages (),
 			SensorArray_Warn (true),
 			CanBeReversed (true),
 			RadarJamRadius (0),

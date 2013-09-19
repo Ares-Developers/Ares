@@ -349,11 +349,12 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	// non-crashable aircraft
 	this->Crashable.Read(&exINI, section, "Crashable");
 
-	// cloak sounds
+	// cloak
 	this->CloakSound.Read(&exINI, section, "CloakSound");
 	this->DecloakSound.Read(&exINI, section, "DecloakSound");
 	this->CloakPowered.Read(&exINI, section, "Cloakable.Powered");
 	this->CloakAllowed.Read(&exINI, section, "Cloakable.Allowed");
+	this->CloakStages.Read(&exINI, section, "Cloakable.Stages");
 
 	// sensors
 	this->SensorArray_Warn.Read(&exINI, section, "SensorArray.Warn");

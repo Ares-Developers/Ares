@@ -80,6 +80,32 @@ DEFINE_HOOK(6F5388, TechnoClass_DrawExtras_Submerged, 6)
 	return 0x6F538E;
 }
 
+// customizable cloaking stages
+DEFINE_HOOK(7036EB, TechnoClass_Uncloak_CloakingStages, 6)
+{
+	GET(TechnoClass*, pThis, ESI);
+
+	auto pType = pThis->GetTechnoType();
+	auto pTypeExt = TechnoTypeExt::ExtMap.Find(pType);
+
+	R->ECX(pTypeExt->CloakStages.Get(RulesClass::Instance->CloakingStages));
+	return 0x7036F1;
+}
+
+DEFINE_HOOK(703A79, TechnoClass_VisualCharacter_CloakingStages, A)
+{
+	GET(TechnoClass*, pThis, ESI);
+
+	auto pType = pThis->GetTechnoType();
+	auto pTypeExt = TechnoTypeExt::ExtMap.Find(pType);
+
+	int stages = pTypeExt->CloakStages.Get(RulesClass::Instance->CloakingStages);
+	int ret = static_cast<int>(Game::F2I(256.0 * pThis->CloakProgress.Value / stages));
+
+	R->EAX(ret);
+	return 0x703A94;
+}
+
 // respect the remove state when updating the parasite.
 DEFINE_HOOK(4D99AA, FootClass_PointerGotInvalid_Parasite, 6)
 {
