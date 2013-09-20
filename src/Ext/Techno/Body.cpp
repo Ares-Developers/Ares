@@ -950,6 +950,12 @@ bool TechnoExt::ExtData::CanSelfCloakNow() const
 		}
 	}
 
+	if(auto pInf = specific_cast<InfantryClass*>(pThis)) {
+		if(pExt->CloakDeployed && !pInf->IsDeployed()) {
+			return false;
+		}
+	}
+
 	// allows cloak
 	return true;
 }

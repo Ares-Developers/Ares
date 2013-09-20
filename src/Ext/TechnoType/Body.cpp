@@ -353,6 +353,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	this->CloakSound.Read(&exINI, section, "CloakSound");
 	this->DecloakSound.Read(&exINI, section, "DecloakSound");
 	this->CloakPowered.Read(&exINI, section, "Cloakable.Powered");
+	this->CloakDeployed.Read(&exINI, section, "Cloakable.Deployed");
 	this->CloakAllowed.Read(&exINI, section, "Cloakable.Allowed");
 	this->CloakStages.Read(&exINI, section, "Cloakable.Stages");
 
