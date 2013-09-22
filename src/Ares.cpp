@@ -371,9 +371,7 @@ DEFINE_HOOK(533058, CommandClassCallback_Register, 7)
 DEFINE_HOOK(7258D0, AnnounceInvalidPointer, 6)
 {
 	GET(void *, DEATH, ECX);
-	GET(BOOL, removed, EDX);
-
-	bool bRemoved = removed != FALSE;
+	GET(bool, bRemoved, EDX);
 
 //	Debug::Log("PointerGotInvalid: %X\n", DEATH);
 
