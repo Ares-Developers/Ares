@@ -12,6 +12,16 @@ public:
 	// it doesn't mean you can copy strings without thinking
 	static void strCopy(char *Dest, const char *Source, size_t Count);
 	static void wstrCopy(wchar_t *Dest, const wchar_t *Source, size_t Count);
+
+	template<size_t Size>
+	static void strCopy(char (&Dest)[Size], const char *Source) {
+		strCopy(Dest, Source, Size);
+	}
+
+	template<size_t Size>
+	static void wstrCopy(wchar_t (&Dest)[Size], const wchar_t *Source) {
+		wstrCopy(Dest, Source, Size);
+	}
 };
 
 #endif
