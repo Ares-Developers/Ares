@@ -622,15 +622,8 @@ AresAction::Value TechnoExt::ExtData::GetActionHijack(TechnoClass* pTarget) {
 	}
 
 	// i'm in a state that forbids capturing
-	if(!this->IsOperated()) {
+	if(pThis->IsDeployed() || !this->IsOperated()) {
 		return AresAction::None;
-	}
-	if(pType->Deployer) {
-		Sequence::Value sequence = pThis->SequenceAnim;
-		if(sequence == Sequence::Deploy || sequence == Sequence::Deployed
-			|| sequence == Sequence::DeployedFire || sequence == Sequence::DeployedIdle) {
-				return AresAction::None;
-		}
 	}
 
 	// target type is not eligible (hijackers can also enter strange buildings)
