@@ -201,7 +201,7 @@ void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass
 
 	// the fallback is handled in the PreDependent SW's code
 	if(pINI->ReadString(section, "SW.PostDependent", Ares::readDefval, Ares::readBuffer, Ares::readLength)) {
-		AresCRT::strCopy(this->SW_PostDependent, Ares::readBuffer, 0x18);
+		AresCRT::strCopy(this->SW_PostDependent, Ares::readBuffer);
 	}
 
 	// find a NewSWType that handles this original one.
@@ -226,7 +226,7 @@ void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass
 	this->CameoPal.LoadFromINI(pINI, pThis->ID, "SidebarPalette");
 
 	if(pINI->ReadString(section, "SidebarPCX", "", Ares::readBuffer, Ares::readLength)) {
-		AresCRT::strCopy(this->SidebarPCX, Ares::readBuffer, 0x20);
+		AresCRT::strCopy(this->SidebarPCX, Ares::readBuffer);
 		_strlwr_s(this->SidebarPCX, 0x20);
 		if(!PCX::Instance->LoadFile(this->SidebarPCX)) {
 			Debug::INIParseFailed(section, "SidebarPCX", this->SidebarPCX);

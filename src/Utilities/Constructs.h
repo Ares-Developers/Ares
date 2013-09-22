@@ -113,7 +113,7 @@ public:
 
 		if(label && *label) {
 			if(this->Label != label) {
-				AresCRT::strCopy(this->Label, label, 0x20);
+				AresCRT::strCopy(this->Label, label);
 			}
 			this->Text = StringTable::LoadString(this->Label);
 		}
@@ -123,7 +123,7 @@ public:
 
 	const CSFText& operator = (const CSFText& other) {
 		if(this != &other) {
-			AresCRT::strCopy(this->Label, other.Label, 0x20);
+			AresCRT::strCopy(this->Label, other.Label);
 			this->Text = other.Text;
 		}
 

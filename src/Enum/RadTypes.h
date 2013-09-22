@@ -45,7 +45,7 @@ public:
 		Light_Factor(&RulesClass::Instance->RadLightFactor),
 		Tint_Factor(&RulesClass::Instance->RadTintFactor)
 	{
-		AresCRT::strCopy(this->Name, Title, 32);
+		AresCRT::strCopy(this->Name, Title);
 		Array.AddItem(this);
 	}
 

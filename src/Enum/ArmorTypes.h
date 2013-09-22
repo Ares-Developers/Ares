@@ -22,7 +22,7 @@ class ArmorType  : public Enumerable<ArmorType>
 		WarheadTypeExt::VersesData DefaultVerses;
 
 	ArmorType(const char *Title) {
-		AresCRT::strCopy(this->Name, Title, 31);
+		AresCRT::strCopy(this->Name, Title);
 		DefaultIndex = -1;
 		Array.AddItem(this);
 	}

@@ -236,31 +236,31 @@ void HouseTypeExt::ExtData::LoadFromRulesFile(HouseTypeClass *pThis, CCINIClass 
 	ReadShpOrPcxImage("File.ObserverBackground", this->ObserverBackground, 0x20, &this->ObserverBackgroundSHP);
 
 	if (pINI->ReadString(pID, "File.LoadScreen", "", Ares::readBuffer, Ares::readLength)) {
-		AresCRT::strCopy(this->LSFile, Ares::readBuffer, 0x20);
+		AresCRT::strCopy(this->LSFile, Ares::readBuffer);
 	}
 
 	if (pINI->ReadString(pID, "File.LoadScreenPAL", "", Ares::readBuffer, Ares::readLength)) {
-		AresCRT::strCopy(this->LSPALFile, Ares::readBuffer, 0x20);
+		AresCRT::strCopy(this->LSPALFile, Ares::readBuffer);
 	}
 
 	if (pINI->ReadString(pID, "File.Taunt", "", Ares::readBuffer, Ares::readLength)) {
-		AresCRT::strCopy(this->TauntFile, Ares::readBuffer, 0x20);
+		AresCRT::strCopy(this->TauntFile, Ares::readBuffer);
 	}
 
 	if (pINI->ReadString(pID, "LoadScreenText.Name", "", Ares::readBuffer, Ares::readLength)) {
-		AresCRT::strCopy(this->LSName, Ares::readBuffer, 0x20);
+		AresCRT::strCopy(this->LSName, Ares::readBuffer);
 	}
 
 	if (pINI->ReadString(pID, "LoadScreenText.SpecialName", "", Ares::readBuffer, Ares::readLength)) {
-		AresCRT::strCopy(this->LSSpecialName, Ares::readBuffer, 0x20);
+		AresCRT::strCopy(this->LSSpecialName, Ares::readBuffer);
 	}
 
 	if (pINI->ReadString(pID, "LoadScreenText.Brief", "", Ares::readBuffer, Ares::readLength)) {
-		AresCRT::strCopy(this->LSBrief, Ares::readBuffer, 0x20);
+		AresCRT::strCopy(this->LSBrief, Ares::readBuffer);
 	}
 
 	if (pINI->ReadString(pID, "MenuText.Status", "", Ares::readBuffer, Ares::readLength)) {
-		AresCRT::strCopy(this->StatusText, Ares::readBuffer, 0x20);
+		AresCRT::strCopy(this->StatusText, Ares::readBuffer);
 	}
 
 	INI_EX exINI(pINI);
@@ -361,7 +361,7 @@ void HouseTypeExt::ExtData::LoadFromINIFile(HouseTypeClass *pThis, CCINIClass *p
 
 template<size_t Len>
 void CopyString(char (HouseTypeExt::ExtData::* prop)[Len], const HouseTypeExt::ExtData *src, HouseTypeExt::ExtData *dst) {
-	AresCRT::strCopy(dst->*prop, src->*prop, Len);
+	AresCRT::strCopy(dst->*prop, src->*prop);
 }
 
 template<typename T>

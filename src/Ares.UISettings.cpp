@@ -82,7 +82,7 @@ void Ares::UISettings::Load(CCINIClass *pINI) {
 	// read the campaigns that can be started from the default campaign selection menu
 	auto ReadCampaign = [&](const char* name, Interface::CampaignData *value, char* defBattle, char* defImage, char* defPalette, char* defSubline) {
 		if(pINI->ReadString(section, name, defBattle, Ares::readBuffer, Ares::readLength)) {
-			AresCRT::strCopy(value->Battle, Ares::readBuffer, 0x18);
+			AresCRT::strCopy(value->Battle, Ares::readBuffer);
 		}
 
 		// load the image
@@ -103,12 +103,12 @@ void Ares::UISettings::Load(CCINIClass *pINI) {
 		// get the subline and tooltip
 		sprintf_s(buffer, 0x20, "%s.Subline", name);
 		if(pINI->ReadString(section, buffer, defSubline, Ares::readBuffer, Ares::readLength)) {
-			AresCRT::strCopy(value->Subline, Ares::readBuffer, 0x1F);
+			AresCRT::strCopy(value->Subline, Ares::readBuffer);
 		}
 
 		sprintf_s(buffer, 0x20, "%s.Tooltip", name);
 		if(pINI->ReadString(section, buffer, value->Subline, Ares::readBuffer, Ares::readLength)) {
-			AresCRT::strCopy(value->ToolTip, Ares::readBuffer, 0x1F);
+			AresCRT::strCopy(value->ToolTip, Ares::readBuffer);
 		}
 
 		// is this a valid campaign?
@@ -146,7 +146,7 @@ void Ares::UISettings::Load(CCINIClass *pINI) {
 
 		sprintf_s(buffer, 0x20, "%s.ColorScheme", name);
 		if(pINI->ReadString(section2, buffer, defColorScheme, Ares::readBuffer, Ares::readLength)) {
-			AresCRT::strCopy(value->colorScheme, Ares::readBuffer, 0x20);
+			AresCRT::strCopy(value->colorScheme, Ares::readBuffer);
 		}
 
 		sprintf_s(buffer, 0x20, "%s.DisplayColor", name);

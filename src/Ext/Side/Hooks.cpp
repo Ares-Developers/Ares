@@ -181,7 +181,7 @@ DEFINE_HOOK(686D7F, Sides_LoadTextColor_CacheSP, 6) {
 
 	char* pDefault = "";
 	char pID[4];
-	AresCRT::strCopy(pID, ScenarioClass::Instance->FileName, 4);
+	AresCRT::strCopy(pID, ScenarioClass::Instance->FileName);
 
 	if(!_strcmpi(pID, "SOV")) {
 		pDefault = "SovietLoad";

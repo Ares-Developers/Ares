@@ -14,11 +14,11 @@ template<> IStream *Container<CampaignExt>::SavingStream = NULL;
 void CampaignExt::ExtData::Initialize(CampaignClass *pThis)
 {
 	if(!_strcmpi(pThis->ID, "ALL1")) {
-		AresCRT::strCopy(this->HoverSound, "AlliedCampaignSelect", 0x1F);
+		AresCRT::strCopy(this->HoverSound, "AlliedCampaignSelect");
 	} else if (!_strcmpi(pThis->ID, "SOV1")) {
-		AresCRT::strCopy(this->HoverSound, "SovietCampaignSelect", 0x1F);
+		AresCRT::strCopy(this->HoverSound, "SovietCampaignSelect");
 	} else if (!_strcmpi(pThis->ID, "TUT1")) {
-		AresCRT::strCopy(this->HoverSound, "BootCampSelect", 0x1F);
+		AresCRT::strCopy(this->HoverSound, "BootCampSelect");
 	}
 };
 
@@ -29,11 +29,11 @@ void CampaignExt::ExtData::LoadFromINIFile(CampaignClass *pThis, CCINIClass *pIN
 	this->DebugOnly = pINI->ReadBool(section, "DebugOnly", this->DebugOnly);
 
 	if(pINI->ReadString(section, "HoverSound", "", Ares::readBuffer, Ares::readLength)) {
-		AresCRT::strCopy(this->HoverSound, Ares::readBuffer, 0x1F);
+		AresCRT::strCopy(this->HoverSound, Ares::readBuffer);
 	}
 
 	if(pINI->ReadString(section, "Summary", "", Ares::readBuffer, Ares::readLength)) {
-		AresCRT::strCopy(this->Summary, Ares::readBuffer, 0x20);
+		AresCRT::strCopy(this->Summary, Ares::readBuffer);
 	}
 }
 

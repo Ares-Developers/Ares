@@ -290,7 +290,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	this->Chronoshift_IsVehicle.Read(&exINI, section, "Chronoshift.IsVehicle");
 
 	if(CCINIClass::INI_Art->ReadString(pThis->ImageFile, "CameoPCX", "", Ares::readBuffer, Ares::readLength)) {
-		AresCRT::strCopy(this->CameoPCX, Ares::readBuffer, 0x20);
+		AresCRT::strCopy(this->CameoPCX, Ares::readBuffer);
 		_strlwr_s(this->CameoPCX, 0x20);
 		if(!PCX::Instance->LoadFile(this->CameoPCX)) {
 			Debug::INIParseFailed(pThis->ImageFile, "CameoPCX", this->CameoPCX);
@@ -298,7 +298,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	}
 
 	if(CCINIClass::INI_Art->ReadString(pThis->ImageFile, "AltCameoPCX", "", Ares::readBuffer, Ares::readLength)) {
-		AresCRT::strCopy(this->AltCameoPCX, Ares::readBuffer, 0x20);
+		AresCRT::strCopy(this->AltCameoPCX, Ares::readBuffer);
 		_strlwr_s(this->AltCameoPCX, 0x20);
 		if(!PCX::Instance->LoadFile(this->AltCameoPCX)) {
 			Debug::INIParseFailed(pThis->ImageFile, "AltCameoPCX", this->AltCameoPCX);

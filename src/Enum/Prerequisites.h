@@ -25,7 +25,7 @@ public:
 
 	GenericPrerequisite(const char *Title)
 	{
-		AresCRT::strCopy(this->Name, Title, 32);
+		AresCRT::strCopy(this->Name, Title);
 		Array.AddItem(this);
 	}
 
