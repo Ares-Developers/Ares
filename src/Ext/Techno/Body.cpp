@@ -359,10 +359,8 @@ bool TechnoExt::ExtData::IsPowered() {
 		HouseClass* Owner = this->AttachedToObject->Owner;
 		for(int i = 0; i < Owner->Buildings.Count; ++i) {
 			BuildingClass* Building = Owner->Buildings.GetItem(i);
-			if(Building->Type->PowersUnit) {
-				if(Building->Type->PowersUnit == TT) {
-					return Building->RegisteredAsPoweredUnitSource && !Building->IsUnderEMP(); // alternatively, HasPower, IsPowerOnline()
-				}
+			if(Building->Type->PowersUnit == TT) {
+				return Building->RegisteredAsPoweredUnitSource && !Building->IsUnderEMP(); // alternatively, HasPower, IsPowerOnline()
 			}
 		}
 		// if we reach this, we found no building that currently powers this object
