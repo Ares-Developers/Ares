@@ -551,7 +551,7 @@ void TechnoExt::DetachSpecificSpawnee(TechnoClass *Spawnee, HouseClass *NewSpawn
 			SpawnNode->GetItem(i)->Unit = NULL;
 			Spawnee->SpawnOwner = NULL;
 
-			SpawnNode->GetItem(i)->Status = SpawnNode::state_Dead;
+			SpawnNode->GetItem(i)->Status = SpawnNodeStatus::Dead;
 
 			Spawnee->SetOwningHouse(NewSpawneeOwner);
 		}

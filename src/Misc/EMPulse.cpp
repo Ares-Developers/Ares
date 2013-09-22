@@ -432,18 +432,18 @@ void EMPulse::updateSpawnManager(TechnoClass * Techno, ObjectClass * Source = NU
 			for (int i=0; i < SM->SpawnedNodes.Count; ++i) {
 				SpawnNode *spawn = SM->SpawnedNodes.GetItem(i);
 				// kill every spawned unit that is in the air. exempt missiles.
-				if(!spawn->IsSpawnMissile && spawn->Unit && spawn->Status >= 1 && spawn->Status <= 4) {
+				if(spawn->IsSpawnMissile == FALSE && spawn->Unit && spawn->Status >= SpawnNodeStatus::TakeOff && spawn->Status <= SpawnNodeStatus::Returning) {
 					TechnoExt::Destroy(spawn->Unit, generic_cast<TechnoClass*>(Source));
 				}
 			}
 
 			// pause the timers so spawning and regenerating is deferred.
 			SM->SpawnTimer.StartTime = -1;
-			SM->UnknownTimer.StartTime = -1;
+			SM->UpdateTimer.StartTime = -1;
 		} else {
 			// resume counting.
 			SM->SpawnTimer.StartIfEmpty();
-			SM->UnknownTimer.StartIfEmpty();
+			SM->UpdateTimer.StartIfEmpty();
 		}
 	}
 }
