@@ -438,8 +438,8 @@ void EMPulse::updateSpawnManager(TechnoClass * Techno, ObjectClass * Source = NU
 			}
 
 			// pause the timers so spawning and regenerating is deferred.
-			SM->SpawnTimer.StartTime = -1;
-			SM->UpdateTimer.StartTime = -1;
+			SM->SpawnTimer.Pause();
+			SM->UpdateTimer.Pause();
 		} else {
 			// resume counting.
 			SM->SpawnTimer.StartIfEmpty();
