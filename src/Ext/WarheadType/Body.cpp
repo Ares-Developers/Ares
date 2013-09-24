@@ -434,8 +434,7 @@ bool WarheadTypeExt::ExtData::applyKillDriver(BulletClass* Bullet) {
 			// If this unit spawns stuff, we should kill the spawns, since they still belong to the previous owner
 			if(pTarget->SpawnManager) {
 				pTarget->SpawnManager->KillNodes();
-				pTarget->SpawnManager->Target = NULL;
-				pTarget->SpawnManager->NewTarget = NULL;
+				pTarget->SpawnManager->ResetTarget();
 			}
 
 			// If this unit enslaves stuff, we should free the slaves, since they still belong to the previous owner

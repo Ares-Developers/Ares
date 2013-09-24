@@ -238,8 +238,7 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 			// if the unit is a spawner, kill the spawns
 			if(Target->SpawnManager) {
 				Target->SpawnManager->KillNodes();
-				Target->SpawnManager->Target = NULL;
-				Target->SpawnManager->NewTarget = NULL;
+				Target->SpawnManager->ResetTarget();
 			}
 
 			//if the unit is a slave, it should be freed
