@@ -1,6 +1,6 @@
 [branch]
-Name=Ares Development Mainline
-Description=This is the trunk or master branch of Ares's repository. It contains the current in-development code.
+Name=Tiberian Fun
+Description=Several features known from Red Alert 2's architectural predecessor recoded.
 TargetVersion=0.5
 Stable=no
 ReadyForTesting=yes
