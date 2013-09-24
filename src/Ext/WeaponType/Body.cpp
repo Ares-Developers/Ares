@@ -312,7 +312,7 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 			}
 
 			Target->Transporter = Attacker;
-			if(AttackerType->OpenTopped) {
+			if(AttackerType->OpenTopped && Target->Owner->IsAlliedWith(Attacker)) {
 				Attacker->EnteredOpenTopped(Target);
 			}
 
