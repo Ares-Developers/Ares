@@ -1,6 +1,6 @@
 [branch]
-Name=Ares Development Mainline
-Description=This is the trunk or master branch of Ares's repository. It contains the current in-development code.
+Name=The AttachEffect system
+Description=Separate branch for implementing issues #1573, #1623, #255. See https://github.com/Ares-Developers/Ares/wiki/AttachEffect-system for documentation.
 TargetVersion=0.5
 Stable=no
 ReadyForTesting=yes

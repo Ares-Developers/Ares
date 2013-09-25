@@ -1002,10 +1002,17 @@ DEFINE_HOOK(6F6AC9, TechnoClass_Remove, 6) {
 	//#1573, #1623, #255 attached effects
 	if (TechnoExt->AttachedEffects.Count) {
 		//auto pID = pThis->GetTechnoType()->ID;
-		for (int i = TechnoExt->AttachedEffects.Count; i>0; --i) {
+		for (int i = TechnoExt->AttachedEffects.Count; i > 0; --i) {
 			//Debug::Log("[AttachEffect] Removing %d. item from %s\n", i - 1, pID);
 			auto Item = TechnoExt->AttachedEffects.GetItem(i - 1);
-			Item->KillAnim();
+			if (Item->Type->DiscardOnEntry) {
+				Item->Destroy();
+				delete Item;
+				TechnoExt->AttachedEffects.RemoveItem(i - 1);
+				TechnoExt::RecalculateStats(pThis);
+			} else {
+				Item->KillAnim();
+			}
 		}
 
 		TechnoExt->AttachEffects_RecreateAnims = true;

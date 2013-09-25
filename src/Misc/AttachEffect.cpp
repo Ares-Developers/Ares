@@ -29,6 +29,8 @@ void AttachEffectTypeClass::Read(INI_EX *exINI, const char * section) {
 	this->AnimType.Parse(exINI, section, "AttachEffect.Animation");
 	this->AnimResetOnReapply.Read(exINI, section, "AttachEffect.AnimResetOnReapply");
 	this->TemporalHidesAnim.Read(exINI, section, "AttachEffect.TemporalHidesAnim");
+	this->ForceDecloak.Read(exINI, section, "AttachEffect.TemporalHidesAnim");
+	this->DiscardOnEntry.Read(exINI, section, "AttachEffect.TemporalHidesAnim");
 	this->FirepowerMultiplier.Read(exINI, section, "AttachEffect.FirepowerMultiplier");
 	this->ArmorMultiplier.Read(exINI, section, "AttachEffect.ArmorMultiplier");
 	this->SpeedMultiplier.Read(exINI, section, "AttachEffect.SpeedMultiplier");
@@ -70,6 +72,10 @@ void AttachEffectTypeClass::Attach(TechnoClass* Target, int Duration, TechnoClas
 					Item->CreateAnim(Target);
 				}
 
+				if (!!this->ForceDecloak && Target->CloakState) {
+					Target->Uncloak(true);
+				}
+
 				return;
 			}
 		}
@@ -84,6 +90,11 @@ void AttachEffectTypeClass::Attach(TechnoClass* Target, int Duration, TechnoClas
 	// update the unit with the attached effect
 	TechnoExt::RecalculateStats(Target);
 
+	//check cloak
+	if (!!this->ForceDecloak && Target->CloakState) {
+		Target->Uncloak(true);
+	}
+
 	// animation
 	Attaching->CreateAnim(Target);
 	
@@ -93,6 +104,7 @@ void AttachEffectClass::InvalidatePointer(void *ptr) {
 	if(this->Invoker == ptr) {
 		this->Invoker = nullptr;
 	}
+
 	if(this->Animation == ptr) {
 		this->KillAnim();
 	}
