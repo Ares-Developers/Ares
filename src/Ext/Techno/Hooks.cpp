@@ -1270,6 +1270,7 @@ DEFINE_HOOK(4D85E4, FootClass_UpdatePosition_TiberiumDamage, 9)
 
 	int damage = 0;
 	WarheadTypeClass* pWarhead = nullptr;
+	int transmogrify = RulesClass::Instance->TiberiumTransmogrify;
 
 	if(RulesExt::Global()->Tiberium_DamageEnabled) {
 		TechnoTypeClass* pType = pThis->GetTechnoType();
@@ -1291,6 +1292,8 @@ DEFINE_HOOK(4D85E4, FootClass_UpdatePosition_TiberiumDamage, 9)
 					if(damage < 1) {
 						damage = 1;
 					}
+
+					transmogrify = pExt->TiberiumTransmogrify.Get(transmogrify);
 				}
 			}
 		}
@@ -1305,7 +1308,7 @@ DEFINE_HOOK(4D85E4, FootClass_UpdatePosition_TiberiumDamage, 9)
 			if(ScenarioClass::Instance->TiberiumDeathToVisceroid) {
 				CellClass* pCell = MapClass::Instance->GetCellAt(&crd);
 				int rnd = ScenarioClass::Instance->Random.RandomRanged(0, 99);
-				if(!(pCell->OccupationFlags & 0x20) && rnd < RulesClass::Instance->TiberiumTransmogrify) {
+				if(!(pCell->OccupationFlags & 0x20) && rnd < transmogrify) {
 					int idxHouse = HouseClass::FindIndexByName("Neutral");
 					if(HouseClass* pHouse = HouseClass::FindByIndex(idxHouse)) {
 						if(UnitTypeClass* pType = RulesClass::Instance->SmallVisceroid) {

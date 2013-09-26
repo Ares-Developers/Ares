@@ -153,6 +153,7 @@ public:
 		// tiberium related
 		Nullable<bool> TiberiumProof;
 		Valueable<bool> TiberiumSpill;
+		Nullable<int> TiberiumTransmogrify;
 
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			Survivors_PilotChance (),
@@ -214,6 +215,7 @@ public:
 			WaterImage (NULL),
 			TiberiumProof (),
 			TiberiumSpill (false),
+			TiberiumTransmogrify (),
 			CanBeReversed (true),
 			RadarJamRadius (0),
 			PassengerTurret (false),
