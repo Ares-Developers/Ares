@@ -29,8 +29,8 @@ void AttachEffectTypeClass::Read(INI_EX *exINI, const char * section) {
 	this->AnimType.Parse(exINI, section, "AttachEffect.Animation");
 	this->AnimResetOnReapply.Read(exINI, section, "AttachEffect.AnimResetOnReapply");
 	this->TemporalHidesAnim.Read(exINI, section, "AttachEffect.TemporalHidesAnim");
-	this->ForceDecloak.Read(exINI, section, "AttachEffect.TemporalHidesAnim");
-	this->DiscardOnEntry.Read(exINI, section, "AttachEffect.TemporalHidesAnim");
+	this->ForceDecloak.Read(exINI, section, "AttachEffect.ForceDecloak");
+	this->DiscardOnEntry.Read(exINI, section, "AttachEffect.DiscardOnEntry");
 	this->FirepowerMultiplier.Read(exINI, section, "AttachEffect.FirepowerMultiplier");
 	this->ArmorMultiplier.Read(exINI, section, "AttachEffect.ArmorMultiplier");
 	this->SpeedMultiplier.Read(exINI, section, "AttachEffect.SpeedMultiplier");
