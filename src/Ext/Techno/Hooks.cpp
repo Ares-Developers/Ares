@@ -3,6 +3,7 @@
 #include "../Building/Body.h"
 #include "../BuildingType/Body.h"
 #include "../Rules/Body.h"
+#include "../Tiberium/Body.h"
 #include "../../Misc/Debug.h"
 #include "../../Misc/JammerClass.h"
 #include "../../Misc/PoweredUnitClass.h"
@@ -1268,6 +1269,8 @@ DEFINE_HOOK(4D85E4, FootClass_UpdatePosition_TiberiumDamage, 9)
 	GET(FootClass*, pThis, ESI);
 
 	int damage = 0;
+	WarheadTypeClass* pWarhead = nullptr;
+
 	if(RulesExt::Global()->Tiberium_DamageEnabled) {
 		TechnoTypeClass* pType = pThis->GetTechnoType();
 		TechnoTypeExt::ExtData* pExt = TechnoTypeExt::ExtMap.Find(pType);
@@ -1280,7 +1283,11 @@ DEFINE_HOOK(4D85E4, FootClass_UpdatePosition_TiberiumDamage, 9)
 				CellClass* pCell = pThis->GetCell();
 				int idxTiberium = pCell->GetContainedTiberiumIndex();
 				if(idxTiberium != -1) {
-					damage = TiberiumClass::Array->GetItem(idxTiberium)->Power / 10;
+					auto pTiberium = TiberiumClass::Array->GetItem(idxTiberium);
+					auto pTibExt = TiberiumExt::ExtMap.Find(pTiberium);
+
+					pWarhead = pTibExt->Warhead.Get(RulesClass::Instance->C4Warhead);
+					damage = pTibExt->Damage.Get(pTiberium->Power / 10);
 					if(damage < 1) {
 						damage = 1;
 					}
@@ -1289,11 +1296,11 @@ DEFINE_HOOK(4D85E4, FootClass_UpdatePosition_TiberiumDamage, 9)
 		}
 	}
 
-	if(damage) {
+	if(damage && pWarhead) {
 		CoordStruct crd;
 		pThis->GetCoords(&crd);
 
-		if(pThis->ReceiveDamage(&damage, 0, RulesClass::Instance->C4Warhead, nullptr, FALSE, FALSE, nullptr) == DamageState::NowDead) {
+		if(pThis->ReceiveDamage(&damage, 0, pWarhead, nullptr, FALSE, FALSE, nullptr) == DamageState::NowDead) {
 			// create a small visceroid if available and the cell is free
 			if(ScenarioClass::Instance->TiberiumDeathToVisceroid) {
 				CellClass* pCell = MapClass::Instance->GetCellAt(&crd);

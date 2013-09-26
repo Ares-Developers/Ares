@@ -8,6 +8,8 @@
 
 #include "../_Container.hpp"
 
+class WarheadTypeClass;
+
 class TiberiumExt
 {
 	public:
@@ -16,7 +18,12 @@ class TiberiumExt
 	class ExtData : public Extension<TT>
 	{
 	public:
-		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject)
+		Nullable<int> Damage;
+		Nullable<WarheadTypeClass*> Warhead;
+
+		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
+			Damage(),
+			Warhead()
 		{
 		};
 

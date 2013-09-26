@@ -1,5 +1,7 @@
 #include "Body.h"
 
+#include <WarheadTypeClass.h>
+
 //Static init
 template<> const DWORD Extension<TiberiumClass>::Canary = 0xB16B00B5;
 Container<TiberiumExt> TiberiumExt::ExtMap;
@@ -17,6 +19,9 @@ void TiberiumExt::ExtData::LoadFromINIFile(TiberiumClass* pThis, CCINIClass* pIN
 	const char* section = pThis->get_ID();
 
 	INI_EX exINI(pINI);
+
+	this->Damage.Read(&exINI, section, "Damage");
+	this->Warhead.Parse(&exINI, section, "Warhead");
 }
 
 // =============================
