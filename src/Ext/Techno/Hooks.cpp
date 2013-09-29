@@ -1309,8 +1309,8 @@ DEFINE_HOOK(4D85E4, FootClass_UpdatePosition_TiberiumDamage, 9)
 				CellClass* pCell = MapClass::Instance->GetCellAt(&crd);
 				int rnd = ScenarioClass::Instance->Random.RandomRanged(0, 99);
 				if(!(pCell->OccupationFlags & 0x20) && rnd < transmogrify) {
-					int idxHouse = HouseClass::FindIndexByName("Neutral");
-					if(HouseClass* pHouse = HouseClass::FindByIndex(idxHouse)) {
+					int idxHouse = HouseTypeClass::FindIndexOfName("Neutral");
+					if(HouseClass* pHouse = HouseClass::FindByCountryIndex(idxHouse)) {
 						if(UnitTypeClass* pType = RulesClass::Instance->SmallVisceroid) {
 							if(ObjectClass* pVisc = pType->CreateObject(pHouse)) {
 								++Unsorted::IKnowWhatImDoing;
