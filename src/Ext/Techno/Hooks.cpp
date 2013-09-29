@@ -1464,3 +1464,83 @@ DEFINE_HOOK(66748A, RulesClass_CTOR_TiberiumTransmogrify, 6)
 	pThis->TiberiumTransmogrify = 0;
 	return 0;
 }
+
+// this was only a leftover stub from TS. reimplemented
+// using the same mechanism.
+DEFINE_HOOK(489270, CellChainReact, 5)
+{
+	GET(CellStruct*, cell, ECX);
+
+	static const int reactChanceMultiplier = 5;
+	static const int spreadChance = 80;
+	static const int minDelay = 15;
+	static const int maxDelay = 120;
+
+	auto pCell = MapClass::Instance->GetCellAt(cell);
+	auto idxTib = pCell->GetContainedTiberiumIndex();
+
+	TiberiumClass* pTib = nullptr;
+	if(TiberiumClass::Array->ValidIndex(idxTib)) {
+		pTib = TiberiumClass::Array->GetItem(idxTib);
+	}
+
+	OverlayTypeClass* pOverlay = nullptr;
+	if(OverlayTypeClass::Array->ValidIndex(pCell->OverlayTypeIndex)) {
+		pOverlay = OverlayTypeClass::Array->GetItem(pCell->OverlayTypeIndex);
+	}
+
+	if(pTib && pOverlay && pOverlay->ChainReaction && pCell->Powerup > 1) {
+		CoordStruct crd;
+		pCell->GetCoords(&crd);
+
+		if(ScenarioClass::Instance->Random.RandomRanged(0, 99) < reactChanceMultiplier * pCell->Powerup) {
+			bool wasFullGrown = (pCell->Powerup >= 11);
+
+			unsigned char delta = pCell->Powerup / 2;
+			int damage = pCell->Powerup * delta;
+
+			// remove some of the tiberium
+			pCell->Powerup -= delta;
+			pCell->MarkForRedraw();
+
+			// create an explosion
+			if(auto pType = MapClass::SelectDamageAnimation(4 * damage, RulesClass::Instance->C4Warhead, pCell->LandType, &crd)) {
+				AnimClass* pAnim = nullptr;
+				GAME_ALLOC(AnimClass, pAnim, pType, &crd, 0, 1, 0x600, 0);
+			}
+
+			// damage the area, without affecting tiberium
+			MapClass::DamageArea(&crd, damage, nullptr, RulesClass::Instance->C4Warhead, false, nullptr);
+
+			// spawn some animation on the neighbour cells
+			if(auto pType = AnimTypeClass::Find("INVISO")) {
+				for(size_t i=0; i<8; ++i) {
+					auto pNeighbour = pCell->GetNeighbourCell(i);
+
+					if(pCell->GetContainedTiberiumIndex() != -1 && pNeighbour->Powerup > 2) {
+						if(ScenarioClass::Instance->Random.RandomRanged(0, 99) < spreadChance) {
+							int delay = ScenarioClass::Instance->Random.RandomRanged(minDelay, maxDelay);
+
+							AnimClass* pAnim = nullptr;
+							GAME_ALLOC(AnimClass, pAnim, pType, &crd, delay, 1, 0x600, 0);
+						}
+					}
+				}
+			}
+
+			if(wasFullGrown) {
+				pTib->RegisterForGrowth(cell);
+			}
+		}
+	}
+
+	return 0;
+}
+
+// hook up the area damage delivery with chain reactions
+DEFINE_HOOK(48964F, DamageArea_ChainReaction, 5)
+{
+	GET(CellClass*, pCell, EBX);
+	pCell->ChainReaction();
+	return 0;
+}
