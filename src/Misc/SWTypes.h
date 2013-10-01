@@ -149,7 +149,7 @@ class ChronoWarpStateMachine : public SWStateMachine {
 
 			ChronoWarpContainer() {}
 
-			bool operator == (ChronoWarpContainer &t)
+			bool operator == (const ChronoWarpContainer &t) const
 				{ return (this->pBld == t.pBld); }
 		};
 
