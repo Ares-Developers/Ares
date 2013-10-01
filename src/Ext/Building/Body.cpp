@@ -495,7 +495,7 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 
 
 	if(pTypeExt->UnReverseEngineer.Get()) {
-		int idx = HouseClass::Array->FindItemIndex(&Owner);
+		int idx = HouseClass::Array->FindItemIndex(Owner);
 
 		Debug::Log("Undoing all Reverse Engineering achieved by house %ls (#%d)\n", Owner->UIName, idx);
 
@@ -831,7 +831,7 @@ bool BuildingExt::ExtData::ReverseEngineer(TechnoClass *Victim) {
 
 	HouseClass *Owner = this->AttachedToObject->Owner;
 
-	int idx = HouseClass::Array->FindItemIndex(&Owner);
+	int idx = HouseClass::Array->FindItemIndex(Owner);
 
 	if(pVictimData->ReversedByHouses.ValidIndex(idx)) {
 		if(!pVictimData->ReversedByHouses[idx]) {

@@ -66,7 +66,7 @@ DEFINE_HOOK(656584, MapClass_GetFoundationShape, 6)
 DEFINE_HOOK(6563B0, RadarClass_UpdateFoundationShapes_Custom, 5)
 {
 	// update each building type foundation
-	for(auto i=BuildingTypeClass::Array->start(); i<BuildingTypeClass::Array->end(); ++i) {
+	for(auto i=BuildingTypeClass::Array->begin(); i<BuildingTypeClass::Array->end(); ++i) {
 		if(auto pExt = BuildingTypeExt::ExtMap.Find(*i)) {
 			pExt->UpdateFoundationRadarShape();
 		}

@@ -52,7 +52,7 @@ public:
 	virtual ~RadType()
 	{
 		RadType * placeholder = this;
-		Array.RemoveItem(Array.FindItemIndex(&placeholder));
+		Array.RemoveItem(Array.FindItemIndex(placeholder));
 	}
 };
 

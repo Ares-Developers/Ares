@@ -40,7 +40,7 @@ public:
 				if(bld == this->SupportTarget) {
 					Debug::Log("Should remove my support target\n");
 				}
-				auto senderIdx = this->Senders.FindItemIndex(&bld);
+				auto senderIdx = this->Senders.FindItemIndex(bld);
 				if(senderIdx != -1) {
 					Debug::Log("Should remove my sender #%d\n", senderIdx);
 				}
@@ -50,7 +50,7 @@ public:
 					Debug::FatalError(true);
 					Debug::Exit();
 				}
-				senderIdx = this->Senders.FindItemIndex(&bld);
+				senderIdx = this->Senders.FindItemIndex(bld);
 				if(senderIdx != -1) {
 					_snprintf_s(Ares::readBuffer, Ares::readLength - 1, "Prism Forwarder (ExtData %p) failed to remove sender #%d\n", container, senderIdx);
 					Debug::FatalError(true);

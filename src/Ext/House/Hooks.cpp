@@ -251,7 +251,7 @@ DEFINE_HOOK(4F9610, HouseClass_GiveTiberium_Storage, A)
 		}
 
 		// go through all buildings and fill them up until all is in there
-		for(auto i=pThis->Buildings.start(); i<pThis->Buildings.end(); ++i) {
+		for(auto i=pThis->Buildings.begin(); i<pThis->Buildings.end(); ++i) {
 			if(amount <= 0.0f) {
 				break;
 			}

@@ -563,7 +563,7 @@ DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
 				if(pSuper->IsCharged) {
 					CellStruct Cell = HouseClass::DefaultIonCannonCoords;
 					auto LaunchSW = [&](CellStruct *Cell) {
-						int idxSW = pThis->Supers.FindItemIndex(&pSuper);
+						int idxSW = pThis->Supers.FindItemIndex(pSuper);
 						pThis->Fire_SW(idxSW, Cell);
 					};
 
