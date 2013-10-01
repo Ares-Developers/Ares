@@ -422,7 +422,7 @@ void BuildingTypeExt::cPrismForwarding::SetSupportTarget(BuildingClass *pSlaveTo
 		// if the target tower is already set, disconnect it by removing it from the old target tower's sender list
 		if(BuildingClass *pOldTarget = pSlaveData->PrismForwarding.SupportTarget) {
 			if(BuildingExt::ExtData *pOldTargetData = BuildingExt::ExtMap.Find(pOldTarget)) {
-				int idxSlave = pOldTargetData->PrismForwarding.Senders.FindItemIndex(&pSlaveTower);
+				int idxSlave = pOldTargetData->PrismForwarding.Senders.FindItemIndex(pSlaveTower);
 				if(idxSlave != -1) {
 					pOldTargetData->PrismForwarding.Senders.RemoveItem(idxSlave);
 					// everywhere the comments say this is now the "longest backwards chain", but decreasing this here makes use of the original meaning. why is this needed here? AlexB 2012-04-08
@@ -439,7 +439,7 @@ void BuildingTypeExt::cPrismForwarding::SetSupportTarget(BuildingClass *pSlaveTo
 			if(BuildingExt::ExtData *pTargetData = BuildingExt::ExtMap.Find(pTargetTower)) {
 				pSlaveData->PrismForwarding.SupportTarget = pTargetTower;
 
-				if(pTargetData->PrismForwarding.Senders.FindItemIndex(&pSlaveTower) == -1) {
+				if(pTargetData->PrismForwarding.Senders.FindItemIndex(pSlaveTower) == -1) {
 					pTargetData->PrismForwarding.Senders.AddItem(pSlaveTower);
 					// why isn't SupportingPrisms increased here? AlexB 2012-04-08
 				} else {

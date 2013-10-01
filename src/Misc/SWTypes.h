@@ -105,7 +105,7 @@ class SWStateMachine {
 
 		virtual ~SWStateMachine() {
 			auto t = this;
-			Array.RemoveItem(Array.FindItemIndex(&t));
+			Array.RemoveItem(Array.FindItemIndex(t));
 		}
 
 		virtual void Update() {};

@@ -462,19 +462,19 @@ bool TechnoTypeExt::ExtData::CameoIsElite()
 			if(House->BarracksInfiltrated && !T->Naval && T->Trainable) {
 				return true;
 			} else {
-				return Country->VeteranInfantry.FindItemIndex((InfantryTypeClass **)&T) != -1;
+				return Country->VeteranInfantry.FindItemIndex((InfantryTypeClass *)T) != -1;
 			}
 		case abs_UnitType:
 			if(House->WarFactoryInfiltrated && !T->Naval && T->Trainable) {
 				return true;
 			} else {
-				return Country->VeteranUnits.FindItemIndex((UnitTypeClass **)&T) != -1;
+				return Country->VeteranUnits.FindItemIndex((UnitTypeClass *)T) != -1;
 			}
 		case abs_AircraftType:
-			return Country->VeteranAircraft.FindItemIndex((AircraftTypeClass **)&T) != -1;
+			return Country->VeteranAircraft.FindItemIndex((AircraftTypeClass *)T) != -1;
 		case abs_BuildingType:
 			if(TechnoTypeClass *Item = T->UndeploysInto) {
-				return Country->VeteranUnits.FindItemIndex((UnitTypeClass **)&Item) != -1;
+				return Country->VeteranUnits.FindItemIndex((UnitTypeClass *)Item) != -1;
 			} else {
 				auto pData = HouseTypeExt::ExtMap.Find(Country);
 				return pData->VeteranBuildings.Contains((BuildingTypeClass*)T);
