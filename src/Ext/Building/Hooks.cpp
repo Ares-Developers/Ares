@@ -88,7 +88,7 @@ DEFINE_HOOK(709B4E, TechnoClass_DrawPipscale_SkipSkipTiberium, 6)
 
 	bool showTiberium = true;
 	if(auto pType = specific_cast<BuildingTypeClass*>(pThis->GetTechnoType())) {
-		if(pType->Refinery && pType->Storage > 0) {
+		if((pType->Refinery || pType->ResourceDestination) && pType->Storage > 0) {
 			// show only if this refinary uses storage. otherwise, the original
 			// refineries would show an unused tiberium pip scale
 			auto pExt = TechnoTypeExt::ExtMap.Find(pType);
