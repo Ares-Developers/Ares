@@ -155,6 +155,9 @@ public:
 		Valueable<bool> TiberiumSpill;
 		Nullable<int> TiberiumTransmogrify;
 
+		// refinery and storage related
+		Valueable<bool> Refinery_UseStorage;
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			Survivors_PilotChance (),
 			Survivors_PassengerChance (),
@@ -216,6 +219,7 @@ public:
 			TiberiumProof (),
 			TiberiumSpill (false),
 			TiberiumTransmogrify (),
+			Refinery_UseStorage (false),
 			CanBeReversed (true),
 			RadarJamRadius (0),
 			PassengerTurret (false),

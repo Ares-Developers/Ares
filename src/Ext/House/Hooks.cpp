@@ -1,5 +1,6 @@
 #include "Body.h"
 #include "../Building/Body.h"
+#include "../Techno/Body.h"
 #include "../TechnoType/Body.h"
 
 #include <StringTable.h>
@@ -308,7 +309,7 @@ DEFINE_HOOK(73E4A2, UnitClass_Mi_Unload_Storage, 6)
 	LEA_STACK(float*, amountRaw, 0x1C);
 	LEA_STACK(float*, amountPurified, 0x34);
 
-	auto pExt = BuildingExt::ExtMap.Find(pBld);
+	auto pExt = TechnoExt::ExtMap.Find(pBld);
 	pExt->DepositTiberium(*amountRaw, *amountPurified, idxTiberium);
 	*amountPurified = *amountRaw = 0.0f;
 
@@ -317,7 +318,7 @@ DEFINE_HOOK(73E4A2, UnitClass_Mi_Unload_Storage, 6)
 
 DEFINE_HOOK(522D75, InfantryClass_Slave_UnloadAt_Storage, 6)
 {
-	GET(BuildingClass*, pBld, EAX);
+	GET(TechnoClass*, pBld, EAX);
 	GET(int, idxTiberium, ESI);
 	GET(OwnedTiberiumStruct*, pTiberium, EBP);
 
@@ -326,7 +327,7 @@ DEFINE_HOOK(522D75, InfantryClass_Slave_UnloadAt_Storage, 6)
 	float amount = pTiberium->GetAmount(idxTiberium);
 	pTiberium->RemoveAmount(amount, idxTiberium);
 
-	auto pExt = BuildingExt::ExtMap.Find(pBld);
+	auto pExt = TechnoExt::ExtMap.Find(pBld);
 	pExt->RefineTiberium(amount, idxTiberium);
 
 	return 0x522E38;

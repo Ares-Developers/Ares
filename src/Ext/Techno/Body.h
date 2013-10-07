@@ -147,6 +147,9 @@ public:
 		eAction GetDeactivatedAction(ObjectClass *Hovered = NULL) const;
 
 		void InvalidateAttachEffectPointer(void *ptr);
+
+		void RefineTiberium(float amount, int idxType);
+		void DepositTiberium(float amount, float bonus, int idxType);
 	};
 
 	static Container<TechnoExt> ExtMap;

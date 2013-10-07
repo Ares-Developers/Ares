@@ -256,8 +256,6 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 
 	this->GateDownSound.Read(&exINI, pID, "GateDownSound");
 	this->GateUpSound.Read(&exINI, pID, "GateUpSound");
-
-	this->Refinery_UseStorage.Read(&exINI, pID, "Refinery.UseStorage");
 }
 
 void BuildingTypeExt::ExtData::CompleteInitialization(BuildingTypeClass *pThis) {

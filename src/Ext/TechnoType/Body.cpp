@@ -354,6 +354,9 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	this->TiberiumSpill.Read(&exINI, section, "TiberiumSpill");
 	this->TiberiumTransmogrify.Read(&exINI, section, "TiberiumTransmogrify");
 
+	// refinery and storage
+	this->Refinery_UseStorage.Read(&exINI, section, "Refinery.UseStorage");
+
 	// quick fix - remove after the rest of weapon selector code is done
 	return;
 }
