@@ -1497,7 +1497,7 @@ DEFINE_HOOK(489270, CellChainReact, 5)
 			bool wasFullGrown = (pCell->Powerup >= 11);
 
 			unsigned char delta = pCell->Powerup / 2;
-			int damage = pCell->Powerup * delta;
+			int damage = pTib->Power * delta;
 
 			// remove some of the tiberium
 			pCell->Powerup -= delta;
