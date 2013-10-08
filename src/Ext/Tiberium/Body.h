@@ -37,6 +37,9 @@ class TiberiumExt
 		virtual void Initialize(TT *pThis);
 		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
 		}
+
+		double GetHealDelay();
+		int GetHealStep(TechnoClass* pTechno);
 	};
 
 	static Container<TiberiumExt> ExtMap;

@@ -24,6 +24,17 @@ void TiberiumExt::ExtData::LoadFromINIFile(TiberiumClass* pThis, CCINIClass* pIN
 	this->Warhead.Parse(&exINI, section, "Warhead");
 }
 
+double TiberiumExt::ExtData::GetHealDelay()
+{
+	return RulesClass::Instance->TiberiumHeal;
+}
+
+int TiberiumExt::ExtData::GetHealStep(TechnoClass* pTechno)
+{
+	auto pType = pTechno->GetTechnoType();
+	return pType->GetRepairStep();
+}
+
 // =============================
 // load/save
 
