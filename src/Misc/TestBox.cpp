@@ -9,7 +9,7 @@ void TestScaffold::FloatToIntTest() {
 
 	for(int i = 0; i < 10; ++i) {
 		for(double f = -5.75; f <= 5.75; f += 0.05) {
-			Debug::Log("%lf -> %I64d\n", f, Game::F2I(f));
+			Debug::Log("%lf -> %I64d\n", f, Game::F2I64(f));
 		}
 	}
 
