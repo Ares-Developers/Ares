@@ -22,17 +22,36 @@ void TiberiumExt::ExtData::LoadFromINIFile(TiberiumClass* pThis, CCINIClass* pIN
 
 	this->Damage.Read(&exINI, section, "Damage");
 	this->Warhead.Parse(&exINI, section, "Warhead");
+
+	this->Heal_Step.Read(&exINI, section, "Heal.Step");
+	this->Heal_IStep.Read(&exINI, section, "Heal.IStep");
+	this->Heal_UStep.Read(&exINI, section, "Heal.UStep");
+	this->Heal_Delay.Read(&exINI, section, "Heal.Delay");
 }
 
 double TiberiumExt::ExtData::GetHealDelay()
 {
-	return RulesClass::Instance->TiberiumHeal;
+	return this->Heal_Delay.Get(RulesClass::Instance->TiberiumHeal);
 }
 
 int TiberiumExt::ExtData::GetHealStep(TechnoClass* pTechno)
 {
 	auto pType = pTechno->GetTechnoType();
-	return pType->GetRepairStep();
+	int step = pType->GetRepairStep();
+
+	switch(pType->WhatAmI()) {
+	case InfantryTypeClass::AbsID:
+		step = this->Heal_IStep.Get(step);
+		break;
+	case UnitTypeClass::AbsID:
+		step = this->Heal_UStep.Get(step);
+		break;
+	default:
+		step = this->Heal_Step.Get(step);
+		break;
+	}
+
+	return step;
 }
 
 // =============================

@@ -21,9 +21,18 @@ class TiberiumExt
 		Nullable<int> Damage;
 		Nullable<WarheadTypeClass*> Warhead;
 
+		Nullable<int> Heal_Step;
+		Nullable<int> Heal_IStep;
+		Nullable<int> Heal_UStep;
+		Nullable<double> Heal_Delay;
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			Damage(),
-			Warhead()
+			Warhead(),
+			Heal_Step(),
+			Heal_IStep(),
+			Heal_UStep(),
+			Heal_Delay()
 		{
 		};
 
