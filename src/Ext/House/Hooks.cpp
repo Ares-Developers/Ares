@@ -327,8 +327,13 @@ DEFINE_HOOK(522D75, InfantryClass_Slave_UnloadAt_Storage, 6)
 	float amount = pTiberium->GetAmount(idxTiberium);
 	pTiberium->RemoveAmount(amount, idxTiberium);
 
-	auto pExt = TechnoExt::ExtMap.Find(pBld);
-	pExt->RefineTiberium(amount, idxTiberium);
+	if(amount > 0.0f) {
+		auto pExt = TechnoExt::ExtMap.Find(pBld);
+		pExt->RefineTiberium(amount, idxTiberium);
+
+		// register for refinery smoke
+		R->BL(1);
+	}
 
 	return 0x522E38;
 }
