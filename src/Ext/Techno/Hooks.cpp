@@ -1359,7 +1359,7 @@ DEFINE_HOOK(702672, TechnoClass_ReceiveDamage_SpillTiberium, 5)
 			// assume about half full, recalc if possible
 			int value = static_cast<int>(max / 2);
 			if(pType->Storage > 0) {
-				value = static_cast<int>(Game::F2I(stored / pType->Storage * max));
+				value = Game::F2I(stored / pType->Storage * max);
 			}
 
 			// get the spill center
@@ -1400,7 +1400,7 @@ DEFINE_HOOK(738749, UnitClass_Destroy_TiberiumExplosive, 6)
 				for(int i=0; i<TiberiumClass::Array->Count; ++i) {
 					TiberiumClass* pTiberium = TiberiumClass::Array->GetItem(i);
 					float power = pThis->Tiberium.GetAmount(i) * pTiberium->Power;
-					morePower += static_cast<int>(Game::F2I(power));
+					morePower += Game::F2I(power);
 				}
 
 				// go boom

@@ -751,7 +751,7 @@ DEFINE_HOOK(6CBF5B, SuperClass_GetCameoChargeState_ChargeDrainRatio, 9) {
 		}
 
 		// up to 55 steps
-		int charge = (int)Game::F2I(percentage * 54.0);
+		int charge = Game::F2I(percentage * 54.0);
 		R->EAX(charge);
 		return 0x6CC053;
 	}
@@ -779,7 +779,7 @@ DEFINE_HOOK(6CB995, SuperClass_ClickFire_ChargeDrainRatioA, 8) {
 	if(SWTypeExt::ExtData* pData = SWTypeExt::ExtMap.Find(pSuper->Type)) {
 		double ratio = pData->SW_ChargeToDrainRatio;
 		double remaining = rechargeTime - timeLeft / ratio;
-		int frames = (int)Game::F2I(remaining);
+		int frames = Game::F2I(remaining);
 	
 		R->EAX(frames);
 		return 0x6CB9B0;
@@ -795,7 +795,7 @@ DEFINE_HOOK(6CBA19, SuperClass_ClickFire_ChargeDrainRatioB, A) {
 	if(SWTypeExt::ExtData* pData = SWTypeExt::ExtMap.Find(pSuper->Type)) {
 		double ratio = pData->SW_ChargeToDrainRatio;
 		double remaining = length * ratio;
-		int frames = (int)Game::F2I(remaining);
+		int frames = Game::F2I(remaining);
 	
 		R->EAX(frames);
 		return 0x6CBA28;

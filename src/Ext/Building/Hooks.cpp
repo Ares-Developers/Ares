@@ -75,7 +75,7 @@ DEFINE_HOOK(44D755, BuildingClass_GetPipFillLevel_Tiberium, 6)
 		amount = pThis->Owner->GetStoragePercentage();
 	}
 
-	int ret = static_cast<int>(Game::F2I(pType->GetPipMax() * amount));
+	int ret = Game::F2I(pType->GetPipMax() * amount);
 	R->EAX(ret);
 	return 0x44D750;
 }
