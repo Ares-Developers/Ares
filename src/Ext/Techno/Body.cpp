@@ -856,14 +856,14 @@ void TechnoExt::ExtData::DepositTiberium(float amount, float bonus, int idxType)
 	// would fill up storage with tiberium that doesn't exist. this is consistent with
 	// the original YR, because old GiveTiberium put it on the bank anyhow, despite its name.
 	if(bonus > 0.0f) {
-		value += static_cast<int>(Game::F2I(bonus * pTiberium->Value * pHouse->Type->IncomeMult));
+		value += Game::F2I(bonus * pTiberium->Value * pHouse->Type->IncomeMult);
 	}
 
 	// also add the normal tiberium to the global account?
 	if(amount > 0.0f) {
 		auto pExt = TechnoTypeExt::ExtMap.Find(pThis->GetTechnoType());
 		if(!pExt->Refinery_UseStorage) {
-			value += static_cast<int>(Game::F2I(amount * pTiberium->Value * pHouse->Type->IncomeMult));
+			value += Game::F2I(amount * pTiberium->Value * pHouse->Type->IncomeMult);
 		} else {
 			pHouse->GiveTiberium(amount, idxType);
 		}

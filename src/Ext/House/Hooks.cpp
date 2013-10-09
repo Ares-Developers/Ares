@@ -239,7 +239,7 @@ DEFINE_HOOK(4F9610, HouseClass_GiveTiberium_Storage, A)
 	GET_STACK(float, amount, 0x4);
 	GET_STACK(int, idxType, 0x8);
 
-	pThis->SiloMoney += static_cast<int>(Game::F2I(amount * 5.0));
+	pThis->SiloMoney += Game::F2I(amount * 5.0);
 
 	if(!SessionClass::Instance->GameMode || pThis->CurrentPlayer) {
 		// don't change, old values are needed for silo update
@@ -282,7 +282,7 @@ DEFINE_HOOK(4F9610, HouseClass_GiveTiberium_Storage, A)
 	} else {
 		// just add the money. this is the only original YR logic
 		auto pTib = TiberiumClass::Array->GetItem(idxType);
-		pThis->Balance += static_cast<int>(Game::F2I(amount * pTib->Value * pThis->Type->IncomeMult));
+		pThis->Balance += Game::F2I(amount * pTib->Value * pThis->Type->IncomeMult);
 	}
 
 	return 0x4F9664;
