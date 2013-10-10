@@ -54,6 +54,21 @@ int TiberiumExt::ExtData::GetHealStep(TechnoClass* pTechno)
 	return step;
 }
 
+int TiberiumExt::ExtData::GetDamage()
+{
+	int damage = this->AttachedToObject->Power / 10;
+	if(damage < 1) {
+		damage = 1;
+	}
+
+	return this->Damage.Get(damage);
+}
+
+WarheadTypeClass* TiberiumExt::ExtData::GetWarhead()
+{
+	return this->Warhead.Get(RulesClass::Instance->C4Warhead);
+}
+
 // =============================
 // load/save
 

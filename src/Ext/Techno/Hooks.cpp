@@ -1286,11 +1286,8 @@ DEFINE_HOOK(4D85E4, FootClass_UpdatePosition_TiberiumDamage, 9)
 				if(auto pTiberium = TiberiumClass::Array->GetItemOrDefault(idxTiberium)) {
 					auto pTibExt = TiberiumExt::ExtMap.Find(pTiberium);
 
-					pWarhead = pTibExt->Warhead.Get(RulesClass::Instance->C4Warhead);
-					damage = pTibExt->Damage.Get(pTiberium->Power / 10);
-					if(damage < 1) {
-						damage = 1;
-					}
+					pWarhead = pTibExt->GetWarhead();
+					damage = pTibExt->GetDamage();
 
 					transmogrify = pExt->TiberiumTransmogrify.Get(transmogrify);
 				}

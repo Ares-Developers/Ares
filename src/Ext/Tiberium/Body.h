@@ -49,6 +49,8 @@ class TiberiumExt
 
 		double GetHealDelay();
 		int GetHealStep(TechnoClass* pTechno);
+		int GetDamage();
+		WarheadTypeClass* GetWarhead();
 	};
 
 	static Container<TiberiumExt> ExtMap;
