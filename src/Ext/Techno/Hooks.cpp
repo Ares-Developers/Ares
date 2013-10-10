@@ -1283,8 +1283,7 @@ DEFINE_HOOK(4D85E4, FootClass_UpdatePosition_TiberiumDamage, 9)
 			if(pThis->Health > 0) {
 				CellClass* pCell = pThis->GetCell();
 				int idxTiberium = pCell->GetContainedTiberiumIndex();
-				if(idxTiberium != -1) {
-					auto pTiberium = TiberiumClass::Array->GetItem(idxTiberium);
+				if(auto pTiberium = TiberiumClass::Array->GetItemOrDefault(idxTiberium)) {
 					auto pTibExt = TiberiumExt::ExtMap.Find(pTiberium);
 
 					pWarhead = pTibExt->Warhead.Get(RulesClass::Instance->C4Warhead);
@@ -1479,15 +1478,8 @@ DEFINE_HOOK(489270, CellChainReact, 5)
 	auto pCell = MapClass::Instance->GetCellAt(cell);
 	auto idxTib = pCell->GetContainedTiberiumIndex();
 
-	TiberiumClass* pTib = nullptr;
-	if(TiberiumClass::Array->ValidIndex(idxTib)) {
-		pTib = TiberiumClass::Array->GetItem(idxTib);
-	}
-
-	OverlayTypeClass* pOverlay = nullptr;
-	if(OverlayTypeClass::Array->ValidIndex(pCell->OverlayTypeIndex)) {
-		pOverlay = OverlayTypeClass::Array->GetItem(pCell->OverlayTypeIndex);
-	}
+	TiberiumClass* pTib = TiberiumClass::Array->GetItemOrDefault(idxTib);
+	OverlayTypeClass* pOverlay = OverlayTypeClass::Array->GetItemOrDefault(pCell->OverlayTypeIndex);
 
 	if(pTib && pOverlay && pOverlay->ChainReaction && pCell->Powerup > 1) {
 		CoordStruct crd;
