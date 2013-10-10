@@ -27,6 +27,8 @@ void TiberiumExt::ExtData::LoadFromINIFile(TiberiumClass* pThis, CCINIClass* pIN
 	this->Heal_IStep.Read(&exINI, section, "Heal.IStep");
 	this->Heal_UStep.Read(&exINI, section, "Heal.UStep");
 	this->Heal_Delay.Read(&exINI, section, "Heal.Delay");
+
+	this->ExplosionWarhead.Parse(&exINI, section, "ExplosionWarhead");
 }
 
 double TiberiumExt::ExtData::GetHealDelay() const
@@ -67,6 +69,11 @@ int TiberiumExt::ExtData::GetDamage() const
 WarheadTypeClass* TiberiumExt::ExtData::GetWarhead() const
 {
 	return this->Warhead.Get(RulesClass::Instance->C4Warhead);
+}
+
+WarheadTypeClass* TiberiumExt::ExtData::GetExplosionWarhead() const
+{
+	return this->ExplosionWarhead.Get(RulesClass::Instance->C4Warhead);
 }
 
 // =============================

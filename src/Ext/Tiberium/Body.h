@@ -26,13 +26,16 @@ class TiberiumExt
 		Nullable<int> Heal_UStep;
 		Nullable<double> Heal_Delay;
 
+		Nullable<WarheadTypeClass*> ExplosionWarhead;
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			Damage(),
 			Warhead(),
 			Heal_Step(),
 			Heal_IStep(),
 			Heal_UStep(),
-			Heal_Delay()
+			Heal_Delay(),
+			ExplosionWarhead()
 		{
 		};
 
@@ -51,6 +54,7 @@ class TiberiumExt
 		int GetHealStep(TechnoClass* pTechno) const;
 		int GetDamage() const;
 		WarheadTypeClass* GetWarhead() const;
+		WarheadTypeClass* GetExplosionWarhead() const;
 	};
 
 	static Container<TiberiumExt> ExtMap;

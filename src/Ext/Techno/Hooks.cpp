@@ -1492,14 +1492,18 @@ DEFINE_HOOK(489270, CellChainReact, 5)
 			pCell->Powerup -= delta;
 			pCell->MarkForRedraw();
 
+			// get the warhead
+			auto pExt = TiberiumExt::ExtMap.Find(pTib);
+			auto pWarhead = pExt->GetExplosionWarhead();
+
 			// create an explosion
-			if(auto pType = MapClass::SelectDamageAnimation(4 * damage, RulesClass::Instance->C4Warhead, pCell->LandType, &crd)) {
+			if(auto pType = MapClass::SelectDamageAnimation(4 * damage, pWarhead, pCell->LandType, &crd)) {
 				AnimClass* pAnim = nullptr;
 				GAME_ALLOC(AnimClass, pAnim, pType, &crd, 0, 1, 0x600, 0);
 			}
 
 			// damage the area, without affecting tiberium
-			MapClass::DamageArea(&crd, damage, nullptr, RulesClass::Instance->C4Warhead, false, nullptr);
+			MapClass::DamageArea(&crd, damage, nullptr, pWarhead, false, nullptr);
 
 			// spawn some animation on the neighbour cells
 			if(auto pType = AnimTypeClass::Find("INVISO")) {
