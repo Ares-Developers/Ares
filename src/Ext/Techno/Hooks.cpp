@@ -1537,3 +1537,15 @@ DEFINE_HOOK(48964F, DamageArea_ChainReaction, 5)
 	pCell->ChainReaction();
 	return 0;
 }
+
+// not exactly the most appropriate place
+DEFINE_HOOK(424EC5, AnimClass_ReInit_TiberiumChainReaction, 6)
+{
+	GET(TiberiumClass*, pTib, EDI);
+	auto pExt = TiberiumExt::ExtMap.Find(pTib);
+
+	R->Stack(0x0, pExt->GetExplosionWarhead());
+	R->EDX(pExt->GetExplosionDamage());
+
+	return 0x424ECB;
+}
