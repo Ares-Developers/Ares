@@ -47,10 +47,10 @@ class TiberiumExt
 		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
 		}
 
-		double GetHealDelay();
-		int GetHealStep(TechnoClass* pTechno);
-		int GetDamage();
-		WarheadTypeClass* GetWarhead();
+		double GetHealDelay() const;
+		int GetHealStep(TechnoClass* pTechno) const;
+		int GetDamage() const;
+		WarheadTypeClass* GetWarhead() const;
 	};
 
 	static Container<TiberiumExt> ExtMap;

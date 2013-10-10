@@ -29,12 +29,12 @@ void TiberiumExt::ExtData::LoadFromINIFile(TiberiumClass* pThis, CCINIClass* pIN
 	this->Heal_Delay.Read(&exINI, section, "Heal.Delay");
 }
 
-double TiberiumExt::ExtData::GetHealDelay()
+double TiberiumExt::ExtData::GetHealDelay() const
 {
 	return this->Heal_Delay.Get(RulesClass::Instance->TiberiumHeal);
 }
 
-int TiberiumExt::ExtData::GetHealStep(TechnoClass* pTechno)
+int TiberiumExt::ExtData::GetHealStep(TechnoClass* pTechno) const
 {
 	auto pType = pTechno->GetTechnoType();
 	int step = pType->GetRepairStep();
@@ -54,7 +54,7 @@ int TiberiumExt::ExtData::GetHealStep(TechnoClass* pTechno)
 	return step;
 }
 
-int TiberiumExt::ExtData::GetDamage()
+int TiberiumExt::ExtData::GetDamage() const
 {
 	int damage = this->AttachedToObject->Power / 10;
 	if(damage < 1) {
@@ -64,7 +64,7 @@ int TiberiumExt::ExtData::GetDamage()
 	return this->Damage.Get(damage);
 }
 
-WarheadTypeClass* TiberiumExt::ExtData::GetWarhead()
+WarheadTypeClass* TiberiumExt::ExtData::GetWarhead() const
 {
 	return this->Warhead.Get(RulesClass::Instance->C4Warhead);
 }
