@@ -280,6 +280,31 @@ void TechnoExt::StopDraining(TechnoClass *Drainer, TechnoClass *Drainee) {
 	}
 }
 
+bool TechnoExt::SpawnVisceroid(CoordStruct &crd, ObjectTypeClass* pType, int chance, bool ignoreTibDeathToVisc) {
+	bool ret = false;
+	// create a small visceroid if available and the cell is free
+	if(ignoreTibDeathToVisc || ScenarioClass::Instance->TiberiumDeathToVisceroid) {
+		CellClass* pCell = MapClass::Instance->GetCellAt(&crd);
+		int rnd = ScenarioClass::Instance->Random.RandomRanged(0, 99);
+		if(!(pCell->OccupationFlags & 0x20) && rnd < chance && pType) {
+			if(HouseClass* pHouse = HouseClass::FindNeutral()) {
+				if(ObjectClass* pVisc = pType->CreateObject(pHouse)) {
+					++Unsorted::IKnowWhatImDoing;
+					ret = true;
+					if(!pVisc->Put(&crd, 0)) {
+						// opposed to TS, we clean up, though
+						// the mutex should make it happen.
+						pVisc->UnInit();
+						ret = false;
+					}
+					--Unsorted::IKnowWhatImDoing;
+				}
+			}
+		}
+	}
+	return ret;
+}
+
 unsigned int TechnoExt::ExtData::AlphaFrame(SHPStruct *Image) {
 	int countFrames = Conversions::Int2Highest(Image->Frames);
 	DirStruct Facing;

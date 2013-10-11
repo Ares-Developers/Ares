@@ -1300,27 +1300,7 @@ DEFINE_HOOK(4D85E4, FootClass_UpdatePosition_TiberiumDamage, 9)
 		pThis->GetCoords(&crd);
 
 		if(pThis->ReceiveDamage(&damage, 0, pWarhead, nullptr, FALSE, FALSE, nullptr) == DamageState::NowDead) {
-			// create a small visceroid if available and the cell is free
-			if(ScenarioClass::Instance->TiberiumDeathToVisceroid) {
-				CellClass* pCell = MapClass::Instance->GetCellAt(&crd);
-				int rnd = ScenarioClass::Instance->Random.RandomRanged(0, 99);
-				if(!(pCell->OccupationFlags & 0x20) && rnd < transmogrify) {
-					int idxHouse = HouseTypeClass::FindIndexOfName("Neutral");
-					if(HouseClass* pHouse = HouseClass::FindByCountryIndex(idxHouse)) {
-						if(UnitTypeClass* pType = RulesClass::Instance->SmallVisceroid) {
-							if(ObjectClass* pVisc = pType->CreateObject(pHouse)) {
-								++Unsorted::IKnowWhatImDoing;
-								if(!pVisc->Put(&crd, 0)) {
-									// opposed to TS, we clean up ;)
-									pVisc->UnInit();
-								}
-								--Unsorted::IKnowWhatImDoing;
-							}
-						}
-					}
-				}
-			}
-
+			TechnoExt::SpawnVisceroid(crd, RulesClass::Instance->SmallVisceroid, transmogrify, false);
 			return 0x4D8F29;
 		}
 	}
