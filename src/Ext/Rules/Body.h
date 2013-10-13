@@ -34,6 +34,8 @@ class RulesExt
 		Valueable<bool> Tiberium_HealEnabled;
 		Valueable<WarheadTypeClass*> Tiberium_ExplosiveWarhead;
 
+		Valueable<int> OverlayExplodeThreshold;
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			ElectricDeath(NULL),
 			EngineerDamage (0.0F),
@@ -42,6 +44,7 @@ class RulesExt
 			Tiberium_DamageEnabled (false),
 			Tiberium_HealEnabled (false),
 			Tiberium_ExplosiveWarhead (nullptr),
+			OverlayExplodeThreshold (0),
 			CanMakeStuffUp(false)
 			{
 				MultiEngineer[0] = false; // Skirmish
