@@ -1519,7 +1519,16 @@ DEFINE_HOOK(48964F, DamageArea_ChainReaction, 5)
 }
 
 // not exactly the most appropriate place
-DEFINE_HOOK(424EC5, AnimClass_ReInit_TiberiumChainReaction, 6)
+DEFINE_HOOK(424DD3, AnimClass_ReInit_TiberiumChainReaction_Chance, 6)
+{
+	GET(TiberiumClass*, pTib, EDI);
+	auto pExt = TiberiumExt::ExtMap.Find(pTib);
+
+	bool react = ScenarioClass::Instance->Random.RandomRanged(0, 99) < pExt->GetDebrisChance();
+	return react ? 0x424DF9 : 0x424E9B;
+}
+
+DEFINE_HOOK(424EC5, AnimClass_ReInit_TiberiumChainReaction_Damage, 6)
 {
 	GET(TiberiumClass*, pTib, EDI);
 	auto pExt = TiberiumExt::ExtMap.Find(pTib);

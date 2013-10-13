@@ -29,6 +29,8 @@ class TiberiumExt
 		Nullable<WarheadTypeClass*> ExplosionWarhead;
 		Nullable<int> ExplosionDamage;
 
+		Valueable<int> DebrisChance;
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			Damage(),
 			Warhead(),
@@ -37,7 +39,8 @@ class TiberiumExt
 			Heal_UStep(),
 			Heal_Delay(),
 			ExplosionWarhead(),
-			ExplosionDamage()
+			ExplosionDamage(),
+			DebrisChance(33)
 		{
 		};
 
@@ -58,6 +61,7 @@ class TiberiumExt
 		WarheadTypeClass* GetWarhead() const;
 		WarheadTypeClass* GetExplosionWarhead() const;
 		int GetExplosionDamage() const;
+		int GetDebrisChance() const;
 	};
 
 	static Container<TiberiumExt> ExtMap;
