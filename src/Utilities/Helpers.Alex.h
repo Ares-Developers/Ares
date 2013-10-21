@@ -439,7 +439,7 @@ public:
 
 		//! Represents a set of unique items.
 		/*!
-			Items can be added using the Collect method. Even though an item
+			Items can be added using the insert method. Even though an item
 			can be added multiple times, it is only contained once in the set.
 
 			Use either the forEach method to call a method using each item as
@@ -451,13 +451,13 @@ public:
 			set_type _set;
 
 		public:
-			bool Collect(T value) {
+			bool insert(T value) {
 				_set.insert(value);
 				return true;
 			}
 
 			std::tr1::function<bool (T)> getCollector() {
-				return [&](T obj) -> bool { return Collect(obj); };
+				return [&](T obj) -> bool { return insert(obj); };
 			}
 
 			size_t size() const {
