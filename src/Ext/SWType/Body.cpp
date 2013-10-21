@@ -396,7 +396,7 @@ bool SWTypeExt::Launch(SuperClass* pThis, NewSWType* pSW, CellStruct* pCoords, b
 			}
 
 			// this sw has been fired. clean up.
-			int idxThis = pThis->Owner->Supers.FindItemIndex(&pThis);
+			int idxThis = pThis->Owner->Supers.FindItemIndex(pThis);
 			if(IsPlayer && !(flags & SuperWeaponFlags::NoCleanup)) {
 				// what's this? we reset the selected SW only for the player on this
 				// computer, so others don't deselect it when firing simultaneously.

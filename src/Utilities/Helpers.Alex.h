@@ -190,7 +190,7 @@ public:
 						if(action(pCell)) {
 							++ret;
 						} else {
-							break;
+							return ret;
 						}
 					}
 				}

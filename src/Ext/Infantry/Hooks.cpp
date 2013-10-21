@@ -59,7 +59,7 @@ DEFINE_HOOK(51DF38, InfantryClass_Remove, A)
 	TechnoExt::ExtData* pData = TechnoExt::ExtMap.Find(pThis);
 
 	if(BuildingClass *Garrison = pData->GarrisonedIn) {
-		signed int idx = Garrison->Occupants.FindItemIndex(&pThis);
+		signed int idx = Garrison->Occupants.FindItemIndex(pThis);
 		if(idx == -1) {
 			Debug::Log("Infantry %s was garrisoned in building %s, but building didn't find it. WTF?", pThis->Type->ID, Garrison->Type->ID);
 		} else {
