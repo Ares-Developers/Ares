@@ -443,15 +443,16 @@ public:
 			can be added multiple times, it is only contained once in the set.
 
 			Use either the forEach method to call a method using each item as
-			a parameter, or access the set trough the Value field directly.
+			a parameter, or iterate the set through the begin and end methods.
 		*/
 		template<typename T>
 		class DistinctCollector {
-		public:
-			std::set<T, StrictWeakComparer<T> > Value;
+			typedef std::set<T, StrictWeakComparer<T> > set_type;
+			set_type _set;
 
+		public:
 			bool Collect(T value) {
-				Value.insert(value);
+				_set.insert(value);
 				return true;
 			}
 
@@ -459,9 +460,21 @@ public:
 				return [&](T obj) -> bool { return Collect(obj); };
 			}
 
+			size_t size() const {
+				return _set.size();
+			}
+
+			typename set_type::const_iterator begin() const {
+				return _set.begin();
+			}
+
+			typename set_type::const_iterator end() const {
+				return _set.end();
+			}
+
 			void forEach(std::tr1::function<bool (T)> action) {
 				if(action) {
-					for(auto iterator = Value.begin(); iterator != Value.end(); iterator++) {
+					for(auto iterator = begin(); iterator != end(); iterator++) {
 						T Obj = *iterator;
 						if(!action(Obj)) {
 							return;
