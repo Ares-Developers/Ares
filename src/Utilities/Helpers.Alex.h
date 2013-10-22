@@ -148,7 +148,7 @@ public:
 
 			\author AlexB
 		*/
-		static int forEach(CellStruct *cell, int width, int height, std::tr1::function<bool (CellClass*)> action) {
+		static int forEach(CellStruct *cell, int width, int height, const std::tr1::function<bool (CellClass*)> &action) {
 			int ret = 0;
 
 			// the coords mark the center of the area
@@ -190,7 +190,7 @@ public:
 
 			\author AlexB
 		*/
-		static int forEach(CellStruct *cell, float radius, std::tr1::function<bool (CellClass*)> action) {
+		static int forEach(CellStruct *cell, float radius, const std::tr1::function<bool (CellClass*)> &action) {
 			int ret = 0;
 
 			// check whether the cell in this square are in the circle also
@@ -229,7 +229,7 @@ public:
 
 			\author AlexB
 		*/
-		static int forEachCellInRange(CellStruct *cell, float widthOrRange, int height, std::tr1::function<bool (CellClass*)> action) {
+		static int forEachCellInRange(CellStruct *cell, float widthOrRange, int height, const std::tr1::function<bool (CellClass*)> &action) {
 			if(height > 0) {
 				if((int)widthOrRange > 0) {
 					// rectangle
@@ -255,7 +255,7 @@ public:
 
 			\author AlexB
 		*/
-		static int forEachObjectInRange(CellStruct *cell, float widthOrRange, int height, std::tr1::function<bool (ObjectClass*)> action) {
+		static int forEachObjectInRange(CellStruct *cell, float widthOrRange, int height, const std::tr1::function<bool (ObjectClass*)> &action) {
 			int ret = 0;
 
 			int maxDistance = (int)widthOrRange;
@@ -320,7 +320,7 @@ public:
 
 			\author AlexB
 		*/
-		static int forEachCellInCellSpread(CellStruct *cell, float widthOrRange, int height, std::tr1::function<bool (CellClass*)> action) {
+		static int forEachCellInCellSpread(CellStruct *cell, float widthOrRange, int height, const std::tr1::function<bool (CellClass*)> &action) {
 			// number of affected cells
 			int ret = 0;
 
@@ -389,7 +389,7 @@ public:
 
 			\author AlexB
 		*/
-		static int forEachObjectInCellSpread(CellStruct *cell, float widthOrRange, int height, std::tr1::function<bool (ObjectClass*)> action) {
+		static int forEachObjectInCellSpread(CellStruct *cell, float widthOrRange, int height, const std::tr1::function<bool (ObjectClass*)> &action) {
 			int ret = 0;
 
 			// function to invoke the action for each object
@@ -467,7 +467,7 @@ public:
 				return _set.end();
 			}
 
-			int for_each(std::tr1::function<bool (T)> action) const {
+			int for_each(const std::tr1::function<bool (T)> &action) const {
 				return std::distance(begin(), std::find_if_not(begin(), end(), action));
 			}
 		};
