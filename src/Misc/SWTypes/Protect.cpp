@@ -121,7 +121,7 @@ bool SW_Protect::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
 
 		// protect everything in range
 		Helpers::Alex::DistinctCollector<ObjectClass*> items;
-		Helpers::Alex::forEachObjectInRange(pCoords, width, height, items.getCollector());
+		Helpers::Alex::forEachObjectInRange(pCoords, width, height, std::ref(items));
 		items.for_each(IronCurtain);
 	}
 

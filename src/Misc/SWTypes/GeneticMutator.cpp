@@ -114,7 +114,7 @@ bool SW_GeneticMutator::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPl
 
 			// find everything in range and mutate it
 			Helpers::Alex::DistinctCollector<ObjectClass*> items;
-			Helpers::Alex::forEachObjectInRange(pCoords, pData->SW_WidthOrRange, pData->SW_Height, items.getCollector());
+			Helpers::Alex::forEachObjectInRange(pCoords, pData->SW_WidthOrRange, pData->SW_Height, std::ref(items));
 			items.for_each(Mutate);
 		}
 	}

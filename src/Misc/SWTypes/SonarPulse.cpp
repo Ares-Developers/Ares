@@ -86,7 +86,7 @@ bool SW_SonarPulse::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 	} else {
 		// decloak everything in range
 		Helpers::Alex::DistinctCollector<ObjectClass*> items;
-		Helpers::Alex::forEachObjectInRange(pCoords, width, height, items.getCollector());
+		Helpers::Alex::forEachObjectInRange(pCoords, width, height, std::ref(items));
 		items.for_each(Detect);
 
 		// radar event only if this isn't full map sonar

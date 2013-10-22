@@ -446,13 +446,13 @@ public:
 			set_type _set;
 
 		public:
-			bool insert(T value) {
-				_set.insert(value);
+			bool operator() (T item) {
+				insert(item);
 				return true;
 			}
 
-			std::tr1::function<bool (T)> getCollector() {
-				return [&](T obj) -> bool { return insert(obj); };
+			void insert(T value) {
+				_set.insert(value);
 			}
 
 			size_t size() const {
