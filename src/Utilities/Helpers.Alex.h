@@ -91,7 +91,7 @@ public:
 		*/
 		static DynamicVectorClass<TechnoClass*>* getCellSpreadItems(CoordStruct *coords, float spread, bool includeInAir=false) {
 			// set of possibly affected objects. every object can be here only once.
-			std::set<TechnoClass*, StrictWeakComparer<ObjectClass*> > set;
+			DistinctCollector<TechnoClass*> set;
 
 			// the quick way. only look at stuff residing on the very cells we are affecting.
 			CellStruct cellCoords = MapClass::Instance->GetCellAt(coords)->MapCoords;
@@ -148,9 +148,6 @@ public:
 					ret->AddItem(Techno);
 				}
 			}
-
-			// tidy up
-			set.clear();
 
 			return ret;
 		}
