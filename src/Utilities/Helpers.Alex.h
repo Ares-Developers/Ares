@@ -327,23 +327,13 @@ public:
 			// are we in rectangle-mode?
 			bool isRectangle = (height > 0);
 
-			int maxDistance = (int)std::floor(widthOrRange + 0.99f);
+			auto maxDistance = (size_t)std::floor(widthOrRange + 0.99f);
 
 			// function to invoke the action for each object
 			auto actionIfInRange = [&](CellClass* pCell) -> bool {
 				if(!isRectangle) {
-					// this distance calculation matches CellSpread < 11.
-					// 11 has flaws in YR, which have not been recreated.
-					CellStruct delta = pCell->MapCoords - *cell;
-					int dx = std::abs(delta.X);
-					int dy = std::abs(delta.Y);
-
-					// distance is longer component plus half the shorter component
-					int maxComp = std::max(dx, dy);
-					int minComp = std::min(dx, dy);
-					int distance = maxComp + minComp / 2;
-
 					// continue with the next cell
+					auto distance = CellSpread::GetDistance(pCell->MapCoords - *cell);
 					if(distance > maxDistance) {
 						return true;
 					}
