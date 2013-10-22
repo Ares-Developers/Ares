@@ -5,6 +5,8 @@
 
 #include <set>
 #include <functional>
+#include <algorithm>
+#include <iterator>
 
 class Helpers {
 public:
@@ -434,7 +436,7 @@ public:
 			Items can be added using the insert method. Even though an item
 			can be added multiple times, it is only contained once in the set.
 
-			Use either the forEach method to call a method using each item as
+			Use either the for_each method to call a method using each item as
 			a parameter, or iterate the set through the begin and end methods.
 		*/
 		template<typename T>
@@ -465,15 +467,8 @@ public:
 				return _set.end();
 			}
 
-			void forEach(std::tr1::function<bool (T)> action) {
-				if(action) {
-					for(auto iterator = begin(); iterator != end(); iterator++) {
-						T Obj = *iterator;
-						if(!action(Obj)) {
-							return;
-						}
-					}
-				}
+			int for_each(std::tr1::function<bool (T)> action) const {
+				return std::distance(begin(), std::find_if_not(begin(), end(), action));
 			}
 		};
 	};

@@ -122,7 +122,7 @@ bool SW_Protect::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
 		// protect everything in range
 		Helpers::Alex::DistinctCollector<ObjectClass*> items;
 		Helpers::Alex::forEachObjectInRange(pCoords, width, height, items.getCollector());
-		items.forEach(IronCurtain);
+		items.for_each(IronCurtain);
 	}
 
 	return true;
