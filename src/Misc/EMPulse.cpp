@@ -33,17 +33,12 @@ void EMPulse::CreateEMPulse(WarheadTypeExt::ExtData *Warhead, CoordStruct *Coord
 	}
 
 	// set of affected objects. every object can be here only once.
-	DynamicVectorClass<TechnoClass*> *items = Helpers::Alex::getCellSpreadItems(Coords,
-		Warhead->AttachedToObject->CellSpread, true);
+	auto items = Helpers::Alex::getCellSpreadItems(Coords, Warhead->AttachedToObject->CellSpread, true);
 
 	// affect each object
-	for(int i=0; i<items->Count; ++i) {
-		deliverEMPDamage(items->GetItem(i), Firer, Warhead);
+	for(size_t i=0; i<items.size(); ++i) {
+		deliverEMPDamage(items[i], Firer, Warhead);
 	}
-
-	// tidy up
-	items->Clear();
-	delete items;
 
 	if (verbose) {
 		Debug::Log("[CreateEMPulse] Done.\n");

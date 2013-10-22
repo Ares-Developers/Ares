@@ -71,7 +71,7 @@ public:
 			\author AlexB
 			\date 2010-06-28
 		*/
-		static DynamicVectorClass<TechnoClass*>* getCellSpreadItems(CoordStruct *coords, float spread, bool includeInAir=false) {
+		static std::vector<TechnoClass*> getCellSpreadItems(CoordStruct *coords, float spread, bool includeInAir=false) {
 			// set of possibly affected objects. every object can be here only once.
 			DistinctCollector<TechnoClass*> set;
 
@@ -104,7 +104,7 @@ public:
 			}
 
 			// look closer. the final selection. put all affected items in a vector.
-			DynamicVectorClass<TechnoClass*> *ret = new DynamicVectorClass<TechnoClass*>();
+			std::vector<TechnoClass*> ret;
 			for(auto iterator = set.begin(); iterator != set.end(); iterator++) {
 				TechnoClass *Techno = *iterator;
 
@@ -127,7 +127,7 @@ public:
 
 				// this is good
 				if(dist <= spread * 256) {
-					ret->AddItem(Techno);
+					ret.push_back(Techno);
 				}
 			}
 
