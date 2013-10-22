@@ -10,26 +10,6 @@ class Helpers {
 public:
 	class Alex {
 	public:
-		//! Default comparer for sets using the lower-than operator.
-		template<typename T, typename Enable = void>
-		struct StrictWeakComparer {
-			bool operator() (const T& lhs, const T& rhs) const {
-				return lhs < rhs;
-			}
-		};
-
-		//! Specialized comparer for all objects derived from ObjectClass.
-		/*!
-			This specialization compares the unique ID each ObjectClass has.
-			It ensures the objects are sorted the same way on every computer.
-		*/
-		template<typename T>
-		struct StrictWeakComparer<T, typename std::enable_if<std::is_base_of<ObjectClass, typename std::remove_pointer<typename T>::type>::value>::type> {
-			bool operator() (const ObjectClass* lhs, const ObjectClass* rhs) const {
-				return lhs->UniqueID < rhs->UniqueID;
-			}
-		};
-
 		//! Gets the new duration a stackable or absolute effect will last.
 		/*!
 			The new frames count is calculated the following way:
@@ -434,6 +414,21 @@ public:
 			return ret;
 		}
 
+		//! Less comparison for pointer types.
+		/*!
+			Dereferences the values before comparing them using std::less.
+
+			This compares the actual objects pointed to instead of their
+			arbitrary pointer values.
+		*/
+		template <typename T>
+		struct deref_less : std::unary_function<const T, bool> {
+			bool operator()(const T lhs, const T rhs) const {
+				typedef std::remove_pointer<T>::type deref_type;
+				return std::less<deref_type>()(*lhs, *rhs);
+			}
+		};
+
 		//! Represents a set of unique items.
 		/*!
 			Items can be added using the insert method. Even though an item
@@ -444,7 +439,8 @@ public:
 		*/
 		template<typename T>
 		class DistinctCollector {
-			typedef std::set<T, StrictWeakComparer<T> > set_type;
+			typedef typename std::conditional<std::is_pointer<T>::value, deref_less<T>, std::less<T>>::type less_type;
+			typedef std::set<T, less_type> set_type;
 			set_type _set;
 
 		public:
