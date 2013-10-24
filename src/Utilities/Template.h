@@ -25,6 +25,8 @@ public:
 	typedef typename CompoundT<T>::BaseT MyBase;
 	Valueable(T Default = T()) : Value(Default) {};
 
+	virtual ~Valueable() {}
+
 	operator const T& () const {
 		return this->Get();
 	}
@@ -562,6 +564,8 @@ public:
 	typedef typename CompoundT<T>::BaseT MyBase;
 
 	ValueableVector() : std::vector<T>(), _Defined(false) {};
+
+	virtual ~ValueableVector() {}
 
 	virtual void Read(INI_EX *parser, const char* pSection, const char* pKey) {
 		if(parser->ReadString(pSection, pKey)) {
