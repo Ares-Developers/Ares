@@ -173,7 +173,7 @@ DEFINE_HOOK(46934D, IvanBombs_Spread, 6)
 
 	TechnoClass *pOwner = generic_cast<TechnoClass *>(pBullet->Owner);
 	if(!pOwner) {
-		return 0;
+		return 0x469AA4;
 	}
 
 	TechnoClass *pTarget = generic_cast<TechnoClass *>(pBullet->Target);
@@ -185,7 +185,7 @@ DEFINE_HOOK(46934D, IvanBombs_Spread, 6)
 		if(pTarget) {
 			pExt->PlantBomb(pOwner, pTarget);
 		}
-		return 0;
+		return 0x469AA4;
 	}
 
 	int Spread = int(cSpread);
@@ -231,7 +231,7 @@ DEFINE_HOOK(46934D, IvanBombs_Spread, 6)
 	}
 */
 
-	return 0;
+	return 0x469AA4;
 }
 
 // deglobalized manual detonation settings
