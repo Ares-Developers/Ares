@@ -421,7 +421,7 @@ void TechnoExt::Destroy(TechnoClass* pTechno, TechnoClass* pKiller, HouseClass* 
 void TechnoExt::TransferIvanBomb(TechnoClass *From, TechnoClass *To) {
 	if(auto Bomb = From->AttachedBomb) {
 		From->AttachedBomb = NULL;
-		Bomb->TargetUnit = To;
+		Bomb->Target = To;
 		To->AttachedBomb = Bomb;
 		To->BombVisible = From->BombVisible;
 		// if there already was a bomb attached to target unit, it's gone now...
