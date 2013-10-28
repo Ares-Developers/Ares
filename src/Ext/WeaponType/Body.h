@@ -145,6 +145,8 @@ public:
 		}
 
 		bool conductAbduction(BulletClass *);
+
+		void PlantBomb(TechnoClass* pSource, ObjectClass* pTarget) const;
 	};
 
 /*

@@ -336,6 +336,40 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 	}
 }
 
+// Plants customizable IvanBombs on a target.
+/*
+	Plants a bomb and changes the customizable properties. Also, the weapon
+	type that planted the bomb is remembered for use in hooks.
+
+	The original Plant function has been changed to not play sounds any more,
+	and it allows all kinds of TechnoClass sources, not just infantry.
+
+	\param pSource The bomber techno who plants the bombs.
+	\param pTarget The victim to be rigged.
+
+	\author AlexB
+	\date 2013-10-28
+*/
+void WeaponTypeExt::ExtData::PlantBomb(TechnoClass* pSource, ObjectClass* pTarget) const {
+	// ensure target isn't rigged already
+	if(pTarget && !pTarget->AttachedBomb) {
+		BombListClass::Instance->Plant(pSource, pTarget);
+
+		// if target has a bomb, planting was successful
+		if(auto pBomb = pTarget->AttachedBomb) {
+			WeaponTypeExt::BombExt[pBomb] = const_cast<ExtData*>(this);
+
+			pBomb->DetonationFrame = Unsorted::CurrentFrame + this->Ivan_Delay.Get();
+			pBomb->TickSound = this->Ivan_TickingSound.Get(RulesClass::Instance->BombTickingSound);
+
+			int index = this->Ivan_AttachSound.Get(RulesClass::Instance->BombAttachSound);
+			if(index != -1 && pSource->Owner->ControlledByPlayer()) {
+				VocClass::PlayAt(index, &pBomb->Target->Location, nullptr);
+			}
+		}
+	}
+}
+
 void Container<WeaponTypeExt>::InvalidatePointer(void *ptr, bool bRemoved) {
 	AnnounceInvalidPointerMap(WeaponTypeExt::BombExt, ptr);
 	AnnounceInvalidPointerMap(WeaponTypeExt::WaveExt, ptr);
