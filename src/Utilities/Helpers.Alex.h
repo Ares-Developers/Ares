@@ -2,6 +2,8 @@
 #define HELPERS_ALEX_H
 
 #include <CellSpread.h>
+#include <Helpers/Enumerators.h>
+#include <Helpers/Iterators.h>
 
 #include <set>
 #include <functional>
@@ -404,6 +406,96 @@ public:
 			}
 
 			return ret;
+		}
+
+		//! Invokes an action for every cell or every object contained on the cells.
+		/*!
+			action is invoked only once per cell. action can be invoked multiple times
+			on other objects.
+
+			\param center The center cell of the area.
+			\param widthOrRange The width of the rectangle.
+			\param height The height of the rectangle.
+			\param action The action to invoke for each object.
+
+			\returns Returns true if widthOrRange and height describe a valid rectangle,
+					 false otherwise.
+
+			\author AlexB
+		*/
+		template <typename T>
+		static bool for_each_in_rect(const CellStruct &center, float widthOrRange, int height, const std::function<bool (T*)> &action) {
+			if(height > 0) {
+				int width = static_cast<int>(widthOrRange);
+
+				if(width > 0) {
+					CellRectIterator iter(center, width, height);
+					iter.apply(action);
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		//! Invokes an action for every cell or every object contained on the cells.
+		/*!
+			action is invoked only once per cell. action can be invoked multiple times
+			on other objects.
+
+			\param center The center cell of the area.
+			\param widthOrRange The width of the rectangle, or the radius, if height <= 0.
+			\param height The height of the rectangle. Use 0 to create a circular area.
+			\param action The action to invoke for each object.
+
+			\returns Returns true if widthOrRange and height describe a valid rectangle
+					 or circle, false otherwise.
+
+			\author AlexB
+		*/
+		template <typename T>
+		static bool for_each_in_rect_or_range(const CellStruct &center, float widthOrRange, int height, const std::function<bool (T*)> &action) {
+			if(!for_each_in_rect(center, widthOrRange, height, action)) {
+				if(height <= 0 && widthOrRange >= 0.0f) {
+					CellRangeIterator iter(center, widthOrRange);
+					iter.apply(action);
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		//! Invokes an action for every cell or every object contained on the cells.
+		/*!
+			action is invoked only once per cell. action can be invoked multiple times
+			on other objects.
+
+			\param center The center cell of the area.
+			\param widthOrRange The width of the rectangle, or the spread, if height <= 0.
+			\param height The height of the rectangle. Use 0 to create a CellSpread area.
+			\param action The action to invoke for each object.
+
+			\returns Returns true if widthOrRange and height describe a valid rectangle
+					 or CellSpread range, false otherwise.
+
+			\author AlexB
+		*/
+		template <typename T>
+		static bool for_each_in_rect_or_spread(const CellStruct &center, float widthOrRange, int height, const std::function<bool (T*)> &action) {
+			if(!for_each_in_rect(center, widthOrRange, height, action)) {
+				if(height <= 0) {
+					int spread = static_cast<int>(widthOrRange);
+
+					if(spread > 0) {
+						CellSpreadIterator iter(center, spread);
+						iter.apply(action);
+						return true;
+					}
+				}
+			}
+
+			return false;
 		}
 
 		//! Less comparison for pointer types.
