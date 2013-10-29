@@ -195,41 +195,13 @@ DEFINE_HOOK(46934D, IvanBombs_Spread, 6)
 
 	CellStruct centerCoords = MapClass::Instance->GetCellAt(&tgtCoords)->MapCoords;
 
-	class IvanBombSpreadApplicator : public CellSpreadApplicator {
-		protected:
-			TechnoClass *pOwner;
-			WeaponTypeExt::ExtData* pWeaponExt;
-		public:
-			IvanBombSpreadApplicator(TechnoClass *owner, WeaponTypeExt::ExtData* pWeaponExt)
-				: pOwner(owner), pWeaponExt(pWeaponExt), CellSpreadApplicator()
-			{ }
-			virtual void operator() (ObjectClass *curObj, CellStruct *origin) override {
-				if(curObj != pOwner && !curObj->AttachedBomb) {
-					if(TechnoClass *curTech = generic_cast<TechnoClass *>(curObj)) {
-						pWeaponExt->PlantBomb(pOwner, curTech);
-					}
-				}
-			}
-	} BombSpreader(pOwner, pExt);
-
-	CellSpreadIterator BombDelivery(BombSpreader, &centerCoords, Spread);
-	BombDelivery.Apply();
-
-/*
-	int countCells = CellSpread::NumCells(Spread);
-
-	for(int i = 0; i < countCells; ++i) {
-		CellStruct tmpCell = CellSpread::GetCell(i);
-		tmpCell += centerCoords;
-		CellClass *c = MapClass::Global()->GetCellAt(&tmpCell);
-
-		for(ObjectClass *curObj = c->GetContent(); curObj; curObj = curObj->NextObject) {
-			if(curObj != pOwner && (curObj->AbstractFlags & ABSFLAGS_ISTECHNO) && !curObj->AttachedBomb) {
-				BombListClass::Global()->Plant(pOwner, reinterpret_cast<TechnoClass *>(curObj));
-			}
+	CellSpreadIterator iter(centerCoords, Spread);
+	iter.apply<TechnoClass>([pOwner, pExt](TechnoClass* pTechno) {
+		if(pTechno != pOwner && !pTechno->AttachedBomb) {
+			pExt->PlantBomb(pOwner, pTechno);
 		}
-	}
-*/
+		return true;
+	});
 
 	return 0x469AA4;
 }
