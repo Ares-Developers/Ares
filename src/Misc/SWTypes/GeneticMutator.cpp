@@ -74,47 +74,45 @@ bool SW_GeneticMutator::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPl
 			MapClass::DamageArea(&coords, pData->SW_Damage, NULL, pData->SW_Warhead, false, pThis->Owner);
 		} else {
 			// ranged approach
-			auto Mutate = [&](ObjectClass* pObj) -> bool {
-				if(InfantryClass* pInf = specific_cast<InfantryClass*>(pObj)) {
-					// is this thing affected at all?
-					if(!pData->IsHouseAffected(pThis->Owner, pInf->Owner)) {
-						return true;
-					}
-
-					if(!pData->IsTechnoAffected(pInf)) {
-						// even if it makes little sense, we do this.
-						// infantry handling is hardcoded and thus
-						// this checks water and land cells.
-						return true;
-					}
-
-					InfantryTypeClass* pType = pInf->Type;
-
-					// quick ways out
-					if(pType->Cyborg && pData->Mutate_IgnoreCyborg.Get()) {
-						return true;
-					}
-
-					if(pType->NotHuman && pData->Mutate_IgnoreNotHuman.Get()) {
-						return true;
-					}
-
-					// destroy or mutate
-					int damage = pType->Strength;
-					bool kill = (pType->Natural && pData->Mutate_KillNatural.Get());
-					WarheadTypeClass* pWH = kill
-						? RulesClass::Instance->C4Warhead
-						: pData->SW_Warhead;
-
-					pInf->ReceiveDamage(&damage, 0, pWH, NULL, true, false, pThis->Owner);
+			auto Mutate = [&](InfantryClass* pInf) -> bool {
+				// is this thing affected at all?
+				if(!pData->IsHouseAffected(pThis->Owner, pInf->Owner)) {
+					return true;
 				}
+
+				if(!pData->IsTechnoAffected(pInf)) {
+					// even if it makes little sense, we do this.
+					// infantry handling is hardcoded and thus
+					// this checks water and land cells.
+					return true;
+				}
+
+				InfantryTypeClass* pType = pInf->Type;
+
+				// quick ways out
+				if(pType->Cyborg && pData->Mutate_IgnoreCyborg.Get()) {
+					return true;
+				}
+
+				if(pType->NotHuman && pData->Mutate_IgnoreNotHuman.Get()) {
+					return true;
+				}
+
+				// destroy or mutate
+				int damage = pType->Strength;
+				bool kill = (pType->Natural && pData->Mutate_KillNatural.Get());
+				WarheadTypeClass* pWH = kill
+					? RulesClass::Instance->C4Warhead
+					: pData->SW_Warhead;
+
+				pInf->ReceiveDamage(&damage, 0, pWH, NULL, true, false, pThis->Owner);
 
 				return true;
 			};
 
 			// find everything in range and mutate it
-			Helpers::Alex::DistinctCollector<ObjectClass*> items;
-			Helpers::Alex::forEachObjectInRange(pCoords, pData->SW_WidthOrRange, pData->SW_Height, std::ref(items));
+			Helpers::Alex::DistinctCollector<InfantryClass*> items;
+			Helpers::Alex::for_each_in_rect_or_range<InfantryClass>(*pCoords, pData->SW_WidthOrRange, pData->SW_Height, std::ref(items));
 			items.for_each(Mutate);
 		}
 	}
