@@ -56,7 +56,7 @@ bool TEventExt::ExtData::TechTypeExists()
 
 	if(pType->Insignificant || pType->DontScore) {
 		// check each techno and subtract one if the type matches.
-		for(auto i=TechnoClass::Array->start(); i<TechnoClass::Array->end(); ++i) {
+		for(auto i=TechnoClass::Array->begin(); i<TechnoClass::Array->end(); ++i) {
 			if((*i)->GetTechnoType() == pType) {
 				count--;
 
@@ -68,7 +68,7 @@ bool TEventExt::ExtData::TechTypeExists()
 	} else {
 		// decreases count by the number of owned techno types. iff count is zero or less,
 		// this techno type exists at least 'count' times.
-		for(auto i=HouseClass::Array->start(); i<HouseClass::Array->end(); ++i) {
+		for(auto i=HouseClass::Array->begin(); i<HouseClass::Array->end(); ++i) {
 			count -= (*i)->CountOwnedNow(pType);
 
 			if(count <= 0) {
@@ -99,14 +99,14 @@ bool TEventExt::ExtData::TechTypeDoesNotExist()
 	if(pType->Insignificant || pType->DontScore) {
 		// we have to loop through all technos here, because game doesn't
 		// keep track of this type.
-		for(auto i=TechnoClass::Array->start(); i<TechnoClass::Array->end(); ++i) {
+		for(auto i=TechnoClass::Array->begin(); i<TechnoClass::Array->end(); ++i) {
 			if((*i)->GetTechnoType() == pType) {
 				return false;
 			}
 		}		
 	} else {
 		// if any house owns this, this check fails.
-		for(auto i=HouseClass::Array->start(); i<HouseClass::Array->end(); ++i) {
+		for(auto i=HouseClass::Array->begin(); i<HouseClass::Array->end(); ++i) {
 			if((*i)->CountOwnedNow(pType) > 0) {
 				return false;
 			}

@@ -536,7 +536,7 @@ DEFINE_HOOK(53A140, LightningStorm_Strike, 7) {
 			if(pData->Weather_CloudHeight < 0) {
 				if(auto itBolts = pData->Weather_Bolts.GetElements(RulesClass::Instance->WeatherConBolts)) {
 					AnimTypeClass* pBoltAnim = itBolts.at(0);
-					pData->Weather_CloudHeight = (int)Game::F2I(((pBoltAnim->GetImage()->Height / 2) - 0.5) * LightningStorm::CloudHeightFactor);
+					pData->Weather_CloudHeight = Game::F2I(((pBoltAnim->GetImage()->Height / 2) - 0.5) * LightningStorm::CloudHeightFactor);
 				}
 			}
 			Coords.Z += pData->Weather_CloudHeight;

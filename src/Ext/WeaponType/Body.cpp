@@ -239,7 +239,7 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 			if(Target->SpawnManager) {
 				Target->SpawnManager->KillNodes();
 				Target->SpawnManager->Target = NULL;
-				Target->SpawnManager->Destination = NULL;
+				Target->SpawnManager->NewTarget = NULL;
 			}
 
 			//if the unit is a slave, it should be freed
@@ -312,7 +312,7 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 			}
 
 			Target->Transporter = Attacker;
-			if(AttackerType->OpenTopped) {
+			if(AttackerType->OpenTopped && Target->Owner->IsAlliedWith(Attacker)) {
 				Attacker->EnteredOpenTopped(Target);
 			}
 

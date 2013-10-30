@@ -458,7 +458,7 @@ void Valueable<RocketStruct>::Read(INI_EX *parser, const char* pSection, const c
 	_snprintf_s(pFlagName, 0x3F, "%s.RaiseRate", pKey);
 	FloatPlaceholder.Set(static_cast<float>(rocket->RaiseRate));
 	FloatPlaceholder.Read(parser, pSection, pFlagName);
-	rocket->RaiseRate = static_cast<int>(Game::F2I(FloatPlaceholder.Get()));
+	rocket->RaiseRate = Game::F2I(FloatPlaceholder.Get());
 
 	_snprintf_s(pFlagName, 0x3F, "%s.Acceleration", pKey);
 	FloatPlaceholder.Set(rocket->Acceleration);

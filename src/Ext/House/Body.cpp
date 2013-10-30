@@ -34,7 +34,7 @@ HouseExt::RequirementStatus HouseExt::RequirementsMet(HouseClass *pHouse, Techno
 	if(!(pData->PrerequisiteTheaters & (1 << ScenarioClass::Instance->Theater))) { return Forbidden; }
 	if(Prereqs::HouseOwnsAny(pHouse, &pData->PrerequisiteNegatives)) { return Forbidden; }
 
-	int idx = HouseClass::Array->FindItemIndex(&pHouse);
+	int idx = HouseClass::Array->FindItemIndex(pHouse);
 
 	if(pData->ReversedByHouses.ValidIndex(idx) && pData->ReversedByHouses[idx]) {
 		return Overridden;
@@ -59,7 +59,7 @@ HouseExt::RequirementStatus HouseExt::RequirementsMet(HouseClass *pHouse, Techno
 	if(!Unsorted::SWAllowed) {
 		if(BuildingTypeClass *pBld = specific_cast<BuildingTypeClass*>(pItem)) {
 			if(pBld->SuperWeapon != -1) {
-				if(RulesClass::Instance->BuildTech.FindItemIndex(&pBld) == -1) {
+				if(RulesClass::Instance->BuildTech.FindItemIndex(pBld) == -1) {
 					if(pHouse->Supers.GetItem(pBld->SuperWeapon)->Type->DisableableFromShell) {
 						return Forbidden;
 					}
@@ -344,7 +344,7 @@ DEFINE_HOOK(4F7140, HouseClass_DTOR, 6)
 {
 	GET(HouseClass*, pItem, ECX);
 
-	int idx = HouseClass::Array->FindItemIndex(&pItem);
+	int idx = HouseClass::Array->FindItemIndex(pItem);
 
 	if(idx != -1) {
 		for(int i = 0; i < TechnoTypeClass::Array->Count; ++i) {

@@ -395,7 +395,7 @@ void BuildingTypeExt::ExtData::UpdateFoundationRadarShape() {
 				fltLength = minLength;
 			}
 
-			return static_cast<int>(Game::F2I(fltLength));
+			return Game::F2I(fltLength);
 		};
 
 		// the transformed lengths

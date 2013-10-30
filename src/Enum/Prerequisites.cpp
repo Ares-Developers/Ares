@@ -143,7 +143,7 @@ bool Prereqs::HouseOwnsAny(HouseClass *pHouse, DynamicVectorClass<int> *list)
 bool Prereqs::ListContainsSpecific(BTypeList *List, signed int Index)
 {
 	BuildingTypeClass * Target = BuildingTypeClass::Array->GetItem(Index);
-	return List->FindItemIndex(&Target) != -1;
+	return List->FindItemIndex(Target) != -1;
 }
 
 bool Prereqs::ListContainsGeneric(BTypeList *List, signed int Index)

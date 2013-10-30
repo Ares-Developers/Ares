@@ -29,7 +29,7 @@ class ArmorType  : public Enumerable<ArmorType>
 
 	virtual ~ArmorType() {
 		ArmorType *placeholder = this;
-		Array.RemoveItem(Array.FindItemIndex(&placeholder));
+		Array.RemoveItem(Array.FindItemIndex(placeholder));
 	}
 
 	virtual void LoadFromINI(CCINIClass *pINI);
