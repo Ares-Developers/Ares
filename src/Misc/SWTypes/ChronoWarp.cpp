@@ -72,13 +72,7 @@ bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 
 			DynamicVectorClass<ChronoWarpStateMachine::ChronoWarpContainer> RegisteredBuildings;
 
-			auto Chronoport = [&](ObjectClass* pObj) -> bool {
-				// sanity checks
-				TechnoClass *pTechno = generic_cast<TechnoClass*>(pObj);
-				if(!pTechno) {
-					return true;
-				}
-
+			auto Chronoport = [&](TechnoClass* pTechno) -> bool {
 				// is this thing affected at all?
 				if(!pData->IsHouseAffected(pThis->Owner, pTechno->Owner)) {
 					return true;
@@ -98,7 +92,7 @@ bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 
 				// differentiate between buildings and vehicle-type buildings
 				bool IsVehicle = false;
-				if(BuildingClass* pBld = specific_cast<BuildingClass*>(pObj)) {
+				if(BuildingClass* pBld = specific_cast<BuildingClass*>(pTechno)) {
 					// always ignore bridge repair huts
 					if(pBld->Type->BridgeRepairHut) {
 						return true;
@@ -170,7 +164,7 @@ bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 				}
 
 				// remove squids. terror drones stay inside.
-				if(FootClass *pFoot = generic_cast<FootClass*>(pObj)) {
+				if(FootClass *pFoot = generic_cast<FootClass*>(pTechno)) {
 					if(FootClass *pSquid = pFoot->ParasiteEatingMe) {
 						if(pType->Naval) {
 							if(ParasiteClass *pSquidParasite = pSquid->ParasiteImUsing) {
@@ -194,7 +188,7 @@ bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 				}
 
 				// building specific preparations
-				if(BuildingClass* pBld = specific_cast<BuildingClass*>(pObj)) {
+				if(BuildingClass* pBld = specific_cast<BuildingClass*>(pTechno)) {
 					// tell all linked units to get off
 					pBld->SendToEachLink(rc_0D);
 					pBld->SendToEachLink(rc_Exit);
@@ -227,7 +221,7 @@ bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 				coordsUnitTarget.Y = coordsUnitSource.Y + (pCoords->Y - pSource->ChronoMapCoords.Y) * 256;
 				pCellUnitTarget->FixHeight(&coordsUnitTarget);
 
-				if(FootClass *pFoot = generic_cast<FootClass*>(pObj)) {
+				if(FootClass *pFoot = generic_cast<FootClass*>(pTechno)) {
 					// clean up the unit's current cell
 					pFoot->Locomotor->Mark_All_Occupation_Bits(0);
 					pFoot->Locomotor->Force_Track(-1, coordsUnitSource);
@@ -244,7 +238,7 @@ bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 					pFoot->SendToEachLink(rc_Exit);
 					pFoot->ChronoWarpedByHouse = pThis->Owner;
 					pFoot->SetDestination(pCellUnitTarget, true);
-				} else if (BuildingClass *pBld = generic_cast<BuildingClass*>(pObj)) {
+				} else if (BuildingClass *pBld = specific_cast<BuildingClass*>(pTechno)) {
 					// begin the building chronoshift
 					pBld->BecomeUntargetable();
 					for(int i = 0; i<BulletClass::Array->Count; ++i) {
@@ -273,8 +267,8 @@ bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 			};
 
 			// collect every techno in this range only once. apply the Chronosphere.
-			Helpers::Alex::DistinctCollector<ObjectClass*> items;
-			Helpers::Alex::forEachObjectInRange(&pSource->ChronoMapCoords, pData->SW_WidthOrRange, pData->SW_Height, std::ref(items));
+			Helpers::Alex::DistinctCollector<TechnoClass*> items;
+			Helpers::Alex::for_each_in_rect_or_range<TechnoClass>(pSource->ChronoMapCoords, pData->SW_WidthOrRange, pData->SW_Height, std::ref(items));
 			items.for_each(Chronoport);
 
 			if(RegisteredBuildings.Count) {
