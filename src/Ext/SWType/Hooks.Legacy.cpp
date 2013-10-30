@@ -61,89 +61,87 @@ DEFINE_HOOK(53B080, PsyDom_Fire, 5) {
 		if(pData->Dominator_Capture.Get()) {
 			DynamicVectorClass<FootClass*> Minions;
 
-			auto Dominate = [&](ObjectClass* pObj) -> bool {
-				if(TechnoClass* pTechno = generic_cast<TechnoClass*>(pObj)) {
-					TechnoTypeClass* pType = pTechno->GetTechnoType();
+			auto Dominate = [&](TechnoClass* pTechno) -> bool {
+				TechnoTypeClass* pType = pTechno->GetTechnoType();
 
-					// don't even try.
-					if(pTechno->IsIronCurtained()) {
+				// don't even try.
+				if(pTechno->IsIronCurtained()) {
+					return true;
+				}
+
+				// ignore BalloonHover and inair units.
+				if(pType->BalloonHover || pTechno->IsInAir()) {
+					return true;
+				}
+
+				// ignore units with no drivers
+				TechnoExt::ExtData* pExt = TechnoExt::ExtMap.Find(pTechno);
+				if(pExt->DriverKilled) {
+					return true;
+				}
+
+				// SW dependent stuff
+				if(!pData->IsHouseAffected(pFirer, pTechno->Owner)) {
+					return true;
+				}
+
+				if(!pData->IsTechnoAffected(pTechno)) {
+					return true;
+				}
+
+				// ignore mind-controlled
+				if(pTechno->MindControlledBy && !pData->Dominator_CaptureMindControlled) {
+					return true;
+				}
+
+				// ignore permanently mind-controlled
+				if(pTechno->MindControlledByAUnit && !pTechno->MindControlledBy
+					&& !pData->Dominator_CapturePermaMindControlled) {
 						return true;
-					}
+				}
 
-					// ignore BalloonHover and inair units.
-					if(pType->BalloonHover || pTechno->IsInAir()) {
-						return true;
-					}
+				// ignore ImmuneToPsionics, if wished
+				if(pType->ImmuneToPsionics && !pData->Dominator_CaptureImmuneToPsionics) {
+					return true;
+				}
 
-					// ignore units with no drivers
-					TechnoExt::ExtData* pExt = TechnoExt::ExtMap.Find(pTechno);
-					if(pExt->DriverKilled) {
-						return true;
-					}
+				// free this unit
+				if(pTechno->MindControlledBy) {
+					pTechno->MindControlledBy->CaptureManager->FreeUnit(pTechno);
+				}
 
-					// SW dependent stuff
-					if(!pData->IsHouseAffected(pFirer, pTechno->Owner)) {
-						return true;
-					}
+				// capture this unit, maybe permanently
+				pTechno->SetOwningHouse(pFirer);
+				pTechno->MindControlledByAUnit = pData->Dominator_PermanentCapture.Get();
 
-					if(!pData->IsTechnoAffected(pTechno)) {
-						return true;
-					}
+				// remove old permanent mind control anim
+				if(pTechno->MindControlRingAnim) {
+					pTechno->MindControlRingAnim->UnInit();
+					pTechno->MindControlRingAnim = NULL;
+				}
 
-					// ignore mind-controlled
-					if(pTechno->MindControlledBy && !pData->Dominator_CaptureMindControlled) {
-						return true;
-					}
-
-					// ignore permanently mind-controlled
-					if(pTechno->MindControlledByAUnit && !pTechno->MindControlledBy
-						&& !pData->Dominator_CapturePermaMindControlled) {
-							return true;
-					}
-
-					// ignore ImmuneToPsionics, if wished
-					if(pType->ImmuneToPsionics && !pData->Dominator_CaptureImmuneToPsionics) {
-						return true;
-					}
-
-					// free this unit
-					if(pTechno->MindControlledBy) {
-						pTechno->MindControlledBy->CaptureManager->FreeUnit(pTechno);
-					}
-
-					// capture this unit, maybe permanently
-					pTechno->SetOwningHouse(pFirer);
-					pTechno->MindControlledByAUnit = pData->Dominator_PermanentCapture.Get();
-
-					// remove old permanent mind control anim
+				// create a permanent capture anim
+				if(pData->Dominator_ControlAnim.Get()) {
+					CoordStruct animCoords;
+					pTechno->GetCoords(&animCoords);
+					animCoords.Z += pType->MindControlRingOffset;
+					GAME_ALLOC(AnimClass, pTechno->MindControlRingAnim, pData->Dominator_ControlAnim, &animCoords);
 					if(pTechno->MindControlRingAnim) {
-						pTechno->MindControlRingAnim->UnInit();
-						pTechno->MindControlRingAnim = NULL;
+						pTechno->MindControlRingAnim->SetOwnerObject(pTechno);
 					}
+				}
 
-					// create a permanent capture anim
-					if(pData->Dominator_ControlAnim.Get()) {
-						CoordStruct animCoords;
-						pTechno->GetCoords(&animCoords);
-						animCoords.Z += pType->MindControlRingOffset;
-						GAME_ALLOC(AnimClass, pTechno->MindControlRingAnim, pData->Dominator_ControlAnim, &animCoords);
-						if(pTechno->MindControlRingAnim) {
-							pTechno->MindControlRingAnim->SetOwnerObject(pTechno);
-						}
-					}
-
-					// add to the other newly captured minions.
-					if(FootClass* pFoot = generic_cast<FootClass*>(pObj)) {
-						Minions.AddItem(pFoot);
-					}
+				// add to the other newly captured minions.
+				if(FootClass* pFoot = generic_cast<FootClass*>(pTechno)) {
+					Minions.AddItem(pFoot);
 				}
 
 				return true;
 			};
 
 			// every techno in this area shall be one with Yuri.
-			Helpers::Alex::DistinctCollector<ObjectClass*> items;
-			Helpers::Alex::forEachObjectInCellSpread(&cell, pData->SW_WidthOrRange, pData->SW_Height, std::ref(items));
+			Helpers::Alex::DistinctCollector<TechnoClass*> items;
+			Helpers::Alex::for_each_in_rect_or_spread<TechnoClass>(cell, pData->SW_WidthOrRange, pData->SW_Height, std::ref(items));
 			items.for_each(Dominate);
 
 			// the AI sends all new minions to hunt
