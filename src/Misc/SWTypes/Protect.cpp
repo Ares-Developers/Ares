@@ -96,32 +96,30 @@ bool SW_Protect::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
 		float width = pData->SW_WidthOrRange;
 		int height = pData->SW_Height;
 		
-		auto IronCurtain = [&](ObjectClass* pObj) -> bool {
-			if(TechnoClass* pTechno = generic_cast<TechnoClass*>(pObj)) {
-				// we shouldn't do anything
-				if(pTechno->IsImmobilized || pTechno->IsBeingWarpedOut()) {
-					return true;
-				}
-
-				// is this thing affected at all?
-				if(!pData->IsHouseAffected(pThis->Owner, pTechno->Owner)) {
-					return true;
-				}
-
-				if(!pData->IsTechnoAffected(pTechno)) {
-					return true;
-				}
-
-				// protect this techno
-				pTechno->IronCurtain(pData->Protect_Duration, pThis->Owner, force);
+		auto IronCurtain = [&](TechnoClass* pTechno) -> bool {
+			// we shouldn't do anything
+			if(pTechno->IsImmobilized || pTechno->IsBeingWarpedOut()) {
+				return true;
 			}
+
+			// is this thing affected at all?
+			if(!pData->IsHouseAffected(pThis->Owner, pTechno->Owner)) {
+				return true;
+			}
+
+			if(!pData->IsTechnoAffected(pTechno)) {
+				return true;
+			}
+
+			// protect this techno
+			pTechno->IronCurtain(pData->Protect_Duration, pThis->Owner, force);
 
 			return true;
 		};
 
 		// protect everything in range
-		Helpers::Alex::DistinctCollector<ObjectClass*> items;
-		Helpers::Alex::forEachObjectInRange(pCoords, width, height, std::ref(items));
+		Helpers::Alex::DistinctCollector<TechnoClass*> items;
+		Helpers::Alex::for_each_in_rect_or_range<TechnoClass>(*pCoords, width, height, std::ref(items));
 		items.for_each(IronCurtain);
 	}
 
