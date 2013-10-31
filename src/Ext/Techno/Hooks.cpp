@@ -1272,7 +1272,7 @@ DEFINE_HOOK(4D85E4, FootClass_UpdatePosition_TiberiumDamage, 9)
 	WarheadTypeClass* pWarhead = nullptr;
 	int transmogrify = RulesClass::Instance->TiberiumTransmogrify;
 
-	if(RulesExt::Global()->Tiberium_DamageEnabled) {
+	if(RulesExt::Global()->Tiberium_DamageEnabled && pThis->GetHeight() <= RulesClass::Instance->HoverHeight) {
 		TechnoTypeClass* pType = pThis->GetTechnoType();
 		TechnoTypeExt::ExtData* pExt = TechnoTypeExt::ExtMap.Find(pType);
 
