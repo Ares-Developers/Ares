@@ -34,7 +34,7 @@ DEFINE_HOOK(438FD1, BombListClass_Add2, 5)
 	int index = pData->Ivan_AttachSound.Get(RulesClass::Instance->BombAttachSound);
 	Debug::Log("Owner is player = %d, AttachSound = %d\n", Owner->Owner->ControlledByPlayer(), index);
 	if(Owner->Owner->ControlledByPlayer() && index != -1) {
-		VocClass::PlayAt(index, &Bomb->TargetUnit->Location, NULL);
+		VocClass::PlayAt(index, &Bomb->Target->Location, NULL);
 	}
 
 	return 0;
