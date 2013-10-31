@@ -327,7 +327,9 @@ DEFINE_HOOK(4DA53E, FootClass_Update, 6)
 	}
 
 	// tiberium heal, as in Tiberian Sun, but customizable per Tiberium type
-	if(F->IsAlive && RulesExt::Global()->Tiberium_HealEnabled) {
+	if(F->IsAlive && RulesExt::Global()->Tiberium_HealEnabled
+		&& F->GetHeight() <= RulesClass::Instance->HoverHeight)
+	{
 		TechnoTypeClass* pType = F->GetTechnoType();
 		if(pType->TiberiumHeal || F->HasAbility(Abilities::TIBERIUM_HEAL)) {
 			if(F->Health > 0 && F->Health < pType->Strength) {
