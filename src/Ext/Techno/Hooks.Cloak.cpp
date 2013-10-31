@@ -100,7 +100,7 @@ DEFINE_HOOK(703A79, TechnoClass_VisualCharacter_CloakingStages, A)
 	auto pTypeExt = TechnoTypeExt::ExtMap.Find(pType);
 
 	int stages = pTypeExt->CloakStages.Get(RulesClass::Instance->CloakingStages);
-	int ret = static_cast<int>(Game::F2I(256.0 * pThis->CloakProgress.Value / stages));
+	int ret = Game::F2I(256.0 * pThis->CloakProgress.Value / stages);
 
 	R->EAX(ret);
 	return 0x703A94;
