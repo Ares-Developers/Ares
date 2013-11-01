@@ -1,5 +1,7 @@
 #include "Body.h"
 
+#include <algorithm>
+
 DEFINE_HOOK(53CC6E, IonBlastClass_Update, 6)
 {
 	GET(IonBlastClass *, IB, EBX);

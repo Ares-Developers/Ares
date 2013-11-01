@@ -7,6 +7,8 @@
 #include <ColorScheme.h>
 #include <strsafe.h>
 
+#include <algorithm>
+
 bool Ares::UISettings::Initialized = false;
 Interface::eUIAction Ares::UISettings::SinglePlayerButton = Interface::uia_Default;
 Interface::eUIAction Ares::UISettings::WWOnlineButton = Interface::uia_Default;

@@ -5,6 +5,7 @@
 
 #include <set>
 #include <functional>
+#include <algorithm>
 
 class Helpers {
 public:
