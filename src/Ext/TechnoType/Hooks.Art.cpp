@@ -11,6 +11,8 @@
 #include <SmudgeTypeClass.h>
 #include <ScenarioClass.h>
 
+#include <algorithm>
+
 DEFINE_HOOK(5F9634, ObjectTypeClass_LoadFromINI, 6)
 {
 	GET(ObjectTypeClass *, pType, EBX);
