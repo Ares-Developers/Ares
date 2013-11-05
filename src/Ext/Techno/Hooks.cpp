@@ -1493,6 +1493,7 @@ DEFINE_HOOK(489270, CellChainReact, 5)
 					if(pCell->GetContainedTiberiumIndex() != -1 && pNeighbour->Powerup > 2) {
 						if(ScenarioClass::Instance->Random.RandomRanged(0, 99) < spreadChance) {
 							int delay = ScenarioClass::Instance->Random.RandomRanged(minDelay, maxDelay);
+							pNeighbour->GetCoords(&crd);
 
 							AnimClass* pAnim = nullptr;
 							GAME_ALLOC(AnimClass, pAnim, pType, &crd, delay, 1, 0x600, 0);
