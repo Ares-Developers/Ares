@@ -31,7 +31,7 @@ DEFINE_HOOK(421730, AlphaShapeClass_SDDTOR, 8)
 	return 0;
 }
 
-DEFINE_HOOK(5F3D5B, ObjectClass_DTOR, A)
+DEFINE_HOOK(5F3D65, ObjectClass_DTOR, 6)
 {
 	GET(ObjectClass *, O, ESI);
 	hash_AlphaExt::iterator i = TechnoExt::AlphaExt.find(O);
