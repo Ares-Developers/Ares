@@ -1309,13 +1309,9 @@ DEFINE_HOOK(4D85E4, FootClass_UpdatePosition_TiberiumDamage, 9)
 }
 
 // spill the stored tiberium on destruction
-DEFINE_HOOK(702672, TechnoClass_ReceiveDamage_SpillTiberium, 5)
+DEFINE_HOOK(702200, TechnoClass_ReceiveDamage_SpillTiberium, 6)
 {
 	GET(TechnoClass*, pThis, ESI);
-
-	if(pThis->AttachedBomb) {
-		pThis->AttachedBomb->Detonate();
-	}
 
 	TechnoTypeClass* pType = pThis->GetTechnoType();
 	auto pExt = TechnoTypeExt::ExtMap.Find(pType);
@@ -1359,7 +1355,7 @@ DEFINE_HOOK(702672, TechnoClass_ReceiveDamage_SpillTiberium, 5)
 		}
 	}
 
-	return 0x702684;
+	return 0;
 }
 
 // blow up harvester units big time
