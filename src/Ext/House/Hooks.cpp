@@ -288,15 +288,40 @@ DEFINE_HOOK(4F9610, HouseClass_GiveTiberium_Storage, A)
 	return 0x4F9664;
 }
 
-// this is not the best way, because only the spreading is
-// skipped instead of the entire loop, but this makes no
-// assumptions about the tiberium struct
-DEFINE_HOOK(441B83, BuildingClass_Destroy_Refinery, 5)
+// spread tiberium on building destruction. replaces the
+// original code, made faster and spilling is now optional.
+DEFINE_HOOK(441B30, BuildingClass_Destroy_Refinery, 6)
 {
 	GET(BuildingClass*, pThis, ESI);
 	auto pExt = TechnoTypeExt::ExtMap.Find(pThis->Type);
 
-	return !pExt->TiberiumSpill ? 0x441BF2 : 0;
+	auto &store = pThis->Tiberium;
+	auto &total = pThis->Owner->OwnedTiberium;
+
+	// remove the tiberium contained in this structure from the house's owned
+	// tiberium. original code does this one bail at a time, we do bulk.
+	if(store.GetTotalAmount() >= 1.0f) {
+		for(auto i = 0; i < OwnedTiberiumStruct::Size; ++i) {
+			auto amount = std::ceil(store.GetAmount(i));
+			if(amount > 0.0f) {
+				store.RemoveAmount(amount, i);
+				total.RemoveAmount(amount, i);
+
+				// spread bail by bail
+				if(pExt->TiberiumSpill) {
+					for(auto j = static_cast<int>(amount); j; --j) {
+						auto dist = ScenarioClass::Instance->Random.RandomRanged(256, 768);
+						auto crd = MapClass::GetRandomCoordsNear(pThis->Location, dist, true);
+
+						auto pCell = MapClass::Instance->GetCellAt(crd);
+						pCell->IncreaseTiberium(i, 1);
+					}
+				}
+			}
+		}
+	}
+
+	return 0x441C0C;
 }
 
 DEFINE_HOOK(73E4A2, UnitClass_Mi_Unload_Storage, 6)
