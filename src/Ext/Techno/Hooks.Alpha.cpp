@@ -14,7 +14,8 @@ DEFINE_HOOK(420960, AlphaShapeClass_CTOR, 5)
 	GET(AlphaShapeClass *, AS, ECX);
 	hash_AlphaExt::iterator i = TechnoExt::AlphaExt.find(O);
 	if(i != TechnoExt::AlphaExt.end()) {
-		delete i->second;
+		GAME_DEALLOC(i->second);
+		// i is invalid now.
 	}
 	TechnoExt::AlphaExt[O] = AS;
 	return 0;
@@ -31,12 +32,13 @@ DEFINE_HOOK(421730, AlphaShapeClass_SDDTOR, 8)
 	return 0;
 }
 
-DEFINE_HOOK(5F3D5B, ObjectClass_DTOR, A)
+DEFINE_HOOK(5F3D65, ObjectClass_DTOR, 6)
 {
 	GET(ObjectClass *, O, ESI);
 	hash_AlphaExt::iterator i = TechnoExt::AlphaExt.find(O);
 	if(i != TechnoExt::AlphaExt.end()) {
-		delete i->second;
+		GAME_DEALLOC(i->second);
+		// i is invalid now.
 	}
 	return 0;
 }
@@ -96,7 +98,8 @@ DEFINE_HOOK(5F3E70, ObjectClass_Update, 5)
 	if(Inactive) {
 		hash_AlphaExt::iterator i = TechnoExt::AlphaExt.find(Source);
 		if(i != TechnoExt::AlphaExt.end()) {
-			delete i->second;
+			GAME_DEALLOC(i->second);
+			// i is invalid now.
 		}
 		return 0;
 	}
