@@ -2,6 +2,7 @@
 #include "../TechnoType/Body.h"
 
 #include <TacticalClass.h>
+#include <Notifications.h>
 
 hash_AlphaExt TechnoExt::AlphaExt;
 // conventions for hashmaps like this:
@@ -21,6 +22,15 @@ DEFINE_HOOK(420960, AlphaShapeClass_CTOR, 5)
 	return 0;
 }
 
+DEFINE_HOOK(420A71, AlphaShapeClass_CTOR_Anims, 5)
+{
+	GET(AlphaShapeClass*, pThis, ESI);
+	if(pThis->AttachedTo->WhatAmI() == AnimClass::AbsID) {
+		PointerExpiredNotification::NotifyInvalidAnim.Add(pThis);
+	}
+	return 0;
+}
+
 DEFINE_HOOK(421730, AlphaShapeClass_SDDTOR, 8)
 {
 	GET(AlphaShapeClass *, AS, ECX);
@@ -29,6 +39,13 @@ DEFINE_HOOK(421730, AlphaShapeClass_SDDTOR, 8)
 	if(i != TechnoExt::AlphaExt.end()) {
 		TechnoExt::AlphaExt.erase(i);
 	}
+	return 0;
+}
+
+DEFINE_HOOK(421798, AlphaShapeClass_SDDTOR_Anims, 6)
+{
+	GET(AlphaShapeClass*, pThis, ESI);
+	PointerExpiredNotification::NotifyInvalidAnim.Remove(pThis);
 	return 0;
 }
 
