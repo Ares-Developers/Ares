@@ -60,85 +60,98 @@ DEFINE_HOOK(5F3D65, ObjectClass_DTOR, 6)
 	return 0;
 }
 
-DEFINE_HOOK(5F3E70, ObjectClass_Update, 5)
-{
-	GET(ObjectClass *, Source, ECX);
-	ObjectTypeClass *SourceType = Source->GetType();
-	if(!SourceType) {
-		return 0;
+void UpdateAlphaShape(ObjectClass* pSource) {
+	ObjectTypeClass* pSourceType = pSource->GetType();
+	if(!pSourceType) {
+		return;
 	}
 
-	SHPStruct *Alpha = SourceType->AlphaImage;
-	if(!Alpha) {
-		return 0;
+	const SHPStruct* pAlpha = pSourceType->AlphaImage;
+	if(!pAlpha) {
+		return;
 	}
 
 	CoordStruct XYZ;
 
 	RectangleStruct *ScreenArea = &TacticalClass::Instance->VisibleArea;
-	Point2D off = { ScreenArea->X - (Alpha->Width / 2), ScreenArea->Y - (Alpha->Height / 2) };
+	Point2D off = {ScreenArea->X - (pAlpha->Width / 2), ScreenArea->Y - (pAlpha->Height / 2)};
 	Point2D xy;
 
-	if(FootClass *Foot = generic_cast<FootClass *>(Source)) {
-		if(Foot->LastMapCoords != Foot->CurrentMapCoords) {
+	if(auto pFoot = abstract_cast<FootClass*>(pSource)) {
+		if(pFoot->LastMapCoords != pFoot->CurrentMapCoords) {
 			// we moved - need to redraw the area we were in
 			// alas, we don't have the precise XYZ we were in, only the cell we were last seen in
 			// so we need to add the cell's dimensions to the dirty area just in case
-			CellClass::Cell2Coord(&Foot->LastMapCoords, &XYZ);
+			CellClass::Cell2Coord(&pFoot->LastMapCoords, &XYZ);
 			Point2D xyTL, xyBR;
 			TacticalClass::Instance->CoordsToClient(&XYZ, &xyTL);
 			// because the coord systems are different - xyz is x/, y\, xy is x-, y|
 			XYZ.X += 256;
+			XYZ.Y += 256;
 			TacticalClass::Instance->CoordsToClient(&XYZ, &xyBR);
 			Point2D cellDimensions = xyBR - xyTL;
 			xy = xyTL;
 			xy.X += cellDimensions.X / 2;
 			xy.Y += cellDimensions.Y / 2;
 			xy += off;
-			RectangleStruct Dirty =
-			  { xy.X - ScreenArea->X - cellDimensions.X, xy.Y - ScreenArea->Y - cellDimensions.Y,
-				Alpha->Width + cellDimensions.X * 2, Alpha->Height + cellDimensions.Y * 2 };
-			TacticalClass::Instance->RegisterDirtyArea(Dirty, 1);
+			RectangleStruct Dirty = {xy.X - ScreenArea->X - cellDimensions.X,
+				xy.Y - ScreenArea->Y - cellDimensions.Y, pAlpha->Width + cellDimensions.X * 2,
+				pAlpha->Height + cellDimensions.Y * 2};
+			TacticalClass::Instance->RegisterDirtyArea(Dirty, true);
 		}
 	}
 
-	bool Inactive = Source->InLimbo;
+	bool Inactive = pSource->InLimbo;
 
-	if(Source->AbstractFlags & ABSFLAGS_ISTECHNO) {
-		Inactive |= reinterpret_cast<TechnoClass *>(Source)->Deactivated;
+	if(auto pTechno = abstract_cast<TechnoClass*>(pSource)) {
+		Inactive |= pTechno->Deactivated;
 	}
 
-	if(Source->WhatAmI() == abs_Building && Source->GetCurrentMission() != mission_Construction) {
-		Inactive |= !reinterpret_cast<BuildingClass *>(Source)->IsPowerOnline();
+	if(auto pBld = abstract_cast<BuildingClass*>(pSource)) {
+		if(pBld->GetCurrentMission() != mission_Construction) {
+			Inactive |= !pBld->IsPowerOnline();
+		}
 	}
 
 	if(Inactive) {
-		hash_AlphaExt::iterator i = TechnoExt::AlphaExt.find(Source);
+		hash_AlphaExt::iterator i = TechnoExt::AlphaExt.find(pSource);
 		if(i != TechnoExt::AlphaExt.end()) {
 			GAME_DEALLOC(i->second);
 			// i is invalid now.
 		}
-		return 0;
+		return;
 	}
 
 	if(Unsorted::CurrentFrame % 2) { // lag reduction - don't draw a new alpha every frame
-		Source->GetCoords(&XYZ);
+		pSource->GetCoords(&XYZ);
 		TacticalClass::Instance->CoordsToClient(&XYZ, &xy);
 		xy += off;
 		++Unsorted::IKnowWhatImDoing;
 		AlphaShapeClass *placeholder;
-		GAME_ALLOC(AlphaShapeClass, placeholder, Source, xy.X, xy.Y);
+		GAME_ALLOC(AlphaShapeClass, placeholder, pSource, xy.X, xy.Y);
 		--Unsorted::IKnowWhatImDoing;
 		//int Margin = 40;
-		RectangleStruct Dirty =
-		  { xy.X - ScreenArea->X, xy.Y - ScreenArea->Y,
-			Alpha->Width, Alpha->Height };
-		TacticalClass::Instance->RegisterDirtyArea(Dirty, 1);
+		RectangleStruct Dirty =	{xy.X - ScreenArea->X, xy.Y - ScreenArea->Y, pAlpha->Width, pAlpha->Height};
+		TacticalClass::Instance->RegisterDirtyArea(Dirty, true);
 	}
+}
 
+DEFINE_HOOK(5F3E70, ObjectClass_Update_AlphaLight, 5)
+{
+	GET(ObjectClass*, pThis, ECX);
+	UpdateAlphaShape(pThis);
 	return 0;
 }
 
+DEFINE_HOOK(423B0B, AnimClass_Update_AlphaLight, 6)
+{
+	GET(AnimClass*, pThis, ESI);
+	// flaming guys do the update via base class
+	if(!pThis->Type->IsFlamingGuy) {
+		UpdateAlphaShape(pThis);
+	}
+	return 0;
+}
 
 DEFINE_HOOK(420F75, AlphaLightClass_UpdateScreen_ShouldDraw, 5)
 {
