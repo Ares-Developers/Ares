@@ -78,6 +78,7 @@ public:
 	static void CloseConfig(CCINIClass**);
 
 	static void InitNoCDMode();
+	static void CheckProcessorFeatures();
 
 	//Callbacks
 	static void __stdcall CmdLineParse(char**,int);
