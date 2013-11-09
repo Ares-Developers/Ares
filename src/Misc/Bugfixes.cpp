@@ -1009,6 +1009,12 @@ DEFINE_HOOK(720A61, sub_7209D0_NoLog, 5) // skip Theme::AI
 	return 0x720A66;
 }
 
+// skips the log line "Looping Movie"
+DEFINE_HOOK(615BD3, Handle_Static_Messages_LoopingMovie, 5)
+{
+	return 0x615BE0;
+}
+
 // #908369, #1100953: units are still deployable when warping or falling
 DEFINE_HOOK(700E47, TechnoClass_CanDeploySlashUnload_Immobile, A)
 {
