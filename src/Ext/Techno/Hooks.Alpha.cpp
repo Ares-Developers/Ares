@@ -77,7 +77,17 @@ void UpdateAlphaShape(ObjectClass* pSource) {
 	Point2D off = {ScreenArea->X - (pAlpha->Width / 2), ScreenArea->Y - (pAlpha->Height / 2)};
 	Point2D xy;
 
-	if(auto pFoot = abstract_cast<FootClass*>(pSource)) {
+	// for animations attached to the owner object, consider
+	// the owner object as source, so the display is refreshed
+	// whenever the owner object moves.
+	auto pOwner = pSource;
+	if(auto pAnim = abstract_cast<AnimClass*>(pSource)) {
+		if(pAnim->OwnerObject) {
+			pOwner = pAnim->OwnerObject;
+		}
+	}
+
+	if(auto pFoot = abstract_cast<FootClass*>(pOwner)) {
 		if(pFoot->LastMapCoords != pFoot->CurrentMapCoords) {
 			// we moved - need to redraw the area we were in
 			// alas, we don't have the precise XYZ we were in, only the cell we were last seen in
