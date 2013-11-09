@@ -49,9 +49,18 @@ DEFINE_HOOK(64CCBF, DoList_ReplaceReconMessage, 6)
 		HCURSOR loadCursor = LoadCursor(NULL, IDC_WAIT);
 		SetClassLong(Game::hWnd, GCL_HCURSOR, (LONG)loadCursor);
 		SetCursor(loadCursor);
-		Debug::Log("Making a memory snapshot\n");
 
-		Debug::FullDump(NULL);
+		std::wstring path;
+		Debug::PrepareSnapshotDirectory(path);
+
+		if(Debug::bLog) {
+			Debug::Log("Copying debug log\n");
+			std::wstring logCopy = path + L"\\debug.log";
+			CopyFileW(Debug::LogFileTempName.c_str(), logCopy.c_str(), FALSE);
+		}
+
+		Debug::Log("Making a memory snapshot\n");
+		Debug::FullDump(NULL, &path);
 
 		loadCursor = LoadCursor(NULL, IDC_ARROW);
 		SetClassLong(Game::hWnd, GCL_HCURSOR, (LONG)loadCursor);
