@@ -1234,3 +1234,27 @@ DEFINE_HOOK(746C55, UnitClass_GetUIName, 6)
 	R->EAX(pThis->ToolTipText);
 	return 0x746C76;
 }
+
+// complete rewrite
+DEFINE_HOOK(4D98C0, FootClass_Destroyed, A) {
+	GET(FootClass*, pThis, ECX);
+	//GET_STACK(AbstractClass*, pKiller, 0x4);
+	auto pType = pThis->GetTechnoType();
+
+	// exclude unimportant units, and only play for current player
+	if(!pType->DontScore && !pType->Insignificant && !pType->Spawned
+		&& pThis->Owner->ControlledByPlayer())
+	{
+		auto pExt = TechnoTypeExt::ExtMap.Find(pType);
+		int idx = pExt->EVA_UnitLost;
+		if(idx != -1) {
+			CellStruct cell;
+			pThis->GetMapCoords(&cell);
+
+			RadarEventClass::Create(RadarEventType::UnitLost, cell);
+			VoxClass::PlayIndex(idx, -1, -1);
+		}
+	}
+
+	return 0x4D9918;
+}

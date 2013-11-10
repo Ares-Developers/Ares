@@ -112,15 +112,6 @@ DEFINE_HOOK(71AF76, TemporalClass_Fire_UnwarpableB, 9) {
 	return 0;
 }
 
-// Insignificant=yes or DontScore=yes prevent EVA_UnitLost on unit destruction
-DEFINE_HOOK(4D98DD, Insignificant_UnitLost, 6)
-{
-	GET(TechnoClass *, t, ESI);
-	TechnoTypeClass *T = t->GetTechnoType();
-
-	return (T->Insignificant || T->DontScore) ? 0x4D9916 : 0;
-}
-
 // MakeInfantry that fails to place will just end the source animation and cleanup instead of memleaking to game end
 DEFINE_HOOK(424B23, AnimClass_Update, 6)
 {

@@ -5,6 +5,7 @@
 #include <BuildingTypeClass.h>
 #include <WarheadTypeClass.h>
 #include <VocClass.h>
+#include <VoxClass.h>
 
 #include "../../Ares.h"
 #include "../_Container.hpp"
@@ -151,6 +152,8 @@ public:
 		Valueable<AnimTypeClass*> CustomMissileTrailerAnim;
 		Valueable<int> CustomMissileTrailerSeparation;
 
+		ValueableIdx<VoxClass> EVA_UnitLost;
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			Survivors_PilotChance (),
 			Survivors_PassengerChance (),
@@ -217,6 +220,7 @@ public:
 			Cloneable (true),
 			CarryallAllowed(),
 			CarryallSizeLimit (),
+			EVA_UnitLost (-1),
 			ImmuneToAbduction(false)
 			{
 				this->Insignia.SetAll(NULL);

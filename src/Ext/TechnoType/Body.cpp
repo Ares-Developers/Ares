@@ -39,6 +39,8 @@ void TechnoTypeExt::ExtData::Initialize(TechnoTypeClass *pThis) {
 		this->CustomMissileTrailerAnim = AnimTypeClass::Find("V3TRAIL");
 		this->CustomMissileTakeoffAnim = AnimTypeClass::Find("V3TAKOFF");
 	}
+
+	this->EVA_UnitLost = VoxClass::FindIndex("EVA_UnitLost");
 }
 
 /*
@@ -349,6 +351,8 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 
 	// non-crashable aircraft
 	this->Crashable.Read(&exINI, section, "Crashable");
+
+	this->EVA_UnitLost.Read(&exINI, section, "EVA.Lost");
 
 	// quick fix - remove after the rest of weapon selector code is done
 	return;
