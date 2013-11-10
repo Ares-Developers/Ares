@@ -17,7 +17,6 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 	this->ArrayIndex = SideClass::FindIndex(pThis->ID);
 
 	//are these necessary?
-	this->BaseDefenseCounts.Clear();
 	this->BaseDefenses.Clear();
 	this->ParaDrop.Clear();
 	this->ParaDropNum.Clear();
@@ -25,10 +24,6 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 	this->ParaDropPlane = AircraftTypeClass::FindIndex("PDPLANE");
 
 	if(!_strcmpi(pID, "Nod")) { //Soviets
-
-		for(int i = 0; i < RulesClass::Instance->SovietBaseDefenseCounts.Count; ++i) {
-			this->BaseDefenseCounts.AddItem(RulesClass::Instance->SovietBaseDefenseCounts.GetItem(i));
-		}
 
 		for(int i = 0; i < RulesClass::Instance->SovietBaseDefenses.Count; ++i) {
 			this->BaseDefenses.AddItem(RulesClass::Instance->SovietBaseDefenses.GetItem(i));
@@ -47,10 +42,6 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 
 	} else if(!_strcmpi(pID, "ThirdSide")) { //Yuri
 
-		for(int i = 0; i < RulesClass::Instance->ThirdBaseDefenseCounts.Count; ++i) {
-			this->BaseDefenseCounts.AddItem(RulesClass::Instance->ThirdBaseDefenseCounts.GetItem(i));
-		}
-
 		for(int i = 0; i < RulesClass::Instance->ThirdBaseDefenses.Count; ++i) {
 			this->BaseDefenses.AddItem(RulesClass::Instance->ThirdBaseDefenses.GetItem(i));
 		}
@@ -67,10 +58,6 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 		this->MessageTextColorIndex = 25;
 
 	} else { //Allies or any other country
-
-		for(int i = 0; i < RulesClass::Instance->AlliedBaseDefenseCounts.Count; ++i) {
-			this->BaseDefenseCounts.AddItem(RulesClass::Instance->AlliedBaseDefenseCounts.GetItem(i));
-		}
 
 		for(int i = 0; i < RulesClass::Instance->AlliedBaseDefenses.Count; ++i) {
 			this->BaseDefenses.AddItem(RulesClass::Instance->AlliedBaseDefenses.GetItem(i));
@@ -95,15 +82,6 @@ void SideExt::ExtData::LoadFromINIFile(SideClass *pThis, CCINIClass *pINI)
 	char* p = NULL;
 	char* section = pThis->get_ID();
 
-	if(pINI->ReadString(section, "AI.BaseDefenseCounts", "", Ares::readBuffer, Ares::readLength)) {
-		this->BaseDefenseCounts.Clear();
-
-		char* context = nullptr;
-		for(p = strtok_s(Ares::readBuffer, Ares::readDelims, &context), &context; p && *p; p = strtok_s(nullptr, Ares::readDelims, &context)) {
-			this->BaseDefenseCounts.AddItem(atoi(p));
-		}
-	}
-
 	if(pINI->ReadString(section, "AI.BaseDefenses", "", Ares::readBuffer, Ares::readLength)) {
 		this->BaseDefenses.Clear();
 
@@ -114,6 +92,8 @@ void SideExt::ExtData::LoadFromINIFile(SideClass *pThis, CCINIClass *pINI)
 	}
 
 	INI_EX exINI(pINI);
+
+	this->BaseDefenseCounts.Read(&exINI, section, "AI.BaseDefenseCounts");
 
 	this->Crew.Parse(&exINI, section, "Crew", 1);
 
@@ -233,6 +213,28 @@ InfantryTypeClass* SideExt::ExtData::GetDefaultDisguise() const {
 	}
 }
 
+Iterator<int> SideExt::ExtData::GetBaseDefenseCounts() const {
+	if(this->BaseDefenseCounts.HasValue()) {
+		return this->BaseDefenseCounts;
+	}
+
+	return this->GetDefaultBaseDefenseCounts();
+}
+
+Iterator<int> SideExt::ExtData::GetDefaultBaseDefenseCounts() const {
+	switch(this->ArrayIndex) {
+	case 0:
+		return RulesClass::Instance->AlliedBaseDefenseCounts;
+	case 1:
+		return RulesClass::Instance->SovietBaseDefenseCounts;
+	case 2:
+		return RulesClass::Instance->ThirdBaseDefenseCounts;
+	default:
+		//return Iterator<int>(); would be correct, but Ares < 0.5 does this:
+		return RulesClass::Instance->AlliedBaseDefenseCounts;
+	}
+}
+
 DWORD SideExt::BaseDefenses(REGISTERS* R, DWORD dwReturnAddress)
 {
 	GET(HouseTypeClass *, pCountry, EAX);
@@ -299,7 +301,7 @@ void Container<SideExt>::Save(SideClass *pThis, IStream *pStm) {
 	if(pData) {
 		//ULONG out;
 		pData->BaseDefenses.Save(pStm);
-		pData->BaseDefenseCounts.Save(pStm);
+		//pData->BaseDefenseCounts.Save(pStm);
 		pData->ParaDrop.Save(pStm);
 		pData->ParaDropNum.Save(pStm);
 	}
@@ -311,7 +313,7 @@ void Container<SideExt>::Load(SideClass *pThis, IStream *pStm) {
 	SWIZZLE(pData->Disguise);
 	SWIZZLE(pData->Crew);
 	pData->BaseDefenses.Load(pStm, 1);
-	pData->BaseDefenseCounts.Load(pStm, 0);
+	//pData->BaseDefenseCounts.Load(pStm, 0);
 	pData->ParaDrop.Load(pStm, 1);
 	pData->ParaDropNum.Load(pStm, 0);
 }

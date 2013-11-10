@@ -45,13 +45,14 @@ DEFINE_HOOK(505C95, Sides_BaseDefenseCounts, 7)
 	GET(HouseClass *, pThis, EBX);
 	int n = R->Stack32(0x80);	//just to be on the safe side, we're not getting it from the House
 
-	SideClass* pSide = SideClass::Array->GetItem(n);
+	SideClass* pSide = SideClass::Array->GetItemOrDefault(n);
 	if(SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide)) {
-		if((int)pThis->AIDifficulty < pData->BaseDefenseCounts.Count) {
-			R->EAX<int>(pData->BaseDefenseCounts.GetItem(pThis->AIDifficulty));
+		auto it = pData->GetBaseDefenseCounts();
+		if(pThis->AIDifficulty < it.size()) {
+			R->EAX<int>(it.at(pThis->AIDifficulty));
 			return 0x505CE9;
 		} else {
-			Debug::Log("WTF! vector has %d items, requested item #%d\n", pData->BaseDefenseCounts.Count, pThis->AIDifficulty);
+			Debug::Log("WTF! vector has %u items, requested item #%u\n", it.size(), pThis->AIDifficulty);
 		}
 	}
 	return 0;
