@@ -14,6 +14,8 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 {
 	char* pID = pThis->ID;
 
+	this->ArrayIndex = SideClass::FindIndex(pThis->ID);
+
 	//are these necessary?
 	this->BaseDefenseCounts.Clear();
 	this->BaseDefenses.Clear();
