@@ -1259,7 +1259,7 @@ DEFINE_HOOK(4D98C0, FootClass_Destroyed, A) {
 	return 0x4D9918;
 }
 
-// issue #????: linking units for type selection
+// linking units for type selection
 DEFINE_HOOK(732C30, TechnoClass_IDMatches, 5)
 {
 	GET(TechnoClass*, pThis, ECX);

@@ -10,7 +10,7 @@
 
 DEFINE_HOOK(732D10, TacticalClass_CollectSelectedIDs, 5)
 {
-	DynamicVectorClass<const char*> *pNames = NULL;
+	DynamicVectorClass<const char*> *pNames = nullptr;
 	GAME_ALLOC(DynamicVectorClass<const char*>, pNames);
 
 	auto Add = [pNames](TechnoTypeClass* pType) {
@@ -34,7 +34,7 @@ DEFINE_HOOK(732D10, TacticalClass_CollectSelectedIDs, 5)
 			Add(pType);
 
 			// optionally do the same the original game does, but support the new grouping feature.
-			if(RulesExt::Global()->TypeSelectUseDeploy.Get()) {
+			if(RulesExt::Global()->TypeSelectUseDeploy) {
 				if(pType->DeploysInto) {
 					Add(pType->DeploysInto);
 				}

@@ -354,10 +354,10 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 
 	this->EVA_UnitLost.Read(&exINI, section, "EVA.Lost");
 
-	// #???? linking units for type selection
+	// linking units for type selection
 	if(pINI->ReadString(section, "GroupAs", "", Ares::readBuffer, Ares::readLength)) {
-		if(VALIDTAG(Ares::readBuffer)) {
-			AresCRT::strCopy(this->GroupAs, Ares::readBuffer, 0x20);
+		if(!INIClass::IsBlank(Ares::readBuffer)) {
+			AresCRT::strCopy(this->GroupAs, Ares::readBuffer);
 		} else {
 			*this->GroupAs = 0;
 		}
