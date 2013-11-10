@@ -114,7 +114,7 @@ DEFINE_HOOK(451358, Sides_SurvivorDivisor, 6)
 
 	SideClass* pSide = SideClass::Array->GetItem(pHouse->SideIndex);
 	if(SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide)) {
-		R->ESI<int>(pData->SurvivorDivisor);
+		R->ESI<int>(pData->GetSurvivorDivisor());
 		return 0x451391;
 	} else {
 		return 0;

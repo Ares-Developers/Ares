@@ -36,7 +36,6 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 
 		this->Crew.Bind(&RulesClass::Instance->SovietCrew);
 		this->DefaultDisguise.Bind(&RulesClass::Instance->SovietDisguise);
-		this->SurvivorDivisor.Bind(&RulesClass::Instance->SovietSurvivorDivisor);
 
 		this->EVAIndex = 1;
 
@@ -61,7 +60,6 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 
 		this->Crew.Bind(&RulesClass::Instance->ThirdCrew);
 		this->DefaultDisguise.Bind(&RulesClass::Instance->ThirdDisguise);
-		this->SurvivorDivisor.Bind(&RulesClass::Instance->ThirdSurvivorDivisor);
 
 		this->EVAIndex = 2;
 
@@ -86,7 +84,6 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 
 		this->Crew.Bind(&RulesClass::Instance->AlliedCrew);
 		this->DefaultDisguise.Bind(&RulesClass::Instance->AlliedDisguise);
-		this->SurvivorDivisor.Bind(&RulesClass::Instance->AlliedSurvivorDivisor);
 
 		this->EVAIndex = 0;
 
@@ -176,6 +173,28 @@ void SideExt::ExtData::LoadFromINIFile(SideClass *pThis, CCINIClass *pINI)
 		if(ColorScheme* pCS = ColorScheme::Find(Ares::readBuffer)) {
 			this->MessageTextColorIndex = pCS->ArrayIndex;
 		}
+	}
+}
+
+int SideExt::ExtData::GetSurvivorDivisor() const {
+	if(this->SurvivorDivisor.isset()) {
+		return this->SurvivorDivisor;
+	}
+
+	return this->GetDefaultSurvivorDivisor();
+}
+
+int SideExt::ExtData::GetDefaultSurvivorDivisor() const {
+	switch(this->ArrayIndex) {
+	case 0:
+		return RulesClass::Instance->AlliedSurvivorDivisor;
+	case 1:
+		return RulesClass::Instance->SovietSurvivorDivisor;
+	case 2:
+		return RulesClass::Instance->ThirdSurvivorDivisor;
+	default:
+		//return 0; would be correct, but Ares < 0.5 does this:
+		return RulesClass::Instance->AlliedSurvivorDivisor;
 	}
 }
 

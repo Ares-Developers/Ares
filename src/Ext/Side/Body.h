@@ -28,7 +28,7 @@ class SideExt
 	public:
 		Customizable<InfantryTypeClass*> DefaultDisguise;
 		Customizable<InfantryTypeClass*> Crew;
-		Customizable<int> SurvivorDivisor;
+		Nullable<int> SurvivorDivisor;
 		TypeList<BuildingTypeClass*> BaseDefenses;
 		TypeList<int> BaseDefenseCounts;
 		TypeList<InfantryTypeClass*>* ParaDropFallbackTypes;
@@ -65,6 +65,9 @@ class SideExt
 		virtual void Initialize(TT *pThis);
 		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
 		}
+
+		int GetSurvivorDivisor() const;
+		int GetDefaultSurvivorDivisor() const;
 	};
 
 	//Hacks required in other classes:
