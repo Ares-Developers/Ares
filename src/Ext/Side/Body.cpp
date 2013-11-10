@@ -34,8 +34,6 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 			this->BaseDefenses.AddItem(RulesClass::Instance->SovietBaseDefenses.GetItem(i));
 		}
 
-		this->DefaultDisguise.Bind(&RulesClass::Instance->SovietDisguise);
-
 		this->EVAIndex = 1;
 
 		this->ParaDropFallbackTypes = &RulesClass::Instance->SovParaDropInf;
@@ -57,8 +55,6 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 			this->BaseDefenses.AddItem(RulesClass::Instance->ThirdBaseDefenses.GetItem(i));
 		}
 
-		this->DefaultDisguise.Bind(&RulesClass::Instance->ThirdDisguise);
-
 		this->EVAIndex = 2;
 
 		this->ParaDropFallbackTypes = &RulesClass::Instance->YuriParaDropInf;
@@ -79,8 +75,6 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 		for(int i = 0; i < RulesClass::Instance->AlliedBaseDefenses.Count; ++i) {
 			this->BaseDefenses.AddItem(RulesClass::Instance->AlliedBaseDefenses.GetItem(i));
 		}
-
-		this->DefaultDisguise.Bind(&RulesClass::Instance->AlliedDisguise);
 
 		this->EVAIndex = 0;
 
@@ -123,7 +117,7 @@ void SideExt::ExtData::LoadFromINIFile(SideClass *pThis, CCINIClass *pINI)
 
 	this->Crew.Parse(&exINI, section, "Crew", 1);
 
-	this->DefaultDisguise.Parse(&exINI, section, "DefaultDisguise", 1);
+	this->Disguise.Parse(&exINI, section, "DefaultDisguise", 1);
 
 	this->EVAIndex.Read(&exINI, section, "EVA.Tag");
 
@@ -217,6 +211,28 @@ InfantryTypeClass* SideExt::ExtData::GetDefaultCrew() const {
 	}
 }
 
+InfantryTypeClass* SideExt::ExtData::GetDisguise() const {
+	if(this->Disguise.isset()) {
+		return this->Disguise;
+	}
+
+	return this->GetDefaultDisguise();
+}
+
+InfantryTypeClass* SideExt::ExtData::GetDefaultDisguise() const {
+	switch(this->ArrayIndex) {
+	case 0:
+		return RulesClass::Instance->AlliedDisguise;
+	case 1:
+		return RulesClass::Instance->SovietDisguise;
+	case 2:
+		return RulesClass::Instance->ThirdDisguise;
+	default:
+		//return RulesClass::Instance->ThirdDisguise; would be correct, but Ares < 0.5 does this:
+		return RulesClass::Instance->AlliedDisguise;
+	}
+}
+
 DWORD SideExt::BaseDefenses(REGISTERS* R, DWORD dwReturnAddress)
 {
 	GET(HouseTypeClass *, pCountry, EAX);
@@ -237,9 +253,9 @@ DWORD SideExt::Disguise(REGISTERS* R, DWORD dwReturnAddress, bool bUseESI)
 	InfantryClass* pThis = (bUseESI ? R->ESI<InfantryClass*>() : R->ECX<InfantryClass *>());
 
 	int n = pHouse->SideIndex;
-	SideClass* pSide = SideClass::Array->GetItem(n);
+	SideClass* pSide = SideClass::Array->GetItemOrDefault(n);
 	if(SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide)) {
-		pThis->Disguise = pData->DefaultDisguise;
+		pThis->Disguise = pData->GetDisguise();
 		return dwReturnAddress;
 	} else {
 		return 0;
@@ -292,7 +308,7 @@ void Container<SideExt>::Save(SideClass *pThis, IStream *pStm) {
 void Container<SideExt>::Load(SideClass *pThis, IStream *pStm) {
 	SideExt::ExtData* pData = this->LoadKey(pThis, pStm);
 
-	SWIZZLE(pData->DefaultDisguise);
+	SWIZZLE(pData->Disguise);
 	SWIZZLE(pData->Crew);
 	pData->BaseDefenses.Load(pStm, 1);
 	pData->BaseDefenseCounts.Load(pStm, 0);

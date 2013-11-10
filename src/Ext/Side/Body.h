@@ -26,7 +26,7 @@ class SideExt
 	class ExtData : public Extension<TT>
 	{
 	public:
-		Customizable<InfantryTypeClass*> DefaultDisguise;
+		Nullable<InfantryTypeClass*> Disguise;
 		Nullable<InfantryTypeClass*> Crew;
 		Nullable<int> SurvivorDivisor;
 		TypeList<BuildingTypeClass*> BaseDefenses;
@@ -71,6 +71,9 @@ class SideExt
 
 		InfantryTypeClass* GetCrew() const;
 		InfantryTypeClass* GetDefaultCrew() const;
+
+		InfantryTypeClass* GetDisguise() const;
+		InfantryTypeClass* GetDefaultDisguise() const;
 	};
 
 	//Hacks required in other classes:

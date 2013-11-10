@@ -75,9 +75,9 @@ DEFINE_HOOK(52267D, Sides_Disguise1, 6)
 	GET(HouseClass *, pHouse, EAX);
 
 	int n = pHouse->SideIndex;
-	SideClass* pSide = SideClass::Array->GetItem(n);
+	SideClass* pSide = SideClass::Array->GetItemOrDefault(n);
 	if(SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide)) {
-		R->EAX<InfantryTypeClass *>(pData->DefaultDisguise);
+		R->EAX<InfantryTypeClass *>(pData->GetDisguise());
 		return 0x5226B7;
 	} else {
 		return 0;
