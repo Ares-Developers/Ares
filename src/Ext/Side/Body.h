@@ -27,7 +27,7 @@ class SideExt
 	{
 	public:
 		Customizable<InfantryTypeClass*> DefaultDisguise;
-		Customizable<InfantryTypeClass*> Crew;
+		Nullable<InfantryTypeClass*> Crew;
 		Nullable<int> SurvivorDivisor;
 		TypeList<BuildingTypeClass*> BaseDefenses;
 		TypeList<int> BaseDefenseCounts;
@@ -68,6 +68,9 @@ class SideExt
 
 		int GetSurvivorDivisor() const;
 		int GetDefaultSurvivorDivisor() const;
+
+		InfantryTypeClass* GetCrew() const;
+		InfantryTypeClass* GetDefaultCrew() const;
 	};
 
 	//Hacks required in other classes:

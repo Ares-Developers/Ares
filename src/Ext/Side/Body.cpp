@@ -34,7 +34,6 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 			this->BaseDefenses.AddItem(RulesClass::Instance->SovietBaseDefenses.GetItem(i));
 		}
 
-		this->Crew.Bind(&RulesClass::Instance->SovietCrew);
 		this->DefaultDisguise.Bind(&RulesClass::Instance->SovietDisguise);
 
 		this->EVAIndex = 1;
@@ -58,7 +57,6 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 			this->BaseDefenses.AddItem(RulesClass::Instance->ThirdBaseDefenses.GetItem(i));
 		}
 
-		this->Crew.Bind(&RulesClass::Instance->ThirdCrew);
 		this->DefaultDisguise.Bind(&RulesClass::Instance->ThirdDisguise);
 
 		this->EVAIndex = 2;
@@ -82,7 +80,6 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 			this->BaseDefenses.AddItem(RulesClass::Instance->AlliedBaseDefenses.GetItem(i));
 		}
 
-		this->Crew.Bind(&RulesClass::Instance->AlliedCrew);
 		this->DefaultDisguise.Bind(&RulesClass::Instance->AlliedDisguise);
 
 		this->EVAIndex = 0;
@@ -195,6 +192,28 @@ int SideExt::ExtData::GetDefaultSurvivorDivisor() const {
 	default:
 		//return 0; would be correct, but Ares < 0.5 does this:
 		return RulesClass::Instance->AlliedSurvivorDivisor;
+	}
+}
+
+InfantryTypeClass* SideExt::ExtData::GetCrew() const {
+	if(this->Crew.isset()) {
+		return this->Crew;
+	}
+
+	return this->GetDefaultCrew();
+}
+
+InfantryTypeClass* SideExt::ExtData::GetDefaultCrew() const {
+	switch(this->ArrayIndex) {
+	case 0:
+		return RulesClass::Instance->AlliedCrew;
+	case 1:
+		return RulesClass::Instance->SovietCrew;
+	case 2:
+		return RulesClass::Instance->ThirdCrew;
+	default:
+		//return RulesClass::Instance->Technician; would be correct, but Ares < 0.5 does this:
+		return RulesClass::Instance->AlliedCrew;
 	}
 }
 

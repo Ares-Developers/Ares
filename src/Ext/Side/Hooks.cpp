@@ -100,7 +100,7 @@ DEFINE_HOOK(707D40, Sides_Crew, 6)
 	int n = pHouse->SideIndex;
 	SideClass* pSide = SideClass::Array->GetItem(n);
 	if(SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide)) {
-		R->ESI<InfantryTypeClass *>(pData->Crew);
+		R->ESI<InfantryTypeClass *>(pData->GetCrew());
 		return 0x707D81;
 	} else {
 		return 0;
