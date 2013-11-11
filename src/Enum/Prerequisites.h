@@ -7,6 +7,7 @@
 
 #include "_Enumerator.hpp"
 #include "../Ares.CRT.h"
+#include "../Utilities/Iterator.h"
 
 #ifdef DEBUGBUILD
 #include "../Misc/Debug.h"
@@ -51,14 +52,14 @@ public:
 	static bool HouseOwnsAny(HouseClass *pHouse, DynamicVectorClass<int> *list);
 
 
-	typedef DynamicVectorClass<BuildingTypeClass *> BTypeList;
+	typedef Iterator<BuildingTypeClass*> BTypeIter;
 
-	static bool ListContainsGeneric(BTypeList * List, signed int Index);
-	static bool ListContainsSpecific(BTypeList * List, signed int Index);
-	static bool ListContainsPrereq(BTypeList * List, signed int Index);
+	static bool ListContainsGeneric(const BTypeIter &List, signed int Index);
+	static bool ListContainsSpecific(const BTypeIter &List, signed int Index);
+	static bool ListContainsPrereq(const BTypeIter &List, signed int Index);
 
-	static bool ListContainsAll(BTypeList * List, DynamicVectorClass<int> *Requirements);
-	static bool ListContainsAny(BTypeList * List, DynamicVectorClass<int> *Requirements);
+	static bool ListContainsAll(const BTypeIter &List, DynamicVectorClass<int> *Requirements);
+	static bool ListContainsAny(const BTypeIter &List, DynamicVectorClass<int> *Requirements);
 
 };
 

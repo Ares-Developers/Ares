@@ -90,7 +90,7 @@ class HouseExt
 
 	static RequirementStatus RequirementsMet(HouseClass *pHouse, TechnoTypeClass *pItem);
 	static bool PrerequisitesMet(HouseClass *pHouse, TechnoTypeClass *pItem);
-	static bool PrerequisitesListed(Prereqs::BTypeList *List, TechnoTypeClass *pItem);
+	static bool PrerequisitesListed(const Prereqs::BTypeIter &List, TechnoTypeClass *pItem);
 
 	static bool HasNeededFactory(HouseClass *pHouse, TechnoTypeClass *pItem);
 	static bool FactoryForObjectExists(HouseClass *pHouse, TechnoTypeClass *pItem);

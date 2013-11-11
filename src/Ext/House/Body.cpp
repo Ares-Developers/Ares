@@ -87,7 +87,7 @@ bool HouseExt::PrerequisitesMet(HouseClass *pHouse, TechnoTypeClass *pItem)
 	return 0;
 }
 
-bool HouseExt::PrerequisitesListed(Prereqs::BTypeList *List, TechnoTypeClass *pItem)
+bool HouseExt::PrerequisitesListed(const Prereqs::BTypeIter &List, TechnoTypeClass *pItem)
 {
 	if(!pItem) {
 		return 0;

@@ -140,13 +140,13 @@ bool Prereqs::HouseOwnsAny(HouseClass *pHouse, DynamicVectorClass<int> *list)
 	return false;
 }
 
-bool Prereqs::ListContainsSpecific(BTypeList *List, signed int Index)
+bool Prereqs::ListContainsSpecific(const BTypeIter &List, signed int Index)
 {
-	BuildingTypeClass * Target = BuildingTypeClass::Array->GetItem(Index);
-	return List->FindItemIndex(Target) != -1;
+	auto Target = BuildingTypeClass::Array->GetItem(Index);
+	return List.contains(Target);
 }
 
-bool Prereqs::ListContainsGeneric(BTypeList *List, signed int Index)
+bool Prereqs::ListContainsGeneric(const BTypeIter &List, signed int Index)
 {
 	Index = - 1 - Index; // hack - POWER is -1 , this way converts to 0, and onwards
 	if(Index < GenericPrerequisite::Array.Count) {
@@ -160,7 +160,7 @@ bool Prereqs::ListContainsGeneric(BTypeList *List, signed int Index)
 	return false;
 }
 
-bool Prereqs::ListContainsPrereq(BTypeList *List, signed int Index)
+bool Prereqs::ListContainsPrereq(const BTypeIter &List, signed int Index)
 {
 	return Index < 0
 		? ListContainsGeneric(List, Index)
@@ -168,7 +168,7 @@ bool Prereqs::ListContainsPrereq(BTypeList *List, signed int Index)
 	;
 }
 
-bool Prereqs::ListContainsAll(BTypeList *List, DynamicVectorClass<int> *Requirements)
+bool Prereqs::ListContainsAll(const BTypeIter &List, DynamicVectorClass<int> *Requirements)
 {
 	for(int i = 0; i < Requirements->Count; ++i) {
 		if(!ListContainsPrereq(List, Requirements->GetItem(i))) {
@@ -178,7 +178,7 @@ bool Prereqs::ListContainsAll(BTypeList *List, DynamicVectorClass<int> *Requirem
 	return true;
 }
 
-bool Prereqs::ListContainsAny(BTypeList *List, DynamicVectorClass<int> *Requirements)
+bool Prereqs::ListContainsAny(const BTypeIter &List, DynamicVectorClass<int> *Requirements)
 {
 	for(int i = 0; i < Requirements->Count; ++i) {
 		if(ListContainsPrereq(List, Requirements->GetItem(i))) {
