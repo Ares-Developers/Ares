@@ -77,6 +77,10 @@ void SideExt::ExtData::LoadFromINIFile(SideClass *pThis, CCINIClass *pINI)
 
 	this->Crew.Parse(&exINI, section, "Crew", 1);
 
+	this->Engineer.Parse(&exINI, section, "Engineer");
+
+	this->Technician.Parse(&exINI, section, "Technician");
+
 	this->Disguise.Parse(&exINI, section, "DefaultDisguise", 1);
 
 	this->EVAIndex.Read(&exINI, section, "EVA.Tag");
@@ -169,6 +173,14 @@ InfantryTypeClass* SideExt::ExtData::GetDefaultCrew() const {
 		//return RulesClass::Instance->Technician; would be correct, but Ares < 0.5 does this:
 		return RulesClass::Instance->AlliedCrew;
 	}
+}
+
+InfantryTypeClass* SideExt::ExtData::GetEngineer() const {
+	return this->Engineer.Get(RulesClass::Instance->Engineer);
+}
+
+InfantryTypeClass* SideExt::ExtData::GetTechnician() const {
+	return this->Technician.Get(RulesClass::Instance->Technician);
 }
 
 InfantryTypeClass* SideExt::ExtData::GetDisguise() const {

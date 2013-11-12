@@ -28,6 +28,8 @@ class SideExt
 	public:
 		Nullable<InfantryTypeClass*> Disguise;
 		Nullable<InfantryTypeClass*> Crew;
+		Nullable<InfantryTypeClass*> Engineer;
+		Nullable<InfantryTypeClass*> Technician;
 		Nullable<int> SurvivorDivisor;
 		NullableVector<BuildingTypeClass*> BaseDefenses;
 		NullableVector<int> BaseDefenseCounts;
@@ -71,6 +73,9 @@ class SideExt
 
 		InfantryTypeClass* GetCrew() const;
 		InfantryTypeClass* GetDefaultCrew() const;
+
+		InfantryTypeClass* GetEngineer() const;
+		InfantryTypeClass* GetTechnician() const;
 
 		InfantryTypeClass* GetDisguise() const;
 		InfantryTypeClass* GetDefaultDisguise() const;
