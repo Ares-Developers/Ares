@@ -29,7 +29,7 @@ class SideExt
 		Nullable<InfantryTypeClass*> Disguise;
 		Nullable<InfantryTypeClass*> Crew;
 		Nullable<int> SurvivorDivisor;
-		TypeList<BuildingTypeClass*> BaseDefenses;
+		NullableVector<BuildingTypeClass*> BaseDefenses;
 		NullableVector<int> BaseDefenseCounts;
 		TypeList<InfantryTypeClass*>* ParaDropFallbackTypes;
 		TypeList<int>* ParaDropFallbackNum;
@@ -77,6 +77,9 @@ class SideExt
 
 		Iterator<int> GetBaseDefenseCounts() const;
 		Iterator<int> GetDefaultBaseDefenseCounts() const;
+
+		Iterator<BuildingTypeClass*> GetBaseDefenses() const;
+		Iterator<BuildingTypeClass*> GetDefaultBaseDefenses() const;
 	};
 
 	//Hacks required in other classes:

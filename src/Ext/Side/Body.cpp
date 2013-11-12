@@ -17,17 +17,12 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 	this->ArrayIndex = SideClass::FindIndex(pThis->ID);
 
 	//are these necessary?
-	this->BaseDefenses.Clear();
 	this->ParaDrop.Clear();
 	this->ParaDropNum.Clear();
 
 	this->ParaDropPlane = AircraftTypeClass::FindIndex("PDPLANE");
 
 	if(!_strcmpi(pID, "Nod")) { //Soviets
-
-		for(int i = 0; i < RulesClass::Instance->SovietBaseDefenses.Count; ++i) {
-			this->BaseDefenses.AddItem(RulesClass::Instance->SovietBaseDefenses.GetItem(i));
-		}
 
 		this->EVAIndex = 1;
 
@@ -42,10 +37,6 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 
 	} else if(!_strcmpi(pID, "ThirdSide")) { //Yuri
 
-		for(int i = 0; i < RulesClass::Instance->ThirdBaseDefenses.Count; ++i) {
-			this->BaseDefenses.AddItem(RulesClass::Instance->ThirdBaseDefenses.GetItem(i));
-		}
-
 		this->EVAIndex = 2;
 
 		this->ParaDropFallbackTypes = &RulesClass::Instance->YuriParaDropInf;
@@ -58,10 +49,6 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 		this->MessageTextColorIndex = 25;
 
 	} else { //Allies or any other country
-
-		for(int i = 0; i < RulesClass::Instance->AlliedBaseDefenses.Count; ++i) {
-			this->BaseDefenses.AddItem(RulesClass::Instance->AlliedBaseDefenses.GetItem(i));
-		}
 
 		this->EVAIndex = 0;
 
@@ -82,18 +69,11 @@ void SideExt::ExtData::LoadFromINIFile(SideClass *pThis, CCINIClass *pINI)
 	char* p = NULL;
 	char* section = pThis->get_ID();
 
-	if(pINI->ReadString(section, "AI.BaseDefenses", "", Ares::readBuffer, Ares::readLength)) {
-		this->BaseDefenses.Clear();
-
-		char* context = nullptr;
-		for(p = strtok_s(Ares::readBuffer, Ares::readDelims, &context); p && *p; p = strtok_s(nullptr, Ares::readDelims, &context)) {
-			this->BaseDefenses.AddItem(BuildingTypeClass::FindOrAllocate(p));
-		}
-	}
-
 	INI_EX exINI(pINI);
 
 	this->BaseDefenseCounts.Read(&exINI, section, "AI.BaseDefenseCounts");
+
+	this->BaseDefenses.Read(&exINI, section, "AI.BaseDefenses");
 
 	this->Crew.Parse(&exINI, section, "Crew", 1);
 
@@ -235,14 +215,40 @@ Iterator<int> SideExt::ExtData::GetDefaultBaseDefenseCounts() const {
 	}
 }
 
+Iterator<BuildingTypeClass*> SideExt::ExtData::GetBaseDefenses() const {
+	if(this->BaseDefenses.HasValue()) {
+		return this->BaseDefenses;
+	}
+
+	return this->GetDefaultBaseDefenses();
+}
+
+Iterator<BuildingTypeClass*> SideExt::ExtData::GetDefaultBaseDefenses() const {
+	switch(this->ArrayIndex) {
+	case 0:
+		return RulesClass::Instance->AlliedBaseDefenses;
+	case 1:
+		return RulesClass::Instance->SovietBaseDefenses;
+	case 2:
+		return RulesClass::Instance->ThirdBaseDefenses;
+	default:
+		//return Iterator<BuildingTypeClass*>(); would be correct, but Ares < 0.5 does this:
+		return RulesClass::Instance->AlliedBaseDefenses;
+	}
+}
+
 DWORD SideExt::BaseDefenses(REGISTERS* R, DWORD dwReturnAddress)
 {
 	GET(HouseTypeClass *, pCountry, EAX);
+	static DynamicVectorClass<BuildingTypeClass*> dummy;
 
-	int n = pCountry->SideIndex;
-	SideClass* pSide = SideClass::Array->GetItem(n);
+	SideClass* pSide = SideClass::Array->GetItemOrDefault(pCountry->SideIndex);
 	if(SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide)) {
-		R->EBX(&pData->BaseDefenses);
+		auto it = pData->GetBaseDefenses();
+		dummy.Items = const_cast<BuildingTypeClass**>(it.begin());
+		dummy.Count = dummy.Capacity = it.size();
+
+		R->EBX(&dummy);
 		return dwReturnAddress;
 	} else {
 		return 0;
@@ -300,7 +306,7 @@ void Container<SideExt>::Save(SideClass *pThis, IStream *pStm) {
 
 	if(pData) {
 		//ULONG out;
-		pData->BaseDefenses.Save(pStm);
+		//pData->BaseDefenses.Save(pStm);
 		//pData->BaseDefenseCounts.Save(pStm);
 		pData->ParaDrop.Save(pStm);
 		pData->ParaDropNum.Save(pStm);
@@ -312,7 +318,7 @@ void Container<SideExt>::Load(SideClass *pThis, IStream *pStm) {
 
 	SWIZZLE(pData->Disguise);
 	SWIZZLE(pData->Crew);
-	pData->BaseDefenses.Load(pStm, 1);
+	//pData->BaseDefenses.Load(pStm, 1);
 	//pData->BaseDefenseCounts.Load(pStm, 0);
 	pData->ParaDrop.Load(pStm, 1);
 	pData->ParaDropNum.Load(pStm, 0);
