@@ -93,35 +93,6 @@ DEFINE_HOOK(5227A3, Sides_Disguise2, 6)
 DEFINE_HOOK(6F422F, Sides_Disguise3, 6)
 	{ return SideExt::Disguise(R, 0x6F4277, true); }
 
-//0x707D40
-DEFINE_HOOK(707D40, Sides_Crew, 6)
-{
-	GET(HouseClass *, pHouse, ECX);
-
-	int n = pHouse->SideIndex;
-	SideClass* pSide = SideClass::Array->GetItem(n);
-	if(SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide)) {
-		R->ESI<InfantryTypeClass *>(pData->GetCrew());
-		return 0x707D81;
-	} else {
-		return 0;
-	}
-}
-
-//0x451358
-DEFINE_HOOK(451358, Sides_SurvivorDivisor, 6)
-{
-	GET(HouseClass *, pHouse, EDX);
-
-	SideClass* pSide = SideClass::Array->GetItem(pHouse->SideIndex);
-	if(SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide)) {
-		R->ESI<int>(pData->GetSurvivorDivisor());
-		return 0x451391;
-	} else {
-		return 0;
-	}
-}
-
 /*
  * this is as good as it can get without tearing the scenario reader apart
  * - find house early, set color from its data...
