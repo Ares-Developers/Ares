@@ -65,23 +65,19 @@ void TechnoExt::SpawnSurvivors(FootClass *pThis, TechnoClass *pKiller, bool Sele
 
 		// possibly eject up to PilotCount crew members
 		if(Type->Crewed && chance > 0) {
-			signed int idx = pOwner->SideIndex;
-			auto Pilots = &pData->Survivors_Pilots;
-			if(Pilots->ValidIndex(idx)) {
-				if(InfantryTypeClass *PilotType = Pilots->GetItem(idx)) {
-					for(int i = 0; i < PilotCount; ++i) {
-						if(ScenarioClass::Instance->Random.RandomRanged(1, 100) <= chance) {
-							InfantryClass *Pilot = reinterpret_cast<InfantryClass *>(PilotType->CreateObject(pOwner));
-							Pilot->Health = (PilotType->Strength / 2);
-							Pilot->Veterancy.Veterancy = pThis->Veterancy.Veterancy;
+			if(InfantryTypeClass* PilotType = pData->Survivors_Pilots.GetItemOrDefault(pOwner->SideIndex)) {
+				for(int i = 0; i < PilotCount; ++i) {
+					if(ScenarioClass::Instance->Random.RandomRanged(1, 100) <= chance) {
+						InfantryClass *Pilot = reinterpret_cast<InfantryClass *>(PilotType->CreateObject(pOwner));
+						Pilot->Health /= 2;
+						Pilot->Veterancy.Veterancy = pThis->Veterancy.Veterancy;
 
-							if(!EjectRandomly(Pilot, loc, 144, Select)) {
-								Pilot->RegisterDestruction(pKiller); //(TechnoClass *)R->get_StackVar32(0x54));
-								GAME_DEALLOC(Pilot);
-							} else {
-								if(pThis->AttachedTag && pThis->AttachedTag->IsTriggerRepeating()) {
-									Pilot->ReplaceTag(pThis->AttachedTag);
-								}
+						if(!EjectRandomly(Pilot, loc, 144, Select)) {
+							Pilot->RegisterDestruction(pKiller); //(TechnoClass *)R->get_StackVar32(0x54));
+							GAME_DEALLOC(Pilot);
+						} else {
+							if(pThis->AttachedTag && pThis->AttachedTag->IsTriggerRepeating()) {
+								Pilot->ReplaceTag(pThis->AttachedTag);
 							}
 						}
 					}
@@ -96,12 +92,12 @@ void TechnoExt::SpawnSurvivors(FootClass *pThis, TechnoClass *pKiller, bool Sele
 	// eject or kill all passengers. if defenses are to be ignored, passengers
 	// killed no matter what the odds are.
 	while(pThis->Passengers.FirstPassenger) {
-		bool toDelete = 1;
+		bool toDelete = true;
 		FootClass *passenger = pThis->RemoveFirstPassenger();
 		bool toSpawn = false;
 		if(chance > 0) {
 			toSpawn = ScenarioClass::Instance->Random.RandomRanged(1, 100) <= chance;
-		} else if(chance == -1 && pThis->WhatAmI() == abs_Unit) {
+		} else if(chance == -1 && pThis->WhatAmI() == UnitClass::AbsID) {
 			Move::Value occupation = passenger->IsCellOccupied(pThis->GetCell(), -1, -1, nullptr, true);
 			toSpawn = (occupation == Move::OK || occupation == Move::MovingBlock);
 		}
@@ -115,7 +111,7 @@ void TechnoExt::SpawnSurvivors(FootClass *pThis, TechnoClass *pKiller, bool Sele
 	}
 
 	// do not ever do this again for this unit
-	pSelfData->Survivors_Done = 1;
+	pSelfData->Survivors_Done = true;
 }
 /**
 	\param Survivor Passenger to eject
