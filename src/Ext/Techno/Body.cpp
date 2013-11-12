@@ -37,11 +37,7 @@ void TechnoExt::SpawnSurvivors(FootClass *pThis, TechnoClass *pKiller, bool Sele
 	// always eject passengers, but crew only if not already processed.
 	if(!pSelfData->Survivors_Done && !pSelfData->DriverKilled && !IgnoreDefenses) {
 		// save this, because the hijacker can kill people
-		int PilotCount = pData->Survivors_PilotCount;
-		if(PilotCount < 0) {
-			// default pilot count, depending on crew
-			PilotCount = (Type->Crewed ? 1 : 0);
-		}
+		int PilotCount = pThis->GetCrewCount();
 
 		// process the hijacker
 		if(InfantryClass *Hijacker = RecoverHijacker(pThis)) {
