@@ -267,21 +267,6 @@ DWORD SideExt::BaseDefenses(REGISTERS* R, DWORD dwReturnAddress)
 	}
 }
 
-DWORD SideExt::Disguise(REGISTERS* R, DWORD dwReturnAddress, bool bUseESI)
-{
-	GET(HouseClass *, pHouse, EAX);
-	InfantryClass* pThis = (bUseESI ? R->ESI<InfantryClass*>() : R->ECX<InfantryClass *>());
-
-	int n = pHouse->SideIndex;
-	SideClass* pSide = SideClass::Array->GetItemOrDefault(n);
-	if(SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide)) {
-		pThis->Disguise = pData->GetDisguise();
-		return dwReturnAddress;
-	} else {
-		return 0;
-	}
-}
-
 DWORD SideExt::LoadTextColor(REGISTERS* R, DWORD dwReturnAddress)
 {
 	// if there is a cached LoadTextColor, use that.

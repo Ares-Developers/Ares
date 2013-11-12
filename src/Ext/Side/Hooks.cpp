@@ -1,4 +1,5 @@
 #include "Body.h"
+#include "../House/Body.h"
 #include "../HouseType/Body.h"
 #include "../SWType/Body.h"
 
@@ -70,28 +71,40 @@ DEFINE_HOOK(507DBA, Sides_BaseDefenses2, 6)
 DEFINE_HOOK(507FAA, Sides_BaseDefenses3, 6)
 	{ return SideExt::BaseDefenses(R, 0x507FE0); }
 
-//0x52267D
-DEFINE_HOOK(52267D, Sides_Disguise1, 6)
+DEFINE_HOOK(52267D, InfantryClass_GetDisguise_Disguise, 6)
 {
 	GET(HouseClass *, pHouse, EAX);
 
-	int n = pHouse->SideIndex;
-	SideClass* pSide = SideClass::Array->GetItemOrDefault(n);
-	if(SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide)) {
-		R->EAX<InfantryTypeClass *>(pData->GetDisguise());
+	if(auto pData = HouseExt::ExtMap.Find(pHouse)) {
+		R->EAX<InfantryTypeClass*>(pData->GetDisguise());
 		return 0x5226B7;
 	} else {
 		return 0;
 	}
 }
 
-//0x5227A3
-DEFINE_HOOK(5227A3, Sides_Disguise2, 6)
-	{ return SideExt::Disguise(R, 0x5227EC, false); }
+DEFINE_HOOK_AGAIN(6F422F, Sides_Disguise, 6) // TechnoClass_Init
+DEFINE_HOOK(5227A3, Sides_Disguise, 6) // InfantryClass_SetDefaultDisguise
+{
+	GET(HouseClass *, pHouse, EAX);
+	InfantryClass* pThis = nullptr;
+	DWORD dwReturnAddress = 0;
 
-//0x6F422F
-DEFINE_HOOK(6F422F, Sides_Disguise3, 6)
-	{ return SideExt::Disguise(R, 0x6F4277, true); }
+	if(R->get_Origin() == 0x5227A3) {
+		pThis = R->ECX<InfantryClass*>();
+		dwReturnAddress = 0x5227EC;
+	} else {
+		pThis = R->ESI<InfantryClass*>();
+		dwReturnAddress = 0x6F4277;
+	}
+
+	if(auto pData = HouseExt::ExtMap.Find(pHouse)) {
+		pThis->Disguise = pData->GetDisguise();
+		return dwReturnAddress;
+	} else {
+		return 0;
+	}
+}
 
 /*
  * this is as good as it can get without tearing the scenario reader apart

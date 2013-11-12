@@ -97,7 +97,6 @@ class SideExt
 	static int CurrentLoadTextColor;
 
 	static DWORD BaseDefenses(REGISTERS* R, DWORD dwReturnAddress);
-	static DWORD Disguise(REGISTERS* R, DWORD dwReturnAddress, bool bUseESI);
 	static DWORD LoadTextColor(REGISTERS* R, DWORD dwReturnAddress);
 	static DWORD MixFileYuriFiles(REGISTERS* R, DWORD dwReturnAddress1, DWORD dwReturnAddress2);
 };
