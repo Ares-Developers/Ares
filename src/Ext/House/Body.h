@@ -100,6 +100,8 @@ class HouseExt
 
 	static signed int PrereqValidate
 		(HouseClass *pHouse, TechnoTypeClass *pItem, bool BuildLimitOnly, bool IncludeQueued);
+
+	static SideClass* GetSide(HouseClass* pHouse);
 };
 
 #endif

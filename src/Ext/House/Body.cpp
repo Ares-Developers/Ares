@@ -2,6 +2,7 @@
 #include "../HouseType/Body.h"
 #include "../Building/Body.h"
 #include "../BuildingType/Body.h"
+#include "../Side/Body.h"
 #include "../TechnoType/Body.h"
 #include "../../Enum/Prerequisites.h"
 
@@ -307,6 +308,10 @@ bool HouseExt::ExtData::CheckBasePlanSanity() {
 //			CheckList(&pSideData->BaseDefenses, "Base Defenses");
 
 	return AllIsWell;
+}
+
+SideClass* HouseExt::GetSide(HouseClass* pHouse) {
+	return SideClass::Array->GetItemOrDefault(pHouse->SideIndex);
 }
 
 // =============================
