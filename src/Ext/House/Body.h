@@ -81,6 +81,12 @@ class HouseExt
 		void SetFirestormState(bool Active);
 
 		bool CheckBasePlanSanity();
+
+		int GetSurvivorDivisor() const;
+		InfantryTypeClass* GetCrew() const;
+		InfantryTypeClass* GetEngineer() const;
+		InfantryTypeClass* GetTechnician() const;
+		InfantryTypeClass* GetDisguise() const;
 	};
 
 	static Container<HouseExt> ExtMap;

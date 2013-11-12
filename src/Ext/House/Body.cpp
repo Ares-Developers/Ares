@@ -314,6 +314,46 @@ SideClass* HouseExt::GetSide(HouseClass* pHouse) {
 	return SideClass::Array->GetItemOrDefault(pHouse->SideIndex);
 }
 
+int HouseExt::ExtData::GetSurvivorDivisor() const {
+	if(auto pExt = SideExt::ExtMap.Find(HouseExt::GetSide(this->AttachedToObject))) {
+		return pExt->GetSurvivorDivisor();
+	}
+
+	return 0;
+}
+
+InfantryTypeClass* HouseExt::ExtData::GetCrew() const {
+	if(auto pExt = SideExt::ExtMap.Find(HouseExt::GetSide(this->AttachedToObject))) {
+		return pExt->GetCrew();
+	}
+
+	return RulesClass::Instance->Technician;
+}
+
+InfantryTypeClass* HouseExt::ExtData::GetEngineer() const {
+	if(auto pExt = SideExt::ExtMap.Find(HouseExt::GetSide(this->AttachedToObject))) {
+		return pExt->GetEngineer();
+	}
+
+	return RulesClass::Instance->Engineer;
+}
+
+InfantryTypeClass* HouseExt::ExtData::GetTechnician() const {
+	if(auto pExt = SideExt::ExtMap.Find(HouseExt::GetSide(this->AttachedToObject))) {
+		return pExt->GetTechnician();
+	}
+
+	return RulesClass::Instance->Technician;
+}
+
+InfantryTypeClass* HouseExt::ExtData::GetDisguise() const {
+	if(auto pExt = SideExt::ExtMap.Find(HouseExt::GetSide(this->AttachedToObject))) {
+		return pExt->GetDisguise();
+	}
+
+	return RulesClass::Instance->ThirdDisguise;
+}
+
 // =============================
 // load/save
 
