@@ -249,24 +249,6 @@ Iterator<BuildingTypeClass*> SideExt::ExtData::GetDefaultBaseDefenses() const {
 	}
 }
 
-DWORD SideExt::BaseDefenses(REGISTERS* R, DWORD dwReturnAddress)
-{
-	GET(HouseTypeClass *, pCountry, EAX);
-	static DynamicVectorClass<BuildingTypeClass*> dummy;
-
-	SideClass* pSide = SideClass::Array->GetItemOrDefault(pCountry->SideIndex);
-	if(SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide)) {
-		auto it = pData->GetBaseDefenses();
-		dummy.Items = const_cast<BuildingTypeClass**>(it.begin());
-		dummy.Count = dummy.Capacity = it.size();
-
-		R->EBX(&dummy);
-		return dwReturnAddress;
-	} else {
-		return 0;
-	}
-}
-
 DWORD SideExt::LoadTextColor(REGISTERS* R, DWORD dwReturnAddress)
 {
 	// if there is a cached LoadTextColor, use that.

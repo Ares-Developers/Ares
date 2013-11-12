@@ -59,17 +59,25 @@ DEFINE_HOOK(505C95, Sides_BaseDefenseCounts, 7)
 	return 0;
 }
 
-//0x507BCA
-DEFINE_HOOK(507BCA, Sides_BaseDefenses1, 6)
-	{ return SideExt::BaseDefenses(R, 0x507C00); }
+DEFINE_HOOK_AGAIN(507DBA, Sides_BaseDefenses, 6) // HouseClass_PickAntiArmorDefense
+DEFINE_HOOK_AGAIN(507FAA, Sides_BaseDefenses, 6) // HouseClass_PickAntiInfantryDefense
+DEFINE_HOOK(507BCA, Sides_BaseDefenses, 6) // HouseClass_PickAntiAirDefense
+{
+	GET(HouseTypeClass *, pCountry, EAX);
+	static DynamicVectorClass<BuildingTypeClass*> dummy;
 
-//0x507DBA
-DEFINE_HOOK(507DBA, Sides_BaseDefenses2, 6)
-	{ return SideExt::BaseDefenses(R, 0x507DF0); }
+	SideClass* pSide = SideClass::Array->GetItemOrDefault(pCountry->SideIndex);
+	if(auto pData = SideExt::ExtMap.Find(pSide)) {
+		auto it = pData->GetBaseDefenses();
+		dummy.Items = const_cast<BuildingTypeClass**>(it.begin());
+		dummy.Count = dummy.Capacity = it.size();
 
-//0x507FAA
-DEFINE_HOOK(507FAA, Sides_BaseDefenses3, 6)
-	{ return SideExt::BaseDefenses(R, 0x507FE0); }
+		R->EBX(&dummy);
+		return R->get_Origin() + 0x36;
+	} else {
+		return 0;
+	}
+}
 
 DEFINE_HOOK(52267D, InfantryClass_GetDisguise_Disguise, 6)
 {
