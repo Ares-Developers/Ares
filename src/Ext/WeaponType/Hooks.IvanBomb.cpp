@@ -45,8 +45,9 @@ DEFINE_HOOK(438A00, BombClass_GetCurrentFrame, 6)
 			frame = lifetime / (pData->Ivan_Delay / (pSHP->Frames - 1));
 
 			// flicker over a time period
-			int period = 2 * pData->Ivan_FlickerRate;
-			if(Unsorted::CurrentFrame % period >= pData->Ivan_FlickerRate) {
+			int rate = pData->Ivan_FlickerRate.Get(RulesClass::Instance->IvanIconFlickerRate);
+			int period = 2 * rate;
+			if(Unsorted::CurrentFrame % period >= rate) {
 				++frame;
 			}
 
