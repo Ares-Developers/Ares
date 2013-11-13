@@ -35,7 +35,7 @@ DEFINE_HOOK(438A00, BombClass_GetCurrentFrame, 6)
 		return 0;
 	}
 
-	SHPStruct* pSHP = pData->Ivan_Image;
+	SHPStruct* pSHP = pData->Ivan_Image.Get(RulesClass::Instance->BOMBCURS_SHP);
 	int frame = 0;
 
 	if(pSHP->Frames >= 2) {
@@ -76,7 +76,7 @@ DEFINE_HOOK(6F523C, TechnoClass_DrawExtras2, 5)
 
 	WeaponTypeExt::ExtData *pData = WeaponTypeExt::BombExt[Bomb];
 
-	if(SHPStruct *Image = pData->Ivan_Image.Get()) {
+	if(SHPStruct *Image = pData->Ivan_Image.Get(RulesClass::Instance->BOMBCURS_SHP)) {
 		R->ECX(Image);
 		return 0x6F5247;
 	}

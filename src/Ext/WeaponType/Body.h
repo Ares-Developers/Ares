@@ -76,7 +76,7 @@ public:
 		NullableIdx<VocClass> Ivan_TickingSound;
 		NullableIdx<VocClass> Ivan_AttachSound;
 		Nullable<WarheadTypeClass *> Ivan_WH;
-		Customizable<SHPStruct *> Ivan_Image;
+		Nullable<SHPStruct *> Ivan_Image;
 		Nullable<int> Ivan_FlickerRate;
 		Nullable<bool> Ivan_CanDetonateTimeBomb;
 		Nullable<bool> Ivan_CanDetonateDeathBomb;
@@ -113,7 +113,7 @@ public:
 			Ivan_TickingSound (),
 			Ivan_AttachSound (),
 			Ivan_WH (),
-			Ivan_Image (&RulesClass::Instance->BOMBCURS_SHP),
+			Ivan_Image (),
 			Ivan_FlickerRate (),
 			Ivan_CanDetonateTimeBomb (),
 			Ivan_CanDetonateDeathBomb (),
