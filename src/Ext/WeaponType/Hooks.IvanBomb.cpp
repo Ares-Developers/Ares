@@ -26,37 +26,43 @@ DEFINE_HOOK(438FD7, BombListClass_Plant_AttachSound, 7)
 	return 0x439022;
 }
 
-// 6F5230, 5
-// custom ivan bomb drawing 1
-DEFINE_HOOK(6F5230, TechnoClass_DrawExtras1, 5)
+DEFINE_HOOK(438A00, BombClass_GetCurrentFrame, 6)
 {
-	GET(TechnoClass *, pThis, EBP);
-	BombClass * Bomb = pThis->AttachedBomb;
+	GET(BombClass*, pThis, ECX);
 
-	WeaponTypeExt::ExtData *pData = WeaponTypeExt::BombExt[Bomb];
-
-	if(pData->Ivan_Image.Get()->Frames < 2) {
-		R->EAX(0);
-		return 0x6F5235;
+	auto pData = WeaponTypeExt::BombExt[pThis];
+	if(!pData) {
+		return 0;
 	}
 
-	int frame =
-	(Unsorted::CurrentFrame - Bomb->PlantingFrame)
-		/ (pData->Ivan_Delay.Get() / (pData->Ivan_Image.Get()->Frames - 1)); // -1 so that last iteration has room to flicker
+	SHPStruct* pSHP = pData->Ivan_Image;
+	int frame = 0;
 
-	if(Unsorted::CurrentFrame % (2 * pData->Ivan_FlickerRate) >= pData->Ivan_FlickerRate) {
-		++frame;
-	}
+	if(pSHP->Frames >= 2) {
+		if(pThis->DeathBomb == FALSE) {
+			// -1 so that last iteration has room to flicker. order is important
+			int lifetime = (Unsorted::CurrentFrame - pThis->PlantingFrame);
+			frame = lifetime / (pData->Ivan_Delay / (pSHP->Frames - 1));
 
-	if(frame >= pData->Ivan_Image.Get()->Frames) {
-		frame = pData->Ivan_Image.Get()->Frames - 1;
-	} else if(frame == pData->Ivan_Image.Get()->Frames - 1) {
-		--frame;
+			// flicker over a time period
+			int period = 2 * pData->Ivan_FlickerRate;
+			if(Unsorted::CurrentFrame % period >= pData->Ivan_FlickerRate) {
+				++frame;
+			}
+
+			if(frame >= pSHP->Frames) {
+				frame = pSHP->Frames - 1;
+			} else if(frame == pSHP->Frames - 1) {
+				--frame;
+			}
+		} else {
+			// DeathBombs (that don't exist) use the last frame
+			frame = pSHP->Frames - 1;
+		}
 	}
 
 	R->EAX(frame);
-
-	return 0x6F5235;
+	return 0x438A62;
 }
 
 // 6F523C, 5
