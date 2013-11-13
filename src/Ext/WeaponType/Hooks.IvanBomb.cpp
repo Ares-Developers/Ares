@@ -121,7 +121,7 @@ DEFINE_HOOK(438799, BombClass_Detonate1, 6)
 
 	WeaponTypeExt::ExtData *pData = WeaponTypeExt::BombExt[Bomb];
 
-	R->Stack<WarheadTypeClass *>(0x4, pData->Ivan_WH);
+	R->Stack<WarheadTypeClass *>(0x4, pData->Ivan_WH.Get(RulesClass::Instance->IvanWarhead));
 	R->EDX(pData->Ivan_Damage.Get(RulesClass::Instance->IvanDamage));
 	return 0x43879F;
 }
@@ -134,7 +134,7 @@ DEFINE_HOOK(438843, BombClass_Detonate2, 6)
 
 	WeaponTypeExt::ExtData *pData = WeaponTypeExt::BombExt[Bomb];
 
-	R->EDX<WarheadTypeClass *>(pData->Ivan_WH);
+	R->EDX<WarheadTypeClass *>(pData->Ivan_WH.Get(RulesClass::Instance->IvanWarhead));
 	R->ECX(pData->Ivan_Damage.Get(RulesClass::Instance->IvanDamage));
 	return 0x438849;
 }
