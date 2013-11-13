@@ -69,8 +69,8 @@ public:
 		int    Wave_FinalIntensity;
 */
 		// custom Ivan Bombs
-		bool Ivan_KillsBridges;
-		bool Ivan_Detachable;
+		Valueable<bool> Ivan_KillsBridges;
+		Valueable<bool> Ivan_Detachable;
 		Customizable<int> Ivan_Damage;
 		Customizable<int> Ivan_Delay;
 		NullableIdx<VocClass> Ivan_TickingSound;

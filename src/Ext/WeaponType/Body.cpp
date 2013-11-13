@@ -106,8 +106,8 @@ void WeaponTypeExt::ExtData::LoadFromINIFile(WeaponTypeExt::TT *pThis, CCINIClas
 	}
 
 	if(pThis->Warhead->IvanBomb) {
-		this->Ivan_KillsBridges = pINI->ReadBool(section, "IvanBomb.DestroysBridges", this->Ivan_KillsBridges);
-		this->Ivan_Detachable   = pINI->ReadBool(section, "IvanBomb.Detachable", this->Ivan_Detachable);
+		this->Ivan_KillsBridges.Read(&exINI, section, "IvanBomb.DestroysBridges");
+		this->Ivan_Detachable.Read(&exINI, section, "IvanBomb.Detachable");
 
 		this->Ivan_Damage.Read(&exINI, section, "IvanBomb.Damage");
 		this->Ivan_Delay.Read(&exINI, section, "IvanBomb.Delay");
