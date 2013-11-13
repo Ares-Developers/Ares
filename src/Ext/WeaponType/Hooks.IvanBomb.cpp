@@ -187,6 +187,10 @@ DEFINE_HOOK(46934D, IvanBombs_Spread, 6)
 	TechnoClass *pTarget = generic_cast<TechnoClass *>(pBullet->Target);
 
 	auto pExt = WeaponTypeExt::ExtMap.Find(pBullet->GetWeaponType());
+	if(!pExt) {
+		Debug::DevLog(Debug::Warning, "IvanBomb bullet without attched WeaponType.\n");
+		return 0x469AA4;
+	}
 
 	// just real target
 	if(cSpread < 0.5) {
