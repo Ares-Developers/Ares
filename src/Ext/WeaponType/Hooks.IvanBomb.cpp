@@ -175,45 +175,39 @@ DEFINE_HOOK(6FA4C6, TechnoClass_Update_ZeroOutTarget, 5)
 DEFINE_HOOK(46934D, IvanBombs_Spread, 6)
 {
 	GET(BulletClass *, pBullet, ESI);
-	double cSpread = pBullet->WH->CellSpread;
 
-	RET_UNLESS(pBullet->Owner && pBullet->Target);
+	if(TechnoClass* pOwner = generic_cast<TechnoClass *>(pBullet->Owner)) {
+		if(auto pExt = WeaponTypeExt::ExtMap.Find(pBullet->GetWeaponType())) {
 
-	TechnoClass *pOwner = generic_cast<TechnoClass *>(pBullet->Owner);
-	if(!pOwner) {
-		return 0x469AA4;
-	}
+			// single target or spread switch
+			if(pBullet->WH->CellSpread < 0.5f) {
 
-	TechnoClass *pTarget = generic_cast<TechnoClass *>(pBullet->Target);
+				// single target
+				if(auto pTarget = generic_cast<TechnoClass*>(pBullet->Target)) {
+					pExt->PlantBomb(pOwner, pTarget);
+				}
+			} else {
 
-	auto pExt = WeaponTypeExt::ExtMap.Find(pBullet->GetWeaponType());
-	if(!pExt) {
-		Debug::DevLog(Debug::Warning, "IvanBomb bullet without attched WeaponType.\n");
-		return 0x469AA4;
-	}
+				// cell spread
+				int Spread = static_cast<int>(pBullet->WH->CellSpread);
 
-	// just real target
-	if(cSpread < 0.5) {
-		if(pTarget) {
-			pExt->PlantBomb(pOwner, pTarget);
+				CoordStruct tgtCoords;
+				pBullet->GetTargetCoords(&tgtCoords);
+
+				CellStruct centerCoords = MapClass::Instance->GetCellAt(tgtCoords)->MapCoords;
+
+				CellSpreadIterator iter(centerCoords, Spread);
+				iter.apply<TechnoClass>([pOwner, pExt](TechnoClass* pTechno) {
+					if(pTechno != pOwner && !pTechno->AttachedBomb) {
+						pExt->PlantBomb(pOwner, pTechno);
+					}
+					return true;
+				});
+			}
+		} else {
+			Debug::DevLog(Debug::Warning, "IvanBomb bullet without attched WeaponType.\n");
 		}
-		return 0x469AA4;
 	}
-
-	int Spread = int(cSpread);
-
-	CoordStruct tgtCoords;
-	pBullet->GetTargetCoords(&tgtCoords);
-
-	CellStruct centerCoords = MapClass::Instance->GetCellAt(&tgtCoords)->MapCoords;
-
-	CellSpreadIterator iter(centerCoords, Spread);
-	iter.apply<TechnoClass>([pOwner, pExt](TechnoClass* pTechno) {
-		if(pTechno != pOwner && !pTechno->AttachedBomb) {
-			pExt->PlantBomb(pOwner, pTechno);
-		}
-		return true;
-	});
 
 	return 0x469AA4;
 }
