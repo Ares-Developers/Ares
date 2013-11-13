@@ -138,6 +138,7 @@ void WarheadTypeExt::ExtData::applyRipples(CoordStruct *coords) {
 	if (this->Ripple_Radius) {
 		IonBlastClass *IB;
 		GAME_ALLOC(IonBlastClass, IB, *coords);
+		IB->DisableIonBeam = TRUE;
 		WarheadTypeExt::IonExt[IB] = this;
 	}
 }
