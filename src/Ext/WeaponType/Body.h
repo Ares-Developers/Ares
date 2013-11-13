@@ -71,7 +71,7 @@ public:
 		// custom Ivan Bombs
 		Valueable<bool> Ivan_KillsBridges;
 		Valueable<bool> Ivan_Detachable;
-		Customizable<int> Ivan_Damage;
+		Nullable<int> Ivan_Damage;
 		Customizable<int> Ivan_Delay;
 		NullableIdx<VocClass> Ivan_TickingSound;
 		NullableIdx<VocClass> Ivan_AttachSound;
@@ -108,7 +108,7 @@ public:
 			Laser_Thickness (NULL),
 			Ivan_KillsBridges (true),
 			Ivan_Detachable (true),
-			Ivan_Damage (&RulesClass::Instance->IvanDamage),
+			Ivan_Damage (),
 			Ivan_Delay (&RulesClass::Instance->IvanTimedDelay),
 			Ivan_TickingSound (),
 			Ivan_AttachSound (),
