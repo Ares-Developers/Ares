@@ -72,7 +72,7 @@ public:
 		Valueable<bool> Ivan_KillsBridges;
 		Valueable<bool> Ivan_Detachable;
 		Nullable<int> Ivan_Damage;
-		Customizable<int> Ivan_Delay;
+		Nullable<int> Ivan_Delay;
 		NullableIdx<VocClass> Ivan_TickingSound;
 		NullableIdx<VocClass> Ivan_AttachSound;
 		Customizable<WarheadTypeClass *> Ivan_WH;
@@ -109,7 +109,7 @@ public:
 			Ivan_KillsBridges (true),
 			Ivan_Detachable (true),
 			Ivan_Damage (),
-			Ivan_Delay (&RulesClass::Instance->IvanTimedDelay),
+			Ivan_Delay (),
 			Ivan_TickingSound (),
 			Ivan_AttachSound (),
 			Ivan_WH (&RulesClass::Instance->IvanWarhead),

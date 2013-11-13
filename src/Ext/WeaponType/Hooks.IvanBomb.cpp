@@ -41,8 +41,9 @@ DEFINE_HOOK(438A00, BombClass_GetCurrentFrame, 6)
 	if(pSHP->Frames >= 2) {
 		if(pThis->DeathBomb == FALSE) {
 			// -1 so that last iteration has room to flicker. order is important
+			int delay = pData->Ivan_Delay.Get(RulesClass::Instance->IvanTimedDelay);
 			int lifetime = (Unsorted::CurrentFrame - pThis->PlantingFrame);
-			frame = lifetime / (pData->Ivan_Delay / (pSHP->Frames - 1));
+			frame = lifetime / (delay / (pSHP->Frames - 1));
 
 			// flicker over a time period
 			int rate = pData->Ivan_FlickerRate.Get(RulesClass::Instance->IvanIconFlickerRate);

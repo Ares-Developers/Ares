@@ -359,7 +359,7 @@ void WeaponTypeExt::ExtData::PlantBomb(TechnoClass* pSource, ObjectClass* pTarge
 		if(auto pBomb = pTarget->AttachedBomb) {
 			WeaponTypeExt::BombExt[pBomb] = const_cast<ExtData*>(this);
 
-			pBomb->DetonationFrame = Unsorted::CurrentFrame + this->Ivan_Delay.Get();
+			pBomb->DetonationFrame = Unsorted::CurrentFrame + this->Ivan_Delay.Get(RulesClass::Instance->IvanTimedDelay);
 			pBomb->TickSound = this->Ivan_TickingSound.Get(RulesClass::Instance->BombTickingSound);
 
 			int index = this->Ivan_AttachSound.Get(RulesClass::Instance->BombAttachSound);
