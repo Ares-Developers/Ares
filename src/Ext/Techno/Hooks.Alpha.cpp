@@ -11,14 +11,14 @@ hash_AlphaExt TechnoExt::AlphaExt;
 
 DEFINE_HOOK(420960, AlphaShapeClass_CTOR, 5)
 {
-	GET_STACK(ObjectClass *, O, 0x4);
-	GET(AlphaShapeClass *, AS, ECX);
-	hash_AlphaExt::iterator i = TechnoExt::AlphaExt.find(O);
+	GET_STACK(ObjectClass*, pSource, 0x4);
+	GET(AlphaShapeClass*, pAlpha, ECX);
+	auto i = TechnoExt::AlphaExt.find(pSource);
 	if(i != TechnoExt::AlphaExt.end()) {
 		GAME_DEALLOC(i->second);
 		// i is invalid now.
 	}
-	TechnoExt::AlphaExt[O] = AS;
+	TechnoExt::AlphaExt[pSource] = pAlpha;
 	return 0;
 }
 
@@ -33,9 +33,8 @@ DEFINE_HOOK(420A71, AlphaShapeClass_CTOR_Anims, 5)
 
 DEFINE_HOOK(421730, AlphaShapeClass_SDDTOR, 8)
 {
-	GET(AlphaShapeClass *, AS, ECX);
-	ObjectClass *O = AS->AttachedTo;
-	hash_AlphaExt::iterator i = TechnoExt::AlphaExt.find(O);
+	GET(AlphaShapeClass*, pAlpha, ECX);
+	auto i = TechnoExt::AlphaExt.find(pAlpha->AttachedTo);
 	if(i != TechnoExt::AlphaExt.end()) {
 		TechnoExt::AlphaExt.erase(i);
 	}
@@ -51,8 +50,8 @@ DEFINE_HOOK(421798, AlphaShapeClass_SDDTOR_Anims, 6)
 
 DEFINE_HOOK(5F3D65, ObjectClass_DTOR, 6)
 {
-	GET(ObjectClass *, O, ESI);
-	hash_AlphaExt::iterator i = TechnoExt::AlphaExt.find(O);
+	GET(ObjectClass*, pThis, ESI);
+	auto i = TechnoExt::AlphaExt.find(pThis);
 	if(i != TechnoExt::AlphaExt.end()) {
 		GAME_DEALLOC(i->second);
 		// i is invalid now.
@@ -66,15 +65,15 @@ void UpdateAlphaShape(ObjectClass* pSource) {
 		return;
 	}
 
-	const SHPStruct* pAlpha = pSourceType->AlphaImage;
-	if(!pAlpha) {
+	const SHPStruct* pImage = pSourceType->AlphaImage;
+	if(!pImage) {
 		return;
 	}
 
 	CoordStruct XYZ;
 
 	RectangleStruct *ScreenArea = &TacticalClass::Instance->VisibleArea;
-	Point2D off = {ScreenArea->X - (pAlpha->Width / 2), ScreenArea->Y - (pAlpha->Height / 2)};
+	Point2D off = {ScreenArea->X - (pImage->Width / 2), ScreenArea->Y - (pImage->Height / 2)};
 	Point2D xy;
 
 	// for animations attached to the owner object, consider
@@ -105,8 +104,8 @@ void UpdateAlphaShape(ObjectClass* pSource) {
 			xy.Y += cellDimensions.Y / 2;
 			xy += off;
 			RectangleStruct Dirty = {xy.X - ScreenArea->X - cellDimensions.X,
-				xy.Y - ScreenArea->Y - cellDimensions.Y, pAlpha->Width + cellDimensions.X * 2,
-				pAlpha->Height + cellDimensions.Y * 2};
+				xy.Y - ScreenArea->Y - cellDimensions.Y, pImage->Width + cellDimensions.X * 2,
+				pImage->Height + cellDimensions.Y * 2};
 			TacticalClass::Instance->RegisterDirtyArea(Dirty, true);
 		}
 	}
@@ -124,7 +123,7 @@ void UpdateAlphaShape(ObjectClass* pSource) {
 	}
 
 	if(Inactive) {
-		hash_AlphaExt::iterator i = TechnoExt::AlphaExt.find(pSource);
+		auto i = TechnoExt::AlphaExt.find(pSource);
 		if(i != TechnoExt::AlphaExt.end()) {
 			GAME_DEALLOC(i->second);
 			// i is invalid now.
@@ -137,11 +136,11 @@ void UpdateAlphaShape(ObjectClass* pSource) {
 		TacticalClass::Instance->CoordsToClient(&XYZ, &xy);
 		xy += off;
 		++Unsorted::IKnowWhatImDoing;
-		AlphaShapeClass *placeholder;
+		AlphaShapeClass* placeholder;
 		GAME_ALLOC(AlphaShapeClass, placeholder, pSource, xy.X, xy.Y);
 		--Unsorted::IKnowWhatImDoing;
 		//int Margin = 40;
-		RectangleStruct Dirty =	{xy.X - ScreenArea->X, xy.Y - ScreenArea->Y, pAlpha->Width, pAlpha->Height};
+		RectangleStruct Dirty = {xy.X - ScreenArea->X, xy.Y - ScreenArea->Y, pImage->Width, pImage->Height};
 		TacticalClass::Instance->RegisterDirtyArea(Dirty, true);
 	}
 }
@@ -165,13 +164,13 @@ DEFINE_HOOK(423B0B, AnimClass_Update_AlphaLight, 6)
 
 DEFINE_HOOK(420F75, AlphaLightClass_UpdateScreen_ShouldDraw, 5)
 {
-	GET(AlphaShapeClass *, A, ECX);
+	GET(AlphaShapeClass*, pAlpha, ECX);
 
-	bool shouldDraw = !A->IsObjectGone;
+	bool shouldDraw = !pAlpha->IsObjectGone;
 
 	if(shouldDraw) {
-		if(TechnoClass* T = generic_cast<TechnoClass *>(A->AttachedTo)) {
-			TechnoExt::ExtData* pData = TechnoExt::ExtMap.Find(T);
+		if(auto pTechno = abstract_cast<TechnoClass*>(pAlpha->AttachedTo)) {
+			auto pData = TechnoExt::ExtMap.Find(pTechno);
 			shouldDraw = pData->DrawVisualFX();
 		}
 	}
@@ -180,14 +179,12 @@ DEFINE_HOOK(420F75, AlphaLightClass_UpdateScreen_ShouldDraw, 5)
 
 DEFINE_HOOK(4210AC, AlphaLightClass_UpdateScreen_Header, 5)
 {
-	GET(AlphaShapeClass *, A, EDX);
-	GET(SHPStruct *, Image, ECX);
-	if(ObjectClass *O = A->AttachedTo) {
-		if(TechnoClass * T = generic_cast<TechnoClass *>(O)) {
-			TechnoExt::ExtData * pData = TechnoExt::ExtMap.Find(T);
-			unsigned int idx = pData->AlphaFrame(Image);
-			R->Stack(0x0, idx);
-		}
+	GET(AlphaShapeClass*, pAlpha, EDX);
+	GET(SHPStruct *, pImage, ECX);
+	if(auto pTechno = abstract_cast<TechnoClass*>(pAlpha->AttachedTo)) {
+		auto pData = TechnoExt::ExtMap.Find(pTechno);
+		unsigned int idx = pData->AlphaFrame(pImage);
+		R->Stack(0x0, idx);
 	}
 	return 0;
 }
@@ -195,14 +192,12 @@ DEFINE_HOOK(4210AC, AlphaLightClass_UpdateScreen_Header, 5)
 DEFINE_HOOK(4211AC, AlphaLightClass_UpdateScreen_Body, 8)
 {
 	GET_STACK(int, AlphaLightIndex, STACK_OFFS(0xDC, 0xB4));
-	GET_STACK(SHPStruct *, Image, STACK_OFFS(0xDC, 0x6C));
-	AlphaShapeClass *A = AlphaShapeClass::Array->Items[AlphaLightIndex];
-	if(ObjectClass *O = A->AttachedTo) {
-		if(TechnoClass * T = generic_cast<TechnoClass *>(O)) {
-			TechnoExt::ExtData * pData = TechnoExt::ExtMap.Find(T);
-			unsigned int idx = pData->AlphaFrame(Image);
-			R->Stack(0x0, idx);
-		}
+	GET_STACK(SHPStruct*, pImage, STACK_OFFS(0xDC, 0x6C));
+	auto pAlpha = AlphaShapeClass::Array->Items[AlphaLightIndex];
+	if(auto pTechno = abstract_cast<TechnoClass*>(pAlpha->AttachedTo)) {
+		auto pData = TechnoExt::ExtMap.Find(pTechno);
+		unsigned int idx = pData->AlphaFrame(pImage);
+		R->Stack(0x0, idx);
 	}
 	return 0;
 }
@@ -211,13 +206,13 @@ DEFINE_HOOK(4211AC, AlphaLightClass_UpdateScreen_Body, 8)
 DEFINE_HOOK(421371, TacticalClass_UpdateAlphasInRectangle_ShouldDraw, 5)
 {
 	GET(int, AlphaLightIndex, EBX);
-	AlphaShapeClass *A = AlphaShapeClass::Array->Items[AlphaLightIndex];
+	auto pAlpha = AlphaShapeClass::Array->Items[AlphaLightIndex];
 
-	bool shouldDraw = !A->IsObjectGone;
+	bool shouldDraw = !pAlpha->IsObjectGone;
 
 	if(shouldDraw) {
-		if(TechnoClass* T = generic_cast<TechnoClass *>(A->AttachedTo)) {
-			TechnoExt::ExtData* pData = TechnoExt::ExtMap.Find(T);
+		if(auto pTechno = abstract_cast<TechnoClass*>(pAlpha->AttachedTo)) {
+			auto pData = TechnoExt::ExtMap.Find(pTechno);
 			shouldDraw = pData->DrawVisualFX();
 		}
 	}
@@ -227,54 +222,50 @@ DEFINE_HOOK(421371, TacticalClass_UpdateAlphasInRectangle_ShouldDraw, 5)
 DEFINE_HOOK(42146E, TacticalClass_UpdateAlphasInRectangle_Header, 5)
 {
 	GET(int, AlphaLightIndex, EBX);
-	GET(RectangleStruct *, buffer, EDX);
-	GET(SHPStruct *, Image, EDI);
+	GET(RectangleStruct*, buffer, EDX);
+	GET(SHPStruct*, pImage, EDI);
 
-	AlphaShapeClass *A = AlphaShapeClass::Array->Items[AlphaLightIndex];
+	auto pAlpha = AlphaShapeClass::Array->Items[AlphaLightIndex];
 	unsigned int idx = 0;
-	if(ObjectClass *O = A->AttachedTo) {
-		if(TechnoClass * T = generic_cast<TechnoClass *>(O)) {
-			TechnoExt::ExtData * pData = TechnoExt::ExtMap.Find(T);
-			idx = pData->AlphaFrame(Image);
-		}
+	if(auto pTechno = abstract_cast<TechnoClass*>(pAlpha->AttachedTo)) {
+		auto pData = TechnoExt::ExtMap.Find(pTechno);
+		idx = pData->AlphaFrame(pImage);
 	}
-	R->EAX(Image->GetFrameBounds(buffer, idx));
+	R->EAX(pImage->GetFrameBounds(buffer, idx));
 	return 0x421478;
 }
 
 DEFINE_HOOK(42152C, TacticalClass_UpdateAlphasInRectangle_Body, 8)
 {
 	GET_STACK(int, AlphaLightIndex, STACK_OFFS(0xA4, 0x78));
-	GET(SHPStruct *, Image, ECX);
-	AlphaShapeClass *A = AlphaShapeClass::Array->Items[AlphaLightIndex];
-	if(ObjectClass *O = A->AttachedTo) {
-		if(TechnoClass * T = generic_cast<TechnoClass *>(O)) {
-			TechnoExt::ExtData * pData = TechnoExt::ExtMap.Find(T);
-			unsigned int idx = pData->AlphaFrame(Image);
-			R->Stack(0x0, idx);
-		}
+	GET(SHPStruct*, pImage, ECX);
+	auto pAlpha = AlphaShapeClass::Array->Items[AlphaLightIndex];
+	if(auto pTechno = abstract_cast<TechnoClass*>(pAlpha->AttachedTo)) {
+		auto pData = TechnoExt::ExtMap.Find(pTechno);
+		unsigned int idx = pData->AlphaFrame(pImage);
+		R->Stack(0x0, idx);
 	}
 	return 0;
 }
 
 DEFINE_HOOK(71944E, TeleportLocomotionClass_ILocomotion_Process, 6)
 {
-	GET(FootClass *, Object, ECX);
-	GET(CoordStruct *, XYZ, EDX);
-	Object->GetCoords(XYZ);
-	R->EAX<CoordStruct *>(XYZ);
+	GET(FootClass*, pObject, ECX);
+	GET(CoordStruct*, XYZ, EDX);
+	pObject->GetCoords(XYZ);
+	R->EAX<CoordStruct*>(XYZ);
 
-	if(TechnoTypeClass *Type = Object->GetTechnoType()) {
-		if(SHPStruct *Alpha = Type->AlphaImage) {
+	if(auto pType = pObject->GetTechnoType()) {
+		if(auto pImage = pType->AlphaImage) {
 			Point2D xy;
 			TacticalClass::Instance->CoordsToClient(XYZ, &xy);
-			RectangleStruct *ScreenArea = &TacticalClass::Instance->VisibleArea;
-			Point2D off = { ScreenArea->X - (Alpha->Width / 2), ScreenArea->Y - (Alpha->Height / 2) };
+			RectangleStruct* ScreenArea = &TacticalClass::Instance->VisibleArea;
+			Point2D off = {ScreenArea->X - (pImage->Width / 2), ScreenArea->Y - (pImage->Height / 2)};
 			xy += off;
 			RectangleStruct Dirty =
 			  { xy.X - ScreenArea->X, xy.Y - ScreenArea->Y,
-				Alpha->Width, Alpha->Height };
-			TacticalClass::Instance->RegisterDirtyArea(Dirty, 1);
+				pImage->Width, pImage->Height};
+			TacticalClass::Instance->RegisterDirtyArea(Dirty, true);
 		}
 	}
 
