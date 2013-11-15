@@ -1,6 +1,6 @@
 [branch]
-Name=Ares Development Mainline
-Description=This is the trunk or master branch of Ares's repository. It contains the current in-development code.
+Name=AlexB's 0.5 Stuff Branch
+Description=This is stuff of various different types that are neither Cloak or Tiberium.
 TargetVersion=0.5
 Stable=no
 ReadyForTesting=yes
