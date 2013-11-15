@@ -114,16 +114,20 @@ DEFINE_HOOK(707D20, TechnoClass_GetCrew, 5)
 DEFINE_HOOK(44EB10, BuildingClass_GetCrew, 9)
 {
 	GET(BuildingClass*, pThis, ECX);
-	HouseClass* pHouse = pThis->Owner;
+	auto pTypeExt = TechnoTypeExt::ExtMap.Find(pThis->GetTechnoType());
 
 	InfantryTypeClass* pType = nullptr;
 
-	// with some luck, and if building-producing building has not been captured, spawn an engineer
+	// YR defaults to 25 for buildings producing buildings
+	int EngineerChance = (pThis->Type->Factory == BuildingTypeClass::AbsID) ? 25 : 0;
+	EngineerChance = pTypeExt->Crew_EngineerChance.Get(EngineerChance);
+
+	// with some luck, and if the building has not been captured, spawn an engineer
 	if(!pThis->HasBeenCaptured
-		&& ScenarioClass::Instance->Random.RandomRanged(0, 99) < 25
-		&& pThis->Type->Factory == BuildingTypeClass::AbsID)
+		&& EngineerChance > 0
+		&& ScenarioClass::Instance->Random.RandomRanged(0, 99) < EngineerChance)
 	{
-		auto pExt = HouseExt::ExtMap.Find(pHouse);
+		auto pExt = HouseExt::ExtMap.Find(pThis->Owner);
 		pType = pExt->GetEngineer();
 	} else {
 		// call base
