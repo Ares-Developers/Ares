@@ -34,7 +34,7 @@ DEFINE_HOOK(53B080, PsyDom_Fire, 5) {
 			IonBlastClass* pBlast = NULL;
 			GAME_ALLOC(IonBlastClass, pBlast, coords);
 			if(pBlast) {
-				pBlast->DisableIonBeam = 1;
+				pBlast->DisableIonBeam = TRUE;
 			}
 		}
 
