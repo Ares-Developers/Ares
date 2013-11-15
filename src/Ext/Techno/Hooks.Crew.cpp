@@ -69,12 +69,20 @@ DEFINE_HOOK(707D20, TechnoClass_GetCrew, 5)
 
 	InfantryTypeClass* pCrewType = nullptr;
 
+	// YR defaults to 15 for armed objects,
+	int TechnicianChance = pThis->IsArmed() ? 15 : 0;
+
+	// Ares < 0.5 defaulted to 0 for non-buildings.
+	if(abstract_cast<FootClass*>(pThis)) {
+		TechnicianChance = 0;
+	}
+
 	if(pType->Crewed) {
 		// for civilian houses always technicians. random for others
 		bool isTechnician = false;
 		if(pHouse->Type->SideIndex == -1) {
 			isTechnician = true;
-		} else if(pThis->IsArmed() && ScenarioClass::Instance->Random.RandomRanged(0, 99) < 15) {
+		} else if(TechnicianChance > 0 && ScenarioClass::Instance->Random.RandomRanged(0, 99) < TechnicianChance) {
 			isTechnician = true;
 		}
 
