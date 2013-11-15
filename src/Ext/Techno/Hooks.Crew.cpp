@@ -77,6 +77,7 @@ DEFINE_HOOK(707D20, TechnoClass_GetCrew, 5)
 	if(abstract_cast<FootClass*>(pThis)) {
 		TechnicianChance = 0;
 	}
+	TechnicianChance = pExt->Crew_TechnicianChance.Get(TechnicianChance);
 
 	if(pType->Crewed) {
 		// for civilian houses always technicians. random for others

@@ -363,6 +363,9 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 		}
 	}
 
+	// crew settings
+	this->Crew_TechnicianChance.Read(&exINI, section, "Crew.TechnicianChance");
+
 	// quick fix - remove after the rest of weapon selector code is done
 	return;
 }

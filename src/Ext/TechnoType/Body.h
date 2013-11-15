@@ -29,6 +29,7 @@ public:
 		Promotable<int> Survivors_PassengerChance;
 		// new on 28.09.09 for #631
 		int Survivors_PilotCount; //!< Defines the number of pilots inside this vehicle if Crewed=yes; maximum number of pilots who can survive. Defaults to 0 if Crewed=no; defaults to 1 if Crewed=yes. // NOTE: Flag in INI is called Survivor.Pilots
+		Nullable<int> Crew_TechnicianChance;
 
 		// animated cameos
 //		int Cameo_Interval;
@@ -160,6 +161,7 @@ public:
 			Survivors_PilotChance (),
 			Survivors_PassengerChance (),
 			Survivors_PilotCount (-1),
+			Crew_TechnicianChance (),
 			PrerequisiteTheaters (0xFFFFFFFF),
 			Secret_RequiredHouses (0),
 			Secret_ForbiddenHouses (0),
