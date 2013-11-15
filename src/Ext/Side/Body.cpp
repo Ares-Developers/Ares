@@ -253,8 +253,7 @@ DWORD SideExt::LoadTextColor(REGISTERS* R, DWORD dwReturnAddress)
 {
 	// if there is a cached LoadTextColor, use that.
 	int index = SideExt::CurrentLoadTextColor;
-	if(ColorScheme::Array->ValidIndex(index)) {
-		ColorScheme* pCS = ColorScheme::Array->GetItem(index);
+	if(auto pCS = ColorScheme::Array->GetItemOrDefault(index)) {
 		R->EAX(pCS);
 		return dwReturnAddress;
 	}
