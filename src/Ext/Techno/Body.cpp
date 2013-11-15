@@ -65,8 +65,8 @@ void TechnoExt::SpawnSurvivors(FootClass *pThis, TechnoClass *pKiller, bool Sele
 
 		// possibly eject up to PilotCount crew members
 		if(Type->Crewed && chance > 0) {
-			if(InfantryTypeClass* PilotType = pData->Survivors_Pilots.GetItemOrDefault(pOwner->SideIndex)) {
-				for(int i = 0; i < PilotCount; ++i) {
+			for(int i = 0; i < PilotCount; ++i) {
+				if(auto PilotType = pThis->GetCrew()) {
 					if(ScenarioClass::Instance->Random.RandomRanged(1, 100) <= chance) {
 						InfantryClass *Pilot = reinterpret_cast<InfantryClass *>(PilotType->CreateObject(pOwner));
 						Pilot->Health /= 2;
