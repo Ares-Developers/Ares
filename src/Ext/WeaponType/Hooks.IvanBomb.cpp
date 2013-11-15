@@ -68,16 +68,16 @@ DEFINE_HOOK(438A00, BombClass_GetCurrentFrame, 6)
 }
 
 // 6F523C, 5
-// custom ivan bomb drawing 2
-DEFINE_HOOK(6F523C, TechnoClass_DrawExtras2, 5)
+// custom ivan bomb drawing
+DEFINE_HOOK(6F523C, TechnoClass_DrawExtras_IvanBombImage, 5)
 {
-	GET(TechnoClass *, pThis, EBP);
-	BombClass * Bomb = pThis->AttachedBomb;
+	GET(TechnoClass*, pThis, EBP);
+	auto pBomb = pThis->AttachedBomb;
 
-	WeaponTypeExt::ExtData *pData = WeaponTypeExt::BombExt[Bomb];
+	auto pData = WeaponTypeExt::BombExt[pBomb];
 
-	if(SHPStruct *Image = pData->Ivan_Image.Get(RulesClass::Instance->BOMBCURS_SHP)) {
-		R->ECX(Image);
+	if(SHPStruct* pImage = pData->Ivan_Image.Get(RulesClass::Instance->BOMBCURS_SHP)) {
+		R->ECX(pImage);
 		return 0x6F5247;
 	}
 	return 0;
