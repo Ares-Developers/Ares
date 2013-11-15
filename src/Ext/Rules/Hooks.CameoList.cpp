@@ -10,7 +10,7 @@ void RulesExt::ClearCameos() {
 		auto &cameos = RulesExt::TabCameos[i];
 		cameos.Clear();
 		cameos.CapacityIncrement = 100;
-		cameos.SetCapacity(100, NULL);
+		cameos.Reserve(100);
 	}
 }
 

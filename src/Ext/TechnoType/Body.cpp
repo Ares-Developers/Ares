@@ -89,7 +89,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	}
 
 	// survivors
-	this->Survivors_Pilots.SetCapacity(SideClass::Array->Count, NULL);
+	this->Survivors_Pilots.Reserve(SideClass::Array->Count);
 	for(int i=this->Survivors_Pilots.Count; i<SideClass::Array->Count; ++i) {
 		this->Survivors_Pilots[i] = NULL;
 	}
