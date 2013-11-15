@@ -63,6 +63,7 @@ DEFINE_HOOK(707D20, TechnoClass_GetCrew, 5)
 {
 	GET(TechnoClass*, pThis, ECX);
 	auto pType = pThis->GetTechnoType();
+	auto pExt = TechnoTypeExt::ExtMap.Find(pType);
 
 	auto pHouse = pThis->Owner;
 	auto pHouseExt = HouseExt::ExtMap.Find(pHouse);
@@ -88,18 +89,16 @@ DEFINE_HOOK(707D20, TechnoClass_GetCrew, 5)
 
 		// chose the appropriate type
 		if(!isTechnician) {
-			// get the side's crew
-			pCrewType = pHouseExt->GetCrew();
+			// customize with this techno's pilot type
+			auto& pPilots = pExt->Survivors_Pilots;
+			int index = pHouse->SideIndex;
 
-			// replace with this techno's pilot type
-			if(auto pExt = TechnoTypeExt::ExtMap.Find(pType)) {
-				auto& pPilots = pExt->Survivors_Pilots;
-				int index = pHouse->SideIndex;
-
-				// only use it if non-null, as documented
-				if(auto pPilotType = pPilots.GetItemOrDefault(index)) {
-					pCrewType = pPilotType;
-				}
+			// only use it if non-null, as documented
+			if(auto pPilotType = pPilots.GetItemOrDefault(index)) {
+				pCrewType = pPilotType;
+			} else {
+				// get the side's crew
+				pCrewType = pHouseExt->GetCrew();
 			}
 		} else {
 			// either civilian side or chance
