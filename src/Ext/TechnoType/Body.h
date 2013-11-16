@@ -152,6 +152,7 @@ public:
 
 		// tiberium related
 		Nullable<bool> TiberiumProof;
+		Nullable<bool> TiberiumRemains;
 		Valueable<bool> TiberiumSpill;
 		Nullable<int> TiberiumTransmogrify;
 
@@ -217,6 +218,7 @@ public:
 			HijackerOneTime (false),
 			WaterImage (NULL),
 			TiberiumProof (),
+			TiberiumRemains(),
 			TiberiumSpill (false),
 			TiberiumTransmogrify (),
 			Refinery_UseStorage (false),

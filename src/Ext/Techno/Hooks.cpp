@@ -1244,9 +1244,10 @@ DEFINE_HOOK(702216, TechnoClass_ReceiveDamage_TiberiumHeal, 6)
 {
 	GET(TechnoClass*, pThis, ESI);
 	TechnoTypeClass* pType = pThis->GetTechnoType();
+	auto pExt = TechnoTypeExt::ExtMap.Find(pType);
 
 	// TS did not check for HasAbility here, either
-	if(pType->TiberiumHeal && RulesExt::Global()->Tiberium_HealEnabled) {
+	if(pExt->TiberiumRemains.Get(pType->TiberiumHeal && RulesExt::Global()->Tiberium_HealEnabled)) {
 		CoordStruct crd;
 		pThis->GetCoords(&crd);
 		CellClass* pCenter = MapClass::Instance->GetCellAt(&crd);

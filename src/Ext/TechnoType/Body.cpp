@@ -351,6 +351,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 
 	// tiberium
 	this->TiberiumProof.Read(&exINI, section, "TiberiumProof");
+	this->TiberiumRemains.Read(&exINI, section, "TiberiumRemains");
 	this->TiberiumSpill.Read(&exINI, section, "TiberiumSpill");
 	this->TiberiumTransmogrify.Read(&exINI, section, "TiberiumTransmogrify");
 
