@@ -17,36 +17,83 @@
 
 class CustomPalette {
 public:
-	ConvertClass *Convert;
-	BytePalette *Palette;
+	ConvertClass* Convert;
+	BytePalette* Palette;
+	BytePalette* TargetPalette;
+	DSurface* TargetSurface;
+	size_t ShadeCount;
 
-	CustomPalette() :
-		Convert(NULL),
-		Palette(NULL)
+	CustomPalette(BytePalette* pTargetPal = nullptr, DSurface* pSurface = nullptr, size_t shades = 1) :
+		Convert(nullptr),
+		Palette(nullptr),
+		TargetPalette(pTargetPal),
+		TargetSurface(pSurface),
+		ShadeCount(shades)
 	{};
 
 	~CustomPalette() {
-		GAME_DEALLOC(this->Convert);
-		GAME_DEALLOC(this->Palette);
+		this->Clear();
 	}
 
-	bool LoadFromINI(CCINIClass *pINI, const char *pSection, const char *pKey, const char *pDefault="") {
+	bool LoadFromINI(CCINIClass* pINI, const char* pSection, const char* pKey, const char* pDefault = "") {
 		if(pINI->ReadString(pSection, pKey, pDefault, Ares::readBuffer, Ares::readLength)) {
-			if(char * suffix = strstr(Ares::readBuffer, "~~~")) {
-				const char * theaterSpecific = Theater::Array[ScenarioClass::Instance->Theater].Extension;
+			if(char* suffix = strstr(Ares::readBuffer, "~~~")) {
+				const char* theaterSpecific = Theater::Array[ScenarioClass::Instance->Theater].Extension;
 				suffix[0] = theaterSpecific[0];
 				suffix[1] = theaterSpecific[1];
 				suffix[2] = theaterSpecific[2];
 			}
-			GAME_DEALLOC(this->Palette);
-			GAME_DEALLOC(this->Convert);
-			this->Palette = NULL;
-			this->Convert = NULL;
-			ConvertClass::CreateFromFile(Ares::readBuffer, &this->Palette, &this->Convert);
-			return !!this->Convert;
+
+			this->Clear();
+
+			this->Palette = this->ReadPalette(Ares::readBuffer);
+			if(this->Palette) {
+				this->CreateConvert();
+			}
+
+			return this->Convert != nullptr;
 		}
 		return false;
 	};
+
+private:
+	void Clear() {
+		GAME_DEALLOC(this->Convert);
+		this->Convert = nullptr;
+
+		GAME_DEALLOC(this->Palette);
+		this->Palette = nullptr;
+	}
+
+	BytePalette* ReadPalette(const char* filename) {
+		BytePalette* ret = nullptr;
+
+		CCFileClass file(filename);
+		if(auto pData = file.ReadWholeFile()) {
+			auto pPal = reinterpret_cast<BytePalette*>(pData);
+
+			GAME_ALLOC(BytePalette, ret);
+
+			// convert 6 bits to 8 bits. not correct,
+			// but this is what the game does
+			for(int i = 0; i < 256; ++i) {
+				ret->Entries[i].R = pPal->Entries[i].R << 2;
+				ret->Entries[i].G = pPal->Entries[i].G << 2;
+				ret->Entries[i].B = pPal->Entries[i].B << 2;
+			}
+
+			delete pData;
+		}
+
+		return ret;
+	}
+
+	void CreateConvert() {
+		auto pTargetPal = this->TargetPalette ? this->TargetPalette : this->Palette;
+		auto pSurface = this->TargetSurface ? this->TargetSurface : DSurface::Alternate;
+
+		GAME_ALLOC(ConvertClass, this->Convert, this->Palette, pTargetPal, pSurface, this->ShadeCount, 0);
+	}
 };
 
 // vector of char* with builtin storage
