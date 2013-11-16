@@ -24,7 +24,7 @@ public:
 
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			MakeInfantryOwner (INVOKER),
-			Palette()
+			Palette((BytePalette*)0x885780, DSurface::Primary, 53) // pointer to TEMPERAT_PAL (not the Convert!)
 			{ };
 
 		virtual ~ExtData() {
