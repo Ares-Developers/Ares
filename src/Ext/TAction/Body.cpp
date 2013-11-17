@@ -1,6 +1,7 @@
 #include "Body.h"
 
 #include "../../Misc/SWTypes.h"
+#include "../../Misc/SWTypes/Firewall.h"
 
 //#include <HouseClass.h>
 
@@ -25,14 +26,12 @@ void TActionExt::ExtData::Initialize(TActionClass *pThis)
 */
 bool TActionExt::ExtData::ActivateFirestorm(TActionClass* pAction, HouseClass* pHouse, ObjectClass* pObject, TriggerClass* pTrigger, CellStruct* pos)
 {
-	if(!pHouse->FirestormActive && pHouse->Supers.Count) {
-		int firestorm = NewSWType::FindIndex("Firestorm");
-		for(int i=0; i<pHouse->Supers.Count; ++i) {
-			if(pHouse->Supers.GetItem(i)->Type->Type == firestorm) {
-				CellStruct empty;
-				pHouse->Fire_SW(i, &empty);
-				break;
-			}
+	if(!pHouse->FirestormActive) {
+		auto index = pHouse->FindSuperWeaponIndex(SW_Firewall::FirewallTypeIndex);
+
+		if(index >= 0) {
+			CellStruct empty;
+			pHouse->Fire_SW(index, &empty);
 		}
 	}
 	return true;
@@ -46,14 +45,12 @@ bool TActionExt::ExtData::ActivateFirestorm(TActionClass* pAction, HouseClass* p
 */
 bool TActionExt::ExtData::DeactivateFirestorm(TActionClass* pAction, HouseClass* pHouse, ObjectClass* pObject, TriggerClass* pTrigger, CellStruct* pos)
 {
-	if(pHouse->FirestormActive && pHouse->Supers.Count) {
-		int firestorm = NewSWType::FindIndex("Firestorm");
-		for(int i=0; i<pHouse->Supers.Count; ++i) {
-			if(pHouse->Supers.GetItem(i)->Type->Type == firestorm) {
-				CellStruct empty;
-				pHouse->Fire_SW(i, &empty);
-				break;
-			}
+	if(pHouse->FirestormActive) {
+		auto index = pHouse->FindSuperWeaponIndex(SW_Firewall::FirewallTypeIndex);
+
+		if(index >= 0) {
+			CellStruct empty;
+			pHouse->Fire_SW(index, &empty);
 		}
 	}
 	return true;
