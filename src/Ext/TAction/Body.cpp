@@ -68,6 +68,11 @@ bool TActionExt::Execute(TActionClass* pAction, HouseClass* pHouse, ObjectClass*
 	auto pExt = ExtMap.Find(pAction);
 
 	switch(pAction->ActionKind) {
+	case TriggerAction::PlaySoundEffectRandom:
+		// #1004906: function replaced to support more than 100 waypoints
+		*ret = pAction->PlayAudioAtRandomWP(pHouse, pObject, pTrigger, pos);
+		break;
+
 	case TriggerAction::ActivateFirestorm:
 		*ret = pExt->ActivateFirestorm(pAction, pHouse, pObject, pTrigger, pos);
 		break;
