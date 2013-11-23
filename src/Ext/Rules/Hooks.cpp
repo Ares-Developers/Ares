@@ -56,3 +56,11 @@ DEFINE_HOOK(48A2D9, DamageArea_ExplodesThreshold, 6)
 
 	return explodes ? 0x48A2E7 : 0x48A433;
 }
+
+// TiberiumTransmogrify is never initialized explitly, thus do that here
+DEFINE_HOOK(66748A, RulesClass_CTOR_TiberiumTransmogrify, 6)
+{
+	GET(RulesClass*, pThis, ESI);
+	pThis->TiberiumTransmogrify = 0;
+	return 0;
+}
