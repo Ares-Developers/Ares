@@ -31,6 +31,12 @@ class RulesExt
 
 		Valueable<bool> CanMakeStuffUp;
 
+		Valueable<bool> Tiberium_DamageEnabled;
+		Valueable<bool> Tiberium_HealEnabled;
+		Valueable<WarheadTypeClass*> Tiberium_ExplosiveWarhead;
+
+		Valueable<int> OverlayExplodeThreshold;
+
 		NullableIdx<VocClass> DecloakSound;
 		Nullable<int> CloakHeight;
 
@@ -43,6 +49,10 @@ class RulesExt
 			EngineerDamage (0.0F),
 			EngineerAlwaysCaptureTech (true),
 			EngineerDamageCursor (MouseCursor::First[MouseCursorType::Detonate]),
+			Tiberium_DamageEnabled (false),
+			Tiberium_HealEnabled (false),
+			Tiberium_ExplosiveWarhead (nullptr),
+			OverlayExplodeThreshold (0),
 			DecloakSound(),
 			CloakHeight(),
 			EnemyVeterancy(true),

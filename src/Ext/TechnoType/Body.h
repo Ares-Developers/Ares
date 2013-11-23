@@ -165,6 +165,15 @@ public:
 		Valueable<AnimTypeClass*> CustomMissileTrailerAnim;
 		Valueable<int> CustomMissileTrailerSeparation;
 
+		// tiberium related
+		Nullable<bool> TiberiumProof;
+		Nullable<bool> TiberiumRemains;
+		Valueable<bool> TiberiumSpill;
+		Nullable<int> TiberiumTransmogrify;
+
+		// refinery and storage related
+		Valueable<bool> Refinery_UseStorage;
+
 		ValueableIdx<VoxClass> EVA_UnitLost;
 
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
@@ -228,6 +237,11 @@ public:
 			HijackerAllowed (true),
 			HijackerOneTime (false),
 			WaterImage (NULL),
+			TiberiumProof (),
+			TiberiumRemains(),
+			TiberiumSpill (false),
+			TiberiumTransmogrify (),
+			Refinery_UseStorage (false),
 			CloakSound (),
 			DecloakSound (),
 			CloakPowered (false),

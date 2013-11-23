@@ -1,6 +1,8 @@
 #include "Body.h"
 #include "../../Ares.h"
 
+#include <OverlayClass.h>
+
 DEFINE_HOOK(668BF0, RulesClass_Addition, 5)
 {
 	GET(RulesClass*, pItem, ECX);
@@ -43,4 +45,22 @@ DEFINE_HOOK(518744, InfantryClass_ReceiveDamage_ElectricDeath, 6)
 
 	R->EDX(El);
 	return 0x51874D;
+}
+
+DEFINE_HOOK(48A2D9, DamageArea_ExplodesThreshold, 6)
+{
+	GET(OverlayTypeClass*, pOverlay, EAX);
+	GET_STACK(int, damage, 0x24);
+
+	bool explodes = pOverlay->Explodes && damage >= RulesExt::Global()->OverlayExplodeThreshold;
+
+	return explodes ? 0x48A2E7 : 0x48A433;
+}
+
+// TiberiumTransmogrify is never initialized explitly, thus do that here
+DEFINE_HOOK(66748A, RulesClass_CTOR_TiberiumTransmogrify, 6)
+{
+	GET(RulesClass*, pThis, ESI);
+	pThis->TiberiumTransmogrify = 0;
+	return 0;
 }

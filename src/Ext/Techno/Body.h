@@ -148,6 +148,9 @@ public:
 
 		void InvalidateAttachEffectPointer(void *ptr);
 
+		void RefineTiberium(float amount, int idxType);
+		void DepositTiberium(float amount, float bonus, int idxType);
+
 		bool IsCloakable(bool allowPassive) const;
 		bool CloakAllowed() const;
 		bool CloakDisallowed(bool allowPassive) const;
@@ -186,6 +189,8 @@ public:
 	static bool CanICloakByDefault(TechnoClass *pTechno);
 
 	static void Destroy(TechnoClass* pTechno, TechnoClass* pKiller = NULL, HouseClass* pKillerHouse = NULL, WarheadTypeClass* pWarhead = NULL);
+
+	static bool SpawnVisceroid(CoordStruct &crd, ObjectTypeClass* pType, int chance, bool ignoreTibDeathToVisc);
 /*
 	static int SelectWeaponAgainst(TechnoClass *pThis, TechnoClass *pTarget);
 	static bool EvalWeaponAgainst(TechnoClass *pThis, TechnoClass *pTarget, WeaponTypeClass* W);

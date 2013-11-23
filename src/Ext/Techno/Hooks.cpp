@@ -2,11 +2,14 @@
 #include "../TechnoType/Body.h"
 #include "../Building/Body.h"
 #include "../BuildingType/Body.h"
+#include "../Rules/Body.h"
+#include "../Tiberium/Body.h"
 #include "../../Misc/Debug.h"
 #include "../../Misc/JammerClass.h"
 #include "../../Misc/PoweredUnitClass.h"
 
 #include <SpecificStructures.h>
+#include <TiberiumClass.h>
 
 // bugfix #297: Crewed=yes jumpjets spawn parachuted infantry on destruction, not idle
 DEFINE_HOOK(737F97, UnitClass_ReceiveDamage, 0)
@@ -1226,6 +1229,198 @@ DEFINE_HOOK(746C55, UnitClass_GetUIName, 6)
 
 	R->EAX(pThis->ToolTipText);
 	return 0x746C76;
+}
+
+// spawn tiberium when a unit dies. this is a minor part of the
+// tiberium heal feature. the actual healing happens in FootClass_Update.
+DEFINE_HOOK(702216, TechnoClass_ReceiveDamage_TiberiumHeal, 6)
+{
+	GET(TechnoClass*, pThis, ESI);
+	TechnoTypeClass* pType = pThis->GetTechnoType();
+	auto pExt = TechnoTypeExt::ExtMap.Find(pType);
+
+	// TS did not check for HasAbility here, either
+	if(pExt->TiberiumRemains.Get(pType->TiberiumHeal && RulesExt::Global()->Tiberium_HealEnabled)) {
+		CoordStruct crd;
+		pThis->GetCoords(&crd);
+		CellClass* pCenter = MapClass::Instance->GetCellAt(&crd);
+
+		// increase the tiberium for the four neighbours and center.
+		// center is retrieved by getting a neighbour cell index >= 8
+		for(int i=0;i<5; ++i) {
+			CellClass* pCell = pCenter->GetNeighbourCell(2*i);
+			int value = ScenarioClass::Instance->Random.RandomRanged(0, 2);
+			pCell->IncreaseTiberium(0, value);
+		}
+	}
+
+	return 0;
+}
+
+// damage the techno when it is moving over a cell containing tiberium
+DEFINE_HOOK(4D85E4, FootClass_UpdatePosition_TiberiumDamage, 9)
+{
+	GET(FootClass*, pThis, ESI);
+
+	int damage = 0;
+	WarheadTypeClass* pWarhead = nullptr;
+	int transmogrify = RulesClass::Instance->TiberiumTransmogrify;
+
+	if(RulesExt::Global()->Tiberium_DamageEnabled && pThis->GetHeight() <= RulesClass::Instance->HoverHeight) {
+		TechnoTypeClass* pType = pThis->GetTechnoType();
+		TechnoTypeExt::ExtData* pExt = TechnoTypeExt::ExtMap.Find(pType);
+
+		// default is: infantry can be damaged, others cannot
+		bool enabled = (pThis->WhatAmI() != InfantryClass::AbsID);
+
+		if(!pExt->TiberiumProof.Get(enabled) && !pThis->HasAbility(Abilities::TIBERIUM_PROOF)) {
+			if(pThis->Health > 0) {
+				CellClass* pCell = pThis->GetCell();
+				int idxTiberium = pCell->GetContainedTiberiumIndex();
+				if(auto pTiberium = TiberiumClass::Array->GetItemOrDefault(idxTiberium)) {
+					auto pTibExt = TiberiumExt::ExtMap.Find(pTiberium);
+
+					pWarhead = pTibExt->GetWarhead();
+					damage = pTibExt->GetDamage();
+
+					transmogrify = pExt->TiberiumTransmogrify.Get(transmogrify);
+				}
+			}
+		}
+	}
+
+	if(damage && pWarhead) {
+		CoordStruct crd;
+		pThis->GetCoords(&crd);
+
+		if(pThis->ReceiveDamage(&damage, 0, pWarhead, nullptr, FALSE, FALSE, nullptr) == DamageState::NowDead) {
+			TechnoExt::SpawnVisceroid(crd, RulesClass::Instance->SmallVisceroid, transmogrify, false);
+			return 0x4D8F29;
+		}
+	}
+
+	return 0;
+}
+
+// spill the stored tiberium on destruction
+DEFINE_HOOK(702200, TechnoClass_ReceiveDamage_SpillTiberium, 6)
+{
+	GET(TechnoClass*, pThis, ESI);
+
+	TechnoTypeClass* pType = pThis->GetTechnoType();
+	auto pExt = TechnoTypeExt::ExtMap.Find(pType);
+
+	if(pExt->TiberiumSpill) {
+		float stored = pThis->Tiberium.GetTotalAmount();
+		if(pThis->WhatAmI() != BuildingClass::AbsID
+			&& stored > 0.0f
+			&& !ScenarioClass::Instance->SpecialFlags.HarvesterImmune)
+		{
+			// don't spill more than we can hold
+			double max = 9.0;
+			if(max > pType->Storage) {
+				max = pType->Storage;
+			}
+
+			// assume about half full, recalc if possible
+			int value = static_cast<int>(max / 2);
+			if(pType->Storage > 0) {
+				value = Game::F2I(stored / pType->Storage * max);
+			}
+
+			// get the spill center
+			CoordStruct crd;
+			pThis->GetCoords(&crd);
+			CellClass* pCenter = MapClass::Instance->GetCellAt(&crd);
+
+			unsigned int neighbours[] = {9, 2, 7, 1, 4, 3, 0, 5, 6};
+			for(int i=0; i<9; ++i) {
+				// spill random amount
+				int amount = ScenarioClass::Instance->Random.RandomRanged(0, 2);
+				CellClass* pCell = pCenter->GetNeighbourCell(neighbours[i]);
+				pCell->IncreaseTiberium(0, amount);
+				value -= amount;
+
+				// stop if value is reached
+				if(value <= 0) {
+					break;
+				}
+			}
+		}
+	}
+
+	return 0;
+}
+
+// blow up harvester units big time
+DEFINE_HOOK(738749, UnitClass_Destroy_TiberiumExplosive, 6)
+{
+	GET(UnitClass*, pThis, ESI);
+
+	if(RulesClass::Instance->TiberiumExplosive) {
+		if(!ScenarioClass::Instance->SpecialFlags.HarvesterImmune) {
+			if(pThis->Tiberium.GetTotalAmount() > 0.0f) {
+
+				// multiply the amounts with their powers and sum them up
+				int morePower = 0;
+				for(int i=0; i<TiberiumClass::Array->Count; ++i) {
+					TiberiumClass* pTiberium = TiberiumClass::Array->GetItem(i);
+					float power = pThis->Tiberium.GetAmount(i) * pTiberium->Power;
+					morePower += Game::F2I(power);
+				}
+
+				// go boom
+				WarheadTypeClass* pWH = RulesExt::Global()->Tiberium_ExplosiveWarhead;
+				if(morePower > 0 && pWH) {
+					CoordStruct crd;
+					pThis->GetCoords(&crd);
+
+					MapClass::DamageArea(&crd, morePower, pThis, pWH, false, nullptr);
+				}
+			}
+		}
+	}
+
+	return 0x7387C4;
+}
+
+// merge two small visceroids into one large visceroid
+DEFINE_HOOK(739F21, UnitClass_UpdatePosition_Visceroid, 6)
+{
+	GET(UnitClass*, pThis, EBP);
+
+	// fleshbag erotic
+	if(pThis->Type->SmallVisceroid) {
+		if(UnitTypeClass* pLargeType = RulesClass::Instance->LargeVisceroid) {
+			if(UnitClass* pDest = specific_cast<UnitClass*>(pThis->Destination)) {
+				if(pDest->Type->SmallVisceroid) {
+
+					// nice to meat you!
+					CoordStruct crdMe, crdHim;
+					pThis->GetCoords(&crdMe);
+					pDest->GetCoords(&crdHim);
+
+					CellStruct cellMe, cellHim;
+					CellClass::Coord2Cell(&crdMe, &cellMe);
+					CellClass::Coord2Cell(&crdHim, &cellHim);
+
+					// two become one
+					if(cellMe == cellHim) {
+						pDest->Type = pLargeType;
+						pDest->Health = pLargeType->Strength;
+
+						CellClass* pCell = MapClass::Instance->GetCellAt(&pDest->LastMapCoords);
+						pDest->UpdateThreatInCell(pCell);
+
+						pThis->UnInit();
+						return 0x73B0A5;
+					}
+				}
+			}
+		}
+	}
+
+	return 0;
 }
 
 // complete rewrite

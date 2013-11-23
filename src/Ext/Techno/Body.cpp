@@ -1,4 +1,5 @@
 #include "Body.h"
+#include "../BuildingType/Body.h"
 #include "../Rules/Body.h"
 #include "../TechnoType/Body.h"
 #include "../../Misc/SWTypes.h"
@@ -270,6 +271,31 @@ void TechnoExt::StopDraining(TechnoClass *Drainer, TechnoClass *Drainee) {
 			Drainee->Owner->ShouldRecheckTechTree = true;
 		}
 	}
+}
+
+bool TechnoExt::SpawnVisceroid(CoordStruct &crd, ObjectTypeClass* pType, int chance, bool ignoreTibDeathToVisc) {
+	bool ret = false;
+	// create a small visceroid if available and the cell is free
+	if(ignoreTibDeathToVisc || ScenarioClass::Instance->TiberiumDeathToVisceroid) {
+		CellClass* pCell = MapClass::Instance->GetCellAt(&crd);
+		int rnd = ScenarioClass::Instance->Random.RandomRanged(0, 99);
+		if(!(pCell->OccupationFlags & 0x20) && rnd < chance && pType) {
+			if(HouseClass* pHouse = HouseClass::FindNeutral()) {
+				if(ObjectClass* pVisc = pType->CreateObject(pHouse)) {
+					++Unsorted::IKnowWhatImDoing;
+					ret = true;
+					if(!pVisc->Put(&crd, 0)) {
+						// opposed to TS, we clean up, though
+						// the mutex should make it happen.
+						pVisc->UnInit();
+						ret = false;
+					}
+					--Unsorted::IKnowWhatImDoing;
+				}
+			}
+		}
+	}
+	return ret;
 }
 
 unsigned int TechnoExt::ExtData::AlphaFrame(SHPStruct *Image) {
@@ -788,6 +814,74 @@ bool TechnoExt::ExtData::PerformActionHijack(TechnoClass* pTarget) {
 	}
 
 	return ret;
+}
+
+// Processes an amount of tiberium of a specific type.
+/*!
+	This function calculates the value of tiberium and also
+	considers ore purifiers.
+
+	\param amount The amount of tiberium.
+	\param idxType The type of tiberium.
+
+	\author AlexB
+	\date 2012-10-10
+*/
+void TechnoExt::ExtData::RefineTiberium(float amount, int idxType) {
+	TechnoClass* pThis = this->AttachedToObject;
+	HouseClass* pHouse = pThis->GetOwningHouse();
+
+	// get the number of applicable purifiers
+	int purifiers = pHouse->NumOrePurifiers;
+	if(!pHouse->CurrentPlayer && SessionClass::Instance->GameMode) {
+		purifiers += RulesClass::Instance->AIVirtualPurifiers.GetItem(pHouse->AIDifficulty);
+	}
+
+	// bonus amount (in tiberium)
+	float purified = purifiers * RulesClass::Instance->PurifierBonus * amount;
+
+	// add the tiberium to the house's credits
+	DepositTiberium(amount, purified, idxType);
+}
+
+// Adds the value of an amount of tiberium and its bonus amount to the house's credits.
+/*!
+	Stores the tiberium's value on the houses's accounts.
+
+	\param amount The amount of raw tiberium.
+	\param bonus The bonus tiberium amount.
+	\param idxType The type of tiberium.
+
+	\author AlexB
+	\date 2012-10-10
+*/
+void TechnoExt::ExtData::DepositTiberium(float amount, float bonus, int idxType) {
+	TechnoClass* pThis = this->AttachedToObject;
+	HouseClass* pHouse = pThis->GetOwningHouse();
+	auto pTiberium = TiberiumClass::Array->GetItem(idxType);
+	int value = 0;
+
+	// always put the purified money on the bank account. otherwise ore purifiers
+	// would fill up storage with tiberium that doesn't exist. this is consistent with
+	// the original YR, because old GiveTiberium put it on the bank anyhow, despite its name.
+	if(bonus > 0.0f) {
+		value += Game::F2I(bonus * pTiberium->Value * pHouse->Type->IncomeMult);
+	}
+
+	// also add the normal tiberium to the global account?
+	if(amount > 0.0f) {
+		auto pExt = TechnoTypeExt::ExtMap.Find(pThis->GetTechnoType());
+		if(!pExt->Refinery_UseStorage) {
+			value += Game::F2I(amount * pTiberium->Value * pHouse->Type->IncomeMult);
+		} else {
+			pHouse->GiveTiberium(amount, idxType);
+		}
+	}
+
+	// deposit
+	if(value > 0) {
+		pHouse->GiveMoney(value);
+	}
 }
 
 /*! Gets whether the techno has the ability to cloak itself or is cloaked by others.

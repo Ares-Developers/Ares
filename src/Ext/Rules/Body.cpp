@@ -55,6 +55,8 @@ void RulesExt::ExtData::LoadFromINIFile(RulesClass *pThis, CCINIClass *pINI) {
 
 void RulesExt::ExtData::LoadBeforeTypeData(RulesClass *pThis, CCINIClass *pINI) {
 	const char section[] = "WeaponTypes";
+	const char sectionGeneral[] = "General";
+	const char sectionCombatDamage[] = "CombatDamage";
 
 	int len = pINI->GetKeyCount(section);
 	for (int i = 0; i < len; ++i) {
@@ -72,11 +74,17 @@ void RulesExt::ExtData::LoadBeforeTypeData(RulesClass *pThis, CCINIClass *pINI) 
 
 	INI_EX exINI(pINI);
 
-	pData->CanMakeStuffUp.Read(&exINI, "General", "CanMakeStuffUp");
+	pData->CanMakeStuffUp.Read(&exINI, sectionGeneral, "CanMakeStuffUp");
 
-	pData->EnemyVeterancy.Read(&exINI, "General", "EnemyVeterancy");
+	pData->Tiberium_DamageEnabled.Read(&exINI, sectionGeneral, "TiberiumDamageEnabled");
+	pData->Tiberium_HealEnabled.Read(&exINI, sectionGeneral, "TiberiumHealEnabled");
+	pData->Tiberium_ExplosiveWarhead.Parse(&exINI, sectionCombatDamage, "TiberiumExplosiveWarhead");
 
-	pData->TypeSelectUseDeploy.Read(&exINI, "General", "TypeSelectUseDeploy");
+	pData->OverlayExplodeThreshold.Read(&exINI, sectionGeneral, "OverlayExplodeThreshold");
+
+	pData->EnemyVeterancy.Read(&exINI, sectionGeneral, "EnemyVeterancy");
+
+	pData->TypeSelectUseDeploy.Read(&exINI, sectionGeneral, "TypeSelectUseDeploy");
 }
 
 // this should load everything that TypeData is not dependant on

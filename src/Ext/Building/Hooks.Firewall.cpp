@@ -7,6 +7,8 @@
 #include "../BuildingType/Body.h"
 #include "../House/Body.h"
 #include "../Techno/Body.h"
+#include "../Tiberium/Body.h"
+#include "../Rules/Body.h"
 
 DEFINE_HOOK(4FB257, HouseClass_UnitFromFactory_Firewall, 6)
 {
@@ -320,6 +322,36 @@ DEFINE_HOOK(4DA53E, FootClass_Update, 6)
 			if(pTypeData->Firewall_Is && pHouseData->FirewallActive) {
 				BuildingExt::ExtData * pData = BuildingExt::ExtMap.Find(B);
 				pData->ImmolateVictim(F);
+			}
+		}
+	}
+
+	// tiberium heal, as in Tiberian Sun, but customizable per Tiberium type
+	if(F->IsAlive && RulesExt::Global()->Tiberium_HealEnabled
+		&& F->GetHeight() <= RulesClass::Instance->HoverHeight)
+	{
+		TechnoTypeClass* pType = F->GetTechnoType();
+		if(pType->TiberiumHeal || F->HasAbility(Abilities::TIBERIUM_HEAL)) {
+			if(F->Health > 0 && F->Health < pType->Strength) {
+				CellClass* pCell = F->GetCell();
+				if(pCell->LandType == lt_Tiberium) {
+					double delay = RulesClass::Instance->TiberiumHeal;
+					int health = pType->GetRepairStep();
+
+					int idxTib = pCell->GetContainedTiberiumIndex();
+					if(auto pTib = TiberiumClass::Array->GetItemOrDefault(idxTib)) {
+						auto pExt = TiberiumExt::ExtMap.Find(pTib);
+						delay = pExt->GetHealDelay();
+						health = pExt->GetHealStep(F);
+					}
+
+					if(!(Unsorted::CurrentFrame % Game::F2I(delay * 900.0))) {
+						F->Health += health;
+						if(F->Health > pType->Strength) {
+							F->Health = pType->Strength;
+						}
+					}
+				}
 			}
 		}
 	}
