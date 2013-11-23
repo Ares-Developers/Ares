@@ -47,13 +47,6 @@ DEFINE_HOOK(6F9E50, TechnoClass_Update, 5)
 	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(Source);
 	TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(Source->GetTechnoType());
 
-	if(pData->CloakSkipTimer.IsDone()) {
-		pData->CloakSkipTimer.Stop();
-		Source->Cloakable = Source->GetTechnoType()->Cloakable;
-	} else if(pData->CloakSkipTimer.GetTimeLeft() > 0) {
-		Source->Cloakable = 0;
-	}
-
 	// #1208
 	if(pTypeData) {
 		if(pTypeData->PassengerTurret.Get()) {

@@ -1,4 +1,5 @@
 #include "Body.h"
+#include "../Rules/Body.h"
 #include "../TechnoType/Body.h"
 #include "../../Misc/SWTypes.h"
 #include "../../Misc/PoweredUnitClass.h"
@@ -787,6 +788,159 @@ bool TechnoExt::ExtData::PerformActionHijack(TechnoClass* pTarget) {
 	}
 
 	return ret;
+}
+
+/*! Gets whether the techno has the ability to cloak itself or is cloaked by others.
+
+	The techno may have the ability to cloak itself, gained the cloaking ability through
+	veterancy or it may be under the influence of Cloak Generators.
+
+	\param allowPassive Allow the techno to be cloaked by others.
+
+	\return True, if the techno can cloak, false otherwise.
+
+	\author AlexB
+	\date 2012-09-28
+*/
+bool TechnoExt::ExtData::IsCloakable(bool allowPassive) const
+{
+	TechnoClass* pThis = this->AttachedToObject;
+	TechnoTypeClass* pType = pThis->GetTechnoType();
+	auto pTypeExt = TechnoTypeExt::ExtMap.Find(pType);
+
+	// object disallowed from cloaking
+	if(!pTypeExt->CloakAllowed) {
+		return false;
+	}
+
+	// check for active cloak
+	if(pThis->IsCloakable() || pThis->HasAbility(Abilities::CLOAK)) {
+		if(this->CanSelfCloakNow()) {
+			return true;
+		}
+	}
+
+	// if not actively cloakable
+	if(allowPassive) {
+		// cloak generators ignore everything above ground. this
+		// fixes hover units not being affected by cloak.
+		if(pThis->GetHeight() > RulesExt::Global()->CloakHeight.Get(RulesClass::Instance->HoverHeight)) {
+			return false;
+		}
+
+		// search for cloak generators
+		CoordStruct crd;
+		pThis->GetCoords(&crd);
+		CellClass* pCell = MapClass::Instance->GetCellAt(&crd);
+		return pCell->CloakGen_InclHouse(pThis->Owner->ArrayIndex);
+	}
+
+	return false;
+}
+
+/*! Gets whether the techno is allowed to cloak.
+
+	Checks all circumstances that might conflict with the unit cloaking.
+
+	\return True, if the techno is allowed to cloak, false otherwise.
+
+	\author AlexB
+	\date 2012-09-28
+*/
+bool TechnoExt::ExtData::CloakAllowed() const
+{
+	if(this->CloakDisallowed(true)) {
+		return false;
+	}
+
+	TechnoClass* pThis = this->AttachedToObject;
+
+	if(pThis->CloakState == CloakState::Cloaked) {
+		return false;
+	}
+
+	if(!pThis->DiskLaserTimer.Ignorable()) {
+		return false;
+	}
+
+	if(pThis->Target && pThis->IsCloseEnoughToAttack(pThis->Target)) {
+		return false;
+	}
+
+	if(pThis->WhatAmI() != BuildingClass::AbsID && pThis->CloakProgress.Value) {
+		return false;
+	}
+
+	if(!pThis->CloakDelayTimer.Ignorable()) {
+		return false;
+	}
+
+	if(pThis->LocomotorSource && pThis->AbstractFlags & ABSFLAGS_ISFOOT && ((FootClass*)pThis)->IsAttackedByLocomotor) {
+		return false;
+	}
+
+	return true;
+}
+
+/*! Gets whether the techno is disallowed to cloak.
+
+	Certain features uncloak the techno. If a techno is cloaked and this returns true,
+	it should be revealed, because something keeps it from maintaining the cloak.
+
+	\param allowPassive Allow the techno to be cloaked by others.
+
+	\return True, if the techno is disallowed to stay cloaked, false otherwise.
+
+	\author AlexB
+	\date 2012-09-28
+*/
+bool TechnoExt::ExtData::CloakDisallowed(bool allowPassive) const
+{
+	if(this->IsCloakable(allowPassive)) {
+		TechnoClass* pThis = this->AttachedToObject;
+		return pThis->IsUnderEMP() || pThis->IsParalyzed()
+			|| pThis->IsBeingWarpedOut() || pThis->IsWarpingIn()
+			|| !this->CloakSkipTimer.Ignorable();
+	}
+
+	return true;
+}
+
+/*! Gets whether the techno is allowed to cloak, only accounting for features Ares adds.
+
+	Edit this function to add new features that may prevent units from cloaking.
+
+	\return True, if the techno is allowed to cloak, false otherwise.
+
+	\author AlexB
+	\date 2012-09-28
+*/
+bool TechnoExt::ExtData::CanSelfCloakNow() const
+{
+	auto pThis = this->AttachedToObject;
+
+	// cloaked and deactivated units are hard to find otherwise
+	if(this->DriverKilled || pThis->Deactivated) {
+		return false;
+	}
+
+	auto pType = pThis->GetTechnoType();
+	auto pExt = TechnoTypeExt::ExtMap.Find(pType);
+
+	if(specific_cast<BuildingTypeClass*>(pType)) {
+		if(pExt->CloakPowered && !pThis->IsPowerOnline()) {
+			return false;
+		}
+	}
+
+	if(auto pInf = specific_cast<InfantryClass*>(pThis)) {
+		if(pExt->CloakDeployed && !pInf->IsDeployed()) {
+			return false;
+		}
+	}
+
+	// allows cloak
+	return true;
 }
 
 // =============================

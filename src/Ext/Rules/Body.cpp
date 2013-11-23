@@ -93,6 +93,9 @@ void RulesExt::ExtData::LoadAfterTypeData(RulesClass *pThis, CCINIClass *pINI) {
 
 	pData->ElectricDeath.Parse(&exINI, "AudioVisual", "InfantryElectrocuted");
 
+	pData->DecloakSound.Read(&exINI, "AudioVisual", "DecloakSound");
+	pData->CloakHeight.Read(&exINI, "General", "CloakHeight");
+
 	for (int i = 0; i < WeaponTypeClass::Array->Count; ++i) {
 		WeaponTypeClass::Array->GetItem(i)->LoadFromINI(pINI);
 	}

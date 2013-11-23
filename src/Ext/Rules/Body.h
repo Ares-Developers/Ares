@@ -6,6 +6,7 @@
 #include <RulesClass.h>
 #include <AnimTypeClass.h>
 #include <SidebarClass.h>
+#include <VocClass.h>
 
 #include "../_Container.hpp"
 #include "../../Utilities/Template.h"
@@ -30,6 +31,9 @@ class RulesExt
 
 		Valueable<bool> CanMakeStuffUp;
 
+		NullableIdx<VocClass> DecloakSound;
+		Nullable<int> CloakHeight;
+
 		Valueable<bool> EnemyVeterancy;
 
 		Valueable<bool> TypeSelectUseDeploy;
@@ -39,6 +43,8 @@ class RulesExt
 			EngineerDamage (0.0F),
 			EngineerAlwaysCaptureTech (true),
 			EngineerDamageCursor (MouseCursor::First[MouseCursorType::Detonate]),
+			DecloakSound(),
+			CloakHeight(),
 			EnemyVeterancy(true),
 			TypeSelectUseDeploy(true),
 			CanMakeStuffUp(false)

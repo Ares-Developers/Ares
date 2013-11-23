@@ -78,9 +78,12 @@ public:
 
 		std::set<TechnoClass *> RegisteredJammers; //!< Set of Radar Jammers which have registered themselves to be in range of this building. (Related to issue #305)
 
+		int SensorArrayActiveCounter;
+
 	public:
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
-			OwnerBeforeRaid(NULL), isCurrentlyRaided(false), ignoreNextEVA(false), PrismForwarding(), FreeUnits_Done(false), AboutToChronoshift(false)
+			OwnerBeforeRaid(NULL), isCurrentlyRaided(false), ignoreNextEVA(false), PrismForwarding(), FreeUnits_Done(false), AboutToChronoshift(false),
+			SensorArrayActiveCounter(0)
 			{ };
 
 		virtual ~ExtData() {
@@ -122,6 +125,8 @@ public:
 		bool ReverseEngineer(TechnoClass * Victim); //!< Returns true if Victim wasn't buildable and now should be
 
 		void KickOutClones(TechnoClass * Production);
+
+		void UpdateSensorArray();
 	};
 
 	static Container<BuildingExt> ExtMap;
