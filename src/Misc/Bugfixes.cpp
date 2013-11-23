@@ -112,15 +112,6 @@ DEFINE_HOOK(71AF76, TemporalClass_Fire_UnwarpableB, 9) {
 	return 0;
 }
 
-// Insignificant=yes or DontScore=yes prevent EVA_UnitLost on unit destruction
-DEFINE_HOOK(4D98DD, Insignificant_UnitLost, 6)
-{
-	GET(TechnoClass *, t, ESI);
-	TechnoTypeClass *T = t->GetTechnoType();
-
-	return (T->Insignificant || T->DontScore) ? 0x4D9916 : 0;
-}
-
 // MakeInfantry that fails to place will just end the source animation and cleanup instead of memleaking to game end
 DEFINE_HOOK(424B23, AnimClass_Update, 6)
 {
@@ -1007,6 +998,12 @@ DEFINE_HOOK(720F37, sub_720EA0_NoLog, 5) // skip Theme::Stop
 DEFINE_HOOK(720A61, sub_7209D0_NoLog, 5) // skip Theme::AI
 {
 	return 0x720A66;
+}
+
+// skips the log line "Looping Movie"
+DEFINE_HOOK(615BD3, Handle_Static_Messages_LoopingMovie, 5)
+{
+	return 0x615BE0;
 }
 
 // #908369, #1100953: units are still deployable when warping or falling

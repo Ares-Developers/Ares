@@ -105,7 +105,7 @@ class SWStateMachine {
 
 		virtual ~SWStateMachine() {
 			auto t = this;
-			Array.RemoveItem(Array.FindItemIndex(&t));
+			Array.RemoveItem(Array.FindItemIndex(t));
 		}
 
 		virtual void Update() {};
@@ -149,7 +149,7 @@ class ChronoWarpStateMachine : public SWStateMachine {
 
 			ChronoWarpContainer() {}
 
-			bool operator == (ChronoWarpContainer &t)
+			bool operator == (const ChronoWarpContainer &t) const
 				{ return (this->pBld == t.pBld); }
 		};
 

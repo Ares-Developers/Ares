@@ -14,27 +14,15 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 {
 	char* pID = pThis->ID;
 
+	this->ArrayIndex = SideClass::FindIndex(pThis->ID);
+
 	//are these necessary?
-	this->BaseDefenseCounts.Clear();
-	this->BaseDefenses.Clear();
 	this->ParaDrop.Clear();
 	this->ParaDropNum.Clear();
 
 	this->ParaDropPlane = AircraftTypeClass::FindIndex("PDPLANE");
 
 	if(!_strcmpi(pID, "Nod")) { //Soviets
-
-		for(int i = 0; i < RulesClass::Instance->SovietBaseDefenseCounts.Count; ++i) {
-			this->BaseDefenseCounts.AddItem(RulesClass::Instance->SovietBaseDefenseCounts.GetItem(i));
-		}
-
-		for(int i = 0; i < RulesClass::Instance->SovietBaseDefenses.Count; ++i) {
-			this->BaseDefenses.AddItem(RulesClass::Instance->SovietBaseDefenses.GetItem(i));
-		}
-
-		this->Crew.Bind(&RulesClass::Instance->SovietCrew);
-		this->DefaultDisguise.Bind(&RulesClass::Instance->SovietDisguise);
-		this->SurvivorDivisor.Bind(&RulesClass::Instance->SovietSurvivorDivisor);
 
 		this->EVAIndex = 1;
 
@@ -49,18 +37,6 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 
 	} else if(!_strcmpi(pID, "ThirdSide")) { //Yuri
 
-		for(int i = 0; i < RulesClass::Instance->ThirdBaseDefenseCounts.Count; ++i) {
-			this->BaseDefenseCounts.AddItem(RulesClass::Instance->ThirdBaseDefenseCounts.GetItem(i));
-		}
-
-		for(int i = 0; i < RulesClass::Instance->ThirdBaseDefenses.Count; ++i) {
-			this->BaseDefenses.AddItem(RulesClass::Instance->ThirdBaseDefenses.GetItem(i));
-		}
-
-		this->Crew.Bind(&RulesClass::Instance->ThirdCrew);
-		this->DefaultDisguise.Bind(&RulesClass::Instance->ThirdDisguise);
-		this->SurvivorDivisor.Bind(&RulesClass::Instance->ThirdSurvivorDivisor);
-
 		this->EVAIndex = 2;
 
 		this->ParaDropFallbackTypes = &RulesClass::Instance->YuriParaDropInf;
@@ -73,18 +49,6 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 		this->MessageTextColorIndex = 25;
 
 	} else { //Allies or any other country
-
-		for(int i = 0; i < RulesClass::Instance->AlliedBaseDefenseCounts.Count; ++i) {
-			this->BaseDefenseCounts.AddItem(RulesClass::Instance->AlliedBaseDefenseCounts.GetItem(i));
-		}
-
-		for(int i = 0; i < RulesClass::Instance->AlliedBaseDefenses.Count; ++i) {
-			this->BaseDefenses.AddItem(RulesClass::Instance->AlliedBaseDefenses.GetItem(i));
-		}
-
-		this->Crew.Bind(&RulesClass::Instance->AlliedCrew);
-		this->DefaultDisguise.Bind(&RulesClass::Instance->AlliedDisguise);
-		this->SurvivorDivisor.Bind(&RulesClass::Instance->AlliedSurvivorDivisor);
 
 		this->EVAIndex = 0;
 
@@ -105,29 +69,19 @@ void SideExt::ExtData::LoadFromINIFile(SideClass *pThis, CCINIClass *pINI)
 	char* p = NULL;
 	char* section = pThis->get_ID();
 
-	if(pINI->ReadString(section, "AI.BaseDefenseCounts", "", Ares::readBuffer, Ares::readLength)) {
-		this->BaseDefenseCounts.Clear();
-
-		char* context = nullptr;
-		for(p = strtok_s(Ares::readBuffer, Ares::readDelims, &context), &context; p && *p; p = strtok_s(nullptr, Ares::readDelims, &context)) {
-			this->BaseDefenseCounts.AddItem(atoi(p));
-		}
-	}
-
-	if(pINI->ReadString(section, "AI.BaseDefenses", "", Ares::readBuffer, Ares::readLength)) {
-		this->BaseDefenses.Clear();
-
-		char* context = nullptr;
-		for(p = strtok_s(Ares::readBuffer, Ares::readDelims, &context); p && *p; p = strtok_s(nullptr, Ares::readDelims, &context)) {
-			this->BaseDefenses.AddItem(BuildingTypeClass::FindOrAllocate(p));
-		}
-	}
-
 	INI_EX exINI(pINI);
 
-	this->Crew.Parse(&exINI, section, "Crew", 1);
+	this->BaseDefenseCounts.Read(&exINI, section, "AI.BaseDefenseCounts");
 
-	this->DefaultDisguise.Parse(&exINI, section, "DefaultDisguise", 1);
+	this->BaseDefenses.Read(&exINI, section, "AI.BaseDefenses");
+
+	this->Crew.Parse(&exINI, section, "Crew");
+
+	this->Engineer.Parse(&exINI, section, "Engineer");
+
+	this->Technician.Parse(&exINI, section, "Technician");
+
+	this->Disguise.Parse(&exINI, section, "DefaultDisguise");
 
 	this->EVAIndex.Read(&exINI, section, "EVA.Tag");
 
@@ -177,32 +131,121 @@ void SideExt::ExtData::LoadFromINIFile(SideClass *pThis, CCINIClass *pINI)
 	}
 }
 
-DWORD SideExt::BaseDefenses(REGISTERS* R, DWORD dwReturnAddress)
-{
-	GET(HouseTypeClass *, pCountry, EAX);
+int SideExt::ExtData::GetSurvivorDivisor() const {
+	if(this->SurvivorDivisor.isset()) {
+		return this->SurvivorDivisor;
+	}
 
-	int n = pCountry->SideIndex;
-	SideClass* pSide = SideClass::Array->GetItem(n);
-	if(SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide)) {
-		R->EBX(&pData->BaseDefenses);
-		return dwReturnAddress;
-	} else {
-		return 0;
+	return this->GetDefaultSurvivorDivisor();
+}
+
+int SideExt::ExtData::GetDefaultSurvivorDivisor() const {
+	switch(this->ArrayIndex) {
+	case 0:
+		return RulesClass::Instance->AlliedSurvivorDivisor;
+	case 1:
+		return RulesClass::Instance->SovietSurvivorDivisor;
+	case 2:
+		return RulesClass::Instance->ThirdSurvivorDivisor;
+	default:
+		//return 0; would be correct, but Ares < 0.5 does this:
+		return RulesClass::Instance->AlliedSurvivorDivisor;
 	}
 }
 
-DWORD SideExt::Disguise(REGISTERS* R, DWORD dwReturnAddress, bool bUseESI)
-{
-	GET(HouseClass *, pHouse, EAX);
-	InfantryClass* pThis = (bUseESI ? R->ESI<InfantryClass*>() : R->ECX<InfantryClass *>());
+InfantryTypeClass* SideExt::ExtData::GetCrew() const {
+	if(this->Crew.isset()) {
+		return this->Crew;
+	}
 
-	int n = pHouse->SideIndex;
-	SideClass* pSide = SideClass::Array->GetItem(n);
-	if(SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide)) {
-		pThis->Disguise = pData->DefaultDisguise;
-		return dwReturnAddress;
-	} else {
-		return 0;
+	return this->GetDefaultCrew();
+}
+
+InfantryTypeClass* SideExt::ExtData::GetDefaultCrew() const {
+	switch(this->ArrayIndex) {
+	case 0:
+		return RulesClass::Instance->AlliedCrew;
+	case 1:
+		return RulesClass::Instance->SovietCrew;
+	case 2:
+		return RulesClass::Instance->ThirdCrew;
+	default:
+		//return RulesClass::Instance->Technician; would be correct, but Ares < 0.5 does this:
+		return RulesClass::Instance->AlliedCrew;
+	}
+}
+
+InfantryTypeClass* SideExt::ExtData::GetEngineer() const {
+	return this->Engineer.Get(RulesClass::Instance->Engineer);
+}
+
+InfantryTypeClass* SideExt::ExtData::GetTechnician() const {
+	return this->Technician.Get(RulesClass::Instance->Technician);
+}
+
+InfantryTypeClass* SideExt::ExtData::GetDisguise() const {
+	if(this->Disguise.isset()) {
+		return this->Disguise;
+	}
+
+	return this->GetDefaultDisguise();
+}
+
+InfantryTypeClass* SideExt::ExtData::GetDefaultDisguise() const {
+	switch(this->ArrayIndex) {
+	case 0:
+		return RulesClass::Instance->AlliedDisguise;
+	case 1:
+		return RulesClass::Instance->SovietDisguise;
+	case 2:
+		return RulesClass::Instance->ThirdDisguise;
+	default:
+		//return RulesClass::Instance->ThirdDisguise; would be correct, but Ares < 0.5 does this:
+		return RulesClass::Instance->AlliedDisguise;
+	}
+}
+
+Iterator<int> SideExt::ExtData::GetBaseDefenseCounts() const {
+	if(this->BaseDefenseCounts.HasValue()) {
+		return this->BaseDefenseCounts;
+	}
+
+	return this->GetDefaultBaseDefenseCounts();
+}
+
+Iterator<int> SideExt::ExtData::GetDefaultBaseDefenseCounts() const {
+	switch(this->ArrayIndex) {
+	case 0:
+		return RulesClass::Instance->AlliedBaseDefenseCounts;
+	case 1:
+		return RulesClass::Instance->SovietBaseDefenseCounts;
+	case 2:
+		return RulesClass::Instance->ThirdBaseDefenseCounts;
+	default:
+		//return Iterator<int>(); would be correct, but Ares < 0.5 does this:
+		return RulesClass::Instance->AlliedBaseDefenseCounts;
+	}
+}
+
+Iterator<BuildingTypeClass*> SideExt::ExtData::GetBaseDefenses() const {
+	if(this->BaseDefenses.HasValue()) {
+		return this->BaseDefenses;
+	}
+
+	return this->GetDefaultBaseDefenses();
+}
+
+Iterator<BuildingTypeClass*> SideExt::ExtData::GetDefaultBaseDefenses() const {
+	switch(this->ArrayIndex) {
+	case 0:
+		return RulesClass::Instance->AlliedBaseDefenses;
+	case 1:
+		return RulesClass::Instance->SovietBaseDefenses;
+	case 2:
+		return RulesClass::Instance->ThirdBaseDefenses;
+	default:
+		//return Iterator<BuildingTypeClass*>(); would be correct, but Ares < 0.5 does this:
+		return RulesClass::Instance->AlliedBaseDefenses;
 	}
 }
 
@@ -210,8 +253,7 @@ DWORD SideExt::LoadTextColor(REGISTERS* R, DWORD dwReturnAddress)
 {
 	// if there is a cached LoadTextColor, use that.
 	int index = SideExt::CurrentLoadTextColor;
-	if(ColorScheme::Array->ValidIndex(index)) {
-		ColorScheme* pCS = ColorScheme::Array->GetItem(index);
+	if(auto pCS = ColorScheme::Array->GetItemOrDefault(index)) {
 		R->EAX(pCS);
 		return dwReturnAddress;
 	}
@@ -242,8 +284,8 @@ void Container<SideExt>::Save(SideClass *pThis, IStream *pStm) {
 
 	if(pData) {
 		//ULONG out;
-		pData->BaseDefenses.Save(pStm);
-		pData->BaseDefenseCounts.Save(pStm);
+		//pData->BaseDefenses.Save(pStm);
+		//pData->BaseDefenseCounts.Save(pStm);
 		pData->ParaDrop.Save(pStm);
 		pData->ParaDropNum.Save(pStm);
 	}
@@ -252,10 +294,10 @@ void Container<SideExt>::Save(SideClass *pThis, IStream *pStm) {
 void Container<SideExt>::Load(SideClass *pThis, IStream *pStm) {
 	SideExt::ExtData* pData = this->LoadKey(pThis, pStm);
 
-	SWIZZLE(pData->DefaultDisguise);
+	SWIZZLE(pData->Disguise);
 	SWIZZLE(pData->Crew);
-	pData->BaseDefenses.Load(pStm, 1);
-	pData->BaseDefenseCounts.Load(pStm, 0);
+	//pData->BaseDefenses.Load(pStm, 1);
+	//pData->BaseDefenseCounts.Load(pStm, 0);
 	pData->ParaDrop.Load(pStm, 1);
 	pData->ParaDropNum.Load(pStm, 0);
 }

@@ -81,6 +81,12 @@ class HouseExt
 		void SetFirestormState(bool Active);
 
 		bool CheckBasePlanSanity();
+
+		int GetSurvivorDivisor() const;
+		InfantryTypeClass* GetCrew() const;
+		InfantryTypeClass* GetEngineer() const;
+		InfantryTypeClass* GetTechnician() const;
+		InfantryTypeClass* GetDisguise() const;
 	};
 
 	static Container<HouseExt> ExtMap;
@@ -90,7 +96,7 @@ class HouseExt
 
 	static RequirementStatus RequirementsMet(HouseClass *pHouse, TechnoTypeClass *pItem);
 	static bool PrerequisitesMet(HouseClass *pHouse, TechnoTypeClass *pItem);
-	static bool PrerequisitesListed(Prereqs::BTypeList *List, TechnoTypeClass *pItem);
+	static bool PrerequisitesListed(const Prereqs::BTypeIter &List, TechnoTypeClass *pItem);
 
 	static bool HasNeededFactory(HouseClass *pHouse, TechnoTypeClass *pItem);
 	static bool FactoryForObjectExists(HouseClass *pHouse, TechnoTypeClass *pItem);
@@ -100,6 +106,8 @@ class HouseExt
 
 	static signed int PrereqValidate
 		(HouseClass *pHouse, TechnoTypeClass *pItem, bool BuildLimitOnly, bool IncludeQueued);
+
+	static SideClass* GetSide(HouseClass* pHouse);
 };
 
 #endif

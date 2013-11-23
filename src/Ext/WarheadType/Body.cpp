@@ -138,6 +138,7 @@ void WarheadTypeExt::ExtData::applyRipples(CoordStruct *coords) {
 	if (this->Ripple_Radius) {
 		IonBlastClass *IB;
 		GAME_ALLOC(IonBlastClass, IB, *coords);
+		IB->DisableIonBeam = TRUE;
 		WarheadTypeExt::IonExt[IB] = this;
 	}
 }
@@ -164,12 +165,11 @@ void WarheadTypeExt::ExtData::applyIronCurtain(CoordStruct *coords, HouseClass* 
 
 	if(this->IC_Duration != 0) {
 		// set of affected objects. every object can be here only once.
-		DynamicVectorClass<TechnoClass*> *items = Helpers::Alex::getCellSpreadItems(coords,
-			this->AttachedToObject->CellSpread, true);
+		auto items = Helpers::Alex::getCellSpreadItems(coords, this->AttachedToObject->CellSpread, true);
 
 		// affect each object
-		for(int i=0; i<items->Count; ++i) {
-			if(TechnoClass *curTechno = items->GetItem(i)) {
+		for(size_t i=0; i<items.size(); ++i) {
+			if(TechnoClass *curTechno = items[i]) {
 
 				// don't protect the dead
 				if(curTechno->InLimbo || !curTechno->IsAlive || !curTechno->Health) {
@@ -228,9 +228,6 @@ void WarheadTypeExt::ExtData::applyIronCurtain(CoordStruct *coords, HouseClass* 
 				}
 			}
 		}
-
-		items->Clear();
-		delete items;
 	}
 }
 
@@ -434,8 +431,7 @@ bool WarheadTypeExt::ExtData::applyKillDriver(BulletClass* Bullet) {
 			// If this unit spawns stuff, we should kill the spawns, since they still belong to the previous owner
 			if(pTarget->SpawnManager) {
 				pTarget->SpawnManager->KillNodes();
-				pTarget->SpawnManager->Target = NULL;
-				pTarget->SpawnManager->Destination = NULL;
+				pTarget->SpawnManager->ResetTarget();
 			}
 
 			// If this unit enslaves stuff, we should free the slaves, since they still belong to the previous owner
@@ -474,12 +470,11 @@ void WarheadTypeExt::ExtData::applyAttachedEffect(CoordStruct *coords, TechnoCla
 	if (this->AttachedEffect.Duration != 0) {
 		CellStruct cellCoords = MapClass::Instance->GetCellAt(coords)->MapCoords;
 		// set of affected objects. every object can be here only once.
-		DynamicVectorClass<TechnoClass*> *items = Helpers::Alex::getCellSpreadItems(coords,
-		this->AttachedToObject->CellSpread, true);
+		auto items = Helpers::Alex::getCellSpreadItems(coords, this->AttachedToObject->CellSpread, true);
 
 		// affect each object
-		for(int i=0; i<items->Count; ++i) {
-			if(TechnoClass *curTechno = items->GetItem(i)) {
+		for(size_t i=0; i<items.size(); ++i) {
+			if(TechnoClass *curTechno = items[i]) {
 				// don't attach to dead
 				if(curTechno->InLimbo || !curTechno->IsAlive || !curTechno->Health) {
 					continue;
@@ -499,8 +494,6 @@ void WarheadTypeExt::ExtData::applyAttachedEffect(CoordStruct *coords, TechnoCla
 				}	
 			}
 		}
-		items->Clear();
-		delete items;
 	}
 }
 

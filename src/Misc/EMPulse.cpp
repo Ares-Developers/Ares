@@ -33,17 +33,12 @@ void EMPulse::CreateEMPulse(WarheadTypeExt::ExtData *Warhead, CoordStruct *Coord
 	}
 
 	// set of affected objects. every object can be here only once.
-	DynamicVectorClass<TechnoClass*> *items = Helpers::Alex::getCellSpreadItems(Coords,
-		Warhead->AttachedToObject->CellSpread, true);
+	auto items = Helpers::Alex::getCellSpreadItems(Coords, Warhead->AttachedToObject->CellSpread, true);
 
 	// affect each object
-	for(int i=0; i<items->Count; ++i) {
-		deliverEMPDamage(items->GetItem(i), Firer, Warhead);
+	for(size_t i=0; i<items.size(); ++i) {
+		deliverEMPDamage(items[i], Firer, Warhead);
 	}
-
-	// tidy up
-	items->Clear();
-	delete items;
 
 	if (verbose) {
 		Debug::Log("[CreateEMPulse] Done.\n");
@@ -432,18 +427,18 @@ void EMPulse::updateSpawnManager(TechnoClass * Techno, ObjectClass * Source = NU
 			for (int i=0; i < SM->SpawnedNodes.Count; ++i) {
 				SpawnNode *spawn = SM->SpawnedNodes.GetItem(i);
 				// kill every spawned unit that is in the air. exempt missiles.
-				if(!spawn->IsSpawnMissile && spawn->Unit && spawn->Status >= 1 && spawn->Status <= 4) {
+				if(spawn->IsSpawnMissile == FALSE && spawn->Unit && spawn->Status >= SpawnNodeStatus::TakeOff && spawn->Status <= SpawnNodeStatus::Returning) {
 					TechnoExt::Destroy(spawn->Unit, generic_cast<TechnoClass*>(Source));
 				}
 			}
 
 			// pause the timers so spawning and regenerating is deferred.
-			SM->SpawnTimer.StartTime = -1;
-			SM->UnknownTimer.StartTime = -1;
+			SM->SpawnTimer.Pause();
+			SM->UpdateTimer.Pause();
 		} else {
 			// resume counting.
 			SM->SpawnTimer.StartIfEmpty();
-			SM->UnknownTimer.StartIfEmpty();
+			SM->UpdateTimer.StartIfEmpty();
 		}
 	}
 }

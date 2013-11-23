@@ -2,6 +2,7 @@
 #include "../HouseType/Body.h"
 #include "../Building/Body.h"
 #include "../BuildingType/Body.h"
+#include "../Side/Body.h"
 #include "../TechnoType/Body.h"
 #include "../../Enum/Prerequisites.h"
 
@@ -34,7 +35,7 @@ HouseExt::RequirementStatus HouseExt::RequirementsMet(HouseClass *pHouse, Techno
 	if(!(pData->PrerequisiteTheaters & (1 << ScenarioClass::Instance->Theater))) { return Forbidden; }
 	if(Prereqs::HouseOwnsAny(pHouse, &pData->PrerequisiteNegatives)) { return Forbidden; }
 
-	int idx = HouseClass::Array->FindItemIndex(&pHouse);
+	int idx = HouseClass::Array->FindItemIndex(pHouse);
 
 	if(pData->ReversedByHouses.ValidIndex(idx) && pData->ReversedByHouses[idx]) {
 		return Overridden;
@@ -59,7 +60,7 @@ HouseExt::RequirementStatus HouseExt::RequirementsMet(HouseClass *pHouse, Techno
 	if(!Unsorted::SWAllowed) {
 		if(BuildingTypeClass *pBld = specific_cast<BuildingTypeClass*>(pItem)) {
 			if(pBld->SuperWeapon != -1) {
-				if(RulesClass::Instance->BuildTech.FindItemIndex(&pBld) == -1) {
+				if(RulesClass::Instance->BuildTech.FindItemIndex(pBld) == -1) {
 					if(pHouse->Supers.GetItem(pBld->SuperWeapon)->Type->DisableableFromShell) {
 						return Forbidden;
 					}
@@ -87,7 +88,7 @@ bool HouseExt::PrerequisitesMet(HouseClass *pHouse, TechnoTypeClass *pItem)
 	return 0;
 }
 
-bool HouseExt::PrerequisitesListed(Prereqs::BTypeList *List, TechnoTypeClass *pItem)
+bool HouseExt::PrerequisitesListed(const Prereqs::BTypeIter &List, TechnoTypeClass *pItem)
 {
 	if(!pItem) {
 		return 0;
@@ -309,6 +310,50 @@ bool HouseExt::ExtData::CheckBasePlanSanity() {
 	return AllIsWell;
 }
 
+SideClass* HouseExt::GetSide(HouseClass* pHouse) {
+	return SideClass::Array->GetItemOrDefault(pHouse->SideIndex);
+}
+
+int HouseExt::ExtData::GetSurvivorDivisor() const {
+	if(auto pExt = SideExt::ExtMap.Find(HouseExt::GetSide(this->AttachedToObject))) {
+		return pExt->GetSurvivorDivisor();
+	}
+
+	return 0;
+}
+
+InfantryTypeClass* HouseExt::ExtData::GetCrew() const {
+	if(auto pExt = SideExt::ExtMap.Find(HouseExt::GetSide(this->AttachedToObject))) {
+		return pExt->GetCrew();
+	}
+
+	return RulesClass::Instance->Technician;
+}
+
+InfantryTypeClass* HouseExt::ExtData::GetEngineer() const {
+	if(auto pExt = SideExt::ExtMap.Find(HouseExt::GetSide(this->AttachedToObject))) {
+		return pExt->GetEngineer();
+	}
+
+	return RulesClass::Instance->Engineer;
+}
+
+InfantryTypeClass* HouseExt::ExtData::GetTechnician() const {
+	if(auto pExt = SideExt::ExtMap.Find(HouseExt::GetSide(this->AttachedToObject))) {
+		return pExt->GetTechnician();
+	}
+
+	return RulesClass::Instance->Technician;
+}
+
+InfantryTypeClass* HouseExt::ExtData::GetDisguise() const {
+	if(auto pExt = SideExt::ExtMap.Find(HouseExt::GetSide(this->AttachedToObject))) {
+		return pExt->GetDisguise();
+	}
+
+	return RulesClass::Instance->ThirdDisguise;
+}
+
 // =============================
 // load/save
 
@@ -344,7 +389,7 @@ DEFINE_HOOK(4F7140, HouseClass_DTOR, 6)
 {
 	GET(HouseClass*, pItem, ECX);
 
-	int idx = HouseClass::Array->FindItemIndex(&pItem);
+	int idx = HouseClass::Array->FindItemIndex(pItem);
 
 	if(idx != -1) {
 		for(int i = 0; i < TechnoTypeClass::Array->Count; ++i) {

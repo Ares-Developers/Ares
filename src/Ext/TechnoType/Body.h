@@ -5,6 +5,7 @@
 #include <BuildingTypeClass.h>
 #include <WarheadTypeClass.h>
 #include <VocClass.h>
+#include <VoxClass.h>
 
 #include "../../Ares.h"
 #include "../_Container.hpp"
@@ -28,6 +29,8 @@ public:
 		Promotable<int> Survivors_PassengerChance;
 		// new on 28.09.09 for #631
 		int Survivors_PilotCount; //!< Defines the number of pilots inside this vehicle if Crewed=yes; maximum number of pilots who can survive. Defaults to 0 if Crewed=no; defaults to 1 if Crewed=yes. // NOTE: Flag in INI is called Survivor.Pilots
+		Nullable<int> Crew_TechnicianChance;
+		Nullable<int> Crew_EngineerChance;
 
 		// animated cameos
 //		int Cameo_Interval;
@@ -98,6 +101,7 @@ public:
 		float MindControlExperienceVictimModifier;
 		bool ExperienceFromAirstrike;
 		float AirstrikeExperienceModifier;
+		Nullable<bool> Experience_ShowEnemy;
 
 		ValueableIdx<VocClass> VoiceRepair;
 
@@ -112,6 +116,8 @@ public:
 
 		char CameoPCX[0x20];
 		char AltCameoPCX[0x20];
+
+		char GroupAs[0x20];
 
 		DynamicVectorClass<bool> ReversedByHouses;
 		Valueable<bool> CanBeReversed;
@@ -150,10 +156,14 @@ public:
 		Valueable<AnimTypeClass*> CustomMissileTrailerAnim;
 		Valueable<int> CustomMissileTrailerSeparation;
 
+		ValueableIdx<VoxClass> EVA_UnitLost;
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			Survivors_PilotChance (),
 			Survivors_PassengerChance (),
 			Survivors_PilotCount (-1),
+			Crew_TechnicianChance (),
+			Crew_EngineerChance (),
 			PrerequisiteTheaters (0xFFFFFFFF),
 			Secret_RequiredHouses (0),
 			Secret_ForbiddenHouses (0),
@@ -192,6 +202,7 @@ public:
 			PassengerExperienceModifier (1.0F),
 			MindControlExperienceSelfModifier (0.0F),
 			MindControlExperienceVictimModifier (1.0F),
+			Experience_ShowEnemy(),
 			GattlingCyclic (false),
 			IsCustomMissile (false),
 			CustomMissileData (),
@@ -215,12 +226,14 @@ public:
 			Cloneable (true),
 			CarryallAllowed(),
 			CarryallSizeLimit (),
+			EVA_UnitLost (-1),
 			ImmuneToAbduction(false)
 			{
 				this->Insignia.SetAll(NULL);
 				*this->CameoPCX = *this->AltCameoPCX = 0;
 				this->ReversedByHouses.SetCapacity(32, NULL);
 				this->ReversedByHouses.CapacityIncrement = 32;
+				*this->GroupAs = 0;
 			};
 
 		virtual ~ExtData() {};
@@ -239,6 +252,8 @@ public:
 		bool CanBeBuiltAt(BuildingTypeClass * FactoryType);
 
 		bool CarryallCanLift(UnitClass * Target);
+
+		const char* GetSelectionGroupID();
 };
 
 	static Container<TechnoTypeExt> ExtMap;

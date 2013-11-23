@@ -73,6 +73,10 @@ void RulesExt::ExtData::LoadBeforeTypeData(RulesClass *pThis, CCINIClass *pINI) 
 	INI_EX exINI(pINI);
 
 	pData->CanMakeStuffUp.Read(&exINI, "General", "CanMakeStuffUp");
+
+	pData->EnemyVeterancy.Read(&exINI, "General", "EnemyVeterancy");
+
+	pData->TypeSelectUseDeploy.Read(&exINI, "General", "TypeSelectUseDeploy");
 }
 
 // this should load everything that TypeData is not dependant on

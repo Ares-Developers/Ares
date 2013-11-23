@@ -39,6 +39,8 @@ void TechnoTypeExt::ExtData::Initialize(TechnoTypeClass *pThis) {
 		this->CustomMissileTrailerAnim = AnimTypeClass::Find("V3TRAIL");
 		this->CustomMissileTakeoffAnim = AnimTypeClass::Find("V3TAKOFF");
 	}
+
+	this->EVA_UnitLost = VoxClass::FindIndex("EVA_UnitLost");
 }
 
 /*
@@ -87,7 +89,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	}
 
 	// survivors
-	this->Survivors_Pilots.SetCapacity(SideClass::Array->Count, NULL);
+	this->Survivors_Pilots.Reserve(SideClass::Array->Count);
 	for(int i=this->Survivors_Pilots.Count; i<SideClass::Array->Count; ++i) {
 		this->Survivors_Pilots[i] = NULL;
 	}
@@ -274,6 +276,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	this->MindControlExperienceVictimModifier = (float)pINI->ReadDouble(section, "Experience.MindControlVictimModifier", this->MindControlExperienceVictimModifier);
 	this->ExperienceFromAirstrike = pINI->ReadBool(section, "Experience.FromAirstrike", this->ExperienceFromAirstrike);
 	this->AirstrikeExperienceModifier = (float)pINI->ReadDouble(section, "Experience.AirstrikeModifier", this->AirstrikeExperienceModifier);
+	this->Experience_ShowEnemy.Read(&exINI, section, "Experience.ShowEnemy");
 
 	this->VoiceRepair.Read(&exINI, section, "VoiceIFVRepair");
 
@@ -290,7 +293,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	this->Chronoshift_IsVehicle.Read(&exINI, section, "Chronoshift.IsVehicle");
 
 	if(CCINIClass::INI_Art->ReadString(pThis->ImageFile, "CameoPCX", "", Ares::readBuffer, Ares::readLength)) {
-		AresCRT::strCopy(this->CameoPCX, Ares::readBuffer, 0x20);
+		AresCRT::strCopy(this->CameoPCX, Ares::readBuffer);
 		_strlwr_s(this->CameoPCX, 0x20);
 		if(!PCX::Instance->LoadFile(this->CameoPCX)) {
 			Debug::INIParseFailed(pThis->ImageFile, "CameoPCX", this->CameoPCX);
@@ -298,7 +301,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	}
 
 	if(CCINIClass::INI_Art->ReadString(pThis->ImageFile, "AltCameoPCX", "", Ares::readBuffer, Ares::readLength)) {
-		AresCRT::strCopy(this->AltCameoPCX, Ares::readBuffer, 0x20);
+		AresCRT::strCopy(this->AltCameoPCX, Ares::readBuffer);
 		_strlwr_s(this->AltCameoPCX, 0x20);
 		if(!PCX::Instance->LoadFile(this->AltCameoPCX)) {
 			Debug::INIParseFailed(pThis->ImageFile, "AltCameoPCX", this->AltCameoPCX);
@@ -348,6 +351,21 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 
 	// non-crashable aircraft
 	this->Crashable.Read(&exINI, section, "Crashable");
+
+	this->EVA_UnitLost.Read(&exINI, section, "EVA.Lost");
+
+	// linking units for type selection
+	if(pINI->ReadString(section, "GroupAs", "", Ares::readBuffer, Ares::readLength)) {
+		if(!INIClass::IsBlank(Ares::readBuffer)) {
+			AresCRT::strCopy(this->GroupAs, Ares::readBuffer);
+		} else {
+			*this->GroupAs = 0;
+		}
+	}
+
+	// crew settings
+	this->Crew_TechnicianChance.Read(&exINI, section, "Crew.TechnicianChance");
+	this->Crew_EngineerChance.Read(&exINI, section, "Crew.EngineerChance");
 
 	// quick fix - remove after the rest of weapon selector code is done
 	return;
@@ -445,6 +463,11 @@ void TechnoTypeClassExt::ReadWeapon(WeaponStruct *pWeapon, const char *prefix, c
 void Container<TechnoTypeExt>::InvalidatePointer(void *ptr, bool bRemoved) {
 }
 
+const char* TechnoTypeExt::ExtData::GetSelectionGroupID()
+{
+	return *this->GroupAs ? this->GroupAs : this->AttachedToObject->ID;
+}
+
 bool TechnoTypeExt::ExtData::CameoIsElite()
 {
 	HouseClass * House = HouseClass::Player;
@@ -462,19 +485,19 @@ bool TechnoTypeExt::ExtData::CameoIsElite()
 			if(House->BarracksInfiltrated && !T->Naval && T->Trainable) {
 				return true;
 			} else {
-				return Country->VeteranInfantry.FindItemIndex((InfantryTypeClass **)&T) != -1;
+				return Country->VeteranInfantry.FindItemIndex((InfantryTypeClass *)T) != -1;
 			}
 		case abs_UnitType:
 			if(House->WarFactoryInfiltrated && !T->Naval && T->Trainable) {
 				return true;
 			} else {
-				return Country->VeteranUnits.FindItemIndex((UnitTypeClass **)&T) != -1;
+				return Country->VeteranUnits.FindItemIndex((UnitTypeClass *)T) != -1;
 			}
 		case abs_AircraftType:
-			return Country->VeteranAircraft.FindItemIndex((AircraftTypeClass **)&T) != -1;
+			return Country->VeteranAircraft.FindItemIndex((AircraftTypeClass *)T) != -1;
 		case abs_BuildingType:
 			if(TechnoTypeClass *Item = T->UndeploysInto) {
-				return Country->VeteranUnits.FindItemIndex((UnitTypeClass **)&Item) != -1;
+				return Country->VeteranUnits.FindItemIndex((UnitTypeClass *)Item) != -1;
 			} else {
 				auto pData = HouseTypeExt::ExtMap.Find(Country);
 				return pData->VeteranBuildings.Contains((BuildingTypeClass*)T);

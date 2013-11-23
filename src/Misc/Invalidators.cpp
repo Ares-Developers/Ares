@@ -70,7 +70,7 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 	// create an array of crew for faster lookup
 	VectorClass<InfantryTypeClass*> Crews(SideClass::Array->Count, NULL);
 	for(int i=0; i<SideClass::Array->Count; ++i) {
-		Crews[i] = SideExt::ExtMap.Find(SideClass::Array->Items[i])->Crew;
+		Crews[i] = SideExt::ExtMap.Find(SideClass::Array->Items[i])->GetCrew();
 	}
 
 	for(int i = 0; i < TechnoTypeClass::Array->Count; ++i) {

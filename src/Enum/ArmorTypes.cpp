@@ -26,6 +26,8 @@ void ArmorType::LoadForWarhead(CCINIClass *pINI, WarheadTypeClass* pWH)
 		return;
 	}
 
+	pData->Verses.Reserve(Array.Count);
+
 	while(pData->Verses.Count < Array.Count) {
 		ArmorType *pArmor = Array[pData->Verses.Count];
 		int idx = pArmor->DefaultIndex;

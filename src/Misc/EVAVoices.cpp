@@ -68,7 +68,7 @@ DEFINE_HOOK(752FDC, VoxClass_LoadFromINI, 5)
 	// put the filename in there. 8 chars max.
 	for(auto i=0; i<count; ++i) {
 		pINI->ReadString(pThis->Name, EVAVoices::Types.at(i), "", buffer, 0x20);
-		AresCRT::strCopy(pThis->Voices[i].Name, buffer, 9);
+		AresCRT::strCopy(pThis->Voices[i].Name, buffer);
 	}
 
 	return 0;

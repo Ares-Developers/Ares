@@ -1,4 +1,5 @@
 #include "Body.h"
+#include "../House/Body.h"
 #include "../HouseType/Body.h"
 #include "../SWType/Body.h"
 
@@ -45,77 +46,69 @@ DEFINE_HOOK(505C95, Sides_BaseDefenseCounts, 7)
 	GET(HouseClass *, pThis, EBX);
 	int n = R->Stack32(0x80);	//just to be on the safe side, we're not getting it from the House
 
-	SideClass* pSide = SideClass::Array->GetItem(n);
+	SideClass* pSide = SideClass::Array->GetItemOrDefault(n);
 	if(SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide)) {
-		if((int)pThis->AIDifficulty < pData->BaseDefenseCounts.Count) {
-			R->EAX<int>(pData->BaseDefenseCounts.GetItem(pThis->AIDifficulty));
+		auto it = pData->GetBaseDefenseCounts();
+		if(pThis->AIDifficulty < it.size()) {
+			R->EAX<int>(it.at(pThis->AIDifficulty));
 			return 0x505CE9;
 		} else {
-			Debug::Log("WTF! vector has %d items, requested item #%d\n", pData->BaseDefenseCounts.Count, pThis->AIDifficulty);
+			Debug::Log("WTF! vector has %u items, requested item #%u\n", it.size(), pThis->AIDifficulty);
 		}
 	}
 	return 0;
 }
 
-//0x507BCA
-DEFINE_HOOK(507BCA, Sides_BaseDefenses1, 6)
-	{ return SideExt::BaseDefenses(R, 0x507C00); }
+DEFINE_HOOK_AGAIN(507DBA, Sides_BaseDefenses, 6) // HouseClass_PickAntiArmorDefense
+DEFINE_HOOK_AGAIN(507FAA, Sides_BaseDefenses, 6) // HouseClass_PickAntiInfantryDefense
+DEFINE_HOOK(507BCA, Sides_BaseDefenses, 6) // HouseClass_PickAntiAirDefense
+{
+	GET(HouseTypeClass *, pCountry, EAX);
+	static DynamicVectorClass<BuildingTypeClass*> dummy;
 
-//0x507DBA
-DEFINE_HOOK(507DBA, Sides_BaseDefenses2, 6)
-	{ return SideExt::BaseDefenses(R, 0x507DF0); }
+	SideClass* pSide = SideClass::Array->GetItemOrDefault(pCountry->SideIndex);
+	if(auto pData = SideExt::ExtMap.Find(pSide)) {
+		auto it = pData->GetBaseDefenses();
+		dummy.Items = const_cast<BuildingTypeClass**>(it.begin());
+		dummy.Count = dummy.Capacity = it.size();
 
-//0x507FAA
-DEFINE_HOOK(507FAA, Sides_BaseDefenses3, 6)
-	{ return SideExt::BaseDefenses(R, 0x507FE0); }
+		R->EBX(&dummy);
+		return R->get_Origin() + 0x36;
+	} else {
+		return 0;
+	}
+}
 
-//0x52267D
-DEFINE_HOOK(52267D, Sides_Disguise1, 6)
+DEFINE_HOOK(52267D, InfantryClass_GetDisguise_Disguise, 6)
 {
 	GET(HouseClass *, pHouse, EAX);
 
-	int n = pHouse->SideIndex;
-	SideClass* pSide = SideClass::Array->GetItem(n);
-	if(SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide)) {
-		R->EAX<InfantryTypeClass *>(pData->DefaultDisguise);
+	if(auto pData = HouseExt::ExtMap.Find(pHouse)) {
+		R->EAX<InfantryTypeClass*>(pData->GetDisguise());
 		return 0x5226B7;
 	} else {
 		return 0;
 	}
 }
 
-//0x5227A3
-DEFINE_HOOK(5227A3, Sides_Disguise2, 6)
-	{ return SideExt::Disguise(R, 0x5227EC, false); }
-
-//0x6F422F
-DEFINE_HOOK(6F422F, Sides_Disguise3, 6)
-	{ return SideExt::Disguise(R, 0x6F4277, true); }
-
-//0x707D40
-DEFINE_HOOK(707D40, Sides_Crew, 6)
+DEFINE_HOOK_AGAIN(6F422F, Sides_Disguise, 6) // TechnoClass_Init
+DEFINE_HOOK(5227A3, Sides_Disguise, 6) // InfantryClass_SetDefaultDisguise
 {
-	GET(HouseClass *, pHouse, ECX);
+	GET(HouseClass *, pHouse, EAX);
+	InfantryClass* pThis = nullptr;
+	DWORD dwReturnAddress = 0;
 
-	int n = pHouse->SideIndex;
-	SideClass* pSide = SideClass::Array->GetItem(n);
-	if(SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide)) {
-		R->ESI<InfantryTypeClass *>(pData->Crew);
-		return 0x707D81;
+	if(R->get_Origin() == 0x5227A3) {
+		pThis = R->ECX<InfantryClass*>();
+		dwReturnAddress = 0x5227EC;
 	} else {
-		return 0;
+		pThis = R->ESI<InfantryClass*>();
+		dwReturnAddress = 0x6F4277;
 	}
-}
 
-//0x451358
-DEFINE_HOOK(451358, Sides_SurvivorDivisor, 6)
-{
-	GET(HouseClass *, pHouse, EDX);
-
-	SideClass* pSide = SideClass::Array->GetItem(pHouse->SideIndex);
-	if(SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide)) {
-		R->ESI<int>(pData->SurvivorDivisor);
-		return 0x451391;
+	if(auto pData = HouseExt::ExtMap.Find(pHouse)) {
+		pThis->Disguise = pData->GetDisguise();
+		return dwReturnAddress;
 	} else {
 		return 0;
 	}
@@ -181,7 +174,7 @@ DEFINE_HOOK(686D7F, Sides_LoadTextColor_CacheSP, 6) {
 
 	char* pDefault = "";
 	char pID[4];
-	AresCRT::strCopy(pID, ScenarioClass::Instance->FileName, 4);
+	AresCRT::strCopy(pID, ScenarioClass::Instance->FileName);
 
 	if(!_strcmpi(pID, "SOV")) {
 		pDefault = "SovietLoad";

@@ -48,26 +48,24 @@ bool SW_SonarPulse::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 		return false;
 	}
 
-	auto Detect = [&](ObjectClass* pObj) -> bool {
-		if(TechnoClass* pTechno = generic_cast<TechnoClass*>(pObj)) {
-			// is this thing affected at all?
-			if(!pData->IsHouseAffected(pThis->Owner, pTechno->Owner)) {
-				return true;
-			}
+	auto Detect = [&](TechnoClass* pTechno) -> bool {
+		// is this thing affected at all?
+		if(!pData->IsHouseAffected(pThis->Owner, pTechno->Owner)) {
+			return true;
+		}
 
-			if(!pData->IsTechnoAffected(pTechno)) {
-				return true;
-			}
+		if(!pData->IsTechnoAffected(pTechno)) {
+			return true;
+		}
 
-			// actually detect this
-			if(pTechno->CloakState) {
-				pTechno->Uncloak(1);
-				pTechno->NeedsRedraw = 1;
-				pTechno->Cloakable = 0;
-				TechnoExt::ExtData *pExt = TechnoExt::ExtMap.Find(pTechno);
-				if(pTechno) {
-					pExt->CloakSkipTimer.Start(pData->Sonar_Delay);
-				}
+		// actually detect this
+		if(pTechno->CloakState) {
+			pTechno->Uncloak(1);
+			pTechno->NeedsRedraw = 1;
+			pTechno->Cloakable = 0;
+			TechnoExt::ExtData *pExt = TechnoExt::ExtMap.Find(pTechno);
+			if(pTechno) {
+				pExt->CloakSkipTimer.Start(pData->Sonar_Delay);
 			}
 		}
 
@@ -85,9 +83,9 @@ bool SW_SonarPulse::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 
 	} else {
 		// decloak everything in range
-		Helpers::Alex::DistinctCollector<ObjectClass*> items;
-		Helpers::Alex::forEachObjectInRange(pCoords, width, height, items.getCollector());
-		items.forEach(Detect);
+		Helpers::Alex::DistinctCollector<TechnoClass*> items;
+		Helpers::Alex::for_each_in_rect_or_range<TechnoClass>(*pCoords, width, height, std::ref(items));
+		items.for_each(Detect);
 
 		// radar event only if this isn't full map sonar
 		if(pData->SW_RadarEvent.Get()) {

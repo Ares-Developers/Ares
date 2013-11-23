@@ -67,3 +67,25 @@ DEFINE_HOOK(46867F, BulletClass_SetMovement_Parachute, 5)
 	R->EAX(result);
 	return 0x468689;
 }
+
+// set the weapon type when spawning bullets. at least
+// Ivan Bombs need those
+DEFINE_HOOK(46A5B2, BulletClass_Shrapnel_WeaponType1, 6)
+{
+	GET(BulletClass*, pShrapnel, EAX);
+	GET(WeaponTypeClass*, pWeapon, ESI);
+
+	pShrapnel->SetWeaponType(pWeapon);
+
+	return 0;
+}
+
+DEFINE_HOOK(46AA27, BulletClass_Shrapnel_WeaponType2, 9)
+{
+	GET(BulletClass*, pShrapnel, EAX);
+	GET(WeaponTypeClass*, pWeapon, ESI);
+
+	pShrapnel->SetWeaponType(pWeapon);
+
+	return 0;
+}

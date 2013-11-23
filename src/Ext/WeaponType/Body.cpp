@@ -106,8 +106,8 @@ void WeaponTypeExt::ExtData::LoadFromINIFile(WeaponTypeExt::TT *pThis, CCINIClas
 	}
 
 	if(pThis->Warhead->IvanBomb) {
-		this->Ivan_KillsBridges = pINI->ReadBool(section, "IvanBomb.DestroysBridges", this->Ivan_KillsBridges);
-		this->Ivan_Detachable   = pINI->ReadBool(section, "IvanBomb.Detachable", this->Ivan_Detachable);
+		this->Ivan_KillsBridges.Read(&exINI, section, "IvanBomb.DestroysBridges");
+		this->Ivan_Detachable.Read(&exINI, section, "IvanBomb.Detachable");
 
 		this->Ivan_Damage.Read(&exINI, section, "IvanBomb.Damage");
 		this->Ivan_Delay.Read(&exINI, section, "IvanBomb.Delay");
@@ -238,8 +238,7 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 			// if the unit is a spawner, kill the spawns
 			if(Target->SpawnManager) {
 				Target->SpawnManager->KillNodes();
-				Target->SpawnManager->Target = NULL;
-				Target->SpawnManager->Destination = NULL;
+				Target->SpawnManager->ResetTarget();
 			}
 
 			//if the unit is a slave, it should be freed
@@ -312,7 +311,7 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 			}
 
 			Target->Transporter = Attacker;
-			if(AttackerType->OpenTopped) {
+			if(AttackerType->OpenTopped && Target->Owner->IsAlliedWith(Attacker)) {
 				Attacker->EnteredOpenTopped(Target);
 			}
 
@@ -334,6 +333,40 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 
 		// the target was not a valid passenger type
 		return false;
+	}
+}
+
+// Plants customizable IvanBombs on a target.
+/*
+	Plants a bomb and changes the customizable properties. Also, the weapon
+	type that planted the bomb is remembered for use in hooks.
+
+	The original Plant function has been changed to not play sounds any more,
+	and it allows all kinds of TechnoClass sources, not just infantry.
+
+	\param pSource The bomber techno who plants the bombs.
+	\param pTarget The victim to be rigged.
+
+	\author AlexB
+	\date 2013-10-28
+*/
+void WeaponTypeExt::ExtData::PlantBomb(TechnoClass* pSource, ObjectClass* pTarget) const {
+	// ensure target isn't rigged already
+	if(pTarget && !pTarget->AttachedBomb) {
+		BombListClass::Instance->Plant(pSource, pTarget);
+
+		// if target has a bomb, planting was successful
+		if(auto pBomb = pTarget->AttachedBomb) {
+			WeaponTypeExt::BombExt[pBomb] = const_cast<ExtData*>(this);
+
+			pBomb->DetonationFrame = Unsorted::CurrentFrame + this->Ivan_Delay.Get(RulesClass::Instance->IvanTimedDelay);
+			pBomb->TickSound = this->Ivan_TickingSound.Get(RulesClass::Instance->BombTickingSound);
+
+			int index = this->Ivan_AttachSound.Get(RulesClass::Instance->BombAttachSound);
+			if(index != -1 && pSource->Owner->ControlledByPlayer()) {
+				VocClass::PlayAt(index, &pBomb->Target->Location, nullptr);
+			}
+		}
 	}
 }
 

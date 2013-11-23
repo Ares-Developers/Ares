@@ -43,7 +43,7 @@ bool SW_Reveal::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
 		int height = pData->SW_Height;
 
 		// default way to reveal, but reveal one cell at a time.
-		Helpers::Alex::forEachCellInRange(pCoords, width, height,
+		Helpers::Alex::for_each_in_rect_or_range<CellClass>(*pCoords, width, height,
 			[&](CellClass* pCell) -> bool {
 				CoordStruct Crd2;
 				pCell->GetCoords(&Crd2);

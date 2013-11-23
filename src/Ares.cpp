@@ -121,6 +121,7 @@ void __stdcall Ares::CmdLineParse(char** ppArgs,int nNumArgs)
 		Debug::Log("Initialized " VERSION_STRVER "\n");
 	}
 
+	CheckProcessorFeatures();
 	InitNoCDMode();
 }
 
@@ -197,6 +198,37 @@ void Ares::InitNoCDMode() {
 			}
 		}
 	}
+}
+
+void Ares::CheckProcessorFeatures() {
+	BOOL supported = FALSE;
+#if _M_IX86_FP == 0 // IA32
+	Debug::Log("Ares is not using enhanced instruction set.\n");
+#elif _M_IX86_FP == 1 // SSE
+#define INSTRUCTION_SET_NAME "SSE"
+	supported = IsProcessorFeaturePresent(PF_XMMI_INSTRUCTIONS_AVAILABLE);
+#elif _M_IX86_FP == 2 && !__AVX__ // SEE2, not AVX
+#define INSTRUCTION_SET_NAME "SSE2"
+	supported = IsProcessorFeaturePresent(PF_XMMI64_INSTRUCTIONS_AVAILABLE);
+#else // all others, untested. add more #elifs to support more
+	static_assert(false, "Ares compiled using unsupported architecture.");
+#endif
+
+#ifdef INSTRUCTION_SET_NAME
+	Debug::Log("Ares requires a CPU with " INSTRUCTION_SET_NAME " support. %s.\n",
+		supported ? "Available" : "Not available");
+
+	if(!supported) {
+		MessageBoxA(Game::hWnd,
+			"This version of Ares requires a CPU with " INSTRUCTION_SET_NAME
+			" support.\n\nYour CPU does not support " INSTRUCTION_SET_NAME ". "
+			"Ares will now exit.",
+			"Ares - CPU Requirements", MB_ICONERROR);
+		Debug::Log("Ares will now exit.\n");
+		Ares::ExeTerminate();
+		Debug::Exit(553);
+	}
+#endif
 }
 
 void Ares::CloseConfig(CCINIClass** ppINI) {
@@ -371,9 +403,7 @@ DEFINE_HOOK(533058, CommandClassCallback_Register, 7)
 DEFINE_HOOK(7258D0, AnnounceInvalidPointer, 6)
 {
 	GET(void *, DEATH, ECX);
-	GET(BOOL, removed, EDX);
-
-	bool bRemoved = removed != FALSE;
+	GET(bool, bRemoved, EDX);
 
 //	Debug::Log("PointerGotInvalid: %X\n", DEATH);
 

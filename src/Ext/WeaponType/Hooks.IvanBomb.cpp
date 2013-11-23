@@ -5,92 +5,79 @@
 
 #include <Helpers/Other.h>
 
-// 438F8F, 6
-// custom ivan bomb attachment 1
-DEFINE_HOOK(438F8F, BombListClass_Add1, 6)
+// custom ivan bomb attachment
+// bugfix #385: Only InfantryTypes can use Ivan Bombs
+DEFINE_HOOK(438E86, BombListClass_Plant_AllTechnos, 5)
 {
-	GET(BombClass *, Bomb, ESI);
-	GET_STACK(BulletClass*, Bullet, 0x0);
-
-	WeaponTypeClass *Source = Bullet->WeaponType;
-	WeaponTypeExt::ExtData *pData = WeaponTypeExt::ExtMap.Find(Source);
-
-	WeaponTypeExt::BombExt[Bomb] = pData;
-	Bomb->DetonationFrame = Unsorted::CurrentFrame + pData->Ivan_Delay.Get();
-	Bomb->TickSound = pData->Ivan_TickingSound.Get(RulesClass::Instance->BombTickingSound);
-	return 0;
-}
-
-// 438FD1, 5
-// custom ivan bomb attachment 2
-DEFINE_HOOK(438FD1, BombListClass_Add2, 5)
-{
-	GET(BombClass *, Bomb, ESI);
-	GET_STACK(BulletClass*, Bullet, 0x0);
-
-	GET(TechnoClass *, Owner, EBP);
-	WeaponTypeClass *Source = Bullet->WeaponType;
-	WeaponTypeExt::ExtData *pData = WeaponTypeExt::ExtMap.Find(Source);
-	int index = pData->Ivan_AttachSound.Get(RulesClass::Instance->BombAttachSound);
-	Debug::Log("Owner is player = %d, AttachSound = %d\n", Owner->Owner->ControlledByPlayer(), index);
-	if(Owner->Owner->ControlledByPlayer() && index != -1) {
-		VocClass::PlayAt(index, &Bomb->TargetUnit->Location, NULL);
+	GET(TechnoClass *, Source, EBP);
+	switch(Source->WhatAmI()) {
+		case abs_Aircraft:
+		case abs_Infantry:
+		case abs_Unit:
+		case abs_Building:
+			return 0x438E97;
+		default:
+			return 0x439022;
 	}
-
-	return 0;
 }
 
-// 438FD7, 7
-// custom ivan bomb attachment 3
-DEFINE_HOOK(438FD7, BombListClass_Add3, 7)
+DEFINE_HOOK(438FD7, BombListClass_Plant_AttachSound, 7)
 {
 	return 0x439022;
 }
 
-// 6F5230, 5
-// custom ivan bomb drawing 1
-DEFINE_HOOK(6F5230, TechnoClass_DrawExtras1, 5)
+DEFINE_HOOK(438A00, BombClass_GetCurrentFrame, 6)
 {
-	GET(TechnoClass *, pThis, EBP);
-	BombClass * Bomb = pThis->AttachedBomb;
+	GET(BombClass*, pThis, ECX);
 
-	WeaponTypeExt::ExtData *pData = WeaponTypeExt::BombExt[Bomb];
-
-	if(pData->Ivan_Image.Get()->Frames < 2) {
-		R->EAX(0);
-		return 0x6F5235;
+	auto pData = WeaponTypeExt::BombExt[pThis];
+	if(!pData) {
+		return 0;
 	}
 
-	int frame =
-	(Unsorted::CurrentFrame - Bomb->PlantingFrame)
-		/ (pData->Ivan_Delay.Get() / (pData->Ivan_Image.Get()->Frames - 1)); // -1 so that last iteration has room to flicker
+	SHPStruct* pSHP = pData->Ivan_Image.Get(RulesClass::Instance->BOMBCURS_SHP);
+	int frame = 0;
 
-	if(Unsorted::CurrentFrame % (2 * pData->Ivan_FlickerRate) >= pData->Ivan_FlickerRate) {
-		++frame;
-	}
+	if(pSHP->Frames >= 2) {
+		if(pThis->DeathBomb == FALSE) {
+			// -1 so that last iteration has room to flicker. order is important
+			int delay = pData->Ivan_Delay.Get(RulesClass::Instance->IvanTimedDelay);
+			int lifetime = (Unsorted::CurrentFrame - pThis->PlantingFrame);
+			frame = lifetime / (delay / (pSHP->Frames - 1));
 
-	if(frame >= pData->Ivan_Image.Get()->Frames) {
-		frame = pData->Ivan_Image.Get()->Frames - 1;
-	} else if(frame == pData->Ivan_Image.Get()->Frames - 1) {
-		--frame;
+			// flicker over a time period
+			int rate = pData->Ivan_FlickerRate.Get(RulesClass::Instance->IvanIconFlickerRate);
+			int period = 2 * rate;
+			if(Unsorted::CurrentFrame % period >= rate) {
+				++frame;
+			}
+
+			if(frame >= pSHP->Frames) {
+				frame = pSHP->Frames - 1;
+			} else if(frame == pSHP->Frames - 1) {
+				--frame;
+			}
+		} else {
+			// DeathBombs (that don't exist) use the last frame
+			frame = pSHP->Frames - 1;
+		}
 	}
 
 	R->EAX(frame);
-
-	return 0x6F5235;
+	return 0x438A62;
 }
 
 // 6F523C, 5
-// custom ivan bomb drawing 2
-DEFINE_HOOK(6F523C, TechnoClass_DrawExtras2, 5)
+// custom ivan bomb drawing
+DEFINE_HOOK(6F523C, TechnoClass_DrawExtras_IvanBombImage, 5)
 {
-	GET(TechnoClass *, pThis, EBP);
-	BombClass * Bomb = pThis->AttachedBomb;
+	GET(TechnoClass*, pThis, EBP);
+	auto pBomb = pThis->AttachedBomb;
 
-	WeaponTypeExt::ExtData *pData = WeaponTypeExt::BombExt[Bomb];
+	auto pData = WeaponTypeExt::BombExt[pBomb];
 
-	if(SHPStruct *Image = pData->Ivan_Image.Get()) {
-		R->ECX(Image);
+	if(SHPStruct* pImage = pData->Ivan_Image.Get(RulesClass::Instance->BOMBCURS_SHP)) {
+		R->ECX(pImage);
 		return 0x6F5247;
 	}
 	return 0;
@@ -134,8 +121,8 @@ DEFINE_HOOK(438799, BombClass_Detonate1, 6)
 
 	WeaponTypeExt::ExtData *pData = WeaponTypeExt::BombExt[Bomb];
 
-	R->Stack<WarheadTypeClass *>(0x4, pData->Ivan_WH);
-	R->EDX(pData->Ivan_Damage);
+	R->Stack<WarheadTypeClass *>(0x4, pData->Ivan_WH.Get(RulesClass::Instance->IvanWarhead));
+	R->EDX(pData->Ivan_Damage.Get(RulesClass::Instance->IvanDamage));
 	return 0x43879F;
 }
 
@@ -147,8 +134,8 @@ DEFINE_HOOK(438843, BombClass_Detonate2, 6)
 
 	WeaponTypeExt::ExtData *pData = WeaponTypeExt::BombExt[Bomb];
 
-	R->EDX<WarheadTypeClass *>(pData->Ivan_WH);
-	R->ECX(pData->Ivan_Damage);
+	R->EDX<WarheadTypeClass *>(pData->Ivan_WH.Get(RulesClass::Instance->IvanWarhead));
+	R->ECX(pData->Ivan_Damage.Get(RulesClass::Instance->IvanDamage));
 	return 0x438849;
 }
 
@@ -175,21 +162,6 @@ DEFINE_HOOK(4393F2, BombClass_SDDTOR, 5)
 	return 0;
 }
 
-// bugfix #385: Only InfantryTypes can use Ivan Bombs
-DEFINE_HOOK(438E86, IvanBombs_AttachableByAll, 5)
-{
-	GET(TechnoClass *, Source, EBP);
-	switch(Source->WhatAmI()) {
-		case abs_Aircraft:
-		case abs_Infantry:
-		case abs_Unit:
-		case abs_Building:
-			return 0x438E97;
-		default:
-			return 0x439022;
-	}
-}
-
 /* this is a wtf: it unsets target if the unit can no longer affect its current target.
  * Makes sense, except Aircraft that lose the target so crudely in the middle of the attack
  * (i.e. ivan bomb weapon) go wtfkerboom with an IE
@@ -203,68 +175,41 @@ DEFINE_HOOK(6FA4C6, TechnoClass_Update_ZeroOutTarget, 5)
 DEFINE_HOOK(46934D, IvanBombs_Spread, 6)
 {
 	GET(BulletClass *, pBullet, ESI);
-	double cSpread = pBullet->WH->CellSpread;
 
-	RET_UNLESS(pBullet->Owner && pBullet->Target);
+	if(TechnoClass* pOwner = generic_cast<TechnoClass *>(pBullet->Owner)) {
+		if(auto pExt = WeaponTypeExt::ExtMap.Find(pBullet->GetWeaponType())) {
 
-	TechnoClass *pOwner = generic_cast<TechnoClass *>(pBullet->Owner);
-	if(!pOwner) {
-		return 0;
-	}
+			// single target or spread switch
+			if(pBullet->WH->CellSpread < 0.5f) {
 
-	TechnoClass *pTarget = generic_cast<TechnoClass *>(pBullet->Target);
-
-	// just real target
-	if(cSpread < 0.5) {
-		if(pTarget) {
-			BombListClass::Instance->Plant(pOwner, pTarget);
-		}
-		return 0;
-	}
-
-	int Spread = int(cSpread);
-
-	CoordStruct tgtCoords;
-	pBullet->GetTargetCoords(&tgtCoords);
-
-	CellStruct centerCoords = MapClass::Instance->GetCellAt(&tgtCoords)->MapCoords;
-
-	class IvanBombSpreadApplicator : public CellSpreadApplicator {
-		protected:
-			TechnoClass *pOwner;
-		public:
-			IvanBombSpreadApplicator(TechnoClass *owner)
-				: pOwner(owner), CellSpreadApplicator()
-			{ }
-			virtual void operator() (ObjectClass *curObj, CellStruct *origin) {
-				if(curObj != pOwner && !curObj->AttachedBomb) {
-					if(TechnoClass *curTech = generic_cast<TechnoClass *>(curObj)) {
-						BombListClass::Instance->Plant(pOwner, curTech);
-					}
+				// single target
+				if(auto pTarget = generic_cast<TechnoClass*>(pBullet->Target)) {
+					pExt->PlantBomb(pOwner, pTarget);
 				}
+			} else {
+
+				// cell spread
+				int Spread = static_cast<int>(pBullet->WH->CellSpread);
+
+				CoordStruct tgtCoords;
+				pBullet->GetTargetCoords(&tgtCoords);
+
+				CellStruct centerCoords = MapClass::Instance->GetCellAt(tgtCoords)->MapCoords;
+
+				CellSpreadIterator iter(centerCoords, Spread);
+				iter.apply<TechnoClass>([pOwner, pExt](TechnoClass* pTechno) {
+					if(pTechno != pOwner && !pTechno->AttachedBomb) {
+						pExt->PlantBomb(pOwner, pTechno);
+					}
+					return true;
+				});
 			}
-	} BombSpreader(pOwner);
-
-	CellSpreadIterator BombDelivery(BombSpreader, &centerCoords, Spread);
-	BombDelivery.Apply();
-
-/*
-	int countCells = CellSpread::NumCells(Spread);
-
-	for(int i = 0; i < countCells; ++i) {
-		CellStruct tmpCell = CellSpread::GetCell(i);
-		tmpCell += centerCoords;
-		CellClass *c = MapClass::Global()->GetCellAt(&tmpCell);
-
-		for(ObjectClass *curObj = c->GetContent(); curObj; curObj = curObj->NextObject) {
-			if(curObj != pOwner && (curObj->AbstractFlags & ABSFLAGS_ISTECHNO) && !curObj->AttachedBomb) {
-				BombListClass::Global()->Plant(pOwner, reinterpret_cast<TechnoClass *>(curObj));
-			}
+		} else {
+			Debug::DevLog(Debug::Warning, "IvanBomb bullet without attched WeaponType.\n");
 		}
 	}
-*/
 
-	return 0;
+	return 0x469AA4;
 }
 
 // deglobalized manual detonation settings

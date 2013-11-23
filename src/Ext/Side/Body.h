@@ -26,11 +26,13 @@ class SideExt
 	class ExtData : public Extension<TT>
 	{
 	public:
-		Customizable<InfantryTypeClass*> DefaultDisguise;
-		Customizable<InfantryTypeClass*> Crew;
-		Customizable<int> SurvivorDivisor;
-		TypeList<BuildingTypeClass*> BaseDefenses;
-		TypeList<int> BaseDefenseCounts;
+		Nullable<InfantryTypeClass*> Disguise;
+		Nullable<InfantryTypeClass*> Crew;
+		Nullable<InfantryTypeClass*> Engineer;
+		Nullable<InfantryTypeClass*> Technician;
+		Nullable<int> SurvivorDivisor;
+		NullableVector<BuildingTypeClass*> BaseDefenses;
+		NullableVector<int> BaseDefenseCounts;
 		TypeList<InfantryTypeClass*>* ParaDropFallbackTypes;
 		TypeList<int>* ParaDropFallbackNum;
 		TypeList<TechnoTypeClass*> ParaDrop;
@@ -43,7 +45,10 @@ class SideExt
 		bool SidebarYuriFileNames;
 		ValueableIdx<EVAVoices> EVAIndex;
 
+		int ArrayIndex;
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
+			ArrayIndex (-1),
 			ParaDropPlane (-1),
 			Parachute_Anim (&RulesClass::Instance->Parachute),
 			ToolTipTextColor (),
@@ -62,6 +67,24 @@ class SideExt
 		virtual void Initialize(TT *pThis);
 		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
 		}
+
+		int GetSurvivorDivisor() const;
+		int GetDefaultSurvivorDivisor() const;
+
+		InfantryTypeClass* GetCrew() const;
+		InfantryTypeClass* GetDefaultCrew() const;
+
+		InfantryTypeClass* GetEngineer() const;
+		InfantryTypeClass* GetTechnician() const;
+
+		InfantryTypeClass* GetDisguise() const;
+		InfantryTypeClass* GetDefaultDisguise() const;
+
+		Iterator<int> GetBaseDefenseCounts() const;
+		Iterator<int> GetDefaultBaseDefenseCounts() const;
+
+		Iterator<BuildingTypeClass*> GetBaseDefenses() const;
+		Iterator<BuildingTypeClass*> GetDefaultBaseDefenses() const;
 	};
 
 	//Hacks required in other classes:
@@ -73,8 +96,6 @@ class SideExt
 
 	static int CurrentLoadTextColor;
 
-	static DWORD BaseDefenses(REGISTERS* R, DWORD dwReturnAddress);
-	static DWORD Disguise(REGISTERS* R, DWORD dwReturnAddress, bool bUseESI);
 	static DWORD LoadTextColor(REGISTERS* R, DWORD dwReturnAddress);
 	static DWORD MixFileYuriFiles(REGISTERS* R, DWORD dwReturnAddress1, DWORD dwReturnAddress2);
 };

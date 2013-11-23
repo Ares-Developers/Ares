@@ -45,14 +45,14 @@ public:
 		Light_Factor(&RulesClass::Instance->RadLightFactor),
 		Tint_Factor(&RulesClass::Instance->RadTintFactor)
 	{
-		AresCRT::strCopy(this->Name, Title, 32);
+		AresCRT::strCopy(this->Name, Title);
 		Array.AddItem(this);
 	}
 
 	virtual ~RadType()
 	{
 		RadType * placeholder = this;
-		Array.RemoveItem(Array.FindItemIndex(&placeholder));
+		Array.RemoveItem(Array.FindItemIndex(placeholder));
 	}
 };
 

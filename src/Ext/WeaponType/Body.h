@@ -69,15 +69,15 @@ public:
 		int    Wave_FinalIntensity;
 */
 		// custom Ivan Bombs
-		bool Ivan_KillsBridges;
-		bool Ivan_Detachable;
-		Customizable<int> Ivan_Damage;
-		Customizable<int> Ivan_Delay;
+		Valueable<bool> Ivan_KillsBridges;
+		Valueable<bool> Ivan_Detachable;
+		Nullable<int> Ivan_Damage;
+		Nullable<int> Ivan_Delay;
 		NullableIdx<VocClass> Ivan_TickingSound;
 		NullableIdx<VocClass> Ivan_AttachSound;
-		Customizable<WarheadTypeClass *> Ivan_WH;
-		Customizable<SHPStruct *> Ivan_Image;
-		Customizable<int> Ivan_FlickerRate;
+		Nullable<WarheadTypeClass *> Ivan_WH;
+		Nullable<SHPStruct *> Ivan_Image;
+		Nullable<int> Ivan_FlickerRate;
 		Nullable<bool> Ivan_CanDetonateTimeBomb;
 		Nullable<bool> Ivan_CanDetonateDeathBomb;
 
@@ -108,13 +108,13 @@ public:
 			Laser_Thickness (NULL),
 			Ivan_KillsBridges (true),
 			Ivan_Detachable (true),
-			Ivan_Damage (&RulesClass::Instance->IvanDamage),
-			Ivan_Delay (&RulesClass::Instance->IvanTimedDelay),
+			Ivan_Damage (),
+			Ivan_Delay (),
 			Ivan_TickingSound (),
 			Ivan_AttachSound (),
-			Ivan_WH (&RulesClass::Instance->IvanWarhead),
-			Ivan_Image (&RulesClass::Instance->BOMBCURS_SHP),
-			Ivan_FlickerRate (&RulesClass::Instance->IvanIconFlickerRate),
+			Ivan_WH (),
+			Ivan_Image (),
+			Ivan_FlickerRate (),
 			Ivan_CanDetonateTimeBomb (),
 			Ivan_CanDetonateDeathBomb (),
 			Rad_Type (NULL),
@@ -145,6 +145,8 @@ public:
 		}
 
 		bool conductAbduction(BulletClass *);
+
+		void PlantBomb(TechnoClass* pSource, ObjectClass* pTarget) const;
 	};
 
 /*

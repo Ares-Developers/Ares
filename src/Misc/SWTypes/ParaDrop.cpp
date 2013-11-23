@@ -67,7 +67,7 @@ void SW_ParaDrop::LoadFromINI(
 		// an empty string for the first plane for this is the default.
 		char plane[0x10] = "";
 		if(Plane) {
-			AresCRT::strCopy(plane, ".Plane", 0x10);
+			AresCRT::strCopy(plane, ".Plane");
 			_itoa_s(Plane + 1, &plane[6], 10, 10);
 		}
 		
