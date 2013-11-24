@@ -14,7 +14,7 @@ DEFINE_HOOK(489270, CellChainReact, 5)
 	static const int minDelay = 15;
 	static const int maxDelay = 120;
 
-	auto pCell = MapClass::Instance->GetCellAt(cell);
+	auto pCell = MapClass::Instance->GetCellAt(*cell);
 	auto idxTib = pCell->GetContainedTiberiumIndex();
 
 	TiberiumClass* pTib = TiberiumClass::Array->GetItemOrDefault(idxTib);

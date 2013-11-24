@@ -161,7 +161,7 @@ void WarheadTypeExt::ExtData::applyRipples(CoordStruct *coords) {
 	\date 2010-06-28
 */
 void WarheadTypeExt::ExtData::applyIronCurtain(CoordStruct *coords, HouseClass* Owner, int damage) {
-	CellStruct cellCoords = MapClass::Instance->GetCellAt(coords)->MapCoords;
+	CellStruct cellCoords = MapClass::Instance->GetCellAt(*coords)->MapCoords;
 
 	if(this->IC_Duration != 0) {
 		// set of affected objects. every object can be here only once.
@@ -468,7 +468,7 @@ bool WarheadTypeExt::ExtData::applyKillDriver(BulletClass* Bullet) {
 
 void WarheadTypeExt::ExtData::applyAttachedEffect(CoordStruct *coords, TechnoClass* Owner) {
 	if (this->AttachedEffect.Duration != 0) {
-		CellStruct cellCoords = MapClass::Instance->GetCellAt(coords)->MapCoords;
+		CellStruct cellCoords = MapClass::Instance->GetCellAt(*coords)->MapCoords;
 		// set of affected objects. every object can be here only once.
 		auto items = Helpers::Alex::getCellSpreadItems(coords, this->AttachedToObject->CellSpread, true);
 

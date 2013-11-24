@@ -125,7 +125,7 @@ bool TechnoExt::EjectSurvivor(FootClass *Survivor, CoordStruct *loc, bool Select
 	bool success = false;
 	bool chuted = false;
 	CoordStruct tmpCoords;
-	CellClass * pCell = MapClass::Instance->GetCellAt(loc);
+	CellClass * pCell = MapClass::Instance->GetCellAt(*loc);
 	if(pCell == MapClass::InvalidCell()) {
 		return false;
 	}
@@ -210,7 +210,7 @@ void TechnoExt::GetPutLocation(CoordStruct const &current, CoordStruct &target, 
 	tmpLoc.X += tmpCoords.X * distance;
 	tmpLoc.Y += tmpCoords.Y * distance;
 
-	CellClass * tmpCell = MapClass::Instance->GetCellAt(&tmpLoc);
+	CellClass * tmpCell = MapClass::Instance->GetCellAt(tmpLoc);
 
 	tmpCell->FindInfantrySubposition(&target, &tmpLoc, 0, 0, 0);
 
@@ -277,7 +277,7 @@ bool TechnoExt::SpawnVisceroid(CoordStruct &crd, ObjectTypeClass* pType, int cha
 	bool ret = false;
 	// create a small visceroid if available and the cell is free
 	if(ignoreTibDeathToVisc || ScenarioClass::Instance->TiberiumDeathToVisceroid) {
-		CellClass* pCell = MapClass::Instance->GetCellAt(&crd);
+		CellClass* pCell = MapClass::Instance->GetCellAt(crd);
 		int rnd = ScenarioClass::Instance->Random.RandomRanged(0, 99);
 		if(!(pCell->OccupationFlags & 0x20) && rnd < chance && pType) {
 			if(HouseClass* pHouse = HouseClass::FindNeutral()) {
@@ -398,7 +398,7 @@ bool TechnoExt::ExtData::IsPowered() {
  * otherwise Bad Things (TM) will happen. Again.
  */
 bool TechnoExt::CreateWithDroppod(FootClass *Object, CoordStruct *XYZ) {
-	auto MyCell = MapClass::Instance->GetCellAt(XYZ);
+	auto MyCell = MapClass::Instance->GetCellAt(*XYZ);
 	if(Object->IsCellOccupied(MyCell, -1, -1, nullptr, false) != Move::OK) {
 //		Debug::Log("Cell occupied... poof!\n");
 		return false;
@@ -925,7 +925,7 @@ bool TechnoExt::ExtData::IsCloakable(bool allowPassive) const
 		// search for cloak generators
 		CoordStruct crd;
 		pThis->GetCoords(&crd);
-		CellClass* pCell = MapClass::Instance->GetCellAt(&crd);
+		CellClass* pCell = MapClass::Instance->GetCellAt(crd);
 		return pCell->CloakGen_InclHouse(pThis->Owner->ArrayIndex);
 	}
 

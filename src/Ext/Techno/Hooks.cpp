@@ -1122,7 +1122,7 @@ DEFINE_HOOK(7441B6, UnitClass_MarkOccupationBits, 6)
 	GET(UnitClass*, pThis, ECX);
 	GET(CoordStruct*, pCrd, ESI);
 
-	CellClass* pCell = MapClass::Instance->GetCellAt(pCrd);
+	CellClass* pCell = MapClass::Instance->GetCellAt(*pCrd);
 	int height = MapClass::Instance->GetCellFloorHeight(pCrd) + CellClass::BridgeHeight();
 	bool alt = (pCrd->Z >= height && pCell->ContainsBridge());
 
@@ -1146,7 +1146,7 @@ DEFINE_HOOK(744216, UnitClass_UnmarkOccupationBits, 6)
 
 	enum { obNormal = 1, obAlt = 2 };
 
-	CellClass* pCell = MapClass::Instance->GetCellAt(pCrd);
+	CellClass* pCell = MapClass::Instance->GetCellAt(*pCrd);
 	int height = MapClass::Instance->GetCellFloorHeight(pCrd) + CellClass::BridgeHeight();
 	int alt = (pCrd->Z >= height) ? obAlt : obNormal;
 
@@ -1243,7 +1243,7 @@ DEFINE_HOOK(702216, TechnoClass_ReceiveDamage_TiberiumHeal, 6)
 	if(pExt->TiberiumRemains.Get(pType->TiberiumHeal && RulesExt::Global()->Tiberium_HealEnabled)) {
 		CoordStruct crd;
 		pThis->GetCoords(&crd);
-		CellClass* pCenter = MapClass::Instance->GetCellAt(&crd);
+		CellClass* pCenter = MapClass::Instance->GetCellAt(crd);
 
 		// increase the tiberium for the four neighbours and center.
 		// center is retrieved by getting a neighbour cell index >= 8
@@ -1331,7 +1331,7 @@ DEFINE_HOOK(702200, TechnoClass_ReceiveDamage_SpillTiberium, 6)
 			// get the spill center
 			CoordStruct crd;
 			pThis->GetCoords(&crd);
-			CellClass* pCenter = MapClass::Instance->GetCellAt(&crd);
+			CellClass* pCenter = MapClass::Instance->GetCellAt(crd);
 
 			unsigned int neighbours[] = {9, 2, 7, 1, 4, 3, 0, 5, 6};
 			for(int i=0; i<9; ++i) {
@@ -1409,7 +1409,7 @@ DEFINE_HOOK(739F21, UnitClass_UpdatePosition_Visceroid, 6)
 						pDest->Type = pLargeType;
 						pDest->Health = pLargeType->Strength;
 
-						CellClass* pCell = MapClass::Instance->GetCellAt(&pDest->LastMapCoords);
+						CellClass* pCell = MapClass::Instance->GetCellAt(pDest->LastMapCoords);
 						pDest->UpdateThreatInCell(pCell);
 
 						pThis->UnInit();

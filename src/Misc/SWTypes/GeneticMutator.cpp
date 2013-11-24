@@ -65,7 +65,7 @@ bool SW_GeneticMutator::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPl
 	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSW);
 
 	CoordStruct coords;
-	CellClass *Cell = MapClass::Instance->GetCellAt(pCoords);
+	CellClass *Cell = MapClass::Instance->GetCellAt(*pCoords);
 	Cell->GetCoordsWithBridge(&coords);
 	
 	if(pThis->IsCharged) {

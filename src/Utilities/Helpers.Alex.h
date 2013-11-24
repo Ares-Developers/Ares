@@ -78,12 +78,12 @@ public:
 			DistinctCollector<TechnoClass*> set;
 
 			// the quick way. only look at stuff residing on the very cells we are affecting.
-			CellStruct cellCoords = MapClass::Instance->GetCellAt(coords)->MapCoords;
+			CellStruct cellCoords = MapClass::Instance->GetCellAt(*coords)->MapCoords;
 			int countCells = CellSpread::NumCells((int)(spread + 0.99));
 			for(int i = 0; i < countCells; ++i) {
 				CellStruct tmpCell = CellSpread::GetCell(i);
 				tmpCell += cellCoords;
-				CellClass *c = MapClass::Instance->GetCellAt(&tmpCell);
+				CellClass *c = MapClass::Instance->GetCellAt(tmpCell);
 				for(ObjectClass *curObj = c->GetContent(); curObj; curObj = curObj->NextObject) {
 					if(TechnoClass *Techno = generic_cast<TechnoClass*>(curObj)) {
 						set.insert(Techno);

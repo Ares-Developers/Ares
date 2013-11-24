@@ -23,7 +23,7 @@ template<> IStream *Container<BuildingExt>::SavingStream = nullptr;
 // member functions
 
 DWORD BuildingExt::GetFirewallFlags(BuildingClass *pThis) {
-	CellClass *MyCell = MapClass::Instance->GetCellAt(&pThis->Location);
+	CellClass *MyCell = MapClass::Instance->GetCellAt(pThis->Location);
 	DWORD flags = 0;
 	for(int direction = 0; direction < 8; direction += 2) {
 		CellClass *Neighbour = MyCell->GetNeighbourCell(direction);
@@ -139,13 +139,13 @@ void BuildingExt::ExtData::KickOutOfRubble() {
 	// iterate over all cells and remove all infantry
 	typedef std::pair<FootClass*, bool> Item;
 	DynamicVectorClass<Item> list;
-	CellStruct location = MapClass::Instance->GetCellAt(&pBld->Location)->MapCoords;
+	CellStruct location = MapClass::Instance->GetCellAt(pBld->Location)->MapCoords;
 	for(size_t i=0; i<length; ++i) {
 		CellStruct pos = data[i];
 		pos += location;
 
 		// remove every techno that resides on this cell
-		CellClass* cell = MapClass::Instance->GetCellAt(&pos);
+		CellClass* cell = MapClass::Instance->GetCellAt(pos);
 		for(ObjectClass* pObj = cell->GetContent(); pObj; pObj = pObj->NextObject) {
 			if(FootClass* pFoot = generic_cast<FootClass*>(pObj)) {
 				bool selected = pFoot->IsSelected;
@@ -360,7 +360,7 @@ void BuildingExt::buildLines(BuildingClass* theBuilding, CellStruct selectedCell
 		for(int distanceFromCenter = 1; distanceFromCenter <= linkLength; ++distanceFromCenter) {
 			cellToBuildOn += directionOffset;
 
-			if(CellClass *cell = MapClass::Instance->GetCellAt(&cellToBuildOn)) {
+			if(CellClass *cell = MapClass::Instance->GetCellAt(cellToBuildOn)) {
 				if(BuildingClass *tempBuilding = specific_cast<BuildingClass *>(theBuilding->Type->CreateObject(buildingOwner))) {
 					CoordStruct coordBuffer;
 					CellClass::Cell2Coord(&cellToBuildOn, &coordBuffer);

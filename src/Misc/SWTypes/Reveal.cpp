@@ -34,7 +34,7 @@ bool SW_Reveal::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
 	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSW);
 	
 	if(pThis->IsCharged) {
-		CellClass *pTarget = MapClass::Instance->GetCellAt(pCoords);
+		CellClass *pTarget = MapClass::Instance->GetCellAt(*pCoords);
 		
 		CoordStruct Crd;
 		pTarget->GetCoords(&Crd);

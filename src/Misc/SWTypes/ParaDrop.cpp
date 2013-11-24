@@ -180,7 +180,7 @@ void SW_ParaDrop::LoadFromINI(
 bool SW_ParaDrop::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
 {
 	if(pThis->IsCharged) {
-		CellClass *pTarget = MapClass::Instance->GetCellAt(pCoords);
+		CellClass *pTarget = MapClass::Instance->GetCellAt(*pCoords);
 
 		// find the nearest cell the paradrop troopers can land on
 		if(pTarget != MapClass::InvalidCell()) {
@@ -189,7 +189,7 @@ bool SW_ParaDrop::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
 				int a14 = 0;
 				CellStruct *nearest = MapClass::Instance->Pathfinding_Find(&a2, pCoords, 0, -1, 0, 0, 1, 1, 0, 0, 0, 1, &a14, 0, 0);
 				if(*nearest != SuperClass::DefaultCoords) {
-					if(CellClass *pTemp = MapClass::Instance->GetCellAt(nearest)) {
+					if(CellClass *pTemp = MapClass::Instance->GetCellAt(*nearest)) {
 						if(pTemp != MapClass::InvalidCell()) {
 							if(!pTemp->Tile_Is_Water()) {
 								pTarget = pTemp;

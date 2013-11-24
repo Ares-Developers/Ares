@@ -73,7 +73,7 @@ bool SW_Protect::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
 
 	if(pThis->IsCharged) {
 		CoordStruct Crd;
-		CellClass *pTarget = MapClass::Instance->GetCellAt(pCoords);
+		CellClass *pTarget = MapClass::Instance->GetCellAt(*pCoords);
 		pTarget->GetCoords(&Crd);
 
 		// play start sound

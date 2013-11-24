@@ -82,7 +82,7 @@ bool SW_NuclearMissile::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPl
 
 		if(SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pType)) {
 
-			CellClass* pCell = MapClass::Instance->GetCellAt(pCoords);
+			CellClass* pCell = MapClass::Instance->GetCellAt(*pCoords);
 			CoordStruct target;
 			pCell->GetCoordsWithBridge(&target);
 

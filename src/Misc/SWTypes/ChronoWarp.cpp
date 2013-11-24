@@ -48,8 +48,8 @@ bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 			}
 
 			// cell and coords calculations
-			CellClass *pCellSource = MapClass::Instance->GetCellAt(&pSource->ChronoMapCoords);
-			CellClass *pCellTarget = MapClass::Instance->GetCellAt(pCoords);
+			CellClass *pCellSource = MapClass::Instance->GetCellAt(pSource->ChronoMapCoords);
+			CellClass *pCellTarget = MapClass::Instance->GetCellAt(*pCoords);
 
 			CoordStruct coordsSource;
 			pCellSource->GetCoordsWithBridge(&coordsSource);
@@ -143,7 +143,7 @@ bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 					if(pLink) {
 						if(BuildingClass* pLinkBld = specific_cast<BuildingClass*>(pLink)) {
 							if(pLinkBld->Type->WeaponsFactory) {
-								if(MapClass::Instance->GetCellAt(&pTechno->Location)->GetBuilding() == pLinkBld) {
+								if(MapClass::Instance->GetCellAt(pTechno->Location)->GetBuilding() == pLinkBld) {
 									return true;
 								}
 							}
@@ -214,7 +214,7 @@ bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 				pTechno->GetCoords(&coordsUnitSource);
 				CoordStruct coordsUnitTarget = coordsUnitSource;
 				CellStruct cellUnitTarget = pTechno->GetCell()->MapCoords - pSource->ChronoMapCoords + *pCoords;
-				CellClass* pCellUnitTarget = MapClass::Instance->GetCellAt(&cellUnitTarget);
+				CellClass* pCellUnitTarget = MapClass::Instance->GetCellAt(cellUnitTarget);
 				
 				// move the unit to the new position
 				coordsUnitTarget.X = coordsUnitSource.X + (pCoords->X - pSource->ChronoMapCoords.X) * 256;
@@ -325,7 +325,7 @@ void ChronoWarpStateMachine::Update() {
 					int idx = 0;
 					do {
 						CellStruct cellNew = CellSpread::GetCell(idx) + pContainer.target;
-						CellClass* pNewCell = MapClass::Instance->GetCellAt(&cellNew);
+						CellClass* pNewCell = MapClass::Instance->GetCellAt(cellNew);
 						CoordStruct coordsNew;
 						pNewCell->GetCoordsWithBridge(&coordsNew);
 

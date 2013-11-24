@@ -19,7 +19,7 @@ DEFINE_HOOK(6CEF84, SuperWeaponTypeClass_GetCursorOverObject, 7)
 
 		// prevent firing into shroud
 		if(!pData->SW_FireToShroud.Get()) {
-			CellClass* pCell = MapClass::Instance->GetCellAt(pMapCoords);
+			CellClass* pCell = MapClass::Instance->GetCellAt(*pMapCoords);
 			CoordStruct Crd;
 
 			if(MapClass::Instance->IsLocationShrouded(pCell->GetCoords(&Crd))) {
@@ -72,7 +72,7 @@ DEFINE_HOOK(653B3A, RadarClass_GetMouseAction_CustomSWAction, 5)
 
 			// prevent firing into shroud
 			if(!pData->SW_FireToShroud.Get()) {
-				CellClass* pCell = MapClass::Instance->GetCellAt(&pMapCoords);
+				CellClass* pCell = MapClass::Instance->GetCellAt(pMapCoords);
 				CoordStruct Crd;
 
 				if(MapClass::Instance->IsLocationShrouded(pCell->GetCoords(&Crd))) {

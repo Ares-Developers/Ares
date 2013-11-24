@@ -116,7 +116,7 @@ void PsychicDominatorStateMachine::Update() {
 		{
 			// here are the contents of PsyDom::Start().
 			CoordStruct coords;
-			CellClass *pTarget = MapClass::Instance->GetCellAt(&this->Coords);
+			CellClass *pTarget = MapClass::Instance->GetCellAt(this->Coords);
 			pTarget->GetCoords(&coords);
 			coords.Z += pData->Dominator_FirstAnimHeight;
 

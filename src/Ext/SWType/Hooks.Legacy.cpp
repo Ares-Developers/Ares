@@ -26,7 +26,7 @@ DEFINE_HOOK(53B080, PsyDom_Fire, 5) {
 		CellStruct cell = PsyDom::Coords;
 
 		CoordStruct coords;
-		CellClass *pTarget = MapClass::Instance->GetCellAt(&cell);
+		CellClass *pTarget = MapClass::Instance->GetCellAt(cell);
 		pTarget->GetCoords(&coords);
 		
 		// blast!
@@ -451,7 +451,7 @@ DEFINE_HOOK(53A6CF, LightningStorm_Update, 7) {
 									// if we respect lightning rods, start looking for one.
 									if(!pData->Weather_IgnoreLightningRod.Get()) {
 										// if, by coincidence, this is a rod, hit it.
-										CellClass *pImpactCell = MapClass::Instance->GetCellAt(&cell);
+										CellClass *pImpactCell = MapClass::Instance->GetCellAt(cell);
 										if(BuildingClass *pBld = pImpactCell->GetBuilding()) {
 											if(pBld->Type->LightningRod) {
 												break;
@@ -463,7 +463,7 @@ DEFINE_HOOK(53A6CF, LightningStorm_Update, 7) {
 										if(ObjectClass* pObj = pImpactCell->FindObjectNearestTo(&nullCoords, false, pImpactCell->GetBuilding())) {
 											if(BuildingClass *pBld = specific_cast<BuildingClass*>(pObj)) {
 												if(pBld->Type->LightningRod) {
-													cell = MapClass::Instance->GetCellAt(&pBld->Location)->MapCoords;
+													cell = MapClass::Instance->GetCellAt(pBld->Location)->MapCoords;
 													break;
 												}
 											}
@@ -521,7 +521,7 @@ DEFINE_HOOK(53A140, LightningStorm_Strike, 7) {
 
 		// get center of cell coords
 		CoordStruct Coords;
-		CellClass* pCell = MapClass::Instance->GetCellAt(&Cell);
+		CellClass* pCell = MapClass::Instance->GetCellAt(Cell);
 		pCell->GetCoordsWithBridge(&Coords);
 		
 		// create a cloud animation
@@ -566,7 +566,7 @@ DEFINE_HOOK(53A300, LightningStorm_Strike2, 5) {
 		SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pType);
 
 		// get center of cell coords
-		CellClass* pCell = MapClass::Instance->GetCellAt(&Coords);
+		CellClass* pCell = MapClass::Instance->GetCellAt(Coords);
 		pCell->GetCoordsWithBridge(&Coords);
 
 		if(Coords != LightningStorm::EmptyCoords) {

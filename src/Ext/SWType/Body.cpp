@@ -314,7 +314,7 @@ bool SWTypeExt::ExtData::IsTechnoAffected(TechnoClass* pTechno) {
 }
 
 bool SWTypeExt::ExtData::CanFireAt(CellStruct *pCoords) {
-	if(CellClass *pCell = MapClass::Instance->GetCellAt(pCoords)) {
+	if(CellClass *pCell = MapClass::Instance->GetCellAt(*pCoords)) {
 
 		// check cell type
 		if(!IsCellEligible(pCell, this->SW_RequiresTarget)) {
@@ -371,7 +371,7 @@ bool SWTypeExt::Launch(SuperClass* pThis, NewSWType* pSW, CellStruct* pCoords, b
 				}
 			}
 
-			CellClass *pTarget = MapClass::Instance->GetCellAt(pCoords);
+			CellClass *pTarget = MapClass::Instance->GetCellAt(*pCoords);
 
 			CoordStruct coords;
 			pTarget->GetCoordsWithBridge(&coords);

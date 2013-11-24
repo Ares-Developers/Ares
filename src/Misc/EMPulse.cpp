@@ -258,7 +258,7 @@ bool EMPulse::isCurrentlyEMPImmune(TechnoClass * Target, HouseClass * SourceHous
 	}
 
 	if(Target->WhatAmI() == abs_Unit) {
-		if(BuildingClass* pBld = MapClass::Instance->GetCellAt(&Target->Location)->GetBuilding()) {
+		if(BuildingClass* pBld = MapClass::Instance->GetCellAt(Target->Location)->GetBuilding()) {
 			if(pBld->Type->WeaponsFactory) {
 				if(pBld->IsUnderEMP() || pBld == Target->GetNthLink(0)) {
 					if (EMPulse::verbose) {

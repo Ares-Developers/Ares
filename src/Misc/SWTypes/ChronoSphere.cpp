@@ -81,7 +81,7 @@ bool SW_ChronoSphere::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlay
 	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSW);
 
 	if(pThis->IsCharged) {
-		CellClass *pTarget = MapClass::Instance->GetCellAt(pCoords);
+		CellClass *pTarget = MapClass::Instance->GetCellAt(*pCoords);
 
 		// remember the current source position
 		pThis->ChronoMapCoords = *pCoords;
