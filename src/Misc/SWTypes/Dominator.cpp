@@ -4,7 +4,7 @@
 #include "../../Ext/WarheadType/Body.h"
 #include "../../Utilities/Helpers.Alex.h"
 
-SuperClass* SW_PsychicDominator::CurrentPsyDom = NULL;
+SuperClass* SW_PsychicDominator::CurrentPsyDom = nullptr;
 
 bool SW_PsychicDominator::HandlesType(int type)
 {
@@ -120,14 +120,14 @@ void PsychicDominatorStateMachine::Update() {
 			pTarget->GetCoords(&coords);
 			coords.Z += pData->Dominator_FirstAnimHeight;
 
-			AnimClass* pAnim = NULL;
+			AnimClass* pAnim = nullptr;
 			if(pData->Dominator_FirstAnim.Get()) {
 				GAME_ALLOC(AnimClass, pAnim, pData->Dominator_FirstAnim, &coords);
 			}
 			PsyDom::Anim = pAnim;
 		
 			if(pData->SW_ActivationSound != -1) {
-				VocClass::PlayAt(pData->SW_ActivationSound, &coords, NULL);
+				VocClass::PlayAt(pData->SW_ActivationSound, &coords, nullptr);
 			}
 
 			pData->PrintMessage(pData->Message_Activate, this->Super->Owner);
@@ -204,7 +204,7 @@ void PsychicDominatorStateMachine::Update() {
 			}
 
 			// clean up
-			SW_PsychicDominator::CurrentPsyDom = NULL;
+			SW_PsychicDominator::CurrentPsyDom = nullptr;
 			PsyDom::Status = PsychicDominatorStatus::Inactive;
 			ScenarioClass::UpdateLighting();
 			this->Clock.TimeLeft = 0;

@@ -10,8 +10,8 @@
 template<> const DWORD Extension<TActionClass>::Canary = 0x61616161;
 Container<TActionExt> TActionExt::ExtMap;
 
-template<> TActionExt::TT *Container<TActionExt>::SavingObject = NULL;
-template<> IStream *Container<TActionExt>::SavingStream = NULL;
+template<> TActionExt::TT *Container<TActionExt>::SavingObject = nullptr;
+template<> IStream *Container<TActionExt>::SavingStream = nullptr;
 
 void TActionExt::ExtData::Initialize(TActionClass *pThis)
 {

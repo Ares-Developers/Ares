@@ -56,12 +56,12 @@ void EMPulse::CreateEMPulse(WarheadTypeExt::ExtData *Warhead, CoordStruct *Coord
 */
 void EMPulse::deliverEMPDamage(ObjectClass *object, TechnoClass *Firer, WarheadTypeExt::ExtData *Warhead) {
 	// fill the gaps
-	HouseClass *pHouse = (Firer ? Firer->Owner : NULL);
+	HouseClass *pHouse = (Firer ? Firer->Owner : nullptr);
 
 	if (TechnoClass * curTechno = generic_cast<TechnoClass *> (object)) {
 		if (verbose) {
 			Debug::Log("[deliverEMPDamage] Step 1: %s => %s\n",
-					(Firer ? Firer->get_ID() : NULL),
+					(Firer ? Firer->get_ID() : nullptr),
 					curTechno->get_ID());
 		}
 
@@ -419,7 +419,7 @@ void EMPulse::updateRadarBlackout(TechnoClass * Techno) {
 	\author AlexB
 	\date 2010-05-03
 */
-void EMPulse::updateSpawnManager(TechnoClass * Techno, ObjectClass * Source = NULL) {
+void EMPulse::updateSpawnManager(TechnoClass * Techno, ObjectClass * Source = nullptr) {
 	if (SpawnManagerClass *SM = Techno->SpawnManager) {
 
 		if (Techno->EMPLockRemaining > 0) {
@@ -484,7 +484,7 @@ void EMPulse::UpdateSparkleAnim(TechnoClass * Techno) {
 		} else {
 			if (pData->EMPSparkleAnim) {
 				pData->EMPSparkleAnim->RemainingIterations = 0; // basically "you don't need to show up anymore"
-				pData->EMPSparkleAnim = NULL;
+				pData->EMPSparkleAnim = nullptr;
 			}
 		}
 	}
@@ -786,7 +786,7 @@ bool EMPulse::EnableEMPEffect2(TechnoClass * Victim) {
 		}
 
 		// update managers.
-		updateSpawnManager(Victim, NULL);
+		updateSpawnManager(Victim, nullptr);
 		updateSlaveManager(Victim);
 
 		// set the sparkle animation.

@@ -6,8 +6,8 @@
 template<> const DWORD Extension<BulletTypeClass>::Canary = 0xF00DF00D;
 Container<BulletTypeExt> BulletTypeExt::ExtMap;
 
-template<> BulletTypeExt::TT *Container<BulletTypeExt>::SavingObject = NULL;
-template<> IStream *Container<BulletTypeExt>::SavingStream = NULL;
+template<> BulletTypeExt::TT *Container<BulletTypeExt>::SavingObject = nullptr;
+template<> IStream *Container<BulletTypeExt>::SavingStream = nullptr;
 
 // =============================
 // member funcs

@@ -40,7 +40,7 @@ public:
 	
 	AttachEffectTypeClass(): Cumulative(false),
 		Duration(0),
-		AnimType(NULL),
+		AnimType(nullptr),
 		AnimResetOnReapply(false),
 		TemporalHidesAnim(false),
 		FirepowerMultiplier(1.0),
@@ -62,7 +62,7 @@ public:
 
 class AttachEffectClass {
 public:
-	AttachEffectClass(AttachEffectTypeClass* AEType, int Timer): Type(AEType), Animation(NULL), ActualDuration(Timer) {
+	AttachEffectClass(AttachEffectTypeClass* AEType, int Timer): Type(AEType), Animation(nullptr), ActualDuration(Timer) {
 	}
 
 	AttachEffectTypeClass * Type;

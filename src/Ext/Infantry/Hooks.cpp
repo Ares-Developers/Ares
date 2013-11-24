@@ -67,7 +67,7 @@ DEFINE_HOOK(51DF38, InfantryClass_Remove, A)
 		}
 	}
 
-	pData->GarrisonedIn = NULL;
+	pData->GarrisonedIn = nullptr;
 
 	return 0;
 }
@@ -76,7 +76,7 @@ DEFINE_HOOK(51DFFD, InfantryClass_Put, 5)
 {
 	GET(InfantryClass *, pThis, EDI);
 	TechnoExt::ExtData* pData = TechnoExt::ExtMap.Find(pThis);
-	pData->GarrisonedIn = NULL;
+	pData->GarrisonedIn = nullptr;
 
 	return 0;
 }

@@ -30,11 +30,11 @@ DEFINE_HOOK(46920B, BulletClass_Fire, 6) {
 
 	HouseClass *OwnerHouse = (Bullet->Owner)
 		? Bullet->Owner->Owner
-		: NULL
+		: nullptr
 	;
 
 	int damage = 0;
-	WeaponTypeExt::ExtData* WeaponTypeExt = NULL;
+	WeaponTypeExt::ExtData* WeaponTypeExt = nullptr;
 	if(Bullet->WeaponType) {
 		damage = Bullet->WeaponType->Damage;
 		WeaponTypeExt = WeaponTypeExt::ExtMap.Find(Bullet->WeaponType);

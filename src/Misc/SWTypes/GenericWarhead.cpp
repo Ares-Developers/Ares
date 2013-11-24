@@ -27,7 +27,7 @@ bool SW_GenericWarhead::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPl
 	pWHExt->applyRipples(&coords);
 	pWHExt->applyIronCurtain(&coords, pThis->Owner, pData->SW_Damage);
 
-	BuildingClass *Firer = NULL;
+	BuildingClass *Firer = nullptr;
 	HouseClass *FirerHouse = pThis->Owner;
 	for(int i = 0; i < FirerHouse->Buildings.Count; ++i) {
 		BuildingClass *B = FirerHouse->Buildings[i];

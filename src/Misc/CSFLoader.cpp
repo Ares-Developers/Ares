@@ -14,7 +14,7 @@ void CSFLoader::LoadAdditionalCSF(const char *pFileName)
 	if(StringTable::IsLoaded && pFileName && *pFileName) {
 		CCFileClass* pFile;
 		GAME_ALLOC(CCFileClass, pFile, pFileName);
-		if(pFile->Exists(NULL) && pFile->Open(eFileMode::Read)) {
+		if(pFile->Exists(nullptr) && pFile->Open(eFileMode::Read)) {
 			CSFHeader header;
 
 			if(pFile->ReadBytes(&header, sizeof(CSFHeader)) == sizeof(CSFHeader)) {
@@ -46,14 +46,14 @@ const CSFString* CSFLoader::FindDynamic(const char* pLabelName) {
 	}
 
 	// failed
-	return NULL;
+	return nullptr;
 }
 
 const wchar_t* CSFLoader::GetDynamicString(const char* pLabelName, const wchar_t* pPattern, const char* pDefault) {
 	const CSFString *String = CSFLoader::FindDynamic(pLabelName);
 
 	if(!String) {
-		CSFString* NewString = NULL;
+		CSFString* NewString = nullptr;
 		GAME_ALLOC(CSFString, NewString);
 		wsprintfW(NewString->Text, pPattern, pDefault);
 
@@ -100,8 +100,8 @@ DEFINE_HOOK(734823, CSF_AllocateMemory, 6)
 		pLabels[i].NumValues = 0;
 		pLabels[i].FirstValueIndex = 0;
 
-		pValues[i] = NULL;
-		pExtraValues[i] = NULL;
+		pValues[i] = nullptr;
+		pExtraValues[i] = nullptr;
 	}
 
 	StringTable::Labels = pLabels;
@@ -138,14 +138,14 @@ DEFINE_HOOK(734A5F, CSF_AddOrOverrideLabel, 5)
 			if(pValues[idx])
 			{
 				GAME_DEALLOC(pValues[idx]);
-				pValues[idx] = NULL;
+				pValues[idx] = nullptr;
 			}
 
 			char** pExtraValues = StringTable::ExtraValues;
 			if(pExtraValues[idx])
 			{
 				GAME_DEALLOC(pExtraValues[idx]);
-				pExtraValues[idx] = NULL;
+				pExtraValues[idx] = nullptr;
 			}
 
 			auto ix = pLabel - StringTable::Labels;

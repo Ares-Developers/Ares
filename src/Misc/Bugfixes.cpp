@@ -522,7 +522,7 @@ DEFINE_HOOK(441C21, BuildingClass_Destroy_ShakeScreenZero, 6)
 DEFINE_HOOK(699C1C, Game_ParsePKTs_ClearFile, 7)
 {
 	LEA_STACK(CCINIClass *, pINI, 0x24);
-	pINI->Clear(NULL, NULL);
+	pINI->Clear(nullptr, nullptr);
 	return 0;
 }
 
@@ -977,7 +977,7 @@ DEFINE_HOOK(7077EE, TechnoClass_PointerGotInvalid_ResetMindControl, 6)
 	GET(void*, ptr, EBP);
 
 	if(pThis->MindControlledBy == ptr) {
-		pThis->MindControlledBy = NULL;
+		pThis->MindControlledBy = nullptr;
 	}
 
 	return 0;

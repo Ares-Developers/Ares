@@ -89,7 +89,7 @@ public:
 			DeployedDamage (1.00),
 			Temporal_WarpAway (&RulesClass::Global()->WarpAway),
 			AffectsEnemies (true),
-			InfDeathAnim (NULL),
+			InfDeathAnim (nullptr),
 			PreImpactAnim (-1),
 			KillDriver (false),
 			Malicious (true),

@@ -31,7 +31,7 @@ DEFINE_HOOK(53B080, PsyDom_Fire, 5) {
 		
 		// blast!
 		if(pData->Dominator_Ripple.Get()) {
-			IonBlastClass* pBlast = NULL;
+			IonBlastClass* pBlast = nullptr;
 			GAME_ALLOC(IonBlastClass, pBlast, coords);
 			if(pBlast) {
 				pBlast->DisableIonBeam = TRUE;
@@ -44,7 +44,7 @@ DEFINE_HOOK(53B080, PsyDom_Fire, 5) {
 		}
 
 		// anim
-		AnimClass* pAnim = NULL;
+		AnimClass* pAnim = nullptr;
 		if(pData->Dominator_SecondAnim.Get()) {
 			CoordStruct animCoords = coords;
 			animCoords.Z += pData->Dominator_SecondAnimHeight;
@@ -54,7 +54,7 @@ DEFINE_HOOK(53B080, PsyDom_Fire, 5) {
 
 		// kill
 		if(pData->SW_Damage > 0 && pData->SW_Warhead.Get()) {
-			MapClass::Instance->DamageArea(&coords, pData->SW_Damage, NULL, pData->SW_Warhead, true, pFirer);
+			MapClass::Instance->DamageArea(&coords, pData->SW_Damage, nullptr, pData->SW_Warhead, true, pFirer);
 		}
 
 		// capture
@@ -117,7 +117,7 @@ DEFINE_HOOK(53B080, PsyDom_Fire, 5) {
 				// remove old permanent mind control anim
 				if(pTechno->MindControlRingAnim) {
 					pTechno->MindControlRingAnim->UnInit();
-					pTechno->MindControlRingAnim = NULL;
+					pTechno->MindControlRingAnim = nullptr;
 				}
 
 				// create a permanent capture anim
@@ -320,7 +320,7 @@ DEFINE_HOOK(53A6CF, LightningStorm_Update, 7) {
 				ScenarioClass::Instance->UpdateLighting();
 				MapClass::Instance->RedrawSidebar(1);
 			} else if(NukeFlash::IsFadingOut()) {
-				SW_NuclearMissile::CurrentNukeType = NULL;
+				SW_NuclearMissile::CurrentNukeType = nullptr;
 				NukeFlash::Status = NukeFlashStatus::Inactive;
 			}
 		}
@@ -361,7 +361,7 @@ DEFINE_HOOK(53A6CF, LightningStorm_Update, 7) {
 				LightningStorm::Active = false;
 				LightningStorm::Owner = nullptr;
 				LightningStorm::Coords = CellStruct::Empty;
-				SW_LightningStorm::CurrentLightningStorm = NULL;
+				SW_LightningStorm::CurrentLightningStorm = nullptr;
 				ScenarioClass::Instance->UpdateLighting();
 			}
 			LightningStorm::TimeToEnd = false;
@@ -540,7 +540,7 @@ DEFINE_HOOK(53A140, LightningStorm_Strike, 7) {
 			Coords.Z += pData->Weather_CloudHeight;
 
 			// create the cloud and do some book keeping.
-			AnimClass* pAnim = NULL;
+			AnimClass* pAnim = nullptr;
 			GAME_ALLOC(AnimClass, pAnim, pAnimType, &Coords);
 
 			if(pAnim) {
@@ -576,7 +576,7 @@ DEFINE_HOOK(53A300, LightningStorm_Strike2, 5) {
 				DWORD rnd = ScenarioClass::Instance->Random.Random();
 				AnimTypeClass* pAnimType = it.at(rnd % it.size());
 
-				AnimClass* pAnim = NULL;
+				AnimClass* pAnim = nullptr;
 				GAME_ALLOC(AnimClass, pAnim, pAnimType, &Coords);
 				
 				if(pAnim) {
@@ -587,14 +587,14 @@ DEFINE_HOOK(53A300, LightningStorm_Strike2, 5) {
 			// play lightning sound
 			if(auto it = pData->Weather_Sounds.GetElements(RulesClass::Instance->LightningSounds)) {
 				DWORD rnd = ScenarioClass::Instance->Random.Random();
-				VocClass::PlayAt(it.at(rnd % it.size()), &Coords, NULL);
+				VocClass::PlayAt(it.at(rnd % it.size()), &Coords, nullptr);
 			}
-						
+
 			bool debris = false;
 			BuildingClass* pBld = pCell->GetBuilding();
 
 			CoordStruct empty;
-			ObjectClass* pObj = pCell->FindObjectNearestTo(&empty, false, NULL);
+			ObjectClass* pObj = pCell->FindObjectNearestTo(&empty, false, nullptr);
 			bool isInfantry = (pObj && pObj->WhatAmI() == abs_Infantry);
 
 			// empty cell action
@@ -628,16 +628,16 @@ DEFINE_HOOK(53A300, LightningStorm_Strike2, 5) {
 			// cause mayhem
 			if(damage) {
 				MapClass::FlashbangWarheadAt(damage, pData->SW_Warhead, Coords, false, 0);
-				MapClass::DamageArea(&Coords, damage, NULL, pData->SW_Warhead, true, pSuper->Owner);
+				MapClass::DamageArea(&Coords, damage, nullptr, pData->SW_Warhead, true, pSuper->Owner);
 
 				// fancy stuff if damage is dealt
-				AnimClass* pAnim = NULL;
+				AnimClass* pAnim = nullptr;
 				AnimTypeClass* pAnimType = MapClass::SelectDamageAnimation(damage, pData->SW_Warhead, pCell->LandType, &Coords);
 				GAME_ALLOC(AnimClass, pAnim, pAnimType, &Coords);
 			}
 
 			// has the last target been destroyed?
-			if(pObj != pCell->FindObjectNearestTo(&empty, false, NULL)) {
+			if(pObj != pCell->FindObjectNearestTo(&empty, false, nullptr)) {
 				debris = true;
 			}
 
@@ -651,7 +651,7 @@ DEFINE_HOOK(53A300, LightningStorm_Strike2, 5) {
 						DWORD rnd = ScenarioClass::Instance->Random.Random();
 						AnimTypeClass *pAnimType = it.at(rnd % it.size());
 
-						AnimClass *pAnim = NULL;
+						AnimClass *pAnim = nullptr;
 						GAME_ALLOC(AnimClass, pAnim, pAnimType, &Coords);
 					}
 				}

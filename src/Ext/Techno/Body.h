@@ -89,17 +89,17 @@ public:
 			idxSlot_Warp (0),
 			idxSlot_Parasite(0),
 			Survivors_Done (0),
-			Insignia_Image (NULL),
-			GarrisonedIn (NULL),
+			Insignia_Image (nullptr),
+			GarrisonedIn (nullptr),
 			HijackerHealth (-1),
-			HijackerHouse (NULL),
+			HijackerHouse (nullptr),
 			DriverKilled (false),
-			EMPSparkleAnim (NULL),
+			EMPSparkleAnim (nullptr),
 			EMPLastMission (mission_None),
 			ShadowDrawnManually (false),
-			RadarJam(NULL),
-			PoweredUnit(NULL),
-			MyOriginalTemporal(NULL),
+			RadarJam(nullptr),
+			PoweredUnit(nullptr),
+			MyOriginalTemporal(nullptr),
 			AltOccupation(),
 			AttachEffects_RecreateAnims(false),
 			AttachedTechnoEffect_isset (false),
@@ -144,7 +144,7 @@ public:
 
 		bool IsDeactivated() const;
 
-		eAction GetDeactivatedAction(ObjectClass *Hovered = NULL) const;
+		eAction GetDeactivatedAction(ObjectClass *Hovered = nullptr) const;
 
 		void InvalidateAttachEffectPointer(void *ptr);
 
@@ -188,7 +188,7 @@ public:
 	static void DetachSpecificSpawnee (TechnoClass *Spawnee, HouseClass *NewSpawneeOwner);
 	static bool CanICloakByDefault(TechnoClass *pTechno);
 
-	static void Destroy(TechnoClass* pTechno, TechnoClass* pKiller = NULL, HouseClass* pKillerHouse = NULL, WarheadTypeClass* pWarhead = NULL);
+	static void Destroy(TechnoClass* pTechno, TechnoClass* pKiller = nullptr, HouseClass* pKillerHouse = nullptr, WarheadTypeClass* pWarhead = nullptr);
 
 	static bool SpawnVisceroid(CoordStruct &crd, ObjectTypeClass* pType, int chance, bool ignoreTibDeathToVisc);
 /*

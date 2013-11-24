@@ -15,7 +15,7 @@ class SW_SpyPlane : NewSWType
 			{ };
 
 		virtual const char * GetTypeString()
-			{ return NULL; }
+			{ return nullptr; }
 
 		virtual void LoadFromINI(
 			SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI);

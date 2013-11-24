@@ -9,7 +9,7 @@
 #include <BulletClass.h>
 #include <YRMath.h>
 
-SuperWeaponTypeClass* SW_NuclearMissile::CurrentNukeType = NULL;
+SuperWeaponTypeClass* SW_NuclearMissile::CurrentNukeType = nullptr;
 
 bool SW_NuclearMissile::HandlesType(int type)
 {
@@ -25,7 +25,7 @@ void SW_NuclearMissile::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeCla
 {
 	// invalid values so NukePayload properties can override them.
 	pData->SW_Damage = -1;
-	pData->SW_Warhead = NULL;
+	pData->SW_Warhead = nullptr;
 	pData->SW_ActivationSound = RulesClass::Instance->DigSound;
 
 	// default values for the original Nuke
@@ -88,7 +88,7 @@ bool SW_NuclearMissile::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPl
 
 			// the nuke has two ways to fire. first the granted way used by nukes
 			// collected from crates. second, the normal way firing from a silo.
-			BuildingClass* pSilo = NULL;
+			BuildingClass* pSilo = nullptr;
 				
 			if((!pThis->Granted || !pThis->Quantity) && pData->Nuke_SiloLaunch.Get()) {
 				
@@ -99,7 +99,7 @@ bool SW_NuclearMissile::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPl
 					if(pTBld->NukeSilo) {
 						if(pTBld->SuperWeapon == pType->ArrayIndex || pTBld->SuperWeapon2 == pType->ArrayIndex) {
 							// valid silo. let's see whether the firer got it.
-							if((pSilo = pThis->Owner->FindBuildingOfType(pTBld->ArrayIndex, -1)) != NULL) {
+							if((pSilo = pThis->Owner->FindBuildingOfType(pTBld->ArrayIndex, -1)) != nullptr) {
 								break;
 							}
 						}
@@ -131,7 +131,7 @@ bool SW_NuclearMissile::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPl
 						WarheadTypeClass *pWarhead = (!pData->SW_Warhead ? pWeapon->Warhead : pData->SW_Warhead.Get());
 
 						// create a bullet and the psi warning
-						if(BulletClass* pBullet = pProjectile->CreateBullet(pCell, NULL, damage, pWarhead, pWeapon->Speed, pWeapon->Bright)) {
+						if(BulletClass* pBullet = pProjectile->CreateBullet(pCell, nullptr, damage, pWarhead, pWeapon->Speed, pWeapon->Bright)) {
 							pBullet->SetWeaponType(pWeapon);
 							if(pData->Nuke_PsiWarning.Get()) {
 								pThis->Owner->PsiWarn(pCell, pBullet, pData->Nuke_PsiWarning.Get()->ID);
@@ -169,7 +169,7 @@ bool SW_NuclearMissile::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPl
 					}
 				}
 
-				VocClass::PlayAt(pData->SW_ActivationSound, &target, NULL);
+				VocClass::PlayAt(pData->SW_ActivationSound, &target, nullptr);
 				pThis->Owner->ShouldRecheckTechTree = true;
 				return true;
 			}

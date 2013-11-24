@@ -28,7 +28,7 @@ public:
 		int DamageReserve;					//current flat reservoir
 
 		// constructor
-		cPrismForwarding() : Senders(), SupportTarget(NULL), PrismChargeDelay(0), ModifierReserve(0.0), DamageReserve(0){
+		cPrismForwarding() : Senders(), SupportTarget(nullptr), PrismChargeDelay(0), ModifierReserve(0.0), DamageReserve(0){
 			this->Senders.Clear();
 		};
 
@@ -82,7 +82,7 @@ public:
 
 	public:
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
-			OwnerBeforeRaid(NULL), isCurrentlyRaided(false), ignoreNextEVA(false), PrismForwarding(), FreeUnits_Done(false), AboutToChronoshift(false),
+			OwnerBeforeRaid(nullptr), isCurrentlyRaided(false), ignoreNextEVA(false), PrismForwarding(), FreeUnits_Done(false), AboutToChronoshift(false),
 			SensorArrayActiveCounter(0)
 			{ };
 

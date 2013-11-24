@@ -78,7 +78,7 @@ bool SW_Protect::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
 
 		// play start sound
 		if(pSW->StartSound > -1) {
-			VocClass::PlayAt(pSW->StartSound, &Crd, NULL);
+			VocClass::PlayAt(pSW->StartSound, &Crd, nullptr);
 		}
 
 		// set up the special sound when the effect wears off

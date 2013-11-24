@@ -23,7 +23,7 @@ public:
 		SuperWeaponTypeClass *NukeSW;
 
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension(Canary, OwnerObject),
-			NukeSW (NULL)
+			NukeSW (nullptr)
 			{ };
 
 		virtual ~ExtData() {

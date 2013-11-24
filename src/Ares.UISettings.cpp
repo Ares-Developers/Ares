@@ -55,7 +55,7 @@ int Ares::UISettings::uiColorDisabledList;
 int Ares::UISettings::uiColorDisabledObserver;
 
 void Ares::UISettings::Load(CCINIClass *pINI) {
-	if(pINI == NULL) {
+	if(pINI == nullptr) {
 		return;
 	}
 

@@ -78,7 +78,7 @@ DEFINE_HOOK(4F8EBD, HouseClass_Update_HasBeenDefeated, 0)
 				return true;
 			}
 			if(FootClass *F = generic_cast<FootClass *>(T)) {
-				return F->ParasiteImUsing != NULL;
+				return F->ParasiteImUsing != nullptr;
 			}
 			return false;
 		}

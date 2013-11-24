@@ -45,7 +45,7 @@ class RulesExt
 		Valueable<bool> TypeSelectUseDeploy;
 
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
-			ElectricDeath(NULL),
+			ElectricDeath(nullptr),
 			EngineerDamage (0.0F),
 			EngineerAlwaysCaptureTech (true),
 			EngineerDamageCursor (MouseCursor::First[MouseCursorType::Detonate]),

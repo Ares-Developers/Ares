@@ -198,8 +198,8 @@ public:
 			Spot_Reverse (false),
 			Is_Bomb (false),
 			Insignia (),
-			Parachute_Anim (NULL),
-			Operator (NULL),
+			Parachute_Anim (nullptr),
+			Operator (nullptr),
 			IsAPromiscuousWhoreAndLetsAnyoneRideIt (false),
 			CameoPal(),
 			RequiredStolenTech(0ull),
@@ -224,11 +224,11 @@ public:
 			GattlingCyclic (false),
 			IsCustomMissile (false),
 			CustomMissileData (),
-			CustomMissileWarhead (NULL),
-			CustomMissileEliteWarhead (NULL),
+			CustomMissileWarhead (nullptr),
+			CustomMissileEliteWarhead (nullptr),
 			CustomMissileTrailerSeparation (3),
-			CustomMissileTrailerAnim (NULL),
-			CustomMissileTakeoffAnim (NULL),
+			CustomMissileTrailerAnim (nullptr),
+			CustomMissileTakeoffAnim (nullptr),
 			VoiceRepair (-1),
 			HijackerEnterSound (-1),
 			HijackerLeaveSound (-1),
@@ -236,7 +236,7 @@ public:
 			HijackerBreakMindControl (true),
 			HijackerAllowed (true),
 			HijackerOneTime (false),
-			WaterImage (NULL),
+			WaterImage (nullptr),
 			TiberiumProof (),
 			TiberiumRemains(),
 			TiberiumSpill (false),
@@ -259,9 +259,9 @@ public:
 			EVA_UnitLost (-1),
 			ImmuneToAbduction(false)
 			{
-				this->Insignia.SetAll(NULL);
+				this->Insignia.SetAll(nullptr);
 				*this->CameoPCX = *this->AltCameoPCX = 0;
-				this->ReversedByHouses.SetCapacity(32, NULL);
+				this->ReversedByHouses.SetCapacity(32, nullptr);
 				this->ReversedByHouses.CapacityIncrement = 32;
 				*this->GroupAs = 0;
 			};

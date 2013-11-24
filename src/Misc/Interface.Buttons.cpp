@@ -25,7 +25,7 @@ bool Interface::invokeClickAction(eUIAction action, char* name, int* pResult, in
 	// reset
 	nextAction = -1;
 	nextReturnMenu = -1;
-	nextMessageText = NULL;
+	nextMessageText = nullptr;
 
 	auto ret = [&](int _nextAction) -> bool {
 		*pResult = nextAction = _nextAction;
@@ -178,8 +178,8 @@ Interface::eUIAction Interface::parseUIAction(char* value, Interface::eUIAction 
 DEFINE_HOOK(52DDBA, Frontend_WndProc_MessageBox, 5) {
 	if(Interface::nextMessageText) {
 		const wchar_t* ok = StringTable::LoadStringA("TXT_OK");
-		MessageBox::Show(Interface::nextMessageText, ok, NULL);
-		Interface::nextMessageText = NULL;
+		MessageBox::Show(Interface::nextMessageText, ok, nullptr);
+		Interface::nextMessageText = nullptr;
 		return 0x52DE39;
 	}
 

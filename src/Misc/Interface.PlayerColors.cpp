@@ -20,7 +20,7 @@ DEFINE_HOOK(69A310, Game_GetLinkedColor, 7) {
 	GET_STACK(int, idx, 0x4);
 
 	// get the slot
-	Interface::ColorData* slot = NULL;
+	Interface::ColorData* slot = nullptr;
 	if(idx == -2 || idx == Ares::UISettings::ColorCount) {
 		// observer color
 		slot = &Ares::UISettings::Colors[0];
@@ -50,7 +50,7 @@ DEFINE_HOOK(69A310, Game_GetLinkedColor, 7) {
 DEFINE_HOOK(4E42A0, GameSetup_GetColorTooltip, 5) {
 	GET(int, idx, ECX);
 
-	const wchar_t* ret = NULL;
+	const wchar_t* ret = nullptr;
 	if(idx == -2) {
 		// random
 		ret = StringTable::LoadStringA("STT:PlayerColorRandom");

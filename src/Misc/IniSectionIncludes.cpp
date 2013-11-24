@@ -2,7 +2,7 @@
 #include "Debug.h"
 #include "IniSectionIncludes.h"
 
-INIClass::INISection* IniSectionIncludes::includedSection = NULL;
+INIClass::INISection* IniSectionIncludes::includedSection = nullptr;
 
 void IniSectionIncludes::CopySection(CCINIClass* ini, INIClass::INISection* source, const char* destName)
 {
@@ -36,7 +36,7 @@ CCINIClass::INISection* IniSectionIncludes::PreProcess(CCINIClass* ini, char* st
 			}
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 DEFINE_HOOK_AGAIN(525D4D, IniSectionIncludes_PreProcess, 6)
@@ -55,7 +55,7 @@ DEFINE_HOOK(525E47, IniSectionIncludes_CopySection1, 6)
 		GET_STACK(CCINIClass*, ini, 0x28);
 		GET(INIClass::INISection*, section, EBX);
 		IniSectionIncludes::CopySection(ini, IniSectionIncludes::includedSection, section->Name);
-		IniSectionIncludes::includedSection = NULL; //reset, very important
+		IniSectionIncludes::includedSection = nullptr; //reset, very important
 	}
 	return 0;
 }
@@ -70,7 +70,7 @@ DEFINE_HOOK(525C28, IniSectionIncludes_CopySection2, 0)
 	{
 		GET_STACK(CCINIClass*, ini, 0x28);
 		IniSectionIncludes::CopySection(ini, IniSectionIncludes::includedSection, sectionName);
-		IniSectionIncludes::includedSection = NULL; //reset, very important
+		IniSectionIncludes::includedSection = nullptr; //reset, very important
 	}
 
 	return 0x525C50;

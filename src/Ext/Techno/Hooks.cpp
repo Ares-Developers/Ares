@@ -128,7 +128,7 @@ DEFINE_HOOK(6F9E76, TechnoClass_Update_CheckOperators, 6)
 	if(pThis->Deactivated) {
 		if(UnitClass* pUnit = specific_cast<UnitClass*>(pThis)) {
 			if(pUnit->Locomotor->Is_Moving() && pUnit->Destination && !pThis->LocomotorSource) {
-				pUnit->SetDestination(NULL, true);
+				pUnit->SetDestination(nullptr, true);
 				pUnit->StopMoving();
 			}
 		}
@@ -186,12 +186,12 @@ DEFINE_HOOK(6F407D, TechnoClass_Init_1, 6)
 	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(T);
 	//TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(Type);
 
-	CaptureManagerClass *Capturer = NULL;
-	ParasiteClass *Parasite = NULL;
-	TemporalClass *Temporal = NULL;
+	CaptureManagerClass *Capturer = nullptr;
+	ParasiteClass *Parasite = nullptr;
+	TemporalClass *Temporal = nullptr;
 
 	FootClass *F = generic_cast<FootClass *>(T);
-	bool IsFoot = (F != NULL);
+	bool IsFoot = (F != nullptr);
 
 //	for(int i = 0; i < pTypeData->Weapons.get_Count(); ++i) {
 //		WeaponStruct *W = &pTypeData->Weapons[i];
@@ -202,8 +202,8 @@ DEFINE_HOOK(6F407D, TechnoClass_Init_1, 6)
 		if(!W1 && !W2) {
 			continue;
 		}
-		WarheadTypeClass *WH1 = W1 ? W1->Warhead : NULL;
-		WarheadTypeClass *WH2 = W2 ? W2->Warhead : NULL;
+		WarheadTypeClass *WH1 = W1 ? W1->Warhead : nullptr;
+		WarheadTypeClass *WH2 = W2 ? W2->Warhead : nullptr;
 
 		bool IsW1Faulty = (W1 && !WH1);
 		if(IsW1Faulty || (W2 && !WH2)) {
@@ -215,23 +215,23 @@ DEFINE_HOOK(6F407D, TechnoClass_Init_1, 6)
 					i);
 		}
 
-		if(WH1 && WH1->MindControl && Capturer == NULL) {
+		if(WH1 && WH1->MindControl && Capturer == nullptr) {
 			GAME_ALLOC(CaptureManagerClass, Capturer, T, W1->Damage, W1->InfiniteMindControl);
-		} else if(WH2 && WH2->MindControl && Capturer == NULL) {
+		} else if(WH2 && WH2->MindControl && Capturer == nullptr) {
 			GAME_ALLOC(CaptureManagerClass, Capturer, T, W2->Damage, W2->InfiniteMindControl);
 		}
 
-		if(WH1 && WH1->Temporal && Temporal == NULL) {
+		if(WH1 && WH1->Temporal && Temporal == nullptr) {
 			GAME_ALLOC(TemporalClass, Temporal, T);
 			Temporal->WarpPerStep = W1->Damage;
 			pData->idxSlot_Warp = (BYTE)i;
-		} else if(WH2 && WH2->Temporal && Temporal == NULL) {
+		} else if(WH2 && WH2->Temporal && Temporal == nullptr) {
 			GAME_ALLOC(TemporalClass, Temporal, T);
 			Temporal->WarpPerStep = W2->Damage;
 			pData->idxSlot_Warp = (BYTE)i;
 		}
 
-		if((WH1 && WH1->Parasite || WH2 && WH2->Parasite) && IsFoot && Parasite == NULL) {
+		if((WH1 && WH1->Parasite || WH2 && WH2->Parasite) && IsFoot && Parasite == nullptr) {
 			GAME_ALLOC(ParasiteClass, Parasite, F);
 			pData->idxSlot_Parasite = (BYTE)i;
 		}
@@ -262,7 +262,7 @@ DEFINE_HOOK(71A84E, TemporalClass_UpdateA, 5)
 	if(TargetExt->RadarJam) {
 		TargetExt->RadarJam->UnjamAll();
 		delete TargetExt->RadarJam;
-		TargetExt->RadarJam = NULL;
+		TargetExt->RadarJam = nullptr;
 	}
 
 	//AttachEffect handling under Temporal
@@ -788,7 +788,7 @@ DEFINE_HOOK(519675, InfantryClass_UpdatePosition_BeforeInfantrySpecific, A)
 					if(!pTarget) {
 						pTarget = pCell->GetBuilding();
 						if(pTarget && !pTarget->IsStrange()) {
-							pTarget = NULL;
+							pTarget = nullptr;
 						}
 					}
 				}
@@ -985,14 +985,14 @@ DEFINE_HOOK(6F6AC9, TechnoClass_Remove, 6) {
 	if(TechnoExt->RadarJam) {
 		TechnoExt->RadarJam->UnjamAll();
 		delete TechnoExt->RadarJam;
-		TechnoExt->RadarJam = NULL;
+		TechnoExt->RadarJam = nullptr;
 	}
 
 	// #617 powered units
 	if(TechnoExt->PoweredUnit)
 	{
 		delete TechnoExt->PoweredUnit;
-		TechnoExt->PoweredUnit = NULL;
+		TechnoExt->PoweredUnit = nullptr;
 	}
 
 	//#1573, #1623, #255 attached effects
@@ -1015,7 +1015,7 @@ DEFINE_HOOK(74642C, UnitClass_ReceiveGunner, 6)
 	GET(UnitClass *, Unit, ESI);
 	auto pData = TechnoExt::ExtMap.Find(Unit);
 	pData->MyOriginalTemporal = Unit->TemporalImUsing;
-	Unit->TemporalImUsing = NULL;
+	Unit->TemporalImUsing = nullptr;
 	return 0;
 }
 
@@ -1024,7 +1024,7 @@ DEFINE_HOOK(74653C, UnitClass_RemoveGunner, 0)
 	GET(UnitClass *, Unit, EDI);
 	auto pData = TechnoExt::ExtMap.Find(Unit);
 	Unit->TemporalImUsing = pData->MyOriginalTemporal;
-	pData->MyOriginalTemporal = NULL;
+	pData->MyOriginalTemporal = nullptr;
 	return 0x746546;
 }
 
@@ -1036,7 +1036,7 @@ DEFINE_HOOK(741206, UnitClass_GetFireError, 6)
 	if(!Type->TurretCount || Type->IsGattling) {
 		return 0x741229;
 	}
-	auto idxW = Unit->SelectWeapon(NULL);
+	auto idxW = Unit->SelectWeapon(nullptr);
 	auto W = Unit->GetWeapon(idxW);
 	return (W->WeaponType && W->WeaponType->Warhead->Temporal)
 		? 0x741210
@@ -1077,10 +1077,10 @@ DEFINE_HOOK(416C4D, AircraftClass_Carryall_Unload_DestroyCargo, 5)
 	GET(UnitClass *, pCargo, ESI);
 
 	int Damage = pCargo->Health;
-	pCargo->ReceiveDamage(&Damage, 0, RulesClass::Instance->C4Warhead, NULL, true, true, NULL);
+	pCargo->ReceiveDamage(&Damage, 0, RulesClass::Instance->C4Warhead, nullptr, true, true, nullptr);
 
 	Damage = pCarryall->Health;
-	pCarryall->ReceiveDamage(&Damage, 0, RulesClass::Instance->C4Warhead, NULL, true, true, NULL);
+	pCarryall->ReceiveDamage(&Damage, 0, RulesClass::Instance->C4Warhead, nullptr, true, true, nullptr);
 
 	return 0x416C53;
 }

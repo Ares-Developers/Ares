@@ -7,8 +7,8 @@ template<> const DWORD Extension<SideClass>::Canary = 0x87654321;
 Container<SideExt> SideExt::ExtMap;
 int SideExt::CurrentLoadTextColor = -1;
 
-template<> SideExt::TT *Container<SideExt>::SavingObject = NULL;
-template<> IStream *Container<SideExt>::SavingStream = NULL;
+template<> SideExt::TT *Container<SideExt>::SavingObject = nullptr;
+template<> IStream *Container<SideExt>::SavingStream = nullptr;
 
 void SideExt::ExtData::Initialize(SideClass *pThis)
 {
@@ -66,7 +66,7 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 
 void SideExt::ExtData::LoadFromINIFile(SideClass *pThis, CCINIClass *pINI)
 {
-	char* p = NULL;
+	char* p = nullptr;
 	char* section = pThis->get_ID();
 
 	INI_EX exINI(pINI);
@@ -91,10 +91,10 @@ void SideExt::ExtData::LoadFromINIFile(SideClass *pThis, CCINIClass *pINI)
 
 	if(pINI->ReadString(section, "ParaDrop.Types", "", Ares::readBuffer, Ares::readLength)) {
 		this->ParaDrop.Clear();
-		this->ParaDropFallbackTypes = NULL;
+		this->ParaDropFallbackTypes = nullptr;
 
 		char* context = nullptr;
-		for(p = strtok_s(Ares::readBuffer, Ares::readDelims, &context); p && *p; p = strtok_s(NULL, Ares::readDelims, &context)) {
+		for(p = strtok_s(Ares::readBuffer, Ares::readDelims, &context); p && *p; p = strtok_s(nullptr, Ares::readDelims, &context)) {
 			TechnoTypeClass* pTT = UnitTypeClass::Find(p);
 
 			if(!pTT) {
@@ -111,10 +111,10 @@ void SideExt::ExtData::LoadFromINIFile(SideClass *pThis, CCINIClass *pINI)
 
 	if(pINI->ReadString(section, "ParaDrop.Num", "", Ares::readBuffer, Ares::readLength)) {
 		this->ParaDropNum.Clear();
-		this->ParaDropFallbackNum = NULL;
+		this->ParaDropFallbackNum = nullptr;
 
 		char* context = nullptr;
-		for(p = strtok_s(Ares::readBuffer, Ares::readDelims, &context); p && *p; p = strtok_s(NULL, Ares::readDelims, &context)) {
+		for(p = strtok_s(Ares::readBuffer, Ares::readDelims, &context); p && *p; p = strtok_s(nullptr, Ares::readDelims, &context)) {
 			this->ParaDropNum.AddItem(atoi(p));
 		}
 	}

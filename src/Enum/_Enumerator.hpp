@@ -36,7 +36,7 @@ public:
 */
 		T** result = Enumerable<T>::stl_Find(Title);
 		if(result == Array.end()) {
-			return NULL;
+			return nullptr;
 		}
 		return *result;
 	}

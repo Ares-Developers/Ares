@@ -4,8 +4,8 @@
 template<> const DWORD Extension<TEventClass>::Canary = 0x61616161;
 Container<TEventExt> TEventExt::ExtMap;
 
-template<> TEventExt::TT *Container<TEventExt>::SavingObject = NULL;
-template<> IStream *Container<TEventExt>::SavingStream = NULL;
+template<> TEventExt::TT *Container<TEventExt>::SavingObject = nullptr;
+template<> IStream *Container<TEventExt>::SavingStream = nullptr;
 
 void TEventExt::ExtData::Initialize(TEventClass *pThis)
 {
@@ -17,7 +17,7 @@ void TEventExt::ExtData::Initialize(TEventClass *pThis)
 	Resolves the TechnoName to a TechnoTypeClass and caches it. This function
 	is an O(n) operation for the first call, every subsequent call is O(1).
 
-	\returns The TechnoTypeClass TechnoName points to, NULL if not set or invalid.
+	\returns The TechnoTypeClass TechnoName points to, nullptr if not set or invalid.
 
 	\date 2012-05-09, 2013-02-09
 */

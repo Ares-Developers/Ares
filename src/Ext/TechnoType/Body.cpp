@@ -12,8 +12,8 @@
 template<> const DWORD Extension<TechnoTypeClass>::Canary = 0x44444444;
 Container<TechnoTypeExt> TechnoTypeExt::ExtMap;
 
-template<> TechnoTypeExt::TT *Container<TechnoTypeExt>::SavingObject = NULL;
-template<> IStream *Container<TechnoTypeExt>::SavingStream = NULL;
+template<> TechnoTypeExt::TT *Container<TechnoTypeExt>::SavingObject = nullptr;
+template<> IStream *Container<TechnoTypeExt>::SavingStream = nullptr;
 
 // =============================
 // member funcs
@@ -24,7 +24,7 @@ void TechnoTypeExt::ExtData::Initialize(TechnoTypeClass *pThis) {
 
 	this->Survivors_PilotCount = -1; // defaults to (crew ? 1 : 0)
 
-	this->PrerequisiteLists.SetCapacity(0, NULL);
+	this->PrerequisiteLists.SetCapacity(0, nullptr);
 	this->PrerequisiteLists.AddItem(new DynamicVectorClass<int>);
 
 	this->PrerequisiteTheaters = 0xFFFFFFFF;
@@ -91,7 +91,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	// survivors
 	this->Survivors_Pilots.Reserve(SideClass::Array->Count);
 	for(int i=this->Survivors_Pilots.Count; i<SideClass::Array->Count; ++i) {
-		this->Survivors_Pilots[i] = NULL;
+		this->Survivors_Pilots[i] = nullptr;
 	}
 	this->Survivors_Pilots.Count = SideClass::Array->Count;
 
@@ -104,7 +104,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	for(int i = 0; i < SideClass::Array->Count; ++i) {
 		_snprintf_s(flag, 255, "Survivor.Side%d", i);
 		if(pINI->ReadString(section, flag, "", Ares::readBuffer, Ares::readLength)) {
-			if((this->Survivors_Pilots[i] = InfantryTypeClass::Find(Ares::readBuffer)) == NULL) {
+			if((this->Survivors_Pilots[i] = InfantryTypeClass::Find(Ares::readBuffer)) == nullptr) {
 				if(!INIClass::IsBlank(Ares::readBuffer)) {
 					Debug::INIParseFailed(section, flag, Ares::readBuffer);
 				}
@@ -406,7 +406,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	}
 	if(WeaponCount > pData->Weapons.get_Count())
 	{
-		pData->Weapons.SetCapacity(WeaponCount, NULL);
+		pData->Weapons.SetCapacity(WeaponCount, nullptr);
 		pData->Weapons.set_Count(WeaponCount);
 	}
 
@@ -416,7 +416,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	}
 	if(WeaponCount > pData->EliteWeapons.get_Count())
 	{
-		pData->EliteWeapons.SetCapacity(WeaponCount, NULL);
+		pData->EliteWeapons.SetCapacity(WeaponCount, nullptr);
 		pData->EliteWeapons.set_Count(WeaponCount);
 	}
 

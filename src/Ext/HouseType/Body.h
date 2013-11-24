@@ -57,11 +57,11 @@ class HouseTypeExt
 				RandomSelectionWeight (0),
 				CountryListIndex (0),
 				ParaDropPlane (-1),
-				Parachute_Anim (NULL),
+				Parachute_Anim (nullptr),
 				VeteranBuildings (),
-				LoadTextColor (NULL),
-				ObserverBackgroundSHP (NULL),
-				ObserverFlagSHP (NULL),
+				LoadTextColor (nullptr),
+				ObserverBackgroundSHP (nullptr),
+				ObserverFlagSHP (nullptr),
 				ObserverFlagYuriPAL (false),
 				SettingsInherited (false)
 			{

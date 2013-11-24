@@ -68,7 +68,7 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 	*/
 
 	// create an array of crew for faster lookup
-	VectorClass<InfantryTypeClass*> Crews(SideClass::Array->Count, NULL);
+	VectorClass<InfantryTypeClass*> Crews(SideClass::Array->Count, nullptr);
 	for(int i=0; i<SideClass::Array->Count; ++i) {
 		Crews[i] = SideExt::ExtMap.Find(SideClass::Array->Items[i])->GetCrew();
 	}
@@ -103,7 +103,7 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 			auto pExtraData = TechnoTypeExt::ExtMap.Find(PowersUnit);
 			if(pExtraData->PoweredBy.size()) {
 				Debug::DevLog(Debug::Error, "[%s]PowersUnit=%s, but [%s] uses PoweredBy=!\n", Item->ID, PowersUnit->ID, PowersUnit->ID);
-				Item->PowersUnit = NULL;
+				Item->PowersUnit = nullptr;
 			}
 		}
 

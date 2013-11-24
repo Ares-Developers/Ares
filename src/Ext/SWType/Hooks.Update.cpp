@@ -142,7 +142,7 @@ DEFINE_HOOK(50AF10, HouseClass_CheckSWs, 5)
 
 	// clean up.
 	delete [] Statuses;
-	Statuses = NULL;
+	Statuses = nullptr;
 
 	return 0x50B1CA;
 }

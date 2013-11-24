@@ -198,7 +198,7 @@ public:
 			SpyPlane_Mission (mission_AttackAgain),
 			Weather_CloudHeight (-1),
 			Weather_ScatterCount (1),
-			Nuke_PsiWarning (NULL),
+			Nuke_PsiWarning (nullptr),
 			Sonar_Delay (0),
 			SW_ActivationSound (-1),
 			SW_ChargeToDrainRatio (&RulesClass::Instance->ChargeToDrainRatio),
@@ -226,7 +226,7 @@ public:
 			Text_Active (),
 			Lighting_Enabled (true),
 			SW_Sound (-1),
-			SW_Anim (NULL),
+			SW_Anim (nullptr),
 			SW_AnimHeight (0),
 			SW_AnimVisibility (SuperWeaponAffectedHouse::All),
 			SW_TypeCustom (false),
@@ -296,7 +296,7 @@ public:
 	TypeList<TechnoTypeClass*> pTypes;
 	TypeList<int> pNum;
 
-	ParadropPlane() : pAircraft (NULL)
+	ParadropPlane() : pAircraft (nullptr)
 	{
 	}
 };

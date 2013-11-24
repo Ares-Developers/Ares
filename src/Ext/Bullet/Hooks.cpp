@@ -35,7 +35,7 @@ DEFINE_HOOK(4666F7, BulletClass_Update, 6)
 			if(MyHeight <= BldHeight) {
 				Bullet->SetTarget((ObjectClass *)MyCell);
 				Bullet->SpawnNextAnim = 1;
-				Bullet->NextAnim = NULL;
+				Bullet->NextAnim = nullptr;
 			}
 		}
 	}

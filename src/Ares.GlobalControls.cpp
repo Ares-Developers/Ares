@@ -9,7 +9,7 @@ bool Ares::GlobalControls::DebugKeysEnabled = true;
 
 byte Ares::GlobalControls::GFX_DX_Force = 0;
 
-CCINIClass *Ares::GlobalControls::INI = NULL;
+CCINIClass *Ares::GlobalControls::INI = nullptr;
 
 std::bitset<3> Ares::GlobalControls::AllowBypassBuildLimit(0ull);
 

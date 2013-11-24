@@ -55,14 +55,14 @@ public:
 	static int __stdcall FatalDialog_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 	static void PrepareSnapshotDirectory(std::wstring &buffer);
-	static void FullDump(MINIDUMP_EXCEPTION_INFORMATION *pException, std::wstring * destinationFolder = NULL, std::wstring * generatedFilename = NULL);
+	static void FullDump(MINIDUMP_EXCEPTION_INFORMATION *pException, std::wstring * destinationFolder = nullptr, std::wstring * generatedFilename = nullptr);
 
 	static void DevLog(Debug::Severity severity, const char* Format, ...);
 
 	static bool bTrackParserErrors;
 	static bool bParserErrorDetected;
 
-	static void INIParseFailed(const char *section, const char *flag, const char *value, const char *Message = NULL);
+	static void INIParseFailed(const char *section, const char *flag, const char *value, const char *Message = nullptr);
 };
 
 #endif

@@ -16,17 +16,17 @@
 template<> const DWORD Extension<SuperWeaponTypeClass>::Canary = 0x55555555;
 Container<SWTypeExt> SWTypeExt::ExtMap;
 
-template<> SWTypeExt::TT *Container<SWTypeExt>::SavingObject = NULL;
-template<> IStream *Container<SWTypeExt>::SavingStream = NULL;
+template<> SWTypeExt::TT *Container<SWTypeExt>::SavingObject = nullptr;
+template<> IStream *Container<SWTypeExt>::SavingStream = nullptr;
 
-SuperWeaponTypeClass *SWTypeExt::CurrentSWType = NULL;
+SuperWeaponTypeClass *SWTypeExt::CurrentSWType = nullptr;
 
 SWTypeExt::ExtData::~ExtData() {
 	this->ParaDrop.clear();
 
 	for(int i=this->ParaDropPlanes.Count-1; i>=0; --i) {
 		delete this->ParaDropPlanes.Items[i];
-		this->ParaDropPlanes.Items[i] = NULL;
+		this->ParaDropPlanes.Items[i] = nullptr;
 	}
 };
 
@@ -376,7 +376,7 @@ bool SWTypeExt::Launch(SuperClass* pThis, NewSWType* pSW, CellStruct* pCoords, b
 			CoordStruct coords;
 			pTarget->GetCoordsWithBridge(&coords);
 
-			if((pData->SW_Anim.Get() != NULL) && !(flags & SuperWeaponFlags::NoAnim)) {
+			if((pData->SW_Anim.Get() != nullptr) && !(flags & SuperWeaponFlags::NoAnim)) {
 				coords.Z += pData->SW_AnimHeight;
 				AnimClass *placeholder;
 				GAME_ALLOC(AnimClass, placeholder, pData->SW_Anim, &coords);
@@ -384,7 +384,7 @@ bool SWTypeExt::Launch(SuperClass* pThis, NewSWType* pSW, CellStruct* pCoords, b
 			}
 
 			if((pData->SW_Sound != -1) && !(flags & SuperWeaponFlags::NoSound)) {
-				VocClass::PlayAt(pData->SW_Sound, &coords, NULL);
+				VocClass::PlayAt(pData->SW_Sound, &coords, nullptr);
 			}
 
 			if(pData->SW_RadarEvent.Get() && !(flags & SuperWeaponFlags::NoEvent)) {
@@ -441,7 +441,7 @@ NewSWType* SWTypeExt::ExtData::GetNewSWType() {
 		return pSW;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void SWTypeExt::ExtData::PrintMessage(const CSFText& message, HouseClass* pFirer) {
@@ -473,7 +473,7 @@ void SWTypeExt::ClearChronoAnim(SuperClass *pThis)
 {
 	if(pThis->Animation) {
 		pThis->Animation->RemainingIterations = 0;
-		pThis->Animation = NULL;
+		pThis->Animation = nullptr;
 		PointerExpiredNotification::NotifyInvalidAnim.Remove(pThis);
 	}
 
@@ -488,7 +488,7 @@ void SWTypeExt::CreateChronoAnim(SuperClass *pThis, CoordStruct *pCoords, AnimTy
 	ClearChronoAnim(pThis);
 	
 	if(pAnimType && pCoords) {
-		AnimClass* pAnim = NULL;
+		AnimClass* pAnim = nullptr;
 		GAME_ALLOC(AnimClass, pAnim, pAnimType, pCoords);
 		if(pAnim) {
 			SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pThis->Type);

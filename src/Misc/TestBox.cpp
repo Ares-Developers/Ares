@@ -18,7 +18,7 @@ void TestScaffold::FloatToIntTest() {
 
 void TestScaffold::GameCastTest() {
 	Debug::Log("Starting g_c test\n");
-	ObjectClass *O = NULL; // doesn't matter how you got the pointer, as long as it's valid... check for NULL yourselves
+	ObjectClass *O = nullptr; // doesn't matter how you got the pointer, as long as it's valid... check for NULL yourselves
 	
 	if(BuildingClass *B = specific_cast<BuildingClass *>(O)) {
 		Debug::Log("Casted to Building - correct\n");

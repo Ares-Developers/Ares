@@ -45,7 +45,7 @@ bool SW_SpyPlane::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
 		// launch all at once
 		CellClass *pTarget = MapClass::Instance->GetCellAt(pCoords);
 		pThis->Owner->SendSpyPlanes(pData->SpyPlane_TypeIndex.Get(), pData->SpyPlane_Count.Get(),
-			pData->SpyPlane_Mission.Get(), pTarget, NULL);
+			pData->SpyPlane_Mission.Get(), pTarget, nullptr);
 	}
 
 	return true;

@@ -164,10 +164,10 @@ public:
 	}
 
 	ValueType FindOrAllocate(KeyType const &key) {
-		if(key == NULL) {
+		if(key == nullptr) {
 			const auto &info = typeid(*this);
 			Debug::Log("CTOR of %s attempted for a NULL pointer! WTF!\n", info.name());
-			return NULL;
+			return nullptr;
 		}
 		auto i = this->find(key);
 		if(i == this->end()) {
@@ -181,7 +181,7 @@ public:
 	ValueType Find(const KeyType &key) {
 		auto i = this->find(key);
 		if(i == this->end()) {
-			return NULL;
+			return nullptr;
 		}
 		return i->second;
 	}
@@ -189,7 +189,7 @@ public:
 	const ValueType Find(const KeyType &key) const {
 		auto i = this->find(key);
 		if(i == this->end()) {
-			return NULL;
+			return nullptr;
 		}
 		return i->second;
 	}
@@ -239,8 +239,8 @@ public:
 	void SaveStatic() {
 		if(Container<T>::SavingObject && Container<T>::SavingStream) {
 			this->Save(Container<T>::SavingObject, Container<T>::SavingStream);
-			Container<T>::SavingObject = NULL;
-			Container<T>::SavingStream = NULL;
+			Container<T>::SavingObject = nullptr;
+			Container<T>::SavingStream = nullptr;
 		}
 	}
 
@@ -254,8 +254,8 @@ public:
 		const auto &info = typeid(key);
 		Debug::Log("Saving Key [%s] (%X)\n", info.name(), key);
 
-		if(key == NULL) {
-			return NULL;
+		if(key == nullptr) {
+			return nullptr;
 		}
 		auto buffer = this->Find(key);
 		Debug::Log("\tKey maps to %X\n", buffer);
@@ -272,8 +272,8 @@ public:
 	void LoadStatic() {
 		if(Container<T>::SavingObject && Container<T>::SavingStream) {
 			this->Load(Container<T>::SavingObject, Container<T>::SavingStream);
-			Container<T>::SavingObject = NULL;
-			Container<T>::SavingStream = NULL;
+			Container<T>::SavingObject = nullptr;
+			Container<T>::SavingStream = nullptr;
 		}
 	}
 
@@ -287,9 +287,9 @@ public:
 		const auto &info = typeid(key);
 		Debug::Log("Loading Key [%s] (%X)\n", info.name(), key);
 
-		if(key == NULL) {
+		if(key == nullptr) {
 			Debug::Log("Load attempted for a NULL pointer! WTF!\n");
-			return NULL;
+			return nullptr;
 		}
 		auto buffer = this->FindOrAllocate(key);
 		long origPtr;

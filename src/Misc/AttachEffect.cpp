@@ -125,7 +125,7 @@ void AttachEffectClass::CreateAnim(TechnoClass *Owner) {
 void AttachEffectClass::KillAnim() {
 	if (auto pAnim = this->Animation) {
 		this->Animation = nullptr;
-		pAnim->SetOwnerObject(NULL);
+		pAnim->SetOwnerObject(nullptr);
 		pAnim->UnInit();
 	}
 }

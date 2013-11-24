@@ -46,7 +46,7 @@ DEFINE_HOOK(6FF008, TechnoClass_Fire_FSW, 8)
 		CellClass::Cell2Coord(&FireFinder.target, &tgt);
 		Bullet->Target = MapClass::Instance->GetCellAt(&tgt)->GetContent();
 		Bullet->Owner->ShouldLoseTargetNow = 1;
-//		Bullet->Owner->SetTarget(NULL);
+//		Bullet->Owner->SetTarget(nullptr);
 //		Bullet->Owner->Scatter(0xB1CFE8, 1, 0);
 	}
 

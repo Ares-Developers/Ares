@@ -30,7 +30,7 @@ DEFINE_HOOK(66238A, RocketLocomotionClass_ILocomotion_Process_CustomMissileTakeo
 
 	if(TechnoTypeExt::ExtData* pExt = TechnoTypeExt::ExtMap.Find(pOwner->Type)) {
 		if(AnimTypeClass* pType = pExt->CustomMissileTakeoffAnim) {
-			AnimClass* pAnim = NULL;
+			AnimClass* pAnim = nullptr;
 			GAME_ALLOC(AnimClass, pAnim, pType, &pOwner->Location, 2, 1, 0x600, -10, 0);
 		}
 		return 0x6623F3;
@@ -48,7 +48,7 @@ DEFINE_HOOK(662512, RocketLocomotionClass_ILocomotion_Process_CustomMissileTakeo
 
 	if(TechnoTypeExt::ExtData* pExt = TechnoTypeExt::ExtMap.Find(pOwner->Type)) {
 		if(AnimTypeClass* pType = pExt->CustomMissileTakeoffAnim) {
-			AnimClass* pAnim = NULL;
+			AnimClass* pAnim = nullptr;
 			GAME_ALLOC(AnimClass, pAnim, pType, &pOwner->Location, 2, 1, 0x600, -10, 0);
 		}
 		return 0x66257B;
@@ -66,7 +66,7 @@ DEFINE_HOOK(6627E5, RocketLocomotionClass_ILocomotion_Process_CustomMissileTakeo
 
 	if(TechnoTypeExt::ExtData* pExt = TechnoTypeExt::ExtMap.Find(pOwner->Type)) {
 		if(AnimTypeClass* pType = pExt->CustomMissileTakeoffAnim) {
-			AnimClass* pAnim = NULL;
+			AnimClass* pAnim = nullptr;
 			GAME_ALLOC(AnimClass, pAnim, pType, &pOwner->Location, 2, 1, 0x600, -10, 0);
 		}
 		return 0x662849;
@@ -87,7 +87,7 @@ DEFINE_HOOK(662D85, RocketLocomotionClass_ILocomotion_Process_CustomMissileTrail
 			pLocomotor->TrailerTimer.Start(pExt->CustomMissileTrailerSeparation);
 
 			if(AnimTypeClass* pType = pExt->CustomMissileTrailerAnim) {
-				AnimClass* pAnim = NULL;
+				AnimClass* pAnim = nullptr;
 				GAME_ALLOC(AnimClass, pAnim, pType, &pOwner->Location);
 			}
 		}
@@ -198,7 +198,7 @@ DEFINE_HOOK(6B752E, SpawnManagerClass_Update_CustomMissileTakeoff, 6)
 
 	if(TechnoTypeExt::ExtData* pExt = TechnoTypeExt::ExtMap.Find(pOwner->Type)) {
 		if(AnimTypeClass* pType = pExt->CustomMissileTakeoffAnim) {
-			AnimClass* pAnim = NULL;
+			AnimClass* pAnim = nullptr;
 			GAME_ALLOC(AnimClass, pAnim, pType, &pOwner->Location, 2, 1, 0x600, -10, 0);
 		}
 		return 0x6B757A;

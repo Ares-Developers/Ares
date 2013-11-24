@@ -4,8 +4,8 @@
 #include <algorithm>
 #include <vector>
 
-CellStruct * BuildingExt::TempFoundationData1 = NULL;
-CellStruct * BuildingExt::TempFoundationData2 = NULL;
+CellStruct * BuildingExt::TempFoundationData1 = nullptr;
+CellStruct * BuildingExt::TempFoundationData2 = nullptr;
 
 DEFINE_HOOK(45EC90, Foundations_GetFoundationWidth, 6)
 {

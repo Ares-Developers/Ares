@@ -10,7 +10,7 @@
 int Interface::lastDialogTemplateID = 0;
 int Interface::nextAction = -1;
 int Interface::nextReturnMenu = -1;
-const wchar_t* Interface::nextMessageText = NULL;
+const wchar_t* Interface::nextMessageText = nullptr;
 
 int Interface::slots[4]; // holds index-of-campaign+1
 
@@ -352,7 +352,7 @@ DEFINE_HOOK(52EC18, CampaignMenu_hDlg_PreHandleGeneral, 5) {
 
 					// set the summary text
 					if(HWND hSovLabel = GetDlgItem(hDlg, 1960)) {
-						const wchar_t* summary = NULL;
+						const wchar_t* summary = nullptr;
 						if(*pData->Summary) {
 							summary = StringTable::LoadStringA(pData->Summary);
 						}
@@ -421,7 +421,7 @@ DEFINE_HOOK(52EE04, CampaignMenu_hDlg_SelectHoverSound, 6) {
 			// get the campaign hovered above
 			int idxCampaign = Interface::slots[idxSlot]-1;
 
-			char* campaignID = NULL;
+			char* campaignID = nullptr;
 			if(idxCampaign > -1) {
 				campaignID = Ares::UISettings::Campaigns[idxCampaign].Battle;
 			}
@@ -455,7 +455,7 @@ DEFINE_HOOK(52F232, CampaignMenu_hDlg_StartCampaign, 6) {
 
 	// get the campaign hovered above
 	int idxSlot = Interface::getSlotIndex(iID);
-	char* campaignID = NULL;
+	char* campaignID = nullptr;
 	if(idxSlot > -1) {
 		int idxCampaign = Interface::slots[idxSlot]-1;
 		if(idxCampaign > -1) {

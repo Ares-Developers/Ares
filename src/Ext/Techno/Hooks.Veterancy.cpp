@@ -9,7 +9,7 @@ DEFINE_HOOK(702E9D, TechnoClass_RegisterDestruction_Veterancy, 6) {
 	GET(int, VictimCost, EBP);
 
 	// get the unit that receives veterancy
-	TechnoClass* pExperience = NULL;
+	TechnoClass* pExperience = nullptr;
 	float ExpFactor = 1.0F;
 
 	// before we do any other logic, check if this kill was committed by an
@@ -29,7 +29,7 @@ DEFINE_HOOK(702E9D, TechnoClass_RegisterDestruction_Veterancy, 6) {
 	TechnoTypeClass* pTKiller = pKiller->GetTechnoType();
 	TechnoClass* pTransporter = pKiller->Transporter;
 	TechnoTypeExt::ExtData *pTKillerData = TechnoTypeExt::ExtMap.Find(pTKiller);
-	TechnoTypeExt::ExtData *pTTransporterData = NULL;
+	TechnoTypeExt::ExtData *pTTransporterData = nullptr;
 	bool TransporterAndKillerAllied = true;
 	bool promoteImmediately = false;
 	if(pTransporter) {
@@ -134,7 +134,7 @@ DEFINE_HOOK(702E9D, TechnoClass_RegisterDestruction_Veterancy, 6) {
 						}
 
 						if(sound != -1 && pExperience->Owner->IsHumanoid()) {
-							VocClass::PlayAt(sound, &pExperience->Transporter->Location, NULL);
+							VocClass::PlayAt(sound, &pExperience->Transporter->Location, nullptr);
 							VoxClass::Play("EVA_UnitPromoted");
 						}
 					}

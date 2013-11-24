@@ -15,7 +15,7 @@ class SW_Reveal : NewSWType
 			{ };
 
 		virtual const char * GetTypeString()
-			{ return NULL; }
+			{ return nullptr; }
 
 		virtual void Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW);
 		virtual bool Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer);

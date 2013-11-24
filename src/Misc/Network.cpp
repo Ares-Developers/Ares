@@ -46,7 +46,7 @@ DEFINE_HOOK(64CCBF, DoList_ReplaceReconMessage, 6)
 	if(MessageBoxW(Game::hWnd, L"Yuri's Revenge has detected a desynchronization!\n"
 			L"Would you like to create a full error report for the developers?\n"
 			L"Be advised that reports from at least two players are needed.", L"Reconnection Error!", MB_YESNO | MB_ICONERROR) == IDYES) {
-		HCURSOR loadCursor = LoadCursor(NULL, IDC_WAIT);
+		HCURSOR loadCursor = LoadCursor(nullptr, IDC_WAIT);
 		SetClassLong(Game::hWnd, GCL_HCURSOR, (LONG)loadCursor);
 		SetCursor(loadCursor);
 
@@ -60,9 +60,9 @@ DEFINE_HOOK(64CCBF, DoList_ReplaceReconMessage, 6)
 		}
 
 		Debug::Log("Making a memory snapshot\n");
-		Debug::FullDump(NULL, &path);
+		Debug::FullDump(nullptr, &path);
 
-		loadCursor = LoadCursor(NULL, IDC_ARROW);
+		loadCursor = LoadCursor(nullptr, IDC_ARROW);
 		SetClassLong(Game::hWnd, GCL_HCURSOR, (LONG)loadCursor);
 		SetCursor(loadCursor);
 		Debug::FatalError("A desynchronization has occurred.\r\n"

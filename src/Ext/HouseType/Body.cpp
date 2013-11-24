@@ -11,8 +11,8 @@
 template<> const DWORD Extension<HouseTypeClass>::Canary = 0xAFFEAFFE;
 Container<HouseTypeExt> HouseTypeExt::ExtMap;
 
-template<> HouseTypeExt::TT *Container<HouseTypeExt>::SavingObject = NULL;
-template<> IStream *Container<HouseTypeExt>::SavingStream = NULL;
+template<> HouseTypeExt::TT *Container<HouseTypeExt>::SavingObject = nullptr;
+template<> IStream *Container<HouseTypeExt>::SavingStream = nullptr;
 
 void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 	char* pID = pThis->ID;
@@ -161,7 +161,7 @@ void HouseTypeExt::ExtData::Initialize(HouseTypeClass *pThis) {
 	this->ParaDrop.Clear();
 	this->ParaDropNum.Clear();
 
-	BuildingTypeClass * pPower = NULL;
+	BuildingTypeClass * pPower = nullptr;
 
 	switch (pThis->SideIndex) {
 	case 0:
@@ -276,7 +276,7 @@ void HouseTypeExt::ExtData::LoadFromINIFile(HouseTypeClass *pThis, CCINIClass *p
 
 	if (!this->Powerplants.Count) {
 		const char * section = "General";
-		const char * key = NULL;
+		const char * key = nullptr;
 		switch (pThis->SideIndex) {
 			case 0:
 				key = "GDIPowerPlant";
@@ -318,7 +318,7 @@ void HouseTypeExt::ExtData::LoadFromINIFile(HouseTypeClass *pThis, CCINIClass *p
 	
 	this->ParaDropPlane.Read(&exINI, pID, "ParaDrop.Aircraft");
 
-	char* p = NULL;
+	char* p = nullptr;
 	if(pINI->ReadString(pID, "ParaDrop.Types", "", Ares::readBuffer, Ares::readLength)) {
 		this->ParaDrop.Clear();
 
@@ -368,7 +368,7 @@ template<typename T>
 void CopyVector(T HouseTypeExt::ExtData::* prop, const HouseTypeExt::ExtData *src, HouseTypeExt::ExtData *dst) {
 	auto &sp = src->*prop;
 	auto &dp = dst->*prop;
-	dp.SetCapacity(sp.Capacity, NULL);
+	dp.SetCapacity(sp.Capacity, nullptr);
 	dp.Count = sp.Count;
 	for(unsigned ix = sp.Count; ix > 0; --ix) {
 		auto idx = ix - 1;
@@ -461,7 +461,7 @@ AircraftTypeClass* HouseTypeExt::ExtData::GetParadropPlane() {
 		return AircraftTypeClass::Array->GetItem(iPlane);
 	} else {
 		Debug::Log("[GetParadropPlane] House %s and its side have no valid paradrop plane defined. Rules fallback failed.\n", this->AttachedToObject->ID);
-		return NULL;
+		return nullptr;
 	}
 }
 

@@ -176,7 +176,7 @@ class Customizable : public Valueable<T> {
 	bool Customized;
 	T*   Default;
 public:
-	Customizable(T* alias = NULL) : Valueable<T>(T()), Customized(false), Default(alias) {};
+	Customizable(T* alias = nullptr) : Valueable<T>(T()), Customized(false), Default(alias) {};
 
 	void Bind(T* to) {
 		if(!this->Customized) {

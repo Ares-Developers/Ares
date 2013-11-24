@@ -403,7 +403,7 @@ void BuildingTypeExt::cPrismForwarding::RemoveFromNetwork(BuildingClass *SlaveTo
 		pSlaveData->PrismForwarding.DamageReserve = 0;
 		//animations should be controlled by whatever incapacitated the tower so no need to mess with anims here
 	}
-	SetSupportTarget(SlaveTower, NULL);
+	SetSupportTarget(SlaveTower, nullptr);
 	//finally, remove all the preceding slaves from the network
 	for(int senderIdx = pSlaveData->PrismForwarding.Senders.Count; senderIdx; senderIdx--) {
 		if (BuildingClass *NextTower = pSlaveData->PrismForwarding.Senders[senderIdx-1]) {
@@ -431,7 +431,7 @@ void BuildingTypeExt::cPrismForwarding::SetSupportTarget(BuildingClass *pSlaveTo
 					Debug::DevLog(Debug::Warning, "PrismForwarding::SetSupportTarget: Old target tower (%p) did not consider this tower (%p) as its sender.\n", pOldTarget, pSlaveTower);
 				}
 			}
-			pSlaveData->PrismForwarding.SupportTarget = NULL;
+			pSlaveData->PrismForwarding.SupportTarget = nullptr;
 		}
 
 		// set the new tower as support target
@@ -455,7 +455,7 @@ void BuildingTypeExt::cPrismForwarding::RemoveAllSenders(BuildingClass *pTower) 
 		// disconnect all sender towers from their support target, which is me
 		for(int senderIdx = pData->PrismForwarding.Senders.Count; senderIdx; senderIdx--) {
 			if(BuildingClass *NextTower = pData->PrismForwarding.Senders[senderIdx-1]) {
-				SetSupportTarget(NextTower, NULL);
+				SetSupportTarget(NextTower, nullptr);
 			}
 		}
 

@@ -7,8 +7,8 @@
 template<> const DWORD Extension<BuildingTypeClass>::Canary = 0x11111111;
 Container<BuildingTypeExt> BuildingTypeExt::ExtMap;
 
-template<> BuildingTypeExt::TT *Container<BuildingTypeExt>::SavingObject = NULL;
-template<> IStream *Container<BuildingTypeExt>::SavingStream = NULL;
+template<> BuildingTypeExt::TT *Container<BuildingTypeExt>::SavingObject = nullptr;
+template<> IStream *Container<BuildingTypeExt>::SavingStream = nullptr;
 
 std::vector<std::string> BuildingTypeExt::ExtData::trenchKinds;
 
@@ -481,7 +481,7 @@ void Container<BuildingTypeExt>::Load(BuildingTypeClass *pThis, IStream *pStm) {
 		pThis->FoundationData = pData->CustomData;
 		pThis->FoundationOutside = pData->OutlineData;
 	} else {
-		pData->CustomData = pData->OutlineData = NULL;
+		pData->CustomData = pData->OutlineData = nullptr;
 	}
 
 #ifdef DEBUGBUILD

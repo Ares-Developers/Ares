@@ -27,14 +27,14 @@
 template<> const DWORD Extension<WarheadTypeClass>::Canary = 0x22222222;
 Container<WarheadTypeExt> WarheadTypeExt::ExtMap;
 
-template<> WarheadTypeExt::TT *Container<WarheadTypeExt>::SavingObject = NULL;
-template<> IStream *Container<WarheadTypeExt>::SavingStream = NULL;
+template<> WarheadTypeExt::TT *Container<WarheadTypeExt>::SavingObject = nullptr;
+template<> IStream *Container<WarheadTypeExt>::SavingStream = nullptr;
 
 hash_ionExt WarheadTypeExt::IonExt;
 
-WarheadTypeClass * WarheadTypeExt::Temporal_WH = NULL;
+WarheadTypeClass * WarheadTypeExt::Temporal_WH = nullptr;
 
-WarheadTypeClass * WarheadTypeExt::EMP_WH = NULL;
+WarheadTypeClass * WarheadTypeExt::EMP_WH = nullptr;
 
 void WarheadTypeExt::ExtData::Initialize(WarheadTypeClass *pThis) {
 	if(!_strcmpi(pThis->ID, "NUKE")) {
@@ -204,7 +204,7 @@ void WarheadTypeExt::ExtData::applyIronCurtain(CoordStruct *coords, HouseClass* 
 						if(newValue > 0) {
 							// damage the victim before ICing it
 							if(damage) {
-								curTechno->ReceiveDamage(&damage, 0, this->AttachedToObject, NULL, true, false, Owner);
+								curTechno->ReceiveDamage(&damage, 0, this->AttachedToObject, nullptr, true, false, Owner);
 							}
 
 							// unit may be destroyed already.
@@ -375,8 +375,8 @@ bool WarheadTypeExt::ExtData::applyKillDriver(BulletClass* Bullet) {
 			}
 
 			// If this vehicle uses Operator=, we have to take care of actual "physical" drivers, rather than theoretical ones
-			FootClass *passenger = NULL;
-			if(TargetTypeExt->IsAPromiscuousWhoreAndLetsAnyoneRideIt && (passenger = pTarget->RemoveFirstPassenger()) != NULL) {
+			FootClass *passenger = nullptr;
+			if(TargetTypeExt->IsAPromiscuousWhoreAndLetsAnyoneRideIt && (passenger = pTarget->RemoveFirstPassenger()) != nullptr) {
 				// kill first passenger
 				passenger->RegisterDestruction(Bullet->Owner);
 				passenger->UnInit();
@@ -408,12 +408,12 @@ bool WarheadTypeExt::ExtData::applyKillDriver(BulletClass* Bullet) {
 				}
 			}
 			pTarget->MindControlledByAUnit = false;
-			pTarget->MindControlledByHouse = NULL;
+			pTarget->MindControlledByHouse = nullptr;
 
 			// remove the mind-control ring anim
 			if(pTarget->MindControlRingAnim) {
 				pTarget->MindControlRingAnim->UnInit();
-				pTarget->MindControlRingAnim = NULL;
+				pTarget->MindControlRingAnim = nullptr;
 			}
 
 			// If this unit mind controls stuff, we should free the controllees, since they still belong to the previous owner
@@ -489,8 +489,8 @@ void WarheadTypeExt::ExtData::applyAttachedEffect(CoordStruct *coords, TechnoCla
 						this->AttachedEffect.Attach(curTechno, this->AttachedEffect.Duration, Owner);
 					}	
 				} else {
-					//this->AttachedEffect.Attach(curTechno, this->AttachedEffect.Duration, NULL, this->AttachedEffect.DamageDelay);
-					this->AttachedEffect.Attach(curTechno, this->AttachedEffect.Duration, NULL);
+					//this->AttachedEffect.Attach(curTechno, this->AttachedEffect.Duration, nullptr, this->AttachedEffect.DamageDelay);
+					this->AttachedEffect.Attach(curTechno, this->AttachedEffect.Duration, nullptr);
 				}	
 			}
 		}

@@ -236,7 +236,7 @@ void HouseLogger(const DynamicVectorClass<T> *Array, FILE * F, const char * Labe
 
 bool LogFrame(const char * LogFilename, NetworkEvent *OffendingEvent = nullptr) {
 	if(auto LogFile = fopen(LogFilename, "wt")) {
-		std::setvbuf(LogFile, NULL, _IOFBF, 1024 * 1024); // 1024 kb buffer - should be sufficient for whole log
+		std::setvbuf(LogFile, nullptr, _IOFBF, 1024 * 1024); // 1024 kb buffer - should be sufficient for whole log
 
 		fprintf(LogFile, "Ares synchronization log (version " VERSION_STR ")\n");
 

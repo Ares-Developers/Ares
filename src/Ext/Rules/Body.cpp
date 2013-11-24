@@ -7,10 +7,10 @@
 #include <GameModeOptionsClass.h>
 
 template<> const DWORD Extension<RulesClass>::Canary = 0x12341234;
-RulesExt::ExtData * RulesExt::Data = NULL;
+RulesExt::ExtData * RulesExt::Data = nullptr;
 
-template<> RulesExt::TT *Container<RulesExt>::SavingObject = NULL;
-template<> IStream *Container<RulesExt>::SavingStream = NULL;
+template<> RulesExt::TT *Container<RulesExt>::SavingObject = nullptr;
+template<> IStream *Container<RulesExt>::SavingStream = nullptr;
 
 void RulesExt::Allocate(RulesClass *pThis) {
 	if (Data) {
@@ -22,7 +22,7 @@ void RulesExt::Allocate(RulesClass *pThis) {
 void RulesExt::Remove(RulesClass *pThis) {
 	if (Data) {
 		delete Data;
-		Data = NULL;
+		Data = nullptr;
 	}
 }
 

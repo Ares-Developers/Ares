@@ -29,7 +29,7 @@ void SW_ChronoWarp::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *
 bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
 {
 	// get the previous super weapon
-	SuperClass* pSource = NULL;
+	SuperClass* pSource = nullptr;
 	if(HouseExt::ExtData *pExt = HouseExt::ExtMap.Find(pThis->Owner)) {
 		if(pThis->Owner->Supers.ValidIndex(pExt->SWLastIndex)) {
 			pSource = pThis->Owner->Supers.GetItem(pExt->SWLastIndex);
@@ -62,7 +62,7 @@ bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 			// Update animations
 			SWTypeExt::ClearChronoAnim(pThis);
 
-			AnimClass *pAnim = NULL;
+			AnimClass *pAnim = nullptr;
 			if(pData->Chronosphere_BlastSrc.Get()) {
 				GAME_ALLOC(AnimClass, pAnim, pData->Chronosphere_BlastSrc.Get(), &coordsSource);
 			}
@@ -158,7 +158,7 @@ bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 					if(!pType->Teleporter || pData->Chronosphere_KillTeleporters.Get()) {
 						int strength = pType->Strength;
 						pTechno->ReceiveDamage(&strength, 0,
-							RulesClass::Instance->C4Warhead, NULL, true, false, pSource->Owner);
+							RulesClass::Instance->C4Warhead, nullptr, true, false, pSource->Owner);
 						return true;
 					}
 				}
@@ -197,7 +197,7 @@ bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 					if(pBld->LightSource) {
 						pBld->LightSource->Deactivate();
 						GAME_DEALLOC(pBld->LightSource);
-						pBld->LightSource = NULL;
+						pBld->LightSource = nullptr;
 					}
 
 					// shut down cloak generation
@@ -362,7 +362,7 @@ void ChronoWarpStateMachine::Update() {
 							if(pContainer.isVehicle || pExt->Chronosphere_BlowUnplaceable.Get()) {
 								int damage = pBld->Type->Strength;
 								pBld->ReceiveDamage(&damage, 0,
-									RulesClass::Instance->C4Warhead, NULL, TRUE, TRUE, this->Super->Owner);
+									RulesClass::Instance->C4Warhead, nullptr, TRUE, TRUE, this->Super->Owner);
 							}
 						}
 					}

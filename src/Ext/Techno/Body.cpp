@@ -15,8 +15,8 @@
 template<> const DWORD Extension<TechnoClass>::Canary = 0x55555555;
 Container<TechnoExt> TechnoExt::ExtMap;
 
-template<> TechnoExt::TT *Container<TechnoExt>::SavingObject = NULL;
-template<> IStream *Container<TechnoExt>::SavingStream = NULL;
+template<> TechnoExt::TT *Container<TechnoExt>::SavingObject = nullptr;
+template<> IStream *Container<TechnoExt>::SavingStream = nullptr;
 
 FireError::Value TechnoExt::FiringStateCache = FireError::NotAValue;
 
@@ -144,7 +144,7 @@ bool TechnoExt::EjectSurvivor(FootClass *Survivor, CoordStruct *loc, bool Select
 		success = Survivor->Put(loc, ScenarioClass::Instance->Random.RandomRanged(0, 7));
 	}
 	RET_UNLESS(success);
-	Survivor->Transporter = NULL;
+	Survivor->Transporter = nullptr;
 	Survivor->LastMapCoords = pCell->MapCoords;
 
 	// don't ask, don't tell
@@ -258,12 +258,12 @@ void TechnoExt::StopDraining(TechnoClass *Drainer, TechnoClass *Drainee) {
 		// stop the animation.
 		if (Drainer->DrainAnim) {
 			Drainer->DrainAnim->UnInit();
-			Drainer->DrainAnim = NULL;
+			Drainer->DrainAnim = nullptr;
 		}
 
 		// remove links.
-		Drainee->DrainingMe = NULL;
-		Drainer->DrainTarget = NULL;
+		Drainee->DrainingMe = nullptr;
+		Drainer->DrainTarget = nullptr;
 
 		// tell the game to recheck the drained
 		// player's tech level.
@@ -322,7 +322,7 @@ UnitTypeClass * TechnoExt::ExtData::GetUnitType() {
 			return pData->WaterImage;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 void Container<TechnoExt>::InvalidatePointer(void *ptr, bool bRemoved) {
@@ -439,7 +439,7 @@ void TechnoExt::Destroy(TechnoClass* pTechno, TechnoClass* pKiller, HouseClass* 
 
 void TechnoExt::TransferIvanBomb(TechnoClass *From, TechnoClass *To) {
 	if(auto Bomb = From->AttachedBomb) {
-		From->AttachedBomb = NULL;
+		From->AttachedBomb = nullptr;
 		Bomb->Target = To;
 		To->AttachedBomb = Bomb;
 		To->BombVisible = From->BombVisible;
@@ -565,8 +565,8 @@ void TechnoExt::DetachSpecificSpawnee(TechnoClass *Spawnee, HouseClass *NewSpawn
 
 		if(Spawnee == SpawnNode->GetItem(i)->Unit) {
 
-			SpawnNode->GetItem(i)->Unit = NULL;
-			Spawnee->SpawnOwner = NULL;
+			SpawnNode->GetItem(i)->Unit = nullptr;
+			Spawnee->SpawnOwner = nullptr;
 
 			SpawnNode->GetItem(i)->Status = SpawnNodeStatus::Dead;
 
@@ -597,7 +597,7 @@ void TechnoExt::FreeSpecificSlave(TechnoClass *Slave, HouseClass *Affector){
 
 		//LostSlave can free the unit from the miner, so we're awesome. 
 		Manager->LostSlave(pSlave);
-		pSlave->SlaveOwner = NULL;
+		pSlave->SlaveOwner = nullptr;
 
 		//OK, delinked, Now relink it to the side which separated the slave from the miner
 		pSlave->SetOwningHouse(Affector);
@@ -606,7 +606,7 @@ void TechnoExt::FreeSpecificSlave(TechnoClass *Slave, HouseClass *Affector){
 
 // If available, creates an InfantryClass instance and removes the hijacker from the victim.
 InfantryClass* TechnoExt::RecoverHijacker(FootClass* pThis) {
-	InfantryClass* Hijacker = NULL;
+	InfantryClass* Hijacker = nullptr;
 	if(pThis && pThis->HijackerInfantryType != -1) {
 		if(InfantryTypeClass* HijackerType = InfantryTypeClass::Array->GetItem(pThis->HijackerInfantryType)) {
 			TechnoExt::ExtData* pExt = TechnoExt::ExtMap.Find(pThis);
@@ -715,7 +715,7 @@ bool TechnoExt::ExtData::PerformActionHijack(TechnoClass* pTarget) {
 		// abort capturing this thing, it looked
 		// better from over there...
 		if(!action) {
-			pThis->SetDestination(NULL, true);
+			pThis->SetDestination(nullptr, true);
 			CoordStruct crd;
 			pTarget->GetCoords(&crd);
 			pThis->Scatter((DWORD)&crd, 1, 0);
@@ -730,7 +730,7 @@ bool TechnoExt::ExtData::PerformActionHijack(TechnoClass* pTarget) {
 		pTarget->MindControlledByAUnit = false;
 		if(pTarget->MindControlRingAnim) {
 			pTarget->MindControlRingAnim->UnInit();
-			pTarget->MindControlRingAnim = NULL;
+			pTarget->MindControlRingAnim = nullptr;
 		}
 
 		bool asPassenger = false;

@@ -106,7 +106,7 @@ protected:
 public:
 	char* operator [](int Index) {
 		if(Index < 0 || Index > this->Strings.Count) {
-			return NULL;
+			return nullptr;
 		}
 		return this->Strings.GetItem(Index);
 	}
@@ -127,11 +127,11 @@ public:
 		return this->Strings.Count;
 	}
 
-	VectorNames<T>(const char * Buf = NULL) {
+	VectorNames<T>(const char * Buf = nullptr) {
 		this->Buffer = _strdup(Buf);
 	}
 
-	void Tokenize(const char * Buf = NULL) {
+	void Tokenize(const char * Buf = nullptr) {
 		if(Buf) {
 			if(this->Buffer) {
 				free(this->Buffer);

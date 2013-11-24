@@ -60,7 +60,7 @@ DEFINE_HOOK(44B2FE, BuildingClass_Mi_Attack_IsPrism, 6)
 			B->PrismTargetCoords.Y = B->PrismTargetCoords.Z = 0;
 			pMasterData->PrismForwarding.ModifierReserve = 0.0;
 			pMasterData->PrismForwarding.DamageReserve = 0;
-			BuildingTypeExt::cPrismForwarding::SetSupportTarget(B, NULL);
+			BuildingTypeExt::cPrismForwarding::SetSupportTarget(B, nullptr);
 
 		}
 
@@ -134,7 +134,7 @@ DEFINE_HOOK(4503F0, BuildingClass_Update_Prism, 9)
 				pData->PrismForwarding.DamageReserve = 0;
 				BuildingTypeExt::cPrismForwarding::RemoveAllSenders(pThis);
 				pThis->SupportingPrisms = 0; //Ares sets this to the longest backward chain
-				BuildingTypeExt::cPrismForwarding::SetSupportTarget(pThis, NULL);
+				BuildingTypeExt::cPrismForwarding::SetSupportTarget(pThis, nullptr);
 				pThis->PrismStage = pcs_Idle;
 			}
 		} else {
@@ -173,11 +173,11 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 		idxSupport = pTypeData->PrismForwarding.SupportWeaponIndex;
 	}
 
-	WeaponTypeClass * supportWeapon = NULL;
+	WeaponTypeClass * supportWeapon = nullptr;
 	if (idxSupport != -1) {
 		supportWeapon = pType->get_Weapon(idxSupport);
 	}
-	LaserDrawClass * LaserBeam = NULL;
+	LaserDrawClass * LaserBeam = nullptr;
 	if (supportWeapon) {
 		WeaponTypeExt::ExtData *supportWeaponData = WeaponTypeExt::ExtMap.Find(supportWeapon);
 		//IsLaser
@@ -233,7 +233,7 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 			int ReportIndex = ScenarioClass::Instance->Random.RandomRanged(0, supportWeapon->Report.Count - 1);
 			int SoundArrayIndex = supportWeapon->Report.GetItem(ReportIndex);
 			if(SoundArrayIndex != -1) {
-				VocClass::PlayAt(SoundArrayIndex, &SourceXYZ, NULL);
+				VocClass::PlayAt(SoundArrayIndex, &SourceXYZ, nullptr);
 			}
 		}
 		//ROF
@@ -290,7 +290,7 @@ DEFINE_HOOK(448277, PrismForward_BuildingChangeOwner, 5)
 
 		if (pTypeData->PrismForwarding.ToAllies.Get()) {
 			BuildingClass *LastTarget = B;
-			BuildingClass *FirstTarget = NULL;
+			BuildingClass *FirstTarget = nullptr;
 			while (LastTarget) {
 				BuildingExt::ExtData *pData = BuildingExt::ExtMap.Find(LastTarget);
 				BuildingClass *NextTarget = pData->PrismForwarding.SupportTarget;

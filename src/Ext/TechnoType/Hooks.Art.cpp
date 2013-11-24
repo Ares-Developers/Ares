@@ -79,7 +79,7 @@ DEFINE_HOOK(5F9070, ObjectTypeClass_Load2DArt, 0)
 			GAME_DEALLOC(pType->Image);
 		}
 	}
-	pType->Image = NULL;
+	pType->Image = nullptr;
 	pType->ImageIsOutdated = false;
 
 	switch(pType->WhatAmI()) {

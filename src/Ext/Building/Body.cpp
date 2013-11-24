@@ -16,8 +16,8 @@
 template<> const DWORD Extension<BuildingClass>::Canary = 0x87654321;
 Container<BuildingExt> BuildingExt::ExtMap;
 
-template<> BuildingClass *Container<BuildingExt>::SavingObject = NULL;
-template<> IStream *Container<BuildingExt>::SavingStream = NULL;
+template<> BuildingClass *Container<BuildingExt>::SavingObject = nullptr;
+template<> IStream *Container<BuildingExt>::SavingStream = nullptr;
 
 // =============================
 // member functions
@@ -81,7 +81,7 @@ void BuildingExt::UpdateDisplayTo(BuildingClass *pThis) {
 bool BuildingExt::ExtData::RubbleYell(bool beingRepaired) {
 	BuildingClass* currentBuilding = this->AttachedToObject;
 	BuildingTypeExt::ExtData* pTypeData = BuildingTypeExt::ExtMap.Find(currentBuilding->Type);
-	BuildingClass* newState = NULL;
+	BuildingClass* newState = nullptr;
 
 	currentBuilding->Remove(); // only takes it off the map
 	currentBuilding->DestroyNthAnim(BuildingAnimSlot::All);
@@ -267,7 +267,7 @@ void BuildingExt::ExtData::evalRaidStatus() {
 			this->ignoreNextEVA = true; // #698 - used in BuildingClass_ChangeOwnership_TrenchEVA to override EVA announcement
 			this->AttachedToObject->SetOwningHouse(this->OwnerBeforeRaid);
 		}
-		this->OwnerBeforeRaid = NULL;
+		this->OwnerBeforeRaid = nullptr;
 		this->isCurrentlyRaided = false;
 	}
 }
@@ -763,11 +763,11 @@ DWORD BuildingExt::FoundationLength(CellStruct * StartCell) {
 void BuildingExt::Cleanup() {
 	if(BuildingExt::TempFoundationData1) {
 		delete[] BuildingExt::TempFoundationData1;
-		BuildingExt::TempFoundationData1 = NULL;
+		BuildingExt::TempFoundationData1 = nullptr;
 	}
 	if(BuildingExt::TempFoundationData2) {
 		delete[] BuildingExt::TempFoundationData2;
-		BuildingExt::TempFoundationData2 = NULL;
+		BuildingExt::TempFoundationData2 = nullptr;
 	}
 }
 

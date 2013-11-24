@@ -7,8 +7,8 @@
 template<> const DWORD Extension<AnimTypeClass>::Canary = 0xEEEEEEEE;
 Container<AnimTypeExt> AnimTypeExt::ExtMap;
 
-template<> AnimTypeExt::TT *Container<AnimTypeExt>::SavingObject = NULL;
-template<> IStream *Container<AnimTypeExt>::SavingStream = NULL;
+template<> AnimTypeExt::TT *Container<AnimTypeExt>::SavingObject = nullptr;
+template<> IStream *Container<AnimTypeExt>::SavingStream = nullptr;
 
 void AnimTypeExt::ExtData::LoadFromINIFile(AnimTypeClass *pThis, CCINIClass *pINI)
 {
@@ -35,7 +35,7 @@ void AnimTypeExt::ExtData::LoadFromINIFile(AnimTypeClass *pThis, CCINIClass *pIN
 void AnimTypeExt::SetMakeInfOwner(AnimClass *pAnim, HouseClass *pInvoker, HouseClass *pVictim, HouseClass *pKiller)
 {
 	AnimTypeExt::ExtData *pAnimData = AnimTypeExt::ExtMap.Find(pAnim->Type);
-	HouseClass *newOwner = NULL;
+	HouseClass *newOwner = nullptr;
 	switch(pAnimData->MakeInfantryOwner) {
 		case AnimTypeExt::ExtData::NEUTRAL:
 			newOwner = HouseClass::FindByCountryIndex(HouseTypeClass::FindIndexOfName("Neutral"));

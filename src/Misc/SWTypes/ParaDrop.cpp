@@ -17,7 +17,7 @@ void SW_ParaDrop::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pS
 		// thus we use the SW's default here.
 		ParadropPlane* pPlane = new ParadropPlane();
 		pData->ParaDropPlanes.AddItem(pPlane);
-		pData->ParaDrop[NULL].AddItem(pPlane);
+		pData->ParaDrop[nullptr].AddItem(pPlane);
 
 		for(int i = 0; i < RulesClass::Instance->AmerParaDropInf.Count; ++i) {
 			pPlane->pTypes.AddItem((RulesClass::Instance->AmerParaDropInf.GetItem(i)));
@@ -61,7 +61,7 @@ void SW_ParaDrop::LoadFromINI(
 	};
 
 	auto ParseParaDrop = [&](char* pID, int Plane) -> ParadropPlane* {
-		ParadropPlane* pPlane = NULL;
+		ParadropPlane* pPlane = nullptr;
 
 		// create the plane part of this request. this will be
 		// an empty string for the first plane for this is the default.
@@ -139,10 +139,10 @@ void SW_ParaDrop::LoadFromINI(
 		int count = pINI->ReadInteger(section, key, defCount);
 
 		// parse every plane
-		ret->SetCapacity(count, NULL);
+		ret->SetCapacity(count, nullptr);
 		for(int i=0; i<count; ++i) {
 			if(i>=ret->Count) {
-				ret->AddItem(NULL);
+				ret->AddItem(nullptr);
 			}
 			
 			ParadropPlane* pPlane = ParseParaDrop(base, i);
@@ -159,14 +159,14 @@ void SW_ParaDrop::LoadFromINI(
 	// n+1 to n+m+1: m countries
 
 	// default
-	CreateParaDropBase(NULL, base);
-	GetParadropPlane(base, 1, &pData->ParaDrop[NULL]);
+	CreateParaDropBase(nullptr, base);
+	GetParadropPlane(base, 1, &pData->ParaDrop[nullptr]);
 
 	// put all sides into the hash table
 	for(int i=0; i<SideClass::Array->Count; ++i) {
 		SideClass *pSide = SideClass::Array->GetItem(i);
 		CreateParaDropBase(pSide->ID, base);
-		GetParadropPlane(base, pData->ParaDrop[NULL].Count, &pData->ParaDrop[pSide]);
+		GetParadropPlane(base, pData->ParaDrop[nullptr].Count, &pData->ParaDrop[pSide]);
 	}
 
 	// put all countries into the hash table
@@ -231,14 +231,14 @@ bool SW_ParaDrop::SendParadrop(SuperClass* pThis, CellClass* pCell) {
 	HouseClass *pHouse = pThis->Owner;
 
 	// these are fallback values if the SW doesn't define them
-	AircraftTypeClass* pFallbackPlane = NULL;
-	TypeList<TechnoTypeClass*> *pFallbackTypes = NULL;
-	TypeList<int> *pFallbackNum = NULL;
+	AircraftTypeClass* pFallbackPlane = nullptr;
+	TypeList<TechnoTypeClass*> *pFallbackTypes = nullptr;
+	TypeList<int> *pFallbackNum = nullptr;
 
 	// get the paradrop list without creating a new value
 	auto GetParadropPlanes = [pData](AbstractTypeClass* pKey) -> DynamicVectorClass<ParadropPlane*>* {
 		if(pData->ParaDrop.find(pKey) == pData->ParaDrop.end()) {
-			return NULL;
+			return nullptr;
 		}
 		return &pData->ParaDrop[pKey];
 	};
@@ -247,7 +247,7 @@ bool SW_ParaDrop::SendParadrop(SuperClass* pThis, CellClass* pCell) {
 	DynamicVectorClass<ParadropPlane*>* drops[3];
 	drops[0] = GetParadropPlanes(pHouse->Type);
 	drops[1] = GetParadropPlanes(SideClass::Array->GetItem(pHouse->Type->SideIndex));
-	drops[2] = GetParadropPlanes(NULL);
+	drops[2] = GetParadropPlanes(nullptr);
 
 	// how many planes shall we launch?
 	int count = 0;
@@ -260,9 +260,9 @@ bool SW_ParaDrop::SendParadrop(SuperClass* pThis, CellClass* pCell) {
 
 	// assemble each plane and its contents
 	for(int i=0; i<count; ++i) { // i = index of plane
-		TypeList<TechnoTypeClass*> *pParaDrop = NULL;
-		TypeList<int> *pParaDropNum = NULL;
-		AircraftTypeClass* pParaDropPlane = NULL;
+		TypeList<TechnoTypeClass*> *pParaDrop = nullptr;
+		TypeList<int> *pParaDropNum = nullptr;
+		AircraftTypeClass* pParaDropPlane = nullptr;
 
 		// try the planes in order of precedence:
 		// * country, explicit plane

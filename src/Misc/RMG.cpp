@@ -189,7 +189,7 @@ DEFINE_HOOK(5A6998, MapSeedClass_Generate_PlaceUrbanFoots, 5)
 	int Index = Randomizer::Global()->RandomRanged(0, Length - 1);
 
 	GET(HouseClass *, Owner, EBP);
-	ObjectClass *Item = NULL;
+	ObjectClass *Item = nullptr;
 	if(Index < RMG::UrbanInfantry.Count()) {
 		if(InfantryTypeClass *IType = RMG::UrbanInfantry.FindItem(Index)) {
 			Item = IType->CreateObject(Owner);

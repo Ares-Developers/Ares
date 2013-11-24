@@ -35,7 +35,7 @@ DEFINE_HOOK(73C725, UnitClass_DrawSHP_DrawShadowEarlier, 6)
 	;
 
 	// TODO: other conditions where it would not make sense to draw shadow
-	switch(U->VisualCharacter(VARIANT_FALSE, NULL)) {
+	switch(U->VisualCharacter(VARIANT_FALSE, nullptr)) {
 		case VisualType::Normal:
 		case VisualType::Indistinct:
 			break;

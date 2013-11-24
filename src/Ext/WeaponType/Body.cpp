@@ -10,8 +10,8 @@
 template<> const DWORD Extension<WeaponTypeClass>::Canary = 0x33333333;
 Container<WeaponTypeExt> WeaponTypeExt::ExtMap;
 
-template<> WeaponTypeExt::TT *Container<WeaponTypeExt>::SavingObject = NULL;
-template<> IStream *Container<WeaponTypeExt>::SavingStream = NULL;
+template<> WeaponTypeExt::TT *Container<WeaponTypeExt>::SavingObject = nullptr;
+template<> IStream *Container<WeaponTypeExt>::SavingStream = nullptr;
 
 ColorStruct WeaponTypeExt::ExtData::DefaultWaveColor = ColorStruct(255, 255, 255); // placeholder
 ColorStruct WeaponTypeExt::ExtData::DefaultWaveColorMagBeam = ColorStruct(0xB0, 0, 0xD0); // rp2 values
@@ -198,10 +198,10 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 			// so we abduct the target...
 
 			Target->StopMoving();
-			Target->SetDestination(NULL, true); // Target->UpdatePosition(int) ?
-			Target->SetTarget(NULL);
+			Target->SetDestination(nullptr, true); // Target->UpdatePosition(int) ?
+			Target->SetTarget(nullptr);
 			Target->CurrentTargets.Clear(); // Target->ShouldLoseTargetNow ?
-			Target->SetFocus(NULL);
+			Target->SetFocus(nullptr);
 			Target->QueueMission(mission_Sleep, true);
 			Target->unknown_C4 = 0; // don't ask
 			Target->unknown_5A0 = 0;
@@ -266,7 +266,7 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 			Target->GetCoords(&coordsUnitSource);
 			Target->Locomotor->Mark_All_Occupation_Bits(0);
 			Target->MarkAllOccupationBits(&coordsUnitSource);
-			Target->ClearPlanningTokens(NULL);
+			Target->ClearPlanningTokens(nullptr);
 			Target->Flashing.DurationRemaining = 0;
 
 			//if it's owner meant to be changed, do it here
@@ -282,7 +282,7 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 			// because we are throwing away the locomotor in a split second, piggybacking
 			// has to be stopped. otherwise we would leak the memory of the original
 			// locomotor saved in the piggy object.
-			ILocomotion* Loco = NULL;
+			ILocomotion* Loco = nullptr;
 			do {
 				Loco = Target->Locomotor;
 				LocomotionClass::End_Piggyback(Target->Locomotor);
@@ -293,7 +293,7 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 			if(!Target->Locomotor) {
 				Game::RaiseError(E_POINTER);
 			}
-			ILocomotion* NewLoco = NULL;
+			ILocomotion* NewLoco = nullptr;
 			if(LocomotionClass::CreateInstance(NewLoco, &TargetType->Locomotor)) {
 				LocomotionClass::Move(Target->Locomotor, NewLoco);
 				if(!Target->Locomotor) {

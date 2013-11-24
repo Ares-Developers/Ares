@@ -26,14 +26,14 @@ public:
 	virtual void Execute(DWORD dwUnk) {
 		Dialogs::TakeMouse();
 
-		HCURSOR loadCursor = LoadCursor(NULL, IDC_WAIT);
+		HCURSOR loadCursor = LoadCursor(nullptr, IDC_WAIT);
 		SetClassLong(Game::hWnd, GCL_HCURSOR, (LONG)loadCursor);
 		SetCursor(loadCursor);
 
 		MessageListClass::Instance->PrintMessage(L"Dumping process memory...");
 
 		std::wstring filename;
-		Debug::FullDump(NULL, NULL, &filename);
+		Debug::FullDump(nullptr, nullptr, &filename);
 
 		Debug::Log("Process memory dumped to %ls\n", filename);
 
@@ -41,7 +41,7 @@ public:
 
 		MessageListClass::Instance->PrintMessage(filename.c_str());
 
-		loadCursor = LoadCursor(NULL, IDC_ARROW);
+		loadCursor = LoadCursor(nullptr, IDC_ARROW);
 		SetClassLong(Game::hWnd, GCL_HCURSOR, (LONG)loadCursor);
 		SetCursor(loadCursor);
 

@@ -238,7 +238,7 @@ DEFINE_HOOK(4FE782, HTExt_PickPowerplant, 6)
 		}
 	}
 
-	BuildingTypeClass *pResult = NULL;
+	BuildingTypeClass *pResult = nullptr;
 	if(Eligible.size() > 0) {
 		int idx = ScenarioClass::Instance->Random.RandomRanged(0, Eligible.size() - 1);
 		pResult = Eligible.at(idx);

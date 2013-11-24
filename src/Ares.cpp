@@ -50,7 +50,7 @@ const char Ares::readDefval[4] = "";
 
 const wchar_t Ares::StabilityWarning[BUFLEN] = L"This version of Ares (" VERSION_WSTR L") is not considered stable.";
 
-MixFileClass *Ares::aresMIX = NULL;
+MixFileClass *Ares::aresMIX = nullptr;
 
 hash_map <DWORD, size_t> MemMap::AllocMap;
 size_t MemMap::Total;
@@ -65,7 +65,7 @@ void Ares::UninitOwnResources()
 {
 	if(aresMIX) {
 		GAME_DEALLOC(aresMIX);
-		aresMIX = NULL;
+		aresMIX = nullptr;
 	}
 }
 
@@ -160,15 +160,15 @@ void __stdcall Ares::ExeTerminate()
 }
 
 CCINIClass* Ares::OpenConfig(const char* file) {
-	CCINIClass* pINI = NULL;
+	CCINIClass* pINI = nullptr;
 	GAME_ALLOC(CCINIClass, pINI);
 
 	if(pINI) {
-		CCFileClass *cfg = NULL;
+		CCFileClass *cfg = nullptr;
 		GAME_ALLOC(CCFileClass, cfg, file);
 
 		if(cfg) {
-			if(cfg->Exists(NULL)) {
+			if(cfg->Exists(nullptr)) {
 				pINI->ReadCCFile(cfg);
 			}
 			GAME_DEALLOC(cfg);
@@ -234,7 +234,7 @@ void Ares::CheckProcessorFeatures() {
 void Ares::CloseConfig(CCINIClass** ppINI) {
 	if(ppINI && *ppINI) {
 		GAME_DEALLOC(*ppINI);
-		*ppINI = NULL;
+		*ppINI = nullptr;
 	}
 }
 

@@ -40,7 +40,7 @@ DEFINE_HOOK(6CEF84, SuperWeaponTypeClass_GetCursorOverObject, 7)
 			SWTypeExt::CurrentSWType = pThis;
 			Actions::Set(&pData->SW_Cursor, pData->SW_FireToShroud.Get());
 		} else {
-			SWTypeExt::CurrentSWType = NULL;
+			SWTypeExt::CurrentSWType = nullptr;
 			Actions::Set(&pData->SW_NoCursor, pData->SW_FireToShroud.Get());
 		}
 		return 0x6CEFD9;
@@ -93,7 +93,7 @@ DEFINE_HOOK(653B3A, RadarClass_GetMouseAction_CustomSWAction, 5)
 				SWTypeExt::CurrentSWType = pThis;
 				Actions::Set(&pData->SW_Cursor, pData->SW_FireToShroud.Get());
 			} else {
-				SWTypeExt::CurrentSWType = NULL;
+				SWTypeExt::CurrentSWType = nullptr;
 				Actions::Set(&pData->SW_NoCursor, pData->SW_FireToShroud.Get());
 			}
 			return 0x653CA3;
@@ -214,11 +214,11 @@ DEFINE_HOOK(4AC20C, DisplayClass_LMBUp, 7)
 		// action of the found type as the no-cursor represents a different
 		// action and we don't want to start a force shield even tough the UI
 		// says no.
-		SuperWeaponTypeClass * pSW = NULL;
+		SuperWeaponTypeClass * pSW = nullptr;
 		if(SuperWeaponTypeClass::Array->ValidIndex(Unsorted::CurrentSWType)) {
 			pSW = SuperWeaponTypeClass::Array->GetItem(Unsorted::CurrentSWType);
 			if(pSW && (pSW->Action != Action)) {
-				pSW = NULL;
+				pSW = nullptr;
 			}
 		}
 
@@ -474,7 +474,7 @@ DEFINE_HOOK(4FAE72, HouseClass_SWFire_PreDependent, 6)
 
 	// find the predependent SW. decouple this from the chronosphere.
 	// don't use a fixed SW type but the very one acutually fired last.
-	SuperClass* pSource = NULL;
+	SuperClass* pSource = nullptr;
 	if(HouseExt::ExtData *pExt = HouseExt::ExtMap.Find(pThis)) {
 		if(pThis->Supers.ValidIndex(pExt->SWLastIndex)) {
 			pSource = pThis->Supers.GetItem(pExt->SWLastIndex);
@@ -696,11 +696,11 @@ DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
 						{
 							// find the first building providing pSuper
 							SuperWeaponTypeClass *pType = pSuper->Type;
-							BuildingClass *pBld = NULL;
+							BuildingClass *pBld = nullptr;
 							for(int j=0; j<BuildingTypeClass::Array->Count; ++j) {
 								BuildingTypeClass *pTBld = BuildingTypeClass::Array->GetItem(j);
 								if((pTBld->SuperWeapon == pType->ArrayIndex) || (pTBld->SuperWeapon2 == pType->ArrayIndex)) {
-									if((pBld = pThis->FindBuildingOfType(pTBld->ArrayIndex, -1)) != NULL) {
+									if((pBld = pThis->FindBuildingOfType(pTBld->ArrayIndex, -1)) != nullptr) {
 										break;
 									}
 								}

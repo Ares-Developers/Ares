@@ -21,7 +21,7 @@ int IndexOfTab(TabDataStruct * tab) {
 			return i;
 		}
 	}
-	Debug::FullDump(NULL);
+	Debug::FullDump(nullptr);
 	Debug::FatalErrorAndExit("Failed to determine tab index of ptr %p\n", tab);
 	//return -1; does not return
 };
@@ -99,7 +99,7 @@ DEFINE_HOOK(6A8710, TabCameoListClass_AddCameo_ReplaceItAll, 0)
 	auto TabIndex = IndexOfTab(pTab);
 	auto &cameos = RulesExt::TabCameos[TabIndex];
 	if(cameos.Count != pTab->CameoCount) {
-		Debug::FullDump(NULL);
+		Debug::FullDump(nullptr);
 		Debug::FatalErrorAndExit("Unsynchronized cameo counts @ %s: tab #%d, old %d, new %d\n", __FUNCTION__, TabIndex, pTab->CameoCount, cameos.Count);
 	}
 
@@ -149,7 +149,7 @@ DEFINE_HOOK(6A8D1C, TabSidebarCameoClass_MouseMove_GetCameos1, 0)
 	auto TabIndex = IndexOfTab(pTab);
 	auto &cameos = RulesExt::TabCameos[TabIndex];
 	if(cameos.Count != CameoCount) {
-		Debug::FullDump(NULL);
+		Debug::FullDump(nullptr);
 		Debug::FatalErrorAndExit("Unsynchronized cameo counts @ %s: old %d, new %d\n", __FUNCTION__, CameoCount, cameos.Count);
 	}
 
@@ -171,7 +171,7 @@ DEFINE_HOOK(6A8DB5, TabSidebarCameoClass_MouseMove_GetCameos2, 0)
 	auto TabIndex = IndexOfTab(pTab);
 	auto &cameos = RulesExt::TabCameos[TabIndex];
 	if(cameos.Count != CameoCount) {
-		Debug::FullDump(NULL);
+		Debug::FullDump(nullptr);
 		Debug::FatalErrorAndExit("Unsynchronized cameo counts @ %s: old %d, new %d\n", __FUNCTION__, CameoCount, cameos.Count);
 	}
 
@@ -195,7 +195,7 @@ DEFINE_HOOK(6A8F6C, TabSidebarCameoClass_MouseMove_GetCameos3, 0)
 	auto TabIndex = IndexOfTab(pTab);
 	auto &cameos = RulesExt::TabCameos[TabIndex];
 	if(cameos.Count != pTab->CameoCount) {
-		Debug::FullDump(NULL);
+		Debug::FullDump(nullptr);
 		Debug::FatalErrorAndExit("Unsynchronized cameo counts @ %s: old %d, new %d\n", __FUNCTION__, pTab->CameoCount, cameos.Count);
 	}
 
@@ -218,7 +218,7 @@ DEFINE_HOOK(6A9304, CameoClass_GetTip_NoLimit, 0)
 
 	auto &cameos = RulesExt::TabCameos[MouseClass::Instance->ActiveTabIndex];
 	if(CameoIndex >= cameos.Count) {
-		Debug::FullDump(NULL);
+		Debug::FullDump(nullptr);
 		Debug::FatalErrorAndExit("Bad cameo count @ %s: max %d, request %d\n", __FUNCTION__, cameos.Count, CameoIndex);
 	}
 
@@ -235,7 +235,7 @@ DEFINE_HOOK(6A9747, TabCameoListClass_Draw_GetCameo1, 0)
 
 	auto &cameos = RulesExt::TabCameos[MouseClass::Instance->ActiveTabIndex];
 	if(CameoIndex >= cameos.Count) {
-		Debug::FullDump(NULL);
+		Debug::FullDump(nullptr);
 		Debug::FatalErrorAndExit("Bad cameo count @ %s: max %d, request %d\n", __FUNCTION__, cameos.Count, CameoIndex);
 	}
 
@@ -260,7 +260,7 @@ DEFINE_HOOK(6A9866, TabCameoListClass_Draw_Test10_1, 0)
 
 	auto &cameos = RulesExt::TabCameos[MouseClass::Instance->ActiveTabIndex];
 	if(CameoIndex >= cameos.Count) {
-		Debug::FullDump(NULL);
+		Debug::FullDump(nullptr);
 		Debug::FatalErrorAndExit("Bad cameo count @ %s: max %d, request %d\n", __FUNCTION__, cameos.Count, CameoIndex);
 	}
 
@@ -276,7 +276,7 @@ DEFINE_HOOK(6A9886, TabCameoListClass_Draw_Test10_2, 0)
 
 	auto &cameos = RulesExt::TabCameos[MouseClass::Instance->ActiveTabIndex];
 	if(CameoIndex >= cameos.Count) {
-		Debug::FullDump(NULL);
+		Debug::FullDump(nullptr);
 		Debug::FatalErrorAndExit("Bad cameo count @ %s: max %d, request %d\n", __FUNCTION__, cameos.Count, CameoIndex);
 	}
 
@@ -298,7 +298,7 @@ DEFINE_HOOK(6A95C8, TabCameoListClass_Draw_TestF10, 0)
 
 	auto &cameos = RulesExt::TabCameos[MouseClass::Instance->ActiveTabIndex];
 	if(CameoIndex >= cameos.Count) {
-		Debug::FullDump(NULL);
+		Debug::FullDump(nullptr);
 		Debug::FatalErrorAndExit("Bad cameo count @ %s: max %d, request %d\n", __FUNCTION__, cameos.Count, CameoIndex);
 	}
 
@@ -321,7 +321,7 @@ DEFINE_HOOK(6A9B4F, TabCameoListClass_Draw_TestFlashFrame, 0)
 
 	auto &cameos = RulesExt::TabCameos[MouseClass::Instance->ActiveTabIndex];
 	if(CameoIndex >= cameos.Count) {
-		Debug::FullDump(NULL);
+		Debug::FullDump(nullptr);
 		Debug::FatalErrorAndExit("Bad cameo count @ %s: max %d, request %d\n", __FUNCTION__, cameos.Count, CameoIndex);
 	}
 
@@ -339,7 +339,7 @@ DEFINE_HOOK(6A9EBA, TabCameoListClass_Draw_Test10_3, 0)
 
 	auto &cameos = RulesExt::TabCameos[MouseClass::Instance->ActiveTabIndex];
 	if(CameoIndex >= cameos.Count) {
-		Debug::FullDump(NULL);
+		Debug::FullDump(nullptr);
 		Debug::FatalErrorAndExit("Bad cameo count @ %s: max %d, request %d\n", __FUNCTION__, cameos.Count, CameoIndex);
 	}
 
@@ -381,7 +381,7 @@ DEFINE_HOOK(6AB0B0, SidebarClass_ProcessCameoClick_LoadCameo2, 0)
 
 	auto &cameos = RulesExt::TabCameos[MouseClass::Instance->ActiveTabIndex];
 	if(CameoIndex >= cameos.Count) {
-		Debug::FullDump(NULL);
+		Debug::FullDump(nullptr);
 		Debug::FatalErrorAndExit("Bad cameo count @ %s: max %d, request %d\n", __FUNCTION__, cameos.Count, CameoIndex);
 	}
 
@@ -394,8 +394,8 @@ DEFINE_HOOK(6AB0B0, SidebarClass_ProcessCameoClick_LoadCameo2, 0)
 
 DEFINE_HOOK(6AB49D, SidebarClass_ProcessCameoClick_FixOffset1, 0)
 {
-	R->EDI<void *>(NULL);
-	R->ECX<void *>(NULL);
+	R->EDI<void *>(nullptr);
+	R->ECX<void *>(nullptr);
 
 	return 0x6AB4A4;
 }
@@ -405,7 +405,7 @@ DEFINE_HOOK(6AB4E8, SidebarClass_ProcessCameoClick_FixOffset2, 0)
 	GET_STACK(int, idx, 0x14);
 	R->ECX<int>(idx);
 
-	R->EDX<void *>(NULL);
+	R->EDX<void *>(nullptr);
 
 	return 0x6AB4EF;
 }
@@ -417,7 +417,7 @@ DEFINE_HOOK(6AB577, SidebarClass_ProcessCameoClick_FixOffset3, 0)
 
 	auto &cameos = RulesExt::TabCameos[MouseClass::Instance->ActiveTabIndex];
 	if(CameoIndex >= cameos.Count) {
-		Debug::FullDump(NULL);
+		Debug::FullDump(nullptr);
 		Debug::FatalErrorAndExit("Bad cameo count @ %s: max %d, request %d\n", __FUNCTION__, cameos.Count, CameoIndex);
 	}
 
@@ -430,7 +430,7 @@ DEFINE_HOOK(6AB577, SidebarClass_ProcessCameoClick_FixOffset3, 0)
 	;
 
 	R->EAX<int>(Progress);
-	R->EBP<void *>(NULL);
+	R->EBP<void *>(nullptr);
 
 	if(Item.unknown_10 == 1) { // hi, welcome to dumb ideas
 		if(Item.Progress.Value > Progress) {
@@ -442,21 +442,21 @@ DEFINE_HOOK(6AB577, SidebarClass_ProcessCameoClick_FixOffset3, 0)
 	int Frames = SavedFactory->GetBuildTimeFrames();
 
 	R->EAX<int>(Frames);
-	R->ECX<void *>(NULL);
+	R->ECX<void *>(nullptr);
 
 	return 0x6AB5C6;
 }
 
 DEFINE_HOOK(6AB620, SidebarClass_ProcessCameoClick_FixOffset4, 0)
 {
-	R->ECX<void *>(NULL);
+	R->ECX<void *>(nullptr);
 
 	return 0x6AB627;
 }
 
 DEFINE_HOOK(6AB741, SidebarClass_ProcessCameoClick_FixOffset5, 0)
 {
-	R->EDX<void *>(NULL);
+	R->EDX<void *>(nullptr);
 
 	return 0x6AB748;
 }
@@ -467,7 +467,7 @@ DEFINE_HOOK(6AB802, SidebarClass_ProcessCameoClick_FixOffset6, 0)
 
 	auto &cameos = RulesExt::TabCameos[MouseClass::Instance->ActiveTabIndex];
 	if(CameoIndex >= cameos.Count) {
-		Debug::FullDump(NULL);
+		Debug::FullDump(nullptr);
 		Debug::FatalErrorAndExit("Bad cameo count @ %s: max %d, request %d\n", __FUNCTION__, cameos.Count, CameoIndex);
 	}
 
@@ -479,14 +479,14 @@ DEFINE_HOOK(6AB802, SidebarClass_ProcessCameoClick_FixOffset6, 0)
 DEFINE_HOOK(6AB825, SidebarClass_ProcessCameoClick_FixOffset7, 0)
 {
 	R->ECX<int>(R->EBP<int>());
-	R->EDX<void *>(NULL);
+	R->EDX<void *>(nullptr);
 
 	return 0x6AB82A;
 }
 
 DEFINE_HOOK(6AB920, SidebarClass_ProcessCameoClick_FixOffset8, 0)
 {
-	R->ECX<void *>(NULL);
+	R->ECX<void *>(nullptr);
 
 	return 0x6AB927;
 }
@@ -506,7 +506,7 @@ DEFINE_HOOK(6ABBCB, TabCameoListClass_AbandonCameosFromFactory_GetPointer1, 0)
 	auto TabIndex = IndexOfTab(pTab);
 	auto &cameos = RulesExt::TabCameos[TabIndex];
 	if(CameoCount != cameos.Count) {
-		Debug::FullDump(NULL);
+		Debug::FullDump(nullptr);
 		Debug::FatalErrorAndExit("Bad cameo count @ %s: old %d, new %d\n", __FUNCTION__, cameos.Count, CameoCount);
 	}
 
@@ -548,7 +548,7 @@ DEFINE_HOOK(6AA6EA, TabCameoListClass_RecheckCameos_Memcpy, 0)
 	auto TabIndex = IndexOfTab(pTab);
 	auto &cameos = RulesExt::TabCameos[TabIndex];
 	if(CameoIndex >= cameos.Count) {
-		Debug::FullDump(NULL);
+		Debug::FullDump(nullptr);
 		Debug::FatalErrorAndExit("Bad cameo count @ %s: max %d, request %d\n", __FUNCTION__, cameos.Count, CameoIndex);
 	}
 
@@ -568,7 +568,7 @@ DEFINE_HOOK(6AA711, TabCameoListClass_RecheckCameos_FilterAllowedCameos, 0)
 	auto &cameos = RulesExt::TabCameos[TabIndex];
 
 	if(cameos.Count != pTab->CameoCount) {
-		Debug::FullDump(NULL);
+		Debug::FullDump(nullptr);
 		Debug::FatalErrorAndExit("Bad cameo count @ %s: old %d, new %d\n", __FUNCTION__, pTab->CameoCount, cameos.Count);
 	}
 
@@ -603,10 +603,10 @@ DEFINE_HOOK(6AA711, TabCameoListClass_RecheckCameos_FilterAllowedCameos, 0)
 				Networking::AddEvent(&Event);
 			}
 			if(cameo.ItemType == BuildingTypeClass::AbsID || cameo.ItemType == BuildingClass::AbsID) {
-				MouseClass::Instance->CurrentBuilding = NULL;
-				MouseClass::Instance->CurrentBuildingType = NULL;
+				MouseClass::Instance->CurrentBuilding = nullptr;
+				MouseClass::Instance->CurrentBuildingType = nullptr;
 				MouseClass::Instance->unknown_11AC = 0xFFFFFFFF;
-				MouseClass::Instance->SetActiveFoundation(NULL);
+				MouseClass::Instance->SetActiveFoundation(nullptr);
 			}
 			if(TechnoType) {
 				auto Me = TechnoType->WhatAmI();
@@ -660,7 +660,7 @@ DEFINE_HOOK(6A7D4A, MouseClass_RecheckCameos_TrapAlignment, 6)
 	auto TabIndex = IndexOfTab(pTab);
 	auto &cameos = RulesExt::TabCameos[TabIndex];
 	if(cameos.Count != pTab->CameoCount) {
-		Debug::FullDump(NULL);
+		Debug::FullDump(nullptr);
 		Debug::FatalErrorAndExit("Bad cameo count @ %s: old %d, new %d\n", __FUNCTION__, pTab->CameoCount, cameos.Count);
 	}
 

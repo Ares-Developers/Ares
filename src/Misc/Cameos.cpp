@@ -24,8 +24,8 @@ DEFINE_HOOK(712045, TechnoTypeClass_GetCameo, 5)
 }
 
 // a global var ewww
-ConvertClass * CurrentDrawnConvert = NULL;
-BSurface * CameoPCX = NULL;
+ConvertClass * CurrentDrawnConvert = nullptr;
+BSurface * CameoPCX = nullptr;
 
 DEFINE_HOOK(6A9948, TabCameoListClass_Draw_SW, 6)
 {
@@ -40,14 +40,14 @@ DEFINE_HOOK(6A9A2A, TabCameoListClass_Draw_Main, 6)
 {
 	GET_STACK(TechnoTypeClass *, pTech, STACK_OFFS(0x4C4, 0x458));
 
-	ConvertClass *pPalette = NULL;
+	ConvertClass *pPalette = nullptr;
 	if(pTech) {
 		if(TechnoTypeExt::ExtData *pData = TechnoTypeExt::ExtMap.Find(pTech)) {
 			pPalette = pData->CameoPal.Convert;
 		}
 	} else if(CurrentDrawnConvert) {
 		pPalette = CurrentDrawnConvert;
-		CurrentDrawnConvert = NULL;
+		CurrentDrawnConvert = nullptr;
 	}
 
 	if(!pPalette) {
@@ -64,7 +64,7 @@ DEFINE_HOOK(6A9952, TabCameoListClass_Draw_GetSWPCX, 6)
 	auto pData = SWTypeExt::ExtMap.Find(pSW);
 	CameoPCX = (*pData->SidebarPCX)
 		? PCX::Instance->GetSurface(pData->SidebarPCX)
-		: NULL
+		: nullptr
 	;
 
 	return 0;
@@ -83,7 +83,7 @@ DEFINE_HOOK(6A980A, TabCameoListClass_Draw_GetTechnoPCX, 8)
 
 	CameoPCX = (*pcxFilename)
 		? PCX::Instance->GetSurface(pcxFilename)
-		: NULL
+		: nullptr
 	;
 
 	return 0;
@@ -103,7 +103,7 @@ DEFINE_HOOK(6A9A43, TabCameoListClass_Draw_DrawPCX, 6)
 		GET(int, TLY, EBP);
 		RectangleStruct bounds = { TLX, TLY, 60, 48 };
 		PCX::Instance->BlitToSurface(&bounds, DSurface::Sidebar, CameoPCX);
-		CameoPCX = NULL;
+		CameoPCX = nullptr;
 	}
 	return 0;
 }

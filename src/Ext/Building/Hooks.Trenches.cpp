@@ -198,7 +198,7 @@ DEFINE_HOOK(52297F, InfantryClass_GarrisonBuilding_OccupierEntered, 5)
 	GET(int, idxOccupant, EBP);
 
 	TechnoExt::ExtData* infExtData = TechnoExt::ExtMap.Find(pBld->Occupants[idxOccupant]);
-	infExtData->GarrisonedIn = NULL;
+	infExtData->GarrisonedIn = nullptr;
 
     / *
     - get current rally point target; if there is none, exit trench

@@ -3,9 +3,9 @@
 #include <TechnoClass.h>
 
 MouseCursor Actions::MP(0, 1, 0, 1, 1, 0, 0);
-MouseCursor* Actions::MPCurrent = NULL;
-MouseCursor* Actions::MPCustom = NULL;
-MouseCursor* Actions::TempCursor = NULL;
+MouseCursor* Actions::MPCurrent = nullptr;
+MouseCursor* Actions::MPCustom = nullptr;
+MouseCursor* Actions::TempCursor = nullptr;
 bool Actions::MPCustomAllowShroud = true;
 
 void Actions::Set(MouseCursor *pCursor, bool bAllowShroud)
@@ -164,7 +164,7 @@ DEFINE_HOOK(653CA6, Actions_AllowMinimap, 5)
 //5BDDC0, 5
 DEFINE_HOOK(5BDDC0, Actions_Reset, 5)
 {
-	Actions::MPCustom = NULL;
+	Actions::MPCustom = nullptr;
 	return 0;
 }
 
