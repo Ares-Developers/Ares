@@ -91,7 +91,7 @@ void UpdateAlphaShape(ObjectClass* pSource) {
 			// we moved - need to redraw the area we were in
 			// alas, we don't have the precise XYZ we were in, only the cell we were last seen in
 			// so we need to add the cell's dimensions to the dirty area just in case
-			CellClass::Cell2Coord(&pFoot->LastMapCoords, &XYZ);
+			XYZ = CellClass::Cell2Coord(pFoot->LastMapCoords);
 			Point2D xyTL, xyBR;
 			TacticalClass::Instance->CoordsToClient(&XYZ, &xyTL);
 			// because the coord systems are different - xyz is x/, y\, xy is x-, y|

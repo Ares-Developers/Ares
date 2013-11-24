@@ -25,8 +25,7 @@ DEFINE_HOOK(6E1780, TActionClass_PlayAudioAtRandomWP, 6)
 		auto luckyWP = pScen->Random.RandomRanged(0, eligibleWPs.size() - 1);
 		CellStruct XY;
 		pScen->GetWaypointCoords(&XY, luckyWP);
-		CoordStruct XYZ;
-		CellClass::Cell2Coord(&XY, &XYZ);
+		CoordStruct XYZ = CellClass::Cell2Coord(XY);
 		VocClass::PlayIndexAtPos(pThis->Value, &XYZ);
 	}
 

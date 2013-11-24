@@ -73,8 +73,7 @@ void WriteLog(const ObjectClass* it, int idx, DWORD checksum, FILE * F) {
 	CoordStruct crd;
 	it->GetCoords(&crd);
 
-	CellStruct cell;
-	CellClass::Coord2Cell(&crd, &cell);
+	CellStruct cell = CellClass::Coord2Cell(crd);
 
 	fprintf(F, "; Type: %d (%s); Coords: %d,%d,%d (%d,%d); Health: %d; InLimbo: %d",
 		typeIndex, typeID, crd.X, crd.Y, crd.Z, cell.X, cell.Y, it->Health, it->InLimbo);

@@ -23,8 +23,7 @@ DEFINE_HOOK(70DA95, TechnoClass_RadarTrackingUpdate_AnnounceDetected, 6)
 			break;
 		}
 
-		CellStruct cell;
-		CellClass::Coord2Cell(&pThis->Location, &cell);
+		CellStruct cell = CellClass::Coord2Cell(pThis->Location);
 		RadarEventClass::Create(RadarEventType::EnemySensed, cell);
 	}
 

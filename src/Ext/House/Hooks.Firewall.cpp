@@ -43,7 +43,7 @@ DEFINE_HOOK(6FF008, TechnoClass_Fire_FSW, 8)
 	Path.Apply(FireFinder);
 
 	if(FireFinder.found) {
-		CellClass::Cell2Coord(&FireFinder.target, &tgt);
+		tgt = CellClass::Cell2Coord(FireFinder.target);
 		Bullet->Target = MapClass::Instance->GetCellAt(tgt)->GetContent();
 		Bullet->Owner->ShouldLoseTargetNow = 1;
 //		Bullet->Owner->SetTarget(nullptr);

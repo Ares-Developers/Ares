@@ -38,8 +38,7 @@ bool SW_UnitDelivery::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlay
 
 void UnitDeliveryStateMachine::Update() {
 	if(this->Finished()) {
-		CoordStruct coords;
-		CellClass::Cell2Coord(&this->Coords, &coords);
+		CoordStruct coords = CellClass::Cell2Coord(this->Coords);
 
 		auto pData = this->FindExtData();
 

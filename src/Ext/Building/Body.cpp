@@ -362,8 +362,7 @@ void BuildingExt::buildLines(BuildingClass* theBuilding, CellStruct selectedCell
 
 			if(CellClass *cell = MapClass::Instance->GetCellAt(cellToBuildOn)) {
 				if(BuildingClass *tempBuilding = specific_cast<BuildingClass *>(theBuilding->Type->CreateObject(buildingOwner))) {
-					CoordStruct coordBuffer;
-					CellClass::Cell2Coord(&cellToBuildOn, &coordBuffer);
+					CoordStruct coordBuffer = CellClass::Cell2Coord(cellToBuildOn);
 
 					++Unsorted::IKnowWhatImDoing; // put the building there even if normal rules would deny - e.g. under units
 					bool Put = tempBuilding->Put(&coordBuffer, 0);

@@ -1400,9 +1400,8 @@ DEFINE_HOOK(739F21, UnitClass_UpdatePosition_Visceroid, 6)
 					pThis->GetCoords(&crdMe);
 					pDest->GetCoords(&crdHim);
 
-					CellStruct cellMe, cellHim;
-					CellClass::Coord2Cell(&crdMe, &cellMe);
-					CellClass::Coord2Cell(&crdHim, &cellHim);
+					auto cellMe = CellClass::Coord2Cell(crdMe);
+					auto cellHim = CellClass::Coord2Cell(crdHim);
 
 					// two become one
 					if(cellMe == cellHim) {
