@@ -362,7 +362,7 @@ void ChronoWarpStateMachine::Update() {
 							if(pContainer.isVehicle || pExt->Chronosphere_BlowUnplaceable.Get()) {
 								int damage = pBld->Type->Strength;
 								pBld->ReceiveDamage(&damage, 0,
-									RulesClass::Instance->C4Warhead, nullptr, TRUE, TRUE, this->Super->Owner);
+									RulesClass::Instance->C4Warhead, nullptr, true, true, this->Super->Owner);
 							}
 						}
 					}

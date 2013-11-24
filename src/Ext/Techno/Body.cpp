@@ -434,7 +434,7 @@ void TechnoExt::Destroy(TechnoClass* pTechno, TechnoClass* pKiller, HouseClass* 
 	}
 
 	int health = pTechno->Health;
-	pTechno->ReceiveDamage(&health, 0, pWarhead, pKiller, TRUE, FALSE, pKillerHouse);
+	pTechno->ReceiveDamage(&health, 0, pWarhead, pKiller, true, false, pKillerHouse);
 }
 
 void TechnoExt::TransferIvanBomb(TechnoClass *From, TechnoClass *To) {

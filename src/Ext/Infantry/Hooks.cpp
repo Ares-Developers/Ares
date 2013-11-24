@@ -133,7 +133,7 @@ DEFINE_HOOK(519D9C, InfantryClass_UpdatePosition_MultiEngineer, 5) {
 	eAction action = InfantryExt::GetEngineerEnterEnemyBuildingAction(pBld);
 	if(action == act_Damage) {
 		int Damage = (int)ceil(pBld->Type->Strength * RulesExt::Global()->EngineerDamage);
-		pBld->ReceiveDamage(&Damage, 0, RulesClass::Global()->C4Warhead, pEngi, 1, 0, 0);
+		pBld->ReceiveDamage(&Damage, 0, RulesClass::Global()->C4Warhead, pEngi, true, false, nullptr);
 		return 0x51A010;
 	} else {
 		return 0x519EAA;

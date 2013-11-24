@@ -715,7 +715,7 @@ void BuildingExt::ExtData::ImmolateVictim(ObjectClass * Victim) {
 		CoordStruct XYZ;
 		Victim->GetCoords(&XYZ);
 		int Damage = Victim->Health;
-		Victim->ReceiveDamage(&Damage, 0, RulesClass::Instance->C4Warhead/* todo */, 0, 1, 0, pThis->Owner);
+		Victim->ReceiveDamage(&Damage, 0, RulesClass::Instance->C4Warhead/* todo */, nullptr, true, false, pThis->Owner);
 
 		if(AnimTypeClass *FSAnim = AnimTypeClass::Find(Victim->IsInAir() ? "FSAIR" : "FSGRND")) {
 			AnimClass * placeholder;

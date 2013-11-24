@@ -1293,7 +1293,7 @@ DEFINE_HOOK(4D85E4, FootClass_UpdatePosition_TiberiumDamage, 9)
 		CoordStruct crd;
 		pThis->GetCoords(&crd);
 
-		if(pThis->ReceiveDamage(&damage, 0, pWarhead, nullptr, FALSE, FALSE, nullptr) == DamageState::NowDead) {
+		if(pThis->ReceiveDamage(&damage, 0, pWarhead, nullptr, false, false, nullptr) == DamageState::NowDead) {
 			TechnoExt::SpawnVisceroid(crd, RulesClass::Instance->SmallVisceroid, transmogrify, false);
 			return 0x4D8F29;
 		}
