@@ -334,11 +334,11 @@ void BuildingExt::buildLines(BuildingClass* theBuilding, CellStruct selectedCell
 		for(short distanceFromCenter = 1; distanceFromCenter <= maxLinkDistance; ++distanceFromCenter) {
 			cellToCheck += directionOffset; // adjust the cell to check based on current distance, relative to the selected cell
 
-			if(!MapClass::Instance->CellExists(&cellToCheck)) { // don't parse this cell if it doesn't exist (duh)
+			CellClass *cell = MapClass::Instance->TryGetCellAt(cellToCheck);
+
+			if(!cell) { // don't parse this cell if it doesn't exist (duh)
 				break;
 			}
-
-			CellClass *cell = MapClass::Instance->GetCellAt(&cellToCheck);
 
 			if(BuildingClass *OtherEnd = cell->GetBuilding()) { // if we find a building...
 				if(buildingExtData->canLinkTo(OtherEnd)) { // ...and it is linkable, we found what we needed

@@ -81,8 +81,7 @@ void UnitDeliveryStateMachine::PlaceUnits() {
 		bool Placed = false;
 		do {
 			CellStruct tmpCell = CellSpread::GetCell(cellIdx) + this->Coords;
-			if(MapClass::Instance->CellExists(&tmpCell)) {
-				CellClass *cell = MapClass::Instance->GetCellAt(&tmpCell);
+			if(CellClass *cell = MapClass::Instance->TryGetCellAt(tmpCell)) {
 				CoordStruct XYZ;
 				cell->GetCoordsWithBridge(&XYZ);
 

@@ -241,7 +241,7 @@ DEFINE_HOOK(539EB0, LightningStorm_Start, 5) {
 
 		// generate random coords if the passed ones are empty
 		if(Coords.X == 0 && Coords.Y == 0) {
-			while(!MapClass::Instance->CellExists(&Coords)) {
+			while(!MapClass::Instance->CellExists(Coords)) {
 				Coords.X = (short)ScenarioClass::Instance->Random.RandomRanged(0, MapClass::Instance->unknown_12C);
 				Coords.Y = (short)ScenarioClass::Instance->Random.RandomRanged(0, MapClass::Instance->unknown_130);
 			}
@@ -427,7 +427,7 @@ DEFINE_HOOK(53A6CF, LightningStorm_Update, 7) {
 
 					// generate a new place to strike
 					CellStruct cell;
-					if(height > 0 && width > 0 && MapClass::Instance->CellExists(&LSCell)) {
+					if(height > 0 && width > 0 && MapClass::Instance->CellExists(LSCell)) {
 						for(int k=pData->Weather_ScatterCount.Get(); k>0; --k) {
 							bool found;
 							for(int i=0; i<3; ++i) {
@@ -437,7 +437,7 @@ DEFINE_HOOK(53A6CF, LightningStorm_Update, 7) {
 	
 								// don't even try if this is invalid
 								found = false;
-								if(MapClass::Instance->CellExists(&cell)) {
+								if(MapClass::Instance->CellExists(cell)) {
 									// out of range?
 									if(!isRectangle) {
 										if(cell.DistanceFrom(LSCell) > pData->SW_WidthOrRange.Get()) {
