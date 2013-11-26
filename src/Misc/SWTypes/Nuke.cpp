@@ -90,7 +90,7 @@ bool SW_NuclearMissile::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPl
 			// collected from crates. second, the normal way firing from a silo.
 			BuildingClass* pSilo = nullptr;
 				
-			if((!pThis->Granted || !pThis->Quantity) && pData->Nuke_SiloLaunch.Get()) {
+			if((!pThis->Granted || !pThis->OneTime) && pData->Nuke_SiloLaunch.Get()) {
 				
 				// find a building type that can fire this SWType and verify the
 				// player has it. don't give up, just try the other types as well.
