@@ -19,12 +19,7 @@ DEFINE_HOOK(46920B, BulletClass_Fire, 6) {
 	//LEA_STACK(CoordStruct *, detonationXYZ, 0xAC); // looks unused?
 	WarheadTypeClass *pThis = Bullet->WH;
 
-	CoordStruct coords;
-	if (Bullet->Target) {
-		coords = Bullet->Target->GetCoords();
-	} else {
-		coords = Bullet->GetCoords();
-	}
+	CoordStruct coords = Bullet->GetTargetCoords();
 
 	auto pWHExt = WarheadTypeExt::ExtMap.Find(pThis);
 

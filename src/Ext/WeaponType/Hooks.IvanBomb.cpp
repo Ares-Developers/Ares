@@ -191,8 +191,7 @@ DEFINE_HOOK(46934D, IvanBombs_Spread, 6)
 				// cell spread
 				int Spread = static_cast<int>(pBullet->WH->CellSpread);
 
-				CoordStruct tgtCoords;
-				pBullet->GetTargetCoords(&tgtCoords);
+				CoordStruct tgtCoords = pBullet->GetTargetCoords();
 
 				CellStruct centerCoords = MapClass::Instance->GetCellAt(tgtCoords)->MapCoords;
 
