@@ -70,9 +70,7 @@ void WriteLog(const ObjectClass* it, int idx, DWORD checksum, FILE * F) {
 		typeIndex = pType->GetArrayIndex();
 	}
 
-	CoordStruct crd;
-	it->GetCoords(&crd);
-
+	CoordStruct crd = it->GetCoords();
 	CellStruct cell = CellClass::Coord2Cell(crd);
 
 	fprintf(F, "; Type: %d (%s); Coords: %d,%d,%d (%d,%d); Health: %d; InLimbo: %d",
@@ -102,7 +100,7 @@ void WriteLog(const TechnoClass* it, int idx, DWORD checksum, FILE * F) {
 	if(auto pTarget = it->Target) {
 		targetID = AbstractClass::GetClassName(pTarget->WhatAmI());
 		targetIndex = pTarget->GetArrayIndex();
-		pTarget->GetCoords(&targetCrd);
+		targetCrd = pTarget->GetCoords();
 	}
 
 	fprintf(F, "; Facing: %d; Facing2: %d; Target: %s (%d; %d,%d)",
@@ -119,7 +117,7 @@ void WriteLog(const FootClass* it, int idx, DWORD checksum, FILE * F) {
 	if(auto pDest = it->Destination) {
 		destID = AbstractClass::GetClassName(pDest->WhatAmI());
 		destIndex = pDest->GetArrayIndex();
-		pDest->GetCoords(&destCrd);
+		destCrd = pDest->GetCoords();
 	}
 
 	fprintf(F, "; Destination: %s (%d; %d,%d)",

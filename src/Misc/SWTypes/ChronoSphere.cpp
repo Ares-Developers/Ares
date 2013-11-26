@@ -87,8 +87,7 @@ bool SW_ChronoSphere::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlay
 		pThis->ChronoMapCoords = *pCoords;
 
 		// position to play the animation at
-		CoordStruct coords;
-		pTarget->GetCoords(&coords);
+		CoordStruct coords = pTarget->GetCoords();
 		if(pTarget->Flags & cf_Bridge) {
 			coords.Z += pTarget->BridgeHeight();
 		}

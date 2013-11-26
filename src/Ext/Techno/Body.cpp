@@ -716,8 +716,7 @@ bool TechnoExt::ExtData::PerformActionHijack(TechnoClass* pTarget) {
 		// better from over there...
 		if(!action) {
 			pThis->SetDestination(nullptr, true);
-			CoordStruct crd;
-			pTarget->GetCoords(&crd);
+			CoordStruct crd = pTarget->GetCoords();
 			pThis->Scatter((DWORD)&crd, 1, 0);
 			return false;
 		}
@@ -923,8 +922,7 @@ bool TechnoExt::ExtData::IsCloakable(bool allowPassive) const
 		}
 
 		// search for cloak generators
-		CoordStruct crd;
-		pThis->GetCoords(&crd);
+		CoordStruct crd = pThis->GetCoords();
 		CellClass* pCell = MapClass::Instance->GetCellAt(crd);
 		return pCell->CloakGen_InclHouse(pThis->Owner->ArrayIndex);
 	}

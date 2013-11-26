@@ -21,9 +21,9 @@ DEFINE_HOOK(46920B, BulletClass_Fire, 6) {
 
 	CoordStruct coords;
 	if (Bullet->Target) {
-		Bullet->Target->GetCoords(&coords);
+		coords = Bullet->Target->GetCoords();
 	} else {
-		Bullet->GetCoords(&coords);
+		coords = Bullet->GetCoords();
 	}
 
 	auto pWHExt = WarheadTypeExt::ExtMap.Find(pThis);

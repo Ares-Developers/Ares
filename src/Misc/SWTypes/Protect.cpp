@@ -72,9 +72,8 @@ bool SW_Protect::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
 	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSW);
 
 	if(pThis->IsCharged) {
-		CoordStruct Crd;
 		CellClass *pTarget = MapClass::Instance->GetCellAt(*pCoords);
-		pTarget->GetCoords(&Crd);
+		CoordStruct Crd = pTarget->GetCoords();
 
 		// play start sound
 		if(pSW->StartSound > -1) {

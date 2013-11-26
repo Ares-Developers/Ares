@@ -25,9 +25,8 @@ DEFINE_HOOK(53B080, PsyDom_Fire, 5) {
 		HouseClass* pFirer = PsyDom::Owner;
 		CellStruct cell = PsyDom::Coords;
 
-		CoordStruct coords;
 		CellClass *pTarget = MapClass::Instance->GetCellAt(cell);
-		pTarget->GetCoords(&coords);
+		CoordStruct coords = pTarget->GetCoords();
 		
 		// blast!
 		if(pData->Dominator_Ripple.Get()) {
@@ -122,8 +121,7 @@ DEFINE_HOOK(53B080, PsyDom_Fire, 5) {
 
 				// create a permanent capture anim
 				if(pData->Dominator_ControlAnim.Get()) {
-					CoordStruct animCoords;
-					pTechno->GetCoords(&animCoords);
+					CoordStruct animCoords = pTechno->GetCoords();
 					animCoords.Z += pType->MindControlRingOffset;
 					GAME_ALLOC(AnimClass, pTechno->MindControlRingAnim, pData->Dominator_ControlAnim, &animCoords);
 					if(pTechno->MindControlRingAnim) {
@@ -345,8 +343,7 @@ DEFINE_HOOK(53A6CF, LightningStorm_Update, 7) {
 	for(int i=LightningStorm::CloudsManifesting->Count-1; i>=0; --i) {
 		if(AnimClass *pAnim = LightningStorm::CloudsManifesting->GetItem(i)) {
 			if(pAnim->Animation.Value >= pAnim->Type->GetImage()->Frames / 2) {
-				CoordStruct crdStrike;
-				pAnim->GetCoords(&crdStrike);
+				CoordStruct crdStrike = pAnim->GetCoords();
 				LightningStorm::Strike2(crdStrike);
 				LightningStorm::CloudsManifesting->RemoveItem(i);
 			}

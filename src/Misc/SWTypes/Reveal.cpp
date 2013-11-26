@@ -36,8 +36,7 @@ bool SW_Reveal::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
 	if(pThis->IsCharged) {
 		CellClass *pTarget = MapClass::Instance->GetCellAt(*pCoords);
 		
-		CoordStruct Crd;
-		pTarget->GetCoords(&Crd);
+		CoordStruct Crd = pTarget->GetCoords();
 
 		float width = pData->SW_WidthOrRange;
 		int height = pData->SW_Height;
@@ -45,8 +44,7 @@ bool SW_Reveal::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
 		// default way to reveal, but reveal one cell at a time.
 		Helpers::Alex::for_each_in_rect_or_range<CellClass>(*pCoords, width, height,
 			[&](CellClass* pCell) -> bool {
-				CoordStruct Crd2;
-				pCell->GetCoords(&Crd2);
+				CoordStruct Crd2 = pCell->GetCoords();
 				MapClass::Instance->RevealArea2(&Crd2, 1, pThis->Owner, 0, 0, 0, 0, 0);
 				MapClass::Instance->RevealArea2(&Crd2, 1, pThis->Owner, 0, 0, 0, 0, 1);
 				return true;

@@ -120,8 +120,7 @@ DEFINE_HOOK(443414, BuildingClass_ClickedAction, 6)
 
 	if(Action == act_Enter) {
 		if(BuildingClass *pTargetBuilding = specific_cast<BuildingClass *>(pTarget)) {
-			CoordStruct XYZ;
-			pTargetBuilding->GetCoords(&XYZ);
+			CoordStruct XYZ = pTargetBuilding->GetCoords();
 			CellStruct tgt = { short(XYZ.X / 256), short(XYZ.Y / 256) };
 			AresNetEvent::Handlers::RaiseTrenchRedirectClick(pThis, &tgt);
 			R->EAX(1);

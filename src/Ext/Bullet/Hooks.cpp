@@ -21,8 +21,7 @@ DEFINE_HOOK(4666F7, BulletClass_Update, 6)
 			} else {
 				solidHeight *= 256;
 			}
-			CoordStruct MyXYZ;
-			MyCell->GetCoords(&MyXYZ);
+			CoordStruct MyXYZ = MyCell->GetCoords();
 
 			// use this delta offset to pick specific foundation cell's height from height map when it's implemented
 			CellStruct MyXY, BldXY, DeltaXY;

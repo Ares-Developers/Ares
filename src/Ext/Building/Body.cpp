@@ -688,8 +688,7 @@ void BuildingExt::ExtData::UpdateFirewall() {
 			B->FirestormAnim = 0;
 		}
 		if(corners != 5 && corners != 10) {  // (0101b || 1010b) == part of a straight line
-			CoordStruct XYZ;
-			B->GetCoords(&XYZ);
+			CoordStruct XYZ = B->GetCoords();
 			XYZ.X -= 768;
 			XYZ.Y -= 768;
 			if(AnimTypeClass *FSA = AnimTypeClass::Find("FSIDLE")) {
@@ -711,8 +710,7 @@ void BuildingExt::ExtData::ImmolateVictims() {
 void BuildingExt::ExtData::ImmolateVictim(ObjectClass * Victim) {
 	BuildingClass *pThis = this->AttachedToObject;
 	if(generic_cast<TechnoClass *>(Victim) && Victim != pThis && !Victim->InLimbo && Victim->IsAlive && Victim->Health) {
-		CoordStruct XYZ;
-		Victim->GetCoords(&XYZ);
+		CoordStruct XYZ = Victim->GetCoords();
 		int Damage = Victim->Health;
 		Victim->ReceiveDamage(&Damage, 0, RulesClass::Instance->C4Warhead/* todo */, nullptr, true, false, pThis->Owner);
 

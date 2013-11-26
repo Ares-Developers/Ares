@@ -210,8 +210,7 @@ bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 				}
 
 				// get the cells and coordinates
-				CoordStruct coordsUnitSource;
-				pTechno->GetCoords(&coordsUnitSource);
+				CoordStruct coordsUnitSource = pTechno->GetCoords();
 				CoordStruct coordsUnitTarget = coordsUnitSource;
 				CellStruct cellUnitTarget = pTechno->GetCell()->MapCoords - pSource->ChronoMapCoords + *pCoords;
 				CellClass* pCellUnitTarget = MapClass::Instance->GetCellAt(cellUnitTarget);

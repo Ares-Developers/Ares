@@ -261,9 +261,8 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 				//this->Abductor_Anim->Owner=Bullet->Owner->Owner;
 			}
 
-			CoordStruct coordsUnitSource = {0, 0, 0};
-			Target->Locomotor->Force_Track(-1, coordsUnitSource);
-			Target->GetCoords(&coordsUnitSource);
+			Target->Locomotor->Force_Track(-1, CoordStruct::Empty);
+			CoordStruct coordsUnitSource = Target->GetCoords();
 			Target->Locomotor->Mark_All_Occupation_Bits(0);
 			Target->MarkAllOccupationBits(&coordsUnitSource);
 			Target->ClearPlanningTokens(nullptr);

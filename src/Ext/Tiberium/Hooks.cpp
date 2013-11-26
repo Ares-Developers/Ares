@@ -21,8 +21,7 @@ DEFINE_HOOK(489270, CellChainReact, 5)
 	OverlayTypeClass* pOverlay = OverlayTypeClass::Array->GetItemOrDefault(pCell->OverlayTypeIndex);
 
 	if(pTib && pOverlay && pOverlay->ChainReaction && pCell->Powerup > 1) {
-		CoordStruct crd;
-		pCell->GetCoords(&crd);
+		CoordStruct crd = pCell->GetCoords();
 
 		if(ScenarioClass::Instance->Random.RandomRanged(0, 99) < reactChanceMultiplier * pCell->Powerup) {
 			bool wasFullGrown = (pCell->Powerup >= 11);
@@ -55,7 +54,7 @@ DEFINE_HOOK(489270, CellChainReact, 5)
 					if(pCell->GetContainedTiberiumIndex() != -1 && pNeighbour->Powerup > 2) {
 						if(ScenarioClass::Instance->Random.RandomRanged(0, 99) < spreadChance) {
 							int delay = ScenarioClass::Instance->Random.RandomRanged(minDelay, maxDelay);
-							pNeighbour->GetCoords(&crd);
+							crd = pNeighbour->GetCoords();
 
 							AnimClass* pAnim = nullptr;
 							GAME_ALLOC(AnimClass, pAnim, pType, &crd, delay, 1, 0x600, 0);

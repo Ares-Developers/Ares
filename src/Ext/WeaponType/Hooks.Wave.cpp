@@ -254,7 +254,7 @@ DEFINE_HOOK(762C5C, WaveClass_Update_Wave, 6)
 
 	CoordStruct xyzSrc, xyzTgt, xyzDummy = {0, 0, 0};
 	Firer->GetFLH(&xyzSrc, weaponIdx, xyzDummy);
-	Target->GetCoords__(&xyzTgt); // not GetCoords() !
+	xyzTgt = Target->GetCoords__(); // not GetCoords() !
 
 	char idx = WeaponTypeExt:: AbsIDtoIdx(Target->WhatAmI());
 

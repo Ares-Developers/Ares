@@ -247,8 +247,7 @@ DEFINE_HOOK(6FCD1D, TechnoClass_GetObjectActivityState_CanTargetFirewall, 5)
 		return 0;
 	}
 
-	CoordStruct crdTgt;
-	Tgt->GetCoords(&crdTgt);
+	CoordStruct crdTgt = Tgt->GetCoords();
 
 	FirestormFinderApplicator FireFinder(Src->Owner);
 

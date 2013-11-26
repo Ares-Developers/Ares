@@ -132,7 +132,7 @@ void UpdateAlphaShape(ObjectClass* pSource) {
 	}
 
 	if(Unsorted::CurrentFrame % 2) { // lag reduction - don't draw a new alpha every frame
-		pSource->GetCoords(&XYZ);
+		XYZ = pSource->GetCoords();
 		TacticalClass::Instance->CoordsToClient(&XYZ, &xy);
 		xy += off;
 		++Unsorted::IKnowWhatImDoing;
@@ -252,7 +252,7 @@ DEFINE_HOOK(71944E, TeleportLocomotionClass_ILocomotion_Process, 6)
 {
 	GET(FootClass*, pObject, ECX);
 	GET(CoordStruct*, XYZ, EDX);
-	pObject->GetCoords(XYZ);
+	*XYZ = pObject->GetCoords();
 	R->EAX<CoordStruct*>(XYZ);
 
 	if(auto pType = pObject->GetTechnoType()) {

@@ -118,8 +118,7 @@ public:
 				}
 
 				// get distance from impact site
-				CoordStruct target;
-				Techno->GetCoords(&target);
+				CoordStruct target = Techno->GetCoords();
 				double dist = target.DistanceFrom(*coords);
 
 				// reduce the distance for flying aircraft

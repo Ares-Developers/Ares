@@ -161,8 +161,7 @@ DEFINE_HOOK(415CA6, AircraftClass_Paradrop, 6)
 	if(P->WhatAmI() != abs_Unit) {
 		return 0;
 	}
-	CoordStruct SrcXYZ;
-	A->GetCoords(&SrcXYZ);
+	CoordStruct SrcXYZ = A->GetCoords();
 	LEA_STACK(CoordStruct *, XYZ, 0x20);
 	XYZ->X = (SrcXYZ.X & ~0xFF) + 0x80;
 	XYZ->Y = (SrcXYZ.Y & ~0xFF) + 0x80;
@@ -1241,8 +1240,7 @@ DEFINE_HOOK(702216, TechnoClass_ReceiveDamage_TiberiumHeal, 6)
 
 	// TS did not check for HasAbility here, either
 	if(pExt->TiberiumRemains.Get(pType->TiberiumHeal && RulesExt::Global()->Tiberium_HealEnabled)) {
-		CoordStruct crd;
-		pThis->GetCoords(&crd);
+		CoordStruct crd = pThis->GetCoords();
 		CellClass* pCenter = MapClass::Instance->GetCellAt(crd);
 
 		// increase the tiberium for the four neighbours and center.
@@ -1290,8 +1288,7 @@ DEFINE_HOOK(4D85E4, FootClass_UpdatePosition_TiberiumDamage, 9)
 	}
 
 	if(damage && pWarhead) {
-		CoordStruct crd;
-		pThis->GetCoords(&crd);
+		CoordStruct crd = pThis->GetCoords();
 
 		if(pThis->ReceiveDamage(&damage, 0, pWarhead, nullptr, false, false, nullptr) == DamageState::NowDead) {
 			TechnoExt::SpawnVisceroid(crd, RulesClass::Instance->SmallVisceroid, transmogrify, false);
@@ -1329,8 +1326,7 @@ DEFINE_HOOK(702200, TechnoClass_ReceiveDamage_SpillTiberium, 6)
 			}
 
 			// get the spill center
-			CoordStruct crd;
-			pThis->GetCoords(&crd);
+			CoordStruct crd = pThis->GetCoords();
 			CellClass* pCenter = MapClass::Instance->GetCellAt(crd);
 
 			unsigned int neighbours[] = {9, 2, 7, 1, 4, 3, 0, 5, 6};
@@ -1372,9 +1368,7 @@ DEFINE_HOOK(738749, UnitClass_Destroy_TiberiumExplosive, 6)
 				// go boom
 				WarheadTypeClass* pWH = RulesExt::Global()->Tiberium_ExplosiveWarhead;
 				if(morePower > 0 && pWH) {
-					CoordStruct crd;
-					pThis->GetCoords(&crd);
-
+					CoordStruct crd = pThis->GetCoords();
 					MapClass::DamageArea(&crd, morePower, pThis, pWH, false, nullptr);
 				}
 			}
@@ -1396,9 +1390,8 @@ DEFINE_HOOK(739F21, UnitClass_UpdatePosition_Visceroid, 6)
 				if(pDest->Type->SmallVisceroid) {
 
 					// nice to meat you!
-					CoordStruct crdMe, crdHim;
-					pThis->GetCoords(&crdMe);
-					pDest->GetCoords(&crdHim);
+					auto crdMe = pThis->GetCoords();
+					auto crdHim = pDest->GetCoords();
 
 					auto cellMe = CellClass::Coord2Cell(crdMe);
 					auto cellHim = CellClass::Coord2Cell(crdHim);
