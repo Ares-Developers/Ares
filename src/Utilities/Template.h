@@ -38,6 +38,10 @@ public:
 	//	return this->GetEx();
 	//}
 
+	T operator -> () const {
+		return this->Get();
+	}
+
 	T* operator & () {
 		return this->GetEx();
 	}
