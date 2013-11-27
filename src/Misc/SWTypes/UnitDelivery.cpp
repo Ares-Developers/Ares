@@ -112,7 +112,7 @@ void UnitDeliveryStateMachine::PlaceUnits() {
 							}
 						} else {
 							if(Type->BalloonHover || Type->JumpJet) {
-								Item->Scatter(0xB1CFE8, 1, 0);
+								Item->Scatter(CoordStruct::Empty, true, false);
 							}
 						}
 						if(TechnoExt::ExtData* pItemData = TechnoExt::ExtMap.Find(Item)) {

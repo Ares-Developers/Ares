@@ -152,10 +152,10 @@ bool TechnoExt::EjectSurvivor(FootClass *Survivor, CoordStruct *loc, bool Select
 		bool scat = Survivor->OnBridge;
 		auto occupation = scat ? pCell->AltOccupationFlags : pCell->OccupationFlags;
 		if((occupation & 0x1C) == 0x1C) {
-			pCell->ScatterContent(0xA8F200, 1, 1, scat);
+			pCell->ScatterContent(CoordStruct::Empty, true, true, scat);
 		}
 	} else {
-		Survivor->Scatter(0xB1CFE8, 1, 0);
+		Survivor->Scatter(CoordStruct::Empty, true, false);
 		Survivor->QueueMission(Survivor->Owner->ControlledByHuman() ? mission_Guard : mission_Hunt, 0);
 	}
 	Survivor->ShouldEnterOccupiable = Survivor->ShouldGarrisonStructure = false;
@@ -717,7 +717,7 @@ bool TechnoExt::ExtData::PerformActionHijack(TechnoClass* pTarget) {
 		if(!action) {
 			pThis->SetDestination(nullptr, true);
 			CoordStruct crd = pTarget->GetCoords();
-			pThis->Scatter((DWORD)&crd, 1, 0);
+			pThis->Scatter(crd, true, false);
 			return false;
 		}
 
