@@ -744,7 +744,7 @@ bool TechnoExt::ExtData::PerformActionHijack(TechnoClass* pTarget) {
 			// raise some events in case the hijacker/driver will be
 			// swallowed by the vehicle.
 			if(pTarget->AttachedTag) {
-				pTarget->AttachedTag->RaiseEvent(TriggerEvent::DestroyedByAnything, pThis, *(CellStruct*)0xA8F1E0, 0, 0);
+				pTarget->AttachedTag->RaiseEvent(TriggerEvent::DestroyedByAnything, pThis, CellStruct::Empty, 0, 0);
 			}
 			pTarget->Owner->HasBeenThieved = true;
 			if(pThis->AttachedTag) {
@@ -756,7 +756,7 @@ bool TechnoExt::ExtData::PerformActionHijack(TechnoClass* pTarget) {
 			// raise some events in case the driver enters
 			// a vehicle that needs an Operator
 			if(pTarget->AttachedTag) {
-				pTarget->AttachedTag->RaiseEvent(TriggerEvent::EnteredBy, pThis, *(CellStruct*)0xA8F1E0, 0, 0);
+				pTarget->AttachedTag->RaiseEvent(TriggerEvent::EnteredBy, pThis, CellStruct::Empty, 0, 0);
 			}
 		}
 
