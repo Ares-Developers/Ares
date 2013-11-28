@@ -257,17 +257,17 @@ public:
 
 		_snprintf_s(FlagName, buflen, buflen - 1, BaseFlag, "Rookie");
 		Placeholder.Read(&exINI, Section, FlagName);
-		this->Rookie = Placeholder.Get();
+		this->Rookie = Placeholder;
 
 		Placeholder.Set(this->Veteran);
 		_snprintf_s(FlagName, buflen, buflen - 1, BaseFlag, "Veteran");
 		Placeholder.Read(&exINI, Section, FlagName);
-		this->Veteran = Placeholder.Get();
+		this->Veteran = Placeholder;
 
 		Placeholder.Set(this->Elite);
 		_snprintf_s(FlagName, buflen, buflen - 1, BaseFlag, "Elite");
 		Placeholder.Read(&exINI, Section, FlagName);
-		this->Elite = Placeholder.Get();
+		this->Elite = Placeholder;
 
 		delete[] FlagName;
 	}
@@ -387,27 +387,27 @@ void Valueable<MouseCursor>::Read(INI_EX *parser, const char* pSection, const ch
 	_snprintf_s(pFlagName, 31, "%s.Frame", pKey);
 	Placeholder.Set(Cursor->Frame);
 	Placeholder.Read(parser, pSection, pFlagName);
-	Cursor->Frame = Placeholder.Get();
+	Cursor->Frame = Placeholder;
 
 	_snprintf_s(pFlagName, 31, "%s.Count", pKey);
 	Placeholder.Set(Cursor->Count);
 	Placeholder.Read(parser, pSection, pFlagName);
-	Cursor->Count = Placeholder.Get();
+	Cursor->Count = Placeholder;
 
 	_snprintf_s(pFlagName, 31, "%s.Interval", pKey);
 	Placeholder.Set(Cursor->Interval);
 	Placeholder.Read(parser, pSection, pFlagName);
-	Cursor->Interval = Placeholder.Get();
+	Cursor->Interval = Placeholder;
 
 	_snprintf_s(pFlagName, 31, "%s.MiniFrame", pKey);
 	Placeholder.Set(Cursor->MiniFrame);
 	Placeholder.Read(parser, pSection, pFlagName);
-	Cursor->MiniFrame = Placeholder.Get();
+	Cursor->MiniFrame = Placeholder;
 
 	_snprintf_s(pFlagName, 31, "%s.MiniCount", pKey);
 	Placeholder.Set(Cursor->MiniCount);
 	Placeholder.Read(parser, pSection, pFlagName);
-	Cursor->MiniCount = Placeholder.Get();
+	Cursor->MiniCount = Placeholder;
 
 	_snprintf_s(pFlagName, 31, "%s.HotSpot", pKey);
 	if(parser->ReadString(pSection, pFlagName)) {
@@ -439,68 +439,68 @@ void Valueable<RocketStruct>::Read(INI_EX *parser, const char* pSection, const c
 	_snprintf_s(pFlagName, 0x3F, "%s.PauseFrames", pKey);
 	IntPlaceholder.Set(rocket->PauseFrames);
 	IntPlaceholder.Read(parser, pSection, pFlagName);
-	rocket->PauseFrames = IntPlaceholder.Get();
+	rocket->PauseFrames = IntPlaceholder;
 
 	_snprintf_s(pFlagName, 0x3F, "%s.TiltFrames", pKey);
 	IntPlaceholder.Set(rocket->TiltFrames);
 	IntPlaceholder.Read(parser, pSection, pFlagName);
-	rocket->TiltFrames = IntPlaceholder.Get();
+	rocket->TiltFrames = IntPlaceholder;
 
 	_snprintf_s(pFlagName, 0x3F, "%s.PitchInitial", pKey);
 	FloatPlaceholder.Set(rocket->PitchInitial);
 	FloatPlaceholder.Read(parser, pSection, pFlagName);
-	rocket->PitchInitial = FloatPlaceholder.Get();
+	rocket->PitchInitial = FloatPlaceholder;
 
 	_snprintf_s(pFlagName, 0x3F, "%s.PitchFinal", pKey);
 	FloatPlaceholder.Set(rocket->PitchFinal);
 	FloatPlaceholder.Read(parser, pSection, pFlagName);
-	rocket->PitchFinal = FloatPlaceholder.Get();
+	rocket->PitchFinal = FloatPlaceholder;
 
 	_snprintf_s(pFlagName, 0x3F, "%s.TurnRate", pKey);
 	FloatPlaceholder.Set(rocket->TurnRate);
 	FloatPlaceholder.Read(parser, pSection, pFlagName);
-	rocket->TurnRate = FloatPlaceholder.Get();
+	rocket->TurnRate = FloatPlaceholder;
 
 	// sic! integer read like a float.
 	_snprintf_s(pFlagName, 0x3F, "%s.RaiseRate", pKey);
 	FloatPlaceholder.Set(static_cast<float>(rocket->RaiseRate));
 	FloatPlaceholder.Read(parser, pSection, pFlagName);
-	rocket->RaiseRate = Game::F2I(FloatPlaceholder.Get());
+	rocket->RaiseRate = Game::F2I(FloatPlaceholder);
 
 	_snprintf_s(pFlagName, 0x3F, "%s.Acceleration", pKey);
 	FloatPlaceholder.Set(rocket->Acceleration);
 	FloatPlaceholder.Read(parser, pSection, pFlagName);
-	rocket->Acceleration = FloatPlaceholder.Get();
+	rocket->Acceleration = FloatPlaceholder;
 
 	_snprintf_s(pFlagName, 0x3F, "%s.Altitude", pKey);
 	IntPlaceholder.Set(rocket->Altitude);
 	IntPlaceholder.Read(parser, pSection, pFlagName);
-	rocket->Altitude = IntPlaceholder.Get();
+	rocket->Altitude = IntPlaceholder;
 
 	_snprintf_s(pFlagName, 0x3F, "%s.Damage", pKey);
 	IntPlaceholder.Set(rocket->Damage);
 	IntPlaceholder.Read(parser, pSection, pFlagName);
-	rocket->Damage = IntPlaceholder.Get();
+	rocket->Damage = IntPlaceholder;
 	
 	_snprintf_s(pFlagName, 0x3F, "%s.EliteDamage", pKey);
 	IntPlaceholder.Set(rocket->EliteDamage);
 	IntPlaceholder.Read(parser, pSection, pFlagName);
-	rocket->EliteDamage = IntPlaceholder.Get();
+	rocket->EliteDamage = IntPlaceholder;
 	
 	_snprintf_s(pFlagName, 0x3F, "%s.BodyLength", pKey);
 	IntPlaceholder.Set(rocket->BodyLength);
 	IntPlaceholder.Read(parser, pSection, pFlagName);
-	rocket->BodyLength = IntPlaceholder.Get();
+	rocket->BodyLength = IntPlaceholder;
 
 	_snprintf_s(pFlagName, 0x3F, "%s.LazyCurve", pKey);
 	BoolPlaceholder.Set(rocket->LazyCurve);
 	BoolPlaceholder.Read(parser, pSection, pFlagName);
-	rocket->LazyCurve = BoolPlaceholder.Get();
+	rocket->LazyCurve = BoolPlaceholder;
 
 	_snprintf_s(pFlagName, 0x3F, "%s.Type", pKey);
 	TypePlaceholder.Set(rocket->Type);
 	TypePlaceholder.Parse(parser, pSection, pFlagName);
-	rocket->Type = TypePlaceholder.Get();
+	rocket->Type = TypePlaceholder;
 };
 
 template<class T>
