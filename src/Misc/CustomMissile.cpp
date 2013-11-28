@@ -12,7 +12,7 @@ DEFINE_HOOK(6622E0, RocketLocomotionClass_ILocomotion_Process_CustomMissile, 6)
 	GET(AircraftClass*, pThis, ECX);
 
 	if(TechnoTypeExt::ExtData* pExt = TechnoTypeExt::ExtMap.Find(pThis->Type)) {
-		if(pExt->IsCustomMissile.Get()) {
+		if(pExt->IsCustomMissile) {
 			R->EAX(&pExt->CustomMissileData);
 			return 0x66230A;
 		}
@@ -102,15 +102,15 @@ DEFINE_HOOK(66305A, RocketLocomotionClass_Explode_CustomMissile, 6)
 	GET(AircraftTypeClass*, pType, ECX);
 	GET(RocketLocomotionClass*, pLocomotor, ESI);
 
-	LEA_STACK(WarheadTypeClass**, pWarhead, 0x10);
-	LEA_STACK(RocketStruct**, pRocketData, 0x14);
+	LEA_STACK(WarheadTypeClass**, ppWarhead, 0x10);
+	LEA_STACK(RocketStruct**, ppRocketData, 0x14);
 
 	if(TechnoTypeExt::ExtData* pExt = TechnoTypeExt::ExtMap.Find(pType)) {
-		if(pExt->IsCustomMissile.Get()) {
-			*pRocketData = &pExt->CustomMissileData;
+		if(pExt->IsCustomMissile) {
+			*ppRocketData = &pExt->CustomMissileData;
 
 			bool isElite = pLocomotor->SpawnerIsElite;
-			*pWarhead = (isElite ? pExt->CustomMissileEliteWarhead.Get() : pExt->CustomMissileWarhead.Get());
+			*ppWarhead = (isElite ? pExt->CustomMissileEliteWarhead : pExt->CustomMissileWarhead);
 			
 			return 0x6630DD;
 		}
@@ -124,7 +124,7 @@ DEFINE_HOOK(6632F2, RocketLocomotionClass_ILocomotion_MoveTo_CustomMissile, 6)
 	GET(AircraftTypeClass*, pType, EDX);
 
 	if(TechnoTypeExt::ExtData* pExt = TechnoTypeExt::ExtMap.Find(pType)) {
-		if(pExt->IsCustomMissile.Get()) {
+		if(pExt->IsCustomMissile) {
 			R->EDX(&pExt->CustomMissileData);
 			return 0x66331E;
 		}
@@ -138,7 +138,7 @@ DEFINE_HOOK(6634F6, RocketLocomotionClass_ILocomotion_DrawMatrix_CustomMissile, 
 	GET(AircraftTypeClass*, pType, ECX);
 
 	if(TechnoTypeExt::ExtData* pExt = TechnoTypeExt::ExtMap.Find(pType)) {
-		if(pExt->IsCustomMissile.Get()) {
+		if(pExt->IsCustomMissile) {
 			R->EAX(&pExt->CustomMissileData);
 			return 0x66351B;
 		}
@@ -151,7 +151,7 @@ DEFINE_HOOK(6B6D60, SpawnManagerClass_CTOR_CustomMissile, 6)
 {
 	GET(SpawnManagerClass*, pSpawnManager, ESI);
 	if(TechnoTypeExt::ExtData* pExt = TechnoTypeExt::ExtMap.Find(pSpawnManager->SpawnType)) {
-		if(pExt->IsCustomMissile.Get()) {
+		if(pExt->IsCustomMissile) {
 			return 0x6B6D86;
 		}
 	}
@@ -163,7 +163,7 @@ DEFINE_HOOK(6B78F8, SpawnManagerClass_Update_CustomMissile, 6)
 {
 	GET(TechnoTypeClass*, pSpawnType, EAX);
 	if(TechnoTypeExt::ExtData* pExt = TechnoTypeExt::ExtMap.Find(pSpawnType)) {
-		if(pExt->IsCustomMissile.Get()) {
+		if(pExt->IsCustomMissile) {
 			return 0x6B791F;
 		}
 	}
@@ -178,7 +178,7 @@ DEFINE_HOOK(6B7A72, SpawnManagerClass_Update_CustomMissile2, 6)
 	GET(TechnoTypeClass*, pSpawnType, EDX);
 
 	if(TechnoTypeExt::ExtData* pExt = TechnoTypeExt::ExtMap.Find(pSpawnType)) {
-		if(pExt->IsCustomMissile.Get()) {
+		if(pExt->IsCustomMissile) {
 			RocketStruct* pRocket = pExt->CustomMissileData.GetEx();
 
 			TimerStruct* pTimer = &pSpawnManager->SpawnedNodes.GetItem(idxSpawn)->SpawnTimer;
