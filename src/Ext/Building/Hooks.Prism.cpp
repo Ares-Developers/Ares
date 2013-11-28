@@ -83,7 +83,7 @@ DEFINE_HOOK(447FAE, BuildingClass_GetObjectActivityState, 6)
 		if (pTypeData->PrismForwarding.Enabled == BuildingTypeExt::cPrismForwarding::YES
 				|| pTypeData->PrismForwarding.Enabled == BuildingTypeExt::cPrismForwarding::ATTACK) {
 			//is a prism tower
-			if (B->PrismStage == pcs_Slave && pTypeData->PrismForwarding.BreakSupport.Get()) {
+			if (B->PrismStage == pcs_Slave && pTypeData->PrismForwarding.BreakSupport) {
 				return NotBusyCharging;
 			}
 		}
@@ -108,9 +108,9 @@ DEFINE_HOOK(4503F0, BuildingClass_Update_Prism, 9)
 						BuildingTypeExt::ExtData *pTypeData = BuildingTypeExt::ExtMap.Find(pType);
 						//slave firing
 						pTargetData->PrismForwarding.ModifierReserve +=
-							(pTypeData->PrismForwarding.SupportModifier.Get() + pData->PrismForwarding.ModifierReserve);
+							(pTypeData->PrismForwarding.SupportModifier + pData->PrismForwarding.ModifierReserve);
 						pTargetData->PrismForwarding.DamageReserve +=
-							(pTypeData->PrismForwarding.DamageAdd.Get()  + pData->PrismForwarding.DamageReserve);
+							(pTypeData->PrismForwarding.DamageAdd  + pData->PrismForwarding.DamageReserve);
 						pThis->FireLaser(pThis->PrismTargetCoords);
 
 					}
@@ -124,7 +124,7 @@ DEFINE_HOOK(4503F0, BuildingClass_Update_Prism, 9)
 
 								//apparently this is divided by 256 elsewhere
 								LaserBeam->DamageMultiplier = int((pData->PrismForwarding.ModifierReserve + 100) * 256) / 100;
-								LaserBeam->Health += pTypeData->PrismForwarding.DamageAdd.Get()  + pData->PrismForwarding.DamageReserve;
+								LaserBeam->Health += pTypeData->PrismForwarding.DamageAdd + pData->PrismForwarding.DamageReserve;
 							}
 						}
 					}
@@ -288,7 +288,7 @@ DEFINE_HOOK(448277, PrismForward_BuildingChangeOwner, 5)
 		BuildingTypeClass *pType = B->Type;
 		BuildingTypeExt::ExtData *pTypeData = BuildingTypeExt::ExtMap.Find(pType);
 
-		if (pTypeData->PrismForwarding.ToAllies.Get()) {
+		if (pTypeData->PrismForwarding.ToAllies) {
 			BuildingClass *LastTarget = B;
 			BuildingClass *FirstTarget = nullptr;
 			while (LastTarget) {

@@ -267,7 +267,7 @@ bool BuildingTypeExt::cPrismForwarding::ValidateSupportTower(
 					HouseClass *pTargetHouse = TargetTower->Owner;
 					HouseClass *pSlaveHouse = SlaveTower->Owner;
 					if ((pSlaveHouse == pTargetHouse && pSlaveHouse == pMasterHouse)
-						|| (pSlaveTypeData->PrismForwarding.ToAllies.Get()
+						|| (pSlaveTypeData->PrismForwarding.ToAllies
 							&& pSlaveHouse->IsAlliedWith(pTargetHouse)
 							&& pSlaveHouse->IsAlliedWith(pMasterHouse))) {
 						//ownership/alliance rules satisfied
@@ -341,7 +341,7 @@ void BuildingTypeExt::cPrismForwarding::SetChargeDelay_Get
 		if (chain != LongestChain) {
 			BuildingTypeExt::ExtData *pTypeData = BuildingTypeExt::ExtMap.Find(TargetTower->Type);
 			//update the delays for this chain
-			unsigned int thisDelay = pTypeData->PrismForwarding.ChargeDelay.Get() + LongestCDelay[chain + 1];
+			unsigned int thisDelay = pTypeData->PrismForwarding.ChargeDelay + LongestCDelay[chain + 1];
 			if ( thisDelay > LongestCDelay[chain]) {
 				LongestCDelay[chain] = thisDelay;
 			}
