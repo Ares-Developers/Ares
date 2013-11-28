@@ -420,16 +420,16 @@ void HouseTypeExt::ExtData::InheritSettings(HouseTypeClass *pThis) {
 
 AnimTypeClass* HouseTypeExt::ExtData::GetParachuteAnim() {
 	// country-specific parachute
-	if(this->Parachute_Anim.Get()) {
-		return this->Parachute_Anim;
+	if(AnimTypeClass* pAnimType = this->Parachute_Anim) {
+		return pAnimType;
 	}
 
 	// side-specific with fallback to rules
 	int iSide = this->AttachedToObject->SideIndex;
 	if(SideClass::Array->ValidIndex(iSide)) {
 		if(SideExt::ExtData *pData = SideExt::ExtMap.Find(SideClass::Array->GetItem(iSide))) {
-			if(pData->Parachute_Anim.Get()) {
-				return pData->Parachute_Anim;
+			if(AnimTypeClass* pAnimType = pData->Parachute_Anim) {
+				return pAnimType;
 			}
 		} else {
 			Debug::Log("[GetParachuteAnim] House %s and its side have no valid parachute defined. Rules fallback failed.\n", this->AttachedToObject->ID);

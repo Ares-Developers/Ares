@@ -452,7 +452,7 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 	bool evaForEnterer = Enterer->ControlledByPlayer() && raiseEva;
 	bool effectApplied = false;
 
-	if(pTypeExt->ResetRadar.Get()) {
+	if(pTypeExt->ResetRadar) {
 		Owner->ReshroudMap();
 		if(!Owner->SpySatActive && evaForOwner) {
 			VoxClass::Play("EVA_RadarSabotaged");
@@ -492,7 +492,7 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 	}
 
 
-	if(pTypeExt->UnReverseEngineer.Get()) {
+	if(pTypeExt->UnReverseEngineer) {
 		int idx = HouseClass::Array->FindItemIndex(Owner);
 
 		Debug::Log("Undoing all Reverse Engineering achieved by house %ls (#%d)\n", Owner->UIName, idx);
@@ -519,7 +519,7 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 	}
 
 
-	if(pTypeExt->ResetSW.Get()) {
+	if(pTypeExt->ResetSW) {
 		bool somethingReset = false;
 		int swIdx = EnteredType->SuperWeapon;
 		if(swIdx != -1) {
@@ -576,7 +576,7 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 	}
 
 
-	if(pTypeExt->GainVeterancy.Get()) {
+	if(pTypeExt->GainVeterancy) {
 		bool promotionStolen = true;
 
 		switch(EnteredType->Factory) {
@@ -616,7 +616,7 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 
 		Addition 04.03.10: People complained about it not being optional. Now it is.
 	*/
-	if(pTypeExt->RevealProduction.Get()) {
+	if(pTypeExt->RevealProduction) {
 		EnteredBuilding->DisplayProductionTo.Add(Enterer);
 		if(evaForOwner || evaForEnterer) {
 			VoxClass::Play("EVA_BuildingInfiltrated");
@@ -624,7 +624,7 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 		effectApplied = true;
 	}
 
-	if(pTypeExt->RevealRadar.Get()) {
+	if(pTypeExt->RevealRadar) {
 		/*	Remember the new persisting radar spy effect on the victim house itself, because
 			destroying the building would destroy the spy reveal info in the ExtData, too.
 			2013-08-12 AlexB

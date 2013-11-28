@@ -358,7 +358,7 @@ DEFINE_HOOK(72F440, Game_InitializeToolTipColor, A)
 		if(SideClass* pSide = SideClass::Array->GetItem(idxSide)) {
 			if(SideExt::ExtData* pExt = SideExt::ExtMap.Find(pSide)) {
 				ColorStruct &clrToolTip = *(ColorStruct*)0x0B0FA1C;
-				clrToolTip = pExt->ToolTipTextColor.Get();
+				clrToolTip = pExt->ToolTipTextColor;
 				return 0x72F495;
 			}
 		}

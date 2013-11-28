@@ -52,7 +52,7 @@ DEFINE_HOOK(6F9E50, TechnoClass_Update, 5)
 
 	// #1208
 	if(pTypeData) {
-		if(pTypeData->PassengerTurret.Get()) {
+		if(pTypeData->PassengerTurret) {
 			// 18 = 1 8 = A H = Adolf Hitler. Clearly we can't allow it to come to that.
 			int passengerNumber = (Source->Passengers.NumPassengers <= 17) ? Source->Passengers.NumPassengers : 17;
 			int maxTurret = Source->GetTechnoType()->TurretCount - 1;
@@ -1152,7 +1152,7 @@ DEFINE_HOOK(744216, UnitClass_UnmarkOccupationBits, 6)
 	// also clear the last occupation bit, if set
 	auto pExt = TechnoExt::ExtMap.Find(pThis);
 	if(pExt->AltOccupation.isset()) {
-		int lastAlt = pExt->AltOccupation.Get() ? obAlt : obNormal;
+		int lastAlt = pExt->AltOccupation ? obAlt : obNormal;
 		alt |= lastAlt;
 		pExt->AltOccupation.Reset();
 	}
@@ -1184,7 +1184,7 @@ DEFINE_HOOK(70DEBA, TechnoClass_UpdateGattling_Cycle, 6)
 		// if max or higher, reset cyclic gattlings
 		auto pExt = TechnoTypeExt::ExtMap.Find(pType);
 
-		if(pExt->GattlingCyclic.Get()) {
+		if(pExt->GattlingCyclic) {
 			pThis->GattlingValue = 0;
 			pThis->CurrentGattlingStage = 0;
 			pThis->Audio4.DTOR_1();
