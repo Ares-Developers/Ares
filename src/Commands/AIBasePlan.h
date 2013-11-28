@@ -53,6 +53,8 @@ public:
 				Debug::Log("\n");
 			}
 		}
+
+		MessageListClass::Instance->PrintMessage(L"Dumped AI Base Plan");
 	}
 
 	//Constructor
