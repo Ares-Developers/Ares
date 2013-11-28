@@ -120,8 +120,8 @@ void PsychicDominatorStateMachine::Update() {
 			coords.Z += pData->Dominator_FirstAnimHeight;
 
 			AnimClass* pAnim = nullptr;
-			if(pData->Dominator_FirstAnim.Get()) {
-				GAME_ALLOC(AnimClass, pAnim, pData->Dominator_FirstAnim, &coords);
+			if(AnimTypeClass* pAnimType = pData->Dominator_FirstAnim) {
+				GAME_ALLOC(AnimClass, pAnim, pAnimType, &coords);
 			}
 			PsyDom::Anim = pAnim;
 		

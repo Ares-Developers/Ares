@@ -42,7 +42,7 @@ bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 			Debug::Log("[ChronoWarp::Launch] Launching %s with %s as source.\n", pThis->Type->ID, pSource->Type->ID);
 
 			// add radar events for source and target
-			if(pData->SW_RadarEvent.Get()) {
+			if(pData->SW_RadarEvent) {
 				RadarEventClass::Create(RadarEventType::SuperweaponActivated, pSource->ChronoMapCoords);
 				RadarEventClass::Create(RadarEventType::SuperweaponActivated, *pCoords);
 			}
@@ -63,11 +63,11 @@ bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 			SWTypeExt::ClearChronoAnim(pThis);
 
 			AnimClass *pAnim = nullptr;
-			if(pData->Chronosphere_BlastSrc.Get()) {
-				GAME_ALLOC(AnimClass, pAnim, pData->Chronosphere_BlastSrc.Get(), &coordsSource);
+			if(AnimTypeClass* pAnimType = pData->Chronosphere_BlastSrc) {
+				GAME_ALLOC(AnimClass, pAnim, pAnimType, &coordsSource);
 			}
-			if(pData->Chronosphere_BlastDest.Get()) {
-				GAME_ALLOC(AnimClass, pAnim, pData->Chronosphere_BlastDest.Get(), &coordsTarget);
+			if(AnimTypeClass* pAnimType = pData->Chronosphere_BlastDest) {
+				GAME_ALLOC(AnimClass, pAnim, pAnimType, &coordsTarget);
 			}
 
 			DynamicVectorClass<ChronoWarpStateMachine::ChronoWarpContainer> RegisteredBuildings;
@@ -99,8 +99,8 @@ bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 					}
 
 					// use "smart" detection of vehicular building types?
-					if(pData->Chronosphere_ReconsiderBuildings.Get()) {
-						IsVehicle = pExt->Chronoshift_IsVehicle.Get();
+					if(pData->Chronosphere_ReconsiderBuildings) {
+						IsVehicle = pExt->Chronoshift_IsVehicle;
 					}
 
 					// always let undeployers pass if all undeployers are affected
@@ -127,12 +127,12 @@ bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 				}
 
 				// unwarpable unit
-				if(!pType->Warpable && !pData->Chronosphere_AffectUnwarpable.Get()) {
+				if(!pType->Warpable && !pData->Chronosphere_AffectUnwarpable) {
 					return true;
 				}
 
 				// iron curtained units
-				if(pTechno->IsIronCurtained() && !pData->Chronosphere_AffectIronCurtain.Get()) {
+				if(pTechno->IsIronCurtained() && !pData->Chronosphere_AffectIronCurtain) {
 					return true;
 				}
 
@@ -154,8 +154,8 @@ bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 				// behind this point, the units are affected.
 
 				// organics are destroyed as long as they aren't teleporters
-				if(pType->Organic && pData->Chronosphere_KillOrganic.Get()) {
-					if(!pType->Teleporter || pData->Chronosphere_KillTeleporters.Get()) {
+				if(pType->Organic && pData->Chronosphere_KillOrganic) {
+					if(!pType->Teleporter || pData->Chronosphere_KillTeleporters) {
 						int strength = pType->Strength;
 						pTechno->ReceiveDamage(&strength, 0,
 							RulesClass::Instance->C4Warhead, nullptr, true, false, pSource->Owner);
@@ -358,7 +358,7 @@ void ChronoWarpStateMachine::Update() {
 					if(!success) {
 						if(SWTypeExt::ExtData *pExt = SWTypeExt::ExtMap.Find(this->Super->Type)) {
 							// destroy (buildings only if they are supposed to)
-							if(pContainer.isVehicle || pExt->Chronosphere_BlowUnplaceable.Get()) {
+							if(pContainer.isVehicle || pExt->Chronosphere_BlowUnplaceable) {
 								int damage = pBld->Type->Strength;
 								pBld->ReceiveDamage(&damage, 0,
 									RulesClass::Instance->C4Warhead, nullptr, true, true, this->Super->Owner);

@@ -376,7 +376,7 @@ bool SWTypeExt::Launch(SuperClass* pThis, NewSWType* pSW, CellStruct* pCoords, b
 			CoordStruct coords;
 			pTarget->GetCoordsWithBridge(&coords);
 
-			if((pData->SW_Anim.Get() != nullptr) && !(flags & SuperWeaponFlags::NoAnim)) {
+			if(pData->SW_Anim && !(flags & SuperWeaponFlags::NoAnim)) {
 				coords.Z += pData->SW_AnimHeight;
 				AnimClass *placeholder;
 				GAME_ALLOC(AnimClass, placeholder, pData->SW_Anim, &coords);
@@ -387,7 +387,7 @@ bool SWTypeExt::Launch(SuperClass* pThis, NewSWType* pSW, CellStruct* pCoords, b
 				VocClass::PlayAt(pData->SW_Sound, &coords, nullptr);
 			}
 
-			if(pData->SW_RadarEvent.Get() && !(flags & SuperWeaponFlags::NoEvent)) {
+			if(pData->SW_RadarEvent && !(flags & SuperWeaponFlags::NoEvent)) {
 				RadarEventClass::Create(RadarEventType::SuperweaponActivated, *pCoords);
 			}
 
@@ -450,7 +450,7 @@ void SWTypeExt::ExtData::PrintMessage(const CSFText& message, HouseClass* pFirer
 	}
 
 	int color = ColorScheme::FindIndex("Gold");
-	if(this->Message_FirerColor.Get()) {
+	if(this->Message_FirerColor) {
 		// firer color
 		if(pFirer) {
 			color = pFirer->ColorSchemeIndex;
@@ -516,7 +516,7 @@ bool SWTypeExt::ChangeLighting(SuperWeaponTypeClass *pThis) {
 }
 
 bool SWTypeExt::ExtData::ChangeLighting() {
-	if(this->Lighting_Enabled.Get()) {
+	if(this->Lighting_Enabled) {
 		auto getValue = [](int value, int def) -> int {
 			return (value < 0) ? def : value;
 		};

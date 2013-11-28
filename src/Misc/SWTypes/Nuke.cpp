@@ -64,14 +64,14 @@ void SW_NuclearMissile::LoadFromINI(
 	pData->Nuke_SiloLaunch.Read(&exINI, section, "Nuke.SiloLaunch");
 
 	Debug::Log("[Nuke] basics %s: ", section);
-	Debug::Log("%s, ", pData->SW_Warhead.Get() ? pData->SW_Warhead.Get()->ID : "<empty>");
+	Debug::Log("%s, ", pData->SW_Warhead ? pData->SW_Warhead->ID : "<empty>");
 	Debug::Log("%d, ", pData->SW_Damage.Get());
 	Debug::Log("%s\n", pData->AttachedToObject->WeaponType ? pData->AttachedToObject->WeaponType->ID : "<empty>");
 
 	Debug::Log("[Nuke] parsing %s: ", section);
-	Debug::Log("%s, ", pData->Nuke_Payload.Get() ? pData->Nuke_Payload.Get()->ID : "<empty>");
-	Debug::Log("%s, ", pData->Nuke_TakeOff.Get() ? pData->Nuke_TakeOff.Get()->ID : "<empty>");
-	Debug::Log("%s, ", pData->Nuke_PsiWarning.Get() ? pData->Nuke_PsiWarning.Get()->ID : "<empty>");
+	Debug::Log("%s, ", pData->Nuke_Payload ? pData->Nuke_Payload->ID : "<empty>");
+	Debug::Log("%s, ", pData->Nuke_TakeOff ? pData->Nuke_TakeOff->ID : "<empty>");
+	Debug::Log("%s, ", pData->Nuke_PsiWarning ? pData->Nuke_PsiWarning->ID : "<empty>");
 	Debug::Log("%d\n", pData->Nuke_SiloLaunch.Get());	
 }
 
@@ -90,7 +90,7 @@ bool SW_NuclearMissile::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPl
 			// collected from crates. second, the normal way firing from a silo.
 			BuildingClass* pSilo = nullptr;
 				
-			if((!pThis->Granted || !pThis->OneTime) && pData->Nuke_SiloLaunch.Get()) {
+			if((!pThis->Granted || !pThis->OneTime) && pData->Nuke_SiloLaunch) {
 				
 				// find a building type that can fire this SWType and verify the
 				// player has it. don't give up, just try the other types as well.
@@ -127,14 +127,14 @@ bool SW_NuclearMissile::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPl
 					if(BulletTypeClass *pProjectile = pWeapon->Projectile) {
 						// get damage and warhead. they are not available during
 						// initialisation, so we gotta fall back now if they are invalid.
-						int damage = (pData->SW_Damage < 0 ? pWeapon->Damage : pData->SW_Damage.Get());
-						WarheadTypeClass *pWarhead = (!pData->SW_Warhead ? pWeapon->Warhead : pData->SW_Warhead.Get());
+						int damage = (pData->SW_Damage < 0 ? pWeapon->Damage : pData->SW_Damage);
+						WarheadTypeClass *pWarhead = (!pData->SW_Warhead ? pWeapon->Warhead : pData->SW_Warhead);
 
 						// create a bullet and the psi warning
 						if(BulletClass* pBullet = pProjectile->CreateBullet(pCell, nullptr, damage, pWarhead, pWeapon->Speed, pWeapon->Bright)) {
 							pBullet->SetWeaponType(pWeapon);
-							if(pData->Nuke_PsiWarning.Get()) {
-								pThis->Owner->PsiWarn(pCell, pBullet, pData->Nuke_PsiWarning.Get()->ID);
+							if(AnimTypeClass* pAnimType = pData->Nuke_PsiWarning) {
+								pThis->Owner->PsiWarn(pCell, pBullet, pAnimType->ID);
 							}
 
 							// remember the fired SW type
@@ -163,7 +163,7 @@ bool SW_NuclearMissile::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPl
 
 			if(fired) {
 				// allies can see the target location before the enemy does
-				if(pData->SW_RadarEvent.Get()) {
+				if(pData->SW_RadarEvent) {
 					if(pThis->Owner->IsAlliedWith(HouseClass::Player)) {
 						RadarEventClass::Create(RadarEventType::SuperweaponActivated, *pCoords);
 					}

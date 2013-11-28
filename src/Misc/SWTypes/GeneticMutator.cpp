@@ -19,7 +19,7 @@ void SW_GeneticMutator::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeCla
 
 	// defaults depend on MutateExplosion property
 	pData->Mutate_Explosion = RulesClass::Instance->MutateExplosion;
-	if(pData->Mutate_Explosion.Get()) {
+	if(pData->Mutate_Explosion) {
 		pData->SW_Warhead = &RulesClass::Instance->MutateExplosionWarhead;
 		pData->SW_WidthOrRange = 5;
 	} else {
@@ -56,7 +56,7 @@ void SW_GeneticMutator::LoadFromINI(
 	pData->Mutate_KillNatural.Read(&exINI, section, "Mutate.KillNatural");
 
 	// whatever happens, always target everything
-	pData->SW_AffectsTarget = pData->SW_AffectsTarget.Get() | SuperWeaponTarget::AllTechnos;
+	pData->SW_AffectsTarget = pData->SW_AffectsTarget | SuperWeaponTarget::AllTechnos;
 }
 
 bool SW_GeneticMutator::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
@@ -69,7 +69,7 @@ bool SW_GeneticMutator::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPl
 	Cell->GetCoordsWithBridge(&coords);
 	
 	if(pThis->IsCharged) {
-		if(pData->Mutate_Explosion.Get()) {
+		if(pData->Mutate_Explosion) {
 			// single shot using cellspread warhead
 			MapClass::DamageArea(&coords, pData->SW_Damage, nullptr, pData->SW_Warhead, false, pThis->Owner);
 		} else {
@@ -90,17 +90,17 @@ bool SW_GeneticMutator::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPl
 				InfantryTypeClass* pType = pInf->Type;
 
 				// quick ways out
-				if(pType->Cyborg && pData->Mutate_IgnoreCyborg.Get()) {
+				if(pType->Cyborg && pData->Mutate_IgnoreCyborg) {
 					return true;
 				}
 
-				if(pType->NotHuman && pData->Mutate_IgnoreNotHuman.Get()) {
+				if(pType->NotHuman && pData->Mutate_IgnoreNotHuman) {
 					return true;
 				}
 
 				// destroy or mutate
 				int damage = pType->Strength;
-				bool kill = (pType->Natural && pData->Mutate_KillNatural.Get());
+				bool kill = (pType->Natural && pData->Mutate_KillNatural);
 				WarheadTypeClass* pWH = kill
 					? RulesClass::Instance->C4Warhead
 					: pData->SW_Warhead;

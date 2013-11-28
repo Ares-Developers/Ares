@@ -66,13 +66,13 @@ void SW_ChronoSphere::LoadFromINI(
 	// reconstruct the original value, then re-read (otherwise buildings will be affected if
 	// the SW section is defined in game mode inis or maps without restating SW.AffectsTarget)
 	if(!pData->Chronosphere_AffectBuildings) {
-		pData->SW_AffectsTarget = (pData->SW_AffectsTarget.Get() & ~SuperWeaponTarget::Building);
+		pData->SW_AffectsTarget = (pData->SW_AffectsTarget & ~SuperWeaponTarget::Building);
 	}
 	pData->SW_AffectsTarget.Read(&exINI, section, "SW.AffectsTarget");
 
 	// we handle the distinction between buildings and deployed vehicles ourselves
-	pData->Chronosphere_AffectBuildings = ((pData->SW_AffectsTarget.Get() & SuperWeaponTarget::Building) != 0);
-	pData->SW_AffectsTarget = (pData->SW_AffectsTarget.Get() | SuperWeaponTarget::Building);
+	pData->Chronosphere_AffectBuildings = ((pData->SW_AffectsTarget & SuperWeaponTarget::Building) != 0);
+	pData->SW_AffectsTarget = (pData->SW_AffectsTarget | SuperWeaponTarget::Building);
 }
 
 bool SW_ChronoSphere::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
@@ -95,8 +95,8 @@ bool SW_ChronoSphere::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlay
 
 		// recoded to support customizable anims
 		// and visibility for allies, too.
-		if(pData->SW_Anim.Get()) {
-			SWTypeExt::CreateChronoAnim(pThis, &coords, pData->SW_Anim);
+		if(AnimTypeClass* pAnimType = pData->SW_Anim) {
+			SWTypeExt::CreateChronoAnim(pThis, &coords, pAnimType);
 		}
 
 		if(IsPlayer) {

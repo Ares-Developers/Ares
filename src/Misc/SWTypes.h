@@ -179,7 +179,7 @@ class PsychicDominatorStateMachine : public SWStateMachine {
 
 				// the initial deferment
 				SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSuper->Type);
-				this->Deferment = pData->SW_Deferment.Get();
+				this->Deferment = pData->SW_Deferment;
 
 				// make the game happy
 				PsyDom::Owner = pSuper->Owner;

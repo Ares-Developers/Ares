@@ -87,7 +87,7 @@ bool SW_SonarPulse::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 		items.for_each(Detect);
 
 		// radar event only if this isn't full map sonar
-		if(pData->SW_RadarEvent.Get()) {
+		if(pData->SW_RadarEvent) {
 			RadarEventClass::Create(RadarEventType::SuperweaponActivated, *pCoords);
 		}
 	}

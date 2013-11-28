@@ -91,7 +91,7 @@ bool SW_Protect::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
 			pThis->Owner->CreatePowerOutage(pData->Protect_PowerOutageDuration);
 		}
 
-		bool force = pData->Protect_IsForceShield.Get();
+		bool force = pData->Protect_IsForceShield;
 		float width = pData->SW_WidthOrRange;
 		int height = pData->SW_Height;
 		
