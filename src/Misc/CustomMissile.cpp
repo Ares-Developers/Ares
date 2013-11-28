@@ -11,7 +11,7 @@ DEFINE_HOOK(6622E0, RocketLocomotionClass_ILocomotion_Process_CustomMissile, 6)
 {
 	GET(AircraftClass*, pThis, ECX);
 
-	if(TechnoTypeExt::ExtData* pExt = TechnoTypeExt::ExtMap.Find(pThis->Type)) {
+	if(auto pExt = TechnoTypeExt::ExtMap.Find(pThis->Type)) {
 		if(pExt->IsCustomMissile) {
 			R->EAX(&pExt->CustomMissileData);
 			return 0x66230A;
@@ -26,9 +26,9 @@ DEFINE_HOOK(66238A, RocketLocomotionClass_ILocomotion_Process_CustomMissileTakeo
 	GET(ILocomotion*, pThis, ESI);
 
 	auto pLocomotor = static_cast<RocketLocomotionClass*>(pThis);
-	AircraftClass* pOwner = specific_cast<AircraftClass*>(pLocomotor->LinkedTo);
+	auto pOwner = abstract_cast<AircraftClass*>(pLocomotor->LinkedTo);
 
-	if(TechnoTypeExt::ExtData* pExt = TechnoTypeExt::ExtMap.Find(pOwner->Type)) {
+	if(auto pExt = TechnoTypeExt::ExtMap.Find(pOwner->Type)) {
 		if(AnimTypeClass* pType = pExt->CustomMissileTakeoffAnim) {
 			AnimClass* pAnim = nullptr;
 			GAME_ALLOC(AnimClass, pAnim, pType, &pOwner->Location, 2, 1, 0x600, -10, 0);
@@ -44,9 +44,9 @@ DEFINE_HOOK(662512, RocketLocomotionClass_ILocomotion_Process_CustomMissileTakeo
 	GET(ILocomotion*, pThis, ESI);
 
 	auto pLocomotor = static_cast<RocketLocomotionClass*>(pThis);
-	AircraftClass* pOwner = specific_cast<AircraftClass*>(pLocomotor->LinkedTo);
+	auto pOwner = abstract_cast<AircraftClass*>(pLocomotor->LinkedTo);
 
-	if(TechnoTypeExt::ExtData* pExt = TechnoTypeExt::ExtMap.Find(pOwner->Type)) {
+	if(auto pExt = TechnoTypeExt::ExtMap.Find(pOwner->Type)) {
 		if(AnimTypeClass* pType = pExt->CustomMissileTakeoffAnim) {
 			AnimClass* pAnim = nullptr;
 			GAME_ALLOC(AnimClass, pAnim, pType, &pOwner->Location, 2, 1, 0x600, -10, 0);
@@ -62,9 +62,9 @@ DEFINE_HOOK(6627E5, RocketLocomotionClass_ILocomotion_Process_CustomMissileTakeo
 	GET(ILocomotion*, pThis, ESI);
 
 	auto pLocomotor = static_cast<RocketLocomotionClass*>(pThis);
-	AircraftClass* pOwner = specific_cast<AircraftClass*>(pLocomotor->LinkedTo);
+	auto pOwner = abstract_cast<AircraftClass*>(pLocomotor->LinkedTo);
 
-	if(TechnoTypeExt::ExtData* pExt = TechnoTypeExt::ExtMap.Find(pOwner->Type)) {
+	if(auto pExt = TechnoTypeExt::ExtMap.Find(pOwner->Type)) {
 		if(AnimTypeClass* pType = pExt->CustomMissileTakeoffAnim) {
 			AnimClass* pAnim = nullptr;
 			GAME_ALLOC(AnimClass, pAnim, pType, &pOwner->Location, 2, 1, 0x600, -10, 0);
@@ -80,9 +80,9 @@ DEFINE_HOOK(662D85, RocketLocomotionClass_ILocomotion_Process_CustomMissileTrail
 	GET(ILocomotion*, pThis, ESI);
 
 	auto pLocomotor = static_cast<RocketLocomotionClass*>(pThis);
-	AircraftClass* pOwner = specific_cast<AircraftClass*>(pLocomotor->LinkedTo);
+	auto pOwner = abstract_cast<AircraftClass*>(pLocomotor->LinkedTo);
 
-	if(TechnoTypeExt::ExtData* pExt = TechnoTypeExt::ExtMap.Find(pOwner->Type)) {
+	if(auto pExt = TechnoTypeExt::ExtMap.Find(pOwner->Type)) {
 		if(pLocomotor->TrailerTimer.Ignorable()) {
 			pLocomotor->TrailerTimer.Start(pExt->CustomMissileTrailerSeparation);
 
@@ -105,7 +105,7 @@ DEFINE_HOOK(66305A, RocketLocomotionClass_Explode_CustomMissile, 6)
 	LEA_STACK(WarheadTypeClass**, ppWarhead, 0x10);
 	LEA_STACK(RocketStruct**, ppRocketData, 0x14);
 
-	if(TechnoTypeExt::ExtData* pExt = TechnoTypeExt::ExtMap.Find(pType)) {
+	if(auto pExt = TechnoTypeExt::ExtMap.Find(pType)) {
 		if(pExt->IsCustomMissile) {
 			*ppRocketData = &pExt->CustomMissileData;
 
@@ -123,7 +123,7 @@ DEFINE_HOOK(6632F2, RocketLocomotionClass_ILocomotion_MoveTo_CustomMissile, 6)
 {
 	GET(AircraftTypeClass*, pType, EDX);
 
-	if(TechnoTypeExt::ExtData* pExt = TechnoTypeExt::ExtMap.Find(pType)) {
+	if(auto pExt = TechnoTypeExt::ExtMap.Find(pType)) {
 		if(pExt->IsCustomMissile) {
 			R->EDX(&pExt->CustomMissileData);
 			return 0x66331E;
@@ -137,7 +137,7 @@ DEFINE_HOOK(6634F6, RocketLocomotionClass_ILocomotion_DrawMatrix_CustomMissile, 
 {
 	GET(AircraftTypeClass*, pType, ECX);
 
-	if(TechnoTypeExt::ExtData* pExt = TechnoTypeExt::ExtMap.Find(pType)) {
+	if(auto pExt = TechnoTypeExt::ExtMap.Find(pType)) {
 		if(pExt->IsCustomMissile) {
 			R->EAX(&pExt->CustomMissileData);
 			return 0x66351B;
@@ -150,7 +150,7 @@ DEFINE_HOOK(6634F6, RocketLocomotionClass_ILocomotion_DrawMatrix_CustomMissile, 
 DEFINE_HOOK(6B6D60, SpawnManagerClass_CTOR_CustomMissile, 6)
 {
 	GET(SpawnManagerClass*, pSpawnManager, ESI);
-	if(TechnoTypeExt::ExtData* pExt = TechnoTypeExt::ExtMap.Find(pSpawnManager->SpawnType)) {
+	if(auto pExt = TechnoTypeExt::ExtMap.Find(pSpawnManager->SpawnType)) {
 		if(pExt->IsCustomMissile) {
 			return 0x6B6D86;
 		}
@@ -162,7 +162,7 @@ DEFINE_HOOK(6B6D60, SpawnManagerClass_CTOR_CustomMissile, 6)
 DEFINE_HOOK(6B78F8, SpawnManagerClass_Update_CustomMissile, 6)
 {
 	GET(TechnoTypeClass*, pSpawnType, EAX);
-	if(TechnoTypeExt::ExtData* pExt = TechnoTypeExt::ExtMap.Find(pSpawnType)) {
+	if(auto pExt = TechnoTypeExt::ExtMap.Find(pSpawnType)) {
 		if(pExt->IsCustomMissile) {
 			return 0x6B791F;
 		}
@@ -177,11 +177,11 @@ DEFINE_HOOK(6B7A72, SpawnManagerClass_Update_CustomMissile2, 6)
 	GET(int, idxSpawn, EDI);
 	GET(TechnoTypeClass*, pSpawnType, EDX);
 
-	if(TechnoTypeExt::ExtData* pExt = TechnoTypeExt::ExtMap.Find(pSpawnType)) {
+	if(auto pExt = TechnoTypeExt::ExtMap.Find(pSpawnType)) {
 		if(pExt->IsCustomMissile) {
-			RocketStruct* pRocket = pExt->CustomMissileData.GetEx();
+			auto pRocket = &pExt->CustomMissileData;
 
-			TimerStruct* pTimer = &pSpawnManager->SpawnedNodes.GetItem(idxSpawn)->SpawnTimer;
+			auto pTimer = &pSpawnManager->SpawnedNodes.GetItem(idxSpawn)->SpawnTimer;
 			pTimer->Start(pRocket->PauseFrames + pRocket->TiltFrames);
 			pTimer->unknown = 0;
 
@@ -196,7 +196,7 @@ DEFINE_HOOK(6B752E, SpawnManagerClass_Update_CustomMissileTakeoff, 6)
 {
 	GET(AircraftClass*, pOwner, EDI);
 
-	if(TechnoTypeExt::ExtData* pExt = TechnoTypeExt::ExtMap.Find(pOwner->Type)) {
+	if(auto pExt = TechnoTypeExt::ExtMap.Find(pOwner->Type)) {
 		if(AnimTypeClass* pType = pExt->CustomMissileTakeoffAnim) {
 			AnimClass* pAnim = nullptr;
 			GAME_ALLOC(AnimClass, pAnim, pType, &pOwner->Location, 2, 1, 0x600, -10, 0);
