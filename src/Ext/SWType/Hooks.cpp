@@ -214,12 +214,9 @@ DEFINE_HOOK(4AC20C, DisplayClass_LMBUp, 7)
 		// action of the found type as the no-cursor represents a different
 		// action and we don't want to start a force shield even tough the UI
 		// says no.
-		SuperWeaponTypeClass * pSW = nullptr;
-		if(SuperWeaponTypeClass::Array->ValidIndex(Unsorted::CurrentSWType)) {
-			pSW = SuperWeaponTypeClass::Array->GetItem(Unsorted::CurrentSWType);
-			if(pSW && (pSW->Action != Action)) {
-				pSW = nullptr;
-			}
+		auto pSW = SuperWeaponTypeClass::Array->GetItemOrDefault(Unsorted::CurrentSWType);
+		if(pSW && (pSW->Action != Action)) {
+			pSW = nullptr;
 		}
 
 		R->EAX(pSW);

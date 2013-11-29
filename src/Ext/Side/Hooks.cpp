@@ -338,14 +338,12 @@ DEFINE_HOOK(6DE0D3, TActionClass_Execute_MessageColor, 6)
 	int idxSide = ScenarioClass::Instance->PlayerSideIndex;
 	int idxColor = 0;
 
-	if(SideClass::Array->ValidIndex(idxSide)) {
-		if(SideClass* pSide = SideClass::Array->GetItem(idxSide)) {
-			if(SideExt::ExtData* pExt = SideExt::ExtMap.Find(pSide)) {
-				idxColor = pExt->MessageTextColorIndex;
-			}
+	if(SideClass* pSide = SideClass::Array->GetItemOrDefault(idxSide)) {
+		if(SideExt::ExtData* pExt = SideExt::ExtMap.Find(pSide)) {
+			idxColor = pExt->MessageTextColorIndex;
 		}
 	}
-	
+
 	R->EAX(idxColor);
 	return 0x6DE0DE;
 }
@@ -354,13 +352,11 @@ DEFINE_HOOK(72F440, Game_InitializeToolTipColor, A)
 {
 	GET(int, idxSide, ECX);
 
-	if(SideClass::Array->ValidIndex(idxSide)) {
-		if(SideClass* pSide = SideClass::Array->GetItem(idxSide)) {
-			if(SideExt::ExtData* pExt = SideExt::ExtMap.Find(pSide)) {
-				ColorStruct &clrToolTip = *(ColorStruct*)0x0B0FA1C;
-				clrToolTip = pExt->ToolTipTextColor;
-				return 0x72F495;
-			}
+	if(SideClass* pSide = SideClass::Array->GetItemOrDefault(idxSide)) {
+		if(SideExt::ExtData* pExt = SideExt::ExtMap.Find(pSide)) {
+			ColorStruct &clrToolTip = *(ColorStruct*)0x0B0FA1C;
+			clrToolTip = pExt->ToolTipTextColor;
+			return 0x72F495;
 		}
 	}
 

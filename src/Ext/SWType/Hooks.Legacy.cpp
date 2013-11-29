@@ -684,19 +684,17 @@ DEFINE_HOOK(44C9FF, BuildingClass_Missile_PsiWarn, 6) {
 	GET(BuildingClass*, pThis, ESI);
 	int type = pThis->FiringSWType;
 
-	if(SuperWeaponTypeClass::Array->ValidIndex(type)) {
-		if(SuperWeaponTypeClass* pSW = SuperWeaponTypeClass::Array->GetItem(type)) {
-			if(SWTypeExt::ExtData* pExt = SWTypeExt::ExtMap.Find(pSW)) {
-				if(AnimTypeClass *pAnim = pExt->Nuke_PsiWarning) {
-					R->EAX(pAnim->ArrayIndex);
-					Debug::Log("PsiWarn set\n");
-					return 0;
-				}
-
-				// skip psi warning.
-				Debug::Log("PsiWarn skipped\n");
-				return 0x44CA7A;
+	if(SuperWeaponTypeClass* pSW = SuperWeaponTypeClass::Array->GetItemOrDefault(type)) {
+		if(SWTypeExt::ExtData* pExt = SWTypeExt::ExtMap.Find(pSW)) {
+			if(AnimTypeClass *pAnim = pExt->Nuke_PsiWarning) {
+				R->EAX(pAnim->ArrayIndex);
+				Debug::Log("PsiWarn set\n");
+				return 0;
 			}
+
+			// skip psi warning.
+			Debug::Log("PsiWarn skipped\n");
+			return 0x44CA7A;
 		}
 	}
 
@@ -710,20 +708,18 @@ DEFINE_HOOK(44CABA, BuildingClass_Missile_CreateBullet, 6) {
 
 	int type = pThis->FiringSWType;
 
-	if(SuperWeaponTypeClass::Array->ValidIndex(type)) {
-		if(SuperWeaponTypeClass* pSW = SuperWeaponTypeClass::Array->GetItem(type)) {
-			if(SWTypeExt::ExtData* pExt = SWTypeExt::ExtMap.Find(pSW)) {
-				if(WeaponTypeClass *pWeapon = pSW->WeaponType) {
-					if(BulletClass* pBullet = pWeapon->Projectile->CreateBullet(pCell, pThis, pWeapon->Damage, pWeapon->Warhead, 255, true)) {
-						if(BulletExt::ExtData *pData = BulletExt::ExtMap.Find(pBullet)) {
-							pData->NukeSW = pSW;
-						}
-
-						R->EBX(pSW->WeaponType);
-						R->EAX(pBullet);
-						
-						return 0x44CAF2;
+	if(SuperWeaponTypeClass* pSW = SuperWeaponTypeClass::Array->GetItemOrDefault(type)) {
+		if(SWTypeExt::ExtData* pExt = SWTypeExt::ExtMap.Find(pSW)) {
+			if(WeaponTypeClass *pWeapon = pSW->WeaponType) {
+				if(BulletClass* pBullet = pWeapon->Projectile->CreateBullet(pCell, pThis, pWeapon->Damage, pWeapon->Warhead, 255, true)) {
+					if(BulletExt::ExtData *pData = BulletExt::ExtMap.Find(pBullet)) {
+						pData->NukeSW = pSW;
 					}
+
+					R->EBX(pSW->WeaponType);
+					R->EAX(pBullet);
+						
+					return 0x44CAF2;
 				}
 			}
 		}
@@ -738,14 +734,11 @@ DEFINE_HOOK(44CC8B, BuildingClass_Missile_NukeTakeOff, 6) {
 
 	int type = pThis->FiringSWType;
 
-	if(SuperWeaponTypeClass::Array->ValidIndex(type)) {
-		if(SuperWeaponTypeClass* pSW = SuperWeaponTypeClass::Array->GetItem(type)) {
-			if(SWTypeExt::ExtData* pExt = SWTypeExt::ExtMap.Find(pSW)) {
-				if(AnimTypeClass* pAnimType = pExt->Nuke_TakeOff) {
-					
-					R->ECX(pAnimType);
-					return 0x44CC91;
-				}
+	if(SuperWeaponTypeClass* pSW = SuperWeaponTypeClass::Array->GetItemOrDefault(type)) {
+		if(SWTypeExt::ExtData* pExt = SWTypeExt::ExtMap.Find(pSW)) {
+			if(AnimTypeClass* pAnimType = pExt->Nuke_TakeOff) {
+				R->ECX(pAnimType);
+				return 0x44CC91;
 			}
 		}
 	}

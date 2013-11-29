@@ -349,8 +349,8 @@ bool SWTypeExt::Launch(SuperClass* pThis, NewSWType* pSW, CellStruct* pCoords, b
 			if(flags & SuperWeaponFlags::PostClick) {
 				// use the properties of the originally fired SW
 				if(HouseExt::ExtData *pExt = HouseExt::ExtMap.Find(pThis->Owner)) {
-					if(pThis->Owner->Supers.ValidIndex(pExt->SWLastIndex)) {
-						pThis = pThis->Owner->Supers.GetItem(pExt->SWLastIndex);
+					if(auto pLast = pThis->Owner->Supers.GetItemOrDefault(pExt->SWLastIndex)) {
+						pThis = pLast;
 						pData = SWTypeExt::ExtMap.Find(pThis->Type);
 					}
 				}

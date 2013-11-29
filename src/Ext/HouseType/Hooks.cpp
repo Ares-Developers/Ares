@@ -9,8 +9,7 @@ DEFINE_HOOK(553412, LoadProgressMgr_Draw_LSFile, 0)
 	GET(int, n, EBX);
 
 	HouseTypeExt::ExtData* pData = nullptr;
-	if(HouseTypeClass::Array->ValidIndex(n)) {
-		HouseTypeClass* pThis = HouseTypeClass::Array->Items[n];
+	if(auto pThis = HouseTypeClass::Array->GetItemOrDefault(n)) {
 		pData = HouseTypeExt::ExtMap.Find(pThis);
 	}
 
@@ -33,8 +32,7 @@ DEFINE_HOOK(5536DA, LoadProgressMgr_Draw_LSName, 0)
 	GET(int, n, EBX);
 
 	HouseTypeExt::ExtData* pData = nullptr;
-	if(HouseTypeClass::Array->ValidIndex(n)) {
-		HouseTypeClass* pThis = HouseTypeClass::Array->Items[n];
+	if(auto pThis = HouseTypeClass::Array->GetItemOrDefault(n)) {
 		pData = HouseTypeExt::ExtMap.Find(pThis);
 	}
 
@@ -57,8 +55,7 @@ DEFINE_HOOK(553A05, LoadProgressMgr_Draw_LSSpecialName, 6)
 	GET_STACK(int, n, 0x38);
 
 	HouseTypeExt::ExtData* pData = nullptr;
-	if(HouseTypeClass::Array->ValidIndex(n)) {
-		HouseTypeClass* pThis = HouseTypeClass::Array->Items[n];
+	if(auto pThis = HouseTypeClass::Array->GetItemOrDefault(n)) {
 		pData = HouseTypeExt::ExtMap.Find(pThis);
 	}
 
@@ -82,8 +79,7 @@ DEFINE_HOOK(553D06, LoadProgressMgr_Draw_LSBrief, 6)
 	GET_STACK(int, n, 0x38);
 
 	HouseTypeExt::ExtData* pData = nullptr;
-	if(HouseTypeClass::Array->ValidIndex(n)) {
-		HouseTypeClass* pThis = HouseTypeClass::Array->Items[n];
+	if(auto pThis = HouseTypeClass::Array->GetItemOrDefault(n)) {
 		pData = HouseTypeExt::ExtMap.Find(pThis);
 	}
 
@@ -106,8 +102,7 @@ DEFINE_HOOK(4E3579, HTExt_DrawFlag, 0)
 	GET(int, n, ECX);
 
 	HouseTypeExt::ExtData* pData = nullptr;
-	if(HouseTypeClass::Array->ValidIndex(n)) {
-		HouseTypeClass* pThis = HouseTypeClass::Array->Items[n];
+	if(auto pThis = HouseTypeClass::Array->GetItemOrDefault(n)) {
 		pData = HouseTypeExt::ExtMap.Find(pThis);
 	}
 
@@ -131,8 +126,7 @@ DEFINE_HOOK(72B690, HTExt_LSPAL, 0)
 	GET(int, n, EDI);
 
 	HouseTypeExt::ExtData* pData = nullptr;
-	if(HouseTypeClass::Array->ValidIndex(n)) {
-		HouseTypeClass* pThis = HouseTypeClass::Array->Items[n];
+	if(auto pThis = HouseTypeClass::Array->GetItemOrDefault(n)) {
 		pData = HouseTypeExt::ExtMap.Find(pThis);
 	}
 
@@ -160,8 +154,7 @@ DEFINE_HOOK(4E38D8, HTExt_GetSTT, 0)
 	GET(int, n, ECX);
 
 	HouseTypeExt::ExtData* pData = nullptr;
-	if(HouseTypeClass::Array->ValidIndex(n)) {
-		HouseTypeClass* pThis = HouseTypeClass::Array->Items[n];
+	if(auto pThis = HouseTypeClass::Array->GetItemOrDefault(n)) {
 		pData = HouseTypeExt::ExtMap.Find(pThis);
 	}
 

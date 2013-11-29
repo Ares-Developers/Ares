@@ -285,22 +285,20 @@ bool SW_ParaDrop::SendParadrop(SuperClass* pThis, CellClass* pCell) {
 
 					// get the plane at specified index
 					int index = i * j;
-					if(planes->ValidIndex(index)) {
-						if(ParadropPlane* pPlane = planes->GetItem(index)) {
+					if(ParadropPlane* pPlane = planes->GetItemOrDefault(index)) {
 
-							// get the contents, if not already set
-							if(!pParaDrop || !pParaDropNum) {
-								if((pPlane->pTypes.Count != 0) && (pPlane->pNum.Count != 0)) {
-									pParaDrop = &pPlane->pTypes;
-									pParaDropNum = &pPlane->pNum;
-								}
+						// get the contents, if not already set
+						if(!pParaDrop || !pParaDropNum) {
+							if((pPlane->pTypes.Count != 0) && (pPlane->pNum.Count != 0)) {
+								pParaDrop = &pPlane->pTypes;
+								pParaDropNum = &pPlane->pNum;
 							}
+						}
 
-							// get the airplane, if it isn't set already
-							if(!pParaDropPlane) {
-								if(AircraftTypeClass* pTAircraft = pPlane->pAircraft) {
-									pParaDropPlane = pTAircraft;
-								}
+						// get the airplane, if it isn't set already
+						if(!pParaDropPlane) {
+							if(AircraftTypeClass* pTAircraft = pPlane->pAircraft) {
+								pParaDropPlane = pTAircraft;
 							}
 						}
 					}
