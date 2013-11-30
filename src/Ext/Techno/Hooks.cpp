@@ -1460,10 +1460,14 @@ DEFINE_HOOK(732C30, TechnoClass_IDMatches, 5)
 
 	// find any match
 	for(auto i=pNames->begin(); i<pNames->end(); ++i) {
-		if(!_strcmpi(*i, id) && pThis->CanBeSelectedNow()) {
+		if(!_strcmpi(*i, id)) {
+			if(pThis->CanBeSelectedNow()) {
+				match = true;
+				break;
+			}
 
 			// buildings are exempt if they can't undeploy
-			if(pThis->WhatAmI() != BuildingClass::AbsID || pType->UndeploysInto) {
+			if(pThis->WhatAmI() == BuildingClass::AbsID && pType->UndeploysInto) {
 				match = true;
 				break;
 			}
