@@ -13,6 +13,8 @@ public:
 	char ID[24]; // as westwood once said, 24 chars ought to be enough for any ID
 	Valueable<int> Duration;
 	Valueable<bool> Cumulative;
+	Valueable<bool> ForceDecloak;
+	Valueable<bool> DiscardOnEntry;
 	
 	//#1573, #1623 animations on units
 	Valueable<AnimTypeClass *> AnimType;
@@ -43,6 +45,8 @@ public:
 		AnimType(nullptr),
 		AnimResetOnReapply(false),
 		TemporalHidesAnim(false),
+		ForceDecloak(false),
+		DiscardOnEntry(false),
 		FirepowerMultiplier(1.0),
 		ArmorMultiplier(1.0),
 		SpeedMultiplier(1.0),

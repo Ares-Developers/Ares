@@ -29,6 +29,8 @@ void AttachEffectTypeClass::Read(INI_EX *exINI, const char * section) {
 	this->AnimType.Parse(exINI, section, "AttachEffect.Animation");
 	this->AnimResetOnReapply.Read(exINI, section, "AttachEffect.AnimResetOnReapply");
 	this->TemporalHidesAnim.Read(exINI, section, "AttachEffect.TemporalHidesAnim");
+	this->ForceDecloak.Read(exINI, section, "AttachEffect.ForceDecloak");
+	this->DiscardOnEntry.Read(exINI, section, "AttachEffect.DiscardOnEntry");
 	this->FirepowerMultiplier.Read(exINI, section, "AttachEffect.FirepowerMultiplier");
 	this->ArmorMultiplier.Read(exINI, section, "AttachEffect.ArmorMultiplier");
 	this->SpeedMultiplier.Read(exINI, section, "AttachEffect.SpeedMultiplier");
@@ -70,6 +72,10 @@ void AttachEffectTypeClass::Attach(TechnoClass* Target, int Duration, TechnoClas
 					Item->CreateAnim(Target);
 				}
 
+				if (!!this->ForceDecloak && (Target->CloakState == CloakState::Cloaked || Target->CloakState == CloakState::Cloaking)) {
+					Target->Uncloak(true);
+				}
+
 				return;
 			}
 		}
@@ -84,6 +90,11 @@ void AttachEffectTypeClass::Attach(TechnoClass* Target, int Duration, TechnoClas
 	// update the unit with the attached effect
 	TechnoExt::RecalculateStats(Target);
 
+	//check cloak
+	if (!!this->ForceDecloak && Target->CloakState) {
+		Target->Uncloak(true);
+	}
+
 	// animation
 	Attaching->CreateAnim(Target);
 	
@@ -93,13 +104,14 @@ void AttachEffectClass::InvalidatePointer(void *ptr) {
 	if(this->Invoker == ptr) {
 		this->Invoker = nullptr;
 	}
+
 	if(this->Animation == ptr) {
 		this->KillAnim();
 	}
 }
 
 void AttachEffectClass::CreateAnim(TechnoClass *Owner) {
-	if (Owner->CloakState ||
+	if ((Owner->CloakState == CloakState::Cloaked || Owner->CloakState == CloakState::Cloaking) ||
 		(Owner->TemporalTargetingMe && !!this->Type->TemporalHidesAnim)) {
 		return;
 	}
@@ -159,14 +171,16 @@ void AttachEffectClass::Update(TechnoClass *Source) {
 
 	if (pData->AttachedEffects.Count) {
 
-		if (!pData->AttachEffects_RecreateAnims && Source->CloakState) {
+		if (!pData->AttachEffects_RecreateAnims &&
+		(Source->CloakState == CloakState::Cloaked || Source->CloakState == CloakState::Cloaking)) {
 			for (int i = pData->AttachedEffects.Count; i > 0; --i) {
 				pData->AttachedEffects.GetItem(i - 1)->KillAnim();
 			}
 			pData->AttachEffects_RecreateAnims = true;
 		}
 
-		if (pData->AttachEffects_RecreateAnims && !Source->CloakState) {
+		if (pData->AttachEffects_RecreateAnims &&
+		!(Source->CloakState == CloakState::Cloaked || Source->CloakState == CloakState::Cloaking)) {
 			for (int i = pData->AttachedEffects.Count; i > 0; --i) {
 				pData->AttachedEffects.GetItem(i - 1)->CreateAnim(Source);
 			}
