@@ -204,7 +204,7 @@ DEFINE_HOOK(46934D, IvanBombs_Spread, 6)
 				});
 			}
 		} else {
-			Debug::DevLog(Debug::Warning, "IvanBomb bullet without attched WeaponType.\n");
+			Debug::DevLog(Debug::Warning, "IvanBomb bullet without attached WeaponType.\n");
 		}
 	}
 
