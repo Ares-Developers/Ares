@@ -11,7 +11,7 @@ public:
 	};
 
 	virtual ~SW_Firewall() {
-		SW_Firewall::TypeIndex = -1;
+		SW_Firewall::FirewallTypeIndex = -1;
 	};
 
 	virtual const char * GetTypeString()
