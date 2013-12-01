@@ -30,8 +30,7 @@ bool TActionExt::ExtData::ActivateFirestorm(TActionClass* pAction, HouseClass* p
 		auto index = pHouse->FindSuperWeaponIndex(SW_Firewall::FirewallTypeIndex);
 
 		if(index >= 0) {
-			CellStruct empty;
-			pHouse->Fire_SW(index, &empty);
+			pHouse->Fire_SW(index, CellStruct::Empty);
 		}
 	}
 	return true;
@@ -49,8 +48,7 @@ bool TActionExt::ExtData::DeactivateFirestorm(TActionClass* pAction, HouseClass*
 		auto index = pHouse->FindSuperWeaponIndex(SW_Firewall::FirewallTypeIndex);
 
 		if(index >= 0) {
-			CellStruct empty;
-			pHouse->Fire_SW(index, &empty);
+			pHouse->Fire_SW(index, CellStruct::Empty);
 		}
 	}
 	return true;

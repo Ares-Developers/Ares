@@ -559,7 +559,7 @@ DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
 
 				if(pSuper->IsCharged) {
 					CellStruct Cell = HouseClass::DefaultIonCannonCoords;
-					auto LaunchSW = [&](CellStruct *Cell) {
+					auto LaunchSW = [&](const CellStruct &Cell) {
 						int idxSW = pThis->Supers.FindItemIndex(pSuper);
 						pThis->Fire_SW(idxSW, Cell);
 					};
@@ -585,7 +585,7 @@ DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
 								}
 
 								if(Cell != HouseClass::DefaultIonCannonCoords) {
-									LaunchSW(&Cell);
+									LaunchSW(Cell);
 								}
 							}
 							break;
@@ -627,7 +627,7 @@ DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
 							}
 
 							if(Cell != HouseClass::DefaultIonCannonCoords) {
-								LaunchSW(&Cell);
+								LaunchSW(Cell);
 								pThis->PreferredDefensiveCell = HouseClass::DefaultIonCannonCoords;
 							}
 							break;
@@ -638,7 +638,7 @@ DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
 							if(pThis->EnemyHouseIndex != -1 && pExt->IsHouseAffected(pThis, HouseClass::Array->GetItem(pThis->EnemyHouseIndex))) {
 								pThis->PickIonCannonTarget(Cell);
 								if(Cell != HouseClass::DefaultIonCannonCoords) {
-									LaunchSW(&Cell);
+									LaunchSW(Cell);
 								}
 							}
 							break;
@@ -646,7 +646,7 @@ DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
 
 					case SuperWeaponAITargetingMode::NoTarget:
 						{
-							LaunchSW(&Cell);
+							LaunchSW(Cell);
 							break;
 						}
 
@@ -676,7 +676,7 @@ DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
 							if(list.Count) {
 								int rnd = ScenarioClass::Instance->Random.RandomRanged(0, list.Count - 1);
 								Cell = list.GetItem(rnd)->GetCell()->MapCoords;
-								LaunchSW(&Cell);
+								LaunchSW(Cell);
 							}
 							break;
 						}
@@ -685,7 +685,7 @@ DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
 						{
 							// fire at the SW's owner's base cell
 							Cell = pThis->Base_Center();
-							LaunchSW(&Cell);
+							LaunchSW(Cell);
 							break;
 						}
 
@@ -704,7 +704,7 @@ DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
 							}
 							if(pBld) {
 								Cell = pBld->GetCell()->MapCoords;
-								LaunchSW(&Cell);
+								LaunchSW(Cell);
 							}
 
 							break;
