@@ -14,7 +14,7 @@ class NewSWType
 		bool Registered;
 
 		void Register()
-			{ Array.AddItem(this); this->TypeIndex = Array.Count; }
+			{ Array.AddItem(this); this->TypeIndex = Array.Count - 1; }
 
 	public:
 		NewSWType()
