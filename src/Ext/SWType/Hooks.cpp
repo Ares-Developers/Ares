@@ -22,7 +22,7 @@ DEFINE_HOOK(6CEF84, SuperWeaponTypeClass_GetCursorOverObject, 7)
 			CellClass* pCell = MapClass::Instance->GetCellAt(*pMapCoords);
 			CoordStruct Crd = pCell->GetCoords();
 
-			if(MapClass::Instance->IsLocationShrouded(&Crd)) {
+			if(MapClass::Instance->IsLocationShrouded(Crd)) {
 				Action = SW_NO_CURSOR;
 			}
 		}
@@ -75,7 +75,7 @@ DEFINE_HOOK(653B3A, RadarClass_GetMouseAction_CustomSWAction, 5)
 				CellClass* pCell = MapClass::Instance->GetCellAt(pMapCoords);
 				CoordStruct Crd = pCell->GetCoords();
 
-				if(MapClass::Instance->IsLocationShrouded(&Crd)) {
+				if(MapClass::Instance->IsLocationShrouded(Crd)) {
 					Action = SW_NO_CURSOR;
 				}
 			}
