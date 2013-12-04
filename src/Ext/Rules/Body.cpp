@@ -82,7 +82,7 @@ void RulesExt::ExtData::LoadBeforeTypeData(RulesClass *pThis, CCINIClass *pINI) 
 
 	pData->OverlayExplodeThreshold.Read(&exINI, sectionGeneral, "OverlayExplodeThreshold");
 
-	pData->EnemyVeterancy.Read(&exINI, sectionGeneral, "EnemyVeterancy");
+	pData->EnemyInsignia.Read(&exINI, sectionGeneral, "EnemyInsignia");
 
 	pData->TypeSelectUseDeploy.Read(&exINI, sectionGeneral, "TypeSelectUseDeploy");
 }

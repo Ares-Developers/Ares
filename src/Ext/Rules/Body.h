@@ -40,7 +40,7 @@ class RulesExt
 		NullableIdx<VocClass> DecloakSound;
 		Nullable<int> CloakHeight;
 
-		Valueable<bool> EnemyVeterancy;
+		Valueable<bool> EnemyInsignia;
 
 		Valueable<bool> TypeSelectUseDeploy;
 
@@ -55,7 +55,7 @@ class RulesExt
 			OverlayExplodeThreshold (0),
 			DecloakSound(),
 			CloakHeight(),
-			EnemyVeterancy(true),
+			EnemyInsignia(true),
 			TypeSelectUseDeploy(true),
 			CanMakeStuffUp(false)
 			{
