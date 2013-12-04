@@ -66,6 +66,7 @@ public:
 		DynamicVectorClass<WeaponStruct> EliteWeapons;
 
 		Promotable<SHPStruct *> Insignia;
+		Nullable<bool> Insignia_ShowEnemy;
 
 		Valueable<AnimTypeClass*> Parachute_Anim;
 
@@ -101,7 +102,6 @@ public:
 		float MindControlExperienceVictimModifier;
 		bool ExperienceFromAirstrike;
 		float AirstrikeExperienceModifier;
-		Nullable<bool> Experience_ShowEnemy;
 
 		ValueableIdx<VocClass> VoiceRepair;
 
@@ -220,7 +220,7 @@ public:
 			PassengerExperienceModifier (1.0F),
 			MindControlExperienceSelfModifier (0.0F),
 			MindControlExperienceVictimModifier (1.0F),
-			Experience_ShowEnemy(),
+			Insignia_ShowEnemy(),
 			GattlingCyclic (false),
 			IsCustomMissile (false),
 			CustomMissileData (),

@@ -16,7 +16,7 @@ DEFINE_HOOK(70A990, TechnoClass_DrawVeterancy, 5)
 
 	bool canSee = T->Owner->IsAlliedWith(HouseClass::Player)
 		|| HouseClass::IsPlayerObserver()
-		|| pTypeData->Experience_ShowEnemy.Get(RulesExt::Global()->EnemyInsignia);
+		|| pTypeData->Insignia_ShowEnemy.Get(RulesExt::Global()->EnemyInsignia);
 
 	if(!canSee) {
 		iFrame = -1;
