@@ -283,7 +283,7 @@ public:
 
 		bool CarryallCanLift(UnitClass * Target);
 
-		const char* GetSelectionGroupID();
+		const char* GetSelectionGroupID() const;
 };
 
 	static Container<TechnoTypeExt> ExtMap;

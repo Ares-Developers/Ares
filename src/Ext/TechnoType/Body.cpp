@@ -483,7 +483,7 @@ void TechnoTypeClassExt::ReadWeapon(WeaponStruct *pWeapon, const char *prefix, c
 void Container<TechnoTypeExt>::InvalidatePointer(void *ptr, bool bRemoved) {
 }
 
-const char* TechnoTypeExt::ExtData::GetSelectionGroupID()
+const char* TechnoTypeExt::ExtData::GetSelectionGroupID() const
 {
 	return *this->GroupAs ? this->GroupAs : this->AttachedToObject->ID;
 }
