@@ -488,6 +488,21 @@ const char* TechnoTypeExt::ExtData::GetSelectionGroupID() const
 	return *this->GroupAs ? this->GroupAs : this->AttachedToObject->ID;
 }
 
+const char* TechnoTypeExt::GetSelectionGroupID(ObjectTypeClass* pType)
+{
+	if(auto pExt = TechnoTypeExt::ExtMap.Find(static_cast<TechnoTypeClass*>(pType))) {
+		return pExt->GetSelectionGroupID();
+	}
+
+	return pType->ID;
+}
+
+bool TechnoTypeExt::HasSelectionGroupID(ObjectTypeClass* pType, const char* pID)
+{
+	auto id = TechnoTypeExt::GetSelectionGroupID(pType);
+	return (_strcmpi(id, pID) == 0);
+}
+
 bool TechnoTypeExt::ExtData::CameoIsElite()
 {
 	HouseClass * House = HouseClass::Player;
