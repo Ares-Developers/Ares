@@ -49,6 +49,33 @@ DEFINE_HOOK(732D10, TacticalClass_CollectSelectedIDs, 5)
 	return 0x732FE1;
 }
 
+DEFINE_HOOK(7327AA, TechnoClass_PlayerOwnedAliveAndNamed_GroupAs, 8)
+{
+	GET(TechnoClass*, pThis, ESI);
+	GET(const char*, pID, EDI);
+
+	bool ret = TechnoTypeExt::HasSelectionGroupID(pThis->GetTechnoType(), pID);
+
+	R->EAX<int>(ret);
+	return 0x7327B2;
+}
+
+DEFINE_HOOK_AGAIN(4ABD9D, DisplayClass_LeftMouseButtonUp_GroupAs, A)
+DEFINE_HOOK_AGAIN(4ABE58, DisplayClass_LeftMouseButtonUp_GroupAs, A)
+DEFINE_HOOK(4ABD6C, DisplayClass_LeftMouseButtonUp_GroupAs, A)
+{
+	GET(ObjectClass*, pThis, ESI);
+	R->EAX(TechnoTypeExt::GetSelectionGroupID(pThis->GetType()));
+	return R->get_Origin() + 13;
+}
+
+DEFINE_HOOK(6DA665, sub_6DA5C0_GroupAs, A)
+{
+	GET(ObjectClass*, pThis, ESI);
+	R->EAX(TechnoTypeExt::GetSelectionGroupID(pThis->GetType()));
+	return R->get_Origin() + 13;
+}
+
 /*
 A_FINE_HOOK(5F8480, ObjectTypeClass_Load3DArt, 6)
 {
