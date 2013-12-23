@@ -1,6 +1,6 @@
 [branch]
-Name=Ares 0.5 Development
-Description=This branch contains all the additions that will be featured in Ares 0.5.
-TargetVersion=0.5
+Name=Ares Development Mainline
+Description=This is the trunk or master branch of Ares's repository. It contains the current in-development code.
+TargetVersion=0.6
 Stable=no
 ReadyForTesting=yes
