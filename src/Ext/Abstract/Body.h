@@ -21,7 +21,7 @@ public:
 		DWORD LastChecksumTime;
 		DWORD LastChecksum;
 
-		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
+		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			LastChecksumTime(0),
 			LastChecksum(0)
 			{ };

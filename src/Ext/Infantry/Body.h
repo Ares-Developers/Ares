@@ -18,7 +18,7 @@ public:
 	{
 	public:
 
-		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject)
+		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject)
 			{ };
 
 		virtual ~ExtData() {

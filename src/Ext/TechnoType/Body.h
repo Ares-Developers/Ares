@@ -176,7 +176,7 @@ public:
 
 		ValueableIdx<VoxClass> EVA_UnitLost;
 
-		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
+		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			Survivors_PilotChance (),
 			Survivors_PassengerChance (),
 			Survivors_PilotCount (-1),

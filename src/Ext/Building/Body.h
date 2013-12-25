@@ -81,7 +81,7 @@ public:
 		int SensorArrayActiveCounter;
 
 	public:
-		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
+		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			OwnerBeforeRaid(nullptr), isCurrentlyRaided(false), ignoreNextEVA(false), PrismForwarding(), FreeUnits_Done(false), AboutToChronoshift(false),
 			SensorArrayActiveCounter(0)
 			{ };

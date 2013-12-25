@@ -44,7 +44,7 @@ class RulesExt
 
 		Valueable<bool> TypeSelectUseDeploy;
 
-		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
+		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			ElectricDeath(nullptr),
 			EngineerDamage (0.0F),
 			EngineerAlwaysCaptureTech (true),

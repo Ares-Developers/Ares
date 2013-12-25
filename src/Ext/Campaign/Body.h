@@ -23,7 +23,7 @@ class CampaignExt
 		char HoverSound[0x1F];
 		char Summary[0x20];
 
-		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
+		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			DebugOnly (false)
 		{
 			*HoverSound = 0;

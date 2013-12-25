@@ -54,18 +54,12 @@ class Extension {
 	public:
 		eInitState _Initialized;
 		T* const AttachedToObject;
-	#ifdef DEBUGBUILD
-		DWORD SavedCanary;
-	#endif
 
 		static const DWORD Canary;
 
-		Extension(const DWORD Canary, T* const OwnerObject) :
-		_Initialized(is_Blank),
-	#ifdef DEBUGBUILD
-		SavedCanary(Canary),
-	#endif
-		AttachedToObject(OwnerObject)
+		Extension(T* const OwnerObject) :
+			_Initialized(is_Blank),
+			AttachedToObject(OwnerObject)
 		{ };
 
 		virtual ~Extension() { };
@@ -171,7 +165,7 @@ public:
 		}
 		auto i = this->find(key);
 		if(i == this->end()) {
-			auto val = new E_T(E_T::Canary, key);
+			auto val = new E_T(key);
 			val->InitializeConstants(key);
 			i = this->insert(typename C_Map::value_type(key, val)).first;
 		}
@@ -298,9 +292,6 @@ public:
 		Debug::Log("LoadKey Swizzle: %X => %X\n", origPtr, buffer);
 		SwizzleManagerClass::Instance.Here_I_Am(origPtr, (void *)buffer);
 		SWIZZLE(buffer->AttachedToObject);
-#ifdef DEBUGBUILD
-			assert(buffer->SavedCanary == typename E_T::Canary);
-#endif
 		return buffer;
 	};
 };

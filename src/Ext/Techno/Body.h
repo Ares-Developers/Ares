@@ -83,7 +83,7 @@ public:
 
 		Nullable<bool> AltOccupation; // if the unit marks cell occupation flags, this is set to whether it uses the "high" occupation members
 
-		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
+		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			idxSlot_Wave (0),
 			idxSlot_Beam (0),
 			idxSlot_Warp (0),

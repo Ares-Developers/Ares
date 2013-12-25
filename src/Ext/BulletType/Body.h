@@ -34,7 +34,7 @@ public:
 		// cache for the image animation's palette convert
 		Nullable<ConvertClass*> ImageConvert;
 
-		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
+		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			SubjectToSolid (false),
 			SubjectToFirewall (true),
 			Parachuted (false),

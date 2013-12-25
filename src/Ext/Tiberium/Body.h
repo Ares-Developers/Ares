@@ -31,7 +31,7 @@ class TiberiumExt
 
 		Valueable<int> DebrisChance;
 
-		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
+		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			Damage(),
 			Warhead(),
 			Heal_Step(),
