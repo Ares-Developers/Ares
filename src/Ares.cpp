@@ -30,6 +30,12 @@
 #include "Misc/Debug.h"
 #include "Misc/EMPulse.h"
 
+#ifdef IS_RELEASE_VER
+const bool IsStable = true;
+#else
+const bool IsStable = false;
+#endif
+
 //Init Statics
 HANDLE Ares::hInstance = 0;
 PVOID Ares::pExceptionHandler = nullptr;
@@ -39,7 +45,7 @@ bool Ares::bTestingRun = false;
 bool Ares::bStrictParser = false;
 bool Ares::bAllowAIControl = false;
 bool Ares::bFPSCounter = false;
-bool Ares::bStable = false;
+bool Ares::bStable = IsStable;
 bool Ares::bStableNotification = false;
 bool Ares::bOutputMissingStrings = false;
 
