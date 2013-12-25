@@ -64,12 +64,6 @@ class Extension {
 
 		virtual ~Extension() { };
 
-		// use this implementation for all descendants
-		// I mean it
-		// sizeof(facepalm)
-		// virtual size_t Size() const { return sizeof(*this); };
-		virtual size_t Size() const = 0;
-
 		// major refactoring!
 		// LoadFromINI is now a non-virtual public function that orchestrates the initialization/loading of extension data
 		// all its slaves are now protected functions
@@ -255,7 +249,7 @@ public:
 		Debug::Log("\tKey maps to %X\n", buffer);
 		if(buffer) {
 			pStm->Write(&buffer, 4, &out);
-			pStm->Write(buffer, buffer->Size(), &out);
+			pStm->Write(buffer, sizeof(*buffer), &out);
 //			Debug::Log("Save used up 0x%X bytes (HRESULT 0x%X)\n", out, res);
 		}
 
@@ -288,7 +282,7 @@ public:
 		auto buffer = this->FindOrAllocate(key);
 		long origPtr;
 		pStm->Read(&origPtr, 4, &out);
-		pStm->Read(buffer, buffer->Size(), &out);
+		pStm->Read(buffer, sizeof(*buffer), &out);
 		Debug::Log("LoadKey Swizzle: %X => %X\n", origPtr, buffer);
 		SwizzleManagerClass::Instance.Here_I_Am(origPtr, (void *)buffer);
 		SWIZZLE(buffer->AttachedToObject);

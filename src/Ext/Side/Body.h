@@ -61,8 +61,6 @@ class SideExt
 
 		}
 
-		virtual size_t Size() const { return sizeof(*this); };
-
 		virtual void LoadFromINIFile(TT *pThis, CCINIClass *pINI);
 		virtual void Initialize(TT *pThis);
 		virtual void InvalidatePointer(void *ptr, bool bRemoved) {

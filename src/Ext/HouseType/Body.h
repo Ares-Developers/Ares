@@ -81,8 +81,6 @@ class HouseTypeExt
 
 		}
 
-		virtual size_t Size() const { return sizeof(*this); };
-
 		virtual void LoadFromINIFile(TT *pThis, CCINIClass *pINI);
 		virtual void LoadFromRulesFile(TT *pThis, CCINIClass *pINI);
 		virtual void InitializeConstants(TT *pThis);

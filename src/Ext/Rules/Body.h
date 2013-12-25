@@ -67,8 +67,6 @@ class RulesExt
 		virtual ~ExtData() {
 		}
 
-		virtual size_t Size() const { return sizeof(*this); };
-
 		virtual void LoadFromINIFile(TT *pThis, CCINIClass *pINI);
 		virtual void LoadBeforeTypeData(TT *pThis, CCINIClass *pINI);
 		virtual void LoadAfterTypeData(TT *pThis, CCINIClass *pINI);

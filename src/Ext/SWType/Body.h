@@ -254,8 +254,6 @@ public:
 
 		virtual ~ExtData();
 
-		virtual size_t Size() const { return sizeof(*this); };
-
 		virtual void LoadFromRulesFile(TT *pThis, CCINIClass *pINI);
 		virtual void LoadFromINIFile(TT *pThis, CCINIClass *pINI);
 		virtual void InitializeConstants(TT *pThis);

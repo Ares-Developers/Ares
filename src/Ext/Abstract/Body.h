@@ -29,8 +29,6 @@ public:
 		virtual ~ExtData() {
 		}
 
-		virtual size_t Size() const { return sizeof(*this); };
-
 		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
 		}
 	};
