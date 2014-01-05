@@ -29,4 +29,18 @@ public:
 	bool WriteToStream(IStream *pStm) const;
 };
 
+namespace Savegame {
+	template <typename T>
+	bool ReadAresStream(AresByteStream &Stm, T &Value, size_t &Offset, bool RegisterForChange = false) {
+		// not implemented
+		return false;
+	};
+
+	template <typename T>
+	bool WriteAresStream(AresByteStream &Stm, const T &Value) {
+		// not implemented
+		return false;
+	};
+}
+
 #endif
