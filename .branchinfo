@@ -1,6 +1,6 @@
 [branch]
-Name=Ares Development Mainline
-Description=This is the trunk or master branch of Ares's repository. It contains the current in-development code.
+Name=AlexB's Service Release
+Description=Lots of changes on the inside, few new features on the outside: This is a service release to improve stability, with minor additions.
 TargetVersion=0.6
 Stable=no
 ReadyForTesting=yes
