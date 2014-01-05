@@ -159,7 +159,7 @@ void BuildingExt::ExtData::KickOutOfRubble() {
 	// this part kicks out all units we found in the rubble
 	for(int i=0; i<list.Count; ++i) {
 		Item &item = list[i];
-		if(pBld->KickOutUnit(item.first, &location)) {
+		if(pBld->KickOutUnit(item.first, location) == KickOutResult::Succeeded) {
 			if(item.second) {
 				item.first->Select();
 			}
@@ -415,7 +415,7 @@ void BuildingExt::KickOutHospitalArmory(BuildingClass *pThis)
 {
 	if(pThis->Type->Hospital || pThis->Type->Armory) {
 		if(FootClass * Passenger = pThis->Passengers.RemoveFirstPassenger()) {
-			pThis->KickOutUnit(Passenger, &BuildingClass::DefaultCellCoords);
+			pThis->KickOutUnit(Passenger, BuildingClass::DefaultCellCoords);
 		}
 	}
 }
@@ -825,7 +825,7 @@ void BuildingExt::ExtData::KickOutClones(TechnoClass * Production) {
 
 	auto KickOutClone = [KickOutCoords, ProductionType, FactoryOwner](BuildingClass *B) -> void {
 		auto Clone = reinterpret_cast<TechnoClass *>(ProductionType->CreateObject(FactoryOwner));
-		if(!B->KickOutUnit(Clone, KickOutCoords)) {
+		if(B->KickOutUnit(Clone, *KickOutCoords) != KickOutResult::Succeeded) {
 			Clone->UnInit();
 		}
 	};

@@ -44,7 +44,7 @@ DEFINE_HOOK(519FAF, InfantryClass_UpdatePosition_EngineerRepairsFriendly, 6)
 		}
 		CellStruct Cell;
 		pThis->GetMapCoords(&Cell);
-		Target->KickOutUnit(pThis, &Cell);
+		Target->KickOutUnit(pThis, Cell);
 		if(wasSelected) {
 			pThis->Select();
 		}
