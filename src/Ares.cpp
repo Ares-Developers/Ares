@@ -551,6 +551,23 @@ void Ares::UpdateStability() {
 	}
 }
 
+void Ares::SaveGame() {
+	Debug::Log("About to save the game\n");
+}
+
+HRESULT Ares::SaveGameData(IStream *pStm) {
+	Debug::Log("Finished saving the game\n");
+	return S_OK;
+}
+
+void Ares::LoadGame() {
+	Debug::Log("About to load the game\n");
+}
+
+void Ares::LoadGameData(IStream *pStm) {
+	Debug::Log("Finished loading the game\n");
+}
+
 #define YR_SIZE_1000 0x496110
 #define YR_SIZE_1001 0x497110
 #define YR_SIZE_1001_UC 0x497FE0

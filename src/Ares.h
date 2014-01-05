@@ -36,6 +36,25 @@
 class Ares
 {
 public:
+	/**
+	* called before any saving takes place
+	*/
+	static void SaveGame();
+	/**
+	* called after the game (and extdata) has saved its data
+	*/
+	static HRESULT SaveGameData(IStream *pStm);
+
+	/**
+	* called before any loading takes place
+	*/
+	static void LoadGame();
+
+	/**
+	* called after the game (and extdata) has loaded its data
+	*/
+	static void LoadGameData(IStream *pStm);
+
 	//Global Options
 	static HANDLE	hInstance;
 
