@@ -232,8 +232,8 @@ public:
 		}
 	}
 
-	void Save(KeyType key, IStream *pStm) {
-		this->SaveKey(key, pStm);
+	bool Save(KeyType key, IStream *pStm) {
+		return this->SaveKey(key, pStm) != nullptr;
 	}
 
 	ValueType SaveKey(KeyType key, IStream *pStm) {
@@ -265,8 +265,8 @@ public:
 		}
 	}
 
-	void Load(KeyType key, IStream *pStm) {
-		this->LoadKey(key, pStm);
+	bool Load(KeyType key, IStream *pStm) {
+		return this->LoadKey(key, pStm) != nullptr;
 	}
 
 	ValueType LoadKey(KeyType key, IStream *pStm) {

@@ -279,7 +279,7 @@ DWORD SideExt::MixFileYuriFiles(REGISTERS* R, DWORD dwReturnAddress1, DWORD dwRe
 // =============================
 // load/save
 
-void Container<SideExt>::Save(SideClass *pThis, IStream *pStm) {
+bool Container<SideExt>::Save(SideClass *pThis, IStream *pStm) {
 	SideExt::ExtData* pData = this->SaveKey(pThis, pStm);
 
 	if(pData) {
@@ -289,9 +289,11 @@ void Container<SideExt>::Save(SideClass *pThis, IStream *pStm) {
 		pData->ParaDrop.Save(pStm);
 		pData->ParaDropNum.Save(pStm);
 	}
+
+	return pData != nullptr;
 }
 
-void Container<SideExt>::Load(SideClass *pThis, IStream *pStm) {
+bool Container<SideExt>::Load(SideClass *pThis, IStream *pStm) {
 	SideExt::ExtData* pData = this->LoadKey(pThis, pStm);
 
 	SWIZZLE(pData->Disguise);
@@ -300,6 +302,8 @@ void Container<SideExt>::Load(SideClass *pThis, IStream *pStm) {
 	//pData->BaseDefenseCounts.Load(pStm, 0);
 	pData->ParaDrop.Load(pStm, 1);
 	pData->ParaDropNum.Load(pStm, 0);
+
+	return pData != nullptr;
 }
 
 // =============================

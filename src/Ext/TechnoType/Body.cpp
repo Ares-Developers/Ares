@@ -573,7 +573,7 @@ bool TechnoTypeExt::ExtData::CarryallCanLift(UnitClass * Target) {
 // =============================
 // load/save
 
-void Container<TechnoTypeExt>::Save(TechnoTypeClass *pThis, IStream *pStm) {
+bool Container<TechnoTypeExt>::Save(TechnoTypeClass *pThis, IStream *pStm) {
 	TechnoTypeExt::ExtData* pData = this->SaveKey(pThis, pStm);
 
 	if(pData) {
@@ -591,9 +591,11 @@ void Container<TechnoTypeExt>::Save(TechnoTypeClass *pThis, IStream *pStm) {
 		pData->Weapons.Save(pStm);
 		pData->EliteWeapons.Save(pStm);
 	}
+
+	return pData != nullptr;
 }
 
-void Container<TechnoTypeExt>::Load(TechnoTypeClass *pThis, IStream *pStm) {
+bool Container<TechnoTypeExt>::Load(TechnoTypeClass *pThis, IStream *pStm) {
 	TechnoTypeExt::ExtData* pData = this->LoadKey(pThis, pStm);
 
 	//ULONG out;
@@ -626,6 +628,8 @@ void Container<TechnoTypeExt>::Load(TechnoTypeClass *pThis, IStream *pStm) {
 	for(int ii = 0; ii < pData->EliteWeapons.Count; ++ii) {
 		SWIZZLE(pData->EliteWeapons.Items[ii].WeaponType);
 	}
+
+	return pData != nullptr;
 }
 
 // =============================

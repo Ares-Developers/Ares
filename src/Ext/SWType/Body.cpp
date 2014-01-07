@@ -540,10 +540,12 @@ void Container<SWTypeExt>::InvalidatePointer(void *ptr, bool bRemoved) {
 // =============================
 // load/save
 
-void Container<SWTypeExt>::Load(SuperWeaponTypeClass *pThis, IStream *pStm) {
+bool Container<SWTypeExt>::Load(SuperWeaponTypeClass *pThis, IStream *pStm) {
 	SWTypeExt::ExtData* pData = this->LoadKey(pThis, pStm);
 
 	SWIZZLE(pData->SW_Anim);
+
+	return pData != nullptr;
 }
 
 // =============================

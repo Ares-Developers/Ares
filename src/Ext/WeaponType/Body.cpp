@@ -379,7 +379,7 @@ void Container<WeaponTypeExt>::InvalidatePointer(void *ptr, bool bRemoved) {
 // =============================
 // load/save
 
-void Container<WeaponTypeExt>::Save(WeaponTypeClass *pThis, IStream *pStm) {
+bool Container<WeaponTypeExt>::Save(WeaponTypeClass *pThis, IStream *pStm) {
 	WeaponTypeExt::ExtData* pData = this->SaveKey(pThis, pStm);
 
 	if(pData) {
@@ -406,11 +406,12 @@ void Container<WeaponTypeExt>::Save(WeaponTypeClass *pThis, IStream *pStm) {
 			pStm->Write(ptr, 4, &out);
 			pStm->Write(WeaponTypeExt::RadSiteExt[ptr], 4, &out);
 		}
-
 	}
+
+	return pData != nullptr;
 }
 
-void Container<WeaponTypeExt>::Load(WeaponTypeClass *pThis, IStream *pStm) {
+bool Container<WeaponTypeExt>::Load(WeaponTypeClass *pThis, IStream *pStm) {
 	WeaponTypeExt::ExtData* pData = this->LoadKey(pThis, pStm);
 
 	ULONG out;
@@ -453,6 +454,8 @@ void Container<WeaponTypeExt>::Load(WeaponTypeClass *pThis, IStream *pStm) {
 
 	SWIZZLE(pData->Ivan_WH);
 	SWIZZLE(pData->Ivan_Image);
+
+	return pData != nullptr;
 }
 
 // =============================

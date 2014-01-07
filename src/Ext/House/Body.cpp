@@ -357,7 +357,7 @@ InfantryTypeClass* HouseExt::ExtData::GetDisguise() const {
 // =============================
 // load/save
 
-void Container<HouseExt>::Load(HouseClass *pThis, IStream *pStm) {
+bool Container<HouseExt>::Load(HouseClass *pThis, IStream *pStm) {
 	HouseExt::ExtData* pData = this->LoadKey(pThis, pStm);
 
 	//ULONG out;
@@ -366,6 +366,8 @@ void Container<HouseExt>::Load(HouseClass *pThis, IStream *pStm) {
 	SWIZZLE(pData->Factory_VehicleType);
 	SWIZZLE(pData->Factory_NavyType);
 	SWIZZLE(pData->Factory_AircraftType);
+
+	return pData != nullptr;
 }
 
 // =============================

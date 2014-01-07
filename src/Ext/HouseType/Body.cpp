@@ -518,18 +518,22 @@ int HouseTypeExt::PickRandomCountry() {
 // =============================
 // load/save
 
-void Container<HouseTypeExt>::Save(HouseTypeClass *pThis, IStream *pStm) {
+bool Container<HouseTypeExt>::Save(HouseTypeClass *pThis, IStream *pStm) {
 	HouseTypeExt::ExtData* pData = this->SaveKey(pThis, pStm);
 
 	if (pData) {
 		pData->Powerplants.Save(pStm);
 	}
+
+	return pData != nullptr;
 }
 
-void Container<HouseTypeExt>::Load(HouseTypeClass *pThis, IStream *pStm) {
+bool Container<HouseTypeExt>::Load(HouseTypeClass *pThis, IStream *pStm) {
 	HouseTypeExt::ExtData* pData = this->LoadKey(pThis, pStm);
 
 	pData->Powerplants.Load(pStm, 1);
+
+	return pData != nullptr;
 }
 
 // =============================

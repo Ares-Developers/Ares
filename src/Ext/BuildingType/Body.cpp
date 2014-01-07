@@ -442,7 +442,7 @@ bool BuildingTypeExt::ExtData::CanBeOccupiedBy(InfantryClass *whom) {
 // =============================
 // load/save
 
-void Container<BuildingTypeExt>::Save(BuildingTypeClass *pThis, IStream *pStm) {
+bool Container<BuildingTypeExt>::Save(BuildingTypeClass *pThis, IStream *pStm) {
 	BuildingTypeExt::ExtData* pData = this->SaveKey(pThis, pStm);
 
 	if(pData && pData->IsCustom) {
@@ -454,9 +454,11 @@ void Container<BuildingTypeExt>::Save(BuildingTypeClass *pThis, IStream *pStm) {
 			sizeof(CellStruct) * (pData->OutlineLength + 1),
 			&out);
 	}
+
+	return pData != nullptr;
 };
 
-void Container<BuildingTypeExt>::Load(BuildingTypeClass *pThis, IStream *pStm) {
+bool Container<BuildingTypeExt>::Load(BuildingTypeClass *pThis, IStream *pStm) {
 	BuildingTypeExt::ExtData* pData = this->LoadKey(pThis, pStm);
 //	this->FindOrAllocate(pThis);
 
@@ -487,6 +489,8 @@ void Container<BuildingTypeExt>::Load(BuildingTypeClass *pThis, IStream *pStm) {
 #ifdef DEBUGBUILD
 	assert(this->SavedCanary == Extension<BuildingTypeClass>::Canary);
 #endif
+
+	return pData != nullptr;
 };
 
 // =============================

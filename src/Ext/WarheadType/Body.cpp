@@ -105,13 +105,15 @@ void Container<WarheadTypeExt>::InvalidatePointer(void *ptr, bool bRemoved) {
 
 // =============================
 // load/save
-void Container<WarheadTypeExt>::Save(WarheadTypeClass *pThis, IStream *pStm) {
+bool Container<WarheadTypeExt>::Save(WarheadTypeClass *pThis, IStream *pStm) {
 	WarheadTypeExt::ExtData* pData = this->SaveKey(pThis, pStm);
 
 	if(pData) {
 		//ULONG out;
 		pData->Verses.Save(pStm);
 	}
+
+	return pData != nullptr;
 }
 /*
 		pStm->Write(&IonBlastClass::Array->Count, 4, &out);
@@ -121,12 +123,14 @@ void Container<WarheadTypeExt>::Save(WarheadTypeClass *pThis, IStream *pStm) {
 			pStm->Write(WarheadTypeExt::IonExt[ptr], 4, &out);
 		}
 */
-void Container<WarheadTypeExt>::Load(WarheadTypeClass *pThis, IStream *pStm) {
+bool Container<WarheadTypeExt>::Load(WarheadTypeClass *pThis, IStream *pStm) {
 	WarheadTypeExt::ExtData* pData = this->LoadKey(pThis, pStm);
 
 	pData->Verses.Load(pStm, 0);
 
 	SWIZZLE(pData->Temporal_WarpAway);
+
+	return pData != nullptr;
 }
 
 /*!
