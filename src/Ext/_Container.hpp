@@ -242,8 +242,33 @@ public:
 		Container<T>::SavingStream = nullptr;
 	}
 
+	void LoadStatic() {
+		const auto &info = typeid(S_T);
+
+		if(Container<T>::SavingObject && Container<T>::SavingStream) {
+			Debug::Log("[LoadStatic] Loading object %p as '%s'\n", Container<T>::SavingObject, info.name());
+
+			if(!this->Load(Container<T>::SavingObject, Container<T>::SavingStream)) {
+				Debug::FatalErrorAndExit("[LoadStatic] Loading failed!\n");
+			}
+		} else {
+			Debug::Log("[LoadStatic] Object or Stream not set for '%s': %p, %p\n",
+				info.name(), Container<T>::SavingObject, Container<T>::SavingStream);
+		}
+
+		Container<T>::SavingObject = nullptr;
+		Container<T>::SavingStream = nullptr;
+	}
+
+protected:
+	// specialize this method to do type-specific stuff
 	bool Save(KeyType key, IStream *pStm) {
 		return this->SaveKey(key, pStm) != nullptr;
+	}
+
+	// specialize this method to do type-specific stuff
+	bool Load(KeyType key, IStream *pStm) {
+		return this->LoadKey(key, pStm) != nullptr;
 	}
 
 	ValueType SaveKey(KeyType key, IStream *pStm) {
@@ -263,28 +288,6 @@ public:
 		Debug::Log("\n\n");
 		return buffer;
 	};
-
-	void LoadStatic() {
-		const auto &info = typeid(S_T);
-
-		if(Container<T>::SavingObject && Container<T>::SavingStream) {
-			Debug::Log("[LoadStatic] Loading object %p as '%s'\n", Container<T>::SavingObject, info.name());
-
-			if(!this->Load(Container<T>::SavingObject, Container<T>::SavingStream)) {
-				Debug::FatalErrorAndExit("[LoadStatic] Loading failed!\n");
-			}
-		} else {
-			Debug::Log("[LoadStatic] Object or Stream not set for '%s': %p, %p\n",
-				info.name(), Container<T>::SavingObject, Container<T>::SavingStream);
-		}
-
-		Container<T>::SavingObject = nullptr;
-		Container<T>::SavingStream = nullptr;
-	}
-
-	bool Load(KeyType key, IStream *pStm) {
-		return this->LoadKey(key, pStm) != nullptr;
-	}
 
 	ValueType LoadKey(KeyType key, IStream *pStm) {
 		ULONG out;
