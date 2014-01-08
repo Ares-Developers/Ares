@@ -225,11 +225,21 @@ public:
 	}
 
 	void SaveStatic() {
+		const auto &info = typeid(S_T);
+
 		if(Container<T>::SavingObject && Container<T>::SavingStream) {
-			this->Save(Container<T>::SavingObject, Container<T>::SavingStream);
-			Container<T>::SavingObject = nullptr;
-			Container<T>::SavingStream = nullptr;
+			Debug::Log("[SaveStatic] Saving object %p as '%s'\n", Container<T>::SavingObject, info.name());
+
+			if(!this->Save(Container<T>::SavingObject, Container<T>::SavingStream)) {
+				Debug::FatalErrorAndExit("[SaveStatic] Saving failed!\n");
+			}
+		} else {
+			Debug::Log("[SaveStatic] Object or Stream not set for '%s': %p, %p\n",
+				info.name(), Container<T>::SavingObject, Container<T>::SavingStream);
 		}
+
+		Container<T>::SavingObject = nullptr;
+		Container<T>::SavingStream = nullptr;
 	}
 
 	bool Save(KeyType key, IStream *pStm) {
@@ -238,9 +248,6 @@ public:
 
 	ValueType SaveKey(KeyType key, IStream *pStm) {
 		ULONG out;
-
-		const auto &info = typeid(key);
-		Debug::Log("Saving Key [%s] (%X)\n", info.name(), key);
 
 		if(key == nullptr) {
 			return nullptr;
@@ -258,11 +265,21 @@ public:
 	};
 
 	void LoadStatic() {
+		const auto &info = typeid(S_T);
+
 		if(Container<T>::SavingObject && Container<T>::SavingStream) {
-			this->Load(Container<T>::SavingObject, Container<T>::SavingStream);
-			Container<T>::SavingObject = nullptr;
-			Container<T>::SavingStream = nullptr;
+			Debug::Log("[LoadStatic] Loading object %p as '%s'\n", Container<T>::SavingObject, info.name());
+
+			if(!this->Load(Container<T>::SavingObject, Container<T>::SavingStream)) {
+				Debug::FatalErrorAndExit("[LoadStatic] Loading failed!\n");
+			}
+		} else {
+			Debug::Log("[LoadStatic] Object or Stream not set for '%s': %p, %p\n",
+				info.name(), Container<T>::SavingObject, Container<T>::SavingStream);
 		}
+
+		Container<T>::SavingObject = nullptr;
+		Container<T>::SavingStream = nullptr;
 	}
 
 	bool Load(KeyType key, IStream *pStm) {
@@ -271,9 +288,6 @@ public:
 
 	ValueType LoadKey(KeyType key, IStream *pStm) {
 		ULONG out;
-
-		const auto &info = typeid(key);
-		Debug::Log("Loading Key [%s] (%X)\n", info.name(), key);
 
 		if(key == nullptr) {
 			Debug::Log("Load attempted for a NULL pointer! WTF!\n");
