@@ -1,5 +1,5 @@
-#ifndef BUILDINGTYPE_EXT_H
-#define BUILDINGTYPE_EXT_H
+#ifndef ANIMTYPE_EXT_H
+#define ANIMTYPE_EXT_H
 
 #include <AnimClass.h>
 #include <AnimTypeClass.h>

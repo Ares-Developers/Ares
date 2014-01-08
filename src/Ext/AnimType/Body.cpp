@@ -100,6 +100,7 @@ DEFINE_HOOK(428800, AnimTypeClass_SaveLoad_Prefix, A)
 	return 0;
 }
 
+DEFINE_HOOK_AGAIN(42892C, AnimTypeClass_Load_Suffix, 6)
 DEFINE_HOOK(428958, AnimTypeClass_Load_Suffix, 6)
 {
 	AnimTypeExt::ExtMap.LoadStatic();
