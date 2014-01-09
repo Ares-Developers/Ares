@@ -83,6 +83,10 @@ class SideExt
 
 		Iterator<BuildingTypeClass*> GetBaseDefenses() const;
 		Iterator<BuildingTypeClass*> GetDefaultBaseDefenses() const;
+
+		Iterator<TechnoTypeClass*> GetParaDropTypes() const;
+
+		Iterator<int> GetParaDropNum() const;
 	};
 
 	//Hacks required in other classes:

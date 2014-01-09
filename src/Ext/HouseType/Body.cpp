@@ -477,13 +477,8 @@ bool HouseTypeExt::ExtData::GetParadropContent(Iterator<TechnoTypeClass*> &Types
 	if(!Types) {
 		SideClass* pSide = SideClass::Array->GetItem(this->AttachedToObject->SideIndex);
 		if(SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide)) {
-			if(pData->ParaDropFallbackTypes && pData->ParaDropFallbackNum) {
-				Types = *reinterpret_cast<TypeList<TechnoTypeClass*>*>(pData->ParaDropFallbackTypes);
-				Num = *pData->ParaDropFallbackNum;
-			} else {
-				Types = pData->ParaDrop;
-				Num = pData->ParaDropNum;
-			}
+			Types = pData->GetParaDropTypes();
+			Num = pData->GetParaDropNum();
 		}
 	}
 

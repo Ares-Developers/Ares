@@ -249,6 +249,22 @@ Iterator<BuildingTypeClass*> SideExt::ExtData::GetDefaultBaseDefenses() const {
 	}
 }
 
+Iterator<TechnoTypeClass*> SideExt::ExtData::GetParaDropTypes() const {
+	if(this->ParaDropFallbackTypes && this->ParaDropFallbackNum) {
+		return *reinterpret_cast<TypeList<TechnoTypeClass*>*>(this->ParaDropFallbackTypes);
+	}
+
+	return this->ParaDrop;
+}
+
+Iterator<int> SideExt::ExtData::GetParaDropNum() const {
+	if(this->ParaDropFallbackTypes && this->ParaDropFallbackNum) {
+		return *this->ParaDropFallbackNum;
+	}
+
+	return this->ParaDropNum;
+}
+
 DWORD SideExt::LoadTextColor(REGISTERS* R, DWORD dwReturnAddress)
 {
 	// if there is a cached LoadTextColor, use that.
