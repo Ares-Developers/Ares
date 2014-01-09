@@ -27,6 +27,17 @@ public:
 	* writes all internal storage to {pStm}
 	*/
 	bool WriteToStream(IStream *pStm) const;
+
+	/**
+	* reads the next block of bytes from {pStm} into its storage,
+	* the block size is prepended to the block
+	*/
+	size_t ReadBlockFromStream(IStream *pStm);
+
+	/**
+	* writes all internal storage to {pStm}, prefixed with its length
+	*/
+	bool WriteBlockToStream(IStream *pStm) const;
 };
 
 namespace Savegame {

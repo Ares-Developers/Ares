@@ -20,3 +20,23 @@ bool AresByteStream::WriteToStream(IStream *pStm) const {
 	auto success = pStm->Write(pcv, Length, &out);
 	return SUCCEEDED(success) && out == Length;
 }
+
+size_t AresByteStream::ReadBlockFromStream(IStream *pStm) {
+	ULONG out = 0;
+	size_t Length = 0;
+	if(SUCCEEDED(pStm->Read(&Length, sizeof(Length), &out))) {
+		if(this->ReadFromStream(pStm, Length)) {
+			return Length;
+		}
+	}
+	return 0;
+}
+
+bool AresByteStream::WriteBlockToStream(IStream *pStm) const {
+	ULONG out = 0;
+	const size_t Length = this->Data.size();
+	if(SUCCEEDED(pStm->Write(&Length, sizeof(Length), &out))) {
+		return this->WriteToStream(pStm);
+	}
+	return false;
+}
