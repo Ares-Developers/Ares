@@ -232,8 +232,19 @@ bool SW_ParaDrop::SendParadrop(SuperClass* pThis, CellClass* pCell) {
 
 	// these are fallback values if the SW doesn't define them
 	AircraftTypeClass* pFallbackPlane = nullptr;
-	TypeList<TechnoTypeClass*> *pFallbackTypes = nullptr;
-	TypeList<int> *pFallbackNum = nullptr;
+	Iterator<TechnoTypeClass*> FallbackTypes;
+	Iterator<int> FallbackNum;
+
+	if(HouseTypeExt::ExtData *pExt = HouseTypeExt::ExtMap.Find(pHouse->Type)) {
+		TypeList<TechnoTypeClass*> *pFallbackTypes = nullptr;
+		TypeList<int> *pFallbackNum = nullptr;
+		if(pExt->GetParadropContent(&pFallbackTypes, &pFallbackNum)) {
+			FallbackTypes = *pFallbackTypes;
+			FallbackNum = *pFallbackNum;
+		}
+
+		pFallbackPlane = pExt->GetParadropPlane();
+	}
 
 	// get the paradrop list without creating a new value
 	auto GetParadropPlanes = [pData](AbstractTypeClass* pKey) -> DynamicVectorClass<ParadropPlane*>* {
@@ -308,24 +319,12 @@ bool SW_ParaDrop::SendParadrop(SuperClass* pThis, CellClass* pCell) {
 
 		// fallback for types and nums
 		if(!ParaDropTypes || !ParaDropNum) {
-			if(!pFallbackTypes || !pFallbackNum) {
-				if(HouseTypeExt::ExtData *pExt = HouseTypeExt::ExtMap.Find(pHouse->Type)) {
-					pExt->GetParadropContent(&pFallbackTypes, &pFallbackNum);
-				}
-			}
-
-			ParaDropTypes = *pFallbackTypes;
-			ParaDropNum = *pFallbackNum;
+			ParaDropTypes = FallbackTypes;
+			ParaDropNum = FallbackNum;
 		}
 
 		// house fallback for the plane
 		if(!pParaDropPlane) {
-			if(!pFallbackPlane) {
-				if(HouseTypeExt::ExtData *pExt = HouseTypeExt::ExtMap.Find(pHouse->Type)) {
-					pFallbackPlane = pExt->GetParadropPlane();
-				}
-			}
-
 			pParaDropPlane = pFallbackPlane;
 		}
 
