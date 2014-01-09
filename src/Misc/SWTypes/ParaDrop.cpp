@@ -335,8 +335,8 @@ bool SW_ParaDrop::SendParadrop(SuperClass* pThis, CellClass* pCell) {
 				pHouse,
 				pCell,
 				pParaDropPlane,
-				pParaDrop,
-				pParaDropNum);
+				*pParaDrop,
+				*pParaDropNum);
 		}
 	}
 

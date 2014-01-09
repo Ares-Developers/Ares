@@ -247,11 +247,9 @@ void Ares::CloseConfig(CCINIClass** ppINI) {
 //A new SendPDPlane function
 //Allows vehicles, sends one single plane for all types
 void Ares::SendPDPlane(HouseClass* pOwner, CellClass* pTarget, AircraftTypeClass* pPlaneType,
-		TypeList<TechnoTypeClass*>* pTypes, TypeList<int>* pNums)
+	const Iterator<TechnoTypeClass*> &Types, const Iterator<int> &Nums)
 {
-	if(pNums && pTypes &&
-		pNums->Count == pTypes->Count &&
-		pNums->Count > 0 &&
+	if(Nums.size() == Types.size() && Nums.size() > 0 &&
 		pOwner && pPlaneType && pTarget)
 	{
 		++Unsorted::IKnowWhatImDoing;
@@ -269,10 +267,9 @@ void Ares::SendPDPlane(HouseClass* pOwner, CellClass* pTarget, AircraftTypeClass
 			}
 		}
 
-		//some ASM magic, seems to retrieve a random cell struct at a given edge
-		CellStruct spawn_cell;
-
-		MapClass::Instance->PickCellOnEdge(&spawn_cell, edge, (CellStruct *)0xB04C38, (CellStruct *)0xB04C38, 4, 1, 0);
+		// seems to retrieve a random cell struct at a given edge
+		CellStruct spawn_cell = MapClass::Instance->PickCellOnEdge(edge, CellStruct::Empty,
+			CellStruct::Empty, SpeedType::Winged, true, mz_Normal);
 
 		pPlane->QueueMission(mission_ParadropApproach, false);
 
@@ -280,7 +277,7 @@ void Ares::SendPDPlane(HouseClass* pOwner, CellClass* pTarget, AircraftTypeClass
 			pPlane->SetTarget(pTarget);
 		}
 
-		CoordStruct spawn_crd = {(spawn_cell.X << 8) + 128, (spawn_cell.Y << 8) + 128, 0};
+		CoordStruct spawn_crd = CellClass::Cell2Coord(spawn_cell);
 
 		++Unsorted::IKnowWhatImDoing;
 		bool bSpawned = pPlane->Put(&spawn_crd, Direction::North);
@@ -288,13 +285,13 @@ void Ares::SendPDPlane(HouseClass* pOwner, CellClass* pTarget, AircraftTypeClass
 
 		if(bSpawned) {
 			pPlane->HasPassengers = true;
-			for(int i = 0; i < pTypes->Count; i++) {
-				TechnoTypeClass* pTechnoType = pTypes->GetItem(i);
+			for(size_t i = 0; i < Types.size(); i++) {
+				TechnoTypeClass* pTechnoType = Types.at(i);
 
 				//only allow infantry and vehicles
 				eAbstractType WhatAmI = pTechnoType->WhatAmI();
 				if(WhatAmI == abs_UnitType || WhatAmI == abs_InfantryType) {
-					for(int k = 0; k < pNums->Items[i]; k++) {
+					for(int k = 0; k < Nums[i]; k++) {
 						FootClass* pNew = reinterpret_cast<FootClass*>(pTechnoType->CreateObject(pOwner));
 						pNew->Remove();
 						pPlane->Passengers.AddPassenger(pNew);
