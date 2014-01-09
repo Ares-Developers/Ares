@@ -64,6 +64,31 @@ public:
 	void Write(const data_t* Value, size_t Size) {
 		this->Data.insert(this->Data.end(), Value, Value + Size);
 	}
+
+
+	/**
+	* attempts to read the data from internal storage into {Value}
+	* updates {Offset} with the amount of data read, no matter if successful
+	* this is done to ensure once an item could not be read, the subsequent items will fail also
+	*/
+	template<typename T>
+	bool Load(T &Value, size_t &Offset) {
+		Offset += sizeof(T);
+
+		// get address regardless of overloaded & operator
+		auto Bytes = &reinterpret_cast<data_t&>(Value);
+		return this->Read(Bytes, sizeof(T));
+	}
+
+	/**
+	* writes the data from {Value} into internal storage
+	*/
+	template<typename T>
+	void Save(const T &Value) {
+		// get address regardless of overloaded & operator
+		auto Bytes = &reinterpret_cast<const data_t&>(Value);
+		this->Write(Bytes, sizeof(T));
+	};
 };
 
 namespace Savegame {
