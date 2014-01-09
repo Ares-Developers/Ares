@@ -411,8 +411,7 @@ DEFINE_HOOK(503040, HouseClass_SaveLoad_Prefix, 5)
 	GET_STACK(HouseExt::TT*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
 
-	Container<HouseExt>::SavingObject = pItem;
-	Container<HouseExt>::SavingStream = pStm;
+	Container<HouseExt>::PrepareStream(pItem, pStm);
 
 	return 0;
 }

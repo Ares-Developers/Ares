@@ -170,8 +170,7 @@ DEFINE_HOOK(71F8C0, TEventClass_SaveLoad_Prefix, 5)
 	GET_STACK(TEventExt::TT*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
 
-	Container<TEventExt>::SavingObject = pItem;
-	Container<TEventExt>::SavingStream = pStm;
+	Container<TEventExt>::PrepareStream(pItem, pStm);
 
 	return 0;
 }

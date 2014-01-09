@@ -519,8 +519,7 @@ DEFINE_HOOK(465010, BuildingTypeClass_SaveLoad_Prefix, 5)
 	GET_STACK(BuildingTypeExt::TT*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
 
-	Container<BuildingTypeExt>::SavingObject = pItem;
-	Container<BuildingTypeExt>::SavingStream = pStm;
+	Container<BuildingTypeExt>::PrepareStream(pItem, pStm);
 
 	return 0;
 }

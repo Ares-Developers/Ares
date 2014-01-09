@@ -64,8 +64,7 @@ DEFINE_HOOK(46C6A0, BulletTypeClass_SaveLoad_Prefix, 5)
 	GET_STACK(BulletTypeExt::TT*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
 
-	Container<BulletTypeExt>::SavingObject = pItem;
-	Container<BulletTypeExt>::SavingStream = pStm;
+	Container<BulletTypeExt>::PrepareStream(pItem, pStm);
 
 	return 0;
 }

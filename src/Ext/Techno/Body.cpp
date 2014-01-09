@@ -1073,8 +1073,7 @@ DEFINE_HOOK(70BF50, TechnoClass_SaveLoad_Prefix, 5)
 	GET_STACK(TechnoExt::TT*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
 
-	Container<TechnoExt>::SavingObject = pItem;
-	Container<TechnoExt>::SavingStream = pStm;
+	Container<TechnoExt>::PrepareStream(pItem, pStm);
 
 	return 0;
 }

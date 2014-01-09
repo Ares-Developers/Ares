@@ -94,8 +94,7 @@ DEFINE_HOOK(428800, AnimTypeClass_SaveLoad_Prefix, A)
 	GET_STACK(AnimTypeExt::TT*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
 
-	Container<AnimTypeExt>::SavingObject = pItem;
-	Container<AnimTypeExt>::SavingStream = pStm;
+	Container<AnimTypeExt>::PrepareStream(pItem, pStm);
 
 	return 0;
 }

@@ -123,10 +123,10 @@ private:
 	typedef E_T* ValueType;
 	typedef hash_map<KeyType, ValueType> C_Map;
 
-public:
 	static S_T * SavingObject;
 	static IStream * SavingStream;
 
+public:
 	void PointerGotInvalid(void *ptr, bool bRemoved) {
 		this->InvalidatePointer(ptr, bRemoved);
 		this->InvalidateExtDataPointer(ptr, bRemoved);
@@ -222,6 +222,14 @@ public:
 		for(auto i = this->begin(); i != this->end(); i++) {
 			i->second->LoadFromRulesFile(i->first, pINI);
 		}
+	}
+
+	static void PrepareStream(KeyType key, IStream *pStm) {
+		const auto &info = typeid(S_T);
+		Debug::Log("[PrepareStream] Next is %p of type '%s'\n", key, info.name());
+
+		Container<T>::SavingObject = key;
+		Container<T>::SavingStream = pStm;
 	}
 
 	void SaveStatic() {

@@ -526,8 +526,7 @@ DEFINE_HOOK(75E0C0, WarheadTypeClass_SaveLoad_Prefix, 8)
 	GET_STACK(WarheadTypeExt::TT*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
 
-	Container<WarheadTypeExt>::SavingObject = pItem;
-	Container<WarheadTypeExt>::SavingStream = pStm;
+	Container<WarheadTypeExt>::PrepareStream(pItem, pStm);
 
 	return 0;
 }

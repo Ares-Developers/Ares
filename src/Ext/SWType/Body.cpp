@@ -573,8 +573,7 @@ DEFINE_HOOK(6CE800, SuperWeaponTypeClass_SaveLoad_Prefix, A)
 	GET_STACK(SWTypeExt::TT*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
 
-	Container<SWTypeExt>::SavingObject = pItem;
-	Container<SWTypeExt>::SavingStream = pStm;
+	Container<SWTypeExt>::PrepareStream(pItem, pStm);
 
 	return 0;
 }
