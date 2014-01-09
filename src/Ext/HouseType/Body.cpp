@@ -465,34 +465,29 @@ AircraftTypeClass* HouseTypeExt::ExtData::GetParadropPlane() {
 	}
 }
 
-bool HouseTypeExt::ExtData::GetParadropContent(TypeList<TechnoTypeClass*> **pTypes, TypeList<int> **pNum) {
-	// no point in dereferencing null
-	if(!pTypes || !pNum) {
-		return false;
-	}
-
+bool HouseTypeExt::ExtData::GetParadropContent(Iterator<TechnoTypeClass*> &Types, Iterator<int> &Num) {
 	// tries to get the house's default contents and falls back to
 	// the sides default contents.
 	if(this->ParaDrop.Count) {
-		*pTypes = &this->ParaDrop;
-		*pNum = &this->ParaDropNum;
+		Types = this->ParaDrop;
+		Num = this->ParaDropNum;
 	}
 
 	// fall back to side specific para drop
-	if(!*pTypes || !(*pTypes)->Count) {
+	if(!Types) {
 		SideClass* pSide = SideClass::Array->GetItem(this->AttachedToObject->SideIndex);
 		if(SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide)) {
 			if(pData->ParaDropFallbackTypes && pData->ParaDropFallbackNum) {
-				*pTypes = (TypeList<TechnoTypeClass*>*)pData->ParaDropFallbackTypes;
-				*pNum = pData->ParaDropFallbackNum;
+				Types = *reinterpret_cast<TypeList<TechnoTypeClass*>*>(pData->ParaDropFallbackTypes);
+				Num = *pData->ParaDropFallbackNum;
 			} else {
-				*pTypes = &pData->ParaDrop;
-				*pNum = &pData->ParaDropNum;
+				Types = pData->ParaDrop;
+				Num = pData->ParaDropNum;
 			}
 		}
 	}
 
-	return (*pTypes && *pNum);
+	return (Types && Num);
 }
 
 int HouseTypeExt::PickRandomCountry() {

@@ -236,13 +236,7 @@ bool SW_ParaDrop::SendParadrop(SuperClass* pThis, CellClass* pCell) {
 	Iterator<int> FallbackNum;
 
 	if(HouseTypeExt::ExtData *pExt = HouseTypeExt::ExtMap.Find(pHouse->Type)) {
-		TypeList<TechnoTypeClass*> *pFallbackTypes = nullptr;
-		TypeList<int> *pFallbackNum = nullptr;
-		if(pExt->GetParadropContent(&pFallbackTypes, &pFallbackNum)) {
-			FallbackTypes = *pFallbackTypes;
-			FallbackNum = *pFallbackNum;
-		}
-
+		pExt->GetParadropContent(FallbackTypes, FallbackNum);
 		pFallbackPlane = pExt->GetParadropPlane();
 	}
 

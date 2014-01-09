@@ -90,7 +90,7 @@ class HouseTypeExt
 		}
 
 		AircraftTypeClass* GetParadropPlane();
-		bool GetParadropContent(TypeList<TechnoTypeClass*>**, TypeList<int>**);
+		bool GetParadropContent(Iterator<TechnoTypeClass*>&, Iterator<int>&);
 		AnimTypeClass* GetParachuteAnim();
 
 		void InheritSettings(HouseTypeClass *pThis);
