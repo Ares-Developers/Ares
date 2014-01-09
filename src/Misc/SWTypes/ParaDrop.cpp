@@ -260,8 +260,8 @@ bool SW_ParaDrop::SendParadrop(SuperClass* pThis, CellClass* pCell) {
 
 	// assemble each plane and its contents
 	for(int i=0; i<count; ++i) { // i = index of plane
-		TypeList<TechnoTypeClass*> *pParaDrop = nullptr;
-		TypeList<int> *pParaDropNum = nullptr;
+		Iterator<TechnoTypeClass*> ParaDropTypes;
+		Iterator<int> ParaDropNum;
 		AircraftTypeClass* pParaDropPlane = nullptr;
 
 		// try the planes in order of precedence:
@@ -276,7 +276,7 @@ bool SW_ParaDrop::SendParadrop(SuperClass* pThis, CellClass* pCell) {
 			for(int k=0; k<3; ++k) { // index in the "drops" array
 
 				// only do something if there is data missing
-				if(!(pParaDrop && pParaDropNum && pParaDropPlane)) {
+				if(!(ParaDropTypes && ParaDropNum && pParaDropPlane)) {
 					// get the country/side-specific plane list
 					DynamicVectorClass<ParadropPlane*> *planes = drops[k];
 					if(!planes) {
@@ -288,10 +288,10 @@ bool SW_ParaDrop::SendParadrop(SuperClass* pThis, CellClass* pCell) {
 					if(ParadropPlane* pPlane = planes->GetItemOrDefault(index)) {
 
 						// get the contents, if not already set
-						if(!pParaDrop || !pParaDropNum) {
+						if(!ParaDropTypes || !ParaDropNum) {
 							if((pPlane->pTypes.Count != 0) && (pPlane->pNum.Count != 0)) {
-								pParaDrop = &pPlane->pTypes;
-								pParaDropNum = &pPlane->pNum;
+								ParaDropTypes = pPlane->pTypes;
+								ParaDropNum = pPlane->pNum;
 							}
 						}
 
@@ -307,15 +307,15 @@ bool SW_ParaDrop::SendParadrop(SuperClass* pThis, CellClass* pCell) {
 		}
 
 		// fallback for types and nums
-		if(!pParaDrop || !pParaDropNum) {
+		if(!ParaDropTypes || !ParaDropNum) {
 			if(!pFallbackTypes || !pFallbackNum) {
 				if(HouseTypeExt::ExtData *pExt = HouseTypeExt::ExtMap.Find(pHouse->Type)) {
 					pExt->GetParadropContent(&pFallbackTypes, &pFallbackNum);
 				}
 			}
 
-			pParaDrop = pFallbackTypes;
-			pParaDropNum = pFallbackNum;
+			ParaDropTypes = *pFallbackTypes;
+			ParaDropNum = *pFallbackNum;
 		}
 
 		// house fallback for the plane
@@ -330,13 +330,13 @@ bool SW_ParaDrop::SendParadrop(SuperClass* pThis, CellClass* pCell) {
 		}
 
 		// finally, send the plane
-		if(pParaDrop && pParaDropNum && pParaDropPlane) {
+		if(ParaDropTypes && ParaDropNum && pParaDropPlane) {
 			Ares::SendPDPlane(
 				pHouse,
 				pCell,
 				pParaDropPlane,
-				*pParaDrop,
-				*pParaDropNum);
+				ParaDropTypes,
+				ParaDropNum);
 		}
 	}
 
