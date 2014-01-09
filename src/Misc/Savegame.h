@@ -38,6 +38,32 @@ public:
 	* writes all internal storage to {pStm}, prefixed with its length
 	*/
 	bool WriteBlockToStream(IStream *pStm) const;
+
+
+	// primitive save/load - should not be specialized
+
+	/**
+	* if it has {Size} bytes left, assigns the first {Size} unread bytes to {Value}
+	* moves the internal position forward
+	*/
+	bool AresByteStream::Read(data_t* Value, size_t Size) {
+		if(this->Data.size() < this->CurrentOffset + Size) {
+			return false;
+		}
+		auto Position = &this->Data[this->CurrentOffset];
+		this->CurrentOffset += Size;
+
+		std::memcpy(Value, Position, Size);
+		return true;
+	}
+
+	/**
+	* ensures there are at least {Size} bytes left in the internal storage, and assigns {Value} casted to byte to that buffer
+	* moves the internal position forward
+	*/
+	void Write(const data_t* Value, size_t Size) {
+		this->Data.insert(this->Data.end(), Value, Value + Size);
+	}
 };
 
 namespace Savegame {
