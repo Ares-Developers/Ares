@@ -22,8 +22,8 @@ class Valueable {
 protected:
 	T    Value;
 public:
-	typedef T MyType;
-	typedef typename CompoundT<T>::BaseT MyBase;
+	typedef T value_type;
+	typedef typename CompoundT<T>::BaseT base_type;
 	Valueable(T Default = T()) : Value(Default) {};
 
 	virtual ~Valueable() {}
@@ -77,7 +77,7 @@ public:
 	void Parse(INI_EX *parser, const char* pSection, const char* pKey, bool Allocate = 0) {
 		if(parser->ReadString(pSection, pKey)) {
 			const char * val = parser->value();
-			if(auto parsed = (Allocate ? MyBase::FindOrAllocate : MyBase::Find)(val)) {
+			if(auto parsed = (Allocate ? base_type::FindOrAllocate : base_type::Find)(val)) {
 				this->Set(parsed);
 			} else {
 				Debug::INIParseFailed(pSection, pKey, val);
@@ -508,8 +508,8 @@ class ValueableVector : public std::vector<T> {
 protected:
 	bool _Defined;
 public:
-	typedef T MyType;
-	typedef typename CompoundT<T>::BaseT MyBase;
+	typedef T value_type;
+	typedef typename CompoundT<T>::BaseT base_type;
 
 	ValueableVector() : std::vector<T>(), _Defined(false) {};
 
