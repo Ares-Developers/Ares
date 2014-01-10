@@ -428,7 +428,7 @@ AnimTypeClass* HouseTypeExt::ExtData::GetParachuteAnim() {
 	int iSide = this->AttachedToObject->SideIndex;
 	if(auto pSide = SideClass::Array->GetItemOrDefault(iSide)) {
 		if(SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide)) {
-			if(AnimTypeClass* pAnimType = pData->Parachute_Anim) {
+			if(AnimTypeClass* pAnimType = pData->GetParachuteAnim()) {
 				return pAnimType;
 			}
 		} else {

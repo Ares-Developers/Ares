@@ -267,6 +267,10 @@ Iterator<int> SideExt::ExtData::GetDefaultParaDropNum() const {
 	}
 }
 
+AnimTypeClass* SideExt::ExtData::GetParachuteAnim() const {
+	return this->Parachute_Anim.Get(RulesClass::Instance->Parachute);
+}
+
 DWORD SideExt::LoadTextColor(REGISTERS* R, DWORD dwReturnAddress)
 {
 	// if there is a cached LoadTextColor, use that.

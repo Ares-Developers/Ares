@@ -36,7 +36,7 @@ class SideExt
 		NullableVector<TechnoTypeClass*> ParaDropTypes;
 		NullableVector<int> ParaDropNum;
 		ValueableIdx<AircraftTypeClass> ParaDropPlane;
-		Customizable<AnimTypeClass*> Parachute_Anim;
+		Nullable<AnimTypeClass*> Parachute_Anim;
 		Valueable<ColorStruct> ToolTipTextColor;
 		int MessageTextColorIndex;
 		int SidebarMixFileIndex;
@@ -48,7 +48,6 @@ class SideExt
 		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			ArrayIndex (-1),
 			ParaDropPlane (-1),
-			Parachute_Anim (&RulesClass::Instance->Parachute),
 			ToolTipTextColor (),
 			MessageTextColorIndex (-1),
 			EVAIndex (-1)
@@ -87,6 +86,8 @@ class SideExt
 
 		Iterator<int> GetParaDropNum() const;
 		Iterator<int> GetDefaultParaDropNum() const;
+
+		AnimTypeClass* GetParachuteAnim() const;
 	};
 
 	//Hacks required in other classes:
