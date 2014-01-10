@@ -87,9 +87,6 @@ void SideExt::ExtData::LoadFromINIFile(SideClass *pThis, CCINIClass *pINI)
 	this->ParaDropPlane.Read(&exINI, section, "ParaDrop.Aircraft");
 
 	this->ParaDropTypes.Read(&exINI, section, "ParaDrop.Types");
-	if(this->ParaDropTypes.HasValue()) {
-		this->ParaDropFallbackTypes = nullptr;
-	}
 
 	// remove all types that aren't either infantry or unit types
 	this->ParaDropTypes.erase(std::remove_if(this->ParaDropTypes.begin(), this->ParaDropTypes.end(), [section](TechnoTypeClass* pItem) -> bool {
@@ -103,9 +100,6 @@ void SideExt::ExtData::LoadFromINIFile(SideClass *pThis, CCINIClass *pINI)
 	}), this->ParaDropTypes.end());
 
 	this->ParaDropNum.Read(&exINI, section, "ParaDrop.Num");
-	if(this->ParaDropNum.HasValue()) {
-		this->ParaDropFallbackNum = nullptr;
-	}
 
 	this->SidebarMixFileIndex =  pINI->ReadInteger(section, "Sidebar.MixFileIndex", this->SidebarMixFileIndex);
 	this->SidebarYuriFileNames = pINI->ReadBool(section, "Sidebar.YuriFileNames", this->SidebarYuriFileNames);
@@ -238,19 +232,19 @@ Iterator<BuildingTypeClass*> SideExt::ExtData::GetDefaultBaseDefenses() const {
 }
 
 Iterator<TechnoTypeClass*> SideExt::ExtData::GetParaDropTypes() const {
-	if(this->ParaDropFallbackTypes && this->ParaDropFallbackNum) {
-		return *reinterpret_cast<TypeList<TechnoTypeClass*>*>(this->ParaDropFallbackTypes);
+	if(this->ParaDropTypes.HasValue() && this->ParaDropNum.HasValue()) {
+		return this->ParaDropTypes;
 	}
 
-	return this->ParaDropTypes;
+	return *reinterpret_cast<TypeList<TechnoTypeClass*>*>(this->ParaDropFallbackTypes); 
 }
 
 Iterator<int> SideExt::ExtData::GetParaDropNum() const {
-	if(this->ParaDropFallbackTypes && this->ParaDropFallbackNum) {
-		return *this->ParaDropFallbackNum;
+	if(this->ParaDropTypes.HasValue() && this->ParaDropNum.HasValue()) {
+		return this->ParaDropNum;
 	}
 
-	return this->ParaDropNum;
+	return *this->ParaDropFallbackNum;
 }
 
 DWORD SideExt::LoadTextColor(REGISTERS* R, DWORD dwReturnAddress)
