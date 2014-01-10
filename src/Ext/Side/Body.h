@@ -35,7 +35,7 @@ class SideExt
 		NullableVector<int> BaseDefenseCounts;
 		TypeList<InfantryTypeClass*>* ParaDropFallbackTypes;
 		TypeList<int>* ParaDropFallbackNum;
-		TypeList<TechnoTypeClass*> ParaDrop;
+		NullableVector<TechnoTypeClass*> ParaDropTypes;
 		NullableVector<int> ParaDropNum;
 		ValueableIdx<AircraftTypeClass> ParaDropPlane;
 		Customizable<AnimTypeClass*> Parachute_Anim;

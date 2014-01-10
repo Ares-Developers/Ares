@@ -2,6 +2,8 @@
 #include "../../Ares.CRT.h"
 #include <ScenarioClass.h>
 
+#include <algorithm>
+
 //Static init
 template<> const DWORD Extension<SideClass>::Canary = 0x87654321;
 Container<SideExt> SideExt::ExtMap;
@@ -15,9 +17,6 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 	char* pID = pThis->ID;
 
 	this->ArrayIndex = SideClass::FindIndex(pThis->ID);
-
-	//are these necessary?
-	this->ParaDrop.Clear();
 
 	this->ParaDropPlane = AircraftTypeClass::FindIndex("PDPLANE");
 
@@ -65,7 +64,6 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 
 void SideExt::ExtData::LoadFromINIFile(SideClass *pThis, CCINIClass *pINI)
 {
-	char* p = nullptr;
 	char* section = pThis->get_ID();
 
 	INI_EX exINI(pINI);
@@ -88,25 +86,21 @@ void SideExt::ExtData::LoadFromINIFile(SideClass *pThis, CCINIClass *pINI)
 
 	this->ParaDropPlane.Read(&exINI, section, "ParaDrop.Aircraft");
 
-	if(pINI->ReadString(section, "ParaDrop.Types", "", Ares::readBuffer, Ares::readLength)) {
-		this->ParaDrop.Clear();
+	this->ParaDropTypes.Read(&exINI, section, "ParaDrop.Types");
+	if(this->ParaDropTypes.HasValue()) {
 		this->ParaDropFallbackTypes = nullptr;
-
-		char* context = nullptr;
-		for(p = strtok_s(Ares::readBuffer, Ares::readDelims, &context); p && *p; p = strtok_s(nullptr, Ares::readDelims, &context)) {
-			TechnoTypeClass* pTT = UnitTypeClass::Find(p);
-
-			if(!pTT) {
-				pTT = InfantryTypeClass::Find(p);
-			}
-
-			if(pTT) {
-				this->ParaDrop.AddItem(pTT);
-			} else {
-				Debug::INIParseFailed(section, "ParaDrop.Types", p);
-			}
-		}
 	}
+
+	// remove all types that aren't either infantry or unit types
+	this->ParaDropTypes.erase(std::remove_if(this->ParaDropTypes.begin(), this->ParaDropTypes.end(), [section](TechnoTypeClass* pItem) -> bool {
+		auto abs = pItem->WhatAmI();
+		if(abs == InfantryTypeClass::AbsID || abs == UnitTypeClass::AbsID) {
+			return false;
+		}
+
+		Debug::INIParseFailed(section, "ParaDrop.Types", pItem->ID, "Only InfantryTypes and UnitTypes are supported.");
+		return true;
+	}), this->ParaDropTypes.end());
 
 	this->ParaDropNum.Read(&exINI, section, "ParaDrop.Num");
 	if(this->ParaDropNum.HasValue()) {
@@ -248,7 +242,7 @@ Iterator<TechnoTypeClass*> SideExt::ExtData::GetParaDropTypes() const {
 		return *reinterpret_cast<TypeList<TechnoTypeClass*>*>(this->ParaDropFallbackTypes);
 	}
 
-	return this->ParaDrop;
+	return this->ParaDropTypes;
 }
 
 Iterator<int> SideExt::ExtData::GetParaDropNum() const {
@@ -296,7 +290,7 @@ bool Container<SideExt>::Save(SideClass *pThis, IStream *pStm) {
 		//ULONG out;
 		//pData->BaseDefenses.Save(pStm);
 		//pData->BaseDefenseCounts.Save(pStm);
-		pData->ParaDrop.Save(pStm);
+		//pData->ParaDrop.Save(pStm);
 		//pData->ParaDropNum.Save(pStm);
 	}
 
@@ -310,7 +304,7 @@ bool Container<SideExt>::Load(SideClass *pThis, IStream *pStm) {
 	SWIZZLE(pData->Crew);
 	//pData->BaseDefenses.Load(pStm, 1);
 	//pData->BaseDefenseCounts.Load(pStm, 0);
-	pData->ParaDrop.Load(pStm, 1);
+	//pData->ParaDrop.Load(pStm, 1);
 	//pData->ParaDropNum.Load(pStm, 0);
 
 	return pData != nullptr;
