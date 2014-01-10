@@ -18,7 +18,6 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 
 	//are these necessary?
 	this->ParaDrop.Clear();
-	this->ParaDropNum.Clear();
 
 	this->ParaDropPlane = AircraftTypeClass::FindIndex("PDPLANE");
 
@@ -109,14 +108,9 @@ void SideExt::ExtData::LoadFromINIFile(SideClass *pThis, CCINIClass *pINI)
 		}
 	}
 
-	if(pINI->ReadString(section, "ParaDrop.Num", "", Ares::readBuffer, Ares::readLength)) {
-		this->ParaDropNum.Clear();
+	this->ParaDropNum.Read(&exINI, section, "ParaDrop.Num");
+	if(this->ParaDropNum.HasValue()) {
 		this->ParaDropFallbackNum = nullptr;
-
-		char* context = nullptr;
-		for(p = strtok_s(Ares::readBuffer, Ares::readDelims, &context); p && *p; p = strtok_s(nullptr, Ares::readDelims, &context)) {
-			this->ParaDropNum.AddItem(atoi(p));
-		}
 	}
 
 	this->SidebarMixFileIndex =  pINI->ReadInteger(section, "Sidebar.MixFileIndex", this->SidebarMixFileIndex);
@@ -303,7 +297,7 @@ bool Container<SideExt>::Save(SideClass *pThis, IStream *pStm) {
 		//pData->BaseDefenses.Save(pStm);
 		//pData->BaseDefenseCounts.Save(pStm);
 		pData->ParaDrop.Save(pStm);
-		pData->ParaDropNum.Save(pStm);
+		//pData->ParaDropNum.Save(pStm);
 	}
 
 	return pData != nullptr;
@@ -317,7 +311,7 @@ bool Container<SideExt>::Load(SideClass *pThis, IStream *pStm) {
 	//pData->BaseDefenses.Load(pStm, 1);
 	//pData->BaseDefenseCounts.Load(pStm, 0);
 	pData->ParaDrop.Load(pStm, 1);
-	pData->ParaDropNum.Load(pStm, 0);
+	//pData->ParaDropNum.Load(pStm, 0);
 
 	return pData != nullptr;
 }

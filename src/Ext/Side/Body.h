@@ -36,7 +36,7 @@ class SideExt
 		TypeList<InfantryTypeClass*>* ParaDropFallbackTypes;
 		TypeList<int>* ParaDropFallbackNum;
 		TypeList<TechnoTypeClass*> ParaDrop;
-		TypeList<int> ParaDropNum;
+		NullableVector<int> ParaDropNum;
 		ValueableIdx<AircraftTypeClass> ParaDropPlane;
 		Customizable<AnimTypeClass*> Parachute_Anim;
 		Valueable<ColorStruct> ToolTipTextColor;
