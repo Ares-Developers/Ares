@@ -96,12 +96,7 @@ void SideExt::ExtData::LoadFromINIFile(SideClass *pThis, CCINIClass *pINI)
 	this->SidebarYuriFileNames = pINI->ReadBool(section, "Sidebar.YuriFileNames", this->SidebarYuriFileNames);
 	this->ToolTipTextColor.Read(&exINI, section, "ToolTipColor");
 	this->SurvivorDivisor.Read(&exINI, section, "SurvivorDivisor");
-
-	if(pINI->ReadString(section, "MessageTextColor", "", Ares::readBuffer, 0x80)) {
-		if(ColorScheme* pCS = ColorScheme::Find(Ares::readBuffer)) {
-			this->MessageTextColorIndex = pCS->ArrayIndex;
-		}
-	}
+	this->MessageTextColorIndex.Read(&exINI, section, "MessageTextColor");
 }
 
 int SideExt::ExtData::GetSurvivorDivisor() const {

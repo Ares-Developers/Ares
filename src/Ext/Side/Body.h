@@ -38,7 +38,7 @@ class SideExt
 		ValueableIdx<AircraftTypeClass> ParaDropPlane;
 		Nullable<AnimTypeClass*> Parachute_Anim;
 		Valueable<ColorStruct> ToolTipTextColor;
-		int MessageTextColorIndex;
+		ValueableIdx<ColorScheme> MessageTextColorIndex;
 		int SidebarMixFileIndex;
 		bool SidebarYuriFileNames;
 		ValueableIdx<EVAVoices> EVAIndex;
