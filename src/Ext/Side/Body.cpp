@@ -24,9 +24,6 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 
 		this->EVAIndex = 1;
 
-		this->ParaDropFallbackTypes = &RulesClass::Instance->SovParaDropInf;
-		this->ParaDropFallbackNum = &RulesClass::Instance->SovParaDropNum;
-
 		this->SidebarMixFileIndex = 2;
 		this->SidebarYuriFileNames = false;
 
@@ -37,9 +34,6 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 
 		this->EVAIndex = 2;
 
-		this->ParaDropFallbackTypes = &RulesClass::Instance->YuriParaDropInf;
-		this->ParaDropFallbackNum = &RulesClass::Instance->YuriParaDropNum;
-
 		this->SidebarMixFileIndex = 2;
 		this->SidebarYuriFileNames = true;
 
@@ -49,9 +43,6 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 	} else { //Allies or any other country
 
 		this->EVAIndex = 0;
-
-		this->ParaDropFallbackTypes = &RulesClass::Instance->AllyParaDropInf;
-		this->ParaDropFallbackNum = &RulesClass::Instance->AllyParaDropNum;
 
 		this->SidebarMixFileIndex = 1;
 		this->SidebarYuriFileNames = false;
@@ -236,7 +227,8 @@ Iterator<TechnoTypeClass*> SideExt::ExtData::GetParaDropTypes() const {
 		return this->ParaDropTypes;
 	}
 
-	return *reinterpret_cast<TypeList<TechnoTypeClass*>*>(this->ParaDropFallbackTypes); 
+	auto ret = this->GetDefaultParaDropTypes();
+	return reinterpret_cast<Iterator<TechnoTypeClass*>&>(ret);
 }
 
 Iterator<InfantryTypeClass*> SideExt::ExtData::GetDefaultParaDropTypes() const {
@@ -258,7 +250,7 @@ Iterator<int> SideExt::ExtData::GetParaDropNum() const {
 		return this->ParaDropNum;
 	}
 
-	return *this->ParaDropFallbackNum;
+	return this->GetDefaultParaDropNum();
 }
 
 Iterator<int> SideExt::ExtData::GetDefaultParaDropNum() const {

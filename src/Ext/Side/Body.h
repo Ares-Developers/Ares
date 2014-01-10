@@ -33,8 +33,6 @@ class SideExt
 		Nullable<int> SurvivorDivisor;
 		NullableVector<BuildingTypeClass*> BaseDefenses;
 		NullableVector<int> BaseDefenseCounts;
-		TypeList<InfantryTypeClass*>* ParaDropFallbackTypes;
-		TypeList<int>* ParaDropFallbackNum;
 		NullableVector<TechnoTypeClass*> ParaDropTypes;
 		NullableVector<int> ParaDropNum;
 		ValueableIdx<AircraftTypeClass> ParaDropPlane;
