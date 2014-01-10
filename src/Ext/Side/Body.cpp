@@ -239,12 +239,40 @@ Iterator<TechnoTypeClass*> SideExt::ExtData::GetParaDropTypes() const {
 	return *reinterpret_cast<TypeList<TechnoTypeClass*>*>(this->ParaDropFallbackTypes); 
 }
 
+Iterator<InfantryTypeClass*> SideExt::ExtData::GetDefaultParaDropTypes() const {
+	switch(this->ArrayIndex) {
+	case 0:
+		return RulesClass::Instance->AllyParaDropInf;
+	case 1:
+		return RulesClass::Instance->SovParaDropInf;
+	case 2:
+		return RulesClass::Instance->YuriParaDropInf;
+	default:
+		//return SovParaDropInf would be correct, but Ares < 0.6 does this:
+		return RulesClass::Instance->AllyParaDropInf;
+	}
+}
+
 Iterator<int> SideExt::ExtData::GetParaDropNum() const {
 	if(this->ParaDropTypes.HasValue() && this->ParaDropNum.HasValue()) {
 		return this->ParaDropNum;
 	}
 
 	return *this->ParaDropFallbackNum;
+}
+
+Iterator<int> SideExt::ExtData::GetDefaultParaDropNum() const {
+	switch(this->ArrayIndex) {
+	case 0:
+		return RulesClass::Instance->AllyParaDropNum;
+	case 1:
+		return RulesClass::Instance->SovParaDropNum;
+	case 2:
+		return RulesClass::Instance->YuriParaDropNum;
+	default:
+		//return SovParaDropNum would be correct, but Ares < 0.6 does this:
+		return RulesClass::Instance->AllyParaDropNum;
+	}
 }
 
 DWORD SideExt::LoadTextColor(REGISTERS* R, DWORD dwReturnAddress)
