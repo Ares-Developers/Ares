@@ -158,21 +158,14 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 }
 
 void HouseTypeExt::ExtData::Initialize(HouseTypeClass *pThis) {
-	this->Powerplants.Clear();
-
-	BuildingTypeClass * pPower = nullptr;
-
 	switch (pThis->SideIndex) {
 	case 0:
-		pPower = RulesClass::Instance->GDIPowerPlant;
 		this->LoadTextColor = ColorScheme::Find("AlliedLoad");
 		break;
 	case 1:
-		pPower = RulesClass::Instance->NodRegularPower;
 		this->LoadTextColor = ColorScheme::Find("SovietLoad");
 		break;
 	case 2:
-		pPower = RulesClass::Instance->ThirdPowerPlant;
 		this->LoadTextColor = ColorScheme::Find("YuriLoad");
 		if(!this->LoadTextColor) {
 			// there is no YuriLoad in the original game. fall
@@ -180,9 +173,6 @@ void HouseTypeExt::ExtData::Initialize(HouseTypeClass *pThis) {
 			this->LoadTextColor = ColorScheme::Find("Purple");
 		}
 		break;
-	}
-	if (pPower) {
-		this->Powerplants.AddItem(pPower);
 	}
 }
 
@@ -271,31 +261,6 @@ void HouseTypeExt::ExtData::LoadFromINIFile(HouseTypeClass *pThis, CCINIClass *p
 
 	if(!this->SettingsInherited && *pThis->ParentCountry && _strcmpi(pThis->ParentCountry, pThis->ID)) {
 		this->InheritSettings(pThis);
-	}
-
-	if (!this->Powerplants.Count) {
-		const char * section = "General";
-		const char * key = nullptr;
-		switch (pThis->SideIndex) {
-			case 0:
-				key = "GDIPowerPlant";
-				break;
-			case 1:
-				key = "NodRegularPower";
-				break;
-			case 2:
-				key = "ThirdPowerPlant";
-				break;
-		}
-		if(key) {
-			if (pINI->ReadString(section, key, "", Ares::readBuffer, Ares::readLength)) {
-				if (BuildingTypeClass *pBld = BuildingTypeClass::Find(Ares::readBuffer)) {
-					this->Powerplants.AddItem(pBld);
-				} else {
-					Debug::INIParseFailed(section, key, Ares::readBuffer);
-				}
-			}
-		}
 	}
 
 	if (pINI->ReadString(pID, "AI.PowerPlants", "", Ares::readBuffer, Ares::readLength)) {
