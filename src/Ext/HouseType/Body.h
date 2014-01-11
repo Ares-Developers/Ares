@@ -38,7 +38,7 @@ class HouseTypeExt
 			int CountryListIndex; //The index this country will appear in the selection list.
 
 			DynamicVectorClass<BuildingTypeClass *> Powerplants;
-			TypeList<TechnoTypeClass*> ParaDrop;
+			ValueableVector<TechnoTypeClass*> ParaDropTypes;
 			ValueableVector<int> ParaDropNum;
 			ValueableIdx<AircraftTypeClass> ParaDropPlane;
 			Valueable<AnimTypeClass*> Parachute_Anim;

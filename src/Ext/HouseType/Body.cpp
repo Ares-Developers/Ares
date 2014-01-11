@@ -7,6 +7,7 @@
 #include <DiscreteDistributionClass.h>
 
 #include <iterator>
+#include <algorithm>
 
 template<> const DWORD Extension<HouseTypeClass>::Canary = 0xAFFEAFFE;
 Container<HouseTypeExt> HouseTypeExt::ExtMap;
@@ -158,7 +159,6 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 
 void HouseTypeExt::ExtData::Initialize(HouseTypeClass *pThis) {
 	this->Powerplants.Clear();
-	this->ParaDrop.Clear();
 
 	BuildingTypeClass * pPower = nullptr;
 
@@ -317,25 +317,18 @@ void HouseTypeExt::ExtData::LoadFromINIFile(HouseTypeClass *pThis, CCINIClass *p
 	
 	this->ParaDropPlane.Read(&exINI, pID, "ParaDrop.Aircraft");
 
-	char* p = nullptr;
-	if(pINI->ReadString(pID, "ParaDrop.Types", "", Ares::readBuffer, Ares::readLength)) {
-		this->ParaDrop.Clear();
+	this->ParaDropTypes.Read(&exINI, pID, "ParaDrop.Types");
 
-		char* context = nullptr;
-		for(p = strtok_s(Ares::readBuffer, Ares::readDelims, &context); p && *p; p = strtok_s(nullptr, Ares::readDelims, &context)) {
-			TechnoTypeClass* pTT = UnitTypeClass::Find(p);
-
-			if(!pTT) {
-				pTT = InfantryTypeClass::Find(p);
-			}
-
-			if(pTT) {
-				this->ParaDrop.AddItem(pTT);
-			} else {
-				Debug::INIParseFailed(pID, "ParaDrop.Types", p);
-			}
+	// remove all types that aren't either infantry or unit types
+	this->ParaDropTypes.erase(std::remove_if(this->ParaDropTypes.begin(), this->ParaDropTypes.end(), [pID](TechnoTypeClass* pItem) -> bool {
+		auto abs = pItem->WhatAmI();
+		if(abs == InfantryTypeClass::AbsID || abs == UnitTypeClass::AbsID) {
+			return false;
 		}
-	}
+
+		Debug::INIParseFailed(pID, "ParaDrop.Types", pItem->ID, "Only InfantryTypes and UnitTypes are supported.");
+		return true;
+	}), this->ParaDropTypes.end());
 
 	this->ParaDropNum.Read(&exINI, pID, "ParaDrop.Num");
 
@@ -401,7 +394,7 @@ void HouseTypeExt::ExtData::InheritSettings(HouseTypeClass *pThis) {
 			this->Parachute_Anim.Set(ParentData->Parachute_Anim);
 
 			CopyVector(&HouseTypeExt::ExtData::Powerplants, ParentData, this);
-			CopyVector(&HouseTypeExt::ExtData::ParaDrop, ParentData, this);
+			this->ParaDropTypes = ParentData->ParaDropTypes;
 			this->ParaDropNum = ParentData->ParaDropNum;
 
 			CopyStdVector(&HouseTypeExt::ExtData::VeteranBuildings, ParentData, this);
@@ -460,8 +453,8 @@ AircraftTypeClass* HouseTypeExt::ExtData::GetParadropPlane() {
 bool HouseTypeExt::ExtData::GetParadropContent(Iterator<TechnoTypeClass*> &Types, Iterator<int> &Num) {
 	// tries to get the house's default contents and falls back to
 	// the sides default contents.
-	if(this->ParaDrop.Count) {
-		Types = this->ParaDrop;
+	if(this->ParaDropTypes.size()) {
+		Types = this->ParaDropTypes;
 		Num = this->ParaDropNum;
 	}
 
