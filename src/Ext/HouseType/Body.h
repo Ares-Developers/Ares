@@ -37,7 +37,7 @@ class HouseTypeExt
 			int RandomSelectionWeight; //This country gets added this many times into the list of legible countries for random selection.
 			int CountryListIndex; //The index this country will appear in the selection list.
 
-			DynamicVectorClass<BuildingTypeClass *> Powerplants;
+			ValueableVector<BuildingTypeClass *> Powerplants;
 			ValueableVector<TechnoTypeClass*> ParaDropTypes;
 			ValueableVector<int> ParaDropNum;
 			ValueableIdx<AircraftTypeClass> ParaDropPlane;

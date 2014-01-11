@@ -263,20 +263,9 @@ void HouseTypeExt::ExtData::LoadFromINIFile(HouseTypeClass *pThis, CCINIClass *p
 		this->InheritSettings(pThis);
 	}
 
-	if (pINI->ReadString(pID, "AI.PowerPlants", "", Ares::readBuffer, Ares::readLength)) {
-		this->Powerplants.Clear();
-
-		char* context = nullptr;
-		for (char *bld = strtok_s(Ares::readBuffer, Ares::readDelims, &context); bld; bld = strtok_s(nullptr, Ares::readDelims, &context)) {
-			if (BuildingTypeClass *pBld = BuildingTypeClass::Find(bld)) {
-				this->Powerplants.AddItem(pBld);
-			} else {
-				Debug::INIParseFailed(pID, "AI.PowerPlants", bld);
-			}
-		}
-	}
-
 	INI_EX exINI(pINI);
+
+	this->Powerplants.Read(&exINI, pID, "AI.PowerPlants");
 
 	this->Parachute_Anim.Parse(&exINI, pID, "Parachute.Anim");
 	
@@ -358,7 +347,7 @@ void HouseTypeExt::ExtData::InheritSettings(HouseTypeClass *pThis) {
 			this->ParaDropPlane.Set(ParentData->ParaDropPlane);
 			this->Parachute_Anim.Set(ParentData->Parachute_Anim);
 
-			CopyVector(&HouseTypeExt::ExtData::Powerplants, ParentData, this);
+			this->Powerplants = ParentData->Powerplants;
 			this->ParaDropTypes = ParentData->ParaDropTypes;
 			this->ParaDropNum = ParentData->ParaDropNum;
 
@@ -436,7 +425,7 @@ bool HouseTypeExt::ExtData::GetParadropContent(Iterator<TechnoTypeClass*> &Types
 }
 
 Iterator<BuildingTypeClass*> HouseTypeExt::ExtData::GetPowerplants() const {
-	if(this->Powerplants.Count) {
+	if(this->Powerplants.size()) {
 		return this->Powerplants;
 	}
 
@@ -488,7 +477,7 @@ bool Container<HouseTypeExt>::Save(HouseTypeClass *pThis, IStream *pStm) {
 	HouseTypeExt::ExtData* pData = this->SaveKey(pThis, pStm);
 
 	if (pData) {
-		pData->Powerplants.Save(pStm);
+		//pData->Powerplants.Save(pStm);
 	}
 
 	return pData != nullptr;
@@ -497,7 +486,7 @@ bool Container<HouseTypeExt>::Save(HouseTypeClass *pThis, IStream *pStm) {
 bool Container<HouseTypeExt>::Load(HouseTypeClass *pThis, IStream *pStm) {
 	HouseTypeExt::ExtData* pData = this->LoadKey(pThis, pStm);
 
-	pData->Powerplants.Load(pStm, 1);
+	//pData->Powerplants.Load(pStm, 1);
 
 	return pData != nullptr;
 }
