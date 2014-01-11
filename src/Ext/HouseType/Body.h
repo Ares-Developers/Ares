@@ -93,6 +93,8 @@ class HouseTypeExt
 		bool GetParadropContent(Iterator<TechnoTypeClass*>&, Iterator<int>&);
 		AnimTypeClass* GetParachuteAnim();
 
+		Iterator<BuildingTypeClass*> GetPowerplants() const;
+
 		void InheritSettings(HouseTypeClass *pThis);
 	};
 

@@ -470,6 +470,10 @@ bool HouseTypeExt::ExtData::GetParadropContent(Iterator<TechnoTypeClass*> &Types
 	return (Types && Num);
 }
 
+Iterator<BuildingTypeClass*> HouseTypeExt::ExtData::GetPowerplants() const {
+	return this->Powerplants;
+}
+
 int HouseTypeExt::PickRandomCountry() {
 	DiscreteDistributionClass<int> items;
 

@@ -301,7 +301,9 @@ bool HouseExt::ExtData::CheckBasePlanSanity() {
 //			CheckList(&RulesClass::Instance->BuildNavalYard, "BuildNavalYard");
 
 	auto pCountryData = HouseTypeExt::ExtMap.Find(House->Type);
-	CheckList(&pCountryData->Powerplants, "Powerplants");
+	auto Powerplants = pCountryData->GetPowerplants();
+	DynamicVectorClass<BuildingTypeClass*> Dummy(Powerplants.size(), const_cast<BuildingTypeClass**>(Powerplants.begin()));
+	CheckList(&Dummy, "Powerplants");
 
 //			auto pSide = SideClass::Array->GetItem(curHouse->Type->SideIndex);
 //			auto pSideData = SideExt::ExtMap.Find(pSide);
