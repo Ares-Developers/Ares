@@ -160,17 +160,17 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 void HouseTypeExt::ExtData::Initialize(HouseTypeClass *pThis) {
 	switch (pThis->SideIndex) {
 	case 0:
-		this->LoadTextColor = ColorScheme::Find("AlliedLoad");
+		this->LoadTextColor = ColorScheme::FindIndex("AlliedLoad");
 		break;
 	case 1:
-		this->LoadTextColor = ColorScheme::Find("SovietLoad");
+		this->LoadTextColor = ColorScheme::FindIndex("SovietLoad");
 		break;
 	case 2:
-		this->LoadTextColor = ColorScheme::Find("YuriLoad");
-		if(!this->LoadTextColor) {
+		this->LoadTextColor = ColorScheme::FindIndex("YuriLoad");
+		if(this->LoadTextColor == -1) {
 			// there is no YuriLoad in the original game. fall
 			// back to a decent value.
-			this->LoadTextColor = ColorScheme::Find("Purple");
+			this->LoadTextColor = ColorScheme::FindIndex("Purple");
 		}
 		break;
 	}
@@ -286,11 +286,7 @@ void HouseTypeExt::ExtData::LoadFromINIFile(HouseTypeClass *pThis, CCINIClass *p
 
 	this->ParaDropNum.Read(&exINI, pID, "ParaDrop.Num");
 
-	if(pINI->ReadString(pID, "LoadScreenText.Color", "", Ares::readBuffer, 0x80)) {
-		if(ColorScheme* CS = ColorScheme::Find(Ares::readBuffer)) {
-			this->LoadTextColor = CS;
-		}
-	}
+	this->LoadTextColor.Read(&exINI, pID, "LoadScreenText.Color");
 
 	this->RandomSelectionWeight = pINI->ReadInteger(pID, "RandomSelectionWeight", this->RandomSelectionWeight);
 	this->CountryListIndex = pINI->ReadInteger(pID, "ListIndex", this->CountryListIndex);

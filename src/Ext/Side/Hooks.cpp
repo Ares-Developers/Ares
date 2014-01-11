@@ -161,8 +161,8 @@ DEFINE_HOOK(6847B7, Sides_LoadTextColor_CacheMP, 6) {
 	SideExt::CurrentLoadTextColor = -1;
 
 	if(HouseTypeExt::ExtData *pData = HouseTypeExt::ExtMap.Find(pType)) {
-		if(pData->LoadTextColor) {
-			SideExt::CurrentLoadTextColor = pData->LoadTextColor->ArrayIndex;
+		if(pData->LoadTextColor != -1) {
+			SideExt::CurrentLoadTextColor = pData->LoadTextColor;
 		}
 	}
 
@@ -190,7 +190,7 @@ DEFINE_HOOK(686D7F, Sides_LoadTextColor_CacheSP, 6) {
 
 	if(pINI->ReadString(ScenarioClass::Instance->FileName, "LoadScreenText.Color", pDefault, Ares::readBuffer, 0x80)) {
 		if(ColorScheme* pCS = ColorScheme::Find(Ares::readBuffer)) {
-			SideExt::CurrentLoadTextColor = pCS->ArrayIndex;
+			SideExt::CurrentLoadTextColor = pCS->ArrayIndex; // TODO: check if off by one. see ColorScheme.h
 		}
 	}
 

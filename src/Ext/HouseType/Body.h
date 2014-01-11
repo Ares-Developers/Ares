@@ -33,7 +33,7 @@ class HouseTypeExt
 			char LSSpecialName[0x20]; //Stringtable label for this country's special weapon
 			char LSBrief[0x20]; //Stringtable label for this country's load brief
 			char StatusText[0x20]; //Stringtable label for this country's Skirmish STT
-			ColorScheme* LoadTextColor; //The text color used for non-Campaign modes
+			ValueableIdx<ColorScheme> LoadTextColor; //The text color used for non-Campaign modes
 			int RandomSelectionWeight; //This country gets added this many times into the list of legible countries for random selection.
 			int CountryListIndex; //The index this country will appear in the selection list.
 
@@ -59,7 +59,7 @@ class HouseTypeExt
 				ParaDropPlane (-1),
 				Parachute_Anim (nullptr),
 				VeteranBuildings (),
-				LoadTextColor (nullptr),
+				LoadTextColor (-1),
 				ObserverBackgroundSHP (nullptr),
 				ObserverFlagSHP (nullptr),
 				ObserverFlagYuriPAL (false),
