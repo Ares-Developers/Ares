@@ -159,7 +159,6 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 void HouseTypeExt::ExtData::Initialize(HouseTypeClass *pThis) {
 	this->Powerplants.Clear();
 	this->ParaDrop.Clear();
-	this->ParaDropNum.Clear();
 
 	BuildingTypeClass * pPower = nullptr;
 
@@ -338,14 +337,7 @@ void HouseTypeExt::ExtData::LoadFromINIFile(HouseTypeClass *pThis, CCINIClass *p
 		}
 	}
 
-	if(pINI->ReadString(pID, "ParaDrop.Num", "", Ares::readBuffer, Ares::readLength)) {
-		this->ParaDropNum.Clear();
-
-		char* context = nullptr;
-		for(p = strtok_s(Ares::readBuffer, Ares::readDelims, &context); p && *p; p = strtok_s(nullptr, Ares::readDelims, &context)) {
-			this->ParaDropNum.AddItem(atoi(p));
-		}
-	}
+	this->ParaDropNum.Read(&exINI, pID, "ParaDrop.Num");
 
 	if(pINI->ReadString(pID, "LoadScreenText.Color", "", Ares::readBuffer, 0x80)) {
 		if(ColorScheme* CS = ColorScheme::Find(Ares::readBuffer)) {
@@ -410,7 +402,7 @@ void HouseTypeExt::ExtData::InheritSettings(HouseTypeClass *pThis) {
 
 			CopyVector(&HouseTypeExt::ExtData::Powerplants, ParentData, this);
 			CopyVector(&HouseTypeExt::ExtData::ParaDrop, ParentData, this);
-			CopyVector(&HouseTypeExt::ExtData::ParaDropNum, ParentData, this);
+			this->ParaDropNum = ParentData->ParaDropNum;
 
 			CopyStdVector(&HouseTypeExt::ExtData::VeteranBuildings, ParentData, this);
 		}
