@@ -38,7 +38,7 @@ void AnimTypeExt::SetMakeInfOwner(AnimClass *pAnim, HouseClass *pInvoker, HouseC
 	HouseClass *newOwner = nullptr;
 	switch(pAnimData->MakeInfantryOwner) {
 		case AnimTypeExt::ExtData::NEUTRAL:
-			newOwner = HouseClass::FindByCountryIndex(HouseTypeClass::FindIndexOfName("Neutral"));
+			newOwner = HouseClass::FindNeutral();
 			break;
 
 		case AnimTypeExt::ExtData::RANDOM:
