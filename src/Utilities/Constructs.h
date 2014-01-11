@@ -17,18 +17,23 @@
 
 class CustomPalette {
 public:
+	class PaletteMode {
+	public:
+		typedef int Value;
+		enum {
+			Default = 0,
+			Temperate = 1
+		};
+	};
+
+	PaletteMode::Value Mode;
 	ConvertClass* Convert;
 	BytePalette* Palette;
-	BytePalette* TargetPalette;
-	DSurface* TargetSurface;
-	size_t ShadeCount;
 
-	CustomPalette(BytePalette* pTargetPal = nullptr, DSurface* pSurface = nullptr, size_t shades = 1) :
+	CustomPalette(PaletteMode::Value mode = PaletteMode::Default) :
+		Mode(mode),
 		Convert(nullptr),
-		Palette(nullptr),
-		TargetPalette(pTargetPal),
-		TargetSurface(pSurface),
-		ShadeCount(shades)
+		Palette(nullptr)
 	{};
 
 	~CustomPalette() {
@@ -89,10 +94,12 @@ private:
 	}
 
 	void CreateConvert() {
-		auto pTargetPal = this->TargetPalette ? this->TargetPalette : this->Palette;
-		auto pSurface = this->TargetSurface ? this->TargetSurface : DSurface::Alternate;
-
-		GAME_ALLOC(ConvertClass, this->Convert, this->Palette, pTargetPal, pSurface, this->ShadeCount, 0);
+		if(this->Mode == PaletteMode::Temperate) {
+			auto pTargetPal = (BytePalette*)0x885780; // pointer to TEMPERAT_PAL (not the Convert!)
+			GAME_ALLOC(ConvertClass, this->Convert, this->Palette, pTargetPal, DSurface::Primary, 53, 0);
+		} else {
+			GAME_ALLOC(ConvertClass, this->Convert, this->Palette, this->Palette, DSurface::Alternate, 1, 0);
+		}
 	}
 };
 

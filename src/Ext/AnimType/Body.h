@@ -24,7 +24,7 @@ public:
 
 		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			MakeInfantryOwner (INVOKER),
-			Palette((BytePalette*)0x885780, DSurface::Primary, 53) // pointer to TEMPERAT_PAL (not the Convert!)
+			Palette(CustomPalette::PaletteMode::Temperate)
 			{ };
 
 		virtual ~ExtData() {
