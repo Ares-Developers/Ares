@@ -94,6 +94,7 @@ class HouseTypeExt
 		AnimTypeClass* GetParachuteAnim();
 
 		Iterator<BuildingTypeClass*> GetPowerplants() const;
+		Iterator<BuildingTypeClass*> GetDefaultPowerplants() const;
 
 		void InheritSettings(HouseTypeClass *pThis);
 	};

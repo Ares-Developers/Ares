@@ -471,7 +471,29 @@ bool HouseTypeExt::ExtData::GetParadropContent(Iterator<TechnoTypeClass*> &Types
 }
 
 Iterator<BuildingTypeClass*> HouseTypeExt::ExtData::GetPowerplants() const {
-	return this->Powerplants;
+	if(this->Powerplants.Count) {
+		return this->Powerplants;
+	}
+
+	return this->GetDefaultPowerplants();
+}
+
+Iterator<BuildingTypeClass*> HouseTypeExt::ExtData::GetDefaultPowerplants() const {
+	BuildingTypeClass** ppPower = nullptr;
+	switch(this->AttachedToObject->SideIndex) {
+	case 0:
+		ppPower = &RulesClass::Instance->GDIPowerPlant;
+		break;
+	case 1:
+		ppPower = &RulesClass::Instance->NodRegularPower;
+		break;
+	case 2:
+		ppPower = &RulesClass::Instance->ThirdPowerPlant;
+		break;
+	}
+
+	int count = (ppPower && *ppPower) ? 1 : 0;
+	return Iterator<BuildingTypeClass*>(ppPower, count);
 }
 
 int HouseTypeExt::PickRandomCountry() {
