@@ -50,15 +50,15 @@ class HouseExt
 			IndexBitfield<HouseClass*> RadarPersist; 
 
 		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
-			IonSensitive(0),
-			FirewallActive(0),
+			IonSensitive(false),
+			FirewallActive(false),
 			FirewallRecalc(0),
 			Factory_BuildingType(nullptr),
 			Factory_InfantryType(nullptr),
 			Factory_VehicleType(nullptr),
 			Factory_NavyType(nullptr),
 			Factory_AircraftType(nullptr),
-			SWLastIndex(0),
+			SWLastIndex(-1),
 			RadarPersist(),
 			StolenTech(0ull)
 		{

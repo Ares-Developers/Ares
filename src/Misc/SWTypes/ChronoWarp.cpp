@@ -31,9 +31,7 @@ bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 	// get the previous super weapon
 	SuperClass* pSource = nullptr;
 	if(HouseExt::ExtData *pExt = HouseExt::ExtMap.Find(pThis->Owner)) {
-		if(pThis->Owner->Supers.ValidIndex(pExt->SWLastIndex)) {
-			pSource = pThis->Owner->Supers.GetItem(pExt->SWLastIndex);
-		}
+		pSource = pThis->Owner->Supers.GetItemOrDefault(pExt->SWLastIndex);
 	}
 
 	// use source super weapon properties

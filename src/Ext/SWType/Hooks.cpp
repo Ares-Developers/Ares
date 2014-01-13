@@ -473,9 +473,7 @@ DEFINE_HOOK(4FAE72, HouseClass_SWFire_PreDependent, 6)
 	// don't use a fixed SW type but the very one acutually fired last.
 	SuperClass* pSource = nullptr;
 	if(HouseExt::ExtData *pExt = HouseExt::ExtMap.Find(pThis)) {
-		if(pThis->Supers.ValidIndex(pExt->SWLastIndex)) {
-			pSource = pThis->Supers.GetItem(pExt->SWLastIndex);
-		}
+		pSource = pThis->Supers.GetItemOrDefault(pExt->SWLastIndex);
 	}
 
 	R->ESI(pSource);
