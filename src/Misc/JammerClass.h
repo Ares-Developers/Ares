@@ -22,14 +22,11 @@ class JammerClass {
 	void Unjam(BuildingClass *);			//!< Attempts to unjam the given building. (Actually just unregisters the Jammer with it, the unjamming happens in a hook.)
 
   public:
-	JammerClass(TechnoClass* GameObject) : LastScan(0), AttachedToObject(nullptr), Ext(nullptr) {
-		this->AttachedToObject = GameObject;
+	JammerClass(TechnoClass* GameObject) : LastScan(0), AttachedToObject(GameObject), Ext(nullptr) {
 		this->Ext = TechnoExt::ExtMap.Find(GameObject);
 	}
 
-	JammerClass(TechnoClass* GameObject, TechnoExt::ExtData* pExt) : LastScan(0), AttachedToObject(nullptr), Ext(nullptr) {
-		this->AttachedToObject = GameObject;
-		this->Ext = pExt;
+	JammerClass(TechnoClass* GameObject, TechnoExt::ExtData* pExt) : LastScan(0), AttachedToObject(GameObject), Ext(pExt) {
 	}
 
 	void UnjamAll();						//!< Unregisters this Jammer on all structures.
