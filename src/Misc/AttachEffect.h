@@ -37,8 +37,8 @@ public:
 	//#1623-only tags
 	Valueable<int> Delay;
 
-	virtual void Attach(TechnoClass* Target, int Duration, TechnoClass* Invoker);
-	//virtual void Attach(TechnoClass* Target, int Duration, TechnoClass* Invoker, int DamageDelay);
+	void Attach(TechnoClass* Target, int Duration, TechnoClass* Invoker);
+	//void Attach(TechnoClass* Target, int Duration, TechnoClass* Invoker, int DamageDelay);
 	
 	AttachEffectTypeClass(): Cumulative(false),
 		Duration(0),
@@ -66,7 +66,7 @@ public:
 
 class AttachEffectClass {
 public:
-	AttachEffectClass(AttachEffectTypeClass* AEType, int Timer): Type(AEType), Animation(nullptr), ActualDuration(Timer) {
+	AttachEffectClass(AttachEffectTypeClass* AEType, int Timer): Type(AEType), Animation(nullptr), ActualDuration(Timer), Invoker(nullptr) {
 	}
 
 	AttachEffectTypeClass * Type;
