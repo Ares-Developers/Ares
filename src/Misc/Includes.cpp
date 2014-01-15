@@ -33,10 +33,10 @@ DEFINE_HOOK(474314, CCINIClass_ReadCCFile2, 6)
 		const char *key = xINI->GetKeyName(section, i);
 		++Includes::LastReadIndex;
 		if(xINI->ReadString(section, key, "", buffer, 0x80)) {
-			bool canLoad = 1;
-			for(int j = 0; j < Includes::LoadedINIFiles.Count; ++j ) {
+			bool canLoad = true;
+			for(int j = 0; j < Includes::LoadedINIFiles.Count; ++j) {
 				if(!strcmp(Includes::LoadedINIFiles[j], buffer)) {
-					canLoad = 0;
+					canLoad = false;
 					break;
 				}
 			}
@@ -44,7 +44,7 @@ DEFINE_HOOK(474314, CCINIClass_ReadCCFile2, 6)
 			if(canLoad) {
 				CCFileClass *xFile;
 				GAME_ALLOC(CCFileClass, xFile, buffer);
-				if(xFile->Exists(NULL)) {
+				if(xFile->Exists(nullptr)) {
 					xINI->ReadCCFile(xFile);
 				}
 				GAME_DEALLOC(xFile);
@@ -54,15 +54,11 @@ DEFINE_HOOK(474314, CCINIClass_ReadCCFile2, 6)
 
 	Includes::LoadedINIs.RemoveItem(Includes::LoadedINIs.Count - 1);
 	if(!Includes::LoadedINIs.Count) {
-		for(int j = Includes::LoadedINIs.Count - 1; j > 0; --j) {
-			Includes::LoadedINIs.RemoveItem(j);
-		}
-		for(int j = Includes::LoadedINIFiles.Count - 1; j > 0; --j) {
+		for(int j = Includes::LoadedINIFiles.Count - 1; j >= 0; --j) {
 			free(Includes::LoadedINIFiles[j]);
 			Includes::LoadedINIFiles.RemoveItem(j);
 		}
 		Includes::LastReadIndex = -1;
-		return 0;
 	}
 	return 0;
 }

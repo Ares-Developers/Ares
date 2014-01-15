@@ -10,8 +10,8 @@
 template<> const DWORD Extension<WeaponTypeClass>::Canary = 0x33333333;
 Container<WeaponTypeExt> WeaponTypeExt::ExtMap;
 
-template<> WeaponTypeExt::TT *Container<WeaponTypeExt>::SavingObject = NULL;
-template<> IStream *Container<WeaponTypeExt>::SavingStream = NULL;
+template<> WeaponTypeExt::TT *Container<WeaponTypeExt>::SavingObject = nullptr;
+template<> IStream *Container<WeaponTypeExt>::SavingStream = nullptr;
 
 ColorStruct WeaponTypeExt::ExtData::DefaultWaveColor = ColorStruct(255, 255, 255); // placeholder
 ColorStruct WeaponTypeExt::ExtData::DefaultWaveColorMagBeam = ColorStruct(0xB0, 0, 0xD0); // rp2 values
@@ -67,10 +67,7 @@ void WeaponTypeExt::ExtData::LoadFromINIFile(WeaponTypeExt::TT *pThis, CCINIClas
 	this->Beam_Duration     = pINI->ReadInteger(section, "Beam.Duration", this->Beam_Duration);
 	this->Beam_Amplitude    = pINI->ReadDouble(section, "Beam.Amplitude", this->Beam_Amplitude);
 	this->Beam_IsHouseColor = pINI->ReadBool(section, "Beam.IsHouseColor", this->Beam_IsHouseColor);
-
-	if(!this->Beam_IsHouseColor) {
-		this->Beam_Color.Read(&exINI, section, "Beam.Color");
-	}
+	this->Beam_Color.Read(&exINI, section, "Beam.Color");
 
 	this->Wave_IsLaser      = pINI->ReadBool(section, "Wave.IsLaser", this->Wave_IsLaser);
 	this->Wave_IsBigLaser   = pINI->ReadBool(section, "Wave.IsBigLaser", this->Wave_IsBigLaser);
@@ -109,8 +106,8 @@ void WeaponTypeExt::ExtData::LoadFromINIFile(WeaponTypeExt::TT *pThis, CCINIClas
 	}
 
 	if(pThis->Warhead->IvanBomb) {
-		this->Ivan_KillsBridges = pINI->ReadBool(section, "IvanBomb.DestroysBridges", this->Ivan_KillsBridges);
-		this->Ivan_Detachable   = pINI->ReadBool(section, "IvanBomb.Detachable", this->Ivan_Detachable);
+		this->Ivan_KillsBridges.Read(&exINI, section, "IvanBomb.DestroysBridges");
+		this->Ivan_Detachable.Read(&exINI, section, "IvanBomb.Detachable");
 
 		this->Ivan_Damage.Read(&exINI, section, "IvanBomb.Damage");
 		this->Ivan_Delay.Read(&exINI, section, "IvanBomb.Delay");
@@ -124,6 +121,9 @@ void WeaponTypeExt::ExtData::LoadFromINIFile(WeaponTypeExt::TT *pThis, CCINIClas
 		this->Ivan_WH.Parse(&exINI, section, "IvanBomb.Warhead");
 
 		this->Ivan_Image.Read(&exINI, section, "IvanBomb.Image");
+
+		this->Ivan_CanDetonateTimeBomb.Read(&exINI, section, "IvanBomb.CanDetonateTimeBomb");
+		this->Ivan_CanDetonateDeathBomb.Read(&exINI, section, "IvanBomb.CanDetonateDeathBomb");
 	}
 //
 /*
@@ -183,7 +183,7 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 		}
 
 		//Don't abduct the target if it has more life then the abducting percent
-		if (this->Abductor_AbductBelowPercent < (Target->Health*1.0 / TargetType->Strength)){
+		if (this->Abductor_AbductBelowPercent < Target->GetHealthPercentage()){
 			return false;
 		}
 
@@ -198,10 +198,10 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 			// so we abduct the target...
 
 			Target->StopMoving();
-			Target->SetDestination(NULL, true); // Target->UpdatePosition(int) ?
-			Target->SetTarget(NULL);
+			Target->SetDestination(nullptr, true); // Target->UpdatePosition(int) ?
+			Target->SetTarget(nullptr);
 			Target->CurrentTargets.Clear(); // Target->ShouldLoseTargetNow ?
-			Target->SetFocus(NULL);
+			Target->SetFocus(nullptr);
 			Target->QueueMission(mission_Sleep, true);
 			Target->unknown_C4 = 0; // don't ask
 			Target->unknown_5A0 = 0;
@@ -238,8 +238,7 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 			// if the unit is a spawner, kill the spawns
 			if(Target->SpawnManager) {
 				Target->SpawnManager->KillNodes();
-				Target->SpawnManager->Target = NULL;
-				Target->SpawnManager->Destination = NULL;
+				Target->SpawnManager->ResetTarget();
 			}
 
 			//if the unit is a slave, it should be freed
@@ -257,16 +256,16 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 			
 			// if we have an abducting animation, play it
 			if (!!this->Abductor_AnimType){
-				GAME_ALLOC(AnimClass, AnimClass* Abductor_Anim, this->Abductor_AnimType, &Bullet->posTgt);
+				AnimClass* Abductor_Anim = nullptr;
+				GAME_ALLOC(AnimClass, Abductor_Anim, this->Abductor_AnimType, &Bullet->posTgt);
 				//this->Abductor_Anim->Owner=Bullet->Owner->Owner;
 			}
 
-			CoordStruct coordsUnitSource = {0, 0, 0};
-			Target->Locomotor->Force_Track(-1, coordsUnitSource);
-			Target->GetCoords(&coordsUnitSource);
+			Target->Locomotor->Force_Track(-1, CoordStruct::Empty);
+			CoordStruct coordsUnitSource = Target->GetCoords();
 			Target->Locomotor->Mark_All_Occupation_Bits(0);
 			Target->MarkAllOccupationBits(&coordsUnitSource);
-			Target->ClearPlanningTokens(NULL);
+			Target->ClearPlanningTokens(nullptr);
 			Target->Flashing.DurationRemaining = 0;
 
 			//if it's owner meant to be changed, do it here
@@ -274,13 +273,15 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 				Target->SetOwningHouse(Attacker->Owner);
 			}
 
-			Target->Remove();
+			if(!Target->Remove()) {
+				Debug::DevLog(Debug::Warning, "Abduction: Target unit %p (%s) could not be removed.\n", Target, Target->get_ID());
+			}
 			Target->OnBridge = false;
 
 			// because we are throwing away the locomotor in a split second, piggybacking
 			// has to be stopped. otherwise we would leak the memory of the original
 			// locomotor saved in the piggy object.
-			ILocomotion* Loco = NULL;
+			ILocomotion* Loco = nullptr;
 			do {
 				Loco = Target->Locomotor;
 				LocomotionClass::End_Piggyback(Target->Locomotor);
@@ -291,7 +292,7 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 			if(!Target->Locomotor) {
 				Game::RaiseError(E_POINTER);
 			}
-			ILocomotion* NewLoco = NULL;
+			ILocomotion* NewLoco = nullptr;
 			if(LocomotionClass::CreateInstance(NewLoco, &TargetType->Locomotor)) {
 				LocomotionClass::Move(Target->Locomotor, NewLoco);
 				if(!Target->Locomotor) {
@@ -309,6 +310,10 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 			}
 
 			Target->Transporter = Attacker;
+			if(AttackerType->OpenTopped && Target->Owner->IsAlliedWith(Attacker)) {
+				Attacker->EnteredOpenTopped(Target);
+			}
+
 			if(Attacker->WhatAmI() == abs_Building) {
 				Target->Absorbed = true;
 			}
@@ -330,7 +335,41 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 	}
 }
 
-void Container<WeaponTypeExt>::InvalidatePointer(void *ptr) {
+// Plants customizable IvanBombs on a target.
+/*
+	Plants a bomb and changes the customizable properties. Also, the weapon
+	type that planted the bomb is remembered for use in hooks.
+
+	The original Plant function has been changed to not play sounds any more,
+	and it allows all kinds of TechnoClass sources, not just infantry.
+
+	\param pSource The bomber techno who plants the bombs.
+	\param pTarget The victim to be rigged.
+
+	\author AlexB
+	\date 2013-10-28
+*/
+void WeaponTypeExt::ExtData::PlantBomb(TechnoClass* pSource, ObjectClass* pTarget) const {
+	// ensure target isn't rigged already
+	if(pTarget && !pTarget->AttachedBomb) {
+		BombListClass::Instance->Plant(pSource, pTarget);
+
+		// if target has a bomb, planting was successful
+		if(auto pBomb = pTarget->AttachedBomb) {
+			WeaponTypeExt::BombExt[pBomb] = const_cast<ExtData*>(this);
+
+			pBomb->DetonationFrame = Unsorted::CurrentFrame + this->Ivan_Delay.Get(RulesClass::Instance->IvanTimedDelay);
+			pBomb->TickSound = this->Ivan_TickingSound.Get(RulesClass::Instance->BombTickingSound);
+
+			int index = this->Ivan_AttachSound.Get(RulesClass::Instance->BombAttachSound);
+			if(index != -1 && pSource->Owner->ControlledByPlayer()) {
+				VocClass::PlayAt(index, &pBomb->Target->Location, nullptr);
+			}
+		}
+	}
+}
+
+void Container<WeaponTypeExt>::InvalidatePointer(void *ptr, bool bRemoved) {
 	AnnounceInvalidPointerMap(WeaponTypeExt::BombExt, ptr);
 	AnnounceInvalidPointerMap(WeaponTypeExt::WaveExt, ptr);
 	AnnounceInvalidPointerMap(WeaponTypeExt::BoltExt, ptr);
@@ -436,8 +475,8 @@ DEFINE_HOOK(7730F0, WeaponTypeClass_DTOR, 5)
 	return 0;
 }
 
-DEFINE_HOOK(772CD0, WeaponTypeClass_SaveLoad_Prefix, 7)
 DEFINE_HOOK_AGAIN(772EB0, WeaponTypeClass_SaveLoad_Prefix, 5)
+DEFINE_HOOK(772CD0, WeaponTypeClass_SaveLoad_Prefix, 7)
 {
 	GET_STACK(WeaponTypeExt::TT*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
@@ -460,9 +499,9 @@ DEFINE_HOOK(772F8C, WeaponTypeClass_Save, 5)
 	return 0;
 }
 
-DEFINE_HOOK(7729B0, WeaponTypeClass_LoadFromINI, 5)
 DEFINE_HOOK_AGAIN(7729C7, WeaponTypeClass_LoadFromINI, 5)
 DEFINE_HOOK_AGAIN(7729D6, WeaponTypeClass_LoadFromINI, 5)
+DEFINE_HOOK(7729B0, WeaponTypeClass_LoadFromINI, 5)
 {
 	GET(WeaponTypeClass*, pItem, ESI);
 	GET_STACK(CCINIClass*, pINI, 0xE4);

@@ -26,6 +26,8 @@ void ArmorType::LoadForWarhead(CCINIClass *pINI, WarheadTypeClass* pWH)
 		return;
 	}
 
+	pData->Verses.Reserve(Array.Count);
+
 	while(pData->Verses.Count < Array.Count) {
 		ArmorType *pArmor = Array[pData->Verses.Count];
 		int idx = pArmor->DefaultIndex;
@@ -92,6 +94,11 @@ DEFINE_HOOK(4753F0, ArmorType_FindIndex, A)
 
 	pINI->ReadString(Section, Key, curTitle, buf, 0x20);
 	int idx = ArmorType::FindIndex(buf);
+
+	if(idx == -1) {
+		Debug::INIParseFailed(Section, Key, buf);
+	}
+
 	R->EAX(idx == -1 ? 0 : idx);
 
 	return 0x475430;

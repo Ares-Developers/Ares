@@ -18,11 +18,11 @@ DEFINE_HOOK(6CEF84, SuperWeaponTypeClass_GetCursorOverObject, 7)
 		int Action = SW_YES_CURSOR;
 
 		// prevent firing into shroud
-		if(!pData->SW_FireToShroud.Get()) {
-			CellClass* pCell = MapClass::Instance->GetCellAt(pMapCoords);
-			CoordStruct Crd;
+		if(!pData->SW_FireToShroud) {
+			CellClass* pCell = MapClass::Instance->GetCellAt(*pMapCoords);
+			CoordStruct Crd = pCell->GetCoords();
 
-			if(MapClass::Instance->IsLocationShrouded(pCell->GetCoords(&Crd))) {
+			if(MapClass::Instance->IsLocationShrouded(Crd)) {
 				Action = SW_NO_CURSOR;
 			}
 		}
@@ -38,10 +38,10 @@ DEFINE_HOOK(6CEF84, SuperWeaponTypeClass_GetCursorOverObject, 7)
 
 		if(Action == SW_YES_CURSOR) {
 			SWTypeExt::CurrentSWType = pThis;
-			Actions::Set(&pData->SW_Cursor, pData->SW_FireToShroud.Get());
+			Actions::Set(&pData->SW_Cursor, pData->SW_FireToShroud);
 		} else {
-			SWTypeExt::CurrentSWType = NULL;
-			Actions::Set(&pData->SW_NoCursor, pData->SW_FireToShroud.Get());
+			SWTypeExt::CurrentSWType = nullptr;
+			Actions::Set(&pData->SW_NoCursor, pData->SW_FireToShroud);
 		}
 		return 0x6CEFD9;
 	}
@@ -71,11 +71,11 @@ DEFINE_HOOK(653B3A, RadarClass_GetMouseAction_CustomSWAction, 5)
 			int Action = SW_YES_CURSOR;
 
 			// prevent firing into shroud
-			if(!pData->SW_FireToShroud.Get()) {
-				CellClass* pCell = MapClass::Instance->GetCellAt(&pMapCoords);
-				CoordStruct Crd;
+			if(!pData->SW_FireToShroud) {
+				CellClass* pCell = MapClass::Instance->GetCellAt(pMapCoords);
+				CoordStruct Crd = pCell->GetCoords();
 
-				if(MapClass::Instance->IsLocationShrouded(pCell->GetCoords(&Crd))) {
+				if(MapClass::Instance->IsLocationShrouded(Crd)) {
 					Action = SW_NO_CURSOR;
 				}
 			}
@@ -91,10 +91,10 @@ DEFINE_HOOK(653B3A, RadarClass_GetMouseAction_CustomSWAction, 5)
 
 			if(Action == SW_YES_CURSOR) {
 				SWTypeExt::CurrentSWType = pThis;
-				Actions::Set(&pData->SW_Cursor, pData->SW_FireToShroud.Get());
+				Actions::Set(&pData->SW_Cursor, pData->SW_FireToShroud);
 			} else {
-				SWTypeExt::CurrentSWType = NULL;
-				Actions::Set(&pData->SW_NoCursor, pData->SW_FireToShroud.Get());
+				SWTypeExt::CurrentSWType = nullptr;
+				Actions::Set(&pData->SW_NoCursor, pData->SW_FireToShroud);
 			}
 			return 0x653CA3;
 		}
@@ -110,9 +110,9 @@ DEFINE_HOOK(6AAEDF, SidebarClass_ProcessCameoClick_SuperWeapons, 6) {
 		// if this SW is only auto-firable, discard any clicks.
 		// if AutoFire is off, the sw would not be firable at all,
 		// thus we ignore the setting in that case.
-		bool manual = !pData->SW_ManualFire.Get() && pData->SW_AutoFire.Get();
-		bool unstoppable = pSuper->Type->UseChargeDrain && pSuper->ChargeDrainState == 2
-			&& pData->SW_Unstoppable.Get();
+		bool manual = !pData->SW_ManualFire && pData->SW_AutoFire;
+		bool unstoppable = pSuper->Type->UseChargeDrain && pSuper->ChargeDrainState == ChargeDrainState::Draining
+			&& pData->SW_Unstoppable;
 
 		// play impatient voice, if this isn't charged yet
 		if(!pSuper->CanFire() && !manual) {
@@ -123,7 +123,7 @@ DEFINE_HOOK(6AAEDF, SidebarClass_ProcessCameoClick_SuperWeapons, 6) {
 		// prevent firing the SW if the player doesn't have sufficient
 		// funds. play an EVA message in that case.
 		if(pData->Money_Amount < 0) {
-			if(HouseClass::Player->Available_Money() < -pData->Money_Amount.Get()) {
+			if(HouseClass::Player->Available_Money() < -pData->Money_Amount) {
 				VoxClass::PlayIndex(pData->EVA_InsufficientFunds);
 				pData->PrintMessage(pData->Message_InsufficientFunds, HouseClass::Player);
 				return 0x6AAFB1;
@@ -141,22 +141,37 @@ DEFINE_HOOK(6AAEDF, SidebarClass_ProcessCameoClick_SuperWeapons, 6) {
 	return 0;
 }
 
+// play a customizable target selection EVA message
+DEFINE_HOOK(6AAF9D, SidebarClass_ProcessCameoClick_SelectTarget, 5)
+{
+	GET(int, index, ESI);
+	if(SuperClass* pSW = HouseClass::Player->Supers.GetItem(index)) {
+		if(SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSW->Type)) {
+			VoxClass::PlayIndex(pData->EVA_SelectTarget);
+		}
+	}
+
+	return 0x6AB95A;
+}
+
 DEFINE_HOOK(6A932B, CameoClass_GetTip_MoneySW, 6) {
 	GET(SuperWeaponTypeClass*, pSW, EAX);
 
 	if(SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSW)) {
 		if(pData->Money_Amount < 0) {
-			wchar_t* pTip = (wchar_t*)0xB07BC4;
+			wchar_t* pTip = SidebarClass::TooltipBuffer;
+			int length = SidebarClass::TooltipLength;
 
 			// account for no-name SWs
 			if(*(byte*)0x884B8C || !wcslen(pSW->UIName)) {
 				const wchar_t* pFormat = StringTable::LoadStringA("TXT_MONEY_FORMAT_1");
-				swprintf(pTip, 0x20, pFormat, -pData->Money_Amount.Get());
+				swprintf(pTip, length, pFormat, -pData->Money_Amount);
 			} else {
 				// then, this must be brand SWs
 				const wchar_t* pFormat = StringTable::LoadStringA("TXT_MONEY_FORMAT_2");
-				swprintf(pTip, 0x20, pFormat, pSW->UIName, -pData->Money_Amount.Get());
+				swprintf(pTip, length, pFormat, pSW->UIName, -pData->Money_Amount);
 			}
+			pTip[length - 1] = 0;
 
 			// replace space by new line
 			for(int i=wcslen(pTip); i>=0; --i) {
@@ -199,12 +214,9 @@ DEFINE_HOOK(4AC20C, DisplayClass_LMBUp, 7)
 		// action of the found type as the no-cursor represents a different
 		// action and we don't want to start a force shield even tough the UI
 		// says no.
-		SuperWeaponTypeClass * pSW = NULL;
-		if(SuperWeaponTypeClass::Array->ValidIndex(Unsorted::CurrentSWType)) {
-			pSW = SuperWeaponTypeClass::Array->GetItem(Unsorted::CurrentSWType);
-			if(pSW && (pSW->Action != Action)) {
-				pSW = NULL;
-			}
+		auto pSW = SuperWeaponTypeClass::Array->GetItemOrDefault(Unsorted::CurrentSWType);
+		if(pSW && (pSW->Action != Action)) {
+			pSW = nullptr;
 		}
 
 		R->EAX(pSW);
@@ -339,7 +351,7 @@ DEFINE_HOOK(50B319, HouseClass_UpdateSWs_ShowCameo, 6)
 	SuperWeaponTypeClass *pSW = Super->Type;
 
 	if(SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSW)) {
-		if(pData->SW_AutoFire.Get() && !pData->SW_ShowCameo.Get()) {
+		if(pData->SW_AutoFire && !pData->SW_ShowCameo) {
 			return 0x50B358;
 		}
 	}
@@ -370,7 +382,7 @@ DEFINE_HOOK(6CBA9E, SuperClass_ClickFire_Abort, 7)
 
 	// auto-abort if no money
 	if(pData->Money_Amount < 0) {
-		if(pSuper->Owner->Available_Money() < -pData->Money_Amount.Get()) {
+		if(pSuper->Owner->Available_Money() < -pData->Money_Amount) {
 			if(pSuper->Owner == HouseClass::Player) {
 				VoxClass::PlayIndex(pData->EVA_InsufficientFunds);
 				pData->PrintMessage(pData->Message_InsufficientFunds, pSuper->Owner);
@@ -387,6 +399,21 @@ DEFINE_HOOK(6CBA9E, SuperClass_ClickFire_Abort, 7)
 	}
 
 	return 0;
+}
+
+DEFINE_HOOK(6CBB0D, SuperClass_ClickFire_ResetAfterLaunch, 6)
+{
+	GET(SuperClass*, pSW, ESI);
+	GET(SuperWeaponTypeClass*, pType, EAX);
+
+	// do as the original game set it, but do not reset
+	// the ready state for PreClick SWs neither. they will
+	// be reset after the PostClick SW fired.
+	if(pType && !pType->PostClick && !pType->PreClick) {
+		pSW->IsCharged = false;
+	}
+
+	return 0x6CBB18;
 }
 
 // ARGH!
@@ -444,7 +471,7 @@ DEFINE_HOOK(4FAE72, HouseClass_SWFire_PreDependent, 6)
 
 	// find the predependent SW. decouple this from the chronosphere.
 	// don't use a fixed SW type but the very one acutually fired last.
-	SuperClass* pSource = NULL;
+	SuperClass* pSource = nullptr;
 	if(HouseExt::ExtData *pExt = HouseExt::ExtMap.Find(pThis)) {
 		if(pThis->Supers.ValidIndex(pExt->SWLastIndex)) {
 			pSource = pThis->Supers.GetItem(pExt->SWLastIndex);
@@ -463,54 +490,56 @@ DEFINE_HOOK(6CC2B0, SuperClass_NameReadiness, 5) {
 
 	// complete rewrite of this method.
 
-	char* key = pData->Text_Preparing;
-	const wchar_t** cache = &pData->NameReadiness_Preparing;
+	CSFText* text = &pData->Text_Preparing;
 	if(pThis->IsOnHold) {
 		// on hold
-		key = pData->Text_Hold;
-		cache = &pData->NameReadiness_Hold;
+		text = &pData->Text_Hold;
 	} else {
 		if(pThis->Type->UseChargeDrain) {
 			switch(pThis->ChargeDrainState) {
-			case 0:
+			case ChargeDrainState::Charging:
 				// still charging
-				key = pData->Text_Charging;
-				cache = &pData->NameReadiness_Charging;
+				text = &pData->Text_Charging;
 				break;
-			case 1:
+			case ChargeDrainState::Ready:
 				// ready
-				key = pData->Text_Ready;
-				cache = &pData->NameReadiness_Ready;
+				text = &pData->Text_Ready;
 				break;
-			case 2:
+			case ChargeDrainState::Draining:
 				// currently active
-				key = pData->Text_Active;
-				cache = &pData->NameReadiness_Active;
+				text = &pData->Text_Active;
 				break;
 			}
 
 		} else {
 			// ready
 			if(pThis->IsCharged) {
-				key = pData->Text_Ready;
-				cache = &pData->NameReadiness_Ready;
+				text = &pData->Text_Ready;
 			}
 		}
 	}
 
-	// the text is not cached yet
-	if(cache && !*cache) {
-		if(key && *key) {
-			*cache = StringTable::LoadStringA(key);
+	R->EAX(text->empty() ? nullptr : text->Text);
+	return 0x6CC352;
+}
+
+// #896002: darken SW cameo if player can't afford it
+DEFINE_HOOK(6A99B7, TabCameoListClass_Draw_SuperDarken, 5)
+{
+	GET(int, idxSW, EDI);
+
+	auto pSW = HouseClass::Player->Supers.GetItem(idxSW);
+	auto pExt = SWTypeExt::ExtMap.Find(pSW->Type);
+
+	bool darken = false;
+	if(pSW->IsCharged && pExt->Money_Amount < 0) {
+		if(pSW->Owner->Available_Money() < -pExt->Money_Amount) {
+			darken = true;
 		}
 	}
 
-	const wchar_t* text = (cache ? *cache : NULL);
-	if(text && !*text) {
-		text = NULL;
-	}
-	R->EAX(text);
-	return 0x6CC352;
+	R->BL(darken);
+	return 0;
 }
 
 DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
@@ -526,37 +555,37 @@ DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
 			SWTypeExt::ExtData* pExt = SWTypeExt::ExtMap.Find(pSuper->Type);
 
 			// fire if this is AI owned or the SW has auto fire set.
-			if(AIFire || pExt->SW_AutoFire.Get()) {
+			if(AIFire || pExt->SW_AutoFire) {
 
 				if(pSuper->IsCharged) {
 					CellStruct Cell = HouseClass::DefaultIonCannonCoords;
-					auto LaunchSW = [&](CellStruct *Cell) {
-						int idxSW = pThis->Supers.FindItemIndex(&pSuper);
+					auto LaunchSW = [&](const CellStruct &Cell) {
+						int idxSW = pThis->Supers.FindItemIndex(pSuper);
 						pThis->Fire_SW(idxSW, Cell);
 					};
 
 					// don't try to fire if we obviously haven't enough money
 					if(pExt->Money_Amount < 0) {
-						if(pThis->Available_Money() < -pExt->Money_Amount.Get()) {
+						if(pThis->Available_Money() < -pExt->Money_Amount) {
 							continue;
 						}
 					}
 
 					// all the different AI targeting modes
-					switch(pExt->SW_AITargetingType.Get()) {
+					switch(pExt->SW_AITargetingType) {
 					case SuperWeaponAITargetingMode::Nuke:
 						{
 							if(pThis->EnemyHouseIndex != -1) {
 								if(pThis->PreferredTargetCell == HouseClass::DefaultIonCannonCoords) {
-									Cell = *((pThis->PreferredTargetWaypoint == 1)
+									Cell = *((pThis->PreferredTargetType == TargetType::Anything)
 										? pThis->PickIonCannonTarget(Cell)
-										: pThis->sub_50D170(&Cell, pThis->PreferredTargetWaypoint));
+										: pThis->PickTargetByType(&Cell, pThis->PreferredTargetType));
 								} else {
 									Cell = pThis->PreferredTargetCell;
 								}
 
 								if(Cell != HouseClass::DefaultIonCannonCoords) {
-									LaunchSW(&Cell);
+									LaunchSW(Cell);
 								}
 							}
 							break;
@@ -598,7 +627,7 @@ DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
 							}
 
 							if(Cell != HouseClass::DefaultIonCannonCoords) {
-								LaunchSW(&Cell);
+								LaunchSW(Cell);
 								pThis->PreferredDefensiveCell = HouseClass::DefaultIonCannonCoords;
 							}
 							break;
@@ -609,7 +638,7 @@ DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
 							if(pThis->EnemyHouseIndex != -1 && pExt->IsHouseAffected(pThis, HouseClass::Array->GetItem(pThis->EnemyHouseIndex))) {
 								pThis->PickIonCannonTarget(Cell);
 								if(Cell != HouseClass::DefaultIonCannonCoords) {
-									LaunchSW(&Cell);
+									LaunchSW(Cell);
 								}
 							}
 							break;
@@ -617,7 +646,7 @@ DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
 
 					case SuperWeaponAITargetingMode::NoTarget:
 						{
-							LaunchSW(&Cell);
+							LaunchSW(Cell);
 							break;
 						}
 
@@ -647,7 +676,7 @@ DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
 							if(list.Count) {
 								int rnd = ScenarioClass::Instance->Random.RandomRanged(0, list.Count - 1);
 								Cell = list.GetItem(rnd)->GetCell()->MapCoords;
-								LaunchSW(&Cell);
+								LaunchSW(Cell);
 							}
 							break;
 						}
@@ -656,7 +685,7 @@ DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
 						{
 							// fire at the SW's owner's base cell
 							Cell = pThis->Base_Center();
-							LaunchSW(&Cell);
+							LaunchSW(Cell);
 							break;
 						}
 
@@ -664,18 +693,18 @@ DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
 						{
 							// find the first building providing pSuper
 							SuperWeaponTypeClass *pType = pSuper->Type;
-							BuildingClass *pBld = NULL;
+							BuildingClass *pBld = nullptr;
 							for(int j=0; j<BuildingTypeClass::Array->Count; ++j) {
 								BuildingTypeClass *pTBld = BuildingTypeClass::Array->GetItem(j);
 								if((pTBld->SuperWeapon == pType->ArrayIndex) || (pTBld->SuperWeapon2 == pType->ArrayIndex)) {
-									if((pBld = pThis->FindBuildingOfType(pTBld->ArrayIndex, -1)) != NULL) {
+									if((pBld = pThis->FindBuildingOfType(pTBld->ArrayIndex, -1)) != nullptr) {
 										break;
 									}
 								}
 							}
 							if(pBld) {
 								Cell = pBld->GetCell()->MapCoords;
-								LaunchSW(&Cell);
+								LaunchSW(Cell);
 							}
 
 							break;
@@ -719,7 +748,7 @@ DEFINE_HOOK(6CBF5B, SuperClass_GetCameoChargeState_ChargeDrainRatio, 9) {
 		}
 
 		// up to 55 steps
-		int charge = (int)Game::F2I(percentage * 54.0);
+		int charge = Game::F2I(percentage * 54.0);
 		R->EAX(charge);
 		return 0x6CC053;
 	}
@@ -747,7 +776,7 @@ DEFINE_HOOK(6CB995, SuperClass_ClickFire_ChargeDrainRatioA, 8) {
 	if(SWTypeExt::ExtData* pData = SWTypeExt::ExtMap.Find(pSuper->Type)) {
 		double ratio = pData->SW_ChargeToDrainRatio;
 		double remaining = rechargeTime - timeLeft / ratio;
-		int frames = (int)Game::F2I(remaining);
+		int frames = Game::F2I(remaining);
 	
 		R->EAX(frames);
 		return 0x6CB9B0;
@@ -763,7 +792,7 @@ DEFINE_HOOK(6CBA19, SuperClass_ClickFire_ChargeDrainRatioB, A) {
 	if(SWTypeExt::ExtData* pData = SWTypeExt::ExtMap.Find(pSuper->Type)) {
 		double ratio = pData->SW_ChargeToDrainRatio;
 		double remaining = length * ratio;
-		int frames = (int)Game::F2I(remaining);
+		int frames = Game::F2I(remaining);
 	
 		R->EAX(frames);
 		return 0x6CBA28;
@@ -778,7 +807,7 @@ DEFINE_HOOK(6CBD6B, SuperClass_Update_DrainMoney, 8) {
 	GET(SuperClass*, pSuper, ESI);
 	GET(int, timeLeft, EAX);
 
-	if(timeLeft > 0 && pSuper->Type->UseChargeDrain && pSuper->ChargeDrainState == 2) {
+	if(timeLeft > 0 && pSuper->Type->UseChargeDrain && pSuper->ChargeDrainState == ChargeDrainState::Draining) {
 		if(SWTypeExt::ExtData* pData = SWTypeExt::ExtMap.Find(pSuper->Type)) {
 			int money = pData->Money_DrainAmount;
 			if(money != 0 && pData->Money_DrainDelay > 0) {

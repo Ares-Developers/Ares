@@ -25,7 +25,7 @@ bool Interface::invokeClickAction(eUIAction action, char* name, int* pResult, in
 	// reset
 	nextAction = -1;
 	nextReturnMenu = -1;
-	nextMessageText = NULL;
+	nextMessageText = nullptr;
 
 	auto ret = [&](int _nextAction) -> bool {
 		*pResult = nextAction = _nextAction;
@@ -35,10 +35,9 @@ bool Interface::invokeClickAction(eUIAction action, char* name, int* pResult, in
 
 	if(action == Interface::uia_Message) {
 		// generate the label name
-		char *buffer = new char[0x20];
+		char buffer[0x20];
 		StringCchPrintfA(buffer, 0x20, "TXT_%s_MSG", name);
 		nextMessageText = StringTable::LoadStringA(buffer);
-		delete [] &buffer;
 
 		// hide dialog temporarily and show a message box
 		return ret(6);
@@ -76,10 +75,10 @@ void Interface::updateMenuItems(HWND hDlg, MenuItem* items, int count) {
 	ScreenToClient(hDlg, &ptDlg);
 
 	int iButton = 0;
-	RECT* rcOriginal = new RECT[count];
+	std::vector<RECT> vecRects(count);
 	for(int i=0; i<count; ++i) {
 		if(HWND hItem = GetDlgItem(hDlg, items[i].nIDDlgItem)) {
-			GetWindowRect(hItem, &rcOriginal[i]);
+			GetWindowRect(hItem, &vecRects[i]);
 
 			if(items[i].uiaAction == Interface::uia_Hide) {
 				// hide the window
@@ -92,14 +91,12 @@ void Interface::updateMenuItems(HWND hDlg, MenuItem* items, int count) {
 
 				if(i != iButton) {
 					// move the button to the next free position
-					moveItem(hItem, rcOriginal[iButton], ptDlg);
+					moveItem(hItem, vecRects[iButton], ptDlg);
 				}
 				++iButton;
 			}
 		}
 	}
-
-	delete [] &rcOriginal;
 }
 
 //! Moves a menu item to a new location using an optional offset.
@@ -181,8 +178,8 @@ Interface::eUIAction Interface::parseUIAction(char* value, Interface::eUIAction 
 DEFINE_HOOK(52DDBA, Frontend_WndProc_MessageBox, 5) {
 	if(Interface::nextMessageText) {
 		const wchar_t* ok = StringTable::LoadStringA("TXT_OK");
-		MessageBox::Show(Interface::nextMessageText, ok, NULL);
-		Interface::nextMessageText = NULL;
+		MessageBox::Show(Interface::nextMessageText, ok, nullptr);
+		Interface::nextMessageText = nullptr;
 		return 0x52DE39;
 	}
 

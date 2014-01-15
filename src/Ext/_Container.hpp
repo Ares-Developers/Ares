@@ -1,21 +1,7 @@
 #ifndef CONTAINER_TEMPLATE_MAGIC_H
 #define CONTAINER_TEMPLATE_MAGIC_H
 
-#ifdef _MSC_VER
 #include <typeinfo>
-#endif
-
-#ifdef __GNUC__
-#include <ext/hash_fun.h>
-namespace __gnu_cxx {
-	template<>
-	struct hash<void *> {
-		size_t operator()(void* const &v) const {
-			return reinterpret_cast<std::size_t>(v);
-		}
-	};
-};
-#endif
 
 #include <xcompile.h>
 #include <CCINIClass.h>
@@ -131,7 +117,7 @@ class Extension {
 
 		virtual void Initialize(T *pThis) { };
 
-		virtual void InvalidatePointer(void *ptr) = 0;
+		virtual void InvalidatePointer(void *ptr, bool bRemoved) = 0;
 
 	private:
 		void operator = (Extension &RHS) {
@@ -145,64 +131,71 @@ class Container : public hash_map<typename T::TT*, typename T::ExtData* > {
 private:
 	typedef typename T::TT        S_T;
 	typedef typename T::ExtData   E_T;
-	typedef hash_map<S_T*, E_T*>  C_Map;
+	typedef S_T* KeyType;
+	typedef E_T* ValueType;
+	typedef hash_map<KeyType, ValueType> C_Map;
 
 public:
 	static S_T * SavingObject;
 	static IStream * SavingStream;
 
-	void PointerGotInvalid(void *ptr) {
-		this->InvalidatePointer(ptr);
-		this->InvalidateExtDataPointer(ptr);
+	void PointerGotInvalid(void *ptr, bool bRemoved) {
+		this->InvalidatePointer(ptr, bRemoved);
+		this->InvalidateExtDataPointer(ptr, bRemoved);
 	}
-
-#define INVALID_CTR(type, p) \
-	type::ExtMap.PointerGotInvalid(p);
 
 protected:
 	// invalidate pointers to container's static gunk here (use full qualified names)
-	virtual void InvalidatePointer(void *ptr) {
+	virtual void InvalidatePointer(void *ptr, bool bRemoved) {
 	};
 
-	void InvalidateExtDataPointer(void *ptr) {
-		for(typename C_Map::iterator i = this->begin(); i != this->end(); ++i) {
-			i->second->InvalidatePointer(ptr);
+	void InvalidateExtDataPointer(void *ptr, bool bRemoved) {
+		for(auto i = this->begin(); i != this->end(); ++i) {
+			i->second->InvalidatePointer(ptr, bRemoved);
 		}
 	}
 
 public:
-	Container() {
+	Container() : hash_map<KeyType, ValueType>() {
 	}
 
 	virtual ~Container() {
 		Empty();
 	}
 
-	E_T *FindOrAllocate(S_T* key) {
-		if(key == NULL) {
-			const std::type_info &info = typeid(*this);
+	ValueType FindOrAllocate(KeyType const &key) {
+		if(key == nullptr) {
+			const auto &info = typeid(*this);
 			Debug::Log("CTOR of %s attempted for a NULL pointer! WTF!\n", info.name());
-			return NULL;
+			return nullptr;
 		}
-		typename C_Map::iterator i = this->find(key);
+		auto i = this->find(key);
 		if(i == this->end()) {
-			E_T * val = new E_T(/*typename*/ E_T::Canary, key);
+			auto val = new E_T(E_T::Canary, key);
 			val->InitializeConstants(key);
 			i = this->insert(typename C_Map::value_type(key, val)).first;
 		}
 		return i->second;
 	}
 
-	E_T *Find(S_T* key) {
-		typename C_Map::iterator i = this->find(key);
+	ValueType Find(const KeyType &key) {
+		auto i = this->find(key);
 		if(i == this->end()) {
-			return NULL;
+			return nullptr;
 		}
 		return i->second;
 	}
 
-	void Remove(S_T* key) {
-		typename C_Map::iterator i = this->find(key);
+	const ValueType Find(const KeyType &key) const {
+		auto i = this->find(key);
+		if(i == this->end()) {
+			return nullptr;
+		}
+		return i->second;
+	}
+
+	void Remove(KeyType key) {
+		auto i = this->find(key);
 		if(i != this->end()) {
 			delete i->second;
 			erase(i);
@@ -217,7 +210,7 @@ public:
 	}
 
 	void Empty() {
-		for(typename C_Map::iterator i = this->begin(); i != this->end(); ) {
+		for(auto i = this->begin(); i != this->end(); ) {
 			delete i->second;
 			erase(i++);
 	//		++i;
@@ -225,20 +218,20 @@ public:
 	}
 
 	void LoadAllFromINI(CCINIClass *pINI) {
-		for(typename C_Map::iterator i = this->begin(); i != this->end(); i++) {
+		for(auto i = this->begin(); i != this->end(); i++) {
 			i->second->LoadFromINI(i->first, pINI);
 		}
 	}
 
-	void LoadFromINI(S_T*key, CCINIClass *pINI) {
-		typename C_Map::iterator i = this->find(key);
+	void LoadFromINI(KeyType key, CCINIClass *pINI) {
+		auto i = this->find(key);
 		if(i != this->end()) {
 			i->second->LoadFromINI(key, pINI);
 		}
 	}
 
 	void LoadAllFromRules(CCINIClass *pINI) {
-		for(typename C_Map::iterator i = this->begin(); i != this->end(); i++) {
+		for(auto i = this->begin(); i != this->end(); i++) {
 			i->second->LoadFromRulesFile(i->first, pINI);
 		}
 	}
@@ -246,25 +239,25 @@ public:
 	void SaveStatic() {
 		if(Container<T>::SavingObject && Container<T>::SavingStream) {
 			this->Save(Container<T>::SavingObject, Container<T>::SavingStream);
-			Container<T>::SavingObject = NULL;
-			Container<T>::SavingStream = NULL;
+			Container<T>::SavingObject = nullptr;
+			Container<T>::SavingStream = nullptr;
 		}
 	}
 
-	void Save(S_T *key, IStream *pStm) {
+	void Save(KeyType key, IStream *pStm) {
 		this->SaveKey(key, pStm);
 	}
 
-	E_T* SaveKey(S_T *key, IStream *pStm) {
+	ValueType SaveKey(KeyType key, IStream *pStm) {
 		ULONG out;
 
-		const std::type_info &info = typeid(key);
+		const auto &info = typeid(key);
 		Debug::Log("Saving Key [%s] (%X)\n", info.name(), key);
 
-		if(key == NULL) {
-			return NULL;
+		if(key == nullptr) {
+			return nullptr;
 		}
-		E_T* buffer = this->Find(key);
+		auto buffer = this->Find(key);
 		Debug::Log("\tKey maps to %X\n", buffer);
 		if(buffer) {
 			pStm->Write(&buffer, 4, &out);
@@ -279,26 +272,26 @@ public:
 	void LoadStatic() {
 		if(Container<T>::SavingObject && Container<T>::SavingStream) {
 			this->Load(Container<T>::SavingObject, Container<T>::SavingStream);
-			Container<T>::SavingObject = NULL;
-			Container<T>::SavingStream = NULL;
+			Container<T>::SavingObject = nullptr;
+			Container<T>::SavingStream = nullptr;
 		}
 	}
 
-	void Load(S_T *key, IStream *pStm) {
+	void Load(KeyType key, IStream *pStm) {
 		this->LoadKey(key, pStm);
 	}
 
-	E_T* LoadKey(S_T *key, IStream *pStm) {
+	ValueType LoadKey(KeyType key, IStream *pStm) {
 		ULONG out;
 
-		const std::type_info &info = typeid(key);
+		const auto &info = typeid(key);
 		Debug::Log("Loading Key [%s] (%X)\n", info.name(), key);
 
-		if(key == NULL) {
+		if(key == nullptr) {
 			Debug::Log("Load attempted for a NULL pointer! WTF!\n");
-			return NULL;
+			return nullptr;
 		}
-		E_T* buffer = this->FindOrAllocate(key);
+		auto buffer = this->FindOrAllocate(key);
 		long origPtr;
 		pStm->Read(&origPtr, 4, &out);
 		pStm->Read(buffer, buffer->Size(), &out);

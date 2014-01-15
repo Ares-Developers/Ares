@@ -35,7 +35,7 @@ DEFINE_HOOK(73C725, UnitClass_DrawSHP_DrawShadowEarlier, 6)
 	;
 
 	// TODO: other conditions where it would not make sense to draw shadow
-	switch(U->VisualCharacter(NULL, NULL)) {
+	switch(U->VisualCharacter(VARIANT_FALSE, nullptr)) {
 		case VisualType::Normal:
 		case VisualType::Indistinct:
 			break;
@@ -152,9 +152,9 @@ DEFINE_HOOK(73C5FC, UnitClass_DrawSHP_WaterType, 6)
 	return 0x73CE00;
 }
 
-DEFINE_HOOK(73C655, UnitClass_DrawSHP_ChangeType1, 6)
 DEFINE_HOOK_AGAIN(73C69D, UnitClass_DrawSHP_ChangeType1, 6)
 DEFINE_HOOK_AGAIN(73C702, UnitClass_DrawSHP_ChangeType1, 6)
+DEFINE_HOOK(73C655, UnitClass_DrawSHP_ChangeType1, 6)
 {
 	GET(UnitClass *, U, EBP);
 	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(U);

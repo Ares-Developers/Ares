@@ -17,7 +17,7 @@ public:
 	};
 
 	static T** stl_Find(const char *Title) {
-		return std::find_if(Array.start(), Array.end(), std::bind2nd(comparator(), Title));
+		return std::find_if(Array.begin(), Array.end(), std::bind2nd(comparator(), Title));
 	}
 
 	static int FindIndex(const char *Title)
@@ -36,7 +36,7 @@ public:
 */
 		T** result = Enumerable<T>::stl_Find(Title);
 		if(result == Array.end()) {
-			return NULL;
+			return nullptr;
 		}
 		return *result;
 	}

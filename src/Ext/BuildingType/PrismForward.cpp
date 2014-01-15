@@ -12,7 +12,7 @@ void BuildingTypeExt::cPrismForwarding::Initialize(BuildingTypeClass *pThis) {
 	if (pThis == RulesClass::Instance->PrismType) {
 		this->Enabled = YES;
 	}
-	this->Targets.AddItem(pThis);
+	this->Targets.push_back(pThis);
 }
 
 void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis, CCINIClass* pINI) {
@@ -30,18 +30,9 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 	}
 
 	if (this->Enabled != NO) {
-		if(pINI->ReadString(pID, "PrismForwarding.Targets", "", Ares::readBuffer, Ares::readLength)) {
-			this->Targets.Clear();
-			for(char *cur = strtok(Ares::readBuffer, ","); cur && *cur; cur = strtok(NULL, ",")) {
-				BuildingTypeClass * target = BuildingTypeClass::Find(cur);
-				if(target) {
-					this->Targets.AddItem(target);
-				}
-			}
-		}
-
 		INI_EX exINI(pINI);
 
+		this->Targets.Read(&exINI, pID, "PrismForwarding.Targets");
 		this->MaxFeeds.Read(&exINI, pID, "PrismForwarding.MaxFeeds");
 		this->MaxChainLength.Read(&exINI, pID, "PrismForwarding.MaxChainLength");
 		this->MaxNetworkSize.Read(&exINI, pID, "PrismForwarding.MaxNetworkSize");
@@ -205,7 +196,7 @@ int BuildingTypeExt::cPrismForwarding::AcquireSlaves_SingleStage
 		if (BuildingClass *SlaveTower = BuildingClass::Array->GetItem(i)) {
 			if (ValidateSupportTower(MasterTower, TargetTower, SlaveTower)) {
 				SlaveTower->GetPosition_2(&curPosition);
-				int Distance = MyPosition.DistanceFrom(curPosition);
+				int Distance = (int)MyPosition.DistanceFrom(curPosition);
 
 				PrismTargetData pd = {SlaveTower, Distance};
 				EligibleTowers.push_back(pd);
@@ -253,7 +244,7 @@ bool BuildingTypeExt::cPrismForwarding::ValidateSupportTower(
 			//building is a prism tower
 			//get all the data we need
 			TechnoExt::ExtData *pTechnoData = TechnoExt::ExtMap.Find(SlaveTower);
-			BuildingExt::ExtData *pSlaveData = BuildingExt::ExtMap.Find(SlaveTower);
+			//BuildingExt::ExtData *pSlaveData = BuildingExt::ExtMap.Find(SlaveTower);
 			int SlaveMission = SlaveTower->GetCurrentMission();
 			//now check all the rules
 			if(SlaveTower->ReloadTimer.Ignorable()
@@ -270,13 +261,13 @@ bool BuildingTypeExt::cPrismForwarding::ValidateSupportTower(
 				&& !SlaveTower->IsUnderEMP() //EMP logic - I think this should already be checked by IsPowerOnline() but included just to be sure
 			) {
 				BuildingTypeClass *pTargetType = TargetTower->Type;
-				if (pSlaveTypeData->PrismForwarding.Targets.FindItemIndex(&pTargetType) != -1) {
+				if (pSlaveTypeData->PrismForwarding.Targets.Contains(pTargetType)) {
 					//valid type to forward from
 					HouseClass *pMasterHouse = MasterTower->Owner;
 					HouseClass *pTargetHouse = TargetTower->Owner;
 					HouseClass *pSlaveHouse = SlaveTower->Owner;
 					if ((pSlaveHouse == pTargetHouse && pSlaveHouse == pMasterHouse)
-						|| (pSlaveTypeData->PrismForwarding.ToAllies.Get()
+						|| (pSlaveTypeData->PrismForwarding.ToAllies
 							&& pSlaveHouse->IsAlliedWith(pTargetHouse)
 							&& pSlaveHouse->IsAlliedWith(pMasterHouse))) {
 						//ownership/alliance rules satisfied
@@ -284,7 +275,7 @@ bool BuildingTypeExt::cPrismForwarding::ValidateSupportTower(
 						CoordStruct MyPosition, curPosition;
 						TargetTower->GetPosition_2(&MyPosition);
 						SlaveTower->GetPosition_2(&curPosition);
-						int Distance = MyPosition.DistanceFrom(curPosition);
+						int Distance = (int)MyPosition.DistanceFrom(curPosition);
 						int SupportRange = 0;
 						int idxSupport = -1;
 						if (SlaveTower->Veterancy.IsElite()) {
@@ -326,7 +317,7 @@ void BuildingTypeExt::cPrismForwarding::SetChargeDelay
 	memset(LongestFDelay, 0, ArrayLen * sizeof(DWORD));
 	
 	int temp = 0;
-	while (temp <= LongestChain) {
+	while (temp < ArrayLen) {
 		LongestCDelay[temp] = 0;
 		LongestFDelay[temp] = 0;
 		++temp;
@@ -350,7 +341,7 @@ void BuildingTypeExt::cPrismForwarding::SetChargeDelay_Get
 		if (chain != LongestChain) {
 			BuildingTypeExt::ExtData *pTypeData = BuildingTypeExt::ExtMap.Find(TargetTower->Type);
 			//update the delays for this chain
-			unsigned int thisDelay = pTypeData->PrismForwarding.ChargeDelay.Get() + LongestCDelay[chain + 1];
+			unsigned int thisDelay = pTypeData->PrismForwarding.ChargeDelay + LongestCDelay[chain + 1];
 			if ( thisDelay > LongestCDelay[chain]) {
 				LongestCDelay[chain] = thisDelay;
 			}
@@ -412,7 +403,7 @@ void BuildingTypeExt::cPrismForwarding::RemoveFromNetwork(BuildingClass *SlaveTo
 		pSlaveData->PrismForwarding.DamageReserve = 0;
 		//animations should be controlled by whatever incapacitated the tower so no need to mess with anims here
 	}
-	SetSupportTarget(SlaveTower, NULL);
+	SetSupportTarget(SlaveTower, nullptr);
 	//finally, remove all the preceding slaves from the network
 	for(int senderIdx = pSlaveData->PrismForwarding.Senders.Count; senderIdx; senderIdx--) {
 		if (BuildingClass *NextTower = pSlaveData->PrismForwarding.Senders[senderIdx-1]) {
@@ -431,7 +422,7 @@ void BuildingTypeExt::cPrismForwarding::SetSupportTarget(BuildingClass *pSlaveTo
 		// if the target tower is already set, disconnect it by removing it from the old target tower's sender list
 		if(BuildingClass *pOldTarget = pSlaveData->PrismForwarding.SupportTarget) {
 			if(BuildingExt::ExtData *pOldTargetData = BuildingExt::ExtMap.Find(pOldTarget)) {
-				int idxSlave = pOldTargetData->PrismForwarding.Senders.FindItemIndex(&pSlaveTower);
+				int idxSlave = pOldTargetData->PrismForwarding.Senders.FindItemIndex(pSlaveTower);
 				if(idxSlave != -1) {
 					pOldTargetData->PrismForwarding.Senders.RemoveItem(idxSlave);
 					// everywhere the comments say this is now the "longest backwards chain", but decreasing this here makes use of the original meaning. why is this needed here? AlexB 2012-04-08
@@ -440,7 +431,7 @@ void BuildingTypeExt::cPrismForwarding::SetSupportTarget(BuildingClass *pSlaveTo
 					Debug::DevLog(Debug::Warning, "PrismForwarding::SetSupportTarget: Old target tower (%p) did not consider this tower (%p) as its sender.\n", pOldTarget, pSlaveTower);
 				}
 			}
-			pSlaveData->PrismForwarding.SupportTarget = NULL;
+			pSlaveData->PrismForwarding.SupportTarget = nullptr;
 		}
 
 		// set the new tower as support target
@@ -448,7 +439,7 @@ void BuildingTypeExt::cPrismForwarding::SetSupportTarget(BuildingClass *pSlaveTo
 			if(BuildingExt::ExtData *pTargetData = BuildingExt::ExtMap.Find(pTargetTower)) {
 				pSlaveData->PrismForwarding.SupportTarget = pTargetTower;
 
-				if(pTargetData->PrismForwarding.Senders.FindItemIndex(&pSlaveTower) == -1) {
+				if(pTargetData->PrismForwarding.Senders.FindItemIndex(pSlaveTower) == -1) {
 					pTargetData->PrismForwarding.Senders.AddItem(pSlaveTower);
 					// why isn't SupportingPrisms increased here? AlexB 2012-04-08
 				} else {
@@ -464,7 +455,7 @@ void BuildingTypeExt::cPrismForwarding::RemoveAllSenders(BuildingClass *pTower) 
 		// disconnect all sender towers from their support target, which is me
 		for(int senderIdx = pData->PrismForwarding.Senders.Count; senderIdx; senderIdx--) {
 			if(BuildingClass *NextTower = pData->PrismForwarding.Senders[senderIdx-1]) {
-				SetSupportTarget(NextTower, NULL);
+				SetSupportTarget(NextTower, nullptr);
 			}
 		}
 

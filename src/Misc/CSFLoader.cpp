@@ -5,28 +5,29 @@
 
 int CSFLoader::CSFCount = 0;
 int CSFLoader::NextValueIndex = 0;
+std::hash_map<std::string, const CSFString*> CSFLoader::DynamicStrings;
 
 void CSFLoader::LoadAdditionalCSF(const char *pFileName)
 {
 	//The main stringtable must have been loaded (memory allocation)
 	//To do that, use StringTable::LoadFile.
-	if(StringTable::is_Loaded() && pFileName && *pFileName) {
+	if(StringTable::IsLoaded && pFileName && *pFileName) {
 		CCFileClass* pFile;
 		GAME_ALLOC(CCFileClass, pFile, pFileName);
-		if(pFile->Exists(NULL) && pFile->Open(eFileMode::Read)) {
+		if(pFile->Exists(nullptr) && pFile->Open(eFileMode::Read)) {
 			CSFHeader header;
 
 			if(pFile->ReadBytes(&header, sizeof(CSFHeader)) == sizeof(CSFHeader)) {
 				if(header.Signature == CSF_SIGNATURE &&
 					header.CSFVersion >= 2 &&
-					header.Language == StringTable::get_Language()) //should stay in one language
+					header.Language == StringTable::Language) //should stay in one language
 				{
 					++CSFCount;
 					StringTable::ReadFile(pFileName); //must be modified to do the rest ;)
 
 					qsort(
-						StringTable::get_Labels(),
-						StringTable::get_LabelCount(),
+						StringTable::Labels,
+						StringTable::LabelCount,
 						sizeof(CSFLabel),
 						(int (__cdecl *)(const void *,const void *))_strcmpi);
 				}
@@ -36,10 +37,44 @@ void CSFLoader::LoadAdditionalCSF(const char *pFileName)
 	}
 };
 
+const CSFString* CSFLoader::FindDynamic(const char* pLabelName) {
+	if(pLabelName) {
+		auto it	= DynamicStrings.find(pLabelName);
+		if(it != DynamicStrings.end()) {
+			return it->second;
+		}
+	}
+
+	// failed
+	return nullptr;
+}
+
+const wchar_t* CSFLoader::GetDynamicString(const char* pLabelName, const wchar_t* pPattern, const char* pDefault) {
+	const CSFString *String = CSFLoader::FindDynamic(pLabelName);
+
+	if(!String) {
+		CSFString* NewString = nullptr;
+		GAME_ALLOC(CSFString, NewString);
+		wsprintfW(NewString->Text, pPattern, pDefault);
+
+		NewString->PreviousEntry = StringTable::LastLoadedString;
+		StringTable::LastLoadedString = NewString;
+
+		if(Ares::bOutputMissingStrings) {
+			Debug::Log("[CSFLoader] Added label \"%s\" with value \"%ls\".\n", pLabelName, NewString->Text);
+		}
+
+		DynamicStrings[pLabelName] = NewString;
+		String = NewString;
+	}
+
+	return String->Text;
+}
+
 //0x7346D0
 DEFINE_HOOK(7346D0, CSF_LoadBaseFile, 6)
 {
-	StringTable::set_Loaded(true);
+	StringTable::IsLoaded = true;
 	CSFLoader::CSFCount = 0;
 
 	return 0;
@@ -65,13 +100,13 @@ DEFINE_HOOK(734823, CSF_AllocateMemory, 6)
 		pLabels[i].NumValues = 0;
 		pLabels[i].FirstValueIndex = 0;
 
-		pValues[i] = NULL;
-		pExtraValues[i] = NULL;
+		pValues[i] = nullptr;
+		pExtraValues[i] = nullptr;
 	}
 
-	StringTable::set_Labels(pLabels);
-	StringTable::set_Values(pValues);
-	StringTable::set_ExtraValues(pExtraValues);
+	StringTable::Labels = pLabels;
+	StringTable::Values = pValues;
+	StringTable::ExtraValues = pExtraValues;
 
 	return 0x7348BC;
 }
@@ -83,8 +118,8 @@ DEFINE_HOOK(734A5F, CSF_AddOrOverrideLabel, 5)
 	{
 		CSFLabel* pLabel = (CSFLabel*)bsearch(
 			(const char*)0xB1BF38, //label buffer, char[4096]
-			StringTable::get_Labels(),
-			StringTable::get_LabelCount(),
+			StringTable::Labels,
+			StringTable::LabelCount,
 			sizeof(CSFLabel),
 			(int (__cdecl *)(const void *,const void *))_strcmpi);
 
@@ -99,30 +134,30 @@ DEFINE_HOOK(734A5F, CSF_AddOrOverrideLabel, 5)
 			int idx = pLabel->FirstValueIndex;
 			CSFLoader::NextValueIndex = idx;
 
-			wchar_t** pValues = StringTable::get_Values();
+			wchar_t** pValues = StringTable::Values;
 			if(pValues[idx])
 			{
 				GAME_DEALLOC(pValues[idx]);
-				pValues[idx] = NULL;
+				pValues[idx] = nullptr;
 			}
 
-			char** pExtraValues = StringTable::get_ExtraValues();
+			char** pExtraValues = StringTable::ExtraValues;
 			if(pExtraValues[idx])
 			{
 				GAME_DEALLOC(pExtraValues[idx]);
-				pExtraValues[idx] = NULL;
+				pExtraValues[idx] = nullptr;
 			}
 
-			auto ix = pLabel - StringTable::get_Labels();
+			auto ix = pLabel - StringTable::Labels;
 			R->EBP(ix * sizeof(CSFLabel));
 		}
 		else
 		{
 			//Label doesn't exist yet - add!
-			int idx = StringTable::get_ValueCount();
+			int idx = StringTable::ValueCount;
 			CSFLoader::NextValueIndex = idx;
-			StringTable::set_ValueCount(idx + 1);
-			StringTable::set_LabelCount(StringTable::get_LabelCount() + 1);
+			StringTable::ValueCount = idx + 1;
+			StringTable::LabelCount = StringTable::LabelCount + 1;
 
 			R->EBP(idx * sizeof(CSFLabel)); //set the index
 		}
@@ -133,7 +168,7 @@ DEFINE_HOOK(734A5F, CSF_AddOrOverrideLabel, 5)
 //0x734A97
 DEFINE_HOOK(734A97, CSF_SetIndex, 6)
 {
-	R->EDX(StringTable::get_Labels());
+	R->EDX(StringTable::Labels);
 
 	if(CSFLoader::CSFCount > 0) {
 		R->ECX(CSFLoader::NextValueIndex);
@@ -159,15 +194,11 @@ DEFINE_HOOK(6BD886, CSF_LoadExtraFiles, 5)
 DEFINE_HOOK(734E83, CSF_LoadString_1, 6)
 {
 	GET(char *, Name, EBX);
-	if(strlen(Name) >= 6 && !strncmp(Name, "NOSTR:", 6)) {
-		CSFString *NewString;
-		GAME_ALLOC(CSFString, NewString);
-		wsprintfW(NewString->Text, L"%hs", &Name[6]);
 
-		NewString->PreviousEntry = StringTable::LastLoadedString;
-		StringTable::LastLoadedString = NewString;
+	if(!strncmp(Name, "NOSTR:", 6)) {
+		const wchar_t* string = CSFLoader::GetDynamicString(Name, L"%hs", &Name[6]);
 
-		R->EAX(NewString->Text);
+		R->EAX(string);
 
 		return 0x734F0F;
 	}
@@ -177,15 +208,10 @@ DEFINE_HOOK(734E83, CSF_LoadString_1, 6)
 DEFINE_HOOK(734EC2, CSF_LoadString_2, 7)
 {
 	GET(char *, Name, EBX);
-	CSFString *NewString;
-	GAME_ALLOC(CSFString, NewString);
 
-	wsprintfW(NewString->Text, L"MISSING:'%hs'", Name);
+	const wchar_t* string = CSFLoader::GetDynamicString(Name, L"MISSING:'%hs'", Name);
 
-	NewString->PreviousEntry = StringTable::LastLoadedString;
-	StringTable::LastLoadedString = NewString;
-
-	R->EAX(NewString->Text);
+	R->EAX(string);
 
 	return 0x734F0F;
 }

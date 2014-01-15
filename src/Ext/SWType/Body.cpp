@@ -11,21 +11,22 @@
 
 #include <WarheadTypeClass.h>
 #include <MessageListClass.h>
+#include <Notifications.h>
 
 template<> const DWORD Extension<SuperWeaponTypeClass>::Canary = 0x55555555;
 Container<SWTypeExt> SWTypeExt::ExtMap;
 
-template<> SWTypeExt::TT *Container<SWTypeExt>::SavingObject = NULL;
-template<> IStream *Container<SWTypeExt>::SavingStream = NULL;
+template<> SWTypeExt::TT *Container<SWTypeExt>::SavingObject = nullptr;
+template<> IStream *Container<SWTypeExt>::SavingStream = nullptr;
 
-SuperWeaponTypeClass *SWTypeExt::CurrentSWType = NULL;
+SuperWeaponTypeClass *SWTypeExt::CurrentSWType = nullptr;
 
 SWTypeExt::ExtData::~ExtData() {
 	this->ParaDrop.clear();
 
 	for(int i=this->ParaDropPlanes.Count-1; i>=0; --i) {
 		delete this->ParaDropPlanes.Items[i];
-		this->ParaDropPlanes.Items[i] = NULL;
+		this->ParaDropPlanes.Items[i] = nullptr;
 	}
 };
 
@@ -53,12 +54,13 @@ void SWTypeExt::ExtData::InitializeConstants(SuperWeaponTypeClass *pThis)
 	Cursor->HotX = hotspx_center;
 	Cursor->HotY = hotspy_middle;
 
-	AresCRT::strCopy(this->Text_Ready, "TXT_READY", 0x20);
-	AresCRT::strCopy(this->Text_Hold, "TXT_HOLD", 0x20);
-	AresCRT::strCopy(this->Text_Charging, "TXT_CHARGING", 0x20);
-	AresCRT::strCopy(this->Text_Active, "TXT_FIRESTORM_ON", 0x20);
+	this->Text_Ready = CSFText("TXT_READY");
+	this->Text_Hold = CSFText("TXT_HOLD");
+	this->Text_Charging = CSFText("TXT_CHARGING");
+	this->Text_Active = CSFText("TXT_FIRESTORM_ON");
 
 	EVA_InsufficientFunds = VoxClass::FindIndex("EVA_InsufficientFunds");
+	EVA_SelectTarget = VoxClass::FindIndex("EVA_SelectTarget");
 }
 
 void SWTypeExt::ExtData::InitializeRuled(SuperWeaponTypeClass *pThis)
@@ -119,6 +121,7 @@ void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass
 	this->EVA_Detected.Read(&exINI, section, "EVA.Detected");
 	this->EVA_Impatient.Read(&exINI, section, "EVA.Impatient");
 	this->EVA_InsufficientFunds.Read(&exINI, section, "EVA.InsufficientFunds");
+	this->EVA_SelectTarget.Read(&exINI, section, "EVA.SelectTarget");
 
 	this->SW_FireToShroud.Read(&exINI, section, "SW.FireIntoShroud");
 	this->SW_AutoFire.Read(&exINI, section, "SW.AutoFire");
@@ -154,12 +157,13 @@ void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass
 	this->SW_Damage.Read(&exINI, section, "SW.Damage");
 
 	if(pINI->ReadString(section, "SW.Range", Ares::readDefval, Ares::readBuffer, Ares::readLength)) {
-		char* p = strtok(Ares::readBuffer, Ares::readDelims);
+		char* context = nullptr;
+		char* p = strtok_s(Ares::readBuffer, Ares::readDelims, &context);
 		if(p && *p) {
 			this->SW_WidthOrRange = (float)atof(p);
 			this->SW_Height = -1;
 
-			p = strtok(NULL, Ares::readDelims);
+			p = strtok_s(nullptr, Ares::readDelims, &context);
 			if(p && *p) {
 				this->SW_Height = atoi(p);
 			}
@@ -173,43 +177,31 @@ void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass
 	this->Lighting_Green.Read(&exINI, section, "Light.Green");
 	this->Lighting_Blue.Read(&exINI, section, "Light.Blue");
 
-	auto readString = [&](char* value, char* key) {
-		if(pINI->ReadString(section, key, Ares::readDefval, Ares::readBuffer, Ares::readLength)) {
-			AresCRT::strCopy(value, Ares::readBuffer, 0x20);
-		}
-	};
-
 	// messages and their properties
 	this->Message_FirerColor.Read(&exINI, section, "Message.FirerColor");
 	if(pINI->ReadString(section, "Message.Color", Ares::readDefval, Ares::readBuffer, Ares::readLength)) {
 		this->Message_ColorScheme = ColorScheme::FindIndex(Ares::readBuffer);
-		if(!this->Message_ColorScheme) {
+		if(this->Message_ColorScheme < 0) {
 			Debug::INIParseFailed(section, "Message.Color", Ares::readBuffer, "Expected a valid color scheme name.");
 		}
 	}
 
-	readString(this->Message_Detected, "Message.Detected");
-	readString(this->Message_Ready, "Message.Ready");
-	readString(this->Message_Launch, "Message.Launch");
-	readString(this->Message_Activate, "Message.Activate");
-	readString(this->Message_Abort, "Message.Abort");
-	readString(this->Message_InsufficientFunds, "Message.InsufficientFunds");
+	this->Message_Detected.Read(&exINI, section, "Message.Detected");
+	this->Message_Ready.Read(&exINI, section, "Message.Ready");
+	this->Message_Launch.Read(&exINI, section, "Message.Launch");
+	this->Message_Activate.Read(&exINI, section, "Message.Activate");
+	this->Message_Abort.Read(&exINI, section, "Message.Abort");
+	this->Message_InsufficientFunds.Read(&exINI, section, "Message.InsufficientFunds");
 
-	readString(this->Text_Preparing, "Text.Preparing");
-	readString(this->Text_Ready, "Text.Ready");
-	readString(this->Text_Hold, "Text.Hold");
-	readString(this->Text_Charging, "Text.Charging");
-	readString(this->Text_Active, "Text.Active");
-
-	this->NameReadiness_Preparing = NULL;
-	this->NameReadiness_Ready = NULL;
-	this->NameReadiness_Hold = NULL;
-	this->NameReadiness_Charging = NULL;
-	this->NameReadiness_Active = NULL;
+	this->Text_Preparing.Read(&exINI, section, "Text.Preparing");
+	this->Text_Ready.Read(&exINI, section, "Text.Ready");
+	this->Text_Hold.Read(&exINI, section, "Text.Hold");
+	this->Text_Charging.Read(&exINI, section, "Text.Charging");
+	this->Text_Active.Read(&exINI, section, "Text.Active");
 
 	// the fallback is handled in the PreDependent SW's code
 	if(pINI->ReadString(section, "SW.PostDependent", Ares::readDefval, Ares::readBuffer, Ares::readLength)) {
-		AresCRT::strCopy(this->SW_PostDependent, Ares::readBuffer, 0x18);
+		AresCRT::strCopy(this->SW_PostDependent, Ares::readBuffer);
 	}
 
 	// find a NewSWType that handles this original one.
@@ -234,7 +226,7 @@ void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass
 	this->CameoPal.LoadFromINI(pINI, pThis->ID, "SidebarPalette");
 
 	if(pINI->ReadString(section, "SidebarPCX", "", Ares::readBuffer, Ares::readLength)) {
-		AresCRT::strCopy(this->SidebarPCX, Ares::readBuffer, 0x20);
+		AresCRT::strCopy(this->SidebarPCX, Ares::readBuffer);
 		_strlwr_s(this->SidebarPCX, 0x20);
 		if(!PCX::Instance->LoadFile(this->SidebarPCX)) {
 			Debug::INIParseFailed(section, "SidebarPCX", this->SidebarPCX);
@@ -322,7 +314,7 @@ bool SWTypeExt::ExtData::IsTechnoAffected(TechnoClass* pTechno) {
 }
 
 bool SWTypeExt::ExtData::CanFireAt(CellStruct *pCoords) {
-	if(CellClass *pCell = MapClass::Instance->GetCellAt(pCoords)) {
+	if(CellClass *pCell = MapClass::Instance->GetCellAt(*pCoords)) {
 
 		// check cell type
 		if(!IsCellEligible(pCell, this->SW_RequiresTarget)) {
@@ -357,8 +349,8 @@ bool SWTypeExt::Launch(SuperClass* pThis, NewSWType* pSW, CellStruct* pCoords, b
 			if(flags & SuperWeaponFlags::PostClick) {
 				// use the properties of the originally fired SW
 				if(HouseExt::ExtData *pExt = HouseExt::ExtMap.Find(pThis->Owner)) {
-					if(pThis->Owner->Supers.ValidIndex(pExt->SWLastIndex)) {
-						pThis = pThis->Owner->Supers.GetItem(pExt->SWLastIndex);
+					if(auto pLast = pThis->Owner->Supers.GetItemOrDefault(pExt->SWLastIndex)) {
+						pThis = pLast;
 						pData = SWTypeExt::ExtMap.Find(pThis->Type);
 					}
 				}
@@ -379,12 +371,12 @@ bool SWTypeExt::Launch(SuperClass* pThis, NewSWType* pSW, CellStruct* pCoords, b
 				}
 			}
 
-			CellClass *pTarget = MapClass::Instance->GetCellAt(pCoords);
+			CellClass *pTarget = MapClass::Instance->GetCellAt(*pCoords);
 
 			CoordStruct coords;
 			pTarget->GetCoordsWithBridge(&coords);
 
-			if((pData->SW_Anim.Get() != NULL) && !(flags & SuperWeaponFlags::NoAnim)) {
+			if(pData->SW_Anim && !(flags & SuperWeaponFlags::NoAnim)) {
 				coords.Z += pData->SW_AnimHeight;
 				AnimClass *placeholder;
 				GAME_ALLOC(AnimClass, placeholder, pData->SW_Anim, &coords);
@@ -392,19 +384,19 @@ bool SWTypeExt::Launch(SuperClass* pThis, NewSWType* pSW, CellStruct* pCoords, b
 			}
 
 			if((pData->SW_Sound != -1) && !(flags & SuperWeaponFlags::NoSound)) {
-				VocClass::PlayAt(pData->SW_Sound, &coords, NULL);
+				VocClass::PlayAt(pData->SW_Sound, &coords, nullptr);
 			}
 
-			if(pData->SW_RadarEvent.Get() && !(flags & SuperWeaponFlags::NoEvent)) {
-				RadarEventClass::Create(RADAREVENT_SUPERWEAPONLAUNCHED, *pCoords);
+			if(pData->SW_RadarEvent && !(flags & SuperWeaponFlags::NoEvent)) {
+				RadarEventClass::Create(RadarEventType::SuperweaponActivated, *pCoords);
 			}
 
-			if(pData->Message_Launch && !(flags & SuperWeaponFlags::NoMessage)) {
+			if(!(flags & SuperWeaponFlags::NoMessage)) {
 				pData->PrintMessage(pData->Message_Launch, pThis->Owner);
 			}
 
 			// this sw has been fired. clean up.
-			int idxThis = pThis->Owner->Supers.FindItemIndex(&pThis);
+			int idxThis = pThis->Owner->Supers.FindItemIndex(pThis);
 			if(IsPlayer && !(flags & SuperWeaponFlags::NoCleanup)) {
 				// what's this? we reset the selected SW only for the player on this
 				// computer, so others don't deselect it when firing simultaneously.
@@ -449,16 +441,16 @@ NewSWType* SWTypeExt::ExtData::GetNewSWType() {
 		return pSW;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
-void SWTypeExt::ExtData::PrintMessage(char* pMessage, HouseClass* pFirer) {
-	if(!pMessage || !*pMessage) {
+void SWTypeExt::ExtData::PrintMessage(const CSFText& message, HouseClass* pFirer) {
+	if(message.empty()) {
 		return;
 	}
 
 	int color = ColorScheme::FindIndex("Gold");
-	if(this->Message_FirerColor.Get()) {
+	if(this->Message_FirerColor) {
 		// firer color
 		if(pFirer) {
 			color = pFirer->ColorSchemeIndex;
@@ -474,48 +466,35 @@ void SWTypeExt::ExtData::PrintMessage(char* pMessage, HouseClass* pFirer) {
 	}
 
 	// print the message
-	const wchar_t* label = StringTable::LoadStringA(pMessage);
-	if(label && *label) {
-		MessageListClass::Instance->PrintMessage(label, color);
-	}
+	MessageListClass::Instance->PrintMessage(message, color);
 }
 
 void SWTypeExt::ClearChronoAnim(SuperClass *pThis)
 {
-	DynamicVectorClass<SuperClass*>* pSupers = (DynamicVectorClass<SuperClass*>*)0xB0F5B8;
-
 	if(pThis->Animation) {
 		pThis->Animation->RemainingIterations = 0;
-		pThis->Animation = NULL;
-		int idx = pSupers->FindItemIndex(&pThis);
-		if(idx != -1) {
-			pSupers->RemoveItem(idx);
-		}
+		pThis->Animation = nullptr;
+		PointerExpiredNotification::NotifyInvalidAnim.Remove(pThis);
 	}
 
-	if(pThis->unknown_bool_6C) {
-		int idx = pSupers->FindItemIndex(&pThis);
-		if(idx != -1) {
-			pSupers->RemoveItem(idx);
-		}
-		pThis->unknown_bool_6C = false;
+	if(pThis->AnimationGotInvalid) {
+		PointerExpiredNotification::NotifyInvalidAnim.Remove(pThis);
+		pThis->AnimationGotInvalid = false;
 	}
 }
 
 void SWTypeExt::CreateChronoAnim(SuperClass *pThis, CoordStruct *pCoords, AnimTypeClass *pAnimType)
 {
-	DynamicVectorClass<SuperClass*>* pSupers = (DynamicVectorClass<SuperClass*>*)0xB0F5B8;
-
 	ClearChronoAnim(pThis);
 	
 	if(pAnimType && pCoords) {
-		AnimClass* pAnim = NULL;
+		AnimClass* pAnim = nullptr;
 		GAME_ALLOC(AnimClass, pAnim, pAnimType, pCoords);
 		if(pAnim) {
 			SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pThis->Type);
 			pAnim->Invisible = !pData->IsAnimVisible(pThis->Owner);
 			pThis->Animation = pAnim;
-			pSupers->AddItem(pThis);
+			PointerExpiredNotification::NotifyInvalidAnim.Add(pThis);
 		}
 	}
 }
@@ -537,7 +516,7 @@ bool SWTypeExt::ChangeLighting(SuperWeaponTypeClass *pThis) {
 }
 
 bool SWTypeExt::ExtData::ChangeLighting() {
-	if(this->Lighting_Enabled.Get()) {
+	if(this->Lighting_Enabled) {
 		auto getValue = [](int value, int def) -> int {
 			return (value < 0) ? def : value;
 		};
@@ -554,7 +533,7 @@ bool SWTypeExt::ExtData::ChangeLighting() {
 	return false;
 }
 
-void Container<SWTypeExt>::InvalidatePointer(void *ptr) {
+void Container<SWTypeExt>::InvalidatePointer(void *ptr, bool bRemoved) {
 	AnnounceInvalidPointer(SWTypeExt::CurrentSWType, ptr);
 }
 
@@ -586,8 +565,8 @@ DEFINE_HOOK(6CEFE0, SuperWeaponTypeClass_DTOR, 8)
 	return 0;
 }
 
-DEFINE_HOOK(6CE800, SuperWeaponTypeClass_SaveLoad_Prefix, A)
 DEFINE_HOOK_AGAIN(6CE8D0, SuperWeaponTypeClass_SaveLoad_Prefix, 8)
+DEFINE_HOOK(6CE800, SuperWeaponTypeClass_SaveLoad_Prefix, A)
 {
 	GET_STACK(SWTypeExt::TT*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
@@ -610,8 +589,8 @@ DEFINE_HOOK(6CE8EA, SuperWeaponTypeClass_Save_Suffix, 3)
 	return 0;
 }
 
-DEFINE_HOOK(6CEE43, SuperWeaponTypeClass_LoadFromINI, A)
 DEFINE_HOOK_AGAIN(6CEE50, SuperWeaponTypeClass_LoadFromINI, A)
+DEFINE_HOOK(6CEE43, SuperWeaponTypeClass_LoadFromINI, A)
 {
 	GET(SuperWeaponTypeClass*, pItem, EBP);
 	GET_STACK(CCINIClass*, pINI, 0x3FC);

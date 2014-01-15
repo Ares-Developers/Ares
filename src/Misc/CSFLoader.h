@@ -19,6 +19,11 @@ public:
 	static int NextValueIndex;
 
 	static void LoadAdditionalCSF(const char* fileName);
+
+	static std::hash_map<std::string, const CSFString*> DynamicStrings;
+
+	static const CSFString* FindDynamic(const char* name);
+	static const wchar_t* GetDynamicString(const char* name, const wchar_t* pattern, const char* def);
 };
 
 #endif

@@ -120,9 +120,8 @@ DEFINE_HOOK(443414, BuildingClass_ClickedAction, 6)
 
 	if(Action == act_Enter) {
 		if(BuildingClass *pTargetBuilding = specific_cast<BuildingClass *>(pTarget)) {
-			CoordStruct XYZ;
-			pTargetBuilding->GetCoords(&XYZ);
-			CellStruct tgt = { short(XYZ.X / 256), short(XYZ.Y / 256) };
+			CoordStruct XYZ = pTargetBuilding->GetCoords();
+			CellStruct tgt = CellClass::Coord2Cell(XYZ);
 			AresNetEvent::Handlers::RaiseTrenchRedirectClick(pThis, &tgt);
 			R->EAX(1);
 			return 0x44344D;
@@ -198,7 +197,7 @@ DEFINE_HOOK(52297F, InfantryClass_GarrisonBuilding_OccupierEntered, 5)
 	GET(int, idxOccupant, EBP);
 
 	TechnoExt::ExtData* infExtData = TechnoExt::ExtMap.Find(pBld->Occupants[idxOccupant]);
-	infExtData->GarrisonedIn = NULL;
+	infExtData->GarrisonedIn = nullptr;
 
     / *
     - get current rally point target; if there is none, exit trench
@@ -224,7 +223,7 @@ DEFINE_HOOK(52297F, InfantryClass_GarrisonBuilding_OccupierEntered, 5)
 DEFINE_HOOK(4586CA, BuildingClass_KillOccupiers_EachOccupierKilled, 6)
 {
     GET(BuildingClass *, pBld, ESI);
-    GET(int, idxOccupant, EDI);
+    //GET(int, idxOccupant, EDI);
     // I don't think anyone ever actually tested Assaulter=yes with raiding, putting this here 'cause it's likely needed
 	BuildingExt::ExtData* buildingExtData = BuildingExt::ExtMap.Find(pBld);
     buildingExtData->evalRaidStatus();
@@ -290,7 +289,7 @@ A_FINE_HOOK(457DF5, BuildingClass_UnloadOccupants_AboutToStartUnloading, 6)
 DEFINE_HOOK(448401, BuildingClass_ChangeOwnership_TrenchEVA, 6)
 {
 	GET(BuildingClass *, pBld, ESI);
-	GET(HouseClass *, pNewOwner, EBX);
+	//GET(HouseClass *, pNewOwner, EBX);
 	enum wasHandled { Yes = 0x44848F, No = 0} Handled = No;
 
 	BuildingExt::ExtData* bldExt = BuildingExt::ExtMap.Find(pBld);

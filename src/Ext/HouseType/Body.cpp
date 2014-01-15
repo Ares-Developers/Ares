@@ -4,12 +4,15 @@
 #include "../../Ares.CRT.h"
 #include <ScenarioClass.h>
 #include <ColorScheme.h>
+#include <DiscreteDistributionClass.h>
+
+#include <iterator>
 
 template<> const DWORD Extension<HouseTypeClass>::Canary = 0xAFFEAFFE;
 Container<HouseTypeExt> HouseTypeExt::ExtMap;
 
-template<> HouseTypeExt::TT *Container<HouseTypeExt>::SavingObject = NULL;
-template<> IStream *Container<HouseTypeExt>::SavingStream = NULL;
+template<> HouseTypeExt::TT *Container<HouseTypeExt>::SavingObject = nullptr;
+template<> IStream *Container<HouseTypeExt>::SavingStream = nullptr;
 
 void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 	char* pID = pThis->ID;
@@ -27,6 +30,8 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		strcpy(this->LSSpecialName, "Name:Para");
 		strcpy(this->StatusText, "STT:PlayerSideAmerica");
 		strcpy(this->TauntFile, "taunts\\tauam%02i.wav");
+		strcpy(this->ObserverBackground, "obsalli.shp");
+		strcpy(this->ObserverFlag, "usai.shp");
 	} else if (!_strcmpi(pID, "Alliance")) //Korea
 	{
 		strcpy(this->FlagFile, "japi.pcx");
@@ -37,6 +42,8 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		strcpy(this->LSSpecialName, "Name:BEAGLE");
 		strcpy(this->StatusText, "STT:PlayerSideKorea");
 		strcpy(this->TauntFile, "taunts\\tauko%02i.wav");
+		strcpy(this->ObserverBackground, "obsalli.shp");
+		strcpy(this->ObserverFlag, "japi.shp");
 	} else if (!_strcmpi(pID, "French")) //France
 	{
 		strcpy(this->FlagFile, "frai.pcx");
@@ -47,6 +54,8 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		strcpy(this->LSSpecialName, "Name:GTGCAN");
 		strcpy(this->StatusText, "STT:PlayerSideFrance");
 		strcpy(this->TauntFile, "taunts\\taufr%02i.wav");
+		strcpy(this->ObserverBackground, "obsalli.shp");
+		strcpy(this->ObserverFlag, "frai.shp");
 	} else if (!_strcmpi(pID, "Germans")) //Germany
 	{
 		strcpy(this->FlagFile, "geri.pcx");
@@ -57,6 +66,8 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		strcpy(this->LSSpecialName, "Name:TNKD");
 		strcpy(this->StatusText, "STT:PlayerSideGermany");
 		strcpy(this->TauntFile, "taunts\\tauge%02i.wav");
+		strcpy(this->ObserverBackground, "obsalli.shp");
+		strcpy(this->ObserverFlag, "geri.shp");
 	} else if (!_strcmpi(pID, "British")) //United Kingdom
 	{
 		strcpy(this->FlagFile, "gbri.pcx");
@@ -67,6 +78,8 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		strcpy(this->LSSpecialName, "Name:SNIPE");
 		strcpy(this->StatusText, "STT:PlayerSideBritain");
 		strcpy(this->TauntFile, "taunts\\taubr%02i.wav");
+		strcpy(this->ObserverBackground, "obsalli.shp");
+		strcpy(this->ObserverFlag, "gbri.shp");
 	} else if (!_strcmpi(pID, "Africans")) //Libya
 	{
 		strcpy(this->FlagFile, "djbi.pcx");
@@ -77,6 +90,8 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		strcpy(this->LSSpecialName, "Name:DTRUCK");
 		strcpy(this->StatusText, "STT:PlayerSideLibya");
 		strcpy(this->TauntFile, "taunts\\tauli%02i.wav");
+		strcpy(this->ObserverBackground, "obssovi.shp");
+		strcpy(this->ObserverFlag, "djbi.shp");
 	} else if (!_strcmpi(pID, "Arabs")) //Iraq
 	{
 		strcpy(this->FlagFile, "arbi.pcx");
@@ -87,6 +102,8 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		strcpy(this->LSSpecialName, "Name:DESO");
 		strcpy(this->StatusText, "STT:PlayerSideIraq");
 		strcpy(this->TauntFile, "taunts\\tauir%02i.wav");
+		strcpy(this->ObserverBackground, "obssovi.shp");
+		strcpy(this->ObserverFlag, "arbi.shp");
 	} else if (!_strcmpi(pID, "Confederation")) //Cuba
 	{
 		strcpy(this->FlagFile, "lati.pcx");
@@ -97,6 +114,8 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		strcpy(this->LSSpecialName, "Name:TERROR");
 		strcpy(this->StatusText, "STT:PlayerSideCuba");
 		strcpy(this->TauntFile, "taunts\\taucu%02i.wav");
+		strcpy(this->ObserverBackground, "obssovi.shp");
+		strcpy(this->ObserverFlag, "lati.shp");
 	} else if (!_strcmpi(pID, "Russians")) //Russia
 	{
 		strcpy(this->FlagFile, "rusi.pcx");
@@ -107,6 +126,8 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		strcpy(this->LSSpecialName, "Name:TTNK");
 		strcpy(this->StatusText, "STT:PlayerSideRussia");
 		strcpy(this->TauntFile, "taunts\\tauru%02i.wav");
+		strcpy(this->ObserverBackground, "obssovi.shp");
+		strcpy(this->ObserverFlag, "rusi.shp");
 	} else if (!_strcmpi(pID, "YuriCountry")) //Yuri
 	{
 		strcpy(this->FlagFile, "yrii.pcx");
@@ -117,6 +138,9 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		strcpy(this->LSSpecialName, "Name:YURI");
 		strcpy(this->StatusText, "STT:PlayerSideYuriCountry");
 		strcpy(this->TauntFile, "taunts\\tauyu%02i.wav");
+		strcpy(this->ObserverBackground, "obsyuri.shp");
+		strcpy(this->ObserverFlag, "yrii.shp");
+		this->ObserverFlagYuriPAL = true;
 	} else //Unknown
 	{
 		strcpy(this->FlagFile, "rani.pcx");
@@ -137,7 +161,7 @@ void HouseTypeExt::ExtData::Initialize(HouseTypeClass *pThis) {
 	this->ParaDrop.Clear();
 	this->ParaDropNum.Clear();
 
-	BuildingTypeClass * pPower = NULL;
+	BuildingTypeClass * pPower = nullptr;
 
 	switch (pThis->SideIndex) {
 	case 0:
@@ -168,40 +192,79 @@ void HouseTypeExt::ExtData::LoadFromRulesFile(HouseTypeClass *pThis, CCINIClass 
 
 	this->InitializeConstants(pThis);
 
-	if (pINI->ReadString(pID, "File.Flag", "", Ares::readBuffer, Ares::readLength)) {
-		AresCRT::strCopy(this->FlagFile, Ares::readBuffer, 0x20);
-		if(!PCX::Instance->LoadFile(this->FlagFile)) {
-			Debug::INIParseFailed(pID, "File.Flag", this->FlagFile);
+	// ppShp is optional. if not set, only PCX is supported
+	auto ReadShpOrPcxImage = [&](const char* key, char* pBuffer, size_t cbBuffer, SHPStruct** ppShp) {
+		// read the key and convert it to lower case
+		if(pINI->ReadString(pID, key, pBuffer, Ares::readBuffer, Ares::readLength)) {
+			AresCRT::strCopy(pBuffer, Ares::readBuffer, cbBuffer);
+			_strlwr_s(pBuffer, cbBuffer);
+
+			// parse the value
+			if(INIClass::IsBlank(pBuffer)) {
+				// explicitly set to no image
+				if(ppShp) {
+					*ppShp = nullptr;
+				}
+				pBuffer[0] = 0;
+			} else if(!ppShp || strstr(pBuffer, ".pcx")) {
+				// clear shp and load pcx
+				if(ppShp) {
+					*ppShp = nullptr;
+				}
+				if(!PCX::Instance->LoadFile(pBuffer)) {
+					// log error and clear invalid name
+					Debug::INIParseFailed(pID, key, pBuffer);
+					pBuffer[0] = 0;
+				}
+			} else if(ppShp) {
+				// allowed to load as shp
+				*ppShp = FileSystem::LoadSHPFile(pBuffer);
+				if(!*ppShp) {
+					// log error and clear invalid name
+					Debug::INIParseFailed(pID, key, pBuffer);
+					pBuffer[0] = 0;
+				}
+			} else {
+				// disallowed file type
+				Debug::INIParseFailed(pID, key, pBuffer, "File type not allowed.");
+			}
 		}
-	}
+	};
+
+	ReadShpOrPcxImage("File.Flag", this->FlagFile, 0x20, nullptr);
+	ReadShpOrPcxImage("File.ObserverFlag", this->ObserverFlag, 0x20, &this->ObserverFlagSHP);
+	ReadShpOrPcxImage("File.ObserverBackground", this->ObserverBackground, 0x20, &this->ObserverBackgroundSHP);
 
 	if (pINI->ReadString(pID, "File.LoadScreen", "", Ares::readBuffer, Ares::readLength)) {
-		AresCRT::strCopy(this->LSFile, Ares::readBuffer, 0x20);
+		AresCRT::strCopy(this->LSFile, Ares::readBuffer);
 	}
 
 	if (pINI->ReadString(pID, "File.LoadScreenPAL", "", Ares::readBuffer, Ares::readLength)) {
-		AresCRT::strCopy(this->LSPALFile, Ares::readBuffer, 0x20);
+		AresCRT::strCopy(this->LSPALFile, Ares::readBuffer);
 	}
 
 	if (pINI->ReadString(pID, "File.Taunt", "", Ares::readBuffer, Ares::readLength)) {
-		AresCRT::strCopy(this->TauntFile, Ares::readBuffer, 0x20);
+		AresCRT::strCopy(this->TauntFile, Ares::readBuffer);
 	}
 
 	if (pINI->ReadString(pID, "LoadScreenText.Name", "", Ares::readBuffer, Ares::readLength)) {
-		AresCRT::strCopy(this->LSName, Ares::readBuffer, 0x20);
+		AresCRT::strCopy(this->LSName, Ares::readBuffer);
 	}
 
 	if (pINI->ReadString(pID, "LoadScreenText.SpecialName", "", Ares::readBuffer, Ares::readLength)) {
-		AresCRT::strCopy(this->LSSpecialName, Ares::readBuffer, 0x20);
+		AresCRT::strCopy(this->LSSpecialName, Ares::readBuffer);
 	}
 
 	if (pINI->ReadString(pID, "LoadScreenText.Brief", "", Ares::readBuffer, Ares::readLength)) {
-		AresCRT::strCopy(this->LSBrief, Ares::readBuffer, 0x20);
+		AresCRT::strCopy(this->LSBrief, Ares::readBuffer);
 	}
 
 	if (pINI->ReadString(pID, "MenuText.Status", "", Ares::readBuffer, Ares::readLength)) {
-		AresCRT::strCopy(this->StatusText, Ares::readBuffer, 0x20);
+		AresCRT::strCopy(this->StatusText, Ares::readBuffer);
 	}
+
+	INI_EX exINI(pINI);
+	this->ObserverFlagYuriPAL.Read(&exINI, pID, "File.ObserverFlagAltPalette");
 }
 
 void HouseTypeExt::ExtData::LoadFromINIFile(HouseTypeClass *pThis, CCINIClass *pINI) {
@@ -213,7 +276,7 @@ void HouseTypeExt::ExtData::LoadFromINIFile(HouseTypeClass *pThis, CCINIClass *p
 
 	if (!this->Powerplants.Count) {
 		const char * section = "General";
-		const char * key = NULL;
+		const char * key = nullptr;
 		switch (pThis->SideIndex) {
 			case 0:
 				key = "GDIPowerPlant";
@@ -238,7 +301,9 @@ void HouseTypeExt::ExtData::LoadFromINIFile(HouseTypeClass *pThis, CCINIClass *p
 
 	if (pINI->ReadString(pID, "AI.PowerPlants", "", Ares::readBuffer, Ares::readLength)) {
 		this->Powerplants.Clear();
-		for (char *bld = strtok(Ares::readBuffer, Ares::readDelims); bld; bld = strtok(NULL, Ares::readDelims)) {
+
+		char* context = nullptr;
+		for (char *bld = strtok_s(Ares::readBuffer, Ares::readDelims, &context); bld; bld = strtok_s(nullptr, Ares::readDelims, &context)) {
 			if (BuildingTypeClass *pBld = BuildingTypeClass::Find(bld)) {
 				this->Powerplants.AddItem(pBld);
 			} else {
@@ -253,11 +318,12 @@ void HouseTypeExt::ExtData::LoadFromINIFile(HouseTypeClass *pThis, CCINIClass *p
 	
 	this->ParaDropPlane.Read(&exINI, pID, "ParaDrop.Aircraft");
 
-	char* p = NULL;
+	char* p = nullptr;
 	if(pINI->ReadString(pID, "ParaDrop.Types", "", Ares::readBuffer, Ares::readLength)) {
 		this->ParaDrop.Clear();
 
-		for(p = strtok(Ares::readBuffer, Ares::readDelims); p && *p; p = strtok(NULL, Ares::readDelims)) {
+		char* context = nullptr;
+		for(p = strtok_s(Ares::readBuffer, Ares::readDelims, &context); p && *p; p = strtok_s(nullptr, Ares::readDelims, &context)) {
 			TechnoTypeClass* pTT = UnitTypeClass::Find(p);
 
 			if(!pTT) {
@@ -275,7 +341,8 @@ void HouseTypeExt::ExtData::LoadFromINIFile(HouseTypeClass *pThis, CCINIClass *p
 	if(pINI->ReadString(pID, "ParaDrop.Num", "", Ares::readBuffer, Ares::readLength)) {
 		this->ParaDropNum.Clear();
 
-		for(p = strtok(Ares::readBuffer, Ares::readDelims); p && *p; p = strtok(NULL, Ares::readDelims)) {
+		char* context = nullptr;
+		for(p = strtok_s(Ares::readBuffer, Ares::readDelims, &context); p && *p; p = strtok_s(nullptr, Ares::readDelims, &context)) {
 			this->ParaDropNum.AddItem(atoi(p));
 		}
 	}
@@ -288,18 +355,20 @@ void HouseTypeExt::ExtData::LoadFromINIFile(HouseTypeClass *pThis, CCINIClass *p
 
 	this->RandomSelectionWeight = pINI->ReadInteger(pID, "RandomSelectionWeight", this->RandomSelectionWeight);
 	this->CountryListIndex = pINI->ReadInteger(pID, "ListIndex", this->CountryListIndex);
+
+	this->VeteranBuildings.Read(&exINI, pID, "VeteranBuildings");
 }
 
 template<size_t Len>
 void CopyString(char (HouseTypeExt::ExtData::* prop)[Len], const HouseTypeExt::ExtData *src, HouseTypeExt::ExtData *dst) {
-	AresCRT::strCopy(dst->*prop, src->*prop, Len);
+	AresCRT::strCopy(dst->*prop, src->*prop);
 }
 
 template<typename T>
 void CopyVector(T HouseTypeExt::ExtData::* prop, const HouseTypeExt::ExtData *src, HouseTypeExt::ExtData *dst) {
 	auto &sp = src->*prop;
 	auto &dp = dst->*prop;
-	dp.SetCapacity(sp.Capacity, NULL);
+	dp.SetCapacity(sp.Capacity, nullptr);
 	dp.Count = sp.Count;
 	for(unsigned ix = sp.Count; ix > 0; --ix) {
 		auto idx = ix - 1;
@@ -307,10 +376,21 @@ void CopyVector(T HouseTypeExt::ExtData::* prop, const HouseTypeExt::ExtData *sr
 	}
 }
 
+template<typename T>
+void CopyStdVector(T HouseTypeExt::ExtData::* prop, const HouseTypeExt::ExtData *src, HouseTypeExt::ExtData *dst) {
+	auto &sp = src->*prop;
+	auto &dp = dst->*prop;
+	dp.clear();
+	dp.reserve(sp.size());
+	std::copy(sp.begin(), sp.end(), std::back_inserter(dp));
+}
+
 void HouseTypeExt::ExtData::InheritSettings(HouseTypeClass *pThis) {
 	if(auto ParentCountry = HouseTypeClass::Find(pThis->ParentCountry)) {
 		if(const auto ParentData = HouseTypeExt::ExtMap.Find(ParentCountry)) {
 			CopyString(&HouseTypeExt::ExtData::FlagFile, ParentData, this);
+			CopyString(&HouseTypeExt::ExtData::ObserverFlag, ParentData, this);
+			CopyString(&HouseTypeExt::ExtData::ObserverBackground, ParentData, this);
 			CopyString(&HouseTypeExt::ExtData::LSFile, ParentData, this);
 			CopyString(&HouseTypeExt::ExtData::LSPALFile, ParentData, this);
 			CopyString(&HouseTypeExt::ExtData::TauntFile, ParentData, this);
@@ -321,6 +401,9 @@ void HouseTypeExt::ExtData::InheritSettings(HouseTypeClass *pThis) {
 			this->LoadTextColor = ParentData->LoadTextColor;
 			this->RandomSelectionWeight = ParentData->RandomSelectionWeight;
 			this->CountryListIndex = ParentData->CountryListIndex + 1;
+			this->ObserverBackgroundSHP = ParentData->ObserverBackgroundSHP;
+			this->ObserverFlagSHP = ParentData->ObserverFlagSHP;
+			this->ObserverFlagYuriPAL = ParentData->ObserverFlagYuriPAL;
 
 			this->ParaDropPlane.Set(ParentData->ParaDropPlane);
 			this->Parachute_Anim.Set(ParentData->Parachute_Anim);
@@ -328,6 +411,8 @@ void HouseTypeExt::ExtData::InheritSettings(HouseTypeClass *pThis) {
 			CopyVector(&HouseTypeExt::ExtData::Powerplants, ParentData, this);
 			CopyVector(&HouseTypeExt::ExtData::ParaDrop, ParentData, this);
 			CopyVector(&HouseTypeExt::ExtData::ParaDropNum, ParentData, this);
+
+			CopyStdVector(&HouseTypeExt::ExtData::VeteranBuildings, ParentData, this);
 		}
 	}
 	this->SettingsInherited = true;
@@ -335,16 +420,16 @@ void HouseTypeExt::ExtData::InheritSettings(HouseTypeClass *pThis) {
 
 AnimTypeClass* HouseTypeExt::ExtData::GetParachuteAnim() {
 	// country-specific parachute
-	if(this->Parachute_Anim.Get()) {
-		return this->Parachute_Anim;
+	if(AnimTypeClass* pAnimType = this->Parachute_Anim) {
+		return pAnimType;
 	}
 
 	// side-specific with fallback to rules
 	int iSide = this->AttachedToObject->SideIndex;
-	if(SideClass::Array->ValidIndex(iSide)) {
-		if(SideExt::ExtData *pData = SideExt::ExtMap.Find(SideClass::Array->GetItem(iSide))) {
-			if(pData->Parachute_Anim.Get()) {
-				return pData->Parachute_Anim;
+	if(auto pSide = SideClass::Array->GetItemOrDefault(iSide)) {
+		if(SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide)) {
+			if(AnimTypeClass* pAnimType = pData->Parachute_Anim) {
+				return pAnimType;
 			}
 		} else {
 			Debug::Log("[GetParachuteAnim] House %s and its side have no valid parachute defined. Rules fallback failed.\n", this->AttachedToObject->ID);
@@ -376,7 +461,7 @@ AircraftTypeClass* HouseTypeExt::ExtData::GetParadropPlane() {
 		return AircraftTypeClass::Array->GetItem(iPlane);
 	} else {
 		Debug::Log("[GetParadropPlane] House %s and its side have no valid paradrop plane defined. Rules fallback failed.\n", this->AttachedToObject->ID);
-		return NULL;
+		return nullptr;
 	}
 }
 
@@ -411,29 +496,23 @@ bool HouseTypeExt::ExtData::GetParadropContent(TypeList<TechnoTypeClass*> **pTyp
 }
 
 int HouseTypeExt::PickRandomCountry() {
-	std::vector<int> vecLegible;
-	HouseTypeClass* pCountry;
+	DiscreteDistributionClass<int> items;
 
 	for (int i = 0; i < HouseTypeClass::Array->Count; i++) {
-		pCountry = HouseTypeClass::Array->Items[i];
+		HouseTypeClass* pCountry = HouseTypeClass::Array->Items[i];
 		if (pCountry->Multiplay) {
 			if (HouseTypeExt::ExtData *pData = HouseTypeExt::ExtMap.Find(pCountry)) {
-				for (int k = 0; k < pData->RandomSelectionWeight; k++) {
-					vecLegible.push_back(i);
-				}
+				items.Add(i, pData->RandomSelectionWeight);
 			}
 		}
 	}
 
-	if (vecLegible.size() > 0) {
-		int pick = ScenarioClass::Instance->Random.RandomRanged(0,
-				vecLegible.size() - 1);
-
-		return vecLegible.at(pick);
-	} else {
+	int ret = 0;
+	if(!items.Select(ScenarioClass::Instance->Random, &ret)) {
 		Debug::FatalErrorAndExit("No countries eligible for random selection!");
 	}
-	return 0;
+
+	return ret;
 }
 
 // =============================
@@ -477,8 +556,8 @@ DEFINE_HOOK(512760, HouseTypeClass_DTOR, 6) {
 	return 0;
 }
 
-DEFINE_HOOK(512290, HouseTypeClass_SaveLoad_Prefix, 5)
 DEFINE_HOOK_AGAIN(512480, HouseTypeClass_SaveLoad_Prefix, 5)
+DEFINE_HOOK(512290, HouseTypeClass_SaveLoad_Prefix, 5)
 {
 	GET_STACK(HouseTypeExt::TT*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
@@ -499,8 +578,8 @@ DEFINE_HOOK(51255C, HouseTypeClass_Save_Suffix, 5) {
 	return 0;
 }
 
-DEFINE_HOOK(51214F, HouseTypeClass_LoadFromINI, 5)
 DEFINE_HOOK_AGAIN(51215A, HouseTypeClass_LoadFromINI, 5)
+DEFINE_HOOK(51214F, HouseTypeClass_LoadFromINI, 5)
 {
 	GET(HouseTypeClass*, pItem, EBX);
 	GET_BASE(CCINIClass*, pINI, 0x8);

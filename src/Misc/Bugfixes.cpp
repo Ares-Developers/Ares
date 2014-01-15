@@ -31,6 +31,7 @@
 #include "../Utilities/Template.h"
 
 #include <cstdlib>
+#include <array>
 
 #ifdef DEBUGBUILD
 #include "../Ext/WarheadType/Body.h"
@@ -109,15 +110,6 @@ DEFINE_HOOK(71AF76, TemporalClass_Fire_UnwarpableB, 9) {
 
 	// always resume normally.
 	return 0;
-}
-
-// Insignificant=yes or DontScore=yes prevent EVA_UnitLost on unit destruction
-DEFINE_HOOK(4D98DD, Insignificant_UnitLost, 6)
-{
-	GET(TechnoClass *, t, ESI);
-	TechnoTypeClass *T = t->GetTechnoType();
-
-	return (T->Insignificant || T->DontScore) ? 0x4D9916 : 0;
 }
 
 // MakeInfantry that fails to place will just end the source animation and cleanup instead of memleaking to game end
@@ -207,8 +199,8 @@ A_FINE_HOOK(74036E, FooClass_GetCursorOverObject, 5)
 // 42461D, 6
 // 42463A, 6
 // correct warhead for animation damage
-DEFINE_HOOK(42461D, AnimClass_Update_Damage, 6)
 DEFINE_HOOK_AGAIN(42463A, AnimClass_Update_Damage, 6)
+DEFINE_HOOK(42461D, AnimClass_Update_Damage, 6)
 {
 	GET(AnimClass *, Anim, ESI);
 	WarheadTypeClass *W = Anim->Type->Warhead;
@@ -217,14 +209,31 @@ DEFINE_HOOK_AGAIN(42463A, AnimClass_Update_Damage, 6)
 			? RulesClass::Global()->FlameDamage2
 			: RulesClass::Global()->C4Warhead;
 	}
-	DWORD WH = (DWORD)W;
 
 	DWORD origin = R->get_Origin();
 	if(origin == 0x42461D) {
-		R->ECX(WH);
+		R->ECX(W);
 	} else {
-		R->EDX(WH);
+		R->EDX(W);
 	}
+
+	if (Anim->Owner) {
+		R->Stack<HouseClass *>(0x4, Anim->Owner);
+	} else {
+		if (Anim->OwnerObject) {
+			if (TechnoClass* OwnerObject = generic_cast<TechnoClass *>(Anim->OwnerObject)) {
+				R->Stack<HouseClass *>(0x4, OwnerObject->Owner);
+				//Debug::Log("Info: %s has ownerhouse set to %s.\n",
+				//Anim->Type->ID, OwnerObject->Owner->Type->ID);
+			}
+#ifdef DEBUGBUILD
+		} else {
+			Debug::Log("Info: Ownerless instance of %s.",
+			Anim->Type->ID);
+#endif
+		}
+	}
+
 	return 0; // WHAT? origin + 6;
 }
 
@@ -357,7 +366,7 @@ DEFINE_HOOK(6CF3CF, sub_6CF350, 8)
 
 	Debug::FatalErrorAndExit("Saved data loading failed");
 
-	return 0;
+	// return 0; does not return
 }
 
 /*
@@ -513,7 +522,7 @@ DEFINE_HOOK(441C21, BuildingClass_Destroy_ShakeScreenZero, 6)
 DEFINE_HOOK(699C1C, Game_ParsePKTs_ClearFile, 7)
 {
 	LEA_STACK(CCINIClass *, pINI, 0x24);
-	pINI->Clear(NULL, NULL);
+	pINI->Clear(nullptr, nullptr);
 	return 0;
 }
 
@@ -532,16 +541,24 @@ DEFINE_HOOK(50928C, HouseClass_Update_Factories_Queues_SkipBrokenDTOR, 5)
 	return 0x5092A3;
 }
 
+/*
+issue #1051260:
+commented out because of possible issues. if one team update destroys another
+team, this would change the list while iterating. because one can never know
+how many teams are deleted and whether the deleted teams are before or after
+//the current element, it is just safer to not touch it at all. 02-Dec-12 AlexB
+
 //westwood is stupid!
 // every frame they create a vector<TeamClass *> , copy all the teams from ::Array into it, iterate with ->Update(), delete
 // so this is OMG OPTIMIZED I guess
-DEFINE_HOOK(55B502, LogicClass_Update_UpdateAITeamsFaster, 5)
+A_FINE_HOOK(55B502, LogicClass_Update_UpdateAITeamsFaster, 5)
 {
 	for(int i = TeamClass::Array->Count - 1; i >= 0; --i) {
 		TeamClass::Array->GetItem(i)->Update();
 	}
 	return 0x55B5A1;
 }
+*/
 
 // Guard command failure
 DEFINE_HOOK(730DB0, GuardCommandClass_Execute, 0)
@@ -558,7 +575,7 @@ DEFINE_HOOK(472198, CaptureManagerClass_DrawLinks, 6)
 {
 	enum { Draw_Maybe = 0, Draw_Yes = 0x4721E6, Draw_No = 0x472287} decision = Draw_Maybe;
 	GET(CaptureManagerClass *, Controlled, EDI);
-	GET(TechnoClass *, Item, ECX);
+	//GET(TechnoClass *, Item, ECX);
 
 	if(FootClass *F = generic_cast<FootClass *>(Controlled->Owner)) {
 		if(F->ParasiteImUsing && F->InLimbo) {
@@ -575,11 +592,18 @@ DEFINE_HOOK(62A2F8, ParasiteClass_PointerGotInvalid, 6)
 	GET(ParasiteClass *, Parasite, ESI);
 	GET(CoordStruct *, XYZ, EAX);
 
-	if(UnitClass *U = specific_cast<UnitClass *>(Parasite->Owner)) {
-		if(!U->Type->Naval && U->GetHeight() > 200) {
-			*XYZ = U->Location;
-			U->IsFallingDown = U->IsABomb = true;
-		}
+	auto Owner = Parasite->Owner;
+
+	bool allowed = false;
+	if(UnitClass *U = specific_cast<UnitClass *>(Owner)) {
+		allowed = !U->Type->Naval;
+	} else if(specific_cast<InfantryClass*>(Owner)) {
+		allowed = true;
+	}
+
+	if(allowed && Owner->GetHeight() > 200) {
+		*XYZ = Owner->Location;
+		Owner->IsFallingDown = Owner->IsABomb = true;
 	}
 
 	return 0;
@@ -608,7 +632,7 @@ DEFINE_HOOK(718871, TeleportLocomotionClass_UnfreezeObject_SinkOrSwim, 7)
 			R->BL(1);
 			return 0x7188B1;
 	}
-	if(Type->SpeedType == st_Hover) {
+	if(Type->SpeedType == SpeedType::Hover) {
 		// will set BL to 1 , unless this is a powered unit with no power centers <-- what if we have a powered unit that's not a hover?
 		return 0x71887A;
 	}
@@ -813,8 +837,8 @@ DEFINE_HOOK(749088, Count_ResetWithGivenCount, 6)
 
 // #1260: reinforcements via actions 7 and 80, and chrono reinforcements
 // via action 107 cause crash if house doesn't exist
-DEFINE_HOOK(65D8FB, TeamTypeClass_ValidateHouse, 6)
 DEFINE_HOOK_AGAIN(65EC4A, TeamTypeClass_ValidateHouse, 6)
+DEFINE_HOOK(65D8FB, TeamTypeClass_ValidateHouse, 6)
 {
 	GET(TeamTypeClass*, pThis, ECX);
 	HouseClass* pHouse = pThis->GetHouse();
@@ -868,6 +892,13 @@ DEFINE_HOOK(4692A2, BulletClass_DetonateAt_RaiseAttackedByHouse, 6)
 	return pVictim->AttachedTag ? 0 : 0x4692BD;
 }
 
+// destroying a building (no health left) resulted in a single green pip shown
+// in the health bar for a split second. this makes the last pip red.
+DEFINE_HOOK(6F661D, TechnoClass_DrawHealthBar_DestroyedBuilding_RedPip, 7)
+{
+	GET(BuildingClass*, pBld, ESI);
+	return (pBld->Health <= 0 || pBld->IsRedHP()) ? 0x6F6628 : 0x6F6630;
+}
 
 DEFINE_HOOK(47243F, CaptureManagerClass_DecideUnitFate_BuildingFate, 6) {
 	GET(TechnoClass *, pVictim, EBX);
@@ -914,7 +945,8 @@ DEFINE_HOOK(739956, UnitClass_Deploy_TransferIvanBomb, 6)
 	GET(BuildingClass *, pStructure, EBX);
 
 	TechnoExt::TransferIvanBomb(pUnit, pStructure);
-
+	TechnoExt::TransferAttachedEffects(pUnit, pStructure);
+	
 	return 0;
 }
 
@@ -924,7 +956,8 @@ DEFINE_HOOK(44A03C, BuildingClass_Mi_Selling_TransferIvanBomb, 6)
 	GET(UnitClass *, pUnit, EBX);
 
 	TechnoExt::TransferIvanBomb(pStructure, pUnit);
-
+	TechnoExt::TransferAttachedEffects(pStructure, pUnit);
+	
 	return 0;
 }
 
@@ -944,8 +977,162 @@ DEFINE_HOOK(7077EE, TechnoClass_PointerGotInvalid_ResetMindControl, 6)
 	GET(void*, ptr, EBP);
 
 	if(pThis->MindControlledBy == ptr) {
-		pThis->MindControlledBy = NULL;
+		pThis->MindControlledBy = nullptr;
 	}
 
 	return 0;
+}
+
+// skip theme log lines
+DEFINE_HOOK_AGAIN(720C42, Theme_Stop_NoLog, 5) // skip Theme::Stop
+DEFINE_HOOK(720DE8, Theme_Stop_NoLog, 5) // skip Theme::PlaySong
+{
+	return R->get_Origin() + 5;
+}
+
+DEFINE_HOOK(720F37, sub_720EA0_NoLog, 5) // skip Theme::Stop
+{
+	return 0x720F3C;
+}
+
+DEFINE_HOOK(720A61, sub_7209D0_NoLog, 5) // skip Theme::AI
+{
+	return 0x720A66;
+}
+
+// skips the log line "Looping Movie"
+DEFINE_HOOK(615BD3, Handle_Static_Messages_LoopingMovie, 5)
+{
+	return 0x615BE0;
+}
+
+// #908369, #1100953: units are still deployable when warping or falling
+DEFINE_HOOK(700E47, TechnoClass_CanDeploySlashUnload_Immobile, A)
+{
+	GET(UnitClass*, pThis, ESI);
+
+	CoordStruct crd;
+	CellClass * pCell = pThis->GetCell();
+	pCell->GetCoordsWithBridge(&crd);
+
+	// recreate replaced check, and also disallow if unit is still warping or dropping in.
+	if(pThis->IsUnderEMP() || pThis->IsWarpingIn() || pThis->IsFallingDown) {
+		return 0x700DCE;
+	}
+
+	return 0x700E59;
+}
+
+// #1156943, #1156937: replace the engineer check, because they were smart
+// enough to use the pointer right before checking whether it's null, and
+// even if it isn't, they build a possible infinite loop.
+DEFINE_HOOK(44A5F0, BuildingClass_Mi_Selling_EngineerFreeze, 6)
+{
+	GET(BuildingClass*, pThis, EBP);
+	GET(InfantryTypeClass*, pType, ESI);
+	LEA_STACK(bool*, pEngineerSpawned, 0x13);
+
+	if(*pEngineerSpawned && pType && pType->Engineer) {
+		// randomize until probability is below 0.01%
+		// for only the Engineer tag being returned.
+		for(int i=9; i>=0; --i) {
+			pType = !i ? nullptr : pThis->GetCrew();
+
+			if(!pType || !pType->Engineer) {
+				break;
+			}
+		}
+	}
+
+	if(pType && pType->Engineer) {
+		*pEngineerSpawned = true;
+	}
+
+	R->ESI(pType);
+	return 0x44A628;
+}
+
+// #1156943: they check for type, and for the instance, yet
+// the Log call uses the values as if nothing happened.
+DEFINE_HOOK(4430E8, BuildingClass_Demolish_LogCrash, 6)
+{
+	GET(BuildingClass*, pThis, EDI);
+	GET(InfantryClass*, pInf, ESI);
+
+	R->EDX(pThis ? pThis->Type->Name : "<none>");
+	R->EAX(pInf ? pInf->Type->Name : "<none>");
+	return 0x4430FA;
+}
+
+// #1171643: keep the last passenger if this is a gunner, not just
+// when it has multiple turrets. gattling and charge turret is no
+// longer affected by this.
+DEFINE_HOOK(73D81E, UnitClass_Mi_Unload_LastPassenger, 5)
+{
+	GET(UnitClass*, pThis, ECX);
+	auto pType = pThis->GetTechnoType();
+	R->EAX(pType->Gunner ? 1 : 0);
+	return 0x73D823;
+}
+
+// stop command would still affect units going berzerk
+DEFINE_HOOK(730EE5, StopCommandClass_Execute_Berzerk, 6)
+{
+	GET(TechnoClass*, pTechno, ESI);
+
+	return pTechno->Berzerk ? 0x730EF7 : 0;
+}
+
+// powered units played their deactivation sounds even
+// when they aren't supposed to.
+DEFINE_HOOK(70FD0E, TechnoClass_Deactivate_MuteSound, 6)
+{
+	return Unsorted::IKnowWhatImDoing ? 0x70FD62 : 0;
+}
+
+DEFINE_HOOK(70FC18, TechnoClass_Activate_MuteSound, 6)
+{
+	return Unsorted::IKnowWhatImDoing ? 0x70FC7A : 0;
+}
+
+// do not infiltrate buildings of allies
+DEFINE_HOOK(519FF8, InfantryClass_UpdatePosition_PreInfiltrate, 6)
+{
+	GET(InfantryClass*, pThis, ESI);
+	GET(BuildingClass*, pBld, EDI);
+
+	if(!pThis->Type->Agent || pThis->Owner->IsAlliedWith(pBld)) {
+		return 0x51A03E;
+	}
+
+	return 0x51A002;
+}
+
+// replaces entire function (without the pip distortion bug)
+DEFINE_HOOK(4748A0, INIClass_GetPipIdx, 7)
+{
+	GET(INIClass*, pINI, ECX);
+	GET_STACK(const char*, pSection, 0x4);
+	GET_STACK(const char*, pKey, 0x8);
+	GET_STACK(int, fallback, 0xC);
+
+	int ret = fallback;
+	if(pINI->ReadString(pSection, pKey, Ares::readDefval, Ares::readBuffer, Ares::readLength)) {
+
+		// find the pip value with the name specified
+		auto PipTypes = reinterpret_cast<std::array<const NamedValue, 11>*>(0x81B958);
+		auto it = std::find(PipTypes->begin(), PipTypes->end(), Ares::readBuffer);
+
+		if(it != PipTypes->end()) {
+			ret = it->Value;
+
+		} else if(!Parser<int>::TryParse(Ares::readBuffer, &ret)) {
+			// parsing as integer didn't work either. invalid value
+			Debug::DevLog(Debug::Warning, "Could not parse pip at [%s]%s=\n", pSection, pKey);
+			ret = fallback;
+		}
+	}
+
+	R->EAX(ret);
+	return 0x474907;
 }

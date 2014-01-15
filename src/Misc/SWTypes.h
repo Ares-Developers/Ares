@@ -14,7 +14,7 @@ class NewSWType
 		bool Registered;
 
 		void Register()
-			{ Array.AddItem(this); this->TypeIndex = Array.Count; }
+			{ Array.AddItem(this); this->TypeIndex = Array.Count - 1; }
 
 	public:
 		NewSWType()
@@ -105,7 +105,7 @@ class SWStateMachine {
 
 		virtual ~SWStateMachine() {
 			auto t = this;
-			Array.RemoveItem(Array.FindItemIndex(&t));
+			Array.RemoveItem(Array.FindItemIndex(t));
 		}
 
 		virtual void Update() {};
@@ -149,7 +149,7 @@ class ChronoWarpStateMachine : public SWStateMachine {
 
 			ChronoWarpContainer() {}
 
-			bool operator == (ChronoWarpContainer &t)
+			bool operator == (const ChronoWarpContainer &t) const
 				{ return (this->pBld == t.pBld); }
 		};
 
@@ -175,16 +175,16 @@ class PsychicDominatorStateMachine : public SWStateMachine {
 	public:
 		PsychicDominatorStateMachine(CellStruct XY, SuperClass *pSuper, NewSWType * pSWType)
 			: SWStateMachine(MAXINT32, XY, pSuper, pSWType) {
-				PsyDom::Status(PsychicDominatorStatus::FirstAnim);
+				PsyDom::Status = PsychicDominatorStatus::FirstAnim;
 
 				// the initial deferment
 				SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSuper->Type);
-				this->Deferment = pData->SW_Deferment.Get();
+				this->Deferment = pData->SW_Deferment;
 
 				// make the game happy
-				PsyDom::Owner(pSuper->Owner);
-				PsyDom::Coords(XY);
-				PsyDom::Anim(NULL);
+				PsyDom::Owner = pSuper->Owner;
+				PsyDom::Coords = XY;
+				PsyDom::Anim = nullptr;
 		};
 
 		virtual void Update();

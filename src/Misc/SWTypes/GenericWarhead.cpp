@@ -17,7 +17,7 @@ bool SW_GenericWarhead::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPl
 	}
 
 	CoordStruct coords;
-	CellClass *Cell = MapClass::Instance->GetCellAt(pCoords);
+	CellClass *Cell = MapClass::Instance->GetCellAt(*pCoords);
 	Cell->GetCoordsWithBridge(&coords);
 
 	auto pWHExt = WarheadTypeExt::ExtMap.Find(pData->SW_Warhead);
@@ -27,7 +27,7 @@ bool SW_GenericWarhead::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPl
 	pWHExt->applyRipples(&coords);
 	pWHExt->applyIronCurtain(&coords, pThis->Owner, pData->SW_Damage);
 
-	BuildingClass *Firer = NULL;
+	BuildingClass *Firer = nullptr;
 	HouseClass *FirerHouse = pThis->Owner;
 	for(int i = 0; i < FirerHouse->Buildings.Count; ++i) {
 		BuildingClass *B = FirerHouse->Buildings[i];
@@ -38,6 +38,7 @@ bool SW_GenericWarhead::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPl
 	}
 
 	pWHExt->applyEMP(&coords, Firer);
+	pWHExt->applyAttachedEffect(&coords, Firer);
 
 	if(!pWHExt->applyPermaMC(&coords, pThis->Owner, Cell->GetContent())) {
 		MapClass::DamageArea(&coords, pData->SW_Damage, Firer, pData->SW_Warhead, 1, pThis->Owner);

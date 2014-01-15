@@ -19,6 +19,8 @@
 
 #include <Conversions.h>
 
+#include "../../Misc/AttachEffect.h"
+
 #include "../_Container.hpp"
 
 #include "../../Utilities/Template.h"
@@ -69,13 +71,15 @@ public:
 
 		Valueable<AnimTypeClass*> InfDeathAnim;
 
-		ValueableIdx<int, AnimTypeClass> PreImpactAnim;
+		ValueableIdx<AnimTypeClass> PreImpactAnim;
 
 		bool KillDriver; //!< Whether this warhead turns the target vehicle over to the special side ("kills the driver"). Request #733.
 
 		Valueable<double> KillDriver_KillBelowPercent;
 
 		Valueable<bool> Malicious;
+
+		AttachEffectTypeClass AttachedEffect;
 
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			MindControl_Permanent (false),
@@ -87,11 +91,12 @@ public:
 			DeployedDamage (1.00),
 			Temporal_WarpAway (&RulesClass::Global()->WarpAway),
 			AffectsEnemies (true),
-			InfDeathAnim (NULL),
+			InfDeathAnim (nullptr),
 			PreImpactAnim (-1),
 			KillDriver (false),
 			KillDriver_KillBelowPercent(1.00),
-			Malicious (true)
+			Malicious (true),
+			AttachedEffect()
 			{
 				for(int i = 0; i < 11; ++i) {
 					VersesData vs;
@@ -107,13 +112,15 @@ public:
 
 		virtual void LoadFromINIFile(TT *pThis, CCINIClass *pINI);
 
-		virtual void InvalidatePointer(void *ptr) {
+		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
 		}
 
 		void applyRipples(CoordStruct *);
 		void applyIronCurtain(CoordStruct *, HouseClass *, int);
 		void applyEMP(CoordStruct *, TechnoClass *);
 		bool applyPermaMC(CoordStruct *, HouseClass *, AbstractClass *);
+
+		void applyAttachedEffect(CoordStruct *, TechnoClass *);
 
 		bool applyKillDriver(BulletClass *); // #733
 	};
@@ -149,6 +156,14 @@ public:
 	static void applyOccupantDamage(BulletClass *);
 
     static bool canWarheadAffectTarget(TechnoClass *, HouseClass *, WarheadTypeClass *);
+
+	static void applyAttachedEffect(WarheadTypeClass * pWH, CoordStruct* coords, TechnoClass * Source) {
+	//static void applyAttachedEffect(WarheadTypeClass * pWH, CoordStruct* coords, HouseClass* Owner) {
+		if(auto pWHExt = WarheadTypeExt::ExtMap.Find(pWH)) {
+			pWHExt->applyAttachedEffect(coords, Source);
+		//	pWHExt->applyAttachedEffect(coords, Owner);
+		}
+	}
 };
 
 typedef hash_map<IonBlastClass *, WarheadTypeExt::ExtData *> hash_ionExt;

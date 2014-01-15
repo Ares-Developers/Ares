@@ -63,6 +63,20 @@ public:
 		// issue #617 powered units
 		PoweredUnitClass* PoweredUnit;
 
+		//#1573, #1623, #255 Stat-modifiers/ongoing animations
+		DynamicVectorClass <AttachEffectClass *> AttachedEffects;
+		bool AttachEffects_RecreateAnims;
+
+		//stuff for #1623
+		bool AttachedTechnoEffect_isset;
+		int AttachedTechnoEffect_Delay;
+
+		//crate fields
+		double Crate_FirepowerMultiplier;
+		double Crate_ArmorMultiplier;
+		double Crate_SpeedMultiplier;
+		bool Crate_Cloakable;
+
 		TemporalClass * MyOriginalTemporal;
 
 		EBolt * MyBolt;
@@ -76,19 +90,26 @@ public:
 			idxSlot_Warp (0),
 			idxSlot_Parasite(0),
 			Survivors_Done (0),
-			Insignia_Image (NULL),
-			GarrisonedIn (NULL),
+			Insignia_Image (nullptr),
+			GarrisonedIn (nullptr),
 			HijackerHealth (-1),
-			HijackerHouse (NULL),
+			HijackerHouse (nullptr),
 			DriverKilled (false),
-			EMPSparkleAnim (NULL),
+			EMPSparkleAnim (nullptr),
 			EMPLastMission (mission_None),
 			ShadowDrawnManually (false),
-			RadarJam(NULL),
-			PoweredUnit(NULL),
-			MyOriginalTemporal(NULL),
+			RadarJam(nullptr),
+			PoweredUnit(nullptr),
+			MyOriginalTemporal(nullptr),
 			AltOccupation(),
-			OriginalHouseType(NULL)
+			OriginalHouseType(nullptr),
+			AttachEffects_RecreateAnims(false),
+			AttachedTechnoEffect_isset (false),
+			AttachedTechnoEffect_Delay (0),
+			Crate_FirepowerMultiplier(1.0),
+			Crate_ArmorMultiplier(1.0),
+			Crate_SpeedMultiplier(1.0),
+			Crate_Cloakable(false)
 			{
 				this->CloakSkipTimer.Stop();
 				// hope this works with the timing - I assume it does, since Types should be created before derivates thereof
@@ -104,8 +125,10 @@ public:
 
 		virtual size_t Size() const { return sizeof(*this); };
 
-		virtual void InvalidatePointer(void *ptr) {
+		// when any pointer in the game expires, this is called - be sure to tell everyone we own to invalidate it
+		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
 			AnnounceInvalidPointer(this->GarrisonedIn, ptr);
+			this->InvalidateAttachEffectPointer(ptr);
 			AnnounceInvalidPointer(this->MyOriginalTemporal, ptr);
 		}
 
@@ -123,7 +146,17 @@ public:
 
 		bool IsDeactivated() const;
 
-		eAction GetDeactivatedAction(ObjectClass *Hovered = NULL) const;
+		eAction GetDeactivatedAction(ObjectClass *Hovered = nullptr) const;
+
+		void InvalidateAttachEffectPointer(void *ptr);
+
+		void RefineTiberium(float amount, int idxType);
+		void DepositTiberium(float amount, float bonus, int idxType);
+
+		bool IsCloakable(bool allowPassive) const;
+		bool CloakAllowed() const;
+		bool CloakDisallowed(bool allowPassive) const;
+		bool CanSelfCloakNow() const;
 	};
 
 	static Container<TechnoExt> ExtMap;
@@ -149,11 +182,17 @@ public:
 	static bool CreateWithDroppod(FootClass *Object, CoordStruct *XYZ);
 
 	static void TransferIvanBomb(TechnoClass *From, TechnoClass *To);
+	static void TransferAttachedEffects(TechnoClass *From, TechnoClass *To);
+
+	static void RecalculateStats(TechnoClass *pTechno);
 
 	static void FreeSpecificSlave(TechnoClass *Slave, HouseClass *Affector);
 	static void DetachSpecificSpawnee (TechnoClass *Spawnee, HouseClass *NewSpawneeOwner);
-	
-	static void Destroy(TechnoClass* pTechno, TechnoClass* pKiller = NULL, HouseClass* pKillerHouse = NULL, WarheadTypeClass* pWarhead = NULL);
+	static bool CanICloakByDefault(TechnoClass *pTechno);
+
+	static void Destroy(TechnoClass* pTechno, TechnoClass* pKiller = nullptr, HouseClass* pKillerHouse = nullptr, WarheadTypeClass* pWarhead = nullptr);
+
+	static bool SpawnVisceroid(CoordStruct &crd, ObjectTypeClass* pType, int chance, bool ignoreTibDeathToVisc);
 /*
 	static int SelectWeaponAgainst(TechnoClass *pThis, TechnoClass *pTarget);
 	static bool EvalWeaponAgainst(TechnoClass *pThis, TechnoClass *pTarget, WeaponTypeClass* W);

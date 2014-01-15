@@ -19,7 +19,7 @@ void SW_GeneticMutator::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeCla
 
 	// defaults depend on MutateExplosion property
 	pData->Mutate_Explosion = RulesClass::Instance->MutateExplosion;
-	if(pData->Mutate_Explosion.Get()) {
+	if(pData->Mutate_Explosion) {
 		pData->SW_Warhead = &RulesClass::Instance->MutateExplosionWarhead;
 		pData->SW_WidthOrRange = 5;
 	} else {
@@ -56,7 +56,7 @@ void SW_GeneticMutator::LoadFromINI(
 	pData->Mutate_KillNatural.Read(&exINI, section, "Mutate.KillNatural");
 
 	// whatever happens, always target everything
-	pData->SW_AffectsTarget = pData->SW_AffectsTarget.Get() | SuperWeaponTarget::AllTechnos;
+	pData->SW_AffectsTarget = pData->SW_AffectsTarget | SuperWeaponTarget::AllTechnos;
 }
 
 bool SW_GeneticMutator::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
@@ -65,59 +65,55 @@ bool SW_GeneticMutator::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPl
 	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSW);
 
 	CoordStruct coords;
-	CellClass *Cell = MapClass::Instance->GetCellAt(pCoords);
+	CellClass *Cell = MapClass::Instance->GetCellAt(*pCoords);
 	Cell->GetCoordsWithBridge(&coords);
 	
 	if(pThis->IsCharged) {
-		if(pData->Mutate_Explosion.Get()) {
+		if(pData->Mutate_Explosion) {
 			// single shot using cellspread warhead
-			MapClass::DamageArea(&coords, pData->SW_Damage, NULL, pData->SW_Warhead, false, pThis->Owner);
+			MapClass::DamageArea(&coords, pData->SW_Damage, nullptr, pData->SW_Warhead, false, pThis->Owner);
 		} else {
 			// ranged approach
-			auto Mutate = [&](ObjectClass* pObj) -> bool {
-				if(InfantryClass* pInf = specific_cast<InfantryClass*>(pObj)) {
-					// is this thing affected at all?
-					if(!pData->IsHouseAffected(pThis->Owner, pInf->Owner)) {
-						return true;
-					}
-
-					if(!pData->IsTechnoAffected(pInf)) {
-						// even if it makes little sense, we do this.
-						// infantry handling is hardcoded and thus
-						// this checks water and land cells.
-						return true;
-					}
-
-					InfantryTypeClass* pType = pInf->Type;
-
-					// quick ways out
-					if(pType->Cyborg && pData->Mutate_IgnoreCyborg.Get()) {
-						return true;
-					}
-
-					if(pType->NotHuman && pData->Mutate_IgnoreNotHuman.Get()) {
-						return true;
-					}
-
-					// destroy or mutate
-					int damage = pType->Strength;
-					bool kill = (pType->Natural && pData->Mutate_KillNatural.Get());
-					WarheadTypeClass* pWH = kill
-						? RulesClass::Instance->C4Warhead
-						: pData->SW_Warhead;
-
-					pInf->ReceiveDamage(&damage, 0, pWH, NULL, true, false, pThis->Owner);
+			auto Mutate = [&](InfantryClass* pInf) -> bool {
+				// is this thing affected at all?
+				if(!pData->IsHouseAffected(pThis->Owner, pInf->Owner)) {
+					return true;
 				}
+
+				if(!pData->IsTechnoAffected(pInf)) {
+					// even if it makes little sense, we do this.
+					// infantry handling is hardcoded and thus
+					// this checks water and land cells.
+					return true;
+				}
+
+				InfantryTypeClass* pType = pInf->Type;
+
+				// quick ways out
+				if(pType->Cyborg && pData->Mutate_IgnoreCyborg) {
+					return true;
+				}
+
+				if(pType->NotHuman && pData->Mutate_IgnoreNotHuman) {
+					return true;
+				}
+
+				// destroy or mutate
+				int damage = pType->Strength;
+				bool kill = (pType->Natural && pData->Mutate_KillNatural);
+				WarheadTypeClass* pWH = kill
+					? RulesClass::Instance->C4Warhead
+					: pData->SW_Warhead;
+
+				pInf->ReceiveDamage(&damage, 0, pWH, nullptr, true, false, pThis->Owner);
 
 				return true;
 			};
 
 			// find everything in range and mutate it
-			if(Helpers::Alex::DistinctCollector<ObjectClass*> *items = new Helpers::Alex::DistinctCollector<ObjectClass*>()) {
-				Helpers::Alex::forEachObjectInRange(pCoords, pData->SW_WidthOrRange, pData->SW_Height, items->getCollector());
-				items->forEach(Mutate);
-				delete items;
-			}
+			Helpers::Alex::DistinctCollector<InfantryClass*> items;
+			Helpers::Alex::for_each_in_rect_or_range<InfantryClass>(*pCoords, pData->SW_WidthOrRange, pData->SW_Height, std::ref(items));
+			items.for_each(Mutate);
 		}
 	}
 

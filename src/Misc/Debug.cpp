@@ -9,7 +9,7 @@ bool Debug::bLog = true;
 bool Debug::bTrackParserErrors = false;
 bool Debug::bParserErrorDetected = false;
 
-FILE *Debug::pLogFile = NULL;
+FILE *Debug::pLogFile = nullptr;
 std::wstring Debug::LogFileName;
 std::wstring Debug::LogFileTempName;
 
@@ -49,7 +49,7 @@ void Debug::LogFileOpen()
 	Debug::MakeLogFile();
 	Debug::LogFileClose(999);
 
-	pLogFile = _wfopen(Debug::LogFileTempName.c_str(), L"w");
+	pLogFile = _wfsopen(Debug::LogFileTempName.c_str(), L"w", _SH_DENYWR);
 	if(!pLogFile) {
 		wchar_t msg[100] = L"\0";
 		wsprintfW(msg, L"Log file failed to open. Error code = %X", errno);
@@ -64,7 +64,7 @@ void Debug::LogFileClose(int tag)
 		fprintf(Debug::pLogFile, "Closing log file on request %d", tag);
 		fclose(Debug::pLogFile);
 		CopyFileW(Debug::LogFileTempName.c_str(), Debug::LogFileName.c_str(), FALSE);
-		Debug::pLogFile = NULL;
+		Debug::pLogFile = nullptr;
 	}
 }
 
@@ -81,7 +81,7 @@ void Debug::MakeLogFile() {
 		Debug::LogFileName = path;
 		Debug::LogFileName += L"\\debug";
 		
-		CreateDirectoryW(Debug::LogFileName.c_str(), NULL);
+		CreateDirectoryW(Debug::LogFileName.c_str(), nullptr);
 
 		wchar_t subpath[64];
 		swprintf(subpath, 64, L"\\debug.%04u%02u%02u-%02u%02u%02u.log",
@@ -173,27 +173,25 @@ void Debug::PrepareSnapshotDirectory(std::wstring &buffer) {
 
 	buffer = path;
 	buffer += L"\\debug";
-	CreateDirectoryW(buffer.c_str(), NULL);
+	CreateDirectoryW(buffer.c_str(), nullptr);
 
 	wchar_t subpath[64];
 	swprintf(subpath, 64, L"\\snapshot-%04u%02u%02u-%02u%02u%02u", time.wYear, time.wMonth, time.wDay, time.wHour, time.wMinute, time.wSecond);
 	buffer += subpath;
-	CreateDirectoryW(buffer.c_str(), NULL);
+	CreateDirectoryW(buffer.c_str(), nullptr);
 }
 
-LONG WINAPI Debug::ExceptionHandler(int code, LPEXCEPTION_POINTERS pExs)
+#pragma warning(push)
+#pragma warning(disable: 4646) // this function does not return, though it isn't declared VOID
+
+__declspec(noreturn) LONG CALLBACK Debug::ExceptionHandler(PEXCEPTION_POINTERS pExs)
 {
 	Debug::FreeMouse();
 	Debug::Log("Exception handler fired!\n");
+	Debug::Log("Exception %X at %p\n", pExs->ExceptionRecord->ExceptionCode, pExs->ExceptionRecord->ExceptionAddress);
 	SetWindowTextW(Game::hWnd, L"Fatal Error - Yuri's Revenge");
+
 //	if (IsDebuggerAttached()) return EXCEPTION_CONTINUE_SEARCH;
-	if (pExs->ExceptionRecord->ExceptionCode == ERROR_MOD_NOT_FOUND ||
-		pExs->ExceptionRecord->ExceptionCode == ERROR_PROC_NOT_FOUND)
-	{
-		Debug::Log("Massive failure: Procedure or module not found!\n");
-		//tell user
-		ExitProcess(pExs->ExceptionRecord->ExceptionCode);
-	}
 
 	switch(pExs->ExceptionRecord->ExceptionCode)
 	{
@@ -231,7 +229,7 @@ LONG WINAPI Debug::ExceptionHandler(int code, LPEXCEPTION_POINTERS pExs)
 
 			std::wstring except_file = path + L"\\except.txt";
 
-			if(FILE *except = _wfopen(except_file.c_str(), L"w")) {
+			if(FILE *except = _wfsopen(except_file.c_str(), L"w", _SH_DENYNO)) {
 #define DELIM "---------------------\n"
 				fprintf(except, "Internal Error encountered!\n");
 				fprintf(except, DELIM);
@@ -258,7 +256,7 @@ LONG WINAPI Debug::ExceptionHandler(int code, LPEXCEPTION_POINTERS pExs)
 			}
 
 			if(MessageBoxW(Game::hWnd, L"Yuri's Revenge has encountered a fatal error!\nWould you like to create a full crash report for the developers?", L"Fatal Error!", MB_YESNO | MB_ICONERROR) == IDYES) {
-				HCURSOR loadCursor = LoadCursor(NULL, IDC_WAIT);
+				HCURSOR loadCursor = LoadCursor(nullptr, IDC_WAIT);
 				SetClassLong(Game::hWnd, GCL_HCURSOR, (LONG)loadCursor);
 				SetCursor(loadCursor);
 				Debug::Log("Making a memory dump\n");
@@ -270,7 +268,7 @@ LONG WINAPI Debug::ExceptionHandler(int code, LPEXCEPTION_POINTERS pExs)
 
 				Debug::FullDump(&expParam, &path);
 
-				loadCursor = LoadCursor(NULL, IDC_ARROW);
+				loadCursor = LoadCursor(nullptr, IDC_ARROW);
 				SetClassLong(Game::hWnd, GCL_HCURSOR, (LONG)loadCursor);
 				SetCursor(loadCursor);
 				Debug::FatalError("The cause of this error could not be determined.\r\n"
@@ -280,17 +278,32 @@ LONG WINAPI Debug::ExceptionHandler(int code, LPEXCEPTION_POINTERS pExs)
 						, Debug::bParserErrorDetected ? "(One or more parser errors have been detected that might be responsible. Check the debug logs.)\r\n" : ""
 				);
 			}
-			ExitProcess(pExs->ExceptionRecord->ExceptionCode); // Exit.
 			break;
 		}
+		case ERROR_MOD_NOT_FOUND:
+		case ERROR_PROC_NOT_FOUND:
+			Debug::Log("Massive failure: Procedure or module not found!\n");
+			break;
 		default:
 			Debug::Log("Massive failure: reason unknown, have fun figuring it out\n");
 			Debug::DumpObj((byte *)pExs->ExceptionRecord, sizeof(*(pExs->ExceptionRecord)));
-			ExitProcess(pExs->ExceptionRecord->ExceptionCode); // Exit.
 //			return EXCEPTION_CONTINUE_SEARCH;
 			break;
 	}
+
+	Debug::Exit(pExs->ExceptionRecord->ExceptionCode);
 };
+
+#pragma warning(pop)
+
+LONG CALLBACK Debug::ExceptionFilter(PEXCEPTION_POINTERS pExs)
+{
+	if(pExs->ExceptionRecord->ExceptionCode == EXCEPTION_BREAKPOINT) {
+		return EXCEPTION_CONTINUE_SEARCH;
+	}
+
+	Debug::ExceptionHandler(pExs);
+}
 
 void Debug::FullDump(MINIDUMP_EXCEPTION_INFORMATION *pException, std::wstring * destinationFolder, std::wstring * generatedFilename) {
 	std::wstring filename;
@@ -307,11 +320,11 @@ void Debug::FullDump(MINIDUMP_EXCEPTION_INFORMATION *pException, std::wstring * 
 	}
 
 	HANDLE dumpFile = CreateFileW(filename.c_str(), GENERIC_READ | GENERIC_WRITE,
-		FILE_SHARE_WRITE | FILE_SHARE_READ, NULL, CREATE_ALWAYS, FILE_FLAG_WRITE_THROUGH, NULL);
+		FILE_SHARE_WRITE | FILE_SHARE_READ, nullptr, CREATE_ALWAYS, FILE_FLAG_WRITE_THROUGH, nullptr);
 
 	MINIDUMP_TYPE type = (MINIDUMP_TYPE)MiniDumpWithFullMemory;
 
-	MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), dumpFile, type, pException, NULL, NULL);
+	MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), dumpFile, type, pException, nullptr, nullptr);
 	CloseHandle(dumpFile);
 }
 
@@ -348,9 +361,9 @@ void Debug::FreeMouse() {
 //	}
 }
 
-void Debug::Exit() {
+__declspec(noreturn) void Debug::Exit(UINT ExitCode) {
 		Debug::Log("Exiting...\n");
-		ExitProcess(1);
+		ExitProcess(ExitCode);
 }
 
 void Debug::FatalError(bool Dump) {
@@ -358,7 +371,7 @@ void Debug::FatalError(bool Dump) {
 		L"Ares has encountered an internal error and is unable to continue normally. "
 		L"Please visit our website at http://ares.strategy-x.com for updates and support.\n\n"
 		L"%hs",
-		Ares::readBuffer, 0x400);
+		Ares::readBuffer);
 
 	Debug::Log("\nFatal Error:\n");
 	Debug::Log("%s\n", Ares::readBuffer);
@@ -368,7 +381,7 @@ void Debug::FatalError(bool Dump) {
 		L"Fatal Error - Yuri's Revenge", MB_OK | MB_ICONERROR);
 
 	if(Dump) {
-		Debug::FullDump(NULL);
+		Debug::FullDump(nullptr);
 	}
 }
 
@@ -377,18 +390,18 @@ void Debug::FatalError(const char *Message, ...) {
 
 	va_list args;
 	va_start(args, Message);
-	vsnprintf(Ares::readBuffer, Ares::readLength, Message, args); /* note that the message will be truncated somewhere after 0x300 chars... */
+	vsnprintf_s(Ares::readBuffer, Ares::readLength - 1, Message, args); /* note that the message will be truncated somewhere after 0x300 chars... */
 	va_end(args);
 
 	Debug::FatalError(false);
 }
 
-void Debug::FatalErrorAndExit(const char *Message, ...) {
+__declspec(noreturn) void Debug::FatalErrorAndExit(const char *Message, ...) {
 	Debug::FreeMouse();
 
 	va_list args;
 	va_start(args, Message);
-	vsnprintf(Ares::readBuffer, Ares::readLength, Message, args); /* note that the message will be truncated somewhere after 0x300 chars... */
+	vsnprintf_s(Ares::readBuffer, Ares::readLength - 1, Message, args); /* note that the message will be truncated somewhere after 0x300 chars... */
 	va_end(args);
 
 	Debug::FatalError(false);
@@ -397,7 +410,7 @@ void Debug::FatalErrorAndExit(const char *Message, ...) {
 
 void Debug::INIParseFailed(const char *section, const char *flag, const char *value, const char *Message) {
 	if(Debug::bTrackParserErrors) {
-		const char * LogMessage = (Message == NULL)
+		const char * LogMessage = (Message == nullptr)
 			? "Failed to parse INI file content: [%s]%s=%s\n"
 			: "Failed to parse INI file content: [%s]%s=%s (%s)\n"
 		;
@@ -412,8 +425,8 @@ DEFINE_HOOK(4C850B, Exception_Dialog, 5)
 	return 0;
 }
 
-DEFINE_HOOK(4068E0, Debug_Log, 1)
 DEFINE_HOOK_AGAIN(4A4AC0, Debug_Log, 1)
+DEFINE_HOOK(4068E0, Debug_Log, 1)
 {
 	if(Debug::bLog && Debug::pLogFile)
 	{
@@ -429,9 +442,9 @@ DEFINE_HOOK_AGAIN(4A4AC0, Debug_Log, 1)
 //ifdef DUMP_EXTENSIVE
 DEFINE_HOOK(4C8FE0, Exception_Handler, 9)
 {
-	GET(int, code, ECX);
+	//GET(int, code, ECX);
 	GET(LPEXCEPTION_POINTERS, pExs, EDX);
-	Debug::ExceptionHandler(code, pExs);
+	Debug::ExceptionHandler(pExs);
 }
 //endif
 

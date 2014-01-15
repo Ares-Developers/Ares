@@ -72,7 +72,7 @@ DEFINE_HOOK(693263, MouseClass_ReactToClicks_LMBUp, 5)
 							T->IronCurtain(90, T->Owner, false);
 							break;
 						case 3:
-							T->ReceiveDamage(&n, 0, WarheadTypeClass::Find("NUKE"), NULL, false, false, NULL);
+							T->ReceiveDamage(&n, 0, WarheadTypeClass::Find("NUKE"), nullptr, false, false, nullptr);
 							break;
 						case 4:
 							T->QueueMission(mission_Hunt, true);

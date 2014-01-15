@@ -1,6 +1,6 @@
 [branch]
-Name=Graion's 0.3 Minor Features
-Description=This branch contains Graion's minor features aimed for 0.3 release. Use on your own risk.
-TargetVersion=0.3
+Name=Graion's 0.6 Minor Features
+Description=This branch contains Graion's minor features aimed for 0.6 release. Use on your own risk.
+TargetVersion=0.6
 Stable=no
 ReadyForTesting=no

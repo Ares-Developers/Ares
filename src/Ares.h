@@ -51,7 +51,13 @@ public:
 
 	static bool bAllowAIControl;
 
+	static bool bFPSCounter;
+
+	static bool bOutputMissingStrings;
+
 	static int TrackIndex;
+
+	static PVOID pExceptionHandler;
 
 	static bool bStable;
 	static bool bStableNotification;
@@ -72,6 +78,7 @@ public:
 	static void CloseConfig(CCINIClass**);
 
 	static void InitNoCDMode();
+	static void CheckProcessorFeatures();
 
 	//Callbacks
 	static void __stdcall CmdLineParse(char**,int);

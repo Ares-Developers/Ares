@@ -27,14 +27,14 @@
 template<> const DWORD Extension<WarheadTypeClass>::Canary = 0x22222222;
 Container<WarheadTypeExt> WarheadTypeExt::ExtMap;
 
-template<> WarheadTypeExt::TT *Container<WarheadTypeExt>::SavingObject = NULL;
-template<> IStream *Container<WarheadTypeExt>::SavingStream = NULL;
+template<> WarheadTypeExt::TT *Container<WarheadTypeExt>::SavingObject = nullptr;
+template<> IStream *Container<WarheadTypeExt>::SavingStream = nullptr;
 
 hash_ionExt WarheadTypeExt::IonExt;
 
-WarheadTypeClass * WarheadTypeExt::Temporal_WH = NULL;
+WarheadTypeClass * WarheadTypeExt::Temporal_WH = nullptr;
 
-WarheadTypeClass * WarheadTypeExt::EMP_WH = NULL;
+WarheadTypeClass * WarheadTypeExt::EMP_WH = nullptr;
 
 void WarheadTypeExt::ExtData::Initialize(WarheadTypeClass *pThis) {
 	if(!_strcmpi(pThis->ID, "NUKE")) {
@@ -55,7 +55,8 @@ void WarheadTypeExt::ExtData::LoadFromINIFile(WarheadTypeClass *pThis, CCINIClas
 	// writing custom verses parser just because
 	if(pINI->ReadString(section, "Verses", "", Ares::readBuffer, Ares::readLength)) {
 		int idx = 0;
-		for(char *cur = strtok(Ares::readBuffer, ","); cur; cur = strtok(NULL, ",")) {
+		char* context = nullptr;
+		for(char *cur = strtok_s(Ares::readBuffer, ",", &context); cur; cur = strtok_s(nullptr, ",", &context)) {
 			this->Verses[idx].Parse(cur);
 			++idx;
 			if(idx > 10) {
@@ -95,9 +96,11 @@ void WarheadTypeExt::ExtData::LoadFromINIFile(WarheadTypeClass *pThis, CCINIClas
 	this->KillDriver_KillBelowPercent.Read(&exINI, section, "KillDriver.KillBelowPercent");
 
 	this->Malicious.Read(&exINI, section, "Malicious");
+
+	this->AttachedEffect.Read(&exINI, section);
 };
 
-void Container<WarheadTypeExt>::InvalidatePointer(void *ptr) {
+void Container<WarheadTypeExt>::InvalidatePointer(void *ptr, bool bRemoved) {
 	AnnounceInvalidPointerMap(WarheadTypeExt::IonExt, ptr);
 	AnnounceInvalidPointer(WarheadTypeExt::Temporal_WH, ptr);
 }
@@ -137,6 +140,7 @@ void WarheadTypeExt::ExtData::applyRipples(CoordStruct *coords) {
 	if (this->Ripple_Radius) {
 		IonBlastClass *IB;
 		GAME_ALLOC(IonBlastClass, IB, *coords);
+		IB->DisableIonBeam = TRUE;
 		WarheadTypeExt::IonExt[IB] = this;
 	}
 }
@@ -159,16 +163,15 @@ void WarheadTypeExt::ExtData::applyRipples(CoordStruct *coords) {
 	\date 2010-06-28
 */
 void WarheadTypeExt::ExtData::applyIronCurtain(CoordStruct *coords, HouseClass* Owner, int damage) {
-	CellStruct cellCoords = MapClass::Instance->GetCellAt(coords)->MapCoords;
+	CellStruct cellCoords = MapClass::Instance->GetCellAt(*coords)->MapCoords;
 
 	if(this->IC_Duration != 0) {
 		// set of affected objects. every object can be here only once.
-		DynamicVectorClass<TechnoClass*> *items = Helpers::Alex::getCellSpreadItems(coords,
-			this->AttachedToObject->CellSpread, true);
+		auto items = Helpers::Alex::getCellSpreadItems(coords, this->AttachedToObject->CellSpread, true);
 
 		// affect each object
-		for(int i=0; i<items->Count; ++i) {
-			if(TechnoClass *curTechno = items->GetItem(i)) {
+		for(size_t i=0; i<items.size(); ++i) {
+			if(TechnoClass *curTechno = items[i]) {
 
 				// don't protect the dead
 				if(curTechno->InLimbo || !curTechno->IsAlive || !curTechno->Health) {
@@ -203,7 +206,7 @@ void WarheadTypeExt::ExtData::applyIronCurtain(CoordStruct *coords, HouseClass* 
 						if(newValue > 0) {
 							// damage the victim before ICing it
 							if(damage) {
-								curTechno->ReceiveDamage(&damage, 0, this->AttachedToObject, NULL, true, false, Owner);
+								curTechno->ReceiveDamage(&damage, 0, this->AttachedToObject, nullptr, true, false, Owner);
 							}
 
 							// unit may be destroyed already.
@@ -227,9 +230,6 @@ void WarheadTypeExt::ExtData::applyIronCurtain(CoordStruct *coords, HouseClass* 
 				}
 			}
 		}
-
-		items->Clear();
-		delete items;
 	}
 }
 
@@ -378,8 +378,8 @@ bool WarheadTypeExt::ExtData::applyKillDriver(BulletClass* Bullet) {
 			}
 
 			// If this vehicle uses Operator=, we have to take care of actual "physical" drivers, rather than theoretical ones
-			FootClass *passenger = NULL;
-			if(TargetTypeExt->IsAPromiscuousWhoreAndLetsAnyoneRideIt && (passenger = pTarget->RemoveFirstPassenger())) {
+			FootClass *passenger = nullptr;
+			if(TargetTypeExt->IsAPromiscuousWhoreAndLetsAnyoneRideIt && (passenger = pTarget->RemoveFirstPassenger()) != nullptr) {
 				// kill first passenger
 				passenger->RegisterDestruction(Bullet->Owner);
 				passenger->UnInit();
@@ -411,12 +411,12 @@ bool WarheadTypeExt::ExtData::applyKillDriver(BulletClass* Bullet) {
 				}
 			}
 			pTarget->MindControlledByAUnit = false;
-			pTarget->MindControlledByHouse = NULL;
+			pTarget->MindControlledByHouse = nullptr;
 
 			// remove the mind-control ring anim
 			if(pTarget->MindControlRingAnim) {
 				pTarget->MindControlRingAnim->UnInit();
-				pTarget->MindControlRingAnim = NULL;
+				pTarget->MindControlRingAnim = nullptr;
 			}
 
 			// If this unit mind controls stuff, we should free the controllees, since they still belong to the previous owner
@@ -434,8 +434,7 @@ bool WarheadTypeExt::ExtData::applyKillDriver(BulletClass* Bullet) {
 			// If this unit spawns stuff, we should kill the spawns, since they still belong to the previous owner
 			if(pTarget->SpawnManager) {
 				pTarget->SpawnManager->KillNodes();
-				pTarget->SpawnManager->Target = NULL;
-				pTarget->SpawnManager->Destination = NULL;
+				pTarget->SpawnManager->ResetTarget();
 			}
 
 			// If this unit enslaves stuff, we should free the slaves, since they still belong to the previous owner
@@ -465,6 +464,42 @@ bool WarheadTypeExt::ExtData::applyKillDriver(BulletClass* Bullet) {
 	return false;
 }
 
+//AttachedEffects, request #1573, #255
+//copy-pasted from AlexB's applyIC
+//since CellSpread effect is needed due to MO's proposed cloak SW (which is the reason why I was bugged with this), it has it.
+//Graion Dilach, ~2011-10-14... I forgot the exact date :S
+
+void WarheadTypeExt::ExtData::applyAttachedEffect(CoordStruct *coords, TechnoClass* Owner) {
+	if (this->AttachedEffect.Duration != 0) {
+		CellStruct cellCoords = MapClass::Instance->GetCellAt(*coords)->MapCoords;
+		// set of affected objects. every object can be here only once.
+		auto items = Helpers::Alex::getCellSpreadItems(coords, this->AttachedToObject->CellSpread, true);
+
+		// affect each object
+		for(size_t i=0; i<items.size(); ++i) {
+			if(TechnoClass *curTechno = items[i]) {
+				// don't attach to dead
+				if(curTechno->InLimbo || !curTechno->IsAlive || !curTechno->Health) {
+					continue;
+				}
+				
+				if (Owner) {
+					if(WarheadTypeExt::canWarheadAffectTarget(curTechno, Owner->Owner, this->AttachedToObject)) {
+						if(abs(this->Verses[curTechno->GetTechnoType()->Armor].Verses) < 0.001) {
+							continue;
+						}
+						//this->AttachedEffect.Attach(curTechno, this->AttachedEffect.Duration, Owner, this->AttachedEffect.DamageDelay);
+						this->AttachedEffect.Attach(curTechno, this->AttachedEffect.Duration, Owner);
+					}	
+				} else {
+					//this->AttachedEffect.Attach(curTechno, this->AttachedEffect.Duration, nullptr, this->AttachedEffect.DamageDelay);
+					this->AttachedEffect.Attach(curTechno, this->AttachedEffect.Duration, nullptr);
+				}	
+			}
+		}
+	}
+}
+
 // =============================
 // container hooks
 
@@ -484,8 +519,8 @@ DEFINE_HOOK(75E510, WarheadTypeClass_DTOR, 6)
 	return 0;
 }
 
-DEFINE_HOOK(75E0C0, WarheadTypeClass_SaveLoad_Prefix, 8)
 DEFINE_HOOK_AGAIN(75E2C0, WarheadTypeClass_SaveLoad_Prefix, 5)
+DEFINE_HOOK(75E0C0, WarheadTypeClass_SaveLoad_Prefix, 8)
 {
 	GET_STACK(WarheadTypeExt::TT*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
@@ -508,8 +543,8 @@ DEFINE_HOOK(75E39C, WarheadTypeClass_Save_Suffix, 5)
 	return 0;
 }
 
-DEFINE_HOOK(75DEA0, WarheadTypeClass_LoadFromINI, 5)
 DEFINE_HOOK_AGAIN(75DEAF, WarheadTypeClass_LoadFromINI, 5)
+DEFINE_HOOK(75DEA0, WarheadTypeClass_LoadFromINI, 5)
 {
 	GET(WarheadTypeClass*, pItem, ESI);
 	GET_STACK(CCINIClass*, pINI, 0x150);

@@ -31,7 +31,7 @@ public:
 		SYSTEMTIME time;
 		GetLocalTime(&time);
 
-		_snprintf(fName, 0x80, "Map.%04u%02u%02u-%02u%02u%02u-%05u.yrm",
+		_snprintf_s(fName, 0x7F, "Map.%04u%02u%02u-%02u%02u%02u-%05u.yrm",
 			time.wYear, time.wMonth, time.wDay, time.wHour, time.wMinute, time.wSecond, time.wMilliseconds);
 
 		char* pBuffer = fName;

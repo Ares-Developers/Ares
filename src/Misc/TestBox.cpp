@@ -9,7 +9,7 @@ void TestScaffold::FloatToIntTest() {
 
 	for(int i = 0; i < 10; ++i) {
 		for(double f = -5.75; f <= 5.75; f += 0.05) {
-			Debug::Log("%lf -> %I64d\n", f, Game::F2I(f));
+			Debug::Log("%lf -> %I64d\n", f, Game::F2I64(f));
 		}
 	}
 
@@ -18,7 +18,7 @@ void TestScaffold::FloatToIntTest() {
 
 void TestScaffold::GameCastTest() {
 	Debug::Log("Starting g_c test\n");
-	ObjectClass *O = NULL; // doesn't matter how you got the pointer, as long as it's valid... check for NULL yourselves
+	ObjectClass *O = nullptr; // doesn't matter how you got the pointer, as long as it's valid... check for NULL yourselves
 	
 	if(BuildingClass *B = specific_cast<BuildingClass *>(O)) {
 		Debug::Log("Casted to Building - correct\n");

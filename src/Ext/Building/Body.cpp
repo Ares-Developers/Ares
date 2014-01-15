@@ -16,14 +16,14 @@
 template<> const DWORD Extension<BuildingClass>::Canary = 0x87654321;
 Container<BuildingExt> BuildingExt::ExtMap;
 
-template<> BuildingClass *Container<BuildingExt>::SavingObject = NULL;
-template<> IStream *Container<BuildingExt>::SavingStream = NULL;
+template<> BuildingClass *Container<BuildingExt>::SavingObject = nullptr;
+template<> IStream *Container<BuildingExt>::SavingStream = nullptr;
 
 // =============================
 // member functions
 
 DWORD BuildingExt::GetFirewallFlags(BuildingClass *pThis) {
-	CellClass *MyCell = MapClass::Instance->GetCellAt(&pThis->Location);
+	CellClass *MyCell = MapClass::Instance->GetCellAt(pThis->Location);
 	DWORD flags = 0;
 	for(int direction = 0; direction < 8; direction += 2) {
 		CellClass *Neighbour = MyCell->GetNeighbourCell(direction);
@@ -41,6 +41,10 @@ void BuildingExt::UpdateDisplayTo(BuildingClass *pThis) {
 	if(pThis->Type->Radar) {
 		HouseClass *H = pThis->Owner;
 		H->RadarVisibleTo.Clear();
+
+		auto HExt = HouseExt::ExtMap.Find(H);
+		H->RadarVisibleTo.data |= HExt->RadarPersist.data;
+
 		for(int i = 0; i < H->Buildings.Count; ++i) {
 			BuildingClass *currentB = H->Buildings.GetItem(i);
 			if(!currentB->InLimbo) {
@@ -77,7 +81,7 @@ void BuildingExt::UpdateDisplayTo(BuildingClass *pThis) {
 bool BuildingExt::ExtData::RubbleYell(bool beingRepaired) {
 	BuildingClass* currentBuilding = this->AttachedToObject;
 	BuildingTypeExt::ExtData* pTypeData = BuildingTypeExt::ExtMap.Find(currentBuilding->Type);
-	BuildingClass* newState = NULL;
+	BuildingClass* newState = nullptr;
 
 	currentBuilding->Remove(); // only takes it off the map
 	currentBuilding->DestroyNthAnim(BuildingAnimSlot::All);
@@ -123,63 +127,44 @@ bool BuildingExt::ExtData::RubbleYell(bool beingRepaired) {
 	All units on the building's foundation are kicked out.
 
 	\author AlexB
-	\date 2010-06-27
+	\date 2013-04-24
 */
 void BuildingExt::ExtData::KickOutOfRubble() {
 	BuildingClass* pBld = this->AttachedToObject;
 
-	if(BuildingTypeExt::ExtData *pData = BuildingTypeExt::ExtMap.Find(pBld->Type)) {
-		// get the number of cells and a pointer to the cell data
-		int length = 0, height = 0, width = 0;
-		CellStruct *data = NULL;
-		if(pData->IsCustom) {
-			width = pData->CustomWidth;
-			height = pData->CustomHeight;
-			data = pData->CustomData;
+	// get the number of non-end-marker cells and a pointer to the cell data
+	CellStruct *data = pBld->Type->FoundationData;
+	size_t length = BuildingExt::FoundationLength(data) - 1;
+
+	// iterate over all cells and remove all infantry
+	typedef std::pair<FootClass*, bool> Item;
+	DynamicVectorClass<Item> list;
+	CellStruct location = MapClass::Instance->GetCellAt(pBld->Location)->MapCoords;
+	for(size_t i=0; i<length; ++i) {
+		CellStruct pos = data[i];
+		pos += location;
+
+		// remove every techno that resides on this cell
+		CellClass* cell = MapClass::Instance->GetCellAt(pos);
+		for(ObjectClass* pObj = cell->GetContent(); pObj; pObj = pObj->NextObject) {
+			if(FootClass* pFoot = generic_cast<FootClass*>(pObj)) {
+				bool selected = pFoot->IsSelected;
+				if(pFoot->Remove()) {
+					list.AddItem(Item(pFoot, selected));
+				}
+			}
+		}
+	}
+
+	// this part kicks out all units we found in the rubble
+	for(int i=0; i<list.Count; ++i) {
+		Item &item = list[i];
+		if(pBld->KickOutUnit(item.first, &location)) {
+			if(item.second) {
+				item.first->Select();
+			}
 		} else {
-			// these are length constants derived from the fnd_* constants
-			int fnd_widths[] = {1, 2, 1, 2, 2, 3, 3, 3, 4, 3, 1, 3, 4, 1, 1, 2, 2, 5, 4, 3, 6, 0};
-			int fnd_heights[] = {1, 1, 2, 2, 3, 2, 3, 5, 2, 3, 3, 1, 3, 4, 5, 6, 5, 3, 4, 4, 4, 0};
-			width = fnd_widths[pBld->Type->Foundation];
-			height = fnd_heights[pBld->Type->Foundation];
-			data = pBld->Type->FoundationData;
-		}
-		length = height * width;
-
-		// iterate over all cells and remove all infantry
-		DynamicVectorClass<std::pair<FootClass*, bool>> list;
-		CellStruct location = MapClass::Instance->GetCellAt(&pBld->Location)->MapCoords;
-		for(int i=0; i<length; ++i) {
-			CellStruct pos = data[i];
-			if((pos.X != 0x7FFF) && (pos.Y != 0x7FFF)) {
-				pos += location;
-
-				// remove every techno that resides on this cell
-				CellClass* cell = MapClass::Instance->GetCellAt(&pos);
-				for(ObjectClass* pObj = cell->GetContent(); pObj; pObj = pObj->NextObject) {
-					if(FootClass* pFoot = generic_cast<FootClass*>(pObj)) {
-						bool selected = pFoot->IsSelected;
-						if(pFoot->Remove()) {
-							list.AddItem(std::pair<FootClass*, bool>(pFoot, selected));
-						}
-					}
-				}
-			} else {
-				// invalid cell.
-				break;
-			}
-		}
-
-		// this part kicks out all units we found in the rubble
-		for(int i=0; i<list.Count; ++i) {
-			std::pair<FootClass*, bool> &item = list[i];
-			if(pBld->KickOutUnit(item.first, &location)) {
-				if(item.second) {
-					item.first->Select();
-				}
-			} else {
-				item.first->UnInit();
-			}
+			item.first->UnInit();
 		}
 	}
 }
@@ -231,8 +216,8 @@ bool BuildingExt::ExtData::canTraverseTo(BuildingClass* targetBuilding) {
 		return false;
 	}
 
-	BuildingTypeExt::ExtData* currentBuildingTypeExt = BuildingTypeExt::ExtMap.Find(currentBuilding->Type);
-	BuildingTypeExt::ExtData* targetBuildingTypeExt = BuildingTypeExt::ExtMap.Find(targetBuilding->Type);
+	//BuildingTypeExt::ExtData* currentBuildingTypeExt = BuildingTypeExt::ExtMap.Find(currentBuilding->Type);
+	//BuildingTypeExt::ExtData* targetBuildingTypeExt = BuildingTypeExt::ExtMap.Find(targetBuilding->Type);
 
 	if(this->sameTrench(targetBuilding)) {
 		// if we've come here, there's room, there are people to move, and the buildings are trenches and of the same kind
@@ -282,7 +267,7 @@ void BuildingExt::ExtData::evalRaidStatus() {
 			this->ignoreNextEVA = true; // #698 - used in BuildingClass_ChangeOwnership_TrenchEVA to override EVA announcement
 			this->AttachedToObject->SetOwningHouse(this->OwnerBeforeRaid);
 		}
-		this->OwnerBeforeRaid = NULL;
+		this->OwnerBeforeRaid = nullptr;
 		this->isCurrentlyRaided = false;
 	}
 }
@@ -339,7 +324,7 @@ void BuildingExt::buildLines(BuildingClass* theBuilding, CellStruct selectedCell
 		return;
 	}
 
-	short maxLinkDistance = theBuilding->Type->GuardRange / 256; // GuardRange governs how far the link can go, is saved in leptons
+	short maxLinkDistance = short(theBuilding->Type->GuardRange / 256); // GuardRange governs how far the link can go, is saved in leptons
 
 	for(int direction = 0; direction <= 7; direction += 2) { // the 4 straight directions of the simple compass
 		CellStruct directionOffset = CellSpread::GetNeighbourOffset(direction); // coordinates of the neighboring cell in the given direction relative to the current cell (e.g. 0,1)
@@ -349,11 +334,11 @@ void BuildingExt::buildLines(BuildingClass* theBuilding, CellStruct selectedCell
 		for(short distanceFromCenter = 1; distanceFromCenter <= maxLinkDistance; ++distanceFromCenter) {
 			cellToCheck += directionOffset; // adjust the cell to check based on current distance, relative to the selected cell
 
-			if(!MapClass::Instance->CellExists(&cellToCheck)) { // don't parse this cell if it doesn't exist (duh)
+			CellClass *cell = MapClass::Instance->TryGetCellAt(cellToCheck);
+
+			if(!cell) { // don't parse this cell if it doesn't exist (duh)
 				break;
 			}
-
-			CellClass *cell = MapClass::Instance->GetCellAt(&cellToCheck);
 
 			if(BuildingClass *OtherEnd = cell->GetBuilding()) { // if we find a building...
 				if(buildingExtData->canLinkTo(OtherEnd)) { // ...and it is linkable, we found what we needed
@@ -375,10 +360,9 @@ void BuildingExt::buildLines(BuildingClass* theBuilding, CellStruct selectedCell
 		for(int distanceFromCenter = 1; distanceFromCenter <= linkLength; ++distanceFromCenter) {
 			cellToBuildOn += directionOffset;
 
-			if(CellClass *cell = MapClass::Instance->GetCellAt(&cellToBuildOn)) {
+			if(CellClass *cell = MapClass::Instance->GetCellAt(cellToBuildOn)) {
 				if(BuildingClass *tempBuilding = specific_cast<BuildingClass *>(theBuilding->Type->CreateObject(buildingOwner))) {
-					CoordStruct coordBuffer;
-					CellClass::Cell2Coord(&cellToBuildOn, &coordBuffer);
+					CoordStruct coordBuffer = CellClass::Cell2Coord(cellToBuildOn);
 
 					++Unsorted::IKnowWhatImDoing; // put the building there even if normal rules would deny - e.g. under units
 					bool Put = tempBuilding->Put(&coordBuffer, 0);
@@ -450,7 +434,7 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 		return false;
 	}
 
-	if(Owner == Enterer) {
+	if(Owner == Enterer || Enterer->IsAlliedWith(Owner)) {
 		return true;
 	}
 
@@ -459,7 +443,7 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 	if(Enterer->ControlledByPlayer() || Owner->ControlledByPlayer()) {
 		CellStruct xy;
 		EnteredBuilding->GetMapCoords(&xy);
-		if(RadarEventClass::Create(RADAREVENT_STRUCTUREINFILTRATED, xy)) {
+		if(RadarEventClass::Create(RadarEventType::BuildingInfiltrated, xy)) {
 			raiseEva = true;
 		}
 	}
@@ -468,7 +452,7 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 	bool evaForEnterer = Enterer->ControlledByPlayer() && raiseEva;
 	bool effectApplied = false;
 
-	if(pTypeExt->ResetRadar.Get()) {
+	if(pTypeExt->ResetRadar) {
 		Owner->ReshroudMap();
 		if(!Owner->SpySatActive && evaForOwner) {
 			VoxClass::Play("EVA_RadarSabotaged");
@@ -508,8 +492,8 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 	}
 
 
-	if(pTypeExt->UnReverseEngineer.Get()) {
-		int idx = HouseClass::Array->FindItemIndex(&Owner);
+	if(pTypeExt->UnReverseEngineer) {
+		int idx = HouseClass::Array->FindItemIndex(Owner);
 
 		Debug::Log("Undoing all Reverse Engineering achieved by house %ls (#%d)\n", Owner->UIName, idx);
 
@@ -535,7 +519,7 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 	}
 
 
-	if(pTypeExt->ResetSW.Get()) {
+	if(pTypeExt->ResetSW) {
 		bool somethingReset = false;
 		int swIdx = EnteredType->SuperWeapon;
 		if(swIdx != -1) {
@@ -592,7 +576,7 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 	}
 
 
-	if(pTypeExt->GainVeterancy.Get()) {
+	if(pTypeExt->GainVeterancy) {
 		bool promotionStolen = true;
 
 		switch(EnteredType->Factory) {
@@ -632,7 +616,7 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 
 		Addition 04.03.10: People complained about it not being optional. Now it is.
 	*/
-	if(pTypeExt->RevealProduction.Get()) {
+	if(pTypeExt->RevealProduction) {
 		EnteredBuilding->DisplayProductionTo.Add(Enterer);
 		if(evaForOwner || evaForEnterer) {
 			VoxClass::Play("EVA_BuildingInfiltrated");
@@ -640,7 +624,16 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 		effectApplied = true;
 	}
 
-	if(pTypeExt->RevealRadar.Get()) {
+	if(pTypeExt->RevealRadar) {
+		/*	Remember the new persisting radar spy effect on the victim house itself, because
+			destroying the building would destroy the spy reveal info in the ExtData, too.
+			2013-08-12 AlexB
+		*/
+		if(pTypeExt->RevealRadarPersist) {
+			auto pOwnerExt = HouseExt::ExtMap.Find(Owner);
+			pOwnerExt->RadarPersist.Add(Enterer);
+		}
+
 		EnteredBuilding->DisplayProductionTo.Add(Enterer);
 		BuildingExt::UpdateDisplayTo(EnteredBuilding);
 		if(evaForOwner || evaForEnterer) {
@@ -695,8 +688,7 @@ void BuildingExt::ExtData::UpdateFirewall() {
 			B->FirestormAnim = 0;
 		}
 		if(corners != 5 && corners != 10) {  // (0101b || 1010b) == part of a straight line
-			CoordStruct XYZ;
-			B->GetCoords(&XYZ);
+			CoordStruct XYZ = B->GetCoords();
 			XYZ.X -= 768;
 			XYZ.Y -= 768;
 			if(AnimTypeClass *FSA = AnimTypeClass::Find("FSIDLE")) {
@@ -718,16 +710,39 @@ void BuildingExt::ExtData::ImmolateVictims() {
 void BuildingExt::ExtData::ImmolateVictim(ObjectClass * Victim) {
 	BuildingClass *pThis = this->AttachedToObject;
 	if(generic_cast<TechnoClass *>(Victim) && Victim != pThis && !Victim->InLimbo && Victim->IsAlive && Victim->Health) {
-		CoordStruct XYZ;
-		Victim->GetCoords(&XYZ);
+		CoordStruct XYZ = Victim->GetCoords();
 		int Damage = Victim->Health;
-		Victim->ReceiveDamage(&Damage, 0, RulesClass::Instance->C4Warhead/* todo */, 0, 1, 0, pThis->Owner);
+		Victim->ReceiveDamage(&Damage, 0, RulesClass::Instance->C4Warhead/* todo */, nullptr, true, false, pThis->Owner);
 
 		if(AnimTypeClass *FSAnim = AnimTypeClass::Find(Victim->IsInAir() ? "FSAIR" : "FSGRND")) {
 			AnimClass * placeholder;
 			GAME_ALLOC(AnimClass, placeholder, FSAnim, &XYZ);
 		}
 
+	}
+}
+
+// Updates the activation of the sensor ability, if neccessary.
+/*!
+	The update is only performed if this is a sensor array and its state changed.
+
+	\author AlexB
+	\date 2012-10-08
+*/
+void BuildingExt::ExtData::UpdateSensorArray() {
+	BuildingClass* pBld = this->AttachedToObject;
+
+	if(pBld->Type->SensorArray) {
+		bool isActive = pBld->IsPowerOnline() && !pBld->Deactivated;
+		bool wasActive = (this->SensorArrayActiveCounter > 0);
+
+		if(isActive != wasActive) {
+			if(isActive) {
+				pBld->SensorArrayActivate();
+			} else {
+				pBld->SensorArrayDeactivate();
+			}
+		}
 	}
 }
 
@@ -745,11 +760,11 @@ DWORD BuildingExt::FoundationLength(CellStruct * StartCell) {
 void BuildingExt::Cleanup() {
 	if(BuildingExt::TempFoundationData1) {
 		delete[] BuildingExt::TempFoundationData1;
-		BuildingExt::TempFoundationData1 = NULL;
+		BuildingExt::TempFoundationData1 = nullptr;
 	}
 	if(BuildingExt::TempFoundationData2) {
 		delete[] BuildingExt::TempFoundationData2;
-		BuildingExt::TempFoundationData2 = NULL;
+		BuildingExt::TempFoundationData2 = nullptr;
 	}
 }
 
@@ -768,7 +783,7 @@ bool BuildingExt::ExtData::ReverseEngineer(TechnoClass *Victim) {
 
 	HouseClass *Owner = this->AttachedToObject->Owner;
 
-	int idx = HouseClass::Array->FindItemIndex(&Owner);
+	int idx = HouseClass::Array->FindItemIndex(Owner);
 
 	if(pVictimData->ReversedByHouses.ValidIndex(idx)) {
 		if(!pVictimData->ReversedByHouses[idx]) {
@@ -819,7 +834,7 @@ void BuildingExt::ExtData::KickOutClones(TechnoClass * Production) {
 
 	// keep cloning vats for backward compat, unless explicit sources are defined
 	if(FactoryType->Factory == InfantryTypeClass::AbsID) {
-		if(!CloningSources.Count) {
+		if(CloningSources.empty()) {
 			auto &CloningVats = FactoryOwner->CloningVats;
 			for(int i = 0; i < CloningVats.Count; ++i) {
 				KickOutClone(CloningVats[i]);
@@ -829,7 +844,7 @@ void BuildingExt::ExtData::KickOutClones(TechnoClass * Production) {
 	}
 
 	// and clone from new sources
-	if(CloningSources.Count || IsUnit) {
+	if(!CloningSources.empty() || IsUnit) {
 		for(int i = 0; i < AllBuildings.Count; ++i) {
 			auto B = AllBuildings[i];
 			if(B->InLimbo) {
@@ -838,8 +853,8 @@ void BuildingExt::ExtData::KickOutClones(TechnoClass * Production) {
 			auto BType = B->Type;
 
 			bool ShouldClone(false);
-			if(CloningSources.Count) {
-				ShouldClone = CloningSources.FindItemIndex(&BType) != -1;
+			if(!CloningSources.empty()) {
+				ShouldClone = CloningSources.Contains(BType);
 			} else if(IsUnit) {
 				auto BData = BuildingTypeExt::ExtMap.Find(BType);
 				ShouldClone = (!!BData->CloningFacility) && (BType->Naval == FactoryType->Naval);
@@ -873,8 +888,8 @@ DEFINE_HOOK(43BCF7, BuildingClass_DTOR, 6)
 	return 0;
 }
 
-DEFINE_HOOK(453E20, BuildingClass_SaveLoad_Prefix, 5)
 DEFINE_HOOK_AGAIN(454190, BuildingClass_SaveLoad_Prefix, 5)
+DEFINE_HOOK(453E20, BuildingClass_SaveLoad_Prefix, 5)
 {
 	GET_STACK(BuildingExt::TT*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);

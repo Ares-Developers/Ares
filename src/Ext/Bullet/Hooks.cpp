@@ -21,8 +21,7 @@ DEFINE_HOOK(4666F7, BulletClass_Update, 6)
 			} else {
 				solidHeight *= 256;
 			}
-			CoordStruct MyXYZ;
-			MyCell->GetCoords(&MyXYZ);
+			CoordStruct MyXYZ = MyCell->GetCoords();
 
 			// use this delta offset to pick specific foundation cell's height from height map when it's implemented
 			CellStruct MyXY, BldXY, DeltaXY;
@@ -33,9 +32,9 @@ DEFINE_HOOK(4666F7, BulletClass_Update, 6)
 			int MyHeight = Bullet->Location.Z;
 			int BldHeight = MapClass::Instance->GetCellFloorHeight(&MyXYZ) + solidHeight;
 			if(MyHeight <= BldHeight) {
-				Bullet->SetTarget((ObjectClass *)MyCell);
+				Bullet->SetTarget(MyCell);
 				Bullet->SpawnNextAnim = 1;
-				Bullet->NextAnim = NULL;
+				Bullet->NextAnim = nullptr;
 			}
 		}
 	}
@@ -66,4 +65,26 @@ DEFINE_HOOK(46867F, BulletClass_SetMovement_Parachute, 5)
 
 	R->EAX(result);
 	return 0x468689;
+}
+
+// set the weapon type when spawning bullets. at least
+// Ivan Bombs need those
+DEFINE_HOOK(46A5B2, BulletClass_Shrapnel_WeaponType1, 6)
+{
+	GET(BulletClass*, pShrapnel, EAX);
+	GET(WeaponTypeClass*, pWeapon, ESI);
+
+	pShrapnel->SetWeaponType(pWeapon);
+
+	return 0;
+}
+
+DEFINE_HOOK(46AA27, BulletClass_Shrapnel_WeaponType2, 9)
+{
+	GET(BulletClass*, pShrapnel, EAX);
+	GET(WeaponTypeClass*, pWeapon, ESI);
+
+	pShrapnel->SetWeaponType(pWeapon);
+
+	return 0;
 }

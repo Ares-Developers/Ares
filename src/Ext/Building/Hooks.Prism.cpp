@@ -8,7 +8,7 @@
 DEFINE_HOOK(44B2FE, BuildingClass_Mi_Attack_IsPrism, 6)
 {
 	GET(BuildingClass *, B, ESI);
-	GET(int, idxWeapon, EBP); //which weapon was chosen to attack the target with
+	//GET(int, idxWeapon, EBP); //which weapon was chosen to attack the target with
 	R->EAX<BuildingTypeClass *>(B->Type);
 
 	enum { IsPrism = 0x44B310, IsNotPrism = 0x44B630, IsCustomPrism = 0x44B6D6};
@@ -60,7 +60,7 @@ DEFINE_HOOK(44B2FE, BuildingClass_Mi_Attack_IsPrism, 6)
 			B->PrismTargetCoords.Y = B->PrismTargetCoords.Z = 0;
 			pMasterData->PrismForwarding.ModifierReserve = 0.0;
 			pMasterData->PrismForwarding.DamageReserve = 0;
-			BuildingTypeExt::cPrismForwarding::SetSupportTarget(B, NULL);
+			BuildingTypeExt::cPrismForwarding::SetSupportTarget(B, nullptr);
 
 		}
 
@@ -83,7 +83,7 @@ DEFINE_HOOK(447FAE, BuildingClass_GetObjectActivityState, 6)
 		if (pTypeData->PrismForwarding.Enabled == BuildingTypeExt::cPrismForwarding::YES
 				|| pTypeData->PrismForwarding.Enabled == BuildingTypeExt::cPrismForwarding::ATTACK) {
 			//is a prism tower
-			if (B->PrismStage == pcs_Slave && pTypeData->PrismForwarding.BreakSupport.Get()) {
+			if (B->PrismStage == pcs_Slave && pTypeData->PrismForwarding.BreakSupport) {
 				return NotBusyCharging;
 			}
 		}
@@ -108,23 +108,23 @@ DEFINE_HOOK(4503F0, BuildingClass_Update_Prism, 9)
 						BuildingTypeExt::ExtData *pTypeData = BuildingTypeExt::ExtMap.Find(pType);
 						//slave firing
 						pTargetData->PrismForwarding.ModifierReserve +=
-							(pTypeData->PrismForwarding.SupportModifier.Get() + pData->PrismForwarding.ModifierReserve);
+							(pTypeData->PrismForwarding.SupportModifier + pData->PrismForwarding.ModifierReserve);
 						pTargetData->PrismForwarding.DamageReserve +=
-							(pTypeData->PrismForwarding.DamageAdd.Get()  + pData->PrismForwarding.DamageReserve);
+							(pTypeData->PrismForwarding.DamageAdd  + pData->PrismForwarding.DamageReserve);
 						pThis->FireLaser(pThis->PrismTargetCoords);
 
 					}
 				}
 				if(PrismStage == pcs_Master) {
-					if(ObjectClass *Target = pThis->Target) {
+					if(AbstractClass *Target = pThis->Target) {
 						if(pThis->GetFireError(Target, pThis->PrismTargetCoords.X, true) == FireError::OK) {
 							if(BulletClass *LaserBeam = pThis->Fire(Target, pThis->PrismTargetCoords.X)) {
 								BuildingTypeClass *pType = pThis->Type;
 								BuildingTypeExt::ExtData *pTypeData = BuildingTypeExt::ExtMap.Find(pType);
 
 								//apparently this is divided by 256 elsewhere
-								LaserBeam->DamageMultiplier = ((pData->PrismForwarding.ModifierReserve + 100) * 256) / 100;
-								LaserBeam->Health += pTypeData->PrismForwarding.DamageAdd.Get()  + pData->PrismForwarding.DamageReserve;
+								LaserBeam->DamageMultiplier = int((pData->PrismForwarding.ModifierReserve + 100) * 256) / 100;
+								LaserBeam->Health += pTypeData->PrismForwarding.DamageAdd + pData->PrismForwarding.DamageReserve;
 							}
 						}
 					}
@@ -134,7 +134,7 @@ DEFINE_HOOK(4503F0, BuildingClass_Update_Prism, 9)
 				pData->PrismForwarding.DamageReserve = 0;
 				BuildingTypeExt::cPrismForwarding::RemoveAllSenders(pThis);
 				pThis->SupportingPrisms = 0; //Ares sets this to the longest backward chain
-				BuildingTypeExt::cPrismForwarding::SetSupportTarget(pThis, NULL);
+				BuildingTypeExt::cPrismForwarding::SetSupportTarget(pThis, nullptr);
 				pThis->PrismStage = pcs_Idle;
 			}
 		} else {
@@ -173,11 +173,11 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 		idxSupport = pTypeData->PrismForwarding.SupportWeaponIndex;
 	}
 
-	WeaponTypeClass * supportWeapon = NULL;
+	WeaponTypeClass * supportWeapon = nullptr;
 	if (idxSupport != -1) {
 		supportWeapon = pType->get_Weapon(idxSupport);
 	}
-	LaserDrawClass * LaserBeam = NULL;
+	LaserDrawClass * LaserBeam = nullptr;
 	if (supportWeapon) {
 		WeaponTypeExt::ExtData *supportWeaponData = WeaponTypeExt::ExtMap.Find(supportWeapon);
 		//IsLaser
@@ -233,7 +233,7 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 			int ReportIndex = ScenarioClass::Instance->Random.RandomRanged(0, supportWeapon->Report.Count - 1);
 			int SoundArrayIndex = supportWeapon->Report.GetItem(ReportIndex);
 			if(SoundArrayIndex != -1) {
-				VocClass::PlayAt(SoundArrayIndex, &SourceXYZ, NULL);
+				VocClass::PlayAt(SoundArrayIndex, &SourceXYZ, nullptr);
 			}
 		}
 		//ROF
@@ -251,7 +251,7 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 	//Intensity adjustment for LaserBeam
 	if (LaserBeam) {
 		if (pTypeData->PrismForwarding.Intensity > 0) {
-			BuildingExt::ExtData *pData = BuildingExt::ExtMap.Find(B);
+			//BuildingExt::ExtData *pData = BuildingExt::ExtMap.Find(B);
 			LaserBeam->Thickness += (pTypeData->PrismForwarding.Intensity * (B->SupportingPrisms - 1));
 		}
 	}
@@ -288,9 +288,9 @@ DEFINE_HOOK(448277, PrismForward_BuildingChangeOwner, 5)
 		BuildingTypeClass *pType = B->Type;
 		BuildingTypeExt::ExtData *pTypeData = BuildingTypeExt::ExtMap.Find(pType);
 
-		if (pTypeData->PrismForwarding.ToAllies.Get()) {
+		if (pTypeData->PrismForwarding.ToAllies) {
 			BuildingClass *LastTarget = B;
-			BuildingClass *FirstTarget = NULL;
+			BuildingClass *FirstTarget = nullptr;
 			while (LastTarget) {
 				BuildingExt::ExtData *pData = BuildingExt::ExtMap.Find(LastTarget);
 				BuildingClass *NextTarget = pData->PrismForwarding.SupportTarget;

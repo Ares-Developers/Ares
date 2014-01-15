@@ -1,5 +1,6 @@
 #include "Body.h"
 #include "../Building/Body.h"
+#include "../Techno/Body.h"
 #include "../TechnoType/Body.h"
 
 #include <StringTable.h>
@@ -11,6 +12,8 @@
 #include <ArrayClasses.h>
 #include <Helpers/Template.h>
 #include <CRT.h>
+#include <VoxClass.h>
+#include <TiberiumClass.h>
 
 // =============================
 // other hooks
@@ -36,17 +39,14 @@ DEFINE_HOOK(4F7870, HouseClass_PrereqValidator, 7)
 
 DEFINE_HOOK(505360, HouseClass_PrerequisitesForTechnoTypeAreListed, 5)
 {
-	GET(HouseClass *, pHouse, ECX);
+	//GET(HouseClass *, pHouse, ECX);
 
 	GET_STACK(TechnoTypeClass *, pItem, 0x4);
 	GET_STACK(DynamicVectorClass<BuildingTypeClass *> *, pBuildingsToCheck, 0x8);
 	GET_STACK(int, pListCount, 0xC);
-	auto realCount = pBuildingsToCheck->Count;
-	pBuildingsToCheck->Count = pListCount;
 
-	R->EAX(HouseExt::PrerequisitesListed(pBuildingsToCheck, pItem));
-
-	pBuildingsToCheck->Count = realCount;
+	auto it = Prereqs::BTypeIter(pBuildingsToCheck->Items, pListCount);
+	R->EAX(HouseExt::PrerequisitesListed(it, pItem));
 
 	return 0x505486;
 }
@@ -78,7 +78,7 @@ DEFINE_HOOK(4F8EBD, HouseClass_Update_HasBeenDefeated, 0)
 				return true;
 			}
 			if(FootClass *F = generic_cast<FootClass *>(T)) {
-				return F->ParasiteImUsing != NULL;
+				return F->ParasiteImUsing != nullptr;
 			}
 			return false;
 		}
@@ -185,7 +185,7 @@ DEFINE_HOOK(50965E, HouseClass_CanInstantiateTeam, 5)
 	TaskForceEntryStruct * ptrEntry = reinterpret_cast<TaskForceEntryStruct *>(ptrTask); // evil! but works, don't ask me why
 
 	GET(HouseClass *, Owner, EBP);
-	enum { BuildLimitAllows = 0x5096BD, Absolutely = 0x509671, NoWay = 0x5096F1} CanBuild = NoWay;
+	enum { BuildLimitAllows = 0x5096BD, TryToRecruit = 0x509671, NoWay = 0x5096F1} CanBuild = NoWay;
 	if(TechnoTypeClass * Type = ptrEntry->Type) {
 		if(Type->FindFactory(true, true, false, Owner)) {
 			if(Ares::GlobalControls::AllowBypassBuildLimit[Owner->AIDifficulty]) {
@@ -195,11 +195,11 @@ DEFINE_HOOK(50965E, HouseClass_CanInstantiateTeam, 5)
 				if(remainLimit >= ptrEntry->Amount) {
 					CanBuild = BuildLimitAllows;
 				} else {
-					CanBuild = NoWay;
+					CanBuild = TryToRecruit;
 				}
 			}
 		} else {
-			CanBuild = BuildLimitAllows;
+			CanBuild = TryToRecruit;
 		}
 	}
 	return CanBuild;
@@ -229,4 +229,142 @@ DEFINE_HOOK(508F91, HouseClass_SpySat_Update_CheckEligible, 6)
 		? Jammed
 		: Eligible
 	;
+}
+
+// play this annoying message every now and then
+DEFINE_HOOK(4F8C23, HouseClass_Update_SilosNeededEVA, 5)
+{
+	VoxClass::Play("EVA_SilosNeeded");
+	return 0;
+}
+
+// restored from TS
+DEFINE_HOOK(4F9610, HouseClass_GiveTiberium_Storage, A)
+{
+	GET(HouseClass*, pThis, ECX);
+	GET_STACK(float, amount, 0x4);
+	GET_STACK(int, idxType, 0x8);
+
+	pThis->SiloMoney += Game::F2I(amount * 5.0);
+
+	if(!SessionClass::Instance->GameMode || pThis->CurrentPlayer) {
+		// don't change, old values are needed for silo update
+		const int lastStorage = static_cast<int>(pThis->OwnedTiberium.GetTotalAmount());
+		const int lastTotalStorage = pThis->TotalStorage;
+
+		// this is the upper limit for stored tiberium
+		if(amount + lastStorage > lastTotalStorage) {
+			amount = static_cast<float>(lastTotalStorage - lastStorage);
+		}
+
+		// go through all buildings and fill them up until all is in there
+		for(auto i=pThis->Buildings.begin(); i<pThis->Buildings.end(); ++i) {
+			if(amount <= 0.0f) {
+				break;
+			}
+
+			if(auto pBuilding = *i) {
+				int storage = pBuilding->Type->Storage;
+				if(pBuilding->IsOnMap && storage > 0) {
+
+					// put as much tiberium into this silo
+					float freeSpace = storage - pBuilding->Tiberium.GetTotalAmount();
+					if(freeSpace > 0.0f) {
+						if(freeSpace > amount) {
+							freeSpace = amount;
+						}
+
+						pBuilding->Tiberium.AddAmount(freeSpace, idxType);
+						pThis->OwnedTiberium.AddAmount(freeSpace, idxType);
+
+						amount -= freeSpace;
+					}
+				}
+			}
+		}
+
+		// redraw silos
+		pThis->UpdateAllSilos(lastStorage, lastTotalStorage);
+	} else {
+		// just add the money. this is the only original YR logic
+		auto pTib = TiberiumClass::Array->GetItem(idxType);
+		pThis->Balance += Game::F2I(amount * pTib->Value * pThis->Type->IncomeMult);
+	}
+
+	return 0x4F9664;
+}
+
+// spread tiberium on building destruction. replaces the
+// original code, made faster and spilling is now optional.
+DEFINE_HOOK(441B30, BuildingClass_Destroy_Refinery, 6)
+{
+	GET(BuildingClass*, pThis, ESI);
+	auto pExt = TechnoTypeExt::ExtMap.Find(pThis->Type);
+
+	auto &store = pThis->Tiberium;
+	auto &total = pThis->Owner->OwnedTiberium;
+
+	// remove the tiberium contained in this structure from the house's owned
+	// tiberium. original code does this one bail at a time, we do bulk.
+	if(store.GetTotalAmount() >= 1.0f) {
+		for(auto i = 0; i < OwnedTiberiumStruct::Size; ++i) {
+			auto amount = std::ceil(store.GetAmount(i));
+			if(amount > 0.0f) {
+				store.RemoveAmount(amount, i);
+				total.RemoveAmount(amount, i);
+
+				// spread bail by bail
+				if(pExt->TiberiumSpill) {
+					for(auto j = static_cast<int>(amount); j; --j) {
+						auto dist = ScenarioClass::Instance->Random.RandomRanged(256, 768);
+						auto crd = MapClass::GetRandomCoordsNear(pThis->Location, dist, true);
+
+						auto pCell = MapClass::Instance->GetCellAt(crd);
+						pCell->IncreaseTiberium(i, 1);
+					}
+				}
+			}
+		}
+	}
+
+	return 0x441C0C;
+}
+
+DEFINE_HOOK(73E4A2, UnitClass_Mi_Unload_Storage, 6)
+{
+	// because a value gets pushed to the stack in an inconvenient
+	// location, we do our stuff and then mess with the stack so
+	// the original functions do nothing any more.
+	GET(BuildingClass*, pBld, EDI);
+	GET(int, idxTiberium, EBP);
+	LEA_STACK(float*, amountRaw, 0x1C);
+	LEA_STACK(float*, amountPurified, 0x34);
+
+	auto pExt = TechnoExt::ExtMap.Find(pBld);
+	pExt->DepositTiberium(*amountRaw, *amountPurified, idxTiberium);
+	*amountPurified = *amountRaw = 0.0f;
+
+	return 0;
+}
+
+DEFINE_HOOK(522D75, InfantryClass_Slave_UnloadAt_Storage, 6)
+{
+	GET(TechnoClass*, pBld, EAX);
+	GET(int, idxTiberium, ESI);
+	GET(OwnedTiberiumStruct*, pTiberium, EBP);
+
+	// replaces the inner loop and stores
+	// one tiberium type at a time
+	float amount = pTiberium->GetAmount(idxTiberium);
+	pTiberium->RemoveAmount(amount, idxTiberium);
+
+	if(amount > 0.0f) {
+		auto pExt = TechnoExt::ExtMap.Find(pBld);
+		pExt->RefineTiberium(amount, idxTiberium);
+
+		// register for refinery smoke
+		R->BL(1);
+	}
+
+	return 0x522E38;
 }

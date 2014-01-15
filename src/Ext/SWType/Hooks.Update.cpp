@@ -85,7 +85,7 @@ DEFINE_HOOK(50AF10, HouseClass_CheckSWs, 5)
 
 			// is this a super weapon to be updated?
 			// sw is bound to a building and no single-shot => create goody otherwise
-			bool isCreateGoody = (!pSW->unknown_bool_60 || pSW->Quantity);
+			bool isCreateGoody = (!pSW->CanHold || pSW->OneTime);
 			bool needsUpdate = !isCreateGoody || pThis->Defeated;
 			if(needsUpdate) {
 
@@ -142,7 +142,7 @@ DEFINE_HOOK(50AF10, HouseClass_CheckSWs, 5)
 
 	// clean up.
 	delete [] Statuses;
-	Statuses = NULL;
+	Statuses = nullptr;
 
 	return 0x50B1CA;
 }
@@ -185,7 +185,7 @@ DEFINE_HOOK(6CB4D0, SuperClass_SetOnHold, 6)
 	GET(SuperClass *, pSuper, ECX);
 	GET_STACK(bool, OnHold, 0x4);
 	OnHold = !!OnHold;
-	if(!pSuper->Granted || pSuper->Quantity || !pSuper->unknown_bool_60) {
+	if(!pSuper->Granted || pSuper->OneTime || !pSuper->CanHold) {
 		R->EAX(0);
 	} else if(OnHold == pSuper->IsOnHold) {
 		R->EAX(0);
@@ -213,9 +213,9 @@ DEFINE_HOOK(6CB4D0, SuperClass_SetOnHold, 6)
 			HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(pSuper->Owner);
 			if(OnHold) {
 				pHouseData->SetFirestormState(0);
-				pSuper->ChargeDrainState = 0xFFFFFFFF;
+				pSuper->ChargeDrainState = ChargeDrainState::None;
 			} else {
-				pSuper->ChargeDrainState = 0;
+				pSuper->ChargeDrainState = ChargeDrainState::Charging;
 				pSuper->RechargeTimer.Start(pSuper->Type->RechargeTime);
 			}
 		}

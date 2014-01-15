@@ -35,7 +35,7 @@ DEFINE_HOOK(75E963, WaveClass_CTOR, 6)
 {
 	GET(WaveClass *, Wave, ESI);
 	GET(DWORD, Type, ECX);
-	if(Type == wave_Laser || Type == wave_BigLaser) {
+	if(Type == WaveType::Laser || Type == WaveType::BigLaser) {
 		return 0;
 	}
 	GET(WeaponTypeClass *, Weapon, EBX);
@@ -96,7 +96,7 @@ DEFINE_HOOK(760F50, WaveClass_Update, 6)
 	}
 
 	switch(pThis->Type) {
-		case wave_Sonic:
+		case WaveType::Sonic:
 			pThis->Update_Wave();
 			Intensity = pThis->WaveIntensity;
 			--Intensity;
@@ -108,8 +108,8 @@ DEFINE_HOOK(760F50, WaveClass_Update, 6)
 				CALL(0x5F3E70); // ObjectClass::Update
 			}
 			break;
-		case wave_BigLaser:
-		case wave_Laser:
+		case WaveType::BigLaser:
+		case WaveType::Laser:
 			Intensity = pThis->LaserIntensity;
 			Intensity -= 6;
 			pThis->LaserIntensity = Intensity;
@@ -117,7 +117,7 @@ DEFINE_HOOK(760F50, WaveClass_Update, 6)
 				pThis->UnInit();
 			}
 			break;
-		case wave_Magnetron:
+		case WaveType::Magnetron:
 			pThis->Update_Wave();
 			Intensity = pThis->WaveIntensity;
 			--Intensity;
@@ -254,13 +254,13 @@ DEFINE_HOOK(762C5C, WaveClass_Update_Wave, 6)
 
 	CoordStruct xyzSrc, xyzTgt, xyzDummy = {0, 0, 0};
 	Firer->GetFLH(&xyzSrc, weaponIdx, xyzDummy);
-	Target->GetCoords__(&xyzTgt); // not GetCoords() !
+	xyzTgt = Target->GetCoords__(); // not GetCoords() !
 
 	char idx = WeaponTypeExt:: AbsIDtoIdx(Target->WhatAmI());
 
 	bool reversed = pData->Wave_Reverse[idx];
 
-	if(Wave->Type == wave_Magnetron) {
+	if(Wave->Type == WaveType::Magnetron) {
 		reversed
 			? Wave->Draw_Magnetic(&xyzTgt, &xyzSrc)
 			: Wave->Draw_Magnetic(&xyzSrc, &xyzTgt);

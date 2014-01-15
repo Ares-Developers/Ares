@@ -87,8 +87,8 @@ DEFINE_HOOK(4016F7, Ares_Audio_LoadWAV, 5)	//50% rewrite of Audio::LoadWAV
 		char* SampleName=(char*)SampleIndex;
 
 		GET(DWORD *, pAudioIndex, ECX);	//AudioIndex*
-		pAudioIndex[0x110 >> 2] = 0;	//ExternalFile = NULL
-		pAudioIndex[0x118 >> 2] = 0;	//CurrentSampleFile = NULL
+		pAudioIndex[0x110 >> 2] = 0;	//ExternalFile = nullptr
+		pAudioIndex[0x118 >> 2] = 0;	//CurrentSampleFile = nullptr
 
 		//Replace the construction of the RawFileClass with one of a CCFileClass
 		char filename[0x100] = "\0";
@@ -100,7 +100,7 @@ DEFINE_HOOK(4016F7, Ares_Audio_LoadWAV, 5)	//50% rewrite of Audio::LoadWAV
 		GAME_ALLOC(CCFileClass, pFile, filename);
 		pAudioIndex[0x110 >> 2] = (DWORD)pFile;	//ExternalFile = pFile
 
-		if(pFile->Exists(NULL)) {
+		if(pFile->Exists(nullptr)) {
 			if(pFile->Open(eFileMode::Read)) {
 				int WAVStruct[0x8];
 				int nSampleSize;
@@ -113,7 +113,7 @@ DEFINE_HOOK(4016F7, Ares_Audio_LoadWAV, 5)	//50% rewrite of Audio::LoadWAV
 				}
 			}
 		}
-		pAudioIndex[0x110 >> 2] = NULL;	//ExternalFile = NULL
+		pAudioIndex[0x110 >> 2] = 0;	//ExternalFile = nullptr
 		GAME_DEALLOC(pFile);
 
 		R->EAX(0);

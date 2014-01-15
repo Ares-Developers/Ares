@@ -59,7 +59,7 @@ DEFINE_HOOK(51DF38, InfantryClass_Remove, A)
 	TechnoExt::ExtData* pData = TechnoExt::ExtMap.Find(pThis);
 
 	if(BuildingClass *Garrison = pData->GarrisonedIn) {
-		signed int idx = Garrison->Occupants.FindItemIndex(&pThis);
+		signed int idx = Garrison->Occupants.FindItemIndex(pThis);
 		if(idx == -1) {
 			Debug::Log("Infantry %s was garrisoned in building %s, but building didn't find it. WTF?", pThis->Type->ID, Garrison->Type->ID);
 		} else {
@@ -67,7 +67,7 @@ DEFINE_HOOK(51DF38, InfantryClass_Remove, A)
 		}
 	}
 
-	pData->GarrisonedIn = NULL;
+	pData->GarrisonedIn = nullptr;
 
 	return 0;
 }
@@ -76,7 +76,7 @@ DEFINE_HOOK(51DFFD, InfantryClass_Put, 5)
 {
 	GET(InfantryClass *, pThis, EDI);
 	TechnoExt::ExtData* pData = TechnoExt::ExtMap.Find(pThis);
-	pData->GarrisonedIn = NULL;
+	pData->GarrisonedIn = nullptr;
 
 	return 0;
 }
@@ -84,7 +84,7 @@ DEFINE_HOOK(51DFFD, InfantryClass_Put, 5)
 DEFINE_HOOK(518434, InfantryClass_ReceiveDamage_SkipDeathAnim, 7)
 {
 	GET(InfantryClass *, pThis, ESI);
-	GET_STACK(ObjectClass *, pAttacker, 0xE0);
+	//GET_STACK(ObjectClass *, pAttacker, 0xE0);
 //	InfantryExt::ExtData* trooperAres = InfantryExt::ExtMap.Find(pThis);
 //	bool skipInfDeathAnim = false; // leaving this default in case this is expanded in the future
 
@@ -117,7 +117,7 @@ DEFINE_HOOK(51E5E1, InfantryClass_GetCursorOverObject_MultiEngineerB, 7) {
 
 	// use a dedicated cursor
 	if(ret == act_Damage) {
-		Actions::Set(RulesExt::Global()->EngineerDamageCursor);
+		Actions::Set(&RulesExt::Global()->EngineerDamageCursor);
 	}
 
 	// return our action
@@ -132,10 +132,33 @@ DEFINE_HOOK(519D9C, InfantryClass_UpdatePosition_MultiEngineer, 5) {
 	// damage or capture
 	eAction action = InfantryExt::GetEngineerEnterEnemyBuildingAction(pBld);
 	if(action == act_Damage) {
-		int Damage = ceil(pBld->Type->Strength * RulesExt::Global()->EngineerDamage);
-		pBld->ReceiveDamage(&Damage, 0, RulesClass::Global()->C4Warhead, pEngi, 1, 0, 0);
+		int Damage = (int)ceil(pBld->Type->Strength * RulesExt::Global()->EngineerDamage);
+		pBld->ReceiveDamage(&Damage, 0, RulesClass::Global()->C4Warhead, pEngi, true, false, nullptr);
 		return 0x51A010;
 	} else {
 		return 0x519EAA;
 	}
+}
+
+// #1008047: the C4 did not work correctly in YR, because some ability checks were missing
+DEFINE_HOOK(51C325, InfantryClass_IsCellOccupied_C4Ability, 6)
+{
+	GET(InfantryClass*, pThis, EBP);
+
+	return (pThis->Type->C4 || pThis->HasAbility(Abilities::C4)) ? 0x51C37D : 0x51C335;
+}
+
+DEFINE_HOOK(51A4D2, InfantryClass_UpdatePosition_C4Ability, 6)
+{
+	GET(InfantryClass*, pThis, ESI);
+
+	return (!pThis->Type->C4 && !pThis->HasAbility(Abilities::C4)) ? 0x51A7F4 : 0x51A4E6;
+}
+
+// C4 ability: this thing might not be needed. works without it, but one can't be too sure
+DEFINE_HOOK(700505, TechnoClass_GetCursorOverObject_C4Ability, 6)
+{
+	GET(InfantryClass*, pThis, ESI);
+
+	return (!pThis->Type->C4 && !pThis->HasAbility(Abilities::C4)) ? 0x700536 : 0x700515;
 }

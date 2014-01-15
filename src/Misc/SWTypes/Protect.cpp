@@ -72,13 +72,12 @@ bool SW_Protect::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
 	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSW);
 
 	if(pThis->IsCharged) {
-		CoordStruct Crd;
-		CellClass *pTarget = MapClass::Instance->GetCellAt(pCoords);
-		pTarget->GetCoords(&Crd);
+		CellClass *pTarget = MapClass::Instance->GetCellAt(*pCoords);
+		CoordStruct Crd = pTarget->GetCoords();
 
 		// play start sound
 		if(pSW->StartSound > -1) {
-			VocClass::PlayAt(pSW->StartSound, &Crd, NULL);
+			VocClass::PlayAt(pSW->StartSound, &Crd, nullptr);
 		}
 
 		// set up the special sound when the effect wears off
@@ -92,39 +91,35 @@ bool SW_Protect::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
 			pThis->Owner->CreatePowerOutage(pData->Protect_PowerOutageDuration);
 		}
 
-		bool force = pData->Protect_IsForceShield.Get();
+		bool force = pData->Protect_IsForceShield;
 		float width = pData->SW_WidthOrRange;
 		int height = pData->SW_Height;
 		
-		auto IronCurtain = [&](ObjectClass* pObj) -> bool {
-			if(TechnoClass* pTechno = generic_cast<TechnoClass*>(pObj)) {
-				// we shouldn't do anything
-				if(pTechno->IsImmobilized || pTechno->IsBeingWarpedOut()) {
-					return true;
-				}
-
-				// is this thing affected at all?
-				if(!pData->IsHouseAffected(pThis->Owner, pTechno->Owner)) {
-					return true;
-				}
-
-				if(!pData->IsTechnoAffected(pTechno)) {
-					return true;
-				}
-
-				// protect this techno
-				pTechno->IronCurtain(pData->Protect_Duration, pThis->Owner, force);
+		auto IronCurtain = [&](TechnoClass* pTechno) -> bool {
+			// we shouldn't do anything
+			if(pTechno->IsImmobilized || pTechno->IsBeingWarpedOut()) {
+				return true;
 			}
+
+			// is this thing affected at all?
+			if(!pData->IsHouseAffected(pThis->Owner, pTechno->Owner)) {
+				return true;
+			}
+
+			if(!pData->IsTechnoAffected(pTechno)) {
+				return true;
+			}
+
+			// protect this techno
+			pTechno->IronCurtain(pData->Protect_Duration, pThis->Owner, force);
 
 			return true;
 		};
 
 		// protect everything in range
-		if(Helpers::Alex::DistinctCollector<ObjectClass*> *items = new Helpers::Alex::DistinctCollector<ObjectClass*>()) {
-			Helpers::Alex::forEachObjectInRange(pCoords, width, height, items->getCollector());
-			items->forEach(IronCurtain);
-			delete items;
-		}
+		Helpers::Alex::DistinctCollector<TechnoClass*> items;
+		Helpers::Alex::for_each_in_rect_or_range<TechnoClass>(*pCoords, width, height, std::ref(items));
+		items.for_each(IronCurtain);
 	}
 
 	return true;

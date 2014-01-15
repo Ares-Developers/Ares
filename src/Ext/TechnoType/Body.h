@@ -3,13 +3,16 @@
 
 #include <TechnoTypeClass.h>
 #include <BuildingTypeClass.h>
+#include <WarheadTypeClass.h>
 #include <VocClass.h>
 #include <HouseTypeClass.h>
+#include <VoxClass.h>
 
 #include "../../Ares.h"
 #include "../_Container.hpp"
 #include "../../Utilities/Template.h"
 #include "../../Utilities/Constructs.h"
+#include "../../Misc/AttachEffect.h"
 
 #include <bitset>
 
@@ -27,6 +30,8 @@ public:
 		Promotable<int> Survivors_PassengerChance;
 		// new on 28.09.09 for #631
 		int Survivors_PilotCount; //!< Defines the number of pilots inside this vehicle if Crewed=yes; maximum number of pilots who can survive. Defaults to 0 if Crewed=no; defaults to 1 if Crewed=yes. // NOTE: Flag in INI is called Survivor.Pilots
+		Nullable<int> Crew_TechnicianChance;
+		Nullable<int> Crew_EngineerChance;
 
 		// animated cameos
 //		int Cameo_Interval;
@@ -62,6 +67,7 @@ public:
 		DynamicVectorClass<WeaponStruct> EliteWeapons;
 
 		Promotable<SHPStruct *> Insignia;
+		Nullable<bool> Insignia_ShowEnemy;
 
 		Valueable<AnimTypeClass*> Parachute_Anim;
 
@@ -98,10 +104,10 @@ public:
 		bool ExperienceFromAirstrike;
 		float AirstrikeExperienceModifier;
 
-		ValueableIdx<int, VocClass> VoiceRepair;
+		ValueableIdx<VocClass> VoiceRepair;
 
-		ValueableIdx<int, VocClass> HijackerEnterSound;
-		ValueableIdx<int, VocClass> HijackerLeaveSound;
+		ValueableIdx<VocClass> HijackerEnterSound;
+		ValueableIdx<VocClass> HijackerLeaveSound;
 		Valueable<int> HijackerKillPilots;
 		Valueable<bool> HijackerBreakMindControl;
 		Valueable<bool> HijackerAllowed;
@@ -109,8 +115,19 @@ public:
 
 		Customizable<UnitTypeClass *> WaterImage;
 
+		NullableIdx<VocClass> CloakSound;
+		NullableIdx<VocClass> DecloakSound;
+		Valueable<bool> CloakPowered;
+		Valueable<bool> CloakDeployed;
+		Valueable<bool> CloakAllowed;
+		Nullable<int> CloakStages;
+
+		Valueable<bool> SensorArray_Warn;
+
 		char CameoPCX[0x20];
 		char AltCameoPCX[0x20];
+
+		char GroupAs[0x20];
 
 		DynamicVectorClass<bool> ReversedByHouses;
 		Valueable<bool> CanBeReversed;
@@ -122,11 +139,14 @@ public:
 		Valueable<bool> PassengerTurret; //!< Whether this unit's turret changes based on the number of people in its passenger hold.
 
 		// issue #617
-		DynamicVectorClass<BuildingTypeClass*> PoweredBy;  //!< The buildingtype this unit is powered by or NULL.
+		ValueableVector<BuildingTypeClass*> PoweredBy;  //!< The buildingtype this unit is powered by or NULL.
 
-		DynamicVectorClass<BuildingTypeClass *> BuiltAt;
+		//issue #1623
+		AttachEffectTypeClass AttachedTechnoEffect; //The AttachedEffect which should been on the Techno from the start.
+
+		ValueableVector<BuildingTypeClass *> BuiltAt;
 		Valueable<bool> Cloneable;
-		DynamicVectorClass<BuildingTypeClass *> ClonedAt;
+		ValueableVector<BuildingTypeClass *> ClonedAt;
 
 		Nullable<bool> CarryallAllowed;
 		Nullable<int> CarryallSizeLimit;
@@ -136,11 +156,37 @@ public:
 		DynamicVectorClass<HouseTypeClass *> FactoryOwners;
 		DynamicVectorClass<HouseTypeClass *> ForbiddenFactoryOwners;
 		Valueable<bool> FactoryOwners_HaveAllPlans;
+		
+		Valueable<bool> GattlingCyclic;
+
+		Nullable<bool> Crashable;
+
+		// custom missiles
+		Valueable<bool> IsCustomMissile;
+		Valueable<RocketStruct> CustomMissileData;
+		Valueable<WarheadTypeClass*> CustomMissileWarhead;
+		Valueable<WarheadTypeClass*> CustomMissileEliteWarhead;
+		Valueable<AnimTypeClass*> CustomMissileTakeoffAnim;
+		Valueable<AnimTypeClass*> CustomMissileTrailerAnim;
+		Valueable<int> CustomMissileTrailerSeparation;
+
+		// tiberium related
+		Nullable<bool> TiberiumProof;
+		Nullable<bool> TiberiumRemains;
+		Valueable<bool> TiberiumSpill;
+		Nullable<int> TiberiumTransmogrify;
+
+		// refinery and storage related
+		Valueable<bool> Refinery_UseStorage;
+
+		ValueableIdx<VoxClass> EVA_UnitLost;
 
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
-			Survivors_PilotChance (NULL),
-			Survivors_PassengerChance (NULL),
+			Survivors_PilotChance (),
+			Survivors_PassengerChance (),
 			Survivors_PilotCount (-1),
+			Crew_TechnicianChance (),
+			Crew_EngineerChance (),
 			PrerequisiteTheaters (0xFFFFFFFF),
 			Secret_RequiredHouses (0),
 			Secret_ForbiddenHouses (0),
@@ -156,9 +202,9 @@ public:
 			Spot_DisableB (false),
 			Spot_Reverse (false),
 			Is_Bomb (false),
-			Insignia (NULL),
-			Parachute_Anim (NULL),
-			Operator (NULL),
+			Insignia (),
+			Parachute_Anim (nullptr),
+			Operator (nullptr),
 			IsAPromiscuousWhoreAndLetsAnyoneRideIt (false),
 			CameoPal(),
 			RequiredStolenTech(0ull),
@@ -179,6 +225,15 @@ public:
 			PassengerExperienceModifier (1.0F),
 			MindControlExperienceSelfModifier (0.0F),
 			MindControlExperienceVictimModifier (1.0F),
+			Insignia_ShowEnemy(),
+			GattlingCyclic (false),
+			IsCustomMissile (false),
+			CustomMissileData (),
+			CustomMissileWarhead (nullptr),
+			CustomMissileEliteWarhead (nullptr),
+			CustomMissileTrailerSeparation (3),
+			CustomMissileTrailerAnim (nullptr),
+			CustomMissileTakeoffAnim (nullptr),
 			VoiceRepair (-1),
 			HijackerEnterSound (-1),
 			HijackerLeaveSound (-1),
@@ -186,20 +241,35 @@ public:
 			HijackerBreakMindControl (true),
 			HijackerAllowed (true),
 			HijackerOneTime (false),
-			WaterImage (NULL),
+			WaterImage (nullptr),
+			TiberiumProof (),
+			TiberiumRemains(),
+			TiberiumSpill (false),
+			TiberiumTransmogrify (),
+			Refinery_UseStorage (false),
+			CloakSound (),
+			DecloakSound (),
+			CloakPowered (false),
+			CloakDeployed (false),
+			CloakAllowed (true),
+			CloakStages (),
+			SensorArray_Warn (true),
 			CanBeReversed (true),
 			RadarJamRadius (0),
 			PassengerTurret (false),
+			AttachedTechnoEffect(),
 			Cloneable (true),
 			CarryallAllowed(),
 			CarryallSizeLimit (),
+			EVA_UnitLost (-1),
 			ImmuneToAbduction(false),
 			FactoryOwners_HaveAllPlans(false)
 			{
-				this->Insignia.SetAll(NULL);
+				this->Insignia.SetAll(nullptr);
 				*this->CameoPCX = *this->AltCameoPCX = 0;
-				this->ReversedByHouses.SetCapacity(32, NULL);
+				this->ReversedByHouses.SetCapacity(32, nullptr);
 				this->ReversedByHouses.CapacityIncrement = 32;
+				*this->GroupAs = 0;
 			};
 
 		virtual ~ExtData() {};
@@ -209,7 +279,7 @@ public:
 		virtual void LoadFromINIFile(TT *pThis, CCINIClass *pINI);
 		virtual void Initialize(TT *pThis);
 
-		virtual void InvalidatePointer(void *ptr) {
+		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
 			AnnounceInvalidPointer(Operator, ptr);
 		}
 
@@ -218,11 +288,14 @@ public:
 		bool CanBeBuiltAt(BuildingTypeClass * FactoryType);
 
 		bool CarryallCanLift(UnitClass * Target);
+
+		const char* GetSelectionGroupID() const;
 };
 
 	static Container<TechnoTypeExt> ExtMap;
 
-	static void PointerGotInvalid(void *ptr);
+	static const char* GetSelectionGroupID(ObjectTypeClass* pType);
+	static bool HasSelectionGroupID(ObjectTypeClass* pType, const char* pID);
 
 //	static void ReadWeapon(WeaponStruct *pWeapon, const char *prefix, const char *section, CCINIClass *pINI);
 };

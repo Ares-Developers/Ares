@@ -33,17 +33,12 @@ void EMPulse::CreateEMPulse(WarheadTypeExt::ExtData *Warhead, CoordStruct *Coord
 	}
 
 	// set of affected objects. every object can be here only once.
-	DynamicVectorClass<TechnoClass*> *items = Helpers::Alex::getCellSpreadItems(Coords,
-		Warhead->AttachedToObject->CellSpread, true);
+	auto items = Helpers::Alex::getCellSpreadItems(Coords, Warhead->AttachedToObject->CellSpread, true);
 
 	// affect each object
-	for(int i=0; i<items->Count; ++i) {
-		deliverEMPDamage(items->GetItem(i), Firer, Warhead);
+	for(size_t i=0; i<items.size(); ++i) {
+		deliverEMPDamage(items[i], Firer, Warhead);
 	}
-
-	// tidy up
-	items->Clear();
-	delete items;
 
 	if (verbose) {
 		Debug::Log("[CreateEMPulse] Done.\n");
@@ -61,12 +56,12 @@ void EMPulse::CreateEMPulse(WarheadTypeExt::ExtData *Warhead, CoordStruct *Coord
 */
 void EMPulse::deliverEMPDamage(ObjectClass *object, TechnoClass *Firer, WarheadTypeExt::ExtData *Warhead) {
 	// fill the gaps
-	HouseClass *pHouse = (Firer ? Firer->Owner : NULL);
+	HouseClass *pHouse = (Firer ? Firer->Owner : nullptr);
 
 	if (TechnoClass * curTechno = generic_cast<TechnoClass *> (object)) {
 		if (verbose) {
 			Debug::Log("[deliverEMPDamage] Step 1: %s => %s\n",
-					(Firer ? Firer->get_ID() : NULL),
+					(Firer ? Firer->get_ID() : nullptr),
 					curTechno->get_ID());
 		}
 
@@ -199,7 +194,7 @@ bool EMPulse::isEMPImmune(TechnoClass * Target, HouseClass * SourceHouse) {
 	// this can be overridden by a flag on the techno.
 	TechnoTypeExt::ExtData *pData = TechnoTypeExt::ExtMap.Find(Target->GetTechnoType());
 
-	if (pData->ImmuneToEMP.Get()) {
+	if (pData->ImmuneToEMP) {
 		if (verbose) {
 			Debug::Log("[isEMPImmune] \"%s\" is ImmuneToEMP.\n", Target->get_ID());
 		}
@@ -263,7 +258,7 @@ bool EMPulse::isCurrentlyEMPImmune(TechnoClass * Target, HouseClass * SourceHous
 	}
 
 	if(Target->WhatAmI() == abs_Unit) {
-		if(BuildingClass* pBld = MapClass::Instance->GetCellAt(&Target->Location)->GetBuilding()) {
+		if(BuildingClass* pBld = MapClass::Instance->GetCellAt(Target->Location)->GetBuilding()) {
 			if(pBld->Type->WeaponsFactory) {
 				if(pBld->IsUnderEMP() || pBld == Target->GetNthLink(0)) {
 					if (EMPulse::verbose) {
@@ -326,7 +321,7 @@ bool EMPulse::IsTypeEMPProne(TechnoTypeClass * Type) {
 		}
 	} else if (InfantryTypeClass * InfantryType = specific_cast<InfantryTypeClass *>(Type)) {
 		// affected only if this is a cyborg.
-		prone = InfantryType->Cyborg_;
+		prone = InfantryType->Cyborg;
 	} else {
 		// if this is a vessel or vehicle that is organic: no effect.
 		prone = !Type->Organic;
@@ -424,7 +419,7 @@ void EMPulse::updateRadarBlackout(TechnoClass * Techno) {
 	\author AlexB
 	\date 2010-05-03
 */
-void EMPulse::updateSpawnManager(TechnoClass * Techno, ObjectClass * Source = NULL) {
+void EMPulse::updateSpawnManager(TechnoClass * Techno, ObjectClass * Source = nullptr) {
 	if (SpawnManagerClass *SM = Techno->SpawnManager) {
 
 		if (Techno->EMPLockRemaining > 0) {
@@ -432,18 +427,18 @@ void EMPulse::updateSpawnManager(TechnoClass * Techno, ObjectClass * Source = NU
 			for (int i=0; i < SM->SpawnedNodes.Count; ++i) {
 				SpawnNode *spawn = SM->SpawnedNodes.GetItem(i);
 				// kill every spawned unit that is in the air. exempt missiles.
-				if(!spawn->IsSpawnMissile && spawn->Unit && spawn->Status >= 1 && spawn->Status <= 4) {
+				if(spawn->IsSpawnMissile == FALSE && spawn->Unit && spawn->Status >= SpawnNodeStatus::TakeOff && spawn->Status <= SpawnNodeStatus::Returning) {
 					TechnoExt::Destroy(spawn->Unit, generic_cast<TechnoClass*>(Source));
 				}
 			}
 
 			// pause the timers so spawning and regenerating is deferred.
-			SM->SpawnTimer.StartTime = -1;
-			SM->UnknownTimer.StartTime = -1;
+			SM->SpawnTimer.Pause();
+			SM->UpdateTimer.Pause();
 		} else {
 			// resume counting.
 			SM->SpawnTimer.StartIfEmpty();
-			SM->UnknownTimer.StartIfEmpty();
+			SM->UpdateTimer.StartIfEmpty();
 		}
 	}
 }
@@ -489,7 +484,7 @@ void EMPulse::UpdateSparkleAnim(TechnoClass * Techno) {
 		} else {
 			if (pData->EMPSparkleAnim) {
 				pData->EMPSparkleAnim->RemainingIterations = 0; // basically "you don't need to show up anymore"
-				pData->EMPSparkleAnim = NULL;
+				pData->EMPSparkleAnim = nullptr;
 			}
 		}
 	}
@@ -533,7 +528,7 @@ void EMPulse::announceAttack(TechnoClass * Techno) {
 
 		switch (rEvent) {
 			case Harvester:
-				if (RadarEventClass::Create(RADAREVENT_OREMINERUNDERATTACK, xy))
+				if (RadarEventClass::Create(RadarEventType::HarvesterAttacked, xy))
 					VoxClass::Play("EVA_OreMinerUnderAttack", -1, -1);
 				break;
 			case Base:
@@ -750,7 +745,10 @@ bool EMPulse::EnableEMPEffect2(TechnoClass * Victim) {
 		if (AircraftClass * Aircraft = specific_cast<AircraftClass *>(Victim)) {
 			// crash flying aircraft
 			if (Aircraft->GetHeight() > 0) {
-				TechnoExt::Destroy(Aircraft);
+				// this would a) happen every time it updates and b) possibly
+				// crash because it frees the caller's memory (the PoweredUnitClass)
+				// while it is executing.
+				//TechnoExt::Destroy(Aircraft);
 				return true;
 			}
 		}
@@ -788,7 +786,7 @@ bool EMPulse::EnableEMPEffect2(TechnoClass * Victim) {
 		}
 
 		// update managers.
-		updateSpawnManager(Victim, NULL);
+		updateSpawnManager(Victim, nullptr);
 		updateSlaveManager(Victim);
 
 		// set the sparkle animation.

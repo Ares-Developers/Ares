@@ -5,6 +5,8 @@
 #include <WeaponTypeClass.h>
 #include <RulesClass.h>
 #include <AnimTypeClass.h>
+#include <SidebarClass.h>
+#include <VocClass.h>
 
 #include "../_Container.hpp"
 #include "../../Utilities/Template.h"
@@ -29,11 +31,32 @@ class RulesExt
 
 		Valueable<bool> CanMakeStuffUp;
 
+		Valueable<bool> Tiberium_DamageEnabled;
+		Valueable<bool> Tiberium_HealEnabled;
+		Valueable<WarheadTypeClass*> Tiberium_ExplosiveWarhead;
+
+		Valueable<int> OverlayExplodeThreshold;
+
+		NullableIdx<VocClass> DecloakSound;
+		Nullable<int> CloakHeight;
+
+		Valueable<bool> EnemyInsignia;
+
+		Valueable<bool> TypeSelectUseDeploy;
+
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
-			ElectricDeath(NULL),
+			ElectricDeath(nullptr),
 			EngineerDamage (0.0F),
 			EngineerAlwaysCaptureTech (true),
 			EngineerDamageCursor (MouseCursor::First[MouseCursorType::Detonate]),
+			Tiberium_DamageEnabled (false),
+			Tiberium_HealEnabled (false),
+			Tiberium_ExplosiveWarhead (nullptr),
+			OverlayExplodeThreshold (0),
+			DecloakSound(),
+			CloakHeight(),
+			EnemyInsignia(true),
+			TypeSelectUseDeploy(true),
 			CanMakeStuffUp(false)
 			{
 				MultiEngineer[0] = false; // Skirmish
@@ -51,7 +74,7 @@ class RulesExt
 		virtual void LoadAfterTypeData(TT *pThis, CCINIClass *pINI);
 		virtual void InitializeConstants(TT *pThis);
 
-		virtual void InvalidatePointer(void *ptr) {
+		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
 		}
 };
 
@@ -71,6 +94,9 @@ public:
 		return Data;
 	};
 
+	static DynamicVectorClass<CameoDataStruct> TabCameos[4];
+
+	static void ClearCameos();
 };
 
 #endif

@@ -23,7 +23,7 @@ public:
 		SuperWeaponTypeClass *NukeSW;
 
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension(Canary, OwnerObject),
-			NukeSW (NULL)
+			NukeSW (nullptr)
 			{ };
 
 		virtual ~ExtData() {
@@ -33,7 +33,7 @@ public:
 
 		bool DamageOccupants();
 
-		virtual void InvalidatePointer(void *ptr) {
+		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
 		}
 
 	};

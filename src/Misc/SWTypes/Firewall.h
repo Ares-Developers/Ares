@@ -5,23 +5,29 @@
 #include "../SWTypes.h"
 
 class SW_Firewall : NewSWType {
-	public:
-		SW_Firewall() : NewSWType()
-			{ };
+public:
+	SW_Firewall() : NewSWType() {
+		SW_Firewall::FirewallTypeIndex = FIRST_SW_TYPE + this->TypeIndex;
+	};
 
-		virtual ~SW_Firewall()
-			{ };
+	virtual ~SW_Firewall() {
+		SW_Firewall::FirewallTypeIndex = -1;
+	};
 
-		virtual const char * GetTypeString()
-			{ return "Firestorm"; }
+	virtual const char * GetTypeString()
+	{
+		return "Firestorm";
+	}
 
-		virtual void LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI) {
-			pSW->Action = 0;
-			pSW->UseChargeDrain = true;
-			pData->SW_RadarEvent = false;
-			// what can we possibly configure here... warhead/damage inflicted? anims?
-		};
-		virtual bool Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer);
+	virtual void LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI) {
+		pSW->Action = 0;
+		pSW->UseChargeDrain = true;
+		pData->SW_RadarEvent = false;
+		// what can we possibly configure here... warhead/damage inflicted? anims?
+	};
+	virtual bool Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer);
+
+	static int FirewallTypeIndex;
 };
 
 #endif

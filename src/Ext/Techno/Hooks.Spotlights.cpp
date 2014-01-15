@@ -6,7 +6,7 @@
 #include <TacticalClass.h>
 
 hash_SpotlightExt TechnoExt::SpotlightExt;
-BuildingLightClass * TechnoExt::ActiveBuildingLight = NULL;
+BuildingLightClass * TechnoExt::ActiveBuildingLight = nullptr;
 
 // just in case
 DEFINE_HOOK(420F40, Spotlights_UpdateFoo, 6)
@@ -176,7 +176,7 @@ DEFINE_HOOK(436459, BuildingLightClass_Update, 6)
 	if(Owner && Owner->WhatAmI() != abs_Building) {
 		TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(Owner->GetTechnoType());
 		CoordStruct Loc = Owner->Location;
-		DWORD Facing;
+		DirStruct Facing;
 		switch(pTypeData->Spot_AttachedTo) {
 			case TechnoTypeExt::sa_Barrel:
 				Owner->BarrelFacing.GetFacing(&Facing);
@@ -187,11 +187,10 @@ DEFINE_HOOK(436459, BuildingLightClass_Update, 6)
 			default:
 				Owner->Facing.GetFacing(&Facing);
 		}
-		WORD F = (WORD)Facing;
 
-		double Angle = Facing2Rad * F;
-		Loc.Y -= pTypeData->Spot_Distance * Math::cos(Angle);
-		Loc.X += pTypeData->Spot_Distance * Math::sin(Angle);
+		double Angle = Facing2Rad * Facing.Value;
+		Loc.Y -= static_cast<int>(pTypeData->Spot_Distance * Math::cos(Angle));
+		Loc.X += static_cast<int>(pTypeData->Spot_Distance * Math::sin(Angle));
 
 		BL->field_B8 = Loc;
 		BL->field_C4 = Loc;
@@ -236,7 +235,7 @@ DEFINE_HOOK(4360FF, BuildingLightClass_Draw_250, 6)
 	TechnoClass *Owner = TechnoExt::ActiveBuildingLight->OwnerObject;
 	TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(Owner->GetTechnoType());
 	R->ECX(pTypeData ? pTypeData->Spot_Height : 250);
-	TechnoExt::ActiveBuildingLight = NULL;
+	TechnoExt::ActiveBuildingLight = nullptr;
 	return 0x436105;
 }
 

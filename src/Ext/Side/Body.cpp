@@ -7,18 +7,16 @@ template<> const DWORD Extension<SideClass>::Canary = 0x87654321;
 Container<SideExt> SideExt::ExtMap;
 int SideExt::CurrentLoadTextColor = -1;
 
-template<> SideExt::TT *Container<SideExt>::SavingObject = NULL;
-template<> IStream *Container<SideExt>::SavingStream = NULL;
-
-hash_map<VoxClass*, DynamicVectorClass<SideExt::VoxFileNameStruct> > SideExt::EVAFiles;
+template<> SideExt::TT *Container<SideExt>::SavingObject = nullptr;
+template<> IStream *Container<SideExt>::SavingStream = nullptr;
 
 void SideExt::ExtData::Initialize(SideClass *pThis)
 {
 	char* pID = pThis->ID;
 
+	this->ArrayIndex = SideClass::FindIndex(pThis->ID);
+
 	//are these necessary?
-	this->BaseDefenseCounts.Clear();
-	this->BaseDefenses.Clear();
 	this->ParaDrop.Clear();
 	this->ParaDropNum.Clear();
 
@@ -26,19 +24,7 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 
 	if(!_strcmpi(pID, "Nod")) { //Soviets
 
-		for(int i = 0; i < RulesClass::Instance->SovietBaseDefenseCounts.Count; ++i) {
-			this->BaseDefenseCounts.AddItem(RulesClass::Instance->SovietBaseDefenseCounts.GetItem(i));
-		}
-
-		for(int i = 0; i < RulesClass::Instance->SovietBaseDefenses.Count; ++i) {
-			this->BaseDefenses.AddItem(RulesClass::Instance->SovietBaseDefenses.GetItem(i));
-		}
-
-		this->Crew.Bind(&RulesClass::Instance->SovietCrew);
-		this->DefaultDisguise.Bind(&RulesClass::Instance->SovietDisguise);
-		this->SurvivorDivisor.Bind(&RulesClass::Instance->SovietSurvivorDivisor);
-
-		strcpy(this->EVATag, "Russian");
+		this->EVAIndex = 1;
 
 		this->ParaDropFallbackTypes = &RulesClass::Instance->SovParaDropInf;
 		this->ParaDropFallbackNum = &RulesClass::Instance->SovParaDropNum;
@@ -46,21 +32,12 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 		this->SidebarMixFileIndex = 2;
 		this->SidebarYuriFileNames = false;
 
+		this->ToolTipTextColor = ColorStruct(255, 255, 0);
+		this->MessageTextColorIndex = 11;
+
 	} else if(!_strcmpi(pID, "ThirdSide")) { //Yuri
 
-		for(int i = 0; i < RulesClass::Instance->ThirdBaseDefenseCounts.Count; ++i) {
-			this->BaseDefenseCounts.AddItem(RulesClass::Instance->ThirdBaseDefenseCounts.GetItem(i));
-		}
-
-		for(int i = 0; i < RulesClass::Instance->ThirdBaseDefenses.Count; ++i) {
-			this->BaseDefenses.AddItem(RulesClass::Instance->ThirdBaseDefenses.GetItem(i));
-		}
-
-		this->Crew.Bind(&RulesClass::Instance->ThirdCrew);
-		this->DefaultDisguise.Bind(&RulesClass::Instance->ThirdDisguise);
-		this->SurvivorDivisor.Bind(&RulesClass::Instance->ThirdSurvivorDivisor);
-
-		strcpy(this->EVATag, "Yuri");
+		this->EVAIndex = 2;
 
 		this->ParaDropFallbackTypes = &RulesClass::Instance->YuriParaDropInf;
 		this->ParaDropFallbackNum = &RulesClass::Instance->YuriParaDropNum;
@@ -68,61 +45,45 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 		this->SidebarMixFileIndex = 2;
 		this->SidebarYuriFileNames = true;
 
+		this->ToolTipTextColor = ColorStruct(255, 255, 0);
+		this->MessageTextColorIndex = 25;
+
 	} else { //Allies or any other country
 
-		for(int i = 0; i < RulesClass::Instance->AlliedBaseDefenseCounts.Count; ++i) {
-			this->BaseDefenseCounts.AddItem(RulesClass::Instance->AlliedBaseDefenseCounts.GetItem(i));
-		}
-
-		for(int i = 0; i < RulesClass::Instance->AlliedBaseDefenses.Count; ++i) {
-			this->BaseDefenses.AddItem(RulesClass::Instance->AlliedBaseDefenses.GetItem(i));
-		}
-
-		this->Crew.Bind(&RulesClass::Instance->AlliedCrew);
-		this->DefaultDisguise.Bind(&RulesClass::Instance->AlliedDisguise);
-		this->SurvivorDivisor.Bind(&RulesClass::Instance->AlliedSurvivorDivisor);
-
-		strcpy(this->EVATag, "Allied");
+		this->EVAIndex = 0;
 
 		this->ParaDropFallbackTypes = &RulesClass::Instance->AllyParaDropInf;
 		this->ParaDropFallbackNum = &RulesClass::Instance->AllyParaDropNum;
 
 		this->SidebarMixFileIndex = 1;
 		this->SidebarYuriFileNames = false;
+
+		this->ToolTipTextColor = ColorStruct(164, 210, 255);
+		this->MessageTextColorIndex = 21;
 	}
 
 };
 
 void SideExt::ExtData::LoadFromINIFile(SideClass *pThis, CCINIClass *pINI)
 {
-	char* p = NULL;
+	char* p = nullptr;
 	char* section = pThis->get_ID();
-
-	if(pINI->ReadString(section, "AI.BaseDefenseCounts", "", Ares::readBuffer, Ares::readLength)) {
-		this->BaseDefenseCounts.Clear();
-
-		for(p = strtok(Ares::readBuffer, Ares::readDelims); p && *p; p = strtok(NULL, Ares::readDelims)) {
-			this->BaseDefenseCounts.AddItem(atoi(p));
-		}
-	}
-
-	if(pINI->ReadString(section, "AI.BaseDefenses", "", Ares::readBuffer, Ares::readLength)) {
-		this->BaseDefenses.Clear();
-
-		for(p = strtok(Ares::readBuffer, Ares::readDelims); p && *p; p = strtok(NULL, Ares::readDelims)) {
-			this->BaseDefenses.AddItem(BuildingTypeClass::FindOrAllocate(p));
-		}
-	}
 
 	INI_EX exINI(pINI);
 
-	this->Crew.Parse(&exINI, section, "Crew", 1);
+	this->BaseDefenseCounts.Read(&exINI, section, "AI.BaseDefenseCounts");
 
-	this->DefaultDisguise.Parse(&exINI, section, "DefaultDisguise", 1);
+	this->BaseDefenses.Read(&exINI, section, "AI.BaseDefenses");
 
-	if(pINI->ReadString(section, "EVA.Tag", "", Ares::readBuffer, 0x20)) {
-		AresCRT::strCopy(this->EVATag, Ares::readBuffer, 0x20);
-	}
+	this->Crew.Parse(&exINI, section, "Crew");
+
+	this->Engineer.Parse(&exINI, section, "Engineer");
+
+	this->Technician.Parse(&exINI, section, "Technician");
+
+	this->Disguise.Parse(&exINI, section, "DefaultDisguise");
+
+	this->EVAIndex.Read(&exINI, section, "EVA.Tag");
 
 	this->Parachute_Anim.Parse(&exINI, section, "Parachute.Anim");
 
@@ -130,9 +91,10 @@ void SideExt::ExtData::LoadFromINIFile(SideClass *pThis, CCINIClass *pINI)
 
 	if(pINI->ReadString(section, "ParaDrop.Types", "", Ares::readBuffer, Ares::readLength)) {
 		this->ParaDrop.Clear();
-		this->ParaDropFallbackTypes = NULL;
+		this->ParaDropFallbackTypes = nullptr;
 
-		for(p = strtok(Ares::readBuffer, Ares::readDelims); p && *p; p = strtok(NULL, Ares::readDelims)) {
+		char* context = nullptr;
+		for(p = strtok_s(Ares::readBuffer, Ares::readDelims, &context); p && *p; p = strtok_s(nullptr, Ares::readDelims, &context)) {
 			TechnoTypeClass* pTT = UnitTypeClass::Find(p);
 
 			if(!pTT) {
@@ -149,44 +111,141 @@ void SideExt::ExtData::LoadFromINIFile(SideClass *pThis, CCINIClass *pINI)
 
 	if(pINI->ReadString(section, "ParaDrop.Num", "", Ares::readBuffer, Ares::readLength)) {
 		this->ParaDropNum.Clear();
-		this->ParaDropFallbackNum = NULL;
+		this->ParaDropFallbackNum = nullptr;
 
-		for(p = strtok(Ares::readBuffer, Ares::readDelims); p && *p; p = strtok(NULL, Ares::readDelims)) {
+		char* context = nullptr;
+		for(p = strtok_s(Ares::readBuffer, Ares::readDelims, &context); p && *p; p = strtok_s(nullptr, Ares::readDelims, &context)) {
 			this->ParaDropNum.AddItem(atoi(p));
 		}
 	}
 
 	this->SidebarMixFileIndex =  pINI->ReadInteger(section, "Sidebar.MixFileIndex", this->SidebarMixFileIndex);
 	this->SidebarYuriFileNames = pINI->ReadBool(section, "Sidebar.YuriFileNames", this->SidebarYuriFileNames);
+	this->ToolTipTextColor.Read(&exINI, section, "ToolTipColor");
 	this->SurvivorDivisor.Read(&exINI, section, "SurvivorDivisor");
-}
 
-DWORD SideExt::BaseDefenses(REGISTERS* R, DWORD dwReturnAddress)
-{
-	GET(HouseTypeClass *, pCountry, EAX);
-
-	int n = pCountry->SideIndex;
-	SideClass* pSide = SideClass::Array->GetItem(n);
-	if(SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide)) {
-		R->EBX(&pData->BaseDefenses);
-		return dwReturnAddress;
-	} else {
-		return 0;
+	if(pINI->ReadString(section, "MessageTextColor", "", Ares::readBuffer, 0x80)) {
+		if(ColorScheme* pCS = ColorScheme::Find(Ares::readBuffer)) {
+			this->MessageTextColorIndex = pCS->ArrayIndex;
+		}
 	}
 }
 
-DWORD SideExt::Disguise(REGISTERS* R, DWORD dwReturnAddress, bool bUseESI)
-{
-	GET(HouseClass *, pHouse, EAX);
-	InfantryClass* pThis = (bUseESI ? R->ESI<InfantryClass*>() : R->ECX<InfantryClass *>());
+int SideExt::ExtData::GetSurvivorDivisor() const {
+	if(this->SurvivorDivisor.isset()) {
+		return this->SurvivorDivisor;
+	}
 
-	int n = pHouse->SideIndex;
-	SideClass* pSide = SideClass::Array->GetItem(n);
-	if(SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide)) {
-		pThis->Disguise = pData->DefaultDisguise;
-		return dwReturnAddress;
-	} else {
-		return 0;
+	return this->GetDefaultSurvivorDivisor();
+}
+
+int SideExt::ExtData::GetDefaultSurvivorDivisor() const {
+	switch(this->ArrayIndex) {
+	case 0:
+		return RulesClass::Instance->AlliedSurvivorDivisor;
+	case 1:
+		return RulesClass::Instance->SovietSurvivorDivisor;
+	case 2:
+		return RulesClass::Instance->ThirdSurvivorDivisor;
+	default:
+		//return 0; would be correct, but Ares < 0.5 does this:
+		return RulesClass::Instance->AlliedSurvivorDivisor;
+	}
+}
+
+InfantryTypeClass* SideExt::ExtData::GetCrew() const {
+	if(this->Crew.isset()) {
+		return this->Crew;
+	}
+
+	return this->GetDefaultCrew();
+}
+
+InfantryTypeClass* SideExt::ExtData::GetDefaultCrew() const {
+	switch(this->ArrayIndex) {
+	case 0:
+		return RulesClass::Instance->AlliedCrew;
+	case 1:
+		return RulesClass::Instance->SovietCrew;
+	case 2:
+		return RulesClass::Instance->ThirdCrew;
+	default:
+		//return RulesClass::Instance->Technician; would be correct, but Ares < 0.5 does this:
+		return RulesClass::Instance->AlliedCrew;
+	}
+}
+
+InfantryTypeClass* SideExt::ExtData::GetEngineer() const {
+	return this->Engineer.Get(RulesClass::Instance->Engineer);
+}
+
+InfantryTypeClass* SideExt::ExtData::GetTechnician() const {
+	return this->Technician.Get(RulesClass::Instance->Technician);
+}
+
+InfantryTypeClass* SideExt::ExtData::GetDisguise() const {
+	if(this->Disguise.isset()) {
+		return this->Disguise;
+	}
+
+	return this->GetDefaultDisguise();
+}
+
+InfantryTypeClass* SideExt::ExtData::GetDefaultDisguise() const {
+	switch(this->ArrayIndex) {
+	case 0:
+		return RulesClass::Instance->AlliedDisguise;
+	case 1:
+		return RulesClass::Instance->SovietDisguise;
+	case 2:
+		return RulesClass::Instance->ThirdDisguise;
+	default:
+		//return RulesClass::Instance->ThirdDisguise; would be correct, but Ares < 0.5 does this:
+		return RulesClass::Instance->AlliedDisguise;
+	}
+}
+
+Iterator<int> SideExt::ExtData::GetBaseDefenseCounts() const {
+	if(this->BaseDefenseCounts.HasValue()) {
+		return this->BaseDefenseCounts;
+	}
+
+	return this->GetDefaultBaseDefenseCounts();
+}
+
+Iterator<int> SideExt::ExtData::GetDefaultBaseDefenseCounts() const {
+	switch(this->ArrayIndex) {
+	case 0:
+		return RulesClass::Instance->AlliedBaseDefenseCounts;
+	case 1:
+		return RulesClass::Instance->SovietBaseDefenseCounts;
+	case 2:
+		return RulesClass::Instance->ThirdBaseDefenseCounts;
+	default:
+		//return Iterator<int>(); would be correct, but Ares < 0.5 does this:
+		return RulesClass::Instance->AlliedBaseDefenseCounts;
+	}
+}
+
+Iterator<BuildingTypeClass*> SideExt::ExtData::GetBaseDefenses() const {
+	if(this->BaseDefenses.HasValue()) {
+		return this->BaseDefenses;
+	}
+
+	return this->GetDefaultBaseDefenses();
+}
+
+Iterator<BuildingTypeClass*> SideExt::ExtData::GetDefaultBaseDefenses() const {
+	switch(this->ArrayIndex) {
+	case 0:
+		return RulesClass::Instance->AlliedBaseDefenses;
+	case 1:
+		return RulesClass::Instance->SovietBaseDefenses;
+	case 2:
+		return RulesClass::Instance->ThirdBaseDefenses;
+	default:
+		//return Iterator<BuildingTypeClass*>(); would be correct, but Ares < 0.5 does this:
+		return RulesClass::Instance->AlliedBaseDefenses;
 	}
 }
 
@@ -194,8 +253,7 @@ DWORD SideExt::LoadTextColor(REGISTERS* R, DWORD dwReturnAddress)
 {
 	// if there is a cached LoadTextColor, use that.
 	int index = SideExt::CurrentLoadTextColor;
-	if(ColorScheme::Array->ValidIndex(index)) {
-		ColorScheme* pCS = ColorScheme::Array->GetItem(index);
+	if(auto pCS = ColorScheme::Array->GetItemOrDefault(index)) {
 		R->EAX(pCS);
 		return dwReturnAddress;
 	}
@@ -225,9 +283,9 @@ void Container<SideExt>::Save(SideClass *pThis, IStream *pStm) {
 	SideExt::ExtData* pData = this->SaveKey(pThis, pStm);
 
 	if(pData) {
-		ULONG out;
-		pData->BaseDefenses.Save(pStm);
-		pData->BaseDefenseCounts.Save(pStm);
+		//ULONG out;
+		//pData->BaseDefenses.Save(pStm);
+		//pData->BaseDefenseCounts.Save(pStm);
 		pData->ParaDrop.Save(pStm);
 		pData->ParaDropNum.Save(pStm);
 	}
@@ -236,10 +294,10 @@ void Container<SideExt>::Save(SideClass *pThis, IStream *pStm) {
 void Container<SideExt>::Load(SideClass *pThis, IStream *pStm) {
 	SideExt::ExtData* pData = this->LoadKey(pThis, pStm);
 
-	SWIZZLE(pData->DefaultDisguise);
+	SWIZZLE(pData->Disguise);
 	SWIZZLE(pData->Crew);
-	pData->BaseDefenses.Load(pStm, 1);
-	pData->BaseDefenseCounts.Load(pStm, 0);
+	//pData->BaseDefenses.Load(pStm, 1);
+	//pData->BaseDefenseCounts.Load(pStm, 0);
 	pData->ParaDrop.Load(pStm, 1);
 	pData->ParaDropNum.Load(pStm, 0);
 }
@@ -264,8 +322,8 @@ DEFINE_HOOK(6A4930, SideClass_DTOR, 6)
 	return 0;
 }
 
-DEFINE_HOOK(6A4780, SideClass_SaveLoad_Prefix, 6)
 DEFINE_HOOK_AGAIN(6A48A0, SideClass_SaveLoad_Prefix, 5)
+DEFINE_HOOK(6A4780, SideClass_SaveLoad_Prefix, 6)
 {
 	GET_STACK(SideExt::TT*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);

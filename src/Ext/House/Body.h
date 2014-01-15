@@ -47,6 +47,7 @@ class HouseExt
 			BuildingClass *Factory_AircraftType;
 
 			std::bitset<32> StolenTech;
+			IndexBitfield<HouseClass*> RadarPersist; 
 
 			DynamicVectorClass<HouseTypeClass *> FactoryOwners_GatheredPlansOf;
 
@@ -54,13 +55,14 @@ class HouseExt
 			IonSensitive(0),
 			FirewallActive(0),
 			FirewallRecalc(0),
-			Factory_BuildingType(NULL),
-			Factory_InfantryType(NULL),
-			Factory_VehicleType(NULL),
-			Factory_NavyType(NULL),
-			Factory_AircraftType(NULL),
+			Factory_BuildingType(nullptr),
+			Factory_InfantryType(nullptr),
+			Factory_VehicleType(nullptr),
+			Factory_NavyType(nullptr),
+			Factory_AircraftType(nullptr),
 			SWLastIndex(0),
-			StolenTech(0)
+			RadarPersist(),
+			StolenTech(0ull)
 		{
 		};
 
@@ -70,7 +72,7 @@ class HouseExt
 
 		virtual size_t Size() const { return sizeof(*this); };
 
-		virtual void InvalidatePointer(void *ptr) {
+		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
 			AnnounceInvalidPointer(Factory_AircraftType, ptr);
 			AnnounceInvalidPointer(Factory_BuildingType, ptr);
 			AnnounceInvalidPointer(Factory_VehicleType, ptr);
@@ -81,6 +83,12 @@ class HouseExt
 		void SetFirestormState(bool Active);
 
 		bool CheckBasePlanSanity();
+
+		int GetSurvivorDivisor() const;
+		InfantryTypeClass* GetCrew() const;
+		InfantryTypeClass* GetEngineer() const;
+		InfantryTypeClass* GetTechnician() const;
+		InfantryTypeClass* GetDisguise() const;
 	};
 
 	static Container<HouseExt> ExtMap;
@@ -90,7 +98,7 @@ class HouseExt
 
 	static RequirementStatus RequirementsMet(HouseClass *pHouse, TechnoTypeClass *pItem);
 	static bool PrerequisitesMet(HouseClass *pHouse, TechnoTypeClass *pItem);
-	static bool PrerequisitesListed(Prereqs::BTypeList *List, TechnoTypeClass *pItem);
+	static bool PrerequisitesListed(const Prereqs::BTypeIter &List, TechnoTypeClass *pItem);
 
 	static bool HasNeededFactory(HouseClass *pHouse, TechnoTypeClass *pItem);
 	static bool FactoryForObjectExists(HouseClass *pHouse, TechnoTypeClass *pItem);
@@ -104,6 +112,8 @@ class HouseExt
 
 	static signed int PrereqValidate
 		(HouseClass *pHouse, TechnoTypeClass *pItem, bool BuildLimitOnly, bool IncludeQueued);
+
+	static SideClass* GetSide(HouseClass* pHouse);
 };
 
 #endif

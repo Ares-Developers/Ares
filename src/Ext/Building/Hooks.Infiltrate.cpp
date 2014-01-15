@@ -19,43 +19,65 @@ DEFINE_HOOK(4571E0, BuildingClass_Infiltrate, 5)
 }
 
 // #814: force sidebar repaint for standard spy effects
-DEFINE_HOOK(457533, BuildingClass_Infiltrate_Standard, 6)
 DEFINE_HOOK_AGAIN(4574D2, BuildingClass_Infiltrate_Standard, 6)
+DEFINE_HOOK(457533, BuildingClass_Infiltrate_Standard, 6)
 {
 	MouseClass::Instance->SidebarNeedsRepaint();
 	return R->get_Origin() + 6;
 }
 
-// check before drawing the tooltip
-DEFINE_HOOK(43E7EF, BuildingClass_DrawVisible_P1, 5)
+DEFINE_HOOK(43E7B0, BuildingClass_DrawVisible, 5)
 {
-	GET(BuildingClass *, B, ESI);
-	BuildingTypeExt::ExtData *pType = BuildingTypeExt::ExtMap.Find(B->Type);
-	return (pType->RevealProduction && B->DisplayProductionTo.Contains(HouseClass::Player))
-		? 0x43E80E
-		: 0x43E832
-	;
-}
+	GET(BuildingClass*, pThis, ECX);
+	GET_STACK(Point2D*, pLocation, 0x4);
+	GET_STACK(RectangleStruct*, pBounds, 0x8);
 
-// check before drawing production cameo
-DEFINE_HOOK(43E832, BuildingClass_DrawVisible_P2, 6)
-{
-	GET(BuildingClass *, B, ESI);
-	BuildingTypeExt::ExtData *pType = BuildingTypeExt::ExtMap.Find(B->Type);
-	return (pType->RevealProduction && B->DisplayProductionTo.Contains(HouseClass::Player))
-		? 0x43E856
-		: 0x43E8EC
-	;
-}
+	auto pType = pThis->Type;
+	auto pExt = BuildingTypeExt::ExtMap.Find(pType);
 
-// fix palette for spied factory production cameo drawing
-DEFINE_HOOK(43E8D1, BuildingClass_DrawVisible_P3, 8)
-{
-	GET(TechnoTypeClass *, Type, EAX);
-	TechnoTypeExt::ExtData *pData = TechnoTypeExt::ExtMap.Find(Type);
-	R->EAX<SHPStruct *>(Type->Cameo);
-	R->EDX<ConvertClass *>(pData->CameoPal.Convert ? pData->CameoPal.Convert : FileSystem::CAMEO_PAL);
-	return 0x43E8DF;
+	// helpers (with support for the new spy effect)
+	bool bAllied = pThis->Owner->IsAlliedWith(HouseClass::Player);
+	bool bReveal = pExt->RevealProduction && pThis->DisplayProductionTo.Contains(HouseClass::Player);
+
+	// show building or house state
+	if(pThis->IsSelected && (bAllied || bReveal)) {
+		Point2D loc = {pLocation->X - 10, pLocation->Y + 10};
+		pThis->DrawExtraInfo(&loc, pLocation, pBounds);
+	}
+
+	// display production cameo
+	if(pThis->IsSelected && bReveal) {
+		auto pFactory = pThis->Factory;
+		if(pThis->Owner->ControlledByPlayer()) {
+			pFactory = pThis->Owner->GetPrimaryFactory(pType->Factory, pType->Naval, bcat_DontCare);
+		}
+
+		if(pFactory && pFactory->InProduction) {
+			auto pProdType = pFactory->InProduction->GetTechnoType();
+			auto pProdExt = TechnoTypeExt::ExtMap.Find(pProdType);
+
+			// support for pcx cameos
+			if(*pProdExt->CameoPCX) {
+				if(auto pPCX = PCX::Instance->GetSurface(pProdExt->CameoPCX)) {
+					const int cameoWidth = 60;
+					const int cameoHeight = 48;
+
+					RectangleStruct cameoBounds = {0, 0, cameoWidth, cameoHeight};
+					RectangleStruct destRect = {pLocation->X - cameoWidth / 2, pLocation->Y - cameoHeight / 2, cameoWidth, cameoHeight};
+					RectangleStruct destClip = Drawing::Intersect(&destRect, pBounds, nullptr, nullptr);
+
+					DSurface::Hidden_2->Blit(pBounds, &destClip, pPCX, &cameoBounds, &cameoBounds, true, true);
+				}
+			} else {
+				// old shp cameos, fixed palette
+				auto pCameo = pProdType->GetCameo();
+				auto pConvert = pProdExt->CameoPal.Convert ? pProdExt->CameoPal.Convert : FileSystem::CAMEO_PAL;
+				DSurface::Hidden_2->DrawSHP(pConvert, pCameo, 0, pLocation, pBounds, 0xE00, 0, 0, 0, 1000, 0, nullptr, 0, 0, 0);
+			}
+		}
+	}
+
+	return 0x43E8F2;
 }
 
 // if this is a radar, change the owner's house bitfields responsible for radar reveals

@@ -19,22 +19,17 @@ DEFINE_HOOK(46920B, BulletClass_Fire, 6) {
 	//LEA_STACK(CoordStruct *, detonationXYZ, 0xAC); // looks unused?
 	WarheadTypeClass *pThis = Bullet->WH;
 
-	CoordStruct coords;
-	if (Bullet->Target) {
-		Bullet->Target->GetCoords(&coords);
-	} else {
-		Bullet->GetCoords(&coords);
-	}
+	CoordStruct coords = Bullet->GetTargetCoords();
 
 	auto pWHExt = WarheadTypeExt::ExtMap.Find(pThis);
 
 	HouseClass *OwnerHouse = (Bullet->Owner)
 		? Bullet->Owner->Owner
-		: NULL
+		: nullptr
 	;
 
 	int damage = 0;
-	WeaponTypeExt::ExtData* WeaponTypeExt = NULL;
+	WeaponTypeExt::ExtData* WeaponTypeExt = nullptr;
 	if(Bullet->WeaponType) {
 		damage = Bullet->WeaponType->Damage;
 		WeaponTypeExt = WeaponTypeExt::ExtMap.Find(Bullet->WeaponType);
@@ -56,6 +51,7 @@ DEFINE_HOOK(46920B, BulletClass_Fire, 6) {
 		pWHExt->applyEMP(&coords, Bullet->Owner);
 		WarheadTypeExt::applyOccupantDamage(Bullet);
 		pWHExt->applyKillDriver(Bullet);
+		pWHExt->applyAttachedEffect(&coords, Bullet->Owner);
 	}
 
 /*
@@ -74,13 +70,6 @@ DEFINE_HOOK(46920B, BulletClass_Fire, 6) {
 		? 0x469AA4
 		: 0
 	;
-}
-
-// issue 472: deglob WarpAway
-DEFINE_HOOK(71A87B, TemporalClass_Update_CacheWH, 6) {
-	GET(WeaponTypeClass *, W, EAX);
-	WarheadTypeExt::Temporal_WH = W->Warhead;
-	return 0;
 }
 
 // issue 472: deglob WarpAway

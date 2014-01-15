@@ -7,10 +7,10 @@
 #include <GameModeOptionsClass.h>
 
 template<> const DWORD Extension<RulesClass>::Canary = 0x12341234;
-RulesExt::ExtData * RulesExt::Data = NULL;
+RulesExt::ExtData * RulesExt::Data = nullptr;
 
-template<> RulesExt::TT *Container<RulesExt>::SavingObject = NULL;
-template<> IStream *Container<RulesExt>::SavingStream = NULL;
+template<> RulesExt::TT *Container<RulesExt>::SavingObject = nullptr;
+template<> IStream *Container<RulesExt>::SavingStream = nullptr;
 
 void RulesExt::Allocate(RulesClass *pThis) {
 	if (Data) {
@@ -22,7 +22,7 @@ void RulesExt::Allocate(RulesClass *pThis) {
 void RulesExt::Remove(RulesClass *pThis) {
 	if (Data) {
 		delete Data;
-		Data = NULL;
+		Data = nullptr;
 	}
 }
 
@@ -55,6 +55,8 @@ void RulesExt::ExtData::LoadFromINIFile(RulesClass *pThis, CCINIClass *pINI) {
 
 void RulesExt::ExtData::LoadBeforeTypeData(RulesClass *pThis, CCINIClass *pINI) {
 	const char section[] = "WeaponTypes";
+	const char sectionGeneral[] = "General";
+	const char sectionCombatDamage[] = "CombatDamage";
 
 	int len = pINI->GetKeyCount(section);
 	for (int i = 0; i < len; ++i) {
@@ -72,7 +74,17 @@ void RulesExt::ExtData::LoadBeforeTypeData(RulesClass *pThis, CCINIClass *pINI) 
 
 	INI_EX exINI(pINI);
 
-	pData->CanMakeStuffUp.Read(&exINI, "General", "CanMakeStuffUp");
+	pData->CanMakeStuffUp.Read(&exINI, sectionGeneral, "CanMakeStuffUp");
+
+	pData->Tiberium_DamageEnabled.Read(&exINI, sectionGeneral, "TiberiumDamageEnabled");
+	pData->Tiberium_HealEnabled.Read(&exINI, sectionGeneral, "TiberiumHealEnabled");
+	pData->Tiberium_ExplosiveWarhead.Parse(&exINI, sectionCombatDamage, "TiberiumExplosiveWarhead");
+
+	pData->OverlayExplodeThreshold.Read(&exINI, sectionGeneral, "OverlayExplodeThreshold");
+
+	pData->EnemyInsignia.Read(&exINI, sectionGeneral, "EnemyInsignia");
+
+	pData->TypeSelectUseDeploy.Read(&exINI, sectionGeneral, "TypeSelectUseDeploy");
 }
 
 // this should load everything that TypeData is not dependant on
@@ -88,6 +100,9 @@ void RulesExt::ExtData::LoadAfterTypeData(RulesClass *pThis, CCINIClass *pINI) {
 	INI_EX exINI(pINI);
 
 	pData->ElectricDeath.Parse(&exINI, "AudioVisual", "InfantryElectrocuted");
+
+	pData->DecloakSound.Read(&exINI, "AudioVisual", "DecloakSound");
+	pData->CloakHeight.Read(&exINI, "General", "CloakHeight");
 
 	for (int i = 0; i < WeaponTypeClass::Array->Count; ++i) {
 		WeaponTypeClass::Array->GetItem(i)->LoadFromINI(pINI);

@@ -41,7 +41,7 @@ DEFINE_HOOK(505B58, HouseClass_GenerateAIBuildList_SkipManualCopy, 6)
 {
 	LEA_STACK(DynamicVectorClass<BuildingTypeClass *> *, PlannedBase1, STACK_OFFS(0xA4, 0x90));
 	LEA_STACK(DynamicVectorClass<BuildingTypeClass *> *, PlannedBase2, STACK_OFFS(0xA4, 0x78));
-	PlannedBase2->SetCapacity(PlannedBase1->Capacity, NULL);
+	PlannedBase2->SetCapacity(PlannedBase1->Capacity, nullptr);
 	return 0x505C2C;
 }
 
@@ -105,7 +105,7 @@ DEFINE_HOOK(688B37, MPGameModeClass_CreateStartingUnits_B, 5)
 
 	auto pArray = &RulesClass::Instance->BaseUnit;
 	bool canBuild = false;
-	UnitTypeClass* Item = NULL;
+	UnitTypeClass* Item = nullptr;
 	for(int i = 0; i < pArray->Count; ++i) {
 		Item = pArray->GetItem(i);
 		if(pHouse->CanExpectToBuild(Item)) {

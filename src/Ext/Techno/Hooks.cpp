@@ -2,11 +2,14 @@
 #include "../TechnoType/Body.h"
 #include "../Building/Body.h"
 #include "../BuildingType/Body.h"
+#include "../Rules/Body.h"
+#include "../Tiberium/Body.h"
 #include "../../Misc/Debug.h"
 #include "../../Misc/JammerClass.h"
 #include "../../Misc/PoweredUnitClass.h"
 
 #include <SpecificStructures.h>
+#include <TiberiumClass.h>
 
 // bugfix #297: Crewed=yes jumpjets spawn parachuted infantry on destruction, not idle
 DEFINE_HOOK(737F97, UnitClass_ReceiveDamage, 0)
@@ -29,6 +32,14 @@ DEFINE_HOOK(41668B, AircraftClass_ReceiveDamage, 6)
 	bool select = a->IsSelected && a->Owner->ControlledByPlayer();
 	TechnoExt::SpawnSurvivors(a, Killer, select, ignoreDefenses != 0);
 
+	// Crashable support for aircraft
+	if(auto pExt = TechnoTypeExt::ExtMap.Find(a->GetTechnoType())) {
+		if(!pExt->Crashable.Get(true)) {
+			R->EAX(0);
+			return 0x41669A;
+		}
+	}
+
 	return 0;
 }
 
@@ -39,16 +50,9 @@ DEFINE_HOOK(6F9E50, TechnoClass_Update, 5)
 	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(Source);
 	TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(Source->GetTechnoType());
 
-	if(pData->CloakSkipTimer.IsDone()) {
-		pData->CloakSkipTimer.Stop();
-		Source->Cloakable = Source->GetTechnoType()->Cloakable;
-	} else if(pData->CloakSkipTimer.GetTimeLeft() > 0) {
-		Source->Cloakable = 0;
-	}
-
 	// #1208
 	if(pTypeData) {
-		if(pTypeData->PassengerTurret.Get()) {
+		if(pTypeData->PassengerTurret) {
 			// 18 = 1 8 = A H = Adolf Hitler. Clearly we can't allow it to come to that.
 			int passengerNumber = (Source->Passengers.NumPassengers <= 17) ? Source->Passengers.NumPassengers : 17;
 			int maxTurret = Source->GetTechnoType()->TurretCount - 1;
@@ -57,7 +61,7 @@ DEFINE_HOOK(6F9E50, TechnoClass_Update, 5)
 	}
 	
 	// #617 powered units
-	if( pTypeData->PoweredBy.Count ) {
+	if(pTypeData && pTypeData->PoweredBy.size()) {
 		if(!pData->PoweredUnit) {
 			pData->PoweredUnit = new PoweredUnitClass(Source, pTypeData);
 		}
@@ -66,10 +70,13 @@ DEFINE_HOOK(6F9E50, TechnoClass_Update, 5)
 		}
 	}
 
+	AttachEffectClass::Update(Source);
+
 	return 0;
 }
 
 //! TechnoClass::Update is called every frame; returning 0 tells it to execute the original function's code as well.
+//! EXCEPT if the target is under Temporal, use the 71A860 hook for that - Graion, 2013-06-13.
 DEFINE_HOOK(6F9E76, TechnoClass_Update_CheckOperators, 6)
 {
 	GET(TechnoClass *, pThis, ESI); // object this is called on
@@ -121,7 +128,7 @@ DEFINE_HOOK(6F9E76, TechnoClass_Update_CheckOperators, 6)
 	if(pThis->Deactivated) {
 		if(UnitClass* pUnit = specific_cast<UnitClass*>(pThis)) {
 			if(pUnit->Locomotor->Is_Moving() && pUnit->Destination && !pThis->LocomotorSource) {
-				pUnit->SetDestination(NULL, true);
+				pUnit->SetDestination(nullptr, true);
 				pUnit->StopMoving();
 			}
 		}
@@ -154,8 +161,7 @@ DEFINE_HOOK(415CA6, AircraftClass_Paradrop, 6)
 	if(P->WhatAmI() != abs_Unit) {
 		return 0;
 	}
-	CoordStruct SrcXYZ;
-	A->GetCoords(&SrcXYZ);
+	CoordStruct SrcXYZ = A->GetCoords();
 	LEA_STACK(CoordStruct *, XYZ, 0x20);
 	XYZ->X = (SrcXYZ.X & ~0xFF) + 0x80;
 	XYZ->Y = (SrcXYZ.Y & ~0xFF) + 0x80;
@@ -177,14 +183,14 @@ DEFINE_HOOK(6F407D, TechnoClass_Init_1, 6)
 	GET(TechnoClass *, T, ESI);
 	TechnoTypeClass * Type = T->GetTechnoType();
 	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(T);
-	TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(Type);
+	//TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(Type);
 
-	CaptureManagerClass *Capturer = NULL;
-	ParasiteClass *Parasite = NULL;
-	TemporalClass *Temporal = NULL;
+	CaptureManagerClass *Capturer = nullptr;
+	ParasiteClass *Parasite = nullptr;
+	TemporalClass *Temporal = nullptr;
 
 	FootClass *F = generic_cast<FootClass *>(T);
-	bool IsFoot = (F != NULL);
+	bool IsFoot = (F != nullptr);
 
 //	for(int i = 0; i < pTypeData->Weapons.get_Count(); ++i) {
 //		WeaponStruct *W = &pTypeData->Weapons[i];
@@ -195,35 +201,36 @@ DEFINE_HOOK(6F407D, TechnoClass_Init_1, 6)
 		if(!W1 && !W2) {
 			continue;
 		}
-		WarheadTypeClass *WH1 = W1 ? W1->Warhead : NULL;
-		WarheadTypeClass *WH2 = W2 ? W2->Warhead : NULL;
+		WarheadTypeClass *WH1 = W1 ? W1->Warhead : nullptr;
+		WarheadTypeClass *WH2 = W2 ? W2->Warhead : nullptr;
 
-		if((W1 && !WH1) || (W2 && !WH2)) {
+		bool IsW1Faulty = (W1 && !WH1);
+		if(IsW1Faulty || (W2 && !WH2)) {
 			Debug::FatalErrorAndExit(
 				"Constructing an instance of [%s]:\r\n%sWeapon %s (slot %d) has no Warhead!",
 					Type->ID,
-					WH1 ? "Elite " : "",
-					(WH1 ? W2 : W1)->ID,
+					IsW1Faulty ? "" : "Elite ",
+					(IsW1Faulty ? W1 : W2)->ID,
 					i);
 		}
 
-		if(WH1 && WH1->MindControl && Capturer == NULL) {
+		if(WH1 && WH1->MindControl && Capturer == nullptr) {
 			GAME_ALLOC(CaptureManagerClass, Capturer, T, W1->Damage, W1->InfiniteMindControl);
-		} else if(WH2 && WH2->MindControl && Capturer == NULL) {
+		} else if(WH2 && WH2->MindControl && Capturer == nullptr) {
 			GAME_ALLOC(CaptureManagerClass, Capturer, T, W2->Damage, W2->InfiniteMindControl);
 		}
 
-		if(WH1 && WH1->Temporal && Temporal == NULL) {
+		if(WH1 && WH1->Temporal && Temporal == nullptr) {
 			GAME_ALLOC(TemporalClass, Temporal, T);
 			Temporal->WarpPerStep = W1->Damage;
 			pData->idxSlot_Warp = (BYTE)i;
-		} else if(WH2 && WH2->Temporal && Temporal == NULL) {
+		} else if(WH2 && WH2->Temporal && Temporal == nullptr) {
 			GAME_ALLOC(TemporalClass, Temporal, T);
 			Temporal->WarpPerStep = W2->Damage;
 			pData->idxSlot_Warp = (BYTE)i;
 		}
 
-		if((WH1 && WH1->Parasite || WH2 && WH2->Parasite) && IsFoot && Parasite == NULL) {
+		if((WH1 && WH1->Parasite || WH2 && WH2->Parasite) && IsFoot && Parasite == nullptr) {
 			GAME_ALLOC(ParasiteClass, Parasite, F);
 			pData->idxSlot_Parasite = (BYTE)i;
 		}
@@ -250,14 +257,34 @@ DEFINE_HOOK(6F4103, TechnoClass_Init_2, 6)
 }
 
 // temporal per-slot
-DEFINE_HOOK(71A860, TemporalClass_UpdateA, 6)
+DEFINE_HOOK(71A84E, TemporalClass_UpdateA, 5)
 {
 	GET(TemporalClass *, Temp, ESI);
-	TechnoClass *T = Temp->Owner;
-	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(T);
-	WeaponStruct *W = T->GetWeapon(pData->idxSlot_Warp);
-	R->EAX<WeaponStruct *>(W);
-	return 0x71A876;
+
+	// Temporal should disable RadarJammers
+	auto Target = Temp->Target;
+	TechnoExt::ExtData * TargetExt = TechnoExt::ExtMap.Find(Target);
+	if(TargetExt->RadarJam) {
+		TargetExt->RadarJam->UnjamAll();
+		delete TargetExt->RadarJam;
+		TargetExt->RadarJam = nullptr;
+	}
+
+	//AttachEffect handling under Temporal
+	if (!TargetExt->AttachEffects_RecreateAnims) {
+		for (int i = TargetExt->AttachedEffects.Count; i > 0; --i) {
+			auto Effect = TargetExt->AttachedEffects.GetItem(i - 1);
+			if (!!Effect->Type->TemporalHidesAnim) {
+				Effect->KillAnim();
+			}
+		}
+		TargetExt->AttachEffects_RecreateAnims = true;
+	}
+
+	Temp->WarpRemaining -= Temp->GetWarpPerStep(0);
+
+	R->EAX(Temp->WarpRemaining);
+	return 0x71A88D;
 }
 
 // temporal per-slot
@@ -267,6 +294,7 @@ DEFINE_HOOK(71AB30, TemporalClass_GetHelperDamage, 5)
 	TechnoClass *T = Temp->Owner;
 	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(T);
 	WeaponStruct *W = T->GetWeapon(pData->idxSlot_Warp);
+	WarheadTypeExt::Temporal_WH = W->WeaponType->Warhead;
 	R->EAX<WeaponStruct *>(W);
 	return 0x71AB47;
 }
@@ -302,8 +330,8 @@ DEFINE_HOOK(629804, ParasiteClass_UpdateSquiddy, 9)
 
 DEFINE_HOOK(6F3330, TechnoClass_SelectWeapon, 5)
 {
-	GET(TechnoClass *, pThis, ECX);
-	GET_STACK(TechnoClass *, pTarg, 0x4);
+	//GET(TechnoClass *, pThis, ECX);
+	//GET_STACK(TechnoClass *, pTarg, 0x4);
 
 //	DWORD Selected = TechnoClassExt::SelectWeaponAgainst(pThis, pTarg);
 //	R->EAX(Selected);
@@ -553,20 +581,20 @@ DEFINE_HOOK(701C97, TechnoClass_ReceiveDamage_AffectsEnemies, 6)
 	GET(WarheadTypeClass *, pThis, EBP);
 	GET(TechnoClass *, Victim, ESI);
 	LEA_STACK(args_ReceiveDamage *, Arguments, 0xC8);
+
+	// get the owner of the attacker. if there's none, use source house
+	auto pSourceHouse = Arguments->Attacker ? Arguments->Attacker->Owner : Arguments->SourceHouse;
+
+	// default for ownerless damage i.e. crates/fire particles
 	bool CanAffect = true;
 
-	WarheadTypeExt::ExtData *WHTypeExt = WarheadTypeExt::ExtMap.Find(pThis);
+	// check if allied to target, then apply either AffectsAllies or AffectsEnemies
+	if(pSourceHouse) {
+		auto pExt = WarheadTypeExt::ExtMap.Find(pThis);
+		CanAffect = Victim->Owner->IsAlliedWith(pSourceHouse) ? pThis->AffectsAllies : pExt->AffectsEnemies;
 
-	if(Arguments->Attacker) {
 		/* Ren, 08.01.2011:
-			Just documenting how/why this works, since I just stared at it for ten minutes trying to
-			figure out why this makes sense:
-			
-			AffectsEnemies=yes is the default case (weapons usually affect the enemy), so if that's true,
-			we can affect the target (this might later be changed by AffectsAllies).
-			AffectsEnemies=no means we cannot attack enemies, i.e. we can only attack allies;
-			ergo, CanAffect is only true if victim and target are allied.
-			Thanks to lazy evaluation, the latter condition is only ever checked if AffectsEnemies is set to no, which is not the default.
+			<not applicable any more \>
 			
 			The question of how this works came up because the current treatment of Neutral is technically wrong:
 			Semantically, AffectsEnemies=no only means "you cannot attack enemies", but our code renders it as "you cannot attack non-allies";
@@ -579,31 +607,18 @@ DEFINE_HOOK(701C97, TechnoClass_ReceiveDamage_AffectsEnemies, 6)
 			I just wanted this behavior and the logic behind it to be documented for the future.
 			
 			Note that, in the specific case of AffectsEnemies=no, AffectsAllies=no, this will rear its ugly head as a bug: Neutral should be affected, but won't be.
-		 */
-		CanAffect = WHTypeExt->AffectsEnemies || Victim->Owner->IsAlliedWith(Arguments->Attacker->Owner);
+			*/
 
-#ifdef DEBUGBUILD
-		if(Arguments->Attacker->Owner != Arguments->SourceHouse) {
-			Debug::Log("Info: During AffectsEnemies parsing, Attacker's Owner was %p [%s], but SourceHouse was %p [%s].",
-				Arguments->Attacker->Owner,
-				(Arguments->Attacker->Owner ? Arguments->Attacker->Owner->Type->ID : "null"),
-				Arguments->SourceHouse,
-				(Arguments->SourceHouse ? Arguments->SourceHouse->Type->ID : "null")
-				);
-			Debug::DumpStack(R, 0x180, 0xC0);
-		}
-#endif
+		/* AlexB, 2013-08-19:
+			"You're either with us, or against us" -- Old saying in Tennessee, ... or was it Texas?
 
-	} else if(Arguments->SourceHouse) {
-		// fallback, in case future ways of damage dealing don't include an attacker, e.g. stuff like GenericWarhead
-		CanAffect = WHTypeExt->AffectsEnemies || Victim->Owner->IsAlliedWith(Arguments->SourceHouse);
-
-	} else {
-		//Debug::Log("Warning: Neither Attacker nor SourceHouse were set during AffectsEnemies parsing!");
-		// this is often the case for ownerless damage i.e. crates/fire particles, no point in logging it
+			The game has no clear concept of neutrality. If something like that is going to be added, it could be
+			in the form of a Nullable<bool> AffectsNeutral, and a CanAffect = AffectsNeutral.Get(CanAffect) if the
+			source house is neutral (however this is going to be inferred).
+		*/
 	}
 
-	return CanAffect ? 0 : 0x701CC2;
+	return CanAffect ? 0x701CD7 : 0x701CC2;
 }
 
 // select the most appropriate firing voice and also account
@@ -778,7 +793,7 @@ DEFINE_HOOK(519675, InfantryClass_UpdatePosition_BeforeInfantrySpecific, A)
 					if(!pTarget) {
 						pTarget = pCell->GetBuilding();
 						if(pTarget && !pTarget->IsStrange()) {
-							pTarget = NULL;
+							pTarget = nullptr;
 						}
 					}
 				}
@@ -975,14 +990,33 @@ DEFINE_HOOK(6F6AC9, TechnoClass_Remove, 6) {
 	if(TechnoExt->RadarJam) {
 		TechnoExt->RadarJam->UnjamAll();
 		delete TechnoExt->RadarJam;
-		TechnoExt->RadarJam = NULL;
+		TechnoExt->RadarJam = nullptr;
 	}
-	
+
 	// #617 powered units
 	if(TechnoExt->PoweredUnit)
 	{
 		delete TechnoExt->PoweredUnit;
-		TechnoExt->PoweredUnit = NULL;
+		TechnoExt->PoweredUnit = nullptr;
+	}
+
+	//#1573, #1623, #255 attached effects
+	if (TechnoExt->AttachedEffects.Count) {
+		//auto pID = pThis->GetTechnoType()->ID;
+		for (int i = TechnoExt->AttachedEffects.Count; i > 0; --i) {
+			//Debug::Log("[AttachEffect] Removing %d. item from %s\n", i - 1, pID);
+			auto Item = TechnoExt->AttachedEffects.GetItem(i - 1);
+			if (Item->Type->DiscardOnEntry) {
+				Item->Destroy();
+				delete Item;
+				TechnoExt->AttachedEffects.RemoveItem(i - 1);
+				TechnoExt::RecalculateStats(pThis);
+			} else {
+				Item->KillAnim();
+			}
+		}
+
+		TechnoExt->AttachEffects_RecreateAnims = true;
 	}
 
 	return 0;
@@ -993,7 +1027,7 @@ DEFINE_HOOK(74642C, UnitClass_ReceiveGunner, 6)
 	GET(UnitClass *, Unit, ESI);
 	auto pData = TechnoExt::ExtMap.Find(Unit);
 	pData->MyOriginalTemporal = Unit->TemporalImUsing;
-	Unit->TemporalImUsing = NULL;
+	Unit->TemporalImUsing = nullptr;
 	return 0;
 }
 
@@ -1002,7 +1036,7 @@ DEFINE_HOOK(74653C, UnitClass_RemoveGunner, 0)
 	GET(UnitClass *, Unit, EDI);
 	auto pData = TechnoExt::ExtMap.Find(Unit);
 	Unit->TemporalImUsing = pData->MyOriginalTemporal;
-	pData->MyOriginalTemporal = NULL;
+	pData->MyOriginalTemporal = nullptr;
 	return 0x746546;
 }
 
@@ -1014,7 +1048,7 @@ DEFINE_HOOK(741206, UnitClass_GetFireError, 6)
 	if(!Type->TurretCount || Type->IsGattling) {
 		return 0x741229;
 	}
-	auto idxW = Unit->SelectWeapon(NULL);
+	auto idxW = Unit->SelectWeapon(nullptr);
 	auto W = Unit->GetWeapon(idxW);
 	return (W->WeaponType && W->WeaponType->Warhead->Temporal)
 		? 0x741210
@@ -1055,10 +1089,10 @@ DEFINE_HOOK(416C4D, AircraftClass_Carryall_Unload_DestroyCargo, 5)
 	GET(UnitClass *, pCargo, ESI);
 
 	int Damage = pCargo->Health;
-	pCargo->ReceiveDamage(&Damage, 0, RulesClass::Instance->C4Warhead, NULL, true, true, NULL);
+	pCargo->ReceiveDamage(&Damage, 0, RulesClass::Instance->C4Warhead, nullptr, true, true, nullptr);
 
 	Damage = pCarryall->Health;
-	pCarryall->ReceiveDamage(&Damage, 0, RulesClass::Instance->C4Warhead, NULL, true, true, NULL);
+	pCarryall->ReceiveDamage(&Damage, 0, RulesClass::Instance->C4Warhead, nullptr, true, true, nullptr);
 
 	return 0x416C53;
 }
@@ -1100,7 +1134,7 @@ DEFINE_HOOK(7441B6, UnitClass_MarkOccupationBits, 6)
 	GET(UnitClass*, pThis, ECX);
 	GET(CoordStruct*, pCrd, ESI);
 
-	CellClass* pCell = MapClass::Instance->GetCellAt(pCrd);
+	CellClass* pCell = MapClass::Instance->GetCellAt(*pCrd);
 	int height = MapClass::Instance->GetCellFloorHeight(pCrd) + CellClass::BridgeHeight();
 	bool alt = (pCrd->Z >= height && pCell->ContainsBridge());
 
@@ -1124,14 +1158,14 @@ DEFINE_HOOK(744216, UnitClass_UnmarkOccupationBits, 6)
 
 	enum { obNormal = 1, obAlt = 2 };
 
-	CellClass* pCell = MapClass::Instance->GetCellAt(pCrd);
+	CellClass* pCell = MapClass::Instance->GetCellAt(*pCrd);
 	int height = MapClass::Instance->GetCellFloorHeight(pCrd) + CellClass::BridgeHeight();
 	int alt = (pCrd->Z >= height) ? obAlt : obNormal;
 
 	// also clear the last occupation bit, if set
 	auto pExt = TechnoExt::ExtMap.Find(pThis);
 	if(pExt->AltOccupation.isset()) {
-		int lastAlt = pExt->AltOccupation.Get() ? obAlt : obNormal;
+		int lastAlt = pExt->AltOccupation ? obAlt : obNormal;
 		alt |= lastAlt;
 		pExt->AltOccupation.Reset();
 	}
@@ -1146,4 +1180,306 @@ DEFINE_HOOK(744216, UnitClass_UnmarkOccupationBits, 6)
 	}
 
 	return 0x74425E;
+}
+
+DEFINE_HOOK(70DEBA, TechnoClass_UpdateGattling_Cycle, 6)
+{
+	GET(TechnoClass*, pThis, ESI);
+	GET(int, lastStageValue, EAX);
+	GET_STACK(int, a2, 0x24);
+
+	auto pType = pThis->GetTechnoType();
+
+	if(pThis->GattlingValue < lastStageValue) {
+		// just increase the value
+		pThis->GattlingValue += a2 * pType->RateUp;
+	} else {
+		// if max or higher, reset cyclic gattlings
+		auto pExt = TechnoTypeExt::ExtMap.Find(pType);
+
+		if(pExt->GattlingCyclic) {
+			pThis->GattlingValue = 0;
+			pThis->CurrentGattlingStage = 0;
+			pThis->Audio4.DTOR_1();
+			pThis->unknown_bool_4B8 = false;
+		}
+	}
+
+	// recreate hooked instruction
+	R->Stack<int>(0x10, pThis->GattlingValue);
+
+	return 0x70DEEB;
+}
+
+// prevent crashing and sinking technos from self-healing
+DEFINE_HOOK(6FA743, TechnoClass_Update_SkipSelfHeal, A)
+{
+	GET(TechnoClass*, pThis, ESI);
+	if(pThis->IsCrashing || pThis->IsSinking) {
+		return 0x6FA941;
+	}
+	
+	return 0;
+}
+
+// make the space between gunner name segment and ifv
+// name smart. it disappears if one of them is empty,
+// eliminating leading and trailing spaces.
+DEFINE_HOOK(746C55, UnitClass_GetUIName, 6)
+{
+	GET(UnitClass*, pThis, ESI);
+	GET(wchar_t*, pGunnerName, EAX);
+
+	auto pName = pThis->Type->UIName;
+
+	auto pSpace = L"";
+	if(pName && *pName && pGunnerName && *pGunnerName) {
+		pSpace = L" ";
+	}
+
+	_snwprintf_s(pThis->ToolTipText, _TRUNCATE, L"%s%s%s", pGunnerName, pSpace, pName);
+
+	R->EAX(pThis->ToolTipText);
+	return 0x746C76;
+}
+
+// spawn tiberium when a unit dies. this is a minor part of the
+// tiberium heal feature. the actual healing happens in FootClass_Update.
+DEFINE_HOOK(702216, TechnoClass_ReceiveDamage_TiberiumHeal, 6)
+{
+	GET(TechnoClass*, pThis, ESI);
+	TechnoTypeClass* pType = pThis->GetTechnoType();
+	auto pExt = TechnoTypeExt::ExtMap.Find(pType);
+
+	// TS did not check for HasAbility here, either
+	if(pExt->TiberiumRemains.Get(pType->TiberiumHeal && RulesExt::Global()->Tiberium_HealEnabled)) {
+		CoordStruct crd = pThis->GetCoords();
+		CellClass* pCenter = MapClass::Instance->GetCellAt(crd);
+
+		// increase the tiberium for the four neighbours and center.
+		// center is retrieved by getting a neighbour cell index >= 8
+		for(int i=0;i<5; ++i) {
+			CellClass* pCell = pCenter->GetNeighbourCell(2*i);
+			int value = ScenarioClass::Instance->Random.RandomRanged(0, 2);
+			pCell->IncreaseTiberium(0, value);
+		}
+	}
+
+	return 0;
+}
+
+// damage the techno when it is moving over a cell containing tiberium
+DEFINE_HOOK(4D85E4, FootClass_UpdatePosition_TiberiumDamage, 9)
+{
+	GET(FootClass*, pThis, ESI);
+
+	int damage = 0;
+	WarheadTypeClass* pWarhead = nullptr;
+	int transmogrify = RulesClass::Instance->TiberiumTransmogrify;
+
+	if(RulesExt::Global()->Tiberium_DamageEnabled && pThis->GetHeight() <= RulesClass::Instance->HoverHeight) {
+		TechnoTypeClass* pType = pThis->GetTechnoType();
+		TechnoTypeExt::ExtData* pExt = TechnoTypeExt::ExtMap.Find(pType);
+
+		// default is: infantry can be damaged, others cannot
+		bool enabled = (pThis->WhatAmI() != InfantryClass::AbsID);
+
+		if(!pExt->TiberiumProof.Get(enabled) && !pThis->HasAbility(Abilities::TIBERIUM_PROOF)) {
+			if(pThis->Health > 0) {
+				CellClass* pCell = pThis->GetCell();
+				int idxTiberium = pCell->GetContainedTiberiumIndex();
+				if(auto pTiberium = TiberiumClass::Array->GetItemOrDefault(idxTiberium)) {
+					auto pTibExt = TiberiumExt::ExtMap.Find(pTiberium);
+
+					pWarhead = pTibExt->GetWarhead();
+					damage = pTibExt->GetDamage();
+
+					transmogrify = pExt->TiberiumTransmogrify.Get(transmogrify);
+				}
+			}
+		}
+	}
+
+	if(damage && pWarhead) {
+		CoordStruct crd = pThis->GetCoords();
+
+		if(pThis->ReceiveDamage(&damage, 0, pWarhead, nullptr, false, false, nullptr) == DamageState::NowDead) {
+			TechnoExt::SpawnVisceroid(crd, RulesClass::Instance->SmallVisceroid, transmogrify, false);
+			return 0x4D8F29;
+		}
+	}
+
+	return 0;
+}
+
+// spill the stored tiberium on destruction
+DEFINE_HOOK(702200, TechnoClass_ReceiveDamage_SpillTiberium, 6)
+{
+	GET(TechnoClass*, pThis, ESI);
+
+	TechnoTypeClass* pType = pThis->GetTechnoType();
+	auto pExt = TechnoTypeExt::ExtMap.Find(pType);
+
+	if(pExt->TiberiumSpill) {
+		float stored = pThis->Tiberium.GetTotalAmount();
+		if(pThis->WhatAmI() != BuildingClass::AbsID
+			&& stored > 0.0f
+			&& !ScenarioClass::Instance->SpecialFlags.HarvesterImmune)
+		{
+			// don't spill more than we can hold
+			double max = 9.0;
+			if(max > pType->Storage) {
+				max = pType->Storage;
+			}
+
+			// assume about half full, recalc if possible
+			int value = static_cast<int>(max / 2);
+			if(pType->Storage > 0) {
+				value = Game::F2I(stored / pType->Storage * max);
+			}
+
+			// get the spill center
+			CoordStruct crd = pThis->GetCoords();
+			CellClass* pCenter = MapClass::Instance->GetCellAt(crd);
+
+			unsigned int neighbours[] = {9, 2, 7, 1, 4, 3, 0, 5, 6};
+			for(int i=0; i<9; ++i) {
+				// spill random amount
+				int amount = ScenarioClass::Instance->Random.RandomRanged(0, 2);
+				CellClass* pCell = pCenter->GetNeighbourCell(neighbours[i]);
+				pCell->IncreaseTiberium(0, amount);
+				value -= amount;
+
+				// stop if value is reached
+				if(value <= 0) {
+					break;
+				}
+			}
+		}
+	}
+
+	return 0;
+}
+
+// blow up harvester units big time
+DEFINE_HOOK(738749, UnitClass_Destroy_TiberiumExplosive, 6)
+{
+	GET(UnitClass*, pThis, ESI);
+
+	if(RulesClass::Instance->TiberiumExplosive) {
+		if(!ScenarioClass::Instance->SpecialFlags.HarvesterImmune) {
+			if(pThis->Tiberium.GetTotalAmount() > 0.0f) {
+
+				// multiply the amounts with their powers and sum them up
+				int morePower = 0;
+				for(int i=0; i<TiberiumClass::Array->Count; ++i) {
+					TiberiumClass* pTiberium = TiberiumClass::Array->GetItem(i);
+					float power = pThis->Tiberium.GetAmount(i) * pTiberium->Power;
+					morePower += Game::F2I(power);
+				}
+
+				// go boom
+				WarheadTypeClass* pWH = RulesExt::Global()->Tiberium_ExplosiveWarhead;
+				if(morePower > 0 && pWH) {
+					CoordStruct crd = pThis->GetCoords();
+					MapClass::DamageArea(&crd, morePower, pThis, pWH, false, nullptr);
+				}
+			}
+		}
+	}
+
+	return 0x7387C4;
+}
+
+// merge two small visceroids into one large visceroid
+DEFINE_HOOK(739F21, UnitClass_UpdatePosition_Visceroid, 6)
+{
+	GET(UnitClass*, pThis, EBP);
+
+	// fleshbag erotic
+	if(pThis->Type->SmallVisceroid) {
+		if(UnitTypeClass* pLargeType = RulesClass::Instance->LargeVisceroid) {
+			if(UnitClass* pDest = specific_cast<UnitClass*>(pThis->Destination)) {
+				if(pDest->Type->SmallVisceroid) {
+
+					// nice to meat you!
+					auto crdMe = pThis->GetCoords();
+					auto crdHim = pDest->GetCoords();
+
+					auto cellMe = CellClass::Coord2Cell(crdMe);
+					auto cellHim = CellClass::Coord2Cell(crdHim);
+
+					// two become one
+					if(cellMe == cellHim) {
+						pDest->Type = pLargeType;
+						pDest->Health = pLargeType->Strength;
+
+						CellClass* pCell = MapClass::Instance->GetCellAt(pDest->LastMapCoords);
+						pDest->UpdateThreatInCell(pCell);
+
+						pThis->UnInit();
+						return 0x73B0A5;
+					}
+				}
+			}
+		}
+	}
+
+	return 0;
+}
+
+// complete rewrite
+DEFINE_HOOK(4D98C0, FootClass_Destroyed, A) {
+	GET(FootClass*, pThis, ECX);
+	//GET_STACK(AbstractClass*, pKiller, 0x4);
+	auto pType = pThis->GetTechnoType();
+
+	// exclude unimportant units, and only play for current player
+	if(!pType->DontScore && !pType->Insignificant && !pType->Spawned
+		&& pThis->Owner->ControlledByPlayer())
+	{
+		auto pExt = TechnoTypeExt::ExtMap.Find(pType);
+		int idx = pExt->EVA_UnitLost;
+		if(idx != -1) {
+			CellStruct cell;
+			pThis->GetMapCoords(&cell);
+
+			RadarEventClass::Create(RadarEventType::UnitLost, cell);
+			VoxClass::PlayIndex(idx, -1, -1);
+		}
+	}
+
+	return 0x4D9918;
+}
+
+// linking units for type selection
+DEFINE_HOOK(732C30, TechnoClass_IDMatches, 5)
+{
+	GET(TechnoClass*, pThis, ECX);
+	GET(DynamicVectorClass<const char*>*, pNames, EDX);
+
+	TechnoTypeClass* pType = pThis->GetTechnoType();
+	auto pExt = TechnoTypeExt::ExtMap.Find(pType);
+	const char* id = pExt->GetSelectionGroupID();
+
+	bool match = false;
+
+	// find any match
+	for(auto i=pNames->begin(); i<pNames->end(); ++i) {
+		if(!_strcmpi(*i, id)) {
+			if(pThis->CanBeSelectedNow()) {
+				match = true;
+				break;
+			}
+
+			// buildings are exempt if they can't undeploy
+			if(pThis->WhatAmI() == BuildingClass::AbsID && pType->UndeploysInto) {
+				match = true;
+				break;
+			}
+		}
+	}
+
+	R->EAX(match ? 1 : 0);
+	return 0x732C97;
 }

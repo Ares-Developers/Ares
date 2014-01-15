@@ -28,7 +28,7 @@ public:
 		int DamageReserve;					//current flat reservoir
 
 		// constructor
-		cPrismForwarding() : Senders(), SupportTarget(NULL), PrismChargeDelay(0), ModifierReserve(0.0), DamageReserve(0){
+		cPrismForwarding() : Senders(), SupportTarget(nullptr), PrismChargeDelay(0), ModifierReserve(0.0), DamageReserve(0){
 			this->Senders.Clear();
 		};
 
@@ -40,19 +40,19 @@ public:
 				if(bld == this->SupportTarget) {
 					Debug::Log("Should remove my support target\n");
 				}
-				auto senderIdx = this->Senders.FindItemIndex(&bld);
+				auto senderIdx = this->Senders.FindItemIndex(bld);
 				if(senderIdx != -1) {
 					Debug::Log("Should remove my sender #%d\n", senderIdx);
 				}
 				BuildingTypeExt::cPrismForwarding::RemoveFromNetwork(bld, true);
 				if(bld == this->SupportTarget) {
-					_snprintf(Ares::readBuffer, Ares::readLength, "Prism Forwarder (ExtData %p) failed to remove support target\n", container);
+					_snprintf_s(Ares::readBuffer, Ares::readLength - 1, "Prism Forwarder (ExtData %p) failed to remove support target\n", container);
 					Debug::FatalError(true);
 					Debug::Exit();
 				}
-				senderIdx = this->Senders.FindItemIndex(&bld);
+				senderIdx = this->Senders.FindItemIndex(bld);
 				if(senderIdx != -1) {
-					_snprintf(Ares::readBuffer, Ares::readLength, "Prism Forwarder (ExtData %p) failed to remove sender #%d\n", container, senderIdx);
+					_snprintf_s(Ares::readBuffer, Ares::readLength - 1, "Prism Forwarder (ExtData %p) failed to remove sender #%d\n", container, senderIdx);
 					Debug::FatalError(true);
 					Debug::Exit();
 				}
@@ -78,9 +78,12 @@ public:
 
 		std::set<TechnoClass *> RegisteredJammers; //!< Set of Radar Jammers which have registered themselves to be in range of this building. (Related to issue #305)
 
+		int SensorArrayActiveCounter;
+
 	public:
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
-			OwnerBeforeRaid(NULL), isCurrentlyRaided(false), ignoreNextEVA(false), PrismForwarding(), FreeUnits_Done(false), AboutToChronoshift(false)
+			OwnerBeforeRaid(nullptr), isCurrentlyRaided(false), ignoreNextEVA(false), PrismForwarding(), FreeUnits_Done(false), AboutToChronoshift(false),
+			SensorArrayActiveCounter(0)
 			{ };
 
 		virtual ~ExtData() {
@@ -94,7 +97,7 @@ public:
 
 		virtual size_t Size() const { return sizeof(*this); };
 
-		virtual void InvalidatePointer(void *ptr) {
+		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
 			AnnounceInvalidPointer(OwnerBeforeRaid, ptr);
 			PrismForwarding.AnnounceInvalidPointer(ptr, this);
 		}
@@ -122,6 +125,8 @@ public:
 		bool ReverseEngineer(TechnoClass * Victim); //!< Returns true if Victim wasn't buildable and now should be
 
 		void KickOutClones(TechnoClass * Production);
+
+		void UpdateSensorArray();
 	};
 
 	static Container<BuildingExt> ExtMap;

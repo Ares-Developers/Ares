@@ -8,43 +8,92 @@
 #include <Theater.h>
 #include <CCINIClass.h>
 #include <GeneralStructures.h>
+#include <StringTable.h>
 
 #include <cstring>
 
-#include "Ares.h"
+#include "../Ares.h"
+#include "../Ares.CRT.h"
 
 class CustomPalette {
 public:
-	ConvertClass *Convert;
-	BytePalette *Palette;
+	ConvertClass* Convert;
+	BytePalette* Palette;
+	BytePalette* TargetPalette;
+	DSurface* TargetSurface;
+	size_t ShadeCount;
 
-	CustomPalette() :
-		Convert(NULL),
-		Palette(NULL)
+	CustomPalette(BytePalette* pTargetPal = nullptr, DSurface* pSurface = nullptr, size_t shades = 1) :
+		Convert(nullptr),
+		Palette(nullptr),
+		TargetPalette(pTargetPal),
+		TargetSurface(pSurface),
+		ShadeCount(shades)
 	{};
 
 	~CustomPalette() {
-		GAME_DEALLOC(this->Convert);
-		GAME_DEALLOC(this->Palette);
+		this->Clear();
 	}
 
-	bool LoadFromINI(CCINIClass *pINI, const char *pSection, const char *pKey, const char *pDefault="") {
+	bool LoadFromINI(CCINIClass* pINI, const char* pSection, const char* pKey, const char* pDefault = "") {
 		if(pINI->ReadString(pSection, pKey, pDefault, Ares::readBuffer, Ares::readLength)) {
-			if(char * suffix = strstr(Ares::readBuffer, "~~~")) {
-				const char * theaterSpecific = Theater::Array[ScenarioClass::Instance->Theater].Extension;
+			if(char* suffix = strstr(Ares::readBuffer, "~~~")) {
+				const char* theaterSpecific = Theater::Array[ScenarioClass::Instance->Theater].Extension;
 				suffix[0] = theaterSpecific[0];
 				suffix[1] = theaterSpecific[1];
 				suffix[2] = theaterSpecific[2];
 			}
-			GAME_DEALLOC(this->Palette);
-			GAME_DEALLOC(this->Convert);
-			this->Palette = NULL;
-			this->Convert = NULL;
-			ConvertClass::CreateFromFile(Ares::readBuffer, &this->Palette, &this->Convert);
-			return !!this->Convert;
+
+			this->Clear();
+
+			this->Palette = this->ReadPalette(Ares::readBuffer);
+			if(this->Palette) {
+				this->CreateConvert();
+			}
+
+			return this->Convert != nullptr;
 		}
 		return false;
 	};
+
+private:
+	void Clear() {
+		GAME_DEALLOC(this->Convert);
+		this->Convert = nullptr;
+
+		GAME_DEALLOC(this->Palette);
+		this->Palette = nullptr;
+	}
+
+	BytePalette* ReadPalette(const char* filename) {
+		BytePalette* ret = nullptr;
+
+		CCFileClass file(filename);
+		if(auto pData = file.ReadWholeFile()) {
+			auto pPal = reinterpret_cast<BytePalette*>(pData);
+
+			GAME_ALLOC(BytePalette, ret);
+
+			// convert 6 bits to 8 bits. not correct,
+			// but this is what the game does
+			for(int i = 0; i < 256; ++i) {
+				ret->Entries[i].R = pPal->Entries[i].R << 2;
+				ret->Entries[i].G = pPal->Entries[i].G << 2;
+				ret->Entries[i].B = pPal->Entries[i].B << 2;
+			}
+
+			delete pData;
+		}
+
+		return ret;
+	}
+
+	void CreateConvert() {
+		auto pTargetPal = this->TargetPalette ? this->TargetPalette : this->Palette;
+		auto pSurface = this->TargetSurface ? this->TargetSurface : DSurface::Alternate;
+
+		GAME_ALLOC(ConvertClass, this->Convert, this->Palette, pTargetPal, pSurface, this->ShadeCount, 0);
+	}
 };
 
 // vector of char* with builtin storage
@@ -57,7 +106,7 @@ protected:
 public:
 	char* operator [](int Index) {
 		if(Index < 0 || Index > this->Strings.Count) {
-			return NULL;
+			return nullptr;
 		}
 		return this->Strings.GetItem(Index);
 	}
@@ -78,11 +127,11 @@ public:
 		return this->Strings.Count;
 	}
 
-	VectorNames<T>(const char * Buf = NULL) {
+	VectorNames<T>(const char * Buf = nullptr) {
 		this->Buffer = _strdup(Buf);
 	}
 
-	void Tokenize(const char * Buf = NULL) {
+	void Tokenize(const char * Buf = nullptr) {
 		if(Buf) {
 			if(this->Buffer) {
 				free(this->Buffer);
@@ -90,10 +139,54 @@ public:
 			this->Buffer = _strdup(Buf);
 		}
 		this->Strings.Clear();
-		for(char * cur = strtok(this->Buffer, ","); cur && *cur; cur = strtok(NULL, ",")) {
+
+		char* context = nullptr;
+		for(char * cur = strtok_s(this->Buffer, ",", &context); cur && *cur; cur = strtok_s(nullptr, ",", &context)) {
 			this->Strings.AddItem(cur);
 		}
 	}
+};
+
+// provides storage for a csf label with automatic lookup.
+class CSFText {
+public:
+	CSFText(const char* label = nullptr) : Text(nullptr) {
+		*this = label;
+	}
+
+	const CSFText& operator = (const char* label) {
+		this->Label[0] = 0;
+		this->Text = nullptr;
+
+		if(label && *label) {
+			if(this->Label != label) {
+				AresCRT::strCopy(this->Label, label);
+			}
+			this->Text = StringTable::LoadString(this->Label);
+		}
+
+		return *this;
+	}
+
+	const CSFText& operator = (const CSFText& other) {
+		if(this != &other) {
+			AresCRT::strCopy(this->Label, other.Label);
+			this->Text = other.Text;
+		}
+
+		return *this;
+	}
+
+	operator const wchar_t* () const {
+		return this->Text;
+	}
+
+	bool empty() const {
+		return !this->Text || !*this->Text;
+	}
+
+	char Label[0x20];
+	const wchar_t* Text;
 };
 
 #endif

@@ -40,7 +40,7 @@
 
 #include "../Misc/Debug.h"
 
-const char * Dialogs::StatusString = NULL;
+const char * Dialogs::StatusString = nullptr;
 wchar_t Dialogs::ExceptDetailedMessage[0x400] = L"\0";
 const int Dialogs::ExceptControlID = ARES_TXT_IE_DETAILS;
 
@@ -66,7 +66,7 @@ DEFINE_HOOK(60411B, Game_DialogFunc_Subtext_Load, 5)
 {
 	GET(int, DlgItemID, EAX);
 
-	Dialogs::StatusString = NULL;
+	Dialogs::StatusString = nullptr;
 	if(DlgItemID == -1) {
 		return 0x604120;
 	}

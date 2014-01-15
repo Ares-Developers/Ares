@@ -12,7 +12,7 @@ bool PoweredUnitClass::IsPoweredBy(HouseClass* Owner) const
 	for(int i = 0; i < Owner->Buildings.Count; ++i)	{
 		auto Building  = Owner->Buildings.GetItem(i);
 		auto BExt = TechnoExt::ExtMap.Find(Building);
-		auto inArray = this->Ext->PoweredBy.FindItemIndex(&Building->Type) != -1;
+		auto inArray = this->Ext->PoweredBy.Contains(Building->Type);
 
 		if(inArray && !Building->BeingWarpedOut && !Building->IsUnderEMP() && BExt->IsOperated() && Building->IsPowerOnline()) {
 			return true;
@@ -32,9 +32,9 @@ void PoweredUnitClass::PowerUp()
 
 bool PoweredUnitClass::PowerDown()
 {
-	if( EMPulse::IsDeactivationAdvisable(this->Techno) && !EMPulse::EnableEMPEffect2(this->Techno) ) {
+	if( EMPulse::IsDeactivationAdvisable(this->Techno) ) {
 		// destroy if EMP.Threshold would crash this unit when in air
-		if( this->Ext->EMP_Threshold && this->Techno->IsInAir() ) {
+		if( EMPulse::EnableEMPEffect2(this->Techno) || ( this->Ext->EMP_Threshold && this->Techno->IsInAir() ) ) {
 			return false;
 		}
 	}
@@ -45,6 +45,8 @@ bool PoweredUnitClass::PowerDown()
 bool PoweredUnitClass::Update()
 {
 	if( (Unsorted::CurrentFrame - this->LastScan) < this->ScanInterval ) return true;
+
+	if(!this->Techno->IsAlive || !this->Techno->Health || this->Techno->InLimbo) return true;
 
 	HouseClass* Owner = this->Techno->Owner;
 	bool HasPower     = this->IsPoweredBy(Owner);

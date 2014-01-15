@@ -69,15 +69,17 @@ public:
 		int    Wave_FinalIntensity;
 */
 		// custom Ivan Bombs
-		bool Ivan_KillsBridges;
-		bool Ivan_Detachable;
-		Customizable<int> Ivan_Damage;
-		Customizable<int> Ivan_Delay;
-		CustomizableIdx<int, VocClass> Ivan_TickingSound;
-		CustomizableIdx<int, VocClass> Ivan_AttachSound;
-		Customizable<WarheadTypeClass *> Ivan_WH;
-		Customizable<SHPStruct *> Ivan_Image;
-		Customizable<int> Ivan_FlickerRate;
+		Valueable<bool> Ivan_KillsBridges;
+		Valueable<bool> Ivan_Detachable;
+		Nullable<int> Ivan_Damage;
+		Nullable<int> Ivan_Delay;
+		NullableIdx<VocClass> Ivan_TickingSound;
+		NullableIdx<VocClass> Ivan_AttachSound;
+		Nullable<WarheadTypeClass *> Ivan_WH;
+		Nullable<SHPStruct *> Ivan_Image;
+		Nullable<int> Ivan_FlickerRate;
+		Nullable<bool> Ivan_CanDetonateTimeBomb;
+		Nullable<bool> Ivan_CanDetonateDeathBomb;
 
 		RadType * Rad_Type;
 
@@ -96,26 +98,28 @@ public:
 			Beam_Duration (15),
 			Beam_Amplitude (40.0),
 			Beam_IsHouseColor (false),
-			Bolt_Color1 (NULL),
-			Bolt_Color2 (NULL),
-			Bolt_Color3 (NULL),
+			Bolt_Color1 (nullptr),
+			Bolt_Color2 (nullptr),
+			Bolt_Color3 (nullptr),
 			Wave_IsHouseColor (false),
 			Wave_IsLaser (false),
 			Wave_IsBigLaser (false),
-			Wave_Color (NULL),
-			Laser_Thickness (NULL),
+			Wave_Color (nullptr),
+			Laser_Thickness (nullptr),
 			Ivan_KillsBridges (true),
 			Ivan_Detachable (true),
-			Ivan_Damage (&RulesClass::Instance->IvanDamage),
-			Ivan_Delay (&RulesClass::Instance->IvanTimedDelay),
-			Ivan_TickingSound (&RulesClass::Instance->BombTickingSound),
-			Ivan_AttachSound (&RulesClass::Instance->BombAttachSound),
-			Ivan_WH (&RulesClass::Instance->IvanWarhead),
-			Ivan_Image (&RulesClass::Instance->BOMBCURS_SHP),
-			Ivan_FlickerRate (&RulesClass::Instance->IvanIconFlickerRate),
-			Rad_Type (NULL),
+			Ivan_Damage (),
+			Ivan_Delay (),
+			Ivan_TickingSound (),
+			Ivan_AttachSound (),
+			Ivan_WH (),
+			Ivan_Image (),
+			Ivan_FlickerRate (),
+			Ivan_CanDetonateTimeBomb (),
+			Ivan_CanDetonateDeathBomb (),
+			Rad_Type (nullptr),
 			Abductor(false),
-			Abductor_AnimType(NULL),
+			Abductor_AnimType(nullptr),
 			Abductor_ChangeOwner(false),
 			Abductor_AbductBelowPercent(1)
 			{
@@ -132,7 +136,7 @@ public:
 		virtual void LoadFromINIFile(TT *pThis, CCINIClass *pINI);
 		virtual void Initialize(TT* pThis);
 
-		virtual void InvalidatePointer(void *ptr) {
+		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
 			AnnounceInvalidPointer(Rad_Type, ptr);
 		}
 
@@ -141,6 +145,8 @@ public:
 		}
 
 		bool conductAbduction(BulletClass *);
+
+		void PlantBomb(TechnoClass* pSource, ObjectClass* pTarget) const;
 	};
 
 /*

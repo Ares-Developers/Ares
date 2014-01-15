@@ -1,4 +1,5 @@
 #include "Body.h"
+#include "../Rules/Body.h"
 #include "../TechnoType/Body.h"
 
 DEFINE_HOOK(70A990, TechnoClass_DrawVeterancy, 5)
@@ -13,10 +14,13 @@ DEFINE_HOOK(70A990, TechnoClass_DrawVeterancy, 5)
 	int iFrame = -1;
 	TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(T->GetTechnoType());
 
-	pTypeData->Insignia.BindTo(T);
-	SHPStruct *fCustom = pTypeData->Insignia.Get();
+	bool canSee = T->Owner->IsAlliedWith(HouseClass::Player)
+		|| HouseClass::IsPlayerObserver()
+		|| pTypeData->Insignia_ShowEnemy.Get(RulesExt::Global()->EnemyInsignia);
 
-	if(fCustom) {
+	if(!canSee) {
+		iFrame = -1;
+	} else if(SHPStruct *fCustom = pTypeData->Insignia.Get(T)) {
 		iFile = fCustom;
 		iFrame = 0;
 	} else {

@@ -12,6 +12,7 @@
 
 #include "../../Ares.h"
 #include "../../Utilities/Template.h"
+#include "../../Misc/EVAVoices.h"
 
 class VoxClass;
 
@@ -25,26 +26,35 @@ class SideExt
 	class ExtData : public Extension<TT>
 	{
 	public:
-		Customizable<InfantryTypeClass*> DefaultDisguise;
-		Customizable<InfantryTypeClass*> Crew;
-		Customizable<int> SurvivorDivisor;
-		TypeList<BuildingTypeClass*> BaseDefenses;
-		TypeList<int> BaseDefenseCounts;
+		Nullable<InfantryTypeClass*> Disguise;
+		Nullable<InfantryTypeClass*> Crew;
+		Nullable<InfantryTypeClass*> Engineer;
+		Nullable<InfantryTypeClass*> Technician;
+		Nullable<int> SurvivorDivisor;
+		NullableVector<BuildingTypeClass*> BaseDefenses;
+		NullableVector<int> BaseDefenseCounts;
 		TypeList<InfantryTypeClass*>* ParaDropFallbackTypes;
 		TypeList<int>* ParaDropFallbackNum;
 		TypeList<TechnoTypeClass*> ParaDrop;
 		TypeList<int> ParaDropNum;
-		ValueableIdx<int, AircraftTypeClass> ParaDropPlane;
+		ValueableIdx<AircraftTypeClass> ParaDropPlane;
 		Customizable<AnimTypeClass*> Parachute_Anim;
+		Valueable<ColorStruct> ToolTipTextColor;
+		int MessageTextColorIndex;
 		int SidebarMixFileIndex;
 		bool SidebarYuriFileNames;
-		char EVATag[0x20];	//TODO
+		ValueableIdx<EVAVoices> EVAIndex;
+
+		int ArrayIndex;
 
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
+			ArrayIndex (-1),
 			ParaDropPlane (-1),
-			Parachute_Anim (&RulesClass::Instance->Parachute)
+			Parachute_Anim (&RulesClass::Instance->Parachute),
+			ToolTipTextColor (),
+			MessageTextColorIndex (-1),
+			EVAIndex (-1)
 		{
-			*EVATag = 0;
 		};
 
 		virtual ~ExtData() {
@@ -55,16 +65,26 @@ class SideExt
 
 		virtual void LoadFromINIFile(TT *pThis, CCINIClass *pINI);
 		virtual void Initialize(TT *pThis);
-		virtual void InvalidatePointer(void *ptr) {
+		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
 		}
-	};
 
-	struct VoxFileNameStruct //need to make this a struct for certain reasons
-	{
-		char FileName[0x10];
+		int GetSurvivorDivisor() const;
+		int GetDefaultSurvivorDivisor() const;
 
-		bool operator == (VoxFileNameStruct &t)
-			{ return (_strcmpi(FileName, t.FileName) == 0); }
+		InfantryTypeClass* GetCrew() const;
+		InfantryTypeClass* GetDefaultCrew() const;
+
+		InfantryTypeClass* GetEngineer() const;
+		InfantryTypeClass* GetTechnician() const;
+
+		InfantryTypeClass* GetDisguise() const;
+		InfantryTypeClass* GetDefaultDisguise() const;
+
+		Iterator<int> GetBaseDefenseCounts() const;
+		Iterator<int> GetDefaultBaseDefenseCounts() const;
+
+		Iterator<BuildingTypeClass*> GetBaseDefenses() const;
+		Iterator<BuildingTypeClass*> GetDefaultBaseDefenses() const;
 	};
 
 	//Hacks required in other classes:
@@ -74,11 +94,8 @@ class SideExt
 
 	static Container<SideExt> ExtMap;
 
-	static hash_map<VoxClass*, DynamicVectorClass<VoxFileNameStruct> > EVAFiles;
 	static int CurrentLoadTextColor;
 
-	static DWORD BaseDefenses(REGISTERS* R, DWORD dwReturnAddress);
-	static DWORD Disguise(REGISTERS* R, DWORD dwReturnAddress, bool bUseESI);
 	static DWORD LoadTextColor(REGISTERS* R, DWORD dwReturnAddress);
 	static DWORD MixFileYuriFiles(REGISTERS* R, DWORD dwReturnAddress1, DWORD dwReturnAddress2);
 };

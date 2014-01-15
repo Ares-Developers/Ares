@@ -32,7 +32,7 @@ DEFINE_HOOK(4C24BE, EBolt_Draw_Color1, 5)
 	WeaponTypeExt::ExtData *pData = WeaponTypeExt::BoltExt[Bolt];
 
 	if(pData) {
-		if(ColorStruct * clr = pData->Bolt_Color1) {
+		if(ColorStruct * clr = &pData->Bolt_Color1) {
 			R->EAX(Drawing::Color16bit(clr));
 			return 0x4C24E4;
 		}
@@ -47,7 +47,7 @@ DEFINE_HOOK(4C25CB, EBolt_Draw_Color2, 5)
 	WeaponTypeExt::ExtData *pData = WeaponTypeExt::BoltExt[Bolt];
 
 	if(pData) {
-		if(ColorStruct * clr = pData->Bolt_Color2) {
+		if(ColorStruct * clr = &pData->Bolt_Color2) {
 			R->Stack<int>(0x18, Drawing::Color16bit(clr));
 			return 0x4C25FD;
 		}
@@ -63,7 +63,7 @@ DEFINE_HOOK(4C26C7, EBolt_Draw_Color3, 5)
 	WeaponTypeExt::ExtData *pData = WeaponTypeExt::BoltExt[Bolt];
 
 	if(pData) {
-		if(ColorStruct * clr = pData->Bolt_Color3) {
+		if(ColorStruct * clr = &pData->Bolt_Color3) {
 			R->EBX(R->EBX() - 2);
 			R->EAX(Drawing::Color16bit(clr));
 			return 0x4C26EE;

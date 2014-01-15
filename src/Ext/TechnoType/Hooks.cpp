@@ -3,14 +3,77 @@
 //include "Side.h"
 #include "../../Enum/Prerequisites.h"
 #include "../../Misc/Debug.h"
+#include "../Rules/Body.h"
 
 // =============================
 // other hooks
 
-
 DEFINE_HOOK(732D10, TacticalClass_CollectSelectedIDs, 5)
 {
-	return 0;
+	DynamicVectorClass<const char*> *pNames = nullptr;
+	GAME_ALLOC(DynamicVectorClass<const char*>, pNames);
+
+	auto Add = [pNames](TechnoTypeClass* pType) {
+		if(auto pExt = TechnoTypeExt::ExtMap.Find(pType)) {
+			const char* id = pExt->GetSelectionGroupID();
+
+			for(auto i = pNames->begin(); i != pNames->end(); ++i) {
+				if(!_strcmpi(*i, id)) {
+					return;
+				}
+			}
+
+			pNames->AddItem(id);
+		}
+	};
+
+	for(auto i = ObjectClass::CurrentObjects->begin(); i != ObjectClass::CurrentObjects->end(); ++i) {
+		// add this object's id used for grouping
+		ObjectClass* pObject = *i;
+		if(TechnoTypeClass* pType = pObject->GetTechnoType()) {
+			Add(pType);
+
+			// optionally do the same the original game does, but support the new grouping feature.
+			if(RulesExt::Global()->TypeSelectUseDeploy) {
+				if(pType->DeploysInto) {
+					Add(pType->DeploysInto);
+				}
+				if(pType->UndeploysInto) {
+					Add(pType->UndeploysInto);
+				}
+			}
+		}
+	}
+
+	R->EAX(pNames);
+	return 0x732FE1;
+}
+
+DEFINE_HOOK(7327AA, TechnoClass_PlayerOwnedAliveAndNamed_GroupAs, 8)
+{
+	GET(TechnoClass*, pThis, ESI);
+	GET(const char*, pID, EDI);
+
+	bool ret = TechnoTypeExt::HasSelectionGroupID(pThis->GetTechnoType(), pID);
+
+	R->EAX<int>(ret);
+	return 0x7327B2;
+}
+
+DEFINE_HOOK_AGAIN(4ABD9D, DisplayClass_LeftMouseButtonUp_GroupAs, A)
+DEFINE_HOOK_AGAIN(4ABE58, DisplayClass_LeftMouseButtonUp_GroupAs, A)
+DEFINE_HOOK(4ABD6C, DisplayClass_LeftMouseButtonUp_GroupAs, A)
+{
+	GET(ObjectClass*, pThis, ESI);
+	R->EAX(TechnoTypeExt::GetSelectionGroupID(pThis->GetType()));
+	return R->get_Origin() + 13;
+}
+
+DEFINE_HOOK(6DA665, sub_6DA5C0_GroupAs, A)
+{
+	GET(ObjectClass*, pThis, ESI);
+	R->EAX(TechnoTypeExt::GetSelectionGroupID(pThis->GetType()));
+	return R->get_Origin() + 13;
 }
 
 /*

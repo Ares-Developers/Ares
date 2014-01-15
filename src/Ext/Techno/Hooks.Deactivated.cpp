@@ -6,7 +6,7 @@ static bool IsDeactivated(TechnoClass * pThis) {
 	return TechnoExt::ExtMap.Find(pThis)->IsDeactivated();
 };
 
-static eAction GetAction(TechnoClass * pThis, ObjectClass *pThat = NULL) {
+static eAction GetAction(TechnoClass * pThis, ObjectClass *pThat = nullptr) {
 	return TechnoExt::ExtMap.Find(pThis)->GetDeactivatedAction(pThat);
 };
 
