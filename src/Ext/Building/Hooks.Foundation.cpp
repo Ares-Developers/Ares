@@ -118,11 +118,8 @@ DEFINE_HOOK(568565, MapClass_AddContentAt_Foundation_OccupyHeight, 5)
 	auto &Map = MapClass::Instance;
 
 	std::for_each(AffectedCells.begin(), AffectedCells.end(), [pThis, Map](CellStruct coords) {
-		int xy = (coords.Y << 9) + coords.X;
-		if(xy >= 0 && xy < 0x40000 && xy < Map->Cells.Capacity) {
-			if(auto Cell = Map->Cells[xy]) {
-				++Cell->OccupyHeightsCoveringMe;
-			}
+		if(auto Cell = Map->TryGetCellAt(coords)) {
+			++Cell->OccupyHeightsCoveringMe;
 		}
 	});
 
@@ -172,12 +169,9 @@ DEFINE_HOOK(568997, MapClass_RemoveContentAt_Foundation_OccupyHeight, 5)
 	auto &Map = MapClass::Instance;
 
 	std::for_each(AffectedCells.begin(), AffectedCells.end(), [pThis, Map](CellStruct coords) {
-		int xy = (coords.Y << 9) + coords.X;
-		if(xy >= 0 && xy < 0x40000 && xy < Map->Cells.Capacity) {
-			if(auto Cell = Map->Cells[xy]) {
-				if(Cell->OccupyHeightsCoveringMe > 0) {
-					--Cell->OccupyHeightsCoveringMe;
-				}
+		if(auto Cell = Map->TryGetCellAt(coords)) {
+			if(Cell->OccupyHeightsCoveringMe > 0) {
+				--Cell->OccupyHeightsCoveringMe;
 			}
 		}
 	});
