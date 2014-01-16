@@ -255,28 +255,27 @@ bool HouseExt::CheckForbiddenFactoryOwner(HouseClass *pHouse, BuildingClass *Fac
 	auto FactoryExt = TechnoExt::ExtMap.Find(Factory);
 	auto HouseExt = HouseExt::ExtMap.Find(pHouse);
 
-	bool localbool;
+	//still feels off, reconsider
+	bool IsBuildable = true;
 	if (pExt->ForbiddenFactoryOwners.Count) {
 		for (int j = 0; j < HouseExt->FactoryOwners_GatheredPlansOf.Count; ++j) {
 			for (int i = 0; i < pExt->ForbiddenFactoryOwners.Count; ++i) {
-				localbool=true;
 				if (HouseExt->FactoryOwners_GatheredPlansOf[j] == pExt->ForbiddenFactoryOwners[i]) {
-					localbool=false;
+					IsBuildable=false;
 					break;
 				}
 			}
-			if (localbool) {return true;}
+			if (IsBuildable) {return true;}
 		}
 
-		localbool=true;
+		IsBuildable=true;
 		for (int i = 0; i < pExt->ForbiddenFactoryOwners.Count; ++i) {
 			if (FactoryExt->OriginalHouseType == pExt->ForbiddenFactoryOwners[i]) {
-				localbool=false;
+				IsBuildable=false;
 			}	
 		}
-		if (localbool) {return true;}
 		
-		return false;
+		return IsBuildable;
 	}
 
 	return true;
