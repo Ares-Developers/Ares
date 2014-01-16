@@ -302,27 +302,14 @@ bool BuildingTypeExt::cPrismForwarding::ValidateSupportTower(
 void BuildingTypeExt::cPrismForwarding::SetChargeDelay
 	(BuildingClass * TargetTower, int LongestChain) {
 	int ArrayLen = LongestChain + 1;
-	DWORD *LongestCDelay = new DWORD[ArrayLen];
-	memset(LongestCDelay, 0, ArrayLen * sizeof(DWORD));
-	DWORD *LongestFDelay = new DWORD[ArrayLen];
-	memset(LongestFDelay, 0, ArrayLen * sizeof(DWORD));
-	
-	int temp = 0;
-	while (temp < ArrayLen) {
-		LongestCDelay[temp] = 0;
-		LongestFDelay[temp] = 0;
-		++temp;
+	std::vector<DWORD> LongestCDelay(ArrayLen, 0);
+	std::vector<DWORD> LongestFDelay(ArrayLen, 0);
+
+	for(int endChain = LongestChain; endChain >= 0; --endChain) {
+		SetChargeDelay_Get(TargetTower, 0, endChain, LongestChain, LongestCDelay.data(), LongestFDelay.data());
 	}
 
-	int endChain = LongestChain;
-	while (endChain >= 0) {
-		SetChargeDelay_Get(TargetTower, 0, endChain, LongestChain, LongestCDelay, LongestFDelay);
-		--endChain;
-	}
-
-	SetChargeDelay_Set(TargetTower, 0, LongestCDelay, LongestFDelay, LongestChain);
-	delete [] LongestFDelay;
-	delete [] LongestCDelay;
+	SetChargeDelay_Set(TargetTower, 0, LongestCDelay.data(), LongestFDelay.data(), LongestChain);
 }
 
 void BuildingTypeExt::cPrismForwarding::SetChargeDelay_Get
