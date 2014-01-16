@@ -758,14 +758,8 @@ DWORD BuildingExt::FoundationLength(CellStruct * StartCell) {
 }
 
 void BuildingExt::Cleanup() {
-	if(BuildingExt::TempFoundationData1) {
-		delete[] BuildingExt::TempFoundationData1;
-		BuildingExt::TempFoundationData1 = nullptr;
-	}
-	if(BuildingExt::TempFoundationData2) {
-		delete[] BuildingExt::TempFoundationData2;
-		BuildingExt::TempFoundationData2 = nullptr;
-	}
+	BuildingExt::TempFoundationData1.clear();
+	BuildingExt::TempFoundationData2.clear();
 }
 
 bool BuildingExt::ExtData::ReverseEngineer(TechnoClass *Victim) {

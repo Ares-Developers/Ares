@@ -140,8 +140,8 @@ public:
 
 	static void KickOutHospitalArmory(BuildingClass *pThis);
 
-	static CellStruct *TempFoundationData1;
-	static CellStruct *TempFoundationData2;
+	static std::vector<CellStruct> TempFoundationData1;
+	static std::vector<CellStruct> TempFoundationData2;
 
 	static DWORD FoundationLength(CellStruct * StartCell);
 
