@@ -160,33 +160,18 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 	this->UCDamageMultiplier = pINI->ReadDouble(pID, "UC.DamageMultiplier", this->UCDamageMultiplier);
 	this->BunkerRaidable = pINI->ReadBool(pID, "Bunker.Raidable", this->BunkerRaidable);
 	if(pINI->ReadString(pID, "IsTrench", "", Ares::readBuffer, Ares::readLength)) {
-		/*  If the list of kinds is empty so far, just add this kind as the first one;
-			if there already are kinds in it, compare the current kind against the kinds in the list;
-			if it was found, assign that kind's ID to this type;
-			if it wasn't found, add this kind at the end of the list and assign the ID.
+		/*  Find the name in the list of kinds; if the list is empty, distance is 0, if the item isn't in
+			the list, the index is the current list's size(); if the returned iterator is beyond the list,
+			add the name to the list, which makes the previously calculated index (th distance) valid.
+			(changed by AlexB 2014-01-16)
 
 			I originally thought of using a map here, but I figured the probability that the kinds list
 			grows so long that the search through all kinds takes up significant time is very low, and
 			vectors are far simpler to use in this situation.
 		*/
-		if(trenchKinds.size()) {
-			signed int foundMatch = -1;
-			for(unsigned int i = 0; i < trenchKinds.size(); ++i) {
-				if(trenchKinds.at(i).compare(Ares::readBuffer) == 0) {
-					foundMatch = i;
-					break;
-				}
-			}
-
-			if(foundMatch > -1) {
-				this->IsTrench = foundMatch;
-			} else {
-				this->IsTrench = trenchKinds.size();
-				trenchKinds.push_back(Ares::readBuffer);
-			}
-
-		} else {
-			this->IsTrench = 0;
+		auto it = std::find(trenchKinds.begin(), trenchKinds.end(), Ares::readBuffer);
+		this->IsTrench = std::distance(trenchKinds.begin(), it);
+		if(it == trenchKinds.end()) {
 			trenchKinds.push_back(Ares::readBuffer);
 		}
 	}
