@@ -109,18 +109,11 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 }
 
 signed int BuildingTypeExt::cPrismForwarding::GetUnusedWeaponSlot(BuildingTypeClass *pThis, bool elite) {
-	int idxWeapon = 1;
-	while (++idxWeapon <= 12) {
-		auto Weapon = elite
-			? pThis->get_EliteWeapon(idxWeapon)
-			: pThis->get_Weapon(idxWeapon)
-		;
+	for(int idxWeapon = 2; idxWeapon < 13; ++idxWeapon) { //13-18 is AlternateFLH0-4
+		auto Weapon = elite ? pThis->get_EliteWeapon(idxWeapon) : pThis->get_Weapon(idxWeapon);
 		if(!Weapon) {
-				break;
+			return idxWeapon;
 		}
-	}
-	if (idxWeapon <= 12) { //13-18 is AlternateFLH0-4
-		return idxWeapon;
 	}
 	return -1;
 }
@@ -147,11 +140,9 @@ int BuildingTypeExt::cPrismForwarding::AcquireSlaves_MultiStage
 		countSlaves += AcquireSlaves_SingleStage(MasterTower, TargetTower, stage, (chain + 1), NetworkSize, LongestChain);
 	} else {
 		BuildingExt::ExtData *pTargetData = BuildingExt::ExtMap.Find(TargetTower);
-		int senderIdx = 0;
-		while(senderIdx < pTargetData->PrismForwarding.Senders.Count) {
+		for(int senderIdx = 0; senderIdx < pTargetData->PrismForwarding.Senders.Count; ++senderIdx) {
 			BuildingClass *SenderTower = pTargetData->PrismForwarding.Senders[senderIdx];
 			countSlaves += AcquireSlaves_MultiStage(MasterTower, SenderTower, (stage - 1), (chain + 1), NetworkSize, LongestChain);
-			++senderIdx;
 		}
 	}
 	return countSlaves;
@@ -351,11 +342,9 @@ void BuildingTypeExt::cPrismForwarding::SetChargeDelay_Get
 		}
 	} else {
 		//ascend to the next chain
-		int senderIdx = 0;
-		while(senderIdx < pTargetData->PrismForwarding.Senders.Count) {
+		for(int senderIdx = 0; senderIdx < pTargetData->PrismForwarding.Senders.Count; ++senderIdx) {
 			BuildingClass *SenderTower = pTargetData->PrismForwarding.Senders[senderIdx];
 			SetChargeDelay_Get(SenderTower, (chain + 1), endChain, LongestChain, LongestCDelay, LongestFDelay);
-			++senderIdx;
 		}
 	}
 }
@@ -373,11 +362,9 @@ void BuildingTypeExt::cPrismForwarding::SetChargeDelay_Set
 			TargetTower->PlayNthAnim(BuildingAnimSlot::Special);
 		}
 	}
-	int senderIdx = 0;
-	while (senderIdx < pTargetData->PrismForwarding.Senders.Count) {
+	for(int senderIdx = 0; senderIdx < pTargetData->PrismForwarding.Senders.Count; ++senderIdx) {
 		BuildingClass *Sender = pTargetData->PrismForwarding.Senders[senderIdx];
 		SetChargeDelay_Set(Sender, (chain + 1), LongestCDelay, LongestFDelay, LongestChain);
-		++senderIdx;
 	}
 }
 
