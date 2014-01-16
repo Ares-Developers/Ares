@@ -336,21 +336,13 @@ bool BuildingTypeExt::IsFoundationEqual(BuildingTypeClass *pTBldA, BuildingTypeC
 		if(pDataA->CustomWidth == pDataB->CustomWidth) {
 			if(pDataA->CustomHeight == pDataB->CustomHeight) {
 				// compare unsorted arrays the hard way: O(n²)
-				int length = (pDataA->CustomHeight * pDataA->CustomHeight + 1);
-				for(int i=0; i<length; ++i) {
-					bool found = false;
-					for(int j=0; j<length; ++j) {
-						if((pDataA->CustomData[i].X == pDataB->CustomData[j].X) && (pDataA->CustomData[i].Y == pDataB->CustomData[j].Y)) {
-							found = true;
-							break;
-						}
-					}
-					if(!found) {
-						return false;
-					}
-				}
-				// found everyting.
-				return true;
+				auto it = std::find_if(pDataA->CustomData.begin(), pDataA->CustomData.end(), [&](const CellStruct& cell) -> bool {
+					auto it2 = std::find(pDataB->CustomData.begin(), pDataB->CustomData.end(), cell);
+					return (it2 == pDataB->CustomData.end());
+				});
+
+				// found everything if no mismatch found.
+				return (it == pDataA->CustomData.end());
 			}
 		}
 	}
