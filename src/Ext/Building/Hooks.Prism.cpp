@@ -108,7 +108,7 @@ DEFINE_HOOK(4503F0, BuildingClass_Update_Prism, 9)
 						BuildingTypeExt::ExtData *pTypeData = BuildingTypeExt::ExtMap.Find(pType);
 						//slave firing
 						pTargetData->PrismForwarding.ModifierReserve +=
-							(pTypeData->PrismForwarding.SupportModifier + pData->PrismForwarding.ModifierReserve);
+							(pTypeData->PrismForwarding.GetSupportModifier() + pData->PrismForwarding.ModifierReserve);
 						pTargetData->PrismForwarding.DamageReserve +=
 							(pTypeData->PrismForwarding.DamageAdd  + pData->PrismForwarding.DamageReserve);
 						pThis->FireLaser(pThis->PrismTargetCoords);

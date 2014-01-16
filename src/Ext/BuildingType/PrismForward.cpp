@@ -157,8 +157,8 @@ int BuildingTypeExt::cPrismForwarding::AcquireSlaves_SingleStage
 	BuildingTypeClass *pTargetType = TargetTower->Type;
 	BuildingTypeExt::ExtData *pTargetTypeData = BuildingTypeExt::ExtMap.Find(pTargetType);
 
-	signed int MaxFeeds = pTargetTypeData->PrismForwarding.MaxFeeds;
-	signed int MaxNetworkSize = pMasterTypeData->PrismForwarding.MaxNetworkSize;
+	signed int MaxFeeds = pTargetTypeData->PrismForwarding.GetMaxFeeds();
+	signed int MaxNetworkSize = pMasterTypeData->PrismForwarding.GetMaxNetworkSize();
 	signed int MaxChainLength = pMasterTypeData->PrismForwarding.MaxChainLength;
 
 	if (MaxFeeds == 0
