@@ -107,8 +107,8 @@ public:
 		int CustomWidth;
 		int CustomHeight;
 		int OutlineLength;
-		CellStruct* CustomData;
-		CellStruct* OutlineData;
+		std::vector<CellStruct> CustomData;
+		std::vector<CellStruct> OutlineData;
 
 		DynamicVectorClass<Point2D> FoundationRadarShape;
 
@@ -175,8 +175,8 @@ public:
 			CustomWidth (0),
 			CustomHeight (0),
 			OutlineLength (0),
-			CustomData (nullptr),
-			OutlineData (nullptr),
+			CustomData (),
+			OutlineData (),
 			FoundationRadarShape (),
 			Firewall_Is (false),
 			UCPassThrough (0.0),
@@ -209,8 +209,6 @@ public:
 			{ };
 
 		virtual ~ExtData() {
-			delete [] CustomData;
-			delete [] OutlineData;
 		}
 
 		virtual void LoadFromINIFile(TT *pThis, CCINIClass *pINI);

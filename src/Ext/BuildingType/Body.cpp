@@ -59,7 +59,7 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 	if(this->IsCustom) {
 		//Reset
 		pThis->Foundation = FOUNDATION_CUSTOM;
-		pThis->FoundationData = this->CustomData;
+		pThis->FoundationData = this->CustomData.data();
 	} else if(pArtINI) {
 
 		char str[0x80]="\0";
@@ -80,24 +80,14 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 			}
 
 			//Allocate CellStruct array
-			if(this->CustomData) {
-				delete [] this->CustomData;
-			}
+			this->CustomData.assign(this->CustomWidth * this->CustomHeight + 1, CellStruct::Empty);
+			this->OutlineData.assign(this->OutlineLength + 1, CellStruct::Empty);
 
-			if(this->OutlineData) {
-				delete [] this->OutlineData;
-			}
-
-			CellStruct* pFoundationData = new CellStruct[this->CustomWidth * this->CustomHeight + 1];
-			CellStruct* pOutlineData = new CellStruct[this->OutlineLength + 1];
-
-			this->CustomData = pFoundationData;
-			this->OutlineData = pOutlineData;
-			pThis->FoundationData = pFoundationData;
-			pThis->FoundationOutside = pOutlineData;
+			pThis->FoundationData = this->CustomData.data();
+			pThis->FoundationOutside = this->OutlineData.data();
 
 			//Load FoundationData
-			CellStruct* pCurrent = pFoundationData;
+			CellStruct* pCurrent = this->CustomData.data();
 			char key[0x20];
 
 			auto ParsePoint = [](CellStruct* &pCell, const char* str) -> void {
@@ -127,7 +117,7 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 			pCurrent->X = 0x7FFF;
 			pCurrent->Y = 0x7FFF;
 
-			pCurrent = pOutlineData;
+			pCurrent = this->OutlineData.data();
 			for(int i = 0; i < this->OutlineLength; ++i) {
 				_snprintf(key, 31, "FoundationOutline.%d", i);
 				if(pArtINI->ReadString(pArtID, key, "", str, 0x80)) {
@@ -445,16 +435,6 @@ bool BuildingTypeExt::ExtData::CanBeOccupiedBy(InfantryClass *whom) {
 bool Container<BuildingTypeExt>::Save(BuildingTypeClass *pThis, IStream *pStm) {
 	BuildingTypeExt::ExtData* pData = this->SaveKey(pThis, pStm);
 
-	if(pData && pData->IsCustom) {
-		ULONG out;
-		pStm->Write(pData->CustomData,
-			sizeof(CellStruct) * (pData->CustomWidth * pData->CustomHeight + 1),
-			&out);
-		pStm->Write(pData->OutlineData,
-			sizeof(CellStruct) * (pData->OutlineLength + 1),
-			&out);
-	}
-
 	return pData != nullptr;
 };
 
@@ -462,28 +442,14 @@ bool Container<BuildingTypeExt>::Load(BuildingTypeClass *pThis, IStream *pStm) {
 	BuildingTypeExt::ExtData* pData = this->LoadKey(pThis, pStm);
 //	this->FindOrAllocate(pThis);
 
-	ULONG out;
-
 	//if there's custom data, read it
 	if(pData->IsCustom && pData->CustomWidth > 0 && pData->CustomHeight > 0) {
-		pData->CustomData = new CellStruct[pData->CustomWidth * pData->CustomHeight + 1];
-		pData->OutlineData = new CellStruct [pData->OutlineLength + 1];
-
-		pStm->Read(
-			pData->CustomData,
-			sizeof(CellStruct) * (pData->CustomWidth * pData->CustomHeight + 1),
-			&out);
-
-		pStm->Read(
-			pData->OutlineData,
-			sizeof(CellStruct) * (pData->OutlineLength + 1),
-			&out);
-
 		pThis->Foundation = FOUNDATION_CUSTOM;
-		pThis->FoundationData = pData->CustomData;
-		pThis->FoundationOutside = pData->OutlineData;
+		pThis->FoundationData = pData->CustomData.data();
+		pThis->FoundationOutside = pData->OutlineData.data();
 	} else {
-		pData->CustomData = pData->OutlineData = nullptr;
+		pData->CustomData.clear();
+		pData->OutlineData.clear();
 	}
 
 #ifdef DEBUGBUILD
