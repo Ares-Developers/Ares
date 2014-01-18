@@ -74,7 +74,7 @@ public:
 		DynamicVectorClass<ParadropPlane*> ParaDropPlanes;
 
 		// Generic Protection
-		Customizable<int> Protect_Duration;
+		Nullable<int> Protect_Duration;
 		Customizable<int> Protect_PlayFadeSoundTime;
 		Customizable<int> Protect_PowerOutageDuration;
 		Valueable<bool> Protect_IsForceShield;

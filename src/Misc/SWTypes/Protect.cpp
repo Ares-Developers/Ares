@@ -19,7 +19,6 @@ void SW_Protect::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW
 		pData->Protect_IsForceShield = true;
 		pData->SW_RadarEvent = false;
 
-		pData->Protect_Duration = &RulesClass::Instance->ForceShieldDuration;
 		pData->Protect_PlayFadeSoundTime = &RulesClass::Instance->ForceShieldPlayFadeSoundTime;
 		pData->Protect_PowerOutageDuration = &RulesClass::Instance->ForceShieldBlackoutDuration;
 		pData->SW_WidthOrRange = (float)RulesClass::Instance->ForceShieldRadius;
@@ -40,7 +39,6 @@ void SW_Protect::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW
 		pData->SW_WidthOrRange = 3;
 		pData->SW_Height = 3;
 
-		pData->Protect_Duration = &RulesClass::Instance->IronCurtainDuration;
 		pData->SW_Anim = RulesClass::Instance->IronCurtainInvokeAnim;
 
 		pData->EVA_Ready = VoxClass::FindIndex("EVA_IronCurtainReady");
@@ -75,6 +73,11 @@ bool SW_Protect::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
 		CellClass *pTarget = MapClass::Instance->GetCellAt(*pCoords);
 		CoordStruct Crd = pTarget->GetCoords();
 
+		bool isForceShield = pData->Protect_IsForceShield;
+
+		int duration = pData->Protect_Duration.Get(isForceShield
+			? RulesClass::Instance->ForceShieldDuration : RulesClass::Instance->IronCurtainDuration);
+
 		// play start sound
 		if(pSW->StartSound > -1) {
 			VocClass::PlayAt(pSW->StartSound, &Crd, nullptr);
@@ -82,7 +85,7 @@ bool SW_Protect::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
 
 		// set up the special sound when the effect wears off
 		if(pThis->Type->SpecialSound > -1) {
-			pThis->SpecialSoundDuration = (int)pData->Protect_Duration - (int)pData->Protect_PlayFadeSoundTime;
+			pThis->SpecialSoundDuration = duration - pData->Protect_PlayFadeSoundTime;
 			pThis->SpecialSoundLocation = Crd;
 		}
 
@@ -111,7 +114,7 @@ bool SW_Protect::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
 			}
 
 			// protect this techno
-			pTechno->IronCurtain(pData->Protect_Duration, pThis->Owner, force);
+			pTechno->IronCurtain(duration, pThis->Owner, force);
 
 			return true;
 		};
