@@ -119,7 +119,7 @@ public:
 
 	using Valueable<T>::Get;
 
-	const T& Get(const T& defVal) const {
+	T Get(const T& defVal) const {
 		return this->isset() ? Valueable<T>::Get() : defVal;
 	}
 
