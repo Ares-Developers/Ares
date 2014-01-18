@@ -65,7 +65,7 @@ public:
 		DynamicVectorClass<VersesData> Verses;
 		double DeployedDamage;
 
-		Customizable<AnimTypeClass *> Temporal_WarpAway;
+		Nullable<AnimTypeClass *> Temporal_WarpAway;
 
 		bool AffectsEnemies; // request #397
 
@@ -87,7 +87,7 @@ public:
 			IC_Duration (0),
 			IC_Cap (-1),
 			DeployedDamage (1.00),
-			Temporal_WarpAway (&RulesClass::Global()->WarpAway),
+			Temporal_WarpAway (),
 			AffectsEnemies (true),
 			InfDeathAnim (nullptr),
 			PreImpactAnim (-1),
