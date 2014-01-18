@@ -19,7 +19,6 @@ void SW_Protect::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW
 		pData->Protect_IsForceShield = true;
 		pData->SW_RadarEvent = false;
 
-		pData->Protect_PlayFadeSoundTime = &RulesClass::Instance->ForceShieldPlayFadeSoundTime;
 		pData->Protect_PowerOutageDuration = &RulesClass::Instance->ForceShieldBlackoutDuration;
 		pData->SW_WidthOrRange = (float)RulesClass::Instance->ForceShieldRadius;
 		pData->SW_Anim = RulesClass::Instance->ForceShieldInvokeAnim;
@@ -85,7 +84,10 @@ bool SW_Protect::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
 
 		// set up the special sound when the effect wears off
 		if(pThis->Type->SpecialSound > -1) {
-			pThis->SpecialSoundDuration = duration - pData->Protect_PlayFadeSoundTime;
+			int playFadeSoundTime = pData->Protect_PlayFadeSoundTime.Get(isForceShield
+				? RulesClass::Instance->ForceShieldPlayFadeSoundTime : 0);
+
+			pThis->SpecialSoundDuration = duration - playFadeSoundTime;
 			pThis->SpecialSoundLocation = Crd;
 		}
 
