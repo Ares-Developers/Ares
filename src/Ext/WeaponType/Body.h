@@ -51,9 +51,9 @@ public:
 		bool   Beam_IsHouseColor;
 
 		// Coloured EBolts
-		Customizable<ColorStruct> Bolt_Color1;
-		Customizable<ColorStruct> Bolt_Color2;
-		Customizable<ColorStruct> Bolt_Color3;
+		Nullable<ColorStruct> Bolt_Color1;
+		Nullable<ColorStruct> Bolt_Color2;
+		Nullable<ColorStruct> Bolt_Color3;
 
 		// TS Lasers
 		bool   Wave_IsHouseColor;
@@ -98,9 +98,9 @@ public:
 			Beam_Duration (15),
 			Beam_Amplitude (40.0),
 			Beam_IsHouseColor (false),
-			Bolt_Color1 (nullptr),
-			Bolt_Color2 (nullptr),
-			Bolt_Color3 (nullptr),
+			Bolt_Color1 (),
+			Bolt_Color2 (),
+			Bolt_Color3 (),
 			Wave_IsHouseColor (false),
 			Wave_IsLaser (false),
 			Wave_IsBigLaser (false),
