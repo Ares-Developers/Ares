@@ -120,7 +120,7 @@ DEFINE_HOOK(53B080, PsyDom_Fire, 5) {
 				}
 
 				// create a permanent capture anim
-				if(AnimTypeClass* pAnimType = pData->Dominator_ControlAnim) {
+				if(AnimTypeClass* pAnimType = pData->Dominator_ControlAnim.Get(RulesClass::Instance->PermaControlledAnimationType)) {
 					CoordStruct animCoords = pTechno->GetCoords();
 					animCoords.Z += pType->MindControlRingOffset;
 					GAME_ALLOC(AnimClass, pTechno->MindControlRingAnim, pAnimType, &animCoords);

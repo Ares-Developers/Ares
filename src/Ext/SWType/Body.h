@@ -104,7 +104,7 @@ public:
 		Valueable<int> Dominator_SecondAnimHeight;
 		Nullable<AnimTypeClass*> Dominator_FirstAnim;
 		Nullable<AnimTypeClass*> Dominator_SecondAnim;
-		Customizable<AnimTypeClass*> Dominator_ControlAnim;
+		Nullable<AnimTypeClass*> Dominator_ControlAnim;
 		Valueable<bool> Dominator_Ripple;
 		Valueable<bool> Dominator_CaptureMindControlled;
 		Valueable<bool> Dominator_CapturePermaMindControlled;
