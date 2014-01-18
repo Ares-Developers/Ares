@@ -99,7 +99,7 @@ public:
 
 		// Psychic Dominator
 		Valueable<bool> Dominator_Capture;
-		Valueable<int> Dominator_FireAtPercentage;
+		Nullable<int> Dominator_FireAtPercentage;
 		Valueable<int> Dominator_FirstAnimHeight;
 		Valueable<int> Dominator_SecondAnimHeight;
 		Nullable<AnimTypeClass*> Dominator_FirstAnim;

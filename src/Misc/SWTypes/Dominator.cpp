@@ -26,7 +26,6 @@ void SW_PsychicDominator::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeC
 
 	pData->Dominator_FirstAnimHeight = 750;
 	pData->Dominator_SecondAnimHeight = 0;
-	pData->Dominator_FireAtPercentage = RulesClass::Instance->DominatorFireAtPercentage;
 	pData->Dominator_Ripple = true;
 	pData->Dominator_Capture = true;
 	pData->Dominator_CaptureMindControlled = true;
@@ -144,7 +143,8 @@ void PsychicDominatorStateMachine::Update() {
 			if(pAnim) {
 				int currentFrame = pAnim->Animation.Value;
 				short frameCount = pAnim->Type->GetImage()->Frames;
-				if(frameCount * pData->Dominator_FireAtPercentage * 0.01 > currentFrame) {
+				int percentage = pData->Dominator_FireAtPercentage.Get(RulesClass::Instance->DominatorFireAtPercentage);
+				if(frameCount * percentage / 100 > currentFrame) {
 					return;
 				}
 			}
