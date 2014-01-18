@@ -145,7 +145,7 @@ public:
 		Valueable<MouseCursor> SW_NoCursor;
 		char SW_PostDependent[0x18];
 		ValueableEnum<SuperWeaponAITargetingMode> SW_AITargetingType;
-		Customizable<double> SW_ChargeToDrainRatio;
+		Nullable<double> SW_ChargeToDrainRatio;
 
 		Valueable<float> SW_WidthOrRange;
 		Valueable<int> SW_Height;
@@ -201,7 +201,6 @@ public:
 			Nuke_PsiWarning (nullptr),
 			Sonar_Delay (0),
 			SW_ActivationSound (-1),
-			SW_ChargeToDrainRatio (&RulesClass::Instance->ChargeToDrainRatio),
 			Money_Amount (0),
 			Money_DrainAmount (0),
 			Money_DrainDelay (0),
@@ -267,6 +266,8 @@ public:
 		bool IsTechnoAffected(TechnoClass* pTechno);
 		void PrintMessage(const CSFText& message, HouseClass* pFirer);
 		NewSWType* GetNewSWType();
+
+		double GetChargeToDrainRatio() const;
 
 		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
 		}

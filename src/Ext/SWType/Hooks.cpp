@@ -740,7 +740,7 @@ DEFINE_HOOK(6CBF5B, SuperClass_GetCameoChargeState_ChargeDrainRatio, 9) {
 
 		// use per-SW charge-to-drain ratio.
 		double percentage = 0.0;
-		double ratio = pData->SW_ChargeToDrainRatio;
+		double ratio = pData->GetChargeToDrainRatio();
 		if(std::abs(rechargeTime2 * ratio) > 0.001) {
 			percentage = 1.0 - (rechargeTime1 * ratio - timeLeft) / (rechargeTime2 * ratio);
 		}
@@ -772,7 +772,7 @@ DEFINE_HOOK(6CB995, SuperClass_ClickFire_ChargeDrainRatioA, 8) {
 	pSuper = (SuperClass*)((char*)pSuper - 30);
 
 	if(SWTypeExt::ExtData* pData = SWTypeExt::ExtMap.Find(pSuper->Type)) {
-		double ratio = pData->SW_ChargeToDrainRatio;
+		double ratio = pData->GetChargeToDrainRatio();
 		double remaining = rechargeTime - timeLeft / ratio;
 		int frames = Game::F2I(remaining);
 	
@@ -788,7 +788,7 @@ DEFINE_HOOK(6CBA19, SuperClass_ClickFire_ChargeDrainRatioB, A) {
 	GET(SuperClass*, pSuper, ESI);
 
 	if(SWTypeExt::ExtData* pData = SWTypeExt::ExtMap.Find(pSuper->Type)) {
-		double ratio = pData->SW_ChargeToDrainRatio;
+		double ratio = pData->GetChargeToDrainRatio();
 		double remaining = length * ratio;
 		int frames = Game::F2I(remaining);
 	

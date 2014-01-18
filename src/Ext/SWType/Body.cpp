@@ -533,6 +533,10 @@ bool SWTypeExt::ExtData::ChangeLighting() {
 	return false;
 }
 
+double SWTypeExt::ExtData::GetChargeToDrainRatio() const {
+	return this->SW_ChargeToDrainRatio.Get(RulesClass::Instance->ChargeToDrainRatio);
+}
+
 void Container<SWTypeExt>::InvalidatePointer(void *ptr, bool bRemoved) {
 	AnnounceInvalidPointer(SWTypeExt::CurrentSWType, ptr);
 }
