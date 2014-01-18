@@ -79,19 +79,18 @@ DEFINE_HOOK(64CCBF, DoList_ReplaceReconMessage, 6)
 
 /*
  how to raise your own events
-	NetworkEvent * Event = new NetworkEvent();
-	Event->Kind = AresNetworkEvent::aev_blah;
-	Event->HouseIndex = U->Owner->ArrayIndex;
-	memcpy(Event->ExtraData, "Boom de yada", 0xkcd);
-	Networking::AddEvent(Event);
-	delete Event;
+	NetworkEvent Event;
+	Event.Kind = AresNetworkEvent::aev_blah;
+	Event.HouseIndex = U->Owner->ArrayIndex;
+	memcpy(Event.ExtraData, "Boom de yada", 0xkcd);
+	Networking::AddEvent(&Event);
 */
 
 void AresNetEvent::Handlers::RaiseTrenchRedirectClick(BuildingClass *Source, CellStruct *Target) {
-	NetworkEvent * Event = new NetworkEvent();
-	Event->Kind = AresNetEvent::aev_TrenchRedirectClick;
-	Event->HouseIndex = byte(Source->Owner->ArrayIndex);
-	byte *ExtraData = Event->ExtraData;
+	NetworkEvent Event;
+	Event.Kind = AresNetEvent::aev_TrenchRedirectClick;
+	Event.HouseIndex = byte(Source->Owner->ArrayIndex);
+	byte *ExtraData = Event.ExtraData;
 
 	NetID SourceObject, TargetCoords;
 
@@ -103,8 +102,7 @@ void AresNetEvent::Handlers::RaiseTrenchRedirectClick(BuildingClass *Source, Cel
 	memcpy(ExtraData, &SourceObject, sizeof(SourceObject));
 	ExtraData += sizeof(SourceObject);
 
-	Networking::AddEvent(Event);
-	delete Event;
+	Networking::AddEvent(&Event);
 }
 
 void AresNetEvent::Handlers::RespondToTrenchRedirectClick(NetworkEvent *Event) {
@@ -125,12 +123,11 @@ void AresNetEvent::Handlers::RespondToTrenchRedirectClick(NetworkEvent *Event) {
 }
 
 void AresNetEvent::Handlers::RaiseFirewallToggle(HouseClass *Source) {
-	NetworkEvent * Event = new NetworkEvent();
-	Event->Kind = AresNetEvent::aev_FirewallToggle;
-	Event->HouseIndex = byte(Source->ArrayIndex);
+	NetworkEvent Event;
+	Event.Kind = AresNetEvent::aev_FirewallToggle;
+	Event.HouseIndex = byte(Source->ArrayIndex);
 
-	Networking::AddEvent(Event);
-	delete Event;
+	Networking::AddEvent(&Event);
 }
 
 void AresNetEvent::Handlers::RespondToFirewallToggle(NetworkEvent *Event) {
