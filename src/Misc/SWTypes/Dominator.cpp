@@ -26,7 +26,6 @@ void SW_PsychicDominator::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeC
 
 	pData->Dominator_FirstAnimHeight = 750;
 	pData->Dominator_SecondAnimHeight = 0;
-	pData->Dominator_FirstAnim = &RulesClass::Instance->DominatorFirstAnim;
 	pData->Dominator_SecondAnim = &RulesClass::Instance->DominatorSecondAnim;
 	pData->Dominator_ControlAnim = &RulesClass::Instance->PermaControlledAnimationType;
 	pData->Dominator_FireAtPercentage = RulesClass::Instance->DominatorFireAtPercentage;
@@ -120,7 +119,7 @@ void PsychicDominatorStateMachine::Update() {
 			coords.Z += pData->Dominator_FirstAnimHeight;
 
 			AnimClass* pAnim = nullptr;
-			if(AnimTypeClass* pAnimType = pData->Dominator_FirstAnim) {
+			if(AnimTypeClass* pAnimType = pData->Dominator_FirstAnim.Get(RulesClass::Instance->DominatorFirstAnim)) {
 				GAME_ALLOC(AnimClass, pAnim, pAnimType, &coords);
 			}
 			PsyDom::Anim = pAnim;

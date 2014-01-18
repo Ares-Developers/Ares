@@ -102,7 +102,7 @@ public:
 		Valueable<int> Dominator_FireAtPercentage;
 		Valueable<int> Dominator_FirstAnimHeight;
 		Valueable<int> Dominator_SecondAnimHeight;
-		Customizable<AnimTypeClass*> Dominator_FirstAnim;
+		Nullable<AnimTypeClass*> Dominator_FirstAnim;
 		Customizable<AnimTypeClass*> Dominator_SecondAnim;
 		Customizable<AnimTypeClass*> Dominator_ControlAnim;
 		Valueable<bool> Dominator_Ripple;
