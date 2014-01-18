@@ -44,7 +44,7 @@ DEFINE_HOOK(53B080, PsyDom_Fire, 5) {
 
 		// anim
 		AnimClass* pAnim = nullptr;
-		if(AnimTypeClass* pAnimType = pData->Dominator_SecondAnim) {
+		if(AnimTypeClass* pAnimType = pData->Dominator_SecondAnim.Get(RulesClass::Instance->DominatorSecondAnim)) {
 			CoordStruct animCoords = coords;
 			animCoords.Z += pData->Dominator_SecondAnimHeight;
 			GAME_ALLOC(AnimClass, pAnim, pAnimType, &animCoords);

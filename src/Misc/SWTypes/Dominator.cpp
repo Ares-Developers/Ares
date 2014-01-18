@@ -26,7 +26,6 @@ void SW_PsychicDominator::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeC
 
 	pData->Dominator_FirstAnimHeight = 750;
 	pData->Dominator_SecondAnimHeight = 0;
-	pData->Dominator_SecondAnim = &RulesClass::Instance->DominatorSecondAnim;
 	pData->Dominator_ControlAnim = &RulesClass::Instance->PermaControlledAnimationType;
 	pData->Dominator_FireAtPercentage = RulesClass::Instance->DominatorFireAtPercentage;
 	pData->Dominator_Ripple = true;
