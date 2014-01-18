@@ -173,14 +173,13 @@ DEFINE_HOOK(686D7F, Sides_LoadTextColor_CacheSP, 6) {
 	LEA_STACK(INIClass*, pINI, 0x1C);
 
 	char* pDefault = "";
-	char pID[4];
-	AresCRT::strCopy(pID, ScenarioClass::Instance->FileName);
+	const char* pID =  ScenarioClass::Instance->FileName;
 
-	if(!_strcmpi(pID, "SOV")) {
+	if(!_strnicmp(pID, "SOV", 3)) {
 		pDefault = "SovietLoad";
-	} else if(!_strcmpi(pID, "YUR")) {
+	} else if(!_strnicmp(pID, "YUR", 3)) {
 		pDefault = "YuriLoad";
-	} else if(!_strcmpi(pID, "TUT")) {
+	} else if(!_strnicmp(pID, "TUT", 3)) {
 		pDefault = "LightGrey";
 	} else {
 		pDefault = "AlliedLoad";
