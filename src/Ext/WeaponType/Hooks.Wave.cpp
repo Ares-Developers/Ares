@@ -218,23 +218,20 @@ bool WeaponTypeExt::ModifyWaveColor(WORD *src, WORD *dst, int Intensity, WaveCla
 		return false;
 	}
 
-	ColorStruct initial = Drawing::WordColor(*src);
+	ColorStruct modified = Drawing::WordColor(*src);
 
-	ColorStruct modified = initial;
+	// ugly hack to fix byte wraparound problems
+	auto upcolor = [&](BYTE ColorStruct::* member) {
+		int component = modified.*member + (Intensity * CurrentColor->*member) / 256;
+		component = std::max(std::min(component, 255), 0);
+		modified.*member = static_cast<BYTE>(component);
+	};
 
-// ugly hack to fix byte wraparound problems
-#define upcolor(c) \
-	int _ ## c = initial. c + (Intensity * CurrentColor-> c ) / 256; \
-	_ ## c = std::min(_ ## c, 255); \
-	modified. c = (BYTE)_ ## c;
+	upcolor(&ColorStruct::R);
+	upcolor(&ColorStruct::G);
+	upcolor(&ColorStruct::B);
 
-	upcolor(R);
-	upcolor(G);
-	upcolor(B);
-
-	WORD color = Drawing::Color16bit(&modified);
-
-	*dst = color;
+	*dst = Drawing::Color16bit(&modified);
 	return true;
 }
 
