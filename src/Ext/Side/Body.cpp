@@ -222,8 +222,7 @@ Iterator<TechnoTypeClass*> SideExt::ExtData::GetParaDropTypes() const {
 		return this->ParaDropTypes;
 	}
 
-	auto ret = this->GetDefaultParaDropTypes();
-	return reinterpret_cast<Iterator<TechnoTypeClass*>&>(ret);
+	return this->GetDefaultParaDropTypes();
 }
 
 Iterator<InfantryTypeClass*> SideExt::ExtData::GetDefaultParaDropTypes() const {
