@@ -45,7 +45,7 @@ public:
 		bool Weapon_Loaded;
 
 		// Coloured Rad Beams
-		Customizable<ColorStruct> Beam_Color;
+		Nullable<ColorStruct> Beam_Color;
 		int    Beam_Duration;
 		double Beam_Amplitude;
 		bool   Beam_IsHouseColor;
@@ -94,7 +94,7 @@ public:
 		
 		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			Weapon_Loaded (false),
-			Beam_Color (&RulesClass::Instance->RadColor),
+			Beam_Color (),
 			Beam_Duration (15),
 			Beam_Amplitude (40.0),
 			Beam_IsHouseColor (false),
@@ -123,7 +123,6 @@ public:
 			Abductor_ChangeOwner(false),
 			Abductor_AbductBelowPercent(1)
 			{
-//				this->Beam_Color = ColorStruct(255, 255, 255);
 				for(int i = 0; i < 5; ++i) {
 					this->Wave_Reverse[i] = false;
 				}
@@ -141,6 +140,7 @@ public:
 		}
 
 		ColorStruct GetWaveColor() const;
+		ColorStruct GetBeamColor() const;
 
 		bool conductAbduction(BulletClass *);
 

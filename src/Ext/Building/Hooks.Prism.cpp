@@ -208,7 +208,7 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 				if (supportWeaponData->Beam_IsHouseColor) {
 					supportRadBeam->Color = B->Owner->LaserColor;
 				} else {
-					supportRadBeam->Color = supportWeaponData->Beam_Color;
+					supportRadBeam->Color = supportWeaponData->GetBeamColor();
 				}
 				supportRadBeam->Period = supportWeaponData->Beam_Duration;
 				supportRadBeam->Amplitude = supportWeaponData->Beam_Amplitude;

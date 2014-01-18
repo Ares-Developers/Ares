@@ -31,7 +31,7 @@ DEFINE_HOOK(6FD79C, TechnoClass_FireRadBeam2, 6)
 	WeaponTypeExt::ExtData *pData = WeaponTypeExt::ExtMap.Find(pSource);
 
 	if(!pData->Beam_IsHouseColor) {
-		Rad->Color = pData->Beam_Color;
+		Rad->Color = pData->GetBeamColor();
 	}
 	Rad->Period = pData->Beam_Duration;
 	Rad->Amplitude = pData->Beam_Amplitude;

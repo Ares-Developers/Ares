@@ -34,13 +34,6 @@ void WeaponTypeExt::ExtData::LoadFromINIFile(WeaponTypeExt::TT *pThis, CCINIClas
 		return;
 	}
 
-	if(pThis->IsRadBeam || pThis->IsRadEruption) {
-		if(pThis->Warhead && pThis->Warhead->Temporal) { //Marshall added the check for Warhead because PrismForwarding.SupportWeapon does not require a Warhead
-			// Well, a RadEruption Temporal will look pretty funny, but this is what WW uses
-			this->Beam_Color.Bind(&RulesClass::Instance->ChronoBeamColor);
-		}
-	}
-
 	if(pThis->Damage == 0 && this->Weapon_Loaded) {
 		// blargh
 		// this is the ugly case of a something that apparently isn't loaded from ini yet, wonder why
@@ -371,6 +364,19 @@ ColorStruct WeaponTypeExt::ExtData::GetWaveColor() const {
 	} else {
 		return this->Wave_Color.Get(WeaponTypeExt::ExtData::DefaultWaveColor);
 	}
+}
+
+ColorStruct WeaponTypeExt::ExtData::GetBeamColor() const {
+	auto pThis = this->AttachedToObject;
+
+	if(pThis->IsRadBeam || pThis->IsRadEruption) {
+		if(pThis->Warhead && pThis->Warhead->Temporal) { //Marshall added the check for Warhead because PrismForwarding.SupportWeapon does not require a Warhead
+			// Well, a RadEruption Temporal will look pretty funny, but this is what WW uses
+			return this->Beam_Color.Get(RulesClass::Instance->ChronoBeamColor);
+		}
+	}
+
+	return this->Beam_Color.Get(RulesClass::Instance->RadColor);
 }
 
 void Container<WeaponTypeExt>::InvalidatePointer(void *ptr, bool bRemoved) {
