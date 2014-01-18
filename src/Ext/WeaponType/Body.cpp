@@ -41,17 +41,6 @@ void WeaponTypeExt::ExtData::LoadFromINIFile(WeaponTypeExt::TT *pThis, CCINIClas
 		}
 	}
 
-	// wave colors will be bound to the default values, thus a change of wave
-	// type will still point to the appropriate value, as long as the modder does not
-	// set the color by hand, in which case that value is used.
-	if(pThis->IsMagBeam) {
-		this->Wave_Color.Bind(&WeaponTypeExt::ExtData::DefaultWaveColorMagBeam);
-	} else if(pThis->IsSonic) {
-		this->Wave_Color.Bind(&WeaponTypeExt::ExtData::DefaultWaveColorSonic);
-	} else {
-		this->Wave_Color.Bind(&WeaponTypeExt::ExtData::DefaultWaveColor);
-	}
-
 	if(pThis->Damage == 0 && this->Weapon_Loaded) {
 		// blargh
 		// this is the ugly case of a something that apparently isn't loaded from ini yet, wonder why
@@ -366,6 +355,21 @@ void WeaponTypeExt::ExtData::PlantBomb(TechnoClass* pSource, ObjectClass* pTarge
 				VocClass::PlayAt(index, &pBomb->Target->Location, nullptr);
 			}
 		}
+	}
+}
+
+// wave colors will be bound to the default values, thus a change of wave
+// type will still point to the appropriate value, as long as the modder does not
+// set the color by hand, in which case that value is used.
+ColorStruct WeaponTypeExt::ExtData::GetWaveColor() const {
+	auto pThis = this->AttachedToObject;
+
+	if(pThis->IsMagBeam) {
+		return this->Wave_Color.Get(WeaponTypeExt::ExtData::DefaultWaveColorMagBeam);
+	} else if(pThis->IsSonic) {
+		return this->Wave_Color.Get(WeaponTypeExt::ExtData::DefaultWaveColorSonic);
+	} else {
+		return this->Wave_Color.Get(WeaponTypeExt::ExtData::DefaultWaveColor);
 	}
 }
 

@@ -59,7 +59,7 @@ public:
 		bool   Wave_IsHouseColor;
 		bool   Wave_IsLaser;
 		bool   Wave_IsBigLaser;
-		Customizable<ColorStruct> Wave_Color;
+		Nullable<ColorStruct> Wave_Color;
 		bool   Wave_Reverse[5];
 
 		Valueable<int> Laser_Thickness;
@@ -104,7 +104,7 @@ public:
 			Wave_IsHouseColor (false),
 			Wave_IsLaser (false),
 			Wave_IsBigLaser (false),
-			Wave_Color (nullptr),
+			Wave_Color (),
 			Laser_Thickness (-1),
 			Ivan_KillsBridges (true),
 			Ivan_Detachable (true),
@@ -124,7 +124,6 @@ public:
 			Abductor_AbductBelowPercent(1)
 			{
 //				this->Beam_Color = ColorStruct(255, 255, 255);
-//				this->Wave_Color = ColorStruct(255, 255, 255);
 				for(int i = 0; i < 5; ++i) {
 					this->Wave_Reverse[i] = false;
 				}
@@ -140,6 +139,8 @@ public:
 		bool IsWave(WeaponTypeClass *pThis) {
 			return pThis->IsSonic || pThis->IsMagBeam || this->Wave_IsLaser || this->Wave_IsBigLaser;
 		}
+
+		ColorStruct GetWaveColor() const;
 
 		bool conductAbduction(BulletClass *);
 
