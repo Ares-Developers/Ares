@@ -56,6 +56,14 @@ public:
 	const T& operator [](size_t index) const {
 		return this->items[index];
 	}
+
+	template<typename Out>
+	operator Iterator<Out>() const {
+		// note: this does only work if pointer-to-derived equals pointer-to-base.
+		// if derived has virtual methods and base hasn't, this will just break.
+		static_assert(std::is_assignable<Out&, T>::value, "Cannot assign to Out from T.");
+		return Iterator<Out>(reinterpret_cast<const Out*>(this->items), this->count);
+	}
 };
 
 #endif
