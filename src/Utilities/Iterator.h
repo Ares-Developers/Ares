@@ -8,7 +8,7 @@ private:
 	size_t count;
 public:
 	Iterator() : items(nullptr), count(0) {}
-	Iterator(const T* first, const size_t count) : items(first), count(count) {}
+	Iterator(const T* first, size_t count) : items(first), count(count) {}
 	Iterator(const std::vector<T> &vec) : items(vec.data()), count(vec.size()) {}
 	Iterator(const VectorClass<T> &vec) : items(vec.Items), count(vec.Capacity) {}
 	Iterator(const DynamicVectorClass<T> &vec) : items(vec.Items), count(vec.Count) {}
