@@ -19,7 +19,6 @@ void SW_Protect::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW
 		pData->Protect_IsForceShield = true;
 		pData->SW_RadarEvent = false;
 
-		pData->Protect_PowerOutageDuration = &RulesClass::Instance->ForceShieldBlackoutDuration;
 		pData->SW_WidthOrRange = (float)RulesClass::Instance->ForceShieldRadius;
 		pData->SW_Anim = RulesClass::Instance->ForceShieldInvokeAnim;
 
@@ -92,8 +91,11 @@ bool SW_Protect::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
 		}
 
 		// shut down power
-		if(pData->Protect_PowerOutageDuration > 0) {
-			pThis->Owner->CreatePowerOutage(pData->Protect_PowerOutageDuration);
+		int powerOutageDuration = pData->Protect_PowerOutageDuration.Get(isForceShield
+			? RulesClass::Instance->ForceShieldBlackoutDuration : 0);
+
+		if(powerOutageDuration > 0) {
+			pThis->Owner->CreatePowerOutage(powerOutageDuration);
 		}
 
 		bool force = pData->Protect_IsForceShield;

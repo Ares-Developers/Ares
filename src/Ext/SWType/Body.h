@@ -76,7 +76,7 @@ public:
 		// Generic Protection
 		Nullable<int> Protect_Duration;
 		Nullable<int> Protect_PlayFadeSoundTime;
-		Customizable<int> Protect_PowerOutageDuration;
+		Nullable<int> Protect_PowerOutageDuration;
 		Valueable<bool> Protect_IsForceShield;
 
 		// Chronosphere
