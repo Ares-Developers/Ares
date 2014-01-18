@@ -62,7 +62,7 @@ public:
 		Customizable<ColorStruct> Wave_Color;
 		bool   Wave_Reverse[5];
 
-		Customizable<signed int> Laser_Thickness;
+		Valueable<int> Laser_Thickness;
 /*
 		int    Wave_InitialIntensity;
 		int    Wave_IntensityStep;
@@ -105,7 +105,7 @@ public:
 			Wave_IsLaser (false),
 			Wave_IsBigLaser (false),
 			Wave_Color (nullptr),
-			Laser_Thickness (nullptr),
+			Laser_Thickness (-1),
 			Ivan_KillsBridges (true),
 			Ivan_Detachable (true),
 			Ivan_Damage (),
@@ -123,7 +123,6 @@ public:
 			Abductor_ChangeOwner(false),
 			Abductor_AbductBelowPercent(1)
 			{
-				this->Laser_Thickness.Set(-1);
 //				this->Beam_Color = ColorStruct(255, 255, 255);
 //				this->Wave_Color = ColorStruct(255, 255, 255);
 				for(int i = 0; i < 5; ++i) {
