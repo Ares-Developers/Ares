@@ -24,8 +24,8 @@ void TechnoTypeExt::ExtData::Initialize(TechnoTypeClass *pThis) {
 
 	this->Survivors_PilotCount = -1; // defaults to (crew ? 1 : 0)
 
-	this->PrerequisiteLists.SetCapacity(0, nullptr);
-	this->PrerequisiteLists.AddItem(new DynamicVectorClass<int>);
+	this->PrerequisiteLists.clear();
+	this->PrerequisiteLists.push_back(new DynamicVectorClass<int>);
 
 	this->PrerequisiteTheaters = 0xFFFFFFFF;
 
@@ -113,32 +113,32 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	}
 
 	// prereqs
-	int PrereqListLen = pINI->ReadInteger(section, "Prerequisite.Lists", this->PrerequisiteLists.Count - 1);
+	int PrereqListLen = pINI->ReadInteger(section, "Prerequisite.Lists", this->PrerequisiteLists.size() - 1);
 
 	if(PrereqListLen < 1) {
 		PrereqListLen = 0;
 	}
 	++PrereqListLen;
-	while(PrereqListLen > this->PrerequisiteLists.Count) {
-		this->PrerequisiteLists.AddItem(new DynamicVectorClass<int>);
+	while(PrereqListLen > static_cast<int>(this->PrerequisiteLists.size())) {
+		this->PrerequisiteLists.push_back(new DynamicVectorClass<int>);
 	}
-	while(PrereqListLen < this->PrerequisiteLists.Count) {
-		int index = this->PrerequisiteLists.Count - 1;
-		if(auto list = this->PrerequisiteLists.GetItem(index)) {
+	while(PrereqListLen < static_cast<int>(this->PrerequisiteLists.size())) {
+		int index = this->PrerequisiteLists.size() - 1;
+		if(auto list = this->PrerequisiteLists.at(index)) {
 			delete list;
 		}
-		this->PrerequisiteLists.RemoveItem(index);
+		this->PrerequisiteLists.erase(this->PrerequisiteLists.begin() + index);
 	}
 
-	DynamicVectorClass<int> *dvc = this->PrerequisiteLists.GetItem(0);
+	DynamicVectorClass<int> *dvc = this->PrerequisiteLists.at(0);
 	Prereqs::Parse(pINI, section, "Prerequisite", dvc);
 
 	dvc = &pThis->PrerequisiteOverride;
 	Prereqs::Parse(pINI, section, "PrerequisiteOverride", dvc);
 
-	for(int i = 0; i < this->PrerequisiteLists.Count; ++i) {
+	for(size_t i = 0; i < this->PrerequisiteLists.size(); ++i) {
 		_snprintf_s(flag, 255, "Prerequisite.List%d", i);
-		dvc = this->PrerequisiteLists.GetItem(i);
+		dvc = this->PrerequisiteLists.at(i);
 		Prereqs::Parse(pINI, section, flag, dvc);
 	}
 
@@ -580,13 +580,6 @@ bool Container<TechnoTypeExt>::Save(TechnoTypeClass *pThis, IStream *pStm) {
 		//ULONG out;
 		pData->Survivors_Pilots.Save(pStm);
 
-		pData->PrerequisiteLists.Save(pStm);
-
-		Debug::Log("Saving [%s] with %d PreqLists\n", pThis->get_ID(), pData->PrerequisiteLists.Count);
-		for(int ii = 0; ii < pData->PrerequisiteLists.Count; ++ii) {
-			pData->PrerequisiteLists.Items[ii]->Save(pStm);
-		}
-
 		pData->PrerequisiteNegatives.Save(pStm);
 		pData->Weapons.Save(pStm);
 		pData->EliteWeapons.Save(pStm);
@@ -601,14 +594,6 @@ bool Container<TechnoTypeExt>::Load(TechnoTypeClass *pThis, IStream *pStm) {
 	//ULONG out;
 
 	pData->Survivors_Pilots.Load(pStm, 1);
-
-	pData->PrerequisiteLists.Load(pStm, 1);
-
-	for(int ii = 0; ii < pData->PrerequisiteLists.Count; ++ii) {
-		DynamicVectorClass<int> *vec = new DynamicVectorClass<int>();
-		vec->Load(pStm, 0);
-		pData->PrerequisiteLists.Items[ii] = vec;
-	}
 
 	pData->PrerequisiteNegatives.Load(pStm, 0);
 	pData->Weapons.Load(pStm, 1);

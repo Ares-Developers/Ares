@@ -37,7 +37,7 @@ public:
 //		int Cameo_CurrentFrame;
 //		TimerStruct Cameo_Timer;
 
-		DynamicVectorClass< DynamicVectorClass<int>* > PrerequisiteLists;
+		std::vector<DynamicVectorClass<int>*> PrerequisiteLists;
 		DynamicVectorClass<int> PrerequisiteNegatives;
 		DWORD PrerequisiteTheaters;
 

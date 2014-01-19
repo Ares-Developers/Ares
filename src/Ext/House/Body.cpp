@@ -79,7 +79,7 @@ bool HouseExt::PrerequisitesMet(HouseClass *pHouse, TechnoTypeClass *pItem)
 	}
 	TechnoTypeExt::ExtData* pData = TechnoTypeExt::ExtMap.Find(pItem);
 
-	for(int i = 0; i < pData->PrerequisiteLists.Count; ++i) {
+	for(size_t i = 0; i < pData->PrerequisiteLists.size(); ++i) {
 		if(Prereqs::HouseOwnsAll(pHouse, pData->PrerequisiteLists[i])) {
 			return 1;
 		}
@@ -95,7 +95,7 @@ bool HouseExt::PrerequisitesListed(const Prereqs::BTypeIter &List, TechnoTypeCla
 	}
 	TechnoTypeExt::ExtData* pData = TechnoTypeExt::ExtMap.Find(pItem);
 
-	for(int i = 0; i < pData->PrerequisiteLists.Count; ++i) {
+	for(size_t i = 0; i < pData->PrerequisiteLists.size(); ++i) {
 		if(Prereqs::ListContainsAll(List, pData->PrerequisiteLists[i])) {
 			return 1;
 		}
