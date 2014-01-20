@@ -112,7 +112,7 @@ public:
 		Valueable<bool> HijackerAllowed;
 		Valueable<bool> HijackerOneTime;
 
-		Customizable<UnitTypeClass *> WaterImage;
+		Valueable<UnitTypeClass *> WaterImage;
 
 		NullableIdx<VocClass> CloakSound;
 		NullableIdx<VocClass> DecloakSound;
