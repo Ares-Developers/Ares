@@ -25,7 +25,7 @@ void TechnoTypeExt::ExtData::Initialize(TechnoTypeClass *pThis) {
 	this->Survivors_PilotCount = -1; // defaults to (crew ? 1 : 0)
 
 	this->PrerequisiteLists.clear();
-	this->PrerequisiteLists.push_back(new DynamicVectorClass<int>);
+	this->PrerequisiteLists.push_back(std::move(make_unique<DynamicVectorClass<int>>()));
 
 	this->PrerequisiteTheaters = 0xFFFFFFFF;
 
@@ -120,17 +120,11 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	}
 	++PrereqListLen;
 	while(PrereqListLen > static_cast<int>(this->PrerequisiteLists.size())) {
-		this->PrerequisiteLists.push_back(new DynamicVectorClass<int>);
+		this->PrerequisiteLists.push_back(std::move(make_unique<DynamicVectorClass<int>>()));
 	}
-	while(PrereqListLen < static_cast<int>(this->PrerequisiteLists.size())) {
-		int index = this->PrerequisiteLists.size() - 1;
-		if(auto list = this->PrerequisiteLists.at(index)) {
-			delete list;
-		}
-		this->PrerequisiteLists.erase(this->PrerequisiteLists.begin() + index);
-	}
+	this->PrerequisiteLists.erase(this->PrerequisiteLists.begin() + PrereqListLen, this->PrerequisiteLists.end());
 
-	DynamicVectorClass<int> *dvc = this->PrerequisiteLists.at(0);
+	DynamicVectorClass<int> *dvc = this->PrerequisiteLists.at(0).get();
 	Prereqs::Parse(pINI, section, "Prerequisite", dvc);
 
 	dvc = &pThis->PrerequisiteOverride;
@@ -138,7 +132,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 
 	for(size_t i = 0; i < this->PrerequisiteLists.size(); ++i) {
 		_snprintf_s(flag, 255, "Prerequisite.List%d", i);
-		dvc = this->PrerequisiteLists.at(i);
+		dvc = this->PrerequisiteLists.at(i).get();
 		Prereqs::Parse(pINI, section, flag, dvc);
 	}
 
