@@ -3,6 +3,17 @@
 
 #include <Objidl.h>
 #include <vector>
+#include <memory>
+
+// replace when available in std. the #if should help to remember this.
+#if _MSC_VER <= 1800
+template<typename T, typename... Args>
+std::unique_ptr<T> make_unique(Args&&... args) {
+	return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
+}
+#else
+#error review me!
+#endif
 
 class AresByteStream {
 protected:
