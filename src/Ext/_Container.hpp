@@ -8,6 +8,7 @@
 #include <SwizzleManagerClass.h>
 
 #include "../Misc/Debug.h"
+#include "../Misc/Savegame.h"
 
 enum eInitState {
 	is_Blank = 0x0, // CTOR'd
@@ -106,6 +107,16 @@ class Extension {
 		virtual void Initialize(T *pThis) { };
 
 		virtual void InvalidatePointer(void *ptr, bool bRemoved) = 0;
+
+		virtual inline void SaveToStream(AresByteStream &Stm) {
+			Savegame::WriteAresStream(Stm, this->_Initialized);
+			//Savegame::WriteAresStream(pStm, this->AttachedToObject);
+		}
+
+		virtual inline void LoadFromStream(AresByteStream &Stm, size_t &Offset) {
+			Savegame::ReadAresStream(Stm, this->_Initialized, Offset);
+			//Savegame::ReadAresStream(Stm, this->AttachedToObject, Offset);
+		}
 
 	private:
 		void operator = (Extension &RHS) {
