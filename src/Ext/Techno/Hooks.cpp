@@ -141,7 +141,7 @@ DEFINE_HOOK(6F9E76, TechnoClass_Update_CheckOperators, 6)
 		// dropping Radar Jammers (#305) here for now; should check if another TechnoClass::Update hook might be better ~Ren
 		if(!!pTypeData->RadarJamRadius) {
 			if(!pData->RadarJam) {
-				pData->RadarJam = new JammerClass(pThis, pData);
+				pData->RadarJam = new JammerClass(pThis);
 			}
 
 			pData->RadarJam->Update();
