@@ -7,23 +7,17 @@
 #include <GameModeOptionsClass.h>
 
 template<> const DWORD Extension<RulesClass>::Canary = 0x12341234;
-RulesExt::ExtData * RulesExt::Data = nullptr;
+std::unique_ptr<RulesExt::ExtData> RulesExt::Data = nullptr;
 
 template<> RulesExt::TT *Container<RulesExt>::SavingObject = nullptr;
 template<> IStream *Container<RulesExt>::SavingStream = nullptr;
 
 void RulesExt::Allocate(RulesClass *pThis) {
-	if (Data) {
-		Remove(pThis);
-	}
-	Data = new RulesExt::ExtData(pThis);
+	Data = make_unique<RulesExt::ExtData>(pThis);
 }
 
 void RulesExt::Remove(RulesClass *pThis) {
-	if (Data) {
-		delete Data;
-		Data = nullptr;
-	}
+	Data = nullptr;
 }
 
 void RulesExt::LoadFromINIFile(RulesClass *pThis, CCINIClass *pINI) {

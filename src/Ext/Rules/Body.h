@@ -77,7 +77,7 @@ class RulesExt
 };
 
 private:
-	static ExtData *Data;
+	static std::unique_ptr<ExtData> Data;
 
 public:
 	static void Allocate(RulesClass *pThis);
@@ -89,7 +89,7 @@ public:
 
 	static ExtData* Global()
 	{
-		return Data;
+		return Data.get();
 	};
 
 	static DynamicVectorClass<CameoDataStruct> TabCameos[4];
