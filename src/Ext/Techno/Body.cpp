@@ -452,21 +452,14 @@ void TechnoExt::TransferAttachedEffects(TechnoClass *From, TechnoClass *To) {
 	TechnoExt::ExtData *FromExt = TechnoExt::ExtMap.Find(From);
 	TechnoExt::ExtData *ToExt = TechnoExt::ExtMap.Find(To);
 
-	for (size_t i=0; i < ToExt->AttachedEffects.size(); ++i) {
-		auto ToItem = ToExt->AttachedEffects.at(i);
-		ToItem->Destroy();
-		delete ToItem;
-	}
 	ToExt->AttachedEffects.clear();
 
 	// while recreation itself isn't the best idea, less hassle and more reliable
 	// list gets intact in the end
 	for (size_t i=0; i < FromExt->AttachedEffects.size(); i++) {
-		auto FromItem = FromExt->AttachedEffects.at(i);
+		auto &FromItem = FromExt->AttachedEffects.at(i);
 		FromItem->Type->Attach(To, FromItem->ActualDuration, FromItem->Invoker);
 		//FromItem->Type->Attach(To, FromItem->ActualDuration, FromItem->Invoker, FromItem->ActualDamageDelay);
-		FromItem->Destroy();
-		delete FromItem;
 	}
 
 	FromExt->AttachedEffects.clear();
@@ -490,8 +483,7 @@ void TechnoExt::RecalculateStats(TechnoClass *pTechno) {
 	//Debug::Log("[AttachEffect]Recalculating stats of %s...\n", pTechno->get_ID());
 
 	for (size_t i = 0; i < pTechnoExt->AttachedEffects.size(); i++) {
-		auto Item = pTechnoExt->AttachedEffects.at(i);
-		auto iType = Item->Type;
+		auto iType = pTechnoExt->AttachedEffects.at(i)->Type;
 		//do not use *= here... Valuable sends GetEx and repositions the double
 		Firepower = iType->FirepowerMultiplier * Firepower;
 		Speed = iType->SpeedMultiplier * Speed;
@@ -541,7 +533,9 @@ eAction TechnoExt::ExtData::GetDeactivatedAction(ObjectClass *Hovered) const {
 
 void TechnoExt::ExtData::InvalidateAttachEffectPointer(void *ptr) {
 	for(auto i = 0u; i < this->AttachedEffects.size(); ++i) {
-		this->AttachedEffects.at(i)->InvalidatePointer(ptr);
+		if(auto &Item = this->AttachedEffects.at(i)) {
+			Item->InvalidatePointer(ptr);
+		}
 	}
 }
 

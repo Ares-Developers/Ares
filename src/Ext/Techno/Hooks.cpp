@@ -263,7 +263,7 @@ DEFINE_HOOK(71A84E, TemporalClass_UpdateA, 5)
 	//AttachEffect handling under Temporal
 	if (!TargetExt->AttachEffects_RecreateAnims) {
 		for (auto i = TargetExt->AttachedEffects.size(); i > 0; --i) {
-			auto Effect = TargetExt->AttachedEffects.at(i - 1);
+			auto &Effect = TargetExt->AttachedEffects.at(i - 1);
 			if (!!Effect->Type->TemporalHidesAnim) {
 				Effect->KillAnim();
 			}
@@ -987,10 +987,8 @@ DEFINE_HOOK(6F6AC9, TechnoClass_Remove, 6) {
 		//auto pID = pThis->GetTechnoType()->ID;
 		for (auto i = TechnoExt->AttachedEffects.size(); i > 0; --i) {
 			//Debug::Log("[AttachEffect] Removing %d. item from %s\n", i - 1, pID);
-			auto Item = TechnoExt->AttachedEffects.at(i - 1);
+			auto &Item = TechnoExt->AttachedEffects.at(i - 1);
 			if (Item->Type->DiscardOnEntry) {
-				Item->Destroy();
-				delete Item;
 				TechnoExt->AttachedEffects.erase(TechnoExt->AttachedEffects.begin() + i - 1);
 				TechnoExt::RecalculateStats(pThis);
 			} else {

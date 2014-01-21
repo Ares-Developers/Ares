@@ -64,7 +64,7 @@ void AttachEffectTypeClass::Attach(TechnoClass* Target, int Duration, TechnoClas
 
 	if (!this->Cumulative) {
 		for (size_t i=0; i < TargetExt->AttachedEffects.size(); i++) {
-			auto Item = TargetExt->AttachedEffects.at(i);
+			auto &Item = TargetExt->AttachedEffects.at(i);
 			if (!strcmp(this->ID, Item->Type->ID)) {
 				Item->ActualDuration = Item->Type->Duration;
 
@@ -82,8 +82,8 @@ void AttachEffectTypeClass::Attach(TechnoClass* Target, int Duration, TechnoClas
 	}
 
 	// there goes the actual attaching
-	auto Attaching = new AttachEffectClass(this, Duration);
-	TargetExt->AttachedEffects.push_back(Attaching);
+	TargetExt->AttachedEffects.push_back(std::move(make_unique<AttachEffectClass>(this, Duration)));
+	auto &Attaching = TargetExt->AttachedEffects.back();
 
 	Attaching->Invoker = Invoker;
 
@@ -189,7 +189,7 @@ void AttachEffectClass::Update(TechnoClass *Source) {
 
 		//Debug::Log("[AttachEffect]AttachEffect update of %s...\n", Source->get_ID());
 		for (size_t i = pData->AttachedEffects.size(); i > 0; --i) {
-			auto Effect = pData->AttachedEffects.at(i - 1);
+			auto Effect = pData->AttachedEffects.at(i - 1).get();
 			if(Effect->ActualDuration > 0) {
 				--Effect->ActualDuration;
 			}
@@ -219,14 +219,12 @@ void AttachEffectClass::Update(TechnoClass *Source) {
 
 			if(!Effect->ActualDuration || (!strcmp(Effect->Type->ID, pType->ID) && Source->Deactivated)) {
 				//Debug::Log("[AttachEffect] %d. item expired, removing...\n", i - 1);
-				Effect->Destroy();
 
 				if (!strcmp(Effect->Type->ID, pType->ID)) {		//#1623, hardcodes Cumulative to false
 					pData->AttachedTechnoEffect_isset = false;
 					pData->AttachedTechnoEffect_Delay = Effect->Type->Delay;
 				}
 
-				delete Effect;
 				pData->AttachedEffects.erase(pData->AttachedEffects.begin() + i - 1);
 				TechnoExt::RecalculateStats(Source);	//and update the unit's properties
 				//Debug::Log("[AttachEffect] Remove #%d was successful.\n", i - 1);
