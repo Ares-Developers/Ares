@@ -20,6 +20,8 @@
 #include "../WeaponType/Body.h"
 #include "../TechnoType/Body.h"
 
+#include "../../Misc/JammerClass.h"
+
 #include "../_Container.hpp"
 
 //#include "../../Misc/JammerClass.h"
@@ -58,7 +60,7 @@ public:
 		HouseClass* HijackerHouse;
 
 		// 305 Radar Jammers
-		JammerClass* RadarJam;
+		std::unique_ptr<JammerClass> RadarJam;
 		
 		// issue #617 powered units
 		PoweredUnitClass* PoweredUnit;

@@ -141,7 +141,7 @@ DEFINE_HOOK(6F9E76, TechnoClass_Update_CheckOperators, 6)
 		// dropping Radar Jammers (#305) here for now; should check if another TechnoClass::Update hook might be better ~Ren
 		if(!!pTypeData->RadarJamRadius) {
 			if(!pData->RadarJam) {
-				pData->RadarJam = new JammerClass(pThis);
+				pData->RadarJam = std::move(make_unique<JammerClass>(pThis));
 			}
 
 			pData->RadarJam->Update();
@@ -258,10 +258,7 @@ DEFINE_HOOK(71A84E, TemporalClass_UpdateA, 5)
 	// Temporal should disable RadarJammers
 	auto Target = Temp->Target;
 	TechnoExt::ExtData * TargetExt = TechnoExt::ExtMap.Find(Target);
-	if(TargetExt->RadarJam) {
-		delete TargetExt->RadarJam;
-		TargetExt->RadarJam = nullptr;
-	}
+	TargetExt->RadarJam = nullptr;
 
 	//AttachEffect handling under Temporal
 	if (!TargetExt->AttachEffects_RecreateAnims) {
@@ -980,10 +977,7 @@ DEFINE_HOOK(6F6AC9, TechnoClass_Remove, 6) {
 	TechnoExt::ExtData* TechnoExt = TechnoExt::ExtMap.Find(pThis);
 
 	// if the removed object is a radar jammer, unjam all jammed radars
-	if(TechnoExt->RadarJam) {
-		delete TechnoExt->RadarJam;
-		TechnoExt->RadarJam = nullptr;
-	}
+	TechnoExt->RadarJam = nullptr;
 
 	// #617 powered units
 	if(TechnoExt->PoweredUnit)
