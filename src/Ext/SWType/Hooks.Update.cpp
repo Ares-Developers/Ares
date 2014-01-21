@@ -21,12 +21,8 @@ DEFINE_HOOK(50AF10, HouseClass_CheckSWs, 5)
 		bool PowerSourced;
 		bool Charging;
 	};
-	SWStatus *Statuses = new SWStatus[pThis->Supers.Count];
-	for(int i = 0; i < pThis->Supers.Count; ++i) {
-		Statuses[i].Available = false;
-		Statuses[i].PowerSourced = false;
-		Statuses[i].Charging = false;
-	}
+
+	std::vector<SWStatus> Statuses(pThis->Supers.Count, {false, false, false});
 
 	// look at every sane building this player owns, if it is not defeated already.
 	if(!pThis->Defeated) {
@@ -36,7 +32,7 @@ DEFINE_HOOK(50AF10, HouseClass_CheckSWs, 5)
 				TechnoExt::ExtData *pExt = TechnoExt::ExtMap.Find(pBld);
 
 				// the super weapon status update lambda.
-				auto UpdateStatus = [=](int idxSW) {
+				auto UpdateStatus = [&](int idxSW) {
 					if(idxSW > -1) {
 						Statuses[idxSW].Available = true;
 						if(!Statuses[idxSW].PowerSourced || !Statuses[idxSW].Charging) {
@@ -139,10 +135,6 @@ DEFINE_HOOK(50AF10, HouseClass_CheckSWs, 5)
 			}
 		}
 	}
-
-	// clean up.
-	delete [] Statuses;
-	Statuses = nullptr;
 
 	return 0x50B1CA;
 }
