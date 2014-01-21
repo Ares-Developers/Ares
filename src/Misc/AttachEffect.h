@@ -69,6 +69,10 @@ public:
 	AttachEffectClass(AttachEffectTypeClass* AEType, int Timer): Type(AEType), Animation(nullptr), ActualDuration(Timer), Invoker(nullptr) {
 	}
 
+	~AttachEffectClass() {
+		this->Destroy();
+	}
+
 	AttachEffectTypeClass * Type;
 	AnimClass * Animation;
 	int ActualDuration;
