@@ -262,8 +262,8 @@ DEFINE_HOOK(71A84E, TemporalClass_UpdateA, 5)
 
 	//AttachEffect handling under Temporal
 	if (!TargetExt->AttachEffects_RecreateAnims) {
-		for (int i = TargetExt->AttachedEffects.Count; i > 0; --i) {
-			auto Effect = TargetExt->AttachedEffects.GetItem(i - 1);
+		for (auto i = TargetExt->AttachedEffects.size(); i > 0; --i) {
+			auto Effect = TargetExt->AttachedEffects.at(i - 1);
 			if (!!Effect->Type->TemporalHidesAnim) {
 				Effect->KillAnim();
 			}
@@ -983,15 +983,15 @@ DEFINE_HOOK(6F6AC9, TechnoClass_Remove, 6) {
 	TechnoExt->PoweredUnit = nullptr;
 
 	//#1573, #1623, #255 attached effects
-	if (TechnoExt->AttachedEffects.Count) {
+	if (!TechnoExt->AttachedEffects.empty()) {
 		//auto pID = pThis->GetTechnoType()->ID;
-		for (int i = TechnoExt->AttachedEffects.Count; i > 0; --i) {
+		for (auto i = TechnoExt->AttachedEffects.size(); i > 0; --i) {
 			//Debug::Log("[AttachEffect] Removing %d. item from %s\n", i - 1, pID);
-			auto Item = TechnoExt->AttachedEffects.GetItem(i - 1);
+			auto Item = TechnoExt->AttachedEffects.at(i - 1);
 			if (Item->Type->DiscardOnEntry) {
 				Item->Destroy();
 				delete Item;
-				TechnoExt->AttachedEffects.RemoveItem(i - 1);
+				TechnoExt->AttachedEffects.erase(TechnoExt->AttachedEffects.begin() + i - 1);
 				TechnoExt::RecalculateStats(pThis);
 			} else {
 				Item->KillAnim();
