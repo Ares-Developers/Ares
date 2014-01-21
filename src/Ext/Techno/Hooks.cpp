@@ -63,7 +63,7 @@ DEFINE_HOOK(6F9E50, TechnoClass_Update, 5)
 	// #617 powered units
 	if(pTypeData && pTypeData->PoweredBy.size()) {
 		if(!pData->PoweredUnit) {
-			pData->PoweredUnit = new PoweredUnitClass(Source);
+			pData->PoweredUnit = std::move(make_unique<PoweredUnitClass>(Source));
 		}
 		if(!pData->PoweredUnit->Update()) {
 			TechnoExt::Destroy(Source);
@@ -980,11 +980,7 @@ DEFINE_HOOK(6F6AC9, TechnoClass_Remove, 6) {
 	TechnoExt->RadarJam = nullptr;
 
 	// #617 powered units
-	if(TechnoExt->PoweredUnit)
-	{
-		delete TechnoExt->PoweredUnit;
-		TechnoExt->PoweredUnit = nullptr;
-	}
+	TechnoExt->PoweredUnit = nullptr;
 
 	//#1573, #1623, #255 attached effects
 	if (TechnoExt->AttachedEffects.Count) {

@@ -21,6 +21,7 @@
 #include "../TechnoType/Body.h"
 
 #include "../../Misc/JammerClass.h"
+#include "../../Misc/PoweredUnitClass.h"
 
 #include "../_Container.hpp"
 
@@ -63,7 +64,7 @@ public:
 		std::unique_ptr<JammerClass> RadarJam;
 		
 		// issue #617 powered units
-		PoweredUnitClass* PoweredUnit;
+		std::unique_ptr<PoweredUnitClass> PoweredUnit;
 
 		//#1573, #1623, #255 Stat-modifiers/ongoing animations
 		DynamicVectorClass <AttachEffectClass *> AttachedEffects;
