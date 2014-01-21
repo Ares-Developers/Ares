@@ -63,7 +63,7 @@ DEFINE_HOOK(6F9E50, TechnoClass_Update, 5)
 	// #617 powered units
 	if(pTypeData && pTypeData->PoweredBy.size()) {
 		if(!pData->PoweredUnit) {
-			pData->PoweredUnit = new PoweredUnitClass(Source, pTypeData);
+			pData->PoweredUnit = new PoweredUnitClass(Source);
 		}
 		if(!pData->PoweredUnit->Update()) {
 			TechnoExt::Destroy(Source);
