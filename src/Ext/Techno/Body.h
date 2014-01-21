@@ -25,10 +25,6 @@
 
 #include "../_Container.hpp"
 
-//#include "../../Misc/JammerClass.h"
-class JammerClass;
-class PoweredUnitClass;
-
 class TechnoExt
 {
 public:
@@ -113,15 +109,9 @@ public:
 			Crate_Cloakable(false)
 			{
 				this->CloakSkipTimer.Stop();
-				// hope this works with the timing - I assume it does, since Types should be created before derivates thereof
-				//TechnoTypeExt::ExtData* TypeExt = TechnoTypeExt::ExtMap.Find(this->AttachedToObject->GetTechnoType());
-				/*if(TypeExt->RadarJamRadius) {
-					RadarJam = new JammerClass(this->AttachedToObject, this); // now in hooks -> TechnoClass_Update_CheckOperators
-				}*/
 			};
 
 		virtual ~ExtData() {
-			//delete RadarJam; // now in hooks -> TechnoClass_Remove
 		};
 
 		// when any pointer in the game expires, this is called - be sure to tell everyone we own to invalidate it
