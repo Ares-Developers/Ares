@@ -159,10 +159,14 @@ public:
 
 		// Lighting
 		Valueable<bool> Lighting_Enabled;
-		Customizable<int> Lighting_Ambient;
-		Customizable<int> Lighting_Green;
-		Customizable<int> Lighting_Blue;
-		Customizable<int> Lighting_Red;
+		Nullable<int> Lighting_Ambient;
+		Nullable<int> Lighting_Green;
+		Nullable<int> Lighting_Blue;
+		Nullable<int> Lighting_Red;
+		int ScenarioClass::* Lighting_DefaultAmbient;
+		int ScenarioClass::* Lighting_DefaultGreen;
+		int ScenarioClass::* Lighting_DefaultBlue;
+		int ScenarioClass::* Lighting_DefaultRed;
 
 		// Messages
 		Valueable<CSFText> Message_Detected;
@@ -224,6 +228,10 @@ public:
 			Text_Charging (),
 			Text_Active (),
 			Lighting_Enabled (true),
+			Lighting_DefaultAmbient (nullptr),
+			Lighting_DefaultGreen (nullptr),
+			Lighting_DefaultBlue (nullptr),
+			Lighting_DefaultRed (nullptr),
 			SW_Sound (-1),
 			SW_Anim (nullptr),
 			SW_AnimHeight (0),

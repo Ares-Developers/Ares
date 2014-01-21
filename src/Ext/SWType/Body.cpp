@@ -517,15 +517,16 @@ bool SWTypeExt::ChangeLighting(SuperWeaponTypeClass *pThis) {
 
 bool SWTypeExt::ExtData::ChangeLighting() {
 	if(this->Lighting_Enabled) {
-		auto getValue = [](int value, int def) -> int {
+		auto getValue = [](Nullable<int> &item, int ScenarioClass::* pDefMember, int def) -> int {
+			int value = item.Get(pDefMember ? ScenarioClass::Instance->*pDefMember : -1);
 			return (value < 0) ? def : value;
 		};
 
 		ScenarioClass* scen = ScenarioClass::Instance;
-		scen->AmbientTarget = getValue(this->Lighting_Ambient, scen->AmbientOriginal);
-		int cG = 1000 * getValue(this->Lighting_Green, scen->Green) / 100;
-		int cB = 1000 * getValue(this->Lighting_Blue, scen->Blue)  / 100;
-		int cR = 1000 * getValue(this->Lighting_Red, scen->Red)  / 100;
+		scen->AmbientTarget = getValue(this->Lighting_Ambient, this->Lighting_DefaultAmbient, scen->AmbientOriginal);
+		int cG = 1000 * getValue(this->Lighting_Green, this->Lighting_DefaultGreen, scen->Green) / 100;
+		int cB = 1000 * getValue(this->Lighting_Blue, this->Lighting_DefaultBlue, scen->Blue) / 100;
+		int cR = 1000 * getValue(this->Lighting_Red, this->Lighting_DefaultRed, scen->Red) / 100;
 		scen->RecalcLighting(cR, cG, cB, 1);
 		return true;
 	}
