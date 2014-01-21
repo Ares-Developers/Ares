@@ -22,6 +22,10 @@ class JammerClass {
 	JammerClass(TechnoClass* GameObject) : LastScan(0), AttachedToObject(GameObject) {
 	}
 
+	~JammerClass() {
+		this->UnjamAll();
+	}
+
 	void UnjamAll();						//!< Unregisters this Jammer on all structures.
 	void Update();							//!< Updates this Jammer's status on all eligible structures.
 };

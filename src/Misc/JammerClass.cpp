@@ -69,9 +69,6 @@ void JammerClass::Unjam(BuildingClass* TargetBuilding) {
 
 void JammerClass::UnjamAll() {
 	for(int i = 0; i < BuildingClass::Array->Count; ++i) {
-		BuildingExt::ExtData* TheBuildingExt = BuildingExt::ExtMap.Find(BuildingClass::Array->GetItem(i));
-
-		TheBuildingExt->RegisteredJammers.erase(this->AttachedToObject);
-		TheBuildingExt->AttachedToObject->Owner->RadarBlackout = true;
+		this->Unjam(BuildingClass::Array->GetItem(i));
 	}
 }

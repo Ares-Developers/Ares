@@ -259,7 +259,6 @@ DEFINE_HOOK(71A84E, TemporalClass_UpdateA, 5)
 	auto Target = Temp->Target;
 	TechnoExt::ExtData * TargetExt = TechnoExt::ExtMap.Find(Target);
 	if(TargetExt->RadarJam) {
-		TargetExt->RadarJam->UnjamAll();
 		delete TargetExt->RadarJam;
 		TargetExt->RadarJam = nullptr;
 	}
@@ -982,7 +981,6 @@ DEFINE_HOOK(6F6AC9, TechnoClass_Remove, 6) {
 
 	// if the removed object is a radar jammer, unjam all jammed radars
 	if(TechnoExt->RadarJam) {
-		TechnoExt->RadarJam->UnjamAll();
 		delete TechnoExt->RadarJam;
 		TechnoExt->RadarJam = nullptr;
 	}
