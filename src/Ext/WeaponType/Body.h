@@ -37,9 +37,9 @@ public:
 	{
 	public:
 		// static defaults
-		static ColorStruct DefaultWaveColor;
-		static ColorStruct DefaultWaveColorSonic;
-		static ColorStruct DefaultWaveColorMagBeam;
+		static const ColorStruct DefaultWaveColor;
+		static const ColorStruct DefaultWaveColorSonic;
+		static const ColorStruct DefaultWaveColorMagBeam;
 
 		// Generic
 		bool Weapon_Loaded;
