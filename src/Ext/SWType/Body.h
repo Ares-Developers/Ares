@@ -301,7 +301,7 @@ class ParadropPlane {
 public:
 	Valueable<AircraftTypeClass*> Aircraft;
 	TypeList<TechnoTypeClass*> pTypes;
-	TypeList<int> pNum;
+	ValueableVector<int> Num;
 
 	ParadropPlane() : Aircraft (nullptr)
 	{

@@ -25,7 +25,7 @@ void SW_ParaDrop::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pS
 		}
 
 		for(int i = 0; i < RulesClass::Instance->AmerParaDropNum.Count; ++i) {
-			pPlane->pNum.AddItem(RulesClass::Instance->AmerParaDropNum.GetItem(i));
+			pPlane->Num.push_back(RulesClass::Instance->AmerParaDropNum.GetItem(i));
 		}
 	}
 
@@ -109,14 +109,7 @@ void SW_ParaDrop::LoadFromINI(
 
 		// the number how many times each item is created
 		_snprintf_s(key, 0x3F, "%s.Num", base);
-		if(pINI->ReadString(section, key, "", Ares::readBuffer, Ares::readLength)) {
-			pPlane->pNum.Clear();
-
-			char* context = nullptr;
-			for(char* p = strtok_s(Ares::readBuffer, Ares::readDelims, &context); p && *p; p = strtok_s(nullptr, Ares::readDelims, &context)) {
-				pPlane->pNum.AddItem(atoi(p));
-			}
-		}
+		pPlane->Num.Read(&exINI, section, key);
 
 		return pPlane;
 	};
@@ -279,9 +272,9 @@ bool SW_ParaDrop::SendParadrop(SuperClass* pThis, CellClass* pCell) {
 
 						// get the contents, if not already set
 						if(!ParaDropTypes || !ParaDropNum) {
-							if((pPlane->pTypes.Count != 0) && (pPlane->pNum.Count != 0)) {
+							if((pPlane->pTypes.Count != 0) && !pPlane->Num.empty()) {
 								ParaDropTypes = pPlane->pTypes;
-								ParaDropNum = pPlane->pNum;
+								ParaDropNum = pPlane->Num;
 							}
 						}
 
