@@ -522,7 +522,7 @@ DEFINE_HOOK(53A140, LightningStorm_Strike, 7) {
 		pCell->GetCoordsWithBridge(&Coords);
 		
 		// create a cloud animation
-		if(Coords != LightningStorm::EmptyCoords) {
+		if(Coords != CoordStruct::Empty) {
 			// select the anim
 			auto itClouds = pData->Weather_Clouds.GetElements(RulesClass::Instance->WeatherConClouds);
 			AnimTypeClass* pAnimType = itClouds.at(ScenarioClass::Instance->Random.Random() % itClouds.size());
@@ -566,7 +566,7 @@ DEFINE_HOOK(53A300, LightningStorm_Strike2, 5) {
 		CellClass* pCell = MapClass::Instance->GetCellAt(Coords);
 		pCell->GetCoordsWithBridge(&Coords);
 
-		if(Coords != LightningStorm::EmptyCoords) {
+		if(Coords != CoordStruct::Empty) {
 
 			// create a bolt animation
 			if(auto it = pData->Weather_Bolts.GetElements(RulesClass::Instance->WeatherConBolts)) {
