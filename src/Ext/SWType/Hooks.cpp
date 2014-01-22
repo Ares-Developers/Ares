@@ -556,7 +556,7 @@ DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
 			if(AIFire || pExt->SW_AutoFire) {
 
 				if(pSuper->IsCharged) {
-					CellStruct Cell = HouseClass::DefaultIonCannonCoords;
+					CellStruct Cell = CellStruct::Empty;
 					auto LaunchSW = [&](const CellStruct &Cell) {
 						int idxSW = pThis->Supers.FindItemIndex(pSuper);
 						pThis->Fire_SW(idxSW, Cell);
@@ -574,7 +574,7 @@ DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
 					case SuperWeaponAITargetingMode::Nuke:
 						{
 							if(pThis->EnemyHouseIndex != -1) {
-								if(pThis->PreferredTargetCell == HouseClass::DefaultIonCannonCoords) {
+								if(pThis->PreferredTargetCell == CellStruct::Empty) {
 									Cell = *((pThis->PreferredTargetType == TargetType::Anything)
 										? pThis->PickIonCannonTarget(Cell)
 										: pThis->PickTargetByType(&Cell, pThis->PreferredTargetType));
@@ -582,7 +582,7 @@ DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
 									Cell = pThis->PreferredTargetCell;
 								}
 
-								if(Cell != HouseClass::DefaultIonCannonCoords) {
+								if(Cell != CellStruct::Empty) {
 									LaunchSW(Cell);
 								}
 							}
@@ -615,8 +615,8 @@ DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
 
 					case SuperWeaponAITargetingMode::ForceShield:
 						{
-							if(pThis->PreferredDefensiveCell2 == HouseClass::DefaultIonCannonCoords) {
-								if(pThis->PreferredDefensiveCell != HouseClass::DefaultIonCannonCoords
+							if(pThis->PreferredDefensiveCell2 == CellStruct::Empty) {
+								if(pThis->PreferredDefensiveCell != CellStruct::Empty
 									&& RulesClass::Instance->AISuperDefenseFrames + pThis->PreferredDefensiveCellStartTime > Unsorted::CurrentFrame) {
 									Cell = pThis->PreferredDefensiveCell;
 								}
@@ -624,9 +624,9 @@ DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
 								Cell = pThis->PreferredDefensiveCell2;
 							}
 
-							if(Cell != HouseClass::DefaultIonCannonCoords) {
+							if(Cell != CellStruct::Empty) {
 								LaunchSW(Cell);
-								pThis->PreferredDefensiveCell = HouseClass::DefaultIonCannonCoords;
+								pThis->PreferredDefensiveCell = CellStruct::Empty;
 							}
 							break;
 						}
@@ -635,7 +635,7 @@ DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
 						{
 							if(pThis->EnemyHouseIndex != -1 && pExt->IsHouseAffected(pThis, HouseClass::Array->GetItem(pThis->EnemyHouseIndex))) {
 								pThis->PickIonCannonTarget(Cell);
-								if(Cell != HouseClass::DefaultIonCannonCoords) {
+								if(Cell != CellStruct::Empty) {
 									LaunchSW(Cell);
 								}
 							}
