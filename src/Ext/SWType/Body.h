@@ -70,7 +70,7 @@ public:
 		Valueable<bool> Nuke_SiloLaunch;
 
 		// Generic Paradrop
-		hash_map<AbstractTypeClass*, DynamicVectorClass<ParadropPlane*>> ParaDrop;
+		hash_map<AbstractTypeClass*, std::vector<ParadropPlane*>> ParaDrop;
 		std::vector<std::unique_ptr<ParadropPlane>> ParaDropPlanes;
 
 		// Generic Protection

@@ -18,7 +18,7 @@ void SW_ParaDrop::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pS
 		pData->ParaDropPlanes.push_back(std::move(make_unique<ParadropPlane>()));
 
 		ParadropPlane* pPlane = pData->ParaDropPlanes.back().get();
-		pData->ParaDrop[nullptr].AddItem(pPlane);
+		pData->ParaDrop[nullptr].push_back(pPlane);
 
 		for(int i = 0; i < RulesClass::Instance->AmerParaDropInf.Count; ++i) {
 			pPlane->pTypes.AddItem((RulesClass::Instance->AmerParaDropInf.GetItem(i)));
@@ -127,21 +127,17 @@ void SW_ParaDrop::LoadFromINI(
 		return pPlane;
 	};
 
-	auto GetParadropPlane = [&](char *pID, int defCount, DynamicVectorClass<ParadropPlane*>* ret) {
+	auto GetParadropPlane = [&](char *pID, int defCount, std::vector<ParadropPlane*> &ret) {
 		// get the number of planes for this house or side
 		char key[0x40];
 		_snprintf_s(key, 0x3F, "%s.Count", pID);
 		int count = pINI->ReadInteger(section, key, defCount);
 
 		// parse every plane
-		ret->SetCapacity(count, nullptr);
+		ret.resize(count, nullptr);
 		for(int i=0; i<count; ++i) {
-			if(i>=ret->Count) {
-				ret->AddItem(nullptr);
-			}
-
 			if(auto pPlane = ParseParaDrop(base, i)) {
-				ret->Items[i] = pPlane.get();
+				ret[i] = pPlane.get();
 				pData->ParaDropPlanes.push_back(std::move(pPlane));
 			}
 		}
@@ -154,20 +150,20 @@ void SW_ParaDrop::LoadFromINI(
 
 	// default
 	CreateParaDropBase(nullptr, base);
-	GetParadropPlane(base, 1, &pData->ParaDrop[nullptr]);
+	GetParadropPlane(base, 1, pData->ParaDrop[nullptr]);
 
 	// put all sides into the hash table
 	for(int i=0; i<SideClass::Array->Count; ++i) {
 		SideClass *pSide = SideClass::Array->GetItem(i);
 		CreateParaDropBase(pSide->ID, base);
-		GetParadropPlane(base, pData->ParaDrop[nullptr].Count, &pData->ParaDrop[pSide]);
+		GetParadropPlane(base, pData->ParaDrop[nullptr].size(), pData->ParaDrop[pSide]);
 	}
 
 	// put all countries into the hash table
 	for(int i=0; i<HouseTypeClass::Array->Count; ++i) {
 		HouseTypeClass *pTHouse = HouseTypeClass::Array->GetItem(i);
 		CreateParaDropBase(pTHouse->ID, base);
-		GetParadropPlane(base, pData->ParaDrop[SideClass::Array->GetItem(pTHouse->SideIndex)].Count, &pData->ParaDrop[pTHouse]);
+		GetParadropPlane(base, pData->ParaDrop[SideClass::Array->GetItem(pTHouse->SideIndex)].size(), pData->ParaDrop[pTHouse]);
 	}
 }
 
@@ -235,7 +231,7 @@ bool SW_ParaDrop::SendParadrop(SuperClass* pThis, CellClass* pCell) {
 	}
 
 	// get the paradrop list without creating a new value
-	auto GetParadropPlanes = [pData](AbstractTypeClass* pKey) -> DynamicVectorClass<ParadropPlane*>* {
+	auto GetParadropPlanes = [pData](AbstractTypeClass* pKey) -> std::vector<ParadropPlane*>* {
 		if(pData->ParaDrop.find(pKey) == pData->ParaDrop.end()) {
 			return nullptr;
 		}
@@ -243,7 +239,7 @@ bool SW_ParaDrop::SendParadrop(SuperClass* pThis, CellClass* pCell) {
 	};
 
 	// use paradrop lists from house, side and default
-	DynamicVectorClass<ParadropPlane*>* drops[3];
+	std::vector<ParadropPlane*>* drops[3];
 	drops[0] = GetParadropPlanes(pHouse->Type);
 	drops[1] = GetParadropPlanes(SideClass::Array->GetItem(pHouse->Type->SideIndex));
 	drops[2] = GetParadropPlanes(nullptr);
@@ -252,7 +248,7 @@ bool SW_ParaDrop::SendParadrop(SuperClass* pThis, CellClass* pCell) {
 	int count = 0;
 	for(int i=0; i<3; ++i) {
 		if(drops[i]) {
-			count = drops[i]->Count;
+			count = drops[i]->size();
 			break;
 		}
 	}
@@ -277,14 +273,15 @@ bool SW_ParaDrop::SendParadrop(SuperClass* pThis, CellClass* pCell) {
 				// only do something if there is data missing
 				if(!(ParaDropTypes && ParaDropNum && pParaDropPlane)) {
 					// get the country/side-specific plane list
-					DynamicVectorClass<ParadropPlane*> *planes = drops[k];
-					if(!planes) {
+					auto planes = drops[k];
+					size_t index = i * j;
+
+					if(!planes || planes->size() <= index) {
 						continue;
 					}
 
 					// get the plane at specified index
-					int index = i * j;
-					if(ParadropPlane* pPlane = planes->GetItemOrDefault(index)) {
+					if(ParadropPlane* pPlane = planes->at(index)) {
 
 						// get the contents, if not already set
 						if(!ParaDropTypes || !ParaDropNum) {
