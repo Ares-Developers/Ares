@@ -78,13 +78,7 @@ void SW_ParaDrop::LoadFromINI(
 
 		// parse the plane contents
 		_snprintf_s(key, 0x3F, "%s.Aircraft", base);
-		if(pINI->ReadString(section, key, "", Ares::readBuffer, Ares::readLength)) {
-			if(AircraftTypeClass* pTAircraft = AircraftTypeClass::Find(Ares::readBuffer)) {
-				pPlane->pAircraft = pTAircraft;
-			} else {
-				Debug::INIParseFailed(section, key, Ares::readBuffer);
-			}
-		}
+		pPlane->Aircraft.Parse(&exINI, section, key);
 
 		// a list of UnitTypes and InfantryTypes
 		_snprintf_s(key, 0x3F, "%s.Types", base);
@@ -109,7 +103,7 @@ void SW_ParaDrop::LoadFromINI(
 		}
 
 		// don't parse nums if there are no types
-		if(!pPlane->pAircraft && !pPlane->pTypes.Count) {
+		if(!pPlane->Aircraft && !pPlane->pTypes.Count) {
 			return nullptr;
 		}
 
@@ -293,9 +287,7 @@ bool SW_ParaDrop::SendParadrop(SuperClass* pThis, CellClass* pCell) {
 
 						// get the airplane, if it isn't set already
 						if(!pParaDropPlane) {
-							if(AircraftTypeClass* pTAircraft = pPlane->pAircraft) {
-								pParaDropPlane = pTAircraft;
-							}
+							pParaDropPlane = pPlane->Aircraft;
 						}
 					}
 				}

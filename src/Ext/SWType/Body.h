@@ -299,11 +299,11 @@ public:
 
 class ParadropPlane {
 public:
-	AircraftTypeClass *pAircraft;
+	Valueable<AircraftTypeClass*> Aircraft;
 	TypeList<TechnoTypeClass*> pTypes;
 	TypeList<int> pNum;
 
-	ParadropPlane() : pAircraft (nullptr)
+	ParadropPlane() : Aircraft (nullptr)
 	{
 	}
 };
