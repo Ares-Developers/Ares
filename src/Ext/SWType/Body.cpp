@@ -24,9 +24,9 @@ SuperWeaponTypeClass *SWTypeExt::CurrentSWType = nullptr;
 SWTypeExt::ExtData::~ExtData() {
 	this->ParaDrop.clear();
 
-	for(int i=this->ParaDropPlanes.Count-1; i>=0; --i) {
-		delete this->ParaDropPlanes.Items[i];
-		this->ParaDropPlanes.Items[i] = nullptr;
+	for(auto i = this->ParaDropPlanes.size(); i > 0; --i) {
+		delete this->ParaDropPlanes[i - 1];
+		this->ParaDropPlanes[i - 1] = nullptr;
 	}
 };
 

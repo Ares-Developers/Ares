@@ -16,7 +16,7 @@ void SW_ParaDrop::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pS
 		// the American paradrop will be the same for every country,
 		// thus we use the SW's default here.
 		ParadropPlane* pPlane = new ParadropPlane();
-		pData->ParaDropPlanes.AddItem(pPlane);
+		pData->ParaDropPlanes.push_back(pPlane);
 		pData->ParaDrop[nullptr].AddItem(pPlane);
 
 		for(int i = 0; i < RulesClass::Instance->AmerParaDropInf.Count; ++i) {
@@ -147,7 +147,7 @@ void SW_ParaDrop::LoadFromINI(
 			
 			ParadropPlane* pPlane = ParseParaDrop(base, i);
 			if(pPlane) {
-				pData->ParaDropPlanes.AddItem(pPlane);
+				pData->ParaDropPlanes.push_back(pPlane);
 				ret->Items[i] = pPlane;
 			}
 		}

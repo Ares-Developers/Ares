@@ -71,7 +71,7 @@ public:
 
 		// Generic Paradrop
 		hash_map<AbstractTypeClass*, DynamicVectorClass<ParadropPlane*>> ParaDrop;
-		DynamicVectorClass<ParadropPlane*> ParaDropPlanes;
+		std::vector<ParadropPlane*> ParaDropPlanes;
 
 		// Generic Protection
 		Nullable<int> Protect_Duration;
