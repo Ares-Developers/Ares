@@ -159,7 +159,7 @@ bool SW_ParaDrop::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
 				int a2 = 0;
 				int a14 = 0;
 				CellStruct *nearest = MapClass::Instance->Pathfinding_Find(&a2, pCoords, 0, -1, 0, 0, 1, 1, 0, 0, 0, 1, &a14, 0, 0);
-				if(*nearest != SuperClass::DefaultCoords) {
+				if(*nearest != CellStruct::Empty) {
 					if(CellClass *pTemp = MapClass::Instance->GetCellAt(*nearest)) {
 						if(pTemp != MapClass::InvalidCell()) {
 							if(!pTemp->Tile_Is_Water()) {
