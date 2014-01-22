@@ -4,6 +4,8 @@
 
 #include <SideClass.h>
 
+#include <algorithm>
+
 bool SW_ParaDrop::HandlesType(int type)
 {
 	return (type == SuperWeaponType::ParaDrop) || (type == SuperWeaponType::AmerParaDrop);
@@ -21,7 +23,7 @@ void SW_ParaDrop::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pS
 		pData->ParaDrop[nullptr].push_back(pPlane);
 
 		for(int i = 0; i < RulesClass::Instance->AmerParaDropInf.Count; ++i) {
-			pPlane->pTypes.AddItem((RulesClass::Instance->AmerParaDropInf.GetItem(i)));
+			pPlane->Types.push_back((RulesClass::Instance->AmerParaDropInf.GetItem(i)));
 		}
 
 		for(int i = 0; i < RulesClass::Instance->AmerParaDropNum.Count; ++i) {
@@ -82,28 +84,21 @@ void SW_ParaDrop::LoadFromINI(
 
 		// a list of UnitTypes and InfantryTypes
 		_snprintf_s(key, 0x3F, "%s.Types", base);
-		if(pINI->ReadString(section, key, "", Ares::readBuffer, Ares::readLength)) {
-			// parse the types
-			pPlane->pTypes.Clear();
+		pPlane->Types.Read(&exINI, section, key);
 
-			char* context = nullptr;
-			for(char* p = strtok_s(Ares::readBuffer, Ares::readDelims, &context); p && *p; p = strtok_s(nullptr, Ares::readDelims, &context)) {
-				TechnoTypeClass* pTT = UnitTypeClass::Find(p);
-
-				if(!pTT) {
-					pTT = InfantryTypeClass::Find(p);
-				}
-
-				if(pTT) {
-					pPlane->pTypes.AddItem(pTT);
-				} else {
-					Debug::INIParseFailed(section, key, p);
-				}
+		// remove all types that aren't either infantry or unit types
+		pPlane->Types.erase(std::remove_if(pPlane->Types.begin(), pPlane->Types.end(), [section, &key](TechnoTypeClass* pItem) -> bool {
+			auto abs = pItem->WhatAmI();
+			if(abs == InfantryTypeClass::AbsID || abs == UnitTypeClass::AbsID) {
+				return false;
 			}
-		}
+
+			Debug::INIParseFailed(section, key, pItem->ID, "Only InfantryTypes and UnitTypes are supported.");
+			return true;
+		}), pPlane->Types.end());
 
 		// don't parse nums if there are no types
-		if(!pPlane->Aircraft && !pPlane->pTypes.Count) {
+		if(!pPlane->Aircraft && pPlane->Types.empty()) {
 			return nullptr;
 		}
 
@@ -272,8 +267,8 @@ bool SW_ParaDrop::SendParadrop(SuperClass* pThis, CellClass* pCell) {
 
 						// get the contents, if not already set
 						if(!ParaDropTypes || !ParaDropNum) {
-							if((pPlane->pTypes.Count != 0) && !pPlane->Num.empty()) {
-								ParaDropTypes = pPlane->pTypes;
+							if(!pPlane->Types.empty() && !pPlane->Num.empty()) {
+								ParaDropTypes = pPlane->Types;
 								ParaDropNum = pPlane->Num;
 							}
 						}
