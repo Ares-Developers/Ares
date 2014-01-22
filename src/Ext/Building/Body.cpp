@@ -415,7 +415,7 @@ void BuildingExt::KickOutHospitalArmory(BuildingClass *pThis)
 {
 	if(pThis->Type->Hospital || pThis->Type->Armory) {
 		if(FootClass * Passenger = pThis->Passengers.RemoveFirstPassenger()) {
-			pThis->KickOutUnit(Passenger, BuildingClass::DefaultCellCoords);
+			pThis->KickOutUnit(Passenger, CellStruct::Empty);
 		}
 	}
 }
@@ -815,11 +815,9 @@ void BuildingExt::ExtData::KickOutClones(TechnoClass * Production) {
 
 	auto &CloningSources = ProductionTypeData->ClonedAt;
 
-	auto KickOutCoords = reinterpret_cast<CellStruct *>(0x89C818);
-
-	auto KickOutClone = [KickOutCoords, ProductionType, FactoryOwner](BuildingClass *B) -> void {
+	auto KickOutClone = [ProductionType, FactoryOwner](BuildingClass *B) -> void {
 		auto Clone = reinterpret_cast<TechnoClass *>(ProductionType->CreateObject(FactoryOwner));
-		if(B->KickOutUnit(Clone, *KickOutCoords) != KickOutResult::Succeeded) {
+		if(B->KickOutUnit(Clone, CellStruct::Empty) != KickOutResult::Succeeded) {
 			Clone->UnInit();
 		}
 	};
