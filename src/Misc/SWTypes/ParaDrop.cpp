@@ -52,13 +52,13 @@ void SW_ParaDrop::LoadFromINI(
 
 	char base[0x40];
 
-	auto CreateParaDropBase = [](char* pID, char* pBuffer) {
+	auto CreateParaDropBase = [](char* pID, char* pBuffer, size_t cbBuffer) {
 		// put a string like "Paradrop.Americans" into the buffer
 		if(pBuffer) {
-			AresCRT::strCopy(pBuffer, "ParaDrop", 9);
 			if(pID && strlen(pID)) {
-				AresCRT::strCopy(&pBuffer[8], ".", 2);
-				AresCRT::strCopy(&pBuffer[9], pID, 0x18);
+				_snprintf_s(pBuffer, cbBuffer, cbBuffer - 1, "ParaDrop.%s", pID);
+			} else {
+				AresCRT::strCopy(pBuffer, "ParaDrop", cbBuffer);
 			}
 		}
 	};
@@ -70,8 +70,7 @@ void SW_ParaDrop::LoadFromINI(
 		// an empty string for the first plane for this is the default.
 		char plane[0x10] = "";
 		if(Plane) {
-			AresCRT::strCopy(plane, ".Plane");
-			_itoa_s(Plane + 1, &plane[6], 10, 10);
+			_snprintf_s(plane, 0xF, ".Plane%d", Plane + 1);
 		}
 		
 		// construct the full tag name base
@@ -131,20 +130,20 @@ void SW_ParaDrop::LoadFromINI(
 	// n+1 to n+m+1: m countries
 
 	// default
-	CreateParaDropBase(nullptr, base);
+	CreateParaDropBase(nullptr, base, sizeof(base));
 	GetParadropPlane(base, 1, pData->ParaDrop[nullptr]);
 
 	// put all sides into the hash table
 	for(int i=0; i<SideClass::Array->Count; ++i) {
 		SideClass *pSide = SideClass::Array->GetItem(i);
-		CreateParaDropBase(pSide->ID, base);
+		CreateParaDropBase(pSide->ID, base, sizeof(base));
 		GetParadropPlane(base, pData->ParaDrop[nullptr].size(), pData->ParaDrop[pSide]);
 	}
 
 	// put all countries into the hash table
 	for(int i=0; i<HouseTypeClass::Array->Count; ++i) {
 		HouseTypeClass *pTHouse = HouseTypeClass::Array->GetItem(i);
-		CreateParaDropBase(pTHouse->ID, base);
+		CreateParaDropBase(pTHouse->ID, base, sizeof(base));
 		GetParadropPlane(base, pData->ParaDrop[SideClass::Array->GetItem(pTHouse->SideIndex)].size(), pData->ParaDrop[pTHouse]);
 	}
 }
