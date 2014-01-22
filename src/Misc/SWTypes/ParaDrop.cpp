@@ -15,8 +15,9 @@ void SW_ParaDrop::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pS
 	if(pSW->Type == SuperWeaponType::AmerParaDrop) {
 		// the American paradrop will be the same for every country,
 		// thus we use the SW's default here.
-		ParadropPlane* pPlane = new ParadropPlane();
-		pData->ParaDropPlanes.push_back(pPlane);
+		pData->ParaDropPlanes.push_back(std::move(make_unique<ParadropPlane>()));
+
+		ParadropPlane* pPlane = pData->ParaDropPlanes.back().get();
 		pData->ParaDrop[nullptr].AddItem(pPlane);
 
 		for(int i = 0; i < RulesClass::Instance->AmerParaDropInf.Count; ++i) {
@@ -60,8 +61,8 @@ void SW_ParaDrop::LoadFromINI(
 		}
 	};
 
-	auto ParseParaDrop = [&](char* pID, int Plane) -> ParadropPlane* {
-		ParadropPlane* pPlane = nullptr;
+	auto ParseParaDrop = [&](char* pID, int Plane) -> std::unique_ptr<ParadropPlane> {
+		auto pPlane = make_unique<ParadropPlane>();
 
 		// create the plane part of this request. this will be
 		// an empty string for the first plane for this is the default.
@@ -79,7 +80,6 @@ void SW_ParaDrop::LoadFromINI(
 		_snprintf_s(key, 0x3F, "%s.Aircraft", base);
 		if(pINI->ReadString(section, key, "", Ares::readBuffer, Ares::readLength)) {
 			if(AircraftTypeClass* pTAircraft = AircraftTypeClass::Find(Ares::readBuffer)) {
-				pPlane = new ParadropPlane();
 				pPlane->pAircraft = pTAircraft;
 			} else {
 				Debug::INIParseFailed(section, key, Ares::readBuffer);
@@ -89,11 +89,6 @@ void SW_ParaDrop::LoadFromINI(
 		// a list of UnitTypes and InfantryTypes
 		_snprintf_s(key, 0x3F, "%s.Types", base);
 		if(pINI->ReadString(section, key, "", Ares::readBuffer, Ares::readLength)) {
-			// create new plane if there is none yet
-			if(!pPlane) {
-				pPlane = new ParadropPlane();
-			}
-
 			// parse the types
 			pPlane->pTypes.Clear();
 
@@ -114,8 +109,8 @@ void SW_ParaDrop::LoadFromINI(
 		}
 
 		// don't parse nums if there are no types
-		if(!pPlane || !pPlane->pTypes.Count) {
-			return pPlane;
+		if(!pPlane->pAircraft && !pPlane->pTypes.Count) {
+			return nullptr;
 		}
 
 		// the number how many times each item is created
@@ -144,11 +139,10 @@ void SW_ParaDrop::LoadFromINI(
 			if(i>=ret->Count) {
 				ret->AddItem(nullptr);
 			}
-			
-			ParadropPlane* pPlane = ParseParaDrop(base, i);
-			if(pPlane) {
-				pData->ParaDropPlanes.push_back(pPlane);
-				ret->Items[i] = pPlane;
+
+			if(auto pPlane = ParseParaDrop(base, i)) {
+				ret->Items[i] = pPlane.get();
+				pData->ParaDropPlanes.push_back(std::move(pPlane));
 			}
 		}
 	};
