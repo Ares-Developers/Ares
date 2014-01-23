@@ -159,11 +159,9 @@ bool SW_ParaDrop::Activate(SuperClass* pThis, const CellStruct &Coords, bool IsP
 				CellStruct nearest = MapClass::Instance->Pathfinding_Find(Coords, SpeedType::Foot, -1, MovementZone::Normal,
 					false, 1, 1, false, false, false, true, CellStruct::Empty, false, false);
 				if(nearest != CellStruct::Empty) {
-					if(CellClass *pTemp = MapClass::Instance->GetCellAt(nearest)) {
-						if(pTemp != MapClass::InvalidCell()) {
-							if(!pTemp->Tile_Is_Water()) {
-								pTarget = pTemp;
-							}
+					if(CellClass *pTemp = MapClass::Instance->TryGetCellAt(nearest)) {
+						if(!pTemp->Tile_Is_Water()) {
+							pTarget = pTemp;
 						}
 					}
 				}
