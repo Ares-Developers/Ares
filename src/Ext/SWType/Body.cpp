@@ -437,8 +437,12 @@ bool SWTypeExt::ExtData::IsTypeRedirected() const {
 	return this->HandledByNewSWType > -1;
 }
 
+int SWTypeExt::ExtData::GetTypeIndexWithRedirect() const {
+	return this->IsTypeRedirected() ? this->HandledByNewSWType : this->AttachedToObject->Type;
+}
+
 NewSWType* SWTypeExt::ExtData::GetNewSWType() {
-	int TypeIdx = (this->IsTypeRedirected() ? this->HandledByNewSWType : this->AttachedToObject->Type);
+	int TypeIdx = this->GetTypeIndexWithRedirect();
 	RET_UNLESS(TypeIdx >= FIRST_SW_TYPE);
 
 	if(NewSWType* pSW = NewSWType::GetNthItem(TypeIdx)) {

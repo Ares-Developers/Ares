@@ -9,7 +9,7 @@ DEFINE_HOOK(6CEF84, SuperWeaponTypeClass_GetCursorOverObject, 7)
 	GET(SuperWeaponTypeClass*, pThis, ECX);
 
 	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pThis);
-	int type = pData->IsTypeRedirected() ? pData->HandledByNewSWType : pThis->Type;
+	int type = pData->GetTypeIndexWithRedirect();
 	bool customType = (type >= FIRST_SW_TYPE);
 
 	if((pThis->Action == SW_YES_CURSOR) || customType) {
@@ -62,7 +62,7 @@ DEFINE_HOOK(653B3A, RadarClass_GetMouseAction_CustomSWAction, 5)
 
 		SuperWeaponTypeClass *pThis = SuperWeaponTypeClass::Array->GetItem(idxSWType);
 		SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pThis);
-		int type = pData->IsTypeRedirected() ? pData->HandledByNewSWType : pThis->Type;
+		int type = pData->GetTypeIndexWithRedirect();
 		bool customType = (type >= FIRST_SW_TYPE);
 
 		if((pThis->Action == SW_YES_CURSOR) || customType) {
