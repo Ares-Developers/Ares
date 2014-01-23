@@ -269,7 +269,7 @@ void Ares::SendPDPlane(HouseClass* pOwner, CellClass* pTarget, AircraftTypeClass
 
 		// seems to retrieve a random cell struct at a given edge
 		CellStruct spawn_cell = MapClass::Instance->PickCellOnEdge(edge, CellStruct::Empty,
-			CellStruct::Empty, SpeedType::Winged, true, mz_Normal);
+			CellStruct::Empty, SpeedType::Winged, true, MovementZone::Normal);
 
 		pPlane->QueueMission(mission_ParadropApproach, false);
 

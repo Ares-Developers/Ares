@@ -625,10 +625,10 @@ DEFINE_HOOK(718871, TeleportLocomotionClass_UnfreezeObject_SinkOrSwim, 7)
 	GET(TechnoTypeClass *, Type, EAX);
 
 	switch(Type->MovementZone) {
-		case mz_Amphibious:
-		case mz_AmphibiousCrusher:
-		case mz_AmphibiousDestroyer:
-		case mz_WaterBeach:
+		case MovementZone::Amphibious:
+		case MovementZone::AmphibiousCrusher:
+		case MovementZone::AmphibiousDestroyer:
+		case MovementZone::WaterBeach:
 			R->BL(1);
 			return 0x7188B1;
 	}
