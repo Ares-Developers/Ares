@@ -29,7 +29,7 @@ DEFINE_HOOK(6CEF84, SuperWeaponTypeClass_GetCursorOverObject, 7)
 
 		// new SW types have to check whether the coordinates are valid.
 		if(Action == SW_YES_CURSOR) {
-			if(customType && !NewSWType::GetNthItem(type)->CanFireAt(pData, pMapCoords)) {
+			if(customType && !NewSWType::GetNthItem(type)->CanFireAt(pData, *pMapCoords)) {
 				Action = SW_NO_CURSOR;
 			}
 		}
@@ -66,13 +66,13 @@ DEFINE_HOOK(653B3A, RadarClass_GetMouseAction_CustomSWAction, 5)
 		bool customType = (type >= FIRST_SW_TYPE);
 
 		if((pThis->Action == SW_YES_CURSOR) || customType) {
-			GET_STACK(CellStruct, pMapCoords, STACK_OFFS(0x54, 0x3C));
+			GET_STACK(CellStruct, MapCoords, STACK_OFFS(0x54, 0x3C));
 
 			int Action = SW_YES_CURSOR;
 
 			// prevent firing into shroud
 			if(!pData->SW_FireToShroud) {
-				CellClass* pCell = MapClass::Instance->GetCellAt(pMapCoords);
+				CellClass* pCell = MapClass::Instance->GetCellAt(MapCoords);
 				CoordStruct Crd = pCell->GetCoords();
 
 				if(MapClass::Instance->IsLocationShrouded(Crd)) {
@@ -82,7 +82,7 @@ DEFINE_HOOK(653B3A, RadarClass_GetMouseAction_CustomSWAction, 5)
 
 			// new SW types have to check whether the coordinates are valid.
 			if(Action == SW_YES_CURSOR) {
-				if(customType && !NewSWType::GetNthItem(type)->CanFireAt(pData, &pMapCoords)) {
+				if(customType && !NewSWType::GetNthItem(type)->CanFireAt(pData, MapCoords)) {
 					Action = SW_NO_CURSOR;
 				}
 			}
