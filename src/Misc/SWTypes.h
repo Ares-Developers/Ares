@@ -26,7 +26,7 @@ class NewSWType
 		static void Init();
 
 		virtual bool CanFireAt(SWTypeExt::ExtData *pSWType, CellStruct* pCoords)
-			{ return pSWType->CanFireAt(pCoords); }
+			{ return pSWType->CanFireAt(*pCoords); }
 
 		virtual bool AbortFire(SuperClass* pSW, bool IsPlayer)
 			{ return false; }

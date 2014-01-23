@@ -299,8 +299,8 @@ bool SWTypeExt::ExtData::IsTechnoAffected(TechnoClass* pTechno) {
 	return true;
 }
 
-bool SWTypeExt::ExtData::CanFireAt(CellStruct *pCoords) {
-	if(CellClass *pCell = MapClass::Instance->GetCellAt(*pCoords)) {
+bool SWTypeExt::ExtData::CanFireAt(const CellStruct &Coords) {
+	if(CellClass *pCell = MapClass::Instance->GetCellAt(Coords)) {
 
 		// check cell type
 		if(!IsCellEligible(pCell, this->SW_RequiresTarget)) {

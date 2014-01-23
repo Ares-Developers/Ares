@@ -268,7 +268,7 @@ public:
 
 		bool ChangeLighting();
 		bool IsAnimVisible(HouseClass* pFirer);
-		bool CanFireAt(CellStruct *pCoords);
+		bool CanFireAt(const CellStruct &Coords);
 		bool IsHouseAffected(HouseClass* pFirer, HouseClass* pHouse);
 		bool IsHouseAffected(HouseClass* pFirer, HouseClass* pHouse, SuperWeaponAffectedHouse::Value value);
 		bool IsTechnoAffected(TechnoClass* pTechno);
