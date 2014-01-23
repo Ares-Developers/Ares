@@ -276,6 +276,7 @@ public:
 		NewSWType* GetNewSWType();
 
 		bool IsOriginalType() const;
+		bool IsTypeRedirected() const;
 
 		double GetChargeToDrainRatio() const;
 

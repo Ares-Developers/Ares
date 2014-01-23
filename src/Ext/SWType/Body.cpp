@@ -432,8 +432,13 @@ bool SWTypeExt::ExtData::IsOriginalType() const {
 	return this->AttachedToObject->Type < FIRST_SW_TYPE;
 }
 
+// is this an original type handled by a NewSWType?
+bool SWTypeExt::ExtData::IsTypeRedirected() const {
+	return this->HandledByNewSWType > -1;
+}
+
 NewSWType* SWTypeExt::ExtData::GetNewSWType() {
-	int TypeIdx = (this->HandledByNewSWType != -1 ? this->HandledByNewSWType : this->AttachedToObject->Type);
+	int TypeIdx = (this->IsTypeRedirected() ? this->HandledByNewSWType : this->AttachedToObject->Type);
 	RET_UNLESS(TypeIdx >= FIRST_SW_TYPE);
 
 	if(NewSWType* pSW = NewSWType::GetNthItem(TypeIdx)) {

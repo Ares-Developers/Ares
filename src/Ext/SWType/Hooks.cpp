@@ -9,7 +9,7 @@ DEFINE_HOOK(6CEF84, SuperWeaponTypeClass_GetCursorOverObject, 7)
 	GET(SuperWeaponTypeClass*, pThis, ECX);
 
 	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pThis);
-	int type = (pData->HandledByNewSWType > -1) ? pData->HandledByNewSWType : pThis->Type;
+	int type = pData->IsTypeRedirected() ? pData->HandledByNewSWType : pThis->Type;
 	bool customType = (type >= FIRST_SW_TYPE);
 
 	if((pThis->Action == SW_YES_CURSOR) || customType) {
@@ -62,7 +62,7 @@ DEFINE_HOOK(653B3A, RadarClass_GetMouseAction_CustomSWAction, 5)
 
 		SuperWeaponTypeClass *pThis = SuperWeaponTypeClass::Array->GetItem(idxSWType);
 		SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pThis);
-		int type = (pData->HandledByNewSWType > -1) ? pData->HandledByNewSWType : pThis->Type;
+		int type = pData->IsTypeRedirected() ? pData->HandledByNewSWType : pThis->Type;
 		bool customType = (type >= FIRST_SW_TYPE);
 
 		if((pThis->Action == SW_YES_CURSOR) || customType) {
@@ -297,7 +297,7 @@ DEFINE_HOOK(446937, BuildingClass_AnnounceSW, 6)
 
 	pData->PrintMessage(pData->Message_Detected, pBuild->Owner);
 
-	if(pData->EVA_Detected != -1 || pData->HandledByNewSWType != -1) {
+	if(pData->EVA_Detected != -1 || pData->IsTypeRedirected()) {
 		if(pData->EVA_Detected != -1) {
 			VoxClass::PlayIndex(pData->EVA_Detected);
 		}
@@ -315,7 +315,7 @@ DEFINE_HOOK(6CBDD7, SuperClass_AnnounceReady, 6)
 
 	pData->PrintMessage(pData->Message_Ready, HouseClass::Player);
 
-	if(pData->EVA_Ready != -1 || pData->HandledByNewSWType != -1) {
+	if(pData->EVA_Ready != -1 || pData->IsTypeRedirected()) {
 		if(pData->EVA_Ready != -1) {
 			VoxClass::PlayIndex(pData->EVA_Ready);
 		}
@@ -333,7 +333,7 @@ DEFINE_HOOK(6CC0EA, SuperClass_AnnounceQuantity, 9)
 
 	pData->PrintMessage(pData->Message_Ready, HouseClass::Player);
 
-	if(pData->EVA_Ready != -1 || pData->HandledByNewSWType != -1) {
+	if(pData->EVA_Ready != -1 || pData->IsTypeRedirected()) {
 		if(pData->EVA_Ready != -1) {
 			VoxClass::PlayIndex(pData->EVA_Ready);
 		}
@@ -852,7 +852,7 @@ DEFINE_HOOK(6CEEB0, SuperWeaponTypeClass_FindFirstOfAction, 8) {
 				break;
 			} else {
 				if(SWTypeExt::ExtData* pExt = SWTypeExt::ExtMap.Find(pType)) {
-					if(pExt->HandledByNewSWType > -1) {
+					if(pExt->IsTypeRedirected()) {
 						if(NewSWType *swt = NewSWType::GetNthItem(pExt->HandledByNewSWType)) {
 							if(swt->HandlesType(SuperWeaponType::Nuke)) {
 								R->EAX(pType);
