@@ -275,6 +275,8 @@ public:
 		void PrintMessage(const CSFText& message, HouseClass* pFirer);
 		NewSWType* GetNewSWType();
 
+		bool IsOriginalType() const;
+
 		double GetChargeToDrainRatio() const;
 
 		virtual void InvalidatePointer(void *ptr, bool bRemoved) {

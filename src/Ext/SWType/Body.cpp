@@ -85,7 +85,7 @@ void SWTypeExt::ExtData::LoadFromRulesFile(SuperWeaponTypeClass *pThis, CCINICla
 
 	// find a NewSWType that handles this original one.
 	int idxNewSWType = pThis->Type;
-	if(pThis->Type < FIRST_SW_TYPE) {
+	if(this->IsOriginalType()) {
 		this->HandledByNewSWType = NewSWType::FindHandler(pThis->Type);
 		idxNewSWType = this->HandledByNewSWType;
 	}
@@ -200,7 +200,7 @@ void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass
 	}
 
 	// find a NewSWType that handles this original one.
-	int idxNewSWType = ((pThis->Type < FIRST_SW_TYPE) ? this->HandledByNewSWType : pThis->Type);
+	int idxNewSWType = (this->IsOriginalType() ? this->HandledByNewSWType : pThis->Type);
 
 	// initialize the NewSWType that handles this SWType.
 	int Type = idxNewSWType - FIRST_SW_TYPE;
@@ -426,6 +426,10 @@ bool SWTypeExt::Launch(SuperClass* pThis, NewSWType* pSW, CellStruct* pCoords, b
 	}
 
 	return false;
+}
+
+bool SWTypeExt::ExtData::IsOriginalType() const {
+	return this->AttachedToObject->Type < FIRST_SW_TYPE;
 }
 
 NewSWType* SWTypeExt::ExtData::GetNewSWType() {
