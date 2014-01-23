@@ -84,18 +84,14 @@ void SWTypeExt::ExtData::LoadFromRulesFile(SuperWeaponTypeClass *pThis, CCINICla
 	}
 
 	// find a NewSWType that handles this original one.
-	int idxNewSWType = pThis->Type;
 	if(this->IsOriginalType()) {
 		this->HandledByNewSWType = NewSWType::FindHandler(pThis->Type);
-		idxNewSWType = this->HandledByNewSWType;
 	}
 
 	// if this is handled by a NewSWType, initialize it.
-	if(idxNewSWType != -1) {
+	if(auto pNewSWType = this->GetNewSWType()) {
 		pThis->Action = SW_YES_CURSOR;
-		if(NewSWType *swt = NewSWType::GetNthItem(idxNewSWType)) {
-			swt->Initialize(this, pThis);
-		}
+		pNewSWType->Initialize(this, pThis);
 	}
 	this->LastAction = pThis->Action;
 }
@@ -199,20 +195,15 @@ void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass
 		AresCRT::strCopy(this->SW_PostDependent, Ares::readBuffer);
 	}
 
-	// find a NewSWType that handles this original one.
-	int idxNewSWType = this->GetNewTypeIndex();
-
 	// initialize the NewSWType that handles this SWType.
-	int Type = idxNewSWType - FIRST_SW_TYPE;
-	if(Type >= 0 && Type < NewSWType::Array.Count) {
+	if(auto pNewSWType = this->GetNewSWType()) {
 		pThis->Action = this->LastAction;
-		NewSWType *swt = NewSWType::GetNthItem(idxNewSWType);
-		swt->LoadFromINI(this, pThis, pINI);
+		pNewSWType->LoadFromINI(this, pThis, pINI);
 		this->LastAction = pThis->Action;
 
 		// whatever the user does, we take care of the stupid tags.
 		// there is no need to have them not hardcoded.
-		SuperWeaponFlags::Value flags = swt->Flags();
+		SuperWeaponFlags::Value flags = pNewSWType->Flags();
 		pThis->PreClick = ((flags & SuperWeaponFlags::PreClick) != 0);
 		pThis->PostClick = ((flags & SuperWeaponFlags::PostClick) != 0);
 		pThis->PreDependent = -1;
@@ -446,7 +437,7 @@ int SWTypeExt::ExtData::GetNewTypeIndex() const {
 	return this->IsOriginalType() ? this->HandledByNewSWType : this->AttachedToObject->Type;
 }
 
-NewSWType* SWTypeExt::ExtData::GetNewSWType() {
+NewSWType* SWTypeExt::ExtData::GetNewSWType() const {
 	int TypeIdx = this->GetNewTypeIndex();
 
 	if(TypeIdx >= FIRST_SW_TYPE) {

@@ -273,8 +273,8 @@ public:
 		bool IsHouseAffected(HouseClass* pFirer, HouseClass* pHouse, SuperWeaponAffectedHouse::Value value);
 		bool IsTechnoAffected(TechnoClass* pTechno);
 		void PrintMessage(const CSFText& message, HouseClass* pFirer);
-		NewSWType* GetNewSWType();
 
+		NewSWType* GetNewSWType() const;
 		bool IsOriginalType() const;
 		bool IsTypeRedirected() const;
 		int GetTypeIndexWithRedirect() const;

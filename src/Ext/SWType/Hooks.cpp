@@ -852,12 +852,10 @@ DEFINE_HOOK(6CEEB0, SuperWeaponTypeClass_FindFirstOfAction, 8) {
 				break;
 			} else {
 				if(SWTypeExt::ExtData* pExt = SWTypeExt::ExtMap.Find(pType)) {
-					if(pExt->IsTypeRedirected()) {
-						if(NewSWType *swt = NewSWType::GetNthItem(pExt->HandledByNewSWType)) {
-							if(swt->HandlesType(SuperWeaponType::Nuke)) {
-								R->EAX(pType);
-								break;
-							}
+					if(NewSWType *pNewSWType = pExt->GetNewSWType()) {
+						if(pNewSWType->HandlesType(SuperWeaponType::Nuke)) {
+							R->EAX(pType);
+							break;
 						}
 					}
 				}
