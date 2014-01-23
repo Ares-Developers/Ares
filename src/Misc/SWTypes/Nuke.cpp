@@ -75,14 +75,14 @@ void SW_NuclearMissile::LoadFromINI(
 	Debug::Log("%d\n", pData->Nuke_SiloLaunch.Get());	
 }
 
-bool SW_NuclearMissile::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
+bool SW_NuclearMissile::Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer)
 {
 	if(pThis->IsCharged) {
 		SuperWeaponTypeClass *pType = pThis->Type;
 
 		if(SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pType)) {
 
-			CellClass* pCell = MapClass::Instance->GetCellAt(*pCoords);
+			CellClass* pCell = MapClass::Instance->GetCellAt(Coords);
 			CoordStruct target;
 			pCell->GetCoordsWithBridge(&target);
 
@@ -116,7 +116,7 @@ bool SW_NuclearMissile::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPl
 				pSilo->QueueMission(mission_Missile, false);
 				pSilo->NextMission();
 
-				pThis->Owner->NukeTarget = *pCoords;
+				pThis->Owner->NukeTarget = Coords;
 				fired = true;
 			}
 
@@ -165,7 +165,7 @@ bool SW_NuclearMissile::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPl
 				// allies can see the target location before the enemy does
 				if(pData->SW_RadarEvent) {
 					if(pThis->Owner->IsAlliedWith(HouseClass::Player)) {
-						RadarEventClass::Create(RadarEventType::SuperweaponActivated, *pCoords);
+						RadarEventClass::Create(RadarEventType::SuperweaponActivated, Coords);
 					}
 				}
 

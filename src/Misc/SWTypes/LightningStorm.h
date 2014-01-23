@@ -21,7 +21,7 @@ class SW_LightningStorm : NewSWType
 			SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI);
 		virtual void Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW);
 		virtual bool AbortFire(SuperClass* pSW, bool IsPlayer);
-		virtual bool Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer);
+		virtual bool Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer);
 		virtual bool HandlesType(int type);
 		virtual SuperWeaponFlags::Value Flags();
 

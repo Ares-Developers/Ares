@@ -329,7 +329,7 @@ bool SWTypeExt::Launch(SuperClass* pThis, NewSWType* pSW, CellStruct* pCoords, b
 
 		// launch the SW, then play sounds and animations. if the SW isn't launched
 		// nothing will be played.
-		if(pSW->Launch(pThis, pCoords, IsPlayer)) {
+		if(pSW->Activate(pThis, *pCoords, IsPlayer != 0)) {
 			SuperWeaponFlags::Value flags = pSW->Flags();
 
 			if(flags & SuperWeaponFlags::PostClick) {

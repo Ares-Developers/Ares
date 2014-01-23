@@ -28,13 +28,13 @@ void SW_Reveal::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)
 	pData->SW_Cursor = MouseCursor::First[MouseCursorType::PsychicReveal];
 }
 
-bool SW_Reveal::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
+bool SW_Reveal::Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer)
 {
 	SuperWeaponTypeClass *pSW = pThis->Type;
 	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSW);
 	
 	if(pThis->IsCharged) {
-		CellClass *pTarget = MapClass::Instance->GetCellAt(*pCoords);
+		CellClass *pTarget = MapClass::Instance->GetCellAt(Coords);
 		
 		CoordStruct Crd = pTarget->GetCoords();
 
@@ -42,7 +42,7 @@ bool SW_Reveal::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
 		int height = pData->SW_Height;
 
 		// default way to reveal, but reveal one cell at a time.
-		Helpers::Alex::for_each_in_rect_or_range<CellClass>(*pCoords, width, height,
+		Helpers::Alex::for_each_in_rect_or_range<CellClass>(Coords, width, height,
 			[&](CellClass* pCell) -> bool {
 				CoordStruct Crd2 = pCell->GetCoords();
 				MapClass::Instance->RevealArea2(&Crd2, 1, pThis->Owner, 0, 0, 0, 0, 0);

@@ -6,7 +6,7 @@ void SW_GenericWarhead::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeCla
 	pData->SW_AITargetingType = SuperWeaponAITargetingMode::Offensive;
 }
 
-bool SW_GenericWarhead::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
+bool SW_GenericWarhead::Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer)
 {
 	SuperWeaponTypeClass *pType = pThis->Type;
 	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pType);
@@ -17,7 +17,7 @@ bool SW_GenericWarhead::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPl
 	}
 
 	CoordStruct coords;
-	CellClass *Cell = MapClass::Instance->GetCellAt(*pCoords);
+	CellClass *Cell = MapClass::Instance->GetCellAt(Coords);
 	Cell->GetCoordsWithBridge(&coords);
 
 	auto pWHExt = WarheadTypeExt::ExtMap.Find(pData->SW_Warhead);

@@ -39,7 +39,7 @@ void SW_SonarPulse::LoadFromINI(
 	}
 }
 
-bool SW_SonarPulse::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
+bool SW_SonarPulse::Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer)
 {
 	SuperWeaponTypeClass *pType = pThis->Type;
 	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pType);
@@ -83,12 +83,12 @@ bool SW_SonarPulse::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 	} else {
 		// decloak everything in range
 		Helpers::Alex::DistinctCollector<TechnoClass*> items;
-		Helpers::Alex::for_each_in_rect_or_range<TechnoClass>(*pCoords, width, height, std::ref(items));
+		Helpers::Alex::for_each_in_rect_or_range<TechnoClass>(Coords, width, height, std::ref(items));
 		items.for_each(Detect);
 
 		// radar event only if this isn't full map sonar
 		if(pData->SW_RadarEvent) {
-			RadarEventClass::Create(RadarEventType::SuperweaponActivated, *pCoords);
+			RadarEventClass::Create(RadarEventType::SuperweaponActivated, Coords);
 		}
 	}
 

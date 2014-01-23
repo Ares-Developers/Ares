@@ -75,16 +75,16 @@ void SW_ChronoSphere::LoadFromINI(
 	pData->SW_AffectsTarget = (pData->SW_AffectsTarget | SuperWeaponTarget::Building);
 }
 
-bool SW_ChronoSphere::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
+bool SW_ChronoSphere::Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer)
 {
 	SuperWeaponTypeClass *pSW = pThis->Type;
 	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSW);
 
 	if(pThis->IsCharged) {
-		CellClass *pTarget = MapClass::Instance->GetCellAt(*pCoords);
+		CellClass *pTarget = MapClass::Instance->GetCellAt(Coords);
 
 		// remember the current source position
-		pThis->ChronoMapCoords = *pCoords;
+		pThis->ChronoMapCoords = Coords;
 
 		// position to play the animation at
 		CoordStruct coords = pTarget->GetCoords();

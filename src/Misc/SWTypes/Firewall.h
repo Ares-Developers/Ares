@@ -25,7 +25,7 @@ public:
 		pData->SW_RadarEvent = false;
 		// what can we possibly configure here... warhead/damage inflicted? anims?
 	};
-	virtual bool Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer);
+	virtual bool Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer);
 
 	static int FirewallTypeIndex;
 };

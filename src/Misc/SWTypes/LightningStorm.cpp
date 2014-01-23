@@ -97,7 +97,7 @@ bool SW_LightningStorm::AbortFire(SuperClass* pSW, bool IsPlayer) {
 	return false;
 }
 
-bool SW_LightningStorm::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
+bool SW_LightningStorm::Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer)
 {
 	if(pThis->IsCharged) {
 		// the only thing we do differently is to remember which
@@ -105,7 +105,7 @@ bool SW_LightningStorm::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPl
 		// by hooks.
 		if(SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pThis->Type)) {
 			CurrentLightningStorm = pThis;
-			LightningStorm::Start(pData->Weather_Duration, pData->SW_Deferment, *pCoords, pThis->Owner);
+			LightningStorm::Start(pData->Weather_Duration, pData->SW_Deferment, Coords, pThis->Owner);
 			return true;
 		}
 	}

@@ -21,7 +21,7 @@ void SW_UnitDelivery::LoadFromINI(
 	pData->SW_DeliverBuildups.Read(&exINI, section, "Deliver.Buildups");
 }
 
-bool SW_UnitDelivery::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
+bool SW_UnitDelivery::Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer)
 {
 	SuperWeaponTypeClass *pSW = pThis->Type;
 	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSW);
@@ -31,9 +31,9 @@ bool SW_UnitDelivery::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlay
 		deferment = 20;
 	}
 
-	this->newStateMachine(deferment, *pCoords, pThis);
+	this->newStateMachine(deferment, Coords, pThis);
 
-	return 1;
+	return true;
 }
 
 void UnitDeliveryStateMachine::Update() {

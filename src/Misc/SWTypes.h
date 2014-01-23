@@ -31,7 +31,7 @@ class NewSWType
 		virtual bool AbortFire(SuperClass* pSW, bool IsPlayer)
 			{ return false; }
 
-		virtual bool Launch(SuperClass* pSW, CellStruct* pCoords, byte IsPlayer) = 0;
+		virtual bool Activate(SuperClass* pSW, const CellStruct &Coords, bool IsPlayer) = 0;
 
 		virtual void Initialize(
 			SWTypeExt::ExtData *pData,

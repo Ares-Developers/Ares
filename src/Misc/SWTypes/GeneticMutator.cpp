@@ -59,13 +59,13 @@ void SW_GeneticMutator::LoadFromINI(
 	pData->SW_AffectsTarget = pData->SW_AffectsTarget | SuperWeaponTarget::AllTechnos;
 }
 
-bool SW_GeneticMutator::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
+bool SW_GeneticMutator::Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer)
 {
 	SuperWeaponTypeClass *pSW = pThis->Type;
 	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSW);
 
 	CoordStruct coords;
-	CellClass *Cell = MapClass::Instance->GetCellAt(*pCoords);
+	CellClass *Cell = MapClass::Instance->GetCellAt(Coords);
 	Cell->GetCoordsWithBridge(&coords);
 	
 	if(pThis->IsCharged) {
@@ -112,7 +112,7 @@ bool SW_GeneticMutator::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPl
 
 			// find everything in range and mutate it
 			Helpers::Alex::DistinctCollector<InfantryClass*> items;
-			Helpers::Alex::for_each_in_rect_or_range<InfantryClass>(*pCoords, pData->SW_WidthOrRange, pData->SW_Height, std::ref(items));
+			Helpers::Alex::for_each_in_rect_or_range<InfantryClass>(Coords, pData->SW_WidthOrRange, pData->SW_Height, std::ref(items));
 			items.for_each(Mutate);
 		}
 	}

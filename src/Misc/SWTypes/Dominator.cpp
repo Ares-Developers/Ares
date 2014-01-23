@@ -85,13 +85,13 @@ bool SW_PsychicDominator::AbortFire(SuperClass* pSW, bool IsPlayer) {
 	return false;
 }
 
-bool SW_PsychicDominator::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
+bool SW_PsychicDominator::Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer)
 {
 	if(pThis->IsCharged) {
 		// we do not use PsyDom::Start() here. instead, we set a global state and
 		// let the state machine take care of everything.
 		SW_PsychicDominator::CurrentPsyDom = pThis;
-		this->newStateMachine(*pCoords, pThis);
+		this->newStateMachine(Coords, pThis);
 	}
 
 	return true;

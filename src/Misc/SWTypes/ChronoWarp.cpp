@@ -26,7 +26,7 @@ void SW_ChronoWarp::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *
 	pData->SW_Cursor = MouseCursor::First[MouseCursorType::Chronosphere];
 }
 
-bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
+bool SW_ChronoWarp::Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer)
 {
 	// get the previous super weapon
 	SuperClass* pSource = nullptr;
@@ -42,12 +42,12 @@ bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 			// add radar events for source and target
 			if(pData->SW_RadarEvent) {
 				RadarEventClass::Create(RadarEventType::SuperweaponActivated, pSource->ChronoMapCoords);
-				RadarEventClass::Create(RadarEventType::SuperweaponActivated, *pCoords);
+				RadarEventClass::Create(RadarEventType::SuperweaponActivated, Coords);
 			}
 
 			// cell and coords calculations
 			CellClass *pCellSource = MapClass::Instance->GetCellAt(pSource->ChronoMapCoords);
-			CellClass *pCellTarget = MapClass::Instance->GetCellAt(*pCoords);
+			CellClass *pCellTarget = MapClass::Instance->GetCellAt(Coords);
 
 			CoordStruct coordsSource;
 			pCellSource->GetCoordsWithBridge(&coordsSource);
@@ -210,12 +210,12 @@ bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 				// get the cells and coordinates
 				CoordStruct coordsUnitSource = pTechno->GetCoords();
 				CoordStruct coordsUnitTarget = coordsUnitSource;
-				CellStruct cellUnitTarget = pTechno->GetCell()->MapCoords - pSource->ChronoMapCoords + *pCoords;
+				CellStruct cellUnitTarget = pTechno->GetCell()->MapCoords - pSource->ChronoMapCoords + Coords;
 				CellClass* pCellUnitTarget = MapClass::Instance->GetCellAt(cellUnitTarget);
 				
 				// move the unit to the new position
-				coordsUnitTarget.X = coordsUnitSource.X + (pCoords->X - pSource->ChronoMapCoords.X) * 256;
-				coordsUnitTarget.Y = coordsUnitSource.Y + (pCoords->Y - pSource->ChronoMapCoords.Y) * 256;
+				coordsUnitTarget.X = coordsUnitSource.X + (Coords.X - pSource->ChronoMapCoords.X) * 256;
+				coordsUnitTarget.Y = coordsUnitSource.Y + (Coords.Y - pSource->ChronoMapCoords.Y) * 256;
 				pCellUnitTarget->FixHeight(&coordsUnitTarget);
 
 				if(FootClass *pFoot = generic_cast<FootClass*>(pTechno)) {
@@ -269,7 +269,7 @@ bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 			items.for_each(Chronoport);
 
 			if(RegisteredBuildings.Count) {
-				this->newStateMachine(RulesClass::Instance->ChronoDelay + 1, *pCoords, pSource, this, &RegisteredBuildings);
+				this->newStateMachine(RulesClass::Instance->ChronoDelay + 1, Coords, pSource, this, &RegisteredBuildings);
 			}
 
 			return true;

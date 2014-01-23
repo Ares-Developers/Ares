@@ -62,13 +62,13 @@ void SW_Protect::LoadFromINI(
 	pData->Protect_PlayFadeSoundTime.Read(&exINI, section, "Protect.PlayFadeSoundTime");
 }
 
-bool SW_Protect::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
+bool SW_Protect::Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer)
 {
 	SuperWeaponTypeClass *pSW = pThis->Type;
 	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSW);
 
 	if(pThis->IsCharged) {
-		CellClass *pTarget = MapClass::Instance->GetCellAt(*pCoords);
+		CellClass *pTarget = MapClass::Instance->GetCellAt(Coords);
 		CoordStruct Crd = pTarget->GetCoords();
 
 		bool isForceShield = pData->Protect_IsForceShield;
@@ -125,7 +125,7 @@ bool SW_Protect::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
 
 		// protect everything in range
 		Helpers::Alex::DistinctCollector<TechnoClass*> items;
-		Helpers::Alex::for_each_in_rect_or_range<TechnoClass>(*pCoords, width, height, std::ref(items));
+		Helpers::Alex::for_each_in_rect_or_range<TechnoClass>(Coords, width, height, std::ref(items));
 		items.for_each(IronCurtain);
 	}
 
