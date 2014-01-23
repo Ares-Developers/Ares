@@ -200,7 +200,7 @@ void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass
 	}
 
 	// find a NewSWType that handles this original one.
-	int idxNewSWType = (this->IsOriginalType() ? this->HandledByNewSWType : pThis->Type);
+	int idxNewSWType = this->GetNewTypeIndex();
 
 	// initialize the NewSWType that handles this SWType.
 	int Type = idxNewSWType - FIRST_SW_TYPE;
@@ -441,12 +441,16 @@ int SWTypeExt::ExtData::GetTypeIndexWithRedirect() const {
 	return this->IsTypeRedirected() ? this->HandledByNewSWType : this->AttachedToObject->Type;
 }
 
-NewSWType* SWTypeExt::ExtData::GetNewSWType() {
-	int TypeIdx = this->GetTypeIndexWithRedirect();
-	RET_UNLESS(TypeIdx >= FIRST_SW_TYPE);
+int SWTypeExt::ExtData::GetNewTypeIndex() const {
+	// if new type, return new type, if original type return only if handled (else it's -1).
+	return this->IsOriginalType() ? this->HandledByNewSWType : this->AttachedToObject->Type;
+}
 
-	if(NewSWType* pSW = NewSWType::GetNthItem(TypeIdx)) {
-		return pSW;
+NewSWType* SWTypeExt::ExtData::GetNewSWType() {
+	int TypeIdx = this->GetNewTypeIndex();
+
+	if(TypeIdx >= FIRST_SW_TYPE) {
+		return NewSWType::GetNthItem(TypeIdx);
 	}
 
 	return nullptr;

@@ -278,6 +278,7 @@ public:
 		bool IsOriginalType() const;
 		bool IsTypeRedirected() const;
 		int GetTypeIndexWithRedirect() const;
+		int GetNewTypeIndex() const;
 
 		double GetChargeToDrainRatio() const;
 
