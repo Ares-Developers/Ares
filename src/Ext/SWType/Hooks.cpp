@@ -421,7 +421,7 @@ DEFINE_HOOK(6CC390, SuperClass_Launch, 6)
 {
 	GET(SuperClass *, pSuper, ECX);
 	GET_STACK(CellStruct*, pCoords, 0x4);
-	GET_STACK(byte, IsPlayer, 0x8);
+	GET_STACK(bool, IsPlayer, 0x8);
 
 	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSuper->Type);
 
@@ -429,7 +429,7 @@ DEFINE_HOOK(6CC390, SuperClass_Launch, 6)
 
 	bool handled = false;
 	if(NewSWType* pNSW = pData->GetNewSWType()) {
-		handled = SWTypeExt::Launch(pSuper, pNSW, pCoords, IsPlayer);
+		handled = SWTypeExt::Launch(pSuper, pNSW, *pCoords, IsPlayer);
 	}
 
 	return handled ? 0x6CDE40 : 0;

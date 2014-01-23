@@ -324,12 +324,12 @@ bool SWTypeExt::ExtData::CanFireAt(const CellStruct &Coords) {
 	return true;
 }
 
-bool SWTypeExt::Launch(SuperClass* pThis, NewSWType* pSW, CellStruct* pCoords, byte IsPlayer) {
+bool SWTypeExt::Launch(SuperClass* pThis, NewSWType* pSW, const CellStruct &Coords, bool IsPlayer) {
 	if(SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pThis->Type)) {
 
 		// launch the SW, then play sounds and animations. if the SW isn't launched
 		// nothing will be played.
-		if(pSW->Activate(pThis, *pCoords, IsPlayer != 0)) {
+		if(pSW->Activate(pThis, Coords, IsPlayer)) {
 			SuperWeaponFlags::Value flags = pSW->Flags();
 
 			if(flags & SuperWeaponFlags::PostClick) {
@@ -357,7 +357,7 @@ bool SWTypeExt::Launch(SuperClass* pThis, NewSWType* pSW, CellStruct* pCoords, b
 				}
 			}
 
-			CellClass *pTarget = MapClass::Instance->GetCellAt(*pCoords);
+			CellClass *pTarget = MapClass::Instance->GetCellAt(Coords);
 
 			CoordStruct coords;
 			pTarget->GetCoordsWithBridge(&coords);
@@ -374,7 +374,7 @@ bool SWTypeExt::Launch(SuperClass* pThis, NewSWType* pSW, CellStruct* pCoords, b
 			}
 
 			if(pData->SW_RadarEvent && !(flags & SuperWeaponFlags::NoEvent)) {
-				RadarEventClass::Create(RadarEventType::SuperweaponActivated, *pCoords);
+				RadarEventClass::Create(RadarEventType::SuperweaponActivated, Coords);
 			}
 
 			if(!(flags & SuperWeaponFlags::NoMessage)) {
