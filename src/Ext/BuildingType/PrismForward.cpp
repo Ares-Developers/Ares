@@ -210,7 +210,7 @@ int BuildingTypeExt::cPrismForwarding::AcquireSlaves_SingleStage
 		CoordStruct FLH, Base = {0, 0, 0};
 		TargetTower->GetFLH(&FLH, 0, Base);
 		nearestPrism->DelayBeforeFiring = nearestPrism->Type->DelayedFireDelay;
-		nearestPrism->PrismStage = pcs_Slave;
+		nearestPrism->PrismStage = PrismChargeState::Slave;
 		nearestPrism->PrismTargetCoords = FLH;
 
 		SetSupportTarget(nearestPrism, TargetTower);
@@ -370,7 +370,7 @@ void BuildingTypeExt::cPrismForwarding::RemoveFromNetwork(BuildingClass *SlaveTo
 	}
 	if (pSlaveData->PrismForwarding.PrismChargeDelay || bCease) {
 		//either hasn't started charging yet or animations have been reset so should go idle immediately
-		SlaveTower->PrismStage = pcs_Idle;
+		SlaveTower->PrismStage = PrismChargeState::Idle;
 		pSlaveData->PrismForwarding.PrismChargeDelay = 0;
 		SlaveTower->DelayBeforeFiring = 0;
 		pSlaveData->PrismForwarding.ModifierReserve = 0.0;

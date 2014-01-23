@@ -21,8 +21,8 @@ DEFINE_HOOK(44B2FE, BuildingClass_Mi_Attack_IsPrism, 6)
 
 		BuildingExt::ExtData *pMasterData = BuildingExt::ExtMap.Find(B);
 
-		if (B->PrismStage == pcs_Idle) {
-			B->PrismStage = pcs_Master;
+		if (B->PrismStage == PrismChargeState::Idle) {
+			B->PrismStage = PrismChargeState::Master;
 			B->DelayBeforeFiring = B->Type->DelayedFireDelay;
 
 			B->PrismTargetCoords.X = 0;
@@ -48,9 +48,9 @@ DEFINE_HOOK(44B2FE, BuildingClass_Mi_Attack_IsPrism, 6)
 			//now we have all the towers we know the longest chain, and can set all the towers' charge delays
 			BuildingTypeExt::cPrismForwarding::SetChargeDelay(B, LongestChain);
 
-		} else if (B->PrismStage == pcs_Slave) {
+		} else if (B->PrismStage == PrismChargeState::Slave) {
 			//a slave tower is changing into a master tower at the last second
-			B->PrismStage = pcs_Master;
+			B->PrismStage = PrismChargeState::Master;
 			B->PrismTargetCoords.X = 0;
 			if (pMasterType->get_Secondary()) {
 				if (B->IsOverpowered) {
@@ -83,7 +83,7 @@ DEFINE_HOOK(447FAE, BuildingClass_GetObjectActivityState, 6)
 		if (pTypeData->PrismForwarding.Enabled == BuildingTypeExt::cPrismForwarding::YES
 				|| pTypeData->PrismForwarding.Enabled == BuildingTypeExt::cPrismForwarding::ATTACK) {
 			//is a prism tower
-			if (B->PrismStage == pcs_Slave && pTypeData->PrismForwarding.BreakSupport) {
+			if (B->PrismStage == PrismChargeState::Slave && pTypeData->PrismForwarding.BreakSupport) {
 				return NotBusyCharging;
 			}
 		}
@@ -101,7 +101,7 @@ DEFINE_HOOK(4503F0, BuildingClass_Update_Prism, 9)
 		if (pData->PrismForwarding.PrismChargeDelay <= 0) {
 			--pThis->DelayBeforeFiring;
 			if(pThis->DelayBeforeFiring <= 0) {
-				if(PrismStage == pcs_Slave) {
+				if(PrismStage == PrismChargeState::Slave) {
 					if (BuildingClass *pTarget = pData->PrismForwarding.SupportTarget) {
 						BuildingExt::ExtData *pTargetData = BuildingExt::ExtMap.Find(pTarget);
 						BuildingTypeClass *pType = pThis->Type;
@@ -115,7 +115,7 @@ DEFINE_HOOK(4503F0, BuildingClass_Update_Prism, 9)
 
 					}
 				}
-				if(PrismStage == pcs_Master) {
+				if(PrismStage == PrismChargeState::Master) {
 					if(AbstractClass *Target = pThis->Target) {
 						if(pThis->GetFireError(Target, pThis->PrismTargetCoords.X, true) == FireError::OK) {
 							if(BulletClass *LaserBeam = pThis->Fire(Target, pThis->PrismTargetCoords.X)) {
@@ -135,7 +135,7 @@ DEFINE_HOOK(4503F0, BuildingClass_Update_Prism, 9)
 				BuildingTypeExt::cPrismForwarding::RemoveAllSenders(pThis);
 				pThis->SupportingPrisms = 0; //Ares sets this to the longest backward chain
 				BuildingTypeExt::cPrismForwarding::SetSupportTarget(pThis, nullptr);
-				pThis->PrismStage = pcs_Idle;
+				pThis->PrismStage = PrismChargeState::Idle;
 			}
 		} else {
 			//still in delayed charge so not actually charging yet
