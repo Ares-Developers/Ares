@@ -199,8 +199,6 @@ public:
 		static int uiColorDisabledSlider;
 		static int uiColorDisabledObserver;
 	};
-
-	static bool RunningOnWindows7OrVista();
 };
 
 class MemMap {

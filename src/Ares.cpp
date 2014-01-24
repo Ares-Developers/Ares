@@ -518,22 +518,6 @@ DEFINE_HOOK(47B026, FileFindOpen, 8)
 	return 0x47B02E;
 }
 
-bool Ares::RunningOnWindows7OrVista() {
-	static bool W7 = false;
-	static bool Checked = false;
-	if(!Checked) {
-		Checked = true;
-		OSVERSIONINFO osvi;
-
-		ZeroMemory(&osvi, sizeof(OSVERSIONINFO));
-		osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-		GetVersionEx(&osvi);
-
-		W7 = (osvi.dwMajorVersion == 6)/* && (osvi.dwMinorVersion >= 1)*/;
-	}
-	return W7;
-}
-
 void Ares::UpdateStability() {
 	if(Ares::bStable) {
 		return;
