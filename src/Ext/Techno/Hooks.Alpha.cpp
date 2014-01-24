@@ -231,7 +231,7 @@ DEFINE_HOOK(42146E, TacticalClass_UpdateAlphasInRectangle_Header, 5)
 		auto pData = TechnoExt::ExtMap.Find(pTechno);
 		idx = pData->AlphaFrame(pImage);
 	}
-	R->EAX(pImage->GetFrameBounds(buffer, idx));
+	R->EAX(pImage->GetFrameBounds(*buffer, idx));
 	return 0x421478;
 }
 

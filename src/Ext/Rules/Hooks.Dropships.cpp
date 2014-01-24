@@ -76,14 +76,14 @@ DEFINE_HOOK(4B93BD, ScenarioClass_GenerateDropshipLoadout_FreeAnims, 0)
 {
 	GET_STACK(SHPStruct *, pBackground, 0xAC);
 	if(pBackground) {
-		pBackground->Unload();
+		pBackground->~SHPStruct();
 	}
 
 	LEA_STACK(SHPStruct **, pSwipeAnims, 0x290);
 
 	for(auto i = 0; i <= 3; ++i) {
 		if(auto pAnim = pSwipeAnims[i]) {
-			pAnim->Unload();
+			pAnim->~SHPStruct();
 		}
 	}
 
