@@ -81,12 +81,7 @@ DEFINE_HOOK(539760, Scenario_ResetAllSuperWeapons_Custom, 5)
 	SW_NuclearMissile::CurrentNukeType = nullptr;
 	SW_PsychicDominator::CurrentPsyDom = nullptr;
 
-	for(int i = SWStateMachine::Array.Count - 1; i >= 0; --i) {
-		if(SWStateMachine* pMachine = SWStateMachine::Array[i]){
-			SWStateMachine::Array.RemoveItem(i);
-			delete pMachine;
-		}
-	}
+	SWStateMachine::ClearAll();
 
 	return 0;
 }
@@ -113,5 +108,15 @@ void SWStateMachine::InvalidatePointer(void *ptr)
 	for(int i = SWStateMachine::Array.Count - 1; i >= 0; --i) {
 		SWStateMachine* Machine = SWStateMachine::Array[i];
 		Machine->PointerGotInvalid(ptr);
+	}
+}
+
+void SWStateMachine::ClearAll()
+{
+	for(int i = SWStateMachine::Array.Count - 1; i >= 0; --i) {
+		if(SWStateMachine* pMachine = SWStateMachine::Array[i]){
+			SWStateMachine::Array.RemoveItem(i);
+			delete pMachine;
+		}
 	}
 }
