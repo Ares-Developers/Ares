@@ -33,7 +33,7 @@ public:
 
 	virtual void LoadFromINI(CCINIClass *pINI);
 
-	RadType(const char *Title) :
+	RadType(const char *Title) : Enumerable<RadType>(Title),
 		WH(&RulesClass::Instance->RadSiteWarhead),
 		Color(&RulesClass::Instance->RadColor),
 		Duration_Multiple(&RulesClass::Instance->RadDurationMultiple),
@@ -45,14 +45,10 @@ public:
 		Light_Factor(&RulesClass::Instance->RadLightFactor),
 		Tint_Factor(&RulesClass::Instance->RadTintFactor)
 	{
-		AresCRT::strCopy(this->Name, Title);
-		Array.AddItem(this);
 	}
 
 	virtual ~RadType()
 	{
-		RadType * placeholder = this;
-		Array.RemoveItem(Array.FindItemIndex(placeholder));
 	}
 };
 

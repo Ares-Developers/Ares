@@ -70,12 +70,22 @@ public:
 
 	Enumerable()
 	{
-		;
+		Array.AddItem(static_cast<T*>(this));
+	}
+
+	Enumerable(const char* Title) {
+		this->Name[0] = 0;
+
+		if(Title) {
+			AresCRT::strCopy(this->Name, Title);
+		}
+
+		Array.AddItem(static_cast<T*>(this));
 	}
 
 	virtual ~Enumerable()
 	{
-		;
+		Array.RemoveItem(Array.FindItemIndex(static_cast<T*>(this)));
 	}
 
 //	template <typename T2>
