@@ -14,6 +14,8 @@
 #include "SWTypes/LightningStorm.h"
 #include "SWTypes/Nuke.h"
 
+#include <algorithm>
+
 std::vector<NewSWType *> NewSWType::Array;
 DynamicVectorClass<SWStateMachine *> SWStateMachine::Array;
 
@@ -37,6 +39,31 @@ void NewSWType::Init()
 	new SW_PsychicDominator();
 	new SW_LightningStorm();
 	new SW_NuclearMissile();
+}
+
+int NewSWType::FindIndex(const char* pType) {
+	auto it = std::find_if(Array.begin(), Array.end(), [pType](NewSWType* item) {
+		const char* pID = item->GetTypeString();
+		return pID && !strcmp(pID, pType);
+	});
+
+	if(it != Array.end()) {
+		return FIRST_SW_TYPE + std::distance(Array.begin(), it);
+	}
+
+	return -1;
+}
+
+int NewSWType::FindHandler(int Type) {
+	auto it = std::find_if(Array.begin(), Array.end(), [Type](NewSWType* item) {
+		return item->HandlesType(Type);
+	});
+
+	if(it != Array.end()) {
+		return FIRST_SW_TYPE + std::distance(Array.begin(), it);
+	}
+
+	return -1;
 }
 
 DEFINE_HOOK(55AFB3, LogicClass_Update, 6)

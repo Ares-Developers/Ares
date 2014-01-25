@@ -4,7 +4,7 @@
 #include "../Ext/SWType/Body.h"
 #include "../Utilities/Enums.h"
 
-#include <algorithm>
+#include <vector>
 
 class SWTypeExt;
 
@@ -63,30 +63,9 @@ class NewSWType
 		return Array.at(i - FIRST_SW_TYPE);
 	}
 
-	static int FindIndex(const char* pType) {
-		auto it = std::find_if(Array.begin(), Array.end(), [pType](NewSWType* item) {
-			const char* pID = item->GetTypeString();
-			return pID && !strcmp(pID, pType);
-		});
+	static int FindIndex(const char* pType);
 
-		if(it != Array.end()) {
-			return FIRST_SW_TYPE + std::distance(Array.begin(), it);
-		}
-
-		return -1;
-	}
-
-	static int FindHandler(int Type) {
-		auto it = std::find_if(Array.begin(), Array.end(), [Type](NewSWType* item) {
-			return item->HandlesType(Type);
-		});
-
-		if(it != Array.end()) {
-			return FIRST_SW_TYPE + std::distance(Array.begin(), it);
-		}
-
-		return -1;
-	}
+	static int FindHandler(int Type);
 };
 
 // state machines - create one to use delayed effects [create a child class per NewSWType, obviously]
