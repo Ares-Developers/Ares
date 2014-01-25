@@ -318,7 +318,7 @@ bool TechnoExt::ExtData::DrawVisualFX() {
 UnitTypeClass * TechnoExt::ExtData::GetUnitType() {
 	if(UnitClass * U = specific_cast<UnitClass *>(this->AttachedToObject)) {
 		TechnoTypeExt::ExtData * pData = TechnoTypeExt::ExtMap.Find(U->Type);
-		if(pData->WaterImage && !U->OnBridge && U->GetCell()->LandType == lt_Water) {
+		if(pData->WaterImage && !U->OnBridge && U->GetCell()->LandType == LandType::Water) {
 			return pData->WaterImage;
 		}
 	}

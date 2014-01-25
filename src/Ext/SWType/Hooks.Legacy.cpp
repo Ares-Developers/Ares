@@ -598,10 +598,10 @@ DEFINE_HOOK(53A300, LightningStorm_Strike2, 5) {
 			if(!pBld && !pObj) {
 				switch(pCell->LandType)
 				{
-				case lt_Road:
-				case lt_Rock:
-				case lt_Wall:
-				case lt_Weeds:
+				case LandType::Road:
+				case LandType::Rock:
+				case LandType::Wall:
+				case LandType::Weeds:
 					debris = true;
 					break;
 				default:

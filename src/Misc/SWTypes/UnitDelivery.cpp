@@ -98,7 +98,7 @@ void UnitDeliveryStateMachine::PlaceUnits() {
 				}
 				if(Type->Naval && validCell) {
 					// naval types look stupid on bridges
-					validCell = (!cell->ContainsBridge() && cell->LandType != lt_Road)
+					validCell = (!cell->ContainsBridge() && cell->LandType != LandType::Road)
 						|| Type->SpeedType == SpeedType::Hover;
 				}
 

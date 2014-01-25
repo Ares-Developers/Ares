@@ -253,7 +253,7 @@ SuperWeaponAffectedHouse::Value SWTypeExt::ExtData::GetRelation(HouseClass* pFir
 
 bool SWTypeExt::ExtData::IsCellEligible(CellClass* pCell, SuperWeaponTarget::Value allowed) {
 	if(allowed & SuperWeaponTarget::AllCells) {
-		bool isWater = (pCell->LandType == lt_Water);
+		bool isWater = (pCell->LandType == LandType::Water);
 		if(isWater && !(allowed & SuperWeaponTarget::Water)) {
 			// doesn't support water
 			return false;
