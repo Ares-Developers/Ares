@@ -259,11 +259,11 @@ void Ares::SendPDPlane(HouseClass* pOwner, CellClass* pTarget, AircraftTypeClass
 		pPlane->Spawned = true;
 
 		//Get edge (direction for plane to come from)
-		int edge = pOwner->StartingEdge;
-		if(edge < edge_NORTH || edge > edge_WEST) {
+		auto edge = pOwner->StartingEdge;
+		if(edge < Edge::North || edge > Edge::West) {
 			edge = pOwner->Edge;
-			if(edge < edge_NORTH || edge > edge_WEST) {
-				edge = edge_NORTH;
+			if(edge < Edge::North || edge > Edge::West) {
+				edge = Edge::North;
 			}
 		}
 
