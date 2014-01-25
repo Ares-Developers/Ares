@@ -3,19 +3,20 @@
 
 #include <algorithm>
 #include <functional>
+#include <memory>
 
 #include <ArrayClasses.h>
 #include <CCINIClass.h>
 
 template <typename T> class Enumerable
 {
-	typedef std::vector<T*> container_t;
+	typedef std::vector<std::unique_ptr<T>> container_t;
 public:
 	static container_t Array;
 
 	static int FindIndex(const char *Title)
 	{
-		auto result = std::find_if(Array.begin(), Array.end(), [Title](Enumerable<T>* Item) {
+		auto result = std::find_if(Array.begin(), Array.end(), [Title](std::unique_ptr<T> &Item) {
 			return !_strcmpi(Item->Name, Title);
 		});
 		if(result == Array.end()) {
@@ -27,20 +28,20 @@ public:
 	static T* Find(const char *Title)
 	{
 		auto result = FindIndex(Title);
-		return (result < 0) ? nullptr : Array[result];
+		return (result < 0) ? nullptr : Array[result].get();
 	}
 
 	static T* FindOrAllocate(const char *Title)
 	{
-		T *find = Find(Title);
-		return find ? find : new T(Title);
+		if(T *find = Find(Title)) {
+			return find;
+		}
+		Array.push_back(std::make_unique<T>(Title));
+		return Array.back().get();
 	}
 
 	static void ClearArray()
 	{
-		for(auto i = Array.size(); i > 0; --i) {
-			delete Array[i - 1];
-		}
 		Array.clear();
 	}
 
@@ -59,7 +60,6 @@ public:
 
 	Enumerable()
 	{
-		Array.push_back(static_cast<T*>(this));
 	}
 
 	Enumerable(const char* Title) {
@@ -68,13 +68,10 @@ public:
 		if(Title) {
 			AresCRT::strCopy(this->Name, Title);
 		}
-
-		Array.push_back(static_cast<T*>(this));
 	}
 
 	virtual ~Enumerable()
 	{
-		Array.erase(std::remove(Array.begin(), Array.end(), static_cast<T*>(this)), Array.end());
 	}
 
 	static const char * GetMainSection();

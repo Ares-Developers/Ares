@@ -29,7 +29,7 @@ void ArmorType::LoadForWarhead(CCINIClass *pINI, WarheadTypeClass* pWH)
 	pData->Verses.Reserve(Array.size());
 
 	while(pData->Verses.Count < static_cast<int>(Array.size())) {
-		ArmorType *pArmor = Array[pData->Verses.Count];
+		auto& pArmor = Array[pData->Verses.Count];
 		int idx = pArmor->DefaultIndex;
 		pData->Verses.AddItem(
 			idx == -1
@@ -106,7 +106,7 @@ DEFINE_HOOK(4753F0, ArmorType_FindIndex, A)
 
 DEFINE_HOOK(4B9A52, DropshipLoadout_PrintArmor, 5)
 {
-	R->Stack(0x4, ArmorType::Array[R->EDX()]);
+	R->Stack(0x4, ArmorType::Array[R->EDX()].get());
 	return 0;
 }
 
