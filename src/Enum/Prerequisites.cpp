@@ -65,9 +65,9 @@ void Prereqs::Parse(CCINIClass *pINI, const char *section, const char *key, Dyna
 
 bool Prereqs::HouseOwnsGeneric(HouseClass *pHouse, signed int Index)
 {
-	Index = - 1 - Index; // hack - POWER is -1 , this way converts to 0, and onwards
-	if(Index < GenericPrerequisite::Array.Count) {
-		DynamicVectorClass<int> *dvc = &GenericPrerequisite::Array.GetItem(Index)->Prereqs;
+	Index = -1 - Index; // hack - POWER is -1 , this way converts to 0, and onwards
+	if(Index < static_cast<int>(GenericPrerequisite::Array.size())) {
+		DynamicVectorClass<int> *dvc = &GenericPrerequisite::Array.at(Index)->Prereqs;
 		for(int i = 0; i < dvc->Count; ++i) {
 			if(HouseOwnsSpecific(pHouse, dvc->GetItem(i))) {
 				return true;
@@ -148,9 +148,9 @@ bool Prereqs::ListContainsSpecific(const BTypeIter &List, signed int Index)
 
 bool Prereqs::ListContainsGeneric(const BTypeIter &List, signed int Index)
 {
-	Index = - 1 - Index; // hack - POWER is -1 , this way converts to 0, and onwards
-	if(Index < GenericPrerequisite::Array.Count) {
-		DynamicVectorClass<int> *dvc = &GenericPrerequisite::Array.GetItem(Index)->Prereqs;
+	Index = -1 - Index; // hack - POWER is -1 , this way converts to 0, and onwards
+	if(Index < static_cast<int>(GenericPrerequisite::Array.size())) {
+		DynamicVectorClass<int> *dvc = &GenericPrerequisite::Array.at(Index)->Prereqs;
 		for(int i = 0; i < dvc->Count; ++i) {
 			if(ListContainsSpecific(List, dvc->GetItem(i))) {
 				return true;

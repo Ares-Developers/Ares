@@ -9,7 +9,7 @@
 
 template <typename T> class Enumerable
 {
-	typedef DynamicVectorClass<T*> container_t;
+	typedef std::vector<T*> container_t;
 public:
 	static container_t Array;
 
@@ -38,10 +38,10 @@ public:
 
 	static void ClearArray()
 	{
-		for(int i = Array.Count - 1; i >= 0; --i) {
-			delete Array[i];
+		for(auto i = Array.size(); i > 0; --i) {
+			delete Array[i - 1];
 		}
-		Array.Clear();
+		Array.clear();
 	}
 
 	static void LoadFromINIList(CCINIClass *pINI)
@@ -52,14 +52,14 @@ public:
 			const char *Key = pINI->GetKeyName(section, i);
 			FindOrAllocate(Key);
 		}
-		for(int i = 0; i < Array.Count; ++i) {
+		for(size_t i = 0; i < Array.size(); ++i) {
 			Array[i]->LoadFromINI(pINI);
 		}
 	}
 
 	Enumerable()
 	{
-		Array.AddItem(static_cast<T*>(this));
+		Array.push_back(static_cast<T*>(this));
 	}
 
 	Enumerable(const char* Title) {
@@ -69,15 +69,14 @@ public:
 			AresCRT::strCopy(this->Name, Title);
 		}
 
-		Array.AddItem(static_cast<T*>(this));
+		Array.push_back(static_cast<T*>(this));
 	}
 
 	virtual ~Enumerable()
 	{
-		Array.RemoveItem(Array.FindItemIndex(static_cast<T*>(this)));
+		Array.erase(std::remove(Array.begin(), Array.end(), static_cast<T*>(this)), Array.end());
 	}
 
-//	template <typename T2>
 	static const char * GetMainSection();
 
 	char Name[32];

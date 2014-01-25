@@ -41,7 +41,7 @@ DEFINE_HOOK(4B99A2, DropshipLoadout_WriteUnit, 0)
 		StringCchPrintfW(pArmament, StringLen, L"Armament: NONE");
 	}
 
-	if(auto pArmorType = ArmorType::Array.GetItem(pType->Armor)) {
+	if(auto pArmorType = ArmorType::Array.at(pType->Armor)) {
 		StringCchPrintfW(pArmor, StringLen, L"Armor: %hs", pArmorType->Name);
 	} else {
 		StringCchPrintfW(pArmor, StringLen, L"Armor: UNKNOWN");
