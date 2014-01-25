@@ -14,11 +14,15 @@
 #include "SWTypes/LightningStorm.h"
 #include "SWTypes/Nuke.h"
 
-DynamicVectorClass<NewSWType *> NewSWType::Array;
+std::vector<NewSWType *> NewSWType::Array;
 DynamicVectorClass<SWStateMachine *> SWStateMachine::Array;
 
 void NewSWType::Init()
 {
+	if(!Array.empty()) {
+		return;
+	}
+
 	new SW_SonarPulse();
 	new SW_UnitDelivery();
 	new SW_GenericWarhead();

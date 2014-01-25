@@ -27,9 +27,7 @@ SWTypeExt::ExtData::~ExtData() {
 
 void SWTypeExt::ExtData::InitializeConstants(SuperWeaponTypeClass *pThis)
 {
-	if(!NewSWType::Array.Count) {
-		NewSWType::Init();
-	}
+	NewSWType::Init();
 
 	MouseCursor *Cursor = &this->SW_Cursor;
 	Cursor->Frame = 53; // Attack

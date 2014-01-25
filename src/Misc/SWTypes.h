@@ -4,17 +4,21 @@
 #include "../Ext/SWType/Body.h"
 #include "../Utilities/Enums.h"
 
+#include <algorithm>
+
 class SWTypeExt;
 
 // New SW Type framework. See SWTypes/*.h for examples of implemented ones. Don't touch yet, still WIP.
 class NewSWType
 {
+	static std::vector<NewSWType *> Array;
+
 	protected:
 		int TypeIndex;
 		bool Registered;
 
 		void Register()
-			{ Array.AddItem(this); this->TypeIndex = Array.Count - 1; }
+			{ Array.push_back(this); this->TypeIndex = static_cast<int>(Array.size() - 1); }
 
 	public:
 		NewSWType()
@@ -55,29 +59,32 @@ class NewSWType
 		virtual SuperWeaponFlags::Value Flags()
 			{ return SuperWeaponFlags::None; }
 
-	static DynamicVectorClass<NewSWType *> Array;
+	static NewSWType* GetNthItem(int i) {
+		return Array.at(i - FIRST_SW_TYPE);
+	}
 
-	static NewSWType * GetNthItem(int i)
-		{ return Array.GetItem(i - FIRST_SW_TYPE); }
+	static int FindIndex(const char* pType) {
+		auto it = std::find_if(Array.begin(), Array.end(), [pType](NewSWType* item) {
+			const char* pID = item->GetTypeString();
+			return pID && !strcmp(pID, pType);
+		});
 
-	static int FindIndex(const char *Type) {
-		for(int i = 0; i < Array.Count; ++i) {
-			if(const char* id = Array.GetItem(i)->GetTypeString()) {
-				if(!strcmp(id, Type)) {
-					return FIRST_SW_TYPE + i;
-				}
-			}
+		if(it != Array.end()) {
+			return FIRST_SW_TYPE + std::distance(Array.begin(), it);
 		}
+
 		return -1;
 	}
 
 	static int FindHandler(int Type) {
-		for(int i=0; i<Array.Count; ++i) {
-			NewSWType *swt = Array.GetItem(i);
-			if(swt->HandlesType(Type)) {
-				return FIRST_SW_TYPE + i;
-			}
+		auto it = std::find_if(Array.begin(), Array.end(), [Type](NewSWType* item) {
+			return item->HandlesType(Type);
+		});
+
+		if(it != Array.end()) {
+			return FIRST_SW_TYPE + std::distance(Array.begin(), it);
 		}
+
 		return -1;
 	}
 };
