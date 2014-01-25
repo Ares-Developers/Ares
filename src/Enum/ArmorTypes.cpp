@@ -1,6 +1,6 @@
 #include "ArmorTypes.h"
 
-DynamicVectorClass<ArmorType*> Enumerable<ArmorType>::Array;
+Enumerable<ArmorType>::container_t Enumerable<ArmorType>::Array;
 
 const char * Enumerable<ArmorType>::GetMainSection()
 {

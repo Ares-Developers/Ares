@@ -1,6 +1,6 @@
 #include "RadTypes.h"
 
-DynamicVectorClass<RadType*> Enumerable<RadType>::Array;
+Enumerable<RadType>::container_t Enumerable<RadType>::Array;
 
 // pretty nice, eh
 const char * Enumerable<RadType>::GetMainSection()

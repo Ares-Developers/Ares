@@ -2,7 +2,7 @@
 #include "../Ares.h"
 #include "Prerequisites.h"
 
-DynamicVectorClass<GenericPrerequisite*> Enumerable<GenericPrerequisite>::Array;
+Enumerable<GenericPrerequisite>::container_t Enumerable<GenericPrerequisite>::Array;
 
 const char * Enumerable<GenericPrerequisite>::GetMainSection()
 {

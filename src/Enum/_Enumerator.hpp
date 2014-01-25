@@ -9,8 +9,9 @@
 
 template <typename T> class Enumerable
 {
+	typedef DynamicVectorClass<T*> container_t;
 public:
-	static DynamicVectorClass< T* > Array;
+	static container_t Array;
 
 	static int FindIndex(const char *Title)
 	{
