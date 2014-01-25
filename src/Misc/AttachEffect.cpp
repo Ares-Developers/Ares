@@ -82,7 +82,7 @@ void AttachEffectTypeClass::Attach(TechnoClass* Target, int Duration, TechnoClas
 	}
 
 	// there goes the actual attaching
-	TargetExt->AttachedEffects.push_back(std::move(make_unique<AttachEffectClass>(this, Duration)));
+	TargetExt->AttachedEffects.push_back(std::make_unique<AttachEffectClass>(this, Duration));
 	auto &Attaching = TargetExt->AttachedEffects.back();
 
 	Attaching->Invoker = Invoker;

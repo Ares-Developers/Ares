@@ -63,7 +63,7 @@ DEFINE_HOOK(6F9E50, TechnoClass_Update, 5)
 	// #617 powered units
 	if(pTypeData && pTypeData->PoweredBy.size()) {
 		if(!pData->PoweredUnit) {
-			pData->PoweredUnit = std::move(make_unique<PoweredUnitClass>(Source));
+			pData->PoweredUnit = std::make_unique<PoweredUnitClass>(Source);
 		}
 		if(!pData->PoweredUnit->Update()) {
 			TechnoExt::Destroy(Source);
@@ -141,7 +141,7 @@ DEFINE_HOOK(6F9E76, TechnoClass_Update_CheckOperators, 6)
 		// dropping Radar Jammers (#305) here for now; should check if another TechnoClass::Update hook might be better ~Ren
 		if(!!pTypeData->RadarJamRadius) {
 			if(!pData->RadarJam) {
-				pData->RadarJam = std::move(make_unique<JammerClass>(pThis));
+				pData->RadarJam = std::make_unique<JammerClass>(pThis);
 			}
 
 			pData->RadarJam->Update();

@@ -13,7 +13,7 @@ template<> RulesExt::TT *Container<RulesExt>::SavingObject = nullptr;
 template<> IStream *Container<RulesExt>::SavingStream = nullptr;
 
 void RulesExt::Allocate(RulesClass *pThis) {
-	Data = make_unique<RulesExt::ExtData>(pThis);
+	Data = std::make_unique<RulesExt::ExtData>(pThis);
 }
 
 void RulesExt::Remove(RulesClass *pThis) {

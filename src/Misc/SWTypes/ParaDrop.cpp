@@ -17,7 +17,7 @@ void SW_ParaDrop::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pS
 	if(pSW->Type == SuperWeaponType::AmerParaDrop) {
 		// the American paradrop will be the same for every country,
 		// thus we use the SW's default here.
-		pData->ParaDropPlanes.push_back(std::move(make_unique<ParadropPlane>()));
+		pData->ParaDropPlanes.push_back(std::make_unique<ParadropPlane>());
 
 		ParadropPlane* pPlane = pData->ParaDropPlanes.back().get();
 		pData->ParaDrop[nullptr].push_back(pPlane);
@@ -64,7 +64,7 @@ void SW_ParaDrop::LoadFromINI(
 	};
 
 	auto ParseParaDrop = [&](char* pID, int Plane) -> std::unique_ptr<ParadropPlane> {
-		auto pPlane = make_unique<ParadropPlane>();
+		auto pPlane = std::make_unique<ParadropPlane>();
 
 		// create the plane part of this request. this will be
 		// an empty string for the first plane for this is the default.
