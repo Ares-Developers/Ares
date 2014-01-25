@@ -24,40 +24,43 @@ public:
 	NewSWType() : TypeIndex(-1) {
 	}
 
-		virtual ~NewSWType()
-			{ };
+	virtual ~NewSWType() {
+	};
 
-		static void Init();
+	virtual bool CanFireAt(SWTypeExt::ExtData *pSWType, const CellStruct &Coords) {
+		return pSWType->CanFireAt(Coords);
+	}
 
-		virtual bool CanFireAt(SWTypeExt::ExtData *pSWType, const CellStruct &Coords)
-			{ return pSWType->CanFireAt(Coords); }
+	virtual bool AbortFire(SuperClass* pSW, bool IsPlayer) {
+		return false;
+	}
 
-		virtual bool AbortFire(SuperClass* pSW, bool IsPlayer)
-			{ return false; }
+	virtual bool Activate(SuperClass* pSW, const CellStruct &Coords, bool IsPlayer) = 0;
 
-		virtual bool Activate(SuperClass* pSW, const CellStruct &Coords, bool IsPlayer) = 0;
+	virtual void Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW) {
+	}
 
-		virtual void Initialize(
-			SWTypeExt::ExtData *pData,
-			SuperWeaponTypeClass *pSW)
-			{ }
+	virtual void LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI) {
+	}
 
-		virtual void LoadFromINI(
-			SWTypeExt::ExtData *pData,
-			SuperWeaponTypeClass *pSW, CCINIClass *pINI)
-			{ }
+	virtual const char* GetTypeString() {
+		return "";
+	}
 
-		virtual const char * GetTypeString()
-			{ return ""; }
+	int GetTypeIndex() {
+		return TypeIndex;
+	}
 
-		virtual const int GetTypeIndex()
-			{ return TypeIndex; }
+	virtual bool HandlesType(int type) {
+		return false;
+	}
 
-		virtual bool HandlesType(int type)
-			{ return false; }
+	virtual SuperWeaponFlags::Value Flags() {
+		return SuperWeaponFlags::None;
+	}
 
-		virtual SuperWeaponFlags::Value Flags()
-			{ return SuperWeaponFlags::None; }
+	// static methods
+	static void Init();
 
 	static NewSWType* GetNthItem(int i) {
 		return Array.at(i - FIRST_SW_TYPE).get();
