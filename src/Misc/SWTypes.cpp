@@ -17,7 +17,7 @@
 #include <algorithm>
 
 std::vector<std::unique_ptr<NewSWType>> NewSWType::Array;
-DynamicVectorClass<SWStateMachine *> SWStateMachine::Array;
+std::vector<SWStateMachine *> SWStateMachine::Array;
 
 void NewSWType::Init()
 {
@@ -88,7 +88,7 @@ DEFINE_HOOK(539760, Scenario_ResetAllSuperWeapons_Custom, 5)
 
 void SWStateMachine::UpdateAll()
 {
-	for(int i = SWStateMachine::Array.Count - 1; i >= 0; --i) {
+	for(int i = static_cast<int>(SWStateMachine::Array.size()) - 1; i >= 0; --i) {
 		SWStateMachine* Machine = SWStateMachine::Array[i];
 
 		if(!Machine) {
@@ -97,7 +97,7 @@ void SWStateMachine::UpdateAll()
 
 		Machine->Update();
 		if(Machine->Finished()) {
-			SWStateMachine::Array.RemoveItem(i);
+			SWStateMachine::Array.erase(SWStateMachine::Array.begin() + i);
 			delete Machine;
 		}
 	}
@@ -105,7 +105,7 @@ void SWStateMachine::UpdateAll()
 
 void SWStateMachine::InvalidatePointer(void *ptr)
 {
-	for(int i = SWStateMachine::Array.Count - 1; i >= 0; --i) {
+	for(int i = static_cast<int>(SWStateMachine::Array.size()) - 1; i >= 0; --i) {
 		SWStateMachine* Machine = SWStateMachine::Array[i];
 		Machine->PointerGotInvalid(ptr);
 	}
@@ -113,10 +113,10 @@ void SWStateMachine::InvalidatePointer(void *ptr)
 
 void SWStateMachine::ClearAll()
 {
-	for(int i = SWStateMachine::Array.Count - 1; i >= 0; --i) {
+	for(int i = static_cast<int>(SWStateMachine::Array.size()) - 1; i >= 0; --i) {
 		if(SWStateMachine* pMachine = SWStateMachine::Array[i]){
-			SWStateMachine::Array.RemoveItem(i);
 			delete pMachine;
 		}
 	}
+	SWStateMachine::Array.clear();
 }

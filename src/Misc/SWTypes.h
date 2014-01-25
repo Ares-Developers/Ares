@@ -5,6 +5,7 @@
 #include "../Utilities/Enums.h"
 
 #include <vector>
+#include <algorithm>
 
 class SWTypeExt;
 
@@ -74,7 +75,7 @@ public:
 // state machines - create one to use delayed effects [create a child class per NewSWType, obviously]
 // i.e. start anim/sound 1 frame after clicking, fire a damage wave 25 frames later, and play second sound 50 frames after that...
 class SWStateMachine {
-		static DynamicVectorClass<SWStateMachine *> Array;
+		static std::vector<SWStateMachine *> Array;
 	protected:
 		TimerStruct  Clock;
 		SuperClass * Super;
@@ -88,12 +89,11 @@ class SWStateMachine {
 		SWStateMachine(int Duration, CellStruct XY, SuperClass *pSuper, NewSWType * pSWType)
 			: Type(pSWType), Super(pSuper), Coords(XY) {
 			Clock.Start(Duration);
-			Array.AddItem(this);
+			Array.push_back(this);
 		}
 
 		virtual ~SWStateMachine() {
-			auto t = this;
-			Array.RemoveItem(Array.FindItemIndex(t));
+			Array.erase(std::remove(Array.begin(), Array.end(), this), Array.end());
 		}
 
 		virtual void Update() {};
