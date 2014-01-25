@@ -5,7 +5,7 @@
 
 #include "../SWTypes.h"
 
-class SW_NuclearMissile : NewSWType
+class SW_NuclearMissile : public NewSWType
 {
 	public:
 		SW_NuclearMissile() : NewSWType()

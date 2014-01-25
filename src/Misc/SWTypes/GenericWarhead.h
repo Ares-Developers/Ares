@@ -5,7 +5,7 @@
 
 #include "../SWTypes.h"
 
-class SW_GenericWarhead : NewSWType
+class SW_GenericWarhead : public NewSWType
 {
 	public:
 		SW_GenericWarhead() : NewSWType()

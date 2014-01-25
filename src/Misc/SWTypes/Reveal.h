@@ -5,7 +5,7 @@
 
 #include "../SWTypes.h"
 
-class SW_Reveal : NewSWType
+class SW_Reveal : public NewSWType
 {
 	public:
 		SW_Reveal() : NewSWType()

@@ -5,7 +5,7 @@
 
 #include "../SWTypes.h"
 
-class SW_SpyPlane : NewSWType
+class SW_SpyPlane : public NewSWType
 {
 	public:
 		SW_SpyPlane() : NewSWType()

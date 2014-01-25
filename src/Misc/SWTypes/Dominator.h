@@ -5,7 +5,7 @@
 
 #include "../SWTypes.h"
 
-class SW_PsychicDominator : NewSWType
+class SW_PsychicDominator : public NewSWType
 {
 	public:
 		SW_PsychicDominator() : NewSWType()

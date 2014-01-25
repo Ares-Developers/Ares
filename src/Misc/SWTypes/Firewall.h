@@ -4,10 +4,10 @@
 #include <xcompile.h>
 #include "../SWTypes.h"
 
-class SW_Firewall : NewSWType {
+class SW_Firewall : public NewSWType {
 public:
 	SW_Firewall() : NewSWType() {
-		SW_Firewall::FirewallTypeIndex = FIRST_SW_TYPE + this->TypeIndex;
+		SW_Firewall::FirewallTypeIndex = FIRST_SW_TYPE + this->GetTypeIndex();
 	};
 
 	virtual ~SW_Firewall() {

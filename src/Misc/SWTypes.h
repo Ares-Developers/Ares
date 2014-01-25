@@ -11,18 +11,18 @@ class SWTypeExt;
 // New SW Type framework. See SWTypes/*.h for examples of implemented ones. Don't touch yet, still WIP.
 class NewSWType
 {
-	static std::vector<NewSWType *> Array;
+	static std::vector<std::unique_ptr<NewSWType>> Array;
 
-	protected:
-		int TypeIndex;
-		bool Registered;
+	static void Register(std::unique_ptr<NewSWType> pType) {
+		pType->TypeIndex = static_cast<int>(Array.size());
+		Array.push_back(std::move(pType));
+	}
 
-		void Register()
-			{ Array.push_back(this); this->TypeIndex = static_cast<int>(Array.size() - 1); }
+	int TypeIndex;
 
-	public:
-		NewSWType()
-			{ Registered = 0; Register(); };
+public:
+	NewSWType() : TypeIndex(-1) {
+	}
 
 		virtual ~NewSWType()
 			{ };
@@ -60,7 +60,7 @@ class NewSWType
 			{ return SuperWeaponFlags::None; }
 
 	static NewSWType* GetNthItem(int i) {
-		return Array.at(i - FIRST_SW_TYPE);
+		return Array.at(i - FIRST_SW_TYPE).get();
 	}
 
 	static int FindIndex(const char* pType);

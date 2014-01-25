@@ -5,7 +5,7 @@
 
 #include "../SWTypes.h"
 
-class SW_Protect : NewSWType
+class SW_Protect : public NewSWType
 {
 	public:
 		SW_Protect() : NewSWType()

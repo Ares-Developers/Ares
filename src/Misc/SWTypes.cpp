@@ -16,7 +16,7 @@
 
 #include <algorithm>
 
-std::vector<NewSWType *> NewSWType::Array;
+std::vector<std::unique_ptr<NewSWType>> NewSWType::Array;
 DynamicVectorClass<SWStateMachine *> SWStateMachine::Array;
 
 void NewSWType::Init()
@@ -25,24 +25,24 @@ void NewSWType::Init()
 		return;
 	}
 
-	new SW_SonarPulse();
-	new SW_UnitDelivery();
-	new SW_GenericWarhead();
-	new SW_Firewall();
-	new SW_Protect();
-	new SW_Reveal();
-	new SW_ParaDrop();
-	new SW_SpyPlane();
-	new SW_ChronoSphere();
-	new SW_ChronoWarp();
-	new SW_GeneticMutator();
-	new SW_PsychicDominator();
-	new SW_LightningStorm();
-	new SW_NuclearMissile();
+	Register(std::make_unique<SW_SonarPulse>());
+	Register(std::make_unique<SW_UnitDelivery>());
+	Register(std::make_unique<SW_GenericWarhead>());
+	Register(std::make_unique<SW_Firewall>());
+	Register(std::make_unique<SW_Protect>());
+	Register(std::make_unique<SW_Reveal>());
+	Register(std::make_unique<SW_ParaDrop>());
+	Register(std::make_unique<SW_SpyPlane>());
+	Register(std::make_unique<SW_ChronoSphere>());
+	Register(std::make_unique<SW_ChronoWarp>());
+	Register(std::make_unique<SW_GeneticMutator>());
+	Register(std::make_unique<SW_PsychicDominator>());
+	Register(std::make_unique<SW_LightningStorm>());
+	Register(std::make_unique<SW_NuclearMissile>());
 }
 
 int NewSWType::FindIndex(const char* pType) {
-	auto it = std::find_if(Array.begin(), Array.end(), [pType](NewSWType* item) {
+	auto it = std::find_if(Array.begin(), Array.end(), [pType](const std::unique_ptr<NewSWType> &item) {
 		const char* pID = item->GetTypeString();
 		return pID && !strcmp(pID, pType);
 	});
@@ -55,7 +55,7 @@ int NewSWType::FindIndex(const char* pType) {
 }
 
 int NewSWType::FindHandler(int Type) {
-	auto it = std::find_if(Array.begin(), Array.end(), [Type](NewSWType* item) {
+	auto it = std::find_if(Array.begin(), Array.end(), [Type](const std::unique_ptr<NewSWType> &item) {
 		return item->HandlesType(Type);
 	});
 

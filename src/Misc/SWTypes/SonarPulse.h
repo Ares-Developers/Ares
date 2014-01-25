@@ -5,7 +5,7 @@
 
 #include "../SWTypes.h"
 
-class SW_SonarPulse : NewSWType
+class SW_SonarPulse : public NewSWType
 {
 	public:
 		SW_SonarPulse() : NewSWType()

@@ -5,7 +5,7 @@
 
 #include "../SWTypes.h"
 
-class SW_ChronoWarp : NewSWType
+class SW_ChronoWarp : public NewSWType
 {
 	public:
 		SW_ChronoWarp() : NewSWType()

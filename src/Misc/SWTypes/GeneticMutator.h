@@ -5,7 +5,7 @@
 
 #include "../SWTypes.h"
 
-class SW_GeneticMutator : NewSWType
+class SW_GeneticMutator : public NewSWType
 {
 	public:
 		SW_GeneticMutator() : NewSWType()

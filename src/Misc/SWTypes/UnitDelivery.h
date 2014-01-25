@@ -5,7 +5,7 @@
 
 #include "../SWTypes.h"
 
-class SW_UnitDelivery : NewSWType
+class SW_UnitDelivery : public NewSWType
 {
 	public:
 		SW_UnitDelivery() : NewSWType()

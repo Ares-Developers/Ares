@@ -5,7 +5,7 @@
 
 #include "../SWTypes.h"
 
-class SW_LightningStorm : NewSWType
+class SW_LightningStorm : public NewSWType
 {
 	public:
 		SW_LightningStorm() : NewSWType()

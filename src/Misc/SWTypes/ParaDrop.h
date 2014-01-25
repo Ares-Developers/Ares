@@ -5,7 +5,7 @@
 
 #include "../SWTypes.h"
 
-class SW_ParaDrop : NewSWType
+class SW_ParaDrop : public NewSWType
 {
 	public:
 		SW_ParaDrop() : NewSWType()

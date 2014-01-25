@@ -5,7 +5,7 @@
 
 #include "../SWTypes.h"
 
-class SW_ChronoSphere : NewSWType
+class SW_ChronoSphere : public NewSWType
 {
 	public:
 		SW_ChronoSphere() : NewSWType()
