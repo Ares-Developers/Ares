@@ -14,21 +14,19 @@ public:
 
 	static int FindIndex(const char *Title)
 	{
-		for(int i = 0; i < Array.Count; ++i)
-			if(!_strcmpi(Title, Array.GetItem(i)->Name))
-				return i;
-		return -1;
-	}
-
-	static T* Find(const char *Title)
-	{
 		auto result = std::find_if(Array.begin(), Array.end(), [Title](Enumerable<T>* Item) {
 			return !_strcmpi(Item->Name, Title);
 		});
 		if(result == Array.end()) {
-			return nullptr;
+			return -1;
 		}
-		return *result;
+		return std::distance(Array.begin(), result);
+	}
+
+	static T* Find(const char *Title)
+	{
+		auto result = FindIndex(Title);
+		return (result < 0) ? nullptr : Array[result];
 	}
 
 	static T* FindOrAllocate(const char *Title)
