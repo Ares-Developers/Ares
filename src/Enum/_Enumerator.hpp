@@ -12,14 +12,6 @@ template <typename T> class Enumerable
 public:
 	static DynamicVectorClass< T* > Array;
 
-	struct comparator : public std::binary_function<Enumerable<T>*, const char *, bool> {
-		bool operator()(Enumerable<T>* Item, const char* title) const { return !_strcmpi(Item->Name, title); }
-	};
-
-	static T** stl_Find(const char *Title) {
-		return std::find_if(Array.begin(), Array.end(), std::bind2nd(comparator(), Title));
-	}
-
 	static int FindIndex(const char *Title)
 	{
 		for(int i = 0; i < Array.Count; ++i)
@@ -30,11 +22,9 @@ public:
 
 	static T* Find(const char *Title)
 	{
-/*		for(int i = 0; i < Array.get_Count(); ++i)
-			if(!_strcmpi(Title, Array.GetItem(i)->Name))
-				return Array.GetItem(i);
-*/
-		T** result = Enumerable<T>::stl_Find(Title);
+		auto result = std::find_if(Array.begin(), Array.end(), [Title](Enumerable<T>* Item) {
+			return !_strcmpi(Item->Name, Title);
+		});
 		if(result == Array.end()) {
 			return nullptr;
 		}
