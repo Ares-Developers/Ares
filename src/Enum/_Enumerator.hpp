@@ -39,8 +39,8 @@ public:
 	{
 		for(int i = Array.Count - 1; i >= 0; --i) {
 			delete Array[i];
-			Array.RemoveItem(i);
 		}
+		Array.Clear();
 	}
 
 	static void LoadFromINIList(CCINIClass *pINI)
