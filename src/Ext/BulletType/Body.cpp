@@ -31,7 +31,7 @@ ConvertClass* BulletTypeExt::ExtData::GetConvert()
 		ConvertClass* Convert = nullptr;
 		if(AnimTypeClass * AnimType = AnimTypeClass::Find(this->AttachedToObject->ImageFile)) {
 			auto pData = AnimTypeExt::ExtMap.Find(AnimType);
-			Convert = pData->Palette.Convert;
+			Convert = pData->Palette.GetConvert();
 		}
 		this->ImageConvert.Set(Convert);
 	}

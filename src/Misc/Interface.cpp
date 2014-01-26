@@ -475,9 +475,11 @@ DEFINE_HOOK(60378B, CampaignMenu_ChooseButtonPalette, 6) {
 
 	if(idxSlot > -1) {
 		int idxCampaign = Interface::slots[idxSlot]-1;
-		if(idxCampaign > -1 && Ares::UISettings::Campaigns[idxCampaign].Palette->Convert) {
-			R->EAX(Ares::UISettings::Campaigns[idxCampaign].Palette->Convert);
-			return 0x603798;
+		if(idxCampaign > -1) {
+			if(auto pConvert = Ares::UISettings::Campaigns[idxCampaign].Palette->GetConvert()) {
+				R->EAX(pConvert);
+				return 0x603798;
+			}
 		}
 	}
 	return 0x6037FE;

@@ -11,7 +11,7 @@ DEFINE_HOOK(4232CE, AnimClass_Draw_SetPalette, 6)
 	auto pData = AnimTypeExt::ExtMap.Find(AnimType);
 
 	if(pData->Palette.Convert) {
-		R->ECX<ConvertClass *>(pData->Palette.Convert);
+		R->ECX<ConvertClass *>(pData->Palette.GetConvert());
 		return 0x4232D4;
 	}
 

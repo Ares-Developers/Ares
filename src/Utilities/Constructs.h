@@ -40,6 +40,10 @@ public:
 		this->Clear();
 	}
 
+	ConvertClass* GetConvert() const {
+		return this->Convert;
+	}
+
 	bool LoadFromINI(CCINIClass* pINI, const char* pSection, const char* pKey, const char* pDefault = "") {
 		if(pINI->ReadString(pSection, pKey, pDefault, Ares::readBuffer, Ares::readLength)) {
 			if(char* suffix = strstr(Ares::readBuffer, "~~~")) {
