@@ -25,7 +25,7 @@ class SW_UnitDelivery : public NewSWType
 	typedef UnitDeliveryStateMachine TStateMachine;
 
 	void newStateMachine(int Duration, CellStruct XY, SuperClass *pSuper) {
-		new TStateMachine(Duration, XY, pSuper, this);
+		SWStateMachine::Register(std::make_unique<UnitDeliveryStateMachine>(Duration, XY, pSuper, this));
 	}
 };
 #endif

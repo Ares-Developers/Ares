@@ -30,7 +30,7 @@ class SW_PsychicDominator : public NewSWType
 		typedef PsychicDominatorStateMachine TStateMachine;
 
 		void newStateMachine(CellStruct XY, SuperClass *pSuper) {
-			new TStateMachine(XY, pSuper, this);
+			SWStateMachine::Register(std::make_unique<PsychicDominatorStateMachine>(XY, pSuper, this));
 		}
 };
 #endif

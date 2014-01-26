@@ -26,7 +26,7 @@ class SW_ChronoWarp : public NewSWType
 
 		void newStateMachine(int Duration, CellStruct XY, SuperClass *pSuper, NewSWType * pSWType,
 			DynamicVectorClass<ChronoWarpStateMachine::ChronoWarpContainer> *Buildings) {
-				new TStateMachine(Duration, XY, pSuper, this, Buildings);
+				SWStateMachine::Register(std::make_unique<ChronoWarpStateMachine>(Duration, XY, pSuper, this, Buildings));
 		}
 };
 #endif

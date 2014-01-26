@@ -17,7 +17,7 @@
 #include <algorithm>
 
 std::vector<std::unique_ptr<NewSWType>> NewSWType::Array;
-std::vector<SWStateMachine *> SWStateMachine::Array;
+std::vector<std::unique_ptr<SWStateMachine>> SWStateMachine::Array;
 
 void NewSWType::Init()
 {
@@ -89,34 +89,24 @@ DEFINE_HOOK(539760, Scenario_ResetAllSuperWeapons_Custom, 5)
 void SWStateMachine::UpdateAll()
 {
 	for(int i = static_cast<int>(SWStateMachine::Array.size()) - 1; i >= 0; --i) {
-		SWStateMachine* Machine = SWStateMachine::Array[i];
-
-		if(!Machine) {
-			Debug::FatalErrorAndExit("SWStateMachine was NULL at index %d.\n", i);
-		}
-
+		auto& Machine = SWStateMachine::Array[i];
 		Machine->Update();
-		if(Machine->Finished()) {
-			SWStateMachine::Array.erase(SWStateMachine::Array.begin() + i);
-			delete Machine;
-		}
 	}
+
+	Array.erase(std::remove_if(Array.begin(), Array.end(), [](const std::unique_ptr<SWStateMachine> &ptr) {
+		return ptr->Finished();
+	}), Array.end());
 }
 
 void SWStateMachine::InvalidatePointer(void *ptr)
 {
 	for(int i = static_cast<int>(SWStateMachine::Array.size()) - 1; i >= 0; --i) {
-		SWStateMachine* Machine = SWStateMachine::Array[i];
+		auto& Machine = SWStateMachine::Array[i];
 		Machine->PointerGotInvalid(ptr);
 	}
 }
 
 void SWStateMachine::ClearAll()
 {
-	for(int i = static_cast<int>(SWStateMachine::Array.size()) - 1; i >= 0; --i) {
-		if(SWStateMachine* pMachine = SWStateMachine::Array[i]){
-			delete pMachine;
-		}
-	}
 	SWStateMachine::Array.clear();
 }
