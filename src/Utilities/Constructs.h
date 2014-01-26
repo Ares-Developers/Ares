@@ -87,7 +87,7 @@ private:
 				ret->Entries[i].B = pPal->Entries[i].B << 2;
 			}
 
-			delete pData;
+			GAME_DEALLOC(pData);
 		}
 
 		return ret;
