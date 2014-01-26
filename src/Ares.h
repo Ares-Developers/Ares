@@ -236,4 +236,13 @@ public:
 	}
 };
 
+struct GameDeleter {
+	template <typename T>
+	void operator ()(T* ptr) {
+		if(ptr) {
+			GAME_DEALLOC(ptr);
+		}
+	}
+};
+
 #endif
