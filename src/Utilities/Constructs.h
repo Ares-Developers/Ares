@@ -11,6 +11,7 @@
 #include <StringTable.h>
 
 #include <cstring>
+#include <memory>
 
 #include "../Ares.h"
 #include "../Ares.CRT.h"
@@ -27,8 +28,8 @@ public:
 	};
 
 	PaletteMode::Value Mode;
-	ConvertClass* Convert;
-	BytePalette* Palette;
+	std::unique_ptr<ConvertClass, GameDeleter> Convert;
+	std::unique_ptr<BytePalette, GameDeleter> Palette;
 
 	CustomPalette(PaletteMode::Value mode = PaletteMode::Default) :
 		Mode(mode),
@@ -41,7 +42,7 @@ public:
 	}
 
 	ConvertClass* GetConvert() const {
-		return this->Convert;
+		return this->Convert.get();
 	}
 
 	bool LoadFromINI(CCINIClass* pINI, const char* pSection, const char* pKey, const char* pDefault = "") {
@@ -67,21 +68,20 @@ public:
 
 private:
 	void Clear() {
-		GAME_DEALLOC(this->Convert);
 		this->Convert = nullptr;
-
-		GAME_DEALLOC(this->Palette);
 		this->Palette = nullptr;
 	}
 
-	BytePalette* ReadPalette(const char* filename) {
-		BytePalette* ret = nullptr;
+	std::unique_ptr<BytePalette, GameDeleter> ReadPalette(const char* filename) {
+		std::unique_ptr<BytePalette, GameDeleter> ret = nullptr;
 
 		CCFileClass file(filename);
 		if(auto pData = file.ReadWholeFile()) {
 			auto pPal = reinterpret_cast<BytePalette*>(pData);
 
-			GAME_ALLOC(BytePalette, ret);
+			BytePalette* buffer = nullptr;
+			GAME_ALLOC(BytePalette, buffer);
+			ret = std::unique_ptr<BytePalette, GameDeleter>(buffer);
 
 			// convert 6 bits to 8 bits. not correct,
 			// but this is what the game does
@@ -98,12 +98,14 @@ private:
 	}
 
 	void CreateConvert() {
+		ConvertClass* buffer = nullptr;
 		if(this->Mode == PaletteMode::Temperate) {
 			auto pTargetPal = (BytePalette*)0x885780; // pointer to TEMPERAT_PAL (not the Convert!)
-			GAME_ALLOC(ConvertClass, this->Convert, this->Palette, pTargetPal, DSurface::Primary, 53, 0);
+			GAME_ALLOC(ConvertClass, buffer, this->Palette.get(), pTargetPal, DSurface::Primary, 53, 0);
 		} else {
-			GAME_ALLOC(ConvertClass, this->Convert, this->Palette, this->Palette, DSurface::Alternate, 1, 0);
+			GAME_ALLOC(ConvertClass, buffer, this->Palette.get(), this->Palette.get(), DSurface::Alternate, 1, 0);
 		}
+		this->Convert = std::unique_ptr<ConvertClass, GameDeleter>(buffer);
 	}
 };
 
