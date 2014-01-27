@@ -104,8 +104,8 @@ class HouseExt
 	static bool FactoryForObjectExists(HouseClass *pHouse, TechnoTypeClass *pItem);
 
 	static bool CheckFactoryOwners(HouseClass *pHouse, TechnoTypeClass *pItem);
-	static bool CheckFactoryOwner(HouseClass *pHouse, BuildingClass *Factory, TechnoTypeClass *pItem);
-	static bool CheckForbiddenFactoryOwner(HouseClass *pHouse, BuildingClass *Factory, TechnoTypeClass *pItem);
+	static bool CheckFactoryOwner(HouseClass *pHouse, TechnoTypeClass *pItem);
+	static bool CheckForbiddenFactoryOwner(HouseClass *pHouse, TechnoTypeClass *pItem);
 
 	static bool IsAnyFirestormActive;
 	static bool UpdateAnyFirestormActive();
