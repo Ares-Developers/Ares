@@ -14,8 +14,7 @@ DEFINE_HOOK(4B99A2, DropshipLoadout_WriteUnit, 0)
 {
 	GET(TechnoTypeClass *, pType, ESI);
 
-	GET_STACK(int, IsAvailable, STACK_OFFS(0x164, -0x8));
-	bool Available = !!IsAvailable;
+	GET_STACK(bool, Available, STACK_OFFS(0x164, -0x8));
 
 	LEA_STACK(Point2D *, BaseCoords, STACK_OFFS(0x164, 0x14C));
 	LEA_STACK(Point2D *, AltCoords, STACK_OFFS(0x164, 0x144));
