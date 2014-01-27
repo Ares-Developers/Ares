@@ -1136,3 +1136,22 @@ DEFINE_HOOK(4748A0, INIClass_GetPipIdx, 7)
 	R->EAX(ret);
 	return 0x474907;
 }
+
+// replaced entire function. error was using delete[] instead of delete.
+// it potentially crashed when any of the files were present in the
+// game directory.
+DEFINE_HOOK(5F77F0, ObjectTypeClass_UnloadPipsSHP, 5)
+{
+	bool* pAllocated = reinterpret_cast<bool*>(0xAC1488);
+	SHPStruct* pShp[] = {FileSystem::PIPBRD_SHP, FileSystem::PIPS_SHP,
+		FileSystem::PIPS2_SHP, FileSystem::TALKBUBL_SHP};
+
+	for(int i = 0; i < 4; ++i) {
+		if(pAllocated[i] && pShp[i]) {
+			GAME_DEALLOC(pShp[i]);
+			pAllocated[i] = false;
+		}
+	}
+
+	return 0x5F78FB;
+}
