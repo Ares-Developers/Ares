@@ -124,15 +124,16 @@ class Extension {
 		}
 };
 
-//template<typename T1, typename T2>
 template<typename T>
-class Container : public hash_map<typename T::TT*, typename T::ExtData* > {
+class Container {
 private:
 	typedef typename T::TT        S_T;
 	typedef typename T::ExtData   E_T;
 	typedef S_T* KeyType;
 	typedef E_T* ValueType;
 	typedef hash_map<KeyType, ValueType> C_Map;
+
+	C_Map Items;
 
 	static S_T * SavingObject;
 	static IStream * SavingStream;
@@ -149,17 +150,17 @@ protected:
 	};
 
 	void InvalidateExtDataPointer(void *ptr, bool bRemoved) {
-		for(auto i = this->begin(); i != this->end(); ++i) {
+		for(auto i = this->Items.begin(); i != this->Items.end(); ++i) {
 			i->second->InvalidatePointer(ptr, bRemoved);
 		}
 	}
 
 public:
-	Container() : hash_map<KeyType, ValueType>() {
+	Container() : Items() {
 	}
 
 	virtual ~Container() {
-		Empty();
+		this->Empty();
 	}
 
 	ValueType FindOrAllocate(KeyType const &key) {
@@ -168,69 +169,68 @@ public:
 			Debug::Log("CTOR of %s attempted for a NULL pointer! WTF!\n", info.name());
 			return nullptr;
 		}
-		auto i = this->find(key);
-		if(i == this->end()) {
+		auto i = this->Items.find(key);
+		if(i == this->Items.end()) {
 			auto val = new E_T(key);
 			val->InitializeConstants(key);
-			i = this->insert(typename C_Map::value_type(key, val)).first;
+			i = this->Items.insert(typename C_Map::value_type(key, val)).first;
 		}
 		return i->second;
 	}
 
 	ValueType Find(const KeyType &key) {
-		auto i = this->find(key);
-		if(i == this->end()) {
+		auto i = this->Items.find(key);
+		if(i == this->Items.end()) {
 			return nullptr;
 		}
 		return i->second;
 	}
 
 	const ValueType Find(const KeyType &key) const {
-		auto i = this->find(key);
-		if(i == this->end()) {
+		auto i = this->Items.find(key);
+		if(i == this->Items.end()) {
 			return nullptr;
 		}
 		return i->second;
 	}
 
 	void Remove(KeyType key) {
-		auto i = this->find(key);
-		if(i != this->end()) {
+		auto i = this->Items.find(key);
+		if(i != this->Items.end()) {
 			delete i->second;
-			erase(i);
+			this->Items.erase(i);
 		}
 	}
 
 	void Remove(typename C_Map::iterator i) {
-		if(i != this->end()) {
+		if(i != this->Items.end()) {
 			delete i->second;
-			erase(i);
+			this->Items.erase(i);
 		}
 	}
 
 	void Empty() {
-		for(auto i = this->begin(); i != this->end(); ) {
+		for(auto i = this->Items.begin(); i != this->Items.end();) {
 			delete i->second;
-			erase(i++);
-	//		++i;
+			this->Items.erase(i++);
 		}
 	}
 
 	void LoadAllFromINI(CCINIClass *pINI) {
-		for(auto i = this->begin(); i != this->end(); i++) {
+		for(auto i = this->Items.begin(); i != this->Items.end(); i++) {
 			i->second->LoadFromINI(i->first, pINI);
 		}
 	}
 
 	void LoadFromINI(KeyType key, CCINIClass *pINI) {
-		auto i = this->find(key);
-		if(i != this->end()) {
+		auto i = this->Items.find(key);
+		if(i != this->Items.end()) {
 			i->second->LoadFromINI(key, pINI);
 		}
 	}
 
 	void LoadAllFromRules(CCINIClass *pINI) {
-		for(auto i = this->begin(); i != this->end(); i++) {
+		for(auto i = this->Items.begin(); i != this->Items.end(); i++) {
 			i->second->LoadFromRulesFile(i->first, pINI);
 		}
 	}
