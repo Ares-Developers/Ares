@@ -202,13 +202,6 @@ public:
 		}
 	}
 
-	void Remove(typename C_Map::iterator i) {
-		if(i != this->Items.end()) {
-			delete i->second;
-			this->Items.erase(i);
-		}
-	}
-
 	void Clear() {
 		for(auto i = this->Items.begin(); i != this->Items.end();) {
 			delete i->second;
