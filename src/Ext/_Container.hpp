@@ -160,7 +160,7 @@ public:
 	}
 
 	virtual ~Container() {
-		this->Empty();
+		this->Clear();
 	}
 
 	ValueType FindOrAllocate(KeyType const &key) {
@@ -209,7 +209,7 @@ public:
 		}
 	}
 
-	void Empty() {
+	void Clear() {
 		for(auto i = this->Items.begin(); i != this->Items.end();) {
 			delete i->second;
 			this->Items.erase(i++);

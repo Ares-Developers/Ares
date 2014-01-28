@@ -433,19 +433,19 @@ DEFINE_HOOK(7258D0, AnnounceInvalidPointer, 6)
 
 DEFINE_HOOK(685659, Scenario_ClearClasses, a)
 {
-	BuildingExt::ExtMap.Empty();
+	BuildingExt::ExtMap.Clear();
 	BuildingExt::Cleanup();
-	BuildingTypeExt::ExtMap.Empty();
-//	BulletExt::ExtMap.Empty();
-	BulletTypeExt::ExtMap.Empty();
-	HouseExt::ExtMap.Empty();
-	HouseTypeExt::ExtMap.Empty();
-	SideExt::ExtMap.Empty();
-	SWTypeExt::ExtMap.Empty();
-	TechnoExt::ExtMap.Empty();
-	TechnoTypeExt::ExtMap.Empty();
-	WarheadTypeExt::ExtMap.Empty();
-	WeaponTypeExt::ExtMap.Empty();
+	BuildingTypeExt::ExtMap.Clear();
+//	BulletExt::ExtMap.Clear();
+	BulletTypeExt::ExtMap.Clear();
+	HouseExt::ExtMap.Clear();
+	HouseTypeExt::ExtMap.Clear();
+	SideExt::ExtMap.Clear();
+	SWTypeExt::ExtMap.Clear();
+	TechnoExt::ExtMap.Clear();
+	TechnoTypeExt::ExtMap.Clear();
+	WarheadTypeExt::ExtMap.Clear();
+	WeaponTypeExt::ExtMap.Clear();
 
 	RulesExt::ClearCameos();
 
