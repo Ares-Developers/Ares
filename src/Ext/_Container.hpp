@@ -2,6 +2,7 @@
 #define CONTAINER_TEMPLATE_MAGIC_H
 
 #include <typeinfo>
+#include <memory>
 
 #include <xcompile.h>
 #include <CCINIClass.h>
@@ -131,7 +132,7 @@ private:
 	typedef typename T::ExtData   E_T;
 	typedef S_T* KeyType;
 	typedef E_T* ValueType;
-	typedef hash_map<KeyType, ValueType> C_Map;
+	typedef hash_map<KeyType, std::unique_ptr<E_T>> C_Map;
 
 	C_Map Items;
 
@@ -171,11 +172,11 @@ public:
 		}
 		auto i = this->Items.find(key);
 		if(i == this->Items.end()) {
-			auto val = new E_T(key);
+			auto val = std::make_unique<E_T>(key);
 			val->InitializeConstants(key);
-			i = this->Items.insert(typename C_Map::value_type(key, val)).first;
+			i = this->Items.insert(typename C_Map::value_type(key, std::move(val))).first;
 		}
-		return i->second;
+		return i->second.get();
 	}
 
 	ValueType Find(const KeyType &key) {
@@ -183,7 +184,7 @@ public:
 		if(i == this->Items.end()) {
 			return nullptr;
 		}
-		return i->second;
+		return i->second.get();
 	}
 
 	const ValueType Find(const KeyType &key) const {
@@ -194,16 +195,12 @@ public:
 	void Remove(KeyType key) {
 		auto i = this->Items.find(key);
 		if(i != this->Items.end()) {
-			delete i->second;
 			this->Items.erase(i);
 		}
 	}
 
 	void Clear() {
-		for(auto i = this->Items.begin(); i != this->Items.end();) {
-			delete i->second;
-			this->Items.erase(i++);
-		}
+		this->Items.clear();
 	}
 
 	void LoadAllFromINI(CCINIClass *pINI) {
