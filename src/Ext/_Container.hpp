@@ -10,7 +10,7 @@
 #include <SwizzleManagerClass.h>
 
 #include "../Misc/Debug.h"
-#include "../Misc/Savegame.h"
+#include "../Misc/Stream.h"
 
 enum eInitState {
 	is_Blank = 0x0, // CTOR'd
