@@ -3,6 +3,7 @@
 
 #include <typeinfo>
 #include <memory>
+#include <unordered_map>
 
 #include <xcompile.h>
 #include <CCINIClass.h>
@@ -132,7 +133,7 @@ private:
 	typedef typename T::ExtData   E_T;
 	typedef S_T* KeyType;
 	typedef E_T* ValueType;
-	typedef hash_map<KeyType, std::unique_ptr<E_T>> C_Map;
+	typedef std::unordered_map<KeyType, std::unique_ptr<E_T>> C_Map;
 
 	C_Map Items;
 
