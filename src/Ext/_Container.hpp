@@ -111,13 +111,13 @@ class Extension {
 		virtual void InvalidatePointer(void *ptr, bool bRemoved) = 0;
 
 		virtual inline void SaveToStream(AresByteStream &Stm) {
-			Savegame::WriteAresStream(Stm, this->_Initialized);
-			//Savegame::WriteAresStream(pStm, this->AttachedToObject);
+			Stm.Save(this->_Initialized);
+			//Stm.Save(this->AttachedToObject);
 		}
 
 		virtual inline void LoadFromStream(AresByteStream &Stm, size_t &Offset) {
-			Savegame::ReadAresStream(Stm, this->_Initialized, Offset);
-			//Savegame::ReadAresStream(Stm, this->AttachedToObject, Offset);
+			Stm.Load(this->_Initialized, Offset);
+			//Stm.Load(this->AttachedToObject, Offset);
 		}
 
 	private:
