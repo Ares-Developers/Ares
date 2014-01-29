@@ -194,7 +194,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 
 	INI_EX exINI(pINI);
 	this->Insignia.Read(pINI, section, "Insignia.%s");
-	this->Parachute_Anim.Parse(&exINI, section, "Parachute.Anim");
+	this->Parachute_Anim.Read(&exINI, section, "Parachute.Anim");
 
 	// new on 08.11.09 for #342 (Operator=)
 	if(pINI->ReadString(section, "Operator", "", Ares::readBuffer, Ares::readLength)) { // try to read the flag
@@ -336,10 +336,10 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 		this->IsCustomMissile.Read(&exINI, section, "Missile.Custom");
 		this->CustomMissileData.Read(&exINI, section, "Missile");
 		this->CustomMissileData.GetEx()->Type = pAircraftType;
-		this->CustomMissileWarhead.Parse(&exINI, section, "Missile.Warhead");
-		this->CustomMissileEliteWarhead.Parse(&exINI, section, "Missile.EliteWarhead");
-		this->CustomMissileTakeoffAnim.Parse(&exINI, section, "Missile.TakeOffAnim");
-		this->CustomMissileTrailerAnim.Parse(&exINI, section, "Missile.TrailerAnim");
+		this->CustomMissileWarhead.Read(&exINI, section, "Missile.Warhead");
+		this->CustomMissileEliteWarhead.Read(&exINI, section, "Missile.EliteWarhead");
+		this->CustomMissileTakeoffAnim.Read(&exINI, section, "Missile.TakeOffAnim");
+		this->CustomMissileTrailerAnim.Read(&exINI, section, "Missile.TrailerAnim");
 		this->CustomMissileTrailerSeparation.Read(&exINI, section, "Missile.TrailerSeparation");
 	}
 

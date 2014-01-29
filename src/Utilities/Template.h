@@ -70,11 +70,7 @@ public:
 		this->Value = *val;
 	}
 
-	void Read(INI_EX *parser, const char* pSection, const char* pKey) {
-		ImplementThisFunction();
-	};
-
-	void Parse(INI_EX *parser, const char* pSection, const char* pKey, bool Allocate = 0) {
+	void Read(INI_EX *parser, const char* pSection, const char* pKey, bool Allocate = false) {
 		if(parser->ReadString(pSection, pKey)) {
 			const char * val = parser->value();
 			if(auto parsed = (Allocate ? base_type::FindOrAllocate : base_type::Find)(val)) {
@@ -292,7 +288,7 @@ public:
 // specializations
 
 template<>
-void Valueable<bool>::Read(INI_EX *parser, const char* pSection, const char* pKey) {
+void Valueable<bool>::Read(INI_EX *parser, const char* pSection, const char* pKey, bool Allocate) {
 	bool buffer = this->Get();
 	if(parser->ReadBool(pSection, pKey, &buffer)) {
 		this->Set(buffer);
@@ -302,7 +298,7 @@ void Valueable<bool>::Read(INI_EX *parser, const char* pSection, const char* pKe
 };
 
 template<>
-void Valueable<int>::Read(INI_EX *parser, const char* pSection, const char* pKey) {
+void Valueable<int>::Read(INI_EX *parser, const char* pSection, const char* pKey, bool Allocate) {
 	int buffer = this->Get();
 	if(parser->ReadInteger(pSection, pKey, &buffer)) {
 		this->Set(buffer);
@@ -312,7 +308,7 @@ void Valueable<int>::Read(INI_EX *parser, const char* pSection, const char* pKey
 };
 
 template<>
-void Valueable<BYTE>::Read(INI_EX *parser, const char* pSection, const char* pKey) {
+void Valueable<BYTE>::Read(INI_EX *parser, const char* pSection, const char* pKey, bool Allocate) {
 	int buffer = this->Get();
 	if(parser->ReadInteger(pSection, pKey, &buffer)) {
 		if(buffer <= 255 && buffer >= 0) {
@@ -327,7 +323,7 @@ void Valueable<BYTE>::Read(INI_EX *parser, const char* pSection, const char* pKe
 };
 
 template<>
-void Valueable<float>::Read(INI_EX *parser, const char* pSection, const char* pKey) {
+void Valueable<float>::Read(INI_EX *parser, const char* pSection, const char* pKey, bool Allocate) {
 	double buffer = this->Get();
 	if(parser->ReadDouble(pSection, pKey, &buffer)) {
 		this->Set(static_cast<float>(buffer));
@@ -337,7 +333,7 @@ void Valueable<float>::Read(INI_EX *parser, const char* pSection, const char* pK
 };
 
 template<>
-void Valueable<double>::Read(INI_EX *parser, const char* pSection, const char* pKey) {
+void Valueable<double>::Read(INI_EX *parser, const char* pSection, const char* pKey, bool Allocate) {
 	double buffer = this->Get();
 	if(parser->ReadDouble(pSection, pKey, &buffer)) {
 		this->Set(buffer);
@@ -347,7 +343,7 @@ void Valueable<double>::Read(INI_EX *parser, const char* pSection, const char* p
 };
 
 template<>
-void Valueable<ColorStruct>::Read(INI_EX *parser, const char* pSection, const char* pKey) {
+void Valueable<ColorStruct>::Read(INI_EX *parser, const char* pSection, const char* pKey, bool Allocate) {
 	ColorStruct buffer = this->Get();
 	if(parser->Read3Bytes(pSection, pKey, (byte*)&buffer)) {
 		this->Set(buffer);
@@ -357,14 +353,14 @@ void Valueable<ColorStruct>::Read(INI_EX *parser, const char* pSection, const ch
 };
 
 template<>
-void Valueable<CSFText>::Read(INI_EX *parser, const char* pSection, const char* pKey) {
+void Valueable<CSFText>::Read(INI_EX *parser, const char* pSection, const char* pKey, bool Allocate) {
 	if(parser->ReadString(pSection, pKey)) {
 		this->Set(parser->value());
 	}
 };
 
 template<>
-void Valueable<SHPStruct *>::Read(INI_EX *parser, const char* pSection, const char* pKey) {
+void Valueable<SHPStruct *>::Read(INI_EX *parser, const char* pSection, const char* pKey, bool Allocate) {
 	if(parser->ReadString(pSection, pKey)) {
 		char flag[256];
 		const char * val = parser->value();
@@ -378,7 +374,7 @@ void Valueable<SHPStruct *>::Read(INI_EX *parser, const char* pSection, const ch
 };
 
 template<>
-void Valueable<MouseCursor>::Read(INI_EX *parser, const char* pSection, const char* pKey) {
+void Valueable<MouseCursor>::Read(INI_EX *parser, const char* pSection, const char* pKey, bool Allocate) {
 	Customizable<int> Placeholder;
 
 	MouseCursor *Cursor = this->GetEx();
@@ -427,7 +423,7 @@ void Valueable<MouseCursor>::Read(INI_EX *parser, const char* pSection, const ch
 };
 
 template<>
-void Valueable<RocketStruct>::Read(INI_EX *parser, const char* pSection, const char* pKey) {
+void Valueable<RocketStruct>::Read(INI_EX *parser, const char* pSection, const char* pKey, bool Allocate) {
 	Customizable<bool> BoolPlaceholder;
 	Customizable<int> IntPlaceholder;
 	Customizable<float> FloatPlaceholder;
@@ -499,7 +495,7 @@ void Valueable<RocketStruct>::Read(INI_EX *parser, const char* pSection, const c
 
 	_snprintf_s(pFlagName, 0x3F, "%s.Type", pKey);
 	TypePlaceholder.Set(rocket->Type);
-	TypePlaceholder.Parse(parser, pSection, pFlagName);
+	TypePlaceholder.Read(parser, pSection, pFlagName);
 	rocket->Type = TypePlaceholder;
 };
 

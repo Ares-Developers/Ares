@@ -267,7 +267,7 @@ void HouseTypeExt::ExtData::LoadFromINIFile(HouseTypeClass *pThis, CCINIClass *p
 
 	this->Powerplants.Read(&exINI, pID, "AI.PowerPlants");
 
-	this->Parachute_Anim.Parse(&exINI, pID, "Parachute.Anim");
+	this->Parachute_Anim.Read(&exINI, pID, "Parachute.Anim");
 	
 	this->ParaDropPlane.Read(&exINI, pID, "ParaDrop.Aircraft");
 

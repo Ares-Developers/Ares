@@ -60,8 +60,8 @@ void SW_ChronoSphere::LoadFromINI(
 	pData->Chronosphere_BlowUnplaceable.Read(&exINI, section, "Chronosphere.BlowUnplaceable");
 	pData->Chronosphere_ReconsiderBuildings.Read(&exINI, section, "Chronosphere.ReconsiderBuildings");
 
-	pData->Chronosphere_BlastSrc.Parse(&exINI, section, "Chronosphere.BlastSrc");
-	pData->Chronosphere_BlastDest.Parse(&exINI, section, "Chronosphere.BlastDest");
+	pData->Chronosphere_BlastSrc.Read(&exINI, section, "Chronosphere.BlastSrc");
+	pData->Chronosphere_BlastDest.Read(&exINI, section, "Chronosphere.BlastDest");
 
 	// reconstruct the original value, then re-read (otherwise buildings will be affected if
 	// the SW section is defined in game mode inis or maps without restating SW.AffectsTarget)

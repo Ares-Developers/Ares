@@ -26,7 +26,7 @@ void AttachEffectTypeClass::Read(INI_EX *exINI, const char * section) {
 	AresCRT::strCopy(this->ID, section);
 	this->Duration.Read(exINI, section, "AttachEffect.Duration");
 	this->Cumulative.Read(exINI, section, "AttachEffect.Cumulative");
-	this->AnimType.Parse(exINI, section, "AttachEffect.Animation");
+	this->AnimType.Read(exINI, section, "AttachEffect.Animation");
 	this->AnimResetOnReapply.Read(exINI, section, "AttachEffect.AnimResetOnReapply");
 	this->TemporalHidesAnim.Read(exINI, section, "AttachEffect.TemporalHidesAnim");
 	this->ForceDecloak.Read(exINI, section, "AttachEffect.ForceDecloak");

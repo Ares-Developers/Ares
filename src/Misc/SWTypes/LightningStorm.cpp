@@ -77,7 +77,7 @@ void SW_LightningStorm::LoadFromINI(
 	pData->Weather_DebrisMin.Read(&exINI, section, "Lightning.DebrisMin");
 	pData->Weather_DebrisMax.Read(&exINI, section, "Lightning.DebrisMax");
 	pData->Weather_CloudHeight.Read(&exINI, section, "Lightning.CloudHeight");
-	pData->Weather_BoltExplosion.Parse(&exINI, section, "Lightning.BoltExplosion");
+	pData->Weather_BoltExplosion.Read(&exINI, section, "Lightning.BoltExplosion");
 	pData->Weather_RadarOutageAffects.Read(&exINI, section, "Lightning.RadarOutageAffects");
 	pData->Weather_Clouds.Read(&exINI, section, "Lightning.Clouds");
 	pData->Weather_Bolts.Read(&exINI, section, "Lightning.Bolts");

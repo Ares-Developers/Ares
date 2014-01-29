@@ -126,7 +126,7 @@ void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass
 	this->SW_Sound.Read(&exINI, section, "SW.Sound");
 	this->SW_ActivationSound.Read(&exINI, section, "SW.ActivationSound");
 
-	this->SW_Anim.Parse(&exINI, section, "SW.Animation");
+	this->SW_Anim.Read(&exINI, section, "SW.Animation");
 	this->SW_AnimHeight.Read(&exINI, section, "SW.AnimationHeight");
 
 	this->SW_AnimVisibility.Read(&exINI, section, "SW.AnimationVisibility");
@@ -142,7 +142,7 @@ void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass
 	this->SW_Cursor.Read(&exINI, section, "Cursor");
 	this->SW_NoCursor.Read(&exINI, section, "NoCursor");
 
-	this->SW_Warhead.Parse(&exINI, section, "SW.Warhead");
+	this->SW_Warhead.Read(&exINI, section, "SW.Warhead");
 	this->SW_Damage.Read(&exINI, section, "SW.Damage");
 
 	if(pINI->ReadString(section, "SW.Range", Ares::readDefval, Ares::readBuffer, Ares::readLength)) {

@@ -63,17 +63,17 @@ void SideExt::ExtData::LoadFromINIFile(SideClass *pThis, CCINIClass *pINI)
 
 	this->BaseDefenses.Read(&exINI, section, "AI.BaseDefenses");
 
-	this->Crew.Parse(&exINI, section, "Crew");
+	this->Crew.Read(&exINI, section, "Crew");
 
-	this->Engineer.Parse(&exINI, section, "Engineer");
+	this->Engineer.Read(&exINI, section, "Engineer");
 
-	this->Technician.Parse(&exINI, section, "Technician");
+	this->Technician.Read(&exINI, section, "Technician");
 
-	this->Disguise.Parse(&exINI, section, "DefaultDisguise");
+	this->Disguise.Read(&exINI, section, "DefaultDisguise");
 
 	this->EVAIndex.Read(&exINI, section, "EVA.Tag");
 
-	this->Parachute_Anim.Parse(&exINI, section, "Parachute.Anim");
+	this->Parachute_Anim.Read(&exINI, section, "Parachute.Anim");
 
 	this->ParaDropPlane.Read(&exINI, section, "ParaDrop.Aircraft");
 

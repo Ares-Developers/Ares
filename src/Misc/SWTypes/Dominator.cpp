@@ -61,9 +61,9 @@ void SW_PsychicDominator::LoadFromINI(
 	INI_EX exINI(pINI);
 	pData->Dominator_FirstAnimHeight.Read(&exINI, section, "Dominator.FirstAnimHeight");
 	pData->Dominator_SecondAnimHeight.Read(&exINI, section, "Dominator.SecondAnimHeight");
-	pData->Dominator_FirstAnim.Parse(&exINI, section, "Dominator.FirstAnim");
-	pData->Dominator_SecondAnim.Parse(&exINI, section, "Dominator.SecondAnim");
-	pData->Dominator_ControlAnim.Parse(&exINI, section, "Dominator.ControlAnim");
+	pData->Dominator_FirstAnim.Read(&exINI, section, "Dominator.FirstAnim");
+	pData->Dominator_SecondAnim.Read(&exINI, section, "Dominator.SecondAnim");
+	pData->Dominator_ControlAnim.Read(&exINI, section, "Dominator.ControlAnim");
 	pData->Dominator_FireAtPercentage.Read(&exINI, section, "Dominator.FireAtPercentage");
 	pData->Dominator_Capture.Read(&exINI, section, "Dominator.Capture");
 	pData->Dominator_Ripple.Read(&exINI, section, "Dominator.Ripple");

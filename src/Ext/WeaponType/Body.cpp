@@ -100,7 +100,7 @@ void WeaponTypeExt::ExtData::LoadFromINIFile(WeaponTypeExt::TT *pThis, CCINIClas
 
 		this->Ivan_AttachSound.Read(&exINI, section, "IvanBomb.AttachSound");
 
-		this->Ivan_WH.Parse(&exINI, section, "IvanBomb.Warhead");
+		this->Ivan_WH.Read(&exINI, section, "IvanBomb.Warhead");
 
 		this->Ivan_Image.Read(&exINI, section, "IvanBomb.Image");
 
@@ -122,7 +122,7 @@ void WeaponTypeExt::ExtData::LoadFromINIFile(WeaponTypeExt::TT *pThis, CCINIClas
 */
 	// #680 Chrono Prison
 	this->Abductor.Read(&exINI, section, "Abductor");
-	this->Abductor_AnimType.Parse(&exINI, section, "Abductor.Anim");
+	this->Abductor_AnimType.Read(&exINI, section, "Abductor.Anim");
 	this->Abductor_ChangeOwner.Read(&exINI, section, "Abductor.ChangeOwner");
 	this->Abductor_AbductBelowPercent.Read(&exINI, section, "Abductor.AbductBelowPercent");
 }

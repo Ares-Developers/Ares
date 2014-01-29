@@ -79,7 +79,7 @@ void SW_ParaDrop::LoadFromINI(
 
 		// parse the plane contents
 		_snprintf_s(key, 0x3F, "%s.Aircraft", base);
-		pPlane->Aircraft.Parse(&exINI, section, key);
+		pPlane->Aircraft.Read(&exINI, section, key);
 
 		// a list of UnitTypes and InfantryTypes
 		_snprintf_s(key, 0x3F, "%s.Types", base);

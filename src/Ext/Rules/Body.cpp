@@ -72,7 +72,7 @@ void RulesExt::ExtData::LoadBeforeTypeData(RulesClass *pThis, CCINIClass *pINI) 
 
 	pData->Tiberium_DamageEnabled.Read(&exINI, sectionGeneral, "TiberiumDamageEnabled");
 	pData->Tiberium_HealEnabled.Read(&exINI, sectionGeneral, "TiberiumHealEnabled");
-	pData->Tiberium_ExplosiveWarhead.Parse(&exINI, sectionCombatDamage, "TiberiumExplosiveWarhead");
+	pData->Tiberium_ExplosiveWarhead.Read(&exINI, sectionCombatDamage, "TiberiumExplosiveWarhead");
 
 	pData->OverlayExplodeThreshold.Read(&exINI, sectionGeneral, "OverlayExplodeThreshold");
 
@@ -93,7 +93,7 @@ void RulesExt::ExtData::LoadAfterTypeData(RulesClass *pThis, CCINIClass *pINI) {
 
 	INI_EX exINI(pINI);
 
-	pData->ElectricDeath.Parse(&exINI, "AudioVisual", "InfantryElectrocuted");
+	pData->ElectricDeath.Read(&exINI, "AudioVisual", "InfantryElectrocuted");
 
 	pData->DecloakSound.Read(&exINI, "AudioVisual", "DecloakSound");
 	pData->CloakHeight.Read(&exINI, "General", "CloakHeight");

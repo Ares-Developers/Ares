@@ -14,7 +14,7 @@ void RadType::LoadFromINI(CCINIClass *pINI)
 
 	INI_EX exINI(pINI);
 
-	this->WH.Parse(&exINI, section, "Warhead");
+	this->WH.Read(&exINI, section, "Warhead");
 	this->Color.Read(&exINI, section, "Color");
 	this->Duration_Multiple.Read(&exINI, section, "DurationMultiple");
 	this->Application_Delay.Read(&exINI, section, "ApplicationDelay");

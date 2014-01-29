@@ -21,14 +21,14 @@ void TiberiumExt::ExtData::LoadFromINIFile(TiberiumClass* pThis, CCINIClass* pIN
 	INI_EX exINI(pINI);
 
 	this->Damage.Read(&exINI, section, "Damage");
-	this->Warhead.Parse(&exINI, section, "Warhead");
+	this->Warhead.Read(&exINI, section, "Warhead");
 
 	this->Heal_Step.Read(&exINI, section, "Heal.Step");
 	this->Heal_IStep.Read(&exINI, section, "Heal.IStep");
 	this->Heal_UStep.Read(&exINI, section, "Heal.UStep");
 	this->Heal_Delay.Read(&exINI, section, "Heal.Delay");
 
-	this->ExplosionWarhead.Parse(&exINI, section, "ExplosionWarhead");
+	this->ExplosionWarhead.Read(&exINI, section, "ExplosionWarhead");
 	this->ExplosionDamage.Read(&exINI, section, "ExplosionDamage");
 
 	this->DebrisChance.Read(&exINI, section, "Debris.Chance");
