@@ -58,10 +58,10 @@ void SW_NuclearMissile::LoadFromINI(
 
 	INI_EX exINI(pINI);
 
-	pData->Nuke_Payload.Read(&exINI, section, "Nuke.Payload", true);
-	pData->Nuke_TakeOff.Read(&exINI, section, "Nuke.TakeOff");
-	pData->Nuke_PsiWarning.Read(&exINI, section, "Nuke.PsiWarning");
-	pData->Nuke_SiloLaunch.Read(&exINI, section, "Nuke.SiloLaunch");
+	pData->Nuke_Payload.Read(exINI, section, "Nuke.Payload", true);
+	pData->Nuke_TakeOff.Read(exINI, section, "Nuke.TakeOff");
+	pData->Nuke_PsiWarning.Read(exINI, section, "Nuke.PsiWarning");
+	pData->Nuke_SiloLaunch.Read(exINI, section, "Nuke.SiloLaunch");
 
 	Debug::Log("[Nuke] basics %s: ", section);
 	Debug::Log("%s, ", pData->SW_Warhead ? pData->SW_Warhead->ID : "<empty>");

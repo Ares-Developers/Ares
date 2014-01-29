@@ -68,17 +68,17 @@ void RulesExt::ExtData::LoadBeforeTypeData(RulesClass *pThis, CCINIClass *pINI) 
 
 	INI_EX exINI(pINI);
 
-	pData->CanMakeStuffUp.Read(&exINI, sectionGeneral, "CanMakeStuffUp");
+	pData->CanMakeStuffUp.Read(exINI, sectionGeneral, "CanMakeStuffUp");
 
-	pData->Tiberium_DamageEnabled.Read(&exINI, sectionGeneral, "TiberiumDamageEnabled");
-	pData->Tiberium_HealEnabled.Read(&exINI, sectionGeneral, "TiberiumHealEnabled");
-	pData->Tiberium_ExplosiveWarhead.Read(&exINI, sectionCombatDamage, "TiberiumExplosiveWarhead");
+	pData->Tiberium_DamageEnabled.Read(exINI, sectionGeneral, "TiberiumDamageEnabled");
+	pData->Tiberium_HealEnabled.Read(exINI, sectionGeneral, "TiberiumHealEnabled");
+	pData->Tiberium_ExplosiveWarhead.Read(exINI, sectionCombatDamage, "TiberiumExplosiveWarhead");
 
-	pData->OverlayExplodeThreshold.Read(&exINI, sectionGeneral, "OverlayExplodeThreshold");
+	pData->OverlayExplodeThreshold.Read(exINI, sectionGeneral, "OverlayExplodeThreshold");
 
-	pData->EnemyInsignia.Read(&exINI, sectionGeneral, "EnemyInsignia");
+	pData->EnemyInsignia.Read(exINI, sectionGeneral, "EnemyInsignia");
 
-	pData->TypeSelectUseDeploy.Read(&exINI, sectionGeneral, "TypeSelectUseDeploy");
+	pData->TypeSelectUseDeploy.Read(exINI, sectionGeneral, "TypeSelectUseDeploy");
 }
 
 // this should load everything that TypeData is not dependant on
@@ -93,10 +93,10 @@ void RulesExt::ExtData::LoadAfterTypeData(RulesClass *pThis, CCINIClass *pINI) {
 
 	INI_EX exINI(pINI);
 
-	pData->ElectricDeath.Read(&exINI, "AudioVisual", "InfantryElectrocuted");
+	pData->ElectricDeath.Read(exINI, "AudioVisual", "InfantryElectrocuted");
 
-	pData->DecloakSound.Read(&exINI, "AudioVisual", "DecloakSound");
-	pData->CloakHeight.Read(&exINI, "General", "CloakHeight");
+	pData->DecloakSound.Read(exINI, "AudioVisual", "DecloakSound");
+	pData->CloakHeight.Read(exINI, "General", "CloakHeight");
 
 	for (int i = 0; i < WeaponTypeClass::Array->Count; ++i) {
 		WeaponTypeClass::Array->GetItem(i)->LoadFromINI(pINI);
@@ -104,7 +104,7 @@ void RulesExt::ExtData::LoadAfterTypeData(RulesClass *pThis, CCINIClass *pINI) {
 
 	pData->EngineerDamage = pINI->ReadDouble("General", "EngineerDamage", pData->EngineerDamage);
 	pData->EngineerAlwaysCaptureTech = pINI->ReadBool("General", "EngineerAlwaysCaptureTech", pData->EngineerAlwaysCaptureTech);
-	pData->EngineerDamageCursor.Read(&exINI, "General", "EngineerDamageCursor");
+	pData->EngineerDamageCursor.Read(exINI, "General", "EngineerDamageCursor");
 }
 
 // =============================

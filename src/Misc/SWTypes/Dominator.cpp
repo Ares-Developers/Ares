@@ -59,18 +59,18 @@ void SW_PsychicDominator::LoadFromINI(
 	}
 
 	INI_EX exINI(pINI);
-	pData->Dominator_FirstAnimHeight.Read(&exINI, section, "Dominator.FirstAnimHeight");
-	pData->Dominator_SecondAnimHeight.Read(&exINI, section, "Dominator.SecondAnimHeight");
-	pData->Dominator_FirstAnim.Read(&exINI, section, "Dominator.FirstAnim");
-	pData->Dominator_SecondAnim.Read(&exINI, section, "Dominator.SecondAnim");
-	pData->Dominator_ControlAnim.Read(&exINI, section, "Dominator.ControlAnim");
-	pData->Dominator_FireAtPercentage.Read(&exINI, section, "Dominator.FireAtPercentage");
-	pData->Dominator_Capture.Read(&exINI, section, "Dominator.Capture");
-	pData->Dominator_Ripple.Read(&exINI, section, "Dominator.Ripple");
-	pData->Dominator_CaptureMindControlled.Read(&exINI, section, "Dominator.CaptureMindControlled");
-	pData->Dominator_CapturePermaMindControlled.Read(&exINI, section, "Dominator.CapturePermaMindControlled");
-	pData->Dominator_CaptureImmuneToPsionics.Read(&exINI, section, "Dominator.CaptureImmuneToPsionics");
-	pData->Dominator_PermanentCapture.Read(&exINI, section, "Dominator.PermanentCapture");
+	pData->Dominator_FirstAnimHeight.Read(exINI, section, "Dominator.FirstAnimHeight");
+	pData->Dominator_SecondAnimHeight.Read(exINI, section, "Dominator.SecondAnimHeight");
+	pData->Dominator_FirstAnim.Read(exINI, section, "Dominator.FirstAnim");
+	pData->Dominator_SecondAnim.Read(exINI, section, "Dominator.SecondAnim");
+	pData->Dominator_ControlAnim.Read(exINI, section, "Dominator.ControlAnim");
+	pData->Dominator_FireAtPercentage.Read(exINI, section, "Dominator.FireAtPercentage");
+	pData->Dominator_Capture.Read(exINI, section, "Dominator.Capture");
+	pData->Dominator_Ripple.Read(exINI, section, "Dominator.Ripple");
+	pData->Dominator_CaptureMindControlled.Read(exINI, section, "Dominator.CaptureMindControlled");
+	pData->Dominator_CapturePermaMindControlled.Read(exINI, section, "Dominator.CapturePermaMindControlled");
+	pData->Dominator_CaptureImmuneToPsionics.Read(exINI, section, "Dominator.CaptureImmuneToPsionics");
+	pData->Dominator_PermanentCapture.Read(exINI, section, "Dominator.PermanentCapture");
 }
 
 bool SW_PsychicDominator::AbortFire(SuperClass* pSW, bool IsPlayer) {

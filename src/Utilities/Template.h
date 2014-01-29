@@ -70,9 +70,9 @@ public:
 		this->Value = *val;
 	}
 
-	void Read(INI_EX *parser, const char* pSection, const char* pKey, bool Allocate = false) {
-		if(parser->ReadString(pSection, pKey)) {
-			const char * val = parser->value();
+	void Read(INI_EX &parser, const char* pSection, const char* pKey, bool Allocate = false) {
+		if(parser.ReadString(pSection, pKey)) {
+			const char * val = parser.value();
 			if(auto parsed = (Allocate ? base_type::FindOrAllocate : base_type::Find)(val)) {
 				this->Set(parsed);
 			} else {
@@ -88,9 +88,9 @@ class ValueableIdx : public Valueable<int> {
 public:
 	ValueableIdx(int Default) : Valueable<int>(Default) {};
 
-	void Read(INI_EX *parser, const char* pSection, const char* pKey) {
-		if(parser->ReadString(pSection, pKey)) {
-			const char * val = parser->value();
+	void Read(INI_EX &parser, const char* pSection, const char* pKey) {
+		if(parser.ReadString(pSection, pKey)) {
+			const char * val = parser.value();
 			int idx = Lookuper::FindIndex(val);
 			if(idx != -1 || INIClass::IsBlank(val)) {
 				this->Set(idx);
@@ -151,9 +151,9 @@ public:
 	NullableIdx() : Nullable<int>() {};
 	NullableIdx(int Val) : Nullable<int>(Val) {};
 
-	void Read(INI_EX *parser, const char* pSection, const char* pKey) {
-		if(parser->ReadString(pSection, pKey)) {
-			const char * val = parser->value();
+	void Read(INI_EX &parser, const char* pSection, const char* pKey) {
+		if(parser.ReadString(pSection, pKey)) {
+			const char * val = parser.value();
 			int idx = Lookuper::FindIndex(val);
 			if(idx != -1 || INIClass::IsBlank(val)) {
 				this->Set(idx);
@@ -252,17 +252,17 @@ public:
 		Placeholder.Set(this->Rookie);
 
 		_snprintf_s(FlagName, buflen, buflen - 1, BaseFlag, "Rookie");
-		Placeholder.Read(&exINI, Section, FlagName);
+		Placeholder.Read(exINI, Section, FlagName);
 		this->Rookie = Placeholder;
 
 		Placeholder.Set(this->Veteran);
 		_snprintf_s(FlagName, buflen, buflen - 1, BaseFlag, "Veteran");
-		Placeholder.Read(&exINI, Section, FlagName);
+		Placeholder.Read(exINI, Section, FlagName);
 		this->Veteran = Placeholder;
 
 		Placeholder.Set(this->Elite);
 		_snprintf_s(FlagName, buflen, buflen - 1, BaseFlag, "Elite");
-		Placeholder.Read(&exINI, Section, FlagName);
+		Placeholder.Read(exINI, Section, FlagName);
 		this->Elite = Placeholder;
 
 		delete[] FlagName;
@@ -288,82 +288,82 @@ public:
 // specializations
 
 template<>
-void Valueable<bool>::Read(INI_EX *parser, const char* pSection, const char* pKey, bool Allocate) {
+void Valueable<bool>::Read(INI_EX &parser, const char* pSection, const char* pKey, bool Allocate) {
 	bool buffer = this->Get();
-	if(parser->ReadBool(pSection, pKey, &buffer)) {
+	if(parser.ReadBool(pSection, pKey, &buffer)) {
 		this->Set(buffer);
-	} else if(parser->declared()) {
-		Debug::INIParseFailed(pSection, pKey, parser->value(), "Expected a valid boolean value [1, true, yes, 0, false, no]");
+	} else if(parser.declared()) {
+		Debug::INIParseFailed(pSection, pKey, parser.value(), "Expected a valid boolean value [1, true, yes, 0, false, no]");
 	}
 };
 
 template<>
-void Valueable<int>::Read(INI_EX *parser, const char* pSection, const char* pKey, bool Allocate) {
+void Valueable<int>::Read(INI_EX &parser, const char* pSection, const char* pKey, bool Allocate) {
 	int buffer = this->Get();
-	if(parser->ReadInteger(pSection, pKey, &buffer)) {
+	if(parser.ReadInteger(pSection, pKey, &buffer)) {
 		this->Set(buffer);
-	} else if(parser->declared()) {
-		Debug::INIParseFailed(pSection, pKey, parser->value(), "Expected a valid number");
+	} else if(parser.declared()) {
+		Debug::INIParseFailed(pSection, pKey, parser.value(), "Expected a valid number");
 	}
 };
 
 template<>
-void Valueable<BYTE>::Read(INI_EX *parser, const char* pSection, const char* pKey, bool Allocate) {
+void Valueable<BYTE>::Read(INI_EX &parser, const char* pSection, const char* pKey, bool Allocate) {
 	int buffer = this->Get();
-	if(parser->ReadInteger(pSection, pKey, &buffer)) {
+	if(parser.ReadInteger(pSection, pKey, &buffer)) {
 		if(buffer <= 255 && buffer >= 0) {
 			const BYTE result((BYTE)buffer); // shut up shut up shut up C4244
 			this->Set(result);
 		} else {
-			Debug::INIParseFailed(pSection, pKey, parser->value(), "Expected a valid number between 0 and 255 inclusive.");
+			Debug::INIParseFailed(pSection, pKey, parser.value(), "Expected a valid number between 0 and 255 inclusive.");
 		}
-	} else if(parser->declared()) {
-		Debug::INIParseFailed(pSection, pKey, parser->value(), "Expected a valid number");
+	} else if(parser.declared()) {
+		Debug::INIParseFailed(pSection, pKey, parser.value(), "Expected a valid number");
 	}
 };
 
 template<>
-void Valueable<float>::Read(INI_EX *parser, const char* pSection, const char* pKey, bool Allocate) {
+void Valueable<float>::Read(INI_EX &parser, const char* pSection, const char* pKey, bool Allocate) {
 	double buffer = this->Get();
-	if(parser->ReadDouble(pSection, pKey, &buffer)) {
+	if(parser.ReadDouble(pSection, pKey, &buffer)) {
 		this->Set(static_cast<float>(buffer));
-	} else if(parser->declared()) {
-		Debug::INIParseFailed(pSection, pKey, parser->value(), "Expected a valid floating point number");
+	} else if(parser.declared()) {
+		Debug::INIParseFailed(pSection, pKey, parser.value(), "Expected a valid floating point number");
 	}
 };
 
 template<>
-void Valueable<double>::Read(INI_EX *parser, const char* pSection, const char* pKey, bool Allocate) {
+void Valueable<double>::Read(INI_EX &parser, const char* pSection, const char* pKey, bool Allocate) {
 	double buffer = this->Get();
-	if(parser->ReadDouble(pSection, pKey, &buffer)) {
+	if(parser.ReadDouble(pSection, pKey, &buffer)) {
 		this->Set(buffer);
-	} else if(parser->declared()) {
-		Debug::INIParseFailed(pSection, pKey, parser->value(), "Expected a valid floating point number");
+	} else if(parser.declared()) {
+		Debug::INIParseFailed(pSection, pKey, parser.value(), "Expected a valid floating point number");
 	}
 };
 
 template<>
-void Valueable<ColorStruct>::Read(INI_EX *parser, const char* pSection, const char* pKey, bool Allocate) {
+void Valueable<ColorStruct>::Read(INI_EX &parser, const char* pSection, const char* pKey, bool Allocate) {
 	ColorStruct buffer = this->Get();
-	if(parser->Read3Bytes(pSection, pKey, (byte*)&buffer)) {
+	if(parser.Read3Bytes(pSection, pKey, (byte*)&buffer)) {
 		this->Set(buffer);
-	} else if(parser->declared()) {
-		Debug::INIParseFailed(pSection, pKey, parser->value(), "Expected a valid R,G,B color");
+	} else if(parser.declared()) {
+		Debug::INIParseFailed(pSection, pKey, parser.value(), "Expected a valid R,G,B color");
 	}
 };
 
 template<>
-void Valueable<CSFText>::Read(INI_EX *parser, const char* pSection, const char* pKey, bool Allocate) {
-	if(parser->ReadString(pSection, pKey)) {
-		this->Set(parser->value());
+void Valueable<CSFText>::Read(INI_EX &parser, const char* pSection, const char* pKey, bool Allocate) {
+	if(parser.ReadString(pSection, pKey)) {
+		this->Set(parser.value());
 	}
 };
 
 template<>
-void Valueable<SHPStruct *>::Read(INI_EX *parser, const char* pSection, const char* pKey, bool Allocate) {
-	if(parser->ReadString(pSection, pKey)) {
+void Valueable<SHPStruct *>::Read(INI_EX &parser, const char* pSection, const char* pKey, bool Allocate) {
+	if(parser.ReadString(pSection, pKey)) {
 		char flag[256];
-		const char * val = parser->value();
+		const char * val = parser.value();
 		_snprintf_s(flag, 255, "%s.shp", val);
 		if(SHPStruct *image = FileSystem::LoadSHPFile(flag)) {
 			this->Set(image);
@@ -374,7 +374,7 @@ void Valueable<SHPStruct *>::Read(INI_EX *parser, const char* pSection, const ch
 };
 
 template<>
-void Valueable<MouseCursor>::Read(INI_EX *parser, const char* pSection, const char* pKey, bool Allocate) {
+void Valueable<MouseCursor>::Read(INI_EX &parser, const char* pSection, const char* pKey, bool Allocate) {
 	Customizable<int> Placeholder;
 
 	MouseCursor *Cursor = this->GetEx();
@@ -406,8 +406,8 @@ void Valueable<MouseCursor>::Read(INI_EX *parser, const char* pSection, const ch
 	Cursor->MiniCount = Placeholder;
 
 	_snprintf_s(pFlagName, 31, "%s.HotSpot", pKey);
-	if(parser->ReadString(pSection, pFlagName)) {
-		char *buffer = const_cast<char *>(parser->value());
+	if(parser.ReadString(pSection, pFlagName)) {
+		char *buffer = const_cast<char *>(parser.value());
 		char *context = nullptr;
 		char *hotx = strtok_s(buffer, ",", &context);
 		if(!strcmp(hotx, "Left")) this->Value.HotX = hotspx_left;
@@ -423,7 +423,7 @@ void Valueable<MouseCursor>::Read(INI_EX *parser, const char* pSection, const ch
 };
 
 template<>
-void Valueable<RocketStruct>::Read(INI_EX *parser, const char* pSection, const char* pKey, bool Allocate) {
+void Valueable<RocketStruct>::Read(INI_EX &parser, const char* pSection, const char* pKey, bool Allocate) {
 	Customizable<bool> BoolPlaceholder;
 	Customizable<int> IntPlaceholder;
 	Customizable<float> FloatPlaceholder;
@@ -511,8 +511,8 @@ public:
 
 	virtual ~ValueableVector() {}
 
-	virtual void Read(INI_EX *parser, const char* pSection, const char* pKey) {
-		if(parser->ReadString(pSection, pKey)) {
+	virtual void Read(INI_EX &parser, const char* pSection, const char* pKey) {
+		if(parser.ReadString(pSection, pKey)) {
 			this->clear();
 			this->_Defined = true;
 			this->Split(parser, pSection, pKey, Ares::readBuffer);
@@ -540,7 +540,7 @@ public:
 	}
 
 protected:
-	virtual void Split(INI_EX *parser, const char* pSection, const char* pKey, char* pValue) {
+	virtual void Split(INI_EX &parser, const char* pSection, const char* pKey, char* pValue) {
 		// if we were able to get the flag in question, take it apart and check the tokens...
 		char* context = nullptr;
 		for(char *cur = strtok_s(pValue, Ares::readDelims, &context); cur; cur = strtok_s(nullptr, Ares::readDelims, &context)) {
@@ -548,7 +548,7 @@ protected:
 		}
 	}
 
-	void Parse(INI_EX *parser, const char* pSection, const char* pKey, char* pValue) {
+	void Parse(INI_EX &parser, const char* pSection, const char* pKey, char* pValue) {
 		T buffer = T();
 		if(Parser<T>::Parse(pValue, &buffer)) {
 			this->push_back(buffer);
@@ -559,7 +559,7 @@ protected:
 };
 
 template<>
-void ValueableVector<TechnoTypeClass *>::Parse(INI_EX *parser, const char* pSection, const char* pKey, char* pValue) {
+void ValueableVector<TechnoTypeClass *>::Parse(INI_EX &parser, const char* pSection, const char* pKey, char* pValue) {
 	// ...against the various object types; if we find one, place it in the value list
 	if(auto pAircraftType = AircraftTypeClass::Find(pValue)) {
 		this->push_back(pAircraftType);
@@ -581,8 +581,8 @@ protected:
 public:
 	NullableVector() : ValueableVector<T>(), _HasValue(false) {};
 
-	virtual void Read(INI_EX *parser, const char* pSection, const char* pKey) {
-		if(parser->ReadString(pSection, pKey)) {
+	virtual void Read(INI_EX &parser, const char* pSection, const char* pKey) {
+		if(parser.ReadString(pSection, pKey)) {
 			this->clear();
 			this->_Defined = true;
 
@@ -614,7 +614,7 @@ public:
 template<typename Lookuper>
 class ValueableIdxVector : public ValueableVector<int> {
 protected:
-	virtual void Split(INI_EX *parser, const char* pSection, const char* pKey, char* pValue) {
+	virtual void Split(INI_EX &parser, const char* pSection, const char* pKey, char* pValue) {
 		// split the string and look up the tokens. only valid tokens are added.
 		char* context = nullptr;
 		for(char* cur = strtok_s(pValue, Ares::readDelims, &context); cur; cur = strtok_s(nullptr, Ares::readDelims, &context)) {
@@ -631,7 +631,7 @@ protected:
 template<typename Lookuper>
 class NullableIdxVector : public NullableVector<int> {
 protected:
-	virtual void Split(INI_EX *parser, const char* pSection, const char* pKey, char* pValue) {
+	virtual void Split(INI_EX &parser, const char* pSection, const char* pKey, char* pValue) {
 		// split the string and look up the tokens. only valid tokens are added.
 		char* context = nullptr;
 		for(char* cur = strtok_s(pValue, Ares::readDelims, &context); cur; cur = strtok_s(nullptr, Ares::readDelims, &context)) {
@@ -652,8 +652,8 @@ public:
 
 	ValueableEnum(ValueType Default = ValueType()) : Valueable<ValueType>(Default) {};
 
-	void Read(INI_EX *parser, const char* pSection, const char* pKey) {
-		if(parser->ReadString(pSection, pKey)) {
+	void Read(INI_EX &parser, const char* pSection, const char* pKey) {
+		if(parser.ReadString(pSection, pKey)) {
 			ValueType buffer = this->Get();
 			if(T::Parse(Ares::readBuffer, &buffer)) {
 				this->Set(buffer);

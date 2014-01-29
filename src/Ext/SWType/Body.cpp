@@ -105,45 +105,45 @@ void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass
 	INI_EX exINI(pINI);
 
 	// read general properties
-	this->EVA_Ready.Read(&exINI, section, "EVA.Ready");
-	this->EVA_Activated.Read(&exINI, section, "EVA.Activated");
-	this->EVA_Detected.Read(&exINI, section, "EVA.Detected");
-	this->EVA_Impatient.Read(&exINI, section, "EVA.Impatient");
-	this->EVA_InsufficientFunds.Read(&exINI, section, "EVA.InsufficientFunds");
-	this->EVA_SelectTarget.Read(&exINI, section, "EVA.SelectTarget");
+	this->EVA_Ready.Read(exINI, section, "EVA.Ready");
+	this->EVA_Activated.Read(exINI, section, "EVA.Activated");
+	this->EVA_Detected.Read(exINI, section, "EVA.Detected");
+	this->EVA_Impatient.Read(exINI, section, "EVA.Impatient");
+	this->EVA_InsufficientFunds.Read(exINI, section, "EVA.InsufficientFunds");
+	this->EVA_SelectTarget.Read(exINI, section, "EVA.SelectTarget");
 
-	this->SW_FireToShroud.Read(&exINI, section, "SW.FireIntoShroud");
-	this->SW_AutoFire.Read(&exINI, section, "SW.AutoFire");
-	this->SW_ManualFire.Read(&exINI, section, "SW.ManualFire");
-	this->SW_RadarEvent.Read(&exINI, section, "SW.CreateRadarEvent");
-	this->SW_ShowCameo.Read(&exINI, section, "SW.ShowCameo");
-	this->SW_Unstoppable.Read(&exINI, section, "SW.Unstoppable");
+	this->SW_FireToShroud.Read(exINI, section, "SW.FireIntoShroud");
+	this->SW_AutoFire.Read(exINI, section, "SW.AutoFire");
+	this->SW_ManualFire.Read(exINI, section, "SW.ManualFire");
+	this->SW_RadarEvent.Read(exINI, section, "SW.CreateRadarEvent");
+	this->SW_ShowCameo.Read(exINI, section, "SW.ShowCameo");
+	this->SW_Unstoppable.Read(exINI, section, "SW.Unstoppable");
 
-	this->Money_Amount.Read(&exINI, section, "Money.Amount");
-	this->Money_DrainAmount.Read(&exINI, section, "Money.DrainAmount");
-	this->Money_DrainDelay.Read(&exINI, section, "Money.DrainDelay");
+	this->Money_Amount.Read(exINI, section, "Money.Amount");
+	this->Money_DrainAmount.Read(exINI, section, "Money.DrainAmount");
+	this->Money_DrainDelay.Read(exINI, section, "Money.DrainDelay");
 
-	this->SW_Sound.Read(&exINI, section, "SW.Sound");
-	this->SW_ActivationSound.Read(&exINI, section, "SW.ActivationSound");
+	this->SW_Sound.Read(exINI, section, "SW.Sound");
+	this->SW_ActivationSound.Read(exINI, section, "SW.ActivationSound");
 
-	this->SW_Anim.Read(&exINI, section, "SW.Animation");
-	this->SW_AnimHeight.Read(&exINI, section, "SW.AnimationHeight");
+	this->SW_Anim.Read(exINI, section, "SW.Animation");
+	this->SW_AnimHeight.Read(exINI, section, "SW.AnimationHeight");
 
-	this->SW_AnimVisibility.Read(&exINI, section, "SW.AnimationVisibility");
-	this->SW_AffectsHouse.Read(&exINI, section, "SW.AffectsHouse");
-	this->SW_AITargetingType.Read(&exINI, section, "SW.AITargeting");
-	this->SW_AffectsTarget.Read(&exINI, section, "SW.AffectsTarget");
-	this->SW_RequiresTarget.Read(&exINI, section, "SW.RequiresTarget");
-	this->SW_RequiresHouse.Read(&exINI, section, "SW.RequiresHouse");
+	this->SW_AnimVisibility.Read(exINI, section, "SW.AnimationVisibility");
+	this->SW_AffectsHouse.Read(exINI, section, "SW.AffectsHouse");
+	this->SW_AITargetingType.Read(exINI, section, "SW.AITargeting");
+	this->SW_AffectsTarget.Read(exINI, section, "SW.AffectsTarget");
+	this->SW_RequiresTarget.Read(exINI, section, "SW.RequiresTarget");
+	this->SW_RequiresHouse.Read(exINI, section, "SW.RequiresHouse");
 
-	this->SW_Deferment.Read(&exINI, section, "SW.Deferment");
-	this->SW_ChargeToDrainRatio.Read(&exINI, section, "SW.ChargeToDrainRatio");
+	this->SW_Deferment.Read(exINI, section, "SW.Deferment");
+	this->SW_ChargeToDrainRatio.Read(exINI, section, "SW.ChargeToDrainRatio");
 
-	this->SW_Cursor.Read(&exINI, section, "Cursor");
-	this->SW_NoCursor.Read(&exINI, section, "NoCursor");
+	this->SW_Cursor.Read(exINI, section, "Cursor");
+	this->SW_NoCursor.Read(exINI, section, "NoCursor");
 
-	this->SW_Warhead.Read(&exINI, section, "SW.Warhead");
-	this->SW_Damage.Read(&exINI, section, "SW.Damage");
+	this->SW_Warhead.Read(exINI, section, "SW.Warhead");
+	this->SW_Damage.Read(exINI, section, "SW.Damage");
 
 	if(pINI->ReadString(section, "SW.Range", Ares::readDefval, Ares::readBuffer, Ares::readLength)) {
 		char* context = nullptr;
@@ -160,14 +160,14 @@ void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass
 	}
 
 	// lighting
-	this->Lighting_Enabled.Read(&exINI, section, "Light.Enabled");
-	this->Lighting_Ambient.Read(&exINI, section, "Light.Ambient");
-	this->Lighting_Red.Read(&exINI, section, "Light.Red");
-	this->Lighting_Green.Read(&exINI, section, "Light.Green");
-	this->Lighting_Blue.Read(&exINI, section, "Light.Blue");
+	this->Lighting_Enabled.Read(exINI, section, "Light.Enabled");
+	this->Lighting_Ambient.Read(exINI, section, "Light.Ambient");
+	this->Lighting_Red.Read(exINI, section, "Light.Red");
+	this->Lighting_Green.Read(exINI, section, "Light.Green");
+	this->Lighting_Blue.Read(exINI, section, "Light.Blue");
 
 	// messages and their properties
-	this->Message_FirerColor.Read(&exINI, section, "Message.FirerColor");
+	this->Message_FirerColor.Read(exINI, section, "Message.FirerColor");
 	if(pINI->ReadString(section, "Message.Color", Ares::readDefval, Ares::readBuffer, Ares::readLength)) {
 		this->Message_ColorScheme = ColorScheme::FindIndex(Ares::readBuffer);
 		if(this->Message_ColorScheme < 0) {
@@ -175,18 +175,18 @@ void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass
 		}
 	}
 
-	this->Message_Detected.Read(&exINI, section, "Message.Detected");
-	this->Message_Ready.Read(&exINI, section, "Message.Ready");
-	this->Message_Launch.Read(&exINI, section, "Message.Launch");
-	this->Message_Activate.Read(&exINI, section, "Message.Activate");
-	this->Message_Abort.Read(&exINI, section, "Message.Abort");
-	this->Message_InsufficientFunds.Read(&exINI, section, "Message.InsufficientFunds");
+	this->Message_Detected.Read(exINI, section, "Message.Detected");
+	this->Message_Ready.Read(exINI, section, "Message.Ready");
+	this->Message_Launch.Read(exINI, section, "Message.Launch");
+	this->Message_Activate.Read(exINI, section, "Message.Activate");
+	this->Message_Abort.Read(exINI, section, "Message.Abort");
+	this->Message_InsufficientFunds.Read(exINI, section, "Message.InsufficientFunds");
 
-	this->Text_Preparing.Read(&exINI, section, "Text.Preparing");
-	this->Text_Ready.Read(&exINI, section, "Text.Ready");
-	this->Text_Hold.Read(&exINI, section, "Text.Hold");
-	this->Text_Charging.Read(&exINI, section, "Text.Charging");
-	this->Text_Active.Read(&exINI, section, "Text.Active");
+	this->Text_Preparing.Read(exINI, section, "Text.Preparing");
+	this->Text_Ready.Read(exINI, section, "Text.Ready");
+	this->Text_Hold.Read(exINI, section, "Text.Hold");
+	this->Text_Charging.Read(exINI, section, "Text.Charging");
+	this->Text_Active.Read(exINI, section, "Text.Active");
 
 	// the fallback is handled in the PreDependent SW's code
 	if(pINI->ReadString(section, "SW.PostDependent", Ares::readDefval, Ares::readBuffer, Ares::readLength)) {

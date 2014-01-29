@@ -61,7 +61,7 @@ public:
 			this->ID[0] = 0;
 		};
 
-	void Read(INI_EX *exINI, const char * section);
+	void Read(INI_EX &exINI, const char * section);
 };
 
 class AttachEffectClass {

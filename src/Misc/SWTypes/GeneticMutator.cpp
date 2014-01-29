@@ -50,10 +50,10 @@ void SW_GeneticMutator::LoadFromINI(
 	}
 
 	INI_EX exINI(pINI);
-	pData->Mutate_Explosion.Read(&exINI, section, "Mutate.Explosion");
-	pData->Mutate_IgnoreCyborg.Read(&exINI, section, "Mutate.IgnoreCyborg");
-	pData->Mutate_IgnoreNotHuman.Read(&exINI, section, "Mutate.IgnoreNotHuman");
-	pData->Mutate_KillNatural.Read(&exINI, section, "Mutate.KillNatural");
+	pData->Mutate_Explosion.Read(exINI, section, "Mutate.Explosion");
+	pData->Mutate_IgnoreCyborg.Read(exINI, section, "Mutate.IgnoreCyborg");
+	pData->Mutate_IgnoreNotHuman.Read(exINI, section, "Mutate.IgnoreNotHuman");
+	pData->Mutate_KillNatural.Read(exINI, section, "Mutate.KillNatural");
 
 	// whatever happens, always target everything
 	pData->SW_AffectsTarget = pData->SW_AffectsTarget | SuperWeaponTarget::AllTechnos;

@@ -32,16 +32,16 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 	if (this->Enabled != NO) {
 		INI_EX exINI(pINI);
 
-		this->Targets.Read(&exINI, pID, "PrismForwarding.Targets");
-		this->MaxFeeds.Read(&exINI, pID, "PrismForwarding.MaxFeeds");
-		this->MaxChainLength.Read(&exINI, pID, "PrismForwarding.MaxChainLength");
-		this->MaxNetworkSize.Read(&exINI, pID, "PrismForwarding.MaxNetworkSize");
-		this->SupportModifier.Read(&exINI, pID, "PrismForwarding.SupportModifier");
-		this->DamageAdd.Read(&exINI, pID, "PrismForwarding.DamageAdd");
-		this->ToAllies.Read(&exINI, pID, "PrismForwarding.ToAllies");
-		this->MyHeight.Read(&exINI, pID, "PrismForwarding.MyHeight");
-		this->BreakSupport.Read(&exINI, pID, "PrismForwarding.BreakSupport");
-		this->Intensity.Read(&exINI, pID, "PrismForwarding.Intensity");
+		this->Targets.Read(exINI, pID, "PrismForwarding.Targets");
+		this->MaxFeeds.Read(exINI, pID, "PrismForwarding.MaxFeeds");
+		this->MaxChainLength.Read(exINI, pID, "PrismForwarding.MaxChainLength");
+		this->MaxNetworkSize.Read(exINI, pID, "PrismForwarding.MaxNetworkSize");
+		this->SupportModifier.Read(exINI, pID, "PrismForwarding.SupportModifier");
+		this->DamageAdd.Read(exINI, pID, "PrismForwarding.DamageAdd");
+		this->ToAllies.Read(exINI, pID, "PrismForwarding.ToAllies");
+		this->MyHeight.Read(exINI, pID, "PrismForwarding.MyHeight");
+		this->BreakSupport.Read(exINI, pID, "PrismForwarding.BreakSupport");
+		this->Intensity.Read(exINI, pID, "PrismForwarding.Intensity");
 		
 		int ChargeDelay = pINI->ReadInteger(pID, "PrismForwarding.ChargeDelay", this->ChargeDelay);
 		if (ChargeDelay >= 1) {

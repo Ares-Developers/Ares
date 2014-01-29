@@ -199,18 +199,18 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 //	this->DisplayProduction = pINI->ReadBool(pID, "SpyEffect.DisplayProduction", this->DisplayProduction);
 
 	INI_EX exINI(pINI);
-	this->InfiltrateCustom.Read(&exINI, pID, "SpyEffect.Custom");
-	this->RevealProduction.Read(&exINI, pID, "SpyEffect.RevealProduction");
-	this->ResetSW.Read(&exINI, pID, "SpyEffect.ResetSuperweapons");
-	this->ResetRadar.Read(&exINI, pID, "SpyEffect.ResetRadar");
-	this->RevealRadar.Read(&exINI, pID, "SpyEffect.RevealRadar");
-	this->RevealRadarPersist.Read(&exINI, pID, "SpyEffect.KeepRadar");
-	this->GainVeterancy.Read(&exINI, pID, "SpyEffect.UnitVeterancy");
-	this->StolenTechIndex.Read(&exINI, pID, "SpyEffect.StolenTechIndex");
-	this->PowerOutageDuration.Read(&exINI, pID, "SpyEffect.PowerOutageDuration");
-	this->StolenMoneyAmount.Read(&exINI, pID, "SpyEffect.StolenMoneyAmount");
-	this->StolenMoneyPercentage.Read(&exINI, pID, "SpyEffect.StolenMoneyPercentage");
-	this->UnReverseEngineer.Read(&exINI, pID, "SpyEffect.UndoReverseEngineer");
+	this->InfiltrateCustom.Read(exINI, pID, "SpyEffect.Custom");
+	this->RevealProduction.Read(exINI, pID, "SpyEffect.RevealProduction");
+	this->ResetSW.Read(exINI, pID, "SpyEffect.ResetSuperweapons");
+	this->ResetRadar.Read(exINI, pID, "SpyEffect.ResetRadar");
+	this->RevealRadar.Read(exINI, pID, "SpyEffect.RevealRadar");
+	this->RevealRadarPersist.Read(exINI, pID, "SpyEffect.KeepRadar");
+	this->GainVeterancy.Read(exINI, pID, "SpyEffect.UnitVeterancy");
+	this->StolenTechIndex.Read(exINI, pID, "SpyEffect.StolenTechIndex");
+	this->PowerOutageDuration.Read(exINI, pID, "SpyEffect.PowerOutageDuration");
+	this->StolenMoneyAmount.Read(exINI, pID, "SpyEffect.StolenMoneyAmount");
+	this->StolenMoneyPercentage.Read(exINI, pID, "SpyEffect.StolenMoneyPercentage");
+	this->UnReverseEngineer.Read(exINI, pID, "SpyEffect.UndoReverseEngineer");
 
 	if(this->StolenTechIndex >= 32) {
 		Debug::DevLog(Debug::Warning, "BuildingType %s has a SpyEffect.StolenTechIndex of %d. The value has to be less than 32.\n", pID, this->StolenTechIndex.Get());
@@ -218,19 +218,19 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 	}
 
 	// #218 Specific Occupiers
-	this->AllowedOccupiers.Read(&exINI, pID, "CanBeOccupiedBy");
+	this->AllowedOccupiers.Read(exINI, pID, "CanBeOccupiedBy");
 	if(!this->AllowedOccupiers.empty()) {
 		// having a specific occupier list implies that this building is supposed to be occupiable
 		pThis->CanBeOccupied = true;
 	}
 
-	this->ReverseEngineersVictims.Read(&exINI, pID, "ReverseEngineersVictims");
+	this->ReverseEngineersVictims.Read(exINI, pID, "ReverseEngineersVictims");
 
-	this->CloningFacility.Read(&exINI, pID, "CloningFacility");
-	this->Factory_ExplicitOnly.Read(&exINI, pID, "Factory.ExplicitOnly");
+	this->CloningFacility.Read(exINI, pID, "CloningFacility");
+	this->Factory_ExplicitOnly.Read(exINI, pID, "Factory.ExplicitOnly");
 
-	this->GateDownSound.Read(&exINI, pID, "GateDownSound");
-	this->GateUpSound.Read(&exINI, pID, "GateUpSound");
+	this->GateDownSound.Read(exINI, pID, "GateDownSound");
+	this->GateUpSound.Read(exINI, pID, "GateUpSound");
 }
 
 void BuildingTypeExt::ExtData::CompleteInitialization(BuildingTypeClass *pThis) {

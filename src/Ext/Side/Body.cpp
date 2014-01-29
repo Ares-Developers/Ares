@@ -59,25 +59,25 @@ void SideExt::ExtData::LoadFromINIFile(SideClass *pThis, CCINIClass *pINI)
 
 	INI_EX exINI(pINI);
 
-	this->BaseDefenseCounts.Read(&exINI, section, "AI.BaseDefenseCounts");
+	this->BaseDefenseCounts.Read(exINI, section, "AI.BaseDefenseCounts");
 
-	this->BaseDefenses.Read(&exINI, section, "AI.BaseDefenses");
+	this->BaseDefenses.Read(exINI, section, "AI.BaseDefenses");
 
-	this->Crew.Read(&exINI, section, "Crew");
+	this->Crew.Read(exINI, section, "Crew");
 
-	this->Engineer.Read(&exINI, section, "Engineer");
+	this->Engineer.Read(exINI, section, "Engineer");
 
-	this->Technician.Read(&exINI, section, "Technician");
+	this->Technician.Read(exINI, section, "Technician");
 
-	this->Disguise.Read(&exINI, section, "DefaultDisguise");
+	this->Disguise.Read(exINI, section, "DefaultDisguise");
 
-	this->EVAIndex.Read(&exINI, section, "EVA.Tag");
+	this->EVAIndex.Read(exINI, section, "EVA.Tag");
 
-	this->Parachute_Anim.Read(&exINI, section, "Parachute.Anim");
+	this->Parachute_Anim.Read(exINI, section, "Parachute.Anim");
 
-	this->ParaDropPlane.Read(&exINI, section, "ParaDrop.Aircraft");
+	this->ParaDropPlane.Read(exINI, section, "ParaDrop.Aircraft");
 
-	this->ParaDropTypes.Read(&exINI, section, "ParaDrop.Types");
+	this->ParaDropTypes.Read(exINI, section, "ParaDrop.Types");
 
 	// remove all types that aren't either infantry or unit types
 	this->ParaDropTypes.erase(std::remove_if(this->ParaDropTypes.begin(), this->ParaDropTypes.end(), [section](TechnoTypeClass* pItem) -> bool {
@@ -90,13 +90,13 @@ void SideExt::ExtData::LoadFromINIFile(SideClass *pThis, CCINIClass *pINI)
 		return true;
 	}), this->ParaDropTypes.end());
 
-	this->ParaDropNum.Read(&exINI, section, "ParaDrop.Num");
+	this->ParaDropNum.Read(exINI, section, "ParaDrop.Num");
 
 	this->SidebarMixFileIndex =  pINI->ReadInteger(section, "Sidebar.MixFileIndex", this->SidebarMixFileIndex);
 	this->SidebarYuriFileNames = pINI->ReadBool(section, "Sidebar.YuriFileNames", this->SidebarYuriFileNames);
-	this->ToolTipTextColor.Read(&exINI, section, "ToolTipColor");
-	this->SurvivorDivisor.Read(&exINI, section, "SurvivorDivisor");
-	this->MessageTextColorIndex.Read(&exINI, section, "MessageTextColor");
+	this->ToolTipTextColor.Read(exINI, section, "ToolTipColor");
+	this->SurvivorDivisor.Read(exINI, section, "SurvivorDivisor");
+	this->MessageTextColorIndex.Read(exINI, section, "MessageTextColor");
 }
 
 int SideExt::ExtData::GetSurvivorDivisor() const {

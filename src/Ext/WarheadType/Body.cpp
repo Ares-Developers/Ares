@@ -78,7 +78,7 @@ void WarheadTypeExt::ExtData::LoadFromINIFile(WarheadTypeClass *pThis, CCINIClas
 	this->IC_Cap = pINI->ReadInteger(section, "IronCurtain.Cap", this->IC_Cap);
 
 	if(pThis->Temporal) {
-		this->Temporal_WarpAway.Read(&exINI, section, "Temporal.WarpAway");
+		this->Temporal_WarpAway.Read(exINI, section, "Temporal.WarpAway");
 	}
 
 	this->DeployedDamage = pINI->ReadDouble(section, "Damage.Deployed", this->DeployedDamage);
@@ -87,15 +87,15 @@ void WarheadTypeExt::ExtData::LoadFromINIFile(WarheadTypeClass *pThis, CCINIClas
 
 	this->AffectsEnemies = pINI->ReadBool(section, "AffectsEnemies", this->AffectsEnemies);
 
-	this->InfDeathAnim.Read(&exINI, section, "InfDeathAnim");
+	this->InfDeathAnim.Read(exINI, section, "InfDeathAnim");
 	
-	this->PreImpactAnim.Read(&exINI, pThis->ID, "PreImpactAnim");
+	this->PreImpactAnim.Read(exINI, pThis->ID, "PreImpactAnim");
 
 	this->KillDriver = pINI->ReadBool(section, "KillDriver", this->KillDriver);
 
-	this->Malicious.Read(&exINI, section, "Malicious");
+	this->Malicious.Read(exINI, section, "Malicious");
 
-	this->AttachedEffect.Read(&exINI, section);
+	this->AttachedEffect.Read(exINI, section);
 };
 
 void Container<WarheadTypeExt>::InvalidatePointer(void *ptr, bool bRemoved) {

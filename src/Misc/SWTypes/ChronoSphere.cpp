@@ -52,23 +52,23 @@ void SW_ChronoSphere::LoadFromINI(
 
 	INI_EX exINI(pINI);
 
-	pData->Chronosphere_KillOrganic.Read(&exINI, section, "Chronosphere.KillOrganic");
-	pData->Chronosphere_KillTeleporters.Read(&exINI, section, "Chronosphere.KillTeleporters");
-	pData->Chronosphere_AffectIronCurtain.Read(&exINI, section, "Chronosphere.AffectsIronCurtain");
-	pData->Chronosphere_AffectUnwarpable.Read(&exINI, section, "Chronosphere.AffectsUnwarpable");
-	pData->Chronosphere_AffectUndeployable.Read(&exINI, section, "Chronosphere.AffectsUndeployable");
-	pData->Chronosphere_BlowUnplaceable.Read(&exINI, section, "Chronosphere.BlowUnplaceable");
-	pData->Chronosphere_ReconsiderBuildings.Read(&exINI, section, "Chronosphere.ReconsiderBuildings");
+	pData->Chronosphere_KillOrganic.Read(exINI, section, "Chronosphere.KillOrganic");
+	pData->Chronosphere_KillTeleporters.Read(exINI, section, "Chronosphere.KillTeleporters");
+	pData->Chronosphere_AffectIronCurtain.Read(exINI, section, "Chronosphere.AffectsIronCurtain");
+	pData->Chronosphere_AffectUnwarpable.Read(exINI, section, "Chronosphere.AffectsUnwarpable");
+	pData->Chronosphere_AffectUndeployable.Read(exINI, section, "Chronosphere.AffectsUndeployable");
+	pData->Chronosphere_BlowUnplaceable.Read(exINI, section, "Chronosphere.BlowUnplaceable");
+	pData->Chronosphere_ReconsiderBuildings.Read(exINI, section, "Chronosphere.ReconsiderBuildings");
 
-	pData->Chronosphere_BlastSrc.Read(&exINI, section, "Chronosphere.BlastSrc");
-	pData->Chronosphere_BlastDest.Read(&exINI, section, "Chronosphere.BlastDest");
+	pData->Chronosphere_BlastSrc.Read(exINI, section, "Chronosphere.BlastSrc");
+	pData->Chronosphere_BlastDest.Read(exINI, section, "Chronosphere.BlastDest");
 
 	// reconstruct the original value, then re-read (otherwise buildings will be affected if
 	// the SW section is defined in game mode inis or maps without restating SW.AffectsTarget)
 	if(!pData->Chronosphere_AffectBuildings) {
 		pData->SW_AffectsTarget = (pData->SW_AffectsTarget & ~SuperWeaponTarget::Building);
 	}
-	pData->SW_AffectsTarget.Read(&exINI, section, "SW.AffectsTarget");
+	pData->SW_AffectsTarget.Read(exINI, section, "SW.AffectsTarget");
 
 	// we handle the distinction between buildings and deployed vehicles ourselves
 	pData->Chronosphere_AffectBuildings = ((pData->SW_AffectsTarget & SuperWeaponTarget::Building) != 0);

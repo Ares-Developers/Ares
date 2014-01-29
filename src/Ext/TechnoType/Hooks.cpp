@@ -98,7 +98,7 @@ DEFINE_HOOK(715320, TechnoTypeClass_LoadFromINI_EarlyReader, 6)
 	INI_EX exINI(pINI);
 	TechnoTypeExt::ExtData *pData = TechnoTypeExt::ExtMap.Find(pType);
 
-	pData->WaterImage.Read(&exINI, pType->ID, "WaterImage");
+	pData->WaterImage.Read(exINI, pType->ID, "WaterImage");
 
 	return 0;
 }

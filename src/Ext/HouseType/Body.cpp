@@ -253,7 +253,7 @@ void HouseTypeExt::ExtData::LoadFromRulesFile(HouseTypeClass *pThis, CCINIClass 
 	}
 
 	INI_EX exINI(pINI);
-	this->ObserverFlagYuriPAL.Read(&exINI, pID, "File.ObserverFlagAltPalette");
+	this->ObserverFlagYuriPAL.Read(exINI, pID, "File.ObserverFlagAltPalette");
 }
 
 void HouseTypeExt::ExtData::LoadFromINIFile(HouseTypeClass *pThis, CCINIClass *pINI) {
@@ -265,13 +265,13 @@ void HouseTypeExt::ExtData::LoadFromINIFile(HouseTypeClass *pThis, CCINIClass *p
 
 	INI_EX exINI(pINI);
 
-	this->Powerplants.Read(&exINI, pID, "AI.PowerPlants");
+	this->Powerplants.Read(exINI, pID, "AI.PowerPlants");
 
-	this->Parachute_Anim.Read(&exINI, pID, "Parachute.Anim");
+	this->Parachute_Anim.Read(exINI, pID, "Parachute.Anim");
 	
-	this->ParaDropPlane.Read(&exINI, pID, "ParaDrop.Aircraft");
+	this->ParaDropPlane.Read(exINI, pID, "ParaDrop.Aircraft");
 
-	this->ParaDropTypes.Read(&exINI, pID, "ParaDrop.Types");
+	this->ParaDropTypes.Read(exINI, pID, "ParaDrop.Types");
 
 	// remove all types that aren't either infantry or unit types
 	this->ParaDropTypes.erase(std::remove_if(this->ParaDropTypes.begin(), this->ParaDropTypes.end(), [pID](TechnoTypeClass* pItem) -> bool {
@@ -284,14 +284,14 @@ void HouseTypeExt::ExtData::LoadFromINIFile(HouseTypeClass *pThis, CCINIClass *p
 		return true;
 	}), this->ParaDropTypes.end());
 
-	this->ParaDropNum.Read(&exINI, pID, "ParaDrop.Num");
+	this->ParaDropNum.Read(exINI, pID, "ParaDrop.Num");
 
-	this->LoadTextColor.Read(&exINI, pID, "LoadScreenText.Color");
+	this->LoadTextColor.Read(exINI, pID, "LoadScreenText.Color");
 
 	this->RandomSelectionWeight = pINI->ReadInteger(pID, "RandomSelectionWeight", this->RandomSelectionWeight);
 	this->CountryListIndex = pINI->ReadInteger(pID, "ListIndex", this->CountryListIndex);
 
-	this->VeteranBuildings.Read(&exINI, pID, "VeteranBuildings");
+	this->VeteranBuildings.Read(exINI, pID, "VeteranBuildings");
 }
 
 template<size_t Len>

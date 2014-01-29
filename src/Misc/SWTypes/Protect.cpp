@@ -57,9 +57,9 @@ void SW_Protect::LoadFromINI(
 	}
 
 	INI_EX exINI(pINI);
-	pData->Protect_Duration.Read(&exINI, section, "Protect.Duration");
-	pData->Protect_PowerOutageDuration.Read(&exINI, section, "Protect.PowerOutage");
-	pData->Protect_PlayFadeSoundTime.Read(&exINI, section, "Protect.PlayFadeSoundTime");
+	pData->Protect_Duration.Read(exINI, section, "Protect.Duration");
+	pData->Protect_PowerOutageDuration.Read(exINI, section, "Protect.PowerOutage");
+	pData->Protect_PlayFadeSoundTime.Read(exINI, section, "Protect.PlayFadeSoundTime");
 }
 
 bool SW_Protect::Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer)

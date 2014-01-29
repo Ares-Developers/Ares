@@ -194,7 +194,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 
 	INI_EX exINI(pINI);
 	this->Insignia.Read(pINI, section, "Insignia.%s");
-	this->Parachute_Anim.Read(&exINI, section, "Parachute.Anim");
+	this->Parachute_Anim.Read(exINI, section, "Parachute.Anim");
 
 	// new on 08.11.09 for #342 (Operator=)
 	if(pINI->ReadString(section, "Operator", "", Ares::readBuffer, Ares::readLength)) { // try to read the flag
@@ -224,7 +224,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 		}
 	}
 
-	this->ImmuneToEMP.Read(&exINI, section, "ImmuneToEMP");
+	this->ImmuneToEMP.Read(exINI, section, "ImmuneToEMP");
 	this->EMP_Modifier = (float)pINI->ReadDouble(section, "EMP.Modifier", this->EMP_Modifier);
 
 	if(pINI->ReadString(section, "EMP.Threshold", "inair", Ares::readBuffer, Ares::readLength)) {
@@ -270,21 +270,21 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	this->MindControlExperienceVictimModifier = (float)pINI->ReadDouble(section, "Experience.MindControlVictimModifier", this->MindControlExperienceVictimModifier);
 	this->ExperienceFromAirstrike = pINI->ReadBool(section, "Experience.FromAirstrike", this->ExperienceFromAirstrike);
 	this->AirstrikeExperienceModifier = (float)pINI->ReadDouble(section, "Experience.AirstrikeModifier", this->AirstrikeExperienceModifier);
-	this->Insignia_ShowEnemy.Read(&exINI, section, "Insignia.ShowEnemy");
+	this->Insignia_ShowEnemy.Read(exINI, section, "Insignia.ShowEnemy");
 
-	this->VoiceRepair.Read(&exINI, section, "VoiceIFVRepair");
+	this->VoiceRepair.Read(exINI, section, "VoiceIFVRepair");
 
-	this->HijackerEnterSound.Read(&exINI, section, "VehicleThief.EnterSound");
-	this->HijackerLeaveSound.Read(&exINI, section, "VehicleThief.LeaveSound");
-	this->HijackerKillPilots.Read(&exINI, section, "VehicleThief.KillPilots");
-	this->HijackerBreakMindControl.Read(&exINI, section, "VehicleThief.BreakMindControl");
-	this->HijackerAllowed.Read(&exINI, section, "VehicleThief.Allowed");
-	this->HijackerOneTime.Read(&exINI, section, "VehicleThief.OneTime");
+	this->HijackerEnterSound.Read(exINI, section, "VehicleThief.EnterSound");
+	this->HijackerLeaveSound.Read(exINI, section, "VehicleThief.LeaveSound");
+	this->HijackerKillPilots.Read(exINI, section, "VehicleThief.KillPilots");
+	this->HijackerBreakMindControl.Read(exINI, section, "VehicleThief.BreakMindControl");
+	this->HijackerAllowed.Read(exINI, section, "VehicleThief.Allowed");
+	this->HijackerOneTime.Read(exINI, section, "VehicleThief.OneTime");
 
 	this->IC_Modifier = (float)pINI->ReadDouble(section, "IronCurtain.Modifier", this->IC_Modifier);
 
-	this->Chronoshift_Allow.Read(&exINI, section, "Chronoshift.Allow");
-	this->Chronoshift_IsVehicle.Read(&exINI, section, "Chronoshift.IsVehicle");
+	this->Chronoshift_Allow.Read(exINI, section, "Chronoshift.Allow");
+	this->Chronoshift_IsVehicle.Read(exINI, section, "Chronoshift.IsVehicle");
 
 	if(CCINIClass::INI_Art->ReadString(pThis->ImageFile, "CameoPCX", "", Ares::readBuffer, Ares::readLength)) {
 		AresCRT::strCopy(this->CameoPCX, Ares::readBuffer);
@@ -302,71 +302,71 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 		}
 	}
 
-	this->CanBeReversed.Read(&exINI, section, "CanBeReversed");
+	this->CanBeReversed.Read(exINI, section, "CanBeReversed");
 
 	// #305
-	this->RadarJamRadius.Read(&exINI, section, "RadarJamRadius");
+	this->RadarJamRadius.Read(exINI, section, "RadarJamRadius");
 
 	// #1208
-	this->PassengerTurret.Read(&exINI, section, "PassengerTurret");
+	this->PassengerTurret.Read(exINI, section, "PassengerTurret");
 	
 	// #617 powered units
-	this->PoweredBy.Read(&exINI, section, "PoweredBy");
+	this->PoweredBy.Read(exINI, section, "PoweredBy");
 
 	//#1623 - AttachEffect on unit-creation
-	this->AttachedTechnoEffect.Read(&exINI, section);
+	this->AttachedTechnoEffect.Read(exINI, section);
 
-	this->BuiltAt.Read(&exINI, section, "BuiltAt");
+	this->BuiltAt.Read(exINI, section, "BuiltAt");
 
-	this->Cloneable.Read(&exINI, section, "Cloneable");
+	this->Cloneable.Read(exINI, section, "Cloneable");
 
-	this->ClonedAt.Read(&exINI, section, "ClonedAt");
+	this->ClonedAt.Read(exINI, section, "ClonedAt");
 
-	this->CarryallAllowed.Read(&exINI, section, "Carryall.Allowed");
-	this->CarryallSizeLimit.Read(&exINI, section, "Carryall.SizeLimit");
+	this->CarryallAllowed.Read(exINI, section, "Carryall.Allowed");
+	this->CarryallSizeLimit.Read(exINI, section, "Carryall.SizeLimit");
 
 	// #680, 1362
-	this->ImmuneToAbduction.Read(&exINI, section, "ImmuneToAbduction");
+	this->ImmuneToAbduction.Read(exINI, section, "ImmuneToAbduction");
 
 	// issue #896235: cyclic gattling
-	this->GattlingCyclic.Read(&exINI, section, "Gattling.Cycle");
+	this->GattlingCyclic.Read(exINI, section, "Gattling.Cycle");
 
 	// #245 custom missiles
 	if(auto pAircraftType = specific_cast<AircraftTypeClass*>(pThis)) {
-		this->IsCustomMissile.Read(&exINI, section, "Missile.Custom");
-		this->CustomMissileData.Read(&exINI, section, "Missile");
+		this->IsCustomMissile.Read(exINI, section, "Missile.Custom");
+		this->CustomMissileData.Read(exINI, section, "Missile");
 		this->CustomMissileData.GetEx()->Type = pAircraftType;
-		this->CustomMissileWarhead.Read(&exINI, section, "Missile.Warhead");
-		this->CustomMissileEliteWarhead.Read(&exINI, section, "Missile.EliteWarhead");
-		this->CustomMissileTakeoffAnim.Read(&exINI, section, "Missile.TakeOffAnim");
-		this->CustomMissileTrailerAnim.Read(&exINI, section, "Missile.TrailerAnim");
-		this->CustomMissileTrailerSeparation.Read(&exINI, section, "Missile.TrailerSeparation");
+		this->CustomMissileWarhead.Read(exINI, section, "Missile.Warhead");
+		this->CustomMissileEliteWarhead.Read(exINI, section, "Missile.EliteWarhead");
+		this->CustomMissileTakeoffAnim.Read(exINI, section, "Missile.TakeOffAnim");
+		this->CustomMissileTrailerAnim.Read(exINI, section, "Missile.TrailerAnim");
+		this->CustomMissileTrailerSeparation.Read(exINI, section, "Missile.TrailerSeparation");
 	}
 
 	// non-crashable aircraft
-	this->Crashable.Read(&exINI, section, "Crashable");
+	this->Crashable.Read(exINI, section, "Crashable");
 
 	// tiberium
-	this->TiberiumProof.Read(&exINI, section, "TiberiumProof");
-	this->TiberiumRemains.Read(&exINI, section, "TiberiumRemains");
-	this->TiberiumSpill.Read(&exINI, section, "TiberiumSpill");
-	this->TiberiumTransmogrify.Read(&exINI, section, "TiberiumTransmogrify");
+	this->TiberiumProof.Read(exINI, section, "TiberiumProof");
+	this->TiberiumRemains.Read(exINI, section, "TiberiumRemains");
+	this->TiberiumSpill.Read(exINI, section, "TiberiumSpill");
+	this->TiberiumTransmogrify.Read(exINI, section, "TiberiumTransmogrify");
 
 	// refinery and storage
-	this->Refinery_UseStorage.Read(&exINI, section, "Refinery.UseStorage");
+	this->Refinery_UseStorage.Read(exINI, section, "Refinery.UseStorage");
 
 	// cloak
-	this->CloakSound.Read(&exINI, section, "CloakSound");
-	this->DecloakSound.Read(&exINI, section, "DecloakSound");
-	this->CloakPowered.Read(&exINI, section, "Cloakable.Powered");
-	this->CloakDeployed.Read(&exINI, section, "Cloakable.Deployed");
-	this->CloakAllowed.Read(&exINI, section, "Cloakable.Allowed");
-	this->CloakStages.Read(&exINI, section, "Cloakable.Stages");
+	this->CloakSound.Read(exINI, section, "CloakSound");
+	this->DecloakSound.Read(exINI, section, "DecloakSound");
+	this->CloakPowered.Read(exINI, section, "Cloakable.Powered");
+	this->CloakDeployed.Read(exINI, section, "Cloakable.Deployed");
+	this->CloakAllowed.Read(exINI, section, "Cloakable.Allowed");
+	this->CloakStages.Read(exINI, section, "Cloakable.Stages");
 
 	// sensors
-	this->SensorArray_Warn.Read(&exINI, section, "SensorArray.Warn");
+	this->SensorArray_Warn.Read(exINI, section, "SensorArray.Warn");
 
-	this->EVA_UnitLost.Read(&exINI, section, "EVA.Lost");
+	this->EVA_UnitLost.Read(exINI, section, "EVA.Lost");
 
 	// linking units for type selection
 	if(pINI->ReadString(section, "GroupAs", "", Ares::readBuffer, Ares::readLength)) {
@@ -378,8 +378,8 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	}
 
 	// crew settings
-	this->Crew_TechnicianChance.Read(&exINI, section, "Crew.TechnicianChance");
-	this->Crew_EngineerChance.Read(&exINI, section, "Crew.EngineerChance");
+	this->Crew_TechnicianChance.Read(exINI, section, "Crew.TechnicianChance");
+	this->Crew_EngineerChance.Read(exINI, section, "Crew.EngineerChance");
 
 	// quick fix - remove after the rest of weapon selector code is done
 	return;

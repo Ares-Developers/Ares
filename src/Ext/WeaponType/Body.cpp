@@ -49,14 +49,14 @@ void WeaponTypeExt::ExtData::LoadFromINIFile(WeaponTypeExt::TT *pThis, CCINIClas
 	this->Beam_Duration     = pINI->ReadInteger(section, "Beam.Duration", this->Beam_Duration);
 	this->Beam_Amplitude    = pINI->ReadDouble(section, "Beam.Amplitude", this->Beam_Amplitude);
 	this->Beam_IsHouseColor = pINI->ReadBool(section, "Beam.IsHouseColor", this->Beam_IsHouseColor);
-	this->Beam_Color.Read(&exINI, section, "Beam.Color");
+	this->Beam_Color.Read(exINI, section, "Beam.Color");
 
 	this->Wave_IsLaser      = pINI->ReadBool(section, "Wave.IsLaser", this->Wave_IsLaser);
 	this->Wave_IsBigLaser   = pINI->ReadBool(section, "Wave.IsBigLaser", this->Wave_IsBigLaser);
 	this->Wave_IsHouseColor = pINI->ReadBool(section, "Wave.IsHouseColor", this->Wave_IsHouseColor);
 
 	if(this->IsWave(pThis) && !this->Wave_IsHouseColor) {
-		this->Wave_Color.Read(&exINI, section, "Wave.Color");
+		this->Wave_Color.Read(exINI, section, "Wave.Color");
 	}
 
 	this->Wave_Reverse[idxVehicle]   =
@@ -71,12 +71,12 @@ void WeaponTypeExt::ExtData::LoadFromINIFile(WeaponTypeExt::TT *pThis, CCINIClas
 		pINI->ReadBool(section, "Wave.ReverseAgainstOthers", this->Wave_Reverse[idxOther]);
 
 	if(pThis->IsElectricBolt) {
-		this->Bolt_Color1.Read(&exINI, section, "Bolt.Color1");
-		this->Bolt_Color2.Read(&exINI, section, "Bolt.Color2");
-		this->Bolt_Color3.Read(&exINI, section, "Bolt.Color3");
+		this->Bolt_Color1.Read(exINI, section, "Bolt.Color1");
+		this->Bolt_Color2.Read(exINI, section, "Bolt.Color2");
+		this->Bolt_Color3.Read(exINI, section, "Bolt.Color3");
 	}
 
-	this->Laser_Thickness.Read(&exINI, section, "LaserThickness");
+	this->Laser_Thickness.Read(exINI, section, "LaserThickness");
 
 //	pData->Wave_InitialIntensity = pINI->ReadInteger(section, "Wave.InitialIntensity", pData->Wave_InitialIntensity);
 //	pData->Wave_IntensityStep    = pINI->ReadInteger(section, "Wave.IntensityStep", pData->Wave_IntensityStep);
@@ -88,24 +88,24 @@ void WeaponTypeExt::ExtData::LoadFromINIFile(WeaponTypeExt::TT *pThis, CCINIClas
 	}
 
 	if(pThis->Warhead->IvanBomb) {
-		this->Ivan_KillsBridges.Read(&exINI, section, "IvanBomb.DestroysBridges");
-		this->Ivan_Detachable.Read(&exINI, section, "IvanBomb.Detachable");
+		this->Ivan_KillsBridges.Read(exINI, section, "IvanBomb.DestroysBridges");
+		this->Ivan_Detachable.Read(exINI, section, "IvanBomb.Detachable");
 
-		this->Ivan_Damage.Read(&exINI, section, "IvanBomb.Damage");
-		this->Ivan_Delay.Read(&exINI, section, "IvanBomb.Delay");
+		this->Ivan_Damage.Read(exINI, section, "IvanBomb.Damage");
+		this->Ivan_Delay.Read(exINI, section, "IvanBomb.Delay");
 
-		this->Ivan_FlickerRate.Read(&exINI, section, "IvanBomb.FlickerRate");
+		this->Ivan_FlickerRate.Read(exINI, section, "IvanBomb.FlickerRate");
 
-		this->Ivan_TickingSound.Read(&exINI, section, "IvanBomb.TickingSound");
+		this->Ivan_TickingSound.Read(exINI, section, "IvanBomb.TickingSound");
 
-		this->Ivan_AttachSound.Read(&exINI, section, "IvanBomb.AttachSound");
+		this->Ivan_AttachSound.Read(exINI, section, "IvanBomb.AttachSound");
 
-		this->Ivan_WH.Read(&exINI, section, "IvanBomb.Warhead");
+		this->Ivan_WH.Read(exINI, section, "IvanBomb.Warhead");
 
-		this->Ivan_Image.Read(&exINI, section, "IvanBomb.Image");
+		this->Ivan_Image.Read(exINI, section, "IvanBomb.Image");
 
-		this->Ivan_CanDetonateTimeBomb.Read(&exINI, section, "IvanBomb.CanDetonateTimeBomb");
-		this->Ivan_CanDetonateDeathBomb.Read(&exINI, section, "IvanBomb.CanDetonateDeathBomb");
+		this->Ivan_CanDetonateTimeBomb.Read(exINI, section, "IvanBomb.CanDetonateTimeBomb");
+		this->Ivan_CanDetonateDeathBomb.Read(exINI, section, "IvanBomb.CanDetonateDeathBomb");
 	}
 //
 /*
@@ -121,10 +121,10 @@ void WeaponTypeExt::ExtData::LoadFromINIFile(WeaponTypeExt::TT *pThis, CCINIClas
 	}
 */
 	// #680 Chrono Prison
-	this->Abductor.Read(&exINI, section, "Abductor");
-	this->Abductor_AnimType.Read(&exINI, section, "Abductor.Anim");
-	this->Abductor_ChangeOwner.Read(&exINI, section, "Abductor.ChangeOwner");
-	this->Abductor_AbductBelowPercent.Read(&exINI, section, "Abductor.AbductBelowPercent");
+	this->Abductor.Read(exINI, section, "Abductor");
+	this->Abductor_AnimType.Read(exINI, section, "Abductor.Anim");
+	this->Abductor_ChangeOwner.Read(exINI, section, "Abductor.ChangeOwner");
+	this->Abductor_AbductBelowPercent.Read(exINI, section, "Abductor.AbductBelowPercent");
 }
 
 // #680 Chrono Prison / Abductor

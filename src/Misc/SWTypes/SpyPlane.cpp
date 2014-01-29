@@ -31,9 +31,9 @@ void SW_SpyPlane::LoadFromINI(
 	}
 
 	INI_EX exINI(pINI);
-	pData->SpyPlane_Count.Read(&exINI, section, "SpyPlane.Count");
-	pData->SpyPlane_TypeIndex.Read(&exINI, section, "SpyPlane.Type");
-	pData->SpyPlane_Mission.Read(&exINI, section, "SpyPlane.Mission");
+	pData->SpyPlane_Count.Read(exINI, section, "SpyPlane.Count");
+	pData->SpyPlane_TypeIndex.Read(exINI, section, "SpyPlane.Type");
+	pData->SpyPlane_Mission.Read(exINI, section, "SpyPlane.Mission");
 }
 
 bool SW_SpyPlane::Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer)

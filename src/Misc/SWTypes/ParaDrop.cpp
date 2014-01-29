@@ -79,11 +79,11 @@ void SW_ParaDrop::LoadFromINI(
 
 		// parse the plane contents
 		_snprintf_s(key, 0x3F, "%s.Aircraft", base);
-		pPlane->Aircraft.Read(&exINI, section, key);
+		pPlane->Aircraft.Read(exINI, section, key);
 
 		// a list of UnitTypes and InfantryTypes
 		_snprintf_s(key, 0x3F, "%s.Types", base);
-		pPlane->Types.Read(&exINI, section, key);
+		pPlane->Types.Read(exINI, section, key);
 
 		// remove all types that aren't either infantry or unit types
 		pPlane->Types.erase(std::remove_if(pPlane->Types.begin(), pPlane->Types.end(), [section, &key](TechnoTypeClass* pItem) -> bool {
@@ -103,7 +103,7 @@ void SW_ParaDrop::LoadFromINI(
 
 		// the number how many times each item is created
 		_snprintf_s(key, 0x3F, "%s.Num", base);
-		pPlane->Num.Read(&exINI, section, key);
+		pPlane->Num.Read(exINI, section, key);
 
 		return pPlane;
 	};
