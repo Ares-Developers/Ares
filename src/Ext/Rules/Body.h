@@ -7,6 +7,7 @@
 #include <AnimTypeClass.h>
 #include <SidebarClass.h>
 #include <VocClass.h>
+#include <MouseClass.h>
 
 #include "../_Container.hpp"
 #include "../../Utilities/Template.h"

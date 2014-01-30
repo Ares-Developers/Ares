@@ -2,6 +2,8 @@
 
 #include <AnimClass.h>
 #include <OverlayTypeClass.h>
+#include <MouseClass.h>
+#include <ScenarioClass.h>
 
 // this was only a leftover stub from TS. reimplemented
 // using the same mechanism.

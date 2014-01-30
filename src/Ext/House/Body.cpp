@@ -6,6 +6,8 @@
 #include "../TechnoType/Body.h"
 #include "../../Enum/Prerequisites.h"
 
+#include <MouseClass.h>
+
 template<> const DWORD Extension<HouseClass>::Canary = 0x12345678;
 Container<HouseExt> HouseExt::ExtMap;
 bool HouseExt::IsAnyFirestormActive = false;

@@ -12,6 +12,7 @@
 #include <VoxClass.h>
 #include <RadarEventClass.h>
 #include <SuperClass.h>
+#include <MouseClass.h>
 
 template<> const DWORD Extension<BuildingClass>::Canary = 0x87654321;
 Container<BuildingExt> BuildingExt::ExtMap;

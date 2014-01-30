@@ -23,6 +23,8 @@
 #include "../../Misc/JammerClass.h"
 #include "../../Misc/PoweredUnitClass.h"
 
+#include "../../Utilities/Enums.h"
+
 #include "../_Container.hpp"
 
 class TechnoExt

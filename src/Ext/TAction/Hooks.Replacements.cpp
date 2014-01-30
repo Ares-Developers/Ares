@@ -1,5 +1,6 @@
 #include "Body.h"
 
+#include <ScenarioClass.h>
 #include <VocClass.h>
 
 // #1004906: support more than 100 waypoints

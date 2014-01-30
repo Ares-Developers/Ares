@@ -4,6 +4,8 @@
 #include <algorithm>
 #include <vector>
 
+#include <MouseClass.h>
+
 std::vector<CellStruct> BuildingExt::TempFoundationData1;
 std::vector<CellStruct> BuildingExt::TempFoundationData2;
 
