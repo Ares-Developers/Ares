@@ -2,6 +2,7 @@
 #include "../Ext/Techno/Body.h"
 #include "../Ext/TechnoType/Body.h"
 #include "../Ext/WarheadType/Body.h"
+#include "../Utilities/TemplateDef.h"
 
 /*
 Attached Effects system

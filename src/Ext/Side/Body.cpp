@@ -1,5 +1,6 @@
 #include "Body.h"
 #include "../../Ares.CRT.h"
+#include "../../Utilities/TemplateDef.h"
 #include <ScenarioClass.h>
 
 #include <algorithm>

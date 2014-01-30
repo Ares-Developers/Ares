@@ -4,6 +4,7 @@
 #include "../../Enum/Prerequisites.h"
 #include "../../Enum/ArmorTypes.h"
 #include "../../Enum/RadTypes.h"
+#include "../../Utilities/TemplateDef.h"
 #include <GameModeOptionsClass.h>
 
 template<> const DWORD Extension<RulesClass>::Canary = 0x12341234;

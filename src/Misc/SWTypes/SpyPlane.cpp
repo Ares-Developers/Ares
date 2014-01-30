@@ -1,5 +1,6 @@
 #include "SpyPlane.h"
 #include "../../Ares.h"
+#include "../../Utilities/TemplateDef.h"
 
 bool SW_SpyPlane::HandlesType(int type)
 {

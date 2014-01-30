@@ -6,6 +6,7 @@
 #include <LocomotionClass.h>
 #include "../WarheadType/Body.h"
 #include "../Techno/Body.h"
+#include "../../Utilities/TemplateDef.h"
 
 template<> const DWORD Extension<WeaponTypeClass>::Canary = 0x33333333;
 Container<WeaponTypeExt> WeaponTypeExt::ExtMap;

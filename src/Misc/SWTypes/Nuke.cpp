@@ -2,6 +2,7 @@
 #include "../../Ares.h"
 
 #include "../../Ext/Bullet/Body.h"
+#include "../../Utilities/TemplateDef.h"
 
 #include <WarheadTypeClass.h>
 #include <BulletTypeClass.h>

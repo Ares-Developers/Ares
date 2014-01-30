@@ -1,6 +1,7 @@
 #include "ParaDrop.h"
 #include "../../Ares.h"
 #include "../../Ext/HouseType/Body.h"
+#include "../../Utilities/TemplateDef.h"
 
 #include <SideClass.h>
 

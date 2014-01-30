@@ -1,5 +1,6 @@
 #include "LightningStorm.h"
 #include "../../Ares.h"
+#include "../../Utilities/TemplateDef.h"
 
 #include <ScenarioClass.h>
 

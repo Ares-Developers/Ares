@@ -8,6 +8,7 @@
 #include "../../Ares.h"
 #include "../../Ares.CRT.h"
 #include "../../Utilities/Enums.h"
+#include "../../Utilities/TemplateDef.h"
 
 #include <WarheadTypeClass.h>
 #include <MessageListClass.h>

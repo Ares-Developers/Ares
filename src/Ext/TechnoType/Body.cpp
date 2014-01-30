@@ -4,6 +4,7 @@
 #include "../Side/Body.h"
 #include "../../Enum/Prerequisites.h"
 #include "../../Misc/Debug.h"
+#include "../../Utilities/TemplateDef.h"
 
 #include <AnimTypeClass.h>
 #include <PCX.h>

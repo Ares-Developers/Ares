@@ -4,6 +4,7 @@
 #include "../Techno/Body.h"
 #include "../TechnoType/Body.h"
 #include "../../Misc/EMPulse.h"
+#include "../../Utilities/TemplateDef.h"
 
 #include <WarheadTypeClass.h>
 #include <GeneralStructures.h>

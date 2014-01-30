@@ -1,6 +1,8 @@
 #include "ChronoSphere.h"
 #include "../../Ares.h"
 
+#include "../../Utilities/TemplateDef.h"
+
 bool SW_ChronoSphere::HandlesType(int type)
 {
 	return (type == SuperWeaponType::ChronoSphere);

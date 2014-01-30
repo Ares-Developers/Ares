@@ -1,6 +1,7 @@
 #include "SonarPulse.h"
 #include "../../Ext/Techno/Body.h"
 #include "../../Utilities/Helpers.Alex.h"
+#include "../../Utilities/TemplateDef.h"
 
 SuperWeaponFlags::Value SW_SonarPulse::Flags()
 {

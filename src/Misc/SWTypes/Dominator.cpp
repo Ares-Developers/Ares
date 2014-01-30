@@ -3,6 +3,7 @@
 #include "../../Ext/Infantry/Body.h"
 #include "../../Ext/WarheadType/Body.h"
 #include "../../Utilities/Helpers.Alex.h"
+#include "../../Utilities/TemplateDef.h"
 
 SuperClass* SW_PsychicDominator::CurrentPsyDom = nullptr;
 

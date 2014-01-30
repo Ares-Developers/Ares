@@ -4,6 +4,7 @@
 #include "../../Enum/Prerequisites.h"
 #include "../../Misc/Debug.h"
 #include "../Rules/Body.h"
+#include "../../Utilities/TemplateDef.h"
 
 // =============================
 // other hooks

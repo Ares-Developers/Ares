@@ -1,4 +1,5 @@
 #include "RadTypes.h"
+#include "../Utilities/TemplateDef.h"
 
 Enumerable<RadType>::container_t Enumerable<RadType>::Array;
 

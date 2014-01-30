@@ -1,5 +1,6 @@
 #include "UnitDelivery.h"
 #include "../../Ext/Techno/Body.h"
+#include "../../Utilities/TemplateDef.h"
 
 void SW_UnitDelivery::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)
 {

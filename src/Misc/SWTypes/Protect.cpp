@@ -1,6 +1,7 @@
 #include "Protect.h"
 #include "../../Ares.h"
 #include "../../Utilities/Helpers.Alex.h"
+#include "../../Utilities/TemplateDef.h"
 
 bool SW_Protect::HandlesType(int type)
 {

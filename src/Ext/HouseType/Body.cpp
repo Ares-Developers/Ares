@@ -2,6 +2,7 @@
 #include "../Side/Body.h"
 #include "../../Ares.h"
 #include "../../Ares.CRT.h"
+#include "../../Utilities/TemplateDef.h"
 #include <ScenarioClass.h>
 #include <ColorScheme.h>
 #include <DiscreteDistributionClass.h>

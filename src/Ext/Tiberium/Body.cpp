@@ -1,4 +1,5 @@
 #include "Body.h"
+#include "../../Utilities/TemplateDef.h"
 
 #include <WarheadTypeClass.h>
 

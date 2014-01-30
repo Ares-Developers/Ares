@@ -1,6 +1,7 @@
 #include "Body.h"
 #include "../TechnoType/Body.h"
 #include "../House/Body.h"
+#include "../../Utilities/TemplateDef.h"
 
 #include <InfantryClass.h>
 

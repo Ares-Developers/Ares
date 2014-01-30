@@ -1,6 +1,7 @@
 #include "Body.h"
 #include "../Building/Body.h"
 #include "../Techno/Body.h"
+#include "../../Utilities/TemplateDef.h"
 #include <BulletClass.h>
 #include <LaserDrawClass.h>
 
