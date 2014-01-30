@@ -1,6 +1,9 @@
 #ifndef ARES_ITERATOR_H
 #define ARES_ITERATOR_H
 
+#include <ArrayClasses.h>
+#include <vector>
+
 template<typename T>
 class Iterator {
 private:
