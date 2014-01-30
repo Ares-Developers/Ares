@@ -6,7 +6,6 @@
 
 #include <MouseClass.h>
 #include <TechnoClass.h>
-#include <Helpers/Type.h>
 #include "INIParser.h"
 #include "Enums.h"
 #include "Constructs.h"
@@ -23,7 +22,7 @@ protected:
 	T    Value;
 public:
 	typedef T value_type;
-	typedef typename CompoundT<T>::BaseT base_type;
+	typedef std::remove_pointer_t<T> base_type;
 	Valueable(T Default = T()) : Value(Default) {};
 
 	virtual ~Valueable() {}
@@ -505,7 +504,7 @@ protected:
 	bool _Defined;
 public:
 	typedef T value_type;
-	typedef typename CompoundT<T>::BaseT base_type;
+	typedef std::remove_pointer_t<T> base_type;
 
 	ValueableVector() : std::vector<T>(), _Defined(false) {};
 
