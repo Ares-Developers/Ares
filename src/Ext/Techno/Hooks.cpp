@@ -111,14 +111,14 @@ DEFINE_HOOK(6F9E76, TechnoClass_Update_CheckOperators, 6)
 			if( (pThis->Deactivated && pData->IsPowered() && !pThis->IsUnderEMP()) || Override ) { // ...if it's currently off, turn it on! (oooh baby)
 				pThis->Reactivate();
 				if(pTheBuildingBelow == pThis) {
-					pThis->Owner->ShouldRecheckTechTree = true; // #885
+					pThis->Owner->RecheckTechTree = true; // #885
 				}
 			}
 		} else { // doesn't have an operator, so...
 			if(!pThis->Deactivated) { // ...if it's not off yet, turn it off!
 				pThis->Deactivate();
 				if(pTheBuildingBelow == pThis) {
-					pThis->Owner->ShouldRecheckTechTree = true; // #885
+					pThis->Owner->RecheckTechTree = true; // #885
 				}
 			}
 		}

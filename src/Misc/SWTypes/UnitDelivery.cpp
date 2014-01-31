@@ -120,7 +120,7 @@ void UnitDeliveryStateMachine::PlaceUnits() {
 							if(!pItemData->IsPowered() || !pItemData->IsOperated()) {
 								Item->Deactivate();
 								if(ItemBuilding) {
-									Item->Owner->ShouldRecheckTechTree = true; 
+									Item->Owner->RecheckTechTree = true; 
 								}
 							}
 						}

@@ -481,7 +481,7 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 	if(pTypeExt->StolenTechIndex > -1) {
 		pEntererExt->StolenTech.set(pTypeExt->StolenTechIndex);
 
-		Enterer->ShouldRecheckTechTree = true;
+		Enterer->RecheckTechTree = true;
 		if(evaForOwner) {
 			VoxClass::Play("EVA_TechnologyStolen");
 		}
@@ -507,7 +507,7 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 					TypeData->ReversedByHouses[idx] = false;
 				}
 			}
-			Owner->ShouldRecheckTechTree = true;
+			Owner->RecheckTechTree = true;
 		}
 
 		if(evaForOwner) {
@@ -593,7 +593,7 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 		}
 
 		if(promotionStolen) {
-			Enterer->ShouldRecheckTechTree = true;
+			Enterer->RecheckTechTree = true;
 			if(Enterer->ControlledByPlayer()) {
 				MouseClass::Instance->SidebarNeedsRepaint();
 			}
@@ -788,7 +788,7 @@ bool BuildingExt::ExtData::ReverseEngineer(TechnoClass *Victim) {
 			if(!WasBuildable) {
 				bool IsBuildable = HouseExt::RequirementsMet(Owner, VictimType) != HouseExt::Forbidden;
 				if(IsBuildable) {
-					Owner->ShouldRecheckTechTree = true;
+					Owner->RecheckTechTree = true;
 					return true;
 				}
 			}

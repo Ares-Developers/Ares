@@ -247,7 +247,7 @@ bool SW_ChronoWarp::Activate(SuperClass* pThis, const CellStruct &Coords, bool I
 
 					// the buidling counts as warped until it reappears
 					pBld->BeingWarpedOut = true;
-					pBld->Owner->ShouldRecheckTechTree = true;
+					pBld->Owner->RecheckTechTree = true;
 					pBld->Owner->RecheckPower = true;
 					pBld->DisableTemporal();
 					pBld->UpdatePlacement(PlacementType::Redraw);
@@ -346,7 +346,7 @@ void ChronoWarpStateMachine::Update() {
 					// chronoshift ends
 					pBld->BeingWarpedOut = false;
 					pBld->Owner->RecheckPower = true;
-					pBld->Owner->ShouldRecheckTechTree = true;
+					pBld->Owner->RecheckTechTree = true;
 					pBld->EnableTemporal();
 					pBld->UpdatePlacement(PlacementType::Redraw);
 
@@ -368,7 +368,7 @@ void ChronoWarpStateMachine::Update() {
 		}
 	} else if(passed == this->Duration) {
 		Super->Owner->RecheckPower = true;
-		Super->Owner->ShouldRecheckTechTree = true;
+		Super->Owner->RecheckTechTree = true;
 		Super->Owner->RecheckRadar = true;
 	}
 }

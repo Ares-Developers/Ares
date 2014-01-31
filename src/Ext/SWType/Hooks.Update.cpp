@@ -130,7 +130,7 @@ DEFINE_HOOK(50AF10, HouseClass_CheckSWs, 5)
 						int idxTab = SidebarClass::GetObjectTabIdx(SuperClass::AbsID, pSWType->GetArrayIndex(), 0);
 						MouseClass::Instance->RepaintSidebar(idxTab);
 					}
-					pThis->ShouldRecheckTechTree = true;
+					pThis->RecheckTechTree = true;
 				}
 			}
 		}

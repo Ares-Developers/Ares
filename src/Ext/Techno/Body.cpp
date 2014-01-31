@@ -268,7 +268,7 @@ void TechnoExt::StopDraining(TechnoClass *Drainer, TechnoClass *Drainee) {
 		// tell the game to recheck the drained
 		// player's tech level.
 		if (Drainee->Owner) {
-			Drainee->Owner->ShouldRecheckTechTree = true;
+			Drainee->Owner->RecheckTechTree = true;
 		}
 	}
 }
