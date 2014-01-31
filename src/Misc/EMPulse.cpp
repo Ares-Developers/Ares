@@ -594,7 +594,7 @@ bool EMPulse::thresholdExceeded(TechnoClass * Victim) {
 */
 bool EMPulse::enableEMPEffect(TechnoClass * Victim, ObjectClass * Source) {
 	Victim->Owner->ShouldRecheckTechTree = true;
-	Victim->Owner->PowerBlackout = true;
+	Victim->Owner->RecheckPower = true;
 
 	if (BuildingClass * Building = specific_cast<BuildingClass *>(Victim)) {
 		Building->DisableStuff();
@@ -692,7 +692,7 @@ void EMPulse::DisableEMPEffect(TechnoClass * Victim) {
 	}
 
 	Victim->Owner->ShouldRecheckTechTree = true;
-	Victim->Owner->PowerBlackout = true;
+	Victim->Owner->RecheckPower = true;
 
 	if (Victim->Deactivated && HasPower) {
 		Victim->Reactivate();
@@ -731,7 +731,7 @@ void EMPulse::DisableEMPEffect(TechnoClass * Victim) {
 
 bool EMPulse::EnableEMPEffect2(TechnoClass * Victim) {
 	Victim->Owner->ShouldRecheckTechTree = true;
-	Victim->Owner->PowerBlackout = true;
+	Victim->Owner->RecheckPower = true;
 
 	if (BuildingClass * Building = specific_cast<BuildingClass *>(Victim)) {
 		Building->DisableStuff();
@@ -818,7 +818,7 @@ void EMPulse::DisableEMPEffect2(TechnoClass * Victim) {
 	}
 
 	Victim->Owner->ShouldRecheckTechTree = true;
-	Victim->Owner->PowerBlackout = true;
+	Victim->Owner->RecheckPower = true;
 
 	if (Victim->Deactivated && HasPower) {
 		Victim->Reactivate();
