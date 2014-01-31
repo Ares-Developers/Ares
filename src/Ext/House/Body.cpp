@@ -53,7 +53,7 @@ HouseExt::RequirementStatus HouseExt::RequirementsMet(HouseClass *pHouse, Techno
 
 	if(pHouse->HasFromSecretLab(pItem)) { return Overridden; }
 
-	if(pHouse->IsHumanoid() && pItem->TechLevel == -1) { return Incomplete; }
+	if(pHouse->ControlledByHuman() && pItem->TechLevel == -1) { return Incomplete; }
 
 	if(!pHouse->HasAllStolenTech(pItem)) { return Incomplete; }
 
@@ -145,7 +145,7 @@ signed int HouseExt::PrereqValidate
 			return 0;
 		}
 
-		if(!pHouse->IsHumanoid()) {
+		if(!pHouse->ControlledByHuman()) {
 			if(Ares::GlobalControls::AllowBypassBuildLimit[pHouse->AIDifficulty]) {
 				return 1;
 			} else {

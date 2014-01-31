@@ -546,7 +546,7 @@ DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
 	// this method iterates over every available SW and checks
 	// whether it should be fired automatically. the original
 	// method would abort if this house is human-controlled.
-	bool AIFire = !pThis->IsHumanoid();
+	bool AIFire = !pThis->ControlledByHuman();
 
 	for(int i=0; i<pThis->Supers.Count; ++i) {
 		if(SuperClass* pSuper = pThis->Supers.GetItem(i)) {
@@ -814,7 +814,7 @@ DEFINE_HOOK(6CBD6B, SuperClass_Update_DrainMoney, 8) {
 					// only abort if SW drains money and there is none
 					if(pData->Money_DrainAmount < 0) {
 						if(pSuper->Owner->Available_Money() < -money) {
-							if(pSuper->Owner->IsHumanoid()) {
+							if(pSuper->Owner->ControlledByHuman()) {
 								VoxClass::PlayIndex(pData->EVA_InsufficientFunds);
 								pData->PrintMessage(pData->Message_InsufficientFunds, HouseClass::Player);
 							}
