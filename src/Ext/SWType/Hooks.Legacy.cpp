@@ -277,7 +277,7 @@ DEFINE_HOOK(539EB0, LightningStorm_Start, 5) {
 					}
 				}
 				if(HouseClass::Player) {
-					HouseClass::Player->RadarBlackout = true;
+					HouseClass::Player->RecheckRadar = true;
 				}
 
 				// let there be light

@@ -402,7 +402,7 @@ void EMPulse::updateRadarBlackout(TechnoClass * Techno) {
 	if (BuildingClass * Building = specific_cast<BuildingClass *>(Techno)) {
 		if (!Building->Type->InvisibleInGame) {
 			if (Building->Type->Radar || Building->Type->SpySat) {
-				Building->Owner->RadarBlackout = true;
+				Building->Owner->RecheckRadar = true;
 			}
 		}
 	}

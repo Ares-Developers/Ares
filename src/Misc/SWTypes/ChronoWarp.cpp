@@ -369,7 +369,7 @@ void ChronoWarpStateMachine::Update() {
 	} else if(passed == this->Duration) {
 		Super->Owner->RecheckPower = true;
 		Super->Owner->ShouldRecheckTechTree = true;
-		Super->Owner->RadarBlackout = true;
+		Super->Owner->RecheckRadar = true;
 	}
 }
 

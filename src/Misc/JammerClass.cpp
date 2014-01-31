@@ -57,14 +57,14 @@ bool JammerClass::InRangeOf(BuildingClass* TargetBuilding) {
 void JammerClass::Jam(BuildingClass* TargetBuilding) {
 	BuildingExt::ExtData* TheBuildingExt = BuildingExt::ExtMap.Find(TargetBuilding);
 	TheBuildingExt->RegisteredJammers.insert(this->AttachedToObject);
-	TargetBuilding->Owner->RadarBlackout = true;
+	TargetBuilding->Owner->RecheckRadar = true;
 }
 
 //! \param TargetBuilding The building to unjam.
 void JammerClass::Unjam(BuildingClass* TargetBuilding) {
 	BuildingExt::ExtData* TheBuildingExt = BuildingExt::ExtMap.Find(TargetBuilding);
 	TheBuildingExt->RegisteredJammers.erase(this->AttachedToObject);
-	TargetBuilding->Owner->RadarBlackout = true;
+	TargetBuilding->Owner->RecheckRadar = true;
 }
 
 void JammerClass::UnjamAll() {
