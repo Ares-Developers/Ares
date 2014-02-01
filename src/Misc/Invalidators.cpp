@@ -117,9 +117,6 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 			}
 		}
 
-		// set the default value, if not already overridden
-		pData->ImmuneToEMP.BindEx(!EMPulse::IsTypeEMPProne(Item));
-
 		for(signed int k = (int)pData->ClonedAt.size() - 1; k >= 0; --k) {
 			auto Cloner = pData->ClonedAt[k];
 			if(Cloner->Factory) {

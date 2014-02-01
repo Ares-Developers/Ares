@@ -78,7 +78,7 @@ public:
 
 		std::bitset<32> RequiredStolenTech;
 
-		Customizable<bool> ImmuneToEMP;
+		Nullable<bool> ImmuneToEMP;
 		bool VeteranAbilityEMPIMMUNE;
 		bool EliteAbilityEMPIMMUNE;
 		int EMP_Threshold;
