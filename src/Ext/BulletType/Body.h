@@ -5,6 +5,7 @@
 #include <BulletTypeClass.h>
 
 #include "../_Container.hpp"
+#include "../../Utilities/Constructs.h"
 #include "../../Utilities/Template.h"
 #include "../../Ares.h"
 
@@ -32,7 +33,7 @@ public:
 		bool SubjectToTrenches; //! if false, this projectile/weapon *always* passes through to the occupants, regardless of UC.PassThrough
 
 		// cache for the image animation's palette convert
-		Nullable<ConvertClass*> ImageConvert;
+		OptionalStruct<ConvertClass*> ImageConvert;
 
 		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			SubjectToSolid (false),
