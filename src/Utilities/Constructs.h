@@ -202,4 +202,42 @@ public:
 	const wchar_t* Text;
 };
 
+// a wrapper for an optional value
+template <typename T>
+struct OptionalStruct {
+	OptionalStruct() : Value(T()), HasValue(false) {}
+	explicit OptionalStruct(T value) : Value(value), HasValue(true) {}
+
+	OptionalStruct& operator= (T value) {
+		this->Value = value;
+		this->HasValue = true;
+		return *this;
+	}
+
+	operator T& () {
+		return this->Value;
+	}
+
+	operator const T& () const {
+		return this->Value;
+	}
+
+	void clear() {
+		this->Value = T();
+		this->HasValue = false;
+	}
+
+	bool empty() const {
+		return !this->HasValue;
+	}
+
+	const T& get() const {
+		return this->Value;
+	}
+
+private:
+	T Value;
+	bool HasValue;
+};
+
 #endif
