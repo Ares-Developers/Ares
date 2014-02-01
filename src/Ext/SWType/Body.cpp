@@ -369,7 +369,7 @@ bool SWTypeExt::Launch(SuperClass* pThis, NewSWType* pSW, const CellStruct &Coor
 			}
 
 			if((pData->SW_Sound != -1) && !(flags & SuperWeaponFlags::NoSound)) {
-				VocClass::PlayAt(pData->SW_Sound, &coords, nullptr);
+				VocClass::PlayAt(pData->SW_Sound, coords, nullptr);
 			}
 
 			if(pData->SW_RadarEvent && !(flags & SuperWeaponFlags::NoEvent)) {

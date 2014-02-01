@@ -46,7 +46,7 @@ void UnitDeliveryStateMachine::Update() {
 		pData->PrintMessage(pData->Message_Activate, this->Super->Owner);
 
 		if(pData->SW_ActivationSound != -1) {
-			VocClass::PlayAt(pData->SW_ActivationSound, &coords, nullptr);
+			VocClass::PlayAt(pData->SW_ActivationSound, coords, nullptr);
 		}
 
 		this->PlaceUnits();

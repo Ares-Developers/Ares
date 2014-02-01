@@ -134,7 +134,7 @@ DEFINE_HOOK(702E9D, TechnoClass_RegisterDestruction_Veterancy, 6) {
 						}
 
 						if(sound != -1 && pExperience->Owner->ControlledByHuman()) {
-							VocClass::PlayAt(sound, &pExperience->Transporter->Location, nullptr);
+							VocClass::PlayAt(sound, pExperience->Transporter->Location, nullptr);
 							VoxClass::Play("EVA_UnitPromoted");
 						}
 					}

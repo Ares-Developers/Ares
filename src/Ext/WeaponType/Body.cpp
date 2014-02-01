@@ -346,7 +346,7 @@ void WeaponTypeExt::ExtData::PlantBomb(TechnoClass* pSource, ObjectClass* pTarge
 
 			int index = this->Ivan_AttachSound.Get(RulesClass::Instance->BombAttachSound);
 			if(index != -1 && pSource->Owner->ControlledByPlayer()) {
-				VocClass::PlayAt(index, &pBomb->Target->Location, nullptr);
+				VocClass::PlayAt(index, pBomb->Target->Location, nullptr);
 			}
 		}
 	}

@@ -170,7 +170,7 @@ bool SW_NuclearMissile::Activate(SuperClass* pThis, const CellStruct &Coords, bo
 					}
 				}
 
-				VocClass::PlayAt(pData->SW_ActivationSound, &target, nullptr);
+				VocClass::PlayAt(pData->SW_ActivationSound, target, nullptr);
 				pThis->Owner->RecheckTechTree = true;
 				return true;
 			}

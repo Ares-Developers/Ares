@@ -58,7 +58,7 @@ void TechnoExt::SpawnSurvivors(FootClass *pThis, TechnoClass *pKiller, bool Sele
 					Hijacker->QueueMission(mission_Guard, true); // override the fate the AI decided upon
 					
 				}
-				VocClass::PlayAt(pExt->HijackerLeaveSound, &pThis->Location, 0);
+				VocClass::PlayAt(pExt->HijackerLeaveSound, pThis->Location, 0);
 
 				// lower than 0: kill all, otherwise, kill n pilots
 				PilotCount = ((pExt->HijackerKillPilots < 0) ? 0 : (PilotCount - pExt->HijackerKillPilots));
@@ -766,7 +766,7 @@ bool TechnoExt::ExtData::PerformActionHijack(TechnoClass* pTarget) {
 		// let's make a steal
 		pTarget->SetOwningHouse(pThis->Owner, 1);
 		pTarget->GotHijacked();
-		VocClass::PlayAt(pTypeExt->HijackerEnterSound, &pTarget->Location, 0);
+		VocClass::PlayAt(pTypeExt->HijackerEnterSound, pTarget->Location, 0);
 
 		// remove the driverless-marker
 		TechnoExt::ExtData* pDestExt = TechnoExt::ExtMap.Find(pTarget);

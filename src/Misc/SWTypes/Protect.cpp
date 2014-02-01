@@ -79,7 +79,7 @@ bool SW_Protect::Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPl
 
 		// play start sound
 		if(pSW->StartSound > -1) {
-			VocClass::PlayAt(pSW->StartSound, &Crd, nullptr);
+			VocClass::PlayAt(pSW->StartSound, Crd, nullptr);
 		}
 
 		// set up the special sound when the effect wears off

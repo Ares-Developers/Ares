@@ -584,7 +584,7 @@ DEFINE_HOOK(53A300, LightningStorm_Strike2, 5) {
 			// play lightning sound
 			if(auto it = pData->Weather_Sounds.GetElements(RulesClass::Instance->LightningSounds)) {
 				DWORD rnd = ScenarioClass::Instance->Random.Random();
-				VocClass::PlayAt(it.at(rnd % it.size()), &Coords, nullptr);
+				VocClass::PlayAt(it.at(rnd % it.size()), Coords, nullptr);
 			}
 
 			bool debris = false;
