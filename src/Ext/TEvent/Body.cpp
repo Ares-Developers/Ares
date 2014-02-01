@@ -23,7 +23,7 @@ void TEventExt::ExtData::Initialize(TEventClass *pThis)
 */
 TechnoTypeClass* TEventExt::ExtData::GetTechnoType()
 {
-	if(!this->TechnoType.isset()) {
+	if(this->TechnoType.empty()) {
 		const char* eventTechno = this->AttachedToObject->TechnoName;
 		TechnoTypeClass* pType = TechnoTypeClass::Find(eventTechno);
 
@@ -31,7 +31,7 @@ TechnoTypeClass* TEventExt::ExtData::GetTechnoType()
 			Debug::DevLog(Debug::Error, "Event references non-existing techno type \"%s\".", eventTechno);
 		}
 
-		this->TechnoType.Set(pType);
+		this->TechnoType = pType;
 	}
 
 	return this->TechnoType;

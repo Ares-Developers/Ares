@@ -2,6 +2,7 @@
 #define TEVENT_EXT_H
 
 #include "../_Container.hpp"
+#include "../../Utilities/Constructs.h"
 #include "../../Utilities/Template.h"
 
 #include <Helpers/Template.h>
@@ -17,7 +18,7 @@ class TEventExt
 	class ExtData : public Extension<TT>
 	{
 		public:
-			Nullable<TechnoTypeClass*> TechnoType;
+			OptionalStruct<TechnoTypeClass*> TechnoType;
 
 		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			TechnoType()
