@@ -347,7 +347,7 @@ DEFINE_HOOK(52EC18, CampaignMenu_hDlg_PreHandleGeneral, 5) {
 				if(pData) {
 					int idxSound = VocClass::FindIndex(pData->HoverSound);
 					if(idxSound > -1) {
-						VocClass::PlayGlobal(idxSound, 1.0f, 8192, 0);
+						VocClass::PlayGlobal(idxSound, 8192, 1.0f);
 					}
 
 					// set the summary text

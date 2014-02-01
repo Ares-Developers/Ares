@@ -288,7 +288,7 @@ DEFINE_HOOK(539EB0, LightningStorm_Start, 5) {
 					pData->PrintMessage(pData->Message_Activate, pSuper->Owner);
 				}
 				if(pData->SW_ActivationSound != -1) {
-					VocClass::PlayGlobal(pData->SW_ActivationSound, 1.0, 0);
+					VocClass::PlayGlobal(pData->SW_ActivationSound, 8192, 1.0);
 				}
 				if(pData->SW_RadarEvent) {
 					RadarEventClass::Create(RadarEventType::SuperweaponActivated, Coords);
