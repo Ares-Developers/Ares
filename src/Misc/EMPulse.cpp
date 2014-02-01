@@ -149,27 +149,24 @@ void EMPulse::deliverEMPDamage(ObjectClass *object, TechnoClass *Firer, WarheadT
 	\returns True if Target is type immune to EMP, false otherwise.
 
 	\author AlexB
-	\date 2010-04-27
+	\date 2010-04-27, 2014-02-01
 */
-bool EMPulse::isEMPTypeImmune(TechnoClass * Target) {
-	// find an emp weapon.
-	TechnoTypeClass *TT = Target->GetTechnoType();
-	if (TT->TypeImmune) {
-		for (int i = 0; i < 18; ++i) {
-			WeaponTypeClass *WeaponType = (!Target->Veterancy.IsElite())
-				? TT->get_Weapon(i)
-				: TT->get_EliteWeapon(i);
-			if (!WeaponType) {
-				continue;
-			}
+bool EMPulse::isEMPTypeImmune(TechnoClass* Target) {
+	auto pType = Target->GetTechnoType();
+	if(!pType->TypeImmune) {
+		return false;
+	}
 
-			WarheadTypeClass *WarheadType = WeaponType->Warhead;
-			if (WarheadTypeExt::ExtData *pWH = WarheadTypeExt::ExtMap.Find(WarheadType)) {
-				if (pWH->EMP_Duration != 0) {
-					// this unit can fire emps and type immunity
-					// grants it to never be affected.
-					return true;
-				}
+	auto isElite = Target->Veterancy.IsElite();
+
+	// find an emp weapon.
+	for(int i = 0; i < 18; ++i) {
+		if(auto pWeaponType = !isElite ? pType->get_Weapon(i) : pType->get_EliteWeapon(i)) {
+			auto pWarheadExt = WarheadTypeExt::ExtMap.Find(pWeaponType->Warhead);
+			if(pWarheadExt->EMP_Duration != 0) {
+				// this unit can fire emps and type immunity
+				// grants it to never be affected.
+				return true;
 			}
 		}
 	}
@@ -300,34 +297,31 @@ bool EMPulse::isCurrentlyEMPImmune(TechnoClass * Target, HouseClass * SourceHous
 	\returns True if Type is prone to EMPs, false otherwise.
 
 	\author AlexB
-	\date 2010-04-30
+	\date 2010-04-30, 2014-02-01
 */
-bool EMPulse::IsTypeEMPProne(TechnoTypeClass * Type) {
-	bool prone = true;
-
-	// buildings are emp prone if they consume power and need it to function
-	if (BuildingTypeClass * BuildingType = specific_cast<BuildingTypeClass *>(Type)) {
-		prone = (BuildingType->Powered && (BuildingType->PowerDrain > 0));
+bool EMPulse::IsTypeEMPProne(TechnoTypeClass* Type) {
+	if(auto pBuildingType = abstract_cast<BuildingTypeClass*>(Type)) {
+		// buildings are emp prone if they consume power and need it to function
+		if(pBuildingType->Powered && pBuildingType->PowerDrain > 0) {
+			return true;
+		}
 
 		// may have a special function.
-		if (BuildingType->Radar ||
-			(BuildingType->SuperWeapon> -1) || (BuildingType->SuperWeapon2 > -1)
-			|| BuildingType->UndeploysInto
-			|| BuildingType->PowersUnit
-			|| BuildingType->Sensors
-			|| BuildingType->LaserFencePost
-			|| BuildingType->GapGenerator) {
-				prone = true;
-		}
-	} else if (InfantryTypeClass * InfantryType = specific_cast<InfantryTypeClass *>(Type)) {
+		return pBuildingType->Radar ||
+			pBuildingType->SuperWeapon > -1 || pBuildingType->SuperWeapon2 > -1
+			|| pBuildingType->UndeploysInto
+			|| pBuildingType->PowersUnit
+			|| pBuildingType->Sensors
+			|| pBuildingType->LaserFencePost
+			|| pBuildingType->GapGenerator;
+
+	} else if(auto pInfantryType = abstract_cast<InfantryTypeClass*>(Type)) {
 		// affected only if this is a cyborg.
-		prone = InfantryType->Cyborg;
+		return pInfantryType->Cyborg;
 	} else {
 		// if this is a vessel or vehicle that is organic: no effect.
-		prone = !Type->Organic;
+		return !Type->Organic;
 	}
-
-	return prone;
 }
 
 //! Gets whether a Techno is a valid target for EMPs fired by a house.
@@ -398,11 +392,11 @@ bool EMPulse::IsDeactivationAdvisable(TechnoClass * Target) {
 	\author AlexB
 	\date 2010-11-28
 */
-void EMPulse::updateRadarBlackout(TechnoClass * Techno) {
-	if (BuildingClass * Building = specific_cast<BuildingClass *>(Techno)) {
-		if (!Building->Type->InvisibleInGame) {
-			if (Building->Type->Radar || Building->Type->SpySat) {
-				Building->Owner->RecheckRadar = true;
+void EMPulse::updateRadarBlackout(TechnoClass* Techno) {
+	if(auto pBuilding = abstract_cast<BuildingClass*>(Techno)) {
+		if(!pBuilding->Type->InvisibleInGame) {
+			if(pBuilding->Type->Radar || pBuilding->Type->SpySat) {
+				pBuilding->Owner->RecheckRadar = true;
 			}
 		}
 	}
