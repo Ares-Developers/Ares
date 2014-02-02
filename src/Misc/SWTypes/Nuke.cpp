@@ -36,7 +36,6 @@ void SW_NuclearMissile::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeCla
 {
 	// invalid values so NukePayload properties can override them.
 	pData->SW_Damage = -1;
-	pData->SW_ActivationSound = RulesClass::Instance->DigSound;
 
 	// default values for the original Nuke
 	pData->Nuke_Payload = WeaponTypeClass::FindOrAllocate("NukePayload");
@@ -179,7 +178,7 @@ bool SW_NuclearMissile::Activate(SuperClass* pThis, const CellStruct &Coords, bo
 					}
 				}
 
-				VocClass::PlayAt(pData->SW_ActivationSound, target, nullptr);
+				VocClass::PlayAt(pData->SW_ActivationSound.Get(RulesClass::Instance->DigSound), target, nullptr);
 				pThis->Owner->RecheckTechTree = true;
 				return true;
 			}

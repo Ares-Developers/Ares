@@ -26,7 +26,6 @@ void SW_PsychicDominator::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeC
 	// Defaults to PsychicDominator values
 	pData->SW_WidthOrRange = (float)RulesClass::Instance->DominatorCaptureRange;
 	pData->SW_Damage = RulesClass::Instance->DominatorDamage;
-	pData->SW_ActivationSound = RulesClass::Instance->PsychicDominatorActivateSound;
 
 	pData->Dominator_FirstAnimHeight = 750;
 	pData->Dominator_SecondAnimHeight = 0;
@@ -125,8 +124,9 @@ void PsychicDominatorStateMachine::Update() {
 			}
 			PsyDom::Anim = pAnim;
 		
-			if(pData->SW_ActivationSound != -1) {
-				VocClass::PlayAt(pData->SW_ActivationSound, coords, nullptr);
+			auto sound = pData->SW_ActivationSound.Get(RulesClass::Instance->PsychicDominatorActivateSound);
+			if(sound != -1) {
+				VocClass::PlayAt(sound, coords, nullptr);
 			}
 
 			pData->PrintMessage(pData->Message_Activate, this->Super->Owner);

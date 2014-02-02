@@ -129,7 +129,7 @@ public:
 
 		// anim/sound
 		ValueableIdx<VocClass> SW_Sound;
-		ValueableIdx<VocClass> SW_ActivationSound;
+		NullableIdx<VocClass> SW_ActivationSound;
 		Valueable<AnimTypeClass *> SW_Anim;
 		Valueable<int> SW_AnimHeight;
 		ValueableEnum<SuperWeaponAffectedHouse> SW_AnimVisibility;
@@ -204,7 +204,6 @@ public:
 			Weather_ScatterCount (1),
 			Nuke_PsiWarning (nullptr),
 			Sonar_Delay (0),
-			SW_ActivationSound (-1),
 			Money_Amount (0),
 			Money_DrainAmount (0),
 			Money_DrainDelay (0),
