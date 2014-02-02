@@ -66,7 +66,7 @@ public:
 		// Nuke
 		Valueable<WeaponTypeClass*> Nuke_Payload;
 		Valueable<AnimTypeClass*> Nuke_PsiWarning;
-		Valueable<AnimTypeClass*> Nuke_TakeOff;
+		Nullable<AnimTypeClass*> Nuke_TakeOff;
 		Valueable<bool> Nuke_SiloLaunch;
 
 		// Generic Paradrop

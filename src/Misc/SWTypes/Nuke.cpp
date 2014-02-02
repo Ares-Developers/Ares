@@ -39,7 +39,6 @@ void SW_NuclearMissile::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeCla
 
 	// default values for the original Nuke
 	pData->Nuke_Payload = WeaponTypeClass::FindOrAllocate("NukePayload");
-	pData->Nuke_TakeOff = RulesClass::Instance->NukeTakeOff;
 	pData->Nuke_PsiWarning = AnimTypeClass::Find("PSIWARN");
 	pData->Nuke_SiloLaunch = true;
 

@@ -746,7 +746,7 @@ DEFINE_HOOK(44CC8B, BuildingClass_Missile_NukeTakeOff, 6) {
 
 	if(SuperWeaponTypeClass* pSW = SuperWeaponTypeClass::Array->GetItemOrDefault(type)) {
 		if(SWTypeExt::ExtData* pExt = SWTypeExt::ExtMap.Find(pSW)) {
-			if(AnimTypeClass* pAnimType = pExt->Nuke_TakeOff) {
+			if(AnimTypeClass* pAnimType = pExt->Nuke_TakeOff.Get(RulesClass::Instance->NukeTakeOff)) {
 				R->ECX(pAnimType);
 				return 0x44CC91;
 			}
