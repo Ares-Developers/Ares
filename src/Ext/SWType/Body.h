@@ -45,7 +45,7 @@ public:
 		ValueableIdx<MissionClass> SpyPlane_Mission;
 
 		// Lightning Storm
-		Valueable<int> Weather_Duration;
+		Nullable<int> Weather_Duration;
 		Valueable<int> Weather_HitDelay;
 		Valueable<int> Weather_ScatterDelay;
 		Valueable<int> Weather_ScatterCount;

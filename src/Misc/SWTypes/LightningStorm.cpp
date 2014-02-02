@@ -33,7 +33,6 @@ void SW_LightningStorm::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeCla
 	pData->Weather_ScatterCount = 1;
 
 	pData->Weather_BoltExplosion = RulesClass::Instance->WeatherConBoltExplosion;
-	pData->Weather_Duration = RulesClass::Instance->LightningStormDuration;
 	pData->Weather_RadarOutage = RulesClass::Instance->LightningStormDuration;
 	pData->Weather_HitDelay = RulesClass::Instance->LightningHitDelay;
 	pData->Weather_ScatterDelay = RulesClass::Instance->LightningScatterDelay;
@@ -108,8 +107,9 @@ bool SW_LightningStorm::Activate(SuperClass* pThis, const CellStruct &Coords, bo
 		// by hooks.
 		if(SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pThis->Type)) {
 			CurrentLightningStorm = pThis;
+			auto duration = pData->Weather_Duration.Get(RulesClass::Instance->LightningStormDuration);
 			auto deferment = pData->SW_Deferment.Get(RulesClass::Instance->LightningDeferment);
-			LightningStorm::Start(pData->Weather_Duration, deferment, Coords, pThis->Owner);
+			LightningStorm::Start(duration, deferment, Coords, pThis->Owner);
 			return true;
 		}
 	}
