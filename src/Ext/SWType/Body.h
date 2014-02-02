@@ -51,7 +51,7 @@ public:
 		Valueable<int> Weather_ScatterCount;
 		Nullable<int> Weather_Separation;
 		Valueable<int> Weather_CloudHeight;
-		Valueable<int> Weather_RadarOutage;
+		Nullable<int> Weather_RadarOutage;
 		Valueable<int> Weather_DebrisMin;
 		Valueable<int> Weather_DebrisMax;
 		Valueable<bool> Weather_PrintText;

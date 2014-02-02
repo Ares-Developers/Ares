@@ -268,12 +268,13 @@ DEFINE_HOOK(539EB0, LightningStorm_Start, 5) {
 				LightningStorm::Active = true;
 
 				// blackout
-				if(pData->Weather_RadarOutage > 0) {
+				auto outage = pData->Weather_RadarOutage.Get(RulesClass::Instance->LightningStormDuration);
+				if(outage > 0) {
 					for(int i=0; i<HouseClass::Array->Count; ++i) {
 						HouseClass* pHouse = HouseClass::Array->GetItem(i);
 						if(pData->IsHouseAffected(pOwner, pHouse, pData->Weather_RadarOutageAffects)) {
 							if(!pHouse->Defeated) {
-								pHouse->CreateRadarOutage(pData->Weather_RadarOutage);
+								pHouse->CreateRadarOutage(outage);
 							}
 						}
 					}

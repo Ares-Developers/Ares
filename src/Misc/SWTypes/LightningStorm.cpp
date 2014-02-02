@@ -33,7 +33,6 @@ void SW_LightningStorm::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeCla
 	pData->Weather_ScatterCount = 1;
 
 	pData->Weather_BoltExplosion = RulesClass::Instance->WeatherConBoltExplosion;
-	pData->Weather_RadarOutage = RulesClass::Instance->LightningStormDuration;
 	pData->Weather_PrintText = RulesClass::Instance->LightningPrintText;
 
 	pData->Weather_RadarOutageAffects = SuperWeaponAffectedHouse::Enemies;
