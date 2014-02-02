@@ -17,7 +17,7 @@ SuperWeaponFlags::Value SW_LightningStorm::Flags()
 }
 
 WarheadTypeClass* SW_LightningStorm::GetWarhead(const SWTypeExt::ExtData* pData) const {
-	return pData->SW_Warhead ? pData->SW_Warhead : RulesClass::Instance->LightningWarhead;
+	return pData->SW_Warhead.Get(RulesClass::Instance->LightningWarhead);
 }
 
 void SW_LightningStorm::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)
@@ -26,7 +26,6 @@ void SW_LightningStorm::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeCla
 	pData->SW_WidthOrRange = (float)RulesClass::Instance->LightningCellSpread;
 	pData->SW_Damage = RulesClass::Instance->LightningDamage;
 	pData->SW_Deferment = RulesClass::Instance->LightningDeferment;
-	pData->SW_Warhead = &RulesClass::Instance->LightningWarhead;
 	pData->SW_ActivationSound = RulesClass::Instance->StormSound;
 
 	pData->Weather_DebrisMin = 2;

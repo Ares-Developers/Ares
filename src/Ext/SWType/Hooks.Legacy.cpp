@@ -775,9 +775,6 @@ DEFINE_HOOK(46B371, BulletClass_NukeMaker, 5) {
 						// initialisation, so we gotta fall back now if they are invalid.
 						int damage = (pExt->SW_Damage < 0 ? pPayload->Damage : pExt->SW_Damage);
 						auto pWarhead = pExt->GetWarhead();
-						if(!pWarhead) {
-							pWarhead = pPayload->Warhead;
-						}
 
 						Debug::Log("Payload = %s\n", pPayload->ID);
 						Debug::Log("Payload WH = %s\n", pPayload->Warhead->ID);

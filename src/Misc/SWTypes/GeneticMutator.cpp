@@ -11,7 +11,7 @@ bool SW_GeneticMutator::HandlesType(int type)
 }
 
 WarheadTypeClass* SW_GeneticMutator::GetWarhead(const SWTypeExt::ExtData* pData) const {
-	if(pData->SW_Warhead) {
+	if(pData->SW_Warhead.isset()) {
 		return pData->SW_Warhead;
 	} else if(pData->Mutate_Explosion) {
 		return RulesClass::Instance->MutateExplosionWarhead;
@@ -31,10 +31,8 @@ void SW_GeneticMutator::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeCla
 	// defaults depend on MutateExplosion property
 	pData->Mutate_Explosion = RulesClass::Instance->MutateExplosion;
 	if(pData->Mutate_Explosion) {
-		pData->SW_Warhead = &RulesClass::Instance->MutateExplosionWarhead;
 		pData->SW_WidthOrRange = 5;
 	} else {
-		pData->SW_Warhead = &RulesClass::Instance->MutateWarhead;
 		pData->SW_WidthOrRange = 3;
 		pData->SW_Height = 3;
 	}

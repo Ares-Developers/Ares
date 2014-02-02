@@ -18,7 +18,7 @@ SuperWeaponFlags::Value SW_PsychicDominator::Flags()
 }
 
 WarheadTypeClass* SW_PsychicDominator::GetWarhead(const SWTypeExt::ExtData* pData) const {
-	return pData->SW_Warhead ? pData->SW_Warhead : RulesClass::Instance->DominatorWarhead;
+	return pData->SW_Warhead.Get(RulesClass::Instance->DominatorWarhead);
 }
 
 void SW_PsychicDominator::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)
@@ -26,7 +26,6 @@ void SW_PsychicDominator::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeC
 	// Defaults to PsychicDominator values
 	pData->SW_WidthOrRange = (float)RulesClass::Instance->DominatorCaptureRange;
 	pData->SW_Damage = RulesClass::Instance->DominatorDamage;
-	pData->SW_Warhead = &RulesClass::Instance->DominatorWarhead;
 	pData->SW_ActivationSound = RulesClass::Instance->PsychicDominatorActivateSound;
 
 	pData->Dominator_FirstAnimHeight = 750;

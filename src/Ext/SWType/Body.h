@@ -153,7 +153,7 @@ public:
 		ValueableEnum<SuperWeaponAffectedHouse> SW_RequiresHouse;
 		ValueableEnum<SuperWeaponTarget> SW_AffectsTarget;
 		ValueableEnum<SuperWeaponTarget> SW_RequiresTarget;
-		Customizable<WarheadTypeClass *> SW_Warhead;
+		Nullable<WarheadTypeClass *> SW_Warhead;
 		Valueable<int> SW_Damage;
 		Valueable<int> SW_Deferment;
 
