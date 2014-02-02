@@ -369,8 +369,9 @@ bool SWTypeExt::Launch(SuperClass* pThis, NewSWType* pSW, const CellStruct &Coor
 				placeholder->Invisible = !pData->IsAnimVisible(pThis->Owner);
 			}
 
-			if((pData->SW_Sound != -1) && !(flags & SuperWeaponFlags::NoSound)) {
-				VocClass::PlayAt(pData->SW_Sound, coords, nullptr);
+			int sound = pData->GetSound();
+			if(sound && !(flags & SuperWeaponFlags::NoSound)) {
+				VocClass::PlayAt(sound, coords, nullptr);
 			}
 
 			if(pData->SW_RadarEvent && !(flags & SuperWeaponFlags::NoEvent)) {
@@ -551,6 +552,14 @@ AnimTypeClass* SWTypeExt::ExtData::GetAnim() const {
 	}
 
 	return this->SW_Anim.Get(nullptr);
+}
+
+int SWTypeExt::ExtData::GetSound() const {
+	if(auto pType = this->GetNewSWType()) {
+		return pType->GetSound(this);
+	}
+
+	return this->SW_Sound;
 }
 
 double SWTypeExt::ExtData::GetChargeToDrainRatio() const {

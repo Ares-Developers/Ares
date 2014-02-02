@@ -280,6 +280,7 @@ public:
 
 		WarheadTypeClass* GetWarhead() const;
 		AnimTypeClass* GetAnim() const;
+		int GetSound() const;
 		double GetChargeToDrainRatio() const;
 
 		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
