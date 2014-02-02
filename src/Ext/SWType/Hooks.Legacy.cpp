@@ -52,9 +52,10 @@ DEFINE_HOOK(53B080, PsyDom_Fire, 5) {
 		}
 
 		// kill
-		if(pData->SW_Damage > 0) {
+		auto damage = pData->GetDamage();
+		if(damage > 0) {
 			if(auto pWarhead = pData->GetWarhead()) {
-				MapClass::Instance->DamageArea(&coords, pData->SW_Damage, nullptr, pWarhead, true, pFirer);
+				MapClass::Instance->DamageArea(&coords, damage, nullptr, pWarhead, true, pFirer);
 			}
 		}
 
@@ -619,7 +620,7 @@ DEFINE_HOOK(53A300, LightningStorm_Strike2, 5) {
 			}
 
 			// account for lightning rods
-			int damage = pData->SW_Damage;
+			int damage = pData->GetDamage();
 			if(!pData->Weather_IgnoreLightningRod) {
 				if(BuildingClass* pBldObj = specific_cast<BuildingClass*>(pObj)) {
 					if(pBldObj->Type->LightningRod) {
@@ -780,7 +781,7 @@ DEFINE_HOOK(46B371, BulletClass_NukeMaker, 5) {
 
 						// get damage and warhead. they are not available during
 						// initialisation, so we gotta fall back now if they are invalid.
-						int damage = (pExt->SW_Damage < 0 ? pPayload->Damage : pExt->SW_Damage);
+						auto damage = pExt->GetDamage();
 						auto pWarhead = pExt->GetWarhead();
 
 						Debug::Log("Payload = %s\n", pPayload->ID);

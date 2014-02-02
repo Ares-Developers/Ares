@@ -562,6 +562,14 @@ int SWTypeExt::ExtData::GetSound() const {
 	return this->SW_Sound.Get(-1);
 }
 
+int SWTypeExt::ExtData::GetDamage() const {
+	if(auto pType = this->GetNewSWType()) {
+		return pType->GetDamage(this);
+	}
+
+	return this->SW_Damage.Get(0);
+}
+
 double SWTypeExt::ExtData::GetChargeToDrainRatio() const {
 	return this->SW_ChargeToDrainRatio.Get(RulesClass::Instance->ChargeToDrainRatio);
 }
