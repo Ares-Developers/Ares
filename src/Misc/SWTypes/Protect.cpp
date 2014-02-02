@@ -9,7 +9,7 @@ bool SW_Protect::HandlesType(int type)
 }
 
 AnimTypeClass* SW_Protect::GetAnim(const SWTypeExt::ExtData* pData) const {
-	if(pData->SW_Anim) {
+	if(pData->SW_Anim.isset()) {
 		return pData->SW_Anim;
 	} else if(pData->AttachedToObject->Type == SuperWeaponType::ForceShield) {
 		return RulesClass::Instance->ForceShieldInvokeAnim;
@@ -31,7 +31,6 @@ void SW_Protect::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW
 		pData->SW_RadarEvent = false;
 
 		pData->SW_WidthOrRange = (float)RulesClass::Instance->ForceShieldRadius;
-		pData->SW_Anim = RulesClass::Instance->ForceShieldInvokeAnim;
 
 		pData->EVA_Ready = VoxClass::FindIndex("EVA_ForceShieldReady");
 
@@ -47,8 +46,6 @@ void SW_Protect::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW
 		// iron curtain and protect
 		pData->SW_WidthOrRange = 3;
 		pData->SW_Height = 3;
-
-		pData->SW_Anim = RulesClass::Instance->IronCurtainInvokeAnim;
 
 		pData->EVA_Ready = VoxClass::FindIndex("EVA_IronCurtainReady");
 		pData->EVA_Detected = VoxClass::FindIndex("EVA_IronCurtainDetected");

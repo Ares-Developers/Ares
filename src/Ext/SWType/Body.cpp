@@ -550,7 +550,7 @@ AnimTypeClass* SWTypeExt::ExtData::GetAnim() const {
 		return pType->GetAnim(this);
 	}
 
-	return this->SW_Anim;
+	return this->SW_Anim.Get(nullptr);
 }
 
 double SWTypeExt::ExtData::GetChargeToDrainRatio() const {

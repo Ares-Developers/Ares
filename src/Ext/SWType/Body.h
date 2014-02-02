@@ -130,7 +130,7 @@ public:
 		// anim/sound
 		ValueableIdx<VocClass> SW_Sound;
 		NullableIdx<VocClass> SW_ActivationSound;
-		Valueable<AnimTypeClass *> SW_Anim;
+		Nullable<AnimTypeClass *> SW_Anim;
 		Valueable<int> SW_AnimHeight;
 		ValueableEnum<SuperWeaponAffectedHouse> SW_AnimVisibility;
 
@@ -232,7 +232,6 @@ public:
 			Lighting_DefaultBlue (nullptr),
 			Lighting_DefaultRed (nullptr),
 			SW_Sound (-1),
-			SW_Anim (nullptr),
 			SW_AnimHeight (0),
 			SW_AnimVisibility (SuperWeaponAffectedHouse::All),
 			SW_TypeCustom (false),
