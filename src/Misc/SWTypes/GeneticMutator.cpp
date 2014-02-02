@@ -28,6 +28,10 @@ int SW_GeneticMutator::GetSound(const SWTypeExt::ExtData* pData) const {
 	return pData->SW_Sound.Get(RulesClass::Instance->GeneticMutatorActivateSound);
 }
 
+int SW_GeneticMutator::GetDamage(const SWTypeExt::ExtData* pData) const {
+	return pData->SW_Damage.Get(10000);
+}
+
 void SW_GeneticMutator::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)
 {
 	// Defaults to Genetic Mutator values
@@ -85,7 +89,7 @@ bool SW_GeneticMutator::Activate(SuperClass* pThis, const CellStruct &Coords, bo
 	if(pThis->IsCharged) {
 		if(pData->Mutate_Explosion.Get(RulesClass::Instance->MutateExplosion)) {
 			// single shot using cellspread warhead
-			MapClass::DamageArea(&coords, pData->SW_Damage, nullptr, GetWarhead(pData), false, pThis->Owner);
+			MapClass::DamageArea(&coords, GetDamage(pData), nullptr, GetWarhead(pData), false, pThis->Owner);
 		} else {
 			// ranged approach
 			auto Mutate = [&](InfantryClass* pInf) -> bool {

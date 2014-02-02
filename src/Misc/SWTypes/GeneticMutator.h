@@ -26,6 +26,7 @@ class SW_GeneticMutator : public NewSWType
 		virtual WarheadTypeClass* GetWarhead(const SWTypeExt::ExtData* pData) const override;
 		virtual AnimTypeClass* GetAnim(const SWTypeExt::ExtData* pData) const override;
 		virtual int GetSound(const SWTypeExt::ExtData* pData) const override;
+		virtual int GetDamage(const SWTypeExt::ExtData* pData) const override;
 };
 
 #endif

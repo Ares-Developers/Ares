@@ -25,6 +25,7 @@ class SW_NuclearMissile : public NewSWType
 		virtual SuperWeaponFlags::Value Flags();
 
 		virtual WarheadTypeClass* GetWarhead(const SWTypeExt::ExtData* pData) const override;
+		virtual int GetDamage(const SWTypeExt::ExtData* pData) const override;
 
 		static SuperWeaponTypeClass* CurrentNukeType;
 };

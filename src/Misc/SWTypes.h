@@ -55,6 +55,10 @@ public:
 		return pData->SW_Sound;
 	}
 
+	virtual int GetDamage(const SWTypeExt::ExtData* pData) const {
+		return pData->SW_Damage;
+	}
+
 	virtual const char* GetTypeString() {
 		return "";
 	}

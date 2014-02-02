@@ -32,6 +32,14 @@ WarheadTypeClass* SW_NuclearMissile::GetWarhead(const SWTypeExt::ExtData* pData)
 	return nullptr;
 }
 
+int SW_NuclearMissile::GetDamage(const SWTypeExt::ExtData* pData) const {
+	auto damage = pData->SW_Damage.Get(-1);
+	if(damage < 0) {
+		damage = pData->Nuke_Payload ? pData->Nuke_Payload->Damage : 0;
+	}
+	return damage;
+}
+
 void SW_NuclearMissile::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)
 {
 	// invalid values so NukePayload properties can override them.
@@ -135,7 +143,7 @@ bool SW_NuclearMissile::Activate(SuperClass* pThis, const CellStruct &Coords, bo
 					if(BulletTypeClass *pProjectile = pWeapon->Projectile) {
 						// get damage and warhead. they are not available during
 						// initialisation, so we gotta fall back now if they are invalid.
-						int damage = (pData->SW_Damage < 0 ? pWeapon->Damage : pData->SW_Damage);
+						int damage = GetDamage(pData);
 						auto pWarhead = GetWarhead(pData);
 
 						// create a bullet and the psi warning

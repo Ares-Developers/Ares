@@ -21,6 +21,10 @@ WarheadTypeClass* SW_PsychicDominator::GetWarhead(const SWTypeExt::ExtData* pDat
 	return pData->SW_Warhead.Get(RulesClass::Instance->DominatorWarhead);
 }
 
+int SW_PsychicDominator::GetDamage(const SWTypeExt::ExtData* pData) const {
+	return pData->SW_Damage.Get(RulesClass::Instance->DominatorDamage);
+}
+
 void SW_PsychicDominator::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)
 {
 	// Defaults to PsychicDominator values

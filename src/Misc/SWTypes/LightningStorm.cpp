@@ -20,6 +20,10 @@ WarheadTypeClass* SW_LightningStorm::GetWarhead(const SWTypeExt::ExtData* pData)
 	return pData->SW_Warhead.Get(RulesClass::Instance->LightningWarhead);
 }
 
+int SW_LightningStorm::GetDamage(const SWTypeExt::ExtData* pData) const {
+	return pData->SW_Damage.Get(RulesClass::Instance->LightningDamage);
+}
+
 void SW_LightningStorm::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)
 {
 	// Defaults to Lightning Storm values

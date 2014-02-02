@@ -26,6 +26,7 @@ class SW_LightningStorm : public NewSWType
 		virtual SuperWeaponFlags::Value Flags();
 
 		virtual WarheadTypeClass* GetWarhead(const SWTypeExt::ExtData* pData) const override;
+		virtual int GetDamage(const SWTypeExt::ExtData* pData) const override;
 
 		static SuperClass* CurrentLightningStorm;
 };
