@@ -414,7 +414,8 @@ DEFINE_HOOK(53A6CF, LightningStorm_Update, 7) {
 				}
 
 				// random damage. somewhere in range.
-				if(pData->Weather_ScatterDelay > 0 && !(Unsorted::CurrentFrame % pData->Weather_ScatterDelay)) {
+				auto scatterDelay = pData->Weather_ScatterDelay.Get(RulesClass::Instance->LightningScatterDelay);
+				if(scatterDelay > 0 && !(Unsorted::CurrentFrame % scatterDelay)) {
 					int width = (int)pData->SW_WidthOrRange;
 					int height = pData->SW_Height;
 					bool isRectangle = true;
