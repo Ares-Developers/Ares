@@ -36,7 +36,6 @@ void SW_GeneticMutator::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeCla
 {
 	// Defaults to Genetic Mutator values
 	pData->SW_AnimHeight = 5;
-	pData->SW_Damage = 10000;
 
 	// defaults depend on MutateExplosion property
 	if(RulesClass::Instance->MutateExplosion) {

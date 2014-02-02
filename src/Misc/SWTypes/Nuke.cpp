@@ -42,9 +42,6 @@ int SW_NuclearMissile::GetDamage(const SWTypeExt::ExtData* pData) const {
 
 void SW_NuclearMissile::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)
 {
-	// invalid values so NukePayload properties can override them.
-	pData->SW_Damage = -1;
-
 	// default values for the original Nuke
 	pData->Nuke_Payload = WeaponTypeClass::FindOrAllocate("NukePayload");
 	pData->Nuke_PsiWarning = AnimTypeClass::Find("PSIWARN");

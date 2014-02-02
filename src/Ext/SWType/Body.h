@@ -249,8 +249,7 @@ public:
 			SW_Height (-1),
 			HandledByNewSWType (-1),
 			CameoPal(),
-			SW_DeliverBuildups (false),
-			SW_Damage(0)
+			SW_DeliverBuildups (false)
 			{
 				*SidebarPCX = 0;
 				*SW_PostDependent = 0;
