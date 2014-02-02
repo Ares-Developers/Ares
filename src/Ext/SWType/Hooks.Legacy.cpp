@@ -287,7 +287,7 @@ DEFINE_HOOK(539EB0, LightningStorm_Start, 5) {
 				ScenarioClass::Instance->UpdateLighting();
 
 				// activation stuff
-				if(pData->Weather_PrintText) {
+				if(pData->Weather_PrintText.Get(RulesClass::Instance->LightningPrintText)) {
 					pData->PrintMessage(pData->Message_Activate, pSuper->Owner);
 				}
 				if(pData->SW_ActivationSound != -1) {
@@ -394,7 +394,7 @@ DEFINE_HOOK(53A6CF, LightningStorm_Update, 7) {
 				// still waiting
 				if(deferment) {
 					if(!(deferment % 225)) {
-						if(pData->Weather_PrintText) {
+						if(pData->Weather_PrintText.Get(RulesClass::Instance->LightningPrintText)) {
 							pData->PrintMessage(pData->Message_Launch, pSuper->Owner);
 						}
 					}

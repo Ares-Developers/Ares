@@ -54,7 +54,7 @@ public:
 		Nullable<int> Weather_RadarOutage;
 		Valueable<int> Weather_DebrisMin;
 		Valueable<int> Weather_DebrisMax;
-		Valueable<bool> Weather_PrintText;
+		Nullable<bool> Weather_PrintText;
 		Valueable<bool> Weather_IgnoreLightningRod;
 		Valueable<AnimTypeClass*> Weather_BoltExplosion;
 		NullableVector<AnimTypeClass*> Weather_Clouds;
