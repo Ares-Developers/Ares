@@ -13,7 +13,7 @@ bool SW_GeneticMutator::HandlesType(int type)
 WarheadTypeClass* SW_GeneticMutator::GetWarhead(const SWTypeExt::ExtData* pData) const {
 	if(pData->SW_Warhead.isset()) {
 		return pData->SW_Warhead;
-	} else if(pData->Mutate_Explosion) {
+	} else if(pData->Mutate_Explosion.Get(RulesClass::Instance->MutateExplosion)) {
 		return RulesClass::Instance->MutateExplosionWarhead;
 	} else {
 		return RulesClass::Instance->MutateWarhead;
@@ -29,8 +29,7 @@ void SW_GeneticMutator::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeCla
 	pData->SW_Damage = 10000;
 
 	// defaults depend on MutateExplosion property
-	pData->Mutate_Explosion = RulesClass::Instance->MutateExplosion;
-	if(pData->Mutate_Explosion) {
+	if(RulesClass::Instance->MutateExplosion) {
 		pData->SW_WidthOrRange = 5;
 	} else {
 		pData->SW_WidthOrRange = 3;
@@ -78,7 +77,7 @@ bool SW_GeneticMutator::Activate(SuperClass* pThis, const CellStruct &Coords, bo
 	Cell->GetCoordsWithBridge(&coords);
 	
 	if(pThis->IsCharged) {
-		if(pData->Mutate_Explosion) {
+		if(pData->Mutate_Explosion.Get(RulesClass::Instance->MutateExplosion)) {
 			// single shot using cellspread warhead
 			MapClass::DamageArea(&coords, pData->SW_Damage, nullptr, pData->GetWarhead(), false, pThis->Owner);
 		} else {

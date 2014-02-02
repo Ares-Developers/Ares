@@ -92,7 +92,7 @@ public:
 		Valueable<bool> Chronosphere_ReconsiderBuildings;
 
 		// Genetic Mutator
-		Valueable<bool> Mutate_Explosion;
+		Nullable<bool> Mutate_Explosion;
 		Valueable<bool> Mutate_IgnoreCyborg;
 		Valueable<bool> Mutate_IgnoreNotHuman;
 		Valueable<bool> Mutate_KillNatural;
