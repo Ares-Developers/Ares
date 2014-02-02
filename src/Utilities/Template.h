@@ -73,6 +73,7 @@ public:
 template<typename Lookuper>
 class ValueableIdx : public Valueable<int> {
 public:
+	ValueableIdx() : Valueable<int>(-1) {};
 	ValueableIdx(int Default) : Valueable<int>(Default) {};
 
 	inline void Read(INI_EX &parser, const char* pSection, const char* pKey);
@@ -125,7 +126,10 @@ public:
 template<typename Lookuper>
 class NullableIdx : public Nullable<int> {
 public:
-	NullableIdx() : Nullable<int>() {};
+	NullableIdx() : Nullable<int>(-1) { 
+		this->HasValue = false;
+	};
+
 	NullableIdx(int Val) : Nullable<int>(Val) {};
 
 	inline void Read(INI_EX &parser, const char* pSection, const char* pKey);
