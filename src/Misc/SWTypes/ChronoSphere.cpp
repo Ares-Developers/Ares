@@ -23,8 +23,8 @@ void SW_ChronoSphere::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass
 {
 	pData->SW_AnimVisibility = SuperWeaponAffectedHouse::Team;
 	pData->SW_AnimHeight = 5;
-	pData->SW_WidthOrRange = 3;
-	pData->SW_Height = 3;
+	pData->SW_Range.WidthOrRange = 3;
+	pData->SW_Range.Height = 3;
 
 	pData->Chronosphere_KillOrganic = true;
 	pData->Chronosphere_KillTeleporters = false;

@@ -27,7 +27,7 @@ int SW_LightningStorm::GetDamage(const SWTypeExt::ExtData* pData) const {
 void SW_LightningStorm::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)
 {
 	// Defaults to Lightning Storm values
-	pData->SW_WidthOrRange = (float)RulesClass::Instance->LightningCellSpread;
+	pData->SW_Range.WidthOrRange = (float)RulesClass::Instance->LightningCellSpread;
 
 	pData->Weather_DebrisMin = 2;
 	pData->Weather_DebrisMax = 4;

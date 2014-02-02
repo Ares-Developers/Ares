@@ -30,7 +30,7 @@ void SW_Protect::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW
 		pData->Protect_IsForceShield = true;
 		pData->SW_RadarEvent = false;
 
-		pData->SW_WidthOrRange = (float)RulesClass::Instance->ForceShieldRadius;
+		pData->SW_Range.WidthOrRange = (float)RulesClass::Instance->ForceShieldRadius;
 
 		pData->EVA_Ready = VoxClass::FindIndex("EVA_ForceShieldReady");
 
@@ -44,8 +44,8 @@ void SW_Protect::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW
 		pData->SW_NoCursor = MouseCursor::First[MouseCursorType::NoForceShield];
 	} else {
 		// iron curtain and protect
-		pData->SW_WidthOrRange = 3;
-		pData->SW_Height = 3;
+		pData->SW_Range.WidthOrRange = 3;
+		pData->SW_Range.Height = 3;
 
 		pData->EVA_Ready = VoxClass::FindIndex("EVA_IronCurtainReady");
 		pData->EVA_Detected = VoxClass::FindIndex("EVA_IronCurtainDetected");
@@ -107,9 +107,9 @@ bool SW_Protect::Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPl
 		}
 
 		bool force = pData->Protect_IsForceShield;
-		float width = pData->SW_WidthOrRange;
-		int height = pData->SW_Height;
-		
+		float width = pData->SW_Range.WidthOrRange;
+		int height = pData->SW_Range.Height;
+
 		auto IronCurtain = [&](TechnoClass* pTechno) -> bool {
 			// we shouldn't do anything
 			if(pTechno->IsImmobilized || pTechno->IsBeingWarpedOut()) {

@@ -18,12 +18,12 @@ void SW_Reveal::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)
 	// a rewrite of the range handling.
 	RulesClass::Instance->PsychicRevealRadius = CCINIClass::INI_Rules->ReadInteger("CombatDamage", "PsychicRevealRadius", 3);
 
-	pData->SW_WidthOrRange = (float)RulesClass::Instance->PsychicRevealRadius;
+	pData->SW_Range.WidthOrRange = (float)RulesClass::Instance->PsychicRevealRadius;
 	pData->SW_RadarEvent = false;
 
 	// real default values, that is, force max cellspread range of 10
 	if(RulesClass::Instance->PsychicRevealRadius > 10) {
-		pData->SW_WidthOrRange = 10.0f;
+		pData->SW_Range.WidthOrRange = 10.0f;
 	}
 
 	pData->EVA_Ready = VoxClass::FindIndex("EVA_PsychicRevealReady");
@@ -42,8 +42,8 @@ bool SW_Reveal::Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPla
 		
 		CoordStruct Crd = pTarget->GetCoords();
 
-		float width = pData->SW_WidthOrRange;
-		int height = pData->SW_Height;
+		float width = pData->SW_Range.WidthOrRange;
+		int height = pData->SW_Range.Height;
 
 		// default way to reveal, but reveal one cell at a time.
 		Helpers::Alex::for_each_in_rect_or_range<CellClass>(Coords, width, height,

@@ -142,7 +142,7 @@ DEFINE_HOOK(53B080, PsyDom_Fire, 5) {
 
 			// every techno in this area shall be one with Yuri.
 			Helpers::Alex::DistinctCollector<TechnoClass*> items;
-			Helpers::Alex::for_each_in_rect_or_spread<TechnoClass>(cell, pData->SW_WidthOrRange, pData->SW_Height, std::ref(items));
+			Helpers::Alex::for_each_in_rect_or_spread<TechnoClass>(cell, pData->SW_Range.WidthOrRange, pData->SW_Range.Height, std::ref(items));
 			items.for_each(Dominate);
 
 			// the AI sends all new minions to hunt
@@ -421,8 +421,8 @@ DEFINE_HOOK(53A6CF, LightningStorm_Update, 7) {
 				// random damage. somewhere in range.
 				auto scatterDelay = pData->Weather_ScatterDelay.Get(RulesClass::Instance->LightningScatterDelay);
 				if(scatterDelay > 0 && !(Unsorted::CurrentFrame % scatterDelay)) {
-					int width = (int)pData->SW_WidthOrRange;
-					int height = pData->SW_Height;
+					int width = (int)pData->SW_Range.WidthOrRange;
+					int height = pData->SW_Range.Height;
 					bool isRectangle = true;
 
 					// is circular range?
@@ -446,7 +446,7 @@ DEFINE_HOOK(53A6CF, LightningStorm_Update, 7) {
 								if(MapClass::Instance->CellExists(cell)) {
 									// out of range?
 									if(!isRectangle) {
-										if(cell.DistanceFrom(LSCell) > pData->SW_WidthOrRange) {
+										if(cell.DistanceFrom(LSCell) > pData->SW_Range.WidthOrRange) {
 											continue;
 										}
 									}

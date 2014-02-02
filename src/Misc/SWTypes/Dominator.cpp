@@ -28,7 +28,7 @@ int SW_PsychicDominator::GetDamage(const SWTypeExt::ExtData* pData) const {
 void SW_PsychicDominator::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)
 {
 	// Defaults to PsychicDominator values
-	pData->SW_WidthOrRange = (float)RulesClass::Instance->DominatorCaptureRange;
+	pData->SW_Range.WidthOrRange = (float)RulesClass::Instance->DominatorCaptureRange;
 
 	pData->Dominator_FirstAnimHeight = 750;
 	pData->Dominator_SecondAnimHeight = 0;

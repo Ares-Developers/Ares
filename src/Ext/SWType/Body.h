@@ -31,6 +31,31 @@
 class ParadropPlane;
 class NewSWType;
 
+struct SWRange {
+	SWRange(float widthOrRange = -1.0f, int height = -1) : WidthOrRange(widthOrRange), Height(height) {}
+	SWRange(int widthOrRange, int height = -1) : WidthOrRange(static_cast<float>(widthOrRange)), Height(height) {}
+
+	float range() const {
+		return this->WidthOrRange;
+	}
+
+	int width() const {
+		return static_cast<int>(this->WidthOrRange);
+	}
+
+	int height() const {
+		return this->Height;
+	}
+
+	bool empty() const {
+		return this->WidthOrRange < 0.0
+			&& this->Height < 0;
+	}
+
+	float WidthOrRange;
+	int Height;
+};
+
 class SWTypeExt
 {
 public:
@@ -147,8 +172,7 @@ public:
 		ValueableEnum<SuperWeaponAITargetingMode> SW_AITargetingType;
 		Nullable<double> SW_ChargeToDrainRatio;
 
-		Valueable<float> SW_WidthOrRange;
-		Valueable<int> SW_Height;
+		SWRange SW_Range;
 		ValueableEnum<SuperWeaponAffectedHouse> SW_AffectsHouse;
 		ValueableEnum<SuperWeaponAffectedHouse> SW_RequiresHouse;
 		ValueableEnum<SuperWeaponTarget> SW_AffectsTarget;
@@ -245,8 +269,7 @@ public:
 			SW_AITargetingType (SuperWeaponAITargetingMode::None),
 			SW_FireToShroud (true),
 			SW_RadarEvent (true),
-			SW_WidthOrRange (-1),
-			SW_Height (-1),
+			SW_Range(),
 			HandledByNewSWType (-1),
 			CameoPal(),
 			SW_DeliverBuildups (false)

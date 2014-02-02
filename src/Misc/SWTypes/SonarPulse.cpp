@@ -11,8 +11,8 @@ SuperWeaponFlags::Value SW_SonarPulse::Flags()
 void SW_SonarPulse::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)
 {
 	// some defaults
-	pData->SW_WidthOrRange = 10;
-	pData->SW_Height = -1;
+	pData->SW_Range.WidthOrRange = 10;
+	pData->SW_Range.Height = -1;
 	pData->SW_RadarEvent = false;
 
 	pData->Sonar_Delay = 60;
@@ -35,7 +35,7 @@ void SW_SonarPulse::LoadFromINI(
 	pData->Sonar_Delay = pINI->ReadInteger(section, "SonarPulse.Delay", pData->Sonar_Delay);
 
 	// full map detection?
-	if(pData->SW_WidthOrRange < 0) {
+	if(pData->SW_Range.WidthOrRange < 0) {
 		pSW->Action = 0;
 	}
 }
@@ -72,8 +72,8 @@ bool SW_SonarPulse::Activate(SuperClass* pThis, const CellStruct &Coords, bool I
 		return true;
 	};
 
-	float width = pData->SW_WidthOrRange;
-	int height = pData->SW_Height;
+	float width = pData->SW_Range.WidthOrRange;
+	int height = pData->SW_Range.Height;
 
 	if(width < 0) {
 		// decloak everything regardless of ranges

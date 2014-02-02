@@ -39,10 +39,10 @@ void SW_GeneticMutator::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeCla
 
 	// defaults depend on MutateExplosion property
 	if(RulesClass::Instance->MutateExplosion) {
-		pData->SW_WidthOrRange = 5;
+		pData->SW_Range.WidthOrRange = 5;
 	} else {
-		pData->SW_WidthOrRange = 3;
-		pData->SW_Height = 3;
+		pData->SW_Range.WidthOrRange = 3;
+		pData->SW_Range.Height = 3;
 	}
 		
 	pData->Mutate_KillNatural = true;
@@ -127,7 +127,7 @@ bool SW_GeneticMutator::Activate(SuperClass* pThis, const CellStruct &Coords, bo
 
 			// find everything in range and mutate it
 			Helpers::Alex::DistinctCollector<InfantryClass*> items;
-			Helpers::Alex::for_each_in_rect_or_range<InfantryClass>(Coords, pData->SW_WidthOrRange, pData->SW_Height, std::ref(items));
+			Helpers::Alex::for_each_in_rect_or_range<InfantryClass>(Coords, pData->SW_Range.WidthOrRange, pData->SW_Range.Height, std::ref(items));
 			items.for_each(Mutate);
 		}
 	}
