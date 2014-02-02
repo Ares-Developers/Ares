@@ -408,7 +408,8 @@ DEFINE_HOOK(53A6CF, LightningStorm_Update, 7) {
 			if(duration == -1 || duration + LightningStorm::StartTime >= Unsorted::CurrentFrame) {
 
 				// deterministic damage. the very target cell.
-				if(pData->Weather_HitDelay > 0 && !(Unsorted::CurrentFrame % pData->Weather_HitDelay)) {
+				auto hitDelay = pData->Weather_HitDelay.Get(RulesClass::Instance->LightningHitDelay);
+				if(hitDelay > 0 && !(Unsorted::CurrentFrame % hitDelay)) {
 					LightningStorm::Strike(LightningStorm::Coords);
 				}
 

@@ -34,7 +34,6 @@ void SW_LightningStorm::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeCla
 
 	pData->Weather_BoltExplosion = RulesClass::Instance->WeatherConBoltExplosion;
 	pData->Weather_RadarOutage = RulesClass::Instance->LightningStormDuration;
-	pData->Weather_HitDelay = RulesClass::Instance->LightningHitDelay;
 	pData->Weather_ScatterDelay = RulesClass::Instance->LightningScatterDelay;
 	pData->Weather_Separation = RulesClass::Instance->LightningSeparation;
 	pData->Weather_PrintText = RulesClass::Instance->LightningPrintText;

@@ -46,7 +46,7 @@ public:
 
 		// Lightning Storm
 		Nullable<int> Weather_Duration;
-		Valueable<int> Weather_HitDelay;
+		Nullable<int> Weather_HitDelay;
 		Valueable<int> Weather_ScatterDelay;
 		Valueable<int> Weather_ScatterCount;
 		Valueable<int> Weather_Separation;
