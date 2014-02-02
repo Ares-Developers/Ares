@@ -559,7 +559,7 @@ int SWTypeExt::ExtData::GetSound() const {
 		return pType->GetSound(this);
 	}
 
-	return this->SW_Sound;
+	return this->SW_Sound.Get(-1);
 }
 
 double SWTypeExt::ExtData::GetChargeToDrainRatio() const {

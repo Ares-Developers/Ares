@@ -25,14 +25,13 @@ AnimTypeClass* SW_GeneticMutator::GetAnim(const SWTypeExt::ExtData* pData) const
 }
 
 int SW_GeneticMutator::GetSound(const SWTypeExt::ExtData* pData) const {
-	return (pData->SW_Sound != -1) ? pData->SW_Sound : RulesClass::Instance->GeneticMutatorActivateSound;
+	return pData->SW_Sound.Get(RulesClass::Instance->GeneticMutatorActivateSound);
 }
 
 void SW_GeneticMutator::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)
 {
 	// Defaults to Genetic Mutator values
 	pData->SW_AnimHeight = 5;
-	pData->SW_Sound = RulesClass::Instance->GeneticMutatorActivateSound;
 	pData->SW_Damage = 10000;
 
 	// defaults depend on MutateExplosion property

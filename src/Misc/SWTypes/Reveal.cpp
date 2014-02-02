@@ -9,7 +9,7 @@ bool SW_Reveal::HandlesType(int type)
 }
 
 int SW_Reveal::GetSound(const SWTypeExt::ExtData* pData) const {
-	return (pData->SW_Sound != -1) ? pData->SW_Sound : RulesClass::Instance->PsychicRevealActivateSound;
+	return pData->SW_Sound.Get(RulesClass::Instance->PsychicRevealActivateSound);
 }
 
 void SW_Reveal::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)
@@ -19,7 +19,6 @@ void SW_Reveal::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)
 	RulesClass::Instance->PsychicRevealRadius = CCINIClass::INI_Rules->ReadInteger("CombatDamage", "PsychicRevealRadius", 3);
 
 	pData->SW_WidthOrRange = (float)RulesClass::Instance->PsychicRevealRadius;
-	pData->SW_Sound = RulesClass::Instance->PsychicRevealActivateSound;
 	pData->SW_RadarEvent = false;
 
 	// real default values, that is, force max cellspread range of 10

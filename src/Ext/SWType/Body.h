@@ -128,7 +128,7 @@ public:
 		ValueableIdx<VoxClass> EVA_SelectTarget;
 
 		// anim/sound
-		ValueableIdx<VocClass> SW_Sound;
+		NullableIdx<VocClass> SW_Sound;
 		NullableIdx<VocClass> SW_ActivationSound;
 		Nullable<AnimTypeClass *> SW_Anim;
 		Valueable<int> SW_AnimHeight;
@@ -231,7 +231,6 @@ public:
 			Lighting_DefaultGreen (nullptr),
 			Lighting_DefaultBlue (nullptr),
 			Lighting_DefaultRed (nullptr),
-			SW_Sound (-1),
 			SW_AnimHeight (0),
 			SW_AnimVisibility (SuperWeaponAffectedHouse::All),
 			SW_TypeCustom (false),
