@@ -98,7 +98,7 @@ bool SW_ChronoSphere::Activate(SuperClass* pThis, const CellStruct &Coords, bool
 
 		// recoded to support customizable anims
 		// and visibility for allies, too.
-		if(AnimTypeClass* pAnimType = pData->SW_Anim) {
+		if(AnimTypeClass* pAnimType = GetAnim(pData)) {
 			SWTypeExt::CreateChronoAnim(pThis, &coords, pAnimType);
 		}
 

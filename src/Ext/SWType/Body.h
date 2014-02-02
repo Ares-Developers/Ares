@@ -280,6 +280,7 @@ public:
 		int GetNewTypeIndex() const;
 
 		WarheadTypeClass* GetWarhead() const;
+		AnimTypeClass* GetAnim() const;
 		double GetChargeToDrainRatio() const;
 
 		virtual void InvalidatePointer(void *ptr, bool bRemoved) {

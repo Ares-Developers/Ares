@@ -361,10 +361,11 @@ bool SWTypeExt::Launch(SuperClass* pThis, NewSWType* pSW, const CellStruct &Coor
 			CoordStruct coords;
 			pTarget->GetCoordsWithBridge(&coords);
 
-			if(pData->SW_Anim && !(flags & SuperWeaponFlags::NoAnim)) {
+			auto pAnim = pData->GetAnim();
+			if(pAnim && !(flags & SuperWeaponFlags::NoAnim)) {
 				coords.Z += pData->SW_AnimHeight;
 				AnimClass *placeholder;
-				GAME_ALLOC(AnimClass, placeholder, pData->SW_Anim, &coords);
+				GAME_ALLOC(AnimClass, placeholder, pAnim, &coords);
 				placeholder->Invisible = !pData->IsAnimVisible(pThis->Owner);
 			}
 
@@ -542,6 +543,14 @@ WarheadTypeClass* SWTypeExt::ExtData::GetWarhead() const {
 	}
 
 	return this->SW_Warhead.Get(nullptr);
+}
+
+AnimTypeClass* SWTypeExt::ExtData::GetAnim() const {
+	if(auto pType = this->GetNewSWType()) {
+		return pType->GetAnim(this);
+	}
+
+	return this->SW_Anim;
 }
 
 double SWTypeExt::ExtData::GetChargeToDrainRatio() const {
