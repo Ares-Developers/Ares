@@ -4,7 +4,6 @@
 
 void SW_UnitDelivery::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)
 {
-	pData->SW_Deferment = -1;
 	pData->SW_AITargetingType = SuperWeaponAITargetingMode::ParaDrop;
 }
 
@@ -27,7 +26,7 @@ bool SW_UnitDelivery::Activate(SuperClass* pThis, const CellStruct &Coords, bool
 	SuperWeaponTypeClass *pSW = pThis->Type;
 	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSW);
 
-	int deferment = pData->SW_Deferment;
+	int deferment = pData->SW_Deferment.Get(-1);
 	if(deferment < 0) {
 		deferment = 20;
 	}

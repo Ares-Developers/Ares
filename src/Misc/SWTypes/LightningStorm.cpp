@@ -25,7 +25,6 @@ void SW_LightningStorm::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeCla
 	// Defaults to Lightning Storm values
 	pData->SW_WidthOrRange = (float)RulesClass::Instance->LightningCellSpread;
 	pData->SW_Damage = RulesClass::Instance->LightningDamage;
-	pData->SW_Deferment = RulesClass::Instance->LightningDeferment;
 	pData->SW_ActivationSound = RulesClass::Instance->StormSound;
 
 	pData->Weather_DebrisMin = 2;
@@ -109,7 +108,8 @@ bool SW_LightningStorm::Activate(SuperClass* pThis, const CellStruct &Coords, bo
 		// by hooks.
 		if(SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pThis->Type)) {
 			CurrentLightningStorm = pThis;
-			LightningStorm::Start(pData->Weather_Duration, pData->SW_Deferment, Coords, pThis->Owner);
+			auto deferment = pData->SW_Deferment.Get(RulesClass::Instance->LightningDeferment);
+			LightningStorm::Start(pData->Weather_Duration, deferment, Coords, pThis->Owner);
 			return true;
 		}
 	}

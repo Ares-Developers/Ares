@@ -155,7 +155,7 @@ public:
 		ValueableEnum<SuperWeaponTarget> SW_RequiresTarget;
 		Nullable<WarheadTypeClass *> SW_Warhead;
 		Valueable<int> SW_Damage;
-		Valueable<int> SW_Deferment;
+		Nullable<int> SW_Deferment;
 
 		// Lighting
 		Valueable<bool> Lighting_Enabled;

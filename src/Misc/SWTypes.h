@@ -191,7 +191,7 @@ public:
 
 		// the initial deferment
 		SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSuper->Type);
-		this->Deferment = pData->SW_Deferment;
+		this->Deferment = pData->SW_Deferment.Get(0);
 
 		// make the game happy
 		PsyDom::Owner = pSuper->Owner;
