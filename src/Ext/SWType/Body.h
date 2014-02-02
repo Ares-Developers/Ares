@@ -80,7 +80,7 @@ public:
 		Valueable<bool> Protect_IsForceShield;
 
 		// Chronosphere
-		Valueable<AnimTypeClass *> Chronosphere_BlastSrc;
+		Nullable<AnimTypeClass *> Chronosphere_BlastSrc;
 		Valueable<AnimTypeClass *> Chronosphere_BlastDest;
 		Valueable<bool> Chronosphere_KillOrganic;
 		Valueable<bool> Chronosphere_KillTeleporters;
