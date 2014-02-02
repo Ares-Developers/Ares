@@ -16,6 +16,10 @@ SuperWeaponFlags::Value SW_LightningStorm::Flags()
 	return SuperWeaponFlags::NoMessage | SuperWeaponFlags::NoEvent;
 }
 
+WarheadTypeClass* SW_LightningStorm::GetWarhead(const SWTypeExt::ExtData* pData) const {
+	return pData->SW_Warhead ? pData->SW_Warhead : RulesClass::Instance->LightningWarhead;
+}
+
 void SW_LightningStorm::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)
 {
 	// Defaults to Lightning Storm values

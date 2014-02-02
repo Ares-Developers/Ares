@@ -22,6 +22,16 @@ SuperWeaponFlags::Value SW_NuclearMissile::Flags()
 	return SuperWeaponFlags::NoEvent;
 }
 
+WarheadTypeClass* SW_NuclearMissile::GetWarhead(const SWTypeExt::ExtData* pData) const {
+	if(pData->SW_Warhead) {
+		return pData->SW_Warhead;
+	}
+	if(pData->Nuke_Payload) {
+		return pData->Nuke_Payload->Warhead;
+	}
+	return nullptr;
+}
+
 void SW_NuclearMissile::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)
 {
 	// invalid values so NukePayload properties can override them.

@@ -43,6 +43,10 @@ public:
 	virtual void LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI) {
 	}
 
+	virtual WarheadTypeClass* GetWarhead(const SWTypeExt::ExtData* pData) const {
+		return pData->SW_Warhead;
+	}
+
 	virtual const char* GetTypeString() {
 		return "";
 	}

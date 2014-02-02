@@ -10,6 +10,16 @@ bool SW_GeneticMutator::HandlesType(int type)
 	return (type == SuperWeaponType::GeneticMutator);
 }
 
+WarheadTypeClass* SW_GeneticMutator::GetWarhead(const SWTypeExt::ExtData* pData) const {
+	if(pData->SW_Warhead) {
+		return pData->SW_Warhead;
+	} else if(pData->Mutate_Explosion) {
+		return RulesClass::Instance->MutateExplosionWarhead;
+	} else {
+		return RulesClass::Instance->MutateWarhead;
+	}
+}
+
 void SW_GeneticMutator::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)
 {
 	// Defaults to Genetic Mutator values

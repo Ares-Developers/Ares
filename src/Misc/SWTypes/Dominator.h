@@ -25,6 +25,8 @@ class SW_PsychicDominator : public NewSWType
 		virtual bool HandlesType(int type);
 		virtual SuperWeaponFlags::Value Flags();
 
+		virtual WarheadTypeClass* GetWarhead(const SWTypeExt::ExtData* pData) const override;
+
 		static SuperClass* CurrentPsyDom;
 
 		typedef PsychicDominatorStateMachine TStateMachine;

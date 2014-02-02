@@ -17,6 +17,10 @@ SuperWeaponFlags::Value SW_PsychicDominator::Flags()
 	return SuperWeaponFlags::NoEvent;
 }
 
+WarheadTypeClass* SW_PsychicDominator::GetWarhead(const SWTypeExt::ExtData* pData) const {
+	return pData->SW_Warhead ? pData->SW_Warhead : RulesClass::Instance->DominatorWarhead;
+}
+
 void SW_PsychicDominator::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)
 {
 	// Defaults to PsychicDominator values
