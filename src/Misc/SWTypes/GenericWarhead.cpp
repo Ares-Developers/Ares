@@ -11,7 +11,7 @@ bool SW_GenericWarhead::Activate(SuperClass* pThis, const CellStruct &Coords, bo
 	SuperWeaponTypeClass *pType = pThis->Type;
 	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pType);
 
-	auto pWarhead = pData->GetWarhead();
+	auto pWarhead = GetWarhead(pData);
 
 	if(!pData || !pWarhead) {
 		Debug::Log("Couldn't launch GenericWarhead SW ([%s])\n", pType->ID);

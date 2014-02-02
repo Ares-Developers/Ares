@@ -136,7 +136,7 @@ bool SW_NuclearMissile::Activate(SuperClass* pThis, const CellStruct &Coords, bo
 						// get damage and warhead. they are not available during
 						// initialisation, so we gotta fall back now if they are invalid.
 						int damage = (pData->SW_Damage < 0 ? pWeapon->Damage : pData->SW_Damage);
-						auto pWarhead = pData->GetWarhead();
+						auto pWarhead = GetWarhead(pData);
 
 						// create a bullet and the psi warning
 						if(BulletClass* pBullet = pProjectile->CreateBullet(pCell, nullptr, damage, pWarhead, pWeapon->Speed, pWeapon->Bright)) {
