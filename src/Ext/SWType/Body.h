@@ -56,7 +56,7 @@ public:
 		Valueable<int> Weather_DebrisMax;
 		Nullable<bool> Weather_PrintText;
 		Valueable<bool> Weather_IgnoreLightningRod;
-		Valueable<AnimTypeClass*> Weather_BoltExplosion;
+		Nullable<AnimTypeClass*> Weather_BoltExplosion;
 		NullableVector<AnimTypeClass*> Weather_Clouds;
 		NullableVector<AnimTypeClass*> Weather_Bolts;
 		NullableVector<AnimTypeClass*> Weather_Debris;

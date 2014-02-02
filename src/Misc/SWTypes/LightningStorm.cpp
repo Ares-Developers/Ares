@@ -32,8 +32,6 @@ void SW_LightningStorm::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeCla
 	pData->Weather_IgnoreLightningRod = false;
 	pData->Weather_ScatterCount = 1;
 
-	pData->Weather_BoltExplosion = RulesClass::Instance->WeatherConBoltExplosion;
-
 	pData->Weather_RadarOutageAffects = SuperWeaponAffectedHouse::Enemies;
 
 	pData->EVA_Detected = VoxClass::FindIndex("EVA_WeatherDeviceReady");

@@ -676,7 +676,7 @@ DEFINE_HOOK(48A59A, MapClass_SelectDamageAnimation_LightningWarhead, 5) {
 		SuperWeaponTypeClass *pType = pSuper->Type;
 		if(SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pType)) {
 			if(pData->GetWarhead() == pWarhead) {
-				if(AnimTypeClass* pAnimType = pData->Weather_BoltExplosion) {
+				if(AnimTypeClass* pAnimType = pData->Weather_BoltExplosion.Get(RulesClass::Instance->WeatherConBoltExplosion)) {
 					R->EAX(pAnimType);
 					return 0x48A5AD;
 				}
