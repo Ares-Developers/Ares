@@ -72,7 +72,7 @@ bool SW_GeneticMutator::Activate(SuperClass* pThis, const CellStruct &Coords, bo
 	if(pThis->IsCharged) {
 		if(pData->Mutate_Explosion) {
 			// single shot using cellspread warhead
-			MapClass::DamageArea(&coords, pData->SW_Damage, nullptr, pData->SW_Warhead, false, pThis->Owner);
+			MapClass::DamageArea(&coords, pData->SW_Damage, nullptr, pData->GetWarhead(), false, pThis->Owner);
 		} else {
 			// ranged approach
 			auto Mutate = [&](InfantryClass* pInf) -> bool {
@@ -102,9 +102,7 @@ bool SW_GeneticMutator::Activate(SuperClass* pThis, const CellStruct &Coords, bo
 				// destroy or mutate
 				int damage = pType->Strength;
 				bool kill = (pType->Natural && pData->Mutate_KillNatural);
-				WarheadTypeClass* pWH = kill
-					? RulesClass::Instance->C4Warhead
-					: pData->SW_Warhead;
+				auto pWH = kill ? RulesClass::Instance->C4Warhead : pData->GetWarhead();
 
 				pInf->ReceiveDamage(&damage, 0, pWH, nullptr, true, false, pThis->Owner);
 

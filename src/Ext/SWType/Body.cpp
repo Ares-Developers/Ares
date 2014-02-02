@@ -536,6 +536,10 @@ bool SWTypeExt::ExtData::ChangeLighting() {
 	return false;
 }
 
+WarheadTypeClass* SWTypeExt::ExtData::GetWarhead() const {
+	return this->SW_Warhead;
+}
+
 double SWTypeExt::ExtData::GetChargeToDrainRatio() const {
 	return this->SW_ChargeToDrainRatio.Get(RulesClass::Instance->ChargeToDrainRatio);
 }

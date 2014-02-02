@@ -52,8 +52,10 @@ DEFINE_HOOK(53B080, PsyDom_Fire, 5) {
 		}
 
 		// kill
-		if(pData->SW_Damage > 0 && pData->SW_Warhead) {
-			MapClass::Instance->DamageArea(&coords, pData->SW_Damage, nullptr, pData->SW_Warhead, true, pFirer);
+		if(pData->SW_Damage > 0) {
+			if(auto pWarhead = pData->GetWarhead()) {
+				MapClass::Instance->DamageArea(&coords, pData->SW_Damage, nullptr, pWarhead, true, pFirer);
+			}
 		}
 
 		// capture
@@ -624,12 +626,13 @@ DEFINE_HOOK(53A300, LightningStorm_Strike2, 5) {
 
 			// cause mayhem
 			if(damage) {
-				MapClass::FlashbangWarheadAt(damage, pData->SW_Warhead, Coords, false, 0);
-				MapClass::DamageArea(&Coords, damage, nullptr, pData->SW_Warhead, true, pSuper->Owner);
+				auto pWarhead = pData->GetWarhead();
+				MapClass::FlashbangWarheadAt(damage, pWarhead, Coords, false, 0);
+				MapClass::DamageArea(&Coords, damage, nullptr, pWarhead, true, pSuper->Owner);
 
 				// fancy stuff if damage is dealt
 				AnimClass* pAnim = nullptr;
-				AnimTypeClass* pAnimType = MapClass::SelectDamageAnimation(damage, pData->SW_Warhead, pCell->LandType, &Coords);
+				AnimTypeClass* pAnimType = MapClass::SelectDamageAnimation(damage, pWarhead, pCell->LandType, &Coords);
 				GAME_ALLOC(AnimClass, pAnim, pAnimType, &Coords);
 			}
 
@@ -668,7 +671,7 @@ DEFINE_HOOK(48A59A, MapClass_SelectDamageAnimation_LightningWarhead, 5) {
 	if(SuperClass* pSuper = SW_LightningStorm::CurrentLightningStorm) {
 		SuperWeaponTypeClass *pType = pSuper->Type;
 		if(SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pType)) {
-			if(pData->SW_Warhead == pWarhead) {
+			if(pData->GetWarhead() == pWarhead) {
 				if(AnimTypeClass* pAnimType = pData->Weather_BoltExplosion) {
 					R->EAX(pAnimType);
 					return 0x48A5AD;
@@ -771,7 +774,10 @@ DEFINE_HOOK(46B371, BulletClass_NukeMaker, 5) {
 						// get damage and warhead. they are not available during
 						// initialisation, so we gotta fall back now if they are invalid.
 						int damage = (pExt->SW_Damage < 0 ? pPayload->Damage : pExt->SW_Damage);
-						WarheadTypeClass *pWarhead = (!pExt->SW_Warhead ? pPayload->Warhead : pExt->SW_Warhead);
+						auto pWarhead = pExt->GetWarhead();
+						if(!pWarhead) {
+							pWarhead = pPayload->Warhead;
+						}
 
 						Debug::Log("Payload = %s\n", pPayload->ID);
 						Debug::Log("Payload WH = %s\n", pPayload->Warhead->ID);

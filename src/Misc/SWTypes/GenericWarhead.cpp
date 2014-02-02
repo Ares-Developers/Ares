@@ -11,7 +11,9 @@ bool SW_GenericWarhead::Activate(SuperClass* pThis, const CellStruct &Coords, bo
 	SuperWeaponTypeClass *pType = pThis->Type;
 	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pType);
 
-	if(!pData || !pData->SW_Warhead) {
+	auto pWarhead = pData->GetWarhead();
+
+	if(!pData || !pWarhead) {
 		Debug::Log("Couldn't launch GenericWarhead SW ([%s])\n", pType->ID);
 		return 0;
 	}
@@ -20,7 +22,7 @@ bool SW_GenericWarhead::Activate(SuperClass* pThis, const CellStruct &Coords, bo
 	CellClass *Cell = MapClass::Instance->GetCellAt(Coords);
 	Cell->GetCoordsWithBridge(&coords);
 
-	auto pWHExt = WarheadTypeExt::ExtMap.Find(pData->SW_Warhead);
+	auto pWHExt = WarheadTypeExt::ExtMap.Find(pWarhead);
 
 	// crush, kill, destroy
 	// NULL -> TechnoClass* SourceObject
@@ -41,12 +43,12 @@ bool SW_GenericWarhead::Activate(SuperClass* pThis, const CellStruct &Coords, bo
 	pWHExt->applyAttachedEffect(&coords, Firer);
 
 	if(!pWHExt->applyPermaMC(&coords, pThis->Owner, Cell->GetContent())) {
-		MapClass::DamageArea(&coords, pData->SW_Damage, Firer, pData->SW_Warhead, 1, pThis->Owner);
-		if(AnimTypeClass * DamageAnimType = MapClass::SelectDamageAnimation(pData->SW_Damage, pData->SW_Warhead, Cell->LandType, &coords)) {
+		MapClass::DamageArea(&coords, pData->SW_Damage, Firer, pWarhead, true, pThis->Owner);
+		if(AnimTypeClass * DamageAnimType = MapClass::SelectDamageAnimation(pData->SW_Damage, pWarhead, Cell->LandType, &coords)) {
 			AnimClass *DamageAnim;
 			GAME_ALLOC(AnimClass, DamageAnim, DamageAnimType, &coords);
 		}
-		MapClass::FlashbangWarheadAt(pData->SW_Damage, pData->SW_Warhead, coords, false, 0);
+		MapClass::FlashbangWarheadAt(pData->SW_Damage, pWarhead, coords, false, 0);
 	}
 
 	return 1;

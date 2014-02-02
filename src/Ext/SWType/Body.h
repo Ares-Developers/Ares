@@ -280,6 +280,7 @@ public:
 		int GetTypeIndexWithRedirect() const;
 		int GetNewTypeIndex() const;
 
+		WarheadTypeClass* GetWarhead() const;
 		double GetChargeToDrainRatio() const;
 
 		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
