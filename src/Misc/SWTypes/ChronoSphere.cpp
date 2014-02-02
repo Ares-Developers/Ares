@@ -32,8 +32,6 @@ void SW_ChronoSphere::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass
 	pData->Chronosphere_BlowUnplaceable = true;
 	pData->Chronosphere_ReconsiderBuildings = true;
 
-	pData->Chronosphere_BlastDest = RulesClass::Instance->ChronoBlastDest;
-
 	pData->EVA_Ready = VoxClass::FindIndex("EVA_ChronosphereReady");
 	pData->EVA_Detected = VoxClass::FindIndex("EVA_ChronosphereDetected");
 	pData->EVA_Activated = VoxClass::FindIndex("EVA_ChronosphereActivated");

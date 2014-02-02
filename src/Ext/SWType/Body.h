@@ -81,7 +81,7 @@ public:
 
 		// Chronosphere
 		Nullable<AnimTypeClass *> Chronosphere_BlastSrc;
-		Valueable<AnimTypeClass *> Chronosphere_BlastDest;
+		Nullable<AnimTypeClass *> Chronosphere_BlastDest;
 		Valueable<bool> Chronosphere_KillOrganic;
 		Valueable<bool> Chronosphere_KillTeleporters;
 		Valueable<bool> Chronosphere_AffectUndeployable;

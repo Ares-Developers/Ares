@@ -64,7 +64,7 @@ bool SW_ChronoWarp::Activate(SuperClass* pThis, const CellStruct &Coords, bool I
 			if(auto pAnimType = pData->Chronosphere_BlastSrc.Get(RulesClass::Instance->ChronoBlast)) {
 				GAME_ALLOC(AnimClass, pAnim, pAnimType, &coordsSource);
 			}
-			if(AnimTypeClass* pAnimType = pData->Chronosphere_BlastDest) {
+			if(auto pAnimType = pData->Chronosphere_BlastDest.Get(RulesClass::Instance->ChronoBlastDest)) {
 				GAME_ALLOC(AnimClass, pAnim, pAnimType, &coordsTarget);
 			}
 
