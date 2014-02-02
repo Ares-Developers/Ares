@@ -8,6 +8,10 @@ bool SW_Reveal::HandlesType(int type)
 	return (type == SuperWeaponType::PsychicReveal);
 }
 
+int SW_Reveal::GetSound(const SWTypeExt::ExtData* pData) const {
+	return (pData->SW_Sound != -1) ? pData->SW_Sound : RulesClass::Instance->PsychicRevealActivateSound;
+}
+
 void SW_Reveal::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)
 {
 	// a quick hack to make this value available earlier. to completely fix this,

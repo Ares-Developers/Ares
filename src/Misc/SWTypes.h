@@ -51,6 +51,10 @@ public:
 		return pData->SW_Anim;
 	}
 
+	virtual int GetSound(const SWTypeExt::ExtData* pData) const {
+		return pData->SW_Sound;
+	}
+
 	virtual const char* GetTypeString() {
 		return "";
 	}

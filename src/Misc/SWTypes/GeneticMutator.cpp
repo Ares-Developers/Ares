@@ -24,6 +24,10 @@ AnimTypeClass* SW_GeneticMutator::GetAnim(const SWTypeExt::ExtData* pData) const
 	return pData->SW_Anim.Get(RulesClass::Instance->IonBlast);
 }
 
+int SW_GeneticMutator::GetSound(const SWTypeExt::ExtData* pData) const {
+	return (pData->SW_Sound != -1) ? pData->SW_Sound : RulesClass::Instance->GeneticMutatorActivateSound;
+}
+
 void SW_GeneticMutator::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)
 {
 	// Defaults to Genetic Mutator values
