@@ -47,6 +47,10 @@ public:
 		return pData->SW_Warhead;
 	}
 
+	virtual AnimTypeClass* GetAnim(const SWTypeExt::ExtData* pData) const {
+		return pData->SW_Anim;
+	}
+
 	virtual const char* GetTypeString() {
 		return "";
 	}

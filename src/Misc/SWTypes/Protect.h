@@ -22,5 +22,7 @@ class SW_Protect : public NewSWType
 		virtual void Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW);
 		virtual bool Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer);
 		virtual bool HandlesType(int type);
+
+		virtual AnimTypeClass* GetAnim(const SWTypeExt::ExtData* pData) const override;
 };
 #endif

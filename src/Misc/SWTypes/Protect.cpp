@@ -8,6 +8,16 @@ bool SW_Protect::HandlesType(int type)
 	return (type == SuperWeaponType::IronCurtain) || (type == SuperWeaponType::ForceShield);
 }
 
+AnimTypeClass* SW_Protect::GetAnim(const SWTypeExt::ExtData* pData) const {
+	if(pData->SW_Anim) {
+		return pData->SW_Anim;
+	} else if(pData->AttachedToObject->Type == SuperWeaponType::ForceShield) {
+		return RulesClass::Instance->ForceShieldInvokeAnim;
+	} else {
+		return RulesClass::Instance->IronCurtainInvokeAnim;
+	}
+}
+
 void SW_Protect::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)
 {
 	int type = pSW->Type;

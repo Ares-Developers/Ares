@@ -20,6 +20,10 @@ WarheadTypeClass* SW_GeneticMutator::GetWarhead(const SWTypeExt::ExtData* pData)
 	}
 }
 
+AnimTypeClass* SW_GeneticMutator::GetAnim(const SWTypeExt::ExtData* pData) const {
+	return pData->SW_Anim ? pData->SW_Anim : RulesClass::Instance->IonBlast;
+}
+
 void SW_GeneticMutator::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)
 {
 	// Defaults to Genetic Mutator values

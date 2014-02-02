@@ -23,5 +23,7 @@ class SW_ChronoSphere : public NewSWType
 		virtual bool Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer);
 		virtual bool HandlesType(int type);
 		virtual SuperWeaponFlags::Value Flags();
+
+		virtual AnimTypeClass* GetAnim(const SWTypeExt::ExtData* pData) const override;
 };
 #endif

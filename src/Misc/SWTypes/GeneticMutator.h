@@ -24,6 +24,7 @@ class SW_GeneticMutator : public NewSWType
 		virtual bool HandlesType(int type);
 
 		virtual WarheadTypeClass* GetWarhead(const SWTypeExt::ExtData* pData) const override;
+		virtual AnimTypeClass* GetAnim(const SWTypeExt::ExtData* pData) const override;
 };
 
 #endif

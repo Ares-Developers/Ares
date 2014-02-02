@@ -15,6 +15,10 @@ SuperWeaponFlags::Value SW_ChronoSphere::Flags()
 		| SuperWeaponFlags::PreClick;
 }
 
+AnimTypeClass* SW_ChronoSphere::GetAnim(const SWTypeExt::ExtData* pData) const {
+	return pData->SW_Anim ? pData->SW_Anim : RulesClass::Instance->ChronoPlacement;
+}
+
 void SW_ChronoSphere::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)
 {
 	pData->SW_Anim = RulesClass::Instance->ChronoPlacement;
