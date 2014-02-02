@@ -472,12 +472,13 @@ DEFINE_HOOK(53A6CF, LightningStorm_Update, 7) {
 									}
 
 									// is this spot far away from another cloud?
-									if(pData->Weather_Separation > 0) {
+									auto separation = pData->Weather_Separation.Get(RulesClass::Instance->LightningSeparation);
+									if(separation > 0) {
 										for(int j=0; j<LightningStorm::CloudsPresent->Count; ++j) {
 											// assume success and disprove.
 											CellStruct *pCell2 = &LightningStorm::CloudsPresent->GetItem(j)->GetCell()->MapCoords;
 											int dist = std::abs(pCell2->X - cell.X) + std::abs(pCell2->Y - cell.Y);
-											if(dist < pData->Weather_Separation) {
+											if(dist < separation) {
 												found = false;
 												break;
 											}

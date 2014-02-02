@@ -49,7 +49,7 @@ public:
 		Nullable<int> Weather_HitDelay;
 		Nullable<int> Weather_ScatterDelay;
 		Valueable<int> Weather_ScatterCount;
-		Valueable<int> Weather_Separation;
+		Nullable<int> Weather_Separation;
 		Valueable<int> Weather_CloudHeight;
 		Valueable<int> Weather_RadarOutage;
 		Valueable<int> Weather_DebrisMin;
