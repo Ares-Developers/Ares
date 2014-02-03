@@ -570,6 +570,14 @@ int SWTypeExt::ExtData::GetDamage() const {
 	return this->SW_Damage.Get(0);
 }
 
+SWRange SWTypeExt::ExtData::GetRange() const {
+	if(auto pType = this->GetNewSWType()) {
+		return pType->GetRange(this);
+	}
+
+	return this->SW_Range;
+}
+
 double SWTypeExt::ExtData::GetChargeToDrainRatio() const {
 	return this->SW_ChargeToDrainRatio.Get(RulesClass::Instance->ChargeToDrainRatio);
 }

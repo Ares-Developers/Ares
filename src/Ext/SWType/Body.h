@@ -303,6 +303,7 @@ public:
 		AnimTypeClass* GetAnim() const;
 		int GetSound() const;
 		int GetDamage() const;
+		SWRange GetRange() const;
 		double GetChargeToDrainRatio() const;
 
 		virtual void InvalidatePointer(void *ptr, bool bRemoved) {

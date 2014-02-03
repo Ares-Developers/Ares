@@ -48,13 +48,6 @@ void SW_GeneticMutator::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeCla
 	pData->SW_AnimHeight = 5;
 
 	// defaults depend on MutateExplosion property
-	if(RulesClass::Instance->MutateExplosion) {
-		pData->SW_Range.WidthOrRange = 5;
-	} else {
-		pData->SW_Range.WidthOrRange = 3;
-		pData->SW_Range.Height = 3;
-	}
-		
 	pData->Mutate_KillNatural = true;
 	pData->Mutate_IgnoreCyborg = false;
 	pData->Mutate_IgnoreNotHuman = false;
@@ -136,8 +129,9 @@ bool SW_GeneticMutator::Activate(SuperClass* pThis, const CellStruct &Coords, bo
 			};
 
 			// find everything in range and mutate it
+			auto range = GetRange(pData);
 			Helpers::Alex::DistinctCollector<InfantryClass*> items;
-			Helpers::Alex::for_each_in_rect_or_range<InfantryClass>(Coords, pData->SW_Range.WidthOrRange, pData->SW_Range.Height, std::ref(items));
+			Helpers::Alex::for_each_in_rect_or_range<InfantryClass>(Coords, range.WidthOrRange, range.Height, std::ref(items));
 			items.for_each(Mutate);
 		}
 	}

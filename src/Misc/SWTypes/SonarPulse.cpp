@@ -18,8 +18,6 @@ SWRange SW_SonarPulse::GetRange(const SWTypeExt::ExtData* pData) const {
 void SW_SonarPulse::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)
 {
 	// some defaults
-	pData->SW_Range.WidthOrRange = 10;
-	pData->SW_Range.Height = -1;
 	pData->SW_RadarEvent = false;
 
 	pData->Sonar_Delay = 60;
@@ -42,7 +40,7 @@ void SW_SonarPulse::LoadFromINI(
 	pData->Sonar_Delay = pINI->ReadInteger(section, "SonarPulse.Delay", pData->Sonar_Delay);
 
 	// full map detection?
-	if(pData->SW_Range.WidthOrRange < 0) {
+	if(GetRange(pData).WidthOrRange < 0) {
 		pSW->Action = 0;
 	}
 }
@@ -79,10 +77,9 @@ bool SW_SonarPulse::Activate(SuperClass* pThis, const CellStruct &Coords, bool I
 		return true;
 	};
 
-	float width = pData->SW_Range.WidthOrRange;
-	int height = pData->SW_Range.Height;
+	auto range = GetRange(pData);
 
-	if(width < 0) {
+	if(range.WidthOrRange < 0) {
 		// decloak everything regardless of ranges
 		for(int i=0; i<TechnoClass::Array->Count; ++i) {
 			Detect(TechnoClass::Array->GetItem(i));
@@ -91,7 +88,7 @@ bool SW_SonarPulse::Activate(SuperClass* pThis, const CellStruct &Coords, bool I
 	} else {
 		// decloak everything in range
 		Helpers::Alex::DistinctCollector<TechnoClass*> items;
-		Helpers::Alex::for_each_in_rect_or_range<TechnoClass>(Coords, width, height, std::ref(items));
+		Helpers::Alex::for_each_in_rect_or_range<TechnoClass>(Coords, range.WidthOrRange, range.Height, std::ref(items));
 		items.for_each(Detect);
 
 		// radar event only if this isn't full map sonar

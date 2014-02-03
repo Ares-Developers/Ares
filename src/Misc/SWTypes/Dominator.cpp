@@ -35,8 +35,6 @@ SWRange SW_PsychicDominator::GetRange(const SWTypeExt::ExtData* pData) const {
 void SW_PsychicDominator::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)
 {
 	// Defaults to PsychicDominator values
-	pData->SW_Range.WidthOrRange = (float)RulesClass::Instance->DominatorCaptureRange;
-
 	pData->Dominator_FirstAnimHeight = 750;
 	pData->Dominator_SecondAnimHeight = 0;
 	pData->Dominator_Ripple = true;
