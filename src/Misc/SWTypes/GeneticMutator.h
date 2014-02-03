@@ -27,6 +27,7 @@ class SW_GeneticMutator : public NewSWType
 		virtual AnimTypeClass* GetAnim(const SWTypeExt::ExtData* pData) const override;
 		virtual int GetSound(const SWTypeExt::ExtData* pData) const override;
 		virtual int GetDamage(const SWTypeExt::ExtData* pData) const override;
+		virtual SWRange GetRange(const SWTypeExt::ExtData* pData) const override;
 };
 
 #endif

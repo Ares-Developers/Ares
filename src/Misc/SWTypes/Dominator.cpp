@@ -25,6 +25,13 @@ int SW_PsychicDominator::GetDamage(const SWTypeExt::ExtData* pData) const {
 	return pData->SW_Damage.Get(RulesClass::Instance->DominatorDamage);
 }
 
+SWRange SW_PsychicDominator::GetRange(const SWTypeExt::ExtData* pData) const {
+	if(pData->SW_Range.empty()) {
+		return SWRange(RulesClass::Instance->DominatorCaptureRange);
+	}
+	return pData->SW_Range;
+}
+
 void SW_PsychicDominator::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)
 {
 	// Defaults to PsychicDominator values

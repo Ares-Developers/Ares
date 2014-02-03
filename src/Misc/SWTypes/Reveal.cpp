@@ -12,6 +12,20 @@ int SW_Reveal::GetSound(const SWTypeExt::ExtData* pData) const {
 	return pData->SW_Sound.Get(RulesClass::Instance->PsychicRevealActivateSound);
 }
 
+SWRange SW_Reveal::GetRange(const SWTypeExt::ExtData* pData) const {
+	if(pData->SW_Range.empty()) {
+		int radius = RulesClass::Instance->PsychicRevealRadius;
+
+		// real default values, that is, force max cellspread range of 10
+		if(radius > 10) {
+			radius = 10;
+		}
+
+		return SWRange(radius);
+	}
+	return pData->SW_Range;
+}
+
 void SW_Reveal::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)
 {
 	// a quick hack to make this value available earlier. to completely fix this,

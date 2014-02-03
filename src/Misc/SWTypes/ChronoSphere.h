@@ -25,5 +25,6 @@ class SW_ChronoSphere : public NewSWType
 		virtual SuperWeaponFlags::Value Flags();
 
 		virtual AnimTypeClass* GetAnim(const SWTypeExt::ExtData* pData) const override;
+		virtual SWRange GetRange(const SWTypeExt::ExtData* pData) const override;
 };
 #endif

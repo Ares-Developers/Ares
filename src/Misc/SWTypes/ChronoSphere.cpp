@@ -19,6 +19,13 @@ AnimTypeClass* SW_ChronoSphere::GetAnim(const SWTypeExt::ExtData* pData) const {
 	return pData->SW_Anim.Get(RulesClass::Instance->ChronoPlacement);
 }
 
+SWRange SW_ChronoSphere::GetRange(const SWTypeExt::ExtData* pData) const {
+	if(pData->SW_Range.empty()) {
+		return SWRange(3, 3);
+	}
+	return pData->SW_Range;
+}
+
 void SW_ChronoSphere::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)
 {
 	pData->SW_AnimVisibility = SuperWeaponAffectedHouse::Team;

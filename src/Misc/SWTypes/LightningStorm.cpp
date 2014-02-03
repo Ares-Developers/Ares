@@ -24,6 +24,13 @@ int SW_LightningStorm::GetDamage(const SWTypeExt::ExtData* pData) const {
 	return pData->SW_Damage.Get(RulesClass::Instance->LightningDamage);
 }
 
+SWRange SW_LightningStorm::GetRange(const SWTypeExt::ExtData* pData) const {
+	if(pData->SW_Range.empty()) {
+		return SWRange(RulesClass::Instance->LightningCellSpread);
+	}
+	return pData->SW_Range;
+}
+
 void SW_LightningStorm::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)
 {
 	// Defaults to Lightning Storm values

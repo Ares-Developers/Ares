@@ -59,6 +59,10 @@ public:
 		return pData->SW_Damage;
 	}
 
+	virtual SWRange GetRange(const SWTypeExt::ExtData* pData) const {
+		return pData->SW_Range;
+	}
+
 	virtual const char* GetTypeString() {
 		return "";
 	}

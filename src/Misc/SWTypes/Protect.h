@@ -24,5 +24,6 @@ class SW_Protect : public NewSWType
 		virtual bool HandlesType(int type);
 
 		virtual AnimTypeClass* GetAnim(const SWTypeExt::ExtData* pData) const override;
+		virtual SWRange GetRange(const SWTypeExt::ExtData* pData) const override;
 };
 #endif

@@ -27,6 +27,7 @@ class SW_PsychicDominator : public NewSWType
 
 		virtual WarheadTypeClass* GetWarhead(const SWTypeExt::ExtData* pData) const override;
 		virtual int GetDamage(const SWTypeExt::ExtData* pData) const override;
+		virtual SWRange GetRange(const SWTypeExt::ExtData* pData) const override;
 
 		static SuperClass* CurrentPsyDom;
 

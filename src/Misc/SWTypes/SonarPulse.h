@@ -22,5 +22,8 @@ class SW_SonarPulse : public NewSWType
 		SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI);
 	virtual bool Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer);
 	virtual SuperWeaponFlags::Value Flags();
+
+	virtual SWRange GetRange(const SWTypeExt::ExtData* pData) const override;
 };
+
 #endif

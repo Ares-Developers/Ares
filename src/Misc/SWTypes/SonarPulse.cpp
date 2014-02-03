@@ -8,6 +8,13 @@ SuperWeaponFlags::Value SW_SonarPulse::Flags()
 	return SuperWeaponFlags::NoEvent;
 }
 
+SWRange SW_SonarPulse::GetRange(const SWTypeExt::ExtData* pData) const {
+	if(pData->SW_Range.empty()) {
+		return SWRange(10);
+	}
+	return pData->SW_Range;
+}
+
 void SW_SonarPulse::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)
 {
 	// some defaults

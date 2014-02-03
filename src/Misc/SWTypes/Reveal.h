@@ -22,6 +22,7 @@ class SW_Reveal : public NewSWType
 		virtual bool HandlesType(int type);
 
 		virtual int GetSound(const SWTypeExt::ExtData* pData) const override;
-
+		virtual SWRange GetRange(const SWTypeExt::ExtData* pData) const override;
 };
+
 #endif

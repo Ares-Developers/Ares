@@ -18,6 +18,16 @@ AnimTypeClass* SW_Protect::GetAnim(const SWTypeExt::ExtData* pData) const {
 	}
 }
 
+SWRange SW_Protect::GetRange(const SWTypeExt::ExtData* pData) const {
+	if(!pData->SW_Range.empty()) {
+		return pData->SW_Range;
+	} else if(pData->AttachedToObject->Type == SuperWeaponType::ForceShield) {
+		return SWRange(RulesClass::Instance->ForceShieldRadius, -1);
+	} else {
+		return SWRange(3, 3);
+	}
+}
+
 void SW_Protect::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)
 {
 	int type = pSW->Type;

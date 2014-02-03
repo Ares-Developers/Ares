@@ -32,6 +32,16 @@ int SW_GeneticMutator::GetDamage(const SWTypeExt::ExtData* pData) const {
 	return pData->SW_Damage.Get(10000);
 }
 
+SWRange SW_GeneticMutator::GetRange(const SWTypeExt::ExtData* pData) const {
+	if(!pData->SW_Range.empty()) {
+		return pData->SW_Range;
+	} else if(pData->Mutate_Explosion.Get(RulesClass::Instance->MutateExplosion)) {
+		return SWRange(5);
+	} else {
+		return SWRange(3, 3);
+	}
+}
+
 void SW_GeneticMutator::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)
 {
 	// Defaults to Genetic Mutator values
