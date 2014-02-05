@@ -96,8 +96,7 @@ DEFINE_HOOK(4016F7, Ares_Audio_LoadWAV, 5)	//50% rewrite of Audio::LoadWAV
 		strcat(filename, ".wav");
 		filename[0xFF] = 0;
 
-		CCFileClass* pFile;
-		GAME_ALLOC(CCFileClass, pFile, filename);
+		CCFileClass* pFile = GameCreate<CCFileClass>(filename);
 		pAudioIndex[0x110 >> 2] = (DWORD)pFile;	//ExternalFile = pFile
 
 		if(pFile->Exists(nullptr)) {
@@ -114,7 +113,7 @@ DEFINE_HOOK(4016F7, Ares_Audio_LoadWAV, 5)	//50% rewrite of Audio::LoadWAV
 			}
 		}
 		pAudioIndex[0x110 >> 2] = 0;	//ExternalFile = nullptr
-		GAME_DEALLOC(pFile);
+		GameDelete(pFile);
 
 		R->EAX(0);
 		return 0x401889;

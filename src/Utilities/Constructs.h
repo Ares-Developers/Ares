@@ -79,8 +79,7 @@ private:
 		if(auto pData = file.ReadWholeFile()) {
 			auto pPal = reinterpret_cast<BytePalette*>(pData);
 
-			BytePalette* buffer = nullptr;
-			GAME_ALLOC(BytePalette, buffer);
+			BytePalette* buffer = GameCreate<BytePalette>();
 			ret = std::unique_ptr<BytePalette, GameDeleter>(buffer);
 
 			// convert 6 bits to 8 bits. not correct,
@@ -91,7 +90,7 @@ private:
 				ret->Entries[i].B = pPal->Entries[i].B << 2;
 			}
 
-			GAME_DEALLOC(pData);
+			GameDelete(pData);
 		}
 
 		return ret;
@@ -101,9 +100,9 @@ private:
 		ConvertClass* buffer = nullptr;
 		if(this->Mode == PaletteMode::Temperate) {
 			auto pTargetPal = (BytePalette*)0x885780; // pointer to TEMPERAT_PAL (not the Convert!)
-			GAME_ALLOC(ConvertClass, buffer, this->Palette.get(), pTargetPal, DSurface::Primary, 53, 0);
+			buffer = GameCreate<ConvertClass>(this->Palette.get(), pTargetPal, DSurface::Primary, 53, false);
 		} else {
-			GAME_ALLOC(ConvertClass, buffer, this->Palette.get(), this->Palette.get(), DSurface::Alternate, 1, 0);
+			buffer = GameCreate<ConvertClass>(this->Palette.get(), this->Palette.get(), DSurface::Alternate, 1, false);
 		}
 		this->Convert = std::unique_ptr<ConvertClass, GameDeleter>(buffer);
 	}

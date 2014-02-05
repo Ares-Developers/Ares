@@ -47,7 +47,7 @@ void TechnoExt::SpawnSurvivors(FootClass *pThis, TechnoClass *pKiller, bool Sele
 
 			if(!EjectRandomly(Hijacker, loc, 144, Select)) {
 				Hijacker->RegisterDestruction(pKiller);
-				GAME_DEALLOC(Hijacker);
+				GameDelete(Hijacker);
 			} else {
 				// the hijacker will now be controlled instead of the unit
 				if(TechnoClass* pController = pThis->MindControlledBy) {
@@ -76,7 +76,7 @@ void TechnoExt::SpawnSurvivors(FootClass *pThis, TechnoClass *pKiller, bool Sele
 
 						if(!EjectRandomly(Pilot, loc, 144, Select)) {
 							Pilot->RegisterDestruction(pKiller); //(TechnoClass *)R->get_StackVar32(0x54));
-							GAME_DEALLOC(Pilot);
+							GameDelete(Pilot);
 						} else {
 							if(pThis->AttachedTag && pThis->AttachedTag->IsTriggerRepeating()) {
 								Pilot->ReplaceTag(pThis->AttachedTag);

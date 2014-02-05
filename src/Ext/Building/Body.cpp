@@ -100,7 +100,7 @@ bool BuildingExt::ExtData::RubbleYell(bool beingRepaired) {
 		// Location should not be changed by removal
 		if(!newState->Put(&currentBuilding->Location, currentBuilding->Facing)) {
 			Debug::Log("Advanced Rubble: Failed to place normal state on map!\n");
-			GAME_DEALLOC(newState);
+			GameDelete(newState);
 			return false;
 		}
 		// currentBuilding->UnInit(); DON'T DO THIS
@@ -116,7 +116,7 @@ bool BuildingExt::ExtData::RubbleYell(bool beingRepaired) {
 		// Location should not be changed by removal
 		if(!newState->Put(&currentBuilding->Location, currentBuilding->Facing)) {
 			Debug::Log("Advanced Rubble: Failed to place rubble state on map!\n");
-			GAME_DEALLOC(newState);
+			GameDelete(newState);
 		}
 	}
 
@@ -374,7 +374,7 @@ void BuildingExt::buildLines(BuildingClass* theBuilding, CellStruct selectedCell
 						tempBuilding->DiscoveredBy(buildingOwner);
 						tempBuilding->unknown_bool_6DD = 1;
 					} else {
-						GAME_DEALLOC(tempBuilding);
+						GameDelete(tempBuilding);
 					}
 				}
 			}
@@ -685,7 +685,7 @@ void BuildingExt::ExtData::UpdateFirewall() {
 	if(!(Unsorted::CurrentFrame % 7) && ScenarioClass::Instance->Random.RandomRanged(0, 15) == 1) {
 		int corners = (FWFrame & 0xF); // 1111b
 		if(AnimClass *IdleAnim = B->FirestormAnim) {
-			GAME_DEALLOC(IdleAnim);
+			GameDelete(IdleAnim);
 			B->FirestormAnim = 0;
 		}
 		if(corners != 5 && corners != 10) {  // (0101b || 1010b) == part of a straight line
@@ -693,7 +693,7 @@ void BuildingExt::ExtData::UpdateFirewall() {
 			XYZ.X -= 768;
 			XYZ.Y -= 768;
 			if(AnimTypeClass *FSA = AnimTypeClass::Find("FSIDLE")) {
-				GAME_ALLOC(AnimClass, B->FirestormAnim, FSA, &XYZ);
+				B->FirestormAnim = GameCreate<AnimClass>(FSA, &XYZ);
 			}
 		}
 	}
@@ -716,8 +716,7 @@ void BuildingExt::ExtData::ImmolateVictim(ObjectClass * Victim) {
 		Victim->ReceiveDamage(&Damage, 0, RulesClass::Instance->C4Warhead/* todo */, nullptr, true, false, pThis->Owner);
 
 		if(AnimTypeClass *FSAnim = AnimTypeClass::Find(Victim->IsInAir() ? "FSAIR" : "FSGRND")) {
-			AnimClass * placeholder;
-			GAME_ALLOC(AnimClass, placeholder, FSAnim, &XYZ);
+			GameCreate<AnimClass>(FSAnim, &XYZ);
 		}
 
 	}

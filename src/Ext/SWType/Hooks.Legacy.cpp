@@ -30,9 +30,7 @@ DEFINE_HOOK(53B080, PsyDom_Fire, 5) {
 		
 		// blast!
 		if(pData->Dominator_Ripple) {
-			IonBlastClass* pBlast = nullptr;
-			GAME_ALLOC(IonBlastClass, pBlast, coords);
-			if(pBlast) {
+			if(auto pBlast = GameCreate<IonBlastClass>(coords)) {
 				pBlast->DisableIonBeam = TRUE;
 			}
 		}
@@ -43,12 +41,11 @@ DEFINE_HOOK(53B080, PsyDom_Fire, 5) {
 		}
 
 		// anim
-		AnimClass* pAnim = nullptr;
+		PsyDom::Anim = nullptr;
 		if(AnimTypeClass* pAnimType = pData->Dominator_SecondAnim.Get(RulesClass::Instance->DominatorSecondAnim)) {
 			CoordStruct animCoords = coords;
 			animCoords.Z += pData->Dominator_SecondAnimHeight;
-			GAME_ALLOC(AnimClass, pAnim, pAnimType, &animCoords);
-			PsyDom::Anim = pAnim;
+			PsyDom::Anim = GameCreate<AnimClass>(pAnimType, &animCoords);
 		}
 
 		// kill
@@ -126,7 +123,7 @@ DEFINE_HOOK(53B080, PsyDom_Fire, 5) {
 				if(AnimTypeClass* pAnimType = pData->Dominator_ControlAnim.Get(RulesClass::Instance->PermaControlledAnimationType)) {
 					CoordStruct animCoords = pTechno->GetCoords();
 					animCoords.Z += pType->MindControlRingOffset;
-					GAME_ALLOC(AnimClass, pTechno->MindControlRingAnim, pAnimType, &animCoords);
+					pTechno->MindControlRingAnim = GameCreate<AnimClass>(pAnimType, &animCoords);
 					if(pTechno->MindControlRingAnim) {
 						pTechno->MindControlRingAnim->SetOwnerObject(pTechno);
 					}
@@ -549,10 +546,7 @@ DEFINE_HOOK(53A140, LightningStorm_Strike, 7) {
 			Coords.Z += pData->Weather_CloudHeight;
 
 			// create the cloud and do some book keeping.
-			AnimClass* pAnim = nullptr;
-			GAME_ALLOC(AnimClass, pAnim, pAnimType, &Coords);
-
-			if(pAnim) {
+			if(auto pAnim = GameCreate<AnimClass>(pAnimType, &Coords)) {
 				LightningStorm::CloudsManifesting->AddItem(pAnim);
 				LightningStorm::CloudsPresent->AddItem(pAnim);
 			}
@@ -585,14 +579,11 @@ DEFINE_HOOK(53A300, LightningStorm_Strike2, 5) {
 				DWORD rnd = ScenarioClass::Instance->Random.Random();
 				AnimTypeClass* pAnimType = it.at(rnd % it.size());
 
-				AnimClass* pAnim = nullptr;
-				GAME_ALLOC(AnimClass, pAnim, pAnimType, &Coords);
-				
-				if(pAnim) {
+				if(auto pAnim = GameCreate<AnimClass>(pAnimType, &Coords)) {
 					LightningStorm::BoltsPresent->AddItem(pAnim);
 				}
 			}
-			
+
 			// play lightning sound
 			if(auto it = pData->Weather_Sounds.GetElements(RulesClass::Instance->LightningSounds)) {
 				DWORD rnd = ScenarioClass::Instance->Random.Random();
@@ -641,9 +632,8 @@ DEFINE_HOOK(53A300, LightningStorm_Strike2, 5) {
 				MapClass::DamageArea(&Coords, damage, nullptr, pWarhead, true, pSuper->Owner);
 
 				// fancy stuff if damage is dealt
-				AnimClass* pAnim = nullptr;
 				AnimTypeClass* pAnimType = MapClass::SelectDamageAnimation(damage, pWarhead, pCell->LandType, &Coords);
-				GAME_ALLOC(AnimClass, pAnim, pAnimType, &Coords);
+				GameCreate<AnimClass>(pAnimType, &Coords);
 			}
 
 			// has the last target been destroyed?
@@ -661,8 +651,7 @@ DEFINE_HOOK(53A300, LightningStorm_Strike2, 5) {
 						DWORD rnd = ScenarioClass::Instance->Random.Random();
 						AnimTypeClass *pAnimType = it.at(rnd % it.size());
 
-						AnimClass *pAnim = nullptr;
-						GAME_ALLOC(AnimClass, pAnim, pAnimType, &Coords);
+						GameCreate<AnimClass>(pAnimType, &Coords);
 					}
 				}
 			}

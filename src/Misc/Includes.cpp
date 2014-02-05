@@ -42,12 +42,11 @@ DEFINE_HOOK(474314, CCINIClass_ReadCCFile2, 6)
 			}
 
 			if(canLoad) {
-				CCFileClass *xFile;
-				GAME_ALLOC(CCFileClass, xFile, buffer);
+				CCFileClass *xFile = GameCreate<CCFileClass>(buffer);
 				if(xFile->Exists(nullptr)) {
 					xINI->ReadCCFile(xFile);
 				}
-				GAME_DEALLOC(xFile);
+				GameDelete(xFile);
 			}
 		}
 	}

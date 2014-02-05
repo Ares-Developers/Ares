@@ -183,9 +183,9 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 		//IsLaser
 		if (supportWeapon->IsLaser) {
 			if (supportWeapon->IsHouseColor) {
-				GAME_ALLOC(LaserDrawClass, LaserBeam, SourceXYZ, *pTargetXYZ, B->Owner->LaserColor, blank, blank, supportWeapon->LaserDuration);
+				LaserBeam = GameCreate<LaserDrawClass>(SourceXYZ, *pTargetXYZ, B->Owner->LaserColor, blank, blank, supportWeapon->LaserDuration);
 			} else {
-				GAME_ALLOC(LaserDrawClass, LaserBeam, SourceXYZ, *pTargetXYZ,
+				LaserBeam = GameCreate<LaserDrawClass>(SourceXYZ, *pTargetXYZ,
 					supportWeapon->LaserInnerColor, supportWeapon->LaserOuterColor, supportWeapon->LaserOuterSpread,
 					supportWeapon->LaserDuration);
 			}
@@ -217,9 +217,7 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 		}
 		//IsElectricBolt
 		if (supportWeapon->IsElectricBolt) {
-			EBolt* supportEBolt;
-			GAME_ALLOC(EBolt, supportEBolt);
-			if (supportEBolt) {
+			if (auto supportEBolt = GameCreate<EBolt>()) {
 				//supportEBolt->Owner = B;
 				TechnoExt::ExtData *pBuildingExt = TechnoExt::ExtMap.Find(B);
 				pBuildingExt->MyBolt = supportEBolt;
@@ -240,7 +238,7 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 		B->ReloadTimer.Start(supportWeapon->ROF);
 	} else {
 		//just the default support beam
-		GAME_ALLOC(LaserDrawClass, LaserBeam, SourceXYZ, *pTargetXYZ, B->Owner->LaserColor, blank, blank, RulesClass::Instance->PrismSupportDuration);
+		LaserBeam = GameCreate<LaserDrawClass>(SourceXYZ, *pTargetXYZ, B->Owner->LaserColor, blank, blank, RulesClass::Instance->PrismSupportDuration);
 		if(LaserBeam) {
 			LaserBeam->IsHouseColor = true;
 			LaserBeam->Thickness = 3;

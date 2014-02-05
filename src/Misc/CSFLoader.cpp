@@ -12,8 +12,7 @@ void CSFLoader::LoadAdditionalCSF(const char *pFileName)
 	//The main stringtable must have been loaded (memory allocation)
 	//To do that, use StringTable::LoadFile.
 	if(StringTable::IsLoaded && pFileName && *pFileName) {
-		CCFileClass* pFile;
-		GAME_ALLOC(CCFileClass, pFile, pFileName);
+		CCFileClass* pFile = GameCreate<CCFileClass>(pFileName);
 		if(pFile->Exists(nullptr) && pFile->Open(eFileMode::Read)) {
 			CSFHeader header;
 
@@ -33,7 +32,7 @@ void CSFLoader::LoadAdditionalCSF(const char *pFileName)
 				}
 			}
 		}
-		GAME_DEALLOC(pFile);
+		GameDelete(pFile);
 	}
 };
 
@@ -53,8 +52,7 @@ const wchar_t* CSFLoader::GetDynamicString(const char* pLabelName, const wchar_t
 	const CSFString *String = CSFLoader::FindDynamic(pLabelName);
 
 	if(!String) {
-		CSFString* NewString = nullptr;
-		GAME_ALLOC(CSFString, NewString);
+		CSFString* NewString = GameCreate<CSFString>();
 		wsprintfW(NewString->Text, pPattern, pDefault);
 
 		NewString->PreviousEntry = StringTable::LastLoadedString;
@@ -88,25 +86,9 @@ DEFINE_HOOK(734823, CSF_AllocateMemory, 6)
 	//but enough for exactly CSF_MAX_ENTRIES entries.
 	//We're assuming we have only one value for one label, which is standard.
 
-	CSFLabel* pLabels;
-	GAME_ALLOC_ARR(CSFLabel, CSF_MAX_ENTRIES, pLabels);
-	wchar_t** pValues;
-	GAME_ALLOC_ARR(wchar_t*, CSF_MAX_ENTRIES, pValues);
-	char** pExtraValues;
-	GAME_ALLOC_ARR(char*, CSF_MAX_ENTRIES, pExtraValues);
-
-	for(int i = 0; i < CSF_MAX_ENTRIES; i++) {
-		*pLabels[i].Name = 0;
-		pLabels[i].NumValues = 0;
-		pLabels[i].FirstValueIndex = 0;
-
-		pValues[i] = nullptr;
-		pExtraValues[i] = nullptr;
-	}
-
-	StringTable::Labels = pLabels;
-	StringTable::Values = pValues;
-	StringTable::ExtraValues = pExtraValues;
+	StringTable::Labels = GameCreateArray<CSFLabel>(CSF_MAX_ENTRIES);
+	StringTable::Values = GameCreateArray<wchar_t*>(CSF_MAX_ENTRIES);
+	StringTable::ExtraValues = GameCreateArray<char*>(CSF_MAX_ENTRIES);
 
 	return 0x7348BC;
 }
@@ -137,14 +119,14 @@ DEFINE_HOOK(734A5F, CSF_AddOrOverrideLabel, 5)
 			wchar_t** pValues = StringTable::Values;
 			if(pValues[idx])
 			{
-				GAME_DEALLOC(pValues[idx]);
+				GameDelete(pValues[idx]);
 				pValues[idx] = nullptr;
 			}
 
 			char** pExtraValues = StringTable::ExtraValues;
 			if(pExtraValues[idx])
 			{
-				GAME_DEALLOC(pExtraValues[idx]);
+				GameDelete(pExtraValues[idx]);
 				pExtraValues[idx] = nullptr;
 			}
 

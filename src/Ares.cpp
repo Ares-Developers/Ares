@@ -47,13 +47,13 @@ size_t MemMap::Total;
 void Ares::InitOwnResources()
 {
 	UninitOwnResources();
-	GAME_ALLOC(MixFileClass, aresMIX, "ares.mix");
+	aresMIX = GameCreate<MixFileClass>("ares.mix");
 }
 
 void Ares::UninitOwnResources()
 {
 	if(aresMIX) {
-		GAME_DEALLOC(aresMIX);
+		GameDelete(aresMIX);
 		aresMIX = nullptr;
 	}
 }
@@ -149,18 +149,16 @@ void __stdcall Ares::ExeTerminate()
 }
 
 CCINIClass* Ares::OpenConfig(const char* file) {
-	CCINIClass* pINI = nullptr;
-	GAME_ALLOC(CCINIClass, pINI);
+	CCINIClass* pINI = GameCreate<CCINIClass>();
 
 	if(pINI) {
-		CCFileClass *cfg = nullptr;
-		GAME_ALLOC(CCFileClass, cfg, file);
+		CCFileClass* cfg = GameCreate<CCFileClass>(file);
 
 		if(cfg) {
 			if(cfg->Exists(nullptr)) {
 				pINI->ReadCCFile(cfg);
 			}
-			GAME_DEALLOC(cfg);
+			GameDelete(cfg);
 		}
 	}
 
@@ -222,7 +220,7 @@ void Ares::CheckProcessorFeatures() {
 
 void Ares::CloseConfig(CCINIClass** ppINI) {
 	if(ppINI && *ppINI) {
-		GAME_DEALLOC(*ppINI);
+		GameDelete(*ppINI);
 		*ppINI = nullptr;
 	}
 }
@@ -284,7 +282,7 @@ void Ares::SendPDPlane(HouseClass* pOwner, CellClass* pTarget, AircraftTypeClass
 			pPlane->NextMission();
 		} else {
 			if(pPlane) {
-				GAME_DEALLOC(pPlane);
+				GameDelete(pPlane);
 			}
 		}
 	}
@@ -379,9 +377,8 @@ DEFINE_HOOK(533058, CommandClassCallback_Register, 7)
 {
 	Ares::RegisterCommands();
 
-	DWORD *D;
-	GAME_ALLOC(DWORD, D);
-	R->EAX<DWORD *>(D);	//Allocate SetUnitTabCommandClass
+	DWORD* D = GameCreate<DWORD>();
+	R->EAX(D);	//Allocate SetUnitTabCommandClass
 	return 0x533062;
 }
 

@@ -141,8 +141,7 @@ bool Container<WarheadTypeExt>::Load(WarheadTypeClass *pThis, IStream *pStm) {
 */
 void WarheadTypeExt::ExtData::applyRipples(CoordStruct *coords) {
 	if (this->Ripple_Radius) {
-		IonBlastClass *IB;
-		GAME_ALLOC(IonBlastClass, IB, *coords);
+		IonBlastClass *IB = GameCreate<IonBlastClass>(*coords);
 		IB->DisableIonBeam = TRUE;
 		WarheadTypeExt::IonExt[IB] = this;
 	}
@@ -276,8 +275,7 @@ bool WarheadTypeExt::ExtData::applyPermaMC(CoordStruct *coords, HouseClass* Owne
 			CoordStruct XYZ = *coords;
 			XYZ.Z += pType->MindControlRingOffset;
 
-			AnimClass *MCAnim;
-			GAME_ALLOC(AnimClass, MCAnim, RulesClass::Instance->PermaControlledAnimationType, &XYZ);
+			AnimClass *MCAnim = GameCreate<AnimClass>(RulesClass::Instance->PermaControlledAnimationType, &XYZ);
 			AnimClass *oldMC = pTarget->MindControlRingAnim;
 			if (oldMC) {
 				oldMC->UnInit();

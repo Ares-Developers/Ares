@@ -75,14 +75,14 @@ DEFINE_HOOK(4B93BD, ScenarioClass_GenerateDropshipLoadout_FreeAnims, 0)
 {
 	GET_STACK(SHPStruct *, pBackground, 0xAC);
 	if(pBackground) {
-		GAME_DEALLOC(pBackground);
+		GameDelete(pBackground);
 	}
 
 	LEA_STACK(SHPStruct **, pSwipeAnims, 0x290);
 
 	for(auto i = 0; i < 4; ++i) {
 		if(auto pAnim = pSwipeAnims[i]) {
-			GAME_DEALLOC(pAnim);
+			GameDelete(pAnim);
 		}
 	}
 

@@ -60,12 +60,11 @@ bool SW_ChronoWarp::Activate(SuperClass* pThis, const CellStruct &Coords, bool I
 			// Update animations
 			SWTypeExt::ClearChronoAnim(pThis);
 
-			AnimClass *pAnim = nullptr;
 			if(auto pAnimType = pData->Chronosphere_BlastSrc.Get(RulesClass::Instance->ChronoBlast)) {
-				GAME_ALLOC(AnimClass, pAnim, pAnimType, &coordsSource);
+				GameCreate<AnimClass>(pAnimType, &coordsSource);
 			}
 			if(auto pAnimType = pData->Chronosphere_BlastDest.Get(RulesClass::Instance->ChronoBlastDest)) {
-				GAME_ALLOC(AnimClass, pAnim, pAnimType, &coordsTarget);
+				GameCreate<AnimClass>(pAnimType, &coordsTarget);
 			}
 
 			DynamicVectorClass<ChronoWarpStateMachine::ChronoWarpContainer> RegisteredBuildings;
@@ -194,7 +193,7 @@ bool SW_ChronoWarp::Activate(SuperClass* pThis, const CellStruct &Coords, bool I
 					// destroy the building light source
 					if(pBld->LightSource) {
 						pBld->LightSource->Deactivate();
-						GAME_DEALLOC(pBld->LightSource);
+						GameDelete(pBld->LightSource);
 						pBld->LightSource = nullptr;
 					}
 

@@ -15,7 +15,7 @@ DEFINE_HOOK(420960, AlphaShapeClass_CTOR, 5)
 	GET(AlphaShapeClass*, pAlpha, ECX);
 	auto i = TechnoExt::AlphaExt.find(pSource);
 	if(i != TechnoExt::AlphaExt.end()) {
-		GAME_DEALLOC(i->second);
+		GameDelete(i->second);
 		// i is invalid now.
 	}
 	TechnoExt::AlphaExt[pSource] = pAlpha;
@@ -53,7 +53,7 @@ DEFINE_HOOK(5F3D65, ObjectClass_DTOR, 6)
 	GET(ObjectClass*, pThis, ESI);
 	auto i = TechnoExt::AlphaExt.find(pThis);
 	if(i != TechnoExt::AlphaExt.end()) {
-		GAME_DEALLOC(i->second);
+		GameDelete(i->second);
 		// i is invalid now.
 	}
 	return 0;
@@ -125,7 +125,7 @@ void UpdateAlphaShape(ObjectClass* pSource) {
 	if(Inactive) {
 		auto i = TechnoExt::AlphaExt.find(pSource);
 		if(i != TechnoExt::AlphaExt.end()) {
-			GAME_DEALLOC(i->second);
+			GameDelete(i->second);
 			// i is invalid now.
 		}
 		return;
@@ -136,8 +136,7 @@ void UpdateAlphaShape(ObjectClass* pSource) {
 		TacticalClass::Instance->CoordsToClient(&XYZ, &xy);
 		xy += off;
 		++Unsorted::IKnowWhatImDoing;
-		AlphaShapeClass* placeholder;
-		GAME_ALLOC(AlphaShapeClass, placeholder, pSource, xy.X, xy.Y);
+		GameCreate<AlphaShapeClass>(pSource, xy.X, xy.Y);
 		--Unsorted::IKnowWhatImDoing;
 		//int Margin = 40;
 		RectangleStruct Dirty = {xy.X - ScreenArea->X, xy.Y - ScreenArea->Y, pImage->Width, pImage->Height};

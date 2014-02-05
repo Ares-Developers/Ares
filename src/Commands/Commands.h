@@ -58,8 +58,7 @@ public:
 // will the templates ever stop? :D
 template <typename T>
 void MakeCommand() {
-	T* command;
-	GAME_ALLOC(T, command);
+	T* command = GameCreate<T>();
 	CommandClass::Array->AddItem(command);
 };
 

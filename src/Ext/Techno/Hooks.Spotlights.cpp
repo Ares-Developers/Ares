@@ -30,8 +30,7 @@ DEFINE_HOOK(6F6D0E, TechnoClass_Put_1, 7)
 	TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(T->GetTechnoType());
 
 	if(pTypeData->Is_Spotlighted) {
-		BuildingLightClass *placeholder;
-		GAME_ALLOC(BuildingLightClass, placeholder, T);
+		BuildingLightClass *placeholder = GameCreate<BuildingLightClass>(T);
 		if(BuildingClass * B = specific_cast<BuildingClass *>(T)) {
 			if(B->Spotlight) {
 				delete B->Spotlight;
@@ -49,8 +48,7 @@ DEFINE_HOOK(6F6F20, TechnoClass_Put_2, 6)
 	TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(T->GetTechnoType());
 
 	if(pTypeData->Is_Spotlighted) {
-		BuildingLightClass *placeholder;
-		GAME_ALLOC(BuildingLightClass, placeholder, T);
+		BuildingLightClass *placeholder = GameCreate<BuildingLightClass>(T);
 		if(BuildingClass * B = specific_cast<BuildingClass *>(T)) {
 			if(B->Spotlight) {
 				delete B->Spotlight;
@@ -97,7 +95,7 @@ DEFINE_HOOK(6F4500, TechnoClass_DTOR_Spotlight, 5)
 	GET(TechnoClass*, pItem, ECX);
 	hash_SpotlightExt::iterator i = TechnoExt::SpotlightExt.find(pItem);
 	if(i != TechnoExt::SpotlightExt.end()) {
-		GAME_DEALLOC(i->second);
+		GameDelete(i->second);
 		TechnoExt::SpotlightExt.erase(i);
 	}
 	return 0;
@@ -123,11 +121,10 @@ DEFINE_HOOK(70FBE3, TechnoClass_Activate, 5)
 		hash_SpotlightExt::iterator i = TechnoExt::SpotlightExt.find(T);
 		if(i != TechnoExt::SpotlightExt.end()) {
 			TechnoExt::SpotlightExt.erase(i);
-			GAME_DEALLOC(i->second);
+			GameDelete(i->second);
 		}
 		++Unsorted::IKnowWhatImDoing;
-		BuildingLightClass *placeholder;
-		GAME_ALLOC(BuildingLightClass, placeholder, T);
+		BuildingLightClass *placeholder = GameCreate<BuildingLightClass>(T);
 		if(BuildingClass * B = specific_cast<BuildingClass *>(T)) {
 			if(B->Spotlight) {
 				delete B->Spotlight;
@@ -148,7 +145,7 @@ DEFINE_HOOK(70FC97, TechnoClass_Deactivate, 6)
 		hash_SpotlightExt::iterator i = TechnoExt::SpotlightExt.find(T);
 		if(i != TechnoExt::SpotlightExt.end()) {
 //			TechnoExt::SpotlightExt.erase(i);
-			GAME_DEALLOC(i->second);
+			GameDelete(i->second);
 		}
 	}
 	return 0;

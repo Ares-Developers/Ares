@@ -76,7 +76,7 @@ DEFINE_HOOK(5F9070, ObjectTypeClass_Load2DArt, 0)
 
 	if(pType->ImageIsOutdated) {
 		if(pType->Image) {
-			GAME_DEALLOC(pType->Image);
+			GameDelete(pType->Image);
 		}
 	}
 	pType->Image = nullptr;

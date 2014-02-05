@@ -46,8 +46,7 @@ bool SW_GenericWarhead::Activate(SuperClass* pThis, const CellStruct &Coords, bo
 	if(!pWHExt->applyPermaMC(&coords, pThis->Owner, Cell->GetContent())) {
 		MapClass::DamageArea(&coords, damage, Firer, pWarhead, true, pThis->Owner);
 		if(AnimTypeClass * DamageAnimType = MapClass::SelectDamageAnimation(damage, pWarhead, Cell->LandType, &coords)) {
-			AnimClass *DamageAnim;
-			GAME_ALLOC(AnimClass, DamageAnim, DamageAnimType, &coords);
+			GameCreate<AnimClass>(DamageAnimType, &coords);
 		}
 		MapClass::FlashbangWarheadAt(damage, pWarhead, coords, false, 0);
 	}

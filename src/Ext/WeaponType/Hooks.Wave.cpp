@@ -22,8 +22,7 @@ DEFINE_HOOK(6FF5F5, TechnoClass_Fire, 6)
 	LEA_STACK(CoordStruct *, xyzSrc, 0x44);
 	LEA_STACK(CoordStruct *, xyzTgt, 0x88);
 
-	WaveClass *Wave;
-	GAME_ALLOC(WaveClass, Wave, xyzSrc, xyzTgt, Owner, pData->Wave_IsBigLaser ? 2 : 1, Target);
+	WaveClass *Wave = GameCreate<WaveClass>(xyzSrc, xyzTgt, Owner, pData->Wave_IsBigLaser ? 2 : 1, Target);
 
 	WeaponTypeExt::WaveExt[Wave] = pData;
 	Owner->Wave = Wave;

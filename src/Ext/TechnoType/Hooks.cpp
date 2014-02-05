@@ -11,8 +11,7 @@
 
 DEFINE_HOOK(732D10, TacticalClass_CollectSelectedIDs, 5)
 {
-	DynamicVectorClass<const char*> *pNames = nullptr;
-	GAME_ALLOC(DynamicVectorClass<const char*>, pNames);
+	auto pNames = GameCreate<DynamicVectorClass<const char*>>();
 
 	auto Add = [pNames](TechnoTypeClass* pType) {
 		if(auto pExt = TechnoTypeExt::ExtMap.Find(pType)) {

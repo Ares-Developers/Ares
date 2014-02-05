@@ -1148,7 +1148,7 @@ DEFINE_HOOK(5F77F0, ObjectTypeClass_UnloadPipsSHP, 5)
 
 	for(int i = 0; i < 4; ++i) {
 		if(pAllocated[i] && pShp[i]) {
-			GAME_DEALLOC(pShp[i]);
+			GameDelete(pShp[i]);
 			pAllocated[i] = false;
 		}
 	}

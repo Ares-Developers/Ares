@@ -472,7 +472,7 @@ void EMPulse::UpdateSparkleAnim(TechnoClass * Techno) {
 	if (pData) {
 		if (Techno->IsUnderEMP()) {
 			if (!pData->EMPSparkleAnim && RulesClass::Instance->EMPulseSparkles) {
-				GAME_ALLOC(AnimClass, pData->EMPSparkleAnim, RulesClass::Instance->EMPulseSparkles, &Techno->Location);
+				pData->EMPSparkleAnim = GameCreate<AnimClass>(RulesClass::Instance->EMPulseSparkles, &Techno->Location);
 				pData->EMPSparkleAnim->SetOwnerObject(Techno);
 			}
 		} else {
