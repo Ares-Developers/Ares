@@ -10,6 +10,8 @@
 #include <CCFileClass.h>
 #include <StringTable.h>
 
+#include <unordered_map>
+
 #define CSF_MAX_ENTRIES 20000
 
 class CSFLoader
@@ -20,7 +22,7 @@ public:
 
 	static void LoadAdditionalCSF(const char* fileName);
 
-	static std::hash_map<std::string, const CSFString*> DynamicStrings;
+	static std::unordered_map<std::string, const CSFString*> DynamicStrings;
 
 	static const CSFString* FindDynamic(const char* name);
 	static const wchar_t* GetDynamicString(const char* name, const wchar_t* pattern, const char* def);

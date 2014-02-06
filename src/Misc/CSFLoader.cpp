@@ -5,7 +5,7 @@
 
 int CSFLoader::CSFCount = 0;
 int CSFLoader::NextValueIndex = 0;
-std::hash_map<std::string, const CSFString*> CSFLoader::DynamicStrings;
+std::unordered_map<std::string, const CSFString*> CSFLoader::DynamicStrings;
 
 void CSFLoader::LoadAdditionalCSF(const char *pFileName)
 {
