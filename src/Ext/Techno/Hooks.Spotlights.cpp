@@ -33,7 +33,7 @@ DEFINE_HOOK(6F6D0E, TechnoClass_Put_1, 7)
 		BuildingLightClass *placeholder = GameCreate<BuildingLightClass>(T);
 		if(BuildingClass * B = specific_cast<BuildingClass *>(T)) {
 			if(B->Spotlight) {
-				delete B->Spotlight;
+				GameDelete(B->Spotlight);
 			}
 			B->Spotlight = placeholder;
 		}
@@ -51,7 +51,7 @@ DEFINE_HOOK(6F6F20, TechnoClass_Put_2, 6)
 		BuildingLightClass *placeholder = GameCreate<BuildingLightClass>(T);
 		if(BuildingClass * B = specific_cast<BuildingClass *>(T)) {
 			if(B->Spotlight) {
-				delete B->Spotlight;
+				GameDelete(B->Spotlight);
 			}
 			B->Spotlight = placeholder;
 		}
@@ -96,7 +96,6 @@ DEFINE_HOOK(6F4500, TechnoClass_DTOR_Spotlight, 5)
 	hash_SpotlightExt::iterator i = TechnoExt::SpotlightExt.find(pItem);
 	if(i != TechnoExt::SpotlightExt.end()) {
 		GameDelete(i->second);
-		TechnoExt::SpotlightExt.erase(i);
 	}
 	return 0;
 }
@@ -120,14 +119,13 @@ DEFINE_HOOK(70FBE3, TechnoClass_Activate, 5)
 	if(pTypeData->Is_Spotlighted) {
 		hash_SpotlightExt::iterator i = TechnoExt::SpotlightExt.find(T);
 		if(i != TechnoExt::SpotlightExt.end()) {
-			TechnoExt::SpotlightExt.erase(i);
 			GameDelete(i->second);
 		}
 		++Unsorted::IKnowWhatImDoing;
 		BuildingLightClass *placeholder = GameCreate<BuildingLightClass>(T);
 		if(BuildingClass * B = specific_cast<BuildingClass *>(T)) {
 			if(B->Spotlight) {
-				delete B->Spotlight;
+				GameDelete(B->Spotlight);
 			}
 			B->Spotlight = placeholder;
 		}
@@ -144,7 +142,6 @@ DEFINE_HOOK(70FC97, TechnoClass_Deactivate, 6)
 	if(pTypeData->Is_Spotlighted) {
 		hash_SpotlightExt::iterator i = TechnoExt::SpotlightExt.find(T);
 		if(i != TechnoExt::SpotlightExt.end()) {
-//			TechnoExt::SpotlightExt.erase(i);
 			GameDelete(i->second);
 		}
 	}
