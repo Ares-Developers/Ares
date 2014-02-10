@@ -137,7 +137,7 @@ bool TechnoExt::EjectSurvivor(FootClass *Survivor, CoordStruct *loc, bool Select
 		// HouseClass::CreateParadrop does this when building passengers for a paradrop... it might be a wise thing to mimic!
 		Survivor->Remove();
 
-		success = Survivor->SpawnParachuted(loc);
+		success = Survivor->SpawnParachuted(*loc);
 		chuted = true;
 	} else {
 		loc->Z = floorZ;
