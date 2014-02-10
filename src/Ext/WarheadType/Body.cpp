@@ -275,7 +275,7 @@ bool WarheadTypeExt::ExtData::applyPermaMC(CoordStruct *coords, HouseClass* Owne
 			CoordStruct XYZ = *coords;
 			XYZ.Z += pType->MindControlRingOffset;
 
-			AnimClass *MCAnim = GameCreate<AnimClass>(RulesClass::Instance->PermaControlledAnimationType, &XYZ);
+			AnimClass *MCAnim = GameCreate<AnimClass>(RulesClass::Instance->PermaControlledAnimationType, XYZ);
 			AnimClass *oldMC = pTarget->MindControlRingAnim;
 			if (oldMC) {
 				oldMC->UnInit();

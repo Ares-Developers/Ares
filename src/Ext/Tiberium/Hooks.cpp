@@ -41,7 +41,7 @@ DEFINE_HOOK(489270, CellChainReact, 5)
 
 			// create an explosion
 			if(auto pType = MapClass::SelectDamageAnimation(4 * damage, pWarhead, pCell->LandType, &crd)) {
-				GameCreate<AnimClass>(pType, &crd, 0, 1, 0x600, 0);
+				GameCreate<AnimClass>(pType, crd, 0, 1, 0x600, 0);
 			}
 
 			// damage the area, without affecting tiberium
@@ -57,7 +57,7 @@ DEFINE_HOOK(489270, CellChainReact, 5)
 							int delay = ScenarioClass::Instance->Random.RandomRanged(minDelay, maxDelay);
 							crd = pNeighbour->GetCoords();
 
-							GameCreate<AnimClass>(pType, &crd, delay, 1, 0x600, 0);
+							GameCreate<AnimClass>(pType, crd, delay, 1, 0x600, 0);
 						}
 					}
 				}

@@ -693,7 +693,7 @@ void BuildingExt::ExtData::UpdateFirewall() {
 			XYZ.X -= 768;
 			XYZ.Y -= 768;
 			if(AnimTypeClass *FSA = AnimTypeClass::Find("FSIDLE")) {
-				B->FirestormAnim = GameCreate<AnimClass>(FSA, &XYZ);
+				B->FirestormAnim = GameCreate<AnimClass>(FSA, XYZ);
 			}
 		}
 	}
@@ -716,7 +716,7 @@ void BuildingExt::ExtData::ImmolateVictim(ObjectClass * Victim) {
 		Victim->ReceiveDamage(&Damage, 0, RulesClass::Instance->C4Warhead/* todo */, nullptr, true, false, pThis->Owner);
 
 		if(AnimTypeClass *FSAnim = AnimTypeClass::Find(Victim->IsInAir() ? "FSAIR" : "FSGRND")) {
-			GameCreate<AnimClass>(FSAnim, &XYZ);
+			GameCreate<AnimClass>(FSAnim, XYZ);
 		}
 
 	}

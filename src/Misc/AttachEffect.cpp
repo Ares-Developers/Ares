@@ -122,7 +122,7 @@ void AttachEffectClass::CreateAnim(TechnoClass *Owner) {
 			this->KillAnim();
 		}
 
-		this->Animation = GameCreate<AnimClass>(this->Type->AnimType, &Owner->Location);
+		this->Animation = GameCreate<AnimClass>(this->Type->AnimType, Owner->Location);
 		if (auto pAnim = this->Animation) {
 			pAnim->SetOwnerObject(Owner);
 			pAnim->RemainingIterations = 0xFFu;

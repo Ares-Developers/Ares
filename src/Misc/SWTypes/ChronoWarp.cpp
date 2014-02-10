@@ -61,10 +61,10 @@ bool SW_ChronoWarp::Activate(SuperClass* pThis, const CellStruct &Coords, bool I
 			SWTypeExt::ClearChronoAnim(pThis);
 
 			if(auto pAnimType = pData->Chronosphere_BlastSrc.Get(RulesClass::Instance->ChronoBlast)) {
-				GameCreate<AnimClass>(pAnimType, &coordsSource);
+				GameCreate<AnimClass>(pAnimType, coordsSource);
 			}
 			if(auto pAnimType = pData->Chronosphere_BlastDest.Get(RulesClass::Instance->ChronoBlastDest)) {
-				GameCreate<AnimClass>(pAnimType, &coordsTarget);
+				GameCreate<AnimClass>(pAnimType, coordsTarget);
 			}
 
 			DynamicVectorClass<ChronoWarpStateMachine::ChronoWarpContainer> RegisteredBuildings;

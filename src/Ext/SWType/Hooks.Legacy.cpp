@@ -45,7 +45,7 @@ DEFINE_HOOK(53B080, PsyDom_Fire, 5) {
 		if(AnimTypeClass* pAnimType = pData->Dominator_SecondAnim.Get(RulesClass::Instance->DominatorSecondAnim)) {
 			CoordStruct animCoords = coords;
 			animCoords.Z += pData->Dominator_SecondAnimHeight;
-			PsyDom::Anim = GameCreate<AnimClass>(pAnimType, &animCoords);
+			PsyDom::Anim = GameCreate<AnimClass>(pAnimType, animCoords);
 		}
 
 		// kill
@@ -123,7 +123,7 @@ DEFINE_HOOK(53B080, PsyDom_Fire, 5) {
 				if(AnimTypeClass* pAnimType = pData->Dominator_ControlAnim.Get(RulesClass::Instance->PermaControlledAnimationType)) {
 					CoordStruct animCoords = pTechno->GetCoords();
 					animCoords.Z += pType->MindControlRingOffset;
-					pTechno->MindControlRingAnim = GameCreate<AnimClass>(pAnimType, &animCoords);
+					pTechno->MindControlRingAnim = GameCreate<AnimClass>(pAnimType, animCoords);
 					if(pTechno->MindControlRingAnim) {
 						pTechno->MindControlRingAnim->SetOwnerObject(pTechno);
 					}
@@ -546,7 +546,7 @@ DEFINE_HOOK(53A140, LightningStorm_Strike, 7) {
 			Coords.Z += pData->Weather_CloudHeight;
 
 			// create the cloud and do some book keeping.
-			if(auto pAnim = GameCreate<AnimClass>(pAnimType, &Coords)) {
+			if(auto pAnim = GameCreate<AnimClass>(pAnimType, Coords)) {
 				LightningStorm::CloudsManifesting->AddItem(pAnim);
 				LightningStorm::CloudsPresent->AddItem(pAnim);
 			}
@@ -579,7 +579,7 @@ DEFINE_HOOK(53A300, LightningStorm_Strike2, 5) {
 				DWORD rnd = ScenarioClass::Instance->Random.Random();
 				AnimTypeClass* pAnimType = it.at(rnd % it.size());
 
-				if(auto pAnim = GameCreate<AnimClass>(pAnimType, &Coords)) {
+				if(auto pAnim = GameCreate<AnimClass>(pAnimType, Coords)) {
 					LightningStorm::BoltsPresent->AddItem(pAnim);
 				}
 			}
@@ -633,7 +633,7 @@ DEFINE_HOOK(53A300, LightningStorm_Strike2, 5) {
 
 				// fancy stuff if damage is dealt
 				AnimTypeClass* pAnimType = MapClass::SelectDamageAnimation(damage, pWarhead, pCell->LandType, &Coords);
-				GameCreate<AnimClass>(pAnimType, &Coords);
+				GameCreate<AnimClass>(pAnimType, Coords);
 			}
 
 			// has the last target been destroyed?
@@ -651,7 +651,7 @@ DEFINE_HOOK(53A300, LightningStorm_Strike2, 5) {
 						DWORD rnd = ScenarioClass::Instance->Random.Random();
 						AnimTypeClass *pAnimType = it.at(rnd % it.size());
 
-						GameCreate<AnimClass>(pAnimType, &Coords);
+						GameCreate<AnimClass>(pAnimType, Coords);
 					}
 				}
 			}
