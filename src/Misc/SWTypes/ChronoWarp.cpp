@@ -49,12 +49,10 @@ bool SW_ChronoWarp::Activate(SuperClass* pThis, const CellStruct &Coords, bool I
 			CellClass *pCellSource = MapClass::Instance->GetCellAt(pSource->ChronoMapCoords);
 			CellClass *pCellTarget = MapClass::Instance->GetCellAt(Coords);
 
-			CoordStruct coordsSource;
-			pCellSource->GetCoordsWithBridge(&coordsSource);
+			CoordStruct coordsSource = pCellSource->GetCoordsWithBridge();
 			coordsSource.Z += pData->SW_AnimHeight;
 
-			CoordStruct coordsTarget;
-			pCellTarget->GetCoordsWithBridge(&coordsTarget);
+			CoordStruct coordsTarget = pCellTarget->GetCoordsWithBridge();
 			coordsTarget.Z += pData->SW_AnimHeight;
 
 			// Update animations
@@ -213,9 +211,9 @@ bool SW_ChronoWarp::Activate(SuperClass* pThis, const CellStruct &Coords, bool I
 				CellClass* pCellUnitTarget = MapClass::Instance->GetCellAt(cellUnitTarget);
 				
 				// move the unit to the new position
-				coordsUnitTarget.X = coordsUnitSource.X + (Coords.X - pSource->ChronoMapCoords.X) * 256;
-				coordsUnitTarget.Y = coordsUnitSource.Y + (Coords.Y - pSource->ChronoMapCoords.Y) * 256;
-				pCellUnitTarget->FixHeight(&coordsUnitTarget);
+				coordsUnitTarget.X += (Coords.X - pSource->ChronoMapCoords.X) * 256;
+				coordsUnitTarget.Y += (Coords.Y - pSource->ChronoMapCoords.Y) * 256;
+				coordsUnitTarget = pCellUnitTarget->FixHeight(coordsUnitTarget);
 
 				if(FootClass *pFoot = generic_cast<FootClass*>(pTechno)) {
 					// clean up the unit's current cell
@@ -323,8 +321,7 @@ void ChronoWarpStateMachine::Update() {
 					do {
 						CellStruct cellNew = CellSpread::GetCell(idx) + Container.target;
 						CellClass* pNewCell = MapClass::Instance->GetCellAt(cellNew);
-						CoordStruct coordsNew;
-						pNewCell->GetCoordsWithBridge(&coordsNew);
+						CoordStruct coordsNew = pNewCell->GetCoordsWithBridge();
 
 						if(pBld->Type->CanCreateHere(&cellNew, 0)) {
 							if(pBld->Put(coordsNew, Direction::North)) {

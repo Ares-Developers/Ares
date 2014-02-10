@@ -526,9 +526,8 @@ DEFINE_HOOK(53A140, LightningStorm_Strike, 7) {
 		SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pType);
 
 		// get center of cell coords
-		CoordStruct Coords;
 		CellClass* pCell = MapClass::Instance->GetCellAt(Cell);
-		pCell->GetCoordsWithBridge(&Coords);
+		CoordStruct Coords = pCell->GetCoordsWithBridge();
 		
 		// create a cloud animation
 		if(Coords != CoordStruct::Empty) {
@@ -570,7 +569,7 @@ DEFINE_HOOK(53A300, LightningStorm_Strike2, 5) {
 
 		// get center of cell coords
 		CellClass* pCell = MapClass::Instance->GetCellAt(Coords);
-		pCell->GetCoordsWithBridge(&Coords);
+		Coords = pCell->GetCoordsWithBridge();
 
 		if(Coords != CoordStruct::Empty) {
 

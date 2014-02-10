@@ -84,9 +84,8 @@ bool SW_GeneticMutator::Activate(SuperClass* pThis, const CellStruct &Coords, bo
 	SuperWeaponTypeClass *pSW = pThis->Type;
 	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSW);
 
-	CoordStruct coords;
 	CellClass *Cell = MapClass::Instance->GetCellAt(Coords);
-	Cell->GetCoordsWithBridge(&coords);
+	CoordStruct coords = Cell->GetCoordsWithBridge();
 	
 	if(pThis->IsCharged) {
 		if(pData->Mutate_Explosion.Get(RulesClass::Instance->MutateExplosion)) {

@@ -358,8 +358,7 @@ bool SWTypeExt::Launch(SuperClass* pThis, NewSWType* pSW, const CellStruct &Coor
 
 			CellClass *pTarget = MapClass::Instance->GetCellAt(Coords);
 
-			CoordStruct coords;
-			pTarget->GetCoordsWithBridge(&coords);
+			CoordStruct coords = pTarget->GetCoordsWithBridge();
 
 			auto pAnim = pData->GetAnim();
 			if(pAnim && !(flags & SuperWeaponFlags::NoAnim)) {

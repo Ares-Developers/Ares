@@ -96,8 +96,7 @@ bool SW_NuclearMissile::Activate(SuperClass* pThis, const CellStruct &Coords, bo
 		if(SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pType)) {
 
 			CellClass* pCell = MapClass::Instance->GetCellAt(Coords);
-			CoordStruct target;
-			pCell->GetCoordsWithBridge(&target);
+			CoordStruct target = pCell->GetCoordsWithBridge();
 
 			// the nuke has two ways to fire. first the granted way used by nukes
 			// collected from crates. second, the normal way firing from a silo.

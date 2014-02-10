@@ -81,8 +81,7 @@ void UnitDeliveryStateMachine::PlaceUnits() {
 		do {
 			CellStruct tmpCell = CellSpread::GetCell(cellIdx) + this->Coords;
 			if(CellClass *cell = MapClass::Instance->TryGetCellAt(tmpCell)) {
-				CoordStruct XYZ;
-				cell->GetCoordsWithBridge(&XYZ);
+				CoordStruct XYZ = cell->GetCoordsWithBridge();
 
 				bool validCell = true;
 				if(cell->OverlayTypeIndex != -1) {

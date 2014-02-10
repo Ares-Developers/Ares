@@ -1011,9 +1011,8 @@ DEFINE_HOOK(700E47, TechnoClass_CanDeploySlashUnload_Immobile, A)
 {
 	GET(UnitClass*, pThis, ESI);
 
-	CoordStruct crd;
 	CellClass * pCell = pThis->GetCell();
-	pCell->GetCoordsWithBridge(&crd);
+	CoordStruct crd = pCell->GetCoordsWithBridge();
 
 	// recreate replaced check, and also disallow if unit is still warping or dropping in.
 	if(pThis->IsUnderEMP() || pThis->IsWarpingIn() || pThis->IsFallingDown) {

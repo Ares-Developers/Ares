@@ -19,9 +19,8 @@ bool SW_GenericWarhead::Activate(SuperClass* pThis, const CellStruct &Coords, bo
 		return 0;
 	}
 
-	CoordStruct coords;
 	CellClass *Cell = MapClass::Instance->GetCellAt(Coords);
-	Cell->GetCoordsWithBridge(&coords);
+	CoordStruct coords = Cell->GetCoordsWithBridge();
 
 	auto pWHExt = WarheadTypeExt::ExtMap.Find(pWarhead);
 
