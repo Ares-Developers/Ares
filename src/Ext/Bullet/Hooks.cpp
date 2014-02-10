@@ -60,7 +60,7 @@ DEFINE_HOOK(46867F, BulletClass_SetMovement_Parachute, 5)
 //		Debug::Log("Bullet trajectory is (%lf, %lf, %lf)\n", *Trajectory);
 		Bullet->IsABomb = 1;
 	} else {
-		result = Bullet->Put(XYZ, 0);
+		result = Bullet->Put(*XYZ, 0);
 	}
 
 	R->EAX(result);

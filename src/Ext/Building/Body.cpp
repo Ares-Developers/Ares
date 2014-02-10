@@ -98,7 +98,7 @@ bool BuildingExt::ExtData::RubbleYell(bool beingRepaired) {
 		newState->Health = static_cast<int>(std::max((newState->Type->Strength / 100), 1)); // see description above
 		newState->IsAlive = true; // assuming this is in the sense of "is not destroyed"
 		// Location should not be changed by removal
-		if(!newState->Put(&currentBuilding->Location, currentBuilding->Facing)) {
+		if(!newState->Put(currentBuilding->Location, currentBuilding->Facing)) {
 			Debug::Log("Advanced Rubble: Failed to place normal state on map!\n");
 			GameDelete(newState);
 			return false;
@@ -114,7 +114,7 @@ bool BuildingExt::ExtData::RubbleYell(bool beingRepaired) {
 
 		newState = specific_cast<BuildingClass *>(pTypeData->RubbleDestroyed->CreateObject(currentBuilding->Owner));
 		// Location should not be changed by removal
-		if(!newState->Put(&currentBuilding->Location, currentBuilding->Facing)) {
+		if(!newState->Put(currentBuilding->Location, currentBuilding->Facing)) {
 			Debug::Log("Advanced Rubble: Failed to place rubble state on map!\n");
 			GameDelete(newState);
 		}
@@ -366,7 +366,7 @@ void BuildingExt::buildLines(BuildingClass* theBuilding, CellStruct selectedCell
 					CoordStruct coordBuffer = CellClass::Cell2Coord(cellToBuildOn);
 
 					++Unsorted::IKnowWhatImDoing; // put the building there even if normal rules would deny - e.g. under units
-					bool Put = tempBuilding->Put(&coordBuffer, 0);
+					bool Put = tempBuilding->Put(coordBuffer, 0);
 					--Unsorted::IKnowWhatImDoing;
 
 					if(Put) {

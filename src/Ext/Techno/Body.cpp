@@ -141,7 +141,7 @@ bool TechnoExt::EjectSurvivor(FootClass *Survivor, CoordStruct *loc, bool Select
 		chuted = true;
 	} else {
 		loc->Z = floorZ;
-		success = Survivor->Put(loc, ScenarioClass::Instance->Random.RandomRanged(0, 7));
+		success = Survivor->Put(*loc, ScenarioClass::Instance->Random.RandomRanged(0, 7));
 	}
 	RET_UNLESS(success);
 	Survivor->Transporter = nullptr;
@@ -284,7 +284,7 @@ bool TechnoExt::SpawnVisceroid(CoordStruct &crd, ObjectTypeClass* pType, int cha
 				if(ObjectClass* pVisc = pType->CreateObject(pHouse)) {
 					++Unsorted::IKnowWhatImDoing;
 					ret = true;
-					if(!pVisc->Put(&crd, 0)) {
+					if(!pVisc->Put(crd, 0)) {
 						// opposed to TS, we clean up, though
 						// the mutex should make it happen.
 						pVisc->UnInit();

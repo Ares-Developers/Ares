@@ -104,7 +104,7 @@ void UnitDeliveryStateMachine::PlaceUnits() {
 
 				if(validCell) {
 					Item->OnBridge = cell->ContainsBridge();
-					if((Placed = Item->Put(&XYZ, (cellIdx & 7))) == true) {
+					if((Placed = Item->Put(XYZ, (cellIdx & 7))) == true) {
 						if(ItemBuilding) {
 							if(pData->SW_DeliverBuildups) {
 								ItemBuilding->DiscoveredBy(this->Super->Owner);

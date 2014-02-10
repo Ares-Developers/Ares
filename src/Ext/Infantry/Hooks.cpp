@@ -38,7 +38,7 @@ DEFINE_HOOK(519FAF, InfantryClass_UpdatePosition_EngineerRepairsFriendly, 6)
 		pThis->Remove();
 		if(!TargetExtData->RubbleYell(true)) {
 			++Unsorted::IKnowWhatImDoing;
-			Target->Put(&Target->Location, Target->Facing);
+			Target->Put(Target->Location, Target->Facing);
 			--Unsorted::IKnowWhatImDoing;
 			VoxClass::Play("EVA_CannotDeployHere");
 		}

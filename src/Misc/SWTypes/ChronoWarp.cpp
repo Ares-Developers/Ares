@@ -327,7 +327,7 @@ void ChronoWarpStateMachine::Update() {
 						pNewCell->GetCoordsWithBridge(&coordsNew);
 
 						if(pBld->Type->CanCreateHere(&cellNew, 0)) {
-							if(pBld->Put(&coordsNew, Direction::North)) {
+							if(pBld->Put(coordsNew, Direction::North)) {
 								success = true;
 								break;
 							}
@@ -338,7 +338,7 @@ void ChronoWarpStateMachine::Update() {
 					if(!success) {
 						// put it back where it was
 						++Unsorted::IKnowWhatImDoing;
-						pBld->Put(&pContainer.origin, Direction::North);
+						pBld->Put(pContainer.origin, Direction::North);
 						pBld->Place(false);
 						--Unsorted::IKnowWhatImDoing;
 					}
