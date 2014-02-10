@@ -246,7 +246,7 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 			Target->Locomotor->Force_Track(-1, CoordStruct::Empty);
 			CoordStruct coordsUnitSource = Target->GetCoords();
 			Target->Locomotor->Mark_All_Occupation_Bits(0);
-			Target->MarkAllOccupationBits(&coordsUnitSource);
+			Target->MarkAllOccupationBits(coordsUnitSource);
 			Target->ClearPlanningTokens(nullptr);
 			Target->Flashing.DurationRemaining = 0;
 

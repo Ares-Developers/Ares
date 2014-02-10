@@ -221,7 +221,7 @@ bool SW_ChronoWarp::Activate(SuperClass* pThis, const CellStruct &Coords, bool I
 					// clean up the unit's current cell
 					pFoot->Locomotor->Mark_All_Occupation_Bits(0);
 					pFoot->Locomotor->Force_Track(-1, coordsUnitSource);
-					pFoot->MarkAllOccupationBits(&coordsUnitSource);
+					pFoot->MarkAllOccupationBits(coordsUnitSource);
 					pFoot->FrozenStill = true;
 				
 					// piggyback the original locomotor onto a new teleport locomotor and
