@@ -288,7 +288,7 @@ void ChronoWarpStateMachine::Update() {
 	if(passed == 1) {
 		// redraw all buildings
 		for(int i=0; i<this->Buildings.Count; ++i) {
-			ChronoWarpContainer Container = this->Buildings.GetItem(i);
+			ChronoWarpContainer& Container = this->Buildings.Items[i];
 			if(Container.pBld) {
 				Container.pBld->UpdatePlacement(PlacementType::Redraw);
 			}
@@ -303,15 +303,15 @@ void ChronoWarpStateMachine::Update() {
 
 		// remove all buildings from the map at once
 		for(int i=0; i<buildings.Count; ++i) {
-			ChronoWarpContainer* pContainer = &buildings.Items[i];
-			pContainer->pBld->Remove();
-			pContainer->pBld->ActuallyPlacedOnMap = false;
+			ChronoWarpContainer& Container = buildings.Items[i];
+			Container.pBld->Remove();
+			Container.pBld->ActuallyPlacedOnMap = false;
 		}
 
 		// bring back all buildings
 		for(int i=0; i<buildings.Count; ++i) {
-			ChronoWarpContainer pContainer = buildings.GetItem(i);
-			if(BuildingClass* pBld = pContainer.pBld) {
+			ChronoWarpContainer& Container = buildings.Items[i];
+			if(BuildingClass* pBld = Container.pBld) {
 
 				if(!pBld->TemporalTargetingMe) {
 					// use some logic to place this unit on some other
@@ -321,7 +321,7 @@ void ChronoWarpStateMachine::Update() {
 					int count = CellSpread::NumCells(10);
 					int idx = 0;
 					do {
-						CellStruct cellNew = CellSpread::GetCell(idx) + pContainer.target;
+						CellStruct cellNew = CellSpread::GetCell(idx) + Container.target;
 						CellClass* pNewCell = MapClass::Instance->GetCellAt(cellNew);
 						CoordStruct coordsNew;
 						pNewCell->GetCoordsWithBridge(&coordsNew);
@@ -333,12 +333,12 @@ void ChronoWarpStateMachine::Update() {
 							}
 						}
 						++idx;
-					} while(pContainer.isVehicle && (idx<count));
+					} while(Container.isVehicle && (idx<count));
 
 					if(!success) {
 						// put it back where it was
 						++Unsorted::IKnowWhatImDoing;
-						pBld->Put(pContainer.origin, Direction::North);
+						pBld->Put(Container.origin, Direction::North);
 						pBld->Place(false);
 						--Unsorted::IKnowWhatImDoing;
 					}
@@ -356,7 +356,7 @@ void ChronoWarpStateMachine::Update() {
 					if(!success) {
 						if(SWTypeExt::ExtData *pExt = SWTypeExt::ExtMap.Find(this->Super->Type)) {
 							// destroy (buildings only if they are supposed to)
-							if(pContainer.isVehicle || pExt->Chronosphere_BlowUnplaceable) {
+							if(Container.isVehicle || pExt->Chronosphere_BlowUnplaceable) {
 								int damage = pBld->Type->Strength;
 								pBld->ReceiveDamage(&damage, 0,
 									RulesClass::Instance->C4Warhead, nullptr, true, true, this->Super->Owner);
