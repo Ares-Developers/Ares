@@ -82,6 +82,8 @@ public:
 
 		EBolt * MyBolt;
 
+		BuildingLightClass* Spotlight;
+
 		Nullable<bool> AltOccupation; // if the unit marks cell occupation flags, this is set to whether it uses the "high" occupation members
 
 		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
@@ -101,6 +103,7 @@ public:
 			RadarJam(nullptr),
 			PoweredUnit(nullptr),
 			MyOriginalTemporal(nullptr),
+			Spotlight(nullptr),
 			AltOccupation(),
 			AttachEffects_RecreateAnims(false),
 			AttachedTechnoEffect_isset (false),
@@ -121,6 +124,7 @@ public:
 			AnnounceInvalidPointer(this->GarrisonedIn, ptr);
 			this->InvalidateAttachEffectPointer(ptr);
 			AnnounceInvalidPointer(this->MyOriginalTemporal, ptr);
+			AnnounceInvalidPointer(this->Spotlight, ptr);
 		}
 
 		bool IsOperated();
@@ -148,11 +152,12 @@ public:
 		bool CloakAllowed() const;
 		bool CloakDisallowed(bool allowPassive) const;
 		bool CanSelfCloakNow() const;
+
+		void SetSpotlight(BuildingLightClass* pSpotlight);
 	};
 
 	static Container<TechnoExt> ExtMap;
 	static hash_map<ObjectClass *, AlphaShapeClass *> AlphaExt;
-	static hash_map<TechnoClass *, BuildingLightClass *> SpotlightExt;
 
 	static BuildingLightClass * ActiveBuildingLight;
 

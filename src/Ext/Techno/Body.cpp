@@ -326,7 +326,6 @@ UnitTypeClass * TechnoExt::ExtData::GetUnitType() {
 
 void Container<TechnoExt>::InvalidatePointer(void *ptr, bool bRemoved) {
 	AnnounceInvalidPointerMap(TechnoExt::AlphaExt, ptr);
-	AnnounceInvalidPointerMap(TechnoExt::SpotlightExt, ptr);
 	AnnounceInvalidPointer(TechnoExt::ActiveBuildingLight, ptr);
 }
 
@@ -1026,6 +1025,24 @@ bool TechnoExt::ExtData::CanSelfCloakNow() const
 
 	// allows cloak
 	return true;
+}
+
+void TechnoExt::ExtData::SetSpotlight(BuildingLightClass* pSpotlight) {
+	if(this->Spotlight != pSpotlight) {
+		if(this->Spotlight) {
+			GameDelete(this->Spotlight);
+		}
+		this->Spotlight = pSpotlight;
+	}
+
+	if(auto pBld = abstract_cast<BuildingClass*>(this->AttachedToObject)) {
+		if(pBld->Spotlight != pSpotlight) {
+			if(pBld->Spotlight) {
+				GameDelete(pBld->Spotlight);
+			}
+			pBld->Spotlight = pSpotlight;
+		}
+	}
 }
 
 // =============================
