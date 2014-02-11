@@ -61,16 +61,16 @@ void UnitDeliveryStateMachine::Update() {
 //have been unloaded again, when it was at index 100.
 
 void UnitDeliveryStateMachine::PlaceUnits() {
-	SWTypeExt::ExtData *pData = this->FindExtData();
+	auto pData = this->FindExtData();
 
 	if(!pData) {
 		return;
 	}
 
 	for(size_t i=0; i<pData->SW_Deliverables.size(); ++i) {
-		TechnoTypeClass * Type = pData->SW_Deliverables[i];
-		TechnoClass * Item = generic_cast<TechnoClass *>(Type->CreateObject(this->Super->Owner));
-		BuildingClass * ItemBuilding = specific_cast<BuildingClass *>(Item);
+		auto Type = pData->SW_Deliverables[i];
+		auto Item = abstract_cast<TechnoClass*>(Type->CreateObject(this->Super->Owner));
+		auto ItemBuilding = abstract_cast<BuildingClass*>(Item);
 
 		if(ItemBuilding && pData->SW_DeliverBuildups) {
 			ItemBuilding->QueueMission(mission_Construction, false);
@@ -79,17 +79,16 @@ void UnitDeliveryStateMachine::PlaceUnits() {
 		// 100 cells should be enough for any sane delivery
 		bool Placed = false;
 		for(auto cellIdx = 0u; cellIdx < 100; ++cellIdx) {
-			CellStruct tmpCell = CellSpread::GetCell(cellIdx) + this->Coords;
-			if(CellClass *cell = MapClass::Instance->TryGetCellAt(tmpCell)) {
-				CoordStruct XYZ = cell->GetCoordsWithBridge();
+			auto tmpCell = CellSpread::GetCell(cellIdx) + this->Coords;
+			if(auto cell = MapClass::Instance->TryGetCellAt(tmpCell)) {
+				auto XYZ = cell->GetCoordsWithBridge();
 
 				bool validCell = true;
-				if(cell->OverlayTypeIndex != -1) {
+				if(auto Overlay = OverlayTypeClass::Array->GetItemOrDefault(cell->OverlayTypeIndex)) {
 					// disallow placing on rocks, rubble and walls
-					OverlayTypeClass *Overlay = OverlayTypeClass::Array->GetItem(cell->OverlayTypeIndex);
 					validCell = !Overlay->Wall && !Overlay->IsARock && !Overlay->IsRubble;
 				}
-				if(AircraftClass * ItemAircraft = specific_cast<AircraftClass *>(Item)) {
+				if(auto ItemAircraft = abstract_cast<AircraftClass*>(Item)) {
 					// for aircraft: cell must be empty: non-water, non-cliff, non-shore, non-anything
 					validCell &= !cell->GetContent() && !cell->Tile_Is_Cliff()
 						&& !cell->Tile_Is_DestroyableCliff() && !cell->Tile_Is_Shore()
@@ -115,11 +114,11 @@ void UnitDeliveryStateMachine::PlaceUnits() {
 								Item->Scatter(CoordStruct::Empty, true, false);
 							}
 						}
-						if(TechnoExt::ExtData* pItemData = TechnoExt::ExtMap.Find(Item)) {
+						if(auto pItemData = TechnoExt::ExtMap.Find(Item)) {
 							if(!pItemData->IsPowered() || !pItemData->IsOperated()) {
 								Item->Deactivate();
 								if(ItemBuilding) {
-									Item->Owner->RecheckTechTree = true; 
+									Item->Owner->RecheckTechTree = true;
 								}
 							}
 						}
