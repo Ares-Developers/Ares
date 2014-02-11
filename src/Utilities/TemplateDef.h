@@ -304,7 +304,7 @@ template <typename T>
 void ValueableVector<T>::Read(INI_EX &parser, const char* pSection, const char* pKey) {
 	if(parser.ReadString(pSection, pKey)) {
 		this->clear();
-		this->_Defined = true;
+		this->defined = true;
 		this->Split(parser, pSection, pKey, Ares::readBuffer);
 	}
 }
@@ -354,13 +354,13 @@ template <typename T>
 void NullableVector<T>::Read(INI_EX &parser, const char* pSection, const char* pKey) {
 	if(parser.ReadString(pSection, pKey)) {
 		this->clear();
-		this->_Defined = true;
+		this->defined = true;
 
 		// provide a way to reset to default
 		if(!_strcmpi(Ares::readBuffer, "<default>")) {
-			this->_HasValue = false;
+			this->hasValue = false;
 		} else {
-			this->_HasValue = true;
+			this->hasValue = true;
 			this->Split(parser, pSection, pKey, Ares::readBuffer);
 		}
 	}

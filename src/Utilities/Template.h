@@ -236,12 +236,12 @@ public:
 template<class T>
 class ValueableVector : public std::vector<T> {
 protected:
-	bool _Defined;
+	bool defined;
 public:
 	typedef T value_type;
 	typedef std::remove_pointer_t<T> base_type;
 
-	ValueableVector() : std::vector<T>(), _Defined(false) {};
+	ValueableVector() : std::vector<T>(), defined(false) {};
 
 	virtual ~ValueableVector() {}
 
@@ -260,7 +260,7 @@ public:
 	}
 
 	bool Defined() const {
-		return this->_Defined;
+		return this->defined;
 	}
 
 	virtual Iterator<T> GetElements() const {
@@ -276,20 +276,20 @@ protected:
 template<class T>
 class NullableVector : public ValueableVector<T> {
 protected:
-	bool _HasValue;
+	bool hasValue;
 public:
-	NullableVector() : ValueableVector<T>(), _HasValue(false) {};
+	NullableVector() : ValueableVector<T>(), hasValue(false) {};
 
 	inline virtual void Read(INI_EX &parser, const char* pSection, const char* pKey);
 
 	bool HasValue() const {
-		return this->_HasValue;
+		return this->hasValue;
 	}
 
 	using ValueableVector<T>::GetElements;
 
 	virtual Iterator<T> GetElements(Iterator<T> defElements) const {
-		if(!this->_HasValue) {
+		if(!this->hasValue) {
 			return defElements;
 		}
 
