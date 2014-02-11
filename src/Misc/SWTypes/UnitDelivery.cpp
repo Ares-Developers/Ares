@@ -76,9 +76,9 @@ void UnitDeliveryStateMachine::PlaceUnits() {
 			ItemBuilding->QueueMission(mission_Construction, false);
 		}
 
-		int cellIdx = 0;
+		// 100 cells should be enough for any sane delivery
 		bool Placed = false;
-		do {
+		for(auto cellIdx = 0u; cellIdx < 100; ++cellIdx) {
 			CellStruct tmpCell = CellSpread::GetCell(cellIdx) + this->Coords;
 			if(CellClass *cell = MapClass::Instance->TryGetCellAt(tmpCell)) {
 				CoordStruct XYZ = cell->GetCoordsWithBridge();
@@ -103,7 +103,8 @@ void UnitDeliveryStateMachine::PlaceUnits() {
 
 				if(validCell) {
 					Item->OnBridge = cell->ContainsBridge();
-					if((Placed = Item->Put(XYZ, (cellIdx & 7))) == true) {
+
+					if(Item->Put(XYZ, (cellIdx & 7))) {
 						if(ItemBuilding) {
 							if(pData->SW_DeliverBuildups) {
 								ItemBuilding->DiscoveredBy(this->Super->Owner);
@@ -122,18 +123,15 @@ void UnitDeliveryStateMachine::PlaceUnits() {
 								}
 							}
 						}
+						Placed = true;
+						break;
 					}
 				}
 			}
+		}
 
-			++cellIdx;
-			if(cellIdx >= 100) { // 100 cells should be enough for any sane delivery
-				cellIdx = 0;
-				if(!Placed) {
-					Item->UnInit();
-				}
-				break;
-			}
-		} while(!Placed);
+		if(!Placed) {
+			Item->UnInit();
+		}
 	}
 }
