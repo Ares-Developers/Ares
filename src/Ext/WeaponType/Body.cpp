@@ -84,7 +84,7 @@ void WeaponTypeExt::ExtData::LoadFromINIFile(WeaponTypeExt::TT *pThis, CCINIClas
 //	pData->Wave_FinalIntensity   = pINI->ReadInteger(section, "Wave.FinalIntensity", pData->Wave_FinalIntensity);
 
 	if(!pThis->Warhead) {
-		DEBUGLOG("Weapon %s doesn't have a Warhead yet, what gives?\n", section);
+		Debug::Log("Weapon %s doesn't have a Warhead yet, what gives?\n", section);
 		return;
 	}
 

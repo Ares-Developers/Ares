@@ -348,10 +348,10 @@ bool SWTypeExt::Launch(SuperClass* pThis, NewSWType* pSW, const CellStruct &Coor
 			if(!(flags & SuperWeaponFlags::NoMoney)) {
 				int Money_Amount = pData->Money_Amount;
 				if(Money_Amount > 0) {
-					DEBUGLOG("House %d gets %d credits\n", pThis->Owner->ArrayIndex, Money_Amount);
+					Debug::Log("House %d gets %d credits\n", pThis->Owner->ArrayIndex, Money_Amount);
 					pThis->Owner->GiveMoney(Money_Amount);
 				} else if(Money_Amount < 0) {
-					DEBUGLOG("House %d loses %d credits\n", pThis->Owner->ArrayIndex, -Money_Amount);
+					Debug::Log("House %d loses %d credits\n", pThis->Owner->ArrayIndex, -Money_Amount);
 					pThis->Owner->TakeMoney(-Money_Amount);
 				}
 			}

@@ -249,7 +249,7 @@ void BuildingTypeExt::UpdateSecretLabOptions(BuildingClass *pThis)
 	BuildingTypeClass *pType = pThis->Type;
 	BuildingTypeExt::ExtData* pData = BuildingTypeExt::ExtMap.Find(pType);
 
-	DEBUGLOG("Secret Lab update for %s\n", pType->get_ID());
+	Debug::Log("Secret Lab update for %s\n", pType->get_ID());
 
 	TechnoTypeClass *Result = pType->SecretInfantry;
 	if(!Result) {
@@ -290,7 +290,7 @@ void BuildingTypeExt::UpdateSecretLabOptions(BuildingClass *pThis)
 	}
 
 	if(Options.Count < 1) {
-		DEBUGLOG("Secret Lab [%s] has no boons applicable to country [%s]!\n",
+		Debug::Log("Secret Lab [%s] has no boons applicable to country [%s]!\n",
 			pType->ID, Owner->Type->ID);
 		return;
 	}
@@ -298,7 +298,7 @@ void BuildingTypeExt::UpdateSecretLabOptions(BuildingClass *pThis)
 	int idx = ScenarioClass::Instance->Random.RandomRanged(0, Options.Count - 1);
 	Result = Options[idx];
 
-	DEBUGLOG("Secret Lab rolled %s for %s\n", Result->ID, pType->ID);
+	Debug::Log("Secret Lab rolled %s for %s\n", Result->ID, pType->ID);
 	pData->Secret_Placed = true;
 	pThis->SecretProduction = Result;
 }
