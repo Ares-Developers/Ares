@@ -851,9 +851,7 @@ DEFINE_HOOK(467E59, BulletClass_Update_NukeBall, 5) {
 					// cause yet another radar event
 					if(SWTypeExt::ExtData *pType = SWTypeExt::ExtMap.Find(pData->NukeSW)) {
 						if(pType->SW_RadarEvent) {
-							CellStruct coords;
-							pBullet->GetMapCoords(&coords);
-
+							CellStruct coords = pBullet->GetMapCoords();
 							RadarEventClass::Create(RadarEventType::SuperweaponActivated, coords);
 						}
 					}

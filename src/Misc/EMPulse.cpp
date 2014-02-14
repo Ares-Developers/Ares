@@ -517,8 +517,7 @@ void EMPulse::announceAttack(TechnoClass * Techno) {
 
 	// handle the event.
 	if (rEvent != None) {
-		CellStruct xy;
-		Techno->GetMapCoords(&xy);
+		CellStruct xy = Techno->GetMapCoords();
 
 		switch (rEvent) {
 			case Harvester:

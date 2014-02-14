@@ -27,8 +27,7 @@ DEFINE_HOOK(4D8642, FootClass_UpdatePosition, 6)
 	GET(FootClass *, F, ESI);
 	TechnoTypeClass *Type = F->GetTechnoType();
 	if(Type->GapGenerator && Type->GapRadiusInCells > 0) {
-		CellStruct curLocation;
-		F->GetMapCoords(&curLocation);
+		CellStruct curLocation = F->GetMapCoords();
 		if(curLocation != F->LastMapCoords) {
 			TechnoExt::NeedsRegap = 1;
 			F->CreateGap();

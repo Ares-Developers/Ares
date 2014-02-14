@@ -1421,9 +1421,7 @@ DEFINE_HOOK(4D98C0, FootClass_Destroyed, A) {
 		auto pExt = TechnoTypeExt::ExtMap.Find(pType);
 		int idx = pExt->EVA_UnitLost;
 		if(idx != -1) {
-			CellStruct cell;
-			pThis->GetMapCoords(&cell);
-
+			CellStruct cell = pThis->GetMapCoords();
 			RadarEventClass::Create(RadarEventType::UnitLost, cell);
 			VoxClass::PlayIndex(idx, -1, -1);
 		}

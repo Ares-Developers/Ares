@@ -42,8 +42,7 @@ DEFINE_HOOK(519FAF, InfantryClass_UpdatePosition_EngineerRepairsFriendly, 6)
 			--Unsorted::IKnowWhatImDoing;
 			VoxClass::Play("EVA_CannotDeployHere");
 		}
-		CellStruct Cell;
-		pThis->GetMapCoords(&Cell);
+		CellStruct Cell = pThis->GetMapCoords();
 		Target->KickOutUnit(pThis, Cell);
 		if(wasSelected) {
 			pThis->Select();

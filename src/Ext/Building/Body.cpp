@@ -442,8 +442,7 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 	bool raiseEva = false;
 
 	if(Enterer->ControlledByPlayer() || Owner->ControlledByPlayer()) {
-		CellStruct xy;
-		EnteredBuilding->GetMapCoords(&xy);
+		CellStruct xy = EnteredBuilding->GetMapCoords();
 		if(RadarEventClass::Create(RadarEventType::BuildingInfiltrated, xy)) {
 			raiseEva = true;
 		}
