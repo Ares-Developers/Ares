@@ -6,7 +6,11 @@
 DEFINE_HOOK(5F5ADD, Parachute_Animation, 6)
 {
 	GET(TechnoClass *, T, ESI);
-	RET_UNLESS(generic_cast<FootClass *>(T));
+
+	if(!generic_cast<FootClass*>(T)) {
+		return 0;
+	}
+
 	TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(T->GetTechnoType());
 	if(pTypeData->Is_Bomb) {
 		T->IsABomb = 1;

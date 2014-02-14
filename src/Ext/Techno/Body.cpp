@@ -142,7 +142,11 @@ bool TechnoExt::EjectSurvivor(FootClass *Survivor, CoordStruct *loc, bool Select
 		loc->Z = floorZ;
 		success = Survivor->Put(*loc, ScenarioClass::Instance->Random.RandomRanged(0, 7));
 	}
-	RET_UNLESS(success);
+
+	if(!success) {
+		return false;
+	}
+
 	Survivor->Transporter = nullptr;
 	Survivor->LastMapCoords = pCell->MapCoords;
 

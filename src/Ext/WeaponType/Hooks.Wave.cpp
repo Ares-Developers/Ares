@@ -11,13 +11,17 @@ DEFINE_HOOK(6FF5F5, TechnoClass_Fire, 6)
 
 	WeaponTypeExt::ExtData *pData = WeaponTypeExt::ExtMap.Find(Source);
 
-	RET_UNLESS(Source->IsMagBeam || Source->IsSonic || pData->Wave_IsLaser || pData->Wave_IsBigLaser);
+	if(!Source->IsMagBeam && !Source->IsSonic && !pData->Wave_IsLaser && !pData->Wave_IsBigLaser) {
+		return 0;
+	}
 
 	GET_BASE(byte, idxWeapon, 0xC);
 
 	TechnoExt::ExtMap.Find(Owner)->idxSlot_Wave = idxWeapon;
 
-	RET_UNLESS(pData->Wave_IsLaser || pData->Wave_IsBigLaser);
+	if(!pData->Wave_IsLaser && !pData->Wave_IsBigLaser) {
+		return 0;
+	}
 
 	LEA_STACK(CoordStruct *, xyzSrc, 0x44);
 	LEA_STACK(CoordStruct *, xyzTgt, 0x88);
@@ -79,7 +83,9 @@ DEFINE_HOOK(760F50, WaveClass_Update, 6)
 	WeaponTypeExt::ExtData *pData = WeaponTypeExt::WaveExt[pThis];
 	const WeaponTypeClass *Weap = pData->AttachedToObject;
 
-	RET_UNLESS(Weap);
+	if(!Weap) {
+		return 0;
+	}
 
 	int Intensity;
 
@@ -244,7 +250,10 @@ DEFINE_HOOK(762C5C, WaveClass_Update_Wave, 6)
 		return 0x762D57;
 	}
 
-	RET_UNLESS(WeaponTypeExt::WaveExt.find(Wave) != WeaponTypeExt::WaveExt.end());
+	if(WeaponTypeExt::WaveExt.find(Wave) == WeaponTypeExt::WaveExt.end()) {
+		return 0;
+	}
+
 	WeaponTypeExt::ExtData *pData = WeaponTypeExt::WaveExt[Wave];
 	int weaponIdx = TechnoExt::ExtMap.Find(Firer)->idxSlot_Wave;
 
