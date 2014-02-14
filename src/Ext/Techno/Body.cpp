@@ -120,11 +120,11 @@ void TechnoExt::SpawnSurvivors(FootClass *pThis, TechnoClass *pKiller, bool Sele
 	\param loc Where to put the passenger
 	\param Select Whether to select the Passenger afterwards
 */
-bool TechnoExt::EjectSurvivor(FootClass *Survivor, CoordStruct *loc, bool Select)
+bool TechnoExt::EjectSurvivor(FootClass *Survivor, CoordStruct loc, bool Select)
 {
 	bool success = false;
 	bool chuted = false;
-	CellClass * pCell = MapClass::Instance->GetCellAt(*loc);
+	CellClass* pCell = MapClass::Instance->GetCellAt(loc);
 	if(pCell == MapClass::InvalidCell()) {
 		return false;
 	}
@@ -132,15 +132,15 @@ bool TechnoExt::EjectSurvivor(FootClass *Survivor, CoordStruct *loc, bool Select
 	Survivor->OnBridge = pCell->ContainsBridge();
 
 	int floorZ = tmpCoords.Z;
-	if(loc->Z - floorZ > 208) {
+	if(loc.Z - floorZ > 208) {
 		// HouseClass::CreateParadrop does this when building passengers for a paradrop... it might be a wise thing to mimic!
 		Survivor->Remove();
 
-		success = Survivor->SpawnParachuted(*loc);
+		success = Survivor->SpawnParachuted(loc);
 		chuted = true;
 	} else {
-		loc->Z = floorZ;
-		success = Survivor->Put(*loc, ScenarioClass::Instance->Random.RandomRanged(0, 7));
+		loc.Z = floorZ;
+		success = Survivor->Put(loc, ScenarioClass::Instance->Random.RandomRanged(0, 7));
 	}
 
 	if(!success) {
@@ -166,7 +166,7 @@ bool TechnoExt::EjectSurvivor(FootClass *Survivor, CoordStruct *loc, bool Select
 	if(Select) {
 		Survivor->Select();
 	}
-	return 1;
+	return true;
 	//! \todo Tag
 }
 
@@ -234,7 +234,7 @@ void TechnoExt::GetPutLocation(CoordStruct const &current, CoordStruct &target, 
 bool TechnoExt::EjectRandomly(FootClass* pEjectee, CoordStruct const &location, int distance, bool select) {
 	CoordStruct destLoc;
 	GetPutLocation(location, destLoc, distance);
-	return TechnoExt::EjectSurvivor(pEjectee, &destLoc, select);
+	return TechnoExt::EjectSurvivor(pEjectee, destLoc, select);
 }
 
 //! Breaks the link between DrainTarget and DrainingMe.
