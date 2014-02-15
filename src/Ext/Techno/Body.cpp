@@ -178,20 +178,17 @@ bool TechnoExt::EjectSurvivor(FootClass *Survivor, CoordStruct loc, bool Select)
 	\author Renegade
 	\date 27.05.2010
 */
-void TechnoExt::EjectPassengers(FootClass *pThis, signed short howMany) {
-	if(howMany == 0 || !pThis->Passengers.NumPassengers) {
-		return;
+void TechnoExt::EjectPassengers(FootClass *pThis, int howMany) {
+	if(howMany < 0) {
+		howMany = pThis->Passengers.NumPassengers;
 	}
 
-	short limit = (howMany < 0 || howMany > pThis->Passengers.NumPassengers) ? (short)pThis->Passengers.NumPassengers : howMany;
-
-	for(short i = 0; (i < limit) && pThis->Passengers.FirstPassenger; ++i) {
+	for(int i = 0; i < howMany && pThis->Passengers.FirstPassenger; ++i) {
 		FootClass *passenger = pThis->RemoveFirstPassenger();
 		if(!EjectRandomly(passenger, pThis->Location, 128, false)) {
 			passenger->UnInit();
 		}
 	}
-	return;
 }
 
 
