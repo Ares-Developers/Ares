@@ -140,10 +140,41 @@ DEFINE_HOOK(4444E2, BuildingClass_KickOutUnit_FindAlternateKickout, 6)
 	return 0x444508;
 }
 
+DEFINE_HOOK(444DBC, BuildingClass_KickOutUnit_Infantry, 5) {
+	GET(TechnoClass*, Production, EDI);
+	GET(BuildingClass*, Factory, ESI);
 
-DEFINE_HOOK(444159, BuildingClass_KickOutUnit_Clone, 6) {
-	GET(TechnoClass *, Production, EDI);
-	GET(BuildingClass *, Factory, ESI);
+	// turn it off
+	--Unsorted::IKnowWhatImDoing;
+
+	auto pFactoryData = BuildingExt::ExtMap.Find(Factory);
+	pFactoryData->KickOutClones(Production);
+
+	// turn it back on so the game can turn it off again
+	++Unsorted::IKnowWhatImDoing;
+
+	return 0;
+}
+
+DEFINE_HOOK(4445F6, BuildingClass_KickOutUnit_Clone_NonNavalUnit, 5) {
+	GET(TechnoClass*, Production, EDI);
+	GET(BuildingClass*, Factory, ESI);
+
+	// turn it off
+	--Unsorted::IKnowWhatImDoing;
+
+	auto pFactoryData = BuildingExt::ExtMap.Find(Factory);
+	pFactoryData->KickOutClones(Production);
+
+	// turn it back on so the game can turn it off again
+	++Unsorted::IKnowWhatImDoing;
+
+	return 0x444971;
+}
+
+DEFINE_HOOK(44441A, BuildingClass_KickOutUnit_Clone_NavalUnit, 6) {
+	GET(TechnoClass*, Production, EDI);
+	GET(BuildingClass*, Factory, ESI);
 
 	auto pFactoryData = BuildingExt::ExtMap.Find(Factory);
 	pFactoryData->KickOutClones(Production);
