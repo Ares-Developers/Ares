@@ -205,20 +205,20 @@ void TechnoExt::EjectPassengers(FootClass *pThis, signed short howMany) {
 	\author Renegade
 	\date 27.05.2010
 */
-void TechnoExt::GetPutLocation(CoordStruct const &current, CoordStruct &target, int distance) {
+CoordStruct TechnoExt::GetPutLocation(CoordStruct current, int distance) {
 	// this whole thing does not at all account for cells which are completely occupied.
-	CoordStruct tmpLoc = current;
 	CellStruct tmpCoords = CellSpread::GetCell(ScenarioClass::Instance->Random.RandomRanged(0, 7));
 
-	tmpLoc.X += tmpCoords.X * distance;
-	tmpLoc.Y += tmpCoords.Y * distance;
+	current.X += tmpCoords.X * distance;
+	current.Y += tmpCoords.Y * distance;
 
-	CellClass * tmpCell = MapClass::Instance->GetCellAt(tmpLoc);
+	CellClass* tmpCell = MapClass::Instance->GetCellAt(current);
 
-	tmpCell->FindInfantrySubposition(&target, &tmpLoc, 0, 0, 0);
+	CoordStruct target;
+	tmpCell->FindInfantrySubposition(&target, &current, 0, 0, 0);
 
 	target.Z = current.Z;
-	return;
+	return target;
 }
 
 //! Places a unit next to a given location on the battlefield.
@@ -232,8 +232,7 @@ void TechnoExt::GetPutLocation(CoordStruct const &current, CoordStruct &target, 
 	\date 12.04.2011
 */
 bool TechnoExt::EjectRandomly(FootClass* pEjectee, CoordStruct const &location, int distance, bool select) {
-	CoordStruct destLoc;
-	GetPutLocation(location, destLoc, distance);
+	CoordStruct destLoc = GetPutLocation(location, distance);
 	return TechnoExt::EjectSurvivor(pEjectee, destLoc, select);
 }
 

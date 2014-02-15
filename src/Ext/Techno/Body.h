@@ -168,7 +168,7 @@ public:
 	static void SpawnSurvivors(FootClass *pThis, TechnoClass *pKiller, bool Select, bool IgnoreDefenses);
 	static bool EjectSurvivor(FootClass *Survivor, CoordStruct loc, bool Select);
 	static void EjectPassengers(FootClass *, signed short);
-	static void GetPutLocation(CoordStruct const &, CoordStruct &, int);
+	static CoordStruct GetPutLocation(CoordStruct, int);
 	static bool EjectRandomly(FootClass*, CoordStruct const &, int, bool);
 	// If available, removes the hijacker from its victim and creates an InfantryClass instance.
 	static InfantryClass* RecoverHijacker(FootClass *pThis);
