@@ -77,6 +77,8 @@ public:
 
 		Valueable<bool> Malicious;
 
+		Valueable<int> CellSpread_MaxAffect;
+
 		AttachEffectTypeClass AttachedEffect;
 
 		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
@@ -93,6 +95,7 @@ public:
 			PreImpactAnim (-1),
 			KillDriver (false),
 			Malicious (true),
+			CellSpread_MaxAffect (-1),
 			AttachedEffect()
 			{
 				for(int i = 0; i < 11; ++i) {
