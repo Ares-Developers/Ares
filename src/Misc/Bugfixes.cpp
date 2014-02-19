@@ -1153,3 +1153,12 @@ DEFINE_HOOK(5F77F0, ObjectTypeClass_UnloadPipsSHP, 5)
 
 	return 0x5F78FB;
 }
+
+// #895584: ships not taking damage when repaired in a shipyard. bug
+// was that the logic that prevented units from being damaged when
+// exiting a war factory applied here, too. added the Naval check.
+DEFINE_HOOK(737CE4, UnitClass_ReceiveDamage_ShipyardRepair, 6)
+{
+	GET(BuildingTypeClass*, pType, ECX);
+	return (pType->WeaponsFactory && !pType->Naval) ? 0x737CEE : 0x737D31;
+}
