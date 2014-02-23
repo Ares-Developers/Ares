@@ -161,3 +161,11 @@ DEFINE_HOOK(700505, TechnoClass_GetCursorOverObject_C4Ability, 6)
 
 	return (!pThis->Type->C4 && !pThis->HasAbility(Abilities::C4)) ? 0x700536 : 0x700515;
 }
+
+// do not prone in water
+DEFINE_HOOK(5201CC, InfantryClass_UpdatePanic_ProneWater, 6)
+{
+	GET(InfantryClass*, pThis, ESI);
+	auto landType = pThis->GetCell()->LandType;
+	return (landType != LandType::Beach && landType != LandType::Water) ? 0 : 0x5201DC;
+}
