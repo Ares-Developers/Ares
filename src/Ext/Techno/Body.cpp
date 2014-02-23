@@ -122,29 +122,28 @@ void TechnoExt::SpawnSurvivors(FootClass *pThis, TechnoClass *pKiller, bool Sele
 */
 bool TechnoExt::EjectSurvivor(FootClass *Survivor, CoordStruct loc, bool Select)
 {
-	bool success = false;
-	bool chuted = false;
-	CellClass* pCell = MapClass::Instance->GetCellAt(loc);
-	if(pCell == MapClass::InvalidCell()) {
+	CellClass* pCell = MapClass::Instance->TryGetCellAt(loc);
+
+	if(!pCell) {
 		return false;
 	}
-	CoordStruct tmpCoords = pCell->GetCoordsWithBridge();
+
 	Survivor->OnBridge = pCell->ContainsBridge();
 
-	int floorZ = tmpCoords.Z;
-	if(loc.Z - floorZ > 208) {
+	int floorZ = pCell->GetCoordsWithBridge().Z;
+	bool chuted = (loc.Z - floorZ > 208);
+	if(chuted) {
 		// HouseClass::CreateParadrop does this when building passengers for a paradrop... it might be a wise thing to mimic!
 		Survivor->Remove();
 
-		success = Survivor->SpawnParachuted(loc);
-		chuted = true;
+		if(!Survivor->SpawnParachuted(loc)) {
+			return false;
+		}
 	} else {
 		loc.Z = floorZ;
-		success = Survivor->Put(loc, ScenarioClass::Instance->Random.RandomRanged(0, 7));
-	}
-
-	if(!success) {
-		return false;
+		if(!Survivor->Put(loc, ScenarioClass::Instance->Random.RandomRanged(0, 7))) {
+			return false;
+		}
 	}
 
 	Survivor->Transporter = nullptr;
@@ -161,11 +160,14 @@ bool TechnoExt::EjectSurvivor(FootClass *Survivor, CoordStruct loc, bool Select)
 		Survivor->Scatter(CoordStruct::Empty, true, false);
 		Survivor->QueueMission(Survivor->Owner->ControlledByHuman() ? mission_Guard : mission_Hunt, 0);
 	}
-	Survivor->ShouldEnterOccupiable = Survivor->ShouldGarrisonStructure = false;
+
+	Survivor->ShouldEnterOccupiable = false;
+	Survivor->ShouldGarrisonStructure = false;
 
 	if(Select) {
 		Survivor->Select();
 	}
+
 	return true;
 	//! \todo Tag
 }
