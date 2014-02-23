@@ -61,10 +61,10 @@ void Promotable<T>::Read(CCINIClass *pINI, const char *Section, const char *Base
 	unsigned int buflen = strlen(BaseFlag) + 8;
 	char *FlagName = new char[buflen];
 
-	Customizable<T> Placeholder;
+	Valueable<T> Placeholder;
 	INI_EX exINI(pINI);
-	Placeholder.Set(this->Rookie);
 
+	Placeholder.Set(this->Rookie);
 	_snprintf_s(FlagName, buflen, buflen - 1, BaseFlag, "Rookie");
 	Placeholder.Read(exINI, Section, FlagName);
 	this->Rookie = Placeholder;
@@ -173,7 +173,7 @@ void Valueable<SHPStruct *>::Read(INI_EX &parser, const char* pSection, const ch
 
 template<>
 void Valueable<MouseCursor>::Read(INI_EX &parser, const char* pSection, const char* pKey, bool Allocate) {
-	Customizable<int> Placeholder;
+	Valueable<int> Placeholder;
 
 	MouseCursor *Cursor = this->GetEx();
 
@@ -222,10 +222,10 @@ void Valueable<MouseCursor>::Read(INI_EX &parser, const char* pSection, const ch
 
 template<>
 void Valueable<RocketStruct>::Read(INI_EX &parser, const char* pSection, const char* pKey, bool Allocate) {
-	Customizable<bool> BoolPlaceholder;
-	Customizable<int> IntPlaceholder;
-	Customizable<float> FloatPlaceholder;
-	Customizable<AircraftTypeClass*> TypePlaceholder;
+	Valueable<bool> BoolPlaceholder;
+	Valueable<int> IntPlaceholder;
+	Valueable<float> FloatPlaceholder;
+	Valueable<AircraftTypeClass*> TypePlaceholder;
 
 	RocketStruct* rocket = this->GetEx();
 
