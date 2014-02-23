@@ -136,67 +136,6 @@ public:
 };
 
 /*
- * This one is for data that defaults to some original flag value but can be overwritten with custom values
- * Bind() it to a data address from where to take the value
- * (e.g. &RulesClass::Global()->RadBeamColor for custom-colorizable rad waves)
- * and Set() it to a fixed value
- */
-
-template<typename T>
-class Customizable : public Valueable<T> {
-	bool Customized;
-	T*   Default;
-public:
-	Customizable(T* alias = nullptr) : Valueable<T>(T()), Customized(false), Default(alias) {};
-
-	void Bind(T* to) {
-		if(!this->Customized) {
-			this->Default = to;
-		}
-	}
-
-	void BindEx(const T& to) {
-		if(!this->Customized) {
-			this->Value = to;
-			this->Default = &this->Value;
-		}
-	}
-
-	virtual const T& Get() const {
-		return (!this->Customized && this->Default)
-		 ? *this->Default
-		 : this->Value;
-		;
-	}
-
-	virtual void Set(const T& val) {
-		this->Customized = true;
-		this->Value = val;
-	}
-
-	virtual T* GetEx() {
-		return this->Customized
-		 ? &this->Value
-		 : this->Default
-		;
-	}
-
-	virtual void SetEx(T* val) {
-		this->Customized = true;
-		this->Value = *val;
-	}
-
-	void Lock() {
-		if(!this->Customized) {
-			if(this->Default) {
-				this->Value = *this->Default;
-			}
-			this->Customized = true;
-		}
-	}
-};
-
-/*
  * This template is for something that varies depending on a unit's Veterancy Level
  * Promotable<int> PilotChance; // class def
  * PilotChance(); // ctor init-list
