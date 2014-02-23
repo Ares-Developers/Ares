@@ -18,37 +18,79 @@ class RadType;
 
 class RadType : public Enumerable<RadType>
 {
-public:
+private:
 
-	Customizable<WarheadTypeClass *> WH;
-	Customizable<ColorStruct> Color;
-	Customizable<int> Duration_Multiple;
-	Customizable<int> Application_Delay;
-	Customizable<int> Level_Max;
-	Customizable<int> Level_Delay;
-	Customizable<int> Light_Delay;
-	Customizable<double> Level_Factor;
-	Customizable<double> Light_Factor;
-	Customizable<double> Tint_Factor;
+	Nullable<WarheadTypeClass *> WH;
+	Nullable<ColorStruct> Color;
+	Nullable<int> Duration_Multiple;
+	Nullable<int> Application_Delay;
+	Nullable<int> Level_Max;
+	Nullable<int> Level_Delay;
+	Nullable<int> Light_Delay;
+	Nullable<double> Level_Factor;
+	Nullable<double> Light_Factor;
+	Nullable<double> Tint_Factor;
+
+public:
 
 	virtual void LoadFromINI(CCINIClass *pINI);
 
 	RadType(const char *Title) : Enumerable<RadType>(Title),
-		WH(&RulesClass::Instance->RadSiteWarhead),
-		Color(&RulesClass::Instance->RadColor),
-		Duration_Multiple(&RulesClass::Instance->RadDurationMultiple),
-		Application_Delay(&RulesClass::Instance->RadApplicationDelay),
-		Level_Max(&RulesClass::Instance->RadLevelMax),
-		Level_Delay(&RulesClass::Instance->RadLevelDelay),
-		Light_Delay(&RulesClass::Instance->RadLightDelay),
-		Level_Factor(&RulesClass::Instance->RadLevelFactor),
-		Light_Factor(&RulesClass::Instance->RadLightFactor),
-		Tint_Factor(&RulesClass::Instance->RadTintFactor)
+		WH(),
+		Color(),
+		Duration_Multiple(),
+		Application_Delay(),
+		Level_Max(),
+		Level_Delay(),
+		Light_Delay(),
+		Level_Factor(),
+		Light_Factor(),
+		Tint_Factor()
 	{
 	}
 
 	virtual ~RadType()
 	{
+	}
+
+	WarheadTypeClass* GetWarhead() const {
+		return this->WH.Get(RulesClass::Instance->RadSiteWarhead);
+	}
+
+	const ColorStruct& GetColor() const {
+		return *this->Color.GetEx(&RulesClass::Instance->RadColor);
+	}
+
+	int GetDurationMultiple() const {
+		return this->Duration_Multiple.Get(RulesClass::Instance->RadDurationMultiple);
+	}
+
+	int GetApplicationDelay() const {
+		return this->Application_Delay.Get(RulesClass::Instance->RadApplicationDelay);
+	}
+
+	int GetLevelMax() const {
+		return this->Level_Max.Get(RulesClass::Instance->RadLevelMax);
+	}
+
+	int GetLevelDelay() const {
+		return this->Level_Delay.Get(RulesClass::Instance->RadLevelDelay);
+	}
+
+	int GetLightDelay() const {
+		return this->Light_Delay.Get(RulesClass::Instance->RadLightDelay);
+	}
+
+	double GetLevelFactor() const {
+		return this->Level_Factor.Get(RulesClass::Instance->RadLevelFactor);
+	}
+
+	double GetLightFactor() const {
+		return this->Light_Factor.Get(RulesClass::Instance->RadLightFactor);
+	}
+
+	double GetTintFactor() const {
+		return this->Tint_Factor.Get(RulesClass::Instance->RadTintFactor);
 	}
 };
 
