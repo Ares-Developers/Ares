@@ -43,6 +43,14 @@ DEFINE_HOOK(41668B, AircraftClass_ReceiveDamage, 6)
 	return 0;
 }
 
+// rotation when crashing made optional
+DEFINE_HOOK(4DECAE, FootClass_Crash_Spin, 5)
+{
+	GET(FootClass*, pThis, ESI);
+	auto pExt = TechnoTypeExt::ExtMap.Find(pThis->GetTechnoType());
+	return pExt->CrashSpin ? 0 : 0x4DED4B;
+}
+
 DEFINE_HOOK(6F9E50, TechnoClass_Update, 5)
 {
 	GET(TechnoClass *, Source, ECX);

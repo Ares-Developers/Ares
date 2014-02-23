@@ -347,6 +347,8 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	// non-crashable aircraft
 	this->Crashable.Read(exINI, section, "Crashable");
 
+	this->CrashSpin.Read(exINI, section, "CrashSpin");
+
 	// tiberium
 	this->TiberiumProof.Read(exINI, section, "TiberiumProof");
 	this->TiberiumRemains.Read(exINI, section, "TiberiumRemains");

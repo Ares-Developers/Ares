@@ -155,6 +155,7 @@ public:
 		Valueable<bool> GattlingCyclic;
 
 		Nullable<bool> Crashable;
+		Valueable<bool> CrashSpin;
 
 		// custom missiles
 		Valueable<bool> IsCustomMissile;
@@ -249,6 +250,7 @@ public:
 			CloakAllowed (true),
 			CloakStages (),
 			SensorArray_Warn (true),
+			CrashSpin (true),
 			CanBeReversed (true),
 			RadarJamRadius (0),
 			PassengerTurret (false),
