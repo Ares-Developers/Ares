@@ -1461,3 +1461,17 @@ DEFINE_HOOK(732C30, TechnoClass_IDMatches, 5)
 	R->EAX(match ? 1 : 0);
 	return 0x732C97;
 }
+
+// #1283653: fix for jammed buildings and attackers in open topped transports
+DEFINE_HOOK(702A38, TechnoClass_ReceiveDamage_OpenTopped, 7)
+{
+	REF_STACK(TechnoClass*, pAttacker, STACK_OFFS(0xC4, -0x10));
+
+	// decide as if the transporter fired at this building
+	if(pAttacker && pAttacker->InOpenToppedTransport && pAttacker->Transporter) {
+		pAttacker = pAttacker->Transporter;
+	}
+
+	R->EDI(pAttacker);
+	return 0x702A3F;
+}
