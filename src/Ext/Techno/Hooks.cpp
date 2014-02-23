@@ -1515,3 +1515,28 @@ DEFINE_HOOK(707B19, TechnoClass_PointerGotInvalid_SpawnCloakOwner, 6)
 
 	return 0x707B29;
 }
+
+// flying aircraft carriers
+// allow spawned units to spawn above ground
+DEFINE_HOOK(414338, AircraftClass_Put_SpawnHigh, 6)
+{
+	GET(AircraftClass*, pThis, ESI);
+	GET(AircraftTypeClass*, pType, ECX);
+
+	R->EAX(pType->MissileSpawn || pThis->SpawnOwner);
+	return 0x41433E;
+}
+
+// aim for the cell for flying carriers
+DEFINE_HOOK(6B783B, SpawnManagerClass_Update_SpawnHigh, 5)
+{
+	GET(SpawnManagerClass*, pThis, ESI);
+
+	AbstractClass* pDest = pThis->Owner;
+	if(pThis->Owner->GetHeight() > 0) {
+		pDest = pThis->Owner->GetCell();
+	}
+
+	R->EAX(pDest);
+	return 0;
+}
