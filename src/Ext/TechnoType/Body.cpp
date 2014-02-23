@@ -349,6 +349,9 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 
 	this->CrashSpin.Read(exINI, section, "CrashSpin");
 
+	this->Animated_InAir.Read(exINI, section, "Animated.InAir");
+	this->Animated_Perma.Read(exINI, section, "Animated.Permanent");
+
 	// tiberium
 	this->TiberiumProof.Read(exINI, section, "TiberiumProof");
 	this->TiberiumRemains.Read(exINI, section, "TiberiumRemains");

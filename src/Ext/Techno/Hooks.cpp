@@ -51,6 +51,20 @@ DEFINE_HOOK(4DECAE, FootClass_Crash_Spin, 5)
 	return pExt->CrashSpin ? 0 : 0x4DED4B;
 }
 
+// move to the next hva frame, even if this unit isn't moving
+DEFINE_HOOK(4DA9B7, FootClass_Update_Animated, A)
+{
+	GET(FootClass*, pThis, ESI);
+	auto pType = pThis->GetTechnoType();
+	auto pExt = TechnoTypeExt::ExtMap.Find(pType);
+
+	// perma means unconditionally, otherwise only while not on ground
+	bool advance = pExt->Animated_Perma ||
+		((pType->DeployToLand || pExt->Animated_InAir) && pThis->GetHeight() > 0);
+
+	return advance ? 0x4DA9D7 : 0x4DAA01;
+}
+
 DEFINE_HOOK(6F9E50, TechnoClass_Update, 5)
 {
 	GET(TechnoClass *, Source, ECX);
