@@ -1475,3 +1475,21 @@ DEFINE_HOOK(702A38, TechnoClass_ReceiveDamage_OpenTopped, 7)
 	R->EDI(pAttacker);
 	return 0x702A3F;
 }
+
+// #912875: respect the remove flag for invalidating SpawnManager owners
+DEFINE_HOOK(707B19, TechnoClass_PointerGotInvalid_SpawnCloakOwner, 6)
+{
+	GET(TechnoClass*, pThis, ESI);
+	GET(void*, ptr, EBP);
+	REF_STACK(bool, remove, STACK_OFFS(0x20, -0x8));
+
+	if(auto pSM = pThis->SpawnManager) {
+		// ignore disappearing owner
+		if(remove || pSM->Owner != ptr) {
+			R->ECX(pSM);
+			return 0x707B23;
+		}
+	}
+
+	return 0x707B29;
+}
