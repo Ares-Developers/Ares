@@ -17,6 +17,8 @@
 #include "Ext/WarheadType/Body.h"
 #include "Ext/WeaponType/Body.h"
 
+#include "Enum/ArmorTypes.h"
+
 DEFINE_HOOK(7258D0, AnnounceInvalidPointer, 6)
 {
 	GET(void *, DEATH, ECX);
@@ -62,6 +64,10 @@ DEFINE_HOOK(685659, Scenario_ClearClasses, a)
 	WeaponTypeExt::ExtMap.Clear();
 
 	RulesExt::ClearCameos();
+
+	ArmorType::ClearArray();
+	RadType::ClearArray();
+	GenericPrerequisite::ClearArray();
 
 	return 0;
 }
