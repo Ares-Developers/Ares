@@ -24,31 +24,31 @@
 
 DEFINE_HOOK(7258D0, AnnounceInvalidPointer, 6)
 {
-	GET(void *, DEATH, ECX);
+	GET(void*, ptr, ECX);
 	GET(bool, bRemoved, EDX);
 
-	//Debug::Log("PointerGotInvalid: %X\n", DEATH);
+	//Debug::Log("PointerGotInvalid: %X\n", ptr);
 
-	AbstractExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
-	AnimTypeExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
-	BuildingExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
-	BuildingTypeExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
-	BulletExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
-	BulletTypeExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
-	HouseExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
-	HouseTypeExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
-	InfantryExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
-	SideExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
-	SWTypeExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
-	TActionExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
-	TechnoExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
-	TechnoTypeExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
-	TEventExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
-	TiberiumExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
-	WarheadTypeExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
-	WeaponTypeExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
+	AbstractExt::ExtMap.PointerGotInvalid(ptr, bRemoved);
+	AnimTypeExt::ExtMap.PointerGotInvalid(ptr, bRemoved);
+	BuildingExt::ExtMap.PointerGotInvalid(ptr, bRemoved);
+	BuildingTypeExt::ExtMap.PointerGotInvalid(ptr, bRemoved);
+	BulletExt::ExtMap.PointerGotInvalid(ptr, bRemoved);
+	BulletTypeExt::ExtMap.PointerGotInvalid(ptr, bRemoved);
+	HouseExt::ExtMap.PointerGotInvalid(ptr, bRemoved);
+	HouseTypeExt::ExtMap.PointerGotInvalid(ptr, bRemoved);
+	InfantryExt::ExtMap.PointerGotInvalid(ptr, bRemoved);
+	SideExt::ExtMap.PointerGotInvalid(ptr, bRemoved);
+	SWTypeExt::ExtMap.PointerGotInvalid(ptr, bRemoved);
+	TActionExt::ExtMap.PointerGotInvalid(ptr, bRemoved);
+	TechnoExt::ExtMap.PointerGotInvalid(ptr, bRemoved);
+	TechnoTypeExt::ExtMap.PointerGotInvalid(ptr, bRemoved);
+	TEventExt::ExtMap.PointerGotInvalid(ptr, bRemoved);
+	TiberiumExt::ExtMap.PointerGotInvalid(ptr, bRemoved);
+	WarheadTypeExt::ExtMap.PointerGotInvalid(ptr, bRemoved);
+	WeaponTypeExt::ExtMap.PointerGotInvalid(ptr, bRemoved);
 
-	RulesExt::Global()->InvalidatePointer(DEATH, bRemoved);
+	RulesExt::Global()->InvalidatePointer(ptr, bRemoved);
 
 	return 0;
 }
