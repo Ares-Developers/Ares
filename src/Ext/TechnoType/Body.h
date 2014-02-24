@@ -179,6 +179,8 @@ public:
 
 		ValueableIdx<VoxClass> EVA_UnitLost;
 
+		Valueable<bool> Drain_Local;
+
 		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			Survivors_PilotChance (),
 			Survivors_PassengerChance (),
@@ -199,6 +201,7 @@ public:
 			Spot_DisableG (false),
 			Spot_DisableB (false),
 			Spot_Reverse (false),
+			Drain_Local (false),
 			Is_Bomb (false),
 			Insignia (),
 			Parachute_Anim (nullptr),

@@ -359,3 +359,28 @@ DEFINE_HOOK(522D75, InfantryClass_Slave_UnloadAt_Storage, 6)
 
 	return 0x522E38;
 }
+
+// drain affecting only the drained power plant
+DEFINE_HOOK(508D32, HouseClass_UpdatePower_LocalDrain1, 5)
+{
+	GET(HouseClass*, pThis, ESI);
+	GET(BuildingClass*, pBld, EDI);
+
+	bool fullDrain = true;
+
+	auto output = pBld->GetPowerOutput();
+
+	if(output > 0) {
+		auto pBldTypeExt = TechnoTypeExt::ExtMap.Find(pBld->Type);
+		auto pDrainTypeExt = TechnoTypeExt::ExtMap.Find(pBld->DrainingMe->GetTechnoType());
+
+		// local, if any of the participants in the drain is local
+		if(pBldTypeExt->Drain_Local || pDrainTypeExt->Drain_Local) {
+			fullDrain = false;
+
+			pThis->PowerOutput -= output;
+		}
+	}
+
+	return fullDrain ? 0 : 0x508D37;
+}

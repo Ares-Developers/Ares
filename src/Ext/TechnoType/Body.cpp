@@ -387,6 +387,9 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	this->Crew_TechnicianChance.Read(exINI, section, "Crew.TechnicianChance");
 	this->Crew_EngineerChance.Read(exINI, section, "Crew.EngineerChance");
 
+	// drain settings
+	this->Drain_Local.Read(exINI, section, "Drain.Local");
+
 	// quick fix - remove after the rest of weapon selector code is done
 	return;
 }
