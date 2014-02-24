@@ -389,6 +389,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 
 	// drain settings
 	this->Drain_Local.Read(exINI, section, "Drain.Local");
+	this->Drain_Amount.Read(exINI, section, "Drain.Amount");
 
 	// quick fix - remove after the rest of weapon selector code is done
 	return;

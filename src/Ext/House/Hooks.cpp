@@ -378,9 +378,36 @@ DEFINE_HOOK(508D32, HouseClass_UpdatePower_LocalDrain1, 5)
 		if(pBldTypeExt->Drain_Local || pDrainTypeExt->Drain_Local) {
 			fullDrain = false;
 
-			pThis->PowerOutput -= output;
+			// use the sign to select min or max.
+			// 0 means no change (maximum of 0 and a positive value)
+			auto limit = [](int value, int limit) {
+				if(limit <= 0) {
+					return std::max(value, -limit);
+				} else {
+					return std::min(value, limit);
+				}
+			};
+
+			// drains the entire output of this building by default
+			// (the local output). building has the last word though.
+			auto drain = limit(output, pDrainTypeExt->Drain_Amount);
+			drain = limit(drain, pBldTypeExt->Drain_Amount);
+
+			if(drain > 0) {
+				pThis->PowerOutput -= drain;
+			}
 		}
 	}
 
 	return fullDrain ? 0 : 0x508D37;
+}
+
+// sanitize the power output
+DEFINE_HOOK(508D4A, HouseClass_UpdatePower_LocalDrain2, 6)
+{
+	GET(HouseClass*, pThis, ESI);
+	if(pThis->PowerOutput < 0) {
+		pThis->PowerOutput = 0;
+	}
+	return 0;
 }
