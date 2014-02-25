@@ -225,6 +225,8 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 		pThis->CanBeOccupied = true;
 	}
 
+	this->Returnable.Read(exINI, pID, "Returnable");
+
 	this->ReverseEngineersVictims.Read(exINI, pID, "ReverseEngineersVictims");
 
 	this->CloningFacility.Read(exINI, pID, "CloningFacility");

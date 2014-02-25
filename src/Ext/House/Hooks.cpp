@@ -1,5 +1,6 @@
 #include "Body.h"
 #include "../Building/Body.h"
+#include "../Rules/Body.h"
 #include "../Techno/Body.h"
 #include "../TechnoType/Body.h"
 
@@ -409,5 +410,60 @@ DEFINE_HOOK(508D4A, HouseClass_UpdatePower_LocalDrain2, 6)
 	if(pThis->PowerOutput < 0) {
 		pThis->PowerOutput = 0;
 	}
+	return 0;
+}
+
+DEFINE_HOOK(4FC731, HouseClass_DestroyAll_ReturnStructures, 7)
+{
+	GET_STACK(HouseClass*, pThis, STACK_OFFS(0x18, 0x8));
+	GET(TechnoClass*, pTechno, ESI);
+
+	// do not return structures in campaigns
+	if(SessionClass::Instance->GameMode == GameMode::Campaign) {
+		return 0;
+	}
+
+	// check whether this is a building
+	if(auto pBld = abstract_cast<BuildingClass*>(pTechno)) {
+		auto pInitialOwner = pBld->InitialOwner;
+
+		// was the building owned by a neutral country?
+		if(!pInitialOwner || pInitialOwner->Type->MultiplayPassive) {
+			auto pExt = BuildingTypeExt::ExtMap.Find(pBld->Type);
+
+			auto occupants = pBld->GetOccupantCount();
+			auto canReturn = (pInitialOwner != pThis) || occupants > 0;
+
+			if(canReturn && pExt->Returnable.Get(RulesExt::Global()->ReturnStructures)) {
+
+				// this may change owner
+				if(occupants) {
+					pBld->KillOccupants(nullptr);
+				}
+
+				// don't do this when killing occupants already changed owner
+				if(pBld->GetOwningHouse() == pThis) {
+
+					// fallback to first civilian side house, same logic SlaveManager uses
+					if(!pInitialOwner) {
+						pInitialOwner = HouseClass::FindCivilianSide();
+					}
+
+					// give to other house and disable
+					if(pInitialOwner && pBld->SetOwningHouse(pInitialOwner, false)) {
+						pBld->Guard();
+
+						if(pBld->Type->NeedsEngineer) {
+							pBld->HasEngineer = false;
+							pBld->DisableStuff();
+						}
+
+						return 0x4FC770;
+					}
+				}
+			}
+		}
+	}
+
 	return 0;
 }

@@ -154,6 +154,8 @@ public:
 
 		// #218 Specific Occupiers
 		ValueableVector<InfantryTypeClass *> AllowedOccupiers;
+
+		Nullable<bool> Returnable;
 		
 		cPrismForwarding PrismForwarding;
 
@@ -202,6 +204,7 @@ public:
 			StolenMoneyPercentage (0),
 			PowerOutageDuration (0),
 			AllowedOccupiers (),
+			Returnable (),
 			PrismForwarding(),
 			ReverseEngineersVictims (false),
 			CloningFacility (false),

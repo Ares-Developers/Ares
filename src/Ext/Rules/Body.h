@@ -43,6 +43,8 @@ class RulesExt
 
 		Valueable<bool> EnemyInsignia;
 
+		Valueable<bool> ReturnStructures;
+
 		Valueable<bool> TypeSelectUseDeploy;
 
 		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
@@ -57,6 +59,7 @@ class RulesExt
 			DecloakSound(),
 			CloakHeight(),
 			EnemyInsignia(true),
+			ReturnStructures(false),
 			TypeSelectUseDeploy(true),
 			CanMakeStuffUp(false)
 			{

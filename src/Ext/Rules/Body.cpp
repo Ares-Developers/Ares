@@ -79,6 +79,8 @@ void RulesExt::ExtData::LoadBeforeTypeData(RulesClass *pThis, CCINIClass *pINI) 
 
 	pData->EnemyInsignia.Read(exINI, sectionGeneral, "EnemyInsignia");
 
+	pData->ReturnStructures.Read(exINI, sectionGeneral, "ReturnStructures");
+
 	pData->TypeSelectUseDeploy.Read(exINI, sectionGeneral, "TypeSelectUseDeploy");
 }
 
