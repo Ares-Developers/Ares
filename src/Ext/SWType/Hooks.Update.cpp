@@ -6,28 +6,24 @@
 #include <algorithm>
 #include <functional>
 
+// cache all super weapon statuses
+struct SWStatus {
+	bool Available;
+	bool PowerSourced;
+	bool Charging;
+};
+
 // This function controls the availability of super weapons. If a you want to
 // add to or change the way the game thinks a building provides a super weapon,
 // change the lambda UpdateStatus. Available means this super weapon exists at
 // all. Setting it to false removes the super weapon. PowerSourced controls
 // whether the super weapon charges or can be used.
-DEFINE_HOOK(50AF10, HouseClass_CheckSWs, 5)
-{
-	GET(HouseClass *, pThis, ECX);
-
-	// cache all super weapon statuses
-	struct SWStatus {
-		bool Available;
-		bool PowerSourced;
-		bool Charging;
-	};
-
-	std::vector<SWStatus> Statuses(pThis->Supers.Count, {false, false, false});
+std::vector<SWStatus> GetSuperWeaponStatuses(HouseClass* pHouse) {
+	std::vector<SWStatus> Statuses(pHouse->Supers.Count, {false, false, false});
 
 	// look at every sane building this player owns, if it is not defeated already.
-	if(!pThis->Defeated) {
-		for(int idxBld = 0; idxBld < pThis->Buildings.Count; ++idxBld) {
-			BuildingClass * pBld = pThis->Buildings.GetItem(idxBld);
+	if(!pHouse->Defeated) {
+		for(auto pBld : pHouse->Buildings) {
 			if(pBld->IsAlive && !pBld->InLimbo) {
 				TechnoExt::ExtData *pExt = TechnoExt::ExtMap.Find(pBld);
 
@@ -40,7 +36,7 @@ DEFINE_HOOK(50AF10, HouseClass_CheckSWs, 5)
 							bool validBuilding = pBld->HasPower
 								&& pExt->IsOperated()
 								&& !pBld->IsUnderEMP();
-							
+
 							if(!status.PowerSourced) {
 								status.PowerSourced = validBuilding;
 							}
@@ -58,10 +54,10 @@ DEFINE_HOOK(50AF10, HouseClass_CheckSWs, 5)
 				};
 
 				// check for upgrades. upgrades can give super weapons, too.
-				for(int i = 0; i < 3; ++i) {
-					if(BuildingTypeClass *Upgrade = pBld->Upgrades[i]) {
-						UpdateStatus(Upgrade->SuperWeapon);
-						UpdateStatus(Upgrade->SuperWeapon2);
+				for(auto pUpgrade : pBld->Upgrades) {
+					if(pUpgrade) {
+						UpdateStatus(pUpgrade->SuperWeapon);
+						UpdateStatus(pUpgrade->SuperWeapon2);
 					}
 				}
 
@@ -70,66 +66,75 @@ DEFINE_HOOK(50AF10, HouseClass_CheckSWs, 5)
 				UpdateStatus(pBld->SecondActiveSWIdx());
 			}
 		}
+
+		// kill off super weapons that are disallowed and
+		// factor in the player's power status
+		auto hasPower = pHouse->HasFullPower();
+
+		for(auto pSuper : pHouse->Supers) {
+			auto index = pSuper->Type->GetArrayIndex();
+			auto& status = Statuses[index];
+
+			// turn off super weapons that are disallowed.
+			if(!Unsorted::SWAllowed) {
+				if(pSuper->Type->DisableableFromShell) {
+					status.Available = false;
+				}
+			}
+
+			// if the house is generally on low power,
+			// powered super weapons aren't powered
+			if(pSuper->IsPowered()) {
+				status.PowerSourced &= hasPower;
+			}
+		}
 	}
 
-	// now update every super weapon that is valid.
-	for(int idxSW = 0; idxSW < pThis->Supers.Count; ++idxSW) {
-		SuperClass *pSW = pThis->Supers[idxSW];
-		SuperWeaponTypeClass * pSWType = pSW->Type;
-		auto& status = Statuses[idxSW];
+	return Statuses;
+}
 
-		// if this weapon has not been granted there's no need to update
-		if(pSW->Granted) {
+DEFINE_HOOK(50AF10, HouseClass_UpdateSuperWeaponsOwned, 5)
+{
+	GET(HouseClass *, pThis, ECX);
+
+	auto Statuses = GetSuperWeaponStatuses(pThis);
+
+	// now update every super weapon that is valid.
+	// if this weapon has not been granted there's no need to update
+	for(auto pSuper : pThis->Supers) {
+		if(pSuper->Granted) {
+			auto pType = pSuper->Type;
+			auto index = pType->GetArrayIndex();
+			auto& status = Statuses[index];
 
 			// is this a super weapon to be updated?
 			// sw is bound to a building and no single-shot => create goody otherwise
-			bool isCreateGoody = (!pSW->CanHold || pSW->OneTime);
-			bool needsUpdate = !isCreateGoody || pThis->Defeated;
-			if(needsUpdate) {
-
-				// super weapons of defeated players are removed.
-				if(!pThis->Defeated) {
-
-					// turn off super weapons that are disallowed.
-					if(!Unsorted::SWAllowed) {
-						if(pSWType->DisableableFromShell) {
-							status.Available = false;
-						}
-					}
-
-					// there is at least one available and powered building,
-					// but the house is generally on low power.
-					if(pThis->PowerOutput < pThis->PowerDrain) {
-						status.PowerSourced = false;
-					}
-				} else {
-					// remove. owner is defeated.
-					status.Available = false;
-				}
+			bool isCreateGoody = (!pSuper->CanHold || pSuper->OneTime);
+			if(!isCreateGoody || pThis->Defeated) {
 
 				// shut down or power up super weapon and decide whether
 				// a sidebar tab update is needed.
 				bool update = false;
 				if(!status.Available || pThis->Defeated) {
-					update = (pSW->Lose() && HouseClass::Player);
-				} else if(status.Charging && !pSW->IsPowered()) {
-					update = pSW->IsOnHold && pSW->SetOnHold(false);
-				} else if(!status.Charging && !pSW->IsPowered()) {
-					update = !pSW->IsOnHold && pSW->SetOnHold(true);
+					update = (pSuper->Lose() && HouseClass::Player);
+				} else if(status.Charging && !pSuper->IsPowered()) {
+					update = pSuper->IsOnHold && pSuper->SetOnHold(false);
+				} else if(!status.Charging && !pSuper->IsPowered()) {
+					update = !pSuper->IsOnHold && pSuper->SetOnHold(true);
 				} else if(!status.PowerSourced) {
-					update = (pSW->IsPowered() && pSW->SetOnHold(true));
+					update = (pSuper->IsPowered() && pSuper->SetOnHold(true));
 				} else {
-					update = (status.PowerSourced && pSW->SetOnHold(false));
+					update = (status.PowerSourced && pSuper->SetOnHold(false));
 				}
 
 				// update only if needed.
 				if(update) {
 					// only the human player can see the sidebar.
-					if(pThis == HouseClass::Player) {
-						if(Unsorted::CurrentSWType == idxSW) {
+					if(pThis->IsPlayer()) {
+						if(Unsorted::CurrentSWType == index) {
 							Unsorted::CurrentSWType = -1;
 						}
-						int idxTab = SidebarClass::GetObjectTabIdx(SuperClass::AbsID, pSWType->GetArrayIndex(), 0);
+						int idxTab = SidebarClass::GetObjectTabIdx(SuperClass::AbsID, index, 0);
 						MouseClass::Instance->RepaintSidebar(idxTab);
 					}
 					pThis->RecheckTechTree = true;
