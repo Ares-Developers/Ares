@@ -146,6 +146,35 @@ DEFINE_HOOK(50AF10, HouseClass_UpdateSuperWeaponsOwned, 5)
 	return 0x50B1CA;
 }
 
+DEFINE_HOOK(50B1D0, HouseClass_UpdateSuperWeaponsUnavailable, 6)
+{
+	GET(HouseClass*, pThis, ECX);
+
+	if(!pThis->Defeated) {
+		auto Statuses = GetSuperWeaponStatuses(pThis);
+
+		// update all super weapons not repeatedly available
+		for(auto pSuper : pThis->Supers) {
+			if(!pSuper->Granted || pSuper->OneTime) {
+				auto index = pSuper->Type->GetArrayIndex();
+				auto& status = Statuses[index];
+
+				if(status.Available) {
+					pSuper->Grant(false, pThis->IsPlayer(), !status.PowerSourced);
+
+					if(pThis->IsPlayer()) {
+						MouseClass::Instance->AddCameo(0x1F /* Special */, index);
+						int idxTab = SidebarClass::GetObjectTabIdx(SuperClass::AbsID, index, 0);
+						MouseClass::Instance->RepaintSidebar(idxTab);
+					}
+				}
+			}
+		}
+	}
+
+	return 0x50B36E;
+}
+
 // a ChargeDrain SW expired - fire it to trigger status update
 DEFINE_HOOK(6CBD86, SuperClass_Progress_Charged, 7)
 {
