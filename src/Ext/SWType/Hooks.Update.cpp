@@ -185,22 +185,9 @@ DEFINE_HOOK(6CB4D0, SuperClass_SetOnHold, 6)
 		R->EAX(0);
 	} else {
 		if(OnHold || pSuper->Type->ManualControl) {
-			int TimeStart = pSuper->RechargeTimer.StartTime;
-			if(TimeStart != -1) {
-				int TimeLeft = pSuper->RechargeTimer.TimeLeft;
-				int TimeElapsed = Unsorted::CurrentFrame - TimeStart;
-				if(TimeElapsed >= TimeLeft) {
-					TimeLeft = 0;
-				} else {
-					TimeLeft -= TimeElapsed;
-				}
-				pSuper->RechargeTimer.TimeLeft = TimeLeft;
-				pSuper->RechargeTimer.StartTime = -1;
-			}
+			pSuper->RechargeTimer.Pause();
 		} else {
-			if(pSuper->RechargeTimer.StartTime == -1) {
-				pSuper->RechargeTimer.StartTime = Unsorted::CurrentFrame;
-			}
+			pSuper->RechargeTimer.StartIfEmpty();
 		}
 		pSuper->IsOnHold = OnHold;
 		if(pSuper->Type->UseChargeDrain) {
