@@ -34,18 +34,19 @@ DEFINE_HOOK(50AF10, HouseClass_CheckSWs, 5)
 				// the super weapon status update lambda.
 				auto UpdateStatus = [&](int idxSW) {
 					if(idxSW > -1) {
-						Statuses[idxSW].Available = true;
-						if(!Statuses[idxSW].PowerSourced || !Statuses[idxSW].Charging) {
+						auto& status = Statuses[idxSW];
+						status.Available = true;
+						if(!status.PowerSourced || !status.Charging) {
 							bool validBuilding = pBld->HasPower
 								&& pExt->IsOperated()
 								&& !pBld->IsUnderEMP();
 							
-							if(!Statuses[idxSW].PowerSourced) {
-								Statuses[idxSW].PowerSourced = validBuilding;
+							if(!status.PowerSourced) {
+								status.PowerSourced = validBuilding;
 							}
 
-							if(!Statuses[idxSW].Charging) {
-								Statuses[idxSW].Charging = validBuilding
+							if(!status.Charging) {
+								status.Charging = validBuilding
 									&& !pBld->IsBeingWarpedOut()
 									&& (pBld->CurrentMission != mission_Selling)
 									&& (pBld->QueuedMission != mission_Selling)
@@ -75,6 +76,7 @@ DEFINE_HOOK(50AF10, HouseClass_CheckSWs, 5)
 	for(int idxSW = 0; idxSW < pThis->Supers.Count; ++idxSW) {
 		SuperClass *pSW = pThis->Supers[idxSW];
 		SuperWeaponTypeClass * pSWType = pSW->Type;
+		auto& status = Statuses[idxSW];
 
 		// if this weapon has not been granted there's no need to update
 		if(pSW->Granted) {
@@ -91,33 +93,33 @@ DEFINE_HOOK(50AF10, HouseClass_CheckSWs, 5)
 					// turn off super weapons that are disallowed.
 					if(!Unsorted::SWAllowed) {
 						if(pSWType->DisableableFromShell) {
-							Statuses[idxSW].Available = false;
+							status.Available = false;
 						}
 					}
 
 					// there is at least one available and powered building,
 					// but the house is generally on low power.
 					if(pThis->PowerOutput < pThis->PowerDrain) {
-						Statuses[idxSW].PowerSourced = false;
+						status.PowerSourced = false;
 					}
 				} else {
 					// remove. owner is defeated.
-					Statuses[idxSW].Available = false;
+					status.Available = false;
 				}
 
 				// shut down or power up super weapon and decide whether
 				// a sidebar tab update is needed.
 				bool update = false;
-				if(!Statuses[idxSW].Available || pThis->Defeated) {
+				if(!status.Available || pThis->Defeated) {
 					update = (pSW->Lose() && HouseClass::Player);
-				} else if(Statuses[idxSW].Charging && !pSW->IsPowered()) {
+				} else if(status.Charging && !pSW->IsPowered()) {
 					update = pSW->IsOnHold && pSW->SetOnHold(false);
-				} else if(!Statuses[idxSW].Charging && !pSW->IsPowered()) {
+				} else if(!status.Charging && !pSW->IsPowered()) {
 					update = !pSW->IsOnHold && pSW->SetOnHold(true);
-				} else if(!Statuses[idxSW].PowerSourced) {
+				} else if(!status.PowerSourced) {
 					update = (pSW->IsPowered() && pSW->SetOnHold(true));
 				} else {
-					update = (Statuses[idxSW].PowerSourced && pSW->SetOnHold(false));
+					update = (status.PowerSourced && pSW->SetOnHold(false));
 				}
 
 				// update only if needed.
