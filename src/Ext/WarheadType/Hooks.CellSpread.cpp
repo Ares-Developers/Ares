@@ -89,7 +89,7 @@ DEFINE_HOOK(4899DA, DamageArea_Damage_MaxAffect, 7)
 			// if more than allowed, sort them and remove the ones further away
 			if(target.size() > static_cast<size_t>(MaxAffect)) {
 				std::sort(target.begin(), target.end(), [](DamageGroup** a, DamageGroup** b) {
-					return (*a)->Distance > (*b)->Distance;
+					return (*a)->Distance < (*b)->Distance;
 				});
 
 				std::for_each(target.begin() + MaxAffect, target.end(), [](DamageGroup** ppItem) {
