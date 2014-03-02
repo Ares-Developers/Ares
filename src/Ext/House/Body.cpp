@@ -111,8 +111,8 @@ HouseExt::BuildLimitStatus HouseExt::CheckBuildLimit(HouseClass *pHouse, TechnoT
 	int BuildLimit = pItem->BuildLimit;
 	int Remaining = HouseExt::BuildLimitRemaining(pHouse, pItem);
 	if(BuildLimit > 0) {
-		if(Remaining <= 0 && IncludeQueued) {
-			return FactoryClass::FindThisOwnerAndProduct(pHouse, pItem)
+		if(Remaining <= 0) {
+			return (IncludeQueued && FactoryClass::FindThisOwnerAndProduct(pHouse, pItem))
 				? NotReached
 				: ReachedPermanently
 			;
@@ -130,7 +130,7 @@ signed int HouseExt::BuildLimitRemaining(HouseClass *pHouse, TechnoTypeClass *pI
 	if(BuildLimit >= 0) {
 		BuildLimit -= pHouse->CountOwnedNowTotal(pItem);
 	} else {
-		BuildLimit = abs(BuildLimit);
+		BuildLimit = std::abs(BuildLimit);
 		BuildLimit -= pHouse->CountOwnedEver(pItem);
 	}
 	return std::min(BuildLimit, 0x7FFFFFFF);
