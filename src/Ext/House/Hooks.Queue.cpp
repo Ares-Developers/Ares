@@ -107,3 +107,27 @@ DEFINE_HOOK(443CCA, BuildingClass_KickOutUnit_AircraftType, A)
 	HouseExt::ExtMap.Find(H)->Factory_AircraftType = nullptr;
 	return 0;
 }
+
+// #1286800: build limit > 1 and queues
+DEFINE_HOOK(50B3CB, HouseClass_ShouldDisableCameo_BuildLimit, 6)
+{
+	GET(FactoryClass*, pFactory, EDI);
+	GET(TechnoTypeClass*, pType, ESI);
+	GET(int, countQueued, EAX);
+
+	// the object in production is counted twice: it appears in this factory
+	// queue, and it is already counted in the house's counters. this only
+	// affects positive build limits, for negative ones players could queue up
+	// one more than BuildLimit.
+	if(auto pObj = pFactory->InProduction) {
+		if(countQueued && pObj->GetType() == pType && pType->BuildLimit > 0) {
+			auto abs = pType->WhatAmI();
+			// buildings can't queue, and pad aircraft has custom handling
+			if(abs == UnitTypeClass::AbsID || abs == InfantryTypeClass::AbsID) {
+				R->EAX(countQueued - 1);
+			}
+		}
+	}
+
+	return 0;
+}
