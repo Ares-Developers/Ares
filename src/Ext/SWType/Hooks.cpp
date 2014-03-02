@@ -340,23 +340,6 @@ DEFINE_HOOK(6CC0EA, SuperClass_AnnounceQuantity, 9)
 	return 0;
 }
 
-// hide the cameo? (only if this is an auto-firing SW)
-DEFINE_HOOK(50B319, HouseClass_UpdateSWs_ShowCameo, 6)
-{
-	GET(HouseClass *, H, EBP);
-	GET(int, Index, EDI);
-	SuperClass *Super = H->Supers.GetItem(Index);
-	SuperWeaponTypeClass *pSW = Super->Type;
-
-	if(SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSW)) {
-		if(pData->SW_AutoFire && !pData->SW_ShowCameo) {
-			return 0x50B358;
-		}
-	}
-
-	return 0;
-}
-
 // AI SW targeting submarines
 DEFINE_HOOK(50CFAA, HouseClass_PickOffensiveSWTarget, 0)
 {

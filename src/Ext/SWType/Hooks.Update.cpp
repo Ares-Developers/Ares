@@ -163,9 +163,13 @@ DEFINE_HOOK(50B1D0, HouseClass_UpdateSuperWeaponsUnavailable, 6)
 					pSuper->Grant(false, pThis->IsPlayer(), !status.PowerSourced);
 
 					if(pThis->IsPlayer()) {
-						MouseClass::Instance->AddCameo(0x1F /* Special */, index);
-						int idxTab = SidebarClass::GetObjectTabIdx(SuperClass::AbsID, index, 0);
-						MouseClass::Instance->RepaintSidebar(idxTab);
+						// hide the cameo (only if this is an auto-firing SW)
+						auto pData = SWTypeExt::ExtMap.Find(pSuper->Type);
+						if(pData->SW_ShowCameo || !pData->SW_AutoFire) {
+							MouseClass::Instance->AddCameo(0x1F /* Special */, index);
+							int idxTab = SidebarClass::GetObjectTabIdx(SuperClass::AbsID, index, 0);
+							MouseClass::Instance->RepaintSidebar(idxTab);
+						}
 					}
 				}
 			}
