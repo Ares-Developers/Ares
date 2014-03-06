@@ -100,7 +100,7 @@ public:
 		float PassengerExperienceModifier;
 		float MindControlExperienceSelfModifier;
 		float MindControlExperienceVictimModifier;
-		bool ExperienceFromAirstrike;
+		Valueable<bool> ExperienceFromAirstrike;
 		Valueable<double> AirstrikeExperienceModifier;
 
 		ValueableIdx<VocClass> VoiceRepair;
