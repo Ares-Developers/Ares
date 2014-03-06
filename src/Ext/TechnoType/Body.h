@@ -98,7 +98,7 @@ public:
 		bool PassengersGainExperience;
 		bool ExperienceFromPassengers;
 		float PassengerExperienceModifier;
-		float MindControlExperienceSelfModifier;
+		Valueable<double> MindControlExperienceSelfModifier;
 		Valueable<double> MindControlExperienceVictimModifier;
 		Valueable<bool> ExperienceFromAirstrike;
 		Valueable<double> AirstrikeExperienceModifier;
@@ -226,7 +226,7 @@ public:
 			ExperienceFromAirstrike (false),
 			AirstrikeExperienceModifier (1.0),
 			PassengerExperienceModifier (1.0F),
-			MindControlExperienceSelfModifier (0.0F),
+			MindControlExperienceSelfModifier (0.0),
 			MindControlExperienceVictimModifier (1.0),
 			Insignia_ShowEnemy(),
 			GattlingCyclic (false),
