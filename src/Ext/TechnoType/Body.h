@@ -101,7 +101,7 @@ public:
 		float MindControlExperienceSelfModifier;
 		float MindControlExperienceVictimModifier;
 		bool ExperienceFromAirstrike;
-		float AirstrikeExperienceModifier;
+		Valueable<double> AirstrikeExperienceModifier;
 
 		ValueableIdx<VocClass> VoiceRepair;
 
@@ -224,7 +224,7 @@ public:
 			PassengersGainExperience (false),
 			ExperienceFromPassengers (true),
 			ExperienceFromAirstrike (false),
-			AirstrikeExperienceModifier (1.0F),
+			AirstrikeExperienceModifier (1.0),
 			PassengerExperienceModifier (1.0F),
 			MindControlExperienceSelfModifier (0.0F),
 			MindControlExperienceVictimModifier (1.0F),

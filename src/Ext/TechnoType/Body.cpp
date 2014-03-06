@@ -270,7 +270,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	this->MindControlExperienceSelfModifier = (float)pINI->ReadDouble(section, "Experience.MindControlSelfModifier", this->MindControlExperienceSelfModifier);
 	this->MindControlExperienceVictimModifier = (float)pINI->ReadDouble(section, "Experience.MindControlVictimModifier", this->MindControlExperienceVictimModifier);
 	this->ExperienceFromAirstrike = pINI->ReadBool(section, "Experience.FromAirstrike", this->ExperienceFromAirstrike);
-	this->AirstrikeExperienceModifier = (float)pINI->ReadDouble(section, "Experience.AirstrikeModifier", this->AirstrikeExperienceModifier);
+	this->AirstrikeExperienceModifier.Read(exINI, section, "Experience.AirstrikeModifier");
 	this->Insignia_ShowEnemy.Read(exINI, section, "Insignia.ShowEnemy");
 
 	this->VoiceRepair.Read(exINI, section, "VoiceIFVRepair");
