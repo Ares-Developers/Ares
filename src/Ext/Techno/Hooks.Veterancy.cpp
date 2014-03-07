@@ -10,7 +10,7 @@ DEFINE_HOOK(702E9D, TechnoClass_RegisterDestruction_Veterancy, 6) {
 
 	// get the unit that receives veterancy
 	TechnoClass* pExperience = nullptr;
-	float ExpFactor = 1.0F;
+	double ExpFactor = 1.0;
 
 	// before we do any other logic, check if this kill was committed by an
 	// air strike and its designator shall get the experience. 
@@ -92,7 +92,7 @@ DEFINE_HOOK(702E9D, TechnoClass_RegisterDestruction_Veterancy, 6) {
 	// update the veterancy
 	if(pExperience) {
 		int KillerCost = pExperience->GetTechnoType()->GetActualCost(pExperience->Owner);
-		int WeightedVictimCost = (int)(VictimCost * ExpFactor);
+		int WeightedVictimCost = static_cast<int>(VictimCost * ExpFactor);
 
 		// no way to get experience by proxy by an enemy unit. you cannot
 		// promote your mind-controller by capturing friendly units.
@@ -105,13 +105,13 @@ DEFINE_HOOK(702E9D, TechnoClass_RegisterDestruction_Veterancy, 6) {
 				TechnoTypeClass* pTController = pExperience->MindControlledBy->GetTechnoType();
 				if(TechnoTypeExt::ExtData* pTControllerData = TechnoTypeExt::ExtMap.Find(pTController)) {
 					// modifiy the cost of the victim.
-					WeightedVictimCost = (int)(WeightedVictimCost * pTControllerData->MindControlExperienceVictimModifier);
+					WeightedVictimCost = static_cast<int>(WeightedVictimCost * pTControllerData->MindControlExperienceVictimModifier);
 
 					// promote the mind-controller
 					if(pTController->Trainable) {
 						// the mind controller get's its own factor
 						int MindControllerCost = pTController->GetActualCost(pExperience->MindControlledByHouse);
-						pExperience->MindControlledBy->Veterancy.Add(MindControllerCost, (int)(WeightedVictimCost * pTControllerData->MindControlExperienceSelfModifier));
+						pExperience->MindControlledBy->Veterancy.Add(MindControllerCost, static_cast<int>(WeightedVictimCost * pTControllerData->MindControlExperienceSelfModifier));
 					}
 				}
 			}
