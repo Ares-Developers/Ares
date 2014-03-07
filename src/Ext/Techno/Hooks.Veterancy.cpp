@@ -112,15 +112,15 @@ DEFINE_HOOK(702E9D, TechnoClass_RegisterDestruction_Veterancy, 6) {
 					auto pTController = pController->GetTechnoType();
 					auto pTControllerData = TechnoTypeExt::ExtMap.Find(pTController);
 
-					// modify the cost of the victim.
-					ExpFactor *= pTControllerData->MindControlExperienceVictimModifier;
-
 					// promote the mind-controller
 					if(pTController->Trainable) {
 						// the mind controller gets its own factor
 						auto ControllerFactor = ExpFactor * pTControllerData->MindControlExperienceSelfModifier;
 						AddExperience(pController, VictimCost, ControllerFactor);
 					}
+
+					// modify the cost of the victim.
+					ExpFactor *= pTControllerData->MindControlExperienceVictimModifier;
 				}
 			}
 
