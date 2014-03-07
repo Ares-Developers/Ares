@@ -6,7 +6,7 @@
 DEFINE_HOOK(702E9D, TechnoClass_RegisterDestruction_Veterancy, 6) {
 	GET(TechnoClass*, pKiller, EDI);
 	GET(TechnoClass*, pVictim, ESI);
-	GET(int, VictimCost, EBP);
+	GET(const int, VictimCost, EBP);
 
 	// get the unit that receives veterancy
 	TechnoClass* pExperience = nullptr;
@@ -91,11 +91,18 @@ DEFINE_HOOK(702E9D, TechnoClass_RegisterDestruction_Veterancy, 6) {
 
 	// update the veterancy
 	if(pExperience) {
-		int WeightedVictimCost = static_cast<int>(VictimCost * ExpFactor);
 
 		// no way to get experience by proxy by an enemy unit. you cannot
 		// promote your mind-controller by capturing friendly units.
 		if(pExperience->Owner->IsAlliedWith(pKiller)) {
+
+			auto AddExperience = [](TechnoClass* pTechno, int victimCost, double factor) {
+				auto TechnoCost = pTechno->GetTechnoType()->GetActualCost(pTechno->Owner);
+				auto WeightedVictimCost = static_cast<int>(victimCost * factor);
+				if(TechnoCost > 0 && WeightedVictimCost > 0) {
+					pTechno->Veterancy.Add(TechnoCost, WeightedVictimCost);
+				}
+			};
 
 			// mind-controllers get experience, too.
 			if(auto pController = pExperience->MindControlledBy) {
@@ -106,21 +113,19 @@ DEFINE_HOOK(702E9D, TechnoClass_RegisterDestruction_Veterancy, 6) {
 					auto pTControllerData = TechnoTypeExt::ExtMap.Find(pTController);
 
 					// modify the cost of the victim.
-					WeightedVictimCost = static_cast<int>(WeightedVictimCost * pTControllerData->MindControlExperienceVictimModifier);
+					ExpFactor *= pTControllerData->MindControlExperienceVictimModifier;
 
 					// promote the mind-controller
 					if(pTController->Trainable) {
 						// the mind controller gets its own factor
-						int MindControllerCost = pTController->GetActualCost(pExperience->MindControlledByHouse);
-						int MindVictimCost = static_cast<int>(WeightedVictimCost * pTControllerData->MindControlExperienceSelfModifier);
-						pController->Veterancy.Add(MindControllerCost, MindVictimCost);
+						auto ControllerFactor = ExpFactor * pTControllerData->MindControlExperienceSelfModifier;
+						AddExperience(pController, VictimCost, ControllerFactor);
 					}
 				}
 			}
 
 			// default. promote the unit this function selected.
-			int ExperienceCost = pExperience->GetTechnoType()->GetActualCost(pExperience->Owner);
-			pExperience->Veterancy.Add(ExperienceCost, WeightedVictimCost);
+			AddExperience(pExperience, VictimCost, ExpFactor);
 
 			// gunners need to be promoted manually, or they won't only get
 			// the experience until after they exited their transport once.
