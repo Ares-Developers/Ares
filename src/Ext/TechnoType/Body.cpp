@@ -264,7 +264,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	this->CanDrive = pINI->ReadBool(section, "CanDrive", this->CanDrive);
 
 	// #346, #464, #970, #1014
-	this->PassengersGainExperience = pINI->ReadBool(section, "Experience.PromotePassengers", this->PassengersGainExperience);
+	this->PassengersGainExperience.Read(exINI, section, "Experience.PromotePassengers");
 	this->ExperienceFromPassengers.Read(exINI, section, "Experience.FromPassengers");
 	this->PassengerExperienceModifier.Read(exINI, section, "Experience.PassengerModifier");
 	this->MindControlExperienceSelfModifier.Read(exINI, section, "Experience.MindControlSelfModifier");

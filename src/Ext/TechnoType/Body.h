@@ -95,7 +95,7 @@ public:
 
 		bool AlternateTheaterArt;
 		
-		bool PassengersGainExperience;
+		Valueable<bool> PassengersGainExperience;
 		Valueable<bool> ExperienceFromPassengers;
 		Valueable<double> PassengerExperienceModifier;
 		Valueable<double> MindControlExperienceSelfModifier;
