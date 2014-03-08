@@ -286,6 +286,8 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 
 	this->IronCurtain_Modifier.Read(exINI, section, "IronCurtain.Modifier");
 
+	this->ForceShield_Modifier.Read(exINI, section, "ForceShield.Modifier");
+
 	this->Chronoshift_Allow.Read(exINI, section, "Chronoshift.Allow");
 	this->Chronoshift_IsVehicle.Read(exINI, section, "Chronoshift.IsVehicle");
 

@@ -85,6 +85,7 @@ public:
 		float EMP_Modifier;
 
 		Valueable<double> IronCurtain_Modifier;
+		Valueable<double> ForceShield_Modifier;
 
 		Valueable<bool> Chronoshift_Allow;
 		Valueable<bool> Chronoshift_IsVehicle;
@@ -216,6 +217,7 @@ public:
 			Chronoshift_Allow (true),
 			Chronoshift_IsVehicle (false),
 			IronCurtain_Modifier (1.0),
+			ForceShield_Modifier (1.0),
 			EMP_Threshold (-1),
 			EMP_Modifier (1.0F),
 			VeteranAbilityEMPIMMUNE (false),

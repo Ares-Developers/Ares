@@ -697,24 +697,23 @@ DEFINE_HOOK(7090A8, TechnoClass_SelectFiringVoice, 0) {
 }
 
 // Support per unit modification of Iron Curtain effect duration
-DEFINE_HOOK(70E2D2, TechnoClass_IronCurtain_Modify, 6) {
+DEFINE_HOOK(70E2B0, TechnoClass_IronCurtain, 5) {
 	GET(TechnoClass*, pThis, ECX);
-	GET(int, duration, EDX);
-	GET_STACK(bool, force, 0x1C);
+	GET_STACK(int, duration, STACK_OFFS(0x0, -0x4));
+	//GET_STACK(HouseClass*, source, STACK_OFFS(0x0, -0x8));
+	GET_STACK(bool, force, STACK_OFFS(0x0, -0xC));
 
 	// if it's no force shield then it's the iron curtain.
-	if(!force) {
-		if(TechnoTypeExt::ExtData *pData = TechnoTypeExt::ExtMap.Find(pThis->GetTechnoType())) {
-			duration = static_cast<int>(duration * pData->IronCurtain_Modifier);
-		}
+	auto pData = TechnoTypeExt::ExtMap.Find(pThis->GetTechnoType());
+	double modifier = force ? pData->ForceShield_Modifier : pData->IronCurtain_Modifier;
+	duration = static_cast<int>(duration * modifier);
 
-		pThis->IronCurtainTimer.TimeLeft = duration;
-		pThis->IronTintStage = 0;
+	pThis->IronCurtainTimer.Start(duration);
+	pThis->IronTintStage = 0;
+	pThis->ForceShielded = force ? TRUE : FALSE;
 
-		return 0x70E2DB;
-	}
-
-	return 0;
+	R->EAX(DamageState::Unaffected);
+	return 0x70E2FD;
 }
 
 // update the vehicle thief's destination. needed to follow a
