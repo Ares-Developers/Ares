@@ -269,6 +269,8 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	this->PassengerExperienceModifier.Read(exINI, section, "Experience.PassengerModifier");
 	this->MindControlExperienceSelfModifier.Read(exINI, section, "Experience.MindControlSelfModifier");
 	this->MindControlExperienceVictimModifier.Read(exINI, section, "Experience.MindControlVictimModifier");
+	this->SpawnExperienceOwnerModifier.Read(exINI, section, "Experience.SpawnOwnerModifier");
+	this->SpawnExperienceSpawnModifier.Read(exINI, section, "Experience.SpawnModifier");
 	this->ExperienceFromAirstrike.Read(exINI, section, "Experience.FromAirstrike");
 	this->AirstrikeExperienceModifier.Read(exINI, section, "Experience.AirstrikeModifier");
 	this->Insignia_ShowEnemy.Read(exINI, section, "Insignia.ShowEnemy");

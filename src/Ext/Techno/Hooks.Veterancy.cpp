@@ -104,6 +104,27 @@ DEFINE_HOOK(702E9D, TechnoClass_RegisterDestruction_Veterancy, 6) {
 				}
 			};
 
+			// if this is a non-missile spawn, handle the spawn manually and switch over to the
+			// owner then. this way, a mind-controlled owner is supported.
+			TechnoClass* pSpawn = nullptr;
+			double SpawnFactor = 1.0;
+			if(auto pSpawner = pExperience->SpawnOwner) {
+				auto pTSpawner = pSpawner->GetTechnoType();
+
+				if(!pTSpawner->MissileSpawn && pTSpawner->Trainable) {
+					auto pTSpawnerData = TechnoTypeExt::ExtMap.Find(pTSpawner);
+
+					// add experience to the spawn. this is done later so mind-control
+					// can be factored in.
+					SpawnFactor = pTSpawnerData->SpawnExperienceSpawnModifier;
+					pSpawn = pExperience;
+
+					// switch over to spawn owners, and factor in the spawner multiplier
+					ExpFactor *= pTSpawnerData->SpawnExperienceOwnerModifier;
+					pExperience = pSpawner;
+				}
+			}
+
 			// mind-controllers get experience, too.
 			if(auto pController = pExperience->MindControlledBy) {
 				if(!pController->Owner->IsAlliedWith(pVictim->Owner)) {
@@ -126,6 +147,11 @@ DEFINE_HOOK(702E9D, TechnoClass_RegisterDestruction_Veterancy, 6) {
 
 			// default. promote the unit this function selected.
 			AddExperience(pExperience, VictimCost, ExpFactor);
+
+			// if there is a spawn, let it get its share.
+			if(pSpawn) {
+				AddExperience(pSpawn, VictimCost, ExpFactor * SpawnFactor);
+			}
 
 			// gunners need to be promoted manually, or they won't only get
 			// the experience until after they exited their transport once.

@@ -100,6 +100,8 @@ public:
 		Valueable<double> PassengerExperienceModifier;
 		Valueable<double> MindControlExperienceSelfModifier;
 		Valueable<double> MindControlExperienceVictimModifier;
+		Valueable<double> SpawnExperienceOwnerModifier;
+		Valueable<double> SpawnExperienceSpawnModifier;
 		Valueable<bool> ExperienceFromAirstrike;
 		Valueable<double> AirstrikeExperienceModifier;
 
@@ -228,6 +230,8 @@ public:
 			PassengerExperienceModifier (1.0),
 			MindControlExperienceSelfModifier (0.0),
 			MindControlExperienceVictimModifier (1.0),
+			SpawnExperienceOwnerModifier (0.0),
+			SpawnExperienceSpawnModifier (1.0),
 			Insignia_ShowEnemy(),
 			GattlingCyclic (false),
 			IsCustomMissile (false),
