@@ -284,7 +284,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	this->HijackerAllowed.Read(exINI, section, "VehicleThief.Allowed");
 	this->HijackerOneTime.Read(exINI, section, "VehicleThief.OneTime");
 
-	this->IC_Modifier = (float)pINI->ReadDouble(section, "IronCurtain.Modifier", this->IC_Modifier);
+	this->IronCurtain_Modifier.Read(exINI, section, "IronCurtain.Modifier");
 
 	this->Chronoshift_Allow.Read(exINI, section, "Chronoshift.Allow");
 	this->Chronoshift_IsVehicle.Read(exINI, section, "Chronoshift.IsVehicle");

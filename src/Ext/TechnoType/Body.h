@@ -84,7 +84,7 @@ public:
 		int EMP_Threshold;
 		float EMP_Modifier;
 
-		float IC_Modifier;
+		Valueable<double> IronCurtain_Modifier;
 
 		Valueable<bool> Chronoshift_Allow;
 		Valueable<bool> Chronoshift_IsVehicle;
@@ -215,7 +215,7 @@ public:
 			RequiredStolenTech(0ull),
 			Chronoshift_Allow (true),
 			Chronoshift_IsVehicle (false),
-			IC_Modifier (1.0F),
+			IronCurtain_Modifier (1.0),
 			EMP_Threshold (-1),
 			EMP_Modifier (1.0F),
 			VeteranAbilityEMPIMMUNE (false),

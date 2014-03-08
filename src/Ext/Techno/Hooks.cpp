@@ -705,7 +705,7 @@ DEFINE_HOOK(70E2D2, TechnoClass_IronCurtain_Modify, 6) {
 	// if it's no force shield then it's the iron curtain.
 	if(!force) {
 		if(TechnoTypeExt::ExtData *pData = TechnoTypeExt::ExtMap.Find(pThis->GetTechnoType())) {
-			duration = (int)(duration * pData->IC_Modifier);
+			duration = static_cast<int>(duration * pData->IronCurtain_Modifier);
 		}
 
 		pThis->IronCurtainTimer.TimeLeft = duration;
