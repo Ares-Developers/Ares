@@ -52,17 +52,25 @@ DEFINE_HOOK(4DECAE, FootClass_Crash_Spin, 5)
 }
 
 // move to the next hva frame, even if this unit isn't moving
-DEFINE_HOOK(4DA9B7, FootClass_Update_Animated, A)
+DEFINE_HOOK(4DA8B2, FootClass_Update_AnimRate, 6)
 {
 	GET(FootClass*, pThis, ESI);
 	auto pType = pThis->GetTechnoType();
 	auto pExt = TechnoTypeExt::ExtMap.Find(pType);
 
-	// perma means unconditionally, otherwise only while not on ground
-	bool advance = pExt->Animated_Perma ||
-		((pType->DeployToLand || pExt->Animated_InAir) && pThis->GetHeight() > 0);
+	enum { Undecided = 0, NoChange = 0x4DAA01, Advance = 0x4DA9FB };
 
-	return advance ? 0x4DA9D7 : 0x4DAA01;
+	// any of these prevents the animation to advance to the next frame
+	if(pThis->IsBeingWarpedOut() || pThis->IsWarpingIn() || pThis->IsAttackedByLocomotor) {
+		return NoChange;
+	}
+
+	// animate unit whenever in air
+	if(pExt->AirRate && pThis->GetHeight() > 0) {
+		return (Unsorted::CurrentFrame % pExt->AirRate) ? NoChange : Advance;
+	}
+
+	return Undecided;
 }
 
 DEFINE_HOOK(6F9E50, TechnoClass_Update, 5)

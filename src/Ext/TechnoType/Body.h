@@ -159,8 +159,7 @@ public:
 
 		Nullable<bool> Crashable;
 		Valueable<bool> CrashSpin;
-		Valueable<bool> Animated_InAir;
-		Valueable<bool> Animated_Perma;
+		Valueable<int> AirRate;
 
 		// custom missiles
 		Valueable<bool> IsCustomMissile;
