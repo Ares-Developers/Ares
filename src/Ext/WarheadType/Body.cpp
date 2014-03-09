@@ -174,63 +174,63 @@ void WarheadTypeExt::ExtData::applyIronCurtain(CoordStruct *coords, HouseClass* 
 		auto items = Helpers::Alex::getCellSpreadItems(coords, this->AttachedToObject->CellSpread, true);
 
 		// affect each object
-		for(size_t i=0; i<items.size(); ++i) {
-			if(TechnoClass *curTechno = items[i]) {
+		for(auto curTechno : items) {
+			// don't protect the dead
+			if(!curTechno || curTechno->InLimbo || !curTechno->IsAlive || !curTechno->Health) {
+				continue;
+			}
 
-				// don't protect the dead
-				if(curTechno->InLimbo || !curTechno->IsAlive || !curTechno->Health) {
-					continue;
+			// affects enemies or allies respectively?
+			if(!WarheadTypeExt::canWarheadAffectTarget(curTechno, Owner, this->AttachedToObject)) {
+				continue;
+			}
+
+			// duration modifier
+			int duration = this->IC_Duration;
+
+			auto pType = curTechno->GetTechnoType();
+
+			// modify good durations only
+			if(duration > 0) {
+				if(auto pData = TechnoTypeExt::ExtMap.Find(pType)) {
+					duration = static_cast<int>(duration * pData->IronCurtain_Modifier);
 				}
+			}
 
-				// affects enemies or allies respectively?
-				if(WarheadTypeExt::canWarheadAffectTarget(curTechno, Owner, this->AttachedToObject)) {
+			// respect verses the boolean way
+			if(std::abs(this->Verses[pType->Armor].Verses) < 0.001) {
+				continue;
+			}
 
-					// duration modifier
-					int duration = this->IC_Duration;
+			// get the values
+			int oldValue = (curTechno->IronCurtainTimer.Ignorable() ? 0 : curTechno->IronCurtainTimer.GetTimeLeft());
+			int newValue = Helpers::Alex::getCappedDuration(oldValue, duration, this->IC_Cap);
 
-					// modify good durations only
-					if(duration > 0) {
-						if(TechnoTypeExt::ExtData *pData = TechnoTypeExt::ExtMap.Find(curTechno->GetTechnoType())) {
-							duration = static_cast<int>(duration * pData->IronCurtain_Modifier);
-						}
+			// update iron curtain
+			if(oldValue <= 0) {
+				// start iron curtain effect?
+				if(newValue > 0) {
+					// damage the victim before ICing it
+					if(damage) {
+						curTechno->ReceiveDamage(&damage, 0, this->AttachedToObject, nullptr, true, false, Owner);
 					}
 
-					// respect verses the boolean way
-					if(abs(this->Verses[curTechno->GetTechnoType()->Armor].Verses) < 0.001) {
-						continue;
+					// unit may be destroyed already.
+					if(curTechno->IsAlive) {
+						// start and prevent the multiplier from being applied twice
+						curTechno->IronCurtain(newValue, Owner, false);
+						curTechno->IronCurtainTimer.Start(newValue);
 					}
-
-					// get the values
-					int oldValue = (curTechno->IronCurtainTimer.Ignorable() ? 0 : curTechno->IronCurtainTimer.GetTimeLeft());
-					int newValue = Helpers::Alex::getCappedDuration(oldValue, duration, this->IC_Cap);
-
-					// update iron curtain
-					if(oldValue <= 0) {
-						// start iron curtain effect?
-						if(newValue > 0) {
-							// damage the victim before ICing it
-							if(damage) {
-								curTechno->ReceiveDamage(&damage, 0, this->AttachedToObject, nullptr, true, false, Owner);
-							}
-
-							// unit may be destroyed already.
-							if(curTechno->IsAlive) {
-								// start and prevent the multiplier from being applied twice
-								curTechno->IronCurtain(newValue, Owner, false);
-								curTechno->IronCurtainTimer.Start(newValue);
-							}
-						}
-					} else {
-						// iron curtain effect is already on.
-						if(newValue > 0) {
-							// set new length and reset tint stage
-							curTechno->IronCurtainTimer.Start(newValue);
-							curTechno->IronTintStage = 4;
-						} else {
-							// turn iron curtain off
-							curTechno->IronCurtainTimer.Stop();
-						}
-					}
+				}
+			} else {
+				// iron curtain effect is already on.
+				if(newValue > 0) {
+					// set new length and reset tint stage
+					curTechno->IronCurtainTimer.Start(newValue);
+					curTechno->IronTintStage = 4;
+				} else {
+					// turn iron curtain off
+					curTechno->IronCurtainTimer.Stop();
 				}
 			}
 		}
