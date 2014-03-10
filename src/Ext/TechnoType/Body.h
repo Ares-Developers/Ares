@@ -153,10 +153,10 @@ public:
 
 		Valueable<bool> ImmuneToAbduction; //680, 1362
 
-		DynamicVectorClass<HouseTypeClass *> FactoryOwners;
+		ValueableVector<HouseTypeClass *> FactoryOwners;
 		DynamicVectorClass<HouseTypeClass *> ForbiddenFactoryOwners;
 		Valueable<bool> FactoryOwners_HaveAllPlans;
-		
+
 		Valueable<bool> GattlingCyclic;
 
 		Nullable<bool> Crashable;

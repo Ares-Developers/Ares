@@ -226,23 +226,21 @@ bool HouseExt::CheckFactoryOwner(HouseClass *pHouse, TechnoTypeClass *pItem){
 	auto pExt = TechnoTypeExt::ExtMap.Find(pItem);
 	auto HouseExt = HouseExt::ExtMap.Find(pHouse);
 
-	if (pExt->FactoryOwners.Count) {
-		for (int i = 0; i < pExt->FactoryOwners.Count; ++i) {
-			if (HouseExt->FactoryOwners_GatheredPlansOf.Contains(pExt->FactoryOwners[i])) {
+	if (!pExt->FactoryOwners.empty()) {
+		for (auto pOwner : pExt->FactoryOwners) {
+			if(HouseExt->FactoryOwners_GatheredPlansOf.Contains(pOwner)) {
 				return true;
 			}
 		}
 
 		eAbstractType WhatAmI = pItem->WhatAmI();
 
-		for (int j = 0; j < pHouse->Buildings.Count; ++j) {
-			if (pHouse->Buildings[j]->Type->Factory == WhatAmI) {
-				auto FactoryExt = TechnoExt::ExtMap.Find(pHouse->Buildings[j]);
+		for (auto pBld : pHouse->Buildings) {
+			if (pBld->Type->Factory == WhatAmI) {
+				auto FactoryExt = TechnoExt::ExtMap.Find(pBld);
 
-				for (int i = 0; i < pExt->FactoryOwners.Count; ++i) {
-					if (FactoryExt->OriginalHouseType == pExt->FactoryOwners[i]) {
-						return true;
-					}
+				if(pExt->FactoryOwners.Contains(FactoryExt->OriginalHouseType)) {
+					return true;
 				}
 			}
 		}

@@ -334,19 +334,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	// #680, 1362
 	this->ImmuneToAbduction.Read(&exINI, section, "ImmuneToAbduction");
 
-	if(pINI->ReadString(section, "FactoryOwners", "", Ares::readBuffer, Ares::readLength) ) {
-		this->FactoryOwners.Clear();
-		if(_strcmpi(Ares::readBuffer, "<none>") && _strcmpi(Ares::readBuffer, "none")) {
-			for(auto cur = strtok(Ares::readBuffer, ","); cur; cur = strtok(NULL, ",")) {
-				auto b = HouseTypeClass::Find(cur);
-				if(b) {
-					this->FactoryOwners.AddItem(b);
-				} else {
-					Debug::INIParseFailed(section, "FactoryOwners", cur);
-				}
-			}
-		}
-	}
+	this->FactoryOwners.Read(&exINI, section, "FactoryOwners");
 
 	if(pINI->ReadString(section, "FactoryOwners.Forbidden", "", Ares::readBuffer, Ares::readLength) ) {
 		this->ForbiddenFactoryOwners.Clear();
