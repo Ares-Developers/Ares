@@ -3,6 +3,7 @@
 
 #include "../_Container.hpp"
 #include "../../Enum/Prerequisites.h"
+#include "../../Utilities/Template.h"
 
 #include <Helpers/Template.h>
 
@@ -49,7 +50,7 @@ class HouseExt
 			std::bitset<32> StolenTech;
 			IndexBitfield<HouseClass*> RadarPersist; 
 
-			DynamicVectorClass<HouseTypeClass *> FactoryOwners_GatheredPlansOf;
+			ValueableVector<HouseTypeClass *> FactoryOwners_GatheredPlansOf;
 
 		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
 			IonSensitive(0),

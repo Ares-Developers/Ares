@@ -18,19 +18,14 @@ DEFINE_HOOK(445F80, BuildingClass_ChangeOwnership, 5)
 	auto bldTExt = TechnoExt::ExtMap.Find(pThis);
 	auto pNewOwnerExt = HouseExt::ExtMap.Find(pThis->Owner);
 
-	if (!!bldTTExt->FactoryOwners_HaveAllPlans) {
-		bool NewPlansGathered = true;
-		for (int i = 0; i < pNewOwnerExt->FactoryOwners_GatheredPlansOf.Count && NewPlansGathered; ++i) {
-			if (bldTExt->OriginalHouseType == pNewOwnerExt->FactoryOwners_GatheredPlansOf[i]) {
-				NewPlansGathered = false;
-			}
-		}
-		
-		if(NewPlansGathered){
-			pNewOwnerExt->FactoryOwners_GatheredPlansOf.AddItem(bldTExt->OriginalHouseType);
+	if (bldTTExt->FactoryOwners_HaveAllPlans) {
+		auto &plans = pNewOwnerExt->FactoryOwners_GatheredPlansOf;
+
+		if(!plans.Contains(bldTExt->OriginalHouseType)) {
+			plans.push_back(bldTExt->OriginalHouseType);
 		}
 	}
-	
+
 	return 0;
 }
 

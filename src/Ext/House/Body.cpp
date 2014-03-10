@@ -225,13 +225,11 @@ bool HouseExt::CheckFactoryOwners(HouseClass *pHouse, TechnoTypeClass *pItem) {
 bool HouseExt::CheckFactoryOwner(HouseClass *pHouse, TechnoTypeClass *pItem){
 	auto pExt = TechnoTypeExt::ExtMap.Find(pItem);
 	auto HouseExt = HouseExt::ExtMap.Find(pHouse);
-	
+
 	if (pExt->FactoryOwners.Count) {
-		for (int j = 0; j < HouseExt->FactoryOwners_GatheredPlansOf.Count; ++j) {
-			for (int i = 0; i < pExt->FactoryOwners.Count; ++i) {
-				if (HouseExt->FactoryOwners_GatheredPlansOf[j] == pExt->FactoryOwners[i]) {
-					return true;
-				}
+		for (int i = 0; i < pExt->FactoryOwners.Count; ++i) {
+			if (HouseExt->FactoryOwners_GatheredPlansOf.Contains(pExt->FactoryOwners[i])) {
+				return true;
 			}
 		}
 
@@ -260,21 +258,19 @@ bool HouseExt::CheckForbiddenFactoryOwner(HouseClass *pHouse, TechnoTypeClass *p
 	auto HouseExt = HouseExt::ExtMap.Find(pHouse);
 
 	if (pExt->ForbiddenFactoryOwners.Count) {
-		for (int j = 0; j < HouseExt->FactoryOwners_GatheredPlansOf.Count; ++j) {
-			for (int i = 0; i < pExt->ForbiddenFactoryOwners.Count; ++i) {
-				if (HouseExt->FactoryOwners_GatheredPlansOf[j] == pExt->ForbiddenFactoryOwners[i]) {
-					break;
-				}
+		for (int i = 0; i < pExt->ForbiddenFactoryOwners.Count; ++i) {
+			if (HouseExt->FactoryOwners_GatheredPlansOf.Contains(pExt->ForbiddenFactoryOwners[i])) {
+				break;
+			}
 
-				if (i == pExt->ForbiddenFactoryOwners.Count - 1)
-				{
-					return true;
-				}
+			if (i == pExt->ForbiddenFactoryOwners.Count - 1)
+			{
+				return true;
 			}
 		}
 
 		eAbstractType WhatAmI = pItem->WhatAmI();
-		
+
 		for (int j = 0; j < pHouse->Buildings.Count; ++j) {
 			if (pHouse->Buildings[j]->Type->Factory == WhatAmI) {
 				auto FactoryExt = TechnoExt::ExtMap.Find(pHouse->Buildings[j]);
