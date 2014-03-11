@@ -333,6 +333,10 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	// #680, 1362
 	this->ImmuneToAbduction.Read(exINI, section, "ImmuneToAbduction");
 
+	this->FactoryOwners.Read(exINI, section, "FactoryOwners");
+	this->ForbiddenFactoryOwners.Read(exINI, section, "FactoryOwners.Forbidden");
+	this->FactoryOwners_HaveAllPlans.Read(exINI, section, "FactoryOwners.HaveAllPlans");
+
 	// issue #896235: cyclic gattling
 	this->GattlingCyclic.Read(exINI, section, "Gattling.Cycle");
 

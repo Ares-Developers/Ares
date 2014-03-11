@@ -5,6 +5,7 @@
 #include <BuildingTypeClass.h>
 #include <WarheadTypeClass.h>
 #include <VocClass.h>
+#include <HouseTypeClass.h>
 #include <VoxClass.h>
 
 #include "../../Ares.h"
@@ -155,6 +156,10 @@ public:
 
 		Valueable<bool> ImmuneToAbduction; //680, 1362
 
+		ValueableVector<HouseTypeClass *> FactoryOwners;
+		ValueableVector<HouseTypeClass *> ForbiddenFactoryOwners;
+		Valueable<bool> FactoryOwners_HaveAllPlans;
+
 		Valueable<bool> GattlingCyclic;
 
 		Nullable<bool> Crashable;
@@ -271,7 +276,8 @@ public:
 			CarryallAllowed(),
 			CarryallSizeLimit (),
 			EVA_UnitLost (-1),
-			ImmuneToAbduction(false)
+			ImmuneToAbduction(false),
+			FactoryOwners_HaveAllPlans(false)
 			{
 				this->Insignia.SetAll(nullptr);
 				*this->CameoPCX = *this->AltCameoPCX = 0;

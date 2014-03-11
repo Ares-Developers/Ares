@@ -94,6 +94,8 @@ void WarheadTypeExt::ExtData::LoadFromINIFile(WarheadTypeClass *pThis, CCINIClas
 
 	this->KillDriver = pINI->ReadBool(section, "KillDriver", this->KillDriver);
 
+	this->KillDriver_KillBelowPercent.Read(exINI, section, "KillDriver.KillBelowPercent");
+
 	this->Malicious.Read(exINI, section, "Malicious");
 
 	this->CellSpread_MaxAffect.Read(exINI, section, "CellSpread.MaxAffect");
@@ -368,7 +370,8 @@ bool WarheadTypeExt::ExtData::applyKillDriver(BulletClass* Bullet) {
 
 		// conditions: Warhead is KillDriver, target is Vehicle or Aircraft, but not protected and not a living being
 		if(((pTarget->WhatAmI() == abs_Unit) || (pTarget->WhatAmI() == abs_Aircraft))
-			&& !(pTarget->BeingWarpedOut || TargetTypeExt->ProtectedDriver || pTargetType->Organic || pTargetType->Natural)) {
+			&& !(pTarget->BeingWarpedOut || TargetTypeExt->ProtectedDriver || pTargetType->Organic || pTargetType->Natural)
+			&& (pTarget->GetHealthPercentage() < this->KillDriver_KillBelowPercent)) {
 
 			// if this aircraft is expected to dock to anything, don't allow killing its pilot
 			// (reason being: the game thinks you lost the aircraft that just turned, and assumes you have free aircraft space,

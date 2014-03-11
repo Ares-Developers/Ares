@@ -75,6 +75,8 @@ public:
 
 		bool KillDriver; //!< Whether this warhead turns the target vehicle over to the special side ("kills the driver"). Request #733.
 
+		Valueable<double> KillDriver_KillBelowPercent;
+
 		Valueable<bool> Malicious;
 
 		Valueable<int> CellSpread_MaxAffect;
@@ -94,6 +96,7 @@ public:
 			InfDeathAnim (nullptr),
 			PreImpactAnim (-1),
 			KillDriver (false),
+			KillDriver_KillBelowPercent(1.00),
 			Malicious (true),
 			CellSpread_MaxAffect (-1),
 			AttachedEffect()

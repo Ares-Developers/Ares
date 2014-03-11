@@ -272,6 +272,11 @@ DEFINE_HOOK(6F407D, TechnoClass_Init_1, 6)
 		F->ParasiteImUsing = Parasite;
 	}
 
+	pData->OriginalHouseType = HouseTypeClass::Find(T->Owner->Type->ParentCountry);
+	if(!pData->OriginalHouseType) {
+		pData->OriginalHouseType = T->Owner->Type;
+	}
+
 	return 0x6F4102;
 }
 

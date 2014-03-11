@@ -5,6 +5,7 @@
 #include "../Side/Body.h"
 #include "../TechnoType/Body.h"
 #include "../../Enum/Prerequisites.h"
+#include "../Techno/Body.h"
 
 #include <MouseClass.h>
 
@@ -58,6 +59,8 @@ HouseExt::RequirementStatus HouseExt::RequirementsMet(HouseClass *pHouse, Techno
 	if(!pHouse->HasAllStolenTech(pItem)) { return Incomplete; }
 
 	if(!pHouse->InRequiredHouses(pItem) || pHouse->InForbiddenHouses(pItem)) { return Forbidden; }
+
+	if(!HouseExt::CheckFactoryOwners(pHouse, pItem)) { return Incomplete; }
 
 	if(!Unsorted::SWAllowed) {
 		if(BuildingTypeClass *pBld = specific_cast<BuildingTypeClass*>(pItem)) {
@@ -205,6 +208,72 @@ bool HouseExt::FactoryForObjectExists(HouseClass *pHouse, TechnoTypeClass *pItem
 		}
 	}
 	return false;
+}
+
+bool HouseExt::CheckFactoryOwners(HouseClass *pHouse, TechnoTypeClass *pItem) {
+	return HouseExt::CheckFactoryOwner(pHouse, pItem)
+		&& HouseExt::CheckForbiddenFactoryOwner(pHouse, pItem);
+}
+
+bool HouseExt::CheckFactoryOwner(HouseClass *pHouse, TechnoTypeClass *pItem){
+	auto pExt = TechnoTypeExt::ExtMap.Find(pItem);
+	auto HouseExt = HouseExt::ExtMap.Find(pHouse);
+
+	if (!pExt->FactoryOwners.empty()) {
+		for (auto pOwner : pExt->FactoryOwners) {
+			if(HouseExt->FactoryOwners_GatheredPlansOf.Contains(pOwner)) {
+				return true;
+			}
+		}
+
+		eAbstractType WhatAmI = pItem->WhatAmI();
+
+		for (auto pBld : pHouse->Buildings) {
+			if (pBld->Type->Factory == WhatAmI) {
+				auto FactoryExt = TechnoExt::ExtMap.Find(pBld);
+
+				if(pExt->FactoryOwners.Contains(FactoryExt->OriginalHouseType)) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	return true;
+}
+
+bool HouseExt::CheckForbiddenFactoryOwner(HouseClass *pHouse, TechnoTypeClass *pItem){
+	auto pExt = TechnoTypeExt::ExtMap.Find(pItem);
+	auto HouseExt = HouseExt::ExtMap.Find(pHouse);
+
+	auto &forbidden = pExt->ForbiddenFactoryOwners;
+
+	if (!forbidden.empty()) {
+		// return true if not a single forbidden house is in the gathered plans
+		if(!std::any_of(forbidden.begin(), forbidden.end(), [HouseExt](HouseTypeClass* pForbidden) {
+			return HouseExt->FactoryOwners_GatheredPlansOf.Contains(pForbidden);
+		}))	{
+			return true;
+		}
+
+		eAbstractType WhatAmI = pItem->WhatAmI();
+
+		for (auto pBld : pHouse->Buildings) {
+			if (pBld->Type->Factory == WhatAmI) {
+				auto FactoryExt = TechnoExt::ExtMap.Find(pBld);
+
+				if(!forbidden.Contains(FactoryExt->OriginalHouseType)) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	return true;
 }
 
 bool HouseExt::UpdateAnyFirestormActive() {

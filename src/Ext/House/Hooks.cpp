@@ -151,6 +151,15 @@ DEFINE_HOOK(500CC5, HouseClass_InitFromINI_FixBufferLimits, 6)
 	}
 
 	H->UIName[20] = 0;
+
+	//dropping this here, should be fine
+	auto pHouseExt = HouseExt::ExtMap.Find(H);
+	if(auto pType = HouseTypeClass::Find(H->Type->ParentCountry)) {
+		pHouseExt->FactoryOwners_GatheredPlansOf.push_back(pType);
+	} else {
+		pHouseExt->FactoryOwners_GatheredPlansOf.push_back(H->Type);
+	}
+
 	return 0x500D0D;
 }
 

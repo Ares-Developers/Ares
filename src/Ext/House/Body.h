@@ -3,6 +3,7 @@
 
 #include "../_Container.hpp"
 #include "../../Enum/Prerequisites.h"
+#include "../../Utilities/Template.h"
 
 #include <Helpers/Template.h>
 
@@ -48,6 +49,8 @@ class HouseExt
 
 			std::bitset<32> StolenTech;
 			IndexBitfield<HouseClass*> RadarPersist; 
+
+			ValueableVector<HouseTypeClass *> FactoryOwners_GatheredPlansOf;
 
 		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			IonSensitive(false),
@@ -98,6 +101,10 @@ class HouseExt
 
 	static bool HasNeededFactory(HouseClass *pHouse, TechnoTypeClass *pItem);
 	static bool FactoryForObjectExists(HouseClass *pHouse, TechnoTypeClass *pItem);
+
+	static bool CheckFactoryOwners(HouseClass *pHouse, TechnoTypeClass *pItem);
+	static bool CheckFactoryOwner(HouseClass *pHouse, TechnoTypeClass *pItem);
+	static bool CheckForbiddenFactoryOwner(HouseClass *pHouse, TechnoTypeClass *pItem);
 
 	static bool IsAnyFirestormActive;
 	static bool UpdateAnyFirestormActive();

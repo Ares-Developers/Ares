@@ -82,6 +82,8 @@ public:
 
 		EBolt * MyBolt;
 
+		HouseTypeClass* OriginalHouseType;
+
 		BuildingLightClass* Spotlight;
 
 		Nullable<bool> AltOccupation; // if the unit marks cell occupation flags, this is set to whether it uses the "high" occupation members
@@ -105,6 +107,7 @@ public:
 			MyOriginalTemporal(nullptr),
 			Spotlight(nullptr),
 			AltOccupation(),
+			OriginalHouseType(nullptr),
 			AttachEffects_RecreateAnims(false),
 			AttachedTechnoEffect_isset (false),
 			AttachedTechnoEffect_Delay (0),
