@@ -209,15 +209,8 @@ bool HouseExt::FactoryForObjectExists(HouseClass *pHouse, TechnoTypeClass *pItem
 }
 
 bool HouseExt::CheckFactoryOwners(HouseClass *pHouse, TechnoTypeClass *pItem) {
-
-	for(int i = 0; i < pHouse->Buildings.Count; ++i) {
-		if( HouseExt::CheckFactoryOwner(pHouse, pItem)
-			&& HouseExt::CheckForbiddenFactoryOwner(pHouse, pItem)
-			) {
-			return true;
-		}
-	}
-	return false;
+	return HouseExt::CheckFactoryOwner(pHouse, pItem)
+		&& HouseExt::CheckForbiddenFactoryOwner(pHouse, pItem);
 }
 
 bool HouseExt::CheckFactoryOwner(HouseClass *pHouse, TechnoTypeClass *pItem){
