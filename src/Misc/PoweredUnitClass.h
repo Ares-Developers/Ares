@@ -1,8 +1,8 @@
 #ifndef __POWEREDUNITCLASS_H
 #define __POWEREDUNITCLASS_H
-#include <TechnoClass.h>
-#include <BuildingTypeClass.h>
-#include "../Ext/Techno/Body.h"
+
+class TechnoClass;
+class HouseClass;
 
 class PoweredUnitClass
 {
@@ -10,7 +10,6 @@ private:
 	static const int ScanInterval = 15;		//!< Minimum delay between scans in frames.
 	
 	TechnoClass* Techno;
-	TechnoTypeExt::ExtData* Ext;
 	int LastScan;							//!< Frame number when the last scan was performed.
 	bool Powered;							//!< Whether the unit has a building providing power. NOT the same as being online.
 	
@@ -18,8 +17,7 @@ private:
 	void PowerUp();
 	bool PowerDown();
 public:
-	PoweredUnitClass(TechnoClass* Techno, TechnoTypeExt::ExtData* Ext)
-		: Techno(Techno), Ext(Ext), LastScan(0), Powered(true) {
+	PoweredUnitClass(TechnoClass* Techno) : Techno(Techno), LastScan(0), Powered(true) {
 	}
 	
 	~PoweredUnitClass() {

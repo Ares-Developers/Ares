@@ -1,5 +1,6 @@
 #include <BuildingClass.h>
 #include <HouseClass.h>
+#include <TechnoClass.h>
 #include <GeneralStructures.h>
 #include "../Ext/Building/Body.h"
 #include "../Ext/TechnoType/Body.h"
@@ -9,10 +10,12 @@
 
 bool PoweredUnitClass::IsPoweredBy(HouseClass* Owner) const
 {
+	auto pType = TechnoTypeExt::ExtMap.Find(this->Techno->GetTechnoType());
+
 	for(int i = 0; i < Owner->Buildings.Count; ++i)	{
 		auto Building  = Owner->Buildings.GetItem(i);
 		auto BExt = TechnoExt::ExtMap.Find(Building);
-		auto inArray = this->Ext->PoweredBy.Contains(Building->Type);
+		auto inArray = pType->PoweredBy.Contains(Building->Type);
 
 		if(inArray && !Building->BeingWarpedOut && !Building->IsUnderEMP() && BExt->IsOperated() && Building->IsPowerOnline()) {
 			return true;
@@ -34,7 +37,8 @@ bool PoweredUnitClass::PowerDown()
 {
 	if( EMPulse::IsDeactivationAdvisable(this->Techno) ) {
 		// destroy if EMP.Threshold would crash this unit when in air
-		if( EMPulse::EnableEMPEffect2(this->Techno) || ( this->Ext->EMP_Threshold && this->Techno->IsInAir() ) ) {
+		auto pType = TechnoTypeExt::ExtMap.Find(this->Techno->GetTechnoType());
+		if( EMPulse::EnableEMPEffect2(this->Techno) || ( pType->EMP_Threshold && this->Techno->IsInAir() ) ) {
 			return false;
 		}
 	}

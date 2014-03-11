@@ -31,6 +31,31 @@
 class ParadropPlane;
 class NewSWType;
 
+struct SWRange {
+	SWRange(float widthOrRange = -1.0f, int height = -1) : WidthOrRange(widthOrRange), Height(height) {}
+	SWRange(int widthOrRange, int height = -1) : WidthOrRange(static_cast<float>(widthOrRange)), Height(height) {}
+
+	float range() const {
+		return this->WidthOrRange;
+	}
+
+	int width() const {
+		return static_cast<int>(this->WidthOrRange);
+	}
+
+	int height() const {
+		return this->Height;
+	}
+
+	bool empty() const {
+		return this->WidthOrRange < 0.0
+			&& this->Height < 0;
+	}
+
+	float WidthOrRange;
+	int Height;
+};
+
 class SWTypeExt
 {
 public:
@@ -45,18 +70,18 @@ public:
 		ValueableIdx<MissionClass> SpyPlane_Mission;
 
 		// Lightning Storm
-		Valueable<int> Weather_Duration;
-		Valueable<int> Weather_HitDelay;
-		Valueable<int> Weather_ScatterDelay;
+		Nullable<int> Weather_Duration;
+		Nullable<int> Weather_HitDelay;
+		Nullable<int> Weather_ScatterDelay;
 		Valueable<int> Weather_ScatterCount;
-		Valueable<int> Weather_Separation;
+		Nullable<int> Weather_Separation;
 		Valueable<int> Weather_CloudHeight;
-		Valueable<int> Weather_RadarOutage;
+		Nullable<int> Weather_RadarOutage;
 		Valueable<int> Weather_DebrisMin;
 		Valueable<int> Weather_DebrisMax;
-		Valueable<bool> Weather_PrintText;
+		Nullable<bool> Weather_PrintText;
 		Valueable<bool> Weather_IgnoreLightningRod;
-		Valueable<AnimTypeClass*> Weather_BoltExplosion;
+		Nullable<AnimTypeClass*> Weather_BoltExplosion;
 		NullableVector<AnimTypeClass*> Weather_Clouds;
 		NullableVector<AnimTypeClass*> Weather_Bolts;
 		NullableVector<AnimTypeClass*> Weather_Debris;
@@ -66,22 +91,22 @@ public:
 		// Nuke
 		Valueable<WeaponTypeClass*> Nuke_Payload;
 		Valueable<AnimTypeClass*> Nuke_PsiWarning;
-		Valueable<AnimTypeClass*> Nuke_TakeOff;
+		Nullable<AnimTypeClass*> Nuke_TakeOff;
 		Valueable<bool> Nuke_SiloLaunch;
 
 		// Generic Paradrop
-		hash_map<AbstractTypeClass*, DynamicVectorClass<ParadropPlane*>> ParaDrop;
-		DynamicVectorClass<ParadropPlane*> ParaDropPlanes;
+		hash_map<AbstractTypeClass*, std::vector<ParadropPlane*>> ParaDrop;
+		std::vector<std::unique_ptr<ParadropPlane>> ParaDropPlanes;
 
 		// Generic Protection
-		Customizable<int> Protect_Duration;
-		Customizable<int> Protect_PlayFadeSoundTime;
-		Customizable<int> Protect_PowerOutageDuration;
+		Nullable<int> Protect_Duration;
+		Nullable<int> Protect_PlayFadeSoundTime;
+		Nullable<int> Protect_PowerOutageDuration;
 		Valueable<bool> Protect_IsForceShield;
 
 		// Chronosphere
-		Valueable<AnimTypeClass *> Chronosphere_BlastSrc;
-		Valueable<AnimTypeClass *> Chronosphere_BlastDest;
+		Nullable<AnimTypeClass *> Chronosphere_BlastSrc;
+		Nullable<AnimTypeClass *> Chronosphere_BlastDest;
 		Valueable<bool> Chronosphere_KillOrganic;
 		Valueable<bool> Chronosphere_KillTeleporters;
 		Valueable<bool> Chronosphere_AffectUndeployable;
@@ -92,19 +117,19 @@ public:
 		Valueable<bool> Chronosphere_ReconsiderBuildings;
 
 		// Genetic Mutator
-		Valueable<bool> Mutate_Explosion;
+		Nullable<bool> Mutate_Explosion;
 		Valueable<bool> Mutate_IgnoreCyborg;
 		Valueable<bool> Mutate_IgnoreNotHuman;
 		Valueable<bool> Mutate_KillNatural;
 
 		// Psychic Dominator
 		Valueable<bool> Dominator_Capture;
-		Valueable<int> Dominator_FireAtPercentage;
+		Nullable<int> Dominator_FireAtPercentage;
 		Valueable<int> Dominator_FirstAnimHeight;
 		Valueable<int> Dominator_SecondAnimHeight;
-		Customizable<AnimTypeClass*> Dominator_FirstAnim;
-		Customizable<AnimTypeClass*> Dominator_SecondAnim;
-		Customizable<AnimTypeClass*> Dominator_ControlAnim;
+		Nullable<AnimTypeClass*> Dominator_FirstAnim;
+		Nullable<AnimTypeClass*> Dominator_SecondAnim;
+		Nullable<AnimTypeClass*> Dominator_ControlAnim;
 		Valueable<bool> Dominator_Ripple;
 		Valueable<bool> Dominator_CaptureMindControlled;
 		Valueable<bool> Dominator_CapturePermaMindControlled;
@@ -128,9 +153,9 @@ public:
 		ValueableIdx<VoxClass> EVA_SelectTarget;
 
 		// anim/sound
-		ValueableIdx<VocClass> SW_Sound;
-		ValueableIdx<VocClass> SW_ActivationSound;
-		Valueable<AnimTypeClass *> SW_Anim;
+		NullableIdx<VocClass> SW_Sound;
+		NullableIdx<VocClass> SW_ActivationSound;
+		Nullable<AnimTypeClass *> SW_Anim;
 		Valueable<int> SW_AnimHeight;
 		ValueableEnum<SuperWeaponAffectedHouse> SW_AnimVisibility;
 
@@ -145,24 +170,27 @@ public:
 		Valueable<MouseCursor> SW_NoCursor;
 		char SW_PostDependent[0x18];
 		ValueableEnum<SuperWeaponAITargetingMode> SW_AITargetingType;
-		Customizable<double> SW_ChargeToDrainRatio;
+		Nullable<double> SW_ChargeToDrainRatio;
 
-		Valueable<float> SW_WidthOrRange;
-		Valueable<int> SW_Height;
+		SWRange SW_Range;
 		ValueableEnum<SuperWeaponAffectedHouse> SW_AffectsHouse;
 		ValueableEnum<SuperWeaponAffectedHouse> SW_RequiresHouse;
 		ValueableEnum<SuperWeaponTarget> SW_AffectsTarget;
 		ValueableEnum<SuperWeaponTarget> SW_RequiresTarget;
-		Customizable<WarheadTypeClass *> SW_Warhead;
-		Valueable<int> SW_Damage;
-		Valueable<int> SW_Deferment;
+		Nullable<WarheadTypeClass *> SW_Warhead;
+		Nullable<int> SW_Damage;
+		Nullable<int> SW_Deferment;
 
 		// Lighting
 		Valueable<bool> Lighting_Enabled;
-		Customizable<int> Lighting_Ambient;
-		Customizable<int> Lighting_Green;
-		Customizable<int> Lighting_Blue;
-		Customizable<int> Lighting_Red;
+		Nullable<int> Lighting_Ambient;
+		Nullable<int> Lighting_Green;
+		Nullable<int> Lighting_Blue;
+		Nullable<int> Lighting_Red;
+		int ScenarioClass::* Lighting_DefaultAmbient;
+		int ScenarioClass::* Lighting_DefaultGreen;
+		int ScenarioClass::* Lighting_DefaultBlue;
+		int ScenarioClass::* Lighting_DefaultRed;
 
 		// Messages
 		Valueable<CSFText> Message_Detected;
@@ -192,7 +220,7 @@ public:
 		int HandledByNewSWType;
 		int LastAction;
 
-		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
+		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			SpyPlane_TypeIndex (0),
 			SpyPlane_Count (1),
 			SpyPlane_Mission (mission_AttackAgain),
@@ -200,8 +228,6 @@ public:
 			Weather_ScatterCount (1),
 			Nuke_PsiWarning (nullptr),
 			Sonar_Delay (0),
-			SW_ActivationSound (-1),
-			SW_ChargeToDrainRatio (&RulesClass::Instance->ChargeToDrainRatio),
 			Money_Amount (0),
 			Money_DrainAmount (0),
 			Money_DrainDelay (0),
@@ -225,8 +251,10 @@ public:
 			Text_Charging (),
 			Text_Active (),
 			Lighting_Enabled (true),
-			SW_Sound (-1),
-			SW_Anim (nullptr),
+			Lighting_DefaultAmbient (nullptr),
+			Lighting_DefaultGreen (nullptr),
+			Lighting_DefaultBlue (nullptr),
+			Lighting_DefaultRed (nullptr),
 			SW_AnimHeight (0),
 			SW_AnimVisibility (SuperWeaponAffectedHouse::All),
 			SW_TypeCustom (false),
@@ -241,20 +269,16 @@ public:
 			SW_AITargetingType (SuperWeaponAITargetingMode::None),
 			SW_FireToShroud (true),
 			SW_RadarEvent (true),
-			SW_WidthOrRange (-1),
-			SW_Height (-1),
+			SW_Range(),
 			HandledByNewSWType (-1),
 			CameoPal(),
-			SW_DeliverBuildups (false),
-			SW_Damage(0)
+			SW_DeliverBuildups (false)
 			{
 				*SidebarPCX = 0;
 				*SW_PostDependent = 0;
 			};
 
 		virtual ~ExtData();
-
-		virtual size_t Size() const { return sizeof(*this); };
 
 		virtual void LoadFromRulesFile(TT *pThis, CCINIClass *pINI);
 		virtual void LoadFromINIFile(TT *pThis, CCINIClass *pINI);
@@ -263,12 +287,24 @@ public:
 
 		bool ChangeLighting();
 		bool IsAnimVisible(HouseClass* pFirer);
-		bool CanFireAt(CellStruct *pCoords);
+		bool CanFireAt(const CellStruct &Coords);
 		bool IsHouseAffected(HouseClass* pFirer, HouseClass* pHouse);
 		bool IsHouseAffected(HouseClass* pFirer, HouseClass* pHouse, SuperWeaponAffectedHouse::Value value);
 		bool IsTechnoAffected(TechnoClass* pTechno);
 		void PrintMessage(const CSFText& message, HouseClass* pFirer);
-		NewSWType* GetNewSWType();
+
+		NewSWType* GetNewSWType() const;
+		bool IsOriginalType() const;
+		bool IsTypeRedirected() const;
+		int GetTypeIndexWithRedirect() const;
+		int GetNewTypeIndex() const;
+
+		WarheadTypeClass* GetWarhead() const;
+		AnimTypeClass* GetAnim() const;
+		int GetSound() const;
+		int GetDamage() const;
+		SWRange GetRange() const;
+		double GetChargeToDrainRatio() const;
 
 		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
 		}
@@ -283,7 +319,7 @@ public:
 
 	static SuperWeaponTypeClass *CurrentSWType;
 
-	bool static Launch(SuperClass* pThis, NewSWType* pData, CellStruct* pCoords, byte IsPlayer);
+	bool static Launch(SuperClass* pThis, NewSWType* pData, const CellStruct &Coords, bool IsPlayer);
 	void static ClearChronoAnim(SuperClass *pThis);
 	void static CreateChronoAnim(SuperClass *pThis, CoordStruct *pCoords, AnimTypeClass *pAnimType);
 	bool static ChangeLighting(SuperClass *pThis);
@@ -292,11 +328,11 @@ public:
 
 class ParadropPlane {
 public:
-	AircraftTypeClass *pAircraft;
-	TypeList<TechnoTypeClass*> pTypes;
-	TypeList<int> pNum;
+	Valueable<AircraftTypeClass*> Aircraft;
+	ValueableVector<TechnoTypeClass*> Types;
+	ValueableVector<int> Num;
 
-	ParadropPlane() : pAircraft (nullptr)
+	ParadropPlane() : Aircraft (nullptr)
 	{
 	}
 };

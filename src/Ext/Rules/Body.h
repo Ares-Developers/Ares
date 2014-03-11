@@ -7,6 +7,7 @@
 #include <AnimTypeClass.h>
 #include <SidebarClass.h>
 #include <VocClass.h>
+#include <MouseClass.h>
 
 #include "../_Container.hpp"
 #include "../../Utilities/Template.h"
@@ -42,9 +43,11 @@ class RulesExt
 
 		Valueable<bool> EnemyInsignia;
 
+		Valueable<bool> ReturnStructures;
+
 		Valueable<bool> TypeSelectUseDeploy;
 
-		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
+		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			ElectricDeath(nullptr),
 			EngineerDamage (0.0F),
 			EngineerAlwaysCaptureTech (true),
@@ -56,6 +59,7 @@ class RulesExt
 			DecloakSound(),
 			CloakHeight(),
 			EnemyInsignia(true),
+			ReturnStructures(false),
 			TypeSelectUseDeploy(true),
 			CanMakeStuffUp(false)
 			{
@@ -67,8 +71,6 @@ class RulesExt
 		virtual ~ExtData() {
 		}
 
-		virtual size_t Size() const { return sizeof(*this); };
-
 		virtual void LoadFromINIFile(TT *pThis, CCINIClass *pINI);
 		virtual void LoadBeforeTypeData(TT *pThis, CCINIClass *pINI);
 		virtual void LoadAfterTypeData(TT *pThis, CCINIClass *pINI);
@@ -79,7 +81,7 @@ class RulesExt
 };
 
 private:
-	static ExtData *Data;
+	static std::unique_ptr<ExtData> Data;
 
 public:
 	static void Allocate(RulesClass *pThis);
@@ -91,7 +93,7 @@ public:
 
 	static ExtData* Global()
 	{
-		return Data;
+		return Data.get();
 	};
 
 	static DynamicVectorClass<CameoDataStruct> TabCameos[4];

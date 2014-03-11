@@ -333,7 +333,7 @@ DEFINE_HOOK(4DA53E, FootClass_Update, 6)
 		if(pType->TiberiumHeal || F->HasAbility(Abilities::TIBERIUM_HEAL)) {
 			if(F->Health > 0 && F->Health < pType->Strength) {
 				CellClass* pCell = F->GetCell();
-				if(pCell->LandType == lt_Tiberium) {
+				if(pCell->LandType == LandType::Tiberium) {
 					double delay = RulesClass::Instance->TiberiumHeal;
 					int health = pType->GetRepairStep();
 

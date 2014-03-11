@@ -14,8 +14,7 @@ DEFINE_HOOK(4B99A2, DropshipLoadout_WriteUnit, 0)
 {
 	GET(TechnoTypeClass *, pType, ESI);
 
-	GET_STACK(int, IsAvailable, STACK_OFFS(0x164, -0x8));
-	bool Available = !!IsAvailable;
+	GET_STACK(bool, Available, STACK_OFFS(0x164, -0x8));
 
 	LEA_STACK(Point2D *, BaseCoords, STACK_OFFS(0x164, 0x14C));
 	LEA_STACK(Point2D *, AltCoords, STACK_OFFS(0x164, 0x144));
@@ -41,7 +40,7 @@ DEFINE_HOOK(4B99A2, DropshipLoadout_WriteUnit, 0)
 		StringCchPrintfW(pArmament, StringLen, L"Armament: NONE");
 	}
 
-	if(auto pArmorType = ArmorType::Array.GetItem(pType->Armor)) {
+	if(auto pArmorType = ArmorType::Array.at(pType->Armor).get()) {
 		StringCchPrintfW(pArmor, StringLen, L"Armor: %hs", pArmorType->Name);
 	} else {
 		StringCchPrintfW(pArmor, StringLen, L"Armor: UNKNOWN");
@@ -76,14 +75,14 @@ DEFINE_HOOK(4B93BD, ScenarioClass_GenerateDropshipLoadout_FreeAnims, 0)
 {
 	GET_STACK(SHPStruct *, pBackground, 0xAC);
 	if(pBackground) {
-		pBackground->Unload();
+		GameDelete(pBackground);
 	}
 
 	LEA_STACK(SHPStruct **, pSwipeAnims, 0x290);
 
-	for(auto i = 0; i <= 3; ++i) {
+	for(auto i = 0; i < 4; ++i) {
 		if(auto pAnim = pSwipeAnims[i]) {
-			pAnim->Unload();
+			GameDelete(pAnim);
 		}
 	}
 

@@ -3,6 +3,7 @@
 #include "../../Ext/Infantry/Body.h"
 #include "../../Ext/WarheadType/Body.h"
 #include "../../Utilities/Helpers.Alex.h"
+#include "../../Utilities/TemplateDef.h"
 
 SuperClass* SW_PsychicDominator::CurrentPsyDom = nullptr;
 
@@ -16,20 +17,26 @@ SuperWeaponFlags::Value SW_PsychicDominator::Flags()
 	return SuperWeaponFlags::NoEvent;
 }
 
+WarheadTypeClass* SW_PsychicDominator::GetWarhead(const SWTypeExt::ExtData* pData) const {
+	return pData->SW_Warhead.Get(RulesClass::Instance->DominatorWarhead);
+}
+
+int SW_PsychicDominator::GetDamage(const SWTypeExt::ExtData* pData) const {
+	return pData->SW_Damage.Get(RulesClass::Instance->DominatorDamage);
+}
+
+SWRange SW_PsychicDominator::GetRange(const SWTypeExt::ExtData* pData) const {
+	if(pData->SW_Range.empty()) {
+		return SWRange(RulesClass::Instance->DominatorCaptureRange);
+	}
+	return pData->SW_Range;
+}
+
 void SW_PsychicDominator::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)
 {
 	// Defaults to PsychicDominator values
-	pData->SW_WidthOrRange = (float)RulesClass::Instance->DominatorCaptureRange;
-	pData->SW_Damage = RulesClass::Instance->DominatorDamage;
-	pData->SW_Warhead = &RulesClass::Instance->DominatorWarhead;
-	pData->SW_ActivationSound = RulesClass::Instance->PsychicDominatorActivateSound;
-
 	pData->Dominator_FirstAnimHeight = 750;
 	pData->Dominator_SecondAnimHeight = 0;
-	pData->Dominator_FirstAnim = &RulesClass::Instance->DominatorFirstAnim;
-	pData->Dominator_SecondAnim = &RulesClass::Instance->DominatorSecondAnim;
-	pData->Dominator_ControlAnim = &RulesClass::Instance->PermaControlledAnimationType;
-	pData->Dominator_FireAtPercentage = RulesClass::Instance->DominatorFireAtPercentage;
 	pData->Dominator_Ripple = true;
 	pData->Dominator_Capture = true;
 	pData->Dominator_CaptureMindControlled = true;
@@ -43,10 +50,10 @@ void SW_PsychicDominator::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeC
 
 	pData->Message_Abort = CSFText("Msg:DominatorActive");
 
-	pData->Lighting_Ambient = &ScenarioClass::Instance->DominatorAmbient;
-	pData->Lighting_Red = &ScenarioClass::Instance->DominatorRed;
-	pData->Lighting_Green = &ScenarioClass::Instance->DominatorGreen;
-	pData->Lighting_Blue = &ScenarioClass::Instance->DominatorBlue;
+	pData->Lighting_DefaultAmbient = &ScenarioClass::DominatorAmbient;
+	pData->Lighting_DefaultRed = &ScenarioClass::DominatorRed;
+	pData->Lighting_DefaultGreen = &ScenarioClass::DominatorGreen;
+	pData->Lighting_DefaultBlue = &ScenarioClass::DominatorBlue;
 
 	pData->SW_AITargetingType = SuperWeaponAITargetingMode::PsychicDominator;
 	pData->SW_AffectsTarget = SuperWeaponTarget::Infantry | SuperWeaponTarget::Unit;
@@ -63,18 +70,18 @@ void SW_PsychicDominator::LoadFromINI(
 	}
 
 	INI_EX exINI(pINI);
-	pData->Dominator_FirstAnimHeight.Read(&exINI, section, "Dominator.FirstAnimHeight");
-	pData->Dominator_SecondAnimHeight.Read(&exINI, section, "Dominator.SecondAnimHeight");
-	pData->Dominator_FirstAnim.Parse(&exINI, section, "Dominator.FirstAnim");
-	pData->Dominator_SecondAnim.Parse(&exINI, section, "Dominator.SecondAnim");
-	pData->Dominator_ControlAnim.Parse(&exINI, section, "Dominator.ControlAnim");
-	pData->Dominator_FireAtPercentage.Read(&exINI, section, "Dominator.FireAtPercentage");
-	pData->Dominator_Capture.Read(&exINI, section, "Dominator.Capture");
-	pData->Dominator_Ripple.Read(&exINI, section, "Dominator.Ripple");
-	pData->Dominator_CaptureMindControlled.Read(&exINI, section, "Dominator.CaptureMindControlled");
-	pData->Dominator_CapturePermaMindControlled.Read(&exINI, section, "Dominator.CapturePermaMindControlled");
-	pData->Dominator_CaptureImmuneToPsionics.Read(&exINI, section, "Dominator.CaptureImmuneToPsionics");
-	pData->Dominator_PermanentCapture.Read(&exINI, section, "Dominator.PermanentCapture");
+	pData->Dominator_FirstAnimHeight.Read(exINI, section, "Dominator.FirstAnimHeight");
+	pData->Dominator_SecondAnimHeight.Read(exINI, section, "Dominator.SecondAnimHeight");
+	pData->Dominator_FirstAnim.Read(exINI, section, "Dominator.FirstAnim");
+	pData->Dominator_SecondAnim.Read(exINI, section, "Dominator.SecondAnim");
+	pData->Dominator_ControlAnim.Read(exINI, section, "Dominator.ControlAnim");
+	pData->Dominator_FireAtPercentage.Read(exINI, section, "Dominator.FireAtPercentage");
+	pData->Dominator_Capture.Read(exINI, section, "Dominator.Capture");
+	pData->Dominator_Ripple.Read(exINI, section, "Dominator.Ripple");
+	pData->Dominator_CaptureMindControlled.Read(exINI, section, "Dominator.CaptureMindControlled");
+	pData->Dominator_CapturePermaMindControlled.Read(exINI, section, "Dominator.CapturePermaMindControlled");
+	pData->Dominator_CaptureImmuneToPsionics.Read(exINI, section, "Dominator.CaptureImmuneToPsionics");
+	pData->Dominator_PermanentCapture.Read(exINI, section, "Dominator.PermanentCapture");
 }
 
 bool SW_PsychicDominator::AbortFire(SuperClass* pSW, bool IsPlayer) {
@@ -89,13 +96,13 @@ bool SW_PsychicDominator::AbortFire(SuperClass* pSW, bool IsPlayer) {
 	return false;
 }
 
-bool SW_PsychicDominator::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
+bool SW_PsychicDominator::Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer)
 {
 	if(pThis->IsCharged) {
 		// we do not use PsyDom::Start() here. instead, we set a global state and
 		// let the state machine take care of everything.
 		SW_PsychicDominator::CurrentPsyDom = pThis;
-		this->newStateMachine(*pCoords, pThis);
+		this->newStateMachine(Coords, pThis);
 	}
 
 	return true;
@@ -120,13 +127,14 @@ void PsychicDominatorStateMachine::Update() {
 			coords.Z += pData->Dominator_FirstAnimHeight;
 
 			AnimClass* pAnim = nullptr;
-			if(AnimTypeClass* pAnimType = pData->Dominator_FirstAnim) {
-				GAME_ALLOC(AnimClass, pAnim, pAnimType, &coords);
+			if(AnimTypeClass* pAnimType = pData->Dominator_FirstAnim.Get(RulesClass::Instance->DominatorFirstAnim)) {
+				pAnim = GameCreate<AnimClass>(pAnimType, coords);
 			}
 			PsyDom::Anim = pAnim;
 		
-			if(pData->SW_ActivationSound != -1) {
-				VocClass::PlayAt(pData->SW_ActivationSound, &coords, nullptr);
+			auto sound = pData->SW_ActivationSound.Get(RulesClass::Instance->PsychicDominatorActivateSound);
+			if(sound != -1) {
+				VocClass::PlayAt(sound, coords, nullptr);
 			}
 
 			pData->PrintMessage(pData->Message_Activate, this->Super->Owner);
@@ -147,7 +155,8 @@ void PsychicDominatorStateMachine::Update() {
 			if(pAnim) {
 				int currentFrame = pAnim->Animation.Value;
 				short frameCount = pAnim->Type->GetImage()->Frames;
-				if(frameCount * pData->Dominator_FireAtPercentage * 0.01 > currentFrame) {
+				int percentage = pData->Dominator_FireAtPercentage.Get(RulesClass::Instance->DominatorFireAtPercentage);
+				if(frameCount * percentage / 100 > currentFrame) {
 					return;
 				}
 			}

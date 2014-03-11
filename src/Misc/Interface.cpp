@@ -347,7 +347,7 @@ DEFINE_HOOK(52EC18, CampaignMenu_hDlg_PreHandleGeneral, 5) {
 				if(pData) {
 					int idxSound = VocClass::FindIndex(pData->HoverSound);
 					if(idxSound > -1) {
-						VocClass::PlayGlobal(idxSound, 1.0f, 8192, 0);
+						VocClass::PlayGlobal(idxSound, 8192, 1.0f);
 					}
 
 					// set the summary text
@@ -475,9 +475,11 @@ DEFINE_HOOK(60378B, CampaignMenu_ChooseButtonPalette, 6) {
 
 	if(idxSlot > -1) {
 		int idxCampaign = Interface::slots[idxSlot]-1;
-		if(idxCampaign > -1 && Ares::UISettings::Campaigns[idxCampaign].Palette->Convert) {
-			R->EAX(Ares::UISettings::Campaigns[idxCampaign].Palette->Convert);
-			return 0x603798;
+		if(idxCampaign > -1) {
+			if(auto pConvert = Ares::UISettings::Campaigns[idxCampaign].Palette->GetConvert()) {
+				R->EAX(pConvert);
+				return 0x603798;
+			}
 		}
 	}
 	return 0x6037FE;

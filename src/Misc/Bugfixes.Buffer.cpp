@@ -245,7 +245,7 @@ DEFINE_HOOK(7121A3, Buf_TechnoType, 6)
 DEFINE_HOOK(713171, Buf_Dock, 9)
 {
 	GET(TechnoTypeClass *, T, EBP);
-	GET(int, Category, EAX);
+	GET(Category::Value, Category, EAX);
 
 	T->Category = Category;
 	return 0x713264;

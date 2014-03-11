@@ -4,10 +4,10 @@
 #include <xcompile.h>
 #include "../SWTypes.h"
 
-class SW_Firewall : NewSWType {
+class SW_Firewall : public NewSWType {
 public:
 	SW_Firewall() : NewSWType() {
-		SW_Firewall::FirewallTypeIndex = FIRST_SW_TYPE + this->TypeIndex;
+		SW_Firewall::FirewallTypeIndex = FIRST_SW_TYPE + this->GetTypeIndex();
 	};
 
 	virtual ~SW_Firewall() {
@@ -25,7 +25,7 @@ public:
 		pData->SW_RadarEvent = false;
 		// what can we possibly configure here... warhead/damage inflicted? anims?
 	};
-	virtual bool Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer);
+	virtual bool Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer);
 
 	static int FirewallTypeIndex;
 };

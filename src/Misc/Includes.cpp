@@ -42,12 +42,11 @@ DEFINE_HOOK(474314, CCINIClass_ReadCCFile2, 6)
 			}
 
 			if(canLoad) {
-				CCFileClass *xFile;
-				GAME_ALLOC(CCFileClass, xFile, buffer);
+				CCFileClass *xFile = GameCreate<CCFileClass>(buffer);
 				if(xFile->Exists(nullptr)) {
 					xINI->ReadCCFile(xFile);
 				}
-				GAME_DEALLOC(xFile);
+				GameDelete(xFile);
 			}
 		}
 	}
@@ -55,7 +54,9 @@ DEFINE_HOOK(474314, CCINIClass_ReadCCFile2, 6)
 	Includes::LoadedINIs.RemoveItem(Includes::LoadedINIs.Count - 1);
 	if(!Includes::LoadedINIs.Count) {
 		for(int j = Includes::LoadedINIFiles.Count - 1; j >= 0; --j) {
-			free(Includes::LoadedINIFiles[j]);
+			if(char* ptr = Includes::LoadedINIFiles[j]) {
+				free(ptr);
+			}
 			Includes::LoadedINIFiles.RemoveItem(j);
 		}
 		Includes::LastReadIndex = -1;

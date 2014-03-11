@@ -3,56 +3,46 @@
 
 #include <algorithm>
 #include <functional>
+#include <memory>
 
 #include <ArrayClasses.h>
 #include <CCINIClass.h>
 
 template <typename T> class Enumerable
 {
+	typedef std::vector<std::unique_ptr<T>> container_t;
 public:
-	static DynamicVectorClass< T* > Array;
-
-	struct comparator : public std::binary_function<Enumerable<T>*, const char *, bool> {
-		bool operator()(Enumerable<T>* Item, const char* title) const { return !_strcmpi(Item->Name, title); }
-	};
-
-	static T** stl_Find(const char *Title) {
-		return std::find_if(Array.begin(), Array.end(), std::bind2nd(comparator(), Title));
-	}
+	static container_t Array;
 
 	static int FindIndex(const char *Title)
 	{
-		for(int i = 0; i < Array.Count; ++i)
-			if(!_strcmpi(Title, Array.GetItem(i)->Name))
-				return i;
-		return -1;
+		auto result = std::find_if(Array.begin(), Array.end(), [Title](std::unique_ptr<T> &Item) {
+			return !_strcmpi(Item->Name, Title);
+		});
+		if(result == Array.end()) {
+			return -1;
+		}
+		return std::distance(Array.begin(), result);
 	}
 
 	static T* Find(const char *Title)
 	{
-/*		for(int i = 0; i < Array.get_Count(); ++i)
-			if(!_strcmpi(Title, Array.GetItem(i)->Name))
-				return Array.GetItem(i);
-*/
-		T** result = Enumerable<T>::stl_Find(Title);
-		if(result == Array.end()) {
-			return nullptr;
-		}
-		return *result;
+		auto result = FindIndex(Title);
+		return (result < 0) ? nullptr : Array[result].get();
 	}
 
 	static T* FindOrAllocate(const char *Title)
 	{
-		T *find = Find(Title);
-		return find ? find : new T(Title);
+		if(T *find = Find(Title)) {
+			return find;
+		}
+		Array.push_back(std::make_unique<T>(Title));
+		return Array.back().get();
 	}
 
 	static void ClearArray()
 	{
-		for(int i = Array.Count - 1; i >= 0; --i) {
-			delete Array[i];
-			Array.RemoveItem(i);
-		}
+		Array.clear();
 	}
 
 	static void LoadFromINIList(CCINIClass *pINI)
@@ -63,22 +53,27 @@ public:
 			const char *Key = pINI->GetKeyName(section, i);
 			FindOrAllocate(Key);
 		}
-		for(int i = 0; i < Array.Count; ++i) {
+		for(size_t i = 0; i < Array.size(); ++i) {
 			Array[i]->LoadFromINI(pINI);
 		}
 	}
 
 	Enumerable()
 	{
-		;
+	}
+
+	Enumerable(const char* Title) {
+		this->Name[0] = 0;
+
+		if(Title) {
+			AresCRT::strCopy(this->Name, Title);
+		}
 	}
 
 	virtual ~Enumerable()
 	{
-		;
 	}
 
-//	template <typename T2>
 	static const char * GetMainSection();
 
 	char Name[32];

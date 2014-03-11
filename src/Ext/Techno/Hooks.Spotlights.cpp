@@ -5,7 +5,6 @@
 #include <HouseClass.h>
 #include <TacticalClass.h>
 
-hash_SpotlightExt TechnoExt::SpotlightExt;
 BuildingLightClass * TechnoExt::ActiveBuildingLight = nullptr;
 
 // just in case
@@ -30,14 +29,9 @@ DEFINE_HOOK(6F6D0E, TechnoClass_Put_1, 7)
 	TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(T->GetTechnoType());
 
 	if(pTypeData->Is_Spotlighted) {
-		BuildingLightClass *placeholder;
-		GAME_ALLOC(BuildingLightClass, placeholder, T);
-		if(BuildingClass * B = specific_cast<BuildingClass *>(T)) {
-			if(B->Spotlight) {
-				delete B->Spotlight;
-			}
-			B->Spotlight = placeholder;
-		}
+		auto pExt = TechnoExt::ExtMap.Find(T);
+		auto pSpotlight = GameCreate<BuildingLightClass>(T);
+		pExt->SetSpotlight(pSpotlight);
 	}
 
 	return 0;
@@ -49,14 +43,9 @@ DEFINE_HOOK(6F6F20, TechnoClass_Put_2, 6)
 	TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(T->GetTechnoType());
 
 	if(pTypeData->Is_Spotlighted) {
-		BuildingLightClass *placeholder;
-		GAME_ALLOC(BuildingLightClass, placeholder, T);
-		if(BuildingClass * B = specific_cast<BuildingClass *>(T)) {
-			if(B->Spotlight) {
-				delete B->Spotlight;
-			}
-			B->Spotlight = placeholder;
-		}
+		auto pExt = TechnoExt::ExtMap.Find(T);
+		auto pSpotlight = GameCreate<BuildingLightClass>(T);
+		pExt->SetSpotlight(pSpotlight);
 	}
 
 	return 0;
@@ -72,11 +61,9 @@ DEFINE_HOOK(435820, BuildingLightClass_CTOR, 6)
 	GET_STACK(TechnoClass *, T, 0x4);
 	GET(BuildingLightClass *, BL, ECX);
 
-	hash_SpotlightExt::iterator i = TechnoExt::SpotlightExt.find(T);
-	if(i != TechnoExt::SpotlightExt.end()) {
-		TechnoExt::SpotlightExt.erase(i);
+	if(auto pExt = TechnoExt::ExtMap.Find(T)) {
+		pExt->Spotlight = BL;
 	}
-	TechnoExt::SpotlightExt[T] = BL;
 	return 0;
 }
 
@@ -85,9 +72,8 @@ DEFINE_HOOK(4370C0, BuildingLightClass_SDDTOR, A)
 	GET(BuildingLightClass *, BL, ECX);
 
 	TechnoClass *T = BL->OwnerObject;
-	hash_SpotlightExt::iterator i = TechnoExt::SpotlightExt.find(T);
-	if(i != TechnoExt::SpotlightExt.end()) {
-		TechnoExt::SpotlightExt.erase(i);
+	if(auto pExt = TechnoExt::ExtMap.Find(T)) {
+		pExt->Spotlight = nullptr;
 	}
 	return 0;
 }
@@ -95,10 +81,8 @@ DEFINE_HOOK(4370C0, BuildingLightClass_SDDTOR, A)
 DEFINE_HOOK(6F4500, TechnoClass_DTOR_Spotlight, 5)
 {
 	GET(TechnoClass*, pItem, ECX);
-	hash_SpotlightExt::iterator i = TechnoExt::SpotlightExt.find(pItem);
-	if(i != TechnoExt::SpotlightExt.end()) {
-		GAME_DEALLOC(i->second);
-		TechnoExt::SpotlightExt.erase(i);
+	if(auto pExt = TechnoExt::ExtMap.Find(pItem)) {
+		pExt->SetSpotlight(nullptr);
 	}
 	return 0;
 }
@@ -120,20 +104,9 @@ DEFINE_HOOK(70FBE3, TechnoClass_Activate, 5)
 	}
 
 	if(pTypeData->Is_Spotlighted) {
-		hash_SpotlightExt::iterator i = TechnoExt::SpotlightExt.find(T);
-		if(i != TechnoExt::SpotlightExt.end()) {
-			TechnoExt::SpotlightExt.erase(i);
-			GAME_DEALLOC(i->second);
-		}
 		++Unsorted::IKnowWhatImDoing;
-		BuildingLightClass *placeholder;
-		GAME_ALLOC(BuildingLightClass, placeholder, T);
-		if(BuildingClass * B = specific_cast<BuildingClass *>(T)) {
-			if(B->Spotlight) {
-				delete B->Spotlight;
-			}
-			B->Spotlight = placeholder;
-		}
+		auto pSpotlight = GameCreate<BuildingLightClass>(T);
+		pData->SetSpotlight(pSpotlight);
 		--Unsorted::IKnowWhatImDoing;
 	}
 	return 0;
@@ -145,11 +118,8 @@ DEFINE_HOOK(70FC97, TechnoClass_Deactivate, 6)
 	TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(T->GetTechnoType());
 
 	if(pTypeData->Is_Spotlighted) {
-		hash_SpotlightExt::iterator i = TechnoExt::SpotlightExt.find(T);
-		if(i != TechnoExt::SpotlightExt.end()) {
-//			TechnoExt::SpotlightExt.erase(i);
-			GAME_DEALLOC(i->second);
-		}
+		auto pExt = TechnoExt::ExtMap.Find(T);
+		pExt->SetSpotlight(nullptr);
 	}
 	return 0;
 }

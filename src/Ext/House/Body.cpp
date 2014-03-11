@@ -6,6 +6,8 @@
 #include "../TechnoType/Body.h"
 #include "../../Enum/Prerequisites.h"
 
+#include <MouseClass.h>
+
 template<> const DWORD Extension<HouseClass>::Canary = 0x12345678;
 Container<HouseExt> HouseExt::ExtMap;
 bool HouseExt::IsAnyFirestormActive = false;
@@ -51,7 +53,7 @@ HouseExt::RequirementStatus HouseExt::RequirementsMet(HouseClass *pHouse, Techno
 
 	if(pHouse->HasFromSecretLab(pItem)) { return Overridden; }
 
-	if(pHouse->IsHumanoid() && pItem->TechLevel == -1) { return Incomplete; }
+	if(pHouse->ControlledByHuman() && pItem->TechLevel == -1) { return Incomplete; }
 
 	if(!pHouse->HasAllStolenTech(pItem)) { return Incomplete; }
 
@@ -79,8 +81,8 @@ bool HouseExt::PrerequisitesMet(HouseClass *pHouse, TechnoTypeClass *pItem)
 	}
 	TechnoTypeExt::ExtData* pData = TechnoTypeExt::ExtMap.Find(pItem);
 
-	for(int i = 0; i < pData->PrerequisiteLists.Count; ++i) {
-		if(Prereqs::HouseOwnsAll(pHouse, pData->PrerequisiteLists[i])) {
+	for(size_t i = 0; i < pData->PrerequisiteLists.size(); ++i) {
+		if(Prereqs::HouseOwnsAll(pHouse, pData->PrerequisiteLists[i].get())) {
 			return 1;
 		}
 	}
@@ -95,8 +97,8 @@ bool HouseExt::PrerequisitesListed(const Prereqs::BTypeIter &List, TechnoTypeCla
 	}
 	TechnoTypeExt::ExtData* pData = TechnoTypeExt::ExtMap.Find(pItem);
 
-	for(int i = 0; i < pData->PrerequisiteLists.Count; ++i) {
-		if(Prereqs::ListContainsAll(List, pData->PrerequisiteLists[i])) {
+	for(size_t i = 0; i < pData->PrerequisiteLists.size(); ++i) {
+		if(Prereqs::ListContainsAll(List, pData->PrerequisiteLists[i].get())) {
 			return 1;
 		}
 	}
@@ -109,8 +111,8 @@ HouseExt::BuildLimitStatus HouseExt::CheckBuildLimit(HouseClass *pHouse, TechnoT
 	int BuildLimit = pItem->BuildLimit;
 	int Remaining = HouseExt::BuildLimitRemaining(pHouse, pItem);
 	if(BuildLimit > 0) {
-		if(Remaining <= 0 && IncludeQueued) {
-			return FactoryClass::FindThisOwnerAndProduct(pHouse, pItem)
+		if(Remaining <= 0) {
+			return (IncludeQueued && FactoryClass::FindThisOwnerAndProduct(pHouse, pItem))
 				? NotReached
 				: ReachedPermanently
 			;
@@ -128,7 +130,7 @@ signed int HouseExt::BuildLimitRemaining(HouseClass *pHouse, TechnoTypeClass *pI
 	if(BuildLimit >= 0) {
 		BuildLimit -= pHouse->CountOwnedNowTotal(pItem);
 	} else {
-		BuildLimit = abs(BuildLimit);
+		BuildLimit = std::abs(BuildLimit);
 		BuildLimit -= pHouse->CountOwnedEver(pItem);
 	}
 	return std::min(BuildLimit, 0x7FFFFFFF);
@@ -143,7 +145,7 @@ signed int HouseExt::PrereqValidate
 			return 0;
 		}
 
-		if(!pHouse->IsHumanoid()) {
+		if(!pHouse->ControlledByHuman()) {
 			if(Ares::GlobalControls::AllowBypassBuildLimit[pHouse->AIDifficulty]) {
 				return 1;
 			} else {
@@ -238,8 +240,7 @@ void HouseExt::ExtData::SetFirestormState(bool Active) {
 		if(pBuildTypeData->Firewall_Is) {
 			BuildingExt::ExtData * pBldData = BuildingExt::ExtMap.Find(B);
 			pBldData->UpdateFirewall();
-			CellStruct temp;
-			B->GetMapCoords(&temp);
+			CellStruct temp = B->GetMapCoords();
 			AffectedCoords.AddItem(temp);
 		}
 	}
@@ -301,7 +302,9 @@ bool HouseExt::ExtData::CheckBasePlanSanity() {
 //			CheckList(&RulesClass::Instance->BuildNavalYard, "BuildNavalYard");
 
 	auto pCountryData = HouseTypeExt::ExtMap.Find(House->Type);
-	CheckList(&pCountryData->Powerplants, "Powerplants");
+	auto Powerplants = pCountryData->GetPowerplants();
+	DynamicVectorClass<BuildingTypeClass*> Dummy(Powerplants.size(), const_cast<BuildingTypeClass**>(Powerplants.begin()));
+	CheckList(&Dummy, "Powerplants");
 
 //			auto pSide = SideClass::Array->GetItem(curHouse->Type->SideIndex);
 //			auto pSideData = SideExt::ExtMap.Find(pSide);
@@ -357,7 +360,7 @@ InfantryTypeClass* HouseExt::ExtData::GetDisguise() const {
 // =============================
 // load/save
 
-void Container<HouseExt>::Load(HouseClass *pThis, IStream *pStm) {
+bool Container<HouseExt>::Load(HouseClass *pThis, IStream *pStm) {
 	HouseExt::ExtData* pData = this->LoadKey(pThis, pStm);
 
 	//ULONG out;
@@ -366,6 +369,8 @@ void Container<HouseExt>::Load(HouseClass *pThis, IStream *pStm) {
 	SWIZZLE(pData->Factory_VehicleType);
 	SWIZZLE(pData->Factory_NavyType);
 	SWIZZLE(pData->Factory_AircraftType);
+
+	return pData != nullptr;
 }
 
 // =============================
@@ -409,8 +414,7 @@ DEFINE_HOOK(503040, HouseClass_SaveLoad_Prefix, 5)
 	GET_STACK(HouseExt::TT*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
 
-	Container<HouseExt>::SavingObject = pItem;
-	Container<HouseExt>::SavingStream = pStm;
+	Container<HouseExt>::PrepareStream(pItem, pStm);
 
 	return 0;
 }

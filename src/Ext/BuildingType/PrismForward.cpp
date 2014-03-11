@@ -1,6 +1,7 @@
 #include "Body.h"
 #include "../Building/Body.h"
 #include "../Techno/Body.h"
+#include "../../Utilities/TemplateDef.h"
 #include <BulletClass.h>
 #include <LaserDrawClass.h>
 
@@ -32,16 +33,16 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 	if (this->Enabled != NO) {
 		INI_EX exINI(pINI);
 
-		this->Targets.Read(&exINI, pID, "PrismForwarding.Targets");
-		this->MaxFeeds.Read(&exINI, pID, "PrismForwarding.MaxFeeds");
-		this->MaxChainLength.Read(&exINI, pID, "PrismForwarding.MaxChainLength");
-		this->MaxNetworkSize.Read(&exINI, pID, "PrismForwarding.MaxNetworkSize");
-		this->SupportModifier.Read(&exINI, pID, "PrismForwarding.SupportModifier");
-		this->DamageAdd.Read(&exINI, pID, "PrismForwarding.DamageAdd");
-		this->ToAllies.Read(&exINI, pID, "PrismForwarding.ToAllies");
-		this->MyHeight.Read(&exINI, pID, "PrismForwarding.MyHeight");
-		this->BreakSupport.Read(&exINI, pID, "PrismForwarding.BreakSupport");
-		this->Intensity.Read(&exINI, pID, "PrismForwarding.Intensity");
+		this->Targets.Read(exINI, pID, "PrismForwarding.Targets");
+		this->MaxFeeds.Read(exINI, pID, "PrismForwarding.MaxFeeds");
+		this->MaxChainLength.Read(exINI, pID, "PrismForwarding.MaxChainLength");
+		this->MaxNetworkSize.Read(exINI, pID, "PrismForwarding.MaxNetworkSize");
+		this->SupportModifier.Read(exINI, pID, "PrismForwarding.SupportModifier");
+		this->DamageAdd.Read(exINI, pID, "PrismForwarding.DamageAdd");
+		this->ToAllies.Read(exINI, pID, "PrismForwarding.ToAllies");
+		this->MyHeight.Read(exINI, pID, "PrismForwarding.MyHeight");
+		this->BreakSupport.Read(exINI, pID, "PrismForwarding.BreakSupport");
+		this->Intensity.Read(exINI, pID, "PrismForwarding.Intensity");
 		
 		int ChargeDelay = pINI->ReadInteger(pID, "PrismForwarding.ChargeDelay", this->ChargeDelay);
 		if (ChargeDelay >= 1) {
@@ -109,18 +110,11 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 }
 
 signed int BuildingTypeExt::cPrismForwarding::GetUnusedWeaponSlot(BuildingTypeClass *pThis, bool elite) {
-	int idxWeapon = 1;
-	while (++idxWeapon <= 12) {
-		auto Weapon = elite
-			? pThis->get_EliteWeapon(idxWeapon)
-			: pThis->get_Weapon(idxWeapon)
-		;
+	for(int idxWeapon = 2; idxWeapon < 13; ++idxWeapon) { //13-18 is AlternateFLH0-4
+		auto Weapon = elite ? pThis->get_EliteWeapon(idxWeapon) : pThis->get_Weapon(idxWeapon);
 		if(!Weapon) {
-				break;
+			return idxWeapon;
 		}
-	}
-	if (idxWeapon <= 12) { //13-18 is AlternateFLH0-4
-		return idxWeapon;
 	}
 	return -1;
 }
@@ -147,11 +141,9 @@ int BuildingTypeExt::cPrismForwarding::AcquireSlaves_MultiStage
 		countSlaves += AcquireSlaves_SingleStage(MasterTower, TargetTower, stage, (chain + 1), NetworkSize, LongestChain);
 	} else {
 		BuildingExt::ExtData *pTargetData = BuildingExt::ExtMap.Find(TargetTower);
-		int senderIdx = 0;
-		while(senderIdx < pTargetData->PrismForwarding.Senders.Count) {
+		for(int senderIdx = 0; senderIdx < pTargetData->PrismForwarding.Senders.Count; ++senderIdx) {
 			BuildingClass *SenderTower = pTargetData->PrismForwarding.Senders[senderIdx];
 			countSlaves += AcquireSlaves_MultiStage(MasterTower, SenderTower, (stage - 1), (chain + 1), NetworkSize, LongestChain);
-			++senderIdx;
 		}
 	}
 	return countSlaves;
@@ -166,8 +158,8 @@ int BuildingTypeExt::cPrismForwarding::AcquireSlaves_SingleStage
 	BuildingTypeClass *pTargetType = TargetTower->Type;
 	BuildingTypeExt::ExtData *pTargetTypeData = BuildingTypeExt::ExtMap.Find(pTargetType);
 
-	signed int MaxFeeds = pTargetTypeData->PrismForwarding.MaxFeeds;
-	signed int MaxNetworkSize = pMasterTypeData->PrismForwarding.MaxNetworkSize;
+	signed int MaxFeeds = pTargetTypeData->PrismForwarding.GetMaxFeeds();
+	signed int MaxNetworkSize = pMasterTypeData->PrismForwarding.GetMaxNetworkSize();
 	signed int MaxChainLength = pMasterTypeData->PrismForwarding.MaxChainLength;
 
 	if (MaxFeeds == 0
@@ -219,7 +211,7 @@ int BuildingTypeExt::cPrismForwarding::AcquireSlaves_SingleStage
 		CoordStruct FLH, Base = {0, 0, 0};
 		TargetTower->GetFLH(&FLH, 0, Base);
 		nearestPrism->DelayBeforeFiring = nearestPrism->Type->DelayedFireDelay;
-		nearestPrism->PrismStage = pcs_Slave;
+		nearestPrism->PrismStage = PrismChargeState::Slave;
 		nearestPrism->PrismTargetCoords = FLH;
 
 		SetSupportTarget(nearestPrism, TargetTower);
@@ -311,27 +303,14 @@ bool BuildingTypeExt::cPrismForwarding::ValidateSupportTower(
 void BuildingTypeExt::cPrismForwarding::SetChargeDelay
 	(BuildingClass * TargetTower, int LongestChain) {
 	int ArrayLen = LongestChain + 1;
-	DWORD *LongestCDelay = new DWORD[ArrayLen];
-	memset(LongestCDelay, 0, ArrayLen * sizeof(DWORD));
-	DWORD *LongestFDelay = new DWORD[ArrayLen];
-	memset(LongestFDelay, 0, ArrayLen * sizeof(DWORD));
-	
-	int temp = 0;
-	while (temp < ArrayLen) {
-		LongestCDelay[temp] = 0;
-		LongestFDelay[temp] = 0;
-		++temp;
+	std::vector<DWORD> LongestCDelay(ArrayLen, 0);
+	std::vector<DWORD> LongestFDelay(ArrayLen, 0);
+
+	for(int endChain = LongestChain; endChain >= 0; --endChain) {
+		SetChargeDelay_Get(TargetTower, 0, endChain, LongestChain, LongestCDelay.data(), LongestFDelay.data());
 	}
 
-	int endChain = LongestChain;
-	while (endChain >= 0) {
-		SetChargeDelay_Get(TargetTower, 0, endChain, LongestChain, LongestCDelay, LongestFDelay);
-		--endChain;
-	}
-
-	SetChargeDelay_Set(TargetTower, 0, LongestCDelay, LongestFDelay, LongestChain);
-	delete [] LongestFDelay;
-	delete [] LongestCDelay;
+	SetChargeDelay_Set(TargetTower, 0, LongestCDelay.data(), LongestFDelay.data(), LongestChain);
 }
 
 void BuildingTypeExt::cPrismForwarding::SetChargeDelay_Get
@@ -351,11 +330,9 @@ void BuildingTypeExt::cPrismForwarding::SetChargeDelay_Get
 		}
 	} else {
 		//ascend to the next chain
-		int senderIdx = 0;
-		while(senderIdx < pTargetData->PrismForwarding.Senders.Count) {
+		for(int senderIdx = 0; senderIdx < pTargetData->PrismForwarding.Senders.Count; ++senderIdx) {
 			BuildingClass *SenderTower = pTargetData->PrismForwarding.Senders[senderIdx];
 			SetChargeDelay_Get(SenderTower, (chain + 1), endChain, LongestChain, LongestCDelay, LongestFDelay);
-			++senderIdx;
 		}
 	}
 }
@@ -373,11 +350,9 @@ void BuildingTypeExt::cPrismForwarding::SetChargeDelay_Set
 			TargetTower->PlayNthAnim(BuildingAnimSlot::Special);
 		}
 	}
-	int senderIdx = 0;
-	while (senderIdx < pTargetData->PrismForwarding.Senders.Count) {
+	for(int senderIdx = 0; senderIdx < pTargetData->PrismForwarding.Senders.Count; ++senderIdx) {
 		BuildingClass *Sender = pTargetData->PrismForwarding.Senders[senderIdx];
 		SetChargeDelay_Set(Sender, (chain + 1), LongestCDelay, LongestFDelay, LongestChain);
-		++senderIdx;
 	}
 }
 
@@ -396,7 +371,7 @@ void BuildingTypeExt::cPrismForwarding::RemoveFromNetwork(BuildingClass *SlaveTo
 	}
 	if (pSlaveData->PrismForwarding.PrismChargeDelay || bCease) {
 		//either hasn't started charging yet or animations have been reset so should go idle immediately
-		SlaveTower->PrismStage = pcs_Idle;
+		SlaveTower->PrismStage = PrismChargeState::Idle;
 		pSlaveData->PrismForwarding.PrismChargeDelay = 0;
 		SlaveTower->DelayBeforeFiring = 0;
 		pSlaveData->PrismForwarding.ModifierReserve = 0.0;

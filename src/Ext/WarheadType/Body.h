@@ -65,7 +65,7 @@ public:
 		DynamicVectorClass<VersesData> Verses;
 		double DeployedDamage;
 
-		Customizable<AnimTypeClass *> Temporal_WarpAway;
+		Nullable<AnimTypeClass *> Temporal_WarpAway;
 
 		bool AffectsEnemies; // request #397
 
@@ -77,9 +77,11 @@ public:
 
 		Valueable<bool> Malicious;
 
+		Valueable<int> CellSpread_MaxAffect;
+
 		AttachEffectTypeClass AttachedEffect;
 
-		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
+		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			MindControl_Permanent (false),
 			Ripple_Radius (0),
 			EMP_Duration (0),
@@ -87,12 +89,13 @@ public:
 			IC_Duration (0),
 			IC_Cap (-1),
 			DeployedDamage (1.00),
-			Temporal_WarpAway (&RulesClass::Global()->WarpAway),
+			Temporal_WarpAway (),
 			AffectsEnemies (true),
 			InfDeathAnim (nullptr),
 			PreImpactAnim (-1),
 			KillDriver (false),
 			Malicious (true),
+			CellSpread_MaxAffect (-1),
 			AttachedEffect()
 			{
 				for(int i = 0; i < 11; ++i) {
@@ -102,8 +105,6 @@ public:
 			};
 
 		virtual ~ExtData() { };
-
-		virtual size_t Size() const { return sizeof(*this); };
 
 		virtual void Initialize(TT *pThis);
 

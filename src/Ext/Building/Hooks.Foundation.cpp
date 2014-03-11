@@ -4,8 +4,10 @@
 #include <algorithm>
 #include <vector>
 
-CellStruct * BuildingExt::TempFoundationData1 = nullptr;
-CellStruct * BuildingExt::TempFoundationData2 = nullptr;
+#include <MouseClass.h>
+
+std::vector<CellStruct> BuildingExt::TempFoundationData1;
+std::vector<CellStruct> BuildingExt::TempFoundationData2;
 
 DEFINE_HOOK(45EC90, Foundations_GetFoundationWidth, 6)
 {
@@ -118,11 +120,8 @@ DEFINE_HOOK(568565, MapClass_AddContentAt_Foundation_OccupyHeight, 5)
 	auto &Map = MapClass::Instance;
 
 	std::for_each(AffectedCells.begin(), AffectedCells.end(), [pThis, Map](CellStruct coords) {
-		int xy = (coords.Y << 9) + coords.X;
-		if(xy >= 0 && xy < 0x40000 && xy < Map->Cells.Capacity) {
-			if(auto Cell = Map->Cells[xy]) {
-				++Cell->OccupyHeightsCoveringMe;
-			}
+		if(auto Cell = Map->TryGetCellAt(coords)) {
+			++Cell->OccupyHeightsCoveringMe;
 		}
 	});
 
@@ -172,12 +171,9 @@ DEFINE_HOOK(568997, MapClass_RemoveContentAt_Foundation_OccupyHeight, 5)
 	auto &Map = MapClass::Instance;
 
 	std::for_each(AffectedCells.begin(), AffectedCells.end(), [pThis, Map](CellStruct coords) {
-		int xy = (coords.Y << 9) + coords.X;
-		if(xy >= 0 && xy < 0x40000 && xy < Map->Cells.Capacity) {
-			if(auto Cell = Map->Cells[xy]) {
-				if(Cell->OccupyHeightsCoveringMe > 0) {
-					--Cell->OccupyHeightsCoveringMe;
-				}
+		if(auto Cell = Map->TryGetCellAt(coords)) {
+			if(Cell->OccupyHeightsCoveringMe > 0) {
+				--Cell->OccupyHeightsCoveringMe;
 			}
 		}
 	});
@@ -191,19 +187,14 @@ DEFINE_HOOK(4A8C77, MapClass_ProcessFoundation1_UnlimitBuffer, 5)
 	GET_STACK(CellStruct *, Foundation, 0x18);
 	GET(DisplayClass *, Display, EBX);
 
-	if(BuildingExt::TempFoundationData1) {
-		delete[] BuildingExt::TempFoundationData1;
-	}
-
 	DWORD Len = BuildingExt::FoundationLength(Foundation);
 
-	BuildingExt::TempFoundationData1 = new CellStruct[Len];
-	memcpy(BuildingExt::TempFoundationData1, Foundation, Len * sizeof(CellStruct));
+	BuildingExt::TempFoundationData1.assign(Foundation, Foundation + Len);
 
-	Display->CurrentFoundation_Data = BuildingExt::TempFoundationData1;
+	Display->CurrentFoundation_Data = BuildingExt::TempFoundationData1.data();
 
 	CellStruct bounds;
-	Display->FoundationBoundsSize(&bounds, BuildingExt::TempFoundationData1);
+	Display->FoundationBoundsSize(&bounds, BuildingExt::TempFoundationData1.data());
 	R->Stack<CellStruct>(0x18, bounds);
 	R->EAX<CellStruct *>(R->lea_Stack<CellStruct *>(0x18));
 
@@ -215,19 +206,14 @@ DEFINE_HOOK(4A8DD7, MapClass_ProcessFoundation2_UnlimitBuffer, 5)
 	GET_STACK(CellStruct *, Foundation, 0x18);
 	GET(DisplayClass *, Display, EBX);
 
-	if(BuildingExt::TempFoundationData2) {
-		delete[] BuildingExt::TempFoundationData2;
-	}
-
 	DWORD Len = BuildingExt::FoundationLength(Foundation);
 
-	BuildingExt::TempFoundationData2 = new CellStruct[Len];
-	memcpy(BuildingExt::TempFoundationData2, Foundation, Len * sizeof(CellStruct));
+	BuildingExt::TempFoundationData2.assign(Foundation, Foundation + Len);
 
-	Display->CurrentFoundationCopy_Data = BuildingExt::TempFoundationData2;
+	Display->CurrentFoundationCopy_Data = BuildingExt::TempFoundationData2.data();
 
 	CellStruct bounds;
-	Display->FoundationBoundsSize(&bounds, BuildingExt::TempFoundationData2);
+	Display->FoundationBoundsSize(&bounds, BuildingExt::TempFoundationData2.data());
 	R->Stack<CellStruct>(0x18, bounds);
 	R->EAX<CellStruct *>(R->lea_Stack<CellStruct *>(0x18));
 

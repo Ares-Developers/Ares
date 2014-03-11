@@ -11,28 +11,38 @@
 #include <StringTable.h>
 
 #include <cstring>
+#include <memory>
 
 #include "../Ares.h"
 #include "../Ares.CRT.h"
 
 class CustomPalette {
 public:
-	ConvertClass* Convert;
-	BytePalette* Palette;
-	BytePalette* TargetPalette;
-	DSurface* TargetSurface;
-	size_t ShadeCount;
+	class PaletteMode {
+	public:
+		typedef int Value;
+		enum {
+			Default = 0,
+			Temperate = 1
+		};
+	};
 
-	CustomPalette(BytePalette* pTargetPal = nullptr, DSurface* pSurface = nullptr, size_t shades = 1) :
+	PaletteMode::Value Mode;
+	std::unique_ptr<ConvertClass, GameDeleter> Convert;
+	std::unique_ptr<BytePalette, GameDeleter> Palette;
+
+	CustomPalette(PaletteMode::Value mode = PaletteMode::Default) :
+		Mode(mode),
 		Convert(nullptr),
-		Palette(nullptr),
-		TargetPalette(pTargetPal),
-		TargetSurface(pSurface),
-		ShadeCount(shades)
+		Palette(nullptr)
 	{};
 
 	~CustomPalette() {
 		this->Clear();
+	}
+
+	ConvertClass* GetConvert() const {
+		return this->Convert.get();
 	}
 
 	bool LoadFromINI(CCINIClass* pINI, const char* pSection, const char* pKey, const char* pDefault = "") {
@@ -58,21 +68,19 @@ public:
 
 private:
 	void Clear() {
-		GAME_DEALLOC(this->Convert);
 		this->Convert = nullptr;
-
-		GAME_DEALLOC(this->Palette);
 		this->Palette = nullptr;
 	}
 
-	BytePalette* ReadPalette(const char* filename) {
-		BytePalette* ret = nullptr;
+	std::unique_ptr<BytePalette, GameDeleter> ReadPalette(const char* filename) {
+		std::unique_ptr<BytePalette, GameDeleter> ret = nullptr;
 
 		CCFileClass file(filename);
 		if(auto pData = file.ReadWholeFile()) {
 			auto pPal = reinterpret_cast<BytePalette*>(pData);
 
-			GAME_ALLOC(BytePalette, ret);
+			BytePalette* buffer = GameCreate<BytePalette>();
+			ret = std::unique_ptr<BytePalette, GameDeleter>(buffer);
 
 			// convert 6 bits to 8 bits. not correct,
 			// but this is what the game does
@@ -82,17 +90,21 @@ private:
 				ret->Entries[i].B = pPal->Entries[i].B << 2;
 			}
 
-			delete pData;
+			GameDelete(pData);
 		}
 
 		return ret;
 	}
 
 	void CreateConvert() {
-		auto pTargetPal = this->TargetPalette ? this->TargetPalette : this->Palette;
-		auto pSurface = this->TargetSurface ? this->TargetSurface : DSurface::Alternate;
-
-		GAME_ALLOC(ConvertClass, this->Convert, this->Palette, pTargetPal, pSurface, this->ShadeCount, 0);
+		ConvertClass* buffer = nullptr;
+		if(this->Mode == PaletteMode::Temperate) {
+			auto pTargetPal = (BytePalette*)0x885780; // pointer to TEMPERAT_PAL (not the Convert!)
+			buffer = GameCreate<ConvertClass>(this->Palette.get(), pTargetPal, DSurface::Primary, 53, false);
+		} else {
+			buffer = GameCreate<ConvertClass>(this->Palette.get(), this->Palette.get(), DSurface::Alternate, 1, false);
+		}
+		this->Convert = std::unique_ptr<ConvertClass, GameDeleter>(buffer);
 	}
 };
 
@@ -187,6 +199,44 @@ public:
 
 	char Label[0x20];
 	const wchar_t* Text;
+};
+
+// a wrapper for an optional value
+template <typename T>
+struct OptionalStruct {
+	OptionalStruct() : Value(T()), HasValue(false) {}
+	explicit OptionalStruct(T value) : Value(value), HasValue(true) {}
+
+	OptionalStruct& operator= (T value) {
+		this->Value = value;
+		this->HasValue = true;
+		return *this;
+	}
+
+	operator T& () {
+		return this->Value;
+	}
+
+	operator const T& () const {
+		return this->Value;
+	}
+
+	void clear() {
+		this->Value = T();
+		this->HasValue = false;
+	}
+
+	bool empty() const {
+		return !this->HasValue;
+	}
+
+	const T& get() const {
+		return this->Value;
+	}
+
+private:
+	T Value;
+	bool HasValue;
 };
 
 #endif

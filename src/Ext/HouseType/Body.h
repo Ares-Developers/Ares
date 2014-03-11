@@ -33,13 +33,13 @@ class HouseTypeExt
 			char LSSpecialName[0x20]; //Stringtable label for this country's special weapon
 			char LSBrief[0x20]; //Stringtable label for this country's load brief
 			char StatusText[0x20]; //Stringtable label for this country's Skirmish STT
-			ColorScheme* LoadTextColor; //The text color used for non-Campaign modes
+			ValueableIdx<ColorScheme> LoadTextColor; //The text color used for non-Campaign modes
 			int RandomSelectionWeight; //This country gets added this many times into the list of legible countries for random selection.
 			int CountryListIndex; //The index this country will appear in the selection list.
 
-			DynamicVectorClass<BuildingTypeClass *> Powerplants;
-			TypeList<TechnoTypeClass*> ParaDrop;
-			TypeList<int> ParaDropNum;
+			ValueableVector<BuildingTypeClass *> Powerplants;
+			ValueableVector<TechnoTypeClass*> ParaDropTypes;
+			ValueableVector<int> ParaDropNum;
 			ValueableIdx<AircraftTypeClass> ParaDropPlane;
 			Valueable<AnimTypeClass*> Parachute_Anim;
 
@@ -53,13 +53,13 @@ class HouseTypeExt
 			Valueable<bool> ObserverFlagYuriPAL;
 			bool SettingsInherited;
 
-		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
+		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 				RandomSelectionWeight (0),
 				CountryListIndex (0),
 				ParaDropPlane (-1),
 				Parachute_Anim (nullptr),
 				VeteranBuildings (),
-				LoadTextColor (nullptr),
+				LoadTextColor (-1),
 				ObserverBackgroundSHP (nullptr),
 				ObserverFlagSHP (nullptr),
 				ObserverFlagYuriPAL (false),
@@ -81,8 +81,6 @@ class HouseTypeExt
 
 		}
 
-		virtual size_t Size() const { return sizeof(*this); };
-
 		virtual void LoadFromINIFile(TT *pThis, CCINIClass *pINI);
 		virtual void LoadFromRulesFile(TT *pThis, CCINIClass *pINI);
 		virtual void InitializeConstants(TT *pThis);
@@ -92,8 +90,11 @@ class HouseTypeExt
 		}
 
 		AircraftTypeClass* GetParadropPlane();
-		bool GetParadropContent(TypeList<TechnoTypeClass*>**, TypeList<int>**);
+		bool GetParadropContent(Iterator<TechnoTypeClass*>&, Iterator<int>&);
 		AnimTypeClass* GetParachuteAnim();
+
+		Iterator<BuildingTypeClass*> GetPowerplants() const;
+		Iterator<BuildingTypeClass*> GetDefaultPowerplants() const;
 
 		void InheritSettings(HouseTypeClass *pThis);
 	};

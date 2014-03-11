@@ -47,7 +47,7 @@ void TechnoExt::SpawnSurvivors(FootClass *pThis, TechnoClass *pKiller, bool Sele
 
 			if(!EjectRandomly(Hijacker, loc, 144, Select)) {
 				Hijacker->RegisterDestruction(pKiller);
-				GAME_DEALLOC(Hijacker);
+				GameDelete(Hijacker);
 			} else {
 				// the hijacker will now be controlled instead of the unit
 				if(TechnoClass* pController = pThis->MindControlledBy) {
@@ -58,7 +58,7 @@ void TechnoExt::SpawnSurvivors(FootClass *pThis, TechnoClass *pKiller, bool Sele
 					Hijacker->QueueMission(mission_Guard, true); // override the fate the AI decided upon
 					
 				}
-				VocClass::PlayAt(pExt->HijackerLeaveSound, &pThis->Location, 0);
+				VocClass::PlayAt(pExt->HijackerLeaveSound, pThis->Location, 0);
 
 				// lower than 0: kill all, otherwise, kill n pilots
 				PilotCount = ((pExt->HijackerKillPilots < 0) ? 0 : (PilotCount - pExt->HijackerKillPilots));
@@ -76,7 +76,7 @@ void TechnoExt::SpawnSurvivors(FootClass *pThis, TechnoClass *pKiller, bool Sele
 
 						if(!EjectRandomly(Pilot, loc, 144, Select)) {
 							Pilot->RegisterDestruction(pKiller); //(TechnoClass *)R->get_StackVar32(0x54));
-							GAME_DEALLOC(Pilot);
+							GameDelete(Pilot);
 						} else {
 							if(pThis->AttachedTag && pThis->AttachedTag->IsTriggerRepeating()) {
 								Pilot->ReplaceTag(pThis->AttachedTag);
@@ -120,30 +120,32 @@ void TechnoExt::SpawnSurvivors(FootClass *pThis, TechnoClass *pKiller, bool Sele
 	\param loc Where to put the passenger
 	\param Select Whether to select the Passenger afterwards
 */
-bool TechnoExt::EjectSurvivor(FootClass *Survivor, CoordStruct *loc, bool Select)
+bool TechnoExt::EjectSurvivor(FootClass *Survivor, CoordStruct loc, bool Select)
 {
-	bool success = false;
-	bool chuted = false;
-	CoordStruct tmpCoords;
-	CellClass * pCell = MapClass::Instance->GetCellAt(*loc);
-	if(pCell == MapClass::InvalidCell()) {
+	CellClass* pCell = MapClass::Instance->TryGetCellAt(loc);
+
+	if(!pCell) {
 		return false;
 	}
-	pCell->GetCoordsWithBridge(&tmpCoords);
+
 	Survivor->OnBridge = pCell->ContainsBridge();
 
-	int floorZ = tmpCoords.Z;
-	if(loc->Z - floorZ > 208) {
+	int floorZ = pCell->GetCoordsWithBridge().Z;
+	bool chuted = (loc.Z - floorZ > 208);
+	if(chuted) {
 		// HouseClass::CreateParadrop does this when building passengers for a paradrop... it might be a wise thing to mimic!
 		Survivor->Remove();
 
-		success = Survivor->SpawnParachuted(loc);
-		chuted = true;
+		if(!Survivor->SpawnParachuted(loc)) {
+			return false;
+		}
 	} else {
-		loc->Z = floorZ;
-		success = Survivor->Put(loc, ScenarioClass::Instance->Random.RandomRanged(0, 7));
+		loc.Z = floorZ;
+		if(!Survivor->Put(loc, ScenarioClass::Instance->Random.RandomRanged(0, 7))) {
+			return false;
+		}
 	}
-	RET_UNLESS(success);
+
 	Survivor->Transporter = nullptr;
 	Survivor->LastMapCoords = pCell->MapCoords;
 
@@ -158,12 +160,15 @@ bool TechnoExt::EjectSurvivor(FootClass *Survivor, CoordStruct *loc, bool Select
 		Survivor->Scatter(CoordStruct::Empty, true, false);
 		Survivor->QueueMission(Survivor->Owner->ControlledByHuman() ? mission_Guard : mission_Hunt, 0);
 	}
-	Survivor->ShouldEnterOccupiable = Survivor->ShouldGarrisonStructure = false;
+
+	Survivor->ShouldEnterOccupiable = false;
+	Survivor->ShouldGarrisonStructure = false;
 
 	if(Select) {
 		Survivor->Select();
 	}
-	return 1;
+
+	return true;
 	//! \todo Tag
 }
 
@@ -175,20 +180,17 @@ bool TechnoExt::EjectSurvivor(FootClass *Survivor, CoordStruct *loc, bool Select
 	\author Renegade
 	\date 27.05.2010
 */
-void TechnoExt::EjectPassengers(FootClass *pThis, signed short howMany) {
-	if(howMany == 0 || !pThis->Passengers.NumPassengers) {
-		return;
+void TechnoExt::EjectPassengers(FootClass *pThis, int howMany) {
+	if(howMany < 0) {
+		howMany = pThis->Passengers.NumPassengers;
 	}
 
-	short limit = (howMany < 0 || howMany > pThis->Passengers.NumPassengers) ? (short)pThis->Passengers.NumPassengers : howMany;
-
-	for(short i = 0; (i < limit) && pThis->Passengers.FirstPassenger; ++i) {
+	for(int i = 0; i < howMany && pThis->Passengers.FirstPassenger; ++i) {
 		FootClass *passenger = pThis->RemoveFirstPassenger();
 		if(!EjectRandomly(passenger, pThis->Location, 128, false)) {
 			passenger->UnInit();
 		}
 	}
-	return;
 }
 
 
@@ -202,20 +204,20 @@ void TechnoExt::EjectPassengers(FootClass *pThis, signed short howMany) {
 	\author Renegade
 	\date 27.05.2010
 */
-void TechnoExt::GetPutLocation(CoordStruct const &current, CoordStruct &target, int distance) {
+CoordStruct TechnoExt::GetPutLocation(CoordStruct current, int distance) {
 	// this whole thing does not at all account for cells which are completely occupied.
-	CoordStruct tmpLoc = current;
 	CellStruct tmpCoords = CellSpread::GetCell(ScenarioClass::Instance->Random.RandomRanged(0, 7));
 
-	tmpLoc.X += tmpCoords.X * distance;
-	tmpLoc.Y += tmpCoords.Y * distance;
+	current.X += tmpCoords.X * distance;
+	current.Y += tmpCoords.Y * distance;
 
-	CellClass * tmpCell = MapClass::Instance->GetCellAt(tmpLoc);
+	CellClass* tmpCell = MapClass::Instance->GetCellAt(current);
 
-	tmpCell->FindInfantrySubposition(&target, &tmpLoc, 0, 0, 0);
+	CoordStruct target;
+	tmpCell->FindInfantrySubposition(&target, &current, 0, 0, 0);
 
 	target.Z = current.Z;
-	return;
+	return target;
 }
 
 //! Places a unit next to a given location on the battlefield.
@@ -229,9 +231,8 @@ void TechnoExt::GetPutLocation(CoordStruct const &current, CoordStruct &target, 
 	\date 12.04.2011
 */
 bool TechnoExt::EjectRandomly(FootClass* pEjectee, CoordStruct const &location, int distance, bool select) {
-	CoordStruct destLoc;
-	GetPutLocation(location, destLoc, distance);
-	return TechnoExt::EjectSurvivor(pEjectee, &destLoc, select);
+	CoordStruct destLoc = GetPutLocation(location, distance);
+	return TechnoExt::EjectSurvivor(pEjectee, destLoc, select);
 }
 
 //! Breaks the link between DrainTarget and DrainingMe.
@@ -268,7 +269,7 @@ void TechnoExt::StopDraining(TechnoClass *Drainer, TechnoClass *Drainee) {
 		// tell the game to recheck the drained
 		// player's tech level.
 		if (Drainee->Owner) {
-			Drainee->Owner->ShouldRecheckTechTree = true;
+			Drainee->Owner->RecheckTechTree = true;
 		}
 	}
 }
@@ -284,7 +285,7 @@ bool TechnoExt::SpawnVisceroid(CoordStruct &crd, ObjectTypeClass* pType, int cha
 				if(ObjectClass* pVisc = pType->CreateObject(pHouse)) {
 					++Unsorted::IKnowWhatImDoing;
 					ret = true;
-					if(!pVisc->Put(&crd, 0)) {
+					if(!pVisc->Put(crd, 0)) {
 						// opposed to TS, we clean up, though
 						// the mutex should make it happen.
 						pVisc->UnInit();
@@ -318,7 +319,7 @@ bool TechnoExt::ExtData::DrawVisualFX() {
 UnitTypeClass * TechnoExt::ExtData::GetUnitType() {
 	if(UnitClass * U = specific_cast<UnitClass *>(this->AttachedToObject)) {
 		TechnoTypeExt::ExtData * pData = TechnoTypeExt::ExtMap.Find(U->Type);
-		if(pData->WaterImage && !U->OnBridge && U->GetCell()->LandType == lt_Water) {
+		if(pData->WaterImage && !U->OnBridge && U->GetCell()->LandType == LandType::Water) {
 			return pData->WaterImage;
 		}
 	}
@@ -327,7 +328,6 @@ UnitTypeClass * TechnoExt::ExtData::GetUnitType() {
 
 void Container<TechnoExt>::InvalidatePointer(void *ptr, bool bRemoved) {
 	AnnounceInvalidPointerMap(TechnoExt::AlphaExt, ptr);
-	AnnounceInvalidPointerMap(TechnoExt::SpotlightExt, ptr);
 	AnnounceInvalidPointer(TechnoExt::ActiveBuildingLight, ptr);
 }
 
@@ -452,24 +452,17 @@ void TechnoExt::TransferAttachedEffects(TechnoClass *From, TechnoClass *To) {
 	TechnoExt::ExtData *FromExt = TechnoExt::ExtMap.Find(From);
 	TechnoExt::ExtData *ToExt = TechnoExt::ExtMap.Find(To);
 
-	for (int i=0; i < ToExt->AttachedEffects.Count; ++i) {
-		auto ToItem = ToExt->AttachedEffects.GetItem(i);
-		ToItem->Destroy();
-		delete ToItem;
-	}
-	ToExt->AttachedEffects.Clear();
+	ToExt->AttachedEffects.clear();
 
 	// while recreation itself isn't the best idea, less hassle and more reliable
 	// list gets intact in the end
-	for (int i=0; i < FromExt->AttachedEffects.Count; i++) {
-		auto FromItem = FromExt->AttachedEffects.GetItem(i);
+	for (size_t i=0; i < FromExt->AttachedEffects.size(); i++) {
+		auto &FromItem = FromExt->AttachedEffects.at(i);
 		FromItem->Type->Attach(To, FromItem->ActualDuration, FromItem->Invoker);
 		//FromItem->Type->Attach(To, FromItem->ActualDuration, FromItem->Invoker, FromItem->ActualDamageDelay);
-		FromItem->Destroy();
-		delete FromItem;
 	}
 
-	FromExt->AttachedEffects.Clear();
+	FromExt->AttachedEffects.clear();
 	FromExt->AttachedTechnoEffect_isset = false;
 	TechnoExt::RecalculateStats(To);
 }
@@ -489,9 +482,8 @@ void TechnoExt::RecalculateStats(TechnoClass *pTechno) {
 
 	//Debug::Log("[AttachEffect]Recalculating stats of %s...\n", pTechno->get_ID());
 
-	for (int i = 0; i < pTechnoExt->AttachedEffects.Count; i++) {
-		auto Item = pTechnoExt->AttachedEffects.GetItem(i);
-		auto iType = Item->Type;
+	for (size_t i = 0; i < pTechnoExt->AttachedEffects.size(); i++) {
+		auto iType = pTechnoExt->AttachedEffects.at(i)->Type;
 		//do not use *= here... Valuable sends GetEx and repositions the double
 		Firepower = iType->FirepowerMultiplier * Firepower;
 		Speed = iType->SpeedMultiplier * Speed;
@@ -540,8 +532,10 @@ eAction TechnoExt::ExtData::GetDeactivatedAction(ObjectClass *Hovered) const {
 }
 
 void TechnoExt::ExtData::InvalidateAttachEffectPointer(void *ptr) {
-	for(auto i = 0; i < this->AttachedEffects.Count; ++i) {
-		this->AttachedEffects.GetItem(i)->InvalidatePointer(ptr);
+	for(auto i = 0u; i < this->AttachedEffects.size(); ++i) {
+		if(auto &Item = this->AttachedEffects.at(i)) {
+			Item->InvalidatePointer(ptr);
+		}
 	}
 }
 
@@ -772,7 +766,7 @@ bool TechnoExt::ExtData::PerformActionHijack(TechnoClass* pTarget) {
 		// let's make a steal
 		pTarget->SetOwningHouse(pThis->Owner, 1);
 		pTarget->GotHijacked();
-		VocClass::PlayAt(pTypeExt->HijackerEnterSound, &pTarget->Location, 0);
+		VocClass::PlayAt(pTypeExt->HijackerEnterSound, pTarget->Location, 0);
 
 		// remove the driverless-marker
 		TechnoExt::ExtData* pDestExt = TechnoExt::ExtMap.Find(pTarget);
@@ -1035,13 +1029,33 @@ bool TechnoExt::ExtData::CanSelfCloakNow() const
 	return true;
 }
 
+void TechnoExt::ExtData::SetSpotlight(BuildingLightClass* pSpotlight) {
+	if(this->Spotlight != pSpotlight) {
+		if(this->Spotlight) {
+			GameDelete(this->Spotlight);
+		}
+		this->Spotlight = pSpotlight;
+	}
+
+	if(auto pBld = abstract_cast<BuildingClass*>(this->AttachedToObject)) {
+		if(pBld->Spotlight != pSpotlight) {
+			if(pBld->Spotlight) {
+				GameDelete(pBld->Spotlight);
+			}
+			pBld->Spotlight = pSpotlight;
+		}
+	}
+}
+
 // =============================
 // load/save
 
-void Container<TechnoExt>::Load(TechnoClass *pThis, IStream *pStm) {
+bool Container<TechnoExt>::Load(TechnoClass *pThis, IStream *pStm) {
 	TechnoExt::ExtData* pData = this->LoadKey(pThis, pStm);
 
 	SWIZZLE(pData->Insignia_Image);
+
+	return pData != nullptr;
 }
 
 // =============================
@@ -1071,8 +1085,7 @@ DEFINE_HOOK(70BF50, TechnoClass_SaveLoad_Prefix, 5)
 	GET_STACK(TechnoExt::TT*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
 
-	Container<TechnoExt>::SavingObject = pItem;
-	Container<TechnoExt>::SavingStream = pStm;
+	Container<TechnoExt>::PrepareStream(pItem, pStm);
 
 	return 0;
 }

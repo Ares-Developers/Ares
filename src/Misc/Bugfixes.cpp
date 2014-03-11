@@ -28,7 +28,7 @@
 #include "../Ext/WeaponType/Body.h"
 #include "../Ext/WarheadType/Body.h"
 
-#include "../Utilities/Template.h"
+#include "../Utilities/TemplateDef.h"
 
 #include <cstdlib>
 #include <array>
@@ -152,8 +152,7 @@ DEFINE_HOOK(6FCA30, TechnoClass_GetWeaponState, 6)
 {
 	GET(TechnoClass *, Techno, ESI);
 	TechnoClass *Transport = Techno->Transporter;
-	RET_UNLESS(Transport && Transport->CloakState);
-	return 0x6FCA4F;
+	return (Transport && Transport->CloakState) ? 0x6FCA4F : 0;
 }
 
 // PrismSupportModifier repair
@@ -625,10 +624,10 @@ DEFINE_HOOK(718871, TeleportLocomotionClass_UnfreezeObject_SinkOrSwim, 7)
 	GET(TechnoTypeClass *, Type, EAX);
 
 	switch(Type->MovementZone) {
-		case mz_Amphibious:
-		case mz_AmphibiousCrusher:
-		case mz_AmphibiousDestroyer:
-		case mz_WaterBeach:
+		case MovementZone::Amphibious:
+		case MovementZone::AmphibiousCrusher:
+		case MovementZone::AmphibiousDestroyer:
+		case MovementZone::WaterBeach:
 			R->BL(1);
 			return 0x7188B1;
 	}
@@ -1011,9 +1010,8 @@ DEFINE_HOOK(700E47, TechnoClass_CanDeploySlashUnload_Immobile, A)
 {
 	GET(UnitClass*, pThis, ESI);
 
-	CoordStruct crd;
 	CellClass * pCell = pThis->GetCell();
-	pCell->GetCoordsWithBridge(&crd);
+	CoordStruct crd = pCell->GetCoordsWithBridge();
 
 	// recreate replaced check, and also disallow if unit is still warping or dropping in.
 	if(pThis->IsUnderEMP() || pThis->IsWarpingIn() || pThis->IsFallingDown) {
@@ -1135,4 +1133,32 @@ DEFINE_HOOK(4748A0, INIClass_GetPipIdx, 7)
 
 	R->EAX(ret);
 	return 0x474907;
+}
+
+// replaced entire function. error was using delete[] instead of delete.
+// it potentially crashed when any of the files were present in the
+// game directory.
+DEFINE_HOOK(5F77F0, ObjectTypeClass_UnloadPipsSHP, 5)
+{
+	bool* pAllocated = reinterpret_cast<bool*>(0xAC1488);
+	SHPStruct* pShp[] = {FileSystem::PIPBRD_SHP, FileSystem::PIPS_SHP,
+		FileSystem::PIPS2_SHP, FileSystem::TALKBUBL_SHP};
+
+	for(int i = 0; i < 4; ++i) {
+		if(pAllocated[i] && pShp[i]) {
+			GameDelete(pShp[i]);
+			pAllocated[i] = false;
+		}
+	}
+
+	return 0x5F78FB;
+}
+
+// #895584: ships not taking damage when repaired in a shipyard. bug
+// was that the logic that prevented units from being damaged when
+// exiting a war factory applied here, too. added the Naval check.
+DEFINE_HOOK(737CE4, UnitClass_ReceiveDamage_ShipyardRepair, 6)
+{
+	GET(BuildingTypeClass*, pType, ECX);
+	return (pType->WeaponsFactory && !pType->Naval) ? 0x737CEE : 0x737D31;
 }

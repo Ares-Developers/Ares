@@ -36,13 +36,13 @@ DEFINE_HOOK(465D4A, BuildingType_IsUndeployable, 6)
 	return 0;
 }
 
-DEFINE_HOOK(465550, sub_465550, 6)
+DEFINE_HOOK(465550, BuildingTypeClass_GetFoundationOutline, 6)
 {
 	GET(BuildingTypeClass *, pThis, ECX);
 	if(pThis->Foundation == FOUNDATION_CUSTOM) {
 		BuildingTypeExt::ExtData* pData = BuildingTypeExt::ExtMap.Find(pThis);
 
-		R->EAX(&pData->OutlineData);
+		R->EAX(pData->OutlineData.data());
 		return 0x46556D;
 	}
 	return 0;

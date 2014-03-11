@@ -8,6 +8,7 @@
 #include "../../Ares.h"
 #include "../../Ares.CRT.h"
 #include "../../Utilities/Enums.h"
+#include "../../Utilities/TemplateDef.h"
 
 #include <WarheadTypeClass.h>
 #include <MessageListClass.h>
@@ -23,18 +24,11 @@ SuperWeaponTypeClass *SWTypeExt::CurrentSWType = nullptr;
 
 SWTypeExt::ExtData::~ExtData() {
 	this->ParaDrop.clear();
-
-	for(int i=this->ParaDropPlanes.Count-1; i>=0; --i) {
-		delete this->ParaDropPlanes.Items[i];
-		this->ParaDropPlanes.Items[i] = nullptr;
-	}
 };
 
 void SWTypeExt::ExtData::InitializeConstants(SuperWeaponTypeClass *pThis)
 {
-	if(!NewSWType::Array.Count) {
-		NewSWType::Init();
-	}
+	NewSWType::Init();
 
 	MouseCursor *Cursor = &this->SW_Cursor;
 	Cursor->Frame = 53; // Attack
@@ -89,18 +83,14 @@ void SWTypeExt::ExtData::LoadFromRulesFile(SuperWeaponTypeClass *pThis, CCINICla
 	}
 
 	// find a NewSWType that handles this original one.
-	int idxNewSWType = pThis->Type;
-	if(pThis->Type < FIRST_SW_TYPE) {
+	if(this->IsOriginalType()) {
 		this->HandledByNewSWType = NewSWType::FindHandler(pThis->Type);
-		idxNewSWType = this->HandledByNewSWType;
 	}
 
 	// if this is handled by a NewSWType, initialize it.
-	if(idxNewSWType != -1) {
+	if(auto pNewSWType = this->GetNewSWType()) {
 		pThis->Action = SW_YES_CURSOR;
-		if(NewSWType *swt = NewSWType::GetNthItem(idxNewSWType)) {
-			swt->Initialize(this, pThis);
-		}
+		pNewSWType->Initialize(this, pThis);
 	}
 	this->LastAction = pThis->Action;
 }
@@ -116,69 +106,69 @@ void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass
 	INI_EX exINI(pINI);
 
 	// read general properties
-	this->EVA_Ready.Read(&exINI, section, "EVA.Ready");
-	this->EVA_Activated.Read(&exINI, section, "EVA.Activated");
-	this->EVA_Detected.Read(&exINI, section, "EVA.Detected");
-	this->EVA_Impatient.Read(&exINI, section, "EVA.Impatient");
-	this->EVA_InsufficientFunds.Read(&exINI, section, "EVA.InsufficientFunds");
-	this->EVA_SelectTarget.Read(&exINI, section, "EVA.SelectTarget");
+	this->EVA_Ready.Read(exINI, section, "EVA.Ready");
+	this->EVA_Activated.Read(exINI, section, "EVA.Activated");
+	this->EVA_Detected.Read(exINI, section, "EVA.Detected");
+	this->EVA_Impatient.Read(exINI, section, "EVA.Impatient");
+	this->EVA_InsufficientFunds.Read(exINI, section, "EVA.InsufficientFunds");
+	this->EVA_SelectTarget.Read(exINI, section, "EVA.SelectTarget");
 
-	this->SW_FireToShroud.Read(&exINI, section, "SW.FireIntoShroud");
-	this->SW_AutoFire.Read(&exINI, section, "SW.AutoFire");
-	this->SW_ManualFire.Read(&exINI, section, "SW.ManualFire");
-	this->SW_RadarEvent.Read(&exINI, section, "SW.CreateRadarEvent");
-	this->SW_ShowCameo.Read(&exINI, section, "SW.ShowCameo");
-	this->SW_Unstoppable.Read(&exINI, section, "SW.Unstoppable");
+	this->SW_FireToShroud.Read(exINI, section, "SW.FireIntoShroud");
+	this->SW_AutoFire.Read(exINI, section, "SW.AutoFire");
+	this->SW_ManualFire.Read(exINI, section, "SW.ManualFire");
+	this->SW_RadarEvent.Read(exINI, section, "SW.CreateRadarEvent");
+	this->SW_ShowCameo.Read(exINI, section, "SW.ShowCameo");
+	this->SW_Unstoppable.Read(exINI, section, "SW.Unstoppable");
 
-	this->Money_Amount.Read(&exINI, section, "Money.Amount");
-	this->Money_DrainAmount.Read(&exINI, section, "Money.DrainAmount");
-	this->Money_DrainDelay.Read(&exINI, section, "Money.DrainDelay");
+	this->Money_Amount.Read(exINI, section, "Money.Amount");
+	this->Money_DrainAmount.Read(exINI, section, "Money.DrainAmount");
+	this->Money_DrainDelay.Read(exINI, section, "Money.DrainDelay");
 
-	this->SW_Sound.Read(&exINI, section, "SW.Sound");
-	this->SW_ActivationSound.Read(&exINI, section, "SW.ActivationSound");
+	this->SW_Sound.Read(exINI, section, "SW.Sound");
+	this->SW_ActivationSound.Read(exINI, section, "SW.ActivationSound");
 
-	this->SW_Anim.Parse(&exINI, section, "SW.Animation");
-	this->SW_AnimHeight.Read(&exINI, section, "SW.AnimationHeight");
+	this->SW_Anim.Read(exINI, section, "SW.Animation");
+	this->SW_AnimHeight.Read(exINI, section, "SW.AnimationHeight");
 
-	this->SW_AnimVisibility.Read(&exINI, section, "SW.AnimationVisibility");
-	this->SW_AffectsHouse.Read(&exINI, section, "SW.AffectsHouse");
-	this->SW_AITargetingType.Read(&exINI, section, "SW.AITargeting");
-	this->SW_AffectsTarget.Read(&exINI, section, "SW.AffectsTarget");
-	this->SW_RequiresTarget.Read(&exINI, section, "SW.RequiresTarget");
-	this->SW_RequiresHouse.Read(&exINI, section, "SW.RequiresHouse");
+	this->SW_AnimVisibility.Read(exINI, section, "SW.AnimationVisibility");
+	this->SW_AffectsHouse.Read(exINI, section, "SW.AffectsHouse");
+	this->SW_AITargetingType.Read(exINI, section, "SW.AITargeting");
+	this->SW_AffectsTarget.Read(exINI, section, "SW.AffectsTarget");
+	this->SW_RequiresTarget.Read(exINI, section, "SW.RequiresTarget");
+	this->SW_RequiresHouse.Read(exINI, section, "SW.RequiresHouse");
 
-	this->SW_Deferment.Read(&exINI, section, "SW.Deferment");
-	this->SW_ChargeToDrainRatio.Read(&exINI, section, "SW.ChargeToDrainRatio");
+	this->SW_Deferment.Read(exINI, section, "SW.Deferment");
+	this->SW_ChargeToDrainRatio.Read(exINI, section, "SW.ChargeToDrainRatio");
 
-	this->SW_Cursor.Read(&exINI, section, "Cursor");
-	this->SW_NoCursor.Read(&exINI, section, "NoCursor");
+	this->SW_Cursor.Read(exINI, section, "Cursor");
+	this->SW_NoCursor.Read(exINI, section, "NoCursor");
 
-	this->SW_Warhead.Parse(&exINI, section, "SW.Warhead");
-	this->SW_Damage.Read(&exINI, section, "SW.Damage");
+	this->SW_Warhead.Read(exINI, section, "SW.Warhead");
+	this->SW_Damage.Read(exINI, section, "SW.Damage");
 
 	if(pINI->ReadString(section, "SW.Range", Ares::readDefval, Ares::readBuffer, Ares::readLength)) {
 		char* context = nullptr;
 		char* p = strtok_s(Ares::readBuffer, Ares::readDelims, &context);
 		if(p && *p) {
-			this->SW_WidthOrRange = (float)atof(p);
-			this->SW_Height = -1;
+			this->SW_Range.WidthOrRange = (float)atof(p);
+			this->SW_Range.Height = -1;
 
 			p = strtok_s(nullptr, Ares::readDelims, &context);
 			if(p && *p) {
-				this->SW_Height = atoi(p);
+				this->SW_Range.Height = atoi(p);
 			}
 		}
 	}
 
 	// lighting
-	this->Lighting_Enabled.Read(&exINI, section, "Light.Enabled");
-	this->Lighting_Ambient.Read(&exINI, section, "Light.Ambient");
-	this->Lighting_Red.Read(&exINI, section, "Light.Red");
-	this->Lighting_Green.Read(&exINI, section, "Light.Green");
-	this->Lighting_Blue.Read(&exINI, section, "Light.Blue");
+	this->Lighting_Enabled.Read(exINI, section, "Light.Enabled");
+	this->Lighting_Ambient.Read(exINI, section, "Light.Ambient");
+	this->Lighting_Red.Read(exINI, section, "Light.Red");
+	this->Lighting_Green.Read(exINI, section, "Light.Green");
+	this->Lighting_Blue.Read(exINI, section, "Light.Blue");
 
 	// messages and their properties
-	this->Message_FirerColor.Read(&exINI, section, "Message.FirerColor");
+	this->Message_FirerColor.Read(exINI, section, "Message.FirerColor");
 	if(pINI->ReadString(section, "Message.Color", Ares::readDefval, Ares::readBuffer, Ares::readLength)) {
 		this->Message_ColorScheme = ColorScheme::FindIndex(Ares::readBuffer);
 		if(this->Message_ColorScheme < 0) {
@@ -186,38 +176,33 @@ void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass
 		}
 	}
 
-	this->Message_Detected.Read(&exINI, section, "Message.Detected");
-	this->Message_Ready.Read(&exINI, section, "Message.Ready");
-	this->Message_Launch.Read(&exINI, section, "Message.Launch");
-	this->Message_Activate.Read(&exINI, section, "Message.Activate");
-	this->Message_Abort.Read(&exINI, section, "Message.Abort");
-	this->Message_InsufficientFunds.Read(&exINI, section, "Message.InsufficientFunds");
+	this->Message_Detected.Read(exINI, section, "Message.Detected");
+	this->Message_Ready.Read(exINI, section, "Message.Ready");
+	this->Message_Launch.Read(exINI, section, "Message.Launch");
+	this->Message_Activate.Read(exINI, section, "Message.Activate");
+	this->Message_Abort.Read(exINI, section, "Message.Abort");
+	this->Message_InsufficientFunds.Read(exINI, section, "Message.InsufficientFunds");
 
-	this->Text_Preparing.Read(&exINI, section, "Text.Preparing");
-	this->Text_Ready.Read(&exINI, section, "Text.Ready");
-	this->Text_Hold.Read(&exINI, section, "Text.Hold");
-	this->Text_Charging.Read(&exINI, section, "Text.Charging");
-	this->Text_Active.Read(&exINI, section, "Text.Active");
+	this->Text_Preparing.Read(exINI, section, "Text.Preparing");
+	this->Text_Ready.Read(exINI, section, "Text.Ready");
+	this->Text_Hold.Read(exINI, section, "Text.Hold");
+	this->Text_Charging.Read(exINI, section, "Text.Charging");
+	this->Text_Active.Read(exINI, section, "Text.Active");
 
 	// the fallback is handled in the PreDependent SW's code
 	if(pINI->ReadString(section, "SW.PostDependent", Ares::readDefval, Ares::readBuffer, Ares::readLength)) {
 		AresCRT::strCopy(this->SW_PostDependent, Ares::readBuffer);
 	}
 
-	// find a NewSWType that handles this original one.
-	int idxNewSWType = ((pThis->Type < FIRST_SW_TYPE) ? this->HandledByNewSWType : pThis->Type);
-
 	// initialize the NewSWType that handles this SWType.
-	int Type = idxNewSWType - FIRST_SW_TYPE;
-	if(Type >= 0 && Type < NewSWType::Array.Count) {
+	if(auto pNewSWType = this->GetNewSWType()) {
 		pThis->Action = this->LastAction;
-		NewSWType *swt = NewSWType::GetNthItem(idxNewSWType);
-		swt->LoadFromINI(this, pThis, pINI);
+		pNewSWType->LoadFromINI(this, pThis, pINI);
 		this->LastAction = pThis->Action;
 
 		// whatever the user does, we take care of the stupid tags.
 		// there is no need to have them not hardcoded.
-		SuperWeaponFlags::Value flags = swt->Flags();
+		SuperWeaponFlags::Value flags = pNewSWType->Flags();
 		pThis->PreClick = ((flags & SuperWeaponFlags::PreClick) != 0);
 		pThis->PostClick = ((flags & SuperWeaponFlags::PostClick) != 0);
 		pThis->PreDependent = -1;
@@ -267,7 +252,7 @@ SuperWeaponAffectedHouse::Value SWTypeExt::ExtData::GetRelation(HouseClass* pFir
 
 bool SWTypeExt::ExtData::IsCellEligible(CellClass* pCell, SuperWeaponTarget::Value allowed) {
 	if(allowed & SuperWeaponTarget::AllCells) {
-		bool isWater = (pCell->LandType == lt_Water);
+		bool isWater = (pCell->LandType == LandType::Water);
 		if(isWater && !(allowed & SuperWeaponTarget::Water)) {
 			// doesn't support water
 			return false;
@@ -313,8 +298,8 @@ bool SWTypeExt::ExtData::IsTechnoAffected(TechnoClass* pTechno) {
 	return true;
 }
 
-bool SWTypeExt::ExtData::CanFireAt(CellStruct *pCoords) {
-	if(CellClass *pCell = MapClass::Instance->GetCellAt(*pCoords)) {
+bool SWTypeExt::ExtData::CanFireAt(const CellStruct &Coords) {
+	if(CellClass *pCell = MapClass::Instance->GetCellAt(Coords)) {
 
 		// check cell type
 		if(!IsCellEligible(pCell, this->SW_RequiresTarget)) {
@@ -338,12 +323,12 @@ bool SWTypeExt::ExtData::CanFireAt(CellStruct *pCoords) {
 	return true;
 }
 
-bool SWTypeExt::Launch(SuperClass* pThis, NewSWType* pSW, CellStruct* pCoords, byte IsPlayer) {
+bool SWTypeExt::Launch(SuperClass* pThis, NewSWType* pSW, const CellStruct &Coords, bool IsPlayer) {
 	if(SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pThis->Type)) {
 
 		// launch the SW, then play sounds and animations. if the SW isn't launched
 		// nothing will be played.
-		if(pSW->Launch(pThis, pCoords, IsPlayer)) {
+		if(pSW->Activate(pThis, Coords, IsPlayer)) {
 			SuperWeaponFlags::Value flags = pSW->Flags();
 
 			if(flags & SuperWeaponFlags::PostClick) {
@@ -363,32 +348,32 @@ bool SWTypeExt::Launch(SuperClass* pThis, NewSWType* pSW, CellStruct* pCoords, b
 			if(!(flags & SuperWeaponFlags::NoMoney)) {
 				int Money_Amount = pData->Money_Amount;
 				if(Money_Amount > 0) {
-					DEBUGLOG("House %d gets %d credits\n", pThis->Owner->ArrayIndex, Money_Amount);
+					Debug::Log("House %d gets %d credits\n", pThis->Owner->ArrayIndex, Money_Amount);
 					pThis->Owner->GiveMoney(Money_Amount);
 				} else if(Money_Amount < 0) {
-					DEBUGLOG("House %d loses %d credits\n", pThis->Owner->ArrayIndex, -Money_Amount);
+					Debug::Log("House %d loses %d credits\n", pThis->Owner->ArrayIndex, -Money_Amount);
 					pThis->Owner->TakeMoney(-Money_Amount);
 				}
 			}
 
-			CellClass *pTarget = MapClass::Instance->GetCellAt(*pCoords);
+			CellClass *pTarget = MapClass::Instance->GetCellAt(Coords);
 
-			CoordStruct coords;
-			pTarget->GetCoordsWithBridge(&coords);
+			CoordStruct coords = pTarget->GetCoordsWithBridge();
 
-			if(pData->SW_Anim && !(flags & SuperWeaponFlags::NoAnim)) {
+			auto pAnim = pData->GetAnim();
+			if(pAnim && !(flags & SuperWeaponFlags::NoAnim)) {
 				coords.Z += pData->SW_AnimHeight;
-				AnimClass *placeholder;
-				GAME_ALLOC(AnimClass, placeholder, pData->SW_Anim, &coords);
+				AnimClass *placeholder = GameCreate<AnimClass>(pAnim, coords);
 				placeholder->Invisible = !pData->IsAnimVisible(pThis->Owner);
 			}
 
-			if((pData->SW_Sound != -1) && !(flags & SuperWeaponFlags::NoSound)) {
-				VocClass::PlayAt(pData->SW_Sound, &coords, nullptr);
+			int sound = pData->GetSound();
+			if(sound && !(flags & SuperWeaponFlags::NoSound)) {
+				VocClass::PlayAt(sound, coords, nullptr);
 			}
 
 			if(pData->SW_RadarEvent && !(flags & SuperWeaponFlags::NoEvent)) {
-				RadarEventClass::Create(RadarEventType::SuperweaponActivated, *pCoords);
+				RadarEventClass::Create(RadarEventType::SuperweaponActivated, Coords);
 			}
 
 			if(!(flags & SuperWeaponFlags::NoMessage)) {
@@ -433,12 +418,29 @@ bool SWTypeExt::Launch(SuperClass* pThis, NewSWType* pSW, CellStruct* pCoords, b
 	return false;
 }
 
-NewSWType* SWTypeExt::ExtData::GetNewSWType() {
-	int TypeIdx = (this->HandledByNewSWType != -1 ? this->HandledByNewSWType : this->AttachedToObject->Type);
-	RET_UNLESS(TypeIdx >= FIRST_SW_TYPE);
+bool SWTypeExt::ExtData::IsOriginalType() const {
+	return this->AttachedToObject->Type < FIRST_SW_TYPE;
+}
 
-	if(NewSWType* pSW = NewSWType::GetNthItem(TypeIdx)) {
-		return pSW;
+// is this an original type handled by a NewSWType?
+bool SWTypeExt::ExtData::IsTypeRedirected() const {
+	return this->HandledByNewSWType > -1;
+}
+
+int SWTypeExt::ExtData::GetTypeIndexWithRedirect() const {
+	return this->IsTypeRedirected() ? this->HandledByNewSWType : this->AttachedToObject->Type;
+}
+
+int SWTypeExt::ExtData::GetNewTypeIndex() const {
+	// if new type, return new type, if original type return only if handled (else it's -1).
+	return this->IsOriginalType() ? this->HandledByNewSWType : this->AttachedToObject->Type;
+}
+
+NewSWType* SWTypeExt::ExtData::GetNewSWType() const {
+	int TypeIdx = this->GetNewTypeIndex();
+
+	if(TypeIdx >= FIRST_SW_TYPE) {
+		return NewSWType::GetNthItem(TypeIdx);
 	}
 
 	return nullptr;
@@ -488,9 +490,7 @@ void SWTypeExt::CreateChronoAnim(SuperClass *pThis, CoordStruct *pCoords, AnimTy
 	ClearChronoAnim(pThis);
 	
 	if(pAnimType && pCoords) {
-		AnimClass* pAnim = nullptr;
-		GAME_ALLOC(AnimClass, pAnim, pAnimType, pCoords);
-		if(pAnim) {
+		if(auto pAnim = GameCreate<AnimClass>(pAnimType, *pCoords)) {
 			SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pThis->Type);
 			pAnim->Invisible = !pData->IsAnimVisible(pThis->Owner);
 			pThis->Animation = pAnim;
@@ -517,20 +517,65 @@ bool SWTypeExt::ChangeLighting(SuperWeaponTypeClass *pThis) {
 
 bool SWTypeExt::ExtData::ChangeLighting() {
 	if(this->Lighting_Enabled) {
-		auto getValue = [](int value, int def) -> int {
+		auto getValue = [](Nullable<int> &item, int ScenarioClass::* pDefMember, int def) -> int {
+			int value = item.Get(pDefMember ? ScenarioClass::Instance->*pDefMember : -1);
 			return (value < 0) ? def : value;
 		};
 
 		ScenarioClass* scen = ScenarioClass::Instance;
-		scen->AmbientTarget = getValue(this->Lighting_Ambient, scen->AmbientOriginal);
-		int cG = 1000 * getValue(this->Lighting_Green, scen->Green) / 100;
-		int cB = 1000 * getValue(this->Lighting_Blue, scen->Blue)  / 100;
-		int cR = 1000 * getValue(this->Lighting_Red, scen->Red)  / 100;
+		scen->AmbientTarget = getValue(this->Lighting_Ambient, this->Lighting_DefaultAmbient, scen->AmbientOriginal);
+		int cG = 1000 * getValue(this->Lighting_Green, this->Lighting_DefaultGreen, scen->Green) / 100;
+		int cB = 1000 * getValue(this->Lighting_Blue, this->Lighting_DefaultBlue, scen->Blue) / 100;
+		int cR = 1000 * getValue(this->Lighting_Red, this->Lighting_DefaultRed, scen->Red) / 100;
 		scen->RecalcLighting(cR, cG, cB, 1);
 		return true;
 	}
 
 	return false;
+}
+
+WarheadTypeClass* SWTypeExt::ExtData::GetWarhead() const {
+	if(auto pType = this->GetNewSWType()) {
+		return pType->GetWarhead(this);
+	}
+
+	return this->SW_Warhead.Get(nullptr);
+}
+
+AnimTypeClass* SWTypeExt::ExtData::GetAnim() const {
+	if(auto pType = this->GetNewSWType()) {
+		return pType->GetAnim(this);
+	}
+
+	return this->SW_Anim.Get(nullptr);
+}
+
+int SWTypeExt::ExtData::GetSound() const {
+	if(auto pType = this->GetNewSWType()) {
+		return pType->GetSound(this);
+	}
+
+	return this->SW_Sound.Get(-1);
+}
+
+int SWTypeExt::ExtData::GetDamage() const {
+	if(auto pType = this->GetNewSWType()) {
+		return pType->GetDamage(this);
+	}
+
+	return this->SW_Damage.Get(0);
+}
+
+SWRange SWTypeExt::ExtData::GetRange() const {
+	if(auto pType = this->GetNewSWType()) {
+		return pType->GetRange(this);
+	}
+
+	return this->SW_Range;
+}
+
+double SWTypeExt::ExtData::GetChargeToDrainRatio() const {
+	return this->SW_ChargeToDrainRatio.Get(RulesClass::Instance->ChargeToDrainRatio);
 }
 
 void Container<SWTypeExt>::InvalidatePointer(void *ptr, bool bRemoved) {
@@ -540,10 +585,12 @@ void Container<SWTypeExt>::InvalidatePointer(void *ptr, bool bRemoved) {
 // =============================
 // load/save
 
-void Container<SWTypeExt>::Load(SuperWeaponTypeClass *pThis, IStream *pStm) {
+bool Container<SWTypeExt>::Load(SuperWeaponTypeClass *pThis, IStream *pStm) {
 	SWTypeExt::ExtData* pData = this->LoadKey(pThis, pStm);
 
 	SWIZZLE(pData->SW_Anim);
+
+	return pData != nullptr;
 }
 
 // =============================
@@ -571,8 +618,7 @@ DEFINE_HOOK(6CE800, SuperWeaponTypeClass_SaveLoad_Prefix, A)
 	GET_STACK(SWTypeExt::TT*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
 
-	Container<SWTypeExt>::SavingObject = pItem;
-	Container<SWTypeExt>::SavingStream = pStm;
+	Container<SWTypeExt>::PrepareStream(pItem, pStm);
 
 	return 0;
 }

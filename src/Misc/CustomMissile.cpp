@@ -30,8 +30,7 @@ DEFINE_HOOK(66238A, RocketLocomotionClass_ILocomotion_Process_CustomMissileTakeo
 
 	if(auto pExt = TechnoTypeExt::ExtMap.Find(pOwner->Type)) {
 		if(AnimTypeClass* pType = pExt->CustomMissileTakeoffAnim) {
-			AnimClass* pAnim = nullptr;
-			GAME_ALLOC(AnimClass, pAnim, pType, &pOwner->Location, 2, 1, 0x600, -10, 0);
+			GameCreate<AnimClass>(pType, pOwner->Location, 2, 1, 0x600, -10, false);
 		}
 		return 0x6623F3;
 	}
@@ -48,8 +47,7 @@ DEFINE_HOOK(662512, RocketLocomotionClass_ILocomotion_Process_CustomMissileTakeo
 
 	if(auto pExt = TechnoTypeExt::ExtMap.Find(pOwner->Type)) {
 		if(AnimTypeClass* pType = pExt->CustomMissileTakeoffAnim) {
-			AnimClass* pAnim = nullptr;
-			GAME_ALLOC(AnimClass, pAnim, pType, &pOwner->Location, 2, 1, 0x600, -10, 0);
+			GameCreate<AnimClass>(pType, pOwner->Location, 2, 1, 0x600, -10, false);
 		}
 		return 0x66257B;
 	}
@@ -66,8 +64,7 @@ DEFINE_HOOK(6627E5, RocketLocomotionClass_ILocomotion_Process_CustomMissileTakeo
 
 	if(auto pExt = TechnoTypeExt::ExtMap.Find(pOwner->Type)) {
 		if(AnimTypeClass* pType = pExt->CustomMissileTakeoffAnim) {
-			AnimClass* pAnim = nullptr;
-			GAME_ALLOC(AnimClass, pAnim, pType, &pOwner->Location, 2, 1, 0x600, -10, 0);
+			GameCreate<AnimClass>(pType, pOwner->Location, 2, 1, 0x600, -10, false);
 		}
 		return 0x662849;
 	}
@@ -87,8 +84,7 @@ DEFINE_HOOK(662D85, RocketLocomotionClass_ILocomotion_Process_CustomMissileTrail
 			pLocomotor->TrailerTimer.Start(pExt->CustomMissileTrailerSeparation);
 
 			if(AnimTypeClass* pType = pExt->CustomMissileTrailerAnim) {
-				AnimClass* pAnim = nullptr;
-				GAME_ALLOC(AnimClass, pAnim, pType, &pOwner->Location);
+				GameCreate<AnimClass>(pType, pOwner->Location);
 			}
 		}
 		return 0x662E16;
@@ -198,8 +194,7 @@ DEFINE_HOOK(6B752E, SpawnManagerClass_Update_CustomMissileTakeoff, 6)
 
 	if(auto pExt = TechnoTypeExt::ExtMap.Find(pOwner->Type)) {
 		if(AnimTypeClass* pType = pExt->CustomMissileTakeoffAnim) {
-			AnimClass* pAnim = nullptr;
-			GAME_ALLOC(AnimClass, pAnim, pType, &pOwner->Location, 2, 1, 0x600, -10, 0);
+			GameCreate<AnimClass>(pType, pOwner->Location, 2, 1, 0x600, -10, false);
 		}
 		return 0x6B757A;
 	}

@@ -1,6 +1,9 @@
 #include "Body.h"
 #include "../../Ares.CRT.h"
+#include "../../Utilities/TemplateDef.h"
 #include <ScenarioClass.h>
+
+#include <algorithm>
 
 //Static init
 template<> const DWORD Extension<SideClass>::Canary = 0x87654321;
@@ -16,18 +19,11 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 
 	this->ArrayIndex = SideClass::FindIndex(pThis->ID);
 
-	//are these necessary?
-	this->ParaDrop.Clear();
-	this->ParaDropNum.Clear();
-
 	this->ParaDropPlane = AircraftTypeClass::FindIndex("PDPLANE");
 
 	if(!_strcmpi(pID, "Nod")) { //Soviets
 
 		this->EVAIndex = 1;
-
-		this->ParaDropFallbackTypes = &RulesClass::Instance->SovParaDropInf;
-		this->ParaDropFallbackNum = &RulesClass::Instance->SovParaDropNum;
 
 		this->SidebarMixFileIndex = 2;
 		this->SidebarYuriFileNames = false;
@@ -39,9 +35,6 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 
 		this->EVAIndex = 2;
 
-		this->ParaDropFallbackTypes = &RulesClass::Instance->YuriParaDropInf;
-		this->ParaDropFallbackNum = &RulesClass::Instance->YuriParaDropNum;
-
 		this->SidebarMixFileIndex = 2;
 		this->SidebarYuriFileNames = true;
 
@@ -51,9 +44,6 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 	} else { //Allies or any other country
 
 		this->EVAIndex = 0;
-
-		this->ParaDropFallbackTypes = &RulesClass::Instance->AllyParaDropInf;
-		this->ParaDropFallbackNum = &RulesClass::Instance->AllyParaDropNum;
 
 		this->SidebarMixFileIndex = 1;
 		this->SidebarYuriFileNames = false;
@@ -66,69 +56,48 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 
 void SideExt::ExtData::LoadFromINIFile(SideClass *pThis, CCINIClass *pINI)
 {
-	char* p = nullptr;
 	char* section = pThis->get_ID();
 
 	INI_EX exINI(pINI);
 
-	this->BaseDefenseCounts.Read(&exINI, section, "AI.BaseDefenseCounts");
+	this->BaseDefenseCounts.Read(exINI, section, "AI.BaseDefenseCounts");
 
-	this->BaseDefenses.Read(&exINI, section, "AI.BaseDefenses");
+	this->BaseDefenses.Read(exINI, section, "AI.BaseDefenses");
 
-	this->Crew.Parse(&exINI, section, "Crew");
+	this->Crew.Read(exINI, section, "Crew");
 
-	this->Engineer.Parse(&exINI, section, "Engineer");
+	this->Engineer.Read(exINI, section, "Engineer");
 
-	this->Technician.Parse(&exINI, section, "Technician");
+	this->Technician.Read(exINI, section, "Technician");
 
-	this->Disguise.Parse(&exINI, section, "DefaultDisguise");
+	this->Disguise.Read(exINI, section, "DefaultDisguise");
 
-	this->EVAIndex.Read(&exINI, section, "EVA.Tag");
+	this->EVAIndex.Read(exINI, section, "EVA.Tag");
 
-	this->Parachute_Anim.Parse(&exINI, section, "Parachute.Anim");
+	this->Parachute_Anim.Read(exINI, section, "Parachute.Anim");
 
-	this->ParaDropPlane.Read(&exINI, section, "ParaDrop.Aircraft");
+	this->ParaDropPlane.Read(exINI, section, "ParaDrop.Aircraft");
 
-	if(pINI->ReadString(section, "ParaDrop.Types", "", Ares::readBuffer, Ares::readLength)) {
-		this->ParaDrop.Clear();
-		this->ParaDropFallbackTypes = nullptr;
+	this->ParaDropTypes.Read(exINI, section, "ParaDrop.Types");
 
-		char* context = nullptr;
-		for(p = strtok_s(Ares::readBuffer, Ares::readDelims, &context); p && *p; p = strtok_s(nullptr, Ares::readDelims, &context)) {
-			TechnoTypeClass* pTT = UnitTypeClass::Find(p);
-
-			if(!pTT) {
-				pTT = InfantryTypeClass::Find(p);
-			}
-
-			if(pTT) {
-				this->ParaDrop.AddItem(pTT);
-			} else {
-				Debug::INIParseFailed(section, "ParaDrop.Types", p);
-			}
+	// remove all types that aren't either infantry or unit types
+	this->ParaDropTypes.erase(std::remove_if(this->ParaDropTypes.begin(), this->ParaDropTypes.end(), [section](TechnoTypeClass* pItem) -> bool {
+		auto abs = pItem->WhatAmI();
+		if(abs == InfantryTypeClass::AbsID || abs == UnitTypeClass::AbsID) {
+			return false;
 		}
-	}
 
-	if(pINI->ReadString(section, "ParaDrop.Num", "", Ares::readBuffer, Ares::readLength)) {
-		this->ParaDropNum.Clear();
-		this->ParaDropFallbackNum = nullptr;
+		Debug::INIParseFailed(section, "ParaDrop.Types", pItem->ID, "Only InfantryTypes and UnitTypes are supported.");
+		return true;
+	}), this->ParaDropTypes.end());
 
-		char* context = nullptr;
-		for(p = strtok_s(Ares::readBuffer, Ares::readDelims, &context); p && *p; p = strtok_s(nullptr, Ares::readDelims, &context)) {
-			this->ParaDropNum.AddItem(atoi(p));
-		}
-	}
+	this->ParaDropNum.Read(exINI, section, "ParaDrop.Num");
 
 	this->SidebarMixFileIndex =  pINI->ReadInteger(section, "Sidebar.MixFileIndex", this->SidebarMixFileIndex);
 	this->SidebarYuriFileNames = pINI->ReadBool(section, "Sidebar.YuriFileNames", this->SidebarYuriFileNames);
-	this->ToolTipTextColor.Read(&exINI, section, "ToolTipColor");
-	this->SurvivorDivisor.Read(&exINI, section, "SurvivorDivisor");
-
-	if(pINI->ReadString(section, "MessageTextColor", "", Ares::readBuffer, 0x80)) {
-		if(ColorScheme* pCS = ColorScheme::Find(Ares::readBuffer)) {
-			this->MessageTextColorIndex = pCS->ArrayIndex;
-		}
-	}
+	this->ToolTipTextColor.Read(exINI, section, "ToolTipColor");
+	this->SurvivorDivisor.Read(exINI, section, "SurvivorDivisor");
+	this->MessageTextColorIndex.Read(exINI, section, "MessageTextColor");
 }
 
 int SideExt::ExtData::GetSurvivorDivisor() const {
@@ -249,6 +218,54 @@ Iterator<BuildingTypeClass*> SideExt::ExtData::GetDefaultBaseDefenses() const {
 	}
 }
 
+Iterator<TechnoTypeClass*> SideExt::ExtData::GetParaDropTypes() const {
+	if(this->ParaDropTypes.HasValue() && this->ParaDropNum.HasValue()) {
+		return this->ParaDropTypes;
+	}
+
+	return this->GetDefaultParaDropTypes();
+}
+
+Iterator<InfantryTypeClass*> SideExt::ExtData::GetDefaultParaDropTypes() const {
+	switch(this->ArrayIndex) {
+	case 0:
+		return RulesClass::Instance->AllyParaDropInf;
+	case 1:
+		return RulesClass::Instance->SovParaDropInf;
+	case 2:
+		return RulesClass::Instance->YuriParaDropInf;
+	default:
+		//return SovParaDropInf would be correct, but Ares < 0.6 does this:
+		return RulesClass::Instance->AllyParaDropInf;
+	}
+}
+
+Iterator<int> SideExt::ExtData::GetParaDropNum() const {
+	if(this->ParaDropTypes.HasValue() && this->ParaDropNum.HasValue()) {
+		return this->ParaDropNum;
+	}
+
+	return this->GetDefaultParaDropNum();
+}
+
+Iterator<int> SideExt::ExtData::GetDefaultParaDropNum() const {
+	switch(this->ArrayIndex) {
+	case 0:
+		return RulesClass::Instance->AllyParaDropNum;
+	case 1:
+		return RulesClass::Instance->SovParaDropNum;
+	case 2:
+		return RulesClass::Instance->YuriParaDropNum;
+	default:
+		//return SovParaDropNum would be correct, but Ares < 0.6 does this:
+		return RulesClass::Instance->AllyParaDropNum;
+	}
+}
+
+AnimTypeClass* SideExt::ExtData::GetParachuteAnim() const {
+	return this->Parachute_Anim.Get(RulesClass::Instance->Parachute);
+}
+
 DWORD SideExt::LoadTextColor(REGISTERS* R, DWORD dwReturnAddress)
 {
 	// if there is a cached LoadTextColor, use that.
@@ -279,27 +296,31 @@ DWORD SideExt::MixFileYuriFiles(REGISTERS* R, DWORD dwReturnAddress1, DWORD dwRe
 // =============================
 // load/save
 
-void Container<SideExt>::Save(SideClass *pThis, IStream *pStm) {
+bool Container<SideExt>::Save(SideClass *pThis, IStream *pStm) {
 	SideExt::ExtData* pData = this->SaveKey(pThis, pStm);
 
 	if(pData) {
 		//ULONG out;
 		//pData->BaseDefenses.Save(pStm);
 		//pData->BaseDefenseCounts.Save(pStm);
-		pData->ParaDrop.Save(pStm);
-		pData->ParaDropNum.Save(pStm);
+		//pData->ParaDrop.Save(pStm);
+		//pData->ParaDropNum.Save(pStm);
 	}
+
+	return pData != nullptr;
 }
 
-void Container<SideExt>::Load(SideClass *pThis, IStream *pStm) {
+bool Container<SideExt>::Load(SideClass *pThis, IStream *pStm) {
 	SideExt::ExtData* pData = this->LoadKey(pThis, pStm);
 
 	SWIZZLE(pData->Disguise);
 	SWIZZLE(pData->Crew);
 	//pData->BaseDefenses.Load(pStm, 1);
 	//pData->BaseDefenseCounts.Load(pStm, 0);
-	pData->ParaDrop.Load(pStm, 1);
-	pData->ParaDropNum.Load(pStm, 0);
+	//pData->ParaDrop.Load(pStm, 1);
+	//pData->ParaDropNum.Load(pStm, 0);
+
+	return pData != nullptr;
 }
 
 // =============================
@@ -328,8 +349,7 @@ DEFINE_HOOK(6A4780, SideClass_SaveLoad_Prefix, 6)
 	GET_STACK(SideExt::TT*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
 
-	Container<SideExt>::SavingObject = pItem;
-	Container<SideExt>::SavingStream = pStm;
+	Container<SideExt>::PrepareStream(pItem, pStm);
 
 	return 0;
 }

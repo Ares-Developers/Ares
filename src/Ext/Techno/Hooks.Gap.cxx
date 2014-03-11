@@ -27,8 +27,7 @@ DEFINE_HOOK(4D8642, FootClass_UpdatePosition, 6)
 	GET(FootClass *, F, ESI);
 	TechnoTypeClass *Type = F->GetTechnoType();
 	if(Type->GapGenerator && Type->GapRadiusInCells > 0) {
-		CellStruct curLocation;
-		F->GetMapCoords(&curLocation);
+		CellStruct curLocation = F->GetMapCoords();
 		if(curLocation != F->LastMapCoords) {
 			TechnoExt::NeedsRegap = 1;
 			F->CreateGap();
@@ -39,27 +38,18 @@ DEFINE_HOOK(4D8642, FootClass_UpdatePosition, 6)
 }
 
 // lolhax
+CoordStruct GapCoordBuffer;
+
 DEFINE_HOOK(6FB4B1, TechnoClass_DeleteGap_new, 6)
 {
 	GET(FootClass *, F, ESI);
 	if(F->WhatAmI() == abs_Building) {
 		R->EDX<CoordStruct *>(&F->Location);
 	} else {
-		CoordStruct *XYZ = new CoordStruct;
-		*XYZ = MapClass::Instance->GetCellAt(F->LastMapCoords)->GetCoords();
-		R->EDX<CoordStruct *>(XYZ);
+		GapCoordBuffer = MapClass::Instance->GetCellAt(F->LastMapCoords)->GetCoords();
+		R->EDX<CoordStruct *>(&GapCoordBuffer);
 	}
 	return 0x6FB4B7;
-}
-
-DEFINE_HOOK(6FB4D1, TechnoClass_DeleteGap_delete, 5)
-{
-	GET(FootClass *, F, ESI);
-	if(F->WhatAmI() != abs_Building) {
-		GET(CoordStruct *, XYZ, EDX);
-		delete XYZ;
-	}
-	return 0;
 }
 
 DEFINE_HOOK(6F6B66, TechnoClass_Remove_DeleteGap, A)

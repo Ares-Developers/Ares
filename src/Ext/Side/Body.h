@@ -33,24 +33,21 @@ class SideExt
 		Nullable<int> SurvivorDivisor;
 		NullableVector<BuildingTypeClass*> BaseDefenses;
 		NullableVector<int> BaseDefenseCounts;
-		TypeList<InfantryTypeClass*>* ParaDropFallbackTypes;
-		TypeList<int>* ParaDropFallbackNum;
-		TypeList<TechnoTypeClass*> ParaDrop;
-		TypeList<int> ParaDropNum;
+		NullableVector<TechnoTypeClass*> ParaDropTypes;
+		NullableVector<int> ParaDropNum;
 		ValueableIdx<AircraftTypeClass> ParaDropPlane;
-		Customizable<AnimTypeClass*> Parachute_Anim;
+		Nullable<AnimTypeClass*> Parachute_Anim;
 		Valueable<ColorStruct> ToolTipTextColor;
-		int MessageTextColorIndex;
+		ValueableIdx<ColorScheme> MessageTextColorIndex;
 		int SidebarMixFileIndex;
 		bool SidebarYuriFileNames;
 		ValueableIdx<EVAVoices> EVAIndex;
 
 		int ArrayIndex;
 
-		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
+		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			ArrayIndex (-1),
 			ParaDropPlane (-1),
-			Parachute_Anim (&RulesClass::Instance->Parachute),
 			ToolTipTextColor (),
 			MessageTextColorIndex (-1),
 			EVAIndex (-1)
@@ -60,8 +57,6 @@ class SideExt
 		virtual ~ExtData() {
 
 		}
-
-		virtual size_t Size() const { return sizeof(*this); };
 
 		virtual void LoadFromINIFile(TT *pThis, CCINIClass *pINI);
 		virtual void Initialize(TT *pThis);
@@ -85,6 +80,14 @@ class SideExt
 
 		Iterator<BuildingTypeClass*> GetBaseDefenses() const;
 		Iterator<BuildingTypeClass*> GetDefaultBaseDefenses() const;
+
+		Iterator<TechnoTypeClass*> GetParaDropTypes() const;
+		Iterator<InfantryTypeClass*> GetDefaultParaDropTypes() const;
+
+		Iterator<int> GetParaDropNum() const;
+		Iterator<int> GetDefaultParaDropNum() const;
+
+		AnimTypeClass* GetParachuteAnim() const;
 	};
 
 	//Hacks required in other classes:

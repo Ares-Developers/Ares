@@ -5,7 +5,7 @@
 
 #include "../SWTypes.h"
 
-class SW_Reveal : NewSWType
+class SW_Reveal : public NewSWType
 {
 	public:
 		SW_Reveal() : NewSWType()
@@ -18,7 +18,11 @@ class SW_Reveal : NewSWType
 			{ return nullptr; }
 
 		virtual void Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW);
-		virtual bool Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer);
+		virtual bool Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer);
 		virtual bool HandlesType(int type);
+
+		virtual int GetSound(const SWTypeExt::ExtData* pData) const override;
+		virtual SWRange GetRange(const SWTypeExt::ExtData* pData) const override;
 };
+
 #endif

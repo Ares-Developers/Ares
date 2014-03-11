@@ -22,7 +22,7 @@ DEFINE_HOOK(457D58, BuildingClass_CanBeOccupied_SpecificOccupiers, 6)
 	if(pInf->Type->Occupier) {
 		bool isFull = (pThis->GetOccupantCount() == pThis->Type->MaxNumberOccupants);
 		bool isEmpty = (pThis->GetOccupantCount() == 0); // yes, yes, !pThis->GetOccupantCount() - leave it this way for semantics :P
-		bool isIneligible = (pThis->IsRedHP() || pInf->IsMindControlled());
+		bool isIneligible = ((pThis->IsRedHP() && pThis->Type->TechLevel == -1) || pInf->IsMindControlled()); // 
 		bool isNeutral = pThis->Owner->IsNeutral();
 		bool isRaidable = (pBuildTypeExt->BunkerRaidable && isEmpty); // if it's not empty, it cannot be raided anymore, 'cause it already was
 		bool sameOwner = (pThis->Owner == pInf->Owner);

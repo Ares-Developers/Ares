@@ -5,7 +5,7 @@
 
 #include "../SWTypes.h"
 
-class SW_GenericWarhead : NewSWType
+class SW_GenericWarhead : public NewSWType
 {
 	public:
 		SW_GenericWarhead() : NewSWType()
@@ -18,6 +18,6 @@ class SW_GenericWarhead : NewSWType
 			{ return "GenericWarhead"; }
 
 	virtual void Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW);
-	virtual bool Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer);
+	virtual bool Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer);
 };
 #endif

@@ -4,26 +4,21 @@
 #include "../../Enum/Prerequisites.h"
 #include "../../Enum/ArmorTypes.h"
 #include "../../Enum/RadTypes.h"
+#include "../../Utilities/TemplateDef.h"
 #include <GameModeOptionsClass.h>
 
 template<> const DWORD Extension<RulesClass>::Canary = 0x12341234;
-RulesExt::ExtData * RulesExt::Data = nullptr;
+std::unique_ptr<RulesExt::ExtData> RulesExt::Data = nullptr;
 
 template<> RulesExt::TT *Container<RulesExt>::SavingObject = nullptr;
 template<> IStream *Container<RulesExt>::SavingStream = nullptr;
 
 void RulesExt::Allocate(RulesClass *pThis) {
-	if (Data) {
-		Remove(pThis);
-	}
-	Data = new RulesExt::ExtData(RulesExt::ExtData::Canary, pThis);
+	Data = std::make_unique<RulesExt::ExtData>(pThis);
 }
 
 void RulesExt::Remove(RulesClass *pThis) {
-	if (Data) {
-		delete Data;
-		Data = nullptr;
-	}
+	Data = nullptr;
 }
 
 void RulesExt::LoadFromINIFile(RulesClass *pThis, CCINIClass *pINI) {
@@ -74,17 +69,19 @@ void RulesExt::ExtData::LoadBeforeTypeData(RulesClass *pThis, CCINIClass *pINI) 
 
 	INI_EX exINI(pINI);
 
-	pData->CanMakeStuffUp.Read(&exINI, sectionGeneral, "CanMakeStuffUp");
+	pData->CanMakeStuffUp.Read(exINI, sectionGeneral, "CanMakeStuffUp");
 
-	pData->Tiberium_DamageEnabled.Read(&exINI, sectionGeneral, "TiberiumDamageEnabled");
-	pData->Tiberium_HealEnabled.Read(&exINI, sectionGeneral, "TiberiumHealEnabled");
-	pData->Tiberium_ExplosiveWarhead.Parse(&exINI, sectionCombatDamage, "TiberiumExplosiveWarhead");
+	pData->Tiberium_DamageEnabled.Read(exINI, sectionGeneral, "TiberiumDamageEnabled");
+	pData->Tiberium_HealEnabled.Read(exINI, sectionGeneral, "TiberiumHealEnabled");
+	pData->Tiberium_ExplosiveWarhead.Read(exINI, sectionCombatDamage, "TiberiumExplosiveWarhead");
 
-	pData->OverlayExplodeThreshold.Read(&exINI, sectionGeneral, "OverlayExplodeThreshold");
+	pData->OverlayExplodeThreshold.Read(exINI, sectionGeneral, "OverlayExplodeThreshold");
 
-	pData->EnemyInsignia.Read(&exINI, sectionGeneral, "EnemyInsignia");
+	pData->EnemyInsignia.Read(exINI, sectionGeneral, "EnemyInsignia");
 
-	pData->TypeSelectUseDeploy.Read(&exINI, sectionGeneral, "TypeSelectUseDeploy");
+	pData->ReturnStructures.Read(exINI, sectionGeneral, "ReturnStructures");
+
+	pData->TypeSelectUseDeploy.Read(exINI, sectionGeneral, "TypeSelectUseDeploy");
 }
 
 // this should load everything that TypeData is not dependant on
@@ -99,10 +96,10 @@ void RulesExt::ExtData::LoadAfterTypeData(RulesClass *pThis, CCINIClass *pINI) {
 
 	INI_EX exINI(pINI);
 
-	pData->ElectricDeath.Parse(&exINI, "AudioVisual", "InfantryElectrocuted");
+	pData->ElectricDeath.Read(exINI, "AudioVisual", "InfantryElectrocuted");
 
-	pData->DecloakSound.Read(&exINI, "AudioVisual", "DecloakSound");
-	pData->CloakHeight.Read(&exINI, "General", "CloakHeight");
+	pData->DecloakSound.Read(exINI, "AudioVisual", "DecloakSound");
+	pData->CloakHeight.Read(exINI, "General", "CloakHeight");
 
 	for (int i = 0; i < WeaponTypeClass::Array->Count; ++i) {
 		WeaponTypeClass::Array->GetItem(i)->LoadFromINI(pINI);
@@ -110,7 +107,7 @@ void RulesExt::ExtData::LoadAfterTypeData(RulesClass *pThis, CCINIClass *pINI) {
 
 	pData->EngineerDamage = pINI->ReadDouble("General", "EngineerDamage", pData->EngineerDamage);
 	pData->EngineerAlwaysCaptureTech = pINI->ReadBool("General", "EngineerAlwaysCaptureTech", pData->EngineerAlwaysCaptureTech);
-	pData->EngineerDamageCursor.Read(&exINI, "General", "EngineerDamageCursor");
+	pData->EngineerDamageCursor.Read(exINI, "General", "EngineerDamageCursor");
 }
 
 // =============================

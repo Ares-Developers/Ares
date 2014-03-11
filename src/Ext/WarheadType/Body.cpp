@@ -4,6 +4,7 @@
 #include "../Techno/Body.h"
 #include "../TechnoType/Body.h"
 #include "../../Misc/EMPulse.h"
+#include "../../Utilities/TemplateDef.h"
 
 #include <WarheadTypeClass.h>
 #include <GeneralStructures.h>
@@ -78,7 +79,7 @@ void WarheadTypeExt::ExtData::LoadFromINIFile(WarheadTypeClass *pThis, CCINIClas
 	this->IC_Cap = pINI->ReadInteger(section, "IronCurtain.Cap", this->IC_Cap);
 
 	if(pThis->Temporal) {
-		this->Temporal_WarpAway.Parse(&exINI, section, "Temporal.WarpAway");
+		this->Temporal_WarpAway.Read(exINI, section, "Temporal.WarpAway");
 	}
 
 	this->DeployedDamage = pINI->ReadDouble(section, "Damage.Deployed", this->DeployedDamage);
@@ -87,15 +88,17 @@ void WarheadTypeExt::ExtData::LoadFromINIFile(WarheadTypeClass *pThis, CCINIClas
 
 	this->AffectsEnemies = pINI->ReadBool(section, "AffectsEnemies", this->AffectsEnemies);
 
-	this->InfDeathAnim.Parse(&exINI, section, "InfDeathAnim");
+	this->InfDeathAnim.Read(exINI, section, "InfDeathAnim");
 	
-	this->PreImpactAnim.Read(&exINI, pThis->ID, "PreImpactAnim");
+	this->PreImpactAnim.Read(exINI, pThis->ID, "PreImpactAnim");
 
 	this->KillDriver = pINI->ReadBool(section, "KillDriver", this->KillDriver);
 
-	this->Malicious.Read(&exINI, section, "Malicious");
+	this->Malicious.Read(exINI, section, "Malicious");
 
-	this->AttachedEffect.Read(&exINI, section);
+	this->CellSpread_MaxAffect.Read(exINI, section, "CellSpread.MaxAffect");
+
+	this->AttachedEffect.Read(exINI, section);
 };
 
 void Container<WarheadTypeExt>::InvalidatePointer(void *ptr, bool bRemoved) {
@@ -105,13 +108,15 @@ void Container<WarheadTypeExt>::InvalidatePointer(void *ptr, bool bRemoved) {
 
 // =============================
 // load/save
-void Container<WarheadTypeExt>::Save(WarheadTypeClass *pThis, IStream *pStm) {
+bool Container<WarheadTypeExt>::Save(WarheadTypeClass *pThis, IStream *pStm) {
 	WarheadTypeExt::ExtData* pData = this->SaveKey(pThis, pStm);
 
 	if(pData) {
 		//ULONG out;
 		pData->Verses.Save(pStm);
 	}
+
+	return pData != nullptr;
 }
 /*
 		pStm->Write(&IonBlastClass::Array->Count, 4, &out);
@@ -121,12 +126,14 @@ void Container<WarheadTypeExt>::Save(WarheadTypeClass *pThis, IStream *pStm) {
 			pStm->Write(WarheadTypeExt::IonExt[ptr], 4, &out);
 		}
 */
-void Container<WarheadTypeExt>::Load(WarheadTypeClass *pThis, IStream *pStm) {
+bool Container<WarheadTypeExt>::Load(WarheadTypeClass *pThis, IStream *pStm) {
 	WarheadTypeExt::ExtData* pData = this->LoadKey(pThis, pStm);
 
 	pData->Verses.Load(pStm, 0);
 
 	SWIZZLE(pData->Temporal_WarpAway);
+
+	return pData != nullptr;
 }
 
 /*!
@@ -136,8 +143,7 @@ void Container<WarheadTypeExt>::Load(WarheadTypeClass *pThis, IStream *pStm) {
 */
 void WarheadTypeExt::ExtData::applyRipples(CoordStruct *coords) {
 	if (this->Ripple_Radius) {
-		IonBlastClass *IB;
-		GAME_ALLOC(IonBlastClass, IB, *coords);
+		IonBlastClass *IB = GameCreate<IonBlastClass>(*coords);
 		IB->DisableIonBeam = TRUE;
 		WarheadTypeExt::IonExt[IB] = this;
 	}
@@ -168,63 +174,63 @@ void WarheadTypeExt::ExtData::applyIronCurtain(CoordStruct *coords, HouseClass* 
 		auto items = Helpers::Alex::getCellSpreadItems(coords, this->AttachedToObject->CellSpread, true);
 
 		// affect each object
-		for(size_t i=0; i<items.size(); ++i) {
-			if(TechnoClass *curTechno = items[i]) {
+		for(auto curTechno : items) {
+			// don't protect the dead
+			if(!curTechno || curTechno->InLimbo || !curTechno->IsAlive || !curTechno->Health) {
+				continue;
+			}
 
-				// don't protect the dead
-				if(curTechno->InLimbo || !curTechno->IsAlive || !curTechno->Health) {
-					continue;
+			// affects enemies or allies respectively?
+			if(!WarheadTypeExt::canWarheadAffectTarget(curTechno, Owner, this->AttachedToObject)) {
+				continue;
+			}
+
+			// duration modifier
+			int duration = this->IC_Duration;
+
+			auto pType = curTechno->GetTechnoType();
+
+			// modify good durations only
+			if(duration > 0) {
+				if(auto pData = TechnoTypeExt::ExtMap.Find(pType)) {
+					duration = static_cast<int>(duration * pData->IronCurtain_Modifier);
 				}
+			}
 
-				// affects enemies or allies respectively?
-				if(WarheadTypeExt::canWarheadAffectTarget(curTechno, Owner, this->AttachedToObject)) {
+			// respect verses the boolean way
+			if(std::abs(this->Verses[pType->Armor].Verses) < 0.001) {
+				continue;
+			}
 
-					// duration modifier
-					int duration = this->IC_Duration;
+			// get the values
+			int oldValue = (curTechno->IronCurtainTimer.Ignorable() ? 0 : curTechno->IronCurtainTimer.GetTimeLeft());
+			int newValue = Helpers::Alex::getCappedDuration(oldValue, duration, this->IC_Cap);
 
-					// modify good durations only
-					if(duration > 0) {
-						if(TechnoTypeExt::ExtData *pData = TechnoTypeExt::ExtMap.Find(curTechno->GetTechnoType())) {
-							duration = (int)(duration * pData->IC_Modifier);
-						}
+			// update iron curtain
+			if(oldValue <= 0) {
+				// start iron curtain effect?
+				if(newValue > 0) {
+					// damage the victim before ICing it
+					if(damage) {
+						curTechno->ReceiveDamage(&damage, 0, this->AttachedToObject, nullptr, true, false, Owner);
 					}
 
-					// respect verses the boolean way
-					if(abs(this->Verses[curTechno->GetTechnoType()->Armor].Verses) < 0.001) {
-						continue;
+					// unit may be destroyed already.
+					if(curTechno->IsAlive) {
+						// start and prevent the multiplier from being applied twice
+						curTechno->IronCurtain(newValue, Owner, false);
+						curTechno->IronCurtainTimer.Start(newValue);
 					}
-
-					// get the values
-					int oldValue = (curTechno->IronCurtainTimer.Ignorable() ? 0 : curTechno->IronCurtainTimer.GetTimeLeft());
-					int newValue = Helpers::Alex::getCappedDuration(oldValue, duration, this->IC_Cap);
-
-					// update iron curtain
-					if(oldValue <= 0) {
-						// start iron curtain effect?
-						if(newValue > 0) {
-							// damage the victim before ICing it
-							if(damage) {
-								curTechno->ReceiveDamage(&damage, 0, this->AttachedToObject, nullptr, true, false, Owner);
-							}
-
-							// unit may be destroyed already.
-							if(curTechno->IsAlive) {
-								// start and prevent the multiplier from being applied twice
-								curTechno->IronCurtain(newValue, Owner, false);
-								curTechno->IronCurtainTimer.Start(newValue);
-							}
-						}
-					} else {
-						// iron curtain effect is already on.
-						if(newValue > 0) {
-							// set new length and reset tint stage
-							curTechno->IronCurtainTimer.Start(newValue);
-							curTechno->IronTintStage = 4;
-						} else {
-							// turn iron curtain off
-							curTechno->IronCurtainTimer.Stop();
-						}
-					}
+				}
+			} else {
+				// iron curtain effect is already on.
+				if(newValue > 0) {
+					// set new length and reset tint stage
+					curTechno->IronCurtainTimer.Start(newValue);
+					curTechno->IronTintStage = 4;
+				} else {
+					// turn iron curtain off
+					curTechno->IronCurtainTimer.Stop();
 				}
 			}
 		}
@@ -271,8 +277,7 @@ bool WarheadTypeExt::ExtData::applyPermaMC(CoordStruct *coords, HouseClass* Owne
 			CoordStruct XYZ = *coords;
 			XYZ.Z += pType->MindControlRingOffset;
 
-			AnimClass *MCAnim;
-			GAME_ALLOC(AnimClass, MCAnim, RulesClass::Instance->PermaControlledAnimationType, &XYZ);
+			AnimClass *MCAnim = GameCreate<AnimClass>(RulesClass::Instance->PermaControlledAnimationType, XYZ);
 			AnimClass *oldMC = pTarget->MindControlRingAnim;
 			if (oldMC) {
 				oldMC->UnInit();
@@ -522,8 +527,7 @@ DEFINE_HOOK(75E0C0, WarheadTypeClass_SaveLoad_Prefix, 8)
 	GET_STACK(WarheadTypeExt::TT*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
 
-	Container<WarheadTypeExt>::SavingObject = pItem;
-	Container<WarheadTypeExt>::SavingStream = pStm;
+	Container<WarheadTypeExt>::PrepareStream(pItem, pStm);
 
 	return 0;
 }

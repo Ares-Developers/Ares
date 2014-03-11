@@ -2,11 +2,13 @@
 #include "../Side/Body.h"
 #include "../../Ares.h"
 #include "../../Ares.CRT.h"
+#include "../../Utilities/TemplateDef.h"
 #include <ScenarioClass.h>
 #include <ColorScheme.h>
 #include <DiscreteDistributionClass.h>
 
 #include <iterator>
+#include <algorithm>
 
 template<> const DWORD Extension<HouseTypeClass>::Canary = 0xAFFEAFFE;
 Container<HouseTypeExt> HouseTypeExt::ExtMap;
@@ -157,33 +159,21 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 }
 
 void HouseTypeExt::ExtData::Initialize(HouseTypeClass *pThis) {
-	this->Powerplants.Clear();
-	this->ParaDrop.Clear();
-	this->ParaDropNum.Clear();
-
-	BuildingTypeClass * pPower = nullptr;
-
 	switch (pThis->SideIndex) {
 	case 0:
-		pPower = RulesClass::Instance->GDIPowerPlant;
-		this->LoadTextColor = ColorScheme::Find("AlliedLoad");
+		this->LoadTextColor = ColorScheme::FindIndex("AlliedLoad");
 		break;
 	case 1:
-		pPower = RulesClass::Instance->NodRegularPower;
-		this->LoadTextColor = ColorScheme::Find("SovietLoad");
+		this->LoadTextColor = ColorScheme::FindIndex("SovietLoad");
 		break;
 	case 2:
-		pPower = RulesClass::Instance->ThirdPowerPlant;
-		this->LoadTextColor = ColorScheme::Find("YuriLoad");
-		if(!this->LoadTextColor) {
+		this->LoadTextColor = ColorScheme::FindIndex("YuriLoad");
+		if(this->LoadTextColor == -1) {
 			// there is no YuriLoad in the original game. fall
 			// back to a decent value.
-			this->LoadTextColor = ColorScheme::Find("Purple");
+			this->LoadTextColor = ColorScheme::FindIndex("Purple");
 		}
 		break;
-	}
-	if (pPower) {
-		this->Powerplants.AddItem(pPower);
 	}
 }
 
@@ -264,7 +254,7 @@ void HouseTypeExt::ExtData::LoadFromRulesFile(HouseTypeClass *pThis, CCINIClass 
 	}
 
 	INI_EX exINI(pINI);
-	this->ObserverFlagYuriPAL.Read(&exINI, pID, "File.ObserverFlagAltPalette");
+	this->ObserverFlagYuriPAL.Read(exINI, pID, "File.ObserverFlagAltPalette");
 }
 
 void HouseTypeExt::ExtData::LoadFromINIFile(HouseTypeClass *pThis, CCINIClass *pINI) {
@@ -274,89 +264,35 @@ void HouseTypeExt::ExtData::LoadFromINIFile(HouseTypeClass *pThis, CCINIClass *p
 		this->InheritSettings(pThis);
 	}
 
-	if (!this->Powerplants.Count) {
-		const char * section = "General";
-		const char * key = nullptr;
-		switch (pThis->SideIndex) {
-			case 0:
-				key = "GDIPowerPlant";
-				break;
-			case 1:
-				key = "NodRegularPower";
-				break;
-			case 2:
-				key = "ThirdPowerPlant";
-				break;
-		}
-		if(key) {
-			if (pINI->ReadString(section, key, "", Ares::readBuffer, Ares::readLength)) {
-				if (BuildingTypeClass *pBld = BuildingTypeClass::Find(Ares::readBuffer)) {
-					this->Powerplants.AddItem(pBld);
-				} else {
-					Debug::INIParseFailed(section, key, Ares::readBuffer);
-				}
-			}
-		}
-	}
-
-	if (pINI->ReadString(pID, "AI.PowerPlants", "", Ares::readBuffer, Ares::readLength)) {
-		this->Powerplants.Clear();
-
-		char* context = nullptr;
-		for (char *bld = strtok_s(Ares::readBuffer, Ares::readDelims, &context); bld; bld = strtok_s(nullptr, Ares::readDelims, &context)) {
-			if (BuildingTypeClass *pBld = BuildingTypeClass::Find(bld)) {
-				this->Powerplants.AddItem(pBld);
-			} else {
-				Debug::INIParseFailed(pID, "AI.PowerPlants", bld);
-			}
-		}
-	}
-
 	INI_EX exINI(pINI);
 
-	this->Parachute_Anim.Parse(&exINI, pID, "Parachute.Anim");
+	this->Powerplants.Read(exINI, pID, "AI.PowerPlants");
+
+	this->Parachute_Anim.Read(exINI, pID, "Parachute.Anim");
 	
-	this->ParaDropPlane.Read(&exINI, pID, "ParaDrop.Aircraft");
+	this->ParaDropPlane.Read(exINI, pID, "ParaDrop.Aircraft");
 
-	char* p = nullptr;
-	if(pINI->ReadString(pID, "ParaDrop.Types", "", Ares::readBuffer, Ares::readLength)) {
-		this->ParaDrop.Clear();
+	this->ParaDropTypes.Read(exINI, pID, "ParaDrop.Types");
 
-		char* context = nullptr;
-		for(p = strtok_s(Ares::readBuffer, Ares::readDelims, &context); p && *p; p = strtok_s(nullptr, Ares::readDelims, &context)) {
-			TechnoTypeClass* pTT = UnitTypeClass::Find(p);
-
-			if(!pTT) {
-				pTT = InfantryTypeClass::Find(p);
-			}
-
-			if(pTT) {
-				this->ParaDrop.AddItem(pTT);
-			} else {
-				Debug::INIParseFailed(pID, "ParaDrop.Types", p);
-			}
+	// remove all types that aren't either infantry or unit types
+	this->ParaDropTypes.erase(std::remove_if(this->ParaDropTypes.begin(), this->ParaDropTypes.end(), [pID](TechnoTypeClass* pItem) -> bool {
+		auto abs = pItem->WhatAmI();
+		if(abs == InfantryTypeClass::AbsID || abs == UnitTypeClass::AbsID) {
+			return false;
 		}
-	}
 
-	if(pINI->ReadString(pID, "ParaDrop.Num", "", Ares::readBuffer, Ares::readLength)) {
-		this->ParaDropNum.Clear();
+		Debug::INIParseFailed(pID, "ParaDrop.Types", pItem->ID, "Only InfantryTypes and UnitTypes are supported.");
+		return true;
+	}), this->ParaDropTypes.end());
 
-		char* context = nullptr;
-		for(p = strtok_s(Ares::readBuffer, Ares::readDelims, &context); p && *p; p = strtok_s(nullptr, Ares::readDelims, &context)) {
-			this->ParaDropNum.AddItem(atoi(p));
-		}
-	}
+	this->ParaDropNum.Read(exINI, pID, "ParaDrop.Num");
 
-	if(pINI->ReadString(pID, "LoadScreenText.Color", "", Ares::readBuffer, 0x80)) {
-		if(ColorScheme* CS = ColorScheme::Find(Ares::readBuffer)) {
-			this->LoadTextColor = CS;
-		}
-	}
+	this->LoadTextColor.Read(exINI, pID, "LoadScreenText.Color");
 
 	this->RandomSelectionWeight = pINI->ReadInteger(pID, "RandomSelectionWeight", this->RandomSelectionWeight);
 	this->CountryListIndex = pINI->ReadInteger(pID, "ListIndex", this->CountryListIndex);
 
-	this->VeteranBuildings.Read(&exINI, pID, "VeteranBuildings");
+	this->VeteranBuildings.Read(exINI, pID, "VeteranBuildings");
 }
 
 template<size_t Len>
@@ -408,9 +344,9 @@ void HouseTypeExt::ExtData::InheritSettings(HouseTypeClass *pThis) {
 			this->ParaDropPlane.Set(ParentData->ParaDropPlane);
 			this->Parachute_Anim.Set(ParentData->Parachute_Anim);
 
-			CopyVector(&HouseTypeExt::ExtData::Powerplants, ParentData, this);
-			CopyVector(&HouseTypeExt::ExtData::ParaDrop, ParentData, this);
-			CopyVector(&HouseTypeExt::ExtData::ParaDropNum, ParentData, this);
+			this->Powerplants = ParentData->Powerplants;
+			this->ParaDropTypes = ParentData->ParaDropTypes;
+			this->ParaDropNum = ParentData->ParaDropNum;
 
 			CopyStdVector(&HouseTypeExt::ExtData::VeteranBuildings, ParentData, this);
 		}
@@ -428,7 +364,7 @@ AnimTypeClass* HouseTypeExt::ExtData::GetParachuteAnim() {
 	int iSide = this->AttachedToObject->SideIndex;
 	if(auto pSide = SideClass::Array->GetItemOrDefault(iSide)) {
 		if(SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide)) {
-			if(AnimTypeClass* pAnimType = pData->Parachute_Anim) {
+			if(AnimTypeClass* pAnimType = pData->GetParachuteAnim()) {
 				return pAnimType;
 			}
 		} else {
@@ -465,34 +401,50 @@ AircraftTypeClass* HouseTypeExt::ExtData::GetParadropPlane() {
 	}
 }
 
-bool HouseTypeExt::ExtData::GetParadropContent(TypeList<TechnoTypeClass*> **pTypes, TypeList<int> **pNum) {
-	// no point in dereferencing null
-	if(!pTypes || !pNum) {
-		return false;
-	}
-
+bool HouseTypeExt::ExtData::GetParadropContent(Iterator<TechnoTypeClass*> &Types, Iterator<int> &Num) {
 	// tries to get the house's default contents and falls back to
 	// the sides default contents.
-	if(this->ParaDrop.Count) {
-		*pTypes = &this->ParaDrop;
-		*pNum = &this->ParaDropNum;
+	if(this->ParaDropTypes.size()) {
+		Types = this->ParaDropTypes;
+		Num = this->ParaDropNum;
 	}
 
 	// fall back to side specific para drop
-	if(!*pTypes || !(*pTypes)->Count) {
+	if(!Types) {
 		SideClass* pSide = SideClass::Array->GetItem(this->AttachedToObject->SideIndex);
 		if(SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide)) {
-			if(pData->ParaDropFallbackTypes && pData->ParaDropFallbackNum) {
-				*pTypes = (TypeList<TechnoTypeClass*>*)pData->ParaDropFallbackTypes;
-				*pNum = pData->ParaDropFallbackNum;
-			} else {
-				*pTypes = &pData->ParaDrop;
-				*pNum = &pData->ParaDropNum;
-			}
+			Types = pData->GetParaDropTypes();
+			Num = pData->GetParaDropNum();
 		}
 	}
 
-	return (*pTypes && *pNum);
+	return (Types && Num);
+}
+
+Iterator<BuildingTypeClass*> HouseTypeExt::ExtData::GetPowerplants() const {
+	if(this->Powerplants.size()) {
+		return this->Powerplants;
+	}
+
+	return this->GetDefaultPowerplants();
+}
+
+Iterator<BuildingTypeClass*> HouseTypeExt::ExtData::GetDefaultPowerplants() const {
+	BuildingTypeClass** ppPower = nullptr;
+	switch(this->AttachedToObject->SideIndex) {
+	case 0:
+		ppPower = &RulesClass::Instance->GDIPowerPlant;
+		break;
+	case 1:
+		ppPower = &RulesClass::Instance->NodRegularPower;
+		break;
+	case 2:
+		ppPower = &RulesClass::Instance->ThirdPowerPlant;
+		break;
+	}
+
+	int count = (ppPower && *ppPower) ? 1 : 0;
+	return Iterator<BuildingTypeClass*>(ppPower, count);
 }
 
 int HouseTypeExt::PickRandomCountry() {
@@ -518,18 +470,22 @@ int HouseTypeExt::PickRandomCountry() {
 // =============================
 // load/save
 
-void Container<HouseTypeExt>::Save(HouseTypeClass *pThis, IStream *pStm) {
+bool Container<HouseTypeExt>::Save(HouseTypeClass *pThis, IStream *pStm) {
 	HouseTypeExt::ExtData* pData = this->SaveKey(pThis, pStm);
 
 	if (pData) {
-		pData->Powerplants.Save(pStm);
+		//pData->Powerplants.Save(pStm);
 	}
+
+	return pData != nullptr;
 }
 
-void Container<HouseTypeExt>::Load(HouseTypeClass *pThis, IStream *pStm) {
+bool Container<HouseTypeExt>::Load(HouseTypeClass *pThis, IStream *pStm) {
 	HouseTypeExt::ExtData* pData = this->LoadKey(pThis, pStm);
 
-	pData->Powerplants.Load(pStm, 1);
+	//pData->Powerplants.Load(pStm, 1);
+
+	return pData != nullptr;
 }
 
 // =============================
@@ -562,8 +518,7 @@ DEFINE_HOOK(512290, HouseTypeClass_SaveLoad_Prefix, 5)
 	GET_STACK(HouseTypeExt::TT*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
 
-	Container<HouseTypeExt>::SavingObject = pItem;
-	Container<HouseTypeExt>::SavingStream = pStm;
+	Container<HouseTypeExt>::PrepareStream(pItem, pStm);
 
 	return 0;
 }

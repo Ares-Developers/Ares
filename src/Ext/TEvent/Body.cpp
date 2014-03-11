@@ -23,7 +23,7 @@ void TEventExt::ExtData::Initialize(TEventClass *pThis)
 */
 TechnoTypeClass* TEventExt::ExtData::GetTechnoType()
 {
-	if(!this->TechnoType.isset()) {
+	if(this->TechnoType.empty()) {
 		const char* eventTechno = this->AttachedToObject->TechnoName;
 		TechnoTypeClass* pType = TechnoTypeClass::Find(eventTechno);
 
@@ -31,7 +31,7 @@ TechnoTypeClass* TEventExt::ExtData::GetTechnoType()
 			Debug::DevLog(Debug::Error, "Event references non-existing techno type \"%s\".", eventTechno);
 		}
 
-		this->TechnoType.Set(pType);
+		this->TechnoType = pType;
 	}
 
 	return this->TechnoType;
@@ -170,8 +170,7 @@ DEFINE_HOOK(71F8C0, TEventClass_SaveLoad_Prefix, 5)
 	GET_STACK(TEventExt::TT*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
 
-	Container<TEventExt>::SavingObject = pItem;
-	Container<TEventExt>::SavingStream = pStm;
+	Container<TEventExt>::PrepareStream(pItem, pStm);
 
 	return 0;
 }

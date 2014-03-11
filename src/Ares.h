@@ -33,9 +33,31 @@
 #define GFX_SU_NF3D 0x00l
 #define GFX_SU_F3D 0x01l
 
+template <typename T>
+class Iterator;
+
 class Ares
 {
 public:
+	/**
+	* called before any saving takes place
+	*/
+	static void SaveGame();
+	/**
+	* called after the game (and extdata) has saved its data
+	*/
+	static HRESULT SaveGameData(IStream *pStm);
+
+	/**
+	* called before any loading takes place
+	*/
+	static void LoadGame();
+
+	/**
+	* called after the game (and extdata) has loaded its data
+	*/
+	static void LoadGameData(IStream *pStm);
+
 	//Global Options
 	static HANDLE	hInstance;
 
@@ -95,8 +117,8 @@ public:
 		HouseClass* pOwner,
 		CellClass* pDestination,
 		AircraftTypeClass* pPlaneType,
-		TypeList<TechnoTypeClass*>* pTypes,
-		TypeList<int>* pNums);
+		const Iterator<TechnoTypeClass*> &Types,
+		const Iterator<int> &Nums);
 
 	class GlobalControls {
 	private:
@@ -177,8 +199,6 @@ public:
 		static int uiColorDisabledSlider;
 		static int uiColorDisabledObserver;
 	};
-
-	static bool RunningOnWindows7OrVista();
 };
 
 class MemMap {
@@ -212,6 +232,15 @@ public:
 			Total -= amount;
 			AllocMap.erase(addr);
 			return amount;
+		}
+	}
+};
+
+struct GameDeleter {
+	template <typename T>
+	void operator ()(T* ptr) {
+		if(ptr) {
+			GameDelete(ptr);
 		}
 	}
 };

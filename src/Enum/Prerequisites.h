@@ -24,15 +24,12 @@ public:
 
 	virtual void LoadFromINI(CCINIClass *pINI);
 
-	GenericPrerequisite(const char *Title)
+	GenericPrerequisite(const char *Title) : Enumerable<GenericPrerequisite>(Title)
 	{
-		AresCRT::strCopy(this->Name, Title);
-		Array.AddItem(this);
 	}
 
 	virtual ~GenericPrerequisite()
 	{
-		Array.RemoveItem(Array.FindItemIndex(this));
 	}
 
 	DynamicVectorClass<int> Prereqs;

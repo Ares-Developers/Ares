@@ -1,6 +1,6 @@
 #include "ArmorTypes.h"
 
-DynamicVectorClass<ArmorType*> Enumerable<ArmorType>::Array;
+Enumerable<ArmorType>::container_t Enumerable<ArmorType>::Array;
 
 const char * Enumerable<ArmorType>::GetMainSection()
 {
@@ -26,10 +26,10 @@ void ArmorType::LoadForWarhead(CCINIClass *pINI, WarheadTypeClass* pWH)
 		return;
 	}
 
-	pData->Verses.Reserve(Array.Count);
+	pData->Verses.Reserve(Array.size());
 
-	while(pData->Verses.Count < Array.Count) {
-		ArmorType *pArmor = Array[pData->Verses.Count];
+	while(pData->Verses.Count < static_cast<int>(Array.size())) {
+		auto& pArmor = Array[pData->Verses.Count];
 		int idx = pArmor->DefaultIndex;
 		pData->Verses.AddItem(
 			idx == -1
@@ -42,7 +42,7 @@ void ArmorType::LoadForWarhead(CCINIClass *pINI, WarheadTypeClass* pWH)
 	char ret[0x20];
 	const char *section = pWH->get_ID();
 
-	for(int i = 0; i < Array.Count; ++i) {
+	for(size_t i = 0; i < Array.size(); ++i) {
 		_snprintf(buffer, 64, "Versus.%s", Array[i]->Name);
 		if(pINI->ReadString(section, buffer, "", ret, 0x20)) {
 
@@ -78,7 +78,7 @@ void ArmorType::AddDefaults()
 DEFINE_HOOK(4753F0, ArmorType_FindIndex, A)
 {
 	GET(CCINIClass *, pINI, ECX);
-	if(!ArmorType::Array.Count) {
+	if(ArmorType::Array.empty()) {
 		ArmorType::AddDefaults();
 	}
 
@@ -88,7 +88,7 @@ DEFINE_HOOK(4753F0, ArmorType_FindIndex, A)
 
 	char buf[0x20];
 
-	const char *curTitle = fallback < ArmorType::Array.Count
+	const char *curTitle = fallback < static_cast<int>(ArmorType::Array.size())
 		? ArmorType::Array[fallback]->Name
 		: "none";
 
@@ -106,7 +106,7 @@ DEFINE_HOOK(4753F0, ArmorType_FindIndex, A)
 
 DEFINE_HOOK(4B9A52, DropshipLoadout_PrintArmor, 5)
 {
-	R->Stack(0x4, ArmorType::Array[R->EDX()]);
+	R->Stack(0x4, ArmorType::Array[R->EDX()].get());
 	return 0;
 }
 

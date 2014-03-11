@@ -24,8 +24,7 @@ DEFINE_HOOK(5185C8, InfantryClass_ReceiveDamage_InfDeath, 6)
 		if(I->GetHeight() < 10) {
 			WarheadTypeExt::ExtData *pWHData = WarheadTypeExt::ExtMap.Find(Arguments->WH);
 			if(AnimTypeClass *deathAnim = pWHData->InfDeathAnim) {
-				AnimClass *Anim = nullptr;
-				GAME_ALLOC(AnimClass, Anim, deathAnim, &I->Location);
+				AnimClass *Anim = GameCreate<AnimClass>(deathAnim, I->Location);
 
 				HouseClass *Invoker = (Arguments->Attacker)
 					? Arguments->Attacker->Owner
@@ -54,8 +53,7 @@ DEFINE_HOOK(51849A, InfantryClass_ReceiveDamage_DeathAnim, 5)
 	// if you got here, a valid DeathAnim for this InfDeath has been defined, and the game has already checked the preconditions
 	// just allocate the anim and set its owner/remap
 
-	AnimClass *Anim = nullptr;
-	GAME_ALLOC(AnimClass, Anim, I->Type->DeathAnims[InfDeath], &I->Location);
+	AnimClass *Anim = GameCreate<AnimClass>(I->Type->DeathAnims[InfDeath], I->Location);
 
 	HouseClass *Invoker = (Arguments->Attacker)
 		? Arguments->Attacker->Owner
@@ -74,10 +72,8 @@ DEFINE_HOOK(6E232E, ActionClass_PlayAnimAt, 5)
 	GET_STACK(HouseClass *, pHouse, 0x1C);
 	LEA_STACK(CoordStruct *, pCoords, 0xC);
 
-	AnimClass *Anim = nullptr;
 	AnimTypeClass *AnimType = AnimTypeClass::Array->GetItem(pAction->Value);
-
-	GAME_ALLOC(AnimClass, Anim, AnimType, pCoords);
+	AnimClass *Anim = GameCreate<AnimClass>(AnimType, *pCoords);
 
 	if(AnimType->MakeInfantry > -1) {
 		AnimTypeExt::SetMakeInfOwner(Anim, pHouse, pHouse, pHouse);
@@ -94,8 +90,7 @@ DEFINE_HOOK(469C4E, BulletClass_DetonateAt_DamageAnimSelected, 5)
 	GET(AnimTypeClass *, AnimType, EBX);
 	LEA_STACK(CoordStruct *, XYZ, 0x64);
 
-	AnimClass * Anim;
-	GAME_ALLOC(AnimClass, Anim, AnimType, XYZ, 0, 1, 0x2600, -15, 0);
+	AnimClass * Anim = GameCreate<AnimClass>(AnimType, *XYZ, 0, 1, 0x2600, -15, false);
 
 	if(Anim) {
 		GET(BulletClass *, Bullet, ESI);

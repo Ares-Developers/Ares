@@ -11,19 +11,22 @@ DEFINE_HOOK(6FF5F5, TechnoClass_Fire, 6)
 
 	WeaponTypeExt::ExtData *pData = WeaponTypeExt::ExtMap.Find(Source);
 
-	RET_UNLESS(Source->IsMagBeam || Source->IsSonic || pData->Wave_IsLaser || pData->Wave_IsBigLaser);
+	if(!Source->IsMagBeam && !Source->IsSonic && !pData->Wave_IsLaser && !pData->Wave_IsBigLaser) {
+		return 0;
+	}
 
 	GET_BASE(byte, idxWeapon, 0xC);
 
 	TechnoExt::ExtMap.Find(Owner)->idxSlot_Wave = idxWeapon;
 
-	RET_UNLESS(pData->Wave_IsLaser || pData->Wave_IsBigLaser);
+	if(!pData->Wave_IsLaser && !pData->Wave_IsBigLaser) {
+		return 0;
+	}
 
 	LEA_STACK(CoordStruct *, xyzSrc, 0x44);
 	LEA_STACK(CoordStruct *, xyzTgt, 0x88);
 
-	WaveClass *Wave;
-	GAME_ALLOC(WaveClass, Wave, xyzSrc, xyzTgt, Owner, pData->Wave_IsBigLaser ? 2 : 1, Target);
+	WaveClass *Wave = GameCreate<WaveClass>(xyzSrc, xyzTgt, Owner, pData->Wave_IsBigLaser ? 2 : 1, Target);
 
 	WeaponTypeExt::WaveExt[Wave] = pData;
 	Owner->Wave = Wave;
@@ -80,7 +83,9 @@ DEFINE_HOOK(760F50, WaveClass_Update, 6)
 	WeaponTypeExt::ExtData *pData = WeaponTypeExt::WaveExt[pThis];
 	const WeaponTypeClass *Weap = pData->AttachedToObject;
 
-	RET_UNLESS(Weap);
+	if(!Weap) {
+		return 0;
+	}
 
 	int Intensity;
 
@@ -210,31 +215,28 @@ bool WeaponTypeExt::ModifyWaveColor(WORD *src, WORD *dst, int Intensity, WaveCla
 {
 	WeaponTypeExt::ExtData *pData = WeaponTypeExt::WaveExt[Wave];
 
-	ColorStruct *CurrentColor = (pData->Wave_IsHouseColor && Wave->Owner)
-		? &Wave->Owner->Owner->Color
-		: &pData->Wave_Color;
+	ColorStruct CurrentColor = (pData->Wave_IsHouseColor && Wave->Owner)
+		? Wave->Owner->Owner->Color
+		: pData->GetWaveColor();
 
-	if(*CurrentColor == ColorStruct(0, 0, 0)) {
+	if(CurrentColor == ColorStruct(0, 0, 0)) {
 		return false;
 	}
 
-	ColorStruct initial = Drawing::WordColor(*src);
+	ColorStruct modified = Drawing::WordColor(*src);
 
-	ColorStruct modified = initial;
+	// ugly hack to fix byte wraparound problems
+	auto upcolor = [&](BYTE ColorStruct::* member) {
+		int component = modified.*member + (Intensity * CurrentColor.*member) / 256;
+		component = std::max(std::min(component, 255), 0);
+		modified.*member = static_cast<BYTE>(component);
+	};
 
-// ugly hack to fix byte wraparound problems
-#define upcolor(c) \
-	int _ ## c = initial. c + (Intensity * CurrentColor-> c ) / 256; \
-	_ ## c = std::min(_ ## c, 255); \
-	modified. c = (BYTE)_ ## c;
+	upcolor(&ColorStruct::R);
+	upcolor(&ColorStruct::G);
+	upcolor(&ColorStruct::B);
 
-	upcolor(R);
-	upcolor(G);
-	upcolor(B);
-
-	WORD color = Drawing::Color16bit(&modified);
-
-	*dst = color;
+	*dst = Drawing::Color16bit(&modified);
 	return true;
 }
 
@@ -248,7 +250,10 @@ DEFINE_HOOK(762C5C, WaveClass_Update_Wave, 6)
 		return 0x762D57;
 	}
 
-	RET_UNLESS(WeaponTypeExt::WaveExt.find(Wave) != WeaponTypeExt::WaveExt.end());
+	if(WeaponTypeExt::WaveExt.find(Wave) == WeaponTypeExt::WaveExt.end()) {
+		return 0;
+	}
+
 	WeaponTypeExt::ExtData *pData = WeaponTypeExt::WaveExt[Wave];
 	int weaponIdx = TechnoExt::ExtMap.Find(Firer)->idxSlot_Wave;
 

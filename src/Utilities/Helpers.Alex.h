@@ -3,6 +3,7 @@
 
 #include <CellSpread.h>
 #include <Helpers/Iterators.h>
+#include <Helpers/Enumerators.h>
 
 #include <set>
 #include <functional>
@@ -77,15 +78,13 @@ public:
 			DistinctCollector<TechnoClass*> set;
 
 			// the quick way. only look at stuff residing on the very cells we are affecting.
-			CellStruct cellCoords = MapClass::Instance->GetCellAt(*coords)->MapCoords;
-			int countCells = CellSpread::NumCells((int)(spread + 0.99));
-			for(int i = 0; i < countCells; ++i) {
-				CellStruct tmpCell = CellSpread::GetCell(i);
-				tmpCell += cellCoords;
-				CellClass *c = MapClass::Instance->GetCellAt(tmpCell);
-				for(ObjectClass *curObj = c->GetContent(); curObj; curObj = curObj->NextObject) {
-					if(TechnoClass *Techno = generic_cast<TechnoClass*>(curObj)) {
-						set.insert(Techno);
+			auto& cellCoords = MapClass::Instance->GetCellAt(*coords)->MapCoords;
+			auto range = static_cast<size_t>(spread + 0.99);
+			for(CellSpreadEnumerator it(range); it; ++it) {
+				auto c = MapClass::Instance->GetCellAt(*it + cellCoords);
+				for(auto curObj = c->GetContent(); curObj; curObj = curObj->NextObject) {
+					if(auto pTechno = abstract_cast<TechnoClass*>(curObj)) {
+						set.insert(pTechno);
 					}
 				}
 			}

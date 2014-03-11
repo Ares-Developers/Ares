@@ -33,12 +33,12 @@ public:
 		//properties
 		enum eEnabled {NO, YES, FORWARD, ATTACK} Enabled;	//is this tower a prism tower? FORWARD means can support, but not attack. ATTACK means can attack but not support.
 		ValueableVector<BuildingTypeClass *> Targets;	//the types of buiding that this tower can forward to
-		Customizable<signed int> MaxFeeds;					//max number of towers that can feed this tower
+		Nullable<int> MaxFeeds;					//max number of towers that can feed this tower
 		Valueable<signed int> MaxChainLength;				//max length of any given (preceding) branch of the network
-		Customizable<signed int> MaxNetworkSize;				//max number of towers that can be in the network
-		Customizable<int> SupportModifier; 				//Per-building PrismSupportModifier
+		Nullable<int> MaxNetworkSize;				//max number of towers that can be in the network
+		Nullable<int> SupportModifier; 				//Per-building PrismSupportModifier
 		Valueable<signed int> DamageAdd; 					//amount of flat damage to add to the firing beam (before multiplier)
-		Customizable<int> MyHeight;						//Per-building PrismSupportHeight
+		Nullable<int> MyHeight;						//Per-building PrismSupportHeight
 		Valueable<signed int> Intensity;						//amount to adjust beam thickness by when supported
 		Valueable<int> ChargeDelay;					//the amount to delay start of charging per backward chain
 		Valueable<bool> ToAllies;						//can this tower support allies' towers or not
@@ -50,6 +50,22 @@ public:
 		signed int GetUnusedWeaponSlot(BuildingTypeClass*, bool);
 		void Initialize(BuildingTypeClass* );
 		void LoadFromINIFile(BuildingTypeClass *, CCINIClass *);
+
+		int GetMaxFeeds() const {
+			return this->MaxFeeds.Get(RulesClass::Instance->PrismSupportMax);
+		}
+
+		int GetMaxNetworkSize() const {
+			return this->MaxNetworkSize.Get(RulesClass::Instance->PrismSupportMax);
+		}
+
+		int GetSupportModifier() const {
+			return this->SupportModifier.Get(RulesClass::Instance->PrismSupportModifier);
+		}
+
+		int GetMyHeight() const {
+			return this->MyHeight.Get(RulesClass::Instance->PrismSupportHeight);
+		}
 
 		// future considerations - move these to BuildingExt's PrismForwarding and refactor first arg
 		static int AcquireSlaves_MultiStage(BuildingClass *, BuildingClass *, int, int, int *, int *);
@@ -65,12 +81,12 @@ public:
 		// constructor
 		cPrismForwarding() : Enabled(NO),
 			Targets(),
-			MaxFeeds(&RulesClass::Instance->PrismSupportMax),
+			MaxFeeds(),
 			MaxChainLength(1),
-			MaxNetworkSize(&RulesClass::Instance->PrismSupportMax),
-			SupportModifier(&RulesClass::Instance->PrismSupportModifier),
+			MaxNetworkSize(),
+			SupportModifier(),
 			DamageAdd(0),
-			MyHeight(&RulesClass::Instance->PrismSupportHeight),
+			MyHeight(),
 			Intensity(-2),
 			ChargeDelay(1),
 			ToAllies(false),
@@ -91,8 +107,8 @@ public:
 		int CustomWidth;
 		int CustomHeight;
 		int OutlineLength;
-		CellStruct* CustomData;
-		CellStruct* OutlineData;
+		std::vector<CellStruct> CustomData;
+		std::vector<CellStruct> OutlineData;
 
 		DynamicVectorClass<Point2D> FoundationRadarShape;
 
@@ -138,6 +154,8 @@ public:
 
 		// #218 Specific Occupiers
 		ValueableVector<InfantryTypeClass *> AllowedOccupiers;
+
+		Nullable<bool> Returnable;
 		
 		cPrismForwarding PrismForwarding;
 
@@ -153,14 +171,14 @@ public:
 		NullableIdx<VocClass> GateDownSound;
 		NullableIdx<VocClass> GateUpSound;
 
-		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
+		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			Solid_Height (0),
 			IsCustom (false),
 			CustomWidth (0),
 			CustomHeight (0),
 			OutlineLength (0),
-			CustomData (nullptr),
-			OutlineData (nullptr),
+			CustomData (),
+			OutlineData (),
 			FoundationRadarShape (),
 			Firewall_Is (false),
 			UCPassThrough (0.0),
@@ -186,6 +204,7 @@ public:
 			StolenMoneyPercentage (0),
 			PowerOutageDuration (0),
 			AllowedOccupiers (),
+			Returnable (),
 			PrismForwarding(),
 			ReverseEngineersVictims (false),
 			CloningFacility (false),
@@ -193,11 +212,7 @@ public:
 			{ };
 
 		virtual ~ExtData() {
-			delete [] CustomData;
-			delete [] OutlineData;
 		}
-
-		virtual size_t Size() const { return sizeof(*this); };
 
 		virtual void LoadFromINIFile(TT *pThis, CCINIClass *pINI);
 		virtual void Initialize(TT *pThis);

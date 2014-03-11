@@ -9,10 +9,9 @@ DEFINE_HOOK(6CEF84, SuperWeaponTypeClass_GetCursorOverObject, 7)
 	GET(SuperWeaponTypeClass*, pThis, ECX);
 
 	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pThis);
-	int type = (pData->HandledByNewSWType > -1) ? pData->HandledByNewSWType : pThis->Type;
-	bool customType = (type >= FIRST_SW_TYPE);
+	auto pType = pData->GetNewSWType();
 
-	if((pThis->Action == SW_YES_CURSOR) || customType) {
+	if((pThis->Action == SW_YES_CURSOR) || pType) {
 		GET_STACK(CellStruct *, pMapCoords, 0x0C);
 
 		int Action = SW_YES_CURSOR;
@@ -29,7 +28,7 @@ DEFINE_HOOK(6CEF84, SuperWeaponTypeClass_GetCursorOverObject, 7)
 
 		// new SW types have to check whether the coordinates are valid.
 		if(Action == SW_YES_CURSOR) {
-			if(customType && !NewSWType::GetNthItem(type)->CanFireAt(pData, pMapCoords)) {
+			if(pType && !pType->CanFireAt(pData, *pMapCoords)) {
 				Action = SW_NO_CURSOR;
 			}
 		}
@@ -62,17 +61,16 @@ DEFINE_HOOK(653B3A, RadarClass_GetMouseAction_CustomSWAction, 5)
 
 		SuperWeaponTypeClass *pThis = SuperWeaponTypeClass::Array->GetItem(idxSWType);
 		SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pThis);
-		int type = (pData->HandledByNewSWType > -1) ? pData->HandledByNewSWType : pThis->Type;
-		bool customType = (type >= FIRST_SW_TYPE);
+		auto pType = pData->GetNewSWType();
 
-		if((pThis->Action == SW_YES_CURSOR) || customType) {
-			GET_STACK(CellStruct, pMapCoords, STACK_OFFS(0x54, 0x3C));
+		if((pThis->Action == SW_YES_CURSOR) || pType) {
+			GET_STACK(CellStruct, MapCoords, STACK_OFFS(0x54, 0x3C));
 
 			int Action = SW_YES_CURSOR;
 
 			// prevent firing into shroud
 			if(!pData->SW_FireToShroud) {
-				CellClass* pCell = MapClass::Instance->GetCellAt(pMapCoords);
+				CellClass* pCell = MapClass::Instance->GetCellAt(MapCoords);
 				CoordStruct Crd = pCell->GetCoords();
 
 				if(MapClass::Instance->IsLocationShrouded(Crd)) {
@@ -82,7 +80,7 @@ DEFINE_HOOK(653B3A, RadarClass_GetMouseAction_CustomSWAction, 5)
 
 			// new SW types have to check whether the coordinates are valid.
 			if(Action == SW_YES_CURSOR) {
-				if(customType && !NewSWType::GetNthItem(type)->CanFireAt(pData, &pMapCoords)) {
+				if(pType && !pType->CanFireAt(pData, MapCoords)) {
 					Action = SW_NO_CURSOR;
 				}
 			}
@@ -297,7 +295,7 @@ DEFINE_HOOK(446937, BuildingClass_AnnounceSW, 6)
 
 	pData->PrintMessage(pData->Message_Detected, pBuild->Owner);
 
-	if(pData->EVA_Detected != -1 || pData->HandledByNewSWType != -1) {
+	if(pData->EVA_Detected != -1 || pData->IsTypeRedirected()) {
 		if(pData->EVA_Detected != -1) {
 			VoxClass::PlayIndex(pData->EVA_Detected);
 		}
@@ -315,7 +313,7 @@ DEFINE_HOOK(6CBDD7, SuperClass_AnnounceReady, 6)
 
 	pData->PrintMessage(pData->Message_Ready, HouseClass::Player);
 
-	if(pData->EVA_Ready != -1 || pData->HandledByNewSWType != -1) {
+	if(pData->EVA_Ready != -1 || pData->IsTypeRedirected()) {
 		if(pData->EVA_Ready != -1) {
 			VoxClass::PlayIndex(pData->EVA_Ready);
 		}
@@ -333,29 +331,12 @@ DEFINE_HOOK(6CC0EA, SuperClass_AnnounceQuantity, 9)
 
 	pData->PrintMessage(pData->Message_Ready, HouseClass::Player);
 
-	if(pData->EVA_Ready != -1 || pData->HandledByNewSWType != -1) {
+	if(pData->EVA_Ready != -1 || pData->IsTypeRedirected()) {
 		if(pData->EVA_Ready != -1) {
 			VoxClass::PlayIndex(pData->EVA_Ready);
 		}
 		return 0x6CC17E;
 	}
-	return 0;
-}
-
-// hide the cameo? (only if this is an auto-firing SW)
-DEFINE_HOOK(50B319, HouseClass_UpdateSWs_ShowCameo, 6)
-{
-	GET(HouseClass *, H, EBP);
-	GET(int, Index, EDI);
-	SuperClass *Super = H->Supers.GetItem(Index);
-	SuperWeaponTypeClass *pSW = Super->Type;
-
-	if(SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSW)) {
-		if(pData->SW_AutoFire && !pData->SW_ShowCameo) {
-			return 0x50B358;
-		}
-	}
-
 	return 0;
 }
 
@@ -421,7 +402,7 @@ DEFINE_HOOK(6CC390, SuperClass_Launch, 6)
 {
 	GET(SuperClass *, pSuper, ECX);
 	GET_STACK(CellStruct*, pCoords, 0x4);
-	GET_STACK(byte, IsPlayer, 0x8);
+	GET_STACK(bool, IsPlayer, 0x8);
 
 	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSuper->Type);
 
@@ -429,7 +410,7 @@ DEFINE_HOOK(6CC390, SuperClass_Launch, 6)
 
 	bool handled = false;
 	if(NewSWType* pNSW = pData->GetNewSWType()) {
-		handled = SWTypeExt::Launch(pSuper, pNSW, pCoords, IsPlayer);
+		handled = SWTypeExt::Launch(pSuper, pNSW, *pCoords, IsPlayer);
 	}
 
 	return handled ? 0x6CDE40 : 0;
@@ -473,9 +454,7 @@ DEFINE_HOOK(4FAE72, HouseClass_SWFire_PreDependent, 6)
 	// don't use a fixed SW type but the very one acutually fired last.
 	SuperClass* pSource = nullptr;
 	if(HouseExt::ExtData *pExt = HouseExt::ExtMap.Find(pThis)) {
-		if(pThis->Supers.ValidIndex(pExt->SWLastIndex)) {
-			pSource = pThis->Supers.GetItem(pExt->SWLastIndex);
-		}
+		pSource = pThis->Supers.GetItemOrDefault(pExt->SWLastIndex);
 	}
 
 	R->ESI(pSource);
@@ -548,7 +527,7 @@ DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
 	// this method iterates over every available SW and checks
 	// whether it should be fired automatically. the original
 	// method would abort if this house is human-controlled.
-	bool AIFire = !pThis->IsHumanoid();
+	bool AIFire = !pThis->ControlledByHuman();
 
 	for(int i=0; i<pThis->Supers.Count; ++i) {
 		if(SuperClass* pSuper = pThis->Supers.GetItem(i)) {
@@ -558,7 +537,7 @@ DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
 			if(AIFire || pExt->SW_AutoFire) {
 
 				if(pSuper->IsCharged) {
-					CellStruct Cell = HouseClass::DefaultIonCannonCoords;
+					CellStruct Cell = CellStruct::Empty;
 					auto LaunchSW = [&](const CellStruct &Cell) {
 						int idxSW = pThis->Supers.FindItemIndex(pSuper);
 						pThis->Fire_SW(idxSW, Cell);
@@ -576,7 +555,7 @@ DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
 					case SuperWeaponAITargetingMode::Nuke:
 						{
 							if(pThis->EnemyHouseIndex != -1) {
-								if(pThis->PreferredTargetCell == HouseClass::DefaultIonCannonCoords) {
+								if(pThis->PreferredTargetCell == CellStruct::Empty) {
 									Cell = *((pThis->PreferredTargetType == TargetType::Anything)
 										? pThis->PickIonCannonTarget(Cell)
 										: pThis->PickTargetByType(&Cell, pThis->PreferredTargetType));
@@ -584,7 +563,7 @@ DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
 									Cell = pThis->PreferredTargetCell;
 								}
 
-								if(Cell != HouseClass::DefaultIonCannonCoords) {
+								if(Cell != CellStruct::Empty) {
 									LaunchSW(Cell);
 								}
 							}
@@ -617,8 +596,8 @@ DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
 
 					case SuperWeaponAITargetingMode::ForceShield:
 						{
-							if(pThis->PreferredDefensiveCell2 == HouseClass::DefaultIonCannonCoords) {
-								if(pThis->PreferredDefensiveCell != HouseClass::DefaultIonCannonCoords
+							if(pThis->PreferredDefensiveCell2 == CellStruct::Empty) {
+								if(pThis->PreferredDefensiveCell != CellStruct::Empty
 									&& RulesClass::Instance->AISuperDefenseFrames + pThis->PreferredDefensiveCellStartTime > Unsorted::CurrentFrame) {
 									Cell = pThis->PreferredDefensiveCell;
 								}
@@ -626,9 +605,9 @@ DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
 								Cell = pThis->PreferredDefensiveCell2;
 							}
 
-							if(Cell != HouseClass::DefaultIonCannonCoords) {
+							if(Cell != CellStruct::Empty) {
 								LaunchSW(Cell);
-								pThis->PreferredDefensiveCell = HouseClass::DefaultIonCannonCoords;
+								pThis->PreferredDefensiveCell = CellStruct::Empty;
 							}
 							break;
 						}
@@ -637,7 +616,7 @@ DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
 						{
 							if(pThis->EnemyHouseIndex != -1 && pExt->IsHouseAffected(pThis, HouseClass::Array->GetItem(pThis->EnemyHouseIndex))) {
 								pThis->PickIonCannonTarget(Cell);
-								if(Cell != HouseClass::DefaultIonCannonCoords) {
+								if(Cell != CellStruct::Empty) {
 									LaunchSW(Cell);
 								}
 							}
@@ -742,7 +721,7 @@ DEFINE_HOOK(6CBF5B, SuperClass_GetCameoChargeState_ChargeDrainRatio, 9) {
 
 		// use per-SW charge-to-drain ratio.
 		double percentage = 0.0;
-		double ratio = pData->SW_ChargeToDrainRatio;
+		double ratio = pData->GetChargeToDrainRatio();
 		if(std::abs(rechargeTime2 * ratio) > 0.001) {
 			percentage = 1.0 - (rechargeTime1 * ratio - timeLeft) / (rechargeTime2 * ratio);
 		}
@@ -774,7 +753,7 @@ DEFINE_HOOK(6CB995, SuperClass_ClickFire_ChargeDrainRatioA, 8) {
 	pSuper = (SuperClass*)((char*)pSuper - 30);
 
 	if(SWTypeExt::ExtData* pData = SWTypeExt::ExtMap.Find(pSuper->Type)) {
-		double ratio = pData->SW_ChargeToDrainRatio;
+		double ratio = pData->GetChargeToDrainRatio();
 		double remaining = rechargeTime - timeLeft / ratio;
 		int frames = Game::F2I(remaining);
 	
@@ -790,7 +769,7 @@ DEFINE_HOOK(6CBA19, SuperClass_ClickFire_ChargeDrainRatioB, A) {
 	GET(SuperClass*, pSuper, ESI);
 
 	if(SWTypeExt::ExtData* pData = SWTypeExt::ExtMap.Find(pSuper->Type)) {
-		double ratio = pData->SW_ChargeToDrainRatio;
+		double ratio = pData->GetChargeToDrainRatio();
 		double remaining = length * ratio;
 		int frames = Game::F2I(remaining);
 	
@@ -816,7 +795,7 @@ DEFINE_HOOK(6CBD6B, SuperClass_Update_DrainMoney, 8) {
 					// only abort if SW drains money and there is none
 					if(pData->Money_DrainAmount < 0) {
 						if(pSuper->Owner->Available_Money() < -money) {
-							if(pSuper->Owner->IsHumanoid()) {
+							if(pSuper->Owner->ControlledByHuman()) {
 								VoxClass::PlayIndex(pData->EVA_InsufficientFunds);
 								pData->PrintMessage(pData->Message_InsufficientFunds, HouseClass::Player);
 							}
@@ -854,12 +833,10 @@ DEFINE_HOOK(6CEEB0, SuperWeaponTypeClass_FindFirstOfAction, 8) {
 				break;
 			} else {
 				if(SWTypeExt::ExtData* pExt = SWTypeExt::ExtMap.Find(pType)) {
-					if(pExt->HandledByNewSWType > -1) {
-						if(NewSWType *swt = NewSWType::GetNthItem(pExt->HandledByNewSWType)) {
-							if(swt->HandlesType(SuperWeaponType::Nuke)) {
-								R->EAX(pType);
-								break;
-							}
+					if(NewSWType *pNewSWType = pExt->GetNewSWType()) {
+						if(pNewSWType->HandlesType(SuperWeaponType::Nuke)) {
+							R->EAX(pType);
+							break;
 						}
 					}
 				}

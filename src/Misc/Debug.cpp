@@ -298,7 +298,11 @@ __declspec(noreturn) LONG CALLBACK Debug::ExceptionHandler(PEXCEPTION_POINTERS p
 
 LONG CALLBACK Debug::ExceptionFilter(PEXCEPTION_POINTERS pExs)
 {
-	if(pExs->ExceptionRecord->ExceptionCode == EXCEPTION_BREAKPOINT) {
+	static const DWORD MS_VC_EXCEPTION = 0x406D1388;
+
+	switch(pExs->ExceptionRecord->ExceptionCode) {
+	case EXCEPTION_BREAKPOINT:
+	case MS_VC_EXCEPTION:
 		return EXCEPTION_CONTINUE_SEARCH;
 	}
 

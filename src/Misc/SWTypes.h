@@ -4,193 +4,221 @@
 #include "../Ext/SWType/Body.h"
 #include "../Utilities/Enums.h"
 
+#include <vector>
+
 class SWTypeExt;
 
 // New SW Type framework. See SWTypes/*.h for examples of implemented ones. Don't touch yet, still WIP.
 class NewSWType
 {
-	protected:
-		int TypeIndex;
-		bool Registered;
+	static std::vector<std::unique_ptr<NewSWType>> Array;
 
-		void Register()
-			{ Array.AddItem(this); this->TypeIndex = Array.Count - 1; }
-
-	public:
-		NewSWType()
-			{ Registered = 0; Register(); };
-
-		virtual ~NewSWType()
-			{ };
-
-		static void Init();
-
-		virtual bool CanFireAt(SWTypeExt::ExtData *pSWType, CellStruct* pCoords)
-			{ return pSWType->CanFireAt(pCoords); }
-
-		virtual bool AbortFire(SuperClass* pSW, bool IsPlayer)
-			{ return false; }
-
-		virtual bool Launch(SuperClass* pSW, CellStruct* pCoords, byte IsPlayer) = 0;
-
-		virtual void Initialize(
-			SWTypeExt::ExtData *pData,
-			SuperWeaponTypeClass *pSW)
-			{ }
-
-		virtual void LoadFromINI(
-			SWTypeExt::ExtData *pData,
-			SuperWeaponTypeClass *pSW, CCINIClass *pINI)
-			{ }
-
-		virtual const char * GetTypeString()
-			{ return ""; }
-
-		virtual const int GetTypeIndex()
-			{ return TypeIndex; }
-
-		virtual bool HandlesType(int type)
-			{ return false; }
-
-		virtual SuperWeaponFlags::Value Flags()
-			{ return SuperWeaponFlags::None; }
-
-	static DynamicVectorClass<NewSWType *> Array;
-
-	static NewSWType * GetNthItem(int i)
-		{ return Array.GetItem(i - FIRST_SW_TYPE); }
-
-	static int FindIndex(const char *Type) {
-		for(int i = 0; i < Array.Count; ++i) {
-			if(const char* id = Array.GetItem(i)->GetTypeString()) {
-				if(!strcmp(id, Type)) {
-					return FIRST_SW_TYPE + i;
-				}
-			}
-		}
-		return -1;
+	static void Register(std::unique_ptr<NewSWType> pType) {
+		pType->TypeIndex = static_cast<int>(Array.size());
+		Array.push_back(std::move(pType));
 	}
 
-	static int FindHandler(int Type) {
-		for(int i=0; i<Array.Count; ++i) {
-			NewSWType *swt = Array.GetItem(i);
-			if(swt->HandlesType(Type)) {
-				return FIRST_SW_TYPE + i;
-			}
-		}
-		return -1;
+	int TypeIndex;
+
+public:
+	NewSWType() : TypeIndex(-1) {
 	}
+
+	virtual ~NewSWType() {
+	};
+
+	virtual bool CanFireAt(SWTypeExt::ExtData *pSWType, const CellStruct &Coords) {
+		return pSWType->CanFireAt(Coords);
+	}
+
+	virtual bool AbortFire(SuperClass* pSW, bool IsPlayer) {
+		return false;
+	}
+
+	virtual bool Activate(SuperClass* pSW, const CellStruct &Coords, bool IsPlayer) = 0;
+
+	virtual void Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW) {
+	}
+
+	virtual void LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI) {
+	}
+
+	virtual WarheadTypeClass* GetWarhead(const SWTypeExt::ExtData* pData) const {
+		return pData->SW_Warhead;
+	}
+
+	virtual AnimTypeClass* GetAnim(const SWTypeExt::ExtData* pData) const {
+		return pData->SW_Anim;
+	}
+
+	virtual int GetSound(const SWTypeExt::ExtData* pData) const {
+		return pData->SW_Sound;
+	}
+
+	virtual int GetDamage(const SWTypeExt::ExtData* pData) const {
+		return pData->SW_Damage;
+	}
+
+	virtual SWRange GetRange(const SWTypeExt::ExtData* pData) const {
+		return pData->SW_Range;
+	}
+
+	virtual const char* GetTypeString() {
+		return "";
+	}
+
+	int GetTypeIndex() {
+		return TypeIndex;
+	}
+
+	virtual bool HandlesType(int type) {
+		return false;
+	}
+
+	virtual SuperWeaponFlags::Value Flags() {
+		return SuperWeaponFlags::None;
+	}
+
+	// static methods
+	static void Init();
+
+	static NewSWType* GetNthItem(int i) {
+		return Array.at(i - FIRST_SW_TYPE).get();
+	}
+
+	static int FindIndex(const char* pType);
+
+	static int FindHandler(int Type);
 };
 
 // state machines - create one to use delayed effects [create a child class per NewSWType, obviously]
 // i.e. start anim/sound 1 frame after clicking, fire a damage wave 25 frames later, and play second sound 50 frames after that...
 class SWStateMachine {
-	public:
-		static DynamicVectorClass<SWStateMachine *> Array;
-	protected:
-		TimerStruct  Clock;
-		SuperClass * Super;
-		NewSWType  * Type;
-		CellStruct   Coords;
-	public:
-		bool Finished() { return Clock.IsDone(); }
+	static std::vector<std::unique_ptr<SWStateMachine>> Array;
 
-		int TimePassed() { return Unsorted::CurrentFrame - Clock.StartTime; }
+public:
+	SWStateMachine(int Duration, CellStruct XY, SuperClass *pSuper, NewSWType * pSWType)
+		: Type(pSWType), Super(pSuper), Coords(XY)
+	{
+		Clock.Start(Duration);
+	}
 
-		SWStateMachine(int Duration, CellStruct XY, SuperClass *pSuper, NewSWType * pSWType)
-			: Type(pSWType), Super(pSuper), Coords(XY) {
-			Clock.Start(Duration);
-			Array.AddItem(this);
+	virtual ~SWStateMachine() {
+	}
+
+	virtual bool Finished() {
+		return Clock.IsDone();
+	}
+
+	virtual void Update() {
+	};
+
+	virtual void PointerGotInvalid(void *ptr) {
+	};
+
+	int TimePassed() {
+		return Unsorted::CurrentFrame - Clock.StartTime;
+	}
+
+	SWTypeExt::ExtData * FindExtData () {
+		return SWTypeExt::ExtMap.Find(this->Super->Type);
+	}
+
+	// static methods
+	static void Register(std::unique_ptr<SWStateMachine> Machine) {
+		if(Machine) {
+			Array.push_back(std::move(Machine));
 		}
+	}
 
-		virtual ~SWStateMachine() {
-			auto t = this;
-			Array.RemoveItem(Array.FindItemIndex(t));
-		}
+	static void UpdateAll();
 
-		virtual void Update() {};
+	static void InvalidatePointer(void *ptr);
 
-		virtual void PointerGotInvalid(void *ptr) {};
+	static void ClearAll();
 
-		static void UpdateAll();
-
-		static void InvalidatePointer(void *ptr);
-
-		SWTypeExt::ExtData * FindExtData () {
-			return SWTypeExt::ExtMap.Find(this->Super->Type);
-		}
+protected:
+	TimerStruct Clock;
+	SuperClass* Super;
+	NewSWType* Type;
+	CellStruct Coords;
 };
 
 class UnitDeliveryStateMachine : public SWStateMachine {
-	public:
-		UnitDeliveryStateMachine(int Duration, CellStruct XY, SuperClass *pSuper, NewSWType * pSWType)
-			: SWStateMachine(Duration, XY, pSuper, pSWType) {};
-		virtual void Update();
+public:
+	UnitDeliveryStateMachine(int Duration, CellStruct XY, SuperClass *pSuper, NewSWType * pSWType)
+		: SWStateMachine(Duration, XY, pSuper, pSWType)
+	{};
 
-		void PlaceUnits();
+	virtual void Update();
+
+	void PlaceUnits();
 };
 
 class ChronoWarpStateMachine : public SWStateMachine {
+public:
+	struct ChronoWarpContainer {
 	public:
-		struct ChronoWarpContainer {
-		public:
-			BuildingClass* pBld;
-			CellStruct target;
-			CoordStruct origin;
-			bool isVehicle;
+		BuildingClass* pBld;
+		CellStruct target;
+		CoordStruct origin;
+		bool isVehicle;
 
-			ChronoWarpContainer(BuildingClass* pBld, CellStruct target, CoordStruct origin, bool isVehicle) :
-				pBld(pBld),
-				target(target),
-				origin(origin),
-				isVehicle(isVehicle)
-			{
-			}
-
-			ChronoWarpContainer() {}
-
-			bool operator == (const ChronoWarpContainer &t) const
-				{ return (this->pBld == t.pBld); }
-		};
-
-		ChronoWarpStateMachine(int Duration, CellStruct XY, SuperClass *pSuper, NewSWType * pSWType, DynamicVectorClass<ChronoWarpContainer> *Buildings)
-			: SWStateMachine(Duration, XY, pSuper, pSWType)
+		ChronoWarpContainer(BuildingClass* pBld, CellStruct target, CoordStruct origin, bool isVehicle) :
+			pBld(pBld),
+			target(target),
+			origin(origin),
+			isVehicle(isVehicle)
 		{
-			for(int i=0; i<Buildings->Count; ++i) {
-				this->Buildings.AddItem(Buildings->GetItem(i));
-			}
-			this->Duration = Duration;
-		};
+		}
 
-		virtual void Update();
+		ChronoWarpContainer() {
+		}
 
-		virtual void PointerGotInvalid(void *ptr);
+		bool operator == (const ChronoWarpContainer &t) const {
+			return (this->pBld == t.pBld);
+		}
+	};
 
-	protected:
-		DynamicVectorClass<ChronoWarpContainer> Buildings;
-		int Duration;
+	ChronoWarpStateMachine(int Duration, CellStruct XY, SuperClass *pSuper, NewSWType * pSWType, DynamicVectorClass<ChronoWarpContainer> *Buildings)
+		: SWStateMachine(Duration, XY, pSuper, pSWType)
+	{
+		for(int i=0; i<Buildings->Count; ++i) {
+			this->Buildings.AddItem(Buildings->GetItem(i));
+		}
+		this->Duration = Duration;
+	};
+
+	virtual void Update();
+
+	virtual void PointerGotInvalid(void *ptr);
+
+protected:
+	DynamicVectorClass<ChronoWarpContainer> Buildings;
+	int Duration;
 };
 
 class PsychicDominatorStateMachine : public SWStateMachine {
-	public:
-		PsychicDominatorStateMachine(CellStruct XY, SuperClass *pSuper, NewSWType * pSWType)
-			: SWStateMachine(MAXINT32, XY, pSuper, pSWType) {
-				PsyDom::Status = PsychicDominatorStatus::FirstAnim;
+public:
+	PsychicDominatorStateMachine(CellStruct XY, SuperClass *pSuper, NewSWType * pSWType)
+		: SWStateMachine(MAXINT32, XY, pSuper, pSWType)
+	{
+		PsyDom::Status = PsychicDominatorStatus::FirstAnim;
 
-				// the initial deferment
-				SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSuper->Type);
-				this->Deferment = pData->SW_Deferment;
+		// the initial deferment
+		SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSuper->Type);
+		this->Deferment = pData->SW_Deferment.Get(0);
 
-				// make the game happy
-				PsyDom::Owner = pSuper->Owner;
-				PsyDom::Coords = XY;
-				PsyDom::Anim = nullptr;
-		};
+		// make the game happy
+		PsyDom::Owner = pSuper->Owner;
+		PsyDom::Coords = XY;
+		PsyDom::Anim = nullptr;
+	};
 
-		virtual void Update();
+	virtual void Update();
 
-	protected:
-		int Deferment;
+protected:
+	int Deferment;
 };
 
 #endif

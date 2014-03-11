@@ -1,4 +1,5 @@
 #include "Body.h"
+#include "../../Utilities/TemplateDef.h"
 
 #include <WarheadTypeClass.h>
 
@@ -20,18 +21,18 @@ void TiberiumExt::ExtData::LoadFromINIFile(TiberiumClass* pThis, CCINIClass* pIN
 
 	INI_EX exINI(pINI);
 
-	this->Damage.Read(&exINI, section, "Damage");
-	this->Warhead.Parse(&exINI, section, "Warhead");
+	this->Damage.Read(exINI, section, "Damage");
+	this->Warhead.Read(exINI, section, "Warhead");
 
-	this->Heal_Step.Read(&exINI, section, "Heal.Step");
-	this->Heal_IStep.Read(&exINI, section, "Heal.IStep");
-	this->Heal_UStep.Read(&exINI, section, "Heal.UStep");
-	this->Heal_Delay.Read(&exINI, section, "Heal.Delay");
+	this->Heal_Step.Read(exINI, section, "Heal.Step");
+	this->Heal_IStep.Read(exINI, section, "Heal.IStep");
+	this->Heal_UStep.Read(exINI, section, "Heal.UStep");
+	this->Heal_Delay.Read(exINI, section, "Heal.Delay");
 
-	this->ExplosionWarhead.Parse(&exINI, section, "ExplosionWarhead");
-	this->ExplosionDamage.Read(&exINI, section, "ExplosionDamage");
+	this->ExplosionWarhead.Read(exINI, section, "ExplosionWarhead");
+	this->ExplosionDamage.Read(exINI, section, "ExplosionDamage");
 
-	this->DebrisChance.Read(&exINI, section, "Debris.Chance");
+	this->DebrisChance.Read(exINI, section, "Debris.Chance");
 }
 
 double TiberiumExt::ExtData::GetHealDelay() const
@@ -92,18 +93,22 @@ int TiberiumExt::ExtData::GetDebrisChance() const
 // =============================
 // load/save
 
-void Container<TiberiumExt>::Save(TiberiumClass* pThis, IStream* pStm) {
+bool Container<TiberiumExt>::Save(TiberiumClass* pThis, IStream* pStm) {
 	TiberiumExt::ExtData* pData = this->SaveKey(pThis, pStm);
 
 	if(pData) {
 		//ULONG out;
 	}
+
+	return pData != nullptr;
 }
 
-void Container<TiberiumExt>::Load(TiberiumClass* pThis, IStream* pStm) {
+bool Container<TiberiumExt>::Load(TiberiumClass* pThis, IStream* pStm) {
 	TiberiumExt::ExtData* pData = this->LoadKey(pThis, pStm);
 
 	UNREFERENCED_PARAMETER(pData);
+
+	return pData != nullptr;
 }
 
 // =============================
@@ -131,8 +136,7 @@ DEFINE_HOOK(721E80, TiberiumClass_SaveLoad_Prefix, 7)
 	GET_STACK(TiberiumExt::TT*, pThis, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
 
-	Container<TiberiumExt>::SavingObject = pThis;
-	Container<TiberiumExt>::SavingStream = pStm;
+	Container<TiberiumExt>::PrepareStream(pThis, pStm);
 
 	return 0;
 }

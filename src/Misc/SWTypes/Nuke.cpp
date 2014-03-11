@@ -2,6 +2,7 @@
 #include "../../Ares.h"
 
 #include "../../Ext/Bullet/Body.h"
+#include "../../Utilities/TemplateDef.h"
 
 #include <WarheadTypeClass.h>
 #include <BulletTypeClass.h>
@@ -21,16 +22,28 @@ SuperWeaponFlags::Value SW_NuclearMissile::Flags()
 	return SuperWeaponFlags::NoEvent;
 }
 
+WarheadTypeClass* SW_NuclearMissile::GetWarhead(const SWTypeExt::ExtData* pData) const {
+	if(pData->SW_Warhead.isset()) {
+		return pData->SW_Warhead;
+	}
+	if(pData->Nuke_Payload) {
+		return pData->Nuke_Payload->Warhead;
+	}
+	return nullptr;
+}
+
+int SW_NuclearMissile::GetDamage(const SWTypeExt::ExtData* pData) const {
+	auto damage = pData->SW_Damage.Get(-1);
+	if(damage < 0) {
+		damage = pData->Nuke_Payload ? pData->Nuke_Payload->Damage : 0;
+	}
+	return damage;
+}
+
 void SW_NuclearMissile::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)
 {
-	// invalid values so NukePayload properties can override them.
-	pData->SW_Damage = -1;
-	pData->SW_Warhead = nullptr;
-	pData->SW_ActivationSound = RulesClass::Instance->DigSound;
-
 	// default values for the original Nuke
 	pData->Nuke_Payload = WeaponTypeClass::FindOrAllocate("NukePayload");
-	pData->Nuke_TakeOff = RulesClass::Instance->NukeTakeOff;
 	pData->Nuke_PsiWarning = AnimTypeClass::Find("PSIWARN");
 	pData->Nuke_SiloLaunch = true;
 
@@ -38,10 +51,10 @@ void SW_NuclearMissile::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeCla
 	pData->EVA_Ready = VoxClass::FindIndex("EVA_NuclearMissileReady");
 	pData->EVA_Activated = VoxClass::FindIndex("EVA_NuclearMissileLaunched");
 
-	pData->Lighting_Ambient = &ScenarioClass::Instance->NukeAmbient;
-	pData->Lighting_Red = &ScenarioClass::Instance->NukeRed;
-	pData->Lighting_Green = &ScenarioClass::Instance->NukeGreen;
-	pData->Lighting_Blue = &ScenarioClass::Instance->NukeBlue;
+	pData->Lighting_DefaultAmbient = &ScenarioClass::NukeAmbient;
+	pData->Lighting_DefaultRed = &ScenarioClass::NukeRed;
+	pData->Lighting_DefaultGreen = &ScenarioClass::NukeGreen;
+	pData->Lighting_DefaultBlue = &ScenarioClass::NukeBlue;
 	
 	pData->SW_AITargetingType = SuperWeaponAITargetingMode::Nuke;
 	pData->SW_Cursor = MouseCursor::First[MouseCursorType::Nuke];
@@ -58,10 +71,10 @@ void SW_NuclearMissile::LoadFromINI(
 
 	INI_EX exINI(pINI);
 
-	pData->Nuke_Payload.Parse(&exINI, section, "Nuke.Payload", true);
-	pData->Nuke_TakeOff.Parse(&exINI, section, "Nuke.TakeOff");
-	pData->Nuke_PsiWarning.Parse(&exINI, section, "Nuke.PsiWarning");
-	pData->Nuke_SiloLaunch.Read(&exINI, section, "Nuke.SiloLaunch");
+	pData->Nuke_Payload.Read(exINI, section, "Nuke.Payload", true);
+	pData->Nuke_TakeOff.Read(exINI, section, "Nuke.TakeOff");
+	pData->Nuke_PsiWarning.Read(exINI, section, "Nuke.PsiWarning");
+	pData->Nuke_SiloLaunch.Read(exINI, section, "Nuke.SiloLaunch");
 
 	Debug::Log("[Nuke] basics %s: ", section);
 	Debug::Log("%s, ", pData->SW_Warhead ? pData->SW_Warhead->ID : "<empty>");
@@ -75,16 +88,15 @@ void SW_NuclearMissile::LoadFromINI(
 	Debug::Log("%d\n", pData->Nuke_SiloLaunch.Get());	
 }
 
-bool SW_NuclearMissile::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
+bool SW_NuclearMissile::Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer)
 {
 	if(pThis->IsCharged) {
 		SuperWeaponTypeClass *pType = pThis->Type;
 
 		if(SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pType)) {
 
-			CellClass* pCell = MapClass::Instance->GetCellAt(*pCoords);
-			CoordStruct target;
-			pCell->GetCoordsWithBridge(&target);
+			CellClass* pCell = MapClass::Instance->GetCellAt(Coords);
+			CoordStruct target = pCell->GetCoordsWithBridge();
 
 			// the nuke has two ways to fire. first the granted way used by nukes
 			// collected from crates. second, the normal way firing from a silo.
@@ -116,7 +128,7 @@ bool SW_NuclearMissile::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPl
 				pSilo->QueueMission(mission_Missile, false);
 				pSilo->NextMission();
 
-				pThis->Owner->NukeTarget = *pCoords;
+				pThis->Owner->NukeTarget = Coords;
 				fired = true;
 			}
 
@@ -127,8 +139,8 @@ bool SW_NuclearMissile::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPl
 					if(BulletTypeClass *pProjectile = pWeapon->Projectile) {
 						// get damage and warhead. they are not available during
 						// initialisation, so we gotta fall back now if they are invalid.
-						int damage = (pData->SW_Damage < 0 ? pWeapon->Damage : pData->SW_Damage);
-						WarheadTypeClass *pWarhead = (!pData->SW_Warhead ? pWeapon->Warhead : pData->SW_Warhead);
+						int damage = GetDamage(pData);
+						auto pWarhead = GetWarhead(pData);
 
 						// create a bullet and the psi warning
 						if(BulletClass* pBullet = pProjectile->CreateBullet(pCell, nullptr, damage, pWarhead, pWeapon->Speed, pWeapon->Bright)) {
@@ -165,12 +177,12 @@ bool SW_NuclearMissile::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPl
 				// allies can see the target location before the enemy does
 				if(pData->SW_RadarEvent) {
 					if(pThis->Owner->IsAlliedWith(HouseClass::Player)) {
-						RadarEventClass::Create(RadarEventType::SuperweaponActivated, *pCoords);
+						RadarEventClass::Create(RadarEventType::SuperweaponActivated, Coords);
 					}
 				}
 
-				VocClass::PlayAt(pData->SW_ActivationSound, &target, nullptr);
-				pThis->Owner->ShouldRecheckTechTree = true;
+				VocClass::PlayAt(pData->SW_ActivationSound.Get(RulesClass::Instance->DigSound), target, nullptr);
+				pThis->Owner->RecheckTechTree = true;
 				return true;
 			}
 

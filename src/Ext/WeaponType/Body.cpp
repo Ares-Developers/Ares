@@ -6,6 +6,7 @@
 #include <LocomotionClass.h>
 #include "../WarheadType/Body.h"
 #include "../Techno/Body.h"
+#include "../../Utilities/TemplateDef.h"
 
 template<> const DWORD Extension<WeaponTypeClass>::Canary = 0x33333333;
 Container<WeaponTypeExt> WeaponTypeExt::ExtMap;
@@ -13,9 +14,9 @@ Container<WeaponTypeExt> WeaponTypeExt::ExtMap;
 template<> WeaponTypeExt::TT *Container<WeaponTypeExt>::SavingObject = nullptr;
 template<> IStream *Container<WeaponTypeExt>::SavingStream = nullptr;
 
-ColorStruct WeaponTypeExt::ExtData::DefaultWaveColor = ColorStruct(255, 255, 255); // placeholder
-ColorStruct WeaponTypeExt::ExtData::DefaultWaveColorMagBeam = ColorStruct(0xB0, 0, 0xD0); // rp2 values
-ColorStruct WeaponTypeExt::ExtData::DefaultWaveColorSonic = ColorStruct(0, 0, 0); // 0,0,0 is a magic value for "no custom handling"
+const ColorStruct WeaponTypeExt::ExtData::DefaultWaveColor = ColorStruct(255, 255, 255); // placeholder
+const ColorStruct WeaponTypeExt::ExtData::DefaultWaveColorMagBeam = ColorStruct(0xB0, 0, 0xD0); // rp2 values
+const ColorStruct WeaponTypeExt::ExtData::DefaultWaveColorSonic = ColorStruct(0, 0, 0); // 0,0,0 is a magic value for "no custom handling"
 
 hash_bombExt WeaponTypeExt::BombExt;
 hash_waveExt WeaponTypeExt::WaveExt;
@@ -34,24 +35,6 @@ void WeaponTypeExt::ExtData::LoadFromINIFile(WeaponTypeExt::TT *pThis, CCINIClas
 		return;
 	}
 
-	if(pThis->IsRadBeam || pThis->IsRadEruption) {
-		if(pThis->Warhead && pThis->Warhead->Temporal) { //Marshall added the check for Warhead because PrismForwarding.SupportWeapon does not require a Warhead
-			// Well, a RadEruption Temporal will look pretty funny, but this is what WW uses
-			this->Beam_Color.Bind(&RulesClass::Instance->ChronoBeamColor);
-		}
-	}
-
-	// wave colors will be bound to the default values, thus a change of wave
-	// type will still point to the appropriate value, as long as the modder does not
-	// set the color by hand, in which case that value is used.
-	if(pThis->IsMagBeam) {
-		this->Wave_Color.Bind(&WeaponTypeExt::ExtData::DefaultWaveColorMagBeam);
-	} else if(pThis->IsSonic) {
-		this->Wave_Color.Bind(&WeaponTypeExt::ExtData::DefaultWaveColorSonic);
-	} else {
-		this->Wave_Color.Bind(&WeaponTypeExt::ExtData::DefaultWaveColor);
-	}
-
 	if(pThis->Damage == 0 && this->Weapon_Loaded) {
 		// blargh
 		// this is the ugly case of a something that apparently isn't loaded from ini yet, wonder why
@@ -67,14 +50,14 @@ void WeaponTypeExt::ExtData::LoadFromINIFile(WeaponTypeExt::TT *pThis, CCINIClas
 	this->Beam_Duration     = pINI->ReadInteger(section, "Beam.Duration", this->Beam_Duration);
 	this->Beam_Amplitude    = pINI->ReadDouble(section, "Beam.Amplitude", this->Beam_Amplitude);
 	this->Beam_IsHouseColor = pINI->ReadBool(section, "Beam.IsHouseColor", this->Beam_IsHouseColor);
-	this->Beam_Color.Read(&exINI, section, "Beam.Color");
+	this->Beam_Color.Read(exINI, section, "Beam.Color");
 
 	this->Wave_IsLaser      = pINI->ReadBool(section, "Wave.IsLaser", this->Wave_IsLaser);
 	this->Wave_IsBigLaser   = pINI->ReadBool(section, "Wave.IsBigLaser", this->Wave_IsBigLaser);
 	this->Wave_IsHouseColor = pINI->ReadBool(section, "Wave.IsHouseColor", this->Wave_IsHouseColor);
 
 	if(this->IsWave(pThis) && !this->Wave_IsHouseColor) {
-		this->Wave_Color.Read(&exINI, section, "Wave.Color");
+		this->Wave_Color.Read(exINI, section, "Wave.Color");
 	}
 
 	this->Wave_Reverse[idxVehicle]   =
@@ -89,41 +72,41 @@ void WeaponTypeExt::ExtData::LoadFromINIFile(WeaponTypeExt::TT *pThis, CCINIClas
 		pINI->ReadBool(section, "Wave.ReverseAgainstOthers", this->Wave_Reverse[idxOther]);
 
 	if(pThis->IsElectricBolt) {
-		this->Bolt_Color1.Read(&exINI, section, "Bolt.Color1");
-		this->Bolt_Color2.Read(&exINI, section, "Bolt.Color2");
-		this->Bolt_Color3.Read(&exINI, section, "Bolt.Color3");
+		this->Bolt_Color1.Read(exINI, section, "Bolt.Color1");
+		this->Bolt_Color2.Read(exINI, section, "Bolt.Color2");
+		this->Bolt_Color3.Read(exINI, section, "Bolt.Color3");
 	}
 
-	this->Laser_Thickness.Read(&exINI, section, "LaserThickness");
+	this->Laser_Thickness.Read(exINI, section, "LaserThickness");
 
 //	pData->Wave_InitialIntensity = pINI->ReadInteger(section, "Wave.InitialIntensity", pData->Wave_InitialIntensity);
 //	pData->Wave_IntensityStep    = pINI->ReadInteger(section, "Wave.IntensityStep", pData->Wave_IntensityStep);
 //	pData->Wave_FinalIntensity   = pINI->ReadInteger(section, "Wave.FinalIntensity", pData->Wave_FinalIntensity);
 
 	if(!pThis->Warhead) {
-		DEBUGLOG("Weapon %s doesn't have a Warhead yet, what gives?\n", section);
+		Debug::Log("Weapon %s doesn't have a Warhead yet, what gives?\n", section);
 		return;
 	}
 
 	if(pThis->Warhead->IvanBomb) {
-		this->Ivan_KillsBridges.Read(&exINI, section, "IvanBomb.DestroysBridges");
-		this->Ivan_Detachable.Read(&exINI, section, "IvanBomb.Detachable");
+		this->Ivan_KillsBridges.Read(exINI, section, "IvanBomb.DestroysBridges");
+		this->Ivan_Detachable.Read(exINI, section, "IvanBomb.Detachable");
 
-		this->Ivan_Damage.Read(&exINI, section, "IvanBomb.Damage");
-		this->Ivan_Delay.Read(&exINI, section, "IvanBomb.Delay");
+		this->Ivan_Damage.Read(exINI, section, "IvanBomb.Damage");
+		this->Ivan_Delay.Read(exINI, section, "IvanBomb.Delay");
 
-		this->Ivan_FlickerRate.Read(&exINI, section, "IvanBomb.FlickerRate");
+		this->Ivan_FlickerRate.Read(exINI, section, "IvanBomb.FlickerRate");
 
-		this->Ivan_TickingSound.Read(&exINI, section, "IvanBomb.TickingSound");
+		this->Ivan_TickingSound.Read(exINI, section, "IvanBomb.TickingSound");
 
-		this->Ivan_AttachSound.Read(&exINI, section, "IvanBomb.AttachSound");
+		this->Ivan_AttachSound.Read(exINI, section, "IvanBomb.AttachSound");
 
-		this->Ivan_WH.Parse(&exINI, section, "IvanBomb.Warhead");
+		this->Ivan_WH.Read(exINI, section, "IvanBomb.Warhead");
 
-		this->Ivan_Image.Read(&exINI, section, "IvanBomb.Image");
+		this->Ivan_Image.Read(exINI, section, "IvanBomb.Image");
 
-		this->Ivan_CanDetonateTimeBomb.Read(&exINI, section, "IvanBomb.CanDetonateTimeBomb");
-		this->Ivan_CanDetonateDeathBomb.Read(&exINI, section, "IvanBomb.CanDetonateDeathBomb");
+		this->Ivan_CanDetonateTimeBomb.Read(exINI, section, "IvanBomb.CanDetonateTimeBomb");
+		this->Ivan_CanDetonateDeathBomb.Read(exINI, section, "IvanBomb.CanDetonateDeathBomb");
 	}
 //
 /*
@@ -139,10 +122,10 @@ void WeaponTypeExt::ExtData::LoadFromINIFile(WeaponTypeExt::TT *pThis, CCINIClas
 	}
 */
 	// #680 Chrono Prison
-	this->Abductor.Read(&exINI, section, "Abductor");
-	this->Abductor_AnimType.Parse(&exINI, section, "Abductor.Anim");
-	this->Abductor_ChangeOwner.Read(&exINI, section, "Abductor.ChangeOwner");
-	this->Abductor_AbductBelowPercent.Read(&exINI, section, "Abductor.AbductBelowPercent");
+	this->Abductor.Read(exINI, section, "Abductor");
+	this->Abductor_AnimType.Read(exINI, section, "Abductor.Anim");
+	this->Abductor_ChangeOwner.Read(exINI, section, "Abductor.ChangeOwner");
+	this->Abductor_AbductBelowPercent.Read(exINI, section, "Abductor.AbductBelowPercent");
 }
 
 // #680 Chrono Prison / Abductor
@@ -256,15 +239,14 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 			
 			// if we have an abducting animation, play it
 			if (!!this->Abductor_AnimType){
-				AnimClass* Abductor_Anim = nullptr;
-				GAME_ALLOC(AnimClass, Abductor_Anim, this->Abductor_AnimType, &Bullet->posTgt);
+				GameCreate<AnimClass>(this->Abductor_AnimType, Bullet->posTgt);
 				//this->Abductor_Anim->Owner=Bullet->Owner->Owner;
 			}
 
 			Target->Locomotor->Force_Track(-1, CoordStruct::Empty);
 			CoordStruct coordsUnitSource = Target->GetCoords();
 			Target->Locomotor->Mark_All_Occupation_Bits(0);
-			Target->MarkAllOccupationBits(&coordsUnitSource);
+			Target->MarkAllOccupationBits(coordsUnitSource);
 			Target->ClearPlanningTokens(nullptr);
 			Target->Flashing.DurationRemaining = 0;
 
@@ -363,10 +345,38 @@ void WeaponTypeExt::ExtData::PlantBomb(TechnoClass* pSource, ObjectClass* pTarge
 
 			int index = this->Ivan_AttachSound.Get(RulesClass::Instance->BombAttachSound);
 			if(index != -1 && pSource->Owner->ControlledByPlayer()) {
-				VocClass::PlayAt(index, &pBomb->Target->Location, nullptr);
+				VocClass::PlayAt(index, pBomb->Target->Location, nullptr);
 			}
 		}
 	}
+}
+
+// wave colors will be bound to the default values, thus a change of wave
+// type will still point to the appropriate value, as long as the modder does not
+// set the color by hand, in which case that value is used.
+ColorStruct WeaponTypeExt::ExtData::GetWaveColor() const {
+	auto pThis = this->AttachedToObject;
+
+	if(pThis->IsMagBeam) {
+		return this->Wave_Color.Get(WeaponTypeExt::ExtData::DefaultWaveColorMagBeam);
+	} else if(pThis->IsSonic) {
+		return this->Wave_Color.Get(WeaponTypeExt::ExtData::DefaultWaveColorSonic);
+	} else {
+		return this->Wave_Color.Get(WeaponTypeExt::ExtData::DefaultWaveColor);
+	}
+}
+
+ColorStruct WeaponTypeExt::ExtData::GetBeamColor() const {
+	auto pThis = this->AttachedToObject;
+
+	if(pThis->IsRadBeam || pThis->IsRadEruption) {
+		if(pThis->Warhead && pThis->Warhead->Temporal) { //Marshall added the check for Warhead because PrismForwarding.SupportWeapon does not require a Warhead
+			// Well, a RadEruption Temporal will look pretty funny, but this is what WW uses
+			return this->Beam_Color.Get(RulesClass::Instance->ChronoBeamColor);
+		}
+	}
+
+	return this->Beam_Color.Get(RulesClass::Instance->RadColor);
 }
 
 void Container<WeaponTypeExt>::InvalidatePointer(void *ptr, bool bRemoved) {
@@ -379,7 +389,7 @@ void Container<WeaponTypeExt>::InvalidatePointer(void *ptr, bool bRemoved) {
 // =============================
 // load/save
 
-void Container<WeaponTypeExt>::Save(WeaponTypeClass *pThis, IStream *pStm) {
+bool Container<WeaponTypeExt>::Save(WeaponTypeClass *pThis, IStream *pStm) {
 	WeaponTypeExt::ExtData* pData = this->SaveKey(pThis, pStm);
 
 	if(pData) {
@@ -406,11 +416,12 @@ void Container<WeaponTypeExt>::Save(WeaponTypeClass *pThis, IStream *pStm) {
 			pStm->Write(ptr, 4, &out);
 			pStm->Write(WeaponTypeExt::RadSiteExt[ptr], 4, &out);
 		}
-
 	}
+
+	return pData != nullptr;
 }
 
-void Container<WeaponTypeExt>::Load(WeaponTypeClass *pThis, IStream *pStm) {
+bool Container<WeaponTypeExt>::Load(WeaponTypeClass *pThis, IStream *pStm) {
 	WeaponTypeExt::ExtData* pData = this->LoadKey(pThis, pStm);
 
 	ULONG out;
@@ -453,6 +464,8 @@ void Container<WeaponTypeExt>::Load(WeaponTypeClass *pThis, IStream *pStm) {
 
 	SWIZZLE(pData->Ivan_WH);
 	SWIZZLE(pData->Ivan_Image);
+
+	return pData != nullptr;
 }
 
 // =============================
@@ -481,8 +494,7 @@ DEFINE_HOOK(772CD0, WeaponTypeClass_SaveLoad_Prefix, 7)
 	GET_STACK(WeaponTypeExt::TT*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
 
-	Container<WeaponTypeExt>::SavingObject = pItem;
-	Container<WeaponTypeExt>::SavingStream = pStm;
+	Container<WeaponTypeExt>::PrepareStream(pItem, pStm);
 
 	return 0;
 }

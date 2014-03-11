@@ -4,14 +4,14 @@
 #include "../../Enum/Prerequisites.h"
 #include "../../Misc/Debug.h"
 #include "../Rules/Body.h"
+#include "../../Utilities/TemplateDef.h"
 
 // =============================
 // other hooks
 
 DEFINE_HOOK(732D10, TacticalClass_CollectSelectedIDs, 5)
 {
-	DynamicVectorClass<const char*> *pNames = nullptr;
-	GAME_ALLOC(DynamicVectorClass<const char*>, pNames);
+	auto pNames = GameCreate<DynamicVectorClass<const char*>>();
 
 	auto Add = [pNames](TechnoTypeClass* pType) {
 		if(auto pExt = TechnoTypeExt::ExtMap.Find(pType)) {
@@ -98,7 +98,7 @@ DEFINE_HOOK(715320, TechnoTypeClass_LoadFromINI_EarlyReader, 6)
 	INI_EX exINI(pINI);
 	TechnoTypeExt::ExtData *pData = TechnoTypeExt::ExtMap.Find(pType);
 
-	pData->WaterImage.Parse(&exINI, pType->ID, "WaterImage");
+	pData->WaterImage.Read(exINI, pType->ID, "WaterImage");
 
 	return 0;
 }
@@ -140,10 +140,41 @@ DEFINE_HOOK(4444E2, BuildingClass_KickOutUnit_FindAlternateKickout, 6)
 	return 0x444508;
 }
 
+DEFINE_HOOK(444DBC, BuildingClass_KickOutUnit_Infantry, 5) {
+	GET(TechnoClass*, Production, EDI);
+	GET(BuildingClass*, Factory, ESI);
 
-DEFINE_HOOK(444159, BuildingClass_KickOutUnit_Clone, 6) {
-	GET(TechnoClass *, Production, EDI);
-	GET(BuildingClass *, Factory, ESI);
+	// turn it off
+	--Unsorted::IKnowWhatImDoing;
+
+	auto pFactoryData = BuildingExt::ExtMap.Find(Factory);
+	pFactoryData->KickOutClones(Production);
+
+	// turn it back on so the game can turn it off again
+	++Unsorted::IKnowWhatImDoing;
+
+	return 0;
+}
+
+DEFINE_HOOK(4445F6, BuildingClass_KickOutUnit_Clone_NonNavalUnit, 5) {
+	GET(TechnoClass*, Production, EDI);
+	GET(BuildingClass*, Factory, ESI);
+
+	// turn it off
+	--Unsorted::IKnowWhatImDoing;
+
+	auto pFactoryData = BuildingExt::ExtMap.Find(Factory);
+	pFactoryData->KickOutClones(Production);
+
+	// turn it back on so the game can turn it off again
+	++Unsorted::IKnowWhatImDoing;
+
+	return 0x444971;
+}
+
+DEFINE_HOOK(44441A, BuildingClass_KickOutUnit_Clone_NavalUnit, 6) {
+	GET(TechnoClass*, Production, EDI);
+	GET(BuildingClass*, Factory, ESI);
 
 	auto pFactoryData = BuildingExt::ExtMap.Find(Factory);
 	pFactoryData->KickOutClones(Production);

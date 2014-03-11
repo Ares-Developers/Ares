@@ -10,23 +10,6 @@
 
 #include <new>
 
-#include "Ext/Abstract/Body.h"
-#include "Ext/Building/Body.h"
-#include "Ext/BuildingType/Body.h"
-#include "Ext/Bullet/Body.h"
-#include "Ext/BulletType/Body.h"
-#include "Ext/House/Body.h"
-#include "Ext/HouseType/Body.h"
-#include "Ext/Infantry/Body.h"
-#include "Ext/Rules/Body.h"
-#include "Ext/Side/Body.h"
-#include "Ext/SWType/Body.h"
-#include "Ext/Techno/Body.h"
-#include "Ext/TechnoType/Body.h"
-#include "Ext/TEvent/Body.h"
-#include "Ext/WarheadType/Body.h"
-#include "Ext/WeaponType/Body.h"
-
 #include "Misc/Debug.h"
 #include "Misc/EMPulse.h"
 
@@ -64,13 +47,13 @@ size_t MemMap::Total;
 void Ares::InitOwnResources()
 {
 	UninitOwnResources();
-	GAME_ALLOC(MixFileClass, aresMIX, "ares.mix");
+	aresMIX = GameCreate<MixFileClass>("ares.mix");
 }
 
 void Ares::UninitOwnResources()
 {
 	if(aresMIX) {
-		GAME_DEALLOC(aresMIX);
+		GameDelete(aresMIX);
 		aresMIX = nullptr;
 	}
 }
@@ -166,18 +149,16 @@ void __stdcall Ares::ExeTerminate()
 }
 
 CCINIClass* Ares::OpenConfig(const char* file) {
-	CCINIClass* pINI = nullptr;
-	GAME_ALLOC(CCINIClass, pINI);
+	CCINIClass* pINI = GameCreate<CCINIClass>();
 
 	if(pINI) {
-		CCFileClass *cfg = nullptr;
-		GAME_ALLOC(CCFileClass, cfg, file);
+		CCFileClass* cfg = GameCreate<CCFileClass>(file);
 
 		if(cfg) {
 			if(cfg->Exists(nullptr)) {
 				pINI->ReadCCFile(cfg);
 			}
-			GAME_DEALLOC(cfg);
+			GameDelete(cfg);
 		}
 	}
 
@@ -239,7 +220,7 @@ void Ares::CheckProcessorFeatures() {
 
 void Ares::CloseConfig(CCINIClass** ppINI) {
 	if(ppINI && *ppINI) {
-		GAME_DEALLOC(*ppINI);
+		GameDelete(*ppINI);
 		*ppINI = nullptr;
 	}
 }
@@ -247,11 +228,9 @@ void Ares::CloseConfig(CCINIClass** ppINI) {
 //A new SendPDPlane function
 //Allows vehicles, sends one single plane for all types
 void Ares::SendPDPlane(HouseClass* pOwner, CellClass* pTarget, AircraftTypeClass* pPlaneType,
-		TypeList<TechnoTypeClass*>* pTypes, TypeList<int>* pNums)
+	const Iterator<TechnoTypeClass*> &Types, const Iterator<int> &Nums)
 {
-	if(pNums && pTypes &&
-		pNums->Count == pTypes->Count &&
-		pNums->Count > 0 &&
+	if(Nums.size() == Types.size() && Nums.size() > 0 &&
 		pOwner && pPlaneType && pTarget)
 	{
 		++Unsorted::IKnowWhatImDoing;
@@ -261,18 +240,17 @@ void Ares::SendPDPlane(HouseClass* pOwner, CellClass* pTarget, AircraftTypeClass
 		pPlane->Spawned = true;
 
 		//Get edge (direction for plane to come from)
-		int edge = pOwner->StartingEdge;
-		if(edge < edge_NORTH || edge > edge_WEST) {
+		auto edge = pOwner->StartingEdge;
+		if(edge < Edge::North || edge > Edge::West) {
 			edge = pOwner->Edge;
-			if(edge < edge_NORTH || edge > edge_WEST) {
-				edge = edge_NORTH;
+			if(edge < Edge::North || edge > Edge::West) {
+				edge = Edge::North;
 			}
 		}
 
-		//some ASM magic, seems to retrieve a random cell struct at a given edge
-		CellStruct spawn_cell;
-
-		MapClass::Instance->PickCellOnEdge(&spawn_cell, edge, (CellStruct *)0xB04C38, (CellStruct *)0xB04C38, 4, 1, 0);
+		// seems to retrieve a random cell struct at a given edge
+		CellStruct spawn_cell = MapClass::Instance->PickCellOnEdge(edge, CellStruct::Empty,
+			CellStruct::Empty, SpeedType::Winged, true, MovementZone::Normal);
 
 		pPlane->QueueMission(mission_ParadropApproach, false);
 
@@ -280,21 +258,21 @@ void Ares::SendPDPlane(HouseClass* pOwner, CellClass* pTarget, AircraftTypeClass
 			pPlane->SetTarget(pTarget);
 		}
 
-		CoordStruct spawn_crd = {(spawn_cell.X << 8) + 128, (spawn_cell.Y << 8) + 128, 0};
+		CoordStruct spawn_crd = CellClass::Cell2Coord(spawn_cell);
 
 		++Unsorted::IKnowWhatImDoing;
-		bool bSpawned = pPlane->Put(&spawn_crd, Direction::North);
+		bool bSpawned = pPlane->Put(spawn_crd, Direction::North);
 		--Unsorted::IKnowWhatImDoing;
 
 		if(bSpawned) {
 			pPlane->HasPassengers = true;
-			for(int i = 0; i < pTypes->Count; i++) {
-				TechnoTypeClass* pTechnoType = pTypes->GetItem(i);
+			for(size_t i = 0; i < Types.size(); i++) {
+				TechnoTypeClass* pTechnoType = Types.at(i);
 
 				//only allow infantry and vehicles
 				eAbstractType WhatAmI = pTechnoType->WhatAmI();
 				if(WhatAmI == abs_UnitType || WhatAmI == abs_InfantryType) {
-					for(int k = 0; k < pNums->Items[i]; k++) {
+					for(int k = 0; k < Nums[i]; k++) {
 						FootClass* pNew = reinterpret_cast<FootClass*>(pTechnoType->CreateObject(pOwner));
 						pNew->Remove();
 						pPlane->Passengers.AddPassenger(pNew);
@@ -304,7 +282,7 @@ void Ares::SendPDPlane(HouseClass* pOwner, CellClass* pTarget, AircraftTypeClass
 			pPlane->NextMission();
 		} else {
 			if(pPlane) {
-				GAME_DEALLOC(pPlane);
+				GameDelete(pPlane);
 			}
 		}
 	}
@@ -399,60 +377,9 @@ DEFINE_HOOK(533058, CommandClassCallback_Register, 7)
 {
 	Ares::RegisterCommands();
 
-	DWORD *D;
-	GAME_ALLOC(DWORD, D);
-	R->EAX<DWORD *>(D);	//Allocate SetUnitTabCommandClass
+	DWORD* D = GameCreate<DWORD>();
+	R->EAX(D);	//Allocate SetUnitTabCommandClass
 	return 0x533062;
-}
-
-
-DEFINE_HOOK(7258D0, AnnounceInvalidPointer, 6)
-{
-	GET(void *, DEATH, ECX);
-	GET(bool, bRemoved, EDX);
-
-//	Debug::Log("PointerGotInvalid: %X\n", DEATH);
-
-	AbstractExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
-	BuildingExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
-	BuildingTypeExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
-	BulletExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
-	BulletTypeExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
-	HouseExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
-	HouseTypeExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
-	InfantryExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
-	SideExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
-	SWTypeExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
-	TechnoExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
-	TechnoTypeExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
-	TEventExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
-	WarheadTypeExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
-	WeaponTypeExt::ExtMap.PointerGotInvalid(DEATH, bRemoved);
-
-	RulesExt::Global()->InvalidatePointer(DEATH, bRemoved);
-
-	return 0;
-}
-
-DEFINE_HOOK(685659, Scenario_ClearClasses, a)
-{
-	BuildingExt::ExtMap.Empty();
-	BuildingExt::Cleanup();
-	BuildingTypeExt::ExtMap.Empty();
-//	BulletExt::ExtMap.Empty();
-	BulletTypeExt::ExtMap.Empty();
-	HouseExt::ExtMap.Empty();
-	HouseTypeExt::ExtMap.Empty();
-	SideExt::ExtMap.Empty();
-	SWTypeExt::ExtMap.Empty();
-	TechnoExt::ExtMap.Empty();
-	TechnoTypeExt::ExtMap.Empty();
-	WarheadTypeExt::ExtMap.Empty();
-	WeaponTypeExt::ExtMap.Empty();
-
-	RulesExt::ClearCameos();
-
-	return 0;
 }
 
 /*
@@ -521,22 +448,6 @@ DEFINE_HOOK(47B026, FileFindOpen, 8)
 	return 0x47B02E;
 }
 
-bool Ares::RunningOnWindows7OrVista() {
-	static bool W7 = false;
-	static bool Checked = false;
-	if(!Checked) {
-		Checked = true;
-		OSVERSIONINFO osvi;
-
-		ZeroMemory(&osvi, sizeof(OSVERSIONINFO));
-		osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-		GetVersionEx(&osvi);
-
-		W7 = (osvi.dwMajorVersion == 6)/* && (osvi.dwMinorVersion >= 1)*/;
-	}
-	return W7;
-}
-
 void Ares::UpdateStability() {
 	if(Ares::bStable) {
 		return;
@@ -549,6 +460,23 @@ void Ares::UpdateStability() {
 			"This suggests that your version of Ares has been tampered with "
 			"and the original developers cannot be held responsible for any problems you might experience.");
 	}
+}
+
+void Ares::SaveGame() {
+	Debug::Log("About to save the game\n");
+}
+
+HRESULT Ares::SaveGameData(IStream *pStm) {
+	Debug::Log("Finished saving the game\n");
+	return S_OK;
+}
+
+void Ares::LoadGame() {
+	Debug::Log("About to load the game\n");
+}
+
+void Ares::LoadGameData(IStream *pStm) {
+	Debug::Log("Finished loading the game\n");
 }
 
 #define YR_SIZE_1000 0x496110

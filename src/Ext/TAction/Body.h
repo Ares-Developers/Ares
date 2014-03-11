@@ -17,19 +17,17 @@ class TActionExt
 	class ExtData : public Extension<TT>
 	{
 		public:
-		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject)
+		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject)
 		{
 		};
 
 		virtual ~ExtData() {
 		}
 
-		virtual size_t Size() const { return sizeof(*this); };
-
 		virtual void LoadFromINIFile(TT *pThis, CCINIClass *pINI) {}
 		virtual void Initialize(TT *pThis);
 
-		virtual void InvalidatePointer(void *ptr) {
+		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
 		}
 
 		// executing actions

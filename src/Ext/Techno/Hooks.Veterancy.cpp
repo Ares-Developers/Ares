@@ -6,11 +6,11 @@
 DEFINE_HOOK(702E9D, TechnoClass_RegisterDestruction_Veterancy, 6) {
 	GET(TechnoClass*, pKiller, EDI);
 	GET(TechnoClass*, pVictim, ESI);
-	GET(int, VictimCost, EBP);
+	GET(const int, VictimCost, EBP);
 
 	// get the unit that receives veterancy
 	TechnoClass* pExperience = nullptr;
-	float ExpFactor = 1.0F;
+	double ExpFactor = 1.0;
 
 	// before we do any other logic, check if this kill was committed by an
 	// air strike and its designator shall get the experience. 
@@ -91,33 +91,67 @@ DEFINE_HOOK(702E9D, TechnoClass_RegisterDestruction_Veterancy, 6) {
 
 	// update the veterancy
 	if(pExperience) {
-		int KillerCost = pExperience->GetTechnoType()->GetActualCost(pExperience->Owner);
-		int WeightedVictimCost = (int)(VictimCost * ExpFactor);
 
 		// no way to get experience by proxy by an enemy unit. you cannot
 		// promote your mind-controller by capturing friendly units.
 		if(pExperience->Owner->IsAlliedWith(pKiller)) {
 
-			// mind-controllers get experience, too.
-			if(pExperience->MindControlledBy && !pExperience->MindControlledBy->Owner->IsAlliedWith(pVictim->Owner)) {
+			auto AddExperience = [](TechnoClass* pTechno, int victimCost, double factor) {
+				auto TechnoCost = pTechno->GetTechnoType()->GetActualCost(pTechno->Owner);
+				auto WeightedVictimCost = static_cast<int>(victimCost * factor);
+				if(TechnoCost > 0 && WeightedVictimCost > 0) {
+					pTechno->Veterancy.Add(TechnoCost, WeightedVictimCost);
+				}
+			};
 
-				// get the mind controllers extended properties
-				TechnoTypeClass* pTController = pExperience->MindControlledBy->GetTechnoType();
-				if(TechnoTypeExt::ExtData* pTControllerData = TechnoTypeExt::ExtMap.Find(pTController)) {
-					// modifiy the cost of the victim.
-					WeightedVictimCost = (int)(WeightedVictimCost * pTControllerData->MindControlExperienceVictimModifier);
+			// if this is a non-missile spawn, handle the spawn manually and switch over to the
+			// owner then. this way, a mind-controlled owner is supported.
+			TechnoClass* pSpawn = nullptr;
+			double SpawnFactor = 1.0;
+			if(auto pSpawner = pExperience->SpawnOwner) {
+				auto pTSpawner = pSpawner->GetTechnoType();
+
+				if(!pTSpawner->MissileSpawn && pTSpawner->Trainable) {
+					auto pTSpawnerData = TechnoTypeExt::ExtMap.Find(pTSpawner);
+
+					// add experience to the spawn. this is done later so mind-control
+					// can be factored in.
+					SpawnFactor = pTSpawnerData->SpawnExperienceSpawnModifier;
+					pSpawn = pExperience;
+
+					// switch over to spawn owners, and factor in the spawner multiplier
+					ExpFactor *= pTSpawnerData->SpawnExperienceOwnerModifier;
+					pExperience = pSpawner;
+				}
+			}
+
+			// mind-controllers get experience, too.
+			if(auto pController = pExperience->MindControlledBy) {
+				if(!pController->Owner->IsAlliedWith(pVictim->Owner)) {
+
+					// get the mind controllers extended properties
+					auto pTController = pController->GetTechnoType();
+					auto pTControllerData = TechnoTypeExt::ExtMap.Find(pTController);
 
 					// promote the mind-controller
 					if(pTController->Trainable) {
-						// the mind controller get's its own factor
-						int MindControllerCost = pTController->GetActualCost(pExperience->MindControlledByHouse);
-						pExperience->MindControlledBy->Veterancy.Add(MindControllerCost, (int)(WeightedVictimCost * pTControllerData->MindControlExperienceSelfModifier));
+						// the mind controller gets its own factor
+						auto ControllerFactor = ExpFactor * pTControllerData->MindControlExperienceSelfModifier;
+						AddExperience(pController, VictimCost, ControllerFactor);
 					}
+
+					// modify the cost of the victim.
+					ExpFactor *= pTControllerData->MindControlExperienceVictimModifier;
 				}
 			}
 
 			// default. promote the unit this function selected.
-			pExperience->Veterancy.Add(KillerCost, WeightedVictimCost);
+			AddExperience(pExperience, VictimCost, ExpFactor);
+
+			// if there is a spawn, let it get its share.
+			if(pSpawn) {
+				AddExperience(pSpawn, VictimCost, ExpFactor * SpawnFactor);
+			}
 
 			// gunners need to be promoted manually, or they won't only get
 			// the experience until after they exited their transport once.
@@ -133,8 +167,8 @@ DEFINE_HOOK(702E9D, TechnoClass_RegisterDestruction_Veterancy, 6) {
 							sound = RulesClass::Instance->UpgradeEliteSound;
 						}
 
-						if(sound != -1 && pExperience->Owner->IsHumanoid()) {
-							VocClass::PlayAt(sound, &pExperience->Transporter->Location, nullptr);
+						if(sound != -1 && pExperience->Owner->ControlledByHuman()) {
+							VocClass::PlayAt(sound, pExperience->Transporter->Location, nullptr);
 							VoxClass::Play("EVA_UnitPromoted");
 						}
 					}

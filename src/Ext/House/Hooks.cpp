@@ -1,5 +1,6 @@
 #include "Body.h"
 #include "../Building/Body.h"
+#include "../Rules/Body.h"
 #include "../Techno/Body.h"
 #include "../TechnoType/Body.h"
 
@@ -358,4 +359,111 @@ DEFINE_HOOK(522D75, InfantryClass_Slave_UnloadAt_Storage, 6)
 	}
 
 	return 0x522E38;
+}
+
+// drain affecting only the drained power plant
+DEFINE_HOOK(508D32, HouseClass_UpdatePower_LocalDrain1, 5)
+{
+	GET(HouseClass*, pThis, ESI);
+	GET(BuildingClass*, pBld, EDI);
+
+	bool fullDrain = true;
+
+	auto output = pBld->GetPowerOutput();
+
+	if(output > 0) {
+		auto pBldTypeExt = TechnoTypeExt::ExtMap.Find(pBld->Type);
+		auto pDrainTypeExt = TechnoTypeExt::ExtMap.Find(pBld->DrainingMe->GetTechnoType());
+
+		// local, if any of the participants in the drain is local
+		if(pBldTypeExt->Drain_Local || pDrainTypeExt->Drain_Local) {
+			fullDrain = false;
+
+			// use the sign to select min or max.
+			// 0 means no change (maximum of 0 and a positive value)
+			auto limit = [](int value, int limit) {
+				if(limit <= 0) {
+					return std::max(value, -limit);
+				} else {
+					return std::min(value, limit);
+				}
+			};
+
+			// drains the entire output of this building by default
+			// (the local output). building has the last word though.
+			auto drain = limit(output, pDrainTypeExt->Drain_Amount);
+			drain = limit(drain, pBldTypeExt->Drain_Amount);
+
+			if(drain > 0) {
+				pThis->PowerOutput -= drain;
+			}
+		}
+	}
+
+	return fullDrain ? 0 : 0x508D37;
+}
+
+// sanitize the power output
+DEFINE_HOOK(508D4A, HouseClass_UpdatePower_LocalDrain2, 6)
+{
+	GET(HouseClass*, pThis, ESI);
+	if(pThis->PowerOutput < 0) {
+		pThis->PowerOutput = 0;
+	}
+	return 0;
+}
+
+DEFINE_HOOK(4FC731, HouseClass_DestroyAll_ReturnStructures, 7)
+{
+	GET_STACK(HouseClass*, pThis, STACK_OFFS(0x18, 0x8));
+	GET(TechnoClass*, pTechno, ESI);
+
+	// do not return structures in campaigns
+	if(SessionClass::Instance->GameMode == GameMode::Campaign) {
+		return 0;
+	}
+
+	// check whether this is a building
+	if(auto pBld = abstract_cast<BuildingClass*>(pTechno)) {
+		auto pInitialOwner = pBld->InitialOwner;
+
+		// was the building owned by a neutral country?
+		if(!pInitialOwner || pInitialOwner->Type->MultiplayPassive) {
+			auto pExt = BuildingTypeExt::ExtMap.Find(pBld->Type);
+
+			auto occupants = pBld->GetOccupantCount();
+			auto canReturn = (pInitialOwner != pThis) || occupants > 0;
+
+			if(canReturn && pExt->Returnable.Get(RulesExt::Global()->ReturnStructures)) {
+
+				// this may change owner
+				if(occupants) {
+					pBld->KillOccupants(nullptr);
+				}
+
+				// don't do this when killing occupants already changed owner
+				if(pBld->GetOwningHouse() == pThis) {
+
+					// fallback to first civilian side house, same logic SlaveManager uses
+					if(!pInitialOwner) {
+						pInitialOwner = HouseClass::FindCivilianSide();
+					}
+
+					// give to other house and disable
+					if(pInitialOwner && pBld->SetOwningHouse(pInitialOwner, false)) {
+						pBld->Guard();
+
+						if(pBld->Type->NeedsEngineer) {
+							pBld->HasEngineer = false;
+							pBld->DisableStuff();
+						}
+
+						return 0x4FC770;
+					}
+				}
+			}
+		}
+	}
+
+	return 0;
 }

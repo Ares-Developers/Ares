@@ -37,7 +37,7 @@ public:
 //		int Cameo_CurrentFrame;
 //		TimerStruct Cameo_Timer;
 
-		DynamicVectorClass< DynamicVectorClass<int>* > PrerequisiteLists;
+		std::vector<std::unique_ptr<DynamicVectorClass<int>>> PrerequisiteLists;
 		DynamicVectorClass<int> PrerequisiteNegatives;
 		DWORD PrerequisiteTheaters;
 
@@ -78,13 +78,14 @@ public:
 
 		std::bitset<32> RequiredStolenTech;
 
-		Customizable<bool> ImmuneToEMP;
+		Nullable<bool> ImmuneToEMP;
 		bool VeteranAbilityEMPIMMUNE;
 		bool EliteAbilityEMPIMMUNE;
 		int EMP_Threshold;
 		float EMP_Modifier;
 
-		float IC_Modifier;
+		Valueable<double> IronCurtain_Modifier;
+		Valueable<double> ForceShield_Modifier;
 
 		Valueable<bool> Chronoshift_Allow;
 		Valueable<bool> Chronoshift_IsVehicle;
@@ -95,13 +96,15 @@ public:
 
 		bool AlternateTheaterArt;
 		
-		bool PassengersGainExperience;
-		bool ExperienceFromPassengers;
-		float PassengerExperienceModifier;
-		float MindControlExperienceSelfModifier;
-		float MindControlExperienceVictimModifier;
-		bool ExperienceFromAirstrike;
-		float AirstrikeExperienceModifier;
+		Valueable<bool> PassengersGainExperience;
+		Valueable<bool> ExperienceFromPassengers;
+		Valueable<double> PassengerExperienceModifier;
+		Valueable<double> MindControlExperienceSelfModifier;
+		Valueable<double> MindControlExperienceVictimModifier;
+		Valueable<double> SpawnExperienceOwnerModifier;
+		Valueable<double> SpawnExperienceSpawnModifier;
+		Valueable<bool> ExperienceFromAirstrike;
+		Valueable<double> AirstrikeExperienceModifier;
 
 		ValueableIdx<VocClass> VoiceRepair;
 
@@ -112,7 +115,7 @@ public:
 		Valueable<bool> HijackerAllowed;
 		Valueable<bool> HijackerOneTime;
 
-		Customizable<UnitTypeClass *> WaterImage;
+		Valueable<UnitTypeClass *> WaterImage;
 
 		NullableIdx<VocClass> CloakSound;
 		NullableIdx<VocClass> DecloakSound;
@@ -155,6 +158,8 @@ public:
 		Valueable<bool> GattlingCyclic;
 
 		Nullable<bool> Crashable;
+		Valueable<bool> CrashSpin;
+		Valueable<int> AirRate;
 
 		// custom missiles
 		Valueable<bool> IsCustomMissile;
@@ -176,7 +181,10 @@ public:
 
 		ValueableIdx<VoxClass> EVA_UnitLost;
 
-		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
+		Valueable<bool> Drain_Local;
+		Valueable<int> Drain_Amount;
+
+		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			Survivors_PilotChance (),
 			Survivors_PassengerChance (),
 			Survivors_PilotCount (-1),
@@ -196,6 +204,8 @@ public:
 			Spot_DisableG (false),
 			Spot_DisableB (false),
 			Spot_Reverse (false),
+			Drain_Local (false),
+			Drain_Amount (0),
 			Is_Bomb (false),
 			Insignia (),
 			Parachute_Anim (nullptr),
@@ -205,7 +215,8 @@ public:
 			RequiredStolenTech(0ull),
 			Chronoshift_Allow (true),
 			Chronoshift_IsVehicle (false),
-			IC_Modifier (1.0F),
+			IronCurtain_Modifier (1.0),
+			ForceShield_Modifier (1.0),
 			EMP_Threshold (-1),
 			EMP_Modifier (1.0F),
 			VeteranAbilityEMPIMMUNE (false),
@@ -216,10 +227,12 @@ public:
 			PassengersGainExperience (false),
 			ExperienceFromPassengers (true),
 			ExperienceFromAirstrike (false),
-			AirstrikeExperienceModifier (1.0F),
-			PassengerExperienceModifier (1.0F),
-			MindControlExperienceSelfModifier (0.0F),
-			MindControlExperienceVictimModifier (1.0F),
+			AirstrikeExperienceModifier (1.0),
+			PassengerExperienceModifier (1.0),
+			MindControlExperienceSelfModifier (0.0),
+			MindControlExperienceVictimModifier (1.0),
+			SpawnExperienceOwnerModifier (0.0),
+			SpawnExperienceSpawnModifier (1.0),
 			Insignia_ShowEnemy(),
 			GattlingCyclic (false),
 			IsCustomMissile (false),
@@ -249,6 +262,7 @@ public:
 			CloakAllowed (true),
 			CloakStages (),
 			SensorArray_Warn (true),
+			CrashSpin (true),
 			CanBeReversed (true),
 			RadarJamRadius (0),
 			PassengerTurret (false),
@@ -267,8 +281,6 @@ public:
 			};
 
 		virtual ~ExtData() {};
-
-		virtual size_t Size() const { return sizeof(*this); };
 
 		virtual void LoadFromINIFile(TT *pThis, CCINIClass *pINI);
 		virtual void Initialize(TT *pThis);

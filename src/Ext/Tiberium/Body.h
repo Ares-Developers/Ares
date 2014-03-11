@@ -31,7 +31,7 @@ class TiberiumExt
 
 		Valueable<int> DebrisChance;
 
-		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
+		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			Damage(),
 			Warhead(),
 			Heal_Step(),
@@ -47,8 +47,6 @@ class TiberiumExt
 		virtual ~ExtData() {
 
 		}
-
-		virtual size_t Size() const { return sizeof(*this); };
 
 		virtual void LoadFromINIFile(TT *pThis, CCINIClass *pINI);
 		virtual void Initialize(TT *pThis);

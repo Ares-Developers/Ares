@@ -1,8 +1,11 @@
 #include "ParaDrop.h"
 #include "../../Ares.h"
 #include "../../Ext/HouseType/Body.h"
+#include "../../Utilities/TemplateDef.h"
 
 #include <SideClass.h>
+
+#include <algorithm>
 
 bool SW_ParaDrop::HandlesType(int type)
 {
@@ -15,16 +18,17 @@ void SW_ParaDrop::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pS
 	if(pSW->Type == SuperWeaponType::AmerParaDrop) {
 		// the American paradrop will be the same for every country,
 		// thus we use the SW's default here.
-		ParadropPlane* pPlane = new ParadropPlane();
-		pData->ParaDropPlanes.AddItem(pPlane);
-		pData->ParaDrop[nullptr].AddItem(pPlane);
+		pData->ParaDropPlanes.push_back(std::make_unique<ParadropPlane>());
+
+		ParadropPlane* pPlane = pData->ParaDropPlanes.back().get();
+		pData->ParaDrop[nullptr].push_back(pPlane);
 
 		for(int i = 0; i < RulesClass::Instance->AmerParaDropInf.Count; ++i) {
-			pPlane->pTypes.AddItem((RulesClass::Instance->AmerParaDropInf.GetItem(i)));
+			pPlane->Types.push_back((RulesClass::Instance->AmerParaDropInf.GetItem(i)));
 		}
 
 		for(int i = 0; i < RulesClass::Instance->AmerParaDropNum.Count; ++i) {
-			pPlane->pNum.AddItem(RulesClass::Instance->AmerParaDropNum.GetItem(i));
+			pPlane->Num.push_back(RulesClass::Instance->AmerParaDropNum.GetItem(i));
 		}
 	}
 
@@ -49,26 +53,25 @@ void SW_ParaDrop::LoadFromINI(
 
 	char base[0x40];
 
-	auto CreateParaDropBase = [](char* pID, char* pBuffer) {
+	auto CreateParaDropBase = [](char* pID, char* pBuffer, size_t cbBuffer) {
 		// put a string like "Paradrop.Americans" into the buffer
 		if(pBuffer) {
-			AresCRT::strCopy(pBuffer, "ParaDrop", 9);
 			if(pID && strlen(pID)) {
-				AresCRT::strCopy(&pBuffer[8], ".", 2);
-				AresCRT::strCopy(&pBuffer[9], pID, 0x18);
+				_snprintf_s(pBuffer, cbBuffer, cbBuffer - 1, "ParaDrop.%s", pID);
+			} else {
+				AresCRT::strCopy(pBuffer, "ParaDrop", cbBuffer);
 			}
 		}
 	};
 
-	auto ParseParaDrop = [&](char* pID, int Plane) -> ParadropPlane* {
-		ParadropPlane* pPlane = nullptr;
+	auto ParseParaDrop = [&](char* pID, int Plane) -> std::unique_ptr<ParadropPlane> {
+		auto pPlane = std::make_unique<ParadropPlane>();
 
 		// create the plane part of this request. this will be
 		// an empty string for the first plane for this is the default.
 		char plane[0x10] = "";
 		if(Plane) {
-			AresCRT::strCopy(plane, ".Plane");
-			_itoa_s(Plane + 1, &plane[6], 10, 10);
+			_snprintf_s(plane, 0xF, ".Plane%d", Plane + 1);
 		}
 		
 		// construct the full tag name base
@@ -77,78 +80,47 @@ void SW_ParaDrop::LoadFromINI(
 
 		// parse the plane contents
 		_snprintf_s(key, 0x3F, "%s.Aircraft", base);
-		if(pINI->ReadString(section, key, "", Ares::readBuffer, Ares::readLength)) {
-			if(AircraftTypeClass* pTAircraft = AircraftTypeClass::Find(Ares::readBuffer)) {
-				pPlane = new ParadropPlane();
-				pPlane->pAircraft = pTAircraft;
-			} else {
-				Debug::INIParseFailed(section, key, Ares::readBuffer);
-			}
-		}
+		pPlane->Aircraft.Read(exINI, section, key);
 
 		// a list of UnitTypes and InfantryTypes
 		_snprintf_s(key, 0x3F, "%s.Types", base);
-		if(pINI->ReadString(section, key, "", Ares::readBuffer, Ares::readLength)) {
-			// create new plane if there is none yet
-			if(!pPlane) {
-				pPlane = new ParadropPlane();
+		pPlane->Types.Read(exINI, section, key);
+
+		// remove all types that aren't either infantry or unit types
+		pPlane->Types.erase(std::remove_if(pPlane->Types.begin(), pPlane->Types.end(), [section, &key](TechnoTypeClass* pItem) -> bool {
+			auto abs = pItem->WhatAmI();
+			if(abs == InfantryTypeClass::AbsID || abs == UnitTypeClass::AbsID) {
+				return false;
 			}
 
-			// parse the types
-			pPlane->pTypes.Clear();
-
-			char* context = nullptr;
-			for(char* p = strtok_s(Ares::readBuffer, Ares::readDelims, &context); p && *p; p = strtok_s(nullptr, Ares::readDelims, &context)) {
-				TechnoTypeClass* pTT = UnitTypeClass::Find(p);
-
-				if(!pTT) {
-					pTT = InfantryTypeClass::Find(p);
-				}
-
-				if(pTT) {
-					pPlane->pTypes.AddItem(pTT);
-				} else {
-					Debug::INIParseFailed(section, key, p);
-				}
-			}
-		}
+			Debug::INIParseFailed(section, key, pItem->ID, "Only InfantryTypes and UnitTypes are supported.");
+			return true;
+		}), pPlane->Types.end());
 
 		// don't parse nums if there are no types
-		if(!pPlane || !pPlane->pTypes.Count) {
-			return pPlane;
+		if(!pPlane->Aircraft && pPlane->Types.empty()) {
+			return nullptr;
 		}
 
 		// the number how many times each item is created
 		_snprintf_s(key, 0x3F, "%s.Num", base);
-		if(pINI->ReadString(section, key, "", Ares::readBuffer, Ares::readLength)) {
-			pPlane->pNum.Clear();
-
-			char* context = nullptr;
-			for(char* p = strtok_s(Ares::readBuffer, Ares::readDelims, &context); p && *p; p = strtok_s(nullptr, Ares::readDelims, &context)) {
-				pPlane->pNum.AddItem(atoi(p));
-			}
-		}
+		pPlane->Num.Read(exINI, section, key);
 
 		return pPlane;
 	};
 
-	auto GetParadropPlane = [&](char *pID, int defCount, DynamicVectorClass<ParadropPlane*>* ret) {
+	auto GetParadropPlane = [&](char *pID, int defCount, std::vector<ParadropPlane*> &ret) {
 		// get the number of planes for this house or side
 		char key[0x40];
 		_snprintf_s(key, 0x3F, "%s.Count", pID);
 		int count = pINI->ReadInteger(section, key, defCount);
 
 		// parse every plane
-		ret->SetCapacity(count, nullptr);
+		ret.resize(count, nullptr);
 		for(int i=0; i<count; ++i) {
-			if(i>=ret->Count) {
-				ret->AddItem(nullptr);
-			}
-			
-			ParadropPlane* pPlane = ParseParaDrop(base, i);
-			if(pPlane) {
-				pData->ParaDropPlanes.AddItem(pPlane);
-				ret->Items[i] = pPlane;
+			if(auto pPlane = ParseParaDrop(base, i)) {
+				ret[i] = pPlane.get();
+				pData->ParaDropPlanes.push_back(std::move(pPlane));
 			}
 		}
 	};
@@ -159,41 +131,38 @@ void SW_ParaDrop::LoadFromINI(
 	// n+1 to n+m+1: m countries
 
 	// default
-	CreateParaDropBase(nullptr, base);
-	GetParadropPlane(base, 1, &pData->ParaDrop[nullptr]);
+	CreateParaDropBase(nullptr, base, sizeof(base));
+	GetParadropPlane(base, 1, pData->ParaDrop[nullptr]);
 
 	// put all sides into the hash table
 	for(int i=0; i<SideClass::Array->Count; ++i) {
 		SideClass *pSide = SideClass::Array->GetItem(i);
-		CreateParaDropBase(pSide->ID, base);
-		GetParadropPlane(base, pData->ParaDrop[nullptr].Count, &pData->ParaDrop[pSide]);
+		CreateParaDropBase(pSide->ID, base, sizeof(base));
+		GetParadropPlane(base, pData->ParaDrop[nullptr].size(), pData->ParaDrop[pSide]);
 	}
 
 	// put all countries into the hash table
 	for(int i=0; i<HouseTypeClass::Array->Count; ++i) {
 		HouseTypeClass *pTHouse = HouseTypeClass::Array->GetItem(i);
-		CreateParaDropBase(pTHouse->ID, base);
-		GetParadropPlane(base, pData->ParaDrop[SideClass::Array->GetItem(pTHouse->SideIndex)].Count, &pData->ParaDrop[pTHouse]);
+		CreateParaDropBase(pTHouse->ID, base, sizeof(base));
+		GetParadropPlane(base, pData->ParaDrop[SideClass::Array->GetItem(pTHouse->SideIndex)].size(), pData->ParaDrop[pTHouse]);
 	}
 }
 
-bool SW_ParaDrop::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
+bool SW_ParaDrop::Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer)
 {
 	if(pThis->IsCharged) {
-		CellClass *pTarget = MapClass::Instance->GetCellAt(*pCoords);
+		CellClass *pTarget = MapClass::Instance->GetCellAt(Coords);
 
 		// find the nearest cell the paradrop troopers can land on
 		if(pTarget != MapClass::InvalidCell()) {
 			if(pTarget->Tile_Is_Water()) {
-				int a2 = 0;
-				int a14 = 0;
-				CellStruct *nearest = MapClass::Instance->Pathfinding_Find(&a2, pCoords, 0, -1, 0, 0, 1, 1, 0, 0, 0, 1, &a14, 0, 0);
-				if(*nearest != SuperClass::DefaultCoords) {
-					if(CellClass *pTemp = MapClass::Instance->GetCellAt(*nearest)) {
-						if(pTemp != MapClass::InvalidCell()) {
-							if(!pTemp->Tile_Is_Water()) {
-								pTarget = pTemp;
-							}
+				CellStruct nearest = MapClass::Instance->Pathfinding_Find(Coords, SpeedType::Foot, -1, MovementZone::Normal,
+					false, 1, 1, false, false, false, true, CellStruct::Empty, false, false);
+				if(nearest != CellStruct::Empty) {
+					if(CellClass *pTemp = MapClass::Instance->TryGetCellAt(nearest)) {
+						if(!pTemp->Tile_Is_Water()) {
+							pTarget = pTemp;
 						}
 					}
 				}
@@ -232,11 +201,16 @@ bool SW_ParaDrop::SendParadrop(SuperClass* pThis, CellClass* pCell) {
 
 	// these are fallback values if the SW doesn't define them
 	AircraftTypeClass* pFallbackPlane = nullptr;
-	TypeList<TechnoTypeClass*> *pFallbackTypes = nullptr;
-	TypeList<int> *pFallbackNum = nullptr;
+	Iterator<TechnoTypeClass*> FallbackTypes;
+	Iterator<int> FallbackNum;
+
+	if(HouseTypeExt::ExtData *pExt = HouseTypeExt::ExtMap.Find(pHouse->Type)) {
+		pExt->GetParadropContent(FallbackTypes, FallbackNum);
+		pFallbackPlane = pExt->GetParadropPlane();
+	}
 
 	// get the paradrop list without creating a new value
-	auto GetParadropPlanes = [pData](AbstractTypeClass* pKey) -> DynamicVectorClass<ParadropPlane*>* {
+	auto GetParadropPlanes = [pData](AbstractTypeClass* pKey) -> std::vector<ParadropPlane*>* {
 		if(pData->ParaDrop.find(pKey) == pData->ParaDrop.end()) {
 			return nullptr;
 		}
@@ -244,7 +218,7 @@ bool SW_ParaDrop::SendParadrop(SuperClass* pThis, CellClass* pCell) {
 	};
 
 	// use paradrop lists from house, side and default
-	DynamicVectorClass<ParadropPlane*>* drops[3];
+	std::vector<ParadropPlane*>* drops[3];
 	drops[0] = GetParadropPlanes(pHouse->Type);
 	drops[1] = GetParadropPlanes(SideClass::Array->GetItem(pHouse->Type->SideIndex));
 	drops[2] = GetParadropPlanes(nullptr);
@@ -253,15 +227,15 @@ bool SW_ParaDrop::SendParadrop(SuperClass* pThis, CellClass* pCell) {
 	int count = 0;
 	for(int i=0; i<3; ++i) {
 		if(drops[i]) {
-			count = drops[i]->Count;
+			count = drops[i]->size();
 			break;
 		}
 	}
 
 	// assemble each plane and its contents
 	for(int i=0; i<count; ++i) { // i = index of plane
-		TypeList<TechnoTypeClass*> *pParaDrop = nullptr;
-		TypeList<int> *pParaDropNum = nullptr;
+		Iterator<TechnoTypeClass*> ParaDropTypes;
+		Iterator<int> ParaDropNum;
 		AircraftTypeClass* pParaDropPlane = nullptr;
 
 		// try the planes in order of precedence:
@@ -276,30 +250,29 @@ bool SW_ParaDrop::SendParadrop(SuperClass* pThis, CellClass* pCell) {
 			for(int k=0; k<3; ++k) { // index in the "drops" array
 
 				// only do something if there is data missing
-				if(!(pParaDrop && pParaDropNum && pParaDropPlane)) {
+				if(!(ParaDropTypes && ParaDropNum && pParaDropPlane)) {
 					// get the country/side-specific plane list
-					DynamicVectorClass<ParadropPlane*> *planes = drops[k];
-					if(!planes) {
+					auto planes = drops[k];
+					size_t index = i * j;
+
+					if(!planes || planes->size() <= index) {
 						continue;
 					}
 
 					// get the plane at specified index
-					int index = i * j;
-					if(ParadropPlane* pPlane = planes->GetItemOrDefault(index)) {
+					if(ParadropPlane* pPlane = planes->at(index)) {
 
 						// get the contents, if not already set
-						if(!pParaDrop || !pParaDropNum) {
-							if((pPlane->pTypes.Count != 0) && (pPlane->pNum.Count != 0)) {
-								pParaDrop = &pPlane->pTypes;
-								pParaDropNum = &pPlane->pNum;
+						if(!ParaDropTypes || !ParaDropNum) {
+							if(!pPlane->Types.empty() && !pPlane->Num.empty()) {
+								ParaDropTypes = pPlane->Types;
+								ParaDropNum = pPlane->Num;
 							}
 						}
 
 						// get the airplane, if it isn't set already
 						if(!pParaDropPlane) {
-							if(AircraftTypeClass* pTAircraft = pPlane->pAircraft) {
-								pParaDropPlane = pTAircraft;
-							}
+							pParaDropPlane = pPlane->Aircraft;
 						}
 					}
 				}
@@ -307,36 +280,24 @@ bool SW_ParaDrop::SendParadrop(SuperClass* pThis, CellClass* pCell) {
 		}
 
 		// fallback for types and nums
-		if(!pParaDrop || !pParaDropNum) {
-			if(!pFallbackTypes || !pFallbackNum) {
-				if(HouseTypeExt::ExtData *pExt = HouseTypeExt::ExtMap.Find(pHouse->Type)) {
-					pExt->GetParadropContent(&pFallbackTypes, &pFallbackNum);
-				}
-			}
-
-			pParaDrop = pFallbackTypes;
-			pParaDropNum = pFallbackNum;
+		if(!ParaDropTypes || !ParaDropNum) {
+			ParaDropTypes = FallbackTypes;
+			ParaDropNum = FallbackNum;
 		}
 
 		// house fallback for the plane
 		if(!pParaDropPlane) {
-			if(!pFallbackPlane) {
-				if(HouseTypeExt::ExtData *pExt = HouseTypeExt::ExtMap.Find(pHouse->Type)) {
-					pFallbackPlane = pExt->GetParadropPlane();
-				}
-			}
-
 			pParaDropPlane = pFallbackPlane;
 		}
 
 		// finally, send the plane
-		if(pParaDrop && pParaDropNum && pParaDropPlane) {
+		if(ParaDropTypes && ParaDropNum && pParaDropPlane) {
 			Ares::SendPDPlane(
 				pHouse,
 				pCell,
 				pParaDropPlane,
-				pParaDrop,
-				pParaDropNum);
+				ParaDropTypes,
+				ParaDropNum);
 		}
 	}
 

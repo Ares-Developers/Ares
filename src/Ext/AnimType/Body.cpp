@@ -1,5 +1,6 @@
 #include "Body.h"
 #include "../../Ares.h"
+#include "../../Utilities/TemplateDef.h"
 #include <HouseTypeClass.h>
 #include <HouseClass.h>
 #include <ScenarioClass.h>
@@ -38,7 +39,7 @@ void AnimTypeExt::SetMakeInfOwner(AnimClass *pAnim, HouseClass *pInvoker, HouseC
 	HouseClass *newOwner = nullptr;
 	switch(pAnimData->MakeInfantryOwner) {
 		case AnimTypeExt::ExtData::NEUTRAL:
-			newOwner = HouseClass::FindByCountryIndex(HouseTypeClass::FindIndexOfName("Neutral"));
+			newOwner = HouseClass::FindNeutral();
 			break;
 
 		case AnimTypeExt::ExtData::RANDOM:
@@ -94,12 +95,12 @@ DEFINE_HOOK(428800, AnimTypeClass_SaveLoad_Prefix, A)
 	GET_STACK(AnimTypeExt::TT*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
 
-	Container<AnimTypeExt>::SavingObject = pItem;
-	Container<AnimTypeExt>::SavingStream = pStm;
+	Container<AnimTypeExt>::PrepareStream(pItem, pStm);
 
 	return 0;
 }
 
+DEFINE_HOOK_AGAIN(42892C, AnimTypeClass_Load_Suffix, 6)
 DEFINE_HOOK(428958, AnimTypeClass_Load_Suffix, 6)
 {
 	AnimTypeExt::ExtMap.LoadStatic();

@@ -7,6 +7,7 @@
 #include "Body.h"
 #include "../Rules/Body.h"
 #include "../../Misc/Actions.h"
+#include <InputManagerClass.h>
 
 // #664: Advanced Rubble - reconstruction part: Check
 DEFINE_HOOK(51E63A, InfantryClass_GetCursorOverObject_EngineerOverFriendlyBuilding, 6) {
@@ -38,12 +39,11 @@ DEFINE_HOOK(519FAF, InfantryClass_UpdatePosition_EngineerRepairsFriendly, 6)
 		pThis->Remove();
 		if(!TargetExtData->RubbleYell(true)) {
 			++Unsorted::IKnowWhatImDoing;
-			Target->Put(&Target->Location, Target->Facing);
+			Target->Put(Target->Location, Target->Facing);
 			--Unsorted::IKnowWhatImDoing;
 			VoxClass::Play("EVA_CannotDeployHere");
 		}
-		CellStruct Cell;
-		pThis->GetMapCoords(&Cell);
+		CellStruct Cell = pThis->GetMapCoords();
 		Target->KickOutUnit(pThis, Cell);
 		if(wasSelected) {
 			pThis->Select();
@@ -100,7 +100,7 @@ DEFINE_HOOK(518434, InfantryClass_ReceiveDamage_SkipDeathAnim, 7)
 DEFINE_HOOK(51D799, InfantryClass_PlayAnim_WaterSound, 7)
 {
 	GET(InfantryClass *, I, ESI);
-	return (I->Transporter || I->Type->MovementZone != mz_AmphibiousDestroyer)
+	return (I->Transporter || I->Type->MovementZone != MovementZone::AmphibiousDestroyer)
 		? 0x51D8BF
 		: 0x51D7A6
 	;
@@ -161,4 +161,38 @@ DEFINE_HOOK(700505, TechnoClass_GetCursorOverObject_C4Ability, 6)
 	GET(InfantryClass*, pThis, ESI);
 
 	return (!pThis->Type->C4 && !pThis->HasAbility(Abilities::C4)) ? 0x700536 : 0x700515;
+}
+
+// do not prone in water
+DEFINE_HOOK(5201CC, InfantryClass_UpdatePanic_ProneWater, 6)
+{
+	GET(InfantryClass*, pThis, ESI);
+	auto landType = pThis->GetCell()->LandType;
+	return (landType != LandType::Beach && landType != LandType::Water) ? 0 : 0x5201DC;
+}
+
+// #1283638: ivans cannot enter grinders; they get an attack cursor. if the
+// grinder is rigged with a bomb, ivans can enter. this fix lets ivans enter
+// allied grinders. pressing the force fire key brings back the old behavior.
+DEFINE_HOOK(51EB48, InfantryClass_GetCursorOverObject_IvanGrinder, A)
+{
+	GET(InfantryClass*, pThis, EDI);
+	GET(ObjectClass*, pTarget, ESI);
+
+	if(auto pTargetBld = abstract_cast<BuildingClass*>(pTarget)) {
+		if(pTargetBld->Type->Grinding && pThis->Owner->IsAlliedWith(pTargetBld)) {
+			if(!InputManagerClass::Instance->IsForceFireKeyPressed()) {
+				static byte return_grind[] = {
+					0x5F, 0x5E, 0x5D, // pop edi, esi and ebp
+					0xB8, act_Repair, 0x00, 0x00, 0x00, // eax = act_Repair (not act_Eaten)
+					0x5B, 0x83, 0xC4, 0x28, // esp += 0x28
+					0xC2, 0x08, 0x00 // retn 8
+				};
+
+				return reinterpret_cast<DWORD>(return_grind);
+			}
+		}
+	}
+
+	return 0;
 }

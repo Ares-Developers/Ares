@@ -2,12 +2,15 @@
 #define CONTAINER_TEMPLATE_MAGIC_H
 
 #include <typeinfo>
+#include <memory>
+#include <unordered_map>
 
 #include <xcompile.h>
 #include <CCINIClass.h>
 #include <SwizzleManagerClass.h>
 
 #include "../Misc/Debug.h"
+#include "../Misc/Stream.h"
 
 enum eInitState {
 	is_Blank = 0x0, // CTOR'd
@@ -54,27 +57,15 @@ class Extension {
 	public:
 		eInitState _Initialized;
 		T* const AttachedToObject;
-	#ifdef DEBUGBUILD
-		DWORD SavedCanary;
-	#endif
 
 		static const DWORD Canary;
 
-		Extension(const DWORD Canary, T* const OwnerObject) :
-		_Initialized(is_Blank),
-	#ifdef DEBUGBUILD
-		SavedCanary(Canary),
-	#endif
-		AttachedToObject(OwnerObject)
+		Extension(T* const OwnerObject) :
+			_Initialized(is_Blank),
+			AttachedToObject(OwnerObject)
 		{ };
 
 		virtual ~Extension() { };
-
-		// use this implementation for all descendants
-		// I mean it
-		// sizeof(facepalm)
-		// virtual size_t Size() const { return sizeof(*this); };
-		virtual size_t Size() const = 0;
 
 		// major refactoring!
 		// LoadFromINI is now a non-virtual public function that orchestrates the initialization/loading of extension data
@@ -119,26 +110,37 @@ class Extension {
 
 		virtual void InvalidatePointer(void *ptr, bool bRemoved) = 0;
 
+		virtual inline void SaveToStream(AresByteStream &Stm) {
+			Stm.Save(this->_Initialized);
+			//Stm.Save(this->AttachedToObject);
+		}
+
+		virtual inline void LoadFromStream(AresByteStream &Stm, size_t &Offset) {
+			Stm.Load(this->_Initialized, Offset);
+			//Stm.Load(this->AttachedToObject, Offset);
+		}
+
 	private:
 		void operator = (Extension &RHS) {
 
 		}
 };
 
-//template<typename T1, typename T2>
 template<typename T>
-class Container : public hash_map<typename T::TT*, typename T::ExtData* > {
+class Container {
 private:
 	typedef typename T::TT        S_T;
 	typedef typename T::ExtData   E_T;
 	typedef S_T* KeyType;
 	typedef E_T* ValueType;
-	typedef hash_map<KeyType, ValueType> C_Map;
+	typedef std::unordered_map<KeyType, std::unique_ptr<E_T>> C_Map;
 
-public:
+	C_Map Items;
+
 	static S_T * SavingObject;
 	static IStream * SavingStream;
 
+public:
 	void PointerGotInvalid(void *ptr, bool bRemoved) {
 		this->InvalidatePointer(ptr, bRemoved);
 		this->InvalidateExtDataPointer(ptr, bRemoved);
@@ -150,17 +152,17 @@ protected:
 	};
 
 	void InvalidateExtDataPointer(void *ptr, bool bRemoved) {
-		for(auto i = this->begin(); i != this->end(); ++i) {
+		for(auto i = this->Items.begin(); i != this->Items.end(); ++i) {
 			i->second->InvalidatePointer(ptr, bRemoved);
 		}
 	}
 
 public:
-	Container() : hash_map<KeyType, ValueType>() {
+	Container() : Items() {
 	}
 
 	virtual ~Container() {
-		Empty();
+		this->Clear();
 	}
 
 	ValueType FindOrAllocate(KeyType const &key) {
@@ -169,90 +171,115 @@ public:
 			Debug::Log("CTOR of %s attempted for a NULL pointer! WTF!\n", info.name());
 			return nullptr;
 		}
-		auto i = this->find(key);
-		if(i == this->end()) {
-			auto val = new E_T(E_T::Canary, key);
+		auto i = this->Items.find(key);
+		if(i == this->Items.end()) {
+			auto val = std::make_unique<E_T>(key);
 			val->InitializeConstants(key);
-			i = this->insert(typename C_Map::value_type(key, val)).first;
+			i = this->Items.insert(typename C_Map::value_type(key, std::move(val))).first;
 		}
-		return i->second;
+		return i->second.get();
 	}
 
 	ValueType Find(const KeyType &key) {
-		auto i = this->find(key);
-		if(i == this->end()) {
+		auto i = this->Items.find(key);
+		if(i == this->Items.end()) {
 			return nullptr;
 		}
-		return i->second;
+		return i->second.get();
 	}
 
 	const ValueType Find(const KeyType &key) const {
-		auto i = this->find(key);
-		if(i == this->end()) {
-			return nullptr;
-		}
-		return i->second;
+		auto that = const_cast<Container<T>*>(this);
+		return that->Find(key);
 	}
 
 	void Remove(KeyType key) {
-		auto i = this->find(key);
-		if(i != this->end()) {
-			delete i->second;
-			erase(i);
+		auto i = this->Items.find(key);
+		if(i != this->Items.end()) {
+			this->Items.erase(i);
 		}
 	}
 
-	void Remove(typename C_Map::iterator i) {
-		if(i != this->end()) {
-			delete i->second;
-			erase(i);
-		}
-	}
-
-	void Empty() {
-		for(auto i = this->begin(); i != this->end(); ) {
-			delete i->second;
-			erase(i++);
-	//		++i;
-		}
+	void Clear() {
+		this->Items.clear();
 	}
 
 	void LoadAllFromINI(CCINIClass *pINI) {
-		for(auto i = this->begin(); i != this->end(); i++) {
+		for(auto i = this->Items.begin(); i != this->Items.end(); i++) {
 			i->second->LoadFromINI(i->first, pINI);
 		}
 	}
 
 	void LoadFromINI(KeyType key, CCINIClass *pINI) {
-		auto i = this->find(key);
-		if(i != this->end()) {
+		auto i = this->Items.find(key);
+		if(i != this->Items.end()) {
 			i->second->LoadFromINI(key, pINI);
 		}
 	}
 
 	void LoadAllFromRules(CCINIClass *pINI) {
-		for(auto i = this->begin(); i != this->end(); i++) {
+		for(auto i = this->Items.begin(); i != this->Items.end(); i++) {
 			i->second->LoadFromRulesFile(i->first, pINI);
 		}
 	}
 
-	void SaveStatic() {
-		if(Container<T>::SavingObject && Container<T>::SavingStream) {
-			this->Save(Container<T>::SavingObject, Container<T>::SavingStream);
-			Container<T>::SavingObject = nullptr;
-			Container<T>::SavingStream = nullptr;
-		}
+	static void PrepareStream(KeyType key, IStream *pStm) {
+		const auto &info = typeid(S_T);
+		Debug::Log("[PrepareStream] Next is %p of type '%s'\n", key, info.name());
+
+		Container<T>::SavingObject = key;
+		Container<T>::SavingStream = pStm;
 	}
 
-	void Save(KeyType key, IStream *pStm) {
-		this->SaveKey(key, pStm);
+	void SaveStatic() {
+		const auto &info = typeid(S_T);
+
+		if(Container<T>::SavingObject && Container<T>::SavingStream) {
+			Debug::Log("[SaveStatic] Saving object %p as '%s'\n", Container<T>::SavingObject, info.name());
+
+			if(!this->Save(Container<T>::SavingObject, Container<T>::SavingStream)) {
+				Debug::FatalErrorAndExit("[SaveStatic] Saving failed!\n");
+			}
+		} else {
+			Debug::Log("[SaveStatic] Object or Stream not set for '%s': %p, %p\n",
+				info.name(), Container<T>::SavingObject, Container<T>::SavingStream);
+		}
+
+		Container<T>::SavingObject = nullptr;
+		Container<T>::SavingStream = nullptr;
+	}
+
+	void LoadStatic() {
+		const auto &info = typeid(S_T);
+
+		if(Container<T>::SavingObject && Container<T>::SavingStream) {
+			Debug::Log("[LoadStatic] Loading object %p as '%s'\n", Container<T>::SavingObject, info.name());
+
+			if(!this->Load(Container<T>::SavingObject, Container<T>::SavingStream)) {
+				Debug::FatalErrorAndExit("[LoadStatic] Loading failed!\n");
+			}
+		} else {
+			Debug::Log("[LoadStatic] Object or Stream not set for '%s': %p, %p\n",
+				info.name(), Container<T>::SavingObject, Container<T>::SavingStream);
+		}
+
+		Container<T>::SavingObject = nullptr;
+		Container<T>::SavingStream = nullptr;
+	}
+
+protected:
+	// specialize this method to do type-specific stuff
+	bool Save(KeyType key, IStream *pStm) {
+		return this->SaveKey(key, pStm) != nullptr;
+	}
+
+	// specialize this method to do type-specific stuff
+	bool Load(KeyType key, IStream *pStm) {
+		return this->LoadKey(key, pStm) != nullptr;
 	}
 
 	ValueType SaveKey(KeyType key, IStream *pStm) {
 		ULONG out;
-
-		const auto &info = typeid(key);
-		Debug::Log("Saving Key [%s] (%X)\n", info.name(), key);
 
 		if(key == nullptr) {
 			return nullptr;
@@ -261,7 +288,7 @@ public:
 		Debug::Log("\tKey maps to %X\n", buffer);
 		if(buffer) {
 			pStm->Write(&buffer, 4, &out);
-			pStm->Write(buffer, buffer->Size(), &out);
+			pStm->Write(buffer, sizeof(*buffer), &out);
 //			Debug::Log("Save used up 0x%X bytes (HRESULT 0x%X)\n", out, res);
 		}
 
@@ -269,23 +296,8 @@ public:
 		return buffer;
 	};
 
-	void LoadStatic() {
-		if(Container<T>::SavingObject && Container<T>::SavingStream) {
-			this->Load(Container<T>::SavingObject, Container<T>::SavingStream);
-			Container<T>::SavingObject = nullptr;
-			Container<T>::SavingStream = nullptr;
-		}
-	}
-
-	void Load(KeyType key, IStream *pStm) {
-		this->LoadKey(key, pStm);
-	}
-
 	ValueType LoadKey(KeyType key, IStream *pStm) {
 		ULONG out;
-
-		const auto &info = typeid(key);
-		Debug::Log("Loading Key [%s] (%X)\n", info.name(), key);
 
 		if(key == nullptr) {
 			Debug::Log("Load attempted for a NULL pointer! WTF!\n");
@@ -294,13 +306,10 @@ public:
 		auto buffer = this->FindOrAllocate(key);
 		long origPtr;
 		pStm->Read(&origPtr, 4, &out);
-		pStm->Read(buffer, buffer->Size(), &out);
+		pStm->Read(buffer, sizeof(*buffer), &out);
 		Debug::Log("LoadKey Swizzle: %X => %X\n", origPtr, buffer);
 		SwizzleManagerClass::Instance.Here_I_Am(origPtr, (void *)buffer);
 		SWIZZLE(buffer->AttachedToObject);
-#ifdef DEBUGBUILD
-			assert(buffer->SavedCanary == typename E_T::Canary);
-#endif
 		return buffer;
 	};
 };

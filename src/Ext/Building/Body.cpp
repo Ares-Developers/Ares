@@ -12,6 +12,7 @@
 #include <VoxClass.h>
 #include <RadarEventClass.h>
 #include <SuperClass.h>
+#include <MouseClass.h>
 
 template<> const DWORD Extension<BuildingClass>::Canary = 0x87654321;
 Container<BuildingExt> BuildingExt::ExtMap;
@@ -97,9 +98,9 @@ bool BuildingExt::ExtData::RubbleYell(bool beingRepaired) {
 		newState->Health = static_cast<int>(std::max((newState->Type->Strength / 100), 1)); // see description above
 		newState->IsAlive = true; // assuming this is in the sense of "is not destroyed"
 		// Location should not be changed by removal
-		if(!newState->Put(&currentBuilding->Location, currentBuilding->Facing)) {
+		if(!newState->Put(currentBuilding->Location, currentBuilding->Facing)) {
 			Debug::Log("Advanced Rubble: Failed to place normal state on map!\n");
-			GAME_DEALLOC(newState);
+			GameDelete(newState);
 			return false;
 		}
 		// currentBuilding->UnInit(); DON'T DO THIS
@@ -113,9 +114,9 @@ bool BuildingExt::ExtData::RubbleYell(bool beingRepaired) {
 
 		newState = specific_cast<BuildingClass *>(pTypeData->RubbleDestroyed->CreateObject(currentBuilding->Owner));
 		// Location should not be changed by removal
-		if(!newState->Put(&currentBuilding->Location, currentBuilding->Facing)) {
+		if(!newState->Put(currentBuilding->Location, currentBuilding->Facing)) {
 			Debug::Log("Advanced Rubble: Failed to place rubble state on map!\n");
-			GAME_DEALLOC(newState);
+			GameDelete(newState);
 		}
 	}
 
@@ -365,7 +366,7 @@ void BuildingExt::buildLines(BuildingClass* theBuilding, CellStruct selectedCell
 					CoordStruct coordBuffer = CellClass::Cell2Coord(cellToBuildOn);
 
 					++Unsorted::IKnowWhatImDoing; // put the building there even if normal rules would deny - e.g. under units
-					bool Put = tempBuilding->Put(&coordBuffer, 0);
+					bool Put = tempBuilding->Put(coordBuffer, 0);
 					--Unsorted::IKnowWhatImDoing;
 
 					if(Put) {
@@ -373,7 +374,7 @@ void BuildingExt::buildLines(BuildingClass* theBuilding, CellStruct selectedCell
 						tempBuilding->DiscoveredBy(buildingOwner);
 						tempBuilding->unknown_bool_6DD = 1;
 					} else {
-						GAME_DEALLOC(tempBuilding);
+						GameDelete(tempBuilding);
 					}
 				}
 			}
@@ -415,7 +416,7 @@ void BuildingExt::KickOutHospitalArmory(BuildingClass *pThis)
 {
 	if(pThis->Type->Hospital || pThis->Type->Armory) {
 		if(FootClass * Passenger = pThis->Passengers.RemoveFirstPassenger()) {
-			pThis->KickOutUnit(Passenger, BuildingClass::DefaultCellCoords);
+			pThis->KickOutUnit(Passenger, CellStruct::Empty);
 		}
 	}
 }
@@ -441,8 +442,7 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 	bool raiseEva = false;
 
 	if(Enterer->ControlledByPlayer() || Owner->ControlledByPlayer()) {
-		CellStruct xy;
-		EnteredBuilding->GetMapCoords(&xy);
+		CellStruct xy = EnteredBuilding->GetMapCoords();
 		if(RadarEventClass::Create(RadarEventType::BuildingInfiltrated, xy)) {
 			raiseEva = true;
 		}
@@ -480,7 +480,7 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 	if(pTypeExt->StolenTechIndex > -1) {
 		pEntererExt->StolenTech.set(pTypeExt->StolenTechIndex);
 
-		Enterer->ShouldRecheckTechTree = true;
+		Enterer->RecheckTechTree = true;
 		if(evaForOwner) {
 			VoxClass::Play("EVA_TechnologyStolen");
 		}
@@ -506,7 +506,7 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 					TypeData->ReversedByHouses[idx] = false;
 				}
 			}
-			Owner->ShouldRecheckTechTree = true;
+			Owner->RecheckTechTree = true;
 		}
 
 		if(evaForOwner) {
@@ -592,7 +592,7 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 		}
 
 		if(promotionStolen) {
-			Enterer->ShouldRecheckTechTree = true;
+			Enterer->RecheckTechTree = true;
 			if(Enterer->ControlledByPlayer()) {
 				MouseClass::Instance->SidebarNeedsRepaint();
 			}
@@ -684,7 +684,7 @@ void BuildingExt::ExtData::UpdateFirewall() {
 	if(!(Unsorted::CurrentFrame % 7) && ScenarioClass::Instance->Random.RandomRanged(0, 15) == 1) {
 		int corners = (FWFrame & 0xF); // 1111b
 		if(AnimClass *IdleAnim = B->FirestormAnim) {
-			GAME_DEALLOC(IdleAnim);
+			GameDelete(IdleAnim);
 			B->FirestormAnim = 0;
 		}
 		if(corners != 5 && corners != 10) {  // (0101b || 1010b) == part of a straight line
@@ -692,7 +692,7 @@ void BuildingExt::ExtData::UpdateFirewall() {
 			XYZ.X -= 768;
 			XYZ.Y -= 768;
 			if(AnimTypeClass *FSA = AnimTypeClass::Find("FSIDLE")) {
-				GAME_ALLOC(AnimClass, B->FirestormAnim, FSA, &XYZ);
+				B->FirestormAnim = GameCreate<AnimClass>(FSA, XYZ);
 			}
 		}
 	}
@@ -715,8 +715,7 @@ void BuildingExt::ExtData::ImmolateVictim(ObjectClass * Victim) {
 		Victim->ReceiveDamage(&Damage, 0, RulesClass::Instance->C4Warhead/* todo */, nullptr, true, false, pThis->Owner);
 
 		if(AnimTypeClass *FSAnim = AnimTypeClass::Find(Victim->IsInAir() ? "FSAIR" : "FSGRND")) {
-			AnimClass * placeholder;
-			GAME_ALLOC(AnimClass, placeholder, FSAnim, &XYZ);
+			GameCreate<AnimClass>(FSAnim, XYZ);
 		}
 
 	}
@@ -758,14 +757,8 @@ DWORD BuildingExt::FoundationLength(CellStruct * StartCell) {
 }
 
 void BuildingExt::Cleanup() {
-	if(BuildingExt::TempFoundationData1) {
-		delete[] BuildingExt::TempFoundationData1;
-		BuildingExt::TempFoundationData1 = nullptr;
-	}
-	if(BuildingExt::TempFoundationData2) {
-		delete[] BuildingExt::TempFoundationData2;
-		BuildingExt::TempFoundationData2 = nullptr;
-	}
+	BuildingExt::TempFoundationData1.clear();
+	BuildingExt::TempFoundationData2.clear();
 }
 
 bool BuildingExt::ExtData::ReverseEngineer(TechnoClass *Victim) {
@@ -793,7 +786,7 @@ bool BuildingExt::ExtData::ReverseEngineer(TechnoClass *Victim) {
 			if(!WasBuildable) {
 				bool IsBuildable = HouseExt::RequirementsMet(Owner, VictimType) != HouseExt::Forbidden;
 				if(IsBuildable) {
-					Owner->ShouldRecheckTechTree = true;
+					Owner->RecheckTechTree = true;
 					return true;
 				}
 			}
@@ -821,11 +814,9 @@ void BuildingExt::ExtData::KickOutClones(TechnoClass * Production) {
 
 	auto &CloningSources = ProductionTypeData->ClonedAt;
 
-	auto KickOutCoords = reinterpret_cast<CellStruct *>(0x89C818);
-
-	auto KickOutClone = [KickOutCoords, ProductionType, FactoryOwner](BuildingClass *B) -> void {
+	auto KickOutClone = [ProductionType, FactoryOwner](BuildingClass *B) -> void {
 		auto Clone = reinterpret_cast<TechnoClass *>(ProductionType->CreateObject(FactoryOwner));
-		if(B->KickOutUnit(Clone, *KickOutCoords) != KickOutResult::Succeeded) {
+		if(B->KickOutUnit(Clone, CellStruct::Empty) != KickOutResult::Succeeded) {
 			Clone->UnInit();
 		}
 	};
@@ -894,8 +885,7 @@ DEFINE_HOOK(453E20, BuildingClass_SaveLoad_Prefix, 5)
 	GET_STACK(BuildingExt::TT*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
 
-	Container<BuildingExt>::SavingObject = pItem;
-	Container<BuildingExt>::SavingStream = pStm;
+	Container<BuildingExt>::PrepareStream(pItem, pStm);
 
 	return 0;
 }

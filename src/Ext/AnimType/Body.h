@@ -1,5 +1,5 @@
-#ifndef BUILDINGTYPE_EXT_H
-#define BUILDINGTYPE_EXT_H
+#ifndef ANIMTYPE_EXT_H
+#define ANIMTYPE_EXT_H
 
 #include <AnimClass.h>
 #include <AnimTypeClass.h>
@@ -22,15 +22,13 @@ public:
 
 		CustomPalette Palette;
 
-		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
+		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			MakeInfantryOwner (INVOKER),
-			Palette((BytePalette*)0x885780, DSurface::Primary, 53) // pointer to TEMPERAT_PAL (not the Convert!)
+			Palette(CustomPalette::PaletteMode::Temperate)
 			{ };
 
 		virtual ~ExtData() {
 		}
-
-		virtual size_t Size() const { return sizeof(*this); };
 
 		virtual void LoadFromINIFile(TT *pThis, CCINIClass *pINI);
 

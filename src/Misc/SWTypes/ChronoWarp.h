@@ -5,7 +5,7 @@
 
 #include "../SWTypes.h"
 
-class SW_ChronoWarp : NewSWType
+class SW_ChronoWarp : public NewSWType
 {
 	public:
 		SW_ChronoWarp() : NewSWType()
@@ -18,7 +18,7 @@ class SW_ChronoWarp : NewSWType
 			{ return nullptr; }
 
 		virtual void Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW);
-		virtual bool Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer);
+		virtual bool Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer);
 		virtual bool HandlesType(int type);
 		virtual SuperWeaponFlags::Value Flags();
 
@@ -26,7 +26,7 @@ class SW_ChronoWarp : NewSWType
 
 		void newStateMachine(int Duration, CellStruct XY, SuperClass *pSuper, NewSWType * pSWType,
 			DynamicVectorClass<ChronoWarpStateMachine::ChronoWarpContainer> *Buildings) {
-				new TStateMachine(Duration, XY, pSuper, this, Buildings);
+				SWStateMachine::Register(std::make_unique<ChronoWarpStateMachine>(Duration, XY, pSuper, this, Buildings));
 		}
 };
 #endif

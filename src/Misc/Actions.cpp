@@ -278,7 +278,7 @@ DEFINE_HOOK(6929FC, DisplayClass_ChooseAction_CanSell, 7)
 DEFINE_HOOK(4ABFBE, DisplayClass_LeftMouseButtonUp_ExecPowerToggle, 7)
 {
 	GET(TechnoClass *, Target, ESI);
-	return (Target && Target->Owner->IsHumanoid() && Target->WhatAmI() == abs_Building)
+	return (Target && Target->Owner->ControlledByHuman() && Target->WhatAmI() == abs_Building)
 	 ? 0x4ABFCE
 	 : 0x4AC294
 	;

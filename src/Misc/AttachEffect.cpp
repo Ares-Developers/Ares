@@ -2,6 +2,7 @@
 #include "../Ext/Techno/Body.h"
 #include "../Ext/TechnoType/Body.h"
 #include "../Ext/WarheadType/Body.h"
+#include "../Utilities/TemplateDef.h"
 
 /*
 Attached Effects system
@@ -22,11 +23,11 @@ In a nutshell:
 
 */
 
-void AttachEffectTypeClass::Read(INI_EX *exINI, const char * section) {
+void AttachEffectTypeClass::Read(INI_EX &exINI, const char * section) {
 	AresCRT::strCopy(this->ID, section);
 	this->Duration.Read(exINI, section, "AttachEffect.Duration");
 	this->Cumulative.Read(exINI, section, "AttachEffect.Cumulative");
-	this->AnimType.Parse(exINI, section, "AttachEffect.Animation");
+	this->AnimType.Read(exINI, section, "AttachEffect.Animation");
 	this->AnimResetOnReapply.Read(exINI, section, "AttachEffect.AnimResetOnReapply");
 	this->TemporalHidesAnim.Read(exINI, section, "AttachEffect.TemporalHidesAnim");
 	this->ForceDecloak.Read(exINI, section, "AttachEffect.ForceDecloak");
@@ -62,9 +63,9 @@ void AttachEffectTypeClass::Attach(TechnoClass* Target, int Duration, TechnoClas
 
 	TechnoExt::ExtData *TargetExt = TechnoExt::ExtMap.Find(Target);
 
-	if (!this->Cumulative && TargetExt->AttachedEffects.Count > 0) {
-		for (int i=0; i < TargetExt->AttachedEffects.Count; i++) {
-			auto Item = TargetExt->AttachedEffects.GetItem(i);
+	if (!this->Cumulative) {
+		for (size_t i=0; i < TargetExt->AttachedEffects.size(); i++) {
+			auto &Item = TargetExt->AttachedEffects.at(i);
 			if (!strcmp(this->ID, Item->Type->ID)) {
 				Item->ActualDuration = Item->Type->Duration;
 
@@ -82,8 +83,8 @@ void AttachEffectTypeClass::Attach(TechnoClass* Target, int Duration, TechnoClas
 	}
 
 	// there goes the actual attaching
-	auto Attaching = new AttachEffectClass(this, Duration);
-	TargetExt->AttachedEffects.AddItem(Attaching);
+	TargetExt->AttachedEffects.push_back(std::make_unique<AttachEffectClass>(this, Duration));
+	auto &Attaching = TargetExt->AttachedEffects.back();
 
 	Attaching->Invoker = Invoker;
 
@@ -121,7 +122,7 @@ void AttachEffectClass::CreateAnim(TechnoClass *Owner) {
 			this->KillAnim();
 		}
 
-		GAME_ALLOC(AnimClass, this->Animation, this->Type->AnimType, &Owner->Location);
+		this->Animation = GameCreate<AnimClass>(this->Type->AnimType, Owner->Location);
 		if (auto pAnim = this->Animation) {
 			pAnim->SetOwnerObject(Owner);
 			pAnim->RemainingIterations = 0xFFu;
@@ -169,27 +170,27 @@ void AttachEffectClass::Update(TechnoClass *Source) {
 	TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(pType);
 
 
-	if (pData->AttachedEffects.Count) {
+	if (!pData->AttachedEffects.empty()) {
 
 		if (!pData->AttachEffects_RecreateAnims &&
 		(Source->CloakState == CloakState::Cloaked || Source->CloakState == CloakState::Cloaking)) {
-			for (int i = pData->AttachedEffects.Count; i > 0; --i) {
-				pData->AttachedEffects.GetItem(i - 1)->KillAnim();
+			for (size_t i = pData->AttachedEffects.size(); i > 0; --i) {
+				pData->AttachedEffects.at(i - 1)->KillAnim();
 			}
 			pData->AttachEffects_RecreateAnims = true;
 		}
 
 		if (pData->AttachEffects_RecreateAnims &&
 		!(Source->CloakState == CloakState::Cloaked || Source->CloakState == CloakState::Cloaking)) {
-			for (int i = pData->AttachedEffects.Count; i > 0; --i) {
-				pData->AttachedEffects.GetItem(i - 1)->CreateAnim(Source);
+			for (size_t i = pData->AttachedEffects.size(); i > 0; --i) {
+				pData->AttachedEffects.at(i - 1)->CreateAnim(Source);
 			}
 			pData->AttachEffects_RecreateAnims = false;
 		}
 
 		//Debug::Log("[AttachEffect]AttachEffect update of %s...\n", Source->get_ID());
-		for (int i = pData->AttachedEffects.Count; i > 0; --i) {
-			auto Effect = pData->AttachedEffects.GetItem(i - 1);
+		for (size_t i = pData->AttachedEffects.size(); i > 0; --i) {
+			auto Effect = pData->AttachedEffects.at(i - 1).get();
 			if(Effect->ActualDuration > 0) {
 				--Effect->ActualDuration;
 			}
@@ -219,15 +220,13 @@ void AttachEffectClass::Update(TechnoClass *Source) {
 
 			if(!Effect->ActualDuration || (!strcmp(Effect->Type->ID, pType->ID) && Source->Deactivated)) {
 				//Debug::Log("[AttachEffect] %d. item expired, removing...\n", i - 1);
-				Effect->Destroy();
 
 				if (!strcmp(Effect->Type->ID, pType->ID)) {		//#1623, hardcodes Cumulative to false
 					pData->AttachedTechnoEffect_isset = false;
 					pData->AttachedTechnoEffect_Delay = Effect->Type->Delay;
 				}
 
-				delete Effect;
-				pData->AttachedEffects.RemoveItem(i - 1);
+				pData->AttachedEffects.erase(pData->AttachedEffects.begin() + i - 1);
 				TechnoExt::RecalculateStats(Source);	//and update the unit's properties
 				//Debug::Log("[AttachEffect] Remove #%d was successful.\n", i - 1);
 			}

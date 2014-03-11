@@ -5,9 +5,9 @@
 
 int SW_Firewall::FirewallTypeIndex = -1;
 
-bool SW_Firewall::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
+bool SW_Firewall::Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer)
 {
 	AresNetEvent::Handlers::RaiseFirewallToggle(pThis->Owner);
 
-	return 1;
+	return true;
 }

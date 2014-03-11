@@ -1,6 +1,9 @@
 #ifndef ARES_ITERATOR_H
 #define ARES_ITERATOR_H
 
+#include <ArrayClasses.h>
+#include <vector>
+
 template<typename T>
 class Iterator {
 private:
@@ -8,7 +11,7 @@ private:
 	size_t count;
 public:
 	Iterator() : items(nullptr), count(0) {}
-	Iterator(const T* first, const size_t count) : items(first), count(count) {}
+	Iterator(const T* first, size_t count) : items(first), count(count) {}
 	Iterator(const std::vector<T> &vec) : items(vec.data()), count(vec.size()) {}
 	Iterator(const VectorClass<T> &vec) : items(vec.Items), count(vec.Capacity) {}
 	Iterator(const DynamicVectorClass<T> &vec) : items(vec.Items), count(vec.Count) {}
@@ -55,6 +58,14 @@ public:
 
 	const T& operator [](size_t index) const {
 		return this->items[index];
+	}
+
+	template<typename Out>
+	operator Iterator<Out>() const {
+		// note: this does only work if pointer-to-derived equals pointer-to-base.
+		// if derived has virtual methods and base hasn't, this will just break.
+		static_assert(std::is_assignable<Out&, T>::value, "Cannot assign to Out from T.");
+		return Iterator<Out>(reinterpret_cast<const Out*>(this->items), this->count);
 	}
 };
 

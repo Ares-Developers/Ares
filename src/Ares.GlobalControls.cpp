@@ -2,6 +2,8 @@
 #include "Utilities\Parser.h"
 #include <CCINIClass.h>
 
+#include <VersionHelpers.h>
+
 bool Ares::GlobalControls::Initialized = 0;
 bool Ares::GlobalControls::AllowParallelAIQueues = 1;
 
@@ -42,7 +44,7 @@ void Ares::GlobalControls::LoadConfig() {
 			GFX_DX_Force = GFX_DX_EM;
 		}
 	}
-	if(Ares::RunningOnWindows7OrVista()) {
+	if(IsWindowsVistaOrGreater()) {
 		GFX_DX_Force = 0;
 	}
 }

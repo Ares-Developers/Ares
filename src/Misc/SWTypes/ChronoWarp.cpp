@@ -26,14 +26,12 @@ void SW_ChronoWarp::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *
 	pData->SW_Cursor = MouseCursor::First[MouseCursorType::Chronosphere];
 }
 
-bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
+bool SW_ChronoWarp::Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer)
 {
 	// get the previous super weapon
 	SuperClass* pSource = nullptr;
 	if(HouseExt::ExtData *pExt = HouseExt::ExtMap.Find(pThis->Owner)) {
-		if(pThis->Owner->Supers.ValidIndex(pExt->SWLastIndex)) {
-			pSource = pThis->Owner->Supers.GetItem(pExt->SWLastIndex);
-		}
+		pSource = pThis->Owner->Supers.GetItemOrDefault(pExt->SWLastIndex);
 	}
 
 	// use source super weapon properties
@@ -44,30 +42,27 @@ bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 			// add radar events for source and target
 			if(pData->SW_RadarEvent) {
 				RadarEventClass::Create(RadarEventType::SuperweaponActivated, pSource->ChronoMapCoords);
-				RadarEventClass::Create(RadarEventType::SuperweaponActivated, *pCoords);
+				RadarEventClass::Create(RadarEventType::SuperweaponActivated, Coords);
 			}
 
 			// cell and coords calculations
 			CellClass *pCellSource = MapClass::Instance->GetCellAt(pSource->ChronoMapCoords);
-			CellClass *pCellTarget = MapClass::Instance->GetCellAt(*pCoords);
+			CellClass *pCellTarget = MapClass::Instance->GetCellAt(Coords);
 
-			CoordStruct coordsSource;
-			pCellSource->GetCoordsWithBridge(&coordsSource);
+			CoordStruct coordsSource = pCellSource->GetCoordsWithBridge();
 			coordsSource.Z += pData->SW_AnimHeight;
 
-			CoordStruct coordsTarget;
-			pCellTarget->GetCoordsWithBridge(&coordsTarget);
+			CoordStruct coordsTarget = pCellTarget->GetCoordsWithBridge();
 			coordsTarget.Z += pData->SW_AnimHeight;
 
 			// Update animations
 			SWTypeExt::ClearChronoAnim(pThis);
 
-			AnimClass *pAnim = nullptr;
-			if(AnimTypeClass* pAnimType = pData->Chronosphere_BlastSrc) {
-				GAME_ALLOC(AnimClass, pAnim, pAnimType, &coordsSource);
+			if(auto pAnimType = pData->Chronosphere_BlastSrc.Get(RulesClass::Instance->ChronoBlast)) {
+				GameCreate<AnimClass>(pAnimType, coordsSource);
 			}
-			if(AnimTypeClass* pAnimType = pData->Chronosphere_BlastDest) {
-				GAME_ALLOC(AnimClass, pAnim, pAnimType, &coordsTarget);
+			if(auto pAnimType = pData->Chronosphere_BlastDest.Get(RulesClass::Instance->ChronoBlastDest)) {
+				GameCreate<AnimClass>(pAnimType, coordsTarget);
 			}
 
 			DynamicVectorClass<ChronoWarpStateMachine::ChronoWarpContainer> RegisteredBuildings;
@@ -196,7 +191,7 @@ bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 					// destroy the building light source
 					if(pBld->LightSource) {
 						pBld->LightSource->Deactivate();
-						GAME_DEALLOC(pBld->LightSource);
+						GameDelete(pBld->LightSource);
 						pBld->LightSource = nullptr;
 					}
 
@@ -212,19 +207,19 @@ bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 				// get the cells and coordinates
 				CoordStruct coordsUnitSource = pTechno->GetCoords();
 				CoordStruct coordsUnitTarget = coordsUnitSource;
-				CellStruct cellUnitTarget = pTechno->GetCell()->MapCoords - pSource->ChronoMapCoords + *pCoords;
+				CellStruct cellUnitTarget = pTechno->GetCell()->MapCoords - pSource->ChronoMapCoords + Coords;
 				CellClass* pCellUnitTarget = MapClass::Instance->GetCellAt(cellUnitTarget);
 				
 				// move the unit to the new position
-				coordsUnitTarget.X = coordsUnitSource.X + (pCoords->X - pSource->ChronoMapCoords.X) * 256;
-				coordsUnitTarget.Y = coordsUnitSource.Y + (pCoords->Y - pSource->ChronoMapCoords.Y) * 256;
-				pCellUnitTarget->FixHeight(&coordsUnitTarget);
+				coordsUnitTarget.X += (Coords.X - pSource->ChronoMapCoords.X) * 256;
+				coordsUnitTarget.Y += (Coords.Y - pSource->ChronoMapCoords.Y) * 256;
+				coordsUnitTarget = pCellUnitTarget->FixHeight(coordsUnitTarget);
 
 				if(FootClass *pFoot = generic_cast<FootClass*>(pTechno)) {
 					// clean up the unit's current cell
 					pFoot->Locomotor->Mark_All_Occupation_Bits(0);
 					pFoot->Locomotor->Force_Track(-1, coordsUnitSource);
-					pFoot->MarkAllOccupationBits(&coordsUnitSource);
+					pFoot->MarkAllOccupationBits(coordsUnitSource);
 					pFoot->FrozenStill = true;
 				
 					// piggyback the original locomotor onto a new teleport locomotor and
@@ -249,8 +244,8 @@ bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 
 					// the buidling counts as warped until it reappears
 					pBld->BeingWarpedOut = true;
-					pBld->Owner->ShouldRecheckTechTree = true;
-					pBld->Owner->PowerBlackout = true;
+					pBld->Owner->RecheckTechTree = true;
+					pBld->Owner->RecheckPower = true;
 					pBld->DisableTemporal();
 					pBld->UpdatePlacement(PlacementType::Redraw);
 
@@ -266,12 +261,13 @@ bool SW_ChronoWarp::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer
 			};
 
 			// collect every techno in this range only once. apply the Chronosphere.
+			auto range = pData->GetRange();
 			Helpers::Alex::DistinctCollector<TechnoClass*> items;
-			Helpers::Alex::for_each_in_rect_or_range<TechnoClass>(pSource->ChronoMapCoords, pData->SW_WidthOrRange, pData->SW_Height, std::ref(items));
+			Helpers::Alex::for_each_in_rect_or_range<TechnoClass>(pSource->ChronoMapCoords, range.WidthOrRange, range.Height, std::ref(items));
 			items.for_each(Chronoport);
 
 			if(RegisteredBuildings.Count) {
-				this->newStateMachine(RulesClass::Instance->ChronoDelay + 1, *pCoords, pSource, this, &RegisteredBuildings);
+				this->newStateMachine(RulesClass::Instance->ChronoDelay + 1, Coords, pSource, this, &RegisteredBuildings);
 			}
 
 			return true;
@@ -290,7 +286,7 @@ void ChronoWarpStateMachine::Update() {
 	if(passed == 1) {
 		// redraw all buildings
 		for(int i=0; i<this->Buildings.Count; ++i) {
-			ChronoWarpContainer Container = this->Buildings.GetItem(i);
+			ChronoWarpContainer& Container = this->Buildings.Items[i];
 			if(Container.pBld) {
 				Container.pBld->UpdatePlacement(PlacementType::Redraw);
 			}
@@ -305,15 +301,15 @@ void ChronoWarpStateMachine::Update() {
 
 		// remove all buildings from the map at once
 		for(int i=0; i<buildings.Count; ++i) {
-			ChronoWarpContainer* pContainer = &buildings.Items[i];
-			pContainer->pBld->Remove();
-			pContainer->pBld->ActuallyPlacedOnMap = false;
+			ChronoWarpContainer& Container = buildings.Items[i];
+			Container.pBld->Remove();
+			Container.pBld->ActuallyPlacedOnMap = false;
 		}
 
 		// bring back all buildings
 		for(int i=0; i<buildings.Count; ++i) {
-			ChronoWarpContainer pContainer = buildings.GetItem(i);
-			if(BuildingClass* pBld = pContainer.pBld) {
+			ChronoWarpContainer& Container = buildings.Items[i];
+			if(BuildingClass* pBld = Container.pBld) {
 
 				if(!pBld->TemporalTargetingMe) {
 					// use some logic to place this unit on some other
@@ -323,32 +319,31 @@ void ChronoWarpStateMachine::Update() {
 					int count = CellSpread::NumCells(10);
 					int idx = 0;
 					do {
-						CellStruct cellNew = CellSpread::GetCell(idx) + pContainer.target;
+						CellStruct cellNew = CellSpread::GetCell(idx) + Container.target;
 						CellClass* pNewCell = MapClass::Instance->GetCellAt(cellNew);
-						CoordStruct coordsNew;
-						pNewCell->GetCoordsWithBridge(&coordsNew);
+						CoordStruct coordsNew = pNewCell->GetCoordsWithBridge();
 
 						if(pBld->Type->CanCreateHere(&cellNew, 0)) {
-							if(pBld->Put(&coordsNew, Direction::North)) {
+							if(pBld->Put(coordsNew, Direction::North)) {
 								success = true;
 								break;
 							}
 						}
 						++idx;
-					} while(pContainer.isVehicle && (idx<count));
+					} while(Container.isVehicle && (idx<count));
 
 					if(!success) {
 						// put it back where it was
 						++Unsorted::IKnowWhatImDoing;
-						pBld->Put(&pContainer.origin, Direction::North);
+						pBld->Put(Container.origin, Direction::North);
 						pBld->Place(false);
 						--Unsorted::IKnowWhatImDoing;
 					}
 
 					// chronoshift ends
 					pBld->BeingWarpedOut = false;
-					pBld->Owner->PowerBlackout = true;
-					pBld->Owner->ShouldRecheckTechTree = true;
+					pBld->Owner->RecheckPower = true;
+					pBld->Owner->RecheckTechTree = true;
 					pBld->EnableTemporal();
 					pBld->UpdatePlacement(PlacementType::Redraw);
 
@@ -358,7 +353,7 @@ void ChronoWarpStateMachine::Update() {
 					if(!success) {
 						if(SWTypeExt::ExtData *pExt = SWTypeExt::ExtMap.Find(this->Super->Type)) {
 							// destroy (buildings only if they are supposed to)
-							if(pContainer.isVehicle || pExt->Chronosphere_BlowUnplaceable) {
+							if(Container.isVehicle || pExt->Chronosphere_BlowUnplaceable) {
 								int damage = pBld->Type->Strength;
 								pBld->ReceiveDamage(&damage, 0,
 									RulesClass::Instance->C4Warhead, nullptr, true, true, this->Super->Owner);
@@ -369,9 +364,9 @@ void ChronoWarpStateMachine::Update() {
 			}
 		}
 	} else if(passed == this->Duration) {
-		Super->Owner->PowerBlackout = true;
-		Super->Owner->ShouldRecheckTechTree = true;
-		Super->Owner->RadarBlackout = true;
+		Super->Owner->RecheckPower = true;
+		Super->Owner->RecheckTechTree = true;
+		Super->Owner->RecheckRadar = true;
 	}
 }
 

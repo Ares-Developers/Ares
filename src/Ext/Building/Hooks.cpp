@@ -89,7 +89,7 @@ DEFINE_HOOK(709B4E, TechnoClass_DrawPipscale_SkipSkipTiberium, 6)
 	bool showTiberium = true;
 	if(auto pType = specific_cast<BuildingTypeClass*>(pThis->GetTechnoType())) {
 		if((pType->Refinery || pType->ResourceDestination) && pType->Storage > 0) {
-			// show only if this refinary uses storage. otherwise, the original
+			// show only if this refinery uses storage. otherwise, the original
 			// refineries would show an unused tiberium pip scale
 			auto pExt = TechnoTypeExt::ExtMap.Find(pType);
 			showTiberium = pExt->Refinery_UseStorage;
@@ -97,4 +97,29 @@ DEFINE_HOOK(709B4E, TechnoClass_DrawPipscale_SkipSkipTiberium, 6)
 	}
 
 	return showTiberium ? 0x709B6E : 0x70A980;
+}
+
+// also consider NeedsEngineer when activating animations
+// if the status changes, animations might start to play that aren't
+// supposed to play because the building requires an Engineer which
+// didn't capture the building yet.
+DEFINE_HOOK(4467D6, BuildingClass_Place_NeedsEngineer, 6)
+{
+	GET(BuildingClass*, pThis, EBP);
+	R->AL(pThis->Type->Powered || (pThis->Type->NeedsEngineer && !pThis->HasEngineer));
+	return 0x4467DC;
+}
+
+DEFINE_HOOK(454BF7, BuildingClass_UpdatePowered_NeedsEngineer, 6)
+{
+	GET(BuildingClass*, pThis, ESI);
+	R->CL(pThis->Type->Powered || (pThis->Type->NeedsEngineer && !pThis->HasEngineer));
+	return 0x454BFD;
+}
+
+DEFINE_HOOK(451A54, BuildingClass_PlayAnim_NeedsEngineer, 6)
+{
+	GET(BuildingClass*, pThis, ESI);
+	R->CL(pThis->Type->Powered || (pThis->Type->NeedsEngineer && !pThis->HasEngineer));
+	return 0x451A5A;
 }

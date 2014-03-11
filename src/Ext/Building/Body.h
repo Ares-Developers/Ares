@@ -81,7 +81,7 @@ public:
 		int SensorArrayActiveCounter;
 
 	public:
-		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
+		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			OwnerBeforeRaid(nullptr), isCurrentlyRaided(false), ignoreNextEVA(false), PrismForwarding(), FreeUnits_Done(false), AboutToChronoshift(false),
 			SensorArrayActiveCounter(0)
 			{ };
@@ -94,8 +94,6 @@ public:
 				Debug::Log("Building ExtData (%p) failed to remove all Senders (%d) before destruction.\n", this, this->PrismForwarding.Senders.Count);
 			}
 		}
-
-		virtual size_t Size() const { return sizeof(*this); };
 
 		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
 			AnnounceInvalidPointer(OwnerBeforeRaid, ptr);
@@ -142,8 +140,8 @@ public:
 
 	static void KickOutHospitalArmory(BuildingClass *pThis);
 
-	static CellStruct *TempFoundationData1;
-	static CellStruct *TempFoundationData2;
+	static std::vector<CellStruct> TempFoundationData1;
+	static std::vector<CellStruct> TempFoundationData2;
 
 	static DWORD FoundationLength(CellStruct * StartCell);
 

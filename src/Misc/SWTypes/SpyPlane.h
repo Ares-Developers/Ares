@@ -5,7 +5,7 @@
 
 #include "../SWTypes.h"
 
-class SW_SpyPlane : NewSWType
+class SW_SpyPlane : public NewSWType
 {
 	public:
 		SW_SpyPlane() : NewSWType()
@@ -20,7 +20,7 @@ class SW_SpyPlane : NewSWType
 		virtual void LoadFromINI(
 			SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI);
 		virtual void Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW);
-		virtual bool Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer);
+		virtual bool Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer);
 		virtual bool HandlesType(int type);
 };
 #endif

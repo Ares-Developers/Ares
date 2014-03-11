@@ -6,26 +6,28 @@ void SW_GenericWarhead::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeCla
 	pData->SW_AITargetingType = SuperWeaponAITargetingMode::Offensive;
 }
 
-bool SW_GenericWarhead::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPlayer)
+bool SW_GenericWarhead::Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer)
 {
 	SuperWeaponTypeClass *pType = pThis->Type;
 	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pType);
 
-	if(!pData || !pData->SW_Warhead) {
+	auto pWarhead = GetWarhead(pData);
+	auto damage = GetDamage(pData);
+
+	if(!pData || !pWarhead) {
 		Debug::Log("Couldn't launch GenericWarhead SW ([%s])\n", pType->ID);
 		return 0;
 	}
 
-	CoordStruct coords;
-	CellClass *Cell = MapClass::Instance->GetCellAt(*pCoords);
-	Cell->GetCoordsWithBridge(&coords);
+	CellClass *Cell = MapClass::Instance->GetCellAt(Coords);
+	CoordStruct coords = Cell->GetCoordsWithBridge();
 
-	auto pWHExt = WarheadTypeExt::ExtMap.Find(pData->SW_Warhead);
+	auto pWHExt = WarheadTypeExt::ExtMap.Find(pWarhead);
 
 	// crush, kill, destroy
 	// NULL -> TechnoClass* SourceObject
 	pWHExt->applyRipples(&coords);
-	pWHExt->applyIronCurtain(&coords, pThis->Owner, pData->SW_Damage);
+	pWHExt->applyIronCurtain(&coords, pThis->Owner, damage);
 
 	BuildingClass *Firer = nullptr;
 	HouseClass *FirerHouse = pThis->Owner;
@@ -41,12 +43,11 @@ bool SW_GenericWarhead::Launch(SuperClass* pThis, CellStruct* pCoords, byte IsPl
 	pWHExt->applyAttachedEffect(&coords, Firer);
 
 	if(!pWHExt->applyPermaMC(&coords, pThis->Owner, Cell->GetContent())) {
-		MapClass::DamageArea(&coords, pData->SW_Damage, Firer, pData->SW_Warhead, 1, pThis->Owner);
-		if(AnimTypeClass * DamageAnimType = MapClass::SelectDamageAnimation(pData->SW_Damage, pData->SW_Warhead, Cell->LandType, &coords)) {
-			AnimClass *DamageAnim;
-			GAME_ALLOC(AnimClass, DamageAnim, DamageAnimType, &coords);
+		MapClass::DamageArea(&coords, damage, Firer, pWarhead, true, pThis->Owner);
+		if(AnimTypeClass * DamageAnimType = MapClass::SelectDamageAnimation(damage, pWarhead, Cell->LandType, &coords)) {
+			GameCreate<AnimClass>(DamageAnimType, coords);
 		}
-		MapClass::FlashbangWarheadAt(pData->SW_Damage, pData->SW_Warhead, coords, false, 0);
+		MapClass::FlashbangWarheadAt(damage, pWarhead, coords, false, 0);
 	}
 
 	return 1;

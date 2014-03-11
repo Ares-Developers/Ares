@@ -1,6 +1,7 @@
 #include "Body.h"
 #include "../TechnoType/Body.h"
 #include "../House/Body.h"
+#include "../../Utilities/TemplateDef.h"
 
 #include <InfantryClass.h>
 
@@ -59,7 +60,7 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 	if(this->IsCustom) {
 		//Reset
 		pThis->Foundation = FOUNDATION_CUSTOM;
-		pThis->FoundationData = this->CustomData;
+		pThis->FoundationData = this->CustomData.data();
 	} else if(pArtINI) {
 
 		char str[0x80]="\0";
@@ -80,24 +81,14 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 			}
 
 			//Allocate CellStruct array
-			if(this->CustomData) {
-				delete [] this->CustomData;
-			}
+			this->CustomData.assign(this->CustomWidth * this->CustomHeight + 1, CellStruct::Empty);
+			this->OutlineData.assign(this->OutlineLength + 1, CellStruct::Empty);
 
-			if(this->OutlineData) {
-				delete [] this->OutlineData;
-			}
-
-			CellStruct* pFoundationData = new CellStruct[this->CustomWidth * this->CustomHeight + 1];
-			CellStruct* pOutlineData = new CellStruct[this->OutlineLength + 1];
-
-			this->CustomData = pFoundationData;
-			this->OutlineData = pOutlineData;
-			pThis->FoundationData = pFoundationData;
-			pThis->FoundationOutside = pOutlineData;
+			pThis->FoundationData = this->CustomData.data();
+			pThis->FoundationOutside = this->OutlineData.data();
 
 			//Load FoundationData
-			CellStruct* pCurrent = pFoundationData;
+			CellStruct* pCurrent = this->CustomData.data();
 			char key[0x20];
 
 			auto ParsePoint = [](CellStruct* &pCell, const char* str) -> void {
@@ -127,7 +118,7 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 			pCurrent->X = 0x7FFF;
 			pCurrent->Y = 0x7FFF;
 
-			pCurrent = pOutlineData;
+			pCurrent = this->OutlineData.data();
 			for(int i = 0; i < this->OutlineLength; ++i) {
 				_snprintf(key, 31, "FoundationOutline.%d", i);
 				if(pArtINI->ReadString(pArtID, key, "", str, 0x80)) {
@@ -170,33 +161,18 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 	this->UCDamageMultiplier = pINI->ReadDouble(pID, "UC.DamageMultiplier", this->UCDamageMultiplier);
 	this->BunkerRaidable = pINI->ReadBool(pID, "Bunker.Raidable", this->BunkerRaidable);
 	if(pINI->ReadString(pID, "IsTrench", "", Ares::readBuffer, Ares::readLength)) {
-		/*  If the list of kinds is empty so far, just add this kind as the first one;
-			if there already are kinds in it, compare the current kind against the kinds in the list;
-			if it was found, assign that kind's ID to this type;
-			if it wasn't found, add this kind at the end of the list and assign the ID.
+		/*  Find the name in the list of kinds; if the list is empty, distance is 0, if the item isn't in
+			the list, the index is the current list's size(); if the returned iterator is beyond the list,
+			add the name to the list, which makes the previously calculated index (th distance) valid.
+			(changed by AlexB 2014-01-16)
 
 			I originally thought of using a map here, but I figured the probability that the kinds list
 			grows so long that the search through all kinds takes up significant time is very low, and
 			vectors are far simpler to use in this situation.
 		*/
-		if(trenchKinds.size()) {
-			signed int foundMatch = -1;
-			for(unsigned int i = 0; i < trenchKinds.size(); ++i) {
-				if(trenchKinds.at(i).compare(Ares::readBuffer) == 0) {
-					foundMatch = i;
-					break;
-				}
-			}
-
-			if(foundMatch > -1) {
-				this->IsTrench = foundMatch;
-			} else {
-				this->IsTrench = trenchKinds.size();
-				trenchKinds.push_back(Ares::readBuffer);
-			}
-
-		} else {
-			this->IsTrench = 0;
+		auto it = std::find(trenchKinds.begin(), trenchKinds.end(), Ares::readBuffer);
+		this->IsTrench = std::distance(trenchKinds.begin(), it);
+		if(it == trenchKinds.end()) {
 			trenchKinds.push_back(Ares::readBuffer);
 		}
 	}
@@ -224,18 +200,18 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 //	this->DisplayProduction = pINI->ReadBool(pID, "SpyEffect.DisplayProduction", this->DisplayProduction);
 
 	INI_EX exINI(pINI);
-	this->InfiltrateCustom.Read(&exINI, pID, "SpyEffect.Custom");
-	this->RevealProduction.Read(&exINI, pID, "SpyEffect.RevealProduction");
-	this->ResetSW.Read(&exINI, pID, "SpyEffect.ResetSuperweapons");
-	this->ResetRadar.Read(&exINI, pID, "SpyEffect.ResetRadar");
-	this->RevealRadar.Read(&exINI, pID, "SpyEffect.RevealRadar");
-	this->RevealRadarPersist.Read(&exINI, pID, "SpyEffect.KeepRadar");
-	this->GainVeterancy.Read(&exINI, pID, "SpyEffect.UnitVeterancy");
-	this->StolenTechIndex.Read(&exINI, pID, "SpyEffect.StolenTechIndex");
-	this->PowerOutageDuration.Read(&exINI, pID, "SpyEffect.PowerOutageDuration");
-	this->StolenMoneyAmount.Read(&exINI, pID, "SpyEffect.StolenMoneyAmount");
-	this->StolenMoneyPercentage.Read(&exINI, pID, "SpyEffect.StolenMoneyPercentage");
-	this->UnReverseEngineer.Read(&exINI, pID, "SpyEffect.UndoReverseEngineer");
+	this->InfiltrateCustom.Read(exINI, pID, "SpyEffect.Custom");
+	this->RevealProduction.Read(exINI, pID, "SpyEffect.RevealProduction");
+	this->ResetSW.Read(exINI, pID, "SpyEffect.ResetSuperweapons");
+	this->ResetRadar.Read(exINI, pID, "SpyEffect.ResetRadar");
+	this->RevealRadar.Read(exINI, pID, "SpyEffect.RevealRadar");
+	this->RevealRadarPersist.Read(exINI, pID, "SpyEffect.KeepRadar");
+	this->GainVeterancy.Read(exINI, pID, "SpyEffect.UnitVeterancy");
+	this->StolenTechIndex.Read(exINI, pID, "SpyEffect.StolenTechIndex");
+	this->PowerOutageDuration.Read(exINI, pID, "SpyEffect.PowerOutageDuration");
+	this->StolenMoneyAmount.Read(exINI, pID, "SpyEffect.StolenMoneyAmount");
+	this->StolenMoneyPercentage.Read(exINI, pID, "SpyEffect.StolenMoneyPercentage");
+	this->UnReverseEngineer.Read(exINI, pID, "SpyEffect.UndoReverseEngineer");
 
 	if(this->StolenTechIndex >= 32) {
 		Debug::DevLog(Debug::Warning, "BuildingType %s has a SpyEffect.StolenTechIndex of %d. The value has to be less than 32.\n", pID, this->StolenTechIndex.Get());
@@ -243,19 +219,21 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 	}
 
 	// #218 Specific Occupiers
-	this->AllowedOccupiers.Read(&exINI, pID, "CanBeOccupiedBy");
+	this->AllowedOccupiers.Read(exINI, pID, "CanBeOccupiedBy");
 	if(!this->AllowedOccupiers.empty()) {
 		// having a specific occupier list implies that this building is supposed to be occupiable
 		pThis->CanBeOccupied = true;
 	}
 
-	this->ReverseEngineersVictims.Read(&exINI, pID, "ReverseEngineersVictims");
+	this->Returnable.Read(exINI, pID, "Returnable");
 
-	this->CloningFacility.Read(&exINI, pID, "CloningFacility");
-	this->Factory_ExplicitOnly.Read(&exINI, pID, "Factory.ExplicitOnly");
+	this->ReverseEngineersVictims.Read(exINI, pID, "ReverseEngineersVictims");
 
-	this->GateDownSound.Read(&exINI, pID, "GateDownSound");
-	this->GateUpSound.Read(&exINI, pID, "GateUpSound");
+	this->CloningFacility.Read(exINI, pID, "CloningFacility");
+	this->Factory_ExplicitOnly.Read(exINI, pID, "Factory.ExplicitOnly");
+
+	this->GateDownSound.Read(exINI, pID, "GateDownSound");
+	this->GateUpSound.Read(exINI, pID, "GateUpSound");
 }
 
 void BuildingTypeExt::ExtData::CompleteInitialization(BuildingTypeClass *pThis) {
@@ -273,7 +251,7 @@ void BuildingTypeExt::UpdateSecretLabOptions(BuildingClass *pThis)
 	BuildingTypeClass *pType = pThis->Type;
 	BuildingTypeExt::ExtData* pData = BuildingTypeExt::ExtMap.Find(pType);
 
-	DEBUGLOG("Secret Lab update for %s\n", pType->get_ID());
+	Debug::Log("Secret Lab update for %s\n", pType->get_ID());
 
 	TechnoTypeClass *Result = pType->SecretInfantry;
 	if(!Result) {
@@ -314,7 +292,7 @@ void BuildingTypeExt::UpdateSecretLabOptions(BuildingClass *pThis)
 	}
 
 	if(Options.Count < 1) {
-		DEBUGLOG("Secret Lab [%s] has no boons applicable to country [%s]!\n",
+		Debug::Log("Secret Lab [%s] has no boons applicable to country [%s]!\n",
 			pType->ID, Owner->Type->ID);
 		return;
 	}
@@ -322,7 +300,7 @@ void BuildingTypeExt::UpdateSecretLabOptions(BuildingClass *pThis)
 	int idx = ScenarioClass::Instance->Random.RandomRanged(0, Options.Count - 1);
 	Result = Options[idx];
 
-	DEBUGLOG("Secret Lab rolled %s for %s\n", Result->ID, pType->ID);
+	Debug::Log("Secret Lab rolled %s for %s\n", Result->ID, pType->ID);
 	pData->Secret_Placed = true;
 	pThis->SecretProduction = Result;
 }
@@ -346,21 +324,13 @@ bool BuildingTypeExt::IsFoundationEqual(BuildingTypeClass *pTBldA, BuildingTypeC
 		if(pDataA->CustomWidth == pDataB->CustomWidth) {
 			if(pDataA->CustomHeight == pDataB->CustomHeight) {
 				// compare unsorted arrays the hard way: O(n²)
-				int length = (pDataA->CustomHeight * pDataA->CustomHeight + 1);
-				for(int i=0; i<length; ++i) {
-					bool found = false;
-					for(int j=0; j<length; ++j) {
-						if((pDataA->CustomData[i].X == pDataB->CustomData[j].X) && (pDataA->CustomData[i].Y == pDataB->CustomData[j].Y)) {
-							found = true;
-							break;
-						}
-					}
-					if(!found) {
-						return false;
-					}
-				}
-				// found everyting.
-				return true;
+				auto it = std::find_if(pDataA->CustomData.begin(), pDataA->CustomData.end(), [&](const CellStruct& cell) -> bool {
+					auto it2 = std::find(pDataB->CustomData.begin(), pDataB->CustomData.end(), cell);
+					return (it2 == pDataB->CustomData.end());
+				});
+
+				// found everything if no mismatch found.
+				return (it == pDataA->CustomData.end());
 			}
 		}
 	}
@@ -442,51 +412,31 @@ bool BuildingTypeExt::ExtData::CanBeOccupiedBy(InfantryClass *whom) {
 // =============================
 // load/save
 
-void Container<BuildingTypeExt>::Save(BuildingTypeClass *pThis, IStream *pStm) {
+bool Container<BuildingTypeExt>::Save(BuildingTypeClass *pThis, IStream *pStm) {
 	BuildingTypeExt::ExtData* pData = this->SaveKey(pThis, pStm);
 
-	if(pData && pData->IsCustom) {
-		ULONG out;
-		pStm->Write(pData->CustomData,
-			sizeof(CellStruct) * (pData->CustomWidth * pData->CustomHeight + 1),
-			&out);
-		pStm->Write(pData->OutlineData,
-			sizeof(CellStruct) * (pData->OutlineLength + 1),
-			&out);
-	}
+	return pData != nullptr;
 };
 
-void Container<BuildingTypeExt>::Load(BuildingTypeClass *pThis, IStream *pStm) {
+bool Container<BuildingTypeExt>::Load(BuildingTypeClass *pThis, IStream *pStm) {
 	BuildingTypeExt::ExtData* pData = this->LoadKey(pThis, pStm);
 //	this->FindOrAllocate(pThis);
 
-	ULONG out;
-
 	//if there's custom data, read it
 	if(pData->IsCustom && pData->CustomWidth > 0 && pData->CustomHeight > 0) {
-		pData->CustomData = new CellStruct[pData->CustomWidth * pData->CustomHeight + 1];
-		pData->OutlineData = new CellStruct [pData->OutlineLength + 1];
-
-		pStm->Read(
-			pData->CustomData,
-			sizeof(CellStruct) * (pData->CustomWidth * pData->CustomHeight + 1),
-			&out);
-
-		pStm->Read(
-			pData->OutlineData,
-			sizeof(CellStruct) * (pData->OutlineLength + 1),
-			&out);
-
 		pThis->Foundation = FOUNDATION_CUSTOM;
-		pThis->FoundationData = pData->CustomData;
-		pThis->FoundationOutside = pData->OutlineData;
+		pThis->FoundationData = pData->CustomData.data();
+		pThis->FoundationOutside = pData->OutlineData.data();
 	} else {
-		pData->CustomData = pData->OutlineData = nullptr;
+		pData->CustomData.clear();
+		pData->OutlineData.clear();
 	}
 
 #ifdef DEBUGBUILD
 	assert(this->SavedCanary == Extension<BuildingTypeClass>::Canary);
 #endif
+
+	return pData != nullptr;
 };
 
 // =============================
@@ -515,8 +465,7 @@ DEFINE_HOOK(465010, BuildingTypeClass_SaveLoad_Prefix, 5)
 	GET_STACK(BuildingTypeExt::TT*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
 
-	Container<BuildingTypeExt>::SavingObject = pItem;
-	Container<BuildingTypeExt>::SavingStream = pStm;
+	Container<BuildingTypeExt>::PrepareStream(pItem, pStm);
 
 	return 0;
 }

@@ -30,9 +30,7 @@ DEFINE_HOOK(53B080, PsyDom_Fire, 5) {
 		
 		// blast!
 		if(pData->Dominator_Ripple) {
-			IonBlastClass* pBlast = nullptr;
-			GAME_ALLOC(IonBlastClass, pBlast, coords);
-			if(pBlast) {
+			if(auto pBlast = GameCreate<IonBlastClass>(coords)) {
 				pBlast->DisableIonBeam = TRUE;
 			}
 		}
@@ -43,17 +41,19 @@ DEFINE_HOOK(53B080, PsyDom_Fire, 5) {
 		}
 
 		// anim
-		AnimClass* pAnim = nullptr;
-		if(AnimTypeClass* pAnimType = pData->Dominator_SecondAnim) {
+		PsyDom::Anim = nullptr;
+		if(AnimTypeClass* pAnimType = pData->Dominator_SecondAnim.Get(RulesClass::Instance->DominatorSecondAnim)) {
 			CoordStruct animCoords = coords;
 			animCoords.Z += pData->Dominator_SecondAnimHeight;
-			GAME_ALLOC(AnimClass, pAnim, pAnimType, &animCoords);
-			PsyDom::Anim = pAnim;
+			PsyDom::Anim = GameCreate<AnimClass>(pAnimType, animCoords);
 		}
 
 		// kill
-		if(pData->SW_Damage > 0 && pData->SW_Warhead) {
-			MapClass::Instance->DamageArea(&coords, pData->SW_Damage, nullptr, pData->SW_Warhead, true, pFirer);
+		auto damage = pData->GetDamage();
+		if(damage > 0) {
+			if(auto pWarhead = pData->GetWarhead()) {
+				MapClass::Instance->DamageArea(&coords, damage, nullptr, pWarhead, true, pFirer);
+			}
 		}
 
 		// capture
@@ -120,10 +120,10 @@ DEFINE_HOOK(53B080, PsyDom_Fire, 5) {
 				}
 
 				// create a permanent capture anim
-				if(AnimTypeClass* pAnimType = pData->Dominator_ControlAnim) {
+				if(AnimTypeClass* pAnimType = pData->Dominator_ControlAnim.Get(RulesClass::Instance->PermaControlledAnimationType)) {
 					CoordStruct animCoords = pTechno->GetCoords();
 					animCoords.Z += pType->MindControlRingOffset;
-					GAME_ALLOC(AnimClass, pTechno->MindControlRingAnim, pAnimType, &animCoords);
+					pTechno->MindControlRingAnim = GameCreate<AnimClass>(pAnimType, animCoords);
 					if(pTechno->MindControlRingAnim) {
 						pTechno->MindControlRingAnim->SetOwnerObject(pTechno);
 					}
@@ -138,8 +138,9 @@ DEFINE_HOOK(53B080, PsyDom_Fire, 5) {
 			};
 
 			// every techno in this area shall be one with Yuri.
+			auto range = pData->GetRange();
 			Helpers::Alex::DistinctCollector<TechnoClass*> items;
-			Helpers::Alex::for_each_in_rect_or_spread<TechnoClass>(cell, pData->SW_WidthOrRange, pData->SW_Height, std::ref(items));
+			Helpers::Alex::for_each_in_rect_or_spread<TechnoClass>(cell, range.WidthOrRange, range.Height, std::ref(items));
 			items.for_each(Dominate);
 
 			// the AI sends all new minions to hunt
@@ -266,30 +267,34 @@ DEFINE_HOOK(539EB0, LightningStorm_Start, 5) {
 				LightningStorm::Active = true;
 
 				// blackout
-				if(pData->Weather_RadarOutage > 0) {
+				auto outage = pData->Weather_RadarOutage.Get(RulesClass::Instance->LightningStormDuration);
+				if(outage > 0) {
 					for(int i=0; i<HouseClass::Array->Count; ++i) {
 						HouseClass* pHouse = HouseClass::Array->GetItem(i);
 						if(pData->IsHouseAffected(pOwner, pHouse, pData->Weather_RadarOutageAffects)) {
 							if(!pHouse->Defeated) {
-								pHouse->CreateRadarOutage(pData->Weather_RadarOutage);
+								pHouse->CreateRadarOutage(outage);
 							}
 						}
 					}
 				}
 				if(HouseClass::Player) {
-					HouseClass::Player->RadarBlackout = true;
+					HouseClass::Player->RecheckRadar = true;
 				}
 
 				// let there be light
 				ScenarioClass::Instance->UpdateLighting();
 
 				// activation stuff
-				if(pData->Weather_PrintText) {
+				if(pData->Weather_PrintText.Get(RulesClass::Instance->LightningPrintText)) {
 					pData->PrintMessage(pData->Message_Activate, pSuper->Owner);
 				}
-				if(pData->SW_ActivationSound != -1) {
-					VocClass::PlayGlobal(pData->SW_ActivationSound, 1.0, 0);
+
+				int sound = pData->SW_ActivationSound.Get(RulesClass::Instance->StormSound);
+				if(sound != -1) {
+					VocClass::PlayGlobal(sound, 8192, 1.0);
 				}
+
 				if(pData->SW_RadarEvent) {
 					RadarEventClass::Create(RadarEventType::SuperweaponActivated, Coords);
 				}
@@ -391,7 +396,7 @@ DEFINE_HOOK(53A6CF, LightningStorm_Update, 7) {
 				// still waiting
 				if(deferment) {
 					if(!(deferment % 225)) {
-						if(pData->Weather_PrintText) {
+						if(pData->Weather_PrintText.Get(RulesClass::Instance->LightningPrintText)) {
 							pData->PrintMessage(pData->Message_Launch, pSuper->Owner);
 						}
 					}
@@ -406,14 +411,17 @@ DEFINE_HOOK(53A6CF, LightningStorm_Update, 7) {
 			if(duration == -1 || duration + LightningStorm::StartTime >= Unsorted::CurrentFrame) {
 
 				// deterministic damage. the very target cell.
-				if(pData->Weather_HitDelay > 0 && !(Unsorted::CurrentFrame % pData->Weather_HitDelay)) {
+				auto hitDelay = pData->Weather_HitDelay.Get(RulesClass::Instance->LightningHitDelay);
+				if(hitDelay > 0 && !(Unsorted::CurrentFrame % hitDelay)) {
 					LightningStorm::Strike(LightningStorm::Coords);
 				}
 
 				// random damage. somewhere in range.
-				if(pData->Weather_ScatterDelay > 0 && !(Unsorted::CurrentFrame % pData->Weather_ScatterDelay)) {
-					int width = (int)pData->SW_WidthOrRange;
-					int height = pData->SW_Height;
+				auto scatterDelay = pData->Weather_ScatterDelay.Get(RulesClass::Instance->LightningScatterDelay);
+				if(scatterDelay > 0 && !(Unsorted::CurrentFrame % scatterDelay)) {
+					auto range = pData->GetRange();
+					int width = range.width();
+					int height = range.height();
 					bool isRectangle = true;
 
 					// is circular range?
@@ -437,7 +445,7 @@ DEFINE_HOOK(53A6CF, LightningStorm_Update, 7) {
 								if(MapClass::Instance->CellExists(cell)) {
 									// out of range?
 									if(!isRectangle) {
-										if(cell.DistanceFrom(LSCell) > pData->SW_WidthOrRange) {
+										if(cell.DistanceFrom(LSCell) > range.WidthOrRange) {
 											continue;
 										}
 									}
@@ -468,12 +476,13 @@ DEFINE_HOOK(53A6CF, LightningStorm_Update, 7) {
 									}
 
 									// is this spot far away from another cloud?
-									if(pData->Weather_Separation > 0) {
+									auto separation = pData->Weather_Separation.Get(RulesClass::Instance->LightningSeparation);
+									if(separation > 0) {
 										for(int j=0; j<LightningStorm::CloudsPresent->Count; ++j) {
 											// assume success and disprove.
 											CellStruct *pCell2 = &LightningStorm::CloudsPresent->GetItem(j)->GetCell()->MapCoords;
 											int dist = std::abs(pCell2->X - cell.X) + std::abs(pCell2->Y - cell.Y);
-											if(dist < pData->Weather_Separation) {
+											if(dist < separation) {
 												found = false;
 												break;
 											}
@@ -517,12 +526,11 @@ DEFINE_HOOK(53A140, LightningStorm_Strike, 7) {
 		SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pType);
 
 		// get center of cell coords
-		CoordStruct Coords;
 		CellClass* pCell = MapClass::Instance->GetCellAt(Cell);
-		pCell->GetCoordsWithBridge(&Coords);
+		CoordStruct Coords = pCell->GetCoordsWithBridge();
 		
 		// create a cloud animation
-		if(Coords != LightningStorm::EmptyCoords) {
+		if(Coords != CoordStruct::Empty) {
 			// select the anim
 			auto itClouds = pData->Weather_Clouds.GetElements(RulesClass::Instance->WeatherConClouds);
 			AnimTypeClass* pAnimType = itClouds.at(ScenarioClass::Instance->Random.Random() % itClouds.size());
@@ -537,10 +545,7 @@ DEFINE_HOOK(53A140, LightningStorm_Strike, 7) {
 			Coords.Z += pData->Weather_CloudHeight;
 
 			// create the cloud and do some book keeping.
-			AnimClass* pAnim = nullptr;
-			GAME_ALLOC(AnimClass, pAnim, pAnimType, &Coords);
-
-			if(pAnim) {
+			if(auto pAnim = GameCreate<AnimClass>(pAnimType, Coords)) {
 				LightningStorm::CloudsManifesting->AddItem(pAnim);
 				LightningStorm::CloudsPresent->AddItem(pAnim);
 			}
@@ -564,27 +569,24 @@ DEFINE_HOOK(53A300, LightningStorm_Strike2, 5) {
 
 		// get center of cell coords
 		CellClass* pCell = MapClass::Instance->GetCellAt(Coords);
-		pCell->GetCoordsWithBridge(&Coords);
+		Coords = pCell->GetCoordsWithBridge();
 
-		if(Coords != LightningStorm::EmptyCoords) {
+		if(Coords != CoordStruct::Empty) {
 
 			// create a bolt animation
 			if(auto it = pData->Weather_Bolts.GetElements(RulesClass::Instance->WeatherConBolts)) {
 				DWORD rnd = ScenarioClass::Instance->Random.Random();
 				AnimTypeClass* pAnimType = it.at(rnd % it.size());
 
-				AnimClass* pAnim = nullptr;
-				GAME_ALLOC(AnimClass, pAnim, pAnimType, &Coords);
-				
-				if(pAnim) {
+				if(auto pAnim = GameCreate<AnimClass>(pAnimType, Coords)) {
 					LightningStorm::BoltsPresent->AddItem(pAnim);
 				}
 			}
-			
+
 			// play lightning sound
 			if(auto it = pData->Weather_Sounds.GetElements(RulesClass::Instance->LightningSounds)) {
 				DWORD rnd = ScenarioClass::Instance->Random.Random();
-				VocClass::PlayAt(it.at(rnd % it.size()), &Coords, nullptr);
+				VocClass::PlayAt(it.at(rnd % it.size()), Coords, nullptr);
 			}
 
 			bool debris = false;
@@ -598,10 +600,10 @@ DEFINE_HOOK(53A300, LightningStorm_Strike2, 5) {
 			if(!pBld && !pObj) {
 				switch(pCell->LandType)
 				{
-				case lt_Road:
-				case lt_Rock:
-				case lt_Wall:
-				case lt_Weeds:
+				case LandType::Road:
+				case LandType::Rock:
+				case LandType::Wall:
+				case LandType::Weeds:
 					debris = true;
 					break;
 				default:
@@ -610,7 +612,7 @@ DEFINE_HOOK(53A300, LightningStorm_Strike2, 5) {
 			}
 
 			// account for lightning rods
-			int damage = pData->SW_Damage;
+			int damage = pData->GetDamage();
 			if(!pData->Weather_IgnoreLightningRod) {
 				if(BuildingClass* pBldObj = specific_cast<BuildingClass*>(pObj)) {
 					if(pBldObj->Type->LightningRod) {
@@ -624,13 +626,13 @@ DEFINE_HOOK(53A300, LightningStorm_Strike2, 5) {
 
 			// cause mayhem
 			if(damage) {
-				MapClass::FlashbangWarheadAt(damage, pData->SW_Warhead, Coords, false, 0);
-				MapClass::DamageArea(&Coords, damage, nullptr, pData->SW_Warhead, true, pSuper->Owner);
+				auto pWarhead = pData->GetWarhead();
+				MapClass::FlashbangWarheadAt(damage, pWarhead, Coords, false, 0);
+				MapClass::DamageArea(&Coords, damage, nullptr, pWarhead, true, pSuper->Owner);
 
 				// fancy stuff if damage is dealt
-				AnimClass* pAnim = nullptr;
-				AnimTypeClass* pAnimType = MapClass::SelectDamageAnimation(damage, pData->SW_Warhead, pCell->LandType, &Coords);
-				GAME_ALLOC(AnimClass, pAnim, pAnimType, &Coords);
+				AnimTypeClass* pAnimType = MapClass::SelectDamageAnimation(damage, pWarhead, pCell->LandType, &Coords);
+				GameCreate<AnimClass>(pAnimType, Coords);
 			}
 
 			// has the last target been destroyed?
@@ -648,8 +650,7 @@ DEFINE_HOOK(53A300, LightningStorm_Strike2, 5) {
 						DWORD rnd = ScenarioClass::Instance->Random.Random();
 						AnimTypeClass *pAnimType = it.at(rnd % it.size());
 
-						AnimClass *pAnim = nullptr;
-						GAME_ALLOC(AnimClass, pAnim, pAnimType, &Coords);
+						GameCreate<AnimClass>(pAnimType, Coords);
 					}
 				}
 			}
@@ -668,8 +669,8 @@ DEFINE_HOOK(48A59A, MapClass_SelectDamageAnimation_LightningWarhead, 5) {
 	if(SuperClass* pSuper = SW_LightningStorm::CurrentLightningStorm) {
 		SuperWeaponTypeClass *pType = pSuper->Type;
 		if(SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pType)) {
-			if(pData->SW_Warhead == pWarhead) {
-				if(AnimTypeClass* pAnimType = pData->Weather_BoltExplosion) {
+			if(pData->GetWarhead() == pWarhead) {
+				if(AnimTypeClass* pAnimType = pData->Weather_BoltExplosion.Get(RulesClass::Instance->WeatherConBoltExplosion)) {
 					R->EAX(pAnimType);
 					return 0x48A5AD;
 				}
@@ -736,7 +737,7 @@ DEFINE_HOOK(44CC8B, BuildingClass_Missile_NukeTakeOff, 6) {
 
 	if(SuperWeaponTypeClass* pSW = SuperWeaponTypeClass::Array->GetItemOrDefault(type)) {
 		if(SWTypeExt::ExtData* pExt = SWTypeExt::ExtMap.Find(pSW)) {
-			if(AnimTypeClass* pAnimType = pExt->Nuke_TakeOff) {
+			if(AnimTypeClass* pAnimType = pExt->Nuke_TakeOff.Get(RulesClass::Instance->NukeTakeOff)) {
 				R->ECX(pAnimType);
 				return 0x44CC91;
 			}
@@ -770,8 +771,8 @@ DEFINE_HOOK(46B371, BulletClass_NukeMaker, 5) {
 
 						// get damage and warhead. they are not available during
 						// initialisation, so we gotta fall back now if they are invalid.
-						int damage = (pExt->SW_Damage < 0 ? pPayload->Damage : pExt->SW_Damage);
-						WarheadTypeClass *pWarhead = (!pExt->SW_Warhead ? pPayload->Warhead : pExt->SW_Warhead);
+						auto damage = pExt->GetDamage();
+						auto pWarhead = pExt->GetWarhead();
 
 						Debug::Log("Payload = %s\n", pPayload->ID);
 						Debug::Log("Payload WH = %s\n", pPayload->Warhead->ID);
@@ -850,9 +851,7 @@ DEFINE_HOOK(467E59, BulletClass_Update_NukeBall, 5) {
 					// cause yet another radar event
 					if(SWTypeExt::ExtData *pType = SWTypeExt::ExtMap.Find(pData->NukeSW)) {
 						if(pType->SW_RadarEvent) {
-							CellStruct coords;
-							pBullet->GetMapCoords(&coords);
-
+							CellStruct coords = pBullet->GetMapCoords();
 							RadarEventClass::Create(RadarEventType::SuperweaponActivated, coords);
 						}
 					}

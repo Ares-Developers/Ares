@@ -20,11 +20,12 @@
 #include "../WeaponType/Body.h"
 #include "../TechnoType/Body.h"
 
-#include "../_Container.hpp"
+#include "../../Misc/JammerClass.h"
+#include "../../Misc/PoweredUnitClass.h"
 
-//#include "../../Misc/JammerClass.h"
-class JammerClass;
-class PoweredUnitClass;
+#include "../../Utilities/Enums.h"
+
+#include "../_Container.hpp"
 
 class TechnoExt
 {
@@ -58,13 +59,13 @@ public:
 		HouseClass* HijackerHouse;
 
 		// 305 Radar Jammers
-		JammerClass* RadarJam;
+		std::unique_ptr<JammerClass> RadarJam;
 		
 		// issue #617 powered units
-		PoweredUnitClass* PoweredUnit;
+		std::unique_ptr<PoweredUnitClass> PoweredUnit;
 
 		//#1573, #1623, #255 Stat-modifiers/ongoing animations
-		DynamicVectorClass <AttachEffectClass *> AttachedEffects;
+		std::vector<std::unique_ptr<AttachEffectClass>> AttachedEffects;
 		bool AttachEffects_RecreateAnims;
 
 		//stuff for #1623
@@ -81,9 +82,11 @@ public:
 
 		EBolt * MyBolt;
 
+		BuildingLightClass* Spotlight;
+
 		Nullable<bool> AltOccupation; // if the unit marks cell occupation flags, this is set to whether it uses the "high" occupation members
 
-		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
+		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			idxSlot_Wave (0),
 			idxSlot_Beam (0),
 			idxSlot_Warp (0),
@@ -100,6 +103,7 @@ public:
 			RadarJam(nullptr),
 			PoweredUnit(nullptr),
 			MyOriginalTemporal(nullptr),
+			Spotlight(nullptr),
 			AltOccupation(),
 			AttachEffects_RecreateAnims(false),
 			AttachedTechnoEffect_isset (false),
@@ -110,24 +114,17 @@ public:
 			Crate_Cloakable(false)
 			{
 				this->CloakSkipTimer.Stop();
-				// hope this works with the timing - I assume it does, since Types should be created before derivates thereof
-				//TechnoTypeExt::ExtData* TypeExt = TechnoTypeExt::ExtMap.Find(this->AttachedToObject->GetTechnoType());
-				/*if(TypeExt->RadarJamRadius) {
-					RadarJam = new JammerClass(this->AttachedToObject, this); // now in hooks -> TechnoClass_Update_CheckOperators
-				}*/
 			};
 
 		virtual ~ExtData() {
-			//delete RadarJam; // now in hooks -> TechnoClass_Remove
 		};
-
-		virtual size_t Size() const { return sizeof(*this); };
 
 		// when any pointer in the game expires, this is called - be sure to tell everyone we own to invalidate it
 		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
 			AnnounceInvalidPointer(this->GarrisonedIn, ptr);
 			this->InvalidateAttachEffectPointer(ptr);
 			AnnounceInvalidPointer(this->MyOriginalTemporal, ptr);
+			AnnounceInvalidPointer(this->Spotlight, ptr);
 		}
 
 		bool IsOperated();
@@ -155,11 +152,12 @@ public:
 		bool CloakAllowed() const;
 		bool CloakDisallowed(bool allowPassive) const;
 		bool CanSelfCloakNow() const;
+
+		void SetSpotlight(BuildingLightClass* pSpotlight);
 	};
 
 	static Container<TechnoExt> ExtMap;
 	static hash_map<ObjectClass *, AlphaShapeClass *> AlphaExt;
-	static hash_map<TechnoClass *, BuildingLightClass *> SpotlightExt;
 
 	static BuildingLightClass * ActiveBuildingLight;
 
@@ -168,9 +166,9 @@ public:
 	static bool NeedsRegap;
 
 	static void SpawnSurvivors(FootClass *pThis, TechnoClass *pKiller, bool Select, bool IgnoreDefenses);
-	static bool EjectSurvivor(FootClass *Survivor, CoordStruct *loc, bool Select);
-	static void EjectPassengers(FootClass *, signed short);
-	static void GetPutLocation(CoordStruct const &, CoordStruct &, int);
+	static bool EjectSurvivor(FootClass *Survivor, CoordStruct loc, bool Select);
+	static void EjectPassengers(FootClass *, int);
+	static CoordStruct GetPutLocation(CoordStruct, int);
 	static bool EjectRandomly(FootClass*, CoordStruct const &, int, bool);
 	// If available, removes the hijacker from its victim and creates an InfantryClass instance.
 	static InfantryClass* RecoverHijacker(FootClass *pThis);

@@ -50,7 +50,7 @@ eAction InfantryExt::GetEngineerEnterEnemyBuildingAction(BuildingClass *pBld) {
 		// check to always capture tech structures. a structure counts
 		// as tech if its initial owner is a multiplayer-passive country.
 		bool isTech = false;
-		if(HouseClass * pHouse = pBld->OwningPlayer2) {
+		if(HouseClass * pHouse = pBld->InitialOwner) {
 			if(HouseTypeClass * pCountry = pHouse->Type) {
 				isTech = pCountry->MultiplayPassive;
 			}

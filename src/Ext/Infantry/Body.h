@@ -18,13 +18,11 @@ public:
 	{
 	public:
 
-		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject)
+		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject)
 			{ };
 
 		virtual ~ExtData() {
 		}
-
-		virtual size_t Size() const { return sizeof(*this); };
 
 		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
 		}

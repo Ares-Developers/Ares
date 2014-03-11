@@ -21,15 +21,10 @@ class ArmorType  : public Enumerable<ArmorType>
 		int DefaultIndex;
 		WarheadTypeExt::VersesData DefaultVerses;
 
-	ArmorType(const char *Title) {
-		AresCRT::strCopy(this->Name, Title);
-		DefaultIndex = -1;
-		Array.AddItem(this);
+	ArmorType(const char *Title) : Enumerable<ArmorType>(Title), DefaultIndex(-1) {
 	}
 
 	virtual ~ArmorType() {
-		ArmorType *placeholder = this;
-		Array.RemoveItem(Array.FindItemIndex(placeholder));
 	}
 
 	virtual void LoadFromINI(CCINIClass *pINI);

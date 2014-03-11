@@ -37,32 +37,32 @@ public:
 	{
 	public:
 		// static defaults
-		static ColorStruct DefaultWaveColor;
-		static ColorStruct DefaultWaveColorSonic;
-		static ColorStruct DefaultWaveColorMagBeam;
+		static const ColorStruct DefaultWaveColor;
+		static const ColorStruct DefaultWaveColorSonic;
+		static const ColorStruct DefaultWaveColorMagBeam;
 
 		// Generic
 		bool Weapon_Loaded;
 
 		// Coloured Rad Beams
-		Customizable<ColorStruct> Beam_Color;
+		Nullable<ColorStruct> Beam_Color;
 		int    Beam_Duration;
 		double Beam_Amplitude;
 		bool   Beam_IsHouseColor;
 
 		// Coloured EBolts
-		Customizable<ColorStruct> Bolt_Color1;
-		Customizable<ColorStruct> Bolt_Color2;
-		Customizable<ColorStruct> Bolt_Color3;
+		Nullable<ColorStruct> Bolt_Color1;
+		Nullable<ColorStruct> Bolt_Color2;
+		Nullable<ColorStruct> Bolt_Color3;
 
 		// TS Lasers
 		bool   Wave_IsHouseColor;
 		bool   Wave_IsLaser;
 		bool   Wave_IsBigLaser;
-		Customizable<ColorStruct> Wave_Color;
+		Nullable<ColorStruct> Wave_Color;
 		bool   Wave_Reverse[5];
 
-		Customizable<signed int> Laser_Thickness;
+		Valueable<int> Laser_Thickness;
 /*
 		int    Wave_InitialIntensity;
 		int    Wave_IntensityStep;
@@ -92,20 +92,20 @@ public:
 		Valueable <bool> Abductor_ChangeOwner;
 		Valueable<double> Abductor_AbductBelowPercent;
 		
-		ExtData(const DWORD Canary, TT* const OwnerObject) : Extension<TT>(Canary, OwnerObject),
+		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			Weapon_Loaded (false),
-			Beam_Color (&RulesClass::Instance->RadColor),
+			Beam_Color (),
 			Beam_Duration (15),
 			Beam_Amplitude (40.0),
 			Beam_IsHouseColor (false),
-			Bolt_Color1 (nullptr),
-			Bolt_Color2 (nullptr),
-			Bolt_Color3 (nullptr),
+			Bolt_Color1 (),
+			Bolt_Color2 (),
+			Bolt_Color3 (),
 			Wave_IsHouseColor (false),
 			Wave_IsLaser (false),
 			Wave_IsBigLaser (false),
-			Wave_Color (nullptr),
-			Laser_Thickness (nullptr),
+			Wave_Color (),
+			Laser_Thickness (-1),
 			Ivan_KillsBridges (true),
 			Ivan_Detachable (true),
 			Ivan_Damage (),
@@ -123,15 +123,10 @@ public:
 			Abductor_ChangeOwner(false),
 			Abductor_AbductBelowPercent(1)
 			{
-				this->Laser_Thickness.Set(-1);
-//				this->Beam_Color = ColorStruct(255, 255, 255);
-//				this->Wave_Color = ColorStruct(255, 255, 255);
 				for(int i = 0; i < 5; ++i) {
 					this->Wave_Reverse[i] = false;
 				}
 			};
-
-		virtual size_t Size() const { return sizeof(*this); };
 
 		virtual void LoadFromINIFile(TT *pThis, CCINIClass *pINI);
 		virtual void Initialize(TT* pThis);
@@ -143,6 +138,9 @@ public:
 		bool IsWave(WeaponTypeClass *pThis) {
 			return pThis->IsSonic || pThis->IsMagBeam || this->Wave_IsLaser || this->Wave_IsBigLaser;
 		}
+
+		ColorStruct GetWaveColor() const;
+		ColorStruct GetBeamColor() const;
 
 		bool conductAbduction(BulletClass *);
 

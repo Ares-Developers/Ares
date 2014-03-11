@@ -2,6 +2,7 @@
 #include "../TechnoType/Body.h"
 #include "../AnimType/Body.h"
 #include "../House/Body.h"
+#include "../../Utilities/TemplateDef.h"
 
 template<> const DWORD Extension<BulletTypeClass>::Canary = 0xF00DF00D;
 Container<BulletTypeExt> BulletTypeExt::ExtMap;
@@ -20,20 +21,20 @@ void BulletTypeExt::ExtData::LoadFromINIFile(BulletTypeClass *pThis, CCINIClass*
 
 	this->SubjectToTrenches = pINI->ReadBool(pThis->ID, "SubjectToTrenches", this->SubjectToTrenches);
 
-	this->ImageConvert.Reset();
+	this->ImageConvert.clear();
 }
 
 // get the custom palette of the animation this bullet type uses
 ConvertClass* BulletTypeExt::ExtData::GetConvert()
 {
 	// cache the palette's convert
-	if(!this->ImageConvert.isset()) {
-		ConvertClass* Convert = nullptr;
-		if(AnimTypeClass * AnimType = AnimTypeClass::Find(this->AttachedToObject->ImageFile)) {
-			auto pData = AnimTypeExt::ExtMap.Find(AnimType);
-			Convert = pData->Palette.Convert;
+	if(this->ImageConvert.empty()) {
+		ConvertClass* pConvert = nullptr;
+		if(auto pAnimType = AnimTypeClass::Find(this->AttachedToObject->ImageFile)) {
+			auto pData = AnimTypeExt::ExtMap.Find(pAnimType);
+			pConvert = pData->Palette.GetConvert();
 		}
-		this->ImageConvert.Set(Convert);
+		this->ImageConvert = pConvert;
 	}
 
 	return this->ImageConvert;
@@ -64,8 +65,7 @@ DEFINE_HOOK(46C6A0, BulletTypeClass_SaveLoad_Prefix, 5)
 	GET_STACK(BulletTypeExt::TT*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
 
-	Container<BulletTypeExt>::SavingObject = pItem;
-	Container<BulletTypeExt>::SavingStream = pStm;
+	Container<BulletTypeExt>::PrepareStream(pItem, pStm);
 
 	return 0;
 }

@@ -35,7 +35,7 @@ public:
 		Debug::Log("AI Base Plans:\n");
 		for(int i = 0; i < HouseClass::Array->Count; ++i) {
 			auto H = HouseClass::Array->GetItem(i);
-			if(!H->IsHumanoid()) {
+			if(!H->ControlledByHuman()) {
 				Debug::Log("#%02d: country %25s:\n", i, H->Type->ID);
 				auto b = &H->Base.BaseNodes;
 				for(int j = 0; j < b->Count; ++j) {

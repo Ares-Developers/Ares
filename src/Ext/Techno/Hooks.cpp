@@ -43,6 +43,36 @@ DEFINE_HOOK(41668B, AircraftClass_ReceiveDamage, 6)
 	return 0;
 }
 
+// rotation when crashing made optional
+DEFINE_HOOK(4DECAE, FootClass_Crash_Spin, 5)
+{
+	GET(FootClass*, pThis, ESI);
+	auto pExt = TechnoTypeExt::ExtMap.Find(pThis->GetTechnoType());
+	return pExt->CrashSpin ? 0 : 0x4DED4B;
+}
+
+// move to the next hva frame, even if this unit isn't moving
+DEFINE_HOOK(4DA8B2, FootClass_Update_AnimRate, 6)
+{
+	GET(FootClass*, pThis, ESI);
+	auto pType = pThis->GetTechnoType();
+	auto pExt = TechnoTypeExt::ExtMap.Find(pType);
+
+	enum { Undecided = 0, NoChange = 0x4DAA01, Advance = 0x4DA9FB };
+
+	// any of these prevents the animation to advance to the next frame
+	if(pThis->IsBeingWarpedOut() || pThis->IsWarpingIn() || pThis->IsAttackedByLocomotor) {
+		return NoChange;
+	}
+
+	// animate unit whenever in air
+	if(pExt->AirRate && pThis->GetHeight() > 0) {
+		return (Unsorted::CurrentFrame % pExt->AirRate) ? NoChange : Advance;
+	}
+
+	return Undecided;
+}
+
 DEFINE_HOOK(6F9E50, TechnoClass_Update, 5)
 {
 	GET(TechnoClass *, Source, ECX);
@@ -63,7 +93,7 @@ DEFINE_HOOK(6F9E50, TechnoClass_Update, 5)
 	// #617 powered units
 	if(pTypeData && pTypeData->PoweredBy.size()) {
 		if(!pData->PoweredUnit) {
-			pData->PoweredUnit = new PoweredUnitClass(Source, pTypeData);
+			pData->PoweredUnit = std::make_unique<PoweredUnitClass>(Source);
 		}
 		if(!pData->PoweredUnit->Update()) {
 			TechnoExt::Destroy(Source);
@@ -111,14 +141,14 @@ DEFINE_HOOK(6F9E76, TechnoClass_Update_CheckOperators, 6)
 			if( (pThis->Deactivated && pData->IsPowered() && !pThis->IsUnderEMP()) || Override ) { // ...if it's currently off, turn it on! (oooh baby)
 				pThis->Reactivate();
 				if(pTheBuildingBelow == pThis) {
-					pThis->Owner->ShouldRecheckTechTree = true; // #885
+					pThis->Owner->RecheckTechTree = true; // #885
 				}
 			}
 		} else { // doesn't have an operator, so...
 			if(!pThis->Deactivated) { // ...if it's not off yet, turn it off!
 				pThis->Deactivate();
 				if(pTheBuildingBelow == pThis) {
-					pThis->Owner->ShouldRecheckTechTree = true; // #885
+					pThis->Owner->RecheckTechTree = true; // #885
 				}
 			}
 		}
@@ -141,7 +171,7 @@ DEFINE_HOOK(6F9E76, TechnoClass_Update_CheckOperators, 6)
 		// dropping Radar Jammers (#305) here for now; should check if another TechnoClass::Update hook might be better ~Ren
 		if(!!pTypeData->RadarJamRadius) {
 			if(!pData->RadarJam) {
-				pData->RadarJam = new JammerClass(pThis, pData);
+				pData->RadarJam = std::make_unique<JammerClass>(pThis);
 			}
 
 			pData->RadarJam->Update();
@@ -215,23 +245,23 @@ DEFINE_HOOK(6F407D, TechnoClass_Init_1, 6)
 		}
 
 		if(WH1 && WH1->MindControl && Capturer == nullptr) {
-			GAME_ALLOC(CaptureManagerClass, Capturer, T, W1->Damage, W1->InfiniteMindControl);
+			Capturer = GameCreate<CaptureManagerClass>(T, W1->Damage, W1->InfiniteMindControl);
 		} else if(WH2 && WH2->MindControl && Capturer == nullptr) {
-			GAME_ALLOC(CaptureManagerClass, Capturer, T, W2->Damage, W2->InfiniteMindControl);
+			Capturer = GameCreate<CaptureManagerClass>(T, W2->Damage, W2->InfiniteMindControl);
 		}
 
 		if(WH1 && WH1->Temporal && Temporal == nullptr) {
-			GAME_ALLOC(TemporalClass, Temporal, T);
+			Temporal = GameCreate<TemporalClass>(T);
 			Temporal->WarpPerStep = W1->Damage;
 			pData->idxSlot_Warp = (BYTE)i;
 		} else if(WH2 && WH2->Temporal && Temporal == nullptr) {
-			GAME_ALLOC(TemporalClass, Temporal, T);
+			Temporal = GameCreate<TemporalClass>(T);
 			Temporal->WarpPerStep = W2->Damage;
 			pData->idxSlot_Warp = (BYTE)i;
 		}
 
 		if((WH1 && WH1->Parasite || WH2 && WH2->Parasite) && IsFoot && Parasite == nullptr) {
-			GAME_ALLOC(ParasiteClass, Parasite, F);
+			Parasite = GameCreate<ParasiteClass>(F);
 			pData->idxSlot_Parasite = (BYTE)i;
 		}
 	}
@@ -258,16 +288,12 @@ DEFINE_HOOK(71A84E, TemporalClass_UpdateA, 5)
 	// Temporal should disable RadarJammers
 	auto Target = Temp->Target;
 	TechnoExt::ExtData * TargetExt = TechnoExt::ExtMap.Find(Target);
-	if(TargetExt->RadarJam) {
-		TargetExt->RadarJam->UnjamAll();
-		delete TargetExt->RadarJam;
-		TargetExt->RadarJam = nullptr;
-	}
+	TargetExt->RadarJam = nullptr;
 
 	//AttachEffect handling under Temporal
 	if (!TargetExt->AttachEffects_RecreateAnims) {
-		for (int i = TargetExt->AttachedEffects.Count; i > 0; --i) {
-			auto Effect = TargetExt->AttachedEffects.GetItem(i - 1);
+		for (auto i = TargetExt->AttachedEffects.size(); i > 0; --i) {
+			auto &Effect = TargetExt->AttachedEffects.at(i - 1);
 			if (!!Effect->Type->TemporalHidesAnim) {
 				Effect->KillAnim();
 			}
@@ -679,24 +705,23 @@ DEFINE_HOOK(7090A8, TechnoClass_SelectFiringVoice, 0) {
 }
 
 // Support per unit modification of Iron Curtain effect duration
-DEFINE_HOOK(70E2D2, TechnoClass_IronCurtain_Modify, 6) {
+DEFINE_HOOK(70E2B0, TechnoClass_IronCurtain, 5) {
 	GET(TechnoClass*, pThis, ECX);
-	GET(int, duration, EDX);
-	GET_STACK(bool, force, 0x1C);
+	GET_STACK(int, duration, STACK_OFFS(0x0, -0x4));
+	//GET_STACK(HouseClass*, source, STACK_OFFS(0x0, -0x8));
+	GET_STACK(bool, force, STACK_OFFS(0x0, -0xC));
 
 	// if it's no force shield then it's the iron curtain.
-	if(!force) {
-		if(TechnoTypeExt::ExtData *pData = TechnoTypeExt::ExtMap.Find(pThis->GetTechnoType())) {
-			duration = (int)(duration * pData->IC_Modifier);
-		}
+	auto pData = TechnoTypeExt::ExtMap.Find(pThis->GetTechnoType());
+	double modifier = force ? pData->ForceShield_Modifier : pData->IronCurtain_Modifier;
+	duration = static_cast<int>(duration * modifier);
 
-		pThis->IronCurtainTimer.TimeLeft = duration;
-		pThis->IronTintStage = 0;
+	pThis->IronCurtainTimer.Start(duration);
+	pThis->IronTintStage = 0;
+	pThis->ForceShielded = force ? TRUE : FALSE;
 
-		return 0x70E2DB;
-	}
-
-	return 0;
+	R->EAX(DamageState::Unaffected);
+	return 0x70E2FD;
 }
 
 // update the vehicle thief's destination. needed to follow a
@@ -981,29 +1006,19 @@ DEFINE_HOOK(6F6AC9, TechnoClass_Remove, 6) {
 	TechnoExt::ExtData* TechnoExt = TechnoExt::ExtMap.Find(pThis);
 
 	// if the removed object is a radar jammer, unjam all jammed radars
-	if(TechnoExt->RadarJam) {
-		TechnoExt->RadarJam->UnjamAll();
-		delete TechnoExt->RadarJam;
-		TechnoExt->RadarJam = nullptr;
-	}
+	TechnoExt->RadarJam = nullptr;
 
 	// #617 powered units
-	if(TechnoExt->PoweredUnit)
-	{
-		delete TechnoExt->PoweredUnit;
-		TechnoExt->PoweredUnit = nullptr;
-	}
+	TechnoExt->PoweredUnit = nullptr;
 
 	//#1573, #1623, #255 attached effects
-	if (TechnoExt->AttachedEffects.Count) {
+	if (!TechnoExt->AttachedEffects.empty()) {
 		//auto pID = pThis->GetTechnoType()->ID;
-		for (int i = TechnoExt->AttachedEffects.Count; i > 0; --i) {
+		for (auto i = TechnoExt->AttachedEffects.size(); i > 0; --i) {
 			//Debug::Log("[AttachEffect] Removing %d. item from %s\n", i - 1, pID);
-			auto Item = TechnoExt->AttachedEffects.GetItem(i - 1);
+			auto &Item = TechnoExt->AttachedEffects.at(i - 1);
 			if (Item->Type->DiscardOnEntry) {
-				Item->Destroy();
-				delete Item;
-				TechnoExt->AttachedEffects.RemoveItem(i - 1);
+				TechnoExt->AttachedEffects.erase(TechnoExt->AttachedEffects.begin() + i - 1);
 				TechnoExt::RecalculateStats(pThis);
 			} else {
 				Item->KillAnim();
@@ -1435,9 +1450,7 @@ DEFINE_HOOK(4D98C0, FootClass_Destroyed, A) {
 		auto pExt = TechnoTypeExt::ExtMap.Find(pType);
 		int idx = pExt->EVA_UnitLost;
 		if(idx != -1) {
-			CellStruct cell;
-			pThis->GetMapCoords(&cell);
-
+			CellStruct cell = pThis->GetMapCoords();
 			RadarEventClass::Create(RadarEventType::UnitLost, cell);
 			VoxClass::PlayIndex(idx, -1, -1);
 		}
@@ -1476,4 +1489,61 @@ DEFINE_HOOK(732C30, TechnoClass_IDMatches, 5)
 
 	R->EAX(match ? 1 : 0);
 	return 0x732C97;
+}
+
+// #1283653: fix for jammed buildings and attackers in open topped transports
+DEFINE_HOOK(702A38, TechnoClass_ReceiveDamage_OpenTopped, 7)
+{
+	REF_STACK(TechnoClass*, pAttacker, STACK_OFFS(0xC4, -0x10));
+
+	// decide as if the transporter fired at this building
+	if(pAttacker && pAttacker->InOpenToppedTransport && pAttacker->Transporter) {
+		pAttacker = pAttacker->Transporter;
+	}
+
+	R->EDI(pAttacker);
+	return 0x702A3F;
+}
+
+// #912875: respect the remove flag for invalidating SpawnManager owners
+DEFINE_HOOK(707B19, TechnoClass_PointerGotInvalid_SpawnCloakOwner, 6)
+{
+	GET(TechnoClass*, pThis, ESI);
+	GET(void*, ptr, EBP);
+	REF_STACK(bool, remove, STACK_OFFS(0x20, -0x8));
+
+	if(auto pSM = pThis->SpawnManager) {
+		// ignore disappearing owner
+		if(remove || pSM->Owner != ptr) {
+			R->ECX(pSM);
+			return 0x707B23;
+		}
+	}
+
+	return 0x707B29;
+}
+
+// flying aircraft carriers
+// allow spawned units to spawn above ground
+DEFINE_HOOK(414338, AircraftClass_Put_SpawnHigh, 6)
+{
+	GET(AircraftClass*, pThis, ESI);
+	GET(AircraftTypeClass*, pType, ECX);
+
+	R->EAX(pType->MissileSpawn || pThis->SpawnOwner);
+	return 0x41433E;
+}
+
+// aim for the cell for flying carriers
+DEFINE_HOOK(6B783B, SpawnManagerClass_Update_SpawnHigh, 5)
+{
+	GET(SpawnManagerClass*, pThis, ESI);
+
+	AbstractClass* pDest = pThis->Owner;
+	if(pThis->Owner->GetHeight() > 0) {
+		pDest = pThis->Owner->GetCell();
+	}
+
+	R->EAX(pDest);
+	return 0;
 }

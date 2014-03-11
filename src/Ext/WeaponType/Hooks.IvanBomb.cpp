@@ -223,3 +223,11 @@ DEFINE_HOOK(6FFFB1, TechnoClass_GetCursorOverObject_IvanBombs, 8)
 		: pExt->Ivan_CanDetonateDeathBomb.Get(RulesClass::Instance->CanDetonateDeathBomb);
 	return canDetonate ? 0x6FFFCC : 0x700006;
 }
+
+// #896027: do not announce pointers as expired to bombs
+// if the pointed to object is staying in-game.
+DEFINE_HOOK(725961, AnnounceInvalidPointer_BombCloak, 6)
+{
+	GET(bool, remove, EDI);
+	return remove ? 0 : 0x72596C;
+}

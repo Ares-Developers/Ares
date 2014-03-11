@@ -31,7 +31,7 @@ DEFINE_HOOK(6A9948, TabCameoListClass_Draw_SW, 6)
 {
 	GET(SuperWeaponTypeClass *, pSW, EAX);
 	if(SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSW)) {
-		CurrentDrawnConvert = pData->CameoPal.Convert;
+		CurrentDrawnConvert = pData->CameoPal.GetConvert();
 	}
 	return 0;
 }
@@ -43,7 +43,7 @@ DEFINE_HOOK(6A9A2A, TabCameoListClass_Draw_Main, 6)
 	ConvertClass *pPalette = nullptr;
 	if(pTech) {
 		if(TechnoTypeExt::ExtData *pData = TechnoTypeExt::ExtMap.Find(pTech)) {
-			pPalette = pData->CameoPal.Convert;
+			pPalette = pData->CameoPal.GetConvert();
 		}
 	} else if(CurrentDrawnConvert) {
 		pPalette = CurrentDrawnConvert;

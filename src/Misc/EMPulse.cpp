@@ -149,27 +149,24 @@ void EMPulse::deliverEMPDamage(ObjectClass *object, TechnoClass *Firer, WarheadT
 	\returns True if Target is type immune to EMP, false otherwise.
 
 	\author AlexB
-	\date 2010-04-27
+	\date 2010-04-27, 2014-02-01
 */
-bool EMPulse::isEMPTypeImmune(TechnoClass * Target) {
-	// find an emp weapon.
-	TechnoTypeClass *TT = Target->GetTechnoType();
-	if (TT->TypeImmune) {
-		for (int i = 0; i < 18; ++i) {
-			WeaponTypeClass *WeaponType = (!Target->Veterancy.IsElite())
-				? TT->get_Weapon(i)
-				: TT->get_EliteWeapon(i);
-			if (!WeaponType) {
-				continue;
-			}
+bool EMPulse::isEMPTypeImmune(TechnoClass* Target) {
+	auto pType = Target->GetTechnoType();
+	if(!pType->TypeImmune) {
+		return false;
+	}
 
-			WarheadTypeClass *WarheadType = WeaponType->Warhead;
-			if (WarheadTypeExt::ExtData *pWH = WarheadTypeExt::ExtMap.Find(WarheadType)) {
-				if (pWH->EMP_Duration != 0) {
-					// this unit can fire emps and type immunity
-					// grants it to never be affected.
-					return true;
-				}
+	auto isElite = Target->Veterancy.IsElite();
+
+	// find an emp weapon.
+	for(int i = 0; i < 18; ++i) {
+		if(auto pWeaponType = !isElite ? pType->get_Weapon(i) : pType->get_EliteWeapon(i)) {
+			auto pWarheadExt = WarheadTypeExt::ExtMap.Find(pWeaponType->Warhead);
+			if(pWarheadExt->EMP_Duration != 0) {
+				// this unit can fire emps and type immunity
+				// grants it to never be affected.
+				return true;
 			}
 		}
 	}
@@ -192,10 +189,10 @@ bool EMPulse::isEMPTypeImmune(TechnoClass * Target) {
 */
 bool EMPulse::isEMPImmune(TechnoClass * Target, HouseClass * SourceHouse) {
 	// this can be overridden by a flag on the techno.
-	TechnoTypeExt::ExtData *pData = TechnoTypeExt::ExtMap.Find(Target->GetTechnoType());
+	auto pData = TechnoTypeExt::ExtMap.Find(Target->GetTechnoType());
 
-	if (pData->ImmuneToEMP) {
-		if (verbose) {
+	if(pData->ImmuneToEMP.Get(!IsTypeEMPProne(pData->AttachedToObject))) {
+		if(verbose) {
 			Debug::Log("[isEMPImmune] \"%s\" is ImmuneToEMP.\n", Target->get_ID());
 		}
 		return true;
@@ -300,34 +297,31 @@ bool EMPulse::isCurrentlyEMPImmune(TechnoClass * Target, HouseClass * SourceHous
 	\returns True if Type is prone to EMPs, false otherwise.
 
 	\author AlexB
-	\date 2010-04-30
+	\date 2010-04-30, 2014-02-01
 */
-bool EMPulse::IsTypeEMPProne(TechnoTypeClass * Type) {
-	bool prone = true;
-
-	// buildings are emp prone if they consume power and need it to function
-	if (BuildingTypeClass * BuildingType = specific_cast<BuildingTypeClass *>(Type)) {
-		prone = (BuildingType->Powered && (BuildingType->PowerDrain > 0));
+bool EMPulse::IsTypeEMPProne(TechnoTypeClass* Type) {
+	if(auto pBuildingType = abstract_cast<BuildingTypeClass*>(Type)) {
+		// buildings are emp prone if they consume power and need it to function
+		if(pBuildingType->Powered && pBuildingType->PowerDrain > 0) {
+			return true;
+		}
 
 		// may have a special function.
-		if (BuildingType->Radar ||
-			(BuildingType->SuperWeapon> -1) || (BuildingType->SuperWeapon2 > -1)
-			|| BuildingType->UndeploysInto
-			|| BuildingType->PowersUnit
-			|| BuildingType->Sensors
-			|| BuildingType->LaserFencePost
-			|| BuildingType->GapGenerator) {
-				prone = true;
-		}
-	} else if (InfantryTypeClass * InfantryType = specific_cast<InfantryTypeClass *>(Type)) {
+		return pBuildingType->Radar ||
+			pBuildingType->SuperWeapon > -1 || pBuildingType->SuperWeapon2 > -1
+			|| pBuildingType->UndeploysInto
+			|| pBuildingType->PowersUnit
+			|| pBuildingType->Sensors
+			|| pBuildingType->LaserFencePost
+			|| pBuildingType->GapGenerator;
+
+	} else if(auto pInfantryType = abstract_cast<InfantryTypeClass*>(Type)) {
 		// affected only if this is a cyborg.
-		prone = InfantryType->Cyborg;
+		return pInfantryType->Cyborg;
 	} else {
 		// if this is a vessel or vehicle that is organic: no effect.
-		prone = !Type->Organic;
+		return !Type->Organic;
 	}
-
-	return prone;
 }
 
 //! Gets whether a Techno is a valid target for EMPs fired by a house.
@@ -398,11 +392,11 @@ bool EMPulse::IsDeactivationAdvisable(TechnoClass * Target) {
 	\author AlexB
 	\date 2010-11-28
 */
-void EMPulse::updateRadarBlackout(TechnoClass * Techno) {
-	if (BuildingClass * Building = specific_cast<BuildingClass *>(Techno)) {
-		if (!Building->Type->InvisibleInGame) {
-			if (Building->Type->Radar || Building->Type->SpySat) {
-				Building->Owner->RadarBlackout = true;
+void EMPulse::updateRadarBlackout(TechnoClass* Techno) {
+	if(auto pBuilding = abstract_cast<BuildingClass*>(Techno)) {
+		if(!pBuilding->Type->InvisibleInGame) {
+			if(pBuilding->Type->Radar || pBuilding->Type->SpySat) {
+				pBuilding->Owner->RecheckRadar = true;
 			}
 		}
 	}
@@ -478,7 +472,7 @@ void EMPulse::UpdateSparkleAnim(TechnoClass * Techno) {
 	if (pData) {
 		if (Techno->IsUnderEMP()) {
 			if (!pData->EMPSparkleAnim && RulesClass::Instance->EMPulseSparkles) {
-				GAME_ALLOC(AnimClass, pData->EMPSparkleAnim, RulesClass::Instance->EMPulseSparkles, &Techno->Location);
+				pData->EMPSparkleAnim = GameCreate<AnimClass>(RulesClass::Instance->EMPulseSparkles, Techno->Location);
 				pData->EMPSparkleAnim->SetOwnerObject(Techno);
 			}
 		} else {
@@ -523,8 +517,7 @@ void EMPulse::announceAttack(TechnoClass * Techno) {
 
 	// handle the event.
 	if (rEvent != None) {
-		CellStruct xy;
-		Techno->GetMapCoords(&xy);
+		CellStruct xy = Techno->GetMapCoords();
 
 		switch (rEvent) {
 			case Harvester:
@@ -593,8 +586,8 @@ bool EMPulse::thresholdExceeded(TechnoClass * Victim) {
 	\date 2010-05-21
 */
 bool EMPulse::enableEMPEffect(TechnoClass * Victim, ObjectClass * Source) {
-	Victim->Owner->ShouldRecheckTechTree = true;
-	Victim->Owner->PowerBlackout = true;
+	Victim->Owner->RecheckTechTree = true;
+	Victim->Owner->RecheckPower = true;
 
 	if (BuildingClass * Building = specific_cast<BuildingClass *>(Victim)) {
 		Building->DisableStuff();
@@ -691,8 +684,8 @@ void EMPulse::DisableEMPEffect(TechnoClass * Victim) {
 		}
 	}
 
-	Victim->Owner->ShouldRecheckTechTree = true;
-	Victim->Owner->PowerBlackout = true;
+	Victim->Owner->RecheckTechTree = true;
+	Victim->Owner->RecheckPower = true;
 
 	if (Victim->Deactivated && HasPower) {
 		Victim->Reactivate();
@@ -730,8 +723,8 @@ void EMPulse::DisableEMPEffect(TechnoClass * Victim) {
 // and certainly don't endorse you to use them. 2011-05-14 AlexB
 
 bool EMPulse::EnableEMPEffect2(TechnoClass * Victim) {
-	Victim->Owner->ShouldRecheckTechTree = true;
-	Victim->Owner->PowerBlackout = true;
+	Victim->Owner->RecheckTechTree = true;
+	Victim->Owner->RecheckPower = true;
 
 	if (BuildingClass * Building = specific_cast<BuildingClass *>(Victim)) {
 		Building->DisableStuff();
@@ -817,8 +810,8 @@ void EMPulse::DisableEMPEffect2(TechnoClass * Victim) {
 		}
 	}
 
-	Victim->Owner->ShouldRecheckTechTree = true;
-	Victim->Owner->PowerBlackout = true;
+	Victim->Owner->RecheckTechTree = true;
+	Victim->Owner->RecheckPower = true;
 
 	if (Victim->Deactivated && HasPower) {
 		Victim->Reactivate();
