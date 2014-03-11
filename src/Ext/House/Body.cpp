@@ -199,11 +199,9 @@ bool HouseExt::FactoryForObjectExists(HouseClass *pHouse, TechnoTypeClass *pItem
 
 	for(int i = 0; i < pHouse->Buildings.Count; ++i) {
 		BuildingTypeClass *pType = pHouse->Buildings[i]->Type;
-		if(
-			pType->Factory == WhatAmI
+		if(pType->Factory == WhatAmI
 			&& pType->Naval == pItem->Naval
-			&& pExt->CanBeBuiltAt(pType)
-			) {
+			&& pExt->CanBeBuiltAt(pType)) {
 			return true;
 		}
 	}
