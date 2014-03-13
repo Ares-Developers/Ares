@@ -146,175 +146,172 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 		return false;
 	}
 
-	if(FootClass *Target = generic_cast<FootClass *>(Bullet->Target)) {
-		TechnoClass* Attacker = Bullet->Owner;
-		TechnoTypeClass* TargetType = Target->GetTechnoType();
-		TechnoTypeExt::ExtData* TargetTypeExt = TechnoTypeExt::ExtMap.Find(TargetType);
-		TechnoTypeClass* AttackerType = Attacker->GetTechnoType();
+	auto Target = abstract_cast<FootClass*>(Bullet->Target);
 
-		//issue 1362
-		if (!!TargetTypeExt->ImmuneToAbduction){
-			return false;
-		}
-		
-		if(!WarheadTypeExt::canWarheadAffectTarget(Target, Attacker->Owner, Bullet->WH)) {
-			return false;
-		}
-
-		if(Target->IsIronCurtained()) {
-			return false;
-		}
-
-		//Don't abduct the target if it has more life then the abducting percent
-		if (this->Abductor_AbductBelowPercent < Target->GetHealthPercentage()){
-			return false;
-		}
-
-		// Don't abduct the target if it's too fat in general, or if there's not enough room left in the hold // alternatively, NumPassengers
-		if((TargetType->Size > AttackerType->SizeLimit)
-		  || (TargetType->Size > (AttackerType->Passengers - Attacker->Passengers.GetTotalSize()))) {
-			return false;
-
-		} else {
-
-			// if we ended up here, the target is of the right type, and the attacker can take it
-			// so we abduct the target...
-
-			Target->StopMoving();
-			Target->SetDestination(nullptr, true); // Target->UpdatePosition(int) ?
-			Target->SetTarget(nullptr);
-			Target->CurrentTargets.Clear(); // Target->ShouldLoseTargetNow ?
-			Target->SetFocus(nullptr);
-			Target->QueueMission(mission_Sleep, true);
-			Target->unknown_C4 = 0; // don't ask
-			Target->unknown_5A0 = 0;
-			Target->CurrentGattlingStage = 0;
-			Target->SetCurrentWeaponStage(0);
-
-			// the team should not wait for me
-			if(Target->BelongsToATeam()) {
-				Target->Team->LiberateMember(Target);
-			}
-
-			// if this unit is being mind controlled, break the link
-			if(TechnoClass * MindController = Target->MindControlledBy) {
-				if(CaptureManagerClass * MC = MindController->CaptureManager) {
-					MC->FreeUnit(Target);
-				}
-			}
-
-			// if this unit is a mind controller, break the link
-			if(Target->CaptureManager) {
-				Target->CaptureManager->FreeAll();
-			}
-
-			// if this unit is currently in a state of temporal flux, get it back to our time-frame
-			if(Target->TemporalTargetingMe) {
-				Target->TemporalTargetingMe->Detach();
-			}
-
-			//if the target is spawned, detach it from it's spawner
-			if(Target->SpawnOwner){
-				TechnoExt::DetachSpecificSpawnee(Target, HouseClass::FindByCountryIndex(HouseTypeClass::FindIndexOfName("Special")));
-			}
-
-			// if the unit is a spawner, kill the spawns
-			if(Target->SpawnManager) {
-				Target->SpawnManager->KillNodes();
-				Target->SpawnManager->ResetTarget();
-			}
-
-			//if the unit is a slave, it should be freed
-			if(Target->SlaveOwner){
-				TechnoExt::FreeSpecificSlave(Target, HouseClass::FindByCountryIndex(HouseTypeClass::FindIndexOfName("Special")));
-			}
-
-			// If the unit is a SlaveManager, free the slaves
-			if(SlaveManagerClass * pSlaveManager = Target->SlaveManager) {
-				pSlaveManager->Killed(Attacker);
-				pSlaveManager->ZeroOutSlaves();
-				Target->SlaveManager->Owner = Target;
-			}
-			
-			
-			// if we have an abducting animation, play it
-			if (!!this->Abductor_AnimType){
-				GameCreate<AnimClass>(this->Abductor_AnimType, Bullet->posTgt);
-				//this->Abductor_Anim->Owner=Bullet->Owner->Owner;
-			}
-
-			Target->Locomotor->Force_Track(-1, CoordStruct::Empty);
-			CoordStruct coordsUnitSource = Target->GetCoords();
-			Target->Locomotor->Mark_All_Occupation_Bits(0);
-			Target->MarkAllOccupationBits(coordsUnitSource);
-			Target->ClearPlanningTokens(nullptr);
-			Target->Flashing.DurationRemaining = 0;
-
-			//if it's owner meant to be changed, do it here
-			if (!!this->Abductor_ChangeOwner && !TargetType->ImmuneToPsionics){
-				Target->SetOwningHouse(Attacker->Owner);
-			}
-
-			if(!Target->Remove()) {
-				Debug::DevLog(Debug::Warning, "Abduction: Target unit %p (%s) could not be removed.\n", Target, Target->get_ID());
-			}
-			Target->OnBridge = false;
-
-			// because we are throwing away the locomotor in a split second, piggybacking
-			// has to be stopped. otherwise we would leak the memory of the original
-			// locomotor saved in the piggy object.
-			ILocomotion* Loco = nullptr;
-			do {
-				Loco = Target->Locomotor;
-				LocomotionClass::End_Piggyback(Target->Locomotor);
-			} while(Target->Locomotor && Loco != Target->Locomotor);
-
-			// throw away the current locomotor and instantiate
-			// a new one of the default type for this unit.
-			if(!Target->Locomotor) {
-				Game::RaiseError(E_POINTER);
-			}
-			ILocomotion* NewLoco = nullptr;
-			if(LocomotionClass::CreateInstance(NewLoco, &TargetType->Locomotor)) {
-				LocomotionClass::Move(Target->Locomotor, NewLoco);
-				if(!Target->Locomotor) {
-					Game::RaiseError(E_POINTER);
-				}
-				Target->Locomotor->Link_To_Object(Target);
-			}
-
-			// handling for Locomotor weapons: since we took this unit from the Magnetron
-			// in an unfriendly way, set these fields here to unblock the unit
-			if(Target->IsAttackedByLocomotor || Target->IsLetGoByLocomotor) {
-				Target->IsAttackedByLocomotor = false;
-				Target->IsLetGoByLocomotor = false;
-				Target->FrozenStill = false;
-			}
-
-			Target->Transporter = Attacker;
-			if(AttackerType->OpenTopped && Target->Owner->IsAlliedWith(Attacker)) {
-				Attacker->EnteredOpenTopped(Target);
-			}
-
-			if(Attacker->WhatAmI() == abs_Building) {
-				Target->Absorbed = true;
-			}
-			Attacker->AddPassenger(Target);
-			Attacker->Undiscover();
-
-			// ..and neuter the bullet, since it's not supposed to hurt the prisoner after the abduction
-			Bullet->Health = 0;
-			Bullet->DamageMultiplier = 0;
-			Bullet->Remove();
-
-			return true;
-		}
-
-	} else {
-
+	if(!Target) {
 		// the target was not a valid passenger type
 		return false;
 	}
+
+	auto Attacker = Bullet->Owner;
+	auto TargetType = Target->GetTechnoType();
+	auto TargetTypeExt = TechnoTypeExt::ExtMap.Find(TargetType);
+	auto AttackerType = Attacker->GetTechnoType();
+
+	//issue 1362
+	if(TargetTypeExt->ImmuneToAbduction) {
+		return false;
+	}
+
+	if(!WarheadTypeExt::canWarheadAffectTarget(Target, Attacker->Owner, Bullet->WH)) {
+		return false;
+	}
+
+	if(Target->IsIronCurtained()) {
+		return false;
+	}
+
+	//Don't abduct the target if it has more life then the abducting percent
+	if(this->Abductor_AbductBelowPercent < Target->GetHealthPercentage()) {
+		return false;
+	}
+
+	// Don't abduct the target if it's too fat in general, or if there's not enough room left in the hold // alternatively, NumPassengers
+	if((TargetType->Size > AttackerType->SizeLimit)
+		|| (TargetType->Size > (AttackerType->Passengers - Attacker->Passengers.GetTotalSize()))) {
+		return false;
+	}
+
+	// if we ended up here, the target is of the right type, and the attacker can take it
+	// so we abduct the target...
+
+	Target->StopMoving();
+	Target->SetDestination(nullptr, true); // Target->UpdatePosition(int) ?
+	Target->SetTarget(nullptr);
+	Target->CurrentTargets.Clear(); // Target->ShouldLoseTargetNow ?
+	Target->SetFocus(nullptr);
+	Target->QueueMission(mission_Sleep, true);
+	Target->unknown_C4 = 0; // don't ask
+	Target->unknown_5A0 = 0;
+	Target->CurrentGattlingStage = 0;
+	Target->SetCurrentWeaponStage(0);
+
+	// the team should not wait for me
+	if(Target->BelongsToATeam()) {
+		Target->Team->LiberateMember(Target);
+	}
+
+	// if this unit is being mind controlled, break the link
+	if(auto MindController = Target->MindControlledBy) {
+		if(auto MC = MindController->CaptureManager) {
+			MC->FreeUnit(Target);
+		}
+	}
+
+	// if this unit is a mind controller, break the link
+	if(Target->CaptureManager) {
+		Target->CaptureManager->FreeAll();
+	}
+
+	// if this unit is currently in a state of temporal flux, get it back to our time-frame
+	if(Target->TemporalTargetingMe) {
+		Target->TemporalTargetingMe->Detach();
+	}
+
+	//if the target is spawned, detach it from it's spawner
+	if(Target->SpawnOwner) {
+		TechnoExt::DetachSpecificSpawnee(Target, HouseClass::FindSpecial());
+	}
+
+	// if the unit is a spawner, kill the spawns
+	if(Target->SpawnManager) {
+		Target->SpawnManager->KillNodes();
+		Target->SpawnManager->ResetTarget();
+	}
+
+	//if the unit is a slave, it should be freed
+	if(Target->SlaveOwner) {
+		TechnoExt::FreeSpecificSlave(Target, HouseClass::FindSpecial());
+	}
+
+	// If the unit is a SlaveManager, free the slaves
+	if(auto pSlaveManager = Target->SlaveManager) {
+		pSlaveManager->Killed(Attacker);
+		pSlaveManager->ZeroOutSlaves();
+		Target->SlaveManager->Owner = Target;
+	}
+
+	// if we have an abducting animation, play it
+	if(this->Abductor_AnimType) {
+		GameCreate<AnimClass>(this->Abductor_AnimType, Bullet->posTgt);
+		//this->Abductor_Anim->Owner=Bullet->Owner->Owner;
+	}
+
+	Target->Locomotor->Force_Track(-1, CoordStruct::Empty);
+	CoordStruct coordsUnitSource = Target->GetCoords();
+	Target->Locomotor->Mark_All_Occupation_Bits(0);
+	Target->MarkAllOccupationBits(coordsUnitSource);
+	Target->ClearPlanningTokens(nullptr);
+	Target->Flashing.DurationRemaining = 0;
+
+	//if it's owner meant to be changed, do it here
+	if(this->Abductor_ChangeOwner && !TargetType->ImmuneToPsionics) {
+		Target->SetOwningHouse(Attacker->Owner);
+	}
+
+	if(!Target->Remove()) {
+		Debug::DevLog(Debug::Warning, "Abduction: Target unit %p (%s) could not be removed.\n", Target, Target->get_ID());
+	}
+	Target->OnBridge = false;
+
+	// because we are throwing away the locomotor in a split second, piggybacking
+	// has to be stopped. otherwise we would leak the memory of the original
+	// locomotor saved in the piggy object.
+	ILocomotion* Loco = nullptr;
+	do {
+		Loco = Target->Locomotor;
+		LocomotionClass::End_Piggyback(Target->Locomotor);
+	} while(Target->Locomotor && Loco != Target->Locomotor);
+
+	// throw away the current locomotor and instantiate
+	// a new one of the default type for this unit.
+	if(!Target->Locomotor) {
+		Game::RaiseError(E_POINTER);
+	}
+	ILocomotion* NewLoco = nullptr;
+	if(LocomotionClass::CreateInstance(NewLoco, &TargetType->Locomotor)) {
+		LocomotionClass::Move(Target->Locomotor, NewLoco);
+		if(!Target->Locomotor) {
+			Game::RaiseError(E_POINTER);
+		}
+		Target->Locomotor->Link_To_Object(Target);
+	}
+
+	// handling for Locomotor weapons: since we took this unit from the Magnetron
+	// in an unfriendly way, set these fields here to unblock the unit
+	if(Target->IsAttackedByLocomotor || Target->IsLetGoByLocomotor) {
+		Target->IsAttackedByLocomotor = false;
+		Target->IsLetGoByLocomotor = false;
+		Target->FrozenStill = false;
+	}
+
+	Target->Transporter = Attacker;
+	if(AttackerType->OpenTopped && Target->Owner->IsAlliedWith(Attacker)) {
+		Attacker->EnteredOpenTopped(Target);
+	}
+
+	if(Attacker->WhatAmI() == abs_Building) {
+		Target->Absorbed = true;
+	}
+	Attacker->AddPassenger(Target);
+	Attacker->Undiscover();
+
+	// ..and neuter the bullet, since it's not supposed to hurt the prisoner after the abduction
+	Bullet->Health = 0;
+	Bullet->DamageMultiplier = 0;
+	Bullet->Remove();
+
+	return true;
 }
 
 // Plants customizable IvanBombs on a target.
