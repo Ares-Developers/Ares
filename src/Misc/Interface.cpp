@@ -92,7 +92,7 @@ void Interface::updateMenu(HWND hDlg, int iID) {
 
 				// call the load button "Play"
 				if(HWND hLoad = GetDlgItem(hDlg, 1038)) {
-					SendMessageA(hLoad, 0x4B2, 0, (LPARAM)StringTable::LoadStringA("GUI:Play"));
+					SendMessageA(hLoad, 0x4B2, 0, (LPARAM)StringTable::LoadStringA("GUI:PlayMission"));
 				}
 
 				// move the soviet label to a new location and reuse
