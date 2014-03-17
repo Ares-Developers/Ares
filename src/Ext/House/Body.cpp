@@ -251,11 +251,13 @@ bool HouseExt::CheckForbiddenFactoryOwner(HouseClass *pHouse, TechnoTypeClass *p
 	auto &forbidden = pExt->ForbiddenFactoryOwners;
 
 	if (!forbidden.empty()) {
-		// return true if not a single forbidden house is in the gathered plans
-		if(!std::any_of(forbidden.begin(), forbidden.end(), [HouseExt](HouseTypeClass* pForbidden) {
-			return HouseExt->FactoryOwners_GatheredPlansOf.Contains(pForbidden);
-		}))	{
-			return true;
+		// return true if not a single forbidden house is in the gathered plans (only if there are any)
+		if(HouseExt->FactoryOwners_GatheredPlansOf.size()) {
+			if(!std::any_of(forbidden.begin(), forbidden.end(), [HouseExt](HouseTypeClass* pForbidden) {
+				return HouseExt->FactoryOwners_GatheredPlansOf.Contains(pForbidden);
+			}))	{
+				return true;
+			}
 		}
 
 		eAbstractType WhatAmI = pItem->WhatAmI();
