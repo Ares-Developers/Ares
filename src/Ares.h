@@ -97,7 +97,7 @@ public:
 	static void UninitOwnResources();
 
 	static CCINIClass* OpenConfig(const char*);
-	static void CloseConfig(CCINIClass**);
+	static void CloseConfig(CCINIClass*&);
 
 	static void InitNoCDMode();
 	static void CheckProcessorFeatures();

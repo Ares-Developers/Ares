@@ -139,7 +139,7 @@ void __stdcall Ares::ExeRun()
 
 void __stdcall Ares::ExeTerminate()
 {
-	CloseConfig(&Ares::GlobalControls::INI);
+	CloseConfig(Ares::GlobalControls::INI);
 	Debug::LogFileClose(111);
 
 	if(Ares::pExceptionHandler) {
@@ -218,10 +218,10 @@ void Ares::CheckProcessorFeatures() {
 #endif
 }
 
-void Ares::CloseConfig(CCINIClass** ppINI) {
-	if(ppINI && *ppINI) {
-		GameDelete(*ppINI);
-		*ppINI = nullptr;
+void Ares::CloseConfig(CCINIClass* &pINI) {
+	if(pINI) {
+		GameDelete(pINI);
+		pINI = nullptr;
 	}
 }
 
