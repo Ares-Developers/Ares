@@ -152,8 +152,10 @@ protected:
 	};
 
 	void InvalidateExtDataPointer(void *ptr, bool bRemoved) {
-		for(auto i = this->Items.begin(); i != this->Items.end(); ++i) {
-			i->second->InvalidatePointer(ptr, bRemoved);
+		for(const auto& i : this->Items) {
+			if(auto& value = i.second) {
+				value->InvalidatePointer(ptr, bRemoved);
+			}
 		}
 	}
 
