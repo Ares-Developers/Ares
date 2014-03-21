@@ -81,6 +81,8 @@ public:
 
 	static PVOID pExceptionHandler;
 
+	static bool bShuttingDown;
+
 	static bool bStable;
 	static bool bStableNotification;
 	static void UpdateStability();

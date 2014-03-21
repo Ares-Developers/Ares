@@ -31,6 +31,7 @@ bool Ares::bFPSCounter = false;
 bool Ares::bStable = IsStable;
 bool Ares::bStableNotification = false;
 bool Ares::bOutputMissingStrings = false;
+bool Ares::bShuttingDown = false;
 
 DWORD Ares::readLength = BUFLEN;
 char Ares::readBuffer[BUFLEN];
@@ -139,6 +140,8 @@ void __stdcall Ares::ExeRun()
 
 void __stdcall Ares::ExeTerminate()
 {
+	Ares::bShuttingDown = true;
+
 	CloseConfig(Ares::GlobalControls::INI);
 	Debug::LogFileClose(111);
 
