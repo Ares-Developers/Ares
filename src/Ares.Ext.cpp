@@ -27,6 +27,10 @@ DEFINE_HOOK(7258D0, AnnounceInvalidPointer, 6)
 	GET(void*, ptr, ECX);
 	GET(bool, bRemoved, EDX);
 
+	if(Ares::bShuttingDown) {
+		return 0;
+	}
+
 	//Debug::Log("PointerGotInvalid: %X\n", ptr);
 
 	AbstractExt::ExtMap.PointerGotInvalid(ptr, bRemoved);

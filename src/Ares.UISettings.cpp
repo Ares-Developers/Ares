@@ -232,6 +232,6 @@ DEFINE_HOOK(5FACDF, _Options_LoadFromINI, 5)
 	Debug::Log("Color count is %d\n", Ares::UISettings::ColorCount);
 
 	// clean up
-	Ares::CloseConfig(&pINI);
+	Ares::CloseConfig(pINI);
 	return 0;
 }

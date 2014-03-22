@@ -81,6 +81,8 @@ public:
 
 	static PVOID pExceptionHandler;
 
+	static bool bShuttingDown;
+
 	static bool bStable;
 	static bool bStableNotification;
 	static void UpdateStability();
@@ -97,7 +99,7 @@ public:
 	static void UninitOwnResources();
 
 	static CCINIClass* OpenConfig(const char*);
-	static void CloseConfig(CCINIClass**);
+	static void CloseConfig(CCINIClass*&);
 
 	static void InitNoCDMode();
 	static void CheckProcessorFeatures();

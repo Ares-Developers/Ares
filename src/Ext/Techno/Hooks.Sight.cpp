@@ -50,7 +50,6 @@ DEFINE_HOOK(5674EA, MapClass_RevealArea0_CellSpread1, 6)
 DEFINE_HOOK(567602, MapClass_RevealArea0_CellSpread2, 5)
 {
 	REF_STACK(CellSpreadEnumerator*, pIter, STACK_OFFS(0x54, 0x44));
-	REF_STACK(CellStruct*, pRel, STACK_OFFS(0x54, -0x4));
 
 	// end condition
 	if(!pIter || !*pIter) {
@@ -66,9 +65,9 @@ DEFINE_HOOK(567602, MapClass_RevealArea0_CellSpread2, 5)
 	// that other thing
 	static CellStruct rel;
 	rel = GetRelation(offset);
-	pRel = &rel;
+	R->EDX(&rel);
 
-	return 0x56763E; // originally 0x567612, where another hook would be;
+	return 0x567635; // originally 0x567612, where another hook would be;
 }
 
 // just advance, validation is done above

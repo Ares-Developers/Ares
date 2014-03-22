@@ -31,6 +31,7 @@ bool Ares::bFPSCounter = false;
 bool Ares::bStable = IsStable;
 bool Ares::bStableNotification = false;
 bool Ares::bOutputMissingStrings = false;
+bool Ares::bShuttingDown = false;
 
 DWORD Ares::readLength = BUFLEN;
 char Ares::readBuffer[BUFLEN];
@@ -139,7 +140,9 @@ void __stdcall Ares::ExeRun()
 
 void __stdcall Ares::ExeTerminate()
 {
-	CloseConfig(&Ares::GlobalControls::INI);
+	Ares::bShuttingDown = true;
+
+	CloseConfig(Ares::GlobalControls::INI);
 	Debug::LogFileClose(111);
 
 	if(Ares::pExceptionHandler) {
@@ -218,10 +221,10 @@ void Ares::CheckProcessorFeatures() {
 #endif
 }
 
-void Ares::CloseConfig(CCINIClass** ppINI) {
-	if(ppINI && *ppINI) {
-		GameDelete(*ppINI);
-		*ppINI = nullptr;
+void Ares::CloseConfig(CCINIClass* &pINI) {
+	if(pINI) {
+		GameDelete(pINI);
+		pINI = nullptr;
 	}
 }
 

@@ -367,6 +367,7 @@ void Debug::FreeMouse() {
 
 __declspec(noreturn) void Debug::Exit(UINT ExitCode) {
 		Debug::Log("Exiting...\n");
+		Ares::bShuttingDown = true;
 		ExitProcess(ExitCode);
 }
 
