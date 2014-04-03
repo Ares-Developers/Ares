@@ -80,6 +80,7 @@ bool TActionExt::Execute(TActionClass* pAction, HouseClass* pHouse, ObjectClass*
 		break;
 
 	default:
+		UNREFERENCED_PARAMETER(pExt);
 		return false;
 	}
 
