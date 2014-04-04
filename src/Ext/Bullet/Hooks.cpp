@@ -192,7 +192,7 @@ DEFINE_HOOK(469EBA, BulletClass_DetonateAt_Splits, 6)
 					velocity.Y = cos_c * sin_b * pBullet->Speed;
 					velocity.Z = sin_c * pBullet->Speed;
 
-					pBullet->MoveTo(&pThis->Location, &velocity);
+					pBullet->MoveTo(pThis->Location, velocity);
 				}
 			}
 		}

@@ -166,7 +166,7 @@ bool SW_NuclearMissile::Activate(SuperClass* pThis, const CellStruct &Coords, bo
 								CoordStruct high = target;
 								high.Z += 20000;
 
-								pBullet->MoveTo(&high, &vel);
+								pBullet->MoveTo(high, vel);
 								fired = true;
 							}
 						}
