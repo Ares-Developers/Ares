@@ -22,7 +22,8 @@ SuperWeaponFlags::Value SW_NuclearMissile::Flags()
 	return SuperWeaponFlags::NoEvent;
 }
 
-WarheadTypeClass* SW_NuclearMissile::GetWarhead(const SWTypeExt::ExtData* pData) const {
+WarheadTypeClass* SW_NuclearMissile::GetWarhead(const SWTypeExt::ExtData* pData) const
+{
 	if(pData->SW_Warhead.isset()) {
 		return pData->SW_Warhead;
 	}
@@ -32,7 +33,8 @@ WarheadTypeClass* SW_NuclearMissile::GetWarhead(const SWTypeExt::ExtData* pData)
 	return nullptr;
 }
 
-int SW_NuclearMissile::GetDamage(const SWTypeExt::ExtData* pData) const {
+int SW_NuclearMissile::GetDamage(const SWTypeExt::ExtData* pData) const
+{
 	auto damage = pData->SW_Damage.Get(-1);
 	if(damage < 0) {
 		damage = pData->Nuke_Payload ? pData->Nuke_Payload->Damage : 0;
@@ -60,8 +62,7 @@ void SW_NuclearMissile::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeCla
 	pData->SW_Cursor = MouseCursor::First[MouseCursorType::Nuke];
 }
 
-void SW_NuclearMissile::LoadFromINI(
-	SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI)
+void SW_NuclearMissile::LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI)
 {
 	const char * section = pSW->ID;
 

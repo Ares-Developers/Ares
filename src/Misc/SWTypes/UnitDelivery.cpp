@@ -7,8 +7,7 @@ void SW_UnitDelivery::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass
 	pData->SW_AITargetingType = SuperWeaponAITargetingMode::ParaDrop;
 }
 
-void SW_UnitDelivery::LoadFromINI(
-	SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI)
+void SW_UnitDelivery::LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI)
 {
 	const char * section = pSW->ID;
 
@@ -36,7 +35,8 @@ bool SW_UnitDelivery::Activate(SuperClass* pThis, const CellStruct &Coords, bool
 	return true;
 }
 
-void UnitDeliveryStateMachine::Update() {
+void UnitDeliveryStateMachine::Update()
+{
 	if(this->Finished()) {
 		CoordStruct coords = CellClass::Cell2Coord(this->Coords);
 
@@ -60,7 +60,8 @@ void UnitDeliveryStateMachine::Update() {
 //glitch: previously, even if a unit could be placed, it would
 //have been unloaded again, when it was at index 100.
 
-void UnitDeliveryStateMachine::PlaceUnits() {
+void UnitDeliveryStateMachine::PlaceUnits()
+{
 	auto pData = this->FindExtData();
 
 	if(!pData) {

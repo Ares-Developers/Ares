@@ -8,7 +8,8 @@ bool SW_Protect::HandlesType(int type)
 	return (type == SuperWeaponType::IronCurtain) || (type == SuperWeaponType::ForceShield);
 }
 
-AnimTypeClass* SW_Protect::GetAnim(const SWTypeExt::ExtData* pData) const {
+AnimTypeClass* SW_Protect::GetAnim(const SWTypeExt::ExtData* pData) const
+{
 	if(pData->SW_Anim.isset()) {
 		return pData->SW_Anim;
 	} else if(pData->AttachedToObject->Type == SuperWeaponType::ForceShield) {
@@ -18,7 +19,8 @@ AnimTypeClass* SW_Protect::GetAnim(const SWTypeExt::ExtData* pData) const {
 	}
 }
 
-SWRange SW_Protect::GetRange(const SWTypeExt::ExtData* pData) const {
+SWRange SW_Protect::GetRange(const SWTypeExt::ExtData* pData) const
+{
 	if(!pData->SW_Range.empty()) {
 		return pData->SW_Range;
 	} else if(pData->AttachedToObject->Type == SuperWeaponType::ForceShield) {
@@ -60,8 +62,7 @@ void SW_Protect::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW
 	}
 }
 
-void SW_Protect::LoadFromINI(
-	SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI)
+void SW_Protect::LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI)
 {
 	const char * section = pSW->ID;
 

@@ -8,11 +8,13 @@ bool SW_Reveal::HandlesType(int type)
 	return (type == SuperWeaponType::PsychicReveal);
 }
 
-int SW_Reveal::GetSound(const SWTypeExt::ExtData* pData) const {
+int SW_Reveal::GetSound(const SWTypeExt::ExtData* pData) const
+{
 	return pData->SW_Sound.Get(RulesClass::Instance->PsychicRevealActivateSound);
 }
 
-SWRange SW_Reveal::GetRange(const SWTypeExt::ExtData* pData) const {
+SWRange SW_Reveal::GetRange(const SWTypeExt::ExtData* pData) const
+{
 	if(pData->SW_Range.empty()) {
 		int radius = RulesClass::Instance->PsychicRevealRadius;
 

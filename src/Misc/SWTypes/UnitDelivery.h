@@ -5,18 +5,17 @@
 
 class SW_UnitDelivery : public NewSWType
 {
-	public:
-		SW_UnitDelivery() : NewSWType()
-			{ };
+public:
+	SW_UnitDelivery() : NewSWType()
+		{ };
 
-		virtual ~SW_UnitDelivery()
-			{ };
+	virtual ~SW_UnitDelivery()
+		{ };
 
-		virtual const char * GetTypeString()
-			{ return "UnitDelivery"; }
+	virtual const char * GetTypeString()
+		{ return "UnitDelivery"; }
 
-	virtual void LoadFromINI(
-		SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI);
+	virtual void LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI);
 	virtual void Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW);
 	virtual bool Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer);
 
@@ -26,4 +25,5 @@ class SW_UnitDelivery : public NewSWType
 		SWStateMachine::Register(std::make_unique<UnitDeliveryStateMachine>(Duration, XY, pSuper, this));
 	}
 };
+
 #endif

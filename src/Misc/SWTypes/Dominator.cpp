@@ -17,15 +17,18 @@ SuperWeaponFlags::Value SW_PsychicDominator::Flags()
 	return SuperWeaponFlags::NoEvent;
 }
 
-WarheadTypeClass* SW_PsychicDominator::GetWarhead(const SWTypeExt::ExtData* pData) const {
+WarheadTypeClass* SW_PsychicDominator::GetWarhead(const SWTypeExt::ExtData* pData) const
+{
 	return pData->SW_Warhead.Get(RulesClass::Instance->DominatorWarhead);
 }
 
-int SW_PsychicDominator::GetDamage(const SWTypeExt::ExtData* pData) const {
+int SW_PsychicDominator::GetDamage(const SWTypeExt::ExtData* pData) const
+{
 	return pData->SW_Damage.Get(RulesClass::Instance->DominatorDamage);
 }
 
-SWRange SW_PsychicDominator::GetRange(const SWTypeExt::ExtData* pData) const {
+SWRange SW_PsychicDominator::GetRange(const SWTypeExt::ExtData* pData) const
+{
 	if(pData->SW_Range.empty()) {
 		return SWRange(RulesClass::Instance->DominatorCaptureRange);
 	}
@@ -60,8 +63,7 @@ void SW_PsychicDominator::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeC
 	pData->SW_Cursor = MouseCursor::First[MouseCursorType::PsychicDominator];
 }
 
-void SW_PsychicDominator::LoadFromINI(
-	SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI)
+void SW_PsychicDominator::LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI)
 {
 	const char * section = pSW->ID;
 
@@ -84,7 +86,8 @@ void SW_PsychicDominator::LoadFromINI(
 	pData->Dominator_PermanentCapture.Read(exINI, section, "Dominator.PermanentCapture");
 }
 
-bool SW_PsychicDominator::AbortFire(SuperClass* pSW, bool IsPlayer) {
+bool SW_PsychicDominator::AbortFire(SuperClass* pSW, bool IsPlayer)
+{
 	// be one with Yuri! and only one.
 	if(PsyDom::Active()) {
 		if(IsPlayer) {
@@ -108,7 +111,8 @@ bool SW_PsychicDominator::Activate(SuperClass* pThis, const CellStruct &Coords, 
 	return true;
 }
 
-void PsychicDominatorStateMachine::Update() {
+void PsychicDominatorStateMachine::Update()
+{
 	// waiting. lurking in the shadows.
 	if(this->Deferment > 0) {
 		if(--this->Deferment) {

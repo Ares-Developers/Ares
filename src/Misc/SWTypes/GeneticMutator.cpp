@@ -10,7 +10,8 @@ bool SW_GeneticMutator::HandlesType(int type)
 	return (type == SuperWeaponType::GeneticMutator);
 }
 
-WarheadTypeClass* SW_GeneticMutator::GetWarhead(const SWTypeExt::ExtData* pData) const {
+WarheadTypeClass* SW_GeneticMutator::GetWarhead(const SWTypeExt::ExtData* pData) const
+{
 	if(pData->SW_Warhead.isset()) {
 		return pData->SW_Warhead;
 	} else if(pData->Mutate_Explosion.Get(RulesClass::Instance->MutateExplosion)) {
@@ -20,19 +21,23 @@ WarheadTypeClass* SW_GeneticMutator::GetWarhead(const SWTypeExt::ExtData* pData)
 	}
 }
 
-AnimTypeClass* SW_GeneticMutator::GetAnim(const SWTypeExt::ExtData* pData) const {
+AnimTypeClass* SW_GeneticMutator::GetAnim(const SWTypeExt::ExtData* pData) const
+{
 	return pData->SW_Anim.Get(RulesClass::Instance->IonBlast);
 }
 
-int SW_GeneticMutator::GetSound(const SWTypeExt::ExtData* pData) const {
+int SW_GeneticMutator::GetSound(const SWTypeExt::ExtData* pData) const
+{
 	return pData->SW_Sound.Get(RulesClass::Instance->GeneticMutatorActivateSound);
 }
 
-int SW_GeneticMutator::GetDamage(const SWTypeExt::ExtData* pData) const {
+int SW_GeneticMutator::GetDamage(const SWTypeExt::ExtData* pData) const
+{
 	return pData->SW_Damage.Get(10000);
 }
 
-SWRange SW_GeneticMutator::GetRange(const SWTypeExt::ExtData* pData) const {
+SWRange SW_GeneticMutator::GetRange(const SWTypeExt::ExtData* pData) const
+{
 	if(!pData->SW_Range.empty()) {
 		return pData->SW_Range;
 	} else if(pData->Mutate_Explosion.Get(RulesClass::Instance->MutateExplosion)) {
@@ -60,8 +65,7 @@ void SW_GeneticMutator::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeCla
 	pData->SW_Cursor = MouseCursor::First[MouseCursorType::GeneticMutator];
 }
 
-void SW_GeneticMutator::LoadFromINI(
-	SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI)
+void SW_GeneticMutator::LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI)
 {
 	const char * section = pSW->ID;
 

@@ -5,19 +5,18 @@
 
 class SW_SonarPulse : public NewSWType
 {
-	public:
-		SW_SonarPulse() : NewSWType()
-			{ };
+public:
+	SW_SonarPulse() : NewSWType()
+		{ };
 
-		virtual ~SW_SonarPulse()
-			{ };
+	virtual ~SW_SonarPulse()
+		{ };
 
-		virtual const char * GetTypeString()
-			{ return "SonarPulse"; }
+	virtual const char * GetTypeString()
+		{ return "SonarPulse"; }
 
 	virtual void Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW);
-	virtual void LoadFromINI(
-		SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI);
+	virtual void LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI);
 	virtual bool Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer);
 	virtual SuperWeaponFlags::Value Flags();
 

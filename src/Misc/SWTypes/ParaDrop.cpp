@@ -40,8 +40,7 @@ void SW_ParaDrop::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pS
 	pData->SW_Cursor = MouseCursor::First[MouseCursorType::ParaDrop];
 }
 
-void SW_ParaDrop::LoadFromINI(
-	SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI)
+void SW_ParaDrop::LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI)
 {
 	const char * section = pSW->ID;
 
@@ -189,7 +188,8 @@ bool SW_ParaDrop::Activate(SuperClass* pThis, const CellStruct &Coords, bool IsP
 	\author AlexB
 	\date 2010-07-19
 */
-bool SW_ParaDrop::SendParadrop(SuperClass* pThis, CellClass* pCell) {
+bool SW_ParaDrop::SendParadrop(SuperClass* pThis, CellClass* pCell)
+{
 	// sanity
 	if(!pThis || !pCell) {
 		return false;

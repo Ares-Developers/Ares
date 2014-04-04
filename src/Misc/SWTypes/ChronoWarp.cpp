@@ -280,7 +280,8 @@ bool SW_ChronoWarp::Activate(SuperClass* pThis, const CellStruct &Coords, bool I
 	return false;
 }
 
-void ChronoWarpStateMachine::Update() {
+void ChronoWarpStateMachine::Update()
+{
 	int passed = this->TimePassed();
 
 	if(passed == 1) {
@@ -370,7 +371,8 @@ void ChronoWarpStateMachine::Update() {
 	}
 }
 
-void ChronoWarpStateMachine::PointerGotInvalid(void *ptr) {
+void ChronoWarpStateMachine::PointerGotInvalid(void *ptr)
+{
 	for(int i=0; i<this->Buildings.Count; ++i) {
 		if(this->Buildings.GetItem(i).pBld == ptr) {
 			this->Buildings.RemoveItem(i);

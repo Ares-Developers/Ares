@@ -15,11 +15,13 @@ SuperWeaponFlags::Value SW_ChronoSphere::Flags()
 		| SuperWeaponFlags::PreClick;
 }
 
-AnimTypeClass* SW_ChronoSphere::GetAnim(const SWTypeExt::ExtData* pData) const {
+AnimTypeClass* SW_ChronoSphere::GetAnim(const SWTypeExt::ExtData* pData) const
+{
 	return pData->SW_Anim.Get(RulesClass::Instance->ChronoPlacement);
 }
 
-SWRange SW_ChronoSphere::GetRange(const SWTypeExt::ExtData* pData) const {
+SWRange SW_ChronoSphere::GetRange(const SWTypeExt::ExtData* pData) const
+{
 	if(pData->SW_Range.empty()) {
 		return SWRange(3, 3);
 	}
@@ -48,8 +50,7 @@ void SW_ChronoSphere::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass
 	pData->SW_Cursor = MouseCursor::First[MouseCursorType::Chronosphere];
 }
 
-void SW_ChronoSphere::LoadFromINI(
-	SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI)
+void SW_ChronoSphere::LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI)
 {
 	const char * section = pSW->ID;
 

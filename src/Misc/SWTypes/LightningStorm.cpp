@@ -16,15 +16,18 @@ SuperWeaponFlags::Value SW_LightningStorm::Flags()
 	return SuperWeaponFlags::NoMessage | SuperWeaponFlags::NoEvent;
 }
 
-WarheadTypeClass* SW_LightningStorm::GetWarhead(const SWTypeExt::ExtData* pData) const {
+WarheadTypeClass* SW_LightningStorm::GetWarhead(const SWTypeExt::ExtData* pData) const
+{
 	return pData->SW_Warhead.Get(RulesClass::Instance->LightningWarhead);
 }
 
-int SW_LightningStorm::GetDamage(const SWTypeExt::ExtData* pData) const {
+int SW_LightningStorm::GetDamage(const SWTypeExt::ExtData* pData) const
+{
 	return pData->SW_Damage.Get(RulesClass::Instance->LightningDamage);
 }
 
-SWRange SW_LightningStorm::GetRange(const SWTypeExt::ExtData* pData) const {
+SWRange SW_LightningStorm::GetRange(const SWTypeExt::ExtData* pData) const
+{
 	if(pData->SW_Range.empty()) {
 		return SWRange(RulesClass::Instance->LightningCellSpread);
 	}
@@ -58,8 +61,7 @@ void SW_LightningStorm::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeCla
 	pData->SW_Cursor = MouseCursor::First[MouseCursorType::LightningStorm];
 }
 
-void SW_LightningStorm::LoadFromINI(
-	SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI)
+void SW_LightningStorm::LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI)
 {
 	const char * section = pSW->ID;
 
@@ -87,7 +89,8 @@ void SW_LightningStorm::LoadFromINI(
 	pData->Weather_Sounds.Read(exINI, section, "Lightning.Sounds");
 }
 
-bool SW_LightningStorm::AbortFire(SuperClass* pSW, bool IsPlayer) {
+bool SW_LightningStorm::AbortFire(SuperClass* pSW, bool IsPlayer)
+{
 	// only one Lightning Storm allowed
 	if(LightningStorm::Active || LightningStorm::HasDeferment()) {
 		if(IsPlayer) {

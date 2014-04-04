@@ -22,8 +22,7 @@ void SW_SpyPlane::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pS
 	pData->SW_Cursor = MouseCursor::First[MouseCursorType::SpyPlane];
 }
 
-void SW_SpyPlane::LoadFromINI(
-	SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI)
+void SW_SpyPlane::LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI)
 {
 	const char * section = pSW->ID;
 

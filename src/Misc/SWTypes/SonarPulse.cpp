@@ -8,7 +8,8 @@ SuperWeaponFlags::Value SW_SonarPulse::Flags()
 	return SuperWeaponFlags::NoEvent;
 }
 
-SWRange SW_SonarPulse::GetRange(const SWTypeExt::ExtData* pData) const {
+SWRange SW_SonarPulse::GetRange(const SWTypeExt::ExtData* pData) const
+{
 	if(pData->SW_Range.empty()) {
 		return SWRange(10);
 	}
@@ -28,8 +29,7 @@ void SW_SonarPulse::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *
 	pData->SW_RequiresTarget = SuperWeaponTarget::Water;
 }
 
-void SW_SonarPulse::LoadFromINI(
-	SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI)
+void SW_SonarPulse::LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI)
 {
 	const char * section = pSW->get_ID();
 
