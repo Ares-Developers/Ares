@@ -138,7 +138,7 @@ DEFINE_HOOK(4CF3D0, FlyLocomotionClass_sub_4CEFB0_HunterSeeker, 7)
 						// result is never used in TS, but a break sounds
 						// like a good idea.
 						CellStruct cell = CellClass::Coord2Cell(crd);
-						if(!MapClass::Instance->CoordinatesLegal(&cell)) {
+						if(!MapClass::Instance->CoordinatesLegal(cell)) {
 							break;
 						}
 					}
