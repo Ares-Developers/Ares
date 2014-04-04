@@ -511,7 +511,7 @@ bool TechnoExt::CreateWithDroppod(FootClass *Object, const CoordStruct& XYZ) {
 		LocomotionClass::ChangeLocomotorTo(Object, &LocomotionClass::CLSIDs::Droppod);
 		CoordStruct xyz = XYZ;
 		xyz.Z = 0;
-		Object->SetLocation(&xyz);
+		Object->SetLocation(xyz);
 		Object->SetDestination(MyCell, 1);
 		Object->Locomotor->Move_To(XYZ);
 		DirStruct Facing;
