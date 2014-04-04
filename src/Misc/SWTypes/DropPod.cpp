@@ -83,7 +83,7 @@ bool SW_DropPod::Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPl
 		CoordStruct crd = CellClass::Cell2Coord(tmpCell);
 
 		// let the locomotor take care of the rest
-		if(TechnoExt::CreateWithDroppod(pFoot, &crd)) {
+		if(TechnoExt::CreateWithDroppod(pFoot, crd)) {
 			if(!--count) {
 				break;
 			}

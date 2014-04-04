@@ -183,7 +183,7 @@ public:
 
 	static void StopDraining(TechnoClass *Drainer, TechnoClass *Drainee);
 
-	static bool CreateWithDroppod(FootClass *Object, CoordStruct *XYZ);
+	static bool CreateWithDroppod(FootClass *Object, const CoordStruct& XYZ);
 
 	static void TransferIvanBomb(TechnoClass *From, TechnoClass *To);
 	static void TransferAttachedEffects(TechnoClass *From, TechnoClass *To);

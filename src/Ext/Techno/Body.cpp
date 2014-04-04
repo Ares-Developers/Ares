@@ -501,19 +501,19 @@ bool TechnoExt::ExtData::IsPowered() {
  * Object should NOT be placed on the map (->Remove() it or don't Put in the first place)
  * otherwise Bad Things (TM) will happen. Again.
  */
-bool TechnoExt::CreateWithDroppod(FootClass *Object, CoordStruct *XYZ) {
-	auto MyCell = MapClass::Instance->GetCellAt(*XYZ);
+bool TechnoExt::CreateWithDroppod(FootClass *Object, const CoordStruct& XYZ) {
+	auto MyCell = MapClass::Instance->GetCellAt(XYZ);
 	if(Object->IsCellOccupied(MyCell, -1, -1, nullptr, false) != Move::OK) {
 //		Debug::Log("Cell occupied... poof!\n");
 		return false;
 	} else {
 //		Debug::Log("Destinating %s @ {%d, %d, %d}\n", Object->GetType()->ID, XYZ->X, XYZ->Y, XYZ->Z);
 		LocomotionClass::ChangeLocomotorTo(Object, &LocomotionClass::CLSIDs::Droppod);
-		CoordStruct xyz = *XYZ;
+		CoordStruct xyz = XYZ;
 		xyz.Z = 0;
 		Object->SetLocation(&xyz);
 		Object->SetDestination(MyCell, 1);
-		Object->Locomotor->Move_To(*XYZ);
+		Object->Locomotor->Move_To(XYZ);
 		DirStruct Facing;
 		Object->Facing.SetFacing(&Facing);
 		if(!Object->InLimbo) {
