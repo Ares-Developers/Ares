@@ -92,8 +92,7 @@ DEFINE_HOOK(539760, Scenario_ResetAllSuperWeapons_Custom, 5)
 
 void SWStateMachine::UpdateAll()
 {
-	for(int i = static_cast<int>(SWStateMachine::Array.size()) - 1; i >= 0; --i) {
-		auto& Machine = SWStateMachine::Array[i];
+	for(auto& Machine : SWStateMachine::Array) {
 		Machine->Update();
 	}
 
@@ -104,8 +103,7 @@ void SWStateMachine::UpdateAll()
 
 void SWStateMachine::InvalidatePointer(void *ptr)
 {
-	for(int i = static_cast<int>(SWStateMachine::Array.size()) - 1; i >= 0; --i) {
-		auto& Machine = SWStateMachine::Array[i];
+	for(auto& Machine : SWStateMachine::Array) {
 		Machine->PointerGotInvalid(ptr);
 	}
 }
