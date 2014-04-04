@@ -32,7 +32,7 @@ DEFINE_HOOK(4666F7, BulletClass_Update, 6)
 			auto DeltaXY = MyXY - BldXY;
 
 			int MyHeight = Bullet->Location.Z;
-			int BldHeight = MapClass::Instance->GetCellFloorHeight(&MyXYZ) + solidHeight;
+			int BldHeight = MapClass::Instance->GetCellFloorHeight(MyXYZ) + solidHeight;
 			if(MyHeight <= BldHeight) {
 				Bullet->SetTarget(MyCell);
 				Bullet->SpawnNextAnim = 1;

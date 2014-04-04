@@ -85,7 +85,7 @@ DEFINE_HOOK(4CF3D0, FlyLocomotionClass_sub_4CEFB0_HunterSeeker, 7)
 
 					// the hunter seeker's default flight level
 					crd = pObject->GetCoords();
-					int floor = MapClass::Instance->GetCellFloorHeight(&crd);
+					int floor = MapClass::Instance->GetCellFloorHeight(crd);
 					int height = floor + pType->GetFlightLevel();
 
 					// linear interpolation between target's Z and normal flight level
@@ -200,7 +200,7 @@ DEFINE_HOOK(4CD9C8, FlyLocomotionClass_sub_4CD600_HunterSeeker_UpdateTarget, 6)
 				}
 			}
 
-			int height = MapClass::Instance->GetCellFloorHeight(&crd);
+			int height = MapClass::Instance->GetCellFloorHeight(crd);
 			if(crd.Z < height) {
 				crd.Z = height;
 			}
