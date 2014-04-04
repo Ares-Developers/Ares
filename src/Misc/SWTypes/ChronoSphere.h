@@ -9,17 +9,17 @@ public:
 	SW_ChronoSphere() : NewSWType()
 		{ };
 
-	virtual ~SW_ChronoSphere()
+	virtual ~SW_ChronoSphere() override
 		{ };
 
-	virtual const char * GetTypeString()
+	virtual const char * GetTypeString() override
 		{ return nullptr; }
 
-	virtual void LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI);
-	virtual void Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW);
-	virtual bool Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer);
-	virtual bool HandlesType(int type);
-	virtual SuperWeaponFlags::Value Flags();
+	virtual void LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI) override;
+	virtual void Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW) override;
+	virtual bool Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer) override;
+	virtual bool HandlesType(int type) override;
+	virtual SuperWeaponFlags::Value Flags() override;
 
 	virtual AnimTypeClass* GetAnim(const SWTypeExt::ExtData* pData) const override;
 	virtual SWRange GetRange(const SWTypeExt::ExtData* pData) const override;

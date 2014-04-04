@@ -9,15 +9,15 @@ public:
 	SW_DropPod() : NewSWType()
 		{ };
 
-	virtual ~SW_DropPod()
+	virtual ~SW_DropPod() override
 		{ };
 
-	virtual const char * GetTypeString()
+	virtual const char * GetTypeString() override
 		{ return "DropPod"; }
 
-	virtual void Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW);
-	virtual void LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI);
-	virtual bool Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer);
+	virtual void Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW) override;
+	virtual void LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI) override;
+	virtual bool Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer) override;
 };
 
 #endif

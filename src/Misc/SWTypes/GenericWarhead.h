@@ -9,14 +9,14 @@ public:
 	SW_GenericWarhead() : NewSWType()
 		{ };
 
-	virtual ~SW_GenericWarhead()
+	virtual ~SW_GenericWarhead() override
 		{ };
 
-	virtual const char * GetTypeString()
+	virtual const char * GetTypeString() override
 		{ return "GenericWarhead"; }
 
-	virtual void Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW);
-	virtual bool Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer);
+	virtual void Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW) override;
+	virtual bool Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer) override;
 };
 
 #endif

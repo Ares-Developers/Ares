@@ -9,23 +9,23 @@ public:
 		SW_Firewall::FirewallTypeIndex = FIRST_SW_TYPE + this->GetTypeIndex();
 	};
 
-	virtual ~SW_Firewall() {
+	virtual ~SW_Firewall() override {
 		SW_Firewall::FirewallTypeIndex = -1;
 	};
 
-	virtual const char * GetTypeString()
+	virtual const char * GetTypeString() override
 	{
 		return "Firestorm";
 	}
 
-	virtual void LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI) {
+	virtual void LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI) override {
 		pSW->Action = 0;
 		pSW->UseChargeDrain = true;
 		pData->SW_RadarEvent = false;
 		// what can we possibly configure here... warhead/damage inflicted? anims?
 	};
 
-	virtual bool Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer);
+	virtual bool Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer) override;
 
 	static int FirewallTypeIndex;
 };

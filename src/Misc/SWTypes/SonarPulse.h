@@ -9,16 +9,16 @@ public:
 	SW_SonarPulse() : NewSWType()
 		{ };
 
-	virtual ~SW_SonarPulse()
+	virtual ~SW_SonarPulse() override
 		{ };
 
-	virtual const char * GetTypeString()
+	virtual const char * GetTypeString() override
 		{ return "SonarPulse"; }
 
-	virtual void Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW);
-	virtual void LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI);
-	virtual bool Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer);
-	virtual SuperWeaponFlags::Value Flags();
+	virtual void Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW) override;
+	virtual void LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI) override;
+	virtual bool Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer) override;
+	virtual SuperWeaponFlags::Value Flags() override;
 
 	virtual SWRange GetRange(const SWTypeExt::ExtData* pData) const override;
 };

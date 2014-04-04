@@ -9,15 +9,15 @@ public:
 	SW_UnitDelivery() : NewSWType()
 		{ };
 
-	virtual ~SW_UnitDelivery()
+	virtual ~SW_UnitDelivery() override
 		{ };
 
-	virtual const char * GetTypeString()
+	virtual const char * GetTypeString() override
 		{ return "UnitDelivery"; }
 
-	virtual void LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI);
-	virtual void Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW);
-	virtual bool Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer);
+	virtual void LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI) override;
+	virtual void Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW) override;
+	virtual bool Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer) override;
 
 	typedef UnitDeliveryStateMachine TStateMachine;
 
