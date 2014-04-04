@@ -1,8 +1,6 @@
 #ifndef SUPERTYPE_EXT_DOMINATOR_H
 #define SUPERTYPE_EXT_DOMINATOR_H
 
-#include <xcompile.h>
-
 #include "../SWTypes.h"
 
 class SW_PsychicDominator : public NewSWType

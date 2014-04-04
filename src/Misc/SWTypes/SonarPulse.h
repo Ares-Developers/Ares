@@ -1,8 +1,6 @@
 #ifndef SUPERTYPE_EXT_SONAR_H
 #define SUPERTYPE_EXT_SONAR_H
 
-#include <xcompile.h>
-
 #include "../SWTypes.h"
 
 class SW_SonarPulse : public NewSWType

@@ -1,7 +1,6 @@
 #ifndef SUPERTYPE_EXT_FIREWALL_H_
 #define SUPERTYPE_EXT_FIREWALL_H_
 
-#include <xcompile.h>
 #include "../SWTypes.h"
 
 class SW_Firewall : public NewSWType {

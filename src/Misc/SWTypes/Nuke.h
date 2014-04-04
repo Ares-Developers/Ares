@@ -1,8 +1,6 @@
 #ifndef SUPERTYPE_EXT_NUKE_H
 #define SUPERTYPE_EXT_NUKE_H
 
-#include <xcompile.h>
-
 #include "../SWTypes.h"
 
 class SW_NuclearMissile : public NewSWType

@@ -1,8 +1,6 @@
 #ifndef SUPERTYPE_EXT_PARADROP_H
 #define SUPERTYPE_EXT_PARADROP_H
 
-#include <xcompile.h>
-
 #include "../SWTypes.h"
 
 class SW_ParaDrop : public NewSWType

@@ -1,8 +1,6 @@
 #ifndef SUPERTYPE_EXT_PROTECT_H
 #define SUPERTYPE_EXT_PROTECT_H
 
-#include <xcompile.h>
-
 #include "../SWTypes.h"
 
 class SW_Protect : public NewSWType

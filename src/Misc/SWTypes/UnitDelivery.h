@@ -1,8 +1,6 @@
 #ifndef SUPERTYPE_EXT_UNITDELIVERY_H
 #define SUPERTYPE_EXT_UNITDELIVERY_H
 
-#include <xcompile.h>
-
 #include "../SWTypes.h"
 
 class SW_UnitDelivery : public NewSWType

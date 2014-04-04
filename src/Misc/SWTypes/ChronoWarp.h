@@ -1,8 +1,6 @@
 #ifndef SUPERTYPE_EXT_CHRONOWARP_H
 #define SUPERTYPE_EXT_CHRONOWARP_H
 
-#include <xcompile.h>
-
 #include "../SWTypes.h"
 
 class SW_ChronoWarp : public NewSWType

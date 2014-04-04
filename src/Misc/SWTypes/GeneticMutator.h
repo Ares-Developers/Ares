@@ -1,8 +1,6 @@
 #ifndef SUPERTYPE_EXT_MUTATOR_H
 #define SUPERTYPE_EXT_MUTATOR_H
 
-#include <xcompile.h>
-
 #include "../SWTypes.h"
 
 class SW_GeneticMutator : public NewSWType

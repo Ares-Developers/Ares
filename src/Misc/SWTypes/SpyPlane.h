@@ -1,8 +1,6 @@
 #ifndef SUPERTYPE_EXT_SPYPLANE_H
 #define SUPERTYPE_EXT_SPYPLANE_H
 
-#include <xcompile.h>
-
 #include "../SWTypes.h"
 
 class SW_SpyPlane : public NewSWType

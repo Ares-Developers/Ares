@@ -1,8 +1,6 @@
 #ifndef SUPERTYPE_EXT_LSTORM_H
 #define SUPERTYPE_EXT_LSTORM_H
 
-#include <xcompile.h>
-
 #include "../SWTypes.h"
 
 class SW_LightningStorm : public NewSWType

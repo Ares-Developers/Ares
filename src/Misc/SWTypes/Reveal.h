@@ -1,8 +1,6 @@
 #ifndef SUPERTYPE_EXT_REVEAL_H
 #define SUPERTYPE_EXT_REVEAL_H
 
-#include <xcompile.h>
-
 #include "../SWTypes.h"
 
 class SW_Reveal : public NewSWType

@@ -1,8 +1,6 @@
 #ifndef SUPERTYPE_EXT_GWARH_H
 #define SUPERTYPE_EXT_GWARH_H
 
-#include <xcompile.h>
-
 #include "../SWTypes.h"
 
 class SW_GenericWarhead : public NewSWType
