@@ -631,7 +631,7 @@ DEFINE_HOOK(53A300, LightningStorm_Strike2, 5) {
 				MapClass::DamageArea(&Coords, damage, nullptr, pWarhead, true, pSuper->Owner);
 
 				// fancy stuff if damage is dealt
-				AnimTypeClass* pAnimType = MapClass::SelectDamageAnimation(damage, pWarhead, pCell->LandType, &Coords);
+				AnimTypeClass* pAnimType = MapClass::SelectDamageAnimation(damage, pWarhead, pCell->LandType, Coords);
 				GameCreate<AnimClass>(pAnimType, Coords);
 			}
 

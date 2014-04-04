@@ -40,7 +40,7 @@ DEFINE_HOOK(489270, CellChainReact, 5)
 			auto pWarhead = pExt->GetExplosionWarhead();
 
 			// create an explosion
-			if(auto pType = MapClass::SelectDamageAnimation(4 * damage, pWarhead, pCell->LandType, &crd)) {
+			if(auto pType = MapClass::SelectDamageAnimation(4 * damage, pWarhead, pCell->LandType, crd)) {
 				GameCreate<AnimClass>(pType, crd, 0, 1, 0x600, 0);
 			}
 
