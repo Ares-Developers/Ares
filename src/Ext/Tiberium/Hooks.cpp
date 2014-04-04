@@ -45,7 +45,7 @@ DEFINE_HOOK(489270, CellChainReact, 5)
 			}
 
 			// damage the area, without affecting tiberium
-			MapClass::DamageArea(&crd, damage, nullptr, pWarhead, false, nullptr);
+			MapClass::DamageArea(crd, damage, nullptr, pWarhead, false, nullptr);
 
 			// spawn some animation on the neighbour cells
 			if(auto pType = AnimTypeClass::Find("INVISO")) {

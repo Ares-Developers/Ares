@@ -1396,7 +1396,7 @@ DEFINE_HOOK(738749, UnitClass_Destroy_TiberiumExplosive, 6)
 				WarheadTypeClass* pWH = RulesExt::Global()->Tiberium_ExplosiveWarhead;
 				if(morePower > 0 && pWH) {
 					CoordStruct crd = pThis->GetCoords();
-					MapClass::DamageArea(&crd, morePower, pThis, pWH, false, nullptr);
+					MapClass::DamageArea(crd, morePower, pThis, pWH, false, nullptr);
 				}
 			}
 		}

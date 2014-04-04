@@ -52,7 +52,7 @@ DEFINE_HOOK(53B080, PsyDom_Fire, 5) {
 		auto damage = pData->GetDamage();
 		if(damage > 0) {
 			if(auto pWarhead = pData->GetWarhead()) {
-				MapClass::Instance->DamageArea(&coords, damage, nullptr, pWarhead, true, pFirer);
+				MapClass::Instance->DamageArea(coords, damage, nullptr, pWarhead, true, pFirer);
 			}
 		}
 
@@ -628,7 +628,7 @@ DEFINE_HOOK(53A300, LightningStorm_Strike2, 5) {
 			if(damage) {
 				auto pWarhead = pData->GetWarhead();
 				MapClass::FlashbangWarheadAt(damage, pWarhead, Coords, false, 0);
-				MapClass::DamageArea(&Coords, damage, nullptr, pWarhead, true, pSuper->Owner);
+				MapClass::DamageArea(Coords, damage, nullptr, pWarhead, true, pSuper->Owner);
 
 				// fancy stuff if damage is dealt
 				AnimTypeClass* pAnimType = MapClass::SelectDamageAnimation(damage, pWarhead, pCell->LandType, Coords);
