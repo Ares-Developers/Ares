@@ -49,10 +49,10 @@ void RulesExt::ExtData::LoadFromINIFile(RulesClass *pThis, CCINIClass *pINI) {
 }
 
 void RulesExt::ExtData::LoadBeforeTypeData(RulesClass *pThis, CCINIClass *pINI) {
-	const char section[] = "WeaponTypes";
-	const char sectionGeneral[] = "General";
-	const char sectionCombatDamage[] = "CombatDamage";
-	const char sectionAV[] = "AudioVisual";
+	const char* section = "WeaponTypes";
+	const char* sectionGeneral = "General";
+	const char* sectionCombatDamage = "CombatDamage";
+	const char* sectionAV = "AudioVisual";
 
 	int len = pINI->GetKeyCount(section);
 	for (int i = 0; i < len; ++i) {

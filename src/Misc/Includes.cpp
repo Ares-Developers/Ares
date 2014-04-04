@@ -26,7 +26,7 @@ DEFINE_HOOK(474314, CCINIClass_ReadCCFile2, 6)
 		return 0;
 	}
 
-	char section[] = "#include";
+	const char* section = "#include";
 
 	int len = xINI->GetKeyCount(section);
 	for(int i = Includes::LastReadIndex; i < len; i = Includes::LastReadIndex) {
