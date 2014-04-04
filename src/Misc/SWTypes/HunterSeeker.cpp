@@ -71,7 +71,7 @@ bool SW_HunterSeeker::Activate(SuperClass* pThis, const CellStruct &Coords, bool
 			CellStruct tmp = CellClass::Coord2Cell(crd);
 			cell = MapClass::Instance->Pathfinding_Find(tmp, SpeedType::Foot, -1, MovementZone::Normal, false, 1, 1, false, false, false, true, CellStruct::Empty, false, false);
 
-			if(MapClass::Instance->IsWithinUsableArea(&cell, true)) {
+			if(MapClass::Instance->IsWithinUsableArea(cell, true)) {
 				pBld = i;
 				break;
 			}
