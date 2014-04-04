@@ -23,10 +23,10 @@ DEFINE_HOOK(6FF5F5, TechnoClass_Fire, 6)
 		return 0;
 	}
 
-	LEA_STACK(CoordStruct *, xyzSrc, 0x44);
-	LEA_STACK(CoordStruct *, xyzTgt, 0x88);
+	REF_STACK(CoordStruct, xyzSrc, 0x44);
+	REF_STACK(CoordStruct, xyzTgt, 0x88);
 
-	WaveClass *Wave = GameCreate<WaveClass>(xyzSrc, xyzTgt, Owner, pData->Wave_IsBigLaser ? 2 : 1, Target);
+	WaveClass *Wave = GameCreate<WaveClass>(xyzSrc, xyzTgt, Owner, pData->Wave_IsBigLaser ? WaveType::BigLaser : WaveType::Laser, Target);
 
 	WeaponTypeExt::WaveExt[Wave] = pData;
 	Owner->Wave = Wave;
@@ -95,7 +95,7 @@ DEFINE_HOOK(760F50, WaveClass_Update, 6)
 		for(int i = 0; i < pThis->Cells.Count; ++i) {
 			CellClass *Cell = pThis->Cells.GetItem(i);
 //			Debug::Log("\t(%hd,%hd)\n", Cell->MapCoords.X, Cell->MapCoords.Y);
-			pThis->DamageArea(Cell->Get3DCoords3(&coords));
+			pThis->DamageArea(*Cell->Get3DCoords3(&coords));
 		}
 //		Debug::Log("Done damaging %X\n", pData);
 	}
@@ -267,12 +267,12 @@ DEFINE_HOOK(762C5C, WaveClass_Update_Wave, 6)
 
 	if(Wave->Type == WaveType::Magnetron) {
 		reversed
-			? Wave->Draw_Magnetic(&xyzTgt, &xyzSrc)
-			: Wave->Draw_Magnetic(&xyzSrc, &xyzTgt);
+			? Wave->Draw_Magnetic(xyzTgt, xyzSrc)
+			: Wave->Draw_Magnetic(xyzSrc, xyzTgt);
 	} else {
 		reversed
-			? Wave->Draw_NonMagnetic(&xyzTgt, &xyzSrc)
-			: Wave->Draw_NonMagnetic(&xyzSrc, &xyzTgt);
+			? Wave->Draw_NonMagnetic(xyzTgt, xyzSrc)
+			: Wave->Draw_NonMagnetic(xyzSrc, xyzTgt);
 	}
 
 	return 0x762D57;
