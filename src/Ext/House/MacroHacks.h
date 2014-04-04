@@ -28,7 +28,7 @@ void GetTypeToProduce(HouseClass* pThis, int& ProducingTypeIndex) {
 		}
 
 		DynamicVectorClass<TechnoTypeClass *> TaskForceMembers;
-		CurrentTeam->GetTaskForceMembers(&TaskForceMembers);
+		CurrentTeam->GetTaskForceMissingMemberTypes(TaskForceMembers);
 		for(int j = 0; j < TaskForceMembers.Count; ++j) {
 			TechnoTypeClass *CurrentMember = TaskForceMembers[j];
 			if(CurrentMember->WhatAmI() != TType::AbsID) {
