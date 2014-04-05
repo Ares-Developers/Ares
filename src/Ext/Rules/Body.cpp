@@ -84,6 +84,8 @@ void RulesExt::ExtData::LoadBeforeTypeData(RulesClass *pThis, CCINIClass *pINI) 
 
 	pData->TypeSelectUseDeploy.Read(exINI, sectionGeneral, "TypeSelectUseDeploy");
 
+	pData->TeamRetaliate.Read(exINI, sectionGeneral, "TeamRetaliate");
+
 	pData->DeactivateDim_Powered.Read(exINI, sectionAV, "DeactivateDimPowered");
 	pData->DeactivateDim_EMP.Read(exINI, sectionAV, "DeactivateDimEMP");
 	pData->DeactivateDim_Operator.Read(exINI, sectionAV, "DeactivateDimOperator");

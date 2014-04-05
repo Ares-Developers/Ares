@@ -47,6 +47,8 @@ class RulesExt
 
 		Valueable<bool> TypeSelectUseDeploy;
 
+		Valueable<bool> TeamRetaliate;
+
 		Valueable<double> DeactivateDim_Powered;
 		Valueable<double> DeactivateDim_EMP;
 		Valueable<double> DeactivateDim_Operator;
@@ -79,6 +81,7 @@ class RulesExt
 			EnemyInsignia(true),
 			ReturnStructures(false),
 			TypeSelectUseDeploy(true),
+			TeamRetaliate(false),
 			DeactivateDim_Powered(0.5),
 			DeactivateDim_EMP(0.8),
 			DeactivateDim_Operator(0.65),
