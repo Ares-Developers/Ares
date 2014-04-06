@@ -155,7 +155,7 @@ DEFINE_HOOK(469EBA, BulletClass_DetonateAt_Splits, 6)
 				// simple iteration
 				pTarget = targets.GetItem(i);
 
-			} else if(!pTarget || pExt->RetargetAccuracy > random.RandomDouble()) {
+			} else if(!pTarget || pExt->RetargetAccuracy < random.RandomDouble()) {
 				// select another target randomly
 				int index = random.RandomRanged(0, targets.Count - 1);
 				pTarget = targets.GetItem(index);
