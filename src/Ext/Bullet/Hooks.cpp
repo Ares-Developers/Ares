@@ -214,3 +214,33 @@ DEFINE_HOOK(468FFA, BulletClass_Fire_SplitsB, 6)
 	auto pExt = BulletTypeExt::ExtMap.Find(pType);
 	return pExt->HasSplitBehavior() ? 0x46909A : 0x469008;
 }
+
+DEFINE_HOOK(467B94, BulletClass_Update_Ranged, 7)
+{
+	GET(BulletClass*, pThis, EBP);
+	REF_STACK(bool, Destroy, 0x18);
+	REF_STACK(CoordStruct, CrdNew, 0x24);
+
+	// range check
+	if(pThis->Type->Ranged) {
+		CoordStruct crdOld = pThis->GetCoords();
+
+		pThis->Range -= Game::F2I(CrdNew.DistanceFrom(crdOld));
+		if(pThis->Range <= 0) {
+			Destroy = true;
+		}
+	}
+
+	// replicate replaced instruction
+	pThis->SetLocation(CrdNew);
+
+	return 0x467BA4;
+}
+
+DEFINE_HOOK(4664FB, BulletClass_Initialize_Ranged, 6)
+{
+	GET(BulletClass*, pThis, ECX);
+	// conservative approach for legacy-initialized bullets
+	pThis->Range = std::numeric_limits<int>::max();
+	return 0;
+}
