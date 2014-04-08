@@ -1209,12 +1209,34 @@ DEFINE_HOOK(52070F, InfantryClass_UpdateFiringState_Uncloak, 5)
 	return 0x52094C;
 }
 
-DEFINE_HOOK(69281E, DisplayClass_ChooseAction_NoTogglePower, A) {
-	Actions::Set(&RulesExt::Global()->TogglePowerNoCursor);
-	return 0;
-}
+DEFINE_HOOK(69281E, DisplayClass_ChooseAction_TogglePower, A)
+{
+	GET(TechnoClass*, pTarget, ESI);
+	REF_STACK(eAction, Action, STACK_OFFS(0x20, 0x10));
 
-DEFINE_HOOK(692893, DisplayClass_ChooseAction_TogglePower, 8) {
-	Actions::Set(&RulesExt::Global()->TogglePowerCursor);
-	return 0;
+	bool allowed = false;
+
+	if(auto pBld = abstract_cast<BuildingClass*>(pTarget)) {
+		auto pOwner = pBld->GetOwningHouse();
+
+		if(pOwner && pOwner->ControlledByPlayer()) {
+			if(pBld->CanBeSelected() && !pBld->IsStrange() && !pBld->IsBeingWarpedOut()) {
+				auto pType = pBld->Type;
+
+				if(pType->TogglePower) {
+					allowed = (pType->PowerDrain > 0 || pType->Powered);
+				}
+			}
+		}
+	}
+
+	if(allowed) {
+		Action = act_TogglePower;
+		Actions::Set(&RulesExt::Global()->TogglePowerCursor);
+	} else {
+		Action = act_NoTogglePower;
+		Actions::Set(&RulesExt::Global()->TogglePowerNoCursor);
+	}
+
+	return 0x69289B;
 }
