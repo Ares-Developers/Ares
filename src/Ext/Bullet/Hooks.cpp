@@ -176,7 +176,9 @@ DEFINE_HOOK(469EBA, BulletClass_DetonateAt_Splits, 6)
 			// create a new bullet
 			WeaponTypeClass* pWeapon = pType->AirburstWeapon;
 			if(pTarget && pWeapon) {
-				if(auto pBullet = pWeapon->Projectile->CreateBullet(pTarget, pThis->Owner, pWeapon->Damage, pWeapon->Warhead, pWeapon->Speed, pWeapon->Bright)) {
+				auto pSplitExt = BulletTypeExt::ExtMap.Find(pWeapon->Projectile);
+
+				if(auto pBullet = pSplitExt->CreateBullet(pTarget, pThis->Owner, pWeapon)) {
 					const double doubleA = -0.00009587672516830327;
 					const double doubleB = 4.712436918747274;
 
