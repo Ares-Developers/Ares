@@ -2,7 +2,10 @@
 #include "../TechnoType/Body.h"
 #include "../AnimType/Body.h"
 #include "../House/Body.h"
+#include "../WeaponType/Body.h"
 #include "../../Utilities/TemplateDef.h"
+
+#include <BulletClass.h>
 
 template<> const DWORD Extension<BulletTypeClass>::Canary = 0xF00DF00D;
 Container<BulletTypeExt> BulletTypeExt::ExtMap;
@@ -52,6 +55,25 @@ bool BulletTypeExt::ExtData::HasSplitBehavior()
 {
 	// behavior in FS: Splits defaults to Airburst.
 	return this->AttachedToObject->Airburst || this->Splits;
+}
+
+BulletClass* BulletTypeExt::ExtData::CreateBullet(AbstractClass* pTarget, TechnoClass* pOwner, WeaponTypeClass* pWeapon) const
+{
+	auto pExt = WeaponTypeExt::ExtMap.Find(pWeapon);
+	return this->CreateBullet(pTarget, pOwner, pWeapon->Damage, pWeapon->Warhead,
+		pWeapon->Speed, Game::F2I(pExt->ProjectileRange), pWeapon->Bright);
+}
+
+BulletClass* BulletTypeExt::ExtData::CreateBullet(AbstractClass* pTarget, TechnoClass* pOwner,
+	int damage, WarheadTypeClass* pWarhead, int speed, int range, bool bright) const
+{
+	auto pBullet = this->AttachedToObject->CreateBullet(pTarget, pOwner, damage, pWarhead, speed, bright);
+
+	if(pBullet) {
+		pBullet->Range = range;
+	}
+
+	return pBullet;
 }
 
 // =============================

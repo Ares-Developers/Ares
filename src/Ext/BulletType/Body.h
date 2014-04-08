@@ -13,6 +13,8 @@
 
 #define FOUNDATION_CUSTOM	0x7F
 
+class BulletClass;
+
 class BulletTypeExt
 {
 public:
@@ -63,6 +65,9 @@ public:
 		ConvertClass* GetConvert();
 
 		bool HasSplitBehavior();
+
+		BulletClass* CreateBullet(AbstractClass* pTarget, TechnoClass* pOwner, WeaponTypeClass* pWeapon) const;
+		BulletClass* CreateBullet(AbstractClass* pTarget, TechnoClass* pOwner, int damage, WarheadTypeClass* pWarhead, int speed, int range, bool bright) const;
 	};
 
 	static Container<BulletTypeExt> ExtMap;
