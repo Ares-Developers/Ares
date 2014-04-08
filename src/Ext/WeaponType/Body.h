@@ -91,6 +91,9 @@ public:
 		Valueable<AnimTypeClass *> Abductor_AnimType;
 		Valueable <bool> Abductor_ChangeOwner;
 		Valueable<double> Abductor_AbductBelowPercent;
+
+		// brought back from TS
+		Valueable<float> ProjectileRange;
 		
 		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			Weapon_Loaded (false),
@@ -118,6 +121,7 @@ public:
 			Ivan_CanDetonateTimeBomb (),
 			Ivan_CanDetonateDeathBomb (),
 			Rad_Type (nullptr),
+			ProjectileRange(400),
 			Abductor(false),
 			Abductor_AnimType(nullptr),
 			Abductor_ChangeOwner(false),

@@ -126,6 +126,9 @@ void WeaponTypeExt::ExtData::LoadFromINIFile(WeaponTypeExt::TT *pThis, CCINIClas
 	this->Abductor_AnimType.Read(exINI, section, "Abductor.Anim");
 	this->Abductor_ChangeOwner.Read(exINI, section, "Abductor.ChangeOwner");
 	this->Abductor_AbductBelowPercent.Read(exINI, section, "Abductor.AbductBelowPercent");
+
+	// brought back from TS
+	this->ProjectileRange.Read(exINI, section, "ProjectileRange");
 }
 
 // #680 Chrono Prison / Abductor
