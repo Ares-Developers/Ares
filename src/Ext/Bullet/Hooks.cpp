@@ -4,6 +4,7 @@
 #include <MapClass.h>
 #include "../BulletType/Body.h"
 #include "../BuildingType/Body.h"
+#include "../WeaponType/Body.h"
 #include <ScenarioClass.h>
 #include <YRMath.h>
 #include <Helpers/Iterators.h>
@@ -243,4 +244,26 @@ DEFINE_HOOK(4664FB, BulletClass_Initialize_Ranged, 6)
 	// conservative approach for legacy-initialized bullets
 	pThis->Range = std::numeric_limits<int>::max();
 	return 0;
+}
+
+DEFINE_HOOK(6FE53F, TechnoClass_Fire_CreateBullet, 6)
+{
+	GET(TechnoClass*, pThis, ESI);
+	GET(WeaponTypeClass*, pWeapon, EBX);
+	GET(int, speed, EAX);
+	GET_BASE(AbstractClass*, pTarget, 0x8);
+
+	// replace skipped instructions
+	REF_STACK(int, Speed, 0x28);
+	Speed = speed;
+
+	auto pWeaponExt = WeaponTypeExt::ExtMap.Find(pWeapon);
+	auto pBulletExt = BulletTypeExt::ExtMap.Find(pWeapon->Projectile);
+
+	// create a new bullet with projectile range
+	auto ret = pBulletExt->CreateBullet(pTarget, pThis, pWeapon->Damage, pWeapon->Warhead,
+		speed, Game::F2I(pWeaponExt->ProjectileRange), pWeapon->Bright);
+
+	R->EAX(ret);
+	return 0x6FE562;
 }
