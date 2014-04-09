@@ -9,6 +9,7 @@
 #include <CCINIClass.h>
 #include <GeneralStructures.h>
 #include <StringTable.h>
+#include <Helpers/String.h>
 
 #include <cstring>
 #include <memory>
@@ -199,6 +200,23 @@ public:
 
 	char Label[0x20];
 	const wchar_t* Text;
+};
+
+// fixed string with read method
+template <size_t Capacity>
+class AresFixedString : public FixedString<Capacity> {
+public:
+	AresFixedString(const char* value = nullptr) : FixedString(value) {
+	}
+
+	using FixedString::operator=;
+
+	bool Read(INIClass* pINI, const char* pSection, const char* pKey, const char* pDefault = "") {
+		if(pINI->ReadString(pSection, pKey, pDefault, Ares::readBuffer, this->Size)) {
+			*this = Ares::readBuffer;
+		}
+		return Ares::readBuffer[0] != 0;
+	}
 };
 
 // a wrapper for an optional value
