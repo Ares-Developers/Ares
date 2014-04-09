@@ -61,7 +61,7 @@ BulletClass* BulletTypeExt::ExtData::CreateBullet(AbstractClass* pTarget, Techno
 {
 	auto pExt = WeaponTypeExt::ExtMap.Find(pWeapon);
 	return this->CreateBullet(pTarget, pOwner, pWeapon->Damage, pWeapon->Warhead,
-		pWeapon->Speed, Game::F2I(pExt->ProjectileRange), pWeapon->Bright);
+		pWeapon->Speed, pExt->GetProjectileRange(), pWeapon->Bright);
 }
 
 BulletClass* BulletTypeExt::ExtData::CreateBullet(AbstractClass* pTarget, TechnoClass* pOwner,

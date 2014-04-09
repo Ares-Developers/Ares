@@ -149,6 +149,12 @@ public:
 		bool conductAbduction(BulletClass *);
 
 		void PlantBomb(TechnoClass* pSource, ObjectClass* pTarget) const;
+
+		int GetProjectileRange() const {
+			return (this->ProjectileRange < 0.0)
+				? std::numeric_limits<int>::max()
+				:  Game::F2I(this->ProjectileRange * 256.0);
+		}
 	};
 
 /*

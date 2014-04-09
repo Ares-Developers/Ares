@@ -264,7 +264,7 @@ DEFINE_HOOK(6FE53F, TechnoClass_Fire_CreateBullet, 6)
 
 	// create a new bullet with projectile range
 	auto ret = pBulletExt->CreateBullet(pTarget, pThis, pWeapon->Damage, pWeapon->Warhead,
-		speed, Game::F2I(pWeaponExt->ProjectileRange), pWeapon->Bright);
+		speed, pWeaponExt->GetProjectileRange(), pWeapon->Bright);
 
 	R->EAX(ret);
 	return 0x6FE562;
