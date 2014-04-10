@@ -11,6 +11,7 @@
 #include <UnitTypeClass.h>
 
 #include "../../Ares.h"
+#include "../../Utilities/Constructs.h"
 #include "../../Utilities/Template.h"
 #include "../../Misc/EVAVoices.h"
 
@@ -43,6 +44,14 @@ class SideExt
 		bool SidebarYuriFileNames;
 		ValueableIdx<EVAVoices> EVAIndex;
 		Valueable<UnitTypeClass*> HunterSeeker;
+
+		AresFixedString<0x20> ScoreCampaignBackground;
+		AresFixedString<0x20> ScoreCampaignTransition;
+		AresFixedString<0x20> ScoreCampaignAnimation;
+		AresFixedString<0x20> ScoreCampaignPalette;
+		AresFixedString<0x20> ScoreMultiplayBackground;
+		AresFixedString<0x20> ScoreMultiplayBars;
+		AresFixedString<0x20> ScoreMultiplayPalette;
 
 		int ArrayIndex;
 
@@ -90,6 +99,8 @@ class SideExt
 		Iterator<int> GetDefaultParaDropNum() const;
 
 		AnimTypeClass* GetParachuteAnim() const;
+
+		const char* GetMultiplayerScoreBarFilename(size_t index) const;
 	};
 
 	//Hacks required in other classes:

@@ -361,3 +361,85 @@ DEFINE_HOOK(72F440, Game_InitializeToolTipColor, A)
 
 	return 0;
 }
+
+// score screens
+
+// campaign
+DEFINE_HOOK(72D300, Game_LoadCampaignScoreAssets, 5)
+{
+	GET(const int, idxSide, ECX);
+	auto pSide = SideClass::Array->GetItemOrDefault(idxSide);
+	auto pExt = SideExt::ExtMap.Find(pSide);
+
+	auto& AlreadyLoaded = *reinterpret_cast<bool*>(0xB0FBAC);
+
+	if(!AlreadyLoaded) {
+
+		// load the images
+		auto& SxCRBKyy_SHP = *reinterpret_cast<SHPStruct**>(0xB0FB34);
+		auto& SxCRTyy_SHP = *reinterpret_cast<SHPStruct**>(0xB0FB00);
+		auto& SxCRAyy_SHP = *reinterpret_cast<SHPStruct**>(0xB0FB30);
+
+		auto& SxCRBKyy_Loaded = *reinterpret_cast<bool*>(0xB0FC70);
+		auto& SxCRTyy_Loaded = *reinterpret_cast<bool*>(0xB0FC71);
+		auto& SxCRAyy_Loaded = *reinterpret_cast<bool*>(0xB0FC72);
+
+		SxCRBKyy_SHP = FileSystem::LoadWholeFileEx<SHPStruct>(pExt->ScoreCampaignBackground, SxCRBKyy_Loaded);
+		SxCRTyy_SHP = FileSystem::LoadWholeFileEx<SHPStruct>(pExt->ScoreCampaignTransition, SxCRTyy_Loaded);
+		SxCRAyy_SHP = FileSystem::LoadWholeFileEx<SHPStruct>(pExt->ScoreCampaignAnimation, SxCRAyy_Loaded);
+
+		// load the palette
+		auto& xSCORE_Palette = *reinterpret_cast<BytePalette**>(0xB0FBA4);
+		auto& xSCORE_Convert = *reinterpret_cast<ConvertClass**>(0xB0FBA8);
+
+		ConvertClass::CreateFromFile(pExt->ScoreCampaignPalette, xSCORE_Palette, xSCORE_Convert);
+
+		AlreadyLoaded = true;
+	}
+
+	return 0x72D345;
+}
+
+// multiplayer
+DEFINE_HOOK(72D730, Game_LoadMultiplayerScoreAssets, 5)
+{
+	GET(const int, idxSide, ECX);
+	auto pSide = SideClass::Array->GetItemOrDefault(idxSide);
+	auto pExt = SideExt::ExtMap.Find(pSide);
+
+	auto& AlreadyLoaded = *reinterpret_cast<bool*>(0xB0FBB8);
+
+	if(!AlreadyLoaded) {
+
+		// load the images
+		auto& MPxSCRNy_SHP = *reinterpret_cast<SHPStruct**>(0xB0FB1C);
+		auto& MPxSCRNy_Loaded = *reinterpret_cast<bool*>(0xB0FC7D);
+
+		MPxSCRNy_SHP = FileSystem::LoadWholeFileEx<SHPStruct>(pExt->ScoreMultiplayBackground, MPxSCRNy_Loaded);
+
+		// load the palette
+		auto& MPxSCRN_Palette = *reinterpret_cast<BytePalette**>(0xB0FBB0);
+		auto& MPxSCRN_Convert = *reinterpret_cast<ConvertClass**>(0xB0FBB4);
+
+		ConvertClass::CreateFromFile(pExt->ScoreMultiplayPalette, MPxSCRN_Palette, MPxSCRN_Convert);
+
+		AlreadyLoaded = true;
+	}
+
+	return 0x72D775;
+}
+
+DEFINE_HOOK(5CA110, Game_GetMultiplayerScoreScreenBar, 5)
+{
+	GET(int, idxBar, ECX);
+
+	int idxSide = ScenarioClass::Instance->PlayerSideIndex;
+	auto pSide = SideClass::Array->GetItemOrDefault(idxSide);
+	auto pExt = SideExt::ExtMap.Find(pSide);
+
+	auto pFilename = pExt->GetMultiplayerScoreBarFilename(idxBar);
+	auto ret = PCX::Instance->GetSurface(pFilename);
+
+	R->EAX(ret);
+	return 0x5CA41D;
+}

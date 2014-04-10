@@ -2,6 +2,7 @@
 #include "../../Ares.CRT.h"
 #include "../../Utilities/TemplateDef.h"
 #include <ScenarioClass.h>
+#include <PCX.h>
 
 #include <algorithm>
 
@@ -52,6 +53,34 @@ void SideExt::ExtData::Initialize(SideClass *pThis)
 		this->MessageTextColorIndex = 21;
 	}
 
+	switch(this->ArrayIndex) {
+	case 0: // Allied
+		this->ScoreCampaignBackground = "ASCRBKMD.SHP";
+		this->ScoreCampaignTransition = "ASCRTMD.SHP";
+		this->ScoreCampaignAnimation = "ASCRAMD.SHP";
+		this->ScoreCampaignPalette = "ASCORE.PAL";
+		this->ScoreMultiplayBackground = "MPASCRNL.SHP";
+		this->ScoreMultiplayBars = "mpascrnlbar~~.pcx";
+		this->ScoreMultiplayPalette = "MPASCRN.PAL";
+		break;
+	case 1: // Soviet
+		this->ScoreCampaignBackground = "SSCRBKMD.SHP";
+		this->ScoreCampaignTransition = "SSCRTMD.SHP";
+		this->ScoreCampaignAnimation = "SSCRAMD.SHP";
+		this->ScoreCampaignPalette = "SSCORE.PAL";
+		this->ScoreMultiplayBackground = "MPSSCRNL.SHP";
+		this->ScoreMultiplayBars = "mpsscrnlbar~~.pcx";
+		this->ScoreMultiplayPalette = "MPSSCRN.PAL";
+		break;
+	default: // Yuri and others
+		this->ScoreCampaignBackground = "SYCRBKMD.SHP";
+		this->ScoreCampaignTransition = "SYCRTMD.SHP";
+		this->ScoreCampaignAnimation = "SYCRAMD.SHP";
+		this->ScoreCampaignPalette = "YSCORE.PAL";
+		this->ScoreMultiplayBackground = "MPYSCRNL.SHP";
+		this->ScoreMultiplayBars = "mpyscrnlbar~~.pcx";
+		this->ScoreMultiplayPalette = "MPYSCRN.PAL";
+	}
 };
 
 void SideExt::ExtData::LoadFromINIFile(SideClass *pThis, CCINIClass *pINI)
@@ -100,6 +129,22 @@ void SideExt::ExtData::LoadFromINIFile(SideClass *pThis, CCINIClass *pINI)
 	this->MessageTextColorIndex.Read(exINI, section, "MessageTextColor");
 
 	this->HunterSeeker.Read(exINI, section, "HunterSeeker");
+
+	// score screens
+	this->ScoreCampaignBackground.Read(pINI, section, "CampaignScore.Background");
+	this->ScoreCampaignTransition.Read(pINI, section, "CampaignScore.Transition");
+	this->ScoreCampaignAnimation.Read(pINI, section, "CampaignScore.Animation");
+	this->ScoreCampaignPalette.Read(pINI, section, "CampaignScore.Palette");
+	this->ScoreMultiplayBackground.Read(pINI, section, "MultiplayerScore.Background");
+	this->ScoreMultiplayPalette.Read(pINI, section, "MultiplayerScore.Palette");
+	this->ScoreMultiplayBars.Read(pINI, section, "MultiplayerScore.Bars");
+
+	for(int i = 0; i < 10; ++i) {
+		auto pFilename = this->GetMultiplayerScoreBarFilename(i);
+		if(!PCX::Instance->GetSurface(pFilename)) {
+			PCX::Instance->LoadFile(pFilename);
+		}
+	}
 }
 
 int SideExt::ExtData::GetSurvivorDivisor() const {
@@ -266,6 +311,21 @@ Iterator<int> SideExt::ExtData::GetDefaultParaDropNum() const {
 
 AnimTypeClass* SideExt::ExtData::GetParachuteAnim() const {
 	return this->Parachute_Anim.Get(RulesClass::Instance->Parachute);
+}
+
+const char* SideExt::ExtData::GetMultiplayerScoreBarFilename(size_t index) const {
+	static char filename[_countof(this->ScoreMultiplayBars.data())];
+	auto& data = this->ScoreMultiplayBars.data();
+	std::transform(std::begin(data), std::end(data), filename, tolower);
+
+	if(auto pMarker = strstr(filename, "~~")) {
+		char number[3];
+		sprintf_s(number, "%02u", index + 1);
+		pMarker[0] = number[0];
+		pMarker[1] = number[1];
+	}
+
+	return filename;
 }
 
 DWORD SideExt::LoadTextColor(REGISTERS* R, DWORD dwReturnAddress)
