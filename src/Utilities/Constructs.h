@@ -168,14 +168,14 @@ public:
 	}
 
 	const CSFText& operator = (const char* label) {
-		this->Label[0] = 0;
-		this->Text = nullptr;
+		if(this->Label != label) {
+			this->Label[0] = 0;
+			this->Text = nullptr;
 
-		if(label && *label) {
-			if(this->Label != label) {
+			if(label && *label) {
 				AresCRT::strCopy(this->Label, label);
+				this->Text = StringTable::LoadString(this->Label);
 			}
-			this->Text = StringTable::LoadString(this->Label);
 		}
 
 		return *this;
