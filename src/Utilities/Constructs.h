@@ -173,7 +173,7 @@ public:
 			this->Text = nullptr;
 
 			if(label && *label) {
-				AresCRT::strCopy(this->Label, label);
+				this->Label = label;
 				this->Text = StringTable::LoadString(this->Label);
 			}
 		}
@@ -183,7 +183,7 @@ public:
 
 	const CSFText& operator = (const CSFText& other) {
 		if(this != &other) {
-			AresCRT::strCopy(this->Label, other.Label);
+			this->Label = other.Label;
 			this->Text = other.Text;
 		}
 
@@ -198,7 +198,7 @@ public:
 		return !this->Text || !*this->Text;
 	}
 
-	char Label[0x20];
+	FixedString<0x20> Label;
 	const wchar_t* Text;
 };
 
