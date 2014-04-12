@@ -5,7 +5,6 @@
 #include <memory>
 #include <unordered_map>
 
-#include <xcompile.h>
 #include <CCINIClass.h>
 #include <SwizzleManagerClass.h>
 
@@ -65,6 +64,10 @@ class Extension {
 			AttachedToObject(OwnerObject)
 		{ };
 
+		Extension(const Extension &other) = delete;
+
+		void operator = (const Extension &RHS) = delete;
+
 		virtual ~Extension() { };
 
 		// major refactoring!
@@ -118,11 +121,6 @@ class Extension {
 		virtual inline void LoadFromStream(AresByteStream &Stm, size_t &Offset) {
 			Stm.Load(this->Initialized, Offset);
 			//Stm.Load(this->AttachedToObject, Offset);
-		}
-
-	private:
-		void operator = (Extension &RHS) {
-
 		}
 };
 
