@@ -7,7 +7,8 @@
 #include <Helpers/Template.h>
 
 #include <TActionClass.h>
-#include <TechnoTypeClass.h>
+
+class HouseClass;
 
 class TActionExt
 {

@@ -1,6 +1,7 @@
 #ifndef HELPERS_ALEX_H
 #define HELPERS_ALEX_H
 
+#include <BuildingTypeClass.h>
 #include <CellSpread.h>
 #include <Helpers/Iterators.h>
 #include <Helpers/Enumerators.h>

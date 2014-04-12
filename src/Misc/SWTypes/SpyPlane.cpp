@@ -2,6 +2,8 @@
 #include "../../Ares.h"
 #include "../../Utilities/TemplateDef.h"
 
+#include <HouseClass.h>
+
 bool SW_SpyPlane::HandlesType(int type)
 {
 	return (type == SuperWeaponType::SpyPlane);

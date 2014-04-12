@@ -3,6 +3,9 @@
 
 #include "../../Utilities/TemplateDef.h"
 
+#include <VocClass.h>
+#include <VoxClass.h>
+
 bool SW_ChronoSphere::HandlesType(int type)
 {
 	return (type == SuperWeaponType::ChronoSphere);

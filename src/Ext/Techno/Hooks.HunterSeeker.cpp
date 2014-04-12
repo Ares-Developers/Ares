@@ -1,7 +1,11 @@
 #include "Body.h"
 #include "../Rules/Body.h"
+#include "../TechnoType/Body.h"
 
 #include <FlyLocomotionClass.h>
+#include <InfantryClass.h>
+#include <UnitClass.h>
+#include <YRMath.h>
 
 DEFINE_HOOK(4CCB84, FlyLocomotionClass_ILocomotion_Process_HunterSeeker, 6)
 {

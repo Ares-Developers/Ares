@@ -7,12 +7,13 @@
 
 #include <Helpers/Template.h>
 
-#include <FactoryClass.h>
 #include <HouseClass.h>
-#include <ScenarioClass.h>
-#include <SuperClass.h>
 
 #include <bitset>
+
+class FactoryClass;
+class SuperClass;
+class SideClass;
 
 class HouseExt
 {

@@ -3,6 +3,8 @@
 
 #include <BuildingClass.h>
 #include <CellClass.h>
+#include <HouseClass.h>
+#include <SessionClass.h>
 
 #include "Body.h"
 

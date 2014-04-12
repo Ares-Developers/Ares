@@ -3,6 +3,11 @@
 #include "../Rules/Body.h"
 #include "../../Misc/Debug.h"
 
+#include <AircraftClass.h>
+#include <BuildingClass.h>
+#include <InfantryClass.h>
+#include <UnitClass.h>
+
 static bool IsDeactivated(TechnoClass * pThis) {
 	return TechnoExt::ExtMap.Find(pThis)->IsDeactivated();
 };

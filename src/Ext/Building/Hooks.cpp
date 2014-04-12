@@ -2,12 +2,14 @@
 #include "../BuildingType/Body.h"
 #include "../HouseType/Body.h"
 #include "../Techno/Body.h"
+#include "../TechnoType/Body.h"
 #include "../../Misc/Network.h"
 
 #include <SpecificStructures.h>
 #include <ScenarioClass.h>
 #include <InfantryClass.h>
 #include <CellClass.h>
+#include <HouseClass.h>
 
 #include <cmath>
 

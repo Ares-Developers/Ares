@@ -1,11 +1,12 @@
 #include "Body.h"
+#include <AbstractClass.h>
 #include <BulletClass.h>
 #include <FootClass.h>
-#include <TechnoClass.h>
 #include <TechnoTypeClass.h>
 #include <LocomotionClass.h>
 #include "../WarheadType/Body.h"
 #include "../Techno/Body.h"
+#include "../TechnoType/Body.h"
 #include "../../Utilities/TemplateDef.h"
 
 template<> const DWORD Extension<WeaponTypeClass>::Canary = 0x33333333;

@@ -8,7 +8,8 @@
 #include <Helpers/Template.h>
 
 #include <TEventClass.h>
-#include <TechnoTypeClass.h>
+
+class TechnoTypeClass;
 
 class TEventExt
 {

@@ -3,6 +3,7 @@
 #include "../../Ext/HouseType/Body.h"
 #include "../../Utilities/TemplateDef.h"
 
+#include <HouseClass.h>
 #include <SideClass.h>
 
 #include <algorithm>

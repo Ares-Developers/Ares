@@ -5,12 +5,19 @@
 #include "../../Misc/SWTypes.h"
 #include "../../Misc/PoweredUnitClass.h"
 
+#include <AnimClass.h>
+#include <BombClass.h>
+#include <CellSpread.h>
+#include <Conversions.h>
 #include <HouseClass.h>
+#include <InfantryClass.h>
 #include <BuildingClass.h>
 #include <GeneralStructures.h>
 #include <Helpers/Template.h>
+#include <LocomotionClass.h>
 #include <SlaveManagerClass.h>
 #include <SpawnManagerClass.h>
+#include <TiberiumClass.h>
 
 template<> const DWORD Extension<TechnoClass>::Canary = 0x55555555;
 Container<TechnoExt> TechnoExt::ExtMap;

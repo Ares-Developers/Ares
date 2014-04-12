@@ -3,6 +3,7 @@
 #include "../../Utilities/TemplateDef.h"
 
 #include <ScenarioClass.h>
+#include <VoxClass.h>
 
 SuperClass* SW_LightningStorm::CurrentLightningStorm = nullptr;
 

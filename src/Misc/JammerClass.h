@@ -2,8 +2,9 @@
 #define JAMMER_H
 
 #include <vector>
-#include <TechnoClass.h>
-#include <BuildingClass.h>
+
+class TechnoClass;
+class BuildingClass;
 
 class JammerClass {
   private:

@@ -2,6 +2,7 @@
 #include <ScenarioClass.h>
 #include <AnimClass.h>
 #include "../Techno/Body.h"
+#include "../TechnoType/Body.h"
 #include "../House/Body.h"
 
 // =============================

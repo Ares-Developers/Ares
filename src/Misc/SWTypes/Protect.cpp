@@ -3,6 +3,8 @@
 #include "../../Utilities/Helpers.Alex.h"
 #include "../../Utilities/TemplateDef.h"
 
+#include <HouseClass.h>
+
 bool SW_Protect::HandlesType(int type)
 {
 	return (type == SuperWeaponType::IronCurtain) || (type == SuperWeaponType::ForceShield);

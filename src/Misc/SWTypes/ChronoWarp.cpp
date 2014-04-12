@@ -5,9 +5,11 @@
 #include "../../Ext/TechnoType/Body.h"
 #include "../../Utilities/Helpers.Alex.h"
 
+#include <AnimClass.h>
 #include <LocomotionClass.h>
 #include <BulletClass.h>
 #include <LightSourceClass.h>
+#include <RadarEventClass.h>
 
 bool SW_ChronoWarp::HandlesType(int type)
 {

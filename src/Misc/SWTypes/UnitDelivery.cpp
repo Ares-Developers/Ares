@@ -2,6 +2,12 @@
 #include "../../Ext/Techno/Body.h"
 #include "../../Utilities/TemplateDef.h"
 
+#include <AircraftClass.h>
+#include <BuildingClass.h>
+#include <CellSpread.h>
+#include <HouseClass.h>
+#include <OverlayTypeClass.h>
+
 void SW_UnitDelivery::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)
 {
 	pData->SW_AITargetingType = SuperWeaponAITargetingMode::ParaDrop;

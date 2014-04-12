@@ -2,6 +2,7 @@
 
 #include "../TechnoType/Body.h"
 
+#include <HouseClass.h>
 #include <RadarEventClass.h>
 #include <VoxClass.h>
 

@@ -21,6 +21,8 @@
 #include "Ext/WeaponType/Body.h"
 
 #include "Enum/ArmorTypes.h"
+#include "Enum/Prerequisites.h"
+#include "Enum/RadTypes.h"
 
 DEFINE_HOOK(7258D0, AnnounceInvalidPointer, 6)
 {

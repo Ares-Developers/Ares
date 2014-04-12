@@ -3,7 +3,11 @@
 #include "../Techno/Body.h"
 #include "../WeaponType/Body.h"
 #include <BulletClass.h>
+#include <EBolt.h>
+#include <HouseClass.h>
 #include <LaserDrawClass.h>
+#include <ScenarioClass.h>
+#include <VocClass.h>
 
 DEFINE_HOOK(44B2FE, BuildingClass_Mi_Attack_IsPrism, 6)
 {

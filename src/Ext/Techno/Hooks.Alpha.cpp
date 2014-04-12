@@ -1,6 +1,9 @@
 #include "Body.h"
 #include "../TechnoType/Body.h"
 
+#include <AlphaShapeClass.h>
+#include <AnimClass.h>
+#include <BuildingClass.h>
 #include <TacticalClass.h>
 #include <Notifications.h>
 

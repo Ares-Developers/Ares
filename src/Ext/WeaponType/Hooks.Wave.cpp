@@ -1,6 +1,9 @@
 #include "Body.h"
 #include "../Techno/Body.h"
 
+#include <HouseClass.h>
+#include <WaveClass.h>
+
 // custom beam styles
 // 6FF5F5, 6
 DEFINE_HOOK(6FF5F5, TechnoClass_Fire, 6)

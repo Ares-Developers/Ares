@@ -2,7 +2,9 @@
 #include "../House/Body.h"
 #include "../../Ares.h"
 #include <Audio.h>
+#include <PCX.h>
 #include <ScenarioClass.h>
+#include <StringTable.h>
 
 DEFINE_HOOK(553412, LoadProgressMgr_Draw_LSFile, 0)
 {

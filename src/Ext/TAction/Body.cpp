@@ -3,7 +3,7 @@
 #include "../../Misc/SWTypes.h"
 #include "../../Misc/SWTypes/Firewall.h"
 
-//#include <HouseClass.h>
+#include <HouseClass.h>
 
 
 //Static init

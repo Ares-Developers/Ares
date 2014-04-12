@@ -3,6 +3,8 @@
 #include "../../Utilities/Helpers.Alex.h"
 #include "../../Utilities/TemplateDef.h"
 
+#include <RadarEventClass.h>
+
 SuperWeaponFlags::Value SW_SonarPulse::Flags()
 {
 	return SuperWeaponFlags::NoEvent;

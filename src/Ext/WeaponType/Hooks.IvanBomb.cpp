@@ -4,6 +4,8 @@
 #include "../Techno/Body.h"
 
 #include <Helpers/Other.h>
+#include <BulletClass.h>
+#include <WarheadTypeClass.h>
 
 // custom ivan bomb attachment
 // bugfix #385: Only InfantryTypes can use Ivan Bombs

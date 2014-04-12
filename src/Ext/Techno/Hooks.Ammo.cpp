@@ -2,6 +2,9 @@
 #include "../../Misc/Debug.h"
 #include "../../Ares.h"
 
+#include <BuildingClass.h>
+#include <InfantryClass.h>
+
 // bugfix #471: InfantryTypes and BuildingTypes don't reload their ammo properly
 
 DEFINE_HOOK(43FE8E, BuildingClass_Update_Reload, 6)

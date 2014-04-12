@@ -4,6 +4,8 @@
 #include "../Ext/SWType/Body.h"
 #include "../Utilities/Enums.h"
 
+#include <SuperClass.h>
+
 #include <vector>
 
 class SWTypeExt;

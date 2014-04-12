@@ -2,12 +2,6 @@
 #define BUILDINGTYPE_EXT_H
 
 #include <CCINIClass.h>
-#include <BuildingTypeClass.h>
-#include <InfantryTypeClass.h>
-#include <Randomizer.h>
-#include <UnitTypeClass.h>
-#include <WeaponTypeClass.h>
-#include <VocClass.h>
 
 #include "../_Container.hpp"
 #include "../../Ares.h"
@@ -20,6 +14,9 @@
 //endif
 
 class BuildingClass;
+class BuildingTypeClass;
+class InfantryTypeClass;
+class VocClass;
 
 #define FOUNDATION_CUSTOM	0x7F
 

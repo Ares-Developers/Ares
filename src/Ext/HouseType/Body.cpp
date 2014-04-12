@@ -6,6 +6,7 @@
 #include <ScenarioClass.h>
 #include <ColorScheme.h>
 #include <DiscreteDistributionClass.h>
+#include <PCX.h>
 
 #include <iterator>
 #include <algorithm>

@@ -1,6 +1,8 @@
 #include <Checksummer.h>
 #include "../Ext/Abstract/Body.h"
 #include <AnimClass.h>
+#include <CellClass.h>
+#include <HouseClass.h>
 #include <InfantryClass.h>
 #include <UnitClass.h>
 #include <BuildingClass.h>

@@ -7,6 +7,7 @@
 #include <ScenarioClass.h>
 #include <InfantryClass.h>
 #include <CellClass.h>
+#include <HouseClass.h>
 
 #include <cmath>
 

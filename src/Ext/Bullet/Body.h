@@ -1,9 +1,7 @@
 #ifndef Bullet_EXT_H
 #define Bullet_EXT_H
 
-#include <CCINIClass.h>
 #include <BulletClass.h>
-#include <SuperWeaponTypeClass.h>
 
 #include "../_Container.hpp"
 #include "../../Ares.h"
@@ -11,6 +9,8 @@
 #include "../../Misc/Debug.h"
 
 #define FOUNDATION_CUSTOM	0x7F
+
+class SuperWeaponTypeClass;
 
 class BulletExt
 {

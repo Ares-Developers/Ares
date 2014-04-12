@@ -2,6 +2,8 @@
 #include "../Rules/Body.h"
 #include "../TechnoType/Body.h"
 
+#include <HouseClass.h>
+
 DEFINE_HOOK(70A990, TechnoClass_DrawVeterancy, 5)
 {
 	GET(TechnoClass *, T, ECX);

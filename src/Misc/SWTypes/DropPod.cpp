@@ -5,6 +5,10 @@
 
 #include "../../Utilities/INIParser.h"
 
+#include <BuildingTypeClass.h>
+#include <HouseClass.h>
+#include <VoxClass.h>
+
 void SW_DropPod::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)
 {
 	pData->EVA_Detected = VoxClass::FindIndex("EVA_DropPodDetected");

@@ -3,14 +3,16 @@
 
 #include <CCINIClass.h>
 #include <HouseTypeClass.h>
-#include <BuildingTypeClass.h>
-#include <PCX.h>
-#include <StringTable.h>
-#include <ColorScheme.h>
 
 #include "../../Utilities/Template.h"
 #include "../../Ares.CRT.h"
 #include "../_Container.hpp"
+
+class AircraftTypeClass;
+class AnimTypeClass;
+class ColorScheme;
+class BuildingTypeClass;
+class TechnoTypeClass;
 
 class HouseTypeExt
 {

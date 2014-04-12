@@ -7,7 +7,9 @@
 #include "Body.h"
 #include "../Rules/Body.h"
 #include "../../Misc/Actions.h"
+#include <HouseClass.h>
 #include <InputManagerClass.h>
+#include <VoxClass.h>
 
 // #664: Advanced Rubble - reconstruction part: Check
 DEFINE_HOOK(51E63A, InfantryClass_GetCursorOverObject_EngineerOverFriendlyBuilding, 6) {

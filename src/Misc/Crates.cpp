@@ -1,6 +1,8 @@
 #include "../Ext/Techno/Body.h"
-#include <Powerups.h>
+#include "../Ext/TechnoType/Body.h"
 
+#include <HouseClass.h>
+#include <Powerups.h>
 
 /*
 	generic crate-handler file

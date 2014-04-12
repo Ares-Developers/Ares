@@ -1,16 +1,8 @@
 #ifndef SUPERTYPE_EXT_H
 #define SUPERTYPE_EXT_H
 
-#include <AircraftTypeClass.h>
-#include <AnimClass.h>
 #include <CCINIClass.h>
-#include <HouseClass.h>
-#include <MissionClass.h>
-#include <RadarEventClass.h>
-#include <SuperClass.h>
-#include <SwizzleManagerClass.h>
-#include <VocClass.h>
-#include <VoxClass.h>
+#include <SuperWeaponTypeClass.h>
 
 #include "../../Ares.CRT.h"
 #include "../../Misc/Actions.h"
@@ -28,8 +20,16 @@
 
 #include "../_Container.hpp"
 
-class ParadropPlane;
+class AircraftTypeClass;
+class AnimClass;
+class HouseClass;
+class MissionClass;
 class NewSWType;
+class ParadropPlane;
+class RadarEventClass;
+class SuperClass;
+class VocClass;
+class VoxClass;
 
 struct SWRange {
 	SWRange(float widthOrRange = -1.0f, int height = -1) : WidthOrRange(widthOrRange), Height(height) {}

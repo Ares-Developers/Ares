@@ -2,13 +2,19 @@
 #include "../../Ares.h"
 
 #include "../../Ext/Bullet/Body.h"
-#include "../../Utilities/TemplateDef.h"
 
 #include <WarheadTypeClass.h>
+#include <BuildingClass.h>
 #include <BulletTypeClass.h>
 #include <ScenarioClass.h>
 #include <BulletClass.h>
+#include <HouseClass.h>
+#include <RadarEventClass.h>
+#include <VocClass.h>
+#include <VoxClass.h>
 #include <YRMath.h>
+
+#include "../../Utilities/TemplateDef.h"
 
 SuperWeaponTypeClass* SW_NuclearMissile::CurrentNukeType = nullptr;
 

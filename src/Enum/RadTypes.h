@@ -1,20 +1,15 @@
 #ifndef RAD_TYPES_H
 #define RAD_TYPES_H
 
-#include <CCINIClass.h>
 #include <WarheadTypeClass.h>
 #include <RadSiteClass.h>
 #include <RulesClass.h>
 
 #include "_Enumerator.hpp"
-#include "../Ares.CRT.h"
 #include "../Utilities/Template.h"
 
-#ifdef DEBUGBUILD
-#include "../Misc/Debug.h"
-#endif
-
 class RadType;
+class CCINIClass;
 
 class RadType : public Enumerable<RadType>
 {

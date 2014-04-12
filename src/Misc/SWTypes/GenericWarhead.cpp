@@ -1,5 +1,6 @@
 #include "GenericWarhead.h"
 #include "../../Ext/Techno/Body.h"
+#include "../../Ext/WarheadType/Body.h"
 
 void SW_GenericWarhead::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)
 {

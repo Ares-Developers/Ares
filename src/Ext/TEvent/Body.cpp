@@ -1,5 +1,8 @@
 #include "Body.h"
 
+#include <HouseClass.h>
+#include <TechnoTypeClass.h>
+
 //Static init
 template<> const DWORD Extension<TEventClass>::Canary = 0x61616161;
 Container<TEventExt> TEventExt::ExtMap;

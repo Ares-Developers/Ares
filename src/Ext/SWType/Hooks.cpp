@@ -3,6 +3,7 @@
 #include "../House/Body.h"
 
 #include <StringTable.h>
+#include <VoxClass.h>
 
 DEFINE_HOOK(6CEF84, SuperWeaponTypeClass_GetCursorOverObject, 7)
 {

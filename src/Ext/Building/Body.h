@@ -1,9 +1,7 @@
 #ifndef BUILDING_EXT_H
 #define BUILDING_EXT_H
 
-#include <CCINIClass.h>
 #include <BuildingClass.h>
-#include <TechnoClass.h>
 #include <set>
 
 #include "../BuildingType/Body.h"

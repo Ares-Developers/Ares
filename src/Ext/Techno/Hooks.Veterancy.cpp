@@ -1,6 +1,12 @@
 #include "Body.h"
 #include "../TechnoType/Body.h"
 
+#include <AirstrikeClass.h>
+#include <HouseClass.h>
+#include <InfantryClass.h>
+#include <VocClass.h>
+#include <VoxClass.h>
+
 // #346, #464, #970, #1014
 // handle all veterancy gains ourselves
 DEFINE_HOOK(702E9D, TechnoClass_RegisterDestruction_Veterancy, 6) {

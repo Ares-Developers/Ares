@@ -4,6 +4,7 @@
 #include "../../Utilities/TemplateDef.h"
 
 #include <InfantryClass.h>
+#include <VocClass.h>
 
 template<> const DWORD Extension<BuildingTypeClass>::Canary = 0x11111111;
 Container<BuildingTypeExt> BuildingTypeExt::ExtMap;

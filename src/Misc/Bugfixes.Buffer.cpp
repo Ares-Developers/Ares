@@ -1,5 +1,6 @@
 #include <vector>
 
+#include <AircraftTypeClass.h>
 #include <AnimClass.h>
 #include <BombListClass.h>
 #include <BulletClass.h>

@@ -2,19 +2,8 @@
 #define WARHEADTYPE_EXT_H
 
 #include <xcompile.h>
-#include <AnimClass.h>
-#include <IonBlastClass.h>
-#include <AnimTypeClass.h>
-#include <BulletClass.h>
-#include <CaptureManagerClass.h>
 #include <CCINIClass.h>
-#include <CellSpread.h>
-#include <EMPulseClass.h>
-#include <MapClass.h>
-#include <TechnoClass.h>
 #include <WarheadTypeClass.h>
-#include <HouseClass.h>
-#include <ObjectClass.h>
 #include <GeneralStructures.h>
 
 #include <Conversions.h>
@@ -29,7 +18,12 @@
 #include "../../Misc/Debug.h"
 #endif
 
-//class WarheadTypeExt;
+class AnimTypeClass;
+class BulletClass;
+class HouseClass;
+class IonBlastClass;
+class TechnoClass;
+
 class WarheadTypeExt //: public Container<WarheadTypeExt>
 {
 public:

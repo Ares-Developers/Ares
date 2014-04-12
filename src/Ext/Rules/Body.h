@@ -2,12 +2,7 @@
 #define RULES_EXT_H
 
 #include <CCINIClass.h>
-#include <WeaponTypeClass.h>
 #include <RulesClass.h>
-#include <AnimTypeClass.h>
-#include <SidebarClass.h>
-#include <VocClass.h>
-#include <MouseClass.h>
 
 #include "../_Container.hpp"
 #include "../../Utilities/Template.h"
@@ -15,6 +10,12 @@
 //ifdef DEBUGBUILD
 #include "../../Misc/Debug.h"
 //endif
+
+class AnimTypeClass;
+class MouseCursor;
+class TechnoTypeClass;
+class VocClass;
+class WarheadTypeClass;
 
 class RulesExt
 {

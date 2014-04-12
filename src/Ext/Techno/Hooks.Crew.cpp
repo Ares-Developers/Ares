@@ -2,6 +2,7 @@
 
 #include "../House/Body.h"
 #include "../Side/Body.h"
+#include "../TechnoType/Body.h"
 
 DEFINE_HOOK(6F3950, TechnoClass_GetCrewCount, 8)
 {

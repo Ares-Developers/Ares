@@ -1,5 +1,6 @@
 #include "Actions.h"
 #include "../Misc/Debug.h"
+#include <HouseClass.h>
 #include <TechnoClass.h>
 
 MouseCursor Actions::MP(0, 1, 0, 1, 1, 0, 0);

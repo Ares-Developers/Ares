@@ -2,6 +2,8 @@
 #include "../TechnoType/Body.h"
 #include "../../Ares.h"
 
+#include <FactoryClass.h>
+
 // =============================
 // multiqueue hooks
 

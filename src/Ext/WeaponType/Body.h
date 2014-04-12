@@ -2,24 +2,8 @@
 #define WEAPONTYPE_EXT_H
 
 #include <xcompile.h>
-#include <Helpers/Template.h>
-#include <BombClass.h>
-#include <BombListClass.h>
-#include <BulletClass.h>
 #include <CCINIClass.h>
-#include <Drawing.h>
-#include <EBolt.h>
-#include <RadBeam.h>
-#include <RadSiteClass.h>
-#include <VocClass.h>
-#include <WarheadTypeClass.h>
-#include <WaveClass.h>
 #include <WeaponTypeClass.h>
-#include <ScenarioClass.h>
-#include <MouseClass.h>
-
-
-#include "../../Enum/RadTypes.h"
 
 #include "../../Misc/Debug.h"
 
@@ -27,7 +11,16 @@
 
 #include "../../Utilities/Template.h"
 
+class BombClass;
+class BulletClass;
+class EBolt;
+class RadBeam;
+class RadType;
+class RadSiteClass;
 struct SHPStruct;
+class VocClass;
+class WarheadTypeClass;
+class WaveClass;
 
 class WeaponTypeExt
 {

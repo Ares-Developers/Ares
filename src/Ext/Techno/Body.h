@@ -4,28 +4,24 @@
 #include <xcompile.h>
 #include <algorithm>
 
-#include <AircraftClass.h>
-#include <CellSpread.h>
-#include <HouseClass.h>
-#include <InfantryClass.h>
-#include <MapClass.h>
-#include <Randomizer.h>
-#include <TemporalClass.h>
-#include <WeaponTypeClass.h>
-#include <WarheadTypeClass.h>
-#include <AlphaShapeClass.h>
-#include <SpotlightClass.h>
-
-#include "../WarheadType/Body.h"
-#include "../WeaponType/Body.h"
-#include "../TechnoType/Body.h"
-
+#include "../../Misc/AttachEffect.h"
 #include "../../Misc/JammerClass.h"
 #include "../../Misc/PoweredUnitClass.h"
 
 #include "../../Utilities/Enums.h"
 
 #include "../_Container.hpp"
+
+class AircraftClass;
+class AlphaShapeClass;
+class BuildingLightClass;
+class EBolt;
+class HouseClass;
+class HouseTypeClass;
+class InfantryClass;
+struct SHPStruct;
+class TemporalClass;
+class WarheadTypeClass;
 
 class TechnoExt
 {

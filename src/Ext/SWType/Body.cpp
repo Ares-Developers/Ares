@@ -10,6 +10,10 @@
 #include "../../Utilities/Enums.h"
 #include "../../Utilities/TemplateDef.h"
 
+#include <RadarEventClass.h>
+#include <SuperClass.h>
+#include <AnimClass.h>
+#include <VocClass.h>
 #include <WarheadTypeClass.h>
 #include <MessageListClass.h>
 #include <Notifications.h>

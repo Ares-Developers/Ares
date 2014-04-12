@@ -1,6 +1,7 @@
 #include "Body.h"
 #include "../../Ares.h"
 #include "../../Utilities/TemplateDef.h"
+#include <AnimClass.h>
 #include <HouseTypeClass.h>
 #include <HouseClass.h>
 #include <ScenarioClass.h>

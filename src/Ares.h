@@ -12,17 +12,8 @@
 //include <YRPP.h>
 #include <Helpers/Macro.h>
 
-#include <CCINIClass.h>
-#include <MixFileClass.h>
-
 #include "Misc/Interface.h"
 #include "Misc/Debug.h"
-
-#include <AircraftTypeClass.h>
-#include <CellClass.h>
-#include <HouseClass.h>
-#include <InfantryTypeClass.h>
-#include <UnitTypeClass.h>
 
 #define GFX_DX_HW 0x01l
 #define GFX_DX_EM 0x02l
@@ -35,6 +26,13 @@
 
 template <typename T>
 class Iterator;
+
+class AircraftTypeClass;
+class TechnoTypeClass;
+class CellClass;
+class HouseClass;
+class CCINIClass;
+class MixFileClass;
 
 class Ares
 {

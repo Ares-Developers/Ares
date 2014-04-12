@@ -4,7 +4,7 @@
 #include "Iterator.h"
 
 #include <MouseClass.h>
-#include <TechnoClass.h>
+#include <FootClass.h>
 
 class INI_EX;
 

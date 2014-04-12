@@ -2,6 +2,7 @@
 #include "../House/Body.h"
 #include "../Techno/Body.h"
 #include <MouseClass.h>
+#include <SuperClass.h>
 
 #include <algorithm>
 #include <functional>

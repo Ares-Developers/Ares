@@ -3,6 +3,10 @@
 #include "../Techno/Body.h"
 #include "../TechnoType/Body.h"
 
+#include <FactoryClass.h>
+#include <HouseClass.h>
+#include <PCX.h>
+
 /* #633 - spy building infiltration */
 // wrapper around the entire function
 DEFINE_HOOK(4571E0, BuildingClass_Infiltrate, 5)

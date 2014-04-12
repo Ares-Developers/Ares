@@ -3,6 +3,7 @@
 
 #include <YRMath.h>
 #include <HouseClass.h>
+#include <SpotlightClass.h>
 #include <TacticalClass.h>
 
 BuildingLightClass * TechnoExt::ActiveBuildingLight = nullptr;

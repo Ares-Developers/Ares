@@ -6,9 +6,11 @@
 #include "../../Misc/Debug.h"
 #include "../../Utilities/TemplateDef.h"
 
-#include <AnimTypeClass.h>
+#include <AbstractClass.h>
 #include <PCX.h>
 #include <Theater.h>
+#include <VocClass.h>
+#include <WarheadTypeClass.h>
 
 template<> const DWORD Extension<TechnoTypeClass>::Canary = 0x44444444;
 Container<TechnoTypeExt> TechnoTypeExt::ExtMap;

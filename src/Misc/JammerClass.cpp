@@ -1,5 +1,6 @@
 #include "JammerClass.h"
 #include <BuildingClass.h>
+#include <HouseClass.h>
 #include <GeneralStructures.h>
 
 #include "../Ext/Building/Body.h"

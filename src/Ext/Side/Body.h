@@ -1,20 +1,20 @@
 #ifndef SIDES_H
 #define SIDES_H
 
-#include <xcompile.h>
 #include <CCINIClass.h>
 #include <SideClass.h>
-#include <ColorScheme.h>
-#include <InfantryTypeClass.h>
-#include <InfantryClass.h>
-#include <BuildingTypeClass.h>
-#include <UnitTypeClass.h>
 
 #include "../../Ares.h"
 #include "../../Utilities/Constructs.h"
 #include "../../Utilities/Template.h"
 #include "../../Misc/EVAVoices.h"
 
+class AircraftTypeClass;
+class BuildingTypeClass;
+class ColorScheme;
+class InfantryTypeClass;
+class InfantryClass;
+class UnitTypeClass;
 class VoxClass;
 
 #include "../_Container.hpp"

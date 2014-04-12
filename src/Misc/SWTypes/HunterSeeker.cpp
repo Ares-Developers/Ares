@@ -6,6 +6,8 @@
 
 #include "../../Utilities/INIParser.h"
 
+#include <HouseClass.h>
+
 #include <vector>
 
 void SW_HunterSeeker::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)

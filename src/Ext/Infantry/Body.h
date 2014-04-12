@@ -1,13 +1,14 @@
 #ifndef INFANTRY_EXT_H
 #define INFANTRY_EXT_H
 
-#include <CCINIClass.h>
 #include <InfantryClass.h>
 
 #include "../_Container.hpp"
 #include "../../Ares.h"
 
 #include "../../Misc/Debug.h"
+
+class BuildingClass;
 
 class InfantryExt
 {

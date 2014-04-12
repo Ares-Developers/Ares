@@ -1,7 +1,6 @@
 #ifndef TIBERIUM_EXT_H
 #define TIBERIUM_EXT_H
 
-#include <xcompile.h>
 #include <TiberiumClass.h>
 
 #include "../../Utilities/Template.h"

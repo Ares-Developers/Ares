@@ -4,12 +4,17 @@
 #include "../BuildingType/Body.h"
 #include "../Rules/Body.h"
 #include "../Tiberium/Body.h"
+#include "../WarheadType/Body.h"
 #include "../../Misc/Debug.h"
 #include "../../Misc/JammerClass.h"
 #include "../../Misc/PoweredUnitClass.h"
 
+#include <AircraftClass.h>
+#include <HouseClass.h>
+#include <InfantryClass.h>
 #include <SpecificStructures.h>
 #include <TiberiumClass.h>
+#include <UnitClass.h>
 
 // bugfix #297: Crewed=yes jumpjets spawn parachuted infantry on destruction, not idle
 DEFINE_HOOK(737F97, UnitClass_ReceiveDamage, 0)

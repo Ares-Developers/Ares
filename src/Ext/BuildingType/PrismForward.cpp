@@ -3,7 +3,9 @@
 #include "../Techno/Body.h"
 #include "../../Utilities/TemplateDef.h"
 #include <BulletClass.h>
+#include <HouseClass.h>
 #include <LaserDrawClass.h>
+#include <WarheadTypeClass.h>
 
 #include <vector>
 #include <algorithm>

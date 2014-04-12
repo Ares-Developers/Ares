@@ -1,13 +1,13 @@
 #ifndef ANIMTYPE_EXT_H
 #define ANIMTYPE_EXT_H
 
-#include <AnimClass.h>
 #include <AnimTypeClass.h>
-#include <ColorScheme.h>
-#include <HouseClass.h>
 
 #include "../_Container.hpp"
 #include "../../Utilities/Constructs.h"
+
+class AnimClass;
+class HouseClass;
 
 class AnimTypeExt
 {

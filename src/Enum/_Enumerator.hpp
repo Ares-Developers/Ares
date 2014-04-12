@@ -1,6 +1,8 @@
 #ifndef ENUMERATOR_H
 #define ENUMERATOR_H
 
+#include "../Ares.CRT.h"
+
 #include <algorithm>
 #include <functional>
 #include <memory>

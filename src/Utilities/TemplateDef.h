@@ -6,6 +6,14 @@
 #include "INIParser.h"
 #include "Constructs.h"
 
+#include <InfantryTypeClass.h>
+#include <AircraftTypeClass.h>
+#include <UnitTypeClass.h>
+#include <BuildingTypeClass.h>
+#include <FootClass.h>
+#include <VocClass.h>
+#include <VoxClass.h>
+
 
 // Valueable
 

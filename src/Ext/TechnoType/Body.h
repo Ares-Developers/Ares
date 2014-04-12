@@ -2,11 +2,6 @@
 #define TECHNOTYPE_EXT_H
 
 #include <TechnoTypeClass.h>
-#include <BuildingTypeClass.h>
-#include <WarheadTypeClass.h>
-#include <VocClass.h>
-#include <HouseTypeClass.h>
-#include <VoxClass.h>
 
 #include "../../Ares.h"
 #include "../_Container.hpp"
@@ -15,6 +10,12 @@
 #include "../../Misc/AttachEffect.h"
 
 #include <bitset>
+
+class BuildingTypeClass;
+class HouseTypeClass;
+class VocClass;
+class VoxClass;
+class WarheadTypeClass;
 
 class TechnoTypeExt
 {

@@ -1,6 +1,9 @@
 #include "Body.h"
 
 #include "../Rules/Body.h"
+#include "../TechnoType/Body.h"
+
+#include <HouseClass.h>
 
 // replace the cloak checking functions to include checks for new features
 DEFINE_HOOK(6FB757, TechnoClass_UpdateCloak, 8)

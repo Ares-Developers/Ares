@@ -2,6 +2,9 @@
 #include <FactoryClass.h>
 #include <SuperClass.h>
 #include <Networking.h>
+#include <BuildingTypeClass.h>
+#include <BuildingClass.h>
+#include <HouseClass.h>
 
 DynamicVectorClass<CameoDataStruct> RulesExt::TabCameos[4];
 

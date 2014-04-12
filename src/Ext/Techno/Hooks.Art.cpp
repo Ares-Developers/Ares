@@ -2,6 +2,10 @@
 #include "../TechnoType/Body.h"
 #include "../HouseType/Body.h"
 
+#include <AnimClass.h>
+#include <AircraftClass.h>
+#include <HouseClass.h>
+
 /* #604 - customizable parachutes */
 DEFINE_HOOK(5F5ADD, Parachute_Animation, 6)
 {

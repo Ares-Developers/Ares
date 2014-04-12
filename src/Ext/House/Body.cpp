@@ -7,7 +7,10 @@
 #include "../../Enum/Prerequisites.h"
 #include "../Techno/Body.h"
 
+#include <FactoryClass.h>
+#include <HouseClass.h>
 #include <MouseClass.h>
+#include <SuperClass.h>
 
 template<> const DWORD Extension<HouseClass>::Canary = 0x12345678;
 Container<HouseExt> HouseExt::ExtMap;
