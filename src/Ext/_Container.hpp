@@ -53,8 +53,8 @@ enum class InitState {
 
 template<typename T>
 class Extension {
-public:
 	InitState Initialized;
+public:
 	T* const AttachedToObject;
 
 	static const DWORD Canary;
