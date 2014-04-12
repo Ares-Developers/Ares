@@ -12,12 +12,12 @@
 #include "../Misc/Debug.h"
 #include "../Misc/Stream.h"
 
-enum eInitState {
-	is_Blank = 0x0, // CTOR'd
-	is_Constanted = 0x1, // values that can be set without looking at Rules (i.e. country default loadscreen)
-	is_Ruled = 0x2, // Rules has been loaded and props set (i.e. country powerplants taken from [General])
-	is_Inited = 0x3, // values that need the object's state (i.e. is object a secretlab? -> load default boons)
-	is_Completed = 0x4 // INI has been read and values set
+enum class InitState {
+	Blank = 0x0, // CTOR'd
+	Constanted = 0x1, // values that can be set without looking at Rules (i.e. country default loadscreen)
+	Ruled = 0x2, // Rules has been loaded and props set (i.e. country powerplants taken from [General])
+	Inited = 0x3, // values that need the object's state (i.e. is object a secretlab? -> load default boons)
+	Completed = 0x4 // INI has been read and values set
 };
 
 /*
@@ -55,13 +55,13 @@ enum eInitState {
 template<typename T>
 class Extension {
 	public:
-		eInitState _Initialized;
+		InitState Initialized;
 		T* const AttachedToObject;
 
 		static const DWORD Canary;
 
 		Extension(T* const OwnerObject) :
-			_Initialized(is_Blank),
+			Initialized(InitState::Blank),
 			AttachedToObject(OwnerObject)
 		{ };
 
@@ -75,23 +75,23 @@ class Extension {
 				return;
 			}
 
-			switch(this->_Initialized) {
-				case is_Blank:
+			switch(this->Initialized) {
+				case InitState::Blank:
 					this->InitializeConstants(pThis);
-					this->_Initialized = is_Constanted;
-				case is_Constanted:
+					this->Initialized = InitState::Constanted;
+				case InitState::Constanted:
 					this->InitializeRuled(pThis);
-					this->_Initialized = is_Ruled;
-				case is_Ruled:
+					this->Initialized = InitState::Ruled;
+				case InitState::Ruled:
 					this->Initialize(pThis);
-					this->_Initialized = is_Inited;
-				case is_Inited:
-				case is_Completed:
+					this->Initialized = InitState::Inited;
+				case InitState::Inited:
+				case InitState::Completed:
 					if(pINI == CCINIClass::INI_Rules) {
 						this->LoadFromRulesFile(pThis, pINI);
 					}
 					this->LoadFromINIFile(pThis, pINI);
-					this->_Initialized = is_Completed;
+					this->Initialized = InitState::Completed;
 			}
 		}
 
@@ -111,12 +111,12 @@ class Extension {
 		virtual void InvalidatePointer(void *ptr, bool bRemoved) = 0;
 
 		virtual inline void SaveToStream(AresByteStream &Stm) {
-			Stm.Save(this->_Initialized);
+			Stm.Save(this->Initialized);
 			//Stm.Save(this->AttachedToObject);
 		}
 
 		virtual inline void LoadFromStream(AresByteStream &Stm, size_t &Offset) {
-			Stm.Load(this->_Initialized, Offset);
+			Stm.Load(this->Initialized, Offset);
 			//Stm.Load(this->AttachedToObject, Offset);
 		}
 
