@@ -53,75 +53,75 @@ enum class InitState {
 
 template<typename T>
 class Extension {
-	public:
-		InitState Initialized;
-		T* const AttachedToObject;
+public:
+	InitState Initialized;
+	T* const AttachedToObject;
 
-		static const DWORD Canary;
+	static const DWORD Canary;
 
-		Extension(T* const OwnerObject) :
-			Initialized(InitState::Blank),
-			AttachedToObject(OwnerObject)
-		{ };
+	Extension(T* const OwnerObject) :
+		Initialized(InitState::Blank),
+		AttachedToObject(OwnerObject)
+	{ };
 
-		Extension(const Extension &other) = delete;
+	Extension(const Extension &other) = delete;
 
-		void operator = (const Extension &RHS) = delete;
+	void operator = (const Extension &RHS) = delete;
 
-		virtual ~Extension() { };
+	virtual ~Extension() { };
 
-		// major refactoring!
-		// LoadFromINI is now a non-virtual public function that orchestrates the initialization/loading of extension data
-		// all its slaves are now protected functions
-		void LoadFromINI(T *pThis, CCINIClass *pINI) {
-			if(!pINI) {
-				return;
+	// major refactoring!
+	// LoadFromINI is now a non-virtual public function that orchestrates the initialization/loading of extension data
+	// all its slaves are now protected functions
+	void LoadFromINI(T* pThis, CCINIClass* pINI) {
+		if(!pINI) {
+			return;
+		}
+
+		switch(this->Initialized) {
+		case InitState::Blank:
+			this->InitializeConstants(pThis);
+			this->Initialized = InitState::Constanted;
+		case InitState::Constanted:
+			this->InitializeRuled(pThis);
+			this->Initialized = InitState::Ruled;
+		case InitState::Ruled:
+			this->Initialize(pThis);
+			this->Initialized = InitState::Inited;
+		case InitState::Inited:
+		case InitState::Completed:
+			if(pINI == CCINIClass::INI_Rules) {
+				this->LoadFromRulesFile(pThis, pINI);
 			}
-
-			switch(this->Initialized) {
-				case InitState::Blank:
-					this->InitializeConstants(pThis);
-					this->Initialized = InitState::Constanted;
-				case InitState::Constanted:
-					this->InitializeRuled(pThis);
-					this->Initialized = InitState::Ruled;
-				case InitState::Ruled:
-					this->Initialize(pThis);
-					this->Initialized = InitState::Inited;
-				case InitState::Inited:
-				case InitState::Completed:
-					if(pINI == CCINIClass::INI_Rules) {
-						this->LoadFromRulesFile(pThis, pINI);
-					}
-					this->LoadFromINIFile(pThis, pINI);
-					this->Initialized = InitState::Completed;
-			}
+			this->LoadFromINIFile(pThis, pINI);
+			this->Initialized = InitState::Completed;
 		}
+	}
 
-//	protected:
-		//reimpl in each class separately
-		virtual void LoadFromINIFile(T *pThis, CCINIClass *pINI) {};
+	//	protected:
+	//reimpl in each class separately
+	virtual void LoadFromINIFile(T* pThis, CCINIClass* pINI) { };
 
-		// for things that only logically work in rules - countries, sides, etc
-		virtual void LoadFromRulesFile(T *pThis, CCINIClass *pINI) {};
+	// for things that only logically work in rules - countries, sides, etc
+	virtual void LoadFromRulesFile(T* pThis, CCINIClass* pINI) { };
 
-		virtual void InitializeConstants(T *pThis) { };
+	virtual void InitializeConstants(T* pThis) { };
 
-		virtual void InitializeRuled(T *pThis) { };
+	virtual void InitializeRuled(T* pThis) { };
 
-		virtual void Initialize(T *pThis) { };
+	virtual void Initialize(T* pThis) { };
 
-		virtual void InvalidatePointer(void *ptr, bool bRemoved) = 0;
+	virtual void InvalidatePointer(void* ptr, bool bRemoved) = 0;
 
-		virtual inline void SaveToStream(AresByteStream &Stm) {
-			Stm.Save(this->Initialized);
-			//Stm.Save(this->AttachedToObject);
-		}
+	virtual inline void SaveToStream(AresByteStream &Stm) {
+		Stm.Save(this->Initialized);
+		//Stm.Save(this->AttachedToObject);
+	}
 
-		virtual inline void LoadFromStream(AresByteStream &Stm, size_t &Offset) {
-			Stm.Load(this->Initialized, Offset);
-			//Stm.Load(this->AttachedToObject, Offset);
-		}
+	virtual inline void LoadFromStream(AresByteStream &Stm, size_t &Offset) {
+		Stm.Load(this->Initialized, Offset);
+		//Stm.Load(this->AttachedToObject, Offset);
+	}
 };
 
 template<typename T>
