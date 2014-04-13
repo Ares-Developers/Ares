@@ -104,13 +104,17 @@ DEFINE_HOOK(469EBA, BulletClass_DetonateAt_Splits, 6)
 		// some defaults
 		int cluster = pType->Cluster;
 
+		// get final target coords and cell
+		CoordStruct crdDest = pExt->AroundTarget.Get(pExt->Splits)
+			? pThis->GetTargetCoords() : pThis->GetCoords();
+		CellStruct cellDest = CellClass::Coord2Cell(crdDest);
+
 		// create a list of cluster targets
 		DynamicVectorClass<AbstractClass*> targets;
 
 		if(!pExt->Splits) {
 			// default hardcoded YR way: hit each cell around the destination once
-			auto pCell = pThis->GetCell();
-			CellRangeIterator it(pCell->MapCoords, pExt->AirburstSpread);
+			CellRangeIterator it(cellDest, pExt->AirburstSpread);
 
 			// fill target list with cells around the target
 			auto collect = [&targets](CellClass* pCell) -> bool { targets.AddItem(pCell); return true; };
@@ -120,10 +124,6 @@ DEFINE_HOOK(469EBA, BulletClass_DetonateAt_Splits, 6)
 			cluster = targets.Count;
 
 		} else {
-			// get detonation coords and cell
-			CoordStruct crdDest = pThis->GetTargetCoords();
-			CellStruct cellDest = CellClass::Coord2Cell(crdDest);
-
 			// fill with technos in range
 			for(auto pTechno : *TechnoClass::Array) {
 				if(pTechno->IsInPlayfield && pTechno->IsOnMap && pTechno->Health > 0) {

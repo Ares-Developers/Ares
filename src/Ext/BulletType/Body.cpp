@@ -33,6 +33,7 @@ void BulletTypeExt::ExtData::LoadFromINIFile(BulletTypeClass *pThis, CCINIClass*
 	this->AirburstSpread.Read(exINI, pThis->ID, "AirburstSpread");
 	this->RetargetAccuracy.Read(exINI, pThis->ID, "RetargetAccuracy");
 	this->Splits.Read(exINI, pThis->ID, "Splits");
+	this->AroundTarget.Read(exINI, pThis->ID, "AroundTarget");
 }
 
 // get the custom palette of the animation this bullet type uses

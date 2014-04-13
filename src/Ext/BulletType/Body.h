@@ -42,6 +42,7 @@ public:
 		Valueable<bool> Splits;
 		Valueable<float> RetargetAccuracy;
 		Valueable<float> AirburstSpread;
+		Nullable<bool> AroundTarget; // aptly named, for both Splits and Airburst, defaulting to Splits
 
 		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			AV (),
