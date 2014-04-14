@@ -9,6 +9,7 @@
 
 #include "../_Container.hpp"
 
+#include "../../Utilities/Constructs.h"
 #include "../../Utilities/Template.h"
 
 class BombClass;
@@ -86,7 +87,7 @@ public:
 		Valueable<double> Abductor_AbductBelowPercent;
 
 		// brought back from TS
-		Valueable<float> ProjectileRange;
+		Valueable<Leptons> ProjectileRange;
 		
 		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			Weapon_Loaded (false),
@@ -114,7 +115,7 @@ public:
 			Ivan_CanDetonateTimeBomb (),
 			Ivan_CanDetonateDeathBomb (),
 			Rad_Type (nullptr),
-			ProjectileRange(400),
+			ProjectileRange (Leptons(100000)),
 			Abductor(false),
 			Abductor_AnimType(nullptr),
 			Abductor_ChangeOwner(false),
@@ -144,9 +145,7 @@ public:
 		void PlantBomb(TechnoClass* pSource, ObjectClass* pTarget) const;
 
 		int GetProjectileRange() const {
-			return (this->ProjectileRange < 0.0)
-				? std::numeric_limits<int>::max()
-				:  Game::F2I(this->ProjectileRange * 256.0);
+			return this->ProjectileRange.Get();
 		}
 	};
 
