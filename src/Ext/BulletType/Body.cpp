@@ -34,6 +34,9 @@ void BulletTypeExt::ExtData::LoadFromINIFile(BulletTypeClass *pThis, CCINIClass*
 	this->RetargetAccuracy.Read(exINI, pThis->ID, "RetargetAccuracy");
 	this->Splits.Read(exINI, pThis->ID, "Splits");
 	this->AroundTarget.Read(exINI, pThis->ID, "AroundTarget");
+
+	this->BallisticScatterMin.Read(exINI, pThis->ID, "BallisticScatter.Min");
+	this->BallisticScatterMax.Read(exINI, pThis->ID, "BallisticScatter.Max");
 }
 
 // get the custom palette of the animation this bullet type uses
@@ -75,6 +78,20 @@ BulletClass* BulletTypeExt::ExtData::CreateBullet(AbstractClass* pTarget, Techno
 	}
 
 	return pBullet;
+}
+
+int BulletTypeExt::ExtData::GetBallisticScatterMin(int default) const {
+	if(this->BallisticScatterMin.isset()) {
+		return Game::F2I(this->BallisticScatterMin * 256.0);
+	}
+	return default;
+}
+
+int BulletTypeExt::ExtData::GetBallisticScatterMax(int default) const {
+	if(this->BallisticScatterMax.isset()) {
+		return Game::F2I(this->BallisticScatterMax * 256.0);
+	}
+	return default;
 }
 
 // =============================
