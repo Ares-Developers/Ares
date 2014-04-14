@@ -43,8 +43,8 @@ public:
 		Valueable<float> RetargetAccuracy;
 		Valueable<float> AirburstSpread;
 		Nullable<bool> AroundTarget; // aptly named, for both Splits and Airburst, defaulting to Splits
-		Nullable<float> BallisticScatterMin;
-		Nullable<float> BallisticScatterMax;
+		Nullable<Leptons> BallisticScatterMin;
+		Nullable<Leptons> BallisticScatterMax;
 
 		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			AV (),
@@ -72,9 +72,6 @@ public:
 
 		BulletClass* CreateBullet(AbstractClass* pTarget, TechnoClass* pOwner, WeaponTypeClass* pWeapon) const;
 		BulletClass* CreateBullet(AbstractClass* pTarget, TechnoClass* pOwner, int damage, WarheadTypeClass* pWarhead, int speed, int range, bool bright) const;
-
-		int GetBallisticScatterMin(int default) const;
-		int GetBallisticScatterMax(int default) const;
 	};
 
 	static Container<BulletTypeExt> ExtMap;

@@ -80,20 +80,6 @@ BulletClass* BulletTypeExt::ExtData::CreateBullet(AbstractClass* pTarget, Techno
 	return pBullet;
 }
 
-int BulletTypeExt::ExtData::GetBallisticScatterMin(int default) const {
-	if(this->BallisticScatterMin.isset()) {
-		return Game::F2I(this->BallisticScatterMin * 256.0);
-	}
-	return default;
-}
-
-int BulletTypeExt::ExtData::GetBallisticScatterMax(int default) const {
-	if(this->BallisticScatterMax.isset()) {
-		return Game::F2I(this->BallisticScatterMax * 256.0);
-	}
-	return default;
-}
-
 // =============================
 // container hooks
 

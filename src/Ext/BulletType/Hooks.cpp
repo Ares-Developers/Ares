@@ -7,8 +7,8 @@ DEFINE_HOOK(6FE709, TechnoClass_Fire_BallisticScatter1, 6)
 
 	// defaults for FlakScatter && !Inviso
 	int default = RulesClass::Instance->BallisticScatter;
-	int min = pExt->GetBallisticScatterMin(0);
-	int max = pExt->GetBallisticScatterMax(default);
+	int min = pExt->BallisticScatterMin.Get(Leptons(0));
+	int max = pExt->BallisticScatterMax.Get(Leptons(default));
 	int scatter = ScenarioClass::Instance->Random.RandomRanged(min, max);
 
 	R->EAX(scatter);
@@ -22,8 +22,8 @@ DEFINE_HOOK(6FE7FE, TechnoClass_Fire_BallisticScatter2, 5)
 
 	// defaults for !FlakScatter || Inviso
 	int default = RulesClass::Instance->BallisticScatter;
-	int min = pExt->GetBallisticScatterMin(default / 2);
-	int max = pExt->GetBallisticScatterMax(default);
+	int min = pExt->BallisticScatterMin.Get(Leptons(default / 2));
+	int max = pExt->BallisticScatterMax.Get(Leptons(default));
 	int scatter = ScenarioClass::Instance->Random.RandomRanged(min, max);
 
 	R->EAX(scatter);
