@@ -17,6 +17,16 @@
 #include "../Ares.h"
 #include "../Ares.CRT.h"
 
+struct Leptons {
+	explicit Leptons(int value = 0) : value(value) {}
+
+	operator int() const {
+		return this->value;
+	}
+
+	int value;
+};
+
 class CustomPalette {
 public:
 	class PaletteMode {

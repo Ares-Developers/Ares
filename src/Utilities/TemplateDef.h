@@ -305,6 +305,15 @@ void Valueable<RocketStruct>::Read(INI_EX &parser, const char* pSection, const c
 	rocket->Type = TypePlaceholder;
 };
 
+template <>
+void Valueable<Leptons>::Read(INI_EX &parser, const char* pSection, const char* pKey, bool) {
+	double buffer = this->Get() * 256.0;
+	if(parser.ReadDouble(pSection, pKey, &buffer)) {
+		this->Set(Leptons(Game::F2I(buffer * 256.0)));
+	} else if(parser.declared()) {
+		Debug::INIParseFailed(pSection, pKey, parser.value(), "Expected a valid floating point number");
+	}
+}
 
 // ValueableVector
 
