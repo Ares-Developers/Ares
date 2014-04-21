@@ -94,7 +94,7 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 
 			auto ParsePoint = [](CellStruct* &pCell, const char* str) -> void {
 				int x = 0, y = 0;
-				switch(sscanf(str, "%d,%d", &x, &y)) {
+				switch(sscanf_s(str, "%d,%d", &x, &y)) {
 				case 0:
 					x = 0;
 					// fallthrough

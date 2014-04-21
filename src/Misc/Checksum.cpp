@@ -234,7 +234,8 @@ void HouseLogger(const DynamicVectorClass<T> *Array, FILE * F, const char * Labe
 }
 
 bool LogFrame(const char * LogFilename, NetworkEvent *OffendingEvent = nullptr) {
-	if(auto LogFile = fopen(LogFilename, "wt")) {
+	FILE* LogFile = nullptr;
+	if(!fopen_s(&LogFile, LogFilename, "wt")) {
 		std::setvbuf(LogFile, nullptr, _IOFBF, 1024 * 1024); // 1024 kb buffer - should be sufficient for whole log
 
 		fprintf(LogFile, "Ares synchronization log (version " VERSION_STR ")\n");
@@ -295,7 +296,7 @@ bool LogFrame(const char * LogFilename, NetworkEvent *OffendingEvent = nullptr) 
 		fclose(LogFile);
 		return true;
 	} else {
-		Debug::Log("Failed to open file for sync log. Error code %X.\n", GetLastError());
+		Debug::Log("Failed to open file for sync log. Error code %X.\n", errno);
 		return false;
 	}
 }

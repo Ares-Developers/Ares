@@ -18,7 +18,7 @@ void GenericPrerequisite::LoadFromINI(CCINIClass *pINI)
 	char name[0x80];
 	strcpy_s(name, this->Name);
 
-	_strlwr(name);
+	_strlwr_s(name);
 	name[0] &= ~0x20; // LOL HACK to uppercase a letter
 
 	DynamicVectorClass<int> *dvc = &this->Prereqs;
