@@ -92,9 +92,7 @@ DEFINE_HOOK(4016F7, Ares_Audio_LoadWAV, 5)	//50% rewrite of Audio::LoadWAV
 
 		//Replace the construction of the RawFileClass with one of a CCFileClass
 		char filename[0x100] = "\0";
-		AresCRT::strCopy(filename, SampleName, 0x100 - 5);
-		strcat(filename, ".wav");
-		filename[0xFF] = 0;
+		_snprintf_s(filename, _TRUNCATE, "%s.wav", SampleName);
 
 		CCFileClass* pFile = GameCreate<CCFileClass>(filename);
 		pAudioIndex[0x110 >> 2] = (DWORD)pFile;	//ExternalFile = pFile

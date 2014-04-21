@@ -64,7 +64,7 @@ DEFINE_HOOK(525C28, IniSectionIncludes_CopySection2, 0)
 {
 	LEA_STACK(char*, str, 0x79); //yes, 0x79
 	LEA_STACK(char*, sectionName, 0x278)
-	strcpy(sectionName, str);
+	strcpy_s(sectionName, 511, str);
 
 	if(IniSectionIncludes::includedSection)
 	{

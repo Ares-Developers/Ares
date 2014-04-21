@@ -25,135 +25,135 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 
 	if (!_strcmpi(pID, "Americans")) //USA
 	{
-		strcpy(this->FlagFile, "usai.pcx");
-		strcpy(this->LSBrief, "LoadBrief:USA");
-		strcpy(this->LSFile, "ls%sustates.shp");
-		strcpy(this->LSName, "Name:Americans");
-		strcpy(this->LSPALFile, "mplsu.pal");
-		strcpy(this->LSSpecialName, "Name:Para");
-		strcpy(this->StatusText, "STT:PlayerSideAmerica");
-		strcpy(this->TauntFile, "taunts\\tauam%02i.wav");
-		strcpy(this->ObserverBackground, "obsalli.shp");
-		strcpy(this->ObserverFlag, "usai.shp");
+		AresCRT::strCopy(this->FlagFile, "usai.pcx");
+		AresCRT::strCopy(this->LSBrief, "LoadBrief:USA");
+		AresCRT::strCopy(this->LSFile, "ls%sustates.shp");
+		AresCRT::strCopy(this->LSName, "Name:Americans");
+		AresCRT::strCopy(this->LSPALFile, "mplsu.pal");
+		AresCRT::strCopy(this->LSSpecialName, "Name:Para");
+		AresCRT::strCopy(this->StatusText, "STT:PlayerSideAmerica");
+		AresCRT::strCopy(this->TauntFile, "taunts\\tauam%02i.wav");
+		AresCRT::strCopy(this->ObserverBackground, "obsalli.shp");
+		AresCRT::strCopy(this->ObserverFlag, "usai.shp");
 	} else if (!_strcmpi(pID, "Alliance")) //Korea
 	{
-		strcpy(this->FlagFile, "japi.pcx");
-		strcpy(this->LSBrief, "LoadBrief:Korea");
-		strcpy(this->LSFile, "ls%skorea.shp");
-		strcpy(this->LSName, "Name:Alliance");
-		strcpy(this->LSPALFile, "mplsk.pal");
-		strcpy(this->LSSpecialName, "Name:BEAGLE");
-		strcpy(this->StatusText, "STT:PlayerSideKorea");
-		strcpy(this->TauntFile, "taunts\\tauko%02i.wav");
-		strcpy(this->ObserverBackground, "obsalli.shp");
-		strcpy(this->ObserverFlag, "japi.shp");
+		AresCRT::strCopy(this->FlagFile, "japi.pcx");
+		AresCRT::strCopy(this->LSBrief, "LoadBrief:Korea");
+		AresCRT::strCopy(this->LSFile, "ls%skorea.shp");
+		AresCRT::strCopy(this->LSName, "Name:Alliance");
+		AresCRT::strCopy(this->LSPALFile, "mplsk.pal");
+		AresCRT::strCopy(this->LSSpecialName, "Name:BEAGLE");
+		AresCRT::strCopy(this->StatusText, "STT:PlayerSideKorea");
+		AresCRT::strCopy(this->TauntFile, "taunts\\tauko%02i.wav");
+		AresCRT::strCopy(this->ObserverBackground, "obsalli.shp");
+		AresCRT::strCopy(this->ObserverFlag, "japi.shp");
 	} else if (!_strcmpi(pID, "French")) //France
 	{
-		strcpy(this->FlagFile, "frai.pcx");
-		strcpy(this->LSBrief, "LoadBrief:French");
-		strcpy(this->LSFile, "ls%sfrance.shp");
-		strcpy(this->LSName, "Name:French");
-		strcpy(this->LSPALFile, "mplsf.pal");
-		strcpy(this->LSSpecialName, "Name:GTGCAN");
-		strcpy(this->StatusText, "STT:PlayerSideFrance");
-		strcpy(this->TauntFile, "taunts\\taufr%02i.wav");
-		strcpy(this->ObserverBackground, "obsalli.shp");
-		strcpy(this->ObserverFlag, "frai.shp");
+		AresCRT::strCopy(this->FlagFile, "frai.pcx");
+		AresCRT::strCopy(this->LSBrief, "LoadBrief:French");
+		AresCRT::strCopy(this->LSFile, "ls%sfrance.shp");
+		AresCRT::strCopy(this->LSName, "Name:French");
+		AresCRT::strCopy(this->LSPALFile, "mplsf.pal");
+		AresCRT::strCopy(this->LSSpecialName, "Name:GTGCAN");
+		AresCRT::strCopy(this->StatusText, "STT:PlayerSideFrance");
+		AresCRT::strCopy(this->TauntFile, "taunts\\taufr%02i.wav");
+		AresCRT::strCopy(this->ObserverBackground, "obsalli.shp");
+		AresCRT::strCopy(this->ObserverFlag, "frai.shp");
 	} else if (!_strcmpi(pID, "Germans")) //Germany
 	{
-		strcpy(this->FlagFile, "geri.pcx");
-		strcpy(this->LSBrief, "LoadBrief:Germans");
-		strcpy(this->LSFile, "ls%sgermany.shp");
-		strcpy(this->LSName, "Name:Germans");
-		strcpy(this->LSPALFile, "mplsg.pal");
-		strcpy(this->LSSpecialName, "Name:TNKD");
-		strcpy(this->StatusText, "STT:PlayerSideGermany");
-		strcpy(this->TauntFile, "taunts\\tauge%02i.wav");
-		strcpy(this->ObserverBackground, "obsalli.shp");
-		strcpy(this->ObserverFlag, "geri.shp");
+		AresCRT::strCopy(this->FlagFile, "geri.pcx");
+		AresCRT::strCopy(this->LSBrief, "LoadBrief:Germans");
+		AresCRT::strCopy(this->LSFile, "ls%sgermany.shp");
+		AresCRT::strCopy(this->LSName, "Name:Germans");
+		AresCRT::strCopy(this->LSPALFile, "mplsg.pal");
+		AresCRT::strCopy(this->LSSpecialName, "Name:TNKD");
+		AresCRT::strCopy(this->StatusText, "STT:PlayerSideGermany");
+		AresCRT::strCopy(this->TauntFile, "taunts\\tauge%02i.wav");
+		AresCRT::strCopy(this->ObserverBackground, "obsalli.shp");
+		AresCRT::strCopy(this->ObserverFlag, "geri.shp");
 	} else if (!_strcmpi(pID, "British")) //United Kingdom
 	{
-		strcpy(this->FlagFile, "gbri.pcx");
-		strcpy(this->LSBrief, "LoadBrief:British");
-		strcpy(this->LSFile, "ls%sukingdom.shp");
-		strcpy(this->LSName, "Name:British");
-		strcpy(this->LSPALFile, "mplsuk.pal");
-		strcpy(this->LSSpecialName, "Name:SNIPE");
-		strcpy(this->StatusText, "STT:PlayerSideBritain");
-		strcpy(this->TauntFile, "taunts\\taubr%02i.wav");
-		strcpy(this->ObserverBackground, "obsalli.shp");
-		strcpy(this->ObserverFlag, "gbri.shp");
+		AresCRT::strCopy(this->FlagFile, "gbri.pcx");
+		AresCRT::strCopy(this->LSBrief, "LoadBrief:British");
+		AresCRT::strCopy(this->LSFile, "ls%sukingdom.shp");
+		AresCRT::strCopy(this->LSName, "Name:British");
+		AresCRT::strCopy(this->LSPALFile, "mplsuk.pal");
+		AresCRT::strCopy(this->LSSpecialName, "Name:SNIPE");
+		AresCRT::strCopy(this->StatusText, "STT:PlayerSideBritain");
+		AresCRT::strCopy(this->TauntFile, "taunts\\taubr%02i.wav");
+		AresCRT::strCopy(this->ObserverBackground, "obsalli.shp");
+		AresCRT::strCopy(this->ObserverFlag, "gbri.shp");
 	} else if (!_strcmpi(pID, "Africans")) //Libya
 	{
-		strcpy(this->FlagFile, "djbi.pcx");
-		strcpy(this->LSBrief, "LoadBrief:Lybia");
-		strcpy(this->LSFile, "ls%slibya.shp");
-		strcpy(this->LSName, "Name:Africans");
-		strcpy(this->LSPALFile, "mplsl.pal");
-		strcpy(this->LSSpecialName, "Name:DTRUCK");
-		strcpy(this->StatusText, "STT:PlayerSideLibya");
-		strcpy(this->TauntFile, "taunts\\tauli%02i.wav");
-		strcpy(this->ObserverBackground, "obssovi.shp");
-		strcpy(this->ObserverFlag, "djbi.shp");
+		AresCRT::strCopy(this->FlagFile, "djbi.pcx");
+		AresCRT::strCopy(this->LSBrief, "LoadBrief:Lybia");
+		AresCRT::strCopy(this->LSFile, "ls%slibya.shp");
+		AresCRT::strCopy(this->LSName, "Name:Africans");
+		AresCRT::strCopy(this->LSPALFile, "mplsl.pal");
+		AresCRT::strCopy(this->LSSpecialName, "Name:DTRUCK");
+		AresCRT::strCopy(this->StatusText, "STT:PlayerSideLibya");
+		AresCRT::strCopy(this->TauntFile, "taunts\\tauli%02i.wav");
+		AresCRT::strCopy(this->ObserverBackground, "obssovi.shp");
+		AresCRT::strCopy(this->ObserverFlag, "djbi.shp");
 	} else if (!_strcmpi(pID, "Arabs")) //Iraq
 	{
-		strcpy(this->FlagFile, "arbi.pcx");
-		strcpy(this->LSBrief, "LoadBrief:Iraq");
-		strcpy(this->LSFile, "ls%siraq.shp");
-		strcpy(this->LSName, "Name:Arabs");
-		strcpy(this->LSPALFile, "mplsi.pal");
-		strcpy(this->LSSpecialName, "Name:DESO");
-		strcpy(this->StatusText, "STT:PlayerSideIraq");
-		strcpy(this->TauntFile, "taunts\\tauir%02i.wav");
-		strcpy(this->ObserverBackground, "obssovi.shp");
-		strcpy(this->ObserverFlag, "arbi.shp");
+		AresCRT::strCopy(this->FlagFile, "arbi.pcx");
+		AresCRT::strCopy(this->LSBrief, "LoadBrief:Iraq");
+		AresCRT::strCopy(this->LSFile, "ls%siraq.shp");
+		AresCRT::strCopy(this->LSName, "Name:Arabs");
+		AresCRT::strCopy(this->LSPALFile, "mplsi.pal");
+		AresCRT::strCopy(this->LSSpecialName, "Name:DESO");
+		AresCRT::strCopy(this->StatusText, "STT:PlayerSideIraq");
+		AresCRT::strCopy(this->TauntFile, "taunts\\tauir%02i.wav");
+		AresCRT::strCopy(this->ObserverBackground, "obssovi.shp");
+		AresCRT::strCopy(this->ObserverFlag, "arbi.shp");
 	} else if (!_strcmpi(pID, "Confederation")) //Cuba
 	{
-		strcpy(this->FlagFile, "lati.pcx");
-		strcpy(this->LSBrief, "LoadBrief:Cuba");
-		strcpy(this->LSFile, "ls%scuba.shp");
-		strcpy(this->LSName, "Name:Confederation");
-		strcpy(this->LSPALFile, "mplsc.pal");
-		strcpy(this->LSSpecialName, "Name:TERROR");
-		strcpy(this->StatusText, "STT:PlayerSideCuba");
-		strcpy(this->TauntFile, "taunts\\taucu%02i.wav");
-		strcpy(this->ObserverBackground, "obssovi.shp");
-		strcpy(this->ObserverFlag, "lati.shp");
+		AresCRT::strCopy(this->FlagFile, "lati.pcx");
+		AresCRT::strCopy(this->LSBrief, "LoadBrief:Cuba");
+		AresCRT::strCopy(this->LSFile, "ls%scuba.shp");
+		AresCRT::strCopy(this->LSName, "Name:Confederation");
+		AresCRT::strCopy(this->LSPALFile, "mplsc.pal");
+		AresCRT::strCopy(this->LSSpecialName, "Name:TERROR");
+		AresCRT::strCopy(this->StatusText, "STT:PlayerSideCuba");
+		AresCRT::strCopy(this->TauntFile, "taunts\\taucu%02i.wav");
+		AresCRT::strCopy(this->ObserverBackground, "obssovi.shp");
+		AresCRT::strCopy(this->ObserverFlag, "lati.shp");
 	} else if (!_strcmpi(pID, "Russians")) //Russia
 	{
-		strcpy(this->FlagFile, "rusi.pcx");
-		strcpy(this->LSBrief, "LoadBrief:Russia");
-		strcpy(this->LSFile, "ls%srussia.shp");
-		strcpy(this->LSName, "Name:Russians");
-		strcpy(this->LSPALFile, "mplsr.pal");
-		strcpy(this->LSSpecialName, "Name:TTNK");
-		strcpy(this->StatusText, "STT:PlayerSideRussia");
-		strcpy(this->TauntFile, "taunts\\tauru%02i.wav");
-		strcpy(this->ObserverBackground, "obssovi.shp");
-		strcpy(this->ObserverFlag, "rusi.shp");
+		AresCRT::strCopy(this->FlagFile, "rusi.pcx");
+		AresCRT::strCopy(this->LSBrief, "LoadBrief:Russia");
+		AresCRT::strCopy(this->LSFile, "ls%srussia.shp");
+		AresCRT::strCopy(this->LSName, "Name:Russians");
+		AresCRT::strCopy(this->LSPALFile, "mplsr.pal");
+		AresCRT::strCopy(this->LSSpecialName, "Name:TTNK");
+		AresCRT::strCopy(this->StatusText, "STT:PlayerSideRussia");
+		AresCRT::strCopy(this->TauntFile, "taunts\\tauru%02i.wav");
+		AresCRT::strCopy(this->ObserverBackground, "obssovi.shp");
+		AresCRT::strCopy(this->ObserverFlag, "rusi.shp");
 	} else if (!_strcmpi(pID, "YuriCountry")) //Yuri
 	{
-		strcpy(this->FlagFile, "yrii.pcx");
-		strcpy(this->LSBrief, "LoadBrief:YuriCountry");
-		strcpy(this->LSFile, "ls%syuri.shp");
-		strcpy(this->LSName, "Name:YuriCountry");
-		strcpy(this->LSPALFile, "mpyls.pal");
-		strcpy(this->LSSpecialName, "Name:YURI");
-		strcpy(this->StatusText, "STT:PlayerSideYuriCountry");
-		strcpy(this->TauntFile, "taunts\\tauyu%02i.wav");
-		strcpy(this->ObserverBackground, "obsyuri.shp");
-		strcpy(this->ObserverFlag, "yrii.shp");
+		AresCRT::strCopy(this->FlagFile, "yrii.pcx");
+		AresCRT::strCopy(this->LSBrief, "LoadBrief:YuriCountry");
+		AresCRT::strCopy(this->LSFile, "ls%syuri.shp");
+		AresCRT::strCopy(this->LSName, "Name:YuriCountry");
+		AresCRT::strCopy(this->LSPALFile, "mpyls.pal");
+		AresCRT::strCopy(this->LSSpecialName, "Name:YURI");
+		AresCRT::strCopy(this->StatusText, "STT:PlayerSideYuriCountry");
+		AresCRT::strCopy(this->TauntFile, "taunts\\tauyu%02i.wav");
+		AresCRT::strCopy(this->ObserverBackground, "obsyuri.shp");
+		AresCRT::strCopy(this->ObserverFlag, "yrii.shp");
 		this->ObserverFlagYuriPAL = true;
 	} else //Unknown
 	{
-		strcpy(this->FlagFile, "rani.pcx");
-		strcpy(this->LSBrief, "GUI:Unknown");
-		strcpy(this->LSFile, "ls%sobs.shp");
-		strcpy(this->LSName, "GUI:Unknown");
-		strcpy(this->LSPALFile, "mplsobs.pal");
-		strcpy(this->LSSpecialName, "GUI:Unknown");
-		strcpy(this->StatusText, "GUI:Unknown");
-		strcpy(this->TauntFile, "taunts\\tauam%02i.wav");
+		AresCRT::strCopy(this->FlagFile, "rani.pcx");
+		AresCRT::strCopy(this->LSBrief, "GUI:Unknown");
+		AresCRT::strCopy(this->LSFile, "ls%sobs.shp");
+		AresCRT::strCopy(this->LSName, "GUI:Unknown");
+		AresCRT::strCopy(this->LSPALFile, "mplsobs.pal");
+		AresCRT::strCopy(this->LSSpecialName, "GUI:Unknown");
+		AresCRT::strCopy(this->StatusText, "GUI:Unknown");
+		AresCRT::strCopy(this->TauntFile, "taunts\\tauam%02i.wav");
 	}
 	this->RandomSelectionWeight = 1;
 	this->CountryListIndex = 100;

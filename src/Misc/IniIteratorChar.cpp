@@ -33,13 +33,15 @@ DEFINE_HOOK(525D23, IteratorChar_Process_Method2, 5)
 	//LEA_STACK(char*, section, 0x278);
 
 	if(strcmp(key, IniIteratorChar::iteratorChar) == 0) {
-		strcpy(IniIteratorChar::buffer, value);
-		sprintf_s(key, 512, "%d", IniIteratorChar::iteratorValue++);
+		strcpy_s(IniIteratorChar::buffer, value);
+		int len = sprintf_s(key, 512, "%d", IniIteratorChar::iteratorValue++);
 
-		char* newValue = key + strlen(key) + 1;
-		strcpy(newValue, IniIteratorChar::buffer);
-		R->ESI<char*>(newValue);
-		value = newValue; //for correct debug display
+		if(len >= 0) {
+			char* newValue = &key[len + 1];
+			strcpy_s(newValue, 512 - len - 1, IniIteratorChar::buffer);
+			R->ESI<char*>(newValue);
+			value = newValue; //for correct debug display
+		}
 	}
 
 	//Debug::Log("[%s] %s = %s (Method 2)\n", section, key, value);
