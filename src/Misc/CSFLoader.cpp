@@ -166,7 +166,7 @@ DEFINE_HOOK(6BD886, CSF_LoadExtraFiles, 5)
 	CSFLoader::LoadAdditionalCSF("ares.csf");
 	char fname[32];
 	for(int idx = 0; idx < 100; ++idx) {
-		_snprintf(fname, 32, "stringtable%02d.csf", idx);
+		_snprintf_s(fname, _TRUNCATE, "stringtable%02d.csf", idx);
 		CSFLoader::LoadAdditionalCSF(fname);
 	}
 	R->AL(1);

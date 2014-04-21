@@ -59,7 +59,7 @@ DEFINE_HOOK(537BC0, Game_MakeScreenshot, 0)
 				SYSTEMTIME time;
 				GetLocalTime(&time);
 
-				_snprintf(fName, 0x80, "SCRN.%04u%02u%02u-%02u%02u%02u-%05u.BMP",
+				_snprintf_s(fName, _TRUNCATE, "SCRN.%04u%02u%02u-%02u%02u%02u-%05u.BMP",
 					time.wYear, time.wMonth, time.wDay, time.wHour, time.wMinute, time.wSecond, time.wMilliseconds);
 
 				CCFileClass *ScreenShot = GameCreate<CCFileClass>("\0");

@@ -182,7 +182,7 @@ DEFINE_HOOK(752BA1, HTExt_GetTaunt, 6)
 	HouseTypeClass* pThis = HouseTypeClass::Array->Items[TauntData.countryIdx];
 	HouseTypeExt::ExtData *pData = HouseTypeExt::ExtMap.Find(pThis);
 	if(pData) {
-		_snprintf(Ares::readBuffer, Ares::readLength, pData->TauntFile, TauntData.tauntIdx);
+		_snprintf_s(Ares::readBuffer, _TRUNCATE, pData->TauntFile, TauntData.tauntIdx);
 		R->EAX(AudioStream::Instance->PlayWAV(Ares::readBuffer, false));
 		return 0x752C5F;
 	}

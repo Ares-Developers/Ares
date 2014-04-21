@@ -305,7 +305,7 @@ DEFINE_HOOK(64DEA0, Multiplay_LogToSYNC_NOMPDEBUG, 0)
 	GET(NetworkEvent *, OffendingEvent, ECX);
 	
 	char LogFilename[0x40];
-	_snprintf(LogFilename, sizeof(LogFilename), "SYNC%01d.TXT", HouseClass::Player->ArrayIndex);
+	_snprintf_s(LogFilename, _TRUNCATE, "SYNC%01d.TXT", HouseClass::Player->ArrayIndex);
 
 	LogFrame(LogFilename, OffendingEvent);
 
@@ -318,7 +318,7 @@ DEFINE_HOOK(6516F0, Multiplay_LogToSync_MPDEBUG, 6)
 	GET(NetworkEvent *, OffendingEvent, EDX);
 	
 	char LogFilename[0x40];
-	_snprintf(LogFilename, sizeof(LogFilename), "SYNC%01d_%03d.TXT", HouseClass::Player->ArrayIndex, SlotNumber);
+	_snprintf_s(LogFilename, _TRUNCATE, "SYNC%01d_%03d.TXT", HouseClass::Player->ArrayIndex, SlotNumber);
 
 	LogFrame(LogFilename, OffendingEvent);
 

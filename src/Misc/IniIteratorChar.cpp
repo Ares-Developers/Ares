@@ -14,7 +14,7 @@ DEFINE_HOOK(5260A2, IteratorChar_Process_Method1, 6)
 	//GET_STACK(CCINIClass::INISection*, section, 0x40);
 
 	if(strcmp(entry->Key, IniIteratorChar::iteratorChar) == 0) {
-		sprintf(IniIteratorChar::buffer, "%d", IniIteratorChar::iteratorValue++);
+		sprintf_s(IniIteratorChar::buffer, "%d", IniIteratorChar::iteratorValue++);
 
 		CRT::free(entry->Key);
 		entry->Key = CRT::strdup(IniIteratorChar::buffer);
@@ -34,7 +34,7 @@ DEFINE_HOOK(525D23, IteratorChar_Process_Method2, 5)
 
 	if(strcmp(key, IniIteratorChar::iteratorChar) == 0) {
 		strcpy(IniIteratorChar::buffer, value);
-		sprintf(key, "%d", IniIteratorChar::iteratorValue++);
+		sprintf_s(key, 512, "%d", IniIteratorChar::iteratorValue++);
 
 		char* newValue = key + strlen(key) + 1;
 		strcpy(newValue, IniIteratorChar::buffer);

@@ -107,7 +107,7 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 			};
 
 			for(int i = 0; i < this->CustomWidth * this->CustomHeight; ++i) {
-				_snprintf(key, 31, "Foundation.%d", i);
+				_snprintf_s(key, _TRUNCATE, "Foundation.%d", i);
 				if(pArtINI->ReadString(pArtID, key, "", str, 0x80)) {
 					ParsePoint(pCurrent, str);
 				} else {
@@ -121,7 +121,7 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 
 			pCurrent = this->OutlineData.data();
 			for(int i = 0; i < this->OutlineLength; ++i) {
-				_snprintf(key, 31, "FoundationOutline.%d", i);
+				_snprintf_s(key, _TRUNCATE, "FoundationOutline.%d", i);
 				if(pArtINI->ReadString(pArtID, key, "", str, 0x80)) {
 					ParsePoint(pCurrent, str);
 				} else {

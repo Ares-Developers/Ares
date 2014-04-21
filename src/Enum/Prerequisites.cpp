@@ -23,7 +23,7 @@ void GenericPrerequisite::LoadFromINI(CCINIClass *pINI)
 
 	DynamicVectorClass<int> *dvc = &this->Prereqs;
 
-	_snprintf(generalbuf, 0x80, "Prerequisite%s", name);
+	_snprintf_s(generalbuf, _TRUNCATE, "Prerequisite%s", name);
 	Prereqs::Parse(pINI, "General", generalbuf, dvc);
 
 	Prereqs::Parse(pINI, section, this->Name, dvc);
