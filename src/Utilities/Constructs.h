@@ -222,8 +222,12 @@ public:
 	using FixedString::operator=;
 
 	bool Read(INIClass* pINI, const char* pSection, const char* pKey, const char* pDefault = "") {
-		if(pINI->ReadString(pSection, pKey, pDefault, Ares::readBuffer, this->Size)) {
-			*this = Ares::readBuffer;
+		if(pINI->ReadString(pSection, pKey, pDefault, Ares::readBuffer, FixedString::Size)) {
+			if(!INIClass::IsBlank(Ares::readBuffer)) {
+				*this = Ares::readBuffer;
+			} else {
+				*this = nullptr;
+			}
 		}
 		return Ares::readBuffer[0] != 0;
 	}
