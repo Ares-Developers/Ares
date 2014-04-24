@@ -70,8 +70,8 @@ public:
 
 			this->Clear();
 
-			this->Palette = this->ReadPalette(Ares::readBuffer);
-			if(this->Palette) {
+			if(auto pPal = FileSystem::AllocatePalette(Ares::readBuffer)) {
+				this->Palette.reset(pPal);
 				this->CreateConvert();
 			}
 
@@ -86,30 +86,6 @@ private:
 		this->Palette = nullptr;
 	}
 
-	UniqueGamePtr<BytePalette> ReadPalette(const char* filename) {
-		UniqueGamePtr<BytePalette> ret = nullptr;
-
-		CCFileClass file(filename);
-		if(auto pData = file.ReadWholeFile()) {
-			auto pPal = reinterpret_cast<BytePalette*>(pData);
-
-			BytePalette* buffer = GameCreate<BytePalette>();
-			ret = UniqueGamePtr<BytePalette>(buffer);
-
-			// convert 6 bits to 8 bits. not correct,
-			// but this is what the game does
-			for(int i = 0; i < 256; ++i) {
-				ret->Entries[i].R = pPal->Entries[i].R << 2;
-				ret->Entries[i].G = pPal->Entries[i].G << 2;
-				ret->Entries[i].B = pPal->Entries[i].B << 2;
-			}
-
-			GameDelete(pData);
-		}
-
-		return ret;
-	}
-
 	void CreateConvert() {
 		ConvertClass* buffer = nullptr;
 		if(this->Mode == PaletteMode::Temperate) {
@@ -117,7 +93,7 @@ private:
 		} else {
 			buffer = GameCreate<ConvertClass>(this->Palette.get(), this->Palette.get(), DSurface::Alternate, 1, false);
 		}
-		this->Convert = UniqueGamePtr<ConvertClass>(buffer);
+		this->Convert.reset(buffer);
 	}
 };
 
