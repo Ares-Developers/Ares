@@ -17,6 +17,9 @@
 #include "../Ares.h"
 #include "../Ares.CRT.h"
 
+template <typename T>
+using UniqueGamePtr = std::unique_ptr<T, GameDeleter>;
+
 struct Leptons {
 	explicit Leptons(int value = 0) : value(value) {}
 
@@ -39,8 +42,8 @@ public:
 	};
 
 	PaletteMode::Value Mode;
-	std::unique_ptr<ConvertClass, GameDeleter> Convert;
-	std::unique_ptr<BytePalette, GameDeleter> Palette;
+	UniqueGamePtr<ConvertClass> Convert;
+	UniqueGamePtr<BytePalette> Palette;
 
 	CustomPalette(PaletteMode::Value mode = PaletteMode::Default) :
 		Mode(mode),
@@ -83,15 +86,15 @@ private:
 		this->Palette = nullptr;
 	}
 
-	std::unique_ptr<BytePalette, GameDeleter> ReadPalette(const char* filename) {
-		std::unique_ptr<BytePalette, GameDeleter> ret = nullptr;
+	UniqueGamePtr<BytePalette> ReadPalette(const char* filename) {
+		UniqueGamePtr<BytePalette> ret = nullptr;
 
 		CCFileClass file(filename);
 		if(auto pData = file.ReadWholeFile()) {
 			auto pPal = reinterpret_cast<BytePalette*>(pData);
 
 			BytePalette* buffer = GameCreate<BytePalette>();
-			ret = std::unique_ptr<BytePalette, GameDeleter>(buffer);
+			ret = UniqueGamePtr<BytePalette>(buffer);
 
 			// convert 6 bits to 8 bits. not correct,
 			// but this is what the game does
@@ -115,7 +118,7 @@ private:
 		} else {
 			buffer = GameCreate<ConvertClass>(this->Palette.get(), this->Palette.get(), DSurface::Alternate, 1, false);
 		}
-		this->Convert = std::unique_ptr<ConvertClass, GameDeleter>(buffer);
+		this->Convert = UniqueGamePtr<ConvertClass>(buffer);
 	}
 };
 
