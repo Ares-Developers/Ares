@@ -113,8 +113,7 @@ private:
 	void CreateConvert() {
 		ConvertClass* buffer = nullptr;
 		if(this->Mode == PaletteMode::Temperate) {
-			auto pTargetPal = (BytePalette*)0x885780; // pointer to TEMPERAT_PAL (not the Convert!)
-			buffer = GameCreate<ConvertClass>(this->Palette.get(), pTargetPal, DSurface::Primary, 53, false);
+			buffer = GameCreate<ConvertClass>(this->Palette.get(), FileSystem::TEMPERAT_PAL, DSurface::Primary, 53, false);
 		} else {
 			buffer = GameCreate<ConvertClass>(this->Palette.get(), this->Palette.get(), DSurface::Alternate, 1, false);
 		}
