@@ -53,6 +53,9 @@ class SideExt
 		AresFixedString<0x20> ScoreMultiplayBars;
 		AresFixedString<0x20> ScoreMultiplayPalette;
 
+		AresFixedString<0x20> GraphicalTextImage;
+		AresFixedString<0x20> GraphicalTextPalette;
+
 		int ArrayIndex;
 
 		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
@@ -112,8 +115,17 @@ class SideExt
 
 	static int CurrentLoadTextColor;
 
+	static UniqueGamePtr<SHPStruct> GraphicalTextImage;
+	static UniqueGamePtr<BytePalette> GraphicalTextPalette;
+	static UniqueGamePtr<ConvertClass> GraphicalTextConvert;
+
+	static void UpdateGlobalFiles();
+
 	static DWORD LoadTextColor(REGISTERS* R, DWORD dwReturnAddress);
 	static DWORD MixFileYuriFiles(REGISTERS* R, DWORD dwReturnAddress1, DWORD dwReturnAddress2);
+
+	static SHPStruct* GetGraphicalTextImage();
+	static ConvertClass* GetGraphicalTextConvert();
 };
 
 #endif

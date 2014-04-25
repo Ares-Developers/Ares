@@ -11,6 +11,10 @@ template<> const DWORD Extension<SideClass>::Canary = 0x87654321;
 Container<SideExt> SideExt::ExtMap;
 int SideExt::CurrentLoadTextColor = -1;
 
+UniqueGamePtr<SHPStruct> SideExt::GraphicalTextImage = nullptr;
+UniqueGamePtr<BytePalette> SideExt::GraphicalTextPalette = nullptr;
+UniqueGamePtr<ConvertClass> SideExt::GraphicalTextConvert = nullptr;
+
 template<> SideExt::TT *Container<SideExt>::SavingObject = nullptr;
 template<> IStream *Container<SideExt>::SavingStream = nullptr;
 
@@ -145,6 +149,9 @@ void SideExt::ExtData::LoadFromINIFile(SideClass *pThis, CCINIClass *pINI)
 			PCX::Instance->LoadFile(pFilename);
 		}
 	}
+
+	this->GraphicalTextImage.Read(pINI, section, "GraphicalText.Image");
+	this->GraphicalTextPalette.Read(pINI, section, "GraphicalText.Palette");
 }
 
 int SideExt::ExtData::GetSurvivorDivisor() const {
@@ -328,6 +335,38 @@ const char* SideExt::ExtData::GetMultiplayerScoreBarFilename(size_t index) const
 	return filename;
 }
 
+void SideExt::UpdateGlobalFiles()
+{
+	// clear old data
+	SideExt::GraphicalTextImage = nullptr;
+	SideExt::GraphicalTextConvert = nullptr;
+	SideExt::GraphicalTextPalette = nullptr;
+
+	int idxSide = ScenarioClass::Instance->PlayerSideIndex;
+	auto pSide = SideClass::Array->GetItemOrDefault(idxSide);
+	auto pExt = SideExt::ExtMap.Find(pSide);
+
+	if(!pExt) {
+		return;
+	}
+
+	// load graphical text shp
+	if(pExt->GraphicalTextImage) {
+		auto pShp = FileSystem::AllocateFile<SHPStruct>(pExt->GraphicalTextImage);
+		SideExt::GraphicalTextImage.reset(pShp);
+	}
+
+	// load graphical text palette and create convert
+	if(pExt->GraphicalTextPalette) {
+		if(auto pPal = FileSystem::AllocatePalette(pExt->GraphicalTextPalette)) {
+			SideExt::GraphicalTextPalette.reset(pPal);
+
+			auto pConvert = GameCreate<ConvertClass>(pPal, FileSystem::TEMPERAT_PAL, DSurface::Primary, 1, false);
+			SideExt::GraphicalTextConvert.reset(pConvert);
+		}
+	}
+}
+
 DWORD SideExt::LoadTextColor(REGISTERS* R, DWORD dwReturnAddress)
 {
 	// if there is a cached LoadTextColor, use that.
@@ -353,6 +392,22 @@ DWORD SideExt::MixFileYuriFiles(REGISTERS* R, DWORD dwReturnAddress1, DWORD dwRe
 	} else {
 		return 0;
 	}
+}
+
+SHPStruct* SideExt::GetGraphicalTextImage() {
+	if(SideExt::GraphicalTextImage) {
+		return SideExt::GraphicalTextImage.get();
+	}
+
+	return FileSystem::GRFXTXT_SHP;
+}
+
+ConvertClass* SideExt::GetGraphicalTextConvert() {
+	if(SideExt::GraphicalTextConvert) {
+		return SideExt::GraphicalTextConvert.get();
+	}
+
+	return FileSystem::GRFXTXT_Convert;
 }
 
 // =============================

@@ -443,3 +443,23 @@ DEFINE_HOOK(5CA110, Game_GetMultiplayerScoreScreenBar, 5)
 	R->EAX(ret);
 	return 0x5CA41D;
 }
+
+// customizable global graphics
+
+DEFINE_HOOK(53534C, Game_LoadUI_LoadSideData, 7)
+{
+	SideExt::UpdateGlobalFiles();
+	return 0;
+}
+
+// graphical text banner
+DEFINE_HOOK(6D4E79, TacticalClass_DrawOverlay_GraphicalText, 6)
+{
+	auto pConvert = SideExt::GetGraphicalTextConvert();
+	auto pShp = SideExt::GetGraphicalTextImage();
+
+	R->EBX(pConvert);
+	R->ESI(pShp);
+
+	return (pConvert && pShp) ? 0x6D4E8D : 0x6D4EF4;
+}
