@@ -150,6 +150,11 @@ void SideExt::ExtData::LoadFromINIFile(SideClass *pThis, CCINIClass *pINI)
 		}
 	}
 
+	this->ScoreCampaignThemeUnderPar.Read(pINI, section, "CampaignScore.UnderParTheme");
+	this->ScoreCampaignThemeOverPar.Read(pINI, section, "CampaignScore.OverParTheme");
+	this->ScoreMultiplayThemeWin.Read(pINI, section, "MultiplayerScore.WinTheme");
+	this->ScoreMultiplayThemeLose.Read(pINI, section, "MultiplayerScore.LoseTheme");
+
 	this->GraphicalTextImage.Read(pINI, section, "GraphicalText.Image");
 	this->GraphicalTextPalette.Read(pINI, section, "GraphicalText.Palette");
 }

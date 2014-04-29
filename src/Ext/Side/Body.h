@@ -53,6 +53,11 @@ class SideExt
 		AresFixedString<0x20> ScoreMultiplayBars;
 		AresFixedString<0x20> ScoreMultiplayPalette;
 
+		AresFixedString<0x20> ScoreCampaignThemeUnderPar;
+		AresFixedString<0x20> ScoreCampaignThemeOverPar;
+		AresFixedString<0x20> ScoreMultiplayThemeWin;
+		AresFixedString<0x20> ScoreMultiplayThemeLose;
+
 		AresFixedString<0x20> GraphicalTextImage;
 		AresFixedString<0x20> GraphicalTextPalette;
 
@@ -64,6 +69,10 @@ class SideExt
 			HunterSeeker (nullptr),
 			ToolTipTextColor (),
 			MessageTextColorIndex (-1),
+			ScoreCampaignThemeUnderPar("SCORE"),
+			ScoreCampaignThemeOverPar("SCORE"),
+			ScoreMultiplayThemeWin("SCORE"),
+			ScoreMultiplayThemeLose("SCORE"),
 			EVAIndex (-1)
 		{
 		};

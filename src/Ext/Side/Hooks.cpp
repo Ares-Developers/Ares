@@ -463,3 +463,67 @@ DEFINE_HOOK(6D4E79, TacticalClass_DrawOverlay_GraphicalText, 6)
 
 	return (pConvert && pShp) ? 0x6D4E8D : 0x6D4EF4;
 }
+
+// score options
+
+// multiplayer score music depending on win or lose
+DEFINE_HOOK(5C9B75, Global_DrawScoreScreen_ScoreTheme, 5)
+{
+	REF_STACK(const char*, pTheme, 0x0);
+
+	if(!HouseClass::IsPlayerObserver()) {
+		int idxSide = ScenarioClass::Instance->PlayerSideIndex;
+		auto pSide = SideClass::Array->GetItemOrDefault(idxSide);
+		auto pExt = SideExt::ExtMap.Find(pSide);
+
+		pTheme = HouseClass::Player->Defeated
+			? pExt->ScoreMultiplayThemeWin
+			: pExt->ScoreMultiplayThemeLose;
+	}
+
+	return 0;
+}
+
+// score music for single player missions
+static const char* pSinglePlayerScoreTheme = nullptr;
+
+DEFINE_HOOK(6C922C, ScoreDialog_Handle_ScoreThemeA, 5)
+{
+	GET(int, elapsed, EDI);
+	GET(int, par, ESI);
+
+	auto pScen = ScenarioClass::Instance;
+
+	int idxSide = pScen->PlayerSideIndex;
+	auto pSide = SideClass::Array->GetItemOrDefault(idxSide);
+	auto pExt = SideExt::ExtMap.Find(pSide);
+
+	// replicate skipped instructions, and also update the score id
+	const char* pTitle = nullptr;
+	const char* pMessage = nullptr;
+
+	if(elapsed > par) {
+		pTitle = pScen->OverParTitle;
+		pMessage = pScen->OverParMessage;
+		pSinglePlayerScoreTheme = pExt->ScoreCampaignThemeOverPar;
+	} else {
+		pTitle = pScen->UnderParTitle;
+		pMessage = pScen->UnderParMessage;
+		pSinglePlayerScoreTheme = pExt->ScoreCampaignThemeUnderPar;
+	}
+
+	R->ECX(pTitle);
+	R->ESI(pMessage);
+	return 0x6C924F;
+}
+
+DEFINE_HOOK(6C935C, ScoreDialog_Handle_ScoreThemeB, 5)
+{
+	REF_STACK(const char*, pTheme, 0x0);
+
+	if(pSinglePlayerScoreTheme) {
+		pTheme = pSinglePlayerScoreTheme;
+	}
+
+	return 0;
+}
