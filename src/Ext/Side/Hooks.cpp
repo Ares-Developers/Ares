@@ -464,6 +464,18 @@ DEFINE_HOOK(6D4E79, TacticalClass_DrawOverlay_GraphicalText, 6)
 	return (pConvert && pShp) ? 0x6D4E8D : 0x6D4EF4;
 }
 
+// dialog background
+DEFINE_HOOK(622223, sub_621E90_DialogBackground, 6)
+{
+	auto pShp = SideExt::DialogBackgroundImage.get();
+	auto pConvert = SideExt::DialogBackgroundConvert.get();
+
+	R->EDI(pShp);
+	R->EAX(pConvert);
+
+	return (pConvert && pShp) ? 0x62226A : 0;
+}
+
 // score options
 
 // multiplayer score music depending on win or lose

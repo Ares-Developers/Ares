@@ -15,6 +15,10 @@ UniqueGamePtr<SHPStruct> SideExt::GraphicalTextImage = nullptr;
 UniqueGamePtr<BytePalette> SideExt::GraphicalTextPalette = nullptr;
 UniqueGamePtr<ConvertClass> SideExt::GraphicalTextConvert = nullptr;
 
+UniqueGamePtr<SHPStruct> SideExt::DialogBackgroundImage = nullptr;
+UniqueGamePtr<BytePalette> SideExt::DialogBackgroundPalette = nullptr;
+UniqueGamePtr<ConvertClass> SideExt::DialogBackgroundConvert = nullptr;
+
 template<> SideExt::TT *Container<SideExt>::SavingObject = nullptr;
 template<> IStream *Container<SideExt>::SavingStream = nullptr;
 
@@ -157,6 +161,9 @@ void SideExt::ExtData::LoadFromINIFile(SideClass *pThis, CCINIClass *pINI)
 
 	this->GraphicalTextImage.Read(pINI, section, "GraphicalText.Image");
 	this->GraphicalTextPalette.Read(pINI, section, "GraphicalText.Palette");
+
+	this->DialogBackgroundImage.Read(pINI, section, "DialogBackground.Image");
+	this->DialogBackgroundPalette.Read(pINI, section, "DialogBackground.Palette");
 }
 
 int SideExt::ExtData::GetSurvivorDivisor() const {
@@ -347,6 +354,10 @@ void SideExt::UpdateGlobalFiles()
 	SideExt::GraphicalTextConvert = nullptr;
 	SideExt::GraphicalTextPalette = nullptr;
 
+	SideExt::DialogBackgroundImage = nullptr;
+	SideExt::DialogBackgroundConvert = nullptr;
+	SideExt::DialogBackgroundPalette = nullptr;
+
 	int idxSide = ScenarioClass::Instance->PlayerSideIndex;
 	auto pSide = SideClass::Array->GetItemOrDefault(idxSide);
 	auto pExt = SideExt::ExtMap.Find(pSide);
@@ -368,6 +379,22 @@ void SideExt::UpdateGlobalFiles()
 
 			auto pConvert = GameCreate<ConvertClass>(pPal, FileSystem::TEMPERAT_PAL, DSurface::Primary, 1, false);
 			SideExt::GraphicalTextConvert.reset(pConvert);
+		}
+	}
+
+	// load dialog background shp
+	if(pExt->DialogBackgroundImage) {
+		auto pShp = FileSystem::AllocateFile<SHPStruct>(pExt->DialogBackgroundImage);
+		SideExt::DialogBackgroundImage.reset(pShp);
+	}
+
+	// load dialog background palette and create convert
+	if(pExt->DialogBackgroundPalette) {
+		if(auto pPal = FileSystem::AllocatePalette(pExt->DialogBackgroundPalette)) {
+			SideExt::DialogBackgroundPalette.reset(pPal);
+
+			auto pConvert = GameCreate<ConvertClass>(pPal, pPal, DSurface::Alternate, 1, false);
+			SideExt::DialogBackgroundConvert.reset(pConvert);
 		}
 	}
 }

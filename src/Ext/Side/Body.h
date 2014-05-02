@@ -61,6 +61,9 @@ class SideExt
 		AresFixedString<0x20> GraphicalTextImage;
 		AresFixedString<0x20> GraphicalTextPalette;
 
+		AresFixedString<0x20> DialogBackgroundImage;
+		AresFixedString<0x20> DialogBackgroundPalette;
+
 		int ArrayIndex;
 
 		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
@@ -127,6 +130,10 @@ class SideExt
 	static UniqueGamePtr<SHPStruct> GraphicalTextImage;
 	static UniqueGamePtr<BytePalette> GraphicalTextPalette;
 	static UniqueGamePtr<ConvertClass> GraphicalTextConvert;
+
+	static UniqueGamePtr<SHPStruct> DialogBackgroundImage;
+	static UniqueGamePtr<BytePalette> DialogBackgroundPalette;
+	static UniqueGamePtr<ConvertClass> DialogBackgroundConvert;
 
 	static void UpdateGlobalFiles();
 
