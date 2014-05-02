@@ -539,3 +539,19 @@ DEFINE_HOOK(6C935C, ScoreDialog_Handle_ScoreThemeB, 5)
 
 	return 0;
 }
+
+// music piece when loading a match or mission
+int idxLoadingTheme = -2;
+
+DEFINE_HOOK(683C70, sub_683AB0_LoadingScoreA, 7)
+{
+	LEA_STACK(CCINIClass*, pINI, STACK_OFFS(0xFC, 0xE0));
+	idxLoadingTheme = pINI->ReadTheme("Basic", "LoadingTheme", -2);
+	return 0;
+}
+
+DEFINE_HOOK(683D05, sub_683AB0_LoadingScoreB, 5)
+{
+	R->EAX(idxLoadingTheme);
+	return (idxLoadingTheme == -2) ? 0 : 0x683D14;
+}
