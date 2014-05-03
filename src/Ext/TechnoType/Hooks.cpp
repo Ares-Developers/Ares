@@ -11,7 +11,10 @@
 
 DEFINE_HOOK(732D10, TacticalClass_CollectSelectedIDs, 5)
 {
-	auto pNames = GameCreate<DynamicVectorClass<const char*>>();
+	// create in dll. all internal memory will be allocated on the game's heap
+	// but as our vtable is used, the virtual destructor will free this instance
+	// from the dll's heap.
+	auto pNames = DLLCreate<DynamicVectorClass<const char*>>();
 
 	auto Add = [pNames](TechnoTypeClass* pType) {
 		if(auto pExt = TechnoTypeExt::ExtMap.Find(pType)) {
