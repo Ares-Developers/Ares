@@ -20,24 +20,23 @@ DEFINE_HOOK(732D10, TacticalClass_CollectSelectedIDs, 5)
 		if(auto pExt = TechnoTypeExt::ExtMap.Find(pType)) {
 			const char* id = pExt->GetSelectionGroupID();
 
-			for(auto i = pNames->begin(); i != pNames->end(); ++i) {
-				if(!_strcmpi(*i, id)) {
-					return;
-				}
+			if(std::none_of(pNames->begin(), pNames->end(), [id](const char* pID) {
+				return !_strcmpi(pID, id);
+			})) {
+				pNames->AddItem(id);
 			}
-
-			pNames->AddItem(id);
 		}
 	};
 
-	for(auto i = ObjectClass::CurrentObjects->begin(); i != ObjectClass::CurrentObjects->end(); ++i) {
+	bool useDeploy = RulesExt::Global()->TypeSelectUseDeploy;
+
+	for(auto pObject : *ObjectClass::CurrentObjects) {
 		// add this object's id used for grouping
-		ObjectClass* pObject = *i;
 		if(TechnoTypeClass* pType = pObject->GetTechnoType()) {
 			Add(pType);
 
 			// optionally do the same the original game does, but support the new grouping feature.
-			if(RulesExt::Global()->TypeSelectUseDeploy) {
+			if(useDeploy) {
 				if(pType->DeploysInto) {
 					Add(pType->DeploysInto);
 				}
