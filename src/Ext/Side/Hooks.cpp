@@ -546,7 +546,27 @@ int idxLoadingTheme = -2;
 DEFINE_HOOK(683C70, sub_683AB0_LoadingScoreA, 7)
 {
 	LEA_STACK(CCINIClass*, pINI, STACK_OFFS(0xFC, 0xE0));
-	idxLoadingTheme = pINI->ReadTheme("Basic", "LoadingTheme", -2);
+
+	// magic value for the default loading theme
+	idxLoadingTheme = -2;
+
+	if(SessionClass::Instance->GameMode == GameMode::Campaign) {
+		// single player missions read from the scenario
+		idxLoadingTheme = pINI->ReadTheme("Basic", "LoadingTheme", -2);
+
+	} else {
+		// override the default for multiplayer matches
+		if(auto pSpot = SessionClass::Instance->StartSpots.GetItemOrDefault(0)) {
+			if(auto pType = HouseTypeClass::Array->GetItemOrDefault(pSpot->Country)) {
+
+				// get theme from the side
+				auto pSide = SideClass::Array->GetItemOrDefault(pType->SideIndex);
+				auto pRulesINI = CCINIClass::INI_Rules;
+				idxLoadingTheme = pRulesINI->ReadTheme(pSide->ID, "LoadingTheme", -2);
+			}
+		}
+	}
+
 	return 0;
 }
 
