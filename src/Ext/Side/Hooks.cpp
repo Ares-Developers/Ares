@@ -489,8 +489,8 @@ DEFINE_HOOK(5C9B75, Global_DrawScoreScreen_ScoreTheme, 5)
 		auto pExt = SideExt::ExtMap.Find(pSide);
 
 		pTheme = HouseClass::Player->Defeated
-			? pExt->ScoreMultiplayThemeWin
-			: pExt->ScoreMultiplayThemeLose;
+			? pExt->ScoreMultiplayThemeLose
+			: pExt->ScoreMultiplayThemeWin;
 	}
 
 	return 0;
