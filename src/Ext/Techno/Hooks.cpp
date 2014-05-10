@@ -1600,3 +1600,18 @@ DEFINE_HOOK(41D5AE, AirstrikeClass_PointerGotInvalid_AirstrikeAbortSound, 9)
 	VocClass::PlayAt(index, pAirstrike->FirstObject->Location, nullptr);
 	return 0x41D5E0;
 }
+
+DEFINE_HOOK(702CFE, TechnoClass_ReceiveDamage_PreventScatter, 6)
+{
+	GET(FootClass*, pThis, ESI);
+	GET_STACK(WarheadTypeClass*, pWarhead, STACK_OFFS(0xC4, -0xC));
+
+	auto pExt = WarheadTypeExt::ExtMap.Find(pWarhead);
+
+	// only allow to scatter if not prevented
+	if(!pExt->PreventScatter) {
+		pThis->Scatter(CoordStruct::Empty, true, false);
+	}
+
+	return 0x702D11;
+}

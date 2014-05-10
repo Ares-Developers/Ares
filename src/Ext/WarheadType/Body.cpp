@@ -98,6 +98,8 @@ void WarheadTypeExt::ExtData::LoadFromINIFile(WarheadTypeClass *pThis, CCINIClas
 
 	this->Malicious.Read(exINI, section, "Malicious");
 
+	this->PreventScatter.Read(exINI, section, "PreventScatter");
+
 	this->CellSpread_MaxAffect.Read(exINI, section, "CellSpread.MaxAffect");
 
 	this->AttachedEffect.Read(exINI, section);

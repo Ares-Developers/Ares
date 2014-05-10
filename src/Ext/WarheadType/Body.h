@@ -73,6 +73,8 @@ public:
 
 		Valueable<bool> Malicious;
 
+		Valueable<bool> PreventScatter;
+
 		Valueable<int> CellSpread_MaxAffect;
 
 		AttachEffectTypeClass AttachedEffect;
@@ -92,6 +94,7 @@ public:
 			KillDriver (false),
 			KillDriver_KillBelowPercent(1.00),
 			Malicious (true),
+			PreventScatter (false),
 			CellSpread_MaxAffect (-1),
 			AttachedEffect()
 			{
