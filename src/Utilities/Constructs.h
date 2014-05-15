@@ -51,10 +51,6 @@ public:
 		Palette(nullptr)
 	{};
 
-	~CustomPalette() {
-		this->Clear();
-	}
-
 	ConvertClass* GetConvert() const {
 		return this->Convert.get();
 	}
