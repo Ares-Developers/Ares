@@ -68,7 +68,7 @@ public:
 
 	void operator = (const Extension &RHS) = delete;
 
-	virtual ~Extension() { };
+	virtual ~Extension() = default;
 
 	// major refactoring!
 	// LoadFromINI is now a non-virtual public function that orchestrates the initialization/loading of extension data
@@ -161,9 +161,7 @@ public:
 	Container() : Items() {
 	}
 
-	virtual ~Container() {
-		this->Clear();
-	}
+	virtual ~Container() = default;
 
 	ValueType FindOrAllocate(KeyType const &key) {
 		if(key == nullptr) {
