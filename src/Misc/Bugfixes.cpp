@@ -529,8 +529,8 @@ DEFINE_HOOK(7440BD, UnitClass_Remove, 6)
 {
 	GET(UnitClass *, U, ESI);
 	TechnoClass *Bunker = U->BunkerLinkedItem;
-	if(Bunker && Bunker->WhatAmI() == abs_Building) {
-		reinterpret_cast<BuildingClass *>(Bunker)->ClearBunker();
+	if(auto Bld = abstract_cast<BuildingClass*>(Bunker)) {
+		Bld->ClearBunker();
 	}
 	return 0;
 }

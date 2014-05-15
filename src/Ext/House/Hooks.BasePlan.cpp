@@ -92,7 +92,7 @@ DEFINE_HOOK(5D705E, MPGameMode_SpawnBaseUnit, 6)
 		return hasNoBaseUnit;
 	}
 
-	auto Unit = reinterpret_cast<UnitClass *>(pBaseUnit->CreateObject(pHouse));
+	auto Unit = static_cast<UnitClass *>(pBaseUnit->CreateObject(pHouse));
 	R->ESI<UnitClass *>(Unit);
 	return hasBaseUnit;
 }
@@ -119,7 +119,7 @@ DEFINE_HOOK(688B37, MPGameModeClass_CreateStartingUnits_B, 5)
 		return hasNoBaseUnit;
 	}
 
-	auto Unit = reinterpret_cast<UnitClass *>(Item->CreateObject(pHouse));
+	auto Unit = static_cast<UnitClass *>(Item->CreateObject(pHouse));
 	R->ESI<UnitClass *>(Unit);
 	R->EBP(0);
 	R->EDI<HouseClass *>(pHouse);

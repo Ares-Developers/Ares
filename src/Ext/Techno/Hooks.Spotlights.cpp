@@ -133,7 +133,7 @@ DEFINE_HOOK(435C08, BuildingLightClass_Draw_ForceType, 5)
 DEFINE_HOOK(435C32, BuildingLightClass_Draw_PowerOnline, A)
 {
 	GET(TechnoClass *, T, EDI);
-	return (T->WhatAmI() != abs_Building || (T->IsPowerOnline() && !reinterpret_cast<BuildingClass *>(T)->IsFogged))
+	return (T->WhatAmI() != abs_Building || (T->IsPowerOnline() && !static_cast<BuildingClass *>(T)->IsFogged))
 		? 0x435C52
 		: 0x4361BC
 	;

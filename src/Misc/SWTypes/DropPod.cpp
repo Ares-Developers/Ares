@@ -73,7 +73,7 @@ bool SW_DropPod::Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPl
 			break;
 		}
 
-		FootClass* pFoot = reinterpret_cast<FootClass*>(pType->CreateObject(pOwner));
+		FootClass* pFoot = static_cast<FootClass*>(pType->CreateObject(pOwner));
 
 		// update veterancy only if higher
 		if(veterancy > pFoot->Veterancy.Veterancy) {

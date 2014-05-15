@@ -237,7 +237,7 @@ void Ares::SendPDPlane(HouseClass* pOwner, CellClass* pTarget, AircraftTypeClass
 		pOwner && pPlaneType && pTarget)
 	{
 		++Unsorted::IKnowWhatImDoing;
-		AircraftClass* pPlane = reinterpret_cast<AircraftClass*>(pPlaneType->CreateObject(pOwner));
+		AircraftClass* pPlane = static_cast<AircraftClass*>(pPlaneType->CreateObject(pOwner));
 		--Unsorted::IKnowWhatImDoing;
 
 		pPlane->Spawned = true;
@@ -276,7 +276,7 @@ void Ares::SendPDPlane(HouseClass* pOwner, CellClass* pTarget, AircraftTypeClass
 				eAbstractType WhatAmI = pTechnoType->WhatAmI();
 				if(WhatAmI == abs_UnitType || WhatAmI == abs_InfantryType) {
 					for(int k = 0; k < Nums[i]; k++) {
-						FootClass* pNew = reinterpret_cast<FootClass*>(pTechnoType->CreateObject(pOwner));
+						FootClass* pNew = static_cast<FootClass*>(pTechnoType->CreateObject(pOwner));
 						pNew->Remove();
 						pPlane->Passengers.AddPassenger(pNew);
 					}

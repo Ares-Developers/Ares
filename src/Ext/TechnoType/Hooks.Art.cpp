@@ -18,7 +18,7 @@ DEFINE_HOOK(5F9634, ObjectTypeClass_LoadFromINI, 6)
 	GET(ObjectTypeClass *, pType, EBX);
 	GET_STACK(CCINIClass *, pINI, STACK_OFFS(0x1B0, -4));
 
-	TechnoTypeClass *pTechnoType = reinterpret_cast<TechnoTypeClass *>(pType);
+	TechnoTypeClass *pTechnoType = static_cast<TechnoTypeClass *>(pType);
 	TechnoTypeExt::ExtData * pTypeData = TechnoTypeExt::ExtMap.Find(pTechnoType);
 
 	if(pTypeData) {
@@ -33,7 +33,7 @@ DEFINE_HOOK(5F9070, ObjectTypeClass_Load2DArt, 0)
 {
 	GET(ObjectTypeClass *, pType, ECX);
 
-	TechnoTypeClass *pTechnoType = reinterpret_cast<TechnoTypeClass *>(pType);
+	TechnoTypeClass *pTechnoType = static_cast<TechnoTypeClass *>(pType);
 	TechnoTypeExt::ExtData * pTypeData = TechnoTypeExt::ExtMap.Find(pTechnoType);
 
 	char basename[256];

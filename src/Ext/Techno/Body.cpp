@@ -77,7 +77,7 @@ void TechnoExt::SpawnSurvivors(FootClass *pThis, TechnoClass *pKiller, bool Sele
 			for(int i = 0; i < PilotCount; ++i) {
 				if(auto PilotType = pThis->GetCrew()) {
 					if(ScenarioClass::Instance->Random.RandomRanged(1, 100) <= chance) {
-						InfantryClass *Pilot = reinterpret_cast<InfantryClass *>(PilotType->CreateObject(pOwner));
+						auto Pilot = static_cast<InfantryClass *>(PilotType->CreateObject(pOwner));
 						Pilot->Health /= 2;
 						Pilot->Veterancy.Veterancy = pThis->Veterancy.Veterancy;
 
@@ -718,7 +718,7 @@ InfantryClass* TechnoExt::RecoverHijacker(FootClass* pThis) {
 			TechnoTypeExt::ExtData* pTypeExt = TechnoTypeExt::ExtMap.Find(HijackerType);
 			HouseClass* HijackerOwner = pExt->HijackerHouse ? pExt->HijackerHouse : pThis->Owner;
 			if(!pTypeExt->HijackerOneTime && HijackerOwner && !HijackerOwner->Defeated) {
-				Hijacker = reinterpret_cast<InfantryClass *>(HijackerType->CreateObject(HijackerOwner));
+				Hijacker = static_cast<InfantryClass *>(HijackerType->CreateObject(HijackerOwner));
 				Hijacker->Health = std::max(pExt->HijackerHealth / 2, 5);
 			}
 			pThis->HijackerInfantryType = -1;

@@ -815,7 +815,7 @@ void BuildingExt::ExtData::KickOutClones(TechnoClass * Production) {
 	auto &CloningSources = ProductionTypeData->ClonedAt;
 
 	auto KickOutClone = [ProductionType, FactoryOwner](BuildingClass *B) -> void {
-		auto Clone = reinterpret_cast<TechnoClass *>(ProductionType->CreateObject(FactoryOwner));
+		auto Clone = static_cast<TechnoClass *>(ProductionType->CreateObject(FactoryOwner));
 		if(B->KickOutUnit(Clone, CellStruct::Empty) != KickOutResult::Succeeded) {
 			Clone->UnInit();
 		}
