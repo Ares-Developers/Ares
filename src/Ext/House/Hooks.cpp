@@ -93,7 +93,7 @@ DEFINE_HOOK(4F8EBD, HouseClass_Update_HasBeenDefeated, 0)
 			}
 		}
 	} else {
-		if(H->OwnedUnitTypes1.Count) {
+		if(H->OwnedUnitTypes1.Total) {
 			for(int i = 0; i < UnitClass::Array->Count; ++i) {
 				TechnoClass *T = UnitClass::Array->Items[i];
 				if(Eligible(T)) {
@@ -102,7 +102,7 @@ DEFINE_HOOK(4F8EBD, HouseClass_Update_HasBeenDefeated, 0)
 			}
 		}
 
-		if(H->OwnedInfantryTypes1.Count) {
+		if(H->OwnedInfantryTypes1.Total) {
 			for(int i = 0; i < InfantryClass::Array->Count; ++i) {
 				TechnoClass *T = InfantryClass::Array->Items[i];
 				if(Eligible(T)) {
@@ -111,7 +111,7 @@ DEFINE_HOOK(4F8EBD, HouseClass_Update_HasBeenDefeated, 0)
 			}
 		}
 
-		if(H->OwnedAircraftTypes1.Count) {
+		if(H->OwnedAircraftTypes1.Total) {
 			for(int i = 0; i < AircraftClass::Array->Count; ++i) {
 				TechnoClass *T = AircraftClass::Array->Items[i];
 				if(Eligible(T)) {
