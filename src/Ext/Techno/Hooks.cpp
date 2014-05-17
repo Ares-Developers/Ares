@@ -1340,9 +1340,9 @@ DEFINE_HOOK(702200, TechnoClass_ReceiveDamage_SpillTiberium, 6)
 	auto pExt = TechnoTypeExt::ExtMap.Find(pType);
 
 	if(pExt->TiberiumSpill) {
-		float stored = pThis->Tiberium.GetTotalAmount();
+		double stored = pThis->Tiberium.GetTotalAmount();
 		if(pThis->WhatAmI() != BuildingClass::AbsID
-			&& stored > 0.0f
+			&& stored > 0.0
 			&& !ScenarioClass::Instance->SpecialFlags.HarvesterImmune)
 		{
 			// don't spill more than we can hold
@@ -1393,7 +1393,7 @@ DEFINE_HOOK(738749, UnitClass_Destroy_TiberiumExplosive, 6)
 				int morePower = 0;
 				for(int i=0; i<TiberiumClass::Array->Count; ++i) {
 					TiberiumClass* pTiberium = TiberiumClass::Array->GetItem(i);
-					float power = pThis->Tiberium.GetAmount(i) * pTiberium->Power;
+					double power = pThis->Tiberium.GetAmount(i) * pTiberium->Power;
 					morePower += Game::F2I(power);
 				}
 
