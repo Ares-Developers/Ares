@@ -91,7 +91,7 @@ DEFINE_HOOK(4549F8, BuildingClass_UpdatePowered_SensorArray, 6)
 // something changed to the worse, like toggle power
 DEFINE_HOOK(4524A3, BuildingClass_DisableThings, 6)
 {
-	GET(BuildingClass*, pBld, ESI);
+	GET(BuildingClass*, pBld, EDI);
 	auto pExt = BuildingExt::ExtMap.Find(pBld);
 	pExt->UpdateSensorArray();
 	return 0;
