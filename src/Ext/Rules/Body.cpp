@@ -89,6 +89,9 @@ void RulesExt::ExtData::LoadBeforeTypeData(RulesClass *pThis, CCINIClass *pINI) 
 	pData->DeactivateDim_Powered.Read(exINI, sectionAV, "DeactivateDimPowered");
 	pData->DeactivateDim_EMP.Read(exINI, sectionAV, "DeactivateDimEMP");
 	pData->DeactivateDim_Operator.Read(exINI, sectionAV, "DeactivateDimOperator");
+
+	pData->AutoRepelAI.Read(exINI, sectionCombatDamage, "AutoRepel");
+	pData->AutoRepelPlayer.Read(exINI, sectionCombatDamage, "PlayerAutoRepel");
 }
 
 // this should load everything that TypeData is not dependant on

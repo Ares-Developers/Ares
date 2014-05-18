@@ -1618,8 +1618,8 @@ DEFINE_HOOK(702CFE, TechnoClass_ReceiveDamage_PreventScatter, 6)
 
 DEFINE_HOOK(6F826E, TechnoClass_CanAutoTargetObject_CivilianEnemy, 5)
 {
-	//GET(TechnoClass*, pThis, EDI);
-	//GET(TechnoClass*, pTarget, ESI);
+	GET(TechnoClass*, pThis, EDI);
+	GET(TechnoClass*, pTarget, ESI);
 	GET(TechnoTypeClass*, pTargetType, EBP);
 
 	enum { Undecided = 0, ConsiderEnemy = 0x6F8483, ConsiderCivilian = 0x6F83B1, Ignore = 0x6F894F };
@@ -1629,6 +1629,20 @@ DEFINE_HOOK(6F826E, TechnoClass_CanAutoTargetObject_CivilianEnemy, 5)
 	// always consider this an enemy
 	if(pExt->CivilianEnemy) {
 		return ConsiderEnemy;
+	}
+
+	// if the potential target is attacking an allied object, consider it an enemy
+	// to not allow civilians to overrun a player
+	if(auto pTargetTarget = abstract_cast<TechnoClass*>(pTarget->Target)) {
+		auto pOwner = pThis->Owner;
+		if(pOwner->IsAlliedWith(pTargetTarget)) {
+			auto pData = RulesExt::Global();
+
+			bool repel = pOwner->ControlledByHuman() ? pData->AutoRepelPlayer : pData->AutoRepelAI;
+			if(repel) {
+				return ConsiderEnemy;
+			}
+		}
 	}
 
 	return Undecided;

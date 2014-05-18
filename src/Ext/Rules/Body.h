@@ -68,6 +68,9 @@ class RulesExt
 		ValueableVector<TechnoTypeClass*> DropPodTypes;
 		Nullable<AnimTypeClass*> DropPodTrailer;
 
+		Valueable<bool> AutoRepelAI;
+		Valueable<bool> AutoRepelPlayer;
+
 		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			ElectricDeath(nullptr),
 			EngineerDamage (0.0F),
