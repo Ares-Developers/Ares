@@ -286,7 +286,7 @@ DEFINE_HOOK(67E74A, LoadGame_EarlyLoadSides, 5)
 		return 0x67F7A3;
 	}
 	for(int i = 0; i < length; ++i) {
-		if((*Imports::OleLoadFromStream)(pStm, &IIDs::AbstractClass_0, &out) < 0) {
+		if((*Imports::OleLoadFromStream)(pStm, &IIDs::IUnknown, &out) < 0) {
 			return 0x67F7A3;
 		}
 	}
