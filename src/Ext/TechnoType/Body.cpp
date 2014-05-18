@@ -418,6 +418,8 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	this->HunterSeekerEmergeSpeed.Read(exINI, section, "HunterSeeker.EmergeSpeed");
 	this->HunterSeekerIgnore.Read(exINI, section, "HunterSeeker.Ignore");
 
+	this->CivilianEnemy.Read(exINI, section, "CivilianEnemy");
+
 	// quick fix - remove after the rest of weapon selector code is done
 	return;
 }

@@ -1615,3 +1615,21 @@ DEFINE_HOOK(702CFE, TechnoClass_ReceiveDamage_PreventScatter, 6)
 
 	return 0x702D11;
 }
+
+DEFINE_HOOK(6F826E, TechnoClass_CanAutoTargetObject_CivilianEnemy, 5)
+{
+	//GET(TechnoClass*, pThis, EDI);
+	//GET(TechnoClass*, pTarget, ESI);
+	GET(TechnoTypeClass*, pTargetType, EBP);
+
+	enum { Undecided = 0, ConsiderEnemy = 0x6F8483, ConsiderCivilian = 0x6F83B1, Ignore = 0x6F894F };
+
+	auto pExt = TechnoTypeExt::ExtMap.Find(pTargetType);
+
+	// always consider this an enemy
+	if(pExt->CivilianEnemy) {
+		return ConsiderEnemy;
+	}
+
+	return Undecided;
+}

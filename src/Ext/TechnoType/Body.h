@@ -169,6 +169,8 @@ public:
 		Valueable<bool> CrashSpin;
 		Valueable<int> AirRate;
 
+		Valueable<bool> CivilianEnemy;
+
 		// custom missiles
 		Valueable<bool> IsCustomMissile;
 		Valueable<RocketStruct> CustomMissileData;
