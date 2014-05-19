@@ -103,6 +103,7 @@ public:
 			RadarJam(nullptr),
 			PoweredUnit(nullptr),
 			MyOriginalTemporal(nullptr),
+			MyBolt(nullptr),
 			Spotlight(nullptr),
 			AltOccupation(),
 			HunterSeekerSW(nullptr),
