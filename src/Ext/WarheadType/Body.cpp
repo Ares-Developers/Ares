@@ -117,7 +117,7 @@ bool Container<WarheadTypeExt>::Save(WarheadTypeClass *pThis, IStream *pStm) {
 
 	if(pData) {
 		//ULONG out;
-		pData->Verses.Save(pStm);
+		//pData->Verses.Save(pStm);
 	}
 
 	return pData != nullptr;
@@ -133,7 +133,7 @@ bool Container<WarheadTypeExt>::Save(WarheadTypeClass *pThis, IStream *pStm) {
 bool Container<WarheadTypeExt>::Load(WarheadTypeClass *pThis, IStream *pStm) {
 	WarheadTypeExt::ExtData* pData = this->LoadKey(pThis, pStm);
 
-	pData->Verses.Load(pStm, 0);
+	//pData->Verses.Load(pStm, 0);
 
 	SWIZZLE(pData->Temporal_WarpAway);
 

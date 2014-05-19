@@ -611,11 +611,11 @@ bool Container<TechnoTypeExt>::Save(TechnoTypeClass *pThis, IStream *pStm) {
 
 	if(pData) {
 		//ULONG out;
-		pData->Survivors_Pilots.Save(pStm);
+		//pData->Survivors_Pilots.Save(pStm);
 
-		pData->PrerequisiteNegatives.Save(pStm);
-		pData->Weapons.Save(pStm);
-		pData->EliteWeapons.Save(pStm);
+		//pData->PrerequisiteNegatives.Save(pStm);
+		//pData->Weapons.Save(pStm);
+		//pData->EliteWeapons.Save(pStm);
 	}
 
 	return pData != nullptr;
@@ -626,11 +626,11 @@ bool Container<TechnoTypeExt>::Load(TechnoTypeClass *pThis, IStream *pStm) {
 
 	//ULONG out;
 
-	pData->Survivors_Pilots.Load(pStm, 1);
+	//pData->Survivors_Pilots.Load(pStm, 1);
 
-	pData->PrerequisiteNegatives.Load(pStm, 0);
-	pData->Weapons.Load(pStm, 1);
-	pData->EliteWeapons.Load(pStm, 1);
+	//pData->PrerequisiteNegatives.Load(pStm, 0);
+	//pData->Weapons.Load(pStm, 1);
+	//pData->EliteWeapons.Load(pStm, 1);
 
 /*
 	SWIZZLE(pData->Parachute_Anim);
