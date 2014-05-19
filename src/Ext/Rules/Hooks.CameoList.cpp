@@ -124,14 +124,14 @@ DEFINE_HOOK(6A8710, TabCameoListClass_AddCameo_ReplaceItAll, 0)
 		newCameo.IsAlt = ObjectTypeClass::IsBuildCat5(ItemType, ItemIndex);
 	}
 
-	Debug::Log("Adding cameo at tab %d, slot %d of %d: AbsID = %d, Index = %d\n", TabIndex, InsertIndex, cameos.Count, ItemType, ItemIndex);
+	//Debug::Log("Adding cameo at tab %d, slot %d of %d: AbsID = %d, Index = %d\n", TabIndex, InsertIndex, cameos.Count, ItemType, ItemIndex);
 
 	if(cameos.AddItem(newCameo)) {
 		++pTab->CameoCount;
 		auto LastIndex = cameos.Count - 1;
 		if(LastIndex > InsertIndex) {
 			for(auto i = LastIndex; i > InsertIndex; --i) {
-				Debug::Log("Shuffling cameo from slot %d to %d\n", i - 1, i);
+				//Debug::Log("Shuffling cameo from slot %d to %d\n", i - 1, i);
 				cameos[i] = cameos[i - 1];
 			}
 			cameos[InsertIndex] = newCameo;
@@ -596,7 +596,7 @@ DEFINE_HOOK(6AA711, TabCameoListClass_RecheckCameos_FilterAllowedCameos, 0)
 		}
 
 		if(!KeepCameo) {
-			Debug::Log("Removing cameo %d from tab %d\n", ix - 1, TabIndex);
+			//Debug::Log("Removing cameo %d from tab %d\n", ix - 1, TabIndex);
 
 			if(cameo.CurrentFactory) {
 				NetworkEvent Event;
