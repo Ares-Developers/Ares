@@ -15,22 +15,20 @@
 
 class ArmorType;
 
-class ArmorType  : public Enumerable<ArmorType>
+class ArmorType : public Enumerable<ArmorType>
 {
-	public:
-		int DefaultIndex;
-		WarheadTypeExt::VersesData DefaultVerses;
+public:
+	ArmorType(const char *Title) : Enumerable<ArmorType>(Title), DefaultIndex(-1) { }
 
-	ArmorType(const char *Title) : Enumerable<ArmorType>(Title), DefaultIndex(-1) {
-	}
+	virtual ~ArmorType() override = default;
 
-	virtual ~ArmorType() {
-	}
-
-	virtual void LoadFromINI(CCINIClass *pINI);
+	virtual void LoadFromINI(CCINIClass *pINI) override;
 
 	static void LoadForWarhead(CCINIClass *pINI, WarheadTypeClass* pWH);
 	static void AddDefaults();
+
+	int DefaultIndex;
+	WarheadTypeExt::VersesData DefaultVerses;
 };
 
 #endif

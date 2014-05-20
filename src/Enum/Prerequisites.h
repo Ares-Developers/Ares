@@ -20,17 +20,13 @@ class GenericPrerequisite;
 class GenericPrerequisite : public Enumerable<GenericPrerequisite>
 {
 public:
+	GenericPrerequisite(const char *Title) : Enumerable<GenericPrerequisite>(Title) { }
+
+	virtual ~GenericPrerequisite() override = default;
+
+	virtual void LoadFromINI(CCINIClass *pINI) override;
+
 	static void AddDefaults();
-
-	virtual void LoadFromINI(CCINIClass *pINI);
-
-	GenericPrerequisite(const char *Title) : Enumerable<GenericPrerequisite>(Title)
-	{
-	}
-
-	virtual ~GenericPrerequisite()
-	{
-	}
 
 	DynamicVectorClass<int> Prereqs;
 };
@@ -38,6 +34,8 @@ public:
 class Prereqs
 {
 public:
+	typedef Iterator<BuildingTypeClass*> BTypeIter;
+
 	static void Parse(CCINIClass *pINI, const char* section, const char *key, DynamicVectorClass<int> *vec);
 
 	static bool HouseOwnsGeneric(HouseClass *pHouse, signed int Index);
@@ -47,16 +45,12 @@ public:
 	static bool HouseOwnsAll(HouseClass *pHouse, DynamicVectorClass<int> *list);
 	static bool HouseOwnsAny(HouseClass *pHouse, DynamicVectorClass<int> *list);
 
-
-	typedef Iterator<BuildingTypeClass*> BTypeIter;
-
 	static bool ListContainsGeneric(const BTypeIter &List, signed int Index);
 	static bool ListContainsSpecific(const BTypeIter &List, signed int Index);
 	static bool ListContainsPrereq(const BTypeIter &List, signed int Index);
 
 	static bool ListContainsAll(const BTypeIter &List, DynamicVectorClass<int> *Requirements);
 	static bool ListContainsAny(const BTypeIter &List, DynamicVectorClass<int> *Requirements);
-
 };
 
 #endif

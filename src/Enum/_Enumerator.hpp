@@ -60,9 +60,7 @@ public:
 		}
 	}
 
-	Enumerable()
-	{
-	}
+	static const char * GetMainSection();
 
 	Enumerable(const char* Title) {
 		this->Name[0] = 0;
@@ -72,11 +70,9 @@ public:
 		}
 	}
 
-	virtual ~Enumerable()
-	{
-	}
+	virtual ~Enumerable() = default;
 
-	static const char * GetMainSection();
+	virtual void LoadFromINI(CCINIClass *pINI) {}
 
 	char Name[32];
 };

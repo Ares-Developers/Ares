@@ -14,7 +14,6 @@ class CCINIClass;
 class RadType : public Enumerable<RadType>
 {
 private:
-
 	Nullable<WarheadTypeClass *> WH;
 	Nullable<ColorStruct> Color;
 	Nullable<int> Duration_Multiple;
@@ -27,9 +26,6 @@ private:
 	Nullable<double> Tint_Factor;
 
 public:
-
-	virtual void LoadFromINI(CCINIClass *pINI);
-
 	RadType(const char *Title) : Enumerable<RadType>(Title),
 		WH(),
 		Color(),
@@ -41,12 +37,11 @@ public:
 		Level_Factor(),
 		Light_Factor(),
 		Tint_Factor()
-	{
-	}
+	{ }
 
-	virtual ~RadType()
-	{
-	}
+	virtual ~RadType() override = default;
+
+	virtual void LoadFromINI(CCINIClass *pINI) override;
 
 	WarheadTypeClass* GetWarhead() const {
 		return this->WH.Get(RulesClass::Instance->RadSiteWarhead);
