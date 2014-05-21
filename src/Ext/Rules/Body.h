@@ -137,6 +137,11 @@ public:
 	static DynamicVectorClass<CameoDataStruct> TabCameos[4];
 
 	static void ClearCameos();
+
+	static void Clear() {
+		ClearCameos();
+		Allocate(RulesClass::Instance);
+	}
 };
 
 #endif

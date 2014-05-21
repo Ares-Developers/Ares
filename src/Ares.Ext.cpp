@@ -85,8 +85,7 @@ DEFINE_HOOK(685659, Scenario_ClearClasses, a)
 	RadType::Clear();
 	GenericPrerequisite::Clear();
 
-	RulesExt::ClearCameos();
-	RulesExt::Allocate(RulesClass::Instance);
+	RulesExt::Clear();
 
 	return 0;
 }
