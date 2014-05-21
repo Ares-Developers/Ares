@@ -148,3 +148,24 @@ DEFINE_HOOK(667A30, RulesClass_DTOR, 5) {
 	RulesExt::Remove(pItem);
 	return 0;
 }
+
+/*
+A_FINE_HOOK_AGAIN(674730, RulesClass_SaveLoad_Prefix, 6)
+A_FINE_HOOK(675210, RulesClass_SaveLoad_Prefix, 5)
+{
+	//GET(RulesExt::TT*, pItem, ECX);
+	//GET_STACK(IStream*, pStm, 0x4);
+
+	return 0;
+}
+
+A_FINE_HOOK(678841, RulesClass_Load_Suffix, 7)
+{
+	return 0;
+}
+
+A_FINE_HOOK(675205, RulesClass_Save_Suffix, 8)
+{
+	return 0;
+}
+*/
