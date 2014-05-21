@@ -86,3 +86,47 @@ bool TActionExt::Execute(TActionClass* pAction, HouseClass* pHouse, ObjectClass*
 
 	return true;
 }
+
+// =============================
+// container hooks
+
+#ifdef MAKE_GAME_SLOWER_FOR_NO_REASON
+A_FINE_HOOK(6DD176, TActionClass_CTOR, 5)
+{
+	GET(TActionClass*, pItem, ESI);
+
+	TActionExt::ExtMap.FindOrAllocate(pItem);
+	return 0;
+}
+
+A_FINE_HOOK(6E4660, TActionClass_SDDTOR, 6)
+{
+	GET(TActionClass*, pItem, ECX);
+
+	TActionExt::ExtMap.Remove(pItem);
+	return 0;
+}
+
+A_FINE_HOOK_AGAIN(6E3E30, TActionClass_SaveLoad_Prefix, 8)
+A_FINE_HOOK(6E3DB0, TActionClass_SaveLoad_Prefix, 5)
+{
+	GET_STACK(TActionExt::TT*, pItem, 0x4);
+	GET_STACK(IStream*, pStm, 0x8);
+
+	Container<TActionExt>::PrepareStream(pItem, pStm);
+
+	return 0;
+}
+
+A_FINE_HOOK(6E3E29, TActionClass_Load_Suffix, 4)
+{
+	TActionExt::ExtMap.LoadStatic();
+	return 0;
+}
+
+A_FINE_HOOK(6E3E4A, TActionClass_Save_Suffix, 3)
+{
+	TActionExt::ExtMap.SaveStatic();
+	return 0;
+}
+#endif
