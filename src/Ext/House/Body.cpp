@@ -432,7 +432,7 @@ InfantryTypeClass* HouseExt::ExtData::GetDisguise() const {
 }
 
 // =============================
-// load/save
+// load / save
 
 bool Container<HouseExt>::Load(HouseClass *pThis, IStream *pStm) {
 	HouseExt::ExtData* pData = this->LoadKey(pThis, pStm);

@@ -469,7 +469,7 @@ int HouseTypeExt::PickRandomCountry() {
 }
 
 // =============================
-// load/save
+// load / save
 
 bool Container<HouseTypeExt>::Save(HouseTypeClass *pThis, IStream *pStm) {
 	HouseTypeExt::ExtData* pData = this->SaveKey(pThis, pStm);
@@ -543,4 +543,3 @@ DEFINE_HOOK(51214F, HouseTypeClass_LoadFromINI, 5)
 	HouseTypeExt::ExtMap.LoadFromINI(pItem, pINI);
 	return 0;
 }
-

@@ -388,7 +388,7 @@ void Container<WeaponTypeExt>::InvalidatePointer(void *ptr, bool bRemoved) {
 }
 
 // =============================
-// load/save
+// load / save
 
 bool Container<WeaponTypeExt>::Save(WeaponTypeClass *pThis, IStream *pStm) {
 	WeaponTypeExt::ExtData* pData = this->SaveKey(pThis, pStm);
@@ -480,8 +480,7 @@ DEFINE_HOOK(771EE9, WeaponTypeClass_CTOR, 5)
 	return 0;
 }
 
-
-DEFINE_HOOK(7730F0, WeaponTypeClass_DTOR, 5)
+DEFINE_HOOK(7730F0, WeaponTypeClass_SDDTOR, 5)
 {
 	GET(WeaponTypeClass*, pItem, ECX);
 

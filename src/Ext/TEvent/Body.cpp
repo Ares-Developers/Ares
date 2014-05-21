@@ -158,7 +158,6 @@ DEFINE_HOOK(71E7F8, TEventClass_CTOR, 5)
 	return 0;
 }
 
-
 DEFINE_HOOK(71FA80, TEventClass_SDDTOR, 6)
 {
 	GET(TEventClass*, pItem, ECX);

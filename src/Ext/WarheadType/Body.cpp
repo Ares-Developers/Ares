@@ -110,36 +110,6 @@ void Container<WarheadTypeExt>::InvalidatePointer(void *ptr, bool bRemoved) {
 	AnnounceInvalidPointer(WarheadTypeExt::Temporal_WH, ptr);
 }
 
-// =============================
-// load/save
-bool Container<WarheadTypeExt>::Save(WarheadTypeClass *pThis, IStream *pStm) {
-	WarheadTypeExt::ExtData* pData = this->SaveKey(pThis, pStm);
-
-	if(pData) {
-		//ULONG out;
-		//pData->Verses.Save(pStm);
-	}
-
-	return pData != nullptr;
-}
-/*
-		pStm->Write(&IonBlastClass::Array->Count, 4, &out);
-		for(int ii = 0; ii < IonBlastClass::Array->Count; ++ii) {
-			IonBlastClass *ptr = IonBlastClass::Array->Items[ii];
-			pStm->Write(ptr, 4, &out);
-			pStm->Write(WarheadTypeExt::IonExt[ptr], 4, &out);
-		}
-*/
-bool Container<WarheadTypeExt>::Load(WarheadTypeClass *pThis, IStream *pStm) {
-	WarheadTypeExt::ExtData* pData = this->LoadKey(pThis, pStm);
-
-	//pData->Verses.Load(pStm, 0);
-
-	SWIZZLE(pData->Temporal_WarpAway);
-
-	return pData != nullptr;
-}
-
 /*!
 	This function checks if the passed warhead has Ripple.Radius set, and, if so, applies the effect.
 	\note Moved here from hook BulletClass_Fire.
@@ -508,6 +478,37 @@ void WarheadTypeExt::ExtData::applyAttachedEffect(CoordStruct *coords, TechnoCla
 }
 
 // =============================
+// load / save
+
+bool Container<WarheadTypeExt>::Save(WarheadTypeClass *pThis, IStream *pStm) {
+	WarheadTypeExt::ExtData* pData = this->SaveKey(pThis, pStm);
+
+	if(pData) {
+		//ULONG out;
+		//pData->Verses.Save(pStm);
+	}
+
+	return pData != nullptr;
+}
+/*
+pStm->Write(&IonBlastClass::Array->Count, 4, &out);
+for(int ii = 0; ii < IonBlastClass::Array->Count; ++ii) {
+IonBlastClass *ptr = IonBlastClass::Array->Items[ii];
+pStm->Write(ptr, 4, &out);
+pStm->Write(WarheadTypeExt::IonExt[ptr], 4, &out);
+}
+*/
+bool Container<WarheadTypeExt>::Load(WarheadTypeClass *pThis, IStream *pStm) {
+	WarheadTypeExt::ExtData* pData = this->LoadKey(pThis, pStm);
+
+	//pData->Verses.Load(pStm, 0);
+
+	SWIZZLE(pData->Temporal_WarpAway);
+
+	return pData != nullptr;
+}
+
+// =============================
 // container hooks
 
 DEFINE_HOOK(75D1A9, WarheadTypeClass_CTOR, 7)
@@ -518,7 +519,7 @@ DEFINE_HOOK(75D1A9, WarheadTypeClass_CTOR, 7)
 	return 0;
 }
 
-DEFINE_HOOK(75E510, WarheadTypeClass_DTOR, 6)
+DEFINE_HOOK(75E510, WarheadTypeClass_SDDTOR, 6)
 {
 	GET(WarheadTypeClass*, pItem, ECX);
 

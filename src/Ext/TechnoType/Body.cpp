@@ -604,7 +604,7 @@ bool TechnoTypeExt::ExtData::CarryallCanLift(UnitClass * Target) {
 }
 
 // =============================
-// load/save
+// load / save
 
 bool Container<TechnoTypeExt>::Save(TechnoTypeClass *pThis, IStream *pStm) {
 	TechnoTypeExt::ExtData* pData = this->SaveKey(pThis, pStm);
@@ -714,4 +714,3 @@ DEFINE_HOOK(679CAF, RulesClass_LoadAfterTypeData_CheckRubbleFoundation, 5) {
 
 	return 0;
 }
-

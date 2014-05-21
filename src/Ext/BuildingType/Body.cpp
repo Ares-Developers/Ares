@@ -413,7 +413,7 @@ bool BuildingTypeExt::ExtData::CanBeOccupiedBy(InfantryClass *whom) {
 }
 
 // =============================
-// load/save
+// load / save
 
 bool Container<BuildingTypeExt>::Save(BuildingTypeClass *pThis, IStream *pStm) {
 	BuildingTypeExt::ExtData* pData = this->SaveKey(pThis, pStm);
@@ -452,7 +452,6 @@ DEFINE_HOOK(45E50C, BuildingTypeClass_CTOR, 6)
 	BuildingTypeExt::ExtMap.FindOrAllocate(pItem);
 	return 0;
 }
-
 
 DEFINE_HOOK(45E580, BuildingTypeClass_DTOR, 5)
 {
@@ -494,4 +493,3 @@ DEFINE_HOOK(464A49, BuildingTypeClass_LoadFromINI, A)
 	BuildingTypeExt::ExtMap.LoadFromINI(pItem, pINI);
 	return 0;
 }
-

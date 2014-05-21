@@ -91,7 +91,7 @@ int TiberiumExt::ExtData::GetDebrisChance() const
 }
 
 // =============================
-// load/save
+// load / save
 
 bool Container<TiberiumExt>::Save(TiberiumClass* pThis, IStream* pStm) {
 	TiberiumExt::ExtData* pData = this->SaveKey(pThis, pStm);

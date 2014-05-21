@@ -116,7 +116,7 @@ class RulesExt
 
 		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
 		}
-};
+	};
 
 private:
 	static std::unique_ptr<ExtData> Data;

@@ -862,7 +862,6 @@ void BuildingExt::ExtData::KickOutClones(TechnoClass * Production) {
 // =============================
 // container hooks
 
-
 DEFINE_HOOK(43BCBD, BuildingClass_CTOR, 6)
 {
 	GET(BuildingClass*, pItem, ESI);
@@ -901,4 +900,3 @@ DEFINE_HOOK(454244, BuildingClass_Save_Suffix, 7)
 	BuildingExt::ExtMap.SaveStatic();
 	return 0;
 }
-

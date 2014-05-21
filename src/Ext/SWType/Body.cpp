@@ -587,7 +587,7 @@ void Container<SWTypeExt>::InvalidatePointer(void *ptr, bool bRemoved) {
 }
 
 // =============================
-// load/save
+// load / save
 
 bool Container<SWTypeExt>::Load(SuperWeaponTypeClass *pThis, IStream *pStm) {
 	SWTypeExt::ExtData* pData = this->LoadKey(pThis, pStm);
@@ -608,7 +608,7 @@ DEFINE_HOOK(6CE6F6, SuperWeaponTypeClass_CTOR, 5)
 	return 0;
 }
 
-DEFINE_HOOK(6CEFE0, SuperWeaponTypeClass_DTOR, 8)
+DEFINE_HOOK(6CEFE0, SuperWeaponTypeClass_SDDTOR, 8)
 {
 	GET(SuperWeaponTypeClass*, pItem, ECX);
 

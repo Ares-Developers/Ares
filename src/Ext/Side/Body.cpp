@@ -9,6 +9,10 @@
 //Static init
 template<> const DWORD Extension<SideClass>::Canary = 0x87654321;
 Container<SideExt> SideExt::ExtMap;
+
+template<> SideExt::TT *Container<SideExt>::SavingObject = nullptr;
+template<> IStream *Container<SideExt>::SavingStream = nullptr;
+
 int SideExt::CurrentLoadTextColor = -1;
 
 UniqueGamePtr<SHPStruct> SideExt::GraphicalTextImage = nullptr;
@@ -18,9 +22,6 @@ UniqueGamePtr<ConvertClass> SideExt::GraphicalTextConvert = nullptr;
 UniqueGamePtr<SHPStruct> SideExt::DialogBackgroundImage = nullptr;
 UniqueGamePtr<BytePalette> SideExt::DialogBackgroundPalette = nullptr;
 UniqueGamePtr<ConvertClass> SideExt::DialogBackgroundConvert = nullptr;
-
-template<> SideExt::TT *Container<SideExt>::SavingObject = nullptr;
-template<> IStream *Container<SideExt>::SavingStream = nullptr;
 
 void SideExt::ExtData::Initialize(SideClass *pThis)
 {
@@ -443,7 +444,7 @@ ConvertClass* SideExt::GetGraphicalTextConvert() {
 }
 
 // =============================
-// load/save
+// load / save
 
 bool Container<SideExt>::Save(SideClass *pThis, IStream *pStm) {
 	SideExt::ExtData* pData = this->SaveKey(pThis, pStm);
@@ -483,8 +484,7 @@ DEFINE_HOOK(6A4609, SideClass_CTOR, 7)
 	return 0;
 }
 
-
-DEFINE_HOOK(6A4930, SideClass_DTOR, 6)
+DEFINE_HOOK(6A4930, SideClass_SDDTOR, 6)
 {
 	GET(SideClass*, pItem, ECX);
 

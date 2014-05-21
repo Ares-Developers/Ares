@@ -1159,7 +1159,7 @@ void TechnoExt::ExtData::SetSpotlight(BuildingLightClass* pSpotlight) {
 }
 
 // =============================
-// load/save
+// load / save
 
 bool Container<TechnoExt>::Load(TechnoClass *pThis, IStream *pStm) {
 	TechnoExt::ExtData* pData = this->LoadKey(pThis, pStm);
