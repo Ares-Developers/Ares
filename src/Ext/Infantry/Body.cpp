@@ -11,7 +11,11 @@
 #include "../Rules/Body.h"
 #include <GameModeOptionsClass.h>
 
+template<> const DWORD Extension<InfantryClass>::Canary = 0xE1E2E3E4;
 Container<InfantryExt> InfantryExt::ExtMap;
+
+template<> InfantryClass *Container<InfantryExt>::SavingObject = nullptr;
+template<> IStream *Container<InfantryExt>::SavingStream = nullptr;
 
 bool InfantryExt::ExtData::IsOccupant() {
 	InfantryClass* thisTrooper = this->AttachedToObject;
@@ -69,3 +73,47 @@ eAction InfantryExt::GetEngineerEnterEnemyBuildingAction(BuildingClass *pBld) {
 	// default.
 	return act_Capture;
 }
+
+// =============================
+// container hooks
+
+#ifdef MAKE_GAME_SLOWER_FOR_NO_REASON
+A_FINE_HOOK(517CB0, InfantryClass_CTOR, 5)
+{
+	GET(InfantryClass*, pItem, ESI);
+
+	InfantryExt::ExtMap.FindOrAllocate(pItem);
+	return 0;
+}
+
+A_FINE_HOOK(517D90, InfantryClass_DTOR, 5)
+{
+	GET(InfantryClass*, pItem, ECX);
+
+	InfantryExt::ExtMap.Remove(pItem);
+	return 0;
+}
+
+A_FINE_HOOK_AGAIN(521B00, InfantryClass_SaveLoad_Prefix, 8)
+A_FINE_HOOK(521960, InfantryClass_SaveLoad_Prefix, 6)
+{
+	GET_STACK(InfantryExt::TT*, pItem, 0x4);
+	GET_STACK(IStream*, pStm, 0x8);
+
+	Container<InfantryExt>::PrepareStream(pItem, pStm);
+
+	return 0;
+}
+
+A_FINE_HOOK(521AEC, InfantryClass_Load_Suffix, 6)
+{
+	InfantryExt::ExtMap.LoadStatic();
+	return 0;
+}
+
+A_FINE_HOOK(521B14, InfantryClass_Save_Suffix, 3)
+{
+	InfantryExt::ExtMap.SaveStatic();
+	return 0;
+}
+#endif
