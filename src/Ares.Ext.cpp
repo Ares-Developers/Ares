@@ -54,7 +54,7 @@ DEFINE_HOOK(7258D0, AnnounceInvalidPointer, 6)
 	WarheadTypeExt::ExtMap.PointerGotInvalid(ptr, bRemoved);
 	WeaponTypeExt::ExtMap.PointerGotInvalid(ptr, bRemoved);
 
-	RulesExt::Global()->InvalidatePointer(ptr, bRemoved);
+	RulesExt::PointerGotInvalid(ptr, bRemoved);
 
 	return 0;
 }

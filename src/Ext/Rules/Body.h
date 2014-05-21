@@ -142,6 +142,10 @@ public:
 		ClearCameos();
 		Allocate(RulesClass::Instance);
 	}
+
+	static void PointerGotInvalid(void* ptr, bool removed) {
+		Global()->InvalidatePointer(ptr, removed);
+	}
 };
 
 #endif
