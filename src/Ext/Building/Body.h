@@ -143,7 +143,7 @@ public:
 
 	static DWORD FoundationLength(CellStruct * StartCell);
 
-	static void Cleanup();
+	static void Clear();
 };
 
 #endif

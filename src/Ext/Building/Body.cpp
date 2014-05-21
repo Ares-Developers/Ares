@@ -756,7 +756,9 @@ DWORD BuildingExt::FoundationLength(CellStruct * StartCell) {
 	return Len;
 }
 
-void BuildingExt::Cleanup() {
+void BuildingExt::Clear() {
+	BuildingExt::ExtMap.Clear();
+
 	BuildingExt::TempFoundationData1.clear();
 	BuildingExt::TempFoundationData2.clear();
 }

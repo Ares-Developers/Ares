@@ -63,8 +63,7 @@ DEFINE_HOOK(685659, Scenario_ClearClasses, a)
 {
 	AbstractExt::ExtMap.Clear();
 	AnimTypeExt::ExtMap.Clear();
-	BuildingExt::ExtMap.Clear();
-	BuildingExt::Cleanup();
+	BuildingExt::Clear();
 	BuildingTypeExt::ExtMap.Clear();
 	BulletExt::ExtMap.Clear();
 	BulletTypeExt::ExtMap.Clear();
