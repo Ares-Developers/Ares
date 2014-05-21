@@ -81,9 +81,9 @@ DEFINE_HOOK(685659, Scenario_ClearClasses, a)
 	WarheadTypeExt::ExtMap.Clear();
 	WeaponTypeExt::ExtMap.Clear();
 
-	ArmorType::ClearArray();
-	RadType::ClearArray();
-	GenericPrerequisite::ClearArray();
+	ArmorType::Clear();
+	RadType::Clear();
+	GenericPrerequisite::Clear();
 
 	RulesExt::ClearCameos();
 	RulesExt::Allocate(RulesClass::Instance);

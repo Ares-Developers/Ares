@@ -42,7 +42,7 @@ public:
 		return Array.back().get();
 	}
 
-	static void ClearArray()
+	static void Clear()
 	{
 		Array.clear();
 	}
