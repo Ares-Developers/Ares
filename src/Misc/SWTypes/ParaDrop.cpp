@@ -210,19 +210,11 @@ bool SW_ParaDrop::SendParadrop(SuperClass* pThis, CellClass* pCell)
 		pFallbackPlane = pExt->GetParadropPlane();
 	}
 
-	// get the paradrop list without creating a new value
-	auto GetParadropPlanes = [pData](AbstractTypeClass* pKey) -> std::vector<ParadropPlane*>* {
-		if(pData->ParaDrop.find(pKey) == pData->ParaDrop.end()) {
-			return nullptr;
-		}
-		return &pData->ParaDrop[pKey];
-	};
-
 	// use paradrop lists from house, side and default
 	std::vector<ParadropPlane*>* drops[3];
-	drops[0] = GetParadropPlanes(pHouse->Type);
-	drops[1] = GetParadropPlanes(SideClass::Array->GetItem(pHouse->Type->SideIndex));
-	drops[2] = GetParadropPlanes(nullptr);
+	drops[0] = pData->ParaDrop.find(pHouse->Type);
+	drops[1] = pData->ParaDrop.find(SideClass::Array->GetItem(pHouse->Type->SideIndex));
+	drops[2] = pData->ParaDrop.find(nullptr);
 
 	// how many planes shall we launch?
 	int count = 0;

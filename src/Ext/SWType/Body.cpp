@@ -26,10 +26,6 @@ template<> IStream *Container<SWTypeExt>::SavingStream = nullptr;
 
 SuperWeaponTypeClass *SWTypeExt::CurrentSWType = nullptr;
 
-SWTypeExt::ExtData::~ExtData() {
-	this->ParaDrop.clear();
-};
-
 void SWTypeExt::ExtData::InitializeConstants(SuperWeaponTypeClass *pThis)
 {
 	NewSWType::Init();

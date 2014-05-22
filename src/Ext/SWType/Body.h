@@ -95,7 +95,7 @@ public:
 		Valueable<bool> Nuke_SiloLaunch;
 
 		// Generic Paradrop
-		hash_map<AbstractTypeClass*, std::vector<ParadropPlane*>> ParaDrop;
+		AresMap<AbstractTypeClass*, std::vector<ParadropPlane*>> ParaDrop;
 		std::vector<std::unique_ptr<ParadropPlane>> ParaDropPlanes;
 
 		// Generic Protection
@@ -296,7 +296,7 @@ public:
 				*SW_PostDependent = 0;
 			};
 
-		virtual ~ExtData();
+		virtual ~ExtData() = default;
 
 		virtual void LoadFromRulesFile(TT *pThis, CCINIClass *pINI);
 		virtual void LoadFromINIFile(TT *pThis, CCINIClass *pINI);
