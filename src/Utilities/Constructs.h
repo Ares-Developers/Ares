@@ -11,8 +11,10 @@
 #include <StringTable.h>
 #include <Helpers/String.h>
 
+#include <algorithm>
 #include <cstring>
 #include <memory>
+#include <vector>
 
 #include "../Ares.h"
 #include "../Ares.CRT.h"
@@ -142,6 +144,86 @@ public:
 			this->Strings.AddItem(cur);
 		}
 	}
+};
+
+// a poor man's map with contiguous storage
+template <typename TKey, typename TValue>
+class AresMap {
+public:
+	TValue& operator[] (const TKey& key) {
+		if(auto pValue = this->find(key)) {
+			return *pValue;
+		}
+		this->values.emplace_back(key, TValue());
+		return this->values.back().second;
+	}
+
+	TValue* find(const TKey& key) {
+		if(auto pValue = static_cast<const AresMap*>(this)->find(key)) {
+			return const_cast<TValue*>(pValue);
+		}
+		return nullptr;
+	}
+
+	const TValue* find(const TKey& key) const {
+		auto it = this->get_iterator(key);
+		if(it != this->values.end()) {
+			return &it->second;
+		}
+		return nullptr;
+	}
+
+	TValue get_or_default(const TKey& key) const {
+		if(auto pValue = this->find(key)) {
+			return *pValue;
+		}
+		return TValue();
+	}
+
+	TValue get_or_default(const TKey& key, TValue def) const {
+		if(auto pValue = this->find(key)) {
+			return *pValue;
+		}
+		return def;
+	}
+
+	void erase(const TKey& key) {
+		auto it = this->get_iterator(key);
+		if(it != this->values.end()) {
+			this->values.erase(it);
+		}
+	}
+
+	bool contains(const TKey& key) const {
+		return this->get_iterator(key) != this->values.end();
+	}
+
+	void insert(const TKey& key, TValue value) {
+		(*this)[key] = value;
+	}
+
+	size_t size() const {
+		return this->values.size();
+	}
+
+	bool empty() const {
+		return this->values.empty();
+	}
+
+	void clear() {
+		this->values.clear();
+	}
+
+private:
+	using container_t = std::vector<std::pair<TKey, TValue>>;
+
+	typename container_t::const_iterator get_iterator(const TKey& key) const {
+		return std::find_if(this->values.begin(), this->values.end(), [&](const container_t::value_type& item) {
+			return item.first == key;
+		});
+	}
+
+	container_t values;
 };
 
 // provides storage for a csf label with automatic lookup.
