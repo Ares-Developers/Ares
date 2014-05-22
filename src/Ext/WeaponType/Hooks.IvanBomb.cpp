@@ -32,7 +32,7 @@ DEFINE_HOOK(438A00, BombClass_GetCurrentFrame, 6)
 {
 	GET(BombClass*, pThis, ECX);
 
-	auto pData = WeaponTypeExt::BombExt[pThis];
+	auto pData = WeaponTypeExt::BombExt.get_or_default(pThis);
 	if(!pData) {
 		return 0;
 	}
@@ -76,7 +76,7 @@ DEFINE_HOOK(6F523C, TechnoClass_DrawExtras_IvanBombImage, 5)
 	GET(TechnoClass*, pThis, EBP);
 	auto pBomb = pThis->AttachedBomb;
 
-	auto pData = WeaponTypeExt::BombExt[pBomb];
+	auto pData = WeaponTypeExt::BombExt.get_or_default(pBomb);
 
 	if(SHPStruct* pImage = pData->Ivan_Image.Get(RulesClass::Instance->BOMBCURS_SHP)) {
 		R->ECX(pImage);
@@ -93,7 +93,7 @@ DEFINE_HOOK(6FCBAD, TechnoClass_GetObjectActivityState_IvanBomb, 6)
 	GET(WarheadTypeClass *, Warhead, EDI);
 	if(Warhead->BombDisarm) {
 		if(BombClass *Bomb = Target->AttachedBomb) {
-			WeaponTypeExt::ExtData *pData = WeaponTypeExt::BombExt[Bomb];
+			WeaponTypeExt::ExtData *pData = WeaponTypeExt::BombExt.get_or_default(Bomb);
 			if(!pData->Ivan_Detachable) {
 				return 0x6FCBBE;
 			}
@@ -108,7 +108,7 @@ DEFINE_HOOK(51E488, InfantryClass_GetCursorOverObject2, 5)
 	GET(TechnoClass *, Target, ESI);
 	BombClass *Bomb = Target->AttachedBomb;
 
-	WeaponTypeExt::ExtData *pData = WeaponTypeExt::BombExt[Bomb];
+	WeaponTypeExt::ExtData *pData = WeaponTypeExt::BombExt.get_or_default(Bomb);
 	if(!pData->Ivan_Detachable) {
 		return 0x51E49E;
 	}
@@ -121,7 +121,7 @@ DEFINE_HOOK(438799, BombClass_Detonate1, 6)
 {
 	GET(BombClass *, Bomb, ESI);
 
-	WeaponTypeExt::ExtData *pData = WeaponTypeExt::BombExt[Bomb];
+	WeaponTypeExt::ExtData *pData = WeaponTypeExt::BombExt.get_or_default(Bomb);
 
 	R->Stack<WarheadTypeClass *>(0x4, pData->Ivan_WH.Get(RulesClass::Instance->IvanWarhead));
 	R->EDX(pData->Ivan_Damage.Get(RulesClass::Instance->IvanDamage));
@@ -134,7 +134,7 @@ DEFINE_HOOK(438843, BombClass_Detonate2, 6)
 {
 	GET(BombClass *, Bomb, ESI);
 
-	WeaponTypeExt::ExtData *pData = WeaponTypeExt::BombExt[Bomb];
+	WeaponTypeExt::ExtData *pData = WeaponTypeExt::BombExt.get_or_default(Bomb);
 
 	R->EDX<WarheadTypeClass *>(pData->Ivan_WH.Get(RulesClass::Instance->IvanWarhead));
 	R->ECX(pData->Ivan_Damage.Get(RulesClass::Instance->IvanDamage));
@@ -147,7 +147,7 @@ DEFINE_HOOK(438879, BombClass_Detonate3, 6)
 {
 	GET(BombClass *, Bomb, ESI);
 
-	WeaponTypeExt::ExtData *pData = WeaponTypeExt::BombExt[Bomb];
+	WeaponTypeExt::ExtData *pData = WeaponTypeExt::BombExt.get_or_default(Bomb);
 	return pData->Ivan_KillsBridges ? 0 : 0x438989;
 }
 
@@ -156,11 +156,7 @@ DEFINE_HOOK(438879, BombClass_Detonate3, 6)
 DEFINE_HOOK(4393F2, BombClass_SDDTOR, 5)
 {
 	GET(BombClass *, Bomb, ECX);
-	hash_bombExt::iterator i = WeaponTypeExt::BombExt.find(Bomb);
-	if(i != WeaponTypeExt::BombExt.end()) {
-		WeaponTypeExt::BombExt[Bomb] = 0;
-		WeaponTypeExt::BombExt.erase(Bomb);
-	}
+	WeaponTypeExt::BombExt.erase(Bomb);
 	return 0;
 }
 
@@ -218,7 +214,7 @@ DEFINE_HOOK(6FFFB1, TechnoClass_GetCursorOverObject_IvanBombs, 8)
 {
 	GET(TechnoClass*, pThis, EDI);
 	auto pBomb = pThis->AttachedBomb;
-	auto pExt = WeaponTypeExt::BombExt[pBomb];
+	auto pExt = WeaponTypeExt::BombExt.get_or_default(pBomb);
 
 	bool canDetonate = (pBomb->IsDeathBomb() == FALSE)
 		? pExt->Ivan_CanDetonateTimeBomb.Get(RulesClass::Instance->CanDetonateTimeBomb)

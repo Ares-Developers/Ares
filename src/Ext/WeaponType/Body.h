@@ -168,7 +168,7 @@ public:
 
 	static Container<WeaponTypeExt> ExtMap;
 
-	static hash_map<BombClass *, ExtData *> BombExt;
+	static AresMap<BombClass*, ExtData*> BombExt;
 	static AresMap<WaveClass*, ExtData*> WaveExt;
 	static AresMap<EBolt*, ExtData*> BoltExt;
 	static AresMap<RadSiteClass*, ExtData*> RadSiteExt;
@@ -199,7 +199,5 @@ public:
 	// @return skipNormalHandling?
 	static bool ModifyWaveColor(WORD *src, WORD *dst, int Intensity, WaveClass *Wave);
 };
-
-typedef hash_map<BombClass *, WeaponTypeExt::ExtData *> hash_bombExt;
 
 #endif
