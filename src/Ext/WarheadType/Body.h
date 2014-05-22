@@ -12,6 +12,7 @@
 
 #include "../_Container.hpp"
 
+#include "../../Utilities/Constructs.h"
 #include "../../Utilities/Template.h"
 
 #ifdef DEBUGBUILD
@@ -129,7 +130,7 @@ public:
 
 	static WarheadTypeClass *EMP_WH;
 
-	static hash_map<IonBlastClass *, WarheadTypeExt::ExtData *> IonExt;
+	static AresMap<IonBlastClass*, WarheadTypeExt::ExtData*> IonExt;
 
 	static void applyRipples(WarheadTypeClass * pWH, CoordStruct* coords) {
 		if(auto pWHExt = WarheadTypeExt::ExtMap.Find(pWH)) {
@@ -164,5 +165,4 @@ public:
 	}
 };
 
-typedef hash_map<IonBlastClass *, WarheadTypeExt::ExtData *> hash_ionExt;
 #endif

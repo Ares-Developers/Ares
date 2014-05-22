@@ -31,7 +31,7 @@ Container<WarheadTypeExt> WarheadTypeExt::ExtMap;
 template<> WarheadTypeExt::TT *Container<WarheadTypeExt>::SavingObject = nullptr;
 template<> IStream *Container<WarheadTypeExt>::SavingStream = nullptr;
 
-hash_ionExt WarheadTypeExt::IonExt;
+AresMap<IonBlastClass*, WarheadTypeExt::ExtData*> WarheadTypeExt::IonExt;
 
 WarheadTypeClass * WarheadTypeExt::Temporal_WH = nullptr;
 
@@ -106,7 +106,6 @@ void WarheadTypeExt::ExtData::LoadFromINIFile(WarheadTypeClass *pThis, CCINIClas
 };
 
 void Container<WarheadTypeExt>::InvalidatePointer(void *ptr, bool bRemoved) {
-	AnnounceInvalidPointerMap(WarheadTypeExt::IonExt, ptr);
 	AnnounceInvalidPointer(WarheadTypeExt::Temporal_WH, ptr);
 }
 
