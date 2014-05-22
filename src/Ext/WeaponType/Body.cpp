@@ -393,31 +393,31 @@ void Container<WeaponTypeExt>::InvalidatePointer(void *ptr, bool bRemoved) {
 bool Container<WeaponTypeExt>::Save(WeaponTypeClass *pThis, IStream *pStm) {
 	WeaponTypeExt::ExtData* pData = this->SaveKey(pThis, pStm);
 
-	if(pData) {
-		ULONG out;
+	//if(pData) {
+	//	ULONG out;
 
-		DynamicVectorClass<BombClass *> *bombs = &BombListClass::Instance->Bombs;
-		pStm->Write(&bombs->Count, 4, &out);
-		for(int ii = 0; ii < bombs->Count; ++ii) {
-			BombClass *ptr = bombs->Items[ii];
-			pStm->Write(ptr, 4, &out);
-			pStm->Write(WeaponTypeExt::BombExt[ptr], 4, &out);
-		}
+	//	DynamicVectorClass<BombClass *> *bombs = &BombListClass::Instance->Bombs;
+	//	pStm->Write(&bombs->Count, 4, &out);
+	//	for(int ii = 0; ii < bombs->Count; ++ii) {
+	//		BombClass *ptr = bombs->Items[ii];
+	//		pStm->Write(ptr, 4, &out);
+	//		pStm->Write(WeaponTypeExt::BombExt[ptr], 4, &out);
+	//	}
 
-		pStm->Write(&WaveClass::Array->Count, 4, &out);
-		for(int ii = 0; ii < WaveClass::Array->Count; ++ii) {
-			WaveClass *ptr = WaveClass::Array->Items[ii];
-			pStm->Write(ptr, 4, &out);
-			pStm->Write(WeaponTypeExt::WaveExt[ptr], 4, &out);
-		}
+	//	pStm->Write(&WaveClass::Array->Count, 4, &out);
+	//	for(int ii = 0; ii < WaveClass::Array->Count; ++ii) {
+	//		WaveClass *ptr = WaveClass::Array->Items[ii];
+	//		pStm->Write(ptr, 4, &out);
+	//		pStm->Write(WeaponTypeExt::WaveExt[ptr], 4, &out);
+	//	}
 
-		pStm->Write(&RadSiteClass::Array->Count, 4, &out);
-		for(int ii = 0; ii < RadSiteClass::Array->Count; ++ii) {
-			RadSiteClass *ptr = RadSiteClass::Array->Items[ii];
-			pStm->Write(ptr, 4, &out);
-			pStm->Write(WeaponTypeExt::RadSiteExt[ptr], 4, &out);
-		}
-	}
+	//	pStm->Write(&RadSiteClass::Array->Count, 4, &out);
+	//	for(int ii = 0; ii < RadSiteClass::Array->Count; ++ii) {
+	//		RadSiteClass *ptr = RadSiteClass::Array->Items[ii];
+	//		pStm->Write(ptr, 4, &out);
+	//		pStm->Write(WeaponTypeExt::RadSiteExt[ptr], 4, &out);
+	//	}
+	//}
 
 	return pData != nullptr;
 }
@@ -425,46 +425,46 @@ bool Container<WeaponTypeExt>::Save(WeaponTypeClass *pThis, IStream *pStm) {
 bool Container<WeaponTypeExt>::Load(WeaponTypeClass *pThis, IStream *pStm) {
 	WeaponTypeExt::ExtData* pData = this->LoadKey(pThis, pStm);
 
-	ULONG out;
+	//ULONG out;
 
-	int Count;
-	WeaponTypeExt::ExtData* data;
+	//int Count;
+	//WeaponTypeExt::ExtData* data;
 
-	pStm->Read(&Count, 4, &out);
-	for(int ii = 0; ii < Count; ++ii) {
-		BombClass *bomb;
-		pStm->Read(&bomb, 4, &out);
-		SWIZZLE(bomb);
+	//pStm->Read(&Count, 4, &out);
+	//for(int ii = 0; ii < Count; ++ii) {
+	//	BombClass *bomb;
+	//	pStm->Read(&bomb, 4, &out);
+	//	SWIZZLE(bomb);
 
-		pStm->Read(&data, 4, &out);
-		SWIZZLE(data);
-		WeaponTypeExt::BombExt[bomb] = data;
-	}
+	//	pStm->Read(&data, 4, &out);
+	//	SWIZZLE(data);
+	//	WeaponTypeExt::BombExt[bomb] = data;
+	//}
 
-	pStm->Read(&Count, 4, &out);
-	for(int ii = 0; ii < Count; ++ii) {
-		WaveClass *wave;
-		pStm->Read(&wave, 4, &out);
-		SWIZZLE(wave);
+	//pStm->Read(&Count, 4, &out);
+	//for(int ii = 0; ii < Count; ++ii) {
+	//	WaveClass *wave;
+	//	pStm->Read(&wave, 4, &out);
+	//	SWIZZLE(wave);
 
-		pStm->Read(&data, 4, &out);
-		SWIZZLE(data);
-		WeaponTypeExt::WaveExt[wave] = data;
-	}
+	//	pStm->Read(&data, 4, &out);
+	//	SWIZZLE(data);
+	//	WeaponTypeExt::WaveExt[wave] = data;
+	//}
 
-	pStm->Read(&Count, 4, &out);
-	for(int ii = 0; ii < Count; ++ii) {
-		RadSiteClass *rad;
-		pStm->Read(&rad, 4, &out);
-		SWIZZLE(rad);
+	//pStm->Read(&Count, 4, &out);
+	//for(int ii = 0; ii < Count; ++ii) {
+	//	RadSiteClass *rad;
+	//	pStm->Read(&rad, 4, &out);
+	//	SWIZZLE(rad);
 
-		pStm->Read(&data, 4, &out);
-		SWIZZLE(data);
-		WeaponTypeExt::RadSiteExt[rad] = data;
-	}
+	//	pStm->Read(&data, 4, &out);
+	//	SWIZZLE(data);
+	//	WeaponTypeExt::RadSiteExt[rad] = data;
+	//}
 
-	SWIZZLE(pData->Ivan_WH);
-	SWIZZLE(pData->Ivan_Image);
+	//SWIZZLE(pData->Ivan_WH);
+	//SWIZZLE(pData->Ivan_Image);
 
 	return pData != nullptr;
 }
