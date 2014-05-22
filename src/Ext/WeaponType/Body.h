@@ -170,7 +170,7 @@ public:
 
 	static hash_map<BombClass *, ExtData *> BombExt;
 	static hash_map<WaveClass *, ExtData *> WaveExt;
-	static hash_map<EBolt *, ExtData *> BoltExt;
+	static AresMap<EBolt*, ExtData*> BoltExt;
 	static hash_map<RadSiteClass *, ExtData *> RadSiteExt;
 
 #define idxVehicle 0
@@ -202,7 +202,6 @@ public:
 
 typedef hash_map<BombClass *, WeaponTypeExt::ExtData *> hash_bombExt;
 typedef hash_map<WaveClass *, WeaponTypeExt::ExtData *> hash_waveExt;
-typedef hash_map<EBolt *, WeaponTypeExt::ExtData *> hash_boltExt;
 typedef hash_map<RadSiteClass *, WeaponTypeExt::ExtData *> hash_radsiteExt;
 
 #endif

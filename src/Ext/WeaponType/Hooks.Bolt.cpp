@@ -18,18 +18,14 @@ DEFINE_HOOK(6FD480, TechnoClass_FireEBolt, 6)
 DEFINE_HOOK(4C2951, EBolt_DTOR, 5)
 {
 	GET(EBolt *, Bolt, ECX);
-	hash_boltExt::iterator i = WeaponTypeExt::BoltExt.find(Bolt);
-	if(i != WeaponTypeExt::BoltExt.end()) {
-		WeaponTypeExt::BoltExt.erase(i);
-	}
-
+	WeaponTypeExt::BoltExt.erase(Bolt);
 	return 0;
 }
 
 DEFINE_HOOK(4C24BE, EBolt_Draw_Color1, 5)
 {
 	GET_STACK(EBolt *, Bolt, 0x40);
-	WeaponTypeExt::ExtData *pData = WeaponTypeExt::BoltExt[Bolt];
+	WeaponTypeExt::ExtData *pData = WeaponTypeExt::BoltExt.get_or_default(Bolt);
 
 	if(pData) {
 		if(pData->Bolt_Color1.isset()) {
@@ -45,7 +41,7 @@ DEFINE_HOOK(4C24BE, EBolt_Draw_Color1, 5)
 DEFINE_HOOK(4C25CB, EBolt_Draw_Color2, 5)
 {
 	GET_STACK(EBolt *, Bolt, 0x40);
-	WeaponTypeExt::ExtData *pData = WeaponTypeExt::BoltExt[Bolt];
+	WeaponTypeExt::ExtData *pData = WeaponTypeExt::BoltExt.get_or_default(Bolt);
 
 	if(pData) {
 		if(pData->Bolt_Color2.isset()) {
@@ -62,7 +58,7 @@ DEFINE_HOOK(4C25CB, EBolt_Draw_Color2, 5)
 DEFINE_HOOK(4C26C7, EBolt_Draw_Color3, 5)
 {
 	GET_STACK(EBolt *, Bolt, 0x40);
-	WeaponTypeExt::ExtData *pData = WeaponTypeExt::BoltExt[Bolt];
+	WeaponTypeExt::ExtData *pData = WeaponTypeExt::BoltExt.get_or_default(Bolt);
 
 	if(pData) {
 		if(pData->Bolt_Color3.isset()) {
