@@ -438,7 +438,6 @@ UnitTypeClass * TechnoExt::ExtData::GetUnitType() {
 }
 
 void Container<TechnoExt>::InvalidatePointer(void *ptr, bool bRemoved) {
-	AnnounceInvalidPointerMap(TechnoExt::AlphaExt, ptr);
 	AnnounceInvalidPointer(TechnoExt::ActiveBuildingLight, ptr);
 }
 

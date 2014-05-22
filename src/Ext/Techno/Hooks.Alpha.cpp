@@ -7,7 +7,8 @@
 #include <TacticalClass.h>
 #include <Notifications.h>
 
-hash_AlphaExt TechnoExt::AlphaExt;
+AresMap<ObjectClass*, AlphaShapeClass*> TechnoExt::AlphaExt;
+
 // conventions for hashmaps like this:
 // the value's CTOR is the only thing allowed to .insert() or [] stuff
 // the value's (SD)DTOR is the only thing allowed to .erase() stuff
@@ -16,10 +17,10 @@ DEFINE_HOOK(420960, AlphaShapeClass_CTOR, 5)
 {
 	GET_STACK(ObjectClass*, pSource, 0x4);
 	GET(AlphaShapeClass*, pAlpha, ECX);
-	auto i = TechnoExt::AlphaExt.find(pSource);
-	if(i != TechnoExt::AlphaExt.end()) {
-		GameDelete(i->second);
-		// i is invalid now.
+
+	if(auto pOldAlpha = TechnoExt::AlphaExt.get_or_default(pSource)) {
+		GameDelete(pOldAlpha);
+		// pSource is erased from map
 	}
 	TechnoExt::AlphaExt[pSource] = pAlpha;
 	return 0;
@@ -37,10 +38,7 @@ DEFINE_HOOK(420A71, AlphaShapeClass_CTOR_Anims, 5)
 DEFINE_HOOK(421730, AlphaShapeClass_SDDTOR, 8)
 {
 	GET(AlphaShapeClass*, pAlpha, ECX);
-	auto i = TechnoExt::AlphaExt.find(pAlpha->AttachedTo);
-	if(i != TechnoExt::AlphaExt.end()) {
-		TechnoExt::AlphaExt.erase(i);
-	}
+	TechnoExt::AlphaExt.erase(pAlpha->AttachedTo);
 	return 0;
 }
 
@@ -54,10 +52,9 @@ DEFINE_HOOK(421798, AlphaShapeClass_SDDTOR_Anims, 6)
 DEFINE_HOOK(5F3D65, ObjectClass_DTOR, 6)
 {
 	GET(ObjectClass*, pThis, ESI);
-	auto i = TechnoExt::AlphaExt.find(pThis);
-	if(i != TechnoExt::AlphaExt.end()) {
-		GameDelete(i->second);
-		// i is invalid now.
+	if(auto pAlpha = TechnoExt::AlphaExt.get_or_default(pThis)) {
+		GameDelete(pAlpha);
+		// pThis is erased from map
 	}
 	return 0;
 }
@@ -126,10 +123,9 @@ void UpdateAlphaShape(ObjectClass* pSource) {
 	}
 
 	if(Inactive) {
-		auto i = TechnoExt::AlphaExt.find(pSource);
-		if(i != TechnoExt::AlphaExt.end()) {
-			GameDelete(i->second);
-			// i is invalid now.
+		if(auto pAlpha = TechnoExt::AlphaExt.get_or_default(pSource)) {
+			GameDelete(pAlpha);
+			// pSource is erased from map
 		}
 		return;
 	}

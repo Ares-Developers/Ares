@@ -8,6 +8,7 @@
 #include "../../Misc/JammerClass.h"
 #include "../../Misc/PoweredUnitClass.h"
 
+#include "../../Utilities/Constructs.h"
 #include "../../Utilities/Enums.h"
 
 #include "../_Container.hpp"
@@ -162,7 +163,8 @@ public:
 	};
 
 	static Container<TechnoExt> ExtMap;
-	static hash_map<ObjectClass *, AlphaShapeClass *> AlphaExt;
+
+	static AresMap<ObjectClass*, AlphaShapeClass*> AlphaExt;
 
 	static BuildingLightClass * ActiveBuildingLight;
 
@@ -201,6 +203,4 @@ public:
 */
 };
 
-typedef hash_map<ObjectClass *, AlphaShapeClass *> hash_AlphaExt;
-typedef hash_map<TechnoClass *, BuildingLightClass *> hash_SpotlightExt;
 #endif
