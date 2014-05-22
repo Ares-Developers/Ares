@@ -22,7 +22,7 @@ const ColorStruct WeaponTypeExt::ExtData::DefaultWaveColorSonic = ColorStruct(0,
 hash_bombExt WeaponTypeExt::BombExt;
 hash_waveExt WeaponTypeExt::WaveExt;
 AresMap<EBolt*, WeaponTypeExt::ExtData*> WeaponTypeExt::BoltExt;
-hash_radsiteExt WeaponTypeExt::RadSiteExt;
+AresMap<RadSiteClass*, WeaponTypeExt::ExtData*> WeaponTypeExt::RadSiteExt;
 
 void WeaponTypeExt::ExtData::Initialize(WeaponTypeClass *pThis)
 {
@@ -383,7 +383,6 @@ ColorStruct WeaponTypeExt::ExtData::GetBeamColor() const {
 void Container<WeaponTypeExt>::InvalidatePointer(void *ptr, bool bRemoved) {
 	AnnounceInvalidPointerMap(WeaponTypeExt::BombExt, ptr);
 	AnnounceInvalidPointerMap(WeaponTypeExt::WaveExt, ptr);
-	AnnounceInvalidPointerMap(WeaponTypeExt::RadSiteExt, ptr);
 }
 
 // =============================
