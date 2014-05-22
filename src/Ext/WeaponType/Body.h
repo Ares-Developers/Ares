@@ -169,7 +169,7 @@ public:
 	static Container<WeaponTypeExt> ExtMap;
 
 	static hash_map<BombClass *, ExtData *> BombExt;
-	static hash_map<WaveClass *, ExtData *> WaveExt;
+	static AresMap<WaveClass*, ExtData*> WaveExt;
 	static AresMap<EBolt*, ExtData*> BoltExt;
 	static AresMap<RadSiteClass*, ExtData*> RadSiteExt;
 
@@ -201,6 +201,5 @@ public:
 };
 
 typedef hash_map<BombClass *, WeaponTypeExt::ExtData *> hash_bombExt;
-typedef hash_map<WaveClass *, WeaponTypeExt::ExtData *> hash_waveExt;
 
 #endif
