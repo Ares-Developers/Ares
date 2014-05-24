@@ -1038,7 +1038,7 @@ DEFINE_HOOK(6F6AC9, TechnoClass_Remove, 6) {
 		TechnoExt->AttachEffects_RecreateAnims = true;
 	}
 
-	return 0;
+	return pThis->InLimbo ? 0x6F6C93 : 0x6F6AD5;
 }
 
 DEFINE_HOOK(74642C, UnitClass_ReceiveGunner, 6)
