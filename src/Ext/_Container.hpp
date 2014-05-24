@@ -178,17 +178,12 @@ public:
 		return i->second.get();
 	}
 
-	ValueType Find(const KeyType &key) {
+	ValueType Find(const KeyType &key) const {
 		auto i = this->Items.find(key);
 		if(i == this->Items.end()) {
 			return nullptr;
 		}
 		return i->second.get();
-	}
-
-	const ValueType Find(const KeyType &key) const {
-		auto that = const_cast<Container<T>*>(this);
-		return that->Find(key);
 	}
 
 	void Remove(KeyType key) {
