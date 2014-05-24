@@ -102,7 +102,7 @@ void WarheadTypeExt::ExtData::LoadFromINIFile(WarheadTypeClass *pThis, CCINIClas
 
 	this->CellSpread_MaxAffect.Read(exINI, section, "CellSpread.MaxAffect");
 
-	this->AttachedEffect.Read(exINI, section);
+	this->AttachedEffect.Read(exINI);
 };
 
 void Container<WarheadTypeExt>::InvalidatePointer(void *ptr, bool bRemoved) {

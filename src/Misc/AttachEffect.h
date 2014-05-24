@@ -10,7 +10,6 @@
 class AttachEffectTypeClass {
 public:
 
-	char ID[24]; // as westwood once said, 24 chars ought to be enough for any ID
 	AbstractTypeClass* Owner;
 	Valueable<int> Duration;
 	Valueable<bool> Cumulative;
@@ -59,11 +58,10 @@ public:
 		DamageDelay(0),
 		*/
 		Delay(0)
-		{
-			this->ID[0] = 0;
-		};
+	{
+	}
 
-	void Read(INI_EX &exINI, const char * section);
+	void Read(INI_EX &exINI);
 };
 
 class AttachEffectClass {

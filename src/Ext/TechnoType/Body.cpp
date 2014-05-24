@@ -326,7 +326,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	this->PoweredBy.Read(exINI, section, "PoweredBy");
 
 	//#1623 - AttachEffect on unit-creation
-	this->AttachedTechnoEffect.Read(exINI, section);
+	this->AttachedTechnoEffect.Read(exINI);
 
 	this->BuiltAt.Read(exINI, section, "BuiltAt");
 

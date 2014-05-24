@@ -23,8 +23,8 @@ In a nutshell:
 
 */
 
-void AttachEffectTypeClass::Read(INI_EX &exINI, const char * section) {
-	AresCRT::strCopy(this->ID, section);
+void AttachEffectTypeClass::Read(INI_EX &exINI) {
+	const char* section = this->Owner->ID;
 	this->Duration.Read(exINI, section, "AttachEffect.Duration");
 	this->Cumulative.Read(exINI, section, "AttachEffect.Cumulative");
 	this->AnimType.Read(exINI, section, "AttachEffect.Animation");
