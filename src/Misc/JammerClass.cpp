@@ -57,7 +57,7 @@ bool JammerClass::InRangeOf(BuildingClass* TargetBuilding) {
 //! \param TargetBuilding The building to jam.
 void JammerClass::Jam(BuildingClass* TargetBuilding) {
 	BuildingExt::ExtData* TheBuildingExt = BuildingExt::ExtMap.Find(TargetBuilding);
-	TheBuildingExt->RegisteredJammers.insert(this->AttachedToObject);
+	TheBuildingExt->RegisteredJammers.insert(this->AttachedToObject, true);
 	TargetBuilding->Owner->RecheckRadar = true;
 }
 

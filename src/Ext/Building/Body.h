@@ -2,11 +2,11 @@
 #define BUILDING_EXT_H
 
 #include <BuildingClass.h>
-#include <set>
 
 #include "../BuildingType/Body.h"
 #include "../_Container.hpp"
 #include "../../Ares.h"
+#include "../../Utilities/Constructs.h"
 
 #ifdef DEBUGBUILD
 #include "../../Misc/Debug.h"
@@ -74,7 +74,7 @@ public:
 		bool InfiltratedBy(HouseClass *Enterer);
 		cPrismForwarding PrismForwarding;
 
-		std::set<TechnoClass *> RegisteredJammers; //!< Set of Radar Jammers which have registered themselves to be in range of this building. (Related to issue #305)
+		AresMap<TechnoClass*, bool> RegisteredJammers; //!< Set of Radar Jammers which have registered themselves to be in range of this building. (Related to issue #305)
 
 		int SensorArrayActiveCounter;
 
