@@ -97,7 +97,7 @@ public:
 			Malicious (true),
 			PreventScatter (false),
 			CellSpread_MaxAffect (-1),
-			AttachedEffect()
+			AttachedEffect(OwnerObject)
 			{
 				for(int i = 0; i < 11; ++i) {
 					VersesData vs;

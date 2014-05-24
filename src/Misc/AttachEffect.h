@@ -11,6 +11,7 @@ class AttachEffectTypeClass {
 public:
 
 	char ID[24]; // as westwood once said, 24 chars ought to be enough for any ID
+	AbstractTypeClass* Owner;
 	Valueable<int> Duration;
 	Valueable<bool> Cumulative;
 	Valueable<bool> ForceDecloak;
@@ -40,7 +41,8 @@ public:
 	void Attach(TechnoClass* Target, int Duration, TechnoClass* Invoker);
 	//void Attach(TechnoClass* Target, int Duration, TechnoClass* Invoker, int DamageDelay);
 	
-	AttachEffectTypeClass(): Cumulative(false),
+	AttachEffectTypeClass(AbstractTypeClass* Owner) : Owner(Owner),
+		Cumulative(false),
 		Duration(0),
 		AnimType(nullptr),
 		AnimResetOnReapply(false),

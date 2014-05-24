@@ -298,7 +298,7 @@ public:
 			CanBeReversed (true),
 			RadarJamRadius (0),
 			PassengerTurret (false),
-			AttachedTechnoEffect(),
+			AttachedTechnoEffect(OwnerObject),
 			Cloneable (true),
 			CarryallAllowed(),
 			CarryallSizeLimit (),

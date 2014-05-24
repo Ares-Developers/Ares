@@ -66,7 +66,7 @@ void AttachEffectTypeClass::Attach(TechnoClass* Target, int Duration, TechnoClas
 	if (!this->Cumulative) {
 		for (size_t i=0; i < TargetExt->AttachedEffects.size(); i++) {
 			auto &Item = TargetExt->AttachedEffects.at(i);
-			if (!strcmp(this->ID, Item->Type->ID)) {
+			if (this == Item->Type) {
 				Item->ActualDuration = Item->Type->Duration;
 
 				if (!!this->AnimType && !!this->AnimResetOnReapply) {
@@ -218,10 +218,10 @@ void AttachEffectClass::Update(TechnoClass *Source) {
 			}*/
 
 
-			if(!Effect->ActualDuration || (!strcmp(Effect->Type->ID, pType->ID) && Source->Deactivated)) {
+			if(!Effect->ActualDuration || (Effect->Type->Owner == pType && Source->Deactivated)) {
 				//Debug::Log("[AttachEffect] %d. item expired, removing...\n", i - 1);
 
-				if (!strcmp(Effect->Type->ID, pType->ID)) {		//#1623, hardcodes Cumulative to false
+				if (Effect->Type->Owner == pType) {		//#1623, hardcodes Cumulative to false
 					pData->AttachedTechnoEffect_isset = false;
 					pData->AttachedTechnoEffect_Delay = Effect->Type->Delay;
 				}
