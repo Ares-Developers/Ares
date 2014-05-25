@@ -659,20 +659,20 @@ void TechnoExt::ExtData::InvalidateAttachEffectPointer(void *ptr) {
 	\date 2011-06-09
 	\todo Get an assembly-reader to document Status in YR++ and update Status accordingly
 */
-void TechnoExt::DetachSpecificSpawnee(TechnoClass *Spawnee, HouseClass *NewSpawneeOwner){
+void TechnoExt::DetachSpecificSpawnee(TechnoClass *Spawnee, HouseClass *NewSpawneeOwner) {
 
 	// setting up the nodes. Funnily, nothing else from the manager is needed
-	auto *SpawnNode = &(Spawnee->SpawnOwner->SpawnManager->SpawnedNodes);
+	const auto& SpawnNodes = Spawnee->SpawnOwner->SpawnManager->SpawnedNodes;
 
 	//find the specific spawnee in the node
-	for (int i=0; i<SpawnNode->Count; ++i){
+	for(auto SpawnNode : SpawnNodes) {
 
-		if(Spawnee == SpawnNode->GetItem(i)->Unit) {
+		if(Spawnee == SpawnNode->Unit) {
 
-			SpawnNode->GetItem(i)->Unit = nullptr;
+			SpawnNode->Unit = nullptr;
 			Spawnee->SpawnOwner = nullptr;
 
-			SpawnNode->GetItem(i)->Status = SpawnNodeStatus::Dead;
+			SpawnNode->Status = SpawnNodeStatus::Dead;
 
 			Spawnee->SetOwningHouse(NewSpawneeOwner);
 		}
