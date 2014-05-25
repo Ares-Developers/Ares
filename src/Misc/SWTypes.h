@@ -135,7 +135,7 @@ public:
 
 	static void UpdateAll();
 
-	static void InvalidatePointer(void *ptr);
+	static void PointerGotInvalid(void *ptr, bool remove);
 
 	static void ClearAll();
 

@@ -101,7 +101,7 @@ void SWStateMachine::UpdateAll()
 	}), Array.end());
 }
 
-void SWStateMachine::InvalidatePointer(void *ptr)
+void SWStateMachine::PointerGotInvalid(void *ptr, bool remove)
 {
 	for(auto& Machine : SWStateMachine::Array) {
 		Machine->PointerGotInvalid(ptr);
