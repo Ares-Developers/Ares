@@ -70,21 +70,6 @@ int NewSWType::FindHandler(int Type) {
 	return -1;
 }
 
-DEFINE_HOOK(55AFB3, LogicClass_Update, 6)
-{
-	SWStateMachine::UpdateAll();
-	Ares::UpdateStability();
-	return 0;
-}
-
-
-DEFINE_HOOK(539760, Scenario_ResetAllSuperWeapons_Custom, 5)
-{
-	SWStateMachine::Clear();
-
-	return 0;
-}
-
 void SWStateMachine::UpdateAll()
 {
 	for(auto& Machine : SWStateMachine::Array) {
@@ -111,4 +96,11 @@ void SWStateMachine::Clear()
 	SW_PsychicDominator::CurrentPsyDom = nullptr;
 
 	SWStateMachine::Array.clear();
+}
+
+DEFINE_HOOK(55AFB3, LogicClass_Update, 6)
+{
+	SWStateMachine::UpdateAll();
+	Ares::UpdateStability();
+	return 0;
 }

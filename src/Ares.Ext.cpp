@@ -24,6 +24,8 @@
 #include "Enum/Prerequisites.h"
 #include "Enum/RadTypes.h"
 
+#include "Misc/SWTypes.h"
+
 DEFINE_HOOK(7258D0, AnnounceInvalidPointer, 6)
 {
 	GET(void*, ptr, ECX);
@@ -56,6 +58,8 @@ DEFINE_HOOK(7258D0, AnnounceInvalidPointer, 6)
 
 	RulesExt::PointerGotInvalid(ptr, bRemoved);
 
+	SWStateMachine::PointerGotInvalid(ptr, bRemoved);
+
 	return 0;
 }
 
@@ -85,6 +89,8 @@ DEFINE_HOOK(685659, Scenario_ClearClasses, a)
 	GenericPrerequisite::Clear();
 
 	RulesExt::Clear();
+
+	SWStateMachine::Clear();
 
 	return 0;
 }
