@@ -194,6 +194,11 @@ public:
 	}
 
 	void Clear() {
+		if(!this->Items.empty()) {
+			const auto &info = typeid(*this);
+			Debug::DevLog(Debug::Warning, "Cleared %u items from %s.\n",
+				this->Items.size(), info.name());
+		}
 		this->Items.clear();
 	}
 
