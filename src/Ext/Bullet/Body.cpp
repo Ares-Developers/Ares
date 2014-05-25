@@ -123,6 +123,7 @@ DEFINE_HOOK(46AE70, BulletClass_SaveLoad_Prefix, 5)
 	return 0;
 }
 
+DEFINE_HOOK_AGAIN(46AF97, BulletClass_Load_Suffix, 7)
 DEFINE_HOOK(46AF9E, BulletClass_Load_Suffix, 7)
 {
 	BulletExt::ExtMap.LoadStatic();
