@@ -37,9 +37,9 @@ public:
 			auto H = HouseClass::Array->GetItem(i);
 			if(!H->ControlledByHuman()) {
 				Debug::Log("#%02d: country %25s:\n", i, H->Type->ID);
-				auto b = &H->Base.BaseNodes;
-				for(int j = 0; j < b->Count; ++j) {
-					auto n = b->GetItem(j);
+				const auto& b = H->Base.BaseNodes;
+				for(int j = 0; j < b.Count; ++j) {
+					const auto& n = b[j];
 					auto idx = n.BuildingTypeIndex;
 					if(idx >= 0) {
 						auto lbl = BuildingTypeClass::Array->GetItem(idx)->ID;
