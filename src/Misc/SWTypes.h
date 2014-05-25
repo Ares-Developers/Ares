@@ -137,7 +137,7 @@ public:
 
 	static void PointerGotInvalid(void *ptr, bool remove);
 
-	static void ClearAll();
+	static void Clear();
 
 protected:
 	TimerStruct Clock;

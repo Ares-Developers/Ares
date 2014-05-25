@@ -80,12 +80,7 @@ DEFINE_HOOK(55AFB3, LogicClass_Update, 6)
 
 DEFINE_HOOK(539760, Scenario_ResetAllSuperWeapons_Custom, 5)
 {
-	// hard-reset any super weapon related globals
-	SW_LightningStorm::CurrentLightningStorm = nullptr;
-	SW_NuclearMissile::CurrentNukeType = nullptr;
-	SW_PsychicDominator::CurrentPsyDom = nullptr;
-
-	SWStateMachine::ClearAll();
+	SWStateMachine::Clear();
 
 	return 0;
 }
@@ -108,7 +103,12 @@ void SWStateMachine::PointerGotInvalid(void *ptr, bool remove)
 	}
 }
 
-void SWStateMachine::ClearAll()
+void SWStateMachine::Clear()
 {
+	// hard-reset any super weapon related globals
+	SW_LightningStorm::CurrentLightningStorm = nullptr;
+	SW_NuclearMissile::CurrentNukeType = nullptr;
+	SW_PsychicDominator::CurrentPsyDom = nullptr;
+
 	SWStateMachine::Array.clear();
 }
