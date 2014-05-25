@@ -115,7 +115,7 @@ public:
 	virtual void Update() {
 	};
 
-	virtual void PointerGotInvalid(void *ptr) {
+	virtual void InvalidatePointer(void *ptr, bool remove) {
 	};
 
 	int TimePassed() {
@@ -193,7 +193,7 @@ public:
 
 	virtual void Update();
 
-	virtual void PointerGotInvalid(void *ptr);
+	virtual void InvalidatePointer(void *ptr, bool remove);
 
 protected:
 	DynamicVectorClass<ChronoWarpContainer> Buildings;

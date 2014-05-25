@@ -84,7 +84,7 @@ void SWStateMachine::UpdateAll()
 void SWStateMachine::PointerGotInvalid(void *ptr, bool remove)
 {
 	for(auto& Machine : SWStateMachine::Array) {
-		Machine->PointerGotInvalid(ptr);
+		Machine->InvalidatePointer(ptr, remove);
 	}
 }
 
