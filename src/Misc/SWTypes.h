@@ -126,7 +126,7 @@ public:
 		return Unsorted::CurrentFrame - Clock.StartTime;
 	}
 
-	SWTypeExt::ExtData * FindExtData () {
+	SWTypeExt::ExtData * FindExtData() const {
 		return SWTypeExt::ExtMap.Find(this->Super->Type);
 	}
 
