@@ -10,6 +10,7 @@
 #include <GeneralStructures.h>
 #include <StringTable.h>
 #include <Helpers/String.h>
+#include <PCX.h>
 
 #include <algorithm>
 #include <cstring>
@@ -224,6 +225,70 @@ private:
 	}
 
 	container_t values;
+};
+
+// pcx filename storage with optional automatic loading
+class AresPCXFile {
+	static const size_t Capacity = 0x20;
+public:
+	explicit AresPCXFile(bool autoResolve = true) : filename(), resolve(autoResolve), checked(false), exists(false) {
+	}
+
+	AresPCXFile(const char* filename, bool autoResolve = true) : AresPCXFile(autoResolve) {
+		*this = filename;
+	}
+
+	AresPCXFile& operator = (const char* filename) {
+		this->filename = filename;
+		auto& data = this->filename.data();
+		_strlwr_s(data);
+
+		this->checked = false;
+		this->exists = false;
+
+		if(this->resolve) {
+			this->Exists();
+		}
+
+		return *this;
+	}
+
+	const FixedString<Capacity>::data_type& GetFilename() const {
+		return this->filename.data();
+	}
+
+	BSurface* GetSurface(BytePalette* pPalette = nullptr) const {
+		return this->Exists() ? PCX::Instance->GetSurface(this->filename, pPalette) : nullptr;
+	}
+
+	bool Exists() const {
+		if(!this->checked) {
+			this->checked = true;
+			if(this->filename) {
+				auto pPCX = PCX::Instance;
+				this->exists = (pPCX->GetSurface(this->filename) || pPCX->LoadFile(this->filename));
+			}
+		}
+		return this->exists;
+	}
+
+	bool Read(INIClass* pINI, const char* pSection, const char* pKey, const char* pDefault = "") {
+		char buffer[Capacity];
+		if(pINI->ReadString(pSection, pKey, pDefault, buffer, Capacity)) {
+			*this = buffer;
+
+			if(this->checked && !this->exists) {
+				Debug::INIParseFailed(pSection, pKey, this->filename, "PCX file not found.");
+			}
+		}
+		return buffer[0] != 0;
+	}
+
+private:
+	FixedString<Capacity> filename;
+	bool resolve;
+	mutable bool checked;
+	mutable bool exists;
 };
 
 // provides storage for a csf label with automatic lookup.
