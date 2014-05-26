@@ -203,10 +203,6 @@ public:
 		Nullable<int> Lighting_Green;
 		Nullable<int> Lighting_Blue;
 		Nullable<int> Lighting_Red;
-		int ScenarioClass::* Lighting_DefaultAmbient;
-		int ScenarioClass::* Lighting_DefaultGreen;
-		int ScenarioClass::* Lighting_DefaultBlue;
-		int ScenarioClass::* Lighting_DefaultRed;
 
 		// Messages
 		Valueable<CSFText> Message_Detected;
@@ -274,10 +270,6 @@ public:
 			Text_Charging (),
 			Text_Active (),
 			Lighting_Enabled (true),
-			Lighting_DefaultAmbient (nullptr),
-			Lighting_DefaultGreen (nullptr),
-			Lighting_DefaultBlue (nullptr),
-			Lighting_DefaultRed (nullptr),
 			SW_AnimHeight (0),
 			SW_AnimVisibility (SuperWeaponAffectedHouse::All),
 			SW_TypeCustom (false),

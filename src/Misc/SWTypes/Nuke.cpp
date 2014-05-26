@@ -59,11 +59,6 @@ void SW_NuclearMissile::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeCla
 	pData->EVA_Ready = VoxClass::FindIndex("EVA_NuclearMissileReady");
 	pData->EVA_Activated = VoxClass::FindIndex("EVA_NuclearMissileLaunched");
 
-	pData->Lighting_DefaultAmbient = &ScenarioClass::NukeAmbient;
-	pData->Lighting_DefaultRed = &ScenarioClass::NukeRed;
-	pData->Lighting_DefaultGreen = &ScenarioClass::NukeGreen;
-	pData->Lighting_DefaultBlue = &ScenarioClass::NukeBlue;
-	
 	pData->SW_AITargetingType = SuperWeaponAITargetingMode::Nuke;
 	pData->SW_Cursor = MouseCursor::First[MouseCursorType::Nuke];
 }

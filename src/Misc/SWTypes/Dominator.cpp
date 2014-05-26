@@ -53,11 +53,6 @@ void SW_PsychicDominator::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeC
 
 	pData->Message_Abort = CSFText("Msg:DominatorActive");
 
-	pData->Lighting_DefaultAmbient = &ScenarioClass::DominatorAmbient;
-	pData->Lighting_DefaultRed = &ScenarioClass::DominatorRed;
-	pData->Lighting_DefaultGreen = &ScenarioClass::DominatorGreen;
-	pData->Lighting_DefaultBlue = &ScenarioClass::DominatorBlue;
-
 	pData->SW_AITargetingType = SuperWeaponAITargetingMode::PsychicDominator;
 	pData->SW_AffectsTarget = SuperWeaponTarget::Infantry | SuperWeaponTarget::Unit;
 	pData->SW_Cursor = MouseCursor::First[MouseCursorType::PsychicDominator];

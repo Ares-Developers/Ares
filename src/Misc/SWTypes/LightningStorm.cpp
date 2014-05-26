@@ -53,11 +53,6 @@ void SW_LightningStorm::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeCla
 	pData->Message_Activate = CSFText("TXT_LIGHTNING_STORM");
 	pData->Message_Abort = CSFText("Msg:LightningStormActive");
 
-	pData->Lighting_DefaultAmbient = &ScenarioClass::IonAmbient;
-	pData->Lighting_DefaultRed = &ScenarioClass::IonRed;
-	pData->Lighting_DefaultGreen = &ScenarioClass::IonGreen;
-	pData->Lighting_DefaultBlue = &ScenarioClass::IonBlue;
-
 	pData->SW_AITargetingType = SuperWeaponAITargetingMode::LightningStorm;
 	pData->SW_Cursor = MouseCursor::First[MouseCursorType::LightningStorm];
 }
