@@ -56,6 +56,11 @@ struct SWRange {
 	int Height;
 };
 
+struct LightingColor {
+	int Red, Green, Blue, Ambient;
+	bool HasValue;
+};
+
 class SWTypeExt
 {
 public:
@@ -303,7 +308,8 @@ public:
 		virtual void InitializeConstants(TT *pThis);
 		virtual void InitializeRuled(TT *pThis);
 
-		bool ChangeLighting();
+		bool UpdateLightingColor(LightingColor& Lighting) const;
+
 		bool IsAnimVisible(HouseClass* pFirer);
 		bool CanFireAt(HouseClass* pOwner, const CellStruct &Coords);
 		bool IsHouseAffected(HouseClass* pFirer, HouseClass* pHouse);
@@ -340,8 +346,8 @@ public:
 	bool static Launch(SuperClass* pThis, NewSWType* pData, const CellStruct &Coords, bool IsPlayer);
 	void static ClearChronoAnim(SuperClass *pThis);
 	void static CreateChronoAnim(SuperClass *pThis, CoordStruct *pCoords, AnimTypeClass *pAnimType);
-	bool static ChangeLighting(SuperClass *pThis);
-	bool static ChangeLighting(SuperWeaponTypeClass *pThis);
+	static bool ChangeLighting(SuperWeaponTypeClass* pCustom = nullptr);
+	static LightingColor GetLightingColor(SuperWeaponTypeClass* pCustom = nullptr);
 };
 
 class ParadropPlane {

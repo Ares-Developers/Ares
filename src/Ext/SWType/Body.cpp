@@ -2,6 +2,9 @@
 
 #include "Body.h"
 #include "../../Misc/SWTypes.h"
+#include "../../Misc/SWTypes/Nuke.h"
+#include "../../Misc/SWTypes/Dominator.h"
+#include "../../Misc/SWTypes/LightningStorm.h"
 #include "../House/Body.h"
 #include "../HouseType/Body.h"
 #include "../Side/Body.h"
@@ -499,39 +502,93 @@ void SWTypeExt::CreateChronoAnim(SuperClass *pThis, CoordStruct *pCoords, AnimTy
 	}
 }
 
-bool SWTypeExt::ChangeLighting(SuperClass *pThis) {
-	if(pThis) {
-		return ChangeLighting(pThis->Type);
+bool SWTypeExt::ChangeLighting(SuperWeaponTypeClass* pCustom) {
+	auto lighting = GetLightingColor(pCustom);
+
+	if(lighting.HasValue) {
+		auto scen = ScenarioClass::Instance;
+		scen->AmbientTarget = lighting.Ambient;
+		scen->RecalcLighting(lighting.Red, lighting.Green, lighting.Blue, 1);
 	}
-	return false;
+
+	return lighting.HasValue;
 }
 
-bool SWTypeExt::ChangeLighting(SuperWeaponTypeClass *pThis) {
-	if(pThis) {
-		if(SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pThis)) {
-			return pData->ChangeLighting();
+LightingColor SWTypeExt::GetLightingColor(SuperWeaponTypeClass* pCustom) {
+	auto scen = ScenarioClass::Instance;
+	SuperWeaponTypeClass* pType = nullptr;
+
+	LightingColor ret;
+	if(NukeFlash::IsFadingIn() || ChronoScreenEffect::Status) {
+		// nuke flash
+		ret.Ambient = scen->NukeAmbient;
+		ret.Red = scen->NukeRed;
+		ret.Green = scen->NukeGreen;
+		ret.Blue = scen->NukeBlue;
+
+		pType = SW_NuclearMissile::CurrentNukeType;
+	} else if(LightningStorm::Active) {
+		// lightning storm
+		ret.Ambient = scen->IonAmbient;
+		ret.Red = scen->IonRed;
+		ret.Green = scen->IonGreen;
+		ret.Blue = scen->IonBlue;
+
+		if(SuperClass *pSuper = SW_LightningStorm::CurrentLightningStorm) {
+			pType = pSuper->Type;
 		}
+	} else if(PsyDom::Status && PsyDom::Status != PsychicDominatorStatus::Over) {
+		// psychic dominator
+		ret.Ambient = scen->DominatorAmbient;
+		ret.Red = scen->DominatorRed;
+		ret.Green = scen->DominatorGreen;
+		ret.Blue = scen->DominatorBlue;
+
+		if(SuperClass *pSuper = SW_PsychicDominator::CurrentPsyDom) {
+			pType = pSuper->Type;
+		}
+	} else {
+		// no special lightning
+		ret.Ambient = scen->AmbientOriginal;
+		ret.Red = scen->Red;
+		ret.Green = scen->Green;
+		ret.Blue = scen->Blue;
+
+		ret.HasValue = false;
 	}
-	return false;
+
+	ret.Red *= 10;
+	ret.Green *= 10;
+	ret.Blue *= 10;
+
+	// active SW or custom one?
+	if(auto pData = SWTypeExt::ExtMap.Find(pCustom ? pCustom : pType)) {
+		pData->UpdateLightingColor(ret);
+	}
+
+	return ret;
 }
 
-bool SWTypeExt::ExtData::ChangeLighting() {
+bool SWTypeExt::ExtData::UpdateLightingColor(LightingColor& Lighting) const {
 	if(this->Lighting_Enabled) {
-		auto getValue = [](Nullable<int> &item, int ScenarioClass::* pDefMember, int def) -> int {
-			int value = item.Get(pDefMember ? ScenarioClass::Instance->*pDefMember : -1);
-			return (value < 0) ? def : value;
+		auto UpdateValue = [](const Nullable<int> &from, int& into, int factor) {
+			int value = from.Get(-1);
+			if(value >= 0) {
+				into = factor * value;
+			}
 		};
 
-		ScenarioClass* scen = ScenarioClass::Instance;
-		scen->AmbientTarget = getValue(this->Lighting_Ambient, this->Lighting_DefaultAmbient, scen->AmbientOriginal);
-		int cG = 1000 * getValue(this->Lighting_Green, this->Lighting_DefaultGreen, scen->Green) / 100;
-		int cB = 1000 * getValue(this->Lighting_Blue, this->Lighting_DefaultBlue, scen->Blue) / 100;
-		int cR = 1000 * getValue(this->Lighting_Red, this->Lighting_DefaultRed, scen->Red) / 100;
-		scen->RecalcLighting(cR, cG, cB, 1);
-		return true;
-	}
+		UpdateValue(this->Lighting_Ambient, Lighting.Ambient, 1);
+		UpdateValue(this->Lighting_Red, Lighting.Red, 10);
+		UpdateValue(this->Lighting_Green, Lighting.Green, 10);
+		UpdateValue(this->Lighting_Blue, Lighting.Blue, 10);
 
-	return false;
+		Lighting.HasValue = true;
+		return true;
+	} else {
+		Lighting.HasValue = false;
+		return false;
+	}
 }
 
 WarheadTypeClass* SWTypeExt::ExtData::GetWarhead() const {

@@ -161,56 +161,13 @@ DEFINE_HOOK(53B080, PsyDom_Fire, 5) {
 // replace entire function
 DEFINE_HOOK(53C280, ScenarioClass_UpdateLighting, 5)
 {
-	bool isSpecial = true;
-	int a = 0;
-	int r = 0;
-	int g = 0;
-	int b = 0;
+	auto lighting = SWTypeExt::GetLightingColor();
 
 	auto scen = ScenarioClass::Instance;
-	SuperWeaponTypeClass* pType = nullptr;
-
-	if(NukeFlash::IsFadingIn() || ChronoScreenEffect::Status) {
-		// nuke flash
-		a = scen->NukeAmbient;
-		r = scen->NukeRed;
-		g = scen->NukeGreen;
-		b = scen->NukeBlue;
-
-		pType = SW_NuclearMissile::CurrentNukeType;
-	} else if(LightningStorm::Active) {
-		// lightning storm
-		a = scen->IonAmbient;
-		r = scen->IonRed;
-		g = scen->IonGreen;
-		b = scen->IonBlue;
-
-		if(SuperClass *pSuper = SW_LightningStorm::CurrentLightningStorm) {
-			pType = pSuper->Type;
-		}
-	} else if(PsyDom::Status && PsyDom::Status != PsychicDominatorStatus::Over) {
-		// psychic dominator
-		a = scen->DominatorAmbient;
-		r = scen->DominatorRed;
-		g = scen->DominatorGreen;
-		b = scen->DominatorBlue;
-
-		if(SuperClass *pSuper = SW_PsychicDominator::CurrentPsyDom) {
-			pType = pSuper->Type;
-		}
-	} else {
-		// no special lightning
-		isSpecial = false;
-	}
-
-	// update the lighting
-	if(pType) {
-		// active SW
-		SWTypeExt::ChangeLighting(pType);
-	} else if(isSpecial) {
+	if(lighting.HasValue) {
 		// something changed the lighting
-		scen->AmbientTarget = a;
-		scen->RecalcLighting(r * 10, g * 10, b * 10, 1);
+		scen->AmbientTarget = lighting.Ambient;
+		scen->RecalcLighting(lighting.Red, lighting.Green, lighting.Blue, 1);
 	} else {
 		// default lighting
 		scen->AmbientTarget = scen->AmbientOriginal;
