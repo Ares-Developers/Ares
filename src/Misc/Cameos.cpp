@@ -72,15 +72,11 @@ DEFINE_HOOK(6A980A, TabCameoListClass_Draw_GetTechnoPCX, 8)
 
 	auto pData = TechnoTypeExt::ExtMap.Find(pType);
 
-	const char * pcxFilename = (pData->CameoIsElite() && *pData->AltCameoPCX)
+	const auto& pcxFile = (pData->CameoIsElite() && pData->AltCameoPCX.Exists())
 		? pData->AltCameoPCX
-		: pData->CameoPCX
-	;
+		: pData->CameoPCX;
 
-	CameoPCX = (*pcxFilename)
-		? PCX::Instance->GetSurface(pcxFilename)
-		: nullptr
-	;
+	CameoPCX = pcxFile.GetSurface();
 
 	return 0;
 }

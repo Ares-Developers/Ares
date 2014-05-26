@@ -298,21 +298,8 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	this->Chronoshift_Allow.Read(exINI, section, "Chronoshift.Allow");
 	this->Chronoshift_IsVehicle.Read(exINI, section, "Chronoshift.IsVehicle");
 
-	if(CCINIClass::INI_Art->ReadString(pThis->ImageFile, "CameoPCX", "", Ares::readBuffer, Ares::readLength)) {
-		AresCRT::strCopy(this->CameoPCX, Ares::readBuffer);
-		_strlwr_s(this->CameoPCX, 0x20);
-		if(!PCX::Instance->LoadFile(this->CameoPCX)) {
-			Debug::INIParseFailed(pThis->ImageFile, "CameoPCX", this->CameoPCX);
-		}
-	}
-
-	if(CCINIClass::INI_Art->ReadString(pThis->ImageFile, "AltCameoPCX", "", Ares::readBuffer, Ares::readLength)) {
-		AresCRT::strCopy(this->AltCameoPCX, Ares::readBuffer);
-		_strlwr_s(this->AltCameoPCX, 0x20);
-		if(!PCX::Instance->LoadFile(this->AltCameoPCX)) {
-			Debug::INIParseFailed(pThis->ImageFile, "AltCameoPCX", this->AltCameoPCX);
-		}
-	}
+	this->CameoPCX.Read(CCINIClass::INI_Art, pThis->ImageFile, "CameoPCX");
+	this->AltCameoPCX.Read(CCINIClass::INI_Art, pThis->ImageFile, "AltCameoPCX");
 
 	this->CanBeReversed.Read(exINI, section, "CanBeReversed");
 
@@ -544,7 +531,7 @@ bool TechnoTypeExt::ExtData::CameoIsElite()
 	TechnoTypeClass * const T = this->AttachedToObject;
 	TechnoTypeExt::ExtData* pExt = TechnoTypeExt::ExtMap.Find(T);
 
-	if(!T->AltCameo && !*pExt->AltCameoPCX) {
+	if(!T->AltCameo && !pExt->AltCameoPCX.Exists()) {
 		return false;
 	}
 

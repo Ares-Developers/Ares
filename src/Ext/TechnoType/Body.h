@@ -130,8 +130,8 @@ public:
 
 		Valueable<bool> SensorArray_Warn;
 
-		char CameoPCX[0x20];
-		char AltCameoPCX[0x20];
+		AresPCXFile CameoPCX;
+		AresPCXFile AltCameoPCX;
 
 		char GroupAs[0x20];
 
@@ -307,7 +307,6 @@ public:
 			FactoryOwners_HaveAllPlans(false)
 			{
 				this->Insignia.SetAll(nullptr);
-				*this->CameoPCX = *this->AltCameoPCX = 0;
 				this->ReversedByHouses.SetCapacity(32, nullptr);
 				this->ReversedByHouses.CapacityIncrement = 32;
 				*this->GroupAs = 0;

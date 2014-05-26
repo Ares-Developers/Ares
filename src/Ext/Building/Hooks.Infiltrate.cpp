@@ -61,17 +61,15 @@ DEFINE_HOOK(43E7B0, BuildingClass_DrawVisible, 5)
 			auto pProdExt = TechnoTypeExt::ExtMap.Find(pProdType);
 
 			// support for pcx cameos
-			if(*pProdExt->CameoPCX) {
-				if(auto pPCX = PCX::Instance->GetSurface(pProdExt->CameoPCX)) {
-					const int cameoWidth = 60;
-					const int cameoHeight = 48;
+			if(auto pPCX = pProdExt->CameoPCX.GetSurface()) {
+				const int cameoWidth = 60;
+				const int cameoHeight = 48;
 
-					RectangleStruct cameoBounds = {0, 0, cameoWidth, cameoHeight};
-					RectangleStruct destRect = {pLocation->X - cameoWidth / 2, pLocation->Y - cameoHeight / 2, cameoWidth, cameoHeight};
-					RectangleStruct destClip = Drawing::Intersect(&destRect, pBounds, nullptr, nullptr);
+				RectangleStruct cameoBounds = {0, 0, cameoWidth, cameoHeight};
+				RectangleStruct destRect = {pLocation->X - cameoWidth / 2, pLocation->Y - cameoHeight / 2, cameoWidth, cameoHeight};
+				RectangleStruct destClip = Drawing::Intersect(&destRect, pBounds, nullptr, nullptr);
 
-					DSurface::Hidden_2->Blit(pBounds, &destClip, pPCX, &cameoBounds, &cameoBounds, true, true);
-				}
+				DSurface::Hidden_2->Blit(pBounds, &destClip, pPCX, &cameoBounds, &cameoBounds, true, true);
 			} else {
 				// old shp cameos, fixed palette
 				auto pCameo = pProdType->GetCameo();
