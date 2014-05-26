@@ -8,6 +8,13 @@
 
 #include <vector>
 
+enum class SWStateMachineIdentifier : unsigned int {
+	Invalid = 0xFFFFFFFFu,
+	UnitDelivery = 0,
+	ChronoWarp = 1,
+	PsychicDominator = 2
+};
+
 class SWTypeExt;
 
 // New SW Type framework. See SWTypes/*.h for examples of implemented ones. Don't touch yet, still WIP.
@@ -130,6 +137,8 @@ public:
 		return SWTypeExt::ExtMap.Find(this->Super->Type);
 	}
 
+	virtual SWStateMachineIdentifier GetIdentifier() const = 0;
+
 	// static methods
 	static void Register(std::unique_ptr<SWStateMachine> Machine) {
 		if(Machine) {
@@ -161,6 +170,10 @@ public:
 	{ }
 
 	virtual void Update();
+
+	virtual SWStateMachineIdentifier GetIdentifier() const override {
+		return SWStateMachineIdentifier::UnitDelivery;
+	}
 
 	void PlaceUnits();
 };
@@ -207,6 +220,10 @@ public:
 
 	virtual void InvalidatePointer(void *ptr, bool remove);
 
+	virtual SWStateMachineIdentifier GetIdentifier() const override {
+		return SWStateMachineIdentifier::ChronoWarp;
+	}
+
 protected:
 	DynamicVectorClass<ChronoWarpContainer> Buildings;
 	int Duration;
@@ -234,6 +251,10 @@ public:
 	};
 
 	virtual void Update();
+
+	virtual SWStateMachineIdentifier GetIdentifier() const override {
+		return SWStateMachineIdentifier::PsychicDominator;
+	}
 
 protected:
 	int Deferment;
