@@ -355,10 +355,6 @@ public:
 	Valueable<AircraftTypeClass*> Aircraft;
 	ValueableVector<TechnoTypeClass*> Types;
 	ValueableVector<int> Num;
-
-	ParadropPlane() : Aircraft (nullptr)
-	{
-	}
 };
 
 #endif
