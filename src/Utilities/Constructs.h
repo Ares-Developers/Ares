@@ -235,11 +235,10 @@ public:
 
 	const CSFText& operator = (const char* label) {
 		if(this->Label != label) {
-			this->Label[0] = 0;
+			this->Label = label;
 			this->Text = nullptr;
 
-			if(label && *label) {
-				this->Label = label;
+			if(this->Label) {
 				this->Text = StringTable::LoadString(this->Label);
 			}
 		}
