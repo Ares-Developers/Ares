@@ -99,6 +99,10 @@ class SWStateMachine {
 	static std::vector<std::unique_ptr<SWStateMachine>> Array;
 
 public:
+	SWStateMachine()
+		: Type(nullptr), Super(nullptr), Coords(), Clock()
+	{ }
+
 	SWStateMachine(int Duration, CellStruct XY, SuperClass *pSuper, NewSWType * pSWType)
 		: Type(pSWType), Super(pSuper), Coords(XY)
 	{
@@ -148,9 +152,13 @@ protected:
 
 class UnitDeliveryStateMachine : public SWStateMachine {
 public:
+	UnitDeliveryStateMachine()
+		: SWStateMachine()
+	{ }
+
 	UnitDeliveryStateMachine(int Duration, CellStruct XY, SuperClass *pSuper, NewSWType * pSWType)
 		: SWStateMachine(Duration, XY, pSuper, pSWType)
-	{};
+	{ }
 
 	virtual void Update();
 
@@ -182,6 +190,10 @@ public:
 		}
 	};
 
+	ChronoWarpStateMachine()
+		: SWStateMachine(), Buildings(), Duration(0)
+	{ }
+
 	ChronoWarpStateMachine(int Duration, CellStruct XY, SuperClass *pSuper, NewSWType * pSWType, DynamicVectorClass<ChronoWarpContainer> *Buildings)
 		: SWStateMachine(Duration, XY, pSuper, pSWType)
 	{
@@ -189,7 +201,7 @@ public:
 			this->Buildings.AddItem(Buildings->GetItem(i));
 		}
 		this->Duration = Duration;
-	};
+	}
 
 	virtual void Update();
 
@@ -202,8 +214,12 @@ protected:
 
 class PsychicDominatorStateMachine : public SWStateMachine {
 public:
+	PsychicDominatorStateMachine()
+		: SWStateMachine(), Deferment(0)
+	{}
+
 	PsychicDominatorStateMachine(CellStruct XY, SuperClass *pSuper, NewSWType * pSWType)
-		: SWStateMachine(MAXINT32, XY, pSuper, pSWType)
+		: SWStateMachine(MAXINT32, XY, pSuper, pSWType), Deferment(0)
 	{
 		PsyDom::Status = PsychicDominatorStatus::FirstAnim;
 
