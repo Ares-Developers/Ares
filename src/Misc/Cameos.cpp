@@ -62,11 +62,7 @@ DEFINE_HOOK(6A9952, TabCameoListClass_Draw_GetSWPCX, 6)
 {
 	GET(SuperWeaponTypeClass *, pSW, EAX);
 	auto pData = SWTypeExt::ExtMap.Find(pSW);
-	CameoPCX = (*pData->SidebarPCX)
-		? PCX::Instance->GetSurface(pData->SidebarPCX)
-		: nullptr
-	;
-
+	CameoPCX = pData->SidebarPCX.GetSurface();
 	return 0;
 }
 

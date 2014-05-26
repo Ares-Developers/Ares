@@ -227,7 +227,7 @@ public:
 		ValueableVector<TechnoTypeClass *> SW_Deliverables;
 		Valueable<bool> SW_DeliverBuildups;
 
-		char SidebarPCX[0x20];
+		AresPCXFile SidebarPCX;
 
 		int HandledByNewSWType;
 		int LastAction;
@@ -289,7 +289,6 @@ public:
 			CameoPal(),
 			SW_DeliverBuildups (false)
 			{
-				*SidebarPCX = 0;
 				*SW_PostDependent = 0;
 			};
 

@@ -213,13 +213,7 @@ void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass
 
 	this->CameoPal.LoadFromINI(pINI, pThis->ID, "SidebarPalette");
 
-	if(pINI->ReadString(section, "SidebarPCX", "", Ares::readBuffer, Ares::readLength)) {
-		AresCRT::strCopy(this->SidebarPCX, Ares::readBuffer);
-		_strlwr_s(this->SidebarPCX, 0x20);
-		if(!PCX::Instance->LoadFile(this->SidebarPCX)) {
-			Debug::INIParseFailed(section, "SidebarPCX", this->SidebarPCX);
-		}
-	}
+	this->SidebarPCX.Read(pINI, pThis->ID, "SidebarPCX");
 }
 
 // can i see the animation of pFirer's SW?
