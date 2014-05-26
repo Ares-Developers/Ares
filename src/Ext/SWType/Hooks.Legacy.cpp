@@ -177,6 +177,29 @@ DEFINE_HOOK(53C280, ScenarioClass_UpdateLighting, 5)
 	return 0x53C441;
 }
 
+DEFINE_HOOK(555E50, LightConvertClass_CTOR_Lighting, 5)
+{
+	GET(LightConvertClass*, pThis, ESI);
+
+	auto lighting = SWTypeExt::GetLightingColor();
+
+	if(lighting.HasValue) {
+		if(pThis->Color1.Red == -1) {
+			pThis->Color1.Red = 1000;
+			pThis->Color1.Green = 1000;
+			pThis->Color1.Blue = 1000;
+		}
+	} else {
+		lighting.Red = pThis->Color1.Red;
+		lighting.Green = pThis->Color1.Green;
+		lighting.Blue = pThis->Color1.Blue;
+	}
+
+	pThis->UpdateColors(lighting.Red, lighting.Green, lighting.Blue, lighting.HasValue);
+
+	return 0x55606C;
+}
+
 // skip the entire method, we handle it ourselves
 DEFINE_HOOK(53AF40, PsyDom_Update, 6) {
 	return 0x53B060;
