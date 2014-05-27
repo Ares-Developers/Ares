@@ -296,13 +296,11 @@ DEFINE_HOOK(6AA0CA, TabCameoListClass_Draw_DrawObserverBackground, 6)
 	if(pData->ObserverBackgroundSHP) {
 		R->EAX<SHPStruct *>(pData->ObserverBackgroundSHP);
 		return DrawSHP;
-	} else if(*pData->ObserverBackground) {
-		if(auto PCXSurface = PCX::Instance->GetSurface(pData->ObserverBackground)) {
-			GET(int, TLX, EDI);
-			GET(int, TLY, EBX);
-			RectangleStruct bounds = { TLX, TLY, pData->ObserverBackgroundWidth, pData->ObserverBackgroundHeight };
-			PCX::Instance->BlitToSurface(&bounds, DSurface::Sidebar, PCXSurface);
-		}
+	} else if(auto PCXSurface = pData->ObserverBackground.GetSurface()) {
+		GET(int, TLX, EDI);
+		GET(int, TLY, EBX);
+		RectangleStruct bounds = { TLX, TLY, pData->ObserverBackgroundWidth, pData->ObserverBackgroundHeight };
+		PCX::Instance->BlitToSurface(&bounds, DSurface::Sidebar, PCXSurface);
 		return DontDraw;
 	} else {
 		return DontDraw;

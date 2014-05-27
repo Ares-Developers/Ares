@@ -48,7 +48,7 @@ class HouseTypeExt
 
 			ValueableVector<BuildingTypeClass*> VeteranBuildings;
 
-			char ObserverBackground[0x20];
+			AresPCXFile ObserverBackground;
 			SHPStruct *ObserverBackgroundSHP;
 
 			AresPCXFile ObserverFlag;
@@ -75,7 +75,6 @@ class HouseTypeExt
 				*LSSpecialName = 0;
 				*LSBrief = 0;
 				*StatusText = 0;
-				*ObserverBackground = 0;
 			};
 
 		virtual ~ExtData() {
