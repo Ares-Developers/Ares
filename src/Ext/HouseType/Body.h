@@ -4,6 +4,7 @@
 #include <CCINIClass.h>
 #include <HouseTypeClass.h>
 
+#include "../../Utilities/Constructs.h"
 #include "../../Utilities/Template.h"
 #include "../../Ares.CRT.h"
 #include "../_Container.hpp"
@@ -27,7 +28,7 @@ class HouseTypeExt
 			enum { ObserverFlagPCXX = 70, ObserverFlagPCXY = 70 };
 			enum { ObserverFlagPCXWidth = 45, ObserverFlagPCXHeight = 21 };
 
-			char FlagFile[0x20]; //Flag
+			AresPCXFile FlagFile; //Flag
 			char LSFile[0x20]; //LoadScreen
 			char LSPALFile[0x20]; //LoadScreen palette
 			char TauntFile[0x20]; //Taunt filename format (should contain %d !!!)
@@ -67,7 +68,6 @@ class HouseTypeExt
 				ObserverFlagYuriPAL (false),
 				SettingsInherited (false)
 			{
-				*FlagFile = 0;
 				*LSFile = 0;
 				*LSPALFile = 0;
 				*TauntFile = 0;

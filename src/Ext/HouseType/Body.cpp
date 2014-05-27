@@ -25,7 +25,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 
 	if (!_strcmpi(pID, "Americans")) //USA
 	{
-		AresCRT::strCopy(this->FlagFile, "usai.pcx");
+		this->FlagFile = "usai.pcx";
 		AresCRT::strCopy(this->LSBrief, "LoadBrief:USA");
 		AresCRT::strCopy(this->LSFile, "ls%sustates.shp");
 		AresCRT::strCopy(this->LSName, "Name:Americans");
@@ -37,7 +37,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		AresCRT::strCopy(this->ObserverFlag, "usai.shp");
 	} else if (!_strcmpi(pID, "Alliance")) //Korea
 	{
-		AresCRT::strCopy(this->FlagFile, "japi.pcx");
+		this->FlagFile = "japi.pcx";
 		AresCRT::strCopy(this->LSBrief, "LoadBrief:Korea");
 		AresCRT::strCopy(this->LSFile, "ls%skorea.shp");
 		AresCRT::strCopy(this->LSName, "Name:Alliance");
@@ -49,7 +49,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		AresCRT::strCopy(this->ObserverFlag, "japi.shp");
 	} else if (!_strcmpi(pID, "French")) //France
 	{
-		AresCRT::strCopy(this->FlagFile, "frai.pcx");
+		this->FlagFile = "frai.pcx";
 		AresCRT::strCopy(this->LSBrief, "LoadBrief:French");
 		AresCRT::strCopy(this->LSFile, "ls%sfrance.shp");
 		AresCRT::strCopy(this->LSName, "Name:French");
@@ -61,7 +61,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		AresCRT::strCopy(this->ObserverFlag, "frai.shp");
 	} else if (!_strcmpi(pID, "Germans")) //Germany
 	{
-		AresCRT::strCopy(this->FlagFile, "geri.pcx");
+		this->FlagFile = "geri.pcx";
 		AresCRT::strCopy(this->LSBrief, "LoadBrief:Germans");
 		AresCRT::strCopy(this->LSFile, "ls%sgermany.shp");
 		AresCRT::strCopy(this->LSName, "Name:Germans");
@@ -73,7 +73,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		AresCRT::strCopy(this->ObserverFlag, "geri.shp");
 	} else if (!_strcmpi(pID, "British")) //United Kingdom
 	{
-		AresCRT::strCopy(this->FlagFile, "gbri.pcx");
+		this->FlagFile = "gbri.pcx";
 		AresCRT::strCopy(this->LSBrief, "LoadBrief:British");
 		AresCRT::strCopy(this->LSFile, "ls%sukingdom.shp");
 		AresCRT::strCopy(this->LSName, "Name:British");
@@ -85,7 +85,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		AresCRT::strCopy(this->ObserverFlag, "gbri.shp");
 	} else if (!_strcmpi(pID, "Africans")) //Libya
 	{
-		AresCRT::strCopy(this->FlagFile, "djbi.pcx");
+		this->FlagFile = "djbi.pcx";
 		AresCRT::strCopy(this->LSBrief, "LoadBrief:Lybia");
 		AresCRT::strCopy(this->LSFile, "ls%slibya.shp");
 		AresCRT::strCopy(this->LSName, "Name:Africans");
@@ -97,7 +97,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		AresCRT::strCopy(this->ObserverFlag, "djbi.shp");
 	} else if (!_strcmpi(pID, "Arabs")) //Iraq
 	{
-		AresCRT::strCopy(this->FlagFile, "arbi.pcx");
+		this->FlagFile = "arbi.pcx";
 		AresCRT::strCopy(this->LSBrief, "LoadBrief:Iraq");
 		AresCRT::strCopy(this->LSFile, "ls%siraq.shp");
 		AresCRT::strCopy(this->LSName, "Name:Arabs");
@@ -109,7 +109,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		AresCRT::strCopy(this->ObserverFlag, "arbi.shp");
 	} else if (!_strcmpi(pID, "Confederation")) //Cuba
 	{
-		AresCRT::strCopy(this->FlagFile, "lati.pcx");
+		this->FlagFile = "lati.pcx";
 		AresCRT::strCopy(this->LSBrief, "LoadBrief:Cuba");
 		AresCRT::strCopy(this->LSFile, "ls%scuba.shp");
 		AresCRT::strCopy(this->LSName, "Name:Confederation");
@@ -121,7 +121,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		AresCRT::strCopy(this->ObserverFlag, "lati.shp");
 	} else if (!_strcmpi(pID, "Russians")) //Russia
 	{
-		AresCRT::strCopy(this->FlagFile, "rusi.pcx");
+		this->FlagFile = "rusi.pcx";
 		AresCRT::strCopy(this->LSBrief, "LoadBrief:Russia");
 		AresCRT::strCopy(this->LSFile, "ls%srussia.shp");
 		AresCRT::strCopy(this->LSName, "Name:Russians");
@@ -133,7 +133,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		AresCRT::strCopy(this->ObserverFlag, "rusi.shp");
 	} else if (!_strcmpi(pID, "YuriCountry")) //Yuri
 	{
-		AresCRT::strCopy(this->FlagFile, "yrii.pcx");
+		this->FlagFile = "yrii.pcx";
 		AresCRT::strCopy(this->LSBrief, "LoadBrief:YuriCountry");
 		AresCRT::strCopy(this->LSFile, "ls%syuri.shp");
 		AresCRT::strCopy(this->LSName, "Name:YuriCountry");
@@ -146,7 +146,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		this->ObserverFlagYuriPAL = true;
 	} else //Unknown
 	{
-		AresCRT::strCopy(this->FlagFile, "rani.pcx");
+		this->FlagFile = "rani.pcx";
 		AresCRT::strCopy(this->LSBrief, "GUI:Unknown");
 		AresCRT::strCopy(this->LSFile, "ls%sobs.shp");
 		AresCRT::strCopy(this->LSName, "GUI:Unknown");
@@ -184,7 +184,7 @@ void HouseTypeExt::ExtData::LoadFromRulesFile(HouseTypeClass *pThis, CCINIClass 
 	this->InitializeConstants(pThis);
 
 	// ppShp is optional. if not set, only PCX is supported
-	auto ReadShpOrPcxImage = [&](const char* key, char* pBuffer, size_t cbBuffer, SHPStruct** ppShp) {
+	auto ReadShpOrPcxImage2 = [&](const char* key, char* pBuffer, size_t cbBuffer, SHPStruct** ppShp) {
 		// read the key and convert it to lower case
 		if(pINI->ReadString(pID, key, pBuffer, Ares::readBuffer, Ares::readLength)) {
 			AresCRT::strCopy(pBuffer, Ares::readBuffer, cbBuffer);
@@ -222,9 +222,47 @@ void HouseTypeExt::ExtData::LoadFromRulesFile(HouseTypeClass *pThis, CCINIClass 
 		}
 	};
 
-	ReadShpOrPcxImage("File.Flag", this->FlagFile, 0x20, nullptr);
-	ReadShpOrPcxImage("File.ObserverFlag", this->ObserverFlag, 0x20, &this->ObserverFlagSHP);
-	ReadShpOrPcxImage("File.ObserverBackground", this->ObserverBackground, 0x20, &this->ObserverBackgroundSHP);
+	// ppShp is optional. if not set, only PCX is supported
+	auto ReadShpOrPcxImage = [&](const char* key, AresPCXFile& Pcx, SHPStruct** ppShp) {
+		// read the key and convert it to lower case
+		if(pINI->ReadString(pID, key, Pcx.GetFilename(), Ares::readBuffer, Ares::readLength)) {
+
+			// parse the value
+			if(INIClass::IsBlank(Ares::readBuffer)) {
+				// explicitly set to no image
+				if(ppShp) {
+					*ppShp = nullptr;
+				}
+				Pcx = nullptr;
+			} else if(!ppShp || strstr(Ares::readBuffer, ".pcx")) {
+				// clear shp and load pcx
+				if(ppShp) {
+					*ppShp = nullptr;
+				}
+				Pcx = Ares::readBuffer;
+				if(!Pcx.Exists()) {
+					// log error and clear invalid name
+					Debug::INIParseFailed(pID, key, Ares::readBuffer);
+					Pcx = nullptr;
+				}
+			} else if(ppShp) {
+				// allowed to load as shp
+				*ppShp = FileSystem::LoadSHPFile(Ares::readBuffer);
+				if(!*ppShp) {
+					// log error and clear invalid name
+					Debug::INIParseFailed(pID, key, Ares::readBuffer);
+					Pcx = nullptr;
+				}
+			} else {
+				// disallowed file type
+				Debug::INIParseFailed(pID, key, Ares::readBuffer, "File type not allowed.");
+			}
+		}
+	};
+
+	ReadShpOrPcxImage("File.Flag", this->FlagFile, nullptr);
+	ReadShpOrPcxImage2("File.ObserverFlag", this->ObserverFlag, 0x20, &this->ObserverFlagSHP);
+	ReadShpOrPcxImage2("File.ObserverBackground", this->ObserverBackground, 0x20, &this->ObserverBackgroundSHP);
 
 	if (pINI->ReadString(pID, "File.LoadScreen", "", Ares::readBuffer, Ares::readLength)) {
 		AresCRT::strCopy(this->LSFile, Ares::readBuffer);
@@ -325,7 +363,6 @@ void CopyStdVector(T HouseTypeExt::ExtData::* prop, const HouseTypeExt::ExtData 
 void HouseTypeExt::ExtData::InheritSettings(HouseTypeClass *pThis) {
 	if(auto ParentCountry = HouseTypeClass::Find(pThis->ParentCountry)) {
 		if(const auto ParentData = HouseTypeExt::ExtMap.Find(ParentCountry)) {
-			CopyString(&HouseTypeExt::ExtData::FlagFile, ParentData, this);
 			CopyString(&HouseTypeExt::ExtData::ObserverFlag, ParentData, this);
 			CopyString(&HouseTypeExt::ExtData::ObserverBackground, ParentData, this);
 			CopyString(&HouseTypeExt::ExtData::LSFile, ParentData, this);
@@ -338,6 +375,7 @@ void HouseTypeExt::ExtData::InheritSettings(HouseTypeClass *pThis) {
 			this->LoadTextColor = ParentData->LoadTextColor;
 			this->RandomSelectionWeight = ParentData->RandomSelectionWeight;
 			this->CountryListIndex = ParentData->CountryListIndex + 1;
+			this->FlagFile = ParentData->FlagFile;
 			this->ObserverBackgroundSHP = ParentData->ObserverBackgroundSHP;
 			this->ObserverFlagSHP = ParentData->ObserverFlagSHP;
 			this->ObserverFlagYuriPAL = ParentData->ObserverFlagYuriPAL;

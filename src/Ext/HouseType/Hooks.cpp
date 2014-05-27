@@ -108,17 +108,17 @@ DEFINE_HOOK(4E3579, HTExt_DrawFlag, 0)
 		pData = HouseTypeExt::ExtMap.Find(pThis);
 	}
 
-	const char* pFlagFile = nullptr;
+	BSurface* pFlag = nullptr;
 
 	if(pData) {
-		pFlagFile = pData->FlagFile;
+		pFlag = pData->FlagFile.GetSurface();
 	} else if(n == 0) {
-		pFlagFile = "usai.pcx";
+		pFlag = PCX::Instance->GetSurface("usai.pcx");
 	} else {
 		return 0x4E3590;
 	}
 
-	R->EAX(PCX::Instance->GetSurface(pFlagFile));
+	R->EAX(pFlag);
 
 	return 0x4E3686;
 }
