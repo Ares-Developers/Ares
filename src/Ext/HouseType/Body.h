@@ -51,7 +51,7 @@ class HouseTypeExt
 			char ObserverBackground[0x20];
 			SHPStruct *ObserverBackgroundSHP;
 
-			char ObserverFlag[0x20];
+			AresPCXFile ObserverFlag;
 			SHPStruct *ObserverFlagSHP;
 			Valueable<bool> ObserverFlagYuriPAL;
 			bool SettingsInherited;
@@ -76,7 +76,6 @@ class HouseTypeExt
 				*LSBrief = 0;
 				*StatusText = 0;
 				*ObserverBackground = 0;
-				*ObserverFlag = 0;
 			};
 
 		virtual ~ExtData() {

@@ -326,15 +326,13 @@ DEFINE_HOOK(6AA164, TabCameoListClass_Draw_DrawObserverFlag, 6)
 		R->ESI<SHPStruct *>(pData->ObserverFlagSHP);
 		R->EAX<int>(!!pData->ObserverFlagYuriPAL ? 9 : 0);
 		return DrawSHP;
-	} else if(*pData->ObserverFlag) {
-		if(auto PCXSurface = PCX::Instance->GetSurface(pData->ObserverFlag)) {
-			GET(int, TLX, EDI);
-			GET(int, TLY, EBX);
-			RectangleStruct bounds = { TLX + pData->ObserverFlagPCXX , TLY + pData->ObserverFlagPCXY,
-					pData->ObserverFlagPCXWidth, pData->ObserverFlagPCXHeight
-			};
-			PCX::Instance->BlitToSurface(&bounds, DSurface::Sidebar, PCXSurface);
-		}
+	} else if(auto PCXSurface = pData->ObserverFlag.GetSurface()) {
+		GET(int, TLX, EDI);
+		GET(int, TLY, EBX);
+		RectangleStruct bounds = { TLX + pData->ObserverFlagPCXX , TLY + pData->ObserverFlagPCXY,
+				pData->ObserverFlagPCXWidth, pData->ObserverFlagPCXHeight
+		};
+		PCX::Instance->BlitToSurface(&bounds, DSurface::Sidebar, PCXSurface);
 		return DontDraw;
 	} else {
 		return DontDraw;

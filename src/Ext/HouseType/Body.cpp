@@ -34,7 +34,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		AresCRT::strCopy(this->StatusText, "STT:PlayerSideAmerica");
 		AresCRT::strCopy(this->TauntFile, "taunts\\tauam%02i.wav");
 		AresCRT::strCopy(this->ObserverBackground, "obsalli.shp");
-		AresCRT::strCopy(this->ObserverFlag, "usai.shp");
+		this->ObserverFlagSHP = FileSystem::LoadSHPFile("usai.shp");
 	} else if (!_strcmpi(pID, "Alliance")) //Korea
 	{
 		this->FlagFile = "japi.pcx";
@@ -46,7 +46,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		AresCRT::strCopy(this->StatusText, "STT:PlayerSideKorea");
 		AresCRT::strCopy(this->TauntFile, "taunts\\tauko%02i.wav");
 		AresCRT::strCopy(this->ObserverBackground, "obsalli.shp");
-		AresCRT::strCopy(this->ObserverFlag, "japi.shp");
+		this->ObserverFlagSHP = FileSystem::LoadSHPFile("japi.shp");
 	} else if (!_strcmpi(pID, "French")) //France
 	{
 		this->FlagFile = "frai.pcx";
@@ -58,7 +58,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		AresCRT::strCopy(this->StatusText, "STT:PlayerSideFrance");
 		AresCRT::strCopy(this->TauntFile, "taunts\\taufr%02i.wav");
 		AresCRT::strCopy(this->ObserverBackground, "obsalli.shp");
-		AresCRT::strCopy(this->ObserverFlag, "frai.shp");
+		this->ObserverFlagSHP = FileSystem::LoadSHPFile("frai.shp");
 	} else if (!_strcmpi(pID, "Germans")) //Germany
 	{
 		this->FlagFile = "geri.pcx";
@@ -70,7 +70,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		AresCRT::strCopy(this->StatusText, "STT:PlayerSideGermany");
 		AresCRT::strCopy(this->TauntFile, "taunts\\tauge%02i.wav");
 		AresCRT::strCopy(this->ObserverBackground, "obsalli.shp");
-		AresCRT::strCopy(this->ObserverFlag, "geri.shp");
+		this->ObserverFlagSHP = FileSystem::LoadSHPFile("geri.shp");
 	} else if (!_strcmpi(pID, "British")) //United Kingdom
 	{
 		this->FlagFile = "gbri.pcx";
@@ -82,7 +82,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		AresCRT::strCopy(this->StatusText, "STT:PlayerSideBritain");
 		AresCRT::strCopy(this->TauntFile, "taunts\\taubr%02i.wav");
 		AresCRT::strCopy(this->ObserverBackground, "obsalli.shp");
-		AresCRT::strCopy(this->ObserverFlag, "gbri.shp");
+		this->ObserverFlagSHP = FileSystem::LoadSHPFile("gbri.shp");
 	} else if (!_strcmpi(pID, "Africans")) //Libya
 	{
 		this->FlagFile = "djbi.pcx";
@@ -94,7 +94,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		AresCRT::strCopy(this->StatusText, "STT:PlayerSideLibya");
 		AresCRT::strCopy(this->TauntFile, "taunts\\tauli%02i.wav");
 		AresCRT::strCopy(this->ObserverBackground, "obssovi.shp");
-		AresCRT::strCopy(this->ObserverFlag, "djbi.shp");
+		this->ObserverFlagSHP = FileSystem::LoadSHPFile("djbi.shp");
 	} else if (!_strcmpi(pID, "Arabs")) //Iraq
 	{
 		this->FlagFile = "arbi.pcx";
@@ -106,7 +106,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		AresCRT::strCopy(this->StatusText, "STT:PlayerSideIraq");
 		AresCRT::strCopy(this->TauntFile, "taunts\\tauir%02i.wav");
 		AresCRT::strCopy(this->ObserverBackground, "obssovi.shp");
-		AresCRT::strCopy(this->ObserverFlag, "arbi.shp");
+		this->ObserverFlagSHP = FileSystem::LoadSHPFile("arbi.shp");
 	} else if (!_strcmpi(pID, "Confederation")) //Cuba
 	{
 		this->FlagFile = "lati.pcx";
@@ -118,7 +118,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		AresCRT::strCopy(this->StatusText, "STT:PlayerSideCuba");
 		AresCRT::strCopy(this->TauntFile, "taunts\\taucu%02i.wav");
 		AresCRT::strCopy(this->ObserverBackground, "obssovi.shp");
-		AresCRT::strCopy(this->ObserverFlag, "lati.shp");
+		this->ObserverFlagSHP = FileSystem::LoadSHPFile("lati.shp");
 	} else if (!_strcmpi(pID, "Russians")) //Russia
 	{
 		this->FlagFile = "rusi.pcx";
@@ -130,7 +130,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		AresCRT::strCopy(this->StatusText, "STT:PlayerSideRussia");
 		AresCRT::strCopy(this->TauntFile, "taunts\\tauru%02i.wav");
 		AresCRT::strCopy(this->ObserverBackground, "obssovi.shp");
-		AresCRT::strCopy(this->ObserverFlag, "rusi.shp");
+		this->ObserverFlagSHP = FileSystem::LoadSHPFile("rusi.shp");
 	} else if (!_strcmpi(pID, "YuriCountry")) //Yuri
 	{
 		this->FlagFile = "yrii.pcx";
@@ -142,7 +142,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		AresCRT::strCopy(this->StatusText, "STT:PlayerSideYuriCountry");
 		AresCRT::strCopy(this->TauntFile, "taunts\\tauyu%02i.wav");
 		AresCRT::strCopy(this->ObserverBackground, "obsyuri.shp");
-		AresCRT::strCopy(this->ObserverFlag, "yrii.shp");
+		this->ObserverFlagSHP = FileSystem::LoadSHPFile("yrii.shp");
 		this->ObserverFlagYuriPAL = true;
 	} else //Unknown
 	{
@@ -261,7 +261,7 @@ void HouseTypeExt::ExtData::LoadFromRulesFile(HouseTypeClass *pThis, CCINIClass 
 	};
 
 	ReadShpOrPcxImage("File.Flag", this->FlagFile, nullptr);
-	ReadShpOrPcxImage2("File.ObserverFlag", this->ObserverFlag, 0x20, &this->ObserverFlagSHP);
+	ReadShpOrPcxImage("File.ObserverFlag", this->ObserverFlag, &this->ObserverFlagSHP);
 	ReadShpOrPcxImage2("File.ObserverBackground", this->ObserverBackground, 0x20, &this->ObserverBackgroundSHP);
 
 	if (pINI->ReadString(pID, "File.LoadScreen", "", Ares::readBuffer, Ares::readLength)) {
@@ -363,7 +363,6 @@ void CopyStdVector(T HouseTypeExt::ExtData::* prop, const HouseTypeExt::ExtData 
 void HouseTypeExt::ExtData::InheritSettings(HouseTypeClass *pThis) {
 	if(auto ParentCountry = HouseTypeClass::Find(pThis->ParentCountry)) {
 		if(const auto ParentData = HouseTypeExt::ExtMap.Find(ParentCountry)) {
-			CopyString(&HouseTypeExt::ExtData::ObserverFlag, ParentData, this);
 			CopyString(&HouseTypeExt::ExtData::ObserverBackground, ParentData, this);
 			CopyString(&HouseTypeExt::ExtData::LSFile, ParentData, this);
 			CopyString(&HouseTypeExt::ExtData::LSPALFile, ParentData, this);
@@ -377,6 +376,7 @@ void HouseTypeExt::ExtData::InheritSettings(HouseTypeClass *pThis) {
 			this->CountryListIndex = ParentData->CountryListIndex + 1;
 			this->FlagFile = ParentData->FlagFile;
 			this->ObserverBackgroundSHP = ParentData->ObserverBackgroundSHP;
+			this->ObserverFlag = ParentData->ObserverFlag;
 			this->ObserverFlagSHP = ParentData->ObserverFlagSHP;
 			this->ObserverFlagYuriPAL = ParentData->ObserverFlagYuriPAL;
 
