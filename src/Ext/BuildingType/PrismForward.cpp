@@ -358,34 +358,3 @@ void BuildingTypeExt::cPrismForwarding::SetChargeDelay_Set
 		SetChargeDelay_Set(Sender, (chain + 1), LongestCDelay, LongestFDelay, LongestChain);
 	}
 }
-
-
-//Whenever a building is incapacitated, this method should be called to take it out of any prism network
-//destruction, change sides, mind-control, sold, warped, emp, undeployed, low power, drained, lost operator
-void BuildingTypeExt::cPrismForwarding::RemoveFromNetwork(BuildingClass *SlaveTower, bool bCease) {
-	BuildingExt::ExtData *pSlaveData = BuildingExt::ExtMap.Find(SlaveTower);
-	if(!pSlaveData) {
-		return;
-	}
-	BuildingTypeClass *pSlaveType = SlaveTower->Type;
-	BuildingTypeExt::ExtData *pSlaveTypeData = BuildingTypeExt::ExtMap.Find(pSlaveType);
-	if(!pSlaveTypeData) {
-		return;
-	}
-	if (pSlaveData->PrismForwarding.PrismChargeDelay || bCease) {
-		//either hasn't started charging yet or animations have been reset so should go idle immediately
-		SlaveTower->PrismStage = PrismChargeState::Idle;
-		pSlaveData->PrismForwarding.PrismChargeDelay = 0;
-		SlaveTower->DelayBeforeFiring = 0;
-		pSlaveData->PrismForwarding.ModifierReserve = 0.0;
-		pSlaveData->PrismForwarding.DamageReserve = 0;
-		//animations should be controlled by whatever incapacitated the tower so no need to mess with anims here
-	}
-	pSlaveData->PrismForwarding.SetSupportTarget(nullptr);
-	//finally, remove all the preceding slaves from the network
-	for(int senderIdx = pSlaveData->PrismForwarding.Senders.Count; senderIdx; senderIdx--) {
-		if (BuildingClass *NextTower = pSlaveData->PrismForwarding.Senders[senderIdx-1]) {
-			RemoveFromNetwork(NextTower, false);
-		}
-	}
-}

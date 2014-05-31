@@ -1,5 +1,33 @@
 #include "Body.h"
 
+//Whenever a building is incapacitated, this method should be called to take it out of any prism network
+//destruction, change sides, mind-control, sold, warped, emp, undeployed, low power, drained, lost operator
+void BuildingExt::cPrismForwarding::RemoveFromNetwork(bool bCease) {
+	auto pSlave = this->Owner->AttachedToObject;
+
+	auto pSlaveTypeData = BuildingTypeExt::ExtMap.Find(pSlave->Type);
+	if(!pSlaveTypeData) {
+		return;
+	}
+	if(this->PrismChargeDelay || bCease) {
+		//either hasn't started charging yet or animations have been reset so should go idle immediately
+		pSlave->PrismStage = PrismChargeState::Idle;
+		this->PrismChargeDelay = 0;
+		pSlave->DelayBeforeFiring = 0;
+		this->ModifierReserve = 0.0;
+		this->DamageReserve = 0;
+		//animations should be controlled by whatever incapacitated the tower so no need to mess with anims here
+	}
+	this->SetSupportTarget(nullptr);
+	//finally, remove all the preceding slaves from the network
+	for(int senderIdx = this->Senders.Count; senderIdx; senderIdx--) {
+		if(BuildingClass *NextTower = this->Senders[senderIdx - 1]) {
+			auto pData = BuildingExt::ExtMap.Find(NextTower);
+			pData->PrismForwarding.RemoveFromNetwork(false);
+		}
+	}
+}
+
 void BuildingExt::cPrismForwarding::SetSupportTarget(BuildingClass *pTargetTower) {
 	auto pSlaveTower = this->Owner->AttachedToObject;
 

@@ -267,14 +267,16 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 DEFINE_HOOK(4424EF, PrismForward_BuildingDestroyed, 6)
 {
 	GET(BuildingClass *, B, ESI);
-	BuildingTypeExt::cPrismForwarding::RemoveFromNetwork(B, true);
+	auto pData = BuildingExt::ExtMap.Find(B);
+	pData->PrismForwarding.RemoveFromNetwork(true);
 	return 0;
 }
 
 DEFINE_HOOK(447113, PrismForward_BuildingSold, 6)
 {
 	GET(BuildingClass *, B, ESI);
-	BuildingTypeExt::cPrismForwarding::RemoveFromNetwork(B, true);
+	auto pData = BuildingExt::ExtMap.Find(B);
+	pData->PrismForwarding.RemoveFromNetwork(true);
 	return 0;
 }
 
@@ -315,8 +317,8 @@ DEFINE_HOOK(448277, PrismForward_BuildingChangeOwner, 5)
 			}
 		}
 		//if we reach this point then the alliance checks have failed
-		BuildingTypeExt::cPrismForwarding::RemoveFromNetwork(B, false); //false because animation should continue / slave is busy but won't now fire
-		
+		auto pData = BuildingExt::ExtMap.Find(B);
+		pData->PrismForwarding.RemoveFromNetwork(false); //false because animation should continue / slave is busy but won't now fire
 	}
 
 	return 0;
@@ -325,7 +327,8 @@ DEFINE_HOOK(448277, PrismForward_BuildingChangeOwner, 5)
 DEFINE_HOOK(71AF76, PrismForward_BuildingWarped, 9) {
 	GET(TechnoClass *, T, EDI);
 	if (BuildingClass * B = specific_cast<BuildingClass *>(T)) {
-		BuildingTypeExt::cPrismForwarding::RemoveFromNetwork(B, true);
+		auto pData = BuildingExt::ExtMap.Find(B);
+		pData->PrismForwarding.RemoveFromNetwork(true);
 	}
 	return 0;
 }
@@ -337,7 +340,8 @@ DEFINE_HOOK(70FD9A, PrismForward_BuildingDrain, 6)
 	GET(TechnoClass *, Drainee, EDI);
 	if(Drainee->DrainingMe != Drainer) { // else we're already being drained, nothing to do
 		if (BuildingClass * B = specific_cast<BuildingClass *>(Drainee)) {
-			BuildingTypeExt::cPrismForwarding::RemoveFromNetwork(B, true);
+			auto pData = BuildingExt::ExtMap.Find(B);
+			pData->PrismForwarding.RemoveFromNetwork(true);
 		}
 	}
 	return 0;
@@ -348,13 +352,15 @@ DEFINE_HOOK(454B3D, PrismForward_BuildingPowerDown, 6)
 	GET(BuildingClass *, B, ESI);
 	// this building just realised it needs to go offline
 	// it unregistered itself from powered unit controls but hasn't done anything else yet
-	BuildingTypeExt::cPrismForwarding::RemoveFromNetwork(B, true);
+	auto pData = BuildingExt::ExtMap.Find(B);
+	pData->PrismForwarding.RemoveFromNetwork(true);
 	return 0;
 }
 
 DEFINE_HOOK(44EBF0, PrismForward_BuildingRemoved, 5)
 {
 	GET(BuildingClass *, B, ECX);
-	BuildingTypeExt::cPrismForwarding::RemoveFromNetwork(B, true);
+	auto pData = BuildingExt::ExtMap.Find(B);
+	pData->PrismForwarding.RemoveFromNetwork(true);
 	return 0;
 }

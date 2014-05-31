@@ -37,6 +37,7 @@ public:
 			DamageReserve(0)
 		{ };
 
+		void RemoveFromNetwork(bool bCease);
 		void SetSupportTarget(BuildingClass* pTargetTower);
 		void RemoveAllSenders();
 
@@ -52,7 +53,7 @@ public:
 				if(senderIdx != -1) {
 					Debug::Log("Should remove my sender #%d\n", senderIdx);
 				}
-				BuildingTypeExt::cPrismForwarding::RemoveFromNetwork(bld, true);
+				pExt->PrismForwarding.RemoveFromNetwork(true);
 				if(bld == this->SupportTarget) {
 					_snprintf_s(Ares::readBuffer, Ares::readLength - 1, "Prism Forwarder (ExtData %p) failed to remove support target\n", container);
 					Debug::FatalError(true);
