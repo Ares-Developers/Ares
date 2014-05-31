@@ -1,5 +1,24 @@
 #include "Body.h"
 
+//here we are only passing in LongestChain so we can set SupportingPrisms to the chain length. this has nothing to do with the charge delay which we have already calculated
+void BuildingExt::cPrismForwarding::SetChargeDelay_Set(int chain, DWORD* LongestCDelay, DWORD* LongestFDelay, int LongestChain) {
+	auto pTargetTower = this->Owner->AttachedToObject;
+
+	this->PrismChargeDelay = (LongestFDelay[chain] - pTargetTower->DelayBeforeFiring) + LongestCDelay[chain];
+	pTargetTower->SupportingPrisms = (LongestChain - chain);
+	if(this->PrismChargeDelay == 0) {
+		//no delay, so start animations now
+		if(pTargetTower->Type->BuildingAnim[BuildingAnimSlot::Special].Anim[0]) { //only if it actually has a special anim
+			pTargetTower->DestroyNthAnim(BuildingAnimSlot::Active);
+			pTargetTower->PlayNthAnim(BuildingAnimSlot::Special);
+		}
+	}
+	for(auto Sender : this->Senders) {
+		auto pData = BuildingExt::ExtMap.Find(Sender);
+		pData->PrismForwarding.SetChargeDelay_Set(chain + 1, LongestCDelay, LongestFDelay, LongestChain);
+	}
+}
+
 //Whenever a building is incapacitated, this method should be called to take it out of any prism network
 //destruction, change sides, mind-control, sold, warped, emp, undeployed, low power, drained, lost operator
 void BuildingExt::cPrismForwarding::RemoveFromNetwork(bool bCease) {

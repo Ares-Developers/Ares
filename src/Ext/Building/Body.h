@@ -37,6 +37,7 @@ public:
 			DamageReserve(0)
 		{ };
 
+		void SetChargeDelay_Set(int chain, DWORD* LongestCDelay, DWORD* LongestFDelay, int LongestChain);
 		void RemoveFromNetwork(bool bCease);
 		void SetSupportTarget(BuildingClass* pTargetTower);
 		void RemoveAllSenders();

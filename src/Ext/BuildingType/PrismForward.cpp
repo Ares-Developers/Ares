@@ -313,7 +313,8 @@ void BuildingTypeExt::cPrismForwarding::SetChargeDelay
 		SetChargeDelay_Get(TargetTower, 0, endChain, LongestChain, LongestCDelay.data(), LongestFDelay.data());
 	}
 
-	SetChargeDelay_Set(TargetTower, 0, LongestCDelay.data(), LongestFDelay.data(), LongestChain);
+	auto pData = BuildingExt::ExtMap.Find(TargetTower);
+	pData->PrismForwarding.SetChargeDelay_Set(0, LongestCDelay.data(), LongestFDelay.data(), LongestChain);
 }
 
 void BuildingTypeExt::cPrismForwarding::SetChargeDelay_Get
@@ -337,24 +338,5 @@ void BuildingTypeExt::cPrismForwarding::SetChargeDelay_Get
 			BuildingClass *SenderTower = pTargetData->PrismForwarding.Senders[senderIdx];
 			SetChargeDelay_Get(SenderTower, (chain + 1), endChain, LongestChain, LongestCDelay, LongestFDelay);
 		}
-	}
-}
-
-//here we are only passing in LongestChain so we can set SupportingPrisms to the chain length. this has nothing to do with the charge delay which we have already calculated
-void BuildingTypeExt::cPrismForwarding::SetChargeDelay_Set
-	(BuildingClass * TargetTower, int chain, DWORD *LongestCDelay, DWORD *LongestFDelay, int LongestChain) {
-	BuildingExt::ExtData *pTargetData = BuildingExt::ExtMap.Find(TargetTower);
-	pTargetData->PrismForwarding.PrismChargeDelay = (LongestFDelay[chain] - TargetTower->DelayBeforeFiring) + LongestCDelay[chain];
-	TargetTower->SupportingPrisms = (LongestChain - chain);
-	if (pTargetData->PrismForwarding.PrismChargeDelay == 0) {
-		//no delay, so start animations now
-		if (TargetTower->Type->BuildingAnim[BuildingAnimSlot::Special].Anim[0]) { //only if it actually has a special anim
-			TargetTower->DestroyNthAnim(BuildingAnimSlot::Active);
-			TargetTower->PlayNthAnim(BuildingAnimSlot::Special);
-		}
-	}
-	for(int senderIdx = 0; senderIdx < pTargetData->PrismForwarding.Senders.Count; ++senderIdx) {
-		BuildingClass *Sender = pTargetData->PrismForwarding.Senders[senderIdx];
-		SetChargeDelay_Set(Sender, (chain + 1), LongestCDelay, LongestFDelay, LongestChain);
 	}
 }

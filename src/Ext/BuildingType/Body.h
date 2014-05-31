@@ -70,7 +70,6 @@ public:
 		static bool ValidateSupportTower(BuildingClass *, BuildingClass *, BuildingClass *);
 		static void SetChargeDelay(BuildingClass *, int);
 		static void SetChargeDelay_Get(BuildingClass * , int , int , int , DWORD *, DWORD *);
-		static void SetChargeDelay_Set(BuildingClass * , int , DWORD *, DWORD *, int);
 
 		// constructor
 		cPrismForwarding() : Enabled(NO),
