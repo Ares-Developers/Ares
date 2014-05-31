@@ -47,7 +47,7 @@ DEFINE_HOOK(44B2FE, BuildingClass_Mi_Attack_IsPrism, 6)
 			int stage = 0;
 
 			//when it reaches zero we can't acquire any more slaves
-			while (BuildingTypeExt::cPrismForwarding::AcquireSlaves_MultiStage(B, B, stage++, 0, &NetworkSize, &LongestChain) != 0) {}
+			while(pMasterData->PrismForwarding.AcquireSlaves_MultiStage(B, stage++, 0, NetworkSize, LongestChain) != 0) {}
 
 			//now we have all the towers we know the longest chain, and can set all the towers' charge delays
 			pMasterData->PrismForwarding.SetChargeDelay(LongestChain);

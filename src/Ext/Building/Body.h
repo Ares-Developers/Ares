@@ -37,6 +37,7 @@ public:
 			DamageReserve(0)
 		{ };
 
+		int AcquireSlaves_MultiStage(BuildingClass* TargetTower, int stage, int chain, int& NetworkSize, int& LongestChain);
 		int AcquireSlaves_SingleStage(BuildingClass* TargetTower, int stage, int chain, int& NetworkSize, int& LongestChain);
 		void SetChargeDelay(int LongestChain);
 		void SetChargeDelay_Get(int chain, int endChain, int LongestChain, DWORD* LongestCDelay, DWORD* LongestFDelay);

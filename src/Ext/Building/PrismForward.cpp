@@ -3,6 +3,35 @@
 #include <vector>
 #include <algorithm>
 
+int BuildingExt::cPrismForwarding::AcquireSlaves_MultiStage(BuildingClass* TargetTower, int stage, int chain, int& NetworkSize, int& LongestChain) {
+	//get all slaves for a specific stage in the prism chain
+	//this is done for all sibling chains in parallel, so we prefer multiple short chains over one really long chain
+	//towers should be added in the following way:
+	// 1---2---4---6
+	// |        \
+	// |         7
+	// |
+	// 3---5--8
+	// as opposed to
+	// 1---2---3---4
+	// |          /
+	// |         5
+	// |
+	// 6---7--8
+	// ...which would not be as good.
+	int countSlaves = 0;
+	if(stage == 0) {
+		countSlaves += this->AcquireSlaves_SingleStage(TargetTower, stage, chain + 1, NetworkSize, LongestChain);
+	} else {
+		auto pTargetData = BuildingExt::ExtMap.Find(TargetTower);
+		for(int senderIdx = 0; senderIdx < pTargetData->PrismForwarding.Senders.Count; ++senderIdx) {
+			auto SenderTower = pTargetData->PrismForwarding.Senders[senderIdx];
+			countSlaves += this->AcquireSlaves_MultiStage(SenderTower, stage - 1, chain + 1, NetworkSize, LongestChain);
+		}
+	}
+	return countSlaves;
+}
+
 int BuildingExt::cPrismForwarding::AcquireSlaves_SingleStage(BuildingClass* TargetTower, int stage, int chain, int& NetworkSize, int& LongestChain) {
 	auto MasterTower = this->Owner->AttachedToObject;
 

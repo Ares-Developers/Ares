@@ -121,37 +121,6 @@ signed int BuildingTypeExt::cPrismForwarding::GetUnusedWeaponSlot(BuildingTypeCl
 	return -1;
 }
 
-int BuildingTypeExt::cPrismForwarding::AcquireSlaves_MultiStage
-	(BuildingClass *MasterTower, BuildingClass *TargetTower, int stage, int chain, int *NetworkSize, int *LongestChain) {
-	//get all slaves for a specific stage in the prism chain
-	//this is done for all sibling chains in parallel, so we prefer multiple short chains over one really long chain
-	//towers should be added in the following way:
-	// 1---2---4---6
-	// |        \
-	// |         7
-	// |
-	// 3---5--8
-	// as opposed to
-	// 1---2---3---4
-	// |          /
-	// |         5
-	// |
-	// 6---7--8
-	// ...which would not be as good.
-	int countSlaves = 0;
-	if (stage == 0) {
-		auto pData = BuildingExt::ExtMap.Find(MasterTower);
-		countSlaves += pData->PrismForwarding.AcquireSlaves_SingleStage(TargetTower, stage, (chain + 1), *NetworkSize, *LongestChain);
-	} else {
-		BuildingExt::ExtData *pTargetData = BuildingExt::ExtMap.Find(TargetTower);
-		for(int senderIdx = 0; senderIdx < pTargetData->PrismForwarding.Senders.Count; ++senderIdx) {
-			BuildingClass *SenderTower = pTargetData->PrismForwarding.Senders[senderIdx];
-			countSlaves += AcquireSlaves_MultiStage(MasterTower, SenderTower, (stage - 1), (chain + 1), NetworkSize, LongestChain);
-		}
-	}
-	return countSlaves;
-}
-
 bool BuildingTypeExt::cPrismForwarding::ValidateSupportTower(
 		BuildingClass *MasterTower, BuildingClass *TargetTower, BuildingClass *SlaveTower) {
 	//MasterTower = the firing tower. This might be the same as TargetTower, it might not.
