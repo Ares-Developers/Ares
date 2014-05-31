@@ -17,8 +17,11 @@ class BuildingExt
 public:
 	typedef BuildingClass TT;
 
+	class ExtData;
+
 	class cPrismForwarding {
-		public:
+	public:
+		BuildingExt::ExtData* Owner;
 		DynamicVectorClass<BuildingClass*> Senders;		//the prism towers that are forwarding to this one
 		BuildingClass* SupportTarget;				//what tower am I sending to?
 		int PrismChargeDelay;					//current delay charge
@@ -26,9 +29,13 @@ public:
 		int DamageReserve;					//current flat reservoir
 
 		// constructor
-		cPrismForwarding() : Senders(), SupportTarget(nullptr), PrismChargeDelay(0), ModifierReserve(0.0), DamageReserve(0){
-			this->Senders.Clear();
-		};
+		cPrismForwarding(BuildingExt::ExtData* pOwner) : Owner(pOwner),
+			Senders(),
+			SupportTarget(nullptr),
+			PrismChargeDelay(0),
+			ModifierReserve(0.0),
+			DamageReserve(0)
+		{ };
 
 		void AnnounceInvalidPointer(void * ptr, Extension<BuildingClass> *container) {
 			// verify that ptr points to an existing object that is a building without
@@ -80,9 +87,14 @@ public:
 
 	public:
 		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
-			OwnerBeforeRaid(nullptr), isCurrentlyRaided(false), ignoreNextEVA(false), PrismForwarding(), FreeUnits_Done(false), AboutToChronoshift(false),
+			OwnerBeforeRaid(nullptr),
+			isCurrentlyRaided(false),
+			ignoreNextEVA(false),
+			PrismForwarding(this),
+			FreeUnits_Done(false),
+			AboutToChronoshift(false),
 			SensorArrayActiveCounter(0)
-			{ };
+		{ };
 
 		virtual ~ExtData() {
 			if(this->PrismForwarding.SupportTarget) {
