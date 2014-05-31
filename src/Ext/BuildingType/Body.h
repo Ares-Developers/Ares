@@ -72,7 +72,6 @@ public:
 		static void SetChargeDelay_Get(BuildingClass * , int , int , int , DWORD *, DWORD *);
 		static void SetChargeDelay_Set(BuildingClass * , int , DWORD *, DWORD *, int);
 		static void RemoveFromNetwork(BuildingClass *, bool);
-		static void SetSupportTarget(BuildingClass *, BuildingClass *);
 
 		// constructor
 		cPrismForwarding() : Enabled(NO),

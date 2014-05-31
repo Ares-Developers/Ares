@@ -64,8 +64,7 @@ DEFINE_HOOK(44B2FE, BuildingClass_Mi_Attack_IsPrism, 6)
 			B->PrismTargetCoords.Y = B->PrismTargetCoords.Z = 0;
 			pMasterData->PrismForwarding.ModifierReserve = 0.0;
 			pMasterData->PrismForwarding.DamageReserve = 0;
-			BuildingTypeExt::cPrismForwarding::SetSupportTarget(B, nullptr);
-
+			pMasterData->PrismForwarding.SetSupportTarget(nullptr);
 		}
 
 		return IsCustomPrism; //always custom, the new code is a complete rewrite of the old code
@@ -138,7 +137,7 @@ DEFINE_HOOK(4503F0, BuildingClass_Update_Prism, 9)
 				pData->PrismForwarding.DamageReserve = 0;
 				pData->PrismForwarding.RemoveAllSenders();
 				pThis->SupportingPrisms = 0; //Ares sets this to the longest backward chain
-				BuildingTypeExt::cPrismForwarding::SetSupportTarget(pThis, nullptr);
+				pData->PrismForwarding.SetSupportTarget(nullptr);
 				pThis->PrismStage = PrismChargeState::Idle;
 			}
 		} else {

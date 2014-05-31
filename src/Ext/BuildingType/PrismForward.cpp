@@ -216,7 +216,8 @@ int BuildingTypeExt::cPrismForwarding::AcquireSlaves_SingleStage
 		nearestPrism->PrismStage = PrismChargeState::Slave;
 		nearestPrism->PrismTargetCoords = FLH;
 
-		SetSupportTarget(nearestPrism, TargetTower);
+		auto pData = BuildingExt::ExtMap.Find(nearestPrism);
+		pData->PrismForwarding.SetSupportTarget(TargetTower);
 	}
 
 	if (iFeeds != 0 && chain > *LongestChain) {
@@ -380,49 +381,11 @@ void BuildingTypeExt::cPrismForwarding::RemoveFromNetwork(BuildingClass *SlaveTo
 		pSlaveData->PrismForwarding.DamageReserve = 0;
 		//animations should be controlled by whatever incapacitated the tower so no need to mess with anims here
 	}
-	SetSupportTarget(SlaveTower, nullptr);
+	pSlaveData->PrismForwarding.SetSupportTarget(nullptr);
 	//finally, remove all the preceding slaves from the network
 	for(int senderIdx = pSlaveData->PrismForwarding.Senders.Count; senderIdx; senderIdx--) {
 		if (BuildingClass *NextTower = pSlaveData->PrismForwarding.Senders[senderIdx-1]) {
 			RemoveFromNetwork(NextTower, false);
-		}
-	}
-}
-
-void BuildingTypeExt::cPrismForwarding::SetSupportTarget(BuildingClass *pSlaveTower, BuildingClass *pTargetTower) {
-	if(BuildingExt::ExtData *pSlaveData = BuildingExt::ExtMap.Find(pSlaveTower)) {
-		// meet the new tower, same as the old tower
-		if(pSlaveData->PrismForwarding.SupportTarget == pTargetTower) {
-			return;
-		}
-
-		// if the target tower is already set, disconnect it by removing it from the old target tower's sender list
-		if(BuildingClass *pOldTarget = pSlaveData->PrismForwarding.SupportTarget) {
-			if(BuildingExt::ExtData *pOldTargetData = BuildingExt::ExtMap.Find(pOldTarget)) {
-				int idxSlave = pOldTargetData->PrismForwarding.Senders.FindItemIndex(pSlaveTower);
-				if(idxSlave != -1) {
-					pOldTargetData->PrismForwarding.Senders.RemoveItem(idxSlave);
-					// everywhere the comments say this is now the "longest backwards chain", but decreasing this here makes use of the original meaning. why is this needed here? AlexB 2012-04-08
-					--pOldTarget->SupportingPrisms;  //Ares doesn't actually use this, but maintaining it anyway (as direct feeds only)
-				} else {
-					Debug::DevLog(Debug::Warning, "PrismForwarding::SetSupportTarget: Old target tower (%p) did not consider this tower (%p) as its sender.\n", pOldTarget, pSlaveTower);
-				}
-			}
-			pSlaveData->PrismForwarding.SupportTarget = nullptr;
-		}
-
-		// set the new tower as support target
-		if(pTargetTower) {
-			if(BuildingExt::ExtData *pTargetData = BuildingExt::ExtMap.Find(pTargetTower)) {
-				pSlaveData->PrismForwarding.SupportTarget = pTargetTower;
-
-				if(pTargetData->PrismForwarding.Senders.FindItemIndex(pSlaveTower) == -1) {
-					pTargetData->PrismForwarding.Senders.AddItem(pSlaveTower);
-					// why isn't SupportingPrisms increased here? AlexB 2012-04-08
-				} else {
-					Debug::DevLog(Debug::Warning, "PrismForwarding::SetSupportTarget: Tower (%p) is already in new target tower's (%p) sender list.\n", pSlaveTower, pTargetTower);
-				}
-			}
 		}
 	}
 }

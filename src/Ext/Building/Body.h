@@ -37,6 +37,7 @@ public:
 			DamageReserve(0)
 		{ };
 
+		void SetSupportTarget(BuildingClass* pTargetTower);
 		void RemoveAllSenders();
 
 		void AnnounceInvalidPointer(void * ptr, Extension<BuildingClass> *container) {
