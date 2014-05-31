@@ -91,9 +91,9 @@ DEFINE_HOOK(46BDD9, BulletTypeClass_CTOR, 5)
 	return 0;
 }
 
-DEFINE_HOOK(46C890, BulletTypeClass_SDDTOR, 6)
+DEFINE_HOOK(46C8B6, BulletTypeClass_SDDTOR, 6)
 {
-	GET(BulletTypeClass*, pItem, ECX);
+	GET(BulletTypeClass*, pItem, ESI);
 
 	BulletTypeExt::ExtMap.Remove(pItem);
 	return 0;

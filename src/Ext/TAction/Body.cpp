@@ -99,9 +99,9 @@ A_FINE_HOOK(6DD176, TActionClass_CTOR, 5)
 	return 0;
 }
 
-A_FINE_HOOK(6E4660, TActionClass_SDDTOR, 6)
+A_FINE_HOOK(6E4761, TActionClass_SDDTOR, 6)
 {
-	GET(TActionClass*, pItem, ECX);
+	GET(TActionClass*, pItem, ESI);
 
 	TActionExt::ExtMap.Remove(pItem);
 	return 0;

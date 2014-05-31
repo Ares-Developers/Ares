@@ -518,9 +518,9 @@ DEFINE_HOOK(75D1A9, WarheadTypeClass_CTOR, 7)
 	return 0;
 }
 
-DEFINE_HOOK(75E510, WarheadTypeClass_SDDTOR, 6)
+DEFINE_HOOK(75E5C8, WarheadTypeClass_SDDTOR, 6)
 {
-	GET(WarheadTypeClass*, pItem, ECX);
+	GET(WarheadTypeClass*, pItem, ESI);
 
 	WarheadTypeExt::ExtMap.Remove(pItem);
 	return 0;

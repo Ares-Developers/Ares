@@ -122,9 +122,9 @@ DEFINE_HOOK(721876, TiberiumClass_CTOR, 5)
 	return 0;
 }
 
-DEFINE_HOOK(721880, TiberiumClass_DTOR, 5)
+DEFINE_HOOK(72193A, TiberiumClass_DTOR, 6)
 {
-	GET(TiberiumClass*, pThis, ECX);
+	GET(TiberiumClass*, pThis, ESI);
 
 	TiberiumExt::ExtMap.Remove(pThis);
 	return 0;

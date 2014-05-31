@@ -464,9 +464,9 @@ DEFINE_HOOK(4F6532, HouseClass_CTOR, 5)
 	return 0;
 }
 
-DEFINE_HOOK(4F7140, HouseClass_DTOR, 6)
+DEFINE_HOOK(4F7371, HouseClass_DTOR, 6)
 {
-	GET(HouseClass*, pItem, ECX);
+	GET(HouseClass*, pItem, ESI);
 
 	int idx = HouseClass::Array->FindItemIndex(pItem);
 

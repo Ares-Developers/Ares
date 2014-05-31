@@ -872,9 +872,9 @@ DEFINE_HOOK(43BCBD, BuildingClass_CTOR, 6)
 	return 0;
 }
 
-DEFINE_HOOK(43BCF7, BuildingClass_DTOR, 6)
+DEFINE_HOOK(43C022, BuildingClass_DTOR, 6)
 {
-	GET(BuildingClass*, pItem, ECX);
+	GET(BuildingClass*, pItem, ESI);
 
 	BuildingExt::ExtMap.Remove(pItem);
 	return 0;

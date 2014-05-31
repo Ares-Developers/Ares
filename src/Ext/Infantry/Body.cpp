@@ -86,9 +86,9 @@ A_FINE_HOOK(517CB0, InfantryClass_CTOR, 5)
 	return 0;
 }
 
-A_FINE_HOOK(517D90, InfantryClass_DTOR, 5)
+A_FINE_HOOK(517F83, InfantryClass_DTOR, 6)
 {
-	GET(InfantryClass*, pItem, ECX);
+	GET(InfantryClass*, pItem, ESI);
 
 	InfantryExt::ExtMap.Remove(pItem);
 	return 0;

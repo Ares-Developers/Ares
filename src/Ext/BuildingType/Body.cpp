@@ -453,9 +453,9 @@ DEFINE_HOOK(45E50C, BuildingTypeClass_CTOR, 6)
 	return 0;
 }
 
-DEFINE_HOOK(45E580, BuildingTypeClass_DTOR, 5)
+DEFINE_HOOK(45E707, BuildingTypeClass_DTOR, 6)
 {
-	GET(BuildingTypeClass*, pItem, ECX);
+	GET(BuildingTypeClass*, pItem, ESI);
 
 	BuildingTypeExt::ExtMap.Remove(pItem);
 	return 0;

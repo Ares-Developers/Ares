@@ -476,9 +476,9 @@ DEFINE_HOOK(771EE9, WeaponTypeClass_CTOR, 5)
 	return 0;
 }
 
-DEFINE_HOOK(7730F0, WeaponTypeClass_SDDTOR, 5)
+DEFINE_HOOK(77311D, WeaponTypeClass_SDDTOR, 6)
 {
-	GET(WeaponTypeClass*, pItem, ECX);
+	GET(WeaponTypeClass*, pItem, ESI);
 
 	WeaponTypeExt::ExtMap.Remove(pItem);
 	return 0;

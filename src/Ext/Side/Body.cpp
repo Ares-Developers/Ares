@@ -484,9 +484,9 @@ DEFINE_HOOK(6A4609, SideClass_CTOR, 7)
 	return 0;
 }
 
-DEFINE_HOOK(6A4930, SideClass_SDDTOR, 6)
+DEFINE_HOOK(6A499F, SideClass_SDDTOR, 6)
 {
-	GET(SideClass*, pItem, ECX);
+	GET(SideClass*, pItem, ESI);
 
 	SideExt::ExtMap.Remove(pItem);
 	return 0;

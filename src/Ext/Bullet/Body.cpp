@@ -104,9 +104,9 @@ DEFINE_HOOK(4664BA, BulletClass_CTOR, 5)
 	return 0;
 }
 
-DEFINE_HOOK(466560, BulletClass_DTOR, 6)
+DEFINE_HOOK(4665E9, BulletClass_DTOR, A)
 {
-	GET(BulletClass*, pItem, ECX);
+	GET(BulletClass*, pItem, ESI);
 
 	BulletExt::ExtMap.Remove(pItem);
 	return 0;
