@@ -37,6 +37,8 @@ public:
 			DamageReserve(0)
 		{ };
 
+		void RemoveAllSenders();
+
 		void AnnounceInvalidPointer(void * ptr, Extension<BuildingClass> *container) {
 			// verify that ptr points to an existing object that is a building without
 			// accessing any of its fields or members.

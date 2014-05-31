@@ -426,24 +426,3 @@ void BuildingTypeExt::cPrismForwarding::SetSupportTarget(BuildingClass *pSlaveTo
 		}
 	}
 }
-
-void BuildingTypeExt::cPrismForwarding::RemoveAllSenders(BuildingClass *pTower) {
-	if(BuildingExt::ExtData *pData = BuildingExt::ExtMap.Find(pTower)) {
-		// disconnect all sender towers from their support target, which is me
-		for(int senderIdx = pData->PrismForwarding.Senders.Count; senderIdx; senderIdx--) {
-			if(BuildingClass *NextTower = pData->PrismForwarding.Senders[senderIdx-1]) {
-				SetSupportTarget(NextTower, nullptr);
-			}
-		}
-
-		// log if not all senders could be removed
-		if(pData->PrismForwarding.Senders.Count) {
-			Debug::DevLog(Debug::Warning, "PrismForwarding::RemoveAllSenders: Tower (%p) still has %d senders after removal completed.\n", pTower, pData->PrismForwarding.Senders.Count);
-			for(int i=0; i<pData->PrismForwarding.Senders.Count; ++i) {
-				Debug::DevLog(Debug::Warning, "Sender %03d: %p\n", i, pData->PrismForwarding.Senders[i]);
-			}
-
-			pData->PrismForwarding.Senders.Clear();
-		}
-	}
-}

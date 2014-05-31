@@ -136,7 +136,7 @@ DEFINE_HOOK(4503F0, BuildingClass_Update_Prism, 9)
 				//This tower's job is done. Go idle.
 				pData->PrismForwarding.ModifierReserve = 0.0;
 				pData->PrismForwarding.DamageReserve = 0;
-				BuildingTypeExt::cPrismForwarding::RemoveAllSenders(pThis);
+				pData->PrismForwarding.RemoveAllSenders();
 				pThis->SupportingPrisms = 0; //Ares sets this to the longest backward chain
 				BuildingTypeExt::cPrismForwarding::SetSupportTarget(pThis, nullptr);
 				pThis->PrismStage = PrismChargeState::Idle;
