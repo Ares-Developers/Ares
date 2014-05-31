@@ -302,17 +302,3 @@ bool BuildingTypeExt::cPrismForwarding::ValidateSupportTower(
 	}
 	return false;
 }
-
-void BuildingTypeExt::cPrismForwarding::SetChargeDelay
-	(BuildingClass * TargetTower, int LongestChain) {
-	int ArrayLen = LongestChain + 1;
-	std::vector<DWORD> LongestCDelay(ArrayLen, 0);
-	std::vector<DWORD> LongestFDelay(ArrayLen, 0);
-
-	auto pData = BuildingExt::ExtMap.Find(TargetTower);
-	for(int endChain = LongestChain; endChain >= 0; --endChain) {
-		pData->PrismForwarding.SetChargeDelay_Get(0, endChain, LongestChain, LongestCDelay.data(), LongestFDelay.data());
-	}
-
-	pData->PrismForwarding.SetChargeDelay_Set(0, LongestCDelay.data(), LongestFDelay.data(), LongestChain);
-}

@@ -1,5 +1,17 @@
 #include "Body.h"
 
+void BuildingExt::cPrismForwarding::SetChargeDelay(int LongestChain) {
+	int ArrayLen = LongestChain + 1;
+	std::vector<DWORD> LongestCDelay(ArrayLen, 0);
+	std::vector<DWORD> LongestFDelay(ArrayLen, 0);
+
+	for(int endChain = LongestChain; endChain >= 0; --endChain) {
+		this->SetChargeDelay_Get(0, endChain, LongestChain, LongestCDelay.data(), LongestFDelay.data());
+	}
+
+	this->SetChargeDelay_Set(0, LongestCDelay.data(), LongestFDelay.data(), LongestChain);
+}
+
 void BuildingExt::cPrismForwarding::SetChargeDelay_Get(int chain, int endChain, int LongestChain, DWORD *LongestCDelay, DWORD *LongestFDelay) {
 	auto TargetTower = this->Owner->AttachedToObject;
 

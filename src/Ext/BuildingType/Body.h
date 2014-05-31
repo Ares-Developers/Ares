@@ -68,7 +68,6 @@ public:
 		static int AcquireSlaves_MultiStage(BuildingClass *, BuildingClass *, int, int, int *, int *);
 		static int AcquireSlaves_SingleStage(BuildingClass *, BuildingClass *, int, int, int *, int *);
 		static bool ValidateSupportTower(BuildingClass *, BuildingClass *, BuildingClass *);
-		static void SetChargeDelay(BuildingClass *, int);
 
 		// constructor
 		cPrismForwarding() : Enabled(NO),
