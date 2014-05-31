@@ -309,34 +309,10 @@ void BuildingTypeExt::cPrismForwarding::SetChargeDelay
 	std::vector<DWORD> LongestCDelay(ArrayLen, 0);
 	std::vector<DWORD> LongestFDelay(ArrayLen, 0);
 
-	for(int endChain = LongestChain; endChain >= 0; --endChain) {
-		SetChargeDelay_Get(TargetTower, 0, endChain, LongestChain, LongestCDelay.data(), LongestFDelay.data());
-	}
-
 	auto pData = BuildingExt::ExtMap.Find(TargetTower);
-	pData->PrismForwarding.SetChargeDelay_Set(0, LongestCDelay.data(), LongestFDelay.data(), LongestChain);
-}
-
-void BuildingTypeExt::cPrismForwarding::SetChargeDelay_Get
-	(BuildingClass * TargetTower, int chain, int endChain, int LongestChain, DWORD *LongestCDelay, DWORD *LongestFDelay) {
-	BuildingExt::ExtData *pTargetData = BuildingExt::ExtMap.Find(TargetTower);
-	if (chain == endChain) {
-		if (chain != LongestChain) {
-			BuildingTypeExt::ExtData *pTypeData = BuildingTypeExt::ExtMap.Find(TargetTower->Type);
-			//update the delays for this chain
-			unsigned int thisDelay = pTypeData->PrismForwarding.ChargeDelay + LongestCDelay[chain + 1];
-			if ( thisDelay > LongestCDelay[chain]) {
-				LongestCDelay[chain] = thisDelay;
-			}
-		}
-		if ( TargetTower->DelayBeforeFiring > LongestFDelay[chain]) {
-			LongestFDelay[chain] = TargetTower->DelayBeforeFiring;
-		}
-	} else {
-		//ascend to the next chain
-		for(int senderIdx = 0; senderIdx < pTargetData->PrismForwarding.Senders.Count; ++senderIdx) {
-			BuildingClass *SenderTower = pTargetData->PrismForwarding.Senders[senderIdx];
-			SetChargeDelay_Get(SenderTower, (chain + 1), endChain, LongestChain, LongestCDelay, LongestFDelay);
-		}
+	for(int endChain = LongestChain; endChain >= 0; --endChain) {
+		pData->PrismForwarding.SetChargeDelay_Get(0, endChain, LongestChain, LongestCDelay.data(), LongestFDelay.data());
 	}
+
+	pData->PrismForwarding.SetChargeDelay_Set(0, LongestCDelay.data(), LongestFDelay.data(), LongestChain);
 }

@@ -1,5 +1,29 @@
 #include "Body.h"
 
+void BuildingExt::cPrismForwarding::SetChargeDelay_Get(int chain, int endChain, int LongestChain, DWORD *LongestCDelay, DWORD *LongestFDelay) {
+	auto TargetTower = this->Owner->AttachedToObject;
+
+	if(chain == endChain) {
+		if(chain != LongestChain) {
+			auto pTypeData = BuildingTypeExt::ExtMap.Find(TargetTower->Type);
+			//update the delays for this chain
+			unsigned int thisDelay = pTypeData->PrismForwarding.ChargeDelay + LongestCDelay[chain + 1];
+			if(thisDelay > LongestCDelay[chain]) {
+				LongestCDelay[chain] = thisDelay;
+			}
+		}
+		if(TargetTower->DelayBeforeFiring > LongestFDelay[chain]) {
+			LongestFDelay[chain] = TargetTower->DelayBeforeFiring;
+		}
+	} else {
+		//ascend to the next chain
+		for(auto SenderTower : this->Senders) {
+			auto pData = BuildingExt::ExtMap.Find(SenderTower);
+			pData->PrismForwarding.SetChargeDelay_Get(chain + 1, endChain, LongestChain, LongestCDelay, LongestFDelay);
+		}
+	}
+}
+
 //here we are only passing in LongestChain so we can set SupportingPrisms to the chain length. this has nothing to do with the charge delay which we have already calculated
 void BuildingExt::cPrismForwarding::SetChargeDelay_Set(int chain, DWORD* LongestCDelay, DWORD* LongestFDelay, int LongestChain) {
 	auto pTargetTower = this->Owner->AttachedToObject;
