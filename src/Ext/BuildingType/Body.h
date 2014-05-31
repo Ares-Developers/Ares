@@ -66,7 +66,6 @@ public:
 
 		// future considerations - move these to BuildingExt's PrismForwarding and refactor first arg
 		static int AcquireSlaves_MultiStage(BuildingClass *, BuildingClass *, int, int, int *, int *);
-		static int AcquireSlaves_SingleStage(BuildingClass *, BuildingClass *, int, int, int *, int *);
 		static bool ValidateSupportTower(BuildingClass *, BuildingClass *, BuildingClass *);
 
 		// constructor

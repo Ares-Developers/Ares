@@ -140,7 +140,8 @@ int BuildingTypeExt::cPrismForwarding::AcquireSlaves_MultiStage
 	// ...which would not be as good.
 	int countSlaves = 0;
 	if (stage == 0) {
-		countSlaves += AcquireSlaves_SingleStage(MasterTower, TargetTower, stage, (chain + 1), NetworkSize, LongestChain);
+		auto pData = BuildingExt::ExtMap.Find(MasterTower);
+		countSlaves += pData->PrismForwarding.AcquireSlaves_SingleStage(TargetTower, stage, (chain + 1), *NetworkSize, *LongestChain);
 	} else {
 		BuildingExt::ExtData *pTargetData = BuildingExt::ExtMap.Find(TargetTower);
 		for(int senderIdx = 0; senderIdx < pTargetData->PrismForwarding.Senders.Count; ++senderIdx) {
@@ -149,82 +150,6 @@ int BuildingTypeExt::cPrismForwarding::AcquireSlaves_MultiStage
 		}
 	}
 	return countSlaves;
-}
-
-int BuildingTypeExt::cPrismForwarding::AcquireSlaves_SingleStage
-	(BuildingClass *MasterTower, BuildingClass *TargetTower, int stage, int chain, int *NetworkSize, int *LongestChain) {
-	//set up immediate slaves for this particular tower
-
-	BuildingTypeClass *pMasterType = MasterTower->Type;
-	BuildingTypeExt::ExtData *pMasterTypeData = BuildingTypeExt::ExtMap.Find(pMasterType);
-	BuildingTypeClass *pTargetType = TargetTower->Type;
-	BuildingTypeExt::ExtData *pTargetTypeData = BuildingTypeExt::ExtMap.Find(pTargetType);
-
-	signed int MaxFeeds = pTargetTypeData->PrismForwarding.GetMaxFeeds();
-	signed int MaxNetworkSize = pMasterTypeData->PrismForwarding.GetMaxNetworkSize();
-	signed int MaxChainLength = pMasterTypeData->PrismForwarding.MaxChainLength;
-
-	if (MaxFeeds == 0
-			|| (MaxChainLength != -1 && MaxChainLength < chain)
-			|| (MaxNetworkSize != -1 && MaxNetworkSize <= *NetworkSize)) {
-		return 0;
-	}
-
-	struct PrismTargetData {
-		BuildingClass * Tower;
-		int Distance;
-
-		bool operator < (PrismTargetData const &rhs) {
-			return this->Distance < rhs.Distance;
-		}
-	};
-
-	CoordStruct MyPosition, curPosition;
-	TargetTower->GetPosition_2(&MyPosition);
-
-	//first, find eligible towers
-	std::vector<PrismTargetData> EligibleTowers;
-	//for(int i = 0; i < TargetTower->Owner->Buildings.Count; ++i) {
-	for (int i = 0; i < BuildingClass::Array->Count; ++i) {
-		//if (BuildingClass *SlaveTower = B->Owner->Buildings[i]) {
-		if (BuildingClass *SlaveTower = BuildingClass::Array->GetItem(i)) {
-			if (ValidateSupportTower(MasterTower, TargetTower, SlaveTower)) {
-				SlaveTower->GetPosition_2(&curPosition);
-				int Distance = (int)MyPosition.DistanceFrom(curPosition);
-
-				PrismTargetData pd = {SlaveTower, Distance};
-				EligibleTowers.push_back(pd);
-			}
-		}
-	}
-
-	std::sort(EligibleTowers.begin(), EligibleTowers.end());
-	//std::reverse(EligibleTowers.begin(), EligibleTowers.end());
-	
-	//now enslave the towers in order of proximity
-	int iFeeds = 0;
-	while (EligibleTowers.size() != 0 && (MaxFeeds == -1 || iFeeds < MaxFeeds) && (MaxNetworkSize == -1 || *NetworkSize < MaxNetworkSize)) {
-		BuildingClass * nearestPrism = EligibleTowers[0].Tower;
-		EligibleTowers.erase(EligibleTowers.begin());
-		//we have a slave tower! do the bizzo
-		++iFeeds;
-		++(*NetworkSize);
-		//++TargetTower->SupportingPrisms; //Ares is now using this for longest backward chain of this tower, so don't set it here
-		CoordStruct FLH, Base = {0, 0, 0};
-		TargetTower->GetFLH(&FLH, 0, Base);
-		nearestPrism->DelayBeforeFiring = nearestPrism->Type->DelayedFireDelay;
-		nearestPrism->PrismStage = PrismChargeState::Slave;
-		nearestPrism->PrismTargetCoords = FLH;
-
-		auto pData = BuildingExt::ExtMap.Find(nearestPrism);
-		pData->PrismForwarding.SetSupportTarget(TargetTower);
-	}
-
-	if (iFeeds != 0 && chain > *LongestChain) {
-		++(*LongestChain);
-	}
-
-	return iFeeds;
 }
 
 bool BuildingTypeExt::cPrismForwarding::ValidateSupportTower(
