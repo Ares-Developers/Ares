@@ -1,5 +1,9 @@
 #include "Body.h"
 
+#include "../Techno/Body.h"
+
+#include <HouseClass.h>
+
 #include <vector>
 #include <algorithm>
 
@@ -67,7 +71,7 @@ int BuildingExt::cPrismForwarding::AcquireSlaves_SingleStage(BuildingClass* Targ
 	//first, find eligible towers
 	std::vector<PrismTargetData> EligibleTowers;
 	for(auto SlaveTower : *BuildingClass::Array) {
-		if(BuildingTypeExt::cPrismForwarding::ValidateSupportTower(MasterTower, TargetTower, SlaveTower)) {
+		if(this->ValidateSupportTower(TargetTower, SlaveTower)) {
 			SlaveTower->GetPosition_2(&curPosition);
 			int Distance = static_cast<int>(MyPosition.DistanceFrom(curPosition));
 			PrismTargetData pd = {SlaveTower, Distance};
@@ -110,6 +114,85 @@ int BuildingExt::cPrismForwarding::AcquireSlaves_SingleStage(BuildingClass* Targ
 	}
 
 	return iFeeds;
+}
+
+bool BuildingExt::cPrismForwarding::ValidateSupportTower(BuildingClass* TargetTower, BuildingClass* SlaveTower) {
+	auto MasterTower = this->Owner->AttachedToObject;
+
+	//MasterTower = the firing tower. This might be the same as TargetTower, it might not.
+	//TargetTower = the tower that we are forwarding to
+	//SlaveTower = the tower being considered to support TargetTower
+	if(SlaveTower->IsAlive) {
+		BuildingTypeClass *pSlaveType = SlaveTower->Type;
+		BuildingTypeExt::ExtData *pSlaveTypeData = BuildingTypeExt::ExtMap.Find(pSlaveType);
+		if(pSlaveTypeData->PrismForwarding.Enabled == BuildingTypeExt::cPrismForwarding::YES
+			|| pSlaveTypeData->PrismForwarding.Enabled == BuildingTypeExt::cPrismForwarding::FORWARD)
+		{
+			//building is a prism tower
+			//get all the data we need
+			TechnoExt::ExtData *pTechnoData = TechnoExt::ExtMap.Find(SlaveTower);
+			//BuildingExt::ExtData *pSlaveData = BuildingExt::ExtMap.Find(SlaveTower);
+			int SlaveMission = SlaveTower->GetCurrentMission();
+			//now check all the rules
+			if(SlaveTower->ReloadTimer.Ignorable()
+				&& SlaveTower != TargetTower
+				&& !SlaveTower->DelayBeforeFiring
+				&& !SlaveTower->IsBeingDrained()
+				&& !SlaveTower->IsBeingWarpedOut()
+				&& SlaveMission != mission_Attack
+				&& SlaveMission != mission_Construction
+				&& SlaveMission != mission_Selling
+				&& pTechnoData->IsPowered() //robot control logic
+				&& pTechnoData->IsOperated() //operator logic
+				&& SlaveTower->IsPowerOnline() //base-powered or overpowerer-powered
+				&& !SlaveTower->IsUnderEMP() //EMP logic - I think this should already be checked by IsPowerOnline() but included just to be sure
+			) {
+				BuildingTypeClass *pTargetType = TargetTower->Type;
+				if(pSlaveTypeData->PrismForwarding.Targets.Contains(pTargetType)) {
+					//valid type to forward from
+					HouseClass *pMasterHouse = MasterTower->Owner;
+					HouseClass *pTargetHouse = TargetTower->Owner;
+					HouseClass *pSlaveHouse = SlaveTower->Owner;
+					if((pSlaveHouse == pTargetHouse && pSlaveHouse == pMasterHouse)
+						|| (pSlaveTypeData->PrismForwarding.ToAllies
+						&& pSlaveHouse->IsAlliedWith(pTargetHouse)
+						&& pSlaveHouse->IsAlliedWith(pMasterHouse))) {
+						//ownership/alliance rules satisfied
+						CellStruct tarCoords = TargetTower->GetCell()->MapCoords;
+						CoordStruct MyPosition, curPosition;
+						TargetTower->GetPosition_2(&MyPosition);
+						SlaveTower->GetPosition_2(&curPosition);
+						int Distance = (int)MyPosition.DistanceFrom(curPosition);
+						int SupportRange = 0;
+						int idxSupport = -1;
+						if(SlaveTower->Veterancy.IsElite()) {
+							idxSupport = pSlaveTypeData->PrismForwarding.EliteSupportWeaponIndex;
+						} else {
+							idxSupport = pSlaveTypeData->PrismForwarding.SupportWeaponIndex;
+						}
+						if(idxSupport != -1) {
+							if(WeaponTypeClass * supportWeapon = pSlaveType->get_Weapon(idxSupport)) {
+								if(Distance < supportWeapon->MinimumRange) {
+									return false; //below minimum range
+								}
+								SupportRange = supportWeapon->Range;
+							}
+						}
+						if(SupportRange == 0) {
+							//not specified on SupportWeapon so use Primary + 1 cell (Marshall chose to add the +1 cell default - see manual for reason)
+							if(WeaponTypeClass * cPrimary = pSlaveType->get_Primary()) {
+								SupportRange = cPrimary->Range + 256; //256 leptons == 1 cell
+							}
+						}
+						if(SupportRange < 0 || Distance <= SupportRange) {
+							return true; //within range
+						}
+					}
+				}
+			}
+		}
+	}
+	return false;
 }
 
 void BuildingExt::cPrismForwarding::SetChargeDelay(int LongestChain) {

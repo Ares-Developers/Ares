@@ -64,9 +64,6 @@ public:
 			return this->MyHeight.Get(RulesClass::Instance->PrismSupportHeight);
 		}
 
-		// future considerations - move these to BuildingExt's PrismForwarding and refactor first arg
-		static bool ValidateSupportTower(BuildingClass *, BuildingClass *, BuildingClass *);
-
 		// constructor
 		cPrismForwarding() : Enabled(NO),
 			Targets(),
