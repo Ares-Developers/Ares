@@ -45,14 +45,14 @@ public:
 			return this->Owner->AttachedToObject;
 		}
 
-		int AcquireSlaves_MultiStage(BuildingClass* TargetTower, int stage, int chain, int& NetworkSize, int& LongestChain);
-		int AcquireSlaves_SingleStage(BuildingClass* TargetTower, int stage, int chain, int& NetworkSize, int& LongestChain);
-		bool ValidateSupportTower(BuildingClass* TargetTower, BuildingClass* SlaveTower);
+		int AcquireSlaves_MultiStage(cPrismForwarding* TargetTower, int stage, int chain, int& NetworkSize, int& LongestChain);
+		int AcquireSlaves_SingleStage(cPrismForwarding* TargetTower, int stage, int chain, int& NetworkSize, int& LongestChain);
+		bool ValidateSupportTower(cPrismForwarding* TargetTower, cPrismForwarding* SlaveTower);
 		void SetChargeDelay(int LongestChain);
 		void SetChargeDelay_Get(int chain, int endChain, int LongestChain, DWORD* LongestCDelay, DWORD* LongestFDelay);
 		void SetChargeDelay_Set(int chain, DWORD* LongestCDelay, DWORD* LongestFDelay, int LongestChain);
 		void RemoveFromNetwork(bool bCease);
-		void SetSupportTarget(BuildingClass* pTargetTower);
+		void SetSupportTarget(cPrismForwarding* pTargetTower);
 		void RemoveAllSenders();
 
 		void AnnounceInvalidPointer(void * ptr, bool Removed);
