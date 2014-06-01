@@ -22,7 +22,7 @@ public:
 	class cPrismForwarding {
 	public:
 		BuildingExt::ExtData* Owner;
-		DynamicVectorClass<BuildingClass*> Senders;		//the prism towers that are forwarding to this one
+		DynamicVectorClass<cPrismForwarding*> Senders;		//the prism towers that are forwarding to this one
 		cPrismForwarding* SupportTarget;			//what tower am I sending to?
 		int PrismChargeDelay;					//current delay charge
 		double ModifierReserve;					//current modifier reservoir

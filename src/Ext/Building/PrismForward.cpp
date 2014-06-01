@@ -28,9 +28,10 @@ int BuildingExt::cPrismForwarding::AcquireSlaves_MultiStage(BuildingClass* Targe
 		countSlaves += this->AcquireSlaves_SingleStage(TargetTower, stage, chain + 1, NetworkSize, LongestChain);
 	} else {
 		auto pTargetData = BuildingExt::ExtMap.Find(TargetTower);
+		// do not think of using iterators or a ranged-for here. Senders grows and might reallocate.
 		for(int senderIdx = 0; senderIdx < pTargetData->PrismForwarding.Senders.Count; ++senderIdx) {
 			auto SenderTower = pTargetData->PrismForwarding.Senders[senderIdx];
-			countSlaves += this->AcquireSlaves_MultiStage(SenderTower, stage - 1, chain + 1, NetworkSize, LongestChain);
+			countSlaves += this->AcquireSlaves_MultiStage(SenderTower->GetOwner(), stage - 1, chain + 1, NetworkSize, LongestChain);
 		}
 	}
 	return countSlaves;
@@ -225,8 +226,7 @@ void BuildingExt::cPrismForwarding::SetChargeDelay_Get(int chain, int endChain, 
 	} else {
 		//ascend to the next chain
 		for(auto SenderTower : this->Senders) {
-			auto pData = BuildingExt::ExtMap.Find(SenderTower);
-			pData->PrismForwarding.SetChargeDelay_Get(chain + 1, endChain, LongestChain, LongestCDelay, LongestFDelay);
+			SenderTower->SetChargeDelay_Get(chain + 1, endChain, LongestChain, LongestCDelay, LongestFDelay);
 		}
 	}
 }
@@ -245,8 +245,7 @@ void BuildingExt::cPrismForwarding::SetChargeDelay_Set(int chain, DWORD* Longest
 		}
 	}
 	for(auto Sender : this->Senders) {
-		auto pData = BuildingExt::ExtMap.Find(Sender);
-		pData->PrismForwarding.SetChargeDelay_Set(chain + 1, LongestCDelay, LongestFDelay, LongestChain);
+		Sender->SetChargeDelay_Set(chain + 1, LongestCDelay, LongestFDelay, LongestChain);
 	}
 }
 
@@ -269,16 +268,13 @@ void BuildingExt::cPrismForwarding::RemoveFromNetwork(bool bCease) {
 
 	//finally, remove all the preceding slaves from the network
 	for(int senderIdx = this->Senders.Count; senderIdx; senderIdx--) {
-		if(BuildingClass *NextTower = this->Senders[senderIdx - 1]) {
-			auto pData = BuildingExt::ExtMap.Find(NextTower);
-			pData->PrismForwarding.RemoveFromNetwork(false);
+		if(auto NextTower = this->Senders[senderIdx - 1]) {
+			NextTower->RemoveFromNetwork(false);
 		}
 	}
 }
 
 void BuildingExt::cPrismForwarding::SetSupportTarget(BuildingClass *pTargetTower) {
-	auto pSlaveTower = this->GetOwner();
-
 	// meet the new tower, same as the old tower
 	if(this->SupportTarget && this->SupportTarget->GetOwner() == pTargetTower) {
 		return;
@@ -286,14 +282,14 @@ void BuildingExt::cPrismForwarding::SetSupportTarget(BuildingClass *pTargetTower
 
 	// if the target tower is already set, disconnect it by removing it from the old target tower's sender list
 	if(auto pOldTarget = this->SupportTarget) {
-		int idxSlave = pOldTarget->Senders.FindItemIndex(pSlaveTower);
+		int idxSlave = pOldTarget->Senders.FindItemIndex(this);
 		if(idxSlave != -1) {
 			pOldTarget->Senders.RemoveItem(idxSlave);
 			// everywhere the comments say this is now the "longest backwards chain", but decreasing this here makes use of the original meaning. why is this needed here? AlexB 2012-04-08
 			--pOldTarget->GetOwner()->SupportingPrisms;  //Ares doesn't actually use this, but maintaining it anyway (as direct feeds only)
 		} else {
 			Debug::DevLog(Debug::Warning, "PrismForwarding::SetSupportTarget: Old target tower (%p) did not consider this tower (%p) as its sender.\n",
-				pOldTarget->GetOwner(), pSlaveTower);
+				pOldTarget->GetOwner(), this->GetOwner());
 		}
 		this->SupportTarget = nullptr;
 	}
@@ -303,11 +299,12 @@ void BuildingExt::cPrismForwarding::SetSupportTarget(BuildingClass *pTargetTower
 		if(auto pTargetData = BuildingExt::ExtMap.Find(pTargetTower)) {
 			this->SupportTarget = &pTargetData->PrismForwarding;
 
-			if(pTargetData->PrismForwarding.Senders.FindItemIndex(pSlaveTower) == -1) {
-				pTargetData->PrismForwarding.Senders.AddItem(pSlaveTower);
+			if(pTargetData->PrismForwarding.Senders.FindItemIndex(this) == -1) {
+				pTargetData->PrismForwarding.Senders.AddItem(this);
 				// why isn't SupportingPrisms increased here? AlexB 2012-04-08
 			} else {
-				Debug::DevLog(Debug::Warning, "PrismForwarding::SetSupportTarget: Tower (%p) is already in new target tower's (%p) sender list.\n", pSlaveTower, pTargetTower);
+				Debug::DevLog(Debug::Warning, "PrismForwarding::SetSupportTarget: Tower (%p) is already in new target tower's (%p) sender list.\n",
+					this->GetOwner(), pTargetTower);
 			}
 		}
 	}
@@ -316,9 +313,8 @@ void BuildingExt::cPrismForwarding::SetSupportTarget(BuildingClass *pTargetTower
 void BuildingExt::cPrismForwarding::RemoveAllSenders() {
 	// disconnect all sender towers from their support target, which is me
 	for(int senderIdx = this->Senders.Count; senderIdx; senderIdx--) {
-		if(BuildingClass *NextTower = this->Senders[senderIdx - 1]) {
-			auto pData = BuildingExt::ExtMap.Find(NextTower);
-			pData->PrismForwarding.SetSupportTarget(nullptr);
+		if(auto NextTower = this->Senders[senderIdx - 1]) {
+			NextTower->SetSupportTarget(nullptr);
 		}
 	}
 
@@ -328,7 +324,7 @@ void BuildingExt::cPrismForwarding::RemoveAllSenders() {
 			"PrismForwarding::RemoveAllSenders: Tower (%p) still has %d senders after removal completed.\n",
 			this->GetOwner(), this->Senders.Count);
 		for(int i = 0; i<this->Senders.Count; ++i) {
-			Debug::DevLog(Debug::Warning, "Sender %03d: %p\n", i, this->Senders[i]);
+			Debug::DevLog(Debug::Warning, "Sender %03d: %p\n", i, this->Senders[i]->GetOwner());
 		}
 
 		this->Senders.Clear();
@@ -339,11 +335,10 @@ void BuildingExt::cPrismForwarding::AnnounceInvalidPointer(void* ptr, bool remov
 	// verify that ptr points to an existing object that is a building without
 	// accessing any of its fields or members.
 	if(auto pExt = ExtMap.Find(static_cast<BuildingClass*>(ptr))) {
-		auto bld = pExt->AttachedToObject;
 		if(&pExt->PrismForwarding == this->SupportTarget) {
 			Debug::Log("Should remove my support target\n");
 		}
-		auto senderIdx = this->Senders.FindItemIndex(bld);
+		auto senderIdx = this->Senders.FindItemIndex(&pExt->PrismForwarding);
 		if(senderIdx != -1) {
 			Debug::Log("Should remove my sender #%d\n", senderIdx);
 		}
@@ -353,7 +348,7 @@ void BuildingExt::cPrismForwarding::AnnounceInvalidPointer(void* ptr, bool remov
 			Debug::FatalError(true);
 			Debug::Exit();
 		}
-		senderIdx = this->Senders.FindItemIndex(bld);
+		senderIdx = this->Senders.FindItemIndex(&pExt->PrismForwarding);
 		if(senderIdx != -1) {
 			_snprintf_s(Ares::readBuffer, Ares::readLength - 1, "Prism Forwarder (ExtData %p) failed to remove sender #%d\n", this->Owner, senderIdx);
 			Debug::FatalError(true);
