@@ -37,6 +37,10 @@ public:
 			DamageReserve(0)
 		{ };
 
+		~cPrismForwarding() {
+			this->RemoveFromNetwork(true);
+		}
+
 		BuildingClass* GetOwner() const {
 			return this->Owner->AttachedToObject;
 		}
