@@ -23,7 +23,7 @@ public:
 	public:
 		BuildingExt::ExtData* Owner;
 		DynamicVectorClass<BuildingClass*> Senders;		//the prism towers that are forwarding to this one
-		BuildingClass* SupportTarget;				//what tower am I sending to?
+		cPrismForwarding* SupportTarget;			//what tower am I sending to?
 		int PrismChargeDelay;					//current delay charge
 		double ModifierReserve;					//current modifier reservoir
 		int DamageReserve;					//current flat reservoir
@@ -36,6 +36,10 @@ public:
 			ModifierReserve(0.0),
 			DamageReserve(0)
 		{ };
+
+		BuildingClass* GetOwner() const {
+			return this->Owner->AttachedToObject;
+		}
 
 		int AcquireSlaves_MultiStage(BuildingClass* TargetTower, int stage, int chain, int& NetworkSize, int& LongestChain);
 		int AcquireSlaves_SingleStage(BuildingClass* TargetTower, int stage, int chain, int& NetworkSize, int& LongestChain);
@@ -83,7 +87,8 @@ public:
 
 		virtual ~ExtData() {
 			if(this->PrismForwarding.SupportTarget) {
-				Debug::Log("Building ExtData (%p) failed to remove SupportTarget (%p) before destruction.\n", this, this->PrismForwarding.SupportTarget);
+				Debug::Log("Building ExtData (%p) failed to remove SupportTarget (%p) before destruction.\n",
+					this, this->PrismForwarding.SupportTarget->GetOwner());
 			}
 			if(this->PrismForwarding.Senders.Count) {
 				Debug::Log("Building ExtData (%p) failed to remove all Senders (%d) before destruction.\n", this, this->PrismForwarding.Senders.Count);

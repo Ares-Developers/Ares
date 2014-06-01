@@ -105,8 +105,8 @@ DEFINE_HOOK(4503F0, BuildingClass_Update_Prism, 9)
 			--pThis->DelayBeforeFiring;
 			if(pThis->DelayBeforeFiring <= 0) {
 				if(PrismStage == PrismChargeState::Slave) {
-					if (BuildingClass *pTarget = pData->PrismForwarding.SupportTarget) {
-						BuildingExt::ExtData *pTargetData = BuildingExt::ExtMap.Find(pTarget);
+					if (auto pTarget = pData->PrismForwarding.SupportTarget) {
+						auto pTargetData = pTarget->Owner;
 						BuildingTypeClass *pType = pThis->Type;
 						BuildingTypeExt::ExtData *pTypeData = BuildingTypeExt::ExtMap.Find(pType);
 						//slave firing
@@ -288,15 +288,15 @@ DEFINE_HOOK(448277, PrismForward_BuildingChangeOwner, 5)
 	HouseClass * oldOwner = B->Owner;
 
 	if (newOwner != oldOwner) {
+		BuildingExt::ExtData* pData = BuildingExt::ExtMap.Find(B);
 		BuildingTypeClass *pType = B->Type;
 		BuildingTypeExt::ExtData *pTypeData = BuildingTypeExt::ExtMap.Find(pType);
 
 		if (pTypeData->PrismForwarding.ToAllies) {
-			BuildingClass *LastTarget = B;
-			BuildingClass *FirstTarget = nullptr;
+			BuildingExt::cPrismForwarding* LastTarget = &pData->PrismForwarding;
+			BuildingExt::cPrismForwarding* FirstTarget = nullptr;
 			while (LastTarget) {
-				BuildingExt::ExtData *pData = BuildingExt::ExtMap.Find(LastTarget);
-				BuildingClass *NextTarget = pData->PrismForwarding.SupportTarget;
+				auto NextTarget = LastTarget->SupportTarget;
 				if (!FirstTarget) {
 					if(!NextTarget) {
 						//no first target so either this is a master tower, an idle tower, or not a prism tower at all
@@ -308,7 +308,7 @@ DEFINE_HOOK(448277, PrismForward_BuildingChangeOwner, 5)
 
 				if (!NextTarget) {
 					//LastTarget is now the master (firing) tower
-					if (newOwner->IsAlliedWith(LastTarget->Owner) && newOwner->IsAlliedWith(FirstTarget->Owner)) {
+					if (newOwner->IsAlliedWith(LastTarget->GetOwner()->Owner) && newOwner->IsAlliedWith(FirstTarget->GetOwner()->Owner)) {
 						//alliances check out so this slave tower can keep on charging.
 						return 0;
 					}
@@ -317,7 +317,6 @@ DEFINE_HOOK(448277, PrismForward_BuildingChangeOwner, 5)
 			}
 		}
 		//if we reach this point then the alliance checks have failed
-		auto pData = BuildingExt::ExtMap.Find(B);
 		pData->PrismForwarding.RemoveFromNetwork(false); //false because animation should continue / slave is busy but won't now fire
 	}
 

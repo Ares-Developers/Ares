@@ -37,7 +37,7 @@ int BuildingExt::cPrismForwarding::AcquireSlaves_MultiStage(BuildingClass* Targe
 }
 
 int BuildingExt::cPrismForwarding::AcquireSlaves_SingleStage(BuildingClass* TargetTower, int stage, int chain, int& NetworkSize, int& LongestChain) {
-	auto MasterTower = this->Owner->AttachedToObject;
+	auto MasterTower = this->GetOwner();
 
 	//set up immediate slaves for this particular tower
 
@@ -117,7 +117,7 @@ int BuildingExt::cPrismForwarding::AcquireSlaves_SingleStage(BuildingClass* Targ
 }
 
 bool BuildingExt::cPrismForwarding::ValidateSupportTower(BuildingClass* TargetTower, BuildingClass* SlaveTower) {
-	auto MasterTower = this->Owner->AttachedToObject;
+	auto MasterTower = this->GetOwner();
 
 	//MasterTower = the firing tower. This might be the same as TargetTower, it might not.
 	//TargetTower = the tower that we are forwarding to
@@ -208,7 +208,7 @@ void BuildingExt::cPrismForwarding::SetChargeDelay(int LongestChain) {
 }
 
 void BuildingExt::cPrismForwarding::SetChargeDelay_Get(int chain, int endChain, int LongestChain, DWORD *LongestCDelay, DWORD *LongestFDelay) {
-	auto TargetTower = this->Owner->AttachedToObject;
+	auto TargetTower = this->GetOwner();
 
 	if(chain == endChain) {
 		if(chain != LongestChain) {
@@ -233,7 +233,7 @@ void BuildingExt::cPrismForwarding::SetChargeDelay_Get(int chain, int endChain, 
 
 //here we are only passing in LongestChain so we can set SupportingPrisms to the chain length. this has nothing to do with the charge delay which we have already calculated
 void BuildingExt::cPrismForwarding::SetChargeDelay_Set(int chain, DWORD* LongestCDelay, DWORD* LongestFDelay, int LongestChain) {
-	auto pTargetTower = this->Owner->AttachedToObject;
+	auto pTargetTower = this->GetOwner();
 
 	this->PrismChargeDelay = (LongestFDelay[chain] - pTargetTower->DelayBeforeFiring) + LongestCDelay[chain];
 	pTargetTower->SupportingPrisms = (LongestChain - chain);
@@ -253,12 +253,8 @@ void BuildingExt::cPrismForwarding::SetChargeDelay_Set(int chain, DWORD* Longest
 //Whenever a building is incapacitated, this method should be called to take it out of any prism network
 //destruction, change sides, mind-control, sold, warped, emp, undeployed, low power, drained, lost operator
 void BuildingExt::cPrismForwarding::RemoveFromNetwork(bool bCease) {
-	auto pSlave = this->Owner->AttachedToObject;
+	auto pSlave = this->GetOwner();
 
-	auto pSlaveTypeData = BuildingTypeExt::ExtMap.Find(pSlave->Type);
-	if(!pSlaveTypeData) {
-		return;
-	}
 	if(this->PrismChargeDelay || bCease) {
 		//either hasn't started charging yet or animations have been reset so should go idle immediately
 		pSlave->PrismStage = PrismChargeState::Idle;
@@ -268,7 +264,9 @@ void BuildingExt::cPrismForwarding::RemoveFromNetwork(bool bCease) {
 		this->DamageReserve = 0;
 		//animations should be controlled by whatever incapacitated the tower so no need to mess with anims here
 	}
+
 	this->SetSupportTarget(nullptr);
+
 	//finally, remove all the preceding slaves from the network
 	for(int senderIdx = this->Senders.Count; senderIdx; senderIdx--) {
 		if(BuildingClass *NextTower = this->Senders[senderIdx - 1]) {
@@ -279,24 +277,23 @@ void BuildingExt::cPrismForwarding::RemoveFromNetwork(bool bCease) {
 }
 
 void BuildingExt::cPrismForwarding::SetSupportTarget(BuildingClass *pTargetTower) {
-	auto pSlaveTower = this->Owner->AttachedToObject;
+	auto pSlaveTower = this->GetOwner();
 
 	// meet the new tower, same as the old tower
-	if(this->SupportTarget == pTargetTower) {
+	if(this->SupportTarget && this->SupportTarget->GetOwner() == pTargetTower) {
 		return;
 	}
 
 	// if the target tower is already set, disconnect it by removing it from the old target tower's sender list
 	if(auto pOldTarget = this->SupportTarget) {
-		if(auto pOldTargetData = BuildingExt::ExtMap.Find(pOldTarget)) {
-			int idxSlave = pOldTargetData->PrismForwarding.Senders.FindItemIndex(pSlaveTower);
-			if(idxSlave != -1) {
-				pOldTargetData->PrismForwarding.Senders.RemoveItem(idxSlave);
-				// everywhere the comments say this is now the "longest backwards chain", but decreasing this here makes use of the original meaning. why is this needed here? AlexB 2012-04-08
-				--pOldTarget->SupportingPrisms;  //Ares doesn't actually use this, but maintaining it anyway (as direct feeds only)
-			} else {
-				Debug::DevLog(Debug::Warning, "PrismForwarding::SetSupportTarget: Old target tower (%p) did not consider this tower (%p) as its sender.\n", pOldTarget, pSlaveTower);
-			}
+		int idxSlave = pOldTarget->Senders.FindItemIndex(pSlaveTower);
+		if(idxSlave != -1) {
+			pOldTarget->Senders.RemoveItem(idxSlave);
+			// everywhere the comments say this is now the "longest backwards chain", but decreasing this here makes use of the original meaning. why is this needed here? AlexB 2012-04-08
+			--pOldTarget->GetOwner()->SupportingPrisms;  //Ares doesn't actually use this, but maintaining it anyway (as direct feeds only)
+		} else {
+			Debug::DevLog(Debug::Warning, "PrismForwarding::SetSupportTarget: Old target tower (%p) did not consider this tower (%p) as its sender.\n",
+				pOldTarget->GetOwner(), pSlaveTower);
 		}
 		this->SupportTarget = nullptr;
 	}
@@ -304,7 +301,7 @@ void BuildingExt::cPrismForwarding::SetSupportTarget(BuildingClass *pTargetTower
 	// set the new tower as support target
 	if(pTargetTower) {
 		if(auto pTargetData = BuildingExt::ExtMap.Find(pTargetTower)) {
-			this->SupportTarget = pTargetTower;
+			this->SupportTarget = &pTargetData->PrismForwarding;
 
 			if(pTargetData->PrismForwarding.Senders.FindItemIndex(pSlaveTower) == -1) {
 				pTargetData->PrismForwarding.Senders.AddItem(pSlaveTower);
@@ -329,7 +326,7 @@ void BuildingExt::cPrismForwarding::RemoveAllSenders() {
 	if(this->Senders.Count) {
 		Debug::DevLog(Debug::Warning,
 			"PrismForwarding::RemoveAllSenders: Tower (%p) still has %d senders after removal completed.\n",
-			this->Owner->AttachedToObject, this->Senders.Count);
+			this->GetOwner(), this->Senders.Count);
 		for(int i = 0; i<this->Senders.Count; ++i) {
 			Debug::DevLog(Debug::Warning, "Sender %03d: %p\n", i, this->Senders[i]);
 		}
@@ -343,7 +340,7 @@ void BuildingExt::cPrismForwarding::AnnounceInvalidPointer(void* ptr, bool remov
 	// accessing any of its fields or members.
 	if(auto pExt = ExtMap.Find(static_cast<BuildingClass*>(ptr))) {
 		auto bld = pExt->AttachedToObject;
-		if(bld == this->SupportTarget) {
+		if(&pExt->PrismForwarding == this->SupportTarget) {
 			Debug::Log("Should remove my support target\n");
 		}
 		auto senderIdx = this->Senders.FindItemIndex(bld);
@@ -351,7 +348,7 @@ void BuildingExt::cPrismForwarding::AnnounceInvalidPointer(void* ptr, bool remov
 			Debug::Log("Should remove my sender #%d\n", senderIdx);
 		}
 		pExt->PrismForwarding.RemoveFromNetwork(true);
-		if(bld == this->SupportTarget) {
+		if(&pExt->PrismForwarding == this->SupportTarget) {
 			_snprintf_s(Ares::readBuffer, Ares::readLength - 1, "Prism Forwarder (ExtData %p) failed to remove support target\n", this->Owner);
 			Debug::FatalError(true);
 			Debug::Exit();
