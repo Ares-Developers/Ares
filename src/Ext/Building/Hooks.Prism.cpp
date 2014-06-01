@@ -292,30 +292,31 @@ DEFINE_HOOK(448277, PrismForward_BuildingChangeOwner, 5)
 		BuildingTypeClass *pType = B->Type;
 		BuildingTypeExt::ExtData *pTypeData = BuildingTypeExt::ExtMap.Find(pType);
 
+		// the first and the last tower have to be allied to this
 		if (pTypeData->PrismForwarding.ToAllies) {
-			BuildingExt::cPrismForwarding* LastTarget = &pData->PrismForwarding;
-			BuildingExt::cPrismForwarding* FirstTarget = nullptr;
-			while (LastTarget) {
-				auto NextTarget = LastTarget->SupportTarget;
-				if (!FirstTarget) {
-					if(!NextTarget) {
-						//no first target so either this is a master tower, an idle tower, or not a prism tower at all
-						//no need to remove
-						return 0;
-					}
-					FirstTarget = NextTarget;
+			auto FirstTarget = pData->PrismForwarding.SupportTarget;
+
+			if (!FirstTarget) {
+				//no first target so either this is a master tower, an idle tower, or not a prism tower at all
+				//no need to remove.
+				return 0;
+			}
+
+			// the tower the new owner strives to support has to be allied, otherwise abort.
+			if (newOwner->IsAlliedWith(FirstTarget->GetOwner()->Owner)) {
+				auto LastTarget = FirstTarget;
+				while (LastTarget->SupportTarget) {
+					LastTarget = LastTarget->SupportTarget;
 				}
 
-				if (!NextTarget) {
-					//LastTarget is now the master (firing) tower
-					if (newOwner->IsAlliedWith(LastTarget->GetOwner()->Owner) && newOwner->IsAlliedWith(FirstTarget->GetOwner()->Owner)) {
-						//alliances check out so this slave tower can keep on charging.
-						return 0;
-					}
+				//LastTarget is now the master (firing) tower
+				if(newOwner->IsAlliedWith(LastTarget->GetOwner()->Owner)) {
+					//alliances check out so this slave tower can keep on charging.
+					return 0;
 				}
-				LastTarget = NextTarget;
 			}
 		}
+
 		//if we reach this point then the alliance checks have failed
 		pData->PrismForwarding.RemoveFromNetwork(false); //false because animation should continue / slave is busy but won't now fire
 	}
