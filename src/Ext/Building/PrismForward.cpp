@@ -249,15 +249,16 @@ void BuildingExt::cPrismForwarding::SetChargeDelay_Set(int chain, DWORD* Longest
 //Whenever a building is incapacitated, this method should be called to take it out of any prism network
 //destruction, change sides, mind-control, sold, warped, emp, undeployed, low power, drained, lost operator
 void BuildingExt::cPrismForwarding::RemoveFromNetwork(bool bCease) {
-	auto pSlave = this->GetOwner();
 
 	if(this->PrismChargeDelay || bCease) {
 		//either hasn't started charging yet or animations have been reset so should go idle immediately
-		pSlave->PrismStage = PrismChargeState::Idle;
 		this->PrismChargeDelay = 0;
-		pSlave->DelayBeforeFiring = 0;
 		this->ModifierReserve = 0.0;
 		this->DamageReserve = 0;
+
+		auto pSlave = this->GetOwner();
+		pSlave->PrismStage = PrismChargeState::Idle;
+		pSlave->DelayBeforeFiring = 0;
 		//animations should be controlled by whatever incapacitated the tower so no need to mess with anims here
 	}
 
@@ -327,27 +328,15 @@ void BuildingExt::cPrismForwarding::RemoveAllSenders() {
 }
 
 void BuildingExt::cPrismForwarding::AnnounceInvalidPointer(void* ptr, bool removed) {
-	// verify that ptr points to an existing object that is a building without
-	// accessing any of its fields or members.
-	if(auto pExt = ExtMap.Find(static_cast<BuildingClass*>(ptr))) {
-		if(&pExt->PrismForwarding == this->SupportTarget) {
-			Debug::Log("Should remove my support target\n");
-		}
-		auto senderIdx = this->Senders.FindItemIndex(&pExt->PrismForwarding);
-		if(senderIdx != -1) {
-			Debug::Log("Should remove my sender #%d\n", senderIdx);
-		}
-		pExt->PrismForwarding.RemoveFromNetwork(true);
-		if(&pExt->PrismForwarding == this->SupportTarget) {
-			_snprintf_s(Ares::readBuffer, Ares::readLength - 1, "Prism Forwarder (ExtData %p) failed to remove support target\n", this->Owner);
-			Debug::FatalError(true);
-			Debug::Exit();
-		}
-		senderIdx = this->Senders.FindItemIndex(&pExt->PrismForwarding);
-		if(senderIdx != -1) {
-			_snprintf_s(Ares::readBuffer, Ares::readLength - 1, "Prism Forwarder (ExtData %p) failed to remove sender #%d\n", this->Owner, senderIdx);
-			Debug::FatalError(true);
-			Debug::Exit();
-		}
-	}
+	//// verify that ptr points to an existing object that is a building without
+	//// accessing any of its fields or members.
+	//if(auto pExt = ExtMap.Find(static_cast<BuildingClass*>(ptr))) {
+	//	if(&pExt->PrismForwarding == this->SupportTarget) {
+	//		Debug::Log("Prism Forwarder (ExtData %p) failed to remove support target\n", this->Owner);
+	//	}
+	//	auto senderIdx = this->Senders.FindItemIndex(&pExt->PrismForwarding);
+	//	if(senderIdx != -1) {
+	//		Debug::Log("Prism Forwarder (ExtData %p) failed to remove sender #%d\n", this->Owner, senderIdx);
+	//	}
+	//}
 }
