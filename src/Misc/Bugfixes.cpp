@@ -1195,3 +1195,15 @@ DEFINE_HOOK(4B5F9E, DropPodLocomotionClass_ILocomotion_Process_Report, 6)
 	GET(int, count, EBP);
 	return count ? 0 : 0x4B5FAD;
 }
+
+DEFINE_HOOK(52070F, InfantryClass_UpdateFiringState_Uncloak, 5)
+{
+	GET(InfantryClass*, pThis, EBP);
+	GET_STACK(int, idxWeapon, STACK_OFFS(0x34, 0x24));
+
+	if(pThis->IsCloseEnough(pThis->Target, idxWeapon)) {
+		pThis->Uncloak(false);
+	}
+
+	return 0x52094C;
+}
