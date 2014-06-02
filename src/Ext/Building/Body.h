@@ -89,15 +89,7 @@ public:
 			SensorArrayActiveCounter(0)
 		{ };
 
-		virtual ~ExtData() {
-			if(this->PrismForwarding.SupportTarget) {
-				Debug::Log("Building ExtData (%p) failed to remove SupportTarget (%p) before destruction.\n",
-					this, this->PrismForwarding.SupportTarget->GetOwner());
-			}
-			if(this->PrismForwarding.Senders.Count) {
-				Debug::Log("Building ExtData (%p) failed to remove all Senders (%d) before destruction.\n", this, this->PrismForwarding.Senders.Count);
-			}
-		}
+		virtual ~ExtData() = default;
 
 		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
 			AnnounceInvalidPointer(OwnerBeforeRaid, ptr);
