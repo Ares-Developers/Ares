@@ -493,21 +493,13 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 
 
 	if(pTypeExt->UnReverseEngineer) {
-		int idx = HouseClass::Array->FindItemIndex(Owner);
+		Debug::Log("Undoing all Reverse Engineering achieved by house %ls\n", Owner->UIName);
 
-		Debug::Log("Undoing all Reverse Engineering achieved by house %ls (#%d)\n", Owner->UIName, idx);
-
-		if(idx != -1) {
-			for(int i = 0; i < TechnoTypeClass::Array->Count; ++i) {
-				TechnoTypeClass * Type = TechnoTypeClass::Array->GetItem(i);
-				TechnoTypeExt::ExtData * TypeData = TechnoTypeExt::ExtMap.Find(Type);
-				if(TypeData->ReversedByHouses.ValidIndex(idx)) {
-					Debug::Log("Zeroing out RevEng of %s\n", Type->ID);
-					TypeData->ReversedByHouses[idx] = false;
-				}
-			}
-			Owner->RecheckTechTree = true;
+		for(auto Type : *TechnoTypeClass::Array) {
+			auto TypeData = TechnoTypeExt::ExtMap.Find(Type);
+			TypeData->ReversedByHouses.erase(Owner);
 		}
+		Owner->RecheckTechTree = true;
 
 		if(evaForOwner) {
 			VoxClass::Play("EVA_BuildingInfiltrated");
@@ -778,19 +770,14 @@ bool BuildingExt::ExtData::ReverseEngineer(TechnoClass *Victim) {
 
 	HouseClass *Owner = this->AttachedToObject->Owner;
 
-	int idx = HouseClass::Array->FindItemIndex(Owner);
-
-	if(pVictimData->ReversedByHouses.ValidIndex(idx)) {
-		if(!pVictimData->ReversedByHouses[idx]) {
-
-			bool WasBuildable = HouseExt::PrereqValidate(Owner, VictimType, false, true) == 1;
-			pVictimData->ReversedByHouses[idx] = true;
-			if(!WasBuildable) {
-				bool IsBuildable = HouseExt::RequirementsMet(Owner, VictimType) != HouseExt::Forbidden;
-				if(IsBuildable) {
-					Owner->RecheckTechTree = true;
-					return true;
-				}
+	if(!pVictimData->ReversedByHouses.contains(Owner)) {
+		bool WasBuildable = HouseExt::PrereqValidate(Owner, VictimType, false, true) == 1;
+		pVictimData->ReversedByHouses.insert(Owner, true);
+		if(!WasBuildable) {
+			bool IsBuildable = HouseExt::RequirementsMet(Owner, VictimType) != HouseExt::Forbidden;
+			if(IsBuildable) {
+				Owner->RecheckTechTree = true;
+				return true;
 			}
 		}
 	}

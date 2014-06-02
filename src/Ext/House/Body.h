@@ -68,9 +68,7 @@ class HouseExt
 		{
 		};
 
-		virtual ~ExtData() {
-
-		}
+		virtual ~ExtData();
 
 		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
 			AnnounceInvalidPointer(Factory_AircraftType, ptr);

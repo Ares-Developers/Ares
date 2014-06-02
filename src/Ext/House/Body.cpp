@@ -41,9 +41,7 @@ HouseExt::RequirementStatus HouseExt::RequirementsMet(HouseClass *pHouse, Techno
 	if(!(pData->PrerequisiteTheaters & (1 << ScenarioClass::Instance->Theater))) { return Forbidden; }
 	if(Prereqs::HouseOwnsAny(pHouse, &pData->PrerequisiteNegatives)) { return Forbidden; }
 
-	int idx = HouseClass::Array->FindItemIndex(pHouse);
-
-	if(pData->ReversedByHouses.ValidIndex(idx) && pData->ReversedByHouses[idx]) {
+	if(pData->ReversedByHouses.contains(pHouse)) {
 		return Overridden;
 	}
 
@@ -295,6 +293,14 @@ bool HouseExt::UpdateAnyFirestormActive() {
 	return IsAnyFirestormActive;
 }
 
+HouseExt::ExtData::~ExtData()
+{
+	for(auto Type : *TechnoTypeClass::Array) {
+		auto TypeData = TechnoTypeExt::ExtMap.Find(Type);
+		TypeData->ReversedByHouses.erase(this->AttachedToObject);
+	}
+}
+
 void HouseExt::ExtData::SetFirestormState(bool Active) {
 	HouseClass *pHouse = this->AttachedToObject;
 	HouseExt::ExtData* pData = HouseExt::ExtMap.Find(pHouse);
@@ -455,28 +461,12 @@ DEFINE_HOOK(4F6532, HouseClass_CTOR, 5)
 	GET(HouseClass*, pItem, EAX);
 
 	HouseExt::ExtMap.FindOrAllocate(pItem);
-
-	for(int i = 0; i < TechnoTypeClass::Array->Count; ++i) {
-		TechnoTypeClass * Type = TechnoTypeClass::Array->GetItem(i);
-		TechnoTypeExt::ExtData * TypeData = TechnoTypeExt::ExtMap.Find(Type);
-		TypeData->ReversedByHouses.AddItem(false);
-	}
 	return 0;
 }
 
 DEFINE_HOOK(4F7371, HouseClass_DTOR, 6)
 {
 	GET(HouseClass*, pItem, ESI);
-
-	int idx = HouseClass::Array->FindItemIndex(pItem);
-
-	if(idx != -1) {
-		for(int i = 0; i < TechnoTypeClass::Array->Count; ++i) {
-			TechnoTypeClass * Type = TechnoTypeClass::Array->GetItem(i);
-			TechnoTypeExt::ExtData * TypeData = TechnoTypeExt::ExtMap.Find(Type);
-			TypeData->ReversedByHouses.RemoveItem(idx);
-		}
-	}
 
 	HouseExt::ExtMap.Remove(pItem);
 	return 0;

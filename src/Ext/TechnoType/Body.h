@@ -135,7 +135,7 @@ public:
 
 		char GroupAs[0x20];
 
-		DynamicVectorClass<bool> ReversedByHouses;
+		AresMap<HouseClass*, bool> ReversedByHouses;
 		Valueable<bool> CanBeReversed;
 
 		// issue #305
@@ -307,8 +307,6 @@ public:
 			FactoryOwners_HaveAllPlans(false)
 			{
 				this->Insignia.SetAll(nullptr);
-				this->ReversedByHouses.SetCapacity(32, nullptr);
-				this->ReversedByHouses.CapacityIncrement = 32;
 				*this->GroupAs = 0;
 			};
 
