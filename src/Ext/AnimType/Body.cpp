@@ -17,15 +17,15 @@ void AnimTypeExt::ExtData::LoadFromINIFile(AnimTypeClass *pThis, CCINIClass *pIN
 	if(pINI->ReadString(pThis->ID, "MakeInfantryOwner", "", Ares::readBuffer, Ares::readLength)) {
 		// fugly. C++ needs switch over strings.
 		if(strcmp(Ares::readBuffer, "invoker") == 0) {
-			this->MakeInfantryOwner = ExtData::INVOKER;
+			this->MakeInfantryOwner = MakeInfantryHouse::Invoker;
 		} else if(strcmp(Ares::readBuffer, "killer") == 0) {
-			this->MakeInfantryOwner = ExtData::KILLER;
+			this->MakeInfantryOwner = MakeInfantryHouse::Killer;
 		} else if(strcmp(Ares::readBuffer, "victim") == 0) {
-			this->MakeInfantryOwner = ExtData::VICTIM;
+			this->MakeInfantryOwner = MakeInfantryHouse::Victim;
 		} else if(strcmp(Ares::readBuffer, "neutral") == 0) {
-			this->MakeInfantryOwner = ExtData::NEUTRAL;
+			this->MakeInfantryOwner = MakeInfantryHouse::Neutral;
 		} else if(strcmp(Ares::readBuffer, "random") == 0) {
-			this->MakeInfantryOwner = ExtData::RANDOM;
+			this->MakeInfantryOwner = MakeInfantryHouse::Random;
 		} else {
 			Debug::INIParseFailed(pThis->ID, "MakeInfantryOwner", Ares::readBuffer);
 		}
@@ -34,31 +34,32 @@ void AnimTypeExt::ExtData::LoadFromINIFile(AnimTypeClass *pThis, CCINIClass *pIN
 	this->Palette.LoadFromINI(pINI, pThis->ID, "CustomPalette");
 }
 
-void AnimTypeExt::SetMakeInfOwner(AnimClass *pAnim, HouseClass *pInvoker, HouseClass *pVictim, HouseClass *pKiller)
+AnimTypeExt::ExtData::MakeInfantryHouse AnimTypeExt::SetMakeInfOwner(AnimClass *pAnim, HouseClass *pInvoker, HouseClass *pVictim, HouseClass *pKiller)
 {
-	AnimTypeExt::ExtData *pAnimData = AnimTypeExt::ExtMap.Find(pAnim->Type);
+	auto pAnimData = AnimTypeExt::ExtMap.Find(pAnim->Type);
+
 	HouseClass *newOwner = nullptr;
 	switch(pAnimData->MakeInfantryOwner) {
-		case AnimTypeExt::ExtData::NEUTRAL:
-			newOwner = HouseClass::FindNeutral();
-			break;
+	case ExtData::MakeInfantryHouse::Neutral:
+		newOwner = HouseClass::FindNeutral();
+		break;
 
-		case AnimTypeExt::ExtData::RANDOM:
-			newOwner = HouseClass::Array->GetItem(ScenarioClass::Instance->Random.RandomRanged(0, HouseClass::Array->Count - 1));
-			break;
+	case ExtData::MakeInfantryHouse::Random:
+		newOwner = HouseClass::Array->GetItem(ScenarioClass::Instance->Random.RandomRanged(0, HouseClass::Array->Count - 1));
+		break;
 
-		case AnimTypeExt::ExtData::VICTIM:
-			newOwner = pVictim;
-			break;
+	case ExtData::MakeInfantryHouse::Victim:
+		newOwner = pVictim;
+		break;
 
-		case AnimTypeExt::ExtData::INVOKER:
-			newOwner = pInvoker;
-			break;
+	case ExtData::MakeInfantryHouse::Invoker:
+		newOwner = pInvoker;
+		break;
 
-		case AnimTypeExt::ExtData::KILLER:
-		default:
-			newOwner = pKiller;
-			break;
+	case ExtData::MakeInfantryHouse::Killer:
+	default:
+		newOwner = pKiller;
+		break;
 	}
 
 	if(newOwner) {
@@ -68,6 +69,7 @@ void AnimTypeExt::SetMakeInfOwner(AnimClass *pAnim, HouseClass *pInvoker, HouseC
 		}
 	}
 
+	return pAnimData->MakeInfantryOwner;
 }
 
 

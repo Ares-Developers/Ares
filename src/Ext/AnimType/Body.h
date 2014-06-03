@@ -17,15 +17,22 @@ public:
 	class ExtData : public Extension<TT>
 	{
 	public:
+		enum class MakeInfantryHouse : int {
+			Invoker = 0,
+			Killer = 1,
+			Victim = 2,
+			Neutral = 3,
+			Random = 4
+		};
 
-		enum {INVOKER, KILLER, VICTIM, NEUTRAL, RANDOM} MakeInfantryOwner;
+		MakeInfantryHouse MakeInfantryOwner;
 
 		CustomPalette Palette;
 
 		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
-			MakeInfantryOwner (INVOKER),
+			MakeInfantryOwner(MakeInfantryHouse::Invoker),
 			Palette(CustomPalette::PaletteMode::Temperate)
-			{ };
+		{ };
 
 		virtual ~ExtData() {
 		}
@@ -39,8 +46,7 @@ public:
 
 	static Container<AnimTypeExt> ExtMap;
 
-	static void SetMakeInfOwner(AnimClass *pAnim, HouseClass *pInvoker, HouseClass *pVictim, HouseClass *pKiller);
-//	static ExtData ExtMap;
+	static ExtData::MakeInfantryHouse SetMakeInfOwner(AnimClass *pAnim, HouseClass *pInvoker, HouseClass *pVictim, HouseClass *pKiller);
 };
 
 #endif
