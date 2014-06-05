@@ -407,6 +407,9 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 
 	this->CivilianEnemy.Read(exINI, section, "CivilianEnemy");
 
+	// particles
+	this->DamageSparks.Read(exINI, section, "DamageSparks");
+
 	// quick fix - remove after the rest of weapon selector code is done
 	return;
 }

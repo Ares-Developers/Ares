@@ -1647,3 +1647,17 @@ DEFINE_HOOK(6F826E, TechnoClass_CanAutoTargetObject_CivilianEnemy, 5)
 
 	return Undecided;
 }
+
+// particle system related
+
+// make damage sparks customizable, using game setting as default.
+DEFINE_HOOK(6FACD9, TechnoClass_Update_DamageSparks, 6)
+{
+	GET(TechnoTypeClass*, pType, EBX);
+	auto pExt = TechnoTypeExt::ExtMap.Find(pType);
+
+	bool sparks = pExt->DamageSparks.Get(pType->DamageSparks);
+
+	R->EAX(sparks);
+	return 0x6FACDF;
+}

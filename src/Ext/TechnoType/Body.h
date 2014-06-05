@@ -207,6 +207,9 @@ public:
 		Nullable<int> HunterSeekerEmergeSpeed;
 		Valueable<bool> HunterSeekerIgnore;
 
+		// particles
+		Nullable<bool> DamageSparks;
+
 		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			Survivors_PilotChance (),
 			Survivors_PassengerChance (),
@@ -326,7 +329,7 @@ public:
 		bool CarryallCanLift(UnitClass * Target);
 
 		const char* GetSelectionGroupID() const;
-};
+	};
 
 	static Container<TechnoTypeExt> ExtMap;
 
