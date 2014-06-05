@@ -1661,3 +1661,45 @@ DEFINE_HOOK(6FACD9, TechnoClass_Update_DamageSparks, 6)
 	R->EAX(sparks);
 	return 0x6FACDF;
 }
+
+// smoke particle systems created when a techno is damaged
+DEFINE_HOOK(702894, TechnoClass_ReceiveDamage_SmokeParticles, 6)
+{
+	GET(TechnoClass*, pThis, ESI);
+	REF_STACK(DynamicVectorClass<ParticleSystemTypeClass const *>, Systems, 0x30);
+
+	auto pType = pThis->GetTechnoType();
+	auto pExt = TechnoTypeExt::ExtMap.Find(pType);
+
+	auto it = pExt->ParticleSystems_DamageSmoke.GetElements(pType->DamageParticleSystems);
+	auto allowAny = pExt->ParticleSystems_DamageSmoke.HasValue();
+
+	for(auto pSystem : it) {
+		if(allowAny || pSystem->BehavesLike == BehavesLike::Smoke) {
+			Systems.AddItem(pSystem);
+		}
+	}
+
+	return 0x702938;
+}
+
+// spark particle systems created at random intervals
+DEFINE_HOOK(6FAD49, TechnoClass_Update_SparkParticles, 0) // breaks the loop
+{
+	GET(TechnoClass*, pThis, ESI);
+	REF_STACK(DynamicVectorClass<ParticleSystemTypeClass const *>, Systems, 0x60);
+
+	auto pType = pThis->GetTechnoType();
+	auto pExt = TechnoTypeExt::ExtMap.Find(pType);
+
+	auto it = pExt->ParticleSystems_DamageSparks.GetElements(pType->DamageParticleSystems);
+	auto allowAny = pExt->ParticleSystems_DamageSparks.HasValue();
+
+	for(auto pSystem : it) {
+		if(allowAny || pSystem->BehavesLike == BehavesLike::Spark) {
+			Systems.AddItem(pSystem);
+		}
+	}
+
+	return 0x6FADB3;
+}

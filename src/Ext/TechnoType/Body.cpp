@@ -410,6 +410,9 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	// particles
 	this->DamageSparks.Read(exINI, section, "DamageSparks");
 
+	this->ParticleSystems_DamageSmoke.Read(exINI, section, "DamageSmokeParticleSystems");
+	this->ParticleSystems_DamageSparks.Read(exINI, section, "DamageSparksParticleSystems");
+
 	// quick fix - remove after the rest of weapon selector code is done
 	return;
 }

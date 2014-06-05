@@ -2,6 +2,7 @@
 #define TECHNOTYPE_EXT_H
 
 #include <TechnoTypeClass.h>
+#include <ParticleSystemTypeClass.h>
 
 #include "../../Ares.h"
 #include "../_Container.hpp"
@@ -209,6 +210,9 @@ public:
 
 		// particles
 		Nullable<bool> DamageSparks;
+
+		NullableVector<ParticleSystemTypeClass*> ParticleSystems_DamageSmoke;
+		NullableVector<ParticleSystemTypeClass*> ParticleSystems_DamageSparks;
 
 		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			Survivors_PilotChance (),
