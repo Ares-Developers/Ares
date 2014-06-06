@@ -22,6 +22,7 @@ const bool IsStable = false;
 //Init Statics
 HANDLE Ares::hInstance = 0;
 PVOID Ares::pExceptionHandler = nullptr;
+Ares::ExceptionHandlerMode Ares::ExceptionMode = Ares::ExceptionHandlerMode::Default;
 bool Ares::bNoLogo = false;
 bool Ares::bNoCD = false;
 bool Ares::bTestingRun = false;
@@ -74,7 +75,7 @@ void __stdcall Ares::RegisterCommands()
 	MakeCommand<FPSCounterCommandClass>();
 }
 
-void __stdcall Ares::CmdLineParse(char** ppArgs,int nNumArgs)
+void __stdcall Ares::CmdLineParse(char** ppArgs, int nNumArgs)
 {
 	Debug::bLog = false;
 	bNoCD = false;
@@ -82,27 +83,27 @@ void __stdcall Ares::CmdLineParse(char** ppArgs,int nNumArgs)
 	EMPulse::verbose = false;
 
 	// > 1 because the exe path itself counts as an argument, too!
-	if(nNumArgs > 1) {
-		for(int i = 1; i < nNumArgs; i++) {
-			char* pArg = ppArgs[i];
+	for(int i = 1; i < nNumArgs; i++) {
+		const char* pArg = ppArgs[i];
 
-			if(_stricmp(pArg,"-LOG") == 0) {
-				Debug::bLog = true;
-			} else if(_stricmp(pArg,"-CD") == 0) {
-				bNoCD = true;
-			} else if(_stricmp(pArg,"-NOLOGO") == 0) {
-				bNoLogo = true;
-			} else if(_stricmp(pArg, "-TESTRUN") == 0) {
-				bTestingRun = true;
-			} else if(_stricmp(pArg, "-STRICT") == 0) {
-				bStrictParser = true;
-			} else if(_stricmp(pArg, "-LOG-EMP") == 0) {
-				EMPulse::verbose = true;
-			} else if(_stricmp(pArg,"-AI-CONTROL") == 0) {
-				bAllowAIControl = true;
-			} else if(_stricmp(pArg,"-LOG-CSF") == 0) {
-				bOutputMissingStrings = true;
-			}
+		if(_stricmp(pArg, "-LOG") == 0) {
+			Debug::bLog = true;
+		} else if(_stricmp(pArg, "-CD") == 0) {
+			bNoCD = true;
+		} else if(_stricmp(pArg, "-NOLOGO") == 0) {
+			bNoLogo = true;
+		} else if(_stricmp(pArg, "-TESTRUN") == 0) {
+			bTestingRun = true;
+		} else if(_stricmp(pArg, "-STRICT") == 0) {
+			bStrictParser = true;
+		} else if(_stricmp(pArg, "-LOG-EMP") == 0) {
+			EMPulse::verbose = true;
+		} else if(_stricmp(pArg, "-AI-CONTROL") == 0) {
+			bAllowAIControl = true;
+		} else if(_stricmp(pArg, "-LOG-CSF") == 0) {
+			bOutputMissingStrings = true;
+		} else if(_stricmp(pArg, "-EXCEPTION") == 0) {
+			ExceptionMode = ExceptionHandlerMode::NoRemove;
 		}
 	}
 
@@ -130,9 +131,11 @@ void __stdcall Ares::ExeRun()
 
 #if _MSC_VER >= 1700
 	// install a new exception handler, if this version of Windows supports it
-	if(HINSTANCE handle = GetModuleHandle(TEXT("kernel32.dll"))) {
-		if(GetProcAddress(handle, "AddVectoredExceptionHandler")) {
-			//Ares::pExceptionHandler = AddVectoredExceptionHandler(1, Debug::ExceptionFilter);
+	if(Ares::ExceptionMode != Ares::ExceptionHandlerMode::Default) {
+		if(HINSTANCE handle = GetModuleHandle(TEXT("kernel32.dll"))) {
+			if(GetProcAddress(handle, "AddVectoredExceptionHandler")) {
+				Ares::pExceptionHandler = AddVectoredExceptionHandler(1, Debug::ExceptionFilter);
+			}
 		}
 	}
 #endif
@@ -145,7 +148,7 @@ void __stdcall Ares::ExeTerminate()
 	CloseConfig(Ares::GlobalControls::INI);
 	Debug::LogFileClose(111);
 
-	if(Ares::pExceptionHandler) {
+	if(Ares::pExceptionHandler && Ares::ExceptionMode != Ares::ExceptionHandlerMode::NoRemove) {
 		RemoveVectoredExceptionHandler(Ares::pExceptionHandler);
 		Ares::pExceptionHandler = nullptr;
 	}

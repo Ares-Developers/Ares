@@ -37,6 +37,12 @@ class MixFileClass;
 class Ares
 {
 public:
+	enum class ExceptionHandlerMode {
+		Default = 0,
+		Full = 1,
+		NoRemove = 2
+	};
+
 	/**
 	* called before any saving takes place
 	*/
@@ -78,6 +84,7 @@ public:
 	static int TrackIndex;
 
 	static PVOID pExceptionHandler;
+	static ExceptionHandlerMode ExceptionMode;
 
 	static bool bShuttingDown;
 
