@@ -295,9 +295,14 @@ bool HouseExt::UpdateAnyFirestormActive() {
 
 HouseExt::ExtData::~ExtData()
 {
+	if(Ares::bShuttingDown) {
+		return;
+	}
+
 	for(auto Type : *TechnoTypeClass::Array) {
-		auto TypeData = TechnoTypeExt::ExtMap.Find(Type);
-		TypeData->ReversedByHouses.erase(this->AttachedToObject);
+		if(auto TypeData = TechnoTypeExt::ExtMap.Find(Type)) {
+			TypeData->ReversedByHouses.erase(this->AttachedToObject);
+		}
 	}
 }
 
