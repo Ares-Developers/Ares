@@ -92,7 +92,7 @@ public:
 	static bool bStableNotification;
 	static void UpdateStability();
 
-	static const wchar_t StabilityWarning[BUFLEN];
+	static const wchar_t StabilityWarning[];
 
 	static DWORD readLength;
 	static char readBuffer[BUFLEN];

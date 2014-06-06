@@ -39,7 +39,7 @@ char Ares::readBuffer[BUFLEN];
 const char Ares::readDelims[4] = ",";
 const char Ares::readDefval[4] = "";
 
-const wchar_t Ares::StabilityWarning[BUFLEN] = L"This version of Ares (" VERSION_WSTR L") is not considered stable.";
+const wchar_t Ares::StabilityWarning[] = L"This version of Ares (" VERSION_WSTR L") is not considered stable.";
 
 MixFileClass *Ares::aresMIX = nullptr;
 
