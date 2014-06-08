@@ -20,16 +20,27 @@ DEFINE_HOOK(6EB432, TeamClass_AttackedBy_Retaliate, 9)
 	auto pSpawn = pThis->SpawnCell;
 
 	if(!pFocus || !pFocus->GetWeapon(0)->WeaponType || !pSpawn || pFocus->IsCloseEnoughToAttackCoords(pSpawn->GetCoords())) {
+		// disallow aircraft, or units considered as aircraft, or stuff not on map like parasites
 		if(pAttacker->WhatAmI() != AircraftClass::AbsID) {
-			pThis->Focus = pAttacker;
-			for(auto i = pThis->FirstUnit; i; i = i->NextTeamMember) {
-				if(i->IsAlive && i->Health && (Unsorted::IKnowWhatImDoing || !i->InLimbo)) {
-					if(i->IsTeamLeader || i->WhatAmI() == AircraftClass::AbsID) {
-						i->SetTarget(nullptr);
-						i->SetDestination(nullptr, true);
-					}
+			if(auto pAttackerFoot = abstract_cast<FootClass*>(pAttacker)) {
+				if(pAttackerFoot->InLimbo || pAttackerFoot->GetTechnoType()->ConsideredAircraft) {
+					return 0x6EB47A;
 				}
 			}
+
+			pThis->Focus = pAttacker;
+
+			// this is the original code, but commented out because it's responsible for switching
+			// targets when the team is attacked by two or more opponents. Now, the team should pick
+			// the first target, and keep it. -AlexB
+			//for(auto i = pThis->FirstUnit; i; i = i->NextTeamMember) {
+			//	if(i->IsAlive && i->Health && (Unsorted::IKnowWhatImDoing || !i->InLimbo)) {
+			//		if(i->IsTeamLeader || i->WhatAmI() == AircraftClass::AbsID) {
+			//			i->SetTarget(nullptr);
+			//			i->SetDestination(nullptr, true);
+			//		}
+			//	}
+			//}
 		}
 	}
 
