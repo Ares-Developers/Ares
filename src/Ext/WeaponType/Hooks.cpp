@@ -109,3 +109,22 @@ DEFINE_HOOK(772A90, WeaponTypeClass_GetProjectileTargetFlags, 6)
 	R->EAX(ret);
 	return 0x772AB3;
 }
+
+DEFINE_HOOK(6FC76A, TechnoClass_GetFireError_AV, 5)
+{
+	//GET(TechnoClass*, pThis, ESI);
+	GET(TechnoClass*, pTarget, EBP);
+	GET(WeaponTypeClass*, pWeapon, EDI);
+
+	auto pProjectile = pWeapon->Projectile;
+
+	if(pProjectile && pTarget->WhatAmI() == abs_Unit) {
+		auto pExt = BulletTypeExt::ExtMap.Find(pProjectile);
+		if(!pExt->AV.Get(pProjectile->AG)) {
+			// returns FireError::ILLEGAL
+			return 0x6FC86A;
+		}
+	}
+
+	return 0;
+}
