@@ -136,7 +136,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	Prereqs::Parse(pINI, section, "PrerequisiteOverride", dvc);
 
 	for(size_t i = 0; i < this->PrerequisiteLists.size(); ++i) {
-		_snprintf_s(flag, 255, "Prerequisite.List%d", i);
+		_snprintf_s(flag, 255, "Prerequisite.List%u", i);
 		dvc = this->PrerequisiteLists.at(i).get();
 		Prereqs::Parse(pINI, section, flag, dvc);
 	}
