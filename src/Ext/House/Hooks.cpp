@@ -338,12 +338,12 @@ DEFINE_HOOK(73E4A2, UnitClass_Mi_Unload_Storage, 6)
 	// the original functions do nothing any more.
 	GET(BuildingClass*, pBld, EDI);
 	GET(int, idxTiberium, EBP);
-	LEA_STACK(float*, amountRaw, 0x1C);
-	LEA_STACK(float*, amountPurified, 0x34);
+	REF_STACK(float, amountRaw, 0x1C);
+	REF_STACK(float, amountPurified, 0x34);
 
 	auto pExt = TechnoExt::ExtMap.Find(pBld);
-	pExt->DepositTiberium(*amountRaw, *amountPurified, idxTiberium);
-	*amountPurified = *amountRaw = 0.0f;
+	pExt->DepositTiberium(amountRaw, amountPurified, idxTiberium);
+	amountPurified = amountRaw = 0.0f;
 
 	return 0;
 }
