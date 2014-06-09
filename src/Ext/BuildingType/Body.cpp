@@ -360,15 +360,15 @@ void BuildingTypeExt::ExtData::UpdateFoundationRadarShape() {
 		int height = pType->GetFoundationHeight(false);
 
 		// transform between cell length and pixels on radar
-		auto Transform = [](int length, float factor) -> int {
-			float fltLength = length * factor + 0.5f;
-			float minLength = (length == 1) ? 1.0f : 2.0f;
+		auto Transform = [](int length, double factor) -> int {
+			double dblLength = length * factor + 0.5;
+			double minLength = (length == 1) ? 1.0 : 2.0;
 
-			if(fltLength < minLength) {
-				fltLength = minLength;
+			if(dblLength < minLength) {
+				dblLength = minLength;
 			}
 
-			return Game::F2I(fltLength);
+			return Game::F2I(dblLength);
 		};
 
 		// the transformed lengths
