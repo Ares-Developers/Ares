@@ -123,7 +123,7 @@ DEFINE_HOOK(6FC76A, TechnoClass_GetFireError_AV, 5)
 		&& pTarget->WhatAmI() == abs_Unit && pTarget->InWhichLayer() == Layer::Ground)
 	{
 		auto pExt = BulletTypeExt::ExtMap.Find(pProjectile);
-		if(!pExt->AV.Get(pProjectile->AG)) {
+		if(!pExt->AV.Get(pType->LandTargeting != 1)) {
 			// returns FireError::ILLEGAL
 			return 0x6FC86A;
 		}
