@@ -163,7 +163,7 @@ public:
 
 	virtual ~Container() = default;
 
-	ValueType FindOrAllocate(KeyType const &key) {
+	ValueType FindOrAllocate(KeyType key) {
 		if(key == nullptr) {
 			const auto &info = typeid(*this);
 			Debug::Log("CTOR of %s attempted for a NULL pointer! WTF!\n", info.name());
@@ -178,7 +178,7 @@ public:
 		return i->second.get();
 	}
 
-	ValueType Find(const KeyType &key) const {
+	ValueType Find(KeyType key) const {
 		auto i = this->Items.find(key);
 		if(i == this->Items.end()) {
 			return nullptr;
