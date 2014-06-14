@@ -116,9 +116,12 @@ DEFINE_HOOK(6FC76A, TechnoClass_GetFireError_AV, 5)
 	GET(TechnoClass*, pTarget, EBP);
 	GET(WeaponTypeClass*, pWeapon, EDI);
 
+	auto pType = pTarget->GetTechnoType();
 	auto pProjectile = pWeapon->Projectile;
 
-	if(pProjectile && pTarget->WhatAmI() == abs_Unit && pTarget->InWhichLayer() == Layer::Ground) {
+	if(pProjectile && !pType->Naval && !pType->ConsideredAircraft
+		&& pTarget->WhatAmI() == abs_Unit && pTarget->InWhichLayer() == Layer::Ground)
+	{
 		auto pExt = BulletTypeExt::ExtMap.Find(pProjectile);
 		if(!pExt->AV.Get(pProjectile->AG)) {
 			// returns FireError::ILLEGAL
