@@ -253,6 +253,7 @@ DEFINE_HOOK(6FE53F, TechnoClass_Fire_CreateBullet, 6)
 	GET(TechnoClass*, pThis, ESI);
 	GET(WeaponTypeClass*, pWeapon, EBX);
 	GET(int, speed, EAX);
+	GET(int, damage, EDI);
 	GET_BASE(AbstractClass*, pTarget, 0x8);
 
 	// replace skipped instructions
@@ -263,7 +264,7 @@ DEFINE_HOOK(6FE53F, TechnoClass_Fire_CreateBullet, 6)
 	auto pBulletExt = BulletTypeExt::ExtMap.Find(pWeapon->Projectile);
 
 	// create a new bullet with projectile range
-	auto ret = pBulletExt->CreateBullet(pTarget, pThis, pWeapon->Damage, pWeapon->Warhead,
+	auto ret = pBulletExt->CreateBullet(pTarget, pThis, damage, pWeapon->Warhead,
 		speed, pWeaponExt->GetProjectileRange(), pWeapon->Bright);
 
 	R->EAX(ret);
