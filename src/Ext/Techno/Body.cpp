@@ -592,13 +592,12 @@ void TechnoExt::RecalculateStats(TechnoClass *pTechno) {
 
 	//Debug::Log("[AttachEffect]Recalculating stats of %s...\n", pTechno->get_ID());
 
-	for (size_t i = 0; i < pTechnoExt->AttachedEffects.size(); i++) {
-		auto iType = pTechnoExt->AttachedEffects.at(i)->Type;
-		//do not use *= here... Valuable sends GetEx and repositions the double
-		Firepower = iType->FirepowerMultiplier * Firepower;
-		Speed = iType->SpeedMultiplier * Speed;
-		Armor = iType->ArmorMultiplier * Armor;
-		Cloak = Cloak || !!iType->Cloakable;
+	for (const auto& Item : pTechnoExt->AttachedEffects) {
+		auto pType = Item->Type;
+		Firepower *= pType->FirepowerMultiplier;
+		Speed *= pType->SpeedMultiplier;
+		Armor *= pType->ArmorMultiplier;
+		Cloak |= pType->Cloakable;
 	}
 
 	pTechno->FirepowerMultiplier = Firepower;

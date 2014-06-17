@@ -59,13 +59,14 @@ void AttachEffectTypeClass::Read(INI_EX &exINI) {
 
 //void AttachEffectTypeClass::Attach(TechnoClass* Target, int Duration, TechnoClass* Invoker, int DamageDelay) {
 void AttachEffectTypeClass::Attach(TechnoClass* Target, int Duration, TechnoClass* Invoker) {
-	if (!Target || Target->IsIronCurtained()) {return;}
+	if (!Target || Target->IsIronCurtained()) {
+		return;
+	}
 
 	TechnoExt::ExtData *TargetExt = TechnoExt::ExtMap.Find(Target);
 
 	if (!this->Cumulative) {
-		for (size_t i=0; i < TargetExt->AttachedEffects.size(); i++) {
-			auto &Item = TargetExt->AttachedEffects.at(i);
+		for (const auto& Item : TargetExt->AttachedEffects) {
 			if (this == Item->Type) {
 				Item->ActualDuration = Item->Type->Duration;
 
