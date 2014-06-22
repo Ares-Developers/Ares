@@ -307,7 +307,7 @@ protected:
 		pStm->Read(buffer, sizeof(*buffer), &out);
 		Debug::Log("LoadKey Swizzle: %X => %X\n", origPtr, buffer);
 		SwizzleManagerClass::Instance.Here_I_Am(origPtr, (void *)buffer);
-		SWIZZLE(buffer->AttachedToObject);
+		//SWIZZLE(buffer->AttachedToObject);
 		return buffer;
 	};
 };

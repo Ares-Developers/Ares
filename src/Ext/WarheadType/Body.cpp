@@ -502,7 +502,7 @@ bool Container<WarheadTypeExt>::Load(WarheadTypeClass *pThis, IStream *pStm) {
 
 	//pData->Verses.Load(pStm, 0);
 
-	SWIZZLE(pData->Temporal_WarpAway);
+	//SWIZZLE(pData->Temporal_WarpAway);
 
 	return pData != nullptr;
 }

@@ -1162,7 +1162,7 @@ void TechnoExt::ExtData::SetSpotlight(BuildingLightClass* pSpotlight) {
 bool Container<TechnoExt>::Load(TechnoClass *pThis, IStream *pStm) {
 	TechnoExt::ExtData* pData = this->LoadKey(pThis, pStm);
 
-	SWIZZLE(pData->Insignia_Image);
+	//SWIZZLE(pData->Insignia_Image);
 
 	return pData != nullptr;
 }

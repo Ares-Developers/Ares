@@ -463,8 +463,8 @@ bool Container<SideExt>::Save(SideClass *pThis, IStream *pStm) {
 bool Container<SideExt>::Load(SideClass *pThis, IStream *pStm) {
 	SideExt::ExtData* pData = this->LoadKey(pThis, pStm);
 
-	SWIZZLE(pData->Disguise);
-	SWIZZLE(pData->Crew);
+	//SWIZZLE(pData->Disguise);
+	//SWIZZLE(pData->Crew);
 	//pData->BaseDefenses.Load(pStm, 1);
 	//pData->BaseDefenseCounts.Load(pStm, 0);
 	//pData->ParaDrop.Load(pStm, 1);

@@ -632,13 +632,13 @@ bool Container<TechnoTypeExt>::Load(TechnoTypeClass *pThis, IStream *pStm) {
 	SWIZZLE(pData->Insignia_E);
 */
 
-	for(int ii = 0; ii < pData->Weapons.Count; ++ii) {
-		SWIZZLE(pData->Weapons.Items[ii].WeaponType);
-	}
+	//for(int ii = 0; ii < pData->Weapons.Count; ++ii) {
+	//	SWIZZLE(pData->Weapons.Items[ii].WeaponType);
+	//}
 
-	for(int ii = 0; ii < pData->EliteWeapons.Count; ++ii) {
-		SWIZZLE(pData->EliteWeapons.Items[ii].WeaponType);
-	}
+	//for(int ii = 0; ii < pData->EliteWeapons.Count; ++ii) {
+	//	SWIZZLE(pData->EliteWeapons.Items[ii].WeaponType);
+	//}
 
 	return pData != nullptr;
 }

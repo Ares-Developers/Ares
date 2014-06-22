@@ -639,7 +639,7 @@ void Container<SWTypeExt>::InvalidatePointer(void *ptr, bool bRemoved) {
 bool Container<SWTypeExt>::Load(SuperWeaponTypeClass *pThis, IStream *pStm) {
 	SWTypeExt::ExtData* pData = this->LoadKey(pThis, pStm);
 
-	SWIZZLE(pData->SW_Anim);
+	//SWIZZLE(pData->SW_Anim);
 
 	return pData != nullptr;
 }
