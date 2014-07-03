@@ -86,7 +86,9 @@ DEFINE_HOOK(5BDC8C, Actions_PrepareCursor, 7)
 DEFINE_HOOK(5BDD9F, Actions_SetCursor, 6)
 {
 	Actions::MPCurrent = Actions::TempCursor; //got set in Actions_UseCustomCursor
-	Actions::MP = *Actions::MPCurrent;
+	if(Actions::MPCurrent) {
+		Actions::MP = *Actions::MPCurrent;
+	}
 	return 0;
 }
 
