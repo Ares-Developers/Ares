@@ -28,8 +28,6 @@ void BulletTypeExt::ExtData::LoadFromINIFile(BulletTypeClass *pThis, CCINIClass*
 
 	this->ImageConvert.clear();
 
-	this->AV.Read(exINI, pThis->ID, "AV");
-
 	this->AirburstSpread.Read(exINI, pThis->ID, "AirburstSpread");
 	this->RetargetAccuracy.Read(exINI, pThis->ID, "RetargetAccuracy");
 	this->Splits.Read(exINI, pThis->ID, "Splits");
