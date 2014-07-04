@@ -1,6 +1,6 @@
 [branch]
-Name=Alex' Adult Playground
-Description=A bunch of old features that were long done, and also new ones.
-TargetVersion=0.7
+Name=Ares Development Mainline
+Description=This is the trunk or master branch of Ares's repository. It contains the current in-development code.
+TargetVersion=0.8
 Stable=no
 ReadyForTesting=yes
