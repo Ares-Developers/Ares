@@ -235,7 +235,7 @@ bool WeaponTypeExt::ModifyWaveColor(WORD *src, WORD *dst, int Intensity, WaveCla
 	upcolor(&ColorStruct::G);
 	upcolor(&ColorStruct::B);
 
-	*dst = Drawing::Color16bit(&modified);
+	*dst = Drawing::Color16bit(modified);
 	return true;
 }
 
