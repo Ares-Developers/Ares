@@ -22,7 +22,7 @@ const ColorStruct WeaponTypeExt::ExtData::DefaultWaveColorSonic = ColorStruct(0,
 AresMap<BombClass*, const WeaponTypeExt::ExtData*> WeaponTypeExt::BombExt;
 AresMap<WaveClass*, const WeaponTypeExt::ExtData*> WeaponTypeExt::WaveExt;
 AresMap<EBolt*, const WeaponTypeExt::ExtData*> WeaponTypeExt::BoltExt;
-AresMap<RadSiteClass*, WeaponTypeExt::ExtData*> WeaponTypeExt::RadSiteExt;
+AresMap<RadSiteClass*, const WeaponTypeExt::ExtData*> WeaponTypeExt::RadSiteExt;
 
 void WeaponTypeExt::ExtData::Initialize(WeaponTypeClass *pThis)
 {
