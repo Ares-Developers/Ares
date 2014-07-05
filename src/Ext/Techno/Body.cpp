@@ -1054,7 +1054,7 @@ bool TechnoExt::ExtData::CloakAllowed() const
 		return false;
 	}
 
-	if(!pThis->DiskLaserTimer.Ignorable()) {
+	if(pThis->DiskLaserTimer.InProgress()) {
 		return false;
 	}
 
@@ -1066,7 +1066,7 @@ bool TechnoExt::ExtData::CloakAllowed() const
 		return false;
 	}
 
-	if(!pThis->CloakDelayTimer.Ignorable()) {
+	if(pThis->CloakDelayTimer.InProgress()) {
 		return false;
 	}
 
@@ -1095,7 +1095,7 @@ bool TechnoExt::ExtData::CloakDisallowed(bool allowPassive) const
 		TechnoClass* pThis = this->AttachedToObject;
 		return pThis->IsUnderEMP() || pThis->IsParalyzed()
 			|| pThis->IsBeingWarpedOut() || pThis->IsWarpingIn()
-			|| !this->CloakSkipTimer.Ignorable();
+			|| this->CloakSkipTimer.InProgress();
 	}
 
 	return true;

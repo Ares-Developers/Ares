@@ -132,7 +132,7 @@ bool BuildingExt::cPrismForwarding::ValidateSupportTower(BuildingExt::cPrismForw
 			//BuildingExt::ExtData *pSlaveData = BuildingExt::ExtMap.Find(SlaveTower);
 			int SlaveMission = SlaveTower->GetCurrentMission();
 			//now check all the rules
-			if(SlaveTower->ReloadTimer.Ignorable()
+			if(SlaveTower->ReloadTimer.Expired()
 				&& SlaveTower != TargetTower
 				&& !SlaveTower->DelayBeforeFiring
 				&& !SlaveTower->IsBeingDrained()

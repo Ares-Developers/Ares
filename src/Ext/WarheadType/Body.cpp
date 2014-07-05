@@ -176,7 +176,7 @@ void WarheadTypeExt::ExtData::applyIronCurtain(CoordStruct *coords, HouseClass* 
 			}
 
 			// get the values
-			int oldValue = (curTechno->IronCurtainTimer.Ignorable() ? 0 : curTechno->IronCurtainTimer.GetTimeLeft());
+			int oldValue = (curTechno->IronCurtainTimer.Expired() ? 0 : curTechno->IronCurtainTimer.GetTimeLeft());
 			int newValue = Helpers::Alex::getCappedDuration(oldValue, duration, this->IC_Cap);
 
 			// update iron curtain

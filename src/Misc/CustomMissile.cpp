@@ -80,7 +80,7 @@ DEFINE_HOOK(662D85, RocketLocomotionClass_ILocomotion_Process_CustomMissileTrail
 	auto pOwner = abstract_cast<AircraftClass*>(pLocomotor->LinkedTo);
 
 	if(auto pExt = TechnoTypeExt::ExtMap.Find(pOwner->Type)) {
-		if(pLocomotor->TrailerTimer.Ignorable()) {
+		if(pLocomotor->TrailerTimer.Expired()) {
 			pLocomotor->TrailerTimer.Start(pExt->CustomMissileTrailerSeparation);
 
 			if(AnimTypeClass* pType = pExt->CustomMissileTrailerAnim) {
