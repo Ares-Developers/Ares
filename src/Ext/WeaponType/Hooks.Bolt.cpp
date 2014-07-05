@@ -1,19 +1,16 @@
 #include "Body.h"
 #include "../Techno/Body.h"
 
-DEFINE_HOOK(6FD480, TechnoClass_FireEBolt, 6)
+DEFINE_HOOK(6FD469, TechnoClass_FireEBolt, 9)
 {
-//	GET(TechnoClass *, OwnerUnit, EDI);
-	GET_STACK(WeaponTypeClass *, Weapon, 0x38);
+	//GET(TechnoClass*, pThis, EDI);
+	GET_STACK(WeaponTypeClass*, pWeapon, STACK_OFFS(0x30, -0x8));
 
-	GET(EBolt *, Bolt, EAX);
+	R->EAX(WeaponTypeExt::CreateBolt(pWeapon));
+	R->ESI(0);
 
-	if(Weapon && Bolt) {
-		WeaponTypeExt::BoltExt[Bolt] = WeaponTypeExt::ExtMap.Find(Weapon);
-	}
-	return 0;
+	return 0x6FD480;
 }
-
 
 DEFINE_HOOK(4C2951, EBolt_DTOR, 5)
 {
@@ -51,7 +48,6 @@ DEFINE_HOOK(4C25CB, EBolt_Draw_Color2, 5)
 
 	return 0;
 }
-
 
 DEFINE_HOOK(4C26C7, EBolt_Draw_Color3, 5)
 {

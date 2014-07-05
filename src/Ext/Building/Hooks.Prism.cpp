@@ -220,7 +220,7 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 		}
 		//IsElectricBolt
 		if (supportWeapon->IsElectricBolt) {
-			if (auto supportEBolt = GameCreate<EBolt>()) {
+			if(auto supportEBolt = WeaponTypeExt::CreateBolt(supportWeaponData)) {
 				//supportEBolt->Owner = B;
 				TechnoExt::ExtData *pBuildingExt = TechnoExt::ExtMap.Find(B);
 				pBuildingExt->MyBolt = supportEBolt;

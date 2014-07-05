@@ -1,6 +1,7 @@
 #include "Body.h"
 #include <AbstractClass.h>
 #include <BulletClass.h>
+#include <EBolt.h>
 #include <FootClass.h>
 #include <TechnoTypeClass.h>
 #include <LocomotionClass.h>
@@ -378,6 +379,21 @@ ColorStruct WeaponTypeExt::ExtData::GetBeamColor() const {
 	}
 
 	return this->Beam_Color.Get(RulesClass::Instance->RadColor);
+}
+
+EBolt* WeaponTypeExt::CreateBolt(WeaponTypeClass* pWeapon) {
+	auto pExt = WeaponTypeExt::ExtMap.Find(pWeapon);
+	return WeaponTypeExt::CreateBolt(pExt);
+}
+
+EBolt* WeaponTypeExt::CreateBolt(WeaponTypeExt::ExtData* pWeapon) {
+	auto ret = GameCreate<EBolt>();
+
+	if(ret && pWeapon) {
+		WeaponTypeExt::BoltExt[ret] = pWeapon;
+	}
+
+	return ret;
 }
 
 void Container<WeaponTypeExt>::InvalidatePointer(void *ptr, bool bRemoved) {

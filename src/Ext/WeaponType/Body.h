@@ -198,6 +198,9 @@ public:
 
 	// @return skipNormalHandling?
 	static bool ModifyWaveColor(WORD *src, WORD *dst, int Intensity, WaveClass *Wave);
+
+	static EBolt* CreateBolt(WeaponTypeClass* pWeapon);
+	static EBolt* CreateBolt(WeaponTypeExt::ExtData* pWeapon = nullptr);
 };
 
 #endif
