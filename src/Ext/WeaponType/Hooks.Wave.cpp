@@ -79,7 +79,7 @@ DEFINE_HOOK(760F50, WaveClass_Update, 6)
 {
 	GET(WaveClass *, pThis, ECX);
 
-	WeaponTypeExt::ExtData *pData = WeaponTypeExt::WaveExt.get_or_default(pThis);
+	auto pData = WeaponTypeExt::WaveExt.get_or_default(pThis);
 	const WeaponTypeClass *Weap = pData->AttachedToObject;
 
 	if(!Weap) {
@@ -212,7 +212,7 @@ DEFINE_HOOK(760286, WaveClass_Draw_Magnetron2, 5)
 
 bool WeaponTypeExt::ModifyWaveColor(WORD *src, WORD *dst, int Intensity, WaveClass *Wave)
 {
-	WeaponTypeExt::ExtData *pData = WeaponTypeExt::WaveExt.get_or_default(Wave);
+	auto pData = WeaponTypeExt::WaveExt.get_or_default(Wave);
 
 	ColorStruct CurrentColor = (pData->Wave_IsHouseColor && Wave->Owner)
 		? Wave->Owner->Owner->Color
@@ -249,7 +249,7 @@ DEFINE_HOOK(762C5C, WaveClass_Update_Wave, 6)
 		return 0x762D57;
 	}
 
-	WeaponTypeExt::ExtData *pData = WeaponTypeExt::WaveExt.get_or_default(Wave);
+	auto pData = WeaponTypeExt::WaveExt.get_or_default(Wave);
 
 	if(!pData) {
 		return 0;
@@ -282,7 +282,7 @@ DEFINE_HOOK(762C5C, WaveClass_Update_Wave, 6)
 DEFINE_HOOK(75F38F, WaveClass_DamageCell, 6)
 {
 	GET(WaveClass *, Wave, EBP);
-	WeaponTypeExt::ExtData *pData = WeaponTypeExt::WaveExt.get_or_default(Wave);
+	auto pData = WeaponTypeExt::WaveExt.get_or_default(Wave);
 	R->EDI(R->EAX());
 	R->EBX(pData->AttachedToObject);
 	return 0x75F39D;

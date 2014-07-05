@@ -20,7 +20,7 @@ const ColorStruct WeaponTypeExt::ExtData::DefaultWaveColorMagBeam = ColorStruct(
 const ColorStruct WeaponTypeExt::ExtData::DefaultWaveColorSonic = ColorStruct(0, 0, 0); // 0,0,0 is a magic value for "no custom handling"
 
 AresMap<BombClass*, const WeaponTypeExt::ExtData*> WeaponTypeExt::BombExt;
-AresMap<WaveClass*, WeaponTypeExt::ExtData*> WeaponTypeExt::WaveExt;
+AresMap<WaveClass*, const WeaponTypeExt::ExtData*> WeaponTypeExt::WaveExt;
 AresMap<EBolt*, const WeaponTypeExt::ExtData*> WeaponTypeExt::BoltExt;
 AresMap<RadSiteClass*, WeaponTypeExt::ExtData*> WeaponTypeExt::RadSiteExt;
 
