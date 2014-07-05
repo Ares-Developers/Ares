@@ -31,7 +31,7 @@ Container<WarheadTypeExt> WarheadTypeExt::ExtMap;
 template<> WarheadTypeExt::TT *Container<WarheadTypeExt>::SavingObject = nullptr;
 template<> IStream *Container<WarheadTypeExt>::SavingStream = nullptr;
 
-AresMap<IonBlastClass*, WarheadTypeExt::ExtData*> WarheadTypeExt::IonExt;
+AresMap<IonBlastClass*, const WarheadTypeExt::ExtData*> WarheadTypeExt::IonExt;
 
 WarheadTypeClass * WarheadTypeExt::Temporal_WH = nullptr;
 

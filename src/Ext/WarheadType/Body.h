@@ -130,7 +130,7 @@ public:
 
 	static WarheadTypeClass *EMP_WH;
 
-	static AresMap<IonBlastClass*, WarheadTypeExt::ExtData*> IonExt;
+	static AresMap<IonBlastClass*, const WarheadTypeExt::ExtData*> IonExt;
 
 	static void applyRipples(WarheadTypeClass * pWH, CoordStruct* coords) {
 		if(auto pWHExt = WarheadTypeExt::ExtMap.Find(pWH)) {
