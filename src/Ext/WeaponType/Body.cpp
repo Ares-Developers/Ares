@@ -21,7 +21,7 @@ const ColorStruct WeaponTypeExt::ExtData::DefaultWaveColorSonic = ColorStruct(0,
 
 AresMap<BombClass*, WeaponTypeExt::ExtData*> WeaponTypeExt::BombExt;
 AresMap<WaveClass*, WeaponTypeExt::ExtData*> WeaponTypeExt::WaveExt;
-AresMap<EBolt*, WeaponTypeExt::ExtData*> WeaponTypeExt::BoltExt;
+AresMap<EBolt*, const WeaponTypeExt::ExtData*> WeaponTypeExt::BoltExt;
 AresMap<RadSiteClass*, WeaponTypeExt::ExtData*> WeaponTypeExt::RadSiteExt;
 
 void WeaponTypeExt::ExtData::Initialize(WeaponTypeClass *pThis)

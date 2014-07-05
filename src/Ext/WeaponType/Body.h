@@ -170,7 +170,7 @@ public:
 
 	static AresMap<BombClass*, ExtData*> BombExt;
 	static AresMap<WaveClass*, ExtData*> WaveExt;
-	static AresMap<EBolt*, ExtData*> BoltExt;
+	static AresMap<EBolt*, const ExtData*> BoltExt;
 	static AresMap<RadSiteClass*, ExtData*> RadSiteExt;
 
 #define idxVehicle 0
