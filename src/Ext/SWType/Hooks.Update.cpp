@@ -226,7 +226,7 @@ DEFINE_HOOK(6CB4D0, SuperClass_SetOnHold, 6)
 		if(OnHold || pSuper->Type->ManualControl) {
 			pSuper->RechargeTimer.Pause();
 		} else {
-			pSuper->RechargeTimer.StartIfEmpty();
+			pSuper->RechargeTimer.Resume();
 		}
 		pSuper->IsOnHold = OnHold;
 		if(pSuper->Type->UseChargeDrain) {

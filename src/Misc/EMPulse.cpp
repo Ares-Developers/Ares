@@ -431,8 +431,8 @@ void EMPulse::updateSpawnManager(TechnoClass * Techno, ObjectClass * Source = nu
 			SM->UpdateTimer.Pause();
 		} else {
 			// resume counting.
-			SM->SpawnTimer.StartIfEmpty();
-			SM->UpdateTimer.StartIfEmpty();
+			SM->SpawnTimer.Resume();
+			SM->UpdateTimer.Resume();
 		}
 	}
 }
