@@ -168,7 +168,7 @@ public:
 
 	static Container<WeaponTypeExt> ExtMap;
 
-	static AresMap<BombClass*, ExtData*> BombExt;
+	static AresMap<BombClass*, const ExtData*> BombExt;
 	static AresMap<WaveClass*, ExtData*> WaveExt;
 	static AresMap<EBolt*, const ExtData*> BoltExt;
 	static AresMap<RadSiteClass*, ExtData*> RadSiteExt;

@@ -19,7 +19,7 @@ const ColorStruct WeaponTypeExt::ExtData::DefaultWaveColor = ColorStruct(255, 25
 const ColorStruct WeaponTypeExt::ExtData::DefaultWaveColorMagBeam = ColorStruct(0xB0, 0, 0xD0); // rp2 values
 const ColorStruct WeaponTypeExt::ExtData::DefaultWaveColorSonic = ColorStruct(0, 0, 0); // 0,0,0 is a magic value for "no custom handling"
 
-AresMap<BombClass*, WeaponTypeExt::ExtData*> WeaponTypeExt::BombExt;
+AresMap<BombClass*, const WeaponTypeExt::ExtData*> WeaponTypeExt::BombExt;
 AresMap<WaveClass*, WeaponTypeExt::ExtData*> WeaponTypeExt::WaveExt;
 AresMap<EBolt*, const WeaponTypeExt::ExtData*> WeaponTypeExt::BoltExt;
 AresMap<RadSiteClass*, WeaponTypeExt::ExtData*> WeaponTypeExt::RadSiteExt;
@@ -339,7 +339,7 @@ void WeaponTypeExt::ExtData::PlantBomb(TechnoClass* pSource, ObjectClass* pTarge
 
 		// if target has a bomb, planting was successful
 		if(auto pBomb = pTarget->AttachedBomb) {
-			WeaponTypeExt::BombExt[pBomb] = const_cast<ExtData*>(this);
+			WeaponTypeExt::BombExt[pBomb] = this;
 
 			pBomb->DetonationFrame = Unsorted::CurrentFrame + this->Ivan_Delay.Get(RulesClass::Instance->IvanTimedDelay);
 			pBomb->TickSound = this->Ivan_TickingSound.Get(RulesClass::Instance->BombTickingSound);
