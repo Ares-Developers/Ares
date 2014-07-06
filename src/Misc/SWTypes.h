@@ -120,7 +120,7 @@ public:
 	}
 
 	virtual bool Finished() {
-		return Clock.IsDone();
+		return Clock.Completed();
 	}
 
 	virtual void Update() {
