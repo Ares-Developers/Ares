@@ -115,11 +115,7 @@ DEFINE_HOOK(6A8710, TabCameoListClass_AddCameo_ReplaceItAll, 0)
 		++InsertIndex;
 	}
 
-	CameoDataStruct newCameo;
-	newCameo.ClearFully();
-	newCameo.Progress.Timer.StartTime = Unsorted::CurrentFrame;
-	newCameo.ItemIndex = ItemIndex;
-	newCameo.ItemType = ItemType;
+	CameoDataStruct newCameo(ItemIndex, ItemType);
 	if(ItemType == BuildingTypeClass::AbsID) {
 		newCameo.IsAlt = ObjectTypeClass::IsBuildCat5(ItemType, ItemIndex);
 	}
@@ -624,8 +620,8 @@ DEFINE_HOOK(6AA711, TabCameoListClass_RecheckCameos_FilterAllowedCameos, 0)
 
 			for(auto ixStrip = StripLength; ixStrip > 0; --ixStrip) {
 				auto &stripCameo = StripData[ixStrip - 1];
-				if(stripCameo.ItemType == cameo.ItemType && stripCameo.ItemIndex == cameo.ItemIndex) {
-					stripCameo.ClearFully();
+				if(stripCameo == cameo) {
+					stripCameo = CameoDataStruct();
 				}
 			}
 
