@@ -150,13 +150,13 @@ DEFINE_HOOK(436459, BuildingLightClass_Update, 6)
 		DirStruct Facing;
 		switch(pTypeData->Spot_AttachedTo) {
 			case TechnoTypeExt::sa_Barrel:
-				Owner->BarrelFacing.GetFacing(&Facing);
+				Facing = Owner->BarrelFacing.current();
 				break;
 			case TechnoTypeExt::sa_Turret:
-				Owner->TurretFacing.GetFacing(&Facing);
+				Facing = Owner->TurretFacing.current();
 				break;
 			default:
-				Owner->Facing.GetFacing(&Facing);
+				Facing = Owner->Facing.current();
 		}
 
 		double Angle = Facing2Rad * static_cast<DirStruct::unsigned_type>(Facing.value());

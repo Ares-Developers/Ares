@@ -308,8 +308,7 @@ bool TechnoExt::SpawnVisceroid(CoordStruct &crd, ObjectTypeClass* pType, int cha
 
 unsigned int TechnoExt::ExtData::AlphaFrame(SHPStruct *Image) {
 	int countFrames = Conversions::Int2Highest(Image->Frames);
-	DirStruct Facing;
-	this->AttachedToObject->Facing.GetFacing(&Facing);
+	DirStruct Facing = this->AttachedToObject->Facing.current();
 	return (static_cast<DirStruct::unsigned_type>(Facing.value()) >> (16 - countFrames));
 }
 
@@ -520,8 +519,7 @@ bool TechnoExt::CreateWithDroppod(FootClass *Object, const CoordStruct& XYZ) {
 		Object->SetLocation(xyz);
 		Object->SetDestination(MyCell, 1);
 		Object->Locomotor->Move_To(XYZ);
-		DirStruct Facing;
-		Object->Facing.SetFacing(&Facing);
+		Object->Facing.set(DirStruct());
 		if(!Object->InLimbo) {
 			Object->See(0, 0);
 			Object->QueueMission(mission_Guard, 0);

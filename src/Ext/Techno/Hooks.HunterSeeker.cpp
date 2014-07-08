@@ -112,9 +112,7 @@ DEFINE_HOOK(4CF3D0, FlyLocomotionClass_sub_4CEFB0_HunterSeeker, 7)
 				// the highest value as the new flight level.
 				int speed = pThis->Apparent_Speed();
 				if(speed > 0) {
-					// M_PI * ((16384 - 1) - facing) / (32768 - 1);
-					DirStruct tmpWhatever;
-					double value = pObject->Facing.GetFacing(&tmpWhatever)->radians();
+					double value = pObject->Facing.current().radians();
 					double cos = Math::cos(value);
 					double sin = Math::sin(value);
 
@@ -215,8 +213,8 @@ DEFINE_HOOK(4CD9C8, FlyLocomotionClass_sub_4CD600_HunterSeeker_UpdateTarget, 6)
 			DirStruct::value_type facing = static_cast<DirStruct::value_type>(Game::F2I((value - 1.570796326794897) * -10430.06004058427));
 
 			DirStruct tmp(facing);
-			pObject->Facing.SetFacing(&tmp);
-			pObject->TurretFacing.SetFacing(&tmp);
+			pObject->Facing.set(tmp);
+			pObject->TurretFacing.set(tmp);
 		}
 	}
 

@@ -106,7 +106,7 @@ void WriteLog(const TechnoClass* it, int idx, DWORD checksum, FILE * F) {
 	}
 
 	fprintf(F, "; Facing: %d; Facing2: %d; Target: %s (%d; %d,%d)",
-		(int)it->Facing, (int)it->TurretFacing, targetID, targetIndex, targetCrd.X, targetCrd.Y);
+		it->Facing.current().value8(), it->TurretFacing.current().value8(), targetID, targetIndex, targetCrd.X, targetCrd.Y);
 }
 
 template<>
