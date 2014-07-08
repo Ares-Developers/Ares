@@ -159,7 +159,7 @@ DEFINE_HOOK(436459, BuildingLightClass_Update, 6)
 				Owner->Facing.GetFacing(&Facing);
 		}
 
-		double Angle = Facing2Rad * Facing.Value;
+		double Angle = Facing2Rad * static_cast<DirStruct::unsigned_type>(Facing.value());
 		Loc.Y -= static_cast<int>(pTypeData->Spot_Distance * Math::cos(Angle));
 		Loc.X += static_cast<int>(pTypeData->Spot_Distance * Math::sin(Angle));
 

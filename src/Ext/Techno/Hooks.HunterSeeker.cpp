@@ -110,13 +110,11 @@ DEFINE_HOOK(4CF3D0, FlyLocomotionClass_sub_4CEFB0_HunterSeeker, 7)
 				// project the next steps using the current speed
 				// and facing. if there's a height difference, use
 				// the highest value as the new flight level.
-				DirStruct tmpWhatever;
-				DirStruct::Raw facing = pObject->Facing.GetFacing(&tmpWhatever)->Value;
-
 				int speed = pThis->Apparent_Speed();
 				if(speed > 0) {
 					// M_PI * ((16384 - 1) - facing) / (32768 - 1);
-					double value = (facing - 16383) * -0.00009587672516830327;
+					DirStruct tmpWhatever;
+					double value = pObject->Facing.GetFacing(&tmpWhatever)->radians();
 					double cos = Math::cos(value);
 					double sin = Math::sin(value);
 
@@ -214,7 +212,7 @@ DEFINE_HOOK(4CD9C8, FlyLocomotionClass_sub_4CD600_HunterSeeker_UpdateTarget, 6)
 			// update the facing
 			crd = pObject->GetCoords();
 			double value = Math::arctanfoo(pThis->MovingDestination.X - crd.X, crd.Y - pThis->MovingDestination.Y);
-			DirStruct::Raw facing = static_cast<DirStruct::Raw>(Game::F2I((value - 1.570796326794897) * -10430.06004058427));
+			DirStruct::value_type facing = static_cast<DirStruct::value_type>(Game::F2I((value - 1.570796326794897) * -10430.06004058427));
 
 			DirStruct tmp(facing);
 			pObject->Facing.SetFacing(&tmp);

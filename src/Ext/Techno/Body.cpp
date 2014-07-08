@@ -310,7 +310,7 @@ unsigned int TechnoExt::ExtData::AlphaFrame(SHPStruct *Image) {
 	int countFrames = Conversions::Int2Highest(Image->Frames);
 	DirStruct Facing;
 	this->AttachedToObject->Facing.GetFacing(&Facing);
-	return (Facing.Value >> (16 - countFrames));
+	return (static_cast<DirStruct::unsigned_type>(Facing.value()) >> (16 - countFrames));
 }
 
 bool TechnoExt::ExtData::DrawVisualFX() {
