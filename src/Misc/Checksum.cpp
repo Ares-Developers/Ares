@@ -17,12 +17,12 @@
 template<typename T>
 inline void ChecksumItem(const T *it, DWORD &CombinedChecksum) {
 	if(it->WhatAmI() != AnimClass::AbsID || it->Fetch_ID() != -2) {
-		Checksummer Ch;
-		it->CalculateChecksum(&Ch);
+		SafeChecksummer Ch;
+		it->CalculateChecksum(Ch);
 		if(auto ExtData = AbstractExt::ExtMap.Find(const_cast<T *>(it))) {
-			ExtData->LastChecksum = Ch.CurrentValue;
+			ExtData->LastChecksum = Ch.Intermediate();
 		}
-		CombinedChecksum = Ch.CurrentValue + ((CombinedChecksum >> 31) + 2 * CombinedChecksum);
+		CombinedChecksum = Ch.Intermediate() + ((CombinedChecksum >> 31) + 2 * CombinedChecksum);
 	}
 }
 
@@ -190,9 +190,9 @@ void LogItem(const T* it, int idx, FILE * F) {
 			Checksum = ExtData->LastChecksum;
 		}
 #else
-		Checksummer Ch;
-		it->CalculateChecksum(&Ch);
-		Checksum = Ch.CurrentValue;
+		SafeChecksummer Ch;
+		it->CalculateChecksum(Ch);
+		Checksum = Ch.Intermediate();
 #endif
 		WriteLogLine(it, idx, Checksum, F);
 	}
