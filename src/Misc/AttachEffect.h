@@ -66,7 +66,11 @@ public:
 
 class AttachEffectClass {
 public:
-	AttachEffectClass(AttachEffectTypeClass* AEType, int Timer): Type(AEType), Animation(nullptr), ActualDuration(Timer), Invoker(nullptr) {
+	AttachEffectClass(AttachEffectTypeClass* Type, int Timer) : Type(Type),
+		Animation(nullptr),
+		ActualDuration(Timer),
+		Invoker(nullptr)
+	{
 	}
 
 	~AttachEffectClass() {

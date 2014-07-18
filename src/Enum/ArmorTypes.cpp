@@ -108,4 +108,3 @@ DEFINE_HOOK(4B9A52, DropshipLoadout_PrintArmor, 5)
 	R->Stack(0x4, ArmorType::Array[R->EDX()].get());
 	return 0;
 }
-

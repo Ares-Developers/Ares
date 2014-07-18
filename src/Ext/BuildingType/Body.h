@@ -220,7 +220,6 @@ public:
 	};
 
 	static Container<BuildingTypeExt> ExtMap;
-//	static ExtData ExtMap;
 
 	static void UpdateSecretLabOptions(BuildingClass *pThis);
 	static bool IsFoundationEqual(BuildingTypeClass *pTBldA, BuildingTypeClass *pTBldB);

@@ -30,7 +30,7 @@ public:
 	static T* Find(const char *Title)
 	{
 		auto result = FindIndex(Title);
-		return (result < 0) ? nullptr : Array[result].get();
+		return (result < 0) ? nullptr : Array[static_cast<size_t>(result)].get();
 	}
 
 	static T* FindOrAllocate(const char *Title)
