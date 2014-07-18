@@ -364,22 +364,24 @@ bool EMPulse::isEligibleEMPTarget(TechnoClass * Target, HouseClass * SourceHouse
 	\author AlexB
 	\date 2010-05-09
 */
-bool EMPulse::IsDeactivationAdvisable(TechnoClass * Target) {
+bool EMPulse::IsDeactivationAdvisable(TechnoClass* Target) {
 	switch(Target->CurrentMission)
 	{
 	case mission_Selling:
 	case mission_Construction:
 	case mission_Unload:
-		if (EMPulse::verbose) {
-			Debug::Log("[IsDeactivationAdvisable] %s should not be disabled. Mission: %d\n", Target->get_ID(), Target->CurrentMission);
+		if(EMPulse::verbose) {
+			Debug::Log("[IsDeactivationAdvisable] %s should not be disabled. Mission: %d\n",
+				Target->get_ID(), Target->CurrentMission);
 		}
 		return false;
+	default:
+		if(EMPulse::verbose) {
+			Debug::Log("[IsDeactivationAdvisable] %s should be disabled. Mission: %d\n",
+				Target->get_ID(), Target->CurrentMission);
+		}
+		return true;
 	}
-
-	if (EMPulse::verbose) {
-		Debug::Log("[IsDeactivationAdvisable] %s should be disabled. Mission: %d\n", Target->get_ID(), Target->CurrentMission);
-	}
-	return true;
 }
 
 //! Updates the radar outage for the owning player.
@@ -409,31 +411,37 @@ void EMPulse::updateRadarBlackout(TechnoClass* Techno) {
 	destroyed.
 
 	\param Techno The Techno that might be a spawner.
+	\param Source The Object possibly destroying the spawns.
 
 	\author AlexB
 	\date 2010-05-03
 */
-void EMPulse::updateSpawnManager(TechnoClass * Techno, ObjectClass * Source = nullptr) {
-	if (SpawnManagerClass *SM = Techno->SpawnManager) {
+void EMPulse::updateSpawnManager(TechnoClass* Techno, ObjectClass* Source = nullptr) {
+	auto pSM = Techno->SpawnManager;
 
-		if (Techno->EMPLockRemaining > 0) {
-			// crash all spawned units that are visible. else, they'd land somewhere else.
-			for (int i=0; i < SM->SpawnedNodes.Count; ++i) {
-				SpawnNode *spawn = SM->SpawnedNodes.GetItem(i);
-				// kill every spawned unit that is in the air. exempt missiles.
-				if(spawn->IsSpawnMissile == FALSE && spawn->Unit && spawn->Status >= SpawnNodeStatus::TakeOff && spawn->Status <= SpawnNodeStatus::Returning) {
-					TechnoExt::Destroy(spawn->Unit, generic_cast<TechnoClass*>(Source));
+	if(!pSM) {
+		return;
+	}
+
+	if(Techno->EMPLockRemaining > 0) {
+		// crash all spawned units that are visible. else, they'd land somewhere else.
+		for(auto pSpawn : pSM->SpawnedNodes) {
+			// kill every spawned unit that is in the air. exempt missiles.
+			if(pSpawn->IsSpawnMissile == FALSE && pSpawn->Unit) {
+				auto Status = pSpawn->Status;
+				if(Status >= SpawnNodeStatus::TakeOff && Status <= SpawnNodeStatus::Returning) {
+					TechnoExt::Destroy(pSpawn->Unit, abstract_cast<TechnoClass*>(Source));
 				}
 			}
-
-			// pause the timers so spawning and regenerating is deferred.
-			SM->SpawnTimer.Pause();
-			SM->UpdateTimer.Pause();
-		} else {
-			// resume counting.
-			SM->SpawnTimer.Resume();
-			SM->UpdateTimer.Resume();
 		}
+
+		// pause the timers so spawning and regenerating is deferred.
+		pSM->SpawnTimer.Pause();
+		pSM->UpdateTimer.Pause();
+	} else {
+		// resume counting.
+		pSM->SpawnTimer.Resume();
+		pSM->UpdateTimer.Resume();
 	}
 }
 
@@ -446,14 +454,14 @@ void EMPulse::updateSpawnManager(TechnoClass * Techno, ObjectClass * Source = nu
 	\author AlexB
 	\date 2010-05-07
 */
-void EMPulse::updateSlaveManager(TechnoClass * Techno) {
-	if (SlaveManagerClass *SM = Techno->SlaveManager) {
-		if (Techno->EMPLockRemaining > 0) {
+void EMPulse::updateSlaveManager(TechnoClass* Techno) {
+	if(auto pSM = Techno->SlaveManager) {
+		if(Techno->EMPLockRemaining > 0) {
 			// pause the timers so spawning and regenerating is deferred.
-			SM->SuspendWork();
+			pSM->SuspendWork();
 		} else {
 			// resume slaving around.
-			SM->ResumeWork();
+			pSM->ResumeWork();
 		}
 	}
 }
@@ -467,18 +475,19 @@ void EMPulse::updateSlaveManager(TechnoClass * Techno) {
 	\author AlexB
 	\date 2010-05-09
 */
-void EMPulse::UpdateSparkleAnim(TechnoClass * Techno) {
-	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(Techno);
-	if (pData) {
-		if (Techno->IsUnderEMP()) {
-			if (!pData->EMPSparkleAnim && RulesClass::Instance->EMPulseSparkles) {
-				pData->EMPSparkleAnim = GameCreate<AnimClass>(RulesClass::Instance->EMPulseSparkles, Techno->Location);
-				pData->EMPSparkleAnim->SetOwnerObject(Techno);
+void EMPulse::UpdateSparkleAnim(TechnoClass* Techno) {
+	if(auto pData = TechnoExt::ExtMap.Find(Techno)) {
+		auto& Anim = pData->EMPSparkleAnim;
+
+		if(Techno->IsUnderEMP()) {
+			if(!Anim && RulesClass::Instance->EMPulseSparkles) {
+				Anim = GameCreate<AnimClass>(RulesClass::Instance->EMPulseSparkles, Techno->Location);
+				Anim->SetOwnerObject(Techno);
 			}
 		} else {
-			if (pData->EMPSparkleAnim) {
-				pData->EMPSparkleAnim->RemainingIterations = 0; // basically "you don't need to show up anymore"
-				pData->EMPSparkleAnim = nullptr;
+			if(Anim) {
+				Anim->RemainingIterations = 0; // basically "you don't need to show up anymore"
+				Anim = nullptr;
 			}
 		}
 	}
@@ -495,39 +504,38 @@ void EMPulse::UpdateSparkleAnim(TechnoClass * Techno) {
 	\author AlexB
 	\date 2010-04-29
 */
-void EMPulse::announceAttack(TechnoClass * Techno) {
-	enum AttackEvents {None = 0, Base = 1, Harvester = 2};
-	AttackEvents rEvent = None;
+void EMPulse::announceAttack(TechnoClass* Techno) {
+	enum class AttackEvents { None = 0, Base = 1, Harvester = 2 };
+	AttackEvents Event = AttackEvents::None;
 
 	// find out what event is the most appropriate.
-	if (Techno && (Techno->Owner == HouseClass::Player)) {
-		if (BuildingClass * Building = specific_cast<BuildingClass *>(Techno)) {
-			if(Building->Type->ResourceGatherer) {
+	if(Techno && Techno->Owner == HouseClass::Player) {
+		if(auto pBuilding = abstract_cast<BuildingClass*>(Techno)) {
+			if(pBuilding->Type->ResourceGatherer) {
 				// slave miner, for example
-				rEvent = Harvester;
-			} else if(!Building->Type->Insignificant && !Building->Type->BaseNormal) {
-				rEvent = Base;
+				Event = AttackEvents::Harvester;
+			} else if(!pBuilding->Type->Insignificant && !pBuilding->Type->BaseNormal) {
+				Event = AttackEvents::Base;
 			}
-		} else if (UnitClass * Unit = specific_cast<UnitClass *>(Techno)) {
-			if (Unit->Type->Harvester || Unit->Type->ResourceGatherer) {
-				rEvent = Harvester;
+		} else if(auto pUnit = abstract_cast<UnitClass*>(Techno)) {
+			if(pUnit->Type->Harvester || pUnit->Type->ResourceGatherer) {
+				Event = AttackEvents::Harvester;
 			}
 		}
 	}
 
 	// handle the event.
-	if (rEvent != None) {
-		CellStruct xy = Techno->GetMapCoords();
-
-		switch (rEvent) {
-			case Harvester:
-				if (RadarEventClass::Create(RadarEventType::HarvesterAttacked, xy))
-					VoxClass::Play("EVA_OreMinerUnderAttack", -1, -1);
-				break;
-			case Base:
-				HouseClass::Player->BuildingUnderAttack(specific_cast<BuildingClass *>(Techno));
-				break;
-		}
+	switch(Event) {
+	case AttackEvents::Harvester:
+		if(RadarEventClass::Create(RadarEventType::HarvesterAttacked, Techno->GetMapCoords()))
+			VoxClass::Play("EVA_OreMinerUnderAttack", -1, -1);
+		break;
+	case AttackEvents::Base:
+		HouseClass::Player->BuildingUnderAttack(abstract_cast<BuildingClass*>(Techno));
+		break;
+	case AttackEvents::None:
+	default:
+		break;
 	}
 }
 
