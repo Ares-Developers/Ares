@@ -118,9 +118,9 @@ public:
 		//Stm.Save(this->AttachedToObject);
 	}
 
-	virtual inline void LoadFromStream(AresByteStream &Stm, size_t &Offset) {
-		Stm.Load(this->Initialized, Offset);
-		//Stm.Load(this->AttachedToObject, Offset);
+	virtual inline void LoadFromStream(AresByteStream &Stm) {
+		Stm.Load(this->Initialized);
+		//Stm.Load(this->AttachedToObject);
 	}
 };
 

@@ -5,8 +5,9 @@
 #include <vector>
 
 class AresByteStream {
-protected:
+public:
 	typedef unsigned char data_t;
+protected:
 	std::vector<data_t> Data;
 	size_t CurrentOffset;
 public:
@@ -16,6 +17,10 @@ public:
 
 	size_t Size() const {
 		return this->Data.size();
+	}
+
+	size_t Offset() const {
+		return this->CurrentOffset;
 	}
 
 	/**
@@ -46,15 +51,16 @@ public:
 	* if it has {Size} bytes left, assigns the first {Size} unread bytes to {Value}
 	* moves the internal position forward
 	*/
-	bool AresByteStream::Read(data_t* Value, size_t Size) {
-		if(this->Data.size() < this->CurrentOffset + Size) {
-			return false;
+	bool Read(data_t* Value, size_t Size) {
+		bool ret = false;
+		if(this->Data.size() >= this->CurrentOffset + Size) {
+			auto Position = &this->Data[this->CurrentOffset];
+			std::memcpy(Value, Position, Size);
+			ret = true;
 		}
-		auto Position = &this->Data[this->CurrentOffset];
-		this->CurrentOffset += Size;
 
-		std::memcpy(Value, Position, Size);
-		return true;
+		this->CurrentOffset += Size;
+		return ret;
 	}
 
 	/**
@@ -68,13 +74,9 @@ public:
 
 	/**
 	* attempts to read the data from internal storage into {Value}
-	* updates {Offset} with the amount of data read, no matter if successful
-	* this is done to ensure once an item could not be read, the subsequent items will fail also
 	*/
 	template<typename T>
-	bool Load(T &Value, size_t &Offset) {
-		Offset += sizeof(T);
-
+	bool Load(T &Value) {
 		// get address regardless of overloaded & operator
 		auto Bytes = &reinterpret_cast<data_t&>(Value);
 		return this->Read(Bytes, sizeof(T));
