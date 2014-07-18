@@ -477,37 +477,6 @@ void WarheadTypeExt::ExtData::applyAttachedEffect(CoordStruct *coords, TechnoCla
 }
 
 // =============================
-// load / save
-
-bool Container<WarheadTypeExt>::Save(WarheadTypeClass *pThis, IStream *pStm) {
-	WarheadTypeExt::ExtData* pData = this->SaveKey(pThis, pStm);
-
-	if(pData) {
-		//ULONG out;
-		//pData->Verses.Save(pStm);
-	}
-
-	return pData != nullptr;
-}
-/*
-pStm->Write(&IonBlastClass::Array->Count, 4, &out);
-for(int ii = 0; ii < IonBlastClass::Array->Count; ++ii) {
-IonBlastClass *ptr = IonBlastClass::Array->Items[ii];
-pStm->Write(ptr, 4, &out);
-pStm->Write(WarheadTypeExt::IonExt[ptr], 4, &out);
-}
-*/
-bool Container<WarheadTypeExt>::Load(WarheadTypeClass *pThis, IStream *pStm) {
-	WarheadTypeExt::ExtData* pData = this->LoadKey(pThis, pStm);
-
-	//pData->Verses.Load(pStm, 0);
-
-	//SWIZZLE(pData->Temporal_WarpAway);
-
-	return pData != nullptr;
-}
-
-// =============================
 // container hooks
 
 DEFINE_HOOK(75D1A9, WarheadTypeClass_CTOR, 7)

@@ -91,27 +91,6 @@ int TiberiumExt::ExtData::GetDebrisChance() const
 }
 
 // =============================
-// load / save
-
-bool Container<TiberiumExt>::Save(TiberiumClass* pThis, IStream* pStm) {
-	TiberiumExt::ExtData* pData = this->SaveKey(pThis, pStm);
-
-	if(pData) {
-		//ULONG out;
-	}
-
-	return pData != nullptr;
-}
-
-bool Container<TiberiumExt>::Load(TiberiumClass* pThis, IStream* pStm) {
-	TiberiumExt::ExtData* pData = this->LoadKey(pThis, pStm);
-
-	UNREFERENCED_PARAMETER(pData);
-
-	return pData != nullptr;
-}
-
-// =============================
 // container hooks
 
 DEFINE_HOOK(721876, TiberiumClass_CTOR, 5)

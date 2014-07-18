@@ -597,53 +597,6 @@ bool TechnoTypeExt::ExtData::CarryallCanLift(UnitClass * Target) {
 }
 
 // =============================
-// load / save
-
-bool Container<TechnoTypeExt>::Save(TechnoTypeClass *pThis, IStream *pStm) {
-	TechnoTypeExt::ExtData* pData = this->SaveKey(pThis, pStm);
-
-	if(pData) {
-		//ULONG out;
-		//pData->Survivors_Pilots.Save(pStm);
-
-		//pData->PrerequisiteNegatives.Save(pStm);
-		//pData->Weapons.Save(pStm);
-		//pData->EliteWeapons.Save(pStm);
-	}
-
-	return pData != nullptr;
-}
-
-bool Container<TechnoTypeExt>::Load(TechnoTypeClass *pThis, IStream *pStm) {
-	TechnoTypeExt::ExtData* pData = this->LoadKey(pThis, pStm);
-
-	//ULONG out;
-
-	//pData->Survivors_Pilots.Load(pStm, 1);
-
-	//pData->PrerequisiteNegatives.Load(pStm, 0);
-	//pData->Weapons.Load(pStm, 1);
-	//pData->EliteWeapons.Load(pStm, 1);
-
-/*
-	SWIZZLE(pData->Parachute_Anim);
-	SWIZZLE(pData->Insignia_R);
-	SWIZZLE(pData->Insignia_V);
-	SWIZZLE(pData->Insignia_E);
-*/
-
-	//for(int ii = 0; ii < pData->Weapons.Count; ++ii) {
-	//	SWIZZLE(pData->Weapons.Items[ii].WeaponType);
-	//}
-
-	//for(int ii = 0; ii < pData->EliteWeapons.Count; ++ii) {
-	//	SWIZZLE(pData->EliteWeapons.Items[ii].WeaponType);
-	//}
-
-	return pData != nullptr;
-}
-
-// =============================
 // container hooks
 
 DEFINE_HOOK(711835, TechnoTypeClass_CTOR, 5)

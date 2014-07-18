@@ -443,22 +443,6 @@ InfantryTypeClass* HouseExt::ExtData::GetDisguise() const {
 }
 
 // =============================
-// load / save
-
-bool Container<HouseExt>::Load(HouseClass *pThis, IStream *pStm) {
-	HouseExt::ExtData* pData = this->LoadKey(pThis, pStm);
-
-	//ULONG out;
-	SWIZZLE(pData->Factory_BuildingType);
-	SWIZZLE(pData->Factory_InfantryType);
-	SWIZZLE(pData->Factory_VehicleType);
-	SWIZZLE(pData->Factory_NavyType);
-	SWIZZLE(pData->Factory_AircraftType);
-
-	return pData != nullptr;
-}
-
-// =============================
 // container hooks
 
 DEFINE_HOOK(4F6532, HouseClass_CTOR, 5)

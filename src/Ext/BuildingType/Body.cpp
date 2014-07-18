@@ -415,17 +415,10 @@ bool BuildingTypeExt::ExtData::CanBeOccupiedBy(InfantryClass *whom) {
 // =============================
 // load / save
 
-bool Container<BuildingTypeExt>::Save(BuildingTypeClass *pThis, IStream *pStm) {
-	BuildingTypeExt::ExtData* pData = this->SaveKey(pThis, pStm);
-
-	return pData != nullptr;
-};
-
 bool Container<BuildingTypeExt>::Load(BuildingTypeClass *pThis, IStream *pStm) {
 	BuildingTypeExt::ExtData* pData = this->LoadKey(pThis, pStm);
-//	this->FindOrAllocate(pThis);
 
-	//if there's custom data, read it
+	// if there's custom data, assign it
 	if(pData->IsCustom && pData->CustomWidth > 0 && pData->CustomHeight > 0) {
 		pThis->Foundation = FOUNDATION_CUSTOM;
 		pThis->FoundationData = pData->CustomData.data();
@@ -434,10 +427,6 @@ bool Container<BuildingTypeExt>::Load(BuildingTypeClass *pThis, IStream *pStm) {
 		pData->CustomData.clear();
 		pData->OutlineData.clear();
 	}
-
-#ifdef DEBUGBUILD
-	assert(this->SavedCanary == Extension<BuildingTypeClass>::Canary);
-#endif
 
 	return pData != nullptr;
 };

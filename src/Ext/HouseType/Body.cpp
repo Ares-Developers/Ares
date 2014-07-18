@@ -468,27 +468,6 @@ int HouseTypeExt::PickRandomCountry() {
 }
 
 // =============================
-// load / save
-
-bool Container<HouseTypeExt>::Save(HouseTypeClass *pThis, IStream *pStm) {
-	HouseTypeExt::ExtData* pData = this->SaveKey(pThis, pStm);
-
-	if (pData) {
-		//pData->Powerplants.Save(pStm);
-	}
-
-	return pData != nullptr;
-}
-
-bool Container<HouseTypeExt>::Load(HouseTypeClass *pThis, IStream *pStm) {
-	HouseTypeExt::ExtData* pData = this->LoadKey(pThis, pStm);
-
-	//pData->Powerplants.Load(pStm, 1);
-
-	return pData != nullptr;
-}
-
-// =============================
 // container hooks
 
 DEFINE_HOOK(511635, HouseTypeClass_CTOR_1, 5) {

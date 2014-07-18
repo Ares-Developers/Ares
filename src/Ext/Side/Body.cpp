@@ -444,36 +444,6 @@ ConvertClass* SideExt::GetGraphicalTextConvert() {
 }
 
 // =============================
-// load / save
-
-bool Container<SideExt>::Save(SideClass *pThis, IStream *pStm) {
-	SideExt::ExtData* pData = this->SaveKey(pThis, pStm);
-
-	if(pData) {
-		//ULONG out;
-		//pData->BaseDefenses.Save(pStm);
-		//pData->BaseDefenseCounts.Save(pStm);
-		//pData->ParaDrop.Save(pStm);
-		//pData->ParaDropNum.Save(pStm);
-	}
-
-	return pData != nullptr;
-}
-
-bool Container<SideExt>::Load(SideClass *pThis, IStream *pStm) {
-	SideExt::ExtData* pData = this->LoadKey(pThis, pStm);
-
-	//SWIZZLE(pData->Disguise);
-	//SWIZZLE(pData->Crew);
-	//pData->BaseDefenses.Load(pStm, 1);
-	//pData->BaseDefenseCounts.Load(pStm, 0);
-	//pData->ParaDrop.Load(pStm, 1);
-	//pData->ParaDropNum.Load(pStm, 0);
-
-	return pData != nullptr;
-}
-
-// =============================
 // container hooks
 
 DEFINE_HOOK(6A4609, SideClass_CTOR, 7)

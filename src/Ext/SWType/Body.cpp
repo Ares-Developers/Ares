@@ -634,17 +634,6 @@ void Container<SWTypeExt>::InvalidatePointer(void *ptr, bool bRemoved) {
 }
 
 // =============================
-// load / save
-
-bool Container<SWTypeExt>::Load(SuperWeaponTypeClass *pThis, IStream *pStm) {
-	SWTypeExt::ExtData* pData = this->LoadKey(pThis, pStm);
-
-	//SWIZZLE(pData->SW_Anim);
-
-	return pData != nullptr;
-}
-
-// =============================
 // container hooks
 
 DEFINE_HOOK(6CE6F6, SuperWeaponTypeClass_CTOR, 5)

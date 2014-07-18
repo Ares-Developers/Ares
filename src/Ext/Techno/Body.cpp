@@ -1155,17 +1155,6 @@ void TechnoExt::ExtData::SetSpotlight(BuildingLightClass* pSpotlight) {
 }
 
 // =============================
-// load / save
-
-bool Container<TechnoExt>::Load(TechnoClass *pThis, IStream *pStm) {
-	TechnoExt::ExtData* pData = this->LoadKey(pThis, pStm);
-
-	//SWIZZLE(pData->Insignia_Image);
-
-	return pData != nullptr;
-}
-
-// =============================
 // container hooks
 
 DEFINE_HOOK(6F3260, TechnoClass_CTOR, 5)
