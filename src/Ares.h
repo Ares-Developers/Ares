@@ -205,6 +205,10 @@ public:
 		static int uiColorDisabledList;
 		static int uiColorDisabledSlider;
 		static int uiColorDisabledObserver;
+
+		static char ModName[0x40];
+		static char ModVersion[0x40];
+		static int ModIdentifier;
 	};
 };
 

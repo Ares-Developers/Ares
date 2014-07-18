@@ -4,6 +4,7 @@
 #include "Utilities/Constructs.h"
 
 #include <StringTable.h>
+#include <Checksummer.h>
 #include <ColorScheme.h>
 #include <strsafe.h>
 
@@ -53,6 +54,10 @@ int Ares::UISettings::uiColorDisabledCheckbox;
 int Ares::UISettings::uiColorDisabledSlider;
 int Ares::UISettings::uiColorDisabledList;
 int Ares::UISettings::uiColorDisabledObserver;
+
+char Ares::UISettings::ModName[0x40] = "Yuri's Revenge";
+char Ares::UISettings::ModVersion[0x40] = "1.001";
+int Ares::UISettings::ModIdentifier = 0;
 
 void Ares::UISettings::Load(CCINIClass *pINI) {
 	if(pINI == nullptr) {
@@ -215,6 +220,20 @@ void Ares::UISettings::Load(CCINIClass *pINI) {
 	uiColorDisabledList = ParseColorInt(section, "Color.List.Disabled", uiColorDisabled);
 	uiColorDisabledObserver = ParseColorInt(section, "Color.Observer.Disabled", 0x8F8F8F);
 
+	// read the mod's version info
+	if(pINI->ReadString("VersionInfo", "Name", Ares::readDefval, Ares::readBuffer, _countof(ModName))) {
+		AresCRT::strCopy(ModName, Ares::readBuffer);
+	}
+	if(pINI->ReadString("VersionInfo", "Version", Ares::readDefval, Ares::readBuffer, _countof(ModVersion))) {
+		AresCRT::strCopy(ModVersion, Ares::readBuffer);
+	}
+
+	SafeChecksummer crc;
+	crc.Add(ModName);
+	crc.Commit();
+	crc.Add(ModVersion);
+	ModIdentifier = pINI->ReadInteger("VersionInfo", "Identifier", static_cast<int>(crc.GetValue()));
+
 	Initialized = true;
 }
 
@@ -230,6 +249,8 @@ DEFINE_HOOK(5FACDF, _Options_LoadFromINI, 5)
 	Debug::Log("CampaignList is %s\n", (Ares::UISettings::CampaignList ? "ON" : "OFF"));
 	Debug::Log("ShowDebugCampaigns is %s\n", (Ares::UISettings::ShowDebugCampaigns ? "ON" : "OFF"));
 	Debug::Log("Color count is %d\n", Ares::UISettings::ColorCount);
+	Debug::Log("Mod is %s (%s) with %X\n", Ares::UISettings::ModName,
+		Ares::UISettings::ModVersion, Ares::UISettings::ModIdentifier);
 
 	// clean up
 	Ares::CloseConfig(pINI);
