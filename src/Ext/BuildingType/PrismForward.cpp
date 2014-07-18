@@ -60,7 +60,7 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 
 		if(pINI->ReadString(pID, "PrismForwarding.SupportWeapon", "", Ares::readBuffer, Ares::readLength)) {
 			if (WeaponTypeClass *cWeapon = WeaponTypeClass::FindOrAllocate(Ares::readBuffer)) {
-				int idxWeapon = this->GetUnusedWeaponSlot(pThis, 0); //rookie weapons
+				int idxWeapon = this->GetUnusedWeaponSlot(pThis, false); //rookie weapons
 				if (idxWeapon == -1) {
 					Debug::FatalErrorAndExit(
 						"BuildingType [%s] is a Prism Tower however there are no free\n"
@@ -71,11 +71,10 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 					cWeapon->Warhead = SuperWH;
 				}
 				cWeapon->NeverUse = true; //the modder shouldn't be expected to have to set this
-				CoordStruct supportFLH;
 				pThis->set_Weapon(idxWeapon, cWeapon);
 				//now get the FLH
-				supportFLH = pThis->get_WeaponFLH(13); //AlternateFLH0
-				if (supportFLH.X == 0 && supportFLH.Y == 0 && supportFLH.Z == 0) {
+				CoordStruct supportFLH = pThis->get_WeaponFLH(13); //AlternateFLH0
+				if (supportFLH == CoordStruct::Empty) {
 					//assuming that, for Prism Towers, this means the FLH was not set.
 					supportFLH = pThis->get_WeaponFLH(0); //Primary
 				}
@@ -85,7 +84,7 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 
 		if(pINI->ReadString(pID, "PrismForwarding.EliteSupportWeapon", "", Ares::readBuffer, Ares::readLength)) {
 			if (WeaponTypeClass *cWeapon = WeaponTypeClass::FindOrAllocate(Ares::readBuffer)) {
-				int idxWeapon = this->GetUnusedWeaponSlot(pThis, 1); //elite weapons
+				int idxWeapon = this->GetUnusedWeaponSlot(pThis, true); //elite weapons
 				if (idxWeapon == -1) {
 					Debug::FatalErrorAndExit(
 						"BuildingType [%s] is a Prism Tower however there are no free\n"
@@ -96,11 +95,10 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 					cWeapon->Warhead = SuperWH;
 				}
 				cWeapon->NeverUse = true; //the modder shouldn't be expected to have to set this
-				CoordStruct supportFLH;
 				pThis->set_EliteWeapon(idxWeapon, cWeapon);
 				//now get the FLH
-				supportFLH = pThis->get_WeaponFLH(14); //AlternateFLH1
-				if (supportFLH.X == 0 && supportFLH.Y == 0 && supportFLH.Z == 0) {
+				CoordStruct supportFLH = pThis->get_WeaponFLH(14); //AlternateFLH1
+				if (supportFLH == CoordStruct::Empty) {
 					//assuming that, for Prism Towers, this means the FLH was not set.
 					supportFLH = pThis->get_EliteWeaponFLH(0); //ElitePrimary
 				}
