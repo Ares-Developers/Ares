@@ -8,7 +8,7 @@ AresSwizzle AresSwizzle::Instance;
 HRESULT AresSwizzle::RegisterForChange(void **p) {
 	if(p) {
 		if(auto deref = *p) {
-			this->Nodes.insert(std::make_pair(deref, p));
+			this->Nodes.emplace(deref, p);
 			*p = nullptr;
 		}
 		return S_OK;
@@ -27,6 +27,7 @@ HRESULT AresSwizzle::RegisterChange(void *was, void *is) {
 }
 
 void AresSwizzle::ConvertNodes() const {
+	Debug::Log("Converting %u nodes.\n", this->Nodes.size());
 	void *lastFind(nullptr);
 	void *lastRes(nullptr);
 	for(auto it = this->Nodes.begin(); it != this->Nodes.end(); ++it) {

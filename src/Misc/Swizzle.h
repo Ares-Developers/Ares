@@ -56,7 +56,8 @@ public:
 
 	template<typename T>
 	void RegisterPointerForChange(T* &ptr) {
-		this->RegisterForChange(reinterpret_cast<void **>(&ptr));
+		auto pptr = const_cast<std::remove_cv_t<T>**>(&ptr);
+		this->RegisterForChange(reinterpret_cast<void **>(pptr));
 	};
 };
 
