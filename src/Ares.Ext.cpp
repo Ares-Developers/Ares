@@ -94,3 +94,12 @@ DEFINE_HOOK(685659, Scenario_ClearClasses, a)
 
 	return 0;
 }
+
+HRESULT Ares::SaveGameData(IStream *pStm) {
+	Debug::Log("Finished saving the game\n");
+	return S_OK;
+}
+
+void Ares::LoadGameData(IStream *pStm) {
+	Debug::Log("Finished loading the game\n");
+}
