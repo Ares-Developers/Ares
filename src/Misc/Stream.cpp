@@ -1,15 +1,17 @@
 #include "Stream.h"
 
+#include <Objidl.h>
+
 bool AresByteStream::ReadFromStream(IStream *pStm, const size_t Length) {
-	this->Data.reserve(this->Data.size() + Length);
-	auto tmp = new data_t[Length];
 	ULONG out = 0;
-	auto success = pStm->Read(tmp, Length, &out);
+	auto size = this->Data.size();
+	this->Data.resize(size + Length);
+	auto pv = reinterpret_cast<void *>(this->Data.data());
+	auto success = pStm->Read(pv, Length, &out);
 	bool result(SUCCEEDED(success) && out == Length);
-	if(result) {
-		this->Data.insert(this->Data.end(), tmp, tmp + Length);
+	if(!result) {
+		this->Data.resize(size);
 	}
-	delete[] tmp;
 	return result;
 }
 

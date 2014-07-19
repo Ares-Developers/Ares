@@ -1,8 +1,9 @@
 #ifndef ARES_STREAM_H
 #define ARES_STREAM_H
 
-#include <Objidl.h>
 #include <vector>
+
+struct IStream;
 
 class AresByteStream {
 public:
