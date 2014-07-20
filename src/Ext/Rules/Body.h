@@ -27,7 +27,7 @@ class RulesExt
 		public:
 		Valueable<AnimTypeClass* >ElectricDeath;
 		Valueable<double> EngineerDamage;
-		bool EngineerAlwaysCaptureTech;
+		Valueable<bool> EngineerAlwaysCaptureTech;
 		Valueable<MouseCursor> EngineerDamageCursor;
 		bool MultiEngineer[3];
 
