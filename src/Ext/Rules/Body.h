@@ -26,7 +26,7 @@ class RulesExt
 	{
 		public:
 		Valueable<AnimTypeClass* >ElectricDeath;
-		double EngineerDamage;
+		Valueable<double> EngineerDamage;
 		bool EngineerAlwaysCaptureTech;
 		Valueable<MouseCursor> EngineerDamageCursor;
 		bool MultiEngineer[3];
@@ -73,7 +73,7 @@ class RulesExt
 
 		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			ElectricDeath(nullptr),
-			EngineerDamage (0.0F),
+			EngineerDamage (0.0),
 			EngineerAlwaysCaptureTech (true),
 			EngineerDamageCursor (MouseCursor::First[MouseCursorType::Detonate]),
 			Tiberium_DamageEnabled (false),

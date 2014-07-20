@@ -115,7 +115,7 @@ void RulesExt::ExtData::LoadAfterTypeData(RulesClass *pThis, CCINIClass *pINI) {
 		WeaponTypeClass::Array->GetItem(i)->LoadFromINI(pINI);
 	}
 
-	pData->EngineerDamage = pINI->ReadDouble("General", "EngineerDamage", pData->EngineerDamage);
+	pData->EngineerDamage.Read(exINI, "General", "EngineerDamage");
 	pData->EngineerAlwaysCaptureTech = pINI->ReadBool("General", "EngineerAlwaysCaptureTech", pData->EngineerAlwaysCaptureTech);
 	pData->EngineerDamageCursor.Read(exINI, "General", "EngineerDamageCursor");
 
