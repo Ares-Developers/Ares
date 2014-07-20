@@ -125,3 +125,11 @@ DEFINE_HOOK(451A54, BuildingClass_PlayAnim_NeedsEngineer, 6)
 	R->CL(pThis->Type->Powered || (pThis->Type->NeedsEngineer && !pThis->HasEngineer));
 	return 0x451A5A;
 }
+
+// infantry exiting hospital get their focus reset, but not for armory
+DEFINE_HOOK(444D26, BuildingClass_KickOutUnit_ArmoryExitBug, 6)
+{
+	GET(BuildingTypeClass*, pType, EDX);
+	R->AL(pType->Hospital || pType->Armory);
+	return 0x444D2C;
+}
