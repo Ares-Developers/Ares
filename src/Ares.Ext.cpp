@@ -26,6 +26,140 @@
 
 #include "Misc/SWTypes.h"
 
+#pragma region Implementation details
+
+// this can be implicitly constructed from int,
+// which can make selecting an overload unattractive,
+// because it's a user-defined conversion. the more
+// conversions, the less attractive
+struct Dummy {
+	Dummy(int a) {};
+};
+
+// this is a typed nothing: a type list type
+template <typename...>
+struct DummyTypes {};
+
+// calls:
+// T::Clear()
+// T::ExtMap.Clear()
+struct ClearHelper {
+	template <typename T>
+	static bool Process() {
+		clear<T>(0, 0);
+		return true;
+	}
+
+private:
+	template <typename T>
+	static auto clear(int, int) -> decltype(T::Clear()) {
+		T::Clear();
+	}
+
+	template <typename T>
+	static auto clear(Dummy, int) -> decltype(T::ExtMap.Clear()) {
+		T::ExtMap.Clear();
+	}
+
+	template <typename T>
+	static auto clear(Dummy, Dummy) -> void {
+		// do nothing
+	}
+};
+
+// calls:
+// T::PointerGotInvalid(void*, bool)
+// T::ExtMap.PointerGotInvalid(void*, bool)
+struct InvalidatePointerHelper {
+	template <typename T>
+	static bool Process(void* ptr, bool removed) {
+		invalidpointer<T>(0, 0, ptr, removed);
+		return true;
+	}
+
+private:
+	template <typename T>
+	static auto invalidpointer(int, int, void* ptr, bool removed) -> decltype(T::PointerGotInvalid(ptr, removed)) {
+		T::PointerGotInvalid(ptr, removed);
+	}
+
+	template <typename T>
+	static auto invalidpointer(Dummy, int, void* ptr, bool removed) -> decltype(T::ExtMap.PointerGotInvalid(ptr, removed)) {
+		T::ExtMap.PointerGotInvalid(ptr, removed);
+	}
+
+	template <typename T>
+	static auto invalidpointer(Dummy, Dummy, void* ptr, bool removed) -> void {
+		// do nothing
+	}
+};
+
+// this is a complicated thing that calls methods on classes. add types to the
+// instantiation of this type, and the most appropriate method for each type
+// will be called with no overhead of virtual functions.
+template <typename... Ts>
+struct MassAction {
+	__forceinline void Clear() {
+		process<ClearHelper>(DummyTypes<Ts...>());
+	}
+
+	__forceinline void InvalidPointer(void* ptr, bool removed) {
+		process<InvalidatePointerHelper>(DummyTypes<Ts...>(), ptr, removed);
+	}
+
+private:
+	// T: the method dispatcher class to call with each type 
+	// TArgs: the arguments to call the method dispatcher's Process() method
+	// TType and TTypes: setup for recursion. TType is the first type, the one
+	//					to handle now. TTypes is the tail that is recursed into
+
+	// this is the base case, no more types, nothing to call
+	template <typename T, typename... TArgs>
+	bool process(DummyTypes<>, TArgs... args) {
+		return true;
+	}
+
+	// this is the recursion part: invoke T:Process() for first type, then
+	// recurse with the remaining types
+	template <typename T, typename... TArgs, typename TType, typename... TTypes>
+	__forceinline bool process(DummyTypes<TType, TTypes...>, TArgs... args) {
+		if(!T::Process<TType>(args...)) {
+			return false;
+		}
+		return process<T>(DummyTypes<TTypes...>(), args...);
+	}
+};
+
+#pragma endregion
+
+// Add more class names as you like
+auto MassActions = MassAction<
+	AbstractExt, // Ext classes
+	AnimTypeExt,
+	BuildingExt,
+	BuildingTypeExt,
+	BulletExt,
+	BulletTypeExt,
+	HouseExt,
+	HouseTypeExt,
+	InfantryExt,
+	RulesExt,
+	SideExt,
+	SWTypeExt,
+	TActionExt,
+	TechnoExt,
+	TechnoTypeExt,
+	TEventExt,
+	TiberiumExt,
+	WarheadTypeExt,
+	WeaponTypeExt,
+	ArmorType, // enum classes
+	GenericPrerequisite,
+	RadType,
+	NewSWType, // other classes
+	SWStateMachine
+>();
+
 DEFINE_HOOK(7258D0, AnnounceInvalidPointer, 6)
 {
 	GET(void*, ptr, ECX);
@@ -36,61 +170,14 @@ DEFINE_HOOK(7258D0, AnnounceInvalidPointer, 6)
 	}
 
 	//Debug::Log("PointerGotInvalid: %X\n", ptr);
-
-	AbstractExt::ExtMap.PointerGotInvalid(ptr, bRemoved);
-	AnimTypeExt::ExtMap.PointerGotInvalid(ptr, bRemoved);
-	BuildingExt::ExtMap.PointerGotInvalid(ptr, bRemoved);
-	BuildingTypeExt::ExtMap.PointerGotInvalid(ptr, bRemoved);
-	BulletExt::ExtMap.PointerGotInvalid(ptr, bRemoved);
-	BulletTypeExt::ExtMap.PointerGotInvalid(ptr, bRemoved);
-	HouseExt::ExtMap.PointerGotInvalid(ptr, bRemoved);
-	HouseTypeExt::ExtMap.PointerGotInvalid(ptr, bRemoved);
-	InfantryExt::ExtMap.PointerGotInvalid(ptr, bRemoved);
-	SideExt::ExtMap.PointerGotInvalid(ptr, bRemoved);
-	SWTypeExt::ExtMap.PointerGotInvalid(ptr, bRemoved);
-	TActionExt::ExtMap.PointerGotInvalid(ptr, bRemoved);
-	TechnoExt::ExtMap.PointerGotInvalid(ptr, bRemoved);
-	TechnoTypeExt::ExtMap.PointerGotInvalid(ptr, bRemoved);
-	TEventExt::ExtMap.PointerGotInvalid(ptr, bRemoved);
-	TiberiumExt::ExtMap.PointerGotInvalid(ptr, bRemoved);
-	WarheadTypeExt::ExtMap.PointerGotInvalid(ptr, bRemoved);
-	WeaponTypeExt::ExtMap.PointerGotInvalid(ptr, bRemoved);
-
-	RulesExt::PointerGotInvalid(ptr, bRemoved);
-
-	SWStateMachine::PointerGotInvalid(ptr, bRemoved);
+	MassActions.InvalidPointer(ptr, bRemoved);
 
 	return 0;
 }
 
 DEFINE_HOOK(685659, Scenario_ClearClasses, a)
 {
-	AbstractExt::ExtMap.Clear();
-	AnimTypeExt::ExtMap.Clear();
-	BuildingExt::Clear();
-	BuildingTypeExt::ExtMap.Clear();
-	BulletExt::ExtMap.Clear();
-	BulletTypeExt::ExtMap.Clear();
-	HouseExt::ExtMap.Clear();
-	HouseTypeExt::ExtMap.Clear();
-	InfantryExt::ExtMap.Clear();
-	SideExt::ExtMap.Clear();
-	SWTypeExt::ExtMap.Clear();
-	TActionExt::ExtMap.Clear();
-	TechnoExt::ExtMap.Clear();
-	TechnoTypeExt::ExtMap.Clear();
-	TEventExt::ExtMap.Clear();
-	TiberiumExt::ExtMap.Clear();
-	WarheadTypeExt::ExtMap.Clear();
-	WeaponTypeExt::ExtMap.Clear();
-
-	ArmorType::Clear();
-	RadType::Clear();
-	GenericPrerequisite::Clear();
-
-	RulesExt::Clear();
-
-	SWStateMachine::Clear();
+	MassActions.Clear();
 
 	return 0;
 }
