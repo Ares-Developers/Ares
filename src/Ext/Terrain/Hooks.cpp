@@ -12,17 +12,21 @@ DEFINE_HOOK(71C7C2, TerrainClass_Update_ForestFire, 6)
 {
 	GET(TerrainClass*, pThis, ESI);
 
-	// burn spread probability this frame
-	if(pThis->IsBurning && ScenarioClass::Instance->Random.RandomRanged(0, 99) == 0) {
-		auto pCell = pThis->GetCell();
+	const auto& flammability = RulesClass::Instance->TreeFlammability;
 
-		// check all neighbour cells that contain terrain objects and
-		// roll the dice for each of them.
-		for(unsigned int i = 0; i < 8; ++i) {
-			auto pNeighbour = pCell->GetNeighbourCell(i);
-			if(auto pTree = pNeighbour->GetTerrain(false)) {
-				if(!pTree->IsBurning && ScenarioClass::Instance->Random.RandomDouble() < RulesClass::Instance->TreeFlammability) {
-					pTree->Ignite();
+	// burn spread probability this frame
+	if(flammability > 0.0) {
+		if(pThis->IsBurning && ScenarioClass::Instance->Random.RandomRanged(0, 99) == 0) {
+			auto pCell = pThis->GetCell();
+
+			// check all neighbour cells that contain terrain objects and
+			// roll the dice for each of them.
+			for(unsigned int i = 0; i < 8; ++i) {
+				auto pNeighbour = pCell->GetNeighbourCell(i);
+				if(auto pTree = pNeighbour->GetTerrain(false)) {
+					if(!pTree->IsBurning && ScenarioClass::Instance->Random.RandomDouble() < flammability) {
+						pTree->Ignite();
+					}
 				}
 			}
 		}
