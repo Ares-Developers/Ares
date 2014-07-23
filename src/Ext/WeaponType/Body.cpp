@@ -284,7 +284,7 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 		Game::RaiseError(E_POINTER);
 	}
 	ILocomotion* NewLoco = nullptr;
-	if(LocomotionClass::CreateInstance(NewLoco, &TargetType->Locomotor)) {
+	if(LocomotionClass::CreateInstance(NewLoco, TargetType->Locomotor)) {
 		LocomotionClass::Move(Target->Locomotor, NewLoco);
 		if(!Target->Locomotor) {
 			Game::RaiseError(E_POINTER);

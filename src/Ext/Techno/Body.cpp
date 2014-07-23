@@ -513,7 +513,7 @@ bool TechnoExt::CreateWithDroppod(FootClass *Object, const CoordStruct& XYZ) {
 		return false;
 	} else {
 //		Debug::Log("Destinating %s @ {%d, %d, %d}\n", Object->GetType()->ID, XYZ->X, XYZ->Y, XYZ->Z);
-		LocomotionClass::ChangeLocomotorTo(Object, &LocomotionClass::CLSIDs::Droppod);
+		LocomotionClass::ChangeLocomotorTo(Object, LocomotionClass::CLSIDs::Droppod);
 		CoordStruct xyz = XYZ;
 		xyz.Z = 0;
 		Object->SetLocation(xyz);

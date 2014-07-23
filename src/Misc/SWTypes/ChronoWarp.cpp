@@ -226,7 +226,7 @@ bool SW_ChronoWarp::Activate(SuperClass* pThis, const CellStruct &Coords, bool I
 				
 					// piggyback the original locomotor onto a new teleport locomotor and
 					// use that for the next move order.
-					LocomotionClass::ChangeLocomotorTo(pFoot, &LocomotionClass::CLSIDs::Teleport);
+					LocomotionClass::ChangeLocomotorTo(pFoot, LocomotionClass::CLSIDs::Teleport);
 
 					// order unit to move to target location
 					pFoot->IsImmobilized = true;
