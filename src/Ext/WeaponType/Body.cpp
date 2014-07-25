@@ -285,9 +285,6 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 	}
 	if(auto NewLoco = LocomotionClass::CreateInstance(TargetType->Locomotor)) {
 		Target->Locomotor = std::move(NewLoco);
-		if(!Target->Locomotor) {
-			Game::RaiseError(E_POINTER);
-		}
 		Target->Locomotor->Link_To_Object(Target);
 	}
 

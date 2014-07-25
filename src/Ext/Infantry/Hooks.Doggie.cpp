@@ -20,9 +20,6 @@ DEFINE_HOOK(51F628, InfantryClass_Guard_Doggie, 5)
 			} else {
 				// turn to correct facing
 				DirStruct dir(3, Direction::East);
-				if(!pThis->Locomotor) {
-					Game::RaiseError(E_POINTER);
-				}
 				pThis->Locomotor->Do_Turn(dir);
 			}
 		}
@@ -65,10 +62,6 @@ DEFINE_HOOK(5200C1, InfantryClass_UpdatePanic_Doggie, 6)
 
 	// if panicking badly, lay down on tiberium
 	if(pThis->PanicDurationLeft >= 200) {
-		if(!pThis->Locomotor) {
-			Game::RaiseError(E_POINTER);
-		}
-
 		if(!pThis->Destination && !pThis->Locomotor->Is_Moving()) {
 			if(pThis->GetCell()->LandType == LandType::Tiberium) {
 				// is on tiberium. just lay down

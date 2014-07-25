@@ -136,7 +136,7 @@ template<>
 void WriteLog(const UnitClass* it, int idx, DWORD checksum, FILE * F) {
 	WriteLog<FootClass>(it, idx, checksum, F);
 
-	auto Loco = it->Locomotor;
+	const auto& Loco = it->Locomotor;
 	auto accum = Loco->Get_Speed_Accum();
 	auto index = Loco->Get_Track_Index();
 	auto number = Loco->Get_Track_Number();
