@@ -274,9 +274,9 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 	// locomotor saved in the piggy object.
 	ILocomotion* Loco = nullptr;
 	do {
-		Loco = Target->Locomotor;
+		Loco = Target->Locomotor.get();
 		LocomotionClass::End_Piggyback(Target->Locomotor);
-	} while(Target->Locomotor && Loco != Target->Locomotor);
+	} while(Target->Locomotor && Loco != Target->Locomotor.get());
 
 	// throw away the current locomotor and instantiate
 	// a new one of the default type for this unit.
@@ -284,8 +284,7 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 		Game::RaiseError(E_POINTER);
 	}
 	if(auto NewLoco = LocomotionClass::CreateInstance(TargetType->Locomotor)) {
-		Target->Locomotor->Release();
-		Target->Locomotor = NewLoco.release();
+		Target->Locomotor = std::move(NewLoco);
 		if(!Target->Locomotor) {
 			Game::RaiseError(E_POINTER);
 		}
