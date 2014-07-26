@@ -1,5 +1,6 @@
 #include "Body.h"
 #include "../../Ares.CRT.h"
+#include "../../Utilities/Helpers.Alex.h"
 #include "../../Utilities/TemplateDef.h"
 #include <ScenarioClass.h>
 #include <PCX.h>
@@ -118,16 +119,8 @@ void SideExt::ExtData::LoadFromINIFile(SideClass *pThis, CCINIClass *pINI)
 
 	this->ParaDropTypes.Read(exINI, section, "ParaDrop.Types");
 
-	// remove all types that aren't either infantry or unit types
-	this->ParaDropTypes.erase(std::remove_if(this->ParaDropTypes.begin(), this->ParaDropTypes.end(), [section](TechnoTypeClass* pItem) -> bool {
-		auto abs = pItem->WhatAmI();
-		if(abs == InfantryTypeClass::AbsID || abs == UnitTypeClass::AbsID) {
-			return false;
-		}
-
-		Debug::INIParseFailed(section, "ParaDrop.Types", pItem->ID, "Only InfantryTypes and UnitTypes are supported.");
-		return true;
-	}), this->ParaDropTypes.end());
+	// remove all types that cannot paradrop
+	Helpers::Alex::remove_non_paradroppables(this->ParaDropTypes, section, "ParaDrop.Types");
 
 	this->ParaDropNum.Read(exINI, section, "ParaDrop.Num");
 

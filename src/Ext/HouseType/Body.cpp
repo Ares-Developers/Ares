@@ -2,6 +2,7 @@
 #include "../Side/Body.h"
 #include "../../Ares.h"
 #include "../../Ares.CRT.h"
+#include "../../Utilities/Helpers.Alex.h"
 #include "../../Utilities/TemplateDef.h"
 #include <ScenarioClass.h>
 #include <ColorScheme.h>
@@ -274,16 +275,8 @@ void HouseTypeExt::ExtData::LoadFromINIFile(HouseTypeClass *pThis, CCINIClass *p
 
 	this->ParaDropTypes.Read(exINI, pID, "ParaDrop.Types");
 
-	// remove all types that aren't either infantry or unit types
-	this->ParaDropTypes.erase(std::remove_if(this->ParaDropTypes.begin(), this->ParaDropTypes.end(), [pID](TechnoTypeClass* pItem) -> bool {
-		auto abs = pItem->WhatAmI();
-		if(abs == InfantryTypeClass::AbsID || abs == UnitTypeClass::AbsID) {
-			return false;
-		}
-
-		Debug::INIParseFailed(pID, "ParaDrop.Types", pItem->ID, "Only InfantryTypes and UnitTypes are supported.");
-		return true;
-	}), this->ParaDropTypes.end());
+	// remove all types that cannot paradrop
+	Helpers::Alex::remove_non_paradroppables(this->ParaDropTypes, pID, "ParaDrop.Types");
 
 	this->ParaDropNum.Read(exINI, pID, "ParaDrop.Num");
 

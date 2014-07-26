@@ -279,6 +279,27 @@ namespace Helpers {
 
 			return false;
 		}
+
+		template <typename Value, typename Option>
+		inline bool is_any_of(Value&& value, Option&& option) {
+			return value == option;
+		}
+
+		template <typename Value, typename Option, typename... Options>
+		inline bool is_any_of(Value&& value, Option&& first_option, Options&&... other_options) {
+			return value == first_option || is_any_of(std::forward<Value>(value), std::forward<Options>(other_options)...);
+		}
+
+		inline void remove_non_paradroppables(std::vector<TechnoTypeClass*> &types, const char* section, const char* key) {
+			// remove all types that aren't either infantry or unit types
+			types.erase(std::remove_if(types.begin(), types.end(), [section, key](TechnoTypeClass* pItem) -> bool {
+				if(!is_any_of(pItem->WhatAmI(), abs_InfantryType, abs_UnitType)) {
+					Debug::INIParseFailed(section, key, pItem->ID, "Only InfantryTypes and UnitTypes are supported.");
+					return true;
+				}
+				return false;
+			}), types.end());
+		}
 	};
 };
 

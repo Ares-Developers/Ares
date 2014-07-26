@@ -1,6 +1,7 @@
 #include "ParaDrop.h"
 #include "../../Ares.h"
 #include "../../Ext/HouseType/Body.h"
+#include "../../Utilities/Helpers.Alex.h"
 #include "../../Utilities/TemplateDef.h"
 
 #include <AircraftClass.h>
@@ -87,16 +88,8 @@ void SW_ParaDrop::LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *p
 		_snprintf_s(key, 0x3F, "%s.Types", base);
 		pPlane->Types.Read(exINI, section, key);
 
-		// remove all types that aren't either infantry or unit types
-		pPlane->Types.erase(std::remove_if(pPlane->Types.begin(), pPlane->Types.end(), [section, &key](TechnoTypeClass* pItem) -> bool {
-			auto abs = pItem->WhatAmI();
-			if(abs == InfantryTypeClass::AbsID || abs == UnitTypeClass::AbsID) {
-				return false;
-			}
-
-			Debug::INIParseFailed(section, key, pItem->ID, "Only InfantryTypes and UnitTypes are supported.");
-			return true;
-		}), pPlane->Types.end());
+		// remove all types that cannot paradrop
+		Helpers::Alex::remove_non_paradroppables(pPlane->Types, section, key);
 
 		// don't parse nums if there are no types
 		if(!pPlane->Aircraft && pPlane->Types.empty()) {
