@@ -11,10 +11,66 @@
 #include <algorithm>
 #include <iterator>
 
-class Helpers {
-public:
-	class Alex {
-	public:
+namespace Helpers {
+
+	namespace Alex {
+
+		//! Less comparison for pointer types.
+		/*!
+		Dereferences the values before comparing them using std::less.
+
+		This compares the actual objects pointed to instead of their
+		arbitrary pointer values.
+		*/
+		template <typename T>
+		struct deref_less : std::unary_function<const T, bool> {
+			bool operator()(const T lhs, const T rhs) const {
+				typedef std::remove_pointer<T>::type deref_type;
+				return std::less<deref_type>()(*lhs, *rhs);
+			}
+		};
+
+		//! Represents a set of unique items.
+		/*!
+		Items can be added using the insert method. Even though an item
+		can be added multiple times, it is only contained once in the set.
+
+		Use either the for_each method to call a method using each item as
+		a parameter, or iterate the set through the begin and end methods.
+		*/
+		template<typename T>
+		class DistinctCollector {
+			typedef typename std::conditional<std::is_pointer<T>::value, deref_less<T>, std::less<T>>::type less_type;
+			typedef std::set<T, less_type> set_type;
+			set_type _set;
+
+		public:
+			bool operator() (T item) {
+				insert(item);
+				return true;
+			}
+
+			void insert(T value) {
+				_set.insert(value);
+			}
+
+			size_t size() const {
+				return _set.size();
+			}
+
+			typename set_type::const_iterator begin() const {
+				return _set.begin();
+			}
+
+			typename set_type::const_iterator end() const {
+				return _set.end();
+			}
+
+			int for_each(const std::tr1::function<bool(T)> &action) const {
+				return std::distance(begin(), std::find_if_not(begin(), end(), action));
+			}
+		};
+
 		//! Gets the new duration a stackable or absolute effect will last.
 		/*!
 			The new frames count is calculated the following way:
@@ -39,7 +95,7 @@ public:
 			\author AlexB
 			\date 2010-04-27
 		*/
-		static int getCappedDuration(int CurrentValue, int Duration, int Cap) {
+		inline int getCappedDuration(int CurrentValue, int Duration, int Cap) {
 			// Usually, the new duration is just added.
 			int ProposedDuration = CurrentValue + Duration;
 
@@ -74,7 +130,7 @@ public:
 			\author AlexB
 			\date 2010-06-28
 		*/
-		static std::vector<TechnoClass*> getCellSpreadItems(CoordStruct *coords, float spread, bool includeInAir=false) {
+		inline std::vector<TechnoClass*> getCellSpreadItems(CoordStruct *coords, float spread, bool includeInAir = false) {
 			// set of possibly affected objects. every object can be here only once.
 			DistinctCollector<TechnoClass*> set;
 
@@ -150,7 +206,7 @@ public:
 			\author AlexB
 		*/
 		template <typename T>
-		static bool for_each_in_rect(const CellStruct &center, float widthOrRange, int height, const std::function<bool (T*)> &action) {
+		inline bool for_each_in_rect(const CellStruct &center, float widthOrRange, int height, const std::function<bool(T*)> &action) {
 			if(height > 0) {
 				int width = static_cast<int>(widthOrRange);
 
@@ -180,7 +236,7 @@ public:
 			\author AlexB
 		*/
 		template <typename T>
-		static bool for_each_in_rect_or_range(const CellStruct &center, float widthOrRange, int height, const std::function<bool (T*)> &action) {
+		inline bool for_each_in_rect_or_range(const CellStruct &center, float widthOrRange, int height, const std::function<bool(T*)> &action) {
 			if(!for_each_in_rect(center, widthOrRange, height, action)) {
 				if(height <= 0 && widthOrRange >= 0.0f) {
 					CellRangeIterator iter(center, widthOrRange);
@@ -208,7 +264,7 @@ public:
 			\author AlexB
 		*/
 		template <typename T>
-		static bool for_each_in_rect_or_spread(const CellStruct &center, float widthOrRange, int height, const std::function<bool (T*)> &action) {
+		inline bool for_each_in_rect_or_spread(const CellStruct &center, float widthOrRange, int height, const std::function<bool (T*)> &action) {
 			if(!for_each_in_rect(center, widthOrRange, height, action)) {
 				if(height <= 0) {
 					int spread = static_cast<int>(widthOrRange);
@@ -223,62 +279,6 @@ public:
 
 			return false;
 		}
-
-		//! Less comparison for pointer types.
-		/*!
-			Dereferences the values before comparing them using std::less.
-
-			This compares the actual objects pointed to instead of their
-			arbitrary pointer values.
-		*/
-		template <typename T>
-		struct deref_less : std::unary_function<const T, bool> {
-			bool operator()(const T lhs, const T rhs) const {
-				typedef std::remove_pointer<T>::type deref_type;
-				return std::less<deref_type>()(*lhs, *rhs);
-			}
-		};
-
-		//! Represents a set of unique items.
-		/*!
-			Items can be added using the insert method. Even though an item
-			can be added multiple times, it is only contained once in the set.
-
-			Use either the for_each method to call a method using each item as
-			a parameter, or iterate the set through the begin and end methods.
-		*/
-		template<typename T>
-		class DistinctCollector {
-			typedef typename std::conditional<std::is_pointer<T>::value, deref_less<T>, std::less<T>>::type less_type;
-			typedef std::set<T, less_type> set_type;
-			set_type _set;
-
-		public:
-			bool operator() (T item) {
-				insert(item);
-				return true;
-			}
-
-			void insert(T value) {
-				_set.insert(value);
-			}
-
-			size_t size() const {
-				return _set.size();
-			}
-
-			typename set_type::const_iterator begin() const {
-				return _set.begin();
-			}
-
-			typename set_type::const_iterator end() const {
-				return _set.end();
-			}
-
-			int for_each(const std::tr1::function<bool (T)> &action) const {
-				return std::distance(begin(), std::find_if_not(begin(), end(), action));
-			}
-		};
 	};
 };
 
