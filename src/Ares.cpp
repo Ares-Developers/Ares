@@ -231,69 +231,6 @@ void Ares::CloseConfig(CCINIClass* &pINI) {
 	}
 }
 
-//A new SendPDPlane function
-//Allows vehicles, sends one single plane for all types
-void Ares::SendPDPlane(HouseClass* pOwner, CellClass* pTarget, AircraftTypeClass* pPlaneType,
-	const Iterator<TechnoTypeClass*> &Types, const Iterator<int> &Nums)
-{
-	if(Nums.size() == Types.size() && Nums.size() > 0 &&
-		pOwner && pPlaneType && pTarget)
-	{
-		++Unsorted::IKnowWhatImDoing;
-		AircraftClass* pPlane = static_cast<AircraftClass*>(pPlaneType->CreateObject(pOwner));
-		--Unsorted::IKnowWhatImDoing;
-
-		pPlane->Spawned = true;
-
-		//Get edge (direction for plane to come from)
-		auto edge = pOwner->StartingEdge;
-		if(edge < Edge::North || edge > Edge::West) {
-			edge = pOwner->Edge;
-			if(edge < Edge::North || edge > Edge::West) {
-				edge = Edge::North;
-			}
-		}
-
-		// seems to retrieve a random cell struct at a given edge
-		CellStruct spawn_cell = MapClass::Instance->PickCellOnEdge(edge, CellStruct::Empty,
-			CellStruct::Empty, SpeedType::Winged, true, MovementZone::Normal);
-
-		pPlane->QueueMission(mission_ParadropApproach, false);
-
-		if(pTarget) {
-			pPlane->SetTarget(pTarget);
-		}
-
-		CoordStruct spawn_crd = CellClass::Cell2Coord(spawn_cell);
-
-		++Unsorted::IKnowWhatImDoing;
-		bool bSpawned = pPlane->Put(spawn_crd, Direction::North);
-		--Unsorted::IKnowWhatImDoing;
-
-		if(bSpawned) {
-			pPlane->HasPassengers = true;
-			for(size_t i = 0; i < Types.size(); i++) {
-				TechnoTypeClass* pTechnoType = Types.at(i);
-
-				//only allow infantry and vehicles
-				eAbstractType WhatAmI = pTechnoType->WhatAmI();
-				if(WhatAmI == abs_UnitType || WhatAmI == abs_InfantryType) {
-					for(int k = 0; k < Nums[i]; k++) {
-						FootClass* pNew = static_cast<FootClass*>(pTechnoType->CreateObject(pOwner));
-						pNew->Remove();
-						pPlane->Passengers.AddPassenger(pNew);
-					}
-				}
-			}
-			pPlane->NextMission();
-		} else {
-			if(pPlane) {
-				GameDelete(pPlane);
-			}
-		}
-	}
-}
-
 //DllMain
 bool __stdcall DllMain(HANDLE hInstance,DWORD dwReason,LPVOID v)
 {

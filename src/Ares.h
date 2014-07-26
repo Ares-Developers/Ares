@@ -24,9 +24,6 @@
 #define GFX_SU_NF3D 0x00l
 #define GFX_SU_F3D 0x01l
 
-template <typename T>
-class Iterator;
-
 class AircraftTypeClass;
 class TechnoTypeClass;
 class CellClass;
@@ -120,12 +117,6 @@ public:
 	static void __stdcall RegisterCommands();
 
 	//General functions
-	static void SendPDPlane(
-		HouseClass* pOwner,
-		CellClass* pDestination,
-		AircraftTypeClass* pPlaneType,
-		const Iterator<TechnoTypeClass*> &Types,
-		const Iterator<int> &Nums);
 
 	class GlobalControls {
 	private:
