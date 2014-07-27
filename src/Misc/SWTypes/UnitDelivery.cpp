@@ -104,7 +104,7 @@ void UnitDeliveryStateMachine::PlaceUnits()
 		}
 
 		// find a place to put this
-		int a5 = -1;
+		int a5 = -1; // usually MapClass::CanLocationBeReached call. see how far we can get without it
 		auto PlaceCoords = MapClass::Instance->Pathfinding_Find(this->Coords,
 			SpeedType, a5, MovementZone, false, extentX, extentY, true, false,
 			false, false, CellStruct::Empty, false, ItemBuilding != nullptr);
@@ -115,6 +115,11 @@ void UnitDeliveryStateMachine::PlaceUnits()
 			// set the appropriate mission
 			if(ItemBuilding && pData->SW_DeliverBuildups) {
 				ItemBuilding->QueueMission(mission_Construction, false);
+			} else {
+				// only computer units can hunt
+				auto Guard = ItemBuilding || pOwner->ControlledByHuman();
+				auto Mission = Guard ? mission_Guard : mission_Hunt;
+				Item->QueueMission(Mission, false);
 			}
 
 			// place and set up
