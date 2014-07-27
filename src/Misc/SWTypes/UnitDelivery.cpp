@@ -59,13 +59,9 @@ void UnitDeliveryStateMachine::Update()
 	}
 }
 
-// Replaced my own implementation with AlexB's shown below
-
 //This function doesn't skip any placeable items, no matter how
 //they are ordered. Infantry is grouped. Units are moved to the
-//center as close as they can. There is an additional fix for a
-//glitch: previously, even if a unit could be placed, it would
-//have been unloaded again, when it was at index 100.
+//center as close as they can.
 
 void UnitDeliveryStateMachine::PlaceUnits()
 {
@@ -85,70 +81,65 @@ void UnitDeliveryStateMachine::PlaceUnits()
 		pOwner = HouseClass::FindNeutral();
 	}
 
-	for(size_t i=0; i<pData->SW_Deliverables.size(); ++i) {
-		auto Type = pData->SW_Deliverables[i];
+	// create an instance of each type and place it
+	for(auto Type : pData->SW_Deliverables) {
 		auto Item = abstract_cast<TechnoClass*>(Type->CreateObject(pOwner));
 		auto ItemBuilding = abstract_cast<BuildingClass*>(Item);
 
-		if(ItemBuilding && pData->SW_DeliverBuildups) {
-			ItemBuilding->QueueMission(mission_Construction, false);
-		}
+		// get the best options to search for a place
+		int extentX = 1;
+		int extentY = 1;
+		SpeedType::Value SpeedType = SpeedType::Track;
+		MovementZone::Value MovementZone = MovementZone::Normal;
 
-		// 100 cells should be enough for any sane delivery
-		bool Placed = false;
-		for(auto cellIdx = 0u; cellIdx < 100; ++cellIdx) {
-			auto tmpCell = CellSpread::GetCell(cellIdx) + this->Coords;
-			if(auto cell = MapClass::Instance->TryGetCellAt(tmpCell)) {
-				auto XYZ = cell->GetCoordsWithBridge();
-
-				bool validCell = true;
-				if(auto Overlay = OverlayTypeClass::Array->GetItemOrDefault(cell->OverlayTypeIndex)) {
-					// disallow placing on rocks, rubble and walls
-					validCell = !Overlay->Wall && !Overlay->IsARock && !Overlay->IsRubble;
-				}
-				if(auto ItemAircraft = abstract_cast<AircraftClass*>(Item)) {
-					// for aircraft: cell must be empty: non-water, non-cliff, non-shore, non-anything
-					validCell &= !cell->GetContent() && !cell->Tile_Is_Cliff()
-						&& !cell->Tile_Is_DestroyableCliff() && !cell->Tile_Is_Shore()
-						&& !cell->Tile_Is_Water() && !cell->ContainsBridge();
-				}
-				if(Type->Naval && validCell) {
-					// naval types look stupid on bridges
-					validCell = (!cell->ContainsBridge() && cell->LandType != LandType::Road)
-						|| Type->SpeedType == SpeedType::Hover;
-				}
-
-				if(validCell) {
-					Item->OnBridge = cell->ContainsBridge();
-
-					if(Item->Put(XYZ, (cellIdx & 7))) {
-						if(ItemBuilding) {
-							if(pData->SW_DeliverBuildups) {
-								ItemBuilding->DiscoveredBy(this->Super->Owner);
-								ItemBuilding->unknown_bool_6DD = 1;
-							}
-						} else {
-							if(Type->BalloonHover || Type->JumpJet) {
-								Item->Scatter(CoordStruct::Empty, true, false);
-							}
-						}
-						if(auto pItemData = TechnoExt::ExtMap.Find(Item)) {
-							if(!pItemData->IsPowered() || !pItemData->IsOperated()) {
-								Item->Deactivate();
-								if(ItemBuilding) {
-									Item->Owner->RecheckTechTree = true;
-								}
-							}
-						}
-						Placed = true;
-						break;
-					}
-				}
+		if(ItemBuilding) {
+			extentX = ItemBuilding->Type->GetFoundationWidth();
+			extentY = ItemBuilding->Type->GetFoundationHeight(true);
+		} else {
+			// place aircraft types on ground explicitly
+			if(Type->WhatAmI() != abs_AircraftType) {
+				SpeedType = Type->SpeedType;
+				MovementZone = Type->MovementZone;
 			}
 		}
 
-		if(!Placed) {
-			Item->UnInit();
+		// find a place to put this
+		int a5 = -1;
+		auto PlaceCoords = MapClass::Instance->Pathfinding_Find(this->Coords,
+			SpeedType, a5, MovementZone, false, extentX, extentY, true, false,
+			false, false, CellStruct::Empty, false, ItemBuilding != nullptr);
+
+		if(auto pCell = MapClass::Instance->TryGetCellAt(PlaceCoords)) {
+			Item->OnBridge = pCell->ContainsBridge();
+
+			// set the appropriate mission
+			if(ItemBuilding && pData->SW_DeliverBuildups) {
+				ItemBuilding->QueueMission(mission_Construction, false);
+			}
+
+			// place and set up
+			auto XYZ = pCell->GetCoordsWithBridge();
+			if(Item->Put(XYZ, (MapClass::GetCellIndex(pCell->MapCoords) & 7))) {
+				if(ItemBuilding) {
+					if(pData->SW_DeliverBuildups) {
+						ItemBuilding->DiscoveredBy(this->Super->Owner);
+						ItemBuilding->unknown_bool_6DD = 1;
+					}
+				} else if(Type->BalloonHover || Type->JumpJet) {
+					Item->Scatter(CoordStruct::Empty, true, false);
+				}
+
+				if(auto pItemData = TechnoExt::ExtMap.Find(Item)) {
+					if(!pItemData->IsPowered() || !pItemData->IsOperated()) {
+						Item->Deactivate();
+						if(ItemBuilding) {
+							Item->Owner->RecheckTechTree = true;
+						}
+					}
+				}
+			} else {
+				Item->UnInit();
+			}
 		}
 	}
 }
