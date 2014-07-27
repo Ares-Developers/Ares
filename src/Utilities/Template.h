@@ -69,6 +69,26 @@ public:
 	inline void Read(INI_EX &parser, const char* pSection, const char* pKey, bool Allocate = false);
 };
 
+template <typename T, typename U>
+inline bool operator == (const Valueable<T>& val, const U& other) {
+	return val.Get() == other;
+}
+
+template <typename T, typename U>
+inline bool operator == (const T& other, const Valueable<U>& val) {
+	return val.Get() == other;
+}
+
+template <typename T, typename U>
+inline bool operator != (const Valueable<T>& val, const U& other) {
+	return !(val == other);
+}
+
+template <typename T, typename U>
+inline bool operator != (const T& other, const Valueable<U>& val) {
+	return !(val == other);
+}
+
 // more fun
 template<typename Lookuper>
 class ValueableIdx : public Valueable<int> {
