@@ -226,6 +226,7 @@ public:
 		// Unit Delivery
 		ValueableVector<TechnoTypeClass *> SW_Deliverables;
 		Valueable<bool> SW_DeliverBuildups;
+		Valueable<OwnerHouseKind> SW_OwnerHouse;
 
 		AresPCXFile SidebarPCX;
 

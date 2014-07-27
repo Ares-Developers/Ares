@@ -4,6 +4,7 @@
 #include "Template.h"
 
 #include "INIParser.h"
+#include "Enums.h"
 #include "Constructs.h"
 
 #include <InfantryTypeClass.h>
@@ -312,6 +313,30 @@ void Valueable<Leptons>::Read(INI_EX &parser, const char* pSection, const char* 
 		this->Set(Leptons(Game::F2I(buffer * 256.0)));
 	} else if(parser.declared()) {
 		Debug::INIParseFailed(pSection, pKey, parser.value(), "Expected a valid floating point number");
+	}
+}
+
+template<>
+void Valueable<OwnerHouseKind>::Read(INI_EX &parser, const char* pSection, const char* pKey, bool Allocate) {
+	if(parser.ReadString(pSection, pKey)) {
+		auto value = this->Get();
+
+		if(_strcmpi(parser.value(), "default") == 0) {
+			value = OwnerHouseKind::Default;
+		} else if(_strcmpi(parser.value(), "invoker") == 0) {
+			value = OwnerHouseKind::Invoker;
+		} else if(_strcmpi(parser.value(), "civilian") == 0) {
+			value = OwnerHouseKind::Civilian;
+		} else if(_strcmpi(parser.value(), "special") == 0) {
+			value = OwnerHouseKind::Special;
+		} else if(_strcmpi(parser.value(), "neutral") == 0) {
+			value = OwnerHouseKind::Neutral;
+		} else {
+			Debug::INIParseFailed(pSection, pKey, parser.value(), "Expected a owner house kind");
+			return;
+		}
+
+		this->Set(value);
 	}
 }
 

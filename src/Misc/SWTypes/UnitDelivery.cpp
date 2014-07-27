@@ -24,6 +24,7 @@ void SW_UnitDelivery::LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeClas
 	INI_EX exINI(pINI);
 	pData->SW_Deliverables.Read(exINI, section, "Deliver.Types");
 	pData->SW_DeliverBuildups.Read(exINI, section, "Deliver.Buildups");
+	pData->SW_OwnerHouse.Read(exINI, section, "Deliver.Owner");
 }
 
 bool SW_UnitDelivery::Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer)
@@ -74,9 +75,19 @@ void UnitDeliveryStateMachine::PlaceUnits()
 		return;
 	}
 
+	// get the house the units will belong to
+	auto pOwner = this->Super->Owner;
+	if(pData->SW_OwnerHouse == OwnerHouseKind::Civilian) {
+		pOwner = HouseClass::FindCivilianSide();
+	} else if(pData->SW_OwnerHouse == OwnerHouseKind::Special) {
+		pOwner = HouseClass::FindSpecial();
+	} else if(pData->SW_OwnerHouse == OwnerHouseKind::Neutral) {
+		pOwner = HouseClass::FindNeutral();
+	}
+
 	for(size_t i=0; i<pData->SW_Deliverables.size(); ++i) {
 		auto Type = pData->SW_Deliverables[i];
-		auto Item = abstract_cast<TechnoClass*>(Type->CreateObject(this->Super->Owner));
+		auto Item = abstract_cast<TechnoClass*>(Type->CreateObject(pOwner));
 		auto ItemBuilding = abstract_cast<BuildingClass*>(Item);
 
 		if(ItemBuilding && pData->SW_DeliverBuildups) {

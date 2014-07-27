@@ -142,6 +142,14 @@ public:
 	}
 };
 
+enum class OwnerHouseKind : int {
+	Default,
+	Invoker,
+	Civilian,
+	Special,
+	Neutral
+};
+
 class SuperWeaponFlags {
 public:
 	typedef unsigned short Value;
