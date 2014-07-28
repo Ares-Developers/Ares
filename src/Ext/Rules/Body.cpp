@@ -90,6 +90,8 @@ void RulesExt::ExtData::LoadBeforeTypeData(RulesClass *pThis, CCINIClass *pINI) 
 	pData->DeactivateDim_EMP.Read(exINI, sectionAV, "DeactivateDimEMP");
 	pData->DeactivateDim_Operator.Read(exINI, sectionAV, "DeactivateDimOperator");
 
+	pData->BerserkROFMultiplier.Read(exINI, sectionCombatDamage, "BerserkROFMultiplier");
+
 	pData->AutoRepelAI.Read(exINI, sectionCombatDamage, "AutoRepel");
 	pData->AutoRepelPlayer.Read(exINI, sectionCombatDamage, "PlayerAutoRepel");
 }

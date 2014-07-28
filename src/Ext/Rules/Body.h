@@ -54,6 +54,8 @@ class RulesExt
 		Valueable<double> DeactivateDim_EMP;
 		Valueable<double> DeactivateDim_Operator;
 
+		Valueable<double> BerserkROFMultiplier;
+
 		// hunter seeker
 		ValueableVector<BuildingTypeClass*> HunterSeekerBuildings;
 		Valueable<int> HunterSeekerDetonateProximity;
@@ -89,6 +91,7 @@ class RulesExt
 			DeactivateDim_Powered(0.5),
 			DeactivateDim_EMP(0.8),
 			DeactivateDim_Operator(0.65),
+			BerserkROFMultiplier(0.5),
 			HunterSeekerBuildings (),
 			HunterSeekerDetonateProximity (0),
 			HunterSeekerDescendProximity (0),

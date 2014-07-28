@@ -1703,3 +1703,18 @@ DEFINE_HOOK(6FAD49, TechnoClass_Update_SparkParticles, 0) // breaks the loop
 
 	return 0x6FADB3;
 }
+
+// customizable berserk fire rate modification
+DEFINE_HOOK(6FF28F, TechnoClass_Fire_BerserkROFMultiplier, 6)
+{
+	GET(TechnoClass*, pThis, ESI);
+	GET(int, ROF, EAX);
+
+	if(pThis->Berzerk) {
+		double multiplier = RulesExt::Global()->BerserkROFMultiplier;
+		ROF = static_cast<int>(ROF * multiplier);
+	}
+
+	R->EAX(ROF);
+	return 0x6FF29E;
+}
