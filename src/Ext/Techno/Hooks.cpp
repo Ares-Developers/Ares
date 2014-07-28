@@ -1711,7 +1711,8 @@ DEFINE_HOOK(6FF28F, TechnoClass_Fire_BerserkROFMultiplier, 6)
 	GET(int, ROF, EAX);
 
 	if(pThis->Berzerk) {
-		double multiplier = RulesExt::Global()->BerserkROFMultiplier;
+		auto pExt = TechnoTypeExt::ExtMap.Find(pThis->GetTechnoType());
+		double multiplier = pExt->BerserkROFMultiplier.Get(RulesExt::Global()->BerserkROFMultiplier);
 		ROF = static_cast<int>(ROF * multiplier);
 	}
 

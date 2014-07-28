@@ -413,6 +413,9 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	this->ParticleSystems_DamageSmoke.Read(exINI, section, "DamageSmokeParticleSystems");
 	this->ParticleSystems_DamageSparks.Read(exINI, section, "DamageSparksParticleSystems");
 
+	// berserking options
+	this->BerserkROFMultiplier.Read(exINI, section, "Berserk.ROFMultiplier");
+
 	// quick fix - remove after the rest of weapon selector code is done
 	return;
 }

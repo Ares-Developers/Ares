@@ -214,6 +214,9 @@ public:
 		NullableVector<ParticleSystemTypeClass*> ParticleSystems_DamageSmoke;
 		NullableVector<ParticleSystemTypeClass*> ParticleSystems_DamageSparks;
 
+		// berserk
+		Nullable<double> BerserkROFMultiplier;
+
 		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			Survivors_PilotChance (),
 			Survivors_PassengerChance (),
