@@ -1758,7 +1758,11 @@ DEFINE_HOOK(6F525B, TechnoClass_DrawExtras_PowerOff, 5)
 		// display power off marker only for current player's buildings
 		bool showPower = FileSystem::POWEROFF_SHP
 			&& !pBld->HasPower
-			&& pBld->Owner->ControlledByPlayer();
+			// only if disabled by power toggle (excludes temporal attacks)
+			&& !pBld->StuffEnabled
+			&& !pBld->IsWarpingIn()
+			// only for owned buildings, but observers got magic eyes
+			&& (pBld->Owner->ControlledByPlayer() || HouseClass::IsPlayerObserver());
 
 		// display any?
 		if(showPower || showRepair) {
