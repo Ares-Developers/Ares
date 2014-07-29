@@ -6,6 +6,7 @@
 #include "../Rules/Body.h"
 #include "../Tiberium/Body.h"
 #include "../WarheadType/Body.h"
+#include "../WeaponType/Body.h"
 #include "../../Misc/Debug.h"
 #include "../../Misc/JammerClass.h"
 #include "../../Misc/PoweredUnitClass.h"
@@ -1720,6 +1721,23 @@ DEFINE_HOOK(6FF28F, TechnoClass_Fire_BerserkROFMultiplier, 6)
 
 	R->EAX(ROF);
 	return 0x6FF29E;
+}
+
+DEFINE_HOOK(6FE31C, TechnoClass_Fire_AllowDamage, 8)
+{
+	//GET(TechnoClass*, pThis, ESI);
+	GET(WeaponTypeClass*, pWeapon, EBX);
+	auto pExt = WeaponTypeExt::ExtMap.Find(pWeapon);
+
+	// whether conventional damage should be used
+	bool applyDamage = pExt->ApplyDamage.Get(!pWeapon->IsSonic && !pWeapon->UseFireParticles);
+
+	if(!applyDamage) {
+		// clear damage
+		R->EDI(0);
+	}
+
+	return applyDamage ? 0x6FE32F : 0x6FE3DF;
 }
 
 // issue #1324: enemy repair wrench visible when it shouldn't

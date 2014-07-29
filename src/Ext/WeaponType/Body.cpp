@@ -131,6 +131,8 @@ void WeaponTypeExt::ExtData::LoadFromINIFile(WeaponTypeExt::TT *pThis, CCINIClas
 
 	// brought back from TS
 	this->ProjectileRange.Read(exINI, section, "ProjectileRange");
+
+	this->ApplyDamage.Read(exINI, section, "ApplyDamage");
 }
 
 // #680 Chrono Prison / Abductor

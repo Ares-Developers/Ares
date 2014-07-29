@@ -88,6 +88,8 @@ public:
 
 		// brought back from TS
 		Valueable<Leptons> ProjectileRange;
+
+		Nullable<bool> ApplyDamage; // whether Damage should be applied even if IsSonic=yes or UseFireParticles=yes
 		
 		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			Weapon_Loaded (false),
