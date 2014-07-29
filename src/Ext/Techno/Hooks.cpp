@@ -1723,28 +1723,6 @@ DEFINE_HOOK(6FF28F, TechnoClass_Fire_BerserkROFMultiplier, 6)
 }
 
 // issue #1324: enemy repair wrench visible when it shouldn't
-DEFINE_HOOK(6F528D, TechnoClass_DrawExtras_Wrench, 7) {
-	GET(BuildingClass*, pBld, EAX);
-
-	// fixes the wrench playing over a temporally challenged building.
-	if(pBld->IsBeingWarpedOut() || pBld->WarpingOut) {
-		return 0x6F5347;
-	}
-
-	// owner and allies are always allowed to see the wrench.
-	if(pBld->Owner->IsAlliedWith(HouseClass::Player)) {
-		return 0;
-	}
-
-	// disabled by rules? cloaked enemies will never show.
-	if(pBld->CloakState || !RulesExt::Global()->EnemyWrench) {
-		return 0x6F5347;
-	}
-
-	// meh.
-	return 0;
-}
-
 DEFINE_HOOK(6F525B, TechnoClass_DrawExtras_PowerOff, 5)
 {
 	GET(TechnoClass*, pTechno, EBP);
@@ -1752,8 +1730,17 @@ DEFINE_HOOK(6F525B, TechnoClass_DrawExtras_PowerOff, 5)
 
 	if(auto pBld = abstract_cast<BuildingClass*>(pTechno)) {
 
-		// display repair animation?
-		bool showRepair = pBld->IsBeingRepaired;
+		// allies and observers can always see by default
+		bool canSeeRepair = HouseClass::Player->IsAlliedWith(pBld->Owner)
+			|| HouseClass::IsPlayerObserver();
+
+		bool showRepair = FileSystem::WRENCH_SHP
+			&& pBld->IsBeingRepaired
+			// fixes the wrench playing over a temporally challenged building
+			&& !pBld->IsBeingWarpedOut()
+			&& !pBld->WarpingOut
+			// never show to enemies when cloaked, and only if allowed
+			&& (canSeeRepair || (!pBld->CloakState && RulesExt::Global()->EnemyWrench));
 
 		// display power off marker only for current player's buildings
 		bool showPower = FileSystem::POWEROFF_SHP
