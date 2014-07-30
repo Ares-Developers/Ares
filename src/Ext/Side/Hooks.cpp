@@ -13,18 +13,20 @@ DEFINE_HOOK(4F8C97, Sides_BuildConst, 6)
 {
 	GET(HouseClass *, pThis, ESI);
 
+	enum { NotifyLowPower = 0x4F8D02, Skip = 0x4F8DB1 };
+
 	// disable FSW on low power
 	auto pHouseData = HouseExt::ExtMap.Find(pThis);
 	pHouseData->SetFirestormState(false);
 
 	// should play low power EVA for more than three BuildConst items
-	for(int i = 0; i < RulesClass::Instance->BuildConst.Count; ++i) {
-		if(pThis->OwnedBuildingTypes1.GetItemCount(RulesClass::Instance->BuildConst.GetItem(i)->ArrayIndex) > 0) {
-			return 0x4F8D02;	//"low power"
+	for(auto pItem : RulesClass::Instance->BuildConst) {
+		if(pThis->OwnedBuildingTypes1[pItem->ArrayIndex] > 0) {
+			return NotifyLowPower;
 		}
 	}
 
-	return 0x4F8DB1;
+	return Skip;
 }
 
 //0x4F8F54
