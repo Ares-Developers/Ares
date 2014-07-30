@@ -138,6 +138,26 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 		}
 	}
 
+	for(int i = 0; i < BuildingTypeClass::Array->Count; ++i) {
+		auto B = BuildingTypeClass::Array->GetItem(i);
+		if(B->TechLevel < 0 || B->TechLevel > RulesClass::Instance->TechLevel) {
+			continue;
+		}
+		if(B->BuildCat == bcat_DontCare) {
+			B->BuildCat = ((B->SuperWeapon != -1) || B->IsBaseDefense || B->Wall)
+				? bcat_Combat
+				: bcat_Infrastructure
+				;
+			const char *catName = (B->BuildCat == bcat_Combat)
+				? "Combat"
+				: "Infrastructure"
+				;
+			Debug::DevLog(Debug::Warning, "Building Type [%s] does not have a valid BuildCat set!\n"
+				"It was reset to %s, but you should really specify it explicitly.\n"
+				, B->ID, catName);
+		}
+	}
+
 	for(int i = 0; i < WeaponTypeClass::Array->Count; ++i) {
 		WeaponTypeClass *Item = WeaponTypeClass::Array->Items[i];
 		if(!Item->Warhead) {
@@ -420,28 +440,5 @@ DEFINE_HOOK(55AFB3, LogicClass_Update_1000, 6)
 		}
 	}
 
-	return 0;
-}
-
-DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateBuildCat, 6) {
-	for(int i = 0; i < BuildingTypeClass::Array->Count; ++i) {
-		auto B = BuildingTypeClass::Array->GetItem(i);
-		if(B->TechLevel < 0 || B->TechLevel > RulesClass::Instance->TechLevel) {
-			continue;
-		}
-		if(B->BuildCat == bcat_DontCare) {
-			B->BuildCat = ((B->SuperWeapon != -1) || B->IsBaseDefense || B->Wall)
-				? bcat_Combat
-				: bcat_Infrastructure
-			;
-			const char *catName = (B->BuildCat == bcat_Combat)
-				? "Combat"
-				: "Infrastructure"
-			;
-			Debug::DevLog(Debug::Warning, "Building Type [%s] does not have a valid BuildCat set!\n"
-				"It was reset to %s, but you should really specify it explicitly.\n"
-				, B->ID, catName);
-		}
-	}
 	return 0;
 }
