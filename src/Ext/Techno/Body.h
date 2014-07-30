@@ -121,6 +121,7 @@ public:
 			};
 
 		virtual ~ExtData() {
+			this->SetSpotlight(nullptr);
 		};
 
 		// when any pointer in the game expires, this is called - be sure to tell everyone we own to invalidate it

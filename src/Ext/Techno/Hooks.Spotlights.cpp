@@ -79,15 +79,6 @@ DEFINE_HOOK(4370C0, BuildingLightClass_SDDTOR, A)
 	return 0;
 }
 
-DEFINE_HOOK(6F4500, TechnoClass_DTOR_Spotlight, 5)
-{
-	GET(TechnoClass*, pItem, ECX);
-	if(auto pExt = TechnoExt::ExtMap.Find(pItem)) {
-		pExt->SetSpotlight(nullptr);
-	}
-	return 0;
-}
-
 DEFINE_HOOK(70FBE3, TechnoClass_Activate, 5)
 {
 	GET(TechnoClass *, T, ECX);
