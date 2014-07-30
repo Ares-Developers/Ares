@@ -109,15 +109,7 @@ DEFINE_HOOK(4D74EC, FootClass_ClickedAction_Deactivated, 6)
 	;
 }
 
-// this hook shares the EIP with a trench enter handler, todo: check if they can brick each other
-DEFINE_HOOK(443414, BuildingClass_ClickedAction_Deactivated, 6)
-{
-	GET(BuildingClass *, pThis, ECX);
-	return (IsDeactivated(pThis))
-		? 0x44344D
-		: 0
-	;
-}
+// another hook is at 443414 and shares the EIP with a trench enter handler
 
 DEFINE_HOOK(4D7D58, FootClass_140_Deactivated, 6)
 {

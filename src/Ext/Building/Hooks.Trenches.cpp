@@ -119,6 +119,15 @@ DEFINE_HOOK(443414, BuildingClass_ClickedAction, 6)
 
 	GET_STACK(ObjectClass *, pTarget, 0x8);
 
+	// part of deactivation logic
+	auto pExt = TechnoExt::ExtMap.Find(pThis);
+
+	if(pExt->IsDeactivated()) {
+		R->EAX(1);
+		return 0x44344D;
+	}
+
+	// trenches
 	if(Action == act_Enter) {
 		if(BuildingClass *pTargetBuilding = specific_cast<BuildingClass *>(pTarget)) {
 			CoordStruct XYZ = pTargetBuilding->GetCoords();
