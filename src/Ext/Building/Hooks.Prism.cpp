@@ -282,48 +282,48 @@ DEFINE_HOOK(447113, PrismForward_BuildingSold, 6)
 
 DEFINE_HOOK(448277, BuildingClass_ChangeOwner_PrismForwardAndLeaveBomb, 5)
 {
-	GET(BuildingClass *, B, ESI);
-	GET_STACK(HouseClass *, newOwner, 0x5C);
+	GET(BuildingClass*, pThis, ESI);
+	GET_STACK(HouseClass*, newOwner, 0x5C);
 
 	enum { LeaveBomb = 0x448293 };
 
 	// #754 - evict Hospital/Armory contents
-	BuildingExt::KickOutHospitalArmory(B);
+	BuildingExt::KickOutHospitalArmory(pThis);
 
-	HouseClass * oldOwner = B->Owner;
+	auto oldOwner = pThis->Owner;
 
-	if (newOwner != oldOwner) {
-		BuildingExt::ExtData* pData = BuildingExt::ExtMap.Find(B);
-		BuildingTypeClass *pType = B->Type;
-		BuildingTypeExt::ExtData *pTypeData = BuildingTypeExt::ExtMap.Find(pType);
+	if(newOwner != oldOwner) {
+		auto pData = BuildingExt::ExtMap.Find(pThis);
+		auto pTypeData = BuildingTypeExt::ExtMap.Find(pThis->Type);
 
 		// the first and the last tower have to be allied to this
-		if (pTypeData->PrismForwarding.ToAllies) {
+		if(pTypeData->PrismForwarding.ToAllies) {
 			auto FirstTarget = pData->PrismForwarding.SupportTarget;
 
-			if (!FirstTarget) {
-				//no first target so either this is a master tower, an idle tower, or not a prism tower at all
-				//no need to remove.
+			if(!FirstTarget) {
+				// no first target so either this is a master tower, an idle
+				// tower, or not a prism tower at all no need to remove.
 				return LeaveBomb;
 			}
 
 			// the tower the new owner strives to support has to be allied, otherwise abort.
-			if (newOwner->IsAlliedWith(FirstTarget->GetOwner()->Owner)) {
+			if(newOwner->IsAlliedWith(FirstTarget->GetOwner()->Owner)) {
 				auto LastTarget = FirstTarget;
-				while (LastTarget->SupportTarget) {
+				while(LastTarget->SupportTarget) {
 					LastTarget = LastTarget->SupportTarget;
 				}
 
-				//LastTarget is now the master (firing) tower
+				// LastTarget is now the master (firing) tower
 				if(newOwner->IsAlliedWith(LastTarget->GetOwner()->Owner)) {
-					//alliances check out so this slave tower can keep on charging.
+					// alliances check out so this slave tower can keep on charging.
 					return LeaveBomb;
 				}
 			}
 		}
 
-		//if we reach this point then the alliance checks have failed
-		pData->PrismForwarding.RemoveFromNetwork(false); //false because animation should continue / slave is busy but won't now fire
+		// if we reach this point then the alliance checks have failed. use false
+		// because animation should continue / slave is busy but won't now fire
+		pData->PrismForwarding.RemoveFromNetwork(false);
 	}
 
 	return LeaveBomb;
