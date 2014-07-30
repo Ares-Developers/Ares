@@ -65,13 +65,3 @@ DEFINE_HOOK(4F8440, HouseClass_Update_FSW_Recalc, 5)
 	}
 	return 0;
 }
-
-DEFINE_HOOK(4F8C97, HouseClass_Update_FSW_LowPower, 6)
-{
-	GET(HouseClass *, H, ESI);
-	HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(H);
-	pHouseData->SetFirestormState(0);
-
-	return 0;
-}
-
