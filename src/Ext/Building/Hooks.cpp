@@ -17,13 +17,7 @@
 
 // one more hook at 448277
 
-DEFINE_HOOK(447113, BuildingClass_UnloadPassengers_ChangeOwner_Sell, 6)
-{
-	GET(BuildingClass *, B, ESI);
-
-	BuildingExt::KickOutHospitalArmory(B);
-	return 0;
-}
+// one more hook at 447113
 
 DEFINE_HOOK(44D8A1, BuildingClass_UnloadPassengers_Unload, 6)
 {

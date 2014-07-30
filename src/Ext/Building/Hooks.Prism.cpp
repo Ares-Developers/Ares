@@ -272,9 +272,13 @@ DEFINE_HOOK(4424EF, PrismForward_BuildingDestroyed, 6)
 	return 0;
 }
 
-DEFINE_HOOK(447113, PrismForward_BuildingSold, 6)
+DEFINE_HOOK(447113, BuildingClass_Sell_PrismForward, 6)
 {
 	GET(BuildingClass *, B, ESI);
+
+	// #754 - evict Hospital/Armory contents
+	BuildingExt::KickOutHospitalArmory(B);
+
 	auto pData = BuildingExt::ExtMap.Find(B);
 	pData->PrismForwarding.RemoveFromNetwork(true);
 	return 0;
