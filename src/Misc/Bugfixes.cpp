@@ -97,21 +97,7 @@ DEFINE_HOOK(71AF2B, TemporalClass_Fire_UnwarpableA, A) {
 }
 
 // bugfix #874 B: Temporal warheads affect Warpable=no units
-DEFINE_HOOK(71AF76, TemporalClass_Fire_UnwarpableB, 9) {
-	GET(TechnoClass *, T, EDI);
-
-	// now it has been checked: this is warpable.
-	// free captured and destroy spawned units.
-	if (T->SpawnManager) {
-		T->SpawnManager->KillNodes();
-	}
-	if (T->CaptureManager) {
-		T->CaptureManager->FreeAll();
-	}
-
-	// always resume normally.
-	return 0;
-}
+// hook moved. search for 71AF76
 
 // MakeInfantry that fails to place will just end the source animation and cleanup instead of memleaking to game end
 DEFINE_HOOK(424B23, AnimClass_Update, 6)

@@ -7,6 +7,7 @@
 #include <HouseClass.h>
 #include <LaserDrawClass.h>
 #include <ScenarioClass.h>
+#include <SpawnManagerClass.h>
 #include <VocClass.h>
 
 DEFINE_HOOK(44B2FE, BuildingClass_Mi_Attack_IsPrism, 6)
@@ -333,8 +334,20 @@ DEFINE_HOOK(448277, BuildingClass_ChangeOwner_PrismForwardAndLeaveBomb, 5)
 	return LeaveBomb;
 }
 
-DEFINE_HOOK(71AF76, PrismForward_BuildingWarped, 9) {
+DEFINE_HOOK(71AF76, TemporalClass_Fire_PrismForwardAndWarpable, 9) {
 	GET(TechnoClass *, T, EDI);
+
+	// bugfix #874 B: Temporal warheads affect Warpable=no units
+	// it has been checked: this is warpable. free captured and destroy spawned units.
+	if(T->SpawnManager) {
+		T->SpawnManager->KillNodes();
+	}
+
+	if(T->CaptureManager) {
+		T->CaptureManager->FreeAll();
+	}
+
+	// prism forward
 	if (BuildingClass * B = specific_cast<BuildingClass *>(T)) {
 		auto pData = BuildingExt::ExtMap.Find(B);
 		pData->PrismForwarding.RemoveFromNetwork(true);
