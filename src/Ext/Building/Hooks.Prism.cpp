@@ -280,11 +280,16 @@ DEFINE_HOOK(447113, PrismForward_BuildingSold, 6)
 	return 0;
 }
 
-DEFINE_HOOK(448277, PrismForward_BuildingChangeOwner, 5)
+DEFINE_HOOK(448277, BuildingClass_ChangeOwner_PrismForwardAndLeaveBomb, 5)
 {
 	GET(BuildingClass *, B, ESI);
 	GET_STACK(HouseClass *, newOwner, 0x5C);
-	
+
+	enum { LeaveBomb = 0x448293 };
+
+	// #754 - evict Hospital/Armory contents
+	BuildingExt::KickOutHospitalArmory(B);
+
 	HouseClass * oldOwner = B->Owner;
 
 	if (newOwner != oldOwner) {
@@ -299,7 +304,7 @@ DEFINE_HOOK(448277, PrismForward_BuildingChangeOwner, 5)
 			if (!FirstTarget) {
 				//no first target so either this is a master tower, an idle tower, or not a prism tower at all
 				//no need to remove.
-				return 0;
+				return LeaveBomb;
 			}
 
 			// the tower the new owner strives to support has to be allied, otherwise abort.
@@ -312,7 +317,7 @@ DEFINE_HOOK(448277, PrismForward_BuildingChangeOwner, 5)
 				//LastTarget is now the master (firing) tower
 				if(newOwner->IsAlliedWith(LastTarget->GetOwner()->Owner)) {
 					//alliances check out so this slave tower can keep on charging.
-					return 0;
+					return LeaveBomb;
 				}
 			}
 		}
@@ -321,7 +326,7 @@ DEFINE_HOOK(448277, PrismForward_BuildingChangeOwner, 5)
 		pData->PrismForwarding.RemoveFromNetwork(false); //false because animation should continue / slave is busy but won't now fire
 	}
 
-	return 0;
+	return LeaveBomb;
 }
 
 DEFINE_HOOK(71AF76, PrismForward_BuildingWarped, 9) {
