@@ -27,6 +27,15 @@ DEFINE_HOOK(44D8A1, BuildingClass_UnloadPassengers_Unload, 6)
 	return 0;
 }
 
+// for yet unestablished reasons a unit might not be present.
+// maybe something triggered the KickOutHospitalArmory
+DEFINE_HOOK(44BB1B, BuildingClass_Mi_Repair_Promote, 6)
+{
+	//GET(BuildingClass*, pThis, EBP);
+	GET(TechnoClass*, pTrainee, EAX);
+
+	return pTrainee ? 0 : 0x44BB3C;
+}
 
 /* 	#218 - specific occupiers -- see Hooks.Trenches.cpp */
 
