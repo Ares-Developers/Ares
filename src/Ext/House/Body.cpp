@@ -398,6 +398,130 @@ bool HouseExt::ExtData::CheckBasePlanSanity() {
 	return AllIsWell;
 }
 
+void HouseExt::ExtData::UpdateTogglePower() {
+	const auto pThis = this->AttachedToObject;
+
+	const bool power_toggle_allowed = true;
+	const int power_toggle_delay = 45;
+
+	if(!power_toggle_allowed
+		|| pThis->Buildings.Count == 0
+		|| pThis->IsBeingDrained 
+		|| pThis->ControlledByHuman()
+		|| pThis->PowerBlackoutTimer.InProgress())
+	{
+		return;
+	}
+
+	if(Unsorted::CurrentFrame % power_toggle_delay == 0) {
+		struct ExpendabilityStruct {
+			int Compare(const ExpendabilityStruct& lhs, const ExpendabilityStruct& rhs) {
+				if(lhs.Value < rhs.Value) {
+					return -1;
+				}
+
+				if(this->Value > rhs.Value) {
+					return 1;
+				}
+
+				return 0;
+			}
+
+			bool operator < (const ExpendabilityStruct& rhs) {
+				if(auto res = Compare(*this, rhs)) {
+					return res < 0;
+				}
+
+				// tie breaker to prevent desyncs
+				return *this->Building < *rhs.Building;
+			}
+
+			bool operator >(const ExpendabilityStruct& rhs) {
+				if(auto res = Compare(*this, rhs)) {
+					return res > 0;
+				}
+
+				// tie breaker to prevent desyncs
+				return *this->Building < *rhs.Building;
+			}
+
+			BuildingClass* Building;
+			int Value;
+		};
+
+		// properties: the higher this value is, the more likely
+		// this building is turned off (expendability)
+		auto GetExpendability = [](BuildingClass* pBld) -> int {
+			auto pType = pBld->Type;
+
+			// disable super weapons, because a defenseless base is
+			// worse than one without super weapons
+			if(pType->SuperWeapon != -1 || pType->SuperWeapon2 != -1) {
+				return pType->PowerDrain * 20 / 10;
+			}
+
+			// non-base defenses should be disabled before going
+			// to the base defenses. but power intensive defenses
+			// might still evaluate worse
+			if(!pType->IsBaseDefense) {
+				return pType->PowerDrain * 15 / 10;
+			}
+
+			// default case, use power
+			return pType->PowerDrain;
+		};
+
+		// create a list of all buildings that can be powered down
+		// and give each building an expendability value
+		std::vector<ExpendabilityStruct> Buildings;
+		Buildings.reserve(pThis->Buildings.Count);
+
+		const auto HasLowPower = pThis->HasLowPower();
+
+		for(auto pBld : pThis->Buildings) {
+			auto pType = pBld->Type;
+			if(pType->CanTogglePower() && pType->PowerDrain > 0) {
+				// if low power, we get buildings with StuffEnabled, if enough
+				// power, we look for builidings that are disabled
+				if(pBld->StuffEnabled == HasLowPower) {
+					Buildings.emplace_back(ExpendabilityStruct{pBld, GetExpendability(pBld)});
+				}
+			}
+		}
+
+		int Surplus = pThis->PowerOutput - pThis->PowerDrain;
+
+		if(HasLowPower) {
+			// most expendable building first
+			std::sort(Buildings.begin(), Buildings.end(), std::greater<>());
+
+			// turn off the expendable buildings until power is restored
+			for(const auto& item : Buildings) {
+				auto Drain = item.Building->Type->PowerDrain;
+
+				item.Building->GoOffline();
+				Surplus += Drain;
+
+				if(Surplus >= 0) {
+					break;
+				}
+			}
+		} else {
+			// least expendable building first
+			std::sort(Buildings.begin(), Buildings.end(), std::less<>());
+
+			// turn on as many of them as possible
+			for(const auto& item : Buildings) {
+				auto Drain = item.Building->Type->PowerDrain;
+				if(Surplus - Drain >= 0) {
+					item.Building->GoOnline();
+					Surplus -= Drain;
+				}
+			}
+		}
+	}
+}
+
 SideClass* HouseExt::GetSide(HouseClass* pHouse) {
 	return SideClass::Array->GetItemOrDefault(pHouse->SideIndex);
 }

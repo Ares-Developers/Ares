@@ -63,5 +63,8 @@ DEFINE_HOOK(4F8440, HouseClass_Update_FSW_Recalc, 5)
 	} else if(pHouseData->FirewallRecalc < 0) {
 		pHouseData->FirewallRecalc = 0;
 	}
+
+	pHouseData->UpdateTogglePower();
+
 	return 0;
 }

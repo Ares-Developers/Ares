@@ -82,6 +82,8 @@ class HouseExt
 
 		bool CheckBasePlanSanity();
 
+		void UpdateTogglePower();
+
 		int GetSurvivorDivisor() const;
 		InfantryTypeClass* GetCrew() const;
 		InfantryTypeClass* GetEngineer() const;
