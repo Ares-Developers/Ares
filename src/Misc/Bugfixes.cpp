@@ -1207,11 +1207,7 @@ DEFINE_HOOK(69281E, DisplayClass_ChooseAction_TogglePower, A)
 
 		if(pOwner && pOwner->ControlledByPlayer()) {
 			if(pBld->CanBeSelected() && !pBld->IsStrange() && !pBld->IsBeingWarpedOut()) {
-				auto pType = pBld->Type;
-
-				if(pType->TogglePower) {
-					allowed = (pType->PowerDrain > 0 || pType->Powered);
-				}
+				allowed = pBld->Type->CanTogglePower();
 			}
 		}
 	}
