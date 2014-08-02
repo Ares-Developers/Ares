@@ -2,6 +2,7 @@
 #include "../HouseType/Body.h"
 #include "../Building/Body.h"
 #include "../BuildingType/Body.h"
+#include "../Rules/Body.h"
 #include "../Side/Body.h"
 #include "../TechnoType/Body.h"
 #include "../../Enum/Prerequisites.h"
@@ -401,10 +402,12 @@ bool HouseExt::ExtData::CheckBasePlanSanity() {
 void HouseExt::ExtData::UpdateTogglePower() {
 	const auto pThis = this->AttachedToObject;
 
-	const bool power_toggle_allowed = true;
-	const int power_toggle_delay = 45;
+	auto pRulesExt = RulesExt::Global();
 
-	if(!power_toggle_allowed
+	if(!pRulesExt->TogglePowerAllowed
+		|| pRulesExt->TogglePowerDelay <= 0
+		|| pRulesExt->TogglePowerIQ < 0
+		|| pRulesExt->TogglePowerIQ > pThis->IQLevel2
 		|| pThis->Buildings.Count == 0
 		|| pThis->IsBeingDrained 
 		|| pThis->ControlledByHuman()
@@ -413,7 +416,7 @@ void HouseExt::ExtData::UpdateTogglePower() {
 		return;
 	}
 
-	if(Unsorted::CurrentFrame % power_toggle_delay == 0) {
+	if(Unsorted::CurrentFrame % pRulesExt->TogglePowerDelay == 0) {
 		struct ExpendabilityStruct {
 			int Compare(const ExpendabilityStruct& lhs, const ExpendabilityStruct& rhs) {
 				if(lhs.Value < rhs.Value) {

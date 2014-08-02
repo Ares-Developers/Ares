@@ -32,6 +32,8 @@ class RulesExt
 		bool MultiEngineer[3];
 
 		Valueable<bool> TogglePowerAllowed;
+		Valueable<int> TogglePowerDelay;
+		Valueable<int> TogglePowerIQ;
 		Valueable<MouseCursor> TogglePowerCursor;
 		Valueable<MouseCursor> TogglePowerNoCursor;
 
@@ -86,6 +88,8 @@ class RulesExt
 			TogglePowerCursor (MouseCursor::First[MouseCursorType::Power]),
 			TogglePowerNoCursor (MouseCursor::First[MouseCursorType::Disallowed]),
 			TogglePowerAllowed (false),
+			TogglePowerDelay (45),
+			TogglePowerIQ (-1),
 			Tiberium_DamageEnabled (false),
 			Tiberium_HealEnabled (false),
 			Tiberium_ExplosiveWarhead (nullptr),

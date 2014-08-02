@@ -136,6 +136,8 @@ void RulesExt::ExtData::LoadAfterTypeData(RulesClass *pThis, CCINIClass *pINI) {
 	pData->DropPodMaximum.Read(exINI, "General", "DropPodMaximum");
 
 	pData->TogglePowerAllowed.Read(exINI, "General", "TogglePowerAllowed");
+	pData->TogglePowerDelay.Read(exINI, "General", "TogglePowerDelay");
+	pData->TogglePowerIQ.Read(exINI, "IQ", "TogglePower");
 	pData->TogglePowerCursor.Read(exINI, "General", "TogglePowerCursor");
 	pData->TogglePowerNoCursor.Read(exINI, "General", "TogglePowerNoCursor");
 }
