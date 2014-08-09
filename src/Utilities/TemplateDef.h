@@ -186,6 +186,33 @@ void Valueable<MouseCursor>::Read(INI_EX &parser, const char* pSection, const ch
 
 	MouseCursor *Cursor = this->GetEx();
 
+	// compact way to define the cursor in one go
+	if(parser.ReadString(pSection, pKey)) {
+		char *buffer = const_cast<char *>(parser.value());
+		char *context = nullptr;
+		if(char *frame = strtok_s(buffer, Ares::readDelims, &context)) {
+			Parser<int>::Parse(frame, &Cursor->Frame);
+		}
+		if(char *count = strtok_s(nullptr, Ares::readDelims, &context)) {
+			Parser<int>::Parse(count, &Cursor->Count);
+		}
+		if(char *interval = strtok_s(nullptr, Ares::readDelims, &context)) {
+			Parser<int>::Parse(interval, &Cursor->Interval);
+		}
+		if(char *frame = strtok_s(nullptr, Ares::readDelims, &context)) {
+			Parser<int>::Parse(frame, &Cursor->MiniFrame);
+		}
+		if(char *count = strtok_s(nullptr, Ares::readDelims, &context)) {
+			Parser<int>::Parse(count, &Cursor->MiniCount);
+		}
+		if(char *hotx = strtok_s(nullptr, Ares::readDelims, &context)) {
+			MouseCursorHotSpotX::Parse(hotx, &Cursor->HotX);
+		}
+		if(char *hoty = strtok_s(nullptr, Ares::readDelims, &context)) {
+			MouseCursorHotSpotY::Parse(hoty, &Cursor->HotY);
+		}
+	}
+
 	char pFlagName[32];
 	_snprintf_s(pFlagName, 31, "%s.Frame", pKey);
 	Placeholder.Set(Cursor->Frame);
