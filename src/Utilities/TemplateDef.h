@@ -217,14 +217,10 @@ void Valueable<MouseCursor>::Read(INI_EX &parser, const char* pSection, const ch
 		char *buffer = const_cast<char *>(parser.value());
 		char *context = nullptr;
 		char *hotx = strtok_s(buffer, ",", &context);
-		if(!strcmp(hotx, "Left")) this->Value.HotX = hotspx_left;
-		else if(!strcmp(hotx, "Center")) this->Value.HotX = hotspx_center;
-		else if(!strcmp(hotx, "Right")) this->Value.HotX = hotspx_right;
+		MouseCursorHotSpotX::Parse(hotx, &Cursor->HotX);
 
 		if(char *hoty = strtok_s(nullptr, ",", &context)) {
-			if(!strcmp(hoty, "Top")) this->Value.HotY = hotspy_top;
-			else if(!strcmp(hoty, "Middle")) this->Value.HotY = hotspy_middle;
-			else if(!strcmp(hoty, "Bottom")) this->Value.HotY = hotspy_bottom;
+			MouseCursorHotSpotY::Parse(hoty, &Cursor->HotY);
 		}
 	}
 };

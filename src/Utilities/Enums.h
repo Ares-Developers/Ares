@@ -177,4 +177,46 @@ public:
 	};
 };
 
+class MouseCursorHotSpotX {
+public:
+	typedef eMouseHotSpotX Value;
+
+	static bool Parse(char* key, Value* value) {
+		if(key && value) {	
+			if(!_strcmpi(key, "left")) {
+				*value = hotspx_left;
+			} else if(!_strcmpi(key, "right")) {
+				*value = hotspx_right;
+			} else if(!_strcmpi(key, "center")) {
+				*value = hotspx_center;
+			} else {
+				return false;
+			}
+			return true;
+		}
+		return false;
+	}
+};
+
+class MouseCursorHotSpotY {
+public:
+	typedef eMouseHotSpotY Value;
+
+	static bool Parse(char* key, Value* value) {
+		if(key && value) {	
+			if(!_strcmpi(key, "top")) {
+				*value = hotspy_top;
+			} else if(!_strcmpi(key, "bottom")) {
+				*value = hotspy_bottom;
+			} else if(!_strcmpi(key, "middle")) {
+				*value = hotspy_middle;
+			} else {
+				return false;
+			}
+			return true;
+		}
+		return false;
+	}
+};
+
 #endif
