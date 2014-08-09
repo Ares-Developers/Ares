@@ -39,8 +39,8 @@ void SWTypeExt::ExtData::InitializeConstants(SuperWeaponTypeClass *pThis)
 	Cursor->Interval = 5; // test?
 	Cursor->MiniFrame = 52;
 	Cursor->MiniCount = 1;
-	Cursor->HotX = hotspx_center;
-	Cursor->HotY = hotspy_middle;
+	Cursor->HotX = MouseHotSpotX::Center;
+	Cursor->HotY = MouseHotSpotY::Middle;
 
 	Cursor = &this->SW_NoCursor;
 	Cursor->Frame = 0;
@@ -48,8 +48,8 @@ void SWTypeExt::ExtData::InitializeConstants(SuperWeaponTypeClass *pThis)
 	Cursor->Interval = 5;
 	Cursor->MiniFrame = 1;
 	Cursor->MiniCount = 1;
-	Cursor->HotX = hotspx_center;
-	Cursor->HotY = hotspy_middle;
+	Cursor->HotX = MouseHotSpotX::Center;
+	Cursor->HotY = MouseHotSpotY::Middle;
 
 	this->Text_Ready = CSFText("TXT_READY");
 	this->Text_Hold = CSFText("TXT_HOLD");

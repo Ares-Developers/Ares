@@ -3,7 +3,7 @@
 #include <HouseClass.h>
 #include <TechnoClass.h>
 
-MouseCursor Actions::MP(0, 1, 0, 1, 1, 0, 0);
+MouseCursor Actions::MP(0, 1, 0, 1, 1, MouseHotSpotX::Center, MouseHotSpotY::Middle);
 MouseCursor* Actions::MPCurrent = nullptr;
 MouseCursor* Actions::MPCustom = nullptr;
 MouseCursor* Actions::TempCursor = nullptr;
