@@ -33,8 +33,7 @@ public:
 	NewSWType() : TypeIndex(-1) {
 	}
 
-	virtual ~NewSWType() {
-	};
+	virtual ~NewSWType() = default;
 
 	virtual bool CanFireAt(SWTypeExt::ExtData *pSWType, HouseClass* pOwner, const CellStruct &Coords) {
 		return pSWType->CanFireAt(pOwner, Coords);

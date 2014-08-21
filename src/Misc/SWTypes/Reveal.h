@@ -9,9 +9,6 @@ class SW_Reveal : public NewSWType
 		SW_Reveal() : NewSWType()
 			{ };
 
-		virtual ~SW_Reveal() override
-			{ };
-
 		virtual void Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW) override;
 		virtual bool Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer) override;
 		virtual bool HandlesType(int type) const override;

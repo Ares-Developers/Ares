@@ -9,9 +9,6 @@ public:
 	SW_UnitDelivery() : NewSWType()
 		{ };
 
-	virtual ~SW_UnitDelivery() override
-		{ };
-
 	virtual const char* GetTypeString() const override
 	{
 		return "UnitDelivery";

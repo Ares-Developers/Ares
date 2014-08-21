@@ -9,9 +9,6 @@ public:
 	SW_Protect() : NewSWType()
 		{ };
 
-	virtual ~SW_Protect() override
-		{ };
-
 	virtual const char* GetTypeString() const override
 	{
 		return "Protect";

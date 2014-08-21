@@ -9,9 +9,6 @@ public:
 	SW_LightningStorm() : NewSWType()
 		{ };
 
-	virtual ~SW_LightningStorm() override
-		{ };
-
 	virtual void LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI) override;
 	virtual void Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW) override;
 	virtual bool AbortFire(SuperClass* pSW, bool IsPlayer) override;

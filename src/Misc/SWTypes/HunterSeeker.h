@@ -9,9 +9,6 @@ public:
 	SW_HunterSeeker() : NewSWType()
 		{ };
 
-	virtual ~SW_HunterSeeker() override
-		{ };
-
 	virtual const char* GetTypeString() const override
 	{
 		return "HunterSeeker";

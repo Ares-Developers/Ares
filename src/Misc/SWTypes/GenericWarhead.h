@@ -9,9 +9,6 @@ public:
 	SW_GenericWarhead() : NewSWType()
 		{ };
 
-	virtual ~SW_GenericWarhead() override
-		{ };
-
 	virtual const char* GetTypeString() const override
 	{
 		return "GenericWarhead";
