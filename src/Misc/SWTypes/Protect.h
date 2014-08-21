@@ -12,8 +12,10 @@ public:
 	virtual ~SW_Protect() override
 		{ };
 
-	virtual const char * GetTypeString() override
-		{ return "Protect"; }
+	virtual const char* GetTypeString() const override
+	{
+		return "Protect";
+	}
 
 	virtual void LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI) override;
 	virtual void Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW) override;

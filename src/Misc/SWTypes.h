@@ -72,8 +72,8 @@ public:
 		return pData->SW_Range;
 	}
 
-	virtual const char* GetTypeString() {
-		return "";
+	virtual const char* GetTypeString() const {
+		return nullptr;
 	}
 
 	int GetTypeIndex() {

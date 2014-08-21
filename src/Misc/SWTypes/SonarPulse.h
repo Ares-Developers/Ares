@@ -12,8 +12,10 @@ public:
 	virtual ~SW_SonarPulse() override
 		{ };
 
-	virtual const char * GetTypeString() override
-		{ return "SonarPulse"; }
+	virtual const char* GetTypeString() const override
+	{
+		return "SonarPulse";
+	}
 
 	virtual void Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW) override;
 	virtual void LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI) override;

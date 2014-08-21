@@ -12,8 +12,10 @@ public:
 	virtual ~SW_UnitDelivery() override
 		{ };
 
-	virtual const char * GetTypeString() override
-		{ return "UnitDelivery"; }
+	virtual const char* GetTypeString() const override
+	{
+		return "UnitDelivery";
+	}
 
 	virtual void LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI) override;
 	virtual void Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW) override;

@@ -12,8 +12,10 @@ public:
 	virtual ~SW_HunterSeeker() override
 		{ };
 
-	virtual const char * GetTypeString() override
-		{ return "HunterSeeker"; }
+	virtual const char* GetTypeString() const override
+	{
+		return "HunterSeeker";
+	}
 
 	virtual void LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI) override;
 	virtual void Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW) override;

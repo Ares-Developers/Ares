@@ -12,8 +12,10 @@ public:
 	virtual ~SW_DropPod() override
 		{ };
 
-	virtual const char * GetTypeString() override
-		{ return "DropPod"; }
+	virtual const char* GetTypeString() const override
+	{
+		return "DropPod";
+	}
 
 	virtual void Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW) override;
 	virtual void LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI) override;

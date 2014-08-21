@@ -13,7 +13,7 @@ public:
 		SW_Firewall::FirewallTypeIndex = -1;
 	};
 
-	virtual const char * GetTypeString() override
+	virtual const char* GetTypeString() const override
 	{
 		return "Firestorm";
 	}
