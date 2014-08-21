@@ -76,7 +76,7 @@ public:
 		return nullptr;
 	}
 
-	int GetTypeIndex() {
+	int GetTypeIndex() const {
 		return TypeIndex;
 	}
 
