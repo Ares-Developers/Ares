@@ -12,7 +12,7 @@ bool SW_LightningStorm::HandlesType(int type) const
 	return (type == SuperWeaponType::LightningStorm);
 }
 
-SuperWeaponFlags::Value SW_LightningStorm::Flags()
+SuperWeaponFlags::Value SW_LightningStorm::Flags() const
 {
 	return SuperWeaponFlags::NoMessage | SuperWeaponFlags::NoEvent;
 }

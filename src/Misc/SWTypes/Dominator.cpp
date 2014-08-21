@@ -12,7 +12,7 @@ bool SW_PsychicDominator::HandlesType(int type) const
 	return (type == SuperWeaponType::PsychicDominator);
 }
 
-SuperWeaponFlags::Value SW_PsychicDominator::Flags()
+SuperWeaponFlags::Value SW_PsychicDominator::Flags() const
 {
 	return SuperWeaponFlags::NoEvent;
 }

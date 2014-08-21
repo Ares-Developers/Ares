@@ -16,7 +16,7 @@ bool SW_ChronoWarp::HandlesType(int type) const
 	return (type == SuperWeaponType::ChronoWarp);
 }
 
-SuperWeaponFlags::Value SW_ChronoWarp::Flags()
+SuperWeaponFlags::Value SW_ChronoWarp::Flags() const
 {
 	return SuperWeaponFlags::NoAnim | SuperWeaponFlags::NoEvent | SuperWeaponFlags::PostClick;
 }
