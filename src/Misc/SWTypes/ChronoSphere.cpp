@@ -6,7 +6,7 @@
 #include <VocClass.h>
 #include <VoxClass.h>
 
-bool SW_ChronoSphere::HandlesType(int type)
+bool SW_ChronoSphere::HandlesType(int type) const
 {
 	return (type == SuperWeaponType::ChronoSphere);
 }

@@ -5,7 +5,7 @@
 
 #include <HouseClass.h>
 
-bool SW_Protect::HandlesType(int type)
+bool SW_Protect::HandlesType(int type) const
 {
 	return (type == SuperWeaponType::IronCurtain) || (type == SuperWeaponType::ForceShield);
 }

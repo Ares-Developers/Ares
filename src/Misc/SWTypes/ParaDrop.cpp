@@ -10,7 +10,7 @@
 
 #include <algorithm>
 
-bool SW_ParaDrop::HandlesType(int type)
+bool SW_ParaDrop::HandlesType(int type) const
 {
 	return (type == SuperWeaponType::ParaDrop) || (type == SuperWeaponType::AmerParaDrop);
 }

@@ -11,7 +11,7 @@
 #include <LightSourceClass.h>
 #include <RadarEventClass.h>
 
-bool SW_ChronoWarp::HandlesType(int type)
+bool SW_ChronoWarp::HandlesType(int type) const
 {
 	return (type == SuperWeaponType::ChronoWarp);
 }

@@ -3,7 +3,7 @@
 #include "../../Utilities/Helpers.Alex.h"
 #include "../../Utilities/TemplateDef.h"
 
-bool SW_Reveal::HandlesType(int type)
+bool SW_Reveal::HandlesType(int type) const
 {
 	return (type == SuperWeaponType::PsychicReveal);
 }

@@ -18,7 +18,7 @@
 
 SuperWeaponTypeClass* SW_NuclearMissile::CurrentNukeType = nullptr;
 
-bool SW_NuclearMissile::HandlesType(int type)
+bool SW_NuclearMissile::HandlesType(int type) const
 {
 	return (type == SuperWeaponType::Nuke);
 }

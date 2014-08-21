@@ -4,7 +4,7 @@
 
 #include <HouseClass.h>
 
-bool SW_SpyPlane::HandlesType(int type)
+bool SW_SpyPlane::HandlesType(int type) const
 {
 	return (type == SuperWeaponType::SpyPlane);
 }

@@ -16,7 +16,7 @@ public:
 	virtual void Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW) override;
 	virtual bool AbortFire(SuperClass* pSW, bool IsPlayer) override;
 	virtual bool Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer) override;
-	virtual bool HandlesType(int type) override;
+	virtual bool HandlesType(int type) const override;
 	virtual SuperWeaponFlags::Value Flags() override;
 
 	virtual WarheadTypeClass* GetWarhead(const SWTypeExt::ExtData* pData) const override;

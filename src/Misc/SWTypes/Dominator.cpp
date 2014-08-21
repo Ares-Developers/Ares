@@ -7,7 +7,7 @@
 
 SuperClass* SW_PsychicDominator::CurrentPsyDom = nullptr;
 
-bool SW_PsychicDominator::HandlesType(int type)
+bool SW_PsychicDominator::HandlesType(int type) const
 {
 	return (type == SuperWeaponType::PsychicDominator);
 }

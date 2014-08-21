@@ -80,7 +80,7 @@ public:
 		return TypeIndex;
 	}
 
-	virtual bool HandlesType(int type) {
+	virtual bool HandlesType(int type) const {
 		return false;
 	}
 
