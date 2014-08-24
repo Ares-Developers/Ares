@@ -89,15 +89,13 @@ public:
 	}
 
 protected:
-	bool HasLaunchSite(SWTypeExt::ExtData* pSWType, HouseClass* pOwner, const CellStruct &Coords) const;
-
-	BuildingClass* FindLaunchSite(SWTypeExt::ExtData* pSWType, HouseClass* pOwner, const CellStruct &Coords, bool ignoreRange, int* pMemo = nullptr) const;
-
 	virtual bool IsLaunchSite(SWTypeExt::ExtData *pSWType, BuildingClass* pBuilding) const;
 
-	virtual bool IsLaunchSiteInRange(SWTypeExt::ExtData* pSWType, const CellStruct &Coords, BuildingClass* pBuilding) const;
+	virtual std::pair<double, double> GetLaunchSiteRange(SWTypeExt::ExtData* pSWType, BuildingClass* pBuilding = nullptr) const;
 
-	bool IsLaunchSiteInRange(SWTypeExt::ExtData* pSWType, const CellStruct &Coords, BuildingClass* pBuilding, double minRange, double maxRange) const;
+	bool HasLaunchSite(SWTypeExt::ExtData* pSWType, HouseClass* pOwner, const CellStruct &Coords) const;
+
+	bool IsLaunchSiteEligible(SWTypeExt::ExtData* pSWType, const CellStruct &Coords, BuildingClass* pBuilding, bool ignoreRange) const;
 
 public:
 	// static methods

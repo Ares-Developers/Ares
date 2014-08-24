@@ -48,69 +48,54 @@ void NewSWType::Init()
 	Register(std::make_unique<SW_DropPod>());
 }
 
-bool NewSWType::HasLaunchSite(SWTypeExt::ExtData* pSWType, HouseClass* pOwner, const CellStruct &Coords) const
-{
-	// the quick way out: indefinite range, no range restriction
-	if(pSWType->SW_RangeMaximum == 0.0 && pSWType->SW_RangeMinimum == 0.0) {
-		return true;
-	}
-
-	return FindLaunchSite(pSWType, pOwner, Coords, false, nullptr) != nullptr;
-}
-
-BuildingClass* NewSWType::FindLaunchSite(SWTypeExt::ExtData* pSWType, HouseClass* pOwner, const CellStruct &Coords, bool ignoreRange, int* pMemo) const
-{
-	// find an appropriate building from memorized start
-	int start = (pMemo ? *pMemo : 0);
-
-	for(int i = start; i < pOwner->Buildings.Count; ++i) {
-		auto pBld = pOwner->Buildings.GetItem(i);
-
-		// update our poor man's iterator
-		if(pMemo) {
-			*pMemo = i + 1;
-		}
-
-		// if this is an appropriate building, return it
-		if(IsLaunchSite(pSWType, pBld)) {
-			if(ignoreRange || IsLaunchSiteInRange(pSWType, Coords, pBld)) {
-				return pBld;
-			}
-		}
-	}
-
-	return nullptr;
-}
-
 bool NewSWType::IsLaunchSite(SWTypeExt::ExtData* pSWType, BuildingClass* pBuilding) const
 {
 	if(pBuilding->IsAlive && pBuilding->Health && !pBuilding->InLimbo && pBuilding->IsPowerOnline()) {
-		return pBuilding->Type->HasSuperWeapon(pSWType->AttachedToObject->ArrayIndex);
+		return pBuilding->HasSuperWeapon(pSWType->AttachedToObject->ArrayIndex);
 	}
 
 	return false;
 }
 
-bool NewSWType::IsLaunchSiteInRange(SWTypeExt::ExtData* pSWType, const CellStruct &Coords, BuildingClass* pBuilding) const
+std::pair<double, double> NewSWType::GetLaunchSiteRange(SWTypeExt::ExtData* pSWType, BuildingClass* pBuilding) const
 {
-	// check the default ranges
-	return IsLaunchSiteInRange(pSWType, Coords, pBuilding, pSWType->SW_RangeMinimum, pSWType->SW_RangeMaximum);
+	return std::make_pair(pSWType->SW_RangeMinimum, pSWType->SW_RangeMaximum);
 }
 
-bool NewSWType::IsLaunchSiteInRange(SWTypeExt::ExtData* pSWType, const CellStruct &Coords, BuildingClass* pBuilding, double minRange, double maxRange) const
+bool NewSWType::HasLaunchSite(SWTypeExt::ExtData* pSWType, HouseClass* pOwner, const CellStruct &Coords) const
 {
-	double distance = Coords.DistanceFrom(pBuilding->GetCell()->MapCoords);
+	// the quick way out: no range restriction at all
+	auto range = GetLaunchSiteRange(pSWType);
 
-	// no max range, or below
-	if(maxRange < 0.0 || distance <= maxRange) {
-
-		// no min range, or above
-		if(minRange < 0.0 || distance >= minRange) {
-			return true;
-		}
+	if(range.first < 0.0 && range.second < 0.0) {
+		return true;
 	}
 
-	return false;
+	return std::any_of(pOwner->Buildings.begin(), pOwner->Buildings.end(), [&](BuildingClass* pBld) {
+		return IsLaunchSiteEligible(pSWType, Coords, pBld, false);
+	});
+}
+
+bool NewSWType::IsLaunchSiteEligible(SWTypeExt::ExtData* pSWType, const CellStruct &Coords, BuildingClass* pBuilding, bool ignoreRange) const
+{
+	if(!IsLaunchSite(pSWType, pBuilding)) {
+		return false;
+	}
+
+	if(ignoreRange) {
+		return true;
+	}
+
+	// get the range for this building
+	auto range = GetLaunchSiteRange(pSWType, pBuilding);
+	const auto& minRange = range.first;
+	const auto& maxRange = range.second;
+
+	const auto distance = Coords.DistanceFrom(pBuilding->GetCell()->MapCoords);
+
+	// negative range values just pass the test
+	return (minRange < 0.0 || distance >= minRange)
+		&& (maxRange < 0.0 || distance <= maxRange);
 }
 
 int NewSWType::FindIndex(const char* pType) {

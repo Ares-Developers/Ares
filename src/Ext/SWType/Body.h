@@ -290,8 +290,8 @@ public:
 			SW_FireToShroud (true),
 			SW_RadarEvent (true),
 			SW_Range(),
-			SW_RangeMinimum (0.0),
-			SW_RangeMaximum (0.0),
+			SW_RangeMinimum(-1.0),
+			SW_RangeMaximum(-1.0),
 			HandledByNewSWType (-1),
 			CameoPal(),
 			SW_DeliverBuildups (false)
