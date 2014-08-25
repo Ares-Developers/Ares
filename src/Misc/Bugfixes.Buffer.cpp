@@ -31,6 +31,8 @@
 
 #include "../Utilities/Macro.h"
 
+#include <type_traits>
+
 template<typename T>
 static void ParseList(DynamicVectorClass<T> &List, CCINIClass * pINI, const char *section, const char *key) {
 	if(pINI->ReadString(section, key, Ares::readDefval, Ares::readBuffer, Ares::readLength)) {
@@ -38,7 +40,7 @@ static void ParseList(DynamicVectorClass<T> &List, CCINIClass * pINI, const char
 
 		char* context = nullptr;
 		for(char *cur = strtok_s(Ares::readBuffer, Ares::readDelims, &context); cur; cur = strtok_s(nullptr, Ares::readDelims, &context)) {
-			if(auto idx = CompoundT<T>::BaseT::Find(cur)) {
+			if(auto idx = std::remove_pointer_t<T>::Find(cur)) {
 				List.AddItem(idx);
 			} else {
 				Debug::INIParseFailed(section, key, cur);
