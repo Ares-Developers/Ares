@@ -8,10 +8,33 @@
 #include <TerrainClass.h>
 #include <WarheadTypeClass.h>
 
-DEFINE_HOOK(5F4FF9, ObjectClass_Put_ForestFire, 7)
+DEFINE_HOOK(5F4FF9, ObjectClass_Put_IsFlammable, 7)
 {
 	//GET(ObjectClass*, pThis, ESI);
-	return 0x5F501B;
+	GET(ObjectTypeClass*, pType, EBX);
+
+	enum { RequiresUpdate = 0x5F501B, NoUpdate = 0x5F5045 };
+
+	// terrain only needs to get Update called when it spawns, or now when
+	// it is flammable. if none is set, don't update
+	if(auto pTerrainType = abstract_cast<TerrainTypeClass*>(pType)) {
+		if(!pTerrainType->SpawnsTiberium && !pTerrainType->IsFlammable) {
+			return NoUpdate;
+		}
+	}
+
+	return RequiresUpdate;
+}
+
+DEFINE_HOOK(71C5D2, TerrainClass_Ignite_IsFlammable, 6)
+{
+	GET(TerrainClass*, pThis, EDI);
+	auto pType = pThis->Type;
+
+	enum { Ignite = 0x71C5F3, CantBurn = 0x71C69D };
+
+	// prevent objects from burning that aren't flammable also
+	return (pType->SpawnsTiberium || !pType->IsFlammable) ? CantBurn : Ignite;
 }
 
 DEFINE_HOOK(71C7C2, TerrainClass_Update_ForestFire, 6)
