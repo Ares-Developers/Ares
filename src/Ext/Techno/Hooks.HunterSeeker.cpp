@@ -85,7 +85,7 @@ DEFINE_HOOK(4CF3D0, FlyLocomotionClass_sub_4CEFB0_HunterSeeker, 7)
 				// not close enough to detonate, but we might start the decent
 				if(dist < DescendProximity) {
 					// the target's current height
-					int z = pTarget->GetCoords(&crd)->Z;
+					int z = pTarget->GetCoords().Z;
 
 					// the hunter seeker's default flight level
 					crd = pObject->GetCoords();
