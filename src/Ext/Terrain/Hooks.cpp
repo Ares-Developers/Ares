@@ -8,6 +8,12 @@
 #include <TerrainClass.h>
 #include <WarheadTypeClass.h>
 
+DEFINE_HOOK(5F4FF9, ObjectClass_Put_ForestFire, 7)
+{
+	//GET(ObjectClass*, pThis, ESI);
+	return 0x5F501B;
+}
+
 DEFINE_HOOK(71C7C2, TerrainClass_Update_ForestFire, 6)
 {
 	GET(TerrainClass*, pThis, ESI);
