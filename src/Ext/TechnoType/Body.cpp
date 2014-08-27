@@ -576,7 +576,7 @@ bool TechnoTypeExt::ExtData::CameoIsElite()
 
 bool TechnoTypeExt::ExtData::CanBeBuiltAt(BuildingTypeClass * FactoryType) {
 	auto pBExt = BuildingTypeExt::ExtMap.Find(FactoryType);
-	return (!this->BuiltAt.size() && !pBExt->Factory_ExplicitOnly) || this->BuiltAt.Contains(FactoryType);
+	return (this->BuiltAt.empty() && !pBExt->Factory_ExplicitOnly) || this->BuiltAt.Contains(FactoryType);
 }
 
 bool TechnoTypeExt::ExtData::CarryallCanLift(UnitClass * Target) {

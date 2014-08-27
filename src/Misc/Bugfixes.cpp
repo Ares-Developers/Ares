@@ -932,7 +932,7 @@ DEFINE_HOOK(739956, UnitClass_Deploy_TransferIvanBomb, 6)
 
 	TechnoExt::TransferIvanBomb(pUnit, pStructure);
 	TechnoExt::TransferAttachedEffects(pUnit, pStructure);
-	
+
 	return 0;
 }
 
@@ -943,7 +943,7 @@ DEFINE_HOOK(44A03C, BuildingClass_Mi_Selling_TransferIvanBomb, 6)
 
 	TechnoExt::TransferIvanBomb(pStructure, pUnit);
 	TechnoExt::TransferAttachedEffects(pStructure, pUnit);
-	
+
 	return 0;
 }
 

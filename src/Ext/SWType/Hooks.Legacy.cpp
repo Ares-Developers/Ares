@@ -313,7 +313,7 @@ DEFINE_HOOK(53A6CF, LightningStorm_Update, 7) {
 	PsyDom::Update();
 	ChronoScreenEffect::Update();
 
-		// remove all bolts from the list that are halfway done
+	// remove all bolts from the list that are halfway done
 	if(LightningStorm::BoltsPresent->Count > 0) {
 		for(int i=LightningStorm::BoltsPresent->Count-1; i>=0; --i) {
 			if(AnimClass *pAnim = LightningStorm::BoltsPresent->GetItem(i)) {
@@ -508,7 +508,7 @@ DEFINE_HOOK(53A140, LightningStorm_Strike, 7) {
 		// get center of cell coords
 		CellClass* pCell = MapClass::Instance->GetCellAt(Cell);
 		CoordStruct Coords = pCell->GetCoordsWithBridge();
-		
+
 		// create a cloud animation
 		if(Coords != CoordStruct::Empty) {
 			// select the anim
@@ -622,7 +622,7 @@ DEFINE_HOOK(53A300, LightningStorm_Strike2, 5) {
 
 			// create some debris
 			if(auto it = pData->Weather_Debris.GetElements(RulesClass::Instance->MetallicDebris)) {
-				
+
 				// dead infantry never generates debris.
 				if(!isInfantry && debris) {
 					int count = ScenarioClass::Instance->Random.RandomRanged(pData->Weather_DebrisMin, pData->Weather_DebrisMax);
@@ -635,10 +635,10 @@ DEFINE_HOOK(53A300, LightningStorm_Strike2, 5) {
 				}
 			}
 		}
-		
+
 		return 0x53A69A;
 	}
-	
+
 	// legacy way for triggers.
 	return 0;
 }
@@ -699,7 +699,7 @@ DEFINE_HOOK(44CABA, BuildingClass_Missile_CreateBullet, 6) {
 
 					R->EBX(pSW->WeaponType);
 					R->EAX(pBullet);
-						
+
 					return 0x44CAF2;
 				}
 			}

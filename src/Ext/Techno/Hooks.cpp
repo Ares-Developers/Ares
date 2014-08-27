@@ -1240,7 +1240,7 @@ DEFINE_HOOK(6FA743, TechnoClass_Update_SkipSelfHeal, A)
 	if(pThis->IsCrashing || pThis->IsSinking) {
 		return 0x6FA941;
 	}
-	
+
 	return 0;
 }
 
