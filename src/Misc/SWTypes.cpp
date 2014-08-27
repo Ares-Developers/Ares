@@ -104,8 +104,8 @@ bool NewSWType::IsDesignator(SWTypeExt::ExtData* pSWType, HouseClass* pOwner, Te
 {
 	if(pTechno->IsAlive && pTechno->Health && !pTechno->InLimbo && !pTechno->Deactivated) {
 		if(pTechno->GetOwningHouse() == pOwner) {
-			auto pType = pTechno->GetTechnoType();
-			return pSWType->SW_AnyDesignator || pSWType->SW_Designators.Contains(pType);
+			return pSWType->SW_AnyDesignator
+				|| pSWType->SW_Designators.Contains(pTechno->GetTechnoType());
 		}
 	}
 
@@ -120,37 +120,22 @@ bool NewSWType::HasDesignator(SWTypeExt::ExtData* pSWType, HouseClass* pOwner, c
 	}
 
 	// a single designator in range suffices
-	return FindDesignator(pSWType, pOwner, Coords, nullptr) != nullptr;
+	return std::any_of(TechnoClass::Array->begin(), TechnoClass::Array->end(), [&](TechnoClass* pTechno) {
+		return IsDesignatorEligible(pSWType, pOwner, Coords, pTechno);
+	});
 }
 
-TechnoClass* NewSWType::FindDesignator(SWTypeExt::ExtData* pSWType, HouseClass* pOwner, const CellStruct &Coords, int* memo) const
-{
-	// if the super weapon needs a designator, try to find one in range
-	if(!pSWType->SW_Designators.empty() || pSWType->SW_AnyDesignator) {
+bool NewSWType::IsDesignatorEligible(SWTypeExt::ExtData* pSWType, HouseClass* pOwner, const CellStruct &Coords, TechnoClass* pTechno) const {
+	if(IsDesignator(pSWType, pOwner, pTechno)) {
+		const auto pType = pTechno->GetTechnoType();
+		const auto pExt = TechnoTypeExt::ExtMap.Find(pType);
 
-		int start = (memo ? *memo : 0);
-		for(int i=start; i<TechnoClass::Array->Count; ++i) {
-			TechnoClass* pTechno = TechnoClass::Array->GetItem(i);
-
-			// update our poor man's iterator
-			if(memo) {
-				*memo = i + 1;
-			}
-
-			if(IsDesignator(pSWType, pOwner, pTechno)) {
-				auto pType = pTechno->GetTechnoType();
-				auto pExt = TechnoTypeExt::ExtMap.Find(pType);
-
-				// has to be closer than the designator range (which defaults to Sight)
-				auto distance = Coords.DistanceFrom(pTechno->GetCell()->MapCoords);
-				if(distance <= pExt->DesignatorRange.Get(pType->Sight)) {
-					return pTechno;
-				}
-			}
-		}
+		// has to be closer than the designator range (which defaults to Sight)
+		auto distance = Coords.DistanceFrom(pTechno->GetCell()->MapCoords);
+		return distance <= pExt->DesignatorRange.Get(pType->Sight);
 	}
 
-	return nullptr;
+	return false;
 }
 
 int NewSWType::FindIndex(const char* pType) {

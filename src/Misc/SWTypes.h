@@ -102,7 +102,7 @@ protected:
 
 	bool HasDesignator(SWTypeExt::ExtData* pSWType, HouseClass* pOwner, const CellStruct &Coords) const;
 
-	TechnoClass* FindDesignator(SWTypeExt::ExtData* pSWType, HouseClass* pOwner, const CellStruct &Coords, int* memo = nullptr) const;
+	bool IsDesignatorEligible(SWTypeExt::ExtData* pSWType, HouseClass* pOwner, const CellStruct &Coords, TechnoClass* pTechno) const;
 
 public:
 	// static methods

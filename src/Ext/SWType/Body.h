@@ -225,7 +225,7 @@ public:
 		Valueable<double> SW_RangeMinimum;
 		Valueable<double> SW_RangeMaximum;
 		ValueableVector<TechnoTypeClass*> SW_Designators;
-		bool SW_AnyDesignator;
+		Valueable<bool> SW_AnyDesignator;
 
 		CustomPalette CameoPal;
 
