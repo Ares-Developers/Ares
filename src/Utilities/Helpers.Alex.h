@@ -300,6 +300,57 @@ namespace Helpers {
 				return false;
 			}), types.end());
 		}
+
+		//! Invokes an action for every element that suffices a predicate.
+		/*! 
+			Complexity: linear. distance(first, last) invocations of pred,
+			up to distance(first, last) invocations of func.
+
+			\param first Input iterator to be beginning.
+			\param last Input iterator to the last.
+			\param pred The predicate to decide whether to call func with an element.
+			\param func The action to invoke for each element that suffices pred.
+
+			\author AlexB
+			\date 2014-08-27
+		*/
+		template <typename InIt, typename Pred, typename Fn>
+		inline void for_each_if(InIt first, InIt last, Pred pred, Fn func) {
+			first = std::find_if(first, last, pred);
+
+			while(first != last) {
+				func(*first);
+
+				first = std::find_if(++first, last, pred);
+			}
+		}
+
+		//! Invokes an action for up to count elements that suffice a predicate.
+		/*!
+			Complexity: linear. Up to distance(first, last) invocations of pred,
+			up to min(distance(first, last), count) invocations of func.
+
+			\param first Input iterator to be beginning.
+			\param last Input iterator to the last.
+			\param count The maximum number of elements to call func with.
+			\param pred The predicate to decide whether to call func with an element.
+			\param func The action to invoke for up to count elements that suffice pred.
+
+			\author AlexB
+			\date 2014-08-27
+		*/
+		template <typename InIt, typename Pred, typename Fn>
+		inline void for_each_if_n(InIt first, InIt last, size_t count, Pred pred, Fn func) {
+			if(count) {
+				first = std::find_if(first, last, pred);
+
+				while(count-- && first != last) {
+					func(*first);
+
+					first = std::find_if(++first, last, pred);
+				}
+			}
+		}
 	};
 };
 
