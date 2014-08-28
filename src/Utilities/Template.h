@@ -46,15 +46,15 @@ public:
 		return this->Get() == 0;
 	};
 
-	virtual const T& Get() const {
+	const T& Get() const {
 		return this->Value;
 	}
 
-	virtual T * GetEx() {
+	T* GetEx() {
 		return &this->Value;
 	}
 
-	virtual const T * GetEx() const {
+	const T* GetEx() const {
 		return &this->Value;
 	}
 
