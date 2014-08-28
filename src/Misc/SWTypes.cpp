@@ -15,6 +15,7 @@
 #include "SWTypes/Nuke.h"
 #include "SWTypes/HunterSeeker.h"
 #include "SWTypes/DropPod.h"
+#include "SWTypes/EMPulse.h"
 
 #include "../Ext/TechnoType/Body.h"
 
@@ -48,6 +49,7 @@ void NewSWType::Init()
 	Register(std::make_unique<SW_NuclearMissile>());
 	Register(std::make_unique<SW_HunterSeeker>());
 	Register(std::make_unique<SW_DropPod>());
+	Register(std::make_unique<SW_EMPulse>());
 }
 
 bool NewSWType::IsLaunchSite(SWTypeExt::ExtData* pSWType, BuildingClass* pBuilding) const

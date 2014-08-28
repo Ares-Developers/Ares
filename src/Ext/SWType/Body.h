@@ -103,6 +103,10 @@ public:
 		AresMap<AbstractTypeClass*, std::vector<ParadropPlane*>> ParaDrop;
 		std::vector<std::unique_ptr<ParadropPlane>> ParaDropPlanes;
 
+		// EMPulse / Fire
+		Valueable<bool> EMPulse_Linked;
+		Valueable<bool> EMPulse_TargetSelf;
+
 		// Generic Protection
 		Nullable<int> Protect_Duration;
 		Nullable<int> Protect_PlayFadeSoundTime;
@@ -255,6 +259,8 @@ public:
 			DropPod_Maximum (),
 			DropPod_Veterancy (2.0),
 			DropPod_Types (),
+			EMPulse_Linked (false),
+			EMPulse_TargetSelf (false),
 			SW_MaxCount (-1),
 			Money_Amount (0),
 			Money_DrainAmount (0),
