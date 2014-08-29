@@ -1,5 +1,6 @@
 #include "EMPulse.h"
 #include "../../Ext/BulletType/Body.h"
+#include "../../Ext/Techno/Body.h"
 #include "../../Ext/TechnoType/Body.h"
 
 #include "../../Utilities/Helpers.Alex.h"
@@ -35,6 +36,8 @@ void SW_EMPulse::LoadFromINI(SWTypeExt::ExtData* pData, SuperWeaponTypeClass* pS
 
 	pData->EMPulse_Linked.Read(exINI, section, "EMPulse.Linked");
 	pData->EMPulse_TargetSelf.Read(exINI, section, "EMPulse.TargetSelf");
+	pData->EMPulse_PulseDelay.Read(exINI, section, "EMPulse.PulseDelay");
+	pData->EMPulse_PulseBall.Read(exINI, section, "EMPulse.PulseBall");
 
 	pSW->Action = pData->EMPulse_TargetSelf ? 0 : SW_YES_CURSOR;
 }
@@ -68,6 +71,10 @@ bool SW_EMPulse::Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPl
 		Count, IsEligible, [&](BuildingClass* pBld)
 	{
 		if(!pData->EMPulse_TargetSelf) {
+			// set extended properties
+			auto pExt = TechnoExt::ExtMap.Find(pBld);
+			pExt->SuperWeapon = pThis;
+
 			// setup the cannon and start the fire mission
 			pBld->FiringSWType = -1;
 			pBld->QueueMission(mission_Missile, false);

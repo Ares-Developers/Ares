@@ -908,3 +908,28 @@ DEFINE_HOOK(71AE85, TemporalClass_CanWarpTarget_PreventChronoBuilding, A)
 
 	return 0;
 }
+
+DEFINE_HOOK(44CE46, BuildingClass_Mi_Missile_Pulsball, 5)
+{
+	GET(BuildingClass*, pThis, ESI);
+	auto pExt = TechnoExt::ExtMap.Find(pThis);
+
+	auto pPulseBall = AnimTypeClass::Find("PULSBALL");
+	auto delay = 32;
+
+	if(auto pSuper = pExt->SuperWeapon) {
+		auto pSWExt = SWTypeExt::ExtMap.Find(pSuper->Type);
+		pPulseBall = pSWExt->EMPulse_PulseBall.Get(pPulseBall);
+		delay = pSWExt->EMPulse_PulseDelay;
+	}
+
+	// also support no pulse ball
+	if(pPulseBall) {
+		auto flh = pThis->GetFLH(0, CoordStruct::Empty);
+		GameCreate<AnimClass>(pPulseBall, flh);
+	}
+
+	pThis->MissionStatus = 2;
+	R->EAX(delay);
+	return 0x44CEC2;
+}

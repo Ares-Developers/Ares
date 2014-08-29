@@ -106,6 +106,8 @@ public:
 		// EMPulse / Fire
 		Valueable<bool> EMPulse_Linked;
 		Valueable<bool> EMPulse_TargetSelf;
+		Valueable<int> EMPulse_PulseDelay;
+		Nullable<AnimTypeClass*> EMPulse_PulseBall;
 
 		// Generic Protection
 		Nullable<int> Protect_Duration;
@@ -261,6 +263,8 @@ public:
 			DropPod_Types (),
 			EMPulse_Linked (false),
 			EMPulse_TargetSelf (false),
+			EMPulse_PulseDelay (32),
+			EMPulse_PulseBall (),
 			SW_MaxCount (-1),
 			Money_Amount (0),
 			Money_DrainAmount (0),
