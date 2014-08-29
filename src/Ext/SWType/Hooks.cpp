@@ -530,167 +530,162 @@ DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
 	// method would abort if this house is human-controlled.
 	bool AIFire = !pThis->ControlledByHuman();
 
-	for(int i=0; i<pThis->Supers.Count; ++i) {
-		if(SuperClass* pSuper = pThis->Supers.GetItem(i)) {
-			SWTypeExt::ExtData* pExt = SWTypeExt::ExtMap.Find(pSuper->Type);
+	for(auto pSuper : pThis->Supers) {
+		auto pExt = SWTypeExt::ExtMap.Find(pSuper->Type);
 
-			// fire if this is AI owned or the SW has auto fire set.
-			if(AIFire || pExt->SW_AutoFire) {
+		// fire if this is AI owned or the SW has auto fire set.
+		if(pSuper->IsCharged && (AIFire || pExt->SW_AutoFire)) {
+			CellStruct Cell = CellStruct::Empty;
+			auto LaunchSW = [&](const CellStruct &Cell) {
+				int idxSW = pThis->Supers.FindItemIndex(pSuper);
+				pThis->Fire_SW(idxSW, Cell);
+			};
 
-				if(pSuper->IsCharged) {
-					CellStruct Cell = CellStruct::Empty;
-					auto LaunchSW = [&](const CellStruct &Cell) {
-						int idxSW = pThis->Supers.FindItemIndex(pSuper);
-						pThis->Fire_SW(idxSW, Cell);
-					};
+			// don't try to fire if we obviously haven't enough money
+			if(pExt->Money_Amount < 0) {
+				if(pThis->Available_Money() < -pExt->Money_Amount) {
+					continue;
+				}
+			}
 
-					// don't try to fire if we obviously haven't enough money
-					if(pExt->Money_Amount < 0) {
-						if(pThis->Available_Money() < -pExt->Money_Amount) {
-							continue;
-						}
+			// all the different AI targeting modes
+			switch(pExt->SW_AITargetingType) {
+			case SuperWeaponAITargetingMode::Nuke:
+			{
+				if(pThis->EnemyHouseIndex != -1) {
+					if(pThis->PreferredTargetCell == CellStruct::Empty) {
+						Cell = *((pThis->PreferredTargetType == TargetType::Anything)
+							? pThis->PickIonCannonTarget(Cell)
+							: pThis->PickTargetByType(&Cell, pThis->PreferredTargetType));
+					} else {
+						Cell = pThis->PreferredTargetCell;
 					}
 
-					// all the different AI targeting modes
-					switch(pExt->SW_AITargetingType) {
-					case SuperWeaponAITargetingMode::Nuke:
-						{
-							if(pThis->EnemyHouseIndex != -1) {
-								if(pThis->PreferredTargetCell == CellStruct::Empty) {
-									Cell = *((pThis->PreferredTargetType == TargetType::Anything)
-										? pThis->PickIonCannonTarget(Cell)
-										: pThis->PickTargetByType(&Cell, pThis->PreferredTargetType));
-								} else {
-									Cell = pThis->PreferredTargetCell;
-								}
+					if(Cell != CellStruct::Empty) {
+						LaunchSW(Cell);
+					}
+				}
+				break;
+			}
 
-								if(Cell != CellStruct::Empty) {
-									LaunchSW(Cell);
-								}
-							}
-							break;
-						}
+			case SuperWeaponAITargetingMode::LightningStorm:
+			{
+				pThis->Fire_LightningStorm(pSuper);
+				break;
+			}
 
-					case SuperWeaponAITargetingMode::LightningStorm:
-						{
-							pThis->Fire_LightningStorm(pSuper);
-							break;
-						}
+			case SuperWeaponAITargetingMode::PsychicDominator:
+			{
+				pThis->Fire_PsyDom(pSuper);
+				break;
+			}
 
-					case SuperWeaponAITargetingMode::PsychicDominator:
-						{
-							pThis->Fire_PsyDom(pSuper);
-							break;
-						}
+			case SuperWeaponAITargetingMode::ParaDrop:
+			{
+				pThis->Fire_ParaDrop(pSuper);
+				break;
+			}
 
-					case SuperWeaponAITargetingMode::ParaDrop:
-						{
-							pThis->Fire_ParaDrop(pSuper);
-							break;
-						}
+			case SuperWeaponAITargetingMode::GeneticMutator:
+			{
+				pThis->Fire_GenMutator(pSuper);
+				break;
+			}
 
-					case SuperWeaponAITargetingMode::GeneticMutator:
-						{
-							pThis->Fire_GenMutator(pSuper);
-							break;
-						}
+			case SuperWeaponAITargetingMode::ForceShield:
+			{
+				if(pThis->PreferredDefensiveCell2 == CellStruct::Empty) {
+					if(pThis->PreferredDefensiveCell != CellStruct::Empty
+						&& RulesClass::Instance->AISuperDefenseFrames + pThis->PreferredDefensiveCellStartTime > Unsorted::CurrentFrame) {
+						Cell = pThis->PreferredDefensiveCell;
+					}
+				} else {
+					Cell = pThis->PreferredDefensiveCell2;
+				}
 
-					case SuperWeaponAITargetingMode::ForceShield:
-						{
-							if(pThis->PreferredDefensiveCell2 == CellStruct::Empty) {
-								if(pThis->PreferredDefensiveCell != CellStruct::Empty
-									&& RulesClass::Instance->AISuperDefenseFrames + pThis->PreferredDefensiveCellStartTime > Unsorted::CurrentFrame) {
-									Cell = pThis->PreferredDefensiveCell;
-								}
-							} else {
-								Cell = pThis->PreferredDefensiveCell2;
-							}
+				if(Cell != CellStruct::Empty) {
+					LaunchSW(Cell);
+					pThis->PreferredDefensiveCell = CellStruct::Empty;
+				}
+				break;
+			}
 
-							if(Cell != CellStruct::Empty) {
-								LaunchSW(Cell);
-								pThis->PreferredDefensiveCell = CellStruct::Empty;
-							}
-							break;
-						}
+			case SuperWeaponAITargetingMode::Offensive:
+			{
+				if(pThis->EnemyHouseIndex != -1 && pExt->IsHouseAffected(pThis, HouseClass::Array->GetItem(pThis->EnemyHouseIndex))) {
+					pThis->PickIonCannonTarget(Cell);
+					if(Cell != CellStruct::Empty) {
+						LaunchSW(Cell);
+					}
+				}
+				break;
+			}
 
-					case SuperWeaponAITargetingMode::Offensive:
-						{
-							if(pThis->EnemyHouseIndex != -1 && pExt->IsHouseAffected(pThis, HouseClass::Array->GetItem(pThis->EnemyHouseIndex))) {
-								pThis->PickIonCannonTarget(Cell);
-								if(Cell != CellStruct::Empty) {
-									LaunchSW(Cell);
-								}
-							}
-							break;
-						}
+			case SuperWeaponAITargetingMode::NoTarget:
+			{
+				LaunchSW(Cell);
+				break;
+			}
 
-					case SuperWeaponAITargetingMode::NoTarget:
-						{
-							LaunchSW(Cell);
-							break;
-						}
-
-					case SuperWeaponAITargetingMode::Stealth:
-						{
-							// find one of the cloaked enemy technos, posing the largest threat.
-							DynamicVectorClass<TechnoClass*> list;
-							int currentValue = 0;
-							for(int j=0; j<TechnoClass::Array->Count; ++j) {
-								if(TechnoClass* pTechno = TechnoClass::Array->GetItem(j)) {
-									if(pTechno->CloakState) {
-										if(pExt->IsHouseAffected(pThis, pTechno->Owner)) {
-											if(pExt->IsTechnoAffected(pTechno)) {
-												int thisValue = pTechno->GetTechnoType()->ThreatPosed;
-												if(currentValue < thisValue) {
-													list.Clear();
-													currentValue = thisValue;
-												}
-												if(currentValue == thisValue) {
-													list.AddItem(pTechno);
-												}
-											}
-										}
+			case SuperWeaponAITargetingMode::Stealth:
+			{
+				// find one of the cloaked enemy technos, posing the largest threat.
+				DynamicVectorClass<TechnoClass*> list;
+				int currentValue = 0;
+				for(int j = 0; j < TechnoClass::Array->Count; ++j) {
+					if(TechnoClass* pTechno = TechnoClass::Array->GetItem(j)) {
+						if(pTechno->CloakState) {
+							if(pExt->IsHouseAffected(pThis, pTechno->Owner)) {
+								if(pExt->IsTechnoAffected(pTechno)) {
+									int thisValue = pTechno->GetTechnoType()->ThreatPosed;
+									if(currentValue < thisValue) {
+										list.Clear();
+										currentValue = thisValue;
+									}
+									if(currentValue == thisValue) {
+										list.AddItem(pTechno);
 									}
 								}
 							}
-							if(list.Count) {
-								int rnd = ScenarioClass::Instance->Random.RandomRanged(0, list.Count - 1);
-								Cell = list.GetItem(rnd)->GetCell()->MapCoords;
-								LaunchSW(Cell);
-							}
-							break;
 						}
+					}
+				}
+				if(list.Count) {
+					int rnd = ScenarioClass::Instance->Random.RandomRanged(0, list.Count - 1);
+					Cell = list.GetItem(rnd)->GetCell()->MapCoords;
+					LaunchSW(Cell);
+				}
+				break;
+			}
 
-					case SuperWeaponAITargetingMode::Base:
-						{
-							// fire at the SW's owner's base cell
-							Cell = pThis->Base_Center();
-							LaunchSW(Cell);
-							break;
-						}
+			case SuperWeaponAITargetingMode::Base:
+			{
+				// fire at the SW's owner's base cell
+				Cell = pThis->Base_Center();
+				LaunchSW(Cell);
+				break;
+			}
 
-					case SuperWeaponAITargetingMode::Self:
-						{
-							// find the first building providing pSuper
-							SuperWeaponTypeClass *pType = pSuper->Type;
-							BuildingClass *pBld = nullptr;
-							for(int j=0; j<BuildingTypeClass::Array->Count; ++j) {
-								BuildingTypeClass *pTBld = BuildingTypeClass::Array->GetItem(j);
-								if((pTBld->SuperWeapon == pType->ArrayIndex) || (pTBld->SuperWeapon2 == pType->ArrayIndex)) {
-									if((pBld = pThis->FindBuildingOfType(pTBld->ArrayIndex, -1)) != nullptr) {
-										break;
-									}
-								}
-							}
-							if(pBld) {
-								Cell = pBld->GetCell()->MapCoords;
-								LaunchSW(Cell);
-							}
-
+			case SuperWeaponAITargetingMode::Self:
+			{
+				// find the first building providing pSuper
+				SuperWeaponTypeClass *pType = pSuper->Type;
+				BuildingClass *pBld = nullptr;
+				for(int j=0; j<BuildingTypeClass::Array->Count; ++j) {
+					BuildingTypeClass *pTBld = BuildingTypeClass::Array->GetItem(j);
+					if((pTBld->SuperWeapon == pType->ArrayIndex) || (pTBld->SuperWeapon2 == pType->ArrayIndex)) {
+						if((pBld = pThis->FindBuildingOfType(pTBld->ArrayIndex, -1)) != nullptr) {
 							break;
 						}
 					}
 				}
+				if(pBld) {
+					Cell = pBld->GetCell()->MapCoords;
+					LaunchSW(Cell);
+				}
+
+				break;
+			}
 			}
 		}
 	}
