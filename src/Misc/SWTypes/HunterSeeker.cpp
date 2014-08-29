@@ -109,7 +109,7 @@ bool SW_HunterSeeker::Activate(SuperClass* pThis, const CellStruct &Coords, bool
 	// put it on the map and let it go
 	if(pHunter) {
 		auto pData = TechnoExt::ExtMap.Find(pHunter);
-		pData->HunterSeekerSW = pThis;
+		pData->SuperWeapon = pThis;
 
 		CoordStruct crd = CellClass::Cell2Coord(cell);
 

@@ -85,7 +85,7 @@ public:
 
 		Nullable<bool> AltOccupation; // if the unit marks cell occupation flags, this is set to whether it uses the "high" occupation members
 
-		SuperClass* HunterSeekerSW; // set if a hunter seeker SW created this
+		SuperClass* SuperWeapon; // the super weapon somehow attached to this (not provided by this)
 
 		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			idxSlot_Wave (0),
@@ -107,7 +107,7 @@ public:
 			MyBolt(nullptr),
 			Spotlight(nullptr),
 			AltOccupation(),
-			HunterSeekerSW(nullptr),
+			SuperWeapon(nullptr),
 			OriginalHouseType(nullptr),
 			AttachEffects_RecreateAnims(false),
 			AttachedTechnoEffect_isset (false),

@@ -335,7 +335,7 @@ bool TechnoExt::ExtData::AcquireHunterSeekerTarget() const {
 		bool canPrefer = true;
 
 		// check the hunter seeker SW
-		if(SuperClass* pSuper = this->HunterSeekerSW) {
+		if(SuperClass* pSuper = this->SuperWeapon) {
 			pOwner = pSuper->Owner;
 			pSWExt = SWTypeExt::ExtMap.Find(pSuper->Type);
 			canPrefer = !pSWExt->HunterSeeker_RandomOnly;
