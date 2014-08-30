@@ -257,9 +257,8 @@ DEFINE_HOOK(762C5C, WaveClass_Update_Wave, 6)
 
 	int weaponIdx = TechnoExt::ExtMap.Find(Firer)->idxSlot_Wave;
 
-	CoordStruct xyzSrc, xyzTgt, xyzDummy = {0, 0, 0};
-	Firer->GetFLH(&xyzSrc, weaponIdx, xyzDummy);
-	xyzTgt = Target->GetCoords__(); // not GetCoords() !
+	CoordStruct xyzSrc = Firer->GetFLH(weaponIdx, CoordStruct::Empty);
+	CoordStruct xyzTgt = Target->GetCoords__(); // not GetCoords() !
 
 	char idx = WeaponTypeExt:: AbsIDtoIdx(Target->WhatAmI());
 

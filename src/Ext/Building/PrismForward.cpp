@@ -98,8 +98,7 @@ int BuildingExt::cPrismForwarding::AcquireSlaves_SingleStage(BuildingExt::cPrism
 		++iFeeds;
 		++NetworkSize;
 		//++TargetTower->SupportingPrisms; //Ares is now using this for longest backward chain of this tower, so don't set it here
-		CoordStruct FLH, Base = {0, 0, 0};
-		TargetTower->GetOwner()->GetFLH(&FLH, 0, Base);
+		CoordStruct FLH = TargetTower->GetOwner()->GetFLH(0, CoordStruct::Empty);
 		nearestPrism->DelayBeforeFiring = nearestPrism->Type->DelayedFireDelay;
 		nearestPrism->PrismStage = PrismChargeState::Slave;
 		nearestPrism->PrismTargetCoords = FLH;

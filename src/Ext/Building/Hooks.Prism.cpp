@@ -165,8 +165,7 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 	BuildingTypeClass *pType = B->Type;
 	BuildingTypeExt::ExtData *pTypeData = BuildingTypeExt::ExtMap.Find(pType);
 
-	CoordStruct SourceXYZ, Base = {0, 0, 0};
-	B->GetFLH(&SourceXYZ, 0, Base);
+	CoordStruct SourceXYZ = B->GetFLH(0, CoordStruct::Empty);
 
 	ColorStruct blank(0, 0, 0);
 
