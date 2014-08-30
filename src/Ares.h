@@ -8,7 +8,6 @@
 
 #include <bitset>
 
-#include <xcompile.h>
 //include <YRPP.h>
 #include <Helpers/Macro.h>
 
@@ -201,41 +200,6 @@ public:
 		static char ModVersion[0x40];
 		static int ModIdentifier;
 	};
-};
-
-class MemMap {
-public:
-	typedef hash_map <DWORD, size_t> memmap;
-	static hash_map <DWORD, size_t> AllocMap;
-	static size_t Total;
-
-	static void Add(void * _addr, size_t amount) {
-		DWORD addr = (DWORD)_addr;
-		memmap::iterator i = AllocMap.find(addr);
-		if(i != AllocMap.end()) {
-#ifdef MEMORY_LOGGING
-			Debug::Log("Reallocated a used block of 0x%X bytes @ 0x%X!\n", amount, addr);
-#endif
-		}
-		AllocMap[addr] = amount;
-		Total += amount;
-	}
-
-	static size_t Remove(void * _addr) {
-		DWORD addr = (DWORD)_addr;
-		memmap::iterator i = AllocMap.find(addr);
-		if(i == AllocMap.end()) {
-#ifdef MEMORY_LOGGING
-			Debug::Log("Deallocated a dud block @ 0x%X!\n", addr);
-#endif
-			return 0;
-		} else {
-			size_t amount = AllocMap[addr];
-			Total -= amount;
-			AllocMap.erase(addr);
-			return amount;
-		}
-	}
 };
 
 #endif

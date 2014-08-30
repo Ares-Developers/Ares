@@ -42,9 +42,6 @@ const wchar_t Ares::StabilityWarning[] = L"This version of Ares (" VERSION_WSTR 
 
 MixFileClass *Ares::aresMIX = nullptr;
 
-hash_map <DWORD, size_t> MemMap::AllocMap;
-size_t MemMap::Total;
-
 void Ares::InitOwnResources()
 {
 	UninitOwnResources();
@@ -326,7 +323,6 @@ DEFINE_HOOK(533058, CommandClassCallback_Register, 7)
 /*
 A_FINE_HOOK(7C8E17, operator_new, 6)
 {
-	static int tick = 0;
 	GET_STACK(size_t, sz, 0x4);
 
 	void * p = operator new(sz, std::nothrow);
@@ -335,35 +331,13 @@ A_FINE_HOOK(7C8E17, operator_new, 6)
 		exit(1);
 	}
 
-#ifdef MEMORY_LOGGING
-	++tick;
-
-	if((tick % 1) == 0) {
-		Debug::Log("@ 0x%X: 0x%X + 0x%X bytes\n", R->get_StackVar32(0x0), MemMap::Total, sz);
-	}
-
-	MemMap::Add(p, sz);
-#endif
-
-	R->set_EAX((DWORD)p);
+	R->EAX(p);
 	return 0x7C8E24;
 }
 
 A_FINE_HOOK(7C8B3D, operator_delete, 9)
 {
-	static int tick = 0;
 	GET_STACK(void *, p, 0x4);
-
-#ifdef MEMORY_LOGGING
-	size_t sz = MemMap::Remove(p);
-
-	++tick;
-
-	if((tick % 1) == 0) {
-		Debug::Log("@ 0x%X: 0x%X - 0x%X bytes\n", R->get_StackVar32(0x0), MemMap::Total, sz);
-	}
-#endif
-
 	operator delete(p);
 	return 0x7C8B47;
 }
