@@ -77,17 +77,6 @@ void SW_NuclearMissile::LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeCl
 	pData->Nuke_TakeOff.Read(exINI, section, "Nuke.TakeOff");
 	pData->Nuke_PsiWarning.Read(exINI, section, "Nuke.PsiWarning");
 	pData->Nuke_SiloLaunch.Read(exINI, section, "Nuke.SiloLaunch");
-
-	Debug::Log("[Nuke] basics %s: ", section);
-	Debug::Log("%s, ", pData->SW_Warhead ? pData->SW_Warhead->ID : "<empty>");
-	Debug::Log("%d, ", pData->SW_Damage.Get());
-	Debug::Log("%s\n", pData->AttachedToObject->WeaponType ? pData->AttachedToObject->WeaponType->ID : "<empty>");
-
-	Debug::Log("[Nuke] parsing %s: ", section);
-	Debug::Log("%s, ", pData->Nuke_Payload ? pData->Nuke_Payload->ID : "<empty>");
-	Debug::Log("%s, ", pData->Nuke_TakeOff ? pData->Nuke_TakeOff->ID : "<empty>");
-	Debug::Log("%s, ", pData->Nuke_PsiWarning ? pData->Nuke_PsiWarning->ID : "<empty>");
-	Debug::Log("%d\n", pData->Nuke_SiloLaunch.Get());	
 }
 
 bool SW_NuclearMissile::Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer)
