@@ -38,6 +38,7 @@ void SW_EMPulse::LoadFromINI(SWTypeExt::ExtData* pData, SuperWeaponTypeClass* pS
 	pData->EMPulse_TargetSelf.Read(exINI, section, "EMPulse.TargetSelf");
 	pData->EMPulse_PulseDelay.Read(exINI, section, "EMPulse.PulseDelay");
 	pData->EMPulse_PulseBall.Read(exINI, section, "EMPulse.PulseBall");
+	pData->EMPulse_Cannons.Read(exINI, section, "EMPulse.Cannons");
 
 	pSW->Action = pData->EMPulse_TargetSelf ? 0 : SW_YES_CURSOR;
 }
@@ -74,9 +75,10 @@ bool SW_EMPulse::Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPl
 			// set extended properties
 			auto pExt = TechnoExt::ExtMap.Find(pBld);
 			pExt->SuperWeapon = pThis;
+			pExt->SuperTarget = MapClass::Instance->TryGetCellAt(Coords);
 
 			// setup the cannon and start the fire mission
-			pBld->FiringSWType = -1;
+			pBld->FiringSWType = pType->ArrayIndex;
 			pBld->QueueMission(mission_Missile, false);
 			pBld->NextMission();
 		} else {
@@ -99,6 +101,12 @@ bool SW_EMPulse::Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPl
 
 bool SW_EMPulse::IsLaunchSite(SWTypeExt::ExtData* pSWType, BuildingClass* pBuilding) const
 {
+	// don't further question the types in this list
+	if(!pSWType->EMPulse_Cannons.empty()) {
+		return pSWType->EMPulse_Cannons.Contains(pBuilding->Type) && pBuilding->IsAlive
+			&& pBuilding->Health && !pBuilding->InLimbo && pBuilding->IsPowerOnline();
+	}
+
 	return pBuilding->Type->EMPulseCannon && NewSWType::IsLaunchSite(pSWType, pBuilding);
 }
 

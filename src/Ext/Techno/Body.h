@@ -86,6 +86,7 @@ public:
 		Nullable<bool> AltOccupation; // if the unit marks cell occupation flags, this is set to whether it uses the "high" occupation members
 
 		SuperClass* SuperWeapon; // the super weapon somehow attached to this (not provided by this)
+		AbstractClass* SuperTarget; // the attached super weapon's target (if any)
 
 		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			idxSlot_Wave (0),
@@ -108,6 +109,7 @@ public:
 			Spotlight(nullptr),
 			AltOccupation(),
 			SuperWeapon(nullptr),
+			SuperTarget(nullptr),
 			OriginalHouseType(nullptr),
 			AttachEffects_RecreateAnims(false),
 			AttachedTechnoEffect_isset (false),

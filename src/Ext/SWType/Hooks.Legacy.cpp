@@ -933,3 +933,25 @@ DEFINE_HOOK(44CE46, BuildingClass_Mi_Missile_Pulsball, 5)
 	R->EAX(delay);
 	return 0x44CEC2;
 }
+
+DEFINE_HOOK(44CCE7, BuildingClass_Mi_Missile_GenericSW, 6)
+{
+	GET(BuildingClass*, pThis, ESI);
+
+	// added this check so this is mutually exclusive
+	if(pThis->Type->EMPulseCannon) {
+		return 0x44CD18;
+	}
+
+	// originally, this part was related to chem missiles
+	auto pExt = TechnoExt::ExtMap.Find(pThis);
+
+	auto pTarget = pExt->SuperTarget ? pExt->SuperTarget
+		: MapClass::Instance->GetCellAt(pThis->Owner->NukeTarget);
+
+	pThis->Fire(pTarget, 0);
+	pThis->QueueMission(mission_Guard, false);
+
+	R->EAX(1);
+	return 0x44D599;
+}

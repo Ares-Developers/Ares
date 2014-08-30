@@ -108,6 +108,7 @@ public:
 		Valueable<bool> EMPulse_TargetSelf;
 		Valueable<int> EMPulse_PulseDelay;
 		Nullable<AnimTypeClass*> EMPulse_PulseBall;
+		ValueableVector<BuildingTypeClass*> EMPulse_Cannons;
 
 		// Generic Protection
 		Nullable<int> Protect_Duration;
