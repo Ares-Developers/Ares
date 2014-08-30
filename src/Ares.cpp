@@ -34,8 +34,7 @@ bool Ares::bStableNotification = false;
 bool Ares::bOutputMissingStrings = false;
 bool Ares::bShuttingDown = false;
 
-DWORD Ares::readLength = BUFLEN;
-char Ares::readBuffer[BUFLEN];
+char Ares::readBuffer[Ares::readLength];
 const char Ares::readDelims[4] = ",";
 const char Ares::readDefval[4] = "";
 
@@ -124,8 +123,6 @@ void __stdcall Ares::PostGameInit()
 
 void __stdcall Ares::ExeRun()
 {
-	Ares::readLength = BUFLEN;
-
 	Unsorted::Savegame_Magic = SAVEGAME_MAGIC;
 	Game::bVideoBackBuffer = false;
 	Game::bAllowVRAMSidebar = false;

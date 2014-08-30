@@ -13,7 +13,7 @@ class INI_EX {
 		return Ares::readBuffer;
 	}
 
-	int buflen() {
+	size_t buflen() {
 		return Ares::readLength;
 	}
 
