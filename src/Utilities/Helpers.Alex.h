@@ -270,7 +270,7 @@ namespace Helpers {
 					int spread = static_cast<int>(widthOrRange);
 
 					if(spread > 0) {
-						CellSpreadIterator iter(center, spread);
+						CellSpreadIterator iter(center, static_cast<size_t>(spread));
 						iter.apply(action);
 						return true;
 					}

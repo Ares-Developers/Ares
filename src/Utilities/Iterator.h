@@ -13,8 +13,8 @@ public:
 	Iterator() : items(nullptr), count(0) {}
 	Iterator(const T* first, size_t count) : items(first), count(count) {}
 	Iterator(const std::vector<T> &vec) : items(vec.data()), count(vec.size()) {}
-	Iterator(const VectorClass<T> &vec) : items(vec.Items), count(vec.Capacity) {}
-	Iterator(const DynamicVectorClass<T> &vec) : items(vec.Items), count(vec.Count) {}
+	Iterator(const VectorClass<T> &vec) : items(vec.Items), count(static_cast<size_t>(vec.Capacity)) {}
+	Iterator(const DynamicVectorClass<T> &vec) : items(vec.Items), count(static_cast<size_t>(vec.Count)) {}
 
 	T at(size_t index) const {
 		return this->items[index];
