@@ -109,7 +109,7 @@ public:
 	static void Init();
 
 	static NewSWType* GetNthItem(int i) {
-		return Array.at(i - FIRST_SW_TYPE).get();
+		return Array.at(static_cast<size_t>(i - FIRST_SW_TYPE)).get();
 	}
 
 	static int FindIndex(const char* pType);
