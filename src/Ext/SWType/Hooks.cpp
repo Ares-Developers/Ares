@@ -2,6 +2,7 @@
 #include "../../Misc/SWTypes.h"
 #include "../House/Body.h"
 
+#include <DiscreteSelectionClass.h>
 #include <StringTable.h>
 #include <VoxClass.h>
 
@@ -630,29 +631,19 @@ DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
 			case SuperWeaponAITargetingMode::Stealth:
 			{
 				// find one of the cloaked enemy technos, posing the largest threat.
-				DynamicVectorClass<TechnoClass*> list;
-				int currentValue = 0;
-				for(int j = 0; j < TechnoClass::Array->Count; ++j) {
-					if(TechnoClass* pTechno = TechnoClass::Array->GetItem(j)) {
-						if(pTechno->CloakState) {
-							if(pExt->IsHouseAffected(pThis, pTechno->Owner)) {
-								if(pExt->IsTechnoAffected(pTechno)) {
-									int thisValue = pTechno->GetTechnoType()->ThreatPosed;
-									if(currentValue < thisValue) {
-										list.Clear();
-										currentValue = thisValue;
-									}
-									if(currentValue == thisValue) {
-										list.AddItem(pTechno);
-									}
-								}
+				DiscreteSelectionClass<TechnoClass*> list;
+				for(auto pTechno : *TechnoClass::Array) {
+					if(pTechno->CloakState) {
+						if(pExt->IsHouseAffected(pThis, pTechno->Owner)) {
+							if(pExt->IsTechnoAffected(pTechno)) {
+								int value = pTechno->GetTechnoType()->ThreatPosed;
+								list.Add(pTechno, value);
 							}
 						}
 					}
 				}
-				if(list.Count) {
-					int rnd = ScenarioClass::Instance->Random.RandomRanged(0, list.Count - 1);
-					Cell = list.GetItem(rnd)->GetCell()->MapCoords;
+				if(auto pTarget = list.Select(ScenarioClass::Instance->Random)) {
+					Cell = pTarget->GetCell()->MapCoords;
 					LaunchSW(Cell);
 				}
 				break;
