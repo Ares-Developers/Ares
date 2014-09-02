@@ -662,10 +662,10 @@ DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
 				// find the first building providing pSuper
 				SuperWeaponTypeClass *pType = pSuper->Type;
 				BuildingClass *pBld = nullptr;
-				for(int j=0; j<BuildingTypeClass::Array->Count; ++j) {
-					BuildingTypeClass *pTBld = BuildingTypeClass::Array->GetItem(j);
-					if((pTBld->SuperWeapon == pType->ArrayIndex) || (pTBld->SuperWeapon2 == pType->ArrayIndex)) {
-						if((pBld = pThis->FindBuildingOfType(pTBld->ArrayIndex, -1)) != nullptr) {
+				for(auto pTBld : *BuildingTypeClass::Array) {
+					if(pTBld->HasSuperWeapon(pType->ArrayIndex)) {
+						pBld = pThis->FindBuildingOfType(pTBld->ArrayIndex, -1);
+						if(pBld != nullptr) {
 							break;
 						}
 					}
