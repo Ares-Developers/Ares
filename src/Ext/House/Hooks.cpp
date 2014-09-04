@@ -62,68 +62,59 @@ DEFINE_HOOK(505360, HouseClass_PrerequisitesForTechnoTypeAreListed, 5)
 
 DEFINE_HOOK(4F8EBD, HouseClass_Update_HasBeenDefeated, 0)
 {
-	GET(HouseClass *, H, ESI);
+	GET(HouseClass*, pThis, ESI);
 
-	if(H->OwnedBuildings) {
+	if(pThis->OwnedBuildings) {
 		return 0x4F8F87;
 	}
 
-	struct EligibleObject {
-		HouseClass *H;
-		EligibleObject(HouseClass *pHouse) : H(pHouse) {};
-		bool operator()(TechnoClass *T) {
-			if(T->Owner != H) {
-				return false;
-			}
-			if(!T->InLimbo) {
-				return true;
-			}
-			if(FootClass *F = generic_cast<FootClass *>(T)) {
-				return F->ParasiteImUsing != nullptr;
-			}
+	auto Eligible = [pThis](TechnoClass* pTechno) {
+		if(pTechno->Owner != pThis) {
 			return false;
 		}
-	} Eligible(H);
+		if(!pTechno->InLimbo) {
+			return true;
+		}
+		if(auto pFoot = generic_cast<FootClass*>(pTechno)) {
+			return pFoot->ParasiteImUsing != nullptr;
+		}
+		return false;
+	};
 
 	if(GameModeOptionsClass::Instance->ShortGame) {
-		for(int i = 0; i < RulesClass::Instance->BaseUnit.Count; ++i) {
-			UnitTypeClass *U = RulesClass::Instance->BaseUnit[i];
-			if(H->OwnedUnitTypes.GetItemCount(U->ArrayIndex)) {
+		for(auto pBaseUnit : RulesClass::Instance->BaseUnit) {
+			if(pThis->OwnedUnitTypes[pBaseUnit->ArrayIndex]) {
 				return 0x4F8F87;
 			}
 		}
 	} else {
-		if(H->OwnedUnitTypes1.Total) {
-			for(int i = 0; i < UnitClass::Array->Count; ++i) {
-				TechnoClass *T = UnitClass::Array->Items[i];
-				if(Eligible(T)) {
+		if(pThis->OwnedUnitTypes1.Total) {
+			for(auto pTechno :*UnitClass::Array) {
+				if(Eligible(pTechno)) {
 					return 0x4F8F87;
 				}
 			}
 		}
 
-		if(H->OwnedInfantryTypes1.Total) {
-			for(int i = 0; i < InfantryClass::Array->Count; ++i) {
-				TechnoClass *T = InfantryClass::Array->Items[i];
-				if(Eligible(T)) {
+		if(pThis->OwnedInfantryTypes1.Total) {
+			for(auto pTechno : *InfantryClass::Array) {
+				if(Eligible(pTechno)) {
 					return 0x4F8F87;
 				}
 			}
 		}
 
-		if(H->OwnedAircraftTypes1.Total) {
-			for(int i = 0; i < AircraftClass::Array->Count; ++i) {
-				TechnoClass *T = AircraftClass::Array->Items[i];
-				if(Eligible(T)) {
+		if(pThis->OwnedAircraftTypes1.Total) {
+			for(auto pTechno : *AircraftClass::Array) {
+				if(Eligible(pTechno)) {
 					return 0x4F8F87;
 				}
 			}
 		}
-
 	}
 
-	H->DestroyAll();
-	H->AcceptDefeat();
+	pThis->DestroyAll();
+	pThis->AcceptDefeat();
 
 	return 0x4F8F87;
 }
