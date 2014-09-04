@@ -24,7 +24,7 @@ void CampaignExt::ExtData::Initialize(CampaignClass *pThis)
 
 void CampaignExt::ExtData::LoadFromINIFile(CampaignClass *pThis, CCINIClass *pINI)
 {
-	char* section = ((AbstractTypeClass*)pThis)->get_ID();
+	const char* section = pThis->get_ID();
 
 	this->DebugOnly = pINI->ReadBool(section, "DebugOnly", this->DebugOnly);
 

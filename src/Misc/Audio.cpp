@@ -18,7 +18,7 @@ DEFINE_HOOK(4064A0, Ares_Audio_AddSample, 0)	//Complete rewrite of VocClass::Add
 	if(pVoc->NumSamples == 0x20) { //if(pVoc->get_NumSamples()==0x20)
 		R->EAX(0); //return false
 	} else {
-		if(*((int*)0x87E2A0)) //I dunno
+		if(*reinterpret_cast<int*>(0x87E2A0)) //I dunno
 		{
 			while(*pSampleName == '$' || *pSampleName == '#') {
 				++pSampleName;
@@ -30,7 +30,7 @@ DEFINE_HOOK(4064A0, Ares_Audio_AddSample, 0)	//Complete rewrite of VocClass::Add
 			;
 
 			if(nSampleIndex == -1) {
-				nSampleIndex = (int)_strdup(pSampleName);
+				nSampleIndex = reinterpret_cast<int>(_strdup(pSampleName));
 			}
 
 			pVoc->SampleIndex[pVoc->NumSamples] = nSampleIndex; //Set sample index or string pointer
@@ -53,7 +53,7 @@ DEFINE_HOOK(75144F, Ares_Audio_DeleteSampleNames, 9)
 		for(int i=0; i < pVoc->NumSamples; ++i) {
 			int SampleIndex = pVoc->SampleIndex[i];	//SampleIndex[i]
 			if(SampleIndex >= MINIMUM_ARES_SAMPLE) {
-				free((char*)SampleIndex);
+				free(reinterpret_cast<char*>(SampleIndex));
 			}
 		}
 		delete ppVoc;
@@ -69,7 +69,7 @@ DEFINE_HOOK(75048E, VocClass_LoadFromINI_ResetSamples, 9)
 		for(int i=0; i < pVoc->NumSamples; ++i) {
 			int SampleIndex = pVoc->SampleIndex[i];	//SampleIndex[i]
 			if(SampleIndex >= MINIMUM_ARES_SAMPLE) {
-				free((char*)SampleIndex);
+				free(reinterpret_cast<char*>(SampleIndex));
 			}
 		}
 		pVoc->NumSamples = 0;
@@ -84,7 +84,7 @@ DEFINE_HOOK(4016F7, Ares_Audio_LoadWAV, 5)	//50% rewrite of Audio::LoadWAV
 	GET(int, SampleIndex, EDX);
 
 	if(SampleIndex >= MINIMUM_ARES_SAMPLE) {
-		char* SampleName=(char*)SampleIndex;
+		char* SampleName = reinterpret_cast<char*>(SampleIndex);
 
 		GET(DWORD *, pAudioIndex, ECX);	//AudioIndex*
 		pAudioIndex[0x110 >> 2] = 0;	//ExternalFile = nullptr
@@ -95,15 +95,15 @@ DEFINE_HOOK(4016F7, Ares_Audio_LoadWAV, 5)	//50% rewrite of Audio::LoadWAV
 		_snprintf_s(filename, _TRUNCATE, "%s.wav", SampleName);
 
 		CCFileClass* pFile = GameCreate<CCFileClass>(filename);
-		pAudioIndex[0x110 >> 2] = (DWORD)pFile;	//ExternalFile = pFile
+		pAudioIndex[0x110 >> 2] = reinterpret_cast<DWORD>(pFile);	//ExternalFile = pFile
 
 		if(pFile->Exists(nullptr)) {
 			if(pFile->Open(eFileMode::Read)) {
 				int WAVStruct[0x8];
 				int nSampleSize;
 
-				if(Audio::ReadWAVFile(pFile, (void *)WAVStruct, &nSampleSize)) {
-					pAudioIndex[0x118 >> 2] = (DWORD)pFile;	//CurrentSampleFile = pFile
+				if(Audio::ReadWAVFile(pFile, reinterpret_cast<void*>(WAVStruct), &nSampleSize)) {
+					pAudioIndex[0x118 >> 2] = reinterpret_cast<DWORD>(pFile);	//CurrentSampleFile = pFile
 					pAudioIndex[0x11C >> 2] = nSampleSize;	//CurrentSampleSize = nSampleSize
 					R->EAX(1);
 					return 0x401889;

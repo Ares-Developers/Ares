@@ -87,12 +87,12 @@ void Interface::updateMenu(HWND hDlg, int iID) {
 			
 				// let the Allied label be the caption
 				if(HWND hAllLabel = GetDlgItem(hDlg, 1959)) {
-					SendMessageA(hAllLabel, 0x4B2, 0, (LPARAM)StringTable::LoadStringA("GUI:SelectCampaign"));
+					SendMessageA(hAllLabel, 0x4B2, 0, reinterpret_cast<LPARAM>(StringTable::LoadStringA("GUI:SelectCampaign")));
 				}
 
 				// call the load button "Play"
 				if(HWND hLoad = GetDlgItem(hDlg, 1038)) {
-					SendMessageA(hLoad, 0x4B2, 0, (LPARAM)StringTable::LoadStringA("GUI:PlayMission"));
+					SendMessageA(hLoad, 0x4B2, 0, reinterpret_cast<LPARAM>(StringTable::LoadStringA("GUI:PlayMission")));
 				}
 
 				// move the soviet label to a new location and reuse
@@ -101,7 +101,7 @@ void Interface::updateMenu(HWND hDlg, int iID) {
 					GetWindowRect(hSovImage, &rcItem);
 					if(HWND hSovLabel = GetDlgItem(hDlg, 1960)) {
 						// remove default text and move label
-						SendMessageA(hSovLabel, 0x4B2, 0, (LPARAM)L"");
+						SendMessageA(hSovLabel, 0x4B2, 0, reinterpret_cast<LPARAM>(L""));
 						moveItem(hSovLabel, rcItem, ptDlg);
 					
 						// left align text
@@ -123,8 +123,8 @@ void Interface::updateMenu(HWND hDlg, int iID) {
 				GetWindowRect(hAllImage, &rcItem);
 			}
 			SIZE szImage;
-			szImage.cx = (int)((rcItem.right - rcItem.left) * .8);
-			szImage.cy = (int)((rcItem.bottom - rcItem.top) * 1.0);
+			szImage.cx = static_cast<int>((rcItem.right - rcItem.left) * .8);
+			szImage.cy = static_cast<int>((rcItem.bottom - rcItem.top) * 1.0);
 
 			// the soviet image's top is used for the second row
 			RECT rcSovImage = {0, 216, 0, 0};
@@ -135,7 +135,7 @@ void Interface::updateMenu(HWND hDlg, int iID) {
 
 			// call the load button "Play"
 			if(HWND hLoad = GetDlgItem(hDlg, 1038)) {
-				SendMessageA(hLoad, 0x4B2, 0, (LPARAM)StringTable::LoadStringA("GUI:PlayMission"));
+				SendMessageA(hLoad, 0x4B2, 0, reinterpret_cast<LPARAM>(StringTable::LoadStringA("GUI:PlayMission")));
 			}
 
 			// position values
@@ -178,7 +178,7 @@ void Interface::updateMenu(HWND hDlg, int iID) {
 						rcLabel.bottom = rcLabel.top + 20;
 
 						// make the subtitle a little wider
-						int widen = (int)(slot < 2 ? (width - rcLabel.right + rcLabel.left) / 2 : 15);
+						int widen = static_cast<int>(slot < 2 ? (width - rcLabel.right + rcLabel.left) / 2 : 15);
 						rcLabel.left -= widen;
 						rcLabel.right += widen;
 
@@ -313,7 +313,7 @@ DEFINE_HOOK(52F00B, CampaignMenu_hDlg_PopulateCampaignList, 5) {
 	for(int i=0; i<CampaignExt::Array.Count; ++i) {
 		CampaignExt::ExtData *pData = CampaignExt::Array.GetItem(i);
 		if(pData && pData->isVisible()) {
-			int newIndex = SendMessageA(hList, 0x4CD, 0, (WPARAM)pData->AttachedToObject->Description);
+			int newIndex = SendMessageA(hList, 0x4CD, 0, reinterpret_cast<WPARAM>(pData->AttachedToObject->Description));
 			SendMessageA(hList, LB_SETITEMDATA, newIndex, i);
 		}
 	}
@@ -356,7 +356,7 @@ DEFINE_HOOK(52EC18, CampaignMenu_hDlg_PreHandleGeneral, 5) {
 						if(*pData->Summary) {
 							summary = StringTable::LoadStringA(pData->Summary);
 						}
-						SendMessageA(hSovLabel, 0x4B2, 0, (LPARAM)summary);
+						SendMessageA(hSovLabel, 0x4B2, 0, reinterpret_cast<LPARAM>(summary));
 					}
 				}
 
@@ -438,7 +438,7 @@ DEFINE_HOOK(52EE04, CampaignMenu_hDlg_SelectHoverSound, 6) {
 
 				// the actual book keeping
 				SendDlgItemMessageA(hDlg, iID, 0x4D3, 0, 0);
-				*(DWORD*)(0x825C20) = sound;
+				*reinterpret_cast<DWORD*>(0x825C20) = sound;
 
 				return 0x52EE2D;
 			}
@@ -506,14 +506,14 @@ DEFINE_HOOK(603A2E, CampaignMenu_ChooseButtonImage, 6) {
 DEFINE_HOOK(60A90A, CampaignMenu_StaticButtonImage, 5) {
 	GET(HWND, iID, EAX);
 
-	return ((Interface::getSlotIndex((int)iID) > -1) ? 0x60A982 : 0x60A9ED);
+	return ((Interface::getSlotIndex(reinterpret_cast<int>(iID)) > -1) ? 0x60A982 : 0x60A9ED);
 }
 
 // animation duration
 DEFINE_HOOK(60357E, CampaignMenu_SetAnimationDuration, 5) {
 	GET(HWND, iID, EAX);
 
-	return ((Interface::getSlotIndex((int)iID) > -1) ? 0x6035C5 : 0x6035E6);
+	return ((Interface::getSlotIndex(reinterpret_cast<int>(iID)) > -1) ? 0x6035C5 : 0x6035E6);
 }
 
 // initialize stuff like the order and images
@@ -526,11 +526,11 @@ DEFINE_HOOK(52F191, CampaignMenu_InitializeMoreButtons, 5) {
 		SendDlgItemMessageA(hDlg, 1773, 0x4D4u, 0, 0);
 
 		if(HWND hItem = GetDlgItem(hDlg, 1771)) {
-			PostMessageA(hItem, 0x4D7u, 0, (LPARAM)hDlg);
+			PostMessageA(hItem, 0x4D7u, 0, reinterpret_cast<LPARAM>(hDlg));
 		}
 
 		if(HWND hItem = GetDlgItem(hDlg, 1773)) {
-			PostMessageA(hItem, 0x4D7u, 0, (LPARAM)hDlg);
+			PostMessageA(hItem, 0x4D7u, 0, reinterpret_cast<LPARAM>(hDlg));
 		}
 
 		// create the order in which the campaigns will appear.
@@ -559,7 +559,7 @@ DEFINE_HOOK(52F191, CampaignMenu_InitializeMoreButtons, 5) {
 				} else {
 					// update the subline text
 					if(HWND hItem = GetDlgItem(hDlg, i + 1959)) {
-						SendMessageA(hItem, 0x4B2u, 0, (LPARAM)StringTable::LoadStringA(Ares::UISettings::Campaigns[idxCampaign].Subline));
+						SendMessageA(hItem, 0x4B2u, 0, reinterpret_cast<LPARAM>(StringTable::LoadStringA(Ares::UISettings::Campaigns[idxCampaign].Subline)));
 					}
 				}
 			}

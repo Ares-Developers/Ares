@@ -39,7 +39,7 @@ DEFINE_HOOK(4C6CCD, Networking_RespondToEvent, 0)
 DEFINE_HOOK(64CCBF, DoList_ReplaceReconMessage, 6)
 {
 	// mimic an increment because decrement happens in the middle of function cleanup and can't be erased nicely
-	int &TempMutex = *(int *)(0xA8DAB4);
+	int &TempMutex = *reinterpret_cast<int*>(0xA8DAB4);
 	++TempMutex;
 
 	Debug::Log("Reconnection error detected!");
@@ -47,7 +47,7 @@ DEFINE_HOOK(64CCBF, DoList_ReplaceReconMessage, 6)
 			L"Would you like to create a full error report for the developers?\n"
 			L"Be advised that reports from at least two players are needed.", L"Reconnection Error!", MB_YESNO | MB_ICONERROR) == IDYES) {
 		HCURSOR loadCursor = LoadCursor(nullptr, IDC_WAIT);
-		SetClassLong(Game::hWnd, GCL_HCURSOR, (LONG)loadCursor);
+		SetClassLong(Game::hWnd, GCL_HCURSOR, reinterpret_cast<LONG>(loadCursor));
 		SetCursor(loadCursor);
 
 		std::wstring path;
@@ -63,7 +63,7 @@ DEFINE_HOOK(64CCBF, DoList_ReplaceReconMessage, 6)
 		Debug::FullDump(nullptr, &path);
 
 		loadCursor = LoadCursor(nullptr, IDC_ARROW);
-		SetClassLong(Game::hWnd, GCL_HCURSOR, (LONG)loadCursor);
+		SetClassLong(Game::hWnd, GCL_HCURSOR, reinterpret_cast<LONG>(loadCursor));
 		SetCursor(loadCursor);
 		Debug::FatalError("A desynchronization has occurred.\r\n"
 			"%s"

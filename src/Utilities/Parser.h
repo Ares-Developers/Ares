@@ -236,7 +236,7 @@ static bool Parser<BYTE>::TryParse(const char* pValue, OutType* outValue) {
 	if(sscanf_s(pValue, pFmt, &buffer) == 1) {
 		if(buffer <= UCHAR_MAX) {
 			if(outValue) {
-				*outValue = (BYTE)buffer;
+				*outValue = static_cast<BYTE>(buffer);
 			}
 			return true;
 		}

@@ -346,7 +346,7 @@ DEFINE_HOOK(6CF3CF, sub_6CF350, 8)
 
 	Debug::Log("Swizzle comparison failed - %X != %X\n", A, *B);
 
-	Debug::DumpObj((byte *)&SwizzleManagerClass::Instance, sizeof(SwizzleManagerClass));
+	Debug::DumpObj(reinterpret_cast<byte*>(&SwizzleManagerClass::Instance), sizeof(SwizzleManagerClass));
 
 	Debug::DumpStack(R, 0x40);
 

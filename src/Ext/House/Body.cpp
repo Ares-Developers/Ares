@@ -154,7 +154,7 @@ signed int HouseExt::PrereqValidate
 			if(Ares::GlobalControls::AllowBypassBuildLimit[pHouse->AIDifficulty]) {
 				return 1;
 			} else {
-				return (signed int)HouseExt::CheckBuildLimit(pHouse, pItem, IncludeQueued);
+				return static_cast<signed int>(HouseExt::CheckBuildLimit(pHouse, pItem, IncludeQueued));
 			}
 		}
 
@@ -172,7 +172,7 @@ signed int HouseExt::PrereqValidate
 		return 0;
 	}
 
-	return (signed int)HouseExt::CheckBuildLimit(pHouse, pItem, IncludeQueued);
+	return static_cast<signed int>(HouseExt::CheckBuildLimit(pHouse, pItem, IncludeQueued));
 }
 
 bool HouseExt::HasNeededFactory(HouseClass *pHouse, TechnoTypeClass *pItem) {

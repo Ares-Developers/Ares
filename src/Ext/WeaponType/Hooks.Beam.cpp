@@ -5,7 +5,7 @@
 
 DEFINE_HOOK(6FD64A, TechnoClass_FireRadBeam1, 6)
 {
-	byte idxWeapon = *(byte *)(R->Stack32(0x18) + 0xC); // hack! 0x18 fetches the caller's EBP, which gives us access to its locals, including idxWeapon
+	byte idxWeapon = *reinterpret_cast<byte*>(R->Stack32(0x18) + 0xC); // hack! 0x18 fetches the caller's EBP, which gives us access to its locals, including idxWeapon
 	GET_STACK(TechnoClass *, Techno, 0x14);
 
 	// get the default color

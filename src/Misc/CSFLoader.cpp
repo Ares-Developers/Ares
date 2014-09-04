@@ -98,12 +98,12 @@ DEFINE_HOOK(734A5F, CSF_AddOrOverrideLabel, 5)
 {
 	if(CSFLoader::CSFCount > 0)
 	{
-		CSFLabel* pLabel = (CSFLabel*)bsearch(
-			(const char*)0xB1BF38, //label buffer, char[4096]
+		CSFLabel* pLabel = static_cast<CSFLabel*>(bsearch(
+			reinterpret_cast<const char*>(0xB1BF38), //label buffer, char[4096]
 			StringTable::Labels,
 			StringTable::LabelCount,
 			sizeof(CSFLabel),
-			(int (__cdecl *)(const void *,const void *))_strcmpi);
+			(int (__cdecl *)(const void *,const void *))_strcmpi));
 
 		if(pLabel)
 		{

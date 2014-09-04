@@ -221,8 +221,8 @@ DEFINE_HOOK(539EB0, LightningStorm_Start, 5) {
 		// generate random coords if the passed ones are empty
 		if(Coords.X == 0 && Coords.Y == 0) {
 			while(!MapClass::Instance->CellExists(Coords)) {
-				Coords.X = (short)ScenarioClass::Instance->Random.RandomRanged(0, MapClass::Instance->unknown_12C);
-				Coords.Y = (short)ScenarioClass::Instance->Random.RandomRanged(0, MapClass::Instance->unknown_130);
+				Coords.X = static_cast<short>(ScenarioClass::Instance->Random.RandomRanged(0, MapClass::Instance->unknown_12C));
+				Coords.Y = static_cast<short>(ScenarioClass::Instance->Random.RandomRanged(0, MapClass::Instance->unknown_130));
 			}
 		}
 
@@ -417,8 +417,8 @@ DEFINE_HOOK(53A6CF, LightningStorm_Update, 7) {
 							bool found;
 							for(int i=0; i<3; ++i) {
 								cell = LSCell;
-								cell.X += (short)ScenarioClass::Instance->Random.RandomRanged(-width / 2, width / 2);
-								cell.Y += (short)ScenarioClass::Instance->Random.RandomRanged(-height / 2, height / 2);
+								cell.X += static_cast<short>(ScenarioClass::Instance->Random.RandomRanged(-width / 2, width / 2));
+								cell.Y += static_cast<short>(ScenarioClass::Instance->Random.RandomRanged(-height / 2, height / 2));
 	
 								// don't even try if this is invalid
 								found = false;
@@ -598,7 +598,7 @@ DEFINE_HOOK(53A300, LightningStorm_Strike2, 5) {
 					if(pBldObj->Type->LightningRod) {
 						if(BuildingTypeExt::ExtData *pExt = BuildingTypeExt::ExtMap.Find(pBldObj->Type)) {
 							// multiply the damage, but never go below zero.
-							damage = (int)std::max(damage * pExt->LightningRod_Modifier, 0.0);
+							damage = static_cast<int>(std::max(damage * pExt->LightningRod_Modifier, 0.0));
 						}
 					}
 				}

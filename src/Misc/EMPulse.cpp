@@ -81,9 +81,9 @@ void EMPulse::deliverEMPDamage(ObjectClass *object, TechnoClass *Firer, WarheadT
 			}
 
 			// respect verses
-			int duration = (int)(Warhead->EMP_Duration * modifier);
+			int duration = static_cast<int>(Warhead->EMP_Duration * modifier);
 			if(supportVerses) {
-				duration = (int)(duration * Warhead->Verses[curTechno->GetTechnoType()->Armor].Verses);
+				duration = static_cast<int>(duration * Warhead->Verses[curTechno->GetTechnoType()->Armor].Verses);
 			} else if(abs(Warhead->Verses[curTechno->GetTechnoType()->Armor].Verses) < 0.001) {
 				return;
 			}
@@ -559,7 +559,7 @@ bool EMPulse::thresholdExceeded(TechnoClass * Victim) {
 		Debug::Log("[thresholdExceeded] %s: %d %d\n", Victim->get_ID(), pData->EMP_Threshold, Victim->EMPLockRemaining);
 	}
 
-	if ((pData->EMP_Threshold != 0) && (Victim->EMPLockRemaining > (DWORD)abs(pData->EMP_Threshold))) {
+	if ((pData->EMP_Threshold != 0) && (Victim->EMPLockRemaining > static_cast<DWORD>(abs(pData->EMP_Threshold)))) {
 		if ((pData->EMP_Threshold > 0) || (Victim->IsInAir() && !Victim->Parachute)) {
 			return true;
 		}

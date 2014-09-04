@@ -159,7 +159,7 @@ bool BuildingExt::cPrismForwarding::ValidateSupportTower(BuildingExt::cPrismForw
 						CoordStruct MyPosition, curPosition;
 						TargetTower->GetPosition_2(&MyPosition);
 						SlaveTower->GetPosition_2(&curPosition);
-						int Distance = (int)MyPosition.DistanceFrom(curPosition);
+						int Distance = static_cast<int>(MyPosition.DistanceFrom(curPosition));
 						int SupportRange = 0;
 						int idxSupport = -1;
 						if(SlaveTower->Veterancy.IsElite()) {

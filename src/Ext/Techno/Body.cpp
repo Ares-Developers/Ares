@@ -1068,7 +1068,7 @@ bool TechnoExt::ExtData::CloakAllowed() const
 		return false;
 	}
 
-	if(pThis->LocomotorSource && pThis->AbstractFlags & ABSFLAGS_ISFOOT && ((FootClass*)pThis)->IsAttackedByLocomotor) {
+	if(pThis->LocomotorSource && pThis->AbstractFlags & ABSFLAGS_ISFOOT && static_cast<FootClass*>(pThis)->IsAttackedByLocomotor) {
 		return false;
 	}
 

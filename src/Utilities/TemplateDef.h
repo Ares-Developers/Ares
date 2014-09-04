@@ -119,7 +119,7 @@ void Valueable<BYTE>::Read(INI_EX &parser, const char* pSection, const char* pKe
 	int buffer = this->Get();
 	if(parser.ReadInteger(pSection, pKey, &buffer)) {
 		if(buffer <= 255 && buffer >= 0) {
-			const BYTE result((BYTE)buffer); // shut up shut up shut up C4244
+			const BYTE result(static_cast<byte>(buffer)); // shut up shut up shut up C4244
 			this->Set(result);
 		} else {
 			Debug::INIParseFailed(pSection, pKey, parser.value(), "Expected a valid number between 0 and 255 inclusive.");
@@ -152,7 +152,7 @@ void Valueable<double>::Read(INI_EX &parser, const char* pSection, const char* p
 template<>
 void Valueable<ColorStruct>::Read(INI_EX &parser, const char* pSection, const char* pKey, bool Allocate) {
 	ColorStruct buffer = this->Get();
-	if(parser.Read3Bytes(pSection, pKey, (byte*)&buffer)) {
+	if(parser.Read3Bytes(pSection, pKey, reinterpret_cast<byte*>(&buffer))) {
 		this->Set(buffer);
 	} else if(parser.declared()) {
 		Debug::INIParseFailed(pSection, pKey, parser.value(), "Expected a valid R,G,B color");

@@ -33,7 +33,7 @@ DEFINE_HOOK(69A310, Game_GetLinkedColor, 7) {
 	int ret = 0;
 	if(slot) {
 		if(slot->colorSchemeIndex == -1) {
-			slot->colorSchemeIndex = (char)ColorScheme::FindIndex(slot->colorScheme);
+			slot->colorSchemeIndex = static_cast<char>(ColorScheme::FindIndex(slot->colorScheme));
 			if(slot->colorSchemeIndex == -1) {
 				Debug::Log("Color scheme \"%s\" not found.\n", slot->colorScheme ? slot->colorScheme : "");
 				slot->colorSchemeIndex = 4;
@@ -173,7 +173,7 @@ DEFINE_HOOK(69B97D, Game_ProcessRandomPlayers_ObserverColor, 7)
 	GET(int, pStartingSpot, ESI);
 
 	// observer uses last color, beyond the actual colors
-	*(int*)(pStartingSpot + 0x53) = Ares::UISettings::ColorCount;
+	*reinterpret_cast<int*>(pStartingSpot + 0x53) = Ares::UISettings::ColorCount;
 
 	return 0x69B984;
 }

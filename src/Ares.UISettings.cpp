@@ -163,7 +163,7 @@ void Ares::UISettings::Load(CCINIClass *pINI) {
 		value->selectedIndex = -1;
 	};
 
-	int* defColors = (int*)0x8316A8;
+	int* defColors = reinterpret_cast<int*>(0x8316A8);
 	ColorCount = std::max(std::min(pINI->ReadInteger(section2, "Count", ColorCount), maxColorCount), 8);
 
 	// original color schemes

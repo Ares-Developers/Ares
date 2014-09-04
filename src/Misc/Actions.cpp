@@ -23,7 +23,7 @@ DEFINE_HOOK(4AB44A, Actions_CustomCursor_NonShrouded, 9)
 		GET(MouseClass *, Mouse, ESI);
 
 		//don't try this at home
-		Mouse->QueryCursor((int)pCursor, R->Stack32(0x34));
+		Mouse->QueryCursor(reinterpret_cast<int>(pCursor), R->Stack32(0x34));
 
 		return 0x4AB78F;
 	}
@@ -45,7 +45,7 @@ DEFINE_HOOK(4AB366, Actions_CustomCursor_Shrouded, 9)
 			GET(GScreenClass *, Mouse, ESI);
 
 			//don't try this at home
-			Mouse->QueryCursor((int)pCursor, R->Stack32(0x34));
+			Mouse->QueryCursor(reinterpret_cast<int>(pCursor), R->Stack32(0x34));
 
 			return 0x4AB78F;
 		} else {

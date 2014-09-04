@@ -245,7 +245,7 @@ __declspec(noreturn) LONG CALLBACK Debug::ExceptionHandler(PEXCEPTION_POINTERS p
 				fprintf(except, "EDX: %08X\tESI: %08X\tEDI: %08X\n", pCtxt->Edx, pCtxt->Esi, pCtxt->Edi);
 
 				fprintf(except, "\nStack dump:\n");
-				DWORD *ptr = (DWORD *)(pCtxt->Esp);
+				DWORD *ptr = reinterpret_cast<DWORD*>(pCtxt->Esp);
 				for(int i = 0; i < 0x100; ++i) {
 					fprintf(except, "%08p: %08X\n", ptr, *ptr);
 					++ptr;
@@ -257,7 +257,7 @@ __declspec(noreturn) LONG CALLBACK Debug::ExceptionHandler(PEXCEPTION_POINTERS p
 
 			if(MessageBoxW(Game::hWnd, L"Yuri's Revenge has encountered a fatal error!\nWould you like to create a full crash report for the developers?", L"Fatal Error!", MB_YESNO | MB_ICONERROR) == IDYES) {
 				HCURSOR loadCursor = LoadCursor(nullptr, IDC_WAIT);
-				SetClassLong(Game::hWnd, GCL_HCURSOR, (LONG)loadCursor);
+				SetClassLong(Game::hWnd, GCL_HCURSOR, reinterpret_cast<LONG>(loadCursor));
 				SetCursor(loadCursor);
 				Debug::Log("Making a memory dump\n");
 
@@ -269,7 +269,7 @@ __declspec(noreturn) LONG CALLBACK Debug::ExceptionHandler(PEXCEPTION_POINTERS p
 				Debug::FullDump(&expParam, &path);
 
 				loadCursor = LoadCursor(nullptr, IDC_ARROW);
-				SetClassLong(Game::hWnd, GCL_HCURSOR, (LONG)loadCursor);
+				SetClassLong(Game::hWnd, GCL_HCURSOR, reinterpret_cast<LONG>(loadCursor));
 				SetCursor(loadCursor);
 				Debug::FatalError("The cause of this error could not be determined.\r\n"
 					"%s"
@@ -286,7 +286,7 @@ __declspec(noreturn) LONG CALLBACK Debug::ExceptionHandler(PEXCEPTION_POINTERS p
 			break;
 		default:
 			Debug::Log("Massive failure: reason unknown, have fun figuring it out\n");
-			Debug::DumpObj((byte *)pExs->ExceptionRecord, sizeof(*(pExs->ExceptionRecord)));
+			Debug::DumpObj(reinterpret_cast<byte*>(pExs->ExceptionRecord), sizeof(*(pExs->ExceptionRecord)));
 //			return EXCEPTION_CONTINUE_SEARCH;
 			break;
 	}
@@ -326,7 +326,7 @@ void Debug::FullDump(MINIDUMP_EXCEPTION_INFORMATION *pException, std::wstring * 
 	HANDLE dumpFile = CreateFileW(filename.c_str(), GENERIC_READ | GENERIC_WRITE,
 		FILE_SHARE_WRITE | FILE_SHARE_READ, nullptr, CREATE_ALWAYS, FILE_FLAG_WRITE_THROUGH, nullptr);
 
-	MINIDUMP_TYPE type = (MINIDUMP_TYPE)MiniDumpWithFullMemory;
+	MINIDUMP_TYPE type = static_cast<MINIDUMP_TYPE>(MiniDumpWithFullMemory);
 
 	MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), dumpFile, type, pException, nullptr, nullptr);
 	CloseHandle(dumpFile);

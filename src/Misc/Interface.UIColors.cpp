@@ -2,21 +2,21 @@
 
 DEFINE_HOOK(60FAD7, Ownerdraw_PostProcessColors, A) {
 	// copy original instruction
-	*(int*)0xAC1B90 = 0x443716;
+	*reinterpret_cast<int*>(0xAC1B90) = 0x443716;
 
 	// update colors
-	*(int*)0xAC18A4 = Ares::UISettings::uiColorText;
-	*(int*)0xAC184C = Ares::UISettings::uiColorCaret;
-	*(int*)0xAC4604 = Ares::UISettings::uiColorSelection;
-	*(int*)0xAC1B98 = Ares::UISettings::uiColorBorder1;
-	*(int*)0xAC1B94 = Ares::UISettings::uiColorBorder2;
-	*(int*)0xAC1AF8 = Ares::UISettings::uiColorDisabledObserver;
-	*(int*)0xAC1CB0 = Ares::UISettings::uiColorTextObserver;
-	*(int*)0xAC4880 = Ares::UISettings::uiColorSelectionObserver;
-	*(int*)0xAC1CB4 = Ares::UISettings::uiColorDisabled;
+	*reinterpret_cast<int*>(0xAC18A4) = Ares::UISettings::uiColorText;
+	*reinterpret_cast<int*>(0xAC184C) = Ares::UISettings::uiColorCaret;
+	*reinterpret_cast<int*>(0xAC4604) = Ares::UISettings::uiColorSelection;
+	*reinterpret_cast<int*>(0xAC1B98) = Ares::UISettings::uiColorBorder1;
+	*reinterpret_cast<int*>(0xAC1B94) = Ares::UISettings::uiColorBorder2;
+	*reinterpret_cast<int*>(0xAC1AF8) = Ares::UISettings::uiColorDisabledObserver;
+	*reinterpret_cast<int*>(0xAC1CB0) = Ares::UISettings::uiColorTextObserver;
+	*reinterpret_cast<int*>(0xAC4880) = Ares::UISettings::uiColorSelectionObserver;
+	*reinterpret_cast<int*>(0xAC1CB4) = Ares::UISettings::uiColorDisabled;
 
 	// skip initialization
-	bool inited = *(bool*)0xAC48D4;
+	bool inited = *reinterpret_cast<bool*>(0xAC48D4);
 	return inited ? 0x60FB5D : 0x60FAE3;
 }
 

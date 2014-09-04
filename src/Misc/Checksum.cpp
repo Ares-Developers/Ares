@@ -247,10 +247,10 @@ bool LogFrame(const char * LogFilename, NetworkEvent *OffendingEvent = nullptr) 
 		fprintf(LogFile, "My Random Number: %08X\n", ScenarioClass::Instance->Random.Random());
 		fprintf(LogFile, "My Frame: %08X\n", Unsorted::CurrentFrame);
 		fprintf(LogFile, "Average FPS: %d\n", Game::F2I(FPSCounter::GetAverageFrameRate()));
-		fprintf(LogFile, "Max MaxAhead: %d\n", *(int*)0xA8B568);
-		fprintf(LogFile, "Latency setting: %d\n", *(int*)0xA8DB9C);
+		fprintf(LogFile, "Max MaxAhead: %d\n", *reinterpret_cast<int*>(0xA8B568));
+		fprintf(LogFile, "Latency setting: %d\n", *reinterpret_cast<int*>(0xA8DB9C));
 		fprintf(LogFile, "Game speed setting: %d\n", GameOptionsClass::Instance->GameSpeed);
-		fprintf(LogFile, "FrameSendRate: %d\n", *(int*)0xA8B554);
+		fprintf(LogFile, "FrameSendRate: %d\n", *reinterpret_cast<int*>(0xA8B554));
 		
 		if(OffendingEvent) {
 			fprintf(LogFile, "\nOffending event:\n");

@@ -101,8 +101,8 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 				case 1:
 					y = 0;
 				}
-				pCell->X = (short)x;
-				pCell->Y = (short)y;
+				pCell->X = static_cast<short>(x);
+				pCell->Y = static_cast<short>(y);
 				++pCell;
 			};
 

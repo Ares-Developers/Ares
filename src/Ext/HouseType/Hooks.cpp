@@ -278,7 +278,7 @@ DEFINE_HOOK(4E3A6A, hWnd_PopulateWithCountryNames, 6) {
 	std::sort(Eligible.begin(), Eligible.end(), sortCountries);
 
 	for(std::vector<HouseTypeExt::ExtData*>::iterator iterator = Eligible.begin(); iterator != Eligible.end(); iterator++) {
-		int idx = SendMessageA(hWnd, 0x4C2u, 0, (LPARAM)(*iterator)->AttachedToObject->UIName);
+		int idx = SendMessageA(hWnd, 0x4C2u, 0, reinterpret_cast<LPARAM>((*iterator)->AttachedToObject->UIName));
 		SendMessageA(hWnd, CB_SETITEMDATA, idx, (*iterator)->AttachedToObject->ArrayIndex2);
 	}
 	

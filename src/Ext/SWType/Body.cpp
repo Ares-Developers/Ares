@@ -155,7 +155,7 @@ void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass
 		char* context = nullptr;
 		char* p = strtok_s(Ares::readBuffer, Ares::readDelims, &context);
 		if(p && *p) {
-			this->SW_Range.WidthOrRange = (float)atof(p);
+			this->SW_Range.WidthOrRange = static_cast<float>(atof(p));
 			this->SW_Range.Height = -1;
 
 			p = strtok_s(nullptr, Ares::readDelims, &context);

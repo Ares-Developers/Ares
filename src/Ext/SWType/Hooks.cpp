@@ -163,7 +163,7 @@ DEFINE_HOOK(6A932B, CameoClass_GetTip_MoneySW, 6) {
 			int length = SidebarClass::TooltipLength;
 
 			// account for no-name SWs
-			if(*(byte*)0x884B8C || !wcslen(pSW->UIName)) {
+			if(*reinterpret_cast<byte*>(0x884B8C) || !wcslen(pSW->UIName)) {
 				const wchar_t* pFormat = StringTable::LoadStringA("TXT_MONEY_FORMAT_1");
 				swprintf(pTip, length, pFormat, -pData->Money_Amount);
 			} else {
@@ -737,7 +737,7 @@ DEFINE_HOOK(6CB995, SuperClass_ClickFire_ChargeDrainRatioA, 8) {
 
 	// recreate the SW from a pointer to its CreationTimer
 	GET(SuperClass*, pSuper, ESI);
-	pSuper = (SuperClass*)((char*)pSuper - 30);
+	pSuper = reinterpret_cast<SuperClass*>(reinterpret_cast<char*>(pSuper) - 30);
 
 	if(SWTypeExt::ExtData* pData = SWTypeExt::ExtMap.Find(pSuper->Type)) {
 		double ratio = pData->GetChargeToDrainRatio();

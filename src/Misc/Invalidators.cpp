@@ -117,7 +117,7 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 			}
 		}
 
-		for(signed int k = (int)pData->ClonedAt.size() - 1; k >= 0; --k) {
+		for(signed int k = static_cast<int>(pData->ClonedAt.size()) - 1; k >= 0; --k) {
 			auto Cloner = pData->ClonedAt[k];
 			if(Cloner->Factory) {
 				pData->ClonedAt.erase(pData->ClonedAt.begin() + k);

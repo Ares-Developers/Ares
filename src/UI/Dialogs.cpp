@@ -47,7 +47,7 @@ const int Dialogs::ExceptControlID = ARES_TXT_IE_DETAILS;
 //4A3B4B, 9 - NOTE: This overrides a call, but it's absolute, so don't worry.
 DEFINE_HOOK(4A3B4B, FetchResource, 9)
 {
-	HMODULE hModule = (HMODULE)Ares::hInstance; //hModule and hInstance are technically the same...
+	HMODULE hModule = static_cast<HMODULE>(Ares::hInstance); //hModule and hInstance are technically the same...
 	GET(LPCTSTR, lpName, ECX);
 	GET(LPCTSTR, lpType, EDX);
 

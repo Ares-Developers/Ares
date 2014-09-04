@@ -261,16 +261,16 @@ DEFINE_HOOK(6F407D, TechnoClass_Init_1, 6)
 		if(WH1 && WH1->Temporal && Temporal == nullptr) {
 			Temporal = GameCreate<TemporalClass>(T);
 			Temporal->WarpPerStep = W1->Damage;
-			pData->idxSlot_Warp = (BYTE)i;
+			pData->idxSlot_Warp = static_cast<BYTE>(i);
 		} else if(WH2 && WH2->Temporal && Temporal == nullptr) {
 			Temporal = GameCreate<TemporalClass>(T);
 			Temporal->WarpPerStep = W2->Damage;
-			pData->idxSlot_Warp = (BYTE)i;
+			pData->idxSlot_Warp = static_cast<BYTE>(i);
 		}
 
 		if((WH1 && WH1->Parasite || WH2 && WH2->Parasite) && IsFoot && Parasite == nullptr) {
 			Parasite = GameCreate<ParasiteClass>(F);
-			pData->idxSlot_Parasite = (BYTE)i;
+			pData->idxSlot_Parasite = static_cast<BYTE>(i);
 		}
 	}
 

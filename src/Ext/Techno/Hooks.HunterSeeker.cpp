@@ -93,7 +93,7 @@ DEFINE_HOOK(4CF3D0, FlyLocomotionClass_sub_4CEFB0_HunterSeeker, 7)
 					int height = floor + pType->GetFlightLevel();
 
 					// linear interpolation between target's Z and normal flight level
-					double ratio = dist / (double)DescendProximity;
+					double ratio = dist / static_cast<double>(DescendProximity);
 					double lerp = z * (1.0 - ratio) + height * ratio;
 
 					// set the descending flight level
