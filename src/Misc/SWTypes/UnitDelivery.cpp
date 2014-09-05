@@ -83,18 +83,21 @@ void UnitDeliveryStateMachine::PlaceUnits()
 
 	// create an instance of each type and place it
 	for(auto Type : pData->SW_Deliverables) {
-		auto Item = abstract_cast<TechnoClass*>(Type->CreateObject(pOwner));
+		auto Item = static_cast<TechnoClass*>(Type->CreateObject(pOwner));
 		auto ItemBuilding = abstract_cast<BuildingClass*>(Item);
 
 		// get the best options to search for a place
-		int extentX = 1;
-		int extentY = 1;
+		short extentX = 1;
+		short extentY = 1;
 		SpeedType::Value SpeedType = SpeedType::Track;
 		MovementZone::Value MovementZone = MovementZone::Normal;
 
 		if(ItemBuilding) {
 			extentX = ItemBuilding->Type->GetFoundationWidth();
 			extentY = ItemBuilding->Type->GetFoundationHeight(true);
+			if(Type->SpeedType == SpeedType::Float) {
+				SpeedType = SpeedType::Float;
+			}
 		} else {
 			// place aircraft types on ground explicitly
 			if(Type->WhatAmI() != abs_AircraftType) {
@@ -103,11 +106,14 @@ void UnitDeliveryStateMachine::PlaceUnits()
 			}
 		}
 
+		// move the target cell so this object is centered on the actual location
+		CellStruct CenteredOnCords = this->Coords - CellStruct{extentX / 2, extentY / 2};
+
 		// find a place to put this
 		int a5 = -1; // usually MapClass::CanLocationBeReached call. see how far we can get without it
-		auto PlaceCoords = MapClass::Instance->Pathfinding_Find(this->Coords,
+		auto PlaceCoords = MapClass::Instance->Pathfinding_Find(CenteredOnCords,
 			SpeedType, a5, MovementZone, false, extentX, extentY, true, false,
-			false, false, CellStruct::Empty, false, ItemBuilding != nullptr);
+			false, false, CellStruct::Empty, false, false);
 
 		if(auto pCell = MapClass::Instance->TryGetCellAt(PlaceCoords)) {
 			Item->OnBridge = pCell->ContainsBridge();
@@ -124,7 +130,7 @@ void UnitDeliveryStateMachine::PlaceUnits()
 
 			// place and set up
 			auto XYZ = pCell->GetCoordsWithBridge();
-			if(Item->Put(XYZ, (MapClass::GetCellIndex(pCell->MapCoords) & 7))) {
+			if(Item->Put(XYZ, (MapClass::GetCellIndex(pCell->MapCoords) & 7u))) {
 				if(ItemBuilding) {
 					if(pData->SW_DeliverBuildups) {
 						ItemBuilding->DiscoveredBy(this->Super->Owner);
