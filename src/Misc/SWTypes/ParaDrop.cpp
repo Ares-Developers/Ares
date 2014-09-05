@@ -313,7 +313,7 @@ void SW_ParaDrop::SendPDPlane(HouseClass* pOwner, CellClass* pTarget, AircraftTy
 		CellStruct spawn_cell = MapClass::Instance->PickCellOnEdge(edge, CellStruct::Empty,
 			CellStruct::Empty, SpeedType::Winged, true, MovementZone::Normal);
 
-		pPlane->QueueMission(mission_ParadropApproach, false);
+		pPlane->QueueMission(Mission::ParadropApproach, false);
 
 		if(pTarget) {
 			pPlane->SetTarget(pTarget);

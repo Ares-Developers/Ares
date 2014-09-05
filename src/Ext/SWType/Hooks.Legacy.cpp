@@ -147,7 +147,7 @@ DEFINE_HOOK(53B080, PsyDom_Fire, 5) {
 			if(!PsyDom::Owner->ControlledByHuman()) {
 				for(int i=0; i<Minions.Count; ++i) {
 					FootClass* pFoot = Minions.GetItem(i);
-					pFoot->QueueMission(mission_Hunt, false);
+					pFoot->QueueMission(Mission::Hunt, false);
 				}
 			}
 		}
@@ -950,7 +950,7 @@ DEFINE_HOOK(44CCE7, BuildingClass_Mi_Missile_GenericSW, 6)
 		: MapClass::Instance->GetCellAt(pThis->Owner->NukeTarget);
 
 	pThis->Fire(pTarget, 0);
-	pThis->QueueMission(mission_Guard, false);
+	pThis->QueueMission(Mission::Guard, false);
 
 	R->EAX(1);
 	return 0x44D599;

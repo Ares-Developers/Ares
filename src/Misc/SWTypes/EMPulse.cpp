@@ -79,7 +79,7 @@ bool SW_EMPulse::Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPl
 
 			// setup the cannon and start the fire mission
 			pBld->FiringSWType = pType->ArrayIndex;
-			pBld->QueueMission(mission_Missile, false);
+			pBld->QueueMission(Mission::Missile, false);
 			pBld->NextMission();
 		} else {
 			// create a bullet and detonate immediately

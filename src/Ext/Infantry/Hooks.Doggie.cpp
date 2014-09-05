@@ -71,7 +71,7 @@ DEFINE_HOOK(5200C1, InfantryClass_UpdatePanic_Doggie, 6)
 				pThis->MoveToTiberium(16, false);
 				if(pThis->Destination) {
 					pThis->SetTarget(nullptr);
-					pThis->QueueMission(mission_Move, false);
+					pThis->QueueMission(Mission::Move, false);
 					pThis->NextMission();
 				}
 			}

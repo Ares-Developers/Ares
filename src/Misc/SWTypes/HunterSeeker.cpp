@@ -115,7 +115,7 @@ bool SW_HunterSeeker::Activate(SuperClass* pThis, const CellStruct &Coords, bool
 
 		if(pHunter->Put(crd, 64)) {
 			pHunter->Locomotor->Acquire_Hunter_Seeker_Target();
-			pHunter->QueueMission(mission_Attack, false);
+			pHunter->QueueMission(Mission::Attack, false);
 			pHunter->NextMission();
 		} else {
 			GameDelete(pHunter);

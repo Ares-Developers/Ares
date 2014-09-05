@@ -183,7 +183,7 @@ bool HouseExt::HasNeededFactory(HouseClass *pHouse, TechnoTypeClass *pItem) {
 		auto pBld = pHouse->Buildings[i];
 		if(!pBld->InLimbo && pBld->HasPower) {
 			if(pBld->Type->Factory == WhatAmI) {
-				if(pBld->GetCurrentMission() != mission_Selling && pBld->QueuedMission != mission_Selling) {
+				if(pBld->GetCurrentMission() != Mission::Selling && pBld->QueuedMission != Mission::Selling) {
 					if((pBld->Type->GetOwners() & ItemOwners) != 0) {
 						return true;
 					}

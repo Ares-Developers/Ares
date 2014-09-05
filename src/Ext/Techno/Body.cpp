@@ -62,7 +62,7 @@ void TechnoExt::SpawnSurvivors(FootClass *pThis, TechnoClass *pKiller, bool Sele
 					pController->CaptureManager->FreeUnit(pThis);
 					pController->CaptureManager->CaptureUnit(Hijacker); // does the immunetopsionics check for us
 					--Unsorted::IKnowWhatImDoing;
-					Hijacker->QueueMission(mission_Guard, true); // override the fate the AI decided upon
+					Hijacker->QueueMission(Mission::Guard, true); // override the fate the AI decided upon
 					
 				}
 				VocClass::PlayAt(pExt->HijackerLeaveSound, pThis->Location, 0);
@@ -165,7 +165,7 @@ bool TechnoExt::EjectSurvivor(FootClass *Survivor, CoordStruct loc, bool Select)
 		}
 	} else {
 		Survivor->Scatter(CoordStruct::Empty, true, false);
-		Survivor->QueueMission(Survivor->Owner->ControlledByHuman() ? mission_Guard : mission_Hunt, 0);
+		Survivor->QueueMission(Survivor->Owner->ControlledByHuman() ? Mission::Guard : Mission::Hunt, 0);
 	}
 
 	Survivor->ShouldEnterOccupiable = false;
@@ -522,7 +522,7 @@ bool TechnoExt::CreateWithDroppod(FootClass *Object, const CoordStruct& XYZ) {
 		Object->Facing.set(DirStruct());
 		if(!Object->InLimbo) {
 			Object->See(0, 0);
-			Object->QueueMission(mission_Guard, 0);
+			Object->QueueMission(Mission::Guard, 0);
 			Object->NextMission();
 			return true;
 		}
@@ -754,7 +754,7 @@ AresAction::Value TechnoExt::ExtData::GetActionHijack(TechnoClass* pTarget) {
 	}
 
 	// target is bad
-	if(pTarget->CurrentMission == mission_Selling || pTarget->IsBeingWarpedOut()
+	if(pTarget->CurrentMission == Mission::Selling || pTarget->IsBeingWarpedOut()
 		|| pTargetType->IsTrain || pTargetType->BalloonHover
 		|| (absTarget != abs_Unit && !pTarget->IsStrange())
 		//|| (absTarget == abs_Unit && ((UnitTypeClass*)pTargetType)->NonVehicle) replaced by Hijacker.Allowed
@@ -910,7 +910,7 @@ bool TechnoExt::ExtData::PerformActionHijack(TechnoClass* pTarget) {
 			ret = false;
 		}
 
-		pTarget->QueueMission(mission_Guard, true);
+		pTarget->QueueMission(Mission::Guard, true);
 	}
 
 	return ret;

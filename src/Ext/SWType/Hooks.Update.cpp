@@ -45,10 +45,10 @@ std::vector<SWStatus> GetSuperWeaponStatuses(HouseClass* pHouse) {
 							if(!status.Charging) {
 								status.Charging = validBuilding
 									&& !pBld->IsBeingWarpedOut()
-									&& (pBld->CurrentMission != mission_Selling)
-									&& (pBld->QueuedMission != mission_Selling)
-									&& (pBld->CurrentMission != mission_Construction)
-									&& (pBld->QueuedMission != mission_Construction);
+									&& (pBld->CurrentMission != Mission::Selling)
+									&& (pBld->QueuedMission != Mission::Selling)
+									&& (pBld->CurrentMission != Mission::Construction)
+									&& (pBld->QueuedMission != Mission::Construction);
 							}
 						}
 					}

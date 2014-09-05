@@ -367,9 +367,9 @@ bool EMPulse::isEligibleEMPTarget(TechnoClass * Target, HouseClass * SourceHouse
 bool EMPulse::IsDeactivationAdvisable(TechnoClass* Target) {
 	switch(Target->CurrentMission)
 	{
-	case mission_Selling:
-	case mission_Construction:
-	case mission_Unload:
+	case Mission::Selling:
+	case Mission::Construction:
+	case Mission::Unload:
 		if(EMPulse::verbose) {
 			Debug::Log("[IsDeactivationAdvisable] %s should not be disabled. Mission: %d\n",
 				Target->get_ID(), Target->CurrentMission);
@@ -712,8 +712,8 @@ void EMPulse::DisableEMPEffect(TechnoClass * Victim) {
 		if (UnitClass * Unit = specific_cast<UnitClass *>(Victim)) {
 			if (Unit->Type->Harvester || Unit->Type->ResourceGatherer) {
 				// prevent unloading harvesters from being irritated.
-				if (pData->EMPLastMission == mission_Guard) {
-					pData->EMPLastMission = mission_Enter;
+				if (pData->EMPLastMission == Mission::Guard) {
+					pData->EMPLastMission = Mission::Enter;
 				}
 
 				Unit->QueueMission(pData->EMPLastMission, true);
@@ -722,7 +722,7 @@ void EMPulse::DisableEMPEffect(TechnoClass * Victim) {
 		}
 
 		if(!hasMission && !Foot->Owner->ControlledByHuman()) {
-			Foot->QueueMission(mission_Hunt, false);
+			Foot->QueueMission(Mission::Hunt, false);
 		}
 	}
 }
@@ -778,7 +778,7 @@ bool EMPulse::EnableEMPEffect2(TechnoClass * Victim) {
 		}
 
 		if(generic_cast<FootClass *>(Victim)) {
-			Victim->QueueMission(mission_Sleep, true);
+			Victim->QueueMission(Mission::Sleep, true);
 		}
 
 		// release all captured units.
@@ -837,8 +837,8 @@ void EMPulse::DisableEMPEffect2(TechnoClass * Victim) {
 			if (UnitClass * Unit = specific_cast<UnitClass *>(Victim)) {
 				if (Unit->Type->Harvester || Unit->Type->ResourceGatherer) {
 					// prevent unloading harvesters from being irritated.
-					if (pData->EMPLastMission == mission_Guard) {
-						pData->EMPLastMission = mission_Enter;
+					if (pData->EMPLastMission == Mission::Guard) {
+						pData->EMPLastMission = Mission::Enter;
 					}
 
 					Unit->QueueMission(pData->EMPLastMission, true);
@@ -847,7 +847,7 @@ void EMPulse::DisableEMPEffect2(TechnoClass * Victim) {
 			}
 
 			if(!hasMission && !Foot->Owner->ControlledByHuman()) {
-				Foot->QueueMission(mission_Hunt, false);
+				Foot->QueueMission(Mission::Hunt, false);
 			}
 		}
 	}

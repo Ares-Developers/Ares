@@ -370,7 +370,7 @@ void BuildingExt::buildLines(BuildingClass* theBuilding, CellStruct selectedCell
 					--Unsorted::IKnowWhatImDoing;
 
 					if(Put) {
-						tempBuilding->QueueMission(mission_Construction, false);
+						tempBuilding->QueueMission(Mission::Construction, false);
 						tempBuilding->DiscoveredBy(buildingOwner);
 						tempBuilding->unknown_bool_6DD = 1;
 					} else {

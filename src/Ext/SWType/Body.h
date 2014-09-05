@@ -72,7 +72,7 @@ public:
 		// SpyPlane
 		ValueableIdx<AircraftTypeClass> SpyPlane_TypeIndex;
 		Valueable<int> SpyPlane_Count;
-		ValueableIdx<MissionClass> SpyPlane_Mission;
+		Valueable<Mission> SpyPlane_Mission;
 
 		// Lightning Storm
 		Nullable<int> Weather_Duration;
@@ -250,7 +250,7 @@ public:
 		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			SpyPlane_TypeIndex (0),
 			SpyPlane_Count (1),
-			SpyPlane_Mission (mission_AttackAgain),
+			SpyPlane_Mission (Mission::AttackAgain),
 			Weather_CloudHeight (-1),
 			Weather_ScatterCount (1),
 			Nuke_PsiWarning (nullptr),

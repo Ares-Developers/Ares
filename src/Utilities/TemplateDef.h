@@ -363,6 +363,18 @@ void Valueable<OwnerHouseKind>::Read(INI_EX &parser, const char* pSection, const
 	}
 }
 
+template<>
+void Valueable<Mission>::Read(INI_EX &parser, const char* pSection, const char* pKey, bool Allocate) {
+	if(parser.ReadString(pSection, pKey)) {
+		auto value = MissionControlClass::FindIndex(parser.value());
+		if(value != Mission::None) {
+			this->Set(value);
+		} else if(parser.declared()) {
+			Debug::INIParseFailed(pSection, pKey, parser.value(), "Invalid Mission name");
+		}
+	}
+}
+
 // ValueableVector
 
 template <typename T>

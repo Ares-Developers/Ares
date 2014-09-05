@@ -116,7 +116,7 @@ bool SW_NuclearMissile::Activate(SuperClass* pThis, const CellStruct &Coords, bo
 				Debug::Log("Nuke launched from Missile Silo, type %s.\n", pSilo->Type->ID);
 				// setup the missile and start the fire mission
 				pSilo->FiringSWType = pType->ArrayIndex;
-				pSilo->QueueMission(mission_Missile, false);
+				pSilo->QueueMission(Mission::Missile, false);
 				pSilo->NextMission();
 
 				pThis->Owner->NukeTarget = Coords;

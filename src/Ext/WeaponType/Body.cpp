@@ -197,7 +197,7 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 	Target->SetTarget(nullptr);
 	Target->CurrentTargets.Clear(); // Target->ShouldLoseTargetNow ?
 	Target->SetFocus(nullptr);
-	Target->QueueMission(mission_Sleep, true);
+	Target->QueueMission(Mission::Sleep, true);
 	Target->unknown_C4 = 0; // don't ask
 	Target->unknown_5A0 = 0;
 	Target->CurrentGattlingStage = 0;

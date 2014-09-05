@@ -815,7 +815,7 @@ DEFINE_HOOK(519675, InfantryClass_UpdatePosition_BeforeInfantrySpecific, A)
 
 	if(pThis) {
 		// steal vehicles / reclaim KillDriver'd units using CanDrive
-		if(pThis->CurrentMission == mission_Capture) {
+		if(pThis->CurrentMission == Mission::Capture) {
 			if(TechnoClass* pDest = generic_cast<TechnoClass*>(pThis->Destination)) {
 				// this is the possible target we stand on
 				CellClass* pCell = pThis->GetCell();
@@ -883,8 +883,8 @@ DEFINE_HOOK(471C96, CaptureManagerClass_CanCapture, A)
 	}
 
 	// currently disallowed
-	eMission mission = pTarget->CurrentMission;
-	if(pTarget->IsIronCurtained() || mission == mission_Selling || mission == mission_Construction) {
+	auto mission = pTarget->CurrentMission;
+	if(pTarget->IsIronCurtained() || mission == Mission::Selling || mission == Mission::Construction) {
 		return Disallowed;
 	}
 

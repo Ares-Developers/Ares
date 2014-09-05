@@ -75,7 +75,7 @@ DEFINE_HOOK(693263, MouseClass_ReactToClicks_LMBUp, 5)
 							T->ReceiveDamage(&n, 0, WarheadTypeClass::Find("NUKE"), nullptr, false, false, nullptr);
 							break;
 						case 4:
-							T->QueueMission(mission_Hunt, true);
+							T->QueueMission(Mission::Hunt, true);
 							break;
 					}
 				}

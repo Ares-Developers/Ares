@@ -46,7 +46,7 @@ public:
 		BuildingClass *GarrisonedIn; // when infantry garrisons a building, we need a fast way to find said building when damage forwarding kills it
 
 		AnimClass *EMPSparkleAnim;
-		eMission EMPLastMission;
+		Mission EMPLastMission;
 
 		bool ShadowDrawnManually;
 
@@ -100,7 +100,7 @@ public:
 			HijackerHouse (nullptr),
 			DriverKilled (false),
 			EMPSparkleAnim (nullptr),
-			EMPLastMission (mission_None),
+			EMPLastMission (Mission::None),
 			ShadowDrawnManually (false),
 			RadarJam(nullptr),
 			PoweredUnit(nullptr),

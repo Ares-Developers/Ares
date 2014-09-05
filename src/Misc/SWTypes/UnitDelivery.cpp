@@ -120,11 +120,11 @@ void UnitDeliveryStateMachine::PlaceUnits()
 
 			// set the appropriate mission
 			if(ItemBuilding && pData->SW_DeliverBuildups) {
-				ItemBuilding->QueueMission(mission_Construction, false);
+				ItemBuilding->QueueMission(Mission::Construction, false);
 			} else {
 				// only computer units can hunt
 				auto Guard = ItemBuilding || pOwner->ControlledByHuman();
-				auto Mission = Guard ? mission_Guard : mission_Hunt;
+				auto Mission = Guard ? Mission::Guard : Mission::Hunt;
 				Item->QueueMission(Mission, false);
 			}
 

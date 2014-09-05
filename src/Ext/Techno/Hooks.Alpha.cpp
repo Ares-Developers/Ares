@@ -117,7 +117,7 @@ void UpdateAlphaShape(ObjectClass* pSource) {
 	}
 
 	if(auto pBld = abstract_cast<BuildingClass*>(pSource)) {
-		if(pBld->GetCurrentMission() != mission_Construction) {
+		if(pBld->GetCurrentMission() != Mission::Construction) {
 			Inactive |= !pBld->IsPowerOnline();
 		}
 	}

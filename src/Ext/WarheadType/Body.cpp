@@ -245,7 +245,7 @@ bool WarheadTypeExt::ExtData::applyPermaMC(CoordStruct *coords, HouseClass* Owne
 			}
 			pTarget->SetOwningHouse(Owner, 1);
 			pTarget->MindControlledByAUnit = 1;
-			pTarget->QueueMission(mission_Guard, 0);
+			pTarget->QueueMission(Mission::Guard, 0);
 
 			CoordStruct XYZ = *coords;
 			XYZ.Z += pType->MindControlRingOffset;
@@ -431,7 +431,7 @@ bool WarheadTypeExt::ExtData::applyKillDriver(BulletClass* Bullet) {
 
 			// Hand over to Civilian/Special house
 			pTarget->SetOwningHouse(HouseClass::FindByCountryIndex(HouseTypeClass::FindIndexOfName("Special")));
-			pTarget->QueueMission(mission_Harmless, true);
+			pTarget->QueueMission(Mission::Harmless, true);
 			return true;
 		} else {
 			return false;

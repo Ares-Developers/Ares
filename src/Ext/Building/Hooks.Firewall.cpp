@@ -63,7 +63,7 @@ DEFINE_HOOK(43EFB3, BuildingClass_GetStaticImageFrame, 6)
 {
 	GET(BuildingClass *, B, ESI);
 
-	if(B->GetCurrentMission() != mission_Construction) {
+	if(B->GetCurrentMission() != Mission::Construction) {
 		signed int FrameIdx = BuildingExt::GetImageFrameIndex(B);
 
 		if(FrameIdx != -1) {

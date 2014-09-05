@@ -129,16 +129,16 @@ bool BuildingExt::cPrismForwarding::ValidateSupportTower(BuildingExt::cPrismForw
 			//get all the data we need
 			TechnoExt::ExtData *pTechnoData = TechnoExt::ExtMap.Find(SlaveTower);
 			//BuildingExt::ExtData *pSlaveData = BuildingExt::ExtMap.Find(SlaveTower);
-			int SlaveMission = SlaveTower->GetCurrentMission();
+			auto SlaveMission = SlaveTower->GetCurrentMission();
 			//now check all the rules
 			if(SlaveTower->ReloadTimer.Expired()
 				&& SlaveTower != TargetTower
 				&& !SlaveTower->DelayBeforeFiring
 				&& !SlaveTower->IsBeingDrained()
 				&& !SlaveTower->IsBeingWarpedOut()
-				&& SlaveMission != mission_Attack
-				&& SlaveMission != mission_Construction
-				&& SlaveMission != mission_Selling
+				&& SlaveMission != Mission::Attack
+				&& SlaveMission != Mission::Construction
+				&& SlaveMission != Mission::Selling
 				&& pTechnoData->IsPowered() //robot control logic
 				&& pTechnoData->IsOperated() //operator logic
 				&& SlaveTower->IsPowerOnline() //base-powered or overpowerer-powered

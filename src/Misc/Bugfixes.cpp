@@ -891,7 +891,7 @@ DEFINE_HOOK(47243F, CaptureManagerClass_DecideUnitFate_BuildingFate, 6) {
 	if(specific_cast<BuildingClass *>(pVictim)) {
 		// 1. add to team and other fates don't really make sense for buildings
 		// 2. BuildingClass::Mission_Hunt() implementation is to do nothing!
-		pVictim->QueueMission(mission_Guard, 0);
+		pVictim->QueueMission(Mission::Guard, 0);
 		return 0x472604;
 	}
 	return 0;

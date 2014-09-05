@@ -130,7 +130,7 @@ DEFINE_HOOK(4444E2, BuildingClass_KickOutUnit_FindAlternateKickout, 6)
 	auto pData = TechnoTypeExt::ExtMap.Find(Production->GetTechnoType());
 
 	if(Src != Tst
-	 && Tst->GetCurrentMission() == mission_Guard
+	 && Tst->GetCurrentMission() == Mission::Guard
 	 && Tst->Type->Factory == Src->Type->Factory
 	 && Tst->Type->Naval == Src->Type->Naval
 	 && pData->CanBeBuiltAt(Tst->Type)
