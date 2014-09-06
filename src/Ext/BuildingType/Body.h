@@ -5,6 +5,7 @@
 
 #include "../_Container.hpp"
 #include "../../Ares.h"
+#include "../../Utilities/Constructs.h"
 #include "../../Utilities/Template.h"
 
 #include <vector>
@@ -159,6 +160,13 @@ public:
 		NullableIdx<VocClass> GateDownSound;
 		NullableIdx<VocClass> GateUpSound;
 
+		// academy
+		mutable OptionalStruct<bool> Academy;
+		Valueable<double> AcademyInfantry;
+		Valueable<double> AcademyAircraft;
+		Valueable<double> AcademyVehicle;
+		Valueable<double> AcademyBuilding;
+
 		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			Solid_Height (0),
 			IsCustom (false),
@@ -217,6 +225,8 @@ public:
 		bool CanBeOccupiedBy(InfantryClass *whom);
 
 		void UpdateFoundationRadarShape();
+
+		bool IsAcademy() const;
 	};
 
 	static Container<BuildingTypeExt> ExtMap;

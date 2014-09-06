@@ -237,6 +237,12 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 	this->GateUpSound.Read(exINI, pID, "GateUpSound");
 
 	this->IsPassable.Read(exINI, pID, "IsPassable");
+
+	this->AcademyInfantry.Read(exINI, pID, "Academy.InfantryVeterancy");
+	this->AcademyAircraft.Read(exINI, pID, "Academy.AircraftVeterancy");
+	this->AcademyVehicle.Read(exINI, pID, "Academy.VehiclesVeterancy");
+	this->AcademyBuilding.Read(exINI, pID, "Academy.BuildingsVeterancy");
+	this->Academy.clear();
 }
 
 void BuildingTypeExt::ExtData::CompleteInitialization(BuildingTypeClass *pThis) {
@@ -410,6 +416,17 @@ bool BuildingTypeExt::ExtData::IsLinkable() {
 bool BuildingTypeExt::ExtData::CanBeOccupiedBy(InfantryClass *whom) {
 	// if CanBeOccupiedBy isn't empty, we have to check if this soldier is allowed in
 	return this->AllowedOccupiers.empty() || this->AllowedOccupiers.Contains(whom->Type);
+}
+
+bool BuildingTypeExt::ExtData::IsAcademy() const {
+	if(this->Academy.empty()) {
+		this->Academy = this->AcademyInfantry > 0.0
+			|| this->AcademyAircraft > 0.0
+			|| this->AcademyVehicle > 0.0
+			|| this->AcademyBuilding > 0.0;
+	}
+
+	return this->Academy;
 }
 
 // =============================

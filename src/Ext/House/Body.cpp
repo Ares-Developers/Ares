@@ -569,6 +569,48 @@ InfantryTypeClass* HouseExt::ExtData::GetDisguise() const {
 	return RulesClass::Instance->ThirdDisguise;
 }
 
+void HouseExt::ExtData::UpdateAcademy(BuildingClass* pAcademy, bool added) {
+	// check if added and there already, or removed and not there
+	auto it = std::find(this->Academies.cbegin(), this->Academies.cend(), pAcademy);
+	if(added == (it != this->Academies.cend())) {
+		return;
+	}
+
+	// now this can be unconditional
+	if(added) {
+		this->Academies.push_back(pAcademy);
+	} else {
+		this->Academies.erase(it);
+	}
+
+	// accumulate the maximum bonuses
+	auto update_max = [](double& accumulator, double value) {
+		accumulator = std::max(accumulator, value);
+	};
+
+	this->AcademyInfantry = 0.0;
+	this->AcademyAircraft = 0.0;
+	this->AcademyVehicle = 0.0;
+	this->AcademyBuilding = 0.0;
+
+	for(auto pBld : this->Academies) {
+		auto pExt = BuildingTypeExt::ExtMap.Find(pBld->Type);
+		update_max(this->AcademyInfantry, pExt->AcademyInfantry);
+		update_max(this->AcademyAircraft, pExt->AcademyAircraft);
+		update_max(this->AcademyVehicle, pExt->AcademyVehicle);
+		update_max(this->AcademyBuilding, pExt->AcademyBuilding);
+	}
+}
+
+void HouseExt::ExtData::ApplyAcademy(TechnoClass* pTechno, const double& bonus) const {
+	if(pTechno->GetTechnoType()->Trainable) {
+		auto& value = pTechno->Veterancy.Veterancy;
+		if(bonus > value) {
+			value = static_cast<float>(std::min(bonus, RulesClass::Instance->VeteranCap));
+		}
+	}
+}
+
 // =============================
 // container hooks
 
