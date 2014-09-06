@@ -555,9 +555,9 @@ DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
 			{
 				if(pThis->EnemyHouseIndex != -1) {
 					if(pThis->PreferredTargetCell == CellStruct::Empty) {
-						Cell = *((pThis->PreferredTargetType == TargetType::Anything)
-							? pThis->PickIonCannonTarget(Cell)
-							: pThis->PickTargetByType(&Cell, pThis->PreferredTargetType));
+						Cell = (pThis->PreferredTargetType == TargetType::Anything)
+							? pThis->PickIonCannonTarget()
+							: pThis->PickTargetByType(pThis->PreferredTargetType);
 					} else {
 						Cell = pThis->PreferredTargetCell;
 					}
@@ -614,7 +614,7 @@ DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
 			case SuperWeaponAITargetingMode::Offensive:
 			{
 				if(pThis->EnemyHouseIndex != -1 && pExt->IsHouseAffected(pThis, HouseClass::Array->GetItem(pThis->EnemyHouseIndex))) {
-					pThis->PickIonCannonTarget(Cell);
+					Cell = pThis->PickIonCannonTarget();
 					if(Cell != CellStruct::Empty) {
 						LaunchSW(Cell);
 					}
