@@ -162,7 +162,7 @@ DEFINE_HOOK(702E9D, TechnoClass_RegisterDestruction_Veterancy, 6) {
 			// gunners need to be promoted manually, or they won't only get
 			// the experience until after they exited their transport once.
 			if(promoteImmediately) {
-				Rank::Value newRank = pExperience->Veterancy.GetRemainingLevel();
+				auto newRank = pExperience->Veterancy.GetRemainingLevel();
 
 				if(pExperience->CurrentRanking != newRank) {
 					if(pExperience->CurrentRanking != Rank::Invalid) {
