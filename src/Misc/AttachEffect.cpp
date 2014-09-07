@@ -93,7 +93,7 @@ void AttachEffectTypeClass::Attach(TechnoClass* Target, int Duration, TechnoClas
 	TechnoExt::RecalculateStats(Target);
 
 	//check cloak
-	if (!!this->ForceDecloak && Target->CloakState) {
+	if (!!this->ForceDecloak && Target->CloakState != CloakState::Uncloaked) {
 		Target->Uncloak(true);
 	}
 

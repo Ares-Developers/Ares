@@ -51,7 +51,7 @@ DEFINE_HOOK(73C725, UnitClass_DrawSHP_DrawShadowEarlier, 6)
 			return retAddr;
 	}
 
-	if(U->CloakState || U->Type->Underwater || U->Type->SmallVisceroid || U->Type->LargeVisceroid) {
+	if(U->CloakState != CloakState::Uncloaked || U->Type->Underwater || U->Type->SmallVisceroid || U->Type->LargeVisceroid) {
 		return retAddr;
 	}
 

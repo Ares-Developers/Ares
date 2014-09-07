@@ -67,7 +67,7 @@ bool SW_SonarPulse::Activate(SuperClass* pThis, const CellStruct &Coords, bool I
 		}
 
 		// actually detect this
-		if(pTechno->CloakState) {
+		if(pTechno->CloakState != CloakState::Uncloaked) {
 			pTechno->Uncloak(1);
 			pTechno->NeedsRedraw = 1;
 			TechnoExt::ExtData *pExt = TechnoExt::ExtMap.Find(pTechno);

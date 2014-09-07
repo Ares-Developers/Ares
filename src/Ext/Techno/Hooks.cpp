@@ -1758,7 +1758,7 @@ DEFINE_HOOK(6F525B, TechnoClass_DrawExtras_PowerOff, 5)
 			&& !pBld->IsBeingWarpedOut()
 			&& !pBld->WarpingOut
 			// never show to enemies when cloaked, and only if allowed
-			&& (canSeeRepair || (!pBld->CloakState && RulesExt::Global()->EnemyWrench));
+			&& (canSeeRepair || (pBld->CloakState == CloakState::Uncloaked && RulesExt::Global()->EnemyWrench));
 
 		// display power off marker only for current player's buildings
 		bool showPower = FileSystem::POWEROFF_SHP

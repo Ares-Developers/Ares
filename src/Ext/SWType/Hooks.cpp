@@ -633,7 +633,7 @@ DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
 				// find one of the cloaked enemy technos, posing the largest threat.
 				DiscreteSelectionClass<TechnoClass*> list;
 				for(auto pTechno : *TechnoClass::Array) {
-					if(pTechno->CloakState) {
+					if(pTechno->CloakState != CloakState::Uncloaked) {
 						if(pExt->IsHouseAffected(pThis, pTechno->Owner)) {
 							if(pExt->IsTechnoAffected(pTechno)) {
 								int value = pTechno->GetTechnoType()->ThreatPosed;

@@ -139,7 +139,7 @@ DEFINE_HOOK(6FCA30, TechnoClass_GetWeaponState, 6)
 {
 	GET(TechnoClass *, Techno, ESI);
 	TechnoClass *Transport = Techno->Transporter;
-	return (Transport && Transport->CloakState) ? 0x6FCA4F : 0;
+	return (Transport && Transport->CloakState != CloakState::Uncloaked) ? 0x6FCA4F : 0;
 }
 
 // PrismSupportModifier repair
