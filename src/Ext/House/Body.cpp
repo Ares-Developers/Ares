@@ -39,7 +39,7 @@ HouseExt::RequirementStatus HouseExt::RequirementsMet(HouseClass *pHouse, Techno
 	// this has to happen before the first possible "can build" response or NCO happens
 	if(pItem->WhatAmI() != abs_BuildingType && !FactoryForObjectExists(pHouse, pItem)) { return Incomplete; }
 
-	if(!(pData->PrerequisiteTheaters & (1 << ScenarioClass::Instance->Theater))) { return Forbidden; }
+	if(!(pData->PrerequisiteTheaters & (1 << static_cast<int>(ScenarioClass::Instance->Theater)))) { return Forbidden; }
 	if(Prereqs::HouseOwnsAny(pHouse, &pData->PrerequisiteNegatives)) { return Forbidden; }
 
 	if(pData->ReversedByHouses.contains(pHouse)) {

@@ -38,13 +38,13 @@ DEFINE_HOOK(5F9070, ObjectTypeClass_Load2DArt, 0)
 
 	char basename[256];
 
-	int scenarioTheater = ScenarioClass::Instance->Theater;
-	Theater *pTheaterData = &Theater::Array[scenarioTheater];
+	auto scenarioTheater = ScenarioClass::Instance->Theater;
+	const auto& TheaterData = Theater::GetTheater(scenarioTheater);
 
 	if(pTypeData && pTypeData->AlternateTheaterArt) {
 		if(!pType->ArcticArtInUse) { // this flag is not used anywhere outside this function, so I'll just hijack it
 			pType->ArcticArtInUse = true;
-			_snprintf_s(basename, 255, "%s%s", pType->ImageFile, pTheaterData->Letter);
+			_snprintf_s(basename, 255, "%s%s", pType->ImageFile, TheaterData.Letter);
 			if(!CCINIClass::INI_Art->GetSection(basename)) {
 				pType->ArcticArtInUse = false;
 				_snprintf_s(basename, 255, "%s", pType->ImageFile);
@@ -62,14 +62,14 @@ DEFINE_HOOK(5F9070, ObjectTypeClass_Load2DArt, 0)
 		pType->ArcticArtInUse = false;
 	}
 
-	_snprintf_s(basename, 255, "%s.%s", pType->ImageFile, (pType->Theater ? pTheaterData->Extension : "SHP"));
+	_snprintf_s(basename, 255, "%s.%s", pType->ImageFile, (pType->Theater ? TheaterData.Extension : "SHP"));
 
-	if(!pType->Theater && pType->NewTheater && scenarioTheater != -1) {
+	if(!pType->Theater && pType->NewTheater && scenarioTheater != TheaterType::None) {
 		unsigned char c0 = basename[0];
 		unsigned char c1 = basename[1] & ~0x20; // evil hack to uppercase
 		if(isalpha(c0)) {
 			if(c1 == 'A' || c1 == 'T') {
-				basename[1] = pTheaterData->Letter[0];
+				basename[1] = TheaterData.Letter[0];
 			}
 		}
 	}
@@ -116,14 +116,14 @@ DEFINE_HOOK(5F9070, ObjectTypeClass_Load2DArt, 0)
 DEFINE_HOOK(5F96B0, ObjectTypeClass_TheaterSpecificID, 6)
 {
 	GET(char *, basename, ECX);
-	GET(signed int, idxTheater, EDX);
+	GET(TheaterType, Theater, EDX);
 
-	if(idxTheater != -1) {
+	if(Theater != TheaterType::None) {
 		char c0 = basename[0];
 		char c1 = basename[1] & ~0x20; // evil hack to uppercase
 		if(isalpha(static_cast<unsigned char>(c0))) {
 			if(c1 == 'A' || c1 == 'T') {
-				basename[1] = Theater::Array[idxTheater].Letter[0];
+				basename[1] = Theater::GetTheater(Theater).Letter[0];
 			}
 		}
 	}

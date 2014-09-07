@@ -61,7 +61,7 @@ public:
 	bool LoadFromINI(CCINIClass* pINI, const char* pSection, const char* pKey, const char* pDefault = "") {
 		if(pINI->ReadString(pSection, pKey, pDefault, Ares::readBuffer, Ares::readLength)) {
 			if(char* suffix = strstr(Ares::readBuffer, "~~~")) {
-				const char* theaterSpecific = Theater::Array[ScenarioClass::Instance->Theater].Extension;
+				const char* theaterSpecific = Theater::GetTheater(ScenarioClass::Instance->Theater).Extension;
 				suffix[0] = theaterSpecific[0];
 				suffix[1] = theaterSpecific[1];
 				suffix[2] = theaterSpecific[2];
