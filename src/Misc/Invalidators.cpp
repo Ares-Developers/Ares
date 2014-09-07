@@ -143,12 +143,12 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 		if(B->TechLevel < 0 || B->TechLevel > RulesClass::Instance->TechLevel) {
 			continue;
 		}
-		if(B->BuildCat == bcat_DontCare) {
+		if(B->BuildCat == BuildCat::DontCare) {
 			B->BuildCat = ((B->SuperWeapon != -1) || B->IsBaseDefense || B->Wall)
-				? bcat_Combat
-				: bcat_Infrastructure
+				? BuildCat::Combat
+				: BuildCat::Infrastructure
 				;
-			const char *catName = (B->BuildCat == bcat_Combat)
+			const char *catName = (B->BuildCat == BuildCat::Combat)
 				? "Combat"
 				: "Infrastructure"
 				;

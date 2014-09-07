@@ -53,7 +53,7 @@ DEFINE_HOOK(43E7B0, BuildingClass_DrawVisible, 5)
 	if(pThis->IsSelected && bReveal) {
 		auto pFactory = pThis->Factory;
 		if(pThis->Owner->ControlledByPlayer()) {
-			pFactory = pThis->Owner->GetPrimaryFactory(pType->Factory, pType->Naval, bcat_DontCare);
+			pFactory = pThis->Owner->GetPrimaryFactory(pType->Factory, pType->Naval, BuildCat::DontCare);
 		}
 
 		if(pFactory && pFactory->InProduction) {

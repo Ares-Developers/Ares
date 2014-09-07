@@ -609,7 +609,7 @@ DEFINE_HOOK(6AA711, TabCameoListClass_RecheckCameos_FilterAllowedCameos, 0)
 			}
 			if(TechnoType) {
 				auto Me = TechnoType->WhatAmI();
-				if(HouseClass::Player->GetPrimaryFactory(Me, TechnoType->Naval, false)) {
+				if(HouseClass::Player->GetPrimaryFactory(Me, TechnoType->Naval, BuildCat::DontCare)) {
 					NetworkEvent Event;
 					Event.FillEvent_ProduceAbandonSuspend(
 						HouseClass::Player->ArrayIndex, netev_ABANDON_ALL, cameo.ItemType, cameo.ItemIndex, TechnoType->Naval
