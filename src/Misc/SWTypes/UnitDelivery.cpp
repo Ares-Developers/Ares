@@ -90,7 +90,7 @@ void UnitDeliveryStateMachine::PlaceUnits()
 		short extentX = 1;
 		short extentY = 1;
 		SpeedType::Value SpeedType = SpeedType::Track;
-		MovementZone::Value MovementZone = MovementZone::Normal;
+		MovementZone MovementZone = MovementZone::Normal;
 
 		if(ItemBuilding) {
 			extentX = ItemBuilding->Type->GetFoundationWidth();

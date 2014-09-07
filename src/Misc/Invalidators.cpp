@@ -82,7 +82,7 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 			Debug::DevLog(Debug::Error, "[%s]SpeedType is invalid!\n", Item->ID);
 		}
 
-		if(IsFoot && Item->MovementZone == -1) {
+		if(IsFoot && Item->MovementZone == MovementZone::None) {
 			Debug::DevLog(Debug::Error, "[%s]MovementZone is invalid!\n", Item->ID);
 		}
 
