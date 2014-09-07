@@ -40,7 +40,7 @@ DEFINE_HOOK(6FF5F5, TechnoClass_Fire, 6)
 DEFINE_HOOK(75E963, WaveClass_CTOR, 6)
 {
 	GET(WaveClass *, Wave, ESI);
-	GET(DWORD, Type, ECX);
+	GET(WaveType, Type, ECX);
 	if(Type == WaveType::Laser || Type == WaveType::BigLaser) {
 		return 0;
 	}
