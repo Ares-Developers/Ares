@@ -54,7 +54,7 @@ void SW_LightningStorm::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeCla
 	pData->Message_Abort = CSFText("Msg:LightningStormActive");
 
 	pData->SW_AITargetingType = SuperWeaponAITargetingMode::LightningStorm;
-	pData->SW_Cursor = MouseCursor::First[MouseCursorType::LightningStorm];
+	pData->SW_Cursor = MouseCursor::GetCursor(MouseCursorType::LightningStorm);
 }
 
 void SW_LightningStorm::LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI)

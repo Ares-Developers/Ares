@@ -50,7 +50,7 @@ void SW_ChronoSphere::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass
 	pData->EVA_Activated = VoxClass::FindIndex("EVA_ChronosphereActivated");
 	
 	pData->SW_AffectsTarget = SuperWeaponTarget::Infantry | SuperWeaponTarget::Unit;
-	pData->SW_Cursor = MouseCursor::First[MouseCursorType::Chronosphere];
+	pData->SW_Cursor = MouseCursor::GetCursor(MouseCursorType::Chronosphere);
 }
 
 void SW_ChronoSphere::LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI)

@@ -55,7 +55,7 @@ void SW_PsychicDominator::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeC
 
 	pData->SW_AITargetingType = SuperWeaponAITargetingMode::PsychicDominator;
 	pData->SW_AffectsTarget = SuperWeaponTarget::Infantry | SuperWeaponTarget::Unit;
-	pData->SW_Cursor = MouseCursor::First[MouseCursorType::PsychicDominator];
+	pData->SW_Cursor = MouseCursor::GetCursor(MouseCursorType::PsychicDominator);
 }
 
 void SW_PsychicDominator::LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI)

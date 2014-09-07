@@ -16,7 +16,7 @@ void SW_DropPod::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW
 	pData->EVA_Activated = VoxClass::FindIndex("EVA_DropPodActivated");
 
 	pData->SW_AITargetingType = SuperWeaponAITargetingMode::ParaDrop;
-	pData->SW_Cursor = MouseCursor::First[MouseCursorType::ParaDrop];
+	pData->SW_Cursor = MouseCursor::GetCursor(MouseCursorType::ParaDrop);
 }
 
 void SW_DropPod::LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI)

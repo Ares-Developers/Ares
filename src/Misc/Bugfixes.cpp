@@ -651,16 +651,16 @@ DEFINE_HOOK(621B80, DSurface_FillRectWithColor, 5)
 DEFINE_HOOK(52BA78, _YR_GameInit_Pre, 5)
 {
 	// issue #198: animate the paradrop cursor
-	MouseCursor::First[MouseCursorType::ParaDrop].Interval = 4;
+	MouseCursor::GetCursor(MouseCursorType::ParaDrop).Interval = 4;
 
 	// issue #214: also animate the chronosphere cursor
-	MouseCursor::First[MouseCursorType::Chronosphere].Interval = 4;
+	MouseCursor::GetCursor(MouseCursorType::Chronosphere).Interval = 4;
 	
 	// issue #1380: the iron curtain cursor
-	MouseCursor::First[MouseCursorType::IronCurtain].Interval = 4;
+	MouseCursor::GetCursor(MouseCursorType::IronCurtain).Interval = 4;
 
 	// animate the engineer damage cursor
-	MouseCursor::First[MouseCursorType::Detonate].Interval = 4;
+	MouseCursor::GetCursor(MouseCursorType::Detonate).Interval = 4;
 
 	return 0;
 }

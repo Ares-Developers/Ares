@@ -25,7 +25,7 @@ void SW_ChronoWarp::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *
 {
 	// Every other thing will be read in the ChronoSphere.
 	
-	pData->SW_Cursor = MouseCursor::First[MouseCursorType::Chronosphere];
+	pData->SW_Cursor = MouseCursor::GetCursor(MouseCursorType::Chronosphere);
 }
 
 bool SW_ChronoWarp::Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer)

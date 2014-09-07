@@ -20,8 +20,8 @@ void SW_EMPulse::Initialize(SWTypeExt::ExtData* pData, SuperWeaponTypeClass* pSW
 	pData->EMPulse_TargetSelf = false;
 
 	pData->SW_AITargetingType = SuperWeaponAITargetingMode::None;
-	pData->SW_Cursor = MouseCursor::First[MouseCursorType::Attack];
-	pData->SW_NoCursor = MouseCursor::First[MouseCursorType::AttackOutOfRange];
+	pData->SW_Cursor = MouseCursor::GetCursor(MouseCursorType::Attack);
+	pData->SW_NoCursor = MouseCursor::GetCursor(MouseCursorType::AttackOutOfRange);
 }
 
 void SW_EMPulse::LoadFromINI(SWTypeExt::ExtData* pData, SuperWeaponTypeClass* pSW, CCINIClass* pINI)

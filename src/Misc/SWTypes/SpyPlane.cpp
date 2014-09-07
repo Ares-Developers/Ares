@@ -21,7 +21,7 @@ void SW_SpyPlane::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pS
 	pData->EVA_Ready = VoxClass::FindIndex("EVA_SpyPlaneReady");
 	
 	pData->SW_AITargetingType = SuperWeaponAITargetingMode::ParaDrop;
-	pData->SW_Cursor = MouseCursor::First[MouseCursorType::SpyPlane];
+	pData->SW_Cursor = MouseCursor::GetCursor(MouseCursorType::SpyPlane);
 }
 
 void SW_SpyPlane::LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI)

@@ -62,7 +62,7 @@ void SW_GeneticMutator::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeCla
 	pData->EVA_Activated = VoxClass::FindIndex("EVA_GeneticMutatorActivated");
 	
 	pData->SW_AITargetingType = SuperWeaponAITargetingMode::GeneticMutator;
-	pData->SW_Cursor = MouseCursor::First[MouseCursorType::GeneticMutator];
+	pData->SW_Cursor = MouseCursor::GetCursor(MouseCursorType::GeneticMutator);
 }
 
 void SW_GeneticMutator::LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI)

@@ -52,15 +52,15 @@ void SW_Protect::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW
 		pData->SW_RequiresHouse = SuperWeaponAffectedHouse::Team;
 		pData->SW_RequiresTarget = SuperWeaponTarget::Building;
 
-		pData->SW_Cursor = MouseCursor::First[MouseCursorType::ForceShield];
-		pData->SW_NoCursor = MouseCursor::First[MouseCursorType::NoForceShield];
+		pData->SW_Cursor = MouseCursor::GetCursor(MouseCursorType::ForceShield);
+		pData->SW_NoCursor = MouseCursor::GetCursor(MouseCursorType::NoForceShield);
 	} else {
 		// iron curtain and protect
 		pData->EVA_Ready = VoxClass::FindIndex("EVA_IronCurtainReady");
 		pData->EVA_Detected = VoxClass::FindIndex("EVA_IronCurtainDetected");
 		pData->EVA_Activated = VoxClass::FindIndex("EVA_IronCurtainActivated");
 
-		pData->SW_Cursor = MouseCursor::First[MouseCursorType::IronCurtain];
+		pData->SW_Cursor = MouseCursor::GetCursor(MouseCursorType::IronCurtain);
 	}
 }
 
