@@ -18,7 +18,7 @@ DEFINE_HOOK(6DD8D7, TActionClass_Execute, A)
 	}
 
 	// replicate the original instructions
-	auto value = pAction->ActionKind - 1;
+	auto value = static_cast<int>(pAction->ActionKind) - 1;
 	R->EDX(value);
 	return (value > 144) ? 0x6DFDDD : 0x6DD8E7;
 }
