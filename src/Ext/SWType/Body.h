@@ -244,7 +244,7 @@ public:
 
 		AresPCXFile SidebarPCX;
 
-		int HandledByNewSWType;
+		SuperWeaponType HandledByNewSWType;
 		int LastAction;
 
 		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
@@ -309,7 +309,7 @@ public:
 			SW_RangeMaximum(-1.0),
 			SW_Designators (),
 			SW_AnyDesignator (false),
-			HandledByNewSWType (-1),
+			HandledByNewSWType (SuperWeaponType::Invalid),
 			CameoPal(),
 			SW_DeliverBuildups (false)
 			{
@@ -335,8 +335,8 @@ public:
 		NewSWType* GetNewSWType() const;
 		bool IsOriginalType() const;
 		bool IsTypeRedirected() const;
-		int GetTypeIndexWithRedirect() const;
-		int GetNewTypeIndex() const;
+		SuperWeaponType GetTypeIndexWithRedirect() const;
+		SuperWeaponType GetNewTypeIndex() const;
 
 		WarheadTypeClass* GetWarhead() const;
 		AnimTypeClass* GetAnim() const;

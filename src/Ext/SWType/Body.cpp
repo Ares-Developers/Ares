@@ -79,8 +79,8 @@ void SWTypeExt::ExtData::LoadFromRulesFile(SuperWeaponTypeClass *pThis, CCINICla
 	}
 
 	if(exINI.ReadString(section, "Type")) {
-		int customType = NewSWType::FindIndex(exINI.value());
-		if(customType > -1) {
+		auto customType = NewSWType::FindIndex(exINI.value());
+		if(customType > SuperWeaponType::Invalid) {
 			pThis->Type = customType;
 		}
 	}
@@ -426,27 +426,27 @@ bool SWTypeExt::Launch(SuperClass* pThis, NewSWType* pSW, const CellStruct &Coor
 }
 
 bool SWTypeExt::ExtData::IsOriginalType() const {
-	return this->AttachedToObject->Type < FIRST_SW_TYPE;
+	return this->AttachedToObject->Type < static_cast<SuperWeaponType>(FIRST_SW_TYPE);
 }
 
 // is this an original type handled by a NewSWType?
 bool SWTypeExt::ExtData::IsTypeRedirected() const {
-	return this->HandledByNewSWType > -1;
+	return this->HandledByNewSWType > SuperWeaponType::Invalid;
 }
 
-int SWTypeExt::ExtData::GetTypeIndexWithRedirect() const {
+SuperWeaponType SWTypeExt::ExtData::GetTypeIndexWithRedirect() const {
 	return this->IsTypeRedirected() ? this->HandledByNewSWType : this->AttachedToObject->Type;
 }
 
-int SWTypeExt::ExtData::GetNewTypeIndex() const {
+SuperWeaponType SWTypeExt::ExtData::GetNewTypeIndex() const {
 	// if new type, return new type, if original type return only if handled (else it's -1).
 	return this->IsOriginalType() ? this->HandledByNewSWType : this->AttachedToObject->Type;
 }
 
 NewSWType* SWTypeExt::ExtData::GetNewSWType() const {
-	int TypeIdx = this->GetNewTypeIndex();
+	auto TypeIdx = this->GetNewTypeIndex();
 
-	if(TypeIdx >= FIRST_SW_TYPE) {
+	if(TypeIdx >= static_cast<SuperWeaponType>(FIRST_SW_TYPE)) {
 		return NewSWType::GetNthItem(TypeIdx);
 	}
 

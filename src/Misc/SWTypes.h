@@ -81,7 +81,7 @@ public:
 		return TypeIndex;
 	}
 
-	virtual bool HandlesType(int type) const {
+	virtual bool HandlesType(SuperWeaponType type) const {
 		return false;
 	}
 
@@ -108,13 +108,13 @@ public:
 	// static methods
 	static void Init();
 
-	static NewSWType* GetNthItem(int i) {
-		return Array.at(static_cast<size_t>(i - FIRST_SW_TYPE)).get();
+	static NewSWType* GetNthItem(SuperWeaponType i) {
+		return Array.at(static_cast<size_t>(i) - FIRST_SW_TYPE).get();
 	}
 
-	static int FindIndex(const char* pType);
+	static SuperWeaponType FindIndex(const char* pType);
 
-	static int FindHandler(int Type);
+	static SuperWeaponType FindHandler(SuperWeaponType Type);
 };
 
 // state machines - create one to use delayed effects [create a child class per NewSWType, obviously]

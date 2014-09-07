@@ -6,11 +6,11 @@
 class SW_Firewall : public NewSWType {
 public:
 	SW_Firewall() : NewSWType() {
-		SW_Firewall::FirewallTypeIndex = FIRST_SW_TYPE + this->GetTypeIndex();
+		SW_Firewall::FirewallType = static_cast<SuperWeaponType>(FIRST_SW_TYPE + this->GetTypeIndex());
 	};
 
 	virtual ~SW_Firewall() override {
-		SW_Firewall::FirewallTypeIndex = -1;
+		SW_Firewall::FirewallType = SuperWeaponType::Invalid;
 	};
 
 	virtual const char* GetTypeString() const override
@@ -27,7 +27,7 @@ public:
 
 	virtual bool Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer) override;
 
-	static int FirewallTypeIndex;
+	static SuperWeaponType FirewallType;
 };
 
 #endif

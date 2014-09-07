@@ -27,7 +27,7 @@ void TActionExt::ExtData::Initialize(TActionClass *pThis)
 bool TActionExt::ExtData::ActivateFirestorm(TActionClass* pAction, HouseClass* pHouse, ObjectClass* pObject, TriggerClass* pTrigger, CellStruct* pos)
 {
 	if(!pHouse->FirestormActive) {
-		auto index = pHouse->FindSuperWeaponIndex(SW_Firewall::FirewallTypeIndex);
+		auto index = pHouse->FindSuperWeaponIndex(SW_Firewall::FirewallType);
 
 		if(index >= 0) {
 			pHouse->Fire_SW(index, CellStruct::Empty);
@@ -45,7 +45,7 @@ bool TActionExt::ExtData::ActivateFirestorm(TActionClass* pAction, HouseClass* p
 bool TActionExt::ExtData::DeactivateFirestorm(TActionClass* pAction, HouseClass* pHouse, ObjectClass* pObject, TriggerClass* pTrigger, CellStruct* pos)
 {
 	if(pHouse->FirestormActive) {
-		auto index = pHouse->FindSuperWeaponIndex(SW_Firewall::FirewallTypeIndex);
+		auto index = pHouse->FindSuperWeaponIndex(SW_Firewall::FirewallType);
 
 		if(index >= 0) {
 			pHouse->Fire_SW(index, CellStruct::Empty);

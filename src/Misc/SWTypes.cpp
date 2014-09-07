@@ -140,29 +140,29 @@ bool NewSWType::IsDesignatorEligible(SWTypeExt::ExtData* pSWType, HouseClass* pO
 	return false;
 }
 
-int NewSWType::FindIndex(const char* pType) {
+SuperWeaponType NewSWType::FindIndex(const char* pType) {
 	auto it = std::find_if(Array.begin(), Array.end(), [pType](const std::unique_ptr<NewSWType> &item) {
 		const char* pID = item->GetTypeString();
 		return pID && !strcmp(pID, pType);
 	});
 
 	if(it != Array.end()) {
-		return FIRST_SW_TYPE + std::distance(Array.begin(), it);
+		return static_cast<SuperWeaponType>(FIRST_SW_TYPE + std::distance(Array.begin(), it));
 	}
 
-	return -1;
+	return SuperWeaponType::Invalid;
 }
 
-int NewSWType::FindHandler(int Type) {
+SuperWeaponType NewSWType::FindHandler(SuperWeaponType Type) {
 	auto it = std::find_if(Array.begin(), Array.end(), [Type](const std::unique_ptr<NewSWType> &item) {
 		return item->HandlesType(Type);
 	});
 
 	if(it != Array.end()) {
-		return FIRST_SW_TYPE + std::distance(Array.begin(), it);
+		return static_cast<SuperWeaponType>(FIRST_SW_TYPE + std::distance(Array.begin(), it));
 	}
 
-	return -1;
+	return SuperWeaponType::Invalid;
 }
 
 void SWStateMachine::UpdateAll()

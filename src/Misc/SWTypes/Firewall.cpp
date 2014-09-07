@@ -3,7 +3,7 @@
 
 #include "../Network.h"
 
-int SW_Firewall::FirewallTypeIndex = -1;
+SuperWeaponType SW_Firewall::FirewallType = SuperWeaponType::Invalid;
 
 bool SW_Firewall::Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer)
 {

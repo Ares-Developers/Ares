@@ -11,7 +11,7 @@ public:
 
 	virtual void Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW) override;
 	virtual bool Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer) override;
-	virtual bool HandlesType(int type) const override;
+	virtual bool HandlesType(SuperWeaponType type) const override;
 	virtual SuperWeaponFlags::Value Flags() const override;
 
 	typedef ChronoWarpStateMachine TStateMachine;

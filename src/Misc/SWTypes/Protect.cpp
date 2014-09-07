@@ -5,7 +5,7 @@
 
 #include <HouseClass.h>
 
-bool SW_Protect::HandlesType(int type) const
+bool SW_Protect::HandlesType(SuperWeaponType type) const
 {
 	return (type == SuperWeaponType::IronCurtain) || (type == SuperWeaponType::ForceShield);
 }
@@ -34,7 +34,7 @@ SWRange SW_Protect::GetRange(const SWTypeExt::ExtData* pData) const
 
 void SW_Protect::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)
 {
-	int type = pSW->Type;
+	auto type = pSW->Type;
 
 	// iron curtain and force shield, as well as protect
 	pData->SW_AnimHeight = 5;

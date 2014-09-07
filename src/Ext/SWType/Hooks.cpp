@@ -194,8 +194,8 @@ DEFINE_HOOK(6A932B, CameoClass_GetTip_MoneySW, 6) {
 DEFINE_HOOK(6CEE96, SuperWeaponTypeClass_GetTypeIndex, 5)
 {
 	GET(const char *, TypeStr, EDI);
-	int customType = NewSWType::FindIndex(TypeStr);
-	if(customType > -1) {
+	auto customType = NewSWType::FindIndex(TypeStr);
+	if(customType > SuperWeaponType::Invalid) {
 		R->ESI(customType);
 		return 0x6CEE9C;
 	}

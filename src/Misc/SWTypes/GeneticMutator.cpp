@@ -5,7 +5,7 @@
 #include "../../Utilities/Helpers.Alex.h"
 #include "../../Utilities/TemplateDef.h"
 
-bool SW_GeneticMutator::HandlesType(int type) const
+bool SW_GeneticMutator::HandlesType(SuperWeaponType type) const
 {
 	return (type == SuperWeaponType::GeneticMutator);
 }

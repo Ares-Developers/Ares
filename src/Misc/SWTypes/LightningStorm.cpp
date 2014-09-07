@@ -7,7 +7,7 @@
 
 SuperClass* SW_LightningStorm::CurrentLightningStorm = nullptr;
 
-bool SW_LightningStorm::HandlesType(int type) const
+bool SW_LightningStorm::HandlesType(SuperWeaponType type) const
 {
 	return (type == SuperWeaponType::LightningStorm);
 }
