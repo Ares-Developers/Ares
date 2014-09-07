@@ -235,7 +235,7 @@ void BuildingExt::cPrismForwarding::SetChargeDelay_Set(int chain, DWORD* Longest
 	pTargetTower->SupportingPrisms = (LongestChain - chain);
 	if(this->PrismChargeDelay == 0) {
 		//no delay, so start animations now
-		if(pTargetTower->Type->BuildingAnim[BuildingAnimSlot::Special].Anim[0]) { //only if it actually has a special anim
+		if(pTargetTower->Type->GetBuildingAnim(BuildingAnimSlot::Special).Anim[0]) { //only if it actually has a special anim
 			pTargetTower->DestroyNthAnim(BuildingAnimSlot::Active);
 			pTargetTower->PlayNthAnim(BuildingAnimSlot::Special);
 		}

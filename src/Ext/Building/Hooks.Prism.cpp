@@ -148,7 +148,7 @@ DEFINE_HOOK(4503F0, BuildingClass_Update_Prism, 9)
 			--pData->PrismForwarding.PrismChargeDelay;
 			if (pData->PrismForwarding.PrismChargeDelay <= 0) {
 				//now it's time to start charging
-				if (pThis->Type->BuildingAnim[BuildingAnimSlot::Special].Anim[0]) { //only if it actually has a special anim
+				if (pThis->Type->GetBuildingAnim(BuildingAnimSlot::Special).Anim[0]) { //only if it actually has a special anim
 					pThis->DestroyNthAnim(BuildingAnimSlot::Active);
 					pThis->PlayNthAnim(BuildingAnimSlot::Special);
 				}
