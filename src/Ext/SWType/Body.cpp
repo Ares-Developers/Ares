@@ -541,7 +541,7 @@ LightingColor SWTypeExt::GetLightingColor(SuperWeaponTypeClass* pCustom) {
 		if(SuperClass *pSuper = SW_LightningStorm::CurrentLightningStorm) {
 			pType = pSuper->Type;
 		}
-	} else if(PsyDom::Status && PsyDom::Status != PsychicDominatorStatus::Over) {
+	} else if(PsyDom::Status != PsychicDominatorStatus::Inactive && PsyDom::Status != PsychicDominatorStatus::Over) {
 		// psychic dominator
 		ret.Ambient = scen->DominatorAmbient;
 		ret.Red = scen->DominatorRed;
