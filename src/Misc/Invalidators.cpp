@@ -78,7 +78,7 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 
 		bool IsFoot = Item->WhatAmI() != abs_BuildingType;
 
-		if(IsFoot && Item->SpeedType == -1) {
+		if(IsFoot && Item->SpeedType == SpeedType::None) {
 			Debug::DevLog(Debug::Error, "[%s]SpeedType is invalid!\n", Item->ID);
 		}
 

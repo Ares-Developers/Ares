@@ -89,7 +89,7 @@ void UnitDeliveryStateMachine::PlaceUnits()
 		// get the best options to search for a place
 		short extentX = 1;
 		short extentY = 1;
-		SpeedType::Value SpeedType = SpeedType::Track;
+		SpeedType SpeedType = SpeedType::Track;
 		MovementZone MovementZone = MovementZone::Normal;
 
 		if(ItemBuilding) {
