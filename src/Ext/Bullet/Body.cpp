@@ -72,7 +72,7 @@ bool BulletExt::ExtData::DamageOccupants() {
 					// Bullet->Health is the damage it delivers (go Westwood)
 					int adjustedDamage = static_cast<int> (ceil(TheBullet->Health * BuildingAresData->UCDamageMultiplier));
 					Debug::Log("Adjusted damage = %d\n", adjustedDamage);
-					int result = Building->Occupants[poorBastard]->ReceiveDamage(&adjustedDamage, 0, TheBullet->WH,
+					auto result = Building->Occupants[poorBastard]->ReceiveDamage(&adjustedDamage, 0, TheBullet->WH,
 								TheBullet->Owner, false, true, TheBullet->GetOwningHouse());
 					Debug::Log("Received damage, %d\n", result);
 				}

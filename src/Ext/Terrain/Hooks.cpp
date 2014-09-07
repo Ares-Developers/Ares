@@ -67,7 +67,7 @@ DEFINE_HOOK(71C7C2, TerrainClass_Update_ForestFire, 6)
 DEFINE_HOOK(71B99E, TerrainClass_ReceiveDamage_ForestFire, 9)
 {
 	GET(TerrainClass*, pThis, ESI);
-	GET(DamageState::Value, res, EAX);
+	GET(DamageState, res, EAX);
 	GET_STACK(int*, pDamage, 0x40);
 	GET_STACK(WarheadTypeClass*, pWarhead, 0x48);
 
