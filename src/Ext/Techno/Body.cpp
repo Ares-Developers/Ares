@@ -107,7 +107,7 @@ void TechnoExt::SpawnSurvivors(FootClass *pThis, TechnoClass *pKiller, bool Sele
 		if(chance > 0) {
 			toSpawn = ScenarioClass::Instance->Random.RandomRanged(1, 100) <= chance;
 		} else if(chance == -1 && pThis->WhatAmI() == UnitClass::AbsID) {
-			Move::Value occupation = passenger->IsCellOccupied(pThis->GetCell(), -1, -1, nullptr, true);
+			Move occupation = passenger->IsCellOccupied(pThis->GetCell(), -1, -1, nullptr, true);
 			toSpawn = (occupation == Move::OK || occupation == Move::MovingBlock);
 		}
 		if(toSpawn && !IgnoreDefenses) {
