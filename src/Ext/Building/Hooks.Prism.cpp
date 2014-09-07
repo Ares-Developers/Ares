@@ -100,7 +100,9 @@ DEFINE_HOOK(447FAE, BuildingClass_GetObjectActivityState, 6)
 DEFINE_HOOK(4503F0, BuildingClass_Update_Prism, 9)
 {
 	GET(BuildingClass *, pThis, ECX);
-	if(int PrismStage = pThis->PrismStage) {
+
+	auto PrismStage = pThis->PrismStage;
+	if(PrismStage != PrismChargeState::Idle) {
 		BuildingExt::ExtData *pData = BuildingExt::ExtMap.Find(pThis);
 		if (pData->PrismForwarding.PrismChargeDelay <= 0) {
 			--pThis->DelayBeforeFiring;
