@@ -75,7 +75,7 @@ void SWTypeExt::ExtData::LoadFromRulesFile(SuperWeaponTypeClass *pThis, CCINICla
 	INI_EX exINI(pINI);
 
 	if(exINI.ReadString(section, "Action") && !_strcmpi(exINI.value(), "Custom")) {
-		pThis->Action = SW_YES_CURSOR;
+		pThis->Action = Actions::SuperWeaponAllowed;
 	}
 
 	if(exINI.ReadString(section, "Type")) {
@@ -92,7 +92,7 @@ void SWTypeExt::ExtData::LoadFromRulesFile(SuperWeaponTypeClass *pThis, CCINICla
 
 	// if this is handled by a NewSWType, initialize it.
 	if(auto pNewSWType = this->GetNewSWType()) {
-		pThis->Action = SW_YES_CURSOR;
+		pThis->Action = Actions::SuperWeaponAllowed;
 		pNewSWType->Initialize(this, pThis);
 	}
 	this->LastAction = pThis->Action;

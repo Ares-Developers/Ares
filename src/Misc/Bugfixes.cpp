@@ -1198,7 +1198,7 @@ DEFINE_HOOK(52070F, InfantryClass_UpdateFiringState_Uncloak, 5)
 DEFINE_HOOK(69281E, DisplayClass_ChooseAction_TogglePower, A)
 {
 	GET(TechnoClass*, pTarget, ESI);
-	REF_STACK(eAction, Action, STACK_OFFS(0x20, 0x10));
+	REF_STACK(::Action, Action, STACK_OFFS(0x20, 0x10));
 
 	bool allowed = false;
 
@@ -1213,10 +1213,10 @@ DEFINE_HOOK(69281E, DisplayClass_ChooseAction_TogglePower, A)
 	}
 
 	if(allowed) {
-		Action = act_TogglePower;
+		Action = Action::TogglePower;
 		Actions::Set(&RulesExt::Global()->TogglePowerCursor);
 	} else {
-		Action = act_NoTogglePower;
+		Action = Action::NoTogglePower;
 		Actions::Set(&RulesExt::Global()->TogglePowerNoCursor);
 	}
 

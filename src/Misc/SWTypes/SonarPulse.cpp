@@ -43,7 +43,7 @@ void SW_SonarPulse::LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeClass 
 
 	// full map detection?
 	if(GetRange(pData).WidthOrRange < 0) {
-		pSW->Action = 0;
+		pSW->Action = Action::None;
 	}
 }
 

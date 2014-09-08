@@ -148,7 +148,7 @@ public:
 
 		bool IsDeactivated() const;
 
-		eAction GetDeactivatedAction(ObjectClass *Hovered = nullptr) const;
+		Action GetDeactivatedAction(ObjectClass *Hovered = nullptr) const;
 
 		void InvalidateAttachEffectPointer(void *ptr);
 

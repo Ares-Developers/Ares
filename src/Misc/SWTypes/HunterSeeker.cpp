@@ -26,7 +26,7 @@ void SW_HunterSeeker::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass
 	pData->Text_Ready = CSFText("TXT_RELEASE");
 
 	// hardcoded
-	pSW->Action = 0;
+	pSW->Action = Action::None;
 	pData->SW_RadarEvent = false;
 }
 
@@ -45,7 +45,7 @@ void SW_HunterSeeker::LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeClas
 	pData->HunterSeeker_Buildings.Read(exINI, section, "HunterSeeker.Buildings");
 
 	// hardcoded
-	pSW->Action = 0;
+	pSW->Action = Action::None;
 	pData->SW_RadarEvent = false;
 }
 

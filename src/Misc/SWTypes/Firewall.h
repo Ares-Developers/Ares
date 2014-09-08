@@ -19,7 +19,7 @@ public:
 	}
 
 	virtual void LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI) override {
-		pSW->Action = 0;
+		pSW->Action = Action::None;
 		pSW->UseChargeDrain = true;
 		pData->SW_RadarEvent = false;
 		// what can we possibly configure here... warhead/damage inflicted? anims?

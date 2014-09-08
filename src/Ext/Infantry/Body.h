@@ -33,7 +33,7 @@ public:
 
 	static Container<InfantryExt> ExtMap;
 
-	static eAction GetEngineerEnterEnemyBuildingAction(BuildingClass *pBld);
+	static Action GetEngineerEnterEnemyBuildingAction(BuildingClass *pBld);
 };
 
 #endif

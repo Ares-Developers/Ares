@@ -13,10 +13,10 @@ DEFINE_HOOK(6CEF84, SuperWeaponTypeClass_GetCursorOverObject, 7)
 	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pThis);
 	auto pType = pData->GetNewSWType();
 
-	if((pThis->Action == SW_YES_CURSOR) || pType) {
+	if((pThis->Action == Actions::SuperWeaponAllowed) || pType) {
 		GET_STACK(CellStruct *, pMapCoords, 0x0C);
 
-		int Action = SW_YES_CURSOR;
+		auto Action = Actions::SuperWeaponAllowed;
 
 		// prevent firing into shroud
 		if(!pData->SW_FireToShroud) {
@@ -24,20 +24,20 @@ DEFINE_HOOK(6CEF84, SuperWeaponTypeClass_GetCursorOverObject, 7)
 			CoordStruct Crd = pCell->GetCoords();
 
 			if(MapClass::Instance->IsLocationShrouded(Crd)) {
-				Action = SW_NO_CURSOR;
+				Action = Actions::SuperWeaponDisallowed;
 			}
 		}
 
 		// new SW types have to check whether the coordinates are valid.
-		if(Action == SW_YES_CURSOR) {
+		if(Action == Actions::SuperWeaponAllowed) {
 			if(pType && !pType->CanFireAt(pData, HouseClass::Player, *pMapCoords)) {
-				Action = SW_NO_CURSOR;
+				Action = Actions::SuperWeaponDisallowed;
 			}
 		}
 
 		R->EAX(Action);
 
-		if(Action == SW_YES_CURSOR) {
+		if(Action == Actions::SuperWeaponAllowed) {
 			SWTypeExt::CurrentSWType = pThis;
 			Actions::Set(&pData->SW_Cursor, pData->SW_FireToShroud);
 		} else {
@@ -65,10 +65,10 @@ DEFINE_HOOK(653B3A, RadarClass_GetMouseAction_CustomSWAction, 5)
 		SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pThis);
 		auto pType = pData->GetNewSWType();
 
-		if((pThis->Action == SW_YES_CURSOR) || pType) {
+		if((pThis->Action == Actions::SuperWeaponAllowed) || pType) {
 			GET_STACK(CellStruct, MapCoords, STACK_OFFS(0x54, 0x3C));
 
-			int Action = SW_YES_CURSOR;
+			auto Action = Actions::SuperWeaponAllowed;
 
 			// prevent firing into shroud
 			if(!pData->SW_FireToShroud) {
@@ -76,20 +76,20 @@ DEFINE_HOOK(653B3A, RadarClass_GetMouseAction_CustomSWAction, 5)
 				CoordStruct Crd = pCell->GetCoords();
 
 				if(MapClass::Instance->IsLocationShrouded(Crd)) {
-					Action = SW_NO_CURSOR;
+					Action = Actions::SuperWeaponDisallowed;
 				}
 			}
 
 			// new SW types have to check whether the coordinates are valid.
-			if(Action == SW_YES_CURSOR) {
+			if(Action == Actions::SuperWeaponAllowed) {
 				if(pType && !pType->CanFireAt(pData, HouseClass::Player, MapCoords)) {
-					Action = SW_NO_CURSOR;
+					Action = Actions::SuperWeaponDisallowed;
 				}
 			}
 
 			R->ESI(Action);
 
-			if(Action == SW_YES_CURSOR) {
+			if(Action == Actions::SuperWeaponAllowed) {
 				SWTypeExt::CurrentSWType = pThis;
 				Actions::Set(&pData->SW_Cursor, pData->SW_FireToShroud);
 			} else {
@@ -206,8 +206,8 @@ DEFINE_HOOK(6CEE96, SuperWeaponTypeClass_GetTypeIndex, 5)
 // translates SW click to type
 DEFINE_HOOK(4AC20C, DisplayClass_LMBUp, 7)
 {
-	int Action = R->Stack32(0x9C);
-	if(Action < SW_NO_CURSOR) {
+	auto Action = static_cast<::Action>(R->Stack32(0x9C));
+	if(Action < Actions::SuperWeaponDisallowed) {
 		// get the actual firing SW type instead of just the first type of the
 		// requested action. this allows clones to work for legacy SWs (the new
 		// ones use SW_*_CURSORs). we have to check that the action matches the
@@ -222,7 +222,7 @@ DEFINE_HOOK(4AC20C, DisplayClass_LMBUp, 7)
 		R->EAX(pSW);
 		return pSW ? 0x4AC21C : 0x4AC294;
 	}
-	else if(Action == SW_NO_CURSOR) {
+	else if(Action == Actions::SuperWeaponDisallowed) {
 		R->EAX(0);
 		return 0x4AC294;
 	}
@@ -806,7 +806,7 @@ DEFINE_HOOK(6CBD6B, SuperClass_Update_DrainMoney, 8) {
 
 // used only to find the nuke for ICBM crates. only supports nukes fully.
 DEFINE_HOOK(6CEEB0, SuperWeaponTypeClass_FindFirstOfAction, 8) {
-	GET(int, action, ECX);
+	GET(Action, action, ECX);
 
 	R->EAX(0);
 

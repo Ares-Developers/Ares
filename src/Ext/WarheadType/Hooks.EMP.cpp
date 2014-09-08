@@ -53,7 +53,7 @@ DEFINE_HOOK(51E3B0, InfantryClass_GetCursorOverObject_EMP, 7) {
 
 	// infantry should really not be able to deploy then EMP'd.
 	if((pInfantry == pTarget) && pInfantry->Type->Deployer && pInfantry->IsUnderEMP()) {
-		R->EAX(act_NoDeploy);
+		R->EAX(Action::NoDeploy);
 		return 0x51F187;
 	}
 

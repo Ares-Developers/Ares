@@ -245,7 +245,7 @@ public:
 		AresPCXFile SidebarPCX;
 
 		SuperWeaponType HandledByNewSWType;
-		int LastAction;
+		Action LastAction;
 
 		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			SpyPlane_TypeIndex (0),
@@ -310,6 +310,7 @@ public:
 			SW_Designators (),
 			SW_AnyDesignator (false),
 			HandledByNewSWType (SuperWeaponType::Invalid),
+			LastAction (Action::None),
 			CameoPal(),
 			SW_DeliverBuildups (false)
 			{

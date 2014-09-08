@@ -130,9 +130,9 @@ DEFINE_HOOK(5BDE64, Actions_AnimateCursor2, 6)
 DEFINE_HOOK(4D7524, Actions_AllowForFootClass, 9)
 {
 	//overwrote the ja, need to replicate it
-	unsigned int CursorIndex = R->EAX();
-	if(CursorIndex > 0x46) {
-		if(CursorIndex == (SW_YES_CURSOR - 1) || CursorIndex == (SW_NO_CURSOR - 1)) {
+	auto CursorIndex = static_cast<Action>(R->EAX() - 1);
+	if(CursorIndex > Action::ForceShield) {
+		if(CursorIndex == Actions::SuperWeaponAllowed || CursorIndex == Actions::SuperWeaponDisallowed) {
 			return 0x4D769F;
 		} else {
 			return 0x4D7CC0;
@@ -267,10 +267,10 @@ DEFINE_HOOK(6929FC, DisplayClass_ChooseAction_CanSell, 7)
 	switch(Target->WhatAmI()) {
 		case abs_Aircraft:
 		case abs_Unit:
-			R->Stack<DWORD>(0x10, act_SellUnit);
+			R->Stack(0x10, Action::SellUnit);
 			return 0x692B06;
 		case abs_Building:
-			R->Stack<DWORD>(0x10, Target->IsStrange() ? act_NoSell : act_Sell);
+			R->Stack(0x10, Target->IsStrange() ? Action::NoSell : Action::Sell);
 			return 0x692B06;
 		default:
 			return 0x692AFE;

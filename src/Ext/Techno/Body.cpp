@@ -624,18 +624,18 @@ bool TechnoExt::ExtData::IsDeactivated() const {
 	return this->AttachedToObject->Deactivated;
 }
 
-eAction TechnoExt::ExtData::GetDeactivatedAction(ObjectClass *Hovered) const {
+Action TechnoExt::ExtData::GetDeactivatedAction(ObjectClass *Hovered) const {
 	if(!Hovered) {
-		return act_None;
+		return Action::None;
 	}
 	if(auto tHovered = generic_cast<TechnoClass *>(Hovered)) {
 		if(this->AttachedToObject->Owner->IsAlliedWith(tHovered)) {
 			if(tHovered->IsSelectable()) {
-				return act_Select;
+				return Action::Select;
 			}
 		}
 	}
-	return act_None;
+	return Action::None;
 }
 
 void TechnoExt::ExtData::InvalidateAttachEffectPointer(void *ptr) {

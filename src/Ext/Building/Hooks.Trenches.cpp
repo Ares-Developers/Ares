@@ -104,7 +104,7 @@ DEFINE_HOOK(44725F, BuildingClass_GetCursorOverObject_TargetABuilding, 5)
 
 		if(curBuildExt->canTraverseTo(targetBuilding)) {
 			//show entry cursor, hooked up to traversal logic in Misc/Network.cpp -> AresNetEvent::Handlers::RespondToTrenchRedirectClick
-			R->EAX<eAction>(act_Enter);
+			R->EAX(Action::Enter);
 			return 0x447273;
 		}
 	}
@@ -114,7 +114,7 @@ DEFINE_HOOK(44725F, BuildingClass_GetCursorOverObject_TargetABuilding, 5)
 
 DEFINE_HOOK(443414, BuildingClass_ClickedAction, 6)
 {
-	GET(eAction, Action, EAX);
+	GET(::Action, Action, EAX);
 	GET(BuildingClass *, pThis, ECX);
 
 	GET_STACK(ObjectClass *, pTarget, 0x8);
@@ -128,7 +128,7 @@ DEFINE_HOOK(443414, BuildingClass_ClickedAction, 6)
 	}
 
 	// trenches
-	if(Action == act_Enter) {
+	if(Action == Action::Enter) {
 		if(BuildingClass *pTargetBuilding = specific_cast<BuildingClass *>(pTarget)) {
 			CoordStruct XYZ = pTargetBuilding->GetCoords();
 			CellStruct tgt = CellClass::Coord2Cell(XYZ);

@@ -115,10 +115,10 @@ DEFINE_HOOK(51E5BB, InfantryClass_GetCursorOverObject_MultiEngineerA, 7) {
 
 DEFINE_HOOK(51E5E1, InfantryClass_GetCursorOverObject_MultiEngineerB, 7) {
 	GET(BuildingClass *, pBld, ECX);
-	eAction ret = InfantryExt::GetEngineerEnterEnemyBuildingAction(pBld);
+	Action ret = InfantryExt::GetEngineerEnterEnemyBuildingAction(pBld);
 
 	// use a dedicated cursor
-	if(ret == act_Damage) {
+	if(ret == Action::Damage) {
 		Actions::Set(&RulesExt::Global()->EngineerDamageCursor);
 	}
 
@@ -132,8 +132,8 @@ DEFINE_HOOK(519D9C, InfantryClass_UpdatePosition_MultiEngineer, 5) {
 	GET(BuildingClass *, pBld, EDI);
 
 	// damage or capture
-	eAction action = InfantryExt::GetEngineerEnterEnemyBuildingAction(pBld);
-	if(action == act_Damage) {
+	Action action = InfantryExt::GetEngineerEnterEnemyBuildingAction(pBld);
+	if(action == Action::Damage) {
 		int Damage = static_cast<int>(ceil(pBld->Type->Strength * RulesExt::Global()->EngineerDamage));
 		pBld->ReceiveDamage(&Damage, 0, RulesClass::Global()->C4Warhead, pEngi, true, false, nullptr);
 		return 0x51A010;
@@ -186,7 +186,7 @@ DEFINE_HOOK(51EB48, InfantryClass_GetCursorOverObject_IvanGrinder, A)
 			if(!InputManagerClass::Instance->IsForceFireKeyPressed()) {
 				static byte return_grind[] = {
 					0x5F, 0x5E, 0x5D, // pop edi, esi and ebp
-					0xB8, act_Repair, 0x00, 0x00, 0x00, // eax = act_Repair (not act_Eaten)
+					0xB8, 0x0B, 0x00, 0x00, 0x00, // eax = Action::Repair (not Action::Eaten)
 					0x5B, 0x83, 0xC4, 0x28, // esp += 0x28
 					0xC2, 0x08, 0x00 // retn 8
 				};

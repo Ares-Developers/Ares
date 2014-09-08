@@ -40,7 +40,7 @@ void SW_EMPulse::LoadFromINI(SWTypeExt::ExtData* pData, SuperWeaponTypeClass* pS
 	pData->EMPulse_PulseBall.Read(exINI, section, "EMPulse.PulseBall");
 	pData->EMPulse_Cannons.Read(exINI, section, "EMPulse.Cannons");
 
-	pSW->Action = pData->EMPulse_TargetSelf ? 0 : SW_YES_CURSOR;
+	pSW->Action = pData->EMPulse_TargetSelf ? Action::None : Actions::SuperWeaponAllowed;
 }
 
 bool SW_EMPulse::Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer)

@@ -3,13 +3,13 @@
 
 #include <MouseClass.h>
 
-// actions for custom sw
-#define SW_YES_CURSOR 0x7F
-#define SW_NO_CURSOR 0x7E
-
 class Actions
 {
 	public:
+		// actions for custom sw
+		static const Action SuperWeaponAllowed = static_cast<Action>(0x7F);
+		static const Action SuperWeaponDisallowed = static_cast<Action>(0x7E);
+
 		static void Set(MouseCursor *pCursor, bool bAllowShroud = false);
 
 		static MouseCursor MP;

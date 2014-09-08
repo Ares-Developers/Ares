@@ -87,7 +87,7 @@ DEFINE_HOOK(693263, MouseClass_ReactToClicks_LMBUp, 5)
 		LEA_STACK(CellStruct*, XY, STACK_OFFS(0x24, 0x1C));
 		LEA_STACK(CoordStruct*, XYZ, STACK_OFFS(0x24, 0xC));
 		LEA_STACK(ObjectClass**, Target, STACK_OFFS(0x24, -0x8));
-		eAction A = MouseClass::Instance->DecideAction(XY, *Target, 0);
+		Action A = MouseClass::Instance->DecideAction(XY, *Target, 0);
 		MouseClass::Instance->LMBUp(XYZ, XY, *Target, A, 0);
 	}
 

@@ -38,7 +38,7 @@ bool InfantryExt::ExtData::IsOccupant() {
 	\author AlexB
 	\date 2012-07-22
 */
-eAction InfantryExt::GetEngineerEnterEnemyBuildingAction(BuildingClass *pBld) {
+Action InfantryExt::GetEngineerEnterEnemyBuildingAction(BuildingClass *pBld) {
 	// no other mode than skirmish allows to disable it, so we only check whether
 	// multi engineer is disabled there. for all other modes, it's always on.
 	// single player campaigns also use special multi engineer behavior.
@@ -65,13 +65,13 @@ eAction InfantryExt::GetEngineerEnterEnemyBuildingAction(BuildingClass *pBld) {
 		if(!RulesExt::Global()->EngineerAlwaysCaptureTech || !isTech) {
 			// no civil structure. apply new logic.
 			if(pBld->GetHealthPercentage() > RulesClass::Global()->EngineerCaptureLevel) {
-				return (RulesExt::Global()->EngineerDamage > 0) ? act_Damage : act_NoEnter;
+				return (RulesExt::Global()->EngineerDamage > 0) ? Action::Damage : Action::NoEnter;
 			}
 		}
 	}
 
 	// default.
-	return act_Capture;
+	return Action::Capture;
 }
 
 // =============================
