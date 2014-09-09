@@ -232,7 +232,7 @@ void WarheadTypeExt::ExtData::applyEMP(const CoordStruct &coords, TechnoClass *s
 	\return false if effect wasn't applied, true if it was.
 		This is important for the chain of damage effects, as, in case of true, the target is now a friendly unit.
 */
-bool WarheadTypeExt::ExtData::applyPermaMC(CoordStruct *coords, HouseClass* Owner, AbstractClass* Target) {
+bool WarheadTypeExt::ExtData::applyPermaMC(const CoordStruct &coords, HouseClass* Owner, AbstractClass* Target) {
 	if (this->MindControl_Permanent && Target) {
 		if (TechnoClass *pTarget = generic_cast<TechnoClass *>(Target)) {
 			TechnoTypeClass *pType = pTarget->GetTechnoType();
@@ -247,7 +247,7 @@ bool WarheadTypeExt::ExtData::applyPermaMC(CoordStruct *coords, HouseClass* Owne
 			pTarget->MindControlledByAUnit = 1;
 			pTarget->QueueMission(Mission::Guard, 0);
 
-			CoordStruct XYZ = *coords;
+			CoordStruct XYZ = coords;
 			XYZ.Z += pType->MindControlRingOffset;
 
 			AnimClass *MCAnim = GameCreate<AnimClass>(RulesClass::Instance->PermaControlledAnimationType, XYZ);

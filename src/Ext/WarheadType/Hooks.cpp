@@ -66,7 +66,7 @@ DEFINE_HOOK(46920B, BulletClass_Fire, 6) {
 	}
 */
 
-	return (OwnerHouse && pWHExt->applyPermaMC(&coords, OwnerHouse, Bullet->Target))
+	return (OwnerHouse && pWHExt->applyPermaMC(coords, OwnerHouse, Bullet->Target))
 		? 0x469AA4
 		: 0
 	;
