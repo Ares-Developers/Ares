@@ -230,7 +230,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	}
 
 	this->ImmuneToEMP.Read(exINI, section, "ImmuneToEMP");
-	this->EMP_Modifier = (float)pINI->ReadDouble(section, "EMP.Modifier", this->EMP_Modifier);
+	this->EMP_Modifier = static_cast<float>(pINI->ReadDouble(section, "EMP.Modifier", this->EMP_Modifier));
 
 	if(pINI->ReadString(section, "EMP.Threshold", "inair", Ares::readBuffer, Ares::readLength)) {
 		if(_strcmpi(Ares::readBuffer, "inair") == 0) {
@@ -552,22 +552,22 @@ bool TechnoTypeExt::ExtData::CameoIsElite()
 			if(House->BarracksInfiltrated && !T->Naval && T->Trainable) {
 				return true;
 			} else {
-				return Country->VeteranInfantry.FindItemIndex((InfantryTypeClass *)T) != -1;
+				return Country->VeteranInfantry.FindItemIndex(static_cast<InfantryTypeClass*>(T)) != -1;
 			}
 		case AbstractType::UnitType:
 			if(House->WarFactoryInfiltrated && !T->Naval && T->Trainable) {
 				return true;
 			} else {
-				return Country->VeteranUnits.FindItemIndex((UnitTypeClass *)T) != -1;
+				return Country->VeteranUnits.FindItemIndex(static_cast<UnitTypeClass*>(T)) != -1;
 			}
 		case AbstractType::AircraftType:
-			return Country->VeteranAircraft.FindItemIndex((AircraftTypeClass *)T) != -1;
+			return Country->VeteranAircraft.FindItemIndex(static_cast<AircraftTypeClass*>(T)) != -1;
 		case AbstractType::BuildingType:
 			if(TechnoTypeClass *Item = T->UndeploysInto) {
-				return Country->VeteranUnits.FindItemIndex((UnitTypeClass *)Item) != -1;
+				return Country->VeteranUnits.FindItemIndex(static_cast<UnitTypeClass*>(Item)) != -1;
 			} else {
 				auto pData = HouseTypeExt::ExtMap.Find(Country);
-				return pData->VeteranBuildings.Contains((BuildingTypeClass*)T);
+				return pData->VeteranBuildings.Contains(static_cast<BuildingTypeClass*>(T));
 			}
 	}
 

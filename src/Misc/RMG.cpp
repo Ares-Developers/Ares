@@ -37,7 +37,7 @@ DEFINE_HOOK(5970EA, RMG_EnableDesert, 9)
 		hWnd,
 		WW_CB_ADDITEM,		//CUSTOM BY WESTWOOD
 		0,
-		(LPARAM)StringTable::LoadString("Name:Desert")); // oh pd
+		reinterpret_cast<LPARAM>(StringTable::LoadString("Name:Desert"))); // oh pd
 
 	//Set the item data
 	SendMessageA(

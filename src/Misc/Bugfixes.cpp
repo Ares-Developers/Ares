@@ -258,7 +258,7 @@ DEFINE_HOOK(6F7561, Arcing_Aircraft, 5)
 #define XL(r) \
 	GET(TechnoClass *, T, ECX); \
 	Debug::Log("%c: [%s] receiving...\n", r, T->GetType()->ID); \
-	Debug::Log("\t Subject = %s\n", ((TechnoClass *)R->get_StackVar32(0x4))->GetType()->ID); \
+	Debug::Log("\t Subject = %s\n", (reinterpret_cast<TechnoClass *>(R->get_StackVar32(0x4)))->GetType()->ID); \
 	Debug::Log("\t command = %d\n", R->get_StackVar32(0x8)); \
 	Debug::Log("\t unknown = %d\n", R->get_StackVar32(0xC)); \
 	for(DWORD i = 0x10; i < 0x40; i += 4) { \
