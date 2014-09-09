@@ -264,7 +264,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	}
 
 	// #733
-	this->ProtectedDriver = pINI->ReadBool(section, "ProtectedDriver", this->ProtectedDriver);
+	this->ProtectedDriver.Read(exINI, section, "ProtectedDriver");
 	this->CanDrive = pINI->ReadBool(section, "CanDrive", this->CanDrive);
 
 	// #346, #464, #970, #1014
