@@ -208,8 +208,8 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 		if (supportWeapon->IsRadBeam) {
 			RadBeam* supportRadBeam = RadBeam::Allocate(RadBeamType::RadBeam);
 			if (supportRadBeam) {
-				supportRadBeam->SetCoordsSource(&SourceXYZ);
-				supportRadBeam->SetCoordsTarget(pTargetXYZ);
+				supportRadBeam->SetCoordsSource(SourceXYZ);
+				supportRadBeam->SetCoordsTarget(*pTargetXYZ);
 				if (supportWeaponData->Beam_IsHouseColor) {
 					supportRadBeam->Color = B->Owner->LaserColor;
 				} else {
