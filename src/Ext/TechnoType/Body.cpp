@@ -230,7 +230,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	}
 
 	this->ImmuneToEMP.Read(exINI, section, "ImmuneToEMP");
-	this->EMP_Modifier = static_cast<float>(pINI->ReadDouble(section, "EMP.Modifier", this->EMP_Modifier));
+	this->EMP_Modifier.Read(exINI, section, "EMP.Modifier");
 
 	if(pINI->ReadString(section, "EMP.Threshold", "inair", Ares::readBuffer, Ares::readLength)) {
 		if(_strcmpi(Ares::readBuffer, "inair") == 0) {

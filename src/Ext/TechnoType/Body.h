@@ -85,7 +85,7 @@ public:
 		bool VeteranAbilityEMPIMMUNE;
 		bool EliteAbilityEMPIMMUNE;
 		int EMP_Threshold;
-		float EMP_Modifier;
+		Valueable<double> EMP_Modifier;
 
 		Valueable<double> IronCurtain_Modifier;
 		Valueable<double> ForceShield_Modifier;
@@ -264,7 +264,7 @@ public:
 			IronCurtain_Modifier (1.0),
 			ForceShield_Modifier (1.0),
 			EMP_Threshold (-1),
-			EMP_Modifier (1.0F),
+			EMP_Modifier (1.0),
 			VeteranAbilityEMPIMMUNE (false),
 			EliteAbilityEMPIMMUNE (false),
 			ProtectedDriver(false),

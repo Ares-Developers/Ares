@@ -72,7 +72,7 @@ void EMPulse::deliverEMPDamage(ObjectClass *object, TechnoClass *Firer, WarheadT
 			}
 
 			// get the target-specific multiplier
-			float modifier = 1.0F;
+			double modifier = 1.0;
 			if(TechnoTypeExt::ExtData* pExt = TechnoTypeExt::ExtMap.Find(curTechno->GetTechnoType())) {
 				// modifier only affects bad things
 				if(Warhead->EMP_Duration > 0) {
