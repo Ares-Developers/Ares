@@ -1,5 +1,6 @@
 #include "Body.h"
 #include "../../Misc/Debug.h"
+#include "../../Utilities/INIParser.h"
 
 #include "../../Ares.CRT.h"
 
@@ -22,7 +23,8 @@ DEFINE_HOOK(5F9634, ObjectTypeClass_LoadFromINI, 6)
 	TechnoTypeExt::ExtData * pTypeData = TechnoTypeExt::ExtMap.Find(pTechnoType);
 
 	if(pTypeData) {
-		pTypeData->AlternateTheaterArt = pINI->ReadBool(pType->ID, "AlternateTheaterArt", pTypeData->AlternateTheaterArt);
+		INI_EX exINI(pINI);
+		pTypeData->AlternateTheaterArt.Read(exINI, pType->ID, "AlternateTheaterArt");
 	}
 
 	return 0;

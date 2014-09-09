@@ -97,7 +97,7 @@ public:
 		Valueable<bool> ProtectedDriver; //!< Whether the driver of this vehicle cannot be killed, i.e. whether this vehicle is immune to KillDriver. Request #733.
 		Valueable<bool> CanDrive; //!< Whether this TechnoType can act as the driver of vehicles whose driver has been killed. Request #733.
 
-		bool AlternateTheaterArt;
+		Valueable<bool> AlternateTheaterArt;
 		
 		Valueable<bool> PassengersGainExperience;
 		Valueable<bool> ExperienceFromPassengers;
