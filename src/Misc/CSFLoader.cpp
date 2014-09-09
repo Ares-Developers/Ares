@@ -24,11 +24,11 @@ void CSFLoader::LoadAdditionalCSF(const char *pFileName)
 					++CSFCount;
 					StringTable::ReadFile(pFileName); //must be modified to do the rest ;)
 
-					qsort(
-						StringTable::Labels,
-						StringTable::LabelCount,
-						sizeof(CSFLabel),
-						(int (__cdecl *)(const void *,const void *))_strcmpi);
+					std::sort(StringTable::Labels, StringTable::Labels + StringTable::LabelCount,
+						[](const CSFLabel& lhs, const CSFLabel& rhs)
+					{
+						return _strcmpi(lhs.Name, rhs.Name) < 0;
+					});
 				}
 			}
 		}
