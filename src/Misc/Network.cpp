@@ -15,13 +15,14 @@ DEFINE_HOOK(4C6CCD, Networking_RespondToEvent, 0)
 	GET(DWORD, EventKind, EAX);
 	GET(NetworkEvent *, Event, ESI);
 
-	if(EventKind >= AresNetEvent::aev_First) {
+	auto kind = static_cast<AresNetEvent::Events>(EventKind);
+	if(kind >= AresNetEvent::Events::First) {
 		// Received Ares event, do something about it
-		switch(EventKind) {
-			case AresNetEvent::aev_TrenchRedirectClick:
+		switch(kind) {
+			case AresNetEvent::Events::TrenchRedirectClick:
 				AresNetEvent::Handlers::RespondToTrenchRedirectClick(Event);
 				break;
-			case AresNetEvent::aev_FirewallToggle:
+			case AresNetEvent::Events::FirewallToggle:
 				AresNetEvent::Handlers::RespondToFirewallToggle(Event);
 				break;
 		}
@@ -88,7 +89,7 @@ DEFINE_HOOK(64CCBF, DoList_ReplaceReconMessage, 6)
 
 void AresNetEvent::Handlers::RaiseTrenchRedirectClick(BuildingClass *Source, CellStruct *Target) {
 	NetworkEvent Event;
-	Event.Kind = AresNetEvent::aev_TrenchRedirectClick;
+	Event.Kind = static_cast<NetworkEvents>(AresNetEvent::Events::TrenchRedirectClick);
 	Event.HouseIndex = byte(Source->Owner->ArrayIndex);
 	byte *ExtraData = Event.ExtraData;
 
@@ -124,7 +125,7 @@ void AresNetEvent::Handlers::RespondToTrenchRedirectClick(NetworkEvent *Event) {
 
 void AresNetEvent::Handlers::RaiseFirewallToggle(HouseClass *Source) {
 	NetworkEvent Event;
-	Event.Kind = AresNetEvent::aev_FirewallToggle;
+	Event.Kind = static_cast<NetworkEvents>(AresNetEvent::Events::FirewallToggle);
 	Event.HouseIndex = byte(Source->ArrayIndex);
 
 	Networking::AddEvent(&Event);

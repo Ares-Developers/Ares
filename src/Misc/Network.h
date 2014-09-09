@@ -5,11 +5,12 @@
 
 class AresNetEvent {
 public:
-	enum {
-		aev_First = 0x60,
-		aev_TrenchRedirectClick = 0x60,
-		aev_FirewallToggle = 0x61,
-		aev_Last = 0x61
+	enum class Events : unsigned char {
+		TrenchRedirectClick = 0x60,
+		FirewallToggle = 0x61,
+
+		First = TrenchRedirectClick,
+		Last = FirewallToggle
 	};
 
 	class Handlers {
