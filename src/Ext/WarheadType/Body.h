@@ -114,7 +114,7 @@ public:
 		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
 		}
 
-		void applyRipples(CoordStruct *);
+		void applyRipples(const CoordStruct &coords);
 		void applyIronCurtain(CoordStruct *, HouseClass *, int);
 		void applyEMP(CoordStruct *, TechnoClass *);
 		bool applyPermaMC(CoordStruct *, HouseClass *, AbstractClass *);
@@ -132,7 +132,7 @@ public:
 
 	static AresMap<IonBlastClass*, const WarheadTypeExt::ExtData*> IonExt;
 
-	static void applyRipples(WarheadTypeClass * pWH, CoordStruct* coords) {
+	static void applyRipples(WarheadTypeClass * pWH, const CoordStruct &coords) {
 		if(auto pWHExt = WarheadTypeExt::ExtMap.Find(pWH)) {
 			pWHExt->applyRipples(coords);
 		}

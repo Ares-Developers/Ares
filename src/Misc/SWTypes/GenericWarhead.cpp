@@ -27,7 +27,7 @@ bool SW_GenericWarhead::Activate(SuperClass* pThis, const CellStruct &Coords, bo
 
 	// crush, kill, destroy
 	// NULL -> TechnoClass* SourceObject
-	pWHExt->applyRipples(&coords);
+	pWHExt->applyRipples(coords);
 	pWHExt->applyIronCurtain(&coords, pThis->Owner, damage);
 
 	BuildingClass *Firer = nullptr;

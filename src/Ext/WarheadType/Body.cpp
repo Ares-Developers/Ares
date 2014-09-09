@@ -114,9 +114,9 @@ void Container<WarheadTypeExt>::InvalidatePointer(void *ptr, bool bRemoved) {
 	\note Moved here from hook BulletClass_Fire.
 	\param coords The coordinates of the warhead impact, the center of the Ripple area.
 */
-void WarheadTypeExt::ExtData::applyRipples(CoordStruct *coords) {
+void WarheadTypeExt::ExtData::applyRipples(const CoordStruct &coords) {
 	if (this->Ripple_Radius) {
-		IonBlastClass *IB = GameCreate<IonBlastClass>(*coords);
+		IonBlastClass *IB = GameCreate<IonBlastClass>(coords);
 		IB->DisableIonBeam = TRUE;
 		WarheadTypeExt::IonExt[IB] = this;
 	}
