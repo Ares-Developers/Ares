@@ -336,7 +336,7 @@ public:
 template <size_t Capacity>
 class AresFixedString : public FixedString<Capacity> {
 public:
-	AresFixedString(const char* value = nullptr) : FixedString(value) {
+	explicit AresFixedString(const char* value = nullptr) : FixedString(value) {
 	}
 
 	using FixedString::operator=;
