@@ -603,7 +603,7 @@ bool EMPulse::enableEMPEffect(TechnoClass * Victim, ObjectClass * Source) {
 
 		BuildingTypeClass * pType = Building->Type;
 		if (pType->Factory != AbstractType::None) {
-			Building->Owner->Update_FactoriesQueues(pType->Factory, pType->Naval, 0);
+			Building->Owner->Update_FactoriesQueues(pType->Factory, pType->Naval, BuildCat::DontCare);
 		}
 	} else {
 		if (AircraftClass * Aircraft = specific_cast<AircraftClass *>(Victim)) {
@@ -687,7 +687,7 @@ void EMPulse::DisableEMPEffect(TechnoClass * Victim) {
 
 			BuildingTypeClass * pType = Building->Type;
 			if (pType->Factory != AbstractType::None) {
-				Building->Owner->Update_FactoriesQueues(pType->Factory, pType->Naval, 0);
+				Building->Owner->Update_FactoriesQueues(pType->Factory, pType->Naval, BuildCat::DontCare);
 			}
 		}
 	}
@@ -740,7 +740,7 @@ bool EMPulse::EnableEMPEffect2(TechnoClass * Victim) {
 
 		BuildingTypeClass * pType = Building->Type;
 		if (pType->Factory != AbstractType::None) {
-			Building->Owner->Update_FactoriesQueues(pType->Factory, pType->Naval, 0);
+			Building->Owner->Update_FactoriesQueues(pType->Factory, pType->Naval, BuildCat::DontCare);
 		}
 	} else {
 		if (AircraftClass * Aircraft = specific_cast<AircraftClass *>(Victim)) {
@@ -813,7 +813,7 @@ void EMPulse::DisableEMPEffect2(TechnoClass * Victim) {
 
 			BuildingTypeClass * pType = Building->Type;
 			if (pType->Factory != AbstractType::None) {
-				Building->Owner->Update_FactoriesQueues(pType->Factory, pType->Naval, 0);
+				Building->Owner->Update_FactoriesQueues(pType->Factory, pType->Naval, BuildCat::DontCare);
 			}
 		}
 	}
