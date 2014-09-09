@@ -144,7 +144,7 @@ void WarheadTypeExt::ExtData::applyIronCurtain(CoordStruct *coords, HouseClass* 
 
 	if(this->IC_Duration != 0) {
 		// set of affected objects. every object can be here only once.
-		auto items = Helpers::Alex::getCellSpreadItems(coords, this->AttachedToObject->CellSpread, true);
+		auto items = Helpers::Alex::getCellSpreadItems(*coords, this->AttachedToObject->CellSpread, true);
 
 		// affect each object
 		for(auto curTechno : items) {
@@ -449,7 +449,7 @@ void WarheadTypeExt::ExtData::applyAttachedEffect(CoordStruct *coords, TechnoCla
 	if (this->AttachedEffect.Duration != 0) {
 		CellStruct cellCoords = MapClass::Instance->GetCellAt(*coords)->MapCoords;
 		// set of affected objects. every object can be here only once.
-		auto items = Helpers::Alex::getCellSpreadItems(coords, this->AttachedToObject->CellSpread, true);
+		auto items = Helpers::Alex::getCellSpreadItems(*coords, this->AttachedToObject->CellSpread, true);
 
 		// affect each object
 		for(size_t i=0; i<items.size(); ++i) {

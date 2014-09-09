@@ -130,12 +130,12 @@ namespace Helpers {
 			\author AlexB
 			\date 2010-06-28
 		*/
-		inline std::vector<TechnoClass*> getCellSpreadItems(CoordStruct *coords, float spread, bool includeInAir = false) {
+		inline std::vector<TechnoClass*> getCellSpreadItems(const CoordStruct &coords, float spread, bool includeInAir = false) {
 			// set of possibly affected objects. every object can be here only once.
 			DistinctCollector<TechnoClass*> set;
 
 			// the quick way. only look at stuff residing on the very cells we are affecting.
-			auto& cellCoords = MapClass::Instance->GetCellAt(*coords)->MapCoords;
+			auto& cellCoords = MapClass::Instance->GetCellAt(coords)->MapCoords;
 			auto range = static_cast<size_t>(spread + 0.99);
 			for(CellSpreadEnumerator it(range); it; ++it) {
 				auto c = MapClass::Instance->GetCellAt(*it + cellCoords);
@@ -153,7 +153,7 @@ namespace Helpers {
 					TechnoClass *Techno = TechnoClass::Array->GetItem(i);
 					if(Techno->GetHeight() > 0) {
 						// rough estimation
-						if(Techno->Location.DistanceFrom(*coords) <= spread * 256) {
+						if(Techno->Location.DistanceFrom(coords) <= spread * 256) {
 							set.insert(Techno);
 						}
 					}
@@ -174,7 +174,7 @@ namespace Helpers {
 
 				// get distance from impact site
 				CoordStruct target = Techno->GetCoords();
-				double dist = target.DistanceFrom(*coords);
+				double dist = target.DistanceFrom(coords);
 
 				// reduce the distance for flying aircraft
 				if((Techno->WhatAmI() == AbstractType::Aircraft) && Techno->IsInAir()) {

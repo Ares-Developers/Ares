@@ -33,7 +33,7 @@ void EMPulse::CreateEMPulse(WarheadTypeExt::ExtData *Warhead, CoordStruct *Coord
 	}
 
 	// set of affected objects. every object can be here only once.
-	auto items = Helpers::Alex::getCellSpreadItems(Coords, Warhead->AttachedToObject->CellSpread, true);
+	auto items = Helpers::Alex::getCellSpreadItems(*Coords, Warhead->AttachedToObject->CellSpread, true);
 
 	// affect each object
 	for(size_t i=0; i<items.size(); ++i) {
