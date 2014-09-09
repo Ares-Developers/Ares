@@ -47,7 +47,7 @@ DEFINE_HOOK(46920B, BulletClass_Fire, 6) {
 	// mind that conductAbduction() neuters the bullet, so if you wish to change
 	// this check, you have to fix that as well
 	if(targetStillOnMap) {
-		pWHExt->applyIronCurtain(&coords, OwnerHouse, damage);
+		pWHExt->applyIronCurtain(coords, OwnerHouse, damage);
 		pWHExt->applyEMP(&coords, Bullet->Owner);
 		WarheadTypeExt::applyOccupantDamage(Bullet);
 		pWHExt->applyKillDriver(Bullet);

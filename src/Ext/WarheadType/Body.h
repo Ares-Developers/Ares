@@ -115,7 +115,7 @@ public:
 		}
 
 		void applyRipples(const CoordStruct &coords);
-		void applyIronCurtain(CoordStruct *, HouseClass *, int);
+		void applyIronCurtain(const CoordStruct &coords, HouseClass* pOwner, int damage);
 		void applyEMP(CoordStruct *, TechnoClass *);
 		bool applyPermaMC(CoordStruct *, HouseClass *, AbstractClass *);
 
@@ -137,7 +137,7 @@ public:
 			pWHExt->applyRipples(coords);
 		}
 	}
-	static void applyIronCurtain(WarheadTypeClass * pWH, CoordStruct* coords, HouseClass * House, int damage) {
+	static void applyIronCurtain(WarheadTypeClass * pWH, const CoordStruct &coords, HouseClass * House, int damage) {
 		if(auto pWHExt = WarheadTypeExt::ExtMap.Find(pWH)) {
 			pWHExt->applyIronCurtain(coords, House, damage);
 		}

@@ -139,12 +139,12 @@ void WarheadTypeExt::ExtData::applyRipples(const CoordStruct &coords) {
 
 	\date 2010-06-28
 */
-void WarheadTypeExt::ExtData::applyIronCurtain(CoordStruct *coords, HouseClass* Owner, int damage) {
-	CellStruct cellCoords = MapClass::Instance->GetCellAt(*coords)->MapCoords;
+void WarheadTypeExt::ExtData::applyIronCurtain(const CoordStruct &coords, HouseClass* Owner, int damage) {
+	CellStruct cellCoords = MapClass::Instance->GetCellAt(coords)->MapCoords;
 
 	if(this->IC_Duration != 0) {
 		// set of affected objects. every object can be here only once.
-		auto items = Helpers::Alex::getCellSpreadItems(*coords, this->AttachedToObject->CellSpread, true);
+		auto items = Helpers::Alex::getCellSpreadItems(coords, this->AttachedToObject->CellSpread, true);
 
 		// affect each object
 		for(auto curTechno : items) {
