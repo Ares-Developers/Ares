@@ -116,7 +116,7 @@ public:
 
 		void applyRipples(const CoordStruct &coords);
 		void applyIronCurtain(const CoordStruct &coords, HouseClass* pOwner, int damage);
-		void applyEMP(CoordStruct *, TechnoClass *);
+		void applyEMP(const CoordStruct &coords, TechnoClass* pSource);
 		bool applyPermaMC(CoordStruct *, HouseClass *, AbstractClass *);
 
 		void applyAttachedEffect(CoordStruct *, TechnoClass *);
@@ -142,7 +142,7 @@ public:
 			pWHExt->applyIronCurtain(coords, House, damage);
 		}
 	}
-	static void applyEMP(WarheadTypeClass * pWH, CoordStruct* coords, TechnoClass *source) {
+	static void applyEMP(WarheadTypeClass * pWH, const CoordStruct &coords, TechnoClass *source) {
 		if(auto pWHExt = WarheadTypeExt::ExtMap.Find(pWH)) {
 			pWHExt->applyEMP(coords, source);
 		}

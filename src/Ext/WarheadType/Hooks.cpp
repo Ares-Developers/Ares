@@ -48,7 +48,7 @@ DEFINE_HOOK(46920B, BulletClass_Fire, 6) {
 	// this check, you have to fix that as well
 	if(targetStillOnMap) {
 		pWHExt->applyIronCurtain(coords, OwnerHouse, damage);
-		pWHExt->applyEMP(&coords, Bullet->Owner);
+		pWHExt->applyEMP(coords, Bullet->Owner);
 		WarheadTypeExt::applyOccupantDamage(Bullet);
 		pWHExt->applyKillDriver(Bullet);
 		pWHExt->applyAttachedEffect(&coords, Bullet->Owner);

@@ -40,7 +40,7 @@ bool SW_GenericWarhead::Activate(SuperClass* pThis, const CellStruct &Coords, bo
 		}
 	}
 
-	pWHExt->applyEMP(&coords, Firer);
+	pWHExt->applyEMP(coords, Firer);
 	pWHExt->applyAttachedEffect(&coords, Firer);
 
 	if(!pWHExt->applyPermaMC(&coords, pThis->Owner, Cell->GetContent())) {

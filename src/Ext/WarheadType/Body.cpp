@@ -216,10 +216,10 @@ void WarheadTypeExt::ExtData::applyIronCurtain(const CoordStruct &coords, HouseC
 	\param coords The coordinates of the warhead impact, the center of the EMP area.
 	\param source The unit that launched the EMP.
 */
-void WarheadTypeExt::ExtData::applyEMP(CoordStruct *coords, TechnoClass *source) {
+void WarheadTypeExt::ExtData::applyEMP(const CoordStruct &coords, TechnoClass *source) {
 	if (this->EMP_Duration) {
 		// launch our rewritten EMP.
-		EMPulse::CreateEMPulse(this, *coords, source);
+		EMPulse::CreateEMPulse(this, coords, source);
 	}
 }
 
