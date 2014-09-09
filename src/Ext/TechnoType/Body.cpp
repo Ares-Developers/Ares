@@ -376,13 +376,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass 
 	this->EVA_UnitLost.Read(exINI, section, "EVA.Lost");
 
 	// linking units for type selection
-	if(pINI->ReadString(section, "GroupAs", "", Ares::readBuffer, Ares::readLength)) {
-		if(!INIClass::IsBlank(Ares::readBuffer)) {
-			AresCRT::strCopy(this->GroupAs, Ares::readBuffer);
-		} else {
-			*this->GroupAs = 0;
-		}
-	}
+	this->GroupAs.Read(pINI, section, "GroupAs");
 
 	// crew settings
 	this->Crew_TechnicianChance.Read(exINI, section, "Crew.TechnicianChance");
@@ -517,7 +511,7 @@ void Container<TechnoTypeExt>::InvalidatePointer(void *ptr, bool bRemoved) {
 
 const char* TechnoTypeExt::ExtData::GetSelectionGroupID() const
 {
-	return *this->GroupAs ? this->GroupAs : this->AttachedToObject->ID;
+	return this->GroupAs ? this->GroupAs : this->AttachedToObject->ID;
 }
 
 const char* TechnoTypeExt::GetSelectionGroupID(ObjectTypeClass* pType)

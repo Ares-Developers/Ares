@@ -134,7 +134,7 @@ public:
 		AresPCXFile CameoPCX;
 		AresPCXFile AltCameoPCX;
 
-		char GroupAs[0x20];
+		AresFixedString<0x20> GroupAs;
 
 		AresMap<HouseClass*, bool> ReversedByHouses;
 		Valueable<bool> CanBeReversed;
@@ -321,7 +321,6 @@ public:
 			FactoryOwners_HaveAllPlans(false)
 			{
 				this->Insignia.SetAll(nullptr);
-				*this->GroupAs = 0;
 			};
 
 		virtual ~ExtData() {};
