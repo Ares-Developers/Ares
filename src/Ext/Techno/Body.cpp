@@ -617,7 +617,7 @@ void TechnoExt::RecalculateStats(TechnoClass *pTechno) {
 bool TechnoExt::CanICloakByDefault(TechnoClass *pTechno) {
 	//Debug::Log("[AttachEffect]Can %s cloak by default?\n", pTechno->get_ID());
 	auto tType = pTechno->GetTechnoType();
-	return tType->Cloakable || pTechno->HasAbility(Abilities::CLOAK);
+	return tType->Cloakable || pTechno->HasAbility(Ability::Cloak);
 }
 
 bool TechnoExt::ExtData::IsDeactivated() const {
@@ -1008,7 +1008,7 @@ bool TechnoExt::ExtData::IsCloakable(bool allowPassive) const
 	}
 
 	// check for active cloak
-	if(pThis->IsCloakable() || pThis->HasAbility(Abilities::CLOAK)) {
+	if(pThis->IsCloakable() || pThis->HasAbility(Ability::Cloak)) {
 		if(this->CanSelfCloakNow()) {
 			return true;
 		}

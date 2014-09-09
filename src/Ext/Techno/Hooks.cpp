@@ -1306,7 +1306,7 @@ DEFINE_HOOK(4D85E4, FootClass_UpdatePosition_TiberiumDamage, 9)
 		// default is: infantry can be damaged, others cannot
 		bool enabled = (pThis->WhatAmI() != InfantryClass::AbsID);
 
-		if(!pExt->TiberiumProof.Get(enabled) && !pThis->HasAbility(Abilities::TIBERIUM_PROOF)) {
+		if(!pExt->TiberiumProof.Get(enabled) && !pThis->HasAbility(Ability::TiberiumProof)) {
 			if(pThis->Health > 0) {
 				CellClass* pCell = pThis->GetCell();
 				int idxTiberium = pCell->GetContainedTiberiumIndex();

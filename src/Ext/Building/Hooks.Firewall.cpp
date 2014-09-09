@@ -348,7 +348,7 @@ DEFINE_HOOK(4DA53E, FootClass_Update, 6)
 		&& F->GetHeight() <= RulesClass::Instance->HoverHeight)
 	{
 		TechnoTypeClass* pType = F->GetTechnoType();
-		if(pType->TiberiumHeal || F->HasAbility(Abilities::TIBERIUM_HEAL)) {
+		if(pType->TiberiumHeal || F->HasAbility(Ability::TiberiumHeal)) {
 			if(F->Health > 0 && F->Health < pType->Strength) {
 				CellClass* pCell = F->GetCell();
 				if(pCell->LandType == LandType::Tiberium) {
