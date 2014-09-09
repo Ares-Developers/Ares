@@ -445,11 +445,11 @@ bool WarheadTypeExt::ExtData::applyKillDriver(BulletClass* Bullet) {
 //since CellSpread effect is needed due to MO's proposed cloak SW (which is the reason why I was bugged with this), it has it.
 //Graion Dilach, ~2011-10-14... I forgot the exact date :S
 
-void WarheadTypeExt::ExtData::applyAttachedEffect(CoordStruct *coords, TechnoClass* Owner) {
+void WarheadTypeExt::ExtData::applyAttachedEffect(const CoordStruct &coords, TechnoClass* Owner) {
 	if (this->AttachedEffect.Duration != 0) {
-		CellStruct cellCoords = MapClass::Instance->GetCellAt(*coords)->MapCoords;
+		CellStruct cellCoords = MapClass::Instance->GetCellAt(coords)->MapCoords;
 		// set of affected objects. every object can be here only once.
-		auto items = Helpers::Alex::getCellSpreadItems(*coords, this->AttachedToObject->CellSpread, true);
+		auto items = Helpers::Alex::getCellSpreadItems(coords, this->AttachedToObject->CellSpread, true);
 
 		// affect each object
 		for(size_t i=0; i<items.size(); ++i) {

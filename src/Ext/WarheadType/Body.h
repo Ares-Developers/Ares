@@ -119,7 +119,7 @@ public:
 		void applyEMP(const CoordStruct &coords, TechnoClass* pSource);
 		bool applyPermaMC(const CoordStruct &coords, HouseClass* pOwner, AbstractClass* pTarget);
 
-		void applyAttachedEffect(CoordStruct *, TechnoClass *);
+		void applyAttachedEffect(const CoordStruct &coords, TechnoClass* pOwner);
 
 		bool applyKillDriver(BulletClass *); // #733
 	};
@@ -156,7 +156,7 @@ public:
 
     static bool canWarheadAffectTarget(TechnoClass *, HouseClass *, WarheadTypeClass *);
 
-	static void applyAttachedEffect(WarheadTypeClass * pWH, CoordStruct* coords, TechnoClass * Source) {
+	static void applyAttachedEffect(WarheadTypeClass * pWH, const CoordStruct &coords, TechnoClass * Source) {
 	//static void applyAttachedEffect(WarheadTypeClass * pWH, CoordStruct* coords, HouseClass* Owner) {
 		if(auto pWHExt = WarheadTypeExt::ExtMap.Find(pWH)) {
 			pWHExt->applyAttachedEffect(coords, Source);

@@ -51,7 +51,7 @@ DEFINE_HOOK(46920B, BulletClass_Fire, 6) {
 		pWHExt->applyEMP(coords, Bullet->Owner);
 		WarheadTypeExt::applyOccupantDamage(Bullet);
 		pWHExt->applyKillDriver(Bullet);
-		pWHExt->applyAttachedEffect(&coords, Bullet->Owner);
+		pWHExt->applyAttachedEffect(coords, Bullet->Owner);
 	}
 
 /*
