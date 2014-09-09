@@ -747,16 +747,16 @@ AresAction::Value TechnoExt::ExtData::GetActionHijack(TechnoClass* pTarget) {
 	}
 
 	// target type is not eligible (hijackers can also enter strange buildings)
-	eAbstractType absTarget = pTarget->WhatAmI();
-	if(absTarget != abs_Aircraft && absTarget != abs_Unit
-		&& (!pType->VehicleThief || absTarget != abs_Building)) {
+	AbstractType absTarget = pTarget->WhatAmI();
+	if(absTarget != AbstractType::Aircraft && absTarget != AbstractType::Unit
+		&& (!pType->VehicleThief || absTarget != AbstractType::Building)) {
 			return AresAction::None;
 	}
 
 	// target is bad
 	if(pTarget->CurrentMission == Mission::Selling || pTarget->IsBeingWarpedOut()
 		|| pTargetType->IsTrain || pTargetType->BalloonHover
-		|| (absTarget != abs_Unit && !pTarget->IsStrange())
+		|| (absTarget != AbstractType::Unit && !pTarget->IsStrange())
 		//|| (absTarget == abs_Unit && ((UnitTypeClass*)pTargetType)->NonVehicle) replaced by Hijacker.Allowed
 		|| !pTarget->IsOnFloor()) {
 			return AresAction::None;

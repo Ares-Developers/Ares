@@ -181,17 +181,17 @@ public:
 #define idxInfantry 3
 #define idxOther 4
 
-	static char AbsIDtoIdx(eAbstractType absId)
+	static char AbsIDtoIdx(AbstractType absId)
 		{
 			switch(absId)
 			{
-				case abs_Unit:
+				case AbstractType::Unit:
 					return idxVehicle;
-				case abs_Aircraft:
+				case AbstractType::Aircraft:
 					return idxAircraft;
-				case abs_Building:
+				case AbstractType::Building:
 					return idxBuilding;
-				case abs_Infantry:
+				case AbstractType::Infantry:
 					return idxInfantry;
 				default:
 					return idxOther;

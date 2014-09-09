@@ -274,12 +274,12 @@ bool SWTypeExt::ExtData::IsCellEligible(CellClass* pCell, SuperWeaponTarget::Val
 bool SWTypeExt::ExtData::IsTechnoEligible(TechnoClass* pTechno, SuperWeaponTarget::Value allowed) {
 	if(allowed & SuperWeaponTarget::AllContents) {
 		if(pTechno) {
-			eAbstractType abs_Techno = pTechno->WhatAmI();
-			if((abs_Techno == abs_Infantry) && !(allowed & SuperWeaponTarget::Infantry)) {
+			AbstractType abs_Techno = pTechno->WhatAmI();
+			if((abs_Techno == AbstractType::Infantry) && !(allowed & SuperWeaponTarget::Infantry)) {
 				return false;
-			} else if(((abs_Techno == abs_Unit) || (abs_Techno == abs_Aircraft)) && !(allowed & SuperWeaponTarget::Unit)) {
+			} else if(((abs_Techno == AbstractType::Unit) || (abs_Techno == AbstractType::Aircraft)) && !(allowed & SuperWeaponTarget::Unit)) {
 				return false;
-			} else if((abs_Techno == abs_Building) && !(allowed & SuperWeaponTarget::Building)) {
+			} else if((abs_Techno == AbstractType::Building) && !(allowed & SuperWeaponTarget::Building)) {
 				return false;
 			}
 		} else {

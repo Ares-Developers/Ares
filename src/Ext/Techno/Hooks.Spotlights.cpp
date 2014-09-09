@@ -124,7 +124,7 @@ DEFINE_HOOK(435C08, BuildingLightClass_Draw_ForceType, 5)
 DEFINE_HOOK(435C32, BuildingLightClass_Draw_PowerOnline, A)
 {
 	GET(TechnoClass *, T, EDI);
-	return (T->WhatAmI() != abs_Building || (T->IsPowerOnline() && !static_cast<BuildingClass *>(T)->IsFogged))
+	return (T->WhatAmI() != AbstractType::Building || (T->IsPowerOnline() && !static_cast<BuildingClass *>(T)->IsFogged))
 		? 0x435C52
 		: 0x4361BC
 	;
@@ -135,7 +135,7 @@ DEFINE_HOOK(436459, BuildingLightClass_Update, 6)
 	static const double Facing2Rad = (2 * 3.14) / 0xFFFF;
 	GET(BuildingLightClass *, BL, EDI);
 	TechnoClass *Owner = BL->OwnerObject;
-	if(Owner && Owner->WhatAmI() != abs_Building) {
+	if(Owner && Owner->WhatAmI() != AbstractType::Building) {
 		TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(Owner->GetTechnoType());
 		CoordStruct Loc = Owner->Location;
 		DirStruct Facing;

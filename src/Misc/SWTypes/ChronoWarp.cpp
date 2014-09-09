@@ -135,7 +135,7 @@ bool SW_ChronoWarp::Activate(SuperClass* pThis, const CellStruct &Coords, bool I
 
 				// if this is a newly produced unit that still is in its
 				// weapons factory, this skips it.
-				if(pTechno->WhatAmI() == abs_Unit) {
+				if(pTechno->WhatAmI() == AbstractType::Unit) {
 					TechnoClass* pLink = pTechno->GetNthLink(0);
 					if(pLink) {
 						if(BuildingClass* pLinkBld = specific_cast<BuildingClass*>(pLink)) {

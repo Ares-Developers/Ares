@@ -574,7 +574,7 @@ DEFINE_HOOK(53A300, LightningStorm_Strike2, 5) {
 
 			CoordStruct empty;
 			ObjectClass* pObj = pCell->FindObjectNearestTo(&empty, false, nullptr);
-			bool isInfantry = (pObj && pObj->WhatAmI() == abs_Infantry);
+			bool isInfantry = (pObj && pObj->WhatAmI() == AbstractType::Infantry);
 
 			// empty cell action
 			if(!pBld && !pObj) {

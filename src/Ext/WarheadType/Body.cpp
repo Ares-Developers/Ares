@@ -340,7 +340,7 @@ bool WarheadTypeExt::ExtData::applyKillDriver(BulletClass* Bullet) {
 		TechnoTypeExt::ExtData* TargetTypeExt = TechnoTypeExt::ExtMap.Find(pTargetType);
 
 		// conditions: Warhead is KillDriver, target is Vehicle or Aircraft, but not protected and not a living being
-		if(((pTarget->WhatAmI() == abs_Unit) || (pTarget->WhatAmI() == abs_Aircraft))
+		if(((pTarget->WhatAmI() == AbstractType::Unit) || (pTarget->WhatAmI() == AbstractType::Aircraft))
 			&& !(pTarget->BeingWarpedOut || TargetTypeExt->ProtectedDriver || pTargetType->Organic || pTargetType->Natural)
 			&& (pTarget->GetHealthPercentage() <= this->KillDriver_KillBelowPercent)) {
 

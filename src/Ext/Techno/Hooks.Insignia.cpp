@@ -37,7 +37,7 @@ DEFINE_HOOK(70A990, TechnoClass_DrawVeterancy, 5)
 	if(iFrame != -1 && iFile) {
 		offset.X += 5;
 		offset.Y += 2;
-		if(T->WhatAmI() != abs_Infantry) {
+		if(T->WhatAmI() != AbstractType::Infantry) {
 			offset.X += 5;
 			offset.Y += 4;
 		}

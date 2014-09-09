@@ -196,7 +196,7 @@ DEFINE_HOOK(415CA6, AircraftClass_Paradrop, 6)
 {
 	GET(AircraftClass *, A, EDI);
 	GET(FootClass *, P, ESI);
-	if(P->WhatAmI() != abs_Unit) {
+	if(P->WhatAmI() != AbstractType::Unit) {
 		return 0;
 	}
 	CoordStruct SrcXYZ = A->GetCoords();
@@ -868,7 +868,7 @@ DEFINE_HOOK(471C96, CaptureManagerClass_CanCapture, A)
 	}
 
 	// disallow capturing bunkered units
-	if(pTarget->BunkerLinkedItem && pTarget->BunkerLinkedItem->WhatAmI() == abs_Unit) {
+	if(pTarget->BunkerLinkedItem && pTarget->BunkerLinkedItem->WhatAmI() == AbstractType::Unit) {
 		return Disallowed;
 	}
 
@@ -904,7 +904,7 @@ DEFINE_HOOK(53C450, TechnoClass_CanBePermaMC, 5)
 	GET(TechnoClass*, pThis, ECX);
 	BYTE ret = 0;
 
-	if(pThis && pThis->WhatAmI() != abs_Building
+	if(pThis && pThis->WhatAmI() != AbstractType::Building
 		&& !pThis->IsIronCurtained() && !pThis->IsInAir()) {
 
 		TechnoTypeClass* pType = pThis->GetTechnoType();

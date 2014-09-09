@@ -192,7 +192,7 @@ DEFINE_HOOK(4CD9C8, FlyLocomotionClass_sub_4CD600_HunterSeeker_UpdateTarget, 6)
 			CoordStruct crd = pTarget->GetCoords();
 
 			if(auto pFoot = abstract_cast<FootClass*>(pObject)) {
-				eAbstractType abs = pTarget->WhatAmI();
+				AbstractType abs = pTarget->WhatAmI();
 				if(abs == UnitClass::AbsID || abs == InfantryClass::AbsID) {
 					if(pFoot->TubeIndex >= 0) {
 						crd = pFoot->unknown_coords_568;

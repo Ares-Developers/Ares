@@ -31,7 +31,7 @@ DEFINE_HOOK(477007, INIClass_GetSpeedType, 8)
 			UnitTypeClass::LoadFromINI overrides it to (this->Crusher ? Track : Wheel) just before reading its SpeedType
 			so we should not alert if we're responding to a TType read and our subject is a UnitType, or all VehicleTypes without an explicit ST declaration will get dinged
 		*/
-		if(caller != 0x7121E5 || R->EBP<TechnoTypeClass *>()->WhatAmI() != abs_UnitType) {
+		if(caller != 0x7121E5 || R->EBP<TechnoTypeClass *>()->WhatAmI() != AbstractType::UnitType) {
 			Debug::INIParseFailed(Section, Key, Value);
 		}
 	}
@@ -76,7 +76,7 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 	for(int i = 0; i < TechnoTypeClass::Array->Count; ++i) {
 		TechnoTypeClass *Item = reinterpret_cast<TechnoTypeClass *>(TechnoTypeClass::Array->Items[i]);
 
-		bool IsFoot = Item->WhatAmI() != abs_BuildingType;
+		bool IsFoot = Item->WhatAmI() != AbstractType::BuildingType;
 
 		if(IsFoot && Item->SpeedType == SpeedType::None) {
 			Debug::DevLog(Debug::Error, "[%s]SpeedType is invalid!\n", Item->ID);
@@ -119,7 +119,7 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 
 		for(signed int k = static_cast<int>(pData->ClonedAt.size()) - 1; k >= 0; --k) {
 			auto Cloner = pData->ClonedAt[k];
-			if(Cloner->Factory) {
+			if(Cloner->Factory != AbstractType::None) {
 				pData->ClonedAt.erase(pData->ClonedAt.begin() + k);
 				Debug::DevLog(Debug::Error, "[%s]ClonedAt includes %s, but %s has Factory= settings. This combination is not supported.\n"
 						"(Protip: Factory= is not what controls unit exit behaviour, WeaponsFactory= and GDI/Nod/YuriBarracks= is.)\n"
@@ -130,7 +130,7 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 		if(!IsFoot) {
 			auto BItem = specific_cast<BuildingTypeClass *>(Item);
 			auto pBData = BuildingTypeExt::ExtMap.Find(BItem);
-			if(!!pBData->CloningFacility && BItem->Factory) {
+			if(!!pBData->CloningFacility && BItem->Factory != AbstractType::None) {
 				pBData->CloningFacility = false;
 				Debug::DevLog(Debug::Error, "[%s] cannot have both CloningFacility= and Factory=.\n"
 					, Item->ID);

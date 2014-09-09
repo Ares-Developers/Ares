@@ -331,8 +331,8 @@ void SW_ParaDrop::SendPDPlane(HouseClass* pOwner, CellClass* pTarget, AircraftTy
 				TechnoTypeClass* pTechnoType = Types.at(i);
 
 				//only allow infantry and vehicles
-				eAbstractType WhatAmI = pTechnoType->WhatAmI();
-				if(WhatAmI == abs_UnitType || WhatAmI == abs_InfantryType) {
+				AbstractType WhatAmI = pTechnoType->WhatAmI();
+				if(WhatAmI == AbstractType::UnitType || WhatAmI == AbstractType::InfantryType) {
 					for(int k = 0; k < Nums[i]; k++) {
 						FootClass* pNew = static_cast<FootClass*>(pTechnoType->CreateObject(pOwner));
 						pNew->Remove();

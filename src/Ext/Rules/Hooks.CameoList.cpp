@@ -51,7 +51,7 @@ DEFINE_HOOK(6A61B1, SidebarClass_SetFactoryForObject, 0)
 	enum { Found = 0x6A6210 , NotFound = 0x6A61E6 };
 
 	GET(int, TabIndex, EAX);
-	GET(int, ItemType, EDI);
+	GET(AbstractType, ItemType, EDI);
 	GET(int, ItemIndex, EBP);
 	GET_STACK(FactoryClass *, Factory, STACK_OFFS(0xC, -0x4));
 
@@ -77,7 +77,7 @@ DEFINE_HOOK(6A63B7, SidebarClass_AddCameo_SkipSizeCheck, 0)
 	enum { AlreadyExists = 0x6A65FF, NewlyAdded = 0x6A63FD };
 
 	GET_STACK(int, TabIndex, 0x18);
-	GET(int, ItemType, ESI);
+	GET(AbstractType, ItemType, ESI);
 	GET(int, ItemIndex, EBP);
 
 	auto &cameos = RulesExt::TabCameos[TabIndex];
@@ -96,7 +96,7 @@ DEFINE_HOOK(6A63B7, SidebarClass_AddCameo_SkipSizeCheck, 0)
 DEFINE_HOOK(6A8710, TabCameoListClass_AddCameo_ReplaceItAll, 0)
 {
 	GET(TabDataStruct *, pTab, ECX);
-	GET_STACK(eAbstractType, ItemType, 0x4);
+	GET_STACK(AbstractType, ItemType, 0x4);
 	GET_STACK(int, ItemIndex, 0x8);
 
 	auto TabIndex = IndexOfTab(pTab);
@@ -245,9 +245,9 @@ DEFINE_HOOK(6A9747, TabCameoListClass_Draw_GetCameo1, 0)
 	R->EAX<byte *>(ptr);
 	R->Stack<byte *>(0x30, ptr);
 
-	R->ECX<eAbstractType>(Item.ItemType);
+	R->ECX(Item.ItemType);
 
-	return (Item.ItemType == abs_Special)
+	return (Item.ItemType == AbstractType::Special)
 		? 0x6A9936
 		: 0x6A9761
 	;
@@ -365,7 +365,7 @@ DEFINE_HOOK(6AAD2F, SidebarClass_ProcessCameoClick_LoadCameoData1, 0)
 	R->Stack<int>(STACK_OFFS(0xAC, 0x98), Item.ItemIndex);
 	R->Stack<FactoryClass *>(STACK_OFFS(0xAC, 0x94), Item.CurrentFactory);
 	R->Stack<int>(STACK_OFFS(0xAC, 0x88), Item.IsAlt);
-	R->EBP<int>(Item.ItemType);
+	R->EBP(Item.ItemType);
 
 	auto ptr = reinterpret_cast<byte *>(&Item);
 	ptr -= 0x58;

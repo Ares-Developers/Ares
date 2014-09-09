@@ -43,7 +43,7 @@ CoordStruct GapCoordBuffer;
 DEFINE_HOOK(6FB4B1, TechnoClass_DeleteGap_new, 6)
 {
 	GET(FootClass *, F, ESI);
-	if(F->WhatAmI() == abs_Building) {
+	if(F->WhatAmI() == AbstractType::Building) {
 		R->EDX<CoordStruct *>(&F->Location);
 	} else {
 		GapCoordBuffer = MapClass::Instance->GetCellAt(F->LastMapCoords)->GetCoords();
@@ -55,7 +55,7 @@ DEFINE_HOOK(6FB4B1, TechnoClass_DeleteGap_new, 6)
 DEFINE_HOOK(6F6B66, TechnoClass_Remove_DeleteGap, A)
 {
 	GET(TechnoClass *, T, ESI);
-	if(T->WhatAmI() == abs_Building) {
+	if(T->WhatAmI() == AbstractType::Building) {
 		T->DestroyGap();
 	} else {
 		TechnoExt::NeedsRegap = 1;

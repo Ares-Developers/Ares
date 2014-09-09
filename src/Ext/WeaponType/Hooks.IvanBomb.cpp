@@ -13,10 +13,10 @@ DEFINE_HOOK(438E86, BombListClass_Plant_AllTechnos, 5)
 {
 	GET(TechnoClass *, Source, EBP);
 	switch(Source->WhatAmI()) {
-		case abs_Aircraft:
-		case abs_Infantry:
-		case abs_Unit:
-		case abs_Building:
+		case AbstractType::Aircraft:
+		case AbstractType::Infantry:
+		case AbstractType::Unit:
+		case AbstractType::Building:
 			return 0x438E97;
 		default:
 			return 0x439022;
@@ -167,7 +167,7 @@ DEFINE_HOOK(4393F2, BombClass_SDDTOR, 5)
 DEFINE_HOOK(6FA4C6, TechnoClass_Update_ZeroOutTarget, 5)
 {
 	GET(TechnoClass *, T, ESI);
-	return (T->WhatAmI() == abs_Aircraft) ? 0x6FA4D1 : 0;
+	return (T->WhatAmI() == AbstractType::Aircraft) ? 0x6FA4D1 : 0;
 }
 
 DEFINE_HOOK(46934D, IvanBombs_Spread, 6)

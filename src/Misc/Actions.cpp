@@ -265,11 +265,11 @@ DEFINE_HOOK(6929FC, DisplayClass_ChooseAction_CanSell, 7)
 {
 	GET(TechnoClass *, Target, ESI);
 	switch(Target->WhatAmI()) {
-		case abs_Aircraft:
-		case abs_Unit:
+		case AbstractType::Aircraft:
+		case AbstractType::Unit:
 			R->Stack(0x10, Action::SellUnit);
 			return 0x692B06;
-		case abs_Building:
+		case AbstractType::Building:
 			R->Stack(0x10, Target->IsStrange() ? Action::NoSell : Action::Sell);
 			return 0x692B06;
 		default:
@@ -280,7 +280,7 @@ DEFINE_HOOK(6929FC, DisplayClass_ChooseAction_CanSell, 7)
 DEFINE_HOOK(4ABFBE, DisplayClass_LeftMouseButtonUp_ExecPowerToggle, 7)
 {
 	GET(TechnoClass *, Target, ESI);
-	return (Target && Target->Owner->ControlledByHuman() && Target->WhatAmI() == abs_Building)
+	return (Target && Target->Owner->ControlledByHuman() && Target->WhatAmI() == AbstractType::Building)
 	 ? 0x4ABFCE
 	 : 0x4AC294
 	;

@@ -295,7 +295,7 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 		Attacker->EnteredOpenTopped(Target);
 	}
 
-	if(Attacker->WhatAmI() == abs_Building) {
+	if(Attacker->WhatAmI() == AbstractType::Building) {
 		Target->Absorbed = true;
 	}
 	Attacker->AddPassenger(Target);

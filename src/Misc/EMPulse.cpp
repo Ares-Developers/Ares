@@ -254,7 +254,7 @@ bool EMPulse::isCurrentlyEMPImmune(TechnoClass * Target, HouseClass * SourceHous
 		return true;
 	}
 
-	if(Target->WhatAmI() == abs_Unit) {
+	if(Target->WhatAmI() == AbstractType::Unit) {
 		if(BuildingClass* pBld = MapClass::Instance->GetCellAt(Target->Location)->GetBuilding()) {
 			if(pBld->Type->WeaponsFactory) {
 				if(pBld->IsUnderEMP() || pBld == Target->GetNthLink(0)) {
@@ -602,7 +602,7 @@ bool EMPulse::enableEMPEffect(TechnoClass * Victim, ObjectClass * Source) {
 		updateRadarBlackout(Building);
 
 		BuildingTypeClass * pType = Building->Type;
-		if (pType->Factory) {
+		if (pType->Factory != AbstractType::None) {
 			Building->Owner->Update_FactoriesQueues(pType->Factory, pType->Naval, 0);
 		}
 	} else {
@@ -686,7 +686,7 @@ void EMPulse::DisableEMPEffect(TechnoClass * Victim) {
 			updateRadarBlackout(Building);
 
 			BuildingTypeClass * pType = Building->Type;
-			if (pType->Factory) {
+			if (pType->Factory != AbstractType::None) {
 				Building->Owner->Update_FactoriesQueues(pType->Factory, pType->Naval, 0);
 			}
 		}
@@ -739,7 +739,7 @@ bool EMPulse::EnableEMPEffect2(TechnoClass * Victim) {
 		updateRadarBlackout(Building);
 
 		BuildingTypeClass * pType = Building->Type;
-		if (pType->Factory) {
+		if (pType->Factory != AbstractType::None) {
 			Building->Owner->Update_FactoriesQueues(pType->Factory, pType->Naval, 0);
 		}
 	} else {
@@ -812,7 +812,7 @@ void EMPulse::DisableEMPEffect2(TechnoClass * Victim) {
 			updateRadarBlackout(Building);
 
 			BuildingTypeClass * pType = Building->Type;
-			if (pType->Factory) {
+			if (pType->Factory != AbstractType::None) {
 				Building->Owner->Update_FactoriesQueues(pType->Factory, pType->Naval, 0);
 			}
 		}

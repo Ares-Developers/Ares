@@ -37,7 +37,7 @@ HouseExt::RequirementStatus HouseExt::RequirementsMet(HouseClass *pHouse, Techno
 	HouseExt::ExtData* pHouseExt = HouseExt::ExtMap.Find(pHouse);
 
 	// this has to happen before the first possible "can build" response or NCO happens
-	if(pItem->WhatAmI() != abs_BuildingType && !FactoryForObjectExists(pHouse, pItem)) { return Incomplete; }
+	if(pItem->WhatAmI() != AbstractType::BuildingType && !FactoryForObjectExists(pHouse, pItem)) { return Incomplete; }
 
 	if(!(pData->PrerequisiteTheaters & (1 << static_cast<int>(ScenarioClass::Instance->Theater)))) { return Forbidden; }
 	if(Prereqs::HouseOwnsAny(pHouse, &pData->PrerequisiteNegatives)) { return Forbidden; }
@@ -177,7 +177,7 @@ signed int HouseExt::PrereqValidate
 
 bool HouseExt::HasNeededFactory(HouseClass *pHouse, TechnoTypeClass *pItem) {
 	DWORD ItemOwners = pItem->GetOwners();
-	eAbstractType WhatAmI = pItem->WhatAmI();
+	AbstractType WhatAmI = pItem->WhatAmI();
 
 	for(int i = 0; i < pHouse->Buildings.Count; ++i) {
 		auto pBld = pHouse->Buildings[i];
@@ -198,7 +198,7 @@ bool HouseExt::HasNeededFactory(HouseClass *pHouse, TechnoTypeClass *pItem) {
 // this only verifies the existence, it does not check whether the building is currently
 // in a state that allows it to kick out units. however, it respects BuiltAt.
 bool HouseExt::FactoryForObjectExists(HouseClass *pHouse, TechnoTypeClass *pItem) {
-	eAbstractType WhatAmI = pItem->WhatAmI();
+	AbstractType WhatAmI = pItem->WhatAmI();
 	auto pExt = TechnoTypeExt::ExtMap.Find(pItem);
 
 	for(int i = 0; i < pHouse->Buildings.Count; ++i) {
@@ -228,7 +228,7 @@ bool HouseExt::CheckFactoryOwner(HouseClass *pHouse, TechnoTypeClass *pItem){
 			}
 		}
 
-		eAbstractType WhatAmI = pItem->WhatAmI();
+		AbstractType WhatAmI = pItem->WhatAmI();
 
 		for (auto pBld : pHouse->Buildings) {
 			if (pBld->Type->Factory == WhatAmI) {
@@ -262,7 +262,7 @@ bool HouseExt::CheckForbiddenFactoryOwner(HouseClass *pHouse, TechnoTypeClass *p
 			}
 		}
 
-		eAbstractType WhatAmI = pItem->WhatAmI();
+		AbstractType WhatAmI = pItem->WhatAmI();
 
 		for (auto pBld : pHouse->Buildings) {
 			if (pBld->Type->Factory == WhatAmI) {

@@ -96,7 +96,7 @@ DEFINE_HOOK(48303A, CellClass_CrateBeingCollected_Speed2, 6)
 	GET(FootClass *, Unit, EDI);
 	GET_STACK(double, Pow_SpeedMultiplier, 0x20);
 	TechnoExt::ExtData *UnitExt = TechnoExt::ExtMap.Find(Unit);
-	if (UnitExt->Crate_SpeedMultiplier == 1.0 && Unit->WhatAmI() != abs_AircraftType){
+	if (UnitExt->Crate_SpeedMultiplier == 1.0 && Unit->WhatAmI() != AbstractType::AircraftType){
 		UnitExt->Crate_SpeedMultiplier = Pow_SpeedMultiplier;
 		TechnoExt::RecalculateStats(Unit);
 		R->CL(Unit->GetOwningHouse()->PlayerControl);

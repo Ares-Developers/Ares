@@ -156,8 +156,8 @@ DEFINE_HOOK(4693B0, BulletClass_Fire_Overpower, 6)
 	GET(TechnoClass *, pT, ECX);
 	switch(pT->WhatAmI())
 	{
-		case abs_Infantry:
-		case abs_Unit:
+		case AbstractType::Infantry:
+		case AbstractType::Unit:
 			return 0x4693BC;
 		default:
 			return 0x469AA4;
@@ -248,10 +248,10 @@ DEFINE_HOOK(414D36, AACombat, 5)
 // let's see what this change does
 DEFINE_HOOK(6F7561, Arcing_Aircraft, 5)
 {
-	GET(int, T, EAX);
+	GET(AbstractType, T, EAX);
 	GET(int *, X, ESI);
 	R->EAX(*X);
-	return T == abs_Aircraft ? 0x6F75B2 : 0x6F7568;
+	return T == AbstractType::Aircraft ? 0x6F75B2 : 0x6F7568;
 }
 
 // leave this here
@@ -461,7 +461,7 @@ DEFINE_HOOK(455E4C, HouseClass_FindRepairBay, 9)
 
 	bool isNotAcceptable = (UT->BalloonHover
 	 || BT->Naval != UT->Naval
-	 || BT->Factory == abs_AircraftType
+	 || BT->Factory == AbstractType::AircraftType
 	 || BT->Helipad
 	 || BT->HoverPad && !RulesClass::Instance->SeparateAircraft
 	);

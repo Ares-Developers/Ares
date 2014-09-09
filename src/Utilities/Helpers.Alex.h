@@ -177,7 +177,7 @@ namespace Helpers {
 				double dist = target.DistanceFrom(*coords);
 
 				// reduce the distance for flying aircraft
-				if((Techno->WhatAmI() == abs_Aircraft) && Techno->IsInAir()) {
+				if((Techno->WhatAmI() == AbstractType::Aircraft) && Techno->IsInAir()) {
 					dist *= 0.5;
 				}
 
@@ -293,7 +293,7 @@ namespace Helpers {
 		inline void remove_non_paradroppables(std::vector<TechnoTypeClass*> &types, const char* section, const char* key) {
 			// remove all types that aren't either infantry or unit types
 			types.erase(std::remove_if(types.begin(), types.end(), [section, key](TechnoTypeClass* pItem) -> bool {
-				if(!is_any_of(pItem->WhatAmI(), abs_InfantryType, abs_UnitType)) {
+				if(!is_any_of(pItem->WhatAmI(), AbstractType::InfantryType, AbstractType::UnitType)) {
 					Debug::INIParseFailed(section, key, pItem->ID, "Only InfantryTypes and UnitTypes are supported.");
 					return true;
 				}

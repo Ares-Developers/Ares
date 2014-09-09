@@ -548,21 +548,21 @@ bool TechnoTypeExt::ExtData::CameoIsElite()
 	}
 
 	switch(T->WhatAmI()) {
-		case abs_InfantryType:
+		case AbstractType::InfantryType:
 			if(House->BarracksInfiltrated && !T->Naval && T->Trainable) {
 				return true;
 			} else {
 				return Country->VeteranInfantry.FindItemIndex((InfantryTypeClass *)T) != -1;
 			}
-		case abs_UnitType:
+		case AbstractType::UnitType:
 			if(House->WarFactoryInfiltrated && !T->Naval && T->Trainable) {
 				return true;
 			} else {
 				return Country->VeteranUnits.FindItemIndex((UnitTypeClass *)T) != -1;
 			}
-		case abs_AircraftType:
+		case AbstractType::AircraftType:
 			return Country->VeteranAircraft.FindItemIndex((AircraftTypeClass *)T) != -1;
-		case abs_BuildingType:
+		case AbstractType::BuildingType:
 			if(TechnoTypeClass *Item = T->UndeploysInto) {
 				return Country->VeteranUnits.FindItemIndex((UnitTypeClass *)Item) != -1;
 			} else {

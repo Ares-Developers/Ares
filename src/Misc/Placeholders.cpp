@@ -304,7 +304,7 @@ A_FINE_HOOK(5F7641, ObjectTypeClass_GetFoundationData, 6)
 	CellStruct *TestFoundation = (CellStruct *)0x89C978;
 	GET_STACK(ObjectTypeClass *, ObjType, 0x0);
 
-	if(ObjType && ObjType->WhatAmI() == abs_UnitType && strcmp(ObjType->ID, "MTNK") == 0) {
+	if(ObjType && ObjType->WhatAmI() == AbstractType::UnitType && strcmp(ObjType->ID, "MTNK") == 0) {
 		Debug::Log("EHLO\n");
 		R->EAX<CellStruct *>(TestFoundation);
 		return 0x5F7697;

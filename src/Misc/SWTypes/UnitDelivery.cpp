@@ -100,7 +100,7 @@ void UnitDeliveryStateMachine::PlaceUnits()
 			}
 		} else {
 			// place aircraft types on ground explicitly
-			if(Type->WhatAmI() != abs_AircraftType) {
+			if(Type->WhatAmI() != AbstractType::AircraftType) {
 				SpeedType = Type->SpeedType;
 				MovementZone = Type->MovementZone;
 			}

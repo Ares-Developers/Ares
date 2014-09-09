@@ -98,8 +98,7 @@ DEFINE_HOOK(44725F, BuildingClass_GetCursorOverObject_TargetABuilding, 5)
 	GET(TechnoClass *, T, EBP);
 	// not decided on UI handling yet
 
-	if(T->WhatAmI() == abs_Building) {
-		BuildingClass* targetBuilding = specific_cast<BuildingClass *>(T);
+	if(auto targetBuilding = abstract_cast<BuildingClass*>(T)) {
 		BuildingExt::ExtData* curBuildExt = BuildingExt::ExtMap.Find(pThis);
 
 		if(curBuildExt->canTraverseTo(targetBuilding)) {

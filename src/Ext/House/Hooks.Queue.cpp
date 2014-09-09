@@ -16,18 +16,18 @@ DEFINE_HOOK(4502F4, BuildingClass_Update_Factory, 6)
 		HouseExt::ExtData *pData = HouseExt::ExtMap.Find(H);
 		BuildingClass **curFactory = nullptr;
 		switch(B->Type->Factory) {
-			case abs_BuildingType:
+			case AbstractType::BuildingType:
 				curFactory = &pData->Factory_BuildingType;
 				break;
-			case abs_UnitType:
+			case AbstractType::UnitType:
 				curFactory = B->Type->Naval
 				 ? &pData->Factory_NavyType
 				 : &pData->Factory_VehicleType;
 				break;
-			case abs_InfantryType:
+			case AbstractType::InfantryType:
 				curFactory = &pData->Factory_InfantryType;
 				break;
-			case abs_AircraftType:
+			case AbstractType::AircraftType:
 				curFactory = &pData->Factory_AircraftType;
 				break;
 		}
@@ -52,18 +52,18 @@ DEFINE_HOOK(4CA07A, FactoryClass_AbandonProduction, 8)
 	HouseExt::ExtData *pData = HouseExt::ExtMap.Find(H);
 	TechnoClass * T = F->InProduction;
 	switch(T->WhatAmI()) {
-		case abs_Building:
+		case AbstractType::Building:
 			pData->Factory_BuildingType = nullptr;
 			break;
-		case abs_Unit:
+		case AbstractType::Unit:
 			(T->GetTechnoType()->Naval
 			 ? pData->Factory_NavyType
 			 : pData->Factory_VehicleType) = nullptr;
 			break;
-		case abs_Infantry:
+		case AbstractType::Infantry:
 			pData->Factory_InfantryType = nullptr;
 			break;
-		case abs_Aircraft:
+		case AbstractType::Aircraft:
 			pData->Factory_AircraftType = nullptr;
 			break;
 	}
