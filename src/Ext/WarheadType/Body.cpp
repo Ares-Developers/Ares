@@ -219,7 +219,7 @@ void WarheadTypeExt::ExtData::applyIronCurtain(const CoordStruct &coords, HouseC
 void WarheadTypeExt::ExtData::applyEMP(CoordStruct *coords, TechnoClass *source) {
 	if (this->EMP_Duration) {
 		// launch our rewritten EMP.
-		EMPulse::CreateEMPulse(this, coords, source);
+		EMPulse::CreateEMPulse(this, *coords, source);
 	}
 }
 

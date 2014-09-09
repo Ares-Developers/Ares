@@ -22,7 +22,7 @@ bool EMPulse::supportVerses = false;
 	\author AlexB
 	\date 2010-05-20
 */
-void EMPulse::CreateEMPulse(WarheadTypeExt::ExtData *Warhead, CoordStruct *Coords, TechnoClass *Firer) {
+void EMPulse::CreateEMPulse(WarheadTypeExt::ExtData *Warhead, const CoordStruct &Coords, TechnoClass *Firer) {
 	if (!Warhead) {
 		Debug::DevLog(Debug::Error, "Trying to CreateEMPulse() with Warhead pointing to NULL. Funny.\n");
 		return;
@@ -33,7 +33,7 @@ void EMPulse::CreateEMPulse(WarheadTypeExt::ExtData *Warhead, CoordStruct *Coord
 	}
 
 	// set of affected objects. every object can be here only once.
-	auto items = Helpers::Alex::getCellSpreadItems(*Coords, Warhead->AttachedToObject->CellSpread, true);
+	auto items = Helpers::Alex::getCellSpreadItems(Coords, Warhead->AttachedToObject->CellSpread, true);
 
 	// affect each object
 	for(size_t i=0; i<items.size(); ++i) {
