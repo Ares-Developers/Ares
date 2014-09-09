@@ -418,19 +418,19 @@ void HouseExt::ExtData::UpdateTogglePower() {
 
 	if(Unsorted::CurrentFrame % pRulesExt->TogglePowerDelay == 0) {
 		struct ExpendabilityStruct {
-			int Compare(const ExpendabilityStruct& lhs, const ExpendabilityStruct& rhs) {
+			static int Compare(const ExpendabilityStruct& lhs, const ExpendabilityStruct& rhs) {
 				if(lhs.Value < rhs.Value) {
 					return -1;
 				}
 
-				if(this->Value > rhs.Value) {
+				if(lhs.Value > rhs.Value) {
 					return 1;
 				}
 
 				return 0;
 			}
 
-			bool operator < (const ExpendabilityStruct& rhs) {
+			bool operator < (const ExpendabilityStruct& rhs) const {
 				if(auto res = Compare(*this, rhs)) {
 					return res < 0;
 				}
@@ -439,7 +439,7 @@ void HouseExt::ExtData::UpdateTogglePower() {
 				return *this->Building < *rhs.Building;
 			}
 
-			bool operator >(const ExpendabilityStruct& rhs) {
+			bool operator >(const ExpendabilityStruct& rhs) const {
 				if(auto res = Compare(*this, rhs)) {
 					return res > 0;
 				}
