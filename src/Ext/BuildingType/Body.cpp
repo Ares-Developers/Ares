@@ -178,29 +178,68 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 		}
 	}
 	if(pINI->ReadString(pID, "Rubble.Intact", "", Ares::readBuffer, Ares::readLength)) {
-		this->RubbleIntact = BuildingTypeClass::Find(Ares::readBuffer);
-		if(!this->RubbleIntact && !INIClass::IsBlank(Ares::readBuffer)) {
-			Debug::INIParseFailed(pID, "Rubble.Intact", Ares::readBuffer);
+		if (_strcmpi(Ares::readBuffer, "%Remove%") == 0) {
+			this->RubbleIntactRemove = true;
+			this->RubbleIntact = BuildingTypeClass::Find(pID);
+		} else {	
+			this->RubbleIntact = BuildingTypeClass::Find(Ares::readBuffer);
+			if(!this->RubbleIntact && !INIClass::IsBlank(Ares::readBuffer)) {
+				Debug::INIParseFailed(pID, "Rubble.Intact", Ares::readBuffer);
+			}
 		}
 	}
 	if(pINI->ReadString(pID, "Rubble.Destroyed", "", Ares::readBuffer, Ares::readLength)) {
-		this->RubbleDestroyed = BuildingTypeClass::Find(Ares::readBuffer);
-		if(this->RubbleDestroyed) {
-			this->RubbleDestroyed->Capturable = false;
-			this->RubbleDestroyed->TogglePower = false;
-			this->RubbleDestroyed->Unsellable = true;
-			this->RubbleDestroyed->CanBeOccupied = false;
-		} else if(!INIClass::IsBlank(Ares::readBuffer)) {
-			Debug::INIParseFailed(pID, "Rubble.Destroyed", Ares::readBuffer);
+		if (_strcmpi(Ares::readBuffer, "%Remove%") == 0) {
+			this->RubbleDestroyedRemove = true;
+			this->RubbleDestroyed = BuildingTypeClass::Find(pID);
+		} else {
+			this->RubbleDestroyed = BuildingTypeClass::Find(Ares::readBuffer);
+			if(this->RubbleDestroyed) {
+				this->RubbleDestroyed->Capturable = false;
+				this->RubbleDestroyed->TogglePower = false;
+				this->RubbleDestroyed->Unsellable = true;
+				this->RubbleDestroyed->CanBeOccupied = false;
+			} else if(!INIClass::IsBlank(Ares::readBuffer)) {
+				Debug::INIParseFailed(pID, "Rubble.Destroyed", Ares::readBuffer);
+			}
 		}
 	}
 
+	if(pINI->ReadString(pID, "Rubble.Destroyed.Owner", "", Ares::readBuffer, Ares::readLength)) {
+		if (_strcmpi(Ares::readBuffer, "Current") == 0) {
+			this->RubbleDestroyedOwner = 1;
+		} else if(_strcmpi(Ares::readBuffer, "Special") == 0) {
+			this->RubbleDestroyedOwner = 2;
+		} else if(_strcmpi(Ares::readBuffer, "Neutral") == 0) {
+			this->RubbleDestroyedOwner = 3;
+		} else if(_strcmpi(Ares::readBuffer, "Random") == 0) {
+			this->RubbleDestroyedOwner = 4;
+		}
+	}
+	if(pINI->ReadString(pID, "Rubble.Intact.Owner", "", Ares::readBuffer, Ares::readLength)) {
+		if (_strcmpi(Ares::readBuffer, "Current") == 0) {
+			this->RubbleIntactOwner = 1;
+		} else if(_strcmpi(Ares::readBuffer, "Special") == 0) {
+			this->RubbleIntactOwner = 2;
+		} else if(_strcmpi(Ares::readBuffer, "Neutral") == 0) {
+			this->RubbleIntactOwner = 3;
+		} else if(_strcmpi(Ares::readBuffer, "Random") == 0) {
+			this->RubbleIntactOwner = 4;
+		}
+	}
+	
 	this->LightningRod_Modifier = pINI->ReadDouble(pID, "LightningRod.Modifier", this->LightningRod_Modifier);
 
 //	this->LegacyRadarEffect = pINI->ReadBool(pID, "SpyEffect.LegacyRadar", this->LegacyRadarEffect);
 //	this->DisplayProduction = pINI->ReadBool(pID, "SpyEffect.DisplayProduction", this->DisplayProduction);
 
 	INI_EX exINI(pINI);
+
+	this->RubbleDestroyedAnim.Read(exINI, pID, "Rubble.Destroyed.Anim");
+	this->RubbleIntactAnim.Read(exINI, pID, "Rubble.Intact.Anim");
+	this->RubbleDestroyedStrength.Read(exINI, pID, "Rubble.Destroyed.Strength");
+	this->RubbleIntactStrength.Read(exINI, pID, "Rubble.Intact.Strength");
+
 	this->InfiltrateCustom.Read(exINI, pID, "SpyEffect.Custom");
 	this->RevealProduction.Read(exINI, pID, "SpyEffect.RevealProduction");
 	this->ResetSW.Read(exINI, pID, "SpyEffect.ResetSuperweapons");

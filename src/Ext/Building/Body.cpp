@@ -79,48 +79,89 @@ void BuildingExt::UpdateDisplayTo(BuildingClass *pThis) {
 	\author Renegade
 	\date 16.12.09+
 */
+/*!
+Addition:
+Rubble.Destroyed			=	(BuildingType or %Remove%)
+Rubble.Intact				=	(BuildingType or %Remove%)
+
+Rubble.Destroyed.Owner		= 	(enumeration Current|Special|Neutral|Random)
+Rubble.Intact.Owner			= 	(enumeration Current|Special|Neutral|Random)
+
+Rubble.Destroyed.Strength	=	(integer)
+Rubble.Intact.Strength		=	(integer)
+
+Rubble.Destroyed.Anim		= 	(animation)
+Rubble.Intact.Anim			= 	(animation)
+
+Gluk-v48
+date 07.04.14
+*/
+
+/*!BUGS:
+Engineer is not always successfully leaves the building. If the buildings are too close.
+Engineer can not convert the building with Foundation=1x1
+\Ext\Infantry\Hooks.cpp		DEFINE_HOOK(519FAF, InfantryClass_UpdatePosition_EngineerRepairsFriendly, 6)
+These two errors do not occur if IsPassable=yes
+
+https://bugs.launchpad.net/ares/+bug/896094
+
+
+*/
 bool BuildingExt::ExtData::RubbleYell(bool beingRepaired) {
-	BuildingClass* currentBuilding = this->AttachedToObject;
-	BuildingTypeExt::ExtData* pTypeData = BuildingTypeExt::ExtMap.Find(currentBuilding->Type);
-	BuildingClass* newState = nullptr;
-
-	currentBuilding->Remove(); // only takes it off the map
-	currentBuilding->DestroyNthAnim(BuildingAnimSlot::All);
-
-	if(beingRepaired) {
-		if(!pTypeData->RubbleIntact) {
+	auto CreateBuilding = [](BuildingClass* currentBuilding, bool RemoveRubble, BuildingTypeClass* NewStateType, int OwnerRubble, int RubbleStrength, AnimTypeClass* Anim, const char* RubbleType ) -> bool {
+		if(!NewStateType ) {
 			Debug::Log("Warning! Advanced Rubble was supposed to be reconstructed but Ares could not obtain its normal state. \
-			Check if [%s]Rubble.Intact is set (correctly).\n", currentBuilding->Type->ID);
+			Check if [%s]Rubble.%s is set (correctly).\n", currentBuilding->Type->ID, RubbleType);
 			return true;
 		}
-
-		newState = specific_cast<BuildingClass *>(pTypeData->RubbleIntact->CreateObject(currentBuilding->Owner));
-		newState->Health = static_cast<int>(std::max((newState->Type->Strength / 100), 1)); // see description above
-		newState->IsAlive = true; // assuming this is in the sense of "is not destroyed"
-		// Location should not be changed by removal
-		if(!newState->Put(currentBuilding->Location, currentBuilding->Facing.current().value8())) {
+		currentBuilding->Remove(); // only takes it off the map
+		currentBuilding->DestroyNthAnim(BuildingAnimSlot::All);
+		if (RemoveRubble) { 
+			if(AnimTypeClass *RubbleAnim = Anim){
+				GameCreate<AnimClass>(RubbleAnim, currentBuilding->GetCoords());
+			}
+			return true;
+		}
+		BuildingClass* NewState = nullptr;
+		HouseClass *NewStateOwner = NULL;
+		if (OwnerRubble == 2 ) {				//2=Special
+			NewStateOwner = HouseClass::FindSpecial();
+		} else if (OwnerRubble == 3 ) {			//3=Neutral
+			NewStateOwner = HouseClass::FindNeutral();
+		} else if (OwnerRubble == 4 ) {			//4=Random			I do not know what to use it, but why not?
+			NewStateOwner = HouseClass::Array->GetItem(ScenarioClass::Instance->Random.RandomRanged(0, HouseClass::Array->Count - 1));
+		} else  {								//*=Current
+			NewStateOwner = currentBuilding->Owner;
+		}
+		NewState = specific_cast<BuildingClass *>(NewStateType->CreateObject(NewStateOwner));
+		
+		if(RubbleStrength == -1){
+			NewState->Health = static_cast<int>(std::max((NewState->Type->Strength / 100), 1));	
+		} else if( 0 < RubbleStrength && RubbleStrength < NewState->Type->Strength) {
+			NewState->Health = RubbleStrength;
+		} /* else Health = Strength*/
+		
+		// The building is created?
+		if(NewState->Put(currentBuilding->Location, currentBuilding->Facing)){
+			if(AnimTypeClass *RubbleAnim = Anim){
+				GameCreate<AnimClass>(RubbleAnim, currentBuilding->GetCoords());
+			}
+			return true;
+		} else {
 			Debug::Log("Advanced Rubble: Failed to place normal state on map!\n");
-			GameDelete(newState);
+			GameDelete(NewState);
 			return false;
 		}
-		// currentBuilding->UnInit(); DON'T DO THIS
+	};
 
-	} else { // if we're not here to repair that thing, obviously, we're gonna crush it
-		if(!pTypeData->RubbleDestroyed) {
-			Debug::Log("Warning! Building was supposed to be turned into Advanced Rubble but Ares could not obtain its rubble state. \
-			Check if [%s]Rubble.Destroyed is set (correctly).\n", currentBuilding->Type->ID);
-			return true;
-		}
-
-		newState = specific_cast<BuildingClass *>(pTypeData->RubbleDestroyed->CreateObject(currentBuilding->Owner));
-		// Location should not be changed by removal
-		if(!newState->Put(currentBuilding->Location, currentBuilding->Facing.current().value8())) {
-			Debug::Log("Advanced Rubble: Failed to place rubble state on map!\n");
-			GameDelete(newState);
-		}
+	BuildingClass* currentBuilding = this->AttachedToObject;
+	BuildingTypeExt::ExtData* pTypeData = BuildingTypeExt::ExtMap.Find(currentBuilding->Type);
+	if(beingRepaired) {
+		return CreateBuilding(currentBuilding, pTypeData->RubbleIntactRemove, pTypeData->RubbleIntact, pTypeData->RubbleIntactOwner, pTypeData->RubbleIntactStrength, pTypeData->RubbleIntactAnim, "Intact" );
+	} else {
+		return CreateBuilding(currentBuilding, pTypeData->RubbleDestroyedRemove, pTypeData->RubbleDestroyed, pTypeData->RubbleDestroyedOwner, pTypeData->RubbleDestroyedStrength, pTypeData->RubbleDestroyedAnim, "Destroyed" ); 
 	}
-
-	return true;
+	
 }
 
 //! Bumps all Technos that reside on a building's foundation out of the way.

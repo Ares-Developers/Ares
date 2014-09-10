@@ -122,6 +122,15 @@ public:
 		BuildingTypeClass * RubbleDestroyed;	//!< What BuildingType to turn into when destroyed. (This is the rubble, set on normal buildings.)
 		static std::vector<std::string> trenchKinds; //!< Vector of strings associating known trench names with IsTrench IDs. \sa IsTrench
 
+		Valueable<AnimTypeClass*> RubbleDestroyedAnim;
+		Valueable<AnimTypeClass*> RubbleIntactAnim;
+		Valueable<int> RubbleDestroyedOwner;
+		Valueable<int> RubbleIntactOwner;
+		Valueable<int> RubbleDestroyedStrength;
+		Valueable<int> RubbleIntactStrength;
+		Valueable<bool> RubbleDestroyedRemove;
+		Valueable<bool> RubbleIntactRemove;
+
 		// added 03.03.10 for #696 (switch for spied radar behavior)
 //		bool LegacyRadarEffect; //!< Whether to use RA's "reveal radar to spy" in addition to RA2's "disrupt radar for victim" on spying of a radar. Defaults to false, requires DisplayProduction to be true. \sa DisplayProduction
 
@@ -205,7 +214,16 @@ public:
 			PrismForwarding(),
 			ReverseEngineersVictims (false),
 			CloningFacility (false),
-			Factory_ExplicitOnly (false)
+			Factory_ExplicitOnly (false),
+
+			RubbleDestroyedAnim (nullptr),
+			RubbleIntactAnim (nullptr),
+			RubbleDestroyedOwner (1),
+			RubbleIntactOwner (1),
+			RubbleDestroyedStrength (-1),
+			RubbleIntactStrength (0),
+			RubbleDestroyedRemove (false),
+			RubbleIntactRemove (false)
 			{ };
 
 		virtual ~ExtData() {
