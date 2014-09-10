@@ -65,7 +65,6 @@ DEFINE_HOOK(4491D5, BuildingClass_ChangeOwnership_Add_Academy, 6)
 
 
 // apply the academy effect
-// TODO: consider Organic, NotHuman(?), and ConsiderAircraft
 
 DEFINE_HOOK(517D51, InfantryClass_Init_Academy, 6)
 {
@@ -84,7 +83,13 @@ DEFINE_HOOK(74689B, UnitClass_Init_Academy, 6)
 	GET(UnitClass*, pThis, ESI);
 
 	if(auto pExt = HouseExt::ExtMap.Find(pThis->Owner)) {
-		pExt->ApplyAcademy(pThis, pExt->AcademyVehicle);
+		if(pThis->Type->ConsideredAircraft) {
+			pExt->ApplyAcademy(pThis, pExt->AcademyAircraft);
+		} else if(pThis->Type->Organic) {
+			pExt->ApplyAcademy(pThis, pExt->AcademyInfantry);
+		} else {
+			pExt->ApplyAcademy(pThis, pExt->AcademyVehicle);
+		}
 	}
 
 	return 0;
