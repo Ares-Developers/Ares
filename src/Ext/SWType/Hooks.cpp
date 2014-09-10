@@ -671,7 +671,9 @@ DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
 					}
 				}
 				if(pBld) {
-					Cell = pBld->GetCell()->MapCoords;
+					CellStruct Offset = CellStruct{pBld->Type->GetFoundationWidth() / 2,
+						pBld->Type->GetFoundationHeight(false) / 2};
+					Cell = pBld->GetCell()->MapCoords + Offset;
 					LaunchSW(Cell);
 				}
 
