@@ -86,49 +86,49 @@ void BuildingExt::UpdateDisplayTo(BuildingClass *pThis) {
 	\date 07.04.14
 */
 bool BuildingExt::ExtData::RubbleYell(bool beingRepaired) {
-	auto CreateBuilding = [](BuildingClass* currentBuilding, bool RemoveRubble,
-		BuildingTypeClass* NewStateType, int OwnerRubble, int RubbleStrength,
-		AnimTypeClass* Anim, const char* RubbleType) -> bool
+	auto CreateBuilding = [](BuildingClass* pBuilding, bool remove,
+		BuildingTypeClass* pNewType, int owner, int strength,
+		AnimTypeClass* pAnimType, const char* pTagName) -> bool
 	{
-		if(!NewStateType) {
+		if(!pNewType) {
 			Debug::Log("Warning! Advanced Rubble was supposed to be reconstructed but"
 				" Ares could not obtain its new BuildingType. Check if [%s]Rubble.%s is"
-				" set (correctly).\n", currentBuilding->Type->ID, RubbleType);
+				" set (correctly).\n", pBuilding->Type->ID, pTagName);
 			return true;
 		}
-		currentBuilding->Remove(); // only takes it off the map
-		currentBuilding->DestroyNthAnim(BuildingAnimSlot::All);
-		if(RemoveRubble) {
-			if(AnimTypeClass *RubbleAnim = Anim){
-				GameCreate<AnimClass>(RubbleAnim, currentBuilding->GetCoords());
+		pBuilding->Remove(); // only takes it off the map
+		pBuilding->DestroyNthAnim(BuildingAnimSlot::All);
+		if(remove) {
+			if(pAnimType){
+				GameCreate<AnimClass>(pAnimType, pBuilding->GetCoords());
 			}
 			return true;
 		}
 		BuildingClass* NewState = nullptr;
 		HouseClass *NewStateOwner = nullptr;
-		if(OwnerRubble == 2) {				//2=Special
+		if(owner == 2) {				//2=Special
 			NewStateOwner = HouseClass::FindSpecial();
-		} else if(OwnerRubble == 3) {			//3=Neutral
+		} else if(owner == 3) {			//3=Neutral
 			NewStateOwner = HouseClass::FindNeutral();
-		} else if(OwnerRubble == 4) {			//4=Random			I do not know what to use it, but why not?
+		} else if(owner == 4) {			//4=Random			I do not know what to use it, but why not?
 			NewStateOwner = HouseClass::Array->GetItem(
 				ScenarioClass::Instance->Random.RandomRanged(0,
 				HouseClass::Array->Count - 1));
 		} else {								//*=Current
-			NewStateOwner = currentBuilding->Owner;
+			NewStateOwner = pBuilding->Owner;
 		}
-		NewState = specific_cast<BuildingClass *>(NewStateType->CreateObject(NewStateOwner));
+		NewState = specific_cast<BuildingClass *>(pNewType->CreateObject(NewStateOwner));
 
-		if(RubbleStrength == -1){
+		if(strength == -1) {
 			NewState->Health = static_cast<int>(std::max((NewState->Type->Strength / 100), 1));
-		} else if(0 < RubbleStrength && RubbleStrength < NewState->Type->Strength) {
-			NewState->Health = RubbleStrength;
+		} else if(0 < strength && strength < NewState->Type->Strength) {
+			NewState->Health = strength;
 		} /* else Health = Strength*/
 
 		// The building is created?
-		if(NewState->Put(currentBuilding->Location, currentBuilding->Facing.current().value8())) {
-			if(AnimTypeClass *RubbleAnim = Anim){
-				GameCreate<AnimClass>(RubbleAnim, currentBuilding->GetCoords());
+		if(NewState->Put(pBuilding->Location, pBuilding->Facing.current().value8())) {
+			if(pAnimType){
+				GameCreate<AnimClass>(pAnimType, pBuilding->GetCoords());
 			}
 			return true;
 		} else {
