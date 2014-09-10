@@ -354,6 +354,8 @@ void Valueable<OwnerHouseKind>::Read(INI_EX &parser, const char* pSection, const
 			value = OwnerHouseKind::Special;
 		} else if(_strcmpi(parser.value(), "neutral") == 0) {
 			value = OwnerHouseKind::Neutral;
+		} else if(_strcmpi(parser.value(), "random") == 0) {
+			value = OwnerHouseKind::Random;
 		} else {
 			Debug::INIParseFailed(pSection, pKey, parser.value(), "Expected a owner house kind");
 			return;

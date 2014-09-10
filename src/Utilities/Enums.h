@@ -147,7 +147,8 @@ enum class OwnerHouseKind : int {
 	Invoker,
 	Civilian,
 	Special,
-	Neutral
+	Neutral,
+	Random
 };
 
 class SuperWeaponFlags {
