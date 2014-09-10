@@ -83,8 +83,8 @@ void EMPulse::deliverEMPDamage(ObjectClass *object, TechnoClass *Firer, WarheadT
 			// respect verses
 			int duration = static_cast<int>(Warhead->EMP_Duration * modifier);
 			if(supportVerses) {
-				duration = static_cast<int>(duration * Warhead->Verses[curTechno->GetTechnoType()->Armor].Verses);
-			} else if(abs(Warhead->Verses[curTechno->GetTechnoType()->Armor].Verses) < 0.001) {
+				duration = static_cast<int>(duration * Warhead->GetVerses(curTechno->GetTechnoType()->Armor).Verses);
+			} else if(abs(Warhead->GetVerses(curTechno->GetTechnoType()->Armor).Verses) < 0.001) {
 				return;
 			}
 

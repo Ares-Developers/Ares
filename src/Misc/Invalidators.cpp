@@ -86,9 +86,11 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 			Debug::DevLog(Debug::Error, "[%s]MovementZone is invalid!\n", Item->ID);
 		}
 
-		if(Item->Armor == -1) {
-			Debug::DevLog(Debug::Error, "[%s]Armor is invalid!\n", Item->ID);
-		}
+		// this should never fire, default is 0 (which is valid), not -1.
+		// see hook at 4753F0. -AlexB
+		//if(Item->Armor == static_cast<Armor>(-1)) { 
+		//	Debug::DevLog(Debug::Error, "[%s]Armor is invalid!\n", Item->ID);
+		//}
 
 		if(Item->Passengers > 0 && Item->SizeLimit < 1) {
 			Debug::DevLog(Debug::Error, "[%s]Passengers=%d and SizeLimit=%d!\n", Item->ID, Item->Passengers, Item->SizeLimit);

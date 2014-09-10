@@ -122,6 +122,14 @@ public:
 		void applyAttachedEffect(const CoordStruct &coords, TechnoClass* pOwner);
 
 		bool applyKillDriver(BulletClass *); // #733
+
+		VersesData& GetVerses(Armor armor) {
+			return this->Verses[static_cast<int>(armor)];
+		}
+
+		const VersesData& GetVerses(Armor armor) const {
+			return this->Verses[static_cast<int>(armor)];
+		}
 	};
 
 	static Container<WarheadTypeExt> ExtMap;

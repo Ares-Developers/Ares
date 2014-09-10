@@ -171,7 +171,7 @@ void WarheadTypeExt::ExtData::applyIronCurtain(const CoordStruct &coords, HouseC
 			}
 
 			// respect verses the boolean way
-			if(std::abs(this->Verses[pType->Armor].Verses) < 0.001) {
+			if(std::abs(this->GetVerses(pType->Armor).Verses) < 0.001) {
 				continue;
 			}
 
@@ -461,7 +461,7 @@ void WarheadTypeExt::ExtData::applyAttachedEffect(const CoordStruct &coords, Tec
 				
 				if (Owner) {
 					if(WarheadTypeExt::canWarheadAffectTarget(curTechno, Owner->Owner, this->AttachedToObject)) {
-						if(abs(this->Verses[curTechno->GetTechnoType()->Armor].Verses) < 0.001) {
+						if(abs(this->GetVerses(curTechno->GetTechnoType()->Armor).Verses) < 0.001) {
 							continue;
 						}
 						//this->AttachedEffect.Attach(curTechno, this->AttachedEffect.Duration, Owner, this->AttachedEffect.DamageDelay);
