@@ -77,7 +77,7 @@ std::vector<SWStatus> GetSuperWeaponStatuses(HouseClass* pHouse) {
 			auto& status = Statuses[index];
 
 			// turn off super weapons that are disallowed.
-			if(!Unsorted::SWAllowed) {
+			if(SessionClass::Instance->GameMode != GameMode::Campaign && !Unsorted::SWAllowed) {
 				if(pSuper->Type->DisableableFromShell) {
 					status.Available = false;
 				}

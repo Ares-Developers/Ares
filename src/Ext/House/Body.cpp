@@ -64,7 +64,7 @@ HouseExt::RequirementStatus HouseExt::RequirementsMet(HouseClass *pHouse, Techno
 
 	if(!HouseExt::CheckFactoryOwners(pHouse, pItem)) { return Incomplete; }
 
-	if(!Unsorted::SWAllowed) {
+	if(SessionClass::Instance->GameMode != GameMode::Campaign && !Unsorted::SWAllowed) {
 		if(BuildingTypeClass *pBld = specific_cast<BuildingTypeClass*>(pItem)) {
 			if(pBld->SuperWeapon != -1) {
 				if(RulesClass::Instance->BuildTech.FindItemIndex(pBld) == -1) {
