@@ -98,46 +98,41 @@ bool BuildingExt::ExtData::RubbleYell(bool beingRepaired) {
 		}
 		pBuilding->Remove(); // only takes it off the map
 		pBuilding->DestroyNthAnim(BuildingAnimSlot::All);
-		if(remove) {
-			if(pAnimType){
-				GameCreate<AnimClass>(pAnimType, pBuilding->GetCoords());
+		if(!remove) {
+			BuildingClass* NewState = nullptr;
+			HouseClass* NewStateOwner = nullptr;
+			if(owner == OwnerHouseKind::Civilian) {
+				NewStateOwner = HouseClass::FindCivilianSide();
+			} else if(owner == OwnerHouseKind::Special) {
+				NewStateOwner = HouseClass::FindSpecial();
+			} else if(owner == OwnerHouseKind::Neutral) {
+				NewStateOwner = HouseClass::FindNeutral();
+			} else if(owner == OwnerHouseKind::Random) {
+				NewStateOwner = HouseClass::Array->GetItem(
+					ScenarioClass::Instance->Random.RandomRanged(0,
+					HouseClass::Array->Count - 1));
+			} else {
+				NewStateOwner = pBuilding->Owner;
 			}
-			return true;
-		}
-		BuildingClass* NewState = nullptr;
-		HouseClass *NewStateOwner = nullptr;
-		if(owner == OwnerHouseKind::Civilian) {
-			NewStateOwner = HouseClass::FindCivilianSide();
-		} else if(owner == OwnerHouseKind::Special) {
-			NewStateOwner = HouseClass::FindSpecial();
-		} else if(owner == OwnerHouseKind::Neutral) {
-			NewStateOwner = HouseClass::FindNeutral();
-		} else if(owner == OwnerHouseKind::Random) {
-			NewStateOwner = HouseClass::Array->GetItem(
-				ScenarioClass::Instance->Random.RandomRanged(0,
-				HouseClass::Array->Count - 1));
-		} else {
-			NewStateOwner = pBuilding->Owner;
-		}
-		NewState = specific_cast<BuildingClass *>(pNewType->CreateObject(NewStateOwner));
+			NewState = specific_cast<BuildingClass *>(pNewType->CreateObject(NewStateOwner));
 
-		if(strength == -1) {
-			NewState->Health = static_cast<int>(std::max((NewState->Type->Strength / 100), 1));
-		} else if(0 < strength && strength < NewState->Type->Strength) {
-			NewState->Health = strength;
-		} /* else Health = Strength*/
+			if(strength == -1) {
+				NewState->Health = static_cast<int>(std::max((NewState->Type->Strength / 100), 1));
+			} else if(0 < strength && strength < NewState->Type->Strength) {
+				NewState->Health = strength;
+			} /* else Health = Strength*/
 
-		// The building is created?
-		if(NewState->Put(pBuilding->Location, pBuilding->Facing.current().value8())) {
-			if(pAnimType){
-				GameCreate<AnimClass>(pAnimType, pBuilding->GetCoords());
+			// The building is created?
+			if(!NewState->Put(pBuilding->Location, pBuilding->Facing.current().value8())) {
+				Debug::Log("Advanced Rubble: Failed to place normal state on map!\n");
+				GameDelete(NewState);
+				return false;
 			}
-			return true;
-		} else {
-			Debug::Log("Advanced Rubble: Failed to place normal state on map!\n");
-			GameDelete(NewState);
-			return false;
 		}
+		if(pAnimType) {
+			GameCreate<AnimClass>(pAnimType, pBuilding->GetCoords());
+		}
+		return true;
 	};
 
 	BuildingClass* currentBuilding = this->AttachedToObject;
