@@ -151,7 +151,7 @@ signed int HouseExt::PrereqValidate
 		}
 
 		if(!pHouse->ControlledByHuman()) {
-			if(Ares::GlobalControls::AllowBypassBuildLimit[pHouse->AIDifficulty]) {
+			if(Ares::GlobalControls::AllowBypassBuildLimit[pHouse->GetAIDifficultyIndex()]) {
 				return 1;
 			} else {
 				return static_cast<signed int>(HouseExt::CheckBuildLimit(pHouse, pItem, IncludeQueued));

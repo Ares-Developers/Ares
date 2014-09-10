@@ -36,7 +36,7 @@ public:
 			//give full capabilities
 			P->IQLevel = RulesClass::Global()->MaxIQLevels;
 			P->IQLevel2 = RulesClass::Global()->MaxIQLevels;
-			P->AIDifficulty = 0;	//brutal!
+			P->AIDifficulty = AIDifficulty::Hard;	//brutal!
 
 			//notify
 			MessageListClass::Instance->PrintMessage(L"AI assumed control!");

@@ -56,11 +56,11 @@ DEFINE_HOOK(505C95, Sides_BaseDefenseCounts, 7)
 	SideClass* pSide = SideClass::Array->GetItemOrDefault(n);
 	if(SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide)) {
 		auto it = pData->GetBaseDefenseCounts();
-		if(pThis->AIDifficulty < it.size()) {
-			R->EAX<int>(it.at(pThis->AIDifficulty));
+		if(pThis->GetAIDifficultyIndex() < it.size()) {
+			R->EAX<int>(it.at(pThis->GetAIDifficultyIndex()));
 			return 0x505CE9;
 		} else {
-			Debug::Log("WTF! vector has %u items, requested item #%u\n", it.size(), pThis->AIDifficulty);
+			Debug::Log("WTF! vector has %u items, requested item #%u\n", it.size(), pThis->GetAIDifficultyIndex());
 		}
 	}
 	return 0;

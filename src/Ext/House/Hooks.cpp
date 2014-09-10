@@ -180,7 +180,7 @@ DEFINE_HOOK(50965E, HouseClass_CanInstantiateTeam, 5)
 	enum { BuildLimitAllows = 0x5096BD, TryToRecruit = 0x509671, NoWay = 0x5096F1} CanBuild = NoWay;
 	if(TechnoTypeClass * Type = ptrEntry->Type) {
 		if(Type->FindFactory(true, true, false, Owner)) {
-			if(Ares::GlobalControls::AllowBypassBuildLimit[Owner->AIDifficulty]) {
+			if(Ares::GlobalControls::AllowBypassBuildLimit[Owner->GetAIDifficultyIndex()]) {
 				CanBuild = BuildLimitAllows;
 			} else {
 				int remainLimit = HouseExt::BuildLimitRemaining(Owner, Type);

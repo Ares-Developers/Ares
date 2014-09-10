@@ -75,7 +75,7 @@ void GetTypeToProduce(HouseClass* pThis, int& ProducingTypeIndex) {
 		}
 	}
 
-	AIDifficulty::Value AIDiff = pThis->AIDifficulty;
+	auto AIDiff = pThis->GetAIDifficultyIndex();
 	int EarliestOdds = RulesClass::Instance->FillEarliestTeamProbability[AIDiff];
 	if(ScenarioClass::Instance->Random.RandomRanged(0, 99) < EarliestOdds) {
 		ProducingTypeIndex = EarliestTypenameIndex;

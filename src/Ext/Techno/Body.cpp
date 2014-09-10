@@ -934,7 +934,7 @@ void TechnoExt::ExtData::RefineTiberium(float amount, int idxType) {
 	// get the number of applicable purifiers
 	int purifiers = pHouse->NumOrePurifiers;
 	if(!pHouse->CurrentPlayer && SessionClass::Instance->GameMode) {
-		purifiers += RulesClass::Instance->AIVirtualPurifiers.GetItem(pHouse->AIDifficulty);
+		purifiers += RulesClass::Instance->AIVirtualPurifiers.GetItem(pHouse->GetAIDifficultyIndex());
 	}
 
 	// bonus amount (in tiberium)

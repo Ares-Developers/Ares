@@ -32,7 +32,7 @@ DEFINE_HOOK(4FEA60, HouseClass_AI_UnitProduction, 0)
 		return ret();
 	}
 
-	AIDifficulty::Value AIDiff = pThis->AIDifficulty;
+	auto AIDiff = pThis->GetAIDifficultyIndex();
 
 	int nParentCountryIndex = HouseTypeClass::FindIndex(pThis->Type->ParentCountry);
 	DWORD flagsOwner = 1 << nParentCountryIndex;
