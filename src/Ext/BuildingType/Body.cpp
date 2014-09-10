@@ -181,7 +181,7 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 		if (_strcmpi(Ares::readBuffer, "%Remove%") == 0) {
 			this->RubbleIntactRemove = true;
 			this->RubbleIntact = BuildingTypeClass::Find(pID);
-		} else {	
+		} else {
 			this->RubbleIntact = BuildingTypeClass::Find(Ares::readBuffer);
 			if(!this->RubbleIntact && !INIClass::IsBlank(Ares::readBuffer)) {
 				Debug::INIParseFailed(pID, "Rubble.Intact", Ares::readBuffer);
@@ -227,7 +227,7 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 			this->RubbleIntactOwner = 4;
 		}
 	}
-	
+
 	this->LightningRod_Modifier = pINI->ReadDouble(pID, "LightningRod.Modifier", this->LightningRod_Modifier);
 
 //	this->LegacyRadarEffect = pINI->ReadBool(pID, "SpyEffect.LegacyRadar", this->LegacyRadarEffect);

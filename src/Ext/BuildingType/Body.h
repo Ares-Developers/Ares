@@ -194,6 +194,14 @@ public:
 			IsTrench (-1),
 			RubbleIntact (nullptr),
 			RubbleDestroyed (nullptr),
+			RubbleDestroyedAnim (nullptr),
+			RubbleIntactAnim (nullptr),
+			RubbleDestroyedOwner (1),
+			RubbleIntactOwner (1),
+			RubbleDestroyedStrength (0),
+			RubbleIntactStrength (-1),
+			RubbleDestroyedRemove (false),
+			RubbleIntactRemove (false),
 			LightningRod_Modifier (1.0),
 			GateDownSound (),
 			GateUpSound (),
@@ -214,16 +222,7 @@ public:
 			PrismForwarding(),
 			ReverseEngineersVictims (false),
 			CloningFacility (false),
-			Factory_ExplicitOnly (false),
-
-			RubbleDestroyedAnim (nullptr),
-			RubbleIntactAnim (nullptr),
-			RubbleDestroyedOwner (1),
-			RubbleIntactOwner (1),
-			RubbleDestroyedStrength (-1),
-			RubbleIntactStrength (0),
-			RubbleDestroyedRemove (false),
-			RubbleIntactRemove (false)
+			Factory_ExplicitOnly (false)
 			{ };
 
 		virtual ~ExtData() {
