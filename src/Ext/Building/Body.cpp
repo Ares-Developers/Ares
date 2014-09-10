@@ -96,47 +96,51 @@ bool BuildingExt::ExtData::RubbleYell(bool beingRepaired) {
 				" set (correctly).\n", pBuilding->Type->ID, pTagName);
 			return true;
 		}
+
 		pBuilding->Remove(); // only takes it off the map
 		pBuilding->DestroyNthAnim(BuildingAnimSlot::All);
+
 		if(!remove) {
-			BuildingClass* NewState = nullptr;
-			HouseClass* NewStateOwner = nullptr;
+			HouseClass* pOwner = nullptr;
 			if(owner == OwnerHouseKind::Civilian) {
-				NewStateOwner = HouseClass::FindCivilianSide();
+				pOwner = HouseClass::FindCivilianSide();
 			} else if(owner == OwnerHouseKind::Special) {
-				NewStateOwner = HouseClass::FindSpecial();
+				pOwner = HouseClass::FindSpecial();
 			} else if(owner == OwnerHouseKind::Neutral) {
-				NewStateOwner = HouseClass::FindNeutral();
+				pOwner = HouseClass::FindNeutral();
 			} else if(owner == OwnerHouseKind::Random) {
-				NewStateOwner = HouseClass::Array->GetItem(
+				pOwner = HouseClass::Array->GetItem(
 					ScenarioClass::Instance->Random.RandomRanged(0,
 					HouseClass::Array->Count - 1));
 			} else {
-				NewStateOwner = pBuilding->Owner;
+				pOwner = pBuilding->Owner;
 			}
-			NewState = specific_cast<BuildingClass *>(pNewType->CreateObject(NewStateOwner));
+
+			auto pNew = static_cast<BuildingClass*>(pNewType->CreateObject(pOwner));
 
 			if(strength == -1) {
-				NewState->Health = static_cast<int>(std::max((NewState->Type->Strength / 100), 1));
-			} else if(0 < strength && strength < NewState->Type->Strength) {
-				NewState->Health = strength;
+				pNew->Health = std::max(pNew->Type->Strength / 100, 1);
+			} else if(0 < strength && strength < pNew->Type->Strength) {
+				pNew->Health = strength;
 			} /* else Health = Strength*/
 
 			// The building is created?
-			if(!NewState->Put(pBuilding->Location, pBuilding->Facing.current().value8())) {
+			if(!pNew->Put(pBuilding->Location, pBuilding->Facing.current().value8())) {
 				Debug::Log("Advanced Rubble: Failed to place normal state on map!\n");
-				GameDelete(NewState);
+				GameDelete(pNew);
 				return false;
 			}
 		}
+
 		if(pAnimType) {
 			GameCreate<AnimClass>(pAnimType, pBuilding->GetCoords());
 		}
+
 		return true;
 	};
 
-	BuildingClass* currentBuilding = this->AttachedToObject;
-	BuildingTypeExt::ExtData* pTypeData = BuildingTypeExt::ExtMap.Find(currentBuilding->Type);
+	auto currentBuilding = this->AttachedToObject;
+	auto pTypeData = BuildingTypeExt::ExtMap.Find(currentBuilding->Type);
 	if(beingRepaired) {
 		return CreateBuilding(currentBuilding, pTypeData->RubbleIntactRemove,
 			pTypeData->RubbleIntact, pTypeData->RubbleIntactOwner,
