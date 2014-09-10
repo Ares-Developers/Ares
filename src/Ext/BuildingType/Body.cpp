@@ -205,29 +205,6 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 		}
 	}
 
-	if(pINI->ReadString(pID, "Rubble.Destroyed.Owner", "", Ares::readBuffer, Ares::readLength)) {
-		if (_strcmpi(Ares::readBuffer, "Current") == 0) {
-			this->RubbleDestroyedOwner = 1;
-		} else if(_strcmpi(Ares::readBuffer, "Special") == 0) {
-			this->RubbleDestroyedOwner = 2;
-		} else if(_strcmpi(Ares::readBuffer, "Neutral") == 0) {
-			this->RubbleDestroyedOwner = 3;
-		} else if(_strcmpi(Ares::readBuffer, "Random") == 0) {
-			this->RubbleDestroyedOwner = 4;
-		}
-	}
-	if(pINI->ReadString(pID, "Rubble.Intact.Owner", "", Ares::readBuffer, Ares::readLength)) {
-		if (_strcmpi(Ares::readBuffer, "Current") == 0) {
-			this->RubbleIntactOwner = 1;
-		} else if(_strcmpi(Ares::readBuffer, "Special") == 0) {
-			this->RubbleIntactOwner = 2;
-		} else if(_strcmpi(Ares::readBuffer, "Neutral") == 0) {
-			this->RubbleIntactOwner = 3;
-		} else if(_strcmpi(Ares::readBuffer, "Random") == 0) {
-			this->RubbleIntactOwner = 4;
-		}
-	}
-
 	this->LightningRod_Modifier = pINI->ReadDouble(pID, "LightningRod.Modifier", this->LightningRod_Modifier);
 
 //	this->LegacyRadarEffect = pINI->ReadBool(pID, "SpyEffect.LegacyRadar", this->LegacyRadarEffect);
@@ -237,6 +214,8 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 
 	this->RubbleDestroyedAnim.Read(exINI, pID, "Rubble.Destroyed.Anim");
 	this->RubbleIntactAnim.Read(exINI, pID, "Rubble.Intact.Anim");
+	this->RubbleDestroyedOwner.Read(exINI, pID, "Rubble.Destroyed.Owner");
+	this->RubbleIntactOwner.Read(exINI, pID, "Rubble.Intact.Owner");
 	this->RubbleDestroyedStrength.Read(exINI, pID, "Rubble.Destroyed.Strength");
 	this->RubbleIntactStrength.Read(exINI, pID, "Rubble.Intact.Strength");
 

@@ -87,7 +87,7 @@ void BuildingExt::UpdateDisplayTo(BuildingClass *pThis) {
 */
 bool BuildingExt::ExtData::RubbleYell(bool beingRepaired) {
 	auto CreateBuilding = [](BuildingClass* pBuilding, bool remove,
-		BuildingTypeClass* pNewType, int owner, int strength,
+		BuildingTypeClass* pNewType, OwnerHouseKind owner, int strength,
 		AnimTypeClass* pAnimType, const char* pTagName) -> bool
 	{
 		if(!pNewType) {
@@ -106,15 +106,17 @@ bool BuildingExt::ExtData::RubbleYell(bool beingRepaired) {
 		}
 		BuildingClass* NewState = nullptr;
 		HouseClass *NewStateOwner = nullptr;
-		if(owner == 2) {				//2=Special
+		if(owner == OwnerHouseKind::Civilian) {
+			NewStateOwner = HouseClass::FindCivilianSide();
+		} else if(owner == OwnerHouseKind::Special) {
 			NewStateOwner = HouseClass::FindSpecial();
-		} else if(owner == 3) {			//3=Neutral
+		} else if(owner == OwnerHouseKind::Neutral) {
 			NewStateOwner = HouseClass::FindNeutral();
-		} else if(owner == 4) {			//4=Random			I do not know what to use it, but why not?
+		} else if(owner == OwnerHouseKind::Random) {
 			NewStateOwner = HouseClass::Array->GetItem(
 				ScenarioClass::Instance->Random.RandomRanged(0,
 				HouseClass::Array->Count - 1));
-		} else {								//*=Current
+		} else {
 			NewStateOwner = pBuilding->Owner;
 		}
 		NewState = specific_cast<BuildingClass *>(pNewType->CreateObject(NewStateOwner));

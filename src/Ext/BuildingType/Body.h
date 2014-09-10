@@ -6,6 +6,7 @@
 #include "../_Container.hpp"
 #include "../../Ares.h"
 #include "../../Utilities/Constructs.h"
+#include "../../Utilities/Enums.h"
 #include "../../Utilities/Template.h"
 
 #include <vector>
@@ -124,8 +125,8 @@ public:
 
 		Valueable<AnimTypeClass*> RubbleDestroyedAnim;
 		Valueable<AnimTypeClass*> RubbleIntactAnim;
-		Valueable<int> RubbleDestroyedOwner;
-		Valueable<int> RubbleIntactOwner;
+		Valueable<OwnerHouseKind> RubbleDestroyedOwner;
+		Valueable<OwnerHouseKind> RubbleIntactOwner;
 		Valueable<int> RubbleDestroyedStrength;
 		Valueable<int> RubbleIntactStrength;
 		Valueable<bool> RubbleDestroyedRemove;
@@ -196,8 +197,8 @@ public:
 			RubbleDestroyed (nullptr),
 			RubbleDestroyedAnim (nullptr),
 			RubbleIntactAnim (nullptr),
-			RubbleDestroyedOwner (1),
-			RubbleIntactOwner (1),
+			RubbleDestroyedOwner (OwnerHouseKind::Default),
+			RubbleIntactOwner (OwnerHouseKind::Default),
 			RubbleDestroyedStrength (0),
 			RubbleIntactStrength (-1),
 			RubbleDestroyedRemove (false),
