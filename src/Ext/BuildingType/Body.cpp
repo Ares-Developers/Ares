@@ -178,30 +178,20 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 		}
 	}
 	if(pINI->ReadString(pID, "Rubble.Intact", "", Ares::readBuffer, Ares::readLength)) {
-		if (_strcmpi(Ares::readBuffer, "%Remove%") == 0) {
-			this->RubbleIntactRemove = true;
-			this->RubbleIntact = BuildingTypeClass::Find(pID);
-		} else {
-			this->RubbleIntact = BuildingTypeClass::Find(Ares::readBuffer);
-			if(!this->RubbleIntact && !INIClass::IsBlank(Ares::readBuffer)) {
-				Debug::INIParseFailed(pID, "Rubble.Intact", Ares::readBuffer);
-			}
+		this->RubbleIntact = BuildingTypeClass::Find(Ares::readBuffer);
+		if(!this->RubbleIntact && !INIClass::IsBlank(Ares::readBuffer)) {
+			Debug::INIParseFailed(pID, "Rubble.Intact", Ares::readBuffer);
 		}
 	}
 	if(pINI->ReadString(pID, "Rubble.Destroyed", "", Ares::readBuffer, Ares::readLength)) {
-		if (_strcmpi(Ares::readBuffer, "%Remove%") == 0) {
-			this->RubbleDestroyedRemove = true;
-			this->RubbleDestroyed = BuildingTypeClass::Find(pID);
-		} else {
-			this->RubbleDestroyed = BuildingTypeClass::Find(Ares::readBuffer);
-			if(this->RubbleDestroyed) {
-				this->RubbleDestroyed->Capturable = false;
-				this->RubbleDestroyed->TogglePower = false;
-				this->RubbleDestroyed->Unsellable = true;
-				this->RubbleDestroyed->CanBeOccupied = false;
-			} else if(!INIClass::IsBlank(Ares::readBuffer)) {
-				Debug::INIParseFailed(pID, "Rubble.Destroyed", Ares::readBuffer);
-			}
+		this->RubbleDestroyed = BuildingTypeClass::Find(Ares::readBuffer);
+		if(this->RubbleDestroyed) {
+			this->RubbleDestroyed->Capturable = false;
+			this->RubbleDestroyed->TogglePower = false;
+			this->RubbleDestroyed->Unsellable = true;
+			this->RubbleDestroyed->CanBeOccupied = false;
+		} else if(!INIClass::IsBlank(Ares::readBuffer)) {
+			Debug::INIParseFailed(pID, "Rubble.Destroyed", Ares::readBuffer);
 		}
 	}
 
@@ -218,6 +208,8 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 	this->RubbleIntactOwner.Read(exINI, pID, "Rubble.Intact.Owner");
 	this->RubbleDestroyedStrength.Read(exINI, pID, "Rubble.Destroyed.Strength");
 	this->RubbleIntactStrength.Read(exINI, pID, "Rubble.Intact.Strength");
+	this->RubbleDestroyedRemove.Read(exINI, pID, "Rubble.Destroyed.Remove");
+	this->RubbleIntactRemove.Read(exINI, pID, "Rubble.Intact.Remove");
 
 	this->InfiltrateCustom.Read(exINI, pID, "SpyEffect.Custom");
 	this->RevealProduction.Read(exINI, pID, "SpyEffect.RevealProduction");

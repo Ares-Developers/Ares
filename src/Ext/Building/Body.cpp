@@ -90,7 +90,7 @@ bool BuildingExt::ExtData::RubbleYell(bool beingRepaired) {
 		BuildingTypeClass* pNewType, OwnerHouseKind owner, int strength,
 		AnimTypeClass* pAnimType, const char* pTagName) -> bool
 	{
-		if(!pNewType) {
+		if(!pNewType && !remove) {
 			Debug::Log("Warning! Advanced Rubble was supposed to be reconstructed but"
 				" Ares could not obtain its new BuildingType. Check if [%s]Rubble.%s is"
 				" set (correctly).\n", pBuilding->Type->ID, pTagName);

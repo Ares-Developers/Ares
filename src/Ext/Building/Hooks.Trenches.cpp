@@ -64,7 +64,7 @@ DEFINE_HOOK(441F12, BuildingClass_Destroy_RubbleYell, 6)
 	BuildingTypeExt::ExtData* destrBuildTE = BuildingTypeExt::ExtMap.Find(pThis->Type);
 
 	// If this object has a rubble building set, turn
-	if(destrBuildTE->RubbleDestroyed) {
+	if(destrBuildTE->RubbleDestroyed || destrBuildTE->RubbleDestroyedRemove) {
 		++Unsorted::IKnowWhatImDoing;
 		BuildingAresData->RubbleYell();
 		--Unsorted::IKnowWhatImDoing;
@@ -79,7 +79,7 @@ DEFINE_HOOK(441F2C, BuildingClass_Destroy_KickOutOfRubble, 5) {
 
 	// find out whether this destroyed building would turn into rubble
 	if(BuildingTypeExt::ExtData *pTData = BuildingTypeExt::ExtMap.Find(pBld->Type)) {
-		if(pTData->RubbleDestroyed) {
+		if(pTData->RubbleDestroyed || pTData->RubbleDestroyedRemove) {
 			if(BuildingExt::ExtData *pData = BuildingExt::ExtMap.Find(pBld)) {
 				// this is not the rubble, but the old intact building.
 				// since we force the same foundation this is no problem.

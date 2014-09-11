@@ -17,7 +17,7 @@ DEFINE_HOOK(51E63A, InfantryClass_GetCursorOverObject_EngineerOverFriendlyBuildi
 	GET(InfantryClass *, pThis, EDI);
 
 	if(BuildingTypeExt::ExtData* pData = BuildingTypeExt::ExtMap.Find(pTarget->Type)) {
-		if(pData->RubbleIntact && pTarget->Owner->IsAlliedWith(pThis)) {
+		if((pData->RubbleIntact || pData->RubbleIntactRemove) && pTarget->Owner->IsAlliedWith(pThis)) {
 			return 0x51E659;
 		}
 	}
@@ -35,7 +35,7 @@ DEFINE_HOOK(519FAF, InfantryClass_UpdatePosition_EngineerRepairsFriendly, 6)
 	BuildingTypeExt::ExtData* TargetTypeExtData = BuildingTypeExt::ExtMap.Find(Target->Type);
 	bool do_normal_repair = true;
 
-	if(TargetTypeExtData->RubbleIntact) {
+	if(TargetTypeExtData->RubbleIntact || TargetTypeExtData->RubbleIntactRemove) {
 		do_normal_repair = false;
 		bool wasSelected = pThis->IsSelected;
 		pThis->Remove();
