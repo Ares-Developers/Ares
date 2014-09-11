@@ -1,4 +1,5 @@
 #include "UnitDelivery.h"
+#include "../../Ext/House/Body.h"
 #include "../../Ext/Techno/Body.h"
 #include "../../Utilities/TemplateDef.h"
 
@@ -72,14 +73,7 @@ void UnitDeliveryStateMachine::PlaceUnits()
 	}
 
 	// get the house the units will belong to
-	auto pOwner = this->Super->Owner;
-	if(pData->SW_OwnerHouse == OwnerHouseKind::Civilian) {
-		pOwner = HouseClass::FindCivilianSide();
-	} else if(pData->SW_OwnerHouse == OwnerHouseKind::Special) {
-		pOwner = HouseClass::FindSpecial();
-	} else if(pData->SW_OwnerHouse == OwnerHouseKind::Neutral) {
-		pOwner = HouseClass::FindNeutral();
-	}
+	auto pOwner = HouseExt::GetHouseKind(pData->SW_OwnerHouse, false, this->Super->Owner);
 
 	// create an instance of each type and place it
 	for(auto Type : pData->SW_Deliverables) {

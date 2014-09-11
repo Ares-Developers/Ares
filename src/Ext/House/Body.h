@@ -3,6 +3,7 @@
 
 #include "../_Container.hpp"
 #include "../../Enum/Prerequisites.h"
+#include "../../Utilities/Enums.h"
 #include "../../Utilities/Template.h"
 
 #include <Helpers/Template.h>
@@ -127,6 +128,9 @@ class HouseExt
 		(HouseClass *pHouse, TechnoTypeClass *pItem, bool BuildLimitOnly, bool IncludeQueued);
 
 	static SideClass* GetSide(HouseClass* pHouse);
+
+	static HouseClass* GetHouseKind(OwnerHouseKind kind, bool allowRandom,
+		HouseClass* pDefault, HouseClass* pInvoker = nullptr);
 };
 
 #endif

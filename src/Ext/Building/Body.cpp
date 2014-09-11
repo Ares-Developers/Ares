@@ -101,21 +101,7 @@ bool BuildingExt::ExtData::RubbleYell(bool beingRepaired) {
 		pBuilding->DestroyNthAnim(BuildingAnimSlot::All);
 
 		if(!remove) {
-			HouseClass* pOwner = nullptr;
-			if(owner == OwnerHouseKind::Civilian) {
-				pOwner = HouseClass::FindCivilianSide();
-			} else if(owner == OwnerHouseKind::Special) {
-				pOwner = HouseClass::FindSpecial();
-			} else if(owner == OwnerHouseKind::Neutral) {
-				pOwner = HouseClass::FindNeutral();
-			} else if(owner == OwnerHouseKind::Random) {
-				pOwner = HouseClass::Array->GetItem(
-					ScenarioClass::Instance->Random.RandomRanged(0,
-					HouseClass::Array->Count - 1));
-			} else {
-				pOwner = pBuilding->Owner;
-			}
-
+			auto pOwner = HouseExt::GetHouseKind(owner, true, pBuilding->Owner);
 			auto pNew = static_cast<BuildingClass*>(pNewType->CreateObject(pOwner));
 
 			if(strength == -1) {

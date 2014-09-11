@@ -294,6 +294,28 @@ bool HouseExt::UpdateAnyFirestormActive() {
 	return IsAnyFirestormActive;
 }
 
+HouseClass* HouseExt::GetHouseKind(OwnerHouseKind kind, bool allowRandom, HouseClass* pDefault, HouseClass* pInvoker) {
+	switch(kind) {
+	case OwnerHouseKind::Invoker:
+		return pInvoker ? pInvoker : pDefault;
+	case OwnerHouseKind::Civilian:
+		return HouseClass::FindCivilianSide();
+	case OwnerHouseKind::Special:
+		return HouseClass::FindSpecial();
+	case OwnerHouseKind::Neutral:
+		return HouseClass::FindNeutral();
+	case OwnerHouseKind::Random:
+		if(allowRandom) {
+			return HouseClass::Array->GetItem(ScenarioClass::Instance->Random.RandomRanged(0, HouseClass::Array->Count - 1));
+		} else {
+			return pDefault;
+		}
+	case OwnerHouseKind::Default:
+	default:
+		return pDefault;
+	}
+}
+
 HouseExt::ExtData::~ExtData()
 {
 	if(Ares::bShuttingDown) {
