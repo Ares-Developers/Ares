@@ -177,23 +177,6 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 			trenchKinds.push_back(Ares::readBuffer);
 		}
 	}
-	if(pINI->ReadString(pID, "Rubble.Intact", "", Ares::readBuffer, Ares::readLength)) {
-		this->RubbleIntact = BuildingTypeClass::Find(Ares::readBuffer);
-		if(!this->RubbleIntact && !INIClass::IsBlank(Ares::readBuffer)) {
-			Debug::INIParseFailed(pID, "Rubble.Intact", Ares::readBuffer);
-		}
-	}
-	if(pINI->ReadString(pID, "Rubble.Destroyed", "", Ares::readBuffer, Ares::readLength)) {
-		this->RubbleDestroyed = BuildingTypeClass::Find(Ares::readBuffer);
-		if(this->RubbleDestroyed) {
-			this->RubbleDestroyed->Capturable = false;
-			this->RubbleDestroyed->TogglePower = false;
-			this->RubbleDestroyed->Unsellable = true;
-			this->RubbleDestroyed->CanBeOccupied = false;
-		} else if(!INIClass::IsBlank(Ares::readBuffer)) {
-			Debug::INIParseFailed(pID, "Rubble.Destroyed", Ares::readBuffer);
-		}
-	}
 
 	this->LightningRod_Modifier = pINI->ReadDouble(pID, "LightningRod.Modifier", this->LightningRod_Modifier);
 
@@ -202,6 +185,8 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 
 	INI_EX exINI(pINI);
 
+	this->RubbleDestroyed.Read(exINI, pID, "Rubble.Destroyed");
+	this->RubbleIntact.Read(exINI, pID, "Rubble.Intact");
 	this->RubbleDestroyedAnim.Read(exINI, pID, "Rubble.Destroyed.Anim");
 	this->RubbleIntactAnim.Read(exINI, pID, "Rubble.Intact.Anim");
 	this->RubbleDestroyedOwner.Read(exINI, pID, "Rubble.Destroyed.Owner");
@@ -210,6 +195,13 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 	this->RubbleIntactStrength.Read(exINI, pID, "Rubble.Intact.Strength");
 	this->RubbleDestroyedRemove.Read(exINI, pID, "Rubble.Destroyed.Remove");
 	this->RubbleIntactRemove.Read(exINI, pID, "Rubble.Intact.Remove");
+
+	if(this->RubbleDestroyed) {
+		this->RubbleDestroyed->Capturable = false;
+		this->RubbleDestroyed->TogglePower = false;
+		this->RubbleDestroyed->Unsellable = true;
+		this->RubbleDestroyed->CanBeOccupied = false;
+	}
 
 	this->InfiltrateCustom.Read(exINI, pID, "SpyEffect.Custom");
 	this->RevealProduction.Read(exINI, pID, "SpyEffect.RevealProduction");
