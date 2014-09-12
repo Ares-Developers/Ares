@@ -145,6 +145,8 @@ public:
 enum class OwnerHouseKind : int {
 	Default,
 	Invoker,
+	Killer,
+	Victim,
 	Civilian,
 	Special,
 	Neutral,

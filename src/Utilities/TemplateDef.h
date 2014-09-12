@@ -348,6 +348,10 @@ void Valueable<OwnerHouseKind>::Read(INI_EX &parser, const char* pSection, const
 			value = OwnerHouseKind::Default;
 		} else if(_strcmpi(parser.value(), "invoker") == 0) {
 			value = OwnerHouseKind::Invoker;
+		} else if(_strcmpi(parser.value(), "killer") == 0) {
+			value = OwnerHouseKind::Killer;
+		} else if(_strcmpi(parser.value(), "victim") == 0) {
+			value = OwnerHouseKind::Victim;
 		} else if(_strcmpi(parser.value(), "civilian") == 0) {
 			value = OwnerHouseKind::Civilian;
 		} else if(_strcmpi(parser.value(), "special") == 0) {

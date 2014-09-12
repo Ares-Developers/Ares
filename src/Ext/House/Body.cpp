@@ -295,10 +295,16 @@ bool HouseExt::UpdateAnyFirestormActive() {
 	return IsAnyFirestormActive;
 }
 
-HouseClass* HouseExt::GetHouseKind(OwnerHouseKind kind, bool allowRandom, HouseClass* pDefault, HouseClass* pInvoker) {
+HouseClass* HouseExt::GetHouseKind(OwnerHouseKind kind, bool allowRandom, HouseClass* pDefault,
+	HouseClass* pInvoker, HouseClass* pKiller, HouseClass* pVictim)
+{
 	switch(kind) {
 	case OwnerHouseKind::Invoker:
 		return pInvoker ? pInvoker : pDefault;
+	case OwnerHouseKind::Killer:
+		return pKiller ? pKiller : pDefault;
+	case OwnerHouseKind::Victim:
+		return pVictim ? pVictim : pDefault;
 	case OwnerHouseKind::Civilian:
 		return HouseClass::FindCivilianSide();
 	case OwnerHouseKind::Special:

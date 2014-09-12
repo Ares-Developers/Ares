@@ -130,7 +130,8 @@ public:
 	static SideClass* GetSide(HouseClass* pHouse);
 
 	static HouseClass* GetHouseKind(OwnerHouseKind kind, bool allowRandom,
-		HouseClass* pDefault, HouseClass* pInvoker = nullptr);
+		HouseClass* pDefault, HouseClass* pInvoker = nullptr,
+		HouseClass* pKiller = nullptr, HouseClass* pVictim = nullptr);
 };
 
 #endif
