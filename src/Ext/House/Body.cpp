@@ -82,33 +82,33 @@ HouseExt::RequirementStatus HouseExt::RequirementsMet(HouseClass *pHouse, Techno
 bool HouseExt::PrerequisitesMet(HouseClass *pHouse, TechnoTypeClass *pItem)
 {
 	if(!pItem) {
-		return 0;
+		return false;
 	}
 	TechnoTypeExt::ExtData* pData = TechnoTypeExt::ExtMap.Find(pItem);
 
 	for(size_t i = 0; i < pData->PrerequisiteLists.size(); ++i) {
 		if(Prereqs::HouseOwnsAll(pHouse, pData->PrerequisiteLists[i].get())) {
-			return 1;
+			return true;
 		}
 	}
 
-	return 0;
+	return false;
 }
 
 bool HouseExt::PrerequisitesListed(const Prereqs::BTypeIter &List, TechnoTypeClass *pItem)
 {
 	if(!pItem) {
-		return 0;
+		return false;
 	}
 	TechnoTypeExt::ExtData* pData = TechnoTypeExt::ExtMap.Find(pItem);
 
 	for(size_t i = 0; i < pData->PrerequisiteLists.size(); ++i) {
 		if(Prereqs::ListContainsAll(List, pData->PrerequisiteLists[i].get())) {
-			return 1;
+			return true;
 		}
 	}
 
-	return 0;
+	return false;
 }
 
 HouseExt::BuildLimitStatus HouseExt::CheckBuildLimit(HouseClass *pHouse, TechnoTypeClass *pItem, bool IncludeQueued)
