@@ -84,10 +84,11 @@ bool HouseExt::PrerequisitesMet(HouseClass *pHouse, TechnoTypeClass *pItem)
 	if(!pItem) {
 		return false;
 	}
-	TechnoTypeExt::ExtData* pData = TechnoTypeExt::ExtMap.Find(pItem);
 
-	for(size_t i = 0; i < pData->PrerequisiteLists.size(); ++i) {
-		if(Prereqs::HouseOwnsAll(pHouse, pData->PrerequisiteLists[i].get())) {
+	auto pData = TechnoTypeExt::ExtMap.Find(pItem);
+
+	for(const auto& pList : pData->PrerequisiteLists) {
+		if(Prereqs::HouseOwnsAll(pHouse, pList.get())) {
 			return true;
 		}
 	}
@@ -100,10 +101,11 @@ bool HouseExt::PrerequisitesListed(const Prereqs::BTypeIter &List, TechnoTypeCla
 	if(!pItem) {
 		return false;
 	}
-	TechnoTypeExt::ExtData* pData = TechnoTypeExt::ExtMap.Find(pItem);
 
-	for(size_t i = 0; i < pData->PrerequisiteLists.size(); ++i) {
-		if(Prereqs::ListContainsAll(List, pData->PrerequisiteLists[i].get())) {
+	auto pData = TechnoTypeExt::ExtMap.Find(pItem);
+
+	for(const auto& pList : pData->PrerequisiteLists) {
+		if(Prereqs::ListContainsAll(List, pList.get())) {
 			return true;
 		}
 	}
@@ -179,8 +181,7 @@ bool HouseExt::HasNeededFactory(HouseClass *pHouse, TechnoTypeClass *pItem) {
 	DWORD ItemOwners = pItem->GetOwners();
 	AbstractType WhatAmI = pItem->WhatAmI();
 
-	for(int i = 0; i < pHouse->Buildings.Count; ++i) {
-		auto pBld = pHouse->Buildings[i];
+	for(auto pBld : pHouse->Buildings) {
 		if(!pBld->InLimbo && pBld->HasPower) {
 			if(pBld->Type->Factory == WhatAmI) {
 				if(pBld->GetCurrentMission() != Mission::Selling && pBld->QueuedMission != Mission::Selling) {
@@ -201,8 +202,8 @@ bool HouseExt::FactoryForObjectExists(HouseClass *pHouse, TechnoTypeClass *pItem
 	AbstractType WhatAmI = pItem->WhatAmI();
 	auto pExt = TechnoTypeExt::ExtMap.Find(pItem);
 
-	for(int i = 0; i < pHouse->Buildings.Count; ++i) {
-		BuildingTypeClass *pType = pHouse->Buildings[i]->Type;
+	for(auto pBld : pHouse->Buildings) {
+		BuildingTypeClass *pType = pBld->Type;
 		if(pType->Factory == WhatAmI
 			&& pType->Naval == pItem->Naval
 			&& pExt->CanBeBuiltAt(pType)) {
@@ -283,8 +284,8 @@ bool HouseExt::CheckForbiddenFactoryOwner(HouseClass *pHouse, TechnoTypeClass *p
 bool HouseExt::UpdateAnyFirestormActive() {
 	IsAnyFirestormActive = false;
 
-	for(int i = 0; i < HouseClass::Array->Count; ++i) {
-		HouseExt::ExtData *pData = HouseExt::ExtMap.Find(HouseClass::Array->Items[i]);
+	for(auto pHouse : *HouseClass::Array) {
+		auto pData = HouseExt::ExtMap.Find(pHouse);
 		if(pData && pData->FirewallActive) {
 			IsAnyFirestormActive = true;
 			break;
@@ -342,13 +343,12 @@ void HouseExt::ExtData::SetFirestormState(bool Active) {
 
 	DynamicVectorClass<CellStruct> AffectedCoords;
 
-	for(int i = 0; i < pHouse->Buildings.Count; ++i) {
-		BuildingClass *B = pHouse->Buildings[i];
-		BuildingTypeExt::ExtData *pBuildTypeData = BuildingTypeExt::ExtMap.Find(B->Type);
-		if(pBuildTypeData->Firewall_Is) {
-			BuildingExt::ExtData * pBldData = BuildingExt::ExtMap.Find(B);
-			pBldData->UpdateFirewall();
-			CellStruct temp = B->GetMapCoords();
+	for(auto pBld : pHouse->Buildings) {
+		auto pTypeData = BuildingTypeExt::ExtMap.Find(pBld->Type);
+		if(pTypeData->Firewall_Is) {
+			auto pData = BuildingExt::ExtMap.Find(pBld);
+			pData->UpdateFirewall();
+			const auto& temp = pBld->GetMapCoords();
 			AffectedCoords.AddItem(temp);
 		}
 	}
@@ -373,11 +373,9 @@ bool HouseExt::ExtData::CheckBasePlanSanity() {
 
 	// if you don't have a base unit buildable, how did you get to base planning?
 	// only through crates or map actions, so have to validate base unit in other situations
-	auto pArray = &RulesClass::Instance->BaseUnit;
 	bool canBuild = false;
-	for(int i = 0; i < pArray->Count; ++i) {
-		auto Item = pArray->GetItem(i);
-		if(House->CanExpectToBuild(Item)) {
+	for(auto pItem : RulesClass::Instance->BaseUnit) {
+		if(House->CanExpectToBuild(pItem)) {
 			canBuild = true;
 			break;
 		}
