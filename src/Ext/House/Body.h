@@ -18,7 +18,7 @@ class SideClass;
 
 class HouseExt
 {
-	public:
+public:
 	typedef HouseClass TT;
 
 	enum RequirementStatus {
@@ -36,29 +36,29 @@ class HouseExt
 
 	class ExtData : public Extension<TT>
 	{
-		public:
-			bool IonSensitive;
-			bool FirewallActive;
-			int FirewallRecalc;
+	public:
+		bool IonSensitive;
+		bool FirewallActive;
+		int FirewallRecalc;
 
-			int SWLastIndex;
+		int SWLastIndex;
 
-			BuildingClass *Factory_BuildingType;
-			BuildingClass *Factory_InfantryType;
-			BuildingClass *Factory_VehicleType;
-			BuildingClass *Factory_NavyType;
-			BuildingClass *Factory_AircraftType;
+		BuildingClass *Factory_BuildingType;
+		BuildingClass *Factory_InfantryType;
+		BuildingClass *Factory_VehicleType;
+		BuildingClass *Factory_NavyType;
+		BuildingClass *Factory_AircraftType;
 
-			std::bitset<32> StolenTech;
-			IndexBitfield<HouseClass*> RadarPersist; 
+		std::bitset<32> StolenTech;
+		IndexBitfield<HouseClass*> RadarPersist;
 
-			ValueableVector<HouseTypeClass *> FactoryOwners_GatheredPlansOf;
+		ValueableVector<HouseTypeClass *> FactoryOwners_GatheredPlansOf;
 
-			std::vector<BuildingClass*> Academies;
-			double AcademyInfantry;
-			double AcademyAircraft;
-			double AcademyVehicle;
-			double AcademyBuilding;
+		std::vector<BuildingClass*> Academies;
+		double AcademyInfantry;
+		double AcademyAircraft;
+		double AcademyVehicle;
+		double AcademyBuilding;
 
 		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			IonSensitive(false),
