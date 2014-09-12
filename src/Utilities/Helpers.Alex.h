@@ -319,9 +319,9 @@ namespace Helpers {
 			first = std::find_if(first, last, pred);
 
 			while(first != last) {
-				func(*first);
+				func(*first++);
 
-				first = std::find_if(++first, last, pred);
+				first = std::find_if(first, last, pred);
 			}
 		}
 
@@ -345,9 +345,9 @@ namespace Helpers {
 				first = std::find_if(first, last, pred);
 
 				while(count-- && first != last) {
-					func(*first);
+					func(*first++);
 
-					first = std::find_if(++first, last, pred);
+					first = std::find_if(first, last, pred);
 				}
 			}
 		}
