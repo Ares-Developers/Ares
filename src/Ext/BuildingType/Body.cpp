@@ -291,8 +291,8 @@ void BuildingTypeExt::UpdateSecretLabOptions(BuildingClass *pThis)
 		if((pTech->Secret_RequiredHouses & OwnerBits) && !(pTech->Secret_ForbiddenHouses & OwnerBits)) {
 			bool ShouldAdd = false;
 			switch(HouseExt::RequirementsMet(Owner, Option)) {
-				case HouseExt::Forbidden:
-				case HouseExt::Incomplete:
+				case HouseExt::RequirementStatus::Forbidden:
+				case HouseExt::RequirementStatus::Incomplete:
 					ShouldAdd = true;
 					break;
 			}

@@ -790,7 +790,7 @@ bool BuildingExt::ExtData::ReverseEngineer(TechnoClass *Victim) {
 		bool WasBuildable = HouseExt::PrereqValidate(Owner, VictimType, false, true) == 1;
 		pVictimData->ReversedByHouses.insert(Owner, true);
 		if(!WasBuildable) {
-			bool IsBuildable = HouseExt::RequirementsMet(Owner, VictimType) != HouseExt::Forbidden;
+			bool IsBuildable = HouseExt::RequirementsMet(Owner, VictimType) != HouseExt::RequirementStatus::Forbidden;
 			if(IsBuildable) {
 				Owner->RecheckTechTree = true;
 				return true;

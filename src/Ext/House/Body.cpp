@@ -26,57 +26,57 @@ template<> IStream *Container<HouseExt>::SavingStream = nullptr;
 HouseExt::RequirementStatus HouseExt::RequirementsMet(HouseClass *pHouse, TechnoTypeClass *pItem)
 {
 	if(pItem->Unbuildable) {
-		return Forbidden;
+		return RequirementStatus::Forbidden;
 	}
 
 	TechnoTypeExt::ExtData* pData = TechnoTypeExt::ExtMap.Find(pItem);
 	if(!pItem) {
-		return Forbidden;
+		return RequirementStatus::Forbidden;
 	}
 //	TechnoTypeClassExt::TechnoTypeClassData *pData = TechnoTypeClassExt::Ext_p[pItem];
 	HouseExt::ExtData* pHouseExt = HouseExt::ExtMap.Find(pHouse);
 
 	// this has to happen before the first possible "can build" response or NCO happens
-	if(pItem->WhatAmI() != AbstractType::BuildingType && !FactoryForObjectExists(pHouse, pItem)) { return Incomplete; }
+	if(pItem->WhatAmI() != AbstractType::BuildingType && !FactoryForObjectExists(pHouse, pItem)) { return RequirementStatus::Incomplete; }
 
-	if(!(pData->PrerequisiteTheaters & (1 << static_cast<int>(ScenarioClass::Instance->Theater)))) { return Forbidden; }
-	if(Prereqs::HouseOwnsAny(pHouse, &pData->PrerequisiteNegatives)) { return Forbidden; }
+	if(!(pData->PrerequisiteTheaters & (1 << static_cast<int>(ScenarioClass::Instance->Theater)))) { return RequirementStatus::Forbidden; }
+	if(Prereqs::HouseOwnsAny(pHouse, &pData->PrerequisiteNegatives)) { return RequirementStatus::Forbidden; }
 
 	if(pData->ReversedByHouses.contains(pHouse)) {
-		return Overridden;
+		return RequirementStatus::Overridden;
 	}
 
 	if(pData->RequiredStolenTech.any()) {
-		if((pHouseExt->StolenTech & pData->RequiredStolenTech) != pData->RequiredStolenTech) { return Incomplete; }
+		if((pHouseExt->StolenTech & pData->RequiredStolenTech) != pData->RequiredStolenTech) { return RequirementStatus::Incomplete; }
 	}
 
 	// yes, the game checks it here
 	// hack value - skip real prereq check
-	if(Prereqs::HouseOwnsAny(pHouse, &pItem->PrerequisiteOverride)) { return Overridden; }
+	if(Prereqs::HouseOwnsAny(pHouse, &pItem->PrerequisiteOverride)) { return RequirementStatus::Overridden; }
 
-	if(pHouse->HasFromSecretLab(pItem)) { return Overridden; }
+	if(pHouse->HasFromSecretLab(pItem)) { return RequirementStatus::Overridden; }
 
-	if(pHouse->ControlledByHuman() && pItem->TechLevel == -1) { return Incomplete; }
+	if(pHouse->ControlledByHuman() && pItem->TechLevel == -1) { return RequirementStatus::Incomplete; }
 
-	if(!pHouse->HasAllStolenTech(pItem)) { return Incomplete; }
+	if(!pHouse->HasAllStolenTech(pItem)) { return RequirementStatus::Incomplete; }
 
-	if(!pHouse->InRequiredHouses(pItem) || pHouse->InForbiddenHouses(pItem)) { return Forbidden; }
+	if(!pHouse->InRequiredHouses(pItem) || pHouse->InForbiddenHouses(pItem)) { return RequirementStatus::Forbidden; }
 
-	if(!HouseExt::CheckFactoryOwners(pHouse, pItem)) { return Incomplete; }
+	if(!HouseExt::CheckFactoryOwners(pHouse, pItem)) { return RequirementStatus::Incomplete; }
 
 	if(SessionClass::Instance->GameMode != GameMode::Campaign && !Unsorted::SWAllowed) {
 		if(BuildingTypeClass *pBld = specific_cast<BuildingTypeClass*>(pItem)) {
 			if(pBld->SuperWeapon != -1) {
 				if(RulesClass::Instance->BuildTech.FindItemIndex(pBld) == -1) {
 					if(pHouse->Supers.GetItem(pBld->SuperWeapon)->Type->DisableableFromShell) {
-						return Forbidden;
+						return RequirementStatus::Forbidden;
 					}
 				}
 			}
 		}
 	}
 
-	return (pHouse->TechLevel >= pItem->TechLevel) ? Complete : Incomplete;
+	return (pHouse->TechLevel >= pItem->TechLevel) ? RequirementStatus::Complete : RequirementStatus::Incomplete;
 }
 
 bool HouseExt::PrerequisitesMet(HouseClass *pHouse, TechnoTypeClass *pItem)
@@ -146,7 +146,7 @@ signed int HouseExt::PrereqValidate
 {
 	if(!BuildLimitOnly) {
 		RequirementStatus ReqsMet = HouseExt::RequirementsMet(pHouse, pItem);
-		if(ReqsMet == Forbidden || ReqsMet == Incomplete) {
+		if(ReqsMet == RequirementStatus::Forbidden || ReqsMet == RequirementStatus::Incomplete) {
 			return 0;
 		}
 
@@ -158,7 +158,7 @@ signed int HouseExt::PrereqValidate
 			}
 		}
 
-		if(ReqsMet == Complete) {
+		if(ReqsMet == RequirementStatus::Complete) {
 			if(!HouseExt::PrerequisitesMet(pHouse, pItem)) {
 				return 0;
 			}
