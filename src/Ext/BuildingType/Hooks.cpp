@@ -42,7 +42,7 @@ DEFINE_HOOK(43FB6D, BuildingClass_Update_LFP, 6)
 DEFINE_HOOK(465D4A, BuildingType_IsUndeployable, 6)
 {
 	GET(BuildingTypeClass *, pThis, ECX);
-	if(pThis->Foundation == FOUNDATION_CUSTOM) {
+	if(pThis->Foundation == BuildingTypeExt::CustomFoundation) {
 		BuildingTypeExt::ExtData* pData = BuildingTypeExt::ExtMap.Find(pThis);
 
 		R->EAX(pData->CustomHeight == 1 && pData->CustomWidth == 1);
@@ -54,7 +54,7 @@ DEFINE_HOOK(465D4A, BuildingType_IsUndeployable, 6)
 DEFINE_HOOK(465550, BuildingTypeClass_GetFoundationOutline, 6)
 {
 	GET(BuildingTypeClass *, pThis, ECX);
-	if(pThis->Foundation == FOUNDATION_CUSTOM) {
+	if(pThis->Foundation == BuildingTypeExt::CustomFoundation) {
 		BuildingTypeExt::ExtData* pData = BuildingTypeExt::ExtMap.Find(pThis);
 
 		R->EAX(pData->OutlineData.data());
@@ -66,7 +66,7 @@ DEFINE_HOOK(465550, BuildingTypeClass_GetFoundationOutline, 6)
 DEFINE_HOOK(464AF0, BuildingTypeClass_GetSizeInLeptons, 6)
 {
 	GET(BuildingTypeClass *, pThis, ECX);
-	if(pThis->Foundation == FOUNDATION_CUSTOM) {
+	if(pThis->Foundation == BuildingTypeExt::CustomFoundation) {
 		GET_STACK(CoordStruct *, Coords, 0x4);
 		BuildingTypeExt::ExtData* pData = BuildingTypeExt::ExtMap.Find(pThis);
 
@@ -82,7 +82,7 @@ DEFINE_HOOK(464AF0, BuildingTypeClass_GetSizeInLeptons, 6)
 DEFINE_HOOK(45ECE0, BuildingTypeClass_GetMaxPips, 6)
 {
 	GET(BuildingTypeClass *, pThis, ECX);
-	if(pThis->Foundation == FOUNDATION_CUSTOM) {
+	if(pThis->Foundation == BuildingTypeExt::CustomFoundation) {
 		BuildingTypeExt::ExtData* pData = BuildingTypeExt::ExtMap.Find(pThis);
 
 		R->EAX(pData->CustomWidth);

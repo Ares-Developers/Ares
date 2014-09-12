@@ -11,8 +11,6 @@
 
 #include "../../Misc/Debug.h"
 
-#define FOUNDATION_CUSTOM	0x7F
-
 class BulletClass;
 class ConvertClass;
 

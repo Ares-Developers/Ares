@@ -60,7 +60,7 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 
 	if(this->IsCustom) {
 		//Reset
-		pThis->Foundation = FOUNDATION_CUSTOM;
+		pThis->Foundation = BuildingTypeExt::CustomFoundation;
 		pThis->FoundationData = this->CustomData.data();
 	} else if(pArtINI) {
 
@@ -69,7 +69,7 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 		if(pArtINI->ReadString(pArtID, "Foundation", "", str, 0x80) && !_strcmpi(str,"Custom")) {
 			//Custom Foundation!
 			this->IsCustom = true;
-			pThis->Foundation = FOUNDATION_CUSTOM;
+			pThis->Foundation = BuildingTypeExt::CustomFoundation;
 
 			//Load Width and Height
 			this->CustomWidth = pArtINI->ReadInteger(pArtID, "Foundation.X", 0);
@@ -325,7 +325,7 @@ bool BuildingTypeExt::IsFoundationEqual(BuildingTypeClass *pTBldA, BuildingTypeC
 		}
 
 		// non-custom foundations need no special handling
-		if(pTBldA->Foundation != FOUNDATION_CUSTOM) {
+		if(pTBldA->Foundation != BuildingTypeExt::CustomFoundation) {
 			return true;
 		}
 
@@ -439,7 +439,7 @@ bool Container<BuildingTypeExt>::Load(BuildingTypeClass *pThis, IStream *pStm) {
 
 	// if there's custom data, assign it
 	if(pData->IsCustom && pData->CustomWidth > 0 && pData->CustomHeight > 0) {
-		pThis->Foundation = FOUNDATION_CUSTOM;
+		pThis->Foundation = BuildingTypeExt::CustomFoundation;
 		pThis->FoundationData = pData->CustomData.data();
 		pThis->FoundationOutside = pData->OutlineData.data();
 	} else {

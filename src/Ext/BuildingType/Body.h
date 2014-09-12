@@ -20,12 +20,12 @@ class BuildingTypeClass;
 class InfantryTypeClass;
 class VocClass;
 
-#define FOUNDATION_CUSTOM	0x7F
-
 class BuildingTypeExt
 {
 public:
 	typedef BuildingTypeClass TT;
+
+	static const eFoundation CustomFoundation = static_cast<eFoundation>(0x7F);
 
 	class cPrismForwarding {
 		public:
