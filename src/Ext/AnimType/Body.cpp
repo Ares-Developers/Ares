@@ -1,4 +1,5 @@
 #include "Body.h"
+#include "../House/Body.h"
 #include "../../Ares.h"
 #include "../../Utilities/TemplateDef.h"
 #include <AnimClass.h>
@@ -14,53 +15,19 @@ template<> IStream *Container<AnimTypeExt>::SavingStream = nullptr;
 
 void AnimTypeExt::ExtData::LoadFromINIFile(AnimTypeClass *pThis, CCINIClass *pINI)
 {
-	if(pINI->ReadString(pThis->ID, "MakeInfantryOwner", "", Ares::readBuffer, Ares::readLength)) {
-		// fugly. C++ needs switch over strings.
-		if(strcmp(Ares::readBuffer, "invoker") == 0) {
-			this->MakeInfantryOwner = MakeInfantryHouse::Invoker;
-		} else if(strcmp(Ares::readBuffer, "killer") == 0) {
-			this->MakeInfantryOwner = MakeInfantryHouse::Killer;
-		} else if(strcmp(Ares::readBuffer, "victim") == 0) {
-			this->MakeInfantryOwner = MakeInfantryHouse::Victim;
-		} else if(strcmp(Ares::readBuffer, "neutral") == 0) {
-			this->MakeInfantryOwner = MakeInfantryHouse::Neutral;
-		} else if(strcmp(Ares::readBuffer, "random") == 0) {
-			this->MakeInfantryOwner = MakeInfantryHouse::Random;
-		} else {
-			Debug::INIParseFailed(pThis->ID, "MakeInfantryOwner", Ares::readBuffer);
-		}
-	}
+	INI_EX exINI(pINI);
+
+	this->MakeInfantryOwner.Read(exINI, pThis->ID, "MakeInfantryOwner");
 
 	this->Palette.LoadFromINI(pINI, pThis->ID, "CustomPalette");
 }
 
-AnimTypeExt::ExtData::MakeInfantryHouse AnimTypeExt::SetMakeInfOwner(AnimClass *pAnim, HouseClass *pInvoker, HouseClass *pVictim, HouseClass *pKiller)
+OwnerHouseKind AnimTypeExt::SetMakeInfOwner(AnimClass *pAnim, HouseClass *pInvoker, HouseClass *pVictim, HouseClass *pKiller)
 {
 	auto pAnimData = AnimTypeExt::ExtMap.Find(pAnim->Type);
 
-	HouseClass *newOwner = nullptr;
-	switch(pAnimData->MakeInfantryOwner) {
-	case ExtData::MakeInfantryHouse::Neutral:
-		newOwner = HouseClass::FindNeutral();
-		break;
-
-	case ExtData::MakeInfantryHouse::Random:
-		newOwner = HouseClass::Array->GetItem(ScenarioClass::Instance->Random.RandomRanged(0, HouseClass::Array->Count - 1));
-		break;
-
-	case ExtData::MakeInfantryHouse::Victim:
-		newOwner = pVictim;
-		break;
-
-	case ExtData::MakeInfantryHouse::Invoker:
-		newOwner = pInvoker;
-		break;
-
-	case ExtData::MakeInfantryHouse::Killer:
-	default:
-		newOwner = pKiller;
-		break;
-	}
+	auto newOwner = HouseExt::GetHouseKind(pAnimData->MakeInfantryOwner, true,
+		nullptr, pInvoker, pVictim, pKiller);
 
 	if(newOwner) {
 		pAnim->Owner = newOwner;

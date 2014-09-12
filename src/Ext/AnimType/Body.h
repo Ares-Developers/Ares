@@ -4,7 +4,9 @@
 #include <AnimTypeClass.h>
 
 #include "../_Container.hpp"
+#include "../../Utilities/Enums.h"
 #include "../../Utilities/Constructs.h"
+#include "../../Utilities/Template.h"
 
 class AnimClass;
 class HouseClass;
@@ -17,20 +19,12 @@ public:
 	class ExtData : public Extension<TT>
 	{
 	public:
-		enum class MakeInfantryHouse : int {
-			Invoker = 0,
-			Killer = 1,
-			Victim = 2,
-			Neutral = 3,
-			Random = 4
-		};
-
-		MakeInfantryHouse MakeInfantryOwner;
+		Valueable<OwnerHouseKind> MakeInfantryOwner;
 
 		CustomPalette Palette;
 
 		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
-			MakeInfantryOwner(MakeInfantryHouse::Invoker),
+			MakeInfantryOwner(OwnerHouseKind::Invoker),
 			Palette(CustomPalette::PaletteMode::Temperate)
 		{ };
 
@@ -46,7 +40,7 @@ public:
 
 	static Container<AnimTypeExt> ExtMap;
 
-	static ExtData::MakeInfantryHouse SetMakeInfOwner(AnimClass *pAnim, HouseClass *pInvoker, HouseClass *pVictim, HouseClass *pKiller);
+	static OwnerHouseKind SetMakeInfOwner(AnimClass *pAnim, HouseClass *pInvoker, HouseClass *pVictim, HouseClass *pKiller);
 };
 
 #endif

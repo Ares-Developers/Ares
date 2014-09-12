@@ -126,7 +126,7 @@ DEFINE_HOOK(51887B, InfantryClass_ReceiveDamage_InfantryVirus2, A)
 		: Arguments.SourceHouse;
 
 	auto res = AnimTypeExt::SetMakeInfOwner(pAnim, pInvoker, pThis->Owner, pInvoker);
-	if(res == AnimTypeExt::ExtData::MakeInfantryHouse::Invoker) {
+	if(res == OwnerHouseKind::Invoker) {
 		pAnim->LightConvert = nullptr;
 	}
 
