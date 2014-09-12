@@ -118,14 +118,14 @@ HouseExt::BuildLimitStatus HouseExt::CheckBuildLimit(HouseClass *pHouse, TechnoT
 	if(BuildLimit > 0) {
 		if(Remaining <= 0) {
 			return (IncludeQueued && FactoryClass::FindThisOwnerAndProduct(pHouse, pItem))
-				? NotReached
-				: ReachedPermanently
+				? BuildLimitStatus::NotReached
+				: BuildLimitStatus::ReachedPermanently
 			;
 		}
 	}
 	return (Remaining > 0)
-		? NotReached
-		: ReachedTemporarily
+		? BuildLimitStatus::NotReached
+		: BuildLimitStatus::ReachedTemporarily
 	;
 }
 

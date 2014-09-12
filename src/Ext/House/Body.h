@@ -28,7 +28,7 @@ public:
 		Overridden = 4, // magic condition met, bypass prereq check
 	};
 
-	enum BuildLimitStatus {
+	enum class BuildLimitStatus {
 		ReachedPermanently = -1, // remove cameo
 		ReachedTemporarily = 0, // black out cameo
 		NotReached = 1, // don't do anything
