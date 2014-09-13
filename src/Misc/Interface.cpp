@@ -81,7 +81,7 @@ void Interface::updateMenu(HWND hDlg, int iID) {
 				// center the list above the difficulty selection. the list may
 				// contain seven items, after that, a scroll bar will appear.
 				// acount for its width, too.
-				int offList = (CampaignExt::countVisible() < 8 ? -2 : -12);
+				int offList = (CampaignExt::CountVisible() < 8) ? -2 : -12;
 				OffsetRect(&rcItem, offList, 32);
 				moveItem(hItem, rcItem, ptDlg);
 			
@@ -312,7 +312,7 @@ DEFINE_HOOK(52F00B, CampaignMenu_hDlg_PopulateCampaignList, 5) {
 	// fill in the campaigns list
 	for(int i=0; i<CampaignExt::Array.Count; ++i) {
 		CampaignExt::ExtData *pData = CampaignExt::Array.GetItem(i);
-		if(pData && pData->isVisible()) {
+		if(pData && pData->IsVisible()) {
 			int newIndex = SendMessageA(hList, 0x4CD, 0, reinterpret_cast<WPARAM>(pData->AttachedToObject->Description));
 			SendMessageA(hList, LB_SETITEMDATA, newIndex, i);
 		}

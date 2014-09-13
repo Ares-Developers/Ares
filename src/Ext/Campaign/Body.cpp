@@ -2,6 +2,8 @@
 #include "./../../Ares.h"
 #include "./../../Ares.CRT.h"
 
+#include <algorithm>
+
 //Static init
 template<> const DWORD Extension<CampaignClass>::Canary = 0x22441133;
 Container<CampaignExt> CampaignExt::ExtMap;
@@ -35,6 +37,12 @@ void CampaignExt::ExtData::LoadFromINIFile(CampaignClass *pThis, CCINIClass *pIN
 	if(pINI->ReadString(section, "Summary", "", Ares::readBuffer, Ares::readLength)) {
 		AresCRT::strCopy(this->Summary, Ares::readBuffer);
 	}
+}
+
+int CampaignExt::CountVisible() {
+	return std::count_if(Array.begin(), Array.end(), [](CampaignExt::ExtData* pItem) {
+		return pItem->IsVisible();
+	});
 }
 
 DEFINE_HOOK(46D090, CampaignClass_DTOR, 6)

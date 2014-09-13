@@ -36,7 +36,7 @@ public:
 		virtual void Initialize(TT *pThis);
 		virtual void InvalidatePointer(void *ptr, bool bRemoved) { }
 
-		bool isVisible() {
+		bool IsVisible() const {
 			return !this->DebugOnly || Ares::UISettings::ShowDebugCampaigns;
 		}
 	};
@@ -46,15 +46,7 @@ public:
 
 	static int lastSelectedCampaign;
 
-	static int countVisible() {
-		int ret = 0;
-		for(int i = 0; i < Array.Count; ++i) {
-			if(Array.GetItem(i)->isVisible()) {
-				++ret;
-			}
-		}
-		return ret;
-	}
+	static int CountVisible();
 };
 
 #endif
