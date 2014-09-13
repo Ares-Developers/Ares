@@ -409,14 +409,12 @@ A_FINE_HOOK(48439A, CellClass_GetColourComponents, 5)
 
 DEFINE_HOOK(6873AB, INIClass_ReadScenario_EarlyLoadRules, 5)
 {
-	switch(SessionClass::Instance->GameMode) {
-		case GameMode::Campaign:
-			RulesClass::Global()->Read_Sides(CCINIClass::INI_Rules);
-			SideExt::ExtMap.LoadAllFromINI(CCINIClass::INI_Rules);
-		default:
-			R->EAX(0x1180);
-			return 0x6873B0;
+	if(SessionClass::Instance->GameMode == GameMode::Campaign) {
+		RulesClass::Global()->Read_Sides(CCINIClass::INI_Rules);
+		SideExt::ExtMap.LoadAllFromINI(CCINIClass::INI_Rules);
 	}
+	R->EAX(0x1180);
+	return 0x6873B0;
 }
 
 // allowhiresmodes
