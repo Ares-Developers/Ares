@@ -28,7 +28,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 	{
 		this->FlagFile = "usai.pcx";
 		AresCRT::strCopy(this->LSBrief, "LoadBrief:USA");
-		AresCRT::strCopy(this->LSFile, "ls%sustates.shp");
+		this->LoadScreenBackground = "ls%sustates.shp";
 		AresCRT::strCopy(this->LSName, "Name:Americans");
 		AresCRT::strCopy(this->LSPALFile, "mplsu.pal");
 		AresCRT::strCopy(this->LSSpecialName, "Name:Para");
@@ -40,7 +40,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 	{
 		this->FlagFile = "japi.pcx";
 		AresCRT::strCopy(this->LSBrief, "LoadBrief:Korea");
-		AresCRT::strCopy(this->LSFile, "ls%skorea.shp");
+		this->LoadScreenBackground = "ls%skorea.shp";
 		AresCRT::strCopy(this->LSName, "Name:Alliance");
 		AresCRT::strCopy(this->LSPALFile, "mplsk.pal");
 		AresCRT::strCopy(this->LSSpecialName, "Name:BEAGLE");
@@ -52,7 +52,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 	{
 		this->FlagFile = "frai.pcx";
 		AresCRT::strCopy(this->LSBrief, "LoadBrief:French");
-		AresCRT::strCopy(this->LSFile, "ls%sfrance.shp");
+		this->LoadScreenBackground = "ls%sfrance.shp";
 		AresCRT::strCopy(this->LSName, "Name:French");
 		AresCRT::strCopy(this->LSPALFile, "mplsf.pal");
 		AresCRT::strCopy(this->LSSpecialName, "Name:GTGCAN");
@@ -64,7 +64,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 	{
 		this->FlagFile = "geri.pcx";
 		AresCRT::strCopy(this->LSBrief, "LoadBrief:Germans");
-		AresCRT::strCopy(this->LSFile, "ls%sgermany.shp");
+		this->LoadScreenBackground = "ls%sgermany.shp";
 		AresCRT::strCopy(this->LSName, "Name:Germans");
 		AresCRT::strCopy(this->LSPALFile, "mplsg.pal");
 		AresCRT::strCopy(this->LSSpecialName, "Name:TNKD");
@@ -76,7 +76,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 	{
 		this->FlagFile = "gbri.pcx";
 		AresCRT::strCopy(this->LSBrief, "LoadBrief:British");
-		AresCRT::strCopy(this->LSFile, "ls%sukingdom.shp");
+		this->LoadScreenBackground = "ls%sukingdom.shp";
 		AresCRT::strCopy(this->LSName, "Name:British");
 		AresCRT::strCopy(this->LSPALFile, "mplsuk.pal");
 		AresCRT::strCopy(this->LSSpecialName, "Name:SNIPE");
@@ -88,7 +88,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 	{
 		this->FlagFile = "djbi.pcx";
 		AresCRT::strCopy(this->LSBrief, "LoadBrief:Lybia");
-		AresCRT::strCopy(this->LSFile, "ls%slibya.shp");
+		this->LoadScreenBackground = "ls%slibya.shp";
 		AresCRT::strCopy(this->LSName, "Name:Africans");
 		AresCRT::strCopy(this->LSPALFile, "mplsl.pal");
 		AresCRT::strCopy(this->LSSpecialName, "Name:DTRUCK");
@@ -100,7 +100,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 	{
 		this->FlagFile = "arbi.pcx";
 		AresCRT::strCopy(this->LSBrief, "LoadBrief:Iraq");
-		AresCRT::strCopy(this->LSFile, "ls%siraq.shp");
+		this->LoadScreenBackground = "ls%siraq.shp";
 		AresCRT::strCopy(this->LSName, "Name:Arabs");
 		AresCRT::strCopy(this->LSPALFile, "mplsi.pal");
 		AresCRT::strCopy(this->LSSpecialName, "Name:DESO");
@@ -112,7 +112,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 	{
 		this->FlagFile = "lati.pcx";
 		AresCRT::strCopy(this->LSBrief, "LoadBrief:Cuba");
-		AresCRT::strCopy(this->LSFile, "ls%scuba.shp");
+		this->LoadScreenBackground = "ls%scuba.shp";
 		AresCRT::strCopy(this->LSName, "Name:Confederation");
 		AresCRT::strCopy(this->LSPALFile, "mplsc.pal");
 		AresCRT::strCopy(this->LSSpecialName, "Name:TERROR");
@@ -124,7 +124,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 	{
 		this->FlagFile = "rusi.pcx";
 		AresCRT::strCopy(this->LSBrief, "LoadBrief:Russia");
-		AresCRT::strCopy(this->LSFile, "ls%srussia.shp");
+		this->LoadScreenBackground = "ls%srussia.shp";
 		AresCRT::strCopy(this->LSName, "Name:Russians");
 		AresCRT::strCopy(this->LSPALFile, "mplsr.pal");
 		AresCRT::strCopy(this->LSSpecialName, "Name:TTNK");
@@ -136,7 +136,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 	{
 		this->FlagFile = "yrii.pcx";
 		AresCRT::strCopy(this->LSBrief, "LoadBrief:YuriCountry");
-		AresCRT::strCopy(this->LSFile, "ls%syuri.shp");
+		this->LoadScreenBackground = "ls%syuri.shp";
 		AresCRT::strCopy(this->LSName, "Name:YuriCountry");
 		AresCRT::strCopy(this->LSPALFile, "mpyls.pal");
 		AresCRT::strCopy(this->LSSpecialName, "Name:YURI");
@@ -149,7 +149,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 	{
 		this->FlagFile = "rani.pcx";
 		AresCRT::strCopy(this->LSBrief, "GUI:Unknown");
-		AresCRT::strCopy(this->LSFile, "ls%sobs.shp");
+		this->LoadScreenBackground = "ls%sobs.shp";
 		AresCRT::strCopy(this->LSName, "GUI:Unknown");
 		AresCRT::strCopy(this->LSPALFile, "mplsobs.pal");
 		AresCRT::strCopy(this->LSSpecialName, "GUI:Unknown");
@@ -226,9 +226,7 @@ void HouseTypeExt::ExtData::LoadFromRulesFile(HouseTypeClass *pThis, CCINIClass 
 	ReadShpOrPcxImage("File.ObserverFlag", this->ObserverFlag, &this->ObserverFlagSHP);
 	ReadShpOrPcxImage("File.ObserverBackground", this->ObserverBackground, &this->ObserverBackgroundSHP);
 
-	if (pINI->ReadString(pID, "File.LoadScreen", "", Ares::readBuffer, Ares::readLength)) {
-		AresCRT::strCopy(this->LSFile, Ares::readBuffer);
-	}
+	this->LoadScreenBackground.Read(pINI, pID, "File.LoadScreen");
 
 	if (pINI->ReadString(pID, "File.LoadScreenPAL", "", Ares::readBuffer, Ares::readLength)) {
 		AresCRT::strCopy(this->LSPALFile, Ares::readBuffer);
@@ -317,7 +315,7 @@ void CopyStdVector(T HouseTypeExt::ExtData::* prop, const HouseTypeExt::ExtData 
 void HouseTypeExt::ExtData::InheritSettings(HouseTypeClass *pThis) {
 	if(auto ParentCountry = HouseTypeClass::Find(pThis->ParentCountry)) {
 		if(const auto ParentData = HouseTypeExt::ExtMap.Find(ParentCountry)) {
-			CopyString(&HouseTypeExt::ExtData::LSFile, ParentData, this);
+			this->LoadScreenBackground = ParentData->LoadScreenBackground;
 			CopyString(&HouseTypeExt::ExtData::LSPALFile, ParentData, this);
 			CopyString(&HouseTypeExt::ExtData::TauntFile, ParentData, this);
 			CopyString(&HouseTypeExt::ExtData::LSName, ParentData, this);

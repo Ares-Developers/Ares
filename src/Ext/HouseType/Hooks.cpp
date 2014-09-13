@@ -18,7 +18,7 @@ DEFINE_HOOK(553412, LoadProgressMgr_Draw_LSFile, 0)
 	const char* pLSFile = nullptr;
 
 	if(pData) {
-		pLSFile = pData->LSFile;
+		pLSFile = pData->LoadScreenBackground;
 	} else if(n == 0) {
 		pLSFile = "ls%sustates.shp";
 	} else {

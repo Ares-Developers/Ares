@@ -32,7 +32,7 @@ class HouseTypeExt
 			static const int ObserverFlagPCXHeight = 21;
 
 			AresPCXFile FlagFile; //Flag
-			char LSFile[0x20]; //LoadScreen
+			AresFixedString<0x20> LoadScreenBackground; //LoadScreen
 			char LSPALFile[0x20]; //LoadScreen palette
 			char TauntFile[0x20]; //Taunt filename format (should contain %d !!!)
 			char LSName[0x20]; //Stringtable label
@@ -71,7 +71,6 @@ class HouseTypeExt
 				ObserverFlagYuriPAL (false),
 				SettingsInherited (false)
 			{
-				*LSFile = 0;
 				*LSPALFile = 0;
 				*TauntFile = 0;
 				*LSName = 0;
