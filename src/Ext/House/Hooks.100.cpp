@@ -59,16 +59,7 @@ DEFINE_HOOK(4FEA60, HouseClass_AI_UnitProduction, 0)
 		}
 
 		if(pThis->IQLevel2 >= RulesClass::Instance->Harvester && !pThis->unknown_bool_242) {
-
-			bool bPlayerControl;
-
-			if(SessionClass::Instance->GameMode == GameMode::Campaign) {
-				bPlayerControl = pThis->CurrentPlayer || pThis->PlayerControl;
-			} else {
-				bPlayerControl = pThis->CurrentPlayer;
-			}
-
-			if(!bPlayerControl && nHarvesters < mMaxHarvesters && pThis->TechLevel >= pHarvester->TechLevel) {
+			if(!pThis->ControlledByHuman() && nHarvesters < mMaxHarvesters && pThis->TechLevel >= pHarvester->TechLevel) {
 				pThis->ProducingUnitTypeIndex = pHarvester->ArrayIndex;
 				return ret();
 			}
