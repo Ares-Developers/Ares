@@ -13,7 +13,7 @@
 
 class CampaignExt
 {
-	public:
+public:
 	typedef CampaignClass TT;
 
 	class ExtData : public Extension<TT>
@@ -24,19 +24,17 @@ class CampaignExt
 		char Summary[0x20];
 
 		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
-			DebugOnly (false)
+			DebugOnly(false)
 		{
 			*HoverSound = 0;
 			*Summary = 0;
 		};
 
-		virtual ~ExtData() {
-		}
+		virtual ~ExtData() = default;
 
 		virtual void LoadFromINIFile(TT *pThis, CCINIClass *pINI);
 		virtual void Initialize(TT *pThis);
-		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
-		}
+		virtual void InvalidatePointer(void *ptr, bool bRemoved) { }
 
 		bool isVisible() {
 			return !this->DebugOnly || Ares::UISettings::ShowDebugCampaigns;
@@ -50,7 +48,7 @@ class CampaignExt
 
 	static int countVisible() {
 		int ret = 0;
-		for(int i=0; i<Array.Count; ++i) {
+		for(int i = 0; i < Array.Count; ++i) {
 			if(Array.GetItem(i)->isVisible()) {
 				++ret;
 			}

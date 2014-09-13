@@ -15,9 +15,9 @@ void CampaignExt::ExtData::Initialize(CampaignClass *pThis)
 {
 	if(!_strcmpi(pThis->ID, "ALL1")) {
 		AresCRT::strCopy(this->HoverSound, "AlliedCampaignSelect");
-	} else if (!_strcmpi(pThis->ID, "SOV1")) {
+	} else if(!_strcmpi(pThis->ID, "SOV1")) {
 		AresCRT::strCopy(this->HoverSound, "SovietCampaignSelect");
-	} else if (!_strcmpi(pThis->ID, "TUT1")) {
+	} else if(!_strcmpi(pThis->ID, "TUT1")) {
 		AresCRT::strCopy(this->HoverSound, "BootCampSelect");
 	}
 };
@@ -56,8 +56,7 @@ DEFINE_HOOK(46CD56, CampaignClass_LoadFromINI, 7)
 	GET(CCINIClass*, pINI, EDI);
 	GET(CampaignClass*, pThis, EBX);
 
-	CampaignExt::ExtData* k = CampaignExt::ExtMap.FindOrAllocate(pThis);
-	if(k) {
+	if(auto k = CampaignExt::ExtMap.FindOrAllocate(pThis)) {
 		CampaignExt::Array.AddItem(k);
 		k->LoadFromINI(pThis, pINI);
 	}
