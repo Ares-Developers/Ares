@@ -172,6 +172,8 @@ public:
 
 		// academy
 		mutable OptionalStruct<bool> Academy;
+		ValueableVector<TechnoTypeClass*> AcademyWhitelist;
+		ValueableVector<TechnoTypeClass*> AcademyBlacklist;
 		Valueable<double> AcademyInfantry;
 		Valueable<double> AcademyAircraft;
 		Valueable<double> AcademyVehicle;

@@ -240,6 +240,8 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINICl
 
 	this->IsPassable.Read(exINI, pID, "IsPassable");
 
+	this->AcademyWhitelist.Read(exINI, pID, "Academy.Types");
+	this->AcademyBlacklist.Read(exINI, pID, "Academy.Ignore");
 	this->AcademyInfantry.Read(exINI, pID, "Academy.InfantryVeterancy");
 	this->AcademyAircraft.Read(exINI, pID, "Academy.AircraftVeterancy");
 	this->AcademyVehicle.Read(exINI, pID, "Academy.VehiclesVeterancy");

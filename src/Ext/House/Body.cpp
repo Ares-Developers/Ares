@@ -633,8 +633,12 @@ void HouseExt::ExtData::ApplyAcademy(TechnoClass* pTechno, AbstractType consider
 	for(auto pBld : this->Academies) {
 		auto pExt = BuildingTypeExt::ExtMap.Find(pBld->Type);
 
-		const auto& data = pExt->*pmBonus;
-		veterancyBonus = std::max(veterancyBonus, data.Get());
+		if(pExt->AcademyWhitelist.empty() || pExt->AcademyWhitelist.Contains(pType)) {
+			if(!pExt->AcademyBlacklist.Contains(pType)) {
+				const auto& data = pExt->*pmBonus;
+				veterancyBonus = std::max(veterancyBonus, data.Get());
+			}
+		}
 	}
 
 	// apply the bonus
