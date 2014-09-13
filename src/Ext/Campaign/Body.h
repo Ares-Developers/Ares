@@ -2,6 +2,7 @@
 #define CAMPAIGN_H
 
 #include "../../Ares.h"
+#include "../../Utilities/Constructs.h"
 #include "../../Utilities/Template.h"
 #include "../_Container.hpp"
 
@@ -21,13 +22,12 @@ public:
 	public:
 		bool DebugOnly;
 		char HoverSound[0x1F];
-		char Summary[0x20];
+		Valueable<CSFText> Summary;
 
 		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			DebugOnly(false)
 		{
 			*HoverSound = 0;
-			*Summary = 0;
 		};
 
 		virtual ~ExtData() = default;

@@ -2,6 +2,8 @@
 #include "./../../Ares.h"
 #include "./../../Ares.CRT.h"
 
+#include "./../../Utilities/INIParser.h"
+
 #include <algorithm>
 
 //Static init
@@ -28,15 +30,15 @@ void CampaignExt::ExtData::LoadFromINIFile(CampaignClass *pThis, CCINIClass *pIN
 {
 	const char* section = pThis->get_ID();
 
+	INI_EX exINI(pINI);
+
 	this->DebugOnly = pINI->ReadBool(section, "DebugOnly", this->DebugOnly);
 
 	if(pINI->ReadString(section, "HoverSound", "", Ares::readBuffer, Ares::readLength)) {
 		AresCRT::strCopy(this->HoverSound, Ares::readBuffer);
 	}
 
-	if(pINI->ReadString(section, "Summary", "", Ares::readBuffer, Ares::readLength)) {
-		AresCRT::strCopy(this->Summary, Ares::readBuffer);
-	}
+	this->Summary.Read(exINI, section, "Summary");
 }
 
 int CampaignExt::CountVisible() {

@@ -352,10 +352,7 @@ DEFINE_HOOK(52EC18, CampaignMenu_hDlg_PreHandleGeneral, 5) {
 
 					// set the summary text
 					if(HWND hSovLabel = GetDlgItem(hDlg, 1960)) {
-						const wchar_t* summary = nullptr;
-						if(*pData->Summary) {
-							summary = StringTable::LoadStringA(pData->Summary);
-						}
+						const wchar_t* summary = pData->Summary.Get();
 						SendMessageA(hSovLabel, 0x4B2, 0, reinterpret_cast<LPARAM>(summary));
 					}
 				}
