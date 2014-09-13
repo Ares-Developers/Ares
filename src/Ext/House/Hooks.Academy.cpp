@@ -71,7 +71,7 @@ DEFINE_HOOK(517D51, InfantryClass_Init_Academy, 6)
 	GET(InfantryClass*, pThis, ESI);
 
 	if(auto pExt = HouseExt::ExtMap.Find(pThis->Owner)) {
-		pExt->ApplyAcademy(pThis, pExt->AcademyInfantry);
+		pExt->ApplyAcademy(pThis, AbstractType::Infantry);
 	}
 
 	return 0;
@@ -84,11 +84,11 @@ DEFINE_HOOK(74689B, UnitClass_Init_Academy, 6)
 
 	if(auto pExt = HouseExt::ExtMap.Find(pThis->Owner)) {
 		if(pThis->Type->ConsideredAircraft) {
-			pExt->ApplyAcademy(pThis, pExt->AcademyAircraft);
+			pExt->ApplyAcademy(pThis, AbstractType::Aircraft);
 		} else if(pThis->Type->Organic) {
-			pExt->ApplyAcademy(pThis, pExt->AcademyInfantry);
+			pExt->ApplyAcademy(pThis, AbstractType::Infantry);
 		} else {
-			pExt->ApplyAcademy(pThis, pExt->AcademyVehicle);
+			pExt->ApplyAcademy(pThis, AbstractType::Unit);
 		}
 	}
 
@@ -100,7 +100,7 @@ DEFINE_HOOK(413FD2, AircraftClass_Init_Academy, 6)
 	GET(AircraftClass*, pThis, ESI);
 
 	if(auto pExt = HouseExt::ExtMap.Find(pThis->Owner)) {
-		pExt->ApplyAcademy(pThis, pExt->AcademyAircraft);
+		pExt->ApplyAcademy(pThis, AbstractType::Aircraft);
 	}
 
 	return 0;
@@ -111,7 +111,7 @@ DEFINE_HOOK(442D1B, BuildingClass_Init_Academy, 6)
 	GET(BuildingClass*, pThis, ESI);
 
 	if(auto pExt = HouseExt::ExtMap.Find(pThis->Owner)) {
-		pExt->ApplyAcademy(pThis, pExt->AcademyBuilding);
+		pExt->ApplyAcademy(pThis, AbstractType::Building);
 	}
 
 	return 0;

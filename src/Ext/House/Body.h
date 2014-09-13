@@ -55,10 +55,6 @@ public:
 		ValueableVector<HouseTypeClass *> FactoryOwners_GatheredPlansOf;
 
 		std::vector<BuildingClass*> Academies;
-		double AcademyInfantry;
-		double AcademyAircraft;
-		double AcademyVehicle;
-		double AcademyBuilding;
 
 		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			IonSensitive(false),
@@ -69,10 +65,6 @@ public:
 			Factory_VehicleType(nullptr),
 			Factory_NavyType(nullptr),
 			Factory_AircraftType(nullptr),
-			AcademyInfantry(0.0),
-			AcademyAircraft(0.0),
-			AcademyVehicle(0.0),
-			AcademyBuilding(0.0),
 			SWLastIndex(-1),
 			RadarPersist(),
 			StolenTech(0ull)
@@ -102,7 +94,7 @@ public:
 		InfantryTypeClass* GetDisguise() const;
 
 		void UpdateAcademy(BuildingClass* pAcademy, bool added);
-		void ApplyAcademy(TechnoClass* pTechno, const double& bonus) const;
+		void ApplyAcademy(TechnoClass* pTechno, AbstractType considerAs) const;
 	};
 
 	static Container<HouseExt> ExtMap;
