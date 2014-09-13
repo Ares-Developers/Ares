@@ -255,14 +255,12 @@ DEFINE_HOOK(4E3A6A, hWnd_PopulateWithCountryNames, 6) {
 	
 	std::vector<HouseTypeExt::ExtData*> Eligible;
 
-	for(int i=0; i<HouseTypeClass::Array->Count; ++i) {
-		if(HouseTypeClass* pCountry = HouseTypeClass::Array->GetItem(i)) {
-			if(pCountry->Multiplay && pCountry->UIName && *pCountry->UIName) {
-				HouseTypeExt::ExtData *pExt = HouseTypeExt::ExtMap.Find(pCountry);
+	for(auto pCountry : *HouseTypeClass::Array) {
+		if(pCountry->Multiplay && pCountry->UIName && *pCountry->UIName) {
+			HouseTypeExt::ExtData *pExt = HouseTypeExt::ExtMap.Find(pCountry);
 
-				if(pExt->CountryListIndex >= 0) {
-					Eligible.push_back(pExt);
-				}
+			if(pExt->CountryListIndex >= 0) {
+				Eligible.push_back(pExt);
 			}
 		}
 	}
@@ -277,9 +275,10 @@ DEFINE_HOOK(4E3A6A, hWnd_PopulateWithCountryNames, 6) {
 
 	std::sort(Eligible.begin(), Eligible.end(), sortCountries);
 
-	for(std::vector<HouseTypeExt::ExtData*>::iterator iterator = Eligible.begin(); iterator != Eligible.end(); iterator++) {
-		int idx = SendMessageA(hWnd, 0x4C2u, 0, reinterpret_cast<LPARAM>((*iterator)->AttachedToObject->UIName));
-		SendMessageA(hWnd, CB_SETITEMDATA, idx, (*iterator)->AttachedToObject->ArrayIndex2);
+	for(auto pCountryExt : Eligible) {
+		auto pCountry = pCountryExt->AttachedToObject;
+		auto idx = SendMessageA(hWnd, 0x4C2u, 0, reinterpret_cast<LPARAM>(pCountry->UIName));
+		SendMessageA(hWnd, CB_SETITEMDATA, static_cast<WPARAM>(idx), pCountry->ArrayIndex2);
 	}
 	
 	return 0x4E3ACF;
