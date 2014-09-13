@@ -13,8 +13,7 @@ void GetTypeToProduce(HouseClass* pThis, int& ProducingTypeIndex) {
 	std::vector<int> CreationFrames(TType::Array->Count, 0x7FFFFFFF);
 	std::vector<int> Values(TType::Array->Count, 0);
 
-	for(int i = 0; i < TeamClass::Array->Count; ++i) {
-		TeamClass *CurrentTeam = TeamClass::Array->GetItem(i);
+	for(auto CurrentTeam : *TeamClass::Array) {
 		if(!CurrentTeam || CurrentTeam->Owner != pThis) {
 			continue;
 		}
@@ -29,8 +28,7 @@ void GetTypeToProduce(HouseClass* pThis, int& ProducingTypeIndex) {
 
 		DynamicVectorClass<TechnoTypeClass *> TaskForceMembers;
 		CurrentTeam->GetTaskForceMissingMemberTypes(TaskForceMembers);
-		for(int j = 0; j < TaskForceMembers.Count; ++j) {
-			TechnoTypeClass *CurrentMember = TaskForceMembers[j];
+		for(auto CurrentMember : TaskForceMembers) {
 			if(CurrentMember->WhatAmI() != TType::AbsID) {
 				continue;
 			}
@@ -42,8 +40,7 @@ void GetTypeToProduce(HouseClass* pThis, int& ProducingTypeIndex) {
 		}
 	}
 
-	for(int i = 0; i < TClass::Array->Count; ++i) {
-		TClass *T = TClass::Array->GetItem(i);
+	for(auto T : *TClass::Array) {
 		int Idx = T->GetType()->GetArrayIndex();
 		if(Values[Idx] > 0 && T->CanBeRecruited(pThis)) {
 			--Values[Idx];
@@ -58,7 +55,7 @@ void GetTypeToProduce(HouseClass* pThis, int& ProducingTypeIndex) {
 	for(int i = 0; i < TType::Array->Count; ++i) {
 		TType *TT = TType::Array->GetItem(i);
 		int CurrentValue = Values[i];
-		if(CurrentValue <= 0 || !pThis->CanBuild(TT, 0, 0)
+		if(CurrentValue <= 0 || !pThis->CanBuild(TT, false, false)
 			|| TT->GetActualCost(pThis) > pThis->Available_Money())
 		{
 			continue;

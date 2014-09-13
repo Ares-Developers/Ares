@@ -38,8 +38,7 @@ DEFINE_HOOK(4FEA60, HouseClass_AI_UnitProduction, 0)
 	DWORD flagsOwner = 1 << nParentCountryIndex;
 
 	UnitTypeClass* pHarvester = nullptr;
-	for(int i = 0; i < RulesClass::Instance->HarvesterUnit.Count; i++) {
-		UnitTypeClass* pCurrent = RulesClass::Instance->HarvesterUnit[i];
+	for(auto pCurrent : RulesClass::Instance->HarvesterUnit) {
 		if(pCurrent->OwnerFlags & flagsOwner) {
 			pHarvester = pCurrent;
 			break;
