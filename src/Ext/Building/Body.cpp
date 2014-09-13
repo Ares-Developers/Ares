@@ -104,10 +104,11 @@ bool BuildingExt::ExtData::RubbleYell(bool beingRepaired) {
 			auto pOwner = HouseExt::GetHouseKind(owner, true, pBuilding->Owner);
 			auto pNew = static_cast<BuildingClass*>(pNewType->CreateObject(pOwner));
 
-			if(strength == -1) {
-				pNew->Health = std::max(pNew->Type->Strength / 100, 1);
-			} else if(0 < strength && strength < pNew->Type->Strength) {
-				pNew->Health = strength;
+			if(strength <= -1 && strength >= -100) {
+				// percentage of original health
+				pNew->Health = std::max((-strength * pNew->Type->Strength) / 100, 1);
+			} else if(strength > 0) {
+				pNew->Health = std::min(strength, pNew->Type->Strength);
 			} /* else Health = Strength*/
 
 			// The building is created?
