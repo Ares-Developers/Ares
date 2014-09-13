@@ -105,7 +105,7 @@ void Interface::updateMenu(HWND hDlg, int iID) {
 						moveItem(hSovLabel, rcItem, ptDlg);
 					
 						// left align text
-						DWORD style = GetWindowLong(hSovLabel, GWL_STYLE);
+						auto style = GetWindowLong(hSovLabel, GWL_STYLE);
 						style = SS_LEFT | WS_CHILD | WS_VISIBLE;
 						SetWindowLong(hSovLabel, GWL_STYLE, style);
 					}
@@ -313,8 +313,8 @@ DEFINE_HOOK(52F00B, CampaignMenu_hDlg_PopulateCampaignList, 5) {
 	for(int i=0; i<CampaignExt::Array.Count; ++i) {
 		CampaignExt::ExtData *pData = CampaignExt::Array.GetItem(i);
 		if(pData && pData->IsVisible()) {
-			int newIndex = SendMessageA(hList, 0x4CD, 0, reinterpret_cast<WPARAM>(pData->AttachedToObject->Description));
-			SendMessageA(hList, LB_SETITEMDATA, newIndex, i);
+			auto newIndex = SendMessageA(hList, 0x4CD, 0, reinterpret_cast<LPARAM>(pData->AttachedToObject->Description));
+			SendMessageA(hList, LB_SETITEMDATA, static_cast<WPARAM>(newIndex), i);
 		}
 	}
 
@@ -338,8 +338,8 @@ DEFINE_HOOK(52EC18, CampaignMenu_hDlg_PreHandleGeneral, 5) {
 		int iID = LOWORD(lParam);
 		int iCmd = HIWORD(lParam);
 		if((iID == 1109) && (iCmd == LBN_SELCHANGE)) {
-			int index = SendDlgItemMessageA(hDlg, 1109, LB_GETCURSEL, 0, 0);
-			int idxCampaign = SendDlgItemMessageA(hDlg, 1109, LB_GETITEMDATA, index, 0);
+			auto index = SendDlgItemMessageA(hDlg, 1109, LB_GETCURSEL, 0, 0);
+			int idxCampaign = SendDlgItemMessageA(hDlg, 1109, LB_GETITEMDATA, static_cast<WPARAM>(index), 0);
 
 			if(CampaignExt::lastSelectedCampaign != idxCampaign) {
 				// play the hover sound
@@ -376,8 +376,8 @@ DEFINE_HOOK(52ED21, CampaignMenu_hDlg_ClickedPlay, 9) {
 	GET(HWND, hDlg, ESI);
 
 	// find out which campaign is selected
-	int idxItem = SendDlgItemMessageA(hDlg, 1109, LB_GETCURSEL, 0, 0);
-	int idxCampaign = SendDlgItemMessageA(hDlg, 1109, LB_GETITEMDATA, idxItem, 0);
+	auto idxItem = SendDlgItemMessageA(hDlg, 1109, LB_GETCURSEL, 0, 0);
+	int idxCampaign = SendDlgItemMessageA(hDlg, 1109, LB_GETITEMDATA, static_cast<WPARAM>(idxItem), 0);
 
 	// set it ourselves
 	R->EAX(idxCampaign);
@@ -434,8 +434,9 @@ DEFINE_HOOK(52EE04, CampaignMenu_hDlg_SelectHoverSound, 6) {
 				}
 
 				// the actual book keeping
+				auto& SoundToPlay = *reinterpret_cast<int*>(0x825C20);
 				SendDlgItemMessageA(hDlg, iID, 0x4D3, 0, 0);
-				*reinterpret_cast<DWORD*>(0x825C20) = sound;
+				SoundToPlay = sound;
 
 				return 0x52EE2D;
 			}
@@ -503,14 +504,14 @@ DEFINE_HOOK(603A2E, CampaignMenu_ChooseButtonImage, 6) {
 DEFINE_HOOK(60A90A, CampaignMenu_StaticButtonImage, 5) {
 	GET(HWND, iID, EAX);
 
-	return ((Interface::getSlotIndex(reinterpret_cast<int>(iID)) > -1) ? 0x60A982 : 0x60A9ED);
+	return (Interface::getSlotIndex(reinterpret_cast<int>(iID)) > -1) ? 0x60A982u : 0x60A9EDu;
 }
 
 // animation duration
 DEFINE_HOOK(60357E, CampaignMenu_SetAnimationDuration, 5) {
 	GET(HWND, iID, EAX);
 
-	return ((Interface::getSlotIndex(reinterpret_cast<int>(iID)) > -1) ? 0x6035C5 : 0x6035E6);
+	return (Interface::getSlotIndex(reinterpret_cast<int>(iID)) > -1) ? 0x6035C5u : 0x6035E6u;
 }
 
 // initialize stuff like the order and images
