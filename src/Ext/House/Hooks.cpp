@@ -239,7 +239,7 @@ DEFINE_HOOK(4F9610, HouseClass_GiveTiberium_Storage, A)
 
 	pThis->SiloMoney += Game::F2I(amount * 5.0);
 
-	if(!SessionClass::Instance->GameMode || pThis->CurrentPlayer) {
+	if(SessionClass::Instance->GameMode == GameMode::Campaign || pThis->CurrentPlayer) {
 		// don't change, old values are needed for silo update
 		const int lastStorage = static_cast<int>(pThis->OwnedTiberium.GetTotalAmount());
 		const int lastTotalStorage = pThis->TotalStorage;

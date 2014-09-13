@@ -342,7 +342,7 @@ bool TechnoExt::ExtData::AcquireHunterSeekerTarget() const {
 		}
 
 		bool isHumanControlled = pOwner->ControlledByHuman();
-		GameMode::Value mode = SessionClass::Instance->GameMode;
+		GameMode mode = SessionClass::Instance->GameMode;
 
 		// the AI in multiplayer games only attacks its favourite enemy
 		bool favouriteEnemyOnly = false;
@@ -933,7 +933,7 @@ void TechnoExt::ExtData::RefineTiberium(float amount, int idxType) {
 
 	// get the number of applicable purifiers
 	int purifiers = pHouse->NumOrePurifiers;
-	if(!pHouse->CurrentPlayer && SessionClass::Instance->GameMode) {
+	if(!pHouse->CurrentPlayer && SessionClass::Instance->GameMode != GameMode::Campaign) {
 		purifiers += RulesClass::Instance->AIVirtualPurifiers.GetItem(pHouse->GetAIDifficultyIndex());
 	}
 

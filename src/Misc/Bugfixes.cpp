@@ -831,7 +831,7 @@ DEFINE_HOOK(65D8FB, TeamTypeClass_ValidateHouse, 6)
 
 	// house exists; it's either declared explicitly (not Player@X) or a in campaign mode
 	// (we don't second guess those), or it's still alive in a multiplayer game
-	if(pHouse && (pThis->Owner || !SessionClass::Instance->GameMode || !pHouse->Defeated)) {
+	if(pHouse && (pThis->Owner || SessionClass::Instance->GameMode == GameMode::Campaign || !pHouse->Defeated)) {
 		return 0;
 	}
 
