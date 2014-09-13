@@ -23,10 +23,13 @@ class HouseTypeExt
 	class ExtData : public Extension<TT>
 	{
 		public:
-			enum { ObserverBackgroundWidth = 121, ObserverBackgroundHeight = 96 };
+			static const int ObserverBackgroundWidth = 121;
+			static const int ObserverBackgroundHeight = 96;
 
-			enum { ObserverFlagPCXX = 70, ObserverFlagPCXY = 70 };
-			enum { ObserverFlagPCXWidth = 45, ObserverFlagPCXHeight = 21 };
+			static const int ObserverFlagPCXX = 70;
+			static const int ObserverFlagPCXY = 70;
+			static const int ObserverFlagPCXWidth = 45;
+			static const int ObserverFlagPCXHeight = 21;
 
 			AresPCXFile FlagFile; //Flag
 			char LSFile[0x20]; //LoadScreen
