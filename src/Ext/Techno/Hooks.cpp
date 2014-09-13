@@ -1794,6 +1794,7 @@ DEFINE_HOOK(6F525B, TechnoClass_DrawExtras_PowerOff, 5)
 				}
 
 				// animation display speed
+				// original frame calculation: ((currentframe%speed)*6)/(speed-1)
 				int speed = GameOptionsClass::Instance->GetAnimSpeed(14) / 4;
 				if(speed < 2) {
 					speed = 2;
@@ -1801,13 +1802,13 @@ DEFINE_HOOK(6F525B, TechnoClass_DrawExtras_PowerOff, 5)
 
 				// draw the markers
 				if(showRepair) {
-					int frame = (Unsorted::CurrentFrame / speed) % FileSystem::WRENCH_SHP->Frames;
+					int frame = (FileSystem::WRENCH_SHP->Frames * (Unsorted::CurrentFrame % speed)) / speed;
 					DSurface::Hidden_2->DrawSHP(FileSystem::MOUSE_PAL, FileSystem::WRENCH_SHP,
 						frame, &ptRepair, pRect, 0xE00, 0, 0, 0, 1000, 0, 0, 0, 0, 0);
 				}
 
 				if(showPower) {
-					int frame = (Unsorted::CurrentFrame / speed) % FileSystem::POWEROFF_SHP->Frames;
+					int frame = (FileSystem::POWEROFF_SHP->Frames * (Unsorted::CurrentFrame % speed)) / speed;
 					DSurface::Hidden_2->DrawSHP(FileSystem::MOUSE_PAL, FileSystem::POWEROFF_SHP,
 						frame, &ptPower, pRect, 0xE00, 0, 0, 0, 1000, 0, 0, 0, 0, 0);
 				}
