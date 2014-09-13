@@ -32,7 +32,7 @@ void CampaignExt::ExtData::LoadFromINIFile(CampaignClass *pThis, CCINIClass *pIN
 
 	INI_EX exINI(pINI);
 
-	this->DebugOnly = pINI->ReadBool(section, "DebugOnly", this->DebugOnly);
+	this->DebugOnly.Read(exINI, section, "DebugOnly");
 
 	this->HoverSound.Read(pINI, section, "HoverSound", "");
 

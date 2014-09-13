@@ -20,7 +20,7 @@ public:
 	class ExtData : public Extension<TT>
 	{
 	public:
-		bool DebugOnly;
+		Valueable<bool> DebugOnly;
 		AresFixedString<0x20> HoverSound;
 		Valueable<CSFText> Summary;
 
