@@ -21,14 +21,12 @@ public:
 	{
 	public:
 		bool DebugOnly;
-		char HoverSound[0x1F];
+		AresFixedString<0x20> HoverSound;
 		Valueable<CSFText> Summary;
 
 		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			DebugOnly(false)
-		{
-			*HoverSound = 0;
-		};
+		{ };
 
 		virtual ~ExtData() = default;
 

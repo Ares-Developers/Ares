@@ -18,11 +18,11 @@ template<> IStream *Container<CampaignExt>::SavingStream = nullptr;
 void CampaignExt::ExtData::Initialize(CampaignClass *pThis)
 {
 	if(!_strcmpi(pThis->ID, "ALL1")) {
-		AresCRT::strCopy(this->HoverSound, "AlliedCampaignSelect");
+		this->HoverSound = "AlliedCampaignSelect";
 	} else if(!_strcmpi(pThis->ID, "SOV1")) {
-		AresCRT::strCopy(this->HoverSound, "SovietCampaignSelect");
+		this->HoverSound = "SovietCampaignSelect";
 	} else if(!_strcmpi(pThis->ID, "TUT1")) {
-		AresCRT::strCopy(this->HoverSound, "BootCampSelect");
+		this->HoverSound = "BootCampSelect";
 	}
 };
 
@@ -34,9 +34,7 @@ void CampaignExt::ExtData::LoadFromINIFile(CampaignClass *pThis, CCINIClass *pIN
 
 	this->DebugOnly = pINI->ReadBool(section, "DebugOnly", this->DebugOnly);
 
-	if(pINI->ReadString(section, "HoverSound", "", Ares::readBuffer, Ares::readLength)) {
-		AresCRT::strCopy(this->HoverSound, Ares::readBuffer);
-	}
+	this->HoverSound.Read(pINI, section, "HoverSound", "");
 
 	this->Summary.Read(exINI, section, "Summary");
 }
