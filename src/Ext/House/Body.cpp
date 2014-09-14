@@ -352,8 +352,8 @@ void HouseExt::ExtData::SetFirestormState(bool Active) {
 	for(auto pBld : pHouse->Buildings) {
 		auto pTypeData = BuildingTypeExt::ExtMap.Find(pBld->Type);
 		if(pTypeData->Firewall_Is) {
-			auto pData = BuildingExt::ExtMap.Find(pBld);
-			pData->UpdateFirewall();
+			auto pExt = BuildingExt::ExtMap.Find(pBld);
+			pExt->UpdateFirewall();
 			const auto& temp = pBld->GetMapCoords();
 			AffectedCoords.AddItem(temp);
 		}
