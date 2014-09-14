@@ -58,7 +58,7 @@ template<>
 void WriteLog(const AbstractClass* it, int idx, DWORD checksum, FILE * F) {
 	WriteLog<void>(it, idx, checksum, F);
 	auto abs = it->WhatAmI();
-	fprintf(F, "; Abs: %d (%s)", abs, AbstractClass::GetClassName(abs));
+	fprintf(F, "; Abs: %u (%s)", abs, AbstractClass::GetClassName(abs));
 }
 
 template<>
