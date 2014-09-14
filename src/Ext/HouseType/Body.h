@@ -38,7 +38,7 @@ class HouseTypeExt
 			Valueable<CSFText> LoadScreenName; // country name
 			Valueable<CSFText> LoadScreenSpecialName; // country's special weapon/unit
 			Valueable<CSFText> LoadScreenBrief; // country's load short text
-			char StatusText[0x20]; //Stringtable label for this country's Skirmish STT
+			Valueable<CSFText> StatusText; // for this country's Skirmish STT
 			ValueableIdx<ColorScheme> LoadTextColor; //The text color used for non-Campaign modes
 			int RandomSelectionWeight; //This country gets added this many times into the list of legible countries for random selection.
 			int CountryListIndex; //The index this country will appear in the selection list.
@@ -70,9 +70,7 @@ class HouseTypeExt
 				ObserverFlagSHP (nullptr),
 				ObserverFlagYuriPAL (false),
 				SettingsInherited (false)
-			{
-				*StatusText = 0;
-			};
+			{ };
 
 		virtual ~ExtData() {
 

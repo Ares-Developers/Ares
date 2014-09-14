@@ -160,17 +160,17 @@ DEFINE_HOOK(4E38D8, HTExt_GetSTT, 0)
 		pData = HouseTypeExt::ExtMap.Find(pThis);
 	}
 
-	const char* pSTT = nullptr;
+	const wchar_t* pSTT = nullptr;
 
 	if(pData) {
-		pSTT = pData->StatusText;
+		pSTT = pData->StatusText.Get();
 	} else if(n == 0) {
-		pSTT = "STT:PlayerSideAmerica";
+		pSTT = StringTable::LoadString("STT:PlayerSideAmerica");
 	} else {
 		return 0x4E38F3;
 	}
 
-	R->EAX(StringTable::LoadString(pSTT));
+	R->EAX(pSTT);
 	return 0x4E39F1;
 }
 
