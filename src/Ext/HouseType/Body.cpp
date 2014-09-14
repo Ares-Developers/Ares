@@ -27,7 +27,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 	if (!_strcmpi(pID, "Americans")) //USA
 	{
 		this->FlagFile = "usai.pcx";
-		AresCRT::strCopy(this->LSBrief, "LoadBrief:USA");
+		this->LoadScreenBrief = CSFText("LoadBrief:USA");
 		this->LoadScreenBackground = "ls%sustates.shp";
 		this->LoadScreenName = CSFText("Name:Americans");
 		this->LoadScreenPalette = "mplsu.pal";
@@ -39,7 +39,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 	} else if (!_strcmpi(pID, "Alliance")) //Korea
 	{
 		this->FlagFile = "japi.pcx";
-		AresCRT::strCopy(this->LSBrief, "LoadBrief:Korea");
+		this->LoadScreenBrief = CSFText("LoadBrief:Korea");
 		this->LoadScreenBackground = "ls%skorea.shp";
 		this->LoadScreenName = CSFText("Name:Alliance");
 		this->LoadScreenPalette = "mplsk.pal";
@@ -51,7 +51,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 	} else if (!_strcmpi(pID, "French")) //France
 	{
 		this->FlagFile = "frai.pcx";
-		AresCRT::strCopy(this->LSBrief, "LoadBrief:French");
+		this->LoadScreenBrief = CSFText("LoadBrief:French");
 		this->LoadScreenBackground = "ls%sfrance.shp";
 		this->LoadScreenName = CSFText("Name:French");
 		this->LoadScreenPalette = "mplsf.pal";
@@ -63,7 +63,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 	} else if (!_strcmpi(pID, "Germans")) //Germany
 	{
 		this->FlagFile = "geri.pcx";
-		AresCRT::strCopy(this->LSBrief, "LoadBrief:Germans");
+		this->LoadScreenBrief = CSFText("LoadBrief:Germans");
 		this->LoadScreenBackground = "ls%sgermany.shp";
 		this->LoadScreenName = CSFText("Name:Germans");
 		this->LoadScreenPalette = "mplsg.pal";
@@ -75,7 +75,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 	} else if (!_strcmpi(pID, "British")) //United Kingdom
 	{
 		this->FlagFile = "gbri.pcx";
-		AresCRT::strCopy(this->LSBrief, "LoadBrief:British");
+		this->LoadScreenBrief = CSFText("LoadBrief:British");
 		this->LoadScreenBackground = "ls%sukingdom.shp";
 		this->LoadScreenName = CSFText("Name:British");
 		this->LoadScreenPalette = "mplsuk.pal";
@@ -87,7 +87,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 	} else if (!_strcmpi(pID, "Africans")) //Libya
 	{
 		this->FlagFile = "djbi.pcx";
-		AresCRT::strCopy(this->LSBrief, "LoadBrief:Lybia");
+		this->LoadScreenBrief = CSFText("LoadBrief:Lybia");
 		this->LoadScreenBackground = "ls%slibya.shp";
 		this->LoadScreenName = CSFText("Name:Africans");
 		this->LoadScreenPalette = "mplsl.pal";
@@ -99,7 +99,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 	} else if (!_strcmpi(pID, "Arabs")) //Iraq
 	{
 		this->FlagFile = "arbi.pcx";
-		AresCRT::strCopy(this->LSBrief, "LoadBrief:Iraq");
+		this->LoadScreenBrief = CSFText("LoadBrief:Iraq");
 		this->LoadScreenBackground = "ls%siraq.shp";
 		this->LoadScreenName = CSFText("Name:Arabs");
 		this->LoadScreenPalette = "mplsi.pal";
@@ -111,7 +111,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 	} else if (!_strcmpi(pID, "Confederation")) //Cuba
 	{
 		this->FlagFile = "lati.pcx";
-		AresCRT::strCopy(this->LSBrief, "LoadBrief:Cuba");
+		this->LoadScreenBrief = CSFText("LoadBrief:Cuba");
 		this->LoadScreenBackground = "ls%scuba.shp";
 		this->LoadScreenName = CSFText("Name:Confederation");
 		this->LoadScreenPalette = "mplsc.pal";
@@ -123,7 +123,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 	} else if (!_strcmpi(pID, "Russians")) //Russia
 	{
 		this->FlagFile = "rusi.pcx";
-		AresCRT::strCopy(this->LSBrief, "LoadBrief:Russia");
+		this->LoadScreenBrief = CSFText("LoadBrief:Russia");
 		this->LoadScreenBackground = "ls%srussia.shp";
 		this->LoadScreenName = CSFText("Name:Russians");
 		this->LoadScreenPalette = "mplsr.pal";
@@ -135,7 +135,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 	} else if (!_strcmpi(pID, "YuriCountry")) //Yuri
 	{
 		this->FlagFile = "yrii.pcx";
-		AresCRT::strCopy(this->LSBrief, "LoadBrief:YuriCountry");
+		this->LoadScreenBrief = CSFText("LoadBrief:YuriCountry");
 		this->LoadScreenBackground = "ls%syuri.shp";
 		this->LoadScreenName = CSFText("Name:YuriCountry");
 		this->LoadScreenPalette = "mpyls.pal";
@@ -148,7 +148,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 	} else //Unknown
 	{
 		this->FlagFile = "rani.pcx";
-		AresCRT::strCopy(this->LSBrief, "GUI:Unknown");
+		this->LoadScreenBrief = CSFText("GUI:Unknown");
 		this->LoadScreenBackground = "ls%sobs.shp";
 		this->LoadScreenName = CSFText("GUI:Unknown");
 		this->LoadScreenPalette = "mplsobs.pal";
@@ -234,10 +234,7 @@ void HouseTypeExt::ExtData::LoadFromRulesFile(HouseTypeClass *pThis, CCINIClass 
 
 	this->LoadScreenName.Read(exINI, pID, "LoadScreenText.Name");
 	this->LoadScreenSpecialName.Read(exINI, pID, "LoadScreenText.SpecialName");
-
-	if (pINI->ReadString(pID, "LoadScreenText.Brief", "", Ares::readBuffer, Ares::readLength)) {
-		AresCRT::strCopy(this->LSBrief, Ares::readBuffer);
-	}
+	this->LoadScreenBrief.Read(exINI, pID, "LoadScreenText.Brief");
 
 	if (pINI->ReadString(pID, "MenuText.Status", "", Ares::readBuffer, Ares::readLength)) {
 		AresCRT::strCopy(this->StatusText, Ares::readBuffer);
@@ -310,7 +307,7 @@ void HouseTypeExt::ExtData::InheritSettings(HouseTypeClass *pThis) {
 			this->TauntFile = ParentData->TauntFile;
 			this->LoadScreenName = ParentData->LoadScreenName;
 			this->LoadScreenSpecialName = ParentData->LoadScreenSpecialName;
-			CopyString(&HouseTypeExt::ExtData::LSBrief, ParentData, this);
+			this->LoadScreenBrief = ParentData->LoadScreenBrief;
 			CopyString(&HouseTypeExt::ExtData::StatusText, ParentData, this);
 			this->LoadTextColor = ParentData->LoadTextColor;
 			this->RandomSelectionWeight = ParentData->RandomSelectionWeight;

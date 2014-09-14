@@ -85,17 +85,17 @@ DEFINE_HOOK(553D06, LoadProgressMgr_Draw_LSBrief, 6)
 		pData = HouseTypeExt::ExtMap.Find(pThis);
 	}
 
-	const char* LSBrief = nullptr;
+	const wchar_t* LSBrief = nullptr;
 
 	if(pData) {
-		LSBrief = pData->LSBrief;
+		LSBrief = pData->LoadScreenBrief.Get();
 	} else if(n == 0) {
-		LSBrief = "LoadBrief:USA";
+		LSBrief = StringTable::LoadString("LoadBrief:USA");
 	} else {
 		return 0x553D2B;
 	}
 
-	R->ESI(StringTable::LoadString(LSBrief)); // limited to some tiny amount
+	R->ESI(LSBrief); // limited to some tiny amount
 	return 0x553E54;
 }
 
