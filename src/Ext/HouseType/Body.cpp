@@ -418,7 +418,7 @@ Iterator<BuildingTypeClass*> HouseTypeExt::ExtData::GetDefaultPowerplants() cons
 		break;
 	}
 
-	int count = (ppPower && *ppPower) ? 1 : 0;
+	unsigned int count = (ppPower && *ppPower) ? 1u : 0u;
 	return Iterator<BuildingTypeClass*>(ppPower, count);
 }
 
@@ -428,8 +428,8 @@ int HouseTypeExt::PickRandomCountry() {
 	for (int i = 0; i < HouseTypeClass::Array->Count; i++) {
 		HouseTypeClass* pCountry = HouseTypeClass::Array->Items[i];
 		if (pCountry->Multiplay) {
-			if (HouseTypeExt::ExtData *pData = HouseTypeExt::ExtMap.Find(pCountry)) {
-				items.Add(i, pData->RandomSelectionWeight);
+			if (auto pData = HouseTypeExt::ExtMap.Find(pCountry)) {
+				items.Add(i, static_cast<unsigned int>(pData->RandomSelectionWeight));
 			}
 		}
 	}
