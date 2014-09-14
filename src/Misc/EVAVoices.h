@@ -8,7 +8,7 @@ struct VoxFile
 	char Name[9];
 
 	//need to define a == operator so it can be used in array classes
-	bool operator == (VoxFile &other)
+	bool operator == (const VoxFile &other) const
 	{
 		return !strcmp(this->Name, other.Name);
 	}
@@ -19,11 +19,7 @@ class VoxClass2 : public VoxClass
 public:
 	VoxClass2(char* pName) : VoxClass(pName) {}
 
-	~VoxClass2()
-	{
-		Voices.clear();
-		this->VoxClass::~VoxClass();
-	}
+	~VoxClass2() = default;
 
 	std::vector<VoxFile> Voices;
 };
@@ -45,7 +41,7 @@ public:
 		// find all others
 		for(unsigned int i=0; i<Types.size(); ++i) {
 			if(!_strcmpi(type, Types[i])) {
-				return i + 3;
+				return static_cast<int>(i + 3);
 			}
 		}
 

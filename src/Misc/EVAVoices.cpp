@@ -21,7 +21,7 @@ DEFINE_HOOK(753000, VoxClass_CreateFromINIList, 6)
 	if(pINI->GetSection(section)) {
 		int count = pINI->GetKeyCount(section);
 
-		for(int i=0; i<count; ++i) {
+		for(int i = 0; i < count; ++i) {
 			const char* key = pINI->GetKeyName(section, i);
 			if(pINI->ReadString(section, key, "", buffer, 200)) {
 				EVAVoices::RegisterType(buffer);
@@ -76,11 +76,11 @@ DEFINE_HOOK(752FDC, VoxClass_LoadFromINI, 5)
 	char buffer[0x20];
 
 	// make way for all filenames
-	int count = EVAVoices::Types.size();
-	pThis->Voices.reserve(count);
+	auto count = EVAVoices::Types.size();
+	pThis->Voices.resize(count);
 
 	// put the filename in there. 8 chars max.
-	for(auto i=0; i<count; ++i) {
+	for(auto i = 0u; i < count; ++i) {
 		pINI->ReadString(pThis->Name, EVAVoices::Types.at(i), "", buffer, 0x20);
 		AresCRT::strCopy(pThis->Voices[i].Name, buffer);
 	}
@@ -120,7 +120,7 @@ DEFINE_HOOK(753380, VoxClass_GetFilename, 5)
 		ret = pThis->Yuri;
 		break;
 	default:
-		ret = pThis->Voices[index-3].Name;
+		ret = pThis->Voices[static_cast<size_t>(index-3)].Name;
 	}
 
 	R->EAX(ret);
