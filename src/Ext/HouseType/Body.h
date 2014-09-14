@@ -36,7 +36,7 @@ class HouseTypeExt
 			AresFixedString<0x20> LoadScreenPalette; //LoadScreen palette
 			AresFixedString<0x20> TauntFile; //Taunt filename format (should contain %d !!!)
 			Valueable<CSFText> LoadScreenName; // country name
-			char LSSpecialName[0x20]; //Stringtable label for this country's special weapon
+			Valueable<CSFText> LoadScreenSpecialName; // country's special weapon/unit
 			char LSBrief[0x20]; //Stringtable label for this country's load brief
 			char StatusText[0x20]; //Stringtable label for this country's Skirmish STT
 			ValueableIdx<ColorScheme> LoadTextColor; //The text color used for non-Campaign modes
@@ -71,7 +71,6 @@ class HouseTypeExt
 				ObserverFlagYuriPAL (false),
 				SettingsInherited (false)
 			{
-				*LSSpecialName = 0;
 				*LSBrief = 0;
 				*StatusText = 0;
 			};

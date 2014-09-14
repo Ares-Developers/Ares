@@ -64,7 +64,7 @@ DEFINE_HOOK(553A05, LoadProgressMgr_Draw_LSSpecialName, 6)
 	const wchar_t* text = L"";
 
 	if(pData) {
-		text = StringTable::LoadString(pData->LSSpecialName);
+		text = pData->LoadScreenSpecialName.Get();
 	} else if(n == 0) {
 		text = StringTable::LoadString("Name:Para");
 	} else if(n > 0 && n <= 9) {

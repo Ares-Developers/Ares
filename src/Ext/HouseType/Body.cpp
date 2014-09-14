@@ -31,7 +31,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		this->LoadScreenBackground = "ls%sustates.shp";
 		this->LoadScreenName = CSFText("Name:Americans");
 		this->LoadScreenPalette = "mplsu.pal";
-		AresCRT::strCopy(this->LSSpecialName, "Name:Para");
+		this->LoadScreenSpecialName = CSFText("Name:Para");
 		AresCRT::strCopy(this->StatusText, "STT:PlayerSideAmerica");
 		this->TauntFile = "taunts\\tauam%02i.wav";
 		this->ObserverBackgroundSHP = FileSystem::LoadSHPFile("obsalli.shp");
@@ -43,7 +43,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		this->LoadScreenBackground = "ls%skorea.shp";
 		this->LoadScreenName = CSFText("Name:Alliance");
 		this->LoadScreenPalette = "mplsk.pal";
-		AresCRT::strCopy(this->LSSpecialName, "Name:BEAGLE");
+		this->LoadScreenSpecialName = CSFText("Name:BEAGLE");
 		AresCRT::strCopy(this->StatusText, "STT:PlayerSideKorea");
 		this->TauntFile = "taunts\\tauko%02i.wav";
 		this->ObserverBackgroundSHP = FileSystem::LoadSHPFile("obsalli.shp");
@@ -55,7 +55,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		this->LoadScreenBackground = "ls%sfrance.shp";
 		this->LoadScreenName = CSFText("Name:French");
 		this->LoadScreenPalette = "mplsf.pal";
-		AresCRT::strCopy(this->LSSpecialName, "Name:GTGCAN");
+		this->LoadScreenSpecialName = CSFText("Name:GTGCAN");
 		AresCRT::strCopy(this->StatusText, "STT:PlayerSideFrance");
 		this->TauntFile = "taunts\\taufr%02i.wav";
 		this->ObserverBackgroundSHP = FileSystem::LoadSHPFile("obsalli.shp");
@@ -67,7 +67,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		this->LoadScreenBackground = "ls%sgermany.shp";
 		this->LoadScreenName = CSFText("Name:Germans");
 		this->LoadScreenPalette = "mplsg.pal";
-		AresCRT::strCopy(this->LSSpecialName, "Name:TNKD");
+		this->LoadScreenSpecialName = CSFText("Name:TNKD");
 		AresCRT::strCopy(this->StatusText, "STT:PlayerSideGermany");
 		this->TauntFile = "taunts\\tauge%02i.wav";
 		this->ObserverBackgroundSHP = FileSystem::LoadSHPFile("obsalli.shp");
@@ -79,7 +79,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		this->LoadScreenBackground = "ls%sukingdom.shp";
 		this->LoadScreenName = CSFText("Name:British");
 		this->LoadScreenPalette = "mplsuk.pal";
-		AresCRT::strCopy(this->LSSpecialName, "Name:SNIPE");
+		this->LoadScreenSpecialName = CSFText("Name:SNIPE");
 		AresCRT::strCopy(this->StatusText, "STT:PlayerSideBritain");
 		this->TauntFile = "taunts\\taubr%02i.wav";
 		this->ObserverBackgroundSHP = FileSystem::LoadSHPFile("obsalli.shp");
@@ -91,7 +91,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		this->LoadScreenBackground = "ls%slibya.shp";
 		this->LoadScreenName = CSFText("Name:Africans");
 		this->LoadScreenPalette = "mplsl.pal";
-		AresCRT::strCopy(this->LSSpecialName, "Name:DTRUCK");
+		this->LoadScreenSpecialName = CSFText("Name:DTRUCK");
 		AresCRT::strCopy(this->StatusText, "STT:PlayerSideLibya");
 		this->TauntFile = "taunts\\tauli%02i.wav";
 		this->ObserverBackgroundSHP = FileSystem::LoadSHPFile("obssovi.shp");
@@ -103,7 +103,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		this->LoadScreenBackground = "ls%siraq.shp";
 		this->LoadScreenName = CSFText("Name:Arabs");
 		this->LoadScreenPalette = "mplsi.pal";
-		AresCRT::strCopy(this->LSSpecialName, "Name:DESO");
+		this->LoadScreenSpecialName = CSFText("Name:DESO");
 		AresCRT::strCopy(this->StatusText, "STT:PlayerSideIraq");
 		this->TauntFile = "taunts\\tauir%02i.wav";
 		this->ObserverBackgroundSHP = FileSystem::LoadSHPFile("obssovi.shp");
@@ -115,7 +115,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		this->LoadScreenBackground = "ls%scuba.shp";
 		this->LoadScreenName = CSFText("Name:Confederation");
 		this->LoadScreenPalette = "mplsc.pal";
-		AresCRT::strCopy(this->LSSpecialName, "Name:TERROR");
+		this->LoadScreenSpecialName = CSFText("Name:TERROR");
 		AresCRT::strCopy(this->StatusText, "STT:PlayerSideCuba");
 		this->TauntFile = "taunts\\taucu%02i.wav";
 		this->ObserverBackgroundSHP = FileSystem::LoadSHPFile("obssovi.shp");
@@ -127,7 +127,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		this->LoadScreenBackground = "ls%srussia.shp";
 		this->LoadScreenName = CSFText("Name:Russians");
 		this->LoadScreenPalette = "mplsr.pal";
-		AresCRT::strCopy(this->LSSpecialName, "Name:TTNK");
+		this->LoadScreenSpecialName = CSFText("Name:TTNK");
 		AresCRT::strCopy(this->StatusText, "STT:PlayerSideRussia");
 		this->TauntFile = "taunts\\tauru%02i.wav";
 		this->ObserverBackgroundSHP = FileSystem::LoadSHPFile("obssovi.shp");
@@ -139,7 +139,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		this->LoadScreenBackground = "ls%syuri.shp";
 		this->LoadScreenName = CSFText("Name:YuriCountry");
 		this->LoadScreenPalette = "mpyls.pal";
-		AresCRT::strCopy(this->LSSpecialName, "Name:YURI");
+		this->LoadScreenSpecialName = CSFText("Name:YURI");
 		AresCRT::strCopy(this->StatusText, "STT:PlayerSideYuriCountry");
 		this->TauntFile = "taunts\\tauyu%02i.wav";
 		this->ObserverBackgroundSHP = FileSystem::LoadSHPFile("obsyuri.shp");
@@ -152,7 +152,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		this->LoadScreenBackground = "ls%sobs.shp";
 		this->LoadScreenName = CSFText("GUI:Unknown");
 		this->LoadScreenPalette = "mplsobs.pal";
-		AresCRT::strCopy(this->LSSpecialName, "GUI:Unknown");
+		this->LoadScreenSpecialName = CSFText("GUI:Unknown");
 		AresCRT::strCopy(this->StatusText, "GUI:Unknown");
 		this->TauntFile = "taunts\\tauam%02i.wav";
 	}
@@ -233,10 +233,7 @@ void HouseTypeExt::ExtData::LoadFromRulesFile(HouseTypeClass *pThis, CCINIClass 
 	this->TauntFile.Read(pINI, pID, "File.Taunt");
 
 	this->LoadScreenName.Read(exINI, pID, "LoadScreenText.Name");
-
-	if (pINI->ReadString(pID, "LoadScreenText.SpecialName", "", Ares::readBuffer, Ares::readLength)) {
-		AresCRT::strCopy(this->LSSpecialName, Ares::readBuffer);
-	}
+	this->LoadScreenSpecialName.Read(exINI, pID, "LoadScreenText.SpecialName");
 
 	if (pINI->ReadString(pID, "LoadScreenText.Brief", "", Ares::readBuffer, Ares::readLength)) {
 		AresCRT::strCopy(this->LSBrief, Ares::readBuffer);
@@ -312,7 +309,7 @@ void HouseTypeExt::ExtData::InheritSettings(HouseTypeClass *pThis) {
 			this->LoadScreenPalette = ParentData->LoadScreenPalette;
 			this->TauntFile = ParentData->TauntFile;
 			this->LoadScreenName = ParentData->LoadScreenName;
-			CopyString(&HouseTypeExt::ExtData::LSSpecialName, ParentData, this);
+			this->LoadScreenSpecialName = ParentData->LoadScreenSpecialName;
 			CopyString(&HouseTypeExt::ExtData::LSBrief, ParentData, this);
 			CopyString(&HouseTypeExt::ExtData::StatusText, ParentData, this);
 			this->LoadTextColor = ParentData->LoadTextColor;
