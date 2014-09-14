@@ -38,17 +38,17 @@ DEFINE_HOOK(5536DA, LoadProgressMgr_Draw_LSName, 0)
 		pData = HouseTypeExt::ExtMap.Find(pThis);
 	}
 
-	const char* pLSName = nullptr;
+	const wchar_t* pLSName = nullptr;
 
 	if(pData) {
-		pLSName = pData->LSName;
+		pLSName = pData->LoadScreenName.Get();
 	} else if(n == 0) {
-		pLSName = "Name:Americans";
+		pLSName = StringTable::LoadString("Name:Americans");
 	} else {
 		return 0x5536FB;
 	}
 
-	R->EDI(StringTable::LoadString(pLSName));
+	R->EDI(pLSName);
 	return 0x553820;
 }
 
