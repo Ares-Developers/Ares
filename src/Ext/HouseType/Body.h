@@ -33,7 +33,7 @@ class HouseTypeExt
 
 			AresPCXFile FlagFile; //Flag
 			AresFixedString<0x20> LoadScreenBackground; //LoadScreen
-			char LSPALFile[0x20]; //LoadScreen palette
+			AresFixedString<0x20> LoadScreenPalette; //LoadScreen palette
 			char TauntFile[0x20]; //Taunt filename format (should contain %d !!!)
 			char LSName[0x20]; //Stringtable label
 			char LSSpecialName[0x20]; //Stringtable label for this country's special weapon
@@ -71,7 +71,6 @@ class HouseTypeExt
 				ObserverFlagYuriPAL (false),
 				SettingsInherited (false)
 			{
-				*LSPALFile = 0;
 				*TauntFile = 0;
 				*LSName = 0;
 				*LSSpecialName = 0;

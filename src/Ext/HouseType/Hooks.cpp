@@ -135,7 +135,7 @@ DEFINE_HOOK(72B690, HTExt_LSPAL, 0)
 	const char* pPALFile = nullptr;
 
 	if(pData) {
-		pPALFile = pData->LSPALFile;
+		pPALFile = pData->LoadScreenPalette;
 	} else if(n == 0) {
 		pPALFile = "mplsu.pal";	//need to recode cause I broke the code with the jump
 	} else {
