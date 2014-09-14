@@ -270,32 +270,6 @@ void HouseTypeExt::ExtData::LoadFromINIFile(HouseTypeClass *pThis, CCINIClass *p
 	this->VeteranBuildings.Read(exINI, pID, "VeteranBuildings");
 }
 
-template<size_t Len>
-void CopyString(char (HouseTypeExt::ExtData::* prop)[Len], const HouseTypeExt::ExtData *src, HouseTypeExt::ExtData *dst) {
-	AresCRT::strCopy(dst->*prop, src->*prop);
-}
-
-template<typename T>
-void CopyVector(T HouseTypeExt::ExtData::* prop, const HouseTypeExt::ExtData *src, HouseTypeExt::ExtData *dst) {
-	auto &sp = src->*prop;
-	auto &dp = dst->*prop;
-	dp.SetCapacity(sp.Capacity, nullptr);
-	dp.Count = sp.Count;
-	for(unsigned ix = sp.Count; ix > 0; --ix) {
-		auto idx = ix - 1;
-		dp.Items[idx] = sp.Items[idx];
-	}
-}
-
-template<typename T>
-void CopyStdVector(T HouseTypeExt::ExtData::* prop, const HouseTypeExt::ExtData *src, HouseTypeExt::ExtData *dst) {
-	auto &sp = src->*prop;
-	auto &dp = dst->*prop;
-	dp.clear();
-	dp.reserve(sp.size());
-	std::copy(sp.begin(), sp.end(), std::back_inserter(dp));
-}
-
 void HouseTypeExt::ExtData::InheritSettings(HouseTypeClass *pThis) {
 	if(auto ParentCountry = HouseTypeClass::Find(pThis->ParentCountry)) {
 		if(const auto ParentData = HouseTypeExt::ExtMap.Find(ParentCountry)) {
@@ -323,7 +297,7 @@ void HouseTypeExt::ExtData::InheritSettings(HouseTypeClass *pThis) {
 			this->ParaDropTypes = ParentData->ParaDropTypes;
 			this->ParaDropNum = ParentData->ParaDropNum;
 
-			CopyStdVector(&HouseTypeExt::ExtData::VeteranBuildings, ParentData, this);
+			this->VeteranBuildings = ParentData->VeteranBuildings;
 		}
 	}
 	this->SettingsInherited = true;
