@@ -17,60 +17,60 @@ class TechnoTypeClass;
 
 class HouseTypeExt
 {
-	public:
+public:
 	typedef HouseTypeClass TT;
 
 	class ExtData : public Extension<TT>
 	{
-		public:
-			static const int ObserverBackgroundWidth = 121;
-			static const int ObserverBackgroundHeight = 96;
+	public:
+		static const int ObserverBackgroundWidth = 121;
+		static const int ObserverBackgroundHeight = 96;
 
-			static const int ObserverFlagPCXX = 70;
-			static const int ObserverFlagPCXY = 70;
-			static const int ObserverFlagPCXWidth = 45;
-			static const int ObserverFlagPCXHeight = 21;
+		static const int ObserverFlagPCXX = 70;
+		static const int ObserverFlagPCXY = 70;
+		static const int ObserverFlagPCXWidth = 45;
+		static const int ObserverFlagPCXHeight = 21;
 
-			AresPCXFile FlagFile; //Flag
-			AresFixedString<0x20> LoadScreenBackground; //LoadScreen
-			AresFixedString<0x20> LoadScreenPalette; //LoadScreen palette
-			AresFixedString<0x20> TauntFile; //Taunt filename format (should contain %d !!!)
-			Valueable<CSFText> LoadScreenName; // country name
-			Valueable<CSFText> LoadScreenSpecialName; // country's special weapon/unit
-			Valueable<CSFText> LoadScreenBrief; // country's load short text
-			Valueable<CSFText> StatusText; // for this country's Skirmish STT
-			ValueableIdx<ColorScheme> LoadTextColor; //The text color used for non-Campaign modes
-			int RandomSelectionWeight; //This country gets added this many times into the list of legible countries for random selection.
-			int CountryListIndex; //The index this country will appear in the selection list.
+		AresPCXFile FlagFile; //Flag
+		AresFixedString<0x20> LoadScreenBackground; //LoadScreen
+		AresFixedString<0x20> LoadScreenPalette; //LoadScreen palette
+		AresFixedString<0x20> TauntFile; //Taunt filename format (should contain %d !!!)
+		Valueable<CSFText> LoadScreenName; // country name
+		Valueable<CSFText> LoadScreenSpecialName; // country's special weapon/unit
+		Valueable<CSFText> LoadScreenBrief; // country's load short text
+		Valueable<CSFText> StatusText; // for this country's Skirmish STT
+		ValueableIdx<ColorScheme> LoadTextColor; //The text color used for non-Campaign modes
+		int RandomSelectionWeight; //This country gets added this many times into the list of legible countries for random selection.
+		int CountryListIndex; //The index this country will appear in the selection list.
 
-			ValueableVector<BuildingTypeClass *> Powerplants;
-			ValueableVector<TechnoTypeClass*> ParaDropTypes;
-			ValueableVector<int> ParaDropNum;
-			ValueableIdx<AircraftTypeClass> ParaDropPlane;
-			Valueable<AnimTypeClass*> Parachute_Anim;
+		ValueableVector<BuildingTypeClass *> Powerplants;
+		ValueableVector<TechnoTypeClass*> ParaDropTypes;
+		ValueableVector<int> ParaDropNum;
+		ValueableIdx<AircraftTypeClass> ParaDropPlane;
+		Valueable<AnimTypeClass*> Parachute_Anim;
 
-			ValueableVector<BuildingTypeClass*> VeteranBuildings;
+		ValueableVector<BuildingTypeClass*> VeteranBuildings;
 
-			AresPCXFile ObserverBackground;
-			SHPStruct *ObserverBackgroundSHP;
+		AresPCXFile ObserverBackground;
+		SHPStruct *ObserverBackgroundSHP;
 
-			AresPCXFile ObserverFlag;
-			SHPStruct *ObserverFlagSHP;
-			Valueable<bool> ObserverFlagYuriPAL;
-			bool SettingsInherited;
+		AresPCXFile ObserverFlag;
+		SHPStruct *ObserverFlagSHP;
+		Valueable<bool> ObserverFlagYuriPAL;
+		bool SettingsInherited;
 
 		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
-				RandomSelectionWeight (0),
-				CountryListIndex (0),
-				ParaDropPlane (-1),
-				Parachute_Anim (nullptr),
-				VeteranBuildings (),
-				LoadTextColor (-1),
-				ObserverBackgroundSHP (nullptr),
-				ObserverFlagSHP (nullptr),
-				ObserverFlagYuriPAL (false),
-				SettingsInherited (false)
-			{ };
+			RandomSelectionWeight(0),
+			CountryListIndex(0),
+			ParaDropPlane(-1),
+			Parachute_Anim(nullptr),
+			VeteranBuildings(),
+			LoadTextColor(-1),
+			ObserverBackgroundSHP(nullptr),
+			ObserverFlagSHP(nullptr),
+			ObserverFlagYuriPAL(false),
+			SettingsInherited(false)
+		{ };
 
 		virtual ~ExtData() {
 
