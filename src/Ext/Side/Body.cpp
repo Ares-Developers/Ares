@@ -141,7 +141,7 @@ void SideExt::ExtData::LoadFromINIFile(SideClass *pThis, CCINIClass *pINI)
 	this->ScoreMultiplayPalette.Read(pINI, section, "MultiplayerScore.Palette");
 	this->ScoreMultiplayBars.Read(pINI, section, "MultiplayerScore.Bars");
 
-	for(int i = 0; i < 10; ++i) {
+	for(unsigned int i = 0; i < 10; ++i) {
 		auto pFilename = this->GetMultiplayerScoreBarFilename(i);
 		if(!PCX::Instance->GetSurface(pFilename)) {
 			PCX::Instance->LoadFile(pFilename);
