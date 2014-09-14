@@ -33,7 +33,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		this->LoadScreenPalette = "mplsu.pal";
 		AresCRT::strCopy(this->LSSpecialName, "Name:Para");
 		AresCRT::strCopy(this->StatusText, "STT:PlayerSideAmerica");
-		AresCRT::strCopy(this->TauntFile, "taunts\\tauam%02i.wav");
+		this->TauntFile = "taunts\\tauam%02i.wav";
 		this->ObserverBackgroundSHP = FileSystem::LoadSHPFile("obsalli.shp");
 		this->ObserverFlagSHP = FileSystem::LoadSHPFile("usai.shp");
 	} else if (!_strcmpi(pID, "Alliance")) //Korea
@@ -45,7 +45,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		this->LoadScreenPalette = "mplsk.pal";
 		AresCRT::strCopy(this->LSSpecialName, "Name:BEAGLE");
 		AresCRT::strCopy(this->StatusText, "STT:PlayerSideKorea");
-		AresCRT::strCopy(this->TauntFile, "taunts\\tauko%02i.wav");
+		this->TauntFile = "taunts\\tauko%02i.wav";
 		this->ObserverBackgroundSHP = FileSystem::LoadSHPFile("obsalli.shp");
 		this->ObserverFlagSHP = FileSystem::LoadSHPFile("japi.shp");
 	} else if (!_strcmpi(pID, "French")) //France
@@ -57,7 +57,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		this->LoadScreenPalette = "mplsf.pal";
 		AresCRT::strCopy(this->LSSpecialName, "Name:GTGCAN");
 		AresCRT::strCopy(this->StatusText, "STT:PlayerSideFrance");
-		AresCRT::strCopy(this->TauntFile, "taunts\\taufr%02i.wav");
+		this->TauntFile = "taunts\\taufr%02i.wav";
 		this->ObserverBackgroundSHP = FileSystem::LoadSHPFile("obsalli.shp");
 		this->ObserverFlagSHP = FileSystem::LoadSHPFile("frai.shp");
 	} else if (!_strcmpi(pID, "Germans")) //Germany
@@ -69,7 +69,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		this->LoadScreenPalette = "mplsg.pal";
 		AresCRT::strCopy(this->LSSpecialName, "Name:TNKD");
 		AresCRT::strCopy(this->StatusText, "STT:PlayerSideGermany");
-		AresCRT::strCopy(this->TauntFile, "taunts\\tauge%02i.wav");
+		this->TauntFile = "taunts\\tauge%02i.wav";
 		this->ObserverBackgroundSHP = FileSystem::LoadSHPFile("obsalli.shp");
 		this->ObserverFlagSHP = FileSystem::LoadSHPFile("geri.shp");
 	} else if (!_strcmpi(pID, "British")) //United Kingdom
@@ -81,7 +81,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		this->LoadScreenPalette = "mplsuk.pal";
 		AresCRT::strCopy(this->LSSpecialName, "Name:SNIPE");
 		AresCRT::strCopy(this->StatusText, "STT:PlayerSideBritain");
-		AresCRT::strCopy(this->TauntFile, "taunts\\taubr%02i.wav");
+		this->TauntFile = "taunts\\taubr%02i.wav";
 		this->ObserverBackgroundSHP = FileSystem::LoadSHPFile("obsalli.shp");
 		this->ObserverFlagSHP = FileSystem::LoadSHPFile("gbri.shp");
 	} else if (!_strcmpi(pID, "Africans")) //Libya
@@ -93,7 +93,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		this->LoadScreenPalette = "mplsl.pal";
 		AresCRT::strCopy(this->LSSpecialName, "Name:DTRUCK");
 		AresCRT::strCopy(this->StatusText, "STT:PlayerSideLibya");
-		AresCRT::strCopy(this->TauntFile, "taunts\\tauli%02i.wav");
+		this->TauntFile = "taunts\\tauli%02i.wav";
 		this->ObserverBackgroundSHP = FileSystem::LoadSHPFile("obssovi.shp");
 		this->ObserverFlagSHP = FileSystem::LoadSHPFile("djbi.shp");
 	} else if (!_strcmpi(pID, "Arabs")) //Iraq
@@ -105,7 +105,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		this->LoadScreenPalette = "mplsi.pal";
 		AresCRT::strCopy(this->LSSpecialName, "Name:DESO");
 		AresCRT::strCopy(this->StatusText, "STT:PlayerSideIraq");
-		AresCRT::strCopy(this->TauntFile, "taunts\\tauir%02i.wav");
+		this->TauntFile = "taunts\\tauir%02i.wav";
 		this->ObserverBackgroundSHP = FileSystem::LoadSHPFile("obssovi.shp");
 		this->ObserverFlagSHP = FileSystem::LoadSHPFile("arbi.shp");
 	} else if (!_strcmpi(pID, "Confederation")) //Cuba
@@ -117,7 +117,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		this->LoadScreenPalette = "mplsc.pal";
 		AresCRT::strCopy(this->LSSpecialName, "Name:TERROR");
 		AresCRT::strCopy(this->StatusText, "STT:PlayerSideCuba");
-		AresCRT::strCopy(this->TauntFile, "taunts\\taucu%02i.wav");
+		this->TauntFile = "taunts\\taucu%02i.wav";
 		this->ObserverBackgroundSHP = FileSystem::LoadSHPFile("obssovi.shp");
 		this->ObserverFlagSHP = FileSystem::LoadSHPFile("lati.shp");
 	} else if (!_strcmpi(pID, "Russians")) //Russia
@@ -129,7 +129,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		this->LoadScreenPalette = "mplsr.pal";
 		AresCRT::strCopy(this->LSSpecialName, "Name:TTNK");
 		AresCRT::strCopy(this->StatusText, "STT:PlayerSideRussia");
-		AresCRT::strCopy(this->TauntFile, "taunts\\tauru%02i.wav");
+		this->TauntFile = "taunts\\tauru%02i.wav";
 		this->ObserverBackgroundSHP = FileSystem::LoadSHPFile("obssovi.shp");
 		this->ObserverFlagSHP = FileSystem::LoadSHPFile("rusi.shp");
 	} else if (!_strcmpi(pID, "YuriCountry")) //Yuri
@@ -141,7 +141,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		this->LoadScreenPalette = "mpyls.pal";
 		AresCRT::strCopy(this->LSSpecialName, "Name:YURI");
 		AresCRT::strCopy(this->StatusText, "STT:PlayerSideYuriCountry");
-		AresCRT::strCopy(this->TauntFile, "taunts\\tauyu%02i.wav");
+		this->TauntFile = "taunts\\tauyu%02i.wav";
 		this->ObserverBackgroundSHP = FileSystem::LoadSHPFile("obsyuri.shp");
 		this->ObserverFlagSHP = FileSystem::LoadSHPFile("yrii.shp");
 		this->ObserverFlagYuriPAL = true;
@@ -154,7 +154,7 @@ void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
 		this->LoadScreenPalette = "mplsobs.pal";
 		AresCRT::strCopy(this->LSSpecialName, "GUI:Unknown");
 		AresCRT::strCopy(this->StatusText, "GUI:Unknown");
-		AresCRT::strCopy(this->TauntFile, "taunts\\tauam%02i.wav");
+		this->TauntFile = "taunts\\tauam%02i.wav";
 	}
 	this->RandomSelectionWeight = 1;
 	this->CountryListIndex = 100;
@@ -228,10 +228,7 @@ void HouseTypeExt::ExtData::LoadFromRulesFile(HouseTypeClass *pThis, CCINIClass 
 
 	this->LoadScreenBackground.Read(pINI, pID, "File.LoadScreen");
 	this->LoadScreenPalette.Read(pINI, pID, "File.LoadScreenPAL");
-
-	if (pINI->ReadString(pID, "File.Taunt", "", Ares::readBuffer, Ares::readLength)) {
-		AresCRT::strCopy(this->TauntFile, Ares::readBuffer);
-	}
+	this->TauntFile.Read(pINI, pID, "File.Taunt");
 
 	if (pINI->ReadString(pID, "LoadScreenText.Name", "", Ares::readBuffer, Ares::readLength)) {
 		AresCRT::strCopy(this->LSName, Ares::readBuffer);
@@ -314,7 +311,7 @@ void HouseTypeExt::ExtData::InheritSettings(HouseTypeClass *pThis) {
 		if(const auto ParentData = HouseTypeExt::ExtMap.Find(ParentCountry)) {
 			this->LoadScreenBackground = ParentData->LoadScreenBackground;
 			this->LoadScreenPalette = ParentData->LoadScreenPalette;
-			CopyString(&HouseTypeExt::ExtData::TauntFile, ParentData, this);
+			this->TauntFile = ParentData->TauntFile;
 			CopyString(&HouseTypeExt::ExtData::LSName, ParentData, this);
 			CopyString(&HouseTypeExt::ExtData::LSSpecialName, ParentData, this);
 			CopyString(&HouseTypeExt::ExtData::LSBrief, ParentData, this);
