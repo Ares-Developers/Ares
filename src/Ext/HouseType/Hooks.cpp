@@ -142,11 +142,10 @@ DEFINE_HOOK(72B690, HTExt_LSPAL, 0)
 		return 0x72B6B6;
 	}
 
-	//some ASM magic! =)
-	PUSH_IMM(0xB0FB98);
-	SET_REG32(edx, 0xB0FB94);
-	SET_REG32(ecx, pPALFile);
-	CALL(0x72ADE0);
+	//some ASM-less magic! =)
+	auto ppPalette = reinterpret_cast<BytePalette**>(0xB0FB94);
+	auto ppDestination = reinterpret_cast<ConvertClass**>(0xB0FB98);
+	ConvertClass::CreateFromFile(pPALFile, *ppPalette, *ppDestination);
 
 	return 0x72B804;
 }
