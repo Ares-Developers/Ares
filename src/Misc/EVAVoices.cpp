@@ -53,6 +53,20 @@ DEFINE_HOOK(753000, VoxClass_CreateFromINIList, 6)
 	return 0x75319F;
 }
 
+// need to destroy manually because of non-virtual destructor
+DEFINE_HOOK(7531CF, VoxClass_DeleteAll, 5)
+{
+	auto& Array = *VoxClass::Array;
+
+	while(Array.Count) {
+		// destroy backwards instead of forwards
+		auto pVox = static_cast<VoxClass2*>(Array[Array.Count-1]);
+		delete pVox;
+	}
+
+	return 0x753240;
+}
+
 // also load all additional filenames
 DEFINE_HOOK(752FDC, VoxClass_LoadFromINI, 5)
 {
