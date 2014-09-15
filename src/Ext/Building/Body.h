@@ -136,6 +136,8 @@ public:
 
 	static void KickOutHospitalArmory(BuildingClass *pThis);
 
+	static CoordStruct GetCenterCoords(BuildingClass* pThis, bool includeBib = false);
+
 	static std::vector<CellStruct> TempFoundationData1;
 	static std::vector<CellStruct> TempFoundationData2;
 

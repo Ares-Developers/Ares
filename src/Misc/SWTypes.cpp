@@ -17,6 +17,7 @@
 #include "SWTypes/DropPod.h"
 #include "SWTypes/EMPulse.h"
 
+#include "../Ext/Building/Body.h"
 #include "../Ext/TechnoType/Body.h"
 
 #include <BuildingClass.h>
@@ -95,7 +96,8 @@ bool NewSWType::IsLaunchSiteEligible(SWTypeExt::ExtData* pSWType, const CellStru
 	const auto& minRange = range.first;
 	const auto& maxRange = range.second;
 
-	const auto distance = Coords.DistanceFrom(pBuilding->GetCell()->MapCoords);
+	const auto center = CellClass::Coord2Cell(BuildingExt::GetCenterCoords(pBuilding));
+	const auto distance = Coords.DistanceFrom(center);
 
 	// negative range values just pass the test
 	return (minRange < 0.0 || distance >= minRange)
@@ -132,8 +134,14 @@ bool NewSWType::IsDesignatorEligible(SWTypeExt::ExtData* pSWType, HouseClass* pO
 		const auto pType = pTechno->GetTechnoType();
 		const auto pExt = TechnoTypeExt::ExtMap.Find(pType);
 
+		// get the designator's center
+		auto center = pTechno->GetCoords();
+		if(auto pBuilding = abstract_cast<BuildingClass*>(pTechno)) {
+			center = BuildingExt::GetCenterCoords(pBuilding);
+		}
+
 		// has to be closer than the designator range (which defaults to Sight)
-		auto distance = Coords.DistanceFrom(pTechno->GetCell()->MapCoords);
+		auto distance = Coords.DistanceFrom(CellClass::Coord2Cell(center));
 		return distance <= pExt->DesignatorRange.Get(pType->Sight);
 	}
 

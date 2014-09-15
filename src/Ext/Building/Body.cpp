@@ -865,6 +865,14 @@ void BuildingExt::ExtData::KickOutClones(TechnoClass * Production) {
 
 }
 
+CoordStruct BuildingExt::GetCenterCoords(BuildingClass* pBuilding, bool includeBib)
+{
+	CoordStruct ret = pBuilding->GetCoords();
+	ret.X += pBuilding->Type->GetFoundationWidth() / 2;
+	ret.X += pBuilding->Type->GetFoundationHeight(includeBib) / 2;
+	return ret;
+}
+
 // =============================
 // container hooks
 
