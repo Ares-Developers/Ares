@@ -85,12 +85,15 @@ void UnitDeliveryStateMachine::PlaceUnits()
 		short extentY = 1;
 		SpeedType SpeedType = SpeedType::Track;
 		MovementZone MovementZone = MovementZone::Normal;
+		bool buildable = false;
 
 		if(ItemBuilding) {
 			extentX = ItemBuilding->Type->GetFoundationWidth();
 			extentY = ItemBuilding->Type->GetFoundationHeight(true);
 			if(Type->SpeedType == SpeedType::Float) {
 				SpeedType = SpeedType::Float;
+			} else {
+				buildable = true;
 			}
 		} else {
 			// place aircraft types on ground explicitly
@@ -107,7 +110,7 @@ void UnitDeliveryStateMachine::PlaceUnits()
 		int a5 = -1; // usually MapClass::CanLocationBeReached call. see how far we can get without it
 		auto PlaceCoords = MapClass::Instance->Pathfinding_Find(CenteredOnCords,
 			SpeedType, a5, MovementZone, false, extentX, extentY, true, false,
-			false, false, CellStruct::Empty, false, false);
+			false, false, CellStruct::Empty, false, buildable);
 
 		if(auto pCell = MapClass::Instance->TryGetCellAt(PlaceCoords)) {
 			Item->OnBridge = pCell->ContainsBridge();
