@@ -1,5 +1,6 @@
 #include "Protect.h"
 #include "../../Ares.h"
+#include "../../Ext/TechnoType/Body.h"
 #include "../../Utilities/Helpers.Alex.h"
 #include "../../Utilities/TemplateDef.h"
 
@@ -76,6 +77,24 @@ void SW_Protect::LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pS
 	pData->Protect_Duration.Read(exINI, section, "Protect.Duration");
 	pData->Protect_PowerOutageDuration.Read(exINI, section, "Protect.PowerOutage");
 	pData->Protect_PlayFadeSoundTime.Read(exINI, section, "Protect.PlayFadeSoundTime");
+}
+
+bool SW_Protect::CanFireAt(SWTypeExt::ExtData* pData, HouseClass* pOwner, const CellStruct &Coords)
+{
+	auto ret = NewSWType::CanFireAt(pData, pOwner, Coords);
+
+	// if this is a force shield requiring buildings and a building is selected, check the modifier
+	if(ret && pData->Protect_IsForceShield && pData->SW_RequiresTarget & SuperWeaponTarget::Building) {
+		auto pCell = MapClass::Instance->GetCellAt(Coords);
+		if(auto pBld = pCell->GetBuilding()) {
+			auto pExt = TechnoTypeExt::ExtMap.Find(pBld->GetTechnoType());
+			if(pExt->ForceShield_Modifier <= 0.0) {
+				ret = false;
+			}
+		}
+	}
+
+	return ret;
 }
 
 bool SW_Protect::Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer)
