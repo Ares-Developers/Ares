@@ -1,4 +1,5 @@
 #include "EMPulse.h"
+#include "../../Ext/Building/Body.h"
 #include "../../Ext/BulletType/Body.h"
 #include "../../Ext/Techno/Body.h"
 #include "../../Ext/TechnoType/Body.h"
@@ -89,7 +90,7 @@ bool SW_EMPulse::Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPl
 				if(auto pBullet = pExt->CreateBullet(pBld, pBld, pWeapon)) {
 					pBullet->SetWeaponType(pWeapon);
 					pBullet->Remove();
-					pBullet->Detonate(pBld->GetCoords());
+					pBullet->Detonate(BuildingExt::GetCenterCoords(pBld));
 					pBullet->Release();
 				}
 			}
