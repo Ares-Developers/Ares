@@ -164,7 +164,7 @@ DEFINE_HOOK(692FDC, sub_692F30, 8)
 		PopupMenu::HighlightedItem = -1;
 		if(offset.X >= 0 && offset.X <= PopupMenu::MenuBox.Width) {
 			if(offset.Y >= 0 && offset.Y <= PopupMenu::MenuBox.Height) {
-				PopupMenu::HighlightedItem = int(offset.Y / PopupMenu::MenuItem.Height);
+				PopupMenu::HighlightedItem = static_cast<int>(offset.Y / PopupMenu::MenuItem.Height);
 			}
 		}
 

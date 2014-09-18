@@ -26,7 +26,7 @@ template<> IStream *Container<BuildingExt>::SavingStream = nullptr;
 DWORD BuildingExt::GetFirewallFlags(BuildingClass *pThis) {
 	CellClass *MyCell = MapClass::Instance->GetCellAt(pThis->Location);
 	DWORD flags = 0;
-	for(int direction = 0; direction < 8; direction += 2) {
+	for(size_t direction = 0; direction < 8; direction += 2) {
 		CellClass *Neighbour = MyCell->GetNeighbourCell(direction);
 		if(BuildingClass *B = Neighbour->GetBuilding()) {
 			BuildingTypeExt::ExtData* pTypeData = BuildingTypeExt::ExtMap.Find(B->Type);
@@ -342,9 +342,9 @@ void BuildingExt::buildLines(BuildingClass* theBuilding, CellStruct selectedCell
 		return;
 	}
 
-	short maxLinkDistance = short(theBuilding->Type->GuardRange / 256); // GuardRange governs how far the link can go, is saved in leptons
+	short maxLinkDistance = static_cast<short>(theBuilding->Type->GuardRange / 256); // GuardRange governs how far the link can go, is saved in leptons
 
-	for(int direction = 0; direction <= 7; direction += 2) { // the 4 straight directions of the simple compass
+	for(size_t direction = 0; direction <= 7; direction += 2) { // the 4 straight directions of the simple compass
 		CellStruct directionOffset = CellSpread::GetNeighbourOffset(direction); // coordinates of the neighboring cell in the given direction relative to the current cell (e.g. 0,1)
 		int linkLength = 0; // how many cells to build on from center in direction to link up with a found building
 
@@ -405,7 +405,7 @@ signed int BuildingExt::GetImageFrameIndex(BuildingClass *pThis) {
 	BuildingTypeExt::ExtData *pData = BuildingTypeExt::ExtMap.Find(pThis->Type);
 
 	if(pData->Firewall_Is) {
-		return pThis->FirestormWallFrame;
+		return static_cast<int>(pThis->FirestormWallFrame);
 
 		/* this is the code the game uses to calculate the firewall's frame number when you place/remove sections... should be a good base for trench frames
 
@@ -495,7 +495,7 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 
 
 	if(pTypeExt->StolenTechIndex > -1) {
-		pEntererExt->StolenTech.set(pTypeExt->StolenTechIndex);
+		pEntererExt->StolenTech.set(static_cast<size_t>(pTypeExt->StolenTechIndex));
 
 		Enterer->RecheckTechTree = true;
 		if(evaForOwner) {
@@ -569,7 +569,7 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 	if(pTypeExt->StolenMoneyAmount > 0) {
 		bounty = pTypeExt->StolenMoneyAmount;
 	} else if(pTypeExt->StolenMoneyPercentage > 0) {
-		bounty = int(available * pTypeExt->StolenMoneyPercentage);
+		bounty = available * pTypeExt->StolenMoneyPercentage;
 	}
 	if(bounty > 0) {
 		bounty = std::min(bounty, available);
@@ -691,7 +691,7 @@ void BuildingExt::ExtData::UpdateFirewall() {
 	}
 
 	if(!(Unsorted::CurrentFrame % 7) && ScenarioClass::Instance->Random.RandomRanged(0, 15) == 1) {
-		int corners = (FWFrame & 0xF); // 1111b
+		auto corners = (FWFrame & 0xF); // 1111b
 		if(AnimClass *IdleAnim = B->FirestormAnim) {
 			GameDelete(IdleAnim);
 			B->FirestormAnim = 0;

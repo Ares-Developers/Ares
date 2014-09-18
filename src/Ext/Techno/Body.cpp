@@ -40,7 +40,7 @@ void TechnoExt::SpawnSurvivors(FootClass *pThis, TechnoClass *pKiller, bool Sele
 	CoordStruct loc = pThis->Location;
 	int chance = pData->Survivors_PilotChance.Get(pThis);
 	if(chance < 0) {
-		chance = int(RulesClass::Instance->CrewEscape * 100);
+		chance = static_cast<int>(RulesClass::Instance->CrewEscape * 100);
 	}
 
 	// always eject passengers, but crew only if not already processed.

@@ -91,7 +91,7 @@ DEFINE_HOOK(517FC1, InfantryClass_ReceiveDamage_DeployedDamage, 6) {
 
 	WarheadTypeExt::ExtData *pData = WarheadTypeExt::ExtMap.Find(WH);
 
-	*Damage = int(*Damage * pData->DeployedDamage);
+	*Damage = static_cast<int>(*Damage * pData->DeployedDamage);
 
 	return WH // yes, let's make sure the pointer's safe AFTER we've dereferenced it... Failstwood!
 		? 0x517FF9

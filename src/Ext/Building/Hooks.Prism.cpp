@@ -129,7 +129,7 @@ DEFINE_HOOK(4503F0, BuildingClass_Update_Prism, 9)
 								BuildingTypeExt::ExtData *pTypeData = BuildingTypeExt::ExtMap.Find(pType);
 
 								//apparently this is divided by 256 elsewhere
-								LaserBeam->DamageMultiplier = int((pData->PrismForwarding.ModifierReserve + 100) * 256) / 100;
+								LaserBeam->DamageMultiplier = static_cast<int>((pData->PrismForwarding.ModifierReserve + 100) * 256) / 100;
 								LaserBeam->Health += pTypeData->PrismForwarding.DamageAdd + pData->PrismForwarding.DamageReserve;
 							}
 						}
