@@ -46,11 +46,11 @@ bool BulletExt::ExtData::DamageOccupants() {
 			Debug::Log("SubjToTrenches = %d\n", TheBulletTypeExt->SubjectToTrenches);
 			// test for !SubjectToTrenches because being SubjectToTrenches means "we're getting stopped by trenches".
 			if(!TheBulletTypeExt->SubjectToTrenches
-				|| ((ScenarioClass::Instance->Random.RandomRanged(0, 99) / 100.0) < BuildingAresData->UCPassThrough)) {
+				|| (ScenarioClass::Instance->Random.RandomDouble() < BuildingAresData->UCPassThrough)) {
 				int poorBastard = ScenarioClass::Instance->Random.RandomRanged(0, Building->Occupants.Count - 1); // which Occupant is getting it?
 				Debug::Log("Poor Bastard #%d\n", poorBastard);
 				if(BuildingAresData->UCFatalRate
-					&& ((ScenarioClass::Instance->Random.RandomRanged(0, 99) / 100.0) < BuildingAresData->UCFatalRate)) {
+					&& (ScenarioClass::Instance->Random.RandomDouble() < BuildingAresData->UCFatalRate)) {
 					Debug::Log("Fatal hit!\n");
 					// fatal hit
 					Building->Occupants[poorBastard]->Destroyed(TheBullet->Owner);
