@@ -70,11 +70,13 @@ DEFINE_HOOK(435820, BuildingLightClass_CTOR, 6)
 
 DEFINE_HOOK(4370C0, BuildingLightClass_SDDTOR, A)
 {
-	GET(BuildingLightClass *, BL, ECX);
+	GET(BuildingLightClass*, pThis, ECX);
 
-	TechnoClass *T = BL->OwnerObject;
-	if(auto pExt = TechnoExt::ExtMap.Find(T)) {
-		pExt->Spotlight = nullptr;
+	if(!Ares::bShuttingDown) {
+		auto pTechno = pThis->OwnerObject;
+		if(auto pExt = TechnoExt::ExtMap.Find(pTechno)) {
+			pExt->Spotlight = nullptr;
+		}
 	}
 	return 0;
 }
