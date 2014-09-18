@@ -143,25 +143,13 @@ DEFINE_HOOK(443414, BuildingClass_ClickedAction, 6)
 // #665: Raidable Buildings - prevent raided buildings from being sold while raided
 DEFINE_HOOK(4494D2, BuildingClass_IsSellable, 6)
 {
-	GET(BuildingClass *, B, ESI);
-	BuildingExt::ExtData* curBuildExt = BuildingExt::ExtMap.Find(B);
+	GET(BuildingClass *, pThis, ESI);
+	auto curBuildExt = BuildingExt::ExtMap.Find(pThis);
 
-	enum SellValues {FORCE_SELLABLE, FORCE_UNSELLABLE, DECIDE_NORMALLY} sellTreatment;
-	sellTreatment = DECIDE_NORMALLY; // default
+	enum { Sellable = 0x449532, Unsellable = 0x449536, Undecided = 0 };
 
-	if(curBuildExt->isCurrentlyRaided) {
-		sellTreatment = FORCE_UNSELLABLE; // enemy shouldn't be able to sell "borrowed" buildings
-	}
-
-	switch(sellTreatment) {
-		case FORCE_SELLABLE:
-			return 0x449532;
-		case FORCE_UNSELLABLE:
-			return 0x449536;
-		case DECIDE_NORMALLY:
-		default:
-			return 0;
-	}
+	// enemy shouldn't be able to sell "borrowed" buildings
+	return curBuildExt->isCurrentlyRaided ? Unsellable : Undecided;
 }
 
 /* Requested in issue #695
