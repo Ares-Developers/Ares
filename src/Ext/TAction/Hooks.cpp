@@ -17,8 +17,8 @@ DEFINE_HOOK(6DD8D7, TActionClass_Execute, A)
 		return 0x6DFDDD;
 	}
 
-	// replicate the original instructions
-	auto value = static_cast<int>(pAction->ActionKind) - 1;
+	// replicate the original instructions, using underflow
+	auto value = static_cast<unsigned int>(pAction->ActionKind) - 1;
 	R->EDX(value);
 	return (value > 144) ? 0x6DFDDD : 0x6DD8E7;
 }
