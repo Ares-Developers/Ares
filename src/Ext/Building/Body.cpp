@@ -24,13 +24,13 @@ template<> IStream *Container<BuildingExt>::SavingStream = nullptr;
 // member functions
 
 DWORD BuildingExt::GetFirewallFlags(BuildingClass *pThis) {
-	CellClass *MyCell = MapClass::Instance->GetCellAt(pThis->Location);
+	auto pCell = MapClass::Instance->GetCellAt(pThis->Location);
 	DWORD flags = 0;
 	for(size_t direction = 0; direction < 8; direction += 2) {
-		CellClass *Neighbour = MyCell->GetNeighbourCell(direction);
-		if(BuildingClass *B = Neighbour->GetBuilding()) {
-			BuildingTypeExt::ExtData* pTypeData = BuildingTypeExt::ExtMap.Find(B->Type);
-			if(pTypeData->Firewall_Is && B->Owner == pThis->Owner && !B->InLimbo && B->IsAlive) {
+		auto pNeighbour = pCell->GetNeighbourCell(direction);
+		if(auto pBld = pNeighbour->GetBuilding()) {
+			auto pTypeData = BuildingTypeExt::ExtMap.Find(pBld->Type);
+			if(pTypeData->Firewall_Is && pBld->Owner == pThis->Owner && !pBld->InLimbo && pBld->IsAlive) {
 				flags |= 1 << (direction >> 1);
 			}
 		}
@@ -40,17 +40,17 @@ DWORD BuildingExt::GetFirewallFlags(BuildingClass *pThis) {
 
 void BuildingExt::UpdateDisplayTo(BuildingClass *pThis) {
 	if(pThis->Type->Radar) {
-		HouseClass *H = pThis->Owner;
-		H->RadarVisibleTo.Clear();
+		auto pHouse = pThis->Owner;
+		pHouse->RadarVisibleTo.Clear();
 
-		auto HExt = HouseExt::ExtMap.Find(H);
-		H->RadarVisibleTo.data |= HExt->RadarPersist.data;
+		auto pExt = HouseExt::ExtMap.Find(pHouse);
+		pHouse->RadarVisibleTo.data |= pExt->RadarPersist.data;
 
-		for(int i = 0; i < H->Buildings.Count; ++i) {
-			BuildingClass *currentB = H->Buildings.GetItem(i);
-			if(!currentB->InLimbo) {
-				if(BuildingTypeExt::ExtMap.Find(currentB->Type)->RevealRadar) {
-					H->RadarVisibleTo.data |= currentB->DisplayProductionTo.data;
+		for(auto pBld : pHouse->Buildings) {
+			if(!pBld->InLimbo) {
+				auto pData = BuildingTypeExt::ExtMap.Find(pBld->Type);
+				if(pData->RevealRadar) {
+					pHouse->RadarVisibleTo.data |= pBld->DisplayProductionTo.data;
 				}
 			}
 		}
