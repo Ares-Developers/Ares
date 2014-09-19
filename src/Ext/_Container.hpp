@@ -178,7 +178,7 @@ public:
 		if(i == this->Items.end()) {
 			auto val = std::make_unique<extension_type>(key);
 			val->InitializeConstants();
-			i = this->Items.insert(typename C_Map::value_type(key, std::move(val))).first;
+			i = this->Items.emplace(key, std::move(val)).first;
 		}
 		return i->second.get();
 	}
