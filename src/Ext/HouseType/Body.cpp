@@ -179,8 +179,8 @@ void HouseTypeExt::ExtData::Initialize() {
 	}
 }
 
-void HouseTypeExt::ExtData::LoadFromRulesFile(HouseTypeClass *pThis, CCINIClass *pINI) {
-	char* pID = pThis->ID;
+void HouseTypeExt::ExtData::LoadFromRulesFile(CCINIClass *pINI) {
+	const char* pID = this->OwnerObject()->ID;
 
 	this->InitializeConstants();
 

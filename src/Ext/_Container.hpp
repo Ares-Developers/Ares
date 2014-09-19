@@ -96,7 +96,7 @@ public:
 		case InitState::Inited:
 		case InitState::Completed:
 			if(pINI == CCINIClass::INI_Rules) {
-				this->LoadFromRulesFile(pThis, pINI);
+				this->LoadFromRulesFile(pINI);
 			}
 			this->LoadFromINIFile(pThis, pINI);
 			this->Initialized = InitState::Completed;
@@ -108,7 +108,7 @@ public:
 	virtual void LoadFromINIFile(T* pThis, CCINIClass* pINI) { };
 
 	// for things that only logically work in rules - countries, sides, etc
-	virtual void LoadFromRulesFile(T* pThis, CCINIClass* pINI) { };
+	virtual void LoadFromRulesFile(CCINIClass* pINI) { };
 
 	virtual void InitializeConstants() { };
 
@@ -222,7 +222,7 @@ public:
 
 	void LoadAllFromRules(CCINIClass *pINI) {
 		for(const auto& i : this->Items) {
-			i.second->LoadFromRulesFile(i.first, pINI);
+			i.second->LoadFromRulesFile(pINI);
 		}
 	}
 

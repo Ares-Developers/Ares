@@ -319,7 +319,7 @@ public:
 
 		virtual ~ExtData() = default;
 
-		virtual void LoadFromRulesFile(TT *pThis, CCINIClass *pINI);
+		virtual void LoadFromRulesFile(CCINIClass *pINI) override;
 		virtual void LoadFromINIFile(TT *pThis, CCINIClass *pINI);
 		virtual void InitializeConstants() override;
 

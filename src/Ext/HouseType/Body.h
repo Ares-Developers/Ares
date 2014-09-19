@@ -75,7 +75,7 @@ public:
 		virtual ~ExtData() = default;
 
 		virtual void LoadFromINIFile(TT *pThis, CCINIClass *pINI);
-		virtual void LoadFromRulesFile(TT *pThis, CCINIClass *pINI);
+		virtual void LoadFromRulesFile(CCINIClass *pINI) override;
 		virtual void InitializeConstants() override;
 		virtual void Initialize() override;
 
