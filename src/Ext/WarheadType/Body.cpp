@@ -37,8 +37,8 @@ WarheadTypeClass * WarheadTypeExt::Temporal_WH = nullptr;
 
 WarheadTypeClass * WarheadTypeExt::EMP_WH = nullptr;
 
-void WarheadTypeExt::ExtData::Initialize(WarheadTypeClass *pThis) {
-	if(!_strcmpi(pThis->ID, "NUKE")) {
+void WarheadTypeExt::ExtData::Initialize() {
+	if(!_strcmpi(this->OwnerObject()->ID, "NUKE")) {
 		this->PreImpactAnim = AnimTypeClass::FindIndex("NUKEBALL");
 	}
 }

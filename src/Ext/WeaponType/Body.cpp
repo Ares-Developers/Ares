@@ -25,9 +25,9 @@ AresMap<WaveClass*, const WeaponTypeExt::ExtData*> WeaponTypeExt::WaveExt;
 AresMap<EBolt*, const WeaponTypeExt::ExtData*> WeaponTypeExt::BoltExt;
 AresMap<RadSiteClass*, const WeaponTypeExt::ExtData*> WeaponTypeExt::RadSiteExt;
 
-void WeaponTypeExt::ExtData::Initialize(WeaponTypeClass *pThis)
+void WeaponTypeExt::ExtData::Initialize()
 {
-	this->Wave_Reverse[idxVehicle] = pThis->IsMagBeam;
+	this->Wave_Reverse[idxVehicle] = this->OwnerObject()->IsMagBeam;
 };
 
 void WeaponTypeExt::ExtData::LoadFromINIFile(WeaponTypeExt::TT *pThis, CCINIClass *pINI)

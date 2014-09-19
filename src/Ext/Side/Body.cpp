@@ -24,11 +24,11 @@ UniqueGamePtr<SHPStruct> SideExt::DialogBackgroundImage = nullptr;
 UniqueGamePtr<BytePalette> SideExt::DialogBackgroundPalette = nullptr;
 UniqueGamePtr<ConvertClass> SideExt::DialogBackgroundConvert = nullptr;
 
-void SideExt::ExtData::Initialize(SideClass *pThis)
+void SideExt::ExtData::Initialize()
 {
-	char* pID = pThis->ID;
+	const char* pID = this->OwnerObject()->ID;
 
-	this->ArrayIndex = SideClass::FindIndex(pThis->ID);
+	this->ArrayIndex = SideClass::FindIndex(pID);
 
 	this->ParaDropPlane = AircraftTypeClass::FindIndex("PDPLANE");
 

@@ -160,8 +160,8 @@ void HouseTypeExt::ExtData::InitializeConstants() {
 	this->CountryListIndex = 100;
 }
 
-void HouseTypeExt::ExtData::Initialize(HouseTypeClass *pThis) {
-	switch (pThis->SideIndex) {
+void HouseTypeExt::ExtData::Initialize() {
+	switch (this->OwnerObject()->SideIndex) {
 	case 0:
 		this->LoadTextColor = ColorScheme::FindIndex("AlliedLoad");
 		break;

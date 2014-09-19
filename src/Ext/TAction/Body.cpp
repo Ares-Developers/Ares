@@ -13,11 +13,6 @@ Container<TActionExt> TActionExt::ExtMap;
 template<> TActionExt::TT *Container<TActionExt>::SavingObject = nullptr;
 template<> IStream *Container<TActionExt>::SavingStream = nullptr;
 
-void TActionExt::ExtData::Initialize(TActionClass *pThis)
-{
-
-}
-
 // Enables the Firestorm super weapon for a house.
 /*!
 	\returns Always True.

@@ -91,7 +91,7 @@ public:
 			this->InitializeRuled();
 			this->Initialized = InitState::Ruled;
 		case InitState::Ruled:
-			this->Initialize(pThis);
+			this->Initialize();
 			this->Initialized = InitState::Inited;
 		case InitState::Inited:
 		case InitState::Completed:
@@ -114,7 +114,7 @@ public:
 
 	virtual void InitializeRuled() { };
 
-	virtual void Initialize(T* pThis) { };
+	virtual void Initialize() { };
 
 	virtual void InvalidatePointer(void* ptr, bool bRemoved) = 0;
 

@@ -15,8 +15,10 @@ int CampaignExt::lastSelectedCampaign;
 template<> CampaignExt::TT *Container<CampaignExt>::SavingObject = nullptr;
 template<> IStream *Container<CampaignExt>::SavingStream = nullptr;
 
-void CampaignExt::ExtData::Initialize(CampaignClass *pThis)
+void CampaignExt::ExtData::Initialize()
 {
+	auto pThis = this->OwnerObject();
+
 	if(!_strcmpi(pThis->ID, "ALL1")) {
 		this->HoverSound = "AlliedCampaignSelect";
 	} else if(!_strcmpi(pThis->ID, "SOV1")) {

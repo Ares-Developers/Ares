@@ -26,7 +26,6 @@ class TActionExt
 		}
 
 		virtual void LoadFromINIFile(TT *pThis, CCINIClass *pINI) {}
-		virtual void Initialize(TT *pThis);
 
 		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
 		}

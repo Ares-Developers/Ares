@@ -10,11 +10,6 @@ Container<TiberiumExt> TiberiumExt::ExtMap;
 template<> TiberiumExt::TT* Container<TiberiumExt>::SavingObject = nullptr;
 template<> IStream* Container<TiberiumExt>::SavingStream = nullptr;
 
-void TiberiumExt::ExtData::Initialize(TiberiumClass* pThis)
-{
-	//const char* pID = pThis->ID;
-};
-
 void TiberiumExt::ExtData::LoadFromINIFile(TiberiumClass* pThis, CCINIClass* pINI)
 {
 	const char* section = pThis->get_ID();

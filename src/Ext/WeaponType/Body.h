@@ -129,7 +129,7 @@ public:
 			};
 
 		virtual void LoadFromINIFile(TT *pThis, CCINIClass *pINI);
-		virtual void Initialize(TT* pThis);
+		virtual void Initialize() override;
 
 		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
 			AnnounceInvalidPointer(Rad_Type, ptr);

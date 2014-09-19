@@ -107,7 +107,7 @@ public:
 
 		virtual ~ExtData() { };
 
-		virtual void Initialize(TT *pThis);
+		virtual void Initialize() override;
 
 		virtual void LoadFromINIFile(TT *pThis, CCINIClass *pINI);
 

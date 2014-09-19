@@ -10,11 +10,6 @@ Container<TEventExt> TEventExt::ExtMap;
 template<> TEventExt::TT *Container<TEventExt>::SavingObject = nullptr;
 template<> IStream *Container<TEventExt>::SavingStream = nullptr;
 
-void TEventExt::ExtData::Initialize(TEventClass *pThis)
-{
-
-}
-
 // Gets the TechnoType pointed to by the event's TechnoName field.
 /*!
 	Resolves the TechnoName to a TechnoTypeClass and caches it. This function

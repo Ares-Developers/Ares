@@ -17,9 +17,9 @@ std::vector<std::string> BuildingTypeExt::ExtData::trenchKinds;
 // =============================
 // member funcs
 
-void BuildingTypeExt::ExtData::Initialize(BuildingTypeClass *pThis)
+void BuildingTypeExt::ExtData::Initialize()
 {
-	if(pThis->SecretLab) {
+	if(this->OwnerObject()->SecretLab) {
 		this->Secret_Boons.Clear();
 		DynamicVectorClass<TechnoTypeClass *> *Options
 			= (DynamicVectorClass<TechnoTypeClass *> *)&RulesClass::Instance->SecretInfantry;
@@ -37,7 +37,7 @@ void BuildingTypeExt::ExtData::Initialize(BuildingTypeClass *pThis)
 			this->Secret_Boons.AddItem(Options->GetItem(i));
 		}
 	}
-	this->PrismForwarding.Initialize(pThis);
+	this->PrismForwarding.Initialize(this->OwnerObject());
 }
 
 void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINIClass* pINI)
