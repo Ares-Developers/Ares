@@ -132,15 +132,15 @@ public:
 template<typename T>
 class Container {
 private:
-	typedef typename T::TT        S_T;
+	using base_type = typename T::TT;
 	typedef typename T::ExtData   E_T;
-	typedef S_T* KeyType;
+	typedef base_type* KeyType;
 	typedef E_T* ValueType;
 	typedef std::unordered_map<KeyType, std::unique_ptr<E_T>> C_Map;
 
 	C_Map Items;
 
-	static S_T * SavingObject;
+	static base_type * SavingObject;
 	static IStream * SavingStream;
 
 public:
@@ -227,7 +227,7 @@ public:
 	}
 
 	static void PrepareStream(KeyType key, IStream *pStm) {
-		const auto &info = typeid(S_T);
+		const auto &info = typeid(base_type);
 		Debug::Log("[PrepareStream] Next is %p of type '%s'\n", key, info.name());
 
 		Container<T>::SavingObject = key;
@@ -235,7 +235,7 @@ public:
 	}
 
 	void SaveStatic() {
-		const auto &info = typeid(S_T);
+		const auto &info = typeid(base_type);
 
 		if(Container<T>::SavingObject && Container<T>::SavingStream) {
 			Debug::Log("[SaveStatic] Saving object %p as '%s'\n", Container<T>::SavingObject, info.name());
@@ -253,7 +253,7 @@ public:
 	}
 
 	void LoadStatic() {
-		const auto &info = typeid(S_T);
+		const auto &info = typeid(base_type);
 
 		if(Container<T>::SavingObject && Container<T>::SavingStream) {
 			Debug::Log("[LoadStatic] Loading object %p as '%s'\n", Container<T>::SavingObject, info.name());
