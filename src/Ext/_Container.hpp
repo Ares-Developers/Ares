@@ -134,9 +134,9 @@ class Container {
 private:
 	using base_type = typename T::TT;
 	using extension_type = typename T::ExtData;
-	typedef base_type* KeyType;
+	using key_type = base_type*;
 	using value_type = extension_type*;
-	using map_type = std::unordered_map<KeyType, std::unique_ptr<extension_type>>;
+	using map_type = std::unordered_map<key_type, std::unique_ptr<extension_type>>;
 
 	map_type Items;
 
@@ -168,7 +168,7 @@ public:
 
 	virtual ~Container() = default;
 
-	value_type FindOrAllocate(KeyType key) {
+	value_type FindOrAllocate(key_type key) {
 		if(key == nullptr) {
 			const auto &info = typeid(*this);
 			Debug::Log("CTOR of %s attempted for a NULL pointer! WTF!\n", info.name());
@@ -183,7 +183,7 @@ public:
 		return i->second.get();
 	}
 
-	value_type Find(KeyType key) const {
+	value_type Find(key_type key) const {
 		auto i = this->Items.find(key);
 		if(i == this->Items.end()) {
 			return nullptr;
@@ -191,7 +191,7 @@ public:
 		return i->second.get();
 	}
 
-	void Remove(KeyType key) {
+	void Remove(key_type key) {
 		auto i = this->Items.find(key);
 		if(i != this->Items.end()) {
 			this->Items.erase(i);
@@ -213,7 +213,7 @@ public:
 		}
 	}
 
-	void LoadFromINI(KeyType key, CCINIClass *pINI) {
+	void LoadFromINI(key_type key, CCINIClass *pINI) {
 		auto i = this->Items.find(key);
 		if(i != this->Items.end()) {
 			i->second->LoadFromINI(pINI);
@@ -226,7 +226,7 @@ public:
 		}
 	}
 
-	static void PrepareStream(KeyType key, IStream *pStm) {
+	static void PrepareStream(key_type key, IStream *pStm) {
 		const auto &info = typeid(base_type);
 		Debug::Log("[PrepareStream] Next is %p of type '%s'\n", key, info.name());
 
@@ -272,16 +272,16 @@ public:
 
 protected:
 	// specialize this method to do type-specific stuff
-	bool Save(KeyType key, IStream *pStm) {
+	bool Save(key_type key, IStream *pStm) {
 		return this->SaveKey(key, pStm) != nullptr;
 	}
 
 	// specialize this method to do type-specific stuff
-	bool Load(KeyType key, IStream *pStm) {
+	bool Load(key_type key, IStream *pStm) {
 		return this->LoadKey(key, pStm) != nullptr;
 	}
 
-	value_type SaveKey(KeyType key, IStream *pStm) {
+	value_type SaveKey(key_type key, IStream *pStm) {
 		ULONG out;
 
 		if(key == nullptr) {
@@ -299,7 +299,7 @@ protected:
 		return buffer;
 	};
 
-	value_type LoadKey(KeyType key, IStream *pStm) {
+	value_type LoadKey(key_type key, IStream *pStm) {
 		ULONG out;
 
 		if(key == nullptr) {
