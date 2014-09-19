@@ -13,13 +13,15 @@ Container<AnimTypeExt> AnimTypeExt::ExtMap;
 template<> AnimTypeExt::TT *Container<AnimTypeExt>::SavingObject = nullptr;
 template<> IStream *Container<AnimTypeExt>::SavingStream = nullptr;
 
-void AnimTypeExt::ExtData::LoadFromINIFile(AnimTypeClass *pThis, CCINIClass *pINI)
+void AnimTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 {
+	const char* pID = this->OwnerObject()->ID;
+
 	INI_EX exINI(pINI);
 
-	this->MakeInfantryOwner.Read(exINI, pThis->ID, "MakeInfantryOwner");
+	this->MakeInfantryOwner.Read(exINI, pID, "MakeInfantryOwner");
 
-	this->Palette.LoadFromINI(pINI, pThis->ID, "CustomPalette");
+	this->Palette.LoadFromINI(pINI, pID, "CustomPalette");
 }
 
 OwnerHouseKind AnimTypeExt::SetMakeInfOwner(AnimClass *pAnim, HouseClass *pInvoker, HouseClass *pVictim, HouseClass *pKiller)

@@ -44,7 +44,7 @@ void RulesExt::ExtData::InitializeConstants() {
 	ArmorType::AddDefaults();
 }
 
-void RulesExt::ExtData::LoadFromINIFile(RulesClass *pThis, CCINIClass *pINI) {
+void RulesExt::ExtData::LoadFromINIFile(CCINIClass* pINI) {
 	// earliest loader - can't really do much because nothing else is initialized yet, so lookups won't work
 }
 

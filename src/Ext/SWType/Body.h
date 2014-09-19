@@ -320,7 +320,7 @@ public:
 		virtual ~ExtData() = default;
 
 		virtual void LoadFromRulesFile(CCINIClass *pINI) override;
-		virtual void LoadFromINIFile(TT *pThis, CCINIClass *pINI);
+		virtual void LoadFromINIFile(CCINIClass* pINI) override;
 		virtual void InitializeConstants() override;
 
 		bool UpdateLightingColor(LightingColor& Lighting) const;

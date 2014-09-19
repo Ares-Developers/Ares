@@ -87,8 +87,9 @@ EXT_SAVE(TechnoTypeClass)
 }
 */
 
-void TechnoTypeExt::ExtData::LoadFromINIFile(TechnoTypeClass *pThis, CCINIClass *pINI)
+void TechnoTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 {
+	auto pThis = this->OwnerObject();
 	const char * section = pThis->ID;
 
 	if(!pINI->GetSection(section)) {

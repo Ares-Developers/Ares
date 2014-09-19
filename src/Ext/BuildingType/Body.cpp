@@ -40,8 +40,9 @@ void BuildingTypeExt::ExtData::Initialize()
 	this->PrismForwarding.Initialize(this->OwnerObject());
 }
 
-void BuildingTypeExt::ExtData::LoadFromINIFile(BuildingTypeClass *pThis, CCINIClass* pINI)
+void BuildingTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 {
+	auto pThis = this->OwnerObject();
 	char* pArtID = pThis->ImageFile;
 	char* pID = pThis->ID;
 

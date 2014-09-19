@@ -16,8 +16,10 @@ template<> IStream *Container<BulletTypeExt>::SavingStream = nullptr;
 // =============================
 // member funcs
 
-void BulletTypeExt::ExtData::LoadFromINIFile(BulletTypeClass *pThis, CCINIClass* pINI)
+void BulletTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 {
+	auto pThis = this->OwnerObject();
+
 	INI_EX exINI(pINI);
 
 	this->SubjectToSolid = pINI->ReadBool(pThis->ID, "SubjectToBuildings", this->SubjectToSolid);

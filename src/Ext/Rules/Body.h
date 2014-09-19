@@ -125,7 +125,7 @@ class RulesExt
 		virtual ~ExtData() {
 		}
 
-		virtual void LoadFromINIFile(TT *pThis, CCINIClass *pINI);
+		virtual void LoadFromINIFile(CCINIClass* pINI) override;
 		virtual void LoadBeforeTypeData(TT *pThis, CCINIClass *pINI);
 		virtual void LoadAfterTypeData(TT *pThis, CCINIClass *pINI);
 		virtual void InitializeConstants() override;

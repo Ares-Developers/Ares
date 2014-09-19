@@ -93,9 +93,9 @@ void SideExt::ExtData::Initialize()
 	}
 };
 
-void SideExt::ExtData::LoadFromINIFile(SideClass *pThis, CCINIClass *pINI)
+void SideExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 {
-	char* section = pThis->get_ID();
+	const char* section = this->OwnerObject()->get_ID();
 
 	INI_EX exINI(pINI);
 

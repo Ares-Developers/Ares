@@ -29,8 +29,6 @@ class TEventExt
 		virtual ~ExtData() {
 		}
 
-		virtual void LoadFromINIFile(TT *pThis, CCINIClass *pINI) {}
-
 		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
 			AnnounceInvalidPointer(TechnoType, ptr);
 		}

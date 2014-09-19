@@ -43,8 +43,9 @@ void WarheadTypeExt::ExtData::Initialize() {
 	}
 }
 
-void WarheadTypeExt::ExtData::LoadFromINIFile(WarheadTypeClass *pThis, CCINIClass *pINI)
+void WarheadTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 {
+	auto pThis = this->OwnerObject();
 	const char * section = pThis->ID;
 
 	INI_EX exINI(pINI);
@@ -90,7 +91,7 @@ void WarheadTypeExt::ExtData::LoadFromINIFile(WarheadTypeClass *pThis, CCINIClas
 
 	this->InfDeathAnim.Read(exINI, section, "InfDeathAnim");
 	
-	this->PreImpactAnim.Read(exINI, pThis->ID, "PreImpactAnim");
+	this->PreImpactAnim.Read(exINI, section, "PreImpactAnim");
 
 	this->KillDriver = pINI->ReadBool(section, "KillDriver", this->KillDriver);
 

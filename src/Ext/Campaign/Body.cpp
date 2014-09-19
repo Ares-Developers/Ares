@@ -28,9 +28,9 @@ void CampaignExt::ExtData::Initialize()
 	}
 };
 
-void CampaignExt::ExtData::LoadFromINIFile(CampaignClass *pThis, CCINIClass *pINI)
+void CampaignExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 {
-	const char* section = pThis->get_ID();
+	const char* section = this->OwnerObject()->get_ID();
 
 	INI_EX exINI(pINI);
 

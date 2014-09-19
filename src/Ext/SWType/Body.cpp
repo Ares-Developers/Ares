@@ -95,9 +95,9 @@ void SWTypeExt::ExtData::LoadFromRulesFile(CCINIClass *pINI)
 	this->LastAction = pThis->Action;
 }
 
-void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass *pINI)
+void SWTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 {
-	const char * section = pThis->get_ID();
+	const char * section = this->OwnerObject()->get_ID();
 
 	if(!pINI->GetSection(section)) {
 		return;
@@ -206,6 +206,7 @@ void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass
 
 	// initialize the NewSWType that handles this SWType.
 	if(auto pNewSWType = this->GetNewSWType()) {
+		auto pThis = this->OwnerObject();
 		pThis->Action = this->LastAction;
 		pNewSWType->LoadFromINI(this, pThis, pINI);
 		this->LastAction = pThis->Action;
@@ -218,9 +219,9 @@ void SWTypeExt::ExtData::LoadFromINIFile(SuperWeaponTypeClass *pThis, CCINIClass
 		pThis->PreDependent = -1;
 	}
 
-	this->CameoPal.LoadFromINI(pINI, pThis->ID, "SidebarPalette");
+	this->CameoPal.LoadFromINI(pINI, section, "SidebarPalette");
 
-	this->SidebarPCX.Read(pINI, pThis->ID, "SidebarPCX");
+	this->SidebarPCX.Read(pINI, section, "SidebarPCX");
 }
 
 // can i see the animation of pFirer's SW?

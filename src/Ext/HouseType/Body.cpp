@@ -240,8 +240,9 @@ void HouseTypeExt::ExtData::LoadFromRulesFile(CCINIClass *pINI) {
 	this->ObserverFlagYuriPAL.Read(exINI, pID, "File.ObserverFlagAltPalette");
 }
 
-void HouseTypeExt::ExtData::LoadFromINIFile(HouseTypeClass *pThis, CCINIClass *pINI) {
-	char* pID = pThis->ID;
+void HouseTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI) {
+	auto pThis = this->OwnerObject();
+	const char* pID = pThis->ID;
 
 	if(!this->SettingsInherited && *pThis->ParentCountry && _strcmpi(pThis->ParentCountry, pThis->ID)) {
 		this->InheritSettings(pThis);

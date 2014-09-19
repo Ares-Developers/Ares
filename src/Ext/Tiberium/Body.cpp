@@ -10,9 +10,9 @@ Container<TiberiumExt> TiberiumExt::ExtMap;
 template<> TiberiumExt::TT* Container<TiberiumExt>::SavingObject = nullptr;
 template<> IStream* Container<TiberiumExt>::SavingStream = nullptr;
 
-void TiberiumExt::ExtData::LoadFromINIFile(TiberiumClass* pThis, CCINIClass* pINI)
+void TiberiumExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 {
-	const char* section = pThis->get_ID();
+	const char* section = this->OwnerObject()->get_ID();
 
 	INI_EX exINI(pINI);
 

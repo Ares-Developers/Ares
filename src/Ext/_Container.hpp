@@ -98,14 +98,14 @@ public:
 			if(pINI == CCINIClass::INI_Rules) {
 				this->LoadFromRulesFile(pINI);
 			}
-			this->LoadFromINIFile(pThis, pINI);
+			this->LoadFromINIFile(pINI);
 			this->Initialized = InitState::Completed;
 		}
 	}
 
 	//	protected:
 	//reimpl in each class separately
-	virtual void LoadFromINIFile(T* pThis, CCINIClass* pINI) { };
+	virtual void LoadFromINIFile(CCINIClass* pINI) { };
 
 	// for things that only logically work in rules - countries, sides, etc
 	virtual void LoadFromRulesFile(CCINIClass* pINI) { };

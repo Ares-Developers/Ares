@@ -30,8 +30,9 @@ void WeaponTypeExt::ExtData::Initialize()
 	this->Wave_Reverse[idxVehicle] = this->OwnerObject()->IsMagBeam;
 };
 
-void WeaponTypeExt::ExtData::LoadFromINIFile(WeaponTypeExt::TT *pThis, CCINIClass *pINI)
+void WeaponTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 {
+	auto pThis = this->OwnerObject();
 	const char * section = pThis->get_ID();
 	if(!pINI->GetSection(section)) {
 		return;
