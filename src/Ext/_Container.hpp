@@ -136,9 +136,9 @@ private:
 	using extension_type = typename T::ExtData;
 	typedef base_type* KeyType;
 	using value_type = extension_type*;
-	typedef std::unordered_map<KeyType, std::unique_ptr<extension_type>> C_Map;
+	using map_type = std::unordered_map<KeyType, std::unique_ptr<extension_type>>;
 
-	C_Map Items;
+	map_type Items;
 
 	static base_type * SavingObject;
 	static IStream * SavingStream;
