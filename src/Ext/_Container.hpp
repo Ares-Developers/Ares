@@ -78,7 +78,7 @@ public:
 	// major refactoring!
 	// LoadFromINI is now a non-virtual public function that orchestrates the initialization/loading of extension data
 	// all its slaves are now protected functions
-	void LoadFromINI(T* pThis, CCINIClass* pINI) {
+	void LoadFromINI(CCINIClass* pINI) {
 		if(!pINI) {
 			return;
 		}
@@ -209,14 +209,14 @@ public:
 
 	void LoadAllFromINI(CCINIClass *pINI) {
 		for(const auto& i : this->Items) {
-			i.second->LoadFromINI(i.first, pINI);
+			i.second->LoadFromINI(pINI);
 		}
 	}
 
 	void LoadFromINI(KeyType key, CCINIClass *pINI) {
 		auto i = this->Items.find(key);
 		if(i != this->Items.end()) {
-			i->second->LoadFromINI(key, pINI);
+			i->second->LoadFromINI(pINI);
 		}
 	}
 

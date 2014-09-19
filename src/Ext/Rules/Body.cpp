@@ -22,7 +22,7 @@ void RulesExt::Remove(RulesClass *pThis) {
 }
 
 void RulesExt::LoadFromINIFile(RulesClass *pThis, CCINIClass *pINI) {
-	Data->LoadFromINI(pThis, pINI);
+	Data->LoadFromINI(pINI);
 }
 
 void RulesExt::LoadBeforeTypeData(RulesClass *pThis, CCINIClass *pINI) {

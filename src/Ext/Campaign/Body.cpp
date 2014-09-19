@@ -68,7 +68,7 @@ DEFINE_HOOK(46CD56, CampaignClass_LoadFromINI, 7)
 
 	if(auto k = CampaignExt::ExtMap.FindOrAllocate(pThis)) {
 		CampaignExt::Array.AddItem(k);
-		k->LoadFromINI(pThis, pINI);
+		k->LoadFromINI(pINI);
 	}
 	return 0;
 }
