@@ -135,8 +135,9 @@ private:
 	using base_type = typename T::TT;
 	using extension_type = typename T::ExtData;
 	using key_type = base_type*;
+	using const_key_type = const base_type*;
 	using value_type = extension_type*;
-	using map_type = std::unordered_map<key_type, std::unique_ptr<extension_type>>;
+	using map_type = std::unordered_map<const_key_type, std::unique_ptr<extension_type>>;
 
 	map_type Items;
 
@@ -183,7 +184,7 @@ public:
 		return i->second.get();
 	}
 
-	value_type Find(key_type key) const {
+	value_type Find(const_key_type key) const {
 		auto i = this->Items.find(key);
 		if(i == this->Items.end()) {
 			return nullptr;
@@ -191,7 +192,7 @@ public:
 		return i->second.get();
 	}
 
-	void Remove(key_type key) {
+	void Remove(const_key_type key) {
 		auto i = this->Items.find(key);
 		if(i != this->Items.end()) {
 			this->Items.erase(i);
@@ -213,7 +214,7 @@ public:
 		}
 	}
 
-	void LoadFromINI(key_type key, CCINIClass *pINI) {
+	void LoadFromINI(const_key_type key, CCINIClass *pINI) {
 		auto i = this->Items.find(key);
 		if(i != this->Items.end()) {
 			i->second->LoadFromINI(pINI);
