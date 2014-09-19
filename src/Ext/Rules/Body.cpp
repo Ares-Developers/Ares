@@ -39,7 +39,7 @@ void RulesExt::LoadAfterTypeData(RulesClass *pThis, CCINIClass *pINI) {
 	Data->LoadAfterTypeData(pThis, pINI);
 }
 
-void RulesExt::ExtData::InitializeConstants(RulesClass *pThis) {
+void RulesExt::ExtData::InitializeConstants() {
 	GenericPrerequisite::AddDefaults();
 	ArmorType::AddDefaults();
 }

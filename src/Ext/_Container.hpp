@@ -85,7 +85,7 @@ public:
 
 		switch(this->Initialized) {
 		case InitState::Blank:
-			this->InitializeConstants(pThis);
+			this->InitializeConstants();
 			this->Initialized = InitState::Constanted;
 		case InitState::Constanted:
 			this->InitializeRuled(pThis);
@@ -110,7 +110,7 @@ public:
 	// for things that only logically work in rules - countries, sides, etc
 	virtual void LoadFromRulesFile(T* pThis, CCINIClass* pINI) { };
 
-	virtual void InitializeConstants(T* pThis) { };
+	virtual void InitializeConstants() { };
 
 	virtual void InitializeRuled(T* pThis) { };
 
@@ -177,7 +177,7 @@ public:
 		auto i = this->Items.find(key);
 		if(i == this->Items.end()) {
 			auto val = std::make_unique<E_T>(key);
-			val->InitializeConstants(key);
+			val->InitializeConstants();
 			i = this->Items.insert(typename C_Map::value_type(key, std::move(val))).first;
 		}
 		return i->second.get();

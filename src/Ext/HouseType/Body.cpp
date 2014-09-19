@@ -18,8 +18,8 @@ Container<HouseTypeExt> HouseTypeExt::ExtMap;
 template<> HouseTypeExt::TT *Container<HouseTypeExt>::SavingObject = nullptr;
 template<> IStream *Container<HouseTypeExt>::SavingStream = nullptr;
 
-void HouseTypeExt::ExtData::InitializeConstants(HouseTypeClass *pThis) {
-	char* pID = pThis->ID;
+void HouseTypeExt::ExtData::InitializeConstants() {
+	const char* pID = this->OwnerObject()->ID;
 
 	//We assign default values by country ID rather than index so you simply add a new country
 	//without having to specify all the tags for the old ones
@@ -182,7 +182,7 @@ void HouseTypeExt::ExtData::Initialize(HouseTypeClass *pThis) {
 void HouseTypeExt::ExtData::LoadFromRulesFile(HouseTypeClass *pThis, CCINIClass *pINI) {
 	char* pID = pThis->ID;
 
-	this->InitializeConstants(pThis);
+	this->InitializeConstants();
 
 	INI_EX exINI(pINI);
 

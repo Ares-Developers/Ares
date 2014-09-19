@@ -29,7 +29,7 @@ template<> IStream *Container<SWTypeExt>::SavingStream = nullptr;
 
 SuperWeaponTypeClass *SWTypeExt::CurrentSWType = nullptr;
 
-void SWTypeExt::ExtData::InitializeConstants(SuperWeaponTypeClass *pThis)
+void SWTypeExt::ExtData::InitializeConstants()
 {
 	NewSWType::Init();
 

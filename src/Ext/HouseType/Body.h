@@ -76,7 +76,7 @@ public:
 
 		virtual void LoadFromINIFile(TT *pThis, CCINIClass *pINI);
 		virtual void LoadFromRulesFile(TT *pThis, CCINIClass *pINI);
-		virtual void InitializeConstants(TT *pThis);
+		virtual void InitializeConstants() override;
 		virtual void Initialize(TT *pThis);
 
 		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
