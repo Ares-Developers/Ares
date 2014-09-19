@@ -70,6 +70,11 @@ public:
 
 	virtual ~Extension() = default;
 
+	// the object this Extension expands
+	T* const& OwnerObject() const {
+		return this->AttachedToObject;
+	}
+
 	// major refactoring!
 	// LoadFromINI is now a non-virtual public function that orchestrates the initialization/loading of extension data
 	// all its slaves are now protected functions
