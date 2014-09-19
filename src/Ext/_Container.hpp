@@ -133,10 +133,10 @@ template<typename T>
 class Container {
 private:
 	using base_type = typename T::TT;
-	typedef typename T::ExtData   E_T;
+	using extension_type = typename T::ExtData;
 	typedef base_type* KeyType;
-	typedef E_T* ValueType;
-	typedef std::unordered_map<KeyType, std::unique_ptr<E_T>> C_Map;
+	typedef extension_type* ValueType;
+	typedef std::unordered_map<KeyType, std::unique_ptr<extension_type>> C_Map;
 
 	C_Map Items;
 
@@ -176,7 +176,7 @@ public:
 		}
 		auto i = this->Items.find(key);
 		if(i == this->Items.end()) {
-			auto val = std::make_unique<E_T>(key);
+			auto val = std::make_unique<extension_type>(key);
 			val->InitializeConstants();
 			i = this->Items.insert(typename C_Map::value_type(key, std::move(val))).first;
 		}
