@@ -203,8 +203,8 @@ public:
 	}
 
 	void LoadAllFromINI(CCINIClass *pINI) {
-		for(auto i = this->Items.begin(); i != this->Items.end(); i++) {
-			i->second->LoadFromINI(i->first, pINI);
+		for(const auto& i : this->Items) {
+			i.second->LoadFromINI(i.first, pINI);
 		}
 	}
 
@@ -216,8 +216,8 @@ public:
 	}
 
 	void LoadAllFromRules(CCINIClass *pINI) {
-		for(auto i = this->Items.begin(); i != this->Items.end(); i++) {
-			i->second->LoadFromRulesFile(i->first, pINI);
+		for(const auto& i : this->Items) {
+			i.second->LoadFromRulesFile(i.first, pINI);
 		}
 	}
 
