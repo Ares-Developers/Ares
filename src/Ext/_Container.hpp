@@ -88,7 +88,7 @@ public:
 			this->InitializeConstants();
 			this->Initialized = InitState::Constanted;
 		case InitState::Constanted:
-			this->InitializeRuled(pThis);
+			this->InitializeRuled();
 			this->Initialized = InitState::Ruled;
 		case InitState::Ruled:
 			this->Initialize(pThis);
@@ -112,7 +112,7 @@ public:
 
 	virtual void InitializeConstants() { };
 
-	virtual void InitializeRuled(T* pThis) { };
+	virtual void InitializeRuled() { };
 
 	virtual void Initialize(T* pThis) { };
 

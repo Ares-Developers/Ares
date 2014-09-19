@@ -60,10 +60,6 @@ void SWTypeExt::ExtData::InitializeConstants()
 	EVA_SelectTarget = VoxClass::FindIndex("EVA_SelectTarget");
 }
 
-void SWTypeExt::ExtData::InitializeRuled(SuperWeaponTypeClass *pThis)
-{
-}
-
 void SWTypeExt::ExtData::LoadFromRulesFile(SuperWeaponTypeClass *pThis, CCINIClass *pINI)
 {
 	const char * section = pThis->get_ID();

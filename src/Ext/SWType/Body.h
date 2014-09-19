@@ -322,7 +322,6 @@ public:
 		virtual void LoadFromRulesFile(TT *pThis, CCINIClass *pINI);
 		virtual void LoadFromINIFile(TT *pThis, CCINIClass *pINI);
 		virtual void InitializeConstants() override;
-		virtual void InitializeRuled(TT *pThis);
 
 		bool UpdateLightingColor(LightingColor& Lighting) const;
 
