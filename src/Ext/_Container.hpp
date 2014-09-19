@@ -135,7 +135,7 @@ private:
 	using base_type = typename T::TT;
 	using extension_type = typename T::ExtData;
 	typedef base_type* KeyType;
-	typedef extension_type* ValueType;
+	using value_type = extension_type*;
 	typedef std::unordered_map<KeyType, std::unique_ptr<extension_type>> C_Map;
 
 	C_Map Items;
@@ -168,7 +168,7 @@ public:
 
 	virtual ~Container() = default;
 
-	ValueType FindOrAllocate(KeyType key) {
+	value_type FindOrAllocate(KeyType key) {
 		if(key == nullptr) {
 			const auto &info = typeid(*this);
 			Debug::Log("CTOR of %s attempted for a NULL pointer! WTF!\n", info.name());
@@ -183,7 +183,7 @@ public:
 		return i->second.get();
 	}
 
-	ValueType Find(KeyType key) const {
+	value_type Find(KeyType key) const {
 		auto i = this->Items.find(key);
 		if(i == this->Items.end()) {
 			return nullptr;
@@ -281,7 +281,7 @@ protected:
 		return this->LoadKey(key, pStm) != nullptr;
 	}
 
-	ValueType SaveKey(KeyType key, IStream *pStm) {
+	value_type SaveKey(KeyType key, IStream *pStm) {
 		ULONG out;
 
 		if(key == nullptr) {
@@ -299,7 +299,7 @@ protected:
 		return buffer;
 	};
 
-	ValueType LoadKey(KeyType key, IStream *pStm) {
+	value_type LoadKey(KeyType key, IStream *pStm) {
 		ULONG out;
 
 		if(key == nullptr) {
