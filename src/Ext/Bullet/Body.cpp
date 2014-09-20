@@ -41,8 +41,8 @@ bool BulletExt::ExtData::DamageOccupants() {
 		return false;
 	}
 
-	BulletTypeExt::ExtData* TheBulletTypeExt = BulletTypeExt::ExtMap.Find(TheBullet->Type);
-	BuildingTypeExt::ExtData* BuildingAresData = BuildingTypeExt::ExtMap.Find(Building->Type);
+	auto TheBulletTypeExt = BulletTypeExt::ExtMap.Find(TheBullet->Type);
+	auto BuildingAresData = BuildingTypeExt::ExtMap.Find(Building->Type);
 
 /*
 	Debug::Log("Bullet %s is about to damage occupants of %s: occupants #%d, UC.PT = %lf\n",
@@ -63,40 +63,33 @@ bool BulletExt::ExtData::DamageOccupants() {
 	}
 
 	// which Occupant is getting it?
-	int poorBastard = ScenarioClass::Instance->Random.RandomRanged(0, Building->Occupants.Count - 1);
-	Debug::Log("Poor Bastard #%d\n", poorBastard);
-	if(BuildingAresData->UCFatalRate
-		&& (ScenarioClass::Instance->Random.RandomDouble() < BuildingAresData->UCFatalRate)) {
+	int idxPoorBastard = ScenarioClass::Instance->Random.RandomRanged(0, Building->Occupants.Count - 1);
+	auto poorBastard = Building->Occupants[idxPoorBastard];
+
+	Debug::Log("Poor Bastard #%d\n", idxPoorBastard);
+	if(BuildingAresData->UCFatalRate && ScenarioClass::Instance->Random.RandomDouble() < BuildingAresData->UCFatalRate) {
 		Debug::Log("Fatal hit!\n");
 		// fatal hit
-		Building->Occupants[poorBastard]->Destroyed(TheBullet->Owner);
-		Building->Occupants[poorBastard]->UnInit();
+		poorBastard->Destroyed(TheBullet->Owner);
+		poorBastard->UnInit();
 		// don't separate these two lines - poor guy's already ~dtor'd, but his pointer is still dangling from the vector
-		Building->Occupants.RemoveItem(poorBastard);
+		Building->Occupants.RemoveItem(idxPoorBastard);
 		Building->UpdateThreatInCell(Building->GetCell());
 	} else {
-		/* ReceiveDamage args:
-		virtual eDamageState ReceiveDamage(int* pDamage, int DistanceFromEpicenter, WarheadTypeClass* pWH,
-			ObjectClass* Attacker, bool IgnoreDefenses, bool PreventPassengerEscape, HouseClass* pAttackingHouse) R0;
-			where
-			DistanceFromEpicenter -> used for CellSpread/PercentAtMax
-			IgnoreDefenses -> ignore Immune=yes
-		*/
-
 		// just a flesh wound
 		Debug::Log("Flesh wound - health(%d) * UCDmgMult(%lf)\n", TheBullet->Health, BuildingAresData->UCDamageMultiplier);
 		// Bullet->Health is the damage it delivers (go Westwood)
-		int adjustedDamage = static_cast<int> (ceil(TheBullet->Health * BuildingAresData->UCDamageMultiplier));
+		int adjustedDamage = static_cast<int>(std::ceil(TheBullet->Health * BuildingAresData->UCDamageMultiplier));
 		Debug::Log("Adjusted damage = %d\n", adjustedDamage);
-		auto result = Building->Occupants[poorBastard]->ReceiveDamage(&adjustedDamage, 0, TheBullet->WH,
-					TheBullet->Owner, false, true, TheBullet->GetOwningHouse());
+		auto result = poorBastard->ReceiveDamage(&adjustedDamage, 0, TheBullet->WH,
+			TheBullet->Owner, false, true, TheBullet->GetOwningHouse());
 		Debug::Log("Received damage, %d\n", result);
 	}
 
-	// BuildingAresData is for the BuildingType for some reason, so we need a new Ext var
-	BuildingExt::ExtData* SpecificBuildingExt = BuildingExt::ExtMap.Find(Building);
 	// if the last occupant was killed and this building was raided, it needs to be returned to its owner. (Bug #700)
+	auto SpecificBuildingExt = BuildingExt::ExtMap.Find(Building);
 	SpecificBuildingExt->evalRaidStatus();
+
 	return true;
 }
 
