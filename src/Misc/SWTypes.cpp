@@ -56,7 +56,7 @@ void NewSWType::Init()
 bool NewSWType::IsLaunchSite(SWTypeExt::ExtData* pSWType, BuildingClass* pBuilding) const
 {
 	if(pBuilding->IsAlive && pBuilding->Health && !pBuilding->InLimbo && pBuilding->IsPowerOnline()) {
-		return pBuilding->HasSuperWeapon(pSWType->AttachedToObject->ArrayIndex);
+		return pBuilding->HasSuperWeapon(pSWType->OwnerObject()->ArrayIndex);
 	}
 
 	return false;

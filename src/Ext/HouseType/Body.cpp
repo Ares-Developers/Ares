@@ -311,14 +311,14 @@ AnimTypeClass* HouseTypeExt::ExtData::GetParachuteAnim() {
 	}
 
 	// side-specific with fallback to rules
-	int iSide = this->AttachedToObject->SideIndex;
+	int iSide = this->OwnerObject()->SideIndex;
 	if(auto pSide = SideClass::Array->GetItemOrDefault(iSide)) {
 		if(SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide)) {
 			if(AnimTypeClass* pAnimType = pData->GetParachuteAnim()) {
 				return pAnimType;
 			}
 		} else {
-			Debug::Log("[GetParachuteAnim] House %s and its side have no valid parachute defined. Rules fallback failed.\n", this->AttachedToObject->ID);
+			Debug::Log("[GetParachuteAnim] House %s and its side have no valid parachute defined. Rules fallback failed.\n", this->OwnerObject()->ID);
 		}
 	}
 	
@@ -331,7 +331,7 @@ AircraftTypeClass* HouseTypeExt::ExtData::GetParadropPlane() {
 	// the sides default plane.
 	int iPlane = this->ParaDropPlane;
 
-	int iSide = this->AttachedToObject->SideIndex;
+	int iSide = this->OwnerObject()->SideIndex;
 	if((iPlane < 0) && (iSide >= 0)) {
 		if(SideExt::ExtData *pData = SideExt::ExtMap.Find(SideClass::Array->GetItem(iSide))) {
 			iPlane = pData->ParaDropPlane;
@@ -346,7 +346,7 @@ AircraftTypeClass* HouseTypeExt::ExtData::GetParadropPlane() {
 	if(AircraftTypeClass::Array->ValidIndex(iPlane)) {
 		return AircraftTypeClass::Array->GetItem(iPlane);
 	} else {
-		Debug::Log("[GetParadropPlane] House %s and its side have no valid paradrop plane defined. Rules fallback failed.\n", this->AttachedToObject->ID);
+		Debug::Log("[GetParadropPlane] House %s and its side have no valid paradrop plane defined. Rules fallback failed.\n", this->OwnerObject()->ID);
 		return nullptr;
 	}
 }
@@ -361,7 +361,7 @@ bool HouseTypeExt::ExtData::GetParadropContent(Iterator<TechnoTypeClass*> &Types
 
 	// fall back to side specific para drop
 	if(!Types) {
-		SideClass* pSide = SideClass::Array->GetItem(this->AttachedToObject->SideIndex);
+		SideClass* pSide = SideClass::Array->GetItem(this->OwnerObject()->SideIndex);
 		if(SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide)) {
 			Types = pData->GetParaDropTypes();
 			Num = pData->GetParaDropNum();
@@ -381,7 +381,7 @@ Iterator<BuildingTypeClass*> HouseTypeExt::ExtData::GetPowerplants() const {
 
 Iterator<BuildingTypeClass*> HouseTypeExt::ExtData::GetDefaultPowerplants() const {
 	BuildingTypeClass** ppPower = nullptr;
-	switch(this->AttachedToObject->SideIndex) {
+	switch(this->OwnerObject()->SideIndex) {
 	case 0:
 		ppPower = &RulesClass::Instance->GDIPowerPlant;
 		break;

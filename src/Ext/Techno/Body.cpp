@@ -308,12 +308,12 @@ bool TechnoExt::SpawnVisceroid(CoordStruct &crd, ObjectTypeClass* pType, int cha
 
 unsigned int TechnoExt::ExtData::AlphaFrame(SHPStruct *Image) {
 	int countFrames = Conversions::Int2Highest(Image->Frames);
-	DirStruct Facing = this->AttachedToObject->Facing.current();
+	DirStruct Facing = this->OwnerObject()->Facing.current();
 	return (static_cast<DirStruct::unsigned_type>(Facing.value()) >> (16 - countFrames));
 }
 
 bool TechnoExt::ExtData::DrawVisualFX() {
-	TechnoClass * Object = this->AttachedToObject;
+	TechnoClass * Object = this->OwnerObject();
 	if(Object->VisualCharacter(VARIANT_TRUE, Object->Owner) == VisualType::Normal) {
 		if(!Object->Disguised) {
 			return true;
@@ -323,7 +323,7 @@ bool TechnoExt::ExtData::DrawVisualFX() {
 }
 
 bool TechnoExt::ExtData::AcquireHunterSeekerTarget() const {
-	auto pThis = this->AttachedToObject;
+	auto pThis = this->OwnerObject();
 
 	if(!pThis->Target) {
 		std::vector<TechnoClass*> preferredTargets;
@@ -427,7 +427,7 @@ bool TechnoExt::ExtData::AcquireHunterSeekerTarget() const {
 }
 
 UnitTypeClass * TechnoExt::ExtData::GetUnitType() {
-	if(UnitClass * U = specific_cast<UnitClass *>(this->AttachedToObject)) {
+	if(UnitClass * U = specific_cast<UnitClass *>(this->OwnerObject())) {
 		TechnoTypeExt::ExtData * pData = TechnoTypeExt::ExtMap.Find(U->Type);
 		if(pData->WaterImage && !U->OnBridge && U->GetCell()->LandType == LandType::Water) {
 			return pData->WaterImage;
@@ -446,12 +446,12 @@ void Container<TechnoExt>::InvalidatePointer(void *ptr, bool bRemoved) {
 	\date 27.04.10
 */
 bool TechnoExt::ExtData::IsOperated() {
-	TechnoTypeExt::ExtData* TypeExt = TechnoTypeExt::ExtMap.Find(this->AttachedToObject->GetTechnoType());
+	TechnoTypeExt::ExtData* TypeExt = TechnoTypeExt::ExtMap.Find(this->OwnerObject()->GetTechnoType());
 
 	if(TypeExt->Operator) {
-		if(this->AttachedToObject->Passengers.NumPassengers) {
+		if(this->OwnerObject()->Passengers.NumPassengers) {
 			// loop & condition come from D
-			for(ObjectClass* O = this->AttachedToObject->Passengers.GetFirstPassenger(); O; O = O->NextObject) {
+			for(ObjectClass* O = this->OwnerObject()->Passengers.GetFirstPassenger(); O; O = O->NextObject) {
 				if(FootClass *F = generic_cast<FootClass *>(O)) {
 					if(F->GetType() == TypeExt->Operator) {
 						// takes a specific operator and someone is present AND that someone is the operator, therefore it is operated
@@ -467,7 +467,7 @@ bool TechnoExt::ExtData::IsOperated() {
 		}
 	} else if(TypeExt->IsAPromiscuousWhoreAndLetsAnyoneRideIt) {
 		// takes anyone, therefore it's operated if anyone is there
-		return (this->AttachedToObject->Passengers.NumPassengers > 0);
+		return (this->OwnerObject()->Passengers.NumPassengers > 0);
 	} else {
 		/* Isn't even set as an Operator-using object, therefore we are returning TRUE,
 		 since, logically, if it doesn't need operators, it can be/is operated, no matter if there are passengers or not.
@@ -482,9 +482,9 @@ bool TechnoExt::ExtData::IsOperated() {
 	\date 27.04.10
 */
 bool TechnoExt::ExtData::IsPowered() {
-	TechnoTypeClass *TT = this->AttachedToObject->GetTechnoType();
+	TechnoTypeClass *TT = this->OwnerObject()->GetTechnoType();
 	if(TT && TT->PoweredUnit) {
-		HouseClass* Owner = this->AttachedToObject->Owner;
+		HouseClass* Owner = this->OwnerObject()->Owner;
 		for(int i = 0; i < Owner->Buildings.Count; ++i) {
 			BuildingClass* Building = Owner->Buildings.GetItem(i);
 			if(Building->Type->PowersUnit == TT) {
@@ -621,7 +621,7 @@ bool TechnoExt::CanICloakByDefault(TechnoClass *pTechno) {
 }
 
 bool TechnoExt::ExtData::IsDeactivated() const {
-	return this->AttachedToObject->Deactivated;
+	return this->OwnerObject()->Deactivated;
 }
 
 Action TechnoExt::ExtData::GetDeactivatedAction(ObjectClass *Hovered) const {
@@ -629,7 +629,7 @@ Action TechnoExt::ExtData::GetDeactivatedAction(ObjectClass *Hovered) const {
 		return Action::None;
 	}
 	if(auto tHovered = generic_cast<TechnoClass *>(Hovered)) {
-		if(this->AttachedToObject->Owner->IsAlliedWith(tHovered)) {
+		if(this->OwnerObject()->Owner->IsAlliedWith(tHovered)) {
 			if(tHovered->IsSelectable()) {
 				return Action::Select;
 			}
@@ -727,7 +727,7 @@ InfantryClass* TechnoExt::RecoverHijacker(FootClass* pThis) {
 // this isn't called VehicleThief action, because it also includes other logic
 // related to infantry getting into an vehicle like CanDrive.
 AresAction::Value TechnoExt::ExtData::GetActionHijack(TechnoClass* pTarget) {
-	InfantryClass* pThis = specific_cast<InfantryClass*>(this->AttachedToObject);
+	InfantryClass* pThis = specific_cast<InfantryClass*>(this->OwnerObject());
 	if(!pThis || !pTarget || !pThis->IsAlive || !pTarget->IsAlive) {
 		return AresAction::None;
 	}
@@ -806,7 +806,7 @@ bool TechnoExt::ExtData::PerformActionHijack(TechnoClass* pTarget) {
 	// was the hijacker lost in the process?
 	bool ret = false;
 
-	if(InfantryClass* pThis = specific_cast<InfantryClass*>(this->AttachedToObject)) {
+	if(InfantryClass* pThis = specific_cast<InfantryClass*>(this->OwnerObject())) {
 		InfantryTypeClass* pType = pThis->Type;
 		TechnoExt::ExtData* pExt = TechnoExt::ExtMap.Find(pThis);
 		TechnoTypeExt::ExtData* pTypeExt = TechnoTypeExt::ExtMap.Find(pType);
@@ -928,7 +928,7 @@ bool TechnoExt::ExtData::PerformActionHijack(TechnoClass* pTarget) {
 	\date 2012-10-10
 */
 void TechnoExt::ExtData::RefineTiberium(float amount, int idxType) {
-	TechnoClass* pThis = this->AttachedToObject;
+	TechnoClass* pThis = this->OwnerObject();
 	HouseClass* pHouse = pThis->GetOwningHouse();
 
 	// get the number of applicable purifiers
@@ -956,7 +956,7 @@ void TechnoExt::ExtData::RefineTiberium(float amount, int idxType) {
 	\date 2012-10-10
 */
 void TechnoExt::ExtData::DepositTiberium(float amount, float bonus, int idxType) {
-	TechnoClass* pThis = this->AttachedToObject;
+	TechnoClass* pThis = this->OwnerObject();
 	HouseClass* pHouse = pThis->GetOwningHouse();
 	auto pTiberium = TiberiumClass::Array->GetItem(idxType);
 	int value = 0;
@@ -998,7 +998,7 @@ void TechnoExt::ExtData::DepositTiberium(float amount, float bonus, int idxType)
 */
 bool TechnoExt::ExtData::IsCloakable(bool allowPassive) const
 {
-	TechnoClass* pThis = this->AttachedToObject;
+	TechnoClass* pThis = this->OwnerObject();
 	TechnoTypeClass* pType = pThis->GetTechnoType();
 	auto pTypeExt = TechnoTypeExt::ExtMap.Find(pType);
 
@@ -1046,7 +1046,7 @@ bool TechnoExt::ExtData::CloakAllowed() const
 		return false;
 	}
 
-	TechnoClass* pThis = this->AttachedToObject;
+	TechnoClass* pThis = this->OwnerObject();
 
 	if(pThis->CloakState == CloakState::Cloaked) {
 		return false;
@@ -1094,7 +1094,7 @@ bool TechnoExt::ExtData::CloakAllowed() const
 bool TechnoExt::ExtData::CloakDisallowed(bool allowPassive) const
 {
 	if(this->IsCloakable(allowPassive)) {
-		TechnoClass* pThis = this->AttachedToObject;
+		TechnoClass* pThis = this->OwnerObject();
 		return pThis->IsUnderEMP() || pThis->IsParalyzed()
 			|| pThis->IsBeingWarpedOut() || pThis->IsWarpingIn()
 			|| this->CloakSkipTimer.InProgress();
@@ -1114,7 +1114,7 @@ bool TechnoExt::ExtData::CloakDisallowed(bool allowPassive) const
 */
 bool TechnoExt::ExtData::CanSelfCloakNow() const
 {
-	auto pThis = this->AttachedToObject;
+	auto pThis = this->OwnerObject();
 
 	// cloaked and deactivated units are hard to find otherwise
 	if(this->DriverKilled || pThis->Deactivated) {
@@ -1148,7 +1148,7 @@ void TechnoExt::ExtData::SetSpotlight(BuildingLightClass* pSpotlight) {
 		this->Spotlight = pSpotlight;
 	}
 
-	if(auto pBld = abstract_cast<BuildingClass*>(this->AttachedToObject)) {
+	if(auto pBld = abstract_cast<BuildingClass*>(this->OwnerObject())) {
 		if(pBld->Spotlight != pSpotlight) {
 			if(pBld->Spotlight) {
 				GameDelete(pBld->Spotlight);

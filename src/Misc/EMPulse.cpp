@@ -33,7 +33,7 @@ void EMPulse::CreateEMPulse(WarheadTypeExt::ExtData *Warhead, const CoordStruct 
 	}
 
 	// set of affected objects. every object can be here only once.
-	auto items = Helpers::Alex::getCellSpreadItems(Coords, Warhead->AttachedToObject->CellSpread, true);
+	auto items = Helpers::Alex::getCellSpreadItems(Coords, Warhead->OwnerObject()->CellSpread, true);
 
 	// affect each object
 	for(size_t i=0; i<items.size(); ++i) {
@@ -65,7 +65,7 @@ void EMPulse::deliverEMPDamage(ObjectClass *object, TechnoClass *Firer, WarheadT
 					curTechno->get_ID());
 		}
 
-		if (isEligibleEMPTarget(curTechno, pHouse, Warhead->AttachedToObject)) {
+		if (isEligibleEMPTarget(curTechno, pHouse, Warhead->OwnerObject())) {
 			if (verbose) {
 				Debug::Log("[deliverEMPDamage] Step 2: %s\n",
 						curTechno->get_ID());
@@ -191,7 +191,7 @@ bool EMPulse::isEMPImmune(TechnoClass * Target, HouseClass * SourceHouse) {
 	// this can be overridden by a flag on the techno.
 	auto pData = TechnoTypeExt::ExtMap.Find(Target->GetTechnoType());
 
-	if(pData->ImmuneToEMP.Get(!IsTypeEMPProne(pData->AttachedToObject))) {
+	if(pData->ImmuneToEMP.Get(!IsTypeEMPProne(pData->OwnerObject()))) {
 		if(verbose) {
 			Debug::Log("[isEMPImmune] \"%s\" is ImmuneToEMP.\n", Target->get_ID());
 		}

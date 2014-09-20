@@ -145,7 +145,7 @@ void WarheadTypeExt::ExtData::applyIronCurtain(const CoordStruct &coords, HouseC
 
 	if(this->IC_Duration != 0) {
 		// set of affected objects. every object can be here only once.
-		auto items = Helpers::Alex::getCellSpreadItems(coords, this->AttachedToObject->CellSpread, true);
+		auto items = Helpers::Alex::getCellSpreadItems(coords, this->OwnerObject()->CellSpread, true);
 
 		// affect each object
 		for(auto curTechno : items) {
@@ -155,7 +155,7 @@ void WarheadTypeExt::ExtData::applyIronCurtain(const CoordStruct &coords, HouseC
 			}
 
 			// affects enemies or allies respectively?
-			if(!WarheadTypeExt::canWarheadAffectTarget(curTechno, Owner, this->AttachedToObject)) {
+			if(!WarheadTypeExt::canWarheadAffectTarget(curTechno, Owner, this->OwnerObject())) {
 				continue;
 			}
 
@@ -186,7 +186,7 @@ void WarheadTypeExt::ExtData::applyIronCurtain(const CoordStruct &coords, HouseC
 				if(newValue > 0) {
 					// damage the victim before ICing it
 					if(damage) {
-						curTechno->ReceiveDamage(&damage, 0, this->AttachedToObject, nullptr, true, false, Owner);
+						curTechno->ReceiveDamage(&damage, 0, this->OwnerObject(), nullptr, true, false, Owner);
 					}
 
 					// unit may be destroyed already.
@@ -450,7 +450,7 @@ void WarheadTypeExt::ExtData::applyAttachedEffect(const CoordStruct &coords, Tec
 	if (this->AttachedEffect.Duration != 0) {
 		CellStruct cellCoords = MapClass::Instance->GetCellAt(coords)->MapCoords;
 		// set of affected objects. every object can be here only once.
-		auto items = Helpers::Alex::getCellSpreadItems(coords, this->AttachedToObject->CellSpread, true);
+		auto items = Helpers::Alex::getCellSpreadItems(coords, this->OwnerObject()->CellSpread, true);
 
 		// affect each object
 		for(size_t i=0; i<items.size(); ++i) {
@@ -461,7 +461,7 @@ void WarheadTypeExt::ExtData::applyAttachedEffect(const CoordStruct &coords, Tec
 				}
 				
 				if (Owner) {
-					if(WarheadTypeExt::canWarheadAffectTarget(curTechno, Owner->Owner, this->AttachedToObject)) {
+					if(WarheadTypeExt::canWarheadAffectTarget(curTechno, Owner->Owner, this->OwnerObject())) {
 						if(abs(this->GetVerses(curTechno->GetTechnoType()->Armor).Verses) < 0.001) {
 							continue;
 						}

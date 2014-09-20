@@ -42,7 +42,7 @@ public:
 		}
 
 		BuildingClass* GetOwner() const {
-			return this->Owner->AttachedToObject;
+			return this->Owner->OwnerObject();
 		}
 
 		int AcquireSlaves_MultiStage(cPrismForwarding* TargetTower, int stage, int chain, int& NetworkSize, int& LongestChain);

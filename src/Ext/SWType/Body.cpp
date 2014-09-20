@@ -424,7 +424,7 @@ bool SWTypeExt::Launch(SuperClass* pThis, NewSWType* pSW, const CellStruct &Coor
 }
 
 bool SWTypeExt::ExtData::IsOriginalType() const {
-	return this->AttachedToObject->Type < static_cast<SuperWeaponType>(FIRST_SW_TYPE);
+	return this->OwnerObject()->Type < static_cast<SuperWeaponType>(FIRST_SW_TYPE);
 }
 
 // is this an original type handled by a NewSWType?
@@ -433,12 +433,12 @@ bool SWTypeExt::ExtData::IsTypeRedirected() const {
 }
 
 SuperWeaponType SWTypeExt::ExtData::GetTypeIndexWithRedirect() const {
-	return this->IsTypeRedirected() ? this->HandledByNewSWType : this->AttachedToObject->Type;
+	return this->IsTypeRedirected() ? this->HandledByNewSWType : this->OwnerObject()->Type;
 }
 
 SuperWeaponType SWTypeExt::ExtData::GetNewTypeIndex() const {
 	// if new type, return new type, if original type return only if handled (else it's -1).
-	return this->IsOriginalType() ? this->HandledByNewSWType : this->AttachedToObject->Type;
+	return this->IsOriginalType() ? this->HandledByNewSWType : this->OwnerObject()->Type;
 }
 
 NewSWType* SWTypeExt::ExtData::GetNewSWType() const {

@@ -331,13 +331,13 @@ HouseExt::ExtData::~ExtData()
 
 	for(auto Type : *TechnoTypeClass::Array) {
 		if(auto TypeData = TechnoTypeExt::ExtMap.Find(Type)) {
-			TypeData->ReversedByHouses.erase(this->AttachedToObject);
+			TypeData->ReversedByHouses.erase(this->OwnerObject());
 		}
 	}
 }
 
 void HouseExt::ExtData::SetFirestormState(bool Active) {
-	HouseClass *pHouse = this->AttachedToObject;
+	HouseClass *pHouse = this->OwnerObject();
 	HouseExt::ExtData* pData = HouseExt::ExtMap.Find(pHouse);
 
 	if(pData->FirewallActive == Active) {
@@ -368,7 +368,7 @@ void HouseExt::ExtData::SetFirestormState(bool Active) {
  * (we have no idea what houses at game start are supposed to be able to do base planning, so mission maps fuck up)
  */
 bool HouseExt::ExtData::CheckBasePlanSanity() {
-	auto House = this->AttachedToObject;
+	auto House = this->OwnerObject();
 	// this shouldn't happen, but you never know
 	if(House->ControlledByHuman() || House->IsNeutral()) {
 		return true;
@@ -426,7 +426,7 @@ bool HouseExt::ExtData::CheckBasePlanSanity() {
 }
 
 void HouseExt::ExtData::UpdateTogglePower() {
-	const auto pThis = this->AttachedToObject;
+	const auto pThis = this->OwnerObject();
 
 	auto pRulesExt = RulesExt::Global();
 
@@ -556,7 +556,7 @@ SideClass* HouseExt::GetSide(HouseClass* pHouse) {
 }
 
 int HouseExt::ExtData::GetSurvivorDivisor() const {
-	if(auto pExt = SideExt::ExtMap.Find(HouseExt::GetSide(this->AttachedToObject))) {
+	if(auto pExt = SideExt::ExtMap.Find(HouseExt::GetSide(this->OwnerObject()))) {
 		return pExt->GetSurvivorDivisor();
 	}
 
@@ -564,7 +564,7 @@ int HouseExt::ExtData::GetSurvivorDivisor() const {
 }
 
 InfantryTypeClass* HouseExt::ExtData::GetCrew() const {
-	if(auto pExt = SideExt::ExtMap.Find(HouseExt::GetSide(this->AttachedToObject))) {
+	if(auto pExt = SideExt::ExtMap.Find(HouseExt::GetSide(this->OwnerObject()))) {
 		return pExt->GetCrew();
 	}
 
@@ -572,7 +572,7 @@ InfantryTypeClass* HouseExt::ExtData::GetCrew() const {
 }
 
 InfantryTypeClass* HouseExt::ExtData::GetEngineer() const {
-	if(auto pExt = SideExt::ExtMap.Find(HouseExt::GetSide(this->AttachedToObject))) {
+	if(auto pExt = SideExt::ExtMap.Find(HouseExt::GetSide(this->OwnerObject()))) {
 		return pExt->GetEngineer();
 	}
 
@@ -580,7 +580,7 @@ InfantryTypeClass* HouseExt::ExtData::GetEngineer() const {
 }
 
 InfantryTypeClass* HouseExt::ExtData::GetTechnician() const {
-	if(auto pExt = SideExt::ExtMap.Find(HouseExt::GetSide(this->AttachedToObject))) {
+	if(auto pExt = SideExt::ExtMap.Find(HouseExt::GetSide(this->OwnerObject()))) {
 		return pExt->GetTechnician();
 	}
 
@@ -588,7 +588,7 @@ InfantryTypeClass* HouseExt::ExtData::GetTechnician() const {
 }
 
 InfantryTypeClass* HouseExt::ExtData::GetDisguise() const {
-	if(auto pExt = SideExt::ExtMap.Find(HouseExt::GetSide(this->AttachedToObject))) {
+	if(auto pExt = SideExt::ExtMap.Find(HouseExt::GetSide(this->OwnerObject()))) {
 		return pExt->GetDisguise();
 	}
 

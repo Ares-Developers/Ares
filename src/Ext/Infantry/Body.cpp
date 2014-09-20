@@ -18,7 +18,7 @@ template<> InfantryClass *Container<InfantryExt>::SavingObject = nullptr;
 template<> IStream *Container<InfantryExt>::SavingStream = nullptr;
 
 bool InfantryExt::ExtData::IsOccupant() {
-	InfantryClass* thisTrooper = this->AttachedToObject;
+	InfantryClass* thisTrooper = this->OwnerObject();
 
 	// under the assumption that occupants' position is correctly updated and not stuck on the pre-occupation one
 	if(BuildingClass* buildingBelow = thisTrooper->GetCell()->GetBuilding()) {

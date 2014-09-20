@@ -268,14 +268,14 @@ DEFINE_HOOK(4E3A6A, hWnd_PopulateWithCountryNames, 6) {
 		if(a->CountryListIndex != b->CountryListIndex) {
 			return a->CountryListIndex < b->CountryListIndex;
 		} else {
-			return a->AttachedToObject->ArrayIndex2 < b->AttachedToObject->ArrayIndex2;
+			return a->OwnerObject()->ArrayIndex2 < b->OwnerObject()->ArrayIndex2;
 		}
 	};
 
 	std::sort(Eligible.begin(), Eligible.end(), sortCountries);
 
 	for(auto pCountryExt : Eligible) {
-		auto pCountry = pCountryExt->AttachedToObject;
+		auto pCountry = pCountryExt->OwnerObject();
 		auto idx = SendMessageA(hWnd, 0x4C2u, 0, reinterpret_cast<LPARAM>(pCountry->UIName));
 		SendMessageA(hWnd, CB_SETITEMDATA, static_cast<WPARAM>(idx), pCountry->ArrayIndex2);
 	}

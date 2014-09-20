@@ -348,7 +348,7 @@ void WeaponTypeExt::ExtData::PlantBomb(TechnoClass* pSource, ObjectClass* pTarge
 // type will still point to the appropriate value, as long as the modder does not
 // set the color by hand, in which case that value is used.
 ColorStruct WeaponTypeExt::ExtData::GetWaveColor() const {
-	auto pThis = this->AttachedToObject;
+	auto pThis = this->OwnerObject();
 
 	if(pThis->IsMagBeam) {
 		return this->Wave_Color.Get(WeaponTypeExt::ExtData::DefaultWaveColorMagBeam);
@@ -360,7 +360,7 @@ ColorStruct WeaponTypeExt::ExtData::GetWaveColor() const {
 }
 
 ColorStruct WeaponTypeExt::ExtData::GetBeamColor() const {
-	auto pThis = this->AttachedToObject;
+	auto pThis = this->OwnerObject();
 
 	if(pThis->IsRadBeam || pThis->IsRadEruption) {
 		if(pThis->Warhead && pThis->Warhead->Temporal) { //Marshall added the check for Warhead because PrismForwarding.SupportWeapon does not require a Warhead

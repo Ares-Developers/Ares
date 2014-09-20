@@ -80,7 +80,7 @@ DEFINE_HOOK(760F50, WaveClass_Update, 6)
 	GET(WaveClass *, pThis, ECX);
 
 	auto pData = WeaponTypeExt::WaveExt.get_or_default(pThis);
-	const WeaponTypeClass *Weap = pData->AttachedToObject;
+	const WeaponTypeClass *Weap = pData->OwnerObject();
 
 	if(!Weap) {
 		return 0;
@@ -281,7 +281,7 @@ DEFINE_HOOK(75F38F, WaveClass_DamageCell, 6)
 	GET(WaveClass *, Wave, EBP);
 	auto pData = WeaponTypeExt::WaveExt.get_or_default(Wave);
 	R->EDI(R->EAX());
-	R->EBX(pData->AttachedToObject);
+	R->EBX(pData->OwnerObject());
 	return 0x75F39D;
 }
 

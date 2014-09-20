@@ -252,11 +252,11 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 
 void BuildingTypeExt::ExtData::CompleteInitialization(BuildingTypeClass *pThis) {
 	// enforce same foundations for rubble/intact building pairs
-	if(this->RubbleDestroyed && !BuildingTypeExt::IsFoundationEqual(this->AttachedToObject, this->RubbleDestroyed)) {
-		Debug::FatalErrorAndExit("BuildingType %s and its Rubble.Destroyed %s don't have the same foundation.", this->AttachedToObject->ID, this->RubbleDestroyed->ID);
+	if(this->RubbleDestroyed && !BuildingTypeExt::IsFoundationEqual(this->OwnerObject(), this->RubbleDestroyed)) {
+		Debug::FatalErrorAndExit("BuildingType %s and its Rubble.Destroyed %s don't have the same foundation.", this->OwnerObject()->ID, this->RubbleDestroyed->ID);
 	}
-	if(this->RubbleIntact && !BuildingTypeExt::IsFoundationEqual(this->AttachedToObject, this->RubbleIntact)) {
-		Debug::FatalErrorAndExit("BuildingType %s and its Rubble.Intact %s don't have the same foundation.", this->AttachedToObject->ID, this->RubbleIntact->ID);
+	if(this->RubbleIntact && !BuildingTypeExt::IsFoundationEqual(this->OwnerObject(), this->RubbleIntact)) {
+		Debug::FatalErrorAndExit("BuildingType %s and its Rubble.Intact %s don't have the same foundation.", this->OwnerObject()->ID, this->RubbleIntact->ID);
 	}
 }
 
@@ -364,7 +364,7 @@ void BuildingTypeExt::ExtData::UpdateFoundationRadarShape() {
 	this->FoundationRadarShape.Clear();
 
 	if(this->IsCustom) {
-		auto pType = this->AttachedToObject;
+		auto pType = this->OwnerObject();
 		auto pRadar = RadarClass::Global();
 
 		int width = pType->GetFoundationWidth();

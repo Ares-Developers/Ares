@@ -313,7 +313,7 @@ DEFINE_HOOK(52F00B, CampaignMenu_hDlg_PopulateCampaignList, 5) {
 	for(int i=0; i<CampaignExt::Array.Count; ++i) {
 		CampaignExt::ExtData *pData = CampaignExt::Array.GetItem(i);
 		if(pData && pData->IsVisible()) {
-			auto newIndex = SendMessageA(hList, 0x4CD, 0, reinterpret_cast<LPARAM>(pData->AttachedToObject->Description));
+			auto newIndex = SendMessageA(hList, 0x4CD, 0, reinterpret_cast<LPARAM>(pData->OwnerObject()->Description));
 			SendMessageA(hList, LB_SETITEMDATA, static_cast<WPARAM>(newIndex), i);
 		}
 	}

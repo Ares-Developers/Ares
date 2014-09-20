@@ -57,7 +57,7 @@ int TiberiumExt::ExtData::GetHealStep(TechnoClass* pTechno) const
 
 int TiberiumExt::ExtData::GetDamage() const
 {
-	int damage = this->AttachedToObject->Power / 10;
+	int damage = this->OwnerObject()->Power / 10;
 	if(damage < 1) {
 		damage = 1;
 	}

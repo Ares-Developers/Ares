@@ -45,7 +45,7 @@ ConvertClass* BulletTypeExt::ExtData::GetConvert()
 	// cache the palette's convert
 	if(this->ImageConvert.empty()) {
 		ConvertClass* pConvert = nullptr;
-		if(auto pAnimType = AnimTypeClass::Find(this->AttachedToObject->ImageFile)) {
+		if(auto pAnimType = AnimTypeClass::Find(this->OwnerObject()->ImageFile)) {
 			auto pData = AnimTypeExt::ExtMap.Find(pAnimType);
 			pConvert = pData->Palette.GetConvert();
 		}
@@ -58,7 +58,7 @@ ConvertClass* BulletTypeExt::ExtData::GetConvert()
 bool BulletTypeExt::ExtData::HasSplitBehavior()
 {
 	// behavior in FS: Splits defaults to Airburst.
-	return this->AttachedToObject->Airburst || this->Splits;
+	return this->OwnerObject()->Airburst || this->Splits;
 }
 
 BulletClass* BulletTypeExt::ExtData::CreateBullet(AbstractClass* pTarget, TechnoClass* pOwner, WeaponTypeClass* pWeapon) const
@@ -71,7 +71,7 @@ BulletClass* BulletTypeExt::ExtData::CreateBullet(AbstractClass* pTarget, Techno
 BulletClass* BulletTypeExt::ExtData::CreateBullet(AbstractClass* pTarget, TechnoClass* pOwner,
 	int damage, WarheadTypeClass* pWarhead, int speed, int range, bool bright) const
 {
-	auto pBullet = this->AttachedToObject->CreateBullet(pTarget, pOwner, damage, pWarhead, speed, bright);
+	auto pBullet = this->OwnerObject()->CreateBullet(pTarget, pOwner, damage, pWarhead, speed, bright);
 
 	if(pBullet) {
 		pBullet->Range = range;

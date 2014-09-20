@@ -22,7 +22,7 @@ template<> IStream *Container<TEventExt>::SavingStream = nullptr;
 TechnoTypeClass* TEventExt::ExtData::GetTechnoType()
 {
 	if(this->TechnoType.empty()) {
-		const char* eventTechno = this->AttachedToObject->TechnoName;
+		const char* eventTechno = this->OwnerObject()->TechnoName;
 		TechnoTypeClass* pType = TechnoTypeClass::Find(eventTechno);
 
 		if(!pType) {
@@ -45,7 +45,7 @@ TechnoTypeClass* TEventExt::ExtData::GetTechnoType()
 */
 bool TEventExt::ExtData::TechTypeExists()
 {
-	int count = this->AttachedToObject->arg;
+	int count = this->OwnerObject()->arg;
 	TechnoTypeClass* pType = this->GetTechnoType();
 
 	if(!pType) {

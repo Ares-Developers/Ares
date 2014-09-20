@@ -514,7 +514,7 @@ void Container<TechnoTypeExt>::InvalidatePointer(void *ptr, bool bRemoved) {
 
 const char* TechnoTypeExt::ExtData::GetSelectionGroupID() const
 {
-	return this->GroupAs ? this->GroupAs : this->AttachedToObject->ID;
+	return this->GroupAs ? this->GroupAs : this->OwnerObject()->ID;
 }
 
 const char* TechnoTypeExt::GetSelectionGroupID(ObjectTypeClass* pType)
@@ -537,7 +537,7 @@ bool TechnoTypeExt::ExtData::CameoIsElite()
 	HouseClass * House = HouseClass::Player;
 	HouseTypeClass *Country = House->Type;
 
-	TechnoTypeClass * const T = this->AttachedToObject;
+	TechnoTypeClass * const T = this->OwnerObject();
 	TechnoTypeExt::ExtData* pExt = TechnoTypeExt::ExtMap.Find(T);
 
 	if(!T->AltCameo && !pExt->AltCameoPCX.Exists()) {

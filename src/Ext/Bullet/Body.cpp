@@ -31,7 +31,7 @@ template<> IStream *Container<BulletExt>::SavingStream = nullptr;
 
 */
 bool BulletExt::ExtData::DamageOccupants() {
-	BulletClass* TheBullet = this->AttachedToObject;
+	BulletClass* TheBullet = this->OwnerObject();
 
 	if(BuildingClass* Building = specific_cast<BuildingClass *> (TheBullet->Target)) { // if that pointer is null, something went wrong
 		BulletTypeExt::ExtData* TheBulletTypeExt = BulletTypeExt::ExtMap.Find(TheBullet->Type);

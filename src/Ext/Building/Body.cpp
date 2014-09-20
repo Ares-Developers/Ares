@@ -126,7 +126,7 @@ bool BuildingExt::ExtData::RubbleYell(bool beingRepaired) {
 		return true;
 	};
 
-	auto currentBuilding = this->AttachedToObject;
+	auto currentBuilding = this->OwnerObject();
 	auto pTypeData = BuildingTypeExt::ExtMap.Find(currentBuilding->Type);
 	if(beingRepaired) {
 		return CreateBuilding(currentBuilding, pTypeData->RubbleIntactRemove,
@@ -148,7 +148,7 @@ bool BuildingExt::ExtData::RubbleYell(bool beingRepaired) {
 	\date 2013-04-24
 */
 void BuildingExt::ExtData::KickOutOfRubble() {
-	BuildingClass* pBld = this->AttachedToObject;
+	BuildingClass* pBld = this->OwnerObject();
 
 	// get the number of non-end-marker cells and a pointer to the cell data
 	CellStruct *data = pBld->Type->FoundationData;
@@ -197,7 +197,7 @@ void BuildingExt::ExtData::KickOutOfRubble() {
 	\date 25.12.09+
 */
 bool BuildingExt::ExtData::sameTrench(BuildingClass* targetBuilding) {
-	BuildingTypeExt::ExtData* currentTypeExtData = BuildingTypeExt::ExtMap.Find(this->AttachedToObject->Type);
+	BuildingTypeExt::ExtData* currentTypeExtData = BuildingTypeExt::ExtMap.Find(this->OwnerObject()->Type);
 	BuildingTypeExt::ExtData* targetTypeExtData = BuildingTypeExt::ExtMap.Find(targetBuilding->Type);
 
 	return ((currentTypeExtData->IsTrench > -1) && (currentTypeExtData->IsTrench == targetTypeExtData->IsTrench));
@@ -221,7 +221,7 @@ bool BuildingExt::ExtData::sameTrench(BuildingClass* targetBuilding) {
 	\date 16.12.09+
 */
 bool BuildingExt::ExtData::canTraverseTo(BuildingClass* targetBuilding) {
-	BuildingClass* currentBuilding = this->AttachedToObject;
+	BuildingClass* currentBuilding = this->OwnerObject();
 	//BuildingTypeClass* currentBuildingType = game_cast<BuildingTypeClass *>(currentBuilding->GetTechnoType());
 	BuildingTypeClass* targetBuildingType = targetBuilding->Type;
 
@@ -265,7 +265,7 @@ bool BuildingExt::ExtData::canTraverseTo(BuildingClass* targetBuilding) {
 	\date 16.12.09+
 */
 void BuildingExt::ExtData::doTraverseTo(BuildingClass* targetBuilding) {
-	BuildingClass* currentBuilding = this->AttachedToObject;
+	BuildingClass* currentBuilding = this->OwnerObject();
 	BuildingTypeClass* targetBuildingType = targetBuilding->Type;
 
 	// depending on Westwood's handling, this could explode when Size > 1 units are involved...but don't tell the users that
@@ -279,11 +279,11 @@ void BuildingExt::ExtData::doTraverseTo(BuildingClass* targetBuilding) {
 
 void BuildingExt::ExtData::evalRaidStatus() {
 	// if the building is still marked as raided, but unoccupied, return it to its previous owner
-	if(this->isCurrentlyRaided && !this->AttachedToObject->Occupants.Count) {
+	if(this->isCurrentlyRaided && !this->OwnerObject()->Occupants.Count) {
 		// Fix for #838: Only return the building to the previous owner if he hasn't been defeated
 		if(!this->OwnerBeforeRaid->Defeated) {
 			this->ignoreNextEVA = true; // #698 - used in BuildingClass_ChangeOwnership_TrenchEVA to override EVA announcement
-			this->AttachedToObject->SetOwningHouse(this->OwnerBeforeRaid);
+			this->OwnerObject()->SetOwningHouse(this->OwnerBeforeRaid);
 		}
 		this->OwnerBeforeRaid = nullptr;
 		this->isCurrentlyRaided = false;
@@ -294,13 +294,13 @@ void BuildingExt::ExtData::evalRaidStatus() {
 // #666: IsTrench/Linking
 // Short check: Is the building of a linkable kind at all?
 bool BuildingExt::ExtData::isLinkable() {
-	BuildingTypeExt::ExtData* typeExtData = BuildingTypeExt::ExtMap.Find(this->AttachedToObject->Type);
+	BuildingTypeExt::ExtData* typeExtData = BuildingTypeExt::ExtMap.Find(this->OwnerObject()->Type);
 	return typeExtData->IsLinkable();
 }
 
 // Full check: Can this building be linked to the target building?
 bool BuildingExt::ExtData::canLinkTo(BuildingClass* targetBuilding) {
-	BuildingClass* currentBuilding = this->AttachedToObject;
+	BuildingClass* currentBuilding = this->OwnerObject();
 
 	// Different owners // and owners not allied
 	if((currentBuilding->Owner != targetBuilding->Owner) && !currentBuilding->Owner->IsAlliedWith(targetBuilding->Owner)) { //<-- see thread 1424
@@ -442,7 +442,7 @@ void BuildingExt::KickOutHospitalArmory(BuildingClass *pThis)
 // infiltration
 
 bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
-	BuildingClass *EnteredBuilding = this->AttachedToObject;
+	BuildingClass *EnteredBuilding = this->OwnerObject();
 	BuildingTypeClass *EnteredType = EnteredBuilding->Type;
 	HouseClass *Owner = EnteredBuilding->Owner;
 	BuildingTypeExt::ExtData* pTypeExt = BuildingTypeExt::ExtMap.Find(EnteredBuilding->Type);
@@ -660,7 +660,7 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 }
 
 void BuildingExt::ExtData::UpdateFirewall() {
-	BuildingClass *B = this->AttachedToObject;
+	BuildingClass *B = this->OwnerObject();
 	BuildingTypeClass *BT = B->Type;
 	HouseClass *H = B->Owner;
 	BuildingTypeExt::ExtData* pTypeData = BuildingTypeExt::ExtMap.Find(BT);
@@ -710,14 +710,14 @@ void BuildingExt::ExtData::UpdateFirewall() {
 }
 
 void BuildingExt::ExtData::ImmolateVictims() {
-	CellClass *C = this->AttachedToObject->GetCell();
+	CellClass *C = this->OwnerObject()->GetCell();
 	for(ObjectClass *O = C->GetContent(); O; O = O->NextObject) {
 		this->ImmolateVictim(O);
 	}
 }
 
 void BuildingExt::ExtData::ImmolateVictim(ObjectClass * Victim) {
-	BuildingClass *pThis = this->AttachedToObject;
+	BuildingClass *pThis = this->OwnerObject();
 	if(generic_cast<TechnoClass *>(Victim) && Victim != pThis && !Victim->InLimbo && Victim->IsAlive && Victim->Health) {
 		CoordStruct XYZ = Victim->GetCoords();
 		int Damage = Victim->Health;
@@ -738,7 +738,7 @@ void BuildingExt::ExtData::ImmolateVictim(ObjectClass * Victim) {
 	\date 2012-10-08
 */
 void BuildingExt::ExtData::UpdateSensorArray() {
-	BuildingClass* pBld = this->AttachedToObject;
+	BuildingClass* pBld = this->OwnerObject();
 
 	if(pBld->Type->SensorArray) {
 		bool isActive = pBld->IsPowerOnline() && !pBld->Deactivated;
@@ -773,7 +773,7 @@ void BuildingExt::Clear() {
 }
 
 bool BuildingExt::ExtData::ReverseEngineer(TechnoClass *Victim) {
-	BuildingTypeExt::ExtData *pReverseData = BuildingTypeExt::ExtMap.Find(this->AttachedToObject->Type);
+	BuildingTypeExt::ExtData *pReverseData = BuildingTypeExt::ExtMap.Find(this->OwnerObject()->Type);
 	if(!pReverseData->ReverseEngineersVictims) {
 		return false;
 	}
@@ -785,7 +785,7 @@ bool BuildingExt::ExtData::ReverseEngineer(TechnoClass *Victim) {
 		return false;
 	}
 
-	HouseClass *Owner = this->AttachedToObject->Owner;
+	HouseClass *Owner = this->OwnerObject()->Owner;
 
 	if(!pVictimData->ReversedByHouses.contains(Owner)) {
 		bool WasBuildable = HouseExt::PrereqValidate(Owner, VictimType, false, true) == 1;
@@ -802,7 +802,7 @@ bool BuildingExt::ExtData::ReverseEngineer(TechnoClass *Victim) {
 }
 
 void BuildingExt::ExtData::KickOutClones(TechnoClass * Production) {
-	auto Factory = this->AttachedToObject;
+	auto Factory = this->OwnerObject();
 	auto FactoryType = Factory->Type;
 
 	if(FactoryType->Cloning || (FactoryType->Factory != InfantryTypeClass::AbsID && FactoryType->Factory != UnitTypeClass::AbsID)) {
