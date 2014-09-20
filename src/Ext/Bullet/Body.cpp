@@ -33,63 +33,67 @@ template<> IStream *Container<BulletExt>::SavingStream = nullptr;
 bool BulletExt::ExtData::DamageOccupants() {
 	BulletClass* TheBullet = this->OwnerObject();
 
-	if(BuildingClass* Building = specific_cast<BuildingClass *> (TheBullet->Target)) { // if that pointer is null, something went wrong
-		BulletTypeExt::ExtData* TheBulletTypeExt = BulletTypeExt::ExtMap.Find(TheBullet->Type);
-		BuildingTypeExt::ExtData* BuildingAresData = BuildingTypeExt::ExtMap.Find(Building->Type);
+	auto Building = specific_cast<BuildingClass*>(TheBullet->Target);
+
+	// if that pointer is null, something went wrong
+	if(!Building) {
+		// no damage dealt b/c the building-pointer was NULL (which is concerning)
+		return false;
+	}
+
+	BulletTypeExt::ExtData* TheBulletTypeExt = BulletTypeExt::ExtMap.Find(TheBullet->Type);
+	BuildingTypeExt::ExtData* BuildingAresData = BuildingTypeExt::ExtMap.Find(Building->Type);
 
 /*
-		Debug::Log("Bullet %s is about to damage occupants of %s: occupants #%d, UC.PT = %lf\n",
-			TheBullet->Type->ID, Building->Type->ID, Building->Occupants.Count, BuildingAresData->UCPassThrough);
+	Debug::Log("Bullet %s is about to damage occupants of %s: occupants #%d, UC.PT = %lf\n",
+		TheBullet->Type->ID, Building->Type->ID, Building->Occupants.Count, BuildingAresData->UCPassThrough);
 */
-		// only work when UCPassThrough is set, as per community vote in thread #1392
-		if(Building->Occupants.Count && BuildingAresData->UCPassThrough) {
-			Debug::Log("SubjToTrenches = %d\n", TheBulletTypeExt->SubjectToTrenches);
-			// test for !SubjectToTrenches because being SubjectToTrenches means "we're getting stopped by trenches".
-			if(!TheBulletTypeExt->SubjectToTrenches
-				|| (ScenarioClass::Instance->Random.RandomDouble() < BuildingAresData->UCPassThrough)) {
-				int poorBastard = ScenarioClass::Instance->Random.RandomRanged(0, Building->Occupants.Count - 1); // which Occupant is getting it?
-				Debug::Log("Poor Bastard #%d\n", poorBastard);
-				if(BuildingAresData->UCFatalRate
-					&& (ScenarioClass::Instance->Random.RandomDouble() < BuildingAresData->UCFatalRate)) {
-					Debug::Log("Fatal hit!\n");
-					// fatal hit
-					Building->Occupants[poorBastard]->Destroyed(TheBullet->Owner);
-					Building->Occupants[poorBastard]->UnInit();
-					// don't separate these two lines - poor guy's already ~dtor'd, but his pointer is still dangling from the vector
-					Building->Occupants.RemoveItem(poorBastard);
-					Building->UpdateThreatInCell(Building->GetCell());
-				} else {
-					/* ReceiveDamage args:
-					virtual eDamageState ReceiveDamage(int* pDamage, int DistanceFromEpicenter, WarheadTypeClass* pWH,
-						ObjectClass* Attacker, bool IgnoreDefenses, bool PreventPassengerEscape, HouseClass* pAttackingHouse) R0;
-						where
-						DistanceFromEpicenter -> used for CellSpread/PercentAtMax
-						IgnoreDefenses -> ignore Immune=yes
-					*/
-
-					// just a flesh wound
-					Debug::Log("Flesh wound - health(%d) * UCDmgMult(%lf)\n", TheBullet->Health, BuildingAresData->UCDamageMultiplier);
-					// Bullet->Health is the damage it delivers (go Westwood)
-					int adjustedDamage = static_cast<int> (ceil(TheBullet->Health * BuildingAresData->UCDamageMultiplier));
-					Debug::Log("Adjusted damage = %d\n", adjustedDamage);
-					auto result = Building->Occupants[poorBastard]->ReceiveDamage(&adjustedDamage, 0, TheBullet->WH,
-								TheBullet->Owner, false, true, TheBullet->GetOwningHouse());
-					Debug::Log("Received damage, %d\n", result);
-				}
-
-				// BuildingAresData is for the BuildingType for some reason, so we need a new Ext var
-				BuildingExt::ExtData* SpecificBuildingExt = BuildingExt::ExtMap.Find(Building);
-				// if the last occupant was killed and this building was raided, it needs to be returned to its owner. (Bug #700)
-				SpecificBuildingExt->evalRaidStatus();
-				return true;
+	// only work when UCPassThrough is set, as per community vote in thread #1392
+	if(Building->Occupants.Count && BuildingAresData->UCPassThrough) {
+		Debug::Log("SubjToTrenches = %d\n", TheBulletTypeExt->SubjectToTrenches);
+		// test for !SubjectToTrenches because being SubjectToTrenches means "we're getting stopped by trenches".
+		if(!TheBulletTypeExt->SubjectToTrenches
+			|| (ScenarioClass::Instance->Random.RandomDouble() < BuildingAresData->UCPassThrough)) {
+			int poorBastard = ScenarioClass::Instance->Random.RandomRanged(0, Building->Occupants.Count - 1); // which Occupant is getting it?
+			Debug::Log("Poor Bastard #%d\n", poorBastard);
+			if(BuildingAresData->UCFatalRate
+				&& (ScenarioClass::Instance->Random.RandomDouble() < BuildingAresData->UCFatalRate)) {
+				Debug::Log("Fatal hit!\n");
+				// fatal hit
+				Building->Occupants[poorBastard]->Destroyed(TheBullet->Owner);
+				Building->Occupants[poorBastard]->UnInit();
+				// don't separate these two lines - poor guy's already ~dtor'd, but his pointer is still dangling from the vector
+				Building->Occupants.RemoveItem(poorBastard);
+				Building->UpdateThreatInCell(Building->GetCell());
 			} else {
-				return false; // no damage dealt b/c bullet was SubjectToTrenches=yes and UC.PassThrough did not apply
+				/* ReceiveDamage args:
+				virtual eDamageState ReceiveDamage(int* pDamage, int DistanceFromEpicenter, WarheadTypeClass* pWH,
+					ObjectClass* Attacker, bool IgnoreDefenses, bool PreventPassengerEscape, HouseClass* pAttackingHouse) R0;
+					where
+					DistanceFromEpicenter -> used for CellSpread/PercentAtMax
+					IgnoreDefenses -> ignore Immune=yes
+				*/
+
+				// just a flesh wound
+				Debug::Log("Flesh wound - health(%d) * UCDmgMult(%lf)\n", TheBullet->Health, BuildingAresData->UCDamageMultiplier);
+				// Bullet->Health is the damage it delivers (go Westwood)
+				int adjustedDamage = static_cast<int> (ceil(TheBullet->Health * BuildingAresData->UCDamageMultiplier));
+				Debug::Log("Adjusted damage = %d\n", adjustedDamage);
+				auto result = Building->Occupants[poorBastard]->ReceiveDamage(&adjustedDamage, 0, TheBullet->WH,
+							TheBullet->Owner, false, true, TheBullet->GetOwningHouse());
+				Debug::Log("Received damage, %d\n", result);
 			}
+
+			// BuildingAresData is for the BuildingType for some reason, so we need a new Ext var
+			BuildingExt::ExtData* SpecificBuildingExt = BuildingExt::ExtMap.Find(Building);
+			// if the last occupant was killed and this building was raided, it needs to be returned to its owner. (Bug #700)
+			SpecificBuildingExt->evalRaidStatus();
+			return true;
 		} else {
-			return false; // no damage dealt b/c either there were no occupants, or UC.PassThrough is set to 0
+			return false; // no damage dealt b/c bullet was SubjectToTrenches=yes and UC.PassThrough did not apply
 		}
 	} else {
-		return false; // no damage dealt b/c the building-pointer was NULL (which is concerning)
+		return false; // no damage dealt b/c either there were no occupants, or UC.PassThrough is set to 0
 	}
 }
 
