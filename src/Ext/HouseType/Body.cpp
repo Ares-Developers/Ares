@@ -182,8 +182,6 @@ void HouseTypeExt::ExtData::Initialize() {
 void HouseTypeExt::ExtData::LoadFromRulesFile(CCINIClass *pINI) {
 	const char* pID = this->OwnerObject()->ID;
 
-	this->InitializeConstants();
-
 	INI_EX exINI(pINI);
 
 	// ppShp is optional. if not set, only PCX is supported
