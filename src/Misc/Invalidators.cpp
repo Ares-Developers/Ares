@@ -73,9 +73,7 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 		Crews[i] = SideExt::ExtMap.Find(SideClass::Array->Items[i])->GetCrew();
 	}
 
-	for(int i = 0; i < TechnoTypeClass::Array->Count; ++i) {
-		TechnoTypeClass *Item = reinterpret_cast<TechnoTypeClass *>(TechnoTypeClass::Array->Items[i]);
-
+	for(auto Item : *TechnoTypeClass::Array) {
 		bool IsFoot = Item->WhatAmI() != AbstractType::BuildingType;
 
 		if(IsFoot && Item->SpeedType == SpeedType::None) {
