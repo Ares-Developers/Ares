@@ -75,6 +75,13 @@ public:
 		return this->AttachedToObject;
 	}
 
+	void EnsureConstanted() {
+		if(this->Initialized < InitState::Constanted) {
+			this->InitializeConstants();
+			this->Initialized = InitState::Constanted;
+		}
+	}
+
 	// major refactoring!
 	// LoadFromINI is now a non-virtual public function that orchestrates the initialization/loading of extension data
 	// all its slaves are now protected functions
@@ -85,8 +92,7 @@ public:
 
 		switch(this->Initialized) {
 		case InitState::Blank:
-			this->InitializeConstants();
-			this->Initialized = InitState::Constanted;
+			this->EnsureConstanted();
 		case InitState::Constanted:
 			this->InitializeRuled();
 			this->Initialized = InitState::Ruled;
@@ -178,7 +184,7 @@ public:
 		auto i = this->Items.find(key);
 		if(i == this->Items.end()) {
 			auto val = std::make_unique<extension_type>(key);
-			val->InitializeConstants();
+			val->EnsureConstanted();
 			i = this->Items.emplace(key, std::move(val)).first;
 		}
 		return i->second.get();
