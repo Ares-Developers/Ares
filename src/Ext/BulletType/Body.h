@@ -54,8 +54,7 @@ public:
 			ImageConvert ()
 			{ };
 
-		virtual ~ExtData() {
-		}
+		virtual ~ExtData() = default;
 
 		virtual void LoadFromINIFile(CCINIClass* pINI) override;
 

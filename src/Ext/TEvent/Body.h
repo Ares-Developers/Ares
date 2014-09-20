@@ -26,8 +26,7 @@ class TEventExt
 		{
 		};
 
-		virtual ~ExtData() {
-		}
+		virtual ~ExtData() = default;
 
 		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
 			AnnounceInvalidPointer(TechnoType, ptr);

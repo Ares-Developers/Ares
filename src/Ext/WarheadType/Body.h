@@ -105,7 +105,7 @@ public:
 				}
 			};
 
-		virtual ~ExtData() { };
+		virtual ~ExtData() = default;
 
 		virtual void Initialize() override;
 

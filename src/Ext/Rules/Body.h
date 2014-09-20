@@ -122,8 +122,7 @@ class RulesExt
 				MultiEngineer[2] = false; // WOnline
 			};
 
-		virtual ~ExtData() {
-		}
+		virtual ~ExtData() = default;
 
 		virtual void LoadFromINIFile(CCINIClass* pINI) override;
 		virtual void LoadBeforeTypeData(TT *pThis, CCINIClass *pINI);

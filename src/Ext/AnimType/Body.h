@@ -28,8 +28,7 @@ public:
 			Palette(CustomPalette::PaletteMode::Temperate)
 		{ };
 
-		virtual ~ExtData() {
-		}
+		virtual ~ExtData() = default;
 
 		virtual void LoadFromINIFile(CCINIClass* pINI) override;
 

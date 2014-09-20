@@ -24,8 +24,7 @@ public:
 			NukeSW (nullptr)
 			{ };
 
-		virtual ~ExtData() {
-		}
+		virtual ~ExtData() = default;
 
 		bool DamageOccupants();
 

@@ -323,7 +323,7 @@ public:
 				this->Insignia.SetAll(nullptr);
 			};
 
-		virtual ~ExtData() {};
+		virtual ~ExtData() = default;
 
 		virtual void LoadFromINIFile(CCINIClass* pINI) override;
 		virtual void Initialize() override;

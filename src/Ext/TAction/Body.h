@@ -22,8 +22,7 @@ class TActionExt
 		{
 		};
 
-		virtual ~ExtData() {
-		}
+		virtual ~ExtData() = default;
 
 		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
 		}

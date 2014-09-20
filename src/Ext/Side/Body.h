@@ -80,9 +80,7 @@ class SideExt
 		{
 		};
 
-		virtual ~ExtData() {
-
-		}
+		virtual ~ExtData() = default;
 
 		virtual void LoadFromINIFile(CCINIClass* pINI) override;
 		virtual void Initialize() override;

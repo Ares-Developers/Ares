@@ -22,8 +22,7 @@ public:
 		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject)
 			{ };
 
-		virtual ~ExtData() {
-		}
+		virtual ~ExtData() = default;
 
 		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
 		}
