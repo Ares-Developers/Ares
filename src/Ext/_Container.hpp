@@ -82,9 +82,6 @@ public:
 		}
 	}
 
-	// major refactoring!
-	// LoadFromINI is now a non-virtual public function that orchestrates the initialization/loading of extension data
-	// all its slaves are now protected functions
 	void LoadFromINI(CCINIClass* pINI) {
 		if(!pINI) {
 			return;
@@ -109,19 +106,6 @@ public:
 		}
 	}
 
-	//	protected:
-	//reimpl in each class separately
-	virtual void LoadFromINIFile(CCINIClass* pINI) { };
-
-	// for things that only logically work in rules - countries, sides, etc
-	virtual void LoadFromRulesFile(CCINIClass* pINI) { };
-
-	virtual void InitializeConstants() { };
-
-	virtual void InitializeRuled() { };
-
-	virtual void Initialize() { };
-
 	virtual void InvalidatePointer(void* ptr, bool bRemoved) = 0;
 
 	virtual inline void SaveToStream(AresByteStream &Stm) {
@@ -133,6 +117,23 @@ public:
 		Stm.Load(this->Initialized);
 		//Stm.Load(this->AttachedToObject);
 	}
+
+protected:
+	// right after construction. only basic initialization tasks possible;
+	// owner object is only partially constructed! do not use global state!
+	virtual void InitializeConstants() { };
+
+	virtual void InitializeRuled() { };
+
+	// called before the first ini file is read
+	virtual void Initialize() { };
+
+	// for things that only logically work in rules - countries, sides, etc
+	virtual void LoadFromRulesFile(CCINIClass* pINI) { };
+
+	// load any ini file: rules, game mode, scenario or map
+	virtual void LoadFromINIFile(CCINIClass* pINI) { };
+
 };
 
 template<typename T>
