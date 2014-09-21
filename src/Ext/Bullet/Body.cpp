@@ -86,6 +86,11 @@ bool BulletExt::ExtData::DamageOccupants() {
 		Debug::Log("Received damage, %d\n", result);
 	}
 
+	// fix up the firing index, otherwise building stops to fire
+	if(Building->FiringOccupantIndex >= Building->GetOccupantCount()) {
+		Building->FiringOccupantIndex = 0;
+	}
+
 	// if the last occupant was killed and this building was raided, it needs to be returned to its owner. (Bug #700)
 	auto SpecificBuildingExt = BuildingExt::ExtMap.Find(Building);
 	SpecificBuildingExt->evalRaidStatus();
