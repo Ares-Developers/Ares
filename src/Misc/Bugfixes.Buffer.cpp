@@ -30,6 +30,7 @@
 #include "../Ares.CRT.h"
 
 #include "../Utilities/Macro.h"
+#include "../Utilities/Parser.h"
 
 #include <type_traits>
 
@@ -40,31 +41,12 @@ static void ParseList(DynamicVectorClass<T> &List, CCINIClass * pINI, const char
 
 		char* context = nullptr;
 		for(char *cur = strtok_s(Ares::readBuffer, Ares::readDelims, &context); cur; cur = strtok_s(nullptr, Ares::readDelims, &context)) {
-			if(auto idx = std::remove_pointer_t<T>::Find(cur)) {
-				List.AddItem(idx);
-			} else {
+			T buffer = T();
+			if(Parser<T>::TryParse(cur, &buffer)) {
+				List.AddItem(buffer);
+			} else if(!std::is_pointer<T>() || !INIClass::IsBlank(cur)) {
 				Debug::INIParseFailed(section, key, cur);
 			}
-		}
-	}
-};
-
-#define PARSE_LIST(obj, key) \
-	ParseList(obj->key, pINI, section, #key);
-
-#define PARSE_RULES_LIST(key) \
-	PARSE_LIST(pRules, key);
-
-
-template<>
-static void ParseList<int>(DynamicVectorClass<int> &List, CCINIClass * pINI, const char *section, const char *key) {
-	if(pINI->ReadString(section, key, Ares::readDefval, Ares::readBuffer, Ares::readLength)) {
-		List.Clear();
-
-		char* context = nullptr;
-		for(char *cur = strtok_s(Ares::readBuffer, Ares::readDelims, &context); cur; cur = strtok_s(nullptr, Ares::readDelims, &context)) {
-			int idx = atoi(cur);
-			List.AddItem(idx);
 		}
 	}
 };
@@ -77,9 +59,9 @@ DEFINE_HOOK(511D16, Buf_CountryVeteran, 9)
 	GET(CCINIClass *, pINI, ESI);
 
 	const char *section = H->ID;
-	PARSE_LIST(H, VeteranInfantry);
-	PARSE_LIST(H, VeteranUnits);
-	PARSE_LIST(H, VeteranAircraft);
+	ParseList(H->VeteranInfantry, pINI, section, "VeteranInfantry");
+	ParseList(H->VeteranUnits, pINI, section, "VeteranUnits");
+	ParseList(H->VeteranAircraft, pINI, section, "VeteranAircraft");
 
 	return 0x51208C;
 }
@@ -93,37 +75,37 @@ DEFINE_HOOK(66D55E, Buf_General, 6)
 	GET(CCINIClass *, pINI, EDI);
 
 	const char *section = "General";
-	PARSE_RULES_LIST(AmerParaDropInf);
-	PARSE_RULES_LIST(AllyParaDropInf);
-	PARSE_RULES_LIST(SovParaDropInf);
-	PARSE_RULES_LIST(YuriParaDropInf);
+	ParseList(pRules->AmerParaDropInf, pINI, section, "AmerParaDropInf");
+	ParseList(pRules->AllyParaDropInf, pINI, section, "AllyParaDropInf");
+	ParseList(pRules->SovParaDropInf, pINI, section, "SovParaDropInf");
+	ParseList(pRules->YuriParaDropInf, pINI, section, "YuriParaDropInf");
 
-	PARSE_RULES_LIST(AmerParaDropNum);
-	PARSE_RULES_LIST(AllyParaDropNum);
-	PARSE_RULES_LIST(SovParaDropNum);
-	PARSE_RULES_LIST(YuriParaDropNum);
+	ParseList(pRules->AmerParaDropNum, pINI, section, "AmerParaDropNum");
+	ParseList(pRules->AllyParaDropNum, pINI, section, "AllyParaDropNum");
+	ParseList(pRules->SovParaDropNum, pINI, section, "SovParaDropNum");
+	ParseList(pRules->YuriParaDropNum, pINI, section, "YuriParaDropNum");
 
-	PARSE_RULES_LIST(AnimToInfantry);
+	ParseList(pRules->AnimToInfantry, pINI, section, "AnimToInfantry");
 
-	PARSE_RULES_LIST(SecretInfantry);
-	PARSE_RULES_LIST(SecretUnits);
-	PARSE_RULES_LIST(SecretBuildings);
+	ParseList(pRules->SecretInfantry, pINI, section, "SecretInfantry");
+	ParseList(pRules->SecretUnits, pINI, section, "SecretUnits");
+	ParseList(pRules->SecretBuildings, pINI, section, "SecretBuildings");
 	pRules->SecretSum = pRules->SecretInfantry.Count
 		+ pRules->SecretUnits.Count
 		+ pRules->SecretBuildings.Count;
 
-	PARSE_RULES_LIST(HarvesterUnit);
-	PARSE_RULES_LIST(BaseUnit);
-	PARSE_RULES_LIST(PadAircraft);
+	ParseList(pRules->HarvesterUnit, pINI, section, "HarvesterUnit");
+	ParseList(pRules->BaseUnit, pINI, section, "BaseUnit");
+	ParseList(pRules->PadAircraft, pINI, section, "PadAircraft");
 
-	PARSE_RULES_LIST(Shipyard);
-	PARSE_RULES_LIST(RepairBay);
+	ParseList(pRules->Shipyard, pINI, section, "Shipyard");
+	ParseList(pRules->RepairBay, pINI, section, "RepairBay");
 
-	PARSE_RULES_LIST(WeatherConClouds);
-	PARSE_RULES_LIST(WeatherConBolts);
-	PARSE_RULES_LIST(BridgeExplosions);
+	ParseList(pRules->WeatherConClouds, pINI, section, "WeatherConClouds");
+	ParseList(pRules->WeatherConBolts, pINI, section, "WeatherConBolts");
+	ParseList(pRules->BridgeExplosions, pINI, section, "BridgeExplosions");
 
-	PARSE_RULES_LIST(DefaultMirageDisguises);
+	ParseList(pRules->DefaultMirageDisguises, pINI, section, "DefaultMirageDisguises");
 	return 0;
 }
 
@@ -157,7 +139,7 @@ DEFINE_HOOK(66F34B, Buf_RepairBay, 5)
 {
 	GET(RulesClass *, Rules, ESI);
 
-	Rules->NoParachuteMaxFallRate = R->EAX();
+	Rules->NoParachuteMaxFallRate = R->EAX<int>();
 
 	return 0x66F450;
 }
@@ -179,16 +161,16 @@ DEFINE_HOOK(66BC71, Buf_CombatDamage, 9)
 	GET(RulesClass *, pRules, ESI);
 	GET(CCINIClass *, pINI, EDI);
 
-	pRules->TiberiumStrength = R->EAX();
+	pRules->TiberiumStrength = R->EAX<int>();
 
 	const char *section = "CombatDamage";
-	PARSE_RULES_LIST(Scorches);
-	PARSE_RULES_LIST(Scorches1);
-	PARSE_RULES_LIST(Scorches2);
-	PARSE_RULES_LIST(Scorches3);
-	PARSE_RULES_LIST(Scorches4);
+	ParseList(pRules->Scorches, pINI, section, "Scorches");
+	ParseList(pRules->Scorches1, pINI, section, "Scorches1");
+	ParseList(pRules->Scorches2, pINI, section, "Scorches2");
+	ParseList(pRules->Scorches3, pINI, section, "Scorches3");
+	ParseList(pRules->Scorches4, pINI, section, "Scorches4");
 
-	PARSE_RULES_LIST(SplashList);
+	ParseList(pRules->SplashList, pINI, section, "SplashList");
 	return 0x66C287;
 }
 
@@ -200,28 +182,28 @@ DEFINE_HOOK(672B0E, Buf_AI, 6)
 	GET(CCINIClass *, pINI, EDI);
 
 	const char *section = "AI";
-	PARSE_RULES_LIST(BuildConst);
-	PARSE_RULES_LIST(BuildPower);
-	PARSE_RULES_LIST(BuildRefinery);
-	PARSE_RULES_LIST(BuildBarracks);
-	PARSE_RULES_LIST(BuildTech);
-	PARSE_RULES_LIST(BuildWeapons);
-	PARSE_RULES_LIST(AlliedBaseDefenses);
-	PARSE_RULES_LIST(SovietBaseDefenses);
-	PARSE_RULES_LIST(ThirdBaseDefenses);
-	PARSE_RULES_LIST(BuildDefense);
-	PARSE_RULES_LIST(BuildPDefense);
-	PARSE_RULES_LIST(BuildAA);
-	PARSE_RULES_LIST(BuildHelipad);
-	PARSE_RULES_LIST(BuildRadar);
-	PARSE_RULES_LIST(ConcreteWalls);
-	PARSE_RULES_LIST(NSGates);
-	PARSE_RULES_LIST(EWGates);
-	PARSE_RULES_LIST(BuildNavalYard);
-	PARSE_RULES_LIST(BuildDummy);
-	PARSE_RULES_LIST(NeutralTechBuildings);
+	ParseList(pRules->BuildConst, pINI, section, "BuildConst");
+	ParseList(pRules->BuildPower, pINI, section, "BuildPower");
+	ParseList(pRules->BuildRefinery, pINI, section, "BuildRefinery");
+	ParseList(pRules->BuildBarracks, pINI, section, "BuildBarracks");
+	ParseList(pRules->BuildTech, pINI, section, "BuildTech");
+	ParseList(pRules->BuildWeapons, pINI, section, "BuildWeapons");
+	ParseList(pRules->AlliedBaseDefenses, pINI, section, "AlliedBaseDefenses");
+	ParseList(pRules->SovietBaseDefenses, pINI, section, "SovietBaseDefenses");
+	ParseList(pRules->ThirdBaseDefenses, pINI, section, "ThirdBaseDefenses");
+	ParseList(pRules->BuildDefense, pINI, section, "BuildDefense");
+	ParseList(pRules->BuildPDefense, pINI, section, "BuildPDefense");
+	ParseList(pRules->BuildAA, pINI, section, "BuildAA");
+	ParseList(pRules->BuildHelipad, pINI, section, "BuildHelipad");
+	ParseList(pRules->BuildRadar, pINI, section, "BuildRadar");
+	ParseList(pRules->ConcreteWalls, pINI, section, "ConcreteWalls");
+	ParseList(pRules->NSGates, pINI, section, "NSGates");
+	ParseList(pRules->EWGates, pINI, section, "EWGates");
+	ParseList(pRules->BuildNavalYard, pINI, section, "BuildNavalYard");
+	ParseList(pRules->BuildDummy, pINI, section, "BuildDummy");
+	ParseList(pRules->NeutralTechBuildings, pINI, section, "NeutralTechBuildings");
 
-	PARSE_RULES_LIST(AIForcePredictionFudge);
+	ParseList(pRules->AIForcePredictionFudge, pINI, section, "AIForcePredictionFudge");
 
 	return 0x673950;
 }
@@ -234,13 +216,13 @@ DEFINE_HOOK(7121A3, Buf_TechnoType, 6)
 	GET(const char *, section, EBX);
 	GET(CCINIClass *, pINI, ESI);
 
-	PARSE_LIST(T, DamageParticleSystems);
-	PARSE_LIST(T, DestroyParticleSystems);
+	ParseList(T->DamageParticleSystems, pINI, section, "DamageParticleSystems");
+	ParseList(T->DestroyParticleSystems, pINI, section, "DestroyParticleSystems");
 
-	PARSE_LIST(T, Dock);
+	ParseList(T->Dock, pINI, section, "Dock");
 
-	PARSE_LIST(T, DebrisMaximums);
-	PARSE_LIST(T, DebrisTypes);
+	ParseList(T->DebrisMaximums, pINI, section, "DebrisMaximums");
+	ParseList(T->DebrisTypes, pINI, section, "DebrisTypes");
 
 	return 0;
 }
@@ -271,10 +253,10 @@ DEFINE_HOOK(75D660, Buf_Warhead, 9)
 	GET(const char *, section, EBP);
 	GET(CCINIClass *, pINI, EDI);
 
-	PARSE_LIST(WH, AnimList);
+	ParseList(WH->AnimList, pINI, section, "AnimList");
 
-	PARSE_LIST(WH, DebrisMaximums);
-	PARSE_LIST(WH, DebrisTypes);
+	ParseList(WH->DebrisMaximums, pINI, section, "DebrisMaximums");
+	ParseList(WH->DebrisTypes, pINI, section, "DebrisTypes");
 
 	return 0;
 }
