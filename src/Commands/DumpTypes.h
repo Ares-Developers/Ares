@@ -23,11 +23,14 @@ public:
 	virtual const wchar_t* GetUIDescription()
 		{ return L"Dumps the current type list to the log"; }
 
-#define LOGTYPE(typestr, section) \
-	Debug::Log("[" # section "]\n"); \
-	for(int i = 0; i < typestr ## TypeClass::Array->Count; ++i) { \
-		typestr ## TypeClass *X = typestr ## TypeClass::Array->GetItem(i); \
-		Debug::Log("%d = %s\n", i, X->get_ID()); \
+	template <typename T>
+	void LogType(const char* pSection) const {
+		Debug::Log("[%s]\n", pSection);
+
+		int i = 0;
+		for(auto pItem : *T::Array) {
+			Debug::Log("%d = %s\n", i++, pItem->get_ID());
+		}
 	}
 
 	virtual void Execute(DWORD dwUnk)
@@ -40,24 +43,24 @@ public:
 
 		Debug::Log("Dumping Rules Types\n\n");
 
-		LOGTYPE(Anim, Animations);
-		LOGTYPE(Weapon, WeaponTypes);
-		LOGTYPE(Warhead, Warheads);
-		LOGTYPE(Bullet, Projectiles);
+		LogType<AnimTypeClass>("Animations");
+		LogType<WeaponTypeClass>("WeaponTypes");
+		LogType<WarheadTypeClass>("Warheads");
+		LogType<BulletTypeClass>("Projectiles");
 
-		LOGTYPE(House, Countries);
+		LogType<HouseTypeClass>("Countries");
 
-		LOGTYPE(Infantry, InfantryTypes);
-		LOGTYPE(Unit, VehicleTypes);
-		LOGTYPE(Aircraft, AircraftTypes);
-		LOGTYPE(Building, BuildingTypes);
+		LogType<InfantryTypeClass>("InfantryTypes");
+		LogType<UnitTypeClass>("VehicleTypes");
+		LogType<AircraftTypeClass>("AircraftTypes");
+		LogType<BuildingTypeClass>("BuildingTypes");
 
-		LOGTYPE(SuperWeapon, SuperWeaponTypes);
-		LOGTYPE(Smudge, SmudgeTypes);
-		LOGTYPE(Overlay, OverlayTypes);
-//		LOGTYPE(Terrain, TerrainTypes); // needs class map in YRPP
-		LOGTYPE(Particle, Particles);
-		LOGTYPE(ParticleSystem, ParticleSystems);
+		LogType<SuperWeaponTypeClass>("SuperWeaponTypes");
+		LogType<SmudgeTypeClass>("SmudgeTypes");
+		LogType<OverlayTypeClass>("OverlayTypes");
+//		LogType<TerrainTypeClass>("TerrainTypes"); // needs class map in YRPP
+		LogType<ParticleTypeClass>("Particles");
+		LogType<ParticleSystemTypeClass>("ParticleSystems");
 
 /*
 		Debug::Log("Dumping Art Types\n\n");
@@ -68,26 +71,20 @@ public:
 */
 
 		Debug::Log("Dumping AI Types\n\n");
-		LOGTYPE(Script, ScriptTypes);
-		LOGTYPE(Team, TeamTypes);
-
-		Debug::Log("[TaskForces]\n");
-		for(int i = 0; i < TaskForceClass::Array->Count; ++i) {
-			TaskForceClass *X = TaskForceClass::Array->GetItem(i);
-			Debug::Log("%d = %s\n", i, X->get_ID());
-		}
+		LogType<ScriptTypeClass>("ScriptTypes");
+		LogType<TeamTypeClass>("TeamTypes");
+		LogType<TaskForceClass>("TaskForces");
 
 		Debug::Log("[AITriggerTypes]\n");
 		for(int i = 0; i < AITriggerTypeClass::Array->Count; ++i) {
 			char Buffer[1024];
-			memset(Buffer, 0, 1024);
-			AITriggerTypeClass::Array->GetItem(i)->FormatForSaving(Buffer, sizeof(Buffer));
+			AITriggerTypeClass::Array->Items[i]->FormatForSaving(Buffer, sizeof(Buffer));
 			Debug::Log("%s\n", Buffer);
 		}
 
 		Debug::Log("[AITriggerTypesEnable]\n");
 		for(int i = 0; i < AITriggerTypeClass::Array->Count; ++i) {
-			AITriggerTypeClass *X = AITriggerTypeClass::Array->GetItem(i);
+			AITriggerTypeClass *X = AITriggerTypeClass::Array->Items[i];
 			Debug::Log("%X = %s\n", X->get_ID(), X->IsEnabled ? "yes" : "no");
 		}
 
