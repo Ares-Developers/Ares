@@ -173,7 +173,7 @@ DEFINE_HOOK(702E9D, TechnoClass_RegisterDestruction_Veterancy, 6) {
 							sound = RulesClass::Instance->UpgradeEliteSound;
 						}
 
-						if(sound != -1 && pExperience->Owner->ControlledByHuman()) {
+						if(pExperience->Owner->ControlledByHuman()) {
 							VocClass::PlayAt(sound, pExperience->Transporter->Location, nullptr);
 							VoxClass::Play("EVA_UnitPromoted");
 						}
