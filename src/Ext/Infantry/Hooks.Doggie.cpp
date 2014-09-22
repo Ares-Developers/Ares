@@ -2,6 +2,8 @@
 
 #include <CellClass.h>
 
+const int DoggiePanicMax = 300;
+
 DEFINE_HOOK(51F628, InfantryClass_Guard_Doggie, 5)
 {
 	GET(InfantryClass*, pThis, ESI);
@@ -34,7 +36,7 @@ DEFINE_HOOK(518CB3, InfantryClass_ReceiveDamage_Doggie, 6)
 
 	// hurt doggie gets more panic
 	if(pThis->Type->Doggie && pThis->IsRedHP()) {
-		R->EDI(300);
+		R->EDI(DoggiePanicMax);
 	}
 
 	return 0;
@@ -61,7 +63,7 @@ DEFINE_HOOK(5200C1, InfantryClass_UpdatePanic_Doggie, 6)
 	}
 
 	// if panicking badly, lay down on tiberium
-	if(pThis->PanicDurationLeft >= 200) {
+	if(pThis->PanicDurationLeft >= DoggiePanicMax) {
 		if(!pThis->Destination && !pThis->Locomotor->Is_Moving()) {
 			if(pThis->GetCell()->LandType == LandType::Tiberium) {
 				// is on tiberium. just lay down
