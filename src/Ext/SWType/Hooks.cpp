@@ -700,6 +700,14 @@ DEFINE_HOOK(4F9004, HouseClass_Update_TrySWFire, 7) {
 	return 0x4F9038;
 }
 
+// #1369308: if still charged it hasn't fired.
+// more efficient place would be 4FAEC9, but this is global
+DEFINE_HOOK(4FAF2A, HouseClass_SWDefendAgainst_Aborted, 8)
+{
+	GET(SuperClass*, pSW, EAX);
+	return (pSW && !pSW->IsCharged) ? 0x4FAF32 : 0x4FB0CF;
+}
+
 DEFINE_HOOK(6CBF5B, SuperClass_GetCameoChargeState_ChargeDrainRatio, 9) {
 	GET_STACK(int, rechargeTime1, 0x10);
 	GET_STACK(int, rechargeTime2, 0x14);
