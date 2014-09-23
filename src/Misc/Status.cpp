@@ -107,3 +107,31 @@ DEFINE_HOOK(74FAE0, GetModuleInternalVersion, 5)
 	R->EAX<const char *>(DISPLAY_STRMINI);
 	return 0x74FC7B;
 }
+
+DEFINE_HOOK(532017, DlgProc_MainMenu_Version, 5)
+{
+	GET(HWND, hWnd, ESI);
+
+	// account for longer version numbers
+	const int MinimumWidth = 168;
+
+	RECT Rect;
+	if(GetWindowRect(hWnd, &Rect)) {
+		int width = Rect.right - Rect.left;
+
+		if(width < MinimumWidth) {
+			// extend to the left by the difference
+			Rect.left -= (MinimumWidth - width);
+
+			// if moved out of screen, move right by this amount
+			if(Rect.left < 0) {
+				Rect.right += -Rect.left;
+				Rect.left = 0;
+			}
+
+			MoveWindow(hWnd, Rect.left, Rect.top, Rect.right - Rect.left, Rect.bottom - Rect.top, FALSE);
+		}
+	}
+
+	return 0;
+}
