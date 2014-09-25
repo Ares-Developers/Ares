@@ -86,10 +86,13 @@ void UnitDeliveryStateMachine::PlaceUnits()
 		SpeedType SpeedType = SpeedType::Track;
 		MovementZone MovementZone = MovementZone::Normal;
 		bool buildable = false;
+		bool anywhere = false;
 
 		if(ItemBuilding) {
-			extentX = ItemBuilding->Type->GetFoundationWidth();
-			extentY = ItemBuilding->Type->GetFoundationHeight(true);
+			auto BuildingType = ItemBuilding->Type;
+			extentX = BuildingType->GetFoundationWidth();
+			extentY = BuildingType->GetFoundationHeight(true);
+			anywhere = BuildingType->PlaceAnywhere;
 			if(Type->SpeedType == SpeedType::Float) {
 				SpeedType = SpeedType::Float;
 			} else {
@@ -104,13 +107,15 @@ void UnitDeliveryStateMachine::PlaceUnits()
 		}
 
 		// move the target cell so this object is centered on the actual location
-		CellStruct CenteredOnCords = this->Coords - CellStruct{extentX / 2, extentY / 2};
+		auto PlaceCoords = this->Coords - CellStruct{extentX / 2, extentY / 2};
 
 		// find a place to put this
-		int a5 = -1; // usually MapClass::CanLocationBeReached call. see how far we can get without it
-		auto PlaceCoords = MapClass::Instance->Pathfinding_Find(CenteredOnCords,
-			SpeedType, a5, MovementZone, false, extentX, extentY, true, false,
-			false, false, CellStruct::Empty, false, buildable);
+		if(!anywhere) {
+			int a5 = -1; // usually MapClass::CanLocationBeReached call. see how far we can get without it
+			PlaceCoords = MapClass::Instance->Pathfinding_Find(PlaceCoords,
+				SpeedType, a5, MovementZone, false, extentX, extentY, true,
+				false, false, false, CellStruct::Empty, false, buildable);
+		}
 
 		if(auto pCell = MapClass::Instance->TryGetCellAt(PlaceCoords)) {
 			Item->OnBridge = pCell->ContainsBridge();
