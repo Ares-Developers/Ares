@@ -22,7 +22,8 @@ template <typename T>
 void Valueable<T>::Read(INI_EX &parser, const char* pSection, const char* pKey, bool Allocate) {
 	if(parser.ReadString(pSection, pKey)) {
 		const char * val = parser.value();
-		if(auto parsed = (Allocate ? base_type::FindOrAllocate : base_type::Find)(val)) {
+		auto parsed = (Allocate ? base_type::FindOrAllocate : base_type::Find)(val);
+		if(parsed || INIClass::IsBlank(val)) {
 			this->Set(parsed);
 		} else {
 			Debug::INIParseFailed(pSection, pKey, val);
