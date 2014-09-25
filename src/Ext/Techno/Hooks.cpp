@@ -1766,6 +1766,7 @@ DEFINE_HOOK(6F525B, TechnoClass_DrawExtras_PowerOff, 5)
 			// only if disabled by power toggle (excludes temporal attacks)
 			&& !pBld->StuffEnabled
 			&& !pBld->IsWarpingIn()
+			&& !pBld->IsUnderEMP()
 			// only for owned buildings, but observers got magic eyes
 			&& (pBld->Owner->ControlledByPlayer() || HouseClass::IsPlayerObserver());
 
