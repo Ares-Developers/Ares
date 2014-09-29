@@ -42,6 +42,8 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 	char* pArtID = pThis->ImageFile;
 	char* pID = pThis->ID;
 
+	INI_EX exINI(pINI);
+
 	this->PrismForwarding.LoadFromINIFile(pThis, pINI);
 
 	if(pThis->UnitRepair && pThis->Factory == AbstractType::AircraftType) {
@@ -151,7 +153,7 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 		}
 	}
 
-	this->Secret_RecalcOnCapture = pINI->ReadBool(pID, "SecretLab.GenerateOnCapture", this->Secret_RecalcOnCapture);
+	this->Secret_RecalcOnCapture.Read(exINI, pID, "SecretLab.GenerateOnCapture");
 
 	// added on 11.11.09 for #221 and children (Trenches)
 	this->UCPassThrough = pINI->ReadDouble(pID, "UC.PassThrough", this->UCPassThrough);
@@ -179,8 +181,6 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 
 //	this->LegacyRadarEffect = pINI->ReadBool(pID, "SpyEffect.LegacyRadar", this->LegacyRadarEffect);
 //	this->DisplayProduction = pINI->ReadBool(pID, "SpyEffect.DisplayProduction", this->DisplayProduction);
-
-	INI_EX exINI(pINI);
 
 	this->RubbleDestroyed.Read(exINI, pID, "Rubble.Destroyed");
 	this->RubbleIntact.Read(exINI, pID, "Rubble.Intact");

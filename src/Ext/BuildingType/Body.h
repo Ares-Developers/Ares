@@ -102,7 +102,7 @@ public:
 
 		// new secret lab
 		DynamicVectorClass<TechnoTypeClass *> Secret_Boons;
-		bool Secret_RecalcOnCapture;
+		Valueable<bool> Secret_RecalcOnCapture;
 		bool Secret_Placed;
 
 		// new firestorm wall
