@@ -125,7 +125,7 @@ void SideExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 	this->ParaDropNum.Read(exINI, section, "ParaDrop.Num");
 
 	this->SidebarMixFileIndex.Read(exINI, section, "Sidebar.MixFileIndex");
-	this->SidebarYuriFileNames = pINI->ReadBool(section, "Sidebar.YuriFileNames", this->SidebarYuriFileNames);
+	this->SidebarYuriFileNames.Read(exINI, section, "Sidebar.YuriFileNames");
 	this->ToolTipTextColor.Read(exINI, section, "ToolTipColor");
 	this->SurvivorDivisor.Read(exINI, section, "SurvivorDivisor");
 	this->MessageTextColorIndex.Read(exINI, section, "MessageTextColor");

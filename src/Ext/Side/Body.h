@@ -41,7 +41,7 @@ class SideExt
 		Valueable<ColorStruct> ToolTipTextColor;
 		ValueableIdx<ColorScheme> MessageTextColorIndex;
 		Valueable<int> SidebarMixFileIndex;
-		bool SidebarYuriFileNames;
+		Valueable<bool> SidebarYuriFileNames;
 		ValueableIdx<EVAVoices> EVAIndex;
 		Valueable<UnitTypeClass*> HunterSeeker;
 
