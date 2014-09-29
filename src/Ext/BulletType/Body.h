@@ -23,7 +23,7 @@ public:
 	{
 	public:
 		// solid
-		bool SubjectToSolid;
+		Valueable<bool> SubjectToSolid;
 
 		// firewall
 		bool SubjectToFirewall;
