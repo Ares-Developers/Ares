@@ -156,7 +156,6 @@ void HouseTypeExt::ExtData::InitializeConstants() {
 		this->StatusText = CSFText("GUI:Unknown");
 		this->TauntFile = "taunts\\tauam%02i.wav";
 	}
-	this->RandomSelectionWeight = 1;
 	this->CountryListIndex = 100;
 }
 
@@ -263,7 +262,7 @@ void HouseTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI) {
 
 	this->LoadTextColor.Read(exINI, pID, "LoadScreenText.Color");
 
-	this->RandomSelectionWeight = pINI->ReadInteger(pID, "RandomSelectionWeight", this->RandomSelectionWeight);
+	this->RandomSelectionWeight.Read(exINI, pID, "RandomSelectionWeight");
 	this->CountryListIndex = pINI->ReadInteger(pID, "ListIndex", this->CountryListIndex);
 
 	this->VeteranBuildings.Read(exINI, pID, "VeteranBuildings");
