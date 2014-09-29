@@ -111,7 +111,7 @@ public:
 		Valueable<bool> IsPassable;
 
 		// lightning rod
-		double LightningRod_Modifier;
+		Valueable<double> LightningRod_Modifier;
 
 		// added on 11.11.09 for #221 and children (Trenches)
 		double UCPassThrough; 					//!< How many percent of the shots pass through the building to the occupants? 0.0 = 0%, 1.0 = 100%; Defaults to 0.0.
