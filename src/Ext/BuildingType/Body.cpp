@@ -159,7 +159,7 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 	this->UCPassThrough.Read(exINI, pID, "UC.PassThrough");
 	this->UCFatalRate.Read(exINI, pID, "UC.FatalRate");
 	this->UCDamageMultiplier.Read(exINI, pID, "UC.DamageMultiplier");
-	this->BunkerRaidable = pINI->ReadBool(pID, "Bunker.Raidable", this->BunkerRaidable);
+	this->BunkerRaidable.Read(exINI, pID, "Bunker.Raidable");
 	if(pINI->ReadString(pID, "IsTrench", "", Ares::readBuffer, Ares::readLength)) {
 		/*  Find the name in the list of kinds; if the list is empty, distance is 0, if the item isn't in
 			the list, the index is the current list's size(); if the returned iterator is beyond the list,
