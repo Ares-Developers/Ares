@@ -106,7 +106,7 @@ public:
 		bool Secret_Placed;
 
 		// new firestorm wall
-		bool Firewall_Is;
+		Valueable<bool> Firewall_Is;
 
 		Valueable<bool> IsPassable;
 

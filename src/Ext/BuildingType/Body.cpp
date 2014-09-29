@@ -52,7 +52,7 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 			"This combination causes Internal Errors and other unwanted behaviour.", pID);
 	}
 
-	this->Firewall_Is = pINI->ReadBool(pID, "Firestorm.Wall", this->Firewall_Is);
+	this->Firewall_Is.Read(exINI, pID, "Firestorm.Wall");
 
 	CCINIClass* pArtINI = CCINIClass::INI_Art;
 	this->Solid_Height = pArtINI->ReadInteger(pArtID, "SolidHeight", this->Solid_Height);
