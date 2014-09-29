@@ -156,7 +156,7 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 	this->Secret_RecalcOnCapture.Read(exINI, pID, "SecretLab.GenerateOnCapture");
 
 	// added on 11.11.09 for #221 and children (Trenches)
-	this->UCPassThrough = pINI->ReadDouble(pID, "UC.PassThrough", this->UCPassThrough);
+	this->UCPassThrough.Read(exINI, pID, "UC.PassThrough");
 	this->UCFatalRate = pINI->ReadDouble(pID, "UC.FatalRate", this->UCFatalRate);
 	this->UCDamageMultiplier = pINI->ReadDouble(pID, "UC.DamageMultiplier", this->UCDamageMultiplier);
 	this->BunkerRaidable = pINI->ReadBool(pID, "Bunker.Raidable", this->BunkerRaidable);
