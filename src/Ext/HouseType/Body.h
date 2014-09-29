@@ -41,7 +41,7 @@ public:
 		Valueable<CSFText> StatusText; // for this country's Skirmish STT
 		ValueableIdx<ColorScheme> LoadTextColor; //The text color used for non-Campaign modes
 		Valueable<int> RandomSelectionWeight; //This country gets added this many times into the list of legible countries for random selection.
-		int CountryListIndex; //The index this country will appear in the selection list.
+		Valueable<int> CountryListIndex; //The index this country will appear in the selection list.
 
 		ValueableVector<BuildingTypeClass *> Powerplants;
 		ValueableVector<TechnoTypeClass*> ParaDropTypes;
@@ -61,7 +61,7 @@ public:
 
 		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			RandomSelectionWeight(1),
-			CountryListIndex(0),
+			CountryListIndex(100),
 			ParaDropPlane(-1),
 			Parachute_Anim(nullptr),
 			VeteranBuildings(),
