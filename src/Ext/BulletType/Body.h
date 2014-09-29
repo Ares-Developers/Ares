@@ -26,7 +26,7 @@ public:
 		Valueable<bool> SubjectToSolid;
 
 		// firewall
-		bool SubjectToFirewall;
+		Valueable<bool> SubjectToFirewall;
 
 		bool Parachuted;
 

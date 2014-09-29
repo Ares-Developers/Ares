@@ -23,7 +23,7 @@ void BulletTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 	INI_EX exINI(pINI);
 
 	this->SubjectToSolid.Read(exINI, pThis->ID, "SubjectToBuildings");
-	this->SubjectToFirewall = pINI->ReadBool(pThis->ID, "SubjectToFirewall", this->SubjectToFirewall);
+	this->SubjectToFirewall.Read(exINI, pThis->ID, "SubjectToFirewall");
 	this->Parachuted = pINI->ReadBool(pThis->ID, "Parachuted", this->Parachuted);
 
 	this->SubjectToTrenches = pINI->ReadBool(pThis->ID, "SubjectToTrenches", this->SubjectToTrenches);
