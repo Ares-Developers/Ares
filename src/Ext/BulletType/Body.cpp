@@ -26,7 +26,7 @@ void BulletTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 	this->SubjectToFirewall.Read(exINI, pThis->ID, "SubjectToFirewall");
 	this->Parachuted.Read(exINI, pThis->ID, "Parachuted");
 
-	this->SubjectToTrenches = pINI->ReadBool(pThis->ID, "SubjectToTrenches", this->SubjectToTrenches);
+	this->SubjectToTrenches.Read(exINI, pThis->ID, "SubjectToTrenches");
 
 	this->ImageConvert.clear();
 

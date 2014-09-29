@@ -54,7 +54,7 @@ bool BulletExt::ExtData::DamageOccupants() {
 		return false;
 	}
 
-	Debug::Log("SubjToTrenches = %d\n", TheBulletTypeExt->SubjectToTrenches);
+	Debug::Log("SubjToTrenches = %d\n", TheBulletTypeExt->SubjectToTrenches.Get());
 
 	// test for SubjectToTrenches because being SubjectToTrenches means "we're getting stopped by trenches".
 	if(TheBulletTypeExt->SubjectToTrenches && ScenarioClass::Instance->Random.RandomDouble() >= BuildingAresData->UCPassThrough) {

@@ -31,7 +31,7 @@ public:
 		Valueable<bool> Parachuted;
 
 		// added on 11.11.09 for #667 (part of Trenches)
-		bool SubjectToTrenches; //! if false, this projectile/weapon *always* passes through to the occupants, regardless of UC.PassThrough
+		Valueable<bool> SubjectToTrenches; //! if false, this projectile/weapon *always* passes through to the occupants, regardless of UC.PassThrough
 
 		// cache for the image animation's palette convert
 		OptionalStruct<ConvertClass*> ImageConvert;
