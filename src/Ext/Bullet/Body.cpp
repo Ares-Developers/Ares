@@ -77,7 +77,7 @@ bool BulletExt::ExtData::DamageOccupants() {
 		Building->UpdateThreatInCell(Building->GetCell());
 	} else {
 		// just a flesh wound
-		Debug::Log("Flesh wound - health(%d) * UCDmgMult(%lf)\n", TheBullet->Health, BuildingAresData->UCDamageMultiplier);
+		Debug::Log("Flesh wound - health(%d) * UCDmgMult(%lf)\n", TheBullet->Health, BuildingAresData->UCDamageMultiplier.Get());
 		// Bullet->Health is the damage it delivers (go Westwood)
 		int adjustedDamage = static_cast<int>(std::ceil(TheBullet->Health * BuildingAresData->UCDamageMultiplier));
 		Debug::Log("Adjusted damage = %d\n", adjustedDamage);
