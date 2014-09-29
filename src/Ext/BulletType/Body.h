@@ -28,7 +28,7 @@ public:
 		// firewall
 		Valueable<bool> SubjectToFirewall;
 
-		bool Parachuted;
+		Valueable<bool> Parachuted;
 
 		// added on 11.11.09 for #667 (part of Trenches)
 		bool SubjectToTrenches; //! if false, this projectile/weapon *always* passes through to the occupants, regardless of UC.PassThrough

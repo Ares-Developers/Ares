@@ -55,7 +55,7 @@ DEFINE_HOOK(46867F, BulletClass_SetMovement_Parachute, 5)
 
 	BulletTypeExt::ExtData *pBulletData = BulletTypeExt::ExtMap.Find(Bullet->Type);
 
-//	Debug::Log("Bullet [%s] is parachuted (%d)\n", Bullet->Type->get_ID(), pBulletData->Parachuted);
+//	Debug::Log("Bullet [%s] is parachuted (%d)\n", Bullet->Type->get_ID(), pBulletData->Parachuted.Get());
 
 	byte result;
 	if(pBulletData->Parachuted) {
