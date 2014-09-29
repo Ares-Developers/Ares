@@ -200,9 +200,7 @@ void SWTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 	this->SW_AnyDesignator.Read(exINI, section, "SW.AnyDesignator");
 
 	// the fallback is handled in the PreDependent SW's code
-	if(pINI->ReadString(section, "SW.PostDependent", Ares::readDefval, Ares::readBuffer, Ares::readLength)) {
-		AresCRT::strCopy(this->SW_PostDependent, Ares::readBuffer);
-	}
+	this->SW_PostDependent.Read(pINI, section, "SW.PostDependent");
 
 	// initialize the NewSWType that handles this SWType.
 	if(auto pNewSWType = this->GetNewSWType()) {

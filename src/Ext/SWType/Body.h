@@ -191,7 +191,7 @@ public:
 		Valueable<bool> SW_Unstoppable;
 		Valueable<MouseCursor> SW_Cursor;
 		Valueable<MouseCursor> SW_NoCursor;
-		char SW_PostDependent[0x18];
+		AresFixedString<0x19> SW_PostDependent;
 		ValueableEnum<SuperWeaponAITargetingMode> SW_AITargetingType;
 		Nullable<double> SW_ChargeToDrainRatio;
 
@@ -313,9 +313,7 @@ public:
 			LastAction (Action::None),
 			CameoPal(),
 			SW_DeliverBuildups (false)
-			{
-				*SW_PostDependent = 0;
-			};
+		{ };
 
 		virtual ~ExtData() = default;
 
