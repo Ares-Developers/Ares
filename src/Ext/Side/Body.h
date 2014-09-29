@@ -40,7 +40,7 @@ class SideExt
 		Nullable<AnimTypeClass*> Parachute_Anim;
 		Valueable<ColorStruct> ToolTipTextColor;
 		ValueableIdx<ColorScheme> MessageTextColorIndex;
-		int SidebarMixFileIndex;
+		Valueable<int> SidebarMixFileIndex;
 		bool SidebarYuriFileNames;
 		ValueableIdx<EVAVoices> EVAIndex;
 		Valueable<UnitTypeClass*> HunterSeeker;
