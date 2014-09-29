@@ -21,20 +21,16 @@ void BuildingTypeExt::ExtData::Initialize()
 {
 	if(this->OwnerObject()->SecretLab) {
 		this->Secret_Boons.Clear();
-		DynamicVectorClass<TechnoTypeClass *> *Options
-			= (DynamicVectorClass<TechnoTypeClass *> *)&RulesClass::Instance->SecretInfantry;
-		for(int i = 0; i < Options->Count; ++i) {
-			this->Secret_Boons.AddItem(Options->GetItem(i));
+		for(auto pType : RulesClass::Instance->SecretInfantry) {
+			this->Secret_Boons.AddItem(pType);
 		}
 
-		Options = (DynamicVectorClass<TechnoTypeClass *> *)&RulesClass::Instance->SecretUnits;
-		for(int i = 0; i < Options->Count; ++i) {
-			this->Secret_Boons.AddItem(Options->GetItem(i));
+		for(auto pType : RulesClass::Instance->SecretUnits) {
+			this->Secret_Boons.AddItem(pType);
 		}
 
-		Options = (DynamicVectorClass<TechnoTypeClass *> *)&RulesClass::Instance->SecretBuildings;
-		for(int i = 0; i < Options->Count; ++i) {
-			this->Secret_Boons.AddItem(Options->GetItem(i));
+		for(auto pType : RulesClass::Instance->SecretBuildings) {
+			this->Secret_Boons.AddItem(pType);
 		}
 	}
 	this->PrismForwarding.Initialize(this->OwnerObject());
