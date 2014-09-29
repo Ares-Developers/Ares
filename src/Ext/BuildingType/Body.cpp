@@ -157,7 +157,7 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 
 	// added on 11.11.09 for #221 and children (Trenches)
 	this->UCPassThrough.Read(exINI, pID, "UC.PassThrough");
-	this->UCFatalRate = pINI->ReadDouble(pID, "UC.FatalRate", this->UCFatalRate);
+	this->UCFatalRate.Read(exINI, pID, "UC.FatalRate");
 	this->UCDamageMultiplier = pINI->ReadDouble(pID, "UC.DamageMultiplier", this->UCDamageMultiplier);
 	this->BunkerRaidable = pINI->ReadBool(pID, "Bunker.Raidable", this->BunkerRaidable);
 	if(pINI->ReadString(pID, "IsTrench", "", Ares::readBuffer, Ares::readLength)) {
