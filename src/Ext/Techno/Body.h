@@ -118,9 +118,7 @@ public:
 			Crate_ArmorMultiplier(1.0),
 			Crate_SpeedMultiplier(1.0),
 			Crate_Cloakable(false)
-			{
-				this->CloakSkipTimer.Stop();
-			};
+			{ };
 
 		virtual ~ExtData() {
 			this->SetSpotlight(nullptr);
