@@ -188,6 +188,8 @@ public:
 			CustomData (),
 			OutlineData (),
 			FoundationRadarShape (),
+			Secret_RecalcOnCapture (false),
+			Secret_Placed (false),
 			Firewall_Is (false),
 			IsPassable (false),
 			UCPassThrough (0.0),
