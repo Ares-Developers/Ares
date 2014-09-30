@@ -29,7 +29,7 @@ OwnerHouseKind AnimTypeExt::SetMakeInfOwner(AnimClass *pAnim, HouseClass *pInvok
 	auto pAnimData = AnimTypeExt::ExtMap.Find(pAnim->Type);
 
 	auto newOwner = HouseExt::GetHouseKind(pAnimData->MakeInfantryOwner, true,
-		nullptr, pInvoker, pVictim, pKiller);
+		nullptr, pInvoker, pKiller, pVictim);
 
 	if(newOwner) {
 		pAnim->Owner = newOwner;
