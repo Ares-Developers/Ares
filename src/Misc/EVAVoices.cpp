@@ -104,7 +104,7 @@ DEFINE_HOOK(753380, VoxClass_GetFilename, 5)
 	GET(VoxClass2*, pThis, ECX);
 	int index = VoxClass::EVAIndex;
 
-	char* ret = nullptr;
+	const char* ret = nullptr;
 	switch(index)
 	{
 	case -1:

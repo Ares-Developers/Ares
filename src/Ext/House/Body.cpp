@@ -392,7 +392,7 @@ bool HouseExt::ExtData::CheckBasePlanSanity() {
 	}
 
 	auto CheckList = [House, errorMsg, &AllIsWell]
-			(DynamicVectorClass<BuildingTypeClass *> *const List, char * const ListName) -> void {
+			(DynamicVectorClass<BuildingTypeClass *> *const List, const char * const ListName) -> void {
 		if(!House->FirstBuildableFromArray(List)) {
 			AllIsWell = false;
 			Debug::DevLog(Debug::Error, errorMsg, House->Type->ID, ListName);

@@ -179,7 +179,7 @@ DEFINE_HOOK(6847B7, Sides_LoadTextColor_CacheMP, 6) {
 DEFINE_HOOK(686D7F, Sides_LoadTextColor_CacheSP, 6) {
 	LEA_STACK(INIClass*, pINI, 0x1C);
 
-	char* pDefault = "";
+	const char* pDefault = "";
 	const char* pID =  ScenarioClass::Instance->FileName;
 
 	if(!_strnicmp(pID, "SOV", 3)) {

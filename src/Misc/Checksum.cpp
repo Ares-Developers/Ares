@@ -65,7 +65,7 @@ template<>
 void WriteLog(const ObjectClass* it, int idx, DWORD checksum, FILE * F) {
 	WriteLog<AbstractClass>(it, idx, checksum, F);
 
-	char* typeID = "<None>";
+	const char* typeID = "<None>";
 	int typeIndex = -1;
 	if(auto pType = it->GetType()) {
 		typeID = pType->ID;

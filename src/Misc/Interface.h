@@ -52,10 +52,10 @@ public:
 
 	static int slots[4];
 
-	static bool invokeClickAction(eUIAction, char*, int*, int);
+	static bool invokeClickAction(eUIAction, const char*, int*, int);
 	static void updateMenuItems(HWND, MenuItem*, int);
 	static void updateMenu(HWND hDlg, int iID);
-	static eUIAction parseUIAction(char*, eUIAction);
+	static eUIAction parseUIAction(const char*, eUIAction);
 	static int getSlotIndex(int);
 
 private:

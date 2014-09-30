@@ -21,7 +21,7 @@
 	\author AlexB
 	\date 2010-06-20
 */
-bool Interface::invokeClickAction(eUIAction action, char* name, int* pResult, int nextMenu) {
+bool Interface::invokeClickAction(eUIAction action, const char* name, int* pResult, int nextMenu) {
 	// reset
 	nextAction = -1;
 	nextReturnMenu = -1;
@@ -157,7 +157,7 @@ void Interface::swapItems(HWND hDlg, int nIDDlgItem1, int nIDDlgItem2) {
 	\author AlexB
 	\date 2010-06-20
 */
-Interface::eUIAction Interface::parseUIAction(char* value, Interface::eUIAction def) {
+Interface::eUIAction Interface::parseUIAction(const char* value, Interface::eUIAction def) {
 	if(!_strcmpi(value, "message")) {
 		return Interface::uia_Message;
 	} else if(!_strcmpi(value, "disable")) {

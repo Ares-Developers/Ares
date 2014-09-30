@@ -87,7 +87,10 @@ void Ares::UISettings::Load(CCINIClass *pINI) {
 	ShowDebugCampaigns = pINI->ReadBool(section, "ShowDebugCampaigns", ShowDebugCampaigns);
 
 	// read the campaigns that can be started from the default campaign selection menu
-	auto ReadCampaign = [&](const char* name, Interface::CampaignData *value, char* defBattle, char* defImage, char* defPalette, char* defSubline) {
+	auto ReadCampaign = [&](const char* name, Interface::CampaignData *value,
+		const char* defBattle, const char* defImage, const char* defPalette,
+		const char* defSubline)
+	{
 		if(pINI->ReadString(section, name, defBattle, Ares::readBuffer, Ares::readLength)) {
 			AresCRT::strCopy(value->Battle, Ares::readBuffer);
 		}
@@ -143,7 +146,7 @@ void Ares::UISettings::Load(CCINIClass *pINI) {
 		return defColor;
 	};
 
-	auto ReadColor = [&](const char* name, Interface::ColorData *value, int colorRGB, char* defTooltip, char* defColorScheme) {
+	auto ReadColor = [&](const char* name, Interface::ColorData *value, int colorRGB, const char* defTooltip, const char* defColorScheme) {
 		// load the tooltip string
 		char buffer[0x20];
 		sprintf_s(buffer, 0x20, "%s.Tooltip", name);
