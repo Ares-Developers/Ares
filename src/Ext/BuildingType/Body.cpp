@@ -19,20 +19,6 @@ std::vector<std::string> BuildingTypeExt::ExtData::trenchKinds;
 
 void BuildingTypeExt::ExtData::Initialize()
 {
-	if(this->OwnerObject()->SecretLab) {
-		this->Secret_Boons.Clear();
-		for(auto pType : RulesClass::Instance->SecretInfantry) {
-			this->Secret_Boons.AddItem(pType);
-		}
-
-		for(auto pType : RulesClass::Instance->SecretUnits) {
-			this->Secret_Boons.AddItem(pType);
-		}
-
-		for(auto pType : RulesClass::Instance->SecretBuildings) {
-			this->Secret_Boons.AddItem(pType);
-		}
-	}
 	this->PrismForwarding.Initialize(this->OwnerObject());
 }
 
@@ -139,20 +125,7 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 
 	}
 
-	if(pINI->ReadString(pID, "SecretLab.PossibleBoons", "", Ares::readBuffer, Ares::readLength)) {
-		this->Secret_Boons.Clear();
-
-		char* context = nullptr;
-		for(char *cur = strtok_s(Ares::readBuffer, ",", &context); cur; cur = strtok_s(nullptr, ",", &context)) {
-			TechnoTypeClass *pTechno = TechnoTypeClass::Find(cur);
-			if(pTechno) {
-				this->Secret_Boons.AddItem(pTechno);
-			} else {
-				Debug::INIParseFailed(pID, "SecretLab.PossibleBoons", cur);
-			}
-		}
-	}
-
+	this->Secret_Boons.Read(exINI, pID, "SecretLab.PossibleBoons");
 	this->Secret_RecalcOnCapture.Read(exINI, pID, "SecretLab.GenerateOnCapture");
 
 	// added on 11.11.09 for #221 and children (Trenches)

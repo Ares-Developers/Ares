@@ -757,6 +757,7 @@ void BuildingExt::ExtData::UpdateSensorArray() {
 // Assigns a secret production option to the building.
 void BuildingExt::ExtData::UpdateSecretLab() {
 	auto pThis = this->OwnerObject();
+	auto pOwner = pThis->Owner;
 	BuildingTypeClass *pType = pThis->Type;
 	BuildingTypeExt::ExtData* pData = BuildingTypeExt::ExtMap.Find(pType);
 
@@ -774,44 +775,47 @@ void BuildingExt::ExtData::UpdateSecretLab() {
 		return;
 	}
 
-	if(!pData->Secret_Boons.Count || (this->SecretLab_Placed && !pData->Secret_RecalcOnCapture)) {
+	if(this->SecretLab_Placed && !pData->Secret_RecalcOnCapture) {
 		return;
 	}
 
-	HouseClass *Owner = pThis->Owner;
-	unsigned int OwnerBits = 1 << Owner->Type->ArrayIndex;
+	DynamicVectorClass<TechnoTypeClass*> Options;
 
-	DynamicVectorClass<TechnoTypeClass *> Options;
-	for(int i = 0; i < pData->Secret_Boons.Count; ++i) {
-		TechnoTypeClass * Option = pData->Secret_Boons.GetItem(i);
-		TechnoTypeExt::ExtData* pTech = TechnoTypeExt::ExtMap.Find(Option);
+	auto AddToOptions = [&](const Iterator<TechnoTypeClass*> &items) {
+		auto OwnerBits = !pOwner ? 0u : (1u << pOwner->Type->ArrayIndex);
 
-		if((pTech->Secret_RequiredHouses & OwnerBits) && !(pTech->Secret_ForbiddenHouses & OwnerBits)) {
-			bool ShouldAdd = false;
-			switch(HouseExt::RequirementsMet(Owner, Option)) {
-			case HouseExt::RequirementStatus::Forbidden:
-			case HouseExt::RequirementStatus::Incomplete:
-				ShouldAdd = true;
-				break;
-			}
-			if(ShouldAdd) {
-				Options.AddItem(Option);
+		for(const auto& Option : items) {
+			auto pExt = TechnoTypeExt::ExtMap.Find(Option);
+
+			if((pExt->Secret_RequiredHouses & OwnerBits) && !(pExt->Secret_ForbiddenHouses & OwnerBits)) {
+				switch(HouseExt::RequirementsMet(pOwner, Option)) {
+				case HouseExt::RequirementStatus::Forbidden:
+				case HouseExt::RequirementStatus::Incomplete:
+					Options.AddItem(Option);
+				}
 			}
 		}
+	};
+
+	// generate a list of items
+	if(pData->Secret_Boons.HasValue()) {
+		AddToOptions(pData->Secret_Boons);
+	} else {
+		AddToOptions(Iterator<InfantryTypeClass*>(RulesClass::Instance->SecretInfantry));
+		AddToOptions(Iterator<UnitTypeClass*>(RulesClass::Instance->SecretUnits));
+		AddToOptions(Iterator<BuildingTypeClass*>(RulesClass::Instance->SecretBuildings));
 	}
 
-	if(Options.Count < 1) {
+	// pick one of all eligible items
+	if(Options.Count > 0) {
+		auto Result = Options[ScenarioClass::Instance->Random.RandomRanged(0, Options.Count - 1)];
+		Debug::Log("Secret Lab rolled %s for %s\n", Result->ID, pType->ID);
+		pThis->SecretProduction = Result;
+		this->SecretLab_Placed = true;
+	} else {
 		Debug::Log("Secret Lab [%s] has no boons applicable to country [%s]!\n",
-			pType->ID, Owner->Type->ID);
-		return;
+			pType->ID, pOwner->Type->ID);
 	}
-
-	int idx = ScenarioClass::Instance->Random.RandomRanged(0, Options.Count - 1);
-	Result = Options[idx];
-
-	Debug::Log("Secret Lab rolled %s for %s\n", Result->ID, pType->ID);
-	this->SecretLab_Placed = true;
-	pThis->SecretProduction = Result;
 }
 
 DWORD BuildingExt::FoundationLength(CellStruct * StartCell) {

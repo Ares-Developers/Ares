@@ -101,7 +101,7 @@ public:
 		DynamicVectorClass<Point2D> FoundationRadarShape;
 
 		// new secret lab
-		DynamicVectorClass<TechnoTypeClass *> Secret_Boons;
+		NullableVector<TechnoTypeClass*> Secret_Boons;
 		Valueable<bool> Secret_RecalcOnCapture;
 
 		// new firestorm wall
