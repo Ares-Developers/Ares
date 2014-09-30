@@ -78,6 +78,8 @@ public:
 
 		int SensorArrayActiveCounter;
 
+		bool SecretLab_Placed;
+
 	public:
 		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
 			OwnerBeforeRaid(nullptr),
@@ -86,6 +88,7 @@ public:
 			PrismForwarding(this),
 			FreeUnits_Done(false),
 			AboutToChronoshift(false),
+			SecretLab_Placed(false),
 			SensorArrayActiveCounter(0)
 		{ };
 
@@ -121,6 +124,7 @@ public:
 		void KickOutClones(TechnoClass * Production);
 
 		void UpdateSensorArray();
+		void UpdateSecretLab();
 	};
 
 	static Container<BuildingExt> ExtMap;

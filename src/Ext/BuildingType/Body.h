@@ -103,7 +103,6 @@ public:
 		// new secret lab
 		DynamicVectorClass<TechnoTypeClass *> Secret_Boons;
 		Valueable<bool> Secret_RecalcOnCapture;
-		bool Secret_Placed;
 
 		// new firestorm wall
 		Valueable<bool> Firewall_Is;
@@ -189,7 +188,6 @@ public:
 			OutlineData (),
 			FoundationRadarShape (),
 			Secret_RecalcOnCapture (false),
-			Secret_Placed (false),
 			Firewall_Is (false),
 			IsPassable (false),
 			UCPassThrough (0.0),
@@ -252,7 +250,6 @@ public:
 
 	static Container<BuildingTypeExt> ExtMap;
 
-	static void UpdateSecretLabOptions(BuildingClass *pThis);
 	static bool IsFoundationEqual(BuildingTypeClass *pTBldA, BuildingTypeClass *pTBldB);
 };
 

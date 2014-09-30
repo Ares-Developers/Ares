@@ -1,9 +1,12 @@
 #include "Body.h"
-#include <ScenarioClass.h>
-#include <AnimClass.h>
+
+#include "../Building/Body.h"
+#include "../House/Body.h"
 #include "../Techno/Body.h"
 #include "../TechnoType/Body.h"
-#include "../House/Body.h"
+
+#include <ScenarioClass.h>
+#include <AnimClass.h>
 
 // =============================
 // other hooks
@@ -12,7 +15,8 @@ DEFINE_HOOK(445F80, BuildingClass_ChangeOwnership, 5)
 {
 	GET(BuildingClass *, pThis, ECX);
 	if(pThis->Type->SecretLab) {
-		BuildingTypeExt::UpdateSecretLabOptions(pThis);
+		auto pExt = BuildingExt::ExtMap.Find(pThis);
+		pExt->UpdateSecretLab();
 	}
 
 	auto bldTTExt = TechnoTypeExt::ExtMap.Find(pThis->Type);
