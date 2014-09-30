@@ -758,23 +758,17 @@ void BuildingExt::ExtData::UpdateSensorArray() {
 void BuildingExt::ExtData::UpdateSecretLab() {
 	auto pThis = this->OwnerObject();
 	auto pOwner = pThis->Owner;
-	BuildingTypeClass *pType = pThis->Type;
-	BuildingTypeExt::ExtData* pData = BuildingTypeExt::ExtMap.Find(pType);
+	auto pType = pThis->Type;
 
-	Debug::Log("Secret Lab update for %s\n", pType->get_ID());
-
-	TechnoTypeClass *Result = pType->SecretInfantry;
-	if(!Result) {
-		Result = pType->SecretUnit;
-		if(!Result) {
-			Result = pType->SecretBuilding;
-		}
-	}
-	if(Result) {
-		pThis->SecretProduction = Result;
+	// fixed item, no need to randomize
+	if(pType->SecretInfantry || pType->SecretUnit || pType->SecretBuilding) {
+		Debug::Log("[Secret Lab] %s has a fixed boon.\n", pType->ID);
 		return;
 	}
 
+	auto pData = BuildingTypeExt::ExtMap.Find(pType); 
+
+	// go on if not placed or always recalculate on capture
 	if(this->SecretLab_Placed && !pData->Secret_RecalcOnCapture) {
 		return;
 	}
