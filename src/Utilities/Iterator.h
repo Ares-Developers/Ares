@@ -68,4 +68,43 @@ public:
 	}
 };
 
+template <typename T>
+Iterator<T> make_iterator_single(const T& value) {
+	return Iterator<T>(&value, 1);
+}
+
+template <typename T, size_t Size>
+Iterator<T> make_iterator(const T(&arr)[Size]) {
+	return Iterator<T>(arr, Size);
+}
+
+template <typename T>
+Iterator<T> make_iterator(const T* ptr, size_t size) {
+	return Iterator<T>(ptr, size);
+}
+
+// vector classes
+template <typename T>
+Iterator<T> make_iterator(const VectorClass<T>& value) {
+	return Iterator<T>(value);
+}
+
+template <typename T>
+Iterator<T> make_iterator(const DynamicVectorClass<T>& value) {
+	return Iterator<T>(value);
+}
+
+template <typename T>
+Iterator<T> make_iterator(const std::vector<T>& value) {
+	return Iterator<T>(value);
+}
+
+// iterator does not keep temporary alive, thus rvalues are forbidden.
+// use the otherwise wierd const&& to not catch any lvalues
+template <typename T>
+void make_iterator_single(const T&&) = delete;
+
+template <typename T>
+void make_iterator(const T&&) = delete;
+
 #endif
