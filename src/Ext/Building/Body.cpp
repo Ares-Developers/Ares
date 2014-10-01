@@ -800,9 +800,9 @@ void BuildingExt::ExtData::UpdateSecretLab() {
 	if(pData->Secret_Boons.HasValue()) {
 		AddToOptions(pData->Secret_Boons);
 	} else {
-		AddToOptions(Iterator<InfantryTypeClass*>(RulesClass::Instance->SecretInfantry));
-		AddToOptions(Iterator<UnitTypeClass*>(RulesClass::Instance->SecretUnits));
-		AddToOptions(Iterator<BuildingTypeClass*>(RulesClass::Instance->SecretBuildings));
+		AddToOptions(make_iterator(RulesClass::Instance->SecretInfantry));
+		AddToOptions(make_iterator(RulesClass::Instance->SecretUnits));
+		AddToOptions(make_iterator(RulesClass::Instance->SecretBuildings));
 	}
 
 	// pick one of all eligible items
