@@ -218,71 +218,67 @@ DEFINE_HOOK(415DF6, AircraftClass_Paradrop_Carryall, 6)
 
 DEFINE_HOOK(6F407D, TechnoClass_Init_1, 6)
 {
-	GET(TechnoClass *, T, ESI);
-	TechnoTypeClass * Type = T->GetTechnoType();
-	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(T);
-	//TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(Type);
+	GET(TechnoClass* const, pThis, ESI);
+	auto pType = pThis->GetTechnoType();
+	auto pData = TechnoExt::ExtMap.Find(pThis);
 
-	CaptureManagerClass *Capturer = nullptr;
-	ParasiteClass *Parasite = nullptr;
-	TemporalClass *Temporal = nullptr;
+	CaptureManagerClass* pCapturer = nullptr;
+	ParasiteClass* pParasite = nullptr;
+	TemporalClass* pTemporal = nullptr;
 
-	FootClass *F = generic_cast<FootClass *>(T);
-	bool IsFoot = (F != nullptr);
+	auto pFoot = abstract_cast<FootClass*>(pThis);
 
-//	for(int i = 0; i < pTypeData->Weapons.get_Count(); ++i) {
-//		WeaponStruct *W = &pTypeData->Weapons[i];
-	TechnoTypeClass *TT = T->GetTechnoType();
 	for(int i = 0; i < 18; ++i) {
-		WeaponTypeClass *W1 = TT->get_Weapon(i);
-		WeaponTypeClass *W2 = TT->get_EliteWeapon(i);
+		auto W1 = pType->get_Weapon(i);
+		auto W2 = pType->get_EliteWeapon(i);
 		if(!W1 && !W2) {
 			continue;
 		}
-		WarheadTypeClass *WH1 = W1 ? W1->Warhead : nullptr;
-		WarheadTypeClass *WH2 = W2 ? W2->Warhead : nullptr;
+		auto WH1 = W1 ? W1->Warhead : nullptr;
+		auto WH2 = W2 ? W2->Warhead : nullptr;
 
 		bool IsW1Faulty = (W1 && !WH1);
 		if(IsW1Faulty || (W2 && !WH2)) {
 			Debug::FatalErrorAndExit(
 				"Constructing an instance of [%s]:\r\n%sWeapon %s (slot %d) has no Warhead!",
-					Type->ID,
+					pType->ID,
 					IsW1Faulty ? "" : "Elite ",
 					(IsW1Faulty ? W1 : W2)->ID,
 					i);
 		}
 
-		if(WH1 && WH1->MindControl && Capturer == nullptr) {
-			Capturer = GameCreate<CaptureManagerClass>(T, W1->Damage, W1->InfiniteMindControl);
-		} else if(WH2 && WH2->MindControl && Capturer == nullptr) {
-			Capturer = GameCreate<CaptureManagerClass>(T, W2->Damage, W2->InfiniteMindControl);
+		if(WH1 && WH1->MindControl && pCapturer == nullptr) {
+			pCapturer = GameCreate<CaptureManagerClass>(pThis, W1->Damage, W1->InfiniteMindControl);
+		} else if(WH2 && WH2->MindControl && pCapturer == nullptr) {
+			pCapturer = GameCreate<CaptureManagerClass>(pThis, W2->Damage, W2->InfiniteMindControl);
 		}
 
-		if(WH1 && WH1->Temporal && Temporal == nullptr) {
-			Temporal = GameCreate<TemporalClass>(T);
-			Temporal->WarpPerStep = W1->Damage;
+		if(WH1 && WH1->Temporal && pTemporal == nullptr) {
+			pTemporal = GameCreate<TemporalClass>(pThis);
+			pTemporal->WarpPerStep = W1->Damage;
 			pData->idxSlot_Warp = static_cast<BYTE>(i);
-		} else if(WH2 && WH2->Temporal && Temporal == nullptr) {
-			Temporal = GameCreate<TemporalClass>(T);
-			Temporal->WarpPerStep = W2->Damage;
+		} else if(WH2 && WH2->Temporal && pTemporal == nullptr) {
+			pTemporal = GameCreate<TemporalClass>(pThis);
+			pTemporal->WarpPerStep = W2->Damage;
 			pData->idxSlot_Warp = static_cast<BYTE>(i);
 		}
 
-		if((WH1 && WH1->Parasite || WH2 && WH2->Parasite) && IsFoot && Parasite == nullptr) {
-			Parasite = GameCreate<ParasiteClass>(F);
+		if((WH1 && WH1->Parasite || WH2 && WH2->Parasite) && pFoot && pParasite == nullptr) {
+			pParasite = GameCreate<ParasiteClass>(pFoot);
 			pData->idxSlot_Parasite = static_cast<BYTE>(i);
 		}
 	}
 
-	T->CaptureManager = Capturer;
-	T->TemporalImUsing = Temporal;
-	if(IsFoot) {
-		F->ParasiteImUsing = Parasite;
+	pThis->CaptureManager = pCapturer;
+	pThis->TemporalImUsing = pTemporal;
+	if(pFoot) {
+		pFoot->ParasiteImUsing = pParasite;
 	}
 
-	pData->OriginalHouseType = HouseTypeClass::Find(T->Owner->Type->ParentCountry);
+	auto pHouseType = pThis->Owner->Type;
+	pData->OriginalHouseType = HouseTypeClass::Find(pHouseType->ParentCountry);
 	if(!pData->OriginalHouseType) {
-		pData->OriginalHouseType = T->Owner->Type;
+		pData->OriginalHouseType = pHouseType;
 	}
 
 	return 0x6F4102;
