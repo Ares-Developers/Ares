@@ -228,44 +228,40 @@ DEFINE_HOOK(6F407D, TechnoClass_Init_1, 6)
 
 	auto pFoot = abstract_cast<FootClass*>(pThis);
 
-	for(int i = 0; i < 18; ++i) {
-		auto W1 = pType->get_Weapon(i);
-		auto W2 = pType->get_EliteWeapon(i);
-		if(!W1 && !W2) {
-			continue;
-		}
-		auto WH1 = W1 ? W1->Warhead : nullptr;
-		auto WH2 = W2 ? W2->Warhead : nullptr;
+	auto CheckWeapon = [=,&pCapturer,&pParasite,&pTemporal]
+		(WeaponTypeClass* pWeapon, int idxWeapon, const char* pTagName)
+	{
+		auto pWarhead = pWeapon->Warhead;
 
-		bool IsW1Faulty = (W1 && !WH1);
-		if(IsW1Faulty || (W2 && !WH2)) {
+		if(!pWarhead) {
 			Debug::FatalErrorAndExit(
-				"Constructing an instance of [%s]:\r\n%sWeapon %s (slot %d) has no Warhead!",
-					pType->ID,
-					IsW1Faulty ? "" : "Elite ",
-					(IsW1Faulty ? W1 : W2)->ID,
-					i);
+				"Constructing an instance of [%s]:\r\n%s %s (slot %d) has no Warhead!",
+				pType->ID, pTagName, pWeapon->ID, idxWeapon);
 		}
 
-		if(WH1 && WH1->MindControl && pCapturer == nullptr) {
-			pCapturer = GameCreate<CaptureManagerClass>(pThis, W1->Damage, W1->InfiniteMindControl);
-		} else if(WH2 && WH2->MindControl && pCapturer == nullptr) {
-			pCapturer = GameCreate<CaptureManagerClass>(pThis, W2->Damage, W2->InfiniteMindControl);
+		if(pWarhead->MindControl && !pCapturer) {
+			pCapturer = GameCreate<CaptureManagerClass>(pThis, pWeapon->Damage, pWeapon->InfiniteMindControl);
 		}
 
-		if(WH1 && WH1->Temporal && pTemporal == nullptr) {
+		if(pWarhead->Temporal && !pTemporal) {
 			pTemporal = GameCreate<TemporalClass>(pThis);
-			pTemporal->WarpPerStep = W1->Damage;
-			pData->idxSlot_Warp = static_cast<BYTE>(i);
-		} else if(WH2 && WH2->Temporal && pTemporal == nullptr) {
-			pTemporal = GameCreate<TemporalClass>(pThis);
-			pTemporal->WarpPerStep = W2->Damage;
-			pData->idxSlot_Warp = static_cast<BYTE>(i);
+			pTemporal->WarpPerStep = pWeapon->Damage;
+			pData->idxSlot_Warp = static_cast<BYTE>(idxWeapon);
 		}
 
-		if((WH1 && WH1->Parasite || WH2 && WH2->Parasite) && pFoot && pParasite == nullptr) {
+		if(pWarhead->Parasite && pFoot && !pParasite) {
 			pParasite = GameCreate<ParasiteClass>(pFoot);
-			pData->idxSlot_Parasite = static_cast<BYTE>(i);
+			pData->idxSlot_Parasite = static_cast<BYTE>(idxWeapon);
+		}
+	};
+
+	// iterate all weapons and their elite counterparts
+	for(int i = 0; i < 18; ++i) {
+		if(auto pWeapon = pType->get_Weapon(i)) {
+			CheckWeapon(pWeapon, i, "Weapon");
+		}
+		if(auto pWeapon = pType->get_EliteWeapon(i)) {
+			CheckWeapon(pWeapon, i, "EliteWeapon");
 		}
 	}
 
