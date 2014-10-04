@@ -181,7 +181,7 @@ DEFINE_HOOK(51EB48, InfantryClass_GetCursorOverObject_IvanGrinder, A)
 	if(auto pTargetBld = abstract_cast<BuildingClass*>(pTarget)) {
 		if(pTargetBld->Type->Grinding && pThis->Owner->IsAlliedWith(pTargetBld)) {
 			if(!InputManagerClass::Instance->IsForceFireKeyPressed()) {
-				static byte return_grind[] = {
+				static const byte return_grind[] = {
 					0x5F, 0x5E, 0x5D, // pop edi, esi and ebp
 					0xB8, 0x0B, 0x00, 0x00, 0x00, // eax = Action::Repair (not Action::Eaten)
 					0x5B, 0x83, 0xC4, 0x28, // esp += 0x28

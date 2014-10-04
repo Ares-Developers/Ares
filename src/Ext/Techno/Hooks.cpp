@@ -1356,11 +1356,11 @@ DEFINE_HOOK(702200, TechnoClass_ReceiveDamage_SpillTiberium, 6)
 			CoordStruct crd = pThis->GetCoords();
 			CellClass* pCenter = MapClass::Instance->GetCellAt(crd);
 
-			unsigned int neighbours[] = {9, 2, 7, 1, 4, 3, 0, 5, 6};
-			for(int i=0; i<9; ++i) {
+			const unsigned int Neighbours[] = {9, 2, 7, 1, 4, 3, 0, 5, 6};
+			for(auto neighbour : Neighbours) {
 				// spill random amount
 				int amount = ScenarioClass::Instance->Random.RandomRanged(0, 2);
-				CellClass* pCell = pCenter->GetNeighbourCell(neighbours[i]);
+				CellClass* pCell = pCenter->GetNeighbourCell(neighbour);
 				pCell->IncreaseTiberium(0, amount);
 				value -= amount;
 
