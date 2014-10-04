@@ -99,8 +99,8 @@ public:
 			CellSpread_MaxAffect (-1),
 			AttachedEffect(OwnerObject)
 			{
+				VersesData vs;
 				for(int i = 0; i < 11; ++i) {
-					VersesData vs;
 					Verses.AddItem(vs);
 				}
 			};
