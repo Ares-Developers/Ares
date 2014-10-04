@@ -68,28 +68,25 @@ void NullableIdx<Lookuper>::Read(INI_EX &parser, const char* pSection, const cha
 
 template <typename T>
 void Promotable<T>::Read(CCINIClass *pINI, const char *Section, const char *BaseFlag) {
-	unsigned int buflen = strlen(BaseFlag) + 8;
-	char *FlagName = new char[buflen];
+	char FlagName[0x40];
 
 	Valueable<T> Placeholder;
 	INI_EX exINI(pINI);
 
 	Placeholder.Set(this->Rookie);
-	_snprintf_s(FlagName, buflen, buflen - 1, BaseFlag, "Rookie");
+	_snprintf_s(FlagName, _TRUNCATE, BaseFlag, "Rookie");
 	Placeholder.Read(exINI, Section, FlagName);
 	this->Rookie = Placeholder;
 
 	Placeholder.Set(this->Veteran);
-	_snprintf_s(FlagName, buflen, buflen - 1, BaseFlag, "Veteran");
+	_snprintf_s(FlagName, _TRUNCATE, BaseFlag, "Veteran");
 	Placeholder.Read(exINI, Section, FlagName);
 	this->Veteran = Placeholder;
 
 	Placeholder.Set(this->Elite);
-	_snprintf_s(FlagName, buflen, buflen - 1, BaseFlag, "Elite");
+	_snprintf_s(FlagName, _TRUNCATE, BaseFlag, "Elite");
 	Placeholder.Read(exINI, Section, FlagName);
 	this->Elite = Placeholder;
-
-	delete[] FlagName;
 };
 
 
