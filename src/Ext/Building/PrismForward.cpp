@@ -122,8 +122,7 @@ bool BuildingExt::cPrismForwarding::ValidateSupportTower(BuildingExt::cPrismForw
 	if(SlaveTower->IsAlive) {
 		BuildingTypeClass *pSlaveType = SlaveTower->Type;
 		BuildingTypeExt::ExtData *pSlaveTypeData = BuildingTypeExt::ExtMap.Find(pSlaveType);
-		if(pSlaveTypeData->PrismForwarding.Enabled == BuildingTypeExt::cPrismForwarding::EnabledState::Yes
-			|| pSlaveTypeData->PrismForwarding.Enabled == BuildingTypeExt::cPrismForwarding::EnabledState::Forward)
+		if(pSlaveTypeData->PrismForwarding.CanForward())
 		{
 			//building is a prism tower
 			//get all the data we need

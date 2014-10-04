@@ -70,6 +70,14 @@ public:
 			return this->MyHeight.Get(RulesClass::Instance->PrismSupportHeight);
 		}
 
+		bool CanAttack() const {
+			return this->Enabled == EnabledState::Yes || this->Enabled == EnabledState::Attack;
+		}
+
+		bool CanForward() const {
+			return this->Enabled == EnabledState::Yes || this->Enabled == EnabledState::Forward;
+		}
+
 		// constructor
 		cPrismForwarding() : Enabled(EnabledState::No),
 			Targets(),

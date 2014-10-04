@@ -48,8 +48,7 @@ DEFINE_HOOK(6FF4DE, TechnoClass_Fire_IsLaser, 6) {
 			BuildingTypeClass *pBldType = pBld->Type;
 			BuildingTypeExt::ExtData *pBldTypeData = BuildingTypeExt::ExtMap.Find(pBldType);
 
-			if (pBldTypeData->PrismForwarding.Enabled == BuildingTypeExt::cPrismForwarding::EnabledState::Yes
-				|| pBldTypeData->PrismForwarding.Enabled == BuildingTypeExt::cPrismForwarding::EnabledState::Attack) {
+			if (pBldTypeData->PrismForwarding.CanAttack()) {
 				//is a prism tower
 				
 				if (pBld->SupportingPrisms > 0) { //Ares sets this to the longest backward chain
