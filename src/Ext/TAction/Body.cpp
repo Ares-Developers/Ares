@@ -7,7 +7,7 @@
 
 
 //Static init
-template<> const DWORD Extension<TActionClass>::Canary = 0x61616161;
+template<> const DWORD Extension<TActionClass>::Canary = 0x91919191;
 Container<TActionExt> TActionExt::ExtMap;
 
 template<> TActionExt::TT *Container<TActionExt>::SavingObject = nullptr;

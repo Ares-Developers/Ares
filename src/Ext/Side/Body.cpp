@@ -8,7 +8,7 @@
 #include <algorithm>
 
 //Static init
-template<> const DWORD Extension<SideClass>::Canary = 0x87654321;
+template<> const DWORD Extension<SideClass>::Canary = 0x06D106D1;
 Container<SideExt> SideExt::ExtMap;
 
 template<> SideExt::TT *Container<SideExt>::SavingObject = nullptr;

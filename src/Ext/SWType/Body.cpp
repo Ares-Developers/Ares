@@ -21,7 +21,7 @@
 #include <MessageListClass.h>
 #include <Notifications.h>
 
-template<> const DWORD Extension<SuperWeaponTypeClass>::Canary = 0x55555555;
+template<> const DWORD Extension<SuperWeaponTypeClass>::Canary = 0x66666666;
 Container<SWTypeExt> SWTypeExt::ExtMap;
 
 template<> SWTypeExt::TT *Container<SWTypeExt>::SavingObject = nullptr;
