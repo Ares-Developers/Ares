@@ -11,9 +11,9 @@
 #include <algorithm>
 
 void BuildingTypeExt::cPrismForwarding::Initialize(BuildingTypeClass *pThis) {
-	this->Enabled = NO;
+	this->Enabled = EnabledState::No;
 	if (pThis == RulesClass::Instance->PrismType) {
-		this->Enabled = YES;
+		this->Enabled = EnabledState::Yes;
 	}
 	this->Targets.push_back(pThis);
 }
@@ -22,17 +22,17 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 	const char * pID = pThis->ID;
 	if(pINI->ReadString(pID, "PrismForwarding", "", Ares::readBuffer, Ares::readLength)) {
 		if((_strcmpi(Ares::readBuffer, "yes") == 0) || (_strcmpi(Ares::readBuffer, "true") == 0)) {
-			this->Enabled = YES;
+			this->Enabled = EnabledState::Yes;
 		} else if(_strcmpi(Ares::readBuffer, "forward") == 0) {
-			this->Enabled = FORWARD;
+			this->Enabled = EnabledState::Forward;
 		} else if(_strcmpi(Ares::readBuffer, "attack") == 0) {
-			this->Enabled = ATTACK;
+			this->Enabled = EnabledState::Attack;
 		} else if((_strcmpi(Ares::readBuffer, "no") == 0) || (_strcmpi(Ares::readBuffer, "false"))== 0) {
-			this->Enabled = NO;
+			this->Enabled = EnabledState::No;
 		}
 	}
 
-	if (this->Enabled != NO) {
+	if (this->Enabled != EnabledState::No) {
 		INI_EX exINI(pINI);
 
 		this->Targets.Read(exINI, pID, "PrismForwarding.Targets");

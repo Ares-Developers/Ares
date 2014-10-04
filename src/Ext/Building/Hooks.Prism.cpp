@@ -21,8 +21,8 @@ DEFINE_HOOK(44B2FE, BuildingClass_Mi_Attack_IsPrism, 6)
 	BuildingTypeClass *pMasterType = B->Type;
 	BuildingTypeExt::ExtData *pMasterTypeData = BuildingTypeExt::ExtMap.Find(pMasterType);
 
-	if (pMasterTypeData->PrismForwarding.Enabled == BuildingTypeExt::cPrismForwarding::YES
-		|| pMasterTypeData->PrismForwarding.Enabled == BuildingTypeExt::cPrismForwarding::ATTACK) {
+	if (pMasterTypeData->PrismForwarding.Enabled == BuildingTypeExt::cPrismForwarding::EnabledState::Yes
+		|| pMasterTypeData->PrismForwarding.Enabled == BuildingTypeExt::cPrismForwarding::EnabledState::Attack) {
 
 		BuildingExt::ExtData *pMasterData = BuildingExt::ExtMap.Find(B);
 
@@ -84,8 +84,8 @@ DEFINE_HOOK(447FAE, BuildingClass_GetObjectActivityState, 6)
 		//if this is a slave prism tower, then it might still be able to become a master tower at this time
 		BuildingTypeClass *pType = B->Type;
 		BuildingTypeExt::ExtData *pTypeData = BuildingTypeExt::ExtMap.Find(pType);
-		if (pTypeData->PrismForwarding.Enabled == BuildingTypeExt::cPrismForwarding::YES
-				|| pTypeData->PrismForwarding.Enabled == BuildingTypeExt::cPrismForwarding::ATTACK) {
+		if (pTypeData->PrismForwarding.Enabled == BuildingTypeExt::cPrismForwarding::EnabledState::Yes
+				|| pTypeData->PrismForwarding.Enabled == BuildingTypeExt::cPrismForwarding::EnabledState::Attack) {
 			//is a prism tower
 			if (B->PrismStage == PrismChargeState::Slave && pTypeData->PrismForwarding.BreakSupport) {
 				return NotBusyCharging;

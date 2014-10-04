@@ -28,9 +28,13 @@ public:
 	static const eFoundation CustomFoundation = static_cast<eFoundation>(0x7F);
 
 	class cPrismForwarding {
-		public:
+	public:
+		enum class EnabledState : int {
+			No, Yes, Forward, Attack
+		};
+
 		//properties
-		enum eEnabled {NO, YES, FORWARD, ATTACK} Enabled;	//is this tower a prism tower? FORWARD means can support, but not attack. ATTACK means can attack but not support.
+		EnabledState Enabled;	//is this tower a prism tower? Forward means can support, but not attack. Attack means can attack but not support.
 		ValueableVector<BuildingTypeClass *> Targets;	//the types of buiding that this tower can forward to
 		Nullable<int> MaxFeeds;					//max number of towers that can feed this tower
 		Valueable<signed int> MaxChainLength;				//max length of any given (preceding) branch of the network
@@ -67,7 +71,7 @@ public:
 		}
 
 		// constructor
-		cPrismForwarding() : Enabled(NO),
+		cPrismForwarding() : Enabled(EnabledState::No),
 			Targets(),
 			MaxFeeds(),
 			MaxChainLength(1),
