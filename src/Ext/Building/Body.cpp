@@ -758,6 +758,11 @@ void BuildingExt::ExtData::UpdateSensorArray() {
 void BuildingExt::ExtData::UpdateSecretLab() {
 	auto pThis = this->OwnerObject();
 	auto pOwner = pThis->Owner;
+
+	if(!pOwner || pOwner->Type->MultiplayPassive) {
+		return;
+	}
+
 	auto pType = pThis->Type;
 
 	// fixed item, no need to randomize
@@ -776,7 +781,7 @@ void BuildingExt::ExtData::UpdateSecretLab() {
 	DynamicVectorClass<TechnoTypeClass*> Options;
 
 	auto AddToOptions = [&](const Iterator<TechnoTypeClass*> &items) {
-		auto OwnerBits = !pOwner ? 0u : (1u << pOwner->Type->ArrayIndex);
+		auto OwnerBits = 1u << pOwner->Type->ArrayIndex;
 
 		for(const auto& Option : items) {
 			auto pExt = TechnoTypeExt::ExtMap.Find(Option);
@@ -803,11 +808,11 @@ void BuildingExt::ExtData::UpdateSecretLab() {
 	// pick one of all eligible items
 	if(Options.Count > 0) {
 		auto Result = Options[ScenarioClass::Instance->Random.RandomRanged(0, Options.Count - 1)];
-		Debug::Log("Secret Lab rolled %s for %s\n", Result->ID, pType->ID);
+		Debug::Log("[Secret Lab] rolled %s for %s\n", Result->ID, pType->ID);
 		pThis->SecretProduction = Result;
 		this->SecretLab_Placed = true;
 	} else {
-		Debug::Log("Secret Lab [%s] has no boons applicable to country [%s]!\n",
+		Debug::Log("[Secret Lab] %s has no boons applicable to country [%s]!\n",
 			pType->ID, pOwner->Type->ID);
 	}
 }
