@@ -210,32 +210,41 @@ void Interface::updateMenu(HWND hDlg, int iID) {
 
 	// main menu
 	if(iID == 226) {
-		struct Interface::MenuItem items[] = {{0x683, Ares::UISettings::SinglePlayerButton},
-			{0x684, Ares::UISettings::WWOnlineButton}, {0x578, Ares::UISettings::NetworkButton},
-			{0x686, Ares::UISettings::MoviesAndCreditsButton}, {0x55C, Interface::uia_Default}};
-		Interface::updateMenuItems(hDlg, items, 5);
+		static const Interface::MenuItem items[] = {
+			{0x683, Ares::UISettings::SinglePlayerButton},
+			{0x684, Ares::UISettings::WWOnlineButton},
+			{0x578, Ares::UISettings::NetworkButton},
+			{0x686, Ares::UISettings::MoviesAndCreditsButton},
+			{0x55C, Interface::uia_Default}};
+		Interface::updateMenuItems(hDlg, items, _countof(items));
 	}
 
 	// singleplayer menu
 	if(iID == 256) {
 		// swap skirmish and load buttons so load will not appear first
 		if(Ares::UISettings::CampaignButton != Interface::uia_Hide) {
-			struct Interface::MenuItem items[] = {{1672, Ares::UISettings::CampaignButton},
-				{1673, Interface::uia_Default}, {1401, Ares::UISettings::SkirmishButton}};
-			Interface::updateMenuItems(hDlg, items, 3);
+			static const Interface::MenuItem items[] = {
+				{1672, Ares::UISettings::CampaignButton},
+				{1673, Interface::uia_Default},
+				{1401, Ares::UISettings::SkirmishButton}};
+			Interface::updateMenuItems(hDlg, items, _countof(items));
 		} else {
+			static const  Interface::MenuItem items[] = {
+				{1401, Ares::UISettings::SkirmishButton},
+				{1673, Interface::uia_Default},
+				{1672, Ares::UISettings::CampaignButton}};
 			Interface::swapItems(hDlg, 0x688, 0x579);
-			struct Interface::MenuItem items[] = {{1401, Ares::UISettings::SkirmishButton},
-				{1673, Interface::uia_Default}, {1672, Ares::UISettings::CampaignButton}};
-			Interface::updateMenuItems(hDlg, items, 3);
+			Interface::updateMenuItems(hDlg, items, _countof(items));
 		}
 	}
 
 	// movies and credits menu
 	if(iID == 257) {
-		struct Interface::MenuItem items[] = {{0x68D, Ares::UISettings::SneakPeeksButton},
-			{0x68E, Ares::UISettings::PlayMoviesButton}, {0x68F, Ares::UISettings::ViewCreditsButton}};
-		Interface::updateMenuItems(hDlg, items, 3);
+		static const Interface::MenuItem items[] = {
+			{0x68D, Ares::UISettings::SneakPeeksButton},
+			{0x68E, Ares::UISettings::PlayMoviesButton},
+			{0x68F, Ares::UISettings::ViewCreditsButton}};
+		Interface::updateMenuItems(hDlg, items, _countof(items));
 	}
 
 	// one-button message box

@@ -69,14 +69,14 @@ bool Interface::invokeClickAction(eUIAction action, const char* name, int* pResu
 	\author AlexB
 	\date 2010-06-20
 */
-void Interface::updateMenuItems(HWND hDlg, MenuItem* items, int count) {
+void Interface::updateMenuItems(HWND hDlg, const MenuItem* items, size_t count) {
 	// account for dialog nc size
 	POINT ptDlg = {0, 0};
 	ScreenToClient(hDlg, &ptDlg);
 
 	int iButton = 0;
 	std::vector<RECT> vecRects(count);
-	for(int i=0; i<count; ++i) {
+	for(size_t i=0; i<count; ++i) {
 		if(HWND hItem = GetDlgItem(hDlg, items[i].nIDDlgItem)) {
 			GetWindowRect(hItem, &vecRects[i]);
 
