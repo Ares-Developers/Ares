@@ -6,6 +6,8 @@
 
 #include <Strsafe.h>
 
+#include <array>
+
 //! Overrides the default action and queue the user defined one.
 /*!
 	Called from within the button click event to override the game's
@@ -74,11 +76,14 @@ void Interface::updateMenuItems(HWND hDlg, const MenuItem* items, size_t count) 
 	POINT ptDlg = {0, 0};
 	ScreenToClient(hDlg, &ptDlg);
 
-	int iButton = 0;
-	std::vector<RECT> vecRects(count);
-	for(size_t i=0; i<count; ++i) {
+	static const size_t MaxMenuItemCount = 9;
+
+	int VisibleButtons = 0;
+	count = std::min(count, MaxMenuItemCount);
+	std::array<RECT, MaxMenuItemCount> Rects;
+	for(size_t i = 0; i < count; ++i) {
 		if(HWND hItem = GetDlgItem(hDlg, items[i].nIDDlgItem)) {
-			GetWindowRect(hItem, &vecRects[i]);
+			GetWindowRect(hItem, &Rects[i]);
 
 			if(items[i].uiaAction == Interface::uia_Hide) {
 				// hide the window
@@ -89,11 +94,11 @@ void Interface::updateMenuItems(HWND hDlg, const MenuItem* items, size_t count) 
 					EnableWindow(hItem, false);
 				}
 
-				if(i != iButton) {
+				if(i != VisibleButtons) {
 					// move the button to the next free position
-					moveItem(hItem, vecRects[iButton], ptDlg);
+					moveItem(hItem, Rects[VisibleButtons], ptDlg);
 				}
-				++iButton;
+				++VisibleButtons;
 			}
 		}
 	}
