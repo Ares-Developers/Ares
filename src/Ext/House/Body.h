@@ -73,7 +73,7 @@ public:
 
 		virtual ~ExtData();
 
-		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
+		virtual void InvalidatePointer(void *ptr, bool bRemoved) override {
 			AnnounceInvalidPointer(Factory_AircraftType, ptr);
 			AnnounceInvalidPointer(Factory_BuildingType, ptr);
 			AnnounceInvalidPointer(Factory_VehicleType, ptr);

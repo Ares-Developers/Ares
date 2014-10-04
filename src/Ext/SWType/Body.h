@@ -343,7 +343,7 @@ public:
 		SWRange GetRange() const;
 		double GetChargeToDrainRatio() const;
 
-		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
+		virtual void InvalidatePointer(void *ptr, bool bRemoved) override {
 		}
 
 	private:

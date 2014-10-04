@@ -234,7 +234,7 @@ public:
 		virtual void Initialize() override;
 		virtual void CompleteInitialization(TT *pThis);
 
-		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
+		virtual void InvalidatePointer(void *ptr, bool bRemoved) override {
 			AnnounceInvalidPointer(RubbleIntact, ptr);
 			AnnounceInvalidPointer(RubbleDestroyed, ptr);
 		}

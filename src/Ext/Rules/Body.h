@@ -129,7 +129,7 @@ class RulesExt
 		virtual void LoadAfterTypeData(TT *pThis, CCINIClass *pINI);
 		virtual void InitializeConstants() override;
 
-		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
+		virtual void InvalidatePointer(void *ptr, bool bRemoved) override {
 		}
 	};
 

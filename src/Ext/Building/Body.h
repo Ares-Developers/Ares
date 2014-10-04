@@ -94,7 +94,7 @@ public:
 
 		virtual ~ExtData() = default;
 
-		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
+		virtual void InvalidatePointer(void *ptr, bool bRemoved) override {
 			AnnounceInvalidPointer(OwnerBeforeRaid, ptr);
 			PrismForwarding.AnnounceInvalidPointer(ptr, bRemoved);
 		}

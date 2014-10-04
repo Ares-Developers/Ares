@@ -125,7 +125,7 @@ public:
 		};
 
 		// when any pointer in the game expires, this is called - be sure to tell everyone we own to invalidate it
-		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
+		virtual void InvalidatePointer(void *ptr, bool bRemoved) override {
 			AnnounceInvalidPointer(this->GarrisonedIn, ptr);
 			this->InvalidateAttachEffectPointer(ptr);
 			AnnounceInvalidPointer(this->MyOriginalTemporal, ptr);

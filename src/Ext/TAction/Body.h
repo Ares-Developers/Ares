@@ -24,7 +24,7 @@ class TActionExt
 
 		virtual ~ExtData() = default;
 
-		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
+		virtual void InvalidatePointer(void *ptr, bool bRemoved) override {
 		}
 
 		// executing actions

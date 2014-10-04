@@ -24,7 +24,7 @@ public:
 
 		virtual ~ExtData() = default;
 
-		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
+		virtual void InvalidatePointer(void *ptr, bool bRemoved) override {
 		}
 
 		bool IsOccupant(); //!< Determines whether this InfantryClass is currently an occupant inside a BuildingClass.

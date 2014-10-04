@@ -79,7 +79,7 @@ public:
 		virtual void InitializeConstants() override;
 		virtual void Initialize() override;
 
-		virtual void InvalidatePointer(void *ptr, bool bRemoved) {
+		virtual void InvalidatePointer(void *ptr, bool bRemoved) override {
 		}
 
 		AircraftTypeClass* GetParadropPlane();
