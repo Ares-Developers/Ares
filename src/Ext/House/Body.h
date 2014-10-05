@@ -19,7 +19,7 @@ class SideClass;
 class HouseExt
 {
 public:
-	typedef HouseClass TT;
+	using base_type = HouseClass;
 
 	enum class RequirementStatus {
 		Forbidden = 1, // forbidden by special conditions (e.g. reqhouses) that's not likely to change in this session

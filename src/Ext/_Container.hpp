@@ -139,7 +139,7 @@ protected:
 template<typename T>
 class Container {
 private:
-	using base_type = typename T::TT;
+	using base_type = typename T::base_type;
 	using extension_type = typename T::ExtData;
 	using key_type = base_type*;
 	using const_key_type = const base_type*;

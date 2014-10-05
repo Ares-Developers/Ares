@@ -15,7 +15,7 @@
 class BuildingExt
 {
 public:
-	typedef BuildingClass TT;
+	using base_type = BuildingClass;
 
 	class ExtData;
 

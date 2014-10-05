@@ -23,7 +23,7 @@ class VocClass;
 class BuildingTypeExt
 {
 public:
-	typedef BuildingTypeClass TT;
+	using base_type = BuildingTypeClass;
 
 	static const eFoundation CustomFoundation = static_cast<eFoundation>(0x7F);
 

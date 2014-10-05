@@ -20,7 +20,7 @@ class WarheadTypeClass;
 class RulesExt
 {
 	public:
-	typedef RulesClass TT;
+	using base_type = RulesClass;
 
 	class ExtData : public Extension<RulesClass>
 	{

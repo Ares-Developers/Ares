@@ -14,7 +14,7 @@ class HouseClass;
 class AnimTypeExt
 {
 public:
-	typedef AnimTypeClass TT;
+	using base_type = AnimTypeClass;
 
 	class ExtData : public Extension<AnimTypeClass>
 	{

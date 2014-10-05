@@ -14,7 +14,7 @@ class TechnoTypeClass;
 class TEventExt
 {
 	public:
-	typedef TEventClass TT;
+	using base_type = TEventClass;
 
 	class ExtData : public Extension<TEventClass>
 	{

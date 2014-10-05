@@ -12,7 +12,7 @@
 class AbstractExt
 {
 public:
-	typedef AbstractClass TT;
+	using base_type = AbstractClass;
 
 	class ExtData : public Extension<AbstractClass>
 	{

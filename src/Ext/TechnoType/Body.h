@@ -21,7 +21,7 @@ class WarheadTypeClass;
 class TechnoTypeExt
 {
 public:
-	typedef TechnoTypeClass TT;
+	using base_type = TechnoTypeClass;
 	enum SpotlightAttachment { sa_Body, sa_Turret, sa_Barrel };
 
 	class ExtData : public Extension<TechnoTypeClass>

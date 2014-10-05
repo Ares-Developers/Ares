@@ -13,7 +13,7 @@ class BuildingClass;
 class InfantryExt
 {
 public:
-	typedef InfantryClass TT;
+	using base_type = InfantryClass;
 
 	class ExtData : public Extension<InfantryClass>
 	{

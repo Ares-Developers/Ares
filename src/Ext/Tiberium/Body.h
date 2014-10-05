@@ -12,7 +12,7 @@ class WarheadTypeClass;
 class TiberiumExt
 {
 	public:
-	typedef TiberiumClass TT;
+	using base_type = TiberiumClass;
 
 	class ExtData : public Extension<TiberiumClass>
 	{

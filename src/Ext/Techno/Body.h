@@ -27,7 +27,7 @@ class WarheadTypeClass;
 class TechnoExt
 {
 public:
-	typedef TechnoClass TT;
+	using base_type = TechnoClass;
 
 	class ExtData : public Extension<TechnoClass>
 	{

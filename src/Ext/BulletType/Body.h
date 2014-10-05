@@ -17,7 +17,7 @@ class ConvertClass;
 class BulletTypeExt
 {
 public:
-	typedef BulletTypeClass TT;
+	using base_type = BulletTypeClass;
 
 	class ExtData : public Extension<BulletTypeClass>
 	{

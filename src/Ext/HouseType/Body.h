@@ -18,7 +18,7 @@ class TechnoTypeClass;
 class HouseTypeExt
 {
 public:
-	typedef HouseTypeClass TT;
+	using base_type = HouseTypeClass;
 
 	class ExtData : public Extension<HouseTypeClass>
 	{

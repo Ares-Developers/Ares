@@ -13,7 +13,7 @@ class HouseClass;
 class TActionExt
 {
 	public:
-	typedef TActionClass TT;
+	using base_type = TActionClass;
 
 	class ExtData : public Extension<TActionClass>
 	{

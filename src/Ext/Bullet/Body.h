@@ -13,7 +13,7 @@ class SuperWeaponTypeClass;
 class BulletExt
 {
 public:
-	typedef BulletClass TT;
+	using base_type = BulletClass;
 
 	class ExtData : public Extension<BulletClass>
 	{

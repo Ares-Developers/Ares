@@ -26,7 +26,8 @@ class WaveClass;
 class WeaponTypeExt
 {
 public:
-	typedef WeaponTypeClass TT;
+	using base_type = WeaponTypeClass;
+
 	class ExtData : public Extension<WeaponTypeClass>
 	{
 	public:

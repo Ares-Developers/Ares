@@ -15,7 +15,7 @@
 class CampaignExt
 {
 public:
-	typedef CampaignClass TT;
+	using base_type = CampaignClass;
 
 	class ExtData : public Extension<CampaignClass>
 	{

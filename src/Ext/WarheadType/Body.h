@@ -28,7 +28,7 @@ class TechnoClass;
 class WarheadTypeExt //: public Container<WarheadTypeExt>
 {
 public:
-	typedef WarheadTypeClass TT;
+	using base_type = WarheadTypeClass;
 
 	struct VersesData : public WarheadFlags {
 		double Verses;

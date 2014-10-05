@@ -22,7 +22,7 @@ class VoxClass;
 class SideExt
 {
 	public:
-	typedef SideClass TT;
+	using base_type = SideClass;
 
 	class ExtData : public Extension<SideClass>
 	{

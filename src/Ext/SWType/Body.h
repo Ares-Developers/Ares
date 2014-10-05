@@ -64,7 +64,7 @@ struct LightingColor {
 class SWTypeExt
 {
 public:
-	typedef SuperWeaponTypeClass TT;
+	using base_type = SuperWeaponTypeClass;
 
 	class ExtData : public Extension<SuperWeaponTypeClass>
 	{
