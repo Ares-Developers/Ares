@@ -6,7 +6,6 @@
 #include "../../Utilities/Template.h"
 #include "../_Container.hpp"
 
-#include <xcompile.h>
 #include <CCINIClass.h>
 #include <ColorScheme.h>
 #include <VocClass.h>

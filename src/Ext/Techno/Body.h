@@ -1,7 +1,6 @@
 #ifndef TECHNO_EXT_H
 #define TECHNO_EXT_H
 
-#include <xcompile.h>
 #include <algorithm>
 
 #include "../../Misc/AttachEffect.h"

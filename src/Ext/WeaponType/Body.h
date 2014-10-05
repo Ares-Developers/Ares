@@ -1,7 +1,6 @@
 #ifndef WEAPONTYPE_EXT_H
 #define WEAPONTYPE_EXT_H
 
-#include <xcompile.h>
 #include <CCINIClass.h>
 #include <WeaponTypeClass.h>
 

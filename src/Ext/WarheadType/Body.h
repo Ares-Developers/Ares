@@ -1,7 +1,6 @@
 #ifndef WARHEADTYPE_EXT_H
 #define WARHEADTYPE_EXT_H
 
-#include <xcompile.h>
 #include <CCINIClass.h>
 #include <WarheadTypeClass.h>
 #include <GeneralStructures.h>
