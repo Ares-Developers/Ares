@@ -22,7 +22,10 @@ class TechnoTypeExt
 {
 public:
 	using base_type = TechnoTypeClass;
-	enum SpotlightAttachment { sa_Body, sa_Turret, sa_Barrel };
+
+	enum class SpotlightAttachment {
+		Body, Turret, Barrel
+	};
 
 	class ExtData : public Extension<TechnoTypeClass>
 	{
@@ -235,7 +238,7 @@ public:
 			Is_Spotlighted(false),
 			Spot_Height(200),
 			Spot_Distance(1024),
-			Spot_AttachedTo(sa_Body),
+			Spot_AttachedTo(SpotlightAttachment::Body),
 			Spot_DisableR(false),
 			Spot_DisableG(false),
 			Spot_DisableB(false),

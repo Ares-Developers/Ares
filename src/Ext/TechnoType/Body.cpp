@@ -174,11 +174,11 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 	this->Spot_Distance = pINI->ReadInteger(section, "Spotlight.Distance", this->Spot_Distance);
 	if(pINI->ReadString(section, "Spotlight.AttachedTo", "", Ares::readBuffer, Ares::readLength)) {
 		if(!_strcmpi(Ares::readBuffer, "body")) {
-			this->Spot_AttachedTo = sa_Body;
+			this->Spot_AttachedTo = SpotlightAttachment::Body;
 		} else if(!_strcmpi(Ares::readBuffer, "turret")) {
-			this->Spot_AttachedTo = sa_Turret;
+			this->Spot_AttachedTo = SpotlightAttachment::Turret;
 		} else if(!_strcmpi(Ares::readBuffer, "barrel")) {
-			this->Spot_AttachedTo = sa_Barrel;
+			this->Spot_AttachedTo = SpotlightAttachment::Barrel;
 		} else {
 			Debug::INIParseFailed(section, "Spotlight.AttachedTo", Ares::readBuffer);
 		}

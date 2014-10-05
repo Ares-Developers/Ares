@@ -134,7 +134,6 @@ DEFINE_HOOK(435C32, BuildingLightClass_Draw_PowerOnline, A)
 
 DEFINE_HOOK(436459, BuildingLightClass_Update, 6)
 {
-	static const double Facing2Rad = (2 * 3.14) / 0xFFFF;
 	GET(BuildingLightClass *, BL, EDI);
 	TechnoClass *Owner = BL->OwnerObject;
 	if(Owner && Owner->WhatAmI() != AbstractType::Building) {
@@ -142,16 +141,18 @@ DEFINE_HOOK(436459, BuildingLightClass_Update, 6)
 		CoordStruct Loc = Owner->Location;
 		DirStruct Facing;
 		switch(pTypeData->Spot_AttachedTo) {
-			case TechnoTypeExt::sa_Barrel:
-				Facing = Owner->BarrelFacing.current();
-				break;
-			case TechnoTypeExt::sa_Turret:
-				Facing = Owner->TurretFacing.current();
-				break;
-			default:
-				Facing = Owner->Facing.current();
+		case TechnoTypeExt::SpotlightAttachment::Barrel:
+			Facing = Owner->BarrelFacing.current();
+			break;
+		case TechnoTypeExt::SpotlightAttachment::Turret:
+			Facing = Owner->TurretFacing.current();
+			break;
+		case TechnoTypeExt::SpotlightAttachment::Body:
+		default:
+			Facing = Owner->Facing.current();
 		}
 
+		static const double Facing2Rad = (2 * 3.14) / 0xFFFF;
 		double Angle = Facing2Rad * static_cast<DirStruct::unsigned_type>(Facing.value());
 		Loc.Y -= static_cast<int>(pTypeData->Spot_Distance * Math::cos(Angle));
 		Loc.X += static_cast<int>(pTypeData->Spot_Distance * Math::sin(Angle));
