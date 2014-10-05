@@ -26,7 +26,7 @@ bool Ares::UISettings::ShowDebugCampaigns = false;
 Ares::UISettings::CampaignData Ares::UISettings::Campaigns[4];
 
 int Ares::UISettings::ColorCount = 8;
-Interface::ColorData Ares::UISettings::Colors[maxColorCount+1];
+Ares::UISettings::ColorData Ares::UISettings::Colors[maxColorCount+1];
 
 int Ares::UISettings::uiColorText;
 int Ares::UISettings::uiColorTextButton = 0xFFFF; // #1644: needed for CD prompt
@@ -146,7 +146,7 @@ void Ares::UISettings::Load(CCINIClass *pINI) {
 		return defColor;
 	};
 
-	auto ReadColor = [&](const char* name, Interface::ColorData *value, int colorRGB, const char* defTooltip, const char* defColorScheme) {
+	auto ReadColor = [&](const char* name, ColorData *value, int colorRGB, const char* defTooltip, const char* defColorScheme) {
 		// load the tooltip string
 		char buffer[0x20];
 		sprintf_s(buffer, 0x20, "%s.Tooltip", name);

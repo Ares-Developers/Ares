@@ -20,7 +20,7 @@ DEFINE_HOOK(69A310, Game_GetLinkedColor, 7) {
 	GET_STACK(int, idx, 0x4);
 
 	// get the slot
-	Interface::ColorData* slot = nullptr;
+	Ares::UISettings::ColorData* slot = nullptr;
 	if(idx == -2 || idx == Ares::UISettings::ColorCount) {
 		// observer color
 		slot = &Ares::UISettings::Colors[0];
@@ -71,7 +71,7 @@ DEFINE_HOOK(4E46BB, hWnd_PopulateWithColors, 7) {
 	// add all colors
 	int curSel = 0;
 	for(int i=0; i<Ares::UISettings::ColorCount; ++i) {
-		Interface::ColorData* pSlot = &Ares::UISettings::Colors[i+1];
+		auto pSlot = &Ares::UISettings::Colors[i+1];
 		bool isCurrent = pSlot->selectedIndex == idxSlot;
 
 		if(isCurrent || pSlot->selectedIndex == -1) {

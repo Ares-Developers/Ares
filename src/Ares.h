@@ -159,6 +159,15 @@ public:
 			bool Valid;
 		};
 
+		struct ColorData {
+			wchar_t* id;
+			int colorRGB;
+			int selectedIndex;
+			char colorSchemeIndex;
+			char colorScheme[0x20];
+			const wchar_t* sttToolTipSublineText;
+		};
+
 		static void Load(CCINIClass*);
 
 		static bool Initialized;
@@ -178,7 +187,7 @@ public:
 
 		static const int maxColorCount = 16;
 		static int ColorCount;
-		static Interface::ColorData Colors[maxColorCount+1];
+		static ColorData Colors[maxColorCount+1];
 
 		static int uiColorText;
 		static int uiColorTextButton;
