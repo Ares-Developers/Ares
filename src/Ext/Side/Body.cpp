@@ -461,7 +461,7 @@ DEFINE_HOOK(6A4780, SideClass_SaveLoad_Prefix, 6)
 	GET_STACK(SideClass*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
 
-	Container<SideExt>::PrepareStream(pItem, pStm);
+	SideExt::ExtMap.PrepareStream(pItem, pStm);
 
 	return 0;
 }

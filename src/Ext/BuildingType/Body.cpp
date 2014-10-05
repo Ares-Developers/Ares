@@ -385,7 +385,7 @@ DEFINE_HOOK(465010, BuildingTypeClass_SaveLoad_Prefix, 5)
 	GET_STACK(BuildingTypeClass*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
 
-	Container<BuildingTypeExt>::PrepareStream(pItem, pStm);
+	BuildingTypeExt::ExtMap.PrepareStream(pItem, pStm);
 
 	return 0;
 }

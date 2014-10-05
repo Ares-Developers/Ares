@@ -32,7 +32,7 @@ A_FINE_HOOK(410380, AbstractClass_SaveLoad_Prefix, 5)
 	GET_STACK(AbstractClass*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
 
-	Container<AbstractExt>::PrepareStream(pItem, pStm);
+	AbstractExt::ExtMap.PrepareStream(pItem, pStm);
 
 	return 0;
 }

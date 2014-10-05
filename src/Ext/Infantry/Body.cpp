@@ -100,7 +100,7 @@ A_FINE_HOOK(521960, InfantryClass_SaveLoad_Prefix, 6)
 	GET_STACK(InfantryClass*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
 
-	Container<InfantryExt>::PrepareStream(pItem, pStm);
+	InfantryExt::ExtMap.PrepareStream(pItem, pStm);
 
 	return 0;
 }

@@ -415,7 +415,7 @@ DEFINE_HOOK(772CD0, WeaponTypeClass_SaveLoad_Prefix, 7)
 	GET_STACK(WeaponTypeClass*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
 
-	Container<WeaponTypeExt>::PrepareStream(pItem, pStm);
+	WeaponTypeExt::ExtMap.PrepareStream(pItem, pStm);
 
 	return 0;
 }

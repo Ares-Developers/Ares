@@ -443,7 +443,7 @@ DEFINE_HOOK(512290, HouseTypeClass_SaveLoad_Prefix, 5)
 	GET_STACK(HouseTypeClass*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
 
-	Container<HouseTypeExt>::PrepareStream(pItem, pStm);
+	HouseTypeExt::ExtMap.PrepareStream(pItem, pStm);
 
 	return 0;
 }

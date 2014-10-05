@@ -1184,7 +1184,7 @@ DEFINE_HOOK(70BF50, TechnoClass_SaveLoad_Prefix, 5)
 	GET_STACK(TechnoClass*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
 
-	Container<TechnoExt>::PrepareStream(pItem, pStm);
+	TechnoExt::ExtMap.PrepareStream(pItem, pStm);
 
 	return 0;
 }

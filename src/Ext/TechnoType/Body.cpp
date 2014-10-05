@@ -624,7 +624,7 @@ DEFINE_HOOK(7162F0, TechnoTypeClass_SaveLoad_Prefix, 6)
 	GET_STACK(TechnoTypeClass*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
 
-	Container<TechnoTypeExt>::PrepareStream(pItem, pStm);
+	TechnoTypeExt::ExtMap.PrepareStream(pItem, pStm);
 
 	return 0;
 }

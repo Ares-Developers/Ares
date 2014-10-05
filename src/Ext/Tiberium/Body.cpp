@@ -110,7 +110,7 @@ DEFINE_HOOK(721E80, TiberiumClass_SaveLoad_Prefix, 7)
 	GET_STACK(TiberiumClass*, pThis, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
 
-	Container<TiberiumExt>::PrepareStream(pThis, pStm);
+	TiberiumExt::ExtMap.PrepareStream(pThis, pStm);
 
 	return 0;
 }

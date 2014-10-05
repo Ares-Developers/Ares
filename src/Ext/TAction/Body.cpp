@@ -108,7 +108,7 @@ A_FINE_HOOK(6E3DB0, TActionClass_SaveLoad_Prefix, 5)
 	GET_STACK(TActionClass*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
 
-	Container<TActionExt>::PrepareStream(pItem, pStm);
+	TActionExt::ExtMap.PrepareStream(pItem, pStm);
 
 	return 0;
 }

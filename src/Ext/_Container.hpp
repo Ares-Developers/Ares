@@ -228,7 +228,7 @@ public:
 		}
 	}
 
-	static void PrepareStream(key_type key, IStream *pStm) {
+	void PrepareStream(key_type key, IStream *pStm) {
 		const auto &info = typeid(base_type);
 		Debug::Log("[PrepareStream] Next is %p of type '%s'\n", key, info.name());
 

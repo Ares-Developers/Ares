@@ -167,7 +167,7 @@ DEFINE_HOOK(71F8C0, TEventClass_SaveLoad_Prefix, 5)
 	GET_STACK(TEventClass*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
 
-	Container<TEventExt>::PrepareStream(pItem, pStm);
+	TEventExt::ExtMap.PrepareStream(pItem, pStm);
 
 	return 0;
 }

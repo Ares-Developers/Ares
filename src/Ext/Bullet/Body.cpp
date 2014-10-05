@@ -123,7 +123,7 @@ DEFINE_HOOK(46AE70, BulletClass_SaveLoad_Prefix, 5)
 	GET_STACK(BulletClass*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
 
-	Container<BulletExt>::PrepareStream(pItem, pStm);
+	BulletExt::ExtMap.PrepareStream(pItem, pStm);
 
 	return 0;
 }
