@@ -29,6 +29,8 @@ class CellClass;
 class HouseClass;
 class CCINIClass;
 class MixFileClass;
+class CustomPalette;
+struct SHPStruct;
 
 class Ares
 {
@@ -148,6 +150,15 @@ public:
 	private:
 		UISettings() {};
 	public:
+		struct CampaignData {
+			char Battle[0x18];
+			char Subline[0x1F];
+			char ToolTip[0x1F];
+			CustomPalette* Palette;
+			SHPStruct* Image;
+			bool Valid;
+		};
+
 		static void Load(CCINIClass*);
 
 		static bool Initialized;
@@ -163,7 +174,7 @@ public:
 		static bool AllowMultiEngineer;
 		static bool CampaignList;
 		static bool ShowDebugCampaigns;
-		static Interface::CampaignData Campaigns[4];
+		static CampaignData Campaigns[4];
 
 		static const int maxColorCount = 16;
 		static int ColorCount;

@@ -23,7 +23,7 @@ Interface::eUIAction Ares::UISettings::ViewCreditsButton = Interface::uia_Defaul
 bool Ares::UISettings::AllowMultiEngineer = false;
 bool Ares::UISettings::CampaignList = false;
 bool Ares::UISettings::ShowDebugCampaigns = false;
-Interface::CampaignData Ares::UISettings::Campaigns[4];
+Ares::UISettings::CampaignData Ares::UISettings::Campaigns[4];
 
 int Ares::UISettings::ColorCount = 8;
 Interface::ColorData Ares::UISettings::Colors[maxColorCount+1];
@@ -87,7 +87,7 @@ void Ares::UISettings::Load(CCINIClass *pINI) {
 	ShowDebugCampaigns = pINI->ReadBool(section, "ShowDebugCampaigns", ShowDebugCampaigns);
 
 	// read the campaigns that can be started from the default campaign selection menu
-	auto ReadCampaign = [&](const char* name, Interface::CampaignData *value,
+	auto ReadCampaign = [&](const char* name, CampaignData *value,
 		const char* defBattle, const char* defImage, const char* defPalette,
 		const char* defSubline)
 	{

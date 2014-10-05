@@ -3,9 +3,6 @@
 
 #include <Windows.h>
 
-class CustomPalette;
-struct SHPStruct;
-
 class Interface
 {
 private:
@@ -25,15 +22,6 @@ public:
 	struct MenuItem {
 		int nIDDlgItem;
 		eUIAction uiaAction;
-	};
-
-	struct CampaignData {
-		char Battle[0x18];
-		char Subline[0x1F];
-		char ToolTip[0x1F];
-		CustomPalette* Palette;
-		SHPStruct* Image;
-		bool Valid;
 	};
 
 	struct ColorData {
