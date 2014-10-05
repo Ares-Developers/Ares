@@ -23,7 +23,7 @@
 	\author AlexB
 	\date 2010-06-20
 */
-bool Interface::invokeClickAction(eUIAction action, const char* name, int* pResult, int nextMenu) {
+bool Interface::invokeClickAction(Ares::UISettings::UIAction action, const char* name, int* pResult, int nextMenu) {
 	// reset
 	nextAction = -1;
 	nextReturnMenu = -1;
@@ -35,7 +35,7 @@ bool Interface::invokeClickAction(eUIAction action, const char* name, int* pResu
 		return (_nextAction > -1);
 	};
 
-	if(action == Interface::uia_Message) {
+	if(action == Ares::UISettings::UIAction::Message) {
 		// generate the label name
 		char buffer[0x20];
 		StringCchPrintfA(buffer, 0x20, "TXT_%s_MSG", name);
@@ -45,12 +45,12 @@ bool Interface::invokeClickAction(eUIAction action, const char* name, int* pResu
 		return ret(6);
 	}
 
-	if(action == Interface::uia_SneakPeek) {
+	if(action == Ares::UISettings::UIAction::SneakPeek) {
 		// show the preview video
 		return ret(13);
 	}
 
-	if(action == Interface::uia_Credits) {
+	if(action == Ares::UISettings::UIAction::Credits) {
 		// show the credits
 		return ret(15);
 	}
@@ -78,18 +78,18 @@ void Interface::updateMenuItems(HWND hDlg, const MenuItem* items, size_t count) 
 
 	static const size_t MaxMenuItemCount = 9;
 
-	int VisibleButtons = 0;
+	size_t VisibleButtons = 0;
 	count = std::min(count, MaxMenuItemCount);
 	std::array<RECT, MaxMenuItemCount> Rects;
 	for(size_t i = 0; i < count; ++i) {
 		if(HWND hItem = GetDlgItem(hDlg, items[i].nIDDlgItem)) {
 			GetWindowRect(hItem, &Rects[i]);
 
-			if(items[i].uiaAction == Interface::uia_Hide) {
+			if(items[i].uiaAction == Ares::UISettings::UIAction::Hide) {
 				// hide the window
 				ShowWindow(hItem, SW_HIDE);
 			} else {
-				if(items[i].uiaAction == Interface::uia_Disable) {
+				if(items[i].uiaAction == Ares::UISettings::UIAction::Disable) {
 					// disable the button
 					EnableWindow(hItem, false);
 				}
@@ -162,17 +162,17 @@ void Interface::swapItems(HWND hDlg, int nIDDlgItem1, int nIDDlgItem2) {
 	\author AlexB
 	\date 2010-06-20
 */
-Interface::eUIAction Interface::parseUIAction(const char* value, Interface::eUIAction def) {
+Ares::UISettings::UIAction Interface::parseUIAction(const char* value, Ares::UISettings::UIAction def) {
 	if(!_strcmpi(value, "message")) {
-		return Interface::uia_Message;
+		return Ares::UISettings::UIAction::Message;
 	} else if(!_strcmpi(value, "disable")) {
-		return Interface::uia_Disable;
+		return Ares::UISettings::UIAction::Disable;
 	} else if(!_strcmpi(value, "hide")) {
-		return Interface::uia_Hide;
+		return Ares::UISettings::UIAction::Hide;
 	} else if(!_strcmpi(value, "credits")) {
-		return Interface::uia_Credits;
+		return Ares::UISettings::UIAction::Credits;
 	} else if(!_strcmpi(value, "sneakpeek")) {
-		return Interface::uia_SneakPeek;
+		return Ares::UISettings::UIAction::SneakPeek;
 	} else if(_strcmpi(value, "default")) {
 		Debug::DevLog(Debug::Warning, "Unrecognized UI action value: %s\n", value);
 	}

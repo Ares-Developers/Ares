@@ -11,7 +11,6 @@
 //include <YRPP.h>
 #include <Helpers/Macro.h>
 
-#include "Misc/Interface.h"
 #include "Misc/Debug.h"
 
 #define GFX_DX_HW 0x01l
@@ -168,18 +167,27 @@ public:
 			const wchar_t* sttToolTipSublineText;
 		};
 
+		enum class UIAction {
+			Default = 0,
+			Message = 1,
+			Disable = 2,
+			Hide = 3,
+			SneakPeek = 13,
+			Credits = 15
+		};
+
 		static void Load(CCINIClass*);
 
 		static bool Initialized;
-		static Interface::eUIAction SinglePlayerButton;
-		static Interface::eUIAction WWOnlineButton;
-		static Interface::eUIAction NetworkButton;
-		static Interface::eUIAction MoviesAndCreditsButton;
-		static Interface::eUIAction CampaignButton;
-		static Interface::eUIAction SkirmishButton;
-		static Interface::eUIAction SneakPeeksButton;
-		static Interface::eUIAction PlayMoviesButton;
-		static Interface::eUIAction ViewCreditsButton;
+		static Ares::UISettings::UIAction SinglePlayerButton;
+		static Ares::UISettings::UIAction WWOnlineButton;
+		static Ares::UISettings::UIAction NetworkButton;
+		static Ares::UISettings::UIAction MoviesAndCreditsButton;
+		static Ares::UISettings::UIAction CampaignButton;
+		static Ares::UISettings::UIAction SkirmishButton;
+		static Ares::UISettings::UIAction SneakPeeksButton;
+		static Ares::UISettings::UIAction PlayMoviesButton;
+		static Ares::UISettings::UIAction ViewCreditsButton;
 		static bool AllowMultiEngineer;
 		static bool CampaignList;
 		static bool ShowDebugCampaigns;

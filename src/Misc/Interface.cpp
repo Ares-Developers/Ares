@@ -215,23 +215,23 @@ void Interface::updateMenu(HWND hDlg, int iID) {
 			{0x684, Ares::UISettings::WWOnlineButton},
 			{0x578, Ares::UISettings::NetworkButton},
 			{0x686, Ares::UISettings::MoviesAndCreditsButton},
-			{0x55C, Interface::uia_Default}};
+			{0x55C, Ares::UISettings::UIAction::Default}};
 		Interface::updateMenuItems(hDlg, items, _countof(items));
 	}
 
 	// singleplayer menu
 	if(iID == 256) {
 		// swap skirmish and load buttons so load will not appear first
-		if(Ares::UISettings::CampaignButton != Interface::uia_Hide) {
+		if(Ares::UISettings::CampaignButton != Ares::UISettings::UIAction::Hide) {
 			static const Interface::MenuItem items[] = {
 				{1672, Ares::UISettings::CampaignButton},
-				{1673, Interface::uia_Default},
+				{1673, Ares::UISettings::UIAction::Default},
 				{1401, Ares::UISettings::SkirmishButton}};
 			Interface::updateMenuItems(hDlg, items, _countof(items));
 		} else {
 			static const  Interface::MenuItem items[] = {
 				{1401, Ares::UISettings::SkirmishButton},
-				{1673, Interface::uia_Default},
+				{1673, Ares::UISettings::UIAction::Default},
 				{1672, Ares::UISettings::CampaignButton}};
 			Interface::swapItems(hDlg, 0x688, 0x579);
 			Interface::updateMenuItems(hDlg, items, _countof(items));

@@ -11,15 +11,15 @@
 #include <algorithm>
 
 bool Ares::UISettings::Initialized = false;
-Interface::eUIAction Ares::UISettings::SinglePlayerButton = Interface::uia_Default;
-Interface::eUIAction Ares::UISettings::WWOnlineButton = Interface::uia_Default;
-Interface::eUIAction Ares::UISettings::NetworkButton = Interface::uia_Default;
-Interface::eUIAction Ares::UISettings::MoviesAndCreditsButton = Interface::uia_Default;
-Interface::eUIAction Ares::UISettings::CampaignButton = Interface::uia_Default;
-Interface::eUIAction Ares::UISettings::SkirmishButton = Interface::uia_Default;
-Interface::eUIAction Ares::UISettings::SneakPeeksButton = Interface::uia_Default;
-Interface::eUIAction Ares::UISettings::PlayMoviesButton = Interface::uia_Default;
-Interface::eUIAction Ares::UISettings::ViewCreditsButton = Interface::uia_Default;
+Ares::UISettings::UIAction Ares::UISettings::SinglePlayerButton = Ares::UISettings::UIAction::Default;
+Ares::UISettings::UIAction Ares::UISettings::WWOnlineButton = Ares::UISettings::UIAction::Default;
+Ares::UISettings::UIAction Ares::UISettings::NetworkButton = Ares::UISettings::UIAction::Default;
+Ares::UISettings::UIAction Ares::UISettings::MoviesAndCreditsButton = Ares::UISettings::UIAction::Default;
+Ares::UISettings::UIAction Ares::UISettings::CampaignButton = Ares::UISettings::UIAction::Default;
+Ares::UISettings::UIAction Ares::UISettings::SkirmishButton = Ares::UISettings::UIAction::Default;
+Ares::UISettings::UIAction Ares::UISettings::SneakPeeksButton = Ares::UISettings::UIAction::Default;
+Ares::UISettings::UIAction Ares::UISettings::PlayMoviesButton = Ares::UISettings::UIAction::Default;
+Ares::UISettings::UIAction Ares::UISettings::ViewCreditsButton = Ares::UISettings::UIAction::Default;
 bool Ares::UISettings::AllowMultiEngineer = false;
 bool Ares::UISettings::CampaignList = false;
 bool Ares::UISettings::ShowDebugCampaigns = false;
@@ -66,7 +66,7 @@ void Ares::UISettings::Load(CCINIClass *pINI) {
 
 	const char* section = "UISettings";
 
-	auto ReadUIAction = [&](const char* name, Interface::eUIAction &value) {
+	auto ReadUIAction = [&](const char* name, Ares::UISettings::UIAction &value) {
 		if(pINI->ReadString(section, name, "default", Ares::readBuffer, Ares::readLength)) {
 			value = Interface::parseUIAction(Ares::readBuffer, value);
 		}
