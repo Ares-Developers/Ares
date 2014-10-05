@@ -22,7 +22,7 @@ class RulesExt
 	public:
 	typedef RulesClass TT;
 
-	class ExtData : public Extension<TT>
+	class ExtData : public Extension<RulesClass>
 	{
 		public:
 		Valueable<AnimTypeClass* >ElectricDeath;
@@ -80,7 +80,7 @@ class RulesExt
 		Valueable<bool> AutoRepelAI;
 		Valueable<bool> AutoRepelPlayer;
 
-		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
+		ExtData(RulesClass* OwnerObject) : Extension<RulesClass>(OwnerObject),
 			ElectricDeath(nullptr),
 			EngineerDamage (0.0),
 			EngineerAlwaysCaptureTech (true),
@@ -125,8 +125,8 @@ class RulesExt
 		virtual ~ExtData() = default;
 
 		virtual void LoadFromINIFile(CCINIClass* pINI) override;
-		virtual void LoadBeforeTypeData(TT *pThis, CCINIClass *pINI);
-		virtual void LoadAfterTypeData(TT *pThis, CCINIClass *pINI);
+		virtual void LoadBeforeTypeData(RulesClass* pThis, CCINIClass* pINI);
+		virtual void LoadAfterTypeData(RulesClass* pThis, CCINIClass* pINI);
 		virtual void InitializeConstants() override;
 
 		virtual void InvalidatePointer(void *ptr, bool bRemoved) override {

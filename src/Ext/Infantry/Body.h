@@ -15,11 +15,11 @@ class InfantryExt
 public:
 	typedef InfantryClass TT;
 
-	class ExtData : public Extension<TT>
+	class ExtData : public Extension<InfantryClass>
 	{
 	public:
 
-		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject)
+		ExtData(InfantryClass* OwnerObject) : Extension<InfantryClass>(OwnerObject)
 			{ };
 
 		virtual ~ExtData() = default;

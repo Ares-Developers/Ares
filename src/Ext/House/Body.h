@@ -34,7 +34,7 @@ public:
 		NotReached = 1, // don't do anything
 	};
 
-	class ExtData : public Extension<TT>
+	class ExtData : public Extension<HouseClass>
 	{
 	public:
 		bool IonSensitive;
@@ -56,7 +56,7 @@ public:
 
 		std::vector<BuildingClass*> Academies;
 
-		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
+		ExtData(HouseClass* OwnerObject) : Extension<HouseClass>(OwnerObject),
 			IonSensitive(false),
 			FirewallActive(false),
 			FirewallRecalc(0),

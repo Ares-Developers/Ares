@@ -16,14 +16,14 @@ class AnimTypeExt
 public:
 	typedef AnimTypeClass TT;
 
-	class ExtData : public Extension<TT>
+	class ExtData : public Extension<AnimTypeClass>
 	{
 	public:
 		Valueable<OwnerHouseKind> MakeInfantryOwner;
 
 		CustomPalette Palette;
 
-		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
+		ExtData(AnimTypeClass* OwnerObject) : Extension<AnimTypeClass>(OwnerObject),
 			MakeInfantryOwner(OwnerHouseKind::Invoker),
 			Palette(CustomPalette::PaletteMode::Temperate)
 		{ };

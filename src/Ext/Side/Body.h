@@ -24,7 +24,7 @@ class SideExt
 	public:
 	typedef SideClass TT;
 
-	class ExtData : public Extension<TT>
+	class ExtData : public Extension<SideClass>
 	{
 	public:
 		Nullable<InfantryTypeClass*> Disguise;
@@ -66,7 +66,7 @@ class SideExt
 
 		int ArrayIndex;
 
-		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
+		ExtData(SideClass* OwnerObject) : Extension<SideClass>(OwnerObject),
 			ArrayIndex (-1),
 			ParaDropPlane (-1),
 			HunterSeeker (nullptr),

@@ -29,7 +29,7 @@ class TechnoExt
 public:
 	typedef TechnoClass TT;
 
-	class ExtData : public Extension<TT>
+	class ExtData : public Extension<TechnoClass>
 	{
 	public:
 		// weapon slots fsblargh
@@ -88,7 +88,7 @@ public:
 		SuperClass* SuperWeapon; // the super weapon somehow attached to this (not provided by this)
 		AbstractClass* SuperTarget; // the attached super weapon's target (if any)
 
-		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
+		ExtData(TechnoClass* OwnerObject) : Extension<TechnoClass>(OwnerObject),
 			idxSlot_Wave (0),
 			idxSlot_Beam (0),
 			idxSlot_Warp (0),

@@ -24,7 +24,7 @@ public:
 	typedef TechnoTypeClass TT;
 	enum SpotlightAttachment { sa_Body, sa_Turret, sa_Barrel };
 
-	class ExtData : public Extension<TT>
+	class ExtData : public Extension<TechnoTypeClass>
 	{
 	public:
 		DynamicVectorClass<InfantryTypeClass *> Survivors_Pilots;
@@ -220,7 +220,7 @@ public:
 		// berserk
 		Nullable<double> BerserkROFMultiplier;
 
-		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
+		ExtData(TechnoTypeClass* OwnerObject) : Extension<TechnoTypeClass>(OwnerObject),
 			Survivors_PilotChance (),
 			Survivors_PassengerChance (),
 			Survivors_PilotCount (-1),

@@ -16,12 +16,12 @@ class TEventExt
 	public:
 	typedef TEventClass TT;
 
-	class ExtData : public Extension<TT>
+	class ExtData : public Extension<TEventClass>
 	{
 		public:
 			OptionalStruct<TechnoTypeClass*> TechnoType;
 
-		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
+		ExtData(TEventClass* OwnerObject) : Extension<TEventClass>(OwnerObject),
 			TechnoType()
 		{
 		};

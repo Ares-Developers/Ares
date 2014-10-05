@@ -14,7 +14,7 @@ class TiberiumExt
 	public:
 	typedef TiberiumClass TT;
 
-	class ExtData : public Extension<TT>
+	class ExtData : public Extension<TiberiumClass>
 	{
 	public:
 		Nullable<int> Damage;
@@ -30,7 +30,7 @@ class TiberiumExt
 
 		Valueable<int> DebrisChance;
 
-		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
+		ExtData(TiberiumClass* OwnerObject) : Extension<TiberiumClass>(OwnerObject),
 			Damage(),
 			Warhead(),
 			Heal_Step(),

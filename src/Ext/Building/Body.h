@@ -59,7 +59,7 @@ public:
 	};
 
 
-	class ExtData : public Extension<TT>
+	class ExtData : public Extension<BuildingClass>
 	{
 	private:
 
@@ -81,7 +81,7 @@ public:
 		bool SecretLab_Placed;
 
 	public:
-		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
+		ExtData(BuildingClass* OwnerObject) : Extension<BuildingClass>(OwnerObject),
 			OwnerBeforeRaid(nullptr),
 			isCurrentlyRaided(false),
 			ignoreNextEVA(false),

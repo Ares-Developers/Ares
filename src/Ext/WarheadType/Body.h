@@ -44,7 +44,7 @@ public:
 		}
 	};
 
-	class ExtData : public Extension<TT>
+	class ExtData : public Extension<WarheadTypeClass>
 	{
 	public:
 		bool MindControl_Permanent;
@@ -80,7 +80,7 @@ public:
 
 		AttachEffectTypeClass AttachedEffect;
 
-		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
+		ExtData(WarheadTypeClass* OwnerObject) : Extension<WarheadTypeClass>(OwnerObject),
 			MindControl_Permanent (false),
 			Ripple_Radius (0),
 			EMP_Duration (0),

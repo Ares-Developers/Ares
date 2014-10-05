@@ -15,10 +15,10 @@ class TActionExt
 	public:
 	typedef TActionClass TT;
 
-	class ExtData : public Extension<TT>
+	class ExtData : public Extension<TActionClass>
 	{
 		public:
-		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject)
+		ExtData(TActionClass* const OwnerObject) : Extension<TActionClass>(OwnerObject)
 		{
 		};
 

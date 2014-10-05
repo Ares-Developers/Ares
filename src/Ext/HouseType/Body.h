@@ -20,7 +20,7 @@ class HouseTypeExt
 public:
 	typedef HouseTypeClass TT;
 
-	class ExtData : public Extension<TT>
+	class ExtData : public Extension<HouseTypeClass>
 	{
 	public:
 		static const int ObserverBackgroundWidth = 121;
@@ -59,7 +59,7 @@ public:
 		Valueable<bool> ObserverFlagYuriPAL;
 		bool SettingsInherited;
 
-		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
+		ExtData(HouseTypeClass* OwnerObject) : Extension<HouseTypeClass>(OwnerObject),
 			RandomSelectionWeight(1),
 			CountryListIndex(100),
 			ParaDropPlane(-1),

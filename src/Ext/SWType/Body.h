@@ -66,7 +66,7 @@ class SWTypeExt
 public:
 	typedef SuperWeaponTypeClass TT;
 
-	class ExtData : public Extension<TT>
+	class ExtData : public Extension<SuperWeaponTypeClass>
 	{
 	public:
 		// SpyPlane
@@ -247,7 +247,7 @@ public:
 		SuperWeaponType HandledByNewSWType;
 		Action LastAction;
 
-		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
+		ExtData(SuperWeaponTypeClass* OwnerObject) : Extension<SuperWeaponTypeClass>(OwnerObject),
 			SpyPlane_TypeIndex (0),
 			SpyPlane_Count (1),
 			SpyPlane_Mission (Mission::AttackAgain),

@@ -14,14 +14,14 @@ class AbstractExt
 public:
 	typedef AbstractClass TT;
 
-	class ExtData : public Extension<TT>
+	class ExtData : public Extension<AbstractClass>
 	{
 	public:
 
 		DWORD LastChecksumTime;
 		DWORD LastChecksum;
 
-		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
+		ExtData(AbstractClass* OwnerObject) : Extension<AbstractClass>(OwnerObject),
 			LastChecksumTime(0),
 			LastChecksum(0)
 			{ };

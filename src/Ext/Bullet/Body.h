@@ -15,12 +15,12 @@ class BulletExt
 public:
 	typedef BulletClass TT;
 
-	class ExtData : public Extension<TT>
+	class ExtData : public Extension<BulletClass>
 	{
 	public:
 		SuperWeaponTypeClass *NukeSW;
 
-		ExtData(TT* const OwnerObject) : Extension(OwnerObject),
+		ExtData(BulletClass* OwnerObject) : Extension(OwnerObject),
 			NukeSW (nullptr)
 			{ };
 

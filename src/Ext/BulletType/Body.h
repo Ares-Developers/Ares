@@ -19,7 +19,7 @@ class BulletTypeExt
 public:
 	typedef BulletTypeClass TT;
 
-	class ExtData : public Extension<TT>
+	class ExtData : public Extension<BulletTypeClass>
 	{
 	public:
 		// solid
@@ -43,7 +43,7 @@ public:
 		Nullable<Leptons> BallisticScatterMin;
 		Nullable<Leptons> BallisticScatterMax;
 
-		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
+		ExtData(BulletTypeClass* OwnerObject) : Extension<BulletTypeClass>(OwnerObject),
 			Splits (false),
 			RetargetAccuracy (0.0f),
 			AirburstSpread (1.5f),

@@ -96,7 +96,7 @@ public:
 		{};
 	};
 
-	class ExtData : public Extension<TT>
+	class ExtData : public Extension<BuildingTypeClass>
 	{
 	public:
 		// solid
@@ -190,7 +190,7 @@ public:
 		Valueable<double> AcademyVehicle;
 		Valueable<double> AcademyBuilding;
 
-		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
+		ExtData(BuildingTypeClass* OwnerObject) : Extension<BuildingTypeClass>(OwnerObject),
 			Solid_Height (0),
 			IsCustom (false),
 			CustomWidth (0),
@@ -244,7 +244,7 @@ public:
 
 		virtual void LoadFromINIFile(CCINIClass* pINI) override;
 		virtual void Initialize() override;
-		virtual void CompleteInitialization(TT *pThis);
+		virtual void CompleteInitialization(BuildingTypeClass* pThis);
 
 		virtual void InvalidatePointer(void *ptr, bool bRemoved) override {
 			AnnounceInvalidPointer(RubbleIntact, ptr);

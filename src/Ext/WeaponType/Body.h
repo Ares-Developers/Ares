@@ -27,7 +27,7 @@ class WeaponTypeExt
 {
 public:
 	typedef WeaponTypeClass TT;
-	class ExtData : public Extension<TT>
+	class ExtData : public Extension<WeaponTypeClass>
 	{
 	public:
 		// static defaults
@@ -91,7 +91,7 @@ public:
 
 		Nullable<bool> ApplyDamage; // whether Damage should be applied even if IsSonic=yes or UseFireParticles=yes
 		
-		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
+		ExtData(WeaponTypeClass* OwnerObject) : Extension<WeaponTypeClass>(OwnerObject),
 			Weapon_Loaded (false),
 			Beam_Color (),
 			Beam_Duration (15),

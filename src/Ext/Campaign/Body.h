@@ -17,14 +17,14 @@ class CampaignExt
 public:
 	typedef CampaignClass TT;
 
-	class ExtData : public Extension<TT>
+	class ExtData : public Extension<CampaignClass>
 	{
 	public:
 		Valueable<bool> DebugOnly;
 		AresFixedString<0x20> HoverSound;
 		Valueable<CSFText> Summary;
 
-		ExtData(TT* const OwnerObject) : Extension<TT>(OwnerObject),
+		ExtData(CampaignClass* OwnerObject) : Extension<CampaignClass>(OwnerObject),
 			DebugOnly(false)
 		{ };
 
