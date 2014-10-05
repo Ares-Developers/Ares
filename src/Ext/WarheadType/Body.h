@@ -25,7 +25,7 @@ class HouseClass;
 class IonBlastClass;
 class TechnoClass;
 
-class WarheadTypeExt //: public Container<WarheadTypeExt>
+class WarheadTypeExt
 {
 public:
 	using base_type = WarheadTypeClass;
@@ -33,11 +33,11 @@ public:
 	struct VersesData : public WarheadFlags {
 		double Verses;
 
-		VersesData(double VS = 1.0, bool FF = true, bool Retal = true, bool Acquire = true): Verses(VS), WarheadFlags(FF, Retal, Acquire) {};
+		VersesData(double VS = 1.0, bool FF = true, bool Retal = true, bool Acquire = true) : Verses(VS), WarheadFlags(FF, Retal, Acquire) {};
 
 		bool operator ==(const VersesData &RHS) const {
 			return (CLOSE_ENOUGH(this->Verses, RHS.Verses));
-		};
+		}
 
 		void Parse(const char *str) {
 			this->Verses = Conversions::Str2Armor(str, this);
@@ -81,29 +81,29 @@ public:
 		AttachEffectTypeClass AttachedEffect;
 
 		ExtData(WarheadTypeClass* OwnerObject) : Extension<WarheadTypeClass>(OwnerObject),
-			MindControl_Permanent (false),
-			Ripple_Radius (0),
-			EMP_Duration (0),
-			EMP_Cap (-1),
-			IC_Duration (0),
-			IC_Cap (-1),
-			DeployedDamage (1.00),
-			Temporal_WarpAway (),
-			AffectsEnemies (true),
-			InfDeathAnim (nullptr),
-			PreImpactAnim (-1),
-			KillDriver (false),
+			MindControl_Permanent(false),
+			Ripple_Radius(0),
+			EMP_Duration(0),
+			EMP_Cap(-1),
+			IC_Duration(0),
+			IC_Cap(-1),
+			DeployedDamage(1.00),
+			Temporal_WarpAway(),
+			AffectsEnemies(true),
+			InfDeathAnim(nullptr),
+			PreImpactAnim(-1),
+			KillDriver(false),
 			KillDriver_KillBelowPercent(1.00),
-			Malicious (true),
-			PreventScatter (false),
-			CellSpread_MaxAffect (-1),
+			Malicious(true),
+			PreventScatter(false),
+			CellSpread_MaxAffect(-1),
 			AttachedEffect(OwnerObject)
-			{
-				VersesData vs;
-				for(int i = 0; i < 11; ++i) {
-					Verses.AddItem(vs);
-				}
-			};
+		{
+			VersesData vs;
+			for(int i = 0; i < 11; ++i) {
+				Verses.AddItem(vs);
+			}
+		}
 
 		virtual ~ExtData() = default;
 
@@ -162,13 +162,13 @@ public:
 	}
 	static void applyOccupantDamage(BulletClass *);
 
-    static bool canWarheadAffectTarget(TechnoClass *, HouseClass *, WarheadTypeClass *);
+	static bool canWarheadAffectTarget(TechnoClass *, HouseClass *, WarheadTypeClass *);
 
 	static void applyAttachedEffect(WarheadTypeClass * pWH, const CoordStruct &coords, TechnoClass * Source) {
-	//static void applyAttachedEffect(WarheadTypeClass * pWH, CoordStruct* coords, HouseClass* Owner) {
+		//static void applyAttachedEffect(WarheadTypeClass * pWH, CoordStruct* coords, HouseClass* Owner) {
 		if(auto pWHExt = WarheadTypeExt::ExtMap.Find(pWH)) {
 			pWHExt->applyAttachedEffect(coords, Source);
-		//	pWHExt->applyAttachedEffect(coords, Owner);
+			//	pWHExt->applyAttachedEffect(coords, Owner);
 		}
 	}
 };

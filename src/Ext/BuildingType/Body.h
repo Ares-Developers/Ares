@@ -51,7 +51,7 @@ public:
 
 		//methods
 		signed int GetUnusedWeaponSlot(BuildingTypeClass*, bool);
-		void Initialize(BuildingTypeClass* );
+		void Initialize(BuildingTypeClass*);
 		void LoadFromINIFile(BuildingTypeClass *, CCINIClass *);
 
 		int GetMaxFeeds() const {
@@ -93,7 +93,7 @@ public:
 			BreakSupport(false),
 			SupportWeaponIndex(-1),
 			EliteSupportWeaponIndex(-1)
-		{};
+		{ }
 	};
 
 	class ExtData : public Extension<BuildingTypeClass>
@@ -144,10 +144,10 @@ public:
 		Valueable<bool> RubbleIntactRemove;
 
 		// added 03.03.10 for #696 (switch for spied radar behavior)
-//		bool LegacyRadarEffect; //!< Whether to use RA's "reveal radar to spy" in addition to RA2's "disrupt radar for victim" on spying of a radar. Defaults to false, requires DisplayProduction to be true. \sa DisplayProduction
+		//bool LegacyRadarEffect; //!< Whether to use RA's "reveal radar to spy" in addition to RA2's "disrupt radar for victim" on spying of a radar. Defaults to false, requires DisplayProduction to be true. \sa DisplayProduction
 
 		// added 04.03.10 for 633#c2727
-//		bool DisplayProduction; //!< Whether to show a factory/radar's production/view to the house who spied it. (RA spy behavior.) Defaults to false. \sa LegacyRadarEffect
+		//bool DisplayProduction; //!< Whether to show a factory/radar's production/view to the house who spied it. (RA spy behavior.) Defaults to false. \sa LegacyRadarEffect
 
 		Valueable<bool> InfiltrateCustom;
 		Valueable<bool> RevealProduction;
@@ -166,7 +166,7 @@ public:
 		ValueableVector<InfantryTypeClass *> AllowedOccupiers;
 
 		Nullable<bool> Returnable;
-		
+
 		cPrismForwarding PrismForwarding;
 
 		Valueable<bool> ReverseEngineersVictims;
@@ -191,54 +191,54 @@ public:
 		Valueable<double> AcademyBuilding;
 
 		ExtData(BuildingTypeClass* OwnerObject) : Extension<BuildingTypeClass>(OwnerObject),
-			Solid_Height (0),
-			IsCustom (false),
-			CustomWidth (0),
-			CustomHeight (0),
-			OutlineLength (0),
-			CustomData (),
-			OutlineData (),
-			FoundationRadarShape (),
-			Secret_RecalcOnCapture (false),
-			Firewall_Is (false),
-			IsPassable (false),
-			UCPassThrough (0.0),
-			UCFatalRate (0.0),
-			UCDamageMultiplier (1.0),
-			BunkerRaidable (false),
-			IsTrench (-1),
-			RubbleIntact (nullptr),
-			RubbleDestroyed (nullptr),
-			RubbleDestroyedAnim (nullptr),
-			RubbleIntactAnim (nullptr),
-			RubbleDestroyedOwner (OwnerHouseKind::Default),
-			RubbleIntactOwner (OwnerHouseKind::Default),
-			RubbleDestroyedStrength (0),
-			RubbleIntactStrength (-1),
-			RubbleDestroyedRemove (false),
-			RubbleIntactRemove (false),
-			LightningRod_Modifier (1.0),
-			GateDownSound (),
-			GateUpSound (),
-			InfiltrateCustom (false),
-			RevealProduction (false),
-			ResetSW (false),
-			ResetRadar (false),
-			RevealRadar (false),
-			RevealRadarPersist (false),
-			GainVeterancy (false),
-			UnReverseEngineer (false),
-			StolenTechIndex (-1),
-			StolenMoneyAmount (0),
-			StolenMoneyPercentage (0),
-			PowerOutageDuration (0),
-			AllowedOccupiers (),
-			Returnable (),
+			Solid_Height(0),
+			IsCustom(false),
+			CustomWidth(0),
+			CustomHeight(0),
+			OutlineLength(0),
+			CustomData(),
+			OutlineData(),
+			FoundationRadarShape(),
+			Secret_RecalcOnCapture(false),
+			Firewall_Is(false),
+			IsPassable(false),
+			UCPassThrough(0.0),
+			UCFatalRate(0.0),
+			UCDamageMultiplier(1.0),
+			BunkerRaidable(false),
+			IsTrench(-1),
+			RubbleIntact(nullptr),
+			RubbleDestroyed(nullptr),
+			RubbleDestroyedAnim(nullptr),
+			RubbleIntactAnim(nullptr),
+			RubbleDestroyedOwner(OwnerHouseKind::Default),
+			RubbleIntactOwner(OwnerHouseKind::Default),
+			RubbleDestroyedStrength(0),
+			RubbleIntactStrength(-1),
+			RubbleDestroyedRemove(false),
+			RubbleIntactRemove(false),
+			LightningRod_Modifier(1.0),
+			GateDownSound(),
+			GateUpSound(),
+			InfiltrateCustom(false),
+			RevealProduction(false),
+			ResetSW(false),
+			ResetRadar(false),
+			RevealRadar(false),
+			RevealRadarPersist(false),
+			GainVeterancy(false),
+			UnReverseEngineer(false),
+			StolenTechIndex(-1),
+			StolenMoneyAmount(0),
+			StolenMoneyPercentage(0),
+			PowerOutageDuration(0),
+			AllowedOccupiers(),
+			Returnable(),
 			PrismForwarding(),
-			ReverseEngineersVictims (false),
-			CloningFacility (false),
-			Factory_ExplicitOnly (false)
-			{ };
+			ReverseEngineersVictims(false),
+			CloningFacility(false),
+			Factory_ExplicitOnly(false)
+		{ }
 
 		virtual ~ExtData() = default;
 

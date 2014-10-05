@@ -35,7 +35,7 @@ public:
 			PrismChargeDelay(0),
 			ModifierReserve(0.0),
 			DamageReserve(0)
-		{ };
+		{ }
 
 		~cPrismForwarding() {
 			this->RemoveFromNetwork(true);
@@ -90,7 +90,7 @@ public:
 			AboutToChronoshift(false),
 			SecretLab_Placed(false),
 			SensorArrayActiveCounter(0)
-		{ };
+		{ }
 
 		virtual ~ExtData() = default;
 

@@ -13,18 +13,17 @@ class TechnoTypeClass;
 
 class TEventExt
 {
-	public:
+public:
 	using base_type = TEventClass;
 
 	class ExtData : public Extension<TEventClass>
 	{
-		public:
-			OptionalStruct<TechnoTypeClass*> TechnoType;
+	public:
+		OptionalStruct<TechnoTypeClass*> TechnoType;
 
 		ExtData(TEventClass* OwnerObject) : Extension<TEventClass>(OwnerObject),
 			TechnoType()
-		{
-		};
+		{ }
 
 		virtual ~ExtData() = default;
 

@@ -68,8 +68,7 @@ public:
 			SWLastIndex(-1),
 			RadarPersist(),
 			StolenTech(0ull)
-		{
-		};
+		{ }
 
 		virtual ~ExtData();
 

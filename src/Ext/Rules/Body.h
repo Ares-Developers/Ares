@@ -19,12 +19,12 @@ class WarheadTypeClass;
 
 class RulesExt
 {
-	public:
+public:
 	using base_type = RulesClass;
 
 	class ExtData : public Extension<RulesClass>
 	{
-		public:
+	public:
 		Valueable<AnimTypeClass* >ElectricDeath;
 		Valueable<double> EngineerDamage;
 		Valueable<bool> EngineerAlwaysCaptureTech;
@@ -82,22 +82,22 @@ class RulesExt
 
 		ExtData(RulesClass* OwnerObject) : Extension<RulesClass>(OwnerObject),
 			ElectricDeath(nullptr),
-			EngineerDamage (0.0),
-			EngineerAlwaysCaptureTech (true),
-			EngineerDamageCursor (MouseCursor::GetCursor(MouseCursorType::Detonate)),
-			TogglePowerCursor (MouseCursor::GetCursor(MouseCursorType::Power)),
-			TogglePowerNoCursor (MouseCursor::GetCursor(MouseCursorType::Disallowed)),
-			TogglePowerAllowed (false),
-			TogglePowerDelay (45),
-			TogglePowerIQ (-1),
-			Tiberium_DamageEnabled (false),
-			Tiberium_HealEnabled (false),
-			Tiberium_ExplosiveWarhead (nullptr),
-			OverlayExplodeThreshold (0),
+			EngineerDamage(0.0),
+			EngineerAlwaysCaptureTech(true),
+			EngineerDamageCursor(MouseCursor::GetCursor(MouseCursorType::Detonate)),
+			TogglePowerCursor(MouseCursor::GetCursor(MouseCursorType::Power)),
+			TogglePowerNoCursor(MouseCursor::GetCursor(MouseCursorType::Disallowed)),
+			TogglePowerAllowed(false),
+			TogglePowerDelay(45),
+			TogglePowerIQ(-1),
+			Tiberium_DamageEnabled(false),
+			Tiberium_HealEnabled(false),
+			Tiberium_ExplosiveWarhead(nullptr),
+			OverlayExplodeThreshold(0),
 			DecloakSound(),
 			CloakHeight(),
 			EnemyInsignia(true),
-			EnemyWrench (true),
+			EnemyWrench(true),
 			ReturnStructures(false),
 			TypeSelectUseDeploy(true),
 			TeamRetaliate(false),
@@ -105,22 +105,22 @@ class RulesExt
 			DeactivateDim_EMP(0.8),
 			DeactivateDim_Operator(0.65),
 			BerserkROFMultiplier(0.5),
-			HunterSeekerBuildings (),
-			HunterSeekerDetonateProximity (0),
-			HunterSeekerDescendProximity (0),
-			HunterSeekerAscentSpeed (0),
-			HunterSeekerDescentSpeed (0),
-			HunterSeekerEmergeSpeed (0),
-			DropPodMinimum (0),
-			DropPodMaximum (0),
-			DropPodTypes (),
-			DropPodTrailer (),
+			HunterSeekerBuildings(),
+			HunterSeekerDetonateProximity(0),
+			HunterSeekerDescendProximity(0),
+			HunterSeekerAscentSpeed(0),
+			HunterSeekerDescentSpeed(0),
+			HunterSeekerEmergeSpeed(0),
+			DropPodMinimum(0),
+			DropPodMaximum(0),
+			DropPodTypes(),
+			DropPodTrailer(),
 			CanMakeStuffUp(false)
-			{
-				MultiEngineer[0] = false; // Skirmish
-				MultiEngineer[1] = false; // LAN
-				MultiEngineer[2] = false; // WOnline
-			};
+		{
+			MultiEngineer[0] = false; // Skirmish
+			MultiEngineer[1] = false; // LAN
+			MultiEngineer[2] = false; // WOnline
+		}
 
 		virtual ~ExtData() = default;
 
@@ -147,7 +147,7 @@ public:
 	static ExtData* Global()
 	{
 		return Data.get();
-	};
+	}
 
 	static DynamicVectorClass<CameoDataStruct> TabCameos[4];
 

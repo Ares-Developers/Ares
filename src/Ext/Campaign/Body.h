@@ -26,7 +26,7 @@ public:
 
 		ExtData(CampaignClass* OwnerObject) : Extension<CampaignClass>(OwnerObject),
 			DebugOnly(false)
-		{ };
+		{ }
 
 		virtual ~ExtData() = default;
 

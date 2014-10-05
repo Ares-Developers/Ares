@@ -24,7 +24,7 @@ public:
 		ExtData(AbstractClass* OwnerObject) : Extension<AbstractClass>(OwnerObject),
 			LastChecksumTime(0),
 			LastChecksum(0)
-			{ };
+		{ }
 
 		virtual ~ExtData() = default;
 

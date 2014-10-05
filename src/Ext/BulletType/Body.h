@@ -44,15 +44,15 @@ public:
 		Nullable<Leptons> BallisticScatterMax;
 
 		ExtData(BulletTypeClass* OwnerObject) : Extension<BulletTypeClass>(OwnerObject),
-			Splits (false),
-			RetargetAccuracy (0.0f),
-			AirburstSpread (1.5f),
-			SubjectToSolid (false),
-			SubjectToFirewall (true),
-			Parachuted (false),
-			SubjectToTrenches (true),
-			ImageConvert ()
-			{ };
+			Splits(false),
+			RetargetAccuracy(0.0f),
+			AirburstSpread(1.5f),
+			SubjectToSolid(false),
+			SubjectToFirewall(true),
+			Parachuted(false),
+			SubjectToTrenches(true),
+			ImageConvert()
+		{ }
 
 		virtual ~ExtData() = default;
 

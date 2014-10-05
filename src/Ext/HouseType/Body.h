@@ -70,7 +70,7 @@ public:
 			ObserverFlagSHP(nullptr),
 			ObserverFlagYuriPAL(false),
 			SettingsInherited(false)
-		{ };
+		{ }
 
 		virtual ~ExtData() = default;
 

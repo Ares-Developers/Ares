@@ -21,8 +21,8 @@ public:
 		SuperWeaponTypeClass *NukeSW;
 
 		ExtData(BulletClass* OwnerObject) : Extension(OwnerObject),
-			NukeSW (nullptr)
-			{ };
+			NukeSW(nullptr)
+		{ }
 
 		virtual ~ExtData() = default;
 
@@ -30,7 +30,6 @@ public:
 
 		virtual void InvalidatePointer(void *ptr, bool bRemoved) override {
 		}
-
 	};
 
 	static Container<BulletExt> ExtMap;

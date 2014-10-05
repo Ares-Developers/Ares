@@ -11,7 +11,7 @@ class WarheadTypeClass;
 
 class TiberiumExt
 {
-	public:
+public:
 	using base_type = TiberiumClass;
 
 	class ExtData : public Extension<TiberiumClass>
@@ -40,8 +40,7 @@ class TiberiumExt
 			ExplosionWarhead(),
 			ExplosionDamage(),
 			DebrisChance(33)
-		{
-		};
+		{ }
 
 		virtual ~ExtData() = default;
 

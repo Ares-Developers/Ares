@@ -21,7 +21,7 @@ class VoxClass;
 
 class SideExt
 {
-	public:
+public:
 	using base_type = SideClass;
 
 	class ExtData : public Extension<SideClass>
@@ -67,18 +67,17 @@ class SideExt
 		int ArrayIndex;
 
 		ExtData(SideClass* OwnerObject) : Extension<SideClass>(OwnerObject),
-			ArrayIndex (-1),
-			ParaDropPlane (-1),
-			HunterSeeker (nullptr),
-			ToolTipTextColor (),
-			MessageTextColorIndex (-1),
+			ArrayIndex(-1),
+			ParaDropPlane(-1),
+			HunterSeeker(nullptr),
+			ToolTipTextColor(),
+			MessageTextColorIndex(-1),
 			ScoreCampaignThemeUnderPar("SCORE"),
 			ScoreCampaignThemeOverPar("SCORE"),
 			ScoreMultiplayThemeWin("SCORE"),
 			ScoreMultiplayThemeLose("SCORE"),
-			EVAIndex (-1)
-		{
-		};
+			EVAIndex(-1)
+		{ }
 
 		virtual ~ExtData() = default;
 

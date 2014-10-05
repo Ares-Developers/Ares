@@ -12,15 +12,14 @@ class HouseClass;
 
 class TActionExt
 {
-	public:
+public:
 	using base_type = TActionClass;
 
 	class ExtData : public Extension<TActionClass>
 	{
-		public:
+	public:
 		ExtData(TActionClass* const OwnerObject) : Extension<TActionClass>(OwnerObject)
-		{
-		};
+		{ }
 
 		virtual ~ExtData() = default;
 

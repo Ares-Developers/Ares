@@ -26,7 +26,7 @@ public:
 		ExtData(AnimTypeClass* OwnerObject) : Extension<AnimTypeClass>(OwnerObject),
 			MakeInfantryOwner(OwnerHouseKind::Invoker),
 			Palette(CustomPalette::PaletteMode::Temperate)
-		{ };
+		{ }
 
 		virtual ~ExtData() = default;
 

@@ -20,7 +20,7 @@ public:
 	public:
 
 		ExtData(InfantryClass* OwnerObject) : Extension<InfantryClass>(OwnerObject)
-			{ };
+		{ }
 
 		virtual ~ExtData() = default;
 

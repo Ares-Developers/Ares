@@ -57,7 +57,7 @@ public:
 
 		// 305 Radar Jammers
 		std::unique_ptr<JammerClass> RadarJam;
-		
+
 		// issue #617 powered units
 		std::unique_ptr<PoweredUnitClass> PoweredUnit;
 
@@ -89,19 +89,19 @@ public:
 		AbstractClass* SuperTarget; // the attached super weapon's target (if any)
 
 		ExtData(TechnoClass* OwnerObject) : Extension<TechnoClass>(OwnerObject),
-			idxSlot_Wave (0),
-			idxSlot_Beam (0),
-			idxSlot_Warp (0),
+			idxSlot_Wave(0),
+			idxSlot_Beam(0),
+			idxSlot_Warp(0),
 			idxSlot_Parasite(0),
-			Survivors_Done (0),
-			Insignia_Image (nullptr),
-			GarrisonedIn (nullptr),
-			HijackerHealth (-1),
-			HijackerHouse (nullptr),
-			DriverKilled (false),
-			EMPSparkleAnim (nullptr),
-			EMPLastMission (Mission::None),
-			ShadowDrawnManually (false),
+			Survivors_Done(0),
+			Insignia_Image(nullptr),
+			GarrisonedIn(nullptr),
+			HijackerHealth(-1),
+			HijackerHouse(nullptr),
+			DriverKilled(false),
+			EMPSparkleAnim(nullptr),
+			EMPLastMission(Mission::None),
+			ShadowDrawnManually(false),
 			RadarJam(nullptr),
 			PoweredUnit(nullptr),
 			MyOriginalTemporal(nullptr),
@@ -112,17 +112,17 @@ public:
 			SuperTarget(nullptr),
 			OriginalHouseType(nullptr),
 			AttachEffects_RecreateAnims(false),
-			AttachedTechnoEffect_isset (false),
-			AttachedTechnoEffect_Delay (0),
+			AttachedTechnoEffect_isset(false),
+			AttachedTechnoEffect_Delay(0),
 			Crate_FirepowerMultiplier(1.0),
 			Crate_ArmorMultiplier(1.0),
 			Crate_SpeedMultiplier(1.0),
 			Crate_Cloakable(false)
-			{ };
+		{ }
 
 		virtual ~ExtData() {
 			this->SetSpotlight(nullptr);
-		};
+		}
 
 		// when any pointer in the game expires, this is called - be sure to tell everyone we own to invalidate it
 		virtual void InvalidatePointer(void *ptr, bool bRemoved) override {
@@ -191,7 +191,7 @@ public:
 	static void RecalculateStats(TechnoClass *pTechno);
 
 	static void FreeSpecificSlave(TechnoClass *Slave, HouseClass *Affector);
-	static void DetachSpecificSpawnee (TechnoClass *Spawnee, HouseClass *NewSpawneeOwner);
+	static void DetachSpecificSpawnee(TechnoClass *Spawnee, HouseClass *NewSpawneeOwner);
 	static bool CanICloakByDefault(TechnoClass *pTechno);
 
 	static void Destroy(TechnoClass* pTechno, TechnoClass* pKiller = nullptr, HouseClass* pKillerHouse = nullptr, WarheadTypeClass* pWarhead = nullptr);

@@ -78,8 +78,8 @@ public:
 
 		RadType * Rad_Type;
 
-//		MouseCursor Cursor_Attack;
-//		bool Cursor_Custom;
+		//MouseCursor Cursor_Attack;
+		//bool Cursor_Custom;
 
 		// #680 Chrono Prison
 		Valueable<bool> Abductor; //!< Will this weapon force eligible targets into the passenger hold of the shooter?
@@ -91,43 +91,43 @@ public:
 		Valueable<Leptons> ProjectileRange;
 
 		Nullable<bool> ApplyDamage; // whether Damage should be applied even if IsSonic=yes or UseFireParticles=yes
-		
+
 		ExtData(WeaponTypeClass* OwnerObject) : Extension<WeaponTypeClass>(OwnerObject),
-			Weapon_Loaded (false),
-			Beam_Color (),
-			Beam_Duration (15),
-			Beam_Amplitude (40.0),
-			Beam_IsHouseColor (false),
-			Bolt_Color1 (),
-			Bolt_Color2 (),
-			Bolt_Color3 (),
-			Wave_IsHouseColor (false),
-			Wave_IsLaser (false),
-			Wave_IsBigLaser (false),
-			Wave_Color (),
-			Laser_Thickness (-1),
-			Ivan_KillsBridges (true),
-			Ivan_Detachable (true),
-			Ivan_Damage (),
-			Ivan_Delay (),
-			Ivan_TickingSound (),
-			Ivan_AttachSound (),
-			Ivan_WH (),
-			Ivan_Image (),
-			Ivan_FlickerRate (),
-			Ivan_CanDetonateTimeBomb (),
-			Ivan_CanDetonateDeathBomb (),
-			Rad_Type (nullptr),
-			ProjectileRange (Leptons(100000)),
+			Weapon_Loaded(false),
+			Beam_Color(),
+			Beam_Duration(15),
+			Beam_Amplitude(40.0),
+			Beam_IsHouseColor(false),
+			Bolt_Color1(),
+			Bolt_Color2(),
+			Bolt_Color3(),
+			Wave_IsHouseColor(false),
+			Wave_IsLaser(false),
+			Wave_IsBigLaser(false),
+			Wave_Color(),
+			Laser_Thickness(-1),
+			Ivan_KillsBridges(true),
+			Ivan_Detachable(true),
+			Ivan_Damage(),
+			Ivan_Delay(),
+			Ivan_TickingSound(),
+			Ivan_AttachSound(),
+			Ivan_WH(),
+			Ivan_Image(),
+			Ivan_FlickerRate(),
+			Ivan_CanDetonateTimeBomb(),
+			Ivan_CanDetonateDeathBomb(),
+			Rad_Type(nullptr),
+			ProjectileRange(Leptons(100000)),
 			Abductor(false),
 			Abductor_AnimType(nullptr),
 			Abductor_ChangeOwner(false),
 			Abductor_AbductBelowPercent(1)
-			{
-				for(int i = 0; i < 5; ++i) {
-					this->Wave_Reverse[i] = false;
-				}
-			};
+		{
+			for(int i = 0; i < 5; ++i) {
+				this->Wave_Reverse[i] = false;
+			}
+		}
 
 		virtual void LoadFromINIFile(CCINIClass* pINI) override;
 		virtual void Initialize() override;
@@ -183,21 +183,21 @@ public:
 #define idxOther 4
 
 	static char AbsIDtoIdx(AbstractType absId)
+	{
+		switch(absId)
 		{
-			switch(absId)
-			{
-				case AbstractType::Unit:
-					return idxVehicle;
-				case AbstractType::Aircraft:
-					return idxAircraft;
-				case AbstractType::Building:
-					return idxBuilding;
-				case AbstractType::Infantry:
-					return idxInfantry;
-				default:
-					return idxOther;
-			}
-		};
+		case AbstractType::Unit:
+			return idxVehicle;
+		case AbstractType::Aircraft:
+			return idxAircraft;
+		case AbstractType::Building:
+			return idxBuilding;
+		case AbstractType::Infantry:
+			return idxInfantry;
+		default:
+			return idxOther;
+		}
+	}
 
 	// @return skipNormalHandling?
 	static bool ModifyWaveColor(WORD *src, WORD *dst, int Intensity, WaveClass *Wave);
