@@ -3,6 +3,8 @@
 
 #include <VoxClass.h>
 
+#include <vector>
+
 struct VoxFile
 {
 	char Name[9];
