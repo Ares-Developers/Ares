@@ -7,7 +7,6 @@
 #include <cstdio>
 #include <string>
 #include <YRPPCore.h>
-#include <Windows.h>
 #ifdef _MSC_VER
 #include <Dbghelp.h>
 #endif
