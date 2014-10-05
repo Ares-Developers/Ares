@@ -15,9 +15,6 @@
 template<> const DWORD Extension<TechnoTypeClass>::Canary = 0x44444444;
 Container<TechnoTypeExt> TechnoTypeExt::ExtMap;
 
-template<> TechnoTypeClass* Container<TechnoTypeExt>::SavingObject = nullptr;
-template<> IStream *Container<TechnoTypeExt>::SavingStream = nullptr;
-
 // =============================
 // member funcs
 

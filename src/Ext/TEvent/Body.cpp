@@ -7,9 +7,6 @@
 template<> const DWORD Extension<TEventClass>::Canary = 0x61616161;
 Container<TEventExt> TEventExt::ExtMap;
 
-template<> TEventClass* Container<TEventExt>::SavingObject = nullptr;
-template<> IStream *Container<TEventExt>::SavingStream = nullptr;
-
 // Gets the TechnoType pointed to by the event's TechnoName field.
 /*!
 	Resolves the TechnoName to a TechnoTypeClass and caches it. This function

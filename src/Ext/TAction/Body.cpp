@@ -10,9 +10,6 @@
 template<> const DWORD Extension<TActionClass>::Canary = 0x91919191;
 Container<TActionExt> TActionExt::ExtMap;
 
-template<> TActionClass* Container<TActionExt>::SavingObject = nullptr;
-template<> IStream *Container<TActionExt>::SavingStream = nullptr;
-
 // Enables the Firestorm super weapon for a house.
 /*!
 	\returns Always True.

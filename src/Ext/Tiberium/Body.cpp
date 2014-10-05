@@ -7,9 +7,6 @@
 template<> const DWORD Extension<TiberiumClass>::Canary = 0xB16B00B5;
 Container<TiberiumExt> TiberiumExt::ExtMap;
 
-template<> TiberiumClass* Container<TiberiumExt>::SavingObject = nullptr;
-template<> IStream* Container<TiberiumExt>::SavingStream = nullptr;
-
 void TiberiumExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 {
 	const char* section = this->OwnerObject()->get_ID();

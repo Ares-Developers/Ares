@@ -10,9 +10,6 @@
 template<> const DWORD Extension<AnimTypeClass>::Canary = 0xEEEEEEEE;
 Container<AnimTypeExt> AnimTypeExt::ExtMap;
 
-template<> AnimTypeClass* Container<AnimTypeExt>::SavingObject = nullptr;
-template<> IStream *Container<AnimTypeExt>::SavingStream = nullptr;
-
 void AnimTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 {
 	const char* pID = this->OwnerObject()->ID;

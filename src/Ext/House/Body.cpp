@@ -15,10 +15,8 @@
 
 template<> const DWORD Extension<HouseClass>::Canary = 0x12345678;
 Container<HouseExt> HouseExt::ExtMap;
-bool HouseExt::IsAnyFirestormActive = false;
 
-template<> HouseClass* Container<HouseExt>::SavingObject = nullptr;
-template<> IStream *Container<HouseExt>::SavingStream = nullptr;
+bool HouseExt::IsAnyFirestormActive = false;
 
 // =============================
 // member funcs

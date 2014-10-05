@@ -10,9 +10,6 @@
 template<> const DWORD Extension<RulesClass>::Canary = 0x12341234;
 std::unique_ptr<RulesExt::ExtData> RulesExt::Data = nullptr;
 
-template<> RulesClass* Container<RulesExt>::SavingObject = nullptr;
-template<> IStream *Container<RulesExt>::SavingStream = nullptr;
-
 void RulesExt::Allocate(RulesClass *pThis) {
 	Data = std::make_unique<RulesExt::ExtData>(pThis);
 }

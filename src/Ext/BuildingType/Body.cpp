@@ -9,9 +9,6 @@
 template<> const DWORD Extension<BuildingTypeClass>::Canary = 0x11111111;
 Container<BuildingTypeExt> BuildingTypeExt::ExtMap;
 
-template<> BuildingTypeClass* Container<BuildingTypeExt>::SavingObject = nullptr;
-template<> IStream *Container<BuildingTypeExt>::SavingStream = nullptr;
-
 std::vector<std::string> BuildingTypeExt::ExtData::trenchKinds;
 
 // =============================

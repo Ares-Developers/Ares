@@ -17,9 +17,6 @@
 template<> const DWORD Extension<BuildingClass>::Canary = 0x87654321;
 Container<BuildingExt> BuildingExt::ExtMap;
 
-template<> BuildingClass *Container<BuildingExt>::SavingObject = nullptr;
-template<> IStream *Container<BuildingExt>::SavingStream = nullptr;
-
 // =============================
 // member functions
 

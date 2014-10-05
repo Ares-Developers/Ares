@@ -3,9 +3,6 @@
 template<> const DWORD Extension<AbstractClass>::Canary = 0xAB5005BA;
 Container<AbstractExt> AbstractExt::ExtMap;
 
-template<> AbstractClass* Container<AbstractExt>::SavingObject = nullptr;
-template<> IStream *Container<AbstractExt>::SavingStream = nullptr;
-
 // =============================
 // container hooks
 

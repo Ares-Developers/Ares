@@ -148,8 +148,8 @@ private:
 
 	map_type Items;
 
-	static base_type * SavingObject;
-	static IStream * SavingStream;
+	base_type * SavingObject;
+	IStream * SavingStream;
 
 public:
 	void PointerGotInvalid(void *ptr, bool bRemoved) {
@@ -232,44 +232,44 @@ public:
 		const auto &info = typeid(base_type);
 		Debug::Log("[PrepareStream] Next is %p of type '%s'\n", key, info.name());
 
-		Container<T>::SavingObject = key;
-		Container<T>::SavingStream = pStm;
+		this->SavingObject = key;
+		this->SavingStream = pStm;
 	}
 
 	void SaveStatic() {
 		const auto &info = typeid(base_type);
 
-		if(Container<T>::SavingObject && Container<T>::SavingStream) {
-			Debug::Log("[SaveStatic] Saving object %p as '%s'\n", Container<T>::SavingObject, info.name());
+		if(this->SavingObject && this->SavingStream) {
+			Debug::Log("[SaveStatic] Saving object %p as '%s'\n", this->SavingObject, info.name());
 
-			if(!this->Save(Container<T>::SavingObject, Container<T>::SavingStream)) {
+			if(!this->Save(this->SavingObject, this->SavingStream)) {
 				Debug::FatalErrorAndExit("[SaveStatic] Saving failed!\n");
 			}
 		} else {
 			Debug::Log("[SaveStatic] Object or Stream not set for '%s': %p, %p\n",
-				info.name(), Container<T>::SavingObject, Container<T>::SavingStream);
+				info.name(), this->SavingObject, this->SavingStream);
 		}
 
-		Container<T>::SavingObject = nullptr;
-		Container<T>::SavingStream = nullptr;
+		this->SavingObject = nullptr;
+		this->SavingStream = nullptr;
 	}
 
 	void LoadStatic() {
 		const auto &info = typeid(base_type);
 
-		if(Container<T>::SavingObject && Container<T>::SavingStream) {
-			Debug::Log("[LoadStatic] Loading object %p as '%s'\n", Container<T>::SavingObject, info.name());
+		if(this->SavingObject && this->SavingStream) {
+			Debug::Log("[LoadStatic] Loading object %p as '%s'\n", this->SavingObject, info.name());
 
-			if(!this->Load(Container<T>::SavingObject, Container<T>::SavingStream)) {
+			if(!this->Load(this->SavingObject, this->SavingStream)) {
 				Debug::FatalErrorAndExit("[LoadStatic] Loading failed!\n");
 			}
 		} else {
 			Debug::Log("[LoadStatic] Object or Stream not set for '%s': %p, %p\n",
-				info.name(), Container<T>::SavingObject, Container<T>::SavingStream);
+				info.name(), this->SavingObject, this->SavingStream);
 		}
 
-		Container<T>::SavingObject = nullptr;
-		Container<T>::SavingStream = nullptr;
+		this->SavingObject = nullptr;
+		this->SavingStream = nullptr;
 	}
 
 protected:

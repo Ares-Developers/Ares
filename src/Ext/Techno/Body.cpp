@@ -22,9 +22,6 @@
 template<> const DWORD Extension<TechnoClass>::Canary = 0x55555555;
 Container<TechnoExt> TechnoExt::ExtMap;
 
-template<> TechnoClass* Container<TechnoExt>::SavingObject = nullptr;
-template<> IStream *Container<TechnoExt>::SavingStream = nullptr;
-
 FireError TechnoExt::FiringStateCache = FireError::NONE;
 
 bool TechnoExt::NeedsRegap = false;

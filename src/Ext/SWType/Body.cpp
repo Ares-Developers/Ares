@@ -24,9 +24,6 @@
 template<> const DWORD Extension<SuperWeaponTypeClass>::Canary = 0x66666666;
 Container<SWTypeExt> SWTypeExt::ExtMap;
 
-template<> SuperWeaponTypeClass* Container<SWTypeExt>::SavingObject = nullptr;
-template<> IStream *Container<SWTypeExt>::SavingStream = nullptr;
-
 SuperWeaponTypeClass *SWTypeExt::CurrentSWType = nullptr;
 
 void SWTypeExt::ExtData::InitializeConstants()

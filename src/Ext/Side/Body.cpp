@@ -11,9 +11,6 @@
 template<> const DWORD Extension<SideClass>::Canary = 0x06D106D1;
 Container<SideExt> SideExt::ExtMap;
 
-template<> SideClass* Container<SideExt>::SavingObject = nullptr;
-template<> IStream *Container<SideExt>::SavingStream = nullptr;
-
 int SideExt::CurrentLoadTextColor = -1;
 
 UniqueGamePtr<SHPStruct> SideExt::GraphicalTextImage = nullptr;

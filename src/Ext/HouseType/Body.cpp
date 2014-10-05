@@ -15,9 +15,6 @@
 template<> const DWORD Extension<HouseTypeClass>::Canary = 0xAFFEAFFE;
 Container<HouseTypeExt> HouseTypeExt::ExtMap;
 
-template<> HouseTypeClass* Container<HouseTypeExt>::SavingObject = nullptr;
-template<> IStream *Container<HouseTypeExt>::SavingStream = nullptr;
-
 void HouseTypeExt::ExtData::InitializeConstants() {
 	const char* pID = this->OwnerObject()->ID;
 

@@ -9,9 +9,6 @@
 template<> const DWORD Extension<BulletClass>::Canary = 0x2A2A2A2A;
 Container<BulletExt> BulletExt::ExtMap;
 
-template<> BulletClass *Container<BulletExt>::SavingObject = nullptr;
-template<> IStream *Container<BulletExt>::SavingStream = nullptr;
-
 // #663: PassThrough; #667: SubjectToTrenches
 //! Does the entire PassThrough logic, checks & damage
 /*!

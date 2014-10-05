@@ -14,9 +14,6 @@
 template<> const DWORD Extension<InfantryClass>::Canary = 0xE1E2E3E4;
 Container<InfantryExt> InfantryExt::ExtMap;
 
-template<> InfantryClass *Container<InfantryExt>::SavingObject = nullptr;
-template<> IStream *Container<InfantryExt>::SavingStream = nullptr;
-
 bool InfantryExt::ExtData::IsOccupant() {
 	InfantryClass* thisTrooper = this->OwnerObject();
 

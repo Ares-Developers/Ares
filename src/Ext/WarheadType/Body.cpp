@@ -28,9 +28,6 @@
 template<> const DWORD Extension<WarheadTypeClass>::Canary = 0x22222222;
 Container<WarheadTypeExt> WarheadTypeExt::ExtMap;
 
-template<> WarheadTypeClass* Container<WarheadTypeExt>::SavingObject = nullptr;
-template<> IStream *Container<WarheadTypeExt>::SavingStream = nullptr;
-
 AresMap<IonBlastClass*, const WarheadTypeExt::ExtData*> WarheadTypeExt::IonExt;
 
 WarheadTypeClass * WarheadTypeExt::Temporal_WH = nullptr;
