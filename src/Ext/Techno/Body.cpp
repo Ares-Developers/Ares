@@ -22,7 +22,7 @@
 template<> const DWORD Extension<TechnoClass>::Canary = 0x55555555;
 Container<TechnoExt> TechnoExt::ExtMap;
 
-template<> TechnoExt::TT *Container<TechnoExt>::SavingObject = nullptr;
+template<> TechnoClass* Container<TechnoExt>::SavingObject = nullptr;
 template<> IStream *Container<TechnoExt>::SavingStream = nullptr;
 
 FireError TechnoExt::FiringStateCache = FireError::NONE;
@@ -1181,7 +1181,7 @@ DEFINE_HOOK(6F4500, TechnoClass_DTOR, 5)
 DEFINE_HOOK_AGAIN(70C250, TechnoClass_SaveLoad_Prefix, 8)
 DEFINE_HOOK(70BF50, TechnoClass_SaveLoad_Prefix, 5)
 {
-	GET_STACK(TechnoExt::TT*, pItem, 0x4);
+	GET_STACK(TechnoClass*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
 
 	Container<TechnoExt>::PrepareStream(pItem, pStm);

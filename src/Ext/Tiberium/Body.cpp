@@ -7,7 +7,7 @@
 template<> const DWORD Extension<TiberiumClass>::Canary = 0xB16B00B5;
 Container<TiberiumExt> TiberiumExt::ExtMap;
 
-template<> TiberiumExt::TT* Container<TiberiumExt>::SavingObject = nullptr;
+template<> TiberiumClass* Container<TiberiumExt>::SavingObject = nullptr;
 template<> IStream* Container<TiberiumExt>::SavingStream = nullptr;
 
 void TiberiumExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
@@ -107,7 +107,7 @@ DEFINE_HOOK(72193A, TiberiumClass_DTOR, 6)
 DEFINE_HOOK_AGAIN(7220D0, TiberiumClass_SaveLoad_Prefix, 5)
 DEFINE_HOOK(721E80, TiberiumClass_SaveLoad_Prefix, 7)
 {
-	GET_STACK(TiberiumExt::TT*, pThis, 0x4);
+	GET_STACK(TiberiumClass*, pThis, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
 
 	Container<TiberiumExt>::PrepareStream(pThis, pStm);

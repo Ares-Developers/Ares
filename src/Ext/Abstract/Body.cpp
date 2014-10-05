@@ -3,7 +3,7 @@
 template<> const DWORD Extension<AbstractClass>::Canary = 0xAB5005BA;
 Container<AbstractExt> AbstractExt::ExtMap;
 
-template<> AbstractExt::TT *Container<AbstractExt>::SavingObject = nullptr;
+template<> AbstractClass* Container<AbstractExt>::SavingObject = nullptr;
 template<> IStream *Container<AbstractExt>::SavingStream = nullptr;
 
 // =============================
@@ -29,7 +29,7 @@ A_FINE_HOOK(4101F0, AbstractClass_DTOR, 6)
 A_FINE_HOOK_AGAIN(410320, AbstractClass_SaveLoad_Prefix, 5)
 A_FINE_HOOK(410380, AbstractClass_SaveLoad_Prefix, 5)
 {
-	GET_STACK(AbstractExt::TT*, pItem, 0x4);
+	GET_STACK(AbstractClass*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
 
 	Container<AbstractExt>::PrepareStream(pItem, pStm);

@@ -958,7 +958,7 @@ DEFINE_HOOK(43C022, BuildingClass_DTOR, 6)
 DEFINE_HOOK_AGAIN(454190, BuildingClass_SaveLoad_Prefix, 5)
 DEFINE_HOOK(453E20, BuildingClass_SaveLoad_Prefix, 5)
 {
-	GET_STACK(BuildingExt::TT*, pItem, 0x4);
+	GET_STACK(BuildingClass*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
 
 	Container<BuildingExt>::PrepareStream(pItem, pStm);

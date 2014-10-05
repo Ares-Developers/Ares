@@ -13,7 +13,7 @@
 template<> const DWORD Extension<WeaponTypeClass>::Canary = 0x33333333;
 Container<WeaponTypeExt> WeaponTypeExt::ExtMap;
 
-template<> WeaponTypeExt::TT *Container<WeaponTypeExt>::SavingObject = nullptr;
+template<> WeaponTypeClass* Container<WeaponTypeExt>::SavingObject = nullptr;
 template<> IStream *Container<WeaponTypeExt>::SavingStream = nullptr;
 
 const ColorStruct WeaponTypeExt::ExtData::DefaultWaveColor = ColorStruct(255, 255, 255); // placeholder
@@ -412,7 +412,7 @@ DEFINE_HOOK(77311D, WeaponTypeClass_SDDTOR, 6)
 DEFINE_HOOK_AGAIN(772EB0, WeaponTypeClass_SaveLoad_Prefix, 5)
 DEFINE_HOOK(772CD0, WeaponTypeClass_SaveLoad_Prefix, 7)
 {
-	GET_STACK(WeaponTypeExt::TT*, pItem, 0x4);
+	GET_STACK(WeaponTypeClass*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
 
 	Container<WeaponTypeExt>::PrepareStream(pItem, pStm);

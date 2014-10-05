@@ -7,7 +7,7 @@
 template<> const DWORD Extension<TEventClass>::Canary = 0x61616161;
 Container<TEventExt> TEventExt::ExtMap;
 
-template<> TEventExt::TT *Container<TEventExt>::SavingObject = nullptr;
+template<> TEventClass* Container<TEventExt>::SavingObject = nullptr;
 template<> IStream *Container<TEventExt>::SavingStream = nullptr;
 
 // Gets the TechnoType pointed to by the event's TechnoName field.
@@ -164,7 +164,7 @@ DEFINE_HOOK(71FAA6, TEventClass_SDDTOR, 6)
 DEFINE_HOOK_AGAIN(71F930, TEventClass_SaveLoad_Prefix, 8)
 DEFINE_HOOK(71F8C0, TEventClass_SaveLoad_Prefix, 5)
 {
-	GET_STACK(TEventExt::TT*, pItem, 0x4);
+	GET_STACK(TEventClass*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
 
 	Container<TEventExt>::PrepareStream(pItem, pStm);

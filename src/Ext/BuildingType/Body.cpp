@@ -9,7 +9,7 @@
 template<> const DWORD Extension<BuildingTypeClass>::Canary = 0x11111111;
 Container<BuildingTypeExt> BuildingTypeExt::ExtMap;
 
-template<> BuildingTypeExt::TT *Container<BuildingTypeExt>::SavingObject = nullptr;
+template<> BuildingTypeClass* Container<BuildingTypeExt>::SavingObject = nullptr;
 template<> IStream *Container<BuildingTypeExt>::SavingStream = nullptr;
 
 std::vector<std::string> BuildingTypeExt::ExtData::trenchKinds;
@@ -382,7 +382,7 @@ DEFINE_HOOK(45E707, BuildingTypeClass_DTOR, 6)
 DEFINE_HOOK_AGAIN(465300, BuildingTypeClass_SaveLoad_Prefix, 5)
 DEFINE_HOOK(465010, BuildingTypeClass_SaveLoad_Prefix, 5)
 {
-	GET_STACK(BuildingTypeExt::TT*, pItem, 0x4);
+	GET_STACK(BuildingTypeClass*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
 
 	Container<BuildingTypeExt>::PrepareStream(pItem, pStm);

@@ -10,7 +10,7 @@
 template<> const DWORD Extension<BulletTypeClass>::Canary = 0xF00DF00D;
 Container<BulletTypeExt> BulletTypeExt::ExtMap;
 
-template<> BulletTypeExt::TT *Container<BulletTypeExt>::SavingObject = nullptr;
+template<> BulletTypeClass* Container<BulletTypeExt>::SavingObject = nullptr;
 template<> IStream *Container<BulletTypeExt>::SavingStream = nullptr;
 
 // =============================
@@ -102,7 +102,7 @@ DEFINE_HOOK(46C8B6, BulletTypeClass_SDDTOR, 6)
 DEFINE_HOOK_AGAIN(46C730, BulletTypeClass_SaveLoad_Prefix, 8)
 DEFINE_HOOK(46C6A0, BulletTypeClass_SaveLoad_Prefix, 5)
 {
-	GET_STACK(BulletTypeExt::TT*, pItem, 0x4);
+	GET_STACK(BulletTypeClass*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
 
 	Container<BulletTypeExt>::PrepareStream(pItem, pStm);

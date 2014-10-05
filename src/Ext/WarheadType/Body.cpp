@@ -28,7 +28,7 @@
 template<> const DWORD Extension<WarheadTypeClass>::Canary = 0x22222222;
 Container<WarheadTypeExt> WarheadTypeExt::ExtMap;
 
-template<> WarheadTypeExt::TT *Container<WarheadTypeExt>::SavingObject = nullptr;
+template<> WarheadTypeClass* Container<WarheadTypeExt>::SavingObject = nullptr;
 template<> IStream *Container<WarheadTypeExt>::SavingStream = nullptr;
 
 AresMap<IonBlastClass*, const WarheadTypeExt::ExtData*> WarheadTypeExt::IonExt;
@@ -499,7 +499,7 @@ DEFINE_HOOK(75E5C8, WarheadTypeClass_SDDTOR, 6)
 DEFINE_HOOK_AGAIN(75E2C0, WarheadTypeClass_SaveLoad_Prefix, 5)
 DEFINE_HOOK(75E0C0, WarheadTypeClass_SaveLoad_Prefix, 8)
 {
-	GET_STACK(WarheadTypeExt::TT*, pItem, 0x4);
+	GET_STACK(WarheadTypeClass*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
 
 	Container<WarheadTypeExt>::PrepareStream(pItem, pStm);

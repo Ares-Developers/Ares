@@ -120,7 +120,7 @@ DEFINE_HOOK(4665E9, BulletClass_DTOR, A)
 DEFINE_HOOK_AGAIN(46AFB0, BulletClass_SaveLoad_Prefix, 8)
 DEFINE_HOOK(46AE70, BulletClass_SaveLoad_Prefix, 5)
 {
-	GET_STACK(BulletExt::TT*, pItem, 0x4);
+	GET_STACK(BulletClass*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
 
 	Container<BulletExt>::PrepareStream(pItem, pStm);

@@ -24,7 +24,7 @@
 template<> const DWORD Extension<SuperWeaponTypeClass>::Canary = 0x66666666;
 Container<SWTypeExt> SWTypeExt::ExtMap;
 
-template<> SWTypeExt::TT *Container<SWTypeExt>::SavingObject = nullptr;
+template<> SuperWeaponTypeClass* Container<SWTypeExt>::SavingObject = nullptr;
 template<> IStream *Container<SWTypeExt>::SavingStream = nullptr;
 
 SuperWeaponTypeClass *SWTypeExt::CurrentSWType = nullptr;
@@ -661,7 +661,7 @@ DEFINE_HOOK(6CEFE0, SuperWeaponTypeClass_SDDTOR, 8)
 DEFINE_HOOK_AGAIN(6CE8D0, SuperWeaponTypeClass_SaveLoad_Prefix, 8)
 DEFINE_HOOK(6CE800, SuperWeaponTypeClass_SaveLoad_Prefix, A)
 {
-	GET_STACK(SWTypeExt::TT*, pItem, 0x4);
+	GET_STACK(SuperWeaponTypeClass*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
 
 	Container<SWTypeExt>::PrepareStream(pItem, pStm);

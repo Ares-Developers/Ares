@@ -17,7 +17,7 @@ template<> const DWORD Extension<HouseClass>::Canary = 0x12345678;
 Container<HouseExt> HouseExt::ExtMap;
 bool HouseExt::IsAnyFirestormActive = false;
 
-template<> HouseExt::TT *Container<HouseExt>::SavingObject = nullptr;
+template<> HouseClass* Container<HouseExt>::SavingObject = nullptr;
 template<> IStream *Container<HouseExt>::SavingStream = nullptr;
 
 // =============================
@@ -672,7 +672,7 @@ DEFINE_HOOK(4F7371, HouseClass_DTOR, 6)
 DEFINE_HOOK_AGAIN(504080, HouseClass_SaveLoad_Prefix, 5)
 DEFINE_HOOK(503040, HouseClass_SaveLoad_Prefix, 5)
 {
-	GET_STACK(HouseExt::TT*, pItem, 0x4);
+	GET_STACK(HouseClass*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
 
 	Container<HouseExt>::PrepareStream(pItem, pStm);

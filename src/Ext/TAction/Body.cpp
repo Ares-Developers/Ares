@@ -10,7 +10,7 @@
 template<> const DWORD Extension<TActionClass>::Canary = 0x91919191;
 Container<TActionExt> TActionExt::ExtMap;
 
-template<> TActionExt::TT *Container<TActionExt>::SavingObject = nullptr;
+template<> TActionClass* Container<TActionExt>::SavingObject = nullptr;
 template<> IStream *Container<TActionExt>::SavingStream = nullptr;
 
 // Enables the Firestorm super weapon for a house.
@@ -105,7 +105,7 @@ A_FINE_HOOK(6E4761, TActionClass_SDDTOR, 6)
 A_FINE_HOOK_AGAIN(6E3E30, TActionClass_SaveLoad_Prefix, 8)
 A_FINE_HOOK(6E3DB0, TActionClass_SaveLoad_Prefix, 5)
 {
-	GET_STACK(TActionExt::TT*, pItem, 0x4);
+	GET_STACK(TActionClass*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
 
 	Container<TActionExt>::PrepareStream(pItem, pStm);

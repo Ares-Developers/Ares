@@ -11,7 +11,7 @@
 template<> const DWORD Extension<SideClass>::Canary = 0x06D106D1;
 Container<SideExt> SideExt::ExtMap;
 
-template<> SideExt::TT *Container<SideExt>::SavingObject = nullptr;
+template<> SideClass* Container<SideExt>::SavingObject = nullptr;
 template<> IStream *Container<SideExt>::SavingStream = nullptr;
 
 int SideExt::CurrentLoadTextColor = -1;
@@ -458,7 +458,7 @@ DEFINE_HOOK(6A499F, SideClass_SDDTOR, 6)
 DEFINE_HOOK_AGAIN(6A48A0, SideClass_SaveLoad_Prefix, 5)
 DEFINE_HOOK(6A4780, SideClass_SaveLoad_Prefix, 6)
 {
-	GET_STACK(SideExt::TT*, pItem, 0x4);
+	GET_STACK(SideClass*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
 
 	Container<SideExt>::PrepareStream(pItem, pStm);

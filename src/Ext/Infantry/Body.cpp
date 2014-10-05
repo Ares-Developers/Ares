@@ -97,7 +97,7 @@ A_FINE_HOOK(517F83, InfantryClass_DTOR, 6)
 A_FINE_HOOK_AGAIN(521B00, InfantryClass_SaveLoad_Prefix, 8)
 A_FINE_HOOK(521960, InfantryClass_SaveLoad_Prefix, 6)
 {
-	GET_STACK(InfantryExt::TT*, pItem, 0x4);
+	GET_STACK(InfantryClass*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
 
 	Container<InfantryExt>::PrepareStream(pItem, pStm);

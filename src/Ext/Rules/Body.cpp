@@ -10,7 +10,7 @@
 template<> const DWORD Extension<RulesClass>::Canary = 0x12341234;
 std::unique_ptr<RulesExt::ExtData> RulesExt::Data = nullptr;
 
-template<> RulesExt::TT *Container<RulesExt>::SavingObject = nullptr;
+template<> RulesClass* Container<RulesExt>::SavingObject = nullptr;
 template<> IStream *Container<RulesExt>::SavingStream = nullptr;
 
 void RulesExt::Allocate(RulesClass *pThis) {
@@ -163,7 +163,7 @@ DEFINE_HOOK(667A30, RulesClass_DTOR, 5) {
 A_FINE_HOOK_AGAIN(674730, RulesClass_SaveLoad_Prefix, 6)
 A_FINE_HOOK(675210, RulesClass_SaveLoad_Prefix, 5)
 {
-	//GET(RulesExt::TT*, pItem, ECX);
+	//GET(RulesClass*, pItem, ECX);
 	//GET_STACK(IStream*, pStm, 0x4);
 
 	return 0;

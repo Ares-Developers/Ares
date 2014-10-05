@@ -10,7 +10,7 @@
 template<> const DWORD Extension<AnimTypeClass>::Canary = 0xEEEEEEEE;
 Container<AnimTypeExt> AnimTypeExt::ExtMap;
 
-template<> AnimTypeExt::TT *Container<AnimTypeExt>::SavingObject = nullptr;
+template<> AnimTypeClass* Container<AnimTypeExt>::SavingObject = nullptr;
 template<> IStream *Container<AnimTypeExt>::SavingStream = nullptr;
 
 void AnimTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
@@ -64,7 +64,7 @@ DEFINE_HOOK(428EA8, AnimTypeClass_SDDTOR, 5)
 DEFINE_HOOK_AGAIN(428970, AnimTypeClass_SaveLoad_Prefix, 8)
 DEFINE_HOOK(428800, AnimTypeClass_SaveLoad_Prefix, A)
 {
-	GET_STACK(AnimTypeExt::TT*, pItem, 0x4);
+	GET_STACK(AnimTypeClass*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
 
 	Container<AnimTypeExt>::PrepareStream(pItem, pStm);

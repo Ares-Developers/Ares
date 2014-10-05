@@ -15,7 +15,7 @@
 template<> const DWORD Extension<HouseTypeClass>::Canary = 0xAFFEAFFE;
 Container<HouseTypeExt> HouseTypeExt::ExtMap;
 
-template<> HouseTypeExt::TT *Container<HouseTypeExt>::SavingObject = nullptr;
+template<> HouseTypeClass* Container<HouseTypeExt>::SavingObject = nullptr;
 template<> IStream *Container<HouseTypeExt>::SavingStream = nullptr;
 
 void HouseTypeExt::ExtData::InitializeConstants() {
@@ -440,7 +440,7 @@ DEFINE_HOOK(5127CF, HouseTypeClass_DTOR, 6) {
 DEFINE_HOOK_AGAIN(512480, HouseTypeClass_SaveLoad_Prefix, 5)
 DEFINE_HOOK(512290, HouseTypeClass_SaveLoad_Prefix, 5)
 {
-	GET_STACK(HouseTypeExt::TT*, pItem, 0x4);
+	GET_STACK(HouseTypeClass*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
 
 	Container<HouseTypeExt>::PrepareStream(pItem, pStm);

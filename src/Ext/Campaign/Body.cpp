@@ -12,7 +12,7 @@ Container<CampaignExt> CampaignExt::ExtMap;
 DynamicVectorClass<CampaignExt::ExtData*> CampaignExt::Array;
 int CampaignExt::lastSelectedCampaign;
 
-template<> CampaignExt::TT *Container<CampaignExt>::SavingObject = nullptr;
+template<> CampaignClass* Container<CampaignExt>::SavingObject = nullptr;
 template<> IStream *Container<CampaignExt>::SavingStream = nullptr;
 
 void CampaignExt::ExtData::Initialize()

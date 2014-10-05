@@ -15,7 +15,7 @@
 template<> const DWORD Extension<TechnoTypeClass>::Canary = 0x44444444;
 Container<TechnoTypeExt> TechnoTypeExt::ExtMap;
 
-template<> TechnoTypeExt::TT *Container<TechnoTypeExt>::SavingObject = nullptr;
+template<> TechnoTypeClass* Container<TechnoTypeExt>::SavingObject = nullptr;
 template<> IStream *Container<TechnoTypeExt>::SavingStream = nullptr;
 
 // =============================
@@ -621,7 +621,7 @@ DEFINE_HOOK(711AE0, TechnoTypeClass_DTOR, 5)
 DEFINE_HOOK_AGAIN(716DC0, TechnoTypeClass_SaveLoad_Prefix, 5)
 DEFINE_HOOK(7162F0, TechnoTypeClass_SaveLoad_Prefix, 6)
 {
-	GET_STACK(TechnoTypeExt::TT*, pItem, 0x4);
+	GET_STACK(TechnoTypeClass*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
 
 	Container<TechnoTypeExt>::PrepareStream(pItem, pStm);
