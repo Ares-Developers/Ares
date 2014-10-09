@@ -267,13 +267,14 @@ bool SWTypeExt::ExtData::IsCellEligible(CellClass* pCell, SuperWeaponTarget::Val
 bool SWTypeExt::ExtData::IsTechnoEligible(TechnoClass* pTechno, SuperWeaponTarget::Value allowed) {
 	if(allowed & SuperWeaponTarget::AllContents) {
 		if(pTechno) {
-			AbstractType abs_Techno = pTechno->WhatAmI();
-			if((abs_Techno == AbstractType::Infantry) && !(allowed & SuperWeaponTarget::Infantry)) {
-				return false;
-			} else if(((abs_Techno == AbstractType::Unit) || (abs_Techno == AbstractType::Aircraft)) && !(allowed & SuperWeaponTarget::Unit)) {
-				return false;
-			} else if((abs_Techno == AbstractType::Building) && !(allowed & SuperWeaponTarget::Building)) {
-				return false;
+			switch(pTechno->WhatAmI()) {
+			case AbstractType::Infantry:
+				return (allowed & SuperWeaponTarget::Infantry) != 0;
+			case AbstractType::Unit:
+			case AbstractType::Aircraft:
+				return (allowed & SuperWeaponTarget::Unit) != 0;
+			case AbstractType::Building:
+				return (allowed & SuperWeaponTarget::Building) != 0;
 			}
 		} else {
 			// is the target cell allowed to be empty?
