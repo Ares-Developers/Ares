@@ -410,8 +410,9 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 	// berserking options
 	this->BerserkROFMultiplier.Read(exINI, section, "Berserk.ROFMultiplier");
 
-	// super weapon designators
+	// super weapon
 	this->DesignatorRange.Read(exINI, section, "DesignatorRange");
+	this->InhibitorRange.Read(exINI, section, "InhibitorRange");
 
 	// quick fix - remove after the rest of weapon selector code is done
 	return;

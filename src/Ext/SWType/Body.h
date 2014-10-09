@@ -234,6 +234,8 @@ public:
 		Valueable<double> SW_RangeMaximum;
 		ValueableVector<TechnoTypeClass*> SW_Designators;
 		Valueable<bool> SW_AnyDesignator;
+		ValueableVector<TechnoTypeClass*> SW_Inhibitors;
+		Valueable<bool> SW_AnyInhibitor;
 
 		CustomPalette CameoPal;
 
@@ -309,6 +311,8 @@ public:
 			SW_RangeMaximum(-1.0),
 			SW_Designators(),
 			SW_AnyDesignator(false),
+			SW_Inhibitors(),
+			SW_AnyInhibitor(false),
 			HandledByNewSWType(SuperWeaponType::Invalid),
 			LastAction(Action::None),
 			CameoPal(),

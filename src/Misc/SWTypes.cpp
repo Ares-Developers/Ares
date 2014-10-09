@@ -148,6 +148,50 @@ bool NewSWType::IsDesignatorEligible(SWTypeExt::ExtData* pSWType, HouseClass* pO
 	return false;
 }
 
+bool NewSWType::IsInhibitor(SWTypeExt::ExtData* pSWType, HouseClass* pOwner, TechnoClass* pTechno) const
+{
+	if(pTechno->IsAlive && pTechno->Health && !pTechno->InLimbo && !pTechno->Deactivated) {
+		if(!pOwner->IsAlliedWith(pTechno)) {
+			return pSWType->SW_AnyInhibitor
+				|| pSWType->SW_Inhibitors.Contains(pTechno->GetTechnoType());
+		}
+	}
+
+	return false;
+}
+
+bool NewSWType::HasInhibitor(SWTypeExt::ExtData* pSWType, HouseClass* pOwner, const CellStruct &Coords) const
+{
+	// does not allow inhibitors
+	if(pSWType->SW_Inhibitors.empty() && !pSWType->SW_AnyInhibitor) {
+		return false;
+	}
+
+	// a single inhibitor in range suffices
+	return std::none_of(TechnoClass::Array->begin(), TechnoClass::Array->end(), [&](TechnoClass* pTechno) {
+		return IsInhibitorEligible(pSWType, pOwner, Coords, pTechno);
+	});
+}
+
+bool NewSWType::IsInhibitorEligible(SWTypeExt::ExtData* pSWType, HouseClass* pOwner, const CellStruct &Coords, TechnoClass* pTechno) const {
+	if(IsInhibitor(pSWType, pOwner, pTechno)) {
+		const auto pType = pTechno->GetTechnoType();
+		const auto pExt = TechnoTypeExt::ExtMap.Find(pType);
+
+		// get the inhibitor's center
+		auto center = pTechno->GetCoords();
+		if(auto pBuilding = abstract_cast<BuildingClass*>(pTechno)) {
+			center = BuildingExt::GetCenterCoords(pBuilding);
+		}
+
+		// has to be closer than the inhibitor range (which defaults to Sight)
+		auto distance = Coords.DistanceFrom(CellClass::Coord2Cell(center));
+		return distance <= pExt->InhibitorRange.Get(pType->Sight);
+	}
+
+	return false;
+}
+
 SuperWeaponType NewSWType::FindIndex(const char* pType) {
 	auto it = std::find_if(Array.begin(), Array.end(), [pType](const std::unique_ptr<NewSWType> &item) {
 		const char* pID = item->GetTypeString();

@@ -196,6 +196,10 @@ void SWTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 	this->SW_Designators.Read(exINI, section, "SW.Designators");
 	this->SW_AnyDesignator.Read(exINI, section, "SW.AnyDesignator");
 
+	// inhibitor related
+	this->SW_Inhibitors.Read(exINI, section, "SW.Inhibitors");
+	this->SW_AnyInhibitor.Read(exINI, section, "SW.AnyInhibitor");
+
 	// the fallback is handled in the PreDependent SW's code
 	this->SW_PostDependent.Read(pINI, section, "SW.PostDependent");
 

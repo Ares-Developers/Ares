@@ -38,7 +38,8 @@ public:
 	virtual bool CanFireAt(SWTypeExt::ExtData *pSWType, HouseClass* pOwner, const CellStruct &Coords) {
 		return pSWType->CanFireAt(pOwner, Coords)
 			&& HasLaunchSite(pSWType, pOwner, Coords)
-			&& HasDesignator(pSWType, pOwner, Coords);
+			&& HasDesignator(pSWType, pOwner, Coords)
+			&& HasInhibitor(pSWType, pOwner, Coords) == false;
 	}
 
 	virtual bool AbortFire(SuperClass* pSW, bool IsPlayer) {
@@ -103,6 +104,12 @@ protected:
 	bool HasDesignator(SWTypeExt::ExtData* pSWType, HouseClass* pOwner, const CellStruct &Coords) const;
 
 	bool IsDesignatorEligible(SWTypeExt::ExtData* pSWType, HouseClass* pOwner, const CellStruct &Coords, TechnoClass* pTechno) const;
+
+	virtual bool IsInhibitor(SWTypeExt::ExtData* pSWType, HouseClass* pOwner, TechnoClass* pTechno) const;
+
+	bool HasInhibitor(SWTypeExt::ExtData* pSWType, HouseClass* pOwner, const CellStruct &Coords) const;
+
+	bool IsInhibitorEligible(SWTypeExt::ExtData* pSWType, HouseClass* pOwner, const CellStruct &Coords, TechnoClass* pTechno) const;
 
 public:
 	// static methods
