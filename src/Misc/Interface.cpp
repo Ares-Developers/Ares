@@ -14,6 +14,8 @@ const wchar_t* Interface::nextMessageText = nullptr;
 
 int Interface::slots[4]; // holds index-of-campaign+1
 
+using namespace DialogConstants;
+
 //! Updates the dialogs after creation to better fit the user's needs.
 /*!
 	This function does dialog dependent stuff. Some controls are moved,
@@ -28,6 +30,8 @@ void Interface::updateMenu(HWND hDlg, int iID) {
 
 	// campaign selection
 	if(iID == 148) {
+		using namespace CampaignDialog;
+
 		// hide item by iID
 		auto hide = [hDlg](int nIDDlgItem) {
 			if(HWND hItem = GetDlgItem(hDlg, nIDDlgItem)) {
@@ -61,22 +65,22 @@ void Interface::updateMenu(HWND hDlg, int iID) {
 
 		// new campaign list versus default click selection
 		if(Ares::UISettings::CampaignList) {
-			if(HWND hItem = GetDlgItem(hDlg, 1109)) {
+			if(HWND hItem = GetDlgItem(hDlg, CampaignList)) {
 				// extensive stuff
-				show(1109);
-				show(1038);
-				hide(1770);
-				hide(1772);
-				hide(1771);
-				hide(1773);
+				show(CampaignList);
+				show(LoadButton);
+				hide(AlliedImage);
+				hide(SovietImage);
+				hide(ThirdImage);
+				hide(FourthImage);
 
 				// use the position of the Allied button to place the
 				// new campaign selection list.
 				RECT rcItem = {125, 34, 125 + 174, 34 + 87};
-				if(HWND hAllImage = GetDlgItem(hDlg, 1770)) {
+				if(HWND hAllImage = GetDlgItem(hDlg, AlliedImage)) {
 					GetWindowRect(hAllImage, &rcItem);
 				}
-				offset(1959, 0, -rcItem.bottom + rcItem.top);
+				offset(AlliedLabel, 0, -rcItem.bottom + rcItem.top);
 
 				// center the list above the difficulty selection. the list may
 				// contain seven items, after that, a scroll bar will appear.
@@ -86,20 +90,20 @@ void Interface::updateMenu(HWND hDlg, int iID) {
 				moveItem(hItem, rcItem, ptDlg);
 			
 				// let the Allied label be the caption
-				if(HWND hAllLabel = GetDlgItem(hDlg, 1959)) {
+				if(HWND hAllLabel = GetDlgItem(hDlg, AlliedLabel)) {
 					SendMessageA(hAllLabel, 0x4B2, 0, reinterpret_cast<LPARAM>(StringTable::LoadStringA("GUI:SelectCampaign")));
 				}
 
 				// call the load button "Play"
-				if(HWND hLoad = GetDlgItem(hDlg, 1038)) {
+				if(HWND hLoad = GetDlgItem(hDlg, LoadButton)) {
 					SendMessageA(hLoad, 0x4B2, 0, reinterpret_cast<LPARAM>(StringTable::LoadStringA("GUI:PlayMission")));
 				}
 
 				// move the soviet label to a new location and reuse
 				// it to show the selected campaigns summary.
-				if(HWND hSovImage = GetDlgItem(hDlg, 1772)) {
+				if(HWND hSovImage = GetDlgItem(hDlg, SovietImage)) {
 					GetWindowRect(hSovImage, &rcItem);
-					if(HWND hSovLabel = GetDlgItem(hDlg, 1960)) {
+					if(HWND hSovLabel = GetDlgItem(hDlg, SovietLabel)) {
 						// remove default text and move label
 						SendMessageA(hSovLabel, 0x4B2, 0, reinterpret_cast<LPARAM>(L""));
 						moveItem(hSovLabel, rcItem, ptDlg);
@@ -119,7 +123,7 @@ void Interface::updateMenu(HWND hDlg, int iID) {
 
 			// The allied image defines the image size.
 			RECT rcItem = {125, 34, 125 + 174, 34 + 87};
-			if(HWND hAllImage = GetDlgItem(hDlg, 1770)) {
+			if(HWND hAllImage = GetDlgItem(hDlg, AlliedImage)) {
 				GetWindowRect(hAllImage, &rcItem);
 			}
 			SIZE szImage;
@@ -128,13 +132,13 @@ void Interface::updateMenu(HWND hDlg, int iID) {
 
 			// the soviet image's top is used for the second row
 			RECT rcSovImage = {0, 216, 0, 0};
-			if(HWND hSovImage = GetDlgItem(hDlg, 1772)) {
+			if(HWND hSovImage = GetDlgItem(hDlg, SovietImage)) {
 				GetWindowRect(hSovImage, &rcSovImage);
 			}
 			int row2Offset = rcSovImage.top - rcItem.top;
 
 			// call the load button "Play"
-			if(HWND hLoad = GetDlgItem(hDlg, 1038)) {
+			if(HWND hLoad = GetDlgItem(hDlg, LoadButton)) {
 				SendMessageA(hLoad, 0x4B2, 0, reinterpret_cast<LPARAM>(StringTable::LoadStringA("GUI:PlayMission")));
 			}
 
@@ -201,56 +205,64 @@ void Interface::updateMenu(HWND hDlg, int iID) {
 			};
 
 			// move click zones and labels
-			moveToPlace(1770, 0, 1, 2, 0, 1959);
-			moveToPlace(1772, 1, 0, 3, 0, 1960);
-			moveToPlace(1771, 2, 3, 4, 1, 1961);
-			moveToPlace(1773, 3, 2, 5, 1, 1962);
+			moveToPlace(AlliedImage, 0, 1, 2, 0, AlliedLabel);
+			moveToPlace(SovietImage, 1, 0, 3, 0, SovietLabel);
+			moveToPlace(ThirdImage, 2, 3, 4, 1, ThirdLabel);
+			moveToPlace(FourthImage, 3, 2, 5, 1, FourthLabel);
 		}
 	}
 
 	// main menu
 	if(iID == 226) {
+		using namespace MainDialog;
+
 		static const Interface::MenuItem items[] = {
-			{0x683, Ares::UISettings::SinglePlayerButton},
-			{0x684, Ares::UISettings::WWOnlineButton},
-			{0x578, Ares::UISettings::NetworkButton},
-			{0x686, Ares::UISettings::MoviesAndCreditsButton},
-			{0x55C, Ares::UISettings::UIAction::Default}};
+			{SinglePlayerButton, Ares::UISettings::SinglePlayerButton},
+			{WestwoodOnlineButton, Ares::UISettings::WWOnlineButton},
+			{NetworkButton, Ares::UISettings::NetworkButton},
+			{MoviesAndCreditsButton, Ares::UISettings::MoviesAndCreditsButton},
+			{OptionsButton, Ares::UISettings::UIAction::Default}};
 		Interface::updateMenuItems(hDlg, items, _countof(items));
 	}
 
 	// singleplayer menu
 	if(iID == 256) {
+		using namespace SinglePlayerDialog;
+
 		// swap skirmish and load buttons so load will not appear first
 		if(Ares::UISettings::CampaignButton != Ares::UISettings::UIAction::Hide) {
 			static const Interface::MenuItem items[] = {
-				{1672, Ares::UISettings::CampaignButton},
-				{1673, Ares::UISettings::UIAction::Default},
-				{1401, Ares::UISettings::SkirmishButton}};
+				{NewCampaignButton, Ares::UISettings::CampaignButton},
+				{LoadSavedGameButton, Ares::UISettings::UIAction::Default},
+				{SkirmishButton, Ares::UISettings::SkirmishButton}};
 			Interface::updateMenuItems(hDlg, items, _countof(items));
 		} else {
 			static const  Interface::MenuItem items[] = {
-				{1401, Ares::UISettings::SkirmishButton},
-				{1673, Ares::UISettings::UIAction::Default},
-				{1672, Ares::UISettings::CampaignButton}};
-			Interface::swapItems(hDlg, 0x688, 0x579);
+				{SkirmishButton, Ares::UISettings::SkirmishButton},
+				{LoadSavedGameButton, Ares::UISettings::UIAction::Default},
+				{NewCampaignButton, Ares::UISettings::CampaignButton}};
+			Interface::swapItems(hDlg, NewCampaignButton, SkirmishButton);
 			Interface::updateMenuItems(hDlg, items, _countof(items));
 		}
 	}
 
 	// movies and credits menu
 	if(iID == 257) {
+		using namespace MoviesAndCreditsDialog;
+
 		static const Interface::MenuItem items[] = {
-			{0x68D, Ares::UISettings::SneakPeeksButton},
-			{0x68E, Ares::UISettings::PlayMoviesButton},
-			{0x68F, Ares::UISettings::ViewCreditsButton}};
+			{SneakPeeksButton, Ares::UISettings::SneakPeeksButton},
+			{PlayMoviesButton, Ares::UISettings::PlayMoviesButton},
+			{ViewCreditsButton, Ares::UISettings::ViewCreditsButton}};
 		Interface::updateMenuItems(hDlg, items, _countof(items));
 	}
 
 	// one-button message box
 	if(iID == 206) {
+		using namespace OneButtonMessageBox;
+
 		// more room for text
-		if(HWND hItem = GetDlgItem(hDlg, 0x5B0)) {
+		if(HWND hItem = GetDlgItem(hDlg, MessageText)) {
 			POINT ptDlg = {0, 0};
 			ScreenToClient(hDlg, &ptDlg);
 
@@ -275,13 +287,14 @@ void Interface::updateMenu(HWND hDlg, int iID) {
 	\date 2010-06-20
 */
 int Interface::getSlotIndex(int iID) {
-	if(iID == 1770) {
+	using namespace CampaignDialog;
+	if(iID == AlliedImage) {
 		return 0;
-	} else if (iID == 1772) {
+	} else if (iID == SovietImage) {
 		return 1;
-	} else if (iID == 1771) {
+	} else if (iID == ThirdImage) {
 		return 2;
-	} else if (iID == 1773) {
+	} else if (iID == FourthImage) {
 		return 3;
 	}
 	return -1;
@@ -329,7 +342,7 @@ DEFINE_HOOK(52F00B, CampaignMenu_hDlg_PopulateCampaignList, 5) {
 
 	// disable the play button as there is nothing selected. we don't select
 	// the first campaign here so the user will get the introduction sound.
-	if(HWND hItem = GetDlgItem(hDlg, 1038)) {
+	if(HWND hItem = GetDlgItem(hDlg, CampaignDialog::LoadButton)) {
 		EnableWindow(hItem, false);
 	}
 
@@ -342,13 +355,15 @@ DEFINE_HOOK(52EC18, CampaignMenu_hDlg_PreHandleGeneral, 5) {
 	GET(int, msg, EBX);
 	GET(int, lParam, EBP);
 
+	using namespace CampaignDialog;
+
 	// catch the selection change event of the campaign list
 	if(msg == WM_COMMAND) {
 		int iID = LOWORD(lParam);
 		int iCmd = HIWORD(lParam);
-		if((iID == 1109) && (iCmd == LBN_SELCHANGE)) {
-			auto index = SendDlgItemMessageA(hDlg, 1109, LB_GETCURSEL, 0, 0);
-			int idxCampaign = SendDlgItemMessageA(hDlg, 1109, LB_GETITEMDATA, static_cast<WPARAM>(index), 0);
+		if((iID == CampaignList) && (iCmd == LBN_SELCHANGE)) {
+			auto index = SendDlgItemMessageA(hDlg, CampaignList, LB_GETCURSEL, 0, 0);
+			int idxCampaign = SendDlgItemMessageA(hDlg, CampaignList, LB_GETITEMDATA, static_cast<WPARAM>(index), 0);
 
 			if(CampaignExt::lastSelectedCampaign != idxCampaign) {
 				// play the hover sound
@@ -360,7 +375,7 @@ DEFINE_HOOK(52EC18, CampaignMenu_hDlg_PreHandleGeneral, 5) {
 					}
 
 					// set the summary text
-					if(HWND hSovLabel = GetDlgItem(hDlg, 1960)) {
+					if(HWND hSovLabel = GetDlgItem(hDlg, SovietLabel)) {
 						const wchar_t* summary = pData->Summary.Get();
 						SendMessageA(hSovLabel, 0x4B2, 0, reinterpret_cast<LPARAM>(summary));
 					}
@@ -371,7 +386,7 @@ DEFINE_HOOK(52EC18, CampaignMenu_hDlg_PreHandleGeneral, 5) {
 			}
 
 			// enable the play button
-			if(HWND hItem = GetDlgItem(hDlg, 1038)) {
+			if(HWND hItem = GetDlgItem(hDlg, LoadButton)) {
 				EnableWindow(hItem, (index >= 0));
 			}
 		}
@@ -384,9 +399,11 @@ DEFINE_HOOK(52EC18, CampaignMenu_hDlg_PreHandleGeneral, 5) {
 DEFINE_HOOK(52ED21, CampaignMenu_hDlg_ClickedPlay, 9) {
 	GET(HWND, hDlg, ESI);
 
+	using namespace CampaignDialog;
+
 	// find out which campaign is selected
-	auto idxItem = SendDlgItemMessageA(hDlg, 1109, LB_GETCURSEL, 0, 0);
-	int idxCampaign = SendDlgItemMessageA(hDlg, 1109, LB_GETITEMDATA, static_cast<WPARAM>(idxItem), 0);
+	auto idxItem = SendDlgItemMessageA(hDlg, CampaignList, LB_GETCURSEL, 0, 0);
+	int idxCampaign = SendDlgItemMessageA(hDlg, CampaignList, LB_GETITEMDATA, static_cast<WPARAM>(idxItem), 0);
 
 	// set it ourselves
 	R->EAX(idxCampaign);
@@ -527,16 +544,19 @@ DEFINE_HOOK(60357E, CampaignMenu_SetAnimationDuration, 5) {
 DEFINE_HOOK(52F191, CampaignMenu_InitializeMoreButtons, 5) {
 	GET(HWND, hDlg, ESI);
 
+	using namespace CampaignDialog;
+
 	if(!Ares::UISettings::CampaignList) {
 		// register buttons as campaign buttons
-		SendDlgItemMessageA(hDlg, 1773, 0x4D5u, 0, 0);
-		SendDlgItemMessageA(hDlg, 1773, 0x4D4u, 0, 0);
+		// (FourthImage being used twice here is no error)
+		SendDlgItemMessageA(hDlg, FourthImage, 0x4D5u, 0, 0);
+		SendDlgItemMessageA(hDlg, FourthImage, 0x4D4u, 0, 0);
 
-		if(HWND hItem = GetDlgItem(hDlg, 1771)) {
+		if(HWND hItem = GetDlgItem(hDlg, ThirdImage)) {
 			PostMessageA(hItem, 0x4D7u, 0, reinterpret_cast<LPARAM>(hDlg));
 		}
 
-		if(HWND hItem = GetDlgItem(hDlg, 1773)) {
+		if(HWND hItem = GetDlgItem(hDlg, FourthImage)) {
 			PostMessageA(hItem, 0x4D7u, 0, reinterpret_cast<LPARAM>(hDlg));
 		}
 
@@ -565,7 +585,7 @@ DEFINE_HOOK(52F191, CampaignMenu_InitializeMoreButtons, 5) {
 					Interface::slots[i] = 0;
 				} else {
 					// update the subline text
-					if(HWND hItem = GetDlgItem(hDlg, i + 1959)) {
+					if(HWND hItem = GetDlgItem(hDlg, AlliedLabel + i)) {
 						SendMessageA(hItem, 0x4B2u, 0, reinterpret_cast<LPARAM>(StringTable::LoadStringA(Ares::UISettings::Campaigns[idxCampaign].Subline)));
 					}
 				}
@@ -609,7 +629,9 @@ DEFINE_HOOK(4F17F6, sub_4F1720_DisableSaves, 6)
 {
 	GET(HWND, hDlg, EBP);
 
-	for(int item=1310; item<=1312; ++item) {
+	using namespace GameOptionsDialog;
+
+	for(int item=LoadGameButton; item<=DeleteGameButton; ++item) {
 		if(HWND hItem = GetDlgItem(hDlg, item)) {
 			EnableWindow(hItem, FALSE);
 		}
