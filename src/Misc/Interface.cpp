@@ -7,7 +7,7 @@
 #include <StringTable.h>
 #include <VocClass.h>
 
-int Interface::lastDialogTemplateID = 0;
+YRDialogID Interface::lastDialogTemplateID = YRDialogID::None;
 int Interface::nextAction = -1;
 int Interface::nextReturnMenu = -1;
 const wchar_t* Interface::nextMessageText = nullptr;
@@ -26,10 +26,10 @@ using namespace DialogConstants;
 	\author AlexB
 	\date 2010-06-20
 */
-void Interface::updateMenu(HWND hDlg, int iID) {
+void Interface::updateMenu(HWND hDlg, YRDialogID iID) {
 
 	// campaign selection
-	if(iID == 148) {
+	if(iID == YRDialogID::CampaignMenu) {
 		using namespace CampaignDialog;
 
 		// hide item by iID
@@ -213,7 +213,7 @@ void Interface::updateMenu(HWND hDlg, int iID) {
 	}
 
 	// main menu
-	if(iID == 226) {
+	if(iID == YRDialogID::MainMenu) {
 		using namespace MainDialog;
 
 		static const Interface::MenuItem items[] = {
@@ -226,7 +226,7 @@ void Interface::updateMenu(HWND hDlg, int iID) {
 	}
 
 	// singleplayer menu
-	if(iID == 256) {
+	if(iID == YRDialogID::SinglePlayerMenu) {
 		using namespace SinglePlayerDialog;
 
 		// swap skirmish and load buttons so load will not appear first
@@ -247,7 +247,7 @@ void Interface::updateMenu(HWND hDlg, int iID) {
 	}
 
 	// movies and credits menu
-	if(iID == 257) {
+	if(iID == YRDialogID::MoviesAndCreditsMenu) {
 		using namespace MoviesAndCreditsDialog;
 
 		static const Interface::MenuItem items[] = {
@@ -258,7 +258,7 @@ void Interface::updateMenu(HWND hDlg, int iID) {
 	}
 
 	// one-button message box
-	if(iID == 206) {
+	if(iID == YRDialogID::OneButtonMessageBox) {
 		using namespace OneButtonMessageBox;
 
 		// more room for text
@@ -302,7 +302,7 @@ int Interface::getSlotIndex(int iID) {
 
 // cache the template id for later use
 DEFINE_HOOK(62267F, Dialog_Show_GetTemplate, 6) {
-	GET(int, iID, EBP);
+	GET(YRDialogID, iID, EBP);
 	Interface::lastDialogTemplateID = iID;
 	return 0;
 }

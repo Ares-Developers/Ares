@@ -3,6 +3,16 @@
 
 #include "../Ares.h"
 
+enum class YRDialogID : int {
+	None = 0,
+	CampaignMenu = 148,
+	GameOptionsMenu = 181,
+	OneButtonMessageBox = 206,
+	MainMenu = 226,
+	SinglePlayerMenu = 256,
+	MoviesAndCreditsMenu = 257
+};
+
 namespace DialogConstants {
 	const int SidebarLabel = 1684;
 	const int StatusLabel = 1685;
@@ -77,7 +87,7 @@ public:
 		Ares::UISettings::UIAction uiaAction;
 	};
 
-	static int lastDialogTemplateID;
+	static YRDialogID lastDialogTemplateID;
 	static int nextReturnMenu;
 	static int nextAction;
 	static const wchar_t* nextMessageText;
@@ -86,7 +96,7 @@ public:
 
 	static bool invokeClickAction(Ares::UISettings::UIAction, const char*, int*, int);
 	static void updateMenuItems(HWND hWnd, const MenuItem* items, size_t count);
-	static void updateMenu(HWND hDlg, int iID);
+	static void updateMenu(HWND hDlg, YRDialogID iID);
 	static Ares::UISettings::UIAction parseUIAction(const char*, Ares::UISettings::UIAction);
 	static int getSlotIndex(int);
 
