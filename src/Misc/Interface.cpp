@@ -91,12 +91,12 @@ void Interface::updateMenu(HWND hDlg, YRDialogID iID) {
 			
 				// let the Allied label be the caption
 				if(HWND hAllLabel = GetDlgItem(hDlg, AlliedLabel)) {
-					SendMessageA(hAllLabel, 0x4B2, 0, reinterpret_cast<LPARAM>(StringTable::LoadStringA("GUI:SelectCampaign")));
+					SendMessageA(hAllLabel, WW_STATIC_SETTEXT, 0, reinterpret_cast<LPARAM>(StringTable::LoadStringA("GUI:SelectCampaign")));
 				}
 
 				// call the load button "Play"
 				if(HWND hLoad = GetDlgItem(hDlg, LoadButton)) {
-					SendMessageA(hLoad, 0x4B2, 0, reinterpret_cast<LPARAM>(StringTable::LoadStringA("GUI:PlayMission")));
+					SendMessageA(hLoad, WW_STATIC_SETTEXT, 0, reinterpret_cast<LPARAM>(StringTable::LoadStringA("GUI:PlayMission")));
 				}
 
 				// move the soviet label to a new location and reuse
@@ -105,7 +105,7 @@ void Interface::updateMenu(HWND hDlg, YRDialogID iID) {
 					GetWindowRect(hSovImage, &rcItem);
 					if(HWND hSovLabel = GetDlgItem(hDlg, SovietLabel)) {
 						// remove default text and move label
-						SendMessageA(hSovLabel, 0x4B2, 0, reinterpret_cast<LPARAM>(L""));
+						SendMessageA(hSovLabel, WW_STATIC_SETTEXT, 0, reinterpret_cast<LPARAM>(L""));
 						moveItem(hSovLabel, rcItem, ptDlg);
 					
 						// left align text
@@ -139,7 +139,7 @@ void Interface::updateMenu(HWND hDlg, YRDialogID iID) {
 
 			// call the load button "Play"
 			if(HWND hLoad = GetDlgItem(hDlg, LoadButton)) {
-				SendMessageA(hLoad, 0x4B2, 0, reinterpret_cast<LPARAM>(StringTable::LoadStringA("GUI:PlayMission")));
+				SendMessageA(hLoad, WW_STATIC_SETTEXT, 0, reinterpret_cast<LPARAM>(StringTable::LoadStringA("GUI:PlayMission")));
 			}
 
 			// position values
@@ -288,16 +288,19 @@ void Interface::updateMenu(HWND hDlg, YRDialogID iID) {
 */
 int Interface::getSlotIndex(int iID) {
 	using namespace CampaignDialog;
-	if(iID == AlliedImage) {
+
+	switch(iID) {
+	case AlliedImage:
 		return 0;
-	} else if (iID == SovietImage) {
+	case SovietImage:
 		return 1;
-	} else if (iID == ThirdImage) {
+	case ThirdImage:
 		return 2;
-	} else if (iID == FourthImage) {
+	case FourthImage:
 		return 3;
+	default:
+		return -1;
 	}
-	return -1;
 }
 
 // cache the template id for later use
@@ -335,7 +338,7 @@ DEFINE_HOOK(52F00B, CampaignMenu_hDlg_PopulateCampaignList, 5) {
 	for(int i=0; i<CampaignExt::Array.Count; ++i) {
 		CampaignExt::ExtData *pData = CampaignExt::Array.GetItem(i);
 		if(pData && pData->IsVisible()) {
-			auto newIndex = SendMessageA(hList, 0x4CD, 0, reinterpret_cast<LPARAM>(pData->OwnerObject()->Description));
+			auto newIndex = SendMessageA(hList, WW_LB_ADDITEM, 0, reinterpret_cast<LPARAM>(pData->OwnerObject()->Description));
 			SendMessageA(hList, LB_SETITEMDATA, static_cast<WPARAM>(newIndex), i);
 		}
 	}
@@ -377,7 +380,7 @@ DEFINE_HOOK(52EC18, CampaignMenu_hDlg_PreHandleGeneral, 5) {
 					// set the summary text
 					if(HWND hSovLabel = GetDlgItem(hDlg, SovietLabel)) {
 						const wchar_t* summary = pData->Summary.Get();
-						SendMessageA(hSovLabel, 0x4B2, 0, reinterpret_cast<LPARAM>(summary));
+						SendMessageA(hSovLabel, WW_STATIC_SETTEXT, 0, reinterpret_cast<LPARAM>(summary));
 					}
 				}
 
@@ -528,16 +531,16 @@ DEFINE_HOOK(603A2E, CampaignMenu_ChooseButtonImage, 6) {
 
 // support button background images for every button
 DEFINE_HOOK(60A90A, CampaignMenu_StaticButtonImage, 5) {
-	GET(HWND, iID, EAX);
+	GET(int, iID, EAX);
 
-	return (Interface::getSlotIndex(reinterpret_cast<int>(iID)) > -1) ? 0x60A982u : 0x60A9EDu;
+	return (Interface::getSlotIndex(iID) > -1) ? 0x60A982u : 0x60A9EDu;
 }
 
 // animation duration
 DEFINE_HOOK(60357E, CampaignMenu_SetAnimationDuration, 5) {
-	GET(HWND, iID, EAX);
+	GET(int, iID, EAX);
 
-	return (Interface::getSlotIndex(reinterpret_cast<int>(iID)) > -1) ? 0x6035C5u : 0x6035E6u;
+	return (Interface::getSlotIndex(iID) > -1) ? 0x6035C5u : 0x6035E6u;
 }
 
 // initialize stuff like the order and images
@@ -586,7 +589,7 @@ DEFINE_HOOK(52F191, CampaignMenu_InitializeMoreButtons, 5) {
 				} else {
 					// update the subline text
 					if(HWND hItem = GetDlgItem(hDlg, AlliedLabel + i)) {
-						SendMessageA(hItem, 0x4B2u, 0, reinterpret_cast<LPARAM>(StringTable::LoadStringA(Ares::UISettings::Campaigns[idxCampaign].Subline)));
+						SendMessageA(hItem, WW_STATIC_SETTEXT, 0, reinterpret_cast<LPARAM>(StringTable::LoadStringA(Ares::UISettings::Campaigns[idxCampaign].Subline)));
 					}
 				}
 			}

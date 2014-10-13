@@ -77,11 +77,10 @@ namespace DialogConstants {
 
 class Interface
 {
-private:
-	Interface(void);
-	~Interface(void);
-
 public:
+	Interface() = delete;
+	~Interface() = delete;
+
 	struct MenuItem {
 		int nIDDlgItem;
 		Ares::UISettings::UIAction uiaAction;
