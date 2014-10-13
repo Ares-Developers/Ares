@@ -26,25 +26,30 @@ public:
 			return;
 		}
 
-		HouseClass* P = HouseClass::Player;
+		HouseClass* pPlayer = HouseClass::Player;
 
-		if(P->CurrentPlayer && P->PlayerControl) {
+		if(pPlayer->CurrentPlayer && pPlayer->PlayerControl) {
 			//let AI assume control
-			P->CurrentPlayer = P->PlayerControl = false;
-			P->Production = P->AutocreateAllowed = true;
+			pPlayer->CurrentPlayer = pPlayer->PlayerControl = false;
+			pPlayer->Production = pPlayer->AutocreateAllowed = true;
 
 			//give full capabilities
-			P->IQLevel = RulesClass::Global()->MaxIQLevels;
-			P->IQLevel2 = RulesClass::Global()->MaxIQLevels;
-			P->AIDifficulty = AIDifficulty::Hard;	//brutal!
+			pPlayer->IQLevel = RulesClass::Global()->MaxIQLevels;
+			pPlayer->IQLevel2 = RulesClass::Global()->MaxIQLevels;
+			pPlayer->AIDifficulty = AIDifficulty::Hard;	//brutal!
 
 			//notify
 			MessageListClass::Instance->PrintMessage(L"AI assumed control!");
 
 		} else {
-
 			//re-assume control
-			P->CurrentPlayer = P->PlayerControl = true;
+			pPlayer->CurrentPlayer = pPlayer->PlayerControl = true;
+			pPlayer->Production = pPlayer->AutocreateAllowed = false;
+
+			//make it a vegetable
+			pPlayer->IQLevel = 0;
+			pPlayer->IQLevel2 = 0;
+			pPlayer->AIDifficulty = AIDifficulty::Normal;
 
 			//notify
 			MessageListClass::Instance->PrintMessage(L"Player assumed control!");
