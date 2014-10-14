@@ -79,9 +79,17 @@ void Interface::updateMenu(HWND hDlg, YRDialogID iID) {
 					}
 				};
 
+				int ListSize = Ares::UISettings::CampaignListSize;
+
+				// sanitize the count
+				if(ListSize < 0) {
+					ListSize = 7;
+				}
+
+				ListSize = std::min(std::max(ListSize, 3), 14);
+
 				// make way for the scroll bar, if there are more items than
 				// can be shown in the list
-				static const int ListSize = 7;
 				const int ScrollbarSize = (CampaignExt::CountVisible() <= ListSize) ? 2 : 12;
 
 				// the caption and list

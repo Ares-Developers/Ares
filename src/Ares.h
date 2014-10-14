@@ -191,6 +191,7 @@ public:
 		static bool AllowMultiEngineer;
 		static bool CampaignList;
 		static bool ShowDebugCampaigns;
+		static int CampaignListSize;
 		static CampaignData Campaigns[4];
 
 		static const int maxColorCount = 16;
