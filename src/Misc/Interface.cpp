@@ -46,23 +46,6 @@ void Interface::updateMenu(HWND hDlg, YRDialogID iID) {
 			}
 		};
 
-		// move item by some pixels
-		auto offset = [hDlg](int nIDDlgItem, int x, int y) {
-			if(HWND hItem = GetDlgItem(hDlg, nIDDlgItem)) {
-				POINT ptDlg = {0, 0};
-				ScreenToClient(hDlg, &ptDlg);
-
-				RECT rcItem;
-				GetWindowRect(hItem, &rcItem);
-
-				OffsetRect(&rcItem, x, y);
-				moveItem(hItem, rcItem, ptDlg);
-			}
-		};
-
-		POINT ptDlg = {0, 0};
-		ScreenToClient(hDlg, &ptDlg);
-
 		// new campaign list versus default click selection
 		if(Ares::UISettings::CampaignList) {
 			if(HWND hItem = GetDlgItem(hDlg, CampaignList)) {
@@ -73,21 +56,6 @@ void Interface::updateMenu(HWND hDlg, YRDialogID iID) {
 				hide(SovietImage);
 				hide(ThirdImage);
 				hide(FourthImage);
-
-				// use the position of the Allied button to place the
-				// new campaign selection list.
-				RECT rcItem = {125, 34, 125 + 174, 34 + 87};
-				if(HWND hAllImage = GetDlgItem(hDlg, AlliedImage)) {
-					GetWindowRect(hAllImage, &rcItem);
-				}
-				offset(AlliedLabel, 0, -rcItem.bottom + rcItem.top);
-
-				// center the list above the difficulty selection. the list may
-				// contain seven items, after that, a scroll bar will appear.
-				// acount for its width, too.
-				int offList = (CampaignExt::CountVisible() < 8) ? -2 : -12;
-				OffsetRect(&rcItem, offList, 32);
-				moveItem(hItem, rcItem, ptDlg);
 			
 				// let the Allied label be the caption
 				if(HWND hAllLabel = GetDlgItem(hDlg, AlliedLabel)) {
@@ -99,21 +67,44 @@ void Interface::updateMenu(HWND hDlg, YRDialogID iID) {
 					SendMessageA(hLoad, WW_STATIC_SETTEXT, 0, reinterpret_cast<LPARAM>(StringTable::LoadStringA("GUI:PlayMission")));
 				}
 
-				// move the soviet label to a new location and reuse
-				// it to show the selected campaigns summary.
-				if(HWND hSovImage = GetDlgItem(hDlg, SovietImage)) {
-					GetWindowRect(hSovImage, &rcItem);
-					if(HWND hSovLabel = GetDlgItem(hDlg, SovietLabel)) {
-						// remove default text and move label
-						SendMessageA(hSovLabel, WW_STATIC_SETTEXT, 0, reinterpret_cast<LPARAM>(L""));
-						moveItem(hSovLabel, rcItem, ptDlg);
-					
-						// left align text
-						auto style = GetWindowLong(hSovLabel, GWL_STYLE);
-						style = SS_LEFT | WS_CHILD | WS_VISIBLE;
-						SetWindowLong(hSovLabel, GWL_STYLE, style);
-					}
+				// remove default text, and align left
+				if(HWND hSovLabel = GetDlgItem(hDlg, SovietLabel)) {
+					SendMessageA(hSovLabel, WW_STATIC_SETTEXT, 0, reinterpret_cast<LPARAM>(L""));
+					SetWindowLong(hSovLabel, GWL_STYLE, SS_LEFT | WS_CHILD | WS_VISIBLE);
 				}
+
+				auto SetLTWH = [](HWND hDlg, int iID, int left, int top, int width, int height) {
+					if(auto hItem = GetDlgItem(hDlg, iID)) {
+						MoveWindow(hItem, left, top, width, height, false);
+					}
+				};
+
+				// make way for the scroll bar, if there are more items than
+				// can be shown in the list
+				static const int ListSize = 7;
+				const int ScrollbarSize = (CampaignExt::CountVisible() <= ListSize) ? 2 : 12;
+
+				// the caption and list
+				static const int InitialHeight = 40;
+				static const int ItemHeight = 19;
+				static const int CampaignListWidth = 60 * WorkAreaWidth / 100;
+				static const int CampaignListLeft = (WorkAreaWidth - CampaignListWidth) / 2;
+				const int CampaignListHeight = 2 + ItemHeight * ListSize;
+
+				SetLTWH(hDlg, AlliedLabel, CampaignListLeft, InitialHeight, CampaignListWidth, 20);
+				SetLTWH(hDlg, CampaignList, CampaignListLeft, InitialHeight + 30, CampaignListWidth - ScrollbarSize, CampaignListHeight);
+
+				// the slider is a block of three controls
+				static const int SliderWidth = 272;
+				static const int SliderLeft = (WorkAreaWidth - SliderWidth) / 2;
+				const int SliderTop = InitialHeight + CampaignListHeight + 59;
+
+				SetLTWH(hDlg, DifficultySlider, SliderLeft, SliderTop, SliderWidth, 22);
+				SetLTWH(hDlg, DifficultyLabel, SliderLeft, SliderTop + 26, SliderWidth / 2, 20);
+				SetLTWH(hDlg, DifficultyText, WorkAreaWidth / 2, SliderTop + 26, SliderWidth / 2, 20);
+
+				// the summary, 7 lines
+				SetLTWH(hDlg, SovietLabel, CampaignListLeft, SliderTop + 65, CampaignListWidth, 120);
 
 				// reset the selection cache
 				CampaignExt::lastSelectedCampaign = -1;
@@ -143,6 +134,9 @@ void Interface::updateMenu(HWND hDlg, YRDialogID iID) {
 			}
 
 			// position values
+			POINT ptDlg = {0, 0};
+			ScreenToClient(hDlg, &ptDlg);
+
 			RECT rcWidth = rcItem;
 			OffsetRect(&rcWidth, ptDlg.x, ptDlg.y);
 			int width = rcWidth.left + rcWidth.right;

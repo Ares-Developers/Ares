@@ -19,6 +19,9 @@ namespace DialogConstants {
 	const int LargeVideo = 1818;
 	const int SidebarVideo = 1820;
 
+	const int WorkAreaWidth = 632;
+	const int WorkAreaHeight = 568;
+
 	namespace MainDialog {
 		const int SidebarVersion = 1821;
 		const int ExitGameButton = 1006;
