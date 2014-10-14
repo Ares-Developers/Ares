@@ -379,6 +379,26 @@ void Valueable<Mission>::Read(INI_EX &parser, const char* pSection, const char* 
 	}
 }
 
+template<>
+void Valueable<SuperWeaponAITargetingMode>::Read(INI_EX &parser, const char* pSection, const char* pKey, bool Allocate) {
+	if(parser.ReadString(pSection, pKey)) {
+		static const auto Modes = {
+			"none", "nuke", "lightningstorm", "psychicdominator", "paradrop",
+			"geneticmutator", "forceshield", "notarget", "offensive", "stealth",
+			"self", "base"};
+
+		auto it = Modes.begin();
+		for(size_t i = 0; i < Modes.size(); ++i) {
+			if(_strcmpi(parser.value(), *it++) == 0) {
+				this->Set(static_cast<SuperWeaponAITargetingMode>(i));
+				return;
+			}
+		}
+
+		Debug::INIParseFailed(pSection, pKey, parser.value(), "Expected a targeting mode");
+	}
+}
+
 // ValueableVector
 
 template <typename T>

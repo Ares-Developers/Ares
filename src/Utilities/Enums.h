@@ -3,57 +3,19 @@
 
 #include "./../Ares.h"
 
-class SuperWeaponAITargetingMode {
-public:
-	typedef unsigned char Value;
-	enum {
-		None = 0x0,
-		Nuke = 0x1,
-		LightningStorm = 0x2,
-		PsychicDominator = 0x3,
-		ParaDrop = 0x4,
-		GeneticMutator = 0x5,
-		ForceShield = 0x6,
-		NoTarget = 0x7,
-		Offensive = 0x8,
-		Stealth = 0x9,
-		Self = 0xA,
-		Base = 0xB
-	};
-
-	static bool Parse(char* key, Value* value) {
-		if(key && value) {
-			if(!_strcmpi(key, "none")) {
-				*value = SuperWeaponAITargetingMode::None;
-			} else if(!_strcmpi(key, "nuke")) {
-				*value = SuperWeaponAITargetingMode::Nuke;
-			} else if(!_strcmpi(key, "lightningstorm")) {
-				*value = SuperWeaponAITargetingMode::LightningStorm;
-			} else if(!_strcmpi(key, "psychicdominator")) {
-				*value = SuperWeaponAITargetingMode::PsychicDominator;
-			} else if(!_strcmpi(key, "paradrop")) {
-				*value = SuperWeaponAITargetingMode::ParaDrop;
-			} else if(!_strcmpi(key, "geneticmutator")) {
-				*value = SuperWeaponAITargetingMode::GeneticMutator;
-			} else if(!_strcmpi(key, "forceshield")) {
-				*value = SuperWeaponAITargetingMode::ForceShield;
-			} else if(!_strcmpi(key, "notarget")) {
-				*value = SuperWeaponAITargetingMode::NoTarget;
-			} else if(!_strcmpi(key, "offensive")) {
-				*value = SuperWeaponAITargetingMode::Offensive;
-			} else if(!_strcmpi(key, "stealth")) {
-				*value = SuperWeaponAITargetingMode::Stealth;
-			} else if(!_strcmpi(key, "base")) {
-				*value = SuperWeaponAITargetingMode::Base;
-			} else if(!_strcmpi(key, "self")) {
-				*value = SuperWeaponAITargetingMode::Self;
-			} else {
-				return false;
-			}
-			return true;
-		}
-		return false;
-	}
+enum class SuperWeaponAITargetingMode {
+	None = 0,
+	Nuke = 1,
+	LightningStorm = 2,
+	PsychicDominator = 3,
+	ParaDrop = 4,
+	GeneticMutator = 5,
+	ForceShield = 6,
+	NoTarget = 7,
+	Offensive = 8,
+	Stealth = 9,
+	Self = 10,
+	Base = 11
 };
 
 class SuperWeaponTarget {

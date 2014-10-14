@@ -192,7 +192,7 @@ public:
 		Valueable<MouseCursor> SW_Cursor;
 		Valueable<MouseCursor> SW_NoCursor;
 		AresFixedString<0x19> SW_PostDependent;
-		ValueableEnum<SuperWeaponAITargetingMode> SW_AITargetingType;
+		Valueable<SuperWeaponAITargetingMode> SW_AITargetingType;
 		Nullable<double> SW_ChargeToDrainRatio;
 
 		SWRange SW_Range;
