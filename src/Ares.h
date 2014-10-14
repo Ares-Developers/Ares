@@ -191,6 +191,7 @@ public:
 		static bool AllowMultiEngineer;
 		static bool CampaignList;
 		static bool ShowDebugCampaigns;
+		static bool ShowSummary;
 		static int CampaignListSize;
 		static CampaignData Campaigns[4];
 

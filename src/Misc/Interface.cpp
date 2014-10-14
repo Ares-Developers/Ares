@@ -86,7 +86,14 @@ void Interface::updateMenu(HWND hDlg, YRDialogID iID) {
 					ListSize = 7;
 				}
 
-				ListSize = std::min(std::max(ListSize, 3), 14);
+				ListSize = std::max(ListSize, 3);
+
+				if(!Ares::UISettings::ShowSummary) {
+					hide(SovietLabel);
+					ListSize = std::min(ListSize, 18);
+				} else {
+					ListSize = std::min(ListSize, 14);
+				}
 
 				// make way for the scroll bar, if there are more items than
 				// can be shown in the list

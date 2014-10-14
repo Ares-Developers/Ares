@@ -23,6 +23,7 @@ Ares::UISettings::UIAction Ares::UISettings::ViewCreditsButton = Ares::UISetting
 bool Ares::UISettings::AllowMultiEngineer = false;
 bool Ares::UISettings::CampaignList = false;
 bool Ares::UISettings::ShowDebugCampaigns = false;
+bool Ares::UISettings::ShowSummary = true;
 int Ares::UISettings::CampaignListSize = -1;
 Ares::UISettings::CampaignData Ares::UISettings::Campaigns[4];
 
@@ -86,6 +87,7 @@ void Ares::UISettings::Load(CCINIClass *pINI) {
 	AllowMultiEngineer = pINI->ReadBool(section, "AllowMultiEngineer", AllowMultiEngineer);
 	CampaignList = pINI->ReadBool(section, "CampaignList", CampaignList);
 	ShowDebugCampaigns = pINI->ReadBool(section, "ShowDebugCampaigns", ShowDebugCampaigns);
+	ShowSummary = pINI->ReadBool(section, "ShowSummary", ShowSummary);
 	CampaignListSize = pINI->ReadInteger(section, "CampaignListSize", CampaignListSize);
 
 	// read the campaigns that can be started from the default campaign selection menu
