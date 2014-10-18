@@ -68,12 +68,9 @@ bool SW_HunterSeeker::Activate(SuperClass* pThis, const CellStruct &Coords, bool
 
 		if(HSBuilding->Contains(i->Type)) {
 			// verify the building coordinates
-			CoordStruct crd = i->GetCoords();
+			cell = this->GetLaunchCell(pExt, i);
 
-			CellStruct tmp = CellClass::Coord2Cell(crd);
-			cell = MapClass::Instance->Pathfinding_Find(tmp, SpeedType::Foot, -1, MovementZone::Normal, false, 1, 1, false, false, false, true, CellStruct::Empty, false, false);
-
-			if(MapClass::Instance->IsWithinUsableArea(cell, true)) {
+			if(cell != CellStruct::Empty) {
 				pBld = i;
 				break;
 			}
@@ -123,4 +120,15 @@ bool SW_HunterSeeker::Activate(SuperClass* pThis, const CellStruct &Coords, bool
 	}
 
 	return true;
+}
+
+CellStruct SW_HunterSeeker::GetLaunchCell(SWTypeExt::ExtData* pSWType, BuildingClass* pBuilding) const
+{
+	auto position = CellClass::Coord2Cell(pBuilding->GetCoords());
+
+	auto cell = MapClass::Instance->Pathfinding_Find(position, SpeedType::Foot,
+		-1, MovementZone::Normal, false, 1, 1, false, false, false, true,
+		CellStruct::Empty, false, false);
+
+	return MapClass::Instance->IsWithinUsableArea(cell, true) ? cell : CellStruct::Empty;
 }
