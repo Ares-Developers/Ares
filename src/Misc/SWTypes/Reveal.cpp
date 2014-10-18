@@ -38,12 +38,32 @@ void SW_Reveal::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)
 	pData->SW_Cursor = MouseCursor::GetCursor(MouseCursorType::PsychicReveal);
 }
 
+void SW_Reveal::LoadFromINI(SWTypeExt::ExtData* pData, SuperWeaponTypeClass* pSW, CCINIClass* pINI)
+{
+	const char * section = pSW->ID;
+
+	if(!pINI->GetSection(section)) {
+		return;
+	}
+
+	INI_EX exINI(pINI);
+	pData->Reveal_FullMap.Read(exINI, section, "Reveal.FullMap");
+
+	pSW->Action = pData->Reveal_FullMap ? Action::None : Actions::SuperWeaponAllowed;
+}
+
 bool SW_Reveal::Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer)
 {
 	SuperWeaponTypeClass *pSW = pThis->Type;
 	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSW);
 	
 	if(pThis->IsCharged) {
+		// reveal all cells without hundred thousands function calls
+		if(pData->Reveal_FullMap) {
+			MapClass::Instance->Reveal(pThis->Owner);
+			return true;
+		}
+
 		CellClass *pTarget = MapClass::Instance->GetCellAt(Coords);
 		
 		CoordStruct Crd = pTarget->GetCoords();
