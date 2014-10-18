@@ -54,14 +54,30 @@ bool SW_HunterSeeker::Activate(SuperClass* pThis, const CellStruct &Coords, bool
 	HouseClass* pOwner = pThis->Owner;
 	auto pExt = SWTypeExt::ExtMap.Find(pThis->Type);
 
-	BuildingClass* pBld = nullptr;
-	CellStruct cell = CellStruct::Empty;
+	// get the appropriate hunter seeker type
+	UnitTypeClass* pType = pExt->HunterSeeker_Type;
+	if(!pType) {
+		if(auto pSide = SideClass::Array->GetItemOrDefault(pOwner->SideIndex)) {
+			auto pSideExt = SideExt::ExtMap.Find(pSide);
+			pType = pSideExt->HunterSeeker;
+		}
+	}
+
+	// no type found
+	if(!pType) {
+		Debug::DevLog(Debug::Warning, "HunterSeeker super weapon \"%s\" could not be launched. "
+			"No HunterSeeker unit type set for house \"%ls\".\n", pThis->Type->ID, pOwner->UIName);
+		return false;
+	}
 
 	// get the appropriate launch buildings list
 	auto HSBuilding = &RulesExt::Global()->HunterSeekerBuildings;
 	if(pExt->HunterSeeker_Buildings.size()) {
 		HSBuilding = &pExt->HunterSeeker_Buildings;
 	}
+
+	BuildingClass* pBld = nullptr;
+	CellStruct cell = CellStruct::Empty;
 
 	// find a hunter seeker building that can launch me
 	for(auto i : pOwner->Buildings) {
@@ -81,22 +97,6 @@ bool SW_HunterSeeker::Activate(SuperClass* pThis, const CellStruct &Coords, bool
 	if(!pBld) {
 		Debug::DevLog(Debug::Warning, "HunterSeeker super weapon \"%s\" could not be launched. House \"%ls\" "
 			"does not own any HSBuilding (%d types set).\n", pThis->Type->ID, pOwner->UIName, HSBuilding->size());
-		return false;
-	}
-
-	// get the appropriate hunter seeker type
-	UnitTypeClass* pType = pExt->HunterSeeker_Type;
-	if(!pType) {
-		if(auto pSide = SideClass::Array->GetItemOrDefault(pOwner->SideIndex)) {
-			auto pSideExt = SideExt::ExtMap.Find(pSide);
-			pType = pSideExt->HunterSeeker;
-		}
-	}
-
-	// no type found
-	if(!pType) {
-		Debug::DevLog(Debug::Warning, "HunterSeeker super weapon \"%s\" could not be launched. "
-			"No HunterSeeker unit type set for house \"%ls\".\n", pThis->Type->ID, pOwner->UIName);
 		return false;
 	}
 
