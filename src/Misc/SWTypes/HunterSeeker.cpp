@@ -4,6 +4,7 @@
 #include "../../Ext/Rules/Body.h"
 #include "../../Ext/Techno/Body.h"
 
+#include "../../Utilities/Helpers.Alex.h"
 #include "../../Utilities/INIParser.h"
 
 #include <HouseClass.h>
@@ -13,8 +14,7 @@
 void SW_HunterSeeker::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)
 {
 	// Defaults to HunterSeeker values
-	pData->HunterSeeker_Type = nullptr;
-	pData->HunterSeeker_RandomOnly = false;
+	pData->SW_MaxCount = 1;
 
 	pData->EVA_Detected = VoxClass::FindIndex("EVA_HunterSeekerDetected");
 	pData->EVA_Ready = VoxClass::FindIndex("EVA_HunterSeekerReady");
@@ -76,50 +76,52 @@ bool SW_HunterSeeker::Activate(SuperClass* pThis, const CellStruct &Coords, bool
 		HSBuilding = &pExt->HunterSeeker_Buildings;
 	}
 
-	BuildingClass* pBld = nullptr;
-	CellStruct cell = CellStruct::Empty;
+	auto IsEligible = [&](BuildingClass* pBld) {
+		return HSBuilding->Contains(pBld->Type);
+	};
 
-	// find a hunter seeker building that can launch me
-	for(auto i : pOwner->Buildings) {
+	// the maximum number of buildings to fire. negative means all.
+	const auto Count = (pExt->SW_MaxCount >= 0)
+		? static_cast<size_t>(pExt->SW_MaxCount)
+		: std::numeric_limits<size_t>::max();
 
-		if(HSBuilding->Contains(i->Type)) {
-			// verify the building coordinates
-			cell = this->GetLaunchCell(pExt, i);
+	// only call on up to Count buildings that suffice IsEligible
+	size_t Success = 0;
+	Helpers::Alex::for_each_if_n(pOwner->Buildings.begin(), pOwner->Buildings.end(),
+		Count, IsEligible, [&](BuildingClass* pBld)
+	{
+		auto cell = this->GetLaunchCell(pExt, pBld);
 
-			if(cell != CellStruct::Empty) {
-				pBld = i;
-				break;
+		if(cell == CellStruct::Empty) {
+			return;
+		}
+
+		// create a hunter seeker
+		if(auto pHunter = GameCreate<UnitClass>(pType, pOwner)) {
+			auto pData = TechnoExt::ExtMap.Find(pHunter);
+			pData->SuperWeapon = pThis;
+
+			// put it on the map and let it go
+			CoordStruct crd = CellClass::Cell2Coord(cell);
+
+			if(pHunter->Put(crd, 64)) {
+				pHunter->Locomotor->Acquire_Hunter_Seeker_Target();
+				pHunter->QueueMission(Mission::Attack, false);
+				pHunter->NextMission();
+				++Success;
+			} else {
+				GameDelete(pHunter);
 			}
 		}
-	}
+	});
 
 	// no launch building found
-	if(!pBld) {
+	if(!Success) {
 		Debug::DevLog(Debug::Warning, "HunterSeeker super weapon \"%s\" could not be launched. House \"%ls\" "
 			"does not own any HSBuilding (%d types set).\n", pThis->Type->ID, pOwner->UIName, HSBuilding->size());
-		return false;
 	}
 
-	// create a hunter seeker
-	auto pHunter = GameCreate<UnitClass>(pType, pOwner);
-
-	// put it on the map and let it go
-	if(pHunter) {
-		auto pData = TechnoExt::ExtMap.Find(pHunter);
-		pData->SuperWeapon = pThis;
-
-		CoordStruct crd = CellClass::Cell2Coord(cell);
-
-		if(pHunter->Put(crd, 64)) {
-			pHunter->Locomotor->Acquire_Hunter_Seeker_Target();
-			pHunter->QueueMission(Mission::Attack, false);
-			pHunter->NextMission();
-		} else {
-			GameDelete(pHunter);
-		}
-	}
-
-	return true;
+	return Success != 0;
 }
 
 CellStruct SW_HunterSeeker::GetLaunchCell(SWTypeExt::ExtData* pSWType, BuildingClass* pBuilding) const
