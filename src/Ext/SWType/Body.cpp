@@ -133,6 +133,8 @@ void SWTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 	this->SW_AffectsTarget.Read(exINI, section, "SW.AffectsTarget");
 	this->SW_RequiresTarget.Read(exINI, section, "SW.RequiresTarget");
 	this->SW_RequiresHouse.Read(exINI, section, "SW.RequiresHouse");
+	this->SW_AIRequiresTarget.Read(exINI, section, "SW.AIRequiresTarget");
+	this->SW_AIRequiresHouse.Read(exINI, section, "SW.AIRequiresHouse");
 
 	this->SW_MaxCount.Read(exINI, section, "SW.MaxCount");
 
@@ -307,14 +309,14 @@ bool SWTypeExt::ExtData::CanFireAt(HouseClass* pOwner, const CellStruct &coords,
 	auto pCell = MapClass::Instance->GetCellAt(coords);
 
 	// check cell type
-	const auto& AllowedTarget = SW_RequiresTarget;
+	const auto& AllowedTarget = manual ? SW_RequiresTarget : SW_AIRequiresTarget;
 	if(!IsCellEligible(pCell, AllowedTarget)) {
 		return false;
 	}
 
 	// check for techno type match
 	auto pTechno = abstract_cast<TechnoClass*>(pCell->GetContent());
-	const auto& AllowedHouse = SW_RequiresHouse;
+	const auto& AllowedHouse = manual ? SW_RequiresHouse : SW_AIRequiresHouse;
 	if(pTechno && AllowedHouse != SuperWeaponAffectedHouse::None) {
 		if(!IsHouseAffected(pOwner, pTechno->Owner, AllowedHouse)) {
 			return false;

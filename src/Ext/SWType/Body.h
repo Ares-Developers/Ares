@@ -202,8 +202,10 @@ public:
 		Valueable<int> SW_MaxCount;
 		ValueableEnum<SuperWeaponAffectedHouse> SW_AffectsHouse;
 		ValueableEnum<SuperWeaponAffectedHouse> SW_RequiresHouse;
+		ValueableEnum<SuperWeaponAffectedHouse> SW_AIRequiresHouse;
 		ValueableEnum<SuperWeaponTarget> SW_AffectsTarget;
 		ValueableEnum<SuperWeaponTarget> SW_RequiresTarget;
+		ValueableEnum<SuperWeaponTarget> SW_AIRequiresTarget;
 		Nullable<WarheadTypeClass *> SW_Warhead;
 		Nullable<int> SW_Damage;
 		Nullable<int> SW_Deferment;
@@ -304,8 +306,10 @@ public:
 			SW_Unstoppable(false),
 			SW_AffectsHouse(SuperWeaponAffectedHouse::All),
 			SW_RequiresHouse(SuperWeaponAffectedHouse::None),
+			SW_AIRequiresHouse(SuperWeaponAffectedHouse::None),
 			SW_AffectsTarget(SuperWeaponTarget::All),
 			SW_RequiresTarget(SuperWeaponTarget::None),
+			SW_AIRequiresTarget(SuperWeaponTarget::None),
 			SW_AITargetingType(SuperWeaponAITargetingMode::None),
 			SW_FireToShroud(true),
 			SW_RadarEvent(true),
