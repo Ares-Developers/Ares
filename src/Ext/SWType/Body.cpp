@@ -304,24 +304,25 @@ bool SWTypeExt::ExtData::IsTechnoAffected(TechnoClass* pTechno) {
 }
 
 bool SWTypeExt::ExtData::CanFireAt(HouseClass* pOwner, const CellStruct &coords, bool manual) {
-	if(CellClass *pCell = MapClass::Instance->GetCellAt(coords)) {
+	auto pCell = MapClass::Instance->GetCellAt(coords);
 
-		// check cell type
-		if(!IsCellEligible(pCell, this->SW_RequiresTarget)) {
+	// check cell type
+	const auto& AllowedTarget = SW_RequiresTarget;
+	if(!IsCellEligible(pCell, AllowedTarget)) {
+		return false;
+	}
+
+	// check for techno type match
+	auto pTechno = abstract_cast<TechnoClass*>(pCell->GetContent());
+	const auto& AllowedHouse = SW_RequiresHouse;
+	if(pTechno && AllowedHouse != SuperWeaponAffectedHouse::None) {
+		if(!IsHouseAffected(pOwner, pTechno->Owner, AllowedHouse)) {
 			return false;
 		}
+	}
 
-		// check for techno type match
-		TechnoClass *pTechno = generic_cast<TechnoClass*>(pCell->GetContent());
-		if(pTechno && this->SW_RequiresHouse != SuperWeaponAffectedHouse::None) {
-			if(!IsHouseAffected(pOwner, pTechno->Owner, this->SW_RequiresHouse)) {
-				return false;
-			}
-		}
-
-		if(!IsTechnoEligible(pTechno, this->SW_RequiresTarget)) {
-			return false;
-		}
+	if(!IsTechnoEligible(pTechno, AllowedTarget)) {
+		return false;
 	}
 
 	// no restriction
