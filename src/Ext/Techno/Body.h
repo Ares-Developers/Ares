@@ -193,6 +193,8 @@ public:
 	static void DetachSpecificSpawnee(TechnoClass *Spawnee, HouseClass *NewSpawneeOwner);
 	static bool CanICloakByDefault(TechnoClass *pTechno);
 
+	static bool IsCloaked(TechnoClass* pTechno);
+
 	static void Destroy(TechnoClass* pTechno, TechnoClass* pKiller = nullptr, HouseClass* pKillerHouse = nullptr, WarheadTypeClass* pWarhead = nullptr);
 
 	static bool SpawnVisceroid(CoordStruct &crd, ObjectTypeClass* pType, int chance, bool ignoreTibDeathToVisc);

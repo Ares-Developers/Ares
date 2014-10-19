@@ -617,6 +617,15 @@ bool TechnoExt::CanICloakByDefault(TechnoClass *pTechno) {
 	return tType->Cloakable || pTechno->HasAbility(Ability::Cloak);
 }
 
+bool TechnoExt::IsCloaked(TechnoClass* pTechno) {
+	if(pTechno->CloakState == CloakState::Cloaked) {
+		return true;
+	} else if(auto pBld = abstract_cast<BuildingClass*>(pTechno)) {
+		return (pBld->Translucency == 15);
+	}
+	return false;
+}
+
 bool TechnoExt::ExtData::IsDeactivated() const {
 	return this->OwnerObject()->Deactivated;
 }
