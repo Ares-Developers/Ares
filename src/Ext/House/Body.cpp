@@ -4,11 +4,14 @@
 #include "../BuildingType/Body.h"
 #include "../Rules/Body.h"
 #include "../Side/Body.h"
+#include "../SWType/Body.h"
 #include "../TechnoType/Body.h"
 #include "../../Enum/Prerequisites.h"
 #include "../Techno/Body.h"
+#include "../../Misc/SWTypes.h"
 
 #include <FactoryClass.h>
+#include <DiscreteSelectionClass.h>
 #include <HouseClass.h>
 #include <MouseClass.h>
 #include <SuperClass.h>
@@ -319,6 +322,61 @@ HouseClass* HouseExt::GetHouseKind(OwnerHouseKind kind, bool allowRandom, HouseC
 	default:
 		return pDefault;
 	}
+}
+
+// replaces the monolithic game function, and allows to pass a super weapon that can exclude
+// technos and also performs checks for range and other features
+TechnoClass* HouseExt::PickIonCannonTarget(HouseClass* pOwner, HouseClass* pVictim,
+	SuperWeaponTypeClass* pSWType, IonCannonCloakOptions cloak)
+{
+	auto pExt = SWTypeExt::ExtMap.Find(pSWType);
+	auto pNewType = pExt ? pExt->GetNewSWType() : nullptr;
+
+	DiscreteSelectionClass<TechnoClass*> targets;
+
+	for(auto pTechno : *TechnoClass::Array) {
+		// original game code only compares owner and doesn't support nullptr
+		bool passedFilter = (!pVictim || pTechno->Owner == pVictim);
+
+		if(passedFilter && pOwner->IsIonCannonEligibleTarget(pTechno)) {
+			auto cell = pTechno->GetMapCoords();
+			if(!MapClass::Instance->IsWithinUsableArea(cell, true)) {
+				continue;
+			}
+
+			int value = pTechno->GetIonCannonValue(pOwner->AIDifficulty);
+
+			// cloak options
+			if(cloak != IonCannonCloakOptions::AgnosticToCloak) {
+				bool cloaked = TechnoExt::IsCloaked(pTechno);
+
+				if(cloak == IonCannonCloakOptions::RandomizeCloaked) {
+					// original behavior
+					if(cloaked) {
+						value = ScenarioClass::Instance->Random.RandomRanged(0, targets.GetRating() + 10);
+					}
+				} else if(cloak == IonCannonCloakOptions::IgnoreCloaked) {
+					// this prevents the 'targeting cloaked units bug'
+					if(cloaked) {
+						continue;
+					}
+				} else if(cloak == IonCannonCloakOptions::RequireCloaked) {
+					if(!cloaked) {
+						continue;
+					}
+				}
+			}
+
+			// heavy duty check for ranges, designators and such
+			if(pNewType && !pNewType->CanFireAt(pExt, pOwner, cell, false)) {
+				continue;
+			}
+
+			targets.Add(pTechno, value);
+		}
+	}
+
+	return targets.Select(ScenarioClass::Instance->Random);
 }
 
 HouseExt::ExtData::~ExtData()

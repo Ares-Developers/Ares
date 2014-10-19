@@ -15,6 +15,7 @@
 class FactoryClass;
 class SuperClass;
 class SideClass;
+class SuperWeaponTypeClass;
 
 class HouseExt
 {
@@ -32,6 +33,13 @@ public:
 		ReachedPermanently = -1, // remove cameo
 		ReachedTemporarily = 0, // black out cameo
 		NotReached = 1, // don't do anything
+	};
+
+	enum class IonCannonCloakOptions {
+		RandomizeCloaked = 0,
+		AgnosticToCloak = 1,
+		IgnoreCloaked = 2,
+		RequireCloaked = 3
 	};
 
 	class ExtData : public Extension<HouseClass>
@@ -123,6 +131,10 @@ public:
 	static HouseClass* GetHouseKind(OwnerHouseKind kind, bool allowRandom,
 		HouseClass* pDefault, HouseClass* pInvoker = nullptr,
 		HouseClass* pKiller = nullptr, HouseClass* pVictim = nullptr);
+
+	static TechnoClass* PickIonCannonTarget(HouseClass* pOwner, HouseClass* pVictim,
+		SuperWeaponTypeClass* pSWType = nullptr,
+		IonCannonCloakOptions cloak = IonCannonCloakOptions::RandomizeCloaked);
 };
 
 #endif
