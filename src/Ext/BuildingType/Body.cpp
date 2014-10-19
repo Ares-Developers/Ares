@@ -49,7 +49,7 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 
 		char str[0x80]="\0";
 
-		if(pArtINI->ReadString(pArtID, "Foundation", "", str, 0x80) && !_strcmpi(str,"Custom")) {
+		if(pArtINI->ReadString(pArtID, "Foundation", "", str, 0x80) && !_strcmpi(str, "Custom")) {
 			//Custom Foundation!
 			this->IsCustom = true;
 			pThis->Foundation = BuildingTypeExt::CustomFoundation;
@@ -71,11 +71,9 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 			pThis->FoundationData = this->CustomData.data();
 			pThis->FoundationOutside = this->OutlineData.data();
 
-			//Load FoundationData
-			CellStruct* pCurrent = this->CustomData.data();
-			char key[0x20];
+			using Iter = std::vector<CellStruct>::iterator;
 
-			auto ParsePoint = [](CellStruct* &pCell, const char* str) -> void {
+			auto ParsePoint = [](Iter &cell, const char* str) -> void {
 				int x = 0, y = 0;
 				switch(sscanf_s(str, "%d,%d", &x, &y)) {
 				case 0:
@@ -84,40 +82,40 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 				case 1:
 					y = 0;
 				}
-				pCell->X = static_cast<short>(x);
-				pCell->Y = static_cast<short>(y);
-				++pCell;
+				*cell++ = CellStruct{static_cast<short>(x), static_cast<short>(y)};
 			};
+
+			//Load FoundationData
+			auto itData = this->CustomData.begin();
+			char key[0x20];
 
 			for(int i = 0; i < this->CustomWidth * this->CustomHeight; ++i) {
 				_snprintf_s(key, _TRUNCATE, "Foundation.%d", i);
 				if(pArtINI->ReadString(pArtID, key, "", str, 0x80)) {
-					ParsePoint(pCurrent, str);
+					ParsePoint(itData, str);
 				} else {
 					break;
 				}
 			}
 
 			//Set end vector
-			*pCurrent = FoundationEndMarker;
+			*itData = FoundationEndMarker;
 
-			pCurrent = this->OutlineData.data();
+			auto itOutline = this->OutlineData.begin();
 			for(int i = 0; i < this->OutlineLength; ++i) {
 				_snprintf_s(key, _TRUNCATE, "FoundationOutline.%d", i);
 				if(pArtINI->ReadString(pArtID, key, "", str, 0x80)) {
-					ParsePoint(pCurrent, str);
+					ParsePoint(itOutline, str);
 				} else {
 					//Set end vector
 					// can't break, some stupid functions access fixed offsets without checking if that offset is within the valid range
-					*pCurrent = FoundationEndMarker;
-					++pCurrent;
+					*itOutline++ = FoundationEndMarker;
 				}
 			}
 
 			//Set end vector
-			*pCurrent = FoundationEndMarker;
+			*itOutline = FoundationEndMarker;
 		}
-
 	}
 
 	this->Secret_Boons.Read(exINI, pID, "SecretLab.PossibleBoons");
