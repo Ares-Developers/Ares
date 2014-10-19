@@ -248,15 +248,13 @@ bool BuildingTypeExt::IsFoundationEqual(BuildingTypeClass *pTBldA, BuildingTypeC
 		// custom foundation
 		auto pDataA = BuildingTypeExt::ExtMap.Find(pTBldA);
 		auto pDataB = BuildingTypeExt::ExtMap.Find(pTBldB);
-		if(pDataA->CustomWidth == pDataB->CustomWidth) {
-			if(pDataA->CustomHeight == pDataB->CustomHeight) {
-				// compare unsorted arrays the hard way: O(n²)
-				return std::all_of(pDataA->CustomData.begin(), pDataA->CustomData.end(), [&](const CellStruct& cell) -> bool {
-					auto it2 = std::find(pDataB->CustomData.begin(), pDataB->CustomData.end(), cell);
-					return (it2 != pDataB->CustomData.end());
-				});
-			}
-		}
+		const auto& customA = pDataA->CustomData;
+		const auto& customB = pDataB->CustomData;
+
+		return pDataA->CustomWidth == pDataB->CustomWidth
+			&& pDataA->CustomHeight == pDataB->CustomHeight
+			&& customA.size() == customB.size()
+			&& std::is_permutation(customA.begin(), customA.end(), customB.begin());
 	}
 	return false;
 }
