@@ -85,6 +85,13 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 				*cell++ = CellStruct{static_cast<short>(x), static_cast<short>(y)};
 			};
 
+			auto CellLess = [](const CellStruct& lhs, const CellStruct& rhs) {
+				if(lhs.Y != rhs.Y) {
+					return lhs.Y < rhs.Y;
+				}
+				return lhs.X < lhs.X;
+			};
+
 			//Load FoundationData
 			auto itData = this->CustomData.begin();
 			char key[0x20];
@@ -98,8 +105,11 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 				}
 			}
 
-			//Set end vector
+			//Sort, remove dupes, add end marker
+			std::sort(this->CustomData.begin(), itData, CellLess);
+			itData = std::unique(this->CustomData.begin(), itData);
 			*itData = FoundationEndMarker;
+			this->CustomData.erase(itData + 1, this->CustomData.end());
 
 			auto itOutline = this->OutlineData.begin();
 			for(int i = 0; i < this->OutlineLength; ++i) {
