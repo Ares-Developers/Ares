@@ -303,8 +303,8 @@ bool SWTypeExt::ExtData::IsTechnoAffected(TechnoClass* pTechno) {
 	return true;
 }
 
-bool SWTypeExt::ExtData::CanFireAt(HouseClass* pOwner, const CellStruct &Coords) {
-	if(CellClass *pCell = MapClass::Instance->GetCellAt(Coords)) {
+bool SWTypeExt::ExtData::CanFireAt(HouseClass* pOwner, const CellStruct &coords, bool manual) {
+	if(CellClass *pCell = MapClass::Instance->GetCellAt(coords)) {
 
 		// check cell type
 		if(!IsCellEligible(pCell, this->SW_RequiresTarget)) {
