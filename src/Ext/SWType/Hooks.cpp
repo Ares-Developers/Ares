@@ -30,7 +30,7 @@ DEFINE_HOOK(6CEF84, SuperWeaponTypeClass_GetCursorOverObject, 7)
 
 		// new SW types have to check whether the coordinates are valid.
 		if(Action == Actions::SuperWeaponAllowed) {
-			if(pType && !pType->CanFireAt(pData, HouseClass::Player, *pMapCoords)) {
+			if(pType && !pType->CanFireAt(pData, HouseClass::Player, *pMapCoords, true)) {
 				Action = Actions::SuperWeaponDisallowed;
 			}
 		}
@@ -82,7 +82,7 @@ DEFINE_HOOK(653B3A, RadarClass_GetMouseAction_CustomSWAction, 5)
 
 			// new SW types have to check whether the coordinates are valid.
 			if(Action == Actions::SuperWeaponAllowed) {
-				if(pType && !pType->CanFireAt(pData, HouseClass::Player, MapCoords)) {
+				if(pType && !pType->CanFireAt(pData, HouseClass::Player, MapCoords, true)) {
 					Action = Actions::SuperWeaponDisallowed;
 				}
 			}

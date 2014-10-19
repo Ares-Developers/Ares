@@ -35,8 +35,8 @@ public:
 
 	virtual ~NewSWType() = default;
 
-	virtual bool CanFireAt(SWTypeExt::ExtData *pSWType, HouseClass* pOwner, const CellStruct &Coords) {
-		return pSWType->CanFireAt(pOwner, Coords, true)
+	virtual bool CanFireAt(SWTypeExt::ExtData *pSWType, HouseClass* pOwner, const CellStruct &Coords, bool manual) {
+		return pSWType->CanFireAt(pOwner, Coords, manual)
 			&& HasLaunchSite(pSWType, pOwner, Coords)
 			&& HasDesignator(pSWType, pOwner, Coords)
 			&& HasInhibitor(pSWType, pOwner, Coords) == false;

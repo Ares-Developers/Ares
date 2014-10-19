@@ -79,9 +79,9 @@ void SW_Protect::LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pS
 	pData->Protect_PlayFadeSoundTime.Read(exINI, section, "Protect.PlayFadeSoundTime");
 }
 
-bool SW_Protect::CanFireAt(SWTypeExt::ExtData* pData, HouseClass* pOwner, const CellStruct &Coords)
+bool SW_Protect::CanFireAt(SWTypeExt::ExtData* pData, HouseClass* pOwner, const CellStruct &Coords, bool manual)
 {
-	auto ret = NewSWType::CanFireAt(pData, pOwner, Coords);
+	auto ret = NewSWType::CanFireAt(pData, pOwner, Coords, manual);
 
 	// if this is a force shield requiring buildings and a building is selected, check the modifier
 	if(ret && pData->Protect_IsForceShield && pData->SW_RequiresTarget & SuperWeaponTarget::Building) {
