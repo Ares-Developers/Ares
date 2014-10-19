@@ -88,10 +88,12 @@ DEFINE_HOOK(702E9D, TechnoClass_RegisterDestruction_Veterancy, 6) {
 		}
 
 	} else if(pKiller->CanOccupyFire()) {
-		// unchanged game logic
+		// game logic, with added check for Trainable
 		if(BuildingClass* pKillerBld = specific_cast<BuildingClass *>(pKiller)) {
 			InfantryClass* pOccupant = pKillerBld->Occupants[pKillerBld->FiringOccupantIndex];
-			pExperience = pOccupant;
+			if(pOccupant->Type->Trainable) {
+				pExperience = pOccupant;
+			}
 		}
 	}
 
