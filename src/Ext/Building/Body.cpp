@@ -271,6 +271,11 @@ void BuildingExt::ExtData::doTraverseTo(BuildingClass* targetBuilding) {
 		currentBuilding->Occupants.RemoveItem(0); // maybe switch Add/Remove if the game gets pissy about multiple of them walking around
 	}
 
+	// fix up firing index, as decrementing the source occupants can invalidate it
+	if(currentBuilding->FiringOccupantIndex >= currentBuilding->GetOccupantCount()) {
+		currentBuilding->FiringOccupantIndex = 0;
+	}
+
 	this->evalRaidStatus(); // if the traversal emptied the current building, it'll have to be returned to its owner
 }
 
