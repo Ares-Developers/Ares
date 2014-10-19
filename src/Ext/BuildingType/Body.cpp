@@ -10,6 +10,7 @@ template<> const DWORD Extension<BuildingTypeClass>::Canary = 0x11111111;
 Container<BuildingTypeExt> BuildingTypeExt::ExtMap;
 
 std::vector<std::string> BuildingTypeExt::ExtData::trenchKinds;
+const CellStruct BuildingTypeExt::FoundationEndMarker = {0x7FFF, 0x7FFF};
 
 // =============================
 // member funcs
@@ -98,8 +99,7 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 			}
 
 			//Set end vector
-			pCurrent->X = 0x7FFF;
-			pCurrent->Y = 0x7FFF;
+			*pCurrent = FoundationEndMarker;
 
 			pCurrent = this->OutlineData.data();
 			for(int i = 0; i < this->OutlineLength; ++i) {
@@ -109,15 +109,13 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 				} else {
 					//Set end vector
 					// can't break, some stupid functions access fixed offsets without checking if that offset is within the valid range
-					pCurrent->X = 0x7FFF;
-					pCurrent->Y = 0x7FFF;
+					*pCurrent = FoundationEndMarker;
 					++pCurrent;
 				}
 			}
 
 			//Set end vector
-			pCurrent->X = 0x7FFF;
-			pCurrent->Y = 0x7FFF;
+			*pCurrent = FoundationEndMarker;
 		}
 
 	}
