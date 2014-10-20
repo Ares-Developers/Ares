@@ -471,6 +471,34 @@ private:
 	}
 };
 
+struct MultiMissileTargetSelector final : public TargetSelector {
+	// classic TS code: fire at the enemy's most threatening building
+	TargetResult operator()(const TargetingInfo& info) const {
+		return{GetTarget(info, CanFireRequiresEnemy(), PreferOffensive(), FindTargetItem),
+			TargetFlags::DisallowEmpty};
+	}
+
+private:
+	static ObjectClass* FindTargetItem(const TargetingInfo& info) {
+		auto pOwner = info.Owner;
+		auto pTargetPlayer = HouseClass::Array->GetItem(pOwner->EnemyHouseIndex);
+
+		return GetTargetFirstMax(pTargetPlayer->Buildings.begin(), pTargetPlayer->Buildings.end(), [&](BuildingClass* pBld) {
+			auto cell = pBld->GetMapCoords();
+
+			if(!info.CanFireAt(cell)) {
+				return -1;
+			}
+
+			if(TechnoExt::IsCloaked(pBld)) {
+				return ScenarioClass::Instance->Random.RandomRanged(0, 100);
+			}
+
+			return MapClass::Instance->GetThreatPosed(cell, pOwner);
+		});
+	}
+};
+
 #pragma endregion
 
 TargetResult PickSuperWeaponTarget(SuperClass* pSuper) {
@@ -500,6 +528,8 @@ TargetResult PickSuperWeaponTarget(SuperClass* pSuper) {
 		return SelfTargetSelector()(info);
 	case SuperWeaponAITargetingMode::Base:
 		return BaseTargetSelector()(info);
+	case SuperWeaponAITargetingMode::MultiMissile:
+		return MultiMissileTargetSelector()(info);
 	case SuperWeaponAITargetingMode::None:
 	default:
 		return{CellStruct::Empty, TargetFlags::DisallowEmpty};

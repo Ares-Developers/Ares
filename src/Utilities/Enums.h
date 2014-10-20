@@ -15,7 +15,8 @@ enum class SuperWeaponAITargetingMode {
 	Offensive = 8,
 	Stealth = 9,
 	Self = 10,
-	Base = 11
+	Base = 11,
+	MultiMissile = 12
 };
 
 class SuperWeaponTarget {
