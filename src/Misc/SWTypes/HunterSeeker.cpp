@@ -20,7 +20,7 @@ void SW_HunterSeeker::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass
 	pData->EVA_Ready = VoxClass::FindIndex("EVA_HunterSeekerReady");
 	pData->EVA_Activated = VoxClass::FindIndex("EVA_HunterSeekerLaunched");
 
-	pData->SW_AITargetingType = SuperWeaponAITargetingMode::NoTarget;
+	pData->SW_AITargetingType = SuperWeaponAITargetingMode::HunterSeeker;
 	pData->SW_AffectsHouse = SuperWeaponAffectedHouse::Enemies;
 
 	pData->Text_Ready = CSFText("TXT_RELEASE");
