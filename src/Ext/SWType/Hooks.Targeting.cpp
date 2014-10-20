@@ -499,6 +499,14 @@ private:
 	}
 };
 
+struct HunterSeekerTargetSelector final : public TargetSelector {
+	// from TS: launch at empty coords only if a house has an enemy
+	TargetResult operator()(const TargetingInfo& info) const {
+		return{GetTarget(info, CanFireRequiresEnemy(), PreferNothing(), PickEmptyTarget()),
+			TargetFlags::AllowEmpty};
+	}
+};
+
 #pragma endregion
 
 TargetResult PickSuperWeaponTarget(SuperClass* pSuper) {
@@ -530,6 +538,8 @@ TargetResult PickSuperWeaponTarget(SuperClass* pSuper) {
 		return BaseTargetSelector()(info);
 	case SuperWeaponAITargetingMode::MultiMissile:
 		return MultiMissileTargetSelector()(info);
+	case SuperWeaponAITargetingMode::HunterSeeker:
+		return HunterSeekerTargetSelector()(info);
 	case SuperWeaponAITargetingMode::None:
 	default:
 		return{CellStruct::Empty, TargetFlags::DisallowEmpty};
