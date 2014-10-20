@@ -385,7 +385,7 @@ void Valueable<SuperWeaponAITargetingMode>::Read(INI_EX &parser, const char* pSe
 		static const auto Modes = {
 			"none", "nuke", "lightningstorm", "psychicdominator", "paradrop",
 			"geneticmutator", "forceshield", "notarget", "offensive", "stealth",
-			"self", "base", "multimissile", "hunterseeker"};
+			"self", "base", "multimissile", "hunterseeker", "enemybase"};
 
 		auto it = Modes.begin();
 		for(size_t i = 0; i < Modes.size(); ++i) {

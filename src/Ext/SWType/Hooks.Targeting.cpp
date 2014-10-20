@@ -415,6 +415,25 @@ struct BaseTargetSelector final : public TargetSelector {
 	}
 };
 
+struct EnemyBaseTargetSelector final : public TargetSelector {
+	TargetResult operator()(const TargetingInfo& info) const {
+		// fire at the owner's enemy base cell
+		return{GetTarget(info, CanFireRequiresEnemy(), PreferNothing(), FindTargetCoords),
+			TargetFlags::DisallowEmpty};
+	}
+
+	static CellStruct FindTargetCoords(const TargetingInfo& info) {
+		if(auto pEnemy = HouseClass::Array->GetItemOrDefault(info.Owner->EnemyHouseIndex)) {
+			auto cell = info.Owner->GetBaseCenter();
+
+			if(info.CanFireAt(cell)) {
+				return cell;
+			}
+		}
+		return CellStruct::Empty;
+	}
+};
+
 struct OffensiveTargetSelector final : public TargetSelector {
 	TargetResult operator()(const TargetingInfo& info) const {
 		return{GetTarget(info, CanFireRequiresAffectedEnemy(), PreferNothing(), PickIonCannonTarget()),
@@ -540,6 +559,8 @@ TargetResult PickSuperWeaponTarget(SuperClass* pSuper) {
 		return MultiMissileTargetSelector()(info);
 	case SuperWeaponAITargetingMode::HunterSeeker:
 		return HunterSeekerTargetSelector()(info);
+	case SuperWeaponAITargetingMode::EnemyBase:
+		return EnemyBaseTargetSelector()(info);
 	case SuperWeaponAITargetingMode::None:
 	default:
 		return{CellStruct::Empty, TargetFlags::DisallowEmpty};
