@@ -30,7 +30,8 @@ SuperWeaponFlags::Value SW_NuclearMissile::Flags() const
 
 WarheadTypeClass* SW_NuclearMissile::GetWarhead(const SWTypeExt::ExtData* pData) const
 {
-	if(pData->SW_Warhead.isset()) {
+	// is set to non-null?
+	if(pData->SW_Warhead.Get(nullptr)) {
 		return pData->SW_Warhead;
 	}
 	if(pData->Nuke_Payload) {

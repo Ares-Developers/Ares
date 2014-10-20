@@ -12,7 +12,8 @@ bool SW_GeneticMutator::HandlesType(SuperWeaponType type) const
 
 WarheadTypeClass* SW_GeneticMutator::GetWarhead(const SWTypeExt::ExtData* pData) const
 {
-	if(pData->SW_Warhead.isset()) {
+	// is set to non-null?
+	if(pData->SW_Warhead.Get(nullptr)) {
 		return pData->SW_Warhead;
 	} else if(pData->Mutate_Explosion.Get(RulesClass::Instance->MutateExplosion)) {
 		return RulesClass::Instance->MutateExplosionWarhead;
