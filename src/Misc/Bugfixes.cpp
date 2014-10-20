@@ -1229,3 +1229,33 @@ DEFINE_HOOK(452210, BuildingClass_Enable_Temporal, 7)
 	pThis->HasPower = pThis->StuffEnabled;
 	return 0x452217;
 }
+
+// naive way to fix negative indexes to be generated. proper way would be to replace
+// the entire function, and the function consuming the indexes. it is not yet known
+// whether the out of bounds read causes desync errors. this function appears to
+// have been inlined prominently in 585F40
+DEFINE_HOOK(56BC54, ThreatPosedEstimates_GetIndex, 5)
+{
+	GET(const CellStruct*, pCell, ECX);
+
+	int index = -1;
+	if(pCell->X >= 0 && pCell->Y >= 0 && pCell->X < 512 && pCell->Y < 512) {
+		index = pCell->X / 4 + 130 * pCell->Y / 4 + 131;
+	}
+
+	R->EAX(index);
+	return 0x56BC7D;
+}
+
+// reject negative indexes. if the index is the result of the function above, this
+// catches all invalid cells. otherwise, the game can write of of bounds, which can
+// set a field that is supposed to be a pointer, and crash when calling a virtual
+// method on it. in worst case, this goes unnoticed.
+DEFINE_HOOK(4FA2E0, HouseClass_SetThreat_Bounds, 7)
+{
+	//GET(HouseClass*, pThis, ESI);
+	GET_STACK(int, index, 0x4);
+	//GET_STACK(int, threat, 0x8);
+
+	return index < 0 ? 0x4FA347u : 0;
+}
