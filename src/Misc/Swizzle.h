@@ -2,6 +2,7 @@
 #define ARES_SWIZZLE_H
 
 #include <unordered_map>
+#include <type_traits>
 
 #include <Objidl.h>
 
@@ -59,6 +60,27 @@ public:
 		auto pptr = const_cast<std::remove_cv_t<T>**>(&ptr);
 		this->RegisterForChange(reinterpret_cast<void **>(pptr));
 	};
+};
+
+template<typename T>
+struct is_swizzlable : public std::is_pointer<T>::type {};
+
+struct Swizzle {
+	template <typename T>
+	Swizzle(T &object) {
+		swizzle(object, typename is_swizzlable<T>::type());
+	}
+
+private:
+	template <typename TSwizzle>
+	void swizzle(TSwizzle& object, std::true_type) {
+		AresSwizzle::Instance.RegisterPointerForChange(object);
+	}
+
+	template <typename TSwizzle>
+	void swizzle(TSwizzle& object, std::false_type) {
+		// not swizzlable
+	}
 };
 
 #endif
