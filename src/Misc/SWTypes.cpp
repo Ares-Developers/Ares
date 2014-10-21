@@ -168,7 +168,7 @@ bool NewSWType::HasInhibitor(SWTypeExt::ExtData* pSWType, HouseClass* pOwner, co
 	}
 
 	// a single inhibitor in range suffices
-	return std::none_of(TechnoClass::Array->begin(), TechnoClass::Array->end(), [&](TechnoClass* pTechno) {
+	return std::any_of(TechnoClass::Array->begin(), TechnoClass::Array->end(), [&](TechnoClass* pTechno) {
 		return IsInhibitorEligible(pSWType, pOwner, Coords, pTechno);
 	});
 }
