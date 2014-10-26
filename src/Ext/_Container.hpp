@@ -108,12 +108,12 @@ public:
 
 	virtual void InvalidatePointer(void* ptr, bool bRemoved) = 0;
 
-	virtual inline void SaveToStream(AresByteStream &Stm) {
+	virtual inline void SaveToStream(AresStreamWriter &Stm) {
 		Stm.Save(this->Initialized);
 		//Stm.Save(this->AttachedToObject);
 	}
 
-	virtual inline void LoadFromStream(AresByteStream &Stm) {
+	virtual inline void LoadFromStream(AresStreamReader &Stm) {
 		Stm.Load(this->Initialized);
 		//Stm.Load(this->AttachedToObject);
 	}
