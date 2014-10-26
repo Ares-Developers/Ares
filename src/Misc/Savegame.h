@@ -5,7 +5,7 @@
 
 namespace Savegame {
 	template <typename T>
-	bool ReadAresStream(AresStreamReader &Stm, T &Value, bool RegisterForChange = false) {
+	bool ReadAresStream(AresStreamReader &Stm, T &Value, bool RegisterForChange = true) {
 		// not implemented
 		return false;
 	};
