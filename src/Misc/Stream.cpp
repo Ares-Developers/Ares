@@ -1,5 +1,9 @@
 #include "Stream.h"
 
+#include "Debug.h"
+
+#include <SwizzleManagerClass.h>
+
 #include <Objidl.h>
 
 bool AresByteStream::ReadFromStream(IStream *pStm, const size_t Length) {
@@ -41,4 +45,36 @@ bool AresByteStream::WriteBlockToStream(IStream *pStm) const {
 		return this->WriteToStream(pStm);
 	}
 	return false;
+}
+
+bool AresStreamReader::RegisterChange(void* newPtr) {
+	static_assert(sizeof(long) == sizeof(void*), "long and void* need to be of same size.");
+
+	long oldPtr = 0;
+	if(this->Load(oldPtr)) {
+		if(SUCCEEDED(SwizzleManagerClass::Instance.Here_I_Am(oldPtr, newPtr))) {
+			return true;
+		}
+
+		this->EmitSwizzleWarning(oldPtr, newPtr);
+	}
+	return false;
+}
+
+void AresStreamReader::EmitExpectEndOfBlockWarning() const {
+	Debug::Log("[AresStreamReader] Read %X bytes instead of %X!\n",
+		this->stream->Offset(), this->stream->Size());
+}
+
+void AresStreamReader::EmitLoadWarning(size_t size) const {
+	Debug::Log("[AresStreamReader] Could not read data of length %u at %X of %X.\n",
+		size, this->stream->Offset() - size, this->stream->Size());
+}
+
+void AresStreamReader::EmitExpectWarning(unsigned int found, unsigned int expect) const {
+	Debug::Log("[AresStreamReader] Found %X, expected %X\n", found, expect);
+}
+
+void AresStreamReader::EmitSwizzleWarning(long id, void* pointer) const {
+	Debug::Log("[AresStreamReader] Could not register change from %X to %p\n", id, pointer);
 }
