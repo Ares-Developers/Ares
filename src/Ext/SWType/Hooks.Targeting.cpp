@@ -296,7 +296,7 @@ private:
 
 struct GeneticMutatorTargetSelector final : public TargetSelector {
 	TargetResult operator()(const TargetingInfo& info) const {
-		return{GetTarget(info, CanFireRequiresEnemy(), PreferHoldIfOffensive(), FindTargetItem),
+		return{GetTarget(info, CanFireAlways(), PreferHoldIfOffensive(), FindTargetItem),
 			TargetFlags::DisallowEmpty};
 	}
 
