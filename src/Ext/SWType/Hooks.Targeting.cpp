@@ -15,14 +15,14 @@
 
 #pragma region Support
 
-enum class TargetFlags {
+enum class SWTargetFlags {
 	DisallowEmpty,
 	AllowEmpty
 };
 
 struct TargetResult {
 	CellStruct Target;
-	TargetFlags Flags;
+	SWTargetFlags Flags;
 };
 
 struct TargetingInfo {
@@ -235,14 +235,14 @@ struct TargetSelector {
 struct NuclearMissileTargetSelector final : public TargetSelector {
 	TargetResult operator()(const TargetingInfo& info) const {
 		return{GetTarget(info, CanFireRequiresEnemy(), PreferOffensive(), PickPreferredTypeOrIonCannon()),
-			TargetFlags::DisallowEmpty};
+			SWTargetFlags::DisallowEmpty};
 	}
 };
 
 struct LightningStormTargetSelector final : public TargetSelector {
 	TargetResult operator()(const TargetingInfo& info) const {
 		return{GetTarget(info, CanAutoFire, PreferOffensive(), PickPreferredTypeOrIonCannon()),
-			TargetFlags::DisallowEmpty};
+			SWTargetFlags::DisallowEmpty};
 	}
 
 private:
@@ -254,7 +254,7 @@ private:
 struct PsychicDominatorTargetSelector final : public TargetSelector {
 	TargetResult operator()(const TargetingInfo& info) const {
 		return{GetTarget(info, CanAutoFire, PreferHoldIfOffensive(), FindTargetItem),
-			TargetFlags::DisallowEmpty};
+			SWTargetFlags::DisallowEmpty};
 	}
 
 private:
@@ -297,7 +297,7 @@ private:
 struct GeneticMutatorTargetSelector final : public TargetSelector {
 	TargetResult operator()(const TargetingInfo& info) const {
 		return{GetTarget(info, CanFireAlways(), PreferHoldIfOffensive(), FindTargetItem),
-			TargetFlags::DisallowEmpty};
+			SWTargetFlags::DisallowEmpty};
 	}
 
 private:
@@ -336,7 +336,7 @@ private:
 struct ParaDropTargetSelector final : public TargetSelector {
 	TargetResult operator()(const TargetingInfo& info) const {
 		return{GetTarget(info, CanFireAlways(), PreferOffensive(), FindTargetCoords),
-			TargetFlags::DisallowEmpty};
+			SWTargetFlags::DisallowEmpty};
 	}
 
 private:
@@ -375,7 +375,7 @@ private:
 struct ForceShieldTargetSelector final : public TargetSelector {
 	TargetResult operator()(const TargetingInfo& info) const {
 		return{GetTarget(info, CanFireAlways(), PreferDefensive(), FindTargetCoords),
-			TargetFlags::DisallowEmpty};
+			SWTargetFlags::DisallowEmpty};
 	}
 
 private:
@@ -397,7 +397,7 @@ private:
 
 struct NoTargetTargetSelector final : public TargetSelector {
 	TargetResult operator()(const TargetingInfo& info) const {
-		return{CellStruct::Empty, TargetFlags::AllowEmpty};
+		return{CellStruct::Empty, SWTargetFlags::AllowEmpty};
 	}
 };
 
@@ -411,7 +411,7 @@ struct BaseTargetSelector final : public TargetSelector {
 			cell = CellStruct::Empty;
 		}
 
-		return{cell, TargetFlags::DisallowEmpty};
+		return{cell, SWTargetFlags::DisallowEmpty};
 	}
 };
 
@@ -419,7 +419,7 @@ struct EnemyBaseTargetSelector final : public TargetSelector {
 	TargetResult operator()(const TargetingInfo& info) const {
 		// fire at the owner's enemy base cell
 		return{GetTarget(info, CanFireRequiresEnemy(), PreferNothing(), FindTargetCoords),
-			TargetFlags::DisallowEmpty};
+			SWTargetFlags::DisallowEmpty};
 	}
 
 	static CellStruct FindTargetCoords(const TargetingInfo& info) {
@@ -437,14 +437,14 @@ struct EnemyBaseTargetSelector final : public TargetSelector {
 struct OffensiveTargetSelector final : public TargetSelector {
 	TargetResult operator()(const TargetingInfo& info) const {
 		return{GetTarget(info, CanFireRequiresAffectedEnemy(), PreferNothing(), PickIonCannonTarget()),
-			TargetFlags::DisallowEmpty};
+			SWTargetFlags::DisallowEmpty};
 	}
 };
 
 struct StealthTargetSelector final : public TargetSelector {
 	TargetResult operator()(const TargetingInfo& info) const {
 		return{GetTarget(info, CanFireAlways(), PreferNothing(), FindTargetItem),
-			TargetFlags::DisallowEmpty};
+			SWTargetFlags::DisallowEmpty};
 	}
 
 private:
@@ -458,7 +458,7 @@ private:
 struct SelfTargetSelector final : public TargetSelector {
 	TargetResult operator()(const TargetingInfo& info) const {
 		return{GetTarget(info, CanFireAlways(), PreferNothing(), FindTargetCoords),
-			TargetFlags::DisallowEmpty};
+			SWTargetFlags::DisallowEmpty};
 	}
 
 private:
@@ -494,7 +494,7 @@ struct MultiMissileTargetSelector final : public TargetSelector {
 	// classic TS code: fire at the enemy's most threatening building
 	TargetResult operator()(const TargetingInfo& info) const {
 		return{GetTarget(info, CanFireRequiresEnemy(), PreferOffensive(), FindTargetItem),
-			TargetFlags::DisallowEmpty};
+			SWTargetFlags::DisallowEmpty};
 	}
 
 private:
@@ -522,7 +522,7 @@ struct HunterSeekerTargetSelector final : public TargetSelector {
 	// from TS: launch at empty coords only if a house has an enemy
 	TargetResult operator()(const TargetingInfo& info) const {
 		return{GetTarget(info, CanFireRequiresEnemy(), PreferNothing(), PickEmptyTarget()),
-			TargetFlags::AllowEmpty};
+			SWTargetFlags::AllowEmpty};
 	}
 };
 
@@ -563,7 +563,7 @@ TargetResult PickSuperWeaponTarget(SuperClass* pSuper) {
 		return EnemyBaseTargetSelector()(info);
 	case SuperWeaponAITargetingMode::None:
 	default:
-		return{CellStruct::Empty, TargetFlags::DisallowEmpty};
+		return{CellStruct::Empty, SWTargetFlags::DisallowEmpty};
 	}
 }
 
@@ -589,7 +589,7 @@ DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
 			}
 
 			auto result = PickSuperWeaponTarget(pSuper);
-			if(result.Target != CellStruct::Empty || result.Flags == TargetFlags::AllowEmpty) {
+			if(result.Target != CellStruct::Empty || result.Flags == SWTargetFlags::AllowEmpty) {
 				int idxSW = pThis->Supers.FindItemIndex(pSuper);
 				pThis->Fire_SW(idxSW, result.Target);
 			}
