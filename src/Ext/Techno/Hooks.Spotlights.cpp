@@ -212,18 +212,18 @@ DEFINE_HOOK(435CD3, SpotlightClass_CTOR, 6)
 	TechnoClass *Owner = BL->OwnerObject;
 	TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(Owner->GetTechnoType());
 
-	eSpotlightFlags Flags = 0;
+	SpotlightFlags Flags = SpotlightFlags::None;
 	if(pTypeData->Spot_Reverse) {
-		Flags |= sf_NoColor;
+		Flags |= SpotlightFlags::NoColor;
 	}
 	if(pTypeData->Spot_DisableR) {
-		Flags |= sf_NoRed;
+		Flags |= SpotlightFlags::NoRed;
 	}
 	if(pTypeData->Spot_DisableG) {
-		Flags |= sf_NoGreen;
+		Flags |= SpotlightFlags::NoGreen;
 	}
 	if(pTypeData->Spot_DisableB) {
-		Flags |= sf_NoBlue;
+		Flags |= SpotlightFlags::NoBlue;
 	}
 
 	Spot->DisableFlags = Flags;
