@@ -203,9 +203,9 @@ public:
 		ValueableEnum<SuperWeaponAffectedHouse> SW_AffectsHouse;
 		ValueableEnum<SuperWeaponAffectedHouse> SW_RequiresHouse;
 		ValueableEnum<SuperWeaponAffectedHouse> SW_AIRequiresHouse;
-		ValueableEnum<SuperWeaponTarget> SW_AffectsTarget;
-		ValueableEnum<SuperWeaponTarget> SW_RequiresTarget;
-		ValueableEnum<SuperWeaponTarget> SW_AIRequiresTarget;
+		Valueable<SuperWeaponTarget> SW_AffectsTarget;
+		Valueable<SuperWeaponTarget> SW_RequiresTarget;
+		Valueable<SuperWeaponTarget> SW_AIRequiresTarget;
 		Nullable<WarheadTypeClass *> SW_Warhead;
 		Nullable<int> SW_Damage;
 		Nullable<int> SW_Deferment;
@@ -359,8 +359,8 @@ public:
 
 	private:
 		static SuperWeaponAffectedHouse::Value GetRelation(HouseClass* pFirer, HouseClass* pHouse);
-		bool IsCellEligible(CellClass* pCell, SuperWeaponTarget::Value allowed);
-		bool IsTechnoEligible(TechnoClass* pTechno, SuperWeaponTarget::Value allowed);
+		bool IsCellEligible(CellClass* pCell, SuperWeaponTarget allowed);
+		bool IsTechnoEligible(TechnoClass* pTechno, SuperWeaponTarget allowed);
 	};
 
 	static Container<SWTypeExt> ExtMap;

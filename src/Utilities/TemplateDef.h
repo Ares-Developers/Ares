@@ -399,6 +399,38 @@ void Valueable<SuperWeaponAITargetingMode>::Read(INI_EX &parser, const char* pSe
 	}
 }
 
+template<>
+void Valueable<SuperWeaponTarget>::Read(INI_EX &parser, const char* pSection, const char* pKey, bool Allocate) {
+	if(parser.ReadString(pSection, pKey)) {
+		auto value = SuperWeaponTarget::None;
+
+		auto str = const_cast<char*>(parser.value());
+		char* context = nullptr;
+		for(auto cur = strtok_s(str, Ares::readDelims, &context); cur; cur = strtok_s(nullptr, Ares::readDelims, &context)) {
+			if(!_strcmpi(cur, "land")) {
+				value |= SuperWeaponTarget::Land;
+			} else if(!_strcmpi(cur, "water")) {
+				value |= SuperWeaponTarget::Water;
+			} else if(!_strcmpi(cur, "empty")) {
+				value |= SuperWeaponTarget::NoContent;
+			} else if(!_strcmpi(cur, "infantry")) {
+				value |= SuperWeaponTarget::Infantry;
+			} else if(!_strcmpi(cur, "units")) {
+				value |= SuperWeaponTarget::Unit;
+			} else if(!_strcmpi(cur, "buildings")) {
+				value |= SuperWeaponTarget::Building;
+			} else if(!_strcmpi(cur, "all")) {
+				value |= SuperWeaponTarget::All;
+			} else {
+				Debug::INIParseFailed(pSection, pKey, parser.value(), "Expected a super weapon target");
+				return;
+			}
+		}
+
+		this->Set(value);
+	}
+}
+
 // ValueableVector
 
 template <typename T>

@@ -82,7 +82,7 @@ void SW_ChronoSphere::LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeClas
 	pData->SW_AffectsTarget.Read(exINI, section, "SW.AffectsTarget");
 
 	// we handle the distinction between buildings and deployed vehicles ourselves
-	pData->Chronosphere_AffectBuildings = ((pData->SW_AffectsTarget & SuperWeaponTarget::Building) != 0);
+	pData->Chronosphere_AffectBuildings = ((pData->SW_AffectsTarget & SuperWeaponTarget::Building) != SuperWeaponTarget::None);
 	pData->SW_AffectsTarget = (pData->SW_AffectsTarget | SuperWeaponTarget::Building);
 }
 

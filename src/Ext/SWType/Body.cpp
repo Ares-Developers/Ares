@@ -256,34 +256,34 @@ SuperWeaponAffectedHouse::Value SWTypeExt::ExtData::GetRelation(HouseClass* pFir
 	return SuperWeaponAffectedHouse::Enemies;
 }
 
-bool SWTypeExt::ExtData::IsCellEligible(CellClass* pCell, SuperWeaponTarget::Value allowed) {
+bool SWTypeExt::ExtData::IsCellEligible(CellClass* pCell, SuperWeaponTarget allowed) {
 	if(allowed & SuperWeaponTarget::AllCells) {
 		if(pCell->LandType == LandType::Water) {
 			// check whether it supports water
-			return (allowed & SuperWeaponTarget::Water) != 0;
+			return (allowed & SuperWeaponTarget::Water) != SuperWeaponTarget::None;
 		} else {
 			// check whether it supports non-water
-			return (allowed & SuperWeaponTarget::Land) != 0;
+			return (allowed & SuperWeaponTarget::Land) != SuperWeaponTarget::None;
 		}
 	}
 	return true;
 }
 
-bool SWTypeExt::ExtData::IsTechnoEligible(TechnoClass* pTechno, SuperWeaponTarget::Value allowed) {
+bool SWTypeExt::ExtData::IsTechnoEligible(TechnoClass* pTechno, SuperWeaponTarget allowed) {
 	if(allowed & SuperWeaponTarget::AllContents) {
 		if(pTechno) {
 			switch(pTechno->WhatAmI()) {
 			case AbstractType::Infantry:
-				return (allowed & SuperWeaponTarget::Infantry) != 0;
+				return (allowed & SuperWeaponTarget::Infantry) != SuperWeaponTarget::None;
 			case AbstractType::Unit:
 			case AbstractType::Aircraft:
-				return (allowed & SuperWeaponTarget::Unit) != 0;
+				return (allowed & SuperWeaponTarget::Unit) != SuperWeaponTarget::None;
 			case AbstractType::Building:
-				return (allowed & SuperWeaponTarget::Building) != 0;
+				return (allowed & SuperWeaponTarget::Building) != SuperWeaponTarget::None;
 			}
 		} else {
 			// is the target cell allowed to be empty?
-			return (allowed & SuperWeaponTarget::NoContent) != 0;
+			return (allowed & SuperWeaponTarget::NoContent) != SuperWeaponTarget::None;
 		}
 	}
 	return true;

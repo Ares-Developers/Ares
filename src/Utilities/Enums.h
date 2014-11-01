@@ -21,51 +21,22 @@ enum class SuperWeaponAITargetingMode {
 	EnemyBase = 14
 };
 
-class SuperWeaponTarget {
-public:
-	typedef unsigned char Value;
-	enum {
-		None = 0x0,
-		Land = 0x1,
-		Water = 0x2,
-		NoContent = 0x4,
-		Infantry = 0x8,
-		Unit = 0x10,
-		Building = 0x20,
+enum class SuperWeaponTarget : unsigned char {
+	None = 0x0,
+	Land = 0x1,
+	Water = 0x2,
+	NoContent = 0x4,
+	Infantry = 0x8,
+	Unit = 0x10,
+	Building = 0x20,
 
-		All = 0xFF,
-		AllCells = Land | Water,
-		AllTechnos = Infantry | Unit | Building,
-		AllContents = NoContent | AllTechnos
-	};
-
-	static bool Parse(char* key, Value* value) {
-		if(key && value) {
-			Value ret = SuperWeaponTarget::None;
-			char* context = nullptr;
-			for(char *cur = strtok_s(key, ",", &context); cur; cur = strtok_s(nullptr, Ares::readDelims, &context)) {
-				if(!_strcmpi(cur, "land")) {
-					ret |= SuperWeaponTarget::Land;
-				} else if(!_strcmpi(cur, "water")) {
-					ret |= SuperWeaponTarget::Water;
-				} else if(!_strcmpi(cur, "empty")) {
-					ret |= SuperWeaponTarget::NoContent;
-				} else if(!_strcmpi(cur, "infantry")) {
-					ret |= SuperWeaponTarget::Infantry;
-				} else if(!_strcmpi(cur, "units")) {
-					ret |= SuperWeaponTarget::Unit;
-				} else if(!_strcmpi(cur, "buildings")) {
-					ret |= SuperWeaponTarget::Building;
-				} else if(!_strcmpi(cur, "all")) {
-					ret |= SuperWeaponTarget::All;
-				}
-			}
-			*value = ret;
-			return true;
-		}
-		return false;
-	}
+	All = 0xFF,
+	AllCells = Land | Water,
+	AllTechnos = Infantry | Unit | Building,
+	AllContents = NoContent | AllTechnos
 };
+
+MAKE_ENUM_FLAGS(SuperWeaponTarget);
 
 class SuperWeaponAffectedHouse {
 public:
