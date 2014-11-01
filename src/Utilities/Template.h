@@ -228,7 +228,7 @@ public:
 		return this->defined;
 	}
 
-	virtual Iterator<T> GetElements() const {
+	Iterator<T> GetElements() const {
 		return Iterator<T>(*this);
 	}
 
@@ -253,7 +253,7 @@ public:
 
 	using ValueableVector<T>::GetElements;
 
-	virtual Iterator<T> GetElements(Iterator<T> defElements) const {
+	Iterator<T> GetElements(Iterator<T> defElements) const {
 		if(!this->hasValue) {
 			return defElements;
 		}
