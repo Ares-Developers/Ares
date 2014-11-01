@@ -41,8 +41,7 @@ DEFINE_HOOK(4AB9B0, DisplayClass_LeftMouseButtonUp, 5)
 DEFINE_HOOK(4AAC7D, DisplayClass_MouseEvent, 8)
 {
 	GET_STACK(Point2D , XY, 0x1C);
-	GET_STACK(byte, FakeMouseFlags, 0x34);
-	MouseEvent MouseFlags(FakeMouseFlags);
+	REF_STACK(const MouseEvent, MouseFlags, 0x34);
 
 	if(MouseFlags & (MouseEvent::RightUp | MouseEvent::LeftUp)) {
 //		PopupMenu::Coords = XY;
