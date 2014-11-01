@@ -133,12 +133,12 @@ public:
 		return this->isset() ? Valueable<T>::GetEx() : defVal;
 	}
 
-	virtual void Set(const T& val) {
+	virtual void Set(const T& val) override {
 		Valueable<T>::Set(val);
 		this->HasValue = true;
 	}
 
-	virtual void SetEx(T* val) {
+	virtual void SetEx(T* val) override {
 		Valueable<T>::SetEx(val);
 		this->HasValue = true;
 	}
@@ -245,7 +245,7 @@ protected:
 public:
 	NullableVector() : ValueableVector<T>(), hasValue(false) {};
 
-	inline virtual void Read(INI_EX &parser, const char* pSection, const char* pKey);
+	inline virtual void Read(INI_EX &parser, const char* pSection, const char* pKey) override;
 
 	bool HasValue() const {
 		return this->hasValue;
@@ -265,13 +265,13 @@ public:
 template<typename Lookuper>
 class ValueableIdxVector : public ValueableVector<int> {
 protected:
-	inline virtual void Split(INI_EX &parser, const char* pSection, const char* pKey, char* pValue);
+	inline virtual void Split(INI_EX &parser, const char* pSection, const char* pKey, char* pValue) override;
 };
 
 template<typename Lookuper>
 class NullableIdxVector : public NullableVector<int> {
 protected:
-	inline virtual void Split(INI_EX &parser, const char* pSection, const char* pKey, char* pValue);
+	inline virtual void Split(INI_EX &parser, const char* pSection, const char* pKey, char* pValue) override;
 };
 
 template<typename T>
