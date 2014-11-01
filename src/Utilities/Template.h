@@ -133,12 +133,12 @@ public:
 		return this->isset() ? Valueable<T>::GetEx() : defVal;
 	}
 
-	virtual void Set(const T& val) override {
+	virtual void Set(const T& val) override final {
 		Valueable<T>::Set(val);
 		this->HasValue = true;
 	}
 
-	virtual void SetEx(T* val) override {
+	virtual void SetEx(T* val) override final {
 		Valueable<T>::SetEx(val);
 		this->HasValue = true;
 	}
@@ -245,7 +245,7 @@ protected:
 public:
 	NullableVector() : ValueableVector<T>(), hasValue(false) {};
 
-	inline virtual void Read(INI_EX &parser, const char* pSection, const char* pKey) override;
+	inline virtual void Read(INI_EX &parser, const char* pSection, const char* pKey) override final;
 
 	bool HasValue() const {
 		return this->hasValue;
@@ -263,19 +263,19 @@ public:
 };
 
 template<typename Lookuper>
-class ValueableIdxVector : public ValueableVector<int> {
+class ValueableIdxVector final : public ValueableVector<int> {
 protected:
 	inline virtual void Split(INI_EX &parser, const char* pSection, const char* pKey, char* pValue) override;
 };
 
 template<typename Lookuper>
-class NullableIdxVector : public NullableVector<int> {
+class NullableIdxVector final : public NullableVector<int> {
 protected:
 	inline virtual void Split(INI_EX &parser, const char* pSection, const char* pKey, char* pValue) override;
 };
 
 template<typename T>
-class ValueableEnum : public Valueable<typename T::Value> {
+class ValueableEnum final : public Valueable<typename T::Value> {
 public:
 	typedef typename T::Value ValueType;
 
