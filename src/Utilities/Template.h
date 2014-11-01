@@ -34,6 +34,12 @@ public:
 	//	return this->GetEx();
 	//}
 
+	template <typename S, typename = std::enable_if_t<std::is_assignable<T&, S&&>::value>>
+	Valueable& operator = (S&& value) {
+		this->Set(value);
+		return *this;
+	}
+
 	T operator -> () const {
 		return this->Get();
 	}
