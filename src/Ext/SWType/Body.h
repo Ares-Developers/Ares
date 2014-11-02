@@ -91,7 +91,7 @@ public:
 		NullableVector<AnimTypeClass*> Weather_Bolts;
 		NullableVector<AnimTypeClass*> Weather_Debris;
 		NullableIdxVector<VocClass> Weather_Sounds;
-		ValueableEnum<SuperWeaponAffectedHouse> Weather_RadarOutageAffects;
+		Valueable<SuperWeaponAffectedHouse> Weather_RadarOutageAffects;
 
 		// Nuke
 		Valueable<WeaponTypeClass*> Nuke_Payload;
@@ -183,7 +183,7 @@ public:
 		NullableIdx<VocClass> SW_ActivationSound;
 		Nullable<AnimTypeClass *> SW_Anim;
 		Valueable<int> SW_AnimHeight;
-		ValueableEnum<SuperWeaponAffectedHouse> SW_AnimVisibility;
+		Valueable<SuperWeaponAffectedHouse> SW_AnimVisibility;
 
 		Valueable<bool> SW_TypeCustom;
 		Valueable<bool> SW_AutoFire;
@@ -200,9 +200,9 @@ public:
 
 		SWRange SW_Range;
 		Valueable<int> SW_MaxCount;
-		ValueableEnum<SuperWeaponAffectedHouse> SW_AffectsHouse;
-		ValueableEnum<SuperWeaponAffectedHouse> SW_RequiresHouse;
-		ValueableEnum<SuperWeaponAffectedHouse> SW_AIRequiresHouse;
+		Valueable<SuperWeaponAffectedHouse> SW_AffectsHouse;
+		Valueable<SuperWeaponAffectedHouse> SW_RequiresHouse;
+		Valueable<SuperWeaponAffectedHouse> SW_AIRequiresHouse;
 		Valueable<SuperWeaponTarget> SW_AffectsTarget;
 		Valueable<SuperWeaponTarget> SW_RequiresTarget;
 		Valueable<SuperWeaponTarget> SW_AIRequiresTarget;
@@ -337,7 +337,7 @@ public:
 		bool IsAnimVisible(HouseClass* pFirer);
 		bool CanFireAt(HouseClass* pOwner, const CellStruct &coords, bool manual);
 		bool IsHouseAffected(HouseClass* pFirer, HouseClass* pHouse);
-		bool IsHouseAffected(HouseClass* pFirer, HouseClass* pHouse, SuperWeaponAffectedHouse::Value value);
+		bool IsHouseAffected(HouseClass* pFirer, HouseClass* pHouse, SuperWeaponAffectedHouse value);
 		bool IsTechnoAffected(TechnoClass* pTechno);
 		void PrintMessage(const CSFText& message, HouseClass* pFirer);
 
@@ -358,7 +358,7 @@ public:
 		}
 
 	private:
-		static SuperWeaponAffectedHouse::Value GetRelation(HouseClass* pFirer, HouseClass* pHouse);
+		static SuperWeaponAffectedHouse GetRelation(HouseClass* pFirer, HouseClass* pHouse);
 		bool IsCellEligible(CellClass* pCell, SuperWeaponTarget allowed);
 		bool IsTechnoEligible(TechnoClass* pTechno, SuperWeaponTarget allowed);
 	};

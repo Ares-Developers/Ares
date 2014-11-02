@@ -227,7 +227,7 @@ void SWTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 
 // can i see the animation of pFirer's SW?
 bool SWTypeExt::ExtData::IsAnimVisible(HouseClass* pFirer) {
-	SuperWeaponAffectedHouse::Value relation = GetRelation(pFirer, HouseClass::Player);
+	auto relation = GetRelation(pFirer, HouseClass::Player);
 	return (this->SW_AnimVisibility & relation) == relation;
 }
 
@@ -236,12 +236,12 @@ bool SWTypeExt::ExtData::IsHouseAffected(HouseClass* pFirer, HouseClass* pHouse)
 	return IsHouseAffected(pFirer, pHouse, this->SW_AffectsHouse);
 }
 
-bool SWTypeExt::ExtData::IsHouseAffected(HouseClass* pFirer, HouseClass* pHouse, SuperWeaponAffectedHouse::Value value) {
-	SuperWeaponAffectedHouse::Value relation = GetRelation(pFirer, pHouse);
+bool SWTypeExt::ExtData::IsHouseAffected(HouseClass* pFirer, HouseClass* pHouse, SuperWeaponAffectedHouse value) {
+	auto relation = GetRelation(pFirer, pHouse);
 	return (value & relation) == relation;
 }
 
-SuperWeaponAffectedHouse::Value SWTypeExt::ExtData::GetRelation(HouseClass* pFirer, HouseClass* pHouse) {
+SuperWeaponAffectedHouse SWTypeExt::ExtData::GetRelation(HouseClass* pFirer, HouseClass* pHouse) {
 	// that's me!
 	if(pFirer == pHouse) {
 		return SuperWeaponAffectedHouse::Owner;

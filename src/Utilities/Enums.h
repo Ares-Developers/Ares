@@ -38,45 +38,19 @@ enum class SuperWeaponTarget : unsigned char {
 
 MAKE_ENUM_FLAGS(SuperWeaponTarget);
 
-class SuperWeaponAffectedHouse {
-public:
-	typedef unsigned char Value;
-	enum {
-		None = 0x0,
-		Owner = 0x1,
-		Allies = 0x2,
-		Team = 0x3,
-		Enemies = 0x4,
-		NotAllies = 0x5,
-		NotOwner = 0x6,
-		All = 0x7
-	};
+enum class SuperWeaponAffectedHouse : unsigned char {
+	None = 0x0,
+	Owner = 0x1,
+	Allies = 0x2,
+	Enemies = 0x4,
 
-	static bool Parse(char* key, Value* value) {
-		if(key && value) {
-			Value ret = SuperWeaponAffectedHouse::None;
-			char* context = nullptr;
-			for(char *cur = strtok_s(key, ",", &context); cur; cur = strtok_s(nullptr, ",", &context)) {
-				if(!_strcmpi(cur, "owner")) {
-					ret |= SuperWeaponAffectedHouse::Owner;
-				} else if(!_strcmpi(cur, "allies")) {
-					ret |= SuperWeaponAffectedHouse::Allies;
-				} else if(!_strcmpi(cur, "enemies")) {
-					ret |= SuperWeaponAffectedHouse::Enemies;
-				} else if(!_strcmpi(cur, "team")) {
-					ret |= SuperWeaponAffectedHouse::Team;
-				} else if(!_strcmpi(cur, "others")) {
-					ret |= SuperWeaponAffectedHouse::NotOwner;
-				} else if(!_strcmpi(cur, "all")) {
-					ret |= SuperWeaponAffectedHouse::All;
-				}
-			}
-			*value = ret;
-			return true;
-		}
-		return false;
-	}
+	Team = Owner | Allies,
+	NotAllies = Owner | Enemies,
+	NotOwner = Allies | Enemies,
+	All = Owner | Allies | Enemies
 };
+
+MAKE_ENUM_FLAGS(SuperWeaponAffectedHouse);
 
 enum class OwnerHouseKind : int {
 	Default,

@@ -431,6 +431,36 @@ void Valueable<SuperWeaponTarget>::Read(INI_EX &parser, const char* pSection, co
 	}
 }
 
+template<>
+void Valueable<SuperWeaponAffectedHouse>::Read(INI_EX &parser, const char* pSection, const char* pKey, bool Allocate) {
+	if(parser.ReadString(pSection, pKey)) {
+		auto value = SuperWeaponAffectedHouse::None;
+
+		auto str = const_cast<char*>(parser.value());
+		char* context = nullptr;
+		for(auto cur = strtok_s(str, Ares::readDelims, &context); cur; cur = strtok_s(nullptr, Ares::readDelims, &context)) {
+			if(!_strcmpi(cur, "owner")) {
+				value |= SuperWeaponAffectedHouse::Owner;
+			} else if(!_strcmpi(cur, "allies")) {
+				value |= SuperWeaponAffectedHouse::Allies;
+			} else if(!_strcmpi(cur, "enemies")) {
+				value |= SuperWeaponAffectedHouse::Enemies;
+			} else if(!_strcmpi(cur, "team")) {
+				value |= SuperWeaponAffectedHouse::Team;
+			} else if(!_strcmpi(cur, "others")) {
+				value |= SuperWeaponAffectedHouse::NotOwner;
+			} else if(!_strcmpi(cur, "all")) {
+				value |= SuperWeaponAffectedHouse::All;
+			} else {
+				Debug::INIParseFailed(pSection, pKey, parser.value(), "Expected a super weapon affected house");
+				return;
+			}
+		}
+
+		this->Set(value);
+	}
+}
+
 // ValueableVector
 
 template <typename T>
