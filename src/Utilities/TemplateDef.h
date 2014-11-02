@@ -563,19 +563,4 @@ void NullableIdxVector<Lookuper>::Split(INI_EX &parser, const char* pSection, co
 	}
 }
 
-
-// ValueableEnum
-
-template <typename T>
-void ValueableEnum<T>::Read(INI_EX &parser, const char* pSection, const char* pKey) {
-	if(parser.ReadString(pSection, pKey)) {
-		ValueType buffer = this->Get();
-		if(T::Parse(Ares::readBuffer, &buffer)) {
-			this->Set(buffer);
-		} else if(!INIClass::IsBlank(Ares::readBuffer)) {
-			Debug::INIParseFailed(pSection, pKey, Ares::readBuffer);
-		}
-	}
-};
-
 #endif

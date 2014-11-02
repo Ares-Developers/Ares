@@ -274,14 +274,4 @@ protected:
 	inline virtual void Split(INI_EX &parser, const char* pSection, const char* pKey, char* pValue) override;
 };
 
-template<typename T>
-class ValueableEnum final : public Valueable<typename T::Value> {
-public:
-	typedef typename T::Value ValueType;
-
-	ValueableEnum(ValueType Default = ValueType()) : Valueable<ValueType>(Default) {};
-
-	inline void Read(INI_EX &parser, const char* pSection, const char* pKey);
-};
-
 #endif
