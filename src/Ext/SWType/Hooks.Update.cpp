@@ -71,6 +71,7 @@ std::vector<SWStatus> GetSuperWeaponStatuses(HouseClass* pHouse) {
 		// kill off super weapons that are disallowed and
 		// factor in the player's power status
 		auto hasPower = pHouse->HasFullPower();
+		auto OwnerBits = 1u << pHouse->Type->ArrayIndex;
 
 		for(auto pSuper : pHouse->Supers) {
 			auto index = pSuper->Type->GetArrayIndex();
@@ -81,6 +82,12 @@ std::vector<SWStatus> GetSuperWeaponStatuses(HouseClass* pHouse) {
 				if(pSuper->Type->DisableableFromShell) {
 					status.Available = false;
 				}
+			}
+
+			// allow only certain houses, disallow forbidden houses
+			auto pData = SWTypeExt::ExtMap.Find(pSuper->Type);
+			if(!(pData->SW_RequiredHouses & OwnerBits) || (pData->SW_ForbiddenHouses & OwnerBits)) {
+				status.Available = false;
 			}
 
 			// if the house is generally on low power,

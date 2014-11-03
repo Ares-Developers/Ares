@@ -219,6 +219,8 @@ public:
 		Nullable<WarheadTypeClass *> SW_Warhead;
 		Nullable<int> SW_Damage;
 		Nullable<int> SW_Deferment;
+		DWORD SW_RequiredHouses;
+		DWORD SW_ForbiddenHouses;
 
 		// Lighting
 		Valueable<bool> Lighting_Enabled;
@@ -328,6 +330,8 @@ public:
 			SW_AnyDesignator(false),
 			SW_Inhibitors(),
 			SW_AnyInhibitor(false),
+			SW_RequiredHouses(0xFFFFFFFFu),
+			SW_ForbiddenHouses(0u),
 			HandledByNewSWType(SuperWeaponType::Invalid),
 			LastAction(Action::None),
 			CameoPal(),

@@ -226,6 +226,10 @@ void SWTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 	// the fallback is handled in the PreDependent SW's code
 	this->SW_PostDependent.Read(pINI, section, "SW.PostDependent");
 
+	// restrictions for this super weapon
+	this->SW_RequiredHouses = pINI->ReadHouseTypesList(section, "SW.RequiredHouses", this->SW_RequiredHouses);
+	this->SW_ForbiddenHouses = pINI->ReadHouseTypesList(section, "SW.ForbiddenHouses", this->SW_ForbiddenHouses);
+
 	// initialize the NewSWType that handles this SWType.
 	if(auto pNewSWType = this->GetNewSWType()) {
 		auto pThis = this->OwnerObject();
