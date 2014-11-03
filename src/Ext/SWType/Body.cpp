@@ -259,6 +259,20 @@ SuperWeaponTarget SWTypeExt::ExtData::GetAIRequiredTarget() const {
 	return SuperWeaponTarget::None;
 }
 
+SuperWeaponAffectedHouse SWTypeExt::ExtData::GetAIRequiredHouse() const {
+	if(this->SW_AIRequiresHouse.isset()) {
+		return this->SW_AIRequiresHouse;
+	}
+
+	auto index = static_cast<unsigned int>(this->SW_AITargetingType.Get());
+
+	if(index < SWTypeExt::AITargetingModes.size()) {
+		return SWTypeExt::AITargetingModes[index].House;
+	}
+
+	return SuperWeaponAffectedHouse::None;
+}
+
 // can i see the animation of pFirer's SW?
 bool SWTypeExt::ExtData::IsAnimVisible(HouseClass* pFirer) {
 	auto relation = GetRelation(pFirer, HouseClass::Player);
@@ -349,7 +363,7 @@ bool SWTypeExt::ExtData::CanFireAt(HouseClass* pOwner, const CellStruct &coords,
 
 	// check for techno type match
 	auto pTechno = abstract_cast<TechnoClass*>(pCell->GetContent());
-	const auto& AllowedHouse = manual ? SW_RequiresHouse : SW_AIRequiresHouse;
+	const auto AllowedHouse = manual ? SW_RequiresHouse.Get() : this->GetAIRequiredHouse();
 	if(pTechno && AllowedHouse != SuperWeaponAffectedHouse::None) {
 		if(!IsHouseAffected(pOwner, pTechno->Owner, AllowedHouse)) {
 			return false;

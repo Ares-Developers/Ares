@@ -212,7 +212,7 @@ public:
 		Valueable<int> SW_MaxCount;
 		Valueable<SuperWeaponAffectedHouse> SW_AffectsHouse;
 		Valueable<SuperWeaponAffectedHouse> SW_RequiresHouse;
-		Valueable<SuperWeaponAffectedHouse> SW_AIRequiresHouse;
+		Nullable<SuperWeaponAffectedHouse> SW_AIRequiresHouse;
 		Valueable<SuperWeaponTarget> SW_AffectsTarget;
 		Valueable<SuperWeaponTarget> SW_RequiresTarget;
 		Nullable<SuperWeaponTarget> SW_AIRequiresTarget;
@@ -316,7 +316,6 @@ public:
 			SW_Unstoppable(false),
 			SW_AffectsHouse(SuperWeaponAffectedHouse::All),
 			SW_RequiresHouse(SuperWeaponAffectedHouse::None),
-			SW_AIRequiresHouse(SuperWeaponAffectedHouse::None),
 			SW_AffectsTarget(SuperWeaponTarget::All),
 			SW_RequiresTarget(SuperWeaponTarget::None),
 			SW_AITargetingType(SuperWeaponAITargetingMode::None),
@@ -351,6 +350,7 @@ public:
 		void PrintMessage(const CSFText& message, HouseClass* pFirer);
 
 		SuperWeaponTarget GetAIRequiredTarget() const;
+		SuperWeaponAffectedHouse GetAIRequiredHouse() const;
 
 		NewSWType* GetNewSWType() const;
 		bool IsOriginalType() const;
