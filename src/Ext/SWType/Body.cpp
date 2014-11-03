@@ -245,6 +245,20 @@ void SWTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 	this->SidebarPCX.Read(pINI, section, "SidebarPCX");
 }
 
+SuperWeaponTarget SWTypeExt::ExtData::GetAIRequiredTarget() const {
+	if(this->SW_AIRequiresTarget.isset()) {
+		return this->SW_AIRequiresTarget;
+	}
+
+	auto index = static_cast<unsigned int>(this->SW_AITargetingType.Get());
+
+	if(index < SWTypeExt::AITargetingModes.size()) {
+		return SWTypeExt::AITargetingModes[index].Target;
+	}
+
+	return SuperWeaponTarget::None;
+}
+
 // can i see the animation of pFirer's SW?
 bool SWTypeExt::ExtData::IsAnimVisible(HouseClass* pFirer) {
 	auto relation = GetRelation(pFirer, HouseClass::Player);
@@ -328,7 +342,7 @@ bool SWTypeExt::ExtData::CanFireAt(HouseClass* pOwner, const CellStruct &coords,
 	auto pCell = MapClass::Instance->GetCellAt(coords);
 
 	// check cell type
-	const auto& AllowedTarget = manual ? SW_RequiresTarget : SW_AIRequiresTarget;
+	const auto AllowedTarget = manual ? SW_RequiresTarget.Get() : this->GetAIRequiredTarget();
 	if(!IsCellEligible(pCell, AllowedTarget)) {
 		return false;
 	}

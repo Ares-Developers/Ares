@@ -215,7 +215,7 @@ public:
 		Valueable<SuperWeaponAffectedHouse> SW_AIRequiresHouse;
 		Valueable<SuperWeaponTarget> SW_AffectsTarget;
 		Valueable<SuperWeaponTarget> SW_RequiresTarget;
-		Valueable<SuperWeaponTarget> SW_AIRequiresTarget;
+		Nullable<SuperWeaponTarget> SW_AIRequiresTarget;
 		Nullable<WarheadTypeClass *> SW_Warhead;
 		Nullable<int> SW_Damage;
 		Nullable<int> SW_Deferment;
@@ -319,7 +319,6 @@ public:
 			SW_AIRequiresHouse(SuperWeaponAffectedHouse::None),
 			SW_AffectsTarget(SuperWeaponTarget::All),
 			SW_RequiresTarget(SuperWeaponTarget::None),
-			SW_AIRequiresTarget(SuperWeaponTarget::None),
 			SW_AITargetingType(SuperWeaponAITargetingMode::None),
 			SW_FireToShroud(true),
 			SW_RadarEvent(true),
@@ -350,6 +349,8 @@ public:
 		bool IsHouseAffected(HouseClass* pFirer, HouseClass* pHouse, SuperWeaponAffectedHouse value);
 		bool IsTechnoAffected(TechnoClass* pTechno);
 		void PrintMessage(const CSFText& message, HouseClass* pFirer);
+
+		SuperWeaponTarget GetAIRequiredTarget() const;
 
 		NewSWType* GetNewSWType() const;
 		bool IsOriginalType() const;
