@@ -20,6 +20,8 @@
 
 #include "../_Container.hpp"
 
+#include <array>
+
 class AircraftTypeClass;
 class AnimClass;
 class HouseClass;
@@ -30,6 +32,12 @@ class RadarEventClass;
 class SuperClass;
 class VocClass;
 class VoxClass;
+
+struct AITargetingModeInfo {
+	SuperWeaponAITargetingMode Mode;
+	SuperWeaponTarget Target;
+	SuperWeaponAffectedHouse House;
+};
 
 struct SWRange {
 	SWRange(float widthOrRange = -1.0f, int height = -1) : WidthOrRange(widthOrRange), Height(height) {}
@@ -65,6 +73,8 @@ class SWTypeExt
 {
 public:
 	using base_type = SuperWeaponTypeClass;
+
+	static const std::array<const AITargetingModeInfo, 15> AITargetingModes;
 
 	class ExtData : public Extension<SuperWeaponTypeClass>
 	{

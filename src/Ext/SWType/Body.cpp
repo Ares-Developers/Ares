@@ -26,6 +26,26 @@ Container<SWTypeExt> SWTypeExt::ExtMap;
 
 SuperWeaponTypeClass *SWTypeExt::CurrentSWType = nullptr;
 
+// note: this array is indexed using the targeting mode. see that the first
+// parameter is always equal to the index of the item.
+const std::array<const AITargetingModeInfo, 15> SWTypeExt::AITargetingModes = {{
+	{SuperWeaponAITargetingMode::None, SuperWeaponTarget::None, SuperWeaponAffectedHouse::None},
+	{SuperWeaponAITargetingMode::Nuke, SuperWeaponTarget::AllTechnos, SuperWeaponAffectedHouse::Enemies},
+	{SuperWeaponAITargetingMode::LightningStorm, SuperWeaponTarget::AllTechnos, SuperWeaponAffectedHouse::Enemies},
+	{SuperWeaponAITargetingMode::PsychicDominator, SuperWeaponTarget::Infantry | SuperWeaponTarget::Unit, SuperWeaponAffectedHouse::All},
+	{SuperWeaponAITargetingMode::ParaDrop, SuperWeaponTarget::None, SuperWeaponAffectedHouse::Enemies},
+	{SuperWeaponAITargetingMode::GeneticMutator, SuperWeaponTarget::Infantry, SuperWeaponAffectedHouse::All},
+	{SuperWeaponAITargetingMode::ForceShield, SuperWeaponTarget::None, SuperWeaponAffectedHouse::None},
+	{SuperWeaponAITargetingMode::NoTarget, SuperWeaponTarget::None, SuperWeaponAffectedHouse::None},
+	{SuperWeaponAITargetingMode::Offensive, SuperWeaponTarget::AllTechnos, SuperWeaponAffectedHouse::Enemies},
+	{SuperWeaponAITargetingMode::Stealth, SuperWeaponTarget::AllTechnos, SuperWeaponAffectedHouse::Enemies},
+	{SuperWeaponAITargetingMode::Self, SuperWeaponTarget::Building, SuperWeaponAffectedHouse::None},
+	{SuperWeaponAITargetingMode::Base, SuperWeaponTarget::None, SuperWeaponAffectedHouse::None},
+	{SuperWeaponAITargetingMode::MultiMissile, SuperWeaponTarget::Building, SuperWeaponAffectedHouse::Enemies},
+	{SuperWeaponAITargetingMode::HunterSeeker, SuperWeaponTarget::None, SuperWeaponAffectedHouse::None},
+	{SuperWeaponAITargetingMode::EnemyBase, SuperWeaponTarget::None, SuperWeaponAffectedHouse::None},
+}};
+
 void SWTypeExt::ExtData::InitializeConstants()
 {
 	NewSWType::Init();
