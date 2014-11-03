@@ -16,6 +16,7 @@
 #include <RadarEventClass.h>
 #include <SuperClass.h>
 #include <AnimClass.h>
+#include <InfantryClass.h>
 #include <VocClass.h>
 #include <WarheadTypeClass.h>
 #include <MessageListClass.h>
@@ -271,6 +272,29 @@ SuperWeaponAffectedHouse SWTypeExt::ExtData::GetAIRequiredHouse() const {
 	}
 
 	return SuperWeaponAffectedHouse::None;
+}
+
+Iterator<TechnoClass*> SWTypeExt::ExtData::GetPotentialAITargets(HouseClass* pTarget) const {
+	const auto require = this->GetAIRequiredTarget() & SuperWeaponTarget::AllTechnos;
+
+	if(require == SuperWeaponTarget::None || require & SuperWeaponTarget::Building) {
+		// either buildings only or it includes buildings
+		if(require == SuperWeaponTarget::Building) {
+			// only buildings from here, either all or of a particular house
+			if(pTarget) {
+				return make_iterator(pTarget->Buildings);
+			}
+			return make_iterator(*BuildingClass::Array);
+		}
+		return make_iterator(*TechnoClass::Array);
+	}
+
+	if(require == SuperWeaponTarget::Infantry) {
+		return make_iterator(*InfantryClass::Array);
+	}
+
+	// it's techno stuff, but not buildings
+	return make_iterator(*FootClass::Array);
 }
 
 // can i see the animation of pFirer's SW?

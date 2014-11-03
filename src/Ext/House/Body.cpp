@@ -334,7 +334,11 @@ TechnoClass* HouseExt::PickIonCannonTarget(HouseClass* pOwner, HouseClass* pVict
 
 	DiscreteSelectionClass<TechnoClass*> targets;
 
-	for(auto pTechno : *TechnoClass::Array) {
+	const auto potentialTargets = pExt
+		? pExt->GetPotentialAITargets(pVictim)
+		: make_iterator(*TechnoClass::Array);
+
+	for(auto pTechno : potentialTargets) {
 		// original game code only compares owner and doesn't support nullptr
 		bool passedFilter = (!pVictim || pTechno->Owner == pVictim);
 

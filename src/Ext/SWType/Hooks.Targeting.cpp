@@ -263,12 +263,13 @@ private:
 	}
 
 	static ObjectClass* FindTargetItem(const TargetingInfo& info) {
-		return GetTargetFirstMax(FootClass::Array->begin(), FootClass::Array->end(), [&](FootClass* pFoot) {
-			if(pFoot->InLimbo) {
+		auto it = info.TypeExt->GetPotentialAITargets();
+		return GetTargetFirstMax(it.begin(), it.end(), [&](TechnoClass* pTechno) {
+			if(pTechno->InLimbo) {
 				return -1;
 			}
 
-			auto cell = pFoot->GetCell()->MapCoords;
+			auto cell = pTechno->GetCell()->MapCoords;
 
 			// new check
 			if(!info.CanFireAt(cell)) {
@@ -302,12 +303,13 @@ struct GeneticMutatorTargetSelector final : public TargetSelector {
 
 private:
 	static ObjectClass* FindTargetItem(const TargetingInfo& info) {
-		return GetTargetFirstMax(InfantryClass::Array->begin(), InfantryClass::Array->end(), [&](InfantryClass* pInfantry) {
-			if(pInfantry->InLimbo) {
+		auto it = info.TypeExt->GetPotentialAITargets();
+		return GetTargetFirstMax(it.begin(), it.end(), [&](TechnoClass* pTechno) {
+			if(pTechno->InLimbo) {
 				return -1;
 			}
 
-			auto cell = pInfantry->GetCell()->MapCoords;
+			auto cell = pTechno->GetCell()->MapCoords;
 
 			// new check
 			if(!info.CanFireAt(cell)) {
@@ -318,7 +320,7 @@ private:
 			for(size_t i = 0; i < CellSpread::NumCells(1); ++i) {
 				auto pCell = MapClass::Instance->GetCellAt(cell + CellSpread::GetCell(i));
 
-				for(auto j = pCell->GetInfantry(pInfantry->OnBridge); j; j = abstract_cast<InfantryClass*>(j->NextObject)) {
+				for(auto j = pCell->GetInfantry(pTechno->OnBridge); j; j = abstract_cast<InfantryClass*>(j->NextObject)) {
 					if(!info.Owner->IsAlliedWith(j) && !j->IsInAir()) {
 						// original game does not consider cloak
 						if(j->CloakState != CloakState::Cloaked) {
@@ -502,14 +504,15 @@ private:
 		auto pOwner = info.Owner;
 		auto pTargetPlayer = HouseClass::Array->GetItem(pOwner->EnemyHouseIndex);
 
-		return GetTargetFirstMax(pTargetPlayer->Buildings.begin(), pTargetPlayer->Buildings.end(), [&](BuildingClass* pBld) {
-			auto cell = pBld->GetMapCoords();
+		auto it = info.TypeExt->GetPotentialAITargets(pTargetPlayer);
+		return GetTargetFirstMax(it.begin(), it.end(), [&](TechnoClass* pTechno) {
+			auto cell = pTechno->GetMapCoords();
 
 			if(!info.CanFireAt(cell)) {
 				return -1;
 			}
 
-			if(TechnoExt::IsCloaked(pBld)) {
+			if(TechnoExt::IsCloaked(pTechno)) {
 				return ScenarioClass::Instance->Random.RandomRanged(0, 100);
 			}
 
