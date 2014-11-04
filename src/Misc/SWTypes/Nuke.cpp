@@ -98,14 +98,12 @@ bool SW_NuclearMissile::Activate(SuperClass* pThis, const CellStruct &Coords, bo
 				
 				// find a building type that can fire this SWType and verify the
 				// player has it. don't give up, just try the other types as well.
-				for(int i=0; i<BuildingTypeClass::Array->Count; ++i) {
-					BuildingTypeClass *pTBld = BuildingTypeClass::Array->GetItem(i);
-					if(pTBld->NukeSilo) {
-						if(pTBld->SuperWeapon == pType->ArrayIndex || pTBld->SuperWeapon2 == pType->ArrayIndex) {
-							// valid silo. let's see whether the firer got it.
-							if((pSilo = pThis->Owner->FindBuildingOfType(pTBld->ArrayIndex, -1)) != nullptr) {
-								break;
-							}
+				for(const auto& pTBld : *BuildingTypeClass::Array) {
+					if(pTBld->NukeSilo && pTBld->HasSuperWeapon(pType->ArrayIndex)) {
+						// valid silo. let's see whether the firer got it.
+						pSilo = pThis->Owner->FindBuildingOfType(pTBld->ArrayIndex, -1);
+						if(pSilo) {
+							break;
 						}
 					}
 				}
