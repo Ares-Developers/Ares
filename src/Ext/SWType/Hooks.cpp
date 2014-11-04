@@ -442,6 +442,17 @@ DEFINE_HOOK(457690, BuildingClass_SW2Available, 9) {
 	return 0x4576E8;
 }
 
+DEFINE_HOOK(43BE50, BuildingClass_DTOR_HasAnySW, 6) {
+	GET(BuildingClass*, pThis, ESI);
+	auto pExt = BuildingExt::ExtMap.Find(pThis);
+	return pExt->HasSuperWeapon() ? 0x43BEEAu : 0x43BEF5u;
+}
+
+DEFINE_HOOK(449716, BuildingClass_Mi_Guard_HasFirstSW, 6) {
+	GET(BuildingClass*, pThis, ESI);
+	return pThis->FirstActiveSWIdx() != -1 ? 0x4497AFu : 0x449762u;
+}
+
 DEFINE_HOOK(4FAE72, HouseClass_SWFire_PreDependent, 6)
 {
 	GET(HouseClass*, pThis, EBX);
