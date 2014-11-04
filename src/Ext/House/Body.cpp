@@ -545,7 +545,7 @@ void HouseExt::ExtData::UpdateTogglePower() {
 
 			// disable super weapons, because a defenseless base is
 			// worse than one without super weapons
-			if(pType->SuperWeapon != -1 || pType->SuperWeapon2 != -1) {
+			if(pType->HasSuperWeapon()) {
 				return pType->PowerDrain * 20 / 10;
 			}
 

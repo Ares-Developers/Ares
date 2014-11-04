@@ -307,8 +307,8 @@ bool EMPulse::IsTypeEMPProne(TechnoTypeClass* Type) {
 		}
 
 		// may have a special function.
-		return pBuildingType->Radar ||
-			pBuildingType->SuperWeapon > -1 || pBuildingType->SuperWeapon2 > -1
+		return pBuildingType->Radar
+			|| pBuildingType->HasSuperWeapon()
 			|| pBuildingType->UndeploysInto
 			|| pBuildingType->PowersUnit
 			|| pBuildingType->Sensors
