@@ -259,6 +259,8 @@ public:
 		void UpdateFoundationRadarShape();
 
 		bool IsAcademy() const;
+		int GetSuperWeaponIndex(size_t index) const;
+		int GetSuperWeaponIndex(size_t index, HouseClass* pHouse) const;
 	};
 
 	static Container<BuildingTypeExt> ExtMap;

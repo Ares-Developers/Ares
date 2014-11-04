@@ -819,6 +819,21 @@ void BuildingExt::ExtData::UpdateSecretLab() {
 	}
 }
 
+bool BuildingExt::ExtData::HasSuperWeapon() const {
+	return this->GetSuperWeaponIndex(0) != -1 || this->GetSuperWeaponIndex(1) != -1;
+}
+
+int BuildingExt::ExtData::GetSuperWeaponIndex(const size_t index) const {
+	const auto pThis = this->OwnerObject();
+	const auto pExt = BuildingTypeExt::ExtMap.Find(pThis->Type);
+	return pExt->GetSuperWeaponIndex(index, pThis->Owner);
+}
+
+SuperClass* BuildingExt::ExtData::GetSuperWeapon(const size_t index) const {
+	const auto idxSW = this->GetSuperWeaponIndex(index);
+	return this->OwnerObject()->Owner->Supers.GetItemOrDefault(idxSW);
+}
+
 DWORD BuildingExt::FoundationLength(CellStruct * StartCell) {
 	DWORD Len = 0;
 	bool End = false;

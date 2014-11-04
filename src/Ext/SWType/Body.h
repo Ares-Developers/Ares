@@ -359,6 +359,8 @@ public:
 		SuperWeaponAffectedHouse GetAIRequiredHouse() const;
 		Iterator<TechnoClass*> GetPotentialAITargets(HouseClass* pTarget = nullptr) const;
 
+		bool IsAvailable(HouseClass* pHouse) const;
+
 		NewSWType* GetNewSWType() const;
 		bool IsOriginalType() const;
 		bool IsTypeRedirected() const;

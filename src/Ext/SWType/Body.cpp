@@ -252,6 +252,17 @@ void SWTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 	this->SidebarPCX.Read(pINI, section, "SidebarPCX");
 }
 
+bool SWTypeExt::ExtData::IsAvailable(HouseClass* pHouse) const {
+	const auto pThis = this->OwnerObject();
+
+	// check whether the optional aux building exists
+	if(pThis->AuxBuilding && pHouse->CountOwnedAndPresent(pThis->AuxBuilding) <= 0) {
+		return false;
+	}
+
+	return true;
+}
+
 SuperWeaponTarget SWTypeExt::ExtData::GetAIRequiredTarget() const {
 	if(this->SW_AIRequiresTarget.isset()) {
 		return this->SW_AIRequiresTarget;

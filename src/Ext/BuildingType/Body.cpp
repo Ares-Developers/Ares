@@ -1,9 +1,11 @@
 #include "Body.h"
 #include "../TechnoType/Body.h"
 #include "../House/Body.h"
+#include "../SWType/Body.h"
 #include "../../Utilities/TemplateDef.h"
 
 #include <InfantryClass.h>
+#include <SuperClass.h>
 #include <VocClass.h>
 
 template<> const DWORD Extension<BuildingTypeClass>::Canary = 0x11111111;
@@ -340,6 +342,29 @@ bool BuildingTypeExt::ExtData::IsAcademy() const {
 	}
 
 	return this->Academy;
+}
+
+int BuildingTypeExt::ExtData::GetSuperWeaponIndex(const size_t index) const {
+	const auto pThis = this->OwnerObject();
+
+	if(index < 2) {
+		return !index ? pThis->SuperWeapon : pThis->SuperWeapon2;
+	}
+
+	return -1;
+}
+
+int BuildingTypeExt::ExtData::GetSuperWeaponIndex(const size_t index, HouseClass* pHouse) const {
+	auto idxSW = this->GetSuperWeaponIndex(index);
+
+	if(auto pSuper = pHouse->Supers.GetItemOrDefault(idxSW)) {
+		auto pExt = SWTypeExt::ExtMap.Find(pSuper->Type);
+		if(!pExt->IsAvailable(pHouse)) {
+			return -1;
+		}
+	}
+
+	return idxSW;
 }
 
 // =============================

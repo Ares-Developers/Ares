@@ -12,6 +12,8 @@
 #include "../../Misc/Debug.h"
 #endif
 
+class SuperClass;
+
 class BuildingExt
 {
 public:
@@ -125,6 +127,10 @@ public:
 
 		void UpdateSensorArray();
 		void UpdateSecretLab();
+
+		bool HasSuperWeapon() const;
+		int GetSuperWeaponIndex(size_t index) const;
+		SuperClass* GetSuperWeapon(size_t index) const;
 	};
 
 	static Container<BuildingExt> ExtMap;
