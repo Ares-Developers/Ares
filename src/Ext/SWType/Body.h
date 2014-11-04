@@ -221,6 +221,8 @@ public:
 		Nullable<int> SW_Deferment;
 		DWORD SW_RequiredHouses;
 		DWORD SW_ForbiddenHouses;
+		ValueableVector<BuildingTypeClass*> SW_AuxBuildings;
+		ValueableVector<BuildingTypeClass*> SW_NegBuildings;
 
 		// Lighting
 		Valueable<bool> Lighting_Enabled;

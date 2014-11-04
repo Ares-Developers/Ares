@@ -229,6 +229,8 @@ void SWTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 	// restrictions for this super weapon
 	this->SW_RequiredHouses = pINI->ReadHouseTypesList(section, "SW.RequiredHouses", this->SW_RequiredHouses);
 	this->SW_ForbiddenHouses = pINI->ReadHouseTypesList(section, "SW.ForbiddenHouses", this->SW_ForbiddenHouses);
+	this->SW_AuxBuildings.Read(exINI, section, "SW.AuxBuildings");
+	this->SW_NegBuildings.Read(exINI, section, "SW.NegBuildings");
 
 	// initialize the NewSWType that handles this SWType.
 	if(auto pNewSWType = this->GetNewSWType()) {

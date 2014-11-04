@@ -90,6 +90,21 @@ std::vector<SWStatus> GetSuperWeaponStatuses(HouseClass* pHouse) {
 				status.Available = false;
 			}
 
+			// check that any aux building exist and no neg building
+			auto IsBuildingPresent = [pHouse](BuildingTypeClass* pType) {
+				return pType && pHouse->CountOwnedAndPresent(pType) > 0;
+			};
+
+			const auto& Aux = pData->SW_AuxBuildings;
+			if(!Aux.empty() && std::none_of(Aux.begin(), Aux.end(), IsBuildingPresent)) {
+				status.Available = false;
+			}
+
+			const auto& Neg = pData->SW_NegBuildings;
+			if(std::any_of(Neg.begin(), Neg.end(), IsBuildingPresent)) {
+				status.Available = false;
+			}
+
 			// if the house is generally on low power,
 			// powered super weapons aren't powered
 			if(pSuper->IsPowered()) {
