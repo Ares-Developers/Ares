@@ -1,5 +1,6 @@
 #include "Body.h"
 #include "../../Misc/SWTypes.h"
+#include "../Building/Body.h"
 #include "../House/Body.h"
 
 #include <DiscreteSelectionClass.h>
@@ -427,24 +428,18 @@ DEFINE_HOOK(44691B, BuildingClass_4DC_SWAvailable, 6)
 	;
 }
 
-DEFINE_HOOK(45765A, BuildingClass_SWAvailable, 6)
-{
-	GET(BuildingClass *, Structure, ESI);
-	GET(BuildingTypeClass *, AuxBuilding, EAX);
-	return Structure->Owner->CountOwnedAndPresent(AuxBuilding) > 0
-		? 0x45767B
-		: 0x457676
-	;
+DEFINE_HOOK(457630, BuildingClass_SWAvailable, 9) {
+	GET(BuildingClass*, pThis, ECX);
+	auto pExt = BuildingExt::ExtMap.Find(pThis);
+	R->EAX(pExt->GetSuperWeaponIndex(0));
+	return 0x457688;
 }
 
-DEFINE_HOOK(4576BA, BuildingClass_SW2Available, 6)
-{
-	GET(BuildingClass *, Structure, ESI);
-	GET(BuildingTypeClass *, AuxBuilding, EAX);
-	return Structure->Owner->CountOwnedAndPresent(AuxBuilding) > 0
-		? 0x4576DB
-		: 0x4576D6
-	;
+DEFINE_HOOK(457690, BuildingClass_SW2Available, 9) {
+	GET(BuildingClass*, pThis, ECX);
+	auto pExt = BuildingExt::ExtMap.Find(pThis);
+	R->EAX(pExt->GetSuperWeaponIndex(1));
+	return 0x4576E8;
 }
 
 DEFINE_HOOK(4FAE72, HouseClass_SWFire_PreDependent, 6)
