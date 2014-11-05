@@ -283,13 +283,11 @@ DEFINE_HOOK(4468F4, BuildingClass_Place_AnnounceSW, 6) {
 
 		pData->PrintMessage(pData->Message_Detected, pThis->Owner);
 
-		if(pData->EVA_Detected != -1 || pData->IsTypeRedirected()) {
-			if(pData->EVA_Detected != -1) {
-				VoxClass::PlayIndex(pData->EVA_Detected);
-			}
-			return 0x44699A;
+		if(pData->EVA_Detected == -1 && !pData->IsTypeRedirected()) {
+			return 0;
 		}
-		return 0;
+
+		VoxClass::PlayIndex(pData->EVA_Detected);
 	}
 
 	return 0x44699A;
@@ -299,15 +297,13 @@ DEFINE_HOOK(4468F4, BuildingClass_Place_AnnounceSW, 6) {
 // 6CBDD7, 6
 DEFINE_HOOK(6CBDD7, SuperClass_AnnounceReady, 6)
 {
-	GET(SuperWeaponTypeClass *, pThis, EAX);
-	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pThis);
+	GET(SuperWeaponTypeClass*, pThis, EAX);
+	auto pData = SWTypeExt::ExtMap.Find(pThis);
 
 	pData->PrintMessage(pData->Message_Ready, HouseClass::Player);
 
 	if(pData->EVA_Ready != -1 || pData->IsTypeRedirected()) {
-		if(pData->EVA_Ready != -1) {
-			VoxClass::PlayIndex(pData->EVA_Ready);
-		}
+		VoxClass::PlayIndex(pData->EVA_Ready);
 		return 0x6CBE68;
 	}
 	return 0;
@@ -316,16 +312,13 @@ DEFINE_HOOK(6CBDD7, SuperClass_AnnounceReady, 6)
 // 6CC0EA, 9
 DEFINE_HOOK(6CC0EA, SuperClass_AnnounceQuantity, 9)
 {
-	GET(SuperClass *, pThis, ESI);
-	SuperWeaponTypeClass *pSW = pThis->Type;
-	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSW);
+	GET(SuperClass*, pThis, ESI);
+	auto pData = SWTypeExt::ExtMap.Find(pThis->Type);
 
 	pData->PrintMessage(pData->Message_Ready, HouseClass::Player);
 
 	if(pData->EVA_Ready != -1 || pData->IsTypeRedirected()) {
-		if(pData->EVA_Ready != -1) {
-			VoxClass::PlayIndex(pData->EVA_Ready);
-		}
+		VoxClass::PlayIndex(pData->EVA_Ready);
 		return 0x6CC17E;
 	}
 	return 0;
@@ -346,9 +339,8 @@ DEFINE_HOOK(50CFAA, HouseClass_PickOffensiveSWTarget, 0)
 // psydom and lightning storm premature exit route
 DEFINE_HOOK(6CBA9E, SuperClass_ClickFire_Abort, 7)
 {
-	GET(SuperClass *, pSuper, ESI);
-	SuperWeaponTypeClass* pType = pSuper->Type;
-	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pType);
+	GET(SuperClass*, pSuper, ESI);
+	auto pData = SWTypeExt::ExtMap.Find(pSuper->Type);
 
 	GET_STACK(bool, IsPlayer, 0x20);
 
@@ -364,7 +356,7 @@ DEFINE_HOOK(6CBA9E, SuperClass_ClickFire_Abort, 7)
 	}
 
 	// can this super weapon fire now?
-	if(NewSWType* pNSW = pData->GetNewSWType()) {
+	if(auto pNSW = pData->GetNewSWType()) {
 		if(pNSW->AbortFire(pSuper, IsPlayer)) {
 			return 0x6CBABF;
 		}
@@ -391,16 +383,16 @@ DEFINE_HOOK(6CBB0D, SuperClass_ClickFire_ResetAfterLaunch, 6)
 // ARGH!
 DEFINE_HOOK(6CC390, SuperClass_Launch, 6)
 {
-	GET(SuperClass *, pSuper, ECX);
+	GET(SuperClass*, pSuper, ECX);
 	GET_STACK(CellStruct*, pCoords, 0x4);
 	GET_STACK(bool, IsPlayer, 0x8);
 
-	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSuper->Type);
+	auto pData = SWTypeExt::ExtMap.Find(pSuper->Type);
 
 	Debug::Log("[LAUNCH] %s\n", pSuper->Type->ID);
 
 	bool handled = false;
-	if(NewSWType* pNSW = pData->GetNewSWType()) {
+	if(auto pNSW = pData->GetNewSWType()) {
 		handled = SWTypeExt::Launch(pSuper, pNSW, *pCoords, IsPlayer);
 	}
 
@@ -439,7 +431,7 @@ DEFINE_HOOK(4FAE72, HouseClass_SWFire_PreDependent, 6)
 	// find the predependent SW. decouple this from the chronosphere.
 	// don't use a fixed SW type but the very one acutually fired last.
 	SuperClass* pSource = nullptr;
-	if(HouseExt::ExtData *pExt = HouseExt::ExtMap.Find(pThis)) {
+	if(auto pExt = HouseExt::ExtMap.Find(pThis)) {
 		pSource = pThis->Supers.GetItemOrDefault(pExt->SWLastIndex);
 	}
 
@@ -450,12 +442,11 @@ DEFINE_HOOK(4FAE72, HouseClass_SWFire_PreDependent, 6)
 
 DEFINE_HOOK(6CC2B0, SuperClass_NameReadiness, 5) {
 	GET(SuperClass*, pThis, ECX);
-	SuperWeaponTypeClass *pSW = pThis->Type;
-	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSW);
+	auto pData = SWTypeExt::ExtMap.Find(pThis->Type);
 
 	// complete rewrite of this method.
 
-	CSFText* text = &pData->Text_Preparing;
+	auto text = &pData->Text_Preparing;
 	if(pThis->IsOnHold) {
 		// on hold
 		text = &pData->Text_Hold;
@@ -639,33 +630,31 @@ DEFINE_HOOK(6CBD6B, SuperClass_Update_DrainMoney, 8) {
 DEFINE_HOOK(6CEEB0, SuperWeaponTypeClass_FindFirstOfAction, 8) {
 	GET(Action, action, ECX);
 
-	R->EAX(0);
+	SuperWeaponTypeClass* pFound = nullptr;
 
 	// this implementation is as stupid as short sighted, but it should work
 	// for the moment. as there are no actions any more, this has to be
 	// reworked if powerups are expanded. for now, it only has to find a nuke.
-	for(int i=0; i<SuperWeaponTypeClass::Array->Count; ++i) {
-		if(SuperWeaponTypeClass* pType = SuperWeaponTypeClass::Array->GetItem(i)) {
-			if(pType->Action == action) {
-				R->EAX(pType);
-				break;
-			} else {
-				if(SWTypeExt::ExtData* pExt = SWTypeExt::ExtMap.Find(pType)) {
-					if(NewSWType *pNewSWType = pExt->GetNewSWType()) {
-						if(pNewSWType->HandlesType(SuperWeaponType::Nuke)) {
-							R->EAX(pType);
-							break;
-						}
-					}
+	for(auto pType : *SuperWeaponTypeClass::Array) {
+		if(pType->Action == action) {
+			pFound = pType;
+			break;
+		} else {
+			auto pExt = SWTypeExt::ExtMap.Find(pType);
+			if(auto pNewSWType = pExt->GetNewSWType()) {
+				if(pNewSWType->HandlesType(SuperWeaponType::Nuke)) {
+					pFound = pType;
+					break;
 				}
 			}
 		}
 	}
 
 	// put a hint into the debug log to explain why we will crash now.
-	if(!R->EAX()) {
+	if(!pFound) {
 		Debug::FatalErrorAndExit("Failed finding an Action=Nuke or Type=MultiMissile super weapon to be granted by ICBM crate.");
 	}
 
+	R->EAX(pFound);
 	return 0x6CEEE5;
 }
