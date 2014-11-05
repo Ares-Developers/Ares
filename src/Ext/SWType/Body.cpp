@@ -260,6 +260,27 @@ bool SWTypeExt::ExtData::IsAvailable(HouseClass* pHouse) const {
 		return false;
 	}
 
+	// allow only certain houses, disallow forbidden houses
+	const auto OwnerBits = 1u << pHouse->Type->ArrayIndex;
+	if(!(this->SW_RequiredHouses & OwnerBits) || (this->SW_ForbiddenHouses & OwnerBits)) {
+		return false;
+	}
+
+	// check that any aux building exist and no neg building
+	auto IsBuildingPresent = [pHouse](BuildingTypeClass* pType) {
+		return pType && pHouse->CountOwnedAndPresent(pType) > 0;
+	};
+
+	const auto& Aux = this->SW_AuxBuildings;
+	if(!Aux.empty() && std::none_of(Aux.begin(), Aux.end(), IsBuildingPresent)) {
+		return false;
+	}
+
+	const auto& Neg = this->SW_NegBuildings;
+	if(std::any_of(Neg.begin(), Neg.end(), IsBuildingPresent)) {
+		return false;
+	}
+
 	return true;
 }
 
