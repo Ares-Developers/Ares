@@ -2,6 +2,7 @@
 #define BUILDINGTYPE_EXT_H
 
 #include <CCINIClass.h>
+#include <SuperWeaponTypeClass.h>
 
 #include "../_Container.hpp"
 #include "../../Ares.h"
@@ -190,6 +191,9 @@ public:
 		Valueable<double> AcademyAircraft;
 		Valueable<double> AcademyVehicle;
 		Valueable<double> AcademyBuilding;
+
+		// super weapons
+		ValueableIdxVector<SuperWeaponTypeClass> SuperWeapons;
 
 		ExtData(BuildingTypeClass* OwnerObject) : Extension<BuildingTypeClass>(OwnerObject),
 			Solid_Height(0),

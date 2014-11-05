@@ -222,6 +222,8 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 	this->AcademyVehicle.Read(exINI, pID, "Academy.VehicleVeterancy");
 	this->AcademyBuilding.Read(exINI, pID, "Academy.BuildingVeterancy");
 	this->Academy.clear();
+
+	this->SuperWeapons.Read(exINI, pID, "SuperWeapons");
 }
 
 void BuildingTypeExt::ExtData::CompleteInitialization(BuildingTypeClass *pThis) {
@@ -345,7 +347,7 @@ bool BuildingTypeExt::ExtData::IsAcademy() const {
 }
 
 size_t BuildingTypeExt::ExtData::GetSuperWeaponCount() const {
-	return 2;
+	return 2 + this->SuperWeapons.size();
 }
 
 int BuildingTypeExt::ExtData::GetSuperWeaponIndex(const size_t index) const {
@@ -353,6 +355,8 @@ int BuildingTypeExt::ExtData::GetSuperWeaponIndex(const size_t index) const {
 
 	if(index < 2) {
 		return !index ? pThis->SuperWeapon : pThis->SuperWeapon2;
+	} else if(index - 2 < this->SuperWeapons.size()) {
+		return this->SuperWeapons[index - 2];
 	}
 
 	return -1;
