@@ -131,6 +131,8 @@ public:
 		bool HasSuperWeapon() const;
 		int GetSuperWeaponIndex(size_t index) const;
 		SuperClass* GetSuperWeapon(size_t index) const;
+		int GetFirstSuperWeaponIndex() const;
+		SuperClass* GetFirstSuperWeapon() const;
 	};
 
 	static Container<BuildingExt> ExtMap;

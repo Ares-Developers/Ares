@@ -820,7 +820,7 @@ void BuildingExt::ExtData::UpdateSecretLab() {
 }
 
 bool BuildingExt::ExtData::HasSuperWeapon() const {
-	return this->GetSuperWeaponIndex(0) != -1 || this->GetSuperWeaponIndex(1) != -1;
+	return this->GetFirstSuperWeaponIndex() != -1;
 }
 
 int BuildingExt::ExtData::GetSuperWeaponIndex(const size_t index) const {
@@ -831,6 +831,21 @@ int BuildingExt::ExtData::GetSuperWeaponIndex(const size_t index) const {
 
 SuperClass* BuildingExt::ExtData::GetSuperWeapon(const size_t index) const {
 	const auto idxSW = this->GetSuperWeaponIndex(index);
+	return this->OwnerObject()->Owner->Supers.GetItemOrDefault(idxSW);
+}
+
+int BuildingExt::ExtData::GetFirstSuperWeaponIndex() const {
+	auto idxSW = this->GetSuperWeaponIndex(0);
+
+	if(idxSW == -1) {
+		idxSW = this->GetSuperWeaponIndex(1);
+	}
+
+	return idxSW;
+}
+
+SuperClass* BuildingExt::ExtData::GetFirstSuperWeapon() const {
+	const auto idxSW = this->GetFirstSuperWeaponIndex();
 	return this->OwnerObject()->Owner->Supers.GetItemOrDefault(idxSW);
 }
 
