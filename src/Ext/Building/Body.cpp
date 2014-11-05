@@ -532,26 +532,26 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 
 	if(pTypeExt->ResetSW) {
 		bool somethingReset = false;
-		int swIdx = EnteredType->SuperWeapon;
-		if(swIdx != -1) {
-			Owner->Supers.Items[swIdx]->Reset();
+		auto EnteredBuildingExt = BuildingExt::ExtMap.Find(EnteredBuilding);
+		if(auto pSuper = EnteredBuildingExt->GetSuperWeapon(0)) {
+			pSuper->Reset();
 			somethingReset = true;
 		}
-		swIdx = EnteredType->SuperWeapon2;
-		if(swIdx != -1) {
-			Owner->Supers.Items[swIdx]->Reset();
+		if(auto pSuper = EnteredBuildingExt->GetSuperWeapon(1)) {
+			pSuper->Reset();
 			somethingReset = true;
 		}
 		for(int i = 0; i < EnteredType->Upgrades; ++i) {
-			if(BuildingTypeClass *Upgrade = EnteredBuilding->Upgrades[i]) {
-				swIdx = Upgrade->SuperWeapon;
-				if(swIdx != -1) {
-					Owner->Supers.Items[swIdx]->Reset();
+			if(auto Upgrade = EnteredBuilding->Upgrades[i]) {
+				auto UpgradeExt = BuildingTypeExt::ExtMap.Find(Upgrade);
+				int swIdx = UpgradeExt->GetSuperWeaponIndex(0, Owner);
+				if(auto pSuper = Owner->Supers.GetItemOrDefault(swIdx)) {
+					pSuper->Reset();
 					somethingReset = true;
 				}
-				swIdx = Upgrade->SuperWeapon2;
-				if(swIdx != -1) {
-					Owner->Supers.Items[swIdx]->Reset();
+				swIdx = UpgradeExt->GetSuperWeaponIndex(1, Owner);
+				if(auto pSuper = Owner->Supers.GetItemOrDefault(swIdx)) {
+					pSuper->Reset();
 					somethingReset = true;
 				}
 			}
