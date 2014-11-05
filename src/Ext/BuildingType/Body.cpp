@@ -344,6 +344,10 @@ bool BuildingTypeExt::ExtData::IsAcademy() const {
 	return this->Academy;
 }
 
+size_t BuildingTypeExt::ExtData::GetSuperWeaponCount() const {
+	return 2;
+}
+
 int BuildingTypeExt::ExtData::GetSuperWeaponIndex(const size_t index) const {
 	const auto pThis = this->OwnerObject();
 

@@ -819,6 +819,11 @@ void BuildingExt::ExtData::UpdateSecretLab() {
 	}
 }
 
+size_t BuildingExt::ExtData::GetSuperWeaponCount() const {
+	auto pExt = BuildingTypeExt::ExtMap.Find(this->OwnerObject()->Type);
+	return pExt->GetSuperWeaponCount();
+}
+
 bool BuildingExt::ExtData::HasSuperWeapon() const {
 	return this->GetFirstSuperWeaponIndex() != -1;
 }

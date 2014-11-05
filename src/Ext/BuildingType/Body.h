@@ -259,6 +259,8 @@ public:
 		void UpdateFoundationRadarShape();
 
 		bool IsAcademy() const;
+
+		size_t GetSuperWeaponCount() const;
 		int GetSuperWeaponIndex(size_t index) const;
 		int GetSuperWeaponIndex(size_t index, HouseClass* pHouse) const;
 	};
