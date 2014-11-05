@@ -1,4 +1,6 @@
 #include "Body.h"
+#include "../Building/Body.h"
+#include "../BuildingType/Body.h"
 #include "../House/Body.h"
 #include "../Techno/Body.h"
 #include <MouseClass.h>
@@ -55,16 +57,17 @@ std::vector<SWStatus> GetSuperWeaponStatuses(HouseClass* pHouse) {
 				};
 
 				// check for upgrades. upgrades can give super weapons, too.
-				for(auto pUpgrade : pBld->Upgrades) {
-					if(pUpgrade) {
-						UpdateStatus(pUpgrade->SuperWeapon);
-						UpdateStatus(pUpgrade->SuperWeapon2);
+				for(const auto& pUpgrade : pBld->Upgrades) {
+					if(const auto pUpgradeExt = BuildingTypeExt::ExtMap.Find(pUpgrade)) {
+						UpdateStatus(pUpgradeExt->GetSuperWeaponIndex(0, pHouse));
+						UpdateStatus(pUpgradeExt->GetSuperWeaponIndex(1, pHouse));
 					}
 				}
 
 				// look for the main building.
-				UpdateStatus(pBld->FirstActiveSWIdx());
-				UpdateStatus(pBld->SecondActiveSWIdx());
+				const auto pBuildingExt = BuildingExt::ExtMap.Find(pBld);
+				UpdateStatus(pBuildingExt->GetSuperWeaponIndex(0));
+				UpdateStatus(pBuildingExt->GetSuperWeaponIndex(1));
 			}
 		}
 
