@@ -59,15 +59,19 @@ std::vector<SWStatus> GetSuperWeaponStatuses(HouseClass* pHouse) {
 				// check for upgrades. upgrades can give super weapons, too.
 				for(const auto& pUpgrade : pBld->Upgrades) {
 					if(const auto pUpgradeExt = BuildingTypeExt::ExtMap.Find(pUpgrade)) {
-						UpdateStatus(pUpgradeExt->GetSuperWeaponIndex(0, pHouse));
-						UpdateStatus(pUpgradeExt->GetSuperWeaponIndex(1, pHouse));
+						const auto count = pUpgradeExt->GetSuperWeaponCount();
+						for(auto i = 0u; i < count; ++i) {
+							UpdateStatus(pUpgradeExt->GetSuperWeaponIndex(i, pHouse));
+						}
 					}
 				}
 
 				// look for the main building.
 				const auto pBuildingExt = BuildingExt::ExtMap.Find(pBld);
-				UpdateStatus(pBuildingExt->GetSuperWeaponIndex(0));
-				UpdateStatus(pBuildingExt->GetSuperWeaponIndex(1));
+				const auto count = pBuildingExt->GetSuperWeaponCount();
+				for(auto i = 0u; i < count; ++i) {
+					UpdateStatus(pBuildingExt->GetSuperWeaponIndex(i));
+				}
 			}
 		}
 

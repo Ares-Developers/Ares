@@ -533,26 +533,23 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 	if(pTypeExt->ResetSW) {
 		bool somethingReset = false;
 		auto EnteredBuildingExt = BuildingExt::ExtMap.Find(EnteredBuilding);
-		if(auto pSuper = EnteredBuildingExt->GetSuperWeapon(0)) {
-			pSuper->Reset();
-			somethingReset = true;
-		}
-		if(auto pSuper = EnteredBuildingExt->GetSuperWeapon(1)) {
-			pSuper->Reset();
-			somethingReset = true;
+		auto buildingSWCount = EnteredBuildingExt->GetSuperWeaponCount();
+		for(auto i = 0u; i < buildingSWCount; ++i) {
+			if(auto pSuper = EnteredBuildingExt->GetSuperWeapon(i)) {
+				pSuper->Reset();
+				somethingReset = true;
+			}
 		}
 		for(int i = 0; i < EnteredType->Upgrades; ++i) {
 			if(auto Upgrade = EnteredBuilding->Upgrades[i]) {
 				auto UpgradeExt = BuildingTypeExt::ExtMap.Find(Upgrade);
-				int swIdx = UpgradeExt->GetSuperWeaponIndex(0, Owner);
-				if(auto pSuper = Owner->Supers.GetItemOrDefault(swIdx)) {
-					pSuper->Reset();
-					somethingReset = true;
-				}
-				swIdx = UpgradeExt->GetSuperWeaponIndex(1, Owner);
-				if(auto pSuper = Owner->Supers.GetItemOrDefault(swIdx)) {
-					pSuper->Reset();
-					somethingReset = true;
+				auto upgradeSWCount = UpgradeExt->GetSuperWeaponCount();
+				for(auto j = 0u; j < upgradeSWCount; ++j) {
+					int swIdx = UpgradeExt->GetSuperWeaponIndex(j, Owner);
+					if(swIdx != -1) {
+						Owner->Supers.Items[swIdx]->Reset();
+						somethingReset = true;
+					}
 				}
 			}
 		}
@@ -840,13 +837,17 @@ SuperClass* BuildingExt::ExtData::GetSuperWeapon(const size_t index) const {
 }
 
 int BuildingExt::ExtData::GetFirstSuperWeaponIndex() const {
-	auto idxSW = this->GetSuperWeaponIndex(0);
+	const auto pThis = this->OwnerObject();
+	const auto pExt = BuildingTypeExt::ExtMap.Find(pThis->Type);
 
-	if(idxSW == -1) {
-		idxSW = this->GetSuperWeaponIndex(1);
+	const auto count = pExt->GetSuperWeaponCount();
+	for(auto i = 0u; i < count; ++i) {
+		const auto idxSW = pExt->GetSuperWeaponIndex(i, pThis->Owner);
+		if(idxSW != -1) {
+			return idxSW;
+		}
 	}
-
-	return idxSW;
+	return -1;
 }
 
 SuperClass* BuildingExt::ExtData::GetFirstSuperWeapon() const {
