@@ -20,6 +20,8 @@ const CellStruct BuildingTypeExt::FoundationEndMarker = {0x7FFF, 0x7FFF};
 void BuildingTypeExt::ExtData::Initialize()
 {
 	this->PrismForwarding.Initialize(this->OwnerObject());
+
+	this->LostEvaEvent = VoxClass::FindIndex("EVA_TechBuildingLost");
 }
 
 void BuildingTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
@@ -224,6 +226,10 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 	this->Academy.clear();
 
 	this->SuperWeapons.Read(exINI, pID, "SuperWeapons");
+
+	this->LostEvaEvent.Read(exINI, pID, "LostEvaEvent");
+	this->MessageCapture.Read(exINI, pID, "Message.Capture");
+	this->MessageLost.Read(exINI, pID, "Message.Lost");
 }
 
 void BuildingTypeExt::ExtData::CompleteInitialization(BuildingTypeClass *pThis) {

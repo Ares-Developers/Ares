@@ -10,6 +10,8 @@
 #include <InfantryClass.h>
 #include <CellClass.h>
 #include <HouseClass.h>
+#include <VoxClass.h>
+#include <MessageListClass.h>
 
 #include <cmath>
 
@@ -140,4 +142,32 @@ DEFINE_HOOK(44D4CA, BuildingClass_Mi_Missile_NoReport, 9)
 
 	bool play = !pType->IsGattling && pWeapon->Report.Count;
 	return play ? 0x44D4D4 : 0x44D51F;
+}
+
+DEFINE_HOOK(44840B, BuildingClass_ChangeOwnership_Tech, 6)
+{
+	GET(BuildingClass*, pThis, ESI);
+	GET(HouseClass*, pNewOwner, EBX);
+
+	if(pThis->Owner != pNewOwner) {
+		const auto pExt = BuildingTypeExt::ExtMap.Find(pThis->Type);
+
+		auto PrintMessage = [](const CSFText& text) {
+			if(!text.empty()) {
+				auto color = HouseClass::Player->ColorSchemeIndex;
+				MessageListClass::Instance->PrintMessage(text, color);
+			}
+		};
+
+		if(pThis->Owner->ControlledByPlayer()) {
+			VoxClass::PlayIndex(pExt->LostEvaEvent);
+			PrintMessage(pExt->MessageLost);
+		}
+		if(pNewOwner->ControlledByPlayer()) {
+			VoxClass::PlayIndex(pThis->Type->CaptureEvaEvent);
+			PrintMessage(pExt->MessageCapture);
+		}
+	}
+
+	return 0x44848F;
 }

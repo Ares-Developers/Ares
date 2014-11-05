@@ -20,6 +20,7 @@ class BuildingClass;
 class BuildingTypeClass;
 class InfantryTypeClass;
 class VocClass;
+class VoxClass;
 
 class BuildingTypeExt
 {
@@ -194,6 +195,10 @@ public:
 
 		// super weapons
 		ValueableIdxVector<SuperWeaponTypeClass> SuperWeapons;
+
+		ValueableIdx<VoxClass> LostEvaEvent;
+		Valueable<CSFText> MessageCapture;
+		Valueable<CSFText> MessageLost;
 
 		ExtData(BuildingTypeClass* OwnerObject) : Extension<BuildingTypeClass>(OwnerObject),
 			Solid_Height(0),
