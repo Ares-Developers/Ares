@@ -235,18 +235,15 @@ DEFINE_HOOK(4AC20C, DisplayClass_LMBUp, 7)
 // 446418, 6
 DEFINE_HOOK(446418, BuildingClass_Place1, 6)
 {
-	GET(BuildingClass *, pBuild, EBP);
-	GET(HouseClass *, pHouse, EAX);
-	int swTIdx = pBuild->Type->SuperWeapon;
-	if(swTIdx == -1) {
-		swTIdx = pBuild->Type->SuperWeapon2;
-		if(swTIdx == -1) {
-			return 0x446580;
-		}
+	GET(BuildingClass*, pThis, EBP);
+	auto pExt = BuildingExt::ExtMap.Find(pThis);
+
+	if(auto pSuper = pExt->GetFirstSuperWeapon()) {
+		R->EAX(pSuper);
+		return 0x44643E;
 	}
 
-	R->EAX(pHouse->Supers.GetItem(swTIdx));
-	return 0x44643E;
+	return 0x446580;
 }
 
 // 44656D, 6
@@ -258,19 +255,16 @@ DEFINE_HOOK(44656D, BuildingClass_Place2, 6)
 // 45100A, 6
 DEFINE_HOOK(45100A, BuildingClass_ProcessAnims1, 6)
 {
-	GET(BuildingClass *, pBuild, ESI);
-	GET(HouseClass *, pHouse, EAX);
-	int swTIdx = pBuild->Type->SuperWeapon;
-	if(swTIdx == -1) {
-		swTIdx = pBuild->Type->SuperWeapon2;
-		if(swTIdx == -1) {
-			return 0x451145;
-		}
+	GET(BuildingClass*, pThis, ESI);
+	auto pExt = BuildingExt::ExtMap.Find(pThis);
+
+	if(auto pSuper = pExt->GetFirstSuperWeapon()) {
+		R->EDI(pThis->Type);
+		R->EAX(pSuper);
+		return 0x451030;
 	}
 
-	R->EDI(pBuild->Type);
-	R->EAX(pHouse->Supers.GetItem(swTIdx));
-	return 0x451030;
+	return 0x451145;
 }
 
 // 451132, 6
@@ -280,30 +274,25 @@ DEFINE_HOOK(451132, BuildingClass_ProcessAnims2, 6)
 }
 
 // EVA_Detected
-// 446937, 6
-DEFINE_HOOK(446937, BuildingClass_AnnounceSW, 6)
-{
-	GET(BuildingClass *, pBuild, EBP);
-	int swTIdx = pBuild->Type->SuperWeapon;
-	if(swTIdx == -1) {
-		swTIdx = pBuild->Type->SuperWeapon2;
-		if(swTIdx == -1) {
+DEFINE_HOOK(4468F4, BuildingClass_Place_AnnounceSW, 6) {
+	GET(BuildingClass*, pThis, EBP);
+	auto pExt = BuildingExt::ExtMap.Find(pThis);
+
+	if(auto pSuper = pExt->GetFirstSuperWeapon()) {
+		auto pData = SWTypeExt::ExtMap.Find(pSuper->Type);
+
+		pData->PrintMessage(pData->Message_Detected, pThis->Owner);
+
+		if(pData->EVA_Detected != -1 || pData->IsTypeRedirected()) {
+			if(pData->EVA_Detected != -1) {
+				VoxClass::PlayIndex(pData->EVA_Detected);
+			}
 			return 0x44699A;
 		}
+		return 0;
 	}
 
-	SuperWeaponTypeClass *pSW = SuperWeaponTypeClass::Array->GetItem(swTIdx);
-	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSW);
-
-	pData->PrintMessage(pData->Message_Detected, pBuild->Owner);
-
-	if(pData->EVA_Detected != -1 || pData->IsTypeRedirected()) {
-		if(pData->EVA_Detected != -1) {
-			VoxClass::PlayIndex(pData->EVA_Detected);
-		}
-		return 0x44699A;
-	}
-	return 0;
+	return 0x44699A;
 }
 
 // EVA_Ready
@@ -416,16 +405,6 @@ DEFINE_HOOK(6CC390, SuperClass_Launch, 6)
 	}
 
 	return handled ? 0x6CDE40 : 0;
-}
-
-DEFINE_HOOK(44691B, BuildingClass_4DC_SWAvailable, 6)
-{
-	GET(BuildingClass *, Structure, EBP);
-	GET(BuildingTypeClass *, AuxBuilding, EAX);
-	return Structure->Owner->CountOwnedAndPresent(AuxBuilding) > 0
-		? 0x446937
-		: 0x44699A
-	;
 }
 
 DEFINE_HOOK(457630, BuildingClass_SWAvailable, 9) {
