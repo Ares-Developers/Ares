@@ -450,25 +450,23 @@ void WarheadTypeExt::ExtData::applyAttachedEffect(const CoordStruct &coords, Tec
 		auto items = Helpers::Alex::getCellSpreadItems(coords, this->OwnerObject()->CellSpread, true);
 
 		// affect each object
-		for(size_t i=0; i<items.size(); ++i) {
-			if(TechnoClass *curTechno = items[i]) {
-				// don't attach to dead
-				if(curTechno->InLimbo || !curTechno->IsAlive || !curTechno->Health) {
-					continue;
+		for(auto curTechno : items) {
+			// don't attach to dead
+			if(!curTechno || curTechno->InLimbo || !curTechno->IsAlive || !curTechno->Health) {
+				continue;
+			}
+
+			if (Owner) {
+				if(WarheadTypeExt::canWarheadAffectTarget(curTechno, Owner->Owner, this->OwnerObject())) {
+					if(abs(this->GetVerses(curTechno->GetTechnoType()->Armor).Verses) < 0.001) {
+						continue;
+					}
+					//this->AttachedEffect.Attach(curTechno, this->AttachedEffect.Duration, Owner, this->AttachedEffect.DamageDelay);
+					this->AttachedEffect.Attach(curTechno, this->AttachedEffect.Duration, Owner);
 				}
-				
-				if (Owner) {
-					if(WarheadTypeExt::canWarheadAffectTarget(curTechno, Owner->Owner, this->OwnerObject())) {
-						if(abs(this->GetVerses(curTechno->GetTechnoType()->Armor).Verses) < 0.001) {
-							continue;
-						}
-						//this->AttachedEffect.Attach(curTechno, this->AttachedEffect.Duration, Owner, this->AttachedEffect.DamageDelay);
-						this->AttachedEffect.Attach(curTechno, this->AttachedEffect.Duration, Owner);
-					}	
-				} else {
-					//this->AttachedEffect.Attach(curTechno, this->AttachedEffect.Duration, nullptr, this->AttachedEffect.DamageDelay);
-					this->AttachedEffect.Attach(curTechno, this->AttachedEffect.Duration, nullptr);
-				}	
+			} else {
+				//this->AttachedEffect.Attach(curTechno, this->AttachedEffect.Duration, nullptr, this->AttachedEffect.DamageDelay);
+				this->AttachedEffect.Attach(curTechno, this->AttachedEffect.Duration, nullptr);
 			}
 		}
 	}
