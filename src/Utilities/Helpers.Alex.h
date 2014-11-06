@@ -135,7 +135,7 @@ namespace Helpers {
 			DistinctCollector<TechnoClass*> set;
 
 			// the quick way. only look at stuff residing on the very cells we are affecting.
-			auto& cellCoords = MapClass::Instance->GetCellAt(coords)->MapCoords;
+			const auto& cellCoords = MapClass::Instance->GetCellAt(coords)->MapCoords;
 			auto range = static_cast<size_t>(spread + 0.99);
 			for(CellSpreadEnumerator it(range); it; ++it) {
 				auto c = MapClass::Instance->GetCellAt(*it + cellCoords);
@@ -149,8 +149,7 @@ namespace Helpers {
 			// flying objects are not included normally
 			if(includeInAir) {
 				// the not quite so fast way. skip everything not in the air.
-				for(int i=0; i<TechnoClass::Array->Count; ++i) {
-					TechnoClass *Techno = TechnoClass::Array->GetItem(i);
+				for(auto Techno : *TechnoClass::Array) {
 					if(Techno->GetHeight() > 0) {
 						// rough estimation
 						if(Techno->Location.DistanceFrom(coords) <= spread * 256) {
@@ -162,18 +161,16 @@ namespace Helpers {
 
 			// look closer. the final selection. put all affected items in a vector.
 			std::vector<TechnoClass*> ret;
-			for(auto iterator = set.begin(); iterator != set.end(); iterator++) {
-				TechnoClass *Techno = *iterator;
-
+			for(auto Techno : set) {
 				// ignore buildings that are not visible, like ambient light posts
-				if(BuildingTypeClass *BT = specific_cast<BuildingTypeClass*>(Techno->GetTechnoType())) {
+				if(auto BT = abstract_cast<BuildingTypeClass*>(Techno->GetTechnoType())) {
 					if(BT->InvisibleInGame) {
 						continue;
 					}
 				}
 
 				// get distance from impact site
-				CoordStruct target = Techno->GetCoords();
+				const auto& target = Techno->GetCoords();
 				double dist = target.DistanceFrom(coords);
 
 				// reduce the distance for flying aircraft
