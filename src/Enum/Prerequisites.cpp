@@ -67,14 +67,14 @@ bool Prereqs::HouseOwnsGeneric(HouseClass *pHouse, signed int Index)
 {
 	Index = -1 - Index; // hack - POWER is -1 , this way converts to 0, and onwards
 	if(Index < static_cast<int>(GenericPrerequisite::Array.size())) {
-		DynamicVectorClass<int> *dvc = &GenericPrerequisite::Array.at(Index)->Prereqs;
-		for(int i = 0; i < dvc->Count; ++i) {
-			if(HouseOwnsSpecific(pHouse, dvc->GetItem(i))) {
+		const auto& dvc = GenericPrerequisite::Array.at(Index)->Prereqs;
+		for(const auto& index : dvc) {
+			if(HouseOwnsSpecific(pHouse, index)) {
 				return true;
 			}
 		}
 		if(Index == 5) { // PROC alternate, man I hate the special cases
-			if(UnitTypeClass *ProcAlt = RulesClass::Instance->PrerequisiteProcAlternate) {
+			if(auto ProcAlt = RulesClass::Instance->PrerequisiteProcAlternate) {
 				if(pHouse->OwnedUnitTypes.GetItemCount(ProcAlt->GetArrayIndex())) {
 					return true;
 				}
@@ -87,20 +87,18 @@ bool Prereqs::HouseOwnsGeneric(HouseClass *pHouse, signed int Index)
 
 bool Prereqs::HouseOwnsSpecific(HouseClass *pHouse, int Index)
 {
-	BuildingTypeClass *BType = BuildingTypeClass::Array->GetItem(Index);
-	char *powerup = BType->PowersUpBuilding;
+	auto BType = BuildingTypeClass::Array->GetItem(Index);
+	const char* powerup = BType->PowersUpBuilding;
 	if(*powerup) {
-		BuildingTypeClass *BCore = BuildingTypeClass::Find(powerup);
+		auto BCore = BuildingTypeClass::Find(powerup);
 		if(pHouse->OwnedBuildingTypes1.GetItemCount(BCore->GetArrayIndex()) < 1) {
 			return false;
 		}
-		for(int i = 0; i < pHouse->Buildings.Count; ++i) {
-			BuildingClass *Bld = pHouse->Buildings.GetItem(i);
+		for(const auto& Bld : pHouse->Buildings) {
 			if(Bld->Type != BCore) {
 				continue;
 			}
-			for(int j = 0; j < 3; ++j) {
-				BuildingTypeClass *Upgrade = Bld->Upgrades[j];
+			for(const auto& Upgrade : Bld->Upgrades) {
 				if(Upgrade == BType) {
 					return true;
 				}
@@ -122,8 +120,8 @@ bool Prereqs::HouseOwnsPrereq(HouseClass *pHouse, signed int Index)
 
 bool Prereqs::HouseOwnsAll(HouseClass *pHouse, DynamicVectorClass<int> *list)
 {
-	for(int i = 0; i < list->Count; ++i) {
-		if(!HouseOwnsPrereq(pHouse, list->GetItem(i))) {
+	for(const auto& index : *list) {
+		if(!HouseOwnsPrereq(pHouse, index)) {
 			return false;
 		}
 	}
@@ -132,8 +130,8 @@ bool Prereqs::HouseOwnsAll(HouseClass *pHouse, DynamicVectorClass<int> *list)
 
 bool Prereqs::HouseOwnsAny(HouseClass *pHouse, DynamicVectorClass<int> *list)
 {
-	for(int i = 0; i < list->Count; ++i) {
-		if(HouseOwnsPrereq(pHouse, list->GetItem(i))) {
+	for(const auto& index : *list) {
+		if(HouseOwnsPrereq(pHouse, index)) {
 			return true;
 		}
 	}
@@ -150,9 +148,9 @@ bool Prereqs::ListContainsGeneric(const BTypeIter &List, signed int Index)
 {
 	Index = -1 - Index; // hack - POWER is -1 , this way converts to 0, and onwards
 	if(Index < static_cast<int>(GenericPrerequisite::Array.size())) {
-		DynamicVectorClass<int> *dvc = &GenericPrerequisite::Array.at(Index)->Prereqs;
-		for(int i = 0; i < dvc->Count; ++i) {
-			if(ListContainsSpecific(List, dvc->GetItem(i))) {
+		const auto& dvc = GenericPrerequisite::Array.at(Index)->Prereqs;
+		for(const auto& index : dvc) {
+			if(ListContainsSpecific(List, index)) {
 				return true;
 			}
 		}
@@ -170,8 +168,8 @@ bool Prereqs::ListContainsPrereq(const BTypeIter &List, signed int Index)
 
 bool Prereqs::ListContainsAll(const BTypeIter &List, DynamicVectorClass<int> *Requirements)
 {
-	for(int i = 0; i < Requirements->Count; ++i) {
-		if(!ListContainsPrereq(List, Requirements->GetItem(i))) {
+	for(const auto& index : *Requirements) {
+		if(!ListContainsPrereq(List, index)) {
 			return false;
 		}
 	}
@@ -180,11 +178,10 @@ bool Prereqs::ListContainsAll(const BTypeIter &List, DynamicVectorClass<int> *Re
 
 bool Prereqs::ListContainsAny(const BTypeIter &List, DynamicVectorClass<int> *Requirements)
 {
-	for(int i = 0; i < Requirements->Count; ++i) {
-		if(ListContainsPrereq(List, Requirements->GetItem(i))) {
+	for(const auto& index : *Requirements) {
+		if(ListContainsPrereq(List, index)) {
 			return true;
 		}
 	}
 	return false;
 }
-
