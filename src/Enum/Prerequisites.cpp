@@ -91,7 +91,7 @@ bool Prereqs::HouseOwnsSpecific(HouseClass *pHouse, int Index)
 	const char* powerup = BType->PowersUpBuilding;
 	if(*powerup) {
 		auto BCore = BuildingTypeClass::Find(powerup);
-		if(pHouse->OwnedBuildingTypes1.GetItemCount(BCore->GetArrayIndex()) < 1) {
+		if(!BCore || pHouse->OwnedBuildingTypes1.GetItemCount(BCore->GetArrayIndex()) < 1) {
 			return false;
 		}
 		for(const auto& Bld : pHouse->Buildings) {
