@@ -152,6 +152,12 @@ bool NewSWType::IsInhibitor(SWTypeExt::ExtData* pSWType, HouseClass* pOwner, Tec
 {
 	if(pTechno->IsAlive && pTechno->Health && !pTechno->InLimbo && !pTechno->Deactivated) {
 		if(!pOwner->IsAlliedWith(pTechno)) {
+			if(auto pBld = abstract_cast<BuildingClass*>(pTechno)) {
+				if(!pBld->IsPowerOnline()) {
+					return false;
+				}
+			}
+
 			return pSWType->SW_AnyInhibitor
 				|| pSWType->SW_Inhibitors.Contains(pTechno->GetTechnoType());
 		}
