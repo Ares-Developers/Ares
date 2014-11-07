@@ -585,10 +585,8 @@ DEFINE_HOOK(5098F0, HouseClass_Update_AI_TryFireSW, 5) {
 		if(pSuper->IsCharged && (AIFire || pExt->SW_AutoFire)) {
 
 			// don't try to fire if we obviously haven't enough money
-			if(pExt->Money_Amount < 0) {
-				if(pThis->Available_Money() < -pExt->Money_Amount) {
-					continue;
-				}
+			if(!pThis->CanTransactMoney(pExt->Money_Amount)) {
+				continue;
 			}
 
 			auto result = PickSuperWeaponTarget(pSuper);

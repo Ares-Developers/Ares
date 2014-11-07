@@ -463,14 +463,7 @@ bool SWTypeExt::Launch(SuperClass* pThis, NewSWType* pSW, const CellStruct &Coor
 			}
 			
 			if(!(flags & SuperWeaponFlags::NoMoney)) {
-				int Money_Amount = pData->Money_Amount;
-				if(Money_Amount > 0) {
-					Debug::Log("House %d gets %d credits\n", pThis->Owner->ArrayIndex, Money_Amount);
-					pThis->Owner->GiveMoney(Money_Amount);
-				} else if(Money_Amount < 0) {
-					Debug::Log("House %d loses %d credits\n", pThis->Owner->ArrayIndex, -Money_Amount);
-					pThis->Owner->TakeMoney(-Money_Amount);
-				}
+				pThis->Owner->TransactMoney(pData->Money_Amount);
 			}
 
 			CellClass *pTarget = MapClass::Instance->GetCellAt(Coords);

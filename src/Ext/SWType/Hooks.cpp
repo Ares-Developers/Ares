@@ -122,12 +122,10 @@ DEFINE_HOOK(6AAEDF, SidebarClass_ProcessCameoClick_SuperWeapons, 6) {
 
 		// prevent firing the SW if the player doesn't have sufficient
 		// funds. play an EVA message in that case.
-		if(pData->Money_Amount < 0) {
-			if(HouseClass::Player->Available_Money() < -pData->Money_Amount) {
-				VoxClass::PlayIndex(pData->EVA_InsufficientFunds);
-				pData->PrintMessage(pData->Message_InsufficientFunds, HouseClass::Player);
-				return 0x6AAFB1;
-			}
+		if(!HouseClass::Player->CanTransactMoney(pData->Money_Amount)) {
+			VoxClass::PlayIndex(pData->EVA_InsufficientFunds);
+			pData->PrintMessage(pData->Message_InsufficientFunds, HouseClass::Player);
+			return 0x6AAFB1;
 		}
 		
 		// disallow manuals and active unstoppables
@@ -345,14 +343,12 @@ DEFINE_HOOK(6CBA9E, SuperClass_ClickFire_Abort, 7)
 	GET_STACK(bool, IsPlayer, 0x20);
 
 	// auto-abort if no money
-	if(pData->Money_Amount < 0) {
-		if(pSuper->Owner->Available_Money() < -pData->Money_Amount) {
-			if(pSuper->Owner == HouseClass::Player) {
-				VoxClass::PlayIndex(pData->EVA_InsufficientFunds);
-				pData->PrintMessage(pData->Message_InsufficientFunds, pSuper->Owner);
-			}
-			return 0x6CBABF;
+	if(!pSuper->Owner->CanTransactMoney(pData->Money_Amount)) {
+		if(pSuper->Owner->IsPlayer()) {
+			VoxClass::PlayIndex(pData->EVA_InsufficientFunds);
+			pData->PrintMessage(pData->Message_InsufficientFunds, pSuper->Owner);
 		}
+		return 0x6CBABF;
 	}
 
 	// can this super weapon fire now?
@@ -488,10 +484,8 @@ DEFINE_HOOK(6A99B7, TabCameoListClass_Draw_SuperDarken, 5)
 	auto pExt = SWTypeExt::ExtMap.Find(pSW->Type);
 
 	bool darken = false;
-	if(pSW->IsCharged && pExt->Money_Amount < 0) {
-		if(pSW->Owner->Available_Money() < -pExt->Money_Amount) {
-			darken = true;
-		}
+	if(pSW->IsCharged && !pSW->Owner->CanTransactMoney(pExt->Money_Amount)) {
+		darken = true;
 	}
 
 	R->BL(darken);
@@ -600,24 +594,19 @@ DEFINE_HOOK(6CBD6B, SuperClass_Update_DrainMoney, 8) {
 			int money = pData->Money_DrainAmount;
 			if(money != 0 && pData->Money_DrainDelay > 0) {
 				if(!(timeLeft % pData->Money_DrainDelay)) {
+					auto pOwner = pSuper->Owner;
 
 					// only abort if SW drains money and there is none
-					if(pData->Money_DrainAmount < 0) {
-						if(pSuper->Owner->Available_Money() < -money) {
-							if(pSuper->Owner->ControlledByHuman()) {
-								VoxClass::PlayIndex(pData->EVA_InsufficientFunds);
-								pData->PrintMessage(pData->Message_InsufficientFunds, HouseClass::Player);
-							}
-							return 0x6CBD73;
+					if(!pOwner->CanTransactMoney(money)) {
+						if(pOwner->ControlledByHuman()) {
+							VoxClass::PlayIndex(pData->EVA_InsufficientFunds);
+							pData->PrintMessage(pData->Message_InsufficientFunds, HouseClass::Player);
 						}
+						return 0x6CBD73;
 					}
 
 					// apply drain money
-					if(money > 0) {
-						pSuper->Owner->GiveMoney(money);
-					} else {
-						pSuper->Owner->TakeMoney(-money);
-					}
+					pOwner->TransactMoney(money);
 				}
 			}
 		}
