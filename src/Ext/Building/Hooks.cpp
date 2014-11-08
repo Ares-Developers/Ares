@@ -171,3 +171,67 @@ DEFINE_HOOK(44840B, BuildingClass_ChangeOwnership_Tech, 6)
 
 	return 0x44848F;
 }
+
+// support oil derrick logic on building upgrades
+DEFINE_HOOK(4409F4, BuildingClass_Put_ProduceCash, 6)
+{
+	GET(BuildingClass*, pThis, ESI);
+	GET(BuildingClass*, pToUpgrade, EDI);
+
+	auto pExt = BuildingExt::ExtMap.Find(pToUpgrade);
+
+	if(auto delay = pThis->Type->ProduceCashDelay) {
+		pExt->CashUpgradeTimers[pThis->UpgradeLevel - 1].Start(delay);
+	}
+
+	return 0;
+}
+
+DEFINE_HOOK(43FD2C, BuildingClass_Update_ProduceCash, 6)
+{
+	GET(BuildingClass*, pThis, ESI);
+	auto pExt = BuildingExt::ExtMap.Find(pThis);
+
+	auto Process = [](BuildingClass* pBld, BuildingTypeClass* pType, TimerStruct& timer) {
+		if(timer.GetTimeLeft() == 1) {
+			timer.Start(pType->ProduceCashDelay);
+
+			if(!pBld->Owner->Type->MultiplayPassive && pBld->IsPowerOnline()) {
+				pBld->Owner->TransactMoney(pType->ProduceCashAmount);
+			}
+		}
+	};
+
+	Process(pThis, pThis->Type, pThis->CashProductionTimer);
+
+	for(size_t i = 0; i < 3; ++i) {
+		if(const auto& pUpgrade = pThis->Upgrades[i]) {
+			Process(pThis, pUpgrade, pExt->CashUpgradeTimers[i]);
+		}
+	}
+
+	return 0x43FDD6;
+}
+
+DEFINE_HOOK(4482BD, BuildingClass_ChangeOwnership_ProduceCash, 6)
+{
+	GET(BuildingClass*, pThis, ESI);
+	auto pExt = BuildingExt::ExtMap.Find(pThis);
+
+	auto Process = [](BuildingClass* pBld, BuildingTypeClass* pType, TimerStruct& timer) {
+		if(pType->ProduceCashStartup) {
+			pBld->Owner->TransactMoney(pType->ProduceCashStartup);
+			timer.Start(pType->ProduceCashDelay);
+		}
+	};
+
+	Process(pThis, pThis->Type, pThis->CashProductionTimer);
+
+	for(size_t i = 0; i < 3; ++i) {
+		if(const auto& pUpgrade = pThis->Upgrades[i]) {
+			Process(pThis, pUpgrade, pExt->CashUpgradeTimers[i]);
+		}
+	}
+
+	return 0x4482FC;
+}

@@ -82,6 +82,8 @@ public:
 
 		bool SecretLab_Placed;
 
+		TimerStruct CashUpgradeTimers[3];
+
 	public:
 		ExtData(BuildingClass* OwnerObject) : Extension<BuildingClass>(OwnerObject),
 			OwnerBeforeRaid(nullptr),
