@@ -561,17 +561,15 @@ void TechnoExt::TransferOriginalOwner(TechnoClass* pFrom, TechnoClass* pTo) {
 }
 
 void TechnoExt::TransferAttachedEffects(TechnoClass *From, TechnoClass *To) {
-	TechnoExt::ExtData *FromExt = TechnoExt::ExtMap.Find(From);
-	TechnoExt::ExtData *ToExt = TechnoExt::ExtMap.Find(To);
+	auto FromExt = TechnoExt::ExtMap.Find(From);
+	auto ToExt = TechnoExt::ExtMap.Find(To);
 
 	ToExt->AttachedEffects.clear();
 
 	// while recreation itself isn't the best idea, less hassle and more reliable
 	// list gets intact in the end
-	for (size_t i=0; i < FromExt->AttachedEffects.size(); i++) {
-		auto &FromItem = FromExt->AttachedEffects.at(i);
-		FromItem->Type->Attach(To, FromItem->ActualDuration, FromItem->Invoker);
-		//FromItem->Type->Attach(To, FromItem->ActualDuration, FromItem->Invoker, FromItem->ActualDamageDelay);
+	for(const auto& Item : FromExt->AttachedEffects) {
+		Item->Type->Attach(To, Item->ActualDuration, Item->Invoker);
 	}
 
 	FromExt->AttachedEffects.clear();
