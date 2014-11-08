@@ -230,8 +230,7 @@ DEFINE_HOOK(4AC20C, DisplayClass_LMBUp, 7)
 }
 
 // decoupling sw anims from types
-// 446418, 6
-DEFINE_HOOK(446418, BuildingClass_Place1, 6)
+DEFINE_HOOK(4463F0, BuildingClass_Place_SuperWeaponAnimsA, 6)
 {
 	GET(BuildingClass*, pThis, EBP);
 	auto pExt = BuildingExt::ExtMap.Find(pThis);
@@ -244,29 +243,31 @@ DEFINE_HOOK(446418, BuildingClass_Place1, 6)
 	return 0x446580;
 }
 
-// 44656D, 6
-DEFINE_HOOK(44656D, BuildingClass_Place2, 6)
+DEFINE_HOOK(44656D, BuildingClass_Place_SuperWeaponAnimsB, 6)
 {
 	return 0x446580;
 }
 
-// 45100A, 6
-DEFINE_HOOK(45100A, BuildingClass_ProcessAnims1, 6)
+DEFINE_HOOK(450F9E, BuildingClass_ProcessAnims_SuperWeaponsA, 6)
 {
 	GET(BuildingClass*, pThis, ESI);
 	auto pExt = BuildingExt::ExtMap.Find(pThis);
 
 	if(auto pSuper = pExt->GetFirstSuperWeapon()) {
-		R->EDI(pThis->Type);
-		R->EAX(pSuper);
-		return 0x451030;
+		auto miss = pThis->GetCurrentMission();
+		if(miss != Mission::Construction && miss != Mission::Selling
+			&& pThis->Type->ChargedAnimTime <= 990.0)
+		{
+			R->EDI(pThis->Type);
+			R->EAX(pSuper);
+			return 0x451030;
+		}
 	}
 
 	return 0x451145;
 }
 
-// 451132, 6
-DEFINE_HOOK(451132, BuildingClass_ProcessAnims2, 6)
+DEFINE_HOOK(451132, BuildingClass_ProcessAnims_SuperWeaponsB, 6)
 {
 	return 0x451145;
 }
