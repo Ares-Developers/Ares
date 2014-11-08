@@ -553,6 +553,13 @@ void TechnoExt::TransferIvanBomb(TechnoClass *From, TechnoClass *To) {
 	}
 }
 
+void TechnoExt::TransferOriginalOwner(TechnoClass* pFrom, TechnoClass* pTo) {
+	auto pFromExt = TechnoExt::ExtMap.Find(pFrom);
+	auto pToExt = TechnoExt::ExtMap.Find(pTo);
+
+	pToExt->OriginalHouseType = pFromExt->OriginalHouseType;
+}
+
 void TechnoExt::TransferAttachedEffects(TechnoClass *From, TechnoClass *To) {
 	TechnoExt::ExtData *FromExt = TechnoExt::ExtMap.Find(From);
 	TechnoExt::ExtData *ToExt = TechnoExt::ExtMap.Find(To);

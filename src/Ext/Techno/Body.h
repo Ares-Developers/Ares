@@ -186,6 +186,7 @@ public:
 
 	static void TransferIvanBomb(TechnoClass *From, TechnoClass *To);
 	static void TransferAttachedEffects(TechnoClass *From, TechnoClass *To);
+	static void TransferOriginalOwner(TechnoClass* pFrom, TechnoClass* pTo);
 
 	static void RecalculateStats(TechnoClass *pTechno);
 
