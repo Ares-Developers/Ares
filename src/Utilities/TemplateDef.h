@@ -421,7 +421,7 @@ void Valueable<SuperWeaponTarget>::Read(INI_EX &parser, const char* pSection, co
 				value |= SuperWeaponTarget::Building;
 			} else if(!_strcmpi(cur, "all")) {
 				value |= SuperWeaponTarget::All;
-			} else {
+			} else if(!_strcmpi(cur, "none")) {
 				Debug::INIParseFailed(pSection, pKey, parser.value(), "Expected a super weapon target");
 				return;
 			}
@@ -451,7 +451,7 @@ void Valueable<SuperWeaponAffectedHouse>::Read(INI_EX &parser, const char* pSect
 				value |= SuperWeaponAffectedHouse::NotOwner;
 			} else if(!_strcmpi(cur, "all")) {
 				value |= SuperWeaponAffectedHouse::All;
-			} else {
+			} else if(!_strcmpi(cur, "none")) {
 				Debug::INIParseFailed(pSection, pKey, parser.value(), "Expected a super weapon affected house");
 				return;
 			}
