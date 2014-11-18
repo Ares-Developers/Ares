@@ -4,6 +4,7 @@
 
 #include <AnimClass.h>
 #include <AircraftClass.h>
+#include <Conversions.h>
 #include <HouseClass.h>
 
 /* #604 - customizable parachutes */
@@ -194,4 +195,33 @@ DEFINE_HOOK(415085, AircraftClass_Update_DamageSmoke, 7)
 	}
 
 	return 0x41512C;
+}
+
+DEFINE_HOOK(73C613, UnitClass_DrawSHP_FacingsA, 7) {
+	GET(UnitClass*, pThis, EBP);
+
+	unsigned int ret = 0;
+
+	auto highest = Conversions::Int2Highest(pThis->Type->Facings);
+
+	// 2^highest is the frame count, 3 means 8 frames
+	if(highest >= 3 && !pThis->IsDisguised()) {
+		auto offset = 1u << (highest - 3);
+		ret = TranslateFixedPoint(16, highest, static_cast<WORD>(pThis->Facing.current().value()), offset);
+	}
+
+	R->EBX(ret);
+	return 0x73C64B;
+}
+
+DEFINE_HOOK(73CD01, UnitClass_DrawSHP_FacingsB, 5)
+{
+	GET(UnitClass*, pThis, EBP);
+	GET(UnitTypeClass*, pType, ECX);
+	GET(int, facing, EAX);
+
+	R->ECX(pThis);
+	R->EAX(facing + pType->WalkFrames * pType->Facings);
+
+	return 0x73CD06;
 }
