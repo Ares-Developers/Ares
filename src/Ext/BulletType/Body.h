@@ -43,6 +43,8 @@ public:
 		Nullable<Leptons> BallisticScatterMin;
 		Nullable<Leptons> BallisticScatterMax;
 
+		Valueable<int> AnimLength;
+
 		ExtData(BulletTypeClass* OwnerObject) : Extension<BulletTypeClass>(OwnerObject),
 			Splits(false),
 			RetargetAccuracy(0.0f),

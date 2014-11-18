@@ -270,3 +270,32 @@ DEFINE_HOOK(6FE53F, TechnoClass_Fire_CreateBullet, 6)
 	R->EAX(ret);
 	return 0x6FE562;
 }
+
+DEFINE_HOOK(468000, BulletClass_GetAnimFrame, 6)
+{
+	GET(BulletClass*, pThis, ECX);
+	auto pType = pThis->Type;
+
+	int frame = 0;
+	if(pType->AnimLow || pType->AnimHigh) {
+		frame = pThis->AnimFrame;
+	} else if(pType->Rotates()) {
+		auto angle = Math::arctanfoo(-pThis->Velocity.Y, pThis->Velocity.X);
+		DirStruct dir(angle);
+
+		const auto ReverseFacing32 = *reinterpret_cast<const int(*)[8]>(0x7F4890);
+		auto facing = ReverseFacing32[dir.value32()];
+
+		auto pExt = BulletTypeExt::ExtMap.Find(pType);
+		const int length = pExt->AnimLength;
+
+		if(length > 1) {
+			frame = facing * length + ((Unsorted::CurrentFrame / pType->AnimRate) % length);
+		} else {
+			frame = facing;
+		}
+	}
+
+	R->EAX(frame);
+	return 0x468088;
+}

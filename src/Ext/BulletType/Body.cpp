@@ -34,6 +34,8 @@ void BulletTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 
 	this->BallisticScatterMin.Read(exINI, pThis->ID, "BallisticScatter.Min");
 	this->BallisticScatterMax.Read(exINI, pThis->ID, "BallisticScatter.Max");
+
+	this->AnimLength.Read(exINI, pThis->ID, "AnimLength");
 }
 
 // get the custom palette of the animation this bullet type uses
