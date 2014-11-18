@@ -225,3 +225,25 @@ DEFINE_HOOK(73CD01, UnitClass_DrawSHP_FacingsB, 5)
 
 	return 0x73CD06;
 }
+
+DEFINE_HOOK(6FF2D1, TechnoClass_Fire_Facings, 6)
+{
+	GET(TechnoClass*, pThis, ESI);
+	GET(WeaponTypeClass*, pWeapon, EBX);
+
+	AnimTypeClass* pAnim = nullptr;
+
+	auto highest = Conversions::Int2Highest(pWeapon->Anim.Count);
+
+	// 2^highest is the frame count, 3 means 8 frames
+	if(highest >= 3) {
+		auto offset = 1u << (highest - 3);
+		auto index = TranslateFixedPoint(16, highest, static_cast<WORD>(pThis->GetRealFacing().value()), offset);
+		pAnim = pWeapon->Anim.GetItemOrDefault(index);
+	} else {
+		pAnim = pWeapon->Anim.GetItemOrDefault(0);
+	}
+
+	R->EDI(pAnim);
+	return 0x6FF31B;
+}
