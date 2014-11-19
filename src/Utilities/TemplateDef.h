@@ -6,6 +6,7 @@
 #include "INIParser.h"
 #include "Enums.h"
 #include "Constructs.h"
+#include "../Misc/SavegameDef.h"
 
 #include <InfantryTypeClass.h>
 #include <AircraftTypeClass.h>
