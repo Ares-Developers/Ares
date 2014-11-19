@@ -10,6 +10,7 @@
 
 #include "../Misc/Debug.h"
 #include "../Misc/Stream.h"
+#include "../Misc/Swizzle.h"
 
 enum class InitState {
 	Blank = 0x0, // CTOR'd
@@ -284,38 +285,70 @@ protected:
 	}
 
 	value_type SaveKey(key_type key, IStream *pStm) {
-		ULONG out;
-
-		if(key == nullptr) {
+		// this really shouldn't happen
+		if(!key) {
+			Debug::Log("[SaveKey] Attempted for a null pointer! WTF!\n");
 			return nullptr;
 		}
+
+		// get the value data
 		auto buffer = this->Find(key);
-		Debug::Log("\tKey maps to %X\n", buffer);
-		if(buffer) {
-			pStm->Write(&buffer, 4, &out);
-			pStm->Write(buffer, sizeof(*buffer), &out);
-//			Debug::Log("Save used up 0x%X bytes (HRESULT 0x%X)\n", out, res);
+		if(!buffer) {
+			Debug::Log("[SaveKey] Could not find value.\n");
+			return nullptr;
 		}
 
-		Debug::Log("\n\n");
+		// write the current pointer, the size of the block, and the canary
+		AresByteStream saver(sizeof(*buffer));
+		AresStreamWriter writer(saver);
+
+		writer.Save(extension_type::Canary);
+		writer.Save(buffer);
+
+		// save the data
+		buffer->SaveToStream(writer);
+
+		// save the block
+		if(!saver.WriteBlockToStream(pStm)) {
+			Debug::Log("[SaveKey] Failed to save data.\n");
+			return nullptr;
+		}
+
+		Debug::Log("[SaveKey] Save used up 0x%X bytes\n", saver.Size());
+
+		// done
 		return buffer;
 	};
 
 	value_type LoadKey(key_type key, IStream *pStm) {
-		ULONG out;
-
-		if(key == nullptr) {
-			Debug::Log("Load attempted for a NULL pointer! WTF!\n");
+		// this really shouldn't happen
+		if(!key) {
+			Debug::Log("[LoadKey] Attempted for a null pointer! WTF!\n");
 			return nullptr;
 		}
+
+		// get the value data
 		auto buffer = this->FindOrAllocate(key);
-		long origPtr;
-		pStm->Read(&origPtr, 4, &out);
-		pStm->Read(buffer, sizeof(*buffer), &out);
-		Debug::Log("LoadKey Swizzle: %X => %X\n", origPtr, buffer);
-		SwizzleManagerClass::Instance.Here_I_Am(origPtr, static_cast<void *>(buffer));
-		//SWIZZLE(buffer->AttachedToObject);
-		return buffer;
+		if(!buffer) {
+			Debug::Log("[LoadKey] Could not find or allocate value.\n");
+			return nullptr;
+		}
+
+		AresByteStream loader(0);
+		if(!loader.ReadBlockFromStream(pStm)) {
+			Debug::Log("[LoadKey] Failed to read data from save stream?!\n");
+			return nullptr;
+		}
+
+		AresStreamReader reader(loader);
+		if(reader.Expect(extension_type::Canary) && reader.RegisterChange(buffer)) {
+			buffer->LoadFromStream(reader);
+			if(reader.ExpectEndOfBlock()) {
+				return buffer;
+			}
+		}
+
+		return nullptr;
 	};
 };
 
