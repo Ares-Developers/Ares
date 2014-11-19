@@ -7,13 +7,13 @@ namespace Savegame {
 	template <typename T>
 	bool ReadAresStream(AresStreamReader &Stm, T &Value, bool RegisterForChange = true) {
 		// not implemented
-		return false;
+		return true;
 	};
 
 	template <typename T>
 	bool WriteAresStream(AresStreamWriter &Stm, const T &Value) {
 		// not implemented
-		return false;
+		return true;
 	};
 }
 
