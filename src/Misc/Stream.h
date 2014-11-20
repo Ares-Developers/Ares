@@ -12,9 +12,7 @@ protected:
 	std::vector<data_t> Data;
 	size_t CurrentOffset;
 public:
-	AresByteStream(size_t Reserve = 0x1000) : Data(), CurrentOffset(0) {
-		this->Data.reserve(Reserve);
-	};
+	AresByteStream(size_t Reserve = 0x1000);
 
 	size_t Size() const {
 		return this->Data.size();
