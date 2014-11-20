@@ -192,7 +192,7 @@ public:
 		return i->second.get();
 	}
 
-	value_type Find(const_key_type key) const {
+	__declspec(noinline) value_type Find(const_key_type key) const {
 		auto i = this->Items.find(key);
 		if(i == this->Items.end()) {
 			return nullptr;
