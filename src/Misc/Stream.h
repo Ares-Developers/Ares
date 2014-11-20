@@ -52,25 +52,13 @@ public:
 	* if it has {Size} bytes left, assigns the first {Size} unread bytes to {Value}
 	* moves the internal position forward
 	*/
-	bool Read(data_t* Value, size_t Size) {
-		bool ret = false;
-		if(this->Data.size() >= this->CurrentOffset + Size) {
-			auto Position = &this->Data[this->CurrentOffset];
-			std::memcpy(Value, Position, Size);
-			ret = true;
-		}
-
-		this->CurrentOffset += Size;
-		return ret;
-	}
+	bool Read(data_t* Value, size_t Size);
 
 	/**
 	* ensures there are at least {Size} bytes left in the internal storage, and assigns {Value} casted to byte to that buffer
 	* moves the internal position forward
 	*/
-	void Write(const data_t* Value, size_t Size) {
-		this->Data.insert(this->Data.end(), Value, Value + Size);
-	}
+	void Write(const data_t* Value, size_t Size);
 
 
 	/**

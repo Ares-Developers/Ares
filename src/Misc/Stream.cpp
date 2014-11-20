@@ -33,6 +33,22 @@ bool AresByteStream::WriteToStream(IStream *pStm) const {
 	return SUCCEEDED(success) && out == Length;
 }
 
+bool AresByteStream::Read(data_t* Value, size_t Size) {
+	bool ret = false;
+	if(this->Data.size() >= this->CurrentOffset + Size) {
+		auto Position = &this->Data[this->CurrentOffset];
+		std::memcpy(Value, Position, Size);
+		ret = true;
+	}
+
+	this->CurrentOffset += Size;
+	return ret;
+}
+
+void AresByteStream::Write(const data_t* Value, size_t Size) {
+	this->Data.insert(this->Data.end(), Value, Value + Size);
+}
+
 size_t AresByteStream::ReadBlockFromStream(IStream *pStm) {
 	ULONG out = 0;
 	size_t Length = 0;
