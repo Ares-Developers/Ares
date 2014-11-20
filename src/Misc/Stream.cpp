@@ -10,6 +10,8 @@ AresByteStream::AresByteStream(size_t Reserve) : Data(), CurrentOffset(0) {
 	this->Data.reserve(Reserve);
 }
 
+AresByteStream::~AresByteStream() = default;
+
 bool AresByteStream::ReadFromStream(IStream *pStm, const size_t Length) {
 	ULONG out = 0;
 	auto size = this->Data.size();

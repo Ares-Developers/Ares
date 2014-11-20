@@ -14,6 +14,8 @@ protected:
 public:
 	AresByteStream(size_t Reserve = 0x1000);
 
+	~AresByteStream();
+
 	size_t Size() const {
 		return this->Data.size();
 	}
