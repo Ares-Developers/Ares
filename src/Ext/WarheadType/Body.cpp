@@ -329,49 +329,51 @@ bool WarheadTypeExt::canWarheadAffectTarget(TechnoClass * Target, HouseClass * S
 bool WarheadTypeExt::ExtData::applyKillDriver(BulletClass* Bullet) {
 	if(!Bullet->Target || !this->KillDriver) {
 		return false;
-	} else if(FootClass *pTarget = generic_cast<FootClass *>(Bullet->Target)) {
+	}
+
+	if(auto pTarget = abstract_cast<FootClass*>(Bullet->Target)) {
 		// don't penetrate the Iron Curtain // typedef IronCurtain ChastityBelt
 		if(pTarget->IsIronCurtained()) {
 			return false;
 		}
-		TechnoTypeClass *pTargetType = pTarget->GetTechnoType();
-		TechnoTypeExt::ExtData* TargetTypeExt = TechnoTypeExt::ExtMap.Find(pTargetType);
+		auto pTargetType = pTarget->GetTechnoType();
+		auto pTargetTypeExt = TechnoTypeExt::ExtMap.Find(pTargetType);
 
 		// conditions: Warhead is KillDriver, target is Vehicle or Aircraft, but not protected and not a living being
 		if(((pTarget->WhatAmI() == AbstractType::Unit) || (pTarget->WhatAmI() == AbstractType::Aircraft))
-			&& !(pTarget->BeingWarpedOut || TargetTypeExt->ProtectedDriver || pTargetType->Organic || pTargetType->Natural)
+			&& !(pTarget->BeingWarpedOut || pTargetTypeExt->ProtectedDriver || pTargetType->Organic || pTargetType->Natural)
 			&& (pTarget->GetHealthPercentage() <= this->KillDriver_KillBelowPercent)) {
 
 			// if this aircraft is expected to dock to anything, don't allow killing its pilot
 			// (reason being: the game thinks you lost the aircraft that just turned, and assumes you have free aircraft space,
 			// allowing you to build more aircraft, for the docking spot that is still occupied by the previous plane.)
-			if(AircraftClass * pTargetAircraft = specific_cast<AircraftClass *>(pTarget)) { // relying on short-circuit evaluation here - nest this if necessary
-				if(pTargetAircraft->Type->AirportBound || pTargetAircraft->Type->Dock.Count) {
+			if(auto pAircraftType = abstract_cast<AircraftTypeClass*>(pTargetType)) {
+				if(pAircraftType->AirportBound || pAircraftType->Dock.Count) {
 					return false;
 				}
 			}
 
 			// If this vehicle uses Operator=, we have to take care of actual "physical" drivers, rather than theoretical ones
-			FootClass *passenger = nullptr;
-			if(TargetTypeExt->IsAPromiscuousWhoreAndLetsAnyoneRideIt && (passenger = pTarget->RemoveFirstPassenger()) != nullptr) {
+			if(pTargetTypeExt->IsAPromiscuousWhoreAndLetsAnyoneRideIt && pTarget->Passengers.GetFirstPassenger()) {
 				// kill first passenger
-				passenger->RegisterDestruction(Bullet->Owner);
-				passenger->UnInit();
+				auto pPassenger = pTarget->RemoveFirstPassenger();
+				pPassenger->RegisterDestruction(Bullet->Owner);
+				pPassenger->UnInit();
 
-			} else if(TargetTypeExt->Operator) {
+			} else if(auto pOperatorType = pTargetTypeExt->Operator) {
 				// find the driver cowardly hiding among the passengers, then kill him
-				for(passenger = pTarget->Passengers.FirstPassenger; passenger; passenger = generic_cast<FootClass*>(passenger->NextObject)) {
-					if(passenger->GetTechnoType() == TargetTypeExt->Operator) {
-						pTarget->RemovePassenger(passenger);
-						passenger->RegisterDestruction(Bullet->Owner);
-						passenger->UnInit();
+				for(auto pPassenger = pTarget->Passengers.GetFirstPassenger(); pPassenger; pPassenger = abstract_cast<FootClass*>(pPassenger->NextObject)) {
+					if(pPassenger->GetTechnoType() == pOperatorType) {
+						pTarget->RemovePassenger(pPassenger);
+						pPassenger->RegisterDestruction(Bullet->Owner);
+						pPassenger->UnInit();
 						break;
 					}
 				}
 			}
 
 			// if passengers remain in the vehicle, operator-using or not, they should leave
-			if(pTarget->Passengers.NumPassengers) {
+			if(pTarget->Passengers.GetFirstPassenger()) {
 				TechnoExt::EjectPassengers(pTarget, -1);
 			}
 
@@ -379,9 +381,9 @@ bool WarheadTypeExt::ExtData::applyKillDriver(BulletClass* Bullet) {
 			pTarget->HijackerInfantryType = -1;
 
 			// If this unit is driving under influence, we have to free it first
-			if(TechnoClass *Controller = pTarget->MindControlledBy) {
-				if(CaptureManagerClass *MC = Controller->CaptureManager) {
-					MC->FreeUnit(pTarget);
+			if(auto pController = pTarget->MindControlledBy) {
+				if(auto pCaptureManager = pController->CaptureManager) {
+					pCaptureManager->FreeUnit(pTarget);
 				}
 			}
 			pTarget->MindControlledByAUnit = false;
@@ -399,16 +401,16 @@ bool WarheadTypeExt::ExtData::applyKillDriver(BulletClass* Bullet) {
 			}
 
 			// This unit will be freed of its duties
-			if(FootClass * pFoot = generic_cast<FootClass *>(pTarget)) {
+			if(auto pFoot = abstract_cast<FootClass*>(pTarget)) {
 				if(pFoot->BelongsToATeam()) {
 					pFoot->Team->LiberateMember(pFoot);
 				}
 			}
 
 			// If this unit spawns stuff, we should kill the spawns, since they still belong to the previous owner
-			if(pTarget->SpawnManager) {
-				pTarget->SpawnManager->KillNodes();
-				pTarget->SpawnManager->ResetTarget();
+			if(auto pSpawnManager = pTarget->SpawnManager) {
+				pSpawnManager->KillNodes();
+				pSpawnManager->ResetTarget();
 			}
 
 			// If this unit enslaves stuff, we should free the slaves, since they still belong to the previous owner
@@ -417,22 +419,20 @@ bool WarheadTypeExt::ExtData::applyKillDriver(BulletClass* Bullet) {
 			// <DCoder> unlink
 			// <Renegade> so on principle, I could just re-link it?
 			// <DCoder> yes you can
-			if(SlaveManagerClass * pSlaveManager = pTarget->SlaveManager) {
+			if(auto pSlaveManager = pTarget->SlaveManager) {
 				pSlaveManager->Killed(Bullet->Owner);
 				pSlaveManager->ZeroOutSlaves();
-				pTarget->SlaveManager->Owner = pTarget;
-				pTarget->SlaveManager->SuspendWork();
+				pSlaveManager->Owner = pTarget;
+				pSlaveManager->SuspendWork();
 			}
 
-			TechnoExt::ExtData* TargetExt = TechnoExt::ExtMap.Find(pTarget);
+			auto TargetExt = TechnoExt::ExtMap.Find(pTarget);
 			TargetExt->DriverKilled = true;
 
 			// Hand over to Civilian/Special house
-			pTarget->SetOwningHouse(HouseClass::FindByCountryIndex(HouseTypeClass::FindIndexOfName("Special")));
+			pTarget->SetOwningHouse(HouseClass::FindSpecial());
 			pTarget->QueueMission(Mission::Harmless, true);
 			return true;
-		} else {
-			return false;
 		}
 	}
 	return false;
