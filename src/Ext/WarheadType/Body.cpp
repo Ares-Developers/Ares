@@ -1,6 +1,7 @@
 #include "Body.h"
 #include <WeaponTypeClass.h>
 #include "../../Enum/ArmorTypes.h"
+#include "../House/Body.h"
 #include "../Techno/Body.h"
 #include "../TechnoType/Body.h"
 #include "../../Misc/EMPulse.h"
@@ -93,6 +94,8 @@ void WarheadTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 	this->KillDriver = pINI->ReadBool(section, "KillDriver", this->KillDriver);
 
 	this->KillDriver_KillBelowPercent.Read(exINI, section, "KillDriver.KillBelowPercent");
+
+	this->KillDriver_Owner.Read(exINI, section, "KillDriver.Owner");
 
 	this->Malicious.Read(exINI, section, "Malicious");
 
@@ -429,8 +432,14 @@ bool WarheadTypeExt::ExtData::applyKillDriver(BulletClass* Bullet) {
 			auto TargetExt = TechnoExt::ExtMap.Find(pTarget);
 			TargetExt->DriverKilled = true;
 
-			// Hand over to Civilian/Special house
-			pTarget->SetOwningHouse(HouseClass::FindSpecial());
+			// Hand over to a different house
+			auto pOwner = HouseExt::GetHouseKind(this->KillDriver_Owner, false,
+				nullptr, nullptr, nullptr, nullptr);
+			if(!pOwner) {
+				pOwner = HouseClass::FindSpecial();
+			}
+
+			pTarget->SetOwningHouse(pOwner);
 			pTarget->QueueMission(Mission::Harmless, true);
 			return true;
 		}

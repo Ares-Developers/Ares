@@ -12,6 +12,7 @@
 #include "../_Container.hpp"
 
 #include "../../Utilities/Constructs.h"
+#include "../../Utilities/Enums.h"
 #include "../../Utilities/Template.h"
 
 #ifdef DEBUGBUILD
@@ -71,6 +72,8 @@ public:
 
 		Valueable<double> KillDriver_KillBelowPercent;
 
+		Valueable<OwnerHouseKind> KillDriver_Owner;
+
 		Valueable<bool> Malicious;
 
 		Valueable<bool> PreventScatter;
@@ -93,6 +96,7 @@ public:
 			PreImpactAnim(-1),
 			KillDriver(false),
 			KillDriver_KillBelowPercent(1.00),
+			KillDriver_Owner(OwnerHouseKind::Special),
 			Malicious(true),
 			PreventScatter(false),
 			CellSpread_MaxAffect(-1),
