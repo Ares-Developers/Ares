@@ -478,8 +478,11 @@ bool TechnoExt::ExtData::IsPowered() {
 
 	if(pType && pType->PoweredUnit) {
 		for(const auto& pBuilding : pThis->Owner->Buildings) {
-			if(pBuilding->Type->PowersUnit == pType) {
-				return pBuilding->RegisteredAsPoweredUnitSource && !pBuilding->IsUnderEMP(); // alternatively, HasPower, IsPowerOnline()
+			if(pBuilding->Type->PowersUnit == pType
+				&& pBuilding->RegisteredAsPoweredUnitSource
+				&& !pBuilding->IsUnderEMP()) // alternatively, HasPower, IsPowerOnline()
+			{
+				return true; 
 			}
 		}
 		// if we reach this, we found no building that currently powers this object
