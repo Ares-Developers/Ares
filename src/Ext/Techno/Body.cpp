@@ -210,12 +210,12 @@ void TechnoExt::EjectPassengers(FootClass *pThis, int howMany) {
 */
 CoordStruct TechnoExt::GetPutLocation(CoordStruct current, int distance) {
 	// this whole thing does not at all account for cells which are completely occupied.
-	CellStruct tmpCoords = CellSpread::GetCell(ScenarioClass::Instance->Random.RandomRanged(0, 7));
+	auto tmpCoords = CellSpread::GetCell(ScenarioClass::Instance->Random.RandomRanged(0, 7));
 
 	current.X += tmpCoords.X * distance;
 	current.Y += tmpCoords.Y * distance;
 
-	CellClass* tmpCell = MapClass::Instance->GetCellAt(current);
+	auto tmpCell = MapClass::Instance->GetCellAt(current);
 
 	CoordStruct target;
 	tmpCell->FindInfantrySubposition(&target, &current, 0, 0, 0);
@@ -282,11 +282,11 @@ bool TechnoExt::SpawnVisceroid(CoordStruct &crd, ObjectTypeClass* pType, int cha
 	bool ret = false;
 	// create a small visceroid if available and the cell is free
 	if(ignoreTibDeathToVisc || ScenarioClass::Instance->TiberiumDeathToVisceroid) {
-		CellClass* pCell = MapClass::Instance->GetCellAt(crd);
+		auto pCell = MapClass::Instance->GetCellAt(crd);
 		int rnd = ScenarioClass::Instance->Random.RandomRanged(0, 99);
 		if(!(pCell->OccupationFlags & 0x20) && rnd < chance && pType) {
-			if(HouseClass* pHouse = HouseClass::FindNeutral()) {
-				if(ObjectClass* pVisc = pType->CreateObject(pHouse)) {
+			if(auto pHouse = HouseClass::FindNeutral()) {
+				if(auto pVisc = pType->CreateObject(pHouse)) {
 					++Unsorted::IKnowWhatImDoing;
 					ret = true;
 					if(!pVisc->Put(crd, 0)) {
@@ -310,7 +310,7 @@ unsigned int TechnoExt::ExtData::AlphaFrame(SHPStruct *Image) {
 }
 
 bool TechnoExt::ExtData::DrawVisualFX() {
-	TechnoClass * Object = this->OwnerObject();
+	auto Object = this->OwnerObject();
 	if(Object->VisualCharacter(VARIANT_TRUE, Object->Owner) == VisualType::Normal) {
 		if(!Object->Disguised) {
 			return true;
@@ -423,10 +423,10 @@ bool TechnoExt::ExtData::AcquireHunterSeekerTarget() const {
 	return false;
 }
 
-UnitTypeClass * TechnoExt::ExtData::GetUnitType() {
-	if(UnitClass * U = specific_cast<UnitClass *>(this->OwnerObject())) {
-		TechnoTypeExt::ExtData * pData = TechnoTypeExt::ExtMap.Find(U->Type);
-		if(pData->WaterImage && !U->OnBridge && U->GetCell()->LandType == LandType::Water) {
+UnitTypeClass* TechnoExt::ExtData::GetUnitType() {
+	if(auto pUnit = abstract_cast<UnitClass*>(this->OwnerObject())) {
+		auto pData = TechnoTypeExt::ExtMap.Find(pUnit->Type);
+		if(pData->WaterImage && !pUnit->OnBridge && pUnit->GetCell()->LandType == LandType::Water) {
 			return pData->WaterImage;
 		}
 	}
@@ -647,8 +647,8 @@ Action TechnoExt::ExtData::GetDeactivatedAction(ObjectClass *Hovered) const {
 }
 
 void TechnoExt::ExtData::InvalidateAttachEffectPointer(void *ptr) {
-	for(auto i = 0u; i < this->AttachedEffects.size(); ++i) {
-		if(auto &Item = this->AttachedEffects.at(i)) {
+	for(const auto& Item : this->AttachedEffects) {
+		if(Item) {
 			Item->InvalidatePointer(ptr);
 		}
 	}
@@ -715,21 +715,21 @@ void TechnoExt::FreeSpecificSlave(TechnoClass *Slave, HouseClass *Affector){
 
 // If available, creates an InfantryClass instance and removes the hijacker from the victim.
 InfantryClass* TechnoExt::RecoverHijacker(FootClass* pThis) {
-	InfantryClass* Hijacker = nullptr;
-	if(pThis && pThis->HijackerInfantryType != -1) {
-		if(InfantryTypeClass* HijackerType = InfantryTypeClass::Array->GetItem(pThis->HijackerInfantryType)) {
-			TechnoExt::ExtData* pExt = TechnoExt::ExtMap.Find(pThis);
-			TechnoTypeExt::ExtData* pTypeExt = TechnoTypeExt::ExtMap.Find(HijackerType);
-			HouseClass* HijackerOwner = pExt->HijackerHouse ? pExt->HijackerHouse : pThis->Owner;
-			if(!pTypeExt->HijackerOneTime && HijackerOwner && !HijackerOwner->Defeated) {
-				Hijacker = static_cast<InfantryClass *>(HijackerType->CreateObject(HijackerOwner));
-				Hijacker->Health = std::max(pExt->HijackerHealth / 2, 5);
+	InfantryClass* pHijacker = nullptr;
+	if(pThis) {
+		if(auto pHijackerType = InfantryTypeClass::Array->GetItemOrDefault(pThis->HijackerInfantryType)) {
+			auto pExt = TechnoExt::ExtMap.Find(pThis);
+			auto pTypeExt = TechnoTypeExt::ExtMap.Find(pHijackerType);
+			auto pHijackerOwner = pExt->HijackerHouse ? pExt->HijackerHouse : pThis->Owner;
+			if(!pTypeExt->HijackerOneTime && pHijackerOwner && !pHijackerOwner->Defeated) {
+				pHijacker = static_cast<InfantryClass*>(pHijackerType->CreateObject(pHijackerOwner));
+				pHijacker->Health = std::max(pExt->HijackerHealth / 2, 5);
 			}
 			pThis->HijackerInfantryType = -1;
 			pExt->HijackerHealth = -1;
 		}
 	}
-	return Hijacker;
+	return pHijacker;
 }
 
 // this isn't called VehicleThief action, because it also includes other logic
