@@ -473,19 +473,19 @@ bool TechnoExt::ExtData::IsOperated() {
 	\date 27.04.10
 */
 bool TechnoExt::ExtData::IsPowered() {
-	TechnoTypeClass *TT = this->OwnerObject()->GetTechnoType();
-	if(TT && TT->PoweredUnit) {
-		HouseClass* Owner = this->OwnerObject()->Owner;
-		for(int i = 0; i < Owner->Buildings.Count; ++i) {
-			BuildingClass* Building = Owner->Buildings.GetItem(i);
-			if(Building->Type->PowersUnit == TT) {
-				return Building->RegisteredAsPoweredUnitSource && !Building->IsUnderEMP(); // alternatively, HasPower, IsPowerOnline()
+	auto pThis = this->OwnerObject();
+	auto pType = pThis->GetTechnoType();
+
+	if(pType && pType->PoweredUnit) {
+		for(const auto& pBuilding : pThis->Owner->Buildings) {
+			if(pBuilding->Type->PowersUnit == pType) {
+				return pBuilding->RegisteredAsPoweredUnitSource && !pBuilding->IsUnderEMP(); // alternatively, HasPower, IsPowerOnline()
 			}
 		}
 		// if we reach this, we found no building that currently powers this object
 		return false;
-	// #617
 	} else if(this->PoweredUnit) {
+		// #617
 		return this->PoweredUnit->IsPowered();
 	} else {
 		// object doesn't need a particular powering structure, therefore, for the purposes of the game, it IS powered
