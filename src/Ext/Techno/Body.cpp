@@ -734,15 +734,15 @@ InfantryClass* TechnoExt::RecoverHijacker(FootClass* pThis) {
 
 // this isn't called VehicleThief action, because it also includes other logic
 // related to infantry getting into an vehicle like CanDrive.
-AresAction::Value TechnoExt::ExtData::GetActionHijack(TechnoClass* pTarget) {
-	InfantryClass* pThis = specific_cast<InfantryClass*>(this->OwnerObject());
+AresAction::Value TechnoExt::ExtData::GetActionHijack(TechnoClass* const pTarget) {
+	const auto pThis = abstract_cast<const InfantryClass*>(this->OwnerObject());
 	if(!pThis || !pTarget || !pThis->IsAlive || !pTarget->IsAlive) {
 		return AresAction::None;
 	}
 
-	InfantryTypeClass* pType = pThis->Type;
-	TechnoTypeClass* pTargetType = pTarget->GetTechnoType();
-	TechnoTypeExt::ExtData* pTypeExt = TechnoTypeExt::ExtMap.Find(pType);
+	const auto pType = pThis->Type;
+	const auto pTargetType = pTarget->GetTechnoType();
+	const auto pTypeExt = TechnoTypeExt::ExtMap.Find(pType);
 
 	// this can't steal vehicles
 	if(!pType->VehicleThief && !pTypeExt->CanDrive) {
@@ -755,7 +755,7 @@ AresAction::Value TechnoExt::ExtData::GetActionHijack(TechnoClass* pTarget) {
 	}
 
 	// target type is not eligible (hijackers can also enter strange buildings)
-	AbstractType absTarget = pTarget->WhatAmI();
+	const auto absTarget = pTarget->WhatAmI();
 	if(absTarget != AbstractType::Aircraft && absTarget != AbstractType::Unit
 		&& (!pType->VehicleThief || absTarget != AbstractType::Building)) {
 			return AresAction::None;
@@ -784,7 +784,7 @@ AresAction::Value TechnoExt::ExtData::GetActionHijack(TechnoClass* pTarget) {
 
 	 //drivers can drive, but only stuff owned by neutrals. if a driver is a vehicle thief
 	 //also, it can reclaim units even if they are immune to hijacking (see below)
-	bool specialOwned = pTarget->Owner->Type->MultiplayPassive;
+	const auto specialOwned = pTarget->Owner->Type->MultiplayPassive;
 	if(specialOwned && pTypeExt->CanDrive) {
 		return AresAction::Drive;
 	}
@@ -796,7 +796,7 @@ AresAction::Value TechnoExt::ExtData::GetActionHijack(TechnoClass* pTarget) {
 			return AresAction::None;
 		}
 
-		TechnoTypeExt::ExtData* pTargetTypeExt = TechnoTypeExt::ExtMap.Find(pTargetType);
+		const auto pTargetTypeExt = TechnoTypeExt::ExtMap.Find(pTargetType);
 		if(!pTargetTypeExt->HijackerAllowed) {
 			return AresAction::None;
 		}
@@ -810,22 +810,22 @@ AresAction::Value TechnoExt::ExtData::GetActionHijack(TechnoClass* pTarget) {
 }
 
 // perform the most appropriate hijack action
-bool TechnoExt::ExtData::PerformActionHijack(TechnoClass* pTarget) {
+bool TechnoExt::ExtData::PerformActionHijack(TechnoClass* const pTarget) {
 	// was the hijacker lost in the process?
 	bool ret = false;
 
-	if(InfantryClass* pThis = specific_cast<InfantryClass*>(this->OwnerObject())) {
-		InfantryTypeClass* pType = pThis->Type;
-		TechnoExt::ExtData* pExt = TechnoExt::ExtMap.Find(pThis);
-		TechnoTypeExt::ExtData* pTypeExt = TechnoTypeExt::ExtMap.Find(pType);
+	if(const auto pThis = abstract_cast<InfantryClass*>(this->OwnerObject())) {
+		const auto pType = pThis->Type;
+		const auto pExt = TechnoExt::ExtMap.Find(pThis);
+		const auto pTypeExt = TechnoTypeExt::ExtMap.Find(pType);
 
-		AresAction::Value action = pExt->GetActionHijack(pTarget);
+		const auto action = pExt->GetActionHijack(pTarget);
 
 		// abort capturing this thing, it looked
 		// better from over there...
 		if(!action) {
 			pThis->SetDestination(nullptr, true);
-			CoordStruct crd = pTarget->GetCoords();
+			const auto& crd = pTarget->GetCoords();
 			pThis->Scatter(crd, true, false);
 			return false;
 		}
@@ -843,7 +843,7 @@ bool TechnoExt::ExtData::PerformActionHijack(TechnoClass* pTarget) {
 
 		bool asPassenger = false;
 		if(action == AresAction::Drive) {
-			TechnoTypeExt::ExtData* pDestTypeExt = TechnoTypeExt::ExtMap.Find(pTarget->GetTechnoType());
+			const auto pDestTypeExt = TechnoTypeExt::ExtMap.Find(pTarget->GetTechnoType());
 			if(pDestTypeExt->Operator || pDestTypeExt->IsAPromiscuousWhoreAndLetsAnyoneRideIt) {
 				asPassenger = true;
 			}
@@ -853,7 +853,8 @@ bool TechnoExt::ExtData::PerformActionHijack(TechnoClass* pTarget) {
 			// raise some events in case the hijacker/driver will be
 			// swallowed by the vehicle.
 			if(pTarget->AttachedTag) {
-				pTarget->AttachedTag->RaiseEvent(TriggerEvent::DestroyedByAnything, pThis, CellStruct::Empty, 0, 0);
+				pTarget->AttachedTag->RaiseEvent(TriggerEvent::DestroyedByAnything,
+					pThis, CellStruct::Empty, false, nullptr);
 			}
 			pTarget->Owner->HasBeenThieved = true;
 			if(pThis->AttachedTag) {
@@ -865,13 +866,14 @@ bool TechnoExt::ExtData::PerformActionHijack(TechnoClass* pTarget) {
 			// raise some events in case the driver enters
 			// a vehicle that needs an Operator
 			if(pTarget->AttachedTag) {
-				pTarget->AttachedTag->RaiseEvent(TriggerEvent::EnteredBy, pThis, CellStruct::Empty, 0, 0);
+				pTarget->AttachedTag->RaiseEvent(TriggerEvent::EnteredBy,
+					pThis, CellStruct::Empty, false, nullptr);
 			}
 		}
 
 		// if the hijacker is mind-controlled, free it,
 		// too, and attach to the new target. #762
-		TechnoClass* controller = pThis->MindControlledBy;
+		const auto controller = pThis->MindControlledBy;
 		if(controller) {
 			++Unsorted::IKnowWhatImDoing;
 			controller->CaptureManager->FreeUnit(pThis);
@@ -879,12 +881,12 @@ bool TechnoExt::ExtData::PerformActionHijack(TechnoClass* pTarget) {
 		}
 
 		// let's make a steal
-		pTarget->SetOwningHouse(pThis->Owner, 1);
+		pTarget->SetOwningHouse(pThis->Owner, true);
 		pTarget->GotHijacked();
-		VocClass::PlayAt(pTypeExt->HijackerEnterSound, pTarget->Location, 0);
+		VocClass::PlayAt(pTypeExt->HijackerEnterSound, pTarget->Location, nullptr);
 
 		// remove the driverless-marker
-		TechnoExt::ExtData* pDestExt = TechnoExt::ExtMap.Find(pTarget);
+		const auto pDestExt = TechnoExt::ExtMap.Find(pTarget);
 		pDestExt->DriverKilled = false;
 
 		// save the hijacker's properties
