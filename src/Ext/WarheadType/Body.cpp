@@ -439,6 +439,9 @@ bool WarheadTypeExt::ExtData::applyKillDriver(BulletClass* Bullet) {
 				pOwner = HouseClass::FindSpecial();
 			}
 
+			pTarget->SetTarget(nullptr);
+			pTarget->SetDestination(nullptr, false);
+
 			pTarget->SetOwningHouse(pOwner);
 			pTarget->QueueMission(Mission::Harmless, true);
 			return true;
