@@ -366,6 +366,14 @@ bool WarheadTypeExt::ExtData::applyKillDriver(BulletClass* Bullet) {
 
 			const auto passive = pOwner->Type->MultiplayPassive;
 
+			auto TargetExt = TechnoExt::ExtMap.Find(pTarget);
+			TargetExt->DriverKilled = passive;
+
+			// exit if owner would not change
+			if(pTarget->Owner == pOwner) {
+				return false;
+			}
+
 			// If this vehicle uses Operator=, we have to take care of actual "physical" drivers, rather than theoretical ones
 			if(pTargetTypeExt->IsAPromiscuousWhoreAndLetsAnyoneRideIt && pTarget->Passengers.GetFirstPassenger()) {
 				// kill first passenger
@@ -442,9 +450,6 @@ bool WarheadTypeExt::ExtData::applyKillDriver(BulletClass* Bullet) {
 					pSlaveManager->ResumeWork();
 				}
 			}
-
-			auto TargetExt = TechnoExt::ExtMap.Find(pTarget);
-			TargetExt->DriverKilled = passive;
 
 			// Hand over to a different house
 			pTarget->SetOwningHouse(pOwner);
