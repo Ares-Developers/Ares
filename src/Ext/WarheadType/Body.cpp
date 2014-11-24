@@ -356,6 +356,16 @@ bool WarheadTypeExt::ExtData::applyKillDriver(BulletClass* Bullet) {
 				}
 			}
 
+			// get the new owner
+			const auto pInvoker = Bullet->Owner->Owner;
+			auto pOwner = HouseExt::GetHouseKind(this->KillDriver_Owner, false,
+				nullptr, pInvoker, pInvoker, pTarget->Owner);
+			if(!pOwner) {
+				pOwner = HouseClass::FindSpecial();
+			}
+
+			const auto passive = pOwner->Type->MultiplayPassive;
+
 			// If this vehicle uses Operator=, we have to take care of actual "physical" drivers, rather than theoretical ones
 			if(pTargetTypeExt->IsAPromiscuousWhoreAndLetsAnyoneRideIt && pTarget->Passengers.GetFirstPassenger()) {
 				// kill first passenger
@@ -430,13 +440,13 @@ bool WarheadTypeExt::ExtData::applyKillDriver(BulletClass* Bullet) {
 			}
 
 			auto TargetExt = TechnoExt::ExtMap.Find(pTarget);
-			TargetExt->DriverKilled = true;
+			TargetExt->DriverKilled = passive;
 
 			// Hand over to a different house
-			auto pOwner = HouseExt::GetHouseKind(this->KillDriver_Owner, false,
-				nullptr, nullptr, nullptr, nullptr);
-			if(!pOwner) {
-				pOwner = HouseClass::FindSpecial();
+			pTarget->SetOwningHouse(pOwner);
+
+			if(passive) {
+				pTarget->QueueMission(Mission::Harmless, true);
 			}
 
 			pTarget->SetTarget(nullptr);
