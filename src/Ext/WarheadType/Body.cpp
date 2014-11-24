@@ -436,7 +436,11 @@ bool WarheadTypeExt::ExtData::applyKillDriver(BulletClass* Bullet) {
 				pSlaveManager->Killed(Bullet->Owner);
 				pSlaveManager->ZeroOutSlaves();
 				pSlaveManager->Owner = pTarget;
-				pSlaveManager->SuspendWork();
+				if(passive) {
+					pSlaveManager->SuspendWork();
+				} else {
+					pSlaveManager->ResumeWork();
+				}
 			}
 
 			auto TargetExt = TechnoExt::ExtMap.Find(pTarget);
