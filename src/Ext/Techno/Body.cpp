@@ -782,9 +782,9 @@ AresAction::Value TechnoExt::ExtData::GetActionHijack(TechnoClass* pTarget) {
 		}
 	}
 
-	 //drivers can drive, but only stuff owned by Special. if a driver is a vehicle thief
+	 //drivers can drive, but only stuff owned by neutrals. if a driver is a vehicle thief
 	 //also, it can reclaim units even if they are immune to hijacking (see below)
-	bool specialOwned = !_strcmpi(pTarget->Owner->Type->ID, "Special");
+	bool specialOwned = pTarget->Owner->Type->MultiplayPassive;
 	if(specialOwned && pTypeExt->CanDrive) {
 		return AresAction::Drive;
 	}
