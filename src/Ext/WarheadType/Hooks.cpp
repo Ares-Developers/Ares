@@ -50,7 +50,7 @@ DEFINE_HOOK(46920B, BulletClass_Fire, 6) {
 		pWHExt->applyIronCurtain(coords, OwnerHouse, damage);
 		pWHExt->applyEMP(coords, Bullet->Owner);
 		WarheadTypeExt::applyOccupantDamage(Bullet);
-		pWHExt->applyKillDriver(Bullet);
+		pWHExt->applyKillDriver(Bullet->Owner, Bullet->Target);
 		pWHExt->applyAttachedEffect(coords, Bullet->Owner);
 	}
 

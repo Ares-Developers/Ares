@@ -124,7 +124,7 @@ public:
 
 		void applyAttachedEffect(const CoordStruct &coords, TechnoClass* pOwner);
 
-		bool applyKillDriver(BulletClass *); // #733
+		bool applyKillDriver(TechnoClass* pSource, AbstractClass* pTarget) const; // #733
 
 		VersesData& GetVerses(Armor armor) {
 			return this->Verses[static_cast<int>(armor)];

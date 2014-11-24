@@ -323,18 +323,19 @@ bool WarheadTypeExt::canWarheadAffectTarget(TechnoClass * Target, HouseClass * S
 
 // Request #733: KillDriver/"Jarmen Kell"
 /*! This function checks if the KillDriver effect should be applied, and, if so, applies it.
-	\param Bullet Pointer to the bullet
+	\param pSource Pointer to the firing unit
+	\param pVictim Pointer to the target unit
 	\return true if the effect was applied, false if not
 	\author Renegade & AlexB
 	\date 05.04.10
 	\todo This needs to be refactored to work with the generic warhead SW. I want to create a generic cellspread function first.
 */
-bool WarheadTypeExt::ExtData::applyKillDriver(BulletClass* Bullet) {
-	if(!Bullet->Target || !this->KillDriver) {
+bool WarheadTypeExt::ExtData::applyKillDriver(TechnoClass* const pSource, AbstractClass* const pVictim) const {
+	if(!pSource || !this->KillDriver) {
 		return false;
 	}
 
-	if(auto pTarget = abstract_cast<FootClass*>(Bullet->Target)) {
+	if(auto const pTarget = abstract_cast<FootClass*>(pVictim)) {
 		// don't penetrate the Iron Curtain // typedef IronCurtain ChastityBelt
 		if(pTarget->IsIronCurtained()) {
 			return false;
@@ -357,7 +358,7 @@ bool WarheadTypeExt::ExtData::applyKillDriver(BulletClass* Bullet) {
 			}
 
 			// get the new owner
-			const auto pInvoker = Bullet->Owner->Owner;
+			const auto pInvoker = pSource->Owner;
 			auto pOwner = HouseExt::GetHouseKind(this->KillDriver_Owner, false,
 				nullptr, pInvoker, pInvoker, pTarget->Owner);
 			if(!pOwner) {
@@ -378,7 +379,7 @@ bool WarheadTypeExt::ExtData::applyKillDriver(BulletClass* Bullet) {
 			if(pTargetTypeExt->IsAPromiscuousWhoreAndLetsAnyoneRideIt && pTarget->Passengers.GetFirstPassenger()) {
 				// kill first passenger
 				auto pPassenger = pTarget->RemoveFirstPassenger();
-				pPassenger->RegisterDestruction(Bullet->Owner);
+				pPassenger->RegisterDestruction(pSource);
 				pPassenger->UnInit();
 
 			} else if(auto pOperatorType = pTargetTypeExt->Operator) {
@@ -386,7 +387,7 @@ bool WarheadTypeExt::ExtData::applyKillDriver(BulletClass* Bullet) {
 				for(auto pPassenger = pTarget->Passengers.GetFirstPassenger(); pPassenger; pPassenger = abstract_cast<FootClass*>(pPassenger->NextObject)) {
 					if(pPassenger->GetTechnoType() == pOperatorType) {
 						pTarget->RemovePassenger(pPassenger);
-						pPassenger->RegisterDestruction(Bullet->Owner);
+						pPassenger->RegisterDestruction(pSource);
 						pPassenger->UnInit();
 						break;
 					}
@@ -441,7 +442,7 @@ bool WarheadTypeExt::ExtData::applyKillDriver(BulletClass* Bullet) {
 			// <Renegade> so on principle, I could just re-link it?
 			// <DCoder> yes you can
 			if(auto pSlaveManager = pTarget->SlaveManager) {
-				pSlaveManager->Killed(Bullet->Owner);
+				pSlaveManager->Killed(pSource);
 				pSlaveManager->ZeroOutSlaves();
 				pSlaveManager->Owner = pTarget;
 				if(passive) {
