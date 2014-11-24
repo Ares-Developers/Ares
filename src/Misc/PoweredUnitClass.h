@@ -17,11 +17,10 @@ private:
 	void PowerUp();
 	bool PowerDown();
 public:
-	PoweredUnitClass(TechnoClass* Techno) : Techno(Techno), LastScan(0), Powered(true) {
-	}
+	PoweredUnitClass(TechnoClass* Techno) : Techno(Techno), LastScan(0), Powered(true)
+	{ }
 	
-	~PoweredUnitClass() {
-	}
+	~PoweredUnitClass() = default;
 
 	//!< Updates this Powered Unit's status. Returns whether the unit should stay alive.
 	bool Update();
