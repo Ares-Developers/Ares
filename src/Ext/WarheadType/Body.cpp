@@ -470,31 +470,27 @@ bool WarheadTypeExt::ExtData::applyKillDriver(TechnoClass* const pSource, Abstra
 //since CellSpread effect is needed due to MO's proposed cloak SW (which is the reason why I was bugged with this), it has it.
 //Graion Dilach, ~2011-10-14... I forgot the exact date :S
 
-void WarheadTypeExt::ExtData::applyAttachedEffect(const CoordStruct &coords, TechnoClass* Owner) {
-	if (this->AttachedEffect.Duration != 0) {
-		CellStruct cellCoords = MapClass::Instance->GetCellAt(coords)->MapCoords;
+void WarheadTypeExt::ExtData::applyAttachedEffect(const CoordStruct &coords, TechnoClass* const Owner) {
+	if(this->AttachedEffect.Duration != 0) {
 		// set of affected objects. every object can be here only once.
-		auto items = Helpers::Alex::getCellSpreadItems(coords, this->OwnerObject()->CellSpread, true);
+		const auto items = Helpers::Alex::getCellSpreadItems(coords, this->OwnerObject()->CellSpread, true);
 
 		// affect each object
-		for(auto curTechno : items) {
+		for(const auto curTechno : items) {
 			// don't attach to dead
 			if(!curTechno || curTechno->InLimbo || !curTechno->IsAlive || !curTechno->Health) {
 				continue;
 			}
 
-			if (Owner) {
-				if(WarheadTypeExt::CanAffectTarget(curTechno, Owner->Owner, this->OwnerObject())) {
-					if(abs(this->GetVerses(curTechno->GetTechnoType()->Armor).Verses) < 0.001) {
-						continue;
-					}
-					//this->AttachedEffect.Attach(curTechno, this->AttachedEffect.Duration, Owner, this->AttachedEffect.DamageDelay);
-					this->AttachedEffect.Attach(curTechno, this->AttachedEffect.Duration, Owner);
+			if(Owner) {
+				if(!WarheadTypeExt::CanAffectTarget(curTechno, Owner->Owner, this->OwnerObject())
+					|| std::abs(this->GetVerses(curTechno->GetTechnoType()->Armor).Verses) < 0.001)
+				{
+					continue;
 				}
-			} else {
-				//this->AttachedEffect.Attach(curTechno, this->AttachedEffect.Duration, nullptr, this->AttachedEffect.DamageDelay);
-				this->AttachedEffect.Attach(curTechno, this->AttachedEffect.Duration, nullptr);
 			}
+
+			this->AttachedEffect.Attach(curTechno, this->AttachedEffect.Duration, Owner);
 		}
 	}
 }
