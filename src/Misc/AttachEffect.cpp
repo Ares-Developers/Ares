@@ -177,20 +177,20 @@ void AttachEffectClass::Update(TechnoClass *Source) {
 
 	if (!pData->AttachedEffects.empty()) {
 
-		if (!pData->AttachEffects_RecreateAnims &&
-		(Source->CloakState == CloakState::Cloaked || Source->CloakState == CloakState::Cloaking)) {
-			for (size_t i = pData->AttachedEffects.size(); i > 0; --i) {
-				pData->AttachedEffects.at(i - 1)->KillAnim();
+		if(Source->CloakState == CloakState::Cloaked || Source->CloakState == CloakState::Cloaking) {
+			if(!pData->AttachEffects_RecreateAnims) {
+				for(size_t i = pData->AttachedEffects.size(); i > 0; --i) {
+					pData->AttachedEffects.at(i - 1)->KillAnim();
+				}
+				pData->AttachEffects_RecreateAnims = true;
 			}
-			pData->AttachEffects_RecreateAnims = true;
-		}
-
-		if (pData->AttachEffects_RecreateAnims &&
-		!(Source->CloakState == CloakState::Cloaked || Source->CloakState == CloakState::Cloaking)) {
-			for (size_t i = pData->AttachedEffects.size(); i > 0; --i) {
-				pData->AttachedEffects.at(i - 1)->CreateAnim(Source);
+		} else {
+			if(pData->AttachEffects_RecreateAnims) {
+				for(size_t i = pData->AttachedEffects.size(); i > 0; --i) {
+					pData->AttachedEffects.at(i - 1)->CreateAnim(Source);
+				}
+				pData->AttachEffects_RecreateAnims = false;
 			}
-			pData->AttachEffects_RecreateAnims = false;
 		}
 
 		//Debug::Log("[AttachEffect]AttachEffect update of %s...\n", Source->get_ID());
