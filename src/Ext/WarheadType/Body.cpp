@@ -155,7 +155,7 @@ void WarheadTypeExt::ExtData::applyIronCurtain(const CoordStruct &coords, HouseC
 			}
 
 			// affects enemies or allies respectively?
-			if(!WarheadTypeExt::canWarheadAffectTarget(curTechno, Owner, this->OwnerObject())) {
+			if(!WarheadTypeExt::CanAffectTarget(curTechno, Owner, this->OwnerObject())) {
 				continue;
 			}
 
@@ -289,33 +289,28 @@ void WarheadTypeExt::applyOccupantDamage(BulletClass* Bullet) {
 
 //! Gets whether a Techno can be affected by a warhead fired by a house.
 /*!
-	A warhead will not affect allies if AffectsAllies is not set and will not
-	affect enemies if AffectsEnemies is not set.
+A warhead will not affect allies if AffectsAllies is not set and will not
+affect enemies if AffectsEnemies is not set.
 
-	\param Target The Techno WH is fired at.
-	\param SourceHouse The house that fired WH.
-	\param WH The fired warhead.
+\param pTarget The Techno pWarhead is fired at.
+\param pSourceHouse The house that fired pWarhead.
+\param pWarhead The fired warhead.
 
-	\returns True if WH can affect Target, false otherwise.
+\returns True if pWarhead can affect pTarget, false otherwise.
 
-	\author AlexB
-	\date 2010-04-27
+\author AlexB
+\date 2010-04-27
 */
-bool WarheadTypeExt::canWarheadAffectTarget(TechnoClass * Target, HouseClass * SourceHouse, WarheadTypeClass *WH) {
-	if (SourceHouse && Target && WH) {
-		// owner and target house are allied and this warhead
-		// is set to not hurt any allies.
-		bool alliedWithTarget = SourceHouse->IsAlliedWith(Target->Owner);
-		if (alliedWithTarget && !WH->AffectsAllies) {
-			return false;
+bool WarheadTypeExt::CanAffectTarget(TechnoClass* const pTarget, HouseClass* const pSourceHouse, WarheadTypeClass* const pWarhead) {
+	if(pSourceHouse && pTarget && pWarhead) {
+		// apply AffectsAllies if owner and target house are allied
+		if(pSourceHouse->IsAlliedWith(pTarget->Owner)) {
+			return pWarhead->AffectsAllies;
 		}
 
-		// this warhead's pulse is designed to fly around
-		// enemy units. useful for healing.
-		WarheadTypeExt::ExtData *pWHdata = WarheadTypeExt::ExtMap.Find(WH);
-		if (!alliedWithTarget && !pWHdata->AffectsEnemies) {
-			return false;
-		}
+		// this warhead is designed to ignore enemy units
+		const auto pExt = WarheadTypeExt::ExtMap.Find(pWarhead);
+		return pExt->AffectsEnemies;
 	}
 
 	return true;
@@ -489,7 +484,7 @@ void WarheadTypeExt::ExtData::applyAttachedEffect(const CoordStruct &coords, Tec
 			}
 
 			if (Owner) {
-				if(WarheadTypeExt::canWarheadAffectTarget(curTechno, Owner->Owner, this->OwnerObject())) {
+				if(WarheadTypeExt::CanAffectTarget(curTechno, Owner->Owner, this->OwnerObject())) {
 					if(abs(this->GetVerses(curTechno->GetTechnoType()->Armor).Verses) < 0.001) {
 						continue;
 					}

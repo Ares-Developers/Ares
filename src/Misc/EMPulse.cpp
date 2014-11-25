@@ -342,7 +342,7 @@ bool EMPulse::isEligibleEMPTarget(TechnoClass * Target, HouseClass * SourceHouse
 		return false;
 	}
 
-	if (!WarheadTypeExt::canWarheadAffectTarget(Target, SourceHouse, Warhead)) {
+	if (!WarheadTypeExt::CanAffectTarget(Target, SourceHouse, Warhead)) {
 		if (verbose) {
 			Debug::Log("[isEligibleEMPTarget] \"%s\" does not affect target.\n", Warhead->ID);
 		}

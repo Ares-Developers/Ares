@@ -168,7 +168,7 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 		return false;
 	}
 
-	if(!WarheadTypeExt::canWarheadAffectTarget(Target, Attacker->Owner, Bullet->WH)) {
+	if(!WarheadTypeExt::CanAffectTarget(Target, Attacker->Owner, Bullet->WH)) {
 		return false;
 	}
 

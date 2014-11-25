@@ -165,7 +165,7 @@ public:
 	}
 	static void applyOccupantDamage(BulletClass *);
 
-	static bool canWarheadAffectTarget(TechnoClass *, HouseClass *, WarheadTypeClass *);
+	static bool CanAffectTarget(TechnoClass* pTarget, HouseClass* pSourceHouse, WarheadTypeClass* pWarhead);
 
 	static void applyAttachedEffect(WarheadTypeClass * pWH, const CoordStruct &coords, TechnoClass * Source) {
 		//static void applyAttachedEffect(WarheadTypeClass * pWH, CoordStruct* coords, HouseClass* Owner) {
