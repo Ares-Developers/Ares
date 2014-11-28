@@ -26,64 +26,64 @@ FireError TechnoExt::FiringStateCache = FireError::NONE;
 
 bool TechnoExt::NeedsRegap = false;
 
-void TechnoExt::SpawnSurvivors(FootClass *pThis, TechnoClass *pKiller, bool Select, bool IgnoreDefenses)
+void TechnoExt::SpawnSurvivors(FootClass* const pThis, TechnoClass* const pKiller, const bool Select, const bool IgnoreDefenses)
 {
-	TechnoTypeClass *Type = pThis->GetTechnoType();
+	auto const pType = pThis->GetTechnoType();
+	auto const pOwner = pThis->Owner;
 
-	HouseClass *pOwner = pThis->Owner;
-	TechnoTypeExt::ExtData *pData = TechnoTypeExt::ExtMap.Find(Type);
-	TechnoExt::ExtData *pSelfData = TechnoExt::ExtMap.Find(pThis);
+	auto const pExt = TechnoExt::ExtMap.Find(pThis);
+	auto const pTypeExt = TechnoTypeExt::ExtMap.Find(pType);
 
-	CoordStruct loc = pThis->Location;
-	int chance = pData->Survivors_PilotChance.Get(pThis);
-	if(chance < 0) {
-		chance = static_cast<int>(RulesClass::Instance->CrewEscape * 100);
+	auto const location = pThis->Location;
+	int pilotChance = pTypeExt->Survivors_PilotChance.Get(pThis);
+	if(pilotChance < 0) {
+		pilotChance = static_cast<int>(RulesClass::Instance->CrewEscape * 100);
 	}
 
 	// always eject passengers, but crew only if not already processed.
-	if(!pSelfData->Survivors_Done && !pSelfData->DriverKilled && !IgnoreDefenses) {
+	if(!pExt->Survivors_Done && !pExt->DriverKilled && !IgnoreDefenses) {
 		// save this, because the hijacker can kill people
-		int PilotCount = pThis->GetCrewCount();
+		auto pilotCount = pThis->GetCrewCount();
 
 		// process the hijacker
-		if(InfantryClass *Hijacker = RecoverHijacker(pThis)) {
-			TechnoTypeExt::ExtData* pExt = TechnoTypeExt::ExtMap.Find(Hijacker->Type);
+		if(auto const pHijacker = RecoverHijacker(pThis)) {
+			auto const pHijackerTypeExt = TechnoTypeExt::ExtMap.Find(pHijacker->Type);
 
-			if(!EjectRandomly(Hijacker, loc, 144, Select)) {
-				Hijacker->RegisterDestruction(pKiller);
-				GameDelete(Hijacker);
+			if(!EjectRandomly(pHijacker, location, 144, Select)) {
+				pHijacker->RegisterDestruction(pKiller);
+				GameDelete(pHijacker);
 			} else {
 				// the hijacker will now be controlled instead of the unit
-				if(TechnoClass* pController = pThis->MindControlledBy) {
+				if(auto const pController = pThis->MindControlledBy) {
 					++Unsorted::IKnowWhatImDoing; // disables sound effects
 					pController->CaptureManager->FreeUnit(pThis);
-					pController->CaptureManager->CaptureUnit(Hijacker); // does the immunetopsionics check for us
+					pController->CaptureManager->CaptureUnit(pHijacker); // does the immunetopsionics check for us
 					--Unsorted::IKnowWhatImDoing;
-					Hijacker->QueueMission(Mission::Guard, true); // override the fate the AI decided upon
-					
+					pHijacker->QueueMission(Mission::Guard, true); // override the fate the AI decided upon
 				}
-				VocClass::PlayAt(pExt->HijackerLeaveSound, pThis->Location, 0);
+
+				VocClass::PlayAt(pHijackerTypeExt->HijackerLeaveSound, location, nullptr);
 
 				// lower than 0: kill all, otherwise, kill n pilots
-				PilotCount = ((pExt->HijackerKillPilots < 0) ? 0 : (PilotCount - pExt->HijackerKillPilots));
+				pilotCount = ((pHijackerTypeExt->HijackerKillPilots < 0) ? 0 : (pilotCount - pHijackerTypeExt->HijackerKillPilots));
 			}
 		}
 
-		// possibly eject up to PilotCount crew members
-		if(Type->Crewed && chance > 0) {
-			for(int i = 0; i < PilotCount; ++i) {
-				if(auto PilotType = pThis->GetCrew()) {
-					if(ScenarioClass::Instance->Random.RandomRanged(1, 100) <= chance) {
-						auto Pilot = static_cast<InfantryClass *>(PilotType->CreateObject(pOwner));
-						Pilot->Health /= 2;
-						Pilot->Veterancy.Veterancy = pThis->Veterancy.Veterancy;
+		// possibly eject up to pilotCount crew members
+		if(pType->Crewed && pilotChance > 0) {
+			for(int i = 0; i < pilotCount; ++i) {
+				if(auto pPilotType = pThis->GetCrew()) {
+					if(ScenarioClass::Instance->Random.RandomRanged(1, 100) <= pilotChance) {
+						auto const pPilot = static_cast<InfantryClass*>(pPilotType->CreateObject(pOwner));
+						pPilot->Health /= 2;
+						pPilot->Veterancy.Veterancy = pThis->Veterancy.Veterancy;
 
-						if(!EjectRandomly(Pilot, loc, 144, Select)) {
-							Pilot->RegisterDestruction(pKiller); //(TechnoClass *)R->get_StackVar32(0x54));
-							GameDelete(Pilot);
+						if(!EjectRandomly(pPilot, location, 144, Select)) {
+							pPilot->RegisterDestruction(pKiller);
+							GameDelete(pPilot);
 						} else {
 							if(pThis->AttachedTag && pThis->AttachedTag->IsTriggerRepeating()) {
-								Pilot->ReplaceTag(pThis->AttachedTag);
+								pPilot->ReplaceTag(pThis->AttachedTag);
 							}
 						}
 					}
@@ -93,32 +93,33 @@ void TechnoExt::SpawnSurvivors(FootClass *pThis, TechnoClass *pKiller, bool Sele
 	}
 
 	// passenger escape chances
-	chance = pData->Survivors_PassengerChance.Get(pThis);
+	auto const passengerChance = pTypeExt->Survivors_PassengerChance.Get(pThis);
 
 	// eject or kill all passengers. if defenses are to be ignored, passengers
 	// killed no matter what the odds are.
 	while(pThis->Passengers.FirstPassenger) {
 		bool toDelete = true;
-		FootClass *passenger = pThis->RemoveFirstPassenger();
+		auto const pPassenger = pThis->RemoveFirstPassenger();
 		bool toSpawn = false;
-		if(chance > 0) {
-			toSpawn = ScenarioClass::Instance->Random.RandomRanged(1, 100) <= chance;
-		} else if(chance == -1 && pThis->WhatAmI() == UnitClass::AbsID) {
-			Move occupation = passenger->IsCellOccupied(pThis->GetCell(), -1, -1, nullptr, true);
+		if(passengerChance > 0) {
+			toSpawn = ScenarioClass::Instance->Random.RandomRanged(1, 100) <= passengerChance;
+		} else if(passengerChance == -1 && pThis->WhatAmI() == UnitClass::AbsID) {
+			Move occupation = pPassenger->IsCellOccupied(pThis->GetCell(), -1, -1, nullptr, true);
 			toSpawn = (occupation == Move::OK || occupation == Move::MovingBlock);
 		}
 		if(toSpawn && !IgnoreDefenses) {
-			toDelete = !EjectRandomly(passenger, loc, 128, Select);
+			toDelete = !EjectRandomly(pPassenger, location, 128, Select);
 		}
 		if(toDelete) {
-			passenger->RegisterDestruction(pKiller); //(TechnoClass *)R->get_StackVar32(0x54));
-			passenger->UnInit();
+			pPassenger->RegisterDestruction(pKiller);
+			pPassenger->UnInit();
 		}
 	}
 
 	// do not ever do this again for this unit
-	pSelfData->Survivors_Done = true;
+	pExt->Survivors_Done = true;
 }
+
 /**
 	\param Survivor Passenger to eject
 	\param loc Where to put the passenger
