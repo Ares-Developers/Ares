@@ -607,7 +607,7 @@ DEFINE_HOOK(53A300, LightningStorm_Strike2, 5) {
 			// cause mayhem
 			if(damage) {
 				auto pWarhead = pData->GetWarhead();
-				MapClass::FlashbangWarheadAt(damage, pWarhead, Coords, false, 0);
+				MapClass::FlashbangWarheadAt(damage, pWarhead, Coords, false, SpotlightFlags::None);
 				MapClass::DamageArea(Coords, damage, nullptr, pWarhead, true, pSuper->Owner);
 
 				// fancy stuff if damage is dealt

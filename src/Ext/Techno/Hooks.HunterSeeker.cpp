@@ -165,8 +165,8 @@ DEFINE_HOOK(4CF3D0, FlyLocomotionClass_sub_4CEFB0_HunterSeeker, 7)
 
 					// damage the map
 					crd = pObject->GetCoords();
-					MapClass::Instance->FlashbangWarheadAt(pWeapon->Damage, RulesClass::Instance->C4Warhead, crd, false, 0);
-					MapClass::Instance->DamageArea(crd, pWeapon->Damage, pObject, pWeapon->Warhead, true, nullptr);
+					MapClass::FlashbangWarheadAt(pWeapon->Damage, RulesClass::Instance->C4Warhead, crd);
+					MapClass::DamageArea(crd, pWeapon->Damage, pObject, pWeapon->Warhead, true, nullptr);
 
 					// return 0
 					R->EBX(0);

@@ -48,7 +48,7 @@ bool SW_GenericWarhead::Activate(SuperClass* pThis, const CellStruct &Coords, bo
 		if(AnimTypeClass * DamageAnimType = MapClass::SelectDamageAnimation(damage, pWarhead, Cell->LandType, coords)) {
 			GameCreate<AnimClass>(DamageAnimType, coords);
 		}
-		MapClass::FlashbangWarheadAt(damage, pWarhead, coords, false, 0);
+		MapClass::FlashbangWarheadAt(damage, pWarhead, coords, false, SpotlightFlags::None);
 	}
 
 	return 1;
