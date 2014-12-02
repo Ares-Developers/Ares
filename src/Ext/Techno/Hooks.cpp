@@ -115,28 +115,23 @@ DEFINE_HOOK(6F9E50, TechnoClass_Update, 5)
 //! EXCEPT if the target is under Temporal, use the 71A860 hook for that - Graion, 2013-06-13.
 DEFINE_HOOK(6F9E76, TechnoClass_Update_CheckOperators, 6)
 {
-	GET(TechnoClass *, pThis, ESI); // object this is called on
-	//TechnoTypeClass *Type = pThis->GetTechnoType();
-	//TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(Type);
-	TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(pThis->GetTechnoType());
-	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(pThis);
+	GET(TechnoClass* const, pThis, ESI); // object this is called on
+
+	auto const pData = TechnoExt::ExtMap.Find(pThis);
 
 	// Related to operators/drivers, issue #342
-	BuildingClass * pTheBuildingBelow = pThis->GetCell()->GetBuilding();
+	auto const pBuildingBelow = pThis->GetCell()->GetBuilding();
+	auto const buildingBelowIsMe = pThis == pBuildingBelow;
 
 	/* Conditions checked:
-		- Is there no building below us
-		OR
-		- Is this the building on this cell AND is it online
-
-		pTheBuildingBelow will be NULL if no building was found
+		pBuildingBelow will be NULL if no building was found
 		This check ensures that Operator'd units don't Deactivate above structures such as War Factories, Repair Depots or Battle Bunkers.
 		(Which is potentially abusable, but let's hope no one figures that out.)
 	*/
-	if(!pTheBuildingBelow || ((pTheBuildingBelow == pThis) && (pTheBuildingBelow->IsPowerOnline()))) {
+	if(!pBuildingBelow || (buildingBelowIsMe && pBuildingBelow->IsPowerOnline())) {
 		bool Override = false;
-		if(FootClass *pFoot = generic_cast<FootClass*>(pThis)) {
-			if(!pTheBuildingBelow) {
+		if(auto const pFoot = abstract_cast<FootClass*>(pThis)) {
+			if(!pBuildingBelow) {
 				// immobile, though not disabled. like hover tanks after
 				// a repair depot has been sold or warped away.
 				Override = (pFoot->Locomotor->Is_Powered() == pThis->Deactivated);
@@ -144,16 +139,16 @@ DEFINE_HOOK(6F9E76, TechnoClass_Update_CheckOperators, 6)
 		}
 
 		if(pData->IsOperated()) { // either does have an operator or doesn't need one, so...
-			if( (pThis->Deactivated && pData->IsPowered() && !pThis->IsUnderEMP()) || Override ) { // ...if it's currently off, turn it on! (oooh baby)
+			if(Override || (pThis->Deactivated && !pThis->IsUnderEMP() && pData->IsPowered())) { // ...if it's currently off, turn it on! (oooh baby)
 				pThis->Reactivate();
-				if(pTheBuildingBelow == pThis) {
+				if(buildingBelowIsMe) {
 					pThis->Owner->RecheckTechTree = true; // #885
 				}
 			}
 		} else { // doesn't have an operator, so...
 			if(!pThis->Deactivated) { // ...if it's not off yet, turn it off!
 				pThis->Deactivate();
-				if(pTheBuildingBelow == pThis) {
+				if(buildingBelowIsMe) {
 					pThis->Owner->RecheckTechTree = true; // #885
 				}
 			}
@@ -162,7 +157,7 @@ DEFINE_HOOK(6F9E76, TechnoClass_Update_CheckOperators, 6)
 
 	// prevent disabled units from driving around.
 	if(pThis->Deactivated) {
-		if(UnitClass* pUnit = specific_cast<UnitClass*>(pThis)) {
+		if(auto const pUnit = abstract_cast<UnitClass*>(pThis)) {
 			if(pUnit->Locomotor->Is_Moving() && pUnit->Destination && !pThis->LocomotorSource) {
 				pUnit->SetDestination(nullptr, true);
 				pUnit->StopMoving();
@@ -175,7 +170,10 @@ DEFINE_HOOK(6F9E76, TechnoClass_Update_CheckOperators, 6)
 		}
 	} else {
 		// dropping Radar Jammers (#305) here for now; should check if another TechnoClass::Update hook might be better ~Ren
-		if(!!pTypeData->RadarJamRadius) {
+		auto const pType = pThis->GetTechnoType();
+		auto const pTypeData = TechnoTypeExt::ExtMap.Find(pType);
+
+		if(pTypeData->RadarJamRadius) {
 			if(!pData->RadarJam) {
 				pData->RadarJam = std::make_unique<JammerClass>(pThis);
 			}
