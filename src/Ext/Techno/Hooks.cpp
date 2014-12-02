@@ -83,32 +83,30 @@ DEFINE_HOOK(4DA8B2, FootClass_Update_AnimRate, 6)
 
 DEFINE_HOOK(6F9E50, TechnoClass_Update, 5)
 {
-	GET(TechnoClass *, Source, ECX);
+	GET(TechnoClass* const, pThis, ECX);
 
-	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(Source);
-	TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(Source->GetTechnoType());
+	auto const pType = pThis->GetTechnoType();
+	auto const pData = TechnoExt::ExtMap.Find(pThis);
+	auto const pTypeData = TechnoTypeExt::ExtMap.Find(pType);
 
 	// #1208
-	if(pTypeData) {
-		if(pTypeData->PassengerTurret) {
-			// 18 = 1 8 = A H = Adolf Hitler. Clearly we can't allow it to come to that.
-			int passengerNumber = (Source->Passengers.NumPassengers <= 17) ? Source->Passengers.NumPassengers : 17;
-			int maxTurret = Source->GetTechnoType()->TurretCount - 1;
-			Source->CurrentTurretNumber = (passengerNumber <= maxTurret) ? passengerNumber : maxTurret;
-		}
+	if(pTypeData->PassengerTurret) {
+		// 18 = 1 8 = A H = Adolf Hitler. Clearly we can't allow it to come to that.
+		auto const passengerNumber = std::min(pThis->Passengers.NumPassengers, 17);
+		pThis->CurrentTurretNumber = std::min(passengerNumber, pType->TurretCount - 1);
 	}
-	
+
 	// #617 powered units
-	if(pTypeData && pTypeData->PoweredBy.size()) {
+	if(!pTypeData->PoweredBy.empty()) {
 		if(!pData->PoweredUnit) {
-			pData->PoweredUnit = std::make_unique<PoweredUnitClass>(Source);
+			pData->PoweredUnit = std::make_unique<PoweredUnitClass>(pThis);
 		}
 		if(!pData->PoweredUnit->Update()) {
-			TechnoExt::Destroy(Source);
+			TechnoExt::Destroy(pThis);
 		}
 	}
 
-	AttachEffectClass::Update(Source);
+	AttachEffectClass::Update(pThis);
 
 	return 0;
 }
