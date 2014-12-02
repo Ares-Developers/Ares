@@ -348,19 +348,17 @@ DEFINE_HOOK(629804, ParasiteClass_UpdateSquiddy, 9)
 	return 0x62980D;
 }
 
-
+/*
 DEFINE_HOOK(6F3330, TechnoClass_SelectWeapon, 5)
 {
-	//GET(TechnoClass *, pThis, ECX);
-	//GET_STACK(TechnoClass *, pTarg, 0x4);
+	GET(TechnoClass *, pThis, ECX);
+	GET_STACK(TechnoClass *, pTarg, 0x4);
 
-//	DWORD Selected = TechnoClassExt::SelectWeaponAgainst(pThis, pTarg);
-//	R->EAX(Selected);
-//	return 0x6F3813;
-	return 0;
+	DWORD Selected = TechnoClassExt::SelectWeaponAgainst(pThis, pTarg);
+	R->EAX(Selected);
+	return 0x6F3813;
 }
 
-/*
 int TechnoClassExt::SelectWeaponAgainst(TechnoClass *pThis, TechnoClass *pTarget)
 {
 	int Index = 0;
