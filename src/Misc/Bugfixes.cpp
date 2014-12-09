@@ -143,11 +143,12 @@ DEFINE_HOOK(6FCA30, TechnoClass_GetWeaponState, 6)
 }
 
 // PrismSupportModifier repair
-DEFINE_HOOK(671152, RulesClass_Addition_General, 6)
+DEFINE_HOOK(671152, RulesClass_Addition_General_PrismSupportModifier, 6)
 {
-	GET(RulesClass *, Rules, ESI);
-	Rules->PrismSupportModifier /= 100;
-	return 0;
+	GET(RulesClass*, pThis, ESI);
+	REF_STACK(double, param, 0x0);
+	param = pThis->PrismSupportModifier / 100.0;
+	return 0x67115B;
 }
 
 // Overpowerer no longer just infantry
