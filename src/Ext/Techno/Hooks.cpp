@@ -1013,15 +1013,20 @@ DEFINE_HOOK(6F6AC9, TechnoClass_Remove, 6) {
 	//#1573, #1623, #255 attached effects
 	if (!TechnoExt->AttachedEffects.empty()) {
 		//auto pID = pThis->GetTechnoType()->ID;
+		bool recalculate = false;
 		for (auto i = TechnoExt->AttachedEffects.size(); i > 0; --i) {
 			//Debug::Log("[AttachEffect] Removing %d. item from %s\n", i - 1, pID);
 			auto &Item = TechnoExt->AttachedEffects.at(i - 1);
 			if (Item->Type->DiscardOnEntry) {
 				TechnoExt->AttachedEffects.erase(TechnoExt->AttachedEffects.begin() + i - 1);
-				TechnoExt->RecalculateStats();
+				recalculate = true;
 			} else {
 				Item->KillAnim();
 			}
+		}
+
+		if(recalculate) {
+			TechnoExt->RecalculateStats();
 		}
 
 		TechnoExt->AttachEffects_RecreateAnims = true;

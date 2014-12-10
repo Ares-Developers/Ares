@@ -194,6 +194,7 @@ void AttachEffectClass::Update(TechnoClass *Source) {
 		}
 
 		//Debug::Log("[AttachEffect]AttachEffect update of %s...\n", Source->get_ID());
+		auto recalculate = false;
 		for (size_t i = pData->AttachedEffects.size(); i > 0; --i) {
 			auto Effect = pData->AttachedEffects.at(i - 1).get();
 			if(Effect->ActualDuration > 0) {
@@ -232,11 +233,16 @@ void AttachEffectClass::Update(TechnoClass *Source) {
 				}
 
 				pData->AttachedEffects.erase(pData->AttachedEffects.begin() + i - 1);
-				pData->RecalculateStats();	//and update the unit's properties
+				recalculate = true;
 				//Debug::Log("[AttachEffect] Remove #%d was successful.\n", i - 1);
 			}
-
 		}
+
+		// update the unit's properties
+		if(recalculate) {
+			pData->RecalculateStats();
+		}
+
 		//Debug::Log("[AttachEffect]Update was successful.\n");
 	}
 
