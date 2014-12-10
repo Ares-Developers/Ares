@@ -90,7 +90,7 @@ void AttachEffectTypeClass::Attach(TechnoClass* Target, int Duration, TechnoClas
 	Attaching->Invoker = Invoker;
 
 	// update the unit with the attached effect
-	TechnoExt::RecalculateStats(Target);
+	TargetExt->RecalculateStats();
 
 	//check cloak
 	if (!!this->ForceDecloak && Target->CloakState != CloakState::Uncloaked) {
@@ -232,7 +232,7 @@ void AttachEffectClass::Update(TechnoClass *Source) {
 				}
 
 				pData->AttachedEffects.erase(pData->AttachedEffects.begin() + i - 1);
-				TechnoExt::RecalculateStats(Source);	//and update the unit's properties
+				pData->RecalculateStats();	//and update the unit's properties
 				//Debug::Log("[AttachEffect] Remove #%d was successful.\n", i - 1);
 			}
 

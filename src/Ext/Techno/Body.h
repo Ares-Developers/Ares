@@ -160,6 +160,8 @@ public:
 		void SetSpotlight(BuildingLightClass* pSpotlight);
 
 		bool AcquireHunterSeekerTarget() const;
+
+		void RecalculateStats();
 	};
 
 	static Container<TechnoExt> ExtMap;
@@ -187,8 +189,6 @@ public:
 	static void TransferIvanBomb(TechnoClass *From, TechnoClass *To);
 	static void TransferAttachedEffects(TechnoClass *From, TechnoClass *To);
 	static void TransferOriginalOwner(TechnoClass* pFrom, TechnoClass* pTo);
-
-	static void RecalculateStats(TechnoClass *pTechno);
 
 	static void FreeSpecificSlave(TechnoClass *Slave, HouseClass *Affector);
 	static void DetachSpecificSpawnee(TechnoClass *Spawnee, HouseClass *NewSpawneeOwner);

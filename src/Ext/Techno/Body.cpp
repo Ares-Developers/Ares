@@ -573,7 +573,7 @@ void TechnoExt::TransferAttachedEffects(TechnoClass *From, TechnoClass *To) {
 
 	FromExt->AttachedEffects.clear();
 	FromExt->AttachedTechnoEffect_isset = false;
-	TechnoExt::RecalculateStats(To);
+	ToExt->RecalculateStats();
 }
 
 /*! This function recalculates the stats modifiable by crates and update them (aimed for request #255)
@@ -581,17 +581,17 @@ void TechnoExt::TransferAttachedEffects(TechnoClass *From, TechnoClass *To) {
 	\author Graion Dilach
 	\date 2011-10-12
 */
+void TechnoExt::ExtData::RecalculateStats() {
+	auto const pThis = this->OwnerObject();
 
-void TechnoExt::RecalculateStats(TechnoClass* const pThis) {
-	auto const pTechnoExt = TechnoExt::ExtMap.Find(pThis);
-	auto Firepower = pTechnoExt->Crate_FirepowerMultiplier;
-	auto Armor = pTechnoExt->Crate_ArmorMultiplier;
-	auto Speed = pTechnoExt->Crate_SpeedMultiplier; //if there's hooks for crate-stuff, they could be the base for this
-	auto Cloak = TechnoExt::CanICloakByDefault(pThis) || pTechnoExt->Crate_Cloakable;
+	auto Firepower = this->Crate_FirepowerMultiplier;
+	auto Armor = this->Crate_ArmorMultiplier;
+	auto Speed = this->Crate_SpeedMultiplier; //if there's hooks for crate-stuff, they could be the base for this
+	auto Cloak = TechnoExt::CanICloakByDefault(pThis) || this->Crate_Cloakable;
 
 	//Debug::Log("[AttachEffect]Recalculating stats of %s...\n", pThis->get_ID());
 
-	for(const auto& Item : pTechnoExt->AttachedEffects) {
+	for(const auto& Item : this->AttachedEffects) {
 		auto const pType = Item->Type;
 		Firepower *= pType->FirepowerMultiplier;
 		Speed *= pType->SpeedMultiplier;

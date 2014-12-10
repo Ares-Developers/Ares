@@ -72,7 +72,7 @@ DEFINE_HOOK(48294F, CellClass_CrateBeingCollected_Cloak2, 7)
 	GET(TechnoClass *, Unit, EDX);
 	TechnoExt::ExtData *UnitExt = TechnoExt::ExtMap.Find(Unit);
 	UnitExt->Crate_Cloakable = 1;
-	TechnoExt::RecalculateStats(Unit);
+	UnitExt->RecalculateStats();
 	return 0x482956;
 }
 
@@ -83,7 +83,7 @@ DEFINE_HOOK(482E57, CellClass_CrateBeingCollected_Armor2, 6)
 	TechnoExt::ExtData *UnitExt = TechnoExt::ExtMap.Find(Unit);
 	if (UnitExt->Crate_ArmorMultiplier == 1.0){
 		UnitExt->Crate_ArmorMultiplier = Pow_ArmorMultiplier;
-		TechnoExt::RecalculateStats(Unit);
+		UnitExt->RecalculateStats();
 		R->AL(Unit->GetOwningHouse()->PlayerControl);
 		return 0x482E89;
 	}
@@ -98,7 +98,7 @@ DEFINE_HOOK(48303A, CellClass_CrateBeingCollected_Speed2, 6)
 	TechnoExt::ExtData *UnitExt = TechnoExt::ExtMap.Find(Unit);
 	if (UnitExt->Crate_SpeedMultiplier == 1.0 && Unit->WhatAmI() != AbstractType::AircraftType){
 		UnitExt->Crate_SpeedMultiplier = Pow_SpeedMultiplier;
-		TechnoExt::RecalculateStats(Unit);
+		UnitExt->RecalculateStats();
 		R->CL(Unit->GetOwningHouse()->PlayerControl);
 		return 0x483078;
 	}
@@ -112,7 +112,7 @@ DEFINE_HOOK(483226, CellClass_CrateBeingCollected_Firepower2, 6)
 	TechnoExt::ExtData *UnitExt = TechnoExt::ExtMap.Find(Unit);
 	if (UnitExt->Crate_FirepowerMultiplier == 1.0){
 		UnitExt->Crate_FirepowerMultiplier = Pow_FirepowerMultiplier;
-		TechnoExt::RecalculateStats(Unit);
+		UnitExt->RecalculateStats();
 		R->AL(Unit->GetOwningHouse()->PlayerControl);
 		return 0x483258;
 	}

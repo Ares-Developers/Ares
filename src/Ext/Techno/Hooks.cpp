@@ -1018,7 +1018,7 @@ DEFINE_HOOK(6F6AC9, TechnoClass_Remove, 6) {
 			auto &Item = TechnoExt->AttachedEffects.at(i - 1);
 			if (Item->Type->DiscardOnEntry) {
 				TechnoExt->AttachedEffects.erase(TechnoExt->AttachedEffects.begin() + i - 1);
-				TechnoExt::RecalculateStats(pThis);
+				TechnoExt->RecalculateStats();
 			} else {
 				Item->KillAnim();
 			}
