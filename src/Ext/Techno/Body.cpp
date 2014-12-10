@@ -582,33 +582,33 @@ void TechnoExt::TransferAttachedEffects(TechnoClass *From, TechnoClass *To) {
 	\date 2011-10-12
 */
 
-void TechnoExt::RecalculateStats(TechnoClass *pTechno) {
-	auto pTechnoExt = TechnoExt::ExtMap.Find(pTechno);
-	double Firepower = pTechnoExt->Crate_FirepowerMultiplier,
-		Armor = pTechnoExt->Crate_ArmorMultiplier,
-		Speed = pTechnoExt->Crate_SpeedMultiplier; //if there's hooks for crate-stuff, they could be the base for this
-	bool Cloak = TechnoExt::CanICloakByDefault(pTechno) || pTechnoExt->Crate_Cloakable;
+void TechnoExt::RecalculateStats(TechnoClass* const pThis) {
+	auto const pTechnoExt = TechnoExt::ExtMap.Find(pThis);
+	auto Firepower = pTechnoExt->Crate_FirepowerMultiplier;
+	auto Armor = pTechnoExt->Crate_ArmorMultiplier;
+	auto Speed = pTechnoExt->Crate_SpeedMultiplier; //if there's hooks for crate-stuff, they could be the base for this
+	auto Cloak = TechnoExt::CanICloakByDefault(pThis) || pTechnoExt->Crate_Cloakable;
 
-	//Debug::Log("[AttachEffect]Recalculating stats of %s...\n", pTechno->get_ID());
+	//Debug::Log("[AttachEffect]Recalculating stats of %s...\n", pThis->get_ID());
 
-	for (const auto& Item : pTechnoExt->AttachedEffects) {
-		auto pType = Item->Type;
+	for(const auto& Item : pTechnoExt->AttachedEffects) {
+		auto const pType = Item->Type;
 		Firepower *= pType->FirepowerMultiplier;
 		Speed *= pType->SpeedMultiplier;
 		Armor *= pType->ArmorMultiplier;
 		Cloak |= pType->Cloakable;
 	}
 
-	pTechno->FirepowerMultiplier = Firepower;
-	pTechno->ArmorMultiplier = Armor;
+	pThis->FirepowerMultiplier = Firepower;
+	pThis->ArmorMultiplier = Armor;
 
-	pTechno->Cloakable = Cloak;
+	pThis->Cloakable = Cloak;
 
-	if(FootClass *Foot = generic_cast<FootClass *>(pTechno)) {
-		Foot->SpeedMultiplier = Speed;
+	if(auto const pFoot = abstract_cast<FootClass*>(pThis)) {
+		pFoot->SpeedMultiplier = Speed;
 	}
 
-	//Debug::Log("[AttachEffect]Calculation was successful.\n", pTechno->get_ID());
+	//Debug::Log("[AttachEffect]Calculation was successful.\n", pThis->get_ID());
 }
 
 /*! This function calculates whether the unit would be cloaked by default
