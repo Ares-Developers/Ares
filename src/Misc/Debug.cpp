@@ -146,11 +146,15 @@ void Debug::DumpStack(REGISTERS *R, size_t len, size_t startAt) {
 }
 
 void __cdecl Debug::LogUnflushed(const char *Format, ...) {
+	va_list ArgList;
+	va_start(ArgList, Format);
+	LogUnflushed(Format, ArgList);
+	va_end(ArgList);
+}
+
+void Debug::LogUnflushed(const char* Format, va_list ArgList) {
 	if(Debug::bLog && Debug::pLogFile) {
-		va_list ArgList;
-		va_start(ArgList, Format);
 		vfprintf(Debug::pLogFile, Format, ArgList);
-		va_end(ArgList);
 	}
 }
 
@@ -438,7 +442,7 @@ DEFINE_HOOK(4068E0, Debug_Log, 1)
 		LEA_STACK(va_list, ArgList, 0x8);
 		GET_STACK(char *, Format, 0x4);
 
-		vfprintf(Debug::pLogFile, Format, ArgList);
+		Debug::LogUnflushed(Format, ArgList);
 		fflush(Debug::pLogFile);
 	}
 	return 0x4A4AF9; // changed to co-op with YDE
