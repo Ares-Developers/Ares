@@ -9,6 +9,13 @@
 bool EMPulse::verbose = false;
 bool EMPulse::supportVerses = false;
 
+template <typename... TArgs>
+void EMP_Log(const char* pFormat, TArgs&&... args) {
+	if(EMPulse::verbose) {
+		Debug::Log(pFormat, std::forward<TArgs>(args)...);
+	}
+}
+
 //! Paralyses all units using an EMP cellspread weapon.
 /*!
 	All Technos in the EMPulse's target cells get affected by an EMP and get
@@ -28,9 +35,7 @@ void EMPulse::CreateEMPulse(WarheadTypeExt::ExtData *Warhead, const CoordStruct 
 		return;
 	}
 
-	if (verbose) {
-		Debug::Log("[CreateEMPulse] Duration: %d, Cap: %d\n", Warhead->EMP_Duration, Warhead->EMP_Cap);
-	}
+	EMP_Log("[CreateEMPulse] Duration: %d, Cap: %d\n", Warhead->EMP_Duration, Warhead->EMP_Cap);
 
 	// set of affected objects. every object can be here only once.
 	auto items = Helpers::Alex::getCellSpreadItems(Coords, Warhead->OwnerObject()->CellSpread, true);
@@ -40,9 +45,7 @@ void EMPulse::CreateEMPulse(WarheadTypeExt::ExtData *Warhead, const CoordStruct 
 		deliverEMPDamage(items[i], Firer, Warhead);
 	}
 
-	if (verbose) {
-		Debug::Log("[CreateEMPulse] Done.\n");
-	}
+	EMP_Log("[CreateEMPulse] Done.\n");
 }
 
 //! Deals EMP damage the object.
@@ -59,17 +62,10 @@ void EMPulse::deliverEMPDamage(ObjectClass *object, TechnoClass *Firer, WarheadT
 	HouseClass *pHouse = (Firer ? Firer->Owner : nullptr);
 
 	if (TechnoClass * curTechno = generic_cast<TechnoClass *> (object)) {
-		if (verbose) {
-			Debug::Log("[deliverEMPDamage] Step 1: %s => %s\n",
-					(Firer ? Firer->get_ID() : nullptr),
-					curTechno->get_ID());
-		}
+		EMP_Log("[deliverEMPDamage] Step 1: %s => %s\n", (Firer ? Firer->get_ID() : nullptr), curTechno->get_ID());
 
 		if (isEligibleEMPTarget(curTechno, pHouse, Warhead->OwnerObject())) {
-			if (verbose) {
-				Debug::Log("[deliverEMPDamage] Step 2: %s\n",
-						curTechno->get_ID());
-			}
+			EMP_Log("[deliverEMPDamage] Step 2: %s\n", curTechno->get_ID());
 
 			// get the target-specific multiplier
 			double modifier = 1.0;
@@ -92,37 +88,25 @@ void EMPulse::deliverEMPDamage(ObjectClass *object, TechnoClass *Firer, WarheadT
 			int oldValue = curTechno->EMPLockRemaining;
 			int newValue = Helpers::Alex::getCappedDuration(oldValue, duration, Warhead->EMP_Cap);
 
-			if (verbose) {
-				Debug::Log("[deliverEMPDamage] Step 3: %d\n",
-						newValue);
-			}
+			EMP_Log("[deliverEMPDamage] Step 3: %d\n", newValue);
 
 			// can not be less than zero
 			curTechno->EMPLockRemaining = std::max(0, newValue);
-			if (verbose) {
-				Debug::Log("[deliverEMPDamage] Step 4: %d\n",
-						newValue);
-			}
+			EMP_Log("[deliverEMPDamage] Step 4: %d\n", newValue);
 
 			// newly de-paralyzed
 			if ((oldValue > 0) && (curTechno->EMPLockRemaining <= 0)) {
-				if (verbose) {
-					Debug::Log("[deliverEMPDamage] Step 5a\n");
-				}
+				EMP_Log("[deliverEMPDamage] Step 5a\n");
 				DisableEMPEffect(curTechno);
 			} else if ((oldValue <= 0) && (curTechno->EMPLockRemaining > 0)) {
 				// newly paralyzed unit
-				if (verbose) {
-					Debug::Log("[deliverEMPDamage] Step 5b\n");
-				}
+				EMP_Log("[deliverEMPDamage] Step 5b\n");
 				if (enableEMPEffect(curTechno, Firer)) {
 					return;
 				}
 			} else if (oldValue != newValue) {
 				// At least update the radar, if this is one.
-				if (verbose) {
-					Debug::Log("[deliverEMPDamage] Step 5c\n");
-				}
+				EMP_Log("[deliverEMPDamage] Step 5c\n");
 				updateRadarBlackout(curTechno);
 			}
 
@@ -192,22 +176,16 @@ bool EMPulse::isEMPImmune(TechnoClass * Target, HouseClass * SourceHouse) {
 	auto pData = TechnoTypeExt::ExtMap.Find(Target->GetTechnoType());
 
 	if(pData->ImmuneToEMP.Get(!IsTypeEMPProne(pData->OwnerObject()))) {
-		if(verbose) {
-			Debug::Log("[isEMPImmune] \"%s\" is ImmuneToEMP.\n", Target->get_ID());
-		}
+		EMP_Log("[isEMPImmune] \"%s\" is ImmuneToEMP.\n", Target->get_ID());
 		return true;
 	}
 
 	// this may be immune because of veteran and elite abilities.
 	if (Target->Veterancy.IsElite() && (pData->EliteAbilityEMPIMMUNE || pData->VeteranAbilityEMPIMMUNE)) {
-		if (verbose) {
-			Debug::Log("[isEMPImmune] \"%s\" is immune because it is elite.\n", Target->get_ID());
-		}
+		EMP_Log("[isEMPImmune] \"%s\" is immune because it is elite.\n", Target->get_ID());
 		return true;
 	} else if (Target->Veterancy.IsVeteran() && pData->VeteranAbilityEMPIMMUNE) {
-		if (verbose) {
-			Debug::Log("[isEMPImmune] \"%s\" is immune because it is veteran.\n", Target->get_ID());
-		}
+		EMP_Log("[isEMPImmune] \"%s\" is immune because it is veteran.\n", Target->get_ID());
 		return true;
 	}
 
@@ -217,9 +195,7 @@ bool EMPulse::isEMPImmune(TechnoClass * Target, HouseClass * SourceHouse) {
 		if (isEMPTypeImmune(Target)) {
 			// This unit can fire emps and type immunity
 			// grants it to never be affected.
-			if (verbose) {
-				Debug::Log("[isEMPImmune] \"%s\" is TypeImmune.\n", Target->get_ID());
-			}
+			EMP_Log("[isEMPImmune] \"%s\" is TypeImmune.\n", Target->get_ID());
 			return true;
 		}
 	}
@@ -258,9 +234,7 @@ bool EMPulse::isCurrentlyEMPImmune(TechnoClass * Target, HouseClass * SourceHous
 		if(BuildingClass* pBld = MapClass::Instance->GetCellAt(Target->Location)->GetBuilding()) {
 			if(pBld->Type->WeaponsFactory) {
 				if(pBld->IsUnderEMP() || pBld == Target->GetNthLink(0)) {
-					if (EMPulse::verbose) {
-						Debug::Log("[isCurrentlyEMPImmune] %s should not be disabled. Still in war factory: %s\n", Target->get_ID(), pBld->get_ID());
-					}
+					EMP_Log("[isCurrentlyEMPImmune] %s should not be disabled. Still in war factory: %s\n", Target->get_ID(), pBld->get_ID());
 					return true;
 				}
 
@@ -268,9 +242,7 @@ bool EMPulse::isCurrentlyEMPImmune(TechnoClass * Target, HouseClass * SourceHous
 				// because nobody could enter it afterwards.
 				TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(Target);
 				if(!pData->IsOperated()) {
-					if (EMPulse::verbose) {
-						Debug::Log("[isCurrentlyEMPImmune] %s should not be disabled. Would be unoperated on bib: %s\n", Target->get_ID(), pBld->get_ID());
-					}
+					EMP_Log("[isCurrentlyEMPImmune] %s should not be disabled. Would be unoperated on bib: %s\n", Target->get_ID(), pBld->get_ID());
 					return true;
 				}
 			}
@@ -343,9 +315,7 @@ bool EMPulse::isEligibleEMPTarget(TechnoClass * Target, HouseClass * SourceHouse
 	}
 
 	if (!WarheadTypeExt::CanAffectTarget(Target, SourceHouse, Warhead)) {
-		if (verbose) {
-			Debug::Log("[isEligibleEMPTarget] \"%s\" does not affect target.\n", Warhead->ID);
-		}
+		EMP_Log("[isEligibleEMPTarget] \"%s\" does not affect target.\n", Warhead->ID);
 		return false;
 	}
 
@@ -370,16 +340,10 @@ bool EMPulse::IsDeactivationAdvisable(TechnoClass* Target) {
 	case Mission::Selling:
 	case Mission::Construction:
 	case Mission::Unload:
-		if(EMPulse::verbose) {
-			Debug::Log("[IsDeactivationAdvisable] %s should not be disabled. Mission: %d\n",
-				Target->get_ID(), Target->CurrentMission);
-		}
+		EMP_Log("[IsDeactivationAdvisable] %s should not be disabled. Mission: %d\n", Target->get_ID(), Target->CurrentMission);
 		return false;
 	default:
-		if(EMPulse::verbose) {
-			Debug::Log("[IsDeactivationAdvisable] %s should be disabled. Mission: %d\n",
-				Target->get_ID(), Target->CurrentMission);
-		}
+		EMP_Log("[IsDeactivationAdvisable] %s should be disabled. Mission: %d\n", Target->get_ID(), Target->CurrentMission);
 		return true;
 	}
 }
@@ -555,9 +519,7 @@ void EMPulse::announceAttack(TechnoClass* Techno) {
 bool EMPulse::thresholdExceeded(TechnoClass * Victim) {
 	TechnoTypeExt::ExtData *pData = TechnoTypeExt::ExtMap.Find(Victim->GetTechnoType());
 
-	if (verbose) {
-		Debug::Log("[thresholdExceeded] %s: %d %d\n", Victim->get_ID(), pData->EMP_Threshold, Victim->EMPLockRemaining);
-	}
+	EMP_Log("[thresholdExceeded] %s: %d %d\n", Victim->get_ID(), pData->EMP_Threshold, Victim->EMPLockRemaining);
 
 	if ((pData->EMP_Threshold != 0) && (Victim->EMPLockRemaining > static_cast<DWORD>(abs(pData->EMP_Threshold)))) {
 		if ((pData->EMP_Threshold > 0) || (Victim->IsInAir() && !Victim->Parachute)) {
@@ -609,9 +571,7 @@ bool EMPulse::enableEMPEffect(TechnoClass * Victim, ObjectClass * Source) {
 		if (AircraftClass * Aircraft = specific_cast<AircraftClass *>(Victim)) {
 			// crash flying aircraft
 			if (Aircraft->GetHeight() > 0) {
-				if (EMPulse::verbose) {
-					Debug::Log("[enableEMPEffect] Plane crash: %s\n", Aircraft->get_ID());
-				}
+				EMP_Log("[enableEMPEffect] Plane crash: %s\n", Aircraft->get_ID());
 				TechnoExt::Destroy(Victim, generic_cast<TechnoClass*>(Source));
 				return true;
 			}
