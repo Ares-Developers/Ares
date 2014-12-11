@@ -293,17 +293,17 @@ void WarheadTypeExt::applyOccupantDamage(BulletClass* Bullet) {
 
 //! Gets whether a Techno can be affected by a warhead fired by a house.
 /*!
-A warhead will not affect allies if AffectsAllies is not set and will not
-affect enemies if AffectsEnemies is not set.
+	A warhead will not affect allies if AffectsAllies is not set and will not
+	affect enemies if AffectsEnemies is not set.
 
-\param pTarget The Techno pWarhead is fired at.
-\param pSourceHouse The house that fired pWarhead.
-\param pWarhead The fired warhead.
+	\param pTarget The Techno pWarhead is fired at.
+	\param pSourceHouse The house that fired pWarhead.
+	\param pWarhead The fired warhead.
 
-\returns True if pWarhead can affect pTarget, false otherwise.
+	\returns True if pWarhead can affect pTarget, false otherwise.
 
-\author AlexB
-\date 2010-04-27
+	\author AlexB
+	\date 2010-04-27
 */
 bool WarheadTypeExt::CanAffectTarget(TechnoClass* const pTarget, HouseClass* const pSourceHouse, WarheadTypeClass* const pWarhead) {
 	if(pSourceHouse && pTarget && pWarhead) {
