@@ -87,7 +87,7 @@ DEFINE_HOOK(5183DE, InfantryClass_ReceiveDamage_InfantryVirus1, 6)
 		return 0;
 	}
 
-	return (R->get_Origin() == 0x5183DE) ? 0x518422 : 0x5185B9;
+	return (R->Origin() == 0x5183DE) ? 0x518422 : 0x5185B9;
 }
 
 DEFINE_HOOK_AGAIN(518B93, InfantryClass_ReceiveDamage_Anims, 5) // InfantryBrute

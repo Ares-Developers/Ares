@@ -10,13 +10,13 @@
 	GET_VERSES(reg_wh, reg_armor) \
 	double VS = vsData->Verses; \
 	__asm{ fld VS }; \
-	return R->get_Origin() + 7;
+	return R->Origin() + 7;
 
 #define FMUL_VERSES(reg_wh, reg_armor) \
 	GET_VERSES(reg_wh, reg_armor) \
 	double VS = vsData->Verses; \
 	__asm{ fmul VS }; \
-	return R->get_Origin() + 7;
+	return R->Origin() + 7;
 
 #ifdef _MSC_VER
 DEFINE_HOOK(6F36FE, Verses_fld_0, 0)

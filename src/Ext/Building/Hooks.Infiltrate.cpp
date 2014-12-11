@@ -27,7 +27,7 @@ DEFINE_HOOK_AGAIN(4574D2, BuildingClass_Infiltrate_Standard, 6)
 DEFINE_HOOK(457533, BuildingClass_Infiltrate_Standard, 6)
 {
 	MouseClass::Instance->SidebarNeedsRepaint();
-	return R->get_Origin() + 6;
+	return R->Origin() + 6;
 }
 
 DEFINE_HOOK(43E7B0, BuildingClass_DrawVisible, 5)

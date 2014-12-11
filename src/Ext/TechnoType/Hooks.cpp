@@ -68,14 +68,14 @@ DEFINE_HOOK(4ABD6C, DisplayClass_LeftMouseButtonUp_GroupAs, A)
 {
 	GET(ObjectClass*, pThis, ESI);
 	R->EAX(TechnoTypeExt::GetSelectionGroupID(pThis->GetType()));
-	return R->get_Origin() + 13;
+	return R->Origin() + 13;
 }
 
 DEFINE_HOOK(6DA665, sub_6DA5C0_GroupAs, A)
 {
 	GET(ObjectClass*, pThis, ESI);
 	R->EAX(TechnoTypeExt::GetSelectionGroupID(pThis->GetType()));
-	return R->get_Origin() + 13;
+	return R->Origin() + 13;
 }
 
 /*

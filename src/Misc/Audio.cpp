@@ -58,7 +58,7 @@ DEFINE_HOOK(75144F, Ares_Audio_DeleteSampleNames, 9)
 		}
 		delete ppVoc;
 	}
-	return R->get_Origin() + 9;
+	return R->Origin() + 9;
 }
 
 

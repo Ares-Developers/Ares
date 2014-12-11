@@ -18,7 +18,7 @@ DEFINE_HOOK(6FF008, TechnoClass_Fire_FSW, 8)
 	CoordStruct src = *R->lea_Stack<CoordStruct *>(0x44);
 	CoordStruct tgt = *R->lea_Stack<CoordStruct *>(0x88);
 
-	BulletClass * Bullet = R->get_Origin() == 0x6FF860
+	BulletClass * Bullet = R->Origin() == 0x6FF860
 		? R->EDI<BulletClass *>()
 		: R->EBX<BulletClass *>()
 	;

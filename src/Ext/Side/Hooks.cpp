@@ -80,7 +80,7 @@ DEFINE_HOOK(507BCA, Sides_BaseDefenses, 6) // HouseClass_PickAntiAirDefense
 		dummy.Count = dummy.Capacity = it.size();
 
 		R->EBX(&dummy);
-		return R->get_Origin() + 0x36;
+		return R->Origin() + 0x36;
 	} else {
 		return 0;
 	}
@@ -105,7 +105,7 @@ DEFINE_HOOK(5227A3, Sides_Disguise, 6) // InfantryClass_SetDefaultDisguise
 	InfantryClass* pThis = nullptr;
 	DWORD dwReturnAddress = 0;
 
-	if(R->get_Origin() == 0x5227A3) {
+	if(R->Origin() == 0x5227A3) {
 		pThis = R->ECX<InfantryClass*>();
 		dwReturnAddress = 0x5227EC;
 	} else {

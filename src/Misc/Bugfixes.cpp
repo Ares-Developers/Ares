@@ -197,7 +197,7 @@ DEFINE_HOOK(42461D, AnimClass_Update_Damage, 6)
 			: RulesClass::Global()->C4Warhead;
 	}
 
-	DWORD origin = R->get_Origin();
+	DWORD origin = R->Origin();
 	if(origin == 0x42461D) {
 		R->ECX(W);
 	} else {
@@ -835,7 +835,7 @@ DEFINE_HOOK(65D8FB, TeamTypeClass_ValidateHouse, 6)
 	}
 
 	// no.
-	return (R->get_Origin() == 0x65D8FB) ? 0x65DD1B : 0x65F301;
+	return (R->Origin() == 0x65D8FB) ? 0x65DD1B : 0x65F301;
 }
 
 DEFINE_HOOK(70CBDA, TechnoClass_DealParticleDamage, 6)
@@ -974,7 +974,7 @@ DEFINE_HOOK(7077EE, TechnoClass_PointerGotInvalid_ResetMindControl, 6)
 DEFINE_HOOK_AGAIN(720C42, Theme_Stop_NoLog, 5) // skip Theme::Stop
 DEFINE_HOOK(720DE8, Theme_Stop_NoLog, 5) // skip Theme::PlaySong
 {
-	return R->get_Origin() + 5;
+	return R->Origin() + 5;
 }
 
 DEFINE_HOOK(720F37, sub_720EA0_NoLog, 5) // skip Theme::Stop

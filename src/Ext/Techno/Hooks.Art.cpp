@@ -170,7 +170,7 @@ DEFINE_HOOK(73C655, UnitClass_DrawSHP_ChangeType1, 6)
 
 	if(UnitTypeClass * pCustomType = pData->GetUnitType()) {
 		R->ECX<UnitTypeClass *>(pCustomType);
-		return R->get_Origin() + 6;
+		return R->Origin() + 6;
 	}
 
 	return 0;
