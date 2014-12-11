@@ -4,6 +4,7 @@
 #include "../TechnoType/Body.h"
 #include "../../Misc/SWTypes.h"
 #include "../../Misc/PoweredUnitClass.h"
+#include "../../Utilities/TemplateDef.h"
 
 #include <AnimClass.h>
 #include <BombClass.h>
@@ -1168,6 +1169,55 @@ void TechnoExt::ExtData::SetSpotlight(BuildingLightClass* pSpotlight) {
 			pBld->Spotlight = pSpotlight;
 		}
 	}
+}
+
+// =============================
+// load / save
+
+template <typename T>
+void TechnoExt::ExtData::Serialize(T& Stm) {
+	Stm
+		.Process(this->idxSlot_Wave)
+		.Process(this->idxSlot_Beam)
+		.Process(this->idxSlot_Warp)
+		.Process(this->idxSlot_Parasite)
+		.Process(this->Survivors_Done)
+		.Process(this->CloakSkipTimer)
+		.Process(this->Insignia_Image)
+		.Process(this->GarrisonedIn)
+		.Process(this->EMPSparkleAnim)
+		.Process(this->EMPLastMission)
+		.Process(this->ShadowDrawnManually)
+		.Process(this->DriverKilled)
+		.Process(this->HijackerHealth)
+		.Process(this->HijackerHouse)
+		.Process(this->RadarJam)
+		.Process(this->PoweredUnit)
+		.Process(this->AttachedEffects)
+		.Process(this->AttachEffects_RecreateAnims)
+		.Process(this->AttachedTechnoEffect_isset)
+		.Process(this->AttachedTechnoEffect_Delay)
+		.Process(this->Crate_FirepowerMultiplier)
+		.Process(this->Crate_ArmorMultiplier)
+		.Process(this->Crate_SpeedMultiplier)
+		.Process(this->Crate_Cloakable)
+		.Process(this->MyOriginalTemporal)
+		.Process(this->MyBolt)
+		.Process(this->OriginalHouseType)
+		.Process(this->Spotlight)
+		.Process(this->AltOccupation)
+		.Process(this->SuperWeapon)
+		.Process(this->SuperTarget);
+}
+
+void TechnoExt::ExtData::LoadFromStream(AresStreamReader &Stm) {
+	Extension<TechnoClass>::LoadFromStream(Stm);
+	this->Serialize(Stm);
+}
+
+void TechnoExt::ExtData::SaveToStream(AresStreamWriter &Stm) {
+	Extension<TechnoClass>::SaveToStream(Stm);
+	this->Serialize(Stm);
 }
 
 // =============================

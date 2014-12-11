@@ -131,6 +131,10 @@ public:
 			AnnounceInvalidPointer(this->Spotlight, ptr);
 		}
 
+		virtual void LoadFromStream(AresStreamReader &Stm) override;
+
+		virtual void SaveToStream(AresStreamWriter &Stm) override;
+
 		bool IsOperated();
 		bool IsPowered();
 
@@ -162,6 +166,10 @@ public:
 		bool AcquireHunterSeekerTarget() const;
 
 		void RecalculateStats();
+
+	private:
+		template <typename T>
+		void Serialize(T& Stm);
 	};
 
 	static Container<TechnoExt> ExtMap;

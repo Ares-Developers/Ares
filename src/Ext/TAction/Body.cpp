@@ -3,6 +3,8 @@
 #include "../../Misc/SWTypes.h"
 #include "../../Misc/SWTypes/Firewall.h"
 
+#include "../../Misc/SavegameDef.h"
+
 #include <HouseClass.h>
 
 
@@ -77,6 +79,24 @@ bool TActionExt::Execute(TActionClass* pAction, HouseClass* pHouse, ObjectClass*
 	}
 
 	return true;
+}
+
+// =============================
+// load / save
+
+template <typename T>
+void TActionExt::ExtData::Serialize(T& Stm) {
+	//Stm;
+}
+
+void TActionExt::ExtData::LoadFromStream(AresStreamReader &Stm) {
+	Extension<TActionClass>::LoadFromStream(Stm);
+	this->Serialize(Stm);
+}
+
+void TActionExt::ExtData::SaveToStream(AresStreamWriter &Stm) {
+	Extension<TActionClass>::SaveToStream(Stm);
+	this->Serialize(Stm);
 }
 
 // =============================

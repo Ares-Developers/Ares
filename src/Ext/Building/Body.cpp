@@ -3,6 +3,8 @@
 #include "../TechnoType/Body.h"
 #include "../House/Body.h"
 
+#include "../../Misc/SavegameDef.h"
+
 #include <AnimClass.h>
 #include <BuildingClass.h>
 #include <CellClass.h>
@@ -972,6 +974,34 @@ CoordStruct BuildingExt::GetCenterCoords(BuildingClass* pBuilding, bool includeB
 	ret.X += pBuilding->Type->GetFoundationWidth() / 2;
 	ret.X += pBuilding->Type->GetFoundationHeight(includeBib) / 2;
 	return ret;
+}
+
+// =============================
+// load / save
+
+template <typename T>
+void BuildingExt::ExtData::Serialize(T& Stm) {
+	Stm
+		.Process(this->OwnerBeforeRaid)
+		.Process(this->isCurrentlyRaided)
+		.Process(this->ignoreNextEVA)
+		.Process(this->FreeUnits_Done)
+		.Process(this->AboutToChronoshift)
+		.Process(this->PrismForwarding)
+		.Process(this->RegisteredJammers)
+		.Process(this->SensorArrayActiveCounter)
+		.Process(this->CashUpgradeTimers)
+		.Process(this->SecretLab_Placed);
+}
+
+void BuildingExt::ExtData::LoadFromStream(AresStreamReader &Stm) {
+	Extension<BuildingClass>::LoadFromStream(Stm);
+	this->Serialize(Stm);
+}
+
+void BuildingExt::ExtData::SaveToStream(AresStreamWriter &Stm) {
+	Extension<BuildingClass>::SaveToStream(Stm);
+	Serialize(Stm);
 }
 
 // =============================

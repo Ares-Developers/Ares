@@ -117,6 +117,10 @@ public:
 		virtual void InvalidatePointer(void *ptr, bool bRemoved) override {
 		}
 
+		virtual void LoadFromStream(AresStreamReader &Stm) override;
+
+		virtual void SaveToStream(AresStreamWriter &Stm) override;
+
 		void applyRipples(const CoordStruct &coords);
 		void applyIronCurtain(const CoordStruct &coords, HouseClass* pOwner, int damage);
 		void applyEMP(const CoordStruct &coords, TechnoClass* pSource);
@@ -133,6 +137,10 @@ public:
 		const VersesData& GetVerses(Armor armor) const {
 			return this->Verses[static_cast<int>(armor)];
 		}
+
+	private:
+		template <typename T>
+		void Serialize(T& Stm);
 	};
 
 	static Container<WarheadTypeExt> ExtMap;

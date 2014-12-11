@@ -384,6 +384,80 @@ int BuildingTypeExt::ExtData::GetSuperWeaponIndex(const size_t index, HouseClass
 // =============================
 // load / save
 
+template <typename T>
+void BuildingTypeExt::ExtData::Serialize(T& Stm) {
+	Stm
+		.Process(this->Solid_Height)
+		.Process(this->IsCustom)
+		.Process(this->CustomWidth)
+		.Process(this->CustomHeight)
+		.Process(this->OutlineLength)
+		.Process(this->CustomData)
+		.Process(this->OutlineData)
+		.Process(this->FoundationRadarShape)
+		.Process(this->Secret_Boons)
+		.Process(this->Secret_RecalcOnCapture)
+		.Process(this->Firewall_Is)
+		.Process(this->IsPassable)
+		.Process(this->LightningRod_Modifier)
+		.Process(this->UCPassThrough)
+		.Process(this->UCFatalRate)
+		.Process(this->UCDamageMultiplier)
+		.Process(this->BunkerRaidable)
+		.Process(this->IsTrench)
+		.Process(this->RubbleIntact)
+		.Process(this->RubbleDestroyed)
+		.Process(this->RubbleDestroyedAnim)
+		.Process(this->RubbleIntactAnim)
+		.Process(this->RubbleDestroyedOwner)
+		.Process(this->RubbleIntactOwner)
+		.Process(this->RubbleDestroyedStrength)
+		.Process(this->RubbleIntactStrength)
+		.Process(this->RubbleDestroyedRemove)
+		.Process(this->RubbleIntactRemove)
+		.Process(this->InfiltrateCustom)
+		.Process(this->RevealProduction)
+		.Process(this->ResetSW)
+		.Process(this->ResetRadar)
+		.Process(this->RevealRadar)
+		.Process(this->RevealRadarPersist)
+		.Process(this->GainVeterancy)
+		.Process(this->UnReverseEngineer)
+		.Process(this->StolenTechIndex)
+		.Process(this->StolenMoneyAmount)
+		.Process(this->StolenMoneyPercentage)
+		.Process(this->PowerOutageDuration)
+		.Process(this->AllowedOccupiers)
+		.Process(this->Returnable)
+		.Process(this->PrismForwarding)
+		.Process(this->ReverseEngineersVictims)
+		.Process(this->CloningFacility)
+		.Process(this->Factory_ExplicitOnly)
+		.Process(this->GateDownSound)
+		.Process(this->GateUpSound)
+		.Process(this->Academy)
+		.Process(this->AcademyWhitelist)
+		.Process(this->AcademyBlacklist)
+		.Process(this->AcademyInfantry)
+		.Process(this->AcademyAircraft)
+		.Process(this->AcademyVehicle)
+		.Process(this->AcademyBuilding)
+		.Process(this->SuperWeapons)
+		.Process(this->LostEvaEvent)
+		.Process(this->MessageCapture)
+		.Process(this->MessageLost);
+}
+
+void BuildingTypeExt::ExtData::LoadFromStream(AresStreamReader &Stm) {
+	Extension<BuildingTypeClass>::LoadFromStream(Stm);
+	this->Serialize(Stm);
+}
+
+void BuildingTypeExt::ExtData::SaveToStream(AresStreamWriter &Stm) {
+	Extension<BuildingTypeClass>::SaveToStream(Stm);
+	this->Serialize(Stm);
+}
+
 bool Container<BuildingTypeExt>::Load(BuildingTypeClass *pThis, IStream *pStm) {
 	BuildingTypeExt::ExtData* pData = this->LoadKey(pThis, pStm);
 

@@ -261,6 +261,10 @@ public:
 			AnnounceInvalidPointer(RubbleDestroyed, ptr);
 		}
 
+		virtual void LoadFromStream(AresStreamReader &Stm) override;
+
+		virtual void SaveToStream(AresStreamWriter &Stm) override;
+
 		bool IsLinkable();
 
 		bool CanBeOccupiedBy(InfantryClass *whom);
@@ -272,6 +276,10 @@ public:
 		size_t GetSuperWeaponCount() const;
 		int GetSuperWeaponIndex(size_t index) const;
 		int GetSuperWeaponIndex(size_t index, HouseClass* pHouse) const;
+
+	private:
+		template <typename T>
+		void Serialize(T& Stm);
 	};
 
 	static Container<BuildingTypeExt> ExtMap;

@@ -63,12 +63,20 @@ public:
 		virtual void InvalidatePointer(void *ptr, bool bRemoved) override {
 		}
 
+		virtual void LoadFromStream(AresStreamReader &Stm) override;
+
+		virtual void SaveToStream(AresStreamWriter &Stm) override;
+
 		ConvertClass* GetConvert();
 
 		bool HasSplitBehavior();
 
 		BulletClass* CreateBullet(AbstractClass* pTarget, TechnoClass* pOwner, WeaponTypeClass* pWeapon) const;
 		BulletClass* CreateBullet(AbstractClass* pTarget, TechnoClass* pOwner, int damage, WarheadTypeClass* pWarhead, int speed, int range, bool bright) const;
+
+	private:
+		template <typename T>
+		void Serialize(T& Stm);
 	};
 
 	static Container<BulletTypeExt> ExtMap;

@@ -496,6 +496,43 @@ void WarheadTypeExt::ExtData::applyAttachedEffect(const CoordStruct &coords, Tec
 }
 
 // =============================
+// load / save
+
+template <typename T>
+void WarheadTypeExt::ExtData::Serialize(T& Stm) {
+	Stm
+		.Process(this->MindControl_Permanent)
+		.Process(this->Ripple_Radius)
+		.Process(this->EMP_Duration)
+		.Process(this->EMP_Cap)
+		.Process(this->IC_Duration)
+		.Process(this->IC_Cap)
+		.Process(this->Verses)
+		.Process(this->DeployedDamage)
+		.Process(this->Temporal_WarpAway)
+		.Process(this->AffectsEnemies)
+		.Process(this->InfDeathAnim)
+		.Process(this->PreImpactAnim)
+		.Process(this->KillDriver)
+		.Process(this->KillDriver_KillBelowPercent)
+		.Process(this->KillDriver_Owner)
+		.Process(this->Malicious)
+		.Process(this->PreventScatter)
+		.Process(this->CellSpread_MaxAffect)
+		.Process(this->AttachedEffect);
+}
+
+void WarheadTypeExt::ExtData::LoadFromStream(AresStreamReader &Stm) {
+	Extension<WarheadTypeClass>::LoadFromStream(Stm);
+	this->Serialize(Stm);
+}
+
+void WarheadTypeExt::ExtData::SaveToStream(AresStreamWriter &Stm) {
+	Extension<WarheadTypeClass>::SaveToStream(Stm);
+	this->Serialize(Stm);
+}
+
+// =============================
 // container hooks
 
 DEFINE_HOOK(75D1A9, WarheadTypeClass_CTOR, 7)

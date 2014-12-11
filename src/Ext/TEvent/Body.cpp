@@ -1,5 +1,7 @@
 #include "Body.h"
 
+#include "../../Misc/SavegameDef.h"
+
 #include <HouseClass.h>
 #include <TechnoTypeClass.h>
 
@@ -137,6 +139,25 @@ bool TEventExt::HasOccured(TEventClass* pEvent, bool* ret) {
 	}
 
 	return true;
+}
+
+// =============================
+// load / save
+
+template <typename T>
+void TEventExt::ExtData::Serialize(T& Stm) {
+	Stm
+		.Process(this->TechnoType);
+}
+
+void TEventExt::ExtData::LoadFromStream(AresStreamReader &Stm) {
+	Extension<TEventClass>::LoadFromStream(Stm);
+	this->Serialize(Stm);
+}
+
+void TEventExt::ExtData::SaveToStream(AresStreamWriter &Stm) {
+	Extension<TEventClass>::SaveToStream(Stm);
+	this->Serialize(Stm);
 }
 
 // =============================

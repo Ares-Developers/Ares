@@ -88,6 +88,10 @@ public:
 			AnnounceInvalidPointer(Factory_InfantryType, ptr);
 		}
 
+		virtual void LoadFromStream(AresStreamReader &Stm) override;
+
+		virtual void SaveToStream(AresStreamWriter &Stm) override;
+
 		void SetFirestormState(bool Active);
 
 		bool CheckBasePlanSanity();
@@ -102,6 +106,10 @@ public:
 
 		void UpdateAcademy(BuildingClass* pAcademy, bool added);
 		void ApplyAcademy(TechnoClass* pTechno, AbstractType considerAs) const;
+
+	private:
+		template <typename T>
+		void Serialize(T& Stm);
 	};
 
 	static Container<HouseExt> ExtMap;

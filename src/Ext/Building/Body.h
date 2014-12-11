@@ -103,6 +103,10 @@ public:
 			PrismForwarding.AnnounceInvalidPointer(ptr, bRemoved);
 		}
 
+		virtual void LoadFromStream(AresStreamReader &Stm) override;
+
+		virtual void SaveToStream(AresStreamWriter &Stm) override;
+
 		// related to Advanced Rubble
 		bool RubbleYell(bool beingRepaired = false); // This function triggers back and forth between rubble states.
 		void KickOutOfRubble();
@@ -136,6 +140,10 @@ public:
 		SuperClass* GetSuperWeapon(size_t index) const;
 		int GetFirstSuperWeaponIndex() const;
 		SuperClass* GetFirstSuperWeapon() const;
+
+	private:
+		template <typename T>
+		void Serialize(T& Stm);
 	};
 
 	static Container<BuildingExt> ExtMap;

@@ -83,6 +83,33 @@ int TiberiumExt::ExtData::GetDebrisChance() const
 }
 
 // =============================
+// load / save
+
+template <typename T>
+void TiberiumExt::ExtData::Serialize(T& Stm) {
+	Stm
+		.Process(this->Damage)
+		.Process(this->Warhead)
+		.Process(this->Heal_Step)
+		.Process(this->Heal_IStep)
+		.Process(this->Heal_UStep)
+		.Process(this->Heal_Delay)
+		.Process(this->ExplosionWarhead)
+		.Process(this->ExplosionDamage)
+		.Process(this->DebrisChance);
+}
+
+void TiberiumExt::ExtData::LoadFromStream(AresStreamReader &Stm) {
+	Extension<TiberiumClass>::LoadFromStream(Stm);
+	this->Serialize(Stm);
+}
+
+void TiberiumExt::ExtData::SaveToStream(AresStreamWriter &Stm) {
+	Extension<TiberiumClass>::SaveToStream(Stm);
+	this->Serialize(Stm);
+}
+
+// =============================
 // container hooks
 
 DEFINE_HOOK(721876, TiberiumClass_CTOR, 5)

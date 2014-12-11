@@ -411,6 +411,47 @@ int HouseTypeExt::PickRandomCountry() {
 }
 
 // =============================
+// load / save
+
+template <typename T>
+void HouseTypeExt::ExtData::Serialize(T& Stm) {
+	Stm
+		.Process(this->FlagFile)
+		.Process(this->LoadScreenBackground)
+		.Process(this->LoadScreenPalette)
+		.Process(this->TauntFile)
+		.Process(this->LoadScreenName)
+		.Process(this->LoadScreenSpecialName)
+		.Process(this->LoadScreenBrief)
+		.Process(this->StatusText)
+		.Process(this->LoadTextColor)
+		.Process(this->RandomSelectionWeight)
+		.Process(this->CountryListIndex)
+		.Process(this->Powerplants)
+		.Process(this->ParaDropTypes)
+		.Process(this->ParaDropNum)
+		.Process(this->ParaDropPlane)
+		.Process(this->Parachute_Anim)
+		.Process(this->VeteranBuildings)
+		.Process(this->ObserverBackground)
+		.Process(this->ObserverBackgroundSHP)
+		.Process(this->ObserverFlag)
+		.Process(this->ObserverFlagSHP)
+		.Process(this->ObserverFlagYuriPAL)
+		.Process(this->SettingsInherited);
+}
+
+void HouseTypeExt::ExtData::LoadFromStream(AresStreamReader &Stm) {
+	Extension<HouseTypeClass>::LoadFromStream(Stm);
+	this->Serialize(Stm);
+}
+
+void HouseTypeExt::ExtData::SaveToStream(AresStreamWriter &Stm) {
+	Extension<HouseTypeClass>::SaveToStream(Stm);
+	this->Serialize(Stm);
+}
+
+// =============================
 // container hooks
 
 DEFINE_HOOK(511635, HouseTypeClass_CTOR_1, 5) {

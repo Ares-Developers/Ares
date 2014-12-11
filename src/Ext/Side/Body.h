@@ -86,6 +86,10 @@ public:
 		virtual void InvalidatePointer(void *ptr, bool bRemoved) override {
 		}
 
+		virtual void LoadFromStream(AresStreamReader &Stm) override;
+
+		virtual void SaveToStream(AresStreamWriter &Stm) override;
+
 		int GetSurvivorDivisor() const;
 		int GetDefaultSurvivorDivisor() const;
 
@@ -113,6 +117,10 @@ public:
 		AnimTypeClass* GetParachuteAnim() const;
 
 		const char* GetMultiplayerScoreBarFilename(size_t index) const;
+
+	private:
+		template <typename T>
+		void Serialize(T& Stm);
 	};
 
 	//Hacks required in other classes:

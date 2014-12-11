@@ -337,6 +337,10 @@ public:
 			AnnounceInvalidPointer(Operator, ptr);
 		}
 
+		virtual void LoadFromStream(AresStreamReader &Stm) override;
+
+		virtual void SaveToStream(AresStreamWriter &Stm) override;
+
 		bool CameoIsElite();
 
 		bool CanBeBuiltAt(BuildingTypeClass * FactoryType);
@@ -344,6 +348,10 @@ public:
 		bool CarryallCanLift(UnitClass * Target);
 
 		const char* GetSelectionGroupID() const;
+
+	private:
+		template <typename T>
+		void Serialize(T& Stm);
 	};
 
 	static Container<TechnoTypeExt> ExtMap;

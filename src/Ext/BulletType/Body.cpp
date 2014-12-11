@@ -80,6 +80,36 @@ BulletClass* BulletTypeExt::ExtData::CreateBullet(AbstractClass* pTarget, Techno
 }
 
 // =============================
+// load / save
+
+template <typename T>
+void BulletTypeExt::ExtData::Serialize(T& Stm) {
+	Stm
+		.Process(this->SubjectToSolid)
+		.Process(this->SubjectToFirewall)
+		.Process(this->Parachuted)
+		.Process(this->SubjectToTrenches)
+		.Process(this->ImageConvert)
+		.Process(this->Splits)
+		.Process(this->RetargetAccuracy)
+		.Process(this->AirburstSpread)
+		.Process(this->AroundTarget)
+		.Process(this->BallisticScatterMin)
+		.Process(this->BallisticScatterMax)
+		.Process(this->AnimLength);
+}
+
+void BulletTypeExt::ExtData::LoadFromStream(AresStreamReader &Stm) {
+	Extension<BulletTypeClass>::LoadFromStream(Stm);
+	this->Serialize(Stm);
+}
+
+void BulletTypeExt::ExtData::SaveToStream(AresStreamWriter &Stm) {
+	Extension<BulletTypeClass>::SaveToStream(Stm);
+	this->Serialize(Stm);
+}
+
+// =============================
 // container hooks
 
 DEFINE_HOOK(46BDD9, BulletTypeClass_CTOR, 5)

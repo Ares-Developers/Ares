@@ -388,6 +388,56 @@ void Container<WeaponTypeExt>::InvalidatePointer(void *ptr, bool bRemoved) {
 }
 
 // =============================
+// load / save
+
+template <typename T>
+void WeaponTypeExt::ExtData::Serialize(T& Stm) {
+	Stm
+		.Process(this->Weapon_Loaded)
+		.Process(this->Beam_Color)
+		.Process(this->Beam_Duration)
+		.Process(this->Beam_Amplitude)
+		.Process(this->Beam_IsHouseColor)
+		.Process(this->Bolt_Color1)
+		.Process(this->Bolt_Color2)
+		.Process(this->Bolt_Color3)
+		.Process(this->Wave_IsHouseColor)
+		.Process(this->Wave_IsLaser)
+		.Process(this->Wave_IsBigLaser)
+		.Process(this->Wave_Color)
+		.Process(this->Wave_Reverse)
+		.Process(this->Laser_Thickness)
+		.Process(this->Ivan_KillsBridges)
+		.Process(this->Ivan_Detachable)
+		.Process(this->Ivan_Damage)
+		.Process(this->Ivan_Delay)
+		.Process(this->Ivan_TickingSound)
+		.Process(this->Ivan_AttachSound)
+		.Process(this->Ivan_WH)
+		.Process(this->Ivan_Image)
+		.Process(this->Ivan_FlickerRate)
+		.Process(this->Ivan_CanDetonateTimeBomb)
+		.Process(this->Ivan_CanDetonateDeathBomb)
+		.Process(this->Rad_Type)
+		.Process(this->Abductor)
+		.Process(this->Abductor_AnimType)
+		.Process(this->Abductor_ChangeOwner)
+		.Process(this->Abductor_AbductBelowPercent)
+		.Process(this->ProjectileRange)
+		.Process(this->ApplyDamage);
+}
+
+void WeaponTypeExt::ExtData::LoadFromStream(AresStreamReader &Stm) {
+	Extension<WeaponTypeClass>::LoadFromStream(Stm);
+	this->Serialize(Stm);
+}
+
+void WeaponTypeExt::ExtData::SaveToStream(AresStreamWriter &Stm) {
+	Extension<WeaponTypeClass>::SaveToStream(Stm);
+	this->Serialize(Stm);
+}
+
+// =============================
 // container hooks
 
 DEFINE_HOOK(771EE9, WeaponTypeClass_CTOR, 5)

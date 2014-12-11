@@ -140,6 +140,62 @@ void RulesExt::ExtData::LoadAfterTypeData(RulesClass *pThis, CCINIClass *pINI) {
 }
 
 // =============================
+// load / save
+
+template <typename T>
+void RulesExt::ExtData::Serialize(T& Stm) {
+	Stm
+		.Process(this->ElectricDeath)
+		.Process(this->EngineerDamage)
+		.Process(this->EngineerAlwaysCaptureTech)
+		.Process(this->EngineerDamageCursor)
+		.Process(this->MultiEngineer)
+		.Process(this->TogglePowerAllowed)
+		.Process(this->TogglePowerDelay)
+		.Process(this->TogglePowerIQ)
+		.Process(this->TogglePowerCursor)
+		.Process(this->TogglePowerNoCursor)
+		.Process(this->CanMakeStuffUp)
+		.Process(this->Tiberium_DamageEnabled)
+		.Process(this->Tiberium_HealEnabled)
+		.Process(this->Tiberium_ExplosiveWarhead)
+		.Process(this->OverlayExplodeThreshold)
+		.Process(this->DecloakSound)
+		.Process(this->CloakHeight)
+		.Process(this->EnemyInsignia)
+		.Process(this->EnemyWrench)
+		.Process(this->ReturnStructures)
+		.Process(this->TypeSelectUseDeploy)
+		.Process(this->TeamRetaliate)
+		.Process(this->DeactivateDim_Powered)
+		.Process(this->DeactivateDim_EMP)
+		.Process(this->DeactivateDim_Operator)
+		.Process(this->BerserkROFMultiplier)
+		.Process(this->HunterSeekerBuildings)
+		.Process(this->HunterSeekerDetonateProximity)
+		.Process(this->HunterSeekerDescendProximity)
+		.Process(this->HunterSeekerAscentSpeed)
+		.Process(this->HunterSeekerDescentSpeed)
+		.Process(this->HunterSeekerEmergeSpeed)
+		.Process(this->DropPodMinimum)
+		.Process(this->DropPodMaximum)
+		.Process(this->DropPodTypes)
+		.Process(this->DropPodTrailer)
+		.Process(this->AutoRepelAI)
+		.Process(this->AutoRepelPlayer);
+}
+
+void RulesExt::ExtData::LoadFromStream(AresStreamReader &Stm) {
+	Extension<RulesClass>::LoadFromStream(Stm);
+	this->Serialize(Stm);
+}
+
+void RulesExt::ExtData::SaveToStream(AresStreamWriter &Stm) {
+	Extension<RulesClass>::SaveToStream(Stm);
+	this->Serialize(Stm);
+}
+
+// =============================
 // container hooks
 
 DEFINE_HOOK(667A1D, RulesClass_CTOR, 5) {

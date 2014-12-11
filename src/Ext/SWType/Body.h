@@ -377,10 +377,17 @@ public:
 		virtual void InvalidatePointer(void *ptr, bool bRemoved) override {
 		}
 
+		virtual void LoadFromStream(AresStreamReader &Stm) override;
+
+		virtual void SaveToStream(AresStreamWriter &Stm) override;
+
 	private:
 		static SuperWeaponAffectedHouse GetRelation(HouseClass* pFirer, HouseClass* pHouse);
 		bool IsCellEligible(CellClass* pCell, SuperWeaponTarget allowed);
 		bool IsTechnoEligible(TechnoClass* pTechno, SuperWeaponTarget allowed);
+
+		template <typename T>
+		void Serialize(T& Stm);
 	};
 
 	static Container<SWTypeExt> ExtMap;

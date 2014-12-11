@@ -82,6 +82,10 @@ public:
 		virtual void InvalidatePointer(void *ptr, bool bRemoved) override {
 		}
 
+		virtual void LoadFromStream(AresStreamReader &Stm) override;
+
+		virtual void SaveToStream(AresStreamWriter &Stm) override;
+
 		AircraftTypeClass* GetParadropPlane();
 		bool GetParadropContent(Iterator<TechnoTypeClass*>&, Iterator<int>&);
 		AnimTypeClass* GetParachuteAnim();
@@ -90,6 +94,10 @@ public:
 		Iterator<BuildingTypeClass*> GetDefaultPowerplants() const;
 
 		void InheritSettings(HouseTypeClass *pThis);
+
+	private:
+		template <typename T>
+		void Serialize(T& Stm);
 	};
 
 	static Container<HouseTypeExt> ExtMap;

@@ -72,6 +72,24 @@ Action InfantryExt::GetEngineerEnterEnemyBuildingAction(BuildingClass *pBld) {
 }
 
 // =============================
+// load / save
+
+template <typename T>
+void InfantryExt::ExtData::Serialize(T& Stm) {
+	//Stm;
+}
+
+void InfantryExt::ExtData::LoadFromStream(AresStreamReader &Stm) {
+	Extension<InfantryClass>::LoadFromStream(Stm);
+	this->Serialize(Stm);
+}
+
+void InfantryExt::ExtData::SaveToStream(AresStreamWriter &Stm) {
+	Extension<InfantryClass>::SaveToStream(Stm);
+	this->Serialize(Stm);
+}
+
+// =============================
 // container hooks
 
 #ifdef MAKE_GAME_SLOWER_FOR_NO_REASON

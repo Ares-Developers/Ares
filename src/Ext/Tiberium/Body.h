@@ -48,6 +48,10 @@ public:
 		virtual void InvalidatePointer(void *ptr, bool bRemoved) override {
 		}
 
+		virtual void LoadFromStream(AresStreamReader &Stm) override;
+
+		virtual void SaveToStream(AresStreamWriter &Stm) override;
+
 		double GetHealDelay() const;
 		int GetHealStep(TechnoClass* pTechno) const;
 		int GetDamage() const;
@@ -55,6 +59,10 @@ public:
 		WarheadTypeClass* GetExplosionWarhead() const;
 		int GetExplosionDamage() const;
 		int GetDebrisChance() const;
+
+	private:
+		template <typename T>
+		void Serialize(T& Stm);
 	};
 
 	static Container<TiberiumExt> ExtMap;

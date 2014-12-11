@@ -16,6 +16,8 @@
 #include <MouseClass.h>
 #include <SuperClass.h>
 
+#include "../../Misc/SavegameDef.h"
+
 template<> const DWORD Extension<HouseClass>::Canary = 0x12345678;
 Container<HouseExt> HouseExt::ExtMap;
 
@@ -708,6 +710,37 @@ void HouseExt::ExtData::ApplyAcademy(TechnoClass* pTechno, AbstractType consider
 			value = static_cast<float>(std::min(veterancyBonus, RulesClass::Instance->VeteranCap));
 		}
 	}
+}
+
+// =============================
+// load / save
+
+template <typename T>
+void HouseExt::ExtData::Serialize(T& Stm) {
+	Stm
+		.Process(this->IonSensitive)
+		.Process(this->FirewallActive)
+		.Process(this->FirewallRecalc)
+		.Process(this->SWLastIndex)
+		.Process(this->Factory_BuildingType)
+		.Process(this->Factory_InfantryType)
+		.Process(this->Factory_VehicleType)
+		.Process(this->Factory_NavyType)
+		.Process(this->Factory_AircraftType)
+		.Process(this->StolenTech)
+		.Process(this->RadarPersist)
+		.Process(this->FactoryOwners_GatheredPlansOf)
+		.Process(this->Academies);
+}
+
+void HouseExt::ExtData::LoadFromStream(AresStreamReader &Stm) {
+	Extension<HouseClass>::LoadFromStream(Stm);
+	this->Serialize(Stm);
+}
+
+void HouseExt::ExtData::SaveToStream(AresStreamWriter &Stm) {
+	Extension<HouseClass>::SaveToStream(Stm);
+	this->Serialize(Stm);
 }
 
 // =============================

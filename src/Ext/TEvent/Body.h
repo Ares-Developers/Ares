@@ -31,12 +31,20 @@ public:
 			AnnounceInvalidPointer(TechnoType, ptr);
 		}
 
+		virtual void LoadFromStream(AresStreamReader &Stm) override;
+
+		virtual void SaveToStream(AresStreamWriter &Stm) override;
+
 		// support
 		TechnoTypeClass* GetTechnoType();
 
 		// handling events
 		bool TechTypeExists();
 		bool TechTypeDoesNotExist();
+
+	private:
+		template <typename T>
+		void Serialize(T& Stm);
 	};
 
 	static bool HasOccured(TEventClass* pEvent, bool* ret);

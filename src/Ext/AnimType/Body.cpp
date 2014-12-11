@@ -38,6 +38,25 @@ OwnerHouseKind AnimTypeExt::SetMakeInfOwner(AnimClass *pAnim, HouseClass *pInvok
 	return pAnimData->MakeInfantryOwner;
 }
 
+// =============================
+// load / save
+
+template <typename T>
+void AnimTypeExt::ExtData::Serialize(T& Stm) {
+	Stm
+		.Process(this->MakeInfantryOwner)
+		.Process(this->Palette);
+}
+
+void AnimTypeExt::ExtData::LoadFromStream(AresStreamReader &Stm) {
+	Extension<AnimTypeClass>::LoadFromStream(Stm);
+	this->Serialize(Stm);
+}
+
+void AnimTypeExt::ExtData::SaveToStream(AresStreamWriter &Stm) {
+	Extension<AnimTypeClass>::SaveToStream(Stm);
+	this->Serialize(Stm);
+}
 
 // =============================
 // container hooks

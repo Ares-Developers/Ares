@@ -135,6 +135,10 @@ public:
 			AnnounceInvalidPointer(Rad_Type, ptr);
 		}
 
+		virtual void LoadFromStream(AresStreamReader &Stm) override;
+
+		virtual void SaveToStream(AresStreamWriter &Stm) override;
+
 		bool IsWave(WeaponTypeClass *pThis) {
 			return pThis->IsSonic || pThis->IsMagBeam || this->Wave_IsLaser || this->Wave_IsBigLaser;
 		}
@@ -149,6 +153,10 @@ public:
 		int GetProjectileRange() const {
 			return this->ProjectileRange.Get();
 		}
+
+	private:
+		template <typename T>
+		void Serialize(T& Stm);
 	};
 
 /*

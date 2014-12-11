@@ -1,7 +1,29 @@
 #include "Body.h"
 
+#include "../../Misc/SavegameDef.h"
+
 template<> const DWORD Extension<AbstractClass>::Canary = 0xAB5005BA;
 Container<AbstractExt> AbstractExt::ExtMap;
+
+// =============================
+// load / save
+
+template <typename T>
+void AbstractExt::ExtData::Serialize(T& Stm) {
+	Stm
+		.Process(this->LastChecksumTime)
+		.Process(this->LastChecksum);
+}
+
+void AbstractExt::ExtData::LoadFromStream(AresStreamReader &Stm) {
+	Extension<AbstractClass>::LoadFromStream(Stm);
+	this->Serialize(Stm);
+}
+
+void AbstractExt::ExtData::SaveToStream(AresStreamWriter &Stm) {
+	Extension<AbstractClass>::SaveToStream(Stm);
+	this->Serialize(Stm);
+}
 
 // =============================
 // container hooks

@@ -434,6 +434,56 @@ ConvertClass* SideExt::GetGraphicalTextConvert() {
 }
 
 // =============================
+// load / save
+
+template <typename T>
+void SideExt::ExtData::Serialize(T& Stm) {
+	Stm
+		.Process(this->Disguise)
+		.Process(this->Crew)
+		.Process(this->Engineer)
+		.Process(this->Technician)
+		.Process(this->SurvivorDivisor)
+		.Process(this->BaseDefenses)
+		.Process(this->BaseDefenseCounts)
+		.Process(this->ParaDropTypes)
+		.Process(this->ParaDropNum)
+		.Process(this->ParaDropPlane)
+		.Process(this->Parachute_Anim)
+		.Process(this->ToolTipTextColor)
+		.Process(this->MessageTextColorIndex)
+		.Process(this->SidebarMixFileIndex)
+		.Process(this->SidebarYuriFileNames)
+		.Process(this->EVAIndex)
+		.Process(this->HunterSeeker)
+		.Process(this->ScoreCampaignBackground)
+		.Process(this->ScoreCampaignTransition)
+		.Process(this->ScoreCampaignAnimation)
+		.Process(this->ScoreCampaignPalette)
+		.Process(this->ScoreMultiplayBackground)
+		.Process(this->ScoreMultiplayBars)
+		.Process(this->ScoreMultiplayPalette)
+		.Process(this->ScoreCampaignThemeUnderPar)
+		.Process(this->ScoreCampaignThemeOverPar)
+		.Process(this->ScoreMultiplayThemeWin)
+		.Process(this->ScoreMultiplayThemeLose)
+		.Process(this->GraphicalTextImage)
+		.Process(this->GraphicalTextPalette)
+		.Process(this->DialogBackgroundImage)
+		.Process(this->DialogBackgroundPalette);
+}
+
+void SideExt::ExtData::LoadFromStream(AresStreamReader &Stm) {
+	Extension<SideClass>::LoadFromStream(Stm);
+	this->Serialize(Stm);
+}
+
+void SideExt::ExtData::SaveToStream(AresStreamWriter &Stm) {
+	Extension<SideClass>::SaveToStream(Stm);
+	this->Serialize(Stm);
+}
+
+// =============================
 // container hooks
 
 DEFINE_HOOK(6A4609, SideClass_CTOR, 7)

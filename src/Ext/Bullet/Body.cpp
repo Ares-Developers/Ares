@@ -6,6 +6,8 @@
 #include "../Building/Body.h"
 #include "../BuildingType/Body.h"
 
+#include "../../Misc/SavegameDef.h"
+
 template<> const DWORD Extension<BulletClass>::Canary = 0x2A2A2A2A;
 Container<BulletExt> BulletExt::ExtMap;
 
@@ -93,6 +95,25 @@ bool BulletExt::ExtData::DamageOccupants() {
 	SpecificBuildingExt->evalRaidStatus();
 
 	return true;
+}
+
+// =============================
+// load / save
+
+template <typename T>
+void BulletExt::ExtData::Serialize(T& Stm) {
+	Stm
+		.Process(this->NukeSW);
+}
+
+void BulletExt::ExtData::LoadFromStream(AresStreamReader &Stm) {
+	Extension<BulletClass>::LoadFromStream(Stm);
+	this->Serialize(Stm);
+}
+
+void BulletExt::ExtData::SaveToStream(AresStreamWriter &Stm) {
+	Extension<BulletClass>::SaveToStream(Stm);
+	this->Serialize(Stm);
 }
 
 // =============================

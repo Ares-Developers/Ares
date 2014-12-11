@@ -27,7 +27,15 @@ public:
 		virtual void InvalidatePointer(void *ptr, bool bRemoved) override {
 		}
 
+		virtual void LoadFromStream(AresStreamReader &Stm) override;
+
+		virtual void SaveToStream(AresStreamWriter &Stm) override;
+
 		bool IsOccupant(); //!< Determines whether this InfantryClass is currently an occupant inside a BuildingClass.
+
+	private:
+		template <typename T>
+		void Serialize(T& Stm);
 	};
 
 	static Container<InfantryExt> ExtMap;
