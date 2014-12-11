@@ -233,34 +233,38 @@ void WarheadTypeExt::ExtData::applyEMP(const CoordStruct &coords, TechnoClass *s
 	\return false if effect wasn't applied, true if it was.
 		This is important for the chain of damage effects, as, in case of true, the target is now a friendly unit.
 */
-bool WarheadTypeExt::ExtData::applyPermaMC(const CoordStruct &coords, HouseClass* Owner, AbstractClass* Target) {
-	if (this->MindControl_Permanent && Target) {
-		if (TechnoClass *pTarget = generic_cast<TechnoClass *>(Target)) {
-			TechnoTypeClass *pType = pTarget->GetTechnoType();
+bool WarheadTypeExt::ExtData::applyPermaMC(const CoordStruct &coords, HouseClass* const Owner, AbstractClass* const Target) {
+	if(this->MindControl_Permanent && Owner) {
+		if(auto const pTarget = abstract_cast<TechnoClass*>(Target)) {
+			auto const pType = pTarget->GetTechnoType();
 
-			if (!pType || pType->ImmuneToPsionics) {
-				return false; // should return 0 in hook
-			}
-			if (pTarget->MindControlledBy) {
-				pTarget->MindControlledBy->CaptureManager->FreeUnit(pTarget);
-			}
-			pTarget->SetOwningHouse(Owner, 1);
-			pTarget->MindControlledByAUnit = 1;
-			pTarget->QueueMission(Mission::Guard, 0);
+			if(!pType->ImmuneToPsionics) {
+				if(auto const pController = pTarget->MindControlledBy) {
+					pController->CaptureManager->FreeUnit(pTarget);
+				}
 
-			CoordStruct XYZ = coords;
-			XYZ.Z += pType->MindControlRingOffset;
+				pTarget->SetOwningHouse(Owner, true);
+				pTarget->MindControlledByAUnit = true;
+				pTarget->QueueMission(Mission::Guard, false);
 
-			AnimClass *MCAnim = GameCreate<AnimClass>(RulesClass::Instance->PermaControlledAnimationType, XYZ);
-			AnimClass *oldMC = pTarget->MindControlRingAnim;
-			if (oldMC) {
-				oldMC->UnInit();
+				if(auto& pAnim = pTarget->MindControlRingAnim) {
+					pAnim->UnInit();
+					pAnim = nullptr;
+				}
+
+				CoordStruct XYZ = coords;
+				XYZ.Z += pType->MindControlRingOffset;
+
+				if(auto const pAnim = GameCreate<AnimClass>(RulesClass::Instance->PermaControlledAnimationType, XYZ)) {
+					pTarget->MindControlRingAnim = pAnim;
+					pAnim->SetOwnerObject(pTarget);
+				}
+
+				return true;
 			}
-			pTarget->MindControlRingAnim = MCAnim;
-			MCAnim->SetOwnerObject(pTarget);
-			return true; // should return 0x469AA4 in hook
 		}
 	}
+
 	return false;
 }
 
