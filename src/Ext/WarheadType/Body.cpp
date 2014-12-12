@@ -116,10 +116,10 @@ void Container<WarheadTypeExt>::InvalidatePointer(void *ptr, bool bRemoved) {
 	\param coords The coordinates of the warhead impact, the center of the Ripple area.
 */
 void WarheadTypeExt::ExtData::applyRipples(const CoordStruct &coords) {
-	if (this->Ripple_Radius) {
-		IonBlastClass *IB = GameCreate<IonBlastClass>(coords);
-		IB->DisableIonBeam = TRUE;
-		WarheadTypeExt::IonExt[IB] = this;
+	if(this->Ripple_Radius) {
+		auto const pBlast = GameCreate<IonBlastClass>(coords);
+		pBlast->DisableIonBeam = TRUE;
+		WarheadTypeExt::IonExt[pBlast] = this;
 	}
 }
 
