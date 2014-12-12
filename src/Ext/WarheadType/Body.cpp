@@ -289,10 +289,9 @@ bool WarheadTypeExt::ExtData::applyPermaMC(HouseClass* const Owner, AbstractClas
 		Since UC.DaMO (#778) in 0.5 will require a reimplementation of this logic anyway,
 		we can probably just leave it here until then.
 */
-void WarheadTypeExt::applyOccupantDamage(BulletClass* Bullet) {
-	if (Bullet->Target) {
-		BulletExt::ExtData* TheBulletExt = BulletExt::ExtMap.Find(Bullet);
-		if (TheBulletExt->DamageOccupants()) {
+void WarheadTypeExt::applyOccupantDamage(BulletClass* const Bullet) {
+	if(auto const pExt = BulletExt::ExtMap.Find(Bullet)) {
+		if(pExt->DamageOccupants()) {
 			// the occupants have been damaged, do not damage the building (the original target)
 			Bullet->Health = 0;
 			Bullet->DamageMultiplier = 0;
