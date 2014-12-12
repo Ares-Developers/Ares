@@ -90,10 +90,8 @@ DEFINE_HOOK(517FC1, InfantryClass_ReceiveDamage_DeployedDamage, 6) {
 
 	*Damage = static_cast<int>(*Damage * pData->DeployedDamage);
 
-	return WH // yes, let's make sure the pointer's safe AFTER we've dereferenced it... Failstwood!
-		? 0x517FF9
-		: 0x518016
-	;
+	// yes, let's make sure the pointer's safe AFTER we've dereferenced it... Failstwood!
+	return WH ? 0x517FF9u : 0x518016u;
 }
 /*
  * Fixing issue #722
@@ -104,10 +102,7 @@ DEFINE_HOOK(7384BD, UnitClass_ReceiveDamage_OreMinerUnderAttack, 6)
 	GET_STACK(WarheadTypeClass *, WH, STACK_OFFS(0x44, -0xC));
 
 	auto pData = WarheadTypeExt::ExtMap.Find(WH);
-	return !pData->Malicious
-		? 0x738535
-		: 0
-	;
+	return !pData->Malicious ? 0x738535u : 0u;
 }
 
 DEFINE_HOOK(4F94A5, HouseClass_BuildingUnderAttack, 6)
