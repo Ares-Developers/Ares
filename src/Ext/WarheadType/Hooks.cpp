@@ -16,14 +16,14 @@
 // attach #561 here, reuse #407's additional hooks for colouring
 DEFINE_HOOK(46920B, BulletClass_Detonate, 6) {
 	GET(BulletClass* const, pThis, ESI);
-	//LEA_STACK(CoordStruct *, detonationXYZ, 0xAC); // looks unused?
+	GET_BASE(const CoordStruct* const, pCoordsDetonation, 0x8);
 
 	auto const pWarhead = pThis->WH;
 	auto const pWHExt = WarheadTypeExt::ExtMap.Find(pWarhead);
 
 	auto const pOwnerHouse = pThis->Owner ? pThis->Owner->Owner : nullptr;
 
-	const auto& coords = pThis->GetTargetCoords();
+	const auto& coords = *pCoordsDetonation;
 
 	// these effects should be applied no matter what happens to the target
 	pWHExt->applyRipples(coords);
