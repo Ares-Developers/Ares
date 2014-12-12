@@ -447,6 +447,9 @@ void EMPulse::UpdateSparkleAnim(TechnoClass* Techno) {
 			if(!Anim && RulesClass::Instance->EMPulseSparkles) {
 				Anim = GameCreate<AnimClass>(RulesClass::Instance->EMPulseSparkles, Techno->Location);
 				Anim->SetOwnerObject(Techno);
+				if(auto const pBld = abstract_cast<BuildingClass*>(Techno)) {
+					Anim->ZAdjust = -1024;
+				}
 			}
 		} else {
 			if(Anim) {
