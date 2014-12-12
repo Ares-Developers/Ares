@@ -252,12 +252,23 @@ bool WarheadTypeExt::ExtData::applyPermaMC(const CoordStruct &coords, HouseClass
 					pAnim = nullptr;
 				}
 
-				CoordStruct XYZ = coords;
-				XYZ.Z += pType->MindControlRingOffset;
+				auto const pBld = abstract_cast<BuildingClass*>(pTarget);
 
-				if(auto const pAnim = GameCreate<AnimClass>(RulesClass::Instance->PermaControlledAnimationType, XYZ)) {
-					pTarget->MindControlRingAnim = pAnim;
-					pAnim->SetOwnerObject(pTarget);
+				CoordStruct location = pTarget->GetCoords();
+				if(pBld) {
+					location.Z += pBld->Type->Height * Unsorted::LevelHeight;
+				} else {
+					location.Z += pType->MindControlRingOffset;
+				}
+
+				if(auto const pAnimType = RulesClass::Instance->PermaControlledAnimationType) {
+					if(auto const pAnim = GameCreate<AnimClass>(pAnimType, location)) {
+						pTarget->MindControlRingAnim = pAnim;
+						pAnim->SetOwnerObject(pTarget);
+						if(pBld) {
+							pAnim->ZAdjust = -1024;
+						}
+					}
 				}
 
 				return true;
