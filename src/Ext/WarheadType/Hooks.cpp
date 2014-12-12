@@ -14,59 +14,38 @@
 // feature #384: Permanent MindControl Warheads + feature #200: EMP Warheads
 // attach #407 here - set TechnoClass::Flashing.Duration // that doesn't exist, according to yrpp::TechnoClass.h::struct FlashData
 // attach #561 here, reuse #407's additional hooks for colouring
-DEFINE_HOOK(46920B, BulletClass_Fire, 6) {
-	GET(BulletClass *, Bullet, ESI);
+DEFINE_HOOK(46920B, BulletClass_Detonate, 6) {
+	GET(BulletClass* const, pThis, ESI);
 	//LEA_STACK(CoordStruct *, detonationXYZ, 0xAC); // looks unused?
-	WarheadTypeClass *pThis = Bullet->WH;
 
-	CoordStruct coords = Bullet->GetTargetCoords();
+	auto const pWarhead = pThis->WH;
+	auto const pWHExt = WarheadTypeExt::ExtMap.Find(pWarhead);
 
-	auto pWHExt = WarheadTypeExt::ExtMap.Find(pThis);
+	auto const pOwnerHouse = pThis->Owner ? pThis->Owner->Owner : nullptr;
 
-	HouseClass *OwnerHouse = (Bullet->Owner)
-		? Bullet->Owner->Owner
-		: nullptr
-	;
-
-	int damage = 0;
-	WeaponTypeExt::ExtData* WeaponTypeExt = nullptr;
-	if(Bullet->WeaponType) {
-		damage = Bullet->WeaponType->Damage;
-		WeaponTypeExt = WeaponTypeExt::ExtMap.Find(Bullet->WeaponType);
-	}
+	const auto& coords = pThis->GetTargetCoords();
 
 	// these effects should be applied no matter what happens to the target
 	pWHExt->applyRipples(coords);
 
 	bool targetStillOnMap = true;
-	if(WeaponTypeExt) {
-		targetStillOnMap = !WeaponTypeExt->conductAbduction(Bullet);
+	if(auto const pWeaponExt = WeaponTypeExt::ExtMap.Find(pThis->WeaponType)) {
+		targetStillOnMap = !pWeaponExt->conductAbduction(pThis);
 	}
 
 	// if the target gets abducted, there's nothing there to apply IC, EMP, etc. to
 	// mind that conductAbduction() neuters the bullet, so if you wish to change
 	// this check, you have to fix that as well
 	if(targetStillOnMap) {
-		pWHExt->applyIronCurtain(coords, OwnerHouse, damage);
-		pWHExt->applyEMP(coords, Bullet->Owner);
-		WarheadTypeExt::applyOccupantDamage(Bullet);
-		pWHExt->applyKillDriver(Bullet->Owner, Bullet->Target);
-		pWHExt->applyAttachedEffect(coords, Bullet->Owner);
+		auto const damage = pThis->WeaponType ? pThis->WeaponType->Damage : 0;
+		pWHExt->applyIronCurtain(coords, pOwnerHouse, damage);
+		pWHExt->applyEMP(coords, pThis->Owner);
+		WarheadTypeExt::applyOccupantDamage(pThis);
+		pWHExt->applyKillDriver(pThis->Owner, pThis->Target);
+		pWHExt->applyAttachedEffect(coords, pThis->Owner);
 	}
 
-/*
- * this is a little demo I made to test DP
-	if(_strcmpi(Bullet->Type->ID, "Cannon") == 0) {
-		UnitClass * Drop = reinterpret_cast<UnitClass *>(UnitTypeClass::Find("APOC")->CreateObject(HouseClass::Player));
-		CoordStruct XYZ = coords;
-		XYZ.Z += 800;
-		if(!TechnoExt::CreateWithDroppod(Drop, &XYZ)) {
-			Drop->UnInit();
-		}
-	}
-*/
-
-	return pWHExt->applyPermaMC(OwnerHouse, Bullet->Target) ? 0x469AA4u : 0u;
+	return pWHExt->applyPermaMC(pOwnerHouse, pThis->Target) ? 0x469AA4u : 0u;
 }
 
 // issue 472: deglob WarpAway
