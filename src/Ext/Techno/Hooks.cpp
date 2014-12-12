@@ -1148,7 +1148,7 @@ DEFINE_HOOK(7441B6, UnitClass_MarkOccupationBits, 6)
 	GET(CoordStruct*, pCrd, ESI);
 
 	CellClass* pCell = MapClass::Instance->GetCellAt(*pCrd);
-	int height = MapClass::Instance->GetCellFloorHeight(*pCrd) + CellClass::BridgeHeight();
+	int height = MapClass::Instance->GetCellFloorHeight(*pCrd) + CellClass::BridgeHeight;
 	bool alt = (pCrd->Z >= height && pCell->ContainsBridge());
 
 	// remember which occupation bit we set
@@ -1172,7 +1172,7 @@ DEFINE_HOOK(744216, UnitClass_UnmarkOccupationBits, 6)
 	enum { obNormal = 1, obAlt = 2 };
 
 	CellClass* pCell = MapClass::Instance->GetCellAt(*pCrd);
-	int height = MapClass::Instance->GetCellFloorHeight(*pCrd) + CellClass::BridgeHeight();
+	int height = MapClass::Instance->GetCellFloorHeight(*pCrd) + CellClass::BridgeHeight;
 	int alt = (pCrd->Z >= height) ? obAlt : obNormal;
 
 	// also clear the last occupation bit, if set

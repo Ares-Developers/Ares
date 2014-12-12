@@ -138,7 +138,7 @@ bool TechnoExt::EjectSurvivor(FootClass *Survivor, CoordStruct loc, bool Select)
 	Survivor->OnBridge = pCell->ContainsBridge();
 
 	int floorZ = pCell->GetCoordsWithBridge().Z;
-	bool chuted = (loc.Z - floorZ > 208);
+	bool chuted = (loc.Z - floorZ > 2 * Unsorted::LevelHeight);
 	if(chuted) {
 		// HouseClass::CreateParadrop does this when building passengers for a paradrop... it might be a wise thing to mimic!
 		Survivor->Remove();

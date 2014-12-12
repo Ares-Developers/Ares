@@ -100,7 +100,7 @@ bool SW_ChronoSphere::Activate(SuperClass* pThis, const CellStruct &Coords, bool
 		// position to play the animation at
 		CoordStruct coords = pTarget->GetCoords();
 		if(pTarget->Flags & cf_Bridge) {
-			coords.Z += pTarget->BridgeHeight();
+			coords.Z += CellClass::BridgeHeight;
 		}
 		coords.Z += pData->SW_AnimHeight;
 
