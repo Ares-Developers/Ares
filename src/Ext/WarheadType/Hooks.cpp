@@ -66,10 +66,7 @@ DEFINE_HOOK(46920B, BulletClass_Fire, 6) {
 	}
 */
 
-	return (OwnerHouse && pWHExt->applyPermaMC(coords, OwnerHouse, Bullet->Target))
-		? 0x469AA4
-		: 0
-	;
+	return pWHExt->applyPermaMC(OwnerHouse, Bullet->Target) ? 0x469AA4u : 0u;
 }
 
 // issue 472: deglob WarpAway

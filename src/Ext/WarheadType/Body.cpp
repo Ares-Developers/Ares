@@ -227,13 +227,12 @@ void WarheadTypeExt::ExtData::applyEMP(const CoordStruct &coords, TechnoClass *s
 /*!
 	This function checks if the passed warhead has MindControl.Permanent set, and, if so, applies the effect.
 	\note Moved here from hook BulletClass_Fire.
-	\param coords The coordinates of the warhead impact, the center of the Mind Control animation.
 	\param Owner Owner of the Mind Control effect, i.e. the one controlling the target afterwards.
 	\param Target Target of the Mind Control effect, i.e. the one being controlled by the owner afterwards.
 	\return false if effect wasn't applied, true if it was.
 		This is important for the chain of damage effects, as, in case of true, the target is now a friendly unit.
 */
-bool WarheadTypeExt::ExtData::applyPermaMC(const CoordStruct &coords, HouseClass* const Owner, AbstractClass* const Target) {
+bool WarheadTypeExt::ExtData::applyPermaMC(HouseClass* const Owner, AbstractClass* const Target) const {
 	if(this->MindControl_Permanent && Owner) {
 		if(auto const pTarget = abstract_cast<TechnoClass*>(Target)) {
 			auto const pType = pTarget->GetTechnoType();
