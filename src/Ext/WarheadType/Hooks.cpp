@@ -23,10 +23,16 @@ DEFINE_HOOK(46920B, BulletClass_Detonate, 6) {
 
 	auto const pOwnerHouse = pThis->Owner ? pThis->Owner->Owner : nullptr;
 
-	const auto& coords = *pCoordsDetonation;
+	// this snapping stuff does not belong here. it should go into BulletClass::Fire,
+	auto coords = *pCoordsDetonation;
+
+	static auto const SnapDistance = 64;
+	if(pThis->Target && pThis->DistanceFrom(pThis->Target) < SnapDistance) {
+		coords = pThis->Target->GetCoords();
+	}
 
 	// these effects should be applied no matter what happens to the target
-	pWHExt->applyRipples(coords);
+	pWHExt->applyRipples(*pCoordsDetonation);
 
 	bool targetStillOnMap = true;
 	if(auto const pWeaponExt = WeaponTypeExt::ExtMap.Find(pThis->WeaponType)) {
