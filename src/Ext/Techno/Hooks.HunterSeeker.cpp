@@ -210,9 +210,8 @@ DEFINE_HOOK(4CD9C8, FlyLocomotionClass_sub_4CD600_HunterSeeker_UpdateTarget, 6)
 			// update the facing
 			crd = pObject->GetCoords();
 			double value = Math::arctanfoo(crd.Y - pThis->MovingDestination.Y, pThis->MovingDestination.X - crd.X);
-			DirStruct::value_type facing = static_cast<DirStruct::value_type>(Game::F2I((value - 1.570796326794897) * -10430.06004058427));
 
-			DirStruct tmp(facing);
+			DirStruct tmp(value);
 			pObject->Facing.set(tmp);
 			pObject->TurretFacing.set(tmp);
 		}
