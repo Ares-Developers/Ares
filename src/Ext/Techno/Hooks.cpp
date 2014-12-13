@@ -284,29 +284,29 @@ DEFINE_HOOK(6F4103, TechnoClass_Init_2, 6)
 // temporal per-slot
 DEFINE_HOOK(71A84E, TemporalClass_UpdateA, 5)
 {
-	GET(TemporalClass *, Temp, ESI);
+	GET(TemporalClass* const, pThis, ESI);
 
 	// it's not guaranteed that there is a target
-	if(auto Target = Temp->Target) {
-		TechnoExt::ExtData * TargetExt = TechnoExt::ExtMap.Find(Target);
+	if(auto const pTarget = pThis->Target) {
+		auto const pExt = TechnoExt::ExtMap.Find(pTarget);
 		// Temporal should disable RadarJammers
-		TargetExt->RadarJam = nullptr;
+		pExt->RadarJam = nullptr;
 
 		//AttachEffect handling under Temporal
-		if(!TargetExt->AttachEffects_RecreateAnims) {
-			for(auto i = TargetExt->AttachedEffects.size(); i > 0; --i) {
-				auto &Effect = TargetExt->AttachedEffects.at(i - 1);
-				if(!!Effect->Type->TemporalHidesAnim) {
+		if(!pExt->AttachEffects_RecreateAnims) {
+			for(auto i = pExt->AttachedEffects.size(); i > 0; --i) {
+				auto const& Effect = pExt->AttachedEffects[i - 1];
+				if(Effect->Type->TemporalHidesAnim) {
 					Effect->KillAnim();
 				}
 			}
-			TargetExt->AttachEffects_RecreateAnims = true;
+			pExt->AttachEffects_RecreateAnims = true;
 		}
 	}
 
-	Temp->WarpRemaining -= Temp->GetWarpPerStep(0);
+	pThis->WarpRemaining -= pThis->GetWarpPerStep(0);
 
-	R->EAX(Temp->WarpRemaining);
+	R->EAX(pThis->WarpRemaining);
 	return 0x71A88D;
 }
 
