@@ -9,10 +9,10 @@
 
 DEFINE_HOOK(4CCB84, FlyLocomotionClass_ILocomotion_Process_HunterSeeker, 6)
 {
-	GET(ILocomotion*, pThis, ESI);
-	auto pLoco = static_cast<FlyLocomotionClass*>(pThis);
-	auto pObject = pLoco->LinkedTo;
-	auto pType = pObject->GetTechnoType();
+	GET(ILocomotion* const, pThis, ESI);
+	auto const pLoco = static_cast<FlyLocomotionClass*>(pThis);
+	auto const pObject = pLoco->LinkedTo;
+	auto const pType = pObject->GetTechnoType();
 
 	if(pType->HunterSeeker) {
 		if(!pObject->Target) {
@@ -34,12 +34,11 @@ DEFINE_HOOK(4CCB84, FlyLocomotionClass_ILocomotion_Process_HunterSeeker, 6)
 
 DEFINE_HOOK(4CE85A, FlyLocomotionClass_UpdateLanding, 8)
 {
-	GET(FlyLocomotionClass*, pThis, ESI);
-	auto pObject = pThis->LinkedTo;
-	auto pType = pObject->GetTechnoType();
+	GET(FlyLocomotionClass* const, pThis, ESI);
+	auto const pObject = pThis->LinkedTo;
+	auto const pType = pObject->GetTechnoType();
 
 	if(pType->HunterSeeker) {
-
 		if(!pObject->Target) {
 			pThis->Acquire_Hunter_Seeker_Target();
 
@@ -63,41 +62,41 @@ DEFINE_HOOK(4CE85A, FlyLocomotionClass_UpdateLanding, 8)
 
 DEFINE_HOOK(4CF3D0, FlyLocomotionClass_sub_4CEFB0_HunterSeeker, 7)
 {
-	GET_STACK(FlyLocomotionClass*, pThis, 0x20);
-	auto pObject = pThis->LinkedTo;
-	auto pType = pObject->GetTechnoType();
-	auto pExt = TechnoTypeExt::ExtMap.Find(pType);
+	GET_STACK(FlyLocomotionClass* const, pThis, 0x20);
+	auto const pObject = pThis->LinkedTo;
+	auto const pType = pObject->GetTechnoType();
+	auto const pExt = TechnoTypeExt::ExtMap.Find(pType);
 
 	if(pType->HunterSeeker) {
-		if(auto pTarget = pObject->Target) {
-			int DetonateProximity = pExt->HunterSeekerDetonateProximity.Get(RulesExt::Global()->HunterSeekerDetonateProximity);
-			int DescendProximity = pExt->HunterSeekerDescendProximity.Get(RulesExt::Global()->HunterSeekerDescendProximity);
+		if(auto const pTarget = pObject->Target) {
+			auto const DetonateProximity = pExt->HunterSeekerDetonateProximity.Get(RulesExt::Global()->HunterSeekerDetonateProximity);
+			auto const DescendProximity = pExt->HunterSeekerDescendProximity.Get(RulesExt::Global()->HunterSeekerDescendProximity);
 
 			// get th difference of our position to the target,
 			// disregarding the Z component.
-			CoordStruct crd = pObject->GetCoords();
+			auto crd = pObject->GetCoords();
 			crd -= pThis->MovingDestination;
 			crd.Z = 0;
 
-			int dist = Game::F2I(crd.Magnitude());
+			auto const dist = Game::F2I(crd.Magnitude());
 
 			if(dist >= DetonateProximity) {
 				// not close enough to detonate, but we might start the decent
 				if(dist < DescendProximity) {
 					// the target's current height
-					int z = pTarget->GetCoords().Z;
+					auto const z = pTarget->GetCoords().Z;
 
 					// the hunter seeker's default flight level
 					crd = pObject->GetCoords();
-					int floor = MapClass::Instance->GetCellFloorHeight(crd);
-					int height = floor + pType->GetFlightLevel();
+					auto floor = MapClass::Instance->GetCellFloorHeight(crd);
+					auto const height = floor + pType->GetFlightLevel();
 
 					// linear interpolation between target's Z and normal flight level
-					double ratio = dist / static_cast<double>(DescendProximity);
-					double lerp = z * (1.0 - ratio) + height * ratio;
+					auto const ratio = dist / static_cast<double>(DescendProximity);
+					auto const lerp = z * (1.0 - ratio) + height * ratio;
 
 					// set the descending flight level
-					int level = Game::F2I(lerp) - floor;
+					auto level = Game::F2I(lerp) - floor;
 					if(level < 10) {
 						level = 10;
 					}
@@ -110,18 +109,18 @@ DEFINE_HOOK(4CF3D0, FlyLocomotionClass_sub_4CEFB0_HunterSeeker, 7)
 				// project the next steps using the current speed
 				// and facing. if there's a height difference, use
 				// the highest value as the new flight level.
-				int speed = pThis->Apparent_Speed();
+				auto const speed = pThis->Apparent_Speed();
 				if(speed > 0) {
-					double value = pObject->Facing.current().radians();
-					double cos = Math::cos(value);
-					double sin = Math::sin(value);
+					double const value = pObject->Facing.current().radians();
+					double const cos = Math::cos(value);
+					double const sin = Math::sin(value);
 
 					int maxHeight = 0;
 					int currentHeight = 0;
-					crd = pObject->GetCoords();
+					auto crd2 = pObject->GetCoords();
 					for(int i = 0; i < 11; ++i) {
-						CellClass* pCell = MapClass::Instance->GetCellAt(crd);
-						int z = pCell->GetCoordsWithBridge().Z;
+						auto const pCell = MapClass::Instance->GetCellAt(crd2);
+						auto const z = pCell->GetCoordsWithBridge().Z;
 
 						if(z > maxHeight) {
 							maxHeight = z;
@@ -132,12 +131,12 @@ DEFINE_HOOK(4CF3D0, FlyLocomotionClass_sub_4CEFB0_HunterSeeker, 7)
 						}
 
 						// advance one step
-						crd.X = Game::F2I(crd.X + cos * speed);
-						crd.Y = Game::F2I(crd.Y - sin * speed);
+						crd2.X += Game::F2I(cos * speed);
+						crd2.Y -= Game::F2I(sin * speed);
 
 						// result is never used in TS, but a break sounds
 						// like a good idea.
-						CellStruct cell = CellClass::Coord2Cell(crd);
+						auto const cell = CellClass::Coord2Cell(crd2);
 						if(!MapClass::Instance->CoordinatesLegal(cell)) {
 							break;
 						}
@@ -152,11 +151,11 @@ DEFINE_HOOK(4CF3D0, FlyLocomotionClass_sub_4CEFB0_HunterSeeker, 7)
 
 			} else {
 				// close enough to detonate
-				if(auto pTechno = abstract_cast<TechnoClass*>(pTarget)) {
-					WeaponTypeClass* pWeapon = pObject->GetWeapon(0)->WeaponType;
+				if(auto const pTechno = abstract_cast<TechnoClass*>(pTarget)) {
+					auto const pWeapon = pObject->GetWeapon(0)->WeaponType;
 
 					// damage the target
-					int damage = pWeapon->Damage;
+					auto damage = pWeapon->Damage;
 					pTechno->ReceiveDamage(&damage, 0, pWeapon->Warhead, pObject, true, true, nullptr);
 
 					// damage the hunter seeker
@@ -164,9 +163,9 @@ DEFINE_HOOK(4CF3D0, FlyLocomotionClass_sub_4CEFB0_HunterSeeker, 7)
 					pObject->ReceiveDamage(&damage, 0, pWeapon->Warhead, nullptr, true, true, nullptr);
 
 					// damage the map
-					crd = pObject->GetCoords();
-					MapClass::FlashbangWarheadAt(pWeapon->Damage, RulesClass::Instance->C4Warhead, crd);
-					MapClass::DamageArea(crd, pWeapon->Damage, pObject, pWeapon->Warhead, true, nullptr);
+					auto const crd2 = pObject->GetCoords();
+					MapClass::FlashbangWarheadAt(pWeapon->Damage, RulesClass::Instance->C4Warhead, crd2);
+					MapClass::DamageArea(crd2, pWeapon->Damage, pObject, pWeapon->Warhead, true, nullptr);
 
 					// return 0
 					R->EBX(0);
@@ -181,18 +180,18 @@ DEFINE_HOOK(4CF3D0, FlyLocomotionClass_sub_4CEFB0_HunterSeeker, 7)
 
 DEFINE_HOOK(4CD9C8, FlyLocomotionClass_sub_4CD600_HunterSeeker_UpdateTarget, 6)
 {
-	GET(FlyLocomotionClass*, pThis, ESI);
-	auto pObject = pThis->LinkedTo;
-	auto pType = pObject->GetTechnoType();
+	GET(FlyLocomotionClass* const, pThis, ESI);
+	auto const pObject = pThis->LinkedTo;
+	auto const pType = pObject->GetTechnoType();
 
 	if(pType->HunterSeeker) {
-		if(auto pTarget = pObject->Target) {
+		if(auto const pTarget = pObject->Target) {
 
 			// update the target's position, considering units in tunnels
-			CoordStruct crd = pTarget->GetCoords();
+			auto crd = pTarget->GetCoords();
 
-			if(auto pFoot = abstract_cast<FootClass*>(pObject)) {
-				AbstractType abs = pTarget->WhatAmI();
+			if(auto const pFoot = abstract_cast<FootClass*>(pObject)) {
+				auto const abs = pTarget->WhatAmI();
 				if(abs == UnitClass::AbsID || abs == InfantryClass::AbsID) {
 					if(pFoot->TubeIndex >= 0) {
 						crd = pFoot->unknown_coords_568;
@@ -200,7 +199,7 @@ DEFINE_HOOK(4CD9C8, FlyLocomotionClass_sub_4CD600_HunterSeeker_UpdateTarget, 6)
 				}
 			}
 
-			int height = MapClass::Instance->GetCellFloorHeight(crd);
+			auto const height = MapClass::Instance->GetCellFloorHeight(crd);
 			if(crd.Z < height) {
 				crd.Z = height;
 			}
@@ -208,10 +207,10 @@ DEFINE_HOOK(4CD9C8, FlyLocomotionClass_sub_4CD600_HunterSeeker_UpdateTarget, 6)
 			pThis->MovingDestination = crd;
 
 			// update the facing
-			crd = pObject->GetCoords();
-			double value = Math::arctanfoo(crd.Y - pThis->MovingDestination.Y, pThis->MovingDestination.X - crd.X);
+			auto const crdSource = pObject->GetCoords();
+			auto const value = Math::arctanfoo(crdSource.Y - crd.Y, crd.X - crdSource.X);
 
-			DirStruct tmp(value);
+			DirStruct const tmp(value);
 			pObject->Facing.set(tmp);
 			pObject->TurretFacing.set(tmp);
 		}
@@ -222,17 +221,17 @@ DEFINE_HOOK(4CD9C8, FlyLocomotionClass_sub_4CD600_HunterSeeker_UpdateTarget, 6)
 
 DEFINE_HOOK(4CDE64, FlyLocomotionClass_sub_4CD600_HunterSeeker_Ascent, 6)
 {
-	GET(FlyLocomotionClass*, pThis, ESI);
-	GET(int, unk, EDI);
-	auto pObject = pThis->LinkedTo;
-	auto pType = pObject->GetTechnoType();
-	auto pExt = TechnoTypeExt::ExtMap.Find(pType);
+	GET(FlyLocomotionClass* const, pThis, ESI);
+	GET(int const, unk, EDI);
+	auto const pObject = pThis->LinkedTo;
+	auto const pType = pObject->GetTechnoType();
+	auto const pExt = TechnoTypeExt::ExtMap.Find(pType);
 
-	int ret = pThis->FlightLevel - unk;
-	int max = 16;
+	auto ret = pThis->FlightLevel - unk;
+	auto max = 16;
 
 	if(!pType->IsDropship) {
-		if (!pType->HunterSeeker) {
+		if(!pType->HunterSeeker) {
 			// ordinary aircraft
 			max = (R->BL() != 0) ? 10 : 20;
 
@@ -256,14 +255,14 @@ DEFINE_HOOK(4CDE64, FlyLocomotionClass_sub_4CD600_HunterSeeker_Ascent, 6)
 
 DEFINE_HOOK(4CDF54, FlyLocomotionClass_sub_4CD600_HunterSeeker_Descent, 5)
 {
-	GET(FlyLocomotionClass*, pThis, ESI);
-	GET(int, max, EDI);
-	auto pObject = pThis->LinkedTo;
-	auto pType = pObject->GetTechnoType();
-	auto pExt = TechnoTypeExt::ExtMap.Find(pType);
+	GET(FlyLocomotionClass* const, pThis, ESI);
+	GET(int const, max, EDI);
+	auto const pObject = pThis->LinkedTo;
+	auto const pType = pObject->GetTechnoType();
+	auto const pExt = TechnoTypeExt::ExtMap.Find(pType);
 
 	if(pType->HunterSeeker) {
-		int ret = pExt->HunterSeekerDescentSpeed.Get(RulesExt::Global()->HunterSeekerDescentSpeed);
+		auto ret = pExt->HunterSeekerDescentSpeed.Get(RulesExt::Global()->HunterSeekerDescentSpeed);
 		if(max < ret) {
 			ret = max;
 		}
@@ -277,10 +276,10 @@ DEFINE_HOOK(4CDF54, FlyLocomotionClass_sub_4CD600_HunterSeeker_Descent, 5)
 
 DEFINE_HOOK(4CFE80, FlyLocomotionClass_ILocomotion_AcquireHunterSeekerTarget, 5)
 {
-	GET_STACK(ILocomotion*, pThis, 0x4);
-	auto pLoco = static_cast<FlyLocomotionClass*>(pThis);
-	auto pObject = pLoco->LinkedTo;
-	auto pExt = TechnoExt::ExtMap.Find(pObject);
+	GET_STACK(ILocomotion* const, pThis, 0x4);
+	auto const pLoco = static_cast<FlyLocomotionClass*>(pThis);
+	auto const pObject = pLoco->LinkedTo;
+	auto const pExt = TechnoExt::ExtMap.Find(pObject);
 
 	// replace the entire function
 	pExt->AcquireHunterSeekerTarget();
@@ -290,13 +289,13 @@ DEFINE_HOOK(4CFE80, FlyLocomotionClass_ILocomotion_AcquireHunterSeekerTarget, 5)
 
 DEFINE_HOOK(4D8D95, FootClass_UpdatePosition_HunterSeeker, A)
 {
-	GET(FootClass*, pThis, ESI);
+	GET(FootClass* const, pThis, ESI);
 
 	// ensure the target won't get away
 	if(pThis->GetTechnoType()->HunterSeeker) {
-		if(auto pTarget = abstract_cast<TechnoClass*>(pThis->Target)) {
-			auto pWeapon = pThis->GetWeapon(0)->WeaponType;
-			int damage = pWeapon->Damage;
+		if(auto const pTarget = abstract_cast<TechnoClass*>(pThis->Target)) {
+			auto const pWeapon = pThis->GetWeapon(0)->WeaponType;
+			auto damage = pWeapon->Damage;
 			pTarget->ReceiveDamage(&damage, 0, pWeapon->Warhead, pThis, true, true, nullptr);
 		}
 	}
