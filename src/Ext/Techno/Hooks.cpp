@@ -286,20 +286,22 @@ DEFINE_HOOK(71A84E, TemporalClass_UpdateA, 5)
 {
 	GET(TemporalClass *, Temp, ESI);
 
-	// Temporal should disable RadarJammers
-	auto Target = Temp->Target;
-	TechnoExt::ExtData * TargetExt = TechnoExt::ExtMap.Find(Target);
-	TargetExt->RadarJam = nullptr;
+	// it's not guaranteed that there is a target
+	if(auto Target = Temp->Target) {
+		TechnoExt::ExtData * TargetExt = TechnoExt::ExtMap.Find(Target);
+		// Temporal should disable RadarJammers
+		TargetExt->RadarJam = nullptr;
 
-	//AttachEffect handling under Temporal
-	if (!TargetExt->AttachEffects_RecreateAnims) {
-		for (auto i = TargetExt->AttachedEffects.size(); i > 0; --i) {
-			auto &Effect = TargetExt->AttachedEffects.at(i - 1);
-			if (!!Effect->Type->TemporalHidesAnim) {
-				Effect->KillAnim();
+		//AttachEffect handling under Temporal
+		if(!TargetExt->AttachEffects_RecreateAnims) {
+			for(auto i = TargetExt->AttachedEffects.size(); i > 0; --i) {
+				auto &Effect = TargetExt->AttachedEffects.at(i - 1);
+				if(!!Effect->Type->TemporalHidesAnim) {
+					Effect->KillAnim();
+				}
 			}
+			TargetExt->AttachEffects_RecreateAnims = true;
 		}
-		TargetExt->AttachEffects_RecreateAnims = true;
 	}
 
 	Temp->WarpRemaining -= Temp->GetWarpPerStep(0);
