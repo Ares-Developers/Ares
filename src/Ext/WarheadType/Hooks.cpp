@@ -23,20 +23,24 @@ DEFINE_HOOK(46920B, BulletClass_Detonate, 6) {
 
 	auto const pOwnerHouse = pThis->Owner ? pThis->Owner->Owner : nullptr;
 
-	// this snapping stuff does not belong here. it should go into BulletClass::Fire,
+	// this snapping stuff does not belong here. it should go into BulletClass::Fire
 	auto coords = *pCoordsDetonation;
+	auto snapped = false;
 
 	static auto const SnapDistance = 64;
 	if(pThis->Target && pThis->DistanceFrom(pThis->Target) < SnapDistance) {
 		coords = pThis->Target->GetCoords();
+		snapped = true;
 	}
 
 	// these effects should be applied no matter what happens to the target
 	pWHExt->applyRipples(*pCoordsDetonation);
 
 	bool targetStillOnMap = true;
-	if(auto const pWeaponExt = WeaponTypeExt::ExtMap.Find(pThis->WeaponType)) {
-		targetStillOnMap = !pWeaponExt->conductAbduction(pThis);
+	if(snapped) {
+		if(auto const pWeaponExt = WeaponTypeExt::ExtMap.Find(pThis->WeaponType)) {
+			targetStillOnMap = !pWeaponExt->conductAbduction(pThis);
+		}
 	}
 
 	// if the target gets abducted, there's nothing there to apply IC, EMP, etc. to
@@ -46,9 +50,12 @@ DEFINE_HOOK(46920B, BulletClass_Detonate, 6) {
 		auto const damage = pThis->WeaponType ? pThis->WeaponType->Damage : 0;
 		pWHExt->applyIronCurtain(coords, pOwnerHouse, damage);
 		pWHExt->applyEMP(coords, pThis->Owner);
-		WarheadTypeExt::applyOccupantDamage(pThis);
-		pWHExt->applyKillDriver(pThis->Owner, pThis->Target);
 		pWHExt->applyAttachedEffect(coords, pThis->Owner);
+
+		if(snapped) {
+			WarheadTypeExt::applyOccupantDamage(pThis);
+			pWHExt->applyKillDriver(pThis->Owner, pThis->Target);
+		}
 	}
 
 	return pWHExt->applyPermaMC(pOwnerHouse, pThis->Target) ? 0x469AA4u : 0u;
