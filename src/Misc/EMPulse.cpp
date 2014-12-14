@@ -41,8 +41,8 @@ void EMPulse::CreateEMPulse(WarheadTypeExt::ExtData *Warhead, const CoordStruct 
 	auto items = Helpers::Alex::getCellSpreadItems(Coords, Warhead->OwnerObject()->CellSpread, true);
 
 	// affect each object
-	for(size_t i=0; i<items.size(); ++i) {
-		deliverEMPDamage(items[i], Firer, Warhead);
+	for(const auto& Item : items) {
+		deliverEMPDamage(Item, Firer, Warhead);
 	}
 
 	EMP_Log("[CreateEMPulse] Done.\n");
@@ -520,12 +520,12 @@ void EMPulse::announceAttack(TechnoClass* Techno) {
 	\date 2010-05-20
 */
 bool EMPulse::thresholdExceeded(TechnoClass * Victim) {
-	TechnoTypeExt::ExtData *pData = TechnoTypeExt::ExtMap.Find(Victim->GetTechnoType());
+	auto const pData = TechnoTypeExt::ExtMap.Find(Victim->GetTechnoType());
 
 	EMP_Log("[thresholdExceeded] %s: %d %d\n", Victim->get_ID(), pData->EMP_Threshold, Victim->EMPLockRemaining);
 
-	if ((pData->EMP_Threshold != 0) && (Victim->EMPLockRemaining > static_cast<DWORD>(abs(pData->EMP_Threshold)))) {
-		if ((pData->EMP_Threshold > 0) || (Victim->IsInAir() && !Victim->Parachute)) {
+	if(pData->EMP_Threshold != 0 && Victim->EMPLockRemaining > static_cast<DWORD>(std::abs(pData->EMP_Threshold))) {
+		if(pData->EMP_Threshold > 0 || (Victim->IsInAir() && !Victim->Parachute)) {
 			return true;
 		}
 	}
