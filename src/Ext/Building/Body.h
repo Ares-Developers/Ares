@@ -56,8 +56,6 @@ public:
 		void RemoveFromNetwork(bool bCease);
 		void SetSupportTarget(cPrismForwarding* pTargetTower);
 		void RemoveAllSenders();
-
-		void AnnounceInvalidPointer(void * ptr, bool Removed);
 	};
 
 
@@ -100,7 +98,6 @@ public:
 
 		virtual void InvalidatePointer(void *ptr, bool bRemoved) override {
 			AnnounceInvalidPointer(OwnerBeforeRaid, ptr);
-			PrismForwarding.AnnounceInvalidPointer(ptr, bRemoved);
 		}
 
 		virtual void LoadFromStream(AresStreamReader &Stm) override;

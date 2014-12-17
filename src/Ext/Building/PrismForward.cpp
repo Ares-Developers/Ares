@@ -324,17 +324,3 @@ void BuildingExt::cPrismForwarding::RemoveAllSenders() {
 		this->Senders.Clear();
 	}
 }
-
-void BuildingExt::cPrismForwarding::AnnounceInvalidPointer(void* ptr, bool removed) {
-	//// verify that ptr points to an existing object that is a building without
-	//// accessing any of its fields or members.
-	//if(auto pExt = ExtMap.Find(static_cast<BuildingClass*>(ptr))) {
-	//	if(&pExt->PrismForwarding == this->SupportTarget) {
-	//		Debug::Log("Prism Forwarder (ExtData %p) failed to remove support target\n", this->Owner);
-	//	}
-	//	auto senderIdx = this->Senders.FindItemIndex(&pExt->PrismForwarding);
-	//	if(senderIdx != -1) {
-	//		Debug::Log("Prism Forwarder (ExtData %p) failed to remove sender #%d\n", this->Owner, senderIdx);
-	//	}
-	//}
-}
