@@ -3,6 +3,8 @@
 
 #include "../Ares.CRT.h"
 
+#include "../Misc/Savegame.h"
+
 #include <algorithm>
 #include <functional>
 #include <memory>
@@ -74,6 +76,10 @@ public:
 	virtual ~Enumerable() = default;
 
 	virtual void LoadFromINI(CCINIClass *pINI) {}
+
+	virtual void LoadFromStream(AresStreamReader &Stm) = 0;
+
+	virtual void SaveToStream(AresStreamWriter &Stm) = 0;
 
 	char Name[32];
 };

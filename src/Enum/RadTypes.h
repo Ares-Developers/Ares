@@ -43,6 +43,10 @@ public:
 
 	virtual void LoadFromINI(CCINIClass *pINI) override;
 
+	virtual void LoadFromStream(AresStreamReader &Stm) override;
+
+	virtual void SaveToStream(AresStreamWriter &Stm) override;
+
 	WarheadTypeClass* GetWarhead() const {
 		return this->WH.Get(RulesClass::Instance->RadSiteWarhead);
 	}

@@ -1,5 +1,7 @@
 #include "ArmorTypes.h"
 
+#include "../Misc/SavegameDef.h"
+
 Enumerable<ArmorType>::container_t Enumerable<ArmorType>::Array;
 
 const char * Enumerable<ArmorType>::GetMainSection()
@@ -17,6 +19,20 @@ void ArmorType::LoadFromINI(CCINIClass *pINI)
 	this->DefaultIndex = ArmorType::FindIndex(buffer);
 	WarheadTypeExt::VersesData *VS = &this->DefaultVerses;
 	VS->Parse(buffer);
+}
+
+void ArmorType::LoadFromStream(AresStreamReader &Stm)
+{
+	Stm
+		.Process(this->DefaultIndex)
+		.Process(this->DefaultVerses);
+}
+
+void ArmorType::SaveToStream(AresStreamWriter &Stm)
+{
+	Stm
+		.Process(this->DefaultIndex)
+		.Process(this->DefaultVerses);
 }
 
 void ArmorType::LoadForWarhead(CCINIClass *pINI, WarheadTypeClass* pWH)

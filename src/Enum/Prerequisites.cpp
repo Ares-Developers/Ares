@@ -2,6 +2,8 @@
 #include "../Ares.h"
 #include "Prerequisites.h"
 
+#include "../Misc/SavegameDef.h"
+
 Enumerable<GenericPrerequisite>::container_t Enumerable<GenericPrerequisite>::Array;
 
 const char * Enumerable<GenericPrerequisite>::GetMainSection()
@@ -27,6 +29,16 @@ void GenericPrerequisite::LoadFromINI(CCINIClass *pINI)
 	Prereqs::Parse(pINI, "General", generalbuf, dvc);
 
 	Prereqs::Parse(pINI, section, this->Name, dvc);
+}
+
+void GenericPrerequisite::LoadFromStream(AresStreamReader &Stm)
+{
+	Stm.Process(this->Prereqs);
+}
+
+void GenericPrerequisite::SaveToStream(AresStreamWriter &Stm)
+{
+	Stm.Process(this->Prereqs);
 }
 
 void GenericPrerequisite::AddDefaults()

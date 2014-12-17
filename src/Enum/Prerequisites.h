@@ -26,6 +26,10 @@ public:
 
 	virtual void LoadFromINI(CCINIClass *pINI) override;
 
+	virtual void LoadFromStream(AresStreamReader &Stm) override;
+
+	virtual void SaveToStream(AresStreamWriter &Stm) override;
+
 	static void AddDefaults();
 
 	DynamicVectorClass<int> Prereqs;

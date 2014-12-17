@@ -26,3 +26,33 @@ void RadType::LoadFromINI(CCINIClass *pINI)
 	this->Light_Factor.Read(exINI, section, "LightFactor");
 	this->Tint_Factor.Read(exINI, section, "TintFactor");
 }
+
+void RadType::LoadFromStream(AresStreamReader &Stm)
+{
+	Stm
+		.Process(this->WH)
+		.Process(this->Color)
+		.Process(this->Duration_Multiple)
+		.Process(this->Application_Delay)
+		.Process(this->Level_Max)
+		.Process(this->Level_Delay)
+		.Process(this->Light_Delay)
+		.Process(this->Level_Factor)
+		.Process(this->Light_Factor)
+		.Process(this->Tint_Factor);
+}
+
+void RadType::SaveToStream(AresStreamWriter &Stm)
+{
+	Stm
+		.Process(this->WH)
+		.Process(this->Color)
+		.Process(this->Duration_Multiple)
+		.Process(this->Application_Delay)
+		.Process(this->Level_Max)
+		.Process(this->Level_Delay)
+		.Process(this->Light_Delay)
+		.Process(this->Level_Factor)
+		.Process(this->Light_Factor)
+		.Process(this->Tint_Factor);
+}
