@@ -8,7 +8,6 @@ class Dialogs {
 public:
 
 	static const char *StatusString;
-	static wchar_t ExceptDetailedMessage[0x400];
 	static const int ExceptControlID;
 
 	static void TakeMouse() {

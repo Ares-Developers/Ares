@@ -376,7 +376,8 @@ __declspec(noreturn) void Debug::Exit(UINT ExitCode) {
 }
 
 void Debug::FatalError(bool Dump) {
-	wsprintfW(Dialogs::ExceptDetailedMessage,
+	wchar_t Message[0x400];
+	wsprintfW(Message,
 		L"Ares has encountered an internal error and is unable to continue normally. "
 		L"Please visit our website at http://ares.strategy-x.com for updates and support.\n\n"
 		L"%hs",
@@ -385,9 +386,7 @@ void Debug::FatalError(bool Dump) {
 	Debug::Log("\nFatal Error:\n");
 	Debug::Log("%s\n", Ares::readBuffer);
 
-	MessageBoxW(Game::hWnd,
-		Dialogs::ExceptDetailedMessage,
-		L"Fatal Error - Yuri's Revenge", MB_OK | MB_ICONERROR);
+	MessageBoxW(Game::hWnd, Message, L"Fatal Error - Yuri's Revenge", MB_OK | MB_ICONERROR);
 
 	if(Dump) {
 		Debug::FullDump(nullptr);
