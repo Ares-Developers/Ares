@@ -45,12 +45,11 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 		this->MyHeight.Read(exINI, pID, "PrismForwarding.MyHeight");
 		this->BreakSupport.Read(exINI, pID, "PrismForwarding.BreakSupport");
 		this->Intensity.Read(exINI, pID, "PrismForwarding.Intensity");
+		this->ChargeDelay.Read(exINI, pID, "PrismForwarding.ChargeDelay");
 		
-		int ChargeDelay = pINI->ReadInteger(pID, "PrismForwarding.ChargeDelay", this->ChargeDelay);
-		if (ChargeDelay >= 1) {
-			this->ChargeDelay.Set(ChargeDelay);
-		} else {
-			Debug::Log("[Developer Error] %s has an invalid PrismForwarding.ChargeDelay (%d), overriding to 1.\n", pThis->ID, ChargeDelay);
+		if(this->ChargeDelay < 1) {
+			Debug::Log("[Developer Error] %s has an invalid PrismForwarding.ChargeDelay (%d), overriding to 1.\n", pThis->ID, this->ChargeDelay.Get());
+			this->ChargeDelay.Set(1);
 		}
 
 		auto SuperWH = RulesClass::Instance->C4Warhead;
