@@ -22,7 +22,7 @@ public:
 	typedef std::remove_pointer_t<T> base_type;
 	Valueable(T Default = T()) : Value(Default) {};
 
-	virtual ~Valueable() {}
+	virtual ~Valueable() = default;
 
 	operator const T& () const {
 		return this->Get();
@@ -208,7 +208,7 @@ public:
 
 	ValueableVector() : std::vector<T>(), defined(false) {};
 
-	virtual ~ValueableVector() {}
+	virtual ~ValueableVector() = default;
 
 	inline virtual void Read(INI_EX &parser, const char* pSection, const char* pKey);
 
