@@ -29,6 +29,11 @@ public:
 	inline bool IsPowered() const {
 		return this->Powered;
 	}
+
+	bool Load(AresStreamReader &Stm, bool RegisterForChange);
+	bool Save(AresStreamWriter &Stm) const;
 };
+
+ENABLE_ARES_PERSISTENCE(PoweredUnitClass);
 
 #endif

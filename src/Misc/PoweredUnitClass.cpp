@@ -70,3 +70,19 @@ bool PoweredUnitClass::Update()
 	LastScan = Unsorted::CurrentFrame;
 	return true;
 }
+
+bool PoweredUnitClass::Load(AresStreamReader &Stm, bool RegisterForChange) {
+	return Stm
+		.Process(this->Techno)
+		.Process(this->LastScan)
+		.Process(this->Powered)
+		.Success();
+}
+
+bool PoweredUnitClass::Save(AresStreamWriter &Stm) const {
+	return Stm
+		.Process(this->Techno)
+		.Process(this->LastScan)
+		.Process(this->Powered)
+		.Success();
+}
