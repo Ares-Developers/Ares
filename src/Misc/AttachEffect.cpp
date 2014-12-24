@@ -23,6 +23,44 @@ In a nutshell:
 
 */
 
+bool AttachEffectTypeClass::Load(AresStreamReader &Stm, bool RegisterForChange) {
+	return Stm
+		.Process(this->Owner)
+		.Process(this->Duration)
+		.Process(this->Cumulative)
+		.Process(this->ForceDecloak)
+		.Process(this->DiscardOnEntry)
+		.Process(this->AnimType)
+		.Process(this->AnimResetOnReapply)
+		.Process(this->TemporalHidesAnim)
+		.Process(this->FirepowerMultiplier)
+		.Process(this->ArmorMultiplier)
+		.Process(this->SpeedMultiplier)
+		.Process(this->Cloakable)
+		.Process(this->Delay)
+		.Success()
+		&& Stm.RegisterChange(this); // announce this type
+}
+
+bool AttachEffectTypeClass::Save(AresStreamWriter &Stm) const {
+	return Stm
+		.Process(this->Owner)
+		.Process(this->Duration)
+		.Process(this->Cumulative)
+		.Process(this->ForceDecloak)
+		.Process(this->DiscardOnEntry)
+		.Process(this->AnimType)
+		.Process(this->AnimResetOnReapply)
+		.Process(this->TemporalHidesAnim)
+		.Process(this->FirepowerMultiplier)
+		.Process(this->ArmorMultiplier)
+		.Process(this->SpeedMultiplier)
+		.Process(this->Cloakable)
+		.Process(this->Delay)
+		.Success()
+		&& Stm.RegisterChange(this);
+}
+
 void AttachEffectTypeClass::Read(INI_EX &exINI) {
 	const char* section = this->Owner->ID;
 	this->Duration.Read(exINI, section, "AttachEffect.Duration");
@@ -100,6 +138,24 @@ void AttachEffectTypeClass::Attach(TechnoClass* Target, int Duration, TechnoClas
 	// animation
 	Attaching->CreateAnim(Target);
 	
+}
+
+bool AttachEffectClass::Load(AresStreamReader &Stm, bool RegisterForChange) {
+	return Stm
+		.Process(this->Type)
+		.Process(this->Animation)
+		.Process(this->ActualDuration)
+		.Process(this->Invoker)
+		.Success();
+}
+
+bool AttachEffectClass::Save(AresStreamWriter &Stm) const {
+	return Stm
+		.Process(this->Type)
+		.Process(this->Animation)
+		.Process(this->ActualDuration)
+		.Process(this->Invoker)
+		.Success();
 }
 
 void AttachEffectClass::InvalidatePointer(void *ptr) {

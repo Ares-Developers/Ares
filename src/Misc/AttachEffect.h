@@ -39,6 +39,10 @@ public:
 
 	void Attach(TechnoClass* Target, int Duration, TechnoClass* Invoker);
 	//void Attach(TechnoClass* Target, int Duration, TechnoClass* Invoker, int DamageDelay);
+
+	bool Load(AresStreamReader &Stm, bool RegisterForChange);
+
+	bool Save(AresStreamWriter &Stm) const;
 	
 	AttachEffectTypeClass(AbstractTypeClass* Owner) : Owner(Owner),
 		Cumulative(false),
@@ -63,6 +67,8 @@ public:
 
 	void Read(INI_EX &exINI);
 };
+
+ENABLE_ARES_PERSISTENCE(AttachEffectTypeClass);
 
 class AttachEffectClass {
 public:
@@ -91,7 +97,13 @@ public:
 	void CreateAnim(TechnoClass *Owner);
 	void KillAnim();
 
+	bool Load(AresStreamReader &Stm, bool RegisterForChange);
+
+	bool Save(AresStreamWriter &Stm) const;
+
 	static void Update(TechnoClass *Source);
 };
+
+ENABLE_ARES_PERSISTENCE(AttachEffectClass);
 
 #endif
