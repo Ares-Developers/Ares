@@ -1,6 +1,8 @@
 #ifndef JAMMER_H
 #define JAMMER_H
 
+#include "../Misc/Savegame.h"
+
 #include <vector>
 
 class TechnoClass;
@@ -29,5 +31,11 @@ class JammerClass {
 
 	void UnjamAll();						//!< Unregisters this Jammer on all structures.
 	void Update();							//!< Updates this Jammer's status on all eligible structures.
+
+	bool Load(AresStreamReader &Stm, bool RegisterForChange);
+	bool Save(AresStreamWriter &Stm) const;
 };
+
+ENABLE_ARES_PERSISTENCE(JammerClass);
+
 #endif

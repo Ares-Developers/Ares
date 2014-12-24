@@ -7,6 +7,8 @@
 #include "../Ext/TechnoType/Body.h"
 #include "Debug.h"
 
+#include "../Utilities/TemplateDef.h"
+
 void JammerClass::Update() {
 	// we don't want to scan & crunch numbers every frame - this limits it to ScanInterval frames
 	if((Unsorted::CurrentFrame - this->LastScan) < this->ScanInterval) {
@@ -72,4 +74,18 @@ void JammerClass::UnjamAll() {
 	for(int i = 0; i < BuildingClass::Array->Count; ++i) {
 		this->Unjam(BuildingClass::Array->GetItem(i));
 	}
+}
+
+bool JammerClass::Load(AresStreamReader &Stm, bool RegisterForChange) {
+	return Stm
+		.Process(this->LastScan)
+		.Process(this->AttachedToObject)
+		.Success();
+}
+
+bool JammerClass::Save(AresStreamWriter &Stm) const {
+	return Stm
+		.Process(this->LastScan)
+		.Process(this->AttachedToObject)
+		.Success();
 }
