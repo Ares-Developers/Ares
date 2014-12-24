@@ -163,6 +163,10 @@ public:
 
 	virtual SWStateMachineIdentifier GetIdentifier() const = 0;
 
+	virtual bool Load(AresStreamReader &Stm, bool RegisterForChange);
+
+	virtual bool Save(AresStreamWriter &Stm) const;
+
 	// static methods
 	static void Register(std::unique_ptr<SWStateMachine> Machine) {
 		if(Machine) {
@@ -248,6 +252,10 @@ public:
 		return SWStateMachineIdentifier::ChronoWarp;
 	}
 
+	virtual bool Load(AresStreamReader &Stm, bool RegisterForChange) override;
+
+	virtual bool Save(AresStreamWriter &Stm) const override;
+
 protected:
 	DynamicVectorClass<ChronoWarpContainer> Buildings;
 	int Duration;
@@ -280,8 +288,14 @@ public:
 		return SWStateMachineIdentifier::PsychicDominator;
 	}
 
+	virtual bool Load(AresStreamReader &Stm, bool RegisterForChange) override;
+
+	virtual bool Save(AresStreamWriter &Stm) const override;
+
 protected:
 	int Deferment;
 };
+
+ENABLE_ARES_PERSISTENCE(SWStateMachine)
 
 #endif

@@ -23,6 +23,8 @@
 #include <BuildingClass.h>
 #include <HouseClass.h>
 
+#include "SavegameDef.h"
+
 #include <algorithm>
 
 std::vector<std::unique_ptr<NewSWType>> NewSWType::Array;
@@ -249,6 +251,27 @@ void SWStateMachine::Clear()
 	SW_PsychicDominator::CurrentPsyDom = nullptr;
 
 	SWStateMachine::Array.clear();
+}
+
+bool SWStateMachine::Load(AresStreamReader &Stm, bool RegisterForChange) {
+	return Stm
+		.Process(this->Clock)
+		.Process(this->Super, RegisterForChange)
+		.Process(this->Type, RegisterForChange)
+		.Process(this->Coords)
+		.Success();
+}
+
+bool SWStateMachine::Save(AresStreamWriter &Stm) const {
+	// used to instantiate in ObjectFactory
+	Stm.Save(this->GetIdentifier());
+
+	return Stm
+		.Process(this->Clock)
+		.Process(this->Super)
+		.Process(this->Type)
+		.Process(this->Coords)
+		.Success();
 }
 
 DEFINE_HOOK(55AFB3, LogicClass_Update, 6)

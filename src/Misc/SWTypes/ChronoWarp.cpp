@@ -4,6 +4,7 @@
 #include "../../Ext/Building/Body.h"
 #include "../../Ext/TechnoType/Body.h"
 #include "../../Utilities/Helpers.Alex.h"
+#include "../../Utilities/TemplateDef.h"
 
 #include <AnimClass.h>
 #include <LocomotionClass.h>
@@ -383,4 +384,20 @@ void ChronoWarpStateMachine::InvalidatePointer(void *ptr, bool remove)
 			}
 		}
 	}
+}
+
+bool ChronoWarpStateMachine::Load(AresStreamReader &Stm, bool RegisterForChange) {
+	return SWStateMachine::Load(Stm, RegisterForChange)
+		&& Stm
+		.Process(this->Buildings, RegisterForChange)
+		.Process(this->Duration, RegisterForChange)
+		.Success();
+}
+
+bool ChronoWarpStateMachine::Save(AresStreamWriter &Stm) const {
+	return SWStateMachine::Save(Stm)
+		&& Stm
+		.Process(this->Buildings)
+		.Process(this->Duration)
+		.Success();
 }

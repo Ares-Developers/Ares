@@ -218,3 +218,17 @@ void PsychicDominatorStateMachine::Update()
 		}
 	}
 }
+
+bool PsychicDominatorStateMachine::Load(AresStreamReader &Stm, bool RegisterForChange) {
+	return SWStateMachine::Load(Stm, RegisterForChange)
+		&& Stm
+		.Process(this->Deferment, RegisterForChange)
+		.Success();
+}
+
+bool PsychicDominatorStateMachine::Save(AresStreamWriter &Stm) const {
+	return SWStateMachine::Save(Stm)
+		&& Stm
+		.Process(this->Deferment)
+		.Success();
+}
