@@ -56,6 +56,10 @@ public:
 		void RemoveFromNetwork(bool bCease);
 		void SetSupportTarget(cPrismForwarding* pTargetTower);
 		void RemoveAllSenders();
+
+		bool Load(AresStreamReader &Stm, bool RegisterForChange);
+
+		bool Save(AresStreamWriter &Stm) const;
 	};
 
 
@@ -165,5 +169,7 @@ public:
 
 	static void Clear();
 };
+
+ENABLE_ARES_PERSISTENCE(BuildingExt::cPrismForwarding)
 
 #endif

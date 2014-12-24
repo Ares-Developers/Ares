@@ -81,6 +81,10 @@ public:
 			return this->Enabled == EnabledState::Yes || this->Enabled == EnabledState::Forward;
 		}
 
+		bool Load(AresStreamReader &Stm, bool RegisterForChange);
+
+		bool Save(AresStreamWriter &Stm) const;
+
 		// constructor
 		cPrismForwarding() : Enabled(EnabledState::No),
 			Targets(),
@@ -286,5 +290,7 @@ public:
 
 	static bool IsFoundationEqual(BuildingTypeClass *pTBldA, BuildingTypeClass *pTBldB);
 };
+
+ENABLE_ARES_PERSISTENCE(BuildingTypeExt::cPrismForwarding);
 
 #endif

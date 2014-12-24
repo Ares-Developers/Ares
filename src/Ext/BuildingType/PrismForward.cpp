@@ -10,6 +10,44 @@
 #include <vector>
 #include <algorithm>
 
+bool BuildingTypeExt::cPrismForwarding::Load(AresStreamReader &Stm, bool RegisterForChange) {
+	return Stm
+		.Process(this->Enabled)
+		.Process(this->Targets, RegisterForChange)
+		.Process(this->MaxFeeds)
+		.Process(this->MaxChainLength)
+		.Process(this->MaxNetworkSize)
+		.Process(this->SupportModifier)
+		.Process(this->DamageAdd)
+		.Process(this->MyHeight)
+		.Process(this->Intensity)
+		.Process(this->ChargeDelay)
+		.Process(this->ToAllies)
+		.Process(this->BreakSupport)
+		.Process(this->SupportWeaponIndex)
+		.Process(this->EliteSupportWeaponIndex)
+		.Success();
+}
+
+bool BuildingTypeExt::cPrismForwarding::Save(AresStreamWriter &Stm) const {
+	return Stm
+		.Process(this->Enabled)
+		.Process(this->Targets)
+		.Process(this->MaxFeeds)
+		.Process(this->MaxChainLength)
+		.Process(this->MaxNetworkSize)
+		.Process(this->SupportModifier)
+		.Process(this->DamageAdd)
+		.Process(this->MyHeight)
+		.Process(this->Intensity)
+		.Process(this->ChargeDelay)
+		.Process(this->ToAllies)
+		.Process(this->BreakSupport)
+		.Process(this->SupportWeaponIndex)
+		.Process(this->EliteSupportWeaponIndex)
+		.Success();
+}
+
 void BuildingTypeExt::cPrismForwarding::Initialize(BuildingTypeClass *pThis) {
 	this->Enabled = EnabledState::No;
 	if (pThis == RulesClass::Instance->PrismType) {

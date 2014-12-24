@@ -1,11 +1,38 @@
 #include "Body.h"
 
 #include "../Techno/Body.h"
+#include "../../Misc/SavegameDef.h"
 
 #include <HouseClass.h>
 
 #include <vector>
 #include <algorithm>
+
+bool BuildingExt::cPrismForwarding::Load(AresStreamReader &Stm, bool RegisterForChange) {
+	// support pointer to this type
+	Stm.RegisterChange(this);
+
+	return Stm
+		.Process(this->Senders, RegisterForChange)
+		.Process(this->SupportTarget, RegisterForChange)
+		.Process(this->PrismChargeDelay)
+		.Process(this->ModifierReserve)
+		.Process(this->DamageReserve)
+		.Success();
+}
+
+bool BuildingExt::cPrismForwarding::Save(AresStreamWriter &Stm) const {
+	// remember this object address
+	Stm.RegisterChange(this);
+
+	return Stm
+		.Process(this->Senders)
+		.Process(this->SupportTarget)
+		.Process(this->PrismChargeDelay)
+		.Process(this->ModifierReserve)
+		.Process(this->DamageReserve)
+		.Success();
+}
 
 int BuildingExt::cPrismForwarding::AcquireSlaves_MultiStage(BuildingExt::cPrismForwarding* TargetTower, int stage, int chain, int& NetworkSize, int& LongestChain) {
 	//get all slaves for a specific stage in the prism chain
