@@ -20,6 +20,8 @@
 #include "../Ares.h"
 #include "../Ares.CRT.h"
 
+#include "../Misc/Savegame.h"
+
 template <typename T>
 using UniqueGamePtr = std::unique_ptr<T, GameDeleter>;
 
@@ -79,6 +81,33 @@ public:
 		return false;
 	};
 
+	bool Load(AresStreamReader &Stm, bool RegisterForChange) {
+		this->Clear();
+
+		bool hasPalette = false;
+		auto ret = Stm.Load(this->Mode) && Stm.Load(hasPalette);
+
+		if(ret && hasPalette) {
+			this->Palette.reset(GameCreate<BytePalette>());
+			ret = Stm.Load(*this->Palette);
+
+			if(ret) {
+				this->CreateConvert();
+			}
+		}
+
+		return ret;
+	}
+
+	bool Save(AresStreamWriter &Stm) const {
+		Stm.Save(this->Mode);
+		Stm.Save(this->Palette != nullptr);
+		if(this->Palette) {
+			Stm.Save(*this->Palette);
+		}
+		return true;
+	}
+
 private:
 	void Clear() {
 		this->Convert = nullptr;
@@ -95,6 +124,8 @@ private:
 		this->Convert.reset(buffer);
 	}
 };
+
+ENABLE_ARES_PERSISTENCE(CustomPalette);
 
 // vector of char* with builtin storage
 template<class T>
