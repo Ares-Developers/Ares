@@ -455,7 +455,7 @@ public:
 };
 
 // a wrapper for an optional value
-template <typename T>
+template <typename T, bool Persistable = false>
 struct OptionalStruct {
 	OptionalStruct() : Value(T()), HasValue(false) {}
 	explicit OptionalStruct(T value) : Value(value), HasValue(true) {}
@@ -487,7 +487,42 @@ struct OptionalStruct {
 		return this->Value;
 	}
 
+	bool load(AresStreamReader &Stm, bool RegisterForChange) {
+		this->clear();
+
+		return load(Stm, RegisterForChange, std::integral_constant<bool, Persistable>());
+	}
+
+	bool save(AresStreamWriter &Stm) const {
+		return save(Stm, std::integral_constant<bool, Persistable>());
+	}
+
 private:
+	bool load(AresStreamReader &Stm, bool RegisterForChange, std::true_type) {
+		if(Stm.Load(this->HasValue)) {
+			if(!this->HasValue || Savegame::ReadAresStream(Stm, this->Value, RegisterForChange)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	bool load(AresStreamReader &Stm, bool RegisterForChangestd, std::false_type) {
+		return true;
+	}
+
+	bool save(AresStreamWriter &Stm, std::true_type) const {
+		Stm.Save(this->HasValue);
+		if(this->HasValue) {
+			Savegame::WriteAresStream(Stm, this->Value);
+		}
+		return true;
+	}
+
+	bool save(AresStreamWriter &Stm, std::false_type) const {
+		return true;
+	}
+
 	T Value;
 	bool HasValue;
 };
