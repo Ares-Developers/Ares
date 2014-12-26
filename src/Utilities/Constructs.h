@@ -411,9 +411,27 @@ public:
 		return !this->Text || !*this->Text;
 	}
 
+	bool load(AresStreamReader &Stm, bool RegisterForChange) {
+		this->Text = nullptr;
+		if(Stm.Load(this->Label.data())) {
+			if(this->Label) {
+				this->Text = StringTable::LoadString(this->Label);
+			}
+			return true;
+		}
+		return false;
+	}
+
+	bool save(AresStreamWriter &Stm) const {
+		Stm.Save(this->Label.data());
+		return true;
+	}
+
 	FixedString<0x20> Label;
 	const wchar_t* Text;
 };
+
+ENABLE_ARES_PERSISTENCE(CSFText);
 
 // fixed string with read method
 template <size_t Capacity>
