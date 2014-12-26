@@ -246,6 +246,37 @@ public:
 		this->values.clear();
 	}
 
+	bool load(AresStreamReader &Stm, bool RegisterForChange) {
+		this->clear();
+
+		size_t size = 0;
+		auto ret = Stm.Load(size);
+
+		if(ret && size) {
+			this->values.resize(size);
+			for(size_t i = 0; i < size; ++i) {
+				if(!Savegame::ReadAresStream(Stm, this->values[i].first, RegisterForChange)
+					|| !Savegame::ReadAresStream(Stm, this->values[i].second, RegisterForChange))
+				{
+					return false;
+				}
+			}
+		}
+
+		return ret;
+	}
+
+	bool save(AresStreamWriter &Stm) const {
+		Stm.Save(this->values.size());
+
+		for(const auto& item : this->values) {
+			Savegame::WriteAresStream(Stm, item.first);
+			Savegame::WriteAresStream(Stm, item.second);
+		}
+
+		return true;
+	}
+
 private:
 	using container_t = std::vector<std::pair<TKey, TValue>>;
 
