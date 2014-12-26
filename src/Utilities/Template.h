@@ -6,6 +6,8 @@
 #include <MouseClass.h>
 #include <FootClass.h>
 
+#include "../Misc/Savegame.h"
+
 class INI_EX;
 
 /**
@@ -73,6 +75,10 @@ public:
 	}
 
 	inline void Read(INI_EX &parser, const char* pSection, const char* pKey, bool Allocate = false);
+
+	inline virtual bool Load(AresStreamReader &Stm, bool RegisterForChange);
+
+	inline virtual bool Save(AresStreamWriter &Stm) const;
 };
 
 template <typename T, typename = std::enable_if_t<std::is_enum<T>::value>>
@@ -147,6 +153,10 @@ public:
 		Valueable<T>::Set(T());
 		this->HasValue = false;
 	}
+
+	inline virtual bool Load(AresStreamReader &Stm, bool RegisterForChange);
+
+	inline virtual bool Save(AresStreamWriter &Stm) const;
 };
 
 template<typename Lookuper>
@@ -195,6 +205,10 @@ public:
 		}
 		return this->Rookie;
 	}
+
+	inline bool Load(AresStreamReader &Stm, bool RegisterForChange);
+
+	inline bool Save(AresStreamWriter &Stm) const;
 };
 
 
@@ -232,6 +246,10 @@ public:
 		return Iterator<T>(*this);
 	}
 
+	inline virtual bool Load(AresStreamReader &Stm, bool RegisterForChange);
+
+	inline virtual bool Save(AresStreamWriter &Stm) const;
+
 protected:
 	inline virtual void Split(INI_EX &parser, const char* pSection, const char* pKey, char* pValue);
 
@@ -260,6 +278,10 @@ public:
 
 		return ValueableVector<T>::GetElements();
 	}
+
+	inline virtual bool Load(AresStreamReader &Stm, bool RegisterForChange);
+
+	inline virtual bool Save(AresStreamWriter &Stm) const;
 };
 
 template<typename Lookuper>

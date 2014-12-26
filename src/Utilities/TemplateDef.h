@@ -32,6 +32,16 @@ void Valueable<T>::Read(INI_EX &parser, const char* pSection, const char* pKey, 
 	}
 };
 
+template <typename T>
+bool Valueable<T>::Load(AresStreamReader &Stm, bool RegisterForChange) {
+	return Savegame::ReadAresStream(Stm, this->Value, RegisterForChange);
+}
+
+template <typename T>
+bool Valueable<T>::Save(AresStreamWriter &Stm) const {
+	return Savegame::WriteAresStream(Stm, this->Value);
+}
+
 
 // ValueableIdx
 
@@ -46,6 +56,28 @@ void ValueableIdx<Lookuper>::Read(INI_EX &parser, const char* pSection, const ch
 			Debug::INIParseFailed(pSection, pKey, val);
 		}
 	}
+}
+
+
+// Nullable
+
+template <typename T>
+bool Nullable<T>::Load(AresStreamReader &Stm, bool RegisterForChange) {
+	this->Reset();
+	auto ret = Savegame::ReadAresStream(Stm, this->HasValue);
+	if(ret && this->HasValue) {
+		ret = Valueable<T>::Load(Stm, RegisterForChange);
+	}
+	return ret;
+}
+
+template <typename T>
+bool Nullable<T>::Save(AresStreamWriter &Stm) const {
+	auto ret = Savegame::WriteAresStream(Stm, this->HasValue);
+	if(this->HasValue) {
+		ret = Valueable<T>::Save(Stm);
+	}
+	return ret;
 }
 
 
@@ -89,6 +121,20 @@ void Promotable<T>::Read(CCINIClass *pINI, const char *Section, const char *Base
 	Placeholder.Read(exINI, Section, FlagName);
 	this->Elite = Placeholder;
 };
+
+template <typename T>
+bool Promotable<T>::Load(AresStreamReader &Stm, bool RegisterForChange) {
+	return Savegame::ReadAresStream(Stm, this->Rookie, RegisterForChange)
+		&& Savegame::ReadAresStream(Stm, this->Veteran, RegisterForChange)
+		&& Savegame::ReadAresStream(Stm, this->Elite, RegisterForChange);
+}
+
+template <typename T>
+bool Promotable<T>::Save(AresStreamWriter &Stm) const {
+	return Savegame::WriteAresStream(Stm, this->Rookie)
+		&& Savegame::WriteAresStream(Stm, this->Veteran)
+		&& Savegame::WriteAresStream(Stm, this->Elite);
+}
 
 
 // specializations
@@ -492,6 +538,40 @@ void ValueableVector<T>::Parse(INI_EX &parser, const char* pSection, const char*
 	}
 }
 
+template <typename T>
+bool ValueableVector<T>::Load(AresStreamReader &Stm, bool RegisterForChange) {
+	size_t size = 0;
+	if(Savegame::ReadAresStream(Stm, size, RegisterForChange)) {
+		this->clear();
+		this->reserve(size);
+
+		for(size_t i = 0; i < size; ++i) {
+			value_type buffer = value_type();
+			Savegame::ReadAresStream(Stm, buffer, false);
+			this->push_back(std::move(buffer));
+
+			if(RegisterForChange) {
+				Swizzle swizzle(this->at(i));
+			}
+		}
+		return Savegame::ReadAresStream(Stm, this->defined);
+	}
+	return false;
+}
+
+template <typename T>
+bool ValueableVector<T>::Save(AresStreamWriter &Stm) const {
+	auto size = this->size();
+	if(Savegame::WriteAresStream(Stm, size)) {
+		for(size_t i = 0; i < size; ++i) {
+			if(!Savegame::WriteAresStream(Stm, this->at(i))) {
+				return false;
+			}
+		}
+		return Savegame::WriteAresStream(Stm, this->defined);
+	}
+	return false;
+}
 
 // specializations
 
@@ -528,6 +608,24 @@ void NullableVector<T>::Read(INI_EX &parser, const char* pSection, const char* p
 			this->Split(parser, pSection, pKey, Ares::readBuffer);
 		}
 	}
+}
+
+template <typename T>
+bool NullableVector<T>::Load(AresStreamReader &Stm, bool RegisterForChange) {
+	this->clear();
+	this->defined = false;
+	if(Savegame::ReadAresStream(Stm, this->hasValue, RegisterForChange)) {
+		return !this->hasValue || ValueableVector<T>::Load(Stm, RegisterForChange);
+	}
+	return false;
+}
+
+template <typename T>
+bool NullableVector<T>::Save(AresStreamWriter &Stm) const {
+	if(Savegame::WriteAresStream(Stm, this->hasValue)) {
+		return !this->hasValue || ValueableVector<T>::Save(Stm);
+	}
+	return false;
 }
 
 
