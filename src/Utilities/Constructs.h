@@ -346,12 +346,33 @@ public:
 		return buffer[0] != 0;
 	}
 
+	bool Load(AresStreamReader &Stm, bool RegisterForChange) {
+		this->filename = nullptr;
+		if(Stm.Load(*this)) {
+			if(this->checked && this->exists) {
+				this->checked = false;
+				if(!this->Exists()) {
+					Debug::DevLog(Debug::Warning, "PCX file '%s' was not found.", this->filename.data());
+				}
+			}
+			return true;
+		}
+		return false;
+	}
+
+	bool Save(AresStreamWriter &Stm) const {
+		Stm.Save(*this);
+		return true;
+	}
+
 private:
 	FixedString<Capacity> filename;
 	bool resolve;
 	mutable bool checked;
 	mutable bool exists;
 };
+
+ENABLE_ARES_PERSISTENCE(AresPCXFile);
 
 // provides storage for a csf label with automatic lookup.
 class CSFText {
