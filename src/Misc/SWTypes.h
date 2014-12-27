@@ -122,6 +122,10 @@ public:
 	static SuperWeaponType FindIndex(const char* pType);
 
 	static SuperWeaponType FindHandler(SuperWeaponType Type);
+
+	static bool LoadGlobals(AresStreamReader& Stm);
+
+	static bool SaveGlobals(AresStreamWriter& Stm);
 };
 
 // state machines - create one to use delayed effects [create a child class per NewSWType, obviously]
@@ -179,6 +183,10 @@ public:
 	static void PointerGotInvalid(void *ptr, bool remove);
 
 	static void Clear();
+
+	static bool LoadGlobals(AresStreamReader& Stm);
+
+	static bool SaveGlobals(AresStreamWriter& Stm);
 
 protected:
 	TimerStruct Clock;

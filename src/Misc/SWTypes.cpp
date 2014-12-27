@@ -225,6 +225,27 @@ SuperWeaponType NewSWType::FindHandler(SuperWeaponType Type) {
 	return SuperWeaponType::Invalid;
 }
 
+bool NewSWType::LoadGlobals(AresStreamReader& Stm)
+{
+	// load the old type pointers, and map by position in vector
+	// this enables swizzling NewSWType*
+	for(const auto& ptr : Array) {
+		Stm.RegisterChange(ptr.get());
+	}
+
+	return Stm.Success();
+}
+
+bool NewSWType::SaveGlobals(AresStreamWriter& Stm)
+{
+	// remember all current type pointers
+	for(const auto& ptr : Array) {
+		Stm.Save(ptr.get());
+	}
+
+	return Stm.Success();
+}
+
 void SWStateMachine::UpdateAll()
 {
 	for(auto& Machine : SWStateMachine::Array) {
@@ -271,6 +292,26 @@ bool SWStateMachine::Save(AresStreamWriter &Stm) const {
 		.Process(this->Super)
 		.Process(this->Type)
 		.Process(this->Coords)
+		.Success();
+}
+
+bool SWStateMachine::LoadGlobals(AresStreamReader& Stm)
+{
+	return Stm
+		.Process(Array)
+		.Process(SW_LightningStorm::CurrentLightningStorm)
+		.Process(SW_NuclearMissile::CurrentNukeType)
+		.Process(SW_PsychicDominator::CurrentPsyDom)
+		.Success();
+}
+
+bool SWStateMachine::SaveGlobals(AresStreamWriter& Stm)
+{
+	return Stm
+		.Process(Array)
+		.Process(SW_LightningStorm::CurrentLightningStorm)
+		.Process(SW_NuclearMissile::CurrentNukeType)
+		.Process(SW_PsychicDominator::CurrentPsyDom)
 		.Success();
 }
 
