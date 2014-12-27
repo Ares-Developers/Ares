@@ -63,6 +63,45 @@ public:
 		}
 	}
 
+	static bool LoadGlobals(AresStreamReader& Stm)
+	{
+		Clear();
+
+		size_t Count = 0;
+		if(!Stm.Load(Count)) {
+			return false;
+		}
+
+		for(size_t i = 0; i < Count; ++i) {
+			void* oldPtr = nullptr;
+			decltype(Name) name;
+			if(!Stm.Load(oldPtr) || !Stm.Load(name)) {
+				return false;
+			}
+
+			auto newPtr = FindOrAllocate(name);
+			AresSwizzle::Instance.RegisterChange(oldPtr, newPtr);
+
+			newPtr->LoadFromStream(Stm);
+		}
+
+		return true;
+	}
+
+	static bool SaveGlobals(AresStreamWriter& Stm)
+	{
+		Stm.Save(Array.size());
+
+		for(const auto& item : Array) {
+			// write old pointer and name, then delegate
+			Stm.Save(item.get());
+			Stm.Save(item->Name);
+			item->SaveToStream(Stm);
+		}
+
+		return true;
+	}
+
 	static const char * GetMainSection();
 
 	Enumerable(const char* Title) {
