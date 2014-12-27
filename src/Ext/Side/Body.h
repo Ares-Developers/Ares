@@ -129,6 +129,8 @@ public:
 	//- VoxClass (EVA)
 
 	static Container<SideExt> ExtMap;
+	static bool LoadGlobals(AresStreamReader& Stm);
+	static bool SaveGlobals(AresStreamWriter& Stm);
 
 	static int CurrentLoadTextColor;
 

@@ -391,6 +391,8 @@ public:
 	};
 
 	static Container<SWTypeExt> ExtMap;
+	static bool LoadGlobals(AresStreamReader& Stm);
+	static bool SaveGlobals(AresStreamWriter& Stm);
 
 	static SuperWeaponTypeClass *CurrentSWType;
 

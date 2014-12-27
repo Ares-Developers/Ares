@@ -437,6 +437,24 @@ void WeaponTypeExt::ExtData::SaveToStream(AresStreamWriter &Stm) {
 	this->Serialize(Stm);
 }
 
+bool WeaponTypeExt::LoadGlobals(AresStreamReader& Stm) {
+	return Stm
+		.Process(BombExt)
+		.Process(WaveExt)
+		.Process(BoltExt)
+		.Process(RadSiteExt)
+		.Success();
+}
+
+bool WeaponTypeExt::SaveGlobals(AresStreamWriter& Stm) {
+	return Stm
+		.Process(BombExt)
+		.Process(WaveExt)
+		.Process(BoltExt)
+		.Process(RadSiteExt)
+		.Success();
+}
+
 // =============================
 // container hooks
 

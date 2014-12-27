@@ -906,6 +906,18 @@ void SWTypeExt::ExtData::SaveToStream(AresStreamWriter &Stm) {
 	this->Serialize(Stm);
 }
 
+bool SWTypeExt::LoadGlobals(AresStreamReader& Stm) {
+	return Stm
+		.Process(CurrentSWType)
+		.Success();
+}
+
+bool SWTypeExt::SaveGlobals(AresStreamWriter& Stm) {
+	return Stm
+		.Process(CurrentSWType)
+		.Success();
+}
+
 // =============================
 // container hooks
 

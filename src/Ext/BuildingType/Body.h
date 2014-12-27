@@ -287,6 +287,8 @@ public:
 	};
 
 	static Container<BuildingTypeExt> ExtMap;
+	static bool LoadGlobals(AresStreamReader& Stm);
+	static bool SaveGlobals(AresStreamWriter& Stm);
 
 	static bool IsFoundationEqual(BuildingTypeClass *pTBldA, BuildingTypeClass *pTBldB);
 };

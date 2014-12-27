@@ -743,6 +743,18 @@ void HouseExt::ExtData::SaveToStream(AresStreamWriter &Stm) {
 	this->Serialize(Stm);
 }
 
+bool HouseExt::LoadGlobals(AresStreamReader& Stm) {
+	return Stm
+		.Process(IsAnyFirestormActive)
+		.Success();
+}
+
+bool HouseExt::SaveGlobals(AresStreamWriter& Stm) {
+	return Stm
+		.Process(IsAnyFirestormActive)
+		.Success();
+}
+
 // =============================
 // container hooks
 

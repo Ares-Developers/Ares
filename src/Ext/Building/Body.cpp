@@ -1004,6 +1004,25 @@ void BuildingExt::ExtData::SaveToStream(AresStreamWriter &Stm) {
 	Serialize(Stm);
 }
 
+bool BuildingExt::LoadGlobals(AresStreamReader& Stm) {
+	auto ret = Stm
+		.Process(TempFoundationData1)
+		.Process(TempFoundationData2)
+		.Success();
+
+	MouseClass::Instance->CurrentFoundation_Data = TempFoundationData1.data();
+	MouseClass::Instance->CurrentFoundationCopy_Data = TempFoundationData2.data();
+
+	return ret;
+}
+
+bool BuildingExt::SaveGlobals(AresStreamWriter& Stm) {
+	return Stm
+		.Process(TempFoundationData1)
+		.Process(TempFoundationData2)
+		.Success();
+}
+
 // =============================
 // container hooks
 

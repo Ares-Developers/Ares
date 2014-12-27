@@ -148,6 +148,8 @@ public:
 	};
 
 	static Container<BuildingExt> ExtMap;
+	static bool LoadGlobals(AresStreamReader& Stm);
+	static bool SaveGlobals(AresStreamWriter& Stm);
 
 	static DWORD GetFirewallFlags(BuildingClass *pThis);
 

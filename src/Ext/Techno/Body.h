@@ -173,6 +173,8 @@ public:
 	};
 
 	static Container<TechnoExt> ExtMap;
+	static bool LoadGlobals(AresStreamReader& Stm);
+	static bool SaveGlobals(AresStreamWriter& Stm);
 
 	static AresMap<ObjectClass*, AlphaShapeClass*> AlphaExt;
 

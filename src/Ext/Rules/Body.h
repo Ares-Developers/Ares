@@ -169,6 +169,9 @@ public:
 	static void PointerGotInvalid(void* ptr, bool removed) {
 		Global()->InvalidatePointer(ptr, removed);
 	}
+
+	static bool LoadGlobals(AresStreamReader& Stm);
+	static bool SaveGlobals(AresStreamWriter& Stm);
 };
 
 #endif

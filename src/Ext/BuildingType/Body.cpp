@@ -474,6 +474,18 @@ bool Container<BuildingTypeExt>::Load(BuildingTypeClass *pThis, IStream *pStm) {
 	return pData != nullptr;
 };
 
+bool BuildingTypeExt::LoadGlobals(AresStreamReader& Stm) {
+	Stm.Process(ExtData::trenchKinds);
+
+	return Stm.Success();
+}
+
+bool BuildingTypeExt::SaveGlobals(AresStreamWriter& Stm) {
+	Stm.Process(ExtData::trenchKinds);
+
+	return Stm.Success();
+}
+
 // =============================
 // container hooks
 

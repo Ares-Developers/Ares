@@ -195,6 +195,22 @@ void RulesExt::ExtData::SaveToStream(AresStreamWriter &Stm) {
 	this->Serialize(Stm);
 }
 
+bool RulesExt::LoadGlobals(AresStreamReader& Stm) {
+	for(auto& tab : TabCameos) {
+		Savegame::ReadAresStream(Stm, tab);
+	}
+
+	return Stm.Success();
+}
+
+bool RulesExt::SaveGlobals(AresStreamWriter& Stm) {
+	for(const auto& tab : TabCameos) {
+		Savegame::WriteAresStream(Stm, tab);
+	}
+
+	return Stm.Success();
+}
+
 // =============================
 // container hooks
 

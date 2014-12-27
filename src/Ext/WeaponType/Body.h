@@ -177,6 +177,8 @@ public:
 */
 
 	static Container<WeaponTypeExt> ExtMap;
+	static bool LoadGlobals(AresStreamReader& Stm);
+	static bool SaveGlobals(AresStreamWriter& Stm);
 
 	static AresMap<BombClass*, const ExtData*> BombExt;
 	static AresMap<WaveClass*, const ExtData*> WaveExt;

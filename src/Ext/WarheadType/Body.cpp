@@ -545,6 +545,22 @@ void WarheadTypeExt::ExtData::SaveToStream(AresStreamWriter &Stm) {
 	this->Serialize(Stm);
 }
 
+bool WarheadTypeExt::LoadGlobals(AresStreamReader& Stm) {
+	return Stm
+		.Process(Temporal_WH)
+		.Process(EMP_WH)
+		.Process(IonExt)
+		.Success();
+}
+
+bool WarheadTypeExt::SaveGlobals(AresStreamWriter& Stm) {
+	return Stm
+		.Process(Temporal_WH)
+		.Process(EMP_WH)
+		.Process(IonExt)
+		.Success();
+}
+
 // =============================
 // container hooks
 

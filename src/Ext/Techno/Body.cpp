@@ -1220,6 +1220,24 @@ void TechnoExt::ExtData::SaveToStream(AresStreamWriter &Stm) {
 	this->Serialize(Stm);
 }
 
+bool TechnoExt::LoadGlobals(AresStreamReader& Stm) {
+	return Stm
+		.Process(AlphaExt)
+		.Process(ActiveBuildingLight)
+		.Process(FiringStateCache)
+		.Process(NeedsRegap)
+		.Success();
+}
+
+bool TechnoExt::SaveGlobals(AresStreamWriter& Stm) {
+	return Stm
+		.Process(AlphaExt)
+		.Process(ActiveBuildingLight)
+		.Process(FiringStateCache)
+		.Process(NeedsRegap)
+		.Success();
+}
+
 // =============================
 // container hooks
 

@@ -144,6 +144,8 @@ public:
 	};
 
 	static Container<WarheadTypeExt> ExtMap;
+	static bool LoadGlobals(AresStreamReader& Stm);
+	static bool SaveGlobals(AresStreamWriter& Stm);
 
 	static WarheadTypeClass *Temporal_WH;
 

@@ -483,6 +483,22 @@ void SideExt::ExtData::SaveToStream(AresStreamWriter &Stm) {
 	this->Serialize(Stm);
 }
 
+bool SideExt::LoadGlobals(AresStreamReader& Stm) {
+	auto ret = Stm
+		.Process(CurrentLoadTextColor)
+		.Success();
+
+	UpdateGlobalFiles();
+
+	return ret;
+}
+
+bool SideExt::SaveGlobals(AresStreamWriter& Stm) {
+	return Stm
+		.Process(CurrentLoadTextColor)
+		.Success();
+}
+
 // =============================
 // container hooks
 
