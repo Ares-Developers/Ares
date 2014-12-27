@@ -26,6 +26,8 @@
 
 #include "Misc/SWTypes.h"
 
+#include <utility>
+
 #pragma region Implementation details
 
 // this can be implicitly constructed from int,
@@ -94,6 +96,54 @@ private:
 	}
 };
 
+// calls:
+// T::LoadGlobals(AresStreamReader&)
+struct LoadHelper {
+	template <typename T>
+	static bool Process(IStream* pStm) {
+		return load<T>(0, pStm);
+	}
+
+private:
+	template <typename T>
+	static auto load(int, IStream* pStm) -> decltype(T::LoadGlobals(std::declval<AresStreamReader&>())) {
+		AresByteStream Stm(0);
+		Stm.ReadBlockFromStream(pStm);
+
+		AresStreamReader Reader(Stm);
+		return T::LoadGlobals(Reader) && Reader.ExpectEndOfBlock();
+	}
+
+	template <typename T>
+	static auto load(Dummy, IStream* pStm) -> bool {
+		// do nothing
+		return true;
+	}
+};
+
+// calls:
+// T::SaveGlobals(AresStreamWriter&)
+struct SaveHelper {
+	template <typename T>
+	static bool Process(IStream* pStm) {
+		return save<T>(0, pStm);
+	}
+
+private:
+	template <typename T>
+	static auto save(int, IStream* pStm) -> decltype(T::SaveGlobals(std::declval<AresStreamWriter&>())) {
+		AresByteStream Stm;
+		AresStreamWriter Writer(Stm);
+		return T::SaveGlobals(Writer) && Stm.WriteBlockToStream(pStm);
+	}
+
+	template <typename T>
+	static auto save(Dummy, IStream* pStm) -> bool {
+		// do nothing
+		return true;
+	}
+};
+
 // this is a complicated thing that calls methods on classes. add types to the
 // instantiation of this type, and the most appropriate method for each type
 // will be called with no overhead of virtual functions.
@@ -105,6 +155,14 @@ struct MassAction {
 
 	__forceinline void InvalidPointer(void* ptr, bool removed) {
 		process<InvalidatePointerHelper>(DummyTypes<Ts...>(), ptr, removed);
+	}
+
+	__forceinline bool Load(IStream* pStm) {
+		return process<LoadHelper>(DummyTypes<Ts...>(), pStm);
+	}
+
+	__forceinline bool Save(IStream* pStm) {
+		return process<SaveHelper>(DummyTypes<Ts...>(), pStm);
 	}
 
 private:
