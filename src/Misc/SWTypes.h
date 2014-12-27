@@ -296,6 +296,29 @@ protected:
 	int Deferment;
 };
 
+template <>
+struct Savegame::ObjectFactory<SWStateMachine> {
+	std::unique_ptr<SWStateMachine> operator() (AresStreamReader &Stm) const {
+		SWStateMachineIdentifier type = SWStateMachineIdentifier::Invalid;
+		if(Stm.Load(type)) {
+			switch(type) {
+			case SWStateMachineIdentifier::UnitDelivery:
+				return std::make_unique<UnitDeliveryStateMachine>();
+			case SWStateMachineIdentifier::ChronoWarp:
+				return std::make_unique<ChronoWarpStateMachine>();
+			case SWStateMachineIdentifier::PsychicDominator:
+				return std::make_unique<PsychicDominatorStateMachine>();
+			case SWStateMachineIdentifier::Invalid:
+			default:
+				Debug::FatalErrorAndExit("SWStateMachineType %d not recognized.",
+					static_cast<unsigned int>(type));
+			}
+		}
+
+		return nullptr;
+	}
+};
+
 ENABLE_ARES_PERSISTENCE(SWStateMachine)
 
 #endif

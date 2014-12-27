@@ -3,6 +3,7 @@
 
 #include "Stream.h"
 
+#include <memory>
 #include <type_traits>
 
 namespace Savegame {
@@ -17,6 +18,13 @@ namespace Savegame {
 		bool ReadFromStream(AresStreamReader &Stm, T &Value, bool RegisterForChange) const;
 
 		bool WriteToStream(AresStreamWriter &Stm, const T &Value) const;
+	};
+
+	template <typename T>
+	struct ObjectFactory {
+		std::unique_ptr<T> operator() (AresStreamReader &Stm) const {
+			return std::make_unique<T>();
+		}
 	};
 
 	template <typename T>

@@ -38,4 +38,11 @@ class JammerClass {
 
 ENABLE_ARES_PERSISTENCE(JammerClass);
 
+template <>
+struct Savegame::ObjectFactory<JammerClass> {
+	std::unique_ptr<JammerClass> operator() (AresStreamReader &Stm) const {
+		return std::make_unique<JammerClass>(nullptr);
+	}
+};
+
 #endif

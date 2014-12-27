@@ -106,4 +106,11 @@ public:
 
 ENABLE_ARES_PERSISTENCE(AttachEffectClass);
 
+template <>
+struct Savegame::ObjectFactory<AttachEffectClass> {
+	std::unique_ptr<AttachEffectClass> operator() (AresStreamReader &Stm) const {
+		return std::make_unique<AttachEffectClass>(nullptr, 0);
+	}
+};
+
 #endif

@@ -36,4 +36,11 @@ public:
 
 ENABLE_ARES_PERSISTENCE(PoweredUnitClass);
 
+template <>
+struct Savegame::ObjectFactory<PoweredUnitClass> {
+	std::unique_ptr<PoweredUnitClass> operator() (AresStreamReader &Stm) const {
+		return std::make_unique<PoweredUnitClass>(nullptr);
+	}
+};
+
 #endif
