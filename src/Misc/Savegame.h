@@ -13,6 +13,12 @@ namespace Savegame {
 	template <typename T>
 	bool WriteAresStream(AresStreamWriter &Stm, const T &Value);
 
+	template <typename T>
+	T* RestoreObject(AresStreamReader &Stm, bool RegisterForChange = true);
+
+	template <typename T>
+	bool PersistObject(AresStreamWriter &Stm, const T* pValue);
+
 	template <typename T, typename = void>
 	struct AresStreamObject {
 		bool ReadFromStream(AresStreamReader &Stm, T &Value, bool RegisterForChange) const;

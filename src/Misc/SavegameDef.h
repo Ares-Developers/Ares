@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <bitset>
+#include <memory>
 
 #include <ArrayClasses.h>
 #include <FileSystem.h>
@@ -27,6 +28,38 @@ namespace Savegame {
 	template <typename T>
 	bool WriteAresStream(AresStreamWriter &Stm, const T &Value) {
 		// not implemented
+		return true;
+	}
+
+	template <typename T>
+	T* RestoreObject(AresStreamReader &Stm, bool RegisterForChange) {
+		T* ptrOld = nullptr;
+		if(!Stm.Load(ptrOld)) {
+			return nullptr;
+		}
+
+		if(ptrOld) {
+			std::unique_ptr<T> ptrNew = ObjectFactory<T>()(Stm);
+
+			if(Savegame::ReadAresStream(Stm, *ptrNew, RegisterForChange)) {
+				AresSwizzle::Instance.RegisterChange(ptrOld, ptrNew.get());
+				return ptrNew.release();
+			}
+		}
+
+		return nullptr;
+	}
+
+	template <typename T>
+	bool PersistObject(AresStreamWriter &Stm, const T* pValue) {
+		if(!Savegame::WriteAresStream(Stm, pValue)) {
+			return false;
+		}
+
+		if(pValue) {
+			return Savegame::WriteAresStream(Stm, *pValue);
+		}
+
 		return true;
 	}
 
@@ -252,6 +285,18 @@ namespace Savegame {
 			Stm.Save(Value.size());
 			Stm.Write(reinterpret_cast<const byte*>(Value.c_str()), Value.size());
 			return true;
+		}
+	};
+
+	template <typename T>
+	struct Savegame::AresStreamObject<std::unique_ptr<T>> {
+		bool ReadFromStream(AresStreamReader &Stm, std::unique_ptr<T> &Value, bool RegisterForChange) const {
+			Value.reset(RestoreObject<T>(Stm, RegisterForChange));
+			return true;
+		}
+
+		bool WriteToStream(AresStreamWriter &Stm, const std::unique_ptr<T> &Value) const {
+			return PersistObject(Stm, Value.get());
 		}
 	};
 
