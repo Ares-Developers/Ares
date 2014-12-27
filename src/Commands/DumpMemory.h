@@ -7,23 +7,20 @@
 class MemoryDumperCommandClass : public CommandClass
 {
 public:
-	//Destructor
-	virtual ~MemoryDumperCommandClass(){}
-
 	//CommandClass
-	virtual const char* GetName()
+	virtual const char* GetName() const override
 	{ return "Dump Process Memory"; }
 
-	virtual const wchar_t* GetUIName()
+	virtual const wchar_t* GetUIName() const override
 	{ return L"Dump Memory"; }
 
-	virtual const wchar_t* GetUICategory()
+	virtual const wchar_t* GetUICategory() const override
 		{ return L"Development"; }
 
-	virtual const wchar_t* GetUIDescription()
+	virtual const wchar_t* GetUIDescription() const override
 		{ return L"Dumps the current process's memory"; }
 
-	virtual void Execute(DWORD dwUnk) {
+	virtual void Execute(DWORD dwUnk) const override {
 		Dialogs::TakeMouse();
 
 		HCURSOR loadCursor = LoadCursor(nullptr, IDC_WAIT);
@@ -47,9 +44,6 @@ public:
 
 		Dialogs::ReturnMouse();
 	}
-
-	//Constructor
-	MemoryDumperCommandClass(){}
 };
 
 #endif

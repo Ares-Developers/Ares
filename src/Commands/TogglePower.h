@@ -9,31 +9,25 @@
 class TogglePowerCommandClass : public CommandClass
 {
 public:
-	//Destructor
-	virtual ~TogglePowerCommandClass(){}
-
 	//CommandClass
-	virtual const char* GetName()
+	virtual const char* GetName() const override
 	{ return "TogglePower"; }
 
-	virtual const wchar_t* GetUIName()
+	virtual const wchar_t* GetUIName() const override
 	{ return L"Toggle Power Mode"; }
 
-	virtual const wchar_t* GetUICategory()
+	virtual const wchar_t* GetUICategory() const override
 		{ return L"Interface"; }
 
-	virtual const wchar_t* GetUIDescription()
+	virtual const wchar_t* GetUIDescription() const override
 		{ return L"Turn toggle power mode on / off."; }
 
-	virtual void Execute(DWORD dwUnk)
+	virtual void Execute(DWORD dwUnk) const override
 	{
 		if(RulesExt::Global()->TogglePowerAllowed) {
 			MapClass::Instance->SetTogglePowerMode(-1);
 		}
 	}
-
-	//Constructor
-	TogglePowerCommandClass(){}
 };
 
 #endif

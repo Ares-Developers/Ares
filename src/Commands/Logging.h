@@ -7,26 +7,20 @@
 class LoggingCommandClass : public CommandClass
 {
 public:
-	//Constructor
-	LoggingCommandClass(){}
-
-	//Destructor
-	virtual ~LoggingCommandClass(){}
-
 	//CommandClass
-	virtual const char* GetName()
+	virtual const char* GetName() const override
 	{ return "Toggle DEBUG.TXT logging"; }
 
-	virtual const wchar_t* GetUIName()
+	virtual const wchar_t* GetUIName() const override
 	{ return L"Toggle DEBUG.TXT logging"; }
 
-	virtual const wchar_t* GetUICategory()
+	virtual const wchar_t* GetUICategory() const override
 		{ return L"Development"; }
 
-	virtual const wchar_t* GetUIDescription()
+	virtual const wchar_t* GetUIDescription() const override
 		{ return L"Toggles the logging of extra data to the DEBUG.TXT log file"; }
 
-	virtual void Execute(DWORD dwUnk)
+	virtual void Execute(DWORD dwUnk) const override
 	{
 		if(Debug::bLog) {
 			Debug::LogFileClose(666);

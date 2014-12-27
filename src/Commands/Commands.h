@@ -14,7 +14,7 @@ protected:
 		\author AlexB
 		\date 2012-06-21
 	*/
-	bool CheckDebugDeactivated() {
+	bool CheckDebugDeactivated() const {
 		if(!Ares::GlobalControls::DebugKeysEnabled) {
 			if(const wchar_t* text = StringTable::LoadStringA("TXT_COMMAND_DISABLED")) {
 				wchar_t msg[0x100] = L"\0";
@@ -30,29 +30,23 @@ protected:
 class TestSomethingCommandClass : public CommandClass
 {
 public:
-	//Destructor
-	virtual ~TestSomethingCommandClass(){}
-
 	//CommandClass
-	virtual const char* GetName()
+	virtual const char* GetName() const override
 		{ return "TestSomething"; }
 
-	virtual const wchar_t* GetUIName()
+	virtual const wchar_t* GetUIName() const override
 		{ return L"Test Function"; }
 
-	virtual const wchar_t* GetUICategory()
+	virtual const wchar_t* GetUICategory() const override
 		{ return L"Development"; }
 
-	virtual const wchar_t* GetUIDescription()
+	virtual const wchar_t* GetUIDescription() const override
 		{ return L"Executes a test function."; }
 
-	virtual void Execute(DWORD dwUnk)
+	virtual void Execute(DWORD dwUnk) const override
 	{
 		MessageListClass::Instance->PrintMessage(L"Test Function executed!");
 	}
-
-	//Constructor
-	TestSomethingCommandClass(){}
 };
 
 // will the templates ever stop? :D

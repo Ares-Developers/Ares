@@ -10,23 +10,20 @@
 class AIBasePlanCommandClass : public AresCommandClass
 {
 public:
-	//Destructor
-	virtual ~AIBasePlanCommandClass(){}
-
 	//CommandClass
-	virtual const char* GetName()
+	virtual const char* GetName() const override
 		{ return "Dump AI Base Plan"; }
 
-	virtual const wchar_t* GetUIName()
+	virtual const wchar_t* GetUIName() const override
 		{ return L"AI Base Plan Logger"; }
 
-	virtual const wchar_t* GetUICategory()
+	virtual const wchar_t* GetUICategory() const override
 		{ return L"Development"; }
 
-	virtual const wchar_t* GetUIDescription()
+	virtual const wchar_t* GetUIDescription() const override
 		{ return L"Dumps the AI Base Plans to the log"; }
 
-	virtual void Execute(DWORD dwUnk)
+	virtual void Execute(DWORD dwUnk) const override
 	{
 		if(this->CheckDebugDeactivated()) {
 			return;
@@ -56,9 +53,6 @@ public:
 
 		MessageListClass::Instance->PrintMessage(L"Dumped AI Base Plan");
 	}
-
-	//Constructor
-	AIBasePlanCommandClass(){}
 };
 
 #endif

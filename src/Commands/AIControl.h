@@ -4,23 +4,20 @@
 class AIControlCommandClass : public AresCommandClass
 {
 public:
-	//Destructor
-	virtual ~AIControlCommandClass(){}
-
 	//CommandClass
-	virtual const char* GetName()
+	virtual const char* GetName() const override
 	{ return "AIControl"; }
 
-	virtual const wchar_t* GetUIName()
+	virtual const wchar_t* GetUIName() const override
 	{ return L"AI Control"; }
 
-	virtual const wchar_t* GetUICategory()
+	virtual const wchar_t* GetUICategory() const override
 		{ return L"Ares"; }
 
-	virtual const wchar_t* GetUIDescription()
+	virtual const wchar_t* GetUIDescription() const override
 		{ return L"Let the AI assume control."; }
 
-	virtual void Execute(DWORD dwUnk)
+	virtual void Execute(DWORD dwUnk) const override
 	{
 		if(this->CheckDebugDeactivated()) {
 			return;
@@ -55,9 +52,6 @@ public:
 			MessageListClass::Instance->PrintMessage(L"Player assumed control!");
 		}
 	}
-
-	//Constructor
-	AIControlCommandClass(){}
 };
 
 #endif

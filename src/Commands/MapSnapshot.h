@@ -4,23 +4,20 @@
 class MapSnapshotCommandClass : public AresCommandClass
 {
 public:
-	//Destructor
-	virtual ~MapSnapshotCommandClass(){}
-
 	//CommandClass
-	virtual const char* GetName()
+	virtual const char* GetName() const override
 		{ return "MapSnapshot"; }
 
-	virtual const wchar_t* GetUIName()
+	virtual const wchar_t* GetUIName() const override
 		{ return L"Map Snapshot"; }
 
-	virtual const wchar_t* GetUICategory()
+	virtual const wchar_t* GetUICategory() const override
 		{ return L"Development"; }
 
-	virtual const wchar_t* GetUIDescription()
+	virtual const wchar_t* GetUIDescription() const override
 		{ return L"Saves the currently played map."; }
 
-	virtual void Execute(DWORD dwUnk)
+	virtual void Execute(DWORD dwUnk) const override
 	{
 		if(this->CheckDebugDeactivated()) {
 			return;
@@ -45,9 +42,6 @@ public:
 
 		MessageListClass::Instance->PrintMessage(msg);
 	}
-
-	//Constructor
-	MapSnapshotCommandClass(){}
 };
 
 #endif

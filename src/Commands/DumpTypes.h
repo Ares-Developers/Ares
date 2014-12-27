@@ -7,20 +7,17 @@
 class DumperTypesCommandClass : public AresCommandClass
 {
 public:
-	//Destructor
-	virtual ~DumperTypesCommandClass(){}
-
 	//CommandClass
-	virtual const char* GetName()
+	virtual const char* GetName() const override
 	{ return "Dump Data Types"; }
 
-	virtual const wchar_t* GetUIName()
+	virtual const wchar_t* GetUIName() const override
 	{ return L"Dump Types"; }
 
-	virtual const wchar_t* GetUICategory()
+	virtual const wchar_t* GetUICategory() const override
 		{ return L"Development"; }
 
-	virtual const wchar_t* GetUIDescription()
+	virtual const wchar_t* GetUIDescription() const override
 		{ return L"Dumps the current type list to the log"; }
 
 	template <typename T>
@@ -33,7 +30,7 @@ public:
 		}
 	}
 
-	virtual void Execute(DWORD dwUnk)
+	virtual void Execute(DWORD dwUnk) const override
 	{
 		if(this->CheckDebugDeactivated()) {
 			return;
@@ -90,9 +87,6 @@ public:
 
 		MessageListClass::Instance->PrintMessage(L"Type data dumped");
 	}
-
-	//Constructor
-	DumperTypesCommandClass(){}
 };
 
 #endif
