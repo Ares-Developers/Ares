@@ -408,4 +408,24 @@ public:
 	ValueableVector<int> Num;
 };
 
+template <>
+struct Savegame::AresStreamObject<ParadropPlane> {
+
+	bool ReadFromStream(AresStreamReader &Stm, ParadropPlane &Value, bool RegisterForChange) const {
+		return Stm
+			.Process(Value.Aircraft, RegisterForChange)
+			.Process(Value.Types, RegisterForChange)
+			.Process(Value.Num, RegisterForChange)
+			.Success();
+	};
+
+	bool WriteToStream(AresStreamWriter &Stm, const ParadropPlane &Value) const {
+		return Stm
+			.Process(Value.Aircraft)
+			.Process(Value.Types)
+			.Process(Value.Num)
+			.Success();
+	};
+};
+
 #endif

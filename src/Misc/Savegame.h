@@ -12,6 +12,13 @@ namespace Savegame {
 	template <typename T>
 	bool WriteAresStream(AresStreamWriter &Stm, const T &Value);
 
+	template <typename T, typename = void>
+	struct AresStreamObject {
+		bool ReadFromStream(AresStreamReader &Stm, T &Value, bool RegisterForChange) const;
+
+		bool WriteToStream(AresStreamWriter &Stm, const T &Value) const;
+	};
+
 	template <typename T>
 	struct has_loadsave_members : public std::false_type {
 	};
