@@ -16,9 +16,7 @@ void JammerClass::Update() {
 	}
 
 	// walk through all buildings
-	for(int i = 0; i < BuildingClass::Array->Count; ++i) {
-		BuildingClass* curBuilding = BuildingClass::Array->GetItem(i);
-
+	for(auto const& curBuilding : *BuildingClass::Array) {
 		// for each jammable building ...
 		if(this->IsEligible(curBuilding)) {
 			// ...check if it's in range, and jam or unjam based on that
@@ -43,17 +41,17 @@ bool JammerClass::IsEligible(BuildingClass* TargetBuilding) {
 		- not an ally (includes ourselves)
 		- either a radar or a spysat
 	*/
-	return (!this->AttachedToObject->Owner->IsAlliedWith(TargetBuilding->Owner)
-			&& (TargetBuilding->Type->Radar || TargetBuilding->Type->SpySat));
+	return !this->AttachedToObject->Owner->IsAlliedWith(TargetBuilding->Owner)
+		&& (TargetBuilding->Type->Radar || TargetBuilding->Type->SpySat);
 }
 
 //! \param TargetBuilding The building to check the distance to.
 bool JammerClass::InRangeOf(BuildingClass* TargetBuilding) {
-	TechnoTypeExt::ExtData* TTExt = TechnoTypeExt::ExtMap.Find(this->AttachedToObject->GetTechnoType());
-	CoordStruct JammerLocation = this->AttachedToObject->Location;
-	const double JamRadiusInLeptons = 256.0 * TTExt->RadarJamRadius;
+	auto const pExt = TechnoTypeExt::ExtMap.Find(this->AttachedToObject->GetTechnoType());
+	auto const& JammerLocation = this->AttachedToObject->Location;
+	auto const JamRadiusInLeptons = 256.0 * pExt->RadarJamRadius;
 
-	return (TargetBuilding->Location.DistanceFrom(JammerLocation) <= JamRadiusInLeptons);
+	return TargetBuilding->Location.DistanceFrom(JammerLocation) <= JamRadiusInLeptons;
 }
 
 //! \param TargetBuilding The building to jam.
@@ -65,14 +63,14 @@ void JammerClass::Jam(BuildingClass* TargetBuilding) {
 
 //! \param TargetBuilding The building to unjam.
 void JammerClass::Unjam(BuildingClass* TargetBuilding) {
-	BuildingExt::ExtData* TheBuildingExt = BuildingExt::ExtMap.Find(TargetBuilding);
-	TheBuildingExt->RegisteredJammers.erase(this->AttachedToObject);
+	auto const pExt = BuildingExt::ExtMap.Find(TargetBuilding);
+	pExt->RegisteredJammers.erase(this->AttachedToObject);
 	TargetBuilding->Owner->RecheckRadar = true;
 }
 
 void JammerClass::UnjamAll() {
-	for(int i = 0; i < BuildingClass::Array->Count; ++i) {
-		this->Unjam(BuildingClass::Array->GetItem(i));
+	for(auto const& item : *BuildingClass::Array) {
+		this->Unjam(item);
 	}
 }
 
