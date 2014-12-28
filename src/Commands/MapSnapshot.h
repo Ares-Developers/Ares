@@ -1,21 +1,33 @@
 #ifndef CMD_MAPSNAP_H
 #define CMD_MAPSNAP_H
 
+#include "Commands.h"
+
+#include <MessageListClass.h>
+
 class MapSnapshotCommandClass : public AresCommandClass
 {
 public:
 	//CommandClass
 	virtual const char* GetName() const override
-		{ return "MapSnapshot"; }
+	{
+		return "MapSnapshot";
+	}
 
 	virtual const wchar_t* GetUIName() const override
-		{ return L"Map Snapshot"; }
+	{
+		return L"Map Snapshot";
+	}
 
 	virtual const wchar_t* GetUICategory() const override
-		{ return L"Development"; }
+	{
+		return L"Development";
+	}
 
 	virtual const wchar_t* GetUIDescription() const override
-		{ return L"Saves the currently played map."; }
+	{
+		return L"Saves the currently played map.";
+	}
 
 	virtual void Execute(DWORD dwUnk) const override
 	{

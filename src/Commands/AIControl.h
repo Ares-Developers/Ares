@@ -1,21 +1,35 @@
 #ifndef CMD_AICTRL_H
 #define CMD_AICTRL_H
 
+#include "Commands.h"
+
+#include <HouseClass.h>
+#include <MessageListClass.h>
+#include <RulesClass.h>
+
 class AIControlCommandClass : public AresCommandClass
 {
 public:
 	//CommandClass
 	virtual const char* GetName() const override
-	{ return "AIControl"; }
+	{
+		return "AIControl";
+	}
 
 	virtual const wchar_t* GetUIName() const override
-	{ return L"AI Control"; }
+	{
+		return L"AI Control";
+	}
 
 	virtual const wchar_t* GetUICategory() const override
-		{ return L"Ares"; }
+	{
+		return L"Ares";
+	}
 
 	virtual const wchar_t* GetUIDescription() const override
-		{ return L"Let the AI assume control."; }
+	{
+		return L"Let the AI assume control.";
+	}
 
 	virtual void Execute(DWORD dwUnk) const override
 	{

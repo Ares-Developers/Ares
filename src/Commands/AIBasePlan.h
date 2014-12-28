@@ -2,26 +2,39 @@
 #define CMD_AIBASEPLAN_H
 
 #include "Ares.h"
-#include "../Misc/Debug.h"
+#include "Commands/Commands.h"
 
 #include "../Ext/House/Body.h"
 #include "../Ext/HouseType/Body.h"
+#include "../Misc/Debug.h"
+
+#include <BuildingTypeClass.h>
+#include <HouseClass.h>
+#include <MessageListClass.h>
 
 class AIBasePlanCommandClass : public AresCommandClass
 {
 public:
 	//CommandClass
 	virtual const char* GetName() const override
-		{ return "Dump AI Base Plan"; }
+	{
+		return "Dump AI Base Plan";
+	}
 
 	virtual const wchar_t* GetUIName() const override
-		{ return L"AI Base Plan Logger"; }
+	{
+		return L"AI Base Plan Logger";
+	}
 
 	virtual const wchar_t* GetUICategory() const override
-		{ return L"Development"; }
+	{
+		return L"Development";
+	}
 
 	virtual const wchar_t* GetUIDescription() const override
-		{ return L"Dumps the AI Base Plans to the log"; }
+	{
+		return L"Dumps the AI Base Plans to the log";
+	}
 
 	virtual void Execute(DWORD dwUnk) const override
 	{

@@ -16,16 +16,24 @@ class DebuggingCommandClass : public CommandClass
 public:
 	//CommandClass
 	virtual const char* GetName() const override
-		{ return "Debug Dump"; }
+	{
+		return "Debug Dump";
+	}
 
 	virtual const wchar_t* GetUIName() const override
-		{ return L"Debugging Dump"; }
+	{
+		return L"Debugging Dump";
+	}
 
 	virtual const wchar_t* GetUICategory() const override
-		{ return L"Development"; }
+	{
+		return L"Development";
+	}
 
 	virtual const wchar_t* GetUIDescription() const override
-		{ return L"Dumps the current debug data to the log"; }
+	{
+		return L"Dumps the current debug data to the log";
+	}
 
 	virtual void Execute(DWORD dwUnk) const override
 	{

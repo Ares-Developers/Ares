@@ -1,8 +1,6 @@
 #include "Ares.h"
 #include "Ares.version.h"
 #include "Ares.CRT.h"
-#include "Commands/Commands.h"
-#include <CommandClass.h>
 //include "CallCenter.h"
 #include <StaticInits.cpp>
 #include <Unsorted.h>
@@ -57,21 +55,6 @@ void Ares::UninitOwnResources()
 }
 
 //Implementations
-void __stdcall Ares::RegisterCommands()
-{
-	if(bAllowAIControl) {
-		MakeCommand<AIControlCommandClass>();
-	}
-	MakeCommand<MapSnapshotCommandClass>();
-	MakeCommand<TestSomethingCommandClass>();
-	MakeCommand<DumperTypesCommandClass>();
-	MakeCommand<MemoryDumperCommandClass>();
-	MakeCommand<DebuggingCommandClass>();
-	MakeCommand<AIBasePlanCommandClass>();
-	MakeCommand<FPSCounterCommandClass>();
-	MakeCommand<TogglePowerCommandClass>();
-}
-
 void __stdcall Ares::CmdLineParse(char** ppArgs, int nNumArgs)
 {
 	Debug::bLog = false;
@@ -309,15 +292,6 @@ DEFINE_HOOK(52F639, _YR_CmdLineParse, 5)
 
 	Ares::CmdLineParse(ppArgs,nNumArgs);
 	return 0;
-}
-
-DEFINE_HOOK(533058, CommandClassCallback_Register, 7)
-{
-	Ares::RegisterCommands();
-
-	DWORD* D = GameCreate<DWORD>();
-	R->EAX(D);	//Allocate SetUnitTabCommandClass
-	return 0x533062;
 }
 
 /*

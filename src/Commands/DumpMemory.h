@@ -1,26 +1,40 @@
 #ifndef CMD_DUMPMEM_H
 #define CMD_DUMPMEM_H
 
-#include "../Ares.h"
+#include "Commands.h"
+
 #include "../Misc/Debug.h"
+
+#include <MessageListClass.h>
+
+#include <string>
 
 class MemoryDumperCommandClass : public CommandClass
 {
 public:
 	//CommandClass
 	virtual const char* GetName() const override
-	{ return "Dump Process Memory"; }
+	{
+		return "Dump Process Memory";
+	}
 
 	virtual const wchar_t* GetUIName() const override
-	{ return L"Dump Memory"; }
+	{
+		return L"Dump Memory";
+	}
 
 	virtual const wchar_t* GetUICategory() const override
-		{ return L"Development"; }
+	{
+		return L"Development";
+	}
 
 	virtual const wchar_t* GetUIDescription() const override
-		{ return L"Dumps the current process's memory"; }
+	{
+		return L"Dumps the current process's memory";
+	}
 
-	virtual void Execute(DWORD dwUnk) const override {
+	virtual void Execute(DWORD dwUnk) const override
+	{
 		Dialogs::TakeMouse();
 
 		HCURSOR loadCursor = LoadCursor(nullptr, IDC_WAIT);

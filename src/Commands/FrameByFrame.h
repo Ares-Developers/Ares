@@ -1,22 +1,35 @@
 #ifndef CMD_FRAME_H
 #define CMD_FRAME_H
 
+#include "Commands.h"
+
+#include <CommandClass.h>
+#include <MessageListClass.h>
+
 // toggle
 class FrameByFrameCommandClass : public CommandClass
 {
 public:
 	//CommandClass
 	virtual const char* GetName() const override
-		{ return "SingleStep"; }
+	{
+		return "SingleStep";
+	}
 
 	virtual const wchar_t* GetUIName() const override
-		{ return L"Toggle Single-stepping"; }
+	{
+		return L"Toggle Single-stepping";
+	}
 
 	virtual const wchar_t* GetUICategory() const override
-		{ return L"Development"; }
+	{
+		return L"Development";
+	}
 
 	virtual const wchar_t* GetUIDescription() const override
-		{ return L"Toggles the single-stepping debug mode on or off."; }
+	{
+		return L"Toggles the single-stepping debug mode on or off.";
+	}
 
 	virtual void Execute(DWORD dwUnk) const override
 	{
@@ -34,16 +47,24 @@ class FrameStepCommandClass : public CommandClass
 public:
 	//CommandClass
 	virtual const char* GetName() const override
-	{ return "SingleStepForward"; }
+	{
+		return "SingleStepForward";
+	}
 
 	virtual const wchar_t* GetUIName() const override
-	{ return L"Single Step"; }
+	{
+		return L"Single Step";
+	}
 
 	virtual const wchar_t* GetUICategory() const override
-		{ return L"Ares"; }
+	{
+		return L"Ares";
+	}
 
 	virtual const wchar_t* GetUIDescription() const override
-		{ return L"Proceeds a single step forward."; }
+	{
+		return L"Proceeds a single step forward.";
+	}
 
 	static int ArmageddonState;
 

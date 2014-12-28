@@ -1,7 +1,10 @@
 #ifndef ARES_COMMANDS_H
 #define ARES_COMMANDS_H
 
+#include "../Ares.h"
+
 #include <YRPP.h>
+#include <CommandClass.h>
 #include <StringTable.h>
 
 class AresCommandClass : public CommandClass
@@ -55,17 +58,5 @@ void MakeCommand() {
 	T* command = GameCreate<T>();
 	CommandClass::Array->AddItem(command);
 };
-
-// include other commands like this
-#include "Commands/AIControl.h"
-#include "Commands/MapSnapshot.h"
-//include "Commands/FrameByFrame.h"
-#include "Commands/AIBasePlan.h"
-#include "Commands/DumpTypes.h"
-#include "Commands/DumpMemory.h"
-#include "Commands/Debugging.h"
-//include "Commands/Logging.h"
-#include "Commands/FPSCounter.h"
-#include "Commands/TogglePower.h"
 
 #endif

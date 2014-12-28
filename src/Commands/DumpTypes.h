@@ -4,21 +4,31 @@
 #include "../Ares.h"
 #include "../Misc/Debug.h"
 
+#include <MessageListClass.h>
+
 class DumperTypesCommandClass : public AresCommandClass
 {
 public:
 	//CommandClass
 	virtual const char* GetName() const override
-	{ return "Dump Data Types"; }
+	{
+		return "Dump Data Types";
+	}
 
 	virtual const wchar_t* GetUIName() const override
-	{ return L"Dump Types"; }
+	{
+		return L"Dump Types";
+	}
 
 	virtual const wchar_t* GetUICategory() const override
-		{ return L"Development"; }
+	{
+		return L"Development";
+	}
 
 	virtual const wchar_t* GetUIDescription() const override
-		{ return L"Dumps the current type list to the log"; }
+	{
+		return L"Dumps the current type list to the log";
+	}
 
 	template <typename T>
 	void LogType(const char* pSection) const {
