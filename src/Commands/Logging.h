@@ -36,11 +36,11 @@ public:
 		if(Debug::bLog) {
 			Debug::LogFileClose(666);
 			Debug::bLog = false;
-			MessageListClass::PrintMessage(L"Debug logging OFF");
+			MessageListClass::Instance->PrintMessage(L"Debug logging OFF");
 		} else {
 			Debug::LogFileOpen();
 			Debug::bLog = true;
-			MessageListClass::PrintMessage(L"Debug logging ON");
+			MessageListClass::Instance->PrintMessage(L"Debug logging ON");
 		}
 	}
 };

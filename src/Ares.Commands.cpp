@@ -9,7 +9,7 @@
 #include "Commands/AIBasePlan.h"
 #include "Commands/DumpTypes.h"
 #include "Commands/DumpMemory.h"
-#include "Commands/Debugging.h"
+//#include "Commands/Debugging.h"
 //include "Commands/Logging.h"
 #include "Commands/FPSCounter.h"
 #include "Commands/TogglePower.h"
@@ -20,10 +20,10 @@ void Ares::RegisterCommands()
 		MakeCommand<AIControlCommandClass>();
 	}
 	MakeCommand<MapSnapshotCommandClass>();
-	MakeCommand<TestSomethingCommandClass>();
+	//MakeCommand<TestSomethingCommandClass>();
 	MakeCommand<DumperTypesCommandClass>();
 	MakeCommand<MemoryDumperCommandClass>();
-	MakeCommand<DebuggingCommandClass>();
+	//MakeCommand<DebuggingCommandClass>();
 	MakeCommand<AIBasePlanCommandClass>();
 	MakeCommand<FPSCounterCommandClass>();
 	MakeCommand<TogglePowerCommandClass>();

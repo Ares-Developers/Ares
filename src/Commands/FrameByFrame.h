@@ -37,7 +37,7 @@ public:
 
 		wchar_t msg[0x40] = L"\0";
 		wsprintfW(msg, L"Single stepping mode %s.", Unsorted::ArmageddonMode ? L"enabled" : L"disabled");
-		MessageListClass::PrintMessage(msg);
+		MessageListClass::Instance->PrintMessage(msg);
 	}
 };
 
@@ -73,8 +73,7 @@ public:
 		Unsorted::ArmageddonMode = 0;
 		ArmageddonState = 1;
 
-		wchar_t msg[0x40] = L"Stepping.";
-		MessageListClass::PrintMessage(msg);
+		MessageListClass::Instance->PrintMessage(L"Stepping.");
 	}
 };
 

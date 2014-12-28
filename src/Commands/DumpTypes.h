@@ -83,16 +83,15 @@ public:
 		LogType<TaskForceClass>("TaskForces");
 
 		Debug::Log("[AITriggerTypes]\n");
-		for(int i = 0; i < AITriggerTypeClass::Array->Count; ++i) {
+		for(auto const& pItem : *AITriggerTypeClass::Array) {
 			char Buffer[1024];
-			AITriggerTypeClass::Array->Items[i]->FormatForSaving(Buffer, sizeof(Buffer));
+			pItem->FormatForSaving(Buffer, sizeof(Buffer));
 			Debug::Log("%s\n", Buffer);
 		}
 
 		Debug::Log("[AITriggerTypesEnable]\n");
-		for(int i = 0; i < AITriggerTypeClass::Array->Count; ++i) {
-			AITriggerTypeClass *X = AITriggerTypeClass::Array->Items[i];
-			Debug::Log("%X = %s\n", X->get_ID(), X->IsEnabled ? "yes" : "no");
+		for(auto const& pItem : *AITriggerTypeClass::Array) {
+			Debug::Log("%X = %s\n", pItem->get_ID(), pItem->IsEnabled ? "yes" : "no");
 		}
 
 		MessageListClass::Instance->PrintMessage(L"Type data dumped");
