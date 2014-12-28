@@ -155,7 +155,7 @@ DEFINE_HOOK(44840B, BuildingClass_ChangeOwnership_Tech, 6)
 		auto PrintMessage = [](const CSFText& text) {
 			if(!text.empty()) {
 				auto color = HouseClass::Player->ColorSchemeIndex;
-				MessageListClass::Instance->PrintMessage(text, color);
+				MessageListClass::Instance->PrintMessage(text, RulesClass::Instance->MessageDelay, color);
 			}
 		};
 

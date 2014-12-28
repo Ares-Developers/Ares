@@ -578,7 +578,7 @@ void SWTypeExt::ExtData::PrintMessage(const CSFText& message, HouseClass* pFirer
 	}
 
 	// print the message
-	MessageListClass::Instance->PrintMessage(message, color);
+	MessageListClass::Instance->PrintMessage(message, RulesClass::Instance->MessageDelay, color);
 }
 
 void SWTypeExt::ClearChronoAnim(SuperClass *pThis)
