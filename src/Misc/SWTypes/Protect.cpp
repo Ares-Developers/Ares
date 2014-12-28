@@ -84,7 +84,7 @@ bool SW_Protect::CanFireAt(SWTypeExt::ExtData* pData, HouseClass* pOwner, const 
 	auto ret = NewSWType::CanFireAt(pData, pOwner, Coords, manual);
 
 	// if this is a force shield requiring buildings and a building is selected, check the modifier
-	if(ret && pData->Protect_IsForceShield && pData->SW_RequiresTarget & SuperWeaponTarget::Building) {
+	if(ret && manual && pData->Protect_IsForceShield && pData->SW_RequiresTarget & SuperWeaponTarget::Building) {
 		auto pCell = MapClass::Instance->GetCellAt(Coords);
 		if(auto pBld = pCell->GetBuilding()) {
 			auto pExt = TechnoTypeExt::ExtMap.Find(pBld->GetTechnoType());
