@@ -43,8 +43,6 @@ void WeaponTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 		return;
 	}
 
-	ColorStruct tmpColor;
-
 	INI_EX exINI(pINI);
 
 	this->Beam_Duration     = pINI->ReadInteger(section, "Beam.Duration", this->Beam_Duration);
