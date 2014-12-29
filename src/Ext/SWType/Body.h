@@ -195,7 +195,6 @@ public:
 		Valueable<int> SW_AnimHeight;
 		Valueable<SuperWeaponAffectedHouse> SW_AnimVisibility;
 
-		Valueable<bool> SW_TypeCustom;
 		Valueable<bool> SW_AutoFire;
 		Valueable<bool> SW_ManualFire;
 		Valueable<bool> SW_FireToShroud;
@@ -313,7 +312,6 @@ public:
 			Lighting_Enabled(true),
 			SW_AnimHeight(0),
 			SW_AnimVisibility(SuperWeaponAffectedHouse::All),
-			SW_TypeCustom(false),
 			SW_AutoFire(false),
 			SW_ManualFire(true),
 			SW_ShowCameo(true),

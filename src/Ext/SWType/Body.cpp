@@ -836,7 +836,6 @@ void SWTypeExt::ExtData::Serialize(T& Stm) {
 		.Process(this->SW_Anim)
 		.Process(this->SW_AnimHeight)
 		.Process(this->SW_AnimVisibility)
-		.Process(this->SW_TypeCustom)
 		.Process(this->SW_AutoFire)
 		.Process(this->SW_ManualFire)
 		.Process(this->SW_FireToShroud)
