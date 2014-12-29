@@ -241,10 +241,22 @@ DEFINE_HOOK(685659, Scenario_ClearClasses, a)
 }
 
 HRESULT Ares::SaveGameData(IStream *pStm) {
+	Debug::Log("Saving global Ares data\n");
+
+	if(!MassActions.Save(pStm)) {
+		return E_FAIL;
+	}
+
 	Debug::Log("Finished saving the game\n");
 	return S_OK;
 }
 
 void Ares::LoadGameData(IStream *pStm) {
-	Debug::Log("Finished loading the game\n");
+	Debug::Log("Loading global Ares data\n");
+
+	if(!MassActions.Load(pStm)) {
+		Debug::Log("Error loading the game\n");
+	} else {
+		Debug::Log("Finished loading the game\n");
+	}
 }
