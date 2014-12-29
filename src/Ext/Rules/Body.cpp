@@ -228,23 +228,46 @@ DEFINE_HOOK(667A30, RulesClass_DTOR, 5) {
 	return 0;
 }
 
-/*
-A_FINE_HOOK_AGAIN(674730, RulesClass_SaveLoad_Prefix, 6)
-A_FINE_HOOK(675210, RulesClass_SaveLoad_Prefix, 5)
+IStream* g_pStm = nullptr;
+
+DEFINE_HOOK_AGAIN(674730, RulesClass_SaveLoad_Prefix, 6)
+DEFINE_HOOK(675210, RulesClass_SaveLoad_Prefix, 5)
 {
 	//GET(RulesClass*, pItem, ECX);
-	//GET_STACK(IStream*, pStm, 0x4);
+	GET_STACK(IStream*, pStm, 0x4);
+
+	g_pStm = pStm;
 
 	return 0;
 }
 
-A_FINE_HOOK(678841, RulesClass_Load_Suffix, 7)
+DEFINE_HOOK(678841, RulesClass_Load_Suffix, 7)
 {
+	auto buffer = RulesExt::Global();
+
+	AresByteStream Stm(0);
+	if(Stm.ReadBlockFromStream(g_pStm)) {
+		AresStreamReader Reader(Stm);
+
+		if(Reader.Expect(RulesExt::ExtData::Canary) && Reader.RegisterChange(buffer)) {
+			buffer->LoadFromStream(Reader);
+		}
+	}
+
 	return 0;
 }
 
-A_FINE_HOOK(675205, RulesClass_Save_Suffix, 8)
+DEFINE_HOOK(675205, RulesClass_Save_Suffix, 8)
 {
+	auto buffer = RulesExt::Global();
+	AresByteStream saver(sizeof(*buffer));
+	AresStreamWriter writer(saver);
+
+	writer.Expect(RulesExt::ExtData::Canary);
+	writer.RegisterChange(buffer);
+
+	buffer->SaveToStream(writer);
+	saver.WriteBlockToStream(g_pStm);
+
 	return 0;
 }
-*/
