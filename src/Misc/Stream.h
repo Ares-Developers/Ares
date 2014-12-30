@@ -1,6 +1,7 @@
 #ifndef ARES_STREAM_H
 #define ARES_STREAM_H
 
+#include <type_traits>
 #include <vector>
 
 struct IStream;
@@ -94,6 +95,17 @@ public:
 	}
 
 protected:
+	// set to false_type or true_type to disable or enable debugging checks
+	using stream_debugging_t = std::true_type;
+
+	bool IsValid(std::true_type) const {
+		return this->success;
+	}
+
+	bool IsValid(std::false_type) const {
+		return true;
+	}
+
 	AresByteStream* stream;
 	bool success;
 };
@@ -107,7 +119,7 @@ public:
 
 	template <typename T>
 	AresStreamReader& Process(T& value, bool RegisterForChange = true) {
-		if(this->Success()) {
+		if(this->IsValid(stream_debugging_t())) {
 			this->success &= Savegame::ReadAresStream(*this, value, RegisterForChange);
 		}
 		return *this;
@@ -117,7 +129,7 @@ public:
 
 	bool ExpectEndOfBlock() const {
 		if(!this->Success() || this->stream->Size() != this->stream->Offset()) {
-			this->EmitExpectEndOfBlockWarning();
+			this->EmitExpectEndOfBlockWarning(stream_debugging_t());
 			return false;
 		}
 		return true;
@@ -126,7 +138,7 @@ public:
 	template <typename T>
 	bool Load(T& buffer) {
 		if(!this->stream->Load(buffer)) {
-			this->EmitLoadWarning(sizeof(T));
+			this->EmitLoadWarning(sizeof(T), stream_debugging_t());
 			this->success = false;
 			return false;
 		}
@@ -135,7 +147,7 @@ public:
 
 	bool Read(AresByteStream::data_t* Value, size_t Size) {
 		if(!this->stream->Read(Value, Size)) {
-			this->EmitLoadWarning(Size);
+			this->EmitLoadWarning(Size, stream_debugging_t());
 			this->success = false;
 			return false;
 		}
@@ -149,7 +161,7 @@ public:
 				return true;
 			}
 
-			this->EmitExpectWarning(buffer, value);
+			this->EmitExpectWarning(buffer, value, stream_debugging_t());
 		}
 		return false;
 	}
@@ -157,10 +169,17 @@ public:
 	bool RegisterChange(void* newPtr);
 
 private:
-	void EmitExpectEndOfBlockWarning() const;
-	void EmitLoadWarning(size_t size) const;
-	void EmitExpectWarning(unsigned int found, unsigned int expect) const;
-	void EmitSwizzleWarning(long id, void* pointer) const;
+	void EmitExpectEndOfBlockWarning(std::true_type) const;
+	void EmitExpectEndOfBlockWarning(std::false_type) const {};
+
+	void EmitLoadWarning(size_t size, std::true_type) const;
+	void EmitLoadWarning(size_t size, std::false_type) const {};
+
+	void EmitExpectWarning(unsigned int found, unsigned int expect, std::true_type) const;
+	void EmitExpectWarning(unsigned int found, unsigned int expect, std::false_type) const {};
+
+	void EmitSwizzleWarning(long id, void* pointer, std::true_type) const;
+	void EmitSwizzleWarning(long id, void* pointer, std::false_type) const {};
 };
 
 class AresStreamWriter : public AresStreamWorkerBase {
@@ -172,7 +191,7 @@ public:
 
 	template <typename T>
 	AresStreamWriter& Process(T& value, bool RegisterForChange = true) {
-		if(this->Success()) {
+		if(this->IsValid(stream_debugging_t())) {
 			this->success &= Savegame::WriteAresStream(*this, value);
 		}
 		return *this;

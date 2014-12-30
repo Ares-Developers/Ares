@@ -78,25 +78,25 @@ bool AresStreamReader::RegisterChange(void* newPtr) {
 			return true;
 		}
 
-		this->EmitSwizzleWarning(oldPtr, newPtr);
+		this->EmitSwizzleWarning(oldPtr, newPtr, stream_debugging_t());
 	}
 	return false;
 }
 
-void AresStreamReader::EmitExpectEndOfBlockWarning() const {
+void AresStreamReader::EmitExpectEndOfBlockWarning(std::true_type) const {
 	Debug::Log("[AresStreamReader] Read %X bytes instead of %X!\n",
 		this->stream->Offset(), this->stream->Size());
 }
 
-void AresStreamReader::EmitLoadWarning(size_t size) const {
+void AresStreamReader::EmitLoadWarning(size_t size, std::true_type) const {
 	Debug::Log("[AresStreamReader] Could not read data of length %u at %X of %X.\n",
 		size, this->stream->Offset() - size, this->stream->Size());
 }
 
-void AresStreamReader::EmitExpectWarning(unsigned int found, unsigned int expect) const {
+void AresStreamReader::EmitExpectWarning(unsigned int found, unsigned int expect, std::true_type) const {
 	Debug::Log("[AresStreamReader] Found %X, expected %X\n", found, expect);
 }
 
-void AresStreamReader::EmitSwizzleWarning(long id, void* pointer) const {
+void AresStreamReader::EmitSwizzleWarning(long id, void* pointer, std::true_type) const {
 	Debug::Log("[AresStreamReader] Could not register change from %X to %p\n", id, pointer);
 }
