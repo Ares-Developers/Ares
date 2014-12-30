@@ -93,7 +93,7 @@ void InfantryExt::ExtData::SaveToStream(AresStreamWriter &Stm) {
 // container hooks
 
 #ifdef MAKE_GAME_SLOWER_FOR_NO_REASON
-A_FINE_HOOK(517CB0, InfantryClass_CTOR, 5)
+DEFINE_HOOK(517CB0, InfantryClass_CTOR, 5)
 {
 	GET(InfantryClass*, pItem, ESI);
 
@@ -101,7 +101,7 @@ A_FINE_HOOK(517CB0, InfantryClass_CTOR, 5)
 	return 0;
 }
 
-A_FINE_HOOK(517F83, InfantryClass_DTOR, 6)
+DEFINE_HOOK(517F83, InfantryClass_DTOR, 6)
 {
 	GET(InfantryClass*, pItem, ESI);
 
@@ -109,8 +109,8 @@ A_FINE_HOOK(517F83, InfantryClass_DTOR, 6)
 	return 0;
 }
 
-A_FINE_HOOK_AGAIN(521B00, InfantryClass_SaveLoad_Prefix, 8)
-A_FINE_HOOK(521960, InfantryClass_SaveLoad_Prefix, 6)
+DEFINE_HOOK_AGAIN(521B00, InfantryClass_SaveLoad_Prefix, 8)
+DEFINE_HOOK(521960, InfantryClass_SaveLoad_Prefix, 6)
 {
 	GET_STACK(InfantryClass*, pItem, 0x4);
 	GET_STACK(IStream*, pStm, 0x8);
@@ -120,13 +120,13 @@ A_FINE_HOOK(521960, InfantryClass_SaveLoad_Prefix, 6)
 	return 0;
 }
 
-A_FINE_HOOK(521AEC, InfantryClass_Load_Suffix, 6)
+DEFINE_HOOK(521AEC, InfantryClass_Load_Suffix, 6)
 {
 	InfantryExt::ExtMap.LoadStatic();
 	return 0;
 }
 
-A_FINE_HOOK(521B14, InfantryClass_Save_Suffix, 3)
+DEFINE_HOOK(521B14, InfantryClass_Save_Suffix, 3)
 {
 	InfantryExt::ExtMap.SaveStatic();
 	return 0;
