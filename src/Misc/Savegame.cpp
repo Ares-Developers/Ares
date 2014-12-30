@@ -47,3 +47,14 @@ DEFINE_HOOK(67F7C8, LoadGame_End, 5)
 
 	return 0;
 }
+
+// log message uses wrong format specifier
+DEFINE_HOOK(67CEFE, Game_Save_FixLog, 7)
+{
+	GET(const char*, pFilename, EDI);
+	GET(const wchar_t*, pSaveName, ESI);
+
+	Debug::Log("\nSAVING GAME [%s - %ls]\n", pFilename, pSaveName);
+
+	return 0x67CF0D;
+}
