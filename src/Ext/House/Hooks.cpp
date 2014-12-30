@@ -15,6 +15,7 @@
 #include <CRT.h>
 #include <VoxClass.h>
 #include <TiberiumClass.h>
+#include <MessageListClass.h>
 
 // =============================
 // other hooks
@@ -226,7 +227,15 @@ DEFINE_HOOK(508F91, HouseClass_SpySat_Update_CheckEligible, 6)
 // play this annoying message every now and then
 DEFINE_HOOK(4F8C23, HouseClass_Update_SilosNeededEVA, 5)
 {
+	GET(HouseClass* const, pThis, ESI);
+
 	VoxClass::Play("EVA_SilosNeeded");
+
+	if(const CSFText& Message = RulesExt::Global()->MessageSilosNeeded) {
+		MessageListClass::Instance->PrintMessage(Message,
+			RulesClass::Instance->MessageDelay,	pThis->ColorSchemeIndex);
+	}
+
 	return 0;
 }
 

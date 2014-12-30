@@ -91,6 +91,8 @@ void RulesExt::ExtData::LoadBeforeTypeData(RulesClass *pThis, CCINIClass *pINI) 
 
 	pData->AutoRepelAI.Read(exINI, sectionCombatDamage, "AutoRepel");
 	pData->AutoRepelPlayer.Read(exINI, sectionCombatDamage, "PlayerAutoRepel");
+
+	pData->MessageSilosNeeded.Read(exINI, sectionGeneral, "Message.SilosNeeded");
 }
 
 // this should load everything that TypeData is not dependant on
@@ -182,7 +184,8 @@ void RulesExt::ExtData::Serialize(T& Stm) {
 		.Process(this->DropPodTypes)
 		.Process(this->DropPodTrailer)
 		.Process(this->AutoRepelAI)
-		.Process(this->AutoRepelPlayer);
+		.Process(this->AutoRepelPlayer)
+		.Process(this->MessageSilosNeeded);
 }
 
 void RulesExt::ExtData::LoadFromStream(AresStreamReader &Stm) {

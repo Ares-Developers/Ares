@@ -5,6 +5,7 @@
 #include <RulesClass.h>
 
 #include "../_Container.hpp"
+#include "../../Utilities/Constructs.h"
 #include "../../Utilities/Template.h"
 
 //ifdef DEBUGBUILD
@@ -79,6 +80,8 @@ public:
 
 		Valueable<bool> AutoRepelAI;
 		Valueable<bool> AutoRepelPlayer;
+
+		Valueable<CSFText> MessageSilosNeeded;
 
 		ExtData(RulesClass* OwnerObject) : Extension<RulesClass>(OwnerObject),
 			ElectricDeath(nullptr),
