@@ -1,6 +1,9 @@
 #include "SavegameDef.h"
 
 #include "../Ares.h"
+#include "../Ares.version.h"
+
+#include <LoadOptionsClass.h>
 
 DEFINE_HOOK(67D300, SaveGame_Start, 5)
 {
@@ -46,6 +49,30 @@ DEFINE_HOOK(67F7C8, LoadGame_End, 5)
 	Ares::LoadGameData(pStm);
 
 	return 0;
+}
+
+DEFINE_HOOK(67D04E, Game_Save_SavegameInformation, 7)
+{
+	REF_STACK(SavegameInformation, Info, STACK_OFFS(0x4A4, 0x3F4));
+
+	// remember the Ares version and a mod id
+	Info.Version = Ares::UISettings::ModIdentifier;
+	Info.InternalVersion = SAVEGAME_MAGIC;
+	sprintf_s(Info.ExecutableName.data(), "GAMEMD.EXE + %s", DISPLAY_STREX);
+
+	return 0;
+}
+
+DEFINE_HOOK(559F31, LoadOptionsClass_GetFileInfo, 9)
+{
+	REF_STACK(SavegameInformation, Info, STACK_OFFS(0x400, 0x3F4));
+
+	// compare equal if same mod and same Ares version (or compatible)
+	auto same = (Info.Version == Ares::UISettings::ModIdentifier
+		&& Info.InternalVersion == SAVEGAME_MAGIC);
+
+	R->ECX(&Info);
+	return same ? 0x559F60u : 0x559F48u;
 }
 
 // log message uses wrong format specifier
