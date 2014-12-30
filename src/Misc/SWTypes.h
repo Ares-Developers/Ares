@@ -327,6 +327,4 @@ struct Savegame::ObjectFactory<SWStateMachine> {
 	}
 };
 
-ENABLE_ARES_PERSISTENCE(SWStateMachine)
-
 #endif

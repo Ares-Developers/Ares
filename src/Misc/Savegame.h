@@ -19,7 +19,7 @@ namespace Savegame {
 	template <typename T>
 	bool PersistObject(AresStreamWriter &Stm, const T* pValue);
 
-	template <typename T, typename = void>
+	template <typename T>
 	struct AresStreamObject {
 		bool ReadFromStream(AresStreamReader &Stm, T &Value, bool RegisterForChange) const;
 
@@ -32,15 +32,6 @@ namespace Savegame {
 			return std::make_unique<T>();
 		}
 	};
-
-	template <typename T>
-	struct has_loadsave_members : public std::false_type {
-	};
 }
-
-#define ENABLE_ARES_PERSISTENCE(type) \
-template <> \
-struct Savegame::has_loadsave_members<type> : public std::true_type { \
-};
 
 #endif

@@ -293,6 +293,4 @@ public:
 	static bool IsFoundationEqual(BuildingTypeClass *pTBldA, BuildingTypeClass *pTBldB);
 };
 
-ENABLE_ARES_PERSISTENCE(BuildingTypeExt::cPrismForwarding);
-
 #endif

@@ -172,6 +172,4 @@ public:
 	static void Clear();
 };
 
-ENABLE_ARES_PERSISTENCE(BuildingExt::cPrismForwarding)
-
 #endif

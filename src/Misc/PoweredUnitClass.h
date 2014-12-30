@@ -34,8 +34,6 @@ public:
 	bool Save(AresStreamWriter &Stm) const;
 };
 
-ENABLE_ARES_PERSISTENCE(PoweredUnitClass);
-
 template <>
 struct Savegame::ObjectFactory<PoweredUnitClass> {
 	std::unique_ptr<PoweredUnitClass> operator() (AresStreamReader &Stm) const {

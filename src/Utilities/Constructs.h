@@ -125,8 +125,6 @@ private:
 	}
 };
 
-ENABLE_ARES_PERSISTENCE(CustomPalette);
-
 // vector of char* with builtin storage
 template<class T>
 class VectorNames {
@@ -289,18 +287,6 @@ private:
 	container_t values;
 };
 
-template <typename TKey, typename TValue>
-struct Savegame::AresStreamObject<AresMap<TKey, TValue>> {
-
-	bool ReadFromStream(AresStreamReader &Stm, AresMap<TKey, TValue> &Value, bool RegisterForChange) const {
-		return Value.load(Stm, RegisterForChange);
-	}
-
-	bool WriteToStream(AresStreamWriter &Stm, const AresMap<TKey, TValue> &Value) const {
-		return Value.save(Stm);
-	}
-};
-
 // pcx filename storage with optional automatic loading
 class AresPCXFile {
 	static const size_t Capacity = 0x20;
@@ -384,8 +370,6 @@ private:
 	mutable bool exists;
 };
 
-ENABLE_ARES_PERSISTENCE(AresPCXFile);
-
 // provides storage for a csf label with automatic lookup.
 class CSFText {
 public:
@@ -442,8 +426,6 @@ public:
 	FixedString<0x20> Label;
 	const wchar_t* Text;
 };
-
-ENABLE_ARES_PERSISTENCE(CSFText);
 
 // fixed string with read method
 template <size_t Capacity>
@@ -537,18 +519,6 @@ private:
 
 	T Value;
 	bool HasValue;
-};
-
-template <typename T, bool Persistable>
-struct Savegame::AresStreamObject<OptionalStruct<T, Persistable>> {
-
-	bool ReadFromStream(AresStreamReader &Stm, OptionalStruct<T, Persistable> &Value, bool RegisterForChange) const {
-		return Value.load(Stm, RegisterForChange);
-	}
-
-	bool WriteToStream(AresStreamWriter &Stm, const OptionalStruct<T, Persistable> &Value) const {
-		return Value.save(Stm);
-	}
 };
 
 #endif

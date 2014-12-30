@@ -296,43 +296,4 @@ protected:
 	inline virtual void Split(INI_EX &parser, const char* pSection, const char* pKey, char* pValue) override;
 };
 
-
-// Stream objects calling the instance methods
-
-template <typename T>
-struct Savegame::AresStreamObject<T, typename std::enable_if<std::is_base_of<Valueable<typename T::value_type>, T>::value>::type> {
-
-	bool ReadFromStream(AresStreamReader &Stm, T &Value, bool RegisterForChange) const {
-		return Value.Load(Stm, RegisterForChange);
-	}
-
-	bool WriteToStream(AresStreamWriter &Stm, const T &Value) const {
-		return Value.Save(Stm);
-	}
-};
-
-template <typename T>
-struct Savegame::AresStreamObject<T, typename std::enable_if<std::is_base_of<ValueableVector<typename T::value_type>, T>::value>::type> {
-
-	bool ReadFromStream(AresStreamReader &Stm, T &Value, bool RegisterForChange) const {
-		return Value.Load(Stm, RegisterForChange);
-	}
-
-	bool WriteToStream(AresStreamWriter &Stm, const T &Value) const {
-		return Value.Save(Stm);
-	}
-};
-
-template <typename T>
-struct Savegame::AresStreamObject<Promotable<T>> {
-
-	bool ReadFromStream(AresStreamReader &Stm, Promotable<T> &Value, bool RegisterForChange) const {
-		return Value.Load(Stm, RegisterForChange);
-	}
-
-	bool WriteToStream(AresStreamWriter &Stm, const Promotable<T> &Value) const {
-		return Value.Save(Stm);
-	}
-};
-
 #endif

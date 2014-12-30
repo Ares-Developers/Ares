@@ -19,6 +19,69 @@
 #include "Debug.h"
 
 namespace Savegame {
+	namespace detail {
+
+		struct Selector {
+			template <typename T>
+			static bool ReadFromStream(AresStreamReader &Stm, T &Value, bool RegisterForChange) {
+				return read_from_stream(Stm, Value, RegisterForChange, 0, 0);
+			}
+
+			template <typename T>
+			static bool WriteToStream(AresStreamWriter &Stm, const T &Value) {
+				return write_to_stream(Stm, Value, 0, 0);
+			}
+
+		private:
+			// support for upper-case Load and lowercase load member functions.
+			// this is more complex than needed, but allows for more consistency
+			// in function naming.
+			struct Dummy {
+				Dummy(int a) {};
+			};
+
+			template <typename T>
+			static auto read_from_stream(AresStreamReader &Stm, T &Value, bool RegisterForChange, int, int)
+				-> decltype(Value.Load(Stm, RegisterForChange))
+			{
+				return Value.Load(Stm, RegisterForChange);
+			}
+
+			template <typename T>
+			static auto read_from_stream(AresStreamReader &Stm, T &Value, bool RegisterForChange, Dummy, int)
+				-> decltype(Value.load(Stm, RegisterForChange))
+			{
+				return Value.load(Stm, RegisterForChange);
+			}
+
+			template <typename T>
+			static bool read_from_stream(AresStreamReader &Stm, T &Value, bool RegisterForChange, Dummy, Dummy) {
+				AresStreamObject<T> item;
+				return item.ReadFromStream(Stm, Value, RegisterForChange);
+			}
+
+			template <typename T>
+			static auto write_to_stream(AresStreamWriter &Stm, const T &Value, int, int)
+				-> decltype(Value.Save(Stm))
+			{
+				return Value.Save(Stm);
+			}
+
+			template <typename T>
+			static auto write_to_stream(AresStreamWriter &Stm, const T &Value, Dummy, int)
+				-> decltype(Value.save(Stm))
+			{
+				return Value.save(Stm);
+			}
+
+			template <typename T>
+			static bool write_to_stream(AresStreamWriter &Stm, const T &Value, Dummy, Dummy) {
+				AresStreamObject<T> item;
+				return item.WriteToStream(Stm, Value);
+			}
+		};
+	}
+
 	template <typename T>
 	bool ReadAresStream(AresStreamReader &Stm, T &Value, bool RegisterForChange) {
 		// not implemented
@@ -63,8 +126,8 @@ namespace Savegame {
 		return true;
 	}
 
-	template <typename T, typename X = void>
-	bool AresStreamObject<T, X>::ReadFromStream(AresStreamReader &Stm, T &Value, bool RegisterForChange) const {
+	template <typename T>
+	bool AresStreamObject<T>::ReadFromStream(AresStreamReader &Stm, T &Value, bool RegisterForChange) const {
 		bool ret = Stm.Load(Value);
 
 		if(RegisterForChange) {
@@ -74,53 +137,14 @@ namespace Savegame {
 		return ret;
 	}
 
-	template <typename T, typename X = void>
-	bool AresStreamObject<T, X>::WriteToStream(AresStreamWriter &Stm, const T &Value) const {
+	template <typename T>
+	bool AresStreamObject<T>::WriteToStream(AresStreamWriter &Stm, const T &Value) const {
 		Stm.Save(Value);
 		return true;
 	}
 
 
 	// specializations
-
-	template <typename T>
-	struct Savegame::AresStreamObject<T, typename std::enable_if<has_loadsave_members<T>::value>::type> {
-		bool ReadFromStream(AresStreamReader &Stm, T &Value, bool RegisterForChange) const {
-			return load(0, Stm, Value, RegisterForChange);
-		}
-
-		bool WriteToStream(AresStreamWriter &Stm, const T &Value) const {
-			return save(0, Stm, Value);
-		}
-
-	private:
-		// support for upper-case Load and lowercase load member functions.
-		// this is more complex than needed, but allows for more consistency
-		// in function naming.
-		struct Dummy {
-			Dummy(int a) {};
-		};
-
-		template <typename T2 = T>
-		static auto load(int, AresStreamReader &Stm, T &Value, bool RegisterForChange) -> decltype(Value.Load(Stm, RegisterForChange)) {
-			return Value.Load(Stm, RegisterForChange);
-		}
-
-		template <typename T2 = T>
-		static auto load(Dummy, AresStreamReader &Stm, T &Value, bool RegisterForChange) -> decltype(Value.load(Stm, RegisterForChange)) {
-			return Value.load(Stm, RegisterForChange);
-		}
-
-		template <typename T2 = T>
-		static auto save(int, AresStreamWriter &Stm, const T &Value) -> decltype(Value.Save(Stm)) {
-			return Value.Save(Stm);
-		}
-
-		template <typename T2 = T>
-		static auto save(Dummy, AresStreamWriter &Stm, const T &Value) -> decltype(Value.save(Stm)) {
-			return Value.save(Stm);
-		}
-	};
 
 	template <typename T>
 	struct Savegame::AresStreamObject<VectorClass<T>> {

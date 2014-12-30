@@ -68,8 +68,6 @@ public:
 	void Read(INI_EX &exINI);
 };
 
-ENABLE_ARES_PERSISTENCE(AttachEffectTypeClass);
-
 class AttachEffectClass {
 public:
 	AttachEffectClass(AttachEffectTypeClass* Type, int Timer) : Type(Type),
@@ -103,8 +101,6 @@ public:
 
 	static void Update(TechnoClass *Source);
 };
-
-ENABLE_ARES_PERSISTENCE(AttachEffectClass);
 
 template <>
 struct Savegame::ObjectFactory<AttachEffectClass> {
