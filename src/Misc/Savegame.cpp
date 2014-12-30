@@ -58,3 +58,9 @@ DEFINE_HOOK(67CEFE, Game_Save_FixLog, 7)
 
 	return 0x67CF0D;
 }
+
+// #895374: skip the code that removes the crates
+DEFINE_HOOK(483BF1, CellClass_Load_Crates, 7)
+{
+	return 0x483BFE;
+}
