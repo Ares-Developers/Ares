@@ -216,20 +216,21 @@ DEFINE_HOOK(43FD2C, BuildingClass_Update_ProduceCash, 6)
 DEFINE_HOOK(4482BD, BuildingClass_ChangeOwnership_ProduceCash, 6)
 {
 	GET(BuildingClass*, pThis, ESI);
+	GET(HouseClass*, pNewOwner, EBX);
 	auto pExt = BuildingExt::ExtMap.Find(pThis);
 
-	auto Process = [](BuildingClass* pBld, BuildingTypeClass* pType, TimerStruct& timer) {
+	auto Process = [](HouseClass* pOwner, BuildingTypeClass* pType, TimerStruct& timer) {
 		if(pType->ProduceCashStartup) {
-			pBld->Owner->TransactMoney(pType->ProduceCashStartup);
+			pOwner->TransactMoney(pType->ProduceCashStartup);
 			timer.Start(pType->ProduceCashDelay);
 		}
 	};
 
-	Process(pThis, pThis->Type, pThis->CashProductionTimer);
+	Process(pNewOwner, pThis->Type, pThis->CashProductionTimer);
 
 	for(size_t i = 0; i < 3; ++i) {
 		if(const auto& pUpgrade = pThis->Upgrades[i]) {
-			Process(pThis, pUpgrade, pExt->CashUpgradeTimers[i]);
+			Process(pNewOwner, pUpgrade, pExt->CashUpgradeTimers[i]);
 		}
 	}
 
