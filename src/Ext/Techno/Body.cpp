@@ -1020,6 +1020,12 @@ bool TechnoExt::ExtData::IsCloakable(bool allowPassive) const
 		return false;
 	}
 
+	// parachuted units cannot cloak. this makes paradropping
+	// units uncloakable like they were in the vanilla game
+	if(pThis->Parachute) {
+		return false;
+	}
+
 	// check for active cloak
 	if(pThis->IsCloakable() || pThis->HasAbility(Ability::Cloak)) {
 		if(this->CanSelfCloakNow()) {
