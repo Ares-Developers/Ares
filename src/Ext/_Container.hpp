@@ -54,15 +54,15 @@ enum class InitState {
 
 template<typename T>
 class Extension {
-	InitState Initialized;
 	T* AttachedToObject;
+	InitState Initialized;
 public:
 
 	static const DWORD Canary;
 
 	Extension(T* const OwnerObject) :
-		Initialized(InitState::Blank),
-		AttachedToObject(OwnerObject)
+		AttachedToObject(OwnerObject),
+		Initialized(InitState::Blank)
 	{ };
 
 	Extension(const Extension &other) = delete;
@@ -110,13 +110,13 @@ public:
 	virtual void InvalidatePointer(void* ptr, bool bRemoved) = 0;
 
 	virtual inline void SaveToStream(AresStreamWriter &Stm) {
-		Stm.Save(this->Initialized);
 		//Stm.Save(this->AttachedToObject);
+		Stm.Save(this->Initialized);
 	}
 
 	virtual inline void LoadFromStream(AresStreamReader &Stm) {
-		Stm.Load(this->Initialized);
 		//Stm.Load(this->AttachedToObject);
+		Stm.Load(this->Initialized);
 	}
 
 protected:
