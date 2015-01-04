@@ -130,8 +130,8 @@ DEFINE_HOOK(5BDE64, Actions_AnimateCursor2, 6)
 DEFINE_HOOK(4D7524, Actions_AllowForFootClass, 9)
 {
 	//overwrote the ja, need to replicate it
-	auto CursorIndex = static_cast<Action>(R->EAX() - 1);
-	if(CursorIndex > Action::ForceShield) {
+	GET(Action, CursorIndex, EBP);
+	if(CursorIndex == Action::None || CursorIndex > Action::Airstrike) {
 		if(CursorIndex == Actions::SuperWeaponAllowed || CursorIndex == Actions::SuperWeaponDisallowed) {
 			return 0x4D769F;
 		} else {
