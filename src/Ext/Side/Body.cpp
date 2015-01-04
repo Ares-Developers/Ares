@@ -439,6 +439,7 @@ ConvertClass* SideExt::GetGraphicalTextConvert() {
 template <typename T>
 void SideExt::ExtData::Serialize(T& Stm) {
 	Stm
+		.Process(this->ArrayIndex)
 		.Process(this->Disguise)
 		.Process(this->Crew)
 		.Process(this->Engineer)
