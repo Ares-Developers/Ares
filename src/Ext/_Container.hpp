@@ -165,9 +165,7 @@ protected:
 
 	void InvalidateExtDataPointer(void *ptr, bool bRemoved) {
 		for(const auto& i : this->Items) {
-			if(auto& value = i.second) {
-				value->InvalidatePointer(ptr, bRemoved);
-			}
+			i.second->InvalidatePointer(ptr, bRemoved);
 		}
 	}
 
@@ -203,6 +201,7 @@ public:
 	void Remove(const_key_type key) {
 		auto i = this->Items.find(key);
 		if(i != this->Items.end()) {
+			auto value = std::move(i->second);
 			this->Items.erase(i);
 		}
 	}
@@ -213,7 +212,7 @@ public:
 			Debug::DevLog(Debug::Warning, "Cleared %u items from %s.\n",
 				this->Items.size(), info.name());
 		}
-		this->Items.clear();
+		map_type().swap(this->Items);
 	}
 
 	void LoadAllFromINI(CCINIClass *pINI) {
