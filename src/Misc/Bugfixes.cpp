@@ -1262,3 +1262,22 @@ DEFINE_HOOK(4FA2E0, HouseClass_SetThreat_Bounds, 7)
 
 	return index < 0 ? 0x4FA347u : 0;
 }
+
+// gunners and opentopped together do not support temporals, because the gunner
+// takes away the TemporalImUsing from the infantry, and thus it is missing
+// when the infantry fires out of the opentopped vehicle
+DEFINE_HOOK(6FC339, TechnoClass_GetFireError_OpenToppedGunnerTemporal, 6)
+{
+	GET(TechnoClass* const, pThis, ESI);
+	GET(WeaponTypeClass* const, pWeapon, EDI);
+
+	bool ret = true;
+	if(pWeapon->Warhead->Temporal && pThis->Transporter) {
+		auto const pType = pThis->Transporter->GetTechnoType();
+		if(pType->Gunner && pType->OpenTopped) {
+			ret = (pThis->TemporalImUsing != nullptr);
+		}
+	}
+
+	return ret ? 0u : 0x6FCD29u;
+}
