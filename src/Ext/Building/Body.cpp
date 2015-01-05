@@ -17,7 +17,7 @@
 #include <MouseClass.h>
 
 template<> const DWORD Extension<BuildingClass>::Canary = 0x87654321;
-Container<BuildingExt> BuildingExt::ExtMap;
+Container<BuildingExt> BuildingExt::ExtMap("BuildingClass");
 
 // =============================
 // member functions

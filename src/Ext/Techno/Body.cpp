@@ -21,7 +21,7 @@
 #include <TiberiumClass.h>
 
 template<> const DWORD Extension<TechnoClass>::Canary = 0x55555555;
-Container<TechnoExt> TechnoExt::ExtMap;
+Container<TechnoExt> TechnoExt::ExtMap("TechnoClass");
 
 FireError TechnoExt::FiringStateCache = FireError::NONE;
 

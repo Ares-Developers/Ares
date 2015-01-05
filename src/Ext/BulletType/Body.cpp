@@ -8,7 +8,7 @@
 #include <BulletClass.h>
 
 template<> const DWORD Extension<BulletTypeClass>::Canary = 0xF00DF00D;
-Container<BulletTypeExt> BulletTypeExt::ExtMap;
+Container<BulletTypeExt> BulletTypeExt::ExtMap("BulletTypeClass");
 
 // =============================
 // member funcs

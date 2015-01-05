@@ -150,11 +150,13 @@ private:
 
 	base_type* SavingObject;
 	IStream* SavingStream;
+	const char* Name;
 
 public:
-	Container() : Items(),
+	explicit Container(const char* pName) : Items(),
 		SavingObject(nullptr),
-		SavingStream(nullptr)
+		SavingStream(nullptr),
+		Name(pName)
 	{ }
 
 	virtual ~Container() = default;
@@ -179,8 +181,7 @@ protected:
 public:
 	value_type FindOrAllocate(key_type key) {
 		if(key == nullptr) {
-			const auto &info = typeid(*this);
-			Debug::Log("CTOR of %s attempted for a NULL pointer! WTF!\n", info.name());
+			Debug::Log("CTOR of %s attempted for a NULL pointer! WTF!\n", this->Name);
 			return nullptr;
 		}
 		auto i = this->Items.find(key);
@@ -210,9 +211,8 @@ public:
 
 	void Clear() {
 		if(!this->Items.empty()) {
-			const auto &info = typeid(*this);
 			Debug::DevLog(Debug::Warning, "Cleared %u items from %s.\n",
-				this->Items.size(), info.name());
+				this->Items.size(), this->Name);
 		}
 		map_type().swap(this->Items);
 	}
@@ -231,25 +231,22 @@ public:
 	}
 
 	void PrepareStream(key_type key, IStream *pStm) {
-		const auto &info = typeid(base_type);
-		Debug::Log("[PrepareStream] Next is %p of type '%s'\n", key, info.name());
+		Debug::Log("[PrepareStream] Next is %p of type '%s'\n", key, this->Name);
 
 		this->SavingObject = key;
 		this->SavingStream = pStm;
 	}
 
 	void SaveStatic() {
-		const auto &info = typeid(base_type);
-
 		if(this->SavingObject && this->SavingStream) {
-			Debug::Log("[SaveStatic] Saving object %p as '%s'\n", this->SavingObject, info.name());
+			Debug::Log("[SaveStatic] Saving object %p as '%s'\n", this->SavingObject, this->Name);
 
 			if(!this->Save(this->SavingObject, this->SavingStream)) {
 				Debug::FatalErrorAndExit("[SaveStatic] Saving failed!\n");
 			}
 		} else {
 			Debug::Log("[SaveStatic] Object or Stream not set for '%s': %p, %p\n",
-				info.name(), this->SavingObject, this->SavingStream);
+				this->Name, this->SavingObject, this->SavingStream);
 		}
 
 		this->SavingObject = nullptr;
@@ -257,17 +254,15 @@ public:
 	}
 
 	void LoadStatic() {
-		const auto &info = typeid(base_type);
-
 		if(this->SavingObject && this->SavingStream) {
-			Debug::Log("[LoadStatic] Loading object %p as '%s'\n", this->SavingObject, info.name());
+			Debug::Log("[LoadStatic] Loading object %p as '%s'\n", this->SavingObject, this->Name);
 
 			if(!this->Load(this->SavingObject, this->SavingStream)) {
 				Debug::FatalErrorAndExit("[LoadStatic] Loading failed!\n");
 			}
 		} else {
 			Debug::Log("[LoadStatic] Object or Stream not set for '%s': %p, %p\n",
-				info.name(), this->SavingObject, this->SavingStream);
+				this->Name, this->SavingObject, this->SavingStream);
 		}
 
 		this->SavingObject = nullptr;

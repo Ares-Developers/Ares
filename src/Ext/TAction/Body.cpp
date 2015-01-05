@@ -10,7 +10,7 @@
 
 //Static init
 template<> const DWORD Extension<TActionClass>::Canary = 0x91919191;
-Container<TActionExt> TActionExt::ExtMap;
+Container<TActionExt> TActionExt::ExtMap("TActionClass");
 
 // Enables the Firestorm super weapon for a house.
 /*!

@@ -5,7 +5,7 @@
 
 //Static init
 template<> const DWORD Extension<TiberiumClass>::Canary = 0xB16B00B5;
-Container<TiberiumExt> TiberiumExt::ExtMap;
+Container<TiberiumExt> TiberiumExt::ExtMap("TiberiumClass");
 
 void TiberiumExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 {

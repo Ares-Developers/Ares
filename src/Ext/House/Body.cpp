@@ -19,7 +19,7 @@
 #include "../../Misc/SavegameDef.h"
 
 template<> const DWORD Extension<HouseClass>::Canary = 0x12345678;
-Container<HouseExt> HouseExt::ExtMap;
+Container<HouseExt> HouseExt::ExtMap("HouseClass");
 
 bool HouseExt::IsAnyFirestormActive = false;
 

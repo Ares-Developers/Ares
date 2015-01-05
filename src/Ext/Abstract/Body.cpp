@@ -3,7 +3,7 @@
 #include "../../Misc/SavegameDef.h"
 
 template<> const DWORD Extension<AbstractClass>::Canary = 0xAB5005BA;
-Container<AbstractExt> AbstractExt::ExtMap;
+Container<AbstractExt> AbstractExt::ExtMap("AbstractClass");
 
 // =============================
 // load / save

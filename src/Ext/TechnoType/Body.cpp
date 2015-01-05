@@ -13,7 +13,7 @@
 #include <WarheadTypeClass.h>
 
 template<> const DWORD Extension<TechnoTypeClass>::Canary = 0x44444444;
-Container<TechnoTypeExt> TechnoTypeExt::ExtMap;
+Container<TechnoTypeExt> TechnoTypeExt::ExtMap("TechnoTypeClass");
 
 // =============================
 // member funcs

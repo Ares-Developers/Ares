@@ -7,7 +7,7 @@
 
 //Static init
 template<> const DWORD Extension<TEventClass>::Canary = 0x61616161;
-Container<TEventExt> TEventExt::ExtMap;
+Container<TEventExt> TEventExt::ExtMap("TEventClass");
 
 // Gets the TechnoType pointed to by the event's TechnoName field.
 /*!

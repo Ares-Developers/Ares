@@ -27,7 +27,7 @@
 #include <set>
 
 template<> const DWORD Extension<WarheadTypeClass>::Canary = 0x22222222;
-Container<WarheadTypeExt> WarheadTypeExt::ExtMap;
+Container<WarheadTypeExt> WarheadTypeExt::ExtMap("WarheadTypeClass");
 
 AresMap<IonBlastClass*, const WarheadTypeExt::ExtData*> WarheadTypeExt::IonExt;
 

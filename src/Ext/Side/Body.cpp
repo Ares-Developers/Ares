@@ -9,7 +9,7 @@
 
 //Static init
 template<> const DWORD Extension<SideClass>::Canary = 0x06D106D1;
-Container<SideExt> SideExt::ExtMap;
+Container<SideExt> SideExt::ExtMap("SideClass");
 
 int SideExt::CurrentLoadTextColor = -1;
 

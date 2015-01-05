@@ -8,7 +8,7 @@
 
 //Static init
 template<> const DWORD Extension<CampaignClass>::Canary = 0x22441133;
-Container<CampaignExt> CampaignExt::ExtMap;
+Container<CampaignExt> CampaignExt::ExtMap("CampaignClass");
 DynamicVectorClass<CampaignExt::ExtData*> CampaignExt::Array;
 int CampaignExt::lastSelectedCampaign;
 

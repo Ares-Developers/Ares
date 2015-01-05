@@ -12,7 +12,7 @@
 #include <GameModeOptionsClass.h>
 
 template<> const DWORD Extension<InfantryClass>::Canary = 0xE1E2E3E4;
-Container<InfantryExt> InfantryExt::ExtMap;
+Container<InfantryExt> InfantryExt::ExtMap("InfantryClass");
 
 bool InfantryExt::ExtData::IsOccupant() {
 	InfantryClass* thisTrooper = this->OwnerObject();

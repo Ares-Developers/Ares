@@ -23,7 +23,7 @@
 #include <Notifications.h>
 
 template<> const DWORD Extension<SuperWeaponTypeClass>::Canary = 0x66666666;
-Container<SWTypeExt> SWTypeExt::ExtMap;
+Container<SWTypeExt> SWTypeExt::ExtMap("SuperWeaponTypeClass");
 
 SuperWeaponTypeClass *SWTypeExt::CurrentSWType = nullptr;
 

@@ -8,7 +8,7 @@
 #include <ScenarioClass.h>
 
 template<> const DWORD Extension<AnimTypeClass>::Canary = 0xEEEEEEEE;
-Container<AnimTypeExt> AnimTypeExt::ExtMap;
+Container<AnimTypeExt> AnimTypeExt::ExtMap("AnimTypeClass");
 
 void AnimTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 {

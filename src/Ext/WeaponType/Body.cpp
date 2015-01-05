@@ -11,7 +11,7 @@
 #include "../../Utilities/TemplateDef.h"
 
 template<> const DWORD Extension<WeaponTypeClass>::Canary = 0x33333333;
-Container<WeaponTypeExt> WeaponTypeExt::ExtMap;
+Container<WeaponTypeExt> WeaponTypeExt::ExtMap("WeaponTypeClass");
 
 const ColorStruct WeaponTypeExt::ExtData::DefaultWaveColor = ColorStruct(255, 255, 255); // placeholder
 const ColorStruct WeaponTypeExt::ExtData::DefaultWaveColorMagBeam = ColorStruct(0xB0, 0, 0xD0); // rp2 values

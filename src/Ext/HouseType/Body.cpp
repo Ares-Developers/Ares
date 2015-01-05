@@ -13,7 +13,7 @@
 #include <algorithm>
 
 template<> const DWORD Extension<HouseTypeClass>::Canary = 0xAFFEAFFE;
-Container<HouseTypeExt> HouseTypeExt::ExtMap;
+Container<HouseTypeExt> HouseTypeExt::ExtMap("HouseTypeClass");
 
 void HouseTypeExt::ExtData::InitializeConstants() {
 	const char* pID = this->OwnerObject()->ID;

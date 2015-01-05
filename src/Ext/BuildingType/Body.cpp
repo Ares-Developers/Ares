@@ -9,7 +9,7 @@
 #include <VocClass.h>
 
 template<> const DWORD Extension<BuildingTypeClass>::Canary = 0x11111111;
-Container<BuildingTypeExt> BuildingTypeExt::ExtMap;
+Container<BuildingTypeExt> BuildingTypeExt::ExtMap("BuildingTypeClass");
 
 std::vector<std::string> BuildingTypeExt::ExtData::trenchKinds;
 const CellStruct BuildingTypeExt::FoundationEndMarker = {0x7FFF, 0x7FFF};
