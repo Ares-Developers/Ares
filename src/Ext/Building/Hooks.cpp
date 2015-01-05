@@ -181,7 +181,7 @@ DEFINE_HOOK(4409F4, BuildingClass_Put_ProduceCash, 6)
 	auto pExt = BuildingExt::ExtMap.Find(pToUpgrade);
 
 	if(auto delay = pThis->Type->ProduceCashDelay) {
-		pExt->CashUpgradeTimers[pThis->UpgradeLevel - 1].Start(delay);
+		pExt->CashUpgradeTimers[pToUpgrade->UpgradeLevel - 1].Start(delay);
 	}
 
 	return 0;
