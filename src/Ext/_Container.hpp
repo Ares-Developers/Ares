@@ -44,7 +44,7 @@ enum class InitState {
       )
 
    Requires:
-   	typedef TX::TT = T;
+   	using base_type = T;
    	const DWORD Extension<T>::Canary = (any dword value easily identifiable in a byte stream)
    	class TX::ExtData : public Extension<T> { custom_data; }
 
@@ -63,7 +63,7 @@ public:
 	Extension(T* const OwnerObject) :
 		AttachedToObject(OwnerObject),
 		Initialized(InitState::Blank)
-	{ };
+	{ }
 
 	Extension(const Extension &other) = delete;
 
@@ -122,19 +122,18 @@ public:
 protected:
 	// right after construction. only basic initialization tasks possible;
 	// owner object is only partially constructed! do not use global state!
-	virtual void InitializeConstants() { };
+	virtual void InitializeConstants() { }
 
-	virtual void InitializeRuled() { };
+	virtual void InitializeRuled() { }
 
 	// called before the first ini file is read
-	virtual void Initialize() { };
+	virtual void Initialize() { }
 
 	// for things that only logically work in rules - countries, sides, etc
-	virtual void LoadFromRulesFile(CCINIClass* pINI) { };
+	virtual void LoadFromRulesFile(CCINIClass* pINI) { }
 
 	// load any ini file: rules, game mode, scenario or map
-	virtual void LoadFromINIFile(CCINIClass* pINI) { };
-
+	virtual void LoadFromINIFile(CCINIClass* pINI) { }
 };
 
 template<typename T>
@@ -167,8 +166,9 @@ public:
 
 protected:
 	// invalidate pointers to container's static gunk here (use full qualified names)
+	// keep this virtual or specializations won't be used -AlexB
 	virtual void InvalidatePointer(void *ptr, bool bRemoved) {
-	};
+	}
 
 	void InvalidateExtDataPointer(void *ptr, bool bRemoved) {
 		for(const auto& i : this->Items) {
@@ -319,7 +319,7 @@ protected:
 
 		// done
 		return buffer;
-	};
+	}
 
 	value_type LoadKey(key_type key, IStream *pStm) {
 		// this really shouldn't happen
@@ -350,7 +350,7 @@ protected:
 		}
 
 		return nullptr;
-	};
+	}
 };
 
 #endif
