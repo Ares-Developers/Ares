@@ -149,10 +149,17 @@ private:
 
 	map_type Items;
 
-	base_type * SavingObject;
-	IStream * SavingStream;
+	base_type* SavingObject;
+	IStream* SavingStream;
 
 public:
+	Container() : Items(),
+		SavingObject(nullptr),
+		SavingStream(nullptr)
+	{ }
+
+	virtual ~Container() = default;
+
 	void PointerGotInvalid(void *ptr, bool bRemoved) {
 		this->InvalidatePointer(ptr, bRemoved);
 		this->InvalidateExtDataPointer(ptr, bRemoved);
@@ -170,11 +177,6 @@ protected:
 	}
 
 public:
-	Container() : Items() {
-	}
-
-	virtual ~Container() = default;
-
 	value_type FindOrAllocate(key_type key) {
 		if(key == nullptr) {
 			const auto &info = typeid(*this);
