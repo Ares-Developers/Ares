@@ -58,6 +58,9 @@ DEFINE_HOOK(6FF4DE, TechnoClass_Fire_IsLaser, 6) {
 					} else if (pBldTypeData->PrismForwarding.Intensity > 0) {
 						pLaser->Thickness += (pBldTypeData->PrismForwarding.Intensity * pBld->SupportingPrisms);
 					}
+
+					// always supporting
+					pLaser->IsSupported = true;
 				}
 			}
 		}
@@ -67,13 +70,11 @@ DEFINE_HOOK(6FF4DE, TechnoClass_Fire_IsLaser, 6) {
 				pLaser->Thickness = 2;
 			} else {
 				pLaser->Thickness = Thickness;
+
+				// required for larger Thickness to work right
+				pLaser->IsSupported = (Thickness > 3);
 			}
 		}
-	}
-
-	if(pLaser) {
-		// required for Thickness to work right
-		pLaser->IsSupported = true; //this appears to change the RGB values for OuterColor (1=double, 0=halve)
 	}
 
 	// skip all default handling
