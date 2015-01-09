@@ -73,7 +73,7 @@ DEFINE_HOOK(44B2FE, BuildingClass_Mi_Attack_IsPrism, 6)
 	return IsNotPrism;
 }
 
-DEFINE_HOOK(447FAE, BuildingClass_GetObjectActivityState, 6)
+DEFINE_HOOK(447FAE, BuildingClass_GetFireError_PrismForward, 6)
 {
 	GET(BuildingClass *, B, ESI);
 	enum { BusyCharging = 0x447FB8, NotBusyCharging = 0x447FC3};
@@ -268,7 +268,7 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 
 //these are all for cleaning up when a prism tower becomes unavailable
 
-DEFINE_HOOK(4424EF, PrismForward_BuildingDestroyed, 6)
+DEFINE_HOOK(4424EF, BuildingClass_ReceiveDamage_PrismForward, 6)
 {
 	GET(BuildingClass *, B, ESI);
 	auto pData = BuildingExt::ExtMap.Find(B);
@@ -359,7 +359,7 @@ DEFINE_HOOK(71AF76, TemporalClass_Fire_PrismForwardAndWarpable, 9) {
 }
 
 
-DEFINE_HOOK(70FD9A, PrismForward_BuildingDrain, 6)
+DEFINE_HOOK(70FD9A, TechnoClass_Drain_PrismForward, 6)
 {
 	GET(TechnoClass *, Drainer, ESI);
 	GET(TechnoClass *, Drainee, EDI);
@@ -372,7 +372,7 @@ DEFINE_HOOK(70FD9A, PrismForward_BuildingDrain, 6)
 	return 0;
 }
 
-DEFINE_HOOK(454B3D, PrismForward_BuildingPowerDown, 6)
+DEFINE_HOOK(454B3D, BuildingClass_UpdatePowered_PrismForward, 6)
 {
 	GET(BuildingClass *, B, ESI);
 	// this building just realised it needs to go offline
@@ -382,7 +382,7 @@ DEFINE_HOOK(454B3D, PrismForward_BuildingPowerDown, 6)
 	return 0;
 }
 
-DEFINE_HOOK(44EBF0, PrismForward_BuildingRemoved, 5)
+DEFINE_HOOK(44EBF0, BuildingClass_Disappear_PrismForward, 5)
 {
 	GET(BuildingClass *, B, ECX);
 	auto pData = BuildingExt::ExtMap.Find(B);
