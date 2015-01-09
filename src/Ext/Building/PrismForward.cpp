@@ -34,7 +34,7 @@ bool BuildingExt::cPrismForwarding::Save(AresStreamWriter &Stm) const {
 		.Success();
 }
 
-int BuildingExt::cPrismForwarding::AcquireSlaves_MultiStage(BuildingExt::cPrismForwarding* TargetTower, int stage, int chain, int& NetworkSize, int& LongestChain) {
+int BuildingExt::cPrismForwarding::AcquireSlaves_MultiStage(BuildingExt::cPrismForwarding* const TargetTower, int const stage, int const chain, int& NetworkSize, int& LongestChain) {
 	//get all slaves for a specific stage in the prism chain
 	//this is done for all sibling chains in parallel, so we prefer multiple short chains over one really long chain
 	//towers should be added in the following way:
@@ -50,30 +50,30 @@ int BuildingExt::cPrismForwarding::AcquireSlaves_MultiStage(BuildingExt::cPrismF
 	// |
 	// 6---7--8
 	// ...which would not be as good.
-	int countSlaves = 0;
+	auto countSlaves = 0;
 	if(stage == 0) {
 		countSlaves += this->AcquireSlaves_SingleStage(TargetTower, stage, chain + 1, NetworkSize, LongestChain);
 	} else {
 		// do not think of using iterators or a ranged-for here. Senders grows and might reallocate.
-		for(int senderIdx = 0; senderIdx < TargetTower->Senders.Count; ++senderIdx) {
-			auto SenderTower = TargetTower->Senders[senderIdx];
+		for(auto senderIdx = 0; senderIdx < TargetTower->Senders.Count; ++senderIdx) {
+			auto const& SenderTower = TargetTower->Senders[senderIdx];
 			countSlaves += this->AcquireSlaves_MultiStage(SenderTower, stage - 1, chain + 1, NetworkSize, LongestChain);
 		}
 	}
 	return countSlaves;
 }
 
-int BuildingExt::cPrismForwarding::AcquireSlaves_SingleStage(BuildingExt::cPrismForwarding* TargetTower, int stage, int chain, int& NetworkSize, int& LongestChain) {
+int BuildingExt::cPrismForwarding::AcquireSlaves_SingleStage(BuildingExt::cPrismForwarding* const TargetTower, int const stage, int const chain, int& NetworkSize, int& LongestChain) {
 	//set up immediate slaves for this particular tower
 
-	BuildingTypeClass *pMasterType = this->GetOwner()->Type;
-	BuildingTypeExt::ExtData *pMasterTypeData = BuildingTypeExt::ExtMap.Find(pMasterType);
-	BuildingTypeClass *pTargetType = TargetTower->GetOwner()->Type;
-	BuildingTypeExt::ExtData *pTargetTypeData = BuildingTypeExt::ExtMap.Find(pTargetType);
+	auto const pMasterType = this->GetOwner()->Type;
+	auto const pMasterTypeData = BuildingTypeExt::ExtMap.Find(pMasterType);
+	auto const pTargetType = TargetTower->GetOwner()->Type;
+	auto const pTargetTypeData = BuildingTypeExt::ExtMap.Find(pTargetType);
 
-	signed int MaxFeeds = pTargetTypeData->PrismForwarding.GetMaxFeeds();
-	signed int MaxNetworkSize = pMasterTypeData->PrismForwarding.GetMaxNetworkSize();
-	signed int MaxChainLength = pMasterTypeData->PrismForwarding.MaxChainLength;
+	auto const MaxFeeds = pTargetTypeData->PrismForwarding.GetMaxFeeds();
+	auto const MaxNetworkSize = pMasterTypeData->PrismForwarding.GetMaxNetworkSize();
+	auto const MaxChainLength = pMasterTypeData->PrismForwarding.MaxChainLength;
 
 	if(MaxFeeds == 0
 		|| (MaxChainLength != -1 && MaxChainLength < chain)
@@ -95,8 +95,8 @@ int BuildingExt::cPrismForwarding::AcquireSlaves_SingleStage(BuildingExt::cPrism
 
 	//first, find eligible towers
 	std::vector<PrismTargetData> EligibleTowers;
-	for(auto SlaveTower : *BuildingClass::Array) {
-		auto pSlaveData = BuildingExt::ExtMap.Find(SlaveTower);
+	for(auto const& SlaveTower : *BuildingClass::Array) {
+		auto const pSlaveData = BuildingExt::ExtMap.Find(SlaveTower);
 		if(this->ValidateSupportTower(TargetTower, &pSlaveData->PrismForwarding)) {
 			SlaveTower->GetPosition_2(&curPosition);
 			int Distance = static_cast<int>(MyPosition.DistanceFrom(curPosition));
@@ -108,7 +108,7 @@ int BuildingExt::cPrismForwarding::AcquireSlaves_SingleStage(BuildingExt::cPrism
 	std::stable_sort(EligibleTowers.begin(), EligibleTowers.end());
 
 	//now enslave the towers in order of proximity
-	int iFeeds = 0;
+	auto iFeeds = 0;
 	for(const auto& eligible : EligibleTowers) {
 		// feed limit enabled and reached
 		if(MaxFeeds != -1 && iFeeds >= MaxFeeds) {
@@ -121,11 +121,11 @@ int BuildingExt::cPrismForwarding::AcquireSlaves_SingleStage(BuildingExt::cPrism
 		}
 
 		//we have a slave tower! do the bizzo
-		auto nearestPrism = eligible.Tower->GetOwner();
+		auto const nearestPrism = eligible.Tower->GetOwner();
 		++iFeeds;
 		++NetworkSize;
 		//++TargetTower->SupportingPrisms; //Ares is now using this for longest backward chain of this tower, so don't set it here
-		CoordStruct FLH = TargetTower->GetOwner()->GetFLH(0, CoordStruct::Empty);
+		auto const FLH = TargetTower->GetOwner()->GetFLH(0, CoordStruct::Empty);
 		nearestPrism->DelayBeforeFiring = nearestPrism->Type->DelayedFireDelay;
 		nearestPrism->PrismStage = PrismChargeState::Slave;
 		nearestPrism->PrismTargetCoords = FLH;
@@ -140,22 +140,22 @@ int BuildingExt::cPrismForwarding::AcquireSlaves_SingleStage(BuildingExt::cPrism
 	return iFeeds;
 }
 
-bool BuildingExt::cPrismForwarding::ValidateSupportTower(BuildingExt::cPrismForwarding* pTargetTower, BuildingExt::cPrismForwarding* pSlaveTower) {
+bool BuildingExt::cPrismForwarding::ValidateSupportTower(BuildingExt::cPrismForwarding* const pTargetTower, BuildingExt::cPrismForwarding* const pSlaveTower) {
 	//MasterTower = the firing tower. This might be the same as TargetTower, it might not.
 	//TargetTower = the tower that we are forwarding to
 	//SlaveTower = the tower being considered to support TargetTower
-	auto TargetTower = pTargetTower->GetOwner();
-	auto SlaveTower = pSlaveTower->GetOwner();
+	auto const TargetTower = pTargetTower->GetOwner();
+	auto const SlaveTower = pSlaveTower->GetOwner();
 	if(SlaveTower->IsAlive) {
-		BuildingTypeClass *pSlaveType = SlaveTower->Type;
-		BuildingTypeExt::ExtData *pSlaveTypeData = BuildingTypeExt::ExtMap.Find(pSlaveType);
+		auto const pSlaveType = SlaveTower->Type;
+		auto const pSlaveTypeData = BuildingTypeExt::ExtMap.Find(pSlaveType);
 		if(pSlaveTypeData->PrismForwarding.CanForward())
 		{
 			//building is a prism tower
 			//get all the data we need
-			TechnoExt::ExtData *pTechnoData = TechnoExt::ExtMap.Find(SlaveTower);
+			auto const pTechnoData = TechnoExt::ExtMap.Find(SlaveTower);
 			//BuildingExt::ExtData *pSlaveData = BuildingExt::ExtMap.Find(SlaveTower);
-			auto SlaveMission = SlaveTower->GetCurrentMission();
+			auto const SlaveMission = SlaveTower->GetCurrentMission();
 			//now check all the rules
 			if(SlaveTower->ReloadTimer.Expired()
 				&& SlaveTower != TargetTower
@@ -168,24 +168,25 @@ bool BuildingExt::cPrismForwarding::ValidateSupportTower(BuildingExt::cPrismForw
 				&& pTechnoData->IsPowered() //robot control logic
 				&& pTechnoData->IsOperated() //operator logic
 				&& SlaveTower->IsPowerOnline() //base-powered or overpowerer-powered
-				&& !SlaveTower->IsUnderEMP() //EMP logic - I think this should already be checked by IsPowerOnline() but included just to be sure
-			) {
-				BuildingTypeClass *pTargetType = TargetTower->Type;
+				&& !SlaveTower->IsUnderEMP()) //EMP logic - I think this should already be checked by IsPowerOnline() but included just to be sure
+			{
+				auto const pTargetType = TargetTower->Type;
 				if(pSlaveTypeData->PrismForwarding.Targets.Contains(pTargetType)) {
 					//valid type to forward from
-					HouseClass *pMasterHouse = this->GetOwner()->Owner;
-					HouseClass *pTargetHouse = TargetTower->Owner;
-					HouseClass *pSlaveHouse = SlaveTower->Owner;
+					const auto pMasterHouse = this->GetOwner()->Owner;
+					const auto pTargetHouse = TargetTower->Owner;
+					const auto pSlaveHouse = SlaveTower->Owner;
 					if((pSlaveHouse == pTargetHouse && pSlaveHouse == pMasterHouse)
 						|| (pSlaveTypeData->PrismForwarding.ToAllies
 						&& pSlaveHouse->IsAlliedWith(pTargetHouse)
-						&& pSlaveHouse->IsAlliedWith(pMasterHouse))) {
+						&& pSlaveHouse->IsAlliedWith(pMasterHouse)))
+					{
 						//ownership/alliance rules satisfied
-						CellStruct tarCoords = TargetTower->GetCell()->MapCoords;
+						auto const tarCoords = TargetTower->GetCell()->MapCoords;
 						CoordStruct MyPosition, curPosition;
 						TargetTower->GetPosition_2(&MyPosition);
 						SlaveTower->GetPosition_2(&curPosition);
-						int Distance = static_cast<int>(MyPosition.DistanceFrom(curPosition));
+						auto const Distance = static_cast<int>(MyPosition.DistanceFrom(curPosition));
 						int SupportRange = 0;
 						int idxSupport = -1;
 						if(SlaveTower->Veterancy.IsElite()) {
@@ -194,7 +195,7 @@ bool BuildingExt::cPrismForwarding::ValidateSupportTower(BuildingExt::cPrismForw
 							idxSupport = pSlaveTypeData->PrismForwarding.SupportWeaponIndex;
 						}
 						if(idxSupport != -1) {
-							if(WeaponTypeClass * supportWeapon = pSlaveType->get_Weapon(idxSupport)) {
+							if(auto const supportWeapon = pSlaveType->get_Weapon(idxSupport)) {
 								if(Distance < supportWeapon->MinimumRange) {
 									return false; //below minimum range
 								}
@@ -203,7 +204,7 @@ bool BuildingExt::cPrismForwarding::ValidateSupportTower(BuildingExt::cPrismForw
 						}
 						if(SupportRange == 0) {
 							//not specified on SupportWeapon so use Primary + 1 cell (Marshall chose to add the +1 cell default - see manual for reason)
-							if(WeaponTypeClass * cPrimary = pSlaveType->get_Primary()) {
+							if(auto const cPrimary = pSlaveType->get_Primary()) {
 								SupportRange = cPrimary->Range + 256; //256 leptons == 1 cell
 							}
 						}
@@ -218,26 +219,26 @@ bool BuildingExt::cPrismForwarding::ValidateSupportTower(BuildingExt::cPrismForw
 	return false;
 }
 
-void BuildingExt::cPrismForwarding::SetChargeDelay(int LongestChain) {
-	int ArrayLen = LongestChain + 1;
+void BuildingExt::cPrismForwarding::SetChargeDelay(int const LongestChain) {
+	auto const ArrayLen = LongestChain + 1;
 	std::vector<DWORD> LongestCDelay(ArrayLen, 0);
 	std::vector<DWORD> LongestFDelay(ArrayLen, 0);
 
-	for(int endChain = LongestChain; endChain >= 0; --endChain) {
+	for(auto endChain = LongestChain; endChain >= 0; --endChain) {
 		this->SetChargeDelay_Get(0, endChain, LongestChain, LongestCDelay.data(), LongestFDelay.data());
 	}
 
 	this->SetChargeDelay_Set(0, LongestCDelay.data(), LongestFDelay.data(), LongestChain);
 }
 
-void BuildingExt::cPrismForwarding::SetChargeDelay_Get(int chain, int endChain, int LongestChain, DWORD *LongestCDelay, DWORD *LongestFDelay) {
-	auto TargetTower = this->GetOwner();
+void BuildingExt::cPrismForwarding::SetChargeDelay_Get(int const chain, int const endChain, int const LongestChain, DWORD* const LongestCDelay, DWORD* const LongestFDelay) {
+	auto const TargetTower = this->GetOwner();
 
 	if(chain == endChain) {
 		if(chain != LongestChain) {
-			auto pTypeData = BuildingTypeExt::ExtMap.Find(TargetTower->Type);
+			auto const pTypeData = BuildingTypeExt::ExtMap.Find(TargetTower->Type);
 			//update the delays for this chain
-			unsigned int thisDelay = pTypeData->PrismForwarding.ChargeDelay + LongestCDelay[chain + 1];
+			auto const thisDelay = pTypeData->PrismForwarding.ChargeDelay + LongestCDelay[chain + 1];
 			if(thisDelay > LongestCDelay[chain]) {
 				LongestCDelay[chain] = thisDelay;
 			}
@@ -247,15 +248,15 @@ void BuildingExt::cPrismForwarding::SetChargeDelay_Get(int chain, int endChain, 
 		}
 	} else {
 		//ascend to the next chain
-		for(auto SenderTower : this->Senders) {
+		for(auto const& SenderTower : this->Senders) {
 			SenderTower->SetChargeDelay_Get(chain + 1, endChain, LongestChain, LongestCDelay, LongestFDelay);
 		}
 	}
 }
 
 //here we are only passing in LongestChain so we can set SupportingPrisms to the chain length. this has nothing to do with the charge delay which we have already calculated
-void BuildingExt::cPrismForwarding::SetChargeDelay_Set(int chain, DWORD const* LongestCDelay, DWORD const* LongestFDelay, int LongestChain) {
-	auto pTargetTower = this->GetOwner();
+void BuildingExt::cPrismForwarding::SetChargeDelay_Set(int const chain, DWORD const* const LongestCDelay, DWORD const* const LongestFDelay, int const LongestChain) {
+	auto const pTargetTower = this->GetOwner();
 
 	this->PrismChargeDelay = (LongestFDelay[chain] - pTargetTower->DelayBeforeFiring) + LongestCDelay[chain];
 	pTargetTower->SupportingPrisms = (LongestChain - chain);
@@ -266,14 +267,14 @@ void BuildingExt::cPrismForwarding::SetChargeDelay_Set(int chain, DWORD const* L
 			pTargetTower->PlayNthAnim(BuildingAnimSlot::Special);
 		}
 	}
-	for(auto Sender : this->Senders) {
+	for(auto const& Sender : this->Senders) {
 		Sender->SetChargeDelay_Set(chain + 1, LongestCDelay, LongestFDelay, LongestChain);
 	}
 }
 
 //Whenever a building is incapacitated, this method should be called to take it out of any prism network
 //destruction, change sides, mind-control, sold, warped, emp, undeployed, low power, drained, lost operator
-void BuildingExt::cPrismForwarding::RemoveFromNetwork(bool bCease) {
+void BuildingExt::cPrismForwarding::RemoveFromNetwork(bool const bCease) {
 
 	if(this->PrismChargeDelay || bCease) {
 		//either hasn't started charging yet or animations have been reset so should go idle immediately
@@ -290,22 +291,22 @@ void BuildingExt::cPrismForwarding::RemoveFromNetwork(bool bCease) {
 	this->SetSupportTarget(nullptr);
 
 	//finally, remove all the preceding slaves from the network
-	for(int senderIdx = this->Senders.Count; senderIdx; senderIdx--) {
-		if(auto NextTower = this->Senders[senderIdx - 1]) {
+	for(auto senderIdx = this->Senders.Count; senderIdx; senderIdx--) {
+		if(auto const& NextTower = this->Senders[senderIdx - 1]) {
 			NextTower->RemoveFromNetwork(false);
 		}
 	}
 }
 
-void BuildingExt::cPrismForwarding::SetSupportTarget(BuildingExt::cPrismForwarding *pTargetTower) {
+void BuildingExt::cPrismForwarding::SetSupportTarget(BuildingExt::cPrismForwarding* const pTargetTower) {
 	// meet the new tower, same as the old tower
 	if(this->SupportTarget == pTargetTower) {
 		return;
 	}
 
 	// if the target tower is already set, disconnect it by removing it from the old target tower's sender list
-	if(auto pOldTarget = this->SupportTarget) {
-		int idxSlave = pOldTarget->Senders.FindItemIndex(this);
+	if(auto const pOldTarget = this->SupportTarget) {
+		auto const idxSlave = pOldTarget->Senders.FindItemIndex(this);
 		if(idxSlave != -1) {
 			pOldTarget->Senders.RemoveItem(idxSlave);
 		} else {
@@ -330,8 +331,8 @@ void BuildingExt::cPrismForwarding::SetSupportTarget(BuildingExt::cPrismForwardi
 
 void BuildingExt::cPrismForwarding::RemoveAllSenders() {
 	// disconnect all sender towers from their support target, which is me
-	for(int senderIdx = this->Senders.Count; senderIdx; senderIdx--) {
-		if(auto NextTower = this->Senders[senderIdx - 1]) {
+	for(auto senderIdx = this->Senders.Count; senderIdx; senderIdx--) {
+		if(auto const& NextTower = this->Senders[senderIdx - 1]) {
 			NextTower->SetSupportTarget(nullptr);
 		}
 	}
@@ -341,7 +342,7 @@ void BuildingExt::cPrismForwarding::RemoveAllSenders() {
 		Debug::DevLog(Debug::Warning,
 			"PrismForwarding::RemoveAllSenders: Tower (%p) still has %d senders after removal completed.\n",
 			this->GetOwner(), this->Senders.Count);
-		for(int i = 0; i<this->Senders.Count; ++i) {
+		for(auto i = 0; i < this->Senders.Count; ++i) {
 			Debug::DevLog(Debug::Warning, "Sender %03d: %p\n", i, this->Senders[i]->GetOwner());
 		}
 

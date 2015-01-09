@@ -12,30 +12,30 @@
 
 DEFINE_HOOK(44B2FE, BuildingClass_Mi_Attack_IsPrism, 6)
 {
-	GET(BuildingClass *, B, ESI);
+	GET(BuildingClass* const, pThis, ESI);
 	//GET(int, idxWeapon, EBP); //which weapon was chosen to attack the target with
-	R->EAX<BuildingTypeClass *>(B->Type);
+	R->EAX<BuildingTypeClass *>(pThis->Type);
 
-	enum { IsPrism = 0x44B310, IsNotPrism = 0x44B630, IsCustomPrism = 0x44B6D6};
+	enum { IsPrism = 0x44B310, IsNotPrism = 0x44B630, IsCustomPrism = 0x44B6D6 };
 
-	BuildingTypeClass *pMasterType = B->Type;
-	BuildingTypeExt::ExtData *pMasterTypeData = BuildingTypeExt::ExtMap.Find(pMasterType);
+	auto const pMasterType = pThis->Type;
+	auto const pMasterTypeData = BuildingTypeExt::ExtMap.Find(pMasterType);
 
-	if (pMasterTypeData->PrismForwarding.CanAttack()) {
-		BuildingExt::ExtData *pMasterData = BuildingExt::ExtMap.Find(B);
+	if(pMasterTypeData->PrismForwarding.CanAttack()) {
+		auto const pMasterData = BuildingExt::ExtMap.Find(pThis);
 
-		if (B->PrismStage == PrismChargeState::Idle) {
-			B->PrismStage = PrismChargeState::Master;
-			B->DelayBeforeFiring = B->Type->DelayedFireDelay;
+		if(pThis->PrismStage == PrismChargeState::Idle) {
+			pThis->PrismStage = PrismChargeState::Master;
+			pThis->DelayBeforeFiring = pThis->Type->DelayedFireDelay;
 
-			B->PrismTargetCoords.X = 0;
-			if (pMasterType->get_Secondary()) {
-				if (B->IsOverpowered) {
-					B->PrismTargetCoords.X = 1;
+			pThis->PrismTargetCoords.X = 0;
+			if(pMasterType->get_Secondary()) {
+				if(pThis->IsOverpowered) {
+					pThis->PrismTargetCoords.X = 1;
 				}
 			}
 
-			B->PrismTargetCoords.Y = B->PrismTargetCoords.Z = 0;
+			pThis->PrismTargetCoords.Y = pThis->PrismTargetCoords.Z = 0;
 			pMasterData->PrismForwarding.ModifierReserve = 0.0;
 			pMasterData->PrismForwarding.DamageReserve = 0;
 
@@ -51,16 +51,16 @@ DEFINE_HOOK(44B2FE, BuildingClass_Mi_Attack_IsPrism, 6)
 			//now we have all the towers we know the longest chain, and can set all the towers' charge delays
 			pMasterData->PrismForwarding.SetChargeDelay(LongestChain);
 
-		} else if (B->PrismStage == PrismChargeState::Slave) {
+		} else if(pThis->PrismStage == PrismChargeState::Slave) {
 			//a slave tower is changing into a master tower at the last second
-			B->PrismStage = PrismChargeState::Master;
-			B->PrismTargetCoords.X = 0;
-			if (pMasterType->get_Secondary()) {
-				if (B->IsOverpowered) {
-					B->PrismTargetCoords.X = 1;
+			pThis->PrismStage = PrismChargeState::Master;
+			pThis->PrismTargetCoords.X = 0;
+			if(pMasterType->get_Secondary()) {
+				if(pThis->IsOverpowered) {
+					pThis->PrismTargetCoords.X = 1;
 				}
 			}
-			B->PrismTargetCoords.Y = B->PrismTargetCoords.Z = 0;
+			pThis->PrismTargetCoords.Y = pThis->PrismTargetCoords.Z = 0;
 			pMasterData->PrismForwarding.ModifierReserve = 0.0;
 			pMasterData->PrismForwarding.DamageReserve = 0;
 			pMasterData->PrismForwarding.SetSupportTarget(nullptr);
@@ -75,16 +75,16 @@ DEFINE_HOOK(44B2FE, BuildingClass_Mi_Attack_IsPrism, 6)
 
 DEFINE_HOOK(447FAE, BuildingClass_GetFireError_PrismForward, 6)
 {
-	GET(BuildingClass *, B, ESI);
-	enum { BusyCharging = 0x447FB8, NotBusyCharging = 0x447FC3};
+	GET(BuildingClass* const, pThis, ESI);
+	enum { BusyCharging = 0x447FB8, NotBusyCharging = 0x447FC3 };
 
-	if(B->DelayBeforeFiring > 0) {
+	if(pThis->DelayBeforeFiring > 0) {
 		//if this is a slave prism tower, then it might still be able to become a master tower at this time
-		BuildingTypeClass *pType = B->Type;
-		BuildingTypeExt::ExtData *pTypeData = BuildingTypeExt::ExtMap.Find(pType);
-		if (pTypeData->PrismForwarding.CanAttack()) {
+		auto const pType = pThis->Type;
+		auto const pTypeData = BuildingTypeExt::ExtMap.Find(pType);
+		if(pTypeData->PrismForwarding.CanAttack()) {
 			//is a prism tower
-			if (B->PrismStage == PrismChargeState::Slave && pTypeData->PrismForwarding.BreakSupport) {
+			if(pThis->PrismStage == PrismChargeState::Slave && pTypeData->PrismForwarding.BreakSupport) {
 				return NotBusyCharging;
 			}
 		}
@@ -96,34 +96,34 @@ DEFINE_HOOK(447FAE, BuildingClass_GetFireError_PrismForward, 6)
 //NB: PrismTargetCoords is not just a coord struct, it's a union whose first dword is the used weapon index and two others are undefined...
 DEFINE_HOOK(4503F0, BuildingClass_Update_Prism, 9)
 {
-	GET(BuildingClass *, pThis, ECX);
+	GET(BuildingClass* const, pThis, ECX);
 
-	auto PrismStage = pThis->PrismStage;
+	auto const PrismStage = pThis->PrismStage;
 	if(PrismStage != PrismChargeState::Idle) {
-		BuildingExt::ExtData *pData = BuildingExt::ExtMap.Find(pThis);
-		if (pData->PrismForwarding.PrismChargeDelay <= 0) {
+		auto const pData = BuildingExt::ExtMap.Find(pThis);
+		if(pData->PrismForwarding.PrismChargeDelay <= 0) {
 			--pThis->DelayBeforeFiring;
 			if(pThis->DelayBeforeFiring <= 0) {
 				if(PrismStage == PrismChargeState::Slave) {
-					if (auto pTarget = pData->PrismForwarding.SupportTarget) {
-						auto pTargetData = pTarget->Owner;
-						BuildingTypeClass *pType = pThis->Type;
-						BuildingTypeExt::ExtData *pTypeData = BuildingTypeExt::ExtMap.Find(pType);
+					if(auto pTarget = pData->PrismForwarding.SupportTarget) {
+						auto const pTargetData = pTarget->Owner;
+						auto const pType = pThis->Type;
+						auto const pTypeData = BuildingTypeExt::ExtMap.Find(pType);
 						//slave firing
 						pTargetData->PrismForwarding.ModifierReserve +=
 							(pTypeData->PrismForwarding.GetSupportModifier() + pData->PrismForwarding.ModifierReserve);
 						pTargetData->PrismForwarding.DamageReserve +=
-							(pTypeData->PrismForwarding.DamageAdd  + pData->PrismForwarding.DamageReserve);
+							(pTypeData->PrismForwarding.DamageAdd + pData->PrismForwarding.DamageReserve);
 						pThis->FireLaser(pThis->PrismTargetCoords);
 
 					}
 				}
 				if(PrismStage == PrismChargeState::Master) {
-					if(AbstractClass *Target = pThis->Target) {
+					if(auto const Target = pThis->Target) {
 						if(pThis->GetFireError(Target, pThis->PrismTargetCoords.X, true) == FireError::OK) {
-							if(BulletClass *LaserBeam = pThis->Fire(Target, pThis->PrismTargetCoords.X)) {
-								BuildingTypeClass *pType = pThis->Type;
-								BuildingTypeExt::ExtData *pTypeData = BuildingTypeExt::ExtMap.Find(pType);
+							if(auto const LaserBeam = pThis->Fire(Target, pThis->PrismTargetCoords.X)) {
+								auto const pType = pThis->Type;
+								auto const pTypeData = BuildingTypeExt::ExtMap.Find(pType);
 
 								//apparently this is divided by 256 elsewhere
 								LaserBeam->DamageMultiplier = static_cast<int>((pData->PrismForwarding.ModifierReserve + 100) * 256) / 100;
@@ -143,9 +143,9 @@ DEFINE_HOOK(4503F0, BuildingClass_Update_Prism, 9)
 		} else {
 			//still in delayed charge so not actually charging yet
 			--pData->PrismForwarding.PrismChargeDelay;
-			if (pData->PrismForwarding.PrismChargeDelay <= 0) {
+			if(pData->PrismForwarding.PrismChargeDelay <= 0) {
 				//now it's time to start charging
-				if (pThis->Type->GetBuildingAnim(BuildingAnimSlot::Special).Anim[0]) { //only if it actually has a special anim
+				if(pThis->Type->GetBuildingAnim(BuildingAnimSlot::Special).Anim[0]) { //only if it actually has a special anim
 					pThis->DestroyNthAnim(BuildingAnimSlot::Active);
 					pThis->PlayNthAnim(BuildingAnimSlot::Special);
 				}
@@ -158,43 +158,42 @@ DEFINE_HOOK(4503F0, BuildingClass_Update_Prism, 9)
 
 DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 {
-	GET(BuildingClass *, B, ECX);
-	LEA_STACK(CoordStruct *, pTargetXYZ, 0x4);
+	GET(BuildingClass* const, pThis, ECX);
+	LEA_STACK(CoordStruct const*, pTargetXYZ, 0x4);
 
-	BuildingTypeClass *pType = B->Type;
-	BuildingTypeExt::ExtData *pTypeData = BuildingTypeExt::ExtMap.Find(pType);
+	auto const pType = pThis->Type;
+	auto const pTypeData = BuildingTypeExt::ExtMap.Find(pType);
 
-	CoordStruct SourceXYZ = B->GetFLH(0, CoordStruct::Empty);
+	auto const sourceXYZ = pThis->GetFLH(0, CoordStruct::Empty);
 
-	ColorStruct blank(0, 0, 0);
+	ColorStruct const blank(0, 0, 0);
 
 	int idxSupport = -1;
-	if (B->Veterancy.IsElite()) {
+	if(pThis->Veterancy.IsElite()) {
 		idxSupport = pTypeData->PrismForwarding.EliteSupportWeaponIndex;
 	} else {
 		idxSupport = pTypeData->PrismForwarding.SupportWeaponIndex;
 	}
 
-	WeaponTypeClass * supportWeapon = nullptr;
-	if (idxSupport != -1) {
-		supportWeapon = pType->get_Weapon(idxSupport);
-	}
-	LaserDrawClass * LaserBeam = nullptr;
-	if (supportWeapon) {
-		WeaponTypeExt::ExtData *supportWeaponData = WeaponTypeExt::ExtMap.Find(supportWeapon);
+	auto const supportWeapon = (idxSupport != -1)
+		? pType->get_Weapon(idxSupport) : nullptr;
+
+	LaserDrawClass* LaserBeam = nullptr;
+	if(supportWeapon) {
+		auto const supportWeaponData = WeaponTypeExt::ExtMap.Find(supportWeapon);
 		//IsLaser
-		if (supportWeapon->IsLaser) {
-			if (supportWeapon->IsHouseColor) {
-				LaserBeam = GameCreate<LaserDrawClass>(SourceXYZ, *pTargetXYZ, B->Owner->LaserColor, blank, blank, supportWeapon->LaserDuration);
+		if(supportWeapon->IsLaser) {
+			if(supportWeapon->IsHouseColor) {
+				LaserBeam = GameCreate<LaserDrawClass>(sourceXYZ, *pTargetXYZ, pThis->Owner->LaserColor, blank, blank, supportWeapon->LaserDuration);
 			} else {
-				LaserBeam = GameCreate<LaserDrawClass>(SourceXYZ, *pTargetXYZ,
+				LaserBeam = GameCreate<LaserDrawClass>(sourceXYZ, *pTargetXYZ,
 					supportWeapon->LaserInnerColor, supportWeapon->LaserOuterColor, supportWeapon->LaserOuterSpread,
 					supportWeapon->LaserDuration);
 			}
 			if(LaserBeam) {
 				LaserBeam->IsHouseColor = supportWeapon->IsHouseColor;
 				//basic thickness (intensity additions are added later)
-				if (supportWeaponData->Laser_Thickness == -1) {
+				if(supportWeaponData->Laser_Thickness == -1) {
 					LaserBeam->Thickness = 3; //original default
 				} else {
 					LaserBeam->Thickness = supportWeaponData->Laser_Thickness;
@@ -202,13 +201,13 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 			}
 		}
 		//IsRadBeam
-		if (supportWeapon->IsRadBeam) {
-			RadBeam* supportRadBeam = RadBeam::Allocate(RadBeamType::RadBeam);
-			if (supportRadBeam) {
-				supportRadBeam->SetCoordsSource(SourceXYZ);
+		if(supportWeapon->IsRadBeam) {
+			auto const supportRadBeam = RadBeam::Allocate(RadBeamType::RadBeam);
+			if(supportRadBeam) {
+				supportRadBeam->SetCoordsSource(sourceXYZ);
 				supportRadBeam->SetCoordsTarget(*pTargetXYZ);
-				if (supportWeaponData->Beam_IsHouseColor) {
-					supportRadBeam->Color = B->Owner->LaserColor;
+				if(supportWeaponData->Beam_IsHouseColor) {
+					supportRadBeam->Color = pThis->Owner->LaserColor;
 				} else {
 					supportRadBeam->Color = supportWeaponData->GetBeamColor();
 				}
@@ -218,50 +217,50 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 			}
 		}
 		//IsElectricBolt
-		if (supportWeapon->IsElectricBolt) {
-			if(auto supportEBolt = WeaponTypeExt::CreateBolt(supportWeaponData)) {
-				//supportEBolt->Owner = B;
-				TechnoExt::ExtData *pBuildingExt = TechnoExt::ExtMap.Find(B);
+		if(supportWeapon->IsElectricBolt) {
+			if(auto const supportEBolt = WeaponTypeExt::CreateBolt(supportWeaponData)) {
+				//supportEBolt->Owner = pThis;
+				auto const pBuildingExt = TechnoExt::ExtMap.Find(pThis);
 				pBuildingExt->MyBolt = supportEBolt;
 				supportEBolt->WeaponSlot = idxSupport;
 				supportEBolt->AlternateColor = supportWeapon->IsAlternateColor;
-				supportEBolt->Fire(SourceXYZ, *pTargetXYZ, 0); //messing with 3rd arg seems to make bolts more jumpy, and parts of them disappear
+				supportEBolt->Fire(sourceXYZ, *pTargetXYZ, 0); //messing with 3rd arg seems to make bolts more jumpy, and parts of them disappear
 			}
 		}
 		//Report
 		if(supportWeapon->Report.Count > 0) {
-			int ReportIndex = ScenarioClass::Instance->Random.RandomRanged(0, supportWeapon->Report.Count - 1);
-			int SoundArrayIndex = supportWeapon->Report.GetItem(ReportIndex);
+			auto const ReportIndex = ScenarioClass::Instance->Random.RandomRanged(0, supportWeapon->Report.Count - 1);
+			auto const SoundArrayIndex = supportWeapon->Report.GetItem(ReportIndex);
 			if(SoundArrayIndex != -1) {
-				VocClass::PlayAt(SoundArrayIndex, SourceXYZ, nullptr);
+				VocClass::PlayAt(SoundArrayIndex, sourceXYZ, nullptr);
 			}
 		}
 		//ROF
-		B->ReloadTimer.Start(supportWeapon->ROF);
+		pThis->ReloadTimer.Start(supportWeapon->ROF);
 	} else {
 		//just the default support beam
-		LaserBeam = GameCreate<LaserDrawClass>(SourceXYZ, *pTargetXYZ, B->Owner->LaserColor, blank, blank, RulesClass::Instance->PrismSupportDuration);
+		LaserBeam = GameCreate<LaserDrawClass>(sourceXYZ, *pTargetXYZ, pThis->Owner->LaserColor, blank, blank, RulesClass::Instance->PrismSupportDuration);
 		if(LaserBeam) {
 			LaserBeam->IsHouseColor = true;
 			LaserBeam->Thickness = 3;
 		}
-		B->ReloadTimer.Start(RulesClass::Instance->PrismSupportDelay);
+		pThis->ReloadTimer.Start(RulesClass::Instance->PrismSupportDelay);
 	}
 
 	//Intensity adjustment for LaserBeam
-	if (LaserBeam) {
-		if(B->SupportingPrisms) {
+	if(LaserBeam) {
+		if(pThis->SupportingPrisms) {
 			if(pTypeData->PrismForwarding.Intensity < 0) {
 				LaserBeam->Thickness -= pTypeData->PrismForwarding.Intensity; //add on absolute intensity
 			} else if(pTypeData->PrismForwarding.Intensity > 0) {
-				LaserBeam->Thickness += (pTypeData->PrismForwarding.Intensity * B->SupportingPrisms);
+				LaserBeam->Thickness += (pTypeData->PrismForwarding.Intensity * pThis->SupportingPrisms);
 			}
 
 			LaserBeam->IsSupported = (LaserBeam->Thickness > 5);
 		}
 	}
 
-	B->SupportingPrisms = 0; //not sure why Westwood set this here. We're setting it in BuildingClass_Update_Prism
+	pThis->SupportingPrisms = 0; //not sure why Westwood set this here. We're setting it in BuildingClass_Update_Prism
 
 	return 0x44ACE2;
 }
@@ -270,28 +269,28 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 
 DEFINE_HOOK(4424EF, BuildingClass_ReceiveDamage_PrismForward, 6)
 {
-	GET(BuildingClass *, B, ESI);
-	auto pData = BuildingExt::ExtMap.Find(B);
+	GET(BuildingClass* const, pThis, ESI);
+	auto const pData = BuildingExt::ExtMap.Find(pThis);
 	pData->PrismForwarding.RemoveFromNetwork(true);
 	return 0;
 }
 
 DEFINE_HOOK(447113, BuildingClass_Sell_PrismForward, 6)
 {
-	GET(BuildingClass *, B, ESI);
+	GET(BuildingClass* const, pThis, ESI);
 
 	// #754 - evict Hospital/Armory contents
-	BuildingExt::KickOutHospitalArmory(B);
+	BuildingExt::KickOutHospitalArmory(pThis);
 
-	auto pData = BuildingExt::ExtMap.Find(B);
+	auto const pData = BuildingExt::ExtMap.Find(pThis);
 	pData->PrismForwarding.RemoveFromNetwork(true);
 	return 0;
 }
 
 DEFINE_HOOK(448277, BuildingClass_ChangeOwner_PrismForwardAndLeaveBomb, 5)
 {
-	GET(BuildingClass*, pThis, ESI);
-	GET_STACK(HouseClass*, newOwner, 0x5C);
+	GET(BuildingClass* const, pThis, ESI);
+	GET_STACK(HouseClass* const, newOwner, 0x5C);
 
 	enum { LeaveBomb = 0x448293 };
 
@@ -301,12 +300,12 @@ DEFINE_HOOK(448277, BuildingClass_ChangeOwner_PrismForwardAndLeaveBomb, 5)
 	auto oldOwner = pThis->Owner;
 
 	if(newOwner != oldOwner) {
-		auto pData = BuildingExt::ExtMap.Find(pThis);
-		auto pTypeData = BuildingTypeExt::ExtMap.Find(pThis->Type);
+		auto const pData = BuildingExt::ExtMap.Find(pThis);
+		auto const pTypeData = BuildingTypeExt::ExtMap.Find(pThis->Type);
 
 		// the first and the last tower have to be allied to this
 		if(pTypeData->PrismForwarding.ToAllies) {
-			auto FirstTarget = pData->PrismForwarding.SupportTarget;
+			auto const FirstTarget = pData->PrismForwarding.SupportTarget;
 
 			if(!FirstTarget) {
 				// no first target so either this is a master tower, an idle
@@ -338,21 +337,21 @@ DEFINE_HOOK(448277, BuildingClass_ChangeOwner_PrismForwardAndLeaveBomb, 5)
 }
 
 DEFINE_HOOK(71AF76, TemporalClass_Fire_PrismForwardAndWarpable, 9) {
-	GET(TechnoClass *, T, EDI);
+	GET(TechnoClass* const, pThis, EDI);
 
 	// bugfix #874 B: Temporal warheads affect Warpable=no units
 	// it has been checked: this is warpable. free captured and destroy spawned units.
-	if(T->SpawnManager) {
-		T->SpawnManager->KillNodes();
+	if(pThis->SpawnManager) {
+		pThis->SpawnManager->KillNodes();
 	}
 
-	if(T->CaptureManager) {
-		T->CaptureManager->FreeAll();
+	if(pThis->CaptureManager) {
+		pThis->CaptureManager->FreeAll();
 	}
 
 	// prism forward
-	if (BuildingClass * B = specific_cast<BuildingClass *>(T)) {
-		auto pData = BuildingExt::ExtMap.Find(B);
+	if(auto const pBld = specific_cast<BuildingClass*>(pThis)) {
+		auto const pData = BuildingExt::ExtMap.Find(pBld);
 		pData->PrismForwarding.RemoveFromNetwork(true);
 	}
 	return 0;
@@ -361,11 +360,11 @@ DEFINE_HOOK(71AF76, TemporalClass_Fire_PrismForwardAndWarpable, 9) {
 
 DEFINE_HOOK(70FD9A, TechnoClass_Drain_PrismForward, 6)
 {
-	GET(TechnoClass *, Drainer, ESI);
-	GET(TechnoClass *, Drainee, EDI);
-	if(Drainee->DrainingMe != Drainer) { // else we're already being drained, nothing to do
-		if (BuildingClass * B = specific_cast<BuildingClass *>(Drainee)) {
-			auto pData = BuildingExt::ExtMap.Find(B);
+	GET(TechnoClass* const, pThis, ESI);
+	GET(TechnoClass* const, pDrainee, EDI);
+	if(pDrainee->DrainingMe != pThis) { // else we're already being drained, nothing to do
+		if(auto const pBld = specific_cast<BuildingClass*>(pDrainee)) {
+			auto const pData = BuildingExt::ExtMap.Find(pBld);
 			pData->PrismForwarding.RemoveFromNetwork(true);
 		}
 	}
@@ -374,18 +373,18 @@ DEFINE_HOOK(70FD9A, TechnoClass_Drain_PrismForward, 6)
 
 DEFINE_HOOK(454B3D, BuildingClass_UpdatePowered_PrismForward, 6)
 {
-	GET(BuildingClass *, B, ESI);
+	GET(BuildingClass* const, pThis, ESI);
 	// this building just realised it needs to go offline
 	// it unregistered itself from powered unit controls but hasn't done anything else yet
-	auto pData = BuildingExt::ExtMap.Find(B);
+	auto const pData = BuildingExt::ExtMap.Find(pThis);
 	pData->PrismForwarding.RemoveFromNetwork(true);
 	return 0;
 }
 
 DEFINE_HOOK(44EBF0, BuildingClass_Disappear_PrismForward, 5)
 {
-	GET(BuildingClass *, B, ECX);
-	auto pData = BuildingExt::ExtMap.Find(B);
+	GET(BuildingClass* const, pThis, ECX);
+	auto const pData = BuildingExt::ExtMap.Find(pThis);
 	pData->PrismForwarding.RemoveFromNetwork(true);
 	return 0;
 }
