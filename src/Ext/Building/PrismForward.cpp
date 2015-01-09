@@ -182,7 +182,6 @@ bool BuildingExt::cPrismForwarding::ValidateSupportTower(BuildingExt::cPrismForw
 						&& pSlaveHouse->IsAlliedWith(pMasterHouse)))
 					{
 						//ownership/alliance rules satisfied
-						auto const tarCoords = TargetTower->GetCell()->MapCoords;
 						CoordStruct MyPosition, curPosition;
 						TargetTower->GetPosition_2(&MyPosition);
 						SlaveTower->GetPosition_2(&curPosition);
@@ -291,7 +290,7 @@ void BuildingExt::cPrismForwarding::RemoveFromNetwork(bool const bCease) {
 	this->SetSupportTarget(nullptr);
 
 	//finally, remove all the preceding slaves from the network
-	for(auto senderIdx = this->Senders.Count; senderIdx; senderIdx--) {
+	for(auto senderIdx = this->Senders.Count; senderIdx; --senderIdx) {
 		if(auto const& NextTower = this->Senders[senderIdx - 1]) {
 			NextTower->RemoveFromNetwork(false);
 		}
@@ -306,20 +305,16 @@ void BuildingExt::cPrismForwarding::SetSupportTarget(BuildingExt::cPrismForwardi
 
 	// if the target tower is already set, disconnect it by removing it from the old target tower's sender list
 	if(auto const pOldTarget = this->SupportTarget) {
-		auto const idxSlave = pOldTarget->Senders.FindItemIndex(this);
-		if(idxSlave != -1) {
-			pOldTarget->Senders.RemoveItem(idxSlave);
-		} else {
+		if(!pOldTarget->Senders.Remove(this)) {
 			Debug::DevLog(Debug::Warning, "PrismForwarding::SetSupportTarget: Old target tower (%p) did not consider this tower (%p) as its sender.\n",
 				pOldTarget->GetOwner(), this->GetOwner());
 		}
-		this->SupportTarget = nullptr;
 	}
+
+	this->SupportTarget = pTargetTower;
 
 	// set the new tower as support target
 	if(pTargetTower) {
-		this->SupportTarget = pTargetTower;
-
 		if(pTargetTower->Senders.FindItemIndex(this) == -1) {
 			pTargetTower->Senders.AddItem(this);
 		} else {
