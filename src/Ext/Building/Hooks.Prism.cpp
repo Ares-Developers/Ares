@@ -250,9 +250,10 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 
 	//Intensity adjustment for LaserBeam
 	if (LaserBeam) {
-		if (pTypeData->PrismForwarding.Intensity > 0) {
-			//BuildingExt::ExtData *pData = BuildingExt::ExtMap.Find(B);
-			LaserBeam->Thickness += (pTypeData->PrismForwarding.Intensity * (B->SupportingPrisms - 1));
+		if(B->SupportingPrisms) {
+			if(pTypeData->PrismForwarding.Intensity > 0) {
+				LaserBeam->Thickness += (pTypeData->PrismForwarding.Intensity * B->SupportingPrisms);
+			}
 		}
 	}
 
