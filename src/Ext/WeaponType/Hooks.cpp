@@ -7,55 +7,50 @@
 
 DEFINE_HOOK(6FD438, TechnoClass_FireLaser, 6)
 {
-	GET(WeaponTypeClass *, pWeapon, ECX);
-	GET(LaserDrawClass *, pBeam, EAX);
+	GET(WeaponTypeClass* const, pWeapon, ECX);
+	GET(LaserDrawClass* const, pBeam, EAX);
 
-	auto pData = WeaponTypeExt::ExtMap.Find(pWeapon);
-	int Thickness = pData->Laser_Thickness;
+	auto const pData = WeaponTypeExt::ExtMap.Find(pWeapon);
+	int const Thickness = pData->Laser_Thickness;
 	if(Thickness > 1) {
 		pBeam->Thickness = Thickness;
 	}
 
 	return 0;
-
 }
 
 DEFINE_HOOK(6FF4DE, TechnoClass_Fire_IsLaser, 6) {
-	GET(TechnoClass*, pThis, ECX);
-	GET(TechnoClass*, pTarget, EDI);
-	GET(WeaponTypeClass*, pFiringWeaponType, EBX);
+	GET(TechnoClass* const, pThis, ECX);
+	GET(TechnoClass* const, pTarget, EDI);
+	GET(WeaponTypeClass* const, pFiringWeaponType, EBX);
 
-	int idxWeapon = R->Base<int>(0xC); // don't use stack offsets - function uses on-the-fly stack realignments which mean offsets are not constants
+	auto const idxWeapon = R->Base<int>(0xC); // don't use stack offsets - function uses on-the-fly stack realignments which mean offsets are not constants
 
-	auto pData = WeaponTypeExt::ExtMap.Find(pFiringWeaponType);
-	int Thickness = pData->Laser_Thickness;
+	auto const pData = WeaponTypeExt::ExtMap.Find(pFiringWeaponType);
+	int const Thickness = pData->Laser_Thickness;
 
-	LaserDrawClass *pLaser = nullptr;
+	if(auto const pBld = abstract_cast<BuildingClass*>(pThis)) {
+		auto const pTWeapon = pBld->GetTurretWeapon()->WeaponType;
 
-	if(BuildingClass* pBld = specific_cast<BuildingClass*>(pThis)) {
-		WeaponTypeClass* pTWeapon = pBld->GetTurretWeapon()->WeaponType;
+		if(auto const pLaser = pBld->CreateLaser(pTarget, idxWeapon, pTWeapon, CoordStruct::Empty)) {
 
-		if((pLaser = pBld->CreateLaser(pTarget, idxWeapon, pTWeapon, CoordStruct::Empty)) != nullptr) {
-			
 			//default thickness for buildings. this was 3 for PrismType (rising to 5 for supported prism) but no idea what it was for non-PrismType - setting to 3 for all BuildingTypes now.
-			if (Thickness == -1) {
+			if(Thickness == -1) {
 				pLaser->Thickness = 3;
 			} else {
 				pLaser->Thickness = Thickness;
 			}
-			
-			//BuildingExt::ExtData *pBldData = BuildingExt::ExtMap.Find(pBld);
-			BuildingTypeClass *pBldType = pBld->Type;
-			BuildingTypeExt::ExtData *pBldTypeData = BuildingTypeExt::ExtMap.Find(pBldType);
 
-			if (pBldTypeData->PrismForwarding.CanAttack()) {
+			auto const pBldTypeData = BuildingTypeExt::ExtMap.Find(pBld->Type);
+
+			if(pBldTypeData->PrismForwarding.CanAttack()) {
 				//is a prism tower
-				
-				if (pBld->SupportingPrisms > 0) { //Ares sets this to the longest backward chain
+
+				if(pBld->SupportingPrisms > 0) { //Ares sets this to the longest backward chain
 					//is being supported... so increase beam intensity
-					if (pBldTypeData->PrismForwarding.Intensity < 0) {
+					if(pBldTypeData->PrismForwarding.Intensity < 0) {
 						pLaser->Thickness -= pBldTypeData->PrismForwarding.Intensity; //add on absolute intensity
-					} else if (pBldTypeData->PrismForwarding.Intensity > 0) {
+					} else if(pBldTypeData->PrismForwarding.Intensity > 0) {
 						pLaser->Thickness += (pBldTypeData->PrismForwarding.Intensity * pBld->SupportingPrisms);
 					}
 
@@ -65,8 +60,8 @@ DEFINE_HOOK(6FF4DE, TechnoClass_Fire_IsLaser, 6) {
 			}
 		}
 	} else {
-		if((pLaser = pThis->CreateLaser(pTarget, idxWeapon, pFiringWeaponType, CoordStruct::Empty)) != nullptr) {
-			if (Thickness == -1) {
+		if(auto const pLaser = pThis->CreateLaser(pTarget, idxWeapon, pFiringWeaponType, CoordStruct::Empty)) {
+			if(Thickness == -1) {
 				pLaser->Thickness = 2;
 			} else {
 				pLaser->Thickness = Thickness;
