@@ -73,7 +73,7 @@ DEFINE_HOOK(6FF4DE, TechnoClass_Fire_IsLaser, 6) {
 
 	if(pLaser) {
 		// required for Thickness to work right
-		pLaser->field_21 = 1; //this appears to change the RGB values for OuterColor (1=double, 0=halve)
+		pLaser->IsSupported = true; //this appears to change the RGB values for OuterColor (1=double, 0=halve)
 	}
 
 	// skip all default handling
