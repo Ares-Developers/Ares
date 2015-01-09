@@ -308,8 +308,6 @@ void BuildingExt::cPrismForwarding::SetSupportTarget(BuildingExt::cPrismForwardi
 		int idxSlave = pOldTarget->Senders.FindItemIndex(this);
 		if(idxSlave != -1) {
 			pOldTarget->Senders.RemoveItem(idxSlave);
-			// everywhere the comments say this is now the "longest backwards chain", but decreasing this here makes use of the original meaning. why is this needed here? AlexB 2012-04-08
-			--pOldTarget->GetOwner()->SupportingPrisms;  //Ares doesn't actually use this, but maintaining it anyway (as direct feeds only)
 		} else {
 			Debug::DevLog(Debug::Warning, "PrismForwarding::SetSupportTarget: Old target tower (%p) did not consider this tower (%p) as its sender.\n",
 				pOldTarget->GetOwner(), this->GetOwner());
@@ -323,7 +321,6 @@ void BuildingExt::cPrismForwarding::SetSupportTarget(BuildingExt::cPrismForwardi
 
 		if(pTargetTower->Senders.FindItemIndex(this) == -1) {
 			pTargetTower->Senders.AddItem(this);
-			// why isn't SupportingPrisms increased here? AlexB 2012-04-08
 		} else {
 			Debug::DevLog(Debug::Warning, "PrismForwarding::SetSupportTarget: Tower (%p) is already in new target tower's (%p) sender list.\n",
 				this->GetOwner(), pTargetTower->GetOwner());
