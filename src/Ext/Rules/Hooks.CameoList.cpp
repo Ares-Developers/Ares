@@ -357,7 +357,7 @@ DEFINE_HOOK(6AAD2F, SidebarClass_ProcessCameoClick_LoadCameoData1, 0)
 		return 0x6AB94F;
 	}
 
-	MouseClass::Instance->SetPointer(0, false);
+	MouseClass::Instance->UpdateCursor(MouseCursorType::Default, false);
 
 	R->Stack<int>(STACK_OFFS(0xAC, 0x80), CameoIndex);
 

@@ -20,10 +20,11 @@ DEFINE_HOOK(4AB44A, Actions_CustomCursor_NonShrouded, 9)
 {
 	MouseCursor* pCursor = Actions::MPCustom;
 	if(pCursor) {
-		GET(MouseClass *, Mouse, ESI);
+		GET(MouseClass*, pMouse, ESI);
+		GET_STACK(bool, minimap, 0x34);
 
 		//don't try this at home
-		Mouse->QueryCursor(reinterpret_cast<int>(pCursor), R->Stack32(0x34));
+		pMouse->SetCursor(reinterpret_cast<MouseCursorType&>(pCursor), minimap);
 
 		return 0x4AB78F;
 	}
@@ -42,10 +43,11 @@ DEFINE_HOOK(4AB366, Actions_CustomCursor_Shrouded, 9)
 	MouseCursor* pCursor = Actions::MPCustom;
 	if(pCursor) {
 		if(Actions::MPCustomAllowShroud) {
-			GET(GScreenClass *, Mouse, ESI);
+			GET(MouseClass*, pMouse, ESI);
+			GET_STACK(bool, minimap, 0x34);
 
 			//don't try this at home
-			Mouse->QueryCursor(reinterpret_cast<int>(pCursor), R->Stack32(0x34));
+			pMouse->SetCursor(reinterpret_cast<MouseCursorType&>(pCursor), minimap);
 
 			return 0x4AB78F;
 		} else {

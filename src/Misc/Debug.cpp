@@ -341,7 +341,7 @@ void Debug::FreeMouse() {
 //	if(!freed) {
 		Game::sub_53E6B0();
 
-		MouseClass::Instance->SetPointer(0, 0);
+		MouseClass::Instance->UpdateCursor(MouseCursorType::Default, false);
 		WWMouseClass::Instance->ReleaseMouse();
 
 		ShowCursor(1);

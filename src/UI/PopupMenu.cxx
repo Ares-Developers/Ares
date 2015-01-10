@@ -83,11 +83,11 @@ DEFINE_HOOK(693263, MouseClass_ReactToClicks_LMBUp, 5)
 		PopupMenu::Drawing = false;
 	} else {
 
-		LEA_STACK(CellStruct*, XY, STACK_OFFS(0x24, 0x1C));
-		LEA_STACK(CoordStruct*, XYZ, STACK_OFFS(0x24, 0xC));
-		LEA_STACK(ObjectClass**, Target, STACK_OFFS(0x24, -0x8));
-		Action A = MouseClass::Instance->DecideAction(XY, *Target, 0);
-		MouseClass::Instance->LMBUp(XYZ, XY, *Target, A, 0);
+		REF_STACK(CellStruct, XY, STACK_OFFS(0x24, 0x1C));
+		REF_STACK(CoordStruct, XYZ, STACK_OFFS(0x24, 0xC));
+		REF_STACK(ObjectClass*, pTarget, STACK_OFFS(0x24, -0x8));
+		Action A = MouseClass::Instance->DecideAction(XY, pTarget, 0);
+		MouseClass::Instance->LeftMouseButtonUp(XYZ, XY, pTarget, A, 0);
 	}
 
 	return 0x693290;
