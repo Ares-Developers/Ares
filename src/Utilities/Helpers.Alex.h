@@ -1,6 +1,8 @@
 #ifndef HELPERS_ALEX_H
 #define HELPERS_ALEX_H
 
+#include "../Misc/Debug.h"
+
 #include <BuildingTypeClass.h>
 #include <CellSpread.h>
 #include <Helpers/Iterators.h>
@@ -10,6 +12,7 @@
 #include <functional>
 #include <algorithm>
 #include <iterator>
+#include <vector>
 
 namespace Helpers {
 
