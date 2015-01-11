@@ -1,4 +1,5 @@
 #include "Reveal.h"
+#include "../MapRevealer.h"
 #include "../../Ares.h"
 #include "../../Utilities/Helpers.Alex.h"
 #include "../../Utilities/TemplateDef.h"
@@ -52,32 +53,50 @@ void SW_Reveal::LoadFromINI(SWTypeExt::ExtData* pData, SuperWeaponTypeClass* pSW
 	pSW->Action = pData->Reveal_FullMap ? Action::None : Actions::SuperWeaponAllowed;
 }
 
-bool SW_Reveal::Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer)
+bool SW_Reveal::Activate(SuperClass* const pThis, const CellStruct &Coords, bool const IsPlayer)
 {
-	SuperWeaponTypeClass *pSW = pThis->Type;
-	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSW);
+	auto const pSW = pThis->Type;
+	auto const pData = SWTypeExt::ExtMap.Find(pSW);
 	
 	if(pThis->IsCharged) {
-		// reveal all cells without hundred thousands function calls
-		if(pData->Reveal_FullMap) {
-			MapClass::Instance->Reveal(pThis->Owner);
-			return true;
+		MapRevealer const revealer(Coords);
+
+		if(revealer.AffectsHouse(pThis->Owner)) {
+			auto Apply = [&](bool add) {
+				if(pData->Reveal_FullMap) {
+					// reveal all cells without hundred thousands function calls
+					auto const Map = MapClass::Instance;
+					Map->CellIteratorReset();
+					while(auto const pCell = Map->CellIteratorNext()) {
+						if(revealer.IsCellAvailable(pCell->MapCoords) && revealer.IsCellAllowed(pCell->MapCoords)) {
+							revealer.Process1(pCell, false, add);
+						}
+					}
+				} else {
+					// default way to reveal, but reveal one cell at a time.
+					auto const& base = revealer.Base();
+
+					auto const range = GetRange(pData);
+					Helpers::Alex::for_each_in_rect_or_range<CellClass>(base, range.WidthOrRange, range.Height,
+						[&, add](CellClass* pCell) -> bool
+					{
+						auto const& cell = pCell->MapCoords;
+						if(revealer.IsCellAvailable(cell) && revealer.IsCellAllowed(cell)) {
+							if(range.height() > 0 || cell.DistanceFrom(base) < range.range()) {
+								auto const pCell = MapClass::Instance->GetCellAt(cell);
+								revealer.Process1(pCell, false, add);
+							}
+						}
+						return true;
+					});
+				}
+			};
+
+			Apply(false);
+			Apply(true);
+
+			MapClass::Instance->MarkNeedsRedraw(1);
 		}
-
-		CellClass *pTarget = MapClass::Instance->GetCellAt(Coords);
-		
-		CoordStruct Crd = pTarget->GetCoords();
-		auto range = GetRange(pData);
-
-		// default way to reveal, but reveal one cell at a time.
-		Helpers::Alex::for_each_in_rect_or_range<CellClass>(Coords, range.WidthOrRange, range.Height,
-			[&](CellClass* pCell) -> bool {
-				CoordStruct Crd2 = pCell->GetCoords();
-				MapClass::Instance->RevealArea2(&Crd2, 1, pThis->Owner, 0, 0, 0, 0, 0);
-				MapClass::Instance->RevealArea2(&Crd2, 1, pThis->Owner, 0, 0, 0, 0, 1);
-				return true;
-			}
-		);
 	}
 
 	return true;
