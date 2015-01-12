@@ -219,9 +219,7 @@ CoordStruct TechnoExt::GetPutLocation(CoordStruct current, int distance) {
 	current.Y += tmpCoords.Y * distance;
 
 	auto tmpCell = MapClass::Instance->GetCellAt(current);
-
-	CoordStruct target;
-	tmpCell->FindInfantrySubposition(&target, &current, 0, 0, 0);
+	auto target = tmpCell->FindInfantrySubposition(current, false, false, false);
 
 	target.Z = current.Z;
 	return target;
