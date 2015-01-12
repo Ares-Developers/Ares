@@ -34,7 +34,7 @@ public:
 	static void LogFileClose(int tag);
 	static void LogFileRemove();
 	static void DumpObj(void const* data, size_t len);
-	static void DumpStack(REGISTERS *R, size_t len, size_t startAt = 0);
+	static void DumpStack(REGISTERS* R, size_t len, int startAt = 0);
 	static void (_cdecl* Log)(const char* pFormat, ...);
 
 	template <typename T>

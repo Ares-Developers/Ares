@@ -133,10 +133,12 @@ void Debug::DumpObj(void const* const data, size_t const len) {
 	Debug::Log("\nEnd of dump.\n");
 }
 
-void Debug::DumpStack(REGISTERS *R, size_t len, size_t startAt) {
+void Debug::DumpStack(REGISTERS* R, size_t len, int startAt) {
 	Debug::Log("Dumping %X bytes of stack\n", len);
-	for(size_t i = startAt; i < len; i += 4) {
-		Debug::Log("esp+%04X = %08X\n", i, R->Stack32(i));
+	auto const end = len / 4;
+	auto const* const mem = R->lea_Stack<DWORD*>(startAt);
+	for(auto i = 0u; i < end; ++i) {
+		Debug::Log("esp+%04X = %08X\n", i * 4, mem[i]);
 	}
 	Debug::Log("Done.\n");
 }
