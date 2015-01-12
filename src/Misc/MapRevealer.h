@@ -16,6 +16,14 @@ public:
 		return this->BaseCell;
 	}
 
+	void Reveal0(const CoordStruct& coords, int const radius, HouseClass* const pHouse, bool onlyOutline, bool unknown, bool fog, bool allowRevealByHeight, bool add) const;
+
+	void Reveal1(const CoordStruct& coords, int const radius, HouseClass* const pHouse, bool onlyOutline, bool fog, bool allowRevealByHeight, bool add) const;
+
+	void UpdateShroud(size_t start, size_t radius, bool fog = false) const;
+
+	void Process0(CellClass* const pCell, bool unknown, bool fog, bool add) const;
+
 	void Process1(CellClass* const pCell, bool fog, bool add) const;
 
 	bool IsCellAllowed(const CellStruct& cell) const {
@@ -36,6 +44,11 @@ public:
 			&& cell.X - cell.Y < this->MapWidth
 			&& cell.Y - cell.X < this->MapWidth
 			&& sum <= this->MapWidth + 2 * this->MapHeight;
+	}
+
+	bool CheckLevel(const CellStruct& cell, int level) const {
+		auto const cellLevel = cell + GetRelation(cell) - this->CellOffset;
+		return MapClass::Instance->GetCellAt(cellLevel)->Level < level + 4;
 	}
 
 	static bool AffectsHouse(HouseClass* const pHouse) {
@@ -73,7 +86,15 @@ private:
 		return CellClass::Coord2Cell(baseCoords);
 	}
 
+	CellStruct GetOffset(const CoordStruct& coords, const CellStruct& base) const {
+		return base - CellClass::Coord2Cell(coords) - CellStruct{2, 2};
+	}
+
+	template <typename T>
+	void RevealImpl(const CoordStruct& coords, int radius, HouseClass* pHouse, bool onlyOutline, bool allowRevealByHeight, T func) const;
+
 	CellStruct BaseCell;
+	CellStruct CellOffset;
 	CellStruct CheckedCells[3];
 	bool RequiredChecks;
 	int MapWidth;
