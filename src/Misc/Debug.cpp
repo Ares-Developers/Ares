@@ -101,38 +101,34 @@ void Debug::LogFileRemove()
 	DeleteFileW(Debug::LogFileTempName.c_str());
 }
 
-void Debug::DumpObj(byte *data, size_t len) {
-	Debug::Log("Dumping %u bytes of object at %X\n", len, data);
+void Debug::DumpObj(void const* const data, size_t const len) {
+	Debug::Log("Dumping %u bytes of object at %p\n", len, data);
+	auto const bytes = static_cast<byte const*>(data);
 
-	Debug::Log(" 00000 |");
-	for(DWORD rem = 0; rem < 0x10; ++rem) {
-		Debug::Log(" %02X |", rem);
+	Debug::Log("       |");
+	for(auto i = 0u; i < 0x10u; ++i) {
+		Debug::Log(" %02X |", i);
 	}
-	Debug::Log("\n\n");
-	for(DWORD dec = 0; dec < len / 0x10; ++dec) {
-		Debug::Log(" %04X0 |", dec);
-		for(DWORD rem = 0; rem < 0x10; ++rem) {
-			Debug::Log(" %02X |", data[dec * 0x10 + rem]);
+	Debug::Log("\n");
+	Debug::Log("-------|");
+	for(auto i = 0u; i < 0x10u; ++i) {
+		Debug::Log("----|", i);
+	}
+	auto const bytesToPrint = (len + 0x10 - 1) / 0x10 * 0x10;
+	for(auto startRow = 0u; startRow < bytesToPrint; startRow += 0x10) {
+		Debug::Log("\n");
+		Debug::Log(" %05X |", startRow);
+		auto const bytesInRow = std::min(len - startRow, 0x10u);
+		for(auto i = 0u; i < bytesInRow; ++i) {
+			Debug::Log(" %02X |", bytes[startRow + i]);
 		}
-		for(DWORD rem = 0; rem < 0x10; ++rem) {
-			byte sym = data[dec * 0x10 + rem];
+		for(auto i = bytesInRow; i < 0x10u; ++i) {
+			Debug::Log(" -- |");
+		}
+		for(auto i = 0u; i < bytesInRow; ++i) {
+			auto const& sym = bytes[startRow + i];
 			Debug::Log("%c", isprint(sym) ? sym : '?');
 		}
-		Debug::Log("\n");
-	}
-
-	DWORD dec = len / 0x10 * 0x10;
-	DWORD remlen = len - dec;
-	Debug::Log(" %05X |", dec);
-	for(DWORD rem = 0; rem < remlen; ++rem) {
-		Debug::Log(" %02X |", data[dec + rem]);
-	}
-	for(DWORD rem = remlen; rem < 0x10; ++rem) {
-		Debug::Log(" -- |");
-	}
-	for(DWORD rem = 0; rem < remlen; ++rem) {
-		byte sym = data[dec + rem];
-		Debug::Log("%c", isprint(sym) ? sym : '?');
 	}
 	Debug::Log("\nEnd of dump.\n");
 }

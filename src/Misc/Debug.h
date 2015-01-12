@@ -33,9 +33,14 @@ public:
 	static void LogFileOpen();
 	static void LogFileClose(int tag);
 	static void LogFileRemove();
-	static void DumpObj(byte *data, size_t len);
+	static void DumpObj(void const* data, size_t len);
 	static void DumpStack(REGISTERS *R, size_t len, size_t startAt = 0);
 	static void (_cdecl* Log)(const char* pFormat, ...);
+
+	template <typename T>
+	static void DumpObj(const T& object) {
+		DumpObj(&object, sizeof(object));
+	}
 
 	static void __cdecl LogUnflushed(const char *Format, ...);
 	static void LogUnflushed(const char* Format, va_list ArgList);
