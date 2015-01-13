@@ -113,7 +113,7 @@ DEFINE_HOOK(703A79, TechnoClass_VisualCharacter_CloakingStages, A)
 DEFINE_HOOK(4D99AA, FootClass_PointerGotInvalid_Parasite, 6)
 {
 	GET(FootClass*, pThis, ESI);
-	GET(void*, ptr, EDI);
+	GET(AbstractClass*, ptr, EDI);
 	GET(bool, remove, EBX);
 
 	// pass the real remove state, instead of always true. this was unused
