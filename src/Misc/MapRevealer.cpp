@@ -28,7 +28,7 @@ void MapRevealer::RevealImpl(const CoordStruct& coords, int const radius, HouseC
 
 	if(this->AffectsHouse(pHouse) && this->IsCellAvailable(base) && radius > 0) {
 		auto const spread = std::min(static_cast<size_t>(radius), CellSpreadEnumerator::Max);
-		auto const spread_sqr = spread * spread;
+		auto const spread_limit_sqr = (spread + 1) * (spread + 1);
 
 		auto const start = (!RulesClass::Instance->RevealByHeight && onlyOutline && spread > 2)
 			? spread - 3 : 0u;
@@ -39,7 +39,7 @@ void MapRevealer::RevealImpl(const CoordStruct& coords, int const radius, HouseC
 			auto const& offset = *it;
 			auto const cell = base + offset;
 			if(this->IsCellAvailable(cell)) {
-				if(std::abs(offset.X) < static_cast<int>(spread) && offset.MagnitudeSquared() <= spread_sqr) {
+				if(std::abs(offset.X) < static_cast<int>(spread) && offset.MagnitudeSquared() < spread_limit_sqr) {
 					if(!checkLevel || this->CheckLevel(cell, level)) {
 						auto pCell = MapClass::Instance->GetCellAt(cell);
 						func(pCell);
