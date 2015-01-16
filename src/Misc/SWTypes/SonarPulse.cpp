@@ -5,7 +5,7 @@
 
 #include <RadarEventClass.h>
 
-SuperWeaponFlags::Value SW_SonarPulse::Flags() const
+SuperWeaponFlags SW_SonarPulse::Flags() const
 {
 	return SuperWeaponFlags::NoEvent;
 }

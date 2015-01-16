@@ -241,9 +241,9 @@ void SWTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 
 		// whatever the user does, we take care of the stupid tags.
 		// there is no need to have them not hardcoded.
-		SuperWeaponFlags::Value flags = pNewSWType->Flags();
-		pThis->PreClick = ((flags & SuperWeaponFlags::PreClick) != 0);
-		pThis->PostClick = ((flags & SuperWeaponFlags::PostClick) != 0);
+		auto const flags = pNewSWType->Flags();
+		pThis->PreClick = static_cast<bool>(flags & SuperWeaponFlags::PreClick);
+		pThis->PostClick = static_cast<bool>(flags & SuperWeaponFlags::PostClick);
 		pThis->PreDependent = -1;
 	}
 
@@ -446,7 +446,7 @@ bool SWTypeExt::Launch(SuperClass* pThis, NewSWType* pSW, const CellStruct &Coor
 		// launch the SW, then play sounds and animations. if the SW isn't launched
 		// nothing will be played.
 		if(pSW->Activate(pThis, Coords, IsPlayer)) {
-			SuperWeaponFlags::Value flags = pSW->Flags();
+			auto const flags = pSW->Flags();
 
 			if(flags & SuperWeaponFlags::PostClick) {
 				// use the properties of the originally fired SW

@@ -23,7 +23,7 @@ bool SW_NuclearMissile::HandlesType(SuperWeaponType type) const
 	return (type == SuperWeaponType::Nuke);
 }
 
-SuperWeaponFlags::Value SW_NuclearMissile::Flags() const
+SuperWeaponFlags SW_NuclearMissile::Flags() const
 {
 	return SuperWeaponFlags::NoEvent;
 }

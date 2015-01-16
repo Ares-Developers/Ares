@@ -63,22 +63,20 @@ enum class OwnerHouseKind : int {
 	Random
 };
 
-class SuperWeaponFlags {
-public:
-	typedef unsigned short Value;
-	enum {
-		None = 0x0,
-		NoAnim = 0x1,
-		NoSound = 0x2,
-		NoEvent = 0x4,
-		NoEVA = 0x8,
-		NoMoney = 0x10,
-		NoCleanup = 0x20,
-		NoMessage = 0x40,
-		PreClick = 0x80,
-		PostClick = 0x100
-	};
+enum class SuperWeaponFlags : unsigned short {
+	None = 0x0,
+	NoAnim = 0x1,
+	NoSound = 0x2,
+	NoEvent = 0x4,
+	NoEVA = 0x8,
+	NoMoney = 0x10,
+	NoCleanup = 0x20,
+	NoMessage = 0x40,
+	PreClick = 0x80,
+	PostClick = 0x100
 };
+
+MAKE_ENUM_FLAGS(SuperWeaponFlags);
 
 enum class AresAction {
 	None = 0,

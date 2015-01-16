@@ -86,7 +86,7 @@ public:
 		return false;
 	}
 
-	virtual SuperWeaponFlags::Value Flags() const {
+	virtual SuperWeaponFlags Flags() const {
 		return SuperWeaponFlags::None;
 	}
 
