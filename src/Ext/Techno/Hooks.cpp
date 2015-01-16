@@ -1133,7 +1133,7 @@ DEFINE_HOOK(4D9A83, FootClass_PointerGotInvalid_OccupierVehicleThief, 6)
 	GET(InfantryTypeClass*, pType, EAX);
 
 	if(pType->VehicleThief) {
-		if(pInfantry->Destination->AbstractFlags & ABSFLAGS_ISFOOT) {
+		if(abstract_cast<FootClass*>(pInfantry->Destination)) {
 			return 0x4D9AB9;
 		}
 	}
