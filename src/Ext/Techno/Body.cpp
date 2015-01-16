@@ -735,7 +735,7 @@ InfantryClass* TechnoExt::RecoverHijacker(FootClass* pThis) {
 
 // this isn't called VehicleThief action, because it also includes other logic
 // related to infantry getting into an vehicle like CanDrive.
-AresAction::Value TechnoExt::ExtData::GetActionHijack(TechnoClass* const pTarget) {
+AresAction TechnoExt::ExtData::GetActionHijack(TechnoClass* const pTarget) {
 	const auto pThis = abstract_cast<const InfantryClass*>(this->OwnerObject());
 	if(!pThis || !pTarget || !pThis->IsAlive || !pTarget->IsAlive) {
 		return AresAction::None;
@@ -824,7 +824,7 @@ bool TechnoExt::ExtData::PerformActionHijack(TechnoClass* const pTarget) {
 
 		// abort capturing this thing, it looked
 		// better from over there...
-		if(!action) {
+		if(action == AresAction::None) {
 			pThis->SetDestination(nullptr, true);
 			const auto& crd = pTarget->GetCoords();
 			pThis->Scatter(crd, true, false);

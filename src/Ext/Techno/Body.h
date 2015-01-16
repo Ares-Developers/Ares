@@ -138,7 +138,7 @@ public:
 		bool IsOperated();
 		bool IsPowered();
 
-		AresAction::Value GetActionHijack(TechnoClass *pTarget);
+		AresAction GetActionHijack(TechnoClass* pTarget);
 		bool PerformActionHijack(TechnoClass* pTarget);
 
 		unsigned int AlphaFrame(SHPStruct * Image);

@@ -779,7 +779,7 @@ DEFINE_HOOK(51E7BF, InfantryClass_GetCursorOverObject_CanCapture, 6)
 			TechnoExt::ExtData* pExt = TechnoExt::ExtMap.Find(pSelected);
 			TechnoTypeExt::ExtData* pTypeExt = TechnoTypeExt::ExtMap.Find(pSelected->Type);
 			if(pSelected->Type->VehicleThief || pTypeExt->CanDrive) {
-				DoWhat = (pExt->GetActionHijack(pTechno) ? Capture : DontCapture);
+				DoWhat = (pExt->GetActionHijack(pTechno) != AresAction::None ? Capture : DontCapture);
 			}
 		}
 	}
