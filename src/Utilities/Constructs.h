@@ -37,20 +37,16 @@ struct Leptons {
 
 class CustomPalette {
 public:
-	class PaletteMode {
-	public:
-		typedef int Value;
-		enum {
-			Default = 0,
-			Temperate = 1
-		};
+	enum class PaletteMode : unsigned int {
+		Default = 0,
+		Temperate = 1
 	};
 
-	PaletteMode::Value Mode;
+	PaletteMode Mode;
 	UniqueGamePtr<ConvertClass> Convert;
 	UniqueGamePtr<BytePalette> Palette;
 
-	CustomPalette(PaletteMode::Value mode = PaletteMode::Default) :
+	CustomPalette(PaletteMode mode = PaletteMode::Default) :
 		Mode(mode),
 		Convert(nullptr),
 		Palette(nullptr)
