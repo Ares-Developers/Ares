@@ -304,13 +304,13 @@ bool TechnoExt::SpawnVisceroid(CoordStruct &crd, ObjectTypeClass* pType, int cha
 	return ret;
 }
 
-unsigned int TechnoExt::ExtData::AlphaFrame(SHPStruct *Image) {
+unsigned int TechnoExt::ExtData::AlphaFrame(const SHPStruct* Image) const {
 	int countFrames = Conversions::Int2Highest(Image->Frames);
 	DirStruct Facing = this->OwnerObject()->Facing.current();
 	return (static_cast<DirStruct::unsigned_type>(Facing.value()) >> (16 - countFrames));
 }
 
-bool TechnoExt::ExtData::DrawVisualFX() {
+bool TechnoExt::ExtData::DrawVisualFX() const {
 	auto Object = this->OwnerObject();
 	if(Object->VisualCharacter(VARIANT_TRUE, Object->Owner) == VisualType::Normal) {
 		if(!Object->Disguised) {
@@ -424,7 +424,7 @@ bool TechnoExt::ExtData::AcquireHunterSeekerTarget() const {
 	return false;
 }
 
-UnitTypeClass* TechnoExt::ExtData::GetUnitType() {
+UnitTypeClass* TechnoExt::ExtData::GetUnitType() const {
 	if(auto pUnit = abstract_cast<UnitClass*>(this->OwnerObject())) {
 		auto pData = TechnoTypeExt::ExtMap.Find(pUnit->Type);
 		if(pData->WaterImage && !pUnit->OnBridge && pUnit->GetCell()->LandType == LandType::Water) {
@@ -443,7 +443,7 @@ void Container<TechnoExt>::InvalidatePointer(void *ptr, bool bRemoved) {
 	\author Renegade
 	\date 27.04.10
 */
-bool TechnoExt::ExtData::IsOperated() {
+bool TechnoExt::ExtData::IsOperated() const {
 	auto pThis = this->OwnerObject();
 	auto pExt = TechnoTypeExt::ExtMap.Find(pThis->GetTechnoType());
 
@@ -473,7 +473,7 @@ bool TechnoExt::ExtData::IsOperated() {
 	\author Renegade
 	\date 27.04.10
 */
-bool TechnoExt::ExtData::IsPowered() {
+bool TechnoExt::ExtData::IsPowered() const {
 	auto pThis = this->OwnerObject();
 	auto pType = pThis->GetTechnoType();
 
@@ -735,7 +735,7 @@ InfantryClass* TechnoExt::RecoverHijacker(FootClass* pThis) {
 
 // this isn't called VehicleThief action, because it also includes other logic
 // related to infantry getting into an vehicle like CanDrive.
-AresAction TechnoExt::ExtData::GetActionHijack(TechnoClass* const pTarget) {
+AresAction TechnoExt::ExtData::GetActionHijack(TechnoClass* const pTarget) const {
 	const auto pThis = abstract_cast<const InfantryClass*>(this->OwnerObject());
 	if(!pThis || !pTarget || !pThis->IsAlive || !pTarget->IsAlive) {
 		return AresAction::None;
@@ -811,7 +811,7 @@ AresAction TechnoExt::ExtData::GetActionHijack(TechnoClass* const pTarget) {
 }
 
 // perform the most appropriate hijack action
-bool TechnoExt::ExtData::PerformActionHijack(TechnoClass* const pTarget) {
+bool TechnoExt::ExtData::PerformActionHijack(TechnoClass* const pTarget) const {
 	// was the hijacker lost in the process?
 	bool ret = false;
 

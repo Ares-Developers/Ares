@@ -135,21 +135,21 @@ public:
 
 		virtual void SaveToStream(AresStreamWriter &Stm) override;
 
-		bool IsOperated();
-		bool IsPowered();
+		bool IsOperated() const;
+		bool IsPowered() const;
 
-		AresAction GetActionHijack(TechnoClass* pTarget);
-		bool PerformActionHijack(TechnoClass* pTarget);
+		AresAction GetActionHijack(TechnoClass* pTarget) const;
+		bool PerformActionHijack(TechnoClass* pTarget) const;
 
-		unsigned int AlphaFrame(SHPStruct * Image);
+		unsigned int AlphaFrame(const SHPStruct* Image) const;
 
-		bool DrawVisualFX();
+		bool DrawVisualFX() const;
 
-		UnitTypeClass * GetUnitType();
+		UnitTypeClass* GetUnitType() const;
 
 		bool IsDeactivated() const;
 
-		Action GetDeactivatedAction(ObjectClass *Hovered = nullptr) const;
+		Action GetDeactivatedAction(ObjectClass* pHovered = nullptr) const;
 
 		void InvalidateAttachEffectPointer(void *ptr);
 
