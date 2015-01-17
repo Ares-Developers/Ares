@@ -236,12 +236,13 @@ DEFINE_HOOK(713171, Buf_Dock, 9)
 	return 0x713264;
 }
 
-DEFINE_HOOK(713BF1, Buf_DmgpartSys, 6)
+DEFINE_HOOK(713C10, Buf_DmgpartSys, 7)
 {
-	GET(TechnoTypeClass *, T, EBP);
-	GET(ParticleSystemTypeClass *, SPS, EAX);
+	GET(TechnoTypeClass*, pThis, EBP);
+	GET(const CoordStruct*, pResult, EAX);
 
-	T->RefinerySmokeParticleSystem = SPS;
+	pThis->NaturalParticleSystemLocation = *pResult;
+
 	return 0x713E1A;
 }
 
