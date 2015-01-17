@@ -247,18 +247,23 @@ DEFINE_HOOK(713BF1, Buf_DmgpartSys, 6)
 
 
 // == WarheadType ==
-DEFINE_HOOK(75D660, Buf_Warhead, 9)
+DEFINE_HOOK(75D660, WarheadTypeClass_LoadFromINI_ListLength, 9)
 {
-	GET(WarheadTypeClass *, WH, ESI);
-	GET(const char *, section, EBP);
-	GET(CCINIClass *, pINI, EDI);
+	GET(WarheadTypeClass*, pThis, ESI);
+	GET(const char*, pSection, EBP);
+	GET(CCINIClass*, pINI, EDI);
 
-	ParseList(WH->AnimList, pINI, section, "AnimList");
+	ParseList(pThis->AnimList, pINI, pSection, "AnimList");
 
-	ParseList(WH->DebrisMaximums, pINI, section, "DebrisMaximums");
-	ParseList(WH->DebrisTypes, pINI, section, "DebrisTypes");
+	ParseList(pThis->DebrisMaximums, pINI, pSection, "DebrisMaximums");
+	ParseList(pThis->DebrisTypes, pINI, pSection, "DebrisTypes");
 
-	return 0;
+	return 0x75D75D;
+}
+
+DEFINE_HOOK(75DAE6, WarheadTypeClass_LoadFromINI_SkipLists, 4)
+{
+	return 0x75DDCC;
 }
 
 
