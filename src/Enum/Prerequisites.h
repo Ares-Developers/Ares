@@ -40,7 +40,7 @@ class Prereqs
 public:
 	typedef Iterator<BuildingTypeClass*> BTypeIter;
 
-	static void Parse(CCINIClass *pINI, const char* section, const char *key, DynamicVectorClass<int> *vec);
+	static void Parse(CCINIClass *pINI, const char* section, const char *key, DynamicVectorClass<int> &Vec);
 
 	static bool HouseOwnsGeneric(HouseClass *pHouse, signed int Index);
 	static bool HouseOwnsSpecific(HouseClass *pHouse, signed int Index);

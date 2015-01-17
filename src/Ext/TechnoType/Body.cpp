@@ -129,20 +129,16 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 	}
 	this->PrerequisiteLists.erase(this->PrerequisiteLists.begin() + PrereqListLen, this->PrerequisiteLists.end());
 
-	DynamicVectorClass<int> *dvc = this->PrerequisiteLists.at(0).get();
-	Prereqs::Parse(pINI, section, "Prerequisite", dvc);
+	Prereqs::Parse(pINI, section, "Prerequisite", *this->PrerequisiteLists.at(0));
 
-	dvc = &pThis->PrerequisiteOverride;
-	Prereqs::Parse(pINI, section, "PrerequisiteOverride", dvc);
+	Prereqs::Parse(pINI, section, "PrerequisiteOverride", pThis->PrerequisiteOverride);
 
 	for(size_t i = 0; i < this->PrerequisiteLists.size(); ++i) {
 		_snprintf_s(flag, 255, "Prerequisite.List%u", i);
-		dvc = this->PrerequisiteLists.at(i).get();
-		Prereqs::Parse(pINI, section, flag, dvc);
+		Prereqs::Parse(pINI, section, flag, *this->PrerequisiteLists.at(i));
 	}
 
-	dvc = &this->PrerequisiteNegatives;
-	Prereqs::Parse(pINI, section, "Prerequisite.Negative", dvc);
+	Prereqs::Parse(pINI, section, "Prerequisite.Negative", this->PrerequisiteNegatives);
 
 	if(pINI->ReadString(section, "Prerequisite.RequiredTheaters", "", Ares::readBuffer, Ares::readLength)) {
 		this->PrerequisiteTheaters = 0;

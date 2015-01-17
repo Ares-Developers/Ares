@@ -23,12 +23,10 @@ void GenericPrerequisite::LoadFromINI(CCINIClass *pINI)
 	_strlwr_s(name);
 	name[0] &= ~0x20; // LOL HACK to uppercase a letter
 
-	DynamicVectorClass<int> *dvc = &this->Prereqs;
-
 	_snprintf_s(generalbuf, _TRUNCATE, "Prerequisite%s", name);
-	Prereqs::Parse(pINI, "General", generalbuf, dvc);
+	Prereqs::Parse(pINI, "General", generalbuf, this->Prereqs);
 
-	Prereqs::Parse(pINI, section, this->Name, dvc);
+	Prereqs::Parse(pINI, section, this->Name, this->Prereqs);
 }
 
 void GenericPrerequisite::LoadFromStream(AresStreamReader &Stm)
@@ -51,20 +49,20 @@ void GenericPrerequisite::AddDefaults()
 	FindOrAllocate("PROC");
 }
 
-void Prereqs::Parse(CCINIClass *pINI, const char *section, const char *key, DynamicVectorClass<int> *vec)
+void Prereqs::Parse(CCINIClass *pINI, const char *section, const char *key, DynamicVectorClass<int> &Vec)
 {
 	if(pINI->ReadString(section, key, "", Ares::readBuffer, Ares::readLength)) {
-		vec->Clear();
+		Vec.Clear();
 
 		char* context = nullptr;
 		for(char *cur = strtok_s(Ares::readBuffer, ",", &context); cur; cur = strtok_s(nullptr, ",", &context)) {
 			int idx = BuildingTypeClass::FindIndex(cur);
 			if(idx > -1) {
-				vec->AddItem(idx);
+				Vec.AddItem(idx);
 			} else {
 				idx = GenericPrerequisite::FindIndex(cur);
 				if(idx > -1) {
-					vec->AddItem(-1 - idx);
+					Vec.AddItem(-1 - idx);
 				} else {
 					Debug::INIParseFailed(section, key, cur);
 				}
