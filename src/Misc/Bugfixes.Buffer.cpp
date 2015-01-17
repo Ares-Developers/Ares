@@ -210,33 +210,35 @@ DEFINE_HOOK(672B0E, Buf_AI, 6)
 
 
 // == TechnoType ==
-DEFINE_HOOK(7121A3, Buf_TechnoType, 6)
+DEFINE_HOOK(7125DF, TechnoTypeClass_LoadFromINI_ListLength, 7)
 {
-	GET(TechnoTypeClass *, T, EBP);
-	GET(const char *, section, EBX);
-	GET(CCINIClass *, pINI, ESI);
+	GET(TechnoTypeClass*, pThis, EBP);
+	GET(const char*, pSection, EBX);
+	GET(CCINIClass*, pINI, ESI);
 
-	ParseList(T->DamageParticleSystems, pINI, section, "DamageParticleSystems");
-	ParseList(T->DestroyParticleSystems, pINI, section, "DestroyParticleSystems");
+	ParseList(pThis->DamageParticleSystems, pINI, pSection, "DamageParticleSystems");
+	ParseList(pThis->DestroyParticleSystems, pINI, pSection, "DestroyParticleSystems");
 
-	ParseList(T->Dock, pINI, section, "Dock");
+	ParseList(pThis->Dock, pINI, pSection, "Dock");
 
-	ParseList(T->DebrisMaximums, pINI, section, "DebrisMaximums");
-	ParseList(T->DebrisTypes, pINI, section, "DebrisTypes");
+	ParseList(pThis->DebrisMaximums, pINI, pSection, "DebrisMaximums");
+	ParseList(pThis->DebrisTypes, pINI, pSection, "DebrisTypes");
+	ParseList(pThis->DebrisAnims, pINI, pSection, "DebrisAnims");
 
-	return 0;
+	return 0x712830;
 }
 
-DEFINE_HOOK(713171, Buf_Dock, 9)
+DEFINE_HOOK(713171, TechnoTypeClass_LoadFromINI_SkipLists1, 9)
 {
-	GET(TechnoTypeClass *, T, EBP);
+	GET(TechnoTypeClass*, pThis, EBP);
 	GET(Category, category, EAX);
 
-	T->Category = category;
+	pThis->Category = category;
+
 	return 0x713264;
 }
 
-DEFINE_HOOK(713C10, Buf_DmgpartSys, 7)
+DEFINE_HOOK(713C10, TechnoTypeClass_LoadFromINI_SkipLists2, 7)
 {
 	GET(TechnoTypeClass*, pThis, EBP);
 	GET(const CoordStruct*, pResult, EAX);
