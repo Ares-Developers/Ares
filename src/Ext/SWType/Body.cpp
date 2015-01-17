@@ -581,7 +581,7 @@ void SWTypeExt::ExtData::PrintMessage(const CSFText& message, HouseClass* pFirer
 	MessageListClass::Instance->PrintMessage(message, RulesClass::Instance->MessageDelay, color);
 }
 
-void SWTypeExt::ClearChronoAnim(SuperClass *pThis)
+void SWTypeExt::ClearChronoAnim(SuperClass* pThis)
 {
 	if(pThis->Animation) {
 		pThis->Animation->RemainingIterations = 0;
@@ -595,13 +595,13 @@ void SWTypeExt::ClearChronoAnim(SuperClass *pThis)
 	}
 }
 
-void SWTypeExt::CreateChronoAnim(SuperClass *pThis, CoordStruct *pCoords, AnimTypeClass *pAnimType)
+void SWTypeExt::CreateChronoAnim(SuperClass* const pThis, const CoordStruct &Coords, AnimTypeClass* const pAnimType)
 {
 	ClearChronoAnim(pThis);
 	
-	if(pAnimType && pCoords) {
-		if(auto pAnim = GameCreate<AnimClass>(pAnimType, *pCoords)) {
-			SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pThis->Type);
+	if(pAnimType) {
+		if(auto pAnim = GameCreate<AnimClass>(pAnimType, Coords)) {
+			auto const pData = SWTypeExt::ExtMap.Find(pThis->Type);
 			pAnim->Invisible = !pData->IsAnimVisible(pThis->Owner);
 			pThis->Animation = pAnim;
 			PointerExpiredNotification::NotifyInvalidAnim.Add(pThis);

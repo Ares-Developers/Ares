@@ -395,8 +395,8 @@ public:
 	static SuperWeaponTypeClass *CurrentSWType;
 
 	bool static Launch(SuperClass* pThis, NewSWType* pData, const CellStruct &Coords, bool IsPlayer);
-	void static ClearChronoAnim(SuperClass *pThis);
-	void static CreateChronoAnim(SuperClass *pThis, CoordStruct *pCoords, AnimTypeClass *pAnimType);
+	void static ClearChronoAnim(SuperClass* pThis);
+	void static CreateChronoAnim(SuperClass* pThis, const CoordStruct &Coords, AnimTypeClass* pAnimType);
 	static bool ChangeLighting(SuperWeaponTypeClass* pCustom = nullptr);
 	static LightingColor GetLightingColor(SuperWeaponTypeClass* pCustom = nullptr);
 };
