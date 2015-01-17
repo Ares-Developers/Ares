@@ -261,6 +261,20 @@ DEFINE_HOOK(75D660, Buf_Warhead, 9)
 	return 0;
 }
 
+
+// == WeaponType ==
+DEFINE_HOOK(772462, WeaponTypeClass_LoadFromINI_ListLength, 4)
+{
+	GET(WeaponTypeClass*, pThis, ESI);
+	GET(const char*, pSection, EBX);
+	GET(CCINIClass*, pINI, EDI);
+
+	ParseList(pThis->Anim, pINI, pSection, "Anim");
+
+	return 0x77255F;
+}
+
+
 // == Map Scripting ==
 DEFINE_HOOK(7274AF, TriggerTypeClass_LoadFromINI_Read_Events, 5)
 {
