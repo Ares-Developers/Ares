@@ -216,10 +216,8 @@ bool SW_ChronoWarp::Activate(SuperClass* pThis, const CellStruct &Coords, bool I
 		if(auto const pFoot = abstract_cast<FootClass*>(pTechno)) {
 			// move the unit to the new position
 			auto const pCellUnitTarget = MapClass::Instance->GetCellAt(cellUnitTarget);
-			auto coordsUnitTarget = coordsUnitSource;
-			coordsUnitTarget.X += (Coords.X - pSource->ChronoMapCoords.X) * 256;
-			coordsUnitTarget.Y += (Coords.Y - pSource->ChronoMapCoords.Y) * 256;
-			coordsUnitTarget = pCellUnitTarget->FixHeight(coordsUnitTarget);
+			auto const offset = CellClass::Cell2Coord(Coords - pSource->ChronoMapCoords);
+			auto const coordsUnitTarget = pCellUnitTarget->FixHeight(coordsUnitSource + offset);
 
 			// clean up the unit's current cell
 			pFoot->Locomotor->Mark_All_Occupation_Bits(0);
