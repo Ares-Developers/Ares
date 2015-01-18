@@ -327,7 +327,7 @@ void ChronoWarpStateMachine::Update()
 						CellClass* pNewCell = MapClass::Instance->GetCellAt(cellNew);
 						CoordStruct coordsNew = pNewCell->GetCoordsWithBridge();
 
-						if(pBld->Type->CanCreateHere(&cellNew, 0)) {
+						if(pBld->Type->CanCreateHere(cellNew, nullptr)) {
 							if(pBld->Put(coordsNew, Direction::North)) {
 								success = true;
 								break;
