@@ -86,48 +86,46 @@ void SW_ChronoSphere::LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeClas
 	pData->SW_AffectsTarget = (pData->SW_AffectsTarget | SuperWeaponTarget::Building);
 }
 
-bool SW_ChronoSphere::Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer)
+bool SW_ChronoSphere::Activate(SuperClass* const pThis, const CellStruct &Coords, bool const IsPlayer)
 {
-	SuperWeaponTypeClass *pSW = pThis->Type;
-	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSW);
+	auto const pSW = pThis->Type;
+	auto const pData = SWTypeExt::ExtMap.Find(pSW);
 
 	if(pThis->IsCharged) {
-		CellClass *pTarget = MapClass::Instance->GetCellAt(Coords);
+		auto const pTarget = MapClass::Instance->GetCellAt(Coords);
 
 		// remember the current source position
 		pThis->ChronoMapCoords = Coords;
 
 		// position to play the animation at
-		CoordStruct coords = pTarget->GetCoords();
-		if(pTarget->Flags & cf_Bridge) {
-			coords.Z += CellClass::BridgeHeight;
-		}
+		auto coords = pTarget->GetCoordsWithBridge();
 		coords.Z += pData->SW_AnimHeight;
 
 		// recoded to support customizable anims
 		// and visibility for allies, too.
-		if(AnimTypeClass* pAnimType = GetAnim(pData)) {
+		if(auto const pAnimType = GetAnim(pData)) {
 			SWTypeExt::CreateChronoAnim(pThis, coords, pAnimType);
 		}
 
 		if(IsPlayer) {
 			// find the corresponding warp SW type.
 			int idxWarp = -1;
-			for(int i=0; i<SuperWeaponTypeClass::Array->Count; ++i) {
-				SuperWeaponTypeClass* pWarp = SuperWeaponTypeClass::Array->GetItem(i);
+
+			auto const& Types = *SuperWeaponTypeClass::Array;
+			for(auto const& pWarp : Types) {
 				if(pWarp->Type == SuperWeaponType::ChronoWarp) {
 					if(!_strcmpi(pData->SW_PostDependent, pWarp->ID)) {
-						idxWarp = i;
+						idxWarp = Types.GetItemIndex(&pWarp);
 						break;
 					} else if(idxWarp == -1) {
 						// fallback to use the first warp if there is no specific one
-						idxWarp = i;
+						idxWarp = Types.GetItemIndex(&pWarp);
 					}
 				}
 			}
 
 			if(idxWarp == -1) {
-				Debug::Log("[ChronoSphere::Launch] There is no SuperWeaponType of type ChronoWarp. Aborted.\n");
+				Debug::Log("[ChronoSphere::Activate] There is no SuperWeaponType with Type=ChronoWarp. Aborted.\n");
 			}
 			Unsorted::CurrentSWType = idxWarp;
 		}
