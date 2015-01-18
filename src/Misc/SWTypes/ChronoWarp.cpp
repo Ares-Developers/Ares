@@ -33,7 +33,7 @@ bool SW_ChronoWarp::Activate(SuperClass* pThis, const CellStruct &Coords, bool I
 {
 	// get the previous super weapon
 	SuperClass* pSource = nullptr;
-	if(HouseExt::ExtData *pExt = HouseExt::ExtMap.Find(pThis->Owner)) {
+	if(auto const pExt = HouseExt::ExtMap.Find(pThis->Owner)) {
 		pSource = pThis->Owner->Supers.GetItemOrDefault(pExt->SWLastIndex);
 	}
 
@@ -45,7 +45,7 @@ bool SW_ChronoWarp::Activate(SuperClass* pThis, const CellStruct &Coords, bool I
 	}
 
 	Debug::Log("[ChronoWarp::Activate] Launching %s with %s as source.\n", pThis->Type->ID, pSource->Type->ID);
-	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pSource->Type);
+	auto const pData = SWTypeExt::ExtMap.Find(pSource->Type);
 
 	// add radar events for source and target
 	if(pData->SW_RadarEvent) {
@@ -53,29 +53,26 @@ bool SW_ChronoWarp::Activate(SuperClass* pThis, const CellStruct &Coords, bool I
 		RadarEventClass::Create(RadarEventType::SuperweaponActivated, Coords);
 	}
 
-	// cell and coords calculations
-	CellClass *pCellSource = MapClass::Instance->GetCellAt(pSource->ChronoMapCoords);
-	CellClass *pCellTarget = MapClass::Instance->GetCellAt(Coords);
-
-	CoordStruct coordsSource = pCellSource->GetCoordsWithBridge();
-	coordsSource.Z += pData->SW_AnimHeight;
-
-	CoordStruct coordsTarget = pCellTarget->GetCoordsWithBridge();
-	coordsTarget.Z += pData->SW_AnimHeight;
-
-	// Update animations
+	// update animations
 	SWTypeExt::ClearChronoAnim(pThis);
 
-	if(auto pAnimType = pData->Chronosphere_BlastSrc.Get(RulesClass::Instance->ChronoBlast)) {
+	if(auto const pAnimType = pData->Chronosphere_BlastSrc.Get(RulesClass::Instance->ChronoBlast)) {
+		auto const pCellSource = MapClass::Instance->GetCellAt(pSource->ChronoMapCoords);
+		auto coordsSource = pCellSource->GetCoordsWithBridge();
+		coordsSource.Z += pData->SW_AnimHeight;
 		GameCreate<AnimClass>(pAnimType, coordsSource);
 	}
-	if(auto pAnimType = pData->Chronosphere_BlastDest.Get(RulesClass::Instance->ChronoBlastDest)) {
+
+	if(auto const pAnimType = pData->Chronosphere_BlastDest.Get(RulesClass::Instance->ChronoBlastDest)) {
+		auto const pCellTarget = MapClass::Instance->GetCellAt(Coords);
+		auto coordsTarget = pCellTarget->GetCoordsWithBridge();
+		coordsTarget.Z += pData->SW_AnimHeight;
 		GameCreate<AnimClass>(pAnimType, coordsTarget);
 	}
 
 	DynamicVectorClass<ChronoWarpStateMachine::ChronoWarpContainer> RegisteredBuildings;
 
-	auto Chronoport = [&](TechnoClass* pTechno) -> bool {
+	auto Chronoport = [&](TechnoClass* const pTechno) -> bool {
 		// is this thing affected at all?
 		if(!pData->IsHouseAffected(pThis->Owner, pTechno->Owner)) {
 			return true;
@@ -85,8 +82,8 @@ bool SW_ChronoWarp::Activate(SuperClass* pThis, const CellStruct &Coords, bool I
 			return true;
 		}
 
-		TechnoTypeClass *pType = pTechno->GetTechnoType();
-		TechnoTypeExt::ExtData *pExt = TechnoTypeExt::ExtMap.Find(pType);
+		auto const pType = pTechno->GetTechnoType();
+		auto const pExt = TechnoTypeExt::ExtMap.Find(pType);
 
 		// can this techno be chronoshifted?
 		if(!pExt->Chronoshift_Allow) {
@@ -95,7 +92,7 @@ bool SW_ChronoWarp::Activate(SuperClass* pThis, const CellStruct &Coords, bool I
 
 		// differentiate between buildings and vehicle-type buildings
 		bool IsVehicle = false;
-		if(BuildingClass* pBld = specific_cast<BuildingClass*>(pTechno)) {
+		if(auto const pBld = abstract_cast<BuildingClass*>(pTechno)) {
 			// always ignore bridge repair huts
 			if(pBld->Type->BridgeRepairHut) {
 				return true;
@@ -124,8 +121,11 @@ bool SW_ChronoWarp::Activate(SuperClass* pThis, const CellStruct &Coords, bool I
 		}
 
 		// some quick exclusion criteria
-		if(pTechno->IsImmobilized || pTechno->IsInAir()
-			|| pTechno->IsBeingWarpedOut() || pTechno->IsWarpingIn()) {
+		if(pTechno->IsImmobilized
+			|| pTechno->IsInAir()
+			|| pTechno->IsBeingWarpedOut()
+			|| pTechno->IsWarpingIn())
+		{
 				return true;
 		}
 
@@ -142,13 +142,10 @@ bool SW_ChronoWarp::Activate(SuperClass* pThis, const CellStruct &Coords, bool I
 		// if this is a newly produced unit that still is in its
 		// weapons factory, this skips it.
 		if(pTechno->WhatAmI() == AbstractType::Unit) {
-			TechnoClass* pLink = pTechno->GetNthLink(0);
-			if(pLink) {
-				if(BuildingClass* pLinkBld = specific_cast<BuildingClass*>(pLink)) {
-					if(pLinkBld->Type->WeaponsFactory) {
-						if(MapClass::Instance->GetCellAt(pTechno->Location)->GetBuilding() == pLinkBld) {
-							return true;
-						}
+			if(auto const pLinkBld = abstract_cast<BuildingClass*>(pTechno->GetNthLink(0))) {
+				if(pLinkBld->Type->WeaponsFactory) {
+					if(MapClass::Instance->GetCellAt(pTechno->Location)->GetBuilding() == pLinkBld) {
+						return true;
 					}
 				}
 			}
@@ -160,17 +157,17 @@ bool SW_ChronoWarp::Activate(SuperClass* pThis, const CellStruct &Coords, bool I
 		if(pType->Organic && pData->Chronosphere_KillOrganic) {
 			if(!pType->Teleporter || pData->Chronosphere_KillTeleporters) {
 				int strength = pType->Strength;
-				pTechno->ReceiveDamage(&strength, 0,
-					RulesClass::Instance->C4Warhead, nullptr, true, false, pSource->Owner);
+				pTechno->ReceiveDamage(&strength, 0, RulesClass::Instance->C4Warhead,
+					nullptr, true, false, pSource->Owner);
 				return true;
 			}
 		}
 
 		// remove squids. terror drones stay inside.
-		if(FootClass *pFoot = generic_cast<FootClass*>(pTechno)) {
-			if(FootClass *pSquid = pFoot->ParasiteEatingMe) {
+		if(auto const pFoot = abstract_cast<FootClass*>(pTechno)) {
+			if(auto const pSquid = pFoot->ParasiteEatingMe) {
 				if(pType->Naval) {
-					if(ParasiteClass *pSquidParasite = pSquid->ParasiteImUsing) {
+					if(auto const pSquidParasite = pSquid->ParasiteImUsing) {
 						pSquidParasite->SuppressionTimer.Start(500);
 						pSquidParasite->ExitUnit();
 					}
@@ -180,10 +177,10 @@ bool SW_ChronoWarp::Activate(SuperClass* pThis, const CellStruct &Coords, bool I
 
 		// disconnect bunker and contents
 		if(pTechno->BunkerLinkedItem) {
-			if(BuildingClass *pBunkerLink = specific_cast<BuildingClass*>(pTechno->BunkerLinkedItem)) {
+			if(auto const pBunkerLink = abstract_cast<BuildingClass*>(pTechno->BunkerLinkedItem)) {
 				// unit will be destroyed or chronoported. in every case the bunker will be empty.
 				pBunkerLink->ClearBunker();
-			} else if(BuildingClass *pBunker = specific_cast<BuildingClass*>(pTechno)) {
+			} else if(auto const pBunker = abstract_cast<BuildingClass*>(pTechno)) {
 				// the bunker leaves...
 				pBunker->UnloadBunker();
 				pBunker->EmptyBunker();
@@ -191,7 +188,7 @@ bool SW_ChronoWarp::Activate(SuperClass* pThis, const CellStruct &Coords, bool I
 		}
 
 		// building specific preparations
-		if(BuildingClass* pBld = specific_cast<BuildingClass*>(pTechno)) {
+		if(auto const pBld = abstract_cast<BuildingClass*>(pTechno)) {
 			// tell all linked units to get off
 			pBld->SendToEachLink(rc_0D);
 			pBld->SendToEachLink(rc_Exit);
@@ -213,17 +210,17 @@ bool SW_ChronoWarp::Activate(SuperClass* pThis, const CellStruct &Coords, bool I
 		}
 
 		// get the cells and coordinates
-		CoordStruct coordsUnitSource = pTechno->GetCoords();
-		CoordStruct coordsUnitTarget = coordsUnitSource;
-		CellStruct cellUnitTarget = pTechno->GetCell()->MapCoords - pSource->ChronoMapCoords + Coords;
-		CellClass* pCellUnitTarget = MapClass::Instance->GetCellAt(cellUnitTarget);
+		auto const coordsUnitSource = pTechno->GetCoords();
+		auto const cellUnitTarget = pTechno->GetCell()->MapCoords - pSource->ChronoMapCoords + Coords;
 
-		// move the unit to the new position
-		coordsUnitTarget.X += (Coords.X - pSource->ChronoMapCoords.X) * 256;
-		coordsUnitTarget.Y += (Coords.Y - pSource->ChronoMapCoords.Y) * 256;
-		coordsUnitTarget = pCellUnitTarget->FixHeight(coordsUnitTarget);
+		if(auto const pFoot = abstract_cast<FootClass*>(pTechno)) {
+			// move the unit to the new position
+			auto const pCellUnitTarget = MapClass::Instance->GetCellAt(cellUnitTarget);
+			auto coordsUnitTarget = coordsUnitSource;
+			coordsUnitTarget.X += (Coords.X - pSource->ChronoMapCoords.X) * 256;
+			coordsUnitTarget.Y += (Coords.Y - pSource->ChronoMapCoords.Y) * 256;
+			coordsUnitTarget = pCellUnitTarget->FixHeight(coordsUnitTarget);
 
-		if(FootClass *pFoot = generic_cast<FootClass*>(pTechno)) {
 			// clean up the unit's current cell
 			pFoot->Locomotor->Mark_All_Occupation_Bits(0);
 			pFoot->Locomotor->Force_Track(-1, coordsUnitSource);
@@ -240,11 +237,10 @@ bool SW_ChronoWarp::Activate(SuperClass* pThis, const CellStruct &Coords, bool I
 			pFoot->SendToEachLink(rc_Exit);
 			pFoot->ChronoWarpedByHouse = pThis->Owner;
 			pFoot->SetDestination(pCellUnitTarget, true);
-		} else if (BuildingClass *pBld = specific_cast<BuildingClass*>(pTechno)) {
+		} else if(auto const pBld = abstract_cast<BuildingClass*>(pTechno)) {
 			// begin the building chronoshift
 			pBld->BecomeUntargetable();
-			for(int i = 0; i<BulletClass::Array->Count; ++i) {
-				BulletClass* pBullet = BulletClass::Array->GetItem(i);
+			for(auto const& pBullet : *BulletClass::Array) {
 				if(pBullet->Target == pBld) {
 					pBullet->LoseTarget();
 				}
@@ -257,7 +253,7 @@ bool SW_ChronoWarp::Activate(SuperClass* pThis, const CellStruct &Coords, bool I
 			pBld->DisableTemporal();
 			pBld->UpdatePlacement(PlacementType::Redraw);
 
-			BuildingExt::ExtData* pBldExt = BuildingExt::ExtMap.Find(pBld);
+			auto const pBldExt = BuildingExt::ExtMap.Find(pBld);
 			pBldExt->AboutToChronoshift = true;
 
 			// register for chronoshift
