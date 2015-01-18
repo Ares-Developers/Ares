@@ -287,12 +287,8 @@ void ChronoWarpStateMachine::Update()
 			}
 		}
 	} else if(passed == this->Duration - 1) {
-		// copy the array so items can't get invalidated
-		DynamicVectorClass<ChronoWarpContainer> buildings;
-		for(int i=0; i<this->Buildings.Count; ++i) {
-			buildings.AddItem(this->Buildings.GetItem(i));
-		}
-		this->Buildings.Clear();
+		// move the array so items can't get invalidated
+		auto const buildings = std::move(this->Buildings);
 
 		// remove all buildings from the map at once
 		for(auto const& item : buildings) {
