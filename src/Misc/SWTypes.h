@@ -242,14 +242,9 @@ public:
 		: SWStateMachine(), Buildings(), Duration(0)
 	{ }
 
-	ChronoWarpStateMachine(int Duration, CellStruct XY, SuperClass *pSuper, NewSWType * pSWType, DynamicVectorClass<ChronoWarpContainer> *Buildings)
-		: SWStateMachine(Duration, XY, pSuper, pSWType)
-	{
-		for(int i=0; i<Buildings->Count; ++i) {
-			this->Buildings.AddItem(Buildings->GetItem(i));
-		}
-		this->Duration = Duration;
-	}
+	ChronoWarpStateMachine(int Duration, const CellStruct& XY, SuperClass* pSuper, NewSWType* pSWType, DynamicVectorClass<ChronoWarpContainer> Buildings)
+		: SWStateMachine(Duration, XY, pSuper, pSWType), Buildings(std::move(Buildings)), Duration(Duration)
+	{ }
 
 	virtual void Update();
 

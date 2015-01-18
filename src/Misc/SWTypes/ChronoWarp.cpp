@@ -270,7 +270,7 @@ bool SW_ChronoWarp::Activate(SuperClass* pThis, const CellStruct &Coords, bool I
 			items.for_each(Chronoport);
 
 			if(RegisteredBuildings.Count) {
-				this->newStateMachine(RulesClass::Instance->ChronoDelay + 1, Coords, pSource, this, &RegisteredBuildings);
+				this->newStateMachine(RulesClass::Instance->ChronoDelay + 1, Coords, pSource, this, std::move(RegisteredBuildings));
 			}
 
 			return true;

@@ -16,9 +16,9 @@ public:
 
 	typedef ChronoWarpStateMachine TStateMachine;
 
-	void newStateMachine(int Duration, CellStruct XY, SuperClass *pSuper, NewSWType * pSWType,
-		DynamicVectorClass<ChronoWarpStateMachine::ChronoWarpContainer> *Buildings) {
-			SWStateMachine::Register(std::make_unique<ChronoWarpStateMachine>(Duration, XY, pSuper, this, Buildings));
+	void newStateMachine(int Duration, const CellStruct &XY, SuperClass* pSuper, NewSWType* pSWType,
+		DynamicVectorClass<ChronoWarpStateMachine::ChronoWarpContainer> Buildings) {
+			SWStateMachine::Register(std::make_unique<ChronoWarpStateMachine>(Duration, XY, pSuper, this, std::move(Buildings)));
 	}
 };
 
