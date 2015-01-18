@@ -291,8 +291,8 @@ void ChronoWarpStateMachine::Update()
 		// redraw all buildings
 		for(int i=0; i<this->Buildings.Count; ++i) {
 			ChronoWarpContainer& Container = this->Buildings.Items[i];
-			if(Container.pBld) {
-				Container.pBld->UpdatePlacement(PlacementType::Redraw);
+			if(Container.building) {
+				Container.building->UpdatePlacement(PlacementType::Redraw);
 			}
 		}
 	} else if(passed == this->Duration - 1) {
@@ -306,14 +306,14 @@ void ChronoWarpStateMachine::Update()
 		// remove all buildings from the map at once
 		for(int i=0; i<buildings.Count; ++i) {
 			ChronoWarpContainer& Container = buildings.Items[i];
-			Container.pBld->Remove();
-			Container.pBld->ActuallyPlacedOnMap = false;
+			Container.building->Remove();
+			Container.building->ActuallyPlacedOnMap = false;
 		}
 
 		// bring back all buildings
 		for(int i=0; i<buildings.Count; ++i) {
 			ChronoWarpContainer& Container = buildings.Items[i];
-			if(BuildingClass* pBld = Container.pBld) {
+			if(BuildingClass* pBld = Container.building) {
 
 				if(!pBld->TemporalTargetingMe) {
 					// use some logic to place this unit on some other
@@ -378,7 +378,7 @@ void ChronoWarpStateMachine::InvalidatePointer(void *ptr, bool remove)
 {
 	if(remove) {
 		for(int i = 0; i < this->Buildings.Count; ++i) {
-			if(this->Buildings[i].pBld == ptr) {
+			if(this->Buildings[i].building == ptr) {
 				this->Buildings.RemoveItem(i);
 				break;
 			}

@@ -218,24 +218,23 @@ class ChronoWarpStateMachine : public SWStateMachine {
 public:
 	struct ChronoWarpContainer {
 	public:
-		BuildingClass* pBld;
+		BuildingClass* building;
 		CellStruct target;
 		CoordStruct origin;
 		bool isVehicle;
 
-		ChronoWarpContainer(BuildingClass* pBld, CellStruct target, CoordStruct origin, bool isVehicle) :
-			pBld(pBld),
+		ChronoWarpContainer(BuildingClass* pBld, const CellStruct& target, const CoordStruct& origin, bool isVehicle) :
+			building(pBld),
 			target(target),
 			origin(origin),
 			isVehicle(isVehicle)
 		{
 		}
 
-		ChronoWarpContainer() {
-		}
+		ChronoWarpContainer() = default;
 
-		bool operator == (const ChronoWarpContainer &t) const {
-			return (this->pBld == t.pBld);
+		bool operator == (const ChronoWarpContainer &other) const {
+			return this->building == other.building;
 		}
 	};
 
