@@ -308,10 +308,8 @@ void ChronoWarpStateMachine::Update()
 			// cell if the target cell is occupied. this emulates
 			// the behavior of other units.
 			auto success = false;
-			auto const count = CellSpread::NumCells(10);
-			size_t idx = 0;
-			do {
-				auto const cellNew = CellSpread::GetCell(idx) + item.target;
+			for(CellSpreadEnumerator it(item.isVehicle ? 10u : 0u); it; ++it) {
+				auto const cellNew = item.target + *it;
 
 				if(pBld->Type->CanCreateHere(cellNew, nullptr)) {
 					auto const pNewCell = MapClass::Instance->GetCellAt(cellNew);
@@ -322,8 +320,7 @@ void ChronoWarpStateMachine::Update()
 						break;
 					}
 				}
-				++idx;
-			} while(item.isVehicle && idx < count);
+			}
 
 			if(!success) {
 				// put it back where it was
