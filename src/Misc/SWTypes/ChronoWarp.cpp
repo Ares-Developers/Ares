@@ -281,10 +281,9 @@ void ChronoWarpStateMachine::Update()
 
 	if(passed == 1) {
 		// redraw all buildings
-		for(int i=0; i<this->Buildings.Count; ++i) {
-			ChronoWarpContainer& Container = this->Buildings.Items[i];
-			if(Container.building) {
-				Container.building->UpdatePlacement(PlacementType::Redraw);
+		for(auto const& item : this->Buildings) {
+			if(item.building) {
+				item.building->UpdatePlacement(PlacementType::Redraw);
 			}
 		}
 	} else if(passed == this->Duration - 1) {
@@ -296,73 +295,74 @@ void ChronoWarpStateMachine::Update()
 		this->Buildings.Clear();
 
 		// remove all buildings from the map at once
-		for(int i=0; i<buildings.Count; ++i) {
-			ChronoWarpContainer& Container = buildings.Items[i];
-			Container.building->Remove();
-			Container.building->ActuallyPlacedOnMap = false;
+		for(auto const& item : buildings) {
+			item.building->Remove();
+			item.building->ActuallyPlacedOnMap = false;
 		}
 
 		// bring back all buildings
-		for(int i=0; i<buildings.Count; ++i) {
-			ChronoWarpContainer& Container = buildings.Items[i];
-			if(BuildingClass* pBld = Container.building) {
+		for(auto const& item : buildings) {
+			auto const pBld = item.building;
 
-				if(!pBld->TemporalTargetingMe) {
-					// use some logic to place this unit on some other
-					// cell if the target cell is occupied. this emulates
-					// the behavior of other units.
-					bool success = false;
-					int count = CellSpread::NumCells(10);
-					int idx = 0;
-					do {
-						CellStruct cellNew = CellSpread::GetCell(idx) + Container.target;
-						CellClass* pNewCell = MapClass::Instance->GetCellAt(cellNew);
-						CoordStruct coordsNew = pNewCell->GetCoordsWithBridge();
+			if(!pBld || pBld->TemporalTargetingMe) {
+				continue;
+			}
 
-						if(pBld->Type->CanCreateHere(cellNew, nullptr)) {
-							if(pBld->Put(coordsNew, Direction::North)) {
-								success = true;
-								break;
-							}
-						}
-						++idx;
-					} while(Container.isVehicle && (idx<count));
+			// use some logic to place this unit on some other
+			// cell if the target cell is occupied. this emulates
+			// the behavior of other units.
+			auto success = false;
+			auto const count = CellSpread::NumCells(10);
+			size_t idx = 0;
+			do {
+				auto const cellNew = CellSpread::GetCell(idx) + item.target;
 
-					if(!success) {
-						// put it back where it was
-						++Unsorted::IKnowWhatImDoing;
-						pBld->Put(Container.origin, Direction::North);
-						pBld->Place(false);
-						--Unsorted::IKnowWhatImDoing;
+				if(pBld->Type->CanCreateHere(cellNew, nullptr)) {
+					auto const pNewCell = MapClass::Instance->GetCellAt(cellNew);
+					auto const coordsNew = pNewCell->GetCoordsWithBridge();
+
+					if(pBld->Put(coordsNew, Direction::North)) {
+						success = true;
+						break;
 					}
+				}
+				++idx;
+			} while(item.isVehicle && idx < count);
 
-					// chronoshift ends
-					pBld->BeingWarpedOut = false;
-					pBld->Owner->RecheckPower = true;
-					pBld->Owner->RecheckTechTree = true;
-					pBld->EnableTemporal();
-					pBld->UpdatePlacement(PlacementType::Redraw);
+			if(!success) {
+				// put it back where it was
+				++Unsorted::IKnowWhatImDoing;
+				pBld->Put(item.origin, Direction::North);
+				pBld->Place(false);
+				--Unsorted::IKnowWhatImDoing;
+			}
 
-					BuildingExt::ExtData* pBldExt = BuildingExt::ExtMap.Find(pBld);
-					pBldExt->AboutToChronoshift = false;
+			// chronoshift ends
+			pBld->BeingWarpedOut = false;
+			pBld->Owner->RecheckPower = true;
+			pBld->Owner->RecheckTechTree = true;
+			pBld->EnableTemporal();
+			pBld->UpdatePlacement(PlacementType::Redraw);
 
-					if(!success) {
-						if(SWTypeExt::ExtData *pExt = SWTypeExt::ExtMap.Find(this->Super->Type)) {
-							// destroy (buildings only if they are supposed to)
-							if(Container.isVehicle || pExt->Chronosphere_BlowUnplaceable) {
-								int damage = pBld->Type->Strength;
-								pBld->ReceiveDamage(&damage, 0,
-									RulesClass::Instance->C4Warhead, nullptr, true, true, this->Super->Owner);
-							}
-						}
-					}
+			auto const pBldExt = BuildingExt::ExtMap.Find(pBld);
+			pBldExt->AboutToChronoshift = false;
+
+			if(!success) {
+				// destroy (buildings only if they are supposed to)
+				auto const pExt = this->FindExtData();
+
+				if(item.isVehicle || pExt->Chronosphere_BlowUnplaceable) {
+					int damage = pBld->Type->Strength;
+					pBld->ReceiveDamage(&damage, 0, RulesClass::Instance->C4Warhead,
+						nullptr, true, true, this->Super->Owner);
 				}
 			}
 		}
 	} else if(passed == this->Duration) {
-		Super->Owner->RecheckPower = true;
-		Super->Owner->RecheckTechTree = true;
-		Super->Owner->RecheckRadar = true;
+		auto const pOwner = this->Super->Owner;
+		pOwner->RecheckPower = true;
+		pOwner->RecheckTechTree = true;
+		pOwner->RecheckRadar = true;
 	}
 }
 
