@@ -107,6 +107,10 @@ void __stdcall Ares::ExeRun()
 	Game::bVideoBackBuffer = false;
 	Game::bAllowVRAMSidebar = false;
 
+	auto const process = GetCurrentProcess();
+	DWORD_PTR const processAffinityMask = 1; // limit to first processor
+	SetProcessAffinityMask(process, processAffinityMask);
+
 #if _MSC_VER >= 1700
 	// install a new exception handler, if this version of Windows supports it
 	if(Ares::ExceptionMode != Ares::ExceptionHandlerMode::Default) {
