@@ -584,6 +584,11 @@ bool EMPulse::enableEMPEffect(TechnoClass * Victim, ObjectClass * Source) {
 	// cache the last mission this thing did
 	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(Victim);
 	pData->EMPLastMission = Victim->CurrentMission;
+
+	// detach temporal
+	if(Victim->IsWarpingSomethingOut()) {
+		Victim->TemporalImUsing->LetGo();
+	}
 	
 	// remove the unit from its team
 	if (FootClass * Foot = generic_cast<FootClass *>(Victim)) {
