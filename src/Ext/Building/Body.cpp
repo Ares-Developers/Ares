@@ -991,7 +991,8 @@ void BuildingExt::ExtData::Serialize(T& Stm) {
 		.Process(this->RegisteredJammers)
 		.Process(this->SensorArrayActiveCounter)
 		.Process(this->CashUpgradeTimers)
-		.Process(this->SecretLab_Placed);
+		.Process(this->SecretLab_Placed)
+		.Process(this->TogglePower_HasPower);
 }
 
 void BuildingExt::ExtData::LoadFromStream(AresStreamReader &Stm) {

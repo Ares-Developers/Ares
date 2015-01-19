@@ -1224,15 +1224,6 @@ DEFINE_HOOK(69281E, DisplayClass_ChooseAction_TogglePower, A)
 	return 0x69289B;
 }
 
-// make temporal weapons play nice with power toggle.
-// previously, power state was set to true unconditionally.
-DEFINE_HOOK(452210, BuildingClass_Enable_Temporal, 7)
-{
-	GET(BuildingClass*, pThis, ECX);
-	pThis->HasPower = pThis->StuffEnabled;
-	return 0x452217;
-}
-
 // naive way to fix negative indexes to be generated. proper way would be to replace
 // the entire function, and the function consuming the indexes. it is not yet known
 // whether the out of bounds read causes desync errors. this function appears to

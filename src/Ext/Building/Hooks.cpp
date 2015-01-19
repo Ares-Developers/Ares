@@ -236,3 +236,29 @@ DEFINE_HOOK(4482BD, BuildingClass_ChangeOwnership_ProduceCash, 6)
 
 	return 0x4482FC;
 }
+
+// make temporal weapons play nice with power toggle.
+// previously, power state was set to true unconditionally.
+DEFINE_HOOK(452287, BuildingClass_GoOnline_TogglePower, 6)
+{
+	GET(BuildingClass* const, pThis, ESI);
+	auto const pExt = BuildingExt::ExtMap.Find(pThis);
+	pExt->TogglePower_HasPower = true;
+	return 0;
+}
+
+DEFINE_HOOK(452393, BuildingClass_GoOffline_TogglePower, 7)
+{
+	GET(BuildingClass* const, pThis, ESI);
+	auto const pExt = BuildingExt::ExtMap.Find(pThis);
+	pExt->TogglePower_HasPower = false;
+	return 0;
+}
+
+DEFINE_HOOK(452210, BuildingClass_Enable_TogglePower, 7)
+{
+	GET(BuildingClass* const, pThis, ECX);
+	auto const pExt = BuildingExt::ExtMap.Find(pThis);
+	pThis->HasPower = pExt->TogglePower_HasPower;
+	return 0x452217;
+}

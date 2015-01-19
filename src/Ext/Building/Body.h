@@ -84,6 +84,8 @@ public:
 
 		bool SecretLab_Placed;
 
+		bool TogglePower_HasPower;
+
 		TimerStruct CashUpgradeTimers[3];
 
 	public:
@@ -95,6 +97,7 @@ public:
 			FreeUnits_Done(false),
 			AboutToChronoshift(false),
 			SecretLab_Placed(false),
+			TogglePower_HasPower(true),
 			SensorArrayActiveCounter(0)
 		{ }
 
