@@ -1740,6 +1740,7 @@ DEFINE_HOOK(6F525B, TechnoClass_DrawExtras_PowerOff, 5)
 	GET_STACK(RectangleStruct*, pRect, 0xA0);
 
 	if(auto pBld = abstract_cast<BuildingClass*>(pTechno)) {
+		auto const pExt = BuildingExt::ExtMap.Find(pBld);
 
 		// allies and observers can always see by default
 		bool canSeeRepair = HouseClass::Player->IsAlliedWith(pBld->Owner)
@@ -1755,11 +1756,7 @@ DEFINE_HOOK(6F525B, TechnoClass_DrawExtras_PowerOff, 5)
 
 		// display power off marker only for current player's buildings
 		bool showPower = FileSystem::POWEROFF_SHP
-			&& !pBld->HasPower
-			// only if disabled by power toggle (excludes temporal attacks)
-			&& !pBld->StuffEnabled
-			&& !pBld->IsWarpingIn()
-			&& !pBld->IsUnderEMP()
+			&& !pExt->TogglePower_HasPower
 			// only for owned buildings, but observers got magic eyes
 			&& (pBld->Owner->ControlledByPlayer() || HouseClass::IsPlayerObserver());
 
