@@ -1207,7 +1207,7 @@ DEFINE_HOOK(69281E, DisplayClass_ChooseAction_TogglePower, A)
 		auto pOwner = pBld->GetOwningHouse();
 
 		if(pOwner && pOwner->ControlledByPlayer()) {
-			if(pBld->CanBeSelected() && !pBld->IsStrange() && !pBld->IsBeingWarpedOut()) {
+			if(pBld->CanBeSelected() && !pBld->IsStrange() && !pBld->IsBeingWarpedOut() && !pBld->IsUnderEMP()) {
 				allowed = pBld->Type->CanTogglePower();
 			}
 		}
