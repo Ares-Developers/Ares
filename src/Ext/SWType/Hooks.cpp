@@ -282,7 +282,7 @@ DEFINE_HOOK(4468F4, BuildingClass_Place_AnnounceSW, 6) {
 
 		pData->PrintMessage(pData->Message_Detected, pThis->Owner);
 
-		if(pData->EVA_Detected == -1 && !pData->IsTypeRedirected()) {
+		if(pData->EVA_Detected == -1 && pData->IsOriginalType() && !pData->IsTypeRedirected()) {
 			return 0;
 		}
 
@@ -301,7 +301,7 @@ DEFINE_HOOK(6CBDD7, SuperClass_AnnounceReady, 6)
 
 	pData->PrintMessage(pData->Message_Ready, HouseClass::Player);
 
-	if(pData->EVA_Ready != -1 || pData->IsTypeRedirected()) {
+	if(pData->EVA_Ready != -1 || !pData->IsOriginalType() || pData->IsTypeRedirected()) {
 		VoxClass::PlayIndex(pData->EVA_Ready);
 		return 0x6CBE68;
 	}
@@ -316,7 +316,7 @@ DEFINE_HOOK(6CC0EA, SuperClass_AnnounceQuantity, 9)
 
 	pData->PrintMessage(pData->Message_Ready, HouseClass::Player);
 
-	if(pData->EVA_Ready != -1 || pData->IsTypeRedirected()) {
+	if(pData->EVA_Ready != -1 || !pData->IsOriginalType() || pData->IsTypeRedirected()) {
 		VoxClass::PlayIndex(pData->EVA_Ready);
 		return 0x6CC17E;
 	}
