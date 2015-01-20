@@ -283,7 +283,8 @@ DEFINE_HOOK(4468F4, BuildingClass_Place_AnnounceSW, 6) {
 		pData->PrintMessage(pData->Message_Detected, pThis->Owner);
 
 		if(pData->EVA_Detected == -1 && pData->IsOriginalType() && !pData->IsTypeRedirected()) {
-			return 0;
+			R->EAX(pSuper->Type->Type);
+			return 0x446943;
 		}
 
 		VoxClass::PlayIndex(pData->EVA_Detected);
