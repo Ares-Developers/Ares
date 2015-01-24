@@ -46,8 +46,8 @@ public:
 			&& sum <= this->MapWidth + 2 * this->MapHeight;
 	}
 
-	bool CheckLevel(const CellStruct& cell, int level) const {
-		auto const cellLevel = cell + GetRelation(cell) - this->CellOffset;
+	bool CheckLevel(const CellStruct& offset, int level) const {
+		auto const cellLevel = this->Base() + offset + GetRelation(offset) - this->CellOffset;
 		return MapClass::Instance->GetCellAt(cellLevel)->Level < level + 4;
 	}
 

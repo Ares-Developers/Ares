@@ -40,7 +40,7 @@ void MapRevealer::RevealImpl(const CoordStruct& coords, int const radius, HouseC
 			auto const cell = base + offset;
 			if(this->IsCellAvailable(cell)) {
 				if(std::abs(offset.X) <= static_cast<int>(spread) && offset.MagnitudeSquared() < spread_limit_sqr) {
-					if(!checkLevel || this->CheckLevel(cell, level)) {
+					if(!checkLevel || this->CheckLevel(offset, level)) {
 						auto pCell = MapClass::Instance->GetCellAt(cell);
 						func(pCell);
 					}
