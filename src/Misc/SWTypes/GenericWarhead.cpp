@@ -1,4 +1,5 @@
 #include "GenericWarhead.h"
+#include "../../Ext/Building/Body.h"
 #include "../../Ext/Techno/Body.h"
 #include "../../Ext/WarheadType/Body.h"
 
@@ -34,7 +35,8 @@ bool SW_GenericWarhead::Activate(SuperClass* pThis, const CellStruct &Coords, bo
 	HouseClass *FirerHouse = pThis->Owner;
 	for(int i = 0; i < FirerHouse->Buildings.Count; ++i) {
 		BuildingClass *B = FirerHouse->Buildings[i];
-		if(B->HasSuperWeapon(pThis->Type->ArrayIndex)) {
+		auto const pExt = BuildingExt::ExtMap.Find(B);
+		if(pExt->HasSuperWeapon(pThis->Type->ArrayIndex, true)) {
 			Firer = B;
 			break;
 		}

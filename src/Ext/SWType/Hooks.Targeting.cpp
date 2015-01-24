@@ -1,5 +1,6 @@
 #include "Body.h"
 
+#include "../Building/Body.h"
 #include "../House/Body.h"
 #include "../Techno/Body.h"
 #include "../../Misc/SWTypes.h"
@@ -471,7 +472,8 @@ private:
 
 		// Ares < 0.9 didn't check power
 		auto it = std::find_if(buildings.begin(), buildings.end(), [=](BuildingClass* pBld) {
-			if(pBld->HasSuperWeapon(index) && pBld->IsPowerOnline()) {
+			auto const pExt = BuildingExt::ExtMap.Find(pBld);
+			if(pExt->HasSuperWeapon(index, true) && pBld->IsPowerOnline()) {
 				auto cell = pBld->GetMapCoords();
 
 				if(info.CanFireAt(cell)) {
