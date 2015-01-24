@@ -495,12 +495,12 @@ void WarheadTypeExt::ExtData::applyAttachedEffect(const CoordStruct &coords, Tec
 				continue;
 			}
 
-			if(Owner) {
-				if(!WarheadTypeExt::CanAffectTarget(curTechno, Owner->Owner, this->OwnerObject())
-					|| std::abs(this->GetVerses(curTechno->GetTechnoType()->Armor).Verses) < 0.001)
-				{
-					continue;
-				}
+			if(Owner && !WarheadTypeExt::CanAffectTarget(curTechno, Owner->Owner, this->OwnerObject())) {
+				continue;
+			}
+
+			if(std::abs(this->GetVerses(curTechno->GetTechnoType()->Armor).Verses) < 0.001) {
+				continue;
 			}
 
 			this->AttachedEffect.Attach(curTechno, this->AttachedEffect.Duration, Owner);
