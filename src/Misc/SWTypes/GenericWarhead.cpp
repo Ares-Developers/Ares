@@ -26,8 +26,7 @@ bool SW_GenericWarhead::Activate(SuperClass* pThis, const CellStruct &Coords, bo
 
 	BuildingClass* pFirer = nullptr;
 	for(auto const& pBld : pThis->Owner->Buildings) {
-		auto const pExt = BuildingExt::ExtMap.Find(pBld);
-		if(pExt->HasSuperWeapon(pThis->Type->ArrayIndex, true)) {
+		if(this->IsLaunchSiteEligible(pData, Coords, pBld, false)) {
 			pFirer = pBld;
 			break;
 		}
