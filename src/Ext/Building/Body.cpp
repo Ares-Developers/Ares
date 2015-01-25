@@ -933,24 +933,23 @@ bool BuildingExt::ExtData::ReverseEngineer(TechnoClass *Victim) {
 	return false;
 }
 
-void BuildingExt::ExtData::KickOutClones(TechnoClass * Production) {
-	auto Factory = this->OwnerObject();
-	auto FactoryType = Factory->Type;
+void BuildingExt::ExtData::KickOutClones(TechnoClass* const Production) {
+	auto const Factory = this->OwnerObject();
+	auto const FactoryType = Factory->Type;
 
 	if(FactoryType->Cloning || (FactoryType->Factory != InfantryTypeClass::AbsID && FactoryType->Factory != UnitTypeClass::AbsID)) {
 		return;
 	}
 
-	auto ProductionType = Production->GetTechnoType();
-	auto ProductionTypeData = TechnoTypeExt::ExtMap.Find(ProductionType);
+	auto const ProductionType = Production->GetTechnoType();
+	auto const ProductionTypeData = TechnoTypeExt::ExtMap.Find(ProductionType);
 	if(!ProductionTypeData->Cloneable) {
 		return;
 	}
 
-	auto FactoryOwner = Factory->Owner;
-	auto &AllBuildings = FactoryOwner->Buildings;
+	auto const FactoryOwner = Factory->Owner;
 
-	auto &CloningSources = ProductionTypeData->ClonedAt;
+	auto const& CloningSources = ProductionTypeData->ClonedAt;
 
 	auto KickOutClone = [ProductionType, FactoryOwner](BuildingClass *B) -> void {
 		auto Clone = static_cast<TechnoClass *>(ProductionType->CreateObject(FactoryOwner));
@@ -959,34 +958,29 @@ void BuildingExt::ExtData::KickOutClones(TechnoClass * Production) {
 		}
 	};
 
-	bool IsUnit(true);
+	auto const IsUnit = (FactoryType->Factory != InfantryTypeClass::AbsID);
 
 	// keep cloning vats for backward compat, unless explicit sources are defined
-	if(FactoryType->Factory == InfantryTypeClass::AbsID) {
-		if(CloningSources.empty()) {
-			auto &CloningVats = FactoryOwner->CloningVats;
-			for(int i = 0; i < CloningVats.Count; ++i) {
-				KickOutClone(CloningVats[i]);
-			}
+	if(!IsUnit && CloningSources.empty()) {
+		for(auto const CloningVat : FactoryOwner->CloningVats) {
+			KickOutClone(CloningVat);
 		}
-		IsUnit = false;
 	}
 
 	// and clone from new sources
 	if(!CloningSources.empty() || IsUnit) {
-		for(int i = 0; i < AllBuildings.Count; ++i) {
-			auto B = AllBuildings[i];
+		for(auto const B : FactoryOwner->Buildings) {
 			if(B->InLimbo) {
 				continue;
 			}
-			auto BType = B->Type;
+			auto const BType = B->Type;
 
-			bool ShouldClone(false);
+			auto ShouldClone = false;
 			if(!CloningSources.empty()) {
 				ShouldClone = CloningSources.Contains(BType);
 			} else if(IsUnit) {
-				auto BData = BuildingTypeExt::ExtMap.Find(BType);
-				ShouldClone = (!!BData->CloningFacility) && (BType->Naval == FactoryType->Naval);
+				auto const BData = BuildingTypeExt::ExtMap.Find(BType);
+				ShouldClone = BData->CloningFacility && (BType->Naval == FactoryType->Naval);
 			}
 
 			if(ShouldClone) {
@@ -994,7 +988,6 @@ void BuildingExt::ExtData::KickOutClones(TechnoClass * Production) {
 			}
 		}
 	}
-
 }
 
 CoordStruct BuildingExt::GetCenterCoords(BuildingClass* pBuilding, bool includeBib)
