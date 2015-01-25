@@ -10,48 +10,43 @@ void SW_GenericWarhead::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeCla
 
 bool SW_GenericWarhead::Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer)
 {
-	SuperWeaponTypeClass *pType = pThis->Type;
-	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pType);
+	auto const pType = pThis->Type;
+	auto const pData = SWTypeExt::ExtMap.Find(pType);
 
 	auto pWarhead = GetWarhead(pData);
 	auto damage = GetDamage(pData);
 
 	if(!pData || !pWarhead) {
 		Debug::Log("Couldn't launch GenericWarhead SW ([%s])\n", pType->ID);
-		return 0;
+		return false;
 	}
 
-	CellClass *Cell = MapClass::Instance->GetCellAt(Coords);
-	CoordStruct coords = Cell->GetCoordsWithBridge();
+	auto const pCell = MapClass::Instance->GetCellAt(Coords);
+	auto const coords = pCell->GetCoordsWithBridge();
 
-	auto pWHExt = WarheadTypeExt::ExtMap.Find(pWarhead);
-
-	// crush, kill, destroy
-	// NULL -> TechnoClass* SourceObject
-	pWHExt->applyRipples(coords);
-	pWHExt->applyIronCurtain(coords, pThis->Owner, damage);
-
-	BuildingClass *Firer = nullptr;
-	HouseClass *FirerHouse = pThis->Owner;
-	for(int i = 0; i < FirerHouse->Buildings.Count; ++i) {
-		BuildingClass *B = FirerHouse->Buildings[i];
-		auto const pExt = BuildingExt::ExtMap.Find(B);
+	BuildingClass* pFirer = nullptr;
+	for(auto const& pBld : pThis->Owner->Buildings) {
+		auto const pExt = BuildingExt::ExtMap.Find(pBld);
 		if(pExt->HasSuperWeapon(pThis->Type->ArrayIndex, true)) {
-			Firer = B;
+			pFirer = pBld;
 			break;
 		}
 	}
 
-	pWHExt->applyEMP(coords, Firer);
-	pWHExt->applyAttachedEffect(coords, Firer);
+	// crush, kill, destroy
+	auto const pWHExt = WarheadTypeExt::ExtMap.Find(pWarhead);
+	pWHExt->applyRipples(coords);
+	pWHExt->applyIronCurtain(coords, pThis->Owner, damage);
+	pWHExt->applyEMP(coords, pFirer);
+	pWHExt->applyAttachedEffect(coords, pFirer);
 
-	if(!pWHExt->applyPermaMC(pThis->Owner, Cell->GetContent())) {
-		MapClass::DamageArea(coords, damage, Firer, pWarhead, true, pThis->Owner);
-		if(AnimTypeClass * DamageAnimType = MapClass::SelectDamageAnimation(damage, pWarhead, Cell->LandType, coords)) {
-			GameCreate<AnimClass>(DamageAnimType, coords);
+	if(!pWHExt->applyPermaMC(pThis->Owner, pCell->GetContent())) {
+		MapClass::DamageArea(coords, damage, pFirer, pWarhead, true, pThis->Owner);
+		if(auto const pType = MapClass::SelectDamageAnimation(damage, pWarhead, pCell->LandType, coords)) {
+			GameCreate<AnimClass>(pType, coords);
 		}
 		MapClass::FlashbangWarheadAt(damage, pWarhead, coords, false, SpotlightFlags::None);
 	}
 
-	return 1;
+	return true;
 }
