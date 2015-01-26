@@ -97,7 +97,7 @@ bool SW_NuclearMissile::Activate(SuperClass* const pThis, const CellStruct &Coor
 			// find a building owned by the player that can fire this SWType
 			auto const& Buildings = pThis->Owner->Buildings;
 			auto it = std::find_if(Buildings.begin(), Buildings.end(), [&](BuildingClass* pBld) {
-				return IsLaunchSiteEligible(pData, Coords, pBld, true);
+				return IsLaunchSiteEligible(pData, Coords, pBld, false);
 			});
 
 			if(it != Buildings.end()) {
