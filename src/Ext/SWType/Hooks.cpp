@@ -617,6 +617,16 @@ DEFINE_HOOK(6CBD6B, SuperClass_Update_DrainMoney, 8) {
 	return (timeLeft ? 0x6CBE7C : 0x6CBD73);
 }
 
+// clear the chrono placement animation if not ChronoWarp
+DEFINE_HOOK(6CBCDE, SuperClass_Update_Animation, 5) {
+	if(auto const pType = SuperWeaponTypeClass::Array->GetItemOrDefault(Unsorted::CurrentSWType)) {
+		if(pType->Type == SuperWeaponType::ChronoWarp) {
+			return 0x6CBCFE;
+		}
+	}
+	return 0x6CBCE3;
+}
+
 // used only to find the nuke for ICBM crates. only supports nukes fully.
 DEFINE_HOOK(6CEEB0, SuperWeaponTypeClass_FindFirstOfAction, 8) {
 	GET(Action, action, ECX);
