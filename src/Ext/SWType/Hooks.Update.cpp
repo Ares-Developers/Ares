@@ -35,22 +35,21 @@ std::vector<SWStatus> GetSuperWeaponStatuses(HouseClass* pHouse) {
 					if(idxSW > -1) {
 						auto& status = Statuses[idxSW];
 						status.Available = true;
-						if(!status.PowerSourced || !status.Charging) {
-							bool validBuilding = pBld->HasPower
-								&& pExt->IsOperated()
-								&& !pBld->IsUnderEMP();
 
-							if(!status.PowerSourced) {
-								status.PowerSourced = validBuilding;
-							}
+						if(!status.Charging
+							&& pBld->HasPower
+							&& !pBld->IsUnderEMP()
+							&& pExt->IsOperated())
+						{
+							status.PowerSourced = true;
 
-							if(!status.Charging) {
-								status.Charging = validBuilding
-									&& !pBld->IsBeingWarpedOut()
-									&& (pBld->CurrentMission != Mission::Selling)
-									&& (pBld->QueuedMission != Mission::Selling)
-									&& (pBld->CurrentMission != Mission::Construction)
-									&& (pBld->QueuedMission != Mission::Construction);
+							if(!pBld->IsBeingWarpedOut()
+								&& (pBld->CurrentMission != Mission::Construction)
+								&& (pBld->CurrentMission != Mission::Selling)
+								&& (pBld->QueuedMission != Mission::Construction)
+								&& (pBld->QueuedMission != Mission::Selling))
+							{
+								status.Charging = true;
 							}
 						}
 					}
