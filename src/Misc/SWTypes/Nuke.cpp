@@ -94,17 +94,14 @@ bool SW_NuclearMissile::Activate(SuperClass* const pThis, const CellStruct &Coor
 		BuildingClass* pSilo = nullptr;
 				
 		if((!pThis->Granted || !pThis->OneTime) && pData->Nuke_SiloLaunch) {
+			// find a building owned by the player that can fire this SWType
+			auto const& Buildings = pThis->Owner->Buildings;
+			auto it = std::find_if(Buildings.begin(), Buildings.end(), [&](BuildingClass* pBld) {
+				return IsLaunchSiteEligible(pData, Coords, pBld, true);
+			});
 
-			// find a building type that can fire this SWType and verify the
-			// player has it. don't give up, just try the other types as well.
-			for(const auto& pTBld : *BuildingTypeClass::Array) {
-				if(pTBld->NukeSilo && pTBld->HasSuperWeapon(pType->ArrayIndex)) {
-					// valid silo. let's see whether the firer got it.
-					pSilo = pThis->Owner->FindBuildingOfType(pTBld->ArrayIndex, -1);
-					if(pSilo) {
-						break;
-					}
-				}
+			if(it != Buildings.end()) {
+				pSilo = *it;
 			}
 		}
 
@@ -174,4 +171,9 @@ bool SW_NuclearMissile::Activate(SuperClass* const pThis, const CellStruct &Coor
 	}
 
 	return false;
+}
+
+bool SW_NuclearMissile::IsLaunchSite(SWTypeExt::ExtData* pSWType, BuildingClass* pBuilding) const
+{
+	return pBuilding->Type->NukeSilo && NewSWType::IsLaunchSite(pSWType, pBuilding);
 }

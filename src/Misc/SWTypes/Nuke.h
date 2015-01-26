@@ -19,6 +19,9 @@ public:
 	virtual int GetDamage(const SWTypeExt::ExtData* pData) const override;
 
 	static SuperWeaponTypeClass* CurrentNukeType;
+
+private:
+	virtual bool IsLaunchSite(SWTypeExt::ExtData* pSWType, BuildingClass* pBuilding) const override;
 };
 
 #endif
