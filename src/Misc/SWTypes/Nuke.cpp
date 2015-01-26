@@ -80,103 +80,98 @@ void SW_NuclearMissile::LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeCl
 	pData->Nuke_SiloLaunch.Read(exINI, section, "Nuke.SiloLaunch");
 }
 
-bool SW_NuclearMissile::Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer)
+bool SW_NuclearMissile::Activate(SuperClass* const pThis, const CellStruct &Coords, bool const IsPlayer)
 {
 	if(pThis->IsCharged) {
-		SuperWeaponTypeClass *pType = pThis->Type;
+		auto const pType = pThis->Type;
+		auto const pData = SWTypeExt::ExtMap.Find(pType);
 
-		if(SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pType)) {
+		auto const pCell = MapClass::Instance->GetCellAt(Coords);
+		auto const target = pCell->GetCoordsWithBridge();
 
-			CellClass* pCell = MapClass::Instance->GetCellAt(Coords);
-			CoordStruct target = pCell->GetCoordsWithBridge();
-
-			// the nuke has two ways to fire. first the granted way used by nukes
-			// collected from crates. second, the normal way firing from a silo.
-			BuildingClass* pSilo = nullptr;
+		// the nuke has two ways to fire. first the granted way used by nukes
+		// collected from crates. second, the normal way firing from a silo.
+		BuildingClass* pSilo = nullptr;
 				
-			if((!pThis->Granted || !pThis->OneTime) && pData->Nuke_SiloLaunch) {
-				
-				// find a building type that can fire this SWType and verify the
-				// player has it. don't give up, just try the other types as well.
-				for(const auto& pTBld : *BuildingTypeClass::Array) {
-					if(pTBld->NukeSilo && pTBld->HasSuperWeapon(pType->ArrayIndex)) {
-						// valid silo. let's see whether the firer got it.
-						pSilo = pThis->Owner->FindBuildingOfType(pTBld->ArrayIndex, -1);
-						if(pSilo) {
-							break;
-						}
+		if((!pThis->Granted || !pThis->OneTime) && pData->Nuke_SiloLaunch) {
+
+			// find a building type that can fire this SWType and verify the
+			// player has it. don't give up, just try the other types as well.
+			for(const auto& pTBld : *BuildingTypeClass::Array) {
+				if(pTBld->NukeSilo && pTBld->HasSuperWeapon(pType->ArrayIndex)) {
+					// valid silo. let's see whether the firer got it.
+					pSilo = pThis->Owner->FindBuildingOfType(pTBld->ArrayIndex, -1);
+					if(pSilo) {
+						break;
 					}
 				}
 			}
+		}
 
-			// via silo
-			bool fired = false;
-			if(pSilo) {
-				Debug::Log("Nuke launched from Missile Silo, type %s.\n", pSilo->Type->ID);
-				// setup the missile and start the fire mission
-				pSilo->FiringSWType = pType->ArrayIndex;
-				pSilo->QueueMission(Mission::Missile, false);
-				pSilo->NextMission();
+		// via silo
+		bool fired = false;
+		if(pSilo) {
+			Debug::Log("Nuke launched from Missile Silo, type %s.\n", pSilo->Type->ID);
+			// setup the missile and start the fire mission
+			pSilo->FiringSWType = pType->ArrayIndex;
+			pSilo->QueueMission(Mission::Missile, false);
+			pSilo->NextMission();
 
-				pThis->Owner->NukeTarget = Coords;
-				fired = true;
-			}
+			pThis->Owner->NukeTarget = Coords;
+			fired = true;
+		}
 
-			if(!fired) {
-				Debug::Log("Nuke launched manually.\n");
-				// if we reached this, there is no silo launch. still launch a missile.
-				if(WeaponTypeClass *pWeapon = pData->Nuke_Payload) {
-					if(BulletTypeClass *pProjectile = pWeapon->Projectile) {
-						// get damage and warhead. they are not available during
-						// initialisation, so we gotta fall back now if they are invalid.
-						int damage = GetDamage(pData);
-						auto pWarhead = GetWarhead(pData);
+		if(!fired) {
+			Debug::Log("Nuke launched manually.\n");
+			// if we reached this, there is no silo launch. still launch a missile.
+			if(auto const pWeapon = pData->Nuke_Payload) {
+				if(auto const pProjectile = pWeapon->Projectile) {
+					// get damage and warhead. they are not available during
+					// initialisation, so we gotta fall back now if they are invalid.
+					auto const damage = GetDamage(pData);
+					auto const pWarhead = GetWarhead(pData);
 
-						// create a bullet and the psi warning
-						if(BulletClass* pBullet = pProjectile->CreateBullet(pCell, nullptr, damage, pWarhead, pWeapon->Speed, pWeapon->Bright)) {
-							pBullet->SetWeaponType(pWeapon);
-							if(AnimTypeClass* pAnimType = pData->Nuke_PsiWarning) {
-								pThis->Owner->PsiWarn(pCell, pBullet, pAnimType->ID);
-							}
+					// create a bullet and the psi warning
+					if(auto const pBullet = pProjectile->CreateBullet(pCell, nullptr, damage, pWarhead, pWeapon->Speed, pWeapon->Bright)) {
+						pBullet->SetWeaponType(pWeapon);
+						if(auto const pAnimType = pData->Nuke_PsiWarning) {
+							pThis->Owner->PsiWarn(pCell, pBullet, pAnimType->ID);
+						}
 
-							// remember the fired SW type
-							if(BulletExt::ExtData *pBulletData = BulletExt::ExtMap.Find(pBullet)) {
-								pBulletData->NukeSW = pType;
-							}
+						// remember the fired SW type
+						if(auto const pBulletData = BulletExt::ExtMap.Find(pBullet)) {
+							pBulletData->NukeSW = pType;
+						}
 								
-							// aim the bullet downward and put
-							// it over the target area.
-							if(pBullet) {
-								BulletVelocity vel;
-								vel.X = 0;
-								vel.Y = 0;
-								vel.Z = -100;
+						// aim the bullet downward and put
+						// it over the target area.
+						if(pBullet) {
+							BulletVelocity vel{0.0, 0.0, -100.0};
 
-								CoordStruct high = target;
-								high.Z += 20000;
+							auto high = target;
+							high.Z += 20000;
 
-								pBullet->MoveTo(high, vel);
-								fired = true;
-							}
+							pBullet->MoveTo(high, vel);
+							fired = true;
 						}
 					}
 				}
 			}
+		}
 
-			if(fired) {
-				// allies can see the target location before the enemy does
-				if(pData->SW_RadarEvent) {
-					if(pThis->Owner->IsAlliedWith(HouseClass::Player)) {
-						RadarEventClass::Create(RadarEventType::SuperweaponActivated, Coords);
-					}
+		if(fired) {
+			// allies can see the target location before the enemy does
+			if(pData->SW_RadarEvent) {
+				if(pThis->Owner->IsAlliedWith(HouseClass::Player)) {
+					RadarEventClass::Create(RadarEventType::SuperweaponActivated, Coords);
 				}
-
-				VocClass::PlayAt(pData->SW_ActivationSound.Get(RulesClass::Instance->DigSound), target, nullptr);
-				pThis->Owner->RecheckTechTree = true;
-				return true;
 			}
 
+			VocClass::PlayAt(pData->SW_ActivationSound.Get(RulesClass::Instance->DigSound), target, nullptr);
+			pThis->Owner->RecheckTechTree = true;
+			return true;
 		}
 	}
+
 	return false;
 }
