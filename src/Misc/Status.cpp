@@ -87,7 +87,7 @@ DEFINE_HOOK(531413, Game_Start, 5)
 	DSurface::Hidden->DrawText(L"This is a testing version, NOT a final product.", 20, 480, COLOR_RED);
 	DSurface::Hidden->DrawText(L"Bugs are to be expected.", 20, 500, COLOR_RED);
 #endif
-	DSurface::Hidden->DrawText(L"Ares is © The Ares Contributors 2007 - 2014.", 10, 520, COLOR_GREEN);
+	DSurface::Hidden->DrawText(L"Ares is © The Ares Contributors 2007 - 2015.", 10, 520, COLOR_GREEN);
 
 	wchar_t wVersion[256];
 	wsprintfW(wVersion, L"%hs", DISPLAY_STRVER);
