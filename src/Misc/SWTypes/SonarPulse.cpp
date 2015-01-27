@@ -47,16 +47,16 @@ void SW_SonarPulse::LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeClass 
 	}
 }
 
-bool SW_SonarPulse::Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer)
+bool SW_SonarPulse::Activate(SuperClass* const pThis, const CellStruct &Coords, bool const IsPlayer)
 {
-	SuperWeaponTypeClass *pType = pThis->Type;
-	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pType);
+	auto const pType = pThis->Type;
+	auto const pData = SWTypeExt::ExtMap.Find(pType);
 
 	if(!pData) {
 		return false;
 	}
 
-	auto Detect = [&](TechnoClass* pTechno) -> bool {
+	auto Detect = [&](TechnoClass* const pTechno) -> bool {
 		// is this thing affected at all?
 		if(!pData->IsHouseAffected(pThis->Owner, pTechno->Owner)) {
 			return true;
@@ -68,29 +68,29 @@ bool SW_SonarPulse::Activate(SuperClass* pThis, const CellStruct &Coords, bool I
 
 		// actually detect this
 		if(pTechno->CloakState != CloakState::Uncloaked) {
-			pTechno->Uncloak(1);
-			pTechno->NeedsRedraw = 1;
-			TechnoExt::ExtData *pExt = TechnoExt::ExtMap.Find(pTechno);
-			if(pTechno) {
-				pExt->CloakSkipTimer.Start(pData->Sonar_Delay);
-			}
+			pTechno->Uncloak(true);
+			pTechno->NeedsRedraw = true;
+
+			auto const pExt = TechnoExt::ExtMap.Find(pTechno);
+			pExt->CloakSkipTimer.Start(pData->Sonar_Delay);
 		}
 
 		return true;
 	};
 
-	auto range = GetRange(pData);
+	auto const range = GetRange(pData);
 
 	if(range.WidthOrRange < 0) {
 		// decloak everything regardless of ranges
-		for(int i=0; i<TechnoClass::Array->Count; ++i) {
-			Detect(TechnoClass::Array->GetItem(i));
+		for(auto const& pTechno : *TechnoClass::Array) {
+			Detect(pTechno);
 		}
 
 	} else {
 		// decloak everything in range
-		Helpers::Alex::DistinctCollector<TechnoClass*> items;
-		Helpers::Alex::for_each_in_rect_or_range<TechnoClass>(Coords, range.WidthOrRange, range.Height, std::ref(items));
+		using namespace Helpers::Alex;
+		DistinctCollector<TechnoClass*> items;
+		for_each_in_rect_or_range<TechnoClass>(Coords, range.WidthOrRange, range.Height, std::ref(items));
 		items.for_each(Detect);
 
 		// radar event only if this isn't full map sonar
