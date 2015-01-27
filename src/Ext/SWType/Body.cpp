@@ -173,7 +173,7 @@ void SWTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 		char* p = strtok_s(Ares::readBuffer, Ares::readDelims, &context);
 		if(p && *p) {
 			this->SW_Range.WidthOrRange = static_cast<float>(atof(p));
-			this->SW_Range.Height = -1;
+			this->SW_Range.Height = 0;
 
 			p = strtok_s(nullptr, Ares::readDelims, &context);
 			if(p && *p) {

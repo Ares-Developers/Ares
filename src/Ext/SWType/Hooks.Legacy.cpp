@@ -405,7 +405,7 @@ DEFINE_HOOK(53A6CF, LightningStorm_Update, 7) {
 					bool isRectangle = true;
 
 					// is circular range?
-					if(height < 0) {
+					if(height <= 0) {
 						height = width;
 						isRectangle = false;
 					}
