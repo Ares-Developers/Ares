@@ -821,7 +821,6 @@ void SWTypeExt::ExtData::Serialize(T& Stm) {
 		.Process(this->DropPod_Maximum)
 		.Process(this->DropPod_Veterancy)
 		.Process(this->DropPod_Types)
-		.Process(this->Reveal_FullMap)
 		.Process(this->Money_Amount)
 		.Process(this->Money_DrainAmount)
 		.Process(this->Money_DrainDelay)

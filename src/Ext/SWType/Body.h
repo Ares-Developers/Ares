@@ -172,9 +172,6 @@ public:
 		Valueable<double> DropPod_Veterancy;
 		ValueableVector<TechnoTypeClass*> DropPod_Types;
 
-		// Reveal
-		Valueable<bool> Reveal_FullMap;
-
 		// Money
 		Valueable<int> Money_Amount;
 		Valueable<int> Money_DrainAmount;

@@ -4,6 +4,8 @@
 #include "../../Utilities/Helpers.Alex.h"
 #include "../../Utilities/TemplateDef.h"
 
+#include <algorithm>
+
 bool SW_Reveal::HandlesType(SuperWeaponType type) const
 {
 	return (type == SuperWeaponType::PsychicReveal);
@@ -17,13 +19,8 @@ int SW_Reveal::GetSound(const SWTypeExt::ExtData* pData) const
 SWRange SW_Reveal::GetRange(const SWTypeExt::ExtData* pData) const
 {
 	if(pData->SW_Range.empty()) {
-		int radius = RulesClass::Instance->PsychicRevealRadius;
-
 		// real default values, that is, force max cellspread range of 10
-		if(radius > 10) {
-			radius = 10;
-		}
-
+		auto const radius = std::min(RulesClass::Instance->PsychicRevealRadius, 10);
 		return SWRange(radius);
 	}
 	return pData->SW_Range;
@@ -41,16 +38,7 @@ void SW_Reveal::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)
 
 void SW_Reveal::LoadFromINI(SWTypeExt::ExtData* pData, SuperWeaponTypeClass* pSW, CCINIClass* pINI)
 {
-	const char * section = pSW->ID;
-
-	if(!pINI->GetSection(section)) {
-		return;
-	}
-
-	INI_EX exINI(pINI);
-	pData->Reveal_FullMap.Read(exINI, section, "Reveal.FullMap");
-
-	pSW->Action = pData->Reveal_FullMap ? Action::None : Actions::SuperWeaponAllowed;
+	pSW->Action = (GetRange(pData).WidthOrRange < 0.0) ? Action::None : Actions::SuperWeaponAllowed;
 }
 
 bool SW_Reveal::Activate(SuperClass* const pThis, const CellStruct &Coords, bool const IsPlayer)
@@ -63,7 +51,9 @@ bool SW_Reveal::Activate(SuperClass* const pThis, const CellStruct &Coords, bool
 
 		if(revealer.AffectsHouse(pThis->Owner)) {
 			auto Apply = [&](bool add) {
-				if(pData->Reveal_FullMap) {
+				auto const range = GetRange(pData);
+
+				if(range.WidthOrRange < 0.0) {
 					// reveal all cells without hundred thousands function calls
 					auto const Map = MapClass::Instance;
 					Map->CellIteratorReset();
@@ -76,7 +66,6 @@ bool SW_Reveal::Activate(SuperClass* const pThis, const CellStruct &Coords, bool
 					// default way to reveal, but reveal one cell at a time.
 					auto const& base = revealer.Base();
 
-					auto const range = GetRange(pData);
 					Helpers::Alex::for_each_in_rect_or_range<CellClass>(base, range.WidthOrRange, range.Height,
 						[&, add](CellClass* pCell) -> bool
 					{
