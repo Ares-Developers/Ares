@@ -192,10 +192,14 @@ void TechnoExt::EjectPassengers(FootClass *pThis, int howMany) {
 		howMany = pThis->Passengers.NumPassengers;
 	}
 
+	auto const openTopped = pThis->GetTechnoType()->OpenTopped;
+
 	for(int i = 0; i < howMany && pThis->Passengers.FirstPassenger; ++i) {
 		FootClass *passenger = pThis->RemoveFirstPassenger();
 		if(!EjectRandomly(passenger, pThis->Location, 128, false)) {
 			passenger->UnInit();
+		} else if(openTopped) {
+			pThis->ExitedOpenTopped(passenger);
 		}
 	}
 }
