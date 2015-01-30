@@ -14,6 +14,10 @@
 DEFINE_HOOK(445F80, BuildingClass_Place, 5)
 {
 	GET(BuildingClass *, pThis, ECX);
+	if(pThis->Type->SecretLab) {
+		auto pExt = BuildingExt::ExtMap.Find(pThis);
+		pExt->UpdateSecretLab();
+	}
 
 	auto bldTTExt = TechnoTypeExt::ExtMap.Find(pThis->Type);
 	auto bldTExt = TechnoExt::ExtMap.Find(pThis);
@@ -26,29 +30,6 @@ DEFINE_HOOK(445F80, BuildingClass_Place, 5)
 			plans.push_back(bldTExt->OriginalHouseType);
 		}
 	}
-
-	return 0;
-}
-
-DEFINE_HOOK(445F9F, BuildingClass_Place_SecretLab, 6)
-{
-	GET(BuildingClass* const, pThis, EBP);
-
-	if(pThis->Type->SecretLab) {
-		auto pExt = BuildingExt::ExtMap.Find(pThis);
-		pExt->UpdateSecretLab();
-	}
-
-	return 0;
-}
-
-DEFINE_HOOK(44909B, BuildingClass_ChangeOwnership_SecretLab, 6)
-{
-	GET(BuildingClass* const, pThis, ESI);
-	//GET(HouseClass* const, pNewOwner, EBP);
-
-	auto pExt = BuildingExt::ExtMap.Find(pThis);
-	pExt->UpdateSecretLab();
 
 	return 0;
 }
