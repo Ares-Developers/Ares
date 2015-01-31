@@ -427,7 +427,7 @@ struct EnemyBaseTargetSelector final : public TargetSelector {
 
 	static CellStruct FindTargetCoords(const TargetingInfo& info) {
 		if(auto pEnemy = HouseClass::Array->GetItemOrDefault(info.Owner->EnemyHouseIndex)) {
-			auto cell = info.Owner->GetBaseCenter();
+			auto cell = pEnemy->GetBaseCenter();
 
 			if(info.CanFireAt(cell)) {
 				return cell;
