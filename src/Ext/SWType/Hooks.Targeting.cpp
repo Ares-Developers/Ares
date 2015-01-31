@@ -139,14 +139,6 @@ struct CanFireRequiresEnemy {
 	}
 };
 
-struct CanFireRequiresAffectedEnemy {
-	bool operator()(const TargetingInfo& info) const {
-		// requires enemy, which also has to be an SW requirement
-		auto pEnemy = HouseClass::Array->GetItemOrDefault(info.Owner->EnemyHouseIndex);
-		return pEnemy && info.TypeExt->IsHouseAffected(info.Owner, pEnemy);
-	}
-};
-
 #pragma endregion
 
 #pragma region Prefer functors
@@ -439,7 +431,7 @@ struct EnemyBaseTargetSelector final : public TargetSelector {
 
 struct OffensiveTargetSelector final : public TargetSelector {
 	TargetResult operator()(const TargetingInfo& info) const {
-		return{GetTarget(info, CanFireRequiresAffectedEnemy(), PreferNothing(), PickIonCannonTarget()),
+		return{GetTarget(info, CanFireRequiresEnemy(), PreferNothing(), PickIonCannonTarget()),
 			SWTargetFlags::DisallowEmpty};
 	}
 };
