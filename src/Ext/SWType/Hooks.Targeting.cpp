@@ -518,8 +518,9 @@ private:
 struct HunterSeekerTargetSelector final : public TargetSelector {
 	// from TS: launch at empty coords only if a house has an enemy
 	TargetResult operator()(const TargetingInfo& info) const {
-		return{GetTarget(info, CanFireRequiresEnemy(), PreferNothing(), PickEmptyTarget()),
-			SWTargetFlags::AllowEmpty};
+		auto const hasEnemy = CanFireRequiresEnemy{}(info);
+		return{CellStruct::Empty, hasEnemy ?
+			SWTargetFlags::AllowEmpty : SWTargetFlags::DisallowEmpty};
 	}
 };
 
