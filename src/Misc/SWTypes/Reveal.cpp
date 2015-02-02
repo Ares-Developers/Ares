@@ -72,7 +72,6 @@ bool SW_Reveal::Activate(SuperClass* const pThis, const CellStruct &Coords, bool
 						auto const& cell = pCell->MapCoords;
 						if(revealer.IsCellAvailable(cell) && revealer.IsCellAllowed(cell)) {
 							if(range.height() > 0 || cell.DistanceFrom(base) < range.range()) {
-								auto const pCell = MapClass::Instance->GetCellAt(cell);
 								revealer.Process1(pCell, false, add);
 							}
 						}
