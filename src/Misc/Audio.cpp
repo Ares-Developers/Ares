@@ -98,7 +98,7 @@ DEFINE_HOOK(4016F7, Ares_Audio_LoadWAV, 5)	//50% rewrite of Audio::LoadWAV
 		pAudioIndex[0x110 >> 2] = reinterpret_cast<DWORD>(pFile);	//ExternalFile = pFile
 
 		if(pFile->Exists(nullptr)) {
-			if(pFile->Open(eFileMode::Read)) {
+			if(pFile->Open(FileAccessMode::Read)) {
 				int WAVStruct[0x8];
 				int nSampleSize;
 

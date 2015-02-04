@@ -64,7 +64,7 @@ DEFINE_HOOK(537BC0, Game_MakeScreenshot, 0)
 
 				CCFileClass *ScreenShot = GameCreate<CCFileClass>("\0");
 
-				ScreenShot->OpenEx(fName, eFileMode::Write);
+				ScreenShot->OpenEx(fName, FileAccessMode::Write);
 
 				#pragma pack(push, 1)
 				struct bmpfile_full_header {

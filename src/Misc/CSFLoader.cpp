@@ -13,7 +13,7 @@ void CSFLoader::LoadAdditionalCSF(const char *pFileName)
 	//To do that, use StringTable::LoadFile.
 	if(StringTable::IsLoaded && pFileName && *pFileName) {
 		CCFileClass* pFile = GameCreate<CCFileClass>(pFileName);
-		if(pFile->Exists(nullptr) && pFile->Open(eFileMode::Read)) {
+		if(pFile->Exists(nullptr) && pFile->Open(FileAccessMode::Read)) {
 			CSFHeader header;
 
 			if(pFile->ReadBytes(&header, sizeof(CSFHeader)) == sizeof(CSFHeader)) {
