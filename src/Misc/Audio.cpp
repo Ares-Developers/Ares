@@ -24,10 +24,8 @@ DEFINE_HOOK(4064A0, Ares_Audio_AddSample, 0)	//Complete rewrite of VocClass::Add
 				++pSampleName;
 			}
 
-			int nSampleIndex = (AudioIDXData::IDX)
-				? AudioIDXData::IDX->FindSampleIndex(pSampleName)
-				: -1
-			;
+			int nSampleIndex = !AudioIDXData::Instance ? -1
+				: AudioIDXData::Instance->FindSampleIndex(pSampleName);
 
 			if(nSampleIndex == -1) {
 				nSampleIndex = reinterpret_cast<int>(_strdup(pSampleName));
@@ -99,10 +97,10 @@ DEFINE_HOOK(4016F7, Ares_Audio_LoadWAV, 5)	//50% rewrite of Audio::LoadWAV
 
 		if(pFile->Exists(nullptr)) {
 			if(pFile->Open(FileAccessMode::Read)) {
-				int WAVStruct[0x8];
+				AudioSampleData Data;
 				int nSampleSize;
 
-				if(Audio::ReadWAVFile(pFile, reinterpret_cast<void*>(WAVStruct), &nSampleSize)) {
+				if(Audio::ReadWAVFile(pFile, &Data, &nSampleSize)) {
 					pAudioIndex[0x118 >> 2] = reinterpret_cast<DWORD>(pFile);	//CurrentSampleFile = pFile
 					pAudioIndex[0x11C >> 2] = nSampleSize;	//CurrentSampleSize = nSampleSize
 					R->EAX(1);
