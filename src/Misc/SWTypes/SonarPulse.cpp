@@ -29,6 +29,7 @@ void SW_SonarPulse::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *
 	pData->SW_AffectsHouse = SuperWeaponAffectedHouse::Enemies;
 	pData->SW_AffectsTarget = SuperWeaponTarget::Water;
 	pData->SW_RequiresTarget = SuperWeaponTarget::Water;
+	pData->SW_AIRequiresTarget = SuperWeaponTarget::Water;
 }
 
 void SW_SonarPulse::LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI)
