@@ -326,36 +326,33 @@ bool TechnoExt::ExtData::DrawVisualFX() const {
 }
 
 bool TechnoExt::ExtData::AcquireHunterSeekerTarget() const {
-	auto pThis = this->OwnerObject();
+	auto const pThis = this->OwnerObject();
 
 	if(!pThis->Target) {
 		std::vector<TechnoClass*> preferredTargets;
 		std::vector<TechnoClass*> randomTargets;
 
 		// defaults if SW isn't set
-		HouseClass* pOwner = pThis->GetOwningHouse();
+		auto pOwner = pThis->GetOwningHouse();
 		SWTypeExt::ExtData* pSWExt = nullptr;
-		bool canPrefer = true;
+		auto canPrefer = true;
 
 		// check the hunter seeker SW
-		if(SuperClass* pSuper = this->SuperWeapon) {
+		if(auto const pSuper = this->SuperWeapon) {
 			pOwner = pSuper->Owner;
 			pSWExt = SWTypeExt::ExtMap.Find(pSuper->Type);
 			canPrefer = !pSWExt->HunterSeeker_RandomOnly;
 		}
 
-		bool isHumanControlled = pOwner->ControlledByHuman();
-		GameMode mode = SessionClass::Instance->GameMode;
+		auto const isHumanControlled = pOwner->ControlledByHuman();
+		auto const mode = SessionClass::Instance->GameMode;
 
 		// the AI in multiplayer games only attacks its favourite enemy
-		bool favouriteEnemyOnly = false;
-		HouseClass* pFavouriteEnemy = nullptr;
-		if(mode != GameMode::Campaign && pOwner->EnemyHouseIndex != -1 && !isHumanControlled) {
-			favouriteEnemyOnly = true;
-			pFavouriteEnemy = HouseClass::Array->GetItem(pOwner->EnemyHouseIndex);
-		}
+		auto const pFavouriteEnemy = HouseClass::Array->GetItemOrDefault(pOwner->EnemyHouseIndex);
+		auto const favouriteEnemyOnly = (mode != GameMode::Campaign
+			&& pFavouriteEnemy && !isHumanControlled);
 
-		for(auto i : *TechnoClass::Array) {
+		for(auto const& i : *TechnoClass::Array) {
 
 			// is the house ok?
 			if(favouriteEnemyOnly) {
@@ -376,20 +373,20 @@ bool TechnoExt::ExtData::AcquireHunterSeekerTarget() const {
 			}
 
 			// type prevents this being a target
-			TechnoTypeClass* pType = i->GetTechnoType();
+			auto const pType = i->GetTechnoType();
 			if(pType->Invisible || !pType->LegalTarget) {
 				continue;
 			}
 
 			// is type to be ignored?
-			auto pExt = TechnoTypeExt::ExtMap.Find(pType);
+			auto const pExt = TechnoTypeExt::ExtMap.Find(pType);
 			if(pExt->HunterSeekerIgnore) {
 				continue;
 			}
 
 			// harvester truce
 			if(ScenarioClass::Instance->SpecialFlags.HarvesterImmune) {
-				if(auto pUnitType = abstract_cast<UnitTypeClass*>(pType)) {
+				if(auto const pUnitType = abstract_cast<UnitTypeClass*>(pType)) {
 					if(pUnitType->Harvester) {
 						continue;
 					}
@@ -403,7 +400,7 @@ bool TechnoExt::ExtData::AcquireHunterSeekerTarget() const {
 
 			// in multiplayer games, non-civilian targets are preferred
 			// for human players
-			bool isPreferred = mode != GameMode::Campaign && isHumanControlled
+			auto const isPreferred = mode != GameMode::Campaign && isHumanControlled
 				&& !i->Owner->Type->MultiplayPassive && canPrefer;
 
 			// add to the right list
@@ -414,11 +411,11 @@ bool TechnoExt::ExtData::AcquireHunterSeekerTarget() const {
 			}
 		}
 
-		auto &targets = (preferredTargets.size() > 0) ? preferredTargets : randomTargets;
+		auto const& targets = !preferredTargets.empty() ? preferredTargets : randomTargets;
 
-		if(int count = targets.size()) {
-			int index = ScenarioClass::Instance->Random.RandomRanged(0, count - 1);
-			TechnoClass* pTarget = targets[index];
+		if(auto const count = static_cast<int>(targets.size())) {
+			auto const index = ScenarioClass::Instance->Random.RandomRanged(0, count - 1);
+			auto const& pTarget = targets[index];
 
 			// that's our target
 			pThis->SetTarget(pTarget);
