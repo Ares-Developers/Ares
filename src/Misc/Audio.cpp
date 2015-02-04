@@ -6,8 +6,10 @@
 #include "../Ares.h"
 #include "../Ares.CRT.h"
 
-// assuming nobody has 128k legit samples in their game
-#define MINIMUM_ARES_SAMPLE 0x20000
+// do not change! this is not a game constant, but a technical one.
+// memory will not be allocated below this address, thus only values
+// below are guaranteed to be indexes. -AlexB
+auto const MinimumAresSample = 0x10000;
 
 DEFINE_HOOK(4064A0, Ares_Audio_AddSample, 0)	//Complete rewrite of VocClass::AddSample
 {
@@ -50,7 +52,7 @@ DEFINE_HOOK(75144F, Ares_Audio_DeleteSampleNames, 9)
 	if(VocClass *pVoc = *ppVoc) {
 		for(int i=0; i < pVoc->NumSamples; ++i) {
 			int SampleIndex = pVoc->SampleIndex[i];	//SampleIndex[i]
-			if(SampleIndex >= MINIMUM_ARES_SAMPLE) {
+			if(SampleIndex >= MinimumAresSample) {
 				free(reinterpret_cast<char*>(SampleIndex));
 			}
 		}
@@ -66,7 +68,7 @@ DEFINE_HOOK(75048E, VocClass_LoadFromINI_ResetSamples, 9)
 	if(VocClass *pVoc = *ppVoc) {
 		for(int i=0; i < pVoc->NumSamples; ++i) {
 			int SampleIndex = pVoc->SampleIndex[i];	//SampleIndex[i]
-			if(SampleIndex >= MINIMUM_ARES_SAMPLE) {
+			if(SampleIndex >= MinimumAresSample) {
 				free(reinterpret_cast<char*>(SampleIndex));
 			}
 		}
@@ -81,7 +83,7 @@ DEFINE_HOOK(4016F7, Ares_Audio_LoadWAV, 5)	//50% rewrite of Audio::LoadWAV
 	//TODO: Once an AudioIndex definition is available, rewrite this. -pd
 	GET(int, SampleIndex, EDX);
 
-	if(SampleIndex >= MINIMUM_ARES_SAMPLE) {
+	if(SampleIndex >= MinimumAresSample) {
 		char* SampleName = reinterpret_cast<char*>(SampleIndex);
 
 		GET(DWORD *, pAudioIndex, ECX);	//AudioIndex*
@@ -122,7 +124,7 @@ DEFINE_HOOK(401640, Ares_Audio_GetSampleInfo, 5)
 {
 	//TODO: Once an AudioSample definition is available (if ever), rewrite this. -pd
 	GET(int, SampleIndex, EDX);
-	if(SampleIndex >= MINIMUM_ARES_SAMPLE) {
+	if(SampleIndex >= MinimumAresSample) {
 
 		GET_STACK(int *, pAudioSample, 0x4);	//AudioSample*
 
