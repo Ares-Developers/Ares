@@ -1,4 +1,4 @@
-//Allows WAV files being placed in Mixes
+// Allows WAV files being placed in Mixes
 
 #include <Audio.h>
 #include <CCFileClass.h>
@@ -11,34 +11,36 @@
 // below are guaranteed to be indexes. -AlexB
 auto const MinimumAresSample = 0x10000;
 
-DEFINE_HOOK(4064A0, Ares_Audio_AddSample, 0)	//Complete rewrite of VocClass::AddSample
+DEFINE_HOOK(4064A0, VocClass_AddSample, 0) // Complete rewrite of VocClass::AddSample
 {
-	//TODO: Once a VocClass and AudioIDXData definition is available, rewrite this. -pd
-	GET(VocClass*, pVoc, ECX); //VocClass*
-	GET(char*, pSampleName, EDX);
+	GET(VocClass*, pVoc, ECX);
+	GET(const char*, pSampleName, EDX);
 
-	if(pVoc->NumSamples == 0x20) { //if(pVoc->get_NumSamples()==0x20)
-		R->EAX(0); //return false
+	if(pVoc->NumSamples == 0x20) {
+		// return false
+		R->EAX(0);
 	} else {
-		if(*reinterpret_cast<int*>(0x87E2A0)) //I dunno
-		{
+		if(*reinterpret_cast<int*>(0x87E2A0)) { // I dunno
 			while(*pSampleName == '$' || *pSampleName == '#') {
 				++pSampleName;
 			}
 
-			int nSampleIndex = !AudioIDXData::Instance ? -1
+			auto idxSample = !AudioIDXData::Instance ? -1
 				: AudioIDXData::Instance->FindSampleIndex(pSampleName);
 
-			if(nSampleIndex == -1) {
-				nSampleIndex = reinterpret_cast<int>(_strdup(pSampleName));
+			if(idxSample == -1) {
+				idxSample = reinterpret_cast<int>(_strdup(pSampleName));
 			}
 
-			pVoc->SampleIndex[pVoc->NumSamples] = nSampleIndex; //Set sample index or string pointer
+			// Set sample index or string pointer
+			pVoc->SampleIndex[pVoc->NumSamples] = idxSample;
 			++pVoc->NumSamples;
 
-			R->EAX(1); //return true
+			// return true
+			R->EAX(1);
 		}
 	}
+
 	return 0x40651E;
 }
 
@@ -46,14 +48,12 @@ DEFINE_HOOK(4064A0, Ares_Audio_AddSample, 0)	//Complete rewrite of VocClass::Add
 DEFINE_HOOK(75144F, Ares_Audio_DeleteSampleNames, 9)
 //FINE_HOOK_AGAIN(75048E, Ares_Audio_DeleteSampleNames, 9)
 {
-	//TODO: Once a VocClass definition is available, rewrite this. -pd
-
-	GET(VocClass **, ppVoc, ESI);
-	if(VocClass *pVoc = *ppVoc) {
-		for(int i=0; i < pVoc->NumSamples; ++i) {
-			int SampleIndex = pVoc->SampleIndex[i];	//SampleIndex[i]
-			if(SampleIndex >= MinimumAresSample) {
-				free(reinterpret_cast<char*>(SampleIndex));
+	GET(VocClass**, ppVoc, ESI);
+	if(const auto pVoc = *ppVoc) {
+		for(auto i = 0; i < pVoc->NumSamples; ++i) {
+			const auto& idxSample = pVoc->SampleIndex[i];
+			if(idxSample >= MinimumAresSample) {
+				free(reinterpret_cast<void*>(idxSample));
 			}
 		}
 		delete ppVoc;
@@ -61,15 +61,14 @@ DEFINE_HOOK(75144F, Ares_Audio_DeleteSampleNames, 9)
 	return R->Origin() + 9;
 }
 
-
 DEFINE_HOOK(75048E, VocClass_LoadFromINI_ResetSamples, 9)
 {
-	GET(VocClass **, ppVoc, ESI);
-	if(VocClass *pVoc = *ppVoc) {
-		for(int i=0; i < pVoc->NumSamples; ++i) {
-			int SampleIndex = pVoc->SampleIndex[i];	//SampleIndex[i]
-			if(SampleIndex >= MinimumAresSample) {
-				free(reinterpret_cast<char*>(SampleIndex));
+	GET(VocClass**, ppVoc, ESI);
+	if(const auto pVoc = *ppVoc) {
+		for(auto i = 0; i < pVoc->NumSamples; ++i) {
+			const auto& idxSample = pVoc->SampleIndex[i];
+			if(idxSample >= MinimumAresSample) {
+				free(reinterpret_cast<void*>(idxSample));
 			}
 		}
 		pVoc->NumSamples = 0;
@@ -77,23 +76,22 @@ DEFINE_HOOK(75048E, VocClass_LoadFromINI_ResetSamples, 9)
 	return 0;
 }
 
-
-DEFINE_HOOK(4016F7, Ares_Audio_LoadWAV, 5)	//50% rewrite of Audio::LoadWAV
+DEFINE_HOOK(4016F7, AudioIndex_LoadSample, 5) //50% rewrite of Audio::LoadWAV
 {
-	GET(int, SampleIndex, EDX);
+	GET(const int, idxSample, EDX);
 
-	if(SampleIndex >= MinimumAresSample) {
-		char* SampleName = reinterpret_cast<char*>(SampleIndex);
+	if(idxSample >= MinimumAresSample) {
+		auto const pSampleName = reinterpret_cast<const char*>(idxSample);
 
 		GET(AudioIDXData*, pAudioIndex, ECX);
 		pAudioIndex->ExternalFile = nullptr;
 		pAudioIndex->CurrentSampleFile = nullptr;
 
-		//Replace the construction of the RawFileClass with one of a CCFileClass
+		// Replace the construction of the RawFileClass with one of a CCFileClass
 		char filename[0x100] = "\0";
-		_snprintf_s(filename, _TRUNCATE, "%s.wav", SampleName);
+		_snprintf_s(filename, _TRUNCATE, "%s.wav", pSampleName);
 
-		CCFileClass* pFile = GameCreate<CCFileClass>(filename);
+		auto const pFile = GameCreate<CCFileClass>(filename);
 		pAudioIndex->ExternalFile = pFile;
 
 		if(pFile->Exists(nullptr)) {
@@ -104,11 +102,13 @@ DEFINE_HOOK(4016F7, Ares_Audio_LoadWAV, 5)	//50% rewrite of Audio::LoadWAV
 				if(Audio::ReadWAVFile(pFile, &Data, &nSampleSize)) {
 					pAudioIndex->CurrentSampleFile = pFile;
 					pAudioIndex->CurrentSampleSize = nSampleSize;
+
 					R->EAX(1);
 					return 0x401889;
 				}
 			}
 		}
+
 		pAudioIndex->ExternalFile = nullptr;
 		GameDelete(pFile);
 
@@ -119,13 +119,12 @@ DEFINE_HOOK(4016F7, Ares_Audio_LoadWAV, 5)	//50% rewrite of Audio::LoadWAV
 	return 0;
 }
 
-DEFINE_HOOK(401640, Ares_Audio_GetSampleInfo, 5)
+DEFINE_HOOK(401640, AudioIndex_GetSampleInformation, 5)
 {
-	GET(int, SampleIndex, EDX);
-	if(SampleIndex >= MinimumAresSample) {
+	GET(const int, idxSample, EDX);
+	GET_STACK(AudioSampleData*, pAudioSample, 0x4);
 
-		GET_STACK(AudioSampleData*, pAudioSample, 0x4);
-
+	if(idxSample >= MinimumAresSample) {
 		pAudioSample->Data = 4;
 		pAudioSample->Format = 0;
 		pAudioSample->SampleRate = 22050;
@@ -136,6 +135,6 @@ DEFINE_HOOK(401640, Ares_Audio_GetSampleInfo, 5)
 		R->EAX(pAudioSample);
 		return 0x40169E;
 	}
+
 	return 0;
 }
-
