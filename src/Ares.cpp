@@ -143,7 +143,7 @@ CCINIClass* Ares::OpenConfig(const char* file) {
 		CCFileClass* cfg = GameCreate<CCFileClass>(file);
 
 		if(cfg) {
-			if(cfg->Exists(nullptr)) {
+			if(cfg->Exists()) {
 				pINI->ReadCCFile(cfg);
 			}
 			GameDelete(cfg);

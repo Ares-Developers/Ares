@@ -43,7 +43,7 @@ DEFINE_HOOK(474314, CCINIClass_ReadCCFile2, 6)
 
 			if(canLoad) {
 				CCFileClass *xFile = GameCreate<CCFileClass>(buffer);
-				if(xFile->Exists(nullptr)) {
+				if(xFile->Exists()) {
 					xINI->ReadCCFile(xFile);
 				}
 				GameDelete(xFile);

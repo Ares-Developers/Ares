@@ -94,7 +94,7 @@ DEFINE_HOOK(4016F7, AudioIndex_LoadSample, 5) //50% rewrite of Audio::LoadWAV
 		auto const pFile = GameCreate<CCFileClass>(filename);
 		pAudioIndex->ExternalFile = pFile;
 
-		if(pFile->Exists(nullptr)) {
+		if(pFile->Exists()) {
 			if(pFile->Open(FileAccessMode::Read)) {
 				AudioSampleData Data;
 				int nSampleSize;
