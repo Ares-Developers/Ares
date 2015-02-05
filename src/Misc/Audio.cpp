@@ -80,22 +80,21 @@ DEFINE_HOOK(75048E, VocClass_LoadFromINI_ResetSamples, 9)
 
 DEFINE_HOOK(4016F7, Ares_Audio_LoadWAV, 5)	//50% rewrite of Audio::LoadWAV
 {
-	//TODO: Once an AudioIndex definition is available, rewrite this. -pd
 	GET(int, SampleIndex, EDX);
 
 	if(SampleIndex >= MinimumAresSample) {
 		char* SampleName = reinterpret_cast<char*>(SampleIndex);
 
-		GET(DWORD *, pAudioIndex, ECX);	//AudioIndex*
-		pAudioIndex[0x110 >> 2] = 0;	//ExternalFile = nullptr
-		pAudioIndex[0x118 >> 2] = 0;	//CurrentSampleFile = nullptr
+		GET(AudioIDXData*, pAudioIndex, ECX);
+		pAudioIndex->ExternalFile = nullptr;
+		pAudioIndex->CurrentSampleFile = nullptr;
 
 		//Replace the construction of the RawFileClass with one of a CCFileClass
 		char filename[0x100] = "\0";
 		_snprintf_s(filename, _TRUNCATE, "%s.wav", SampleName);
 
 		CCFileClass* pFile = GameCreate<CCFileClass>(filename);
-		pAudioIndex[0x110 >> 2] = reinterpret_cast<DWORD>(pFile);	//ExternalFile = pFile
+		pAudioIndex->ExternalFile = pFile;
 
 		if(pFile->Exists(nullptr)) {
 			if(pFile->Open(FileAccessMode::Read)) {
@@ -103,14 +102,14 @@ DEFINE_HOOK(4016F7, Ares_Audio_LoadWAV, 5)	//50% rewrite of Audio::LoadWAV
 				int nSampleSize;
 
 				if(Audio::ReadWAVFile(pFile, &Data, &nSampleSize)) {
-					pAudioIndex[0x118 >> 2] = reinterpret_cast<DWORD>(pFile);	//CurrentSampleFile = pFile
-					pAudioIndex[0x11C >> 2] = nSampleSize;	//CurrentSampleSize = nSampleSize
+					pAudioIndex->CurrentSampleFile = pFile;
+					pAudioIndex->CurrentSampleSize = nSampleSize;
 					R->EAX(1);
 					return 0x401889;
 				}
 			}
 		}
-		pAudioIndex[0x110 >> 2] = 0;	//ExternalFile = nullptr
+		pAudioIndex->ExternalFile = nullptr;
 		GameDelete(pFile);
 
 		R->EAX(0);
@@ -122,18 +121,17 @@ DEFINE_HOOK(4016F7, Ares_Audio_LoadWAV, 5)	//50% rewrite of Audio::LoadWAV
 
 DEFINE_HOOK(401640, Ares_Audio_GetSampleInfo, 5)
 {
-	//TODO: Once an AudioSample definition is available (if ever), rewrite this. -pd
 	GET(int, SampleIndex, EDX);
 	if(SampleIndex >= MinimumAresSample) {
 
-		GET_STACK(int *, pAudioSample, 0x4);	//AudioSample*
+		GET_STACK(AudioSampleData*, pAudioSample, 0x4);
 
-		pAudioSample[0x00 >> 2] = 4;
-		pAudioSample[0x04 >> 2] = 0;
-		pAudioSample[0x08 >> 2] = 22050;
-		pAudioSample[0x0C >> 2] = 1;
-		pAudioSample[0x10 >> 2] = 2;
-		pAudioSample[0x18 >> 2] = 0;
+		pAudioSample->Data = 4;
+		pAudioSample->Format = 0;
+		pAudioSample->SampleRate = 22050;
+		pAudioSample->NumChannels = 1;
+		pAudioSample->BytesPerSample = 2;
+		pAudioSample->BlockAlign = 0;
 
 		R->EAX(pAudioSample);
 		return 0x40169E;
