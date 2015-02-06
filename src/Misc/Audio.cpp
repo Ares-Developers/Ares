@@ -84,8 +84,7 @@ DEFINE_HOOK(4016F7, AudioIndex_LoadSample, 5) //50% rewrite of Audio::LoadWAV
 		auto const pSampleName = reinterpret_cast<const char*>(idxSample);
 
 		GET(AudioIDXData*, pAudioIndex, ECX);
-		pAudioIndex->ExternalFile = nullptr;
-		pAudioIndex->CurrentSampleFile = nullptr;
+		pAudioIndex->ClearCurrentSample();
 
 		// Replace the construction of the RawFileClass with one of a CCFileClass
 		char filename[0x100] = "\0";
