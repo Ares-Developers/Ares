@@ -6,10 +6,30 @@
 #include "../Ares.h"
 #include "../Ares.CRT.h"
 
+#include <set>
+#include <string>
+
 // do not change! this is not a game constant, but a technical one.
 // memory will not be allocated below this address, thus only values
 // below are guaranteed to be indexes. -AlexB
 auto const MinimumAresSample = 0x10000;
+
+class LooseAudioCache {
+public:
+	int GetIndex(const char* pFilename) {
+		auto it = this->Files.find(pFilename);
+		if(it == this->Files.end()) {
+			it = this->Files.emplace(pFilename).first;
+		}
+
+		return reinterpret_cast<int>(it->c_str());
+	}
+
+private:
+	std::set<std::string> Files;
+};
+
+LooseAudioCache LooseFiles;
 
 DEFINE_HOOK(4064A0, VocClass_AddSample, 0) // Complete rewrite of VocClass::AddSample
 {
@@ -29,7 +49,7 @@ DEFINE_HOOK(4064A0, VocClass_AddSample, 0) // Complete rewrite of VocClass::AddS
 				: AudioIDXData::Instance->FindSampleIndex(pSampleName);
 
 			if(idxSample == -1) {
-				idxSample = reinterpret_cast<int>(_strdup(pSampleName));
+				idxSample = LooseFiles.GetIndex(pSampleName);
 			}
 
 			// Set sample index or string pointer
@@ -42,38 +62,6 @@ DEFINE_HOOK(4064A0, VocClass_AddSample, 0) // Complete rewrite of VocClass::AddS
 	}
 
 	return 0x40651E;
-}
-
-//Hook at 0x75144F AND 0x75048E (?? that address makes no sense)
-DEFINE_HOOK(75144F, Ares_Audio_DeleteSampleNames, 9)
-//FINE_HOOK_AGAIN(75048E, Ares_Audio_DeleteSampleNames, 9)
-{
-	GET(VocClass**, ppVoc, ESI);
-	if(const auto pVoc = *ppVoc) {
-		for(auto i = 0; i < pVoc->NumSamples; ++i) {
-			const auto& idxSample = pVoc->SampleIndex[i];
-			if(idxSample >= MinimumAresSample) {
-				free(reinterpret_cast<void*>(idxSample));
-			}
-		}
-		delete ppVoc;
-	}
-	return R->Origin() + 9;
-}
-
-DEFINE_HOOK(75048E, VocClass_LoadFromINI_ResetSamples, 9)
-{
-	GET(VocClass**, ppVoc, ESI);
-	if(const auto pVoc = *ppVoc) {
-		for(auto i = 0; i < pVoc->NumSamples; ++i) {
-			const auto& idxSample = pVoc->SampleIndex[i];
-			if(idxSample >= MinimumAresSample) {
-				free(reinterpret_cast<void*>(idxSample));
-			}
-		}
-		pVoc->NumSamples = 0;
-	}
-	return 0;
 }
 
 DEFINE_HOOK(4016F7, AudioIndex_LoadSample, 5) //50% rewrite of Audio::LoadWAV
