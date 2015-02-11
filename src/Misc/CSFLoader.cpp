@@ -16,7 +16,7 @@ void CSFLoader::LoadAdditionalCSF(const char *pFileName)
 		if(pFile->Exists() && pFile->Open(FileAccessMode::Read)) {
 			CSFHeader header;
 
-			if(pFile->ReadBytes(&header, sizeof(CSFHeader)) == sizeof(CSFHeader)) {
+			if(pFile->Read(header)) {
 				if(header.Signature == CSF_SIGNATURE &&
 					header.CSFVersion >= 2 &&
 					header.Language == StringTable::Language) //should stay in one language
@@ -101,7 +101,7 @@ DEFINE_HOOK(734A5F, CSF_AddOrOverrideLabel, 5)
 		CSFLabel* pLabel = static_cast<CSFLabel*>(bsearch(
 			reinterpret_cast<const char*>(0xB1BF38), //label buffer, char[4096]
 			StringTable::Labels,
-			StringTable::LabelCount,
+			static_cast<size_t>(StringTable::LabelCount),
 			sizeof(CSFLabel),
 			(int (__cdecl *)(const void *,const void *))_strcmpi));
 
