@@ -75,7 +75,7 @@ DEFINE_HOOK(4016F7, AudioIndex_LoadSample, 5) //50% rewrite of Audio::LoadWAV
 		pAudioIndex->ClearCurrentSample();
 
 		// Replace the construction of the RawFileClass with one of a CCFileClass
-		char filename[0x100] = "\0";
+		char filename[0x100];
 		_snprintf_s(filename, _TRUNCATE, "%s.wav", pSampleName);
 
 		auto const pFile = GameCreate<CCFileClass>(filename);
