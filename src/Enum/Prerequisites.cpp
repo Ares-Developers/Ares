@@ -128,9 +128,9 @@ bool Prereqs::HouseOwnsPrereq(HouseClass *pHouse, signed int Index)
 	;
 }
 
-bool Prereqs::HouseOwnsAll(HouseClass *pHouse, DynamicVectorClass<int> *list)
+bool Prereqs::HouseOwnsAll(HouseClass *pHouse, const DynamicVectorClass<int> &list)
 {
-	for(const auto& index : *list) {
+	for(const auto& index : list) {
 		if(!HouseOwnsPrereq(pHouse, index)) {
 			return false;
 		}

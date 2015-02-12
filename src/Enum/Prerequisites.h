@@ -46,7 +46,7 @@ public:
 	static bool HouseOwnsSpecific(HouseClass *pHouse, signed int Index);
 	static bool HouseOwnsPrereq(HouseClass *pHouse, signed int Index);
 
-	static bool HouseOwnsAll(HouseClass *pHouse, DynamicVectorClass<int> *list);
+	static bool HouseOwnsAll(HouseClass *pHouse, const DynamicVectorClass<int> &list);
 	static bool HouseOwnsAny(HouseClass *pHouse, const DynamicVectorClass<int> &list);
 
 	static bool ListContainsGeneric(const BTypeIter &List, signed int Index);
