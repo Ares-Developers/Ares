@@ -54,7 +54,7 @@ public:
 	static bool ListContainsPrereq(const BTypeIter &List, signed int Index);
 
 	static bool ListContainsAll(const BTypeIter &List, DynamicVectorClass<int> *Requirements);
-	static bool ListContainsAny(const BTypeIter &List, DynamicVectorClass<int> *Requirements);
+	static bool ListContainsAny(const BTypeIter &List, const DynamicVectorClass<int> &Requirements);
 };
 
 #endif

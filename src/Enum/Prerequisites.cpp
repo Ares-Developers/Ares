@@ -186,9 +186,9 @@ bool Prereqs::ListContainsAll(const BTypeIter &List, DynamicVectorClass<int> *Re
 	return true;
 }
 
-bool Prereqs::ListContainsAny(const BTypeIter &List, DynamicVectorClass<int> *Requirements)
+bool Prereqs::ListContainsAny(const BTypeIter &List, const DynamicVectorClass<int> &Requirements)
 {
-	for(const auto& index : *Requirements) {
+	for(const auto& index : Requirements) {
 		if(ListContainsPrereq(List, index)) {
 			return true;
 		}
