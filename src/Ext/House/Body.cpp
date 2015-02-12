@@ -43,7 +43,7 @@ HouseExt::RequirementStatus HouseExt::RequirementsMet(HouseClass *pHouse, Techno
 	if(pItem->WhatAmI() != AbstractType::BuildingType && !FactoryForObjectExists(pHouse, pItem)) { return RequirementStatus::Incomplete; }
 
 	if(!(pData->PrerequisiteTheaters & (1 << static_cast<int>(ScenarioClass::Instance->Theater)))) { return RequirementStatus::Forbidden; }
-	if(Prereqs::HouseOwnsAny(pHouse, &pData->PrerequisiteNegatives)) { return RequirementStatus::Forbidden; }
+	if(Prereqs::HouseOwnsAny(pHouse, pData->PrerequisiteNegatives)) { return RequirementStatus::Forbidden; }
 
 	if(pData->ReversedByHouses.contains(pHouse)) {
 		return RequirementStatus::Overridden;
@@ -55,7 +55,7 @@ HouseExt::RequirementStatus HouseExt::RequirementsMet(HouseClass *pHouse, Techno
 
 	// yes, the game checks it here
 	// hack value - skip real prereq check
-	if(Prereqs::HouseOwnsAny(pHouse, &pItem->PrerequisiteOverride)) { return RequirementStatus::Overridden; }
+	if(Prereqs::HouseOwnsAny(pHouse, pItem->PrerequisiteOverride)) { return RequirementStatus::Overridden; }
 
 	if(pHouse->HasFromSecretLab(pItem)) { return RequirementStatus::Overridden; }
 
