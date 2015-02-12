@@ -108,7 +108,7 @@ bool HouseExt::PrerequisitesListed(const Prereqs::BTypeIter &List, TechnoTypeCla
 	auto pData = TechnoTypeExt::ExtMap.Find(pItem);
 
 	for(const auto& pList : pData->PrerequisiteLists) {
-		if(Prereqs::ListContainsAll(List, pList.get())) {
+		if(Prereqs::ListContainsAll(List, *pList)) {
 			return true;
 		}
 	}
