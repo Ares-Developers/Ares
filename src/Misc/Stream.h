@@ -96,7 +96,7 @@ public:
 
 protected:
 	// set to false_type or true_type to disable or enable debugging checks
-	using stream_debugging_t = std::true_type;
+	using stream_debugging_t = std::false_type;
 
 	bool IsValid(std::true_type) const {
 		return this->success;
