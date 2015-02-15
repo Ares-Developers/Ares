@@ -1,6 +1,6 @@
 [branch]
-Name=Rough Sea
-Description=The journey goes on, and this part of it moves in an uncertain direction.
+Name=Ares Development Mainline
+Description=This is the trunk or master branch of Ares's repository. It contains the current in-development code.
 TargetVersion=0.9
-Stable=no
-ReadyForTesting=yes
+Stable=yes
+ReadyForTesting=no
