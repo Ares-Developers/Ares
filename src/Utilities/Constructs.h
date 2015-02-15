@@ -1,5 +1,4 @@
-#ifndef CONSTRUCTS_H_
-#define CONSTRUCTS_H_
+#pragma once
 
 // custom paletted cameos
 // TODO: add a static vector to buffer instances of the same Palette file?
@@ -516,5 +515,3 @@ private:
 	T Value;
 	bool HasValue;
 };
-
-#endif

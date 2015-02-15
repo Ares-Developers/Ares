@@ -1,5 +1,4 @@
-#ifndef TACTION_EXT_H
-#define TACTION_EXT_H
+#pragma once
 
 #include "../_Container.hpp"
 #include "../../Utilities/Template.h"
@@ -43,5 +42,3 @@ public:
 
 	static Container<TActionExt> ExtMap;
 };
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef SIDES_H
-#define SIDES_H
+#pragma once
 
 #include <CCINIClass.h>
 #include <SideClass.h>
@@ -150,5 +149,3 @@ public:
 	static SHPStruct* GetGraphicalTextImage();
 	static ConvertClass* GetGraphicalTextConvert();
 };
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef SUPERTYPE_EXT_GWARH_H
-#define SUPERTYPE_EXT_GWARH_H
+#pragma once
 
 #include "../SWTypes.h"
 
@@ -17,5 +16,3 @@ public:
 	virtual void Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW) override;
 	virtual bool Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer) override;
 };
-
-#endif

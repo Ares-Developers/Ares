@@ -1,5 +1,4 @@
-#ifndef RULES_EXT_H
-#define RULES_EXT_H
+#pragma once
 
 #include <CCINIClass.h>
 #include <RulesClass.h>
@@ -176,5 +175,3 @@ public:
 	static bool LoadGlobals(AresStreamReader& Stm);
 	static bool SaveGlobals(AresStreamWriter& Stm);
 };
-
-#endif

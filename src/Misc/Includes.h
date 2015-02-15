@@ -1,5 +1,4 @@
-#ifndef INCLUSIONS_H
-#define INCLUSIONS_H
+#pragma once
 
 #include <ArrayClasses.h>
 #include <CCFileClass.h>
@@ -12,5 +11,3 @@ public:
 	static DynamicVectorClass<CCINIClass*> LoadedINIs;
 	static DynamicVectorClass<char*> LoadedINIFiles;
 };
-
-#endif

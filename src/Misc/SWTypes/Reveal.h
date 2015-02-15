@@ -1,5 +1,4 @@
-#ifndef SUPERTYPE_EXT_REVEAL_H
-#define SUPERTYPE_EXT_REVEAL_H
+#pragma once
 
 #include "../SWTypes.h"
 
@@ -17,5 +16,3 @@ public:
 	virtual int GetSound(const SWTypeExt::ExtData* pData) const override;
 	virtual SWRange GetRange(const SWTypeExt::ExtData* pData) const override;
 };
-
-#endif

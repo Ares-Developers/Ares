@@ -1,5 +1,4 @@
-#ifndef ABSTRACT_EXT_H
-#define ABSTRACT_EXT_H
+#pragma once
 
 #include <CCINIClass.h>
 #include <AbstractClass.h>
@@ -42,5 +41,3 @@ public:
 
 	static Container<AbstractExt> ExtMap;
 };
-
-#endif

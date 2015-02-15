@@ -1,5 +1,4 @@
-#ifndef ARMORS_H
-#define ARMORS_H
+#pragma once
 
 #include <ArrayClasses.h>
 #include <CCINIClass.h>
@@ -34,5 +33,3 @@ public:
 	int DefaultIndex;
 	WarheadTypeExt::VersesData DefaultVerses;
 };
-
-#endif

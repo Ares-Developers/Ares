@@ -1,5 +1,4 @@
-#ifndef DEBUG_H
-#define DEBUG_H
+#pragma once
 
 //define DEBUG_FILE "DEBUG.TXT"
 
@@ -69,5 +68,3 @@ public:
 
 	static void INIParseFailed(const char *section, const char *flag, const char *value, const char *Message = nullptr);
 };
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef SUPERTYPE_EXT_HUNTERSEEKER_H
-#define SUPERTYPE_EXT_HUNTERSEEKER_H
+#pragma once
 
 #include "../SWTypes.h"
 
@@ -20,5 +19,3 @@ public:
 
 	CellStruct GetLaunchCell(SWTypeExt::ExtData* pSWType, BuildingClass* pBuilding) const;
 };
-
-#endif

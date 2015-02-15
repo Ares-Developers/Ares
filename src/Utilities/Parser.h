@@ -1,5 +1,4 @@
-#ifndef ARES_PARSER_H
-#define ARES_PARSER_H
+#pragma once
 
 //! Parses strings into one or more elements of another type.
 /*!
@@ -243,5 +242,3 @@ static bool Parser<BYTE>::TryParse(const char* pValue, OutType* outValue) {
 	}
 	return false;
 };
-
-#endif

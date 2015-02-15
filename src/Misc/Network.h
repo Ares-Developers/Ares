@@ -1,5 +1,4 @@
-#ifndef ARES_NETWORKING_H_
-#define ARES_NETWORKING_H_
+#pragma once
 
 #include <Networking.h>
 
@@ -22,5 +21,3 @@ public:
 		static void RespondToFirewallToggle(NetworkEvent *Event);
 	};
 };
-
-#endif

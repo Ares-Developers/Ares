@@ -1,5 +1,4 @@
-#ifndef TECHNO_EXT_H
-#define TECHNO_EXT_H
+#pragma once
 
 #include <algorithm>
 
@@ -215,5 +214,3 @@ public:
 	static float EvalVersesAgainst(TechnoClass *pThis, TechnoClass *pTarget, WeaponTypeClass* W);
 */
 };
-
-#endif

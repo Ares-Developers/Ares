@@ -1,5 +1,4 @@
-#ifndef ATTACHEFFECT_H_
-#define ATTACHEFFECT_H_
+#pragma once
 
 #include <vector>
 #include <TechnoClass.h>
@@ -108,5 +107,3 @@ struct Savegame::ObjectFactory<AttachEffectClass> {
 		return std::make_unique<AttachEffectClass>(nullptr, 0);
 	}
 };
-
-#endif

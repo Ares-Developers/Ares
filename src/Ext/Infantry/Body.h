@@ -1,5 +1,4 @@
-#ifndef INFANTRY_EXT_H
-#define INFANTRY_EXT_H
+#pragma once
 
 #include <InfantryClass.h>
 
@@ -42,5 +41,3 @@ public:
 
 	static Action GetEngineerEnterEnemyBuildingAction(BuildingClass *pBld);
 };
-
-#endif

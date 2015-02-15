@@ -1,5 +1,4 @@
-#ifndef Bullet_EXT_H
-#define Bullet_EXT_H
+#pragma once
 
 #include <BulletClass.h>
 
@@ -42,5 +41,3 @@ public:
 
 	static Container<BulletExt> ExtMap;
 };
-
-#endif

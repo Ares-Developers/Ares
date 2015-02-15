@@ -1,5 +1,4 @@
-#ifndef RMG_EXT_H
-#define RMG_EXT_H
+#pragma once
 
 #include <ArrayClasses.h>
 #include <StringTable.h>
@@ -19,5 +18,3 @@ public:
 	static VectorNames<UnitTypeClass> UrbanVehicles;
 	static VectorNames<InfantryTypeClass> UrbanInfantry;
 };
-
-#endif

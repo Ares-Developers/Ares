@@ -1,5 +1,4 @@
-#ifndef CAMPAIGN_H
-#define CAMPAIGN_H
+#pragma once
 
 #include "../../Ares.h"
 #include "../../Utilities/Constructs.h"
@@ -45,5 +44,3 @@ public:
 
 	static int CountVisible();
 };
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef SUPERTYPE_EXT_FIREWALL_H_
-#define SUPERTYPE_EXT_FIREWALL_H_
+#pragma once
 
 #include "../SWTypes.h"
 
@@ -29,5 +28,3 @@ public:
 
 	static SuperWeaponType FirewallType;
 };
-
-#endif

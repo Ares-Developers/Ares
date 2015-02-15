@@ -1,5 +1,4 @@
-#ifndef ARES_SWIZZLE_H
-#define ARES_SWIZZLE_H
+#pragma once
 
 #include <unordered_map>
 #include <type_traits>
@@ -82,5 +81,3 @@ private:
 		// not swizzlable
 	}
 };
-
-#endif

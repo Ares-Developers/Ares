@@ -1,5 +1,4 @@
-#ifndef CMD_AIBASEPLAN_H
-#define CMD_AIBASEPLAN_H
+#pragma once
 
 #include "Ares.h"
 #include "Commands/Commands.h"
@@ -67,5 +66,3 @@ public:
 		MessageListClass::Instance->PrintMessage(L"Dumped AI Base Plan");
 	}
 };
-
-#endif

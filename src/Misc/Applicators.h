@@ -1,3 +1,5 @@
+#pragma once
+
 #include <BulletClass.h>
 #include <BuildingClass.h>
 #include <CellClass.h>

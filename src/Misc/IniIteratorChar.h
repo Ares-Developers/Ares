@@ -1,5 +1,4 @@
-#ifndef INIITERATORCHAR_H
-#define INIITERATORCHAR_H
+#pragma once
 
 #include <CCINIClass.h>
 #include <CRT.h>
@@ -15,5 +14,3 @@ public:
 
 	static char buffer[];
 };
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef RAD_TYPES_H
-#define RAD_TYPES_H
+#pragma once
 
 #include <WarheadTypeClass.h>
 #include <RadSiteClass.h>
@@ -87,5 +86,3 @@ public:
 		return this->Tint_Factor.Get(RulesClass::Instance->RadTintFactor);
 	}
 };
-
-#endif

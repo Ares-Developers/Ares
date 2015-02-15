@@ -1,5 +1,4 @@
-#ifndef ARES_TEMPLATE_H
-#define ARES_TEMPLATE_H
+#pragma once
 
 #include "Iterator.h"
 
@@ -295,5 +294,3 @@ class NullableIdxVector final : public NullableVector<int> {
 protected:
 	inline virtual void Split(INI_EX &parser, const char* pSection, const char* pKey, char* pValue) override;
 };
-
-#endif

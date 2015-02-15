@@ -1,5 +1,4 @@
-#ifndef WEAPONTYPE_EXT_H
-#define WEAPONTYPE_EXT_H
+#pragma once
 
 #include <CCINIClass.h>
 #include <WeaponTypeClass.h>
@@ -214,5 +213,3 @@ public:
 	static EBolt* CreateBolt(WeaponTypeClass* pWeapon);
 	static EBolt* CreateBolt(WeaponTypeExt::ExtData* pWeapon = nullptr);
 };
-
-#endif

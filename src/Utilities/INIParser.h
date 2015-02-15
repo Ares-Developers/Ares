@@ -1,5 +1,4 @@
-#ifndef ARES_INI_PARSER_H
-#define ARES_INI_PARSER_H
+#pragma once
 
 #include "..\Ares.h"
 #include "Parser.h"
@@ -73,5 +72,3 @@ public:
 		return Read<double, 1>(pSection, pKey, nBuffer);
 	}
 };
-
-#endif

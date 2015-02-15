@@ -1,5 +1,4 @@
-#ifndef ARES_H
-#define ARES_H
+#pragma once
 
 //ifndef str
 #define str(x) str_(x)
@@ -231,5 +230,3 @@ public:
 		static int ModIdentifier;
 	};
 };
-
-#endif

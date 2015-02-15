@@ -1,5 +1,4 @@
-#ifndef CMD_DEBUGGING_H
-#define CMD_DEBUGGING_H
+#pragma once
 
 #include "Ares.h"
 #include "../Misc/Debug.h"
@@ -40,5 +39,3 @@ public:
 		// empty for now
 	}
 };
-
-#endif

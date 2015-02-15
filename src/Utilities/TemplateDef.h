@@ -1,5 +1,4 @@
-#ifndef ARES_TEMPLATEDEF_H
-#define ARES_TEMPLATEDEF_H
+#pragma once
 
 #include "Template.h"
 
@@ -661,5 +660,3 @@ void NullableIdxVector<Lookuper>::Split(INI_EX &parser, const char* pSection, co
 		}
 	}
 }
-
-#endif

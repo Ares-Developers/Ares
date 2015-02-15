@@ -1,5 +1,4 @@
-#ifndef CONTAINER_TEMPLATE_MAGIC_H
-#define CONTAINER_TEMPLATE_MAGIC_H
+#pragma once
 
 #include <typeinfo>
 #include <memory>
@@ -347,5 +346,3 @@ protected:
 		return nullptr;
 	}
 };
-
-#endif

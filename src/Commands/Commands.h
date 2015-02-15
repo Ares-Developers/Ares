@@ -1,5 +1,4 @@
-#ifndef ARES_COMMANDS_H
-#define ARES_COMMANDS_H
+#pragma once
 
 #include "../Ares.h"
 
@@ -58,5 +57,3 @@ void MakeCommand() {
 	T* command = GameCreate<T>();
 	CommandClass::Array->AddItem(command);
 };
-
-#endif

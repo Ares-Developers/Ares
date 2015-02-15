@@ -1,5 +1,4 @@
-#ifndef BULLETTYPE_EXT_H
-#define BULLETTYPE_EXT_H
+#pragma once
 
 #include <CCINIClass.h>
 #include <BulletTypeClass.h>
@@ -81,5 +80,3 @@ public:
 
 	static Container<BulletTypeExt> ExtMap;
 };
-
-#endif

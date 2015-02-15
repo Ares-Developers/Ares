@@ -1,5 +1,4 @@
-#ifndef CMD_TOGGLEPOWER_H
-#define CMD_TOGGLEPOWER_H
+#pragma once
 
 #include "../Ext/Rules/Body.h"
 
@@ -37,5 +36,3 @@ public:
 		}
 	}
 };
-
-#endif

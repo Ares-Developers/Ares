@@ -1,3 +1,5 @@
+#pragma once
+
 #define ARES_GUI_START 5000
 
 #define ARES_CHK_RMG_URBAN_AREAS 5000

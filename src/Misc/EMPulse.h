@@ -1,5 +1,4 @@
-#ifndef NEW_EMPULSE_H
-#define NEW_EMPULSE_H
+#pragma once
 
 #include "../Ext/Techno/Body.h"
 #include "../Ext/TechnoType/Body.h"
@@ -35,5 +34,3 @@ protected:
 public:
 	static bool verbose;
 };
-
-#endif

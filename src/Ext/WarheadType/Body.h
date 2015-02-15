@@ -1,5 +1,4 @@
-#ifndef WARHEADTYPE_EXT_H
-#define WARHEADTYPE_EXT_H
+#pragma once
 
 #include <CCINIClass.h>
 #include <WarheadTypeClass.h>
@@ -185,5 +184,3 @@ public:
 		}
 	}
 };
-
-#endif

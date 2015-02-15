@@ -1,5 +1,5 @@
-#ifndef ARES_DIALOGS_H
-#define ARES_DIALOGS_H
+#pragma once
+
 #include "registered.h"
 #include <WWMouseClass.h>
 #include <UI.h>
@@ -20,5 +20,3 @@ public:
 		WWMouseClass::Instance->CaptureMouse();
 	}
 };
-
-#endif

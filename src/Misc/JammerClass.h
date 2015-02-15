@@ -1,5 +1,4 @@
-#ifndef JAMMER_H
-#define JAMMER_H
+#pragma once
 
 #include "../Misc/Savegame.h"
 
@@ -42,5 +41,3 @@ struct Savegame::ObjectFactory<JammerClass> {
 		return std::make_unique<JammerClass>(nullptr);
 	}
 };
-
-#endif

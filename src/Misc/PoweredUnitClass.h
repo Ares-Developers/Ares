@@ -1,5 +1,4 @@
-#ifndef __POWEREDUNITCLASS_H
-#define __POWEREDUNITCLASS_H
+#pragma once
 
 class TechnoClass;
 class HouseClass;
@@ -40,5 +39,3 @@ struct Savegame::ObjectFactory<PoweredUnitClass> {
 		return std::make_unique<PoweredUnitClass>(nullptr);
 	}
 };
-
-#endif

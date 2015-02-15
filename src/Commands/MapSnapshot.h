@@ -1,5 +1,4 @@
-#ifndef CMD_MAPSNAP_H
-#define CMD_MAPSNAP_H
+#pragma once
 
 #include "Commands.h"
 
@@ -55,5 +54,3 @@ public:
 		MessageListClass::Instance->PrintMessage(msg);
 	}
 };
-
-#endif

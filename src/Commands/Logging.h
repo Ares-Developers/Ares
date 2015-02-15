@@ -1,5 +1,4 @@
-#ifndef CMD_LOGGING_H
-#define CMD_LOGGING_H
+#pragma once
 
 #include "../Ares.h"
 #include "../Misc/Debug.h"
@@ -44,5 +43,3 @@ public:
 		}
 	}
 };
-
-#endif

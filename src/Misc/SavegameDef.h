@@ -1,5 +1,4 @@
-#ifndef ARES_SAVEGAMEDEF_H
-#define ARES_SAVEGAMEDEF_H
+#pragma once
 
 // include this file whenever something is to be saved.
 
@@ -450,5 +449,3 @@ namespace Savegame {
 		}
 	};
 }
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef TECHNOTYPE_EXT_H
-#define TECHNOTYPE_EXT_H
+#pragma once
 
 #include <TechnoTypeClass.h>
 #include <ParticleSystemTypeClass.h>
@@ -361,5 +360,3 @@ public:
 
 	//static void ReadWeapon(WeaponStruct *pWeapon, const char *prefix, const char *section, CCINIClass *pINI);
 };
-
-#endif

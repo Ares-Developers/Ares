@@ -1,5 +1,4 @@
-#ifndef CMD_AICTRL_H
-#define CMD_AICTRL_H
+#pragma once
 
 #include "Commands.h"
 
@@ -67,5 +66,3 @@ public:
 		}
 	}
 };
-
-#endif

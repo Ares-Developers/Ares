@@ -4,8 +4,7 @@
 
 //code translated from RP2 and optimized :3
 
-#ifndef CSFLOADER_H
-#define CSFLOADER_H
+#pragma once
 
 #include <CCFileClass.h>
 #include <StringTable.h>
@@ -27,5 +26,3 @@ public:
 	static const CSFString* FindDynamic(const char* name);
 	static const wchar_t* GetDynamicString(const char* name, const wchar_t* pattern, const char* def);
 };
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef BUILDINGTYPE_EXT_H
-#define BUILDINGTYPE_EXT_H
+#pragma once
 
 #include <CCINIClass.h>
 #include <SuperWeaponTypeClass.h>
@@ -292,5 +291,3 @@ public:
 
 	static bool IsFoundationEqual(BuildingTypeClass *pTBldA, BuildingTypeClass *pTBldB);
 };
-
-#endif

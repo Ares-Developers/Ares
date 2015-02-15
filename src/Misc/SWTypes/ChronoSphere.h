@@ -1,5 +1,4 @@
-#ifndef SUPERTYPE_EXT_CHRONOSPHERE_H
-#define SUPERTYPE_EXT_CHRONOSPHERE_H
+#pragma once
 
 #include "../SWTypes.h"
 
@@ -18,5 +17,3 @@ public:
 	virtual AnimTypeClass* GetAnim(const SWTypeExt::ExtData* pData) const override;
 	virtual SWRange GetRange(const SWTypeExt::ExtData* pData) const override;
 };
-
-#endif

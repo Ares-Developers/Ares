@@ -1,5 +1,4 @@
-#ifndef CRAZY_MACROS_H
-#define CRAZY_MACROS_H
+#pragma once
 
 /*
  * This file contains the macro fu needed to make the 100 unit bug fixes work better
@@ -82,5 +81,3 @@ void GetTypeToProduce(HouseClass* pThis, int& ProducingTypeIndex) {
 		ProducingTypeIndex = RandomIndex;
 	}
 }
-
-#endif

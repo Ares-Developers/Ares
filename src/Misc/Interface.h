@@ -1,5 +1,4 @@
-#ifndef INTERFACE_H
-#define INTERFACE_H
+#pragma once
 
 #include "../Ares.h"
 
@@ -106,5 +105,3 @@ private:
 	static void moveItem(HWND, RECT, POINT);
 	static void swapItems(HWND, int, int);
 };
-
-#endif

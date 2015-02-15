@@ -1,5 +1,4 @@
-#ifndef ARES_SAVEGAME_H
-#define ARES_SAVEGAME_H
+#pragma once
 
 #include "Stream.h"
 
@@ -33,5 +32,3 @@ namespace Savegame {
 		}
 	};
 }
-
-#endif

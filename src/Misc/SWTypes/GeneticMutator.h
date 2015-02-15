@@ -1,5 +1,4 @@
-#ifndef SUPERTYPE_EXT_MUTATOR_H
-#define SUPERTYPE_EXT_MUTATOR_H
+#pragma once
 
 #include "../SWTypes.h"
 
@@ -20,5 +19,3 @@ public:
 	virtual int GetDamage(const SWTypeExt::ExtData* pData) const override;
 	virtual SWRange GetRange(const SWTypeExt::ExtData* pData) const override;
 };
-
-#endif

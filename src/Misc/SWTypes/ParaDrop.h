@@ -1,5 +1,4 @@
-#ifndef SUPERTYPE_EXT_PARADROP_H
-#define SUPERTYPE_EXT_PARADROP_H
+#pragma once
 
 #include "../SWTypes.h"
 
@@ -20,5 +19,3 @@ public:
 		AircraftTypeClass* pPlaneType, const Iterator<TechnoTypeClass*> &Types,
 		const Iterator<int> &Nums);
 };
-
-#endif

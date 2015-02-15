@@ -1,5 +1,4 @@
-#ifndef ARES_STREAM_H
-#define ARES_STREAM_H
+#pragma once
 
 #include <type_traits>
 #include <vector>
@@ -218,5 +217,3 @@ public:
 		return true;
 	}
 };
-
-#endif

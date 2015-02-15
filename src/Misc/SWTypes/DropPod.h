@@ -1,5 +1,4 @@
-#ifndef SUPERTYPE_EXT_DROPPOD_H
-#define SUPERTYPE_EXT_DROPPOD_H
+#pragma once
 
 #include "../SWTypes.h"
 
@@ -18,5 +17,3 @@ public:
 	virtual void LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW, CCINIClass *pINI) override;
 	virtual bool Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer) override;
 };
-
-#endif

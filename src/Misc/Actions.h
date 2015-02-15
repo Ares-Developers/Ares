@@ -1,5 +1,4 @@
-#ifndef ACTIONS_H
-#define ACTIONS_H
+#pragma once
 
 #include <MouseClass.h>
 
@@ -20,5 +19,3 @@ class Actions
 
 		static bool MPCustomAllowShroud;
 };
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef BUILDING_EXT_H
-#define BUILDING_EXT_H
+#pragma once
 
 #include <BuildingClass.h>
 
@@ -175,5 +174,3 @@ public:
 
 	static void Clear();
 };
-
-#endif

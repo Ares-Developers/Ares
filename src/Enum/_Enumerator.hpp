@@ -1,5 +1,4 @@
-#ifndef ENUMERATOR_H
-#define ENUMERATOR_H
+#pragma once
 
 #include "../Ares.CRT.h"
 
@@ -122,5 +121,3 @@ public:
 
 	char Name[32];
 };
-
-#endif

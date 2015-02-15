@@ -1,5 +1,4 @@
-#ifndef STATUS_MESSAGES_H
-#define STATUS_MESSAGES_H
+#pragma once
 
 #include "../Ares.h"
 #include <Drawing.h>
@@ -20,5 +19,3 @@ public:
 	}
 
 };
-
-#endif

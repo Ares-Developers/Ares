@@ -1,5 +1,4 @@
-#ifndef SUPERTYPE_EXT_DOMINATOR_H
-#define SUPERTYPE_EXT_DOMINATOR_H
+#pragma once
 
 #include "../SWTypes.h"
 
@@ -28,5 +27,3 @@ public:
 		SWStateMachine::Register(std::make_unique<PsychicDominatorStateMachine>(XY, pSuper, this));
 	}
 };
-
-#endif

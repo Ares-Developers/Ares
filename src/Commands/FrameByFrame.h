@@ -1,5 +1,4 @@
-#ifndef CMD_FRAME_H
-#define CMD_FRAME_H
+#pragma once
 
 #include "Commands.h"
 
@@ -76,5 +75,3 @@ public:
 		MessageListClass::Instance->PrintMessage(L"Stepping.");
 	}
 };
-
-#endif

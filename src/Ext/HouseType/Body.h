@@ -1,5 +1,4 @@
-#ifndef HTEXT_H
-#define HTEXT_H
+#pragma once
 
 #include <CCINIClass.h>
 #include <HouseTypeClass.h>
@@ -104,5 +103,3 @@ public:
 
 	static int PickRandomCountry();
 };
-
-#endif

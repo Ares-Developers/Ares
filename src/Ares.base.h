@@ -1,6 +1,3 @@
-#ifndef ARES_BASE_H_
-#define ARES_BASE_H_
+#pragma once
 
 #include <Syringe.h>
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef ENUMS_H_
-#define ENUMS_H_
+#pragma once
 
 #include "./../Ares.h"
 
@@ -125,5 +124,3 @@ public:
 		return false;
 	}
 };
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef TEVENT_EXT_H
-#define TEVENT_EXT_H
+#pragma once
 
 #include "../_Container.hpp"
 #include "../../Utilities/Constructs.h"
@@ -51,5 +50,3 @@ public:
 
 	static Container<TEventExt> ExtMap;
 };
-
-#endif

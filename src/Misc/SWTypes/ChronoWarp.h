@@ -1,5 +1,4 @@
-#ifndef SUPERTYPE_EXT_CHRONOWARP_H
-#define SUPERTYPE_EXT_CHRONOWARP_H
+#pragma once
 
 #include "../SWTypes.h"
 
@@ -21,5 +20,3 @@ public:
 			SWStateMachine::Register(std::make_unique<ChronoWarpStateMachine>(Duration, XY, pSuper, this, std::move(Buildings)));
 	}
 };
-
-#endif

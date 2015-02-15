@@ -1,5 +1,4 @@
-#ifndef ANIMTYPE_EXT_H
-#define ANIMTYPE_EXT_H
+#pragma once
 
 #include <AnimTypeClass.h>
 
@@ -48,5 +47,3 @@ public:
 
 	static OwnerHouseKind SetMakeInfOwner(AnimClass *pAnim, HouseClass *pInvoker, HouseClass *pVictim, HouseClass *pKiller);
 };
-
-#endif

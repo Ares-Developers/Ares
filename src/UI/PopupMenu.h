@@ -1,5 +1,4 @@
-#ifndef ARES_POPUPMENU_H_
-#define ARES_POPUPMENU_H_
+#pragma once
 
 #include <GeneralStructures.h>
 
@@ -15,4 +14,3 @@ public:
 	static short HighlightedItem;
 	static bool Drawing;
 };
-#endif

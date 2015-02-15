@@ -1,5 +1,4 @@
-#ifndef SUPERTYPE_EXT_EMPULSE_H
-#define SUPERTYPE_EXT_EMPULSE_H
+#pragma once
 
 #include "../SWTypes.h"
 
@@ -22,5 +21,3 @@ private:
 	virtual bool IsLaunchSite(SWTypeExt::ExtData* pSWType, BuildingClass* pBuilding) const override;
 	virtual std::pair<double, double> GetLaunchSiteRange(SWTypeExt::ExtData* pSWType, BuildingClass* pBuilding) const override;
 };
-
-#endif

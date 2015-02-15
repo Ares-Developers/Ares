@@ -1,5 +1,4 @@
-#ifndef CMD_DUMPMEM_H
-#define CMD_DUMPMEM_H
+#pragma once
 
 #include "Commands.h"
 
@@ -59,5 +58,3 @@ public:
 		Dialogs::ReturnMouse();
 	}
 };
-
-#endif

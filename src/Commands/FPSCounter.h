@@ -1,5 +1,4 @@
-#ifndef CMD_FPSCOUNTER_H
-#define CMD_FPSCOUNTER_H
+#pragma once
 
 #include "Ares.h"
 #include "../Misc/Debug.h"
@@ -35,5 +34,3 @@ public:
 		Ares::bFPSCounter = !Ares::bFPSCounter;
 	}
 };
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef NEW_SW_TYPE_H
-#define NEW_SW_TYPE_H
+#pragma once
 
 #include "../Ext/SWType/Body.h"
 #include "../Utilities/Enums.h"
@@ -320,5 +319,3 @@ struct Savegame::ObjectFactory<SWStateMachine> {
 		return nullptr;
 	}
 };
-
-#endif

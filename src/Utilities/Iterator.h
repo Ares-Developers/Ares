@@ -1,5 +1,4 @@
-#ifndef ARES_ITERATOR_H
-#define ARES_ITERATOR_H
+#pragma once
 
 #include <ArrayClasses.h>
 #include <vector>
@@ -106,5 +105,3 @@ void make_iterator_single(const T&&) = delete;
 
 template <typename T>
 void make_iterator(const T&&) = delete;
-
-#endif

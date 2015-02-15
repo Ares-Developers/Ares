@@ -1,5 +1,4 @@
-#ifndef ARES_CRT_H_
-#define ARES_CRT_H_
+#pragma once
 
 class AresCRT {
 public:
@@ -23,5 +22,3 @@ public:
 		wstrCopy(Dest, Source, Size);
 	}
 };
-
-#endif

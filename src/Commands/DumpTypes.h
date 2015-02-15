@@ -1,5 +1,4 @@
-#ifndef CMD_DUMPTYPES_H
-#define CMD_DUMPTYPES_H
+#pragma once
 
 #include "../Ares.h"
 #include "../Misc/Debug.h"
@@ -97,5 +96,3 @@ public:
 		MessageListClass::Instance->PrintMessage(L"Type data dumped");
 	}
 };
-
-#endif

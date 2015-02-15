@@ -1,5 +1,4 @@
-#ifndef INISECTIONINCLUDES_H
-#define INISECTIONINCLUDES_H
+#pragma once
 
 #include <CCINIClass.h>
 
@@ -12,5 +11,3 @@ public:
 	static CCINIClass::INISection* PreProcess(CCINIClass* ini, char* str);
 	static void CopySection(CCINIClass* ini, INIClass::INISection* source, const char* dest);
 };
-
-#endif

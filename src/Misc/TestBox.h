@@ -1,5 +1,4 @@
-#ifndef ARES_TEST_SCAFFOLD_H
-#define ARES_TEST_SCAFFOLD_H
+#pragma once
 
 #include <Unsorted.h>
 #include "../Ares.h"
@@ -10,5 +9,3 @@ public:
 	static void FloatToIntTest();
 	static void GameCastTest();
 };
-
-#endif

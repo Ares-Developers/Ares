@@ -1,5 +1,4 @@
-#ifndef SUPERTYPE_EXT_LSTORM_H
-#define SUPERTYPE_EXT_LSTORM_H
+#pragma once
 
 #include "../SWTypes.h"
 
@@ -22,5 +21,3 @@ public:
 
 	static SuperClass* CurrentLightningStorm;
 };
-
-#endif

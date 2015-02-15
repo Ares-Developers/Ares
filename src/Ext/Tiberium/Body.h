@@ -1,5 +1,4 @@
-#ifndef TIBERIUM_EXT_H
-#define TIBERIUM_EXT_H
+#pragma once
 
 #include <TiberiumClass.h>
 
@@ -67,5 +66,3 @@ public:
 
 	static Container<TiberiumExt> ExtMap;
 };
-
-#endif

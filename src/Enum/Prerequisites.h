@@ -1,5 +1,4 @@
-#ifndef GEN_PREREQ_H
-#define GEN_PREREQ_H
+#pragma once
 
 #include <CCINIClass.h>
 #include <HouseClass.h>
@@ -56,5 +55,3 @@ public:
 	static bool ListContainsAll(const BTypeIter &List, const DynamicVectorClass<int> &Requirements);
 	static bool ListContainsAny(const BTypeIter &List, const DynamicVectorClass<int> &Requirements);
 };
-
-#endif

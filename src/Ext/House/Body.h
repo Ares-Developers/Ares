@@ -1,5 +1,4 @@
-#ifndef HOUSE_EXT_H
-#define HOUSE_EXT_H
+#pragma once
 
 #include "../_Container.hpp"
 #include "../../Enum/Prerequisites.h"
@@ -146,5 +145,3 @@ public:
 		SuperWeaponTypeClass* pSWType = nullptr,
 		IonCannonCloakOptions cloak = IonCannonCloakOptions::RandomizeCloaked);
 };
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef SUPERTYPE_EXT_UNITDELIVERY_H
-#define SUPERTYPE_EXT_UNITDELIVERY_H
+#pragma once
 
 #include "../SWTypes.h"
 
@@ -24,5 +23,3 @@ public:
 		SWStateMachine::Register(std::make_unique<UnitDeliveryStateMachine>(Duration, XY, pSuper, this));
 	}
 };
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef SUPERTYPE_EXT_SONAR_H
-#define SUPERTYPE_EXT_SONAR_H
+#pragma once
 
 #include "../SWTypes.h"
 
@@ -21,5 +20,3 @@ public:
 
 	virtual SWRange GetRange(const SWTypeExt::ExtData* pData) const override;
 };
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef VERSION_H
-#define VERSION_H
+#pragma once
 
 // define this to switch to release version
 //#define IS_RELEASE_VER
@@ -55,5 +54,3 @@
 #define DISPLAY_STRMINI "1.001/Ares " DISPLAY_STR
 
 #define VERSION_INTERNAL "Ares r" VERSION_STR
-
-#endif

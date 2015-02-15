@@ -1,5 +1,4 @@
-#ifndef HELPERS_ALEX_H
-#define HELPERS_ALEX_H
+#pragma once
 
 #include "../Misc/Debug.h"
 
@@ -353,5 +352,3 @@ namespace Helpers {
 		}
 	};
 };
-
-#endif

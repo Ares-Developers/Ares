@@ -1,5 +1,4 @@
-#ifndef EVAVOICES_H
-#define EVAVOICES_H
+#pragma once
 
 #include <VoxClass.h>
 
@@ -64,5 +63,3 @@ public:
 
 	static std::vector<const char*> Types;
 };
-
-#endif

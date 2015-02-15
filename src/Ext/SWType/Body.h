@@ -1,5 +1,4 @@
-#ifndef SUPERTYPE_EXT_H
-#define SUPERTYPE_EXT_H
+#pragma once
 
 #include <CCINIClass.h>
 #include <SuperWeaponTypeClass.h>
@@ -424,5 +423,3 @@ struct Savegame::AresStreamObject<ParadropPlane> {
 			.Success();
 	};
 };
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef SUPERTYPE_EXT_NUKE_H
-#define SUPERTYPE_EXT_NUKE_H
+#pragma once
 
 #include "../SWTypes.h"
 
@@ -23,5 +22,3 @@ public:
 private:
 	virtual bool IsLaunchSite(SWTypeExt::ExtData* pSWType, BuildingClass* pBuilding) const override;
 };
-
-#endif

@@ -1,3 +1,5 @@
+#pragma once
+
 #include "../Utilities/Helpers.Alex.h"
 
 #include <HouseClass.h>
