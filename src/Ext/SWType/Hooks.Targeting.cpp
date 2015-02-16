@@ -81,7 +81,7 @@ ObjectClass* GetTargetFirstMax(It first, It last, Valuator value) {
 
 	for(auto it = first; it < last; ++it) {
 		if(auto pItem = *it) {
-			auto curValue = value(pItem);
+			auto curValue = value(pItem, maxValue);
 
 			if(curValue > maxValue) {
 				pTarget = pItem;
@@ -99,7 +99,7 @@ ObjectClass* GetTargetAnyMax(It first, It last, Valuator value) {
 
 	for(auto it = first; it < last; ++it) {
 		if(auto pItem = *it) {
-			auto curValue = value(pItem);
+			auto curValue = value(pItem, targets.GetRating());
 			targets.Add(pItem, curValue);
 		}
 	}
@@ -257,17 +257,12 @@ private:
 
 	static ObjectClass* FindTargetItem(const TargetingInfo& info) {
 		auto it = info.TypeExt->GetPotentialAITargets();
-		return GetTargetFirstMax(it.begin(), it.end(), [&](TechnoClass* pTechno) {
+		return GetTargetFirstMax(it.begin(), it.end(), [&](TechnoClass* pTechno, int curMax) {
 			if(pTechno->InLimbo) {
 				return -1;
 			}
 
 			auto cell = pTechno->GetCell()->MapCoords;
-
-			// new check
-			if(!info.CanFireAt(cell)) {
-				return -1;
-			}
 
 			int value = 0;
 			for(size_t i = 0; i < CellSpread::NumCells(3); ++i) {
@@ -281,6 +276,11 @@ private:
 						}
 					}
 				}
+			}
+
+			// new check
+			if(value <= curMax || !info.CanFireAt(cell)) {
+				return -1;
 			}
 
 			return value;
@@ -297,17 +297,12 @@ struct GeneticMutatorTargetSelector final : public TargetSelector {
 private:
 	static ObjectClass* FindTargetItem(const TargetingInfo& info) {
 		auto it = info.TypeExt->GetPotentialAITargets();
-		return GetTargetFirstMax(it.begin(), it.end(), [&](TechnoClass* pTechno) {
+		return GetTargetFirstMax(it.begin(), it.end(), [&](TechnoClass* pTechno, int curMax) {
 			if(pTechno->InLimbo) {
 				return -1;
 			}
 
 			auto cell = pTechno->GetCell()->MapCoords;
-
-			// new check
-			if(!info.CanFireAt(cell)) {
-				return -1;
-			}
 
 			int value = 0;
 			for(size_t i = 0; i < CellSpread::NumCells(1); ++i) {
@@ -321,6 +316,11 @@ private:
 						}
 					}
 				}
+			}
+
+			// new check
+			if(value <= curMax || !info.CanFireAt(cell)) {
+				return -1;
 			}
 
 			return value;
@@ -499,18 +499,18 @@ private:
 		auto pTargetPlayer = HouseClass::Array->GetItem(pOwner->EnemyHouseIndex);
 
 		auto it = info.TypeExt->GetPotentialAITargets(pTargetPlayer);
-		return GetTargetFirstMax(it.begin(), it.end(), [&](TechnoClass* pTechno) {
+		return GetTargetFirstMax(it.begin(), it.end(), [&](TechnoClass* pTechno, int curMax) {
 			auto cell = pTechno->GetMapCoords();
 
-			if(!info.CanFireAt(cell)) {
+			auto const value = TechnoExt::IsCloaked(pTechno)
+				? ScenarioClass::Instance->Random.RandomRanged(0, 100)
+				: MapClass::Instance->GetThreatPosed(cell, pOwner);
+
+			if(value <= curMax || !info.CanFireAt(cell)) {
 				return -1;
 			}
 
-			if(TechnoExt::IsCloaked(pTechno)) {
-				return ScenarioClass::Instance->Random.RandomRanged(0, 100);
-			}
-
-			return MapClass::Instance->GetThreatPosed(cell, pOwner);
+			return value;
 		});
 	}
 };
