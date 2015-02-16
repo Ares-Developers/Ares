@@ -223,6 +223,9 @@ public:
 		// berserk
 		Nullable<double> BerserkROFMultiplier;
 
+		// assault options
+		Valueable<int> AssaulterLevel;
+
 		ExtData(TechnoTypeClass* OwnerObject) : Extension<TechnoTypeClass>(OwnerObject),
 			Survivors_PilotChance(),
 			Survivors_PassengerChance(),

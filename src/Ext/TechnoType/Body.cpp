@@ -410,6 +410,9 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 	this->DesignatorRange.Read(exINI, section, "DesignatorRange");
 	this->InhibitorRange.Read(exINI, section, "InhibitorRange");
 
+	// assault options
+	this->AssaulterLevel.Read(exINI, section, "Assaulter.Level");
+
 	// quick fix - remove after the rest of weapon selector code is done
 	return;
 }
@@ -721,7 +724,8 @@ void TechnoTypeExt::ExtData::Serialize(T& Stm) {
 		.Process(this->DamageSparks)
 		.Process(this->ParticleSystems_DamageSmoke)
 		.Process(this->ParticleSystems_DamageSparks)
-		.Process(this->BerserkROFMultiplier);
+		.Process(this->BerserkROFMultiplier)
+		.Process(this->AssaulterLevel);
 }
 
 void TechnoTypeExt::ExtData::LoadFromStream(AresStreamReader &Stm) {

@@ -1,6 +1,7 @@
 #include "Body.h"
 #include "../BuildingType/Body.h"
 #include "../Techno/Body.h"
+#include "../TechnoType/Body.h"
 #include "../../Misc/Network.h"
 
 #include <SpecificStructures.h>
@@ -53,6 +54,31 @@ DEFINE_HOOK(457D58, BuildingClass_CanBeOccupied_SpecificOccupiers, 6)
 	return can_occupy ? 0x457DD5 : 0x457DA3;
 }
 
+// semi-specific assaulters by customizable level
+DEFINE_HOOK(457DB7, BuildingClass_CanBeOccupied_SpecificAssaulters, 6)
+{
+	GET(BuildingClass* const, pThis, ESI);
+	GET(InfantryClass* const, pInfantry, EDI);
+
+	auto const isAssaultable = !pThis->Owner->IsAlliedWith(pInfantry)
+		&& pThis->GetOccupantCount() > 0;
+
+	if(isAssaultable) {
+		auto const pBldExt = TechnoTypeExt::ExtMap.Find(pThis->Type);
+
+		// buildings with negative level are not assaultable
+		if(pBldExt->AssaulterLevel >= 0) {
+			auto const pInfExt = TechnoTypeExt::ExtMap.Find(pInfantry->Type);
+
+			// assaultable if infantry has same level or more
+			if(pBldExt->AssaulterLevel <= pInfExt->AssaulterLevel) {
+				return 0x457DD5;
+			}
+		}
+	}
+
+	return 0x457DA3;
+}
 
 // #664: Advanced Rubble - turning into rubble part
 // moved to before the survivors get unlimboed, per sanity's requirements
