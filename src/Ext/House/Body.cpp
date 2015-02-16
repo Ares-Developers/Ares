@@ -373,6 +373,12 @@ TechnoClass* HouseExt::PickIonCannonTarget(HouseClass* pOwner, HouseClass* pVict
 				}
 			}
 
+			// do not do heavy lifting on objects that
+			// would not be chosen anyhow
+			if(value < targets.GetRating()) {
+				continue;
+			}
+
 			// heavy duty check for ranges, designators and such
 			if(pNewType && !pNewType->CanFireAt(pExt, pOwner, cell, false)) {
 				continue;
