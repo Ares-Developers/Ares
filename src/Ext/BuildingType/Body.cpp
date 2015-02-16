@@ -230,6 +230,9 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 	this->LostEvaEvent.Read(exINI, pID, "LostEvaEvent");
 	this->MessageCapture.Read(exINI, pID, "Message.Capture");
 	this->MessageLost.Read(exINI, pID, "Message.Lost");
+
+	this->DegradeAmount.Read(exINI, pID, "Degrade.Amount");
+	this->DegradePercentage.Read(exINI, pID, "Degrade.Percentage");
 }
 
 void BuildingTypeExt::ExtData::CompleteInitialization(BuildingTypeClass *pThis) {
@@ -445,7 +448,9 @@ void BuildingTypeExt::ExtData::Serialize(T& Stm) {
 		.Process(this->SuperWeapons)
 		.Process(this->LostEvaEvent)
 		.Process(this->MessageCapture)
-		.Process(this->MessageLost);
+		.Process(this->MessageLost)
+		.Process(this->DegradeAmount)
+		.Process(this->DegradePercentage);
 }
 
 void BuildingTypeExt::ExtData::LoadFromStream(AresStreamReader &Stm) {

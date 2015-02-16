@@ -203,6 +203,10 @@ public:
 		Valueable<CSFText> MessageCapture;
 		Valueable<CSFText> MessageLost;
 
+		// degrading on low power
+		Nullable<int> DegradeAmount;
+		Nullable<double> DegradePercentage;
+
 		ExtData(BuildingTypeClass* OwnerObject) : Extension<BuildingTypeClass>(OwnerObject),
 			Solid_Height(0),
 			IsCustom(false),

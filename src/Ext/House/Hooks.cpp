@@ -239,12 +239,18 @@ DEFINE_HOOK(4F8B08, HouseClass_Update_DamageDelay, 6)
 			auto const defaultPercentage = pRulesExt->DegradePercentage.Get(pRules->ConditionYellow);
 
 			for(auto const& pBld : pThis->Buildings) {
+				auto const pType = pBld->Type;
+				auto const pExt = BuildingTypeExt::ExtMap.Find(pType);
+
 				// get the default amount for this building
-				auto const& defaultAmount = pBld->Type->PowerDrain ?
+				auto const& defaultAmount = pType->PowerDrain ?
 					pRulesExt->DegradeAmountConsumer : pRulesExt->DegradeAmountNormal;
 
-				if(defaultAmount > 0 && pBld->GetHealthPercentage() > defaultPercentage) {
-					int damage = defaultAmount;
+				// get the damage that applies to this building
+				auto damage = pExt->DegradeAmount.Get(defaultAmount);
+				auto const percentage = pExt->DegradePercentage.Get(defaultPercentage);
+
+				if(damage > 0 && pBld->GetHealthPercentage() > percentage) {
 					pBld->ReceiveDamage(&damage, 0, pRules->C4Warhead, nullptr, false, false, nullptr);
 				}
 			}
