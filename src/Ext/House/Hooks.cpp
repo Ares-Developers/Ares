@@ -224,6 +224,30 @@ DEFINE_HOOK(508F91, HouseClass_SpySat_Update_CheckEligible, 6)
 	;
 }
 
+DEFINE_HOOK(4F8B08, HouseClass_Update_DamageDelay, 6)
+{
+	GET(HouseClass* const, pThis, ESI);
+
+	// timer used unconditionally to trigger checks
+	if(pThis->DamageDelayTimer.Completed()) {
+		auto const pRules = RulesClass::Instance;
+		pThis->DamageDelayTimer.Start(static_cast<int>(pRules->DamageDelay * 900));
+
+		// damage is only applied conditionally
+		if(pThis->HasLowPower()) {
+			for(auto const& pBld : pThis->Buildings) {
+				if(pBld->Type->PowerDrain && pBld->GetHealthPercentage() > pRules->ConditionYellow) {
+					auto damage = 1;
+					pBld->ReceiveDamage(&damage, 0, pRules->C4Warhead, nullptr, false, false, nullptr);
+				}
+			}
+		}
+	}
+
+	// recreate the replaced instructions
+	return pThis->IsPlayer() ? 0x4F8B14u : 0x4F8DB1u;
+}
+
 // play this annoying message every now and then
 DEFINE_HOOK(4F8C23, HouseClass_Update_SilosNeededEVA, 5)
 {
