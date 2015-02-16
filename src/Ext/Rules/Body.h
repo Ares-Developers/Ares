@@ -83,6 +83,9 @@ public:
 		Valueable<CSFText> MessageSilosNeeded;
 
 		Valueable<bool> DegradeEnabled;
+		Nullable<double> DegradePercentage;
+		Valueable<int> DegradeAmountNormal;
+		Valueable<int> DegradeAmountConsumer;
 
 		ExtData(RulesClass* OwnerObject) : Extension<RulesClass>(OwnerObject),
 			ElectricDeath(nullptr),
@@ -119,6 +122,8 @@ public:
 			DropPodMaximum(0),
 			DropPodTypes(),
 			DropPodTrailer(),
+			DegradeAmountNormal(0),
+			DegradeAmountConsumer(1),
 			CanMakeStuffUp(false)
 		{
 			MultiEngineer[0] = false; // Skirmish

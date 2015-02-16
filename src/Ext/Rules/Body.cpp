@@ -95,6 +95,9 @@ void RulesExt::ExtData::LoadBeforeTypeData(RulesClass *pThis, CCINIClass *pINI) 
 	pData->MessageSilosNeeded.Read(exINI, sectionGeneral, "Message.SilosNeeded");
 
 	pData->DegradeEnabled.Read(exINI, sectionGeneral, "Degrade.Enabled");
+	pData->DegradePercentage.Read(exINI, sectionGeneral, "Degrade.Percentage");
+	pData->DegradeAmountNormal.Read(exINI, sectionGeneral, "Degrade.AmountNormal");
+	pData->DegradeAmountConsumer.Read(exINI, sectionGeneral, "Degrade.AmountConsumer");
 }
 
 // this should load everything that TypeData is not dependant on
@@ -188,7 +191,10 @@ void RulesExt::ExtData::Serialize(T& Stm) {
 		.Process(this->AutoRepelAI)
 		.Process(this->AutoRepelPlayer)
 		.Process(this->MessageSilosNeeded)
-		.Process(this->DegradeEnabled);
+		.Process(this->DegradeEnabled)
+		.Process(this->DegradePercentage)
+		.Process(this->DegradeAmountNormal)
+		.Process(this->DegradeAmountConsumer);
 }
 
 void RulesExt::ExtData::LoadFromStream(AresStreamReader &Stm) {

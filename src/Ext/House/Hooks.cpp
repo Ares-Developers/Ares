@@ -236,9 +236,15 @@ DEFINE_HOOK(4F8B08, HouseClass_Update_DamageDelay, 6)
 		// damage is only applied conditionally
 		auto const pRulesExt = RulesExt::Global();
 		if(pRulesExt->DegradeEnabled && pThis->HasLowPower()) {
+			auto const defaultPercentage = pRulesExt->DegradePercentage.Get(pRules->ConditionYellow);
+
 			for(auto const& pBld : pThis->Buildings) {
-				if(pBld->Type->PowerDrain && pBld->GetHealthPercentage() > pRules->ConditionYellow) {
-					auto damage = 1;
+				// get the default amount for this building
+				auto const& defaultAmount = pBld->Type->PowerDrain ?
+					pRulesExt->DegradeAmountConsumer : pRulesExt->DegradeAmountNormal;
+
+				if(defaultAmount > 0 && pBld->GetHealthPercentage() > defaultPercentage) {
+					int damage = defaultAmount;
 					pBld->ReceiveDamage(&damage, 0, pRules->C4Warhead, nullptr, false, false, nullptr);
 				}
 			}
