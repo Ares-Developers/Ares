@@ -234,7 +234,8 @@ DEFINE_HOOK(4F8B08, HouseClass_Update_DamageDelay, 6)
 		pThis->DamageDelayTimer.Start(static_cast<int>(pRules->DamageDelay * 900));
 
 		// damage is only applied conditionally
-		if(pThis->HasLowPower()) {
+		auto const pRulesExt = RulesExt::Global();
+		if(pRulesExt->DegradeEnabled && pThis->HasLowPower()) {
 			for(auto const& pBld : pThis->Buildings) {
 				if(pBld->Type->PowerDrain && pBld->GetHealthPercentage() > pRules->ConditionYellow) {
 					auto damage = 1;

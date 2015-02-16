@@ -82,6 +82,8 @@ public:
 
 		Valueable<CSFText> MessageSilosNeeded;
 
+		Valueable<bool> DegradeEnabled;
+
 		ExtData(RulesClass* OwnerObject) : Extension<RulesClass>(OwnerObject),
 			ElectricDeath(nullptr),
 			EngineerDamage(0.0),
