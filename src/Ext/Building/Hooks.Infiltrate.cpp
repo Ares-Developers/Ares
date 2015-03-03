@@ -132,25 +132,3 @@ DEFINE_HOOK(509303, HouseClass_AllyWith_unused, 0)
 	pThis->RadarVisibleTo.Add(pThat);
 	return 0x509319;
 }
-
-DEFINE_HOOK(56757F, MapClass_RevealArea0_DisplayTo, 0)
-{
-	GET(HouseClass *, pThis, EDI);
-	GET(HouseClass *, pThat, EAX);
-
-	return pThis->RadarVisibleTo.Contains(pThat)
-		? 0x567597
-		: 0x56759D
-	;
-}
-
-DEFINE_HOOK(567AC1, MapClass_RevealArea1_DisplayTo, 0)
-{
-	GET(HouseClass *, pThis, EBX);
-	GET(HouseClass *, pThat, EAX);
-
-	return pThis->RadarVisibleTo.Contains(pThat)
-		? 0x567AD9
-		: 0x567ADF
-	;
-}
