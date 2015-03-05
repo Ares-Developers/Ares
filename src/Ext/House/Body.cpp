@@ -428,7 +428,7 @@ void HouseExt::ExtData::SetFirestormState(bool Active) {
 	}
 
 	MapClass::Instance->Update_Pathfinding_1();
-	MapClass::Instance->Update_Pathfinding_2(&AffectedCoords);
+	MapClass::Instance->Update_Pathfinding_2(AffectedCoords);
 };
 
 /**
