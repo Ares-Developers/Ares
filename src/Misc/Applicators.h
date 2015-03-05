@@ -12,29 +12,24 @@
 #include "../../Ext/TechnoType/Body.h"
 
 class FirestormFinderApplicator : public CellSequenceApplicator {
-	protected:
-		HouseClass *pOwner;
-	public:
-		bool found;
-		CellStruct target;
+protected:
+	HouseClass *pOwner;
+public:
+	bool found;
+	CellStruct target;
 
-		FirestormFinderApplicator(HouseClass *owner)
-			: pOwner(owner), CellSequenceApplicator(), found(false)
-		{
-			target.X = target.Y = 0;
-		}
-		virtual void operator() (CellClass *curCell) {
-			if(!found) {
-				if(BuildingClass *B = curCell->GetBuilding()) {
-					if(!B->InLimbo && B->Owner != pOwner) {
-						BuildingTypeExt::ExtData* pTypeData = BuildingTypeExt::ExtMap.Find(B->Type);
-						HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(B->Owner);
-						if(pTypeData->Firewall_Is && pHouseData->FirewallActive) {
-							target = curCell->MapCoords;
-							found = 1;
-						}
-					}
+	FirestormFinderApplicator(HouseClass *owner)
+		: pOwner(owner), CellSequenceApplicator(), found(false), target(CellStruct::Empty)
+	{ }
+
+	void operator() (CellClass* curCell) override {
+		if(!found) {
+			if(auto const pBuilding = curCell->GetBuilding()) {
+				if(BuildingExt::IsActiveFirestormWall(pBuilding, pOwner)) {
+					target = curCell->MapCoords;
+					found = true;
 				}
 			}
 		}
+	}
 };
