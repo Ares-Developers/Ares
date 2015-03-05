@@ -100,16 +100,13 @@ DEFINE_HOOK(43FC39, BuildingClass_Update_FSW, 6)
 }
 
 // pathfinding 1
-DEFINE_HOOK(483D8E, CellClass_Setup_Slave, 6)
+DEFINE_HOOK(483D94, CellClass_Setup_Slave, 6)
 {
 	GET(BuildingClass *, B, ESI);
 	BuildingTypeExt::ExtData* pTypeData = BuildingTypeExt::ExtMap.Find(B->Type);
-	HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(B->Owner);
-
-	R->EAX<BuildingTypeClass *>(B->Type);
 
 	if(pTypeData->Firewall_Is) {
-		R->EAX<HouseClass *>(B->Owner);
+		HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(B->Owner);
 		return pHouseData->FirewallActive
 			 ? 0x483D6B
 			 : 0x483DCD
@@ -124,7 +121,6 @@ DEFINE_HOOK(51BD4C, InfantryClass_Update, 6)
 {
 	GET(BuildingClass *, B, EDI);
 	BuildingTypeExt::ExtData* pTypeData = BuildingTypeExt::ExtMap.Find(B->Type);
-	HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(B->Owner);
 
 	enum {Impassable = 0x51BD7F, Ignore = 0x51BD7D, NoDecision = 0x51BD68};
 
@@ -133,6 +129,7 @@ DEFINE_HOOK(51BD4C, InfantryClass_Update, 6)
 	}
 
 	if(pTypeData->Firewall_Is) {
+		HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(B->Owner);
 		return pHouseData->FirewallActive
 			? Impassable
 			: Ignore
@@ -147,7 +144,6 @@ DEFINE_HOOK(51C4C8, InfantryClass_IsCellOccupied, 6)
 {
 	GET(BuildingClass *, B, ESI);
 	BuildingTypeExt::ExtData* pTypeData = BuildingTypeExt::ExtMap.Find(B->Type);
-	HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(B->Owner);
 
 	enum {Impassable = 0x51C7D0, Ignore = 0x51C70F, NoDecision = 0x51C4EB};
 
@@ -156,6 +152,7 @@ DEFINE_HOOK(51C4C8, InfantryClass_IsCellOccupied, 6)
 	}
 
 	if(pTypeData->Firewall_Is) {
+		HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(B->Owner);
 		return pHouseData->FirewallActive
 			? Impassable
 			: Ignore
@@ -170,7 +167,6 @@ DEFINE_HOOK(73F7B0, UnitClass_IsCellOccupied, 6)
 {
 	GET(BuildingClass *, B, ESI);
 	BuildingTypeExt::ExtData* pTypeData = BuildingTypeExt::ExtMap.Find(B->Type);
-	HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(B->Owner);
 
 	enum {Impassable = 0x73FCD0, Ignore = 0x73FA87, NoDecision = 0x73F7D3};
 
@@ -179,7 +175,7 @@ DEFINE_HOOK(73F7B0, UnitClass_IsCellOccupied, 6)
 	}
 
 	if(pTypeData->Firewall_Is) {
-		R->EAX<HouseClass *>(B->Owner);
+		HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(B->Owner);
 		return pHouseData->FirewallActive
 			? Impassable
 			: Ignore
@@ -244,11 +240,15 @@ DEFINE_HOOK(6FC0C5, TechnoClass_GetObjectActivityState_Firewall, 6)
 	return 0;
 }
 
-DEFINE_HOOK(6FCD1D, TechnoClass_GetObjectActivityState_CanTargetFirewall, 5)
+DEFINE_HOOK(6FCD1D, TechnoClass_GetFireError_CanTargetFirewall, 5)
 {
 	GET(TechnoClass *, Src, ESI);
 	GET_STACK(AbstractClass *, Tgt, 0x24);
 	GET_STACK(int, idxWeapon, 0x28);
+
+	if(!HouseExt::IsAnyFirestormActive) {
+		return 0;
+	}
 
 	WeaponTypeClass *Weapon = Src->GetWeapon(idxWeapon)->WeaponType;
 	if(!Weapon || !Weapon->Projectile) {
@@ -257,7 +257,7 @@ DEFINE_HOOK(6FCD1D, TechnoClass_GetObjectActivityState_CanTargetFirewall, 5)
 
 	BulletTypeExt::ExtData *pBulletData = BulletTypeExt::ExtMap.Find(Weapon->Projectile);
 
-	if(!pBulletData->SubjectToFirewall || !HouseExt::IsAnyFirestormActive) {
+	if(!pBulletData->SubjectToFirewall) {
 		return 0;
 	}
 
