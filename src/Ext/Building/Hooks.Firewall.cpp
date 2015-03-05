@@ -39,35 +39,31 @@ DEFINE_HOOK(445355, BuildingClass_KickOutUnit_Firewall, 6)
 // placement linking
 DEFINE_HOOK(6D5455, sub_6D5030, 6)
 {
-	GET(BuildingTypeClass *, BT, EAX);
-	BuildingTypeExt::ExtData* pTypeData = BuildingTypeExt::ExtMap.Find(BT);
+	GET(BuildingTypeClass* const, pType, EAX);
+	auto const pExt = BuildingTypeExt::ExtMap.Find(pType);
 
-	return pTypeData->IsLinkable()
-	 ? 0x6D545F
-	 : 0x6D54A9;
+	return pExt->IsLinkable() ? 0x6D545Fu : 0x6D54A9u;
 }
 
 // placement linking
 DEFINE_HOOK(6D5A5C, sub_6D59D0, 6)
 {
-	GET(BuildingTypeClass *, BT, EDX);
-	BuildingTypeExt::ExtData* pTypeData = BuildingTypeExt::ExtMap.Find(BT);
+	GET(BuildingTypeClass* const, pType, EDX);
+	auto const pExt = BuildingTypeExt::ExtMap.Find(pType);
 
-	return pTypeData->IsLinkable()
-	 ? 0x6D5A66
-	 : 0x6D5A75;
+	return pExt->IsLinkable() ? 0x6D5A66u : 0x6D5A75u;
 }
 
 // frame to draw
 DEFINE_HOOK(43EFB3, BuildingClass_GetStaticImageFrame, 6)
 {
-	GET(BuildingClass *, B, ESI);
+	GET(BuildingClass*, pThis, ESI);
 
-	if(B->GetCurrentMission() != Mission::Construction) {
-		signed int FrameIdx = BuildingExt::GetImageFrameIndex(B);
+	if(pThis->GetCurrentMission() != Mission::Construction) {
+		auto FrameIdx = BuildingExt::GetImageFrameIndex(pThis);
 
 		if(FrameIdx != -1) {
-			R->EAX<signed int>(FrameIdx);
+			R->EAX(FrameIdx);
 			return 0x43EFC3;
 		}
 	}
@@ -77,11 +73,11 @@ DEFINE_HOOK(43EFB3, BuildingClass_GetStaticImageFrame, 6)
 // ignore damage
 DEFINE_HOOK(442230, BuildingClass_ReceiveDamage_FSW, 6)
 {
-	GET(BuildingClass *, pThis, ECX);
-	GET_STACK(int *, Damage, 0x4);
+	GET(BuildingClass* const, pThis, ECX);
+	GET_STACK(int* const, pDamage, 0x4);
 
 	if(BuildingExt::IsActiveFirestormWall(pThis)) {
-		*Damage = 0;
+		*pDamage = 0;
 		return 0x442C14;
 	}
 
@@ -91,9 +87,9 @@ DEFINE_HOOK(442230, BuildingClass_ReceiveDamage_FSW, 6)
 // main update
 DEFINE_HOOK(43FC39, BuildingClass_Update_FSW, 6)
 {
-	GET(BuildingClass*, B, ESI);
+	GET(BuildingClass* const, pThis, ESI);
+	auto const pData = BuildingExt::ExtMap.Find(pThis);
 
-	BuildingExt::ExtData * pData = BuildingExt::ExtMap.Find(B);
 	pData->UpdateFirewall();
 
 	return 0;
@@ -102,38 +98,32 @@ DEFINE_HOOK(43FC39, BuildingClass_Update_FSW, 6)
 // pathfinding 1
 DEFINE_HOOK(483D94, CellClass_Setup_Slave, 6)
 {
-	GET(BuildingClass *, B, ESI);
-	BuildingTypeExt::ExtData* pTypeData = BuildingTypeExt::ExtMap.Find(B->Type);
+	GET(BuildingClass* const, pBuilding, ESI);
+	auto const pTypeExt = BuildingTypeExt::ExtMap.Find(pBuilding->Type);
 
-	if(pTypeData->Firewall_Is) {
-		HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(B->Owner);
-		return pHouseData->FirewallActive
-			 ? 0x483D6B
-			 : 0x483DCD
-		;
-	} else {
-		return 0x483DB0;
+	if(pTypeExt->Firewall_Is) {
+		auto const pHouseExt = HouseExt::ExtMap.Find(pBuilding->Owner);
+		return pHouseExt->FirewallActive ? 0x483D6Bu : 0x483DCDu;
 	}
+
+	return 0x483DB0;
 }
 
 // pathfinding 2
 DEFINE_HOOK(51BD4C, InfantryClass_Update, 6)
 {
-	GET(BuildingClass *, B, EDI);
-	BuildingTypeExt::ExtData* pTypeData = BuildingTypeExt::ExtMap.Find(B->Type);
+	GET(BuildingClass* const, pBld, EDI);
+	auto const pTypeExt = BuildingTypeExt::ExtMap.Find(pBld->Type);
 
 	enum {Impassable = 0x51BD7F, Ignore = 0x51BD7D, NoDecision = 0x51BD68};
 
-	if(pTypeData->IsPassable) {
+	if(pTypeExt->IsPassable) {
 		return Ignore;
 	}
 
-	if(pTypeData->Firewall_Is) {
-		HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(B->Owner);
-		return pHouseData->FirewallActive
-			? Impassable
-			: Ignore
-		;
+	if(pTypeExt->Firewall_Is) {
+		auto const pHouseExt = HouseExt::ExtMap.Find(pBld->Owner);
+		return pHouseExt->FirewallActive ? Impassable : Ignore;
 	}
 
 	return NoDecision;
@@ -142,21 +132,18 @@ DEFINE_HOOK(51BD4C, InfantryClass_Update, 6)
 // pathfinding 3
 DEFINE_HOOK(51C4C8, InfantryClass_IsCellOccupied, 6)
 {
-	GET(BuildingClass *, B, ESI);
-	BuildingTypeExt::ExtData* pTypeData = BuildingTypeExt::ExtMap.Find(B->Type);
+	GET(BuildingClass* const, pBld, ESI);
+	auto const pTypeExt = BuildingTypeExt::ExtMap.Find(pBld->Type);
 
 	enum {Impassable = 0x51C7D0, Ignore = 0x51C70F, NoDecision = 0x51C4EB};
 
-	if(pTypeData->IsPassable) {
+	if(pTypeExt->IsPassable) {
 		return Ignore;
 	}
 
-	if(pTypeData->Firewall_Is) {
-		HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(B->Owner);
-		return pHouseData->FirewallActive
-			? Impassable
-			: Ignore
-		;
+	if(pTypeExt->Firewall_Is) {
+		auto const pHouseExt = HouseExt::ExtMap.Find(pBld->Owner);
+		return pHouseExt->FirewallActive ? Impassable : Ignore;
 	}
 
 	return NoDecision;
@@ -165,21 +152,18 @@ DEFINE_HOOK(51C4C8, InfantryClass_IsCellOccupied, 6)
 // pathfinding 4
 DEFINE_HOOK(73F7B0, UnitClass_IsCellOccupied, 6)
 {
-	GET(BuildingClass *, B, ESI);
-	BuildingTypeExt::ExtData* pTypeData = BuildingTypeExt::ExtMap.Find(B->Type);
+	GET(BuildingClass* const, pBld, ESI);
+	auto const pTypeExt = BuildingTypeExt::ExtMap.Find(pBld->Type);
 
 	enum {Impassable = 0x73FCD0, Ignore = 0x73FA87, NoDecision = 0x73F7D3};
 
-	if(pTypeData->IsPassable) {
+	if(pTypeExt->IsPassable) {
 		return Ignore;
 	}
 
-	if(pTypeData->Firewall_Is) {
-		HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(B->Owner);
-		return pHouseData->FirewallActive
-			? Impassable
-			: Ignore
-		;
+	if(pTypeExt->Firewall_Is) {
+		auto const pHouseExt = HouseExt::ExtMap.Find(pBld->Owner);
+		return pHouseExt->FirewallActive ? Impassable : Ignore;
 	}
 
 	return NoDecision;
@@ -228,11 +212,13 @@ DEFINE_HOOK(5884A4, MapClass_SomePathfinding_3, 6)
 }
 
 // targeting state
-DEFINE_HOOK(6FC0C5, TechnoClass_GetObjectActivityState_Firewall, 6)
+DEFINE_HOOK(6FC0C5, TechnoClass_GetFireError_Firewall, 6)
 {
-	GET(TechnoClass *, Tgt, EBX);
-	if(BuildingClass *B = specific_cast<BuildingClass*>(Tgt)) {
-		if(BuildingExt::IsActiveFirestormWall(B, nullptr)) {
+	//GET(TechnoClass* const, pThis, ESI);
+	GET(TechnoClass* const, pTarget, EBX);
+
+	if(auto const pBld = abstract_cast<BuildingClass*>(pTarget)) {
+		if(BuildingExt::IsActiveFirestormWall(pBld, nullptr)) {
 			return 0x6FC86A;
 		}
 	}
@@ -242,35 +228,34 @@ DEFINE_HOOK(6FC0C5, TechnoClass_GetObjectActivityState_Firewall, 6)
 
 DEFINE_HOOK(6FCD1D, TechnoClass_GetFireError_CanTargetFirewall, 5)
 {
-	GET(TechnoClass *, Src, ESI);
-	GET_STACK(AbstractClass *, Tgt, 0x24);
-	GET_STACK(int, idxWeapon, 0x28);
+	GET(TechnoClass* const, pThis, ESI);
+	GET_STACK(AbstractClass* const, pTarget, 0x24);
+	GET_STACK(int const, idxWeapon, 0x28);
 
 	if(!HouseExt::IsAnyFirestormActive) {
 		return 0;
 	}
 
-	WeaponTypeClass *Weapon = Src->GetWeapon(idxWeapon)->WeaponType;
-	if(!Weapon || !Weapon->Projectile) {
+	auto const pWeapon = pThis->GetWeapon(idxWeapon)->WeaponType;
+	if(!pWeapon || !pWeapon->Projectile) {
 		return 0;
 	}
 
-	BulletTypeExt::ExtData *pBulletData = BulletTypeExt::ExtMap.Find(Weapon->Projectile);
-
+	auto const pBulletData = BulletTypeExt::ExtMap.Find(pWeapon->Projectile);
 	if(!pBulletData->SubjectToFirewall) {
 		return 0;
 	}
 
-	CoordStruct crdTgt = Tgt->GetCoords();
+	auto const crdTgt = Tgt->GetCoords();
 
-	FirestormFinderApplicator FireFinder(Src->Owner);
+	FirestormFinderApplicator FireFinder(pThis->Owner);
 
-	CellSequence Path(&Src->Location, &crdTgt);
+	CellSequence Path(&pThis->Location, &crdTgt);
 
 	Path.Apply(FireFinder);
 
 	if(FireFinder.found) {
-		Src->ShouldLoseTargetNow = 1;
+		pThis->ShouldLoseTargetNow = 1;
 		TechnoExt::FiringStateCache = FireError::ILLEGAL;
 	} else {
 		TechnoExt::FiringStateCache = FireError::NONE;
@@ -288,14 +273,11 @@ DEFINE_HOOK(6FCD23, TechnoClass_GetObjectActivityState_OverrideFirewall, 6)
 	return 0;
 }
 
-DEFINE_HOOK(6F64CB, TechnoClass_DrawHealthBar, 6)
+DEFINE_HOOK(6F64CB, TechnoClass_DrawHealthBar_FirestormWall, 6)
 {
-	GET(BuildingClass *, B, ESI);
-	BuildingTypeExt::ExtData * pData = BuildingTypeExt::ExtMap.Find(B->Type);
-	return (pData->Firewall_Is)
-		? 0x6F6832
-		: 0
-	;
+	GET(BuildingClass* const, pThis, ESI);
+	auto const pData = BuildingTypeExt::ExtMap.Find(pThis->Type);
+	return pData->Firewall_Is ? 0x6F6832u : 0u;
 }
 
 DEFINE_HOOK(71B126, TemporalClass_Fire, 7)
@@ -325,41 +307,41 @@ DEFINE_HOOK(71B126, TemporalClass_Fire, 7)
 
 DEFINE_HOOK(4DA53E, FootClass_Update, 6)
 {
-	GET(FootClass *, F, ESI);
+	GET(FootClass* const, pThis, ESI);
 
-	if(F->IsAlive) {
-		CellClass *C = F->GetCell();
-		if(BuildingClass * B = C->GetBuilding()) {
-			if(BuildingExt::IsActiveFirestormWall(B)) {
-				BuildingExt::ExtData * pData = BuildingExt::ExtMap.Find(B);
-				pData->ImmolateVictim(F);
+	if(pThis->IsAlive) {
+		auto const pCell = pThis->GetCell();
+		if(auto const pBld = pCell->GetBuilding()) {
+			if(BuildingExt::IsActiveFirestormWall(pBld)) {
+				auto const pData = BuildingExt::ExtMap.Find(pBld);
+				pData->ImmolateVictim(pThis);
 			}
 		}
 	}
 
 	// tiberium heal, as in Tiberian Sun, but customizable per Tiberium type
-	if(F->IsAlive && RulesExt::Global()->Tiberium_HealEnabled
-		&& F->GetHeight() <= RulesClass::Instance->HoverHeight)
+	if(pThis->IsAlive && RulesExt::Global()->Tiberium_HealEnabled
+		&& pThis->GetHeight() <= RulesClass::Instance->HoverHeight)
 	{
-		TechnoTypeClass* pType = F->GetTechnoType();
-		if(pType->TiberiumHeal || F->HasAbility(Ability::TiberiumHeal)) {
-			if(F->Health > 0 && F->Health < pType->Strength) {
-				CellClass* pCell = F->GetCell();
+		auto const pType = pThis->GetTechnoType();
+		if(pType->TiberiumHeal || pThis->HasAbility(Ability::TiberiumHeal)) {
+			if(pThis->Health > 0 && pThis->Health < pType->Strength) {
+				auto const pCell = pThis->GetCell();
 				if(pCell->LandType == LandType::Tiberium) {
-					double delay = RulesClass::Instance->TiberiumHeal;
-					int health = pType->GetRepairStep();
+					auto delay = RulesClass::Instance->TiberiumHeal;
+					auto health = pType->GetRepairStep();
 
 					int idxTib = pCell->GetContainedTiberiumIndex();
-					if(auto pTib = TiberiumClass::Array->GetItemOrDefault(idxTib)) {
+					if(auto const pTib = TiberiumClass::Array->GetItemOrDefault(idxTib)) {
 						auto pExt = TiberiumExt::ExtMap.Find(pTib);
 						delay = pExt->GetHealDelay();
-						health = pExt->GetHealStep(F);
+						health = pExt->GetHealStep(pThis);
 					}
 
 					if(!(Unsorted::CurrentFrame % Game::F2I(delay * 900.0))) {
-						F->Health += health;
-						if(F->Health > pType->Strength) {
-							F->Health = pType->Strength;
+						pThis->Health += health;
+						if(pThis->Health > pType->Strength) {
+							pThis->Health = pType->Strength;
 						}
 					}
 				}
