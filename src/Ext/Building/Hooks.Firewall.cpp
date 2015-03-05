@@ -80,9 +80,7 @@ DEFINE_HOOK(442230, BuildingClass_ReceiveDamage_FSW, 6)
 	GET(BuildingClass *, pThis, ECX);
 	GET_STACK(int *, Damage, 0x4);
 
-	BuildingTypeExt::ExtData* pTypeData = BuildingTypeExt::ExtMap.Find(pThis->Type);
-	HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(pThis->Owner);
-	if(pTypeData->Firewall_Is && pHouseData->FirewallActive) {
+	if(BuildingExt::IsActiveFirestormWall(pThis)) {
 		*Damage = 0;
 		return 0x442C14;
 	}
@@ -238,10 +236,8 @@ DEFINE_HOOK(6FC0C5, TechnoClass_GetObjectActivityState_Firewall, 6)
 {
 	GET(TechnoClass *, Tgt, EBX);
 	if(BuildingClass *B = specific_cast<BuildingClass*>(Tgt)) {
-		if(BuildingTypeExt::ExtMap.Find(B->Type)->Firewall_Is) {
-			if(HouseExt::ExtMap.Find(B->Owner)->FirewallActive) {
-				return 0x6FC86A;
-			}
+		if(BuildingExt::IsActiveFirestormWall(B, nullptr)) {
+			return 0x6FC86A;
 		}
 	}
 
@@ -334,9 +330,7 @@ DEFINE_HOOK(4DA53E, FootClass_Update, 6)
 	if(F->IsAlive) {
 		CellClass *C = F->GetCell();
 		if(BuildingClass * B = C->GetBuilding()) {
-			BuildingTypeExt::ExtData* pTypeData = BuildingTypeExt::ExtMap.Find(B->Type);
-			HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(B->Owner);
-			if(pTypeData->Firewall_Is && pHouseData->FirewallActive) {
+			if(BuildingExt::IsActiveFirestormWall(B)) {
 				BuildingExt::ExtData * pData = BuildingExt::ExtMap.Find(B);
 				pData->ImmolateVictim(F);
 			}
