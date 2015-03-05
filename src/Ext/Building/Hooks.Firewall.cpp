@@ -10,6 +10,37 @@
 #include "../Tiberium/Body.h"
 #include "../Rules/Body.h"
 
+#include <Helpers/Enumerators.h>
+
+DEFINE_HOOK(5880A0, MapClass_FindFirstFirestorm, 6)
+{
+	//GET(MapClass* const, pThis, ECX);
+	GET_STACK(CoordStruct* const, pOutBuffer, STACK_OFFS(0x0, -0x4));
+	GET_STACK(CoordStruct const* const, pStart, STACK_OFFS(0x0, -0x8));
+	GET_STACK(CoordStruct const* const, pEnd, STACK_OFFS(0x0, -0xC));
+	GET_STACK(HouseClass const* const, pOwner, STACK_OFFS(0x0, -0x10));
+
+	*pOutBuffer = CoordStruct::Empty;
+
+	if(HouseExt::IsAnyFirestormActive && *pStart != *pEnd) {
+		auto const start = CellClass::Coord2Cell(*pStart);
+		auto const end = CellClass::Coord2Cell(*pEnd);
+
+		for(CellSequenceEnumerator it(start, end); it; ++it) {
+			auto const pCell = MapClass::Instance->GetCellAt(*it);
+			if(auto const pBld = pCell->GetBuilding()) {
+				if(BuildingExt::IsActiveFirestormWall(pBld, pOwner)) {
+					*pOutBuffer = CellClass::Cell2Coord(*it);
+					break;
+				}
+			}
+		}
+	}
+
+	R->EAX(pOutBuffer);
+	return 0x58855E;
+}
+
 DEFINE_HOOK(4FB257, HouseClass_UnitFromFactory_Firewall, 6)
 {
 	GET(BuildingClass *, B, ESI);
@@ -167,48 +198,6 @@ DEFINE_HOOK(73F7B0, UnitClass_IsCellOccupied, 6)
 	}
 
 	return NoDecision;
-}
-
-// pathfinding 5
-DEFINE_HOOK(58819F, MapClass_SomePathfinding_1, 6)
-{
-	GET(BuildingClass *, B, EAX);
-	BuildingTypeExt::ExtData* pTypeData = BuildingTypeExt::ExtMap.Find(B->Type);
-	HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(B->Owner);
-
-	R->EAX<HouseClass *>(B->Owner);
-	return (pTypeData->Firewall_Is && pHouseData->FirewallActive)
-		? 0x5881BF
-		: 0x5881C4
-	;
-}
-
-// pathfinding 6
-DEFINE_HOOK(58828C, MapClass_SomePathfinding_2, 6)
-{
-	GET(BuildingClass *, B, EAX);
-	BuildingTypeExt::ExtData* pTypeData = BuildingTypeExt::ExtMap.Find(B->Type);
-	HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(B->Owner);
-
-	R->EAX<HouseClass *>(B->Owner);
-	return (pTypeData->Firewall_Is && pHouseData->FirewallActive)
-		? 0x5882AC
-		: 0x5882B1
-	;
-}
-
-// pathfinding 7
-DEFINE_HOOK(5884A4, MapClass_SomePathfinding_3, 6)
-{
-	GET(BuildingClass *, B, EAX);
-	BuildingTypeExt::ExtData* pTypeData = BuildingTypeExt::ExtMap.Find(B->Type);
-	HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(B->Owner);
-
-	R->EAX<HouseClass *>(B->Owner);
-	return (pTypeData->Firewall_Is && pHouseData->FirewallActive)
-		? 0x5884C4
-		: 0x5884C9
-	;
 }
 
 // targeting state
