@@ -172,5 +172,7 @@ public:
 
 	static DWORD FoundationLength(CellStruct * StartCell);
 
+	static bool IsActiveFirestormWall(BuildingClass* pBuilding, HouseClass const* pIgnore = nullptr);
+
 	static void Clear();
 };

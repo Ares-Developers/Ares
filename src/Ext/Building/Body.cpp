@@ -37,6 +37,21 @@ DWORD BuildingExt::GetFirewallFlags(BuildingClass *pThis) {
 	return flags;
 }
 
+bool BuildingExt::IsActiveFirestormWall(BuildingClass* const pBuilding, HouseClass const* const pIgnore)
+{
+	if(HouseExt::IsAnyFirestormActive && pBuilding && pBuilding->Owner != pIgnore) {
+		if(!pBuilding->InLimbo && pBuilding->IsAlive) {
+			auto const pHouseExt = HouseExt::ExtMap.Find(pBuilding->Owner);
+			if(pHouseExt->FirewallActive) {
+				auto const pTypeExt = BuildingTypeExt::ExtMap.Find(pBuilding->Type);
+				return pTypeExt->Firewall_Is;
+			}
+		}
+	}
+
+	return false;
+}
+
 void BuildingExt::UpdateDisplayTo(BuildingClass *pThis) {
 	if(pThis->Type->Radar) {
 		auto pHouse = pThis->Owner;
