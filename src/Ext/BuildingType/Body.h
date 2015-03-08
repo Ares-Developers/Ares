@@ -106,7 +106,7 @@ public:
 	{
 	public:
 		// solid
-		int Solid_Height;
+		Valueable<int> Solid_Height;
 
 		// foundations
 		bool IsCustom;

@@ -43,7 +43,9 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 	this->Firewall_Is.Read(exINI, pID, "Firestorm.Wall");
 
 	CCINIClass* pArtINI = CCINIClass::INI_Art;
-	this->Solid_Height = pArtINI->ReadInteger(pArtID, "SolidHeight", this->Solid_Height);
+
+	INI_EX exArt(pArtINI);
+	this->Solid_Height.Read(exArt, pArtID, "SolidHeight");
 
 	if(this->IsCustom) {
 		//Reset
