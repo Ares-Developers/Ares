@@ -1,10 +1,9 @@
 #include <AnimClass.h>
 #include <WeaponTypeClass.h>
 
-#include "../../Misc/Applicators.h"
-
 #include "Body.h"
 #include "../BuildingType/Body.h"
+#include "../BulletType/Body.h"
 #include "../House/Body.h"
 #include "../Techno/Body.h"
 #include "../Tiberium/Body.h"
@@ -235,15 +234,10 @@ DEFINE_HOOK(6FCD1D, TechnoClass_GetFireError_CanTargetFirewall, 5)
 		return 0;
 	}
 
-	auto const crdTgt = Tgt->GetCoords();
+	auto const crd = MapClass::Instance->FindFirstFirestorm(pThis->Location,
+		pTarget->GetCoords(), pThis->Owner);
 
-	FirestormFinderApplicator FireFinder(pThis->Owner);
-
-	CellSequence Path(&pThis->Location, &crdTgt);
-
-	Path.Apply(FireFinder);
-
-	if(FireFinder.found) {
+	if(crd != CoordStruct::Empty) {
 		pThis->ShouldLoseTargetNow = 1;
 		TechnoExt::FiringStateCache = FireError::ILLEGAL;
 	} else {
