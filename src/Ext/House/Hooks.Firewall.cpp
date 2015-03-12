@@ -3,8 +3,6 @@
 #include <BuildingClass.h>
 #include <CellClass.h>
 
-#include "../../Misc/Applicators.h"
-
 #include "Body.h"
 #include "../BuildingType/Body.h"
 #include "../Building/Body.h"
@@ -15,17 +13,20 @@
 DEFINE_HOOK_AGAIN(6FF860, TechnoClass_Fire_FSW, 8)
 DEFINE_HOOK(6FF008, TechnoClass_Fire_FSW, 8)
 {
-	CoordStruct src = *R->lea_Stack<CoordStruct *>(0x44);
-	CoordStruct tgt = *R->lea_Stack<CoordStruct *>(0x88);
+	REF_STACK(CoordStruct const, src, 0x44);
+	REF_STACK(CoordStruct const, tgt, 0x88);
 
-	BulletClass * Bullet = R->Origin() == 0x6FF860
-		? R->EDI<BulletClass *>()
-		: R->EBX<BulletClass *>()
+	if(!HouseExt::IsAnyFirestormActive) {
+		return 0;
+	}
+
+	auto const Bullet = R->Origin() == 0x6FF860
+		? R->EDI<BulletClass*>()
+		: R->EBX<BulletClass*>()
 	;
 
-	BulletTypeExt::ExtData *pBulletData = BulletTypeExt::ExtMap.Find(Bullet->Type);
-
-	if(!pBulletData->SubjectToFirewall || !HouseExt::IsAnyFirestormActive) {
+	auto const pBulletData = BulletTypeExt::ExtMap.Find(Bullet->Type);
+	if(!pBulletData->SubjectToFirewall) {
 		return 0;
 	}
 
@@ -36,15 +37,11 @@ DEFINE_HOOK(6FF008, TechnoClass_Fire_FSW, 8)
 
 // screw having two code paths
 
-	FirestormFinderApplicator FireFinder(Bullet->Owner->Owner);
+	auto const crd = MapClass::Instance->FindFirstFirestorm(src, tgt, Bullet->Owner->Owner);
 
-	CellSequence Path(&src, &tgt);
-
-	Path.Apply(FireFinder);
-
-	if(FireFinder.found) {
-		tgt = CellClass::Cell2Coord(FireFinder.target);
-		Bullet->Target = MapClass::Instance->GetCellAt(tgt)->GetContent();
+	if(crd != CoordStruct::Empty) {
+		auto const pCell = MapClass::Instance->GetCellAt(crd);
+		Bullet->Target = pCell->GetContent();
 		Bullet->Owner->ShouldLoseTargetNow = 1;
 //		Bullet->Owner->SetTarget(nullptr);
 //		Bullet->Owner->Scatter(0xB1CFE8, 1, 0);
