@@ -206,16 +206,16 @@ DEFINE_HOOK(469EBA, BulletClass_DetonateAt_Splits, 6)
 
 DEFINE_HOOK(468EB9, BulletClass_Fire_SplitsA, 6)
 {
-	GET(BulletTypeClass*, pType, EAX);
-	auto pExt = BulletTypeExt::ExtMap.Find(pType);
-	return !pExt->HasSplitBehavior() ? 0x468EC7 : 0x468FF4;
+	GET(BulletTypeClass* const, pType, EAX);
+	auto const pExt = BulletTypeExt::ExtMap.Find(pType);
+	return !pExt->HasSplitBehavior() ? 0x468EC7u : 0x468FF4u;
 }
 
 DEFINE_HOOK(468FFA, BulletClass_Fire_SplitsB, 6)
 {
-	GET(BulletTypeClass*, pType, EAX);
-	auto pExt = BulletTypeExt::ExtMap.Find(pType);
-	return pExt->HasSplitBehavior() ? 0x46909A : 0x469008;
+	GET(BulletTypeClass* const, pType, EAX);
+	auto const pExt = BulletTypeExt::ExtMap.Find(pType);
+	return pExt->HasSplitBehavior() ? 0x46909Au : 0x469008u;
 }
 
 DEFINE_HOOK(467B94, BulletClass_Update_Ranged, 7)
