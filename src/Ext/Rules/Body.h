@@ -87,6 +87,10 @@ public:
 		Valueable<int> DegradeAmountNormal;
 		Valueable<int> DegradeAmountConsumer;
 
+		// firestorm
+		Valueable<AnimTypeClass*> FirestormGroundAnim;
+		Valueable<AnimTypeClass*> FirestormAirAnim;
+
 		ExtData(RulesClass* OwnerObject) : Extension<RulesClass>(OwnerObject),
 			ElectricDeath(nullptr),
 			EngineerDamage(0.0),
@@ -137,6 +141,8 @@ public:
 		virtual void LoadBeforeTypeData(RulesClass* pThis, CCINIClass* pINI);
 		virtual void LoadAfterTypeData(RulesClass* pThis, CCINIClass* pINI);
 		virtual void InitializeConstants() override;
+
+		void InitializeAfterTypeData(RulesClass* pThis);
 
 		virtual void InvalidatePointer(void *ptr, bool bRemoved) override {
 		}

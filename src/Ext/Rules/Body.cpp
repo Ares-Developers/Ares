@@ -33,6 +33,9 @@ void RulesExt::LoadBeforeTypeData(RulesClass *pThis, CCINIClass *pINI) {
 }
 
 void RulesExt::LoadAfterTypeData(RulesClass *pThis, CCINIClass *pINI) {
+	if(pINI == CCINIClass::INI_Rules) {
+		Data->InitializeAfterTypeData(pThis);
+	}
 	Data->LoadAfterTypeData(pThis, pINI);
 }
 
@@ -100,6 +103,12 @@ void RulesExt::ExtData::LoadBeforeTypeData(RulesClass *pThis, CCINIClass *pINI) 
 	pData->DegradeAmountConsumer.Read(exINI, sectionGeneral, "Degrade.AmountConsumer");
 }
 
+// this runs between the before and after type data loading methods for rules ini
+void RulesExt::ExtData::InitializeAfterTypeData(RulesClass* const pThis) {
+	this->FirestormGroundAnim = AnimTypeClass::Find("FSGRND");
+	this->FirestormAirAnim = AnimTypeClass::Find("FSAIR");
+}
+
 // this should load everything that TypeData is not dependant on
 // i.e. InfantryElectrocuted= can go here since nothing refers to it
 // but [GenericPrerequisites] have to go earlier because they're used in parsing TypeData
@@ -144,6 +153,9 @@ void RulesExt::ExtData::LoadAfterTypeData(RulesClass *pThis, CCINIClass *pINI) {
 	pData->TogglePowerIQ.Read(exINI, "IQ", "TogglePower");
 	pData->TogglePowerCursor.Read(exINI, "General", "TogglePowerCursor");
 	pData->TogglePowerNoCursor.Read(exINI, "General", "TogglePowerNoCursor");
+
+	pData->FirestormGroundAnim.Read(exINI, "AudioVisual", "FirestormGroundAnim");
+	pData->FirestormAirAnim.Read(exINI, "AudioVisual", "FirestormAirAnim");
 }
 
 // =============================
@@ -194,7 +206,9 @@ void RulesExt::ExtData::Serialize(T& Stm) {
 		.Process(this->DegradeEnabled)
 		.Process(this->DegradePercentage)
 		.Process(this->DegradeAmountNormal)
-		.Process(this->DegradeAmountConsumer);
+		.Process(this->DegradeAmountConsumer)
+		.Process(this->FirestormGroundAnim)
+		.Process(this->FirestormAirAnim);
 }
 
 void RulesExt::ExtData::LoadFromStream(AresStreamReader &Stm) {

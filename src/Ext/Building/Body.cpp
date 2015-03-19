@@ -2,6 +2,7 @@
 #include "../BuildingType/Body.h"
 #include "../TechnoType/Body.h"
 #include "../House/Body.h"
+#include "../Rules/Body.h"
 
 #include "../../Misc/SavegameDef.h"
 
@@ -739,8 +740,14 @@ void BuildingExt::ExtData::ImmolateVictim(ObjectClass * Victim) {
 		int Damage = Victim->Health;
 		Victim->ReceiveDamage(&Damage, 0, RulesClass::Instance->C4Warhead/* todo */, nullptr, true, false, pThis->Owner);
 
-		if(AnimTypeClass *FSAnim = AnimTypeClass::Find(Victim->IsInAir() ? "FSAIR" : "FSGRND")) {
-			GameCreate<AnimClass>(FSAnim, XYZ);
+		auto const pRulesExt = RulesExt::Global();
+
+		auto const pType = !Victim->IsInAir()
+			? pRulesExt->FirestormGroundAnim
+			: pRulesExt->FirestormAirAnim;
+
+		if(pType) {
+			GameCreate<AnimClass>(pType, XYZ);
 		}
 
 	}
