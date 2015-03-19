@@ -156,6 +156,7 @@ void RulesExt::ExtData::LoadAfterTypeData(RulesClass *pThis, CCINIClass *pINI) {
 
 	pData->FirestormGroundAnim.Read(exINI, "AudioVisual", "FirestormGroundAnim");
 	pData->FirestormAirAnim.Read(exINI, "AudioVisual", "FirestormAirAnim");
+	pData->FirestormWarhead.Read(exINI, "CombatDamage", "FirestormWarhead");
 }
 
 // =============================
@@ -208,7 +209,8 @@ void RulesExt::ExtData::Serialize(T& Stm) {
 		.Process(this->DegradeAmountNormal)
 		.Process(this->DegradeAmountConsumer)
 		.Process(this->FirestormGroundAnim)
-		.Process(this->FirestormAirAnim);
+		.Process(this->FirestormAirAnim)
+		.Process(this->FirestormWarhead);
 }
 
 void RulesExt::ExtData::LoadFromStream(AresStreamReader &Stm) {

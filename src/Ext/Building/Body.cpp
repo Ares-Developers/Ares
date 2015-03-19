@@ -737,10 +737,12 @@ void BuildingExt::ExtData::ImmolateVictim(ObjectClass * Victim) {
 	BuildingClass *pThis = this->OwnerObject();
 	if(generic_cast<TechnoClass *>(Victim) && Victim != pThis && !Victim->InLimbo && Victim->IsAlive && Victim->Health) {
 		CoordStruct XYZ = Victim->GetCoords();
-		int Damage = Victim->Health;
-		Victim->ReceiveDamage(&Damage, 0, RulesClass::Instance->C4Warhead/* todo */, nullptr, true, false, pThis->Owner);
 
 		auto const pRulesExt = RulesExt::Global();
+
+		int Damage = Victim->Health;
+		auto const pWarhead = pRulesExt->FirestormWarhead.Get(RulesClass::Instance->C4Warhead);
+		Victim->ReceiveDamage(&Damage, 0, pWarhead, nullptr, true, false, pThis->Owner);
 
 		auto const pType = !Victim->IsInAir()
 			? pRulesExt->FirestormGroundAnim

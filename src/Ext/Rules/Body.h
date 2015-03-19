@@ -90,6 +90,7 @@ public:
 		// firestorm
 		Valueable<AnimTypeClass*> FirestormGroundAnim;
 		Valueable<AnimTypeClass*> FirestormAirAnim;
+		Nullable<WarheadTypeClass*> FirestormWarhead;
 
 		ExtData(RulesClass* OwnerObject) : Extension<RulesClass>(OwnerObject),
 			ElectricDeath(nullptr),
