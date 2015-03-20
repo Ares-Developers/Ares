@@ -733,18 +733,18 @@ void BuildingExt::ExtData::ImmolateVictims() {
 	}
 }
 
-void BuildingExt::ExtData::ImmolateVictim(ObjectClass * Victim) {
+bool BuildingExt::ExtData::ImmolateVictim(ObjectClass* const pVictim, bool const destroy) {
 	BuildingClass *pThis = this->OwnerObject();
-	if(generic_cast<TechnoClass *>(Victim) && Victim != pThis && !Victim->InLimbo && Victim->IsAlive && Victim->Health) {
-		CoordStruct XYZ = Victim->GetCoords();
+	if(generic_cast<TechnoClass *>(pVictim) && pVictim != pThis && !pVictim->InLimbo && pVictim->IsAlive && pVictim->Health) {
+		CoordStruct XYZ = pVictim->GetCoords();
 
 		auto const pRulesExt = RulesExt::Global();
 
-		int Damage = Victim->Health;
+		int Damage = pVictim->Health;
 		auto const pWarhead = pRulesExt->FirestormWarhead.Get(RulesClass::Instance->C4Warhead);
-		Victim->ReceiveDamage(&Damage, 0, pWarhead, nullptr, true, false, pThis->Owner);
+		pVictim->ReceiveDamage(&Damage, 0, pWarhead, nullptr, true, false, pThis->Owner);
 
-		auto const pType = !Victim->IsInAir()
+		auto const pType = !pVictim->IsInAir()
 			? pRulesExt->FirestormGroundAnim
 			: pRulesExt->FirestormAirAnim;
 
@@ -752,7 +752,10 @@ void BuildingExt::ExtData::ImmolateVictim(ObjectClass * Victim) {
 			GameCreate<AnimClass>(pType, XYZ);
 		}
 
+		return true;
 	}
+
+	return false;
 }
 
 // Updates the activation of the sensor ability, if neccessary.

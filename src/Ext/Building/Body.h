@@ -128,7 +128,7 @@ public:
 
 		void UpdateFirewall();
 		void ImmolateVictims();
-		void ImmolateVictim(ObjectClass * Victim);
+		bool ImmolateVictim(ObjectClass* Victim, bool destroy = true);
 
 		bool ReverseEngineer(TechnoClass * Victim); //!< Returns true if Victim wasn't buildable and now should be
 
