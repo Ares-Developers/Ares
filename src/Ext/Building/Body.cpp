@@ -741,22 +741,27 @@ void BuildingExt::ExtData::ImmolateVictims() {
 }
 
 bool BuildingExt::ExtData::ImmolateVictim(ObjectClass* const pVictim, bool const destroy) {
-	BuildingClass *pThis = this->OwnerObject();
-	if(generic_cast<TechnoClass *>(pVictim) && pVictim != pThis && !pVictim->InLimbo && pVictim->IsAlive && pVictim->Health) {
-		CoordStruct XYZ = pVictim->GetCoords();
-
+	if(pVictim && pVictim->Health > 0) {
 		auto const pRulesExt = RulesExt::Global();
 
-		int Damage = pVictim->Health;
-		auto const pWarhead = pRulesExt->FirestormWarhead.Get(RulesClass::Instance->C4Warhead);
-		pVictim->ReceiveDamage(&Damage, 0, pWarhead, nullptr, true, false, pThis->Owner);
+		if(destroy) {
+			auto const pThis = this->OwnerObject();
 
-		auto const pType = !pVictim->IsInAir()
+			auto const pWarhead = pRulesExt->FirestormWarhead.Get(
+				RulesClass::Instance->C4Warhead);
+
+			auto damage = pVictim->Health;
+			pVictim->ReceiveDamage(&damage, 0, pWarhead, nullptr, true, true,
+				pThis->Owner);
+		}
+
+		auto const& pType = (pVictim->GetHeight() < 100)
 			? pRulesExt->FirestormGroundAnim
 			: pRulesExt->FirestormAirAnim;
 
 		if(pType) {
-			GameCreate<AnimClass>(pType, XYZ);
+			auto const crd = pVictim->GetCoords();
+			GameCreate<AnimClass>(pType, crd, 0, 1, 0x600, -10, false);
 		}
 
 		return true;
