@@ -727,9 +727,16 @@ void BuildingExt::ExtData::UpdateFirewall() {
 }
 
 void BuildingExt::ExtData::ImmolateVictims() {
-	CellClass *C = this->OwnerObject()->GetCell();
-	for(ObjectClass *O = C->GetContent(); O; O = O->NextObject) {
-		this->ImmolateVictim(O);
+	auto const pCell = this->OwnerObject()->GetCell();
+	auto pNext = pCell->FirstObject;
+	for(auto pObject = pNext; pObject; pObject = pNext) {
+		pNext = pObject->NextObject;
+
+		if(auto pFoot = abstract_cast<FootClass*>(pObject)) {
+			if(!pFoot->GetType()->IgnoresFirestorm) {
+				this->ImmolateVictim(pFoot);
+			}
+		}
 	}
 }
 
