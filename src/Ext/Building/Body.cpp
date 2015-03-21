@@ -677,48 +677,42 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 }
 
 void BuildingExt::ExtData::UpdateFirewall() {
-	BuildingClass *B = this->OwnerObject();
-	BuildingTypeClass *BT = B->Type;
-	HouseClass *H = B->Owner;
-	BuildingTypeExt::ExtData* pTypeData = BuildingTypeExt::ExtMap.Find(BT);
+	auto const pThis = this->OwnerObject();
+	auto const pTypeExt = BuildingTypeExt::ExtMap.Find(pThis->Type);
 
-	if(!pTypeData->Firewall_Is) {
+	if(!pTypeExt->Firewall_Is) {
 		return;
 	}
 
-	HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(H);
-	bool FS = pHouseData->FirewallActive;
+	auto const pHouseExt = HouseExt::ExtMap.Find(pThis->Owner);
+	auto const active = pHouseExt->FirewallActive;
 
-	DWORD FWFrame = BuildingExt::GetFirewallFlags(B);
-	if(FS) {
-		FWFrame += 32;
-	}
+	auto const idxFrame = BuildingExt::GetFirewallFlags(pThis)
+		+ (active ? 32u : 0u);
 
-	if(B->FirestormWallFrame != FWFrame) {
-		if(!pHouseData->FirewallRecalc) {
-			pHouseData->FirewallRecalc = 1;
+	if(pThis->FirestormWallFrame != idxFrame) {
+		if(!pHouseExt->FirewallRecalc) {
+			pHouseExt->FirewallRecalc = 1;
 		}
-		B->FirestormWallFrame = FWFrame;
-		B->GetCell()->Setup(0xFFFFFFFF);
-		B->UpdatePlacement(PlacementType::Redraw);
+		pThis->FirestormWallFrame = idxFrame;
+		pThis->GetCell()->Setup(0xFFFFFFFF);
+		pThis->UpdatePlacement(PlacementType::Redraw);
 	}
 
-	if(!FS) {
+	if(!active) {
 		return;
 	}
 
 	if(!(Unsorted::CurrentFrame % 7) && ScenarioClass::Instance->Random.RandomRanged(0, 15) == 1) {
-		auto corners = (FWFrame & 0xF); // 1111b
-		if(AnimClass *IdleAnim = B->FirestormAnim) {
-			GameDelete(IdleAnim);
-			B->FirestormAnim = 0;
+		auto const connections = (idxFrame & 0xF); // 1111b
+		if(auto const pIdleAnim = pThis->FirestormAnim) {
+			GameDelete(pIdleAnim);
+			pThis->FirestormAnim = nullptr;
 		}
-		if(corners != 5 && corners != 10) {  // (0101b || 1010b) == part of a straight line
-			CoordStruct XYZ = B->GetCoords();
-			XYZ.X -= 768;
-			XYZ.Y -= 768;
-			if(AnimTypeClass *FSA = AnimTypeClass::Find("FSIDLE")) {
-				B->FirestormAnim = GameCreate<AnimClass>(FSA, XYZ);
+		if(connections != 5 && connections != 10) {  // (0101b || 1010b) == part of a straight line
+			if(auto const pType = AnimTypeClass::Find("FSIDLE")) {
+				auto crd = pThis->GetCoords() - CoordStruct{768, 768, 0};
+				pThis->FirestormAnim = GameCreate<AnimClass>(pType, crd);
 			}
 		}
 	}
