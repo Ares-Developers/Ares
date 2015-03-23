@@ -736,6 +736,28 @@ void BuildingExt::ExtData::UpdateFirewall(bool const changedState) {
 	}
 }
 
+void BuildingExt::ExtData::UpdateFirewallLinks() {
+	auto const pThis = this->OwnerObject();
+	auto const pTypeExt = BuildingTypeExt::ExtMap.Find(pThis->Type);
+
+	if(pTypeExt->Firewall_Is) {
+		// update this
+		if(!pThis->InLimbo && pThis->IsAlive) {
+			this->UpdateFirewall();
+		}
+
+		// and all surrounding buildings
+		auto const pCell = MapClass::Instance->GetCellAt(pThis->Location);
+		for(auto i = 0u; i < 8; i += 2) {
+			auto const pNeighbour = pCell->GetNeighbourCell(i);
+			if(auto const pBld = pNeighbour->GetBuilding()) {
+				auto const pExt = BuildingExt::ExtMap.Find(pBld);
+				pExt->UpdateFirewall();
+			}
+		}
+	}
+}
+
 void BuildingExt::ExtData::ImmolateVictims() {
 	auto const pCell = this->OwnerObject()->GetCell();
 	auto pNext = pCell->FirstObject;

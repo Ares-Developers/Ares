@@ -114,8 +114,31 @@ DEFINE_HOOK(442230, BuildingClass_ReceiveDamage_FSW, 6)
 	return 0;
 }
 
+// connect the newly built Firestorm Wall
+DEFINE_HOOK(440D01, BuildingClass_Put_FirestormWall, 6)
+{
+	GET(BuildingClass* const, pThis, ESI);
+	//GET(CellStruct const*, pMapCoords, EBP);
+	auto const pExt = BuildingExt::ExtMap.Find(pThis);
+
+	pExt->UpdateFirewallLinks();
+
+	return 0;
+}
+
+// disconnect the Firestorm Wall
+DEFINE_HOOK(445DF4, BuildingClass_Remove_FirestormWall, 6)
+{
+	GET(BuildingClass* const, pThis, ESI);
+	auto const pExt = BuildingExt::ExtMap.Find(pThis);
+
+	pExt->UpdateFirewallLinks();
+
+	return 0;
+}
+
 // main update
-DEFINE_HOOK(43FC39, BuildingClass_Update_FSW, 6)
+DEFINE_HOOK(440378, BuildingClass_Update_FirestormWall, 6)
 {
 	GET(BuildingClass* const, pThis, ESI);
 	auto const pData = BuildingExt::ExtMap.Find(pThis);
