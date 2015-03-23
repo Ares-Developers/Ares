@@ -703,7 +703,7 @@ void BuildingExt::ExtData::UpdateFirewall(bool const changedState) {
 			}
 		}
 	} else {
-		// update the frame, cell passability
+		// update the frame, cell passability and active anim
 		auto const idxFrame = BuildingExt::GetFirewallFlags(pThis)
 			+ (active ? 32u : 0u);
 
@@ -714,6 +714,20 @@ void BuildingExt::ExtData::UpdateFirewall(bool const changedState) {
 			pThis->FirestormWallFrame = idxFrame;
 			pThis->GetCell()->Setup(0xFFFFFFFF);
 			pThis->UpdatePlacement(PlacementType::Redraw);
+		}
+
+		auto& Anim = pThis->GetAnim(BuildingAnimSlot::Special);
+
+		auto const connections = idxFrame & 0xF;
+		if(active && connections != 5 && connections != 10 && !Anim) {
+			if(auto const& pType = RulesExt::Global()->FirestormActiveAnim) {
+				auto const crd = pThis->GetCoords() - CoordStruct{ 128, 128, 0 };
+				Anim = GameCreate<AnimClass>(pType, crd, 1, 0, 0x600, -10);
+				Anim->IsFogged = pThis->IsFogged;
+			}
+		} else if(Anim) {
+			GameDelete(Anim);
+			Anim = nullptr;
 		}
 	}
 

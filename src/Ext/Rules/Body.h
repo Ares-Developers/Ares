@@ -88,6 +88,7 @@ public:
 		Valueable<int> DegradeAmountConsumer;
 
 		// firestorm
+		Valueable<AnimTypeClass*> FirestormActiveAnim;
 		Valueable<AnimTypeClass*> FirestormIdleAnim;
 		Valueable<AnimTypeClass*> FirestormGroundAnim;
 		Valueable<AnimTypeClass*> FirestormAirAnim;

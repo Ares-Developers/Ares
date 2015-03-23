@@ -105,6 +105,7 @@ void RulesExt::ExtData::LoadBeforeTypeData(RulesClass *pThis, CCINIClass *pINI) 
 
 // this runs between the before and after type data loading methods for rules ini
 void RulesExt::ExtData::InitializeAfterTypeData(RulesClass* const pThis) {
+	this->FirestormActiveAnim = AnimTypeClass::Find("GAFSDF_A");
 	this->FirestormIdleAnim = AnimTypeClass::Find("FSIDLE");
 	this->FirestormGroundAnim = AnimTypeClass::Find("FSGRND");
 	this->FirestormAirAnim = AnimTypeClass::Find("FSAIR");
@@ -155,6 +156,7 @@ void RulesExt::ExtData::LoadAfterTypeData(RulesClass *pThis, CCINIClass *pINI) {
 	pData->TogglePowerCursor.Read(exINI, "General", "TogglePowerCursor");
 	pData->TogglePowerNoCursor.Read(exINI, "General", "TogglePowerNoCursor");
 
+	pData->FirestormActiveAnim.Read(exINI, "AudioVisual", "FirestormActiveAnim");
 	pData->FirestormIdleAnim.Read(exINI, "AudioVisual", "FirestormIdleAnim");
 	pData->FirestormGroundAnim.Read(exINI, "AudioVisual", "FirestormGroundAnim");
 	pData->FirestormAirAnim.Read(exINI, "AudioVisual", "FirestormAirAnim");
@@ -210,6 +212,7 @@ void RulesExt::ExtData::Serialize(T& Stm) {
 		.Process(this->DegradePercentage)
 		.Process(this->DegradeAmountNormal)
 		.Process(this->DegradeAmountConsumer)
+		.Process(this->FirestormActiveAnim)
 		.Process(this->FirestormIdleAnim)
 		.Process(this->FirestormGroundAnim)
 		.Process(this->FirestormAirAnim)
