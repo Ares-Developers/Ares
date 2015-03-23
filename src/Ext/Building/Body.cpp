@@ -696,7 +696,7 @@ void BuildingExt::ExtData::UpdateFirewall(bool const changedState) {
 				pThis->FirestormAnim = nullptr;
 			}
 			if(connections != 5 && connections != 10) {  // (0101b || 1010b) == part of a straight line
-				if(auto const pType = AnimTypeClass::Find("FSIDLE")) {
+				if(AnimTypeClass* pType = RulesExt::Global()->FirestormIdleAnim) {
 					auto crd = pThis->GetCoords() - CoordStruct{768, 768, 0};
 					pThis->FirestormAnim = GameCreate<AnimClass>(pType, crd);
 				}
