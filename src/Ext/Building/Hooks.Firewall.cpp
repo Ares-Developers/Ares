@@ -286,31 +286,6 @@ DEFINE_HOOK(6F64CB, TechnoClass_DrawHealthBar_FirestormWall, 6)
 	return pData->Firewall_Is ? 0x6F6832u : 0u;
 }
 
-DEFINE_HOOK(71B126, TemporalClass_Fire, 7)
-{
-	GET(BuildingClass *, B, EDI);
-	BuildingTypeExt::ExtData * pData = BuildingTypeExt::ExtMap.Find(B->Type);
-	HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(B->Owner);
-
-	if(pData->Firewall_Is && pHouseData->FirewallActive) {
-		bool found = false;
-		for(int i = 0; i < B->Owner->Buildings.Count; ++i) {
-			BuildingClass * pBuilding = B->Owner->Buildings[i];
-			if(pBuilding->Type == B->Type && pBuilding != B) {
-				if(!pBuilding->InLimbo && pBuilding->IsAlive && pBuilding->Health) {
-					found = true;
-					break;
-				}
-			}
-		}
-		if(!found) {
-			pHouseData->SetFirestormState(0);
-		}
-	}
-
-	return 0;
-}
-
 DEFINE_HOOK(4DA53E, FootClass_Update, 6)
 {
 	GET(FootClass* const, pThis, ESI);
