@@ -676,7 +676,7 @@ bool BuildingExt::ExtData::InfiltratedBy(HouseClass *Enterer) {
 	return true;
 }
 
-void BuildingExt::ExtData::UpdateFirewall() {
+void BuildingExt::ExtData::UpdateFirewall(bool const changedState) {
 	auto const pThis = this->OwnerObject();
 	auto const pTypeExt = BuildingTypeExt::ExtMap.Find(pThis->Type);
 

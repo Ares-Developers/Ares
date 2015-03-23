@@ -126,7 +126,7 @@ public:
 		// related to raidable buildings
 		void evalRaidStatus(); //!< Checks if the building is empty but still marked as raided, and returns the building to its previous owner, if so.
 
-		void UpdateFirewall();
+		void UpdateFirewall(bool changedState = true);
 		void ImmolateVictims();
 		bool ImmolateVictim(ObjectClass* Victim, bool destroy = true);
 

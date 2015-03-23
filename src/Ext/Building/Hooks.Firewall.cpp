@@ -120,7 +120,7 @@ DEFINE_HOOK(43FC39, BuildingClass_Update_FSW, 6)
 	GET(BuildingClass* const, pThis, ESI);
 	auto const pData = BuildingExt::ExtMap.Find(pThis);
 
-	pData->UpdateFirewall();
+	pData->UpdateFirewall(false);
 
 	return 0;
 }
