@@ -689,17 +689,17 @@ void BuildingExt::ExtData::UpdateFirewall(bool const changedState) {
 
 	if(!changedState) {
 		// update only the idle anim
-		if(!(Unsorted::CurrentFrame % 7) && ScenarioClass::Instance->Random.RandomRanged(0, 15) == 1) {
-			auto const connections = (pThis->FirestormWallFrame & 0xF); // 1111b
-			if(auto const pIdleAnim = pThis->FirestormAnim) {
-				GameDelete(pIdleAnim);
-				pThis->FirestormAnim = nullptr;
-			}
-			if(connections != 5 && connections != 10) {  // (0101b || 1010b) == part of a straight line
-				if(AnimTypeClass* pType = RulesExt::Global()->FirestormIdleAnim) {
-					auto crd = pThis->GetCoords() - CoordStruct{768, 768, 0};
-					pThis->FirestormAnim = GameCreate<AnimClass>(pType, crd);
-				}
+		auto& Anim = pThis->GetAnim(BuildingAnimSlot::SpecialTwo);
+
+		// (0b0101 || 0b1010) == part of a straight line
+		auto const connections = pThis->FirestormWallFrame & 0xF;
+		if(active && Unsorted::CurrentFrame & 7 && !Anim
+			&& connections != 5 && connections != 10
+			&& (ScenarioClass::Instance->Random.Random() & 0xF) == 0)
+		{
+			if(AnimTypeClass* pType = RulesExt::Global()->FirestormIdleAnim) {
+				auto const crd = pThis->GetCoords() - CoordStruct{ 740, 740, 0 };
+				Anim = GameCreate<AnimClass>(pType, crd, 0, 1, 0x604, -10);
 			}
 		}
 	} else {
