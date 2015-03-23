@@ -687,37 +687,39 @@ void BuildingExt::ExtData::UpdateFirewall(bool const changedState) {
 	auto const pHouseExt = HouseExt::ExtMap.Find(pThis->Owner);
 	auto const active = pHouseExt->FirewallActive;
 
-	auto const idxFrame = BuildingExt::GetFirewallFlags(pThis)
-		+ (active ? 32u : 0u);
-
-	if(pThis->FirestormWallFrame != idxFrame) {
-		if(!pHouseExt->FirewallRecalc) {
-			pHouseExt->FirewallRecalc = 1;
-		}
-		pThis->FirestormWallFrame = idxFrame;
-		pThis->GetCell()->Setup(0xFFFFFFFF);
-		pThis->UpdatePlacement(PlacementType::Redraw);
-	}
-
-	if(!active) {
-		return;
-	}
-
-	if(!(Unsorted::CurrentFrame % 7) && ScenarioClass::Instance->Random.RandomRanged(0, 15) == 1) {
-		auto const connections = (idxFrame & 0xF); // 1111b
-		if(auto const pIdleAnim = pThis->FirestormAnim) {
-			GameDelete(pIdleAnim);
-			pThis->FirestormAnim = nullptr;
-		}
-		if(connections != 5 && connections != 10) {  // (0101b || 1010b) == part of a straight line
-			if(auto const pType = AnimTypeClass::Find("FSIDLE")) {
-				auto crd = pThis->GetCoords() - CoordStruct{768, 768, 0};
-				pThis->FirestormAnim = GameCreate<AnimClass>(pType, crd);
+	if(!changedState) {
+		// update only the idle anim
+		if(!(Unsorted::CurrentFrame % 7) && ScenarioClass::Instance->Random.RandomRanged(0, 15) == 1) {
+			auto const connections = (pThis->FirestormWallFrame & 0xF); // 1111b
+			if(auto const pIdleAnim = pThis->FirestormAnim) {
+				GameDelete(pIdleAnim);
+				pThis->FirestormAnim = nullptr;
+			}
+			if(connections != 5 && connections != 10) {  // (0101b || 1010b) == part of a straight line
+				if(auto const pType = AnimTypeClass::Find("FSIDLE")) {
+					auto crd = pThis->GetCoords() - CoordStruct{768, 768, 0};
+					pThis->FirestormAnim = GameCreate<AnimClass>(pType, crd);
+				}
 			}
 		}
+	} else {
+		// update the frame, cell passability
+		auto const idxFrame = BuildingExt::GetFirewallFlags(pThis)
+			+ (active ? 32u : 0u);
+
+		if(pThis->FirestormWallFrame != idxFrame) {
+			if(!pHouseExt->FirewallRecalc) {
+				pHouseExt->FirewallRecalc = 1;
+			}
+			pThis->FirestormWallFrame = idxFrame;
+			pThis->GetCell()->Setup(0xFFFFFFFF);
+			pThis->UpdatePlacement(PlacementType::Redraw);
+		}
 	}
 
-	this->ImmolateVictims();
+	if(active) {
+		this->ImmolateVictims();
+	}
 }
 
 void BuildingExt::ExtData::ImmolateVictims() {
