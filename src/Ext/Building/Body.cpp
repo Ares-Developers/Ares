@@ -1065,7 +1065,7 @@ CoordStruct BuildingExt::GetCenterCoords(BuildingClass* pBuilding, bool includeB
 {
 	CoordStruct ret = pBuilding->GetCoords();
 	ret.X += pBuilding->Type->GetFoundationWidth() / 2;
-	ret.X += pBuilding->Type->GetFoundationHeight(includeBib) / 2;
+	ret.Y += pBuilding->Type->GetFoundationHeight(includeBib) / 2;
 	return ret;
 }
 
