@@ -1,9 +1,38 @@
 #include "TrajectoryHelper.h"
 
+#include <BulletTypeClass.h>
 #include <CellClass.h>
 #include <HouseClass.h>
 #include <MapClass.h>
+#include <RulesClass.h>
+#include <OverlayTypeClass.h>
 #include <WarheadTypeClass.h>
+
+bool AresTrajectoryHelper::IsCliffHit(
+	CellClass const* const pSource, CellClass const* const pBefore,
+	CellClass const* const pAfter)
+{
+	auto const levelAfter = pAfter->GetLevel();
+	return levelAfter - pBefore->GetLevel() >= CellClass::BridgeLevels
+		&& levelAfter - pSource->GetLevel() > 0;
+}
+
+bool AresTrajectoryHelper::IsWallHit(
+	CellClass const* const pSource, CellClass const* const pCheck,
+	CellClass const* const pTarget, HouseClass const* const pOwner)
+{
+	if(pCheck != pTarget && pCheck->OverlayTypeIndex != -1) {
+		if(OverlayTypeClass::Array->Items[pCheck->OverlayTypeIndex]->Wall) {
+			if(pSource->Level <= pTarget->Level) {
+				auto const& index = pCheck->WallOwnerIndex;
+				return !RulesClass::Instance->AlliedWallTransparency
+					|| !HouseClass::Array->Items[index]->IsAlliedWith(pOwner);
+			}
+		}
+	}
+
+	return false;
+}
 
 Vector2D<int> AresTrajectoryHelper::AbsoluteDifference(const CoordStruct& coords) {
 	return{ std::abs(coords.X), std::abs(coords.Y) };
@@ -24,12 +53,12 @@ CellClass* AresTrajectoryHelper::GetObstacle(
 
 	auto IsCliffHit = [&]() {
 		return pType->SubjectToCliffs
-			&& TrajectoryHelper::IsCliffHit(pCellSource, pCellBullet, pCellCur);
+			&& AresTrajectoryHelper::IsCliffHit(pCellSource, pCellBullet, pCellCur);
 	};
 
 	auto IsWallHit = [&]() {
 		return pType->SubjectToWalls
-			&& TrajectoryHelper::IsWallHit(pCellSource, pCellCur, pCellTarget, pOwner);
+			&& AresTrajectoryHelper::IsWallHit(pCellSource, pCellCur, pCellTarget, pOwner);
 	};
 
 	auto const isHit = IsCliffHit() || IsWallHit(); 

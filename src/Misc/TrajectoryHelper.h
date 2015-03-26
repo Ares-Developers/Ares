@@ -6,6 +6,14 @@ class HouseClass;
 class AresTrajectoryHelper
 {
 private:
+	static bool IsCliffHit(
+		CellClass const* pSource, CellClass const* pBefore,
+		CellClass const* pAfter);
+
+	static bool IsWallHit(
+		CellClass const* pSource, CellClass const* pCheck,
+		CellClass const* pTarget, HouseClass const* pOwner);
+
 	static Vector2D<int> AbsoluteDifference(const CoordStruct& coords);
 
 	static Vector2D<int> AbsoluteDifference(const CellStruct& cell);
