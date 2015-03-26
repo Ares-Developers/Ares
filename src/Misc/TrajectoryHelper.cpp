@@ -34,38 +34,7 @@ CellClass* AresTrajectoryHelper::GetObstacle(
 
 	auto const isHit = IsCliffHit() || IsWallHit(); 
 
-	if(isHit) {
-#ifdef SLOW_WITH_SAME_OUTCOME
-		// NOTE: this path returns pCellCur regardless of anything that happen
-		// in this block, because the complicated 'if' below folds down to
-		// a constant and the magnitude calculation would return the same
-		// value anyhow. this is here for reference -AlexB 2015-03-01
-		auto const diff = crdCur - pCellCur->GetCoords();
-
-		// Magnitude <= 85
-		auto const UpperLimit = 86 * 86;
-		if(diff.MagnitudeSquared() < UpperLimit) {
-			return pCellCur;
-		}
-
-		auto const diff1 = AbsoluteDifference(
-			pCellSource->GetCoords() - pCellTarget->GetCoords());
-		auto const diff2 = AbsoluteDifference(
-			crdCur - pCellCur->GetCoords());
-
-		// original code, with isHit reused (and known to be true)
-		// this is a well hidden compile time constant 'true'
-		if((diff1.Y < diff1.X && diff2.Y > diff2.X && isHit)
-			|| (diff1.Y <= diff1.X || diff2.Y >= diff2.X || isHit))
-		{
-			return pCellCur;
-		}
-#else
-		return pCellCur;
-#endif
-	}
-
-	return nullptr;
+	return isHit ? pCellCur : nullptr;
 }
 
 CellClass* AresTrajectoryHelper::FindFirstObstacle(
