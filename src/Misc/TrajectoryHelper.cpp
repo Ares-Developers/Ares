@@ -1,5 +1,7 @@
 #include "TrajectoryHelper.h"
 
+#include "../Ext/BuildingType/Body.h"
+
 #include <BulletTypeClass.h>
 #include <CellClass.h>
 #include <HouseClass.h>
@@ -34,6 +36,34 @@ bool AresTrajectoryHelper::IsWallHit(
 	return false;
 }
 
+bool AresTrajectoryHelper::IsBuildingHit(
+	AbstractClass const* const pSource, AbstractClass const* const pTarget,
+	CoordStruct const& crdCur, HouseClass const* const pOwner)
+{
+	auto const pCellBullet = MapClass::Instance->GetCellAt(crdCur);
+
+	if(auto const pBld = pCellBullet->GetBuilding()) {
+		// source building buildings is always traversable.
+		if(pBld == pSource) {
+			return false;
+		}
+
+		auto const pBldType = pBld->Type;
+
+		auto const pBldTypeExt = BuildingTypeExt::ExtMap.Find(pBldType);
+		if(int solidHeight = pBldTypeExt->Solid_Height) {
+			if(solidHeight < 0) {
+				solidHeight = pBldType->Height;
+			}
+
+			auto const floor = MapClass::Instance->GetCellFloorHeight(crdCur);
+			return crdCur.Z <= floor + solidHeight * 256;
+		}
+	}
+
+	return false;
+}
+
 Vector2D<int> AresTrajectoryHelper::AbsoluteDifference(const CoordStruct& coords) {
 	return{ std::abs(coords.X), std::abs(coords.Y) };
 }
@@ -62,7 +92,12 @@ CellClass* AresTrajectoryHelper::GetObstacle(
 			&& AresTrajectoryHelper::IsWallHit(pCellSource, pCellCur, pCellTarget, pOwner);
 	};
 
-	auto const isHit = IsCliffHit() || IsWallHit(); 
+	auto IsBuildingHit = [&]() {
+		return pTypeExt->SubjectToSolid
+			&& AresTrajectoryHelper::IsBuildingHit(pSource, pTarget, crdCur, pOwner);
+	};
+
+	auto const isHit = IsCliffHit() || IsWallHit() || IsBuildingHit(); 
 
 	return isHit ? pCellCur : nullptr;
 }
@@ -74,7 +109,7 @@ CellClass* AresTrajectoryHelper::FindFirstObstacle(
 	BulletTypeExt::ExtData const* const pTypeExt,
 	HouseClass const* const pOwner)
 {
-	if(AresTrajectoryHelper::SubjectToAnything(pType)) {
+	if(AresTrajectoryHelper::SubjectToAnything(pType, pTypeExt)) {
 		auto const cellTarget = CellClass::Coord2Cell(crdTarget);
 		auto const pCellTarget = MapClass::Instance->GetCellAt(cellTarget);
 

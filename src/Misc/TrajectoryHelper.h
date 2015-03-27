@@ -14,6 +14,10 @@ private:
 		CellClass const* pSource, CellClass const* pCheck,
 		CellClass const* pTarget, HouseClass const* pOwner);
 
+	static bool IsBuildingHit(
+		AbstractClass const* pSource, AbstractClass const* pTarget,
+		CoordStruct const& crdCur, HouseClass const* pOwner);
+
 	static Vector2D<int> AbsoluteDifference(const CoordStruct& coords);
 
 	static Vector2D<int> AbsoluteDifference(const CellStruct& cell);
@@ -21,10 +25,11 @@ private:
 public:
 	// gets whether collision checks are needed
 	static bool SubjectToAnything(
-		BulletTypeClass const* pType)
+		BulletTypeClass const* pType, BulletTypeExt::ExtData const* pTypeExt)
 	{
 		return pType->SubjectToCliffs
-			|| pType->SubjectToWalls;
+			|| pType->SubjectToWalls
+			|| pTypeExt->SubjectToSolid;
 	}
 
 	// gets the obstacle when moving from pCellBullet to crdCur
