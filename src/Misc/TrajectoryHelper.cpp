@@ -44,6 +44,7 @@ Vector2D<int> AresTrajectoryHelper::AbsoluteDifference(const CellStruct& cell) {
 
 CellClass* AresTrajectoryHelper::GetObstacle(
 	CellClass const* const pCellSource, CellClass const* const pCellTarget,
+	AbstractClass const* const pSource, AbstractClass const* const pTarget,
 	CellClass const* const pCellBullet, CoordStruct const& crdCur,
 	BulletTypeClass const* const pType, BulletTypeExt::ExtData const* pTypeExt,
 	HouseClass const* const pOwner)
@@ -68,6 +69,7 @@ CellClass* AresTrajectoryHelper::GetObstacle(
 
 CellClass* AresTrajectoryHelper::FindFirstObstacle(
 	CoordStruct const& crdSrc, CoordStruct const& crdTarget,
+	AbstractClass const* const pSource, AbstractClass const* const pTarget,
 	BulletTypeClass const* const pType,
 	BulletTypeExt::ExtData const* const pTypeExt,
 	HouseClass const* const pOwner)
@@ -88,8 +90,8 @@ CellClass* AresTrajectoryHelper::FindFirstObstacle(
 		auto crdCur = crdSrc;
 		auto pCellCur = pCellSrc;
 		for(size_t i = 0; i < maxDelta; ++i) {
-			if(auto const pCell = GetObstacle(pCellSrc, pCellTarget, pCellCur,
-				crdCur, pType, pTypeExt, pOwner))
+			if(auto const pCell = GetObstacle(pCellSrc, pCellTarget, pSource,
+				pTarget, pCellCur, crdCur, pType, pTypeExt, pOwner))
 			{
 				return pCell;
 			}
@@ -104,13 +106,14 @@ CellClass* AresTrajectoryHelper::FindFirstObstacle(
 
 CellClass* AresTrajectoryHelper::FindFirstImpenetrableObstacle(
 	CoordStruct const& crdSrc, CoordStruct const& crdTarget,
+	AbstractClass const* const pSource, AbstractClass const* const pTarget,
 	WeaponTypeClass const* const pWeapon, HouseClass const* const pOwner)
 {
 	auto const pProjectile = pWeapon->Projectile;
 	auto const pProjectileExt = BulletTypeExt::ExtMap.Find(pProjectile);
 
 	if(auto const pCell = FindFirstObstacle(
-		crdSrc, crdTarget, pProjectile, pProjectileExt,
+		crdSrc, crdTarget, pSource, pTarget, pProjectile, pProjectileExt,
 		pOwner))
 	{
 		if(pCell->ConnectsToOverlay(-1, -1)) {
@@ -137,7 +140,7 @@ DEFINE_HOOK(4CC360, TrajectoryHelper_GetObstacle, 5)
 	auto const pTypeExt = BulletTypeExt::ExtMap.Find(pType);
 
 	auto const ret = AresTrajectoryHelper::GetObstacle(
-		pCellSource, pCellTarget, pCellBullet, crdCur, pType,
+		pCellSource, pCellTarget, nullptr, nullptr, pCellBullet, crdCur, pType,
 		pTypeExt, pOwner);
 
 	R->EAX(ret);
@@ -154,7 +157,7 @@ DEFINE_HOOK(4CC100, TrajectoryHelper_FindFirstObstacle, 7)
 	auto const pTypeExt = BulletTypeExt::ExtMap.Find(pType);
 
 	auto const ret = AresTrajectoryHelper::FindFirstObstacle(
-		*pSource, *pTarget, pType, pTypeExt, pOwner);
+		*pSource, *pTarget, nullptr, nullptr, pType, pTypeExt, pOwner);
 
 	R->EAX(ret);
 	return 0x4CC30B;
@@ -168,7 +171,7 @@ DEFINE_HOOK(4CC310, TrajectoryHelper_FindFirstImpenetrableObstacle, 5)
 	GET_STACK(HouseClass* const, pOwner, 0x8);
 
 	auto const ret = AresTrajectoryHelper::FindFirstImpenetrableObstacle(
-		*pSource, *pTarget, pWeapon, pOwner);
+		*pSource, *pTarget, nullptr, nullptr, pWeapon, pOwner);
 
 	R->EAX(ret);
 	return 0x4CC357;
