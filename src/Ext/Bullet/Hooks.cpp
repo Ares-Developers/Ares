@@ -79,6 +79,12 @@ DEFINE_HOOK(4688BD, BulletClass_SetMovement_Obstacle, 6)
 		crdFirestorm.Z = MapClass::Instance->GetCellFloorHeight(crdFirestorm);
 		pThis->SetLocation(crdFirestorm);
 
+		auto const pCell = MapClass::Instance->GetCellAt(crdFirestorm);
+		auto const pBld = pCell->GetBuilding();
+		auto const pExt = BuildingExt::ExtMap.Find(pBld);
+		pExt->ImmolateVictim(pThis, false);
+		pThis->UnInit();
+
 	} else {
 		auto const pTypeExt = BulletTypeExt::ExtMap.Find(pThis->Type);
 		auto const pCell = AresTrajectoryHelper::FindFirstObstacle(
