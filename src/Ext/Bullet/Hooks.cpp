@@ -62,6 +62,36 @@ DEFINE_HOOK(46867F, BulletClass_SetMovement_Parachute, 5)
 	return 0x468689;
 }
 
+DEFINE_HOOK(4688BD, BulletClass_SetMovement_Obstacle, 6)
+{
+	GET(BulletClass* const, pThis, EBX);
+	GET(CoordStruct const* const, pLocation, EDI);
+	REF_STACK(CoordStruct const, dest, STACK_OFFS(0x54, 0x10));
+
+	auto const pOwner = pThis->Owner ? pThis->Owner->Owner : nullptr;
+
+	// code must use pLocation because it has FlakScatter applied
+	auto crdFirestorm = MapClass::Instance->FindFirstFirestorm(
+		*pLocation, dest, pOwner);
+
+	if(crdFirestorm != CoordStruct::Empty) {
+		crdFirestorm.Z = MapClass::Instance->GetCellFloorHeight(crdFirestorm);
+		pThis->SetLocation(crdFirestorm);
+
+	} else {
+		auto const pTypeExt = BulletTypeExt::ExtMap.Find(pThis->Type);
+		auto const pCell = AresTrajectoryHelper::FindFirstObstacle(
+			*pLocation, dest, pThis->Owner, pThis->Target, pThis->Type,
+			pTypeExt, pOwner);
+
+		pThis->SetLocation(pCell ? pCell->GetCoords() : dest);
+		pThis->Speed = 0;
+		pThis->Velocity = BulletVelocity::Empty;
+	}
+
+	return 0x468A3F;
+}
+
 // set the weapon type when spawning bullets. at least
 // Ivan Bombs need those
 DEFINE_HOOK(46A5B2, BulletClass_Shrapnel_WeaponType1, 6)
