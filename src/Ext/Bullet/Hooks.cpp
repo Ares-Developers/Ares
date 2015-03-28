@@ -3,6 +3,7 @@
 #include <CellClass.h>
 #include <MapClass.h>
 #include "../BulletType/Body.h"
+#include "../Building/Body.h"
 #include "../BuildingType/Body.h"
 #include "../WeaponType/Body.h"
 #include <ScenarioClass.h>
@@ -258,6 +259,22 @@ DEFINE_HOOK(467B94, BulletClass_Update_Ranged, 7)
 
 	// replicate replaced instruction
 	pThis->SetLocation(CrdNew);
+
+	// firestorm wall check
+	if(!pThis->Type->IgnoresFirestorm) {
+		auto const pCell = MapClass::Instance->GetCellAt(CrdNew);
+
+		if(auto const pBld = pCell->GetBuilding()) {
+			auto const pOwner = pThis->Owner ? pThis->Owner->Owner : nullptr;
+
+			if(BuildingExt::IsActiveFirestormWall(pBld, pOwner)) {
+				auto const pExt = BuildingExt::ExtMap.Find(pBld);
+				pExt->ImmolateVictim(pThis, false);
+				pThis->UnInit();
+				return 0x467FBA;
+			}
+		}
+	}
 
 	return 0x467BA4;
 }
