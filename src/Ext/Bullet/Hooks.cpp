@@ -9,40 +9,32 @@
 #include <YRMath.h>
 #include <Helpers/Iterators.h>
 
-// forced solid buildings - implement selection depending on projectile/building settings and heightmaps
-DEFINE_HOOK(4666F7, BulletClass_Update, 6)
+#include "../../Misc/TrajectoryHelper.h"
+
+DEFINE_HOOK(468BE2, BulletClass_ShouldDetonate_Obstacle, 6)
 {
-	GET(BulletClass *, Bullet, EBP);
+	GET(BulletClass* const, pThis, ESI);
+	GET(CoordStruct* const, pOutCoords, EDI);
 
-	CellClass *MyCell = Bullet->GetCell();
-	BulletTypeExt::ExtData *pBulletData = BulletTypeExt::ExtMap.Find(Bullet->Type);
-	BuildingClass *BuildingInIt = MyCell->GetBuilding();
-	if(pBulletData->SubjectToSolid && BuildingInIt && Bullet->Owner != BuildingInIt) {
-		auto *pBuildingTypeData = BuildingTypeExt::ExtMap.Find(BuildingInIt->Type);
-		if(int solidHeight = pBuildingTypeData->Solid_Height) {
-			if(solidHeight < 0) {
-				solidHeight = BuildingInIt->Type->Height * 256;
-			} else {
-				solidHeight *= 256;
-			}
-			CoordStruct MyXYZ = MyCell->GetCoords();
+	auto const pTypeExt = BulletTypeExt::ExtMap.Find(pThis->Type);
 
-			// use this delta offset to pick specific foundation cell's height from height map when it's implemented
-			auto MyXY = Bullet->GetMapCoords();
-			auto BldXY = BuildingInIt->GetMapCoords();
-			auto DeltaXY = MyXY - BldXY;
+	if(AresTrajectoryHelper::SubjectToAnything(pThis->Type, pTypeExt)) {
+		auto const Map = MapClass::Instance;
+		auto const pCellSource = Map->GetCellAt(pThis->SourceCoords);
+		auto const pCellTarget = Map->GetCellAt(pThis->TargetCoords);
+		auto const pCellLast = Map->GetCellAt(pThis->LastMapCoords);
 
-			int MyHeight = Bullet->Location.Z;
-			int BldHeight = MapClass::Instance->GetCellFloorHeight(MyXYZ) + solidHeight;
-			if(MyHeight <= BldHeight) {
-				Bullet->SetTarget(MyCell);
-				Bullet->SpawnNextAnim = 1;
-				Bullet->NextAnim = nullptr;
-			}
+		auto const pOwner = pThis->Owner ? pThis->Owner->Owner : nullptr;
+
+		if(AresTrajectoryHelper::GetObstacle(
+			pCellSource, pCellTarget, pThis->Owner, pThis->Target, pCellLast,
+			*pOutCoords, pThis->Type, pTypeExt, pOwner))
+		{
+			return 0x468C76;
 		}
 	}
 
-	return 0;
+	return 0x468C86;
 }
 
 DEFINE_HOOK(46867F, BulletClass_SetMovement_Parachute, 5)
