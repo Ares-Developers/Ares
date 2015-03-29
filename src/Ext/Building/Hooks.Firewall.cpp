@@ -9,6 +9,8 @@
 #include "../Tiberium/Body.h"
 #include "../Rules/Body.h"
 
+#include "../../Misc/SWTypes/Firewall.h"
+
 #include <Helpers/Enumerators.h>
 
 DEFINE_HOOK(5880A0, MapClass_FindFirstFirestorm, 6)
@@ -101,17 +103,28 @@ DEFINE_HOOK(43EFB3, BuildingClass_GetStaticImageFrame, 6)
 }
 
 // ignore damage
-DEFINE_HOOK(442230, BuildingClass_ReceiveDamage_FSW, 6)
+DEFINE_HOOK(4423E7, BuildingClass_ReceiveDamage_FSW, 5)
 {
-	GET(BuildingClass* const, pThis, ECX);
-	GET_STACK(int* const, pDamage, 0x4);
+	GET(BuildingClass* const, pThis, ESI);
+	GET_STACK(int* const, pDamage, 0xA0);
 
 	if(BuildingExt::IsActiveFirestormWall(pThis)) {
-		*pDamage = 0;
-		return 0x442C14;
+		auto const pExt = RulesExt::Global();
+		auto const& coefficient = pExt->DamageToFirestormDamageCoefficient;
+		auto const amount = static_cast<int>(*pDamage * coefficient);
+
+		if(amount > 0) {
+			auto const index = SW_Firewall::FirewallType;
+			if(auto const pSuper = pThis->Owner->FindSuperWeapon(index)) {
+				auto const left = pSuper->RechargeTimer.GetTimeLeft();
+				int const reduced = std::max(0, left - amount);
+				pSuper->RechargeTimer.Start(reduced);
+			}
+		}
+		return 0x4423B7;
 	}
 
-	return 0;
+	return 0x4423F2;
 }
 
 // connect the newly built Firestorm Wall

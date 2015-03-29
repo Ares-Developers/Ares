@@ -93,6 +93,7 @@ public:
 		Valueable<AnimTypeClass*> FirestormGroundAnim;
 		Valueable<AnimTypeClass*> FirestormAirAnim;
 		Nullable<WarheadTypeClass*> FirestormWarhead;
+		Valueable<double> DamageToFirestormDamageCoefficient;
 
 		ExtData(RulesClass* OwnerObject) : Extension<RulesClass>(OwnerObject),
 			ElectricDeath(nullptr),
