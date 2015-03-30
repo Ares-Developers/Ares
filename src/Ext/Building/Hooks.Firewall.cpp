@@ -235,63 +235,6 @@ DEFINE_HOOK(73F7B0, UnitClass_IsCellOccupied, 6)
 	return NoDecision;
 }
 
-// targeting state
-DEFINE_HOOK(6FC0C5, TechnoClass_GetFireError_Firewall, 6)
-{
-	//GET(TechnoClass* const, pThis, ESI);
-	GET(TechnoClass* const, pTarget, EBX);
-
-	if(auto const pBld = abstract_cast<BuildingClass*>(pTarget)) {
-		if(BuildingExt::IsActiveFirestormWall(pBld, nullptr)) {
-			return 0x6FC86A;
-		}
-	}
-
-	return 0;
-}
-
-DEFINE_HOOK(6FCD1D, TechnoClass_GetFireError_CanTargetFirewall, 5)
-{
-	GET(TechnoClass* const, pThis, ESI);
-	GET_STACK(AbstractClass* const, pTarget, 0x24);
-	GET_STACK(int const, idxWeapon, 0x28);
-
-	if(!HouseExt::IsAnyFirestormActive) {
-		return 0;
-	}
-
-	auto const pWeapon = pThis->GetWeapon(idxWeapon)->WeaponType;
-	if(!pWeapon || !pWeapon->Projectile) {
-		return 0;
-	}
-
-	auto const pBulletData = BulletTypeExt::ExtMap.Find(pWeapon->Projectile);
-	if(!pBulletData->SubjectToFirewall) {
-		return 0;
-	}
-
-	auto const crd = MapClass::Instance->FindFirstFirestorm(pThis->Location,
-		pTarget->GetCoords(), pThis->Owner);
-
-	if(crd != CoordStruct::Empty) {
-		pThis->ShouldLoseTargetNow = 1;
-		TechnoExt::FiringStateCache = FireError::ILLEGAL;
-	} else {
-		TechnoExt::FiringStateCache = FireError::NONE;
-	}
-	return 0;
-}
-
-DEFINE_HOOK(6FCD23, TechnoClass_GetObjectActivityState_OverrideFirewall, 6)
-{
-	if(TechnoExt::FiringStateCache != FireError::NONE) {
-		R->EAX(TechnoExt::FiringStateCache);
-		TechnoExt::FiringStateCache = FireError::NONE;
-	}
-
-	return 0;
-}
-
 DEFINE_HOOK(6F64CB, TechnoClass_DrawHealthBar_FirestormWall, 6)
 {
 	GET(BuildingClass* const, pThis, ESI);

@@ -23,8 +23,6 @@
 template<> const DWORD Extension<TechnoClass>::Canary = 0x55555555;
 Container<TechnoExt> TechnoExt::ExtMap("TechnoClass");
 
-FireError TechnoExt::FiringStateCache = FireError::NONE;
-
 bool TechnoExt::NeedsRegap = false;
 
 void TechnoExt::SpawnSurvivors(FootClass* const pThis, TechnoClass* const pKiller, const bool Select, const bool IgnoreDefenses)
@@ -1230,7 +1228,6 @@ bool TechnoExt::LoadGlobals(AresStreamReader& Stm) {
 	return Stm
 		.Process(AlphaExt)
 		.Process(ActiveBuildingLight)
-		.Process(FiringStateCache)
 		.Process(NeedsRegap)
 		.Success();
 }
@@ -1239,7 +1236,6 @@ bool TechnoExt::SaveGlobals(AresStreamWriter& Stm) {
 	return Stm
 		.Process(AlphaExt)
 		.Process(ActiveBuildingLight)
-		.Process(FiringStateCache)
 		.Process(NeedsRegap)
 		.Success();
 }

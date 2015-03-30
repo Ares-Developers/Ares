@@ -179,8 +179,6 @@ public:
 
 	static BuildingLightClass * ActiveBuildingLight;
 
-	static FireError FiringStateCache;
-
 	static bool NeedsRegap;
 
 	static void SpawnSurvivors(FootClass *pThis, TechnoClass *pKiller, bool Select, bool IgnoreDefenses);
