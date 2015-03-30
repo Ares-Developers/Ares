@@ -5,6 +5,7 @@
 #include "../BulletType/Body.h"
 #include "../Building/Body.h"
 #include "../BuildingType/Body.h"
+#include "../House/Body.h"
 #include "../WeaponType/Body.h"
 #include <ScenarioClass.h>
 #include <YRMath.h>
@@ -267,7 +268,7 @@ DEFINE_HOOK(467B94, BulletClass_Update_Ranged, 7)
 	pThis->SetLocation(CrdNew);
 
 	// firestorm wall check
-	if(!pThis->Type->IgnoresFirestorm) {
+	if(HouseExt::IsAnyFirestormActive && !pThis->Type->IgnoresFirestorm) {
 		auto const pCell = MapClass::Instance->GetCellAt(CrdNew);
 
 		if(auto const pBld = pCell->GetBuilding()) {
