@@ -50,6 +50,11 @@ bool AresTrajectoryHelper::IsBuildingHit(
 
 		auto const pBldType = pBld->Type;
 
+		// open gates are not hit: let it pass through
+		if(pBldType->Gate && pBld->IsTraversable()) {
+			return false;
+		}
+
 		auto const pBldTypeExt = BuildingTypeExt::ExtMap.Find(pBldType);
 		if(int solidHeight = pBldTypeExt->Solid_Height) {
 			if(solidHeight < 0) {
