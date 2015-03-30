@@ -51,11 +51,11 @@ DEFINE_HOOK(46867F, BulletClass_SetMovement_Parachute, 5)
 
 //	Debug::Log("Bullet [%s] is parachuted (%d)\n", Bullet->Type->get_ID(), pBulletData->Parachuted.Get());
 
-	byte result;
+	bool result = false;
 	if(pBulletData->Parachuted) {
 		result = Bullet->SpawnParachuted(*XYZ);
 //		Debug::Log("Bullet trajectory is (%lf, %lf, %lf)\n", *Trajectory);
-		Bullet->IsABomb = 1;
+		Bullet->IsABomb = true;
 	} else {
 		result = Bullet->Put(*XYZ, 0);
 	}
