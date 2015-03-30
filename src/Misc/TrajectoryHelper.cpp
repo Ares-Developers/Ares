@@ -43,8 +43,9 @@ bool AresTrajectoryHelper::IsBuildingHit(
 	auto const pCellBullet = MapClass::Instance->GetCellAt(crdCur);
 
 	if(auto const pBld = pCellBullet->GetBuilding()) {
-		// source building buildings is always traversable.
-		if(pBld == pSource) {
+		// source building and target buildings are always traversable.
+		// this should fix the issue of aircraft being unable to hit buildings
+		if(pBld == pSource || pBld == pTarget) {
 			return false;
 		}
 
