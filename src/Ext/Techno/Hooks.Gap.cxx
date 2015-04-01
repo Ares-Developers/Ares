@@ -1,5 +1,7 @@
 #include <Drawing.h>
 #include <YRDDraw.h>
+#include <BuildingClass.h>
+#include <HouseClass.h>
 #include <MouseClass.h>
 
 #include "Body.h"
@@ -150,9 +152,9 @@ DEFINE_HOOK(6561E4, MapClass_UpdateMinimapForCrates_2, 6)
 DEFINE_HOOK(6FB306, TechnoClass_CreateGap_TryOptimize, 6)
 {
 	GET(CellClass *, Cell, EAX);
-	const auto ShroudCounter = static_cast<signed int>(Cell->IsUnderShroud);
+	const auto ShroudCounter = Cell->ShroudCounter;
 	if(ShroudCounter >= 0 && ShroudCounter != 1) {
-		++Cell->IsUnderShroud;
+		++Cell->ShroudCounter;
 	}
 	++Cell->GapsCoveringThisCell;
 	if(ShroudCounter >= 1) {
@@ -168,8 +170,8 @@ DEFINE_HOOK(6FB5F0, TechnoClass_DeleteGap_TryOptimize, 6)
 	const auto remainingGaps = static_cast<signed int>(Cell->GapsCoveringThisCell);
 	if(HouseClass::Player->SpySatActive) {
 		if(remainingGaps <= 0) {
-			--Cell->IsUnderShroud;
-			const auto ShroudCounter = static_cast<signed int>(Cell->IsUnderShroud);
+			--Cell->ShroudCounter;
+			const auto ShroudCounter = Cell->ShroudCounter;
 			if(ShroudCounter <= 0) {
 				Cell->CopyFlags |= 0x18;
 			}
