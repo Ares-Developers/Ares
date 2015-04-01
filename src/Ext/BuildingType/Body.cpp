@@ -46,6 +46,7 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 
 	INI_EX exArt(pArtINI);
 	this->Solid_Height.Read(exArt, pArtID, "SolidHeight");
+	this->Solid_Level.Read(exArt, pArtID, "SolidLevel");
 
 	if(this->IsCustom) {
 		//Reset
@@ -393,6 +394,7 @@ template <typename T>
 void BuildingTypeExt::ExtData::Serialize(T& Stm) {
 	Stm
 		.Process(this->Solid_Height)
+		.Process(this->Solid_Level)
 		.Process(this->IsCustom)
 		.Process(this->CustomWidth)
 		.Process(this->CustomHeight)

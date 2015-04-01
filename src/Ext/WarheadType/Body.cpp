@@ -104,6 +104,8 @@ void WarheadTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 	this->CellSpread_MaxAffect.Read(exINI, section, "CellSpread.MaxAffect");
 
 	this->AttachedEffect.Read(exINI);
+
+	this->Solid_Level.Read(exINI, section, "SolidLevel");
 };
 
 void Container<WarheadTypeExt>::InvalidatePointer(void *ptr, bool bRemoved) {
@@ -532,7 +534,8 @@ void WarheadTypeExt::ExtData::Serialize(T& Stm) {
 		.Process(this->Malicious)
 		.Process(this->PreventScatter)
 		.Process(this->CellSpread_MaxAffect)
-		.Process(this->AttachedEffect);
+		.Process(this->AttachedEffect)
+		.Process(this->Solid_Level);
 }
 
 void WarheadTypeExt::ExtData::LoadFromStream(AresStreamReader &Stm) {

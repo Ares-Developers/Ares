@@ -107,6 +107,7 @@ public:
 	public:
 		// solid
 		Valueable<int> Solid_Height;
+		Valueable<int> Solid_Level;
 
 		// foundations
 		bool IsCustom;
@@ -209,6 +210,7 @@ public:
 
 		ExtData(BuildingTypeClass* OwnerObject) : Extension<BuildingTypeClass>(OwnerObject),
 			Solid_Height(0),
+			Solid_Level(1),
 			IsCustom(false),
 			CustomWidth(0),
 			CustomHeight(0),

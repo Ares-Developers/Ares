@@ -2,6 +2,7 @@
 
 #include "../Ext/BuildingType/Body.h"
 #include "../Ext/Rules/Body.h"
+#include "../Ext/WarheadType/Body.h"
 
 #include <BulletTypeClass.h>
 #include <CellClass.h>
@@ -168,6 +169,17 @@ CellClass* AresTrajectoryHelper::FindFirstImpenetrableObstacle(
 		if(pCell->ConnectsToOverlay(-1, -1)) {
 			if(pWeapon->Warhead->Wall) {
 				return nullptr;
+			}
+		} else if(auto const pBld = pCell->GetBuilding()) {
+			// only willingfully fire through enemy buildings
+			if(!pOwner->IsAlliedWith(pBld)) {
+				auto const pWarheadExt = WarheadTypeExt::ExtMap.Find(pWeapon->Warhead);
+				auto const pBldTypeExt = BuildingTypeExt::ExtMap.Find(pBld->Type);
+
+				// penetrable if warhead level is at least equal to building level
+				if(pWarheadExt->Solid_Level >= pBldTypeExt->Solid_Level) {
+					return nullptr;
+				}
 			}
 		}
 
