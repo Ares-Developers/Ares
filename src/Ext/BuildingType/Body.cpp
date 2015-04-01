@@ -44,9 +44,13 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 
 	CCINIClass* pArtINI = CCINIClass::INI_Art;
 
+	// kept for backwards-compatibility with Ares <= 0.9
 	INI_EX exArt(pArtINI);
 	this->Solid_Height.Read(exArt, pArtID, "SolidHeight");
-	this->Solid_Level.Read(exArt, pArtID, "SolidLevel");
+	
+	// relocated the solid tag from artmd to rulesmd
+	this->Solid_Height.Read(exINI, pID, "SolidHeight");
+	this->Solid_Level.Read(exINI, pID, "SolidLevel");
 
 	if(this->IsCustom) {
 		//Reset
