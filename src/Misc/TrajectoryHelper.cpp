@@ -1,12 +1,12 @@
 #include "TrajectoryHelper.h"
 
 #include "../Ext/BuildingType/Body.h"
+#include "../Ext/Rules/Body.h"
 
 #include <BulletTypeClass.h>
 #include <CellClass.h>
 #include <HouseClass.h>
 #include <MapClass.h>
-#include <RulesClass.h>
 #include <OverlayTypeClass.h>
 #include <WarheadTypeClass.h>
 
@@ -46,6 +46,14 @@ bool AresTrajectoryHelper::IsBuildingHit(
 		// source building and target buildings are always traversable.
 		// this should fix the issue of aircraft being unable to hit buildings
 		if(pBld == pSource || pBld == pTarget) {
+			return false;
+		}
+
+		// does the building let allies through?
+		auto const isTransparent = RulesExt::Global()->AlliedSolidTransparency
+			&& pBld->Owner->IsAlliedWith(pOwner);
+
+		if(isTransparent) {
 			return false;
 		}
 
