@@ -141,6 +141,19 @@ bool TEventExt::HasOccured(TEventClass* pEvent, bool* ret) {
 	return true;
 }
 
+// Resolves a param to a house.
+HouseClass* TEventExt::ResolveHouseParam(int const param, HouseClass* const pOwnerHouse) {
+	if(param == 8997) {
+		return pOwnerHouse;
+	}
+
+	if(HouseClass::Index_IsMP(param)) {
+		return HouseClass::FindByIndex(param);
+	}
+
+	return HouseClass::FindByCountryIndex(param);
+}
+
 // =============================
 // load / save
 
