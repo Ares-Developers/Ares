@@ -226,6 +226,9 @@ public:
 		// assault options
 		Valueable<int> AssaulterLevel;
 
+		// crushing
+		Valueable<bool> OmniCrusher_Aggressive;
+
 		ExtData(TechnoTypeClass* OwnerObject) : Extension<TechnoTypeClass>(OwnerObject),
 			Survivors_PilotChance(),
 			Survivors_PassengerChance(),
@@ -325,6 +328,7 @@ public:
 			CarryallSizeLimit(),
 			EVA_UnitLost(-1),
 			ImmuneToAbduction(false),
+			OmniCrusher_Aggressive(true),
 			FactoryOwners_HaveAllPlans(false)
 		{
 			this->Insignia.SetAll(nullptr);
