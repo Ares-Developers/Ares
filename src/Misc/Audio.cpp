@@ -8,6 +8,50 @@
 
 LooseAudioCache LooseAudioCache::Instance;
 
+AudioSampleData* AresAudioHelper::GetData(int const index)
+{
+	if(auto pFilename = ToLooseFile(index)) {
+		auto& loose = LooseAudioCache::Instance.GetData(pFilename);
+
+		if(loose.Size < 0) {
+			auto file = GetFile(index);
+			if(file.File && file.Allocated) {
+				GameDelete(file.File);
+			}
+		}
+
+		return &loose.Data;
+	}
+
+	return nullptr;
+}
+
+AresAudioHelper::FileStruct AresAudioHelper::GetFile(int const index)
+{
+	if(auto const pSampleName = ToLooseFile(index)) {
+		auto& loose = LooseAudioCache::Instance.GetData(pSampleName);
+
+		// Replace the construction of the RawFileClass with one of a CCFileClass
+		char filename[0x100];
+		_snprintf_s(filename, _TRUNCATE, "%s.wav", pSampleName);
+
+		auto pFile = GameCreate<CCFileClass>(filename);
+
+		if(pFile->Exists() && pFile->Open(FileAccessMode::Read)) {
+			if(loose.Size < 0 && Audio::ReadWAVFile(pFile, &loose.Data, &loose.Size)) {
+				loose.Offset = pFile->Seek(0, FileSeekMode::Current);
+			}
+		} else {
+			GameDelete(pFile);
+			pFile = nullptr;
+		}
+
+		return FileStruct{ pFile, true };
+	} else {
+		return FileStruct{ AudioIDXData::Instance->BagFile, false };
+	}
+}
+
 DEFINE_HOOK(4064A0, VocClass_AddSample, 0) // Complete rewrite of VocClass::AddSample
 {
 	GET(VocClass*, pVoc, ECX);

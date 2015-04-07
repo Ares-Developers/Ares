@@ -40,3 +40,29 @@ public:
 private:
 	std::map<std::string, LooseAudioFile> Files;
 };
+
+class AresAudioHelper {
+public:
+	struct FileStruct {
+		RawFileClass* File;
+		bool Allocated;
+	};
+
+	static AudioSampleData* GetData(int index);
+
+	static FileStruct GetFile(int index);
+
+	static const char* ToLooseFile(int index) {
+		if(index >= MinimumAresSample) {
+			return reinterpret_cast<const char*>(index);
+		}
+		return nullptr;
+	}
+
+	static int ToSampleIndex(int index) {
+		if(index < MinimumAresSample) {
+			return index;
+		}
+		return -1;
+	}
+};
