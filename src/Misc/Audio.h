@@ -3,7 +3,9 @@
 #include <Audio.h>
 
 #include <map>
+#include <memory>
 #include <string>
+#include <vector>
 
 // do not change! this is not a game constant, but a technical one.
 // memory will not be allocated below this address, thus only values
@@ -67,4 +69,35 @@ public:
 		}
 		return -1;
 	}
+};
+
+class AudioBag {
+public:
+	AudioBag() = default;
+
+	explicit AudioBag(const char* pFilename) : AudioBag() {
+		this->Open(pFilename);
+	}
+
+	AudioBag(AudioBag&& other) {
+		this->Entries = std::move(other.Entries);
+		this->Bag = std::move(other.Bag);
+	};
+
+	CCFileClass* file() const {
+		return this->Bag.get();
+	}
+
+	const std::vector<AudioIDXEntry>& entries() const {
+		return this->Entries;
+	}
+
+private:
+	void Open(const std::string& fileBase);
+
+	template <typename T>
+	using UniqueGamePtr = std::unique_ptr<T, GameDeleter>;
+
+	UniqueGamePtr<CCFileClass> Bag;
+	std::vector<AudioIDXEntry> Entries;
 };

@@ -53,6 +53,48 @@ AresAudioHelper::FileStruct AresAudioHelper::GetFile(int const index)
 	}
 }
 
+void AudioBag::Open(const std::string& fileBase) {
+	auto const filenameIndex = fileBase + ".idx";
+	auto pIndex = UniqueGamePtr<CCFileClass>(GameCreate<CCFileClass>(filenameIndex.c_str()));
+
+	if(pIndex->Exists() && pIndex->Open(FileAccessMode::Read)) {
+		auto const filenameBag = fileBase + ".bag";
+		auto pBag = UniqueGamePtr<CCFileClass>(GameCreate<CCFileClass>(filenameBag.c_str()));
+
+		if(pBag->Exists() && pBag->Open(FileAccessMode::Read)) {
+			AudioIDXHeader headerIndex;
+
+			if(pIndex->Read(headerIndex)) {
+				std::vector<AudioIDXEntry> entries;
+
+				if(headerIndex.numSamples > 0) {
+					entries.resize(headerIndex.numSamples, {});
+
+					auto const Size = sizeof(AudioIDXEntry);
+
+					if(headerIndex.Magic == 1) {
+						for(auto& entry : entries) {
+							if(!pIndex->Read(entry, Size - 4)) {
+								return;
+							}
+							entry.ChunkSize = 0;
+						}
+					} else {
+						auto const headerSize = headerIndex.numSamples * Size;
+						if(!pIndex->Read(entries[0], static_cast<int>(headerSize))) {
+							return;
+						}
+					}
+				}
+
+				std::sort(entries.begin(), entries.end());
+				this->Bag = std::move(pBag);
+				this->Entries = std::move(entries);
+			}
+		}
+	}
+}
+
 DEFINE_HOOK(4064A0, VocClass_AddSample, 0) // Complete rewrite of VocClass::AddSample
 {
 	GET(VocClass*, pVoc, ECX);
