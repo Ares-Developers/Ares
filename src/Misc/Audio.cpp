@@ -1,7 +1,6 @@
 // Allows WAV files being placed in Mixes
 #include "Audio.h"
 
-#include <Audio.h>
 #include <CCFileClass.h>
 #include <VocClass.h>
 #include "../Ares.h"

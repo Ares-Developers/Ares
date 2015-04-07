@@ -1,6 +1,8 @@
 #pragma once
 
-#include <set>
+#include <Audio.h>
+
+#include <map>
 #include <string>
 
 // do not change! this is not a game constant, but a technical one.
@@ -12,15 +14,29 @@ class LooseAudioCache {
 public:
 	static LooseAudioCache Instance;
 
+	struct LooseAudioFile {
+		LooseAudioFile()
+			: Offset(-1), Size(-1), Data()
+		{ }
+
+		int Offset;
+		int Size;
+		AudioSampleData Data;
+	};
+
+	LooseAudioFile& GetData(const char* pFilename) {
+		return this->Files[pFilename];
+	}
+
 	int GetIndex(const char* pFilename) {
 		auto it = this->Files.find(pFilename);
 		if(it == this->Files.end()) {
-			it = this->Files.emplace(pFilename).first;
+			it = this->Files.emplace(pFilename, LooseAudioFile()).first;
 		}
 
-		return reinterpret_cast<int>(it->c_str());
+		return reinterpret_cast<int>(it->first.c_str());
 	}
 
 private:
-	std::set<std::string> Files;
+	std::map<std::string, LooseAudioFile> Files;
 };
