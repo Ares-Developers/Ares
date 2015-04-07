@@ -14,7 +14,7 @@ void SW_SpyPlane::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pS
 	// Defaults to Spy Plane values
 	pData->SpyPlane_TypeIndex = AircraftTypeClass::FindIndex("SPYP");
 	pData->SpyPlane_Count = 1;
-	pData->SpyPlane_Mission = Mission::AttackAgain;
+	pData->SpyPlane_Mission = Mission::SpyplaneApproach;
 
 	pData->SW_RadarEvent = false;
 

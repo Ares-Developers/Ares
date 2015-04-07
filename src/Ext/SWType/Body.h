@@ -266,7 +266,7 @@ public:
 		ExtData(SuperWeaponTypeClass* OwnerObject) : Extension<SuperWeaponTypeClass>(OwnerObject),
 			SpyPlane_TypeIndex(0),
 			SpyPlane_Count(1),
-			SpyPlane_Mission(Mission::AttackAgain),
+			SpyPlane_Mission(Mission::SpyplaneApproach),
 			Weather_CloudHeight(-1),
 			Weather_ScatterCount(1),
 			Nuke_PsiWarning(nullptr),
