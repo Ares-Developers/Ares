@@ -50,7 +50,8 @@ AresAudioHelper::FileStruct AresAudioHelper::GetFile(int const index)
 		return FileStruct{ loose.Size, loose.Offset, pFile, true };
 	} else {
 		auto& sample = AudioIDXData::Instance->Samples[index];
-		return FileStruct{ sample.Size, sample.Offset, AudioIDXData::Instance->BagFile, false };
+		auto const pFile = AudioLuggage::Instance.GetFile(index);
+		return FileStruct{ sample.Size, sample.Offset, pFile, false };
 	}
 }
 
@@ -151,6 +152,28 @@ AudioIDXData* AudioLuggage::Create(const char* pPath) {
 #endif
 
 	return ret;
+}
+
+// load more than one audio bag and index.
+// this replaces the entire old parser.
+DEFINE_HOOK(4011C0, Audio_Load, 6)
+{
+	auto& luggage = AudioLuggage::Instance;
+
+	// audio.bag and ares.bag
+	luggage.Append("audio");
+	luggage.Append("ares");
+
+	// audio01.bag to audio99.bag
+	char buffer[0x100];
+	for(auto i = 1; i < 100; ++i) {
+		_snprintf_s(buffer, _TRUNCATE, "audio%02d", i);
+		luggage.Append(buffer);
+	}
+
+	// generate index
+	R->EAX(luggage.Create());
+	return 0x401578;
 }
 
 DEFINE_HOOK(4064A0, VocClass_AddSample, 0) // Complete rewrite of VocClass::AddSample
