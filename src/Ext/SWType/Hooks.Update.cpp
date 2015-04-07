@@ -222,31 +222,38 @@ DEFINE_HOOK(6CB7BA, SuperClass_Lose, 6)
 // rewriting OnHold to support ChargeDrain
 DEFINE_HOOK(6CB4D0, SuperClass_SetOnHold, 6)
 {
-	GET(SuperClass *, pSuper, ECX);
-	GET_STACK(bool, OnHold, 0x4);
-	OnHold = !!OnHold;
-	if(!pSuper->Granted || pSuper->OneTime || !pSuper->CanHold) {
-		R->EAX(0);
-	} else if(OnHold == pSuper->IsOnHold) {
-		R->EAX(0);
-	} else {
-		if(OnHold || pSuper->Type->ManualControl) {
-			pSuper->RechargeTimer.Pause();
+	GET(SuperClass* const, pThis, ECX);
+	GET_STACK(bool const, onHold, 0x4);
+
+	bool ret = false;
+
+	if(pThis->Granted
+		&& !pThis->OneTime
+		&& pThis->CanHold
+		&& onHold != pThis->IsOnHold)
+	{
+		if(onHold || pThis->Type->ManualControl) {
+			pThis->RechargeTimer.Pause();
 		} else {
-			pSuper->RechargeTimer.Resume();
+			pThis->RechargeTimer.Resume();
 		}
-		pSuper->IsOnHold = OnHold;
-		if(pSuper->Type->UseChargeDrain) {
-			HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(pSuper->Owner);
-			if(OnHold) {
-				pHouseData->SetFirestormState(0);
-				pSuper->ChargeDrainState = ChargeDrainState::None;
+
+		pThis->IsOnHold = onHold;
+
+		if(pThis->Type->UseChargeDrain) {
+			if(onHold) {
+				auto const pHouseData = HouseExt::ExtMap.Find(pThis->Owner);
+				pHouseData->SetFirestormState(false);
+				pThis->ChargeDrainState = ChargeDrainState::None;
 			} else {
-				pSuper->ChargeDrainState = ChargeDrainState::Charging;
-				pSuper->RechargeTimer.Start(pSuper->Type->RechargeTime);
+				pThis->ChargeDrainState = ChargeDrainState::Charging;
+				pThis->RechargeTimer.Start(pThis->Type->RechargeTime);
 			}
 		}
-		R->EAX(1);
+
+		ret = true;
 	}
+
+	R->EAX(ret);
 	return 0x6CB555;
 }
