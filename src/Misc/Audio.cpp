@@ -100,19 +100,8 @@ DEFINE_HOOK(4016F0, IDXContainer_LoadSample, 6)
 		pThis->ExternalFile = file.File;
 	}
 
-	auto ret = true;
-	if(pThis->CurrentSampleFile) {
-		auto const pos = pThis->CurrentSampleFile->Seek(file.Offset, FileSeekMode::Set);
-		if(pos != file.Offset) {
-			ret = false;
-		}
-
-		if(!file.Size) {
-			ret = false;
-		}
-	} else {
-		ret = false;
-	}
+	auto const ret = file.File && file.Size
+		&& file.File->Seek(file.Offset, FileSeekMode::Set) == file.Offset;
 
 #ifdef SUPPORT_PATH
 	// not expnded, does not handle loose files (like freeing current file)
