@@ -132,13 +132,17 @@ DEFINE_HOOK(401640, AudioIndex_GetSampleInformation, 5)
 	GET(const int, idxSample, EDX);
 	GET_STACK(AudioSampleData*, pAudioSample, 0x4);
 
-	if(idxSample >= MinimumAresSample) {
-		pAudioSample->Data = 4;
-		pAudioSample->Format = 0;
-		pAudioSample->SampleRate = 22050;
-		pAudioSample->NumChannels = 1;
-		pAudioSample->BytesPerSample = 2;
-		pAudioSample->BlockAlign = 0;
+	if(auto const pData = AresAudioHelper::GetData(idxSample)) {
+		if(pData->SampleRate) {
+			*pAudioSample = *pData;
+		} else {
+			pAudioSample->Data = 4;
+			pAudioSample->Format = 0;
+			pAudioSample->SampleRate = 22050;
+			pAudioSample->NumChannels = 1;
+			pAudioSample->BytesPerSample = 2;
+			pAudioSample->BlockAlign = 0;
+		}
 
 		R->EAX(pAudioSample);
 		return 0x40169E;
