@@ -86,46 +86,75 @@ DEFINE_HOOK(4064A0, VocClass_AddSample, 0) // Complete rewrite of VocClass::AddS
 	return 0x40651E;
 }
 
-DEFINE_HOOK(4016F7, AudioIndex_LoadSample, 5) //50% rewrite of Audio::LoadWAV
+DEFINE_HOOK(4016F0, IDXContainer_LoadSample, 6)
 {
-	GET(const int, idxSample, EDX);
+	GET(AudioIDXData* const, pThis, ECX);
+	GET(int const, index, EDX);
 
-	if(idxSample >= MinimumAresSample) {
-		auto const pSampleName = reinterpret_cast<const char*>(idxSample);
+	pThis->ClearCurrentSample();
 
-		GET(AudioIDXData*, pAudioIndex, ECX);
-		pAudioIndex->ClearCurrentSample();
+	auto const file = AresAudioHelper::GetFile(index);
+	pThis->CurrentSampleFile = file.File;
+	pThis->CurrentSampleSize = file.Size;
+	if(file.Allocated) {
+		pThis->ExternalFile = file.File;
+	}
 
-		// Replace the construction of the RawFileClass with one of a CCFileClass
-		char filename[0x100];
-		_snprintf_s(filename, _TRUNCATE, "%s.wav", pSampleName);
+	auto ret = true;
+	if(pThis->CurrentSampleFile) {
+		auto const pos = pThis->CurrentSampleFile->Seek(file.Offset, FileSeekMode::Set);
+		if(pos != file.Offset) {
+			ret = false;
+		}
 
-		auto const pFile = GameCreate<CCFileClass>(filename);
-		pAudioIndex->ExternalFile = pFile;
+		if(!file.Size) {
+			ret = false;
+		}
+	} else {
+		ret = false;
+	}
 
-		if(pFile->Exists()) {
-			if(pFile->Open(FileAccessMode::Read)) {
-				AudioSampleData Data;
-				int nSampleSize;
+#ifdef SUPPORT_PATH
+	// not expnded, does not handle loose files (like freeing current file)
+	if(pThis->PathFound != FALSE) {
+		auto& sample = pThis->Samples[index];
 
-				if(Audio::ReadWAVFile(pFile, &Data, &nSampleSize)) {
-					pAudioIndex->CurrentSampleFile = pFile;
-					pAudioIndex->CurrentSampleSize = nSampleSize;
+		char filename[MAX_PATH];
+		_snprintf_s(filename, _TRUNCATE, "%s%s.wav", pThis->Path, sample.Name);
 
-					R->EAX(1);
-					return 0x401889;
+		// warning: this will leak loose files! -AlexB
+		auto const pFile = GameCreate<RawFileClass>(filename);
+		pThis->ExternalFile = pFile;
+
+		if(pFile->Exists() && pFile->Open(FileAccessMode::Read)) {
+			AudioSampleData data;
+			int sampleSize;
+
+			if(Audio::ReadWAVFile(pFile, &data, &sampleSize)) {
+				sample.Flags = 2;
+				if(data.BytesPerSample == 2) {
+					sample.Flags = 6;
 				}
+				if(data.NumChannels == 2) {
+					sample.Flags |= 1;
+				}
+				sample.SampleRate = data.SampleRate;
+				pThis->CurrentSampleSize = sampleSize;
+				pThis->CurrentSampleFile = pThis->ExternalFile;
+				R->EAX(true);
+				return 0x4018B8;
 			}
 		}
 
-		pAudioIndex->ExternalFile = nullptr;
-		GameDelete(pFile);
-
-		R->EAX(0);
-		return 0x401889;
+		if(pThis->ExternalFile) {
+			GameDelete(pThis->ExternalFile);
+			pThis->ExternalFile = nullptr;
+		}
 	}
+#endif
 
-	return 0;
+	R->EAX(ret);
+	return 0x4018B8;
 }
 
 DEFINE_HOOK(401640, AudioIndex_GetSampleInformation, 5)
