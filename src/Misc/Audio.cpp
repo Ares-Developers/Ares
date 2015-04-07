@@ -46,9 +46,10 @@ AresAudioHelper::FileStruct AresAudioHelper::GetFile(int const index)
 			pFile = nullptr;
 		}
 
-		return FileStruct{ pFile, true };
+		return FileStruct{ loose.Size, loose.Offset, pFile, true };
 	} else {
-		return FileStruct{ AudioIDXData::Instance->BagFile, false };
+		auto& sample = AudioIDXData::Instance->Samples[index];
+		return FileStruct{ sample.Size, sample.Offset, AudioIDXData::Instance->BagFile, false };
 	}
 }
 

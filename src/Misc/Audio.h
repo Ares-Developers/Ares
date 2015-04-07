@@ -44,6 +44,8 @@ private:
 class AresAudioHelper {
 public:
 	struct FileStruct {
+		int Size;
+		int Offset;
 		RawFileClass* File;
 		bool Allocated;
 	};
