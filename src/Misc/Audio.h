@@ -101,3 +101,23 @@ private:
 	UniqueGamePtr<CCFileClass> Bag;
 	std::vector<AudioIDXEntry> Entries;
 };
+
+// a collection of audio bags, get it?
+class AudioLuggage {
+public:
+	static AudioLuggage Instance;
+
+	void Append(const char* pFileBase) {
+		this->Bags.emplace_back(pFileBase);
+	}
+
+	AudioIDXData* Create(const char* pPath = nullptr);
+
+	CCFileClass* GetFile(int index) const {
+		return this->Files[static_cast<unsigned int>(index)];
+	}
+
+private:
+	std::vector<AudioBag> Bags;
+	std::vector<CCFileClass*> Files;
+};

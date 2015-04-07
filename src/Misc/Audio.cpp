@@ -7,6 +7,7 @@
 #include "../Ares.CRT.h"
 
 LooseAudioCache LooseAudioCache::Instance;
+AudioLuggage AudioLuggage::Instance;
 
 AudioSampleData* AresAudioHelper::GetData(int const index)
 {
@@ -93,6 +94,63 @@ void AudioBag::Open(const std::string& fileBase) {
 			}
 		}
 	}
+}
+
+AudioIDXData* AudioLuggage::Create(const char* pPath) {
+	std::map<AudioIDXEntry, CCFileClass*> map;
+
+	for(auto const& bag : this->Bags) {
+		for(auto const& entry : bag.entries()) {
+			map[entry] = bag.file();
+		}
+	}
+
+	auto ret = GameCreate<AudioIDXData>();
+	ret->BagFile = nullptr; // this->Bags.front().file(); // not needed
+	ret->SampleCount = static_cast<int>(map.size());
+	ret->Samples = GameCreateArray<AudioIDXEntry>(map.size());
+
+	this->Files.clear();
+	this->Files.reserve(map.size());
+
+	auto pEntry = ret->Samples;
+
+	for(auto const& item : map) {
+		*pEntry++ = item.first;
+		this->Files.push_back(item.second);
+	}
+
+#ifdef SUPPORT_PATH
+	if(pPath) {
+		auto const lenPath = strlen(pPath);
+
+		strcpy_s(ret->Path, pPath);
+		if(ret->Path[lenPath - 1] == '\\') {
+			ret->Path[lenPath - 1] = '\0';
+		}
+
+		WIN32_FIND_DATA find;
+		auto const hFind = FindFirstFileA(ret->Path, &find);
+
+		if(hFind != INVALID_HANDLE_VALUE) {
+			do {
+				if(find.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+					ret->PathFound = TRUE;
+					break;
+				}
+			} while(FindNextFileA(hFind, &find));
+
+			FindClose(hFind);
+		}
+
+		if(lenPath < _countof(ret->Path)) {
+			ret->Path[lenPath - 1] = '\\';
+			ret->Path[lenPath] = '\0';
+		}
+	}
+#endif
+
+	return ret;
 }
 
 DEFINE_HOOK(4064A0, VocClass_AddSample, 0) // Complete rewrite of VocClass::AddSample
