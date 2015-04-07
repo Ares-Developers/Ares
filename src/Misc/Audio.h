@@ -10,6 +10,8 @@ auto const MinimumAresSample = 0x10000;
 
 class LooseAudioCache {
 public:
+	static LooseAudioCache Instance;
+
 	int GetIndex(const char* pFilename) {
 		auto it = this->Files.find(pFilename);
 		if(it == this->Files.end()) {

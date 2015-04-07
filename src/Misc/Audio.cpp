@@ -7,7 +7,7 @@
 #include "../Ares.h"
 #include "../Ares.CRT.h"
 
-LooseAudioCache LooseFiles;
+LooseAudioCache LooseAudioCache::Instance;
 
 DEFINE_HOOK(4064A0, VocClass_AddSample, 0) // Complete rewrite of VocClass::AddSample
 {
@@ -27,7 +27,7 @@ DEFINE_HOOK(4064A0, VocClass_AddSample, 0) // Complete rewrite of VocClass::AddS
 				: AudioIDXData::Instance->FindSampleIndex(pSampleName);
 
 			if(idxSample == -1) {
-				idxSample = LooseFiles.GetIndex(pSampleName);
+				idxSample = LooseAudioCache::Instance.GetIndex(pSampleName);
 			}
 
 			// Set sample index or string pointer
