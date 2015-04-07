@@ -1810,16 +1810,12 @@ DEFINE_HOOK(6F525B, TechnoClass_DrawExtras_PowerOff, 5)
 	return 0x6F5347;
 }
 
-DEFINE_HOOK(741603, UnitClass_ApproachTarget_OmniCrusher, 6)
+DEFINE_HOOK(741613, UnitClass_ApproachTarget_OmniCrusher, 6)
 {
 	GET(UnitClass* const, pThis, ESI);
-	auto const pType = pThis->Type;
 
-	bool aggressive = pType->OmniCrusher;
-	if(aggressive) {
-		auto const pExt = TechnoTypeExt::ExtMap.Find(pType);
-		aggressive = pExt->OmniCrusher_Aggressive;
-	}
+	auto const pExt = TechnoTypeExt::ExtMap.Find(pThis->Type);
+	auto const aggressive = pExt->OmniCrusher_Aggressive;
 
-	return aggressive ? 0x741613u : 0x741685u;
+	return aggressive ? 0u : 0x741685u;
 }
