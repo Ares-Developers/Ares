@@ -135,3 +135,9 @@ DEFINE_HOOK(532017, DlgProc_MainMenu_Version, 5)
 
 	return 0;
 }
+
+// end the loading screen as early as possible, ignoring the delay.
+DEFINE_HOOK(52CA37, InitGame_Delay, 5)
+{
+	return 0x52CA65;
+}
