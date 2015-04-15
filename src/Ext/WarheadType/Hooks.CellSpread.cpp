@@ -1,5 +1,7 @@
 #include "Body.h"
 
+#include "../Rules/Body.h"
+
 #include <Helpers\Enumerators.h>
 
 #include <algorithm>
@@ -119,8 +121,17 @@ DEFINE_HOOK(4893BA, DamageArea_DamageAir, 9)
 	GET(const CoordStruct* const, pCoords, EDI);
 	GET(const WarheadTypeClass* const, pWarhead, ESI);
 	GET(int const, heightFloor, EAX);
+	GET_STACK(const CellClass*, pCell, STACK_OFFS(0xE0, 0xC0));
 
 	int heightAboveGround = pCoords->Z - heightFloor;
+
+	// consider explosions on and over bridges
+	if(heightAboveGround > CellClass::BridgeHeight
+		&& pCell->ContainsBridge()
+		&& RulesExt::Global()->DamageAirConsiderBridges)
+	{
+		heightAboveGround -= CellClass::BridgeHeight;
+	}
 
 	// damage units in air if detonation is above a threshold
 	auto const pExt = WarheadTypeExt::ExtMap.Find(pWarhead);

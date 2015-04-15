@@ -97,6 +97,8 @@ public:
 
 		Valueable<bool> AlliedSolidTransparency;
 
+		Valueable<bool> DamageAirConsiderBridges;
+
 		ExtData(RulesClass* OwnerObject) : Extension<RulesClass>(OwnerObject),
 			ElectricDeath(nullptr),
 			EngineerDamage(0.0),

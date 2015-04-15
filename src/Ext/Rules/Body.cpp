@@ -103,6 +103,8 @@ void RulesExt::ExtData::LoadBeforeTypeData(RulesClass *pThis, CCINIClass *pINI) 
 	pData->DegradeAmountConsumer.Read(exINI, sectionGeneral, "Degrade.AmountConsumer");
 
 	pData->AlliedSolidTransparency.Read(exINI, sectionCombatDamage, "AlliedSolidTransparency");
+
+	pData->DamageAirConsiderBridges.Read(exINI, sectionGeneral, "DamageAirConsiderBridges");
 }
 
 // this runs between the before and after type data loading methods for rules ini
@@ -221,7 +223,8 @@ void RulesExt::ExtData::Serialize(T& Stm) {
 		.Process(this->FirestormAirAnim)
 		.Process(this->FirestormWarhead)
 		.Process(this->DamageToFirestormDamageCoefficient)
-		.Process(this->AlliedSolidTransparency);
+		.Process(this->AlliedSolidTransparency)
+		.Process(this->DamageAirConsiderBridges);
 }
 
 void RulesExt::ExtData::LoadFromStream(AresStreamReader &Stm) {
