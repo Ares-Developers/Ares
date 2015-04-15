@@ -77,6 +77,7 @@ DEFINE_HOOK(4899DA, DamageArea_Damage_MaxAffect, 7)
 	for(auto& group : groups) {
 		// could have been cleared by previous iteration
 		if(group && !handled.count(group->Target)) {
+			handled.insert(group->Target);
 			target.clear();
 
 			// collect all slots containing damage groups for this target
