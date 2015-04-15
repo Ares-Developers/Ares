@@ -106,6 +106,8 @@ void WarheadTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 	this->AttachedEffect.Read(exINI);
 
 	this->Solid_Level.Read(exINI, section, "SolidLevel");
+
+	this->DamageAirThreshold.Read(exINI, section, "DamageAirThreshold");
 };
 
 void Container<WarheadTypeExt>::InvalidatePointer(void *ptr, bool bRemoved) {
@@ -535,7 +537,8 @@ void WarheadTypeExt::ExtData::Serialize(T& Stm) {
 		.Process(this->PreventScatter)
 		.Process(this->CellSpread_MaxAffect)
 		.Process(this->AttachedEffect)
-		.Process(this->Solid_Level);
+		.Process(this->Solid_Level)
+		.Process(this->DamageAirThreshold);
 }
 
 void WarheadTypeExt::ExtData::LoadFromStream(AresStreamReader &Stm) {

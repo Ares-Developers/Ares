@@ -81,6 +81,8 @@ public:
 
 		Valueable<int> CellSpread_MaxAffect;
 
+		Valueable<int> DamageAirThreshold;
+
 		AttachEffectTypeClass AttachedEffect;
 
 		ExtData(WarheadTypeClass* OwnerObject) : Extension<WarheadTypeClass>(OwnerObject),
@@ -102,6 +104,7 @@ public:
 			Malicious(true),
 			PreventScatter(false),
 			CellSpread_MaxAffect(-1),
+			DamageAirThreshold(0),
 			AttachedEffect(OwnerObject)
 		{
 			VersesData vs;

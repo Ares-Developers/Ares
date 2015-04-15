@@ -113,3 +113,18 @@ DEFINE_HOOK(4899DA, DamageArea_Damage_MaxAffect, 7)
 
 	return 0;
 }
+
+DEFINE_HOOK(4893BA, DamageArea_DamageAir, 9)
+{
+	GET(const CoordStruct* const, pCoords, EDI);
+	GET(const WarheadTypeClass* const, pWarhead, ESI);
+	GET(int const, heightFloor, EAX);
+
+	int heightAboveGround = pCoords->Z - heightFloor;
+
+	// damage units in air if detonation is above a threshold
+	auto const pExt = WarheadTypeExt::ExtMap.Find(pWarhead);
+	auto const damageAir = heightAboveGround > pExt->DamageAirThreshold;
+
+	return damageAir ? 0x4893C3u : 0x48955Eu;
+}
