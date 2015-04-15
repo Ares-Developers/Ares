@@ -50,7 +50,7 @@ public:
 
 	bool CheckLevel(const CellStruct& offset, int level) const {
 		auto const cellLevel = this->Base() + offset + GetRelation(offset) - this->CellOffset;
-		return MapClass::Instance->GetCellAt(cellLevel)->Level < level + 4;
+		return MapClass::Instance->GetCellAt(cellLevel)->Level < level + CellClass::BridgeLevels;
 	}
 
 	static bool AffectsHouse(HouseClass* const pHouse) {
