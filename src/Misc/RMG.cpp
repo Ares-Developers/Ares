@@ -123,17 +123,17 @@ DEFINE_HOOK(5982D5, MapSeedClass_LoadFromINI, 6)
 
 		pINI->ReadString("Urban", "Structures",
 			"CABUNK01,CABUNK02,CAARMY01,CAARMY02,CAARMY03,CAARMY04,CACHIG03,CANEWY01,CANEWY14,CANWY09,CANWY26,CANWY25,CATEXS07",
-			Ares::readBuffer, Ares::readLength);
+			Ares::readBuffer);
 		RMG::UrbanStructures.Tokenize(Ares::readBuffer);
 
 		pINI->ReadString("Urban", "Infantry",
 			"CIV1,CIV2,CIV3,CIVA,CIVB,CIVC",
-			Ares::readBuffer, Ares::readLength);
+			Ares::readBuffer);
 		RMG::UrbanInfantry.Tokenize(Ares::readBuffer);
 
 		pINI->ReadString("Urban", "Vehicles",
 			"TRUCKA,TRUCKB,COP,EUROC,SUVW,SUVB,FTRK,AMBU"
-			, Ares::readBuffer, Ares::readLength);
+			, Ares::readBuffer);
 		RMG::UrbanVehicles.Tokenize(Ares::readBuffer);
 
 		RMG::UrbanAreasRead = 1;

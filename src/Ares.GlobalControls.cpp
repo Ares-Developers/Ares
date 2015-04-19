@@ -19,7 +19,7 @@ void Ares::GlobalControls::Load(CCINIClass *pINI) {
 	Initialized = 1;
 	AllowParallelAIQueues = pINI->ReadBool("GlobalControls", "AllowParallelAIQueues", AllowParallelAIQueues);
 
-	if(pINI->ReadString("GlobalControls", "AllowBypassBuildLimit", "", Ares::readBuffer, Ares::readLength)) {
+	if(pINI->ReadString("GlobalControls", "AllowBypassBuildLimit", "", Ares::readBuffer)) {
 		bool temp[3] = {};
 		int read = Parser<bool, 3>::Parse(Ares::readBuffer, temp);
 
@@ -37,7 +37,7 @@ void Ares::GlobalControls::Load(CCINIClass *pINI) {
 }
 
 void Ares::GlobalControls::LoadConfig() {
-	if(INI->ReadString("Graphics.Advanced", "DirectX.Force", Ares::readDefval, Ares::readBuffer, Ares::readLength)) {
+	if(INI->ReadString("Graphics.Advanced", "DirectX.Force", Ares::readDefval, Ares::readBuffer)) {
 		if(!_strcmpi(Ares::readBuffer, "hardware")) {
 			GFX_DX_Force = GFX_DX_HW;
 		} else if(!_strcmpi(Ares::readBuffer, "emulation")) {

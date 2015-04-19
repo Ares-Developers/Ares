@@ -56,7 +56,7 @@ public:
 	}
 
 	bool LoadFromINI(CCINIClass* pINI, const char* pSection, const char* pKey, const char* pDefault = "") {
-		if(pINI->ReadString(pSection, pKey, pDefault, Ares::readBuffer, Ares::readLength)) {
+		if(pINI->ReadString(pSection, pKey, pDefault, Ares::readBuffer)) {
 			if(char* suffix = strstr(Ares::readBuffer, "~~~")) {
 				const char* theaterSpecific = Theater::GetTheater(ScenarioClass::Instance->Theater).Extension;
 				suffix[0] = theaterSpecific[0];
@@ -329,7 +329,7 @@ public:
 
 	bool Read(INIClass* pINI, const char* pSection, const char* pKey, const char* pDefault = "") {
 		char buffer[Capacity];
-		if(pINI->ReadString(pSection, pKey, pDefault, buffer, Capacity)) {
+		if(pINI->ReadString(pSection, pKey, pDefault, buffer)) {
 			*this = buffer;
 
 			if(this->checked && !this->exists) {

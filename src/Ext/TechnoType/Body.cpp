@@ -108,7 +108,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 	char flag[256];
 	for(int i = 0; i < SideClass::Array->Count; ++i) {
 		_snprintf_s(flag, 255, "Survivor.Side%d", i);
-		if(pINI->ReadString(section, flag, "", Ares::readBuffer, Ares::readLength)) {
+		if(pINI->ReadString(section, flag, "", Ares::readBuffer)) {
 			if((this->Survivors_Pilots[i] = InfantryTypeClass::Find(Ares::readBuffer)) == nullptr) {
 				if(!INIClass::IsBlank(Ares::readBuffer)) {
 					Debug::INIParseFailed(section, flag, Ares::readBuffer);
@@ -140,7 +140,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 
 	Prereqs::Parse(pINI, section, "Prerequisite.Negative", this->PrerequisiteNegatives);
 
-	if(pINI->ReadString(section, "Prerequisite.RequiredTheaters", "", Ares::readBuffer, Ares::readLength)) {
+	if(pINI->ReadString(section, "Prerequisite.RequiredTheaters", "", Ares::readBuffer)) {
 		this->PrerequisiteTheaters = 0;
 
 		char* context = nullptr;
@@ -168,7 +168,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 	this->Is_Spotlighted = pINI->ReadBool(section, "HasSpotlight", this->Is_Spotlighted);
 	this->Spot_Height = pINI->ReadInteger(section, "Spotlight.StartHeight", this->Spot_Height);
 	this->Spot_Distance = pINI->ReadInteger(section, "Spotlight.Distance", this->Spot_Distance);
-	if(pINI->ReadString(section, "Spotlight.AttachedTo", "", Ares::readBuffer, Ares::readLength)) {
+	if(pINI->ReadString(section, "Spotlight.AttachedTo", "", Ares::readBuffer)) {
 		if(!_strcmpi(Ares::readBuffer, "body")) {
 			this->Spot_AttachedTo = SpotlightAttachment::Body;
 		} else if(!_strcmpi(Ares::readBuffer, "turret")) {
@@ -198,7 +198,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 	this->Parachute_Anim.Read(exINI, section, "Parachute.Anim");
 
 	// new on 08.11.09 for #342 (Operator=)
-	if(pINI->ReadString(section, "Operator", "", Ares::readBuffer, Ares::readLength)) { // try to read the flag
+	if(pINI->ReadString(section, "Operator", "", Ares::readBuffer)) { // try to read the flag
 		this->IsAPromiscuousWhoreAndLetsAnyoneRideIt = (strcmp(Ares::readBuffer, "_ANY_") == 0); // set whether this type accepts all operators
 		if(!this->IsAPromiscuousWhoreAndLetsAnyoneRideIt) { // if not, find the specific operator it allows
 			if(auto Operator = InfantryTypeClass::Find(Ares::readBuffer)) {
@@ -211,7 +211,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 
 	this->CameoPal.LoadFromINI(CCINIClass::INI_Art, pThis->ImageFile, "CameoPalette");
 
-	if(pINI->ReadString(section, "Prerequisite.StolenTechs", "", Ares::readBuffer, Ares::readLength)) {
+	if(pINI->ReadString(section, "Prerequisite.StolenTechs", "", Ares::readBuffer)) {
 		this->RequiredStolenTech.reset();
 
 		char* context = nullptr;
@@ -228,7 +228,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 	this->ImmuneToEMP.Read(exINI, section, "ImmuneToEMP");
 	this->EMP_Modifier.Read(exINI, section, "EMP.Modifier");
 
-	if(pINI->ReadString(section, "EMP.Threshold", "inair", Ares::readBuffer, Ares::readLength)) {
+	if(pINI->ReadString(section, "EMP.Threshold", "inair", Ares::readBuffer)) {
 		if(_strcmpi(Ares::readBuffer, "inair") == 0) {
 			this->EMP_Threshold = -1;
 		} else if((_strcmpi(Ares::readBuffer, "yes") == 0) || (_strcmpi(Ares::readBuffer, "true") == 0)) {
@@ -240,7 +240,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 		}
 	}
 
-	if(pINI->ReadString(section, "VeteranAbilities", "", Ares::readBuffer, Ares::readLength)) {
+	if(pINI->ReadString(section, "VeteranAbilities", "", Ares::readBuffer)) {
 		char* context = nullptr;
 		for(char *cur = strtok_s(Ares::readBuffer, ",", &context); cur; cur = strtok_s(nullptr, ",", &context)) {
 			if(!_strcmpi(cur, "empimmune")) {
@@ -250,7 +250,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 		}
 	}
 
-	if(pINI->ReadString(section, "EliteAbilities", "", Ares::readBuffer, Ares::readLength)) {
+	if(pINI->ReadString(section, "EliteAbilities", "", Ares::readBuffer)) {
 		char* context = nullptr;
 		for(char *cur = strtok_s(Ares::readBuffer, ",", &context); cur; cur = strtok_s(nullptr, ",", &context)) {
 			if(!_strcmpi(cur, "empimmune")) {
@@ -477,7 +477,7 @@ void TechnoTypeClassExt::ReadWeapon(WeaponStruct *pWeapon, const char *prefix, c
 	char buffer[256];
 	char flag[64];
 
-	pINI->ReadString(section, prefix, "", buffer, 0x100);
+	pINI->ReadString(section, prefix, "", buffer);
 
 	if(strlen(buffer))
 	{

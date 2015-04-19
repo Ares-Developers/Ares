@@ -182,7 +182,7 @@ void HouseTypeExt::ExtData::LoadFromRulesFile(CCINIClass *pINI) {
 	// ppShp is optional. if not set, only PCX is supported
 	auto ReadShpOrPcxImage = [&](const char* key, AresPCXFile& Pcx, SHPStruct** ppShp) {
 		// read the key and convert it to lower case
-		if(pINI->ReadString(pID, key, Pcx.GetFilename(), Ares::readBuffer, Ares::readLength)) {
+		if(pINI->ReadString(pID, key, Pcx.GetFilename(), Ares::readBuffer)) {
 
 			// parse the value
 			if(INIClass::IsBlank(Ares::readBuffer)) {

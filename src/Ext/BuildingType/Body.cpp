@@ -60,7 +60,7 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 
 		char str[0x80]="\0";
 
-		if(pArtINI->ReadString(pArtID, "Foundation", "", str, 0x80) && !_strcmpi(str, "Custom")) {
+		if(pArtINI->ReadString(pArtID, "Foundation", "", str) && !_strcmpi(str, "Custom")) {
 			//Custom Foundation!
 			this->IsCustom = true;
 			pThis->Foundation = BuildingTypeExt::CustomFoundation;
@@ -109,7 +109,7 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 
 			for(int i = 0; i < this->CustomWidth * this->CustomHeight; ++i) {
 				_snprintf_s(key, _TRUNCATE, "Foundation.%d", i);
-				if(pArtINI->ReadString(pArtID, key, "", str, 0x80)) {
+				if(pArtINI->ReadString(pArtID, key, "", str)) {
 					ParsePoint(itData, str);
 				} else {
 					break;
@@ -125,7 +125,7 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 			auto itOutline = this->OutlineData.begin();
 			for(int i = 0; i < this->OutlineLength; ++i) {
 				_snprintf_s(key, _TRUNCATE, "FoundationOutline.%d", i);
-				if(pArtINI->ReadString(pArtID, key, "", str, 0x80)) {
+				if(pArtINI->ReadString(pArtID, key, "", str)) {
 					ParsePoint(itOutline, str);
 				} else {
 					//Set end vector
@@ -147,7 +147,7 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 	this->UCFatalRate.Read(exINI, pID, "UC.FatalRate");
 	this->UCDamageMultiplier.Read(exINI, pID, "UC.DamageMultiplier");
 	this->BunkerRaidable.Read(exINI, pID, "Bunker.Raidable");
-	if(pINI->ReadString(pID, "IsTrench", "", Ares::readBuffer, Ares::readLength)) {
+	if(pINI->ReadString(pID, "IsTrench", "", Ares::readBuffer)) {
 		/*  Find the name in the list of kinds; if the list is empty, distance is 0, if the item isn't in
 			the list, the index is the current list's size(); if the returned iterator is beyond the list,
 			add the name to the list, which makes the previously calculated index (th distance) valid.

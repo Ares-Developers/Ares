@@ -69,7 +69,7 @@ void Ares::UISettings::Load(CCINIClass *pINI) {
 	const char* section = "UISettings";
 
 	auto ReadUIAction = [&](const char* name, Ares::UISettings::UIAction &value) {
-		if(pINI->ReadString(section, name, "default", Ares::readBuffer, Ares::readLength)) {
+		if(pINI->ReadString(section, name, "default", Ares::readBuffer)) {
 			value = Interface::parseUIAction(Ares::readBuffer, value);
 		}
 	};
@@ -95,14 +95,14 @@ void Ares::UISettings::Load(CCINIClass *pINI) {
 		const char* defBattle, const char* defImage, const char* defPalette,
 		const char* defSubline)
 	{
-		if(pINI->ReadString(section, name, defBattle, Ares::readBuffer, Ares::readLength)) {
+		if(pINI->ReadString(section, name, defBattle, Ares::readBuffer)) {
 			AresCRT::strCopy(value->Battle, Ares::readBuffer);
 		}
 
 		// load the image
 		char buffer[0x20];
 		sprintf_s(buffer, 0x20, "%s.Image", name);
-		if(pINI->ReadString(section, buffer, defImage, Ares::readBuffer, Ares::readLength)) {
+		if(pINI->ReadString(section, buffer, defImage, Ares::readBuffer)) {
 			value->Image = FileSystem::LoadSHPFile(Ares::readBuffer);
 		}
 
@@ -116,12 +116,12 @@ void Ares::UISettings::Load(CCINIClass *pINI) {
 
 		// get the subline and tooltip
 		sprintf_s(buffer, 0x20, "%s.Subline", name);
-		if(pINI->ReadString(section, buffer, defSubline, Ares::readBuffer, Ares::readLength)) {
+		if(pINI->ReadString(section, buffer, defSubline, Ares::readBuffer)) {
 			AresCRT::strCopy(value->Subline, Ares::readBuffer);
 		}
 
 		sprintf_s(buffer, 0x20, "%s.Tooltip", name);
-		if(pINI->ReadString(section, buffer, value->Subline, Ares::readBuffer, Ares::readLength)) {
+		if(pINI->ReadString(section, buffer, value->Subline, Ares::readBuffer)) {
 			AresCRT::strCopy(value->ToolTip, Ares::readBuffer);
 		}
 
@@ -154,12 +154,12 @@ void Ares::UISettings::Load(CCINIClass *pINI) {
 		// load the tooltip string
 		char buffer[0x20];
 		sprintf_s(buffer, 0x20, "%s.Tooltip", name);
-		if(pINI->ReadString(section2, buffer, defTooltip, Ares::readBuffer, Ares::readLength)) {
+		if(pINI->ReadString(section2, buffer, defTooltip, Ares::readBuffer)) {
 			value->sttToolTipSublineText = StringTable::LoadStringA(Ares::readBuffer);
 		}
 
 		sprintf_s(buffer, 0x20, "%s.ColorScheme", name);
-		if(pINI->ReadString(section2, buffer, defColorScheme, Ares::readBuffer, Ares::readLength)) {
+		if(pINI->ReadString(section2, buffer, defColorScheme, Ares::readBuffer)) {
 			AresCRT::strCopy(value->colorScheme, Ares::readBuffer);
 		}
 

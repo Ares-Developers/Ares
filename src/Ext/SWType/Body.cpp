@@ -168,7 +168,7 @@ void SWTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 	this->SW_Warhead.Read(exINI, section, "SW.Warhead");
 	this->SW_Damage.Read(exINI, section, "SW.Damage");
 
-	if(pINI->ReadString(section, "SW.Range", Ares::readDefval, Ares::readBuffer, Ares::readLength)) {
+	if(pINI->ReadString(section, "SW.Range", Ares::readDefval, Ares::readBuffer)) {
 		char* context = nullptr;
 		char* p = strtok_s(Ares::readBuffer, Ares::readDelims, &context);
 		if(p && *p) {
@@ -191,7 +191,7 @@ void SWTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 
 	// messages and their properties
 	this->Message_FirerColor.Read(exINI, section, "Message.FirerColor");
-	if(pINI->ReadString(section, "Message.Color", Ares::readDefval, Ares::readBuffer, Ares::readLength)) {
+	if(pINI->ReadString(section, "Message.Color", Ares::readDefval, Ares::readBuffer)) {
 		this->Message_ColorScheme = ColorScheme::FindIndex(Ares::readBuffer);
 		if(this->Message_ColorScheme < 0) {
 			Debug::INIParseFailed(section, "Message.Color", Ares::readBuffer, "Expected a valid color scheme name.");

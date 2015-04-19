@@ -51,7 +51,7 @@ void GenericPrerequisite::AddDefaults()
 
 void Prereqs::Parse(CCINIClass *pINI, const char *section, const char *key, DynamicVectorClass<int> &Vec)
 {
-	if(pINI->ReadString(section, key, "", Ares::readBuffer, Ares::readLength)) {
+	if(pINI->ReadString(section, key, "", Ares::readBuffer)) {
 		Vec.Clear();
 
 		char* context = nullptr;

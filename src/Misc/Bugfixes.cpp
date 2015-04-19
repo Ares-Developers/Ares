@@ -1103,7 +1103,7 @@ DEFINE_HOOK(4748A0, INIClass_GetPipIdx, 7)
 	GET_STACK(int, fallback, 0xC);
 
 	int ret = fallback;
-	if(pINI->ReadString(pSection, pKey, Ares::readDefval, Ares::readBuffer, Ares::readLength)) {
+	if(pINI->ReadString(pSection, pKey, Ares::readDefval, Ares::readBuffer)) {
 
 		// find the pip value with the name specified
 		auto PipTypes = reinterpret_cast<std::array<const NamedValue, 11>*>(0x81B958);

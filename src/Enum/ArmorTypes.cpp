@@ -14,7 +14,7 @@ void ArmorType::LoadFromINI(CCINIClass *pINI)
 	const char *section = Enumerable<ArmorType>::GetMainSection();
 
 	char buffer[0x40];
-	pINI->ReadString(section, this->Name, "", buffer, 0x40);
+	pINI->ReadString(section, this->Name, "", buffer);
 
 	this->DefaultIndex = ArmorType::FindIndex(buffer);
 	WarheadTypeExt::VersesData *VS = &this->DefaultVerses;
@@ -60,7 +60,7 @@ void ArmorType::LoadForWarhead(CCINIClass *pINI, WarheadTypeClass* pWH)
 
 	for(size_t i = 0; i < Array.size(); ++i) {
 		_snprintf_s(buffer, _TRUNCATE, "Versus.%s", Array[i]->Name);
-		if(pINI->ReadString(section, buffer, "", ret, 0x20)) {
+		if(pINI->ReadString(section, buffer, "", ret)) {
 			pData->Verses[i].Parse(ret);
 		}
 
@@ -107,7 +107,7 @@ DEFINE_HOOK(4753F0, ArmorType_FindIndex, A)
 		? ArmorType::Array[fallback]->Name
 		: "none";
 
-	pINI->ReadString(Section, Key, curTitle, buf, 0x20);
+	pINI->ReadString(Section, Key, curTitle, buf);
 	int idx = ArmorType::FindIndex(buf);
 
 	if(idx == -1) {

@@ -57,7 +57,7 @@ void RulesExt::ExtData::LoadBeforeTypeData(RulesClass *pThis, CCINIClass *pINI) 
 	int len = pINI->GetKeyCount(section);
 	for (int i = 0; i < len; ++i) {
 		const char *key = pINI->GetKeyName(section, i);
-		if (pINI->ReadString(section, key, "", Ares::readBuffer, Ares::readLength)) {
+		if (pINI->ReadString(section, key, "", Ares::readBuffer)) {
 			WeaponTypeClass::FindOrAllocate(Ares::readBuffer);
 		}
 	}

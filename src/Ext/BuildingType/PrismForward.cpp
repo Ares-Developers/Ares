@@ -58,7 +58,7 @@ void BuildingTypeExt::cPrismForwarding::Initialize(BuildingTypeClass *pThis) {
 
 void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis, CCINIClass* pINI) {
 	const char * pID = pThis->ID;
-	if(pINI->ReadString(pID, "PrismForwarding", "", Ares::readBuffer, Ares::readLength)) {
+	if(pINI->ReadString(pID, "PrismForwarding", "", Ares::readBuffer)) {
 		if((_strcmpi(Ares::readBuffer, "yes") == 0) || (_strcmpi(Ares::readBuffer, "true") == 0)) {
 			this->Enabled = EnabledState::Yes;
 		} else if(_strcmpi(Ares::readBuffer, "forward") == 0) {
@@ -95,7 +95,7 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 			SuperWH = WarheadTypeClass::Find("Super");
 		}
 
-		if(pINI->ReadString(pID, "PrismForwarding.SupportWeapon", "", Ares::readBuffer, Ares::readLength)) {
+		if(pINI->ReadString(pID, "PrismForwarding.SupportWeapon", "", Ares::readBuffer)) {
 			if (WeaponTypeClass *cWeapon = WeaponTypeClass::FindOrAllocate(Ares::readBuffer)) {
 				int idxWeapon = this->GetUnusedWeaponSlot(pThis, false); //rookie weapons
 				if (idxWeapon == -1) {
@@ -119,7 +119,7 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 			}
 		}
 
-		if(pINI->ReadString(pID, "PrismForwarding.EliteSupportWeapon", "", Ares::readBuffer, Ares::readLength)) {
+		if(pINI->ReadString(pID, "PrismForwarding.EliteSupportWeapon", "", Ares::readBuffer)) {
 			if (WeaponTypeClass *cWeapon = WeaponTypeClass::FindOrAllocate(Ares::readBuffer)) {
 				int idxWeapon = this->GetUnusedWeaponSlot(pThis, true); //elite weapons
 				if (idxWeapon == -1) {

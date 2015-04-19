@@ -135,7 +135,7 @@ A_FINE_HOOK(687586, INIClass_ReadScenario, 7)
 
 		HouseClass::LoadFromINIList(pINI); // comment out this line to make it work everywhere except for the very first scenario you try
 
-		pINI->ReadString("Basic", "Player", "Americans", Ares::readBuffer, Ares::readLength);
+		pINI->ReadString("Basic", "Player", "Americans", Ares::readBuffer);
 		int idxHouse = HouseClass::FindIndexByName(Ares::readBuffer);
 		Debug::Log("Side was %d and iH = %d\n", ProgressScreenClass::Instance->GetSide(), idxHouse);
 		if(idxHouse > -1 && idxHouse < HouseClass::Array->Count) {
@@ -194,7 +194,7 @@ DEFINE_HOOK(686D7F, Sides_LoadTextColor_CacheSP, 6) {
 
 	SideExt::CurrentLoadTextColor = -1;
 
-	if(pINI->ReadString(ScenarioClass::Instance->FileName, "LoadScreenText.Color", pDefault, Ares::readBuffer, 0x80)) {
+	if(pINI->ReadString(ScenarioClass::Instance->FileName, "LoadScreenText.Color", pDefault, Ares::readBuffer)) {
 		if(ColorScheme* pCS = ColorScheme::Find(Ares::readBuffer)) {
 			SideExt::CurrentLoadTextColor = pCS->ArrayIndex; // TODO: check if off by one. see ColorScheme.h
 		}

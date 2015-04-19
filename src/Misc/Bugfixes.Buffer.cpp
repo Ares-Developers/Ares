@@ -36,7 +36,7 @@
 
 template<typename T>
 static void ParseList(DynamicVectorClass<T> &List, CCINIClass * pINI, const char *section, const char *key) {
-	if(pINI->ReadString(section, key, Ares::readDefval, Ares::readBuffer, Ares::readLength)) {
+	if(pINI->ReadString(section, key, Ares::readDefval, Ares::readBuffer)) {
 		List.Clear();
 
 		char* context = nullptr;
