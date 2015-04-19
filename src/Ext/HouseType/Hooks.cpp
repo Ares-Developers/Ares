@@ -250,13 +250,14 @@ DEFINE_HOOK(4FE782, HTExt_PickPowerplant, 6)
 
 // issue #521: sort order for countries / countries can be hidden
 DEFINE_HOOK(4E3A6A, hWnd_PopulateWithCountryNames, 6) {
-	GET(HWND, hWnd, ESI);
+	GET(HWND const, hWnd, ESI);
 	
-	std::vector<HouseTypeExt::ExtData*> Eligible;
+	using Ext_t = HouseTypeExt::ExtData*;
+	std::vector<Ext_t> Eligible;
 
-	for(auto pCountry : *HouseTypeClass::Array) {
+	for(auto const& pCountry : *HouseTypeClass::Array) {
 		if(pCountry->Multiplay && pCountry->UIName && *pCountry->UIName) {
-			HouseTypeExt::ExtData *pExt = HouseTypeExt::ExtMap.Find(pCountry);
+			auto const pExt = HouseTypeExt::ExtMap.Find(pCountry);
 
 			if(pExt->CountryListIndex >= 0) {
 				Eligible.push_back(pExt);
@@ -264,19 +265,19 @@ DEFINE_HOOK(4E3A6A, hWnd_PopulateWithCountryNames, 6) {
 		}
 	}
 
-	auto sortCountries = [](const HouseTypeExt::ExtData* a, const HouseTypeExt::ExtData* b) -> bool {
-		if(a->CountryListIndex != b->CountryListIndex) {
-			return a->CountryListIndex < b->CountryListIndex;
+	auto sortCountries = [](const Ext_t &lhs, const Ext_t &rhs) -> bool {
+		if(lhs->CountryListIndex != rhs->CountryListIndex) {
+			return lhs->CountryListIndex < rhs->CountryListIndex;
 		} else {
-			return a->OwnerObject()->ArrayIndex2 < b->OwnerObject()->ArrayIndex2;
+			return lhs->OwnerObject()->ArrayIndex2 < rhs->OwnerObject()->ArrayIndex2;
 		}
 	};
 
 	std::sort(Eligible.begin(), Eligible.end(), sortCountries);
 
 	for(auto pCountryExt : Eligible) {
-		auto pCountry = pCountryExt->OwnerObject();
-		auto idx = SendMessageA(hWnd, 0x4C2u, 0, reinterpret_cast<LPARAM>(pCountry->UIName));
+		auto const pCountry = pCountryExt->OwnerObject();
+		auto const idx = SendMessageA(hWnd, WW_CB_ADDITEM, 0, reinterpret_cast<LPARAM>(pCountry->UIName));
 		SendMessageA(hWnd, CB_SETITEMDATA, static_cast<WPARAM>(idx), pCountry->ArrayIndex2);
 	}
 	
