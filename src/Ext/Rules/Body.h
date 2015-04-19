@@ -99,6 +99,8 @@ public:
 
 		Valueable<bool> DamageAirConsiderBridges;
 
+		Valueable<bool> DiskLaserAnimEnabled;
+
 		ExtData(RulesClass* OwnerObject) : Extension<RulesClass>(OwnerObject),
 			ElectricDeath(nullptr),
 			EngineerDamage(0.0),

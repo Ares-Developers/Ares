@@ -1,5 +1,6 @@
 #include "Body.h"
 
+#include "../Rules/Body.h"
 #include "../../Misc/TrajectoryHelper.h"
 
 #include <AnimClass.h>
@@ -30,11 +31,13 @@ DEFINE_HOOK(4A76ED, DiskLaserClass_Update_Anim, 7)
 
 	auto const pWarhead = pThis->Weapon->Warhead;
 
-	auto const pType = MapClass::SelectDamageAnimation(
-		pThis->Damage, pWarhead, LandType::Clear, coords);
+	if(RulesExt::Global()->DiskLaserAnimEnabled) {
+		auto const pType = MapClass::SelectDamageAnimation(
+			pThis->Damage, pWarhead, LandType::Clear, coords);
 
-	if(pType) {
-		GameCreate<AnimClass>(pType, coords);
+		if(pType) {
+			GameCreate<AnimClass>(pType, coords);
+		}
 	}
 
 	MapClass::FlashbangWarheadAt(pThis->Damage, pWarhead, coords);
