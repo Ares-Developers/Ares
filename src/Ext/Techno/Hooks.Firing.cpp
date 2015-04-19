@@ -2,6 +2,9 @@
 
 #include "../../Misc/TrajectoryHelper.h"
 
+#include <AnimClass.h>
+#include <DiskLaserClass.h>
+
 DEFINE_HOOK_AGAIN(6F7631, TechnoClass_IsCloseEnoughToTarget_Obstacle, 6)
 DEFINE_HOOK(6F7511, TechnoClass_IsCloseEnoughToTarget_Obstacle, 6)
 {
@@ -18,4 +21,23 @@ DEFINE_HOOK(6F7511, TechnoClass_IsCloseEnoughToTarget_Obstacle, 6)
 		*pSource, dest, pThis, pTarget, pWeapon, pThis->Owner));
 
 	return 0x6F7647;
+}
+
+DEFINE_HOOK(4A76ED, DiskLaserClass_Update_Anim, 7)
+{
+	GET(DiskLaserClass* const, pThis, ESI);
+	REF_STACK(CoordStruct, coords, STACK_OFFS(0x54, 0x1C));
+
+	auto const pWarhead = pThis->Weapon->Warhead;
+
+	auto const pType = MapClass::SelectDamageAnimation(
+		pThis->Damage, pWarhead, LandType::Clear, coords);
+
+	if(pType) {
+		GameCreate<AnimClass>(pType, coords);
+	}
+
+	MapClass::FlashbangWarheadAt(pThis->Damage, pWarhead, coords);
+
+	return 0;
 }
