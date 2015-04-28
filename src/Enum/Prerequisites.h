@@ -32,6 +32,7 @@ public:
 	static void AddDefaults();
 
 	DynamicVectorClass<int> Prereqs;
+	DynamicVectorClass<int> Alternates;
 };
 
 class Prereqs
@@ -40,6 +41,7 @@ public:
 	using BTypeIter = Iterator<BuildingTypeClass*>;
 
 	static void Parse(CCINIClass *pINI, const char* section, const char *key, DynamicVectorClass<int> &Vec);
+	static void ParseAlternate(CCINIClass *pINI, const char* section, const char *key, DynamicVectorClass<int> &Vec);
 
 	static bool HouseOwnsGeneric(HouseClass const* pHouse, int Index);
 	static bool HouseOwnsSpecific(HouseClass const* pHouse, int Index);

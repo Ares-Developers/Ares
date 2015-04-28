@@ -27,16 +27,23 @@ void GenericPrerequisite::LoadFromINI(CCINIClass *pINI)
 	Prereqs::Parse(pINI, "General", generalbuf, this->Prereqs);
 
 	Prereqs::Parse(pINI, section, this->Name, this->Prereqs);
+
+	_snprintf_s(generalbuf, _TRUNCATE, "Prerequisite%sAlternate", name);
+	Prereqs::ParseAlternate(pINI, "General", generalbuf, this->Alternates);
 }
 
 void GenericPrerequisite::LoadFromStream(AresStreamReader &Stm)
 {
-	Stm.Process(this->Prereqs);
+	Stm
+		.Process(this->Prereqs)
+		.Process(this->Alternates);
 }
 
 void GenericPrerequisite::SaveToStream(AresStreamWriter &Stm)
 {
-	Stm.Process(this->Prereqs);
+	Stm
+		.Process(this->Prereqs)
+		.Process(this->Alternates);
 }
 
 void GenericPrerequisite::AddDefaults()
@@ -71,6 +78,23 @@ void Prereqs::Parse(CCINIClass *pINI, const char *section, const char *key, Dyna
 	}
 }
 
+void Prereqs::ParseAlternate(CCINIClass *pINI, const char *section, const char *key, DynamicVectorClass<int> &Vec)
+{
+	if(pINI->ReadString(section, key, "", Ares::readBuffer)) {
+		Vec.Clear();
+
+		char* context = nullptr;
+		for(char *cur = strtok_s(Ares::readBuffer, ",", &context); cur; cur = strtok_s(nullptr, ",", &context)) {
+			int idx = UnitTypeClass::FindIndex(cur);
+			if(idx > -1) {
+				Vec.AddItem(idx);
+			} else {
+				Debug::INIParseFailed(section, key, cur);
+			}
+		}
+	}
+}
+
 	// helper funcs
 
 bool Prereqs::HouseOwnsGeneric(HouseClass const* const pHouse, int const Index)
@@ -78,17 +102,15 @@ bool Prereqs::HouseOwnsGeneric(HouseClass const* const pHouse, int const Index)
 	// hack - POWER is -1 , this way converts to 0, and onwards
 	auto const idxPrereq = static_cast<unsigned int>(-1 - Index);
 	if(idxPrereq < GenericPrerequisite::Array.size()) {
-		const auto& dvc = GenericPrerequisite::Array[idxPrereq]->Prereqs;
-		for(const auto& index : dvc) {
+		auto const& Prereq = GenericPrerequisite::Array[idxPrereq];
+		for(const auto& index : Prereq->Prereqs) {
 			if(HouseOwnsSpecific(pHouse, index)) {
 				return true;
 			}
 		}
-		if(Index == Prerequisite::Proc) { // PROC alternate, man I hate the special cases
-			if(auto ProcAlt = RulesClass::Instance->PrerequisiteProcAlternate) {
-				if(pHouse->OwnedUnitTypes.GetItemCount(ProcAlt->GetArrayIndex())) {
-					return true;
-				}
+		for(const auto& index : Prereq->Alternates) {
+			if(pHouse->OwnedUnitTypes.GetItemCount(index)) {
+				return true;
 			}
 		}
 	}
