@@ -73,7 +73,7 @@ void Prereqs::Parse(CCINIClass *pINI, const char *section, const char *key, Dyna
 
 	// helper funcs
 
-bool Prereqs::HouseOwnsGeneric(HouseClass const* const pHouse, signed int const Index)
+bool Prereqs::HouseOwnsGeneric(HouseClass const* const pHouse, int const Index)
 {
 	// hack - POWER is -1 , this way converts to 0, and onwards
 	auto const idxPrereq = static_cast<unsigned int>(-1 - Index);
@@ -120,7 +120,7 @@ bool Prereqs::HouseOwnsSpecific(HouseClass const* const pHouse, int const Index)
 	}
 }
 
-bool Prereqs::HouseOwnsPrereq(HouseClass const* const pHouse, signed int const Index)
+bool Prereqs::HouseOwnsPrereq(HouseClass const* const pHouse, int const Index)
 {
 	return Index < 0
 		? HouseOwnsGeneric(pHouse, Index)
@@ -148,13 +148,13 @@ bool Prereqs::HouseOwnsAny(HouseClass const* const pHouse, const DynamicVectorCl
 	return false;
 }
 
-bool Prereqs::ListContainsSpecific(const BTypeIter &List, signed int const Index)
+bool Prereqs::ListContainsSpecific(const BTypeIter &List, int const Index)
 {
 	auto Target = BuildingTypeClass::Array->GetItem(Index);
 	return List.contains(Target);
 }
 
-bool Prereqs::ListContainsGeneric(const BTypeIter &List, signed int const Index)
+bool Prereqs::ListContainsGeneric(const BTypeIter &List, int const Index)
 {
 	// hack - POWER is -1 , this way converts to 0, and onwards
 	auto const idxPrereq = static_cast<unsigned int>(-1 - Index);
@@ -169,7 +169,7 @@ bool Prereqs::ListContainsGeneric(const BTypeIter &List, signed int const Index)
 	return false;
 }
 
-bool Prereqs::ListContainsPrereq(const BTypeIter &List, signed int Index)
+bool Prereqs::ListContainsPrereq(const BTypeIter &List, int Index)
 {
 	return Index < 0
 		? ListContainsGeneric(List, Index)
