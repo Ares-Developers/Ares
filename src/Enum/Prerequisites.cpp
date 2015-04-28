@@ -78,7 +78,7 @@ bool Prereqs::HouseOwnsGeneric(HouseClass const* const pHouse, signed int const 
 	// hack - POWER is -1 , this way converts to 0, and onwards
 	auto const idxPrereq = static_cast<unsigned int>(-1 - Index);
 	if(idxPrereq < GenericPrerequisite::Array.size()) {
-		const auto& dvc = GenericPrerequisite::Array.at(idxPrereq)->Prereqs;
+		const auto& dvc = GenericPrerequisite::Array[idxPrereq]->Prereqs;
 		for(const auto& index : dvc) {
 			if(HouseOwnsSpecific(pHouse, index)) {
 				return true;
@@ -160,7 +160,7 @@ bool Prereqs::ListContainsGeneric(const BTypeIter &List, signed int const Index)
 	// hack - POWER is -1 , this way converts to 0, and onwards
 	auto const idxPrereq = static_cast<unsigned int>(-1 - Index);
 	if(idxPrereq < GenericPrerequisite::Array.size()) {
-		const auto& dvc = GenericPrerequisite::Array.at(idxPrereq)->Prereqs;
+		const auto& dvc = GenericPrerequisite::Array[idxPrereq]->Prereqs;
 		for(const auto& index : dvc) {
 			if(ListContainsSpecific(List, index)) {
 				return true;
