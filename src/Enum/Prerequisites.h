@@ -37,7 +37,7 @@ public:
 class Prereqs
 {
 public:
-	typedef Iterator<BuildingTypeClass*> BTypeIter;
+	using BTypeIter = Iterator<BuildingTypeClass*>;
 
 	static void Parse(CCINIClass *pINI, const char* section, const char *key, DynamicVectorClass<int> &Vec);
 

@@ -84,14 +84,13 @@ bool Prereqs::HouseOwnsGeneric(HouseClass const* const pHouse, signed int const 
 				return true;
 			}
 		}
-		if(idxPrereq == 5) { // PROC alternate, man I hate the special cases
+		if(Index == Prerequisite::Proc) { // PROC alternate, man I hate the special cases
 			if(auto ProcAlt = RulesClass::Instance->PrerequisiteProcAlternate) {
 				if(pHouse->OwnedUnitTypes.GetItemCount(ProcAlt->GetArrayIndex())) {
 					return true;
 				}
 			}
 		}
-		return false;
 	}
 	return false;
 }
@@ -149,7 +148,7 @@ bool Prereqs::HouseOwnsAny(HouseClass const* const pHouse, const DynamicVectorCl
 	return false;
 }
 
-bool Prereqs::ListContainsSpecific(const BTypeIter &List, signed int Index)
+bool Prereqs::ListContainsSpecific(const BTypeIter &List, signed int const Index)
 {
 	auto Target = BuildingTypeClass::Array->GetItem(Index);
 	return List.contains(Target);
