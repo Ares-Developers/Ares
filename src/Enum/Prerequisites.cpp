@@ -73,17 +73,18 @@ void Prereqs::Parse(CCINIClass *pINI, const char *section, const char *key, Dyna
 
 	// helper funcs
 
-bool Prereqs::HouseOwnsGeneric(HouseClass const* const pHouse, signed int Index)
+bool Prereqs::HouseOwnsGeneric(HouseClass const* const pHouse, signed int const Index)
 {
-	Index = -1 - Index; // hack - POWER is -1 , this way converts to 0, and onwards
-	if(Index < static_cast<int>(GenericPrerequisite::Array.size())) {
-		const auto& dvc = GenericPrerequisite::Array.at(Index)->Prereqs;
+	// hack - POWER is -1 , this way converts to 0, and onwards
+	auto const idxPrereq = static_cast<unsigned int>(-1 - Index);
+	if(idxPrereq < GenericPrerequisite::Array.size()) {
+		const auto& dvc = GenericPrerequisite::Array.at(idxPrereq)->Prereqs;
 		for(const auto& index : dvc) {
 			if(HouseOwnsSpecific(pHouse, index)) {
 				return true;
 			}
 		}
-		if(Index == 5) { // PROC alternate, man I hate the special cases
+		if(idxPrereq == 5) { // PROC alternate, man I hate the special cases
 			if(auto ProcAlt = RulesClass::Instance->PrerequisiteProcAlternate) {
 				if(pHouse->OwnedUnitTypes.GetItemCount(ProcAlt->GetArrayIndex())) {
 					return true;
@@ -154,11 +155,12 @@ bool Prereqs::ListContainsSpecific(const BTypeIter &List, signed int Index)
 	return List.contains(Target);
 }
 
-bool Prereqs::ListContainsGeneric(const BTypeIter &List, signed int Index)
+bool Prereqs::ListContainsGeneric(const BTypeIter &List, signed int const Index)
 {
-	Index = -1 - Index; // hack - POWER is -1 , this way converts to 0, and onwards
-	if(Index < static_cast<int>(GenericPrerequisite::Array.size())) {
-		const auto& dvc = GenericPrerequisite::Array.at(Index)->Prereqs;
+	// hack - POWER is -1 , this way converts to 0, and onwards
+	auto const idxPrereq = static_cast<unsigned int>(-1 - Index);
+	if(idxPrereq < GenericPrerequisite::Array.size()) {
+		const auto& dvc = GenericPrerequisite::Array.at(idxPrereq)->Prereqs;
 		for(const auto& index : dvc) {
 			if(ListContainsSpecific(List, index)) {
 				return true;
