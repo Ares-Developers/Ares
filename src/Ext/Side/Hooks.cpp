@@ -570,6 +570,9 @@ DEFINE_HOOK(683C70, sub_683AB0_LoadingScoreA, 7)
 				auto pSide = SideClass::Array->GetItemOrDefault(pType->SideIndex);
 				auto pRulesINI = CCINIClass::INI_Rules;
 				idxLoadingTheme = pRulesINI->ReadTheme(pSide->ID, "LoadingTheme", -2);
+
+				// ...then from the house
+				idxLoadingTheme = pRulesINI->ReadTheme(pType->ID, "LoadingTheme", idxLoadingTheme);
 			}
 		}
 	}
