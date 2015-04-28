@@ -73,7 +73,7 @@ void Prereqs::Parse(CCINIClass *pINI, const char *section, const char *key, Dyna
 
 	// helper funcs
 
-bool Prereqs::HouseOwnsGeneric(HouseClass *pHouse, signed int Index)
+bool Prereqs::HouseOwnsGeneric(HouseClass const* const pHouse, signed int Index)
 {
 	Index = -1 - Index; // hack - POWER is -1 , this way converts to 0, and onwards
 	if(Index < static_cast<int>(GenericPrerequisite::Array.size())) {
@@ -95,7 +95,7 @@ bool Prereqs::HouseOwnsGeneric(HouseClass *pHouse, signed int Index)
 	return false;
 }
 
-bool Prereqs::HouseOwnsSpecific(HouseClass *pHouse, int Index)
+bool Prereqs::HouseOwnsSpecific(HouseClass const* const pHouse, int const Index)
 {
 	auto BType = BuildingTypeClass::Array->GetItem(Index);
 	const char* powerup = BType->PowersUpBuilding;
@@ -120,7 +120,7 @@ bool Prereqs::HouseOwnsSpecific(HouseClass *pHouse, int Index)
 	}
 }
 
-bool Prereqs::HouseOwnsPrereq(HouseClass *pHouse, signed int Index)
+bool Prereqs::HouseOwnsPrereq(HouseClass const* const pHouse, signed int const Index)
 {
 	return Index < 0
 		? HouseOwnsGeneric(pHouse, Index)
@@ -128,7 +128,7 @@ bool Prereqs::HouseOwnsPrereq(HouseClass *pHouse, signed int Index)
 	;
 }
 
-bool Prereqs::HouseOwnsAll(HouseClass *pHouse, const DynamicVectorClass<int> &list)
+bool Prereqs::HouseOwnsAll(HouseClass const* const pHouse, const DynamicVectorClass<int> &list)
 {
 	for(const auto& index : list) {
 		if(!HouseOwnsPrereq(pHouse, index)) {
@@ -138,7 +138,7 @@ bool Prereqs::HouseOwnsAll(HouseClass *pHouse, const DynamicVectorClass<int> &li
 	return true;
 }
 
-bool Prereqs::HouseOwnsAny(HouseClass *pHouse, const DynamicVectorClass<int> &list)
+bool Prereqs::HouseOwnsAny(HouseClass const* const pHouse, const DynamicVectorClass<int> &list)
 {
 	for(const auto& index : list) {
 		if(HouseOwnsPrereq(pHouse, index)) {
