@@ -176,6 +176,10 @@ public:
  * PilotChance(); // ctor init-list
  * PilotChance->Read(..., "Base%s"); // load from ini
  * PilotChance->Get(Unit); // usage
+ *
+ * Use %s format specifier, exactly once. If pSingleFlag is null, pBaseFlag will
+ * be used. For the single flag name, a trailing dot (after replacing %s) will
+ * be removed. I.e. "Test.%s" will be converted to "Test".
  */
 template<typename T>
 class Promotable {
@@ -188,7 +192,7 @@ public:
 		this->Elite = this->Veteran = this->Rookie = val;
 	}
 
-	inline void Read(INI_EX &parser, const char *Section, const char *BaseFlag);
+	inline void Read(INI_EX &parser, const char* pSection, const char* pBaseFlag, const char* pSingleFlag = nullptr);
 
 	const T* GetEx(TechnoClass* pTechno) const {
 		return &this->Get(pTechno);
