@@ -93,6 +93,8 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 		return;
 	}
 
+	INI_EX exINI(pINI);
+
 	// survivors
 	this->Survivors_Pilots.Reserve(SideClass::Array->Count);
 	for(int i=this->Survivors_Pilots.Count; i<SideClass::Array->Count; ++i) {
@@ -102,8 +104,8 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 
 	this->Survivors_PilotCount = pINI->ReadInteger(section, "Survivor.Pilots", this->Survivors_PilotCount);
 
-	this->Survivors_PilotChance.Read(pINI, section, "Survivor.%sPilotChance");
-	this->Survivors_PassengerChance.Read(pINI, section, "Survivor.%sPassengerChance");
+	this->Survivors_PilotChance.Read(exINI, section, "Survivor.%sPilotChance");
+	this->Survivors_PassengerChance.Read(exINI, section, "Survivor.%sPassengerChance");
 
 	char flag[256];
 	for(int i = 0; i < SideClass::Array->Count; ++i) {
@@ -193,8 +195,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 	}
 */
 
-	INI_EX exINI(pINI);
-	this->Insignia.Read(pINI, section, "Insignia.%s");
+	this->Insignia.Read(exINI, section, "Insignia.%s");
 	this->Parachute_Anim.Read(exINI, section, "Parachute.Anim");
 
 	// new on 08.11.09 for #342 (Operator=)
@@ -415,7 +416,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 
 	// crush
 	this->OmniCrusher_Aggressive.Read(exINI, section, "OmniCrusher.Aggressive");
-	this->CrushDamage.Read(pINI, section, "CrushDamage.%s");
+	this->CrushDamage.Read(exINI, section, "CrushDamage.%s");
 
 	// quick fix - remove after the rest of weapon selector code is done
 	return;

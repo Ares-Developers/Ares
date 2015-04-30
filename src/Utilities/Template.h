@@ -188,7 +188,7 @@ public:
 		this->Elite = this->Veteran = this->Rookie = val;
 	}
 
-	inline void Read(CCINIClass *pINI, const char *Section, const char *BaseFlag);
+	inline void Read(INI_EX &parser, const char *Section, const char *BaseFlag);
 
 	const T* GetEx(TechnoClass* pTechno) const {
 		return &this->Get(pTechno);
