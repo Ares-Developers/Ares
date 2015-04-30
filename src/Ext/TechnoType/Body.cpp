@@ -599,6 +599,22 @@ bool TechnoTypeExt::ExtData::CarryallCanLift(UnitClass * Target) {
 
 }
 
+bool TechnoTypeExt::ExtData::IsGenericPrerequisite() const
+{
+	if(this->GenericPrerequisite.empty()) {
+		bool isGeneric = false;
+		for(auto const& Prereq : GenericPrerequisite::Array) {
+			if(Prereq->Alternates.FindItemIndex(this->OwnerObject()) != -1) {
+				isGeneric = true;
+				break;
+			}
+		}
+		this->GenericPrerequisite = isGeneric;
+	}
+
+	return this->GenericPrerequisite;
+}
+
 // =============================
 // load / save
 
@@ -614,6 +630,7 @@ void TechnoTypeExt::ExtData::Serialize(T& Stm) {
 		.Process(this->PrerequisiteLists)
 		.Process(this->PrerequisiteNegatives)
 		.Process(this->PrerequisiteTheaters)
+		.Process(this->GenericPrerequisite)
 		.Process(this->Secret_RequiredHouses)
 		.Process(this->Secret_ForbiddenHouses)
 		.Process(this->Is_Deso)

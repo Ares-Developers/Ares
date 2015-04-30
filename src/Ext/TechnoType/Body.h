@@ -46,6 +46,8 @@ public:
 		DynamicVectorClass<int> PrerequisiteNegatives;
 		DWORD PrerequisiteTheaters;
 
+		mutable OptionalStruct<bool, true> GenericPrerequisite;
+
 		// new secret lab
 		DWORD Secret_RequiredHouses;
 		DWORD Secret_ForbiddenHouses;
@@ -354,6 +356,8 @@ public:
 		bool CarryallCanLift(UnitClass * Target);
 
 		const char* GetSelectionGroupID() const;
+
+		bool IsGenericPrerequisite() const;
 
 	private:
 		template <typename T>
