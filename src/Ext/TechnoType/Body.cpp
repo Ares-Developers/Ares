@@ -415,6 +415,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 
 	// crush
 	this->OmniCrusher_Aggressive.Read(exINI, section, "OmniCrusher.Aggressive");
+	this->CrushDamage.Read(pINI, section, "CrushDamage.%s");
 
 	// quick fix - remove after the rest of weapon selector code is done
 	return;
@@ -746,7 +747,8 @@ void TechnoTypeExt::ExtData::Serialize(T& Stm) {
 		.Process(this->ParticleSystems_DamageSparks)
 		.Process(this->BerserkROFMultiplier)
 		.Process(this->AssaulterLevel)
-		.Process(this->OmniCrusher_Aggressive);
+		.Process(this->OmniCrusher_Aggressive)
+		.Process(this->CrushDamage);
 }
 
 void TechnoTypeExt::ExtData::LoadFromStream(AresStreamReader &Stm) {

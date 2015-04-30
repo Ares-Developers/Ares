@@ -1819,3 +1819,21 @@ DEFINE_HOOK(741613, UnitClass_ApproachTarget_OmniCrusher, 6)
 
 	return aggressive ? 0u : 0x741685u;
 }
+
+DEFINE_HOOK(7418AA, UnitClass_CrushCell_CrushDamage, 6)
+{
+	GET(UnitClass* const, pThis, EDI);
+	GET(ObjectClass* const, pVictim, ESI);
+
+	if(auto const pTechno = abstract_cast<TechnoClass*>(pVictim)) {
+		auto pExt = TechnoTypeExt::ExtMap.Find(pVictim->GetTechnoType());
+
+		if(auto damage = pExt->CrushDamage.Get(pTechno)) {
+			pThis->ReceiveDamage(
+				&damage, 0, RulesClass::Instance->C4Warhead, nullptr, false,
+				false, nullptr);
+		}
+	}
+
+	return 0;
+}

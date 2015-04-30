@@ -230,6 +230,7 @@ public:
 
 		// crushing
 		Valueable<bool> OmniCrusher_Aggressive;
+		Promotable<int> CrushDamage;
 
 		ExtData(TechnoTypeClass* OwnerObject) : Extension<TechnoTypeClass>(OwnerObject),
 			Survivors_PilotChance(),
