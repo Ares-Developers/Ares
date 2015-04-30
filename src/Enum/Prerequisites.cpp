@@ -78,17 +78,16 @@ void Prereqs::Parse(CCINIClass *pINI, const char *section, const char *key, Dyna
 	}
 }
 
-void Prereqs::ParseAlternate(CCINIClass *pINI, const char *section, const char *key, DynamicVectorClass<int> &Vec)
+void Prereqs::ParseAlternate(CCINIClass *pINI, const char *section, const char *key, DynamicVectorClass<TechnoTypeClass*> &Vec)
 {
 	if(pINI->ReadString(section, key, "", Ares::readBuffer)) {
 		Vec.Clear();
 
 		char* context = nullptr;
-		for(char *cur = strtok_s(Ares::readBuffer, ",", &context); cur; cur = strtok_s(nullptr, ",", &context)) {
-			int idx = UnitTypeClass::FindIndex(cur);
-			if(idx > -1) {
-				Vec.AddItem(idx);
-			} else {
+		for(auto cur = strtok_s(Ares::readBuffer, ",", &context); cur; cur = strtok_s(nullptr, ",", &context)) {
+			if(auto const pType = TechnoTypeClass::Find(cur)) {
+				Vec.AddItem(pType);
+			} else if(!INIClass::IsBlank(cur)) {
 				Debug::INIParseFailed(section, key, cur);
 			}
 		}
@@ -108,8 +107,8 @@ bool Prereqs::HouseOwnsGeneric(HouseClass const* const pHouse, int const Index)
 				return true;
 			}
 		}
-		for(const auto& index : Prereq->Alternates) {
-			if(pHouse->OwnedUnitTypes.GetItemCount(index)) {
+		for(const auto& pType : Prereq->Alternates) {
+			if(pHouse->CountOwnedNow(pType)) {
 				return true;
 			}
 		}
