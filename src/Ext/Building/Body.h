@@ -87,6 +87,8 @@ public:
 
 		TimerStruct CashUpgradeTimers[3];
 
+		VectorClass<int> DockReloadTimers;
+
 	public:
 		ExtData(BuildingClass* OwnerObject) : Extension<BuildingClass>(OwnerObject),
 			OwnerBeforeRaid(nullptr),

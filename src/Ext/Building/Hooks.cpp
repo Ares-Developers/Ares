@@ -262,3 +262,85 @@ DEFINE_HOOK(452210, BuildingClass_Enable_TogglePower, 7)
 	pThis->HasPower = pExt->TogglePower_HasPower;
 	return 0x452217;
 }
+
+// replaces the UnitReload handling and makes each docker independent of all
+// others. this means planes don't have to wait one more ReloadDelay because
+// the first docker triggered repair mission while the other dockers arrive
+// too late and need to be put to sleep first.
+DEFINE_HOOK(44C844, BuildingClass_MissionRepair_Reload, 6)
+{
+	GET(BuildingClass* const, pThis, EBP);
+	auto const pExt = BuildingExt::ExtMap.Find(pThis);
+
+	// ensure there are enough slots
+	pExt->DockReloadTimers.Reserve(pThis->RadioLinks.Capacity);
+
+	// update all dockers, check if there's
+	// at least one needing more attention
+	bool keep_reloading = false;
+	for(auto i = 0; i < pThis->RadioLinks.Capacity; ++i) {
+		if(auto const pLink = pThis->GetNthLink(i)) {
+
+			// check if reloaded and repaired already
+			auto const pLinkType = pLink->GetTechnoType();
+			auto done = pThis->SendCommand(rc_1D, pLink) == rc_01
+				&& pLink->Health == pLinkType->Strength;
+
+			if(!done) {
+				// check if docked
+				auto const miss = pLink->GetCurrentMission();
+				if(miss == Mission::Enter
+					|| pThis->SendCommand(rc_NeedToMove, pLink) != rc_01)
+				{
+					continue;
+				}
+
+				keep_reloading = true;
+
+				// make the unit sleep first
+				if(miss != Mission::Sleep) {
+					pLink->QueueMission(Mission::Sleep, false);
+					continue;
+				}
+
+				// check whether the timer completed
+				auto const last_timer = pExt->DockReloadTimers[i];
+				if(last_timer > Unsorted::CurrentFrame) {
+					continue;
+				}
+
+				// set the next frame
+				auto const rate = RulesClass::Instance->ReloadRate;
+				auto const frames = static_cast<int>(rate * 900);
+				pExt->DockReloadTimers[i] = Unsorted::CurrentFrame + frames;
+
+				// only reload if the timer was not outdated
+				if(last_timer != Unsorted::CurrentFrame) {
+					continue;
+				}
+
+				// reload and repair, return true if both failed
+				done = pThis->SendCommand(rc_1F, pLink) != rc_01
+					&& pThis->SendCommand(rc_1C, pLink) != rc_01;
+			}
+
+			if(done) {
+				pLink->vt_entry_484(0, 1);
+				pLink->ForceMission(Mission::Guard);
+				pLink->ProceedToNextPlanningWaypoint();
+
+				pExt->DockReloadTimers[i] = -1;
+			}
+		}
+	}
+
+	if(keep_reloading) {
+		// update each frame
+		R->EAX(1);
+	} else {
+		pThis->QueueMission(Mission::Guard, false);
+		R->EAX(3);
+	}
+
+	return 0x44C968;
+}
