@@ -232,6 +232,8 @@ public:
 		Valueable<bool> OmniCrusher_Aggressive;
 		Promotable<int> CrushDamage;
 
+		Nullable<double> ReloadRate;
+
 		ExtData(TechnoTypeClass* OwnerObject) : Extension<TechnoTypeClass>(OwnerObject),
 			Survivors_PilotChance(),
 			Survivors_PassengerChance(),

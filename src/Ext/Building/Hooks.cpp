@@ -310,7 +310,9 @@ DEFINE_HOOK(44C844, BuildingClass_MissionRepair_Reload, 6)
 				}
 
 				// set the next frame
-				auto const rate = RulesClass::Instance->ReloadRate;
+				auto const pLinkExt = TechnoTypeExt::ExtMap.Find(pLinkType);
+				auto const defaultRate = RulesClass::Instance->ReloadRate;
+				auto const rate = pLinkExt->ReloadRate.Get(defaultRate);
 				auto const frames = static_cast<int>(rate * 900);
 				pExt->DockReloadTimers[i] = Unsorted::CurrentFrame + frames;
 
