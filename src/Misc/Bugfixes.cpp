@@ -471,7 +471,8 @@ DEFINE_HOOK(455E4C, HouseClass_FindRepairBay, 9)
 
 	eRadioCommands Response = Unit->SendCommand(rc_CanEnter, Bay);
 
-	return Response == 0
+	// original game accepted any valid answer as a positive one
+	return Response != rc_01
 	 ? 0x455EDE
 	 : 0x455E5D
 	;
