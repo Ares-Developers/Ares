@@ -452,30 +452,26 @@ A_FINE_HOOK(5FAD09, Options_LoadFromINI, 5)
 
 DEFINE_HOOK(455E4C, HouseClass_FindRepairBay, 9)
 {
-	GET(UnitClass *, Unit, ECX);
-	GET(BuildingClass *, Bay, ESI);
+	GET(UnitClass* const, pUnit, ECX);
+	GET(BuildingClass* const, pBay, ESI);
 
-	UnitTypeClass *UT = Unit->Type;
-	BuildingTypeClass *BT = Bay->Type;
+	auto const pType = pBay->Type;
+	auto const pUnitType = pUnit->Type;
 
-	bool isNotAcceptable = (UT->BalloonHover
-	 || BT->Naval != UT->Naval
-	 || BT->Factory == AbstractType::AircraftType
-	 || BT->Helipad
-	 || BT->HoverPad && !RulesClass::Instance->SeparateAircraft
-	);
+	bool isNotAcceptable = (pUnitType->BalloonHover
+		|| pType->Naval != pUnitType->Naval
+		|| pType->Factory == AbstractType::AircraftType
+		|| pType->Helipad
+		|| pType->HoverPad && !RulesClass::Instance->SeparateAircraft);
 
 	if(isNotAcceptable) {
 		return 0x455EDE;
 	}
 
-	eRadioCommands Response = Unit->SendCommand(rc_CanEnter, Bay);
+	auto const response = pUnit->SendCommand(rc_CanEnter, pBay);
 
 	// original game accepted any valid answer as a positive one
-	return Response != rc_01
-	 ? 0x455EDE
-	 : 0x455E5D
-	;
+	return response != rc_01 ? 0x455EDEu : 0x455E5Du;
 }
 
 /*
