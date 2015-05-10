@@ -281,7 +281,7 @@ DEFINE_HOOK(44C844, BuildingClass_MissionRepair_Reload, 6)
 	for(auto i = 0; i < pThis->RadioLinks.Capacity; ++i) {
 		if(auto const pLink = pThis->GetNthLink(i)) {
 
-			auto const SendCommand = [&](RadioCommand command) {
+			auto const SendCommand = [=](RadioCommand command) {
 				auto const response = pThis->SendCommand(command, pLink);
 				return response == RadioCommand::AnswerPositive;
 			};
