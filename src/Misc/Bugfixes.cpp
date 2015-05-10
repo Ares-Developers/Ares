@@ -468,10 +468,11 @@ DEFINE_HOOK(455E4C, HouseClass_FindRepairBay, 9)
 		return 0x455EDE;
 	}
 
-	auto const response = pUnit->SendCommand(rc_CanEnter, pBay);
+	auto const response = pUnit->SendCommand(
+		RadioCommand::QueryCanEnter, pBay);
 
 	// original game accepted any valid answer as a positive one
-	return response != rc_01 ? 0x455EDEu : 0x455E5Du;
+	return response != RadioCommand::AnswerPositive ? 0x455EDEu : 0x455E5Du;
 }
 
 /*

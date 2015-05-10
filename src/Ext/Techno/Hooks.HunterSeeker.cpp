@@ -22,7 +22,7 @@ DEFINE_HOOK(4CCB84, FlyLocomotionClass_ILocomotion_Process_HunterSeeker, 6)
 				pLoco->IsLanding = false;
 				pLoco->FlightLevel = pType->GetFlightLevel();
 
-				pObject->SendToFirstLink(rc_Exit);
+				pObject->SendToFirstLink(RadioCommand::NotifyUnlink);
 				pObject->QueueMission(Mission::Attack, false);
 				pObject->NextMission();
 			}
@@ -46,7 +46,7 @@ DEFINE_HOOK(4CE85A, FlyLocomotionClass_UpdateLanding, 8)
 				pThis->IsLanding = false;
 				pThis->FlightLevel = pType->GetFlightLevel();
 
-				pObject->SendToFirstLink(rc_Exit);
+				pObject->SendToFirstLink(RadioCommand::NotifyUnlink);
 				pObject->QueueMission(Mission::Attack, false);
 				pObject->NextMission();
 			}

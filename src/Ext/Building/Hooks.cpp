@@ -281,16 +281,21 @@ DEFINE_HOOK(44C844, BuildingClass_MissionRepair_Reload, 6)
 	for(auto i = 0; i < pThis->RadioLinks.Capacity; ++i) {
 		if(auto const pLink = pThis->GetNthLink(i)) {
 
+			auto const SendCommand = [&](RadioCommand command) {
+				auto const response = pThis->SendCommand(command, pLink);
+				return response == RadioCommand::AnswerPositive;
+			};
+
 			// check if reloaded and repaired already
 			auto const pLinkType = pLink->GetTechnoType();
-			auto done = pThis->SendCommand(rc_1D, pLink) == rc_01
+			auto done = SendCommand(RadioCommand::QueryReadiness)
 				&& pLink->Health == pLinkType->Strength;
 
 			if(!done) {
 				// check if docked
 				auto const miss = pLink->GetCurrentMission();
-				if(miss == Mission::Enter
-					|| pThis->SendCommand(rc_NeedToMove, pLink) != rc_01)
+				if(miss == Mission::Enter 
+					|| !SendCommand(RadioCommand::QueryMoving))
 				{
 					continue;
 				}
@@ -322,8 +327,8 @@ DEFINE_HOOK(44C844, BuildingClass_MissionRepair_Reload, 6)
 				}
 
 				// reload and repair, return true if both failed
-				done = pThis->SendCommand(rc_1F, pLink) != rc_01
-					&& pThis->SendCommand(rc_1C, pLink) != rc_01;
+				done = !SendCommand(RadioCommand::RequestReload)
+					&& !SendCommand(RadioCommand::RequestRepair);
 			}
 
 			if(done) {

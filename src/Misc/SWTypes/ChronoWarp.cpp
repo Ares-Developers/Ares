@@ -190,8 +190,8 @@ bool SW_ChronoWarp::Activate(SuperClass* pThis, const CellStruct &Coords, bool I
 		// building specific preparations
 		if(auto const pBld = abstract_cast<BuildingClass*>(pTechno)) {
 			// tell all linked units to get off
-			pBld->SendToEachLink(rc_0D);
-			pBld->SendToEachLink(rc_Exit);
+			pBld->SendToEachLink(RadioCommand::RequestRedraw);
+			pBld->SendToEachLink(RadioCommand::NotifyUnlink);
 
 			// destroy the building light source
 			if(pBld->LightSource) {
@@ -232,7 +232,7 @@ bool SW_ChronoWarp::Activate(SuperClass* pThis, const CellStruct &Coords, bool I
 			// order unit to move to target location
 			pFoot->IsImmobilized = true;
 			pFoot->ChronoDestCoords = coordsUnitTarget;
-			pFoot->SendToEachLink(rc_Exit);
+			pFoot->SendToEachLink(RadioCommand::NotifyUnlink);
 			pFoot->ChronoWarpedByHouse = pThis->Owner;
 			pFoot->SetDestination(pCellUnitTarget, true);
 		} else if(auto const pBld = abstract_cast<BuildingClass*>(pTechno)) {
