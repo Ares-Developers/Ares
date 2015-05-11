@@ -1,5 +1,8 @@
 #include "Body.h"
 
+#include <AircraftClass.h>
+#include <BuildingClass.h>
+
 // NOTE! enabling this hook breaks tank bunker. (#1155833)
 //A_FINE_HOOK(6FFF03, TechnoClass_GetCursorOverObject, A)
 //{
@@ -26,3 +29,21 @@
 //
 //	return Result;
 //}
+
+// skip the check for UnitRepair, as it does not play well with UnitReload and
+// Factory=AircraftType at all. in fact, it's prohibited, and thus docking to
+// other structures was never allowed.
+DEFINE_HOOK(417E16, AircraftClass_GetCursorOverObject_Dock, 6)
+{
+	// target is known to be a building
+	GET(AircraftClass* const, pThis, ESI);
+	GET(BuildingClass* const, pBuilding, EDI);
+
+	// enter and no-enter cursors only if aircraft can dock
+	if(pThis->Type->Dock.FindItemIndex(pBuilding->Type) != -1) {
+		return 0x417E4B;
+	}
+
+	// select cursor
+	return 0x417E7D;
+}
