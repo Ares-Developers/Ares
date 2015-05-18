@@ -83,6 +83,7 @@ DEFINE_HOOK(5F9070, ObjectTypeClass_Load2DArt, 0)
 	pType->Image = nullptr;
 	pType->ImageIsOutdated = false;
 
+	bool forceShp = false;
 	switch(pType->WhatAmI()) {
 		case SmudgeTypeClass::AbsID:
 		case TerrainTypeClass::AbsID:
@@ -91,18 +92,14 @@ DEFINE_HOOK(5F9070, ObjectTypeClass_Load2DArt, 0)
 
 		case OverlayTypeClass::AbsID:
 		case AnimTypeClass::AbsID:
-			pType->Image = reinterpret_cast<SHPStruct *>(FileSystem::LoadFile(basename, true));
-			if(!pType->Image) {
-				basename[1] = 'G';
-				pType->Image = reinterpret_cast<SHPStruct *>(FileSystem::LoadFile(basename, true));
-			}
-			break;
+			forceShp = true;
+			// fall through
 
 		default:
-			pType->Image = reinterpret_cast<SHPStruct *>(FileSystem::LoadFile(basename, false)); // false? how would I know? it works for wastewood
+			pType->Image = reinterpret_cast<SHPStruct *>(FileSystem::LoadFile(basename, forceShp));
 			if(!pType->Image) {
 				basename[1] = 'G';
-				pType->Image = reinterpret_cast<SHPStruct *>(FileSystem::LoadFile(basename, false));
+				pType->Image = reinterpret_cast<SHPStruct *>(FileSystem::LoadFile(basename, forceShp));
 			}
 			break;
 	}
