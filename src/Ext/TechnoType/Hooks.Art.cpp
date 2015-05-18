@@ -1,5 +1,6 @@
 #include "Body.h"
 #include "../../Misc/Debug.h"
+#include "../../Utilities/Helpers.Alex.h"
 #include "../../Utilities/INIParser.h"
 
 #include "../../Ares.CRT.h"
@@ -83,25 +84,21 @@ DEFINE_HOOK(5F9070, ObjectTypeClass_Load2DArt, 0)
 	pType->Image = nullptr;
 	pType->ImageIsOutdated = false;
 
-	bool forceShp = false;
-	switch(pType->WhatAmI()) {
-		case SmudgeTypeClass::AbsID:
-		case TerrainTypeClass::AbsID:
-		// what? it's what the game does, evidently those load somewhere else
-		break;
+	using namespace Helpers::Alex;
+	auto const abs = pType->WhatAmI();
 
-		case OverlayTypeClass::AbsID:
-		case AnimTypeClass::AbsID:
-			forceShp = true;
-			// fall through
+	// what? it's what the game does, evidently those load somewhere else
+	if(!is_any_of(abs, AbstractType::SmudgeType, AbstractType::TerrainType)) {
+		auto const forceShp = is_any_of(
+			abs, AbstractType::OverlayType, AbstractType::AnimType);
 
-		default:
-			pType->Image = reinterpret_cast<SHPStruct *>(FileSystem::LoadFile(basename, forceShp));
-			if(!pType->Image) {
-				basename[1] = 'G';
-				pType->Image = reinterpret_cast<SHPStruct *>(FileSystem::LoadFile(basename, forceShp));
-			}
-			break;
+		auto pImage = FileSystem::LoadFile(basename, forceShp);
+		if(!pImage) {
+			basename[1] = 'G';
+			pImage = FileSystem::LoadFile(basename, forceShp);
+		}
+
+		pType->Image = reinterpret_cast<SHPStruct*>(pImage);
 	}
 
 	if(SHPStruct *SHP = pType->Image) {
