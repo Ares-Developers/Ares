@@ -60,7 +60,6 @@ DEFINE_HOOK(5F9070, ObjectTypeClass_Load2DArt, 0)
 			pType->ArcticArtInUse = true;
 		}
 	} else {
-		AresCRT::strCopy(basename, pType->ImageFile, 0x1A);
 		pType->ArcticArtInUse = false;
 	}
 
