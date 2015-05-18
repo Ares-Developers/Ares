@@ -103,7 +103,7 @@ DEFINE_HOOK(5F9070, ObjectTypeClass_Load2DArt, 0)
 			pType->Image = reinterpret_cast<SHPStruct *>(FileSystem::LoadFile(basename, false)); // false? how would I know? it works for wastewood
 			if(!pType->Image) {
 				basename[1] = 'G';
-				pType->Image = reinterpret_cast<SHPStruct *>(FileSystem::LoadFile(basename, true));
+				pType->Image = reinterpret_cast<SHPStruct *>(FileSystem::LoadFile(basename, false));
 			}
 			break;
 	}
