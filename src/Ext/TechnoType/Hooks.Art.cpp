@@ -54,7 +54,7 @@ DEFINE_HOOK(5F9070, ObjectTypeClass_Load2DArt, 0)
 			}
 			AresCRT::strCopy(pType->ImageFile, basename);
 		}
-	} else if(pType->AlternateArcticArt && scenarioTheater == TheaterType::Snow && !pType->ImageIsOutdated) { //outdated? you think I know what it means? hahahaha
+	} else if(pType->AlternateArcticArt && scenarioTheater == TheaterType::Snow && !pType->ImageAllocated) {
 		if(!pType->ArcticArtInUse) {
 			_snprintf_s(basename, 255, "%sA", pType->ImageFile);
 			AresCRT::strCopy(pType->ImageFile, basename);
@@ -76,13 +76,13 @@ DEFINE_HOOK(5F9070, ObjectTypeClass_Load2DArt, 0)
 		}
 	}
 
-	if(pType->ImageIsOutdated) {
+	if(pType->ImageAllocated) {
 		if(pType->Image) {
 			GameDelete(pType->Image);
 		}
 	}
 	pType->Image = nullptr;
-	pType->ImageIsOutdated = false;
+	pType->ImageAllocated = false;
 
 	using namespace Helpers::Alex;
 	auto const abs = pType->WhatAmI();
