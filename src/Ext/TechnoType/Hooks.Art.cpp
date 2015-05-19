@@ -34,29 +34,29 @@ DEFINE_HOOK(5F9634, ObjectTypeClass_LoadFromINI, 6)
 // SHP file loading
 DEFINE_HOOK(5F9070, ObjectTypeClass_Load2DArt, 0)
 {
-	GET(ObjectTypeClass *, pType, ECX);
+	GET(ObjectTypeClass* const, pType, ECX);
 
-	TechnoTypeClass *pTechnoType = static_cast<TechnoTypeClass *>(pType);
-	TechnoTypeExt::ExtData * pTypeData = TechnoTypeExt::ExtMap.Find(pTechnoType);
+	auto const pTypeData = TechnoTypeExt::ExtMap.Find(static_cast<TechnoTypeClass*>(pType));
 
-	char basename[256];
+	char basename[MAX_PATH];
 
-	auto scenarioTheater = ScenarioClass::Instance->Theater;
-	const auto& TheaterData = Theater::GetTheater(scenarioTheater);
+	auto const scenarioTheater = ScenarioClass::Instance->Theater;
+	auto const& TheaterData = Theater::GetTheater(scenarioTheater);
 
+	// extension object is not present if not techno type
 	if(pTypeData && pTypeData->AlternateTheaterArt) {
 		if(!pType->ArcticArtInUse) { // this flag is not used anywhere outside this function, so I'll just hijack it
 			pType->ArcticArtInUse = true;
-			_snprintf_s(basename, 255, "%s%s", pType->ImageFile, TheaterData.Letter);
+			_snprintf_s(basename, _TRUNCATE, "%s%s", pType->ImageFile, TheaterData.Letter);
 			if(!CCINIClass::INI_Art->GetSection(basename)) {
 				pType->ArcticArtInUse = false;
-				_snprintf_s(basename, 255, "%s", pType->ImageFile);
+				_snprintf_s(basename, _TRUNCATE, "%s", pType->ImageFile);
 			}
 			AresCRT::strCopy(pType->ImageFile, basename);
 		}
 	} else if(pType->AlternateArcticArt && scenarioTheater == TheaterType::Snow && !pType->ImageAllocated) {
 		if(!pType->ArcticArtInUse) {
-			_snprintf_s(basename, 255, "%sA", pType->ImageFile);
+			_snprintf_s(basename, _TRUNCATE, "%sA", pType->ImageFile);
 			AresCRT::strCopy(pType->ImageFile, basename);
 			pType->ArcticArtInUse = true;
 		}
@@ -64,22 +64,21 @@ DEFINE_HOOK(5F9070, ObjectTypeClass_Load2DArt, 0)
 		pType->ArcticArtInUse = false;
 	}
 
-	_snprintf_s(basename, 255, "%s.%s", pType->ImageFile, (pType->Theater ? TheaterData.Extension : "SHP"));
+	auto const pExt = (pType->Theater ? TheaterData.Extension : "SHP");
+	_snprintf_s(basename, _TRUNCATE, "%s.%s", pType->ImageFile, pExt);
 
 	if(!pType->Theater && pType->NewTheater && scenarioTheater != TheaterType::None) {
-		unsigned char c0 = basename[0];
-		unsigned char c1 = basename[1] & ~0x20; // evil hack to uppercase
-		if(isalpha(c0)) {
+		if(isalpha(static_cast<unsigned char>(basename[0]))) {
+			// evil hack to uppercase
+			auto const c1 = static_cast<unsigned char>(basename[1]) & ~0x20;
 			if(c1 == 'A' || c1 == 'T') {
 				basename[1] = TheaterData.Letter[0];
 			}
 		}
 	}
 
-	if(pType->ImageAllocated) {
-		if(pType->Image) {
-			GameDelete(pType->Image);
-		}
+	if(pType->ImageAllocated && pType->Image) {
+		GameDelete(pType->Image);
 	}
 	pType->Image = nullptr;
 	pType->ImageAllocated = false;
@@ -98,11 +97,12 @@ DEFINE_HOOK(5F9070, ObjectTypeClass_Load2DArt, 0)
 			pImage = FileSystem::LoadFile(basename, forceShp);
 		}
 
-		pType->Image = reinterpret_cast<SHPStruct*>(pImage);
+		pType->Image = static_cast<SHPStruct*>(pImage);
 	}
 
-	if(SHPStruct *SHP = pType->Image) {
-		pType->MaxDimension = std::max<short>(std::max<short>(SHP->Width, SHP->Height), 8);
+	if(auto const pShp = pType->Image) {
+		auto const& size = std::max(pShp->Width, pShp->Height);
+		pType->MaxDimension = std::max(size, static_cast<short>(8));
 	}
 
 	return 0x5F92C3;
