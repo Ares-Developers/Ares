@@ -318,7 +318,7 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 					VERSION_STR);
 
 			// we can't just leave him with no log, though...that'd be depressing and suspicious
-			static const char* listOfLines[] = {
+			static const char* const listOfLines[] = {
 				"Gremlins found in [General], initializing microwave algorithms",
 				"Finding and removing porn\nFound 4269 files\nDeleting blondes\nDeleting brunettes\nDeleting redheads\nDeleting shemales\nDeleting midgets\nDeleting horses",
 				"Found pirated music, deleting 2342 tracks",
@@ -374,23 +374,21 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 				"Touching sound.ini with a 10-foot-pole"
 			};
 
-			const int listSize = sizeof(listOfLines) / sizeof(listOfLines[0]); // get item count of listOfLines
+			const int listSize = _countof(listOfLines); // get item count of listOfLines
 
-			std::vector<int> usedLines; // list of lines already used in this log
+			std::vector<const char*> lines(listOfLines, listOfLines + listSize); // modifiable list of lines
 
 			for(int i = 0; i < 10; ++i) {
-				auto logLineNo = 0;
+				// 'i' used lines have been shuffled to the end already
+				auto const available = static_cast<int>(lines.size()) - i;
+				auto const index = r->RandomRanged(0, available - 1);
 
-				// check if this line was used before, if so, find a new one
-				do {
-					logLineNo = r->RandomRanged(0, listSize - 1);
-				} while(find(usedLines.begin(), usedLines.end(), logLineNo) != usedLines.end());
-
-				// mark this line as used
-				usedLines.push_back(logLineNo);
+				// mark this line as used by swapping it with last
+				auto const last = lines.begin() + available - 1;
+				std::iter_swap(lines.begin() + index, last);
 
 				// print the line
-				Debug::Log("%s\n", listOfLines[logLineNo]);
+				Debug::Log("%s\n", *last);
 			}
 		}
 	}
