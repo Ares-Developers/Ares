@@ -20,6 +20,7 @@ Ares::UISettings::UIAction Ares::UISettings::SkirmishButton = Ares::UISettings::
 Ares::UISettings::UIAction Ares::UISettings::SneakPeeksButton = Ares::UISettings::UIAction::Default;
 Ares::UISettings::UIAction Ares::UISettings::PlayMoviesButton = Ares::UISettings::UIAction::Default;
 Ares::UISettings::UIAction Ares::UISettings::ViewCreditsButton = Ares::UISettings::UIAction::Default;
+bool Ares::UISettings::QuickExit = false;
 bool Ares::UISettings::AllowMultiEngineer = false;
 bool Ares::UISettings::CampaignList = false;
 bool Ares::UISettings::ShowDebugCampaigns = false;
@@ -84,6 +85,7 @@ void Ares::UISettings::Load(CCINIClass *pINI) {
 	ReadUIAction("PlayMoviesButton", PlayMoviesButton);
 	ReadUIAction("ViewCreditsButton", ViewCreditsButton);
 
+	QuickExit = pINI->ReadBool(section, "QuickExit", QuickExit);
 	AllowMultiEngineer = pINI->ReadBool(section, "AllowMultiEngineer", AllowMultiEngineer);
 	CampaignList = pINI->ReadBool(section, "CampaignList", CampaignList);
 	ShowDebugCampaigns = pINI->ReadBool(section, "ShowDebugCampaigns", ShowDebugCampaigns);
@@ -252,6 +254,7 @@ DEFINE_HOOK(5FACDF, _Options_LoadFromINI, 5)
 	
 	// load and output settings
 	Ares::UISettings::Load(pINI);
+	Debug::Log("QuickExit is %s\n", (Ares::UISettings::QuickExit ? "ON" : "OFF"));
 	Debug::Log("AllowMultiEngineer is %s\n", (Ares::UISettings::AllowMultiEngineer ? "ON" : "OFF"));
 	Debug::Log("CampaignList is %s\n", (Ares::UISettings::CampaignList ? "ON" : "OFF"));
 	Debug::Log("ShowDebugCampaigns is %s\n", (Ares::UISettings::ShowDebugCampaigns ? "ON" : "OFF"));
@@ -262,4 +265,10 @@ DEFINE_HOOK(5FACDF, _Options_LoadFromINI, 5)
 	// clean up
 	Ares::CloseConfig(pINI);
 	return 0;
+}
+
+DEFINE_HOOK(52DDBA, Frontend_WndProc_QuickExit, 5)
+{
+	auto const quick = Ares::UISettings::QuickExit;
+	return quick ? 0x52DE25u : 0u;
 }

@@ -187,6 +187,7 @@ public:
 		static Ares::UISettings::UIAction SneakPeeksButton;
 		static Ares::UISettings::UIAction PlayMoviesButton;
 		static Ares::UISettings::UIAction ViewCreditsButton;
+		static bool QuickExit;
 		static bool AllowMultiEngineer;
 		static bool CampaignList;
 		static bool ShowDebugCampaigns;
