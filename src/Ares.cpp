@@ -238,8 +238,8 @@ bool __stdcall DllMain(HANDLE hInstance,DWORD dwReason,LPVOID v)
 DEFINE_HOOK(52C5E0, Ares_NoLogo, 7)
 {
 	return (Ares::bNoLogo)
-		? 0x52C5F3
-		: 0
+		? 0x52C5F3u
+		: 0u
 	;
 }
 
@@ -279,7 +279,7 @@ DEFINE_HOOK(7CD810, ExeRun, 9)
 DEFINE_HOOK(7CD8EF, ExeTerminate, 9)
 {
 	Ares::ExeTerminate();
-	GET(int, result, EAX);
+	GET(UINT, result, EAX);
 	ExitProcess(result); //teehee
 }
 
@@ -363,18 +363,18 @@ void Ares::LoadGame() {
 	Debug::Log("About to load the game\n");
 }
 
-#define YR_SIZE_1000 0x496110
-#define YR_SIZE_1001 0x497110
-#define YR_SIZE_1001_UC 0x497FE0
-#define YR_SIZE_NPATCH 0x5AB000
+const DWORD YR_SIZE_1000 = 0x496110;
+const DWORD YR_SIZE_1001 = 0x497110;
+const DWORD YR_SIZE_1001_UC = 0x497FE0;
+const DWORD YR_SIZE_NPATCH = 0x5AB000;
 
-#define YR_TIME_1000 0x3B846665
-#define YR_TIME_1001 0x3BDF544E
+const DWORD YR_TIME_1000 = 0x3B846665;
+const DWORD YR_TIME_1001 = 0x3BDF544E;
 
-#define YR_CRC_1000 0xB701D792
-#define YR_CRC_1001_CD 0x098465B3
-#define YR_CRC_1001_TFD 0xEB903080
-#define YR_CRC_1001_UC 0x1B499086
+const DWORD YR_CRC_1000 = 0xB701D792;
+const DWORD YR_CRC_1001_CD = 0x098465B3;
+const DWORD YR_CRC_1001_TFD = 0xEB903080;
+const DWORD YR_CRC_1001_UC = 0x1B499086;
 
 SYRINGE_HANDSHAKE(pInfo)
 {
