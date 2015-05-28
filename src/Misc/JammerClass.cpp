@@ -15,6 +15,9 @@ void JammerClass::Update() {
 		return;
 	}
 
+	// save the current frame for future reference
+	this->LastScan = Unsorted::CurrentFrame;
+
 	// walk through all buildings
 	for(auto const& curBuilding : *BuildingClass::Array) {
 		// for each jammable building ...
@@ -27,9 +30,6 @@ void JammerClass::Update() {
 			}
 		}
 	}
-
-	// lastly, save the current frame for future reference
-	this->LastScan = Unsorted::CurrentFrame;
 }
 
 //! \param TargetBuilding The building whose eligibility to check.
