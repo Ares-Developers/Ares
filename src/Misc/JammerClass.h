@@ -14,6 +14,8 @@ class JammerClass {
 
 	TechnoClass* AttachedToObject;			//!< Pointer to game object this jammer is on
 
+	bool Registered;						//!< Did I jam anything at all? Used to skip endless unjam calls.
+
 	bool InRangeOf(BuildingClass *);		//!< Calculates if the jammer is in range of this building.
 	bool IsEligible(BuildingClass *);		//!< Checks if this building can/should be jammed.
 
@@ -21,8 +23,11 @@ class JammerClass {
 	void Unjam(BuildingClass *);			//!< Attempts to unjam the given building. (Actually just unregisters the Jammer with it, the unjamming happens in a hook.)
 
   public:
-	JammerClass(TechnoClass* GameObject) : LastScan(0), AttachedToObject(GameObject) {
-	}
+	JammerClass(TechnoClass* GameObject) :
+		LastScan(0),
+		AttachedToObject(GameObject),
+		Registered(false)
+	{ }
 
 	~JammerClass() {
 		this->UnjamAll();

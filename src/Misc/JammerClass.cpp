@@ -56,9 +56,10 @@ bool JammerClass::InRangeOf(BuildingClass* TargetBuilding) {
 
 //! \param TargetBuilding The building to jam.
 void JammerClass::Jam(BuildingClass* TargetBuilding) {
-	BuildingExt::ExtData* TheBuildingExt = BuildingExt::ExtMap.Find(TargetBuilding);
-	TheBuildingExt->RegisteredJammers.insert(this->AttachedToObject, true);
+	auto const pExt = BuildingExt::ExtMap.Find(TargetBuilding);
+	pExt->RegisteredJammers.insert(this->AttachedToObject, true);
 	TargetBuilding->Owner->RecheckRadar = true;
+	this->Registered = true;
 }
 
 //! \param TargetBuilding The building to unjam.
@@ -69,8 +70,11 @@ void JammerClass::Unjam(BuildingClass* TargetBuilding) {
 }
 
 void JammerClass::UnjamAll() {
-	for(auto const& item : *BuildingClass::Array) {
-		this->Unjam(item);
+	if(this->Registered) {
+		this->Registered = false;
+		for(auto const& item : *BuildingClass::Array) {
+			this->Unjam(item);
+		}
 	}
 }
 
@@ -78,6 +82,7 @@ bool JammerClass::Load(AresStreamReader &Stm, bool RegisterForChange) {
 	return Stm
 		.Process(this->LastScan)
 		.Process(this->AttachedToObject)
+		.Process(this->Registered)
 		.Success();
 }
 
@@ -85,5 +90,6 @@ bool JammerClass::Save(AresStreamWriter &Stm) const {
 	return Stm
 		.Process(this->LastScan)
 		.Process(this->AttachedToObject)
+		.Process(this->Registered)
 		.Success();
 }
