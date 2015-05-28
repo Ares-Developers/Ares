@@ -54,16 +54,28 @@ bool JammerClass::InRangeOf(BuildingClass* TargetBuilding) {
 //! \param TargetBuilding The building to jam.
 void JammerClass::Jam(BuildingClass* TargetBuilding) {
 	auto const pExt = BuildingExt::ExtMap.Find(TargetBuilding);
-	pExt->RegisteredJammers.insert(this->AttachedToObject, true);
-	TargetBuilding->Owner->RecheckRadar = true;
-	this->Registered = true;
+
+	auto& Jammers = pExt->RegisteredJammers;
+	if(!Jammers.contains(this->AttachedToObject)) {
+		Jammers.insert(this->AttachedToObject, true);
+		if(Jammers.size() == 1) {
+			TargetBuilding->Owner->RecheckRadar = true;
+		}
+		this->Registered = true;
+	}
 }
 
 //! \param TargetBuilding The building to unjam.
 void JammerClass::Unjam(BuildingClass* TargetBuilding) {
 	auto const pExt = BuildingExt::ExtMap.Find(TargetBuilding);
-	pExt->RegisteredJammers.erase(this->AttachedToObject);
-	TargetBuilding->Owner->RecheckRadar = true;
+
+	auto& Jammers = pExt->RegisteredJammers;
+	if(Jammers.contains(this->AttachedToObject)) {
+		Jammers.erase(this->AttachedToObject);
+		if(Jammers.empty()) {
+			TargetBuilding->Owner->RecheckRadar = true;
+		}
+	}
 }
 
 void JammerClass::UnjamAll() {
