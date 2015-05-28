@@ -1,7 +1,7 @@
 #include "IniIteratorChar.h"
 
-const char IniIteratorChar::iteratorChar[] = "+";
-const char IniIteratorChar::iteratorReplacementFormat[] = "%d";
+const char* const IniIteratorChar::iteratorChar = "+";
+const char* const IniIteratorChar::iteratorReplacementFormat = "%d";
 
 int IniIteratorChar::iteratorValue = 0;
 
@@ -13,7 +13,8 @@ DEFINE_HOOK(5260A2, IteratorChar_Process_Method1, 6)
 
 	if(strcmp(entry->Key, IniIteratorChar::iteratorChar) == 0) {
 		char buffer[0x10];
-		sprintf_s(buffer, "%d", IniIteratorChar::iteratorValue++);
+		sprintf_s(buffer, IniIteratorChar::iteratorReplacementFormat,
+			IniIteratorChar::iteratorValue++);
 
 		CRT::free(entry->Key);
 		entry->Key = CRT::strdup(buffer);
@@ -34,7 +35,9 @@ DEFINE_HOOK(525D23, IteratorChar_Process_Method2, 5)
 	if(strcmp(key, IniIteratorChar::iteratorChar) == 0) {
 		char buffer[0x200];
 		strcpy_s(buffer, value);
-		int len = sprintf_s(key, 512, "%d", IniIteratorChar::iteratorValue++);
+		int len = sprintf_s(key, 512,
+			IniIteratorChar::iteratorReplacementFormat,
+			IniIteratorChar::iteratorValue++);
 
 		if(len >= 0) {
 			char* newValue = &key[len + 1];

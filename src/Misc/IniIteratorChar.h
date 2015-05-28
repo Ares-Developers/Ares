@@ -7,8 +7,8 @@
 class IniIteratorChar
 {
 public:
-	static const char iteratorChar[];
-	static const char iteratorReplacementFormat[];
+	static const char* const iteratorChar;
+	static const char* const iteratorReplacementFormat;
 
 	static int iteratorValue;
 };
