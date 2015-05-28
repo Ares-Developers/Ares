@@ -187,6 +187,19 @@ DEFINE_HOOK(6F9E76, TechnoClass_Update_CheckOperators, 6)
 	return 0;
 }
 
+// Radar Jammers (#305) unjam all on owner change
+DEFINE_HOOK(7014D5, TechnoClass_ChangeOwnership_RadarJammer, 6)
+{
+	GET(TechnoClass* const, pThis, ESI);
+	auto const pExt = TechnoExt::ExtMap.Find(pThis);
+
+	if(auto const& pJammer = pExt->RadarJam) {
+		pJammer->UnjamAll();
+	}
+
+	return 0;
+}
+
 // fix for vehicle paradrop alignment
 DEFINE_HOOK(415CA6, AircraftClass_Paradrop, 6)
 {

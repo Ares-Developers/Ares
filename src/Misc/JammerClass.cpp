@@ -25,9 +25,6 @@ void JammerClass::Update() {
 			} else {
 				this->Unjam(curBuilding);
 			}
-		} else {
-			this->Unjam(curBuilding); // doing this since it could be ineligible after a takeover, for example
-			// (e.g. we jammed it before as a hostile building, and then our Engineer took it over - wouldn't want it to be eternally jammed.)
 		}
 	}
 

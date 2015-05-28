@@ -325,6 +325,9 @@ DEFINE_HOOK(448277, BuildingClass_ChangeOwner_PrismForwardAndLeaveBomb, 5)
 	// because animation should continue / slave is busy but won't now fire
 	pData->PrismForwarding.RemoveFromNetwork(false);
 
+	// #305: remove all jammers. will be restored with the next update.
+	pData->RegisteredJammers.clear();
+
 	return LeaveBomb;
 }
 
