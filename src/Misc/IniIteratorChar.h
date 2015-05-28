@@ -11,6 +11,4 @@ public:
 	static const char iteratorReplacementFormat[];
 
 	static int iteratorValue;
-
-	static char buffer[];
 };
