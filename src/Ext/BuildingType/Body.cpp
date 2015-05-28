@@ -58,7 +58,8 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 		pThis->FoundationData = this->CustomData.data();
 	} else if(pArtINI) {
 
-		char str[0x80]="\0";
+		char str[0x80];
+		str[0] = '\0';
 
 		if(pArtINI->ReadString(pArtID, "Foundation", "", str) && !_strcmpi(str, "Custom")) {
 			//Custom Foundation!
