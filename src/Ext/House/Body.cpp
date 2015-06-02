@@ -512,34 +512,19 @@ void HouseExt::ExtData::UpdateTogglePower() {
 
 	if(Unsorted::CurrentFrame % pRulesExt->TogglePowerDelay == 0) {
 		struct ExpendabilityStruct {
-			static int Compare(const ExpendabilityStruct& lhs, const ExpendabilityStruct& rhs) {
-				if(lhs.Value < rhs.Value) {
-					return -1;
-				}
-
-				if(lhs.Value > rhs.Value) {
-					return 1;
-				}
-
-				return 0;
+		private:
+			std::tuple<const int&, BuildingClass&> Tie() const {
+				// compare with tie breaker to prevent desyncs
+				return std::tie(this->Value, *this->Building);
 			}
 
+		public:
 			bool operator < (const ExpendabilityStruct& rhs) const {
-				if(auto res = Compare(*this, rhs)) {
-					return res < 0;
-				}
-
-				// tie breaker to prevent desyncs
-				return *this->Building < *rhs.Building;
+				return this->Tie() < rhs.Tie();
 			}
 
-			bool operator >(const ExpendabilityStruct& rhs) const {
-				if(auto res = Compare(*this, rhs)) {
-					return res > 0;
-				}
-
-				// tie breaker to prevent desyncs
-				return *this->Building < *rhs.Building;
+			bool operator > (const ExpendabilityStruct& rhs) const {
+				return this->Tie() > rhs.Tie();
 			}
 
 			BuildingClass* Building;
