@@ -65,7 +65,10 @@ CellStruct GetTarget(const TargetingInfo& info, CanFire canFire, Prefer prefer, 
 	// check whether SW can fire and whether it should do so
 	// on the preferred target
 	if(canFire(info)) {
-		if(!prefer(info, ret)) {
+		auto const preferred = prefer(info);
+		if(preferred.first) {
+			ret = preferred.second;
+		} else {
 			// delegate finding a target, convert to cell
 			ret = ConvertToCell(selector(info));
 		}
@@ -144,41 +147,39 @@ struct CanFireRequiresEnemy {
 #pragma region Prefer functors
 
 struct PreferNothing {
-	bool operator()(const TargetingInfo& info, CellStruct& target) const {
+	std::pair<bool, CellStruct> operator()(const TargetingInfo& info) const {
 		// no preferred target
-		return false;
+		return std::make_pair(false, CellStruct::Empty);
 	}
 };
 
 struct PreferHoldIfOffensive {
-	bool operator()(const TargetingInfo& info, CellStruct& target) const {
+	std::pair<bool, CellStruct> operator()(const TargetingInfo& info) const {
 		// if preferred cell set, don't use it, but don't look further
 		if(info.Owner->PreferredTargetCell != CellStruct::Empty) {
-			return true;
+			return std::make_pair(true, CellStruct::Empty);
 		}
-		return false;
+		return std::make_pair(false, CellStruct::Empty);
 	}
 };
 
 struct PreferOffensive {
-	bool operator()(const TargetingInfo& info, CellStruct& target) const {
+	std::pair<bool, CellStruct> operator()(const TargetingInfo& info) const {
 		// if preferred cell set, use it
 		if(info.Owner->PreferredTargetCell != CellStruct::Empty) {
-			target = info.Owner->PreferredTargetCell;
-			return true;
+			return std::make_pair(true, info.Owner->PreferredTargetCell);
 		}
-		return false;
+		return std::make_pair(false, CellStruct::Empty);
 	}
 };
 
 struct PreferDefensive {
-	bool operator()(const TargetingInfo& info, CellStruct& target) const {
+	std::pair<bool, CellStruct> operator()(const TargetingInfo& info) const {
 		// if preferred cell set, use it
 		if(info.Owner->PreferredDefensiveCell2 != CellStruct::Empty) {
-			target = info.Owner->PreferredDefensiveCell2;
-			return true;
+			return std::make_pair(true, info.Owner->PreferredDefensiveCell2);
 		}
-		return false;
+		return std::make_pair(false, CellStruct::Empty);
 	}
 };
 
