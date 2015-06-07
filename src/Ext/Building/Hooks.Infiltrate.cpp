@@ -74,7 +74,7 @@ DEFINE_HOOK(43E7B0, BuildingClass_DrawVisible, 5)
 				// old shp cameos, fixed palette
 				auto pCameo = pProdType->GetCameo();
 				auto pConvert = pProdExt->CameoPal.Convert ? pProdExt->CameoPal.GetConvert() : FileSystem::CAMEO_PAL;
-				DSurface::Hidden_2->DrawSHP(pConvert, pCameo, 0, pLocation, pBounds, 0xE00, 0, 0, 0, 1000, 0, nullptr, 0, 0, 0);
+				DSurface::Hidden_2->DrawSHP(pConvert, pCameo, 0, pLocation, pBounds, BlitterFlags(0xE00), 0, 0, 0, 1000, 0, nullptr, 0, 0, 0);
 			}
 		}
 	}

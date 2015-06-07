@@ -43,7 +43,7 @@ DEFINE_HOOK(70A990, TechnoClass_DrawVeterancy, 5)
 		}
 
 		DSurface::Hidden_2->DrawSHP(
-			FileSystem::THEATER_PAL, iFile, iFrame, &offset, pRect, bf_Alpha | bf_400 | bf_200, 0, -2, 0, 1000, 0, 0, 0, 0, 0);
+			FileSystem::THEATER_PAL, iFile, iFrame, &offset, pRect, BlitterFlags(0xE00), 0, -2, 0, 1000, 0, 0, 0, 0, 0);
 	}
 
 	return 0x70AA5B;

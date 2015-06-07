@@ -1808,13 +1808,13 @@ DEFINE_HOOK(6F525B, TechnoClass_DrawExtras_PowerOff, 5)
 				if(showRepair) {
 					int frame = (FileSystem::WRENCH_SHP->Frames * (Unsorted::CurrentFrame % speed)) / speed;
 					DSurface::Hidden_2->DrawSHP(FileSystem::MOUSE_PAL, FileSystem::WRENCH_SHP,
-						frame, &ptRepair, pRect, 0xE00, 0, 0, 0, 1000, 0, 0, 0, 0, 0);
+						frame, &ptRepair, pRect, BlitterFlags(0xE00), 0, 0, 0, 1000, 0, 0, 0, 0, 0);
 				}
 
 				if(showPower) {
 					int frame = (FileSystem::POWEROFF_SHP->Frames * (Unsorted::CurrentFrame % speed)) / speed;
 					DSurface::Hidden_2->DrawSHP(FileSystem::MOUSE_PAL, FileSystem::POWEROFF_SHP,
-						frame, &ptPower, pRect, 0xE00, 0, 0, 0, 1000, 0, 0, 0, 0, 0);
+						frame, &ptPower, pRect, BlitterFlags(0xE00), 0, 0, 0, 1000, 0, 0, 0, 0, 0);
 				}
 			}
 		}

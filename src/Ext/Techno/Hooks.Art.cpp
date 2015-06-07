@@ -75,7 +75,7 @@ DEFINE_HOOK(73C725, UnitClass_DrawSHP_DrawShadowEarlier, 6)
 
 		FrameToDraw += Image->Frames / 2;
 
-		DSurface::Hidden_2->DrawSHP(FileSystem::THEATER_PAL, Image, FrameToDraw, &coords, BoundingRect, 0x2E01,
+		DSurface::Hidden_2->DrawSHP(FileSystem::THEATER_PAL, Image, FrameToDraw, &coords, BoundingRect, BlitterFlags(0x2E01),
 				0, ZAdjust, 0, 1000, 0, 0, 0, 0, 0);
 
 		pData->ShadowDrawnManually = true;

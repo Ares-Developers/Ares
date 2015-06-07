@@ -18,7 +18,9 @@ DEFINE_HOOK(7C89D4, DirectDrawCreate, 6)
 DEFINE_HOOK(7B9510, WWMouseClass_DrawCursor_V1, 6)
 //A_FINE_HOOK_AGAIN(7B94B2, WWMouseClass_DrawCursor_V1, 6)
 {
-	void *Blitter = FileSystem::MOUSE_PAL->SelectProperBlitter(WWMouseClass::Instance->Image, WWMouseClass::Instance->ImageFrameIndex, 0);
+	auto const Blitter = FileSystem::MOUSE_PAL->SelectProperBlitter(
+		WWMouseClass::Instance->Image, WWMouseClass::Instance->ImageFrameIndex,
+		BlitterFlags::None);
 
 	R->Stack<void*>(0x18, Blitter);
 
