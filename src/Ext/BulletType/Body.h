@@ -36,8 +36,8 @@ public:
 		OptionalStruct<ConvertClass*> ImageConvert;
 
 		Valueable<bool> Splits;
-		Valueable<float> RetargetAccuracy;
-		Valueable<float> AirburstSpread;
+		Valueable<double> RetargetAccuracy;
+		Valueable<double> AirburstSpread;
 		Nullable<bool> AroundTarget; // aptly named, for both Splits and Airburst, defaulting to Splits
 		Nullable<Leptons> BallisticScatterMin;
 		Nullable<Leptons> BallisticScatterMax;
@@ -46,8 +46,8 @@ public:
 
 		ExtData(BulletTypeClass* OwnerObject) : Extension<BulletTypeClass>(OwnerObject),
 			Splits(false),
-			RetargetAccuracy(0.0f),
-			AirburstSpread(1.5f),
+			RetargetAccuracy(0.0),
+			AirburstSpread(1.5),
 			SubjectToSolid(false),
 			SubjectToFirewall(true),
 			Parachuted(false),
