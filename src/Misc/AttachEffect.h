@@ -36,14 +36,14 @@ public:
 	//#1623-only tags
 	Valueable<int> Delay;
 
-	void Attach(TechnoClass* Target, int Duration, TechnoClass* Invoker);
-	//void Attach(TechnoClass* Target, int Duration, TechnoClass* Invoker, int DamageDelay);
+	void Attach(TechnoClass* pTarget, int duration, TechnoClass* pInvoker);
+	//void Attach(TechnoClass* pTarget, int duration, TechnoClass* pInvoker, int damageDelay);
 
 	bool Load(AresStreamReader &Stm, bool RegisterForChange);
 
 	bool Save(AresStreamWriter &Stm) const;
 	
-	AttachEffectTypeClass(AbstractTypeClass* Owner) : Owner(Owner),
+	AttachEffectTypeClass(AbstractTypeClass* pOwner) : Owner(pOwner),
 		Cumulative(false),
 		Duration(0),
 		AnimType(nullptr),
@@ -69,9 +69,9 @@ public:
 
 class AttachEffectClass {
 public:
-	AttachEffectClass(AttachEffectTypeClass* Type, int Timer) : Type(Type),
+	AttachEffectClass(AttachEffectTypeClass* pType, int timer) : Type(pType),
 		Animation(nullptr),
-		ActualDuration(Timer),
+		ActualDuration(timer),
 		Invoker(nullptr)
 	{
 	}
@@ -89,16 +89,16 @@ public:
 
 	void Destroy();
 
-	void InvalidatePointer(void *ptr);
+	void InvalidatePointer(void* ptr);
 
-	void CreateAnim(TechnoClass *Owner);
+	void CreateAnim(TechnoClass* pOwner);
 	void KillAnim();
 
 	bool Load(AresStreamReader &Stm, bool RegisterForChange);
 
 	bool Save(AresStreamWriter &Stm) const;
 
-	static void Update(TechnoClass *Source);
+	static void Update(TechnoClass* pSource);
 };
 
 template <>

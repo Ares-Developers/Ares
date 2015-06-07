@@ -87,21 +87,21 @@ void AttachEffectTypeClass::Read(INI_EX &exINI) {
 /*!
 	This function attaches an effect to a target.
 
-	\param Target The Techno which gets affected.
-	\param Duration The location the projectile detonated.
-	\param Invoker The Techno that casts the effect.
+	\param pTarget The Techno which gets affected.
+	\param duration The location the projectile detonated.
+	\param pInvoker The Techno that casts the effect.
 
 	\author Graion Dilach
 	\date 2011-09-24+
 */
 
-//void AttachEffectTypeClass::Attach(TechnoClass* Target, int Duration, TechnoClass* Invoker, int DamageDelay) {
-void AttachEffectTypeClass::Attach(TechnoClass* Target, int Duration, TechnoClass* Invoker) {
-	if (!Target || Target->IsIronCurtained()) {
+//void AttachEffectTypeClass::Attach(TechnoClass* pTarget, int duration, TechnoClass* pInvoker, int DamageDelay) {
+void AttachEffectTypeClass::Attach(TechnoClass* pTarget, int duration, TechnoClass* pInvoker) {
+	if (!pTarget || pTarget->IsIronCurtained()) {
 		return;
 	}
 
-	TechnoExt::ExtData *TargetExt = TechnoExt::ExtMap.Find(Target);
+	TechnoExt::ExtData *TargetExt = TechnoExt::ExtMap.Find(pTarget);
 
 	if (!this->Cumulative) {
 		for (const auto& Item : TargetExt->AttachedEffects) {
@@ -109,11 +109,11 @@ void AttachEffectTypeClass::Attach(TechnoClass* Target, int Duration, TechnoClas
 				Item->ActualDuration = Item->Type->Duration;
 
 				if (!!this->AnimType && !!this->AnimResetOnReapply) {
-					Item->CreateAnim(Target);
+					Item->CreateAnim(pTarget);
 				}
 
-				if (!!this->ForceDecloak && (Target->CloakState == CloakState::Cloaked || Target->CloakState == CloakState::Cloaking)) {
-					Target->Uncloak(true);
+				if (!!this->ForceDecloak && (pTarget->CloakState == CloakState::Cloaked || pTarget->CloakState == CloakState::Cloaking)) {
+					pTarget->Uncloak(true);
 				}
 
 				return;
@@ -122,21 +122,21 @@ void AttachEffectTypeClass::Attach(TechnoClass* Target, int Duration, TechnoClas
 	}
 
 	// there goes the actual attaching
-	TargetExt->AttachedEffects.push_back(std::make_unique<AttachEffectClass>(this, Duration));
+	TargetExt->AttachedEffects.push_back(std::make_unique<AttachEffectClass>(this, duration));
 	auto &Attaching = TargetExt->AttachedEffects.back();
 
-	Attaching->Invoker = Invoker;
+	Attaching->Invoker = pInvoker;
 
 	// update the unit with the attached effect
 	TargetExt->RecalculateStats();
 
 	//check cloak
-	if (!!this->ForceDecloak && Target->CloakState != CloakState::Uncloaked) {
-		Target->Uncloak(true);
+	if (!!this->ForceDecloak && pTarget->CloakState != CloakState::Uncloaked) {
+		pTarget->Uncloak(true);
 	}
 
 	// animation
-	Attaching->CreateAnim(Target);
+	Attaching->CreateAnim(pTarget);
 	
 }
 
@@ -158,7 +158,7 @@ bool AttachEffectClass::Save(AresStreamWriter &Stm) const {
 		.Success();
 }
 
-void AttachEffectClass::InvalidatePointer(void *ptr) {
+void AttachEffectClass::InvalidatePointer(void* ptr) {
 	if(this->Invoker == ptr) {
 		this->Invoker = nullptr;
 	}
@@ -172,9 +172,9 @@ void AttachEffectClass::InvalidatePointer(void *ptr) {
 	}
 }
 
-void AttachEffectClass::CreateAnim(TechnoClass *Owner) {
-	if ((Owner->CloakState == CloakState::Cloaked || Owner->CloakState == CloakState::Cloaking) ||
-		(Owner->TemporalTargetingMe && !!this->Type->TemporalHidesAnim)) {
+void AttachEffectClass::CreateAnim(TechnoClass* pOwner) {
+	if ((pOwner->CloakState == CloakState::Cloaked || pOwner->CloakState == CloakState::Cloaking) ||
+		(pOwner->TemporalTargetingMe && !!this->Type->TemporalHidesAnim)) {
 		return;
 	}
 
@@ -183,9 +183,9 @@ void AttachEffectClass::CreateAnim(TechnoClass *Owner) {
 			this->KillAnim();
 		}
 
-		this->Animation = GameCreate<AnimClass>(this->Type->AnimType, Owner->Location);
+		this->Animation = GameCreate<AnimClass>(this->Type->AnimType, pOwner->Location);
 		if (auto pAnim = this->Animation) {
-			pAnim->SetOwnerObject(Owner);
+			pAnim->SetOwnerObject(pOwner);
 			pAnim->RemainingIterations = 0xFFu;
 
 			if (this->Invoker && this->Invoker->Owner) {
@@ -214,26 +214,26 @@ void AttachEffectClass::Destroy() {
 
 	(retval boolean, to see if the unit gets killed (scrapped 408, it always crashed))
 
-	\param Source The currently updated Techno.
+	\param pSource The currently updated Techno.
 
 	\author Graion Dilach
 	\date 2011-09-24+
 */
 
-void AttachEffectClass::Update(TechnoClass *Source) {
+void AttachEffectClass::Update(TechnoClass* pSource) {
 
-	if (!Source || Source->InLimbo || Source->IsImmobilized || Source->Transporter) {
+	if (!pSource || pSource->InLimbo || pSource->IsImmobilized || pSource->Transporter) {
 		return;
 	}
 
-	TechnoTypeClass *pType = Source->GetTechnoType();
-	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(Source);
+	TechnoTypeClass *pType = pSource->GetTechnoType();
+	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(pSource);
 	TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(pType);
 
 
 	if (!pData->AttachedEffects.empty()) {
 
-		if(Source->CloakState == CloakState::Cloaked || Source->CloakState == CloakState::Cloaking) {
+		if(pSource->CloakState == CloakState::Cloaked || pSource->CloakState == CloakState::Cloaking) {
 			if(!pData->AttachEffects_RecreateAnims) {
 				for(size_t i = pData->AttachedEffects.size(); i > 0; --i) {
 					pData->AttachedEffects.at(i - 1)->KillAnim();
@@ -243,13 +243,13 @@ void AttachEffectClass::Update(TechnoClass *Source) {
 		} else {
 			if(pData->AttachEffects_RecreateAnims) {
 				for(size_t i = pData->AttachedEffects.size(); i > 0; --i) {
-					pData->AttachedEffects.at(i - 1)->CreateAnim(Source);
+					pData->AttachedEffects.at(i - 1)->CreateAnim(pSource);
 				}
 				pData->AttachEffects_RecreateAnims = false;
 			}
 		}
 
-		//Debug::Log("[AttachEffect]AttachEffect update of %s...\n", Source->get_ID());
+		//Debug::Log("[AttachEffect]AttachEffect update of %s...\n", pSource->get_ID());
 		auto recalculate = false;
 		for (size_t i = pData->AttachedEffects.size(); i > 0; --i) {
 			auto Effect = pData->AttachedEffects.at(i - 1).get();
@@ -264,12 +264,12 @@ void AttachEffectClass::Update(TechnoClass *Source) {
 					Effect->ActualDamageDelay--;
 				} else {
 					if (Effect->Invoker) {
-						Source->ReceiveDamage(Effect->Type->Damage, 0, Effect->Type->Warhead, Effect->Invoker, false, false, Effect->Invoker->Owner);
+						pSource->ReceiveDamage(Effect->Type->Damage, 0, Effect->Type->Warhead, Effect->Invoker, false, false, Effect->Invoker->Owner);
 					} else {
-						Source->ReceiveDamage(Effect->Type->Damage, 0, Effect->Type->Warhead, Source, false, false, Source->Owner);
+						pSource->ReceiveDamage(Effect->Type->Damage, 0, Effect->Type->Warhead, pSource, false, false, pSource->Owner);
 					}
 
-					if(Source->InLimbo || !Source->IsAlive || !Source->Health) {
+					if(pSource->InLimbo || !pSource->IsAlive || !pSource->Health) {
 						//check if the unit is still alive, if residual damage killed it, no reason to continue
 						return false;	//this is a void atm
 					}
@@ -280,7 +280,7 @@ void AttachEffectClass::Update(TechnoClass *Source) {
 			}*/
 
 
-			if(!Effect->ActualDuration || (Effect->Type->Owner == pType && Source->Deactivated)) {
+			if(!Effect->ActualDuration || (Effect->Type->Owner == pType && pSource->Deactivated)) {
 				//Debug::Log("[AttachEffect] %d. item expired, removing...\n", i - 1);
 
 				if (Effect->Type->Owner == pType) {		//#1623, hardcodes Cumulative to false
@@ -306,14 +306,14 @@ void AttachEffectClass::Update(TechnoClass *Source) {
 	//#1623 - generating AttachedEffect from Type
 	if (pTypeData->AttachedTechnoEffect.Duration != 0 && !pData->AttachedTechnoEffect_isset) {
 		if (!pData->AttachedTechnoEffect_Delay) {
-			if (!Source->Deactivated) {
-				//Debug::Log("[AttachEffect]Missing Type effect of %s...\n", Source->get_ID());
-				//pTypeData->AttachedTechnoEffect.Attach(Source, pTypeData->AttachedTechnoEffect.Duration, Source, pTypeData->AttachedTechnoEffect.DamageDelay);
+			if (!pSource->Deactivated) {
+				//Debug::Log("[AttachEffect]Missing Type effect of %s...\n", pSource->get_ID());
+				//pTypeData->AttachedTechnoEffect.Attach(pSource, pTypeData->AttachedTechnoEffect.Duration, pSource, pTypeData->AttachedTechnoEffect.DamageDelay);
 
-				pTypeData->AttachedTechnoEffect.Attach(Source, pTypeData->AttachedTechnoEffect.Duration, Source);
+				pTypeData->AttachedTechnoEffect.Attach(pSource, pTypeData->AttachedTechnoEffect.Duration, pSource);
 
 				pData->AttachedTechnoEffect_isset = true;
-				//Debug::Log("[AttachEffect]Readded to %s.\n", Source->get_ID());
+				//Debug::Log("[AttachEffect]Readded to %s.\n", pSource->get_ID());
 			}
 
 		} else if (pData->AttachedTechnoEffect_Delay > 0) {
