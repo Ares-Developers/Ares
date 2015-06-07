@@ -77,10 +77,10 @@ void MoviesList::LoadListFromINI()
 	}
 
 	// load unlocked state
-	if(auto const pINI = CCINIClass::INI_RA2MD) {
+	if(auto const pRA2MD = CCINIClass::INI_RA2MD) {
 		for(auto& item : this->Array) {
 			auto& value = item.Unlocked;
-			value = pINI->ReadBool("UnlockedMovies", item.Filename, value);
+			value = pRA2MD->ReadBool("UnlockedMovies", item.Filename, value);
 		}
 	}
 }
