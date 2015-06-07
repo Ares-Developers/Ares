@@ -34,10 +34,10 @@ void MoviesList::Unlock(char const* const pFilename)
 
 void MoviesList::LoadListFromINI()
 {
-	Debug::Log("Reading MOVIESMD.INI\n");
+	Debug::Log("Reading MOVIEMD.INI\n");
 
 	auto const pINI = UniqueGamePtr<CCINIClass>(GameCreate<CCINIClass>());
-	auto const pFile = UniqueGamePtr<CCFileClass>(GameCreate<CCFileClass>("MOVIESMD.INI"));
+	auto const pFile = UniqueGamePtr<CCFileClass>(GameCreate<CCFileClass>("MOVIEMD.INI"));
 
 	if(pINI && pFile && pFile->Exists()) {
 		pINI->ReadCCFile(pFile.get());
