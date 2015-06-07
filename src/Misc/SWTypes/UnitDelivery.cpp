@@ -76,8 +76,8 @@ void UnitDeliveryStateMachine::PlaceUnits()
 	auto pOwner = HouseExt::GetHouseKind(pData->SW_OwnerHouse, false, this->Super->Owner);
 
 	// create an instance of each type and place it
-	for(auto Type : pData->SW_Deliverables) {
-		auto Item = static_cast<TechnoClass*>(Type->CreateObject(pOwner));
+	for(auto pType : pData->SW_Deliverables) {
+		auto Item = static_cast<TechnoClass*>(pType->CreateObject(pOwner));
 		auto ItemBuilding = abstract_cast<BuildingClass*>(Item);
 
 		// get the best options to search for a place
@@ -93,16 +93,16 @@ void UnitDeliveryStateMachine::PlaceUnits()
 			extentX = BuildingType->GetFoundationWidth();
 			extentY = BuildingType->GetFoundationHeight(true);
 			anywhere = BuildingType->PlaceAnywhere;
-			if(Type->SpeedType == SpeedType::Float) {
+			if(pType->SpeedType == SpeedType::Float) {
 				SpeedType = SpeedType::Float;
 			} else {
 				buildable = true;
 			}
 		} else {
 			// place aircraft types on ground explicitly
-			if(Type->WhatAmI() != AbstractType::AircraftType) {
-				SpeedType = Type->SpeedType;
-				MovementZone = Type->MovementZone;
+			if(pType->WhatAmI() != AbstractType::AircraftType) {
+				SpeedType = pType->SpeedType;
+				MovementZone = pType->MovementZone;
 			}
 		}
 
@@ -138,7 +138,7 @@ void UnitDeliveryStateMachine::PlaceUnits()
 						ItemBuilding->DiscoveredBy(this->Super->Owner);
 						ItemBuilding->unknown_bool_6DD = 1;
 					}
-				} else if(Type->BalloonHover || Type->JumpJet) {
+				} else if(pType->BalloonHover || pType->JumpJet) {
 					Item->Scatter(CoordStruct::Empty, true, false);
 				}
 
