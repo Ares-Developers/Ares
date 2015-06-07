@@ -275,7 +275,7 @@ namespace Savegame {
 			for(auto i = 0u; i < Size; ++i) {
 				auto pos = i % 8;
 
-				if(Value.at(i)) {
+				if(Value[i]) {
 					value |= 1 << pos;
 				}
 
