@@ -202,8 +202,8 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 	if(pINI->ReadString(section, "Operator", "", Ares::readBuffer)) { // try to read the flag
 		this->IsAPromiscuousWhoreAndLetsAnyoneRideIt = (strcmp(Ares::readBuffer, "_ANY_") == 0); // set whether this type accepts all operators
 		if(!this->IsAPromiscuousWhoreAndLetsAnyoneRideIt) { // if not, find the specific operator it allows
-			if(auto Operator = InfantryTypeClass::Find(Ares::readBuffer)) {
-				this->Operator = Operator;
+			if(auto const pOperator = InfantryTypeClass::Find(Ares::readBuffer)) {
+				this->Operator = pOperator;
 			} else if(!INIClass::IsBlank(Ares::readBuffer)) {
 				Debug::INIParseFailed(section, "Operator", Ares::readBuffer);
 			}
