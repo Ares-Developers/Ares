@@ -194,15 +194,77 @@ struct PickEmptyTarget {
 };
 
 struct PickIonCannonTarget {
+	enum class CloakHandling {
+		RandomizeCloaked = 0,
+		AgnosticToCloak = 1,
+		IgnoreCloaked = 2,
+		RequireCloaked = 3
+	};
+
+	explicit PickIonCannonTarget(
+		HouseClass* pEnemy, CloakHandling cloak = CloakHandling::IgnoreCloaked)
+		: Enemy(pEnemy), Cloak(cloak)
+	{ }
+
 	CellStruct operator()(const TargetingInfo& info) const {
-		auto pEnemy = HouseClass::Array->GetItemOrDefault(info.Owner->EnemyHouseIndex);
-		if(auto pResult = HouseExt::PickIonCannonTarget(info.Owner, pEnemy,
-			info.Super->Type, HouseExt::IonCannonCloakOptions::IgnoreCloaked))
-		{
+		auto const pOwner = info.Owner;
+		auto const pEnemy = this->Enemy;
+
+		const auto it = info.TypeExt->GetPotentialAITargets(pEnemy);
+
+		auto const pResult = GetTargetAnyMax(it.begin(), it.end(), [=, &info](TechnoClass* pTechno, int curMax) {
+			// original game code only compares owner and doesn't support nullptr
+			auto const passedFilter = (!pEnemy || pTechno->Owner == pEnemy);
+
+			if(passedFilter && pOwner->IsIonCannonEligibleTarget(pTechno)) {
+				auto const cell = pTechno->GetMapCoords();
+				if(!MapClass::Instance->IsWithinUsableArea(cell, true)) {
+					return -1;
+				}
+
+				auto value = pTechno->GetIonCannonValue(pOwner->AIDifficulty);
+
+				// cloak options
+				if(this->Cloak != CloakHandling::AgnosticToCloak) {
+					bool cloaked = TechnoExt::IsCloaked(pTechno);
+
+					if(this->Cloak == CloakHandling::RandomizeCloaked) {
+						// original behavior
+						if(cloaked) {
+							value = ScenarioClass::Instance->Random.RandomRanged(0, curMax + 10);
+						}
+					} else if(this->Cloak == CloakHandling::IgnoreCloaked) {
+						// this prevents the 'targeting cloaked units bug'
+						if(cloaked) {
+							return -1;
+						}
+					} else if(this->Cloak == CloakHandling::RequireCloaked) {
+						if(!cloaked) {
+							return -1;
+						}
+					}
+				}
+
+				// do not do heavy lifting on objects that
+				// would not be chosen anyhow
+				if(value >= curMax && info.CanFireAt(cell)) {
+					return value;
+				}
+			}
+
+			return -1;
+		});
+
+		if(pResult) {
 			return pResult->GetMapCoords();
 		}
+
 		return CellStruct::Empty;
 	}
+
+private:
+	HouseClass* Enemy;
+	CloakHandling Cloak;
 };
 
 struct PickPreferredTypeOrIonCannon {
@@ -210,7 +272,9 @@ struct PickPreferredTypeOrIonCannon {
 		auto pOwner = info.Owner;
 		auto type = pOwner->PreferredTargetType;
 		if(type == TargetType::Anything) {
-			return PickIonCannonTarget()(info);
+			auto const pEnemy = HouseClass::Array->GetItemOrDefault(
+				info.Owner->EnemyHouseIndex);
+			return PickIonCannonTarget(pEnemy)(info);
 		} else {
 			return pOwner->PickTargetByType(type);
 		}
@@ -432,22 +496,17 @@ struct EnemyBaseTargetSelector final : public TargetSelector {
 
 struct OffensiveTargetSelector final : public TargetSelector {
 	TargetResult operator()(const TargetingInfo& info) const {
-		return{GetTarget(info, CanFireRequiresEnemy(), PreferNothing(), PickIonCannonTarget()),
+		auto const pEnemy = HouseClass::Array->GetItemOrDefault(info.Owner->EnemyHouseIndex);
+		return{GetTarget(info, CanFireRequiresEnemy(), PreferNothing(), PickIonCannonTarget(pEnemy)),
 			SWTargetFlags::DisallowEmpty};
 	}
 };
 
 struct StealthTargetSelector final : public TargetSelector {
 	TargetResult operator()(const TargetingInfo& info) const {
-		return{GetTarget(info, CanFireAlways(), PreferNothing(), FindTargetItem),
+		return{GetTarget(info, CanFireAlways(), PreferNothing(),
+			PickIonCannonTarget(nullptr, PickIonCannonTarget::CloakHandling::RequireCloaked)),
 			SWTargetFlags::DisallowEmpty};
-	}
-
-private:
-	static ObjectClass* FindTargetItem(const TargetingInfo& info) {
-		auto pEnemy = nullptr; //HouseClass::Array->GetItemOrDefault(info.Owner->EnemyHouseIndex);
-		return HouseExt::PickIonCannonTarget(info.Owner, pEnemy, info.Super->Type,
-			HouseExt::IonCannonCloakOptions::RequireCloaked);
 	}
 };
 
