@@ -140,8 +140,4 @@ public:
 	static HouseClass* GetHouseKind(OwnerHouseKind kind, bool allowRandom,
 		HouseClass* pDefault, HouseClass* pInvoker = nullptr,
 		HouseClass* pKiller = nullptr, HouseClass* pVictim = nullptr);
-
-	static TechnoClass* PickIonCannonTarget(HouseClass* pOwner, HouseClass* pVictim,
-		SuperWeaponTypeClass* pSWType = nullptr,
-		IonCannonCloakOptions cloak = IonCannonCloakOptions::RandomizeCloaked);
 };
