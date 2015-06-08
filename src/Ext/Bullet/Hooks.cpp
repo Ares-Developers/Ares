@@ -209,21 +209,7 @@ DEFINE_HOOK(469EBA, BulletClass_DetonateAt_Splits, 6)
 				auto pSplitExt = BulletTypeExt::ExtMap.Find(pWeapon->Projectile);
 
 				if(auto pBullet = pSplitExt->CreateBullet(pTarget, pThis->Owner, pWeapon)) {
-					DirStruct const dir(5, static_cast<short>(random.RandomRanged(0, 31)));
-					auto const radians = dir.radians();
-
-					double const sin_rad = Math::sin(radians);
-					double const cos_rad = Math::cos(radians);
-
-					auto const threeHalfPi = 1.5 * Math::Pi;
-					auto const sin_factor = Math::sin(threeHalfPi); // -1.0
-					auto const cos_factor = Math::cos(threeHalfPi); // 0.0
-
-					BulletVelocity velocity;
-					velocity.X = cos_factor * cos_rad * pBullet->Speed; // 0.0 * ...
-					velocity.Y = cos_factor * sin_rad * pBullet->Speed; // 0.0 * ...
-					velocity.Z = sin_factor * pBullet->Speed; // -1.0 * ...
-
+					BulletVelocity velocity{ 0.0, 0.0, -static_cast<double>(pBullet->Speed) };
 					pBullet->MoveTo(pThis->Location, velocity);
 				}
 			}
