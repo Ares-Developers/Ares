@@ -418,14 +418,14 @@ bool SWTypeExt::ExtData::CanFireAt(HouseClass* pOwner, const CellStruct &coords,
 	auto pCell = MapClass::Instance->GetCellAt(coords);
 
 	// check cell type
-	const auto AllowedTarget = manual ? SW_RequiresTarget.Get() : this->GetAIRequiredTarget();
+	auto const AllowedTarget = !manual ? this->GetAIRequiredTarget() : SW_RequiresTarget;
 	if(!IsCellEligible(pCell, AllowedTarget)) {
 		return false;
 	}
 
 	// check for techno type match
-	auto pTechno = abstract_cast<TechnoClass*>(pCell->GetContent());
-	const auto AllowedHouse = manual ? SW_RequiresHouse.Get() : this->GetAIRequiredHouse();
+	auto const pTechno = abstract_cast<TechnoClass*>(pCell->GetContent());
+	auto const AllowedHouse = !manual ? this->GetAIRequiredHouse() : SW_RequiresHouse;
 	if(pTechno && AllowedHouse != SuperWeaponAffectedHouse::None) {
 		if(!IsHouseAffected(pOwner, pTechno->Owner, AllowedHouse)) {
 			return false;
