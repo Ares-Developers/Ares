@@ -16,6 +16,14 @@ enum class SWStateMachineIdentifier : unsigned int {
 
 class SWTypeExt;
 
+struct TargetingData {
+	TargetingData(SWTypeExt::ExtData* pTypeExt, HouseClass* pOwner);
+	~TargetingData();
+
+	SWTypeExt::ExtData* TypeExt;
+	HouseClass* Owner;
+};
+
 // New SW Type framework. See SWTypes/*.h for examples of implemented ones. Don't touch yet, still WIP.
 class NewSWType
 {
@@ -33,6 +41,8 @@ public:
 	}
 
 	virtual ~NewSWType() = default;
+
+	std::unique_ptr<const TargetingData> GetTargetingData(SWTypeExt::ExtData* pSWType, HouseClass* pOwner) const;
 
 	virtual bool CanFireAt(SWTypeExt::ExtData* pSWType, HouseClass* pOwner, const CellStruct& cell, bool manual) const;
 

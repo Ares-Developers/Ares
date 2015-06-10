@@ -27,6 +27,16 @@
 
 #include <algorithm>
 
+#pragma region TargetingData definitions
+
+TargetingData::TargetingData(SWTypeExt::ExtData* pTypeExt, HouseClass* pOwner)
+	: TypeExt(pTypeExt), Owner(pOwner)
+{ }
+
+TargetingData::~TargetingData() = default;
+
+#pragma endregion
+
 std::vector<std::unique_ptr<NewSWType>> NewSWType::Array;
 std::vector<std::unique_ptr<SWStateMachine>> SWStateMachine::Array;
 
@@ -53,6 +63,12 @@ void NewSWType::Init()
 	Register(std::make_unique<SW_HunterSeeker>());
 	Register(std::make_unique<SW_DropPod>());
 	Register(std::make_unique<SW_EMPulse>());
+}
+
+std::unique_ptr<const TargetingData> NewSWType::GetTargetingData(
+	SWTypeExt::ExtData* const pSWType, HouseClass* const pOwner) const
+{
+	return std::make_unique<const TargetingData>(pSWType, pOwner);
 }
 
 bool NewSWType::CanFireAt(
