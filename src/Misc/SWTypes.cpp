@@ -55,6 +55,16 @@ void NewSWType::Init()
 	Register(std::make_unique<SW_EMPulse>());
 }
 
+bool NewSWType::CanFireAt(
+	SWTypeExt::ExtData* const pSWType, HouseClass* const pOwner,
+	const CellStruct& cell, bool manual) const
+{
+	return pSWType->CanFireAt(pOwner, cell, manual)
+		&& HasLaunchSite(pSWType, pOwner, cell)
+		&& HasDesignator(pSWType, pOwner, cell)
+		&& HasInhibitor(pSWType, pOwner, cell) == false;
+}
+
 bool NewSWType::IsLaunchSite(SWTypeExt::ExtData* pSWType, BuildingClass* pBuilding) const
 {
 	if(pBuilding->IsAlive && pBuilding->Health && !pBuilding->InLimbo && pBuilding->IsPowerOnline()) {
