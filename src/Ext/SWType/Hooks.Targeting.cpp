@@ -35,13 +35,24 @@ struct TargetingInfo {
 	{ }
 
 	bool CanFireAt(const CellStruct &cell) const {
-		return this->NewType->CanFireAt(this->TypeExt, this->Owner, cell, false);
+		if(!this->Data) {
+			this->GetData();
+		}
+
+		return this->NewType->CanFireAt(*this->Data, cell, false);
 	}
 
+private:
+	void GetData() const {
+		this->Data = this->NewType->GetTargetingData(this->TypeExt, this->Owner);
+	}
+
+public:
 	SuperClass* Super;
 	HouseClass* Owner;
 	SWTypeExt::ExtData* TypeExt;
 	NewSWType* NewType;
+	std::unique_ptr<const TargetingData> mutable Data;
 };
 
 CellStruct ConvertToCell(const CellStruct& result) {
