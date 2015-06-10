@@ -30,7 +30,8 @@
 #pragma region TargetingData definitions
 
 TargetingData::TargetingData(SWTypeExt::ExtData* pTypeExt, HouseClass* pOwner)
-	: TypeExt(pTypeExt), Owner(pOwner)
+	: TypeExt(pTypeExt), Owner(pOwner),
+	NeedsLaunchSite(false), NeedsDesignator(false)
 { }
 
 TargetingData::~TargetingData() = default;
@@ -68,7 +69,73 @@ void NewSWType::Init()
 std::unique_ptr<const TargetingData> NewSWType::GetTargetingData(
 	SWTypeExt::ExtData* const pSWType, HouseClass* const pOwner) const
 {
-	return std::make_unique<const TargetingData>(pSWType, pOwner);
+	auto data = std::make_unique<TargetingData>(pSWType, pOwner);
+
+	// get launchsite data
+	auto const launchsite_range = GetLaunchSiteRange(pSWType);
+
+	if(launchsite_range.first >= 0.0 || launchsite_range.second >= 0.0) {
+		data->NeedsLaunchSite = true;
+
+		for(auto const& pBld : pOwner->Buildings) {
+			if(this->IsLaunchSite(pSWType, pBld)) {
+				auto const range = this->GetLaunchSiteRange(pSWType, pBld);
+				auto const center = CellClass::Coord2Cell(
+					BuildingExt::GetCenterCoords(pBld));
+
+				data->LaunchSites.emplace_back(TargetingData::LaunchSite{
+					pBld, center, range.first, range.second });
+			}
+		}
+	}
+
+	// get designator data
+	if(!pSWType->SW_Designators.empty() || pSWType->SW_AnyDesignator) {
+		data->NeedsDesignator = true;
+
+		for(auto const& pTechno : *TechnoClass::Array) {
+			if(this->IsDesignator(pSWType, pOwner, pTechno)) {
+				// get the designator's center
+				auto center = pTechno->GetCoords();
+				if(auto pBuilding = abstract_cast<BuildingClass*>(pTechno)) {
+					center = BuildingExt::GetCenterCoords(pBuilding);
+				}
+
+				const auto pType = pTechno->GetTechnoType();
+				const auto pExt = TechnoTypeExt::ExtMap.Find(pType);
+				auto const range = pExt->DesignatorRange.Get(pType->Sight);
+
+				if(range > 0) {
+					data->Designators.emplace_back(TargetingData::RangedItem{
+						range * range, CellClass::Coord2Cell(center) });
+				}
+			}
+		}
+	}
+
+	// get inhibitor data
+	if(!pSWType->SW_Inhibitors.empty() || pSWType->SW_AnyInhibitor) {
+		for(auto const& pTechno : *TechnoClass::Array) {
+			if(this->IsInhibitor(pSWType, pOwner, pTechno)) {
+				// get the inhibitor's center
+				auto center = pTechno->GetCoords();
+				if(auto pBuilding = abstract_cast<BuildingClass*>(pTechno)) {
+					center = BuildingExt::GetCenterCoords(pBuilding);
+				}
+
+				const auto pType = pTechno->GetTechnoType();
+				const auto pExt = TechnoTypeExt::ExtMap.Find(pType);
+				auto const range = pExt->InhibitorRange.Get(pType->Sight);
+
+				if(range > 0) {
+					data->Inhibitors.emplace_back(TargetingData::RangedItem{
+						range * range, CellClass::Coord2Cell(center) });
+				}
+			}
+		}
+	}
+
+	return std::unique_ptr<const TargetingData>(std::move(data));
 }
 
 bool NewSWType::CanFireAt(
@@ -80,10 +147,44 @@ bool NewSWType::CanFireAt(
 }
 
 bool NewSWType::CanFireAt(TargetingData const& data, const CellStruct& cell, bool manual) const {
-	return data.TypeExt->CanFireAt(data.Owner, cell, manual)
-		&& HasLaunchSite(data.TypeExt, data.Owner, cell)
-		&& HasDesignator(data.TypeExt, data.Owner, cell)
-		&& HasInhibitor(data.TypeExt, data.Owner, cell) == false;
+	if(!data.TypeExt->CanFireAt(data.Owner, cell, manual)) {
+		return false;
+	}
+
+	if(data.NeedsLaunchSite && std::none_of(data.LaunchSites.begin(),
+		data.LaunchSites.end(), [cell](TargetingData::LaunchSite const& site)
+	{
+		auto const distance = cell.DistanceFrom(site.Center);
+
+		// negative range values just pass the test
+		return (site.MinRange < 0.0 || distance >= site.MinRange)
+			&& (site.MaxRange < 0.0 || distance <= site.MaxRange);
+	}))
+	{
+		return false;
+	}
+
+	if(data.NeedsDesignator && std::none_of(data.Designators.begin(),
+		data.Designators.end(), [cell](TargetingData::RangedItem const& site)
+	{
+		auto const distance = cell.DistanceFromSquared(site.Center);
+		return distance <= site.RangeSqr;
+	}))
+	{
+		return false;
+	}
+
+	if(std::any_of(data.Inhibitors.begin(), data.Inhibitors.end(),
+		[cell](TargetingData::RangedItem const& site)
+	{
+		auto const distance = cell.DistanceFromSquared(site.Center);
+		return distance <= site.RangeSqr;
+	}))
+	{
+		return false;
+	}
+
+	return true;
 }
 
 bool NewSWType::IsLaunchSite(SWTypeExt::ExtData* pSWType, BuildingClass* pBuilding) const

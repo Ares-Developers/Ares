@@ -20,8 +20,27 @@ struct TargetingData {
 	TargetingData(SWTypeExt::ExtData* pTypeExt, HouseClass* pOwner);
 	~TargetingData();
 
+	struct LaunchSite
+	{
+		BuildingClass* Building;
+		CellStruct Center;
+		double MinRange;
+		double MaxRange;
+	};
+
+	struct RangedItem
+	{
+		int RangeSqr;
+		CellStruct Center;
+	};
+
 	SWTypeExt::ExtData* TypeExt;
 	HouseClass* Owner;
+	bool NeedsLaunchSite;
+	bool NeedsDesignator;
+	std::vector<LaunchSite> LaunchSites;
+	std::vector<RangedItem> Designators;
+	std::vector<RangedItem> Inhibitors;
 };
 
 // New SW Type framework. See SWTypes/*.h for examples of implemented ones. Don't touch yet, still WIP.
