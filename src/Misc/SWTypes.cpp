@@ -75,14 +75,15 @@ bool NewSWType::CanFireAt(
 	SWTypeExt::ExtData* const pSWType, HouseClass* const pOwner,
 	const CellStruct& cell, bool manual) const
 {
-	return pSWType->CanFireAt(pOwner, cell, manual)
-		&& HasLaunchSite(pSWType, pOwner, cell)
-		&& HasDesignator(pSWType, pOwner, cell)
-		&& HasInhibitor(pSWType, pOwner, cell) == false;
+	auto const data = this->GetTargetingData(pSWType, pOwner);
+	return this->CanFireAt(*data, cell, manual);
 }
 
 bool NewSWType::CanFireAt(TargetingData const& data, const CellStruct& cell, bool manual) const {
-	return this->CanFireAt(data.TypeExt, data.Owner, cell, manual);
+	return data.TypeExt->CanFireAt(data.Owner, cell, manual)
+		&& HasLaunchSite(data.TypeExt, data.Owner, cell)
+		&& HasDesignator(data.TypeExt, data.Owner, cell)
+		&& HasInhibitor(data.TypeExt, data.Owner, cell) == false;
 }
 
 bool NewSWType::IsLaunchSite(SWTypeExt::ExtData* pSWType, BuildingClass* pBuilding) const
