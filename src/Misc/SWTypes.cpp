@@ -81,6 +81,10 @@ bool NewSWType::CanFireAt(
 		&& HasInhibitor(pSWType, pOwner, cell) == false;
 }
 
+bool NewSWType::CanFireAt(TargetingData const& data, const CellStruct& cell, bool manual) const {
+	return this->CanFireAt(data.TypeExt, data.Owner, cell, manual);
+}
+
 bool NewSWType::IsLaunchSite(SWTypeExt::ExtData* pSWType, BuildingClass* pBuilding) const
 {
 	if(pBuilding->IsAlive && pBuilding->Health && !pBuilding->InLimbo && pBuilding->IsPowerOnline()) {

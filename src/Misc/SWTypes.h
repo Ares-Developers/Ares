@@ -44,7 +44,9 @@ public:
 
 	std::unique_ptr<const TargetingData> GetTargetingData(SWTypeExt::ExtData* pSWType, HouseClass* pOwner) const;
 
-	virtual bool CanFireAt(SWTypeExt::ExtData* pSWType, HouseClass* pOwner, const CellStruct& cell, bool manual) const;
+	bool CanFireAt(SWTypeExt::ExtData* pSWType, HouseClass* pOwner, const CellStruct& cell, bool manual) const;
+
+	virtual bool CanFireAt(TargetingData const& data, CellStruct const& cell, bool manual) const;
 
 	virtual bool AbortFire(SuperClass* pSW, bool IsPlayer) {
 		return false;
