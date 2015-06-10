@@ -523,7 +523,7 @@ private:
 		const auto& buildings = info.Owner->Buildings;
 
 		// Ares < 0.9 didn't check power
-		auto it = std::find_if(buildings.begin(), buildings.end(), [=](BuildingClass* pBld) {
+		auto it = std::find_if(buildings.begin(), buildings.end(), [=, &info](BuildingClass* pBld) {
 			auto const pExt = BuildingExt::ExtMap.Find(pBld);
 			if(pExt->HasSuperWeapon(index, true) && pBld->IsPowerOnline()) {
 				auto cell = pBld->GetMapCoords();
