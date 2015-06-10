@@ -79,7 +79,7 @@ void SW_Protect::LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pS
 	pData->Protect_PlayFadeSoundTime.Read(exINI, section, "Protect.PlayFadeSoundTime");
 }
 
-bool SW_Protect::CanFireAt(SWTypeExt::ExtData* pData, HouseClass* pOwner, const CellStruct &Coords, bool manual)
+bool SW_Protect::CanFireAt(SWTypeExt::ExtData* pData, HouseClass* pOwner, const CellStruct &Coords, bool manual) const
 {
 	auto ret = NewSWType::CanFireAt(pData, pOwner, Coords, manual);
 
