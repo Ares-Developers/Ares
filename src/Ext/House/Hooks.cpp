@@ -280,8 +280,10 @@ DEFINE_HOOK(4F8C23, HouseClass_Update_SilosNeededEVA, 5)
 DEFINE_HOOK(4F9610, HouseClass_GiveTiberium_Storage, A)
 {
 	GET(HouseClass* const, pThis, ECX);
-	GET_STACK(float, amount, 0x4);
+	REF_STACK(float const, amountFlt, 0x4);
 	GET_STACK(int const, idxType, 0x8);
+
+	auto amount = static_cast<double>(amountFlt);
 
 	pThis->SiloMoney += Game::F2I(amount * 5.0);
 
@@ -292,7 +294,7 @@ DEFINE_HOOK(4F9610, HouseClass_GiveTiberium_Storage, A)
 
 		// this is the upper limit for stored tiberium
 		if(amount > lastTotalStorage - lastStorage) {
-			amount = static_cast<float>(lastTotalStorage - lastStorage);
+			amount = static_cast<double>(lastTotalStorage - lastStorage);
 		}
 
 		// go through all buildings and fill them up until all is in there
