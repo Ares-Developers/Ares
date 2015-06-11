@@ -152,8 +152,8 @@ public:
 
 		void InvalidateAttachEffectPointer(void *ptr);
 
-		void RefineTiberium(float amount, int idxType);
-		void DepositTiberium(float amount, float bonus, int idxType);
+		void RefineTiberium(double amount, int idxType);
+		void DepositTiberium(double amount, double bonus, int idxType);
 
 		bool IsCloakable(bool allowPassive) const;
 		bool CloakAllowed() const;

@@ -938,7 +938,7 @@ bool TechnoExt::ExtData::PerformActionHijack(TechnoClass* const pTarget) const {
 	\author AlexB
 	\date 2012-10-10
 */
-void TechnoExt::ExtData::RefineTiberium(float amount, int idxType) {
+void TechnoExt::ExtData::RefineTiberium(double amount, int idxType) {
 	TechnoClass* pThis = this->OwnerObject();
 	HouseClass* pHouse = pThis->GetOwningHouse();
 
@@ -949,7 +949,7 @@ void TechnoExt::ExtData::RefineTiberium(float amount, int idxType) {
 	}
 
 	// bonus amount (in tiberium)
-	float purified = purifiers * RulesClass::Instance->PurifierBonus * amount;
+	double purified = purifiers * RulesClass::Instance->PurifierBonus * amount;
 
 	// add the tiberium to the house's credits
 	DepositTiberium(amount, purified, idxType);
@@ -966,7 +966,7 @@ void TechnoExt::ExtData::RefineTiberium(float amount, int idxType) {
 	\author AlexB
 	\date 2012-10-10
 */
-void TechnoExt::ExtData::DepositTiberium(float amount, float bonus, int idxType) {
+void TechnoExt::ExtData::DepositTiberium(double amount, double bonus, int idxType) {
 	TechnoClass* pThis = this->OwnerObject();
 	HouseClass* pHouse = pThis->GetOwningHouse();
 	auto pTiberium = TiberiumClass::Array->GetItem(idxType);
@@ -975,12 +975,12 @@ void TechnoExt::ExtData::DepositTiberium(float amount, float bonus, int idxType)
 	// always put the purified money on the bank account. otherwise ore purifiers
 	// would fill up storage with tiberium that doesn't exist. this is consistent with
 	// the original YR, because old GiveTiberium put it on the bank anyhow, despite its name.
-	if(bonus > 0.0f) {
+	if(bonus > 0.0) {
 		value += Game::F2I(bonus * pTiberium->Value * pHouse->Type->IncomeMult);
 	}
 
 	// also add the normal tiberium to the global account?
-	if(amount > 0.0f) {
+	if(amount > 0.0) {
 		auto pExt = TechnoTypeExt::ExtMap.Find(pThis->GetTechnoType());
 		if(!pExt->Refinery_UseStorage) {
 			value += Game::F2I(amount * pTiberium->Value * pHouse->Type->IncomeMult);
