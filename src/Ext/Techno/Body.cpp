@@ -938,18 +938,18 @@ bool TechnoExt::ExtData::PerformActionHijack(TechnoClass* const pTarget) const {
 	\author AlexB
 	\date 2012-10-10
 */
-void TechnoExt::ExtData::RefineTiberium(double amount, int idxType) {
-	TechnoClass* pThis = this->OwnerObject();
-	HouseClass* pHouse = pThis->GetOwningHouse();
+void TechnoExt::ExtData::RefineTiberium(double const amount, int const idxType) {
+	auto const pThis = this->OwnerObject();
+	auto const pHouse = pThis->GetOwningHouse();
 
 	// get the number of applicable purifiers
-	int purifiers = pHouse->NumOrePurifiers;
+	auto purifiers = pHouse->NumOrePurifiers;
 	if(!pHouse->CurrentPlayer && SessionClass::Instance->GameMode != GameMode::Campaign) {
 		purifiers += RulesClass::Instance->AIVirtualPurifiers.GetItem(pHouse->GetAIDifficultyIndex());
 	}
 
 	// bonus amount (in tiberium)
-	double purified = purifiers * RulesClass::Instance->PurifierBonus * amount;
+	auto const purified = purifiers * RulesClass::Instance->PurifierBonus * amount;
 
 	// add the tiberium to the house's credits
 	DepositTiberium(amount, purified, idxType);
@@ -966,11 +966,11 @@ void TechnoExt::ExtData::RefineTiberium(double amount, int idxType) {
 	\author AlexB
 	\date 2012-10-10
 */
-void TechnoExt::ExtData::DepositTiberium(double amount, double bonus, int idxType) {
-	TechnoClass* pThis = this->OwnerObject();
-	HouseClass* pHouse = pThis->GetOwningHouse();
-	auto pTiberium = TiberiumClass::Array->GetItem(idxType);
-	int value = 0;
+void TechnoExt::ExtData::DepositTiberium(double const amount, double const bonus, int const idxType) {
+	auto const pThis = this->OwnerObject();
+	auto const pHouse = pThis->GetOwningHouse();
+	auto const pTiberium = TiberiumClass::Array->GetItem(idxType);
+	auto value = 0;
 
 	// always put the purified money on the bank account. otherwise ore purifiers
 	// would fill up storage with tiberium that doesn't exist. this is consistent with
@@ -981,7 +981,7 @@ void TechnoExt::ExtData::DepositTiberium(double amount, double bonus, int idxTyp
 
 	// also add the normal tiberium to the global account?
 	if(amount > 0.0) {
-		auto pExt = TechnoTypeExt::ExtMap.Find(pThis->GetTechnoType());
+		auto const pExt = TechnoTypeExt::ExtMap.Find(pThis->GetTechnoType());
 		if(!pExt->Refinery_UseStorage) {
 			value += Game::F2I(amount * pTiberium->Value * pHouse->Type->IncomeMult);
 		} else {
