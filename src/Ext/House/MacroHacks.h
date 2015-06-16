@@ -4,13 +4,16 @@
  * This file contains the macro fu needed to make the 100 unit bug fixes work better
  * Don't get it? Don't touch it!
  */
+extern std::vector<int> CreationFrames;
+extern std::vector<int> Values;
+extern std::vector<int> BestChoices;
 
 // Westwood, meet my friend the resizable array
 // what? copy pasting original code, leave it be
 template <class TClass, class TType>
 void GetTypeToProduce(HouseClass* pThis, int& ProducingTypeIndex) {
-	std::vector<int> CreationFrames(TType::Array->Count, 0x7FFFFFFF);
-	std::vector<int> Values(TType::Array->Count, 0);
+	CreationFrames.assign(TType::Array->Count, 0x7FFFFFFF);
+	Values.assign(TType::Array->Count, 0);
 
 	for(auto CurrentTeam : *TeamClass::Array) {
 		if(!CurrentTeam || CurrentTeam->Owner != pThis) {
@@ -46,7 +49,8 @@ void GetTypeToProduce(HouseClass* pThis, int& ProducingTypeIndex) {
 		}
 	}
 
-	std::vector<int> BestChoices;
+	BestChoices.clear();
+
 	int BestValue = -1;
 	int EarliestTypenameIndex = -1;
 	int EarliestFrame = 0x7FFFFFFF;
