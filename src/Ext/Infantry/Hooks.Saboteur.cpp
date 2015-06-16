@@ -1,5 +1,6 @@
 #include "Body.h"
 
+#include "../BuildingType/Body.h"
 #include "../TechnoType/Body.h"
 
 #include <BuildingClass.h>
@@ -22,7 +23,7 @@ DEFINE_HOOK(7004AD, TechnoClass_GetCursorOverObject_Saboteur, 6)
 		auto const saboteur = pThisTypeExt->Saboteur;
 
 		infiltratable = (agent && pObjectType->Spyable)
-			|| (saboteur && pObjectType->CanC4)
+			|| (saboteur && BuildingTypeExt::IsSabotagable(pObjectType))
 			|| (!agent && !saboteur && pObjectType->Capturable)
 			|| ((pThisType->C4 || pThis->HasAbility(Ability::C4)) && pObjectType->CanC4);
 	}
@@ -48,7 +49,7 @@ DEFINE_HOOK(51EE6B, InfantryClass_GetCursorOverObject_Saboteur, 6)
 
 			infiltratable = (!agent && !saboteur && pObjectType->Capturable)
 				|| (agent && pObjectType->Spyable)
-				|| (saboteur && pObjectType->CanC4);
+				|| (saboteur && BuildingTypeExt::IsSabotagable(pObjectType));
 		}
 	}
 
@@ -71,7 +72,7 @@ DEFINE_HOOK(51B2CB, InfantryClass_SetTarget_Saboteur, 6)
 		if(pThisType->Agent) {
 			allowed = pTargetType->Spyable;
 		} else if(pThisTypeExt->Saboteur) {
-			allowed = pTargetType->CanC4;
+			allowed = BuildingTypeExt::IsSabotagable(pTargetType);
 		} else {
 			allowed = pTargetType->Capturable;
 		}
@@ -93,7 +94,7 @@ DEFINE_HOOK(51A03E, InfantryClass_UpdatePosition_Saboteur, 6)
 	auto const pThisTypeExt = TechnoTypeExt::ExtMap.Find(pThisType);
 
 	bool sabotage = false;
-	if(pThisTypeExt->Saboteur && pBuilding->Type->CanC4) {
+	if(pThisTypeExt->Saboteur && BuildingTypeExt::IsSabotagable(pBuilding->Type)) {
 		if(pBuilding->IsIronCurtained() || pBuilding->IsBeingWarpedOut()
 			|| pBuilding->GetCurrentMission() == Mission::Selling)
 		{

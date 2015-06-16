@@ -241,6 +241,8 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 
 	this->DegradeAmount.Read(exINI, pID, "Degrade.Amount");
 	this->DegradePercentage.Read(exINI, pID, "Degrade.Percentage");
+
+	this->ImmuneToSaboteurs.Read(exINI, pID, "ImmuneToSaboteurs");
 }
 
 void BuildingTypeExt::ExtData::CompleteInitialization(BuildingTypeClass *pThis) {
@@ -278,6 +280,15 @@ bool BuildingTypeExt::IsFoundationEqual(BuildingTypeClass *pTBldA, BuildingTypeC
 			&& std::is_permutation(customA.begin(), customA.end(), customB.begin());
 	}
 	return false;
+}
+
+bool BuildingTypeExt::IsSabotagable(BuildingTypeClass const* const pType)
+{
+	auto const pExt = BuildingTypeExt::ExtMap.Find(pType);
+	auto const civ_occupiable = pType->CanBeOccupied && pType->TechLevel == -1;
+	auto const default_sabotabable = pType->CanC4 && !civ_occupiable;
+
+	return !pExt->ImmuneToSaboteurs.Get(!default_sabotabable);
 }
 
 //! Updates the set of points used to draw this building foundation on the radar.
@@ -459,7 +470,8 @@ void BuildingTypeExt::ExtData::Serialize(T& Stm) {
 		.Process(this->MessageCapture)
 		.Process(this->MessageLost)
 		.Process(this->DegradeAmount)
-		.Process(this->DegradePercentage);
+		.Process(this->DegradePercentage)
+		.Process(this->ImmuneToSaboteurs);
 }
 
 void BuildingTypeExt::ExtData::LoadFromStream(AresStreamReader &Stm) {

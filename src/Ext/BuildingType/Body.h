@@ -208,6 +208,9 @@ public:
 		Nullable<int> DegradeAmount;
 		Nullable<double> DegradePercentage;
 
+		// saboteurs
+		Nullable<bool> ImmuneToSaboteurs;
+
 		ExtData(BuildingTypeClass* OwnerObject) : Extension<BuildingTypeClass>(OwnerObject),
 			Solid_Height(0),
 			Solid_Level(1),
@@ -296,4 +299,6 @@ public:
 	static bool SaveGlobals(AresStreamWriter& Stm);
 
 	static bool IsFoundationEqual(BuildingTypeClass *pTBldA, BuildingTypeClass *pTBldB);
+
+	static bool IsSabotagable(BuildingTypeClass const* pType);
 };
