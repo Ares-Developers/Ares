@@ -715,24 +715,27 @@ void TechnoExt::FreeSpecificSlave(TechnoClass *Slave, HouseClass *Affector){
 }
 
 // If available, creates an InfantryClass instance and removes the hijacker from the victim.
-InfantryClass* TechnoExt::RecoverHijacker(FootClass* pThis) {
-	InfantryClass* pHijacker = nullptr;
-	if(pThis) {
-		if(auto pHijackerType = InfantryTypeClass::Array->GetItemOrDefault(pThis->HijackerInfantryType)) {
-			auto pExt = TechnoExt::ExtMap.Find(pThis);
-			auto pTypeExt = TechnoTypeExt::ExtMap.Find(pHijackerType);
-			auto pHijackerOwner = pExt->HijackerHouse ? pExt->HijackerHouse : pThis->Owner;
-			if(!pTypeExt->HijackerOneTime && pHijackerOwner && !pHijackerOwner->Defeated) {
-				pHijacker = static_cast<InfantryClass*>(pHijackerType->CreateObject(pHijackerOwner));
-				pHijacker->Health = std::max(pExt->HijackerHealth / 2, 5);
-				pHijacker->Veterancy.Veterancy = pExt->HijackerVeterancy;
-			}
-			pThis->HijackerInfantryType = -1;
-			pExt->HijackerHealth = -1;
-			pExt->HijackerVeterancy = 0.0;
+InfantryClass* TechnoExt::RecoverHijacker(FootClass* const pThis) {
+	auto const pType = InfantryTypeClass::Array->GetItemOrDefault(
+		pThis->HijackerInfantryType);
+
+	if(pType) {
+		auto const pExt = TechnoExt::ExtMap.Find(pThis);
+		auto const pOwner = pExt->HijackerHouse ?
+			pExt->HijackerHouse : pThis->Owner;
+
+		pThis->HijackerInfantryType = -1;
+
+		auto const pTypeExt = TechnoTypeExt::ExtMap.Find(pType);
+		if(!pTypeExt->HijackerOneTime && pOwner && !pOwner->Defeated) {
+			auto const pHijacker = static_cast<InfantryClass*>(pType->CreateObject(pOwner));
+			pHijacker->Health = std::max(pExt->HijackerHealth, 10) / 2;
+			pHijacker->Veterancy.Veterancy = pExt->HijackerVeterancy;
+			return pHijacker;
 		}
 	}
-	return pHijacker;
+
+	return nullptr;
 }
 
 // this isn't called VehicleThief action, because it also includes other logic
