@@ -154,14 +154,6 @@ DEFINE_HOOK(51A4D2, InfantryClass_UpdatePosition_C4Ability, 6)
 	return (!pThis->Type->C4 && !pThis->HasAbility(Ability::C4)) ? 0x51A7F4 : 0x51A4E6;
 }
 
-// C4 ability: this thing might not be needed. works without it, but one can't be too sure
-DEFINE_HOOK(700505, TechnoClass_GetCursorOverObject_C4Ability, 6)
-{
-	GET(InfantryClass*, pThis, ESI);
-
-	return (!pThis->Type->C4 && !pThis->HasAbility(Ability::C4)) ? 0x700536 : 0x700515;
-}
-
 // do not prone in water
 DEFINE_HOOK(5201CC, InfantryClass_UpdatePanic_ProneWater, 6)
 {

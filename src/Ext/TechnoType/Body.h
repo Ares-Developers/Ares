@@ -234,6 +234,8 @@ public:
 
 		Nullable<double> ReloadRate;
 
+		Valueable<bool> Saboteur;
+
 		ExtData(TechnoTypeClass* OwnerObject) : Extension<TechnoTypeClass>(OwnerObject),
 			Survivors_PilotChance(),
 			Survivors_PassengerChance(),

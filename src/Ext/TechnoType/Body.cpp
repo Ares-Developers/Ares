@@ -420,6 +420,8 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 
 	this->ReloadRate.Read(exINI, section, "ReloadRate");
 
+	this->Saboteur.Read(exINI, section, "Saboteur");
+
 	// quick fix - remove after the rest of weapon selector code is done
 	return;
 }
@@ -752,7 +754,8 @@ void TechnoTypeExt::ExtData::Serialize(T& Stm) {
 		.Process(this->AssaulterLevel)
 		.Process(this->OmniCrusher_Aggressive)
 		.Process(this->CrushDamage)
-		.Process(this->ReloadRate);
+		.Process(this->ReloadRate)
+		.Process(this->Saboteur);
 }
 
 void TechnoTypeExt::ExtData::LoadFromStream(AresStreamReader &Stm) {
