@@ -52,6 +52,7 @@ public:
 
 		int HijackerHealth;
 		HouseClass* HijackerHouse;
+		float HijackerVeterancy;
 
 		// 305 Radar Jammers
 		std::unique_ptr<JammerClass> RadarJam;
@@ -96,6 +97,7 @@ public:
 			GarrisonedIn(nullptr),
 			HijackerHealth(-1),
 			HijackerHouse(nullptr),
+			HijackerVeterancy(0.0f),
 			DriverKilled(false),
 			EMPSparkleAnim(nullptr),
 			EMPLastMission(Mission::None),

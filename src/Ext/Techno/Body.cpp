@@ -725,9 +725,11 @@ InfantryClass* TechnoExt::RecoverHijacker(FootClass* pThis) {
 			if(!pTypeExt->HijackerOneTime && pHijackerOwner && !pHijackerOwner->Defeated) {
 				pHijacker = static_cast<InfantryClass*>(pHijackerType->CreateObject(pHijackerOwner));
 				pHijacker->Health = std::max(pExt->HijackerHealth / 2, 5);
+				pHijacker->Veterancy.Veterancy = pExt->HijackerVeterancy;
 			}
 			pThis->HijackerInfantryType = -1;
 			pExt->HijackerHealth = -1;
+			pExt->HijackerVeterancy = 0.0;
 		}
 	}
 	return pHijacker;
@@ -895,6 +897,7 @@ bool TechnoExt::ExtData::PerformActionHijack(TechnoClass* const pTarget) const {
 			pTarget->HijackerInfantryType = pType->ArrayIndex;
 			pDestExt->HijackerHouse = pThis->Owner;
 			pDestExt->HijackerHealth = pThis->Health;
+			pDestExt->HijackerVeterancy = pThis->Veterancy.Veterancy;
 		}
 
 		// hook up the original mind-controller with the target #762
@@ -1195,6 +1198,7 @@ void TechnoExt::ExtData::Serialize(T& Stm) {
 		.Process(this->DriverKilled)
 		.Process(this->HijackerHealth)
 		.Process(this->HijackerHouse)
+		.Process(this->HijackerVeterancy)
 		.Process(this->RadarJam)
 		.Process(this->PoweredUnit)
 		.Process(this->AttachedEffects)
