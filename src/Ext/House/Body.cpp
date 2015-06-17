@@ -395,7 +395,7 @@ bool HouseExt::ExtData::CheckBasePlanSanity() {
 	}
 
 	auto CheckList = [House, errorMsg, &AllIsWell]
-			(DynamicVectorClass<BuildingTypeClass *> *const List, const char * const ListName) -> void {
+			(DynamicVectorClass<BuildingTypeClass *> const& List, const char * const ListName) -> void {
 		if(!House->FirstBuildableFromArray(List)) {
 			AllIsWell = false;
 			Debug::DevLog(Debug::Error, errorMsg, House->Type->ID, ListName);
@@ -403,27 +403,27 @@ bool HouseExt::ExtData::CheckBasePlanSanity() {
 	};
 
 	// commented out lists that do not cause a crash, according to testers
-//	CheckList(&RulesClass::Instance->Shipyard, "Shipyard");
-	CheckList(&RulesClass::Instance->BuildPower, "BuildPower");
-	CheckList(&RulesClass::Instance->BuildRefinery, "BuildRefinery");
-	CheckList(&RulesClass::Instance->BuildWeapons, "BuildWeapons");
+//	CheckList(RulesClass::Instance->Shipyard, "Shipyard");
+	CheckList(RulesClass::Instance->BuildPower, "BuildPower");
+	CheckList(RulesClass::Instance->BuildRefinery, "BuildRefinery");
+	CheckList(RulesClass::Instance->BuildWeapons, "BuildWeapons");
 
-//			CheckList(&RulesClass::Instance->BuildConst, "BuildConst");
-//			CheckList(&RulesClass::Instance->BuildBarracks, "BuildBarracks");
-//			CheckList(&RulesClass::Instance->BuildTech, "BuildTech");
-//			CheckList(&RulesClass::Instance->BuildRadar, "BuildRadar");
-//			CheckList(&RulesClass::Instance->ConcreteWalls, "ConcreteWalls");
-//			CheckList(&RulesClass::Instance->BuildDummy, "BuildDummy");
-//			CheckList(&RulesClass::Instance->BuildNavalYard, "BuildNavalYard");
+//			CheckList(RulesClass::Instance->BuildConst, "BuildConst");
+//			CheckList(RulesClass::Instance->BuildBarracks, "BuildBarracks");
+//			CheckList(RulesClass::Instance->BuildTech, "BuildTech");
+//			CheckList(RulesClass::Instance->BuildRadar, "BuildRadar");
+//			CheckList(RulesClass::Instance->ConcreteWalls, "ConcreteWalls");
+//			CheckList(RulesClass::Instance->BuildDummy, "BuildDummy");
+//			CheckList(RulesClass::Instance->BuildNavalYard, "BuildNavalYard");
 
 	auto pCountryData = HouseTypeExt::ExtMap.Find(House->Type);
 	auto Powerplants = pCountryData->GetPowerplants();
 	DynamicVectorClass<BuildingTypeClass*> Dummy(Powerplants.size(), const_cast<BuildingTypeClass**>(Powerplants.begin()));
-	CheckList(&Dummy, "Powerplants");
+	CheckList(Dummy, "Powerplants");
 
 //			auto pSide = SideClass::Array->GetItem(curHouse->Type->SideIndex);
 //			auto pSideData = SideExt::ExtMap.Find(pSide);
-//			CheckList(&pSideData->BaseDefenses, "Base Defenses");
+//			CheckList(pSideData->BaseDefenses, "Base Defenses");
 
 	return AllIsWell;
 }

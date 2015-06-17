@@ -55,7 +55,7 @@ DEFINE_HOOK(4FEA60, HouseClass_AI_UnitProduction, 0)
 		int mMaxHarvesters =
 			RulesClass::Instance->HarvestersPerRefinery[AIDiff]
 				 * pThis->CountResourceDestinations;
-		if(!pThis->FirstBuildableFromArray(&RulesClass::Instance->BuildRefinery)) {
+		if(!pThis->FirstBuildableFromArray(RulesClass::Instance->BuildRefinery)) {
 			mMaxHarvesters =
 				RulesClass::Instance->AISlaveMinerNumber[AIDiff];
 		}
@@ -71,7 +71,7 @@ DEFINE_HOOK(4FEA60, HouseClass_AI_UnitProduction, 0)
 		int mMaxHarvesters = RulesClass::Instance->AISlaveMinerNumber[AIDiff];
 
 		if(pThis->CountResourceGatherers < mMaxHarvesters) {
-			if(BuildingTypeClass* pBT = pThis->FirstBuildableFromArray(&RulesClass::Instance->BuildRefinery)) {
+			if(BuildingTypeClass* pBT = pThis->FirstBuildableFromArray(RulesClass::Instance->BuildRefinery)) {
 				//awesome way to find out whether this building is a slave miner, isn't it? ...
 				if(UnitTypeClass* pSlaveMiner = pBT->UndeploysInto) {
 					pThis->ProducingUnitTypeIndex = pSlaveMiner->ArrayIndex;
