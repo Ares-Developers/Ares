@@ -8,17 +8,21 @@
 #include "EMPulse.h"
 #include "PoweredUnitClass.h"
 
-bool PoweredUnitClass::IsPoweredBy(HouseClass* Owner) const
+bool PoweredUnitClass::IsPoweredBy(HouseClass* const pOwner) const
 {
-	auto pType = TechnoTypeExt::ExtMap.Find(this->Techno->GetTechnoType());
+	auto const pType = this->Techno->GetTechnoType();
+	auto const pTypeExt = TechnoTypeExt::ExtMap.Find(pType);
 
-	for(int i = 0; i < Owner->Buildings.Count; ++i)	{
-		auto Building  = Owner->Buildings.GetItem(i);
-		auto BExt = TechnoExt::ExtMap.Find(Building);
-		auto inArray = pType->PoweredBy.Contains(Building->Type);
+	auto const& PoweredBy = pTypeExt->PoweredBy;
 
-		if(inArray && !Building->BeingWarpedOut && !Building->IsUnderEMP() && BExt->IsOperated() && Building->IsPowerOnline()) {
-			return true;
+	for(auto const& pBuilding : pOwner->Buildings) {
+		auto const inArray = PoweredBy.Contains(pBuilding->Type);
+
+		if(inArray && !pBuilding->BeingWarpedOut && !pBuilding->IsUnderEMP()) {
+			auto const pExt = TechnoExt::ExtMap.Find(pBuilding);
+			if(pExt->IsOperated() && pBuilding->IsPowerOnline()) {
+				return true;
+			}
 		}
 	}
 	
@@ -27,18 +31,18 @@ bool PoweredUnitClass::IsPoweredBy(HouseClass* Owner) const
 
 void PoweredUnitClass::PowerUp()
 {
-	TechnoExt::ExtData* e = TechnoExt::ExtMap.Find(this->Techno);
-	if( !this->Techno->IsUnderEMP() && e->IsOperated() ) {
+	auto const pExt = TechnoExt::ExtMap.Find(this->Techno);
+	if(!this->Techno->IsUnderEMP() && pExt->IsOperated()) {
 		EMPulse::DisableEMPEffect2(this->Techno);
 	}
 }
 
 bool PoweredUnitClass::PowerDown()
 {
-	if( EMPulse::IsDeactivationAdvisable(this->Techno) ) {
+	if(EMPulse::IsDeactivationAdvisable(this->Techno)) {
 		// destroy if EMP.Threshold would crash this unit when in air
-		auto pType = TechnoTypeExt::ExtMap.Find(this->Techno->GetTechnoType());
-		if( EMPulse::EnableEMPEffect2(this->Techno) || ( pType->EMP_Threshold && this->Techno->IsInAir() ) ) {
+		auto const pType = TechnoTypeExt::ExtMap.Find(this->Techno->GetTechnoType());
+		if(EMPulse::EnableEMPEffect2(this->Techno) || (pType->EMP_Threshold && this->Techno->IsInAir())) {
 			return false;
 		}
 	}
@@ -48,26 +52,31 @@ bool PoweredUnitClass::PowerDown()
 
 bool PoweredUnitClass::Update()
 {
-	if( (Unsorted::CurrentFrame - this->LastScan) < this->ScanInterval ) return true;
+	if((Unsorted::CurrentFrame - this->LastScan) < PoweredUnitClass::ScanInterval) {
+		return true;
+	}
 
-	if(!this->Techno->IsAlive || !this->Techno->Health || this->Techno->InLimbo) return true;
+	if(!this->Techno->IsAlive || !this->Techno->Health || this->Techno->InLimbo) {
+		return true;
+	}
 
-	HouseClass* Owner = this->Techno->Owner;
-	bool HasPower     = this->IsPoweredBy(Owner);
+	this->LastScan = Unsorted::CurrentFrame;
+
+	auto const pOwner = this->Techno->Owner;
+	auto const hasPower = this->IsPoweredBy(pOwner);
 	
-	this->Powered = HasPower;
+	this->Powered = hasPower;
 	
-	if(HasPower && this->Techno->Deactivated) {
+	if(hasPower && this->Techno->Deactivated) {
 		this->PowerUp();
-	} else if(!HasPower && !this->Techno->Deactivated) {
+	} else if(!hasPower && !this->Techno->Deactivated) {
 		// don't shutdown units inside buildings (warfac, barracks, shipyard) because that locks up the factory and the robot tank did it
-		auto WhatAmI = this->Techno->WhatAmI();
-		if((WhatAmI != InfantryClass::AbsID && WhatAmI != UnitClass::AbsID) || (!this->Techno->GetCell()->GetBuilding())) {
+		auto const whatAmI = this->Techno->WhatAmI();
+		if((whatAmI != InfantryClass::AbsID && whatAmI != UnitClass::AbsID) || (!this->Techno->GetCell()->GetBuilding())) {
 			return this->PowerDown();
 		}
 	}
 
-	LastScan = Unsorted::CurrentFrame;
 	return true;
 }
 
