@@ -27,21 +27,23 @@ std::vector<int> BestChoices;
 // fix the 100 unit bug for vehicles
 DEFINE_HOOK(4FEA60, HouseClass_AI_UnitProduction, 0)
 {
-	GET(HouseClass*, pThis, ECX);
+	GET(HouseClass* const, pThis, ECX);
 
-	retfunc_fixed<DWORD> ret(R, 0x4FEEDA, 0xF);
+	retfunc_fixed<DWORD> ret(R, 0x4FEEDA, 15);
 
 	if(pThis->ProducingUnitTypeIndex != -1) {
 		return ret();
 	}
 
-	auto AIDiff = pThis->GetAIDifficultyIndex();
+	auto const pRules = RulesClass::Instance;
 
-	int nParentCountryIndex = HouseTypeClass::FindIndex(pThis->Type->ParentCountry);
-	DWORD flagsOwner = 1 << nParentCountryIndex;
+	auto const AIDiff = static_cast<int>(pThis->GetAIDifficultyIndex());
+
+	auto const idxParentCountry = HouseTypeClass::FindIndex(pThis->Type->ParentCountry);
+	auto const flagsOwner = 1u << idxParentCountry;
 
 	UnitTypeClass* pHarvester = nullptr;
-	for(auto pCurrent : RulesClass::Instance->HarvesterUnit) {
+	for(auto const& pCurrent : pRules->HarvesterUnit) {
 		if(pCurrent->OwnerFlags & flagsOwner) {
 			pHarvester = pCurrent;
 			break;
@@ -50,30 +52,27 @@ DEFINE_HOOK(4FEA60, HouseClass_AI_UnitProduction, 0)
 
 	if(pHarvester) {
 		//Buildable harvester found
-		int nHarvesters = pThis->CountResourceGatherers;
+		auto const harvesters = pThis->CountResourceGatherers;
 
-		int mMaxHarvesters =
-			RulesClass::Instance->HarvestersPerRefinery[AIDiff]
-				 * pThis->CountResourceDestinations;
-		if(!pThis->FirstBuildableFromArray(RulesClass::Instance->BuildRefinery)) {
-			mMaxHarvesters =
-				RulesClass::Instance->AISlaveMinerNumber[AIDiff];
-		}
+		auto maxHarvesters = pThis->FirstBuildableFromArray(pRules->BuildRefinery)
+			? pRules->HarvestersPerRefinery[AIDiff] * pThis->CountResourceDestinations
+			: pRules->AISlaveMinerNumber[AIDiff];
 
-		if(pThis->IQLevel2 >= RulesClass::Instance->Harvester && !pThis->unknown_bool_242) {
-			if(!pThis->ControlledByHuman() && nHarvesters < mMaxHarvesters && pThis->TechLevel >= pHarvester->TechLevel) {
-				pThis->ProducingUnitTypeIndex = pHarvester->ArrayIndex;
-				return ret();
-			}
+		if(pThis->IQLevel2 >= pRules->Harvester && !pThis->unknown_bool_242
+			&& !pThis->ControlledByHuman() && harvesters < maxHarvesters
+			&& pThis->TechLevel >= pHarvester->TechLevel)
+		{
+			pThis->ProducingUnitTypeIndex = pHarvester->ArrayIndex;
+			return ret();
 		}
 	} else {
 		//No buildable harvester found
-		int mMaxHarvesters = RulesClass::Instance->AISlaveMinerNumber[AIDiff];
+		auto const maxHarvesters = pRules->AISlaveMinerNumber[AIDiff];
 
-		if(pThis->CountResourceGatherers < mMaxHarvesters) {
-			if(BuildingTypeClass* pBT = pThis->FirstBuildableFromArray(RulesClass::Instance->BuildRefinery)) {
+		if(pThis->CountResourceGatherers < maxHarvesters) {
+			if(auto const pBT = pThis->FirstBuildableFromArray(pRules->BuildRefinery)) {
 				//awesome way to find out whether this building is a slave miner, isn't it? ...
-				if(UnitTypeClass* pSlaveMiner = pBT->UndeploysInto) {
+				if(auto const pSlaveMiner = pBT->UndeploysInto) {
 					pThis->ProducingUnitTypeIndex = pSlaveMiner->ArrayIndex;
 					return ret();
 				}
@@ -109,4 +108,3 @@ DEFINE_HOOK(4FF210, HouseClass_AI_AircraftProduction, 6)
 	R->EAX(15);
 	return 0x4FF534;
 }
-

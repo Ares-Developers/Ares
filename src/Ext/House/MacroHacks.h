@@ -12,8 +12,9 @@ extern std::vector<int> BestChoices;
 // what? copy pasting original code, leave it be
 template <class TClass, class TType>
 void GetTypeToProduce(HouseClass* pThis, int& ProducingTypeIndex) {
-	CreationFrames.assign(TType::Array->Count, 0x7FFFFFFF);
-	Values.assign(TType::Array->Count, 0);
+	auto const count = static_cast<unsigned int>(TType::Array->Count);
+	CreationFrames.assign(count, 0x7FFFFFFF);
+	Values.assign(count, 0);
 
 	for(auto CurrentTeam : *TeamClass::Array) {
 		if(!CurrentTeam || CurrentTeam->Owner != pThis) {
@@ -34,7 +35,7 @@ void GetTypeToProduce(HouseClass* pThis, int& ProducingTypeIndex) {
 			if(CurrentMember->WhatAmI() != TType::AbsID) {
 				continue;
 			}
-			int Idx = CurrentMember->GetArrayIndex();
+			auto const Idx = static_cast<unsigned int>(CurrentMember->GetArrayIndex());
 			++Values[Idx];
 			if(TeamCreationFrame < CreationFrames[Idx]) {
 				CreationFrames[Idx] = TeamCreationFrame;
@@ -43,7 +44,7 @@ void GetTypeToProduce(HouseClass* pThis, int& ProducingTypeIndex) {
 	}
 
 	for(auto T : *TClass::Array) {
-		int Idx = T->GetType()->GetArrayIndex();
+		auto const Idx = static_cast<unsigned int>(T->GetType()->GetArrayIndex());
 		if(Values[Idx] > 0 && T->CanBeRecruited(pThis)) {
 			--Values[Idx];
 		}
@@ -55,8 +56,8 @@ void GetTypeToProduce(HouseClass* pThis, int& ProducingTypeIndex) {
 	int EarliestTypenameIndex = -1;
 	int EarliestFrame = 0x7FFFFFFF;
 
-	for(int i = 0; i < TType::Array->Count; ++i) {
-		TType *TT = TType::Array->GetItem(i);
+	for(auto i = 0u; i < count; ++i) {
+		auto const TT = TType::Array->Items[static_cast<int>(i)];
 		int CurrentValue = Values[i];
 		if(CurrentValue <= 0 || !pThis->CanBuild(TT, false, false)
 			|| TT->GetActualCost(pThis) > pThis->Available_Money())
@@ -68,20 +69,19 @@ void GetTypeToProduce(HouseClass* pThis, int& ProducingTypeIndex) {
 			BestValue = CurrentValue;
 			BestChoices.clear();
 		}
-		BestChoices.push_back(i);
+		BestChoices.push_back(static_cast<int>(i));
 		if(EarliestFrame > CreationFrames[i] || EarliestTypenameIndex == -1) {
-			EarliestTypenameIndex = i;
+			EarliestTypenameIndex = static_cast<int>(i);
 			EarliestFrame = CreationFrames[i];
 		}
 	}
 
-	auto AIDiff = pThis->GetAIDifficultyIndex();
+	auto const AIDiff = static_cast<int>(pThis->GetAIDifficultyIndex());
 	int EarliestOdds = RulesClass::Instance->FillEarliestTeamProbability[AIDiff];
 	if(ScenarioClass::Instance->Random.RandomRanged(0, 99) < EarliestOdds) {
 		ProducingTypeIndex = EarliestTypenameIndex;
-	} else if(BestChoices.size()) {
-		int RandomChoice = ScenarioClass::Instance->Random.RandomRanged(0, BestChoices.size() - 1);
-		int RandomIndex = BestChoices.at(RandomChoice);
-		ProducingTypeIndex = RandomIndex;
+	} else if(auto const size = static_cast<int>(BestChoices.size())) {
+		int RandomChoice = ScenarioClass::Instance->Random.RandomRanged(0, size - 1);
+		ProducingTypeIndex = BestChoices[static_cast<unsigned int>(RandomChoice)];
 	}
 }
