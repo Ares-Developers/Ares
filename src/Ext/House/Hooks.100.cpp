@@ -39,7 +39,7 @@ DEFINE_HOOK(4FEA60, HouseClass_AI_UnitProduction, 0)
 
 	auto const AIDiff = static_cast<int>(pThis->GetAIDifficultyIndex());
 
-	auto const idxParentCountry = HouseTypeClass::FindIndex(pThis->Type->ParentCountry);
+	auto const idxParentCountry = pThis->Type->FindParentCountryIndex();
 	auto const flagsOwner = 1u << idxParentCountry;
 
 	UnitTypeClass* pHarvester = nullptr;

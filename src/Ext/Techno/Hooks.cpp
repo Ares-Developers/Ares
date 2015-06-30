@@ -281,7 +281,7 @@ DEFINE_HOOK(6F407D, TechnoClass_Init_1, 6)
 	}
 
 	auto pHouseType = pThis->Owner->Type;
-	pData->OriginalHouseType = HouseTypeClass::Find(pHouseType->ParentCountry);
+	pData->OriginalHouseType = pHouseType->FindParentCountry();
 	if(!pData->OriginalHouseType) {
 		pData->OriginalHouseType = pHouseType;
 	}

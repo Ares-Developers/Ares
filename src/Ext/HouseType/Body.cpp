@@ -265,7 +265,7 @@ void HouseTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI) {
 }
 
 void HouseTypeExt::ExtData::InheritSettings(HouseTypeClass *pThis) {
-	if(auto ParentCountry = HouseTypeClass::Find(pThis->ParentCountry)) {
+	if(auto ParentCountry = pThis->FindParentCountry()) {
 		if(const auto ParentData = HouseTypeExt::ExtMap.Find(ParentCountry)) {
 			this->LoadScreenBackground = ParentData->LoadScreenBackground;
 			this->LoadScreenPalette = ParentData->LoadScreenPalette;
