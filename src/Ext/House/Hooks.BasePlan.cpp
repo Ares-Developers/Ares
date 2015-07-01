@@ -106,9 +106,10 @@ DEFINE_HOOK(688B37, MPGameModeClass_CreateStartingUnits_B, 5)
 	auto pArray = &RulesClass::Instance->BaseUnit;
 	bool canBuild = false;
 	UnitTypeClass* Item = nullptr;
+	auto const idxParent = pHouse->Type->FindParentCountryIndex();
 	for(int i = 0; i < pArray->Count; ++i) {
 		Item = pArray->GetItem(i);
-		if(pHouse->CanExpectToBuild(Item)) {
+		if(pHouse->CanExpectToBuild(Item, idxParent)) {
 			canBuild = true;
 			break;
 		}

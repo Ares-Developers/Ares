@@ -383,8 +383,9 @@ bool HouseExt::ExtData::CheckBasePlanSanity() {
 	// if you don't have a base unit buildable, how did you get to base planning?
 	// only through crates or map actions, so have to validate base unit in other situations
 	bool canBuild = false;
+	auto const idxParent = House->Type->FindParentCountryIndex();
 	for(auto pItem : RulesClass::Instance->BaseUnit) {
-		if(House->CanExpectToBuild(pItem)) {
+		if(House->CanExpectToBuild(pItem, idxParent)) {
 			canBuild = true;
 			break;
 		}
