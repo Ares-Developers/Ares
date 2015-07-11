@@ -137,12 +137,10 @@ DEFINE_HOOK(500CC5, HouseClass_InitFromINI_FixBufferLimits, 6)
 
 	if(H->UINameString[0]) {
 		const wchar_t *str = StringTable::LoadString(H->UINameString);
-		CRT::wcsncpy(H->UIName, str, 20);
+		AresCRT::wstrCopy(H->UIName, str);
 	} else {
-		CRT::wcsncpy(H->UIName, H->Type->UIName, 20);
+		AresCRT::wstrCopy(H->UIName, H->Type->UIName);
 	}
-
-	H->UIName[20] = 0;
 
 	//dropping this here, should be fine
 	auto pHouseExt = HouseExt::ExtMap.Find(H);
@@ -160,9 +158,7 @@ DEFINE_HOOK(4F62FF, HouseClass_CTOR_FixNameOverflow, 6)
 	GET(HouseClass *, H, EBP);
 	GET_STACK(HouseTypeClass *, Country, 0x48);
 
-	CRT::wcsncpy(H->UIName, Country->UIName, 20);
-
-	H->UIName[20] = 0;
+	AresCRT::wstrCopy(H->UIName, Country->UIName);
 
 	return 0x4F6312;
 }
