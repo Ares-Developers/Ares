@@ -101,7 +101,7 @@ DEFINE_HOOK(568565, MapClass_AddContentAt_Foundation_OccupyHeight, 5)
 
 	CellStruct * CurrentFCell = Foundation;
 
-	while(CurrentFCell->X != 32767 && CurrentFCell->Y != 32767) {
+	while(*CurrentFCell != BuildingTypeExt::FoundationEndMarker) {
 		CellStruct ActualCell = *MainCoords + *CurrentFCell;
 		for(int i = ShadowHeight; i > 0; --i) {
 			AffectedCells.push_back(ActualCell);
@@ -152,7 +152,7 @@ DEFINE_HOOK(568997, MapClass_RemoveContentAt_Foundation_OccupyHeight, 5)
 
 	CellStruct * CurrentFCell = Foundation;
 
-	while(CurrentFCell->X != 32767 && CurrentFCell->Y != 32767) {
+	while(*CurrentFCell != BuildingTypeExt::FoundationEndMarker) {
 		CellStruct ActualCell = *MainCoords + *CurrentFCell;
 		for(int i = ShadowHeight; i > 0; --i) {
 			AffectedCells.push_back(ActualCell);
