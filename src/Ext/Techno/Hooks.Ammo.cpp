@@ -1,4 +1,5 @@
 #include "Body.h"
+#include "../TechnoType/Body.h"
 #include "../../Misc/Debug.h"
 #include "../../Ares.h"
 
@@ -63,3 +64,21 @@ DEFINE_HOOK(6FF66C, TechnoClass_Fire_RearmTimer, 6)
 	return 0;
 }
 
+// variable amounts of rounds to reload
+DEFINE_HOOK(6FB05B, TechnoClass_Reload_ReloadAmount, 6)
+{
+	GET(TechnoClass* const, pThis, ESI);
+	auto const pType = pThis->GetTechnoType();
+	auto const pExt = TechnoTypeExt::ExtMap.Find(pType);
+
+	int amount = pExt->ReloadAmount;
+	if(!pThis->Ammo) {
+		amount = pExt->EmptyReloadAmount.Get(amount);
+	}
+
+	// clamping to support negative values
+	auto const ammo = pThis->Ammo + amount;
+	pThis->Ammo = Math::clamp(ammo, 0, pType->Ammo);
+
+	return 0x6FB061;
+}

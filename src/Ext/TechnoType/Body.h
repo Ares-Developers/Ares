@@ -234,6 +234,9 @@ public:
 
 		Nullable<double> ReloadRate;
 
+		Valueable<int> ReloadAmount;
+		Nullable<int> EmptyReloadAmount;
+
 		Valueable<bool> Saboteur;
 
 		ExtData(TechnoTypeClass* OwnerObject) : Extension<TechnoTypeClass>(OwnerObject),
@@ -336,6 +339,7 @@ public:
 			EVA_UnitLost(-1),
 			ImmuneToAbduction(false),
 			OmniCrusher_Aggressive(true),
+			ReloadAmount(1),
 			FactoryOwners_HaveAllPlans(false)
 		{
 			this->Insignia.SetAll(nullptr);
