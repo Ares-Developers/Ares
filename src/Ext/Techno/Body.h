@@ -208,6 +208,9 @@ public:
 	static void Destroy(TechnoClass* pTechno, TechnoClass* pKiller = nullptr, HouseClass* pKillerHouse = nullptr, WarheadTypeClass* pWarhead = nullptr);
 
 	static bool SpawnVisceroid(CoordStruct &crd, ObjectTypeClass* pType, int chance, bool ignoreTibDeathToVisc);
+
+	static void DecreaseAmmo(
+		TechnoClass* pThis, WeaponTypeClass const* pWeapon = nullptr);
 /*
 	static int SelectWeaponAgainst(TechnoClass *pThis, TechnoClass *pTarget);
 	static bool EvalWeaponAgainst(TechnoClass *pThis, TechnoClass *pTarget, WeaponTypeClass* W);

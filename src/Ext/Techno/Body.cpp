@@ -2,6 +2,7 @@
 #include "../BuildingType/Body.h"
 #include "../Rules/Body.h"
 #include "../TechnoType/Body.h"
+#include "../WeaponType/Body.h"
 #include "../../Misc/SWTypes.h"
 #include "../../Misc/PoweredUnitClass.h"
 #include "../../Utilities/TemplateDef.h"
@@ -305,6 +306,19 @@ bool TechnoExt::SpawnVisceroid(CoordStruct &crd, ObjectTypeClass* pType, int cha
 		}
 	}
 	return ret;
+}
+
+void TechnoExt::DecreaseAmmo(
+	TechnoClass* const pThis, WeaponTypeClass const* const pWeapon)
+{
+	int count = 1;
+	if(auto const pExt = WeaponTypeExt::ExtMap.Find(pWeapon)) {
+		count = pExt->Ammo;
+	}
+
+	while(count-- > 0) {
+		pThis->DecreaseAmmo();
+	}
 }
 
 unsigned int TechnoExt::ExtData::AlphaFrame(const SHPStruct* Image) const {

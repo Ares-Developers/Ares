@@ -1,5 +1,6 @@
 #include "Body.h"
 #include "../TechnoType/Body.h"
+#include "../WeaponType/Body.h"
 #include "../../Misc/Debug.h"
 #include "../../Ares.h"
 
@@ -62,6 +63,29 @@ DEFINE_HOOK(6FF66C, TechnoClass_Fire_RearmTimer, 6)
 		}
 	}
 	return 0;
+}
+
+// weapons can take more than one round of ammo
+DEFINE_HOOK(6FCA0D, TechnoClass_GetFireError_Ammo, 6)
+{
+	GET(TechnoClass* const, pThis, ESI);
+	GET(WeaponTypeClass* const, pWeapon, EBX);
+
+	auto pExt = WeaponTypeExt::ExtMap.Find(pWeapon);
+
+	return (pThis->Ammo < 0 || pThis->Ammo >= pExt->Ammo)
+		? 0x6FCA26u : 0x6FCA17u;
+}
+
+// remove ammo rounds depending on weapon
+DEFINE_HOOK(6FF656, TechnoClass_Fire_Ammo, A)
+{
+	GET(TechnoClass* const, pThis, ESI);
+	GET(WeaponTypeClass const* const, pWeapon, EBX);
+
+	TechnoExt::DecreaseAmmo(pThis, pWeapon);
+
+	return 0x6FF660;
 }
 
 // variable amounts of rounds to reload

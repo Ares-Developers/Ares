@@ -129,6 +129,8 @@ void WeaponTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 	this->ProjectileRange.Read(exINI, section, "ProjectileRange");
 
 	this->ApplyDamage.Read(exINI, section, "ApplyDamage");
+
+	this->Ammo.Read(exINI, section, "Ammo");
 }
 
 // #680 Chrono Prison / Abductor
@@ -422,7 +424,8 @@ void WeaponTypeExt::ExtData::Serialize(T& Stm) {
 		.Process(this->Abductor_ChangeOwner)
 		.Process(this->Abductor_AbductBelowPercent)
 		.Process(this->ProjectileRange)
-		.Process(this->ApplyDamage);
+		.Process(this->ApplyDamage)
+		.Process(this->Ammo);
 }
 
 void WeaponTypeExt::ExtData::LoadFromStream(AresStreamReader &Stm) {

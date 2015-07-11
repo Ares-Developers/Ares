@@ -90,6 +90,8 @@ public:
 
 		Nullable<bool> ApplyDamage; // whether Damage should be applied even if IsSonic=yes or UseFireParticles=yes
 
+		Valueable<int> Ammo;
+
 		ExtData(WeaponTypeClass* OwnerObject) : Extension<WeaponTypeClass>(OwnerObject),
 			Weapon_Loaded(false),
 			Beam_Color(),
@@ -117,6 +119,7 @@ public:
 			Ivan_CanDetonateDeathBomb(),
 			Rad_Type(nullptr),
 			ProjectileRange(Leptons(100000)),
+			Ammo(1),
 			Abductor(false),
 			Abductor_AnimType(nullptr),
 			Abductor_ChangeOwner(false),
