@@ -271,28 +271,33 @@ bool EMPulse::isCurrentlyEMPImmune(TechnoClass * Target, HouseClass * SourceHous
 	\author AlexB
 	\date 2010-04-30, 2014-02-01
 */
-bool EMPulse::IsTypeEMPProne(TechnoTypeClass* Type) {
-	if(auto pBuildingType = abstract_cast<BuildingTypeClass*>(Type)) {
-		// buildings are emp prone if they consume power and need it to function
-		if(pBuildingType->Powered && pBuildingType->PowerDrain > 0) {
+bool EMPulse::IsTypeEMPProne(TechnoTypeClass const* const pType) {
+	auto const abs = pType->WhatAmI();
+
+	if(abs == AbstractType::BuildingType) {
+		auto const pBldType = static_cast<BuildingTypeClass const*>(pType);
+
+		// buildings are prone if they consume power and need it to function
+		if(pBldType->Powered && pBldType->PowerDrain > 0) {
 			return true;
 		}
 
 		// may have a special function.
-		return pBuildingType->Radar
-			|| pBuildingType->HasSuperWeapon()
-			|| pBuildingType->UndeploysInto
-			|| pBuildingType->PowersUnit
-			|| pBuildingType->Sensors
-			|| pBuildingType->LaserFencePost
-			|| pBuildingType->GapGenerator;
+		return pBldType->Radar
+			|| pBldType->HasSuperWeapon()
+			|| pBldType->UndeploysInto
+			|| pBldType->PowersUnit
+			|| pBldType->Sensors
+			|| pBldType->LaserFencePost
+			|| pBldType->GapGenerator;
 
-	} else if(auto pInfantryType = abstract_cast<InfantryTypeClass*>(Type)) {
+	} else if(abs == AbstractType::InfantryType) {
 		// affected only if this is a cyborg.
-		return pInfantryType->Cyborg;
+		auto const pInfType = static_cast<InfantryTypeClass const*>(pType);
+		return pInfType->Cyborg;
 	} else {
 		// if this is a vessel or vehicle that is organic: no effect.
-		return !Type->Organic;
+		return !pType->Organic;
 	}
 }
 
