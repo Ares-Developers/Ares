@@ -90,6 +90,7 @@ public:
 		bool EliteAbilityEMPIMMUNE;
 		int EMP_Threshold;
 		Valueable<double> EMP_Modifier;
+		Nullable<AnimTypeClass*> EMP_Sparkles;
 
 		Valueable<double> IronCurtain_Modifier;
 		Valueable<double> ForceShield_Modifier;

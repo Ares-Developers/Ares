@@ -228,6 +228,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 
 	this->ImmuneToEMP.Read(exINI, section, "ImmuneToEMP");
 	this->EMP_Modifier.Read(exINI, section, "EMP.Modifier");
+	this->EMP_Sparkles.Read(exINI, section, "EMP.Sparkles");
 
 	if(pINI->ReadString(section, "EMP.Threshold", "inair", Ares::readBuffer)) {
 		if(_strcmpi(Ares::readBuffer, "inair") == 0) {
@@ -668,6 +669,7 @@ void TechnoTypeExt::ExtData::Serialize(T& Stm) {
 		.Process(this->EliteAbilityEMPIMMUNE)
 		.Process(this->EMP_Threshold)
 		.Process(this->EMP_Modifier)
+		.Process(this->EMP_Sparkles)
 		.Process(this->IronCurtain_Modifier)
 		.Process(this->ForceShield_Modifier)
 		.Process(this->Chronoshift_Allow)

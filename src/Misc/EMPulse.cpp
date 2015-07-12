@@ -445,7 +445,12 @@ void EMPulse::UpdateSparkleAnim(TechnoClass* const pTechno) {
 
 	if(pTechno->IsUnderEMP()) {
 		if(!Anim) {
-			if(auto const pAnimType = RulesClass::Instance->EMPulseSparkles) {
+			auto const pType = pTechno->GetTechnoType();
+			auto const pTypeExt = TechnoTypeExt::ExtMap.Find(pType);
+			auto const pAnimType = pTypeExt->EMP_Sparkles.Get(
+				RulesClass::Instance->EMPulseSparkles);
+
+			if(pAnimType) {
 				Anim = GameCreate<AnimClass>(pAnimType, pTechno->Location);
 				Anim->SetOwnerObject(pTechno);
 				if(auto const pBld = abstract_cast<BuildingClass*>(pTechno)) {
