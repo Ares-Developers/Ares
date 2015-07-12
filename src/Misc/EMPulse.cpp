@@ -314,17 +314,17 @@ bool EMPulse::IsTypeEMPProne(TechnoTypeClass const* const pType) {
 	\author AlexB
 	\date 2010-04-30
 */
-bool EMPulse::isEligibleEMPTarget(TechnoClass * Target, HouseClass * SourceHouse, WarheadTypeClass *Warhead) {
-	if (isCurrentlyEMPImmune(Target, SourceHouse)) {
+bool EMPulse::isEligibleEMPTarget(
+	TechnoClass* const pTarget, HouseClass* const pSourceHouse,
+	WarheadTypeClass* const pWarhead)
+{
+	if(!WarheadTypeExt::CanAffectTarget(pTarget, pSourceHouse, pWarhead)) {
+		EMP_Log("[isEligibleEMPTarget] \"%s\" does not affect target.\n",
+			pWarhead->ID);
 		return false;
 	}
 
-	if (!WarheadTypeExt::CanAffectTarget(Target, SourceHouse, Warhead)) {
-		EMP_Log("[isEligibleEMPTarget] \"%s\" does not affect target.\n", Warhead->ID);
-		return false;
-	}
-
-	return true;
+	return !isCurrentlyEMPImmune(pTarget, pSourceHouse);
 }
 
 //! Gets whether this Techno should be deactivated right now.
