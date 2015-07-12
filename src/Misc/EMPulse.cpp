@@ -439,24 +439,24 @@ void EMPulse::updateSlaveManager(TechnoClass* Techno) {
 	\author AlexB
 	\date 2010-05-09
 */
-void EMPulse::UpdateSparkleAnim(TechnoClass* Techno) {
-	if(auto pData = TechnoExt::ExtMap.Find(Techno)) {
-		auto& Anim = pData->EMPSparkleAnim;
+void EMPulse::UpdateSparkleAnim(TechnoClass* const pTechno) {
+	auto const pData = TechnoExt::ExtMap.Find(pTechno);
+	auto& Anim = pData->EMPSparkleAnim;
 
-		if(Techno->IsUnderEMP()) {
-			if(!Anim && RulesClass::Instance->EMPulseSparkles) {
-				Anim = GameCreate<AnimClass>(RulesClass::Instance->EMPulseSparkles, Techno->Location);
-				Anim->SetOwnerObject(Techno);
-				if(auto const pBld = abstract_cast<BuildingClass*>(Techno)) {
+	if(pTechno->IsUnderEMP()) {
+		if(!Anim) {
+			if(auto const pAnimType = RulesClass::Instance->EMPulseSparkles) {
+				Anim = GameCreate<AnimClass>(pAnimType, pTechno->Location);
+				Anim->SetOwnerObject(pTechno);
+				if(auto const pBld = abstract_cast<BuildingClass*>(pTechno)) {
 					Anim->ZAdjust = -1024;
 				}
 			}
-		} else {
-			if(Anim) {
-				Anim->RemainingIterations = 0; // basically "you don't need to show up anymore"
-				Anim = nullptr;
-			}
 		}
+	} else if(Anim) {
+		// finish this loop, then disappear
+		Anim->RemainingIterations = 0;
+		Anim = nullptr;
 	}
 }
 
