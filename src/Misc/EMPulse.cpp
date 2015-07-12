@@ -52,68 +52,75 @@ void EMPulse::CreateEMPulse(WarheadTypeExt::ExtData *Warhead, const CoordStruct 
 /*!
 	Applies, removes or alters the EMP effect on a given unit.
 
-	\param object The Techno that should get affected by EMP.
+	\param pTechno The Techno that should get affected by EMP.
+	\param pFirer The object that fired this EMP.
+	\param pWarhead The warhead causing the EMP.
 
 	\author AlexB
 	\date 2010-06-30
 */
-void EMPulse::deliverEMPDamage(ObjectClass *object, TechnoClass *Firer, WarheadTypeExt::ExtData *Warhead) {
-	// fill the gaps
-	HouseClass *pHouse = (Firer ? Firer->Owner : nullptr);
+void EMPulse::deliverEMPDamage(
+	TechnoClass* const pTechno, TechnoClass* const pFirer,
+	WarheadTypeExt::ExtData* pWarhead)
+{
+	EMP_Log("[deliverEMPDamage] Step 1: %s => %s\n",
+		(pFirer ? pFirer->get_ID() : nullptr), pTechno->get_ID());
 
-	if (TechnoClass * curTechno = generic_cast<TechnoClass *> (object)) {
-		EMP_Log("[deliverEMPDamage] Step 1: %s => %s\n", (Firer ? Firer->get_ID() : nullptr), curTechno->get_ID());
+	auto const pHouse = pFirer ? pFirer->Owner : nullptr;
+	if(isEligibleEMPTarget(pTechno, pHouse, pWarhead->OwnerObject())) {
+		auto const pType = pTechno->GetTechnoType();
+		EMP_Log("[deliverEMPDamage] Step 2: %s\n", pType->get_ID());
 
-		if (isEligibleEMPTarget(curTechno, pHouse, Warhead->OwnerObject())) {
-			EMP_Log("[deliverEMPDamage] Step 2: %s\n", curTechno->get_ID());
-
-			// get the target-specific multiplier
-			double modifier = 1.0;
-			if(TechnoTypeExt::ExtData* pExt = TechnoTypeExt::ExtMap.Find(curTechno->GetTechnoType())) {
-				// modifier only affects bad things
-				if(Warhead->EMP_Duration > 0) {
-					modifier = pExt->EMP_Modifier;
-				}
+		// get the target-specific multiplier
+		auto modifier = 1.0;
+		if(auto const pExt = TechnoTypeExt::ExtMap.Find(pType)) {
+			// modifier only affects bad things
+			if(pWarhead->EMP_Duration > 0) {
+				modifier = pExt->EMP_Modifier;
 			}
+		}
 
-			// respect verses
-			int duration = static_cast<int>(Warhead->EMP_Duration * modifier);
-			if(supportVerses) {
-				duration = static_cast<int>(duration * Warhead->GetVerses(curTechno->GetTechnoType()->Armor).Verses);
-			} else if(abs(Warhead->GetVerses(curTechno->GetTechnoType()->Armor).Verses) < 0.001) {
+		// respect verses
+		auto const& Verses = pWarhead->GetVerses(pType->Armor).Verses;
+		auto duration = static_cast<int>(pWarhead->EMP_Duration * modifier);
+		if(supportVerses) {
+			duration = static_cast<int>(duration * Verses);
+		} else if(std::abs(Verses) < 0.001) {
+			return;
+		}
+
+		// get the new capped value
+		auto const oldValue = static_cast<int>(pTechno->EMPLockRemaining);
+		auto const newValue = Helpers::Alex::getCappedDuration(
+			oldValue, duration, pWarhead->EMP_Cap);
+
+		EMP_Log("[deliverEMPDamage] Step 3: %d\n", newValue);
+
+		// can not be less than zero
+		pTechno->EMPLockRemaining = static_cast<DWORD>(Math::max(newValue, 0));
+		EMP_Log("[deliverEMPDamage] Step 4: %d\n", newValue);
+
+		auto const underEMPBefore = (oldValue > 0);
+		auto const underEMPAfter = (pTechno->EMPLockRemaining > 0);
+		if (underEMPBefore && !underEMPAfter) {
+			// newly de-paralyzed
+			EMP_Log("[deliverEMPDamage] Step 5a\n");
+			DisableEMPEffect(pTechno);
+		} else if (!underEMPBefore && underEMPAfter) {
+			// newly paralyzed unit
+			EMP_Log("[deliverEMPDamage] Step 5b\n");
+			if (enableEMPEffect(pTechno, pFirer)) {
 				return;
 			}
+		} else if (oldValue != newValue) {
+			// At least update the radar, if this is one.
+			EMP_Log("[deliverEMPDamage] Step 5c\n");
+			updateRadarBlackout(pTechno);
+		}
 
-			// get the new capped value
-			int oldValue = curTechno->EMPLockRemaining;
-			int newValue = Helpers::Alex::getCappedDuration(oldValue, duration, Warhead->EMP_Cap);
-
-			EMP_Log("[deliverEMPDamage] Step 3: %d\n", newValue);
-
-			// can not be less than zero
-			curTechno->EMPLockRemaining = std::max(0, newValue);
-			EMP_Log("[deliverEMPDamage] Step 4: %d\n", newValue);
-
-			// newly de-paralyzed
-			if ((oldValue > 0) && (curTechno->EMPLockRemaining <= 0)) {
-				EMP_Log("[deliverEMPDamage] Step 5a\n");
-				DisableEMPEffect(curTechno);
-			} else if ((oldValue <= 0) && (curTechno->EMPLockRemaining > 0)) {
-				// newly paralyzed unit
-				EMP_Log("[deliverEMPDamage] Step 5b\n");
-				if (enableEMPEffect(curTechno, Firer)) {
-					return;
-				}
-			} else if (oldValue != newValue) {
-				// At least update the radar, if this is one.
-				EMP_Log("[deliverEMPDamage] Step 5c\n");
-				updateRadarBlackout(curTechno);
-			}
-
-			// is techno destroyed by EMP?
-			if (thresholdExceeded(curTechno)) {
-				TechnoExt::Destroy(curTechno, Firer);
-			}
+		// is techno destroyed by EMP?
+		if (thresholdExceeded(pTechno)) {
+			TechnoExt::Destroy(pTechno, pFirer);
 		}
 	}
 }

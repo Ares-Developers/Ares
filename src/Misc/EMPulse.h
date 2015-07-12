@@ -18,7 +18,9 @@ public:
 	static bool EnableEMPEffect2(TechnoClass *Techno);
 
 protected:
-	static void deliverEMPDamage(ObjectClass *, TechnoClass *, WarheadTypeExt::ExtData *);
+	static void deliverEMPDamage(
+		TechnoClass* pTechno, TechnoClass* pFirer,
+		WarheadTypeExt::ExtData* pWarhead);
 	static bool isEMPTypeImmune(TechnoClass *);
 	static bool isEMPImmune(TechnoClass *, HouseClass *);
 	static bool isCurrentlyEMPImmune(TechnoClass *, HouseClass *);
