@@ -150,10 +150,9 @@ std::wstring Exception::PrepareSnapshotDirectory() {
 	return buffer;
 }
 
-void Exception::FullDump(
+std::wstring Exception::FullDump(
 	PMINIDUMP_EXCEPTION_INFORMATION const pException,
-	std::wstring const* const destinationFolder,
-	std::wstring* const generatedFilename)
+	std::wstring const* const destinationFolder)
 {
 	std::wstring filename;
 	if(destinationFolder) {
@@ -164,10 +163,6 @@ void Exception::FullDump(
 
 	filename += L"\\extcrashdump.dmp";
 
-	if(generatedFilename) {
-		generatedFilename->assign(filename);
-	}
-
 	HANDLE dumpFile = CreateFileW(filename.c_str(), GENERIC_READ | GENERIC_WRITE,
 		FILE_SHARE_WRITE | FILE_SHARE_READ, nullptr, CREATE_ALWAYS, FILE_FLAG_WRITE_THROUGH, nullptr);
 
@@ -175,6 +170,8 @@ void Exception::FullDump(
 
 	MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), dumpFile, type, pException, nullptr, nullptr);
 	CloseHandle(dumpFile);
+
+	return filename;
 }
 
 //ifdef DUMP_EXTENSIVE
