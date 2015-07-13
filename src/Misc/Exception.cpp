@@ -100,7 +100,7 @@ __declspec(noreturn) LONG CALLBACK Exception::ExceptionHandler(PEXCEPTION_POINTE
 			expParam.ExceptionPointers = pExs;
 			expParam.ClientPointers = FALSE;
 
-			Exception::FullDump(&expParam, &path);
+			Exception::FullDump(std::move(path), &expParam);
 
 			loadCursor = LoadCursor(nullptr, IDC_ARROW);
 			SetClassLong(Game::hWnd, GCL_HCURSOR, reinterpret_cast<LONG>(loadCursor));
@@ -151,16 +151,16 @@ std::wstring Exception::PrepareSnapshotDirectory() {
 }
 
 std::wstring Exception::FullDump(
-	PMINIDUMP_EXCEPTION_INFORMATION const pException,
-	std::wstring const* const destinationFolder)
+	PMINIDUMP_EXCEPTION_INFORMATION const pException)
 {
-	std::wstring filename;
-	if(destinationFolder) {
-		filename = *destinationFolder;
-	} else {
-		filename = Exception::PrepareSnapshotDirectory();
-	}
+	return Exception::FullDump(PrepareSnapshotDirectory(), pException);
+}
 
+std::wstring Exception::FullDump(
+	std::wstring destinationFolder,
+	PMINIDUMP_EXCEPTION_INFORMATION const pException)
+{
+	std::wstring filename = std::move(destinationFolder);
 	filename += L"\\extcrashdump.dmp";
 
 	HANDLE dumpFile = CreateFileW(filename.c_str(), GENERIC_READ | GENERIC_WRITE,

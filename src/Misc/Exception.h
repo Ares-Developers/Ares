@@ -13,9 +13,9 @@ public:
 	static LONG CALLBACK ExceptionFilter(PEXCEPTION_POINTERS pExs);
 	static __declspec(noreturn) LONG CALLBACK ExceptionHandler(PEXCEPTION_POINTERS pExs);
 
-	static std::wstring FullDump(
-		PMINIDUMP_EXCEPTION_INFORMATION pException = nullptr,
-		std::wstring const* destinationFolder = nullptr);
+	static std::wstring FullDump(PMINIDUMP_EXCEPTION_INFORMATION pException = nullptr);
+	static std::wstring FullDump(std::wstring destinationFolder,
+		PMINIDUMP_EXCEPTION_INFORMATION pException = nullptr);
 
 	static std::wstring PrepareSnapshotDirectory();
 };

@@ -170,7 +170,10 @@ void Debug::Flush() {
  */
 
 void Debug::FullDump(MINIDUMP_EXCEPTION_INFORMATION *pException, std::wstring * destinationFolder, std::wstring * generatedFilename) {
-	auto filename = Exception::FullDump(pException, destinationFolder);
+	auto filename = destinationFolder
+		? Exception::FullDump(*destinationFolder, pException)
+		: Exception::FullDump(pException);
+
 	if(generatedFilename) {
 		*generatedFilename = std::move(filename);
 	}
