@@ -169,23 +169,6 @@ void Debug::Flush() {
  * minidump
  */
 
-void Debug::PrepareSnapshotDirectory(std::wstring &buffer) {
-	wchar_t path[MAX_PATH];
-	SYSTEMTIME time;
-
-	GetLocalTime(&time);
-	GetCurrentDirectoryW(MAX_PATH, path);
-
-	buffer = path;
-	buffer += L"\\debug";
-	CreateDirectoryW(buffer.c_str(), nullptr);
-
-	wchar_t subpath[64];
-	swprintf(subpath, 64, L"\\snapshot-%04u%02u%02u-%02u%02u%02u", time.wYear, time.wMonth, time.wDay, time.wHour, time.wMinute, time.wSecond);
-	buffer += subpath;
-	CreateDirectoryW(buffer.c_str(), nullptr);
-}
-
 void Debug::FullDump(MINIDUMP_EXCEPTION_INFORMATION *pException, std::wstring * destinationFolder, std::wstring * generatedFilename) {
 	Exception::FullDump(pException, destinationFolder, generatedFilename);
 }

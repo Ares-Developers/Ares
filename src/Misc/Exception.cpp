@@ -55,7 +55,7 @@ __declspec(noreturn) LONG CALLBACK Exception::ExceptionHandler(PEXCEPTION_POINTE
 	{
 		std::wstring path;
 
-		Debug::PrepareSnapshotDirectory(path);
+		Exception::PrepareSnapshotDirectory(path);
 
 		Debug::Flush();
 		if(Debug::bLog) {
@@ -132,6 +132,23 @@ __declspec(noreturn) LONG CALLBACK Exception::ExceptionHandler(PEXCEPTION_POINTE
 
 #pragma warning(pop)
 
+void Exception::PrepareSnapshotDirectory(std::wstring &buffer) {
+	wchar_t path[MAX_PATH];
+	SYSTEMTIME time;
+
+	GetLocalTime(&time);
+	GetCurrentDirectoryW(MAX_PATH, path);
+
+	buffer = path;
+	buffer += L"\\debug";
+	CreateDirectoryW(buffer.c_str(), nullptr);
+
+	wchar_t subpath[64];
+	swprintf(subpath, 64, L"\\snapshot-%04u%02u%02u-%02u%02u%02u", time.wYear, time.wMonth, time.wDay, time.wHour, time.wMinute, time.wSecond);
+	buffer += subpath;
+	CreateDirectoryW(buffer.c_str(), nullptr);
+}
+
 void Exception::FullDump(
 	PMINIDUMP_EXCEPTION_INFORMATION const pException,
 	std::wstring const* const destinationFolder,
@@ -141,7 +158,7 @@ void Exception::FullDump(
 	if(destinationFolder) {
 		filename = *destinationFolder;
 	} else {
-		Debug::PrepareSnapshotDirectory(filename);
+		Exception::PrepareSnapshotDirectory(filename);
 	}
 
 	filename += L"\\extcrashdump.dmp";

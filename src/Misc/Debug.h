@@ -56,7 +56,6 @@ public:
 	static __declspec(noreturn) void FatalErrorAndExit(const char *Message, ...);
 	static int __stdcall FatalDialog_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-	static void PrepareSnapshotDirectory(std::wstring &buffer);
 	static void FullDump(MINIDUMP_EXCEPTION_INFORMATION *pException, std::wstring * destinationFolder = nullptr, std::wstring * generatedFilename = nullptr);
 
 	static void DevLog(Debug::Severity severity, const char* Format, ...);

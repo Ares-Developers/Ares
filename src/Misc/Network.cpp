@@ -1,6 +1,7 @@
 #include "Network.h"
 
 #include "Debug.h"
+#include "Exception.h"
 #include "../Ares.h"
 
 #include "../Ext/Building/Body.h"
@@ -52,7 +53,7 @@ DEFINE_HOOK(64CCBF, DoList_ReplaceReconMessage, 6)
 		SetCursor(loadCursor);
 
 		std::wstring path;
-		Debug::PrepareSnapshotDirectory(path);
+		Exception::PrepareSnapshotDirectory(path);
 
 		if(Debug::bLog) {
 			Debug::Log("Copying debug log\n");

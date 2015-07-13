@@ -17,4 +17,6 @@ public:
 		PMINIDUMP_EXCEPTION_INFORMATION pException = nullptr,
 		std::wstring const* destinationFolder = nullptr,
 		std::wstring* generatedFilename = nullptr);
+
+	static void PrepareSnapshotDirectory(std::wstring &buffer);
 };
