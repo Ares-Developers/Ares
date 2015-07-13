@@ -659,62 +659,69 @@ bool EMPulse::enableEMPEffect(
 	This function may be called only once, and only if the EMP effect
 	is on.
 
-	\param Victim The Techno that shall have its EMP effects removed.
+	\param pVictim The Techno that shall have its EMP effects removed.
 
 	\author AlexB
 	\date 2010-05-03
 */
-void EMPulse::DisableEMPEffect(TechnoClass * Victim) {
-	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(Victim);
-	bool HasPower = true;
+void EMPulse::DisableEMPEffect(TechnoClass* const pVictim) {
+	auto const abs = pVictim->WhatAmI();
 
-	if (BuildingClass * Building = specific_cast<BuildingClass *>(Victim)) {
-		HasPower = HasPower && Building->IsPowerOnline();
+	auto hasPower = true;
 
-		if (!Building->Type->InvisibleInGame) {
-			if (HasPower || Building->Type->LaserFencePost) {
-				Building->EnableStuff();
+	if(abs == AbstractType::Building) {
+		auto const pBuilding = static_cast<BuildingClass*>(pVictim);
+		hasPower = pBuilding->IsPowerOnline();
+
+		auto const pOwner = pBuilding->Owner;
+		pOwner->RecheckTechTree = true;
+		pOwner->RecheckPower = true;
+
+		auto const pType = pBuilding->Type;
+		if(!pType->InvisibleInGame) {
+			if(hasPower || pType->LaserFencePost) {
+				pBuilding->EnableStuff();
 			}
-			updateRadarBlackout(Building);
+			updateRadarBlackout(pBuilding);
 
-			BuildingTypeClass * pType = Building->Type;
-			if (pType->Factory != AbstractType::None) {
-				Building->Owner->Update_FactoriesQueues(pType->Factory, pType->Naval, BuildCat::DontCare);
+			if(pType->Factory != AbstractType::None) {
+				pOwner->Update_FactoriesQueues(
+					pType->Factory, pType->Naval, BuildCat::DontCare);
 			}
 		}
 	}
 
-	Victim->Owner->RecheckTechTree = true;
-	Victim->Owner->RecheckPower = true;
-
-	if (Victim->Deactivated && HasPower) {
-		Victim->Reactivate();
+	if(hasPower && pVictim->Deactivated) {
+		pVictim->Reactivate();
 	}
 
 	// allow to spawn units again.
-	updateSpawnManager(Victim);
-	updateSlaveManager(Victim);
+	updateSpawnManager(pVictim);
+	updateSlaveManager(pVictim);
 
 	// update the animation
-	UpdateSparkleAnim(Victim);
+	UpdateSparkleAnim(pVictim);
 
 	// get harvesters back to work and ai units to hunt
-	if (FootClass * Foot = generic_cast<FootClass *>(Victim)) {
-		bool hasMission = false;
-		if (UnitClass * Unit = specific_cast<UnitClass *>(Victim)) {
-			if (Unit->Type->Harvester || Unit->Type->ResourceGatherer) {
+	if(auto const pFoot = abstract_cast<FootClass*>(pVictim)) {
+		auto hasMission = false;
+		if(abs == AbstractType::Unit) {
+			auto const Unit = static_cast<UnitClass*>(pVictim);
+			if(Unit->Type->Harvester || Unit->Type->ResourceGatherer) {
 				// prevent unloading harvesters from being irritated.
-				if (pData->EMPLastMission == Mission::Guard) {
-					pData->EMPLastMission = Mission::Enter;
+				auto const pExt = TechnoExt::ExtMap.Find(pVictim);
+				auto mission = pExt->EMPLastMission;
+				if(mission == Mission::Guard) {
+					mission = Mission::Enter;
 				}
 
-				Unit->QueueMission(pData->EMPLastMission, true);
+				Unit->QueueMission(mission, true);
 				hasMission = true;
 			}
 		}
 
-		if(!hasMission && !Foot->Owner->ControlledByHuman()) {
-			Foot->QueueMission(Mission::Hunt, false);
+		if(!hasMission && !pFoot->Owner->ControlledByHuman()) {
+			pFoot->QueueMission(Mission::Hunt, false);
 		}
 	}
 }
