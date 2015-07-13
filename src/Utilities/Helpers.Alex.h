@@ -2,6 +2,7 @@
 
 #include "../Misc/Debug.h"
 
+#include <BuildingClass.h>
 #include <BuildingTypeClass.h>
 #include <CellSpread.h>
 #include <Helpers/Iterators.h>
@@ -132,17 +133,20 @@ namespace Helpers {
 			\author AlexB
 			\date 2010-06-28
 		*/
-		inline std::vector<TechnoClass*> getCellSpreadItems(const CoordStruct &coords, float spread, bool includeInAir = false) {
+		inline std::vector<TechnoClass*> getCellSpreadItems(
+			CoordStruct const& coords, double const spread,
+			bool const includeInAir = false)
+		{
 			// set of possibly affected objects. every object can be here only once.
 			DistinctCollector<TechnoClass*> set;
 
 			// the quick way. only look at stuff residing on the very cells we are affecting.
-			const auto& cellCoords = MapClass::Instance->GetCellAt(coords)->MapCoords;
-			auto range = static_cast<size_t>(spread + 0.99);
+			auto const cellCoords = MapClass::Instance->GetCellAt(coords)->MapCoords;
+			auto const range = static_cast<size_t>(spread + 0.99);
 			for(CellSpreadEnumerator it(range); it; ++it) {
-				auto c = MapClass::Instance->GetCellAt(*it + cellCoords);
-				for(auto curObj = c->GetContent(); curObj; curObj = curObj->NextObject) {
-					if(auto pTechno = abstract_cast<TechnoClass*>(curObj)) {
+				auto const pCell = MapClass::Instance->GetCellAt(*it + cellCoords);
+				for(auto pObj = pCell->GetContent(); pObj; pObj = pObj->NextObject) {
+					if(auto const pTechno = abstract_cast<TechnoClass*>(pObj)) {
 						set.insert(pTechno);
 					}
 				}
@@ -151,11 +155,11 @@ namespace Helpers {
 			// flying objects are not included normally
 			if(includeInAir) {
 				// the not quite so fast way. skip everything not in the air.
-				for(auto Techno : *TechnoClass::Array) {
-					if(Techno->GetHeight() > 0) {
+				for(auto const& pTechno : *TechnoClass::Array) {
+					if(pTechno->GetHeight() > 0) {
 						// rough estimation
-						if(Techno->Location.DistanceFrom(coords) <= spread * 256) {
-							set.insert(Techno);
+						if(pTechno->Location.DistanceFrom(coords) <= spread * 256) {
+							set.insert(pTechno);
 						}
 					}
 				}
@@ -163,26 +167,31 @@ namespace Helpers {
 
 			// look closer. the final selection. put all affected items in a vector.
 			std::vector<TechnoClass*> ret;
-			for(auto Techno : set) {
+			ret.reserve(set.size());
+
+			for(auto const& pTechno : set) {
+				auto const abs = pTechno->WhatAmI();
+
 				// ignore buildings that are not visible, like ambient light posts
-				if(auto BT = abstract_cast<BuildingTypeClass*>(Techno->GetTechnoType())) {
-					if(BT->InvisibleInGame) {
+				if(abs == AbstractType::Building) {
+					auto const pBuilding = static_cast<BuildingClass*>(pTechno);
+					if(pBuilding->Type->InvisibleInGame) {
 						continue;
 					}
 				}
 
 				// get distance from impact site
-				const auto& target = Techno->GetCoords();
-				double dist = target.DistanceFrom(coords);
+				auto const target = pTechno->GetCoords();
+				auto dist = target.DistanceFrom(coords);
 
 				// reduce the distance for flying aircraft
-				if((Techno->WhatAmI() == AbstractType::Aircraft) && Techno->IsInAir()) {
+				if(abs == AbstractType::Aircraft && pTechno->IsInAir()) {
 					dist *= 0.5;
 				}
 
 				// this is good
 				if(dist <= spread * 256) {
-					ret.push_back(Techno);
+					ret.push_back(pTechno);
 				}
 			}
 
