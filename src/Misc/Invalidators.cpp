@@ -77,32 +77,32 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 		bool IsFoot = Item->WhatAmI() != AbstractType::BuildingType;
 
 		if(IsFoot && Item->SpeedType == SpeedType::None) {
-			Debug::DevLog(Debug::Error, "[%s]SpeedType is invalid!\n", Item->ID);
+			Debug::DevLog(Debug::Severity::Error, "[%s]SpeedType is invalid!\n", Item->ID);
 		}
 
 		if(IsFoot && Item->MovementZone == MovementZone::None) {
-			Debug::DevLog(Debug::Error, "[%s]MovementZone is invalid!\n", Item->ID);
+			Debug::DevLog(Debug::Severity::Error, "[%s]MovementZone is invalid!\n", Item->ID);
 		}
 
 		// this should never fire, default is 0 (which is valid), not -1.
 		// see hook at 4753F0. -AlexB
 		//if(Item->Armor == static_cast<Armor>(-1)) { 
-		//	Debug::DevLog(Debug::Error, "[%s]Armor is invalid!\n", Item->ID);
+		//	Debug::DevLog(Debug::Severity::Error, "[%s]Armor is invalid!\n", Item->ID);
 		//}
 
 		if(Item->Passengers > 0 && Item->SizeLimit < 1) {
-			Debug::DevLog(Debug::Error, "[%s]Passengers=%d and SizeLimit=%d!\n", Item->ID, Item->Passengers, Item->SizeLimit);
+			Debug::DevLog(Debug::Severity::Error, "[%s]Passengers=%d and SizeLimit=%d!\n", Item->ID, Item->Passengers, Item->SizeLimit);
 		}
 
 		auto pData = TechnoTypeExt::ExtMap.Find(Item);
 		if(Item->PoweredUnit && pData->PoweredBy.size()) {
-			Debug::DevLog(Debug::Error, "[%s] uses both PoweredUnit=yes and PoweredBy=!\n", Item->ID);
+			Debug::DevLog(Debug::Severity::Error, "[%s] uses both PoweredUnit=yes and PoweredBy=!\n", Item->ID);
 			Item->PoweredUnit = false;
 		}
 		if(auto PowersUnit = Item->PowersUnit) {
 			auto pExtraData = TechnoTypeExt::ExtMap.Find(PowersUnit);
 			if(pExtraData->PoweredBy.size()) {
-				Debug::DevLog(Debug::Error, "[%s]PowersUnit=%s, but [%s] uses PoweredBy=!\n", Item->ID, PowersUnit->ID, PowersUnit->ID);
+				Debug::DevLog(Debug::Severity::Error, "[%s]PowersUnit=%s, but [%s] uses PoweredBy=!\n", Item->ID, PowersUnit->ID, PowersUnit->ID);
 				Item->PowersUnit = nullptr;
 			}
 		}
@@ -121,7 +121,7 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 			auto Cloner = pData->ClonedAt[k];
 			if(Cloner->Factory != AbstractType::None) {
 				pData->ClonedAt.erase(pData->ClonedAt.begin() + k);
-				Debug::DevLog(Debug::Error, "[%s]ClonedAt includes %s, but %s has Factory= settings. This combination is not supported.\n"
+				Debug::DevLog(Debug::Severity::Error, "[%s]ClonedAt includes %s, but %s has Factory= settings. This combination is not supported.\n"
 						"(Protip: Factory= is not what controls unit exit behaviour, WeaponsFactory= and GDI/Nod/YuriBarracks= is.)\n"
 					, Item->ID, Cloner->ID, Cloner->ID);
 			}
@@ -132,7 +132,7 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 			auto pBData = BuildingTypeExt::ExtMap.Find(BItem);
 			if(!!pBData->CloningFacility && BItem->Factory != AbstractType::None) {
 				pBData->CloningFacility = false;
-				Debug::DevLog(Debug::Error, "[%s] cannot have both CloningFacility= and Factory=.\n"
+				Debug::DevLog(Debug::Severity::Error, "[%s] cannot have both CloningFacility= and Factory=.\n"
 					, Item->ID);
 			}
 		}
@@ -152,7 +152,7 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 				? "Combat"
 				: "Infrastructure"
 				;
-			Debug::DevLog(Debug::Warning, "Building Type [%s] does not have a valid BuildCat set!\n"
+			Debug::DevLog(Debug::Severity::Warning, "Building Type [%s] does not have a valid BuildCat set!\n"
 				"It was reset to %s, but you should really specify it explicitly.\n"
 				, B->ID, catName);
 		}
@@ -161,7 +161,7 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 	for(int i = 0; i < WeaponTypeClass::Array->Count; ++i) {
 		WeaponTypeClass *Item = WeaponTypeClass::Array->Items[i];
 		if(!Item->Warhead) {
-			Debug::DevLog(Debug::Error, "Weapon[%s] has no Warhead! This usually indicates one of two things:\n"
+			Debug::DevLog(Debug::Severity::Error, "Weapon[%s] has no Warhead! This usually indicates one of two things:\n"
 				"- The weapon was created too late and its rules weren't read (see WEEDGUY hack);\n"
 				"- The weapon's name was misspelled.\n"
 			, Item->get_ID());
@@ -179,7 +179,7 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 
 		for(auto it = LimitedClasses.begin(); it != LimitedClasses.end(); ++it) {
 			if(it->second > 512) {
-				Debug::DevLog(Debug::Warning, "The [%s] list contains more than 512 entries. "
+				Debug::DevLog(Debug::Severity::Warning, "The [%s] list contains more than 512 entries. "
 					"This might result in unexpected behaviour and crashes.\n", it->first);
 			}
 		}
@@ -188,12 +188,12 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 	for(auto i = 0; i < RulesClass::Instance->BuildConst.Count; ++i) {
 		auto BC = RulesClass::Instance->BuildConst.GetItem(i);
 		if(!BC->AIBuildThis) {
-			Debug::DevLog(Debug::Warning, "[AI]BuildConst= includes [%s], which doesn't have AIBuildThis=yes!\n", BC->ID);
+			Debug::DevLog(Debug::Severity::Warning, "[AI]BuildConst= includes [%s], which doesn't have AIBuildThis=yes!\n", BC->ID);
 		}
 	}
 
 	if(OverlayTypeClass::Array->Count > 255) {
-		Debug::DevLog(Debug::Warning, "Only 255 OverlayTypes are supported.\n");
+		Debug::DevLog(Debug::Severity::Warning, "Only 255 OverlayTypes are supported.\n");
 	}
 
 	if(Ares::bStrictParser && Debug::bParserErrorDetected) {

@@ -8,7 +8,7 @@ class REGISTERS;
 class Debug
 {
 public:
-	enum Severity {
+	enum class Severity {
 		Notice = 0x1,
 		Warning = 0x2,
 		Error = 0x3

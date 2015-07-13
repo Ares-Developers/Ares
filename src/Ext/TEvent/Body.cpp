@@ -25,7 +25,7 @@ TechnoTypeClass* TEventExt::ExtData::GetTechnoType()
 		TechnoTypeClass* pType = TechnoTypeClass::Find(eventTechno);
 
 		if(!pType) {
-			Debug::DevLog(Debug::Error, "Event references non-existing techno type \"%s\".", eventTechno);
+			Debug::DevLog(Debug::Severity::Error, "Event references non-existing techno type \"%s\".", eventTechno);
 		}
 
 		this->TechnoType = pType;

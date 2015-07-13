@@ -210,7 +210,7 @@ public:
 
 	void Clear() {
 		if(!this->Items.empty()) {
-			Debug::DevLog(Debug::Warning, "Cleared %u items from %s.\n",
+			Debug::DevLog(Debug::Severity::Warning, "Cleared %u items from %s.\n",
 				this->Items.size(), this->Name);
 		}
 		map_type().swap(this->Items);

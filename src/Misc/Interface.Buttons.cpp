@@ -174,7 +174,7 @@ Ares::UISettings::UIAction Interface::parseUIAction(const char* value, Ares::UIS
 	} else if(!_strcmpi(value, "sneakpeek")) {
 		return Ares::UISettings::UIAction::SneakPeek;
 	} else if(_strcmpi(value, "default")) {
-		Debug::DevLog(Debug::Warning, "Unrecognized UI action value: %s\n", value);
+		Debug::DevLog(Debug::Severity::Warning, "Unrecognized UI action value: %s\n", value);
 	}
 	return def;
 }

@@ -306,7 +306,7 @@ void BuildingExt::cPrismForwarding::SetSupportTarget(BuildingExt::cPrismForwardi
 	// if the target tower is already set, disconnect it by removing it from the old target tower's sender list
 	if(auto const pOldTarget = this->SupportTarget) {
 		if(!pOldTarget->Senders.Remove(this)) {
-			Debug::DevLog(Debug::Warning, "PrismForwarding::SetSupportTarget: Old target tower (%p) did not consider this tower (%p) as its sender.\n",
+			Debug::DevLog(Debug::Severity::Warning, "PrismForwarding::SetSupportTarget: Old target tower (%p) did not consider this tower (%p) as its sender.\n",
 				pOldTarget->GetOwner(), this->GetOwner());
 		}
 	}
@@ -318,7 +318,7 @@ void BuildingExt::cPrismForwarding::SetSupportTarget(BuildingExt::cPrismForwardi
 		if(pTargetTower->Senders.FindItemIndex(this) == -1) {
 			pTargetTower->Senders.AddItem(this);
 		} else {
-			Debug::DevLog(Debug::Warning, "PrismForwarding::SetSupportTarget: Tower (%p) is already in new target tower's (%p) sender list.\n",
+			Debug::DevLog(Debug::Severity::Warning, "PrismForwarding::SetSupportTarget: Tower (%p) is already in new target tower's (%p) sender list.\n",
 				this->GetOwner(), pTargetTower->GetOwner());
 		}
 	}
@@ -334,11 +334,11 @@ void BuildingExt::cPrismForwarding::RemoveAllSenders() {
 
 	// log if not all senders could be removed
 	if(this->Senders.Count) {
-		Debug::DevLog(Debug::Warning,
+		Debug::DevLog(Debug::Severity::Warning,
 			"PrismForwarding::RemoveAllSenders: Tower (%p) still has %d senders after removal completed.\n",
 			this->GetOwner(), this->Senders.Count);
 		for(auto i = 0; i < this->Senders.Count; ++i) {
-			Debug::DevLog(Debug::Warning, "Sender %03d: %p\n", i, this->Senders[i]->GetOwner());
+			Debug::DevLog(Debug::Severity::Warning, "Sender %03d: %p\n", i, this->Senders[i]->GetOwner());
 		}
 
 		this->Senders.Clear();

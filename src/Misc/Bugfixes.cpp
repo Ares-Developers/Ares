@@ -810,7 +810,7 @@ DEFINE_HOOK(749088, Count_ResetWithGivenCount, 6)
 {
 	GET(unsigned int, Width, EAX);
 	if(Width > 512) {
-		Debug::DevLog(Debug::Warning, "One of the internal counters attempted to overflow "
+		Debug::DevLog(Debug::Severity::Warning, "One of the internal counters attempted to overflow "
 			"(given width of %d exceeds maximum allowed width of 512).\n"
 			"The counter width has been reset to 512, but this can result in unpredictable behaviour and crashes.\n", Width);
 		R->EAX(512);
@@ -1112,7 +1112,7 @@ DEFINE_HOOK(4748A0, INIClass_GetPipIdx, 7)
 
 		} else if(!Parser<int>::TryParse(Ares::readBuffer, &ret)) {
 			// parsing as integer didn't work either. invalid value
-			Debug::DevLog(Debug::Warning, "Could not parse pip at [%s]%s=\n", pSection, pKey);
+			Debug::DevLog(Debug::Severity::Warning, "Could not parse pip at [%s]%s=\n", pSection, pKey);
 			ret = fallback;
 		}
 	}

@@ -230,7 +230,7 @@ void Valueable<SHPStruct *>::Read(INI_EX &parser, const char* pSection, const ch
 		if(SHPStruct *image = FileSystem::LoadSHPFile(flag)) {
 			this->Set(image);
 		} else {
-			Debug::DevLog(Debug::Warning, "Failed to find file %s referenced by [%s]%s=%s\n", flag, pSection, pKey, val);
+			Debug::DevLog(Debug::Severity::Warning, "Failed to find file %s referenced by [%s]%s=%s\n", flag, pSection, pKey, val);
 		}
 	}
 };

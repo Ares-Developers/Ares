@@ -202,7 +202,7 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 	this->UnReverseEngineer.Read(exINI, pID, "SpyEffect.UndoReverseEngineer");
 
 	if(this->StolenTechIndex >= 32) {
-		Debug::DevLog(Debug::Warning, "BuildingType %s has a SpyEffect.StolenTechIndex of %d. The value has to be less than 32.\n", pID, this->StolenTechIndex.Get());
+		Debug::DevLog(Debug::Severity::Warning, "BuildingType %s has a SpyEffect.StolenTechIndex of %d. The value has to be less than 32.\n", pID, this->StolenTechIndex.Get());
 		this->StolenTechIndex = -1;
 	}
 

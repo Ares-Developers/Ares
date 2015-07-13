@@ -37,11 +37,11 @@ void Debug::DevLog(Debug::Severity severity, const char* Format, ...) {
 
 const char * Debug::SeverityString(Debug::Severity severity) {
 	switch(severity) {
-		case Notice:
+		case Severity::Notice:
 			return "notice";
-		case Warning:
+		case Severity::Warning:
 			return "warning";
-		case Error:
+		case Severity::Error:
 			return "error";
 		default:
 			return "wtf";
@@ -259,7 +259,7 @@ void Debug::INIParseFailed(const char *section, const char *flag, const char *va
 			: "Failed to parse INI file content: [%s]%s=%s (%s)\n"
 		;
 
-		Debug::DevLog(Debug::Warning, LogMessage, section, flag, value, Message);
+		Debug::DevLog(Debug::Severity::Warning, LogMessage, section, flag, value, Message);
 	}
 }
 

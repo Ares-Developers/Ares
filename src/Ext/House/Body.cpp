@@ -171,7 +171,7 @@ signed int HouseExt::PrereqValidate
 	}
 
 	if(!HouseExt::HasNeededFactory(pHouse, pItem)) {
-		Debug::DevLog(Debug::Error, "[NCO Bug detected] "
+		Debug::DevLog(Debug::Severity::Error, "[NCO Bug detected] "
 			"House %ls meets all requirements to build %s, but doesn't have a suitable factory!\n",
 			pHouse->UIName, pItem->ID);
 		return 0;
@@ -392,14 +392,14 @@ bool HouseExt::ExtData::CheckBasePlanSanity() {
 	}
 	if(!canBuild) {
 		AllIsWell = false;
-		Debug::DevLog(Debug::Error, errorMsg, House->Type->ID, "BaseUnit");
+		Debug::DevLog(Debug::Severity::Error, errorMsg, House->Type->ID, "BaseUnit");
 	}
 
 	auto CheckList = [House, errorMsg, &AllIsWell]
 			(DynamicVectorClass<BuildingTypeClass *> const& List, const char * const ListName) -> void {
 		if(!House->FirstBuildableFromArray(List)) {
 			AllIsWell = false;
-			Debug::DevLog(Debug::Error, errorMsg, House->Type->ID, ListName);
+			Debug::DevLog(Debug::Severity::Error, errorMsg, House->Type->ID, ListName);
 		}
 	};
 
