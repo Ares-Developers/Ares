@@ -22,27 +22,33 @@ void EMP_Log(const char* pFormat, TArgs&&... args) {
 	deactivated temporarily. Their special functions stop working until the
 	EMP ceases. Flying Aircraft crashes.
 
-	\param EMPulse The electromagnetic pulse to create.
-	\param Coords The location the projectile detonated.
-	\param Firer The Techno that fired the pulse.
+	\param pWarhead The warhead that creates the electromagnetic pulse.
+	\param coords The location the projectile detonated.
+	\param pFirer The Techno that fired the pulse.
 
 	\author AlexB
 	\date 2010-05-20
 */
-void EMPulse::CreateEMPulse(WarheadTypeExt::ExtData *Warhead, const CoordStruct &Coords, TechnoClass *Firer) {
-	if (!Warhead) {
-		Debug::DevLog(Debug::Error, "Trying to CreateEMPulse() with Warhead pointing to NULL. Funny.\n");
+void EMPulse::CreateEMPulse(
+	WarheadTypeExt::ExtData* const pWarhead, CoordStruct const& coords,
+	TechnoClass* const pFirer)
+{
+	if(!pWarhead) {
+		Debug::DevLog(Debug::Error,
+			"Trying to CreateEMPulse() with Warhead pointing to NULL.\n");
 		return;
 	}
 
-	EMP_Log("[CreateEMPulse] Duration: %d, Cap: %d\n", Warhead->EMP_Duration, Warhead->EMP_Cap);
-
 	// set of affected objects. every object can be here only once.
-	auto items = Helpers::Alex::getCellSpreadItems(Coords, Warhead->OwnerObject()->CellSpread, true);
+	auto const items = Helpers::Alex::getCellSpreadItems(
+		coords, pWarhead->OwnerObject()->CellSpread, true);
+
+	EMP_Log("[CreateEMPulse] Duration: %d, Cap: %d on %u objects\n",
+		pWarhead->EMP_Duration, pWarhead->EMP_Cap, items.size());
 
 	// affect each object
-	for(const auto& Item : items) {
-		deliverEMPDamage(Item, Firer, Warhead);
+	for(const auto& pItem : items) {
+		deliverEMPDamage(pItem, pFirer, pWarhead);
 	}
 
 	EMP_Log("[CreateEMPulse] Done.\n");
