@@ -53,9 +53,7 @@ __declspec(noreturn) LONG CALLBACK Exception::ExceptionHandler(PEXCEPTION_POINTE
 	case EXCEPTION_STACK_OVERFLOW:
 	case 0xE06D7363: // exception thrown and not caught
 	{
-		std::wstring path;
-
-		Exception::PrepareSnapshotDirectory(path);
+		std::wstring path = Exception::PrepareSnapshotDirectory();
 
 		Debug::Flush();
 		if(Debug::bLog) {
@@ -132,21 +130,24 @@ __declspec(noreturn) LONG CALLBACK Exception::ExceptionHandler(PEXCEPTION_POINTE
 
 #pragma warning(pop)
 
-void Exception::PrepareSnapshotDirectory(std::wstring &buffer) {
+std::wstring Exception::PrepareSnapshotDirectory() {
 	wchar_t path[MAX_PATH];
-	SYSTEMTIME time;
+	auto const len = GetCurrentDirectoryW(MAX_PATH, path);
+	std::wstring buffer(path, path + len);
 
-	GetLocalTime(&time);
-	GetCurrentDirectoryW(MAX_PATH, path);
-
-	buffer = path;
 	buffer += L"\\debug";
 	CreateDirectoryW(buffer.c_str(), nullptr);
 
+	SYSTEMTIME time;
+	GetLocalTime(&time);
+
 	wchar_t subpath[64];
 	swprintf(subpath, 64, L"\\snapshot-%04u%02u%02u-%02u%02u%02u", time.wYear, time.wMonth, time.wDay, time.wHour, time.wMinute, time.wSecond);
+
 	buffer += subpath;
 	CreateDirectoryW(buffer.c_str(), nullptr);
+
+	return buffer;
 }
 
 void Exception::FullDump(
@@ -158,7 +159,7 @@ void Exception::FullDump(
 	if(destinationFolder) {
 		filename = *destinationFolder;
 	} else {
-		Exception::PrepareSnapshotDirectory(filename);
+		filename = Exception::PrepareSnapshotDirectory();
 	}
 
 	filename += L"\\extcrashdump.dmp";

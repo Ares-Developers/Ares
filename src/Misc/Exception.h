@@ -18,5 +18,5 @@ public:
 		std::wstring const* destinationFolder = nullptr,
 		std::wstring* generatedFilename = nullptr);
 
-	static void PrepareSnapshotDirectory(std::wstring &buffer);
+	static std::wstring PrepareSnapshotDirectory();
 };

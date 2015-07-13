@@ -52,8 +52,7 @@ DEFINE_HOOK(64CCBF, DoList_ReplaceReconMessage, 6)
 		SetClassLong(Game::hWnd, GCL_HCURSOR, reinterpret_cast<LONG>(loadCursor));
 		SetCursor(loadCursor);
 
-		std::wstring path;
-		Exception::PrepareSnapshotDirectory(path);
+		std::wstring path = Exception::PrepareSnapshotDirectory();
 
 		if(Debug::bLog) {
 			Debug::Log("Copying debug log\n");
