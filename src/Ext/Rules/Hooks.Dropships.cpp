@@ -2,6 +2,7 @@
 #include "../../Enum/ArmorTypes.h"
 #include <Strsafe.h>
 #include <InputManagerClass.h>
+#include <WWMouseClass.h>
 
 DEFINE_HOOK(4B769B, ScenarioClass_GenerateDropshipLoadout, 5)
 {

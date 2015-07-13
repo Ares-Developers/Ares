@@ -1,16 +1,9 @@
 #pragma once
 
-//define DEBUG_FILE "DEBUG.TXT"
-
-#include "..\Ares.h"
 #include <cstdio>
 #include <string>
-#include <YRPPCore.h>
-#ifdef _MSC_VER
-#include <Dbghelp.h>
-#endif
 
-#include "../UI/Dialogs.h"
+class REGISTERS;
 
 class Debug
 {
@@ -24,7 +17,6 @@ public:
 
 	static bool bLog;
 	static FILE* pLogFile;
-//	static FILE* pDevLogFile;
 	static std::wstring LogFileName;
 	static std::wstring LogFileTempName;
 
@@ -52,7 +44,6 @@ public:
 	static void FatalError(bool Dump = false); /* takes formatted message from Ares::readBuffer */
 	static void FatalError(const char *Message, ...);
 	static __declspec(noreturn) void FatalErrorAndExit(const char *Message, ...);
-	static int __stdcall FatalDialog_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 	static std::wstring FullDump();
 	static std::wstring FullDump(std::wstring destinationFolder);

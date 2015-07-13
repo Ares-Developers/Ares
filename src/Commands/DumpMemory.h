@@ -3,6 +3,7 @@
 #include "Commands.h"
 
 #include "../Misc/Debug.h"
+#include "../UI/Dialogs.h"
 
 #include <MessageListClass.h>
 

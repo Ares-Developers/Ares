@@ -3,6 +3,8 @@
 #include "Debug.h"
 #include "../Ares.CRT.h"
 
+#include <Helpers\Macro.h>
+
 std::vector<const char*> EVAVoices::Types;
 
 // replace the complete ini loading function

@@ -1,5 +1,7 @@
 #include "Body.h"
 
+#include <Helpers\Macro.h>
+
 DEFINE_HOOK(6DD8D7, TActionClass_Execute, A)
 {
 	GET(TActionClass*, pAction, ESI);

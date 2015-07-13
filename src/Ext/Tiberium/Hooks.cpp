@@ -4,6 +4,7 @@
 #include <OverlayTypeClass.h>
 #include <MouseClass.h>
 #include <ScenarioClass.h>
+#include <Helpers\Macro.h>
 
 // this was only a leftover stub from TS. reimplemented
 // using the same mechanism.

@@ -1,4 +1,5 @@
 #include "CSFLoader.h"
+#include <algorithm>
 #include <cstdio>
 
 #include "../Ares.h"

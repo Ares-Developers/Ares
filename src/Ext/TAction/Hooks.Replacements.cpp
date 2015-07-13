@@ -3,6 +3,8 @@
 #include <ScenarioClass.h>
 #include <VocClass.h>
 
+#include <Helpers\Macro.h>
+
 // #1004906: support more than 100 waypoints
 DEFINE_HOOK(6E1780, TActionClass_PlayAudioAtRandomWP, 6)
 {

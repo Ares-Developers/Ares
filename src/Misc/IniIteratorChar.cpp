@@ -1,5 +1,7 @@
 #include "IniIteratorChar.h"
 
+#include <Helpers\Macro.h>
+
 const char* const IniIteratorChar::iteratorChar = "+";
 const char* const IniIteratorChar::iteratorReplacementFormat = "%d";
 

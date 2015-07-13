@@ -2,6 +2,8 @@
 #include "Debug.h"
 #include "IniSectionIncludes.h"
 
+#include <Helpers\Macro.h>
+
 INIClass::INISection* IniSectionIncludes::includedSection = nullptr;
 
 void IniSectionIncludes::CopySection(CCINIClass* ini, INIClass::INISection* source, const char* destName)

@@ -2,6 +2,7 @@
 #include "../Ext/Abstract/Body.h"
 #include <AnimClass.h>
 #include <CellClass.h>
+#include <ColorScheme.h>
 #include <HouseClass.h>
 #include <InfantryClass.h>
 #include <UnitClass.h>

@@ -1,12 +1,13 @@
 #include "Debug.h"
 
 #include "Exception.h"
+#include "..\Ares.h"
 
-#include <Unsorted.h>
 #include <MouseClass.h>
+#include <Unsorted.h>
 #include <WWMouseClass.h>
-#include <CRT.h>
-#include "..\Ares.version.h"
+
+#include <Dbghelp.h>
 
 bool Debug::bLog = true;
 bool Debug::bTrackParserErrors = false;
