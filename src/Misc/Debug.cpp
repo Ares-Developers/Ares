@@ -169,14 +169,12 @@ void Debug::Flush() {
  * minidump
  */
 
-void Debug::FullDump(MINIDUMP_EXCEPTION_INFORMATION *pException, std::wstring * destinationFolder, std::wstring * generatedFilename) {
-	auto filename = destinationFolder
-		? Exception::FullDump(*destinationFolder, pException)
-		: Exception::FullDump(pException);
+std::wstring Debug::FullDump() {
+	return Exception::FullDump();
+}
 
-	if(generatedFilename) {
-		*generatedFilename = std::move(filename);
-	}
+std::wstring Debug::FullDump(std::wstring destinationFolder) {
+	return Exception::FullDump(std::move(destinationFolder));
 }
 
 void Debug::FreeMouse() {
@@ -232,7 +230,7 @@ void Debug::FatalError(bool Dump) {
 	MessageBoxW(Game::hWnd, Message, L"Fatal Error - Yuri's Revenge", MB_OK | MB_ICONERROR);
 
 	if(Dump) {
-		Debug::FullDump(nullptr);
+		Debug::FullDump();
 	}
 }
 

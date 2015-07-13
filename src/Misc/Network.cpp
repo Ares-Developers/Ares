@@ -61,7 +61,7 @@ DEFINE_HOOK(64CCBF, DoList_ReplaceReconMessage, 6)
 		}
 
 		Debug::Log("Making a memory snapshot\n");
-		Debug::FullDump(nullptr, &path);
+		Debug::FullDump(std::move(path));
 
 		loadCursor = LoadCursor(nullptr, IDC_ARROW);
 		SetClassLong(Game::hWnd, GCL_HCURSOR, reinterpret_cast<LONG>(loadCursor));

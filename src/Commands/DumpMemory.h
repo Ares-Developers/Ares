@@ -42,8 +42,7 @@ public:
 
 		MessageListClass::Instance->PrintMessage(L"Dumping process memory...");
 
-		std::wstring filename;
-		Debug::FullDump(nullptr, nullptr, &filename);
+		std::wstring filename = Debug::FullDump();
 
 		Debug::Log("Process memory dumped to %ls\n", filename);
 
