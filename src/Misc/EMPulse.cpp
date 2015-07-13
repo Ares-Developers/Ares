@@ -567,79 +567,86 @@ bool EMPulse::thresholdExceeded(TechnoClass * Victim) {
 	but it has to do all the other stuff now, or Slave Miners won't stop working.
 	Or other bad stuff happens.
 
-	\param Victim The Techno that is under EMP effect.
-	\param Source The house to credit kills to.
+	\param pVictim The Techno that is under EMP effect.
+	\param pSource The house to credit kills to.
 
-	\returns True if Victim has been destroyed by the EMP effect, False otherwise.
+	\returns True if pVictim has been destroyed by the EMP effect, False otherwise.
 
 	\author AlexB
 	\date 2010-05-21
 */
-bool EMPulse::enableEMPEffect(TechnoClass * Victim, ObjectClass * Source) {
-	Victim->Owner->RecheckTechTree = true;
-	Victim->Owner->RecheckPower = true;
+bool EMPulse::enableEMPEffect(
+	TechnoClass* const pVictim, ObjectClass* const pSource)
+{
+	auto const abs = pVictim->WhatAmI();
 
-	if (BuildingClass * Building = specific_cast<BuildingClass *>(Victim)) {
-		Building->DisableStuff();
-		updateRadarBlackout(Building);
+	if(abs == AbstractType::Building) {
+		auto const pBuilding = static_cast<BuildingClass*>(pVictim);
+		auto const pOwner = pBuilding->Owner;
 
-		BuildingTypeClass * pType = Building->Type;
-		if (pType->Factory != AbstractType::None) {
-			Building->Owner->Update_FactoriesQueues(pType->Factory, pType->Naval, BuildCat::DontCare);
+		pOwner->RecheckTechTree = true;
+		pOwner->RecheckPower = true;
+
+		pBuilding->DisableStuff();
+		updateRadarBlackout(pBuilding);
+
+		auto const pType = pBuilding->Type;
+		if(pType->Factory != AbstractType::None) {
+			pOwner->Update_FactoriesQueues(
+				pType->Factory, pType->Naval, BuildCat::DontCare);
 		}
-	} else {
-		if (AircraftClass * Aircraft = specific_cast<AircraftClass *>(Victim)) {
-			// crash flying aircraft
-			if (Aircraft->GetHeight() > 0) {
-				EMP_Log("[enableEMPEffect] Plane crash: %s\n", Aircraft->get_ID());
-				TechnoExt::Destroy(Victim, generic_cast<TechnoClass*>(Source));
-				return true;
-			}
+	} else if(abs == AbstractType::Aircraft) {
+		// crash flying aircraft
+		auto const pAircraft = static_cast<AircraftClass*>(pVictim);
+		if(pAircraft->GetHeight() > 0) {
+			EMP_Log("[enableEMPEffect] Plane crash: %s\n", pAircraft->get_ID());
+			TechnoExt::Destroy(pVictim, abstract_cast<TechnoClass*>(pSource));
+			return true;
 		}
 	}
 
 	// cache the last mission this thing did
-	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(Victim);
-	pData->EMPLastMission = Victim->CurrentMission;
+	auto const pExt = TechnoExt::ExtMap.Find(pVictim);
+	pExt->EMPLastMission = pVictim->CurrentMission;
 
 	// detach temporal
-	if(Victim->IsWarpingSomethingOut()) {
-		Victim->TemporalImUsing->LetGo();
+	if(pVictim->IsWarpingSomethingOut()) {
+		pVictim->TemporalImUsing->LetGo();
 	}
-	
+
 	// remove the unit from its team
-	if (FootClass * Foot = generic_cast<FootClass *>(Victim)) {
-		if (Foot->BelongsToATeam()) {
-			Foot->Team->LiberateMember(Foot);
+	if(auto const pFoot = abstract_cast<FootClass*>(pVictim)) {
+		if(pFoot->BelongsToATeam()) {
+			pFoot->Team->LiberateMember(pFoot);
 		}
 	}
 
 	// deactivate and sparkle
-	if (!Victim->Deactivated && IsDeactivationAdvisable(Victim)) {
-		bool selected = Victim->IsSelected;
-		Victim->Deactivate();
+	if(!pVictim->Deactivated && IsDeactivationAdvisable(pVictim)) {
+		auto selected = pVictim->IsSelected;
+		pVictim->Deactivate();
 		if(selected) {
-			bool feedback = Unsorted::MoveFeedback;
+			auto const feedback = Unsorted::MoveFeedback;
 			Unsorted::MoveFeedback = false;
-			Victim->Select();
+			pVictim->Select();
 			Unsorted::MoveFeedback = feedback;
 		}
 	}
 
 	// release all captured units.
-	if (Victim->CaptureManager) {
-		Victim->CaptureManager->FreeAll();
+	if(pVictim->CaptureManager) {
+		pVictim->CaptureManager->FreeAll();
 	}
 
 	// update managers.
-	updateSpawnManager(Victim, Source);
-	updateSlaveManager(Victim);
+	updateSpawnManager(pVictim, pSource);
+	updateSlaveManager(pVictim);
 
 	// set the sparkle animation.
-	UpdateSparkleAnim(Victim);
+	UpdateSparkleAnim(pVictim);
 
 	// warn the player
-	announceAttack(Victim);
+	announceAttack(pVictim);
 
 	// the unit still lives.
 	return false;
