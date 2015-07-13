@@ -187,26 +187,7 @@ void Debug::PrepareSnapshotDirectory(std::wstring &buffer) {
 }
 
 void Debug::FullDump(MINIDUMP_EXCEPTION_INFORMATION *pException, std::wstring * destinationFolder, std::wstring * generatedFilename) {
-	std::wstring filename;
-	if(destinationFolder) {
-		filename = *destinationFolder;
-	} else {
-		Debug::PrepareSnapshotDirectory(filename);
-	}
-
-	filename += L"\\extcrashdump.dmp";
-
-	if(generatedFilename) {
-		generatedFilename->assign(filename);
-	}
-
-	HANDLE dumpFile = CreateFileW(filename.c_str(), GENERIC_READ | GENERIC_WRITE,
-		FILE_SHARE_WRITE | FILE_SHARE_READ, nullptr, CREATE_ALWAYS, FILE_FLAG_WRITE_THROUGH, nullptr);
-
-	MINIDUMP_TYPE type = static_cast<MINIDUMP_TYPE>(MiniDumpWithFullMemory);
-
-	MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), dumpFile, type, pException, nullptr, nullptr);
-	CloseHandle(dumpFile);
+	Exception::FullDump(pException, destinationFolder, generatedFilename);
 }
 
 void Debug::FreeMouse() {

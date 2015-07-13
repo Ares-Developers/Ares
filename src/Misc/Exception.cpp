@@ -102,7 +102,7 @@ __declspec(noreturn) LONG CALLBACK Exception::ExceptionHandler(PEXCEPTION_POINTE
 			expParam.ExceptionPointers = pExs;
 			expParam.ClientPointers = FALSE;
 
-			Debug::FullDump(&expParam, &path);
+			Exception::FullDump(&expParam, &path);
 
 			loadCursor = LoadCursor(nullptr, IDC_ARROW);
 			SetClassLong(Game::hWnd, GCL_HCURSOR, reinterpret_cast<LONG>(loadCursor));
@@ -131,6 +131,33 @@ __declspec(noreturn) LONG CALLBACK Exception::ExceptionHandler(PEXCEPTION_POINTE
 };
 
 #pragma warning(pop)
+
+void Exception::FullDump(
+	PMINIDUMP_EXCEPTION_INFORMATION const pException,
+	std::wstring const* const destinationFolder,
+	std::wstring* const generatedFilename)
+{
+	std::wstring filename;
+	if(destinationFolder) {
+		filename = *destinationFolder;
+	} else {
+		Debug::PrepareSnapshotDirectory(filename);
+	}
+
+	filename += L"\\extcrashdump.dmp";
+
+	if(generatedFilename) {
+		generatedFilename->assign(filename);
+	}
+
+	HANDLE dumpFile = CreateFileW(filename.c_str(), GENERIC_READ | GENERIC_WRITE,
+		FILE_SHARE_WRITE | FILE_SHARE_READ, nullptr, CREATE_ALWAYS, FILE_FLAG_WRITE_THROUGH, nullptr);
+
+	MINIDUMP_TYPE type = static_cast<MINIDUMP_TYPE>(MiniDumpWithFullMemory);
+
+	MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), dumpFile, type, pException, nullptr, nullptr);
+	CloseHandle(dumpFile);
+}
 
 //ifdef DUMP_EXTENSIVE
 DEFINE_HOOK(4C8FE0, Exception_Handler, 9)
