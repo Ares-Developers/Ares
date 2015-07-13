@@ -49,8 +49,6 @@ public:
 
 	/** TODO: review if all these errors are needed */
 
-	static __declspec(noreturn) void Exit(UINT ExitCode = 1u);
-
 	static void FatalError(bool Dump = false); /* takes formatted message from Ares::readBuffer */
 	static void FatalError(const char *Message, ...);
 	static __declspec(noreturn) void FatalErrorAndExit(const char *Message, ...);

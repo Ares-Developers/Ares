@@ -202,7 +202,7 @@ void Ares::CheckProcessorFeatures() {
 			"Ares - CPU Requirements", MB_ICONERROR);
 		Debug::Log("Ares will now exit.\n");
 		Ares::ExeTerminate();
-		Debug::Exit(553);
+		Exception::Exit(553);
 	}
 #endif
 }

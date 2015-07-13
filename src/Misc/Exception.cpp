@@ -1,6 +1,7 @@
 #include "Exception.h"
 
 #include "Debug.h"
+#include "../Ares.h"
 #include "../Ares.version.h"
 
 #include <Unsorted.h>
@@ -125,7 +126,7 @@ __declspec(noreturn) LONG CALLBACK Exception::ExceptionHandler(PEXCEPTION_POINTE
 		break;
 	}
 
-	Debug::Exit(pExs->ExceptionRecord->ExceptionCode);
+	Exception::Exit(pExs->ExceptionRecord->ExceptionCode);
 };
 
 #pragma warning(pop)
@@ -172,6 +173,12 @@ std::wstring Exception::FullDump(
 	CloseHandle(dumpFile);
 
 	return filename;
+}
+
+__declspec(noreturn) void Exception::Exit(UINT ExitCode) {
+	Debug::Log("Exiting...\n");
+	Ares::bShuttingDown = true;
+	ExitProcess(ExitCode);
 }
 
 //ifdef DUMP_EXTENSIVE

@@ -210,12 +210,6 @@ void Debug::FreeMouse() {
 //	}
 }
 
-__declspec(noreturn) void Debug::Exit(UINT ExitCode) {
-		Debug::Log("Exiting...\n");
-		Ares::bShuttingDown = true;
-		ExitProcess(ExitCode);
-}
-
 void Debug::FatalError(bool Dump) {
 	wchar_t Message[0x400];
 	wsprintfW(Message,
@@ -254,7 +248,7 @@ __declspec(noreturn) void Debug::FatalErrorAndExit(const char *Message, ...) {
 	va_end(args);
 
 	Debug::FatalError(false);
-	Debug::Exit();
+	Exception::Exit();
 }
 
 void Debug::INIParseFailed(const char *section, const char *flag, const char *value, const char *Message) {

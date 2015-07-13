@@ -18,4 +18,6 @@ public:
 		PMINIDUMP_EXCEPTION_INFORMATION pException = nullptr);
 
 	static std::wstring PrepareSnapshotDirectory();
+
+	static __declspec(noreturn) void Exit(UINT ExitCode = 1u);
 };
