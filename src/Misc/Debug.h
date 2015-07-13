@@ -44,8 +44,6 @@ public:
 	static void __cdecl LogUnflushed(const char *Format, ...);
 	static void LogUnflushed(const char* Format, va_list ArgList);
 	static void Flush();
-	static __declspec(noreturn) LONG CALLBACK ExceptionHandler(PEXCEPTION_POINTERS pExs);
-	static LONG CALLBACK ExceptionFilter(PEXCEPTION_POINTERS pExs);
 
 	static void FreeMouse();
 

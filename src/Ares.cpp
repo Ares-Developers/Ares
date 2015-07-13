@@ -10,6 +10,7 @@
 
 #include "Misc/Debug.h"
 #include "Misc/EMPulse.h"
+#include "Misc/Exception.h"
 
 #ifdef IS_RELEASE_VER
 const bool IsStable = true;
@@ -116,7 +117,7 @@ void __stdcall Ares::ExeRun()
 	if(Ares::ExceptionMode != Ares::ExceptionHandlerMode::Default) {
 		if(HINSTANCE handle = GetModuleHandle(TEXT("kernel32.dll"))) {
 			if(GetProcAddress(handle, "AddVectoredExceptionHandler")) {
-				Ares::pExceptionHandler = AddVectoredExceptionHandler(1, Debug::ExceptionFilter);
+				Ares::pExceptionHandler = AddVectoredExceptionHandler(1, Exception::ExceptionFilter);
 			}
 		}
 	}
