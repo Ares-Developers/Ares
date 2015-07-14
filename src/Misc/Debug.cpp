@@ -21,9 +21,7 @@ void (_cdecl* Debug::Log)(const char* pFormat, ...) =
 	(void (__cdecl *)(const char *,...))0x4068E0;
 
 void Debug::DevLog(Debug::Severity severity, const char* Format, ...) {
-	if(Debug::bTrackParserErrors) {
-		Debug::bParserErrorDetected = true;
-	}
+	Debug::RegisterParserError();
 	if(!pLogFile) {
 		return;
 	}

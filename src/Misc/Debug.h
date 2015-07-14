@@ -17,6 +17,12 @@ public:
 		Fatal = 5
 	};
 
+	static void RegisterParserError() {
+		if(Debug::bTrackParserErrors) {
+			Debug::bParserErrorDetected = true;
+		}
+	}
+
 	static bool bLog;
 	static FILE* pLogFile;
 	static std::wstring LogFileName;
