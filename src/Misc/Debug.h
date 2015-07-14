@@ -20,6 +20,20 @@ public:
 	// logging
 
 	template <typename... TArgs>
+	static void Log(bool enabled, Debug::Severity severity, const char* const pFormat, TArgs&&... args) {
+		if(enabled) {
+			Debug::Log(severity, pFormat, std::forward<TArgs>(args)...);
+		}
+	}
+
+	template <typename... TArgs>
+	static void Log(bool enabled, const char* const pFormat, TArgs&&... args) {
+		if(enabled) {
+			Debug::Log(pFormat, std::forward<TArgs>(args)...);
+		}
+	}
+
+	template <typename... TArgs>
 	static void Log(Debug::Severity severity, const char* const pFormat, TArgs&&... args) {
 		Debug::LogFlushed(severity, pFormat, std::forward<TArgs>(args)...);
 	}
