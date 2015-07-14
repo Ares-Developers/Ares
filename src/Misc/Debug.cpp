@@ -139,45 +139,51 @@ void Debug::LogFileRemove()
 }
 
 void Debug::DumpObj(void const* const data, size_t const len) {
-	Debug::Log("Dumping %u bytes of object at %p\n", len, data);
+	if(!Debug::LogFileActive()) {
+		return;
+	}
+	Debug::LogUnflushed("Dumping %u bytes of object at %p\n", len, data);
 	auto const bytes = static_cast<byte const*>(data);
 
-	Debug::Log("       |");
+	Debug::LogUnflushed("       |");
 	for(auto i = 0u; i < 0x10u; ++i) {
-		Debug::Log(" %02X |", i);
+		Debug::LogUnflushed(" %02X |", i);
 	}
-	Debug::Log("\n");
-	Debug::Log("-------|");
+	Debug::LogUnflushed("\n");
+	Debug::LogUnflushed("-------|");
 	for(auto i = 0u; i < 0x10u; ++i) {
-		Debug::Log("----|", i);
+		Debug::LogUnflushed("----|", i);
 	}
 	auto const bytesToPrint = (len + 0x10 - 1) / 0x10 * 0x10;
 	for(auto startRow = 0u; startRow < bytesToPrint; startRow += 0x10) {
-		Debug::Log("\n");
-		Debug::Log(" %05X |", startRow);
+		Debug::LogUnflushed("\n");
+		Debug::LogUnflushed(" %05X |", startRow);
 		auto const bytesInRow = std::min(len - startRow, 0x10u);
 		for(auto i = 0u; i < bytesInRow; ++i) {
-			Debug::Log(" %02X |", bytes[startRow + i]);
+			Debug::LogUnflushed(" %02X |", bytes[startRow + i]);
 		}
 		for(auto i = bytesInRow; i < 0x10u; ++i) {
-			Debug::Log(" -- |");
+			Debug::LogUnflushed(" -- |");
 		}
 		for(auto i = 0u; i < bytesInRow; ++i) {
 			auto const& sym = bytes[startRow + i];
-			Debug::Log("%c", isprint(sym) ? sym : '?');
+			Debug::LogUnflushed("%c", isprint(sym) ? sym : '?');
 		}
 	}
-	Debug::Log("\nEnd of dump.\n");
+	Debug::Log("\nEnd of dump.\n"); // flushes
 }
 
 void Debug::DumpStack(REGISTERS* R, size_t len, int startAt) {
-	Debug::Log("Dumping %X bytes of stack\n", len);
+	if(!Debug::LogFileActive()) {
+		return;
+	}
+	Debug::LogUnflushed("Dumping %X bytes of stack\n", len);
 	auto const end = len / 4;
 	auto const* const mem = R->lea_Stack<DWORD*>(startAt);
 	for(auto i = 0u; i < end; ++i) {
-		Debug::Log("esp+%04X = %08X\n", i * 4, mem[i]);
+		Debug::LogUnflushed("esp+%04X = %08X\n", i * 4, mem[i]);
 	}
-	Debug::Log("Done.\n");
+	Debug::Log("Done.\n"); // flushes
 }
 
 /**
