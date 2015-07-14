@@ -42,16 +42,20 @@ void Debug::LogWithVArgs(const char* const pFormat, va_list args) {
 	}
 }
 
-const char * Debug::SeverityString(Debug::Severity severity) {
+const char* Debug::SeverityString(Debug::Severity const severity) {
 	switch(severity) {
-		case Severity::Notice:
-			return "notice";
-		case Severity::Warning:
-			return "warning";
-		case Severity::Error:
-			return "error";
-		default:
-			return "wtf";
+	case Severity::Vebose:
+		return "verbose";
+	case Severity::Notice:
+		return "notice";
+	case Severity::Warning:
+		return "warning";
+	case Severity::Error:
+		return "error";
+	case Severity::Fatal:
+		return "fatal";
+	default:
+		return "wtf";
 	}
 }
 

@@ -9,9 +9,12 @@ class Debug
 {
 public:
 	enum class Severity {
-		Notice = 0x1,
-		Warning = 0x2,
-		Error = 0x3
+		None = 0,
+		Vebose = 1,
+		Notice = 2,
+		Warning = 3,
+		Error = 4,
+		Fatal = 5
 	};
 
 	static bool bLog;
