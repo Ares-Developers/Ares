@@ -43,11 +43,36 @@ public:
 		Debug::LogFlushed(pFormat, std::forward<TArgs>(args)...);
 	}
 
+	static void LogWithVArgs(const char* const pFormat, va_list args);
+
+	// parser errors
+
+	static bool bTrackParserErrors;
+	static bool bParserErrorDetected;
+
+	static void INIParseFailed(const char *section, const char *flag, const char *value, const char *Message = nullptr);
+
 	static void RegisterParserError() {
 		if(Debug::bTrackParserErrors) {
 			Debug::bParserErrorDetected = true;
 		}
 	}
+
+	// dumping
+
+	static void DumpStack(REGISTERS* R, size_t len, int startAt = 0);
+
+	static void DumpObj(void const* data, size_t len);
+
+	template <typename T>
+	static void DumpObj(const T& object) {
+		DumpObj(&object, sizeof(object));
+	}
+
+	static std::wstring FullDump();
+	static std::wstring FullDump(std::wstring destinationFolder);
+
+	// unsorted
 
 	static bool bLog;
 	static FILE* pLogFile;
@@ -58,15 +83,6 @@ public:
 	static void LogFileOpen();
 	static void LogFileClose(int tag);
 	static void LogFileRemove();
-	static void DumpObj(void const* data, size_t len);
-	static void DumpStack(REGISTERS* R, size_t len, int startAt = 0);
-
-	template <typename T>
-	static void DumpObj(const T& object) {
-		DumpObj(&object, sizeof(object));
-	}
-
-	static void LogWithVArgs(const char* const pFormat, va_list args);
 
 	static void FreeMouse();
 
@@ -75,14 +91,6 @@ public:
 	static void FatalError(bool Dump = false); /* takes formatted message from Ares::readBuffer */
 	static void FatalError(const char *Message, ...);
 	static __declspec(noreturn) void FatalErrorAndExit(const char *Message, ...);
-
-	static std::wstring FullDump();
-	static std::wstring FullDump(std::wstring destinationFolder);
-
-	static bool bTrackParserErrors;
-	static bool bParserErrorDetected;
-
-	static void INIParseFailed(const char *section, const char *flag, const char *value, const char *Message = nullptr);
 
 private:
 	static const char* SeverityString(Debug::Severity severity);
