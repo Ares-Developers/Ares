@@ -75,7 +75,6 @@ public:
 	// unsorted
 
 	static bool bLog;
-	static FILE* pLogFile;
 	static std::wstring LogFileName;
 	static std::wstring LogFileTempName;
 
@@ -93,6 +92,12 @@ public:
 	static __declspec(noreturn) void FatalErrorAndExit(const char *Message, ...);
 
 private:
+	static FILE* LogFile;
+
+	static bool LogFileActive() {
+		return Debug::bLog && Debug::LogFile;
+	}
+
 	static const char* SeverityString(Debug::Severity severity);
 
 	// the two base cases, with flushing

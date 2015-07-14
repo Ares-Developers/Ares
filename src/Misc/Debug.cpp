@@ -13,7 +13,7 @@ bool Debug::bLog = true;
 bool Debug::bTrackParserErrors = false;
 bool Debug::bParserErrorDetected = false;
 
-FILE *Debug::pLogFile = nullptr;
+FILE* Debug::LogFile = nullptr;
 std::wstring Debug::LogFileName;
 std::wstring Debug::LogFileTempName;
 
@@ -37,7 +37,7 @@ const char* Debug::SeverityString(Debug::Severity const severity) {
 void Debug::LogFlushed(
 	Debug::Severity const severity, const char* const pFormat, ...)
 {
-	if(bLog && pLogFile) {
+	if(Debug::LogFileActive()) {
 		if(severity != Severity::None) {
 			Debug::LogUnflushed(
 				"[Developer %s]", Debug::SeverityString(severity));
@@ -58,7 +58,7 @@ void Debug::LogFlushed(const char* const pFormat, ...)
 }
 
 void Debug::LogWithVArgs(const char* const pFormat, va_list const args) {
-	if(bLog && pLogFile) {
+	if(Debug::LogFileActive()) {
 		Debug::LogWithVArgsUnflushed(pFormat, args);
 		Debug::Flush();
 	}
@@ -74,11 +74,11 @@ void __cdecl Debug::LogUnflushed(const char* const pFormat, ...) {
 void Debug::LogWithVArgsUnflushed(
 	const char* const pFormat, va_list const args)
 {
-	vfprintf(Debug::pLogFile, pFormat, args);
+	vfprintf(Debug::LogFile, pFormat, args);
 }
 
 void Debug::Flush() {
-	fflush(Debug::pLogFile);
+	fflush(Debug::LogFile);
 }
 
 void Debug::LogFileOpen()
@@ -86,8 +86,8 @@ void Debug::LogFileOpen()
 	Debug::MakeLogFile();
 	Debug::LogFileClose(999);
 
-	pLogFile = _wfsopen(Debug::LogFileTempName.c_str(), L"w", _SH_DENYWR);
-	if(!pLogFile) {
+	LogFile = _wfsopen(Debug::LogFileTempName.c_str(), L"w", _SH_DENYWR);
+	if(!LogFile) {
 		wchar_t msg[100] = L"\0";
 		wsprintfW(msg, L"Log file failed to open. Error code = %X", errno);
 		MessageBoxW(Game::hWnd, Debug::LogFileTempName.c_str(), msg, MB_OK | MB_ICONEXCLAMATION);
@@ -97,11 +97,11 @@ void Debug::LogFileOpen()
 
 void Debug::LogFileClose(int tag)
 {
-	if(Debug::pLogFile) {
-		fprintf(Debug::pLogFile, "Closing log file on request %d", tag);
-		fclose(Debug::pLogFile);
+	if(Debug::LogFile) {
+		fprintf(Debug::LogFile, "Closing log file on request %d", tag);
+		fclose(Debug::LogFile);
 		CopyFileW(Debug::LogFileTempName.c_str(), Debug::LogFileName.c_str(), FALSE);
-		Debug::pLogFile = nullptr;
+		Debug::LogFile = nullptr;
 	}
 }
 
