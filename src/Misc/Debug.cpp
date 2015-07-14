@@ -57,22 +57,24 @@ void Debug::LogFlushed(const char* const pFormat, ...)
 	va_end(args);
 }
 
-void Debug::LogWithVArgs(const char* const pFormat, va_list args) {
+void Debug::LogWithVArgs(const char* const pFormat, va_list const args) {
 	if(bLog && pLogFile) {
 		Debug::LogWithVArgsUnflushed(pFormat, args);
 		Debug::Flush();
 	}
 }
 
-void __cdecl Debug::LogUnflushed(const char *Format, ...) {
-	va_list ArgList;
-	va_start(ArgList, Format);
-	LogWithVArgsUnflushed(Format, ArgList);
-	va_end(ArgList);
+void __cdecl Debug::LogUnflushed(const char* const pFormat, ...) {
+	va_list args;
+	va_start(args, pFormat);
+	Debug::LogWithVArgsUnflushed(pFormat, args);
+	va_end(args);
 }
 
-void Debug::LogWithVArgsUnflushed(const char* Format, va_list ArgList) {
-	vfprintf(Debug::pLogFile, Format, ArgList);
+void Debug::LogWithVArgsUnflushed(
+	const char* const pFormat, va_list const args)
+{
+	vfprintf(Debug::pLogFile, pFormat, args);
 }
 
 void Debug::Flush() {
@@ -285,10 +287,10 @@ DEFINE_HOOK(4C850B, Exception_Dialog, 5)
 DEFINE_HOOK_AGAIN(4A4AC0, Debug_Log, 1)
 DEFINE_HOOK(4068E0, Debug_Log, 1)
 {
-	LEA_STACK(va_list, ArgList, 0x8);
-	GET_STACK(char *, Format, 0x4);
+	LEA_STACK(va_list const, args, 0x8);
+	GET_STACK(const char* const, pFormat, 0x4);
 
-	Debug::LogWithVArgs(Format, ArgList);
+	Debug::LogWithVArgs(pFormat, args);
 
 	return 0x4A4AF9; // changed to co-op with YDE
 }
