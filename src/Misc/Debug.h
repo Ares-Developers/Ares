@@ -100,9 +100,10 @@ private:
 	static void __cdecl LogFlushed(
 		Debug::Severity severity, const char* pFormat, ...);
 
-	// no flushing
+	// no flushing, and unchecked
 	static void __cdecl LogUnflushed(const char* pFormat, ...);
 	static void LogWithVArgsUnflushed(const char* pFormat, va_list args);
 
+	// flush unchecked
 	static void Flush();
 };

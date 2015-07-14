@@ -72,15 +72,11 @@ void __cdecl Debug::LogUnflushed(const char *Format, ...) {
 }
 
 void Debug::LogWithVArgsUnflushed(const char* Format, va_list ArgList) {
-	if(Debug::bLog && Debug::pLogFile) {
-		vfprintf(Debug::pLogFile, Format, ArgList);
-	}
+	vfprintf(Debug::pLogFile, Format, ArgList);
 }
 
 void Debug::Flush() {
-	if(Debug::bLog && Debug::pLogFile) {
-		fflush(Debug::pLogFile);
-	}
+	fflush(Debug::pLogFile);
 }
 
 void Debug::LogFileOpen()
@@ -289,13 +285,11 @@ DEFINE_HOOK(4C850B, Exception_Dialog, 5)
 DEFINE_HOOK_AGAIN(4A4AC0, Debug_Log, 1)
 DEFINE_HOOK(4068E0, Debug_Log, 1)
 {
-	if(Debug::bLog && Debug::pLogFile)
-	{
-		LEA_STACK(va_list, ArgList, 0x8);
-		GET_STACK(char *, Format, 0x4);
+	LEA_STACK(va_list, ArgList, 0x8);
+	GET_STACK(char *, Format, 0x4);
 
-		Debug::LogWithVArgs(Format, ArgList);
-	}
+	Debug::LogWithVArgs(Format, ArgList);
+
 	return 0x4A4AF9; // changed to co-op with YDE
 }
 
