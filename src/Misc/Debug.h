@@ -58,6 +58,11 @@ public:
 private:
 	static const char* SeverityString(Debug::Severity severity);
 
+	// the two base cases, with flushing
+	static void __cdecl LogFlushed(const char* pFormat, ...);
+	static void __cdecl LogFlushed(
+		Debug::Severity severity, const char* pFormat, ...);
+
 	// no flushing
 	static void __cdecl LogUnflushed(const char* pFormat, ...);
 	static void LogWithVArgsUnflushed(const char* pFormat, va_list args);

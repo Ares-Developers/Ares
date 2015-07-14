@@ -35,6 +35,29 @@ void Debug::DevLog(Debug::Severity severity, const char* Format, ...) {
 //	fprintf(pLogFile, "\n");
 }
 
+void Debug::LogFlushed(
+	Debug::Severity const severity, const char* const pFormat, ...)
+{
+	if(bLog && pLogFile) {
+		if(severity != Severity::None) {
+			Debug::LogUnflushed(
+				"[Developer %s]", Debug::SeverityString(severity));
+		}
+		va_list args;
+		va_start(args, pFormat);
+		Debug::LogWithVArgs(pFormat, args);
+		va_end(args);
+	}
+}
+
+void Debug::LogFlushed(const char* const pFormat, ...)
+{
+	va_list args;
+	va_start(args, pFormat);
+	Debug::LogWithVArgs(pFormat, args);
+	va_end(args);
+}
+
 void Debug::LogWithVArgs(const char* const pFormat, va_list args) {
 	if(bLog && pLogFile) {
 		Debug::LogWithVArgsUnflushed(pFormat, args);
