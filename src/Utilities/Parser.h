@@ -32,7 +32,7 @@ public:
 		char buffer[0x80];
 		for(size_t i=0; i<Count; ++i) {
 			// skip the leading spaces
-			while(*pValue && isspace(static_cast<unsigned char>(*pValue))) {
+			while(isspace(static_cast<unsigned char>(*pValue))) {
 				++pValue;
 			}
 
