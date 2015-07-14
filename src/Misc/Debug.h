@@ -13,7 +13,6 @@ public:
 		Warning = 0x2,
 		Error = 0x3
 	};
-	static const char * SeverityString(Debug::Severity severity);
 
 	static bool bLog;
 	static FILE* pLogFile;
@@ -33,10 +32,7 @@ public:
 		DumpObj(&object, sizeof(object));
 	}
 
-	static void __cdecl LogUnflushed(const char *Format, ...);
-	static void LogWithVArgsUnflushed(const char* Format, va_list ArgList);
 	static void LogWithVArgs(const char* const pFormat, va_list args);
-	static void Flush();
 
 	static void FreeMouse();
 
@@ -55,4 +51,13 @@ public:
 	static bool bParserErrorDetected;
 
 	static void INIParseFailed(const char *section, const char *flag, const char *value, const char *Message = nullptr);
+
+private:
+	static const char* SeverityString(Debug::Severity severity);
+
+	// no flushing
+	static void __cdecl LogUnflushed(const char* pFormat, ...);
+	static void LogWithVArgsUnflushed(const char* pFormat, va_list args);
+
+	static void Flush();
 };
