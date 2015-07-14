@@ -265,7 +265,7 @@ bool WeaponTypeExt::ExtData::conductAbduction(BulletClass * Bullet) {
 	}
 
 	if(!Target->Remove()) {
-		Debug::DevLog(Debug::Severity::Warning, "Abduction: Target unit %p (%s) could not be removed.\n", Target, Target->get_ID());
+		Debug::Log(Debug::Severity::Warning, "Abduction: Target unit %p (%s) could not be removed.\n", Target, Target->get_ID());
 	}
 	Target->OnBridge = false;
 

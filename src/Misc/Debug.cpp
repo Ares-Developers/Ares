@@ -275,7 +275,8 @@ void Debug::INIParseFailed(const char *section, const char *flag, const char *va
 			: "Failed to parse INI file content: [%s]%s=%s (%s)\n"
 		;
 
-		Debug::DevLog(Debug::Severity::Warning, LogMessage, section, flag, value, Message);
+		Debug::Log(Debug::Severity::Warning, LogMessage, section, flag, value, Message);
+		Debug::RegisterParserError();
 	}
 }
 

@@ -29,12 +29,6 @@ public:
 		Debug::LogFlushed(pFormat, std::forward<TArgs>(args)...);
 	}
 
-	template <typename... TArgs>
-	static void DevLog(Debug::Severity severity, const char* Format, TArgs&&... args) {
-		Debug::Log(severity, Format, std::forward<TArgs>(args)...);
-		Debug::RegisterParserError();
-	}
-
 	static void RegisterParserError() {
 		if(Debug::bTrackParserErrors) {
 			Debug::bParserErrorDetected = true;

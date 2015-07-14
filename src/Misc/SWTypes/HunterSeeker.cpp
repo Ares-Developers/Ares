@@ -66,7 +66,7 @@ bool SW_HunterSeeker::Activate(SuperClass* pThis, const CellStruct &Coords, bool
 
 	// no type found
 	if(!pType) {
-		Debug::DevLog(Debug::Severity::Warning, "HunterSeeker super weapon \"%s\" could not be launched. "
+		Debug::Log(Debug::Severity::Error, "HunterSeeker super weapon \"%s\" could not be launched. "
 			"No HunterSeeker unit type set for house \"%ls\".\n", pThis->Type->ID, pOwner->UIName);
 		return false;
 	}
@@ -118,8 +118,8 @@ bool SW_HunterSeeker::Activate(SuperClass* pThis, const CellStruct &Coords, bool
 
 	// no launch building found
 	if(!Success) {
-		Debug::DevLog(Debug::Severity::Warning, "HunterSeeker super weapon \"%s\" could not be launched. House \"%ls\" "
-			"does not own any HSBuilding (%d types set).\n", pThis->Type->ID, pOwner->UIName, HSBuilding->size());
+		Debug::Log(Debug::Severity::Error, "HunterSeeker super weapon \"%s\" could not be launched. House \"%ls\" "
+			"does not own any HSBuilding (%u types set).\n", pThis->Type->ID, pOwner->UIName, HSBuilding->size());
 	}
 
 	return Success != 0;

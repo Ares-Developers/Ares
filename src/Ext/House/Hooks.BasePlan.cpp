@@ -77,7 +77,7 @@ DEFINE_HOOK(4F65BF, HouseClass_CanAffordBase, 6)
 		return 0;
 	}
 //	GET(HouseClass *, pHouse, ESI);
-//	Debug::DevLog(Debug::Error, "AI House of country [%s] cannot build anything from [General]BaseUnit=.\n", pHouse->Type->ID);
+//	Debug::Log(Debug::Error, "AI House of country [%s] cannot build anything from [General]BaseUnit=.\n", pHouse->Type->ID);
 	return 0x4F65DA;
 }
 
@@ -88,7 +88,7 @@ DEFINE_HOOK(5D705E, MPGameMode_SpawnBaseUnit, 6)
 	GET(HouseClass *, pHouse, EDI);
 	GET(UnitTypeClass *, pBaseUnit, EAX);
 	if(!pBaseUnit) {
-		Debug::DevLog(Debug::Severity::Error, "House of country [%s] cannot build anything from [General]BaseUnit=.\n", pHouse->Type->ID);
+		Debug::Log(Debug::Severity::Fatal, "House of country [%s] cannot build anything from [General]BaseUnit=.\n", pHouse->Type->ID);
 		return hasNoBaseUnit;
 	}
 
@@ -115,7 +115,7 @@ DEFINE_HOOK(688B37, MPGameModeClass_CreateStartingUnits_B, 5)
 		}
 	}
 	if(!canBuild) {
-		Debug::DevLog(Debug::Severity::Error, "House of country [%s] cannot build anything from [General]BaseUnit=. \n", pHouse->Type->ID);
+		Debug::Log(Debug::Severity::Fatal, "House of country [%s] cannot build anything from [General]BaseUnit=.\n", pHouse->Type->ID);
 
 		return hasNoBaseUnit;
 	}
@@ -132,7 +132,7 @@ DEFINE_HOOK(5D721A, MPGameMode_CreateStartingUnits, 5)
 	GET_STACK(int, UnitCount, 0x40);
 	GET_STACK(HouseClass*, pHouse, 0x4C);
 	if(!UnitCount) {
-		Debug::DevLog(Debug::Severity::Error, "House of country [%s] cannot build anything from [General]BaseUnit=. \n", pHouse->Type->ID);
+		Debug::Log(Debug::Severity::Fatal, "House of country [%s] cannot build anything from [General]BaseUnit=.\n", pHouse->Type->ID);
 	}
 	return 0;
 }

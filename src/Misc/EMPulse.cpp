@@ -34,7 +34,7 @@ void EMPulse::CreateEMPulse(
 	TechnoClass* const pFirer)
 {
 	if(!pWarhead) {
-		Debug::DevLog(Debug::Severity::Error,
+		Debug::Log(Debug::Severity::Error,
 			"Trying to CreateEMPulse() with Warhead pointing to NULL.\n");
 		return;
 	}

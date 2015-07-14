@@ -55,7 +55,7 @@ bool SW_DropPod::Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPl
 
 	// quick way out
 	if(pTypes->empty()) {
-		Debug::DevLog(Debug::Severity::Warning, "DropPod super weapon \"%s\" could not be launched. House \"%ls\" "
+		Debug::Log(Debug::Severity::Error, "DropPod super weapon \"%s\" could not be launched. House \"%ls\" "
 			"does not have any types to drop set.\n", pSW->ID, pOwner->UIName);
 		return false;
 	}
@@ -69,7 +69,7 @@ bool SW_DropPod::Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPl
 		TechnoTypeClass* pType = pTypes->at(index);
 
 		if(pType->WhatAmI() == BuildingTypeClass::AbsID) {
-			Debug::DevLog(Debug::Severity::Warning, "DropPod super weapon \"%s\" contains building types. Aborting.\n", pSW->ID);
+			Debug::Log(Debug::Severity::Error, "DropPod super weapon \"%s\" contains building types. Aborting.\n", pSW->ID);
 			break;
 		}
 

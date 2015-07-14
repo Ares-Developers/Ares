@@ -345,7 +345,8 @@ public:
 			if(this->checked && this->exists) {
 				this->checked = false;
 				if(!this->Exists()) {
-					Debug::DevLog(Debug::Severity::Warning, "PCX file '%s' was not found.", this->filename.data());
+					Debug::Log(Debug::Severity::Warning, "PCX file '%s' was not found.\n", this->filename.data());
+					Debug::RegisterParserError();
 				}
 			}
 			return true;

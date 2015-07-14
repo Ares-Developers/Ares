@@ -21,7 +21,7 @@ HRESULT AresSwizzle::RegisterChange(void *was, void *is) {
 	if(exist == this->Changes.end()) {
 		this->Changes[was] = is;
 	} else if(exist->second != is) {
-		Debug::DevLog(Debug::Severity::Error, "Pointer %p declared change to both %p AND %p!\n", was, exist->second, is);
+		Debug::Log(Debug::Severity::Fatal, "Pointer %p declared change to both %p AND %p!\n", was, exist->second, is);
 	}
 	return S_OK;
 }
@@ -34,7 +34,7 @@ void AresSwizzle::ConvertNodes() const {
 		if(lastFind != it->first) {
 			auto change = this->Changes.find(it->first);
 			if(change == this->Changes.end()) {
-				Debug::DevLog(Debug::Severity::Error, "Pointer %p could not be remapped!\n", it->first);
+				Debug::Log(Debug::Severity::Fatal, "Pointer %p could not be remapped!\n", it->first);
 			} else {
 				lastFind = it->first;
 				lastRes = change->second;
