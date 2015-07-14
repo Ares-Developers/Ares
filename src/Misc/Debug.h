@@ -17,6 +17,24 @@ public:
 		Fatal = 5
 	};
 
+	// logging
+
+	template <typename... TArgs>
+	static void Log(Debug::Severity severity, const char* const pFormat, TArgs&&... args) {
+		Debug::LogFlushed(severity, pFormat, std::forward<TArgs>(args)...);
+	}
+
+	template <typename... TArgs>
+	static void Log(const char* const pFormat, TArgs&&... args) {
+		Debug::LogFlushed(pFormat, std::forward<TArgs>(args)...);
+	}
+
+	template <typename... TArgs>
+	static void DevLog(Debug::Severity severity, const char* Format, TArgs&&... args) {
+		Debug::Log(severity, Format, std::forward<TArgs>(args)...);
+		Debug::RegisterParserError();
+	}
+
 	static void RegisterParserError() {
 		if(Debug::bTrackParserErrors) {
 			Debug::bParserErrorDetected = true;
@@ -34,7 +52,6 @@ public:
 	static void LogFileRemove();
 	static void DumpObj(void const* data, size_t len);
 	static void DumpStack(REGISTERS* R, size_t len, int startAt = 0);
-	static void (_cdecl* Log)(const char* pFormat, ...);
 
 	template <typename T>
 	static void DumpObj(const T& object) {
@@ -53,8 +70,6 @@ public:
 
 	static std::wstring FullDump();
 	static std::wstring FullDump(std::wstring destinationFolder);
-
-	static void DevLog(Debug::Severity severity, const char* Format, ...);
 
 	static bool bTrackParserErrors;
 	static bool bParserErrorDetected;

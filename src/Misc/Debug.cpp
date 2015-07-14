@@ -17,22 +17,6 @@ FILE *Debug::pLogFile = nullptr;
 std::wstring Debug::LogFileName;
 std::wstring Debug::LogFileTempName;
 
-void (_cdecl* Debug::Log)(const char* pFormat, ...) =
-	(void (__cdecl *)(const char *,...))0x4068E0;
-
-void Debug::DevLog(Debug::Severity severity, const char* Format, ...) {
-	Debug::RegisterParserError();
-	if(!pLogFile) {
-		return;
-	}
-	va_list args;
-	fprintf(pLogFile, "[Developer %s]", Debug::SeverityString(severity));
-	va_start(args, Format);
-	Debug::LogWithVArgs(Format, args);
-	va_end(args);
-//	fprintf(pLogFile, "\n");
-}
-
 void Debug::LogFlushed(
 	Debug::Severity const severity, const char* const pFormat, ...)
 {
