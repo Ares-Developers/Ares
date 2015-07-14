@@ -17,6 +17,23 @@ FILE *Debug::pLogFile = nullptr;
 std::wstring Debug::LogFileName;
 std::wstring Debug::LogFileTempName;
 
+const char* Debug::SeverityString(Debug::Severity const severity) {
+	switch(severity) {
+	case Severity::Vebose:
+		return "verbose";
+	case Severity::Notice:
+		return "notice";
+	case Severity::Warning:
+		return "warning";
+	case Severity::Error:
+		return "error";
+	case Severity::Fatal:
+		return "fatal";
+	default:
+		return "wtf";
+	}
+}
+
 void Debug::LogFlushed(
 	Debug::Severity const severity, const char* const pFormat, ...)
 {
@@ -47,20 +64,22 @@ void Debug::LogWithVArgs(const char* const pFormat, va_list args) {
 	}
 }
 
-const char* Debug::SeverityString(Debug::Severity const severity) {
-	switch(severity) {
-	case Severity::Vebose:
-		return "verbose";
-	case Severity::Notice:
-		return "notice";
-	case Severity::Warning:
-		return "warning";
-	case Severity::Error:
-		return "error";
-	case Severity::Fatal:
-		return "fatal";
-	default:
-		return "wtf";
+void __cdecl Debug::LogUnflushed(const char *Format, ...) {
+	va_list ArgList;
+	va_start(ArgList, Format);
+	LogWithVArgsUnflushed(Format, ArgList);
+	va_end(ArgList);
+}
+
+void Debug::LogWithVArgsUnflushed(const char* Format, va_list ArgList) {
+	if(Debug::bLog && Debug::pLogFile) {
+		vfprintf(Debug::pLogFile, Format, ArgList);
+	}
+}
+
+void Debug::Flush() {
+	if(Debug::bLog && Debug::pLogFile) {
+		fflush(Debug::pLogFile);
 	}
 }
 
@@ -161,25 +180,6 @@ void Debug::DumpStack(REGISTERS* R, size_t len, int startAt) {
 		Debug::Log("esp+%04X = %08X\n", i * 4, mem[i]);
 	}
 	Debug::Log("Done.\n");
-}
-
-void __cdecl Debug::LogUnflushed(const char *Format, ...) {
-	va_list ArgList;
-	va_start(ArgList, Format);
-	LogWithVArgsUnflushed(Format, ArgList);
-	va_end(ArgList);
-}
-
-void Debug::LogWithVArgsUnflushed(const char* Format, va_list ArgList) {
-	if(Debug::bLog && Debug::pLogFile) {
-		vfprintf(Debug::pLogFile, Format, ArgList);
-	}
-}
-
-void Debug::Flush() {
-	if(Debug::bLog && Debug::pLogFile) {
-		fflush(Debug::pLogFile);
-	}
 }
 
 /**
