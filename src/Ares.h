@@ -66,9 +66,6 @@ public:
 
 	static bool bTestingRun;
 
-	static bool bLog;
-	static FILE* pLogFile;
-
 	static bool bStrictParser;
 
 	static bool bAllowAIControl;
