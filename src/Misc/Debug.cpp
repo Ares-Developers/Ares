@@ -124,8 +124,7 @@ void Debug::MakeLogFile() {
 		swprintf(subpath, 64, L"\\debug.%04u%02u%02u-%02u%02u%02u.log",
 			time.wYear, time.wMonth, time.wDay, time.wHour, time.wMinute, time.wSecond);
 
-		Debug::LogFileTempName = Debug::LogFileName;
-		Debug::LogFileTempName += L"\\debug.log";
+		Debug::LogFileTempName = Debug::LogFileName + L"\\debug.log";
 		Debug::LogFileName += subpath;
 
 		made = 1;
