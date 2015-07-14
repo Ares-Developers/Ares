@@ -163,8 +163,8 @@ std::wstring Exception::FullDump(
 	std::wstring filename = std::move(destinationFolder);
 	filename += L"\\extcrashdump.dmp";
 
-	HANDLE dumpFile = CreateFileW(filename.c_str(), GENERIC_READ | GENERIC_WRITE,
-		FILE_SHARE_WRITE | FILE_SHARE_READ, nullptr, CREATE_ALWAYS, FILE_FLAG_WRITE_THROUGH, nullptr);
+	HANDLE dumpFile = CreateFileW(filename.c_str(), GENERIC_WRITE,
+		0, nullptr, CREATE_ALWAYS, FILE_FLAG_RANDOM_ACCESS, nullptr);
 
 	MINIDUMP_TYPE type = static_cast<MINIDUMP_TYPE>(MiniDumpWithFullMemory);
 
