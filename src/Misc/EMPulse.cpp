@@ -11,9 +11,7 @@ bool EMPulse::supportVerses = false;
 
 template <typename... TArgs>
 void EMP_Log(const char* pFormat, TArgs&&... args) {
-	//if(EMPulse::verbose) {
-	//	Debug::Log(pFormat, std::forward<TArgs>(args)...);
-	//}
+	//Debug::Log(EMPulse::verbose, pFormat, std::forward<TArgs>(args)...);
 }
 
 //! Paralyses all units using an EMP cellspread weapon.

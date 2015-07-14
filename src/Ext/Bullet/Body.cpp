@@ -11,11 +11,6 @@
 template<> const DWORD Extension<BulletClass>::Canary = 0x2A2A2A2A;
 Container<BulletExt> BulletExt::ExtMap("BulletClass");
 
-template <typename... TArgs>
-void UC_Log(const char* pFormat, TArgs&&... args) {
-	//Debug::Log(pFormat, std::forward<TArgs>(args)...);
-}
-
 // #663: PassThrough; #667: SubjectToTrenches
 //! Does the entire PassThrough logic, checks & damage
 /*!
@@ -39,6 +34,8 @@ bool BulletExt::ExtData::DamageOccupants() {
 
 	auto Building = specific_cast<BuildingClass*>(TheBullet->Target);
 
+	auto const Logging = false;
+
 	// if that pointer is null, something went wrong
 	if(!Building) {
 		// no damage dealt b/c the building-pointer was NULL (which is concerning)
@@ -49,7 +46,7 @@ bool BulletExt::ExtData::DamageOccupants() {
 	auto BuildingAresData = BuildingTypeExt::ExtMap.Find(Building->Type);
 
 /*
-	Debug::Log("Bullet %s is about to damage occupants of %s: occupants #%d, UC.PT = %lf\n",
+	Debug::Log(Logging, "Bullet %s is about to damage occupants of %s: occupants #%d, UC.PT = %lf\n",
 		TheBullet->Type->ID, Building->Type->ID, Building->Occupants.Count, BuildingAresData->UCPassThrough);
 */
 	// only work when UCPassThrough is set, as per community vote in thread #1392
@@ -58,7 +55,7 @@ bool BulletExt::ExtData::DamageOccupants() {
 		return false;
 	}
 
-	UC_Log("SubjToTrenches = %d\n", TheBulletTypeExt->SubjectToTrenches.Get());
+	Debug::Log(Logging, "SubjToTrenches = %d\n", TheBulletTypeExt->SubjectToTrenches.Get());
 
 	// test for SubjectToTrenches because being SubjectToTrenches means "we're getting stopped by trenches".
 	if(TheBulletTypeExt->SubjectToTrenches && ScenarioClass::Instance->Random.RandomDouble() >= BuildingAresData->UCPassThrough) {
@@ -70,9 +67,9 @@ bool BulletExt::ExtData::DamageOccupants() {
 	int idxPoorBastard = ScenarioClass::Instance->Random.RandomRanged(0, Building->Occupants.Count - 1);
 	auto poorBastard = Building->Occupants[idxPoorBastard];
 
-	UC_Log("Poor Bastard #%d\n", idxPoorBastard);
+	Debug::Log(Logging, "Poor Bastard #%d\n", idxPoorBastard);
 	if(BuildingAresData->UCFatalRate && ScenarioClass::Instance->Random.RandomDouble() < BuildingAresData->UCFatalRate) {
-		UC_Log("Fatal hit!\n");
+		Debug::Log(Logging, "Fatal hit!\n");
 		// fatal hit
 		poorBastard->Destroyed(TheBullet->Owner);
 		poorBastard->UnInit();
@@ -81,13 +78,13 @@ bool BulletExt::ExtData::DamageOccupants() {
 		Building->UpdateThreatInCell(Building->GetCell());
 	} else {
 		// just a flesh wound
-		UC_Log("Flesh wound - health(%d) * UCDmgMult(%lf)\n", TheBullet->Health, BuildingAresData->UCDamageMultiplier.Get());
+		Debug::Log(Logging, "Flesh wound - health(%d) * UCDmgMult(%lf)\n", TheBullet->Health, BuildingAresData->UCDamageMultiplier.Get());
 		// Bullet->Health is the damage it delivers (go Westwood)
 		int adjustedDamage = static_cast<int>(std::ceil(TheBullet->Health * BuildingAresData->UCDamageMultiplier));
-		UC_Log("Adjusted damage = %d\n", adjustedDamage);
+		Debug::Log(Logging, "Adjusted damage = %d\n", adjustedDamage);
 		auto result = poorBastard->ReceiveDamage(&adjustedDamage, 0, TheBullet->WH,
 			TheBullet->Owner, false, true, TheBullet->GetOwningHouse());
-		UC_Log("Received damage, %d\n", result);
+		Debug::Log(Logging, "Received damage, %d\n", result);
 	}
 
 	// fix up the firing index, otherwise building stops to fire
