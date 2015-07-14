@@ -35,7 +35,6 @@ void AresSwizzle::ConvertNodes() const {
 			auto change = this->Changes.find(it->first);
 			if(change == this->Changes.end()) {
 				Debug::DevLog(Debug::Severity::Error, "Pointer %p could not be remapped!\n", it->first);
-				Debug::Flush();
 			} else {
 				lastFind = it->first;
 				lastRes = change->second;

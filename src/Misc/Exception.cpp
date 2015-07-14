@@ -56,7 +56,6 @@ __declspec(noreturn) LONG CALLBACK Exception::ExceptionHandler(PEXCEPTION_POINTE
 	{
 		std::wstring path = Exception::PrepareSnapshotDirectory();
 
-		Debug::Flush();
 		if(Debug::bLog) {
 			std::wstring logCopy = path + L"\\debug.log";
 			CopyFileW(Debug::LogFileTempName.c_str(), logCopy.c_str(), FALSE);

@@ -30,9 +30,16 @@ void Debug::DevLog(Debug::Severity severity, const char* Format, ...) {
 	va_list args;
 	fprintf(pLogFile, "[Developer %s]", Debug::SeverityString(severity));
 	va_start(args, Format);
-	vfprintf(pLogFile, Format, args);
+	Debug::LogWithVArgs(Format, args);
 	va_end(args);
 //	fprintf(pLogFile, "\n");
+}
+
+void Debug::LogWithVArgs(const char* const pFormat, va_list args) {
+	if(bLog && pLogFile) {
+		Debug::LogWithVArgsUnflushed(pFormat, args);
+		Debug::Flush();
+	}
 }
 
 const char * Debug::SeverityString(Debug::Severity severity) {
@@ -277,8 +284,7 @@ DEFINE_HOOK(4068E0, Debug_Log, 1)
 		LEA_STACK(va_list, ArgList, 0x8);
 		GET_STACK(char *, Format, 0x4);
 
-		Debug::LogWithVArgsUnflushed(Format, ArgList);
-		fflush(Debug::pLogFile);
+		Debug::LogWithVArgs(Format, ArgList);
 	}
 	return 0x4A4AF9; // changed to co-op with YDE
 }
