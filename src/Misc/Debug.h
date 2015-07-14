@@ -34,7 +34,7 @@ public:
 	}
 
 	static void __cdecl LogUnflushed(const char *Format, ...);
-	static void LogUnflushed(const char* Format, va_list ArgList);
+	static void LogWithVArgsUnflushed(const char* Format, va_list ArgList);
 	static void Flush();
 
 	static void FreeMouse();
