@@ -425,27 +425,6 @@ void EMPulse::updateSpawnManager(TechnoClass* Techno, ObjectClass* Source = null
 	}
 }
 
-//! Updates the SlaveManager to account for the EMP effect.
-/*!
-	Stops the slaves where they are standing until the EMP effect is over.
-
-	\param Techno The Techno that might be an enslaver.
-
-	\author AlexB
-	\date 2010-05-07
-*/
-void EMPulse::updateSlaveManager(TechnoClass* Techno) {
-	if(auto pSM = Techno->SlaveManager) {
-		if(Techno->EMPLockRemaining > 0) {
-			// pause the timers so spawning and regenerating is deferred.
-			pSM->SuspendWork();
-		} else {
-			// resume slaving around.
-			pSM->ResumeWork();
-		}
-	}
-}
-
 //! Updates the sparkle animation of Techno.
 /*!
 	Enables or disables the EMP sparkle animation.
@@ -643,7 +622,10 @@ bool EMPulse::enableEMPEffect(
 
 	// update managers.
 	updateSpawnManager(pVictim, pSource);
-	updateSlaveManager(pVictim);
+
+	if(auto const pSlaveManager = pVictim->SlaveManager) {
+		pSlaveManager->SuspendWork();
+	}
 
 	// set the sparkle animation.
 	UpdateSparkleAnim(pVictim);
@@ -700,7 +682,10 @@ void EMPulse::DisableEMPEffect(TechnoClass* const pVictim) {
 
 	// allow to spawn units again.
 	updateSpawnManager(pVictim);
-	updateSlaveManager(pVictim);
+
+	if(auto const pSlaveManager = pVictim->SlaveManager) {
+		pSlaveManager->ResumeWork();
+	}
 
 	// update the animation
 	UpdateSparkleAnim(pVictim);
