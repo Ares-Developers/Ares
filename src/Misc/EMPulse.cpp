@@ -793,16 +793,14 @@ void EMPulse::DisableEMPEffect2(TechnoClass * Victim) {
 	if(BuildingClass * Building = specific_cast<BuildingClass *>(Victim)) {
 		HasPower = HasPower && Building->IsPowerOnline(); //Building->HasPower && !(Building->Owner->PowerDrain > Building->Owner->PowerOutput) ;
 
-		if(!Building->Type->InvisibleInGame) {
-			if(HasPower) {
-				Building->EnableStuff();
-			}
-			updateRadarBlackout(Building);
+		if(HasPower) {
+			Building->EnableStuff();
+		}
+		updateRadarBlackout(Building);
 
-			BuildingTypeClass * pType = Building->Type;
-			if(pType->Factory != AbstractType::None) {
-				Building->Owner->Update_FactoriesQueues(pType->Factory, pType->Naval, BuildCat::DontCare);
-			}
+		BuildingTypeClass * pType = Building->Type;
+		if(pType->Factory != AbstractType::None) {
+			Building->Owner->Update_FactoriesQueues(pType->Factory, pType->Naval, BuildCat::DontCare);
 		}
 	}
 
