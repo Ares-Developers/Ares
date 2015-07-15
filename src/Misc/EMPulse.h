@@ -25,7 +25,7 @@ protected:
 	static bool isEMPImmune(TechnoClass *, HouseClass *);
 	static bool isCurrentlyEMPImmune(TechnoClass *, HouseClass *);
 	static bool isEligibleEMPTarget(TechnoClass *, HouseClass *, WarheadTypeClass *);
-	static void updateRadarBlackout(TechnoClass *);
+	static void updateRadarBlackout(BuildingClass* pBuilding);
 	static void updateSpawnManager(TechnoClass *, ObjectClass *);
 	static bool enableEMPEffect(TechnoClass *, ObjectClass *);
 	static void announceAttack(TechnoClass *);

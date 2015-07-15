@@ -374,16 +374,15 @@ bool EMPulse::IsDeactivationAdvisable(TechnoClass* Target) {
 	If this is a structure providing radar or spy satellite abilities the
 	original check for radar facilities is invoked by setting a flag.
 
-	\param Techno The Techno that might be a Radar or SpySat structure.
+	\param pBuilding The building that might be a Radar or SpySat structure.
 
 	\author AlexB
 	\date 2010-11-28
 */
-void EMPulse::updateRadarBlackout(TechnoClass* Techno) {
-	if(auto pBuilding = abstract_cast<BuildingClass*>(Techno)) {
-		if(pBuilding->Type->Radar || pBuilding->Type->SpySat) {
-			pBuilding->Owner->RecheckRadar = true;
-		}
+void EMPulse::updateRadarBlackout(BuildingClass* const pBuilding) {
+	auto const pType = pBuilding->Type;
+	if(pType->Radar || pType->SpySat) {
+		pBuilding->Owner->RecheckRadar = true;
 	}
 }
 
