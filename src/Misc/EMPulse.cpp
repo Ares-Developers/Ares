@@ -790,7 +790,10 @@ bool EMPulse::EnableEMPEffect2(TechnoClass * Victim) {
 
 		// update managers.
 		updateSpawnManager(Victim, nullptr);
-		updateSlaveManager(Victim);
+
+		if(auto const pSlaveManager = Victim->SlaveManager) {
+			pSlaveManager->SuspendWork();
+		}
 	}
 
 	// the unit still lives.
@@ -825,7 +828,10 @@ void EMPulse::DisableEMPEffect2(TechnoClass * Victim) {
 
 		// allow to spawn units again.
 		updateSpawnManager(Victim);
-		updateSlaveManager(Victim);
+
+		if(auto const pSlaveManager = Victim->SlaveManager) {
+			pSlaveManager->ResumeWork();
+		}
 
 		// get harvesters back to work and ai units to hunt
 		if(FootClass * Foot = generic_cast<FootClass *>(Victim)) {
