@@ -104,6 +104,8 @@ void EMPulse::deliverEMPDamage(
 		pTechno->EMPLockRemaining = static_cast<DWORD>(Math::max(newValue, 0));
 		EMP_Log("[deliverEMPDamage] Step 4: %d\n", newValue);
 
+		auto diedFromPulse = false;
+
 		auto const underEMPBefore = (oldValue > 0);
 		auto const underEMPAfter = (pTechno->EMPLockRemaining > 0);
 		if(underEMPBefore && !underEMPAfter) {
@@ -113,9 +115,7 @@ void EMPulse::deliverEMPDamage(
 		} else if(!underEMPBefore && underEMPAfter) {
 			// newly paralyzed unit
 			EMP_Log("[deliverEMPDamage] Step 5b\n");
-			if(enableEMPEffect(pTechno, pFirer)) {
-				return;
-			}
+			diedFromPulse = enableEMPEffect(pTechno, pFirer);
 		} else if(oldValue != newValue) {
 			// At least update the radar, if this is one.
 			EMP_Log("[deliverEMPDamage] Step 5c\n");
@@ -123,7 +123,7 @@ void EMPulse::deliverEMPDamage(
 		}
 
 		// is techno destroyed by EMP?
-		if(thresholdExceeded(pTechno)) {
+		if(diedFromPulse || thresholdExceeded(pTechno)) {
 			TechnoExt::Destroy(pTechno, pFirer);
 		}
 	}
@@ -604,7 +604,6 @@ bool EMPulse::enableEMPEffect(
 		auto const pAircraft = static_cast<AircraftClass*>(pVictim);
 		if(pAircraft->GetHeight() > 0) {
 			EMP_Log("[enableEMPEffect] Plane crash: %s\n", pAircraft->get_ID());
-			TechnoExt::Destroy(pVictim, abstract_cast<TechnoClass*>(pSource));
 			return true;
 		}
 	}
