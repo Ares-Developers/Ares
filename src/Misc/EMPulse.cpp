@@ -288,6 +288,11 @@ bool EMPulse::IsTypeEMPProne(TechnoTypeClass const* const pType) {
 	if(abs == AbstractType::BuildingType) {
 		auto const pBldType = static_cast<BuildingTypeClass const*>(pType);
 
+		// exclude invisible buildings
+		if(pBldType->InvisibleInGame) {
+			return false;
+		}
+
 		// buildings are prone if they consume power and need it to function
 		if(pBldType->Powered && pBldType->PowerDrain > 0) {
 			return true;
@@ -376,10 +381,8 @@ bool EMPulse::IsDeactivationAdvisable(TechnoClass* Target) {
 */
 void EMPulse::updateRadarBlackout(TechnoClass* Techno) {
 	if(auto pBuilding = abstract_cast<BuildingClass*>(Techno)) {
-		if(!pBuilding->Type->InvisibleInGame) {
-			if(pBuilding->Type->Radar || pBuilding->Type->SpySat) {
-				pBuilding->Owner->RecheckRadar = true;
-			}
+		if(pBuilding->Type->Radar || pBuilding->Type->SpySat) {
+			pBuilding->Owner->RecheckRadar = true;
 		}
 	}
 }
@@ -663,16 +666,14 @@ void EMPulse::DisableEMPEffect(TechnoClass* const pVictim) {
 		pOwner->RecheckPower = true;
 
 		auto const pType = pBuilding->Type;
-		if(!pType->InvisibleInGame) {
-			if(hasPower || pType->LaserFencePost) {
-				pBuilding->EnableStuff();
-			}
-			updateRadarBlackout(pBuilding);
+		if(hasPower || pType->LaserFencePost) {
+			pBuilding->EnableStuff();
+		}
+		updateRadarBlackout(pBuilding);
 
-			if(pType->Factory != AbstractType::None) {
-				pOwner->Update_FactoriesQueues(
-					pType->Factory, pType->Naval, BuildCat::DontCare);
-			}
+		if(pType->Factory != AbstractType::None) {
+			pOwner->Update_FactoriesQueues(
+				pType->Factory, pType->Naval, BuildCat::DontCare);
 		}
 	}
 
