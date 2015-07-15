@@ -106,24 +106,24 @@ void EMPulse::deliverEMPDamage(
 
 		auto const underEMPBefore = (oldValue > 0);
 		auto const underEMPAfter = (pTechno->EMPLockRemaining > 0);
-		if (underEMPBefore && !underEMPAfter) {
+		if(underEMPBefore && !underEMPAfter) {
 			// newly de-paralyzed
 			EMP_Log("[deliverEMPDamage] Step 5a\n");
 			DisableEMPEffect(pTechno);
-		} else if (!underEMPBefore && underEMPAfter) {
+		} else if(!underEMPBefore && underEMPAfter) {
 			// newly paralyzed unit
 			EMP_Log("[deliverEMPDamage] Step 5b\n");
-			if (enableEMPEffect(pTechno, pFirer)) {
+			if(enableEMPEffect(pTechno, pFirer)) {
 				return;
 			}
-		} else if (oldValue != newValue) {
+		} else if(oldValue != newValue) {
 			// At least update the radar, if this is one.
 			EMP_Log("[deliverEMPDamage] Step 5c\n");
 			updateRadarBlackout(pTechno);
 		}
 
 		// is techno destroyed by EMP?
-		if (thresholdExceeded(pTechno)) {
+		if(thresholdExceeded(pTechno)) {
 			TechnoExt::Destroy(pTechno, pFirer);
 		}
 	}
@@ -192,18 +192,18 @@ bool EMPulse::isEMPImmune(TechnoClass * Target, HouseClass * SourceHouse) {
 	}
 
 	// this may be immune because of veteran and elite abilities.
-	if (Target->Veterancy.IsElite() && (pData->EliteAbilityEMPIMMUNE || pData->VeteranAbilityEMPIMMUNE)) {
+	if(Target->Veterancy.IsElite() && (pData->EliteAbilityEMPIMMUNE || pData->VeteranAbilityEMPIMMUNE)) {
 		EMP_Log("[isEMPImmune] \"%s\" is immune because it is elite.\n", Target->get_ID());
 		return true;
-	} else if (Target->Veterancy.IsVeteran() && pData->VeteranAbilityEMPIMMUNE) {
+	} else if(Target->Veterancy.IsVeteran() && pData->VeteranAbilityEMPIMMUNE) {
 		EMP_Log("[isEMPImmune] \"%s\" is immune because it is veteran.\n", Target->get_ID());
 		return true;
 	}
 
 	// if houses differ, TypeImmune does not count.
-	if (Target->Owner == SourceHouse) {
+	if(Target->Owner == SourceHouse) {
 		// ignore if type immune. don't even try.
-		if (isEMPTypeImmune(Target)) {
+		if(isEMPTypeImmune(Target)) {
 			// This unit can fire emps and type immunity
 			// grants it to never be affected.
 			EMP_Log("[isEMPImmune] \"%s\" is TypeImmune.\n", Target->get_ID());
@@ -232,12 +232,12 @@ bool EMPulse::isEMPImmune(TechnoClass * Target, HouseClass * SourceHouse) {
 */
 bool EMPulse::isCurrentlyEMPImmune(TechnoClass * Target, HouseClass * SourceHouse) {
 	// objects currently doing some time travel are exempt
-	if (Target->BeingWarpedOut) {
+	if(Target->BeingWarpedOut) {
 		return true;
 	}
 
 	// iron curtained objects can not be affected by EMPs
-	if (Target->IsIronCurtained()) {
+	if(Target->IsIronCurtained()) {
 		return true;
 	}
 
@@ -737,18 +737,18 @@ bool EMPulse::EnableEMPEffect2(TechnoClass * Victim) {
 	Victim->Owner->RecheckTechTree = true;
 	Victim->Owner->RecheckPower = true;
 
-	if (BuildingClass * Building = specific_cast<BuildingClass *>(Victim)) {
+	if(BuildingClass * Building = specific_cast<BuildingClass *>(Victim)) {
 		Building->DisableStuff();
 		updateRadarBlackout(Building);
 
 		BuildingTypeClass * pType = Building->Type;
-		if (pType->Factory != AbstractType::None) {
+		if(pType->Factory != AbstractType::None) {
 			Building->Owner->Update_FactoriesQueues(pType->Factory, pType->Naval, BuildCat::DontCare);
 		}
 	} else {
-		if (AircraftClass * Aircraft = specific_cast<AircraftClass *>(Victim)) {
+		if(AircraftClass * Aircraft = specific_cast<AircraftClass *>(Victim)) {
 			// crash flying aircraft
-			if (Aircraft->GetHeight() > 0) {
+			if(Aircraft->GetHeight() > 0) {
 				// this would a) happen every time it updates and b) possibly
 				// crash because it frees the caller's memory (the PoweredUnitClass)
 				// while it is executing.
@@ -759,14 +759,14 @@ bool EMPulse::EnableEMPEffect2(TechnoClass * Victim) {
 	}
 
 	// deactivate and sparkle
-	if (!Victim->Deactivated && IsDeactivationAdvisable(Victim)) {
+	if(!Victim->Deactivated && IsDeactivationAdvisable(Victim)) {
 		// cache the last mission this thing did
 		TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(Victim);
 		pData->EMPLastMission = Victim->CurrentMission;
 
 		// remove the unit from its team
-		if (FootClass * Foot = generic_cast<FootClass *>(Victim)) {
-			if (Foot->BelongsToATeam()) {
+		if(FootClass * Foot = generic_cast<FootClass *>(Victim)) {
+			if(Foot->BelongsToATeam()) {
 				Foot->Team->LiberateMember(Foot);
 			}
 		}
@@ -785,7 +785,7 @@ bool EMPulse::EnableEMPEffect2(TechnoClass * Victim) {
 		}
 
 		// release all captured units.
-		if (Victim->CaptureManager) {
+		if(Victim->CaptureManager) {
 			Victim->CaptureManager->FreeAll();
 		}
 
@@ -805,17 +805,17 @@ void EMPulse::DisableEMPEffect2(TechnoClass * Victim) {
 	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(Victim);
 	bool HasPower = pData->IsPowered() && pData->IsOperated();
 
-	if (BuildingClass * Building = specific_cast<BuildingClass *>(Victim)) {
+	if(BuildingClass * Building = specific_cast<BuildingClass *>(Victim)) {
 		HasPower = HasPower && Building->IsPowerOnline(); //Building->HasPower && !(Building->Owner->PowerDrain > Building->Owner->PowerOutput) ;
 
-		if (!Building->Type->InvisibleInGame) {
-			if (HasPower) {
+		if(!Building->Type->InvisibleInGame) {
+			if(HasPower) {
 				Building->EnableStuff();
 			}
 			updateRadarBlackout(Building);
 
 			BuildingTypeClass * pType = Building->Type;
-			if (pType->Factory != AbstractType::None) {
+			if(pType->Factory != AbstractType::None) {
 				Building->Owner->Update_FactoriesQueues(pType->Factory, pType->Naval, BuildCat::DontCare);
 			}
 		}
@@ -824,7 +824,7 @@ void EMPulse::DisableEMPEffect2(TechnoClass * Victim) {
 	Victim->Owner->RecheckTechTree = true;
 	Victim->Owner->RecheckPower = true;
 
-	if (Victim->Deactivated && HasPower) {
+	if(Victim->Deactivated && HasPower) {
 		Victim->Reactivate();
 
 		// allow to spawn units again.
@@ -835,12 +835,12 @@ void EMPulse::DisableEMPEffect2(TechnoClass * Victim) {
 		UpdateSparkleAnim(Victim);
 
 		// get harvesters back to work and ai units to hunt
-		if (FootClass * Foot = generic_cast<FootClass *>(Victim)) {
+		if(FootClass * Foot = generic_cast<FootClass *>(Victim)) {
 			bool hasMission = false;
-			if (UnitClass * Unit = specific_cast<UnitClass *>(Victim)) {
-				if (Unit->Type->Harvester || Unit->Type->ResourceGatherer) {
+			if(UnitClass * Unit = specific_cast<UnitClass *>(Victim)) {
+				if(Unit->Type->Harvester || Unit->Type->ResourceGatherer) {
 					// prevent unloading harvesters from being irritated.
-					if (pData->EMPLastMission == Mission::Guard) {
+					if(pData->EMPLastMission == Mission::Guard) {
 						pData->EMPLastMission = Mission::Enter;
 					}
 
