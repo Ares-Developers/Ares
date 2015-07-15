@@ -116,10 +116,10 @@ void EMPulse::deliverEMPDamage(
 			// newly paralyzed unit
 			EMP_Log("[deliverEMPDamage] Step 5b\n");
 			diedFromPulse = enableEMPEffect(pTechno, pFirer);
-		} else if(oldValue != newValue) {
-			// At least update the radar, if this is one.
+		} else if(oldValue == newValue) {
+			// no relevant change
 			EMP_Log("[deliverEMPDamage] Step 5c\n");
-			updateRadarBlackout(pTechno);
+			return;
 		}
 
 		// is techno destroyed by EMP?
