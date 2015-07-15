@@ -791,9 +791,6 @@ bool EMPulse::EnableEMPEffect2(TechnoClass * Victim) {
 		// update managers.
 		updateSpawnManager(Victim, nullptr);
 		updateSlaveManager(Victim);
-
-		// set the sparkle animation.
-		UpdateSparkleAnim(Victim);
 	}
 
 	// the unit still lives.
@@ -829,9 +826,6 @@ void EMPulse::DisableEMPEffect2(TechnoClass * Victim) {
 		// allow to spawn units again.
 		updateSpawnManager(Victim);
 		updateSlaveManager(Victim);
-
-		// update the animation
-		UpdateSparkleAnim(Victim);
 
 		// get harvesters back to work and ai units to hunt
 		if(FootClass * Foot = generic_cast<FootClass *>(Victim)) {
