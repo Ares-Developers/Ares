@@ -123,7 +123,7 @@ void EMPulse::deliverEMPDamage(
 		}
 
 		// is techno destroyed by EMP?
-		if(diedFromPulse || thresholdExceeded(pTechno)) {
+		if(diedFromPulse || (underEMPAfter && thresholdExceeded(pTechno))) {
 			TechnoExt::Destroy(pTechno, pFirer);
 		}
 	}
