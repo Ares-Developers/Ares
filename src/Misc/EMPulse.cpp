@@ -125,6 +125,9 @@ void EMPulse::deliverEMPDamage(
 		// is techno destroyed by EMP?
 		if(diedFromPulse || (underEMPAfter && thresholdExceeded(pTechno))) {
 			TechnoExt::Destroy(pTechno, pFirer);
+		} else if(!underEMPBefore && underEMPAfter) {
+			// set the sparkle animation
+			UpdateSparkleAnim(pTechno);
 		}
 	}
 }
@@ -642,9 +645,6 @@ bool EMPulse::enableEMPEffect(
 	if(auto const pSlaveManager = pVictim->SlaveManager) {
 		pSlaveManager->SuspendWork();
 	}
-
-	// set the sparkle animation.
-	UpdateSparkleAnim(pVictim);
 
 	// warn the player
 	announceAttack(pVictim);
