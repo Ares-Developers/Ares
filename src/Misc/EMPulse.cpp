@@ -480,6 +480,35 @@ void EMPulse::UpdateSparkleAnim(
 	}
 }
 
+//! Updates the sparkle animation of Techno, given another Techno.
+/*!
+	Recreates the proper animation given another Techno. This is used for
+	swapping Technos on the battlefield between deployed and undeployed forms.
+
+	\param pTechno The Techno to update.
+	\param pFrom The Techno to copy the animation from.
+
+	\author AlexB
+	\date 2015-07-16
+*/
+void EMPulse::UpdateSparkleAnim(
+	TechnoClass* const pTechno, TechnoClass const* const pFrom)
+{
+	AnimTypeClass* pSpecific = nullptr;
+
+	auto const pExt = TechnoExt::ExtMap.Find(pFrom);
+	if(auto const pAnim = pExt->EMPSparkleAnim) {
+		// the current anim is not the default anim, thus was created from
+		// a warhead. use the same type
+		auto const pAnimType = getSparkleAnimType(pFrom);
+		if(pAnimType != pAnim->Type) {
+			pSpecific = pAnim->Type;
+		}
+	}
+
+	UpdateSparkleAnim(pTechno, pSpecific);
+}
+
 //! If the victim is owned by the human player creates radar events and EVA warnings.
 /*!
 	Creates a radar event and makes EVA tell you so if the Techno is a resource

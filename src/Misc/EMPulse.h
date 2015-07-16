@@ -13,6 +13,8 @@ public:
 	static bool IsDeactivationAdvisable(TechnoClass *Techno);
 	static void UpdateSparkleAnim(
 		TechnoClass* pTechno, AnimTypeClass* pSpecific = nullptr);
+	static void UpdateSparkleAnim(
+		TechnoClass* pTechno, TechnoClass const* pFrom);
 
 	// two dummy functions not used by EMP
 	static void DisableEMPEffect2(TechnoClass *Techno);

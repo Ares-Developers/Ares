@@ -41,7 +41,7 @@ DEFINE_HOOK(44A04C, BuildingClass_Unload_CopyEMPDuration, 6) {
 	// reuse the EMP duration of the deployed/undeployed Techno.
 	if(pUnit && pBuilding) {
 		pUnit->EMPLockRemaining = pBuilding->EMPLockRemaining;
-		EMPulse::UpdateSparkleAnim(pUnit);
+		EMPulse::UpdateSparkleAnim(pUnit, pBuilding);
 	}
 
 	return 0;
