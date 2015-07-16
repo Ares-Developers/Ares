@@ -431,21 +431,27 @@ void EMPulse::updateSpawnManager(TechnoClass* Techno, ObjectClass* Source = null
 /*!
 	Enables or disables the EMP sparkle animation.
 
-	\param Techno The Techno to update.
+	\param pTechno The Techno to update.
+	\param pSpecific Optional anim type to create.
 
 	\author AlexB
-	\date 2010-05-09
+	\date 2010-05-09, 2015-07-16
 */
-void EMPulse::UpdateSparkleAnim(TechnoClass* const pTechno) {
+void EMPulse::UpdateSparkleAnim(
+	TechnoClass* const pTechno, AnimTypeClass* const pSpecific)
+{
 	auto const pData = TechnoExt::ExtMap.Find(pTechno);
 	auto& Anim = pData->EMPSparkleAnim;
 
 	if(pTechno->IsUnderEMP()) {
 		if(!Anim) {
-			auto const pType = pTechno->GetTechnoType();
-			auto const pTypeExt = TechnoTypeExt::ExtMap.Find(pType);
-			auto const pAnimType = pTypeExt->EMP_Sparkles.Get(
-				RulesClass::Instance->EMPulseSparkles);
+			auto pAnimType = pSpecific;
+			if(!pSpecific) {
+				auto const pType = pTechno->GetTechnoType();
+				auto const pTypeExt = TechnoTypeExt::ExtMap.Find(pType);
+				pAnimType = pTypeExt->EMP_Sparkles.Get(
+					RulesClass::Instance->EMPulseSparkles);
+			}
 
 			if(pAnimType) {
 				Anim = GameCreate<AnimClass>(pAnimType, pTechno->Location);
