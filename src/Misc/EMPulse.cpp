@@ -621,7 +621,7 @@ bool EMPulse::enableEMPEffect(
 
 	// deactivate and sparkle
 	if(!pVictim->Deactivated && IsDeactivationAdvisable(pVictim)) {
-		auto selected = pVictim->IsSelected;
+		auto const selected = pVictim->IsSelected;
 		pVictim->Deactivate();
 		if(selected) {
 			auto const feedback = Unsorted::MoveFeedback;
@@ -708,16 +708,14 @@ void EMPulse::DisableEMPEffect(TechnoClass* const pVictim) {
 	if(auto const pFoot = abstract_cast<FootClass*>(pVictim)) {
 		auto hasMission = false;
 		if(abs == AbstractType::Unit) {
-			auto const Unit = static_cast<UnitClass*>(pVictim);
-			if(Unit->Type->Harvester || Unit->Type->ResourceGatherer) {
+			auto const pUnit = static_cast<UnitClass*>(pVictim);
+			if(pUnit->Type->Harvester || pUnit->Type->ResourceGatherer) {
 				// prevent unloading harvesters from being irritated.
 				auto const pExt = TechnoExt::ExtMap.Find(pVictim);
-				auto mission = pExt->EMPLastMission;
-				if(mission == Mission::Guard) {
-					mission = Mission::Enter;
-				}
+				auto const mission = pExt->EMPLastMission != Mission::Guard
+					? pExt->EMPLastMission : Mission::Enter;
 
-				Unit->QueueMission(mission, true);
+				pUnit->QueueMission(mission, true);
 				hasMission = true;
 			}
 		}
