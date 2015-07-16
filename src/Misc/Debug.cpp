@@ -19,7 +19,7 @@ std::wstring Debug::LogFileTempName;
 
 const char* Debug::SeverityString(Debug::Severity const severity) {
 	switch(severity) {
-	case Severity::Vebose:
+	case Severity::Verbose:
 		return "verbose";
 	case Severity::Notice:
 		return "notice";

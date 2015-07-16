@@ -10,7 +10,7 @@ class Debug
 public:
 	enum class Severity {
 		None = 0,
-		Vebose = 1,
+		Verbose = 1,
 		Notice = 2,
 		Warning = 3,
 		Error = 4,
