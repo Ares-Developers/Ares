@@ -729,11 +729,11 @@ void EMPulse::DisableEMPEffect(TechnoClass* const pVictim) {
 // the functions below are not related to EMP. they aren't official
 // and certainly don't endorse you to use them. 2011-05-14 AlexB
 
-bool EMPulse::EnableEMPEffect2(TechnoClass * Victim) {
-	auto const abs = Victim->WhatAmI();
+bool EMPulse::EnableEMPEffect2(TechnoClass* const pVictim) {
+	auto const abs = pVictim->WhatAmI();
 
 	if(abs == AbstractType::Building) {
-		auto const pBuilding = static_cast<BuildingClass*>(Victim);
+		auto const pBuilding = static_cast<BuildingClass*>(pVictim);
 		auto const pOwner = pBuilding->Owner;
 
 		pOwner->RecheckTechTree = true;
@@ -749,52 +749,52 @@ bool EMPulse::EnableEMPEffect2(TechnoClass * Victim) {
 		}
 	} else if(abs == AbstractType::Aircraft) {
 		// crash flying aircraft
-		auto const pAircraft = static_cast<AircraftClass*>(Victim);
+		auto const pAircraft = static_cast<AircraftClass*>(pVictim);
 		if(pAircraft->GetHeight() > 0) {
 			return true;
 		}
 	}
 
 	// deactivate and sparkle
-	if(!Victim->Deactivated && IsDeactivationAdvisable(Victim)) {
+	if(!pVictim->Deactivated && IsDeactivationAdvisable(pVictim)) {
 		// cache the last mission this thing did
-		auto const pExt = TechnoExt::ExtMap.Find(Victim);
-		pExt->EMPLastMission = Victim->CurrentMission;
+		auto const pExt = TechnoExt::ExtMap.Find(pVictim);
+		pExt->EMPLastMission = pVictim->CurrentMission;
 
 		// detach temporal
-		if(Victim->IsWarpingSomethingOut()) {
-			Victim->TemporalImUsing->LetGo();
+		if(pVictim->IsWarpingSomethingOut()) {
+			pVictim->TemporalImUsing->LetGo();
 		}
 
 		// remove the unit from its team
-		if(auto const pFoot = abstract_cast<FootClass*>(Victim)) {
+		if(auto const pFoot = abstract_cast<FootClass*>(pVictim)) {
 			if(pFoot->BelongsToATeam()) {
 				pFoot->Team->LiberateMember(pFoot);
 			}
 		}
 
-		auto const selected = Victim->IsSelected;
-		Victim->Deactivate();
+		auto const selected = pVictim->IsSelected;
+		pVictim->Deactivate();
 		if(selected) {
 			auto const feedback = Unsorted::MoveFeedback;
 			Unsorted::MoveFeedback = false;
-			Victim->Select();
+			pVictim->Select();
 			Unsorted::MoveFeedback = feedback;
 		}
 
-		if(generic_cast<FootClass *>(Victim)) {
-			Victim->QueueMission(Mission::Sleep, true);
+		if(abstract_cast<FootClass*>(pVictim)) {
+			pVictim->QueueMission(Mission::Sleep, true);
 		}
 
 		// release all captured units.
-		if(Victim->CaptureManager) {
-			Victim->CaptureManager->FreeAll();
+		if(pVictim->CaptureManager) {
+			pVictim->CaptureManager->FreeAll();
 		}
 
 		// update managers.
-		updateSpawnManager(Victim, nullptr);
+		updateSpawnManager(pVictim, nullptr);
 
-		if(auto const pSlaveManager = Victim->SlaveManager) {
+		if(auto const pSlaveManager = pVictim->SlaveManager) {
 			pSlaveManager->SuspendWork();
 		}
 	}
@@ -803,14 +803,14 @@ bool EMPulse::EnableEMPEffect2(TechnoClass * Victim) {
 	return false;
 }
 
-void EMPulse::DisableEMPEffect2(TechnoClass * Victim) {
-	auto const abs = Victim->WhatAmI();
+void EMPulse::DisableEMPEffect2(TechnoClass* const pVictim) {
+	auto const abs = pVictim->WhatAmI();
 
-	auto const pExt = TechnoExt::ExtMap.Find(Victim);
+	auto const pExt = TechnoExt::ExtMap.Find(pVictim);
 	auto hasPower = pExt->IsPowered() && pExt->IsOperated();
 
 	if(abs == AbstractType::Building) {
-		auto const pBuilding = static_cast<BuildingClass*>(Victim);
+		auto const pBuilding = static_cast<BuildingClass*>(pVictim);
 		hasPower = hasPower && pBuilding->IsPowerOnline();
 
 		auto const pOwner = pBuilding->Owner;
@@ -829,21 +829,21 @@ void EMPulse::DisableEMPEffect2(TechnoClass * Victim) {
 		}
 	}
 
-	if(hasPower && Victim->Deactivated) {
-		Victim->Reactivate();
+	if(hasPower && pVictim->Deactivated) {
+		pVictim->Reactivate();
 
 		// allow to spawn units again.
-		updateSpawnManager(Victim);
+		updateSpawnManager(pVictim);
 
-		if(auto const pSlaveManager = Victim->SlaveManager) {
+		if(auto const pSlaveManager = pVictim->SlaveManager) {
 			pSlaveManager->ResumeWork();
 		}
 
 		// get harvesters back to work and ai units to hunt
-		if(auto const pFoot = abstract_cast<FootClass*>(Victim)) {
+		if(auto const pFoot = abstract_cast<FootClass*>(pVictim)) {
 			auto hasMission = false;
 			if(abs == AbstractType::Unit) {
-				auto const pUnit = static_cast<UnitClass*>(Victim);
+				auto const pUnit = static_cast<UnitClass*>(pVictim);
 				if(pUnit->Type->Harvester || pUnit->Type->ResourceGatherer) {
 					// prevent unloading harvesters from being irritated.
 					auto const mission = pExt->EMPLastMission != Mission::Guard
