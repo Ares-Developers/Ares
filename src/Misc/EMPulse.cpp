@@ -760,6 +760,11 @@ bool EMPulse::EnableEMPEffect2(TechnoClass * Victim) {
 		TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(Victim);
 		pData->EMPLastMission = Victim->CurrentMission;
 
+		// detach temporal
+		if(Victim->IsWarpingSomethingOut()) {
+			Victim->TemporalImUsing->LetGo();
+		}
+
 		// remove the unit from its team
 		if(FootClass * Foot = generic_cast<FootClass *>(Victim)) {
 			if(Foot->BelongsToATeam()) {
