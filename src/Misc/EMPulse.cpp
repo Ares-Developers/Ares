@@ -427,6 +427,19 @@ void EMPulse::updateSpawnManager(TechnoClass* Techno, ObjectClass* Source = null
 	}
 }
 
+//! Returns the default sparkle anim type for a techno.
+/*!
+	\param pTechno The techno to get the animation for.
+
+	\author AlexB
+	\date 2015-07-16
+*/
+AnimTypeClass* EMPulse::getSparkleAnimType(TechnoClass const* const pTechno) {
+	auto const pType = pTechno->GetTechnoType();
+	auto const pTypeExt = TechnoTypeExt::ExtMap.Find(pType);
+	return pTypeExt->EMP_Sparkles.Get(RulesClass::Instance->EMPulseSparkles);
+}
+
 //! Updates the sparkle animation of Techno.
 /*!
 	Enables or disables the EMP sparkle animation.
@@ -445,13 +458,8 @@ void EMPulse::UpdateSparkleAnim(
 
 	if(pTechno->IsUnderEMP()) {
 		if(!Anim) {
-			auto pAnimType = pSpecific;
-			if(!pSpecific) {
-				auto const pType = pTechno->GetTechnoType();
-				auto const pTypeExt = TechnoTypeExt::ExtMap.Find(pType);
-				pAnimType = pTypeExt->EMP_Sparkles.Get(
-					RulesClass::Instance->EMPulseSparkles);
-			}
+			auto const pAnimType = pSpecific ? pSpecific
+				: getSparkleAnimType(pTechno);
 
 			if(pAnimType) {
 				Anim = GameCreate<AnimClass>(pAnimType, pTechno->Location);

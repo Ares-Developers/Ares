@@ -28,6 +28,7 @@ protected:
 	static bool isEligibleEMPTarget(TechnoClass *, HouseClass *, WarheadTypeClass *);
 	static void updateRadarBlackout(BuildingClass* pBuilding);
 	static void updateSpawnManager(TechnoClass *, ObjectClass *);
+	static AnimTypeClass* getSparkleAnimType(TechnoClass const* pTechno);
 	static bool enableEMPEffect(TechnoClass *, ObjectClass *);
 	static void announceAttack(TechnoClass *);
 	static bool thresholdExceeded(TechnoClass *);
