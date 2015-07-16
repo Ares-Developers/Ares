@@ -730,35 +730,36 @@ void EMPulse::DisableEMPEffect(TechnoClass* const pVictim) {
 // and certainly don't endorse you to use them. 2011-05-14 AlexB
 
 bool EMPulse::EnableEMPEffect2(TechnoClass * Victim) {
-	Victim->Owner->RecheckTechTree = true;
-	Victim->Owner->RecheckPower = true;
+	auto const abs = Victim->WhatAmI();
 
-	if(BuildingClass * Building = specific_cast<BuildingClass *>(Victim)) {
-		Building->DisableStuff();
-		updateRadarBlackout(Building);
+	if(abs == AbstractType::Building) {
+		auto const pBuilding = static_cast<BuildingClass*>(Victim);
+		auto const pOwner = pBuilding->Owner;
 
-		BuildingTypeClass * pType = Building->Type;
+		pOwner->RecheckTechTree = true;
+		pOwner->RecheckPower = true;
+
+		pBuilding->DisableStuff();
+		updateRadarBlackout(pBuilding);
+
+		auto const pType = pBuilding->Type;
 		if(pType->Factory != AbstractType::None) {
-			Building->Owner->Update_FactoriesQueues(pType->Factory, pType->Naval, BuildCat::DontCare);
+			pBuilding->Owner->Update_FactoriesQueues(
+				pType->Factory, pType->Naval, BuildCat::DontCare);
 		}
-	} else {
-		if(AircraftClass * Aircraft = specific_cast<AircraftClass *>(Victim)) {
-			// crash flying aircraft
-			if(Aircraft->GetHeight() > 0) {
-				// this would a) happen every time it updates and b) possibly
-				// crash because it frees the caller's memory (the PoweredUnitClass)
-				// while it is executing.
-				//TechnoExt::Destroy(Aircraft);
-				return true;
-			}
+	} else if(abs == AbstractType::Aircraft) {
+		// crash flying aircraft
+		auto const pAircraft = static_cast<AircraftClass*>(Victim);
+		if(pAircraft->GetHeight() > 0) {
+			return true;
 		}
 	}
 
 	// deactivate and sparkle
 	if(!Victim->Deactivated && IsDeactivationAdvisable(Victim)) {
 		// cache the last mission this thing did
-		TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(Victim);
-		pData->EMPLastMission = Victim->CurrentMission;
+		auto const pExt = TechnoExt::ExtMap.Find(Victim);
+		pExt->EMPLastMission = Victim->CurrentMission;
 
 		// detach temporal
 		if(Victim->IsWarpingSomethingOut()) {
@@ -766,16 +767,16 @@ bool EMPulse::EnableEMPEffect2(TechnoClass * Victim) {
 		}
 
 		// remove the unit from its team
-		if(FootClass * Foot = generic_cast<FootClass *>(Victim)) {
-			if(Foot->BelongsToATeam()) {
-				Foot->Team->LiberateMember(Foot);
+		if(auto const pFoot = abstract_cast<FootClass*>(Victim)) {
+			if(pFoot->BelongsToATeam()) {
+				pFoot->Team->LiberateMember(pFoot);
 			}
 		}
 
-		bool selected = Victim->IsSelected;
+		auto const selected = Victim->IsSelected;
 		Victim->Deactivate();
 		if(selected) {
-			bool feedback = Unsorted::MoveFeedback;
+			auto const feedback = Unsorted::MoveFeedback;
 			Unsorted::MoveFeedback = false;
 			Victim->Select();
 			Unsorted::MoveFeedback = feedback;
@@ -803,27 +804,32 @@ bool EMPulse::EnableEMPEffect2(TechnoClass * Victim) {
 }
 
 void EMPulse::DisableEMPEffect2(TechnoClass * Victim) {
-	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(Victim);
-	bool HasPower = pData->IsPowered() && pData->IsOperated();
+	auto const abs = Victim->WhatAmI();
 
-	if(BuildingClass * Building = specific_cast<BuildingClass *>(Victim)) {
-		HasPower = HasPower && Building->IsPowerOnline(); //Building->HasPower && !(Building->Owner->PowerDrain > Building->Owner->PowerOutput) ;
+	auto const pExt = TechnoExt::ExtMap.Find(Victim);
+	auto hasPower = pExt->IsPowered() && pExt->IsOperated();
 
-		if(HasPower) {
-			Building->EnableStuff();
+	if(abs == AbstractType::Building) {
+		auto const pBuilding = static_cast<BuildingClass*>(Victim);
+		hasPower = hasPower && pBuilding->IsPowerOnline();
+
+		auto const pOwner = pBuilding->Owner;
+		pOwner->RecheckTechTree = true;
+		pOwner->RecheckPower = true;
+
+		if(hasPower) {
+			pBuilding->EnableStuff();
 		}
-		updateRadarBlackout(Building);
+		updateRadarBlackout(pBuilding);
 
-		BuildingTypeClass * pType = Building->Type;
+		auto const pType = pBuilding->Type;
 		if(pType->Factory != AbstractType::None) {
-			Building->Owner->Update_FactoriesQueues(pType->Factory, pType->Naval, BuildCat::DontCare);
+			pBuilding->Owner->Update_FactoriesQueues(
+				pType->Factory, pType->Naval, BuildCat::DontCare);
 		}
 	}
 
-	Victim->Owner->RecheckTechTree = true;
-	Victim->Owner->RecheckPower = true;
-
-	if(Victim->Deactivated && HasPower) {
+	if(hasPower && Victim->Deactivated) {
 		Victim->Reactivate();
 
 		// allow to spawn units again.
@@ -834,22 +840,22 @@ void EMPulse::DisableEMPEffect2(TechnoClass * Victim) {
 		}
 
 		// get harvesters back to work and ai units to hunt
-		if(FootClass * Foot = generic_cast<FootClass *>(Victim)) {
-			bool hasMission = false;
-			if(UnitClass * Unit = specific_cast<UnitClass *>(Victim)) {
-				if(Unit->Type->Harvester || Unit->Type->ResourceGatherer) {
+		if(auto const pFoot = abstract_cast<FootClass*>(Victim)) {
+			auto hasMission = false;
+			if(abs == AbstractType::Unit) {
+				auto const pUnit = static_cast<UnitClass*>(Victim);
+				if(pUnit->Type->Harvester || pUnit->Type->ResourceGatherer) {
 					// prevent unloading harvesters from being irritated.
-					if(pData->EMPLastMission == Mission::Guard) {
-						pData->EMPLastMission = Mission::Enter;
-					}
+					auto const mission = pExt->EMPLastMission != Mission::Guard
+						? pExt->EMPLastMission : Mission::Enter;
 
-					Unit->QueueMission(pData->EMPLastMission, true);
+					pUnit->QueueMission(mission, true);
 					hasMission = true;
 				}
 			}
 
-			if(!hasMission && !Foot->Owner->ControlledByHuman()) {
-				Foot->QueueMission(Mission::Hunt, false);
+			if(!hasMission && !pFoot->Owner->ControlledByHuman()) {
+				pFoot->QueueMission(Mission::Hunt, false);
 			}
 		}
 	}
