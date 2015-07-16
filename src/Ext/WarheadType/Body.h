@@ -52,6 +52,7 @@ public:
 
 		int EMP_Duration;
 		int EMP_Cap;
+		Valueable<AnimTypeClass*> EMP_Sparkles;
 
 		int IC_Duration;
 		int IC_Cap;

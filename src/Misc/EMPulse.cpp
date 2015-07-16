@@ -108,11 +108,12 @@ void EMPulse::deliverEMPDamage(
 
 		auto const underEMPBefore = (oldValue > 0);
 		auto const underEMPAfter = (pTechno->EMPLockRemaining > 0);
+		auto const newlyUnderEMP = !underEMPBefore && underEMPAfter;
 		if(underEMPBefore && !underEMPAfter) {
 			// newly de-paralyzed
 			EMP_Log("[deliverEMPDamage] Step 5a\n");
 			DisableEMPEffect(pTechno);
-		} else if(!underEMPBefore && underEMPAfter) {
+		} else if(newlyUnderEMP) {
 			// newly paralyzed unit
 			EMP_Log("[deliverEMPDamage] Step 5b\n");
 			diedFromPulse = enableEMPEffect(pTechno, pFirer);
@@ -125,9 +126,9 @@ void EMPulse::deliverEMPDamage(
 		// is techno destroyed by EMP?
 		if(diedFromPulse || (underEMPAfter && thresholdExceeded(pTechno))) {
 			TechnoExt::Destroy(pTechno, pFirer);
-		} else if(!underEMPBefore && underEMPAfter) {
+		} else if(newlyUnderEMP || pWarhead->EMP_Sparkles) {
 			// set the sparkle animation
-			UpdateSparkleAnim(pTechno);
+			UpdateSparkleAnim(pTechno, pWarhead->EMP_Sparkles);
 		}
 	}
 }

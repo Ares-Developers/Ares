@@ -73,6 +73,7 @@ void WarheadTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 
 	this->EMP_Duration = pINI->ReadInteger(section, "EMP.Duration", this->EMP_Duration);
 	this->EMP_Cap = pINI->ReadInteger(section, "EMP.Cap", this->EMP_Cap);
+	this->EMP_Sparkles.Read(exINI, section, "EMP.Sparkles");
 
 	this->IC_Duration = pINI->ReadInteger(section, "IronCurtain.Duration", this->IC_Duration);
 	this->IC_Cap = pINI->ReadInteger(section, "IronCurtain.Cap", this->IC_Cap);
@@ -522,6 +523,7 @@ void WarheadTypeExt::ExtData::Serialize(T& Stm) {
 		.Process(this->Ripple_Radius)
 		.Process(this->EMP_Duration)
 		.Process(this->EMP_Cap)
+		.Process(this->EMP_Sparkles)
 		.Process(this->IC_Duration)
 		.Process(this->IC_Cap)
 		.Process(this->Verses)
