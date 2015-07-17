@@ -100,18 +100,18 @@ void Interface::updateMenu(HWND hDlg, YRDialogID iID) {
 				const int ScrollbarSize = (CampaignExt::CountVisible() <= ListSize) ? 2 : 12;
 
 				// the caption and list
-				static const int InitialHeight = 40;
-				static const int ItemHeight = 19;
-				static const int CampaignListWidth = 60 * WorkAreaWidth / 100;
-				static const int CampaignListLeft = (WorkAreaWidth - CampaignListWidth) / 2;
+				const int InitialHeight = 40;
+				const int ItemHeight = 19;
+				const int CampaignListWidth = 60 * WorkAreaWidth / 100;
+				const int CampaignListLeft = (WorkAreaWidth - CampaignListWidth) / 2;
 				const int CampaignListHeight = 2 + ItemHeight * ListSize;
 
 				SetLTWH(hDlg, AlliedLabel, CampaignListLeft, InitialHeight, CampaignListWidth, 20);
 				SetLTWH(hDlg, CampaignList, CampaignListLeft, InitialHeight + 30, CampaignListWidth - ScrollbarSize, CampaignListHeight);
 
 				// the slider is a block of three controls
-				static const int SliderWidth = 272;
-				static const int SliderLeft = (WorkAreaWidth - SliderWidth) / 2;
+				const int SliderWidth = 272;
+				const int SliderLeft = (WorkAreaWidth - SliderWidth) / 2;
 				const int SliderTop = InitialHeight + CampaignListHeight + 59;
 
 				SetLTWH(hDlg, DifficultySlider, SliderLeft, SliderTop, SliderWidth, 22);
