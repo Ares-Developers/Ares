@@ -65,13 +65,15 @@ bool SW_SonarPulse::Activate(SuperClass* const pThis, const CellStruct &Coords, 
 			return true;
 		}
 
+		auto const pExt = TechnoExt::ExtMap.Find(pTechno);
+		auto const delay = Math::max(
+			pExt->CloakSkipTimer.GetTimeLeft(), pData->Sonar_Delay);
+		pExt->CloakSkipTimer.Start(delay);
+
 		// actually detect this
 		if(pTechno->CloakState != CloakState::Uncloaked) {
 			pTechno->Uncloak(true);
 			pTechno->NeedsRedraw = true;
-
-			auto const pExt = TechnoExt::ExtMap.Find(pTechno);
-			pExt->CloakSkipTimer.Start(pData->Sonar_Delay);
 		}
 
 		return true;
