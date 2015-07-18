@@ -219,10 +219,12 @@ DEFINE_HOOK(539EB0, LightningStorm_Start, 5) {
 		bool ret = false;
 
 		// generate random coords if the passed ones are empty
-		if(Coords.X == 0 && Coords.Y == 0) {
+		if(Coords == CellStruct::Empty) {
+			auto const& Bounds = MapClass::Instance->MapCoordBounds;
+			auto& Random = ScenarioClass::Instance->Random;
 			while(!MapClass::Instance->CellExists(Coords)) {
-				Coords.X = static_cast<short>(ScenarioClass::Instance->Random.RandomRanged(0, MapClass::Instance->MapCoordBounds.Right));
-				Coords.Y = static_cast<short>(ScenarioClass::Instance->Random.RandomRanged(0, MapClass::Instance->MapCoordBounds.Bottom));
+				Coords.X = static_cast<short>(Random.RandomRanged(0, Bounds.Right));
+				Coords.Y = static_cast<short>(Random.RandomRanged(0, Bounds.Bottom));
 			}
 		}
 
