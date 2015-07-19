@@ -143,12 +143,25 @@ public:
 		HouseClass const* pHouse, int idxParentCountry,
 		Iterator<TechnoTypeClass const*> items, size_t start = 0);
 
+	static size_t FindBuildableIndex(
+		HouseClass const* pHouse, int idxParentCountry,
+		Iterator<TechnoTypeClass const*> items, size_t start = 0);
+
 	template <typename T>
 	static T* FindOwned(
 		HouseClass const* const pHouse, int const idxParent,
 		Iterator<T*> const items, size_t const start = 0)
 	{
 		auto const index = FindOwnedIndex(pHouse, idxParent, items, start);
+		return index < items.size() ? items[index] : nullptr;
+	}
+
+	template <typename T>
+	static T* FindBuildable(
+		HouseClass const* const pHouse, int const idxParent,
+		Iterator<T*> const items, size_t const start = 0)
+	{
+		auto const index = FindBuildableIndex(pHouse, idxParent, items, start);
 		return index < items.size() ? items[index] : nullptr;
 	}
 

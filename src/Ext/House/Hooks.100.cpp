@@ -48,7 +48,8 @@ DEFINE_HOOK(4FEA60, HouseClass_AI_UnitProduction, 0)
 		//Buildable harvester found
 		auto const harvesters = pThis->CountResourceGatherers;
 
-		auto maxHarvesters = pThis->FirstBuildableFromArray(pRules->BuildRefinery)
+		auto maxHarvesters = HouseExt::FindBuildable(
+			pThis, idxParentCountry, make_iterator(pRules->BuildRefinery)) 
 			? pRules->HarvestersPerRefinery[AIDiff] * pThis->CountResourceDestinations
 			: pRules->AISlaveMinerNumber[AIDiff];
 
@@ -64,9 +65,12 @@ DEFINE_HOOK(4FEA60, HouseClass_AI_UnitProduction, 0)
 		auto const maxHarvesters = pRules->AISlaveMinerNumber[AIDiff];
 
 		if(pThis->CountResourceGatherers < maxHarvesters) {
-			if(auto const pBT = pThis->FirstBuildableFromArray(pRules->BuildRefinery)) {
+			auto const pRefinery = HouseExt::FindBuildable(
+				pThis, idxParentCountry, make_iterator(pRules->BuildRefinery));
+
+			if(pRefinery) {
 				//awesome way to find out whether this building is a slave miner, isn't it? ...
-				if(auto const pSlaveMiner = pBT->UndeploysInto) {
+				if(auto const pSlaveMiner = pRefinery->UndeploysInto) {
 					pThis->ProducingUnitTypeIndex = pSlaveMiner->ArrayIndex;
 					return ret();
 				}

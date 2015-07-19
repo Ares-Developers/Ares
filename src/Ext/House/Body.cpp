@@ -216,6 +216,26 @@ size_t HouseExt::FindOwnedIndex(
 	return items.size();
 }
 
+size_t HouseExt::FindBuildableIndex(
+	HouseClass const* const pHouse, int const idxParentCountry,
+	Iterator<TechnoTypeClass const*> const items, size_t const start)
+{
+	for(auto i = start; i < items.size(); ++i) {
+		auto const pItem = items[i];
+
+		if(pHouse->CanExpectToBuild(pItem, idxParentCountry)) {
+			auto const pBld = abstract_cast<const BuildingTypeClass*>(pItem);
+			if(pBld && HouseExt::IsDisabledFromShell(pHouse, pBld)) {
+				continue;
+			}
+
+			return i;
+		}
+	}
+
+	return items.size();
+}
+
 bool HouseExt::HasNeededFactory(HouseClass *pHouse, TechnoTypeClass *pItem) {
 	DWORD ItemOwners = pItem->GetOwners();
 	AbstractType WhatAmI = pItem->WhatAmI();
@@ -431,9 +451,9 @@ bool HouseExt::ExtData::CheckBasePlanSanity() {
 		Debug::Log(Debug::Severity::Error, errorMsg, House->Type->ID, "BaseUnit");
 	}
 
-	auto CheckList = [House, errorMsg, &AllIsWell]
+	auto CheckList = [House, idxParent, errorMsg, &AllIsWell]
 			(DynamicVectorClass<BuildingTypeClass *> const& List, const char * const ListName) -> void {
-		if(!House->FirstBuildableFromArray(List)) {
+		if(!HouseExt::FindBuildable(House, idxParent, make_iterator(List))) {
 			AllIsWell = false;
 			Debug::Log(Debug::Severity::Error, errorMsg, House->Type->ID, ListName);
 		}

@@ -11,6 +11,20 @@ DEFINE_HOOK(5054B0, HouseClass_GenerateAIBuildList_EnsureSanity, 6)
 	return 0;// allow the list to be generated even if it will crash the game - sanity check will log potential problems and thou shalt RTFLog
 }
 
+// replaced the entire function, to have one centralized implementation
+DEFINE_HOOK(5051E0, HouseClass_FirstBuildableFromArray, 5)
+{
+	GET(HouseClass const* const, pThis, ECX);
+	GET_STACK(const DynamicVectorClass<BuildingTypeClass*>* const, pList, 0x4);
+
+	auto const idxParentCountry = pThis->Type->FindParentCountryIndex();
+	auto const pItem = HouseExt::FindBuildable(
+		pThis, idxParentCountry, make_iterator(*pList));
+
+	R->EAX(pItem);
+	return 0x505300;
+}
+
 // #917 - handle the case of no shipyard gracefully
 DEFINE_HOOK(50610E, HouseClass_FindPositionForBuilding_FixShipyard, 7)
 {
