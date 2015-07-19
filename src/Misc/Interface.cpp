@@ -225,7 +225,7 @@ void Interface::updateMenu(HWND hDlg, YRDialogID iID) {
 	if(iID == YRDialogID::MainMenu) {
 		using namespace MainDialog;
 
-		static const Interface::MenuItem items[] = {
+		const Interface::MenuItem items[] = {
 			{SinglePlayerButton, Ares::UISettings::SinglePlayerButton},
 			{WestwoodOnlineButton, Ares::UISettings::WWOnlineButton},
 			{NetworkButton, Ares::UISettings::NetworkButton},
@@ -240,13 +240,13 @@ void Interface::updateMenu(HWND hDlg, YRDialogID iID) {
 
 		// swap skirmish and load buttons so load will not appear first
 		if(Ares::UISettings::CampaignButton != Ares::UISettings::UIAction::Hide) {
-			static const Interface::MenuItem items[] = {
+			const Interface::MenuItem items[] = {
 				{NewCampaignButton, Ares::UISettings::CampaignButton},
 				{LoadSavedGameButton, Ares::UISettings::UIAction::Default},
 				{SkirmishButton, Ares::UISettings::SkirmishButton}};
 			Interface::updateMenuItems(hDlg, items, _countof(items));
 		} else {
-			static const  Interface::MenuItem items[] = {
+			const  Interface::MenuItem items[] = {
 				{SkirmishButton, Ares::UISettings::SkirmishButton},
 				{LoadSavedGameButton, Ares::UISettings::UIAction::Default},
 				{NewCampaignButton, Ares::UISettings::CampaignButton}};
@@ -259,7 +259,7 @@ void Interface::updateMenu(HWND hDlg, YRDialogID iID) {
 	if(iID == YRDialogID::MoviesAndCreditsMenu) {
 		using namespace MoviesAndCreditsDialog;
 
-		static const Interface::MenuItem items[] = {
+		const Interface::MenuItem items[] = {
 			{SneakPeeksButton, Ares::UISettings::SneakPeeksButton},
 			{PlayMoviesButton, Ares::UISettings::PlayMoviesButton},
 			{ViewCreditsButton, Ares::UISettings::ViewCreditsButton}};
