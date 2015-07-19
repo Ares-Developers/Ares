@@ -423,64 +423,73 @@ void HouseExt::ExtData::SetFirestormState(bool Active) {
 };
 
 /**
- * moved the fix for #917 here - check a house's ability to handle base plan before it actually tries to generate a base plan, not at game start
- * (we have no idea what houses at game start are supposed to be able to do base planning, so mission maps fuck up)
+ * moved the fix for #917 here - check a house's ability to handle base plan
+ * before it actually tries to generate a base plan, not at game start (we have
+ * no idea what houses at game start are supposed to be able to do base
+ * planning, so mission maps fuck up)
  */
 bool HouseExt::ExtData::CheckBasePlanSanity() {
-	auto House = this->OwnerObject();
+	auto const pThis = this->OwnerObject();
 	// this shouldn't happen, but you never know
-	if(House->ControlledByHuman() || House->IsNeutral()) {
+	if(pThis->ControlledByHuman() || pThis->IsNeutral()) {
 		return true;
 	}
 
-	const char *errorMsg = "AI House of country [%s] cannot build any object in %s. The AI ain't smart enough for that.\n";
-	bool AllIsWell(true);
+	auto AllIsWell = true;
 
-	// if you don't have a base unit buildable, how did you get to base planning?
-	// only through crates or map actions, so have to validate base unit in other situations
-	bool canBuild = false;
-	auto const idxParent = House->Type->FindParentCountryIndex();
-	for(auto pItem : RulesClass::Instance->BaseUnit) {
-		if(House->CanExpectToBuild(pItem, idxParent)) {
-			canBuild = true;
-			break;
-		}
-	}
+	auto const pRules = RulesClass::Instance;
+	auto const pType = pThis->Type;
+
+	auto const errorMsg = "AI House of country [%s] cannot build any object in "
+		"%s. The AI ain't smart enough for that.\n";
+
+	// if you don't have a base unit buildable, how did you get to base
+	// planning? only through crates or map actions, so have to validate base
+	// unit in other situations
+	auto const idxParent = pType->FindParentCountryIndex();
+	auto const canBuild = std::any_of(
+		pRules->BaseUnit.begin(), pRules->BaseUnit.end(),
+		[pThis, idxParent] (UnitTypeClass const* const pItem)
+	{
+		return pThis->CanExpectToBuild(pItem, idxParent);
+	});
+
 	if(!canBuild) {
 		AllIsWell = false;
-		Debug::Log(Debug::Severity::Error, errorMsg, House->Type->ID, "BaseUnit");
+		Debug::Log(Debug::Severity::Error, errorMsg, pType->ID, "BaseUnit");
 	}
 
-	auto CheckList = [House, idxParent, errorMsg, &AllIsWell]
-			(DynamicVectorClass<BuildingTypeClass *> const& List, const char * const ListName) -> void {
-		if(!HouseExt::FindBuildable(House, idxParent, make_iterator(List))) {
+	auto CheckList = [pThis, pType, idxParent, errorMsg, &AllIsWell] (
+		Iterator<BuildingTypeClass const*> const list,
+		const char* const ListName) -> void
+	{
+		if(!HouseExt::FindBuildable(pThis, idxParent, list)) {
 			AllIsWell = false;
-			Debug::Log(Debug::Severity::Error, errorMsg, House->Type->ID, ListName);
+			Debug::Log(Debug::Severity::Error, errorMsg, pType->ID, ListName);
 		}
 	};
 
 	// commented out lists that do not cause a crash, according to testers
-//	CheckList(RulesClass::Instance->Shipyard, "Shipyard");
-	CheckList(RulesClass::Instance->BuildPower, "BuildPower");
-	CheckList(RulesClass::Instance->BuildRefinery, "BuildRefinery");
-	CheckList(RulesClass::Instance->BuildWeapons, "BuildWeapons");
+	//CheckList(make_iterator(pRules->Shipyard), "Shipyard");
+	CheckList(make_iterator(pRules->BuildPower), "BuildPower");
+	CheckList(make_iterator(pRules->BuildRefinery), "BuildRefinery");
+	CheckList(make_iterator(pRules->BuildWeapons), "BuildWeapons");
+	//CheckList(make_iterator(pRules->BuildConst), "BuildConst");
+	//CheckList(make_iterator(pRules->BuildBarracks), "BuildBarracks");
+	//CheckList(make_iterator(pRules->BuildTech), "BuildTech");
+	//CheckList(make_iterator(pRules->BuildRadar), "BuildRadar");
+	//CheckList(make_iterator(pRules->ConcreteWalls), "ConcreteWalls");
+	//CheckList(make_iterator(pRules->BuildDummy), "BuildDummy");
+	//CheckList(make_iterator(pRules->BuildNavalYard), "BuildNavalYard");
 
-//			CheckList(RulesClass::Instance->BuildConst, "BuildConst");
-//			CheckList(RulesClass::Instance->BuildBarracks, "BuildBarracks");
-//			CheckList(RulesClass::Instance->BuildTech, "BuildTech");
-//			CheckList(RulesClass::Instance->BuildRadar, "BuildRadar");
-//			CheckList(RulesClass::Instance->ConcreteWalls, "ConcreteWalls");
-//			CheckList(RulesClass::Instance->BuildDummy, "BuildDummy");
-//			CheckList(RulesClass::Instance->BuildNavalYard, "BuildNavalYard");
+	auto const pCountryData = HouseTypeExt::ExtMap.Find(pType);
+	auto const Powerplants = pCountryData->GetPowerplants();
+	CheckList(Powerplants, "Powerplants");
 
-	auto pCountryData = HouseTypeExt::ExtMap.Find(House->Type);
-	auto Powerplants = pCountryData->GetPowerplants();
-	DynamicVectorClass<BuildingTypeClass*> Dummy(Powerplants.size(), const_cast<BuildingTypeClass**>(Powerplants.begin()));
-	CheckList(Dummy, "Powerplants");
-
-//			auto pSide = SideClass::Array->GetItem(curHouse->Type->SideIndex);
-//			auto pSideData = SideExt::ExtMap.Find(pSide);
-//			CheckList(pSideData->BaseDefenses, "Base Defenses");
+	//auto const pSide = SideClass::Array->GetItemOrDefault(pType->SideIndex);
+	//if(auto const pSideExt = SideExt::ExtMap.Find(pSide)) {
+	//	CheckList(make_iterator(pSideExt->BaseDefenses), "Base Defenses");
+	//}
 
 	return AllIsWell;
 }
