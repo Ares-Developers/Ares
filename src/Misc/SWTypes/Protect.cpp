@@ -136,7 +136,7 @@ bool SW_Protect::Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPl
 		bool force = pData->Protect_IsForceShield;
 		auto range = GetRange(pData);
 
-		auto IronCurtain = [&](TechnoClass* pTechno) -> bool {
+		auto IronCurtain = [=](TechnoClass* pTechno) -> bool {
 			// we shouldn't do anything
 			if(pTechno->IsImmobilized || pTechno->IsBeingWarpedOut()) {
 				return true;

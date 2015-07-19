@@ -98,7 +98,7 @@ bool SW_GeneticMutator::Activate(SuperClass* pThis, const CellStruct &Coords, bo
 			MapClass::DamageArea(coords, GetDamage(pData), nullptr, GetWarhead(pData), false, pThis->Owner);
 		} else {
 			// ranged approach
-			auto Mutate = [&](InfantryClass* pInf) -> bool {
+			auto Mutate = [this, pThis, pData](InfantryClass* pInf) -> bool {
 				// is this thing affected at all?
 				if(!pData->IsHouseAffected(pThis->Owner, pInf->Owner)) {
 					return true;

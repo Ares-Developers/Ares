@@ -83,7 +83,7 @@ DEFINE_HOOK(4899DA, DamageArea_Damage_MaxAffect, 7)
 			target.clear();
 
 			// collect all slots containing damage groups for this target
-			std::for_each(&group, groups.end(), [&](DamageGroup* &item) {
+			std::for_each(&group, groups.end(), [group, &target](DamageGroup* &item) {
 				if(item && item->Target == group->Target) {
 					target.push_back(&item);
 				}
@@ -104,7 +104,7 @@ DEFINE_HOOK(4899DA, DamageArea_Damage_MaxAffect, 7)
 	}
 
 	// move all the empty ones to the back, then remove them
-	auto end = std::stable_partition(groups.begin(), groups.end(), [&](DamageGroup* pGroup) {
+	auto end = std::stable_partition(groups.begin(), groups.end(), [](DamageGroup* pGroup) {
 		return pGroup != nullptr;
 	});
 

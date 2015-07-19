@@ -66,7 +66,7 @@ void SW_ParaDrop::LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *p
 		}
 	};
 
-	auto ParseParaDrop = [&](char* pID, int Plane) -> std::unique_ptr<ParadropPlane> {
+	auto ParseParaDrop = [section, &exINI](char* pID, int Plane) -> std::unique_ptr<ParadropPlane> {
 		auto pPlane = std::make_unique<ParadropPlane>();
 
 		// create the plane part of this request. this will be
@@ -103,7 +103,7 @@ void SW_ParaDrop::LoadFromINI(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *p
 		return pPlane;
 	};
 
-	auto GetParadropPlane = [&](char *pID, int defCount, std::vector<ParadropPlane*> &ret) {
+	auto GetParadropPlane = [=, &base](char *pID, int defCount, std::vector<ParadropPlane*> &ret) {
 		// get the number of planes for this house or side
 		char key[0x40];
 		_snprintf_s(key, 0x3F, "%s.Count", pID);

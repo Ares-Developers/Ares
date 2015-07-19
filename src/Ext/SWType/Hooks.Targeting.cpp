@@ -333,7 +333,7 @@ private:
 
 	static ObjectClass* FindTargetItem(const TargetingInfo& info) {
 		auto it = info.TypeExt->GetPotentialAITargets();
-		return GetTargetFirstMax(it.begin(), it.end(), [&](TechnoClass* pTechno, int curMax) {
+		return GetTargetFirstMax(it.begin(), it.end(), [&info](TechnoClass* pTechno, int curMax) {
 			if(pTechno->InLimbo) {
 				return -1;
 			}
@@ -373,7 +373,7 @@ struct GeneticMutatorTargetSelector final : public TargetSelector {
 private:
 	static ObjectClass* FindTargetItem(const TargetingInfo& info) {
 		auto it = info.TypeExt->GetPotentialAITargets();
-		return GetTargetFirstMax(it.begin(), it.end(), [&](TechnoClass* pTechno, int curMax) {
+		return GetTargetFirstMax(it.begin(), it.end(), [&info](TechnoClass* pTechno, int curMax) {
 			if(pTechno->InLimbo) {
 				return -1;
 			}
@@ -534,7 +534,7 @@ private:
 		const auto& buildings = info.Owner->Buildings;
 
 		// Ares < 0.9 didn't check power
-		auto it = std::find_if(buildings.begin(), buildings.end(), [=, &info](BuildingClass* pBld) {
+		auto it = std::find_if(buildings.begin(), buildings.end(), [index, &info](BuildingClass* pBld) {
 			auto const pExt = BuildingExt::ExtMap.Find(pBld);
 			if(pExt->HasSuperWeapon(index, true) && pBld->IsPowerOnline()) {
 				auto cell = pBld->GetMapCoords();
@@ -570,7 +570,7 @@ private:
 		auto pTargetPlayer = HouseClass::Array->GetItem(pOwner->EnemyHouseIndex);
 
 		auto it = info.TypeExt->GetPotentialAITargets(pTargetPlayer);
-		return GetTargetFirstMax(it.begin(), it.end(), [&](TechnoClass* pTechno, int curMax) {
+		return GetTargetFirstMax(it.begin(), it.end(), [pOwner, &info](TechnoClass* pTechno, int curMax) {
 			auto cell = pTechno->GetMapCoords();
 
 			auto const value = TechnoExt::IsCloaked(pTechno)

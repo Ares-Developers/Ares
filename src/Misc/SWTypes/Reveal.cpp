@@ -50,7 +50,7 @@ bool SW_Reveal::Activate(SuperClass* const pThis, const CellStruct &Coords, bool
 		MapRevealer const revealer(Coords);
 
 		if(revealer.AffectsHouse(pThis->Owner)) {
-			auto Apply = [&](bool add) {
+			auto Apply = [=, &revealer](bool add) {
 				auto const range = GetRange(pData);
 
 				if(range.WidthOrRange < 0.0) {
@@ -67,7 +67,7 @@ bool SW_Reveal::Activate(SuperClass* const pThis, const CellStruct &Coords, bool
 					auto const& base = revealer.Base();
 
 					Helpers::Alex::for_each_in_rect_or_range<CellClass>(base, range.WidthOrRange, range.Height,
-						[&, add](CellClass* pCell) -> bool
+						[=, &revealer](CellClass* pCell) -> bool
 					{
 						auto const& cell = pCell->MapCoords;
 						if(revealer.IsCellAvailable(cell) && revealer.IsCellAllowed(cell)) {

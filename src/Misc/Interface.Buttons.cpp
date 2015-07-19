@@ -29,7 +29,7 @@ bool Interface::invokeClickAction(Ares::UISettings::UIAction action, const char*
 	nextReturnMenu = -1;
 	nextMessageText = nullptr;
 
-	auto ret = [&](int _nextAction) -> bool {
+	auto ret = [pResult, nextMenu](int _nextAction) -> bool {
 		*pResult = nextAction = _nextAction;
 		nextReturnMenu = nextMenu;
 		return (_nextAction > -1);

@@ -852,7 +852,7 @@ void BuildingExt::ExtData::UpdateSecretLab() {
 
 	DynamicVectorClass<TechnoTypeClass*> Options;
 
-	auto AddToOptions = [&](const Iterator<TechnoTypeClass*> &items) {
+	auto AddToOptions = [pOwner, &Options](const Iterator<TechnoTypeClass*> &items) {
 		auto OwnerBits = 1u << pOwner->Type->ArrayIndex;
 
 		for(const auto& Option : items) {

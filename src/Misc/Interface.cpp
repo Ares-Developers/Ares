@@ -162,7 +162,7 @@ void Interface::updateMenu(HWND hDlg, YRDialogID iID) {
 			lefts[2] = width - lefts[1] - szImage.cx;
 
 			// create seven slot rects
-			auto setRect = [&](RECT *rcRect, int x, int y) {
+			auto setRect = [ptDlg, szImage](RECT *rcRect, int x, int y) {
 				rcRect->left = x - ptDlg.x;
 				rcRect->top = y;
 				rcRect->right = rcRect->left + szImage.cx;
@@ -179,7 +179,7 @@ void Interface::updateMenu(HWND hDlg, YRDialogID iID) {
 			setRect(&rcSlots[6], -szImage.cx, -szImage.cy);
 
 			// move the images to their new locations
-			auto fillSlot = [&](int iIDDlgItem, int slot, int iIDLabel) {
+			auto fillSlot = [hDlg, ptDlg, width, &rcSlots](int iIDDlgItem, int slot, int iIDLabel) {
 				if(HWND hItem = GetDlgItem(hDlg, iIDDlgItem)) {
 					moveItem(hItem, rcSlots[slot], ptDlg);
 				}
@@ -205,7 +205,7 @@ void Interface::updateMenu(HWND hDlg, YRDialogID iID) {
 			};
 
 			// move image and label. auto-center, if there is no neighbour.
-			auto moveToPlace = [&](int iID, int index, int neighbour, int slot, int center, int iIDLabel) {
+			auto moveToPlace = [=](int iID, int index, int neighbour, int slot, int center, int iIDLabel) {
 				if(slots[index]) {
 					fillSlot(iID, (slots[neighbour] ? slot : center), iIDLabel);
 				} else {

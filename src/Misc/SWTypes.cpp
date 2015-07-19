@@ -211,7 +211,7 @@ bool NewSWType::HasLaunchSite(SWTypeExt::ExtData* pSWType, HouseClass* pOwner, c
 		return true;
 	}
 
-	return std::any_of(pOwner->Buildings.begin(), pOwner->Buildings.end(), [&](BuildingClass* pBld) {
+	return std::any_of(pOwner->Buildings.begin(), pOwner->Buildings.end(), [=, &Coords](BuildingClass* pBld) {
 		return IsLaunchSiteEligible(pSWType, Coords, pBld, false);
 	});
 }
@@ -259,7 +259,7 @@ bool NewSWType::HasDesignator(SWTypeExt::ExtData* pSWType, HouseClass* pOwner, c
 	}
 
 	// a single designator in range suffices
-	return std::any_of(TechnoClass::Array->begin(), TechnoClass::Array->end(), [&](TechnoClass* pTechno) {
+	return std::any_of(TechnoClass::Array->begin(), TechnoClass::Array->end(), [=, &Coords](TechnoClass* pTechno) {
 		return IsDesignatorEligible(pSWType, pOwner, Coords, pTechno);
 	});
 }
@@ -309,7 +309,7 @@ bool NewSWType::HasInhibitor(SWTypeExt::ExtData* pSWType, HouseClass* pOwner, co
 	}
 
 	// a single inhibitor in range suffices
-	return std::any_of(TechnoClass::Array->begin(), TechnoClass::Array->end(), [&](TechnoClass* pTechno) {
+	return std::any_of(TechnoClass::Array->begin(), TechnoClass::Array->end(), [=, &Coords](TechnoClass* pTechno) {
 		return IsInhibitorEligible(pSWType, pOwner, Coords, pTechno);
 	});
 }

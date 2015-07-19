@@ -31,7 +31,7 @@ std::vector<SWStatus> GetSuperWeaponStatuses(HouseClass* pHouse) {
 				TechnoExt::ExtData *pExt = TechnoExt::ExtMap.Find(pBld);
 
 				// the super weapon status update lambda.
-				auto UpdateStatus = [&](int idxSW) {
+				auto UpdateStatus = [pBld, pExt, &Statuses](int idxSW) {
 					if(idxSW > -1) {
 						auto& status = Statuses[idxSW];
 						status.Available = true;

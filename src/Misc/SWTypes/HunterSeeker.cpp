@@ -77,7 +77,7 @@ bool SW_HunterSeeker::Activate(SuperClass* pThis, const CellStruct &Coords, bool
 		HSBuilding = &pExt->HunterSeeker_Buildings;
 	}
 
-	auto IsEligible = [&](BuildingClass* pBld) {
+	auto IsEligible = [&HSBuilding](BuildingClass* pBld) {
 		return HSBuilding->Contains(pBld->Type);
 	};
 
@@ -89,7 +89,7 @@ bool SW_HunterSeeker::Activate(SuperClass* pThis, const CellStruct &Coords, bool
 	// only call on up to Count buildings that suffice IsEligible
 	size_t Success = 0;
 	Helpers::Alex::for_each_if_n(pOwner->Buildings.begin(), pOwner->Buildings.end(),
-		Count, IsEligible, [&](BuildingClass* pBld)
+		Count, IsEligible, [=, &Success](BuildingClass* pBld)
 	{
 		auto cell = this->GetLaunchCell(pExt, pBld);
 

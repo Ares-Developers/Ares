@@ -69,7 +69,7 @@ void Ares::UISettings::Load(CCINIClass *pINI) {
 
 	const char* section = "UISettings";
 
-	auto ReadUIAction = [&](const char* name, Ares::UISettings::UIAction &value) {
+	auto ReadUIAction = [pINI, section](const char* name, Ares::UISettings::UIAction &value) {
 		if(pINI->ReadString(section, name, "default", Ares::readBuffer)) {
 			value = Interface::parseUIAction(Ares::readBuffer, value);
 		}
@@ -93,7 +93,7 @@ void Ares::UISettings::Load(CCINIClass *pINI) {
 	CampaignListSize = pINI->ReadInteger(section, "CampaignListSize", CampaignListSize);
 
 	// read the campaigns that can be started from the default campaign selection menu
-	auto ReadCampaign = [&](const char* name, CampaignData *value,
+	auto ReadCampaign = [pINI, section](const char* name, CampaignData *value,
 		const char* defBattle, const char* defImage, const char* defPalette,
 		const char* defSubline)
 	{
@@ -140,7 +140,7 @@ void Ares::UISettings::Load(CCINIClass *pINI) {
 	// and the mapping to link to the corresponding in-game color schemes.
 	const char* section2 = "Colors";
 
-	auto ParseColorInt = [&](const char* section, const char* key, int defColor) -> int {
+	auto ParseColorInt = [pINI](const char* section, const char* key, int defColor) -> int {
 		ColorStruct defCS;
 		ColorStruct bufCS;
 		defCS.R = defColor & 0xFF;
@@ -152,7 +152,7 @@ void Ares::UISettings::Load(CCINIClass *pINI) {
 		return defColor;
 	};
 
-	auto ReadColor = [&](const char* name, ColorData *value, int colorRGB, const char* defTooltip, const char* defColorScheme) {
+	auto ReadColor = [pINI, section2, ParseColorInt](const char* name, ColorData *value, int colorRGB, const char* defTooltip, const char* defColorScheme) {
 		// load the tooltip string
 		char buffer[0x20];
 		sprintf_s(buffer, 0x20, "%s.Tooltip", name);

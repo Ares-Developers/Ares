@@ -64,13 +64,13 @@ bool SW_EMPulse::Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPl
 	// if linked, only one needs to be in range (and CanFireAt checked that already).
 	const bool ignoreRange = pData->EMPulse_Linked || pData->EMPulse_TargetSelf;
 
-	auto IsEligible = [&](BuildingClass* pBld) {
+	auto IsEligible = [=](BuildingClass* pBld) {
 		return IsLaunchSiteEligible(pData, Coords, pBld, ignoreRange);
 	};
 
 	// only call on up to Count buildings that suffice IsEligible
 	Helpers::Alex::for_each_if_n(pOwner->Buildings.begin(), pOwner->Buildings.end(),
-		Count, IsEligible, [&](BuildingClass* pBld)
+		Count, IsEligible, [=](BuildingClass* pBld)
 	{
 		if(!pData->EMPulse_TargetSelf) {
 			// set extended properties

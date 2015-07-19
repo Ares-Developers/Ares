@@ -60,7 +60,7 @@ DEFINE_HOOK(53B080, PsyDom_Fire, 5) {
 		if(pData->Dominator_Capture) {
 			DynamicVectorClass<FootClass*> Minions;
 
-			auto Dominate = [&](TechnoClass* pTechno) -> bool {
+			auto Dominate = [pData, pFirer, &Minions](TechnoClass* pTechno) -> bool {
 				TechnoTypeClass* pType = pTechno->GetTechnoType();
 
 				// don't even try.

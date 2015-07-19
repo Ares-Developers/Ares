@@ -55,7 +55,7 @@ bool SW_SonarPulse::Activate(SuperClass* const pThis, const CellStruct &Coords, 
 		return false;
 	}
 
-	auto Detect = [&](TechnoClass* const pTechno) -> bool {
+	auto Detect = [pThis, pData](TechnoClass* const pTechno) -> bool {
 		// is this thing affected at all?
 		if(!pData->IsHouseAffected(pThis->Owner, pTechno->Owner)) {
 			return true;

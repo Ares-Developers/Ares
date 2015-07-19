@@ -97,17 +97,17 @@ CellClass* AresTrajectoryHelper::GetObstacle(
 	auto const cellCur = CellClass::Coord2Cell(crdCur);
 	auto const pCellCur = MapClass::Instance->GetCellAt(cellCur);
 
-	auto IsCliffHit = [&]() {
+	auto const IsCliffHit = [=]() {
 		return pType->SubjectToCliffs
 			&& AresTrajectoryHelper::IsCliffHit(pCellSource, pCellBullet, pCellCur);
 	};
 
-	auto IsWallHit = [&]() {
+	auto const IsWallHit = [=]() {
 		return pType->SubjectToWalls
 			&& AresTrajectoryHelper::IsWallHit(pCellSource, pCellCur, pCellTarget, pOwner);
 	};
 
-	auto IsBuildingHit = [&]() {
+	auto const IsBuildingHit = [=]() {
 		return pTypeExt->SubjectToSolid
 			&& AresTrajectoryHelper::IsBuildingHit(pSource, pTarget, crdCur, pOwner);
 	};

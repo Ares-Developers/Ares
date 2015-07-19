@@ -72,7 +72,7 @@ bool SW_ChronoWarp::Activate(SuperClass* pThis, const CellStruct &Coords, bool I
 
 	DynamicVectorClass<ChronoWarpStateMachine::ChronoWarpContainer> RegisteredBuildings;
 
-	auto Chronoport = [&](TechnoClass* const pTechno) -> bool {
+	auto Chronoport = [pThis, pData, pSource, Coords, &RegisteredBuildings](TechnoClass* const pTechno) -> bool {
 		// is this thing affected at all?
 		if(!pData->IsHouseAffected(pThis->Owner, pTechno->Owner)) {
 			return true;
