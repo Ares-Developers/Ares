@@ -199,6 +199,23 @@ bool HouseExt::IsDisabledFromShell(
 	return false;
 }
 
+size_t HouseExt::FindOwnedIndex(
+	HouseClass const* const, int const idxParentCountry,
+	Iterator<TechnoTypeClass const*> const items, size_t const start)
+{
+	auto const bitOwner = 1u << idxParentCountry;
+
+	for(auto i = start; i < items.size(); ++i) {
+		auto const pItem = items[i];
+
+		if(pItem->InOwners(bitOwner)) {
+			return i;
+		}
+	}
+
+	return items.size();
+}
+
 bool HouseExt::HasNeededFactory(HouseClass *pHouse, TechnoTypeClass *pItem) {
 	DWORD ItemOwners = pItem->GetOwners();
 	AbstractType WhatAmI = pItem->WhatAmI();

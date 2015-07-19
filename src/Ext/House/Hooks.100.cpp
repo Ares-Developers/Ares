@@ -40,15 +40,9 @@ DEFINE_HOOK(4FEA60, HouseClass_AI_UnitProduction, 0)
 	auto const AIDiff = static_cast<int>(pThis->GetAIDifficultyIndex());
 
 	auto const idxParentCountry = pThis->Type->FindParentCountryIndex();
-	auto const flagsOwner = 1u << idxParentCountry;
 
-	UnitTypeClass* pHarvester = nullptr;
-	for(auto const& pCurrent : pRules->HarvesterUnit) {
-		if(pCurrent->OwnerFlags & flagsOwner) {
-			pHarvester = pCurrent;
-			break;
-		}
-	}
+	auto const pHarvester = HouseExt::FindOwned(
+		pThis, idxParentCountry, make_iterator(pRules->HarvesterUnit));
 
 	if(pHarvester) {
 		//Buildable harvester found

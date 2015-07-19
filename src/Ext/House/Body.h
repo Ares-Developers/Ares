@@ -3,6 +3,7 @@
 #include "../_Container.hpp"
 #include "../../Enum/Prerequisites.h"
 #include "../../Utilities/Enums.h"
+#include "../../Utilities/Iterator.h"
 #include "../../Utilities/Template.h"
 
 #include <Helpers/Template.h>
@@ -137,6 +138,19 @@ public:
 
 	static bool IsDisabledFromShell(
 		HouseClass const* pHouse, BuildingTypeClass const* pItem);
+
+	static size_t FindOwnedIndex(
+		HouseClass const* pHouse, int idxParentCountry,
+		Iterator<TechnoTypeClass const*> items, size_t start = 0);
+
+	template <typename T>
+	static T* FindOwned(
+		HouseClass const* const pHouse, int const idxParent,
+		Iterator<T*> const items, size_t const start = 0)
+	{
+		auto const index = FindOwnedIndex(pHouse, idxParent, items, start);
+		return index < items.size() ? items[index] : nullptr;
+	}
 
 	static SideClass* GetSide(HouseClass* pHouse);
 
