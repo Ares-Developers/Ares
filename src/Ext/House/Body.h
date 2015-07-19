@@ -135,6 +135,9 @@ public:
 	static signed int PrereqValidate
 		(HouseClass *pHouse, TechnoTypeClass *pItem, bool BuildLimitOnly, bool IncludeQueued);
 
+	static bool IsDisabledFromShell(
+		HouseClass const* pHouse, BuildingTypeClass const* pItem);
+
 	static SideClass* GetSide(HouseClass* pHouse);
 
 	static HouseClass* GetHouseKind(OwnerHouseKind kind, bool allowRandom,

@@ -67,15 +67,9 @@ HouseExt::RequirementStatus HouseExt::RequirementsMet(HouseClass *pHouse, Techno
 
 	if(!HouseExt::CheckFactoryOwners(pHouse, pItem)) { return RequirementStatus::Incomplete; }
 
-	if(SessionClass::Instance->GameMode != GameMode::Campaign && !Unsorted::SWAllowed) {
-		if(BuildingTypeClass *pBld = specific_cast<BuildingTypeClass*>(pItem)) {
-			if(pBld->SuperWeapon != -1) {
-				if(RulesClass::Instance->BuildTech.FindItemIndex(pBld) == -1) {
-					if(pHouse->Supers.GetItem(pBld->SuperWeapon)->Type->DisableableFromShell) {
-						return RequirementStatus::Forbidden;
-					}
-				}
-			}
+	if(auto const pBldType = specific_cast<BuildingTypeClass*>(pItem)) {
+		if(HouseExt::IsDisabledFromShell(pHouse, pBldType)) {
+			return RequirementStatus::Forbidden;
 		}
 	}
 
@@ -178,6 +172,31 @@ signed int HouseExt::PrereqValidate
 	}
 
 	return static_cast<signed int>(HouseExt::CheckBuildLimit(pHouse, pItem, IncludeQueued));
+}
+
+bool HouseExt::IsDisabledFromShell(
+	HouseClass const* const pHouse, BuildingTypeClass const* const pItem)
+{
+	// SWAllowed does not apply to campaigns any more
+	if(SessionClass::Instance->GameMode == GameMode::Campaign
+		|| GameModeOptionsClass::Instance->SWAllowed)
+	{
+		return false;
+	}
+
+	if(pItem->SuperWeapon != -1) {
+		// allow SWs only if not disableable from shell
+		auto const pItem2 = const_cast<BuildingTypeClass*>(pItem);
+		auto const& BuildTech = RulesClass::Instance->BuildTech;
+		if(BuildTech.FindItemIndex(pItem2) == -1) {
+			auto const pSuper = pHouse->Supers[pItem->SuperWeapon];
+			if(pSuper->Type->DisableableFromShell) {
+				return true;
+			}
+		}
+	}
+
+	return false;
 }
 
 bool HouseExt::HasNeededFactory(HouseClass *pHouse, TechnoTypeClass *pItem) {
