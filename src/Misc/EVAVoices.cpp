@@ -44,7 +44,7 @@ DEFINE_HOOK(753000, VoxClass_CreateFromINIList, 6)
 				// find or allocate done manually
 				VoxClass* pVox = VoxClass::Find(buffer);
 				if(!pVox) {
-					pVox = new VoxClass2(buffer);
+					pVox = GameCreate<VoxClass2>(buffer);
 				}
 
 				pVox->LoadFromINI(pINI);
@@ -63,7 +63,7 @@ DEFINE_HOOK(7531CF, VoxClass_DeleteAll, 5)
 	while(Array.Count) {
 		// destroy backwards instead of forwards
 		auto pVox = static_cast<VoxClass2*>(Array[Array.Count-1]);
-		delete pVox;
+		GameDelete(pVox);
 	}
 
 	return 0x753240;
