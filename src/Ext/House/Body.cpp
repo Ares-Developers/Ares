@@ -664,8 +664,10 @@ void HouseExt::ExtData::UpdateAcademy(BuildingClass* pAcademy, bool added) {
 	}
 }
 
-void HouseExt::ExtData::ApplyAcademy(TechnoClass* pTechno, AbstractType considerAs) const {
-	auto pType = pTechno->GetTechnoType();
+void HouseExt::ExtData::ApplyAcademy(
+	TechnoClass* const pTechno, AbstractType const considerAs) const
+{
+	auto const pType = pTechno->GetTechnoType();
 
 	// get the academy data for this type
 	Valueable<double> BuildingTypeExt::ExtData::* pmBonus = nullptr;
@@ -677,21 +679,20 @@ void HouseExt::ExtData::ApplyAcademy(TechnoClass* pTechno, AbstractType consider
 		pmBonus = &BuildingTypeExt::ExtData::AcademyVehicle;
 	} else if(considerAs == AbstractType::Building) {
 		pmBonus = &BuildingTypeExt::ExtData::AcademyBuilding;
-	} else {
-		Debug::FatalErrorAndExit("Academy encountered invalid AbstractType");
 	}
 
-	double veterancyBonus = 0.0;
+	auto veterancyBonus = 0.0;
 
 	// aggregate the bonuses
-	for(auto pBld : this->Academies) {
-		auto pExt = BuildingTypeExt::ExtMap.Find(pBld->Type);
+	for(auto const& pBld : this->Academies) {
+		auto const pExt = BuildingTypeExt::ExtMap.Find(pBld->Type);
 
-		if(pExt->AcademyWhitelist.empty() || pExt->AcademyWhitelist.Contains(pType)) {
-			if(!pExt->AcademyBlacklist.Contains(pType)) {
-				const auto& data = pExt->*pmBonus;
-				veterancyBonus = std::max(veterancyBonus, data.Get());
-			}
+		auto const isWhitelisted = pExt->AcademyWhitelist.empty()
+			|| pExt->AcademyWhitelist.Contains(pType);
+
+		if(isWhitelisted && !pExt->AcademyBlacklist.Contains(pType)) {
+			const auto& data = pExt->*pmBonus;
+			veterancyBonus = std::max(veterancyBonus, data.Get());
 		}
 	}
 
@@ -699,7 +700,8 @@ void HouseExt::ExtData::ApplyAcademy(TechnoClass* pTechno, AbstractType consider
 	if(pType->Trainable) {
 		auto& value = pTechno->Veterancy.Veterancy;
 		if(veterancyBonus > value) {
-			value = static_cast<float>(std::min(veterancyBonus, RulesClass::Instance->VeteranCap));
+			value = static_cast<float>(std::min(
+				veterancyBonus, RulesClass::Instance->VeteranCap));
 		}
 	}
 }
