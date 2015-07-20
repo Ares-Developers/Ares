@@ -667,6 +667,12 @@ void HouseExt::ExtData::UpdateAcademy(BuildingClass* pAcademy, bool added) {
 void HouseExt::ExtData::ApplyAcademy(
 	TechnoClass* const pTechno, AbstractType const considerAs) const
 {
+	// mutex in effect, ignore academies to fix preplaced order issues.
+	// also triggered in game for certain "conversions" like deploy
+	if(Unsorted::IKnowWhatImDoing) {
+		return;
+	}
+
 	auto const pType = pTechno->GetTechnoType();
 
 	// get the academy data for this type
