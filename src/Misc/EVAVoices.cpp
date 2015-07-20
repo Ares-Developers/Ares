@@ -10,7 +10,7 @@ std::vector<const char*> EVAVoices::Types;
 // replace the complete ini loading function
 DEFINE_HOOK(753000, VoxClass_CreateFromINIList, 6)
 {
-	GET(CCINIClass*, pINI, ECX);
+	GET(CCINIClass* const, pINI, ECX);
 
 	char buffer[200];
 
@@ -18,28 +18,28 @@ DEFINE_HOOK(753000, VoxClass_CreateFromINIList, 6)
 	// when the dialogs are read.
 	EVAVoices::Types.clear();
 
-	const char* section = "EVATypes";
+	auto const pSection = "EVATypes";
 
-	if(pINI->GetSection(section)) {
-		int count = pINI->GetKeyCount(section);
+	if(pINI->GetSection(pSection)) {
+		auto const count = pINI->GetKeyCount(pSection);
 
-		for(int i = 0; i < count; ++i) {
-			const char* key = pINI->GetKeyName(section, i);
-			if(pINI->ReadString(section, key, "", buffer)) {
+		for(auto i = 0; i < count; ++i) {
+			auto const pKey = pINI->GetKeyName(pSection, i);
+			if(pINI->ReadString(pSection, pKey, "", buffer)) {
 				EVAVoices::RegisterType(buffer);
 			}
 		}
 	}
 
 	// read all dialogs
-	const char* section2 = "DialogList";
+	auto const pSection2 = "DialogList";
 
-	if(pINI->GetSection(section2)) {
-		int count = pINI->GetKeyCount(section2);
+	if(pINI->GetSection(pSection2)) {
+		auto const count = pINI->GetKeyCount(pSection2);
 
-		for(int i=0; i<count; ++i) {
-			const char* key = pINI->GetKeyName(section2, i);
-			if(pINI->ReadString(section2, key, "", buffer)) {
+		for(auto i = 0; i < count; ++i) {
+			auto const pKey = pINI->GetKeyName(pSection2, i);
+			if(pINI->ReadString(pSection2, pKey, "", buffer)) {
 
 				// find or allocate done manually
 				VoxClass* pVox = VoxClass::Find(buffer);
@@ -62,7 +62,7 @@ DEFINE_HOOK(7531CF, VoxClass_DeleteAll, 5)
 
 	while(Array.Count) {
 		// destroy backwards instead of forwards
-		auto pVox = static_cast<VoxClass2*>(Array[Array.Count-1]);
+		auto const pVox = static_cast<VoxClass2*>(Array[Array.Count - 1]);
 		GameDelete(pVox);
 	}
 
@@ -72,18 +72,18 @@ DEFINE_HOOK(7531CF, VoxClass_DeleteAll, 5)
 // also load all additional filenames
 DEFINE_HOOK(752FDC, VoxClass_LoadFromINI, 5)
 {
-	GET(VoxClass2*, pThis, ESI);
-	GET(CCINIClass*, pINI, EBP);
+	GET(VoxClass2* const, pThis, ESI);
+	GET(CCINIClass* const, pINI, EBP);
 
 	char buffer[0x20];
 
 	// make way for all filenames
-	auto count = EVAVoices::Types.size();
+	auto const count = EVAVoices::Types.size();
 	pThis->Voices.resize(count);
 
 	// put the filename in there. 8 chars max.
 	for(auto i = 0u; i < count; ++i) {
-		pINI->ReadString(pThis->Name, EVAVoices::Types.at(i), "", buffer);
+		pINI->ReadString(pThis->Name, EVAVoices::Types[i], "", buffer);
 		AresCRT::strCopy(pThis->Voices[i].Name, buffer);
 	}
 
@@ -93,8 +93,8 @@ DEFINE_HOOK(752FDC, VoxClass_LoadFromINI, 5)
 // undo the inlining. call the function we hook
 DEFINE_HOOK(7528E8, VoxClass_PlayEVASideSpecific, 5)
 {
-	GET(VoxClass*, pVox, EBP);
-	const char* ret = pVox->GetFilename();
+	GET(VoxClass* const, pVox, EBP);
+	auto const ret = pVox->GetFilename();
 
 	R->EDI(ret);
 	return 0x752901;
