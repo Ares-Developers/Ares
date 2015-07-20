@@ -6,16 +6,24 @@
 // #917 - validate build list before it needs to be generated
 DEFINE_HOOK(5054B0, HouseClass_GenerateAIBuildList_EnsureSanity, 6)
 {
-	GET(HouseClass *, pHouse, ECX);
-	auto pData = HouseExt::ExtMap.Find(pHouse);
-	pData->CheckBasePlanSanity();
-	return 0;// allow the list to be generated even if it will crash the game - sanity check will log potential problems and thou shalt RTFLog
+	GET(HouseClass* const, pThis, ECX);
+
+	auto const pExt = HouseExt::ExtMap.Find(pThis);
+	pExt->CheckBasePlanSanity();
+
+	// allow the list to be generated even if it will crash the game - sanity
+	// check will log potential problems and thou shalt RTFLog
+	return 0;
 }
 
-// fixes SWs not being available in campaigns if they have been turned off in a multiplayer mode
+// fixes SWs not being available in campaigns if they have been turned off in a
+// multiplayer mode
 DEFINE_HOOK(5055D8, HouseClass_GenerateAIBuildList_SWAllowed, 5)
 {
-	R->AL(SessionClass::Instance->GameMode == GameMode::Campaign || GameModeOptionsClass::Instance->SWAllowed);
+	auto const allowed = SessionClass::Instance->GameMode == GameMode::Campaign
+		|| GameModeOptionsClass::Instance->SWAllowed;
+
+	R->EAX(allowed);
 	return 0x5055DD;
 }
 
@@ -34,32 +42,35 @@ DEFINE_HOOK(5055D8, HouseClass_GenerateAIBuildList_SWAllowed, 5)
 
 DEFINE_HOOK(505B58, HouseClass_GenerateAIBuildList_SkipManualCopy, 6)
 {
-	LEA_STACK(DynamicVectorClass<BuildingTypeClass *> *, PlannedBase1, STACK_OFFS(0xA4, 0x90));
-	LEA_STACK(DynamicVectorClass<BuildingTypeClass *> *, PlannedBase2, STACK_OFFS(0xA4, 0x78));
-	PlannedBase2->SetCapacity(PlannedBase1->Capacity, nullptr);
+	REF_STACK(DynamicVectorClass<BuildingTypeClass*>, PlannedBase1, STACK_OFFS(0xA4, 0x90));
+	REF_STACK(DynamicVectorClass<BuildingTypeClass*>, PlannedBase2, STACK_OFFS(0xA4, 0x78));
+	PlannedBase2.SetCapacity(PlannedBase1.Capacity, nullptr);
 	return 0x505C2C;
 }
 
 DEFINE_HOOK(505C34, HouseClass_GenerateAIBuildList_FullAutoCopy, 5)
 {
-	R->EDI<int>(0);
+	R->EDI(0);
 	return 0x505C39;
 }
 
-//0x505C95
-DEFINE_HOOK(505C95, Sides_BaseDefenseCounts, 7)
+DEFINE_HOOK(505C95, HouseClass_GenerateAIBuildList_BaseDefenseCounts, 7)
 {
-	GET(HouseClass *, pThis, EBX);
-	int n = R->Stack32(0x80);	//just to be on the safe side, we're not getting it from the House
+	GET(HouseClass* const, pThis, EBX);
+	GET_STACK(int const, idxSide, 0x80);
 
-	SideClass* pSide = SideClass::Array->GetItemOrDefault(n);
-	if(SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide)) {
-		auto it = pData->GetBaseDefenseCounts();
-		if(pThis->GetAIDifficultyIndex() < it.size()) {
-			R->EAX<int>(it.at(pThis->GetAIDifficultyIndex()));
+	if(auto const pSide = SideClass::Array->GetItemOrDefault(idxSide)) {
+		auto const pExt = SideExt::ExtMap.Find(pSide);
+		
+		auto const idxDiff = pThis->GetAIDifficultyIndex();
+
+		auto const it = pExt->GetBaseDefenseCounts();
+		if(idxDiff < it.size()) {
+			R->EAX(it.at(idxDiff));
 			return 0x505CE9;
 		} else {
-			Debug::Log("WTF! vector has %u items, requested item #%u\n", it.size(), pThis->GetAIDifficultyIndex());
+			Debug::Log("WTF! vector has %u items, requested item #%u\n",
+				it.size(), idxDiff);
 		}
 	}
 	return 0;
@@ -68,18 +79,15 @@ DEFINE_HOOK(505C95, Sides_BaseDefenseCounts, 7)
 // I am crying all inside
 DEFINE_HOOK(505CF1, HouseClass_GenerateAIBuildList_PadWithN1, 5)
 {
-	LEA_STACK(DynamicVectorClass<BuildingTypeClass *> *, PlannedBase2, STACK_OFFS(0xA4, 0x78));
+	REF_STACK(DynamicVectorClass<BuildingTypeClass*>, PlannedBase2, STACK_OFFS(0xA4, 0x78));
 	GET(int, DefenseCount, EAX);
-	while(PlannedBase2->Count <= 3) {
-		PlannedBase2->AddItem(reinterpret_cast<BuildingTypeClass *>(-1));
+	while(PlannedBase2.Count <= 3) {
+		PlannedBase2.AddItem(reinterpret_cast<BuildingTypeClass*>(-1));
 		--DefenseCount;
 	}
-	R->EDI<int>(DefenseCount);
-	R->EBX<int>(-1);
-	return (DefenseCount > 0)
-		? 0x505CF6
-		: 0x505D8D
-	;
+	R->EDI(DefenseCount);
+	R->EBX(-1);
+	return (DefenseCount > 0) ? 0x505CF6u : 0x505D8Du;
 }
 
 // replaced the entire function, to have one centralized implementation
