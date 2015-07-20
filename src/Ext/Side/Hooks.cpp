@@ -47,25 +47,6 @@ DEFINE_HOOK(4F8F54, Sides_SlaveMinerCheck, 6)
 	return 0x4F8F75;
 }
 
-//0x505C95
-DEFINE_HOOK(505C95, Sides_BaseDefenseCounts, 7)
-{
-	GET(HouseClass *, pThis, EBX);
-	int n = R->Stack32(0x80);	//just to be on the safe side, we're not getting it from the House
-
-	SideClass* pSide = SideClass::Array->GetItemOrDefault(n);
-	if(SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide)) {
-		auto it = pData->GetBaseDefenseCounts();
-		if(pThis->GetAIDifficultyIndex() < it.size()) {
-			R->EAX<int>(it.at(pThis->GetAIDifficultyIndex()));
-			return 0x505CE9;
-		} else {
-			Debug::Log("WTF! vector has %u items, requested item #%u\n", it.size(), pThis->GetAIDifficultyIndex());
-		}
-	}
-	return 0;
-}
-
 DEFINE_HOOK_AGAIN(507DBA, Sides_BaseDefenses, 6) // HouseClass_PickAntiArmorDefense
 DEFINE_HOOK_AGAIN(507FAA, Sides_BaseDefenses, 6) // HouseClass_PickAntiInfantryDefense
 DEFINE_HOOK(507BCA, Sides_BaseDefenses, 6) // HouseClass_PickAntiAirDefense

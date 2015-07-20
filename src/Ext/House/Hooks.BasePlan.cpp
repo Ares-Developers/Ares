@@ -1,5 +1,6 @@
 #include "Body.h"
 #include "../HouseType/Body.h"
+#include "../Side/Body.h"
 #include <BuildingTypeClass.h>
 
 // #917 - validate build list before it needs to be generated
@@ -11,31 +12,11 @@ DEFINE_HOOK(5054B0, HouseClass_GenerateAIBuildList_EnsureSanity, 6)
 	return 0;// allow the list to be generated even if it will crash the game - sanity check will log potential problems and thou shalt RTFLog
 }
 
-// replaced the entire function, to have one centralized implementation
-DEFINE_HOOK(5051E0, HouseClass_FirstBuildableFromArray, 5)
+// fixes SWs not being available in campaigns if they have been turned off in a multiplayer mode
+DEFINE_HOOK(5055D8, HouseClass_GenerateAIBuildList_SWAllowed, 5)
 {
-	GET(HouseClass const* const, pThis, ECX);
-	GET_STACK(const DynamicVectorClass<BuildingTypeClass*>* const, pList, 0x4);
-
-	auto const idxParentCountry = pThis->Type->FindParentCountryIndex();
-	auto const pItem = HouseExt::FindBuildable(
-		pThis, idxParentCountry, make_iterator(*pList));
-
-	R->EAX(pItem);
-	return 0x505300;
-}
-
-// #917 - handle the case of no shipyard gracefully
-DEFINE_HOOK(50610E, HouseClass_FindPositionForBuilding_FixShipyard, 7)
-{
-	GET(BuildingTypeClass *, pShipyard, EAX);
-	if(pShipyard) {
-		R->ESI<int>(pShipyard->GetFoundationWidth() + 2);
-		R->EAX<int>(pShipyard->GetFoundationHeight(false));
-		return 0x506134;
-	} else {
-		return 0x5060CE;
-	}
+	R->AL(SessionClass::Instance->GameMode == GameMode::Campaign || GameModeOptionsClass::Instance->SWAllowed);
+	return 0x5055DD;
 }
 
 // #917 - stupid copying logic
@@ -65,6 +46,25 @@ DEFINE_HOOK(505C34, HouseClass_GenerateAIBuildList_FullAutoCopy, 5)
 	return 0x505C39;
 }
 
+//0x505C95
+DEFINE_HOOK(505C95, Sides_BaseDefenseCounts, 7)
+{
+	GET(HouseClass *, pThis, EBX);
+	int n = R->Stack32(0x80);	//just to be on the safe side, we're not getting it from the House
+
+	SideClass* pSide = SideClass::Array->GetItemOrDefault(n);
+	if(SideExt::ExtData *pData = SideExt::ExtMap.Find(pSide)) {
+		auto it = pData->GetBaseDefenseCounts();
+		if(pThis->GetAIDifficultyIndex() < it.size()) {
+			R->EAX<int>(it.at(pThis->GetAIDifficultyIndex()));
+			return 0x505CE9;
+		} else {
+			Debug::Log("WTF! vector has %u items, requested item #%u\n", it.size(), pThis->GetAIDifficultyIndex());
+		}
+	}
+	return 0;
+}
+
 // I am crying all inside
 DEFINE_HOOK(505CF1, HouseClass_GenerateAIBuildList_PadWithN1, 5)
 {
@@ -80,6 +80,33 @@ DEFINE_HOOK(505CF1, HouseClass_GenerateAIBuildList_PadWithN1, 5)
 		? 0x505CF6
 		: 0x505D8D
 	;
+}
+
+// replaced the entire function, to have one centralized implementation
+DEFINE_HOOK(5051E0, HouseClass_FirstBuildableFromArray, 5)
+{
+	GET(HouseClass const* const, pThis, ECX);
+	GET_STACK(const DynamicVectorClass<BuildingTypeClass*>* const, pList, 0x4);
+
+	auto const idxParentCountry = pThis->Type->FindParentCountryIndex();
+	auto const pItem = HouseExt::FindBuildable(
+		pThis, idxParentCountry, make_iterator(*pList));
+
+	R->EAX(pItem);
+	return 0x505300;
+}
+
+// #917 - handle the case of no shipyard gracefully
+DEFINE_HOOK(50610E, HouseClass_FindPositionForBuilding_FixShipyard, 7)
+{
+	GET(BuildingTypeClass *, pShipyard, EAX);
+	if(pShipyard) {
+		R->ESI<int>(pShipyard->GetFoundationWidth() + 2);
+		R->EAX<int>(pShipyard->GetFoundationHeight(false));
+		return 0x506134;
+	} else {
+		return 0x5060CE;
+	}
 }
 
 // don't crash if you can't find a base unit
@@ -149,11 +176,4 @@ DEFINE_HOOK(5D721A, MPGameMode_CreateStartingUnits, 5)
 		Debug::Log(Debug::Severity::Fatal, "House of country [%s] cannot build anything from [General]BaseUnit=.\n", pHouse->Type->ID);
 	}
 	return 0;
-}
-
-// fixes SWs not being available in campaigns if they have been turned off in a multiplayer mode
-DEFINE_HOOK(5055D8, HouseClass_GenerateAIBuildList_SWAllowed, 5)
-{
-	R->AL(SessionClass::Instance->GameMode == GameMode::Campaign || GameModeOptionsClass::Instance->SWAllowed);
-	return 0x5055DD;
 }
