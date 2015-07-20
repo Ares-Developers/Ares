@@ -103,14 +103,13 @@ DEFINE_HOOK(7528E8, VoxClass_PlayEVASideSpecific, 5)
 // resolve EVA index to filename
 DEFINE_HOOK(753380, VoxClass_GetFilename, 5)
 {
-	GET(VoxClass2*, pThis, ECX);
-	int index = VoxClass::EVAIndex;
+	GET(VoxClass2* const, pThis, ECX);
+	auto const index = VoxClass::EVAIndex;
 
-	const char* ret = nullptr;
+	const char* ret = "";
 	switch(index)
 	{
 	case -1:
-		ret = "";
 		break;
 	case 0:
 		ret = pThis->Allied;
@@ -122,7 +121,10 @@ DEFINE_HOOK(753380, VoxClass_GetFilename, 5)
 		ret = pThis->Yuri;
 		break;
 	default:
-		ret = pThis->Voices[static_cast<size_t>(index-3)].Name;
+		auto const idxVoc = static_cast<size_t>(index - 3);
+		if(idxVoc < pThis->Voices.size()) {
+			ret = pThis->Voices[idxVoc].Name;
+		}
 	}
 
 	R->EAX(ret);
