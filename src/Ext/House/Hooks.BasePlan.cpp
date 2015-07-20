@@ -1,4 +1,5 @@
 #include "Body.h"
+#include "../BuildingType/Body.h"
 #include "../HouseType/Body.h"
 #include "../Side/Body.h"
 #include <BuildingTypeClass.h>
@@ -52,6 +53,50 @@ DEFINE_HOOK(505C34, HouseClass_GenerateAIBuildList_FullAutoCopy, 5)
 {
 	R->EDI(0);
 	return 0x505C39;
+}
+
+DEFINE_HOOK(505C95, HouseClass_GenerateAIBuildList_CountExtra, 7)
+{
+	GET(HouseClass* const, pThis, EBX);
+	REF_STACK(DynamicVectorClass<BuildingTypeClass*>, BuildList, STACK_OFFS(0xA4, 0x78));
+
+	auto const idxDifficulty = pThis->GetAIDifficultyIndex();
+	auto& Random = ScenarioClass::Instance->Random;
+
+	// optionally add the same buildings more than once, but ignore the
+	// construction yard at index 0
+	for(auto i = 1; i < BuildList.Count; ++i) {
+		auto const pItem = BuildList[i];
+
+		// only handle if occurs for the first time, otherwise we have an
+		// escalating probability of desaster.
+		auto const handled = make_iterator(BuildList.begin(), i);
+
+		if(!handled.contains(pItem)) {
+			auto const pExt = BuildingTypeExt::ExtMap.Find(pItem);
+			if(idxDifficulty < pExt->AIBuildCounts.size()) {
+				// fixed number of buildings, one minimum (exists already)
+				auto count = Math::max(pExt->AIBuildCounts[idxDifficulty], 1);
+
+				// random optional building counts
+				if(idxDifficulty < pExt->AIExtraCounts.size()) {
+					auto const& max = pExt->AIExtraCounts[idxDifficulty];
+					count += Random.RandomRanged(0, Math::max(max, 0));
+				}
+
+				// account for the one that already exists
+				for(auto j = 1; j < count; ++j) {
+					auto const idx = Random.RandomRanged(
+						i + 1, BuildList.Count);
+					BuildList.AddItem(pItem);
+					std::rotate(BuildList.begin() + idx, BuildList.end() - 1,
+						BuildList.end());
+				}
+			}
+		}
+	}
+
+	return 0;
 }
 
 DEFINE_HOOK(505C95, HouseClass_GenerateAIBuildList_BaseDefenseCounts, 7)

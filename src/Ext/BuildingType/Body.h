@@ -211,6 +211,9 @@ public:
 		// saboteurs
 		Nullable<bool> ImmuneToSaboteurs;
 
+		ValueableVector<int> AIBuildCounts;
+		ValueableVector<int> AIExtraCounts;
+
 		ExtData(BuildingTypeClass* OwnerObject) : Extension<BuildingTypeClass>(OwnerObject),
 			Solid_Height(0),
 			Solid_Level(1),
