@@ -152,13 +152,6 @@ DEFINE_HOOK(5D721A, MPGameMode_CreateStartingUnits, 5)
 }
 
 // fixes SWs not being available in campaigns if they have been turned off in a multiplayer mode
-
-DEFINE_HOOK(505288, HouseClass_FindFirstBuildableBuildingTypeFromArray_SWAllowed, 6)
-{
-	R->CL(SessionClass::Instance->GameMode == GameMode::Campaign || GameModeOptionsClass::Instance->SWAllowed);
-	return 0x50528E;
-}
-
 DEFINE_HOOK(5055D8, HouseClass_GenerateAIBuildList_SWAllowed, 5)
 {
 	R->AL(SessionClass::Instance->GameMode == GameMode::Campaign || GameModeOptionsClass::Instance->SWAllowed);
