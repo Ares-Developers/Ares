@@ -289,12 +289,12 @@ public:
 	explicit AresPCXFile(bool autoResolve = true) : filename(), resolve(autoResolve), checked(false), exists(false) {
 	}
 
-	AresPCXFile(const char* filename, bool autoResolve = true) : AresPCXFile(autoResolve) {
-		*this = filename;
+	AresPCXFile(const char* pFilename, bool autoResolve = true) : AresPCXFile(autoResolve) {
+		*this = pFilename;
 	}
 
-	AresPCXFile& operator = (const char* filename) {
-		this->filename = filename;
+	AresPCXFile& operator = (const char* pFilename) {
+		this->filename = pFilename;
 		auto& data = this->filename.data();
 		_strlwr_s(data);
 
