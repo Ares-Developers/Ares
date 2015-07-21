@@ -354,8 +354,10 @@ bool HouseExt::UpdateAnyFirestormActive() {
 	return IsAnyFirestormActive;
 }
 
-HouseClass* HouseExt::GetHouseKind(OwnerHouseKind kind, bool allowRandom, HouseClass* pDefault,
-	HouseClass* pInvoker, HouseClass* pKiller, HouseClass* pVictim)
+HouseClass* HouseExt::GetHouseKind(
+	OwnerHouseKind const kind, bool const allowRandom,
+	HouseClass* const pDefault, HouseClass* const pInvoker,
+	HouseClass* const pKiller, HouseClass* const pVictim)
 {
 	switch(kind) {
 	case OwnerHouseKind::Invoker:
@@ -372,7 +374,9 @@ HouseClass* HouseExt::GetHouseKind(OwnerHouseKind kind, bool allowRandom, HouseC
 		return HouseClass::FindNeutral();
 	case OwnerHouseKind::Random:
 		if(allowRandom) {
-			return HouseClass::Array->GetItem(ScenarioClass::Instance->Random.RandomRanged(0, HouseClass::Array->Count - 1));
+			auto& Random = ScenarioClass::Instance->Random;
+			return HouseClass::Array->GetItem(
+				Random.RandomRanged(0, HouseClass::Array->Count - 1));
 		} else {
 			return pDefault;
 		}
@@ -388,32 +392,32 @@ HouseExt::ExtData::~ExtData()
 		return;
 	}
 
-	for(auto Type : *TechnoTypeClass::Array) {
-		if(auto TypeData = TechnoTypeExt::ExtMap.Find(Type)) {
-			TypeData->ReversedByHouses.erase(this->OwnerObject());
+	for(auto const pType : *TechnoTypeClass::Array) {
+		if(auto const pTypeData = TechnoTypeExt::ExtMap.Find(pType)) {
+			pTypeData->ReversedByHouses.erase(this->OwnerObject());
 		}
 	}
 }
 
-void HouseExt::ExtData::SetFirestormState(bool Active) {
-	HouseClass *pHouse = this->OwnerObject();
-	HouseExt::ExtData* pData = HouseExt::ExtMap.Find(pHouse);
+void HouseExt::ExtData::SetFirestormState(bool const active) {
+	auto const pHouse = this->OwnerObject();
+	auto const pData = HouseExt::ExtMap.Find(pHouse);
 
-	if(pData->FirewallActive == Active) {
+	if(pData->FirewallActive == active) {
 		return;
 	}
 
-	pData->FirewallActive = Active;
+	pData->FirewallActive = active;
 	UpdateAnyFirestormActive();
 
 	DynamicVectorClass<CellStruct> AffectedCoords;
 
-	for(auto pBld : pHouse->Buildings) {
-		auto pTypeData = BuildingTypeExt::ExtMap.Find(pBld->Type);
+	for(auto const& pBld : pHouse->Buildings) {
+		auto const pTypeData = BuildingTypeExt::ExtMap.Find(pBld->Type);
 		if(pTypeData->Firewall_Is) {
-			auto pExt = BuildingExt::ExtMap.Find(pBld);
+			auto const pExt = BuildingExt::ExtMap.Find(pBld);
 			pExt->UpdateFirewall();
-			const auto& temp = pBld->GetMapCoords();
+			const auto temp = pBld->GetMapCoords();
 			AffectedCoords.AddItem(temp);
 		}
 	}
