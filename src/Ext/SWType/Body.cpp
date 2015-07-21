@@ -440,6 +440,18 @@ bool SWTypeExt::ExtData::CanFireAt(HouseClass* pOwner, const CellStruct &coords,
 	return true;
 }
 
+bool SWTypeExt::Activate(
+	SuperClass* const pSuper, CellStruct const cell, bool const isPlayer)
+{
+	auto const pExt = SWTypeExt::ExtMap.Find(pSuper->Type);
+
+	if(auto const pNewType = pExt->GetNewSWType()) {
+		return SWTypeExt::Launch(pSuper, pNewType, cell, isPlayer);
+	}
+
+	return false;
+}
+
 bool SWTypeExt::Launch(SuperClass* pThis, NewSWType* pSW, const CellStruct &Coords, bool IsPlayer) {
 	if(SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pThis->Type)) {
 

@@ -381,18 +381,13 @@ DEFINE_HOOK(6CBB0D, SuperClass_ClickFire_ResetAfterLaunch, 6)
 // ARGH!
 DEFINE_HOOK(6CC390, SuperClass_Launch, 6)
 {
-	GET(SuperClass*, pSuper, ECX);
-	GET_STACK(CellStruct*, pCoords, 0x4);
-	GET_STACK(bool, IsPlayer, 0x8);
-
-	auto pData = SWTypeExt::ExtMap.Find(pSuper->Type);
+	GET(SuperClass* const, pSuper, ECX);
+	GET_STACK(CellStruct const* const, pCell, 0x4);
+	GET_STACK(bool const, isPlayer, 0x8);
 
 	Debug::Log("[LAUNCH] %s\n", pSuper->Type->ID);
 
-	bool handled = false;
-	if(auto pNSW = pData->GetNewSWType()) {
-		handled = SWTypeExt::Launch(pSuper, pNSW, *pCoords, IsPlayer);
-	}
+	auto const handled = SWTypeExt::Activate(pSuper, *pCell, isPlayer);
 
 	return handled ? 0x6CDE40 : 0;
 }

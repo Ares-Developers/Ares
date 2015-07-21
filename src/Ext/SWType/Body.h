@@ -390,6 +390,8 @@ public:
 
 	static SuperWeaponTypeClass *CurrentSWType;
 
+	static bool Activate(SuperClass* pSuper, CellStruct cell, bool isPlayer);
+
 	bool static Launch(SuperClass* pThis, NewSWType* pData, const CellStruct &Coords, bool IsPlayer);
 	void static ClearChronoAnim(SuperClass* pThis);
 	void static CreateChronoAnim(SuperClass* pThis, const CoordStruct &Coords, AnimTypeClass* pAnimType);
