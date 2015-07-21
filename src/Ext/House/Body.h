@@ -131,7 +131,7 @@ public:
 	static bool CheckForbiddenFactoryOwner(HouseClass *pHouse, TechnoTypeClass *pItem);
 
 	static bool IsAnyFirestormActive;
-	static bool UpdateAnyFirestormActive();
+	static bool UpdateAnyFirestormActive(bool lastChange);
 
 	static signed int PrereqValidate
 		(HouseClass *pHouse, TechnoTypeClass *pItem, bool BuildLimitOnly, bool IncludeQueued);

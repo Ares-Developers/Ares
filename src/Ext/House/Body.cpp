@@ -340,14 +340,17 @@ bool HouseExt::CheckForbiddenFactoryOwner(HouseClass *pHouse, TechnoTypeClass *p
 	return true;
 }
 
-bool HouseExt::UpdateAnyFirestormActive() {
-	IsAnyFirestormActive = false;
+bool HouseExt::UpdateAnyFirestormActive(bool const lastChange) {
+	IsAnyFirestormActive = lastChange;
 
-	for(auto pHouse : *HouseClass::Array) {
-		auto pData = HouseExt::ExtMap.Find(pHouse);
-		if(pData && pData->FirewallActive) {
-			IsAnyFirestormActive = true;
-			break;
+	// if last change activated one, there is at least one. else...
+	if(!lastChange) {
+		for(auto const& pHouse : *HouseClass::Array) {
+			auto const pData = HouseExt::ExtMap.Find(pHouse);
+			if(pData && pData->FirewallActive) {
+				IsAnyFirestormActive = true;
+				break;
+			}
 		}
 	}
 
@@ -408,7 +411,7 @@ void HouseExt::ExtData::SetFirestormState(bool const active) {
 	}
 
 	pData->FirewallActive = active;
-	UpdateAnyFirestormActive();
+	UpdateAnyFirestormActive(active);
 
 	DynamicVectorClass<CellStruct> AffectedCoords;
 
