@@ -21,7 +21,7 @@ LONG CALLBACK Exception::ExceptionFilter(PEXCEPTION_POINTERS const pExs)
 #pragma warning(push)
 #pragma warning(disable: 4646) // this function does not return, though it isn't declared VOID
 
-__declspec(noreturn) LONG CALLBACK Exception::ExceptionHandler(PEXCEPTION_POINTERS const pExs)
+[[noreturn]] LONG CALLBACK Exception::ExceptionHandler(PEXCEPTION_POINTERS const pExs)
 {
 	Debug::FreeMouse();
 	Debug::Log("Exception handler fired!\n");
@@ -174,7 +174,7 @@ std::wstring Exception::FullDump(
 	return filename;
 }
 
-__declspec(noreturn) void Exception::Exit(UINT ExitCode) {
+[[noreturn]] void Exception::Exit(UINT ExitCode) {
 	Debug::Log("Exiting...\n");
 	Ares::bShuttingDown = true;
 	ExitProcess(ExitCode);

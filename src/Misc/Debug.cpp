@@ -259,7 +259,7 @@ void Debug::FatalError(const char *Message, ...) {
 	Debug::FatalError(false);
 }
 
-__declspec(noreturn) void Debug::FatalErrorAndExit(const char *Message, ...) {
+[[noreturn]] void Debug::FatalErrorAndExit(const char *Message, ...) {
 	Debug::FreeMouse();
 
 	va_list args;

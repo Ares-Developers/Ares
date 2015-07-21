@@ -89,7 +89,7 @@ public:
 
 	static void FatalError(bool Dump = false); /* takes formatted message from Ares::readBuffer */
 	static void FatalError(const char *Message, ...);
-	static __declspec(noreturn) void FatalErrorAndExit(const char *Message, ...);
+	[[noreturn]] static void FatalErrorAndExit(const char *Message, ...);
 
 private:
 	static FILE* LogFile;
