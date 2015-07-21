@@ -301,7 +301,8 @@ public:
 	static bool LoadGlobals(AresStreamReader& Stm);
 	static bool SaveGlobals(AresStreamWriter& Stm);
 
-	static bool IsFoundationEqual(BuildingTypeClass *pTBldA, BuildingTypeClass *pTBldB);
+	static bool IsFoundationEqual(
+		BuildingTypeClass const* pType1, BuildingTypeClass const* pType2);
 
 	static bool IsSabotagable(BuildingTypeClass const* pType);
 };

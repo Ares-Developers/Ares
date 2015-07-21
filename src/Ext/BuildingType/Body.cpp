@@ -259,31 +259,32 @@ void BuildingTypeExt::ExtData::CompleteInitialization(BuildingTypeClass *pThis) 
 	}
 }
 
-// Naive function to return whether two buildings have tha same foundation.
-bool BuildingTypeExt::IsFoundationEqual(BuildingTypeClass *pTBldA, BuildingTypeClass *pTBldB) {
-	if(pTBldA && pTBldB) {
-		// must have same foundation id
-		if(pTBldA->Foundation != pTBldB->Foundation) {
-			return false;
-		}
-
-		// non-custom foundations need no special handling
-		if(pTBldA->Foundation != BuildingTypeExt::CustomFoundation) {
-			return true;
-		}
-
-		// custom foundation
-		auto pDataA = BuildingTypeExt::ExtMap.Find(pTBldA);
-		auto pDataB = BuildingTypeExt::ExtMap.Find(pTBldB);
-		const auto& customA = pDataA->CustomData;
-		const auto& customB = pDataB->CustomData;
-
-		return pDataA->CustomWidth == pDataB->CustomWidth
-			&& pDataA->CustomHeight == pDataB->CustomHeight
-			&& customA.size() == customB.size()
-			&& std::is_permutation(customA.begin(), customA.end(), customB.begin());
+// returns whether two buildings have the same foundation
+bool BuildingTypeExt::IsFoundationEqual(
+	BuildingTypeClass const* const pType1,
+	BuildingTypeClass const* const pType2)
+{
+	// both types must be set and must have same foundation id
+	if(!pType1 || !pType2 || pType1->Foundation != pType2->Foundation) {
+		return false;
 	}
-	return false;
+
+	// non-custom foundations need no special handling
+	if(pType1->Foundation != BuildingTypeExt::CustomFoundation) {
+		return true;
+	}
+
+	// custom foundation
+	auto const pExt1 = BuildingTypeExt::ExtMap.Find(pType1);
+	auto const pExt2 = BuildingTypeExt::ExtMap.Find(pType2);
+	const auto& data1 = pExt1->CustomData;
+	const auto& data2 = pExt2->CustomData;
+
+	// this works for any two foundations. it's linear with sorted ones
+	return pExt1->CustomWidth == pExt2->CustomWidth
+		&& pExt1->CustomHeight == pExt2->CustomHeight
+		&& std::is_permutation(
+			data1.begin(), data1.end(), data2.begin(), data2.end());
 }
 
 bool BuildingTypeExt::IsSabotagable(BuildingTypeClass const* const pType)
