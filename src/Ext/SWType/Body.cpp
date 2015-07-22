@@ -452,6 +452,19 @@ bool SWTypeExt::Activate(
 	return false;
 }
 
+bool SWTypeExt::Deactivate(
+	SuperClass* const pSuper, CellStruct const cell, bool const isPlayer)
+{
+	auto const pExt = SWTypeExt::ExtMap.Find(pSuper->Type);
+
+	if(auto const pNewType = pExt->GetNewSWType()) {
+		pNewType->Deactivate(pSuper, cell, isPlayer);
+		return true;
+	}
+
+	return false;
+}
+
 bool SWTypeExt::Launch(SuperClass* pThis, NewSWType* pSW, const CellStruct &Coords, bool IsPlayer) {
 	if(SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pThis->Type)) {
 
