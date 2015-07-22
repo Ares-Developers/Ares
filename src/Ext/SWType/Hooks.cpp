@@ -594,6 +594,7 @@ DEFINE_HOOK(6CBD86, SuperClass_Progress_Charged, 7)
 	return 0;
 }
 
+#if !FINISHED_INCLUDING_THEM_ALL
 // a ChargeDrain SW was clicked while it was active - fire to trigger status update
 DEFINE_HOOK(6CB979, SuperClass_ClickFire, 6)
 {
@@ -603,6 +604,7 @@ DEFINE_HOOK(6CB979, SuperClass_ClickFire, 6)
 
 	return 0;
 }
+#endif // !FINISHED_INCLUDING_THEM_ALL
 
 // SW was lost (source went away)
 DEFINE_HOOK(6CB7B0, SuperClass_Lose, 6)
@@ -656,6 +658,8 @@ DEFINE_HOOK(6CB920, SuperClass_ClickFire, 5)
 				auto const duration = Game::F2I(pThis->GetRechargeTime()
 					- (left / pExt->GetChargeToDrainRatio()));
 				pThis->RechargeTimer.Start(duration);
+
+				SWTypeExt::Deactivate(pThis, *pCell, isPlayer);
 
 			} else if(pThis->ChargeDrainState == ChargeDrainState::Ready) {
 				// activate for human players
