@@ -505,10 +505,8 @@ DEFINE_HOOK(6CC053, SuperClass_GetCameoChargeState_FixFullyCharged, 5) {
 // a ChargeDrain SW expired - fire it to trigger status update
 DEFINE_HOOK(6CBD86, SuperClass_Progress_Charged, 7)
 {
-	GET(SuperClass *, pSuper, ESI);
-	HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(pSuper->Owner);
-	pHouseData->SetFirestormState(0);
-
+	GET(SuperClass* const, pThis, ESI);
+	SWTypeExt::Deactivate(pThis, CellStruct::Empty, true);
 	return 0;
 }
 
