@@ -54,12 +54,6 @@ DEFINE_HOOK(4F8440, HouseClass_Update_FSW_Recalc, 5)
 {
 	GET(HouseClass *, H, ECX);
 	HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(H);
-	if(pHouseData->FirewallRecalc > 0) {
-		--pHouseData->FirewallRecalc;
-		pHouseData->SetFirestormState(pHouseData->FirewallActive);
-	} else if(pHouseData->FirewallRecalc < 0) {
-		pHouseData->FirewallRecalc = 0;
-	}
 
 	pHouseData->UpdateTogglePower();
 

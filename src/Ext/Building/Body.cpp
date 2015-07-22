@@ -708,9 +708,6 @@ void BuildingExt::ExtData::UpdateFirewall(bool const changedState) {
 			+ (active ? 32u : 0u);
 
 		if(pThis->FirestormWallFrame != idxFrame) {
-			if(!pHouseExt->FirewallRecalc) {
-				pHouseExt->FirewallRecalc = 1;
-			}
 			pThis->FirestormWallFrame = idxFrame;
 			pThis->GetCell()->Setup(0xFFFFFFFF);
 			pThis->UpdatePlacement(PlacementType::Redraw);

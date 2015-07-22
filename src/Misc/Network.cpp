@@ -137,6 +137,5 @@ void AresNetEvent::Handlers::RespondToFirewallToggle(NetworkEvent *Event) {
 		bool FS = pData->FirewallActive;
 		FS = !FS;
 		pData->SetFirestormState(FS);
-		pData->FirewallRecalc = 1;
 	}
 }

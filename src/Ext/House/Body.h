@@ -47,7 +47,6 @@ public:
 	public:
 		bool IonSensitive;
 		bool FirewallActive;
-		int FirewallRecalc;
 
 		int SWLastIndex;
 
@@ -67,7 +66,6 @@ public:
 		ExtData(HouseClass* OwnerObject) : Extension<HouseClass>(OwnerObject),
 			IonSensitive(false),
 			FirewallActive(false),
-			FirewallRecalc(0),
 			Factory_BuildingType(nullptr),
 			Factory_InfantryType(nullptr),
 			Factory_VehicleType(nullptr),

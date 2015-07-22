@@ -727,7 +727,6 @@ void HouseExt::ExtData::Serialize(T& Stm) {
 	Stm
 		.Process(this->IonSensitive)
 		.Process(this->FirewallActive)
-		.Process(this->FirewallRecalc)
 		.Process(this->SWLastIndex)
 		.Process(this->Factory_BuildingType)
 		.Process(this->Factory_InfantryType)
