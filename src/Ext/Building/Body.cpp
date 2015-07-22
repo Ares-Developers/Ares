@@ -694,7 +694,7 @@ void BuildingExt::ExtData::UpdateFirewall(bool const changedState) {
 		// (0b0101 || 0b1010) == part of a straight line
 		auto const connections = pThis->FirestormWallFrame & 0xF;
 		if(active && Unsorted::CurrentFrame & 7 && !Anim
-			&& connections != 5 && connections != 10
+			&& connections != 0b0101 && connections != 0b0101
 			&& (ScenarioClass::Instance->Random.Random() & 0xF) == 0)
 		{
 			if(AnimTypeClass* pType = RulesExt::Global()->FirestormIdleAnim) {
@@ -716,7 +716,7 @@ void BuildingExt::ExtData::UpdateFirewall(bool const changedState) {
 		auto& Anim = pThis->GetAnim(BuildingAnimSlot::Special);
 
 		auto const connections = idxFrame & 0xF;
-		if(active && connections != 5 && connections != 10 && !Anim) {
+		if(active && connections != 0b0101 && connections != 0b1010 && !Anim) {
 			if(auto const& pType = RulesExt::Global()->FirestormActiveAnim) {
 				auto const crd = pThis->GetCoords() - CoordStruct{ 128, 128, 0 };
 				Anim = GameCreate<AnimClass>(pType, crd, 1, 0, 0x600, -10);
