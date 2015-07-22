@@ -508,3 +508,13 @@ DEFINE_HOOK(4FC731, HouseClass_DestroyAll_ReturnStructures, 7)
 
 	return 0;
 }
+
+DEFINE_HOOK(4F8440, HouseClass_Update_TogglePower, 5)
+{
+	GET(HouseClass* const, pThis, ECX);
+	auto const pExt = HouseExt::ExtMap.Find(pThis);
+
+	pExt->UpdateTogglePower();
+
+	return 0;
+}

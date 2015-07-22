@@ -49,13 +49,3 @@ DEFINE_HOOK(6FF008, TechnoClass_Fire_FSW, 8)
 
 	return 0;
 }
-
-DEFINE_HOOK(4F8440, HouseClass_Update_FSW_Recalc, 5)
-{
-	GET(HouseClass *, H, ECX);
-	HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(H);
-
-	pHouseData->UpdateTogglePower();
-
-	return 0;
-}
