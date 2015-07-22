@@ -620,6 +620,108 @@ DEFINE_HOOK(6CB7B0, SuperClass_Lose, 6)
 	return 0x6CB810;
 }
 
+#if FINISHED_INCLUDING_THEM_ALL
+// activate or deactivate the SW
+DEFINE_HOOK(6CB920, SuperClass_ClickFire, 5)
+{
+	GET(SuperClass* const, pThis, ECX);
+	GET_STACK(bool const, isPlayer, 0x4);
+	GET_STACK(CellStruct const* const, pCell, 0x8);
+
+	retfunc<bool> ret(R, 0x6CBC9C);
+
+	auto const pType = pThis->Type;
+
+	auto const pOwner = pThis->Owner;
+
+	if(pType->UseChargeDrain) {
+
+		// AI get non-draining SWs
+		if(!pOwner->ControlledByHuman()) {
+			if(!pOwner->FirestormActive) {
+				pThis->Launch(*pCell, isPlayer);
+			}
+
+		} else {
+			if(pThis->ChargeDrainState == ChargeDrainState::Draining) {
+				// deactivate for human players
+				pThis->ChargeDrainState = ChargeDrainState::Ready;
+				auto const left = pThis->RechargeTimer.GetTimeLeft();
+
+				auto const duration = Game::F2I(pThis->GetRechargeTime()
+					- (left / RulesClass::Instance->ChargeToDrainRatio));
+				pThis->RechargeTimer.Start(duration);
+
+			} else if(pThis->ChargeDrainState == ChargeDrainState::Ready) {
+				// activate for human players
+				pThis->ChargeDrainState = ChargeDrainState::Draining;
+				auto const left = pThis->RechargeTimer.GetTimeLeft();
+
+				auto const duration = Game::F2I(
+					(pThis->GetRechargeTime() - left)
+					* RulesClass::Instance->ChargeToDrainRatio);
+				pThis->RechargeTimer.Start(duration);
+
+				pThis->Launch(*pCell, isPlayer);
+			}
+		}
+
+		return ret(false);
+	}
+
+	if((pThis->RechargeTimer.StartTime == -1
+		|| !pThis->Granted
+		|| !pThis->IsCharged)
+		&& !pType->PostClick)
+	{
+		return ret(false);
+	}
+
+	if(pType->Type == SuperWeaponType::LightningStorm
+		&& LightningStorm::HasDeferment())
+	{
+		if(isPlayer) {
+			LightningStorm::PrintMessage();
+		}
+		return ret(false);
+	}
+
+	if(pType->Type == SuperWeaponType::PsychicDominator
+		&& PsyDom::Active())
+	{
+		if(isPlayer) {
+			PsyDom::PrintMessage();
+		}
+		return ret(false);
+	}
+
+	pThis->Launch(*pCell, isPlayer);
+
+	if(!pType->PostClick) {
+		pThis->IsCharged = false;
+	}
+
+	if(pThis->OneTime) {
+		// remove this SW
+		pThis->OneTime = false;
+		auto const lost = pThis->Lose();
+		return ret(lost);
+	} else if(pType->ManualControl) {
+		// set recharge timer, then pause
+		auto time = pThis->GetRechargeTime();
+		pThis->CameoChargeState = -1;
+		pThis->RechargeTimer.Start(time);
+		pThis->RechargeTimer.Pause();
+	} else {
+		if(!pType->PreClick && !pType->PostClick) {
+			pThis->StopPreclickAnim(isPlayer);
+		}
+	}
+
+	return ret(false);
+}
+#endif
+
 // rewriting OnHold to support ChargeDrain
 DEFINE_HOOK(6CB4D0, SuperClass_SetOnHold, 6)
 {
