@@ -336,6 +336,7 @@ DEFINE_HOOK(50CFAA, HouseClass_PickOffensiveSWTarget, 0)
 	return 0x50CFC9;
 }
 
+#if !FINISHED_INCLUDING_THEM_ALL
 // psydom and lightning storm premature exit route
 DEFINE_HOOK(6CBA9E, SuperClass_ClickFire_Abort, 7)
 {
@@ -362,6 +363,7 @@ DEFINE_HOOK(6CBA9E, SuperClass_ClickFire_Abort, 7)
 
 	return 0;
 }
+#endif
 
 DEFINE_HOOK(6CBB0D, SuperClass_ClickFire_ResetAfterLaunch, 6)
 {
@@ -631,6 +633,7 @@ DEFINE_HOOK(6CB920, SuperClass_ClickFire, 5)
 	retfunc<bool> ret(R, 0x6CBC9C);
 
 	auto const pType = pThis->Type;
+	auto const pExt = SWTypeExt::ExtMap.Find(pType);
 
 	auto const pOwner = pThis->Owner;
 
@@ -677,22 +680,20 @@ DEFINE_HOOK(6CB920, SuperClass_ClickFire, 5)
 		return ret(false);
 	}
 
-	if(pType->Type == SuperWeaponType::LightningStorm
-		&& LightningStorm::HasDeferment())
-	{
-		if(isPlayer) {
-			LightningStorm::PrintMessage();
+	// auto-abort if no money
+	if(!pOwner->CanTransactMoney(pExt->Money_Amount)) {
+		if(pOwner->IsPlayer()) {
+			VoxClass::PlayIndex(pExt->EVA_InsufficientFunds);
+			pExt->PrintMessage(pExt->Message_InsufficientFunds, pOwner);
 		}
 		return ret(false);
 	}
 
-	if(pType->Type == SuperWeaponType::PsychicDominator
-		&& PsyDom::Active())
-	{
-		if(isPlayer) {
-			PsyDom::PrintMessage();
+	// can this super weapon fire now?
+	if(auto const pNewType = pExt->GetNewSWType()) {
+		if(pNewType->AbortFire(pThis, isPlayer)) {
+			return ret(false);
 		}
-		return ret(false);
 	}
 
 	pThis->Launch(*pCell, isPlayer);
