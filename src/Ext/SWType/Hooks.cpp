@@ -546,6 +546,7 @@ DEFINE_HOOK(6CC053, SuperClass_GetCameoChargeState_FixFullyCharged, 5) {
 	return 0x6CC066;
 }
 
+#if !FINISHED_INCLUDING_THEM_ALL
 DEFINE_HOOK(6CB995, SuperClass_ClickFire_ChargeDrainRatioA, 8) {
 	GET_STACK(int, rechargeTime, 0x24);
 	GET_STACK(int, timeLeft, 0x20);
@@ -565,6 +566,7 @@ DEFINE_HOOK(6CB995, SuperClass_ClickFire_ChargeDrainRatioA, 8) {
 
 	return 0;
 }
+#endif // !FINISHED_INCLUDING_THEM_ALL
 
 DEFINE_HOOK(6CBA19, SuperClass_ClickFire_ChargeDrainRatioB, A) {
 	GET(int, length, EDI);
@@ -652,7 +654,7 @@ DEFINE_HOOK(6CB920, SuperClass_ClickFire, 5)
 				auto const left = pThis->RechargeTimer.GetTimeLeft();
 
 				auto const duration = Game::F2I(pThis->GetRechargeTime()
-					- (left / RulesClass::Instance->ChargeToDrainRatio));
+					- (left / pExt->GetChargeToDrainRatio()));
 				pThis->RechargeTimer.Start(duration);
 
 			} else if(pThis->ChargeDrainState == ChargeDrainState::Ready) {
