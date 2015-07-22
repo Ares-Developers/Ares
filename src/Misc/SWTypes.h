@@ -73,6 +73,9 @@ public:
 
 	virtual bool Activate(SuperClass* pSW, const CellStruct &Coords, bool IsPlayer) = 0;
 
+	virtual void Deactivate(SuperClass* pSW, CellStruct cell, bool isPlayer) {
+	}
+
 	virtual void Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW) {
 	}
 

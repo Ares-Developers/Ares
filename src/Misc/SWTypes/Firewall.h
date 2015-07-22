@@ -26,5 +26,7 @@ public:
 
 	virtual bool Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer) override;
 
+	virtual void Deactivate(SuperClass* pThis, CellStruct cell, bool isPlayer) override;
+
 	static SuperWeaponType FirewallType;
 };
