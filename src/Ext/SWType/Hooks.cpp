@@ -626,7 +626,7 @@ DEFINE_HOOK(6CB4D0, SuperClass_SetOnHold, 6)
 	GET(SuperClass* const, pThis, ECX);
 	GET_STACK(bool const, onHold, 0x4);
 
-	bool ret = false;
+	auto ret = false;
 
 	if(pThis->Granted
 		&& !pThis->OneTime
@@ -643,8 +643,7 @@ DEFINE_HOOK(6CB4D0, SuperClass_SetOnHold, 6)
 
 		if(pThis->Type->UseChargeDrain) {
 			if(onHold) {
-				auto const pHouseData = HouseExt::ExtMap.Find(pThis->Owner);
-				pHouseData->SetFirestormState(false);
+				SWTypeExt::Deactivate(pThis, CellStruct::Empty, false);
 				pThis->ChargeDrainState = ChargeDrainState::None;
 			} else {
 				pThis->ChargeDrainState = ChargeDrainState::Charging;
