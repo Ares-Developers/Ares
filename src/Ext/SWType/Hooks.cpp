@@ -552,6 +552,8 @@ DEFINE_HOOK(6CB920, SuperClass_ClickFire, 5)
 		if(!pOwner->ControlledByHuman()) {
 			if(!pOwner->FirestormActive) {
 				pThis->Launch(*pCell, isPlayer);
+			} else {
+				SWTypeExt::Deactivate(pThis, *pCell, isPlayer);
 			}
 
 		} else {
