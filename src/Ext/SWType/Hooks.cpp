@@ -363,7 +363,6 @@ DEFINE_HOOK(6CBA9E, SuperClass_ClickFire_Abort, 7)
 
 	return 0;
 }
-#endif
 
 DEFINE_HOOK(6CBB0D, SuperClass_ClickFire_ResetAfterLaunch, 6)
 {
@@ -379,6 +378,7 @@ DEFINE_HOOK(6CBB0D, SuperClass_ClickFire_ResetAfterLaunch, 6)
 
 	return 0x6CBB18;
 }
+#endif
 
 // ARGH!
 DEFINE_HOOK(6CC390, SuperClass_Launch, 6)
@@ -698,7 +698,8 @@ DEFINE_HOOK(6CB920, SuperClass_ClickFire, 5)
 
 	pThis->Launch(*pCell, isPlayer);
 
-	if(!pType->PostClick) {
+	// the others will be reset after the PostClick SW fired
+	if(!pType->PostClick && !pType->PreClick) {
 		pThis->IsCharged = false;
 	}
 
