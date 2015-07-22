@@ -601,15 +601,23 @@ DEFINE_HOOK(6CB979, SuperClass_ClickFire, 6)
 }
 
 // SW was lost (source went away)
-DEFINE_HOOK(6CB7BA, SuperClass_Lose, 6)
+DEFINE_HOOK(6CB7B0, SuperClass_Lose, 6)
 {
-	GET(SuperClass *, pSuper, ECX);
-	if(pSuper->Type->UseChargeDrain) {
-		HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(pSuper->Owner);
-		pHouseData->SetFirestormState(0);
+	GET(SuperClass* const, pThis, ECX);
+	auto ret = false;
+
+	if(pThis->Granted) {
+		pThis->IsCharged = false;
+		pThis->Granted = false;
+
+		SuperClass::ShowTimers->Remove(pThis);
+		SWTypeExt::Deactivate(pThis, CellStruct::Empty, false);
+
+		ret = true;
 	}
 
-	return 0;
+	R->EAX(ret);
+	return 0x6CB810;
 }
 
 // rewriting OnHold to support ChargeDrain
