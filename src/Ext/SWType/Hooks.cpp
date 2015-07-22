@@ -566,7 +566,6 @@ DEFINE_HOOK(6CB995, SuperClass_ClickFire_ChargeDrainRatioA, 8) {
 
 	return 0;
 }
-#endif // !FINISHED_INCLUDING_THEM_ALL
 
 DEFINE_HOOK(6CBA19, SuperClass_ClickFire_ChargeDrainRatioB, A) {
 	GET(int, length, EDI);
@@ -583,6 +582,7 @@ DEFINE_HOOK(6CBA19, SuperClass_ClickFire_ChargeDrainRatioB, A) {
 
 	return 0;
 }
+#endif // !FINISHED_INCLUDING_THEM_ALL
 
 // a ChargeDrain SW expired - fire it to trigger status update
 DEFINE_HOOK(6CBD86, SuperClass_Progress_Charged, 7)
@@ -664,7 +664,7 @@ DEFINE_HOOK(6CB920, SuperClass_ClickFire, 5)
 
 				auto const duration = Game::F2I(
 					(pThis->GetRechargeTime() - left)
-					* RulesClass::Instance->ChargeToDrainRatio);
+					* pExt->GetChargeToDrainRatio());
 				pThis->RechargeTimer.Start(duration);
 
 				pThis->Launch(*pCell, isPlayer);
