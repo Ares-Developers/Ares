@@ -336,50 +336,6 @@ DEFINE_HOOK(50CFAA, HouseClass_PickOffensiveSWTarget, 0)
 	return 0x50CFC9;
 }
 
-#if !FINISHED_INCLUDING_THEM_ALL
-// psydom and lightning storm premature exit route
-DEFINE_HOOK(6CBA9E, SuperClass_ClickFire_Abort, 7)
-{
-	GET(SuperClass*, pSuper, ESI);
-	auto pData = SWTypeExt::ExtMap.Find(pSuper->Type);
-
-	GET_STACK(bool, IsPlayer, 0x20);
-
-	// auto-abort if no money
-	if(!pSuper->Owner->CanTransactMoney(pData->Money_Amount)) {
-		if(pSuper->Owner->IsPlayer()) {
-			VoxClass::PlayIndex(pData->EVA_InsufficientFunds);
-			pData->PrintMessage(pData->Message_InsufficientFunds, pSuper->Owner);
-		}
-		return 0x6CBABF;
-	}
-
-	// can this super weapon fire now?
-	if(auto pNSW = pData->GetNewSWType()) {
-		if(pNSW->AbortFire(pSuper, IsPlayer)) {
-			return 0x6CBABF;
-		}
-	}
-
-	return 0;
-}
-
-DEFINE_HOOK(6CBB0D, SuperClass_ClickFire_ResetAfterLaunch, 6)
-{
-	GET(SuperClass*, pSW, ESI);
-	GET(SuperWeaponTypeClass*, pType, EAX);
-
-	// do as the original game set it, but do not reset
-	// the ready state for PreClick SWs neither. they will
-	// be reset after the PostClick SW fired.
-	if(pType && !pType->PostClick && !pType->PreClick) {
-		pSW->IsCharged = false;
-	}
-
-	return 0x6CBB18;
-}
-#endif
-
 // ARGH!
 DEFINE_HOOK(6CC390, SuperClass_Launch, 6)
 {
@@ -546,44 +502,6 @@ DEFINE_HOOK(6CC053, SuperClass_GetCameoChargeState_FixFullyCharged, 5) {
 	return 0x6CC066;
 }
 
-#if !FINISHED_INCLUDING_THEM_ALL
-DEFINE_HOOK(6CB995, SuperClass_ClickFire_ChargeDrainRatioA, 8) {
-	GET_STACK(int, rechargeTime, 0x24);
-	GET_STACK(int, timeLeft, 0x20);
-
-	// recreate the SW from a pointer to its CreationTimer
-	GET(SuperClass*, pSuper, ESI);
-	pSuper = reinterpret_cast<SuperClass*>(reinterpret_cast<char*>(pSuper) - 30);
-
-	if(SWTypeExt::ExtData* pData = SWTypeExt::ExtMap.Find(pSuper->Type)) {
-		double ratio = pData->GetChargeToDrainRatio();
-		double remaining = rechargeTime - timeLeft / ratio;
-		int frames = Game::F2I(remaining);
-	
-		R->EAX(frames);
-		return 0x6CB9B0;
-	}
-
-	return 0;
-}
-
-DEFINE_HOOK(6CBA19, SuperClass_ClickFire_ChargeDrainRatioB, A) {
-	GET(int, length, EDI);
-	GET(SuperClass*, pSuper, ESI);
-
-	if(SWTypeExt::ExtData* pData = SWTypeExt::ExtMap.Find(pSuper->Type)) {
-		double ratio = pData->GetChargeToDrainRatio();
-		double remaining = length * ratio;
-		int frames = Game::F2I(remaining);
-	
-		R->EAX(frames);
-		return 0x6CBA28;
-	}
-
-	return 0;
-}
-#endif // !FINISHED_INCLUDING_THEM_ALL
-
 // a ChargeDrain SW expired - fire it to trigger status update
 DEFINE_HOOK(6CBD86, SuperClass_Progress_Charged, 7)
 {
@@ -593,18 +511,6 @@ DEFINE_HOOK(6CBD86, SuperClass_Progress_Charged, 7)
 
 	return 0;
 }
-
-#if !FINISHED_INCLUDING_THEM_ALL
-// a ChargeDrain SW was clicked while it was active - fire to trigger status update
-DEFINE_HOOK(6CB979, SuperClass_ClickFire, 6)
-{
-	GET(SuperClass *, pSuper, ESI);
-	HouseExt::ExtData *pHouseData = HouseExt::ExtMap.Find(pSuper->Owner);
-	pHouseData->SetFirestormState(0);
-
-	return 0;
-}
-#endif // !FINISHED_INCLUDING_THEM_ALL
 
 // SW was lost (source went away)
 DEFINE_HOOK(6CB7B0, SuperClass_Lose, 6)
@@ -626,7 +532,6 @@ DEFINE_HOOK(6CB7B0, SuperClass_Lose, 6)
 	return 0x6CB810;
 }
 
-#if FINISHED_INCLUDING_THEM_ALL
 // activate or deactivate the SW
 DEFINE_HOOK(6CB920, SuperClass_ClickFire, 5)
 {
@@ -728,7 +633,6 @@ DEFINE_HOOK(6CB920, SuperClass_ClickFire, 5)
 
 	return ret(false);
 }
-#endif
 
 // rewriting OnHold to support ChargeDrain
 DEFINE_HOOK(6CB4D0, SuperClass_SetOnHold, 6)
