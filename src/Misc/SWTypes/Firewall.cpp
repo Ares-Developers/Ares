@@ -6,9 +6,16 @@
 
 SuperWeaponType SW_Firewall::FirewallType = SuperWeaponType::Invalid;
 
-bool SW_Firewall::Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer)
+bool SW_Firewall::Activate(
+	SuperClass* const pThis, const CellStruct& cell, bool const isPlayer)
 {
-	AresNetEvent::Handlers::RaiseFirewallToggle(pThis->Owner);
+	auto const pOwner = pThis->Owner;
+	auto const pExt = HouseExt::ExtMap.Find(pOwner);
+	pExt->SetFirestormState(true);
+
+	if(isPlayer) {
+		pOwner->RecheckTechTree = true;
+	}
 
 	return true;
 }
