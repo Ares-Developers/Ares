@@ -420,7 +420,7 @@ void HouseExt::ExtData::SetFirestormState(bool const active) {
 		if(pTypeData->Firewall_Is) {
 			auto const pExt = BuildingExt::ExtMap.Find(pBld);
 			pExt->UpdateFirewall();
-			const auto temp = pBld->GetMapCoords();
+			auto const temp = pBld->GetMapCoords();
 			AffectedCoords.AddItem(temp);
 		}
 	}

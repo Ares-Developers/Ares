@@ -92,7 +92,7 @@ public:
 
 		virtual void SaveToStream(AresStreamWriter &Stm) override;
 
-		void SetFirestormState(bool Active);
+		void SetFirestormState(bool active);
 
 		bool CheckBasePlanSanity();
 
