@@ -236,13 +236,15 @@ size_t HouseExt::FindBuildableIndex(
 	return items.size();
 }
 
-bool HouseExt::HasNeededFactory(HouseClass *pHouse, TechnoTypeClass *pItem) {
-	DWORD ItemOwners = pItem->GetOwners();
-	AbstractType WhatAmI = pItem->WhatAmI();
+bool HouseExt::HasNeededFactory(
+	HouseClass* const pHouse, TechnoTypeClass* const pItem)
+{
+	auto const ItemOwners = pItem->GetOwners();
+	auto const abs = pItem->WhatAmI();
 
-	for(auto pBld : pHouse->Buildings) {
+	for(auto const& pBld : pHouse->Buildings) {
 		if(!pBld->InLimbo && pBld->HasPower) {
-			if(pBld->Type->Factory == WhatAmI) {
+			if(pBld->Type->Factory == abs) {
 				if(pBld->GetCurrentMission() != Mission::Selling && pBld->QueuedMission != Mission::Selling) {
 					if((pBld->Type->GetOwners() & ItemOwners) != 0) {
 						return true;
@@ -257,42 +259,49 @@ bool HouseExt::HasNeededFactory(HouseClass *pHouse, TechnoTypeClass *pItem) {
 
 // this only verifies the existence, it does not check whether the building is currently
 // in a state that allows it to kick out units. however, it respects BuiltAt.
-bool HouseExt::FactoryForObjectExists(HouseClass *pHouse, TechnoTypeClass *pItem) {
-	AbstractType WhatAmI = pItem->WhatAmI();
-	auto pExt = TechnoTypeExt::ExtMap.Find(pItem);
+bool HouseExt::FactoryForObjectExists(
+	HouseClass* const pHouse, TechnoTypeClass* const pItem)
+{
+	auto const pExt = TechnoTypeExt::ExtMap.Find(pItem);
+	auto const abs = pItem->WhatAmI();
 
-	for(auto pBld : pHouse->Buildings) {
-		BuildingTypeClass *pType = pBld->Type;
-		if(pType->Factory == WhatAmI
+	for(auto const& pBld : pHouse->Buildings) {
+		auto const pType = pBld->Type;
+		if(pType->Factory == abs
 			&& pType->Naval == pItem->Naval
 			&& pExt->CanBeBuiltAt(pType)) {
 			return true;
 		}
 	}
+
 	return false;
 }
 
-bool HouseExt::CheckFactoryOwners(HouseClass *pHouse, TechnoTypeClass *pItem) {
+bool HouseExt::CheckFactoryOwners(
+	HouseClass* const pHouse, TechnoTypeClass* const pItem)
+{
 	return HouseExt::CheckFactoryOwner(pHouse, pItem)
 		&& HouseExt::CheckForbiddenFactoryOwner(pHouse, pItem);
 }
 
-bool HouseExt::CheckFactoryOwner(HouseClass *pHouse, TechnoTypeClass *pItem){
-	auto pExt = TechnoTypeExt::ExtMap.Find(pItem);
-	auto HouseExt = HouseExt::ExtMap.Find(pHouse);
+bool HouseExt::CheckFactoryOwner(
+	HouseClass* const pHouse, TechnoTypeClass* const pItem)
+{
+	auto const pExt = TechnoTypeExt::ExtMap.Find(pItem);
+	auto const pHouseExt = HouseExt::ExtMap.Find(pHouse);
 
-	if (!pExt->FactoryOwners.empty()) {
-		for (auto pOwner : pExt->FactoryOwners) {
-			if(HouseExt->FactoryOwners_GatheredPlansOf.Contains(pOwner)) {
+	if(!pExt->FactoryOwners.empty()) {
+		for(auto const& pOwner : pExt->FactoryOwners) {
+			if(pHouseExt->FactoryOwners_GatheredPlansOf.Contains(pOwner)) {
 				return true;
 			}
 		}
 
-		AbstractType WhatAmI = pItem->WhatAmI();
+		auto const abs = pItem->WhatAmI();
 
-		for (auto pBld : pHouse->Buildings) {
-			if (pBld->Type->Factory == WhatAmI) {
-				auto FactoryExt = TechnoExt::ExtMap.Find(pBld);
+		for(auto const& pBld : pHouse->Buildings) {
+			if(pBld->Type->Factory == abs) {
+				auto const FactoryExt = TechnoExt::ExtMap.Find(pBld);
 
 				if(pExt->FactoryOwners.Contains(FactoryExt->OriginalHouseType)) {
 					return true;
@@ -306,29 +315,37 @@ bool HouseExt::CheckFactoryOwner(HouseClass *pHouse, TechnoTypeClass *pItem){
 	return true;
 }
 
-bool HouseExt::CheckForbiddenFactoryOwner(HouseClass *pHouse, TechnoTypeClass *pItem){
-	auto pExt = TechnoTypeExt::ExtMap.Find(pItem);
-	auto HouseExt = HouseExt::ExtMap.Find(pHouse);
+bool HouseExt::CheckForbiddenFactoryOwner(
+	HouseClass* const pHouse, TechnoTypeClass* pItem)
+{
+	auto const pExt = TechnoTypeExt::ExtMap.Find(pItem);
+	auto const pHouseExt = HouseExt::ExtMap.Find(pHouse);
 
-	auto &forbidden = pExt->ForbiddenFactoryOwners;
+	auto const& Forbidden = pExt->ForbiddenFactoryOwners;
 
-	if (!forbidden.empty()) {
-		// return true if not a single forbidden house is in the gathered plans (only if there are any)
-		if(HouseExt->FactoryOwners_GatheredPlansOf.size()) {
-			if(!std::any_of(forbidden.begin(), forbidden.end(), [HouseExt](HouseTypeClass* pForbidden) {
-				return HouseExt->FactoryOwners_GatheredPlansOf.Contains(pForbidden);
-			}))	{
+	if(!Forbidden.empty()) {
+		// return true if not a single forbidden house is in the gathered plans
+		// (only if there are any)
+		auto const& Gathered = pHouseExt->FactoryOwners_GatheredPlansOf;
+		if(!Gathered.empty()) {
+			auto const hasGathered = std::any_of(Forbidden.begin(), Forbidden.end(),
+				[&Gathered](HouseTypeClass* const pForbidden)
+			{
+				return Gathered.Contains(pForbidden);
+			});
+
+			if(!hasGathered) {
 				return true;
 			}
 		}
 
-		AbstractType WhatAmI = pItem->WhatAmI();
+		auto const abs = pItem->WhatAmI();
 
-		for (auto pBld : pHouse->Buildings) {
-			if (pBld->Type->Factory == WhatAmI) {
-				auto FactoryExt = TechnoExt::ExtMap.Find(pBld);
+		for(auto const& pBld : pHouse->Buildings) {
+			if(pBld->Type->Factory == abs) {
+				auto const pFactoryExt = TechnoExt::ExtMap.Find(pBld);
 
-				if(!forbidden.Contains(FactoryExt->OriginalHouseType)) {
+				if(!Forbidden.Contains(pFactoryExt->OriginalHouseType)) {
 					return true;
 				}
 			}
