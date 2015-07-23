@@ -7,7 +7,7 @@
 
 //Static init
 template<> const DWORD Extension<TEventClass>::Canary = 0x61616161;
-Container<TEventExt> TEventExt::ExtMap("TEventClass");
+TEventExt::ExtContainer TEventExt::ExtMap;
 
 // Gets the TechnoType pointed to by the event's TechnoName field.
 /*!
@@ -173,6 +173,14 @@ void TEventExt::ExtData::SaveToStream(AresStreamWriter &Stm) {
 	Extension<TEventClass>::SaveToStream(Stm);
 	this->Serialize(Stm);
 }
+
+// =============================
+// container
+
+TEventExt::ExtContainer::ExtContainer() : Container("TEventClass") {
+}
+
+TEventExt::ExtContainer::~ExtContainer() = default;
 
 // =============================
 // container hooks

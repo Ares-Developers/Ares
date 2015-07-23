@@ -374,7 +374,13 @@ public:
 		void Serialize(T& Stm);
 	};
 
-	static Container<TechnoTypeExt> ExtMap;
+	class ExtContainer final : public Container<TechnoTypeExt> {
+	public:
+		ExtContainer();
+		~ExtContainer();
+	};
+
+	static ExtContainer ExtMap;
 
 	static const char* GetSelectionGroupID(ObjectTypeClass* pType);
 	static bool HasSelectionGroupID(ObjectTypeClass* pType, const char* pID);

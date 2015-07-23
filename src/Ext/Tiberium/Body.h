@@ -64,5 +64,11 @@ public:
 		void Serialize(T& Stm);
 	};
 
-	static Container<TiberiumExt> ExtMap;
+	class ExtContainer final : public Container<TiberiumExt> {
+	public:
+		ExtContainer();
+		~ExtContainer();
+	};
+
+	static ExtContainer ExtMap;
 };

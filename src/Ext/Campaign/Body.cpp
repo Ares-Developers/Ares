@@ -8,7 +8,8 @@
 
 //Static init
 template<> const DWORD Extension<CampaignClass>::Canary = 0x22441133;
-Container<CampaignExt> CampaignExt::ExtMap("CampaignClass");
+CampaignExt::ExtContainer CampaignExt::ExtMap;
+
 DynamicVectorClass<CampaignExt::ExtData*> CampaignExt::Array;
 int CampaignExt::lastSelectedCampaign;
 
@@ -43,6 +44,17 @@ int CampaignExt::CountVisible() {
 		return pItem->IsVisible();
 	});
 }
+
+// =============================
+// container
+
+CampaignExt::ExtContainer::ExtContainer() : Container("CampaignClass") {
+}
+
+CampaignExt::ExtContainer::~ExtContainer() = default;
+
+// =============================
+// container hooks
 
 DEFINE_HOOK(46D090, CampaignClass_DTOR, 6)
 {

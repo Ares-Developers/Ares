@@ -173,7 +173,15 @@ public:
 		void Serialize(T& Stm);
 	};
 
-	static Container<TechnoExt> ExtMap;
+	class ExtContainer final : public Container<TechnoExt> {
+	public:
+		ExtContainer();
+		~ExtContainer();
+
+		virtual void InvalidatePointer(void *ptr, bool bRemoved) override;
+	};
+
+	static ExtContainer ExtMap;
 	static bool LoadGlobals(AresStreamReader& Stm);
 	static bool SaveGlobals(AresStreamWriter& Stm);
 

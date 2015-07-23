@@ -38,7 +38,13 @@ public:
 		void Serialize(T& Stm);
 	};
 
-	static bool Execute(TActionClass* pAction, HouseClass* pHouse, ObjectClass* pObject, TriggerClass* pTrigger, CellStruct* pos, bool* ret);
+	class ExtContainer final : public Container<TActionExt> {
+	public:
+		ExtContainer();
+		~ExtContainer();
+	};
 
-	static Container<TActionExt> ExtMap;
+	static ExtContainer ExtMap;
+
+	static bool Execute(TActionClass* pAction, HouseClass* pHouse, ObjectClass* pObject, TriggerClass* pTrigger, CellStruct* pos, bool* ret);
 };

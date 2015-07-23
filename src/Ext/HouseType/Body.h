@@ -99,7 +99,13 @@ public:
 		void Serialize(T& Stm);
 	};
 
-	static Container<HouseTypeExt> ExtMap;
+	class ExtContainer final : public Container<HouseTypeExt> {
+	public:
+		ExtContainer();
+		~ExtContainer();
+	};
+
+	static ExtContainer ExtMap;
 
 	static int PickRandomCountry();
 };

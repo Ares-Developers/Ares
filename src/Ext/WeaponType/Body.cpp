@@ -11,7 +11,7 @@
 #include "../../Utilities/TemplateDef.h"
 
 template<> const DWORD Extension<WeaponTypeClass>::Canary = 0x33333333;
-Container<WeaponTypeExt> WeaponTypeExt::ExtMap("WeaponTypeClass");
+WeaponTypeExt::ExtContainer WeaponTypeExt::ExtMap;
 
 const ColorStruct WeaponTypeExt::ExtData::DefaultWaveColor = ColorStruct(255, 255, 255); // placeholder
 const ColorStruct WeaponTypeExt::ExtData::DefaultWaveColorMagBeam = ColorStruct(0xB0, 0, 0xD0); // rp2 values
@@ -384,9 +384,6 @@ EBolt* WeaponTypeExt::CreateBolt(WeaponTypeExt::ExtData* pWeapon) {
 	return ret;
 }
 
-void Container<WeaponTypeExt>::InvalidatePointer(void *ptr, bool bRemoved) {
-}
-
 // =============================
 // load / save
 
@@ -455,6 +452,14 @@ bool WeaponTypeExt::SaveGlobals(AresStreamWriter& Stm) {
 		.Process(RadSiteExt)
 		.Success();
 }
+
+// =============================
+// container
+
+WeaponTypeExt::ExtContainer::ExtContainer() : Container("WeaponTypeClass") {
+}
+
+WeaponTypeExt::ExtContainer::~ExtContainer() = default;
 
 // =============================
 // container hooks

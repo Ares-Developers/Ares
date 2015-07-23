@@ -12,7 +12,7 @@
 #include <GameModeOptionsClass.h>
 
 template<> const DWORD Extension<InfantryClass>::Canary = 0xE1E2E3E4;
-Container<InfantryExt> InfantryExt::ExtMap("InfantryClass");
+InfantryExt::ExtContainer InfantryExt::ExtMap;
 
 bool InfantryExt::ExtData::IsOccupant() {
 	InfantryClass* thisTrooper = this->OwnerObject();
@@ -88,6 +88,14 @@ void InfantryExt::ExtData::SaveToStream(AresStreamWriter &Stm) {
 	Extension<InfantryClass>::SaveToStream(Stm);
 	this->Serialize(Stm);
 }
+
+// =============================
+// container
+
+InfantryExt::ExtContainer::ExtContainer() : Container("InfantryClass") {
+}
+
+InfantryExt::ExtContainer::~ExtContainer() = default;
 
 // =============================
 // container hooks

@@ -8,7 +8,7 @@
 #include <ScenarioClass.h>
 
 template<> const DWORD Extension<AnimTypeClass>::Canary = 0xEEEEEEEE;
-Container<AnimTypeExt> AnimTypeExt::ExtMap("AnimTypeClass");
+AnimTypeExt::ExtContainer AnimTypeExt::ExtMap;
 
 void AnimTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 {
@@ -37,6 +37,14 @@ OwnerHouseKind AnimTypeExt::SetMakeInfOwner(AnimClass *pAnim, HouseClass *pInvok
 
 	return pAnimData->MakeInfantryOwner;
 }
+
+// =============================
+// container
+
+AnimTypeExt::ExtContainer::ExtContainer() : Container("AnimTypeClass") {
+}
+
+AnimTypeExt::ExtContainer::~ExtContainer() = default;
 
 // =============================
 // load / save

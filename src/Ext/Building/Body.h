@@ -153,7 +153,13 @@ public:
 		void Serialize(T& Stm);
 	};
 
-	static Container<BuildingExt> ExtMap;
+	class ExtContainer final : public Container<BuildingExt> {
+	public:
+		ExtContainer();
+		~ExtContainer();
+	};
+
+	static ExtContainer ExtMap;
 	static bool LoadGlobals(AresStreamReader& Stm);
 	static bool SaveGlobals(AresStreamWriter& Stm);
 

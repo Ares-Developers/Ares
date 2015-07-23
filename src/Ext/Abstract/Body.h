@@ -39,5 +39,11 @@ public:
 		void Serialize(T& Stm);
 	};
 
-	static Container<AbstractExt> ExtMap;
+	class ExtContainer final : public Container<AbstractExt> {
+	public:
+		ExtContainer();
+		~ExtContainer();
+	};
+
+	static ExtContainer ExtMap;
 };

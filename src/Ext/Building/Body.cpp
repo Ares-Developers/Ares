@@ -18,7 +18,7 @@
 #include <MouseClass.h>
 
 template<> const DWORD Extension<BuildingClass>::Canary = 0x87654321;
-Container<BuildingExt> BuildingExt::ExtMap("BuildingClass");
+BuildingExt::ExtContainer BuildingExt::ExtMap;
 
 // =============================
 // member functions
@@ -1114,6 +1114,14 @@ bool BuildingExt::SaveGlobals(AresStreamWriter& Stm) {
 		.Process(TempFoundationData2)
 		.Success();
 }
+
+// =============================
+// container
+
+BuildingExt::ExtContainer::ExtContainer() : Container("BuildingClass") {
+}
+
+BuildingExt::ExtContainer::~ExtContainer() = default;
 
 // =============================
 // container hooks

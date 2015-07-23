@@ -5,7 +5,7 @@
 
 //Static init
 template<> const DWORD Extension<TiberiumClass>::Canary = 0xB16B00B5;
-Container<TiberiumExt> TiberiumExt::ExtMap("TiberiumClass");
+TiberiumExt::ExtContainer TiberiumExt::ExtMap;
 
 void TiberiumExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 {
@@ -108,6 +108,14 @@ void TiberiumExt::ExtData::SaveToStream(AresStreamWriter &Stm) {
 	Extension<TiberiumClass>::SaveToStream(Stm);
 	this->Serialize(Stm);
 }
+
+// =============================
+// container
+
+TiberiumExt::ExtContainer::ExtContainer() : Container("TiberiumClass") {
+}
+
+TiberiumExt::ExtContainer::~ExtContainer() = default;
 
 // =============================
 // container hooks

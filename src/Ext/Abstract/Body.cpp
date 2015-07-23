@@ -3,7 +3,7 @@
 #include "../../Misc/SavegameDef.h"
 
 template<> const DWORD Extension<AbstractClass>::Canary = 0xAB5005BA;
-Container<AbstractExt> AbstractExt::ExtMap("AbstractClass");
+AbstractExt::ExtContainer AbstractExt::ExtMap;
 
 // =============================
 // load / save
@@ -24,6 +24,14 @@ void AbstractExt::ExtData::SaveToStream(AresStreamWriter &Stm) {
 	Extension<AbstractClass>::SaveToStream(Stm);
 	this->Serialize(Stm);
 }
+
+// =============================
+// container
+
+AbstractExt::ExtContainer::ExtContainer() : Container("AbstractClass") {
+}
+
+AbstractExt::ExtContainer::~ExtContainer() = default;
 
 // =============================
 // container hooks

@@ -13,7 +13,7 @@
 #include <WarheadTypeClass.h>
 
 template<> const DWORD Extension<TechnoTypeClass>::Canary = 0x44444444;
-Container<TechnoTypeExt> TechnoTypeExt::ExtMap("TechnoTypeClass");
+TechnoTypeExt::ExtContainer TechnoTypeExt::ExtMap;
 
 // =============================
 // member funcs
@@ -519,9 +519,6 @@ void TechnoTypeClassExt::ReadWeapon(WeaponStruct *pWeapon, const char *prefix, c
 }
 */
 
-void Container<TechnoTypeExt>::InvalidatePointer(void *ptr, bool bRemoved) {
-}
-
 const char* TechnoTypeExt::ExtData::GetSelectionGroupID() const
 {
 	return this->GroupAs ? this->GroupAs : this->OwnerObject()->ID;
@@ -774,6 +771,14 @@ void TechnoTypeExt::ExtData::SaveToStream(AresStreamWriter &Stm) {
 	Extension<TechnoTypeClass>::SaveToStream(Stm);
 	this->Serialize(Stm);
 }
+
+// =============================
+// container
+
+TechnoTypeExt::ExtContainer::ExtContainer() : Container("TechnoTypeClass") {
+}
+
+TechnoTypeExt::ExtContainer::~ExtContainer() = default;
 
 // =============================
 // container hooks

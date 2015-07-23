@@ -9,7 +9,7 @@
 
 //Static init
 template<> const DWORD Extension<SideClass>::Canary = 0x06D106D1;
-Container<SideExt> SideExt::ExtMap("SideClass");
+SideExt::ExtContainer SideExt::ExtMap;
 
 int SideExt::CurrentLoadTextColor = -1;
 
@@ -501,6 +501,14 @@ bool SideExt::SaveGlobals(AresStreamWriter& Stm) {
 		.Process(CurrentLoadTextColor)
 		.Success();
 }
+
+// =============================
+// container
+
+SideExt::ExtContainer::ExtContainer() : Container("SideClass") {
+}
+
+SideExt::ExtContainer::~ExtContainer() = default;
 
 // =============================
 // container hooks

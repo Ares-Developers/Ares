@@ -22,7 +22,7 @@
 #include <TiberiumClass.h>
 
 template<> const DWORD Extension<TechnoClass>::Canary = 0x55555555;
-Container<TechnoExt> TechnoExt::ExtMap("TechnoClass");
+TechnoExt::ExtContainer TechnoExt::ExtMap;
 
 bool TechnoExt::NeedsRegap = false;
 
@@ -446,10 +446,6 @@ UnitTypeClass* TechnoExt::ExtData::GetUnitType() const {
 		}
 	}
 	return nullptr;
-}
-
-void Container<TechnoExt>::InvalidatePointer(void *ptr, bool bRemoved) {
-	AnnounceInvalidPointer(TechnoExt::ActiveBuildingLight, ptr);
 }
 
 /*! This function checks if this object can currently be used, in terms of having or needing an operator.
@@ -1259,6 +1255,18 @@ bool TechnoExt::SaveGlobals(AresStreamWriter& Stm) {
 		.Process(ActiveBuildingLight)
 		.Process(NeedsRegap)
 		.Success();
+}
+
+// =============================
+// container
+
+TechnoExt::ExtContainer::ExtContainer() : Container("TechnoClass") {
+}
+
+TechnoExt::ExtContainer::~ExtContainer() = default;
+
+void TechnoExt::ExtContainer::InvalidatePointer(void* ptr, bool bRemoved) {
+	AnnounceInvalidPointer(TechnoExt::ActiveBuildingLight, ptr);
 }
 
 // =============================

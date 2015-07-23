@@ -27,7 +27,7 @@
 #include <set>
 
 template<> const DWORD Extension<WarheadTypeClass>::Canary = 0x22222222;
-Container<WarheadTypeExt> WarheadTypeExt::ExtMap("WarheadTypeClass");
+WarheadTypeExt::ExtContainer WarheadTypeExt::ExtMap;
 
 AresMap<IonBlastClass*, const WarheadTypeExt::ExtData*> WarheadTypeExt::IonExt;
 
@@ -110,10 +110,6 @@ void WarheadTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 
 	this->DamageAirThreshold.Read(exINI, section, "DamageAirThreshold");
 };
-
-void Container<WarheadTypeExt>::InvalidatePointer(void *ptr, bool bRemoved) {
-	AnnounceInvalidPointer(WarheadTypeExt::Temporal_WH, ptr);
-}
 
 /*!
 	This function checks if the passed warhead has Ripple.Radius set, and, if so, applies the effect.
@@ -567,6 +563,18 @@ bool WarheadTypeExt::SaveGlobals(AresStreamWriter& Stm) {
 		.Process(EMP_WH)
 		.Process(IonExt)
 		.Success();
+}
+
+// =============================
+// container
+
+WarheadTypeExt::ExtContainer::ExtContainer() : Container("WarheadTypeClass") {
+}
+
+WarheadTypeExt::ExtContainer::~ExtContainer() = default;
+
+void WarheadTypeExt::ExtContainer::InvalidatePointer(void* ptr, bool bRemoved) {
+	AnnounceInvalidPointer(WarheadTypeExt::Temporal_WH, ptr);
 }
 
 // =============================

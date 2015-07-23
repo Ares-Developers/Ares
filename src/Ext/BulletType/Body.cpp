@@ -8,7 +8,7 @@
 #include <BulletClass.h>
 
 template<> const DWORD Extension<BulletTypeClass>::Canary = 0xF00DF00D;
-Container<BulletTypeExt> BulletTypeExt::ExtMap("BulletTypeClass");
+BulletTypeExt::ExtContainer BulletTypeExt::ExtMap;
 
 // =============================
 // member funcs
@@ -108,6 +108,14 @@ void BulletTypeExt::ExtData::SaveToStream(AresStreamWriter &Stm) {
 	Extension<BulletTypeClass>::SaveToStream(Stm);
 	this->Serialize(Stm);
 }
+
+// =============================
+// container
+
+BulletTypeExt::ExtContainer::ExtContainer() : Container("BulletTypeClass") {
+}
+
+BulletTypeExt::ExtContainer::~ExtContainer() = default;
 
 // =============================
 // container hooks

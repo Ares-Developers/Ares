@@ -37,7 +37,13 @@ public:
 		}
 	};
 
-	static Container<CampaignExt> ExtMap;
+	class ExtContainer final : public Container<CampaignExt> {
+	public:
+		ExtContainer();
+		~ExtContainer();
+	};
+
+	static ExtContainer ExtMap;
 	static DynamicVectorClass<CampaignExt::ExtData*> Array;
 
 	static int lastSelectedCampaign;

@@ -13,7 +13,7 @@
 #include <algorithm>
 
 template<> const DWORD Extension<HouseTypeClass>::Canary = 0xAFFEAFFE;
-Container<HouseTypeExt> HouseTypeExt::ExtMap("HouseTypeClass");
+HouseTypeExt::ExtContainer HouseTypeExt::ExtMap;
 
 void HouseTypeExt::ExtData::InitializeConstants() {
 	const char* pID = this->OwnerObject()->ID;
@@ -450,6 +450,14 @@ void HouseTypeExt::ExtData::SaveToStream(AresStreamWriter &Stm) {
 	Extension<HouseTypeClass>::SaveToStream(Stm);
 	this->Serialize(Stm);
 }
+
+// =============================
+// container
+
+HouseTypeExt::ExtContainer::ExtContainer() : Container("HouseTypeClass") {
+}
+
+HouseTypeExt::ExtContainer::~ExtContainer() = default;
 
 // =============================
 // container hooks

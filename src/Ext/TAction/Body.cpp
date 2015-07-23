@@ -10,7 +10,7 @@
 
 //Static init
 template<> const DWORD Extension<TActionClass>::Canary = 0x91919191;
-Container<TActionExt> TActionExt::ExtMap("TActionClass");
+TActionExt::ExtContainer TActionExt::ExtMap;
 
 // Enables the Firestorm super weapon for a house.
 /*!
@@ -98,6 +98,14 @@ void TActionExt::ExtData::SaveToStream(AresStreamWriter &Stm) {
 	Extension<TActionClass>::SaveToStream(Stm);
 	this->Serialize(Stm);
 }
+
+// =============================
+// container
+
+TActionExt::ExtContainer::ExtContainer() : Container("TActionClass") {
+}
+
+TActionExt::ExtContainer::~ExtContainer() = default;
 
 // =============================
 // container hooks

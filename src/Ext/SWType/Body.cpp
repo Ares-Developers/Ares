@@ -23,7 +23,7 @@
 #include <Notifications.h>
 
 template<> const DWORD Extension<SuperWeaponTypeClass>::Canary = 0x66666666;
-Container<SWTypeExt> SWTypeExt::ExtMap("SuperWeaponTypeClass");
+SWTypeExt::ExtContainer SWTypeExt::ExtMap;
 
 SuperWeaponTypeClass *SWTypeExt::CurrentSWType = nullptr;
 
@@ -767,10 +767,6 @@ double SWTypeExt::ExtData::GetChargeToDrainRatio() const {
 	return this->SW_ChargeToDrainRatio.Get(RulesClass::Instance->ChargeToDrainRatio);
 }
 
-void Container<SWTypeExt>::InvalidatePointer(void *ptr, bool bRemoved) {
-	AnnounceInvalidPointer(SWTypeExt::CurrentSWType, ptr);
-}
-
 // =============================
 // load / save
 
@@ -939,6 +935,18 @@ bool SWTypeExt::SaveGlobals(AresStreamWriter& Stm) {
 	return Stm
 		.Process(CurrentSWType)
 		.Success();
+}
+
+// =============================
+// container
+
+SWTypeExt::ExtContainer::ExtContainer() : Container("SuperWeaponTypeClass") {
+}
+
+SWTypeExt::ExtContainer::~ExtContainer() = default;
+
+void SWTypeExt::ExtContainer::InvalidatePointer(void* ptr, bool bRemoved) {
+	AnnounceInvalidPointer(SWTypeExt::CurrentSWType, ptr);
 }
 
 // =============================

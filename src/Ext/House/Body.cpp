@@ -19,7 +19,7 @@
 #include "../../Misc/SavegameDef.h"
 
 template<> const DWORD Extension<HouseClass>::Canary = 0x12345678;
-Container<HouseExt> HouseExt::ExtMap("HouseClass");
+HouseExt::ExtContainer HouseExt::ExtMap;
 
 bool HouseExt::IsAnyFirestormActive = false;
 
@@ -760,6 +760,14 @@ bool HouseExt::SaveGlobals(AresStreamWriter& Stm) {
 		.Process(IsAnyFirestormActive)
 		.Success();
 }
+
+// =============================
+// container
+
+HouseExt::ExtContainer::ExtContainer() : Container("HouseClass") {
+}
+
+HouseExt::ExtContainer::~ExtContainer() = default;
 
 // =============================
 // container hooks

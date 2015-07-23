@@ -384,7 +384,15 @@ public:
 		void Serialize(T& Stm);
 	};
 
-	static Container<SWTypeExt> ExtMap;
+	class ExtContainer final : public Container<SWTypeExt> {
+	public:
+		ExtContainer();
+		~ExtContainer();
+
+		virtual void InvalidatePointer(void* ptr, bool bRemove) override;
+	};
+
+	static ExtContainer ExtMap;
 	static bool LoadGlobals(AresStreamReader& Stm);
 	static bool SaveGlobals(AresStreamWriter& Stm);
 

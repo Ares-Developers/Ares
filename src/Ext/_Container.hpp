@@ -254,8 +254,6 @@ public:
 	}
 
 protected:
-	// invalidate pointers to container's static gunk here (use full qualified names)
-	// keep this virtual or specializations won't be used -AlexB
 	virtual void InvalidatePointer(void *ptr, bool bRemoved) {
 	}
 
@@ -347,13 +345,13 @@ public:
 	}
 
 protected:
-	// specialize this method to do type-specific stuff
-	bool Save(key_type key, IStream *pStm) {
+	// override this method to do type-specific stuff
+	virtual bool Save(key_type key, IStream *pStm) {
 		return this->SaveKey(key, pStm) != nullptr;
 	}
 
-	// specialize this method to do type-specific stuff
-	bool Load(key_type key, IStream *pStm) {
+	// override this method to do type-specific stuff
+	virtual bool Load(key_type key, IStream *pStm) {
 		return this->LoadKey(key, pStm) != nullptr;
 	}
 

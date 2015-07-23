@@ -43,7 +43,13 @@ public:
 		void Serialize(T& Stm);
 	};
 
-	static Container<AnimTypeExt> ExtMap;
+	class ExtContainer final : public Container<AnimTypeExt> {
+	public:
+		ExtContainer();
+		~ExtContainer();
+	};
+
+	static ExtContainer ExtMap;
 
 	static OwnerHouseKind SetMakeInfOwner(AnimClass *pAnim, HouseClass *pInvoker, HouseClass *pVictim, HouseClass *pKiller);
 };

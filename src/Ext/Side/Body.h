@@ -122,12 +122,18 @@ public:
 		void Serialize(T& Stm);
 	};
 
+	class ExtContainer final : public Container<SideExt> {
+	public:
+		ExtContainer();
+		~ExtContainer();
+	};
+
 	//Hacks required in other classes:
 	//- TechnoTypeClass (Stolen Tech)
 	//- HouseClass (Stolen Tech)
 	//- VoxClass (EVA)
 
-	static Container<SideExt> ExtMap;
+	static ExtContainer ExtMap;
 	static bool LoadGlobals(AresStreamReader& Stm);
 	static bool SaveGlobals(AresStreamWriter& Stm);
 

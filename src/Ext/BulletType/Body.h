@@ -78,5 +78,11 @@ public:
 		void Serialize(T& Stm);
 	};
 
-	static Container<BulletTypeExt> ExtMap;
+	class ExtContainer final : public Container<BulletTypeExt> {
+	public:
+		ExtContainer();
+		~ExtContainer();
+	};
+
+	static ExtContainer ExtMap;
 };

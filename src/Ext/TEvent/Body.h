@@ -46,8 +46,14 @@ public:
 		void Serialize(T& Stm);
 	};
 
+	class ExtContainer final : public Container<TEventExt> {
+	public:
+		ExtContainer();
+		~ExtContainer();
+	};
+
+	static ExtContainer ExtMap;
+
 	static bool HasOccured(TEventClass* pEvent, bool* ret);
 	static HouseClass* ResolveHouseParam(int param, HouseClass* pOwnerHouse = nullptr);
-
-	static Container<TEventExt> ExtMap;
 };

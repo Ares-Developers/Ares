@@ -37,7 +37,13 @@ public:
 		void Serialize(T& Stm);
 	};
 
-	static Container<InfantryExt> ExtMap;
+	class ExtContainer final : public Container<InfantryExt> {
+	public:
+		ExtContainer();
+		~ExtContainer();
+	};
+
+	static ExtContainer ExtMap;
 
 	static Action GetEngineerEnterEnemyBuildingAction(BuildingClass *pBld);
 };

@@ -9,7 +9,7 @@
 #include <VocClass.h>
 
 template<> const DWORD Extension<BuildingTypeClass>::Canary = 0x11111111;
-Container<BuildingTypeExt> BuildingTypeExt::ExtMap("BuildingTypeClass");
+BuildingTypeExt::ExtContainer BuildingTypeExt::ExtMap;
 
 std::vector<std::string> BuildingTypeExt::ExtData::trenchKinds;
 const CellStruct BuildingTypeExt::FoundationEndMarker = {0x7FFF, 0x7FFF};
@@ -491,7 +491,7 @@ void BuildingTypeExt::ExtData::SaveToStream(AresStreamWriter &Stm) {
 	this->Serialize(Stm);
 }
 
-bool Container<BuildingTypeExt>::Load(BuildingTypeClass *pThis, IStream *pStm) {
+bool BuildingTypeExt::ExtContainer::Load(BuildingTypeClass* pThis, IStream* pStm) {
 	BuildingTypeExt::ExtData* pData = this->LoadKey(pThis, pStm);
 
 	// if there's custom data, assign it
@@ -518,6 +518,14 @@ bool BuildingTypeExt::SaveGlobals(AresStreamWriter& Stm) {
 
 	return Stm.Success();
 }
+
+// =============================
+// container
+
+BuildingTypeExt::ExtContainer::ExtContainer() : Container("BuildingTypeClass") {
+}
+
+BuildingTypeExt::ExtContainer::~ExtContainer() = default;
 
 // =============================
 // container hooks

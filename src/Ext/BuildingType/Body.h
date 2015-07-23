@@ -297,7 +297,15 @@ public:
 		void Serialize(T& Stm);
 	};
 
-	static Container<BuildingTypeExt> ExtMap;
+	class ExtContainer final : public Container<BuildingTypeExt> {
+	public:
+		ExtContainer();
+		~ExtContainer();
+
+		virtual bool Load(BuildingTypeClass* pThis, IStream* pStm) override;
+	};
+
+	static ExtContainer ExtMap;
 	static bool LoadGlobals(AresStreamReader& Stm);
 	static bool SaveGlobals(AresStreamWriter& Stm);
 

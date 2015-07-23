@@ -160,6 +160,14 @@ public:
 		void Serialize(T& Stm);
 	};
 
+	class ExtContainer final : public Container<WeaponTypeExt> {
+	public:
+		ExtContainer();
+		~ExtContainer();
+	};
+
+	static ExtContainer ExtMap;
+
 /*
 	struct WeaponWeight
 	{
@@ -177,7 +185,6 @@ public:
 
 */
 
-	static Container<WeaponTypeExt> ExtMap;
 	static bool LoadGlobals(AresStreamReader& Stm);
 	static bool SaveGlobals(AresStreamWriter& Stm);
 

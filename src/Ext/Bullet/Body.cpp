@@ -9,7 +9,7 @@
 #include "../../Misc/SavegameDef.h"
 
 template<> const DWORD Extension<BulletClass>::Canary = 0x2A2A2A2A;
-Container<BulletExt> BulletExt::ExtMap("BulletClass");
+BulletExt::ExtContainer BulletExt::ExtMap;
 
 // #663: PassThrough; #667: SubjectToTrenches
 //! Does the entire PassThrough logic, checks & damage
@@ -117,6 +117,14 @@ void BulletExt::ExtData::SaveToStream(AresStreamWriter &Stm) {
 	Extension<BulletClass>::SaveToStream(Stm);
 	this->Serialize(Stm);
 }
+
+// =============================
+// container
+
+BulletExt::ExtContainer::ExtContainer() : Container("BulletClass") {
+}
+
+BulletExt::ExtContainer::~ExtContainer() = default;
 
 // =============================
 // container hooks
