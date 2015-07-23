@@ -255,7 +255,7 @@ private:
 };
 
 template<typename T>
-class Container final {
+class Container {
 private:
 	using base_type = typename T::base_type;
 	using extension_type = typename T::ExtData;
