@@ -15,7 +15,7 @@ class TEventExt
 public:
 	using base_type = TEventClass;
 
-	class ExtData : public Extension<TEventClass>
+	class ExtData final : public Extension<TEventClass>
 	{
 	public:
 		OptionalStruct<TechnoTypeClass*> TechnoType;

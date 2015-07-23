@@ -19,7 +19,7 @@ class HouseTypeExt
 public:
 	using base_type = HouseTypeClass;
 
-	class ExtData : public Extension<HouseTypeClass>
+	class ExtData final : public Extension<HouseTypeClass>
 	{
 	public:
 		static const int ObserverBackgroundWidth = 121;

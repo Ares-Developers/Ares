@@ -42,7 +42,7 @@ public:
 		RequireCloaked = 3
 	};
 
-	class ExtData : public Extension<HouseClass>
+	class ExtData final : public Extension<HouseClass>
 	{
 	public:
 		bool IonSensitive;

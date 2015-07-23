@@ -14,7 +14,7 @@ class TActionExt
 public:
 	using base_type = TActionClass;
 
-	class ExtData : public Extension<TActionClass>
+	class ExtData final : public Extension<TActionClass>
 	{
 	public:
 		ExtData(TActionClass* const OwnerObject) : Extension<TActionClass>(OwnerObject)

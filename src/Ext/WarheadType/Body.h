@@ -43,7 +43,7 @@ public:
 		}
 	};
 
-	class ExtData : public Extension<WarheadTypeClass>
+	class ExtData final : public Extension<WarheadTypeClass>
 	{
 	public:
 		bool MindControl_Permanent;

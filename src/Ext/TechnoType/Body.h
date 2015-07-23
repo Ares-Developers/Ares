@@ -26,7 +26,7 @@ public:
 		Body, Turret, Barrel
 	};
 
-	class ExtData : public Extension<TechnoTypeClass>
+	class ExtData final : public Extension<TechnoTypeClass>
 	{
 	public:
 		DynamicVectorClass<InfantryTypeClass *> Survivors_Pilots;

@@ -26,7 +26,7 @@ class WeaponTypeExt
 public:
 	using base_type = WeaponTypeClass;
 
-	class ExtData : public Extension<WeaponTypeClass>
+	class ExtData final : public Extension<WeaponTypeClass>
 	{
 	public:
 		// static defaults

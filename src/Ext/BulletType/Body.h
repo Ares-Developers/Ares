@@ -18,7 +18,7 @@ class BulletTypeExt
 public:
 	using base_type = BulletTypeClass;
 
-	class ExtData : public Extension<BulletTypeClass>
+	class ExtData final : public Extension<BulletTypeClass>
 	{
 	public:
 		// solid

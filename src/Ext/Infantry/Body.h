@@ -14,7 +14,7 @@ class InfantryExt
 public:
 	using base_type = InfantryClass;
 
-	class ExtData : public Extension<InfantryClass>
+	class ExtData final : public Extension<InfantryClass>
 	{
 	public:
 

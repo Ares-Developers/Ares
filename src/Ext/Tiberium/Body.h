@@ -13,7 +13,7 @@ class TiberiumExt
 public:
 	using base_type = TiberiumClass;
 
-	class ExtData : public Extension<TiberiumClass>
+	class ExtData final : public Extension<TiberiumClass>
 	{
 	public:
 		Nullable<int> Damage;

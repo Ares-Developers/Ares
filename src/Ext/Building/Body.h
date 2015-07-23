@@ -62,7 +62,7 @@ public:
 	};
 
 
-	class ExtData : public Extension<BuildingClass>
+	class ExtData final : public Extension<BuildingClass>
 	{
 	private:
 

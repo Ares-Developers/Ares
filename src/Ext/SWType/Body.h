@@ -75,7 +75,7 @@ public:
 
 	static const std::array<const AITargetingModeInfo, 15> AITargetingModes;
 
-	class ExtData : public Extension<SuperWeaponTypeClass>
+	class ExtData final : public Extension<SuperWeaponTypeClass>
 	{
 	public:
 		// SpyPlane

@@ -13,7 +13,7 @@ class AbstractExt
 public:
 	using base_type = AbstractClass;
 
-	class ExtData : public Extension<AbstractClass>
+	class ExtData final : public Extension<AbstractClass>
 	{
 	public:
 

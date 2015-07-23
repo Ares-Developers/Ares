@@ -23,7 +23,7 @@ class SideExt
 public:
 	using base_type = SideClass;
 
-	class ExtData : public Extension<SideClass>
+	class ExtData final : public Extension<SideClass>
 	{
 	public:
 		Nullable<InfantryTypeClass*> Disguise;

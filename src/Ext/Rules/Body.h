@@ -22,7 +22,7 @@ class RulesExt
 public:
 	using base_type = RulesClass;
 
-	class ExtData : public Extension<RulesClass>
+	class ExtData final : public Extension<RulesClass>
 	{
 	public:
 		Valueable<AnimTypeClass* >ElectricDeath;

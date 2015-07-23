@@ -14,7 +14,7 @@ class BulletExt
 public:
 	using base_type = BulletClass;
 
-	class ExtData : public Extension<BulletClass>
+	class ExtData final : public Extension<BulletClass>
 	{
 	public:
 		SuperWeaponTypeClass *NukeSW;

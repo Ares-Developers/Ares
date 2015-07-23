@@ -15,7 +15,7 @@ class AnimTypeExt
 public:
 	using base_type = AnimTypeClass;
 
-	class ExtData : public Extension<AnimTypeClass>
+	class ExtData final : public Extension<AnimTypeClass>
 	{
 	public:
 		Valueable<OwnerHouseKind> MakeInfantryOwner;

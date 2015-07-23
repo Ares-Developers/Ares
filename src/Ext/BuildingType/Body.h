@@ -102,7 +102,7 @@ public:
 		{ }
 	};
 
-	class ExtData : public Extension<BuildingTypeClass>
+	class ExtData final : public Extension<BuildingTypeClass>
 	{
 	public:
 		// solid

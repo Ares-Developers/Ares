@@ -15,7 +15,7 @@ class CampaignExt
 public:
 	using base_type = CampaignClass;
 
-	class ExtData : public Extension<CampaignClass>
+	class ExtData final : public Extension<CampaignClass>
 	{
 	public:
 		Valueable<bool> DebugOnly;

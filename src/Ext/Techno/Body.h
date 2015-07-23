@@ -27,7 +27,7 @@ class TechnoExt
 public:
 	using base_type = TechnoClass;
 
-	class ExtData : public Extension<TechnoClass>
+	class ExtData final : public Extension<TechnoClass>
 	{
 	public:
 		// weapon slots fsblargh
