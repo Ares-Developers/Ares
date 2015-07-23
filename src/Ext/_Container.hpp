@@ -180,7 +180,7 @@ public:
 	using key_type = Key*;
 	using const_key_type = const Key*;
 	using value_type = Value*;
-	using const_iterator_value = std::pair<const_key_type, value_type>;
+	using iterator = typename std::unordered_map<key_type, value_type>::const_iterator;
 
 	ContainerMap() = default;
 	ContainerMap(ContainerMap const&) = delete;
@@ -188,40 +188,7 @@ public:
 	ContainerMap& operator =(ContainerMap const&) = delete;
 	ContainerMap& operator =(ContainerMap&&) = delete;
 
-	struct Iterator : std::iterator<std::forward_iterator_tag, const_iterator_value> {
-		Iterator() = default;
-		explicit Iterator(ContainerMapBase::iterator it) : Iter(it) {}
-
-		bool operator ==(Iterator const& other) const {
-			return this->Iter == other.Iter;
-		}
-
-		bool operator !=(Iterator const& other) const {
-			return this->Iter != other.Iter;
-		}
-
-		Iterator& operator++() {
-			++this->Iter;
-			return *this;
-		}
-
-		Iterator operator++(int) {
-			auto const old = *this;
-			++this->Iter;
-			return old;
-		}
-
-		const_iterator_value operator*() const {
-			return std::make_pair(
-				static_cast<const_key_type>(Iter->first),
-				static_cast<ContainerMap::value_type>(Iter->second));
-		}
-
-	private:
-		ContainerMapBase::iterator Iter;
-	};
-
-	 value_type find(const_key_type key) const {
+	value_type find(const_key_type key) const {
 		return static_cast<value_type>(this->Items.find(key));
 	}
 
@@ -242,12 +209,14 @@ public:
 		return this->Items.size();
 	}
 
-	Iterator begin() const {
-		return Iterator{ this->Items.begin() };
+	iterator begin() const {
+		auto ret = this->Items.begin();
+		return reinterpret_cast<iterator&>(ret);
 	}
 
-	Iterator end() const {
-		return Iterator{ this->Items.end() };
+	iterator end() const {
+		auto ret = this->Items.end();
+		return reinterpret_cast<iterator&>(ret);
 	}
 
 private:
