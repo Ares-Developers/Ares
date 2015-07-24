@@ -221,76 +221,79 @@ void AttachEffectClass::Destroy() {
 */
 
 void AttachEffectClass::Update(TechnoClass* pSource) {
+	auto const Logging = false;
 
-	if (!pSource || pSource->InLimbo || pSource->IsImmobilized || pSource->Transporter) {
+	if(!pSource || pSource->InLimbo || pSource->IsImmobilized || pSource->Transporter) {
 		return;
 	}
 
-	TechnoTypeClass *pType = pSource->GetTechnoType();
-	TechnoExt::ExtData *pData = TechnoExt::ExtMap.Find(pSource);
-	TechnoTypeExt::ExtData *pTypeData = TechnoTypeExt::ExtMap.Find(pType);
+	auto const pType = pSource->GetTechnoType();
+	auto const pData = TechnoExt::ExtMap.Find(pSource);
+	auto const pTypeData = TechnoTypeExt::ExtMap.Find(pType);
 
-
-	if (!pData->AttachedEffects.empty()) {
+	if(!pData->AttachedEffects.empty()) {
 
 		if(pSource->CloakState == CloakState::Cloaked || pSource->CloakState == CloakState::Cloaking) {
 			if(!pData->AttachEffects_RecreateAnims) {
-				for(size_t i = pData->AttachedEffects.size(); i > 0; --i) {
-					pData->AttachedEffects.at(i - 1)->KillAnim();
+				for(auto i = pData->AttachedEffects.size(); i > 0; --i) {
+					pData->AttachedEffects[i - 1]->KillAnim();
 				}
 				pData->AttachEffects_RecreateAnims = true;
 			}
 		} else {
 			if(pData->AttachEffects_RecreateAnims) {
-				for(size_t i = pData->AttachedEffects.size(); i > 0; --i) {
-					pData->AttachedEffects.at(i - 1)->CreateAnim(pSource);
+				for(auto i = pData->AttachedEffects.size(); i > 0; --i) {
+					pData->AttachedEffects[i - 1]->CreateAnim(pSource);
 				}
 				pData->AttachEffects_RecreateAnims = false;
 			}
 		}
 
-		//Debug::Log("[AttachEffect]AttachEffect update of %s...\n", pSource->get_ID());
+		Debug::Log(Logging, "[AttachEffect]AttachEffect update of %s...\n", pSource->get_ID());
 		auto recalculate = false;
-		for (size_t i = pData->AttachedEffects.size(); i > 0; --i) {
-			auto Effect = pData->AttachedEffects.at(i - 1).get();
+		for(auto i = pData->AttachedEffects.size(); i > 0; --i) {
+			auto const& Effect = pData->AttachedEffects[i - 1];
+			auto const pEffectType = Effect->Type;
+
 			if(Effect->ActualDuration > 0) {
 				--Effect->ActualDuration;
 			}
 
 			//#408, residual damage
 			/* unfinished, crash if unit gets killed and was targeted
-			if (!!Effect->Type->Damage) {
-				if (Effect->ActualDamageDelay) {
-					Effect->ActualDamageDelay--;
+			if(pEffectType->Damage) {
+				if(Effect->ActualDamageDelay) {
+					--Effect->ActualDamageDelay;
 				} else {
-					if (Effect->Invoker) {
-						pSource->ReceiveDamage(Effect->Type->Damage, 0, Effect->Type->Warhead, Effect->Invoker, false, false, Effect->Invoker->Owner);
-					} else {
-						pSource->ReceiveDamage(Effect->Type->Damage, 0, Effect->Type->Warhead, pSource, false, false, pSource->Owner);
-					}
+					Effect->ActualDamageDelay = pEffectType->DamageDelay;
 
-					if(pSource->InLimbo || !pSource->IsAlive || !pSource->Health) {
+					auto const pAttacker = Effect->Invoker
+						? Effect->Invoker : pSource;
+					auto const pHouse = pKiller->Owner;
+
+					int damage = pEffectType->Damage;
+					auto const res = pSource->ReceiveDamage(
+						&damage, 0, pEffectType->Warhead, pAttacker, false,
+						false, pHouse);
+
+					if(res == DamageState::NowDead) {
 						//check if the unit is still alive, if residual damage killed it, no reason to continue
 						return false;	//this is a void atm
 					}
-
-					Effect->ActualDamageDelay = Effect->Type->DamageDelay;
 				}
-
 			}*/
 
+			if(!Effect->ActualDuration || (pEffectType->Owner == pType && pSource->Deactivated)) {
+				Debug::Log(Logging, "[AttachEffect] %u. item expired, removing...\n", i - 1);
 
-			if(!Effect->ActualDuration || (Effect->Type->Owner == pType && pSource->Deactivated)) {
-				//Debug::Log("[AttachEffect] %d. item expired, removing...\n", i - 1);
-
-				if (Effect->Type->Owner == pType) {		//#1623, hardcodes Cumulative to false
+				if(pEffectType->Owner == pType) {		//#1623, hardcodes Cumulative to false
 					pData->AttachedTechnoEffect_isset = false;
-					pData->AttachedTechnoEffect_Delay = Effect->Type->Delay;
+					pData->AttachedTechnoEffect_Delay = pEffectType->Delay;
 				}
 
 				pData->AttachedEffects.erase(pData->AttachedEffects.begin() + i - 1);
 				recalculate = true;
-				//Debug::Log("[AttachEffect] Remove #%d was successful.\n", i - 1);
+				Debug::Log(Logging, "[AttachEffect] Remove #%u was successful.\n", i - 1);
 			}
 		}
 
@@ -299,26 +302,25 @@ void AttachEffectClass::Update(TechnoClass* pSource) {
 			pData->RecalculateStats();
 		}
 
-		//Debug::Log("[AttachEffect]Update was successful.\n");
+		Debug::Log(Logging, "[AttachEffect]Update was successful.\n");
 	}
 
-
 	//#1623 - generating AttachedEffect from Type
-	if (pTypeData->AttachedTechnoEffect.Duration != 0 && !pData->AttachedTechnoEffect_isset) {
-		if (!pData->AttachedTechnoEffect_Delay) {
-			if (!pSource->Deactivated) {
-				//Debug::Log("[AttachEffect]Missing Type effect of %s...\n", pSource->get_ID());
+	if(pTypeData->AttachedTechnoEffect.Duration && !pData->AttachedTechnoEffect_isset) {
+		if(!pData->AttachedTechnoEffect_Delay) {
+			if(!pSource->Deactivated) {
+				Debug::Log(Logging, "[AttachEffect]Missing Type effect of %s...\n", pSource->get_ID());
 				//pTypeData->AttachedTechnoEffect.Attach(pSource, pTypeData->AttachedTechnoEffect.Duration, pSource, pTypeData->AttachedTechnoEffect.DamageDelay);
 
 				pTypeData->AttachedTechnoEffect.Attach(pSource, pTypeData->AttachedTechnoEffect.Duration, pSource);
 
 				pData->AttachedTechnoEffect_isset = true;
-				//Debug::Log("[AttachEffect]Readded to %s.\n", pSource->get_ID());
+				Debug::Log(Logging, "[AttachEffect]Readded to %s.\n", pSource->get_ID());
 			}
-
-		} else if (pData->AttachedTechnoEffect_Delay > 0) {
-			pData->AttachedTechnoEffect_Delay--;
+		} else if(pData->AttachedTechnoEffect_Delay > 0) {
+			--pData->AttachedTechnoEffect_Delay;
 		}
 	}
+
 	return;
 }
