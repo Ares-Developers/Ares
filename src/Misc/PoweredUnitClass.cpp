@@ -31,18 +31,26 @@ bool PoweredUnitClass::IsPoweredBy(HouseClass* const pOwner) const
 
 void PoweredUnitClass::PowerUp()
 {
-	auto const pExt = TechnoExt::ExtMap.Find(this->Techno);
-	if(!this->Techno->IsUnderEMP() && pExt->IsOperated()) {
-		EMPulse::DisableEMPEffect2(this->Techno);
+	auto const pTechno = this->Techno;
+	auto const pExt = TechnoExt::ExtMap.Find(pTechno);
+
+	if(!pTechno->IsUnderEMP() && pExt->IsOperated()) {
+		EMPulse::DisableEMPEffect2(pTechno);
 	}
 }
 
 bool PoweredUnitClass::PowerDown()
 {
-	if(EMPulse::IsDeactivationAdvisable(this->Techno)) {
+	auto const pTechno = this->Techno;
+
+	if(EMPulse::IsDeactivationAdvisable(pTechno)) {
 		// destroy if EMP.Threshold would crash this unit when in air
-		auto const pType = TechnoTypeExt::ExtMap.Find(this->Techno->GetTechnoType());
-		if(EMPulse::EnableEMPEffect2(this->Techno) || (pType->EMP_Threshold && this->Techno->IsInAir())) {
+		auto const pType = pTechno->GetTechnoType();
+		auto const pExt = TechnoTypeExt::ExtMap.Find(pType);
+
+		if(EMPulse::EnableEMPEffect2(pTechno)
+			|| (pExt->EMP_Threshold && pTechno->IsInAir()))
+		{
 			return false;
 		}
 	}
@@ -56,23 +64,25 @@ bool PoweredUnitClass::Update()
 		return true;
 	}
 
-	if(!this->Techno->IsAlive || !this->Techno->Health || this->Techno->InLimbo) {
+	auto const pTechno = this->Techno;
+
+	if(!pTechno->IsAlive || !pTechno->Health || pTechno->InLimbo) {
 		return true;
 	}
 
 	this->LastScan = Unsorted::CurrentFrame;
 
-	auto const pOwner = this->Techno->Owner;
+	auto const pOwner = pTechno->Owner;
 	auto const hasPower = this->IsPoweredBy(pOwner);
 	
 	this->Powered = hasPower;
 	
-	if(hasPower && this->Techno->Deactivated) {
+	if(hasPower && pTechno->Deactivated) {
 		this->PowerUp();
-	} else if(!hasPower && !this->Techno->Deactivated) {
+	} else if(!hasPower && !pTechno->Deactivated) {
 		// don't shutdown units inside buildings (warfac, barracks, shipyard) because that locks up the factory and the robot tank did it
-		auto const whatAmI = this->Techno->WhatAmI();
-		if((whatAmI != InfantryClass::AbsID && whatAmI != UnitClass::AbsID) || (!this->Techno->GetCell()->GetBuilding())) {
+		auto const whatAmI = pTechno->WhatAmI();
+		if((whatAmI != InfantryClass::AbsID && whatAmI != UnitClass::AbsID) || (!pTechno->GetCell()->GetBuilding())) {
 			return this->PowerDown();
 		}
 	}
