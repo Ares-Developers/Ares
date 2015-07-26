@@ -20,9 +20,6 @@
 
 // =============================
 // hooks for 100 unit bug
-std::vector<int> CreationFrames;
-std::vector<int> Values;
-std::vector<int> BestChoices;
 
 // fix the 100 unit bug for vehicles
 DEFINE_HOOK(4FEA60, HouseClass_AI_UnitProduction, 0)

@@ -4,14 +4,15 @@
  * This file contains the macro fu needed to make the 100 unit bug fixes work better
  * Don't get it? Don't touch it!
  */
-extern std::vector<int> CreationFrames;
-extern std::vector<int> Values;
-extern std::vector<int> BestChoices;
 
 // Westwood, meet my friend the resizable array
 // what? copy pasting original code, leave it be
 template <class TClass, class TType>
 void GetTypeToProduce(HouseClass* pThis, int& ProducingTypeIndex) {
+	auto& CreationFrames = HouseExt::AIProduction_CreationFrames;
+	auto& Values = HouseExt::AIProduction_Values;
+	auto& BestChoices = HouseExt::AIProduction_BestChoices;
+
 	auto const count = static_cast<unsigned int>(TType::Array->Count);
 	CreationFrames.assign(count, 0x7FFFFFFF);
 	Values.assign(count, 0);

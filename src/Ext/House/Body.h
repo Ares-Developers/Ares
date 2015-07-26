@@ -174,4 +174,9 @@ public:
 	static HouseClass* GetHouseKind(OwnerHouseKind kind, bool allowRandom,
 		HouseClass* pDefault, HouseClass* pInvoker = nullptr,
 		HouseClass* pKiller = nullptr, HouseClass* pVictim = nullptr);
+
+	// temporary storage for the 100-unit bug fix
+	static std::vector<int> AIProduction_CreationFrames;
+	static std::vector<int> AIProduction_Values;
+	static std::vector<int> AIProduction_BestChoices;
 };

@@ -23,6 +23,10 @@ HouseExt::ExtContainer HouseExt::ExtMap;
 
 bool HouseExt::IsAnyFirestormActive = false;
 
+std::vector<int> HouseExt::AIProduction_CreationFrames;
+std::vector<int> HouseExt::AIProduction_Values;
+std::vector<int> HouseExt::AIProduction_BestChoices;
+
 // =============================
 // member funcs
 
