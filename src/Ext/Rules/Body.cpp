@@ -176,6 +176,8 @@ void RulesExt::ExtData::LoadAfterTypeData(RulesClass *pThis, CCINIClass *pINI) {
 template <typename T>
 void RulesExt::ExtData::Serialize(T& Stm) {
 	Stm
+		.Process(Ares::GlobalControls::AllowBypassBuildLimit)
+		.Process(Ares::GlobalControls::AllowParallelAIQueues)
 		.Process(this->ElectricDeath)
 		.Process(this->EngineerDamage)
 		.Process(this->EngineerAlwaysCaptureTech)
