@@ -1,3 +1,5 @@
+#include "Surfaces.h"
+
 #include <Drawing.h>
 #include <YRDDraw.h>
 #include <WWMouseClass.h>
@@ -8,6 +10,8 @@
 
 #include "../Ext/TechnoType/Body.h"
 #include "../Ext/SWType/Body.h"
+
+const CSFText AresSurfaces::ModNote("TXT_RELEASE_NOTE");
 
 DEFINE_HOOK(7C89D4, DirectDrawCreate, 6)
 {
@@ -164,9 +168,8 @@ DEFINE_HOOK(4F4583, GScreenClass_DrawOnTop_TheDarkSideOfTheMoon, 6)
 		DrawText(Ares::StabilityWarning, offset, COLOR_RED);
 	}
 
-	static const CSFText modnote("TXT_RELEASE_NOTE");
-	if(!modnote.empty()) {
-		DrawText(modnote, offset, COLOR_RED);
+	if(!AresSurfaces::ModNote.empty()) {
+		DrawText(AresSurfaces::ModNote, offset, COLOR_RED);
 	}
 
 	if(Ares::bFPSCounter) {
