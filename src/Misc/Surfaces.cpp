@@ -12,6 +12,7 @@
 #include "../Ext/SWType/Body.h"
 
 const CSFText AresSurfaces::ModNote("TXT_RELEASE_NOTE");
+std::vector<unsigned char> AresSurfaces::ShpCompression1Buffer;
 
 DEFINE_HOOK(7C89D4, DirectDrawCreate, 6)
 {
@@ -190,4 +191,23 @@ DEFINE_HOOK(78997B, sub_789960_RemoveWOLResolutionCheck, 0)
 DEFINE_HOOK(4BA61B, DSurface_CTOR_SkipVRAM, 6)
 {
 	return 0x4BA623;
+}
+
+DEFINE_HOOK(437CCC, BSurface_DrawSHPFrame1_Buffer, 8)
+{
+	REF_STACK(RectangleStruct const, bounds, STACK_OFFS(0x7C, 0x10));
+	REF_STACK(unsigned char const*, pBuffer, STACK_OFFS(0x7C, 0x6C));
+
+	auto const width = static_cast<size_t>(Math::clamp(
+		bounds.Width, 0, std::numeric_limits<short>::max()));
+
+	// buffer overrun is now not as forgiving as it was before
+	auto& Buffer = AresSurfaces::ShpCompression1Buffer;
+	if(Buffer.size() < width) {
+		Buffer.insert(Buffer.end(), width - Buffer.size(), 0u);
+	}
+
+	pBuffer = Buffer.data();
+
+	return 0x437CD4;
 }
