@@ -5,8 +5,6 @@
 #define str_(x) #x
 //endif
 
-#include <bitset>
-
 //include <YRPP.h>
 #include <Helpers/Macro.h>
 
@@ -132,7 +130,7 @@ public:
 
 		static byte GFX_DX_Force;
 
-		static std::bitset<3> AllowBypassBuildLimit;
+		static bool AllowBypassBuildLimit[3];
 
 		class SurfaceConfig {
 		public:

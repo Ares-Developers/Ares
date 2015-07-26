@@ -13,7 +13,7 @@ byte Ares::GlobalControls::GFX_DX_Force = 0;
 
 CCINIClass *Ares::GlobalControls::INI = nullptr;
 
-std::bitset<3> Ares::GlobalControls::AllowBypassBuildLimit(0ull);
+bool Ares::GlobalControls::AllowBypassBuildLimit[3] = {false, false, false};
 
 void Ares::GlobalControls::Load(CCINIClass *pINI) {
 	Initialized = 1;
