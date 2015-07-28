@@ -3,6 +3,7 @@
 #include "../Rules/Body.h"
 
 #include <AircraftClass.h>
+//#include <Helpers/Enumerators.h>
 
 // #895225: make the AI smarter. this code was missing from YR.
 // it clears the targets and assigns the attacker the team's current focus.
@@ -33,7 +34,7 @@ DEFINE_HOOK(6EB432, TeamClass_AttackedBy_Retaliate, 9)
 			// this is the original code, but commented out because it's responsible for switching
 			// targets when the team is attacked by two or more opponents. Now, the team should pick
 			// the first target, and keep it. -AlexB
-			//for(auto i = pThis->FirstUnit; i; i = i->NextTeamMember) {
+			//for(NextTeamMember i(pThis->FirstUnit); i; ++i) {
 			//	if(i->IsAlive && i->Health && (Unsorted::IKnowWhatImDoing || !i->InLimbo)) {
 			//		if(i->IsTeamLeader || i->WhatAmI() == AircraftClass::AbsID) {
 			//			i->SetTarget(nullptr);
