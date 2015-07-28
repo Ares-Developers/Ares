@@ -6,6 +6,6 @@
 
 class AresSurfaces {
 public:
-	static const CSFText ModNote;
+	static CSFText ModNote;
 	static std::vector<unsigned char> ShpCompression1Buffer;
 };

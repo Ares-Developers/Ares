@@ -11,7 +11,7 @@
 #include "../Ext/TechnoType/Body.h"
 #include "../Ext/SWType/Body.h"
 
-const CSFText AresSurfaces::ModNote("TXT_RELEASE_NOTE");
+CSFText AresSurfaces::ModNote;
 std::vector<unsigned char> AresSurfaces::ShpCompression1Buffer;
 
 DEFINE_HOOK(7C89D4, DirectDrawCreate, 6)
@@ -167,6 +167,10 @@ DEFINE_HOOK(4F4583, GScreenClass_DrawOnTop_TheDarkSideOfTheMoon, 6)
 	if(!Ares::bStable) {
 		Ares::bStableNotification = true;
 		DrawText(Ares::StabilityWarning, offset, COLOR_RED);
+	}
+
+	if(!AresSurfaces::ModNote.Label) {
+		AresSurfaces::ModNote = "TXT_RELEASE_NOTE";
 	}
 
 	if(!AresSurfaces::ModNote.empty()) {
