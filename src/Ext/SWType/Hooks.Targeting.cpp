@@ -7,6 +7,7 @@
 
 #include <CellSpread.h>
 #include <FactoryClass.h>
+#include <Helpers/Enumerators.h>
 #include <HouseClass.h>
 #include <InfantryClass.h>
 #include <SuperClass.h>
@@ -344,10 +345,11 @@ private:
 			for(size_t i = 0; i < CellSpread::NumCells(3); ++i) {
 				auto pCell = MapClass::Instance->GetCellAt(cell + CellSpread::GetCell(i));
 
-				for(auto j = abstract_cast<FootClass*>(pCell->FirstObject); j; j = abstract_cast<FootClass*>(j->NextObject)) {
-					if(!info.Owner->IsAlliedWith(j) && !j->IsInAir() && j->CanBePermaMindControlled()) {
+				for(NextObject j(pCell->FirstObject); j && abstract_cast<FootClass*>(*j); ++j) {
+					auto pFoot = static_cast<FootClass*>(*j);
+					if(!info.Owner->IsAlliedWith(pFoot) && !pFoot->IsInAir() && pFoot->CanBePermaMindControlled()) {
 						// original game does not consider cloak
-						if(j->CloakState != CloakState::Cloaked) {
+						if(pFoot->CloakState != CloakState::Cloaked) {
 							++value;
 						}
 					}
@@ -384,10 +386,11 @@ private:
 			for(size_t i = 0; i < CellSpread::NumCells(1); ++i) {
 				auto pCell = MapClass::Instance->GetCellAt(cell + CellSpread::GetCell(i));
 
-				for(auto j = pCell->GetInfantry(pTechno->OnBridge); j; j = abstract_cast<InfantryClass*>(j->NextObject)) {
-					if(!info.Owner->IsAlliedWith(j) && !j->IsInAir()) {
+				for(NextObject j(pCell->GetInfantry(pTechno->OnBridge)); j && abstract_cast<InfantryClass*>(*j); ++j) {
+					auto pInf = static_cast<InfantryClass*>(*j);
+					if(!info.Owner->IsAlliedWith(pInf) && !pInf->IsInAir()) {
 						// original game does not consider cloak
-						if(j->CloakState != CloakState::Cloaked) {
+						if(pInf->CloakState != CloakState::Cloaked) {
 							++value;
 						}
 					}

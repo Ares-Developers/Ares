@@ -145,8 +145,8 @@ namespace Helpers {
 			auto const range = static_cast<size_t>(spread + 0.99);
 			for(CellSpreadEnumerator it(range); it; ++it) {
 				auto const pCell = MapClass::Instance->GetCellAt(*it + cellCoords);
-				for(auto pObj = pCell->GetContent(); pObj; pObj = pObj->NextObject) {
-					if(auto const pTechno = abstract_cast<TechnoClass*>(pObj)) {
+				for(NextObject obj(pCell->GetContent()); obj; ++obj) {
+					if(auto const pTechno = abstract_cast<TechnoClass*>(*obj)) {
 						set.insert(pTechno);
 					}
 				}

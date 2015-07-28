@@ -16,6 +16,7 @@
 #include <RadarEventClass.h>
 #include <SuperClass.h>
 #include <MouseClass.h>
+#include <Helpers\Enumerators.h>
 
 template<> const DWORD Extension<BuildingClass>::Canary = 0x87654321;
 BuildingExt::ExtContainer BuildingExt::ExtMap;
@@ -179,8 +180,8 @@ void BuildingExt::ExtData::KickOutOfRubble() {
 
 		// remove every techno that resides on this cell
 		CellClass* cell = MapClass::Instance->GetCellAt(pos);
-		for(ObjectClass* pObj = cell->GetContent(); pObj; pObj = pObj->NextObject) {
-			if(FootClass* pFoot = generic_cast<FootClass*>(pObj)) {
+		for(NextObject obj(cell->GetContent()); obj; ++obj) {
+			if(FootClass* pFoot = generic_cast<FootClass*>(*obj)) {
 				bool selected = pFoot->IsSelected;
 				if(pFoot->Remove()) {
 					list.AddItem(Item(pFoot, selected));
@@ -757,11 +758,8 @@ void BuildingExt::ExtData::UpdateFirewallLinks() {
 
 void BuildingExt::ExtData::ImmolateVictims() {
 	auto const pCell = this->OwnerObject()->GetCell();
-	auto pNext = pCell->FirstObject;
-	for(auto pObject = pNext; pObject; pObject = pNext) {
-		pNext = pObject->NextObject;
-
-		if(auto pFoot = abstract_cast<FootClass*>(pObject)) {
+	for(NextObject object(pCell->FirstObject); object; ++object) {
+		if(auto pFoot = abstract_cast<FootClass*>(*object)) {
 			if(!pFoot->GetType()->IgnoresFirestorm) {
 				this->ImmolateVictim(pFoot);
 			}

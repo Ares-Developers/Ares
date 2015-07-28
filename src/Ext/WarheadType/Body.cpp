@@ -393,7 +393,8 @@ bool WarheadTypeExt::ExtData::applyKillDriver(TechnoClass* const pSource, Abstra
 
 			} else if(auto pOperatorType = pTargetTypeExt->Operator) {
 				// find the driver cowardly hiding among the passengers, then kill him
-				for(auto pPassenger = pTarget->Passengers.GetFirstPassenger(); pPassenger; pPassenger = abstract_cast<FootClass*>(pPassenger->NextObject)) {
+				for(NextObject passenger(pTarget->Passengers.GetFirstPassenger()); passenger; ++passenger) {
+					auto const pPassenger = static_cast<FootClass*>(*passenger);
 					if(pPassenger->GetTechnoType() == pOperatorType) {
 						pTarget->RemovePassenger(pPassenger);
 						pPassenger->RegisterDestruction(pSource);

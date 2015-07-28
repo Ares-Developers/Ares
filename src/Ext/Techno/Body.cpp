@@ -15,6 +15,7 @@
 #include <InfantryClass.h>
 #include <BuildingClass.h>
 #include <GeneralStructures.h>
+#include <Helpers/Enumerators.h>
 #include <Helpers/Template.h>
 #include <LocomotionClass.h>
 #include <SlaveManagerClass.h>
@@ -459,8 +460,8 @@ bool TechnoExt::ExtData::IsOperated() const {
 
 	if(auto pOperator = pExt->Operator) {
 		// loop & condition come from D
-		for(ObjectClass* pObject = pThis->Passengers.GetFirstPassenger(); pObject; pObject = pObject->NextObject) {
-			if(pObject->GetType() == pOperator) {
+		for(NextObject object(pThis->Passengers.GetFirstPassenger()); object; ++object) {
+			if(object->GetType() == pOperator) {
 				// takes a specific operator and someone is present AND that someone is the operator, therefore it is operated
 				return true;
 			}
