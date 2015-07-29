@@ -144,11 +144,13 @@ DEFINE_HOOK(469EBA, BulletClass_DetonateAt_Splits, 6)
 
 		if(!pExt->Splits) {
 			// default hardcoded YR way: hit each cell around the destination once
-			CellRangeIterator it(cellDest, pExt->AirburstSpread);
 
 			// fill target list with cells around the target
-			auto collect = [&targets](CellClass* pCell) -> bool { targets.AddItem(pCell); return true; };
-			it.apply<CellClass>(collect);
+			CellRangeIterator<CellClass>{}(cellDest, pExt->AirburstSpread,
+				[&targets](CellClass* pCell) -> bool
+			{
+				targets.AddItem(pCell); return true;
+			});
 
 			// we want as many as we get, not more, not less
 			cluster = targets.Count;

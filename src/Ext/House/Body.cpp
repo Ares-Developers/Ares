@@ -18,6 +18,8 @@
 
 #include "../../Misc/SavegameDef.h"
 
+#include <functional>
+
 template<> const DWORD Extension<HouseClass>::Canary = 0x12345678;
 HouseExt::ExtContainer HouseExt::ExtMap;
 

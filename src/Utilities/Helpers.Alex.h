@@ -219,14 +219,23 @@ namespace Helpers {
 
 			\author AlexB
 		*/
-		template <typename T>
-		inline bool for_each_in_rect(const CellStruct &center, float widthOrRange, int height, const std::function<bool(T*)> &action) {
+		template <typename T, typename Func>
+		inline bool for_each_in_rect(
+			CellStruct const center, float widthOrRange, int height, Func&& action)
+		{
 			if(height > 0) {
-				int width = static_cast<int>(widthOrRange);
+				auto const width = static_cast<int>(widthOrRange);
 
 				if(width > 0) {
-					CellRectIterator iter(center, width, height);
-					iter.apply(action);
+					// the coords mark the center of the area
+					auto topleft = center;
+					topleft.X -= static_cast<short>(width / 2);
+					topleft.Y -= static_cast<short>(height / 2);
+
+					auto const rect = LTRBStruct{
+						topleft.X, topleft.Y, topleft.X + width, topleft.Y + height };
+
+					CellRectIterator<T>{}(rect, std::forward<Func>(action));
 					return true;
 				}
 			}
@@ -249,14 +258,15 @@ namespace Helpers {
 
 			\author AlexB
 		*/
-		template <typename T>
-		inline bool for_each_in_rect_or_range(const CellStruct &center, float widthOrRange, int height, const std::function<bool(T*)> &action) {
-			if(!for_each_in_rect(center, widthOrRange, height, action)) {
-				if(height <= 0 && widthOrRange >= 0.0f) {
-					CellRangeIterator iter(center, widthOrRange);
-					iter.apply(action);
-					return true;
-				}
+		template <typename T, typename Func>
+		inline bool for_each_in_rect_or_range(CellStruct center, float widthOrRange, int height, Func&& action) {
+			if(for_each_in_rect<T>(center, widthOrRange, height, action)) {
+				return true;
+			}
+
+			if(height <= 0 && widthOrRange >= 0.0) {
+				CellRangeIterator<T>{}(center, widthOrRange, std::forward<Func>(action));
+				return true;
 			}
 
 			return false;
@@ -277,17 +287,19 @@ namespace Helpers {
 
 			\author AlexB
 		*/
-		template <typename T>
-		inline bool for_each_in_rect_or_spread(const CellStruct &center, float widthOrRange, int height, const std::function<bool (T*)> &action) {
-			if(!for_each_in_rect(center, widthOrRange, height, action)) {
-				if(height <= 0) {
-					int spread = static_cast<int>(widthOrRange);
+		template <typename T, typename Func>
+		inline bool for_each_in_rect_or_spread(CellStruct center, float widthOrRange, int height, Func&& action) {
+			if(for_each_in_rect<T>(center, widthOrRange, height, action)) {
+				return true;
+			}
 
-					if(spread > 0) {
-						CellSpreadIterator iter(center, static_cast<size_t>(spread));
-						iter.apply(action);
-						return true;
-					}
+			if(height <= 0) {
+				auto const spread = static_cast<size_t>(
+					Math::max(static_cast<int>(widthOrRange), 0));
+
+				if(spread > 0) {
+					CellSpreadIterator<T>{}(center, spread, std::forward<Func>(action));
+					return true;
 				}
 			}
 

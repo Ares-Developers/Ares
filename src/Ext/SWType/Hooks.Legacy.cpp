@@ -140,7 +140,7 @@ DEFINE_HOOK(53B080, PsyDom_Fire, 5) {
 			// every techno in this area shall be one with Yuri.
 			auto range = pData->GetRange();
 			Helpers::Alex::DistinctCollector<TechnoClass*> items;
-			Helpers::Alex::for_each_in_rect_or_spread<TechnoClass>(cell, range.WidthOrRange, range.Height, std::ref(items));
+			Helpers::Alex::for_each_in_rect_or_spread<TechnoClass>(cell, range.WidthOrRange, range.Height, items);
 			items.for_each(Dominate);
 
 			// the AI sends all new minions to hunt

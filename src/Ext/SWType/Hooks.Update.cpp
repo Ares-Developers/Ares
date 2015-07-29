@@ -6,9 +6,6 @@
 #include <MouseClass.h>
 #include <SuperClass.h>
 
-#include <algorithm>
-#include <functional>
-
 // cache all super weapon statuses
 struct SWStatus {
 	bool Available;

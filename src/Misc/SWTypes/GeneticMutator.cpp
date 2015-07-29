@@ -135,7 +135,7 @@ bool SW_GeneticMutator::Activate(SuperClass* pThis, const CellStruct &Coords, bo
 			// find everything in range and mutate it
 			auto range = GetRange(pData);
 			Helpers::Alex::DistinctCollector<InfantryClass*> items;
-			Helpers::Alex::for_each_in_rect_or_range<InfantryClass>(Coords, range.WidthOrRange, range.Height, std::ref(items));
+			Helpers::Alex::for_each_in_rect_or_range<InfantryClass>(Coords, range.WidthOrRange, range.Height, items);
 			items.for_each(Mutate);
 		}
 	}

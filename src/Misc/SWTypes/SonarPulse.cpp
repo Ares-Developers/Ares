@@ -91,7 +91,7 @@ bool SW_SonarPulse::Activate(SuperClass* const pThis, const CellStruct &Coords, 
 		// decloak everything in range
 		using namespace Helpers::Alex;
 		DistinctCollector<TechnoClass*> items;
-		for_each_in_rect_or_range<TechnoClass>(Coords, range.WidthOrRange, range.Height, std::ref(items));
+		for_each_in_rect_or_range<TechnoClass>(Coords, range.WidthOrRange, range.Height, items);
 		items.for_each(Detect);
 
 		// radar event only if this isn't full map sonar

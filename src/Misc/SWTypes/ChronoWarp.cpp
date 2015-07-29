@@ -266,7 +266,7 @@ bool SW_ChronoWarp::Activate(SuperClass* pThis, const CellStruct &Coords, bool I
 	// collect every techno in this range only once. apply the Chronosphere.
 	auto range = pData->GetRange();
 	Helpers::Alex::DistinctCollector<TechnoClass*> items;
-	Helpers::Alex::for_each_in_rect_or_range<TechnoClass>(pSource->ChronoMapCoords, range.WidthOrRange, range.Height, std::ref(items));
+	Helpers::Alex::for_each_in_rect_or_range<TechnoClass>(pSource->ChronoMapCoords, range.WidthOrRange, range.Height, items);
 	items.for_each(Chronoport);
 
 	if(RegisteredBuildings.Count) {

@@ -193,8 +193,9 @@ DEFINE_HOOK(46934D, IvanBombs_Spread, 6)
 
 				CellStruct centerCoords = MapClass::Instance->GetCellAt(tgtCoords)->MapCoords;
 
-				CellSpreadIterator iter(centerCoords, Spread);
-				iter.apply<TechnoClass>([pOwner, pExt](TechnoClass* pTechno) {
+				CellSpreadIterator<TechnoClass>{}(centerCoords, Spread,
+					[pOwner, pExt](TechnoClass* pTechno)
+				{
 					if(pTechno != pOwner && !pTechno->AttachedBomb) {
 						pExt->PlantBomb(pOwner, pTechno);
 					}

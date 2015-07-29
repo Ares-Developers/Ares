@@ -159,7 +159,7 @@ bool SW_Protect::Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPl
 
 		// protect everything in range
 		Helpers::Alex::DistinctCollector<TechnoClass*> items;
-		Helpers::Alex::for_each_in_rect_or_range<TechnoClass>(Coords, range.WidthOrRange, range.Height, std::ref(items));
+		Helpers::Alex::for_each_in_rect_or_range<TechnoClass>(Coords, range.WidthOrRange, range.Height, items);
 		items.for_each(IronCurtain);
 	}
 
