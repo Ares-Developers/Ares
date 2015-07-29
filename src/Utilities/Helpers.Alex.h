@@ -69,7 +69,13 @@ namespace Helpers {
 				return _set.end();
 			}
 
-			int for_each(const std::tr1::function<bool(T)> &action) const {
+			template <typename Func>
+			void for_each(Func&& action) const {
+				std::find_if_not(begin(), end(), action);
+			}
+
+			template <typename Func>
+			int for_each_count(Func&& action) const {
 				return std::distance(begin(), std::find_if_not(begin(), end(), action));
 			}
 		};
