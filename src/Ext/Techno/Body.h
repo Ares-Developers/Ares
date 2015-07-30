@@ -186,13 +186,8 @@ public:
 			case AbstractType::Temporal:
 			case AbstractType::Anim:
 			case AbstractType::Aircraft:
-			case AbstractType::AircraftType:
-			case AbstractType::BuildingType:
 			case AbstractType::Infantry:
-			case AbstractType::InfantryType:
 			case AbstractType::Unit:
-			case AbstractType::UnitType:
-			case AbstractType::WarheadType:
 				return false;
 			default:
 				return true;

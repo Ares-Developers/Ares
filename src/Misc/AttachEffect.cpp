@@ -166,10 +166,6 @@ void AttachEffectClass::InvalidatePointer(void* ptr) {
 	if(this->Animation == ptr) {
 		this->KillAnim();
 	}
-
-	if(this->Type && this->Type->Owner == ptr) {
-		this->Type = nullptr;
-	}
 }
 
 void AttachEffectClass::CreateAnim(TechnoClass* pOwner) {
