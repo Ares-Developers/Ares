@@ -131,13 +131,13 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 	}
 	this->PrerequisiteLists.erase(this->PrerequisiteLists.begin() + PrereqListLen, this->PrerequisiteLists.end());
 
-	Prereqs::Parse(pINI, section, "Prerequisite", *this->PrerequisiteLists.at(0));
+	Prereqs::Parse(pINI, section, "Prerequisite", *this->PrerequisiteLists[0]);
 
 	Prereqs::Parse(pINI, section, "PrerequisiteOverride", pThis->PrerequisiteOverride);
 
-	for(size_t i = 0; i < this->PrerequisiteLists.size(); ++i) {
+	for(auto i = 0u; i < this->PrerequisiteLists.size(); ++i) {
 		_snprintf_s(flag, 255, "Prerequisite.List%u", i);
-		Prereqs::Parse(pINI, section, flag, *this->PrerequisiteLists.at(i));
+		Prereqs::Parse(pINI, section, flag, *this->PrerequisiteLists[i]);
 	}
 
 	Prereqs::Parse(pINI, section, "Prerequisite.Negative", this->PrerequisiteNegatives);
