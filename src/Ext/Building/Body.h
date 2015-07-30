@@ -105,7 +105,6 @@ public:
 		virtual ~ExtData() = default;
 
 		virtual void InvalidatePointer(void *ptr, bool bRemoved) override {
-			AnnounceInvalidPointer(OwnerBeforeRaid, ptr);
 		}
 
 		virtual void LoadFromStream(AresStreamReader &Stm) override;
@@ -157,11 +156,6 @@ public:
 	public:
 		ExtContainer();
 		~ExtContainer();
-
-		virtual bool InvalidateExtDataIgnorable(void* const ptr) const override {
-			auto const abs = static_cast<AbstractClass*>(ptr)->WhatAmI();
-			return abs != AbstractType::House;
-		}
 	};
 
 	static ExtContainer ExtMap;
