@@ -272,8 +272,6 @@ public:
 		virtual void CompleteInitialization(BuildingTypeClass* pThis);
 
 		virtual void InvalidatePointer(void *ptr, bool bRemoved) override {
-			AnnounceInvalidPointer(RubbleIntact, ptr);
-			AnnounceInvalidPointer(RubbleDestroyed, ptr);
 		}
 
 		virtual void LoadFromStream(AresStreamReader &Stm) override;
@@ -301,11 +299,6 @@ public:
 	public:
 		ExtContainer();
 		~ExtContainer();
-
-		virtual bool InvalidateExtDataIgnorable(void* const ptr) const override {
-			auto const abs = static_cast<AbstractClass*>(ptr)->WhatAmI();
-			return abs != AbstractType::BuildingType;
-		}
 
 		virtual bool Load(BuildingTypeClass* pThis, IStream* pStm) override;
 	};
