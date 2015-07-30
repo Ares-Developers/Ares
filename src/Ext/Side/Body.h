@@ -115,7 +115,7 @@ public:
 
 		AnimTypeClass* GetParachuteAnim() const;
 
-		const char* GetMultiplayerScoreBarFilename(size_t index) const;
+		const char* GetMultiplayerScoreBarFilename(unsigned int index) const;
 
 	private:
 		template <typename T>

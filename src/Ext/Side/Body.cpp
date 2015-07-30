@@ -323,7 +323,7 @@ AnimTypeClass* SideExt::ExtData::GetParachuteAnim() const {
 	return this->Parachute_Anim.Get(RulesClass::Instance->Parachute);
 }
 
-const char* SideExt::ExtData::GetMultiplayerScoreBarFilename(size_t index) const {
+const char* SideExt::ExtData::GetMultiplayerScoreBarFilename(unsigned int index) const {
 	static char filename[_countof(this->ScoreMultiplayBars.data())];
 	auto const& data = this->ScoreMultiplayBars.data();
 	std::transform(std::begin(data), std::end(data), filename, [](const char& ch) {

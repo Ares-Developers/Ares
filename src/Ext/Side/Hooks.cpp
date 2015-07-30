@@ -419,7 +419,7 @@ DEFINE_HOOK(72D730, Game_LoadMultiplayerScoreAssets, 5)
 
 DEFINE_HOOK(5CA110, Game_GetMultiplayerScoreScreenBar, 5)
 {
-	GET(int, idxBar, ECX);
+	GET(unsigned int, idxBar, ECX);
 
 	int idxSide = ScenarioClass::Instance->PlayerSideIndex;
 	auto pSide = SideClass::Array->GetItemOrDefault(idxSide);
