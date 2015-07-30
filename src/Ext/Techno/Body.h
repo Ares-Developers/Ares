@@ -178,6 +178,27 @@ public:
 		ExtContainer();
 		~ExtContainer();
 
+		virtual bool InvalidateExtDataIgnorable(void* const ptr) const override {
+			auto const abs = static_cast<AbstractClass*>(ptr)->WhatAmI();
+			switch(abs) {
+			case AbstractType::Building:
+			case AbstractType::BuildingLight:
+			case AbstractType::Temporal:
+			case AbstractType::Anim:
+			case AbstractType::Aircraft:
+			case AbstractType::AircraftType:
+			case AbstractType::BuildingType:
+			case AbstractType::Infantry:
+			case AbstractType::InfantryType:
+			case AbstractType::Unit:
+			case AbstractType::UnitType:
+			case AbstractType::WarheadType:
+				return false;
+			default:
+				return true;
+			}
+		}
+
 		virtual void InvalidatePointer(void *ptr, bool bRemoved) override;
 	};
 

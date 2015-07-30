@@ -50,6 +50,19 @@ public:
 	public:
 		ExtContainer();
 		~ExtContainer();
+
+		virtual bool InvalidateExtDataIgnorable(void* const ptr) const override {
+			auto const abs = static_cast<AbstractClass*>(ptr)->WhatAmI();
+			switch(abs) {
+			case AbstractType::AircraftType:
+			case AbstractType::BuildingType:
+			case AbstractType::InfantryType:
+			case AbstractType::UnitType:
+				return false;
+			default:
+				return true;
+			}
+		}
 	};
 
 	static ExtContainer ExtMap;

@@ -302,6 +302,11 @@ public:
 		ExtContainer();
 		~ExtContainer();
 
+		virtual bool InvalidateExtDataIgnorable(void* const ptr) const override {
+			auto const abs = static_cast<AbstractClass*>(ptr)->WhatAmI();
+			return abs != AbstractType::BuildingType;
+		}
+
 		virtual bool Load(BuildingTypeClass* pThis, IStream* pStm) override;
 	};
 
