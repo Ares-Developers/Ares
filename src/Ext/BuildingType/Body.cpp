@@ -247,6 +247,8 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 
 	this->AIBuildCounts.Read(exINI, pID, "AIBuildCounts");
 	this->AIExtraCounts.Read(exINI, pID, "AIExtraCounts");
+
+	this->BuildupTime.Read(exINI, pID, "BuildupTime");
 }
 
 void BuildingTypeExt::ExtData::CompleteInitialization(BuildingTypeClass *pThis) {
@@ -478,7 +480,8 @@ void BuildingTypeExt::ExtData::Serialize(T& Stm) {
 		.Process(this->DegradePercentage)
 		.Process(this->ImmuneToSaboteurs)
 		.Process(this->AIBuildCounts)
-		.Process(this->AIExtraCounts);
+		.Process(this->AIExtraCounts)
+		.Process(this->BuildupTime);
 }
 
 void BuildingTypeExt::ExtData::LoadFromStream(AresStreamReader &Stm) {

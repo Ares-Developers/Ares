@@ -214,6 +214,8 @@ public:
 		ValueableVector<int> AIBuildCounts;
 		ValueableVector<int> AIExtraCounts;
 
+		Nullable<double> BuildupTime;
+
 		ExtData(BuildingTypeClass* OwnerObject) : Extension<BuildingTypeClass>(OwnerObject),
 			Solid_Height(0),
 			Solid_Level(1),

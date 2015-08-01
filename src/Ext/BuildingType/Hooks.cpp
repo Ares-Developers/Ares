@@ -94,3 +94,16 @@ DEFINE_HOOK(45ECE0, BuildingTypeClass_GetMaxPips, 6)
 	}
 	return 0;
 }
+
+DEFINE_HOOK(45F2E1, BuildingTypeClass_Load2DArt_BuildupTime, 6)
+{
+	GET(BuildingTypeClass* const, pThis, EBP);
+	GET_STACK(int const, frames, STACK_OFFS(0x168, 0x158));
+
+	auto const pExt = BuildingTypeExt::ExtMap.Find(pThis);
+	auto const buildup_time = static_cast<int>(pExt->BuildupTime.Get(
+		RulesClass::Instance->BuildupTime) * 900.0 / frames);
+
+	R->ECX(buildup_time);
+	return 0x45F2FE;
+}
