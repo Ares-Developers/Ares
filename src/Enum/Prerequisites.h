@@ -17,7 +17,7 @@ class TechnoTypeClass;
 
 class GenericPrerequisite;
 
-class GenericPrerequisite : public Enumerable<GenericPrerequisite>
+class GenericPrerequisite final : public Enumerable<GenericPrerequisite>
 {
 public:
 	GenericPrerequisite(const char *Title) : Enumerable<GenericPrerequisite>(Title) { }

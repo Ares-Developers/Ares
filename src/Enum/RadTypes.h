@@ -10,7 +10,7 @@
 class RadType;
 class CCINIClass;
 
-class RadType : public Enumerable<RadType>
+class RadType final : public Enumerable<RadType>
 {
 private:
 	Nullable<WarheadTypeClass *> WH;

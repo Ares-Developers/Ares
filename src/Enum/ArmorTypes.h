@@ -14,7 +14,7 @@
 
 class ArmorType;
 
-class ArmorType : public Enumerable<ArmorType>
+class ArmorType final : public Enumerable<ArmorType>
 {
 public:
 	ArmorType(const char *Title) : Enumerable<ArmorType>(Title), DefaultIndex(-1) { }
