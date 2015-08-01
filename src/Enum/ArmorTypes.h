@@ -1,18 +1,10 @@
 #pragma once
 
-#include <ArrayClasses.h>
-#include <CCINIClass.h>
-#include <WarheadTypeClass.h>
-
-#include <Conversions.h>
-
-#include "../Ext/WarheadType/Body.h"
-#include "../Ares.h"
-#include "../Ares.CRT.h"
-
 #include "_Enumerator.hpp"
+#include "../Ext/WarheadType/Body.h"
 
-class ArmorType;
+class CCINIClass;
+class WarheadTypeClass;
 
 class ArmorType final : public Enumerable<ArmorType>
 {

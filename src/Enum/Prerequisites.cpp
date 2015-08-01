@@ -1,8 +1,11 @@
-#include <ArrayClasses.h>
-#include "../Ares.h"
 #include "Prerequisites.h"
 
+#include "../Ares.h"
 #include "../Misc/SavegameDef.h"
+
+#include <ArrayClasses.h>
+#include <BuildingTypeClass.h>
+#include <HouseClass.h>
 
 Enumerable<GenericPrerequisite>::container_t Enumerable<GenericPrerequisite>::Array;
 

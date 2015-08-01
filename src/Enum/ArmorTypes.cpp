@@ -2,6 +2,8 @@
 
 #include "../Misc/SavegameDef.h"
 
+#include <Conversions.h>
+
 Enumerable<ArmorType>::container_t Enumerable<ArmorType>::Array;
 
 const char * Enumerable<ArmorType>::GetMainSection()

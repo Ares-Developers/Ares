@@ -1,21 +1,13 @@
 #pragma once
 
-#include <CCINIClass.h>
-#include <HouseClass.h>
-#include <UnitTypeClass.h>
-
 #include "_Enumerator.hpp"
-#include "../Ares.CRT.h"
+
 #include "../Utilities/Iterator.h"
 
-#ifdef DEBUGBUILD
-#include "../Misc/Debug.h"
-#endif
-
+class BuildingTypeClass;
+class CCINIClass;
 class HouseClass;
 class TechnoTypeClass;
-
-class GenericPrerequisite;
 
 class GenericPrerequisite final : public Enumerable<GenericPrerequisite>
 {

@@ -1,14 +1,12 @@
 #pragma once
 
-#include <WarheadTypeClass.h>
-#include <RadSiteClass.h>
-#include <RulesClass.h>
-
 #include "_Enumerator.hpp"
 #include "../Utilities/Template.h"
 
-class RadType;
+#include <RulesClass.h>
+
 class CCINIClass;
+class WarheadTypeClass;
 
 class RadType final : public Enumerable<RadType>
 {

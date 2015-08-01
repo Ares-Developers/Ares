@@ -6,6 +6,8 @@
 #include "../Rules/Body.h"
 #include "../../Utilities/TemplateDef.h"
 
+#include <HouseTypeClass.h>
+
 // =============================
 // other hooks
 

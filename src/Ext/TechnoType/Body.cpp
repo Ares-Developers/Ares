@@ -7,6 +7,7 @@
 #include "../../Utilities/TemplateDef.h"
 
 #include <AbstractClass.h>
+#include <HouseClass.h>
 #include <PCX.h>
 #include <Theater.h>
 #include <VocClass.h>
