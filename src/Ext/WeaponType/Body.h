@@ -201,23 +201,6 @@ public:
 #define idxInfantry 3
 #define idxOther 4
 
-	static char AbsIDtoIdx(AbstractType absId)
-	{
-		switch(absId)
-		{
-		case AbstractType::Unit:
-			return idxVehicle;
-		case AbstractType::Aircraft:
-			return idxAircraft;
-		case AbstractType::Building:
-			return idxBuilding;
-		case AbstractType::Infantry:
-			return idxInfantry;
-		default:
-			return idxOther;
-		}
-	}
-
 	// @return skipNormalHandling?
 	static bool ModifyWaveColor(WORD *src, WORD *dst, int Intensity, WaveClass *Wave);
 

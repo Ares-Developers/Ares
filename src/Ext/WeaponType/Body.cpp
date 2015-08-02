@@ -345,9 +345,20 @@ bool WeaponTypeExt::ExtData::IsWaveReversedAgainst(
 	AbstractClass const* const pTarget) const
 {
 	auto const abs = pTarget->WhatAmI();
-	auto const idx = AbsIDtoIdx(abs);
 
-	return this->Wave_Reverse[idx];
+	switch(abs)
+	{
+	case AbstractType::Unit:
+		return this->Wave_Reverse[idxVehicle];
+	case AbstractType::Aircraft:
+		return this->Wave_Reverse[idxAircraft];
+	case AbstractType::Building:
+		return this->Wave_Reverse[idxBuilding];
+	case AbstractType::Infantry:
+		return this->Wave_Reverse[idxInfantry];
+	default:
+		return this->Wave_Reverse[idxOther];
+	}
 }
 
 // wave colors will be bound to the default values, thus a change of wave
