@@ -251,13 +251,23 @@ void BuildingTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 	this->BuildupTime.Read(exINI, pID, "BuildupTime");
 }
 
-void BuildingTypeExt::ExtData::CompleteInitialization(BuildingTypeClass *pThis) {
+void BuildingTypeExt::ExtData::CompleteInitialization() {
+	auto const pThis = this->OwnerObject();
+
 	// enforce same foundations for rubble/intact building pairs
-	if(this->RubbleDestroyed && !BuildingTypeExt::IsFoundationEqual(this->OwnerObject(), this->RubbleDestroyed)) {
-		Debug::FatalErrorAndExit("BuildingType %s and its Rubble.Destroyed %s don't have the same foundation.", this->OwnerObject()->ID, this->RubbleDestroyed->ID);
+	if(this->RubbleDestroyed &&
+		!BuildingTypeExt::IsFoundationEqual(pThis, this->RubbleDestroyed))
+	{
+		Debug::FatalErrorAndExit(
+			"BuildingType %s and its %s %s don't have the same foundation.",
+			pThis->ID, "Rubble.Destroyed", this->RubbleDestroyed->ID);
 	}
-	if(this->RubbleIntact && !BuildingTypeExt::IsFoundationEqual(this->OwnerObject(), this->RubbleIntact)) {
-		Debug::FatalErrorAndExit("BuildingType %s and its Rubble.Intact %s don't have the same foundation.", this->OwnerObject()->ID, this->RubbleIntact->ID);
+	if(this->RubbleIntact &&
+		!BuildingTypeExt::IsFoundationEqual(pThis, this->RubbleIntact))
+	{
+		Debug::FatalErrorAndExit(
+			"BuildingType %s and its %s %s don't have the same foundation.",
+			pThis->ID, "Rubble.Intact", this->RubbleIntact->ID);
 	}
 }
 

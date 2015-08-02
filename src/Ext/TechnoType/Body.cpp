@@ -833,14 +833,12 @@ DEFINE_HOOK(716123, TechnoTypeClass_LoadFromINI, 5)
 	return 0;
 }
 
-DEFINE_HOOK(679CAF, RulesClass_LoadAfterTypeData_CheckRubbleFoundation, 5) {
+DEFINE_HOOK(679CAF, RulesClass_LoadAfterTypeData_CompleteInitialization, 5) {
 	//GET(CCINIClass*, pINI, ESI);
 
-	for(int i=0; i<BuildingTypeClass::Array->Count; ++i) {
-		BuildingTypeClass* pTBld = BuildingTypeClass::Array->GetItem(i);
-		if(BuildingTypeExt::ExtData *pData = BuildingTypeExt::ExtMap.Find(pTBld)) {
-			pData->CompleteInitialization(pTBld);
-		}
+	for(auto const& pType : *BuildingTypeClass::Array) {
+		auto const pExt = BuildingTypeExt::ExtMap.Find(pType);
+		pExt->CompleteInitialization();
 	}
 
 	return 0;

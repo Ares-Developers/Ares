@@ -271,7 +271,7 @@ public:
 
 		virtual void LoadFromINIFile(CCINIClass* pINI) override;
 		virtual void Initialize() override;
-		virtual void CompleteInitialization(BuildingTypeClass* pThis);
+		virtual void CompleteInitialization();
 
 		virtual void InvalidatePointer(void *ptr, bool bRemoved) override {
 		}
