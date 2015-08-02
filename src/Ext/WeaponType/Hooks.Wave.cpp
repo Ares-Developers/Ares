@@ -158,7 +158,7 @@ DEFINE_HOOK(760BC2, WaveClass_Draw2, 9)
 	GET(WaveClass *, Wave, EBX);
 	GET(WORD *, dest, EBP);
 
-	return (WeaponTypeExt::ModifyWaveColor(dest, dest, Wave->LaserIntensity, Wave))
+	return (WeaponTypeExt::ModifyWaveColor(*dest, *dest, Wave->LaserIntensity, Wave))
 		? 0x760CAF
 		: 0
 	;
@@ -170,7 +170,7 @@ DEFINE_HOOK(760DE2, WaveClass_Draw3, 9)
 	GET(WaveClass *, Wave, EBX);
 	GET(WORD *, dest, EDI);
 
-	return (WeaponTypeExt::ModifyWaveColor(dest, dest, Wave->LaserIntensity, Wave))
+	return (WeaponTypeExt::ModifyWaveColor(*dest, *dest, Wave->LaserIntensity, Wave))
 		? 0x760ECB
 		: 0
 	;
@@ -183,7 +183,7 @@ DEFINE_HOOK(75EE57, WaveClass_Draw_Sonic, 7)
 	GET(WORD*, src, EDI);
 	GET(DWORD, offset, ECX);
 
-	return (WeaponTypeExt::ModifyWaveColor(src + offset, src, R->ESI(), Wave))
+	return (WeaponTypeExt::ModifyWaveColor(src[offset], *src, R->ESI(), Wave))
 		? 0x75EF1C
 		: 0
 	;
@@ -196,7 +196,7 @@ DEFINE_HOOK(7601FB, WaveClass_Draw_Magnetron, 0B)
 	GET(WORD*, src, EBX);
 	GET(DWORD, offset, ECX);
 
-	return (WeaponTypeExt::ModifyWaveColor(src + offset, src, R->EBP(), Wave))
+	return (WeaponTypeExt::ModifyWaveColor(src[offset], *src, R->EBP(), Wave))
 		? 0x760285
 		: 0
 	;

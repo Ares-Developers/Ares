@@ -389,24 +389,25 @@ ColorStruct WeaponTypeExt::ExtData::GetBeamColor() const {
 	return this->Beam_Color.Get(RulesClass::Instance->RadColor);
 }
 
-bool WeaponTypeExt::ModifyWaveColor(WORD *src, WORD *dst, int Intensity, WaveClass *Wave)
+bool WeaponTypeExt::ModifyWaveColor(
+	WORD const src, WORD& dest, int const intensity, WaveClass* const pWave)
 {
-	auto pData = WeaponTypeExt::WaveExt.get_or_default(Wave);
+	auto const pData = WeaponTypeExt::WaveExt.get_or_default(pWave);
 
-	ColorStruct CurrentColor = (pData->Wave_IsHouseColor && Wave->Owner)
-		? Wave->Owner->Owner->Color
+	auto const currentColor = (pData->Wave_IsHouseColor && pWave->Owner)
+		? pWave->Owner->Owner->Color
 		: pData->GetWaveColor();
 
-	if(CurrentColor == ColorStruct(0, 0, 0)) {
+	if(currentColor == ColorStruct(0, 0, 0)) {
 		return false;
 	}
 
-	ColorStruct modified = Drawing::WordColor(*src);
+	auto modified = Drawing::WordColor(src);
 
 	// ugly hack to fix byte wraparound problems
-	auto upcolor = [&](BYTE ColorStruct::* member) {
-		int component = modified.*member + (Intensity * CurrentColor.*member) / 256;
-		component = std::max(std::min(component, 255), 0);
+	auto const upcolor = [=, &modified](BYTE ColorStruct::* member) {
+		auto const component = Math::clamp(modified.*member
+			+ (intensity * currentColor.*member) / 256, 0, 255);
 		modified.*member = static_cast<BYTE>(component);
 	};
 
@@ -414,7 +415,7 @@ bool WeaponTypeExt::ModifyWaveColor(WORD *src, WORD *dst, int Intensity, WaveCla
 	upcolor(&ColorStruct::G);
 	upcolor(&ColorStruct::B);
 
-	*dst = Drawing::Color16bit(modified);
+	dest = Drawing::Color16bit(modified);
 	return true;
 }
 

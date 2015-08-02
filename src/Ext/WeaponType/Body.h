@@ -203,7 +203,7 @@ public:
 	static AresMap<RadSiteClass*, const ExtData*> RadSiteExt;
 
 	// @return skipNormalHandling?
-	static bool ModifyWaveColor(WORD *src, WORD *dst, int Intensity, WaveClass *Wave);
+	static bool ModifyWaveColor(WORD src, WORD& dest, int intensity, WaveClass* pWave);
 
 	static EBolt* CreateBolt(WeaponTypeClass* pWeapon);
 	static EBolt* CreateBolt(WeaponTypeExt::ExtData* pWeapon = nullptr);
