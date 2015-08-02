@@ -147,8 +147,9 @@ public:
 
 		virtual void SaveToStream(AresStreamWriter &Stm) override;
 
-		bool IsWave(WeaponTypeClass *pThis) {
-			return pThis->IsSonic || pThis->IsMagBeam || this->Wave_IsLaser || this->Wave_IsBigLaser;
+		bool IsWave() const {
+			auto const pThis = this->OwnerObject();
+			return this->Wave_IsLaser || this->Wave_IsBigLaser || pThis->IsSonic || pThis->IsMagBeam;
 		}
 
 		bool IsWaveReversedAgainst(AbstractClass const* pTarget) const;
