@@ -144,6 +144,8 @@ public:
 			return pThis->IsSonic || pThis->IsMagBeam || this->Wave_IsLaser || this->Wave_IsBigLaser;
 		}
 
+		bool IsWaveReversedAgainst(AbstractClass const* pTarget) const;
+
 		ColorStruct GetWaveColor() const;
 		ColorStruct GetBeamColor() const;
 

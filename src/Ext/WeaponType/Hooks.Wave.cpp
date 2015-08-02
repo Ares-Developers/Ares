@@ -258,9 +258,7 @@ DEFINE_HOOK(762C5C, WaveClass_Update_Wave, 6)
 	CoordStruct xyzSrc = Firer->GetFLH(weaponIdx, CoordStruct::Empty);
 	CoordStruct xyzTgt = Target->GetCoords__(); // not GetCoords() !
 
-	char idx = WeaponTypeExt:: AbsIDtoIdx(Target->WhatAmI());
-
-	bool reversed = pData->Wave_Reverse[idx];
+	bool reversed = pData->IsWaveReversedAgainst(Target);
 
 	if(Wave->Type == WaveType::Magnetron) {
 		reversed

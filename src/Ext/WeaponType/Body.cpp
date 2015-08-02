@@ -341,6 +341,15 @@ void WeaponTypeExt::ExtData::PlantBomb(TechnoClass* pSource, ObjectClass* pTarge
 	}
 }
 
+bool WeaponTypeExt::ExtData::IsWaveReversedAgainst(
+	AbstractClass const* const pTarget) const
+{
+	auto const abs = pTarget->WhatAmI();
+	auto const idx = AbsIDtoIdx(abs);
+
+	return this->Wave_Reverse[idx];
+}
+
 // wave colors will be bound to the default values, thus a change of wave
 // type will still point to the appropriate value, as long as the modder does not
 // set the color by hand, in which case that value is used.
