@@ -8,31 +8,35 @@
 // 6FF5F5, 6
 DEFINE_HOOK(6FF5F5, TechnoClass_Fire, 6)
 {
-	GET(WeaponTypeClass *, Source, EBX);
-	GET(TechnoClass *, Owner, ESI);
-	GET(TechnoClass *, Target, EDI);
+	GET(TechnoClass* const, pThis, ESI);
+	GET(WeaponTypeClass* const, pSource, EBX);
+	GET(TechnoClass* const, pTarget, EDI);
 
-	WeaponTypeExt::ExtData *pData = WeaponTypeExt::ExtMap.Find(Source);
+	auto const pData = WeaponTypeExt::ExtMap.Find(pSource);
 
-	if(!Source->IsMagBeam && !Source->IsSonic && !pData->Wave_IsLaser && !pData->Wave_IsBigLaser) {
+	if(!pData->IsWave()) {
 		return 0;
 	}
 
 	GET_BASE(byte, idxWeapon, 0xC);
 
-	TechnoExt::ExtMap.Find(Owner)->idxSlot_Wave = idxWeapon;
+	TechnoExt::ExtMap.Find(pThis)->idxSlot_Wave = idxWeapon;
 
 	if(!pData->Wave_IsLaser && !pData->Wave_IsBigLaser) {
 		return 0;
 	}
 
-	REF_STACK(CoordStruct, xyzSrc, 0x44);
-	REF_STACK(CoordStruct, xyzTgt, 0x88);
+	REF_STACK(CoordStruct const, crdSrc, 0x44);
+	REF_STACK(CoordStruct const, crdTgt, 0x88);
 
-	WaveClass *Wave = GameCreate<WaveClass>(xyzSrc, xyzTgt, Owner, pData->Wave_IsBigLaser ? WaveType::BigLaser : WaveType::Laser, Target);
+	auto const type = pData->Wave_IsBigLaser
+		? WaveType::BigLaser : WaveType::Laser;
 
-	WeaponTypeExt::WaveExt[Wave] = pData;
-	Owner->Wave = Wave;
+	auto const pWave = GameCreate<WaveClass>(
+		crdSrc, crdTgt, pThis, type, pTarget);
+
+	WeaponTypeExt::WaveExt[pWave] = pData;
+	pThis->Wave = pWave;
 	return 0x6FF650;
 }
 
@@ -159,8 +163,8 @@ DEFINE_HOOK(760BC2, WaveClass_Draw2, 9)
 	GET(WORD *, dest, EBP);
 
 	return (WeaponTypeExt::ModifyWaveColor(*dest, *dest, Wave->LaserIntensity, Wave))
-		? 0x760CAF
-		: 0
+		? 0x760CAFu
+		: 0u
 	;
 }
 
@@ -171,8 +175,8 @@ DEFINE_HOOK(760DE2, WaveClass_Draw3, 9)
 	GET(WORD *, dest, EDI);
 
 	return (WeaponTypeExt::ModifyWaveColor(*dest, *dest, Wave->LaserIntensity, Wave))
-		? 0x760ECB
-		: 0
+		? 0x760ECBu
+		: 0u
 	;
 }
 
@@ -184,8 +188,8 @@ DEFINE_HOOK(75EE57, WaveClass_Draw_Sonic, 7)
 	GET(DWORD, offset, ECX);
 
 	return (WeaponTypeExt::ModifyWaveColor(src[offset], *src, R->ESI(), Wave))
-		? 0x75EF1C
-		: 0
+		? 0x75EF1Cu
+		: 0u
 	;
 }
 
@@ -197,8 +201,8 @@ DEFINE_HOOK(7601FB, WaveClass_Draw_Magnetron, 0B)
 	GET(DWORD, offset, ECX);
 
 	return (WeaponTypeExt::ModifyWaveColor(src[offset], *src, R->EBP(), Wave))
-		? 0x760285
-		: 0
+		? 0x760285u
+		: 0u
 	;
 }
 
