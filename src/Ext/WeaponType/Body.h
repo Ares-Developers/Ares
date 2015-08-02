@@ -28,6 +28,13 @@ public:
 
 	class ExtData final : public Extension<WeaponTypeClass>
 	{
+		// wave reverse indexes
+		static auto const idxVehicle = 0;
+		static auto const idxAircraft = 1;
+		static auto const idxBuilding = 2;
+		static auto const idxInfantry = 3;
+		static auto const idxOther = 4;
+
 	public:
 		// static defaults
 		static const ColorStruct DefaultWaveColor;
@@ -194,12 +201,6 @@ public:
 	static AresMap<WaveClass*, const ExtData*> WaveExt;
 	static AresMap<EBolt*, const ExtData*> BoltExt;
 	static AresMap<RadSiteClass*, const ExtData*> RadSiteExt;
-
-#define idxVehicle 0
-#define idxAircraft 1
-#define idxBuilding 2
-#define idxInfantry 3
-#define idxOther 4
 
 	// @return skipNormalHandling?
 	static bool ModifyWaveColor(WORD *src, WORD *dst, int Intensity, WaveClass *Wave);
