@@ -269,6 +269,9 @@ void BuildingTypeExt::ExtData::CompleteInitialization() {
 			"BuildingType %s and its %s %s don't have the same foundation.",
 			pThis->ID, "Rubble.Intact", this->RubbleIntact->ID);
 	}
+
+	// update the final buildup time duration
+	this->UpdateBuildupFrames();
 }
 
 // returns whether two buildings have the same foundation
@@ -367,6 +370,25 @@ void BuildingTypeExt::ExtData::UpdateFoundationRadarShape() {
 				this->FoundationRadarShape.AddItem(pixel);
 			}
 		}
+	}
+}
+
+// updates the buildup frame duration
+void BuildingTypeExt::ExtData::UpdateBuildupFrames()
+{
+	auto const pThis = this->OwnerObject();
+
+	if(auto const pShp = pThis->Buildup) {
+		auto const frames = pThis->Gate ?
+			pThis->GateStages + 1 : pShp->Frames / 2;
+
+		auto const duration = (frames < 1) ?
+			1 : static_cast<int>(this->BuildupTime.Get(
+				RulesClass::Instance->BuildupTime) * 900.0 / frames);
+
+		pThis->BuildingAnimFrame[0].dwUnknown = 0;
+		pThis->BuildingAnimFrame[0].FrameCount = frames;
+		pThis->BuildingAnimFrame[0].FrameDuration = duration;
 	}
 }
 
@@ -516,6 +538,9 @@ bool BuildingTypeExt::ExtContainer::Load(BuildingTypeClass* pThis, IStream* pStm
 		pData->CustomData.clear();
 		pData->OutlineData.clear();
 	}
+
+	// reset the buildup time
+	pData->UpdateBuildupFrames();
 
 	return pData != nullptr;
 };

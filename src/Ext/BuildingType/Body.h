@@ -285,6 +285,7 @@ public:
 		bool CanBeOccupiedBy(InfantryClass *whom);
 
 		void UpdateFoundationRadarShape();
+		void UpdateBuildupFrames();
 
 		bool IsAcademy() const;
 
