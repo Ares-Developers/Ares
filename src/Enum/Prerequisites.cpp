@@ -14,6 +14,12 @@ const char * Enumerable<GenericPrerequisite>::GetMainSection()
 	return "GenericPrerequisites";
 }
 
+GenericPrerequisite::GenericPrerequisite(const char* const pTitle)
+	: Enumerable<GenericPrerequisite>(pTitle)
+{ }
+
+GenericPrerequisite::~GenericPrerequisite() = default;
+
 void GenericPrerequisite::LoadFromINI(CCINIClass *pINI)
 {
 	const char *section = GenericPrerequisite::GetMainSection();

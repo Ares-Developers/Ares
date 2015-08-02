@@ -11,6 +11,12 @@ const char * Enumerable<ArmorType>::GetMainSection()
 	return "ArmorTypes";
 }
 
+ArmorType::ArmorType(const char* const pTitle)
+	: Enumerable<ArmorType>(pTitle), DefaultIndex(-1)
+{ }
+
+ArmorType::~ArmorType() = default;
+
 void ArmorType::LoadFromINI(CCINIClass *pINI)
 {
 	const char *section = Enumerable<ArmorType>::GetMainSection();

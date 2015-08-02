@@ -12,9 +12,9 @@ class TechnoTypeClass;
 class GenericPrerequisite final : public Enumerable<GenericPrerequisite>
 {
 public:
-	GenericPrerequisite(const char *Title) : Enumerable<GenericPrerequisite>(Title) { }
+	GenericPrerequisite(const char* pTitle);
 
-	virtual ~GenericPrerequisite() override = default;
+	virtual ~GenericPrerequisite() override;
 
 	virtual void LoadFromINI(CCINIClass *pINI) override;
 

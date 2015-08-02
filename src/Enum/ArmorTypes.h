@@ -9,9 +9,9 @@ class WarheadTypeClass;
 class ArmorType final : public Enumerable<ArmorType>
 {
 public:
-	ArmorType(const char *Title) : Enumerable<ArmorType>(Title), DefaultIndex(-1) { }
+	ArmorType(const char* pTitle);
 
-	virtual ~ArmorType() override = default;
+	virtual ~ArmorType() override;
 
 	virtual void LoadFromINI(CCINIClass *pINI) override;
 

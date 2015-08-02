@@ -12,6 +12,22 @@ const char * Enumerable<RadType>::GetMainSection()
 	return "RadiationTypes";
 }
 
+RadType::RadType(const char* const pTitle)
+	: Enumerable<RadType>(pTitle),
+	WH(),
+	Color(),
+	Duration_Multiple(),
+	Application_Delay(),
+	Level_Max(),
+	Level_Delay(),
+	Light_Delay(),
+	Level_Factor(),
+	Light_Factor(),
+	Tint_Factor()
+{ }
+
+RadType::~RadType() = default;
+
 void RadType::LoadFromINI(CCINIClass *pINI)
 {
 	const char *section = this->Name;

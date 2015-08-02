@@ -23,20 +23,9 @@ private:
 	Nullable<double> Tint_Factor;
 
 public:
-	RadType(const char *Title) : Enumerable<RadType>(Title),
-		WH(),
-		Color(),
-		Duration_Multiple(),
-		Application_Delay(),
-		Level_Max(),
-		Level_Delay(),
-		Light_Delay(),
-		Level_Factor(),
-		Light_Factor(),
-		Tint_Factor()
-	{ }
+	RadType(const char* pTitle);
 
-	virtual ~RadType() override = default;
+	virtual ~RadType() override;
 
 	virtual void LoadFromINI(CCINIClass *pINI) override;
 
