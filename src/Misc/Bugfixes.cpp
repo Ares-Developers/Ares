@@ -1310,3 +1310,48 @@ DEFINE_HOOK(4759D4, INIClass_WriteEdge, 7)
 
 	return 0;
 }
+
+// the following three hooks fix 895855, 937938, and 1171659
+
+// prevent invisible mcvs, which shouldn't happen any more as the sell/move
+// hack is fixed. thus this one is a double unnecessity
+DEFINE_HOOK(449FF8, BuildingClass_Mi_Selling_PutMcv, 7)
+{
+	GET(UnitClass* const, pUnit, EBX);
+	GET(unsigned int, facing, EAX);
+	REF_STACK(CoordStruct const, Crd, STACK_OFFS(0xD0, 0xB8));
+
+	// set the override for putting, not just for creation as WW did
+	++Unsorted::IKnowWhatImDoing;
+	auto const ret = pUnit->Put(Crd, facing);
+	--Unsorted::IKnowWhatImDoing;
+
+	// should never happen, but if anything breaks, it's here
+	if(!ret) {
+		// do not keep the player alive if it couldn't be placed
+		GameDelete(pUnit);
+	}
+
+	return ret ? 0x44A010u : 0x44A16Bu;
+}
+
+// remember that this building ejected its survivors already
+DEFINE_HOOK(44A8A2, BuildingClass_Mi_Selling_Crew, A)
+{
+	GET(BuildingClass* const, pThis, EBP);
+	pThis->NoCrew = true;
+	return 0;
+}
+
+// don't set the focus when selling (true selling, thus no focus set atm)
+DEFINE_HOOK(4C6DDB, Networking_RespondToEvent_Selling, 8)
+{
+	GET(TechnoClass* const, pTechno, EDI);
+	GET(AbstractClass* const, pFocus, EAX);
+
+	if(pTechno->CurrentMission != Mission::Selling || pTechno->Focus) {
+		pTechno->SetFocus(pFocus);
+	}
+
+	return 0x4C6DE3;
+}
