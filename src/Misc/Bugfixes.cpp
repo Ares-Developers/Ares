@@ -11,6 +11,7 @@
 #include <MixFileClass.h>
 #include <TacticalClass.h>
 #include <TechnoClass.h>
+#include <TeleportLocomotionClass.h>
 #include <TemporalClass.h>
 #include <UnitTypeClass.h>
 #include <WarheadTypeClass.h>
@@ -952,6 +953,31 @@ DEFINE_HOOK(71810D, TeleportLocomotionClass_ILocomotion_MoveTo_Deactivated, 6)
 {
 	GET(FootClass*, pFoot, ECX);
 	return (!pFoot->Deactivated && pFoot->Locomotor->Is_Powered()) ? 0 : 0x71820F;
+}
+
+// issues 896173 and 1433804: the teleport locomotor keeps a copy of the last
+// coordinates, and unmarks the occupation bits of that place instead of the
+// ones the unit was added to after putting it back on the map. that left the
+// actual cell blocked. this fix resets the last coords, so the actual position
+// is unmarked.
+DEFINE_HOOK(51DF27, InfantryClass_Remove_Teleport, 6)
+{
+	GET(InfantryClass* const, pThis, ECX);
+
+	if(pThis->Type->Teleporter) {
+		auto const pLoco = static_cast<LocomotionClass*>(
+			pThis->Locomotor.get());
+
+		CLSID clsid;
+		if(SUCCEEDED(pLoco->GetClassID(&clsid))
+			&& clsid == LocomotionClass::CLSIDs::Teleport)
+		{
+			auto const pTele = static_cast<TeleportLocomotionClass*>(pLoco);
+			pTele->LastCoords = CoordStruct::Empty;
+		}
+	}
+
+	return 0;
 }
 
 // issues 1002020, 896263, 895954: clear stale mind control pointer to prevent
