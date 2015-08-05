@@ -1297,3 +1297,16 @@ DEFINE_HOOK(6FC339, TechnoClass_GetFireError_OpenToppedGunnerTemporal, 6)
 
 	return ret ? 0u : 0x6FCD29u;
 }
+
+// invalid or not set edge reads array out of bounds 
+DEFINE_HOOK(4759D4, INIClass_WriteEdge, 7)
+{
+	GET(int const, index, EAX);
+
+	if(index < 0 || index > 4) {
+		R->EDX("none");
+		return 0x4759DB;
+	}
+
+	return 0;
+}
