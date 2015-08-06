@@ -21,6 +21,7 @@ void CSFLoader::LoadAdditionalCSF(const char *pFileName, bool ignoreLanguage)
 				if(header.Signature == CSF_SIGNATURE &&
 					header.CSFVersion >= 2 &&
 					(header.Language == StringTable::Language //should stay in one language
+						|| header.Language == static_cast<CSFLanguages>(-1)
 						|| ignoreLanguage))
 				{
 					++CSFCount;
