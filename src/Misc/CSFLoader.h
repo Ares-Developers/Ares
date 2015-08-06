@@ -19,7 +19,7 @@ public:
 	static int CSFCount;
 	static int NextValueIndex;
 
-	static void LoadAdditionalCSF(const char* fileName);
+	static void LoadAdditionalCSF(const char* fileName, bool ignoreLanguage = false);
 
 	static std::unordered_map<std::string, const CSFString*> DynamicStrings;
 

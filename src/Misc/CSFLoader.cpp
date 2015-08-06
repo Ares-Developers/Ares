@@ -8,7 +8,7 @@ int CSFLoader::CSFCount = 0;
 int CSFLoader::NextValueIndex = 0;
 std::unordered_map<std::string, const CSFString*> CSFLoader::DynamicStrings;
 
-void CSFLoader::LoadAdditionalCSF(const char *pFileName)
+void CSFLoader::LoadAdditionalCSF(const char *pFileName, bool ignoreLanguage)
 {
 	//The main stringtable must have been loaded (memory allocation)
 	//To do that, use StringTable::LoadFile.
@@ -20,7 +20,8 @@ void CSFLoader::LoadAdditionalCSF(const char *pFileName)
 			if(pFile->Read(header)) {
 				if(header.Signature == CSF_SIGNATURE &&
 					header.CSFVersion >= 2 &&
-					header.Language == StringTable::Language) //should stay in one language
+					(header.Language == StringTable::Language //should stay in one language
+						|| ignoreLanguage))
 				{
 					++CSFCount;
 					StringTable::ReadFile(pFileName); //must be modified to do the rest ;)
@@ -164,7 +165,7 @@ DEFINE_HOOK(734A97, CSF_SetIndex, 6)
 
 DEFINE_HOOK(6BD886, CSF_LoadExtraFiles, 5)
 {
-	CSFLoader::LoadAdditionalCSF("ares.csf");
+	CSFLoader::LoadAdditionalCSF("ares.csf", true);
 	char fname[32];
 	for(int idx = 0; idx < 100; ++idx) {
 		_snprintf_s(fname, _TRUNCATE, "stringtable%02d.csf", idx);
