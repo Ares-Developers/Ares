@@ -808,6 +808,8 @@ DEFINE_HOOK(467E59, BulletClass_Update_NukeBall, 5) {
 
 	enum { Default = 0u, FireNow = 0x467F9Bu, PreImpact = 0x467EB6 };
 
+	auto allowFlash = true;
+
 	// this is a bullet launched by a super weapon
 	if(pExt->NukeSW) {
 		SW_NuclearMissile::CurrentNukeType = pExt->NukeSW;
@@ -823,10 +825,12 @@ DEFINE_HOOK(467E59, BulletClass_Update_NukeBall, 5) {
 			RadarEventClass::Create(
 				RadarEventType::SuperweaponActivated, coords);
 		}
+
+		allowFlash = pSWTypeExt->Lighting_Enabled;
 	}
 
 	// does this create a flash?
-	if(pWarheadExt->NukeFlashDuration > 0) {
+	if(allowFlash && pWarheadExt->NukeFlashDuration > 0) {
 		// replaces call to NukeFlash::FadeIn
 
 		// manual light stuff
