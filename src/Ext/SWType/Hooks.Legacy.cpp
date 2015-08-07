@@ -799,57 +799,55 @@ DEFINE_HOOK(46B423, BulletClass_NukeMaker_PropagateSW, 6) {
 
 // deferred explosion. create a nuke ball anim and, when that is over, go boom.
 DEFINE_HOOK(467E59, BulletClass_Update_NukeBall, 5) {
-	// changed the hardcoded way to just do this if the
-	// warhead is called NUKE to an more universal
-	// approach. every warhead having a pre-impact-anim
-	// will get this behavior.
+	// changed the hardcoded way to just do this if the warhead is called NUKE
+	// to a more universal approach. every warhead can get this behavior.
 	GET(BulletClass* const, pThis, EBP);
 
-	if(auto const pExt = WarheadTypeExt::ExtMap.Find(pThis->WH)) {
-		if(pExt->PreImpactAnim != -1) {
-			// copy what the original function does, but only do it if
-			// this is a SW launched bullet.
-			if(auto const pData = BulletExt::ExtMap.Find(pThis)) {
-				SW_NuclearMissile::CurrentNukeType = pData->NukeSW;
+	auto const pExt = BulletExt::ExtMap.Find(pThis);
+	auto const pWarheadExt = WarheadTypeExt::ExtMap.Find(pThis->WH);
 
-				if(pData->NukeSW) {
-					if(pThis->GetHeight() < 0) {
-						pThis->SetHeight(0);
-					}
+	enum { Default = 0u, FireNow = 0x467F9Bu, PreImpact = 0x467EB6 };
 
-					// replaces call to NukeFlash::FadeIn
+	// this is a bullet launched by a super weapon
+	if(pExt->NukeSW) {
+		SW_NuclearMissile::CurrentNukeType = pExt->NukeSW;
 
-					// manual light stuff
-					NukeFlash::Status = NukeFlashStatus::FadeIn;
-					ScenarioClass::Instance->AmbientTimer.Start(1);
-
-					// enable the nuke flash
-					NukeFlash::StartTime = Unsorted::CurrentFrame;
-					NukeFlash::Duration = 30;
-
-					SWTypeExt::ChangeLighting(pData->NukeSW);
-					MapClass::Instance->RedrawSidebar(1);
-
-					// cause yet another radar event
-					if(auto const pType = SWTypeExt::ExtMap.Find(pData->NukeSW)) {
-						if(pType->SW_RadarEvent) {
-							auto const coords = pThis->GetMapCoords();
-							RadarEventClass::Create(RadarEventType::SuperweaponActivated, coords);
-						}
-					}
-				}
-			}
-
-			int idxPreImpact = pExt->PreImpactAnim;
-			R->EAX(idxPreImpact);
-			return 0x467EB6;
+		if(pThis->GetHeight() < 0) {
+			pThis->SetHeight(0);
 		}
 
-		// no pre impact anim
-		return 0x467F9B;
+		// cause yet another radar event
+		auto const pSWTypeExt = SWTypeExt::ExtMap.Find(pExt->NukeSW);
+		if(pSWTypeExt->SW_RadarEvent) {
+			auto const coords = pThis->GetMapCoords();
+			RadarEventClass::Create(
+				RadarEventType::SuperweaponActivated, coords);
+		}
 	}
 
-	return 0;
+	// does this create a flash?
+	if(pExt->NukeSW) {
+		// replaces call to NukeFlash::FadeIn
+
+		// manual light stuff
+		NukeFlash::Status = NukeFlashStatus::FadeIn;
+		ScenarioClass::Instance->AmbientTimer.Start(1);
+
+		// enable the nuke flash
+		NukeFlash::StartTime = Unsorted::CurrentFrame;
+		NukeFlash::Duration = 30;
+
+		SWTypeExt::ChangeLighting(pExt->NukeSW);
+		MapClass::Instance->RedrawSidebar(1);
+	}
+
+	if(pWarheadExt->PreImpactAnim != -1) {
+		int idxPreImpact = pWarheadExt->PreImpactAnim;
+		R->EAX(idxPreImpact);
+		return PreImpact;
+	}
+
+	return FireNow;
 }
 
 // iron curtained units would crush themselves
