@@ -803,18 +803,18 @@ DEFINE_HOOK(467E59, BulletClass_Update_NukeBall, 5) {
 	// warhead is called NUKE to an more universal
 	// approach. every warhead having a pre-impact-anim
 	// will get this behavior.
-	GET(BulletClass*, pBullet, EBP);
+	GET(BulletClass* const, pThis, EBP);
 
-	if(WarheadTypeExt::ExtData* pExt = WarheadTypeExt::ExtMap.Find(pBullet->WH)) {
+	if(auto const pExt = WarheadTypeExt::ExtMap.Find(pThis->WH)) {
 		if(pExt->PreImpactAnim != -1) {
 			// copy what the original function does, but only do it if
 			// this is a SW launched bullet.
-			if(BulletExt::ExtData* pData = BulletExt::ExtMap.Find(pBullet)) {
+			if(auto const pData = BulletExt::ExtMap.Find(pThis)) {
 				SW_NuclearMissile::CurrentNukeType = pData->NukeSW;
 
 				if(pData->NukeSW) {
-					if(pBullet->GetHeight() < 0) {
-						pBullet->SetHeight(0);
+					if(pThis->GetHeight() < 0) {
+						pThis->SetHeight(0);
 					}
 
 					// replaces call to NukeFlash::FadeIn
@@ -831,9 +831,9 @@ DEFINE_HOOK(467E59, BulletClass_Update_NukeBall, 5) {
 					MapClass::Instance->RedrawSidebar(1);
 
 					// cause yet another radar event
-					if(SWTypeExt::ExtData *pType = SWTypeExt::ExtMap.Find(pData->NukeSW)) {
+					if(auto const pType = SWTypeExt::ExtMap.Find(pData->NukeSW)) {
 						if(pType->SW_RadarEvent) {
-							CellStruct coords = pBullet->GetMapCoords();
+							auto const coords = pThis->GetMapCoords();
 							RadarEventClass::Create(RadarEventType::SuperweaponActivated, coords);
 						}
 					}
