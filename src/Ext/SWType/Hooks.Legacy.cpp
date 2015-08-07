@@ -826,7 +826,7 @@ DEFINE_HOOK(467E59, BulletClass_Update_NukeBall, 5) {
 	}
 
 	// does this create a flash?
-	if(pExt->NukeSW) {
+	if(pWarheadExt->NukeFlashDuration > 0) {
 		// replaces call to NukeFlash::FadeIn
 
 		// manual light stuff
@@ -835,7 +835,7 @@ DEFINE_HOOK(467E59, BulletClass_Update_NukeBall, 5) {
 
 		// enable the nuke flash
 		NukeFlash::StartTime = Unsorted::CurrentFrame;
-		NukeFlash::Duration = 30;
+		NukeFlash::Duration = pWarheadExt->NukeFlashDuration;
 
 		SWTypeExt::ChangeLighting(pExt->NukeSW);
 		MapClass::Instance->RedrawSidebar(1);

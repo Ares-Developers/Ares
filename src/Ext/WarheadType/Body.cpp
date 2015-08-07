@@ -38,6 +38,7 @@ WarheadTypeClass * WarheadTypeExt::EMP_WH = nullptr;
 void WarheadTypeExt::ExtData::Initialize() {
 	if(!_strcmpi(this->OwnerObject()->ID, "NUKE")) {
 		this->PreImpactAnim = AnimTypeClass::FindIndex("NUKEBALL");
+		this->NukeFlashDuration = 30;
 	}
 }
 
@@ -91,6 +92,7 @@ void WarheadTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 	this->InfDeathAnim.Read(exINI, section, "InfDeathAnim");
 	
 	this->PreImpactAnim.Read(exINI, section, "PreImpactAnim");
+	this->NukeFlashDuration.Read(exINI, section, "NukeFlash.Duration");
 
 	this->KillDriver = pINI->ReadBool(section, "KillDriver", this->KillDriver);
 
@@ -529,6 +531,7 @@ void WarheadTypeExt::ExtData::Serialize(T& Stm) {
 		.Process(this->AffectsEnemies)
 		.Process(this->InfDeathAnim)
 		.Process(this->PreImpactAnim)
+		.Process(this->NukeFlashDuration)
 		.Process(this->KillDriver)
 		.Process(this->KillDriver_KillBelowPercent)
 		.Process(this->KillDriver_Owner)
