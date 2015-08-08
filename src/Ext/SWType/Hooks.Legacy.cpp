@@ -297,10 +297,11 @@ DEFINE_HOOK(539EB0, LightningStorm_Start, 5) {
 DEFINE_HOOK(53A6CF, LightningStorm_Update, 7) {
 	// switch lightning for nuke
 	if(NukeFlash::Duration != -1) {
-		if(NukeFlash::StartTime + NukeFlash::Duration < Unsorted::CurrentFrame) {
+		auto const curentFrame = Unsorted::CurrentFrame;
+		if(NukeFlash::StartTime + NukeFlash::Duration < curentFrame) {
 			if(NukeFlash::IsFadingIn()) {
 				NukeFlash::Status = NukeFlashStatus::FadeOut;
-				NukeFlash::StartTime = Unsorted::CurrentFrame;
+				NukeFlash::StartTime = curentFrame;
 				NukeFlash::Duration = 15;
 				ScenarioClass::Instance->UpdateLighting();
 				MapClass::Instance->RedrawSidebar(1);
@@ -316,21 +317,19 @@ DEFINE_HOOK(53A6CF, LightningStorm_Update, 7) {
 	ChronoScreenEffect::Update();
 
 	// remove all bolts from the list that are halfway done
-	if(LightningStorm::BoltsPresent->Count > 0) {
-		for(int i=LightningStorm::BoltsPresent->Count-1; i>=0; --i) {
-			if(AnimClass *pAnim = LightningStorm::BoltsPresent->GetItem(i)) {
-				if(pAnim->Animation.Value >= pAnim->Type->GetImage()->Frames / 2) {
-					LightningStorm::BoltsPresent->RemoveItem(i);
-				}
+	for(auto i = LightningStorm::BoltsPresent->Count - 1; i >= 0; --i) {
+		if(auto const pAnim = LightningStorm::BoltsPresent->Items[i]) {
+			if(pAnim->Animation.Value >= pAnim->Type->GetImage()->Frames / 2) {
+				LightningStorm::BoltsPresent->RemoveItem(i);
 			}
 		}
 	}
 
 	// find the clouds that should strike right now
-	for(int i=LightningStorm::CloudsManifesting->Count-1; i>=0; --i) {
-		if(AnimClass *pAnim = LightningStorm::CloudsManifesting->GetItem(i)) {
+	for(auto i = LightningStorm::CloudsManifesting->Count - 1; i >= 0; --i) {
+		if(auto const pAnim = LightningStorm::CloudsManifesting->Items[i]) {
 			if(pAnim->Animation.Value >= pAnim->Type->GetImage()->Frames / 2) {
-				CoordStruct crdStrike = pAnim->GetCoords();
+				auto const crdStrike = pAnim->GetCoords();
 				LightningStorm::Strike2(crdStrike);
 				LightningStorm::CloudsManifesting->RemoveItem(i);
 			}
@@ -351,9 +350,10 @@ DEFINE_HOOK(53A6CF, LightningStorm_Update, 7) {
 			LightningStorm::TimeToEnd = false;
 		}
 	} else {
-		for(int i=LightningStorm::CloudsPresent->Count-1; i>=0; --i) {
-			if(AnimClass *pAnim = LightningStorm::CloudsPresent->GetItem(i)) {
-				if(pAnim->Animation.Value >= pAnim->Type->GetImage()->Frames - 1) {
+		for(auto i = LightningStorm::CloudsPresent->Count - 1; i >= 0; --i) {
+			if(auto const pAnim = LightningStorm::CloudsPresent->Items[i]) {
+				auto pAnimImage = pAnim->Type->GetImage();
+				if(pAnim->Animation.Value >= pAnimImage->Frames - 1) {
 					LightningStorm::CloudsPresent->RemoveItem(i);
 				}
 			}
@@ -361,141 +361,143 @@ DEFINE_HOOK(53A6CF, LightningStorm_Update, 7) {
 	}
 
 	// check for presence of Ares SW
-	if(SuperClass* pSuper = SW_LightningStorm::CurrentLightningStorm) {
-		CellStruct LSCell = LightningStorm::Coords;
+	auto const pSuper = SW_LightningStorm::CurrentLightningStorm;
 
-		SuperWeaponTypeClass *pType = pSuper->Type;
-		SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pType);
+	if(!pSuper) {
+		// still support old logic for triggers
+		return 0x53A8FF;
+	}
 
-		if(!LightningStorm::Active || LightningStorm::TimeToEnd) {
-			int deferment = LightningStorm::Deferment;
+	CellStruct LSCell = LightningStorm::Coords;
 
-			// still counting down?
-			if(deferment > 0) {
-				--deferment;
-				LightningStorm::Deferment = deferment;
+	SuperWeaponTypeClass *pType = pSuper->Type;
+	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pType);
 
-				// still waiting
-				if(deferment) {
-					if(!(deferment % 225)) {
-						if(pData->Weather_PrintText.Get(RulesClass::Instance->LightningPrintText)) {
-							pData->PrintMessage(pData->Message_Launch, pSuper->Owner);
-						}
-					}
-				} else {
-					// launch the storm
-					LightningStorm::Start(LightningStorm::Duration, 0, LSCell, LightningStorm::Owner);
-				}
-			}
-		} else {
-			// does this Lightning Storm go on?
-			int duration = LightningStorm::Duration;
-			if(duration == -1 || duration + LightningStorm::StartTime >= Unsorted::CurrentFrame) {
+	if(!LightningStorm::Active || LightningStorm::TimeToEnd) {
+		int deferment = LightningStorm::Deferment;
 
-				// deterministic damage. the very target cell.
-				auto hitDelay = pData->Weather_HitDelay.Get(RulesClass::Instance->LightningHitDelay);
-				if(hitDelay > 0 && !(Unsorted::CurrentFrame % hitDelay)) {
-					LightningStorm::Strike(LightningStorm::Coords);
-				}
+		// still counting down?
+		if(deferment > 0) {
+			--deferment;
+			LightningStorm::Deferment = deferment;
 
-				// random damage. somewhere in range.
-				auto scatterDelay = pData->Weather_ScatterDelay.Get(RulesClass::Instance->LightningScatterDelay);
-				if(scatterDelay > 0 && !(Unsorted::CurrentFrame % scatterDelay)) {
-					auto range = pData->GetRange();
-					int width = range.width();
-					int height = range.height();
-					bool isRectangle = true;
-
-					// is circular range?
-					if(height <= 0) {
-						height = width;
-						isRectangle = false;
-					}
-
-					// generate a new place to strike
-					CellStruct cell;
-					if(height > 0 && width > 0 && MapClass::Instance->CellExists(LSCell)) {
-						for(int k=pData->Weather_ScatterCount; k>0; --k) {
-							bool found;
-							for(int i=0; i<3; ++i) {
-								cell = LSCell;
-								cell.X += static_cast<short>(ScenarioClass::Instance->Random.RandomRanged(-width / 2, width / 2));
-								cell.Y += static_cast<short>(ScenarioClass::Instance->Random.RandomRanged(-height / 2, height / 2));
-	
-								// don't even try if this is invalid
-								found = false;
-								if(MapClass::Instance->CellExists(cell)) {
-									// out of range?
-									if(!isRectangle) {
-										if(cell.DistanceFrom(LSCell) > range.WidthOrRange) {
-											continue;
-										}
-									}
-
-									// assume valid
-									found = true;
-
-									// if we respect lightning rods, start looking for one.
-									if(!pData->Weather_IgnoreLightningRod) {
-										// if, by coincidence, this is a rod, hit it.
-										CellClass *pImpactCell = MapClass::Instance->GetCellAt(cell);
-										if(BuildingClass *pBld = pImpactCell->GetBuilding()) {
-											if(pBld->Type->LightningRod) {
-												break;
-											}
-										}
-
-										// if a lightning rod is next to this, hit that instead. naive.
-										if(auto const pObj = pImpactCell->FindTechnoNearestTo(Point2D::Empty, false, pImpactCell->GetBuilding())) {
-											if(BuildingClass *pBld = specific_cast<BuildingClass*>(pObj)) {
-												if(pBld->Type->LightningRod) {
-													cell = MapClass::Instance->GetCellAt(pBld->Location)->MapCoords;
-													break;
-												}
-											}
-										}
-									}
-
-									// is this spot far away from another cloud?
-									auto separation = pData->Weather_Separation.Get(RulesClass::Instance->LightningSeparation);
-									if(separation > 0) {
-										for(int j=0; j<LightningStorm::CloudsPresent->Count; ++j) {
-											// assume success and disprove.
-											CellStruct *pCell2 = &LightningStorm::CloudsPresent->GetItem(j)->GetCell()->MapCoords;
-											int dist = std::abs(pCell2->X - cell.X) + std::abs(pCell2->Y - cell.Y);
-											if(dist < separation) {
-												found = false;
-												break;
-											}
-										}
-									}
-
-									// valid cell.
-									if(found) {
-										break;
-									}
-								}
-							}
-
-							// found a valid position. strike there.
-							if(found) {
-								LightningStorm::Strike(cell);
-							}
-						}
+			// still waiting
+			if(deferment) {
+				if(!(deferment % 225)) {
+					if(pData->Weather_PrintText.Get(RulesClass::Instance->LightningPrintText)) {
+						pData->PrintMessage(pData->Message_Launch, pSuper->Owner);
 					}
 				}
 			} else {
-				// it's over already
-				LightningStorm::TimeToEnd = true;
+				// launch the storm
+				LightningStorm::Start(LightningStorm::Duration, 0, LSCell, LightningStorm::Owner);
 			}
 		}
+	} else {
+		// does this Lightning Storm go on?
+		int duration = LightningStorm::Duration;
+		if(duration == -1 || duration + LightningStorm::StartTime >= Unsorted::CurrentFrame) {
 
-		// jump over everything
-		return 0x53AB45;
+			// deterministic damage. the very target cell.
+			auto hitDelay = pData->Weather_HitDelay.Get(RulesClass::Instance->LightningHitDelay);
+			if(hitDelay > 0 && !(Unsorted::CurrentFrame % hitDelay)) {
+				LightningStorm::Strike(LightningStorm::Coords);
+			}
+
+			// random damage. somewhere in range.
+			auto scatterDelay = pData->Weather_ScatterDelay.Get(RulesClass::Instance->LightningScatterDelay);
+			if(scatterDelay > 0 && !(Unsorted::CurrentFrame % scatterDelay)) {
+				auto range = pData->GetRange();
+				int width = range.width();
+				int height = range.height();
+				bool isRectangle = true;
+
+				// is circular range?
+				if(height <= 0) {
+					height = width;
+					isRectangle = false;
+				}
+
+				// generate a new place to strike
+				CellStruct cell;
+				if(height > 0 && width > 0 && MapClass::Instance->CellExists(LSCell)) {
+					for(int k=pData->Weather_ScatterCount; k>0; --k) {
+						bool found;
+						for(int i=0; i<3; ++i) {
+							cell = LSCell;
+							cell.X += static_cast<short>(ScenarioClass::Instance->Random.RandomRanged(-width / 2, width / 2));
+							cell.Y += static_cast<short>(ScenarioClass::Instance->Random.RandomRanged(-height / 2, height / 2));
+	
+							// don't even try if this is invalid
+							found = false;
+							if(MapClass::Instance->CellExists(cell)) {
+								// out of range?
+								if(!isRectangle) {
+									if(cell.DistanceFrom(LSCell) > range.WidthOrRange) {
+										continue;
+									}
+								}
+
+								// assume valid
+								found = true;
+
+								// if we respect lightning rods, start looking for one.
+								if(!pData->Weather_IgnoreLightningRod) {
+									// if, by coincidence, this is a rod, hit it.
+									CellClass *pImpactCell = MapClass::Instance->GetCellAt(cell);
+									if(BuildingClass *pBld = pImpactCell->GetBuilding()) {
+										if(pBld->Type->LightningRod) {
+											break;
+										}
+									}
+
+									// if a lightning rod is next to this, hit that instead. naive.
+									if(auto const pObj = pImpactCell->FindTechnoNearestTo(Point2D::Empty, false, pImpactCell->GetBuilding())) {
+										if(BuildingClass *pBld = specific_cast<BuildingClass*>(pObj)) {
+											if(pBld->Type->LightningRod) {
+												cell = MapClass::Instance->GetCellAt(pBld->Location)->MapCoords;
+												break;
+											}
+										}
+									}
+								}
+
+								// is this spot far away from another cloud?
+								auto separation = pData->Weather_Separation.Get(RulesClass::Instance->LightningSeparation);
+								if(separation > 0) {
+									for(int j=0; j<LightningStorm::CloudsPresent->Count; ++j) {
+										// assume success and disprove.
+										CellStruct *pCell2 = &LightningStorm::CloudsPresent->GetItem(j)->GetCell()->MapCoords;
+										int dist = std::abs(pCell2->X - cell.X) + std::abs(pCell2->Y - cell.Y);
+										if(dist < separation) {
+											found = false;
+											break;
+										}
+									}
+								}
+
+								// valid cell.
+								if(found) {
+									break;
+								}
+							}
+						}
+
+						// found a valid position. strike there.
+						if(found) {
+							LightningStorm::Strike(cell);
+						}
+					}
+				}
+			}
+		} else {
+			// it's over already
+			LightningStorm::TimeToEnd = true;
+		}
 	}
 
-	// still support old logic for triggers
-	return 0x53A8FF;
+	// jump over everything
+	return 0x53AB45;
 }
 
 // create a cloud.
