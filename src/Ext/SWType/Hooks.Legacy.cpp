@@ -428,76 +428,72 @@ DEFINE_HOOK(53A6CF, LightningStorm_Update, 7) {
 		auto const width = range.width();
 		auto const height = isRectangle ? width : range.height();
 
+		auto const GetRandomCoords = [=]() {
+			auto& Random = ScenarioClass::Instance->Random;
+			auto const offsetX = Random.RandomRanged(-width / 2, width / 2);
+			auto const offsetY = Random.RandomRanged(-height / 2, height / 2);
+			auto const ret = coords + CellStruct{
+				static_cast<short>(offsetX), static_cast<short>(offsetY) };
+
+			// don't even try if this is invalid
+			if(!MapClass::Instance->CellExists(ret)) {
+				return CellStruct::Empty;
+			}
+
+			// out of range?
+			if(!isRectangle && ret.DistanceFrom(coords) > range.WidthOrRange) {
+				return CellStruct::Empty;
+			}
+
+			// if we respect lightning rods, start looking for one.
+			if(!pExt->Weather_IgnoreLightningRod) {
+				// if, by coincidence, this is a rod, hit it.
+				auto const pCell = MapClass::Instance->GetCellAt(ret);
+				auto const pCellBld = pCell->GetBuilding();
+
+				if(pCellBld && pCellBld->Type->LightningRod) {
+					return ret;
+				}
+
+				// if a lightning rod is next to this, hit that instead. naive.
+				if(auto const pObj = pCell->FindTechnoNearestTo(
+					Point2D::Empty, false, pCellBld))
+				{
+					if(auto const pBld = specific_cast<BuildingClass*>(pObj)) {
+						if(pBld->Type->LightningRod) {
+							return pBld->GetMapCoords();
+						}
+					}
+				}
+			}
+
+			// is this spot far away from another cloud?
+			auto const separation = pExt->Weather_Separation.Get(
+				RulesClass::Instance->LightningSeparation);
+			if(separation > 0) {
+				// assume success and disprove.
+				for(auto const& pCloud : *LightningStorm::CloudsPresent) {
+					auto const cellCloud = pCloud->GetMapCoords();
+					auto const dist = std::abs(cellCloud.X - ret.X)
+						+ std::abs(cellCloud.Y - ret.Y);
+
+					if(dist < separation) {
+						return CellStruct::Empty;
+					}
+				}
+			}
+
+			return ret;
+		};
+
 		// generate a new place to strike
 		if(height > 0 && width > 0 && MapClass::Instance->CellExists(coords)) {
 			for(int k = pExt->Weather_ScatterCount; k > 0; --k) {
-				CellStruct cell;
-				bool found;
-				for(auto i = 0; i < 3; ++i) {
-					cell = coords;
-					cell.X += static_cast<short>(ScenarioClass::Instance->Random.RandomRanged(-width / 2, width / 2));
-					cell.Y += static_cast<short>(ScenarioClass::Instance->Random.RandomRanged(-height / 2, height / 2));
-	
-					// don't even try if this is invalid
-					found = false;
-					if(!MapClass::Instance->CellExists(cell)) {
-						continue;
-					}
-
-					// out of range?
-					if(!isRectangle) {
-						if(cell.DistanceFrom(coords) > range.WidthOrRange) {
-							continue;
-						}
-					}
-
-					// assume valid
-					found = true;
-
-					// if we respect lightning rods, start looking for one.
-					if(!pExt->Weather_IgnoreLightningRod) {
-						// if, by coincidence, this is a rod, hit it.
-						auto const pImpactCell = MapClass::Instance->GetCellAt(cell);
-						if(auto const pBld = pImpactCell->GetBuilding()) {
-							if(pBld->Type->LightningRod) {
-								break;
-							}
-						}
-
-						// if a lightning rod is next to this, hit that instead. naive.
-						if(auto const pObj = pImpactCell->FindTechnoNearestTo(Point2D::Empty, false, pImpactCell->GetBuilding())) {
-							if(auto const pBld = specific_cast<BuildingClass*>(pObj)) {
-								if(pBld->Type->LightningRod) {
-									cell = MapClass::Instance->GetCellAt(pBld->Location)->MapCoords;
-									break;
-								}
-							}
-						}
-					}
-
-					// is this spot far away from another cloud?
-					auto const separation = pExt->Weather_Separation.Get(RulesClass::Instance->LightningSeparation);
-					if(separation > 0) {
-						for(auto const& pCloud : *LightningStorm::CloudsPresent) {
-							// assume success and disprove.
-							auto const cellCloud = pCloud->GetMapCoords();
-							auto const dist = std::abs(cellCloud.X - cell.X) + std::abs(cellCloud.Y - cell.Y);
-							if(dist < separation) {
-								found = false;
-								break;
-							}
-						}
-					}
-
-					// valid cell.
-					if(found) {
-						break;
-					}
-				}
-
-				// found a valid position. strike there.
-				if(found) {
+				auto const cell = GetRandomCoords();
+				if(cell != CellStruct::Empty) {
+					// found a valid position. strike there.
 					LightningStorm::Strike(cell);
+					break;
 				}
 			}
 		}
