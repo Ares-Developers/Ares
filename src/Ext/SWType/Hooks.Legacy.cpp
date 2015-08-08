@@ -550,77 +550,80 @@ DEFINE_HOOK(53A300, LightningStorm_Strike2, 5) {
 		return 0;
 	}
 
-	GET_STACK(CoordStruct, Coords, 0x4);
+	REF_STACK(CoordStruct const, refCoords, 0x4);
 
-	SuperWeaponTypeClass *pType = pSuper->Type;
-	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pType);
+	auto const pType = pSuper->Type;
+	auto const pData = SWTypeExt::ExtMap.Find(pType);
 
 	// get center of cell coords
-	CellClass* pCell = MapClass::Instance->GetCellAt(Coords);
-	Coords = pCell->GetCoordsWithBridge();
+	auto const pCell = MapClass::Instance->GetCellAt(refCoords);
+	auto const coords = pCell->GetCoordsWithBridge();
 
-	if(Coords != CoordStruct::Empty) {
+	if(coords != CoordStruct::Empty) {
 
 		// create a bolt animation
-		if(auto it = pData->Weather_Bolts.GetElements(RulesClass::Instance->WeatherConBolts)) {
-			DWORD rnd = ScenarioClass::Instance->Random.Random();
-			AnimTypeClass* pAnimType = it.at(rnd % it.size());
+		if(auto it = pData->Weather_Bolts.GetElements(
+			RulesClass::Instance->WeatherConBolts))
+		{
+			auto const rnd = ScenarioClass::Instance->Random.Random();
+			auto const pAnimType = it.at(rnd % it.size());
 
-			if(auto pAnim = GameCreate<AnimClass>(pAnimType, Coords)) {
+			if(auto const pAnim = GameCreate<AnimClass>(pAnimType, coords)) {
 				LightningStorm::BoltsPresent->AddItem(pAnim);
 			}
 		}
 
 		// play lightning sound
-		if(auto it = pData->Weather_Sounds.GetElements(RulesClass::Instance->LightningSounds)) {
-			DWORD rnd = ScenarioClass::Instance->Random.Random();
-			VocClass::PlayAt(it.at(rnd % it.size()), Coords, nullptr);
+		if(auto const it = pData->Weather_Sounds.GetElements(
+			RulesClass::Instance->LightningSounds))
+		{
+			auto const rnd = ScenarioClass::Instance->Random.Random();
+			VocClass::PlayAt(it.at(rnd % it.size()), coords, nullptr);
 		}
 
-		bool debris = false;
-		BuildingClass* pBld = pCell->GetBuilding();
+		auto debris = false;
+		auto const pBld = pCell->GetBuilding();
 
-		CoordStruct empty;
-		ObjectClass* pObj = pCell->FindObjectNearestTo(&empty, false, nullptr);
-		bool isInfantry = (pObj && pObj->WhatAmI() == AbstractType::Infantry);
+		auto empty = CoordStruct::Empty;
+		auto const pObj = pCell->FindObjectNearestTo(&empty, false, nullptr);
+		auto const isInfantry = abstract_cast<InfantryClass*>(pObj) != nullptr;
 
 		// empty cell action
 		if(!pBld && !pObj) {
-			switch(pCell->LandType)
-			{
-			case LandType::Road:
-			case LandType::Rock:
-			case LandType::Wall:
-			case LandType::Weeds:
-				debris = true;
-				break;
-			default:
-			break;
-			}
+			debris = Helpers::Alex::is_any_of(
+				pCell->LandType,
+				LandType::Road,
+				LandType::Rock,
+				LandType::Wall,
+				LandType::Weeds);
 		}
 
 		// account for lightning rods
-		int damage = pData->GetDamage();
+		auto damage = pData->GetDamage();
 		if(!pData->Weather_IgnoreLightningRod) {
-			if(BuildingClass* pBldObj = specific_cast<BuildingClass*>(pObj)) {
-				if(pBldObj->Type->LightningRod) {
-					if(BuildingTypeExt::ExtData *pExt = BuildingTypeExt::ExtMap.Find(pBldObj->Type)) {
-						// multiply the damage, but never go below zero.
-						damage = static_cast<int>(std::max(damage * pExt->LightningRod_Modifier, 0.0));
-					}
+			if(auto const pBldObj = abstract_cast<BuildingClass*>(pObj)) {
+				auto const pBldType = pBldObj->Type;
+				if(pBldType->LightningRod) {
+					// multiply the damage, but never go below zero.
+					auto const pBldExt = BuildingTypeExt::ExtMap.Find(pBldType);
+					damage = Math::max(static_cast<int>(
+						damage * pBldExt->LightningRod_Modifier), 0);
 				}
 			}
 		}
 
 		// cause mayhem
 		if(damage) {
-			auto pWarhead = pData->GetWarhead();
-			MapClass::FlashbangWarheadAt(damage, pWarhead, Coords, false, SpotlightFlags::None);
-			MapClass::DamageArea(Coords, damage, nullptr, pWarhead, true, pSuper->Owner);
+			auto const pWarhead = pData->GetWarhead();
+			MapClass::FlashbangWarheadAt(
+				damage, pWarhead, coords, false, SpotlightFlags::None);
+			MapClass::DamageArea(
+				coords, damage, nullptr, pWarhead, true, pSuper->Owner);
 
 			// fancy stuff if damage is dealt
-			AnimTypeClass* pAnimType = MapClass::SelectDamageAnimation(damage, pWarhead, pCell->LandType, Coords);
-			GameCreate<AnimClass>(pAnimType, Coords);
+			auto const pAnimType = MapClass::SelectDamageAnimation(
+				damage, pWarhead, pCell->LandType, coords);
+			GameCreate<AnimClass>(pAnimType, coords);
 		}
 
 		// has the last target been destroyed?
@@ -629,16 +632,19 @@ DEFINE_HOOK(53A300, LightningStorm_Strike2, 5) {
 		}
 
 		// create some debris
-		if(auto it = pData->Weather_Debris.GetElements(RulesClass::Instance->MetallicDebris)) {
-
-			// dead infantry never generates debris.
+		if(auto const it = pData->Weather_Debris.GetElements(
+			RulesClass::Instance->MetallicDebris))
+		{
+			// dead infantry never generates debris
 			if(!isInfantry && debris) {
-				int count = ScenarioClass::Instance->Random.RandomRanged(pData->Weather_DebrisMin, pData->Weather_DebrisMax);
-				for(int i=0; i<count; ++i) {
-					DWORD rnd = ScenarioClass::Instance->Random.Random();
-					AnimTypeClass *pAnimType = it.at(rnd % it.size());
+				auto const count = ScenarioClass::Instance->Random.RandomRanged(
+					pData->Weather_DebrisMin, pData->Weather_DebrisMax);
 
-					GameCreate<AnimClass>(pAnimType, Coords);
+				for(int i = 0; i < count; ++i) {
+					auto const rnd = ScenarioClass::Instance->Random.Random();
+					auto const pAnimType = it.at(rnd % it.size());
+
+					GameCreate<AnimClass>(pAnimType, coords);
 				}
 			}
 		}
