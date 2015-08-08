@@ -368,13 +368,13 @@ DEFINE_HOOK(53A6CF, LightningStorm_Update, 7) {
 		return 0x53A8FF;
 	}
 
-	CellStruct LSCell = LightningStorm::Coords;
+	auto const coords = LightningStorm::Coords;
 
-	SuperWeaponTypeClass *pType = pSuper->Type;
-	SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pType);
+	auto const pType = pSuper->Type;
+	auto const pExt = SWTypeExt::ExtMap.Find(pType);
 
 	if(!LightningStorm::Active || LightningStorm::TimeToEnd) {
-		int deferment = LightningStorm::Deferment;
+		auto deferment = LightningStorm::Deferment;
 
 		// still counting down?
 		if(deferment > 0) {
@@ -383,48 +383,48 @@ DEFINE_HOOK(53A6CF, LightningStorm_Update, 7) {
 
 			// still waiting
 			if(deferment) {
-				if(!(deferment % 225)) {
-					if(pData->Weather_PrintText.Get(RulesClass::Instance->LightningPrintText)) {
-						pData->PrintMessage(pData->Message_Launch, pSuper->Owner);
+				if(deferment % 225 == 0) {
+					if(pExt->Weather_PrintText.Get(
+						RulesClass::Instance->LightningPrintText))
+					{
+						pExt->PrintMessage(pExt->Message_Launch, pSuper->Owner);
 					}
 				}
 			} else {
 				// launch the storm
-				LightningStorm::Start(LightningStorm::Duration, 0, LSCell, LightningStorm::Owner);
+				LightningStorm::Start(
+					LightningStorm::Duration, 0, coords, LightningStorm::Owner);
 			}
 		}
 	} else {
 		// does this Lightning Storm go on?
-		int duration = LightningStorm::Duration;
-		if(duration == -1 || duration + LightningStorm::StartTime >= Unsorted::CurrentFrame) {
-
+		auto const duration = LightningStorm::Duration;
+		if(duration == -1
+			|| duration + LightningStorm::StartTime >= Unsorted::CurrentFrame)
+		{
 			// deterministic damage. the very target cell.
-			auto hitDelay = pData->Weather_HitDelay.Get(RulesClass::Instance->LightningHitDelay);
-			if(hitDelay > 0 && !(Unsorted::CurrentFrame % hitDelay)) {
-				LightningStorm::Strike(LightningStorm::Coords);
+			auto const hitDelay = pExt->Weather_HitDelay.Get(
+				RulesClass::Instance->LightningHitDelay);
+			if(hitDelay > 0 && Unsorted::CurrentFrame % hitDelay == 0) {
+				LightningStorm::Strike(coords);
 			}
 
 			// random damage. somewhere in range.
-			auto scatterDelay = pData->Weather_ScatterDelay.Get(RulesClass::Instance->LightningScatterDelay);
-			if(scatterDelay > 0 && !(Unsorted::CurrentFrame % scatterDelay)) {
-				auto range = pData->GetRange();
-				int width = range.width();
-				int height = range.height();
-				bool isRectangle = true;
-
-				// is circular range?
-				if(height <= 0) {
-					height = width;
-					isRectangle = false;
-				}
+			auto const scatterDelay = pExt->Weather_ScatterDelay.Get(
+				RulesClass::Instance->LightningScatterDelay);
+			if(scatterDelay > 0 && Unsorted::CurrentFrame % scatterDelay == 0) {
+				auto const range = pExt->GetRange();
+				auto const isRectangle = (range.height() <= 0);
+				auto const width = range.width();
+				auto const height = isRectangle ? width : range.height();
 
 				// generate a new place to strike
-				CellStruct cell;
-				if(height > 0 && width > 0 && MapClass::Instance->CellExists(LSCell)) {
-					for(int k=pData->Weather_ScatterCount; k>0; --k) {
+				if(height > 0 && width > 0 && MapClass::Instance->CellExists(coords)) {
+					for(int k = pExt->Weather_ScatterCount; k > 0; --k) {
+						CellStruct cell;
 						bool found;
-						for(int i=0; i<3; ++i) {
-							cell = LSCell;
+						for(auto i = 0; i < 3; ++i) {
+							cell = coords;
 							cell.X += static_cast<short>(ScenarioClass::Instance->Random.RandomRanged(-width / 2, width / 2));
 							cell.Y += static_cast<short>(ScenarioClass::Instance->Random.RandomRanged(-height / 2, height / 2));
 	
@@ -433,7 +433,7 @@ DEFINE_HOOK(53A6CF, LightningStorm_Update, 7) {
 							if(MapClass::Instance->CellExists(cell)) {
 								// out of range?
 								if(!isRectangle) {
-									if(cell.DistanceFrom(LSCell) > range.WidthOrRange) {
+									if(cell.DistanceFrom(coords) > range.WidthOrRange) {
 										continue;
 									}
 								}
@@ -442,10 +442,10 @@ DEFINE_HOOK(53A6CF, LightningStorm_Update, 7) {
 								found = true;
 
 								// if we respect lightning rods, start looking for one.
-								if(!pData->Weather_IgnoreLightningRod) {
+								if(!pExt->Weather_IgnoreLightningRod) {
 									// if, by coincidence, this is a rod, hit it.
-									CellClass *pImpactCell = MapClass::Instance->GetCellAt(cell);
-									if(BuildingClass *pBld = pImpactCell->GetBuilding()) {
+									auto const pImpactCell = MapClass::Instance->GetCellAt(cell);
+									if(auto const pBld = pImpactCell->GetBuilding()) {
 										if(pBld->Type->LightningRod) {
 											break;
 										}
@@ -453,7 +453,7 @@ DEFINE_HOOK(53A6CF, LightningStorm_Update, 7) {
 
 									// if a lightning rod is next to this, hit that instead. naive.
 									if(auto const pObj = pImpactCell->FindTechnoNearestTo(Point2D::Empty, false, pImpactCell->GetBuilding())) {
-										if(BuildingClass *pBld = specific_cast<BuildingClass*>(pObj)) {
+										if(auto const pBld = specific_cast<BuildingClass*>(pObj)) {
 											if(pBld->Type->LightningRod) {
 												cell = MapClass::Instance->GetCellAt(pBld->Location)->MapCoords;
 												break;
@@ -463,12 +463,12 @@ DEFINE_HOOK(53A6CF, LightningStorm_Update, 7) {
 								}
 
 								// is this spot far away from another cloud?
-								auto separation = pData->Weather_Separation.Get(RulesClass::Instance->LightningSeparation);
+								auto const separation = pExt->Weather_Separation.Get(RulesClass::Instance->LightningSeparation);
 								if(separation > 0) {
-									for(int j=0; j<LightningStorm::CloudsPresent->Count; ++j) {
+									for(auto const& pCloud : *LightningStorm::CloudsPresent) {
 										// assume success and disprove.
-										CellStruct *pCell2 = &LightningStorm::CloudsPresent->GetItem(j)->GetCell()->MapCoords;
-										int dist = std::abs(pCell2->X - cell.X) + std::abs(pCell2->Y - cell.Y);
+										auto const cellCloud = pCloud->GetMapCoords();
+										auto const dist = std::abs(cellCloud.X - cell.X) + std::abs(cellCloud.Y - cell.Y);
 										if(dist < separation) {
 											found = false;
 											break;
