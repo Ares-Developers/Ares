@@ -207,90 +207,99 @@ DEFINE_HOOK(53AF40, PsyDom_Update, 6) {
 
 // this is a complete rewrite of LightningStorm::Start.
 DEFINE_HOOK(539EB0, LightningStorm_Start, 5) {
-	if(SuperClass* pSuper = SW_LightningStorm::CurrentLightningStorm) {
-		GET(int, duration, ECX);
-		GET(int, deferment, EDX);
-		GET_STACK(CellStruct, Coords, 0x4);
-		GET_STACK(HouseClass*, pOwner, 0x8);
+	const auto pSuper = SW_LightningStorm::CurrentLightningStorm;
 
-		SuperWeaponTypeClass *pType = pSuper->Type;
-		SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pType);
+	if(!pSuper) {
+		// legacy way still needed for triggers.
+		return 0;
+	}
 
-		bool ret = false;
+	GET(int const, duration, ECX);
+	GET(int const, deferment, EDX);
+	GET_STACK(CellStruct, cell, 0x4);
+	GET_STACK(HouseClass* const, pOwner, 0x8);
 
-		// generate random coords if the passed ones are empty
-		if(Coords == CellStruct::Empty) {
-			auto const& Bounds = MapClass::Instance->MapCoordBounds;
-			auto& Random = ScenarioClass::Instance->Random;
-			while(!MapClass::Instance->CellExists(Coords)) {
-				Coords.X = static_cast<short>(Random.RandomRanged(0, Bounds.Right));
-				Coords.Y = static_cast<short>(Random.RandomRanged(0, Bounds.Bottom));
-			}
+	auto const pType = pSuper->Type;
+	auto const pExt = SWTypeExt::ExtMap.Find(pType);
+
+	auto ret = false;
+
+	// generate random cell if the passed ones are empty
+	if(cell == CellStruct::Empty) {
+		auto const& Bounds = MapClass::Instance->MapCoordBounds;
+		auto& Random = ScenarioClass::Instance->Random;
+		while(!MapClass::Instance->CellExists(cell)) {
+			cell.X = static_cast<short>(Random.RandomRanged(0, Bounds.Right));
+			cell.Y = static_cast<short>(Random.RandomRanged(0, Bounds.Bottom));
 		}
+	}
 
-		// yes. set them even if the Lightning Storm
-		// is active.
-		LightningStorm::Coords = Coords;
-		LightningStorm::Owner = pOwner;
+	// yes. set them even if the Lightning Storm is active.
+	LightningStorm::Coords = cell;
+	LightningStorm::Owner = pOwner;
 		
-		if(!LightningStorm::Active) {
-			if(deferment) {
-				// register this storm to start soon
-				if(!LightningStorm::Deferment || LightningStorm::Deferment >= deferment) {
-					LightningStorm::Deferment = deferment;
-				}
-				LightningStorm::Duration = duration;
-				ret = true;
-			} else {
-				// start the mayhem. not setting this will create an
-				// infinite loop. not tested what happens after that.
-				LightningStorm::Duration = duration;
-				LightningStorm::StartTime = Unsorted::CurrentFrame;
-				LightningStorm::Active = true;
+	if(!LightningStorm::Active) {
+		if(deferment) {
+			// register this storm to start soon
+			if(!LightningStorm::Deferment
+				|| LightningStorm::Deferment >= deferment)
+			{
+				LightningStorm::Deferment = deferment;
+			}
+			LightningStorm::Duration = duration;
+			ret = true;
+		} else {
+			// start the mayhem. not setting this will create an
+			// infinite loop. not tested what happens after that.
+			LightningStorm::Duration = duration;
+			LightningStorm::StartTime = Unsorted::CurrentFrame;
+			LightningStorm::Active = true;
 
-				// blackout
-				auto outage = pData->Weather_RadarOutage.Get(RulesClass::Instance->LightningStormDuration);
-				if(outage > 0) {
-					for(int i=0; i<HouseClass::Array->Count; ++i) {
-						HouseClass* pHouse = HouseClass::Array->GetItem(i);
-						if(pData->IsHouseAffected(pOwner, pHouse, pData->Weather_RadarOutageAffects)) {
-							if(!pHouse->Defeated) {
-								pHouse->CreateRadarOutage(outage);
-							}
+			// blackout
+			auto const outage = pExt->Weather_RadarOutage.Get(
+				RulesClass::Instance->LightningStormDuration);
+			if(outage > 0) {
+				for(auto const& pHouse : *HouseClass::Array) {
+					if(pExt->IsHouseAffected(
+						pOwner, pHouse, pExt->Weather_RadarOutageAffects))
+					{
+						if(!pHouse->Defeated) {
+							pHouse->CreateRadarOutage(outage);
 						}
 					}
 				}
-				if(HouseClass::Player) {
-					HouseClass::Player->RecheckRadar = true;
-				}
-
-				// let there be light
-				ScenarioClass::Instance->UpdateLighting();
-
-				// activation stuff
-				if(pData->Weather_PrintText.Get(RulesClass::Instance->LightningPrintText)) {
-					pData->PrintMessage(pData->Message_Activate, pSuper->Owner);
-				}
-
-				int sound = pData->SW_ActivationSound.Get(RulesClass::Instance->StormSound);
-				if(sound != -1) {
-					VocClass::PlayGlobal(sound, 8192, 1.0);
-				}
-
-				if(pData->SW_RadarEvent) {
-					RadarEventClass::Create(RadarEventType::SuperweaponActivated, Coords);
-				}
-
-				MapClass::Instance->RedrawSidebar(1);
 			}
-		}
+			if(HouseClass::Player) {
+				HouseClass::Player->RecheckRadar = true;
+			}
 
-		R->EAX(ret);
-		return 0x539F80;
+			// let there be light
+			ScenarioClass::Instance->UpdateLighting();
+
+			// activation stuff
+			if(pExt->Weather_PrintText.Get(
+				RulesClass::Instance->LightningPrintText))
+			{
+				pExt->PrintMessage(pExt->Message_Activate, pSuper->Owner);
+			}
+
+			auto const sound = pExt->SW_ActivationSound.Get(
+				RulesClass::Instance->StormSound);
+			if(sound != -1) {
+				VocClass::PlayGlobal(sound, 0x2000, 1.0);
+			}
+
+			if(pExt->SW_RadarEvent) {
+				RadarEventClass::Create(
+					RadarEventType::SuperweaponActivated, cell);
+			}
+
+			MapClass::Instance->RedrawSidebar(1);
+		}
 	}
 
-	// legacy way still needed for triggers.
-	return 0;
+	R->EAX(ret);
+	return 0x539F80;
 }
 
 // this is a complete rewrite of LightningStorm::Update.
