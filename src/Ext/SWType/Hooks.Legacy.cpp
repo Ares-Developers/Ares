@@ -664,21 +664,21 @@ DEFINE_HOOK(48A59A, MapClass_SelectDamageAnimation_LightningWarhead, 5) {
 }
 
 DEFINE_HOOK(44C9FF, BuildingClass_Missile_PsiWarn, 6) {
-	GET(BuildingClass*, pThis, ESI);
-	int type = pThis->FiringSWType;
+	GET(BuildingClass* const, pThis, ESI);
 
-	if(SuperWeaponTypeClass* pSW = SuperWeaponTypeClass::Array->GetItemOrDefault(type)) {
-		if(SWTypeExt::ExtData* pExt = SWTypeExt::ExtMap.Find(pSW)) {
-			if(AnimTypeClass *pAnim = pExt->Nuke_PsiWarning) {
-				R->EAX(pAnim->ArrayIndex);
-				Debug::Log("PsiWarn set\n");
-				return 0;
-			}
+	auto const type = pThis->FiringSWType;
 
-			// skip psi warning.
-			Debug::Log("PsiWarn skipped\n");
-			return 0x44CA7A;
+	if(auto const pSW = SuperWeaponTypeClass::Array->GetItemOrDefault(type)) {
+		auto const pExt = SWTypeExt::ExtMap.Find(pSW);
+		if(auto const& Anim = pExt->Nuke_PsiWarning) {
+			R->EAX(Anim->ArrayIndex);
+			Debug::Log("PsiWarn set\n");
+			return 0;
 		}
+
+		// skip psi warning.
+		Debug::Log("PsiWarn skipped\n");
+		return 0x44CA7A;
 	}
 
 	return 0;
@@ -686,24 +686,24 @@ DEFINE_HOOK(44C9FF, BuildingClass_Missile_PsiWarn, 6) {
 
 // upward pointing missile, launched from missile silo.
 DEFINE_HOOK(44CABA, BuildingClass_Missile_CreateBullet, 6) {
-	GET(CellClass*, pCell, EAX);
-	GET(BuildingClass*, pThis, ESI);
+	GET(CellClass* const, pCell, EAX);
+	GET(BuildingClass* const, pThis, ESI);
 
-	int type = pThis->FiringSWType;
+	auto const type = pThis->FiringSWType;
 
-	if(SuperWeaponTypeClass* pSW = SuperWeaponTypeClass::Array->GetItemOrDefault(type)) {
-		if(SWTypeExt::ExtData* pExt = SWTypeExt::ExtMap.Find(pSW)) {
-			if(WeaponTypeClass *pWeapon = pSW->WeaponType) {
-				if(BulletClass* pBullet = pWeapon->Projectile->CreateBullet(pCell, pThis, pWeapon->Damage, pWeapon->Warhead, 255, true)) {
-					if(BulletExt::ExtData *pData = BulletExt::ExtMap.Find(pBullet)) {
-						pData->NukeSW = pSW;
-					}
+	if(auto const pSW = SuperWeaponTypeClass::Array->GetItemOrDefault(type)) {
+		if(auto const pWeapon = pSW->WeaponType) {
+			auto const pBullet = pWeapon->Projectile->CreateBullet(
+				pCell, pThis, pWeapon->Damage, pWeapon->Warhead, 255, true);
 
-					R->EBX(pSW->WeaponType);
-					R->EAX(pBullet);
+			if(pBullet) {
+				auto const pBulletExt = BulletExt::ExtMap.Find(pBullet);
+				pBulletExt->NukeSW = pSW;
 
-					return 0x44CAF2;
-				}
+				R->EBX(pSW->WeaponType);
+				R->EAX(pBullet);
+
+				return 0x44CAF2;
 			}
 		}
 	}
@@ -713,16 +713,19 @@ DEFINE_HOOK(44CABA, BuildingClass_Missile_CreateBullet, 6) {
 
 // special takeoff anim.
 DEFINE_HOOK(44CC8B, BuildingClass_Missile_NukeTakeOff, 6) {
-	GET(BuildingClass*, pThis, ESI);
+	GET(BuildingClass* const, pThis, ESI);
 
-	int type = pThis->FiringSWType;
+	auto const type = pThis->FiringSWType;
 
-	if(SuperWeaponTypeClass* pSW = SuperWeaponTypeClass::Array->GetItemOrDefault(type)) {
-		if(SWTypeExt::ExtData* pExt = SWTypeExt::ExtMap.Find(pSW)) {
-			if(AnimTypeClass* pAnimType = pExt->Nuke_TakeOff.Get(RulesClass::Instance->NukeTakeOff)) {
-				R->ECX(pAnimType);
-				return 0x44CC91;
-			}
+	if(auto const pSW = SuperWeaponTypeClass::Array->GetItemOrDefault(type)) {
+		auto const pExt = SWTypeExt::ExtMap.Find(pSW);
+
+		auto const pAnimType = pExt->Nuke_TakeOff.Get(
+			RulesClass::Instance->NukeTakeOff);
+
+		if(pAnimType) {
+			R->ECX(pAnimType);
+			return 0x44CC91;
 		}
 	}
 
@@ -731,7 +734,7 @@ DEFINE_HOOK(44CC8B, BuildingClass_Missile_NukeTakeOff, 6) {
 
 // remove ZAdjust hardcoding
 DEFINE_HOOK(44CC9D, BuildingClass_Missile_NukeTakeOffB, A) {
-	GET(AnimClass*, pAnim, EAX);
+	GET(AnimClass* const, pAnim, EAX);
 
 	if(!pAnim->ZAdjust) {
 		pAnim->ZAdjust = -100;
