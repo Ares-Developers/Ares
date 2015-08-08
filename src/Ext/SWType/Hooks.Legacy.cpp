@@ -500,33 +500,39 @@ DEFINE_HOOK(53A6CF, LightningStorm_Update, 7) {
 
 // create a cloud.
 DEFINE_HOOK(53A140, LightningStorm_Strike, 7) {
-	if(SuperClass* pSuper = SW_LightningStorm::CurrentLightningStorm) {
-		GET_STACK(CellStruct, Cell, 0x4);
+	if(auto const pSuper = SW_LightningStorm::CurrentLightningStorm) {
+		GET_STACK(CellStruct const, cell, 0x4);
 
-		SuperWeaponTypeClass *pType = pSuper->Type;
-		SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pType);
+		auto const pType = pSuper->Type;
+		auto const pExt = SWTypeExt::ExtMap.Find(pType);
 
 		// get center of cell coords
-		CellClass* pCell = MapClass::Instance->GetCellAt(Cell);
-		CoordStruct Coords = pCell->GetCoordsWithBridge();
+		auto const pCell = MapClass::Instance->GetCellAt(cell);
+		auto coords = pCell->GetCoordsWithBridge();
 
 		// create a cloud animation
-		if(Coords != CoordStruct::Empty) {
+		if(coords != CoordStruct::Empty) {
 			// select the anim
-			auto itClouds = pData->Weather_Clouds.GetElements(RulesClass::Instance->WeatherConClouds);
-			AnimTypeClass* pAnimType = itClouds.at(ScenarioClass::Instance->Random.Random() % itClouds.size());
+			auto const itClouds = pExt->Weather_Clouds.GetElements(
+				RulesClass::Instance->WeatherConClouds);
+			auto const pAnimType = itClouds.at(
+				ScenarioClass::Instance->Random.Random() % itClouds.size());
 
 			// infer the height this thing will be drawn at.
-			if(pData->Weather_CloudHeight < 0) {
-				if(auto itBolts = pData->Weather_Bolts.GetElements(RulesClass::Instance->WeatherConBolts)) {
-					AnimTypeClass* pBoltAnim = itBolts.at(0);
-					pData->Weather_CloudHeight = Game::F2I(((pBoltAnim->GetImage()->Height / 2) - 0.5) * LightningStorm::CloudHeightFactor);
+			if(pExt->Weather_CloudHeight < 0) {
+				if(auto const itBolts = pExt->Weather_Bolts.GetElements(
+					RulesClass::Instance->WeatherConBolts))
+				{
+					auto const pBoltAnim = itBolts.at(0);
+					pExt->Weather_CloudHeight = Game::F2I(
+						((pBoltAnim->GetImage()->Height / 2) - 0.5)
+						* LightningStorm::CloudHeightFactor);
 				}
 			}
-			Coords.Z += pData->Weather_CloudHeight;
+			coords.Z += pExt->Weather_CloudHeight;
 
 			// create the cloud and do some book keeping.
-			if(auto pAnim = GameCreate<AnimClass>(pAnimType, Coords)) {
+			if(auto const pAnim = GameCreate<AnimClass>(pAnimType, coords)) {
 				LightningStorm::CloudsManifesting->AddItem(pAnim);
 				LightningStorm::CloudsPresent->AddItem(pAnim);
 			}
