@@ -741,42 +741,35 @@ DEFINE_HOOK(44CC9D, BuildingClass_Missile_NukeTakeOffB, A) {
 
 // create a downward pointing missile if the launched one leaves the map.
 DEFINE_HOOK(46B371, BulletClass_NukeMaker, 5) {
-	GET(BulletClass*, pBullet, EBP);
+	GET(BulletClass* const, pThis, EBP);
+	auto const pExt = BulletExt::ExtMap.Find(pThis);
 
-	if(pBullet && pBullet->WeaponType) {
-		if(BulletExt::ExtData *pData = BulletExt::ExtMap.Find(pBullet)) {
-			if(SuperWeaponTypeClass *pSW = pData->NukeSW) {
-				if(SWTypeExt::ExtData* pExt = SWTypeExt::ExtMap.Find(pSW)) {
+	if(auto const pSW = pExt->NukeSW) {
+		auto const pSWExt = SWTypeExt::ExtMap.Find(pSW);
 
-					// get the per-SW nuke payload weapon
-					if(WeaponTypeClass *pPayload = pExt->Nuke_Payload) {
+		// get the per-SW nuke payload weapon
+		if(WeaponTypeClass const* const pPayload = pSWExt->Nuke_Payload) {
 
-						// get damage and warhead. they are not available during
-						// initialisation, so we gotta fall back now if they are invalid.
-						auto damage = pExt->GetDamage();
-						auto pWarhead = pExt->GetWarhead();
+			// these are not available during initialisation, so we gotta
+			// fall back now if they are invalid.
+			auto const damage = pSWExt->GetDamage();
+			auto const pWarhead = pSWExt->GetWarhead();
 
-						Debug::Log("Payload = %s\n", pPayload->ID);
-						Debug::Log("Payload WH = %s\n", pPayload->Warhead->ID);
-						Debug::Log("Payload Projectile = %s\n", pPayload->Projectile->ID);
-						Debug::Log("Warhead = %s\n", pWarhead->ID);
-
-						// put the new values into the registers
-						R->Stack(0x30, R->EAX());
-						R->ESI(pPayload);
-						R->Stack(0x10, 0);
-						R->Stack(0x18, pPayload->Speed);
-						R->Stack(0x28, pPayload->Projectile);
-						R->EAX(pWarhead);
-						R->ECX(R->lea_Stack<CoordStruct*>(0x10));
-						R->EDX(damage);
+			// put the new values into the registers
+			R->Stack(0x30, R->EAX());
+			R->ESI(pPayload);
+			R->Stack(0x10, 0);
+			R->Stack(0x18, pPayload->Speed);
+			R->Stack(0x28, pPayload->Projectile);
+			R->EAX(pWarhead);
+			R->ECX(R->lea_Stack<CoordStruct*>(0x10));
+			R->EDX(damage);
 				
-						return 0x46B3B7;
-					} else {
-						Debug::Log("[%s] has no payload weapon type, or it is invalid.\n", pSW->ID);
-					}
-				}
-			}
+			return 0x46B3B7;
+		} else {
+			Debug::Log(
+				"[%s] has no payload weapon type, or it is invalid.\n",
+				pSW->ID);
 		}
 	}
 
@@ -785,14 +778,12 @@ DEFINE_HOOK(46B371, BulletClass_NukeMaker, 5) {
 
 // just puts the launched SW pointer on the downward aiming missile.
 DEFINE_HOOK(46B423, BulletClass_NukeMaker_PropagateSW, 6) {
-	GET(BulletClass*, pBullet, EBP);
-	GET(BulletClass*, pNuke, EDI);
+	GET(BulletClass* const, pThis, EBP);
+	GET(BulletClass* const, pNuke, EDI);
 
-	if(BulletExt::ExtData *pData = BulletExt::ExtMap.Find(pBullet)) {
-		if(BulletExt::ExtData *pExt = BulletExt::ExtMap.Find(pNuke)) {
-			pExt->NukeSW = pData->NukeSW;
-		}
-	}
+	auto const pThisExt = BulletExt::ExtMap.Find(pThis);
+	auto const pNukeExt = BulletExt::ExtMap.Find(pNuke);
+	pNukeExt->NukeSW = pThisExt->NukeSW;
 
 	return 0;
 }
