@@ -446,8 +446,7 @@ DEFINE_HOOK(53A6CF, LightningStorm_Update, 7) {
 										}
 
 										// if a lightning rod is next to this, hit that instead. naive.
-										CoordStruct nullCoords;
-										if(ObjectClass* pObj = pImpactCell->FindObjectNearestTo(&nullCoords, false, pImpactCell->GetBuilding())) {
+										if(auto const pObj = pImpactCell->FindTechnoNearestTo(Point2D::Empty, false, pImpactCell->GetBuilding())) {
 											if(BuildingClass *pBld = specific_cast<BuildingClass*>(pObj)) {
 												if(pBld->Type->LightningRod) {
 													cell = MapClass::Instance->GetCellAt(pBld->Location)->MapCoords;
@@ -584,8 +583,8 @@ DEFINE_HOOK(53A300, LightningStorm_Strike2, 5) {
 		auto debris = false;
 		auto const pBld = pCell->GetBuilding();
 
-		auto empty = CoordStruct::Empty;
-		auto const pObj = pCell->FindObjectNearestTo(&empty, false, nullptr);
+		auto const& empty = Point2D::Empty;
+		auto const pObj = pCell->FindTechnoNearestTo(empty, false, nullptr);
 		auto const isInfantry = abstract_cast<InfantryClass*>(pObj) != nullptr;
 
 		// empty cell action
@@ -627,7 +626,7 @@ DEFINE_HOOK(53A300, LightningStorm_Strike2, 5) {
 		}
 
 		// has the last target been destroyed?
-		if(pObj != pCell->FindObjectNearestTo(&empty, false, nullptr)) {
+		if(pObj != pCell->FindTechnoNearestTo(empty, false, nullptr)) {
 			debris = true;
 		}
 
