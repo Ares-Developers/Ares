@@ -647,15 +647,17 @@ DEFINE_HOOK(53A300, LightningStorm_Strike2, 5) {
 
 DEFINE_HOOK(48A59A, MapClass_SelectDamageAnimation_LightningWarhead, 5) {
 	// override the lightning bolt explosion
-	GET(WarheadTypeClass*, pWarhead, ESI);
-	if(SuperClass* pSuper = SW_LightningStorm::CurrentLightningStorm) {
-		SuperWeaponTypeClass *pType = pSuper->Type;
-		if(SWTypeExt::ExtData *pData = SWTypeExt::ExtMap.Find(pType)) {
-			if(pData->GetWarhead() == pWarhead) {
-				if(AnimTypeClass* pAnimType = pData->Weather_BoltExplosion.Get(RulesClass::Instance->WeatherConBoltExplosion)) {
-					R->EAX(pAnimType);
-					return 0x48A5AD;
-				}
+	GET(WarheadTypeClass* const, pWarhead, ESI);
+	if(auto const pSuper = SW_LightningStorm::CurrentLightningStorm) {
+		auto const pData = SWTypeExt::ExtMap.Find(pSuper->Type);
+
+		if(pData->GetWarhead() == pWarhead) {
+			auto const pAnimType = pData->Weather_BoltExplosion.Get(
+				RulesClass::Instance->WeatherConBoltExplosion);
+
+			if(pAnimType) {
+				R->EAX(pAnimType);
+				return 0x48A5AD;
 			}
 		}
 	}
