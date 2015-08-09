@@ -25,7 +25,8 @@ template <typename T>
 using UniqueGamePtr = std::unique_ptr<T, GameDeleter>;
 
 struct Leptons {
-	explicit Leptons(int value = 0) : value(value) {}
+	Leptons() : value(0) {}
+	explicit Leptons(int value) : value(value) {}
 
 	operator int() const {
 		return this->value;
