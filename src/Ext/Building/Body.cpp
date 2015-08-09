@@ -958,15 +958,14 @@ SuperClass* BuildingExt::ExtData::GetFirstSuperWeapon() const {
 	return this->OwnerObject()->Owner->Supers.GetItemOrDefault(idxSW);
 }
 
-DWORD BuildingExt::FoundationLength(CellStruct const* pFoundation) {
-	DWORD Len = 0;
-	bool End = false;
-	do {
-		++Len;
-		End = pFoundation->X == 32767 && pFoundation->Y == 32767;
-		++pFoundation;
-	} while(!End);
-	return Len;
+DWORD BuildingExt::FoundationLength(CellStruct const* const pFoundation) {
+	auto pFCell = pFoundation;
+	while(*pFCell != BuildingTypeExt::FoundationEndMarker) {
+		++pFCell;
+	}
+
+	// include the end marker
+	return static_cast<DWORD>(std::distance(pFoundation, pFCell + 1));
 }
 
 const std::vector<CellStruct>& BuildingExt::GetCoveredCells(
