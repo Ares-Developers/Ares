@@ -223,19 +223,20 @@ DEFINE_HOOK(4FE782, HouseClass_AI_BaseConstructionUpdate_PickPowerplant, 6)
 	GET(HouseClass* const, pThis, EBP);
 	auto const pExt = HouseTypeExt::ExtMap.Find(pThis->Type);
 
-	std::vector<BuildingTypeClass *> Eligible;
+	BuildingTypeClass* buffer[10];
+	DynamicVectorClass<BuildingTypeClass*> Eligible(_countof(buffer), buffer);
 
 	auto const it = pExt->GetPowerplants();
 	for(auto const& pPower : it) {
 		if(HouseExt::PrereqValidate(pThis, pPower, false, true) == 1) {
-			Eligible.push_back(pPower);
+			Eligible.AddItem(pPower);
 		}
 	}
 
 	BuildingTypeClass* pResult = nullptr;
-	if(Eligible.size() > 0) {
+	if(Eligible.Count > 0) {
 		auto& Random = ScenarioClass::Instance->Random;
-		auto const idx = Random.RandomRanged(0, Eligible.size() - 1);
+		auto const idx = Random.RandomRanged(0, Eligible.Count - 1);
 		pResult = Eligible[idx];
 	} else if(!it.empty()) {
 		pResult = it.at(0);
