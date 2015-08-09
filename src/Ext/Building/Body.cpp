@@ -18,8 +18,14 @@
 #include <MouseClass.h>
 #include <Helpers\Enumerators.h>
 
+#include <algorithm>
+
 template<> const DWORD Extension<BuildingClass>::Canary = 0x87654321;
 BuildingExt::ExtContainer BuildingExt::ExtMap;
+
+std::vector<CellStruct> BuildingExt::TempFoundationData1;
+std::vector<CellStruct> BuildingExt::TempFoundationData2;
+std::vector<CellStruct> BuildingExt::TempCoveredCellsData;
 
 // =============================
 // member functions
@@ -961,6 +967,41 @@ DWORD BuildingExt::FoundationLength(CellStruct * StartCell) {
 		++StartCell;
 	} while(!End);
 	return Len;
+}
+
+const std::vector<CellStruct>& BuildingExt::GetCoveredCells(
+	BuildingClass* const pThis, CellStruct const mainCoords,
+	int const shadowHeight)
+{
+	auto const pFoundation = pThis->GetFoundationData(false);
+	auto const len = BuildingExt::FoundationLength(pFoundation);
+
+	TempCoveredCellsData.clear();
+	TempCoveredCellsData.reserve(len * shadowHeight);
+
+	auto pFCell = pFoundation;
+
+	while(*pFCell != BuildingTypeExt::FoundationEndMarker) {
+		auto actualCell = mainCoords + *pFCell;
+		for(auto i = shadowHeight; i > 0; --i) {
+			TempCoveredCellsData.push_back(actualCell);
+			--actualCell.X;
+			--actualCell.Y;
+		}
+		++pFCell;
+	}
+
+	std::sort(TempCoveredCellsData.begin(), TempCoveredCellsData.end(),
+		[](const CellStruct &lhs, const CellStruct &rhs) -> bool
+	{
+		return lhs.X > rhs.X || lhs.X == rhs.X && lhs.Y > rhs.Y;
+	});
+
+	auto const it = std::unique(
+		TempCoveredCellsData.begin(), TempCoveredCellsData.end());
+	TempCoveredCellsData.erase(it, TempCoveredCellsData.end());
+
+	return TempCoveredCellsData;
 }
 
 void BuildingExt::Clear() {

@@ -178,7 +178,12 @@ public:
 	static std::vector<CellStruct> TempFoundationData1;
 	static std::vector<CellStruct> TempFoundationData2;
 
+	static std::vector<CellStruct> TempCoveredCellsData;
+
 	static DWORD FoundationLength(CellStruct * StartCell);
+
+	static const std::vector<CellStruct>& GetCoveredCells(
+		BuildingClass* pThis, CellStruct mainCoords, int shadowHeight);
 
 	static bool IsActiveFirestormWall(BuildingClass* pBuilding, HouseClass const* pIgnore = nullptr);
 

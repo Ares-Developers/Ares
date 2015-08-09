@@ -1,13 +1,8 @@
 #include "Body.h"
+
 #include "../BuildingType/Body.h"
 
-#include <algorithm>
-#include <vector>
-
 #include <MouseClass.h>
-
-std::vector<CellStruct> BuildingExt::TempFoundationData1;
-std::vector<CellStruct> BuildingExt::TempFoundationData2;
 
 DEFINE_HOOK(45EC90, Foundations_GetFoundationWidth, 6)
 {
@@ -92,38 +87,16 @@ DEFINE_HOOK(568565, MapClass_AddContentAt_Foundation_OccupyHeight, 5)
 	GET(int, ShadowHeight, EBP);
 	GET_STACK(CellStruct *, MainCoords, 0x8B4);
 
-	CellStruct * Foundation = pThis->GetFoundationData(false);
-	DWORD Len = BuildingExt::FoundationLength(Foundation);
-
-	std::vector<CellStruct> AffectedCells;
-
-	AffectedCells.reserve(Len * ShadowHeight);
-
-	CellStruct * CurrentFCell = Foundation;
-
-	while(*CurrentFCell != BuildingTypeExt::FoundationEndMarker) {
-		CellStruct ActualCell = *MainCoords + *CurrentFCell;
-		for(int i = ShadowHeight; i > 0; --i) {
-			AffectedCells.push_back(ActualCell);
-			--ActualCell.X;
-			--ActualCell.Y;
-		}
-		++CurrentFCell;
-	}
-
-	std::sort(AffectedCells.begin(), AffectedCells.end(), [](const CellStruct &lhs, const CellStruct &rhs) -> bool {
-		return lhs.X > rhs.X || lhs.X == rhs.X && lhs.Y > rhs.Y;
-	});
-	auto it = std::unique(AffectedCells.begin(), AffectedCells.end());
-	AffectedCells.resize(it - AffectedCells.begin());
+	auto const& AffectedCells = BuildingExt::GetCoveredCells(
+		pThis, *MainCoords, ShadowHeight);
 
 	auto &Map = MapClass::Instance;
 
-	std::for_each(AffectedCells.begin(), AffectedCells.end(), [pThis, Map](CellStruct coords) {
-		if(auto Cell = Map->TryGetCellAt(coords)) {
-			++Cell->OccupyHeightsCoveringMe;
+	for(auto const& cell : AffectedCells) {
+		if(auto pCell = Map->TryGetCellAt(cell)) {
+			++pCell->OccupyHeightsCoveringMe;
 		}
-	});
+	}
 
 	return 0x568697;
 }
@@ -143,40 +116,18 @@ DEFINE_HOOK(568997, MapClass_RemoveContentAt_Foundation_OccupyHeight, 5)
 	GET(int, ShadowHeight, EBP);
 	GET_STACK(CellStruct *, MainCoords, 0x8B4);
 
-	CellStruct * Foundation = pThis->GetFoundationData(false);
-	DWORD Len = BuildingExt::FoundationLength(Foundation);
-
-	std::vector<CellStruct> AffectedCells;
-
-	AffectedCells.reserve(Len * ShadowHeight);
-
-	CellStruct * CurrentFCell = Foundation;
-
-	while(*CurrentFCell != BuildingTypeExt::FoundationEndMarker) {
-		CellStruct ActualCell = *MainCoords + *CurrentFCell;
-		for(int i = ShadowHeight; i > 0; --i) {
-			AffectedCells.push_back(ActualCell);
-			--ActualCell.X;
-			--ActualCell.Y;
-		}
-		++CurrentFCell;
-	}
-
-	std::sort(AffectedCells.begin(), AffectedCells.end(), [](const CellStruct &lhs, const CellStruct &rhs) -> bool {
-		return lhs.X > rhs.X || lhs.X == rhs.X && lhs.Y > rhs.Y;
-	});
-	auto it = std::unique(AffectedCells.begin(), AffectedCells.end());
-	AffectedCells.resize(it - AffectedCells.begin());
+	auto const& AffectedCells = BuildingExt::GetCoveredCells(
+		pThis, *MainCoords, ShadowHeight);
 
 	auto &Map = MapClass::Instance;
 
-	std::for_each(AffectedCells.begin(), AffectedCells.end(), [pThis, Map](CellStruct coords) {
-		if(auto Cell = Map->TryGetCellAt(coords)) {
-			if(Cell->OccupyHeightsCoveringMe > 0) {
-				--Cell->OccupyHeightsCoveringMe;
+	for(auto const& cell : AffectedCells) {
+		if(auto const pCell = Map->TryGetCellAt(cell)) {
+			if(pCell->OccupyHeightsCoveringMe > 0) {
+				--pCell->OccupyHeightsCoveringMe;
 			}
 		}
-	});
+	}
 
 	return 0x568ADC;
 }
