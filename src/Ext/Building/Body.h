@@ -180,7 +180,7 @@ public:
 
 	static std::vector<CellStruct> TempCoveredCellsData;
 
-	static DWORD FoundationLength(CellStruct * StartCell);
+	static DWORD FoundationLength(CellStruct const* pFoundation);
 
 	static const std::vector<CellStruct>& GetCoveredCells(
 		BuildingClass* pThis, CellStruct mainCoords, int shadowHeight);

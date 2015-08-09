@@ -958,13 +958,13 @@ SuperClass* BuildingExt::ExtData::GetFirstSuperWeapon() const {
 	return this->OwnerObject()->Owner->Supers.GetItemOrDefault(idxSW);
 }
 
-DWORD BuildingExt::FoundationLength(CellStruct * StartCell) {
+DWORD BuildingExt::FoundationLength(CellStruct const* pFoundation) {
 	DWORD Len = 0;
 	bool End = false;
 	do {
 		++Len;
-		End = StartCell->X == 32767 && StartCell->Y == 32767;
-		++StartCell;
+		End = pFoundation->X == 32767 && pFoundation->Y == 32767;
+		++pFoundation;
 	} while(!End);
 	return Len;
 }

@@ -76,7 +76,7 @@ DEFINE_HOOK(568411, MapClass_AddContentAt_Foundation_P1, 0)
 {
 	GET(BuildingClass *, pThis, EDI);
 
-	R->EBP<CellStruct *>(pThis->GetFoundationData(false));
+	R->EBP(pThis->GetFoundationData(false));
 
 	return 0x568432;
 }
@@ -105,7 +105,7 @@ DEFINE_HOOK(568841, MapClass_RemoveContentAt_Foundation_P1, 0)
 {
 	GET(BuildingClass *, pThis, EDI);
 
-	R->EBP<CellStruct *>(pThis->GetFoundationData(false));
+	R->EBP(pThis->GetFoundationData(false));
 
 	return 0x568862;
 }
@@ -135,7 +135,7 @@ DEFINE_HOOK(568997, MapClass_RemoveContentAt_Foundation_OccupyHeight, 5)
 
 DEFINE_HOOK(4A8C77, MapClass_ProcessFoundation1_UnlimitBuffer, 5)
 {
-	GET_STACK(CellStruct *, Foundation, 0x18);
+	GET_STACK(CellStruct const*, Foundation, 0x18);
 	GET(DisplayClass *, Display, EBX);
 
 	DWORD Len = BuildingExt::FoundationLength(Foundation);
@@ -154,7 +154,7 @@ DEFINE_HOOK(4A8C77, MapClass_ProcessFoundation1_UnlimitBuffer, 5)
 
 DEFINE_HOOK(4A8DD7, MapClass_ProcessFoundation2_UnlimitBuffer, 5)
 {
-	GET_STACK(CellStruct *, Foundation, 0x18);
+	GET_STACK(CellStruct const*, Foundation, 0x18);
 	GET(DisplayClass *, Display, EBX);
 
 	DWORD Len = BuildingExt::FoundationLength(Foundation);
