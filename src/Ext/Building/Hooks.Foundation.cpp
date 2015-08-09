@@ -144,8 +144,9 @@ DEFINE_HOOK(4A8C77, MapClass_ProcessFoundation1_UnlimitBuffer, 5)
 
 	Display->CurrentFoundation_Data = BuildingExt::TempFoundationData1.data();
 
-	CellStruct bounds;
-	Display->FoundationBoundsSize(&bounds, BuildingExt::TempFoundationData1.data());
+	auto const bounds = Display->FoundationBoundsSize(
+		BuildingExt::TempFoundationData1.data());
+
 	R->Stack<CellStruct>(0x18, bounds);
 	R->EAX<CellStruct *>(R->lea_Stack<CellStruct *>(0x18));
 
@@ -163,8 +164,9 @@ DEFINE_HOOK(4A8DD7, MapClass_ProcessFoundation2_UnlimitBuffer, 5)
 
 	Display->CurrentFoundationCopy_Data = BuildingExt::TempFoundationData2.data();
 
-	CellStruct bounds;
-	Display->FoundationBoundsSize(&bounds, BuildingExt::TempFoundationData2.data());
+	auto const bounds = Display->FoundationBoundsSize(
+		BuildingExt::TempFoundationData2.data());
+
 	R->Stack<CellStruct>(0x18, bounds);
 	R->EAX<CellStruct *>(R->lea_Stack<CellStruct *>(0x18));
 
