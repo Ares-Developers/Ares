@@ -218,30 +218,35 @@ DEFINE_HOOK(69B670, HTExt_PickRandom_AI, 0)
 	return 0x69B684;
 }
 
-DEFINE_HOOK(4FE782, HTExt_PickPowerplant, 6)
+DEFINE_HOOK(4FE782, HouseClass_AI_BaseConstructionUpdate_PickPowerplant, 6)
 {
-	GET(HouseClass *, H, EBP);
-	HouseTypeExt::ExtData *pData = HouseTypeExt::ExtMap.Find(H->Type);
+	GET(HouseClass* const, pThis, EBP);
+	auto const pExt = HouseTypeExt::ExtMap.Find(pThis->Type);
 
 	std::vector<BuildingTypeClass *> Eligible;
 
-	auto it = pData->GetPowerplants();
-	for(size_t i = 0; i < it.size(); ++i) {
-		BuildingTypeClass *pPower = it.at(i);
-		if(HouseExt::PrereqValidate(H, pPower, 0, 1) == 1) {
+	auto const it = pExt->GetPowerplants();
+	for(auto const& pPower : it) {
+		if(HouseExt::PrereqValidate(pThis, pPower, false, true) == 1) {
 			Eligible.push_back(pPower);
 		}
 	}
 
-	BuildingTypeClass *pResult = nullptr;
+	BuildingTypeClass* pResult = nullptr;
 	if(Eligible.size() > 0) {
-		int idx = ScenarioClass::Instance->Random.RandomRanged(0, Eligible.size() - 1);
-		pResult = Eligible.at(idx);
-	} else if(it.size()) {
+		auto& Random = ScenarioClass::Instance->Random;
+		auto const idx = Random.RandomRanged(0, Eligible.size() - 1);
+		pResult = Eligible[idx];
+	} else if(!it.empty()) {
 		pResult = it.at(0);
-		Debug::Log("Country [%s] wanted to build a powerplant but does not meet prerequisites for any possible plant. Going to give it the first one on the list (%s)\n", H->Type->ID, pResult->ID);
+		Debug::Log(
+			"Country [%s] wanted to build a powerplant but does not meet "
+			"prerequisites for any possible plant. Going to give it the first "
+			"one on the list (%s)\n", pThis->Type->ID, pResult->ID);
 	} else {
-		Debug::Log("Country [%s] did not find any powerplants it could construct! The AI's probably going to crash now...\n", H->Type->ID);
+		Debug::Log(
+			"Country [%s] did not find any powerplants it could construct! "
+			"The AI's probably going to crash now...\n", pThis->Type->ID);
 	}
 
 	R->EDI(pResult);
