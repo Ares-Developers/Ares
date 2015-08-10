@@ -5,7 +5,6 @@
 #include <Helpers\Enumerators.h>
 
 #include <algorithm>
-#include <set>
 
 // create enumerator
 DEFINE_HOOK(4895B8, DamageArea_CellSpread1, 6) {
@@ -53,7 +52,6 @@ DEFINE_HOOK(4899BE, DamageArea_CellSpread3, 8)
 	return 0x4899DA;
 }
 
-
 // #895990: limit the number of times a warhead with
 // CellSpread will hit the same object for each hit
 DEFINE_HOOK(4899DA, DamageArea_Damage_MaxAffect, 7)
@@ -73,34 +71,29 @@ DEFINE_HOOK(4899DA, DamageArea_Damage_MaxAffect, 7)
 		return 0;
 	}
 
-	auto const upper_limit = static_cast<unsigned int>(groups.Count);
+	ObjectClass* bufferHandled[1000];
+	DynamicVectorClass<ObjectClass*> handled(_countof(bufferHandled), bufferHandled);
+	handled.Reserve(groups.Count);
 
-	std::vector<ObjectClass*> handled;
-	handled.reserve(upper_limit);
-
-	std::vector<DamageGroup**> target;
-	target.reserve(upper_limit);
+	DamageGroup** bufferTarget[1000];
+	DynamicVectorClass<DamageGroup**> target(_countof(bufferTarget), bufferTarget);
+	target.Reserve(groups.Count);
 
 	for(auto& group : groups) {
-		// could have been cleared by previous iteration
-		if(!group) {
-			continue;
-		}
-
-		// has not been handled already
-		if(std::find(handled.begin(), handled.end(), group->Target) == handled.end()) {
-			handled.push_back(group->Target);
-			target.clear();
+		// group could have been cleared by previous iteration.
+		// only handle if has not been handled already.
+		if(group && handled.AddUnique(group->Target)) {
+			target.Count = 0;
 
 			// collect all slots containing damage groups for this target
 			std::for_each(&group, groups.end(), [group, &target](DamageGroup* &item) {
 				if(item && item->Target == group->Target) {
-					target.push_back(&item);
+					target.AddItem(&item);
 				}
 			});
 
 			// if more than allowed, sort them and remove the ones further away
-			if(target.size() > static_cast<size_t>(MaxAffect)) {
+			if(target.Count > MaxAffect) {
 				std::sort(target.begin(), target.end(), [](DamageGroup** a, DamageGroup** b) {
 					return (*a)->Distance < (*b)->Distance;
 				});
