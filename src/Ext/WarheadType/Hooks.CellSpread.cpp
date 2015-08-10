@@ -73,13 +73,18 @@ DEFINE_HOOK(4899DA, DamageArea_Damage_MaxAffect, 7)
 		return 0;
 	}
 
-	std::set<ObjectClass*> handled;
+	std::vector<ObjectClass*> handled;
 
 	std::vector<DamageGroup**> target;
 	for(auto& group : groups) {
 		// could have been cleared by previous iteration
-		if(group && !handled.count(group->Target)) {
-			handled.insert(group->Target);
+		if(!group) {
+			continue;
+		}
+
+		// has not been handled already
+		if(std::find(handled.begin(), handled.end(), group->Target) == handled.end()) {
+			handled.push_back(group->Target);
 			target.clear();
 
 			// collect all slots containing damage groups for this target
