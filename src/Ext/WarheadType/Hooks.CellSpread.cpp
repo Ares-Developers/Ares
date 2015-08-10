@@ -114,14 +114,12 @@ DEFINE_HOOK(4899DA, DamageArea_Damage_MaxAffect, 7)
 	}
 
 	// move all the empty ones to the back, then remove them
-	auto end = std::stable_partition(groups.begin(), groups.end(), [](DamageGroup* pGroup) {
-		return pGroup != nullptr;
+	auto const end = std::remove_if(groups.begin(), groups.end(), [](DamageGroup* pGroup) {
+		return pGroup == nullptr;
 	});
 
-	auto validCount = std::distance(groups.begin(), end);
-	for(int i = groups.Count - 1; i >= validCount; --i) {
-		groups.RemoveItem(i);
-	}
+	auto const validCount = std::distance(groups.begin(), end);
+	groups.Count = validCount;
 
 	return 0;
 }
