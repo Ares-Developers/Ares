@@ -73,9 +73,14 @@ DEFINE_HOOK(4899DA, DamageArea_Damage_MaxAffect, 7)
 		return 0;
 	}
 
+	auto const upper_limit = static_cast<unsigned int>(groups.Count);
+
 	std::vector<ObjectClass*> handled;
+	handled.reserve(upper_limit);
 
 	std::vector<DamageGroup**> target;
+	target.reserve(upper_limit);
+
 	for(auto& group : groups) {
 		// could have been cleared by previous iteration
 		if(!group) {
