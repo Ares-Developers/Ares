@@ -2,8 +2,6 @@
 
 #include "../Misc/Savegame.h"
 
-#include <vector>
-
 class TechnoClass;
 class BuildingClass;
 
