@@ -2,6 +2,8 @@
 
 #include "../Rules/Body.h"
 
+#include "../../Utilities/Helpers.Alex.h"
+
 #include <Helpers\Enumerators.h>
 
 #include <algorithm>
@@ -94,7 +96,10 @@ DEFINE_HOOK(4899DA, DamageArea_Damage_MaxAffect, 7)
 
 			// if more than allowed, sort them and remove the ones further away
 			if(target.Count > MaxAffect) {
-				std::sort(target.begin(), target.end(), [](DamageGroup** a, DamageGroup** b) {
+				Helpers::Alex::insertionsort(
+					target.begin(), target.begin() + MaxAffect, target.end(),
+					[](DamageGroup** a, DamageGroup** b)
+				{
 					return (*a)->Distance < (*b)->Distance;
 				});
 
