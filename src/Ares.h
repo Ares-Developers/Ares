@@ -190,9 +190,9 @@ public:
 		static int CampaignListSize;
 		static CampaignData Campaigns[4];
 
-		static const int maxColorCount = 16;
+		static const int MaxColorCount = 16;
 		static int ColorCount;
-		static ColorData Colors[maxColorCount+1];
+		static ColorData Colors[MaxColorCount + 1];
 
 		static int uiColorText;
 		static int uiColorTextButton;

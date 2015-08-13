@@ -29,7 +29,7 @@ int Ares::UISettings::CampaignListSize = -1;
 Ares::UISettings::CampaignData Ares::UISettings::Campaigns[4];
 
 int Ares::UISettings::ColorCount = 8;
-Ares::UISettings::ColorData Ares::UISettings::Colors[maxColorCount+1];
+Ares::UISettings::ColorData Ares::UISettings::Colors[MaxColorCount + 1];
 
 int Ares::UISettings::uiColorText;
 int Ares::UISettings::uiColorTextButton = 0xFFFF; // #1644: needed for CD prompt
@@ -173,7 +173,7 @@ void Ares::UISettings::Load(CCINIClass *pINI) {
 	};
 
 	int* defColors = reinterpret_cast<int*>(0x8316A8);
-	ColorCount = std::max(std::min(pINI->ReadInteger(section2, "Count", ColorCount), maxColorCount), 8);
+	ColorCount = std::max(std::min(pINI->ReadInteger(section2, "Count", ColorCount), MaxColorCount), 8);
 
 	// original color schemes
 	ReadColor("Observer", &Colors[0], defColors[8], "STT:PlayerColorObserver", "LightGrey");
