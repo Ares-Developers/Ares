@@ -138,35 +138,33 @@ DEFINE_HOOK(4E4556, hWnd_GetSlotColorIndex, 7) {
 }
 
 DEFINE_HOOK(4E4580, hWnd_IsAvailableColor, 5) {
-	GET(int const, slot, ECX);
+	GET(int const, idxColor, ECX);
 
-	R->AL(Ares::UISettings::Colors[slot + 1].selectedIndex == -1);
+	R->AL(Ares::UISettings::Colors[idxColor + 1].selectedIndex == -1);
 	return 0x4E4592;
 }
 
-DEFINE_HOOK(4E4C9D, hWnd_WhateverColors_A, 7) {
-	GET(int const, curSel, EAX);
+DEFINE_HOOK(4E4C9D, hWnd_UpdatePlayerColors_A, 7) {
+	GET(int const, idxPlayer, EAX);
 
-	auto idx = -1;
+	// check players and reset used color for this player
 	for(auto i = 0; i < Ares::UISettings::ColorCount; ++i) {
-		if(Ares::UISettings::Colors[i + 1].selectedIndex == curSel) {
-			idx = i;
+		auto& Color = Ares::UISettings::Colors[i + 1];
+		if(Color.selectedIndex == idxPlayer) {
+			Color.selectedIndex = -1;
 			break;
 		}
-	}
-  
-	if(idx != -1) {
-		Ares::UISettings::Colors[idx + 1].selectedIndex = -1;
 	}
 
 	return 0x4E4CC9;
 }
 
-DEFINE_HOOK(4E4D67, hWnd_WhateverColors_B, 7) {
-	GET(int const, idx, EAX);
-	GET(int const, value, ESI);
+DEFINE_HOOK(4E4D67, hWnd_UpdatePlayerColors_B, 7) {
+	GET(int const, idxColor, EAX);
+	GET(int const, idxPlayer, ESI);
 
-	Ares::UISettings::Colors[idx + 1].selectedIndex = value;
+	// reserve the color for a player. skip the observer
+	Ares::UISettings::Colors[idxColor + 1].selectedIndex = idxPlayer;
 
 	return 0x4E4D6E;
 }
