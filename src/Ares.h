@@ -153,10 +153,9 @@ public:
 		};
 
 		struct ColorData {
-			wchar_t* id;
 			int colorRGB;
 			int selectedIndex;
-			char colorSchemeIndex;
+			int colorSchemeIndex;
 			char colorScheme[0x20];
 			const wchar_t* sttToolTipSublineText;
 		};
