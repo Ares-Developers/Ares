@@ -95,39 +95,38 @@ DEFINE_HOOK(4E46BB, hWnd_PopulateWithColors, 7) {
 }
 
 // update the color in the combo drop-down lists
-DEFINE_HOOK(4E4A41, hWnd_DrawColors_A, 7) {
-	GET(int const, curSel, EAX);
+DEFINE_HOOK(4E4A41, hWnd_SetPlayerColor_A, 7) {
+	GET(int const, idxPlayer, EAX);
 
-	auto idx = -1;
-	for(auto i = 0; i < Ares::UISettings::ColorCount; ++i) {
-		if(Ares::UISettings::Colors[i + 1].selectedIndex == curSel) {
-			idx = i;
+	auto const count = Ares::UISettings::ColorCount;
+	for(auto i = 0; i < count; ++i) {
+		auto& Color = Ares::UISettings::Colors[i + 1];
+		if(Color.selectedIndex == idxPlayer) {
+			Color.selectedIndex = -1;
 			break;
 		}
-	}
-
-	if(idx != -1) {
-		Ares::UISettings::Colors[idx + 1].selectedIndex = -1;
 	}
 
 	return 0x4E4A6D;
 }
 
-DEFINE_HOOK(4E4B47, hWnd_DrawColors_B, 7) {
-	GET(int, idx, EBP);
-	GET(int, value, ESI);
+DEFINE_HOOK(4E4B47, hWnd_SetPlayerColor_B, 7) {
+	GET(int const, idxColor, EBP);
+	GET(int const, idxPlayer, ESI);
 
-	Ares::UISettings::Colors[idx + 1].selectedIndex = value;
+	Ares::UISettings::Colors[idxColor + 1].selectedIndex = idxPlayer;
 
 	return 0x4E4B4E;
 }
 
 DEFINE_HOOK(4E4556, hWnd_GetSlotColorIndex, 7) {
-	GET(int const, slot, ECX);
+	GET(int const, idxPlayer, ECX);
 
 	auto ret = -1;
-	for(auto i = 0; i < Ares::UISettings::ColorCount; ++i) {
-		if(Ares::UISettings::Colors[i + 1].selectedIndex == slot) {
+	auto const count = Ares::UISettings::ColorCount;
+	for(auto i = 0; i < count; ++i) {
+		auto const& Color = Ares::UISettings::Colors[i + 1];
+		if(Color.selectedIndex == idxPlayer) {
 			ret = i + 1;
 			break;
 		}
