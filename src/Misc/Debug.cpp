@@ -205,22 +205,23 @@ void Debug::FreeMouse() {
 		MouseClass::Instance->UpdateCursor(MouseCursorType::Default, false);
 		WWMouseClass::Instance->ReleaseMouse();
 
-		ShowCursor(1);
+		ShowCursor(TRUE);
 
-#define BLACK_SURFACE(s) \
-		if(DSurface::s) { \
-			DSurface::s->Fill(0); \
-		}
+		auto const BlackSurface = [](DSurface* const pSurface) {
+			if(pSurface) {
+				pSurface->Fill(0);
+			}
+		};
 
-		BLACK_SURFACE(Alternate);
-		BLACK_SURFACE(Composite);
-		BLACK_SURFACE(Hidden);
-		BLACK_SURFACE(Hidden_2);
-		BLACK_SURFACE(Primary);
-		BLACK_SURFACE(Sidebar);
-		BLACK_SURFACE(Tile);
+		BlackSurface(DSurface::Alternate);
+		BlackSurface(DSurface::Composite);
+		BlackSurface(DSurface::Hidden);
+		BlackSurface(DSurface::Hidden_2);
+		BlackSurface(DSurface::Primary);
+		BlackSurface(DSurface::Sidebar);
+		BlackSurface(DSurface::Tile);
 
-		ShowCursor(1);
+		ShowCursor(TRUE);
 
 //		DirectDrawWrap::DisposeOfStuff();
 //		DirectDrawWrap::lpDD->SetCooperativeLevel(Game::hWnd, eDDCoopLevel::DDSCL_NORMAL);
