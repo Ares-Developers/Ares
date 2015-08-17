@@ -50,15 +50,15 @@ DEFINE_HOOK(69A310, SessionClass_GetPlayerColorScheme, 7) {
 
 // return the tool tip describing this color
 DEFINE_HOOK(4E42A0, GameSetup_GetColorTooltip, 5) {
-	GET(int const, idx, ECX);
+	GET(int const, idxColor, ECX);
 
 	const wchar_t* ret = nullptr;
-	if(idx == -2) {
+	if(idxColor == -2) {
 		// random
 		ret = StringTable::LoadString("STT:PlayerColorRandom");
-	} else if(idx <= Ares::UISettings::ColorCount) {
+	} else if(idxColor <= Ares::UISettings::ColorCount) {
 		// houses and observer
-		auto const index = (idx + 1) % (Ares::UISettings::ColorCount + 1);
+		auto const index = (idxColor + 1) % (Ares::UISettings::ColorCount + 1);
 		ret = Ares::UISettings::Colors[index].sttToolTipSublineText;
 	}
 
@@ -69,17 +69,17 @@ DEFINE_HOOK(4E42A0, GameSetup_GetColorTooltip, 5) {
 // handle adding colors to combo box
 DEFINE_HOOK(4E46BB, hWnd_PopulateWithColors, 7) {
 	GET(HWND const, hWnd, ESI);
-	GET_STACK(int const, idxSlot, 0x14);
+	GET_STACK(int const, idxPlayer, 0x14);
 
 	// add all colors
 	auto curSel = 0;
 	for(auto i = 0; i < Ares::UISettings::ColorCount; ++i) {
-		auto const& Slot = Ares::UISettings::Colors[i + 1];
-		auto const isCurrent = Slot.selectedIndex == idxSlot;
+		auto const& Color = Ares::UISettings::Colors[i + 1];
+		auto const isCurrent = Color.selectedIndex == idxPlayer;
 
-		if(isCurrent || Slot.selectedIndex == -1) {
+		if(isCurrent || Color.selectedIndex == -1) {
 			int idx = SendMessageA(hWnd, WW_CB_ADDITEM, 0, 0x822B78);
-			SendMessageA(hWnd, WW_SETCOLOR, idx, Slot.colorRGB);
+			SendMessageA(hWnd, WW_SETCOLOR, idx, Color.colorRGB);
 			SendMessageA(hWnd, CB_SETITEMDATA, idx, i);
 
 			if(isCurrent) {
