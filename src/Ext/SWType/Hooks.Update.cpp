@@ -76,7 +76,7 @@ std::vector<SWStatus> GetSuperWeaponStatuses(HouseClass* pHouse) {
 		auto hasPower = pHouse->HasFullPower();
 
 		for(auto pSuper : pHouse->Supers) {
-			auto index = pSuper->Type->GetArrayIndex();
+			auto index = pSuper->Type->ArrayIndex;
 			auto& status = Statuses[index];
 
 			// turn off super weapons that are disallowed.
@@ -109,7 +109,7 @@ DEFINE_HOOK(50AF10, HouseClass_UpdateSuperWeaponsOwned, 5)
 	for(auto pSuper : pThis->Supers) {
 		if(pSuper->Granted) {
 			auto pType = pSuper->Type;
-			auto index = pType->GetArrayIndex();
+			auto index = pType->ArrayIndex;
 			auto& status = Statuses[index];
 
 			// is this a super weapon to be updated?
@@ -161,7 +161,7 @@ DEFINE_HOOK(50B1D0, HouseClass_UpdateSuperWeaponsUnavailable, 6)
 		// update all super weapons not repeatedly available
 		for(auto pSuper : pThis->Supers) {
 			if(!pSuper->Granted || pSuper->OneTime) {
-				auto index = pSuper->Type->GetArrayIndex();
+				auto index = pSuper->Type->ArrayIndex;
 				auto& status = Statuses[index];
 
 				if(status.Available) {
