@@ -127,19 +127,19 @@ bool Prereqs::HouseOwnsGeneric(HouseClass const* const pHouse, int const Index)
 
 bool Prereqs::HouseOwnsSpecific(HouseClass const* const pHouse, int const Index)
 {
-	auto BType = BuildingTypeClass::Array->GetItem(Index);
-	const char* powerup = BType->PowersUpBuilding;
-	if(*powerup) {
-		auto BCore = BuildingTypeClass::Find(powerup);
-		if(!BCore || pHouse->OwnedBuildingTypes1.GetItemCount(BCore->GetArrayIndex()) < 1) {
+	auto const pType = BuildingTypeClass::Array->Items[Index];
+	auto const pPowerup = pType->PowersUpBuilding;
+	if(*pPowerup) {
+		auto const pCore = BuildingTypeClass::Find(pPowerup);
+		if(!pCore || pHouse->OwnedBuildingTypes1.GetItemCount(pCore->ArrayIndex) < 1) {
 			return false;
 		}
-		for(const auto& Bld : pHouse->Buildings) {
-			if(Bld->Type != BCore) {
+		for(auto const& pBld : pHouse->Buildings) {
+			if(pBld->Type != pCore) {
 				continue;
 			}
-			for(const auto& Upgrade : Bld->Upgrades) {
-				if(Upgrade == BType) {
+			for(const auto& pUpgrade : pBld->Upgrades) {
+				if(pUpgrade == pType) {
 					return true;
 				}
 			}
@@ -180,8 +180,8 @@ bool Prereqs::HouseOwnsAny(HouseClass const* const pHouse, const DynamicVectorCl
 
 bool Prereqs::ListContainsSpecific(const BTypeIter &List, int const Index)
 {
-	auto Target = BuildingTypeClass::Array->GetItem(Index);
-	return List.contains(Target);
+	auto const pItem = BuildingTypeClass::Array->Items[Index];
+	return List.contains(pItem);
 }
 
 bool Prereqs::ListContainsGeneric(const BTypeIter &List, int const Index)
