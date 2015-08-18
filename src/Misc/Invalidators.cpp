@@ -178,19 +178,18 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 		}
 	}
 
-	{ // new scope to keep typedef tidy
-		typedef std::pair<const char *, int> LimitedClass;
+	{ // new scope to keep it tidy
+		std::pair<const char*, int> LimitedClasses[] = {
+			{ "BuildingTypes", BuildingTypeClass::Array->Count },
+			{ "VehicleTypes", UnitTypeClass::Array->Count },
+			{ "InfantryTypes", InfantryTypeClass::Array->Count },
+			{ "AircraftTypes", AircraftTypeClass::Array->Count }
+		};
 
-		std::vector<LimitedClass> LimitedClasses;
-		LimitedClasses.push_back(LimitedClass("BuildingTypes", BuildingTypeClass::Array->Count));
-		LimitedClasses.push_back(LimitedClass("VehicleTypes", UnitTypeClass::Array->Count));
-		LimitedClasses.push_back(LimitedClass("InfantryTypes", InfantryTypeClass::Array->Count));
-		LimitedClasses.push_back(LimitedClass("AircraftTypes", AircraftTypeClass::Array->Count));
-
-		for(auto it = LimitedClasses.begin(); it != LimitedClasses.end(); ++it) {
-			if(it->second > 512) {
+		for(auto const& limited : LimitedClasses) {
+			if(limited.second > 512) {
 				Debug::Log(Debug::Severity::Warning, "The [%s] list contains more than 512 entries. "
-					"This might result in unexpected behaviour and crashes.\n", it->first);
+					"This might result in unexpected behaviour and crashes.\n", limited.first);
 			}
 		}
 	}
