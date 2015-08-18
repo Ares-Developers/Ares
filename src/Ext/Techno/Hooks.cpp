@@ -1031,7 +1031,7 @@ DEFINE_HOOK(6F6AC9, TechnoClass_Remove, 6) {
 		bool recalculate = false;
 		for (auto i = TechnoExt->AttachedEffects.size(); i > 0; --i) {
 			//Debug::Log("[AttachEffect] Removing %d. item from %s\n", i - 1, pID);
-			auto &Item = TechnoExt->AttachedEffects.at(i - 1);
+			auto& Item = TechnoExt->AttachedEffects[i - 1];
 			if (Item->Type->DiscardOnEntry) {
 				TechnoExt->AttachedEffects.erase(TechnoExt->AttachedEffects.begin() + i - 1);
 				recalculate = true;

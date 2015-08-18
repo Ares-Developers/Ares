@@ -43,18 +43,15 @@ bool SW_DropPod::Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPl
 	CellStruct cell = Coords;
 
 	// collect the options
-	auto pTypes = &pData->DropPod_Types;
+	auto const& Types = !pData->DropPod_Types.empty()
+		? pData->DropPod_Types
+		: RulesExt::Global()->DropPodTypes;
 	int cMin = pData->DropPod_Minimum.Get(RulesExt::Global()->DropPodMinimum);
 	int cMax = pData->DropPod_Maximum.Get(RulesExt::Global()->DropPodMaximum);
 	double veterancy = std::min(pData->DropPod_Veterancy.Get(), RulesClass::Instance->VeteranCap);
 
-	if(pTypes->empty()) {
-		// use globals
-		pTypes = &RulesExt::Global()->DropPodTypes;
-	}
-
 	// quick way out
-	if(pTypes->empty()) {
+	if(Types.empty()) {
 		Debug::Log(Debug::Severity::Error, "DropPod super weapon \"%s\" could not be launched. House \"%ls\" "
 			"does not have any types to drop set.\n", pSW->ID, pOwner->UIName);
 		return false;
@@ -65,8 +62,8 @@ bool SW_DropPod::Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPl
 	for(int i = 3 * count; i; --i) {
 
 		// get a random type from the list and create an instance
-		int index = ScenarioClass::Instance->Random.RandomRanged(0, pTypes->size() - 1);
-		TechnoTypeClass* pType = pTypes->at(index);
+		int index = ScenarioClass::Instance->Random.RandomRanged(0, Types.size() - 1);
+		TechnoTypeClass* pType = Types[index];
 
 		if(pType->WhatAmI() == BuildingTypeClass::AbsID) {
 			Debug::Log(Debug::Severity::Error, "DropPod super weapon \"%s\" contains building types. Aborting.\n", pSW->ID);

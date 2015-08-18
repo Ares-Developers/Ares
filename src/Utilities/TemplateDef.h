@@ -562,7 +562,7 @@ bool ValueableVector<T>::Load(AresStreamReader &Stm, bool RegisterForChange) {
 			this->push_back(std::move(buffer));
 
 			if(RegisterForChange) {
-				Swizzle swizzle(this->at(i));
+				Swizzle swizzle(this->back());
 			}
 		}
 		return Savegame::ReadAresStream(Stm, this->defined);
@@ -574,8 +574,8 @@ template <typename T>
 bool ValueableVector<T>::Save(AresStreamWriter &Stm) const {
 	auto size = this->size();
 	if(Savegame::WriteAresStream(Stm, size)) {
-		for(size_t i = 0; i < size; ++i) {
-			if(!Savegame::WriteAresStream(Stm, this->at(i))) {
+		for(auto const& item : *this) {
+			if(!Savegame::WriteAresStream(Stm, item)) {
 				return false;
 			}
 		}

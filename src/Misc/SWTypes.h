@@ -144,7 +144,7 @@ public:
 	static void Init();
 
 	static NewSWType* GetNthItem(SuperWeaponType i) {
-		return Array.at(static_cast<size_t>(i) - SWTypeExt::FirstCustomType).get();
+		return Array[static_cast<size_t>(i) - SWTypeExt::FirstCustomType].get();
 	}
 
 	static SuperWeaponType FindIndex(const char* pType);

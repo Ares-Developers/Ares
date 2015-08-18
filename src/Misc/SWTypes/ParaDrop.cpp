@@ -247,7 +247,7 @@ bool SW_ParaDrop::SendParadrop(SuperClass* pThis, CellClass* pCell)
 					}
 
 					// get the plane at specified index
-					if(ParadropPlane* pPlane = planes->at(index)) {
+					if(auto const pPlane = (*planes)[index]) {
 
 						// get the contents, if not already set
 						if(!ParaDropTypes || !ParaDropNum) {
