@@ -5,7 +5,8 @@
 class SW_Firewall : public NewSWType {
 public:
 	SW_Firewall() : NewSWType() {
-		SW_Firewall::FirewallType = static_cast<SuperWeaponType>(FIRST_SW_TYPE + this->GetTypeIndex());
+		auto const index = SWTypeExt::FirstCustomType + this->GetTypeIndex();
+		SW_Firewall::FirewallType = static_cast<SuperWeaponType>(index);
 	};
 
 	virtual ~SW_Firewall() override {

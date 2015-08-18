@@ -14,9 +14,6 @@
 #include "../../Misc/Debug.h"
 #endif
 
-// the index of the first custom sw type
-#define FIRST_SW_TYPE 12
-
 #include "../_Container.hpp"
 
 #include <array>
@@ -74,6 +71,9 @@ public:
 	using base_type = SuperWeaponTypeClass;
 
 	static const std::array<const AITargetingModeInfo, 15> AITargetingModes;
+
+	// the index of the first custom sw type
+	static const int FirstCustomType = 12;
 
 	class ExtData final : public Extension<SuperWeaponTypeClass>
 	{

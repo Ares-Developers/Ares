@@ -554,7 +554,8 @@ bool SWTypeExt::Launch(SuperClass* pThis, NewSWType* pSW, const CellStruct &Coor
 }
 
 bool SWTypeExt::ExtData::IsOriginalType() const {
-	return this->OwnerObject()->Type < static_cast<SuperWeaponType>(FIRST_SW_TYPE);
+	auto const first = SWTypeExt::FirstCustomType;
+	return this->OwnerObject()->Type < static_cast<SuperWeaponType>(first);
 }
 
 // is this an original type handled by a NewSWType?
@@ -574,7 +575,7 @@ SuperWeaponType SWTypeExt::ExtData::GetNewTypeIndex() const {
 NewSWType* SWTypeExt::ExtData::GetNewSWType() const {
 	auto TypeIdx = this->GetNewTypeIndex();
 
-	if(TypeIdx >= static_cast<SuperWeaponType>(FIRST_SW_TYPE)) {
+	if(TypeIdx >= static_cast<SuperWeaponType>(SWTypeExt::FirstCustomType)) {
 		return NewSWType::GetNthItem(TypeIdx);
 	}
 

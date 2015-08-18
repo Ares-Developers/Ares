@@ -340,7 +340,8 @@ SuperWeaponType NewSWType::FindIndex(const char* pType) {
 	});
 
 	if(it != Array.end()) {
-		return static_cast<SuperWeaponType>(FIRST_SW_TYPE + std::distance(Array.begin(), it));
+		return static_cast<SuperWeaponType>(
+			SWTypeExt::FirstCustomType + std::distance(Array.begin(), it));
 	}
 
 	return SuperWeaponType::Invalid;
@@ -352,7 +353,8 @@ SuperWeaponType NewSWType::FindHandler(SuperWeaponType Type) {
 	});
 
 	if(it != Array.end()) {
-		return static_cast<SuperWeaponType>(FIRST_SW_TYPE + std::distance(Array.begin(), it));
+		return static_cast<SuperWeaponType>(
+			SWTypeExt::FirstCustomType + std::distance(Array.begin(), it));
 	}
 
 	return SuperWeaponType::Invalid;
