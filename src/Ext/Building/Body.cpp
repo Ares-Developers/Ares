@@ -170,25 +170,22 @@ bool BuildingExt::ExtData::RubbleYell(bool beingRepaired) {
 	\date 2013-04-24
 */
 void BuildingExt::ExtData::KickOutOfRubble() {
-	BuildingClass* pBld = this->OwnerObject();
+	auto const pBld = this->OwnerObject();
 
 	// get the number of non-end-marker cells and a pointer to the cell data
-	CellStruct *data = pBld->Type->FoundationData;
-	size_t length = BuildingExt::FoundationLength(data) - 1;
+	auto const data = pBld->Type->FoundationData;
+
+	using Item = std::pair<FootClass*, bool>;
+	DynamicVectorClass<Item> list;
 
 	// iterate over all cells and remove all infantry
-	typedef std::pair<FootClass*, bool> Item;
-	DynamicVectorClass<Item> list;
-	CellStruct location = MapClass::Instance->GetCellAt(pBld->Location)->MapCoords;
-	for(size_t i=0; i<length; ++i) {
-		CellStruct pos = data[i];
-		pos += location;
-
+	auto const location = MapClass::Instance->GetCellAt(pBld->Location)->MapCoords;
+	for(auto i = data; *i != BuildingTypeExt::FoundationEndMarker; ++i) {
 		// remove every techno that resides on this cell
-		CellClass* cell = MapClass::Instance->GetCellAt(pos);
-		for(NextObject obj(cell->GetContent()); obj; ++obj) {
-			if(FootClass* pFoot = generic_cast<FootClass*>(*obj)) {
-				bool selected = pFoot->IsSelected;
+		auto const pCell = MapClass::Instance->GetCellAt(location + *i);
+		for(NextObject obj(pCell->GetContent()); obj; ++obj) {
+			if(auto const pFoot = abstract_cast<FootClass*>(*obj)) {
+				auto const selected = pFoot->IsSelected;
 				if(pFoot->Remove()) {
 					list.AddItem(Item(pFoot, selected));
 				}
@@ -197,8 +194,7 @@ void BuildingExt::ExtData::KickOutOfRubble() {
 	}
 
 	// this part kicks out all units we found in the rubble
-	for(int i=0; i<list.Count; ++i) {
-		Item &item = list[i];
+	for(auto const& item : list) {
 		if(pBld->KickOutUnit(item.first, location) == KickOutResult::Succeeded) {
 			if(item.second) {
 				item.first->Select();
