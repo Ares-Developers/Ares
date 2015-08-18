@@ -13,7 +13,7 @@ public:
 	virtual bool HandlesType(SuperWeaponType type) const override;
 	virtual SuperWeaponFlags Flags() const override;
 
-	typedef ChronoWarpStateMachine TStateMachine;
+	using TStateMachine = ChronoWarpStateMachine;
 
 	void newStateMachine(int Duration, const CellStruct &XY, SuperClass* pSuper, NewSWType* pSWType,
 		DynamicVectorClass<ChronoWarpStateMachine::ChronoWarpContainer> Buildings) {

@@ -21,7 +21,7 @@ public:
 
 	static SuperClass* CurrentPsyDom;
 
-	typedef PsychicDominatorStateMachine TStateMachine;
+	using TStateMachine = PsychicDominatorStateMachine;
 
 	void newStateMachine(CellStruct XY, SuperClass *pSuper) {
 		SWStateMachine::Register(std::make_unique<PsychicDominatorStateMachine>(XY, pSuper, this));

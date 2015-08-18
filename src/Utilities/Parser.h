@@ -8,8 +8,8 @@
 template<typename T, size_t count = 1>
 class Parser {
 public:
-	typedef typename T OutType;
-	typedef typename std::remove_pointer<T>::type BaseType;
+	using OutType = T;
+	using BaseType = std::remove_pointer_t<T>;
 	static const size_t Count = count;
 
 	//! Parses at most Count values and returns the number of items parsed.
@@ -99,8 +99,8 @@ public:
 template<typename T>
 class Parser<T, 1> {
 public:
-	typedef typename T OutType;
-	typedef typename std::remove_pointer<T>::type BaseType;
+	using OutType = T;
+	using BaseType = std::remove_pointer_t<T>;
 	static const size_t Count = 1;
 
 	//! Parses a single element.

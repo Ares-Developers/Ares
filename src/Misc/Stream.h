@@ -7,7 +7,7 @@ struct IStream;
 
 class AresByteStream {
 public:
-	typedef unsigned char data_t;
+	using data_t = unsigned char;
 protected:
 	std::vector<data_t> Data;
 	size_t CurrentOffset;

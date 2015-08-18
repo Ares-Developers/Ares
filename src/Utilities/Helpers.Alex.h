@@ -28,8 +28,7 @@ namespace Helpers {
 		template <typename T>
 		struct deref_less : std::unary_function<const T, bool> {
 			bool operator()(const T lhs, const T rhs) const {
-				typedef std::remove_pointer<T>::type deref_type;
-				return std::less<deref_type>()(*lhs, *rhs);
+				return std::less<>()(*lhs, *rhs);
 			}
 		};
 
@@ -43,8 +42,8 @@ namespace Helpers {
 		*/
 		template<typename T>
 		class DistinctCollector {
-			typedef typename std::conditional<std::is_pointer<T>::value, deref_less<T>, std::less<T>>::type less_type;
-			typedef std::set<T, less_type> set_type;
+			using less_type = std::conditional_t<std::is_pointer<T>::value, deref_less<T>, std::less<T>>;
+			using set_type = std::set<T, less_type>;
 			set_type _set;
 
 		public:

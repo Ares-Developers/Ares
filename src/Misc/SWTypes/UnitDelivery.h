@@ -17,7 +17,7 @@ public:
 	virtual void Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW) override;
 	virtual bool Activate(SuperClass* pThis, const CellStruct &Coords, bool IsPlayer) override;
 
-	typedef UnitDeliveryStateMachine TStateMachine;
+	using TStateMachine = UnitDeliveryStateMachine;
 
 	void newStateMachine(int Duration, CellStruct XY, SuperClass *pSuper) {
 		SWStateMachine::Register(std::make_unique<UnitDeliveryStateMachine>(Duration, XY, pSuper, this));

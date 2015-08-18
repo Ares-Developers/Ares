@@ -19,8 +19,8 @@ class Valueable {
 protected:
 	T    Value;
 public:
-	typedef T value_type;
-	typedef std::remove_pointer_t<T> base_type;
+	using value_type = T;
+	using base_type = std::remove_pointer_t<T>;
 	Valueable(T Default = T()) : Value(Default) {};
 
 	virtual ~Valueable() = default;
@@ -220,8 +220,8 @@ class ValueableVector : public std::vector<T> {
 protected:
 	bool defined;
 public:
-	typedef T value_type;
-	typedef std::remove_pointer_t<T> base_type;
+	using value_type = T;
+	using base_type = std::remove_pointer_t<T>;
 
 	ValueableVector() : std::vector<T>(), defined(false) {};
 
