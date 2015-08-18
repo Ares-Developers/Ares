@@ -68,112 +68,126 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 	*/
 
 	// create an array of crew for faster lookup
-	VectorClass<InfantryTypeClass*> Crews(SideClass::Array->Count, nullptr);
-	for(int i=0; i<SideClass::Array->Count; ++i) {
-		Crews[i] = SideExt::ExtMap.Find(SideClass::Array->Items[i])->GetCrew();
+	DynamicVectorClass<InfantryTypeClass*> Crews(SideClass::Array->Count, nullptr);
+	for(auto const& pSide : *SideClass::Array) {
+		Crews.AddItem(SideExt::ExtMap.Find(pSide)->GetCrew());
 	}
 
-	for(auto Item : *TechnoTypeClass::Array) {
-		bool IsFoot = Item->WhatAmI() != AbstractType::BuildingType;
+	for(auto const& pItem : *TechnoTypeClass::Array) {
+		auto const isFoot = pItem->WhatAmI() != AbstractType::BuildingType;
 
-		if(IsFoot && Item->SpeedType == SpeedType::None) {
-			Debug::Log(Debug::Severity::Error, "[%s]SpeedType is invalid!\n", Item->ID);
+		if(isFoot && pItem->SpeedType == SpeedType::None) {
+			Debug::Log(
+				Debug::Severity::Error, "[%s]SpeedType is invalid!\n",
+				pItem->ID);
 			Debug::RegisterParserError();
 		}
 
-		if(IsFoot && Item->MovementZone == MovementZone::None) {
-			Debug::Log(Debug::Severity::Error, "[%s]MovementZone is invalid!\n", Item->ID);
+		if(isFoot && pItem->MovementZone == MovementZone::None) {
+			Debug::Log(
+				Debug::Severity::Error, "[%s]MovementZone is invalid!\n",
+				pItem->ID);
 			Debug::RegisterParserError();
 		}
 
 		// this should never fire, default is 0 (which is valid), not -1.
 		// see hook at 4753F0. -AlexB
-		//if(Item->Armor == static_cast<Armor>(-1)) { 
-		//	Debug::Log(Debug::Severity::Error, "[%s]Armor is invalid!\n", Item->ID);
+		//if(pItem->Armor == static_cast<Armor>(-1)) { 
+		//	Debug::Log(
+		//		Debug::Severity::Error, "[%s]Armor is invalid!\n", pItem->ID);
 		//	Debug::RegisterParserError();
 		//}
 
-		if(Item->Passengers > 0 && Item->SizeLimit < 1) {
-			Debug::Log(Debug::Severity::Error, "[%s]Passengers=%d and SizeLimit=%d!\n", Item->ID, Item->Passengers, Item->SizeLimit);
+		if(pItem->Passengers > 0 && pItem->SizeLimit < 1) {
+			Debug::Log(
+				Debug::Severity::Error, "[%s]Passengers=%d and SizeLimit=%d!\n",
+				pItem->ID, pItem->Passengers, pItem->SizeLimit);
 			Debug::RegisterParserError();
 		}
 
-		auto pData = TechnoTypeExt::ExtMap.Find(Item);
-		if(Item->PoweredUnit && pData->PoweredBy.size()) {
-			Debug::Log(Debug::Severity::Error, "[%s] uses both PoweredUnit=yes and PoweredBy=!\n", Item->ID);
+		auto const pExt = TechnoTypeExt::ExtMap.Find(pItem);
+		if(pItem->PoweredUnit && !pExt->PoweredBy.empty()) {
+			Debug::Log(
+				Debug::Severity::Error,
+				"[%s] uses both PoweredUnit=yes and PoweredBy=!\n", pItem->ID);
 			Debug::RegisterParserError();
-			Item->PoweredUnit = false;
+			pItem->PoweredUnit = false;
 		}
-		if(auto PowersUnit = Item->PowersUnit) {
-			auto pExtraData = TechnoTypeExt::ExtMap.Find(PowersUnit);
-			if(pExtraData->PoweredBy.size()) {
-				Debug::Log(Debug::Severity::Error, "[%s]PowersUnit=%s, but [%s] uses PoweredBy=!\n", Item->ID, PowersUnit->ID, PowersUnit->ID);
+		if(auto const pPowersUnit = pItem->PowersUnit) {
+			auto const pExtraData = TechnoTypeExt::ExtMap.Find(pPowersUnit);
+			if(!pExtraData->PoweredBy.empty()) {
+				Debug::Log(
+					Debug::Severity::Error,
+					"[%s]PowersUnit=%s, but [%s] uses PoweredBy=!\n",
+					pItem->ID, pPowersUnit->ID, pPowersUnit->ID);
 				Debug::RegisterParserError();
-				Item->PowersUnit = nullptr;
+				pItem->PowersUnit = nullptr;
 			}
 		}
 
 		// if empty, set survivor pilots to the corresponding side's Crew
 		{
-			int count = std::min(pData->Survivors_Pilots.Count, SideClass::Array->Count);
-			for(int j=0; j<count; ++j) {
-				if(!pData->Survivors_Pilots[j]) {
-					pData->Survivors_Pilots[j] = Crews[j];
+			auto const count = Math::min(
+				pExt->Survivors_Pilots.Count, Crews.Count);
+			for(auto j = 0; j < count; ++j) {
+				if(!pExt->Survivors_Pilots[j]) {
+					pExt->Survivors_Pilots[j] = Crews[j];
 				}
 			}
 		}
 
-		for(signed int k = static_cast<int>(pData->ClonedAt.size()) - 1; k >= 0; --k) {
-			auto Cloner = pData->ClonedAt[k];
-			if(Cloner->Factory != AbstractType::None) {
-				pData->ClonedAt.erase(pData->ClonedAt.begin() + k);
-				Debug::Log(Debug::Severity::Error, "[%s]ClonedAt includes %s, but %s has Factory= settings. This combination is not supported.\n"
-						"(Protip: Factory= is not what controls unit exit behaviour, WeaponsFactory= and GDI/Nod/YuriBarracks= is.)\n"
-					, Item->ID, Cloner->ID, Cloner->ID);
+		for(int k = static_cast<int>(pExt->ClonedAt.size()) - 1; k >= 0; --k) {
+			auto const pCloner = pExt->ClonedAt[k];
+			if(pCloner->Factory != AbstractType::None) {
+				pExt->ClonedAt.erase(pExt->ClonedAt.begin() + k);
+				Debug::Log(Debug::Severity::Error,
+					"[%s]ClonedAt includes %s, but %s has Factory= settings. "
+					"This combination is not supported.\n(Protip: Factory= is "
+					"not what controls unit exit behaviour, WeaponsFactory= "
+					"and GDI/Nod/YuriBarracks= is.)\n", pItem->ID, pCloner->ID,
+					pCloner->ID);
 				Debug::RegisterParserError();
 			}
 		}
 
-		if(!IsFoot) {
-			auto BItem = specific_cast<BuildingTypeClass *>(Item);
-			auto pBData = BuildingTypeExt::ExtMap.Find(BItem);
-			if(!!pBData->CloningFacility && BItem->Factory != AbstractType::None) {
-				pBData->CloningFacility = false;
-				Debug::Log(Debug::Severity::Error, "[%s] cannot have both CloningFacility= and Factory=.\n"
-					, Item->ID);
+		if(!isFoot) {
+			auto const pBItem = abstract_cast<BuildingTypeClass*>(pItem);
+			auto const pBExt = BuildingTypeExt::ExtMap.Find(pBItem);
+			if(pBExt->CloningFacility && pBItem->Factory != AbstractType::None) {
+				pBExt->CloningFacility = false;
+				Debug::Log(Debug::Severity::Error,
+					"[%s] cannot have both CloningFacility= and Factory=.\n",
+					pItem->ID);
 				Debug::RegisterParserError();
 			}
 		}
 	}
 
-	for(int i = 0; i < BuildingTypeClass::Array->Count; ++i) {
-		auto B = BuildingTypeClass::Array->GetItem(i);
-		if(B->TechLevel < 0 || B->TechLevel > RulesClass::Instance->TechLevel) {
+	for(auto const pBType : *BuildingTypeClass::Array) {
+		auto const techLevel = pBType->TechLevel;
+		if(techLevel < 0 || techLevel > RulesClass::Instance->TechLevel) {
 			continue;
 		}
-		if(B->BuildCat == BuildCat::DontCare) {
-			B->BuildCat = ((B->SuperWeapon != -1) || B->IsBaseDefense || B->Wall)
-				? BuildCat::Combat
-				: BuildCat::Infrastructure
-				;
-			const char *catName = (B->BuildCat == BuildCat::Combat)
-				? "Combat"
-				: "Infrastructure"
-				;
-			Debug::Log(Debug::Severity::Warning, "Building Type [%s] does not have a valid BuildCat set!\n"
-				"It was reset to %s, but you should really specify it explicitly.\n"
-				, B->ID, catName);
+		if(pBType->BuildCat == BuildCat::DontCare) {
+			pBType->BuildCat = ((pBType->SuperWeapon != -1) || pBType->IsBaseDefense || pBType->Wall)
+				? BuildCat::Combat : BuildCat::Infrastructure;
+			auto const catName = (pBType->BuildCat == BuildCat::Combat)
+				? "Combat" : "Infrastructure";
+			Debug::Log(Debug::Severity::Warning,
+				"Building Type [%s] does not have a valid BuildCat set!\n"
+				"It was reset to %s, but you should really specify it "
+				"explicitly.\n", pBType->ID, catName);
 			Debug::RegisterParserError();
 		}
 	}
 
-	for(int i = 0; i < WeaponTypeClass::Array->Count; ++i) {
-		WeaponTypeClass *Item = WeaponTypeClass::Array->Items[i];
-		if(!Item->Warhead) {
-			Debug::Log(Debug::Severity::Error, "Weapon[%s] has no Warhead! This usually indicates one of two things:\n"
-				"- The weapon was created too late and its rules weren't read (see WEEDGUY hack);\n"
-				"- The weapon's name was misspelled.\n"
-			, Item->get_ID());
+	for(auto const pItem : *WeaponTypeClass::Array) {
+		if(!pItem->Warhead) {
+			Debug::Log(Debug::Severity::Error,
+				"Weapon[%s] has no Warhead! This usually indicates one of two "
+				"things:\n- The weapon was created too late and its rules "
+				"weren't read (see WEEDGUY hack);\n- The weapon's name was "
+				"misspelled.\n", pItem->get_ID());
 			Debug::RegisterParserError();
 		}
 	}
@@ -188,32 +202,37 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 
 		for(auto const& limited : LimitedClasses) {
 			if(limited.second > 512) {
-				Debug::Log(Debug::Severity::Warning, "The [%s] list contains more than 512 entries. "
-					"This might result in unexpected behaviour and crashes.\n", limited.first);
+				Debug::Log(Debug::Severity::Warning,
+					"The [%s] list contains more than 512 entries. This might "
+					"result in unexpected behaviour and crashes.\n",
+					limited.first);
 			}
 		}
 	}
 
-	for(auto i = 0; i < RulesClass::Instance->BuildConst.Count; ++i) {
-		auto BC = RulesClass::Instance->BuildConst.GetItem(i);
-		if(!BC->AIBuildThis) {
-			Debug::Log(Debug::Severity::Warning, "[AI]BuildConst= includes [%s], which doesn't have AIBuildThis=yes!\n", BC->ID);
+	for(auto const& pConst : RulesClass::Instance->BuildConst) {
+		if(!pConst->AIBuildThis) {
+			Debug::Log(Debug::Severity::Warning,
+				"[AI]BuildConst= includes [%s], which doesn't have "
+				"AIBuildThis=yes!\n", pConst->ID);
 		}
 	}
 
 	if(OverlayTypeClass::Array->Count > 255) {
-		Debug::Log(Debug::Severity::Error, "Only 255 OverlayTypes are supported.\n");
+		Debug::Log(Debug::Severity::Error,
+			"Only 255 OverlayTypes are supported.\n");
 		Debug::RegisterParserError();
 	}
 
 	if(Ares::bStrictParser && Debug::bParserErrorDetected) {
-		Debug::FatalErrorAndExit("One or more errors were detected while parsing the INI files.\r\n"
-				"Please review the contents of the debug log and correct them.");
+		Debug::FatalErrorAndExit(
+			"One or more errors were detected while parsing the INI files.\r\n"
+			"Please review the contents of the debug log and correct them.");
 	}
 
 	// #1000
-	if(RulesExt::ExtData *AresGeneral = RulesExt::Global()) {
-		if(!!AresGeneral->CanMakeStuffUp) {
+	if(auto const AresGeneral = RulesExt::Global()) {
+		if(AresGeneral->CanMakeStuffUp) {
 			Randomizer *r = &ScenarioClass::Instance->Random;
 			if(RulesClass* StockGeneral = RulesClass::Global()) { // well, the modder *said* we can make stuff up, so...
 
