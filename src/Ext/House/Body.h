@@ -35,13 +35,6 @@ public:
 		NotReached = 1, // don't do anything
 	};
 
-	enum class IonCannonCloakOptions {
-		RandomizeCloaked = 0,
-		AgnosticToCloak = 1,
-		IgnoreCloaked = 2,
-		RequireCloaked = 3
-	};
-
 	class ExtData final : public Extension<HouseClass>
 	{
 	public:
@@ -125,6 +118,7 @@ public:
 	static bool LoadGlobals(AresStreamReader& Stm);
 	static bool SaveGlobals(AresStreamWriter& Stm);
 
+	static int CountOwnedNowTotal(HouseClass* pHouse, TechnoTypeClass* pItem);
 	static signed int BuildLimitRemaining(HouseClass *pHouse, TechnoTypeClass *pItem);
 	static BuildLimitStatus CheckBuildLimit(HouseClass *pHouse, TechnoTypeClass *pItem, bool IncludeQueued);
 

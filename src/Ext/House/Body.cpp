@@ -134,11 +134,77 @@ HouseExt::BuildLimitStatus HouseExt::CheckBuildLimit(HouseClass *pHouse, TechnoT
 	;
 }
 
+int HouseExt::CountOwnedNowTotal(
+	HouseClass* const pHouse, TechnoTypeClass* const pItem)
+{
+	int Index = pItem->GetArrayIndex();
+	int Sum = 0;
+	const BuildingTypeClass *BT = nullptr;
+	const UnitTypeClass *UT = nullptr;
+	const UnitClass *U = nullptr;
+	const InfantryTypeClass *IT = nullptr;
+
+	switch(pItem->WhatAmI()) {
+	case AbstractType::BuildingType:
+		BT = static_cast<const BuildingTypeClass *>(pItem);
+		if(BT->PowersUpBuilding[0]) {
+			if(auto plug = BuildingTypeClass::Find(BT->PowersUpBuilding)) {
+				for(int i = 0; i < pHouse->Buildings.Count; ++i) {
+					auto pBase = pHouse->Buildings[i];
+					if(pBase->Type == plug) {
+						for(int j = 0; j < 3; ++j) {
+							if(pBase->Upgrades[j] == plug) {
+								++Sum;
+							}
+						}
+					}
+				}
+			}
+		} else {
+			Sum = pHouse->OwnedBuildingTypes.GetItemCount(Index);
+			if((UT = BT->UndeploysInto) != nullptr) {
+				Sum += pHouse->OwnedUnitTypes.GetItemCount(UT->GetArrayIndex());
+			}
+		}
+		break;
+
+	case AbstractType::UnitType:
+		Sum = pHouse->OwnedUnitTypes.GetItemCount(Index);
+		UT = static_cast<const UnitTypeClass *>(pItem);
+		BT = UT->DeploysInto;
+		if(BT) {
+			Sum += pHouse->OwnedBuildingTypes.GetItemCount(BT->GetArrayIndex());
+		}
+		break;
+
+	case AbstractType::InfantryType:
+		Sum = pHouse->OwnedInfantryTypes.GetItemCount(Index);
+		IT = static_cast<const InfantryTypeClass *>(pItem);
+		if(IT->VehicleThief) {
+			for(int i = 0; i < UnitClass::Array->Count; ++i) {
+				U = UnitClass::Array->GetItem(i);
+				if(U->Owner == pHouse && U->HijackerInfantryType == Index) {
+					++Sum;
+				}
+			}
+		}
+		break;
+
+	case AbstractType::AircraftType:
+		Sum = pHouse->OwnedAircraftTypes.GetItemCount(Index);
+		break;
+
+	default:
+		;
+	}
+	return Sum;
+}
+
 signed int HouseExt::BuildLimitRemaining(HouseClass *pHouse, TechnoTypeClass *pItem)
 {
 	int BuildLimit = pItem->BuildLimit;
 	if(BuildLimit >= 0) {
-		BuildLimit -= pHouse->CountOwnedNowTotal(pItem);
+		BuildLimit -= HouseExt::CountOwnedNowTotal(pHouse, pItem);
 	} else {
 		BuildLimit = std::abs(BuildLimit);
 		BuildLimit -= pHouse->CountOwnedEver(pItem);
