@@ -118,7 +118,7 @@ public:
 	static bool LoadGlobals(AresStreamReader& Stm);
 	static bool SaveGlobals(AresStreamWriter& Stm);
 
-	static int CountOwnedNowTotal(HouseClass* pHouse, TechnoTypeClass* pItem);
+	static int CountOwnedNowTotal(HouseClass* pHouse, TechnoTypeClass const* pItem);
 	static signed int BuildLimitRemaining(HouseClass *pHouse, TechnoTypeClass *pItem);
 	static BuildLimitStatus CheckBuildLimit(HouseClass *pHouse, TechnoTypeClass *pItem, bool IncludeQueued);
 
