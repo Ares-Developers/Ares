@@ -963,17 +963,24 @@ DEFINE_HOOK(44CE46, BuildingClass_Mi_Missile_Pulsball, 5)
 
 DEFINE_HOOK(44CCE7, BuildingClass_Mi_Missile_GenericSW, 6)
 {
-	GET(BuildingClass*, pThis, ESI);
+	GET(BuildingClass* const, pThis, ESI);
+
+	auto const pExt = TechnoExt::ExtMap.Find(pThis);
+	auto const pSuperTarget = pExt->SuperTarget;
 
 	// added this check so this is mutually exclusive
 	if(pThis->Type->EMPulseCannon) {
+		if(pSuperTarget) {
+			// support multiple simultaneously firing super weapons by
+			// re-setting the house-global coords for this super weapon
+			auto const cell = CellClass::Coord2Cell(pSuperTarget->GetCoords());
+			pThis->Owner->EMPTarget = cell;
+		}
 		return 0x44CD18;
 	}
 
 	// originally, this part was related to chem missiles
-	auto pExt = TechnoExt::ExtMap.Find(pThis);
-
-	auto pTarget = pExt->SuperTarget ? pExt->SuperTarget
+	auto const pTarget = pSuperTarget ? pSuperTarget
 		: MapClass::Instance->GetCellAt(pThis->Owner->NukeTarget);
 
 	pThis->Fire(pTarget, 0);
