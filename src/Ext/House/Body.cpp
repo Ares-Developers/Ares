@@ -137,67 +137,70 @@ HouseExt::BuildLimitStatus HouseExt::CheckBuildLimit(HouseClass *pHouse, TechnoT
 int HouseExt::CountOwnedNowTotal(
 	HouseClass* const pHouse, TechnoTypeClass const* const pItem)
 {
-	int Index = -1;
-	int Sum = 0;
-	const BuildingTypeClass* BT = nullptr;
-	const UnitTypeClass* UT = nullptr;
-	const InfantryTypeClass* IT = nullptr;
+	int index = -1;
+	int sum = 0;
+	const BuildingTypeClass* pBType = nullptr;
+	const UnitTypeClass* pUType = nullptr;
+	const InfantryTypeClass* pIType = nullptr;
+	const char* pPowersUp = nullptr;
 
 	switch(pItem->WhatAmI()) {
 	case AbstractType::BuildingType:
-		BT = static_cast<BuildingTypeClass const*>(pItem);
-		if(BT->PowersUpBuilding[0]) {
-			if(auto const pPlug = BuildingTypeClass::Find(BT->PowersUpBuilding)) {
-				for(auto const& pBase : pHouse->Buildings) {
-					if(pBase->Type == pPlug) {
-						for(auto const& pUpgrade : pBase->Upgrades) {
-							if(pUpgrade == BT) {
-								++Sum;
+		pBType = static_cast<BuildingTypeClass const*>(pItem);
+		pPowersUp = pBType->PowersUpBuilding;
+		if(pPowersUp[0]) {
+			if(auto const pTPowersUp = BuildingTypeClass::Find(pPowersUp)) {
+				for(auto const& pBld : pHouse->Buildings) {
+					if(pBld->Type == pTPowersUp) {
+						for(auto const& pUpgrade : pBld->Upgrades) {
+							if(pUpgrade == pBType) {
+								++sum;
 							}
 						}
 					}
 				}
 			}
 		} else {
-			Sum = pHouse->CountOwnedNow(BT);
-			if(auto const pUndeploy = BT->UndeploysInto) {
-				Sum += pHouse->CountOwnedNow(pUndeploy);
+			sum = pHouse->CountOwnedNow(pBType);
+			if(auto const pUndeploy = pBType->UndeploysInto) {
+				sum += pHouse->CountOwnedNow(pUndeploy);
 			}
 		}
 		break;
 
 	case AbstractType::UnitType:
-		UT = static_cast<UnitTypeClass const*>(pItem);
-		Sum = pHouse->CountOwnedNow(UT);
-		if(auto const pDeploy = UT->DeploysInto) {
-			Sum += pHouse->CountOwnedNow(pDeploy);
+		pUType = static_cast<UnitTypeClass const*>(pItem);
+		sum = pHouse->CountOwnedNow(pUType);
+		if(auto const pDeploy = pUType->DeploysInto) {
+			sum += pHouse->CountOwnedNow(pDeploy);
 		}
 		break;
 
 	case AbstractType::InfantryType:
-		IT = static_cast<InfantryTypeClass const*>(pItem);
-		Sum = pHouse->CountOwnedNow(IT);
-		if(IT->VehicleThief) {
-			Index = IT->ArrayIndex;
+		pIType = static_cast<InfantryTypeClass const*>(pItem);
+		sum = pHouse->CountOwnedNow(pIType);
+		if(pIType->VehicleThief) {
+			index = pIType->ArrayIndex;
 			for(auto const& pUnit : *UnitClass::Array) {
-				if(pUnit->HijackerInfantryType == Index
+				if(pUnit->HijackerInfantryType == index
 					&& pUnit->Owner == pHouse)
 				{
-					++Sum;
+					++sum;
 				}
 			}
 		}
 		break;
 
 	case AbstractType::AircraftType:
-		Sum = pHouse->CountOwnedNow(
+		sum = pHouse->CountOwnedNow(
 			static_cast<AircraftTypeClass const*>(pItem));
 		break;
 
 	default:
 		__assume(0);
 	}
-	return Sum;
+
+	return sum;
 }
 
 signed int HouseExt::BuildLimitRemaining(HouseClass *pHouse, TechnoTypeClass *pItem)
