@@ -697,7 +697,7 @@ void BuildingExt::ExtData::UpdateFirewall(bool const changedState) {
 		// (0b0101 || 0b1010) == part of a straight line
 		auto const connections = pThis->FirestormWallFrame & 0xF;
 		if(active && Unsorted::CurrentFrame & 7 && !Anim
-			&& connections != 0b0101 && connections != 0b0101
+			&& connections != 0b0101 && connections != 0b1010
 			&& (ScenarioClass::Instance->Random.Random() & 0xF) == 0)
 		{
 			if(AnimTypeClass* pType = RulesExt::Global()->FirestormIdleAnim) {
