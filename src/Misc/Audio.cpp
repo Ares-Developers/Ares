@@ -55,13 +55,15 @@ AresAudioHelper::FileStruct AresAudioHelper::GetFile(int const index)
 	}
 }
 
-void AudioBag::Open(const std::string& fileBase) {
-	auto const filenameIndex = fileBase + ".idx";
-	auto pIndex = UniqueGamePtr<CCFileClass>(GameCreate<CCFileClass>(filenameIndex.c_str()));
+void AudioBag::Open(const char* fileBase) {
+	char filename[0x100];
+	_snprintf_s(filename, _TRUNCATE, "%s.idx", fileBase);
+
+	auto pIndex = UniqueGamePtr<CCFileClass>(GameCreate<CCFileClass>(filename));
 
 	if(pIndex->Exists() && pIndex->Open(FileAccessMode::Read)) {
-		auto const filenameBag = fileBase + ".bag";
-		auto pBag = UniqueGamePtr<CCFileClass>(GameCreate<CCFileClass>(filenameBag.c_str()));
+		_snprintf_s(filename, _TRUNCATE, "%s.bag", fileBase);
+		auto pBag = UniqueGamePtr<CCFileClass>(GameCreate<CCFileClass>(filename));
 
 		if(pBag->Exists() && pBag->Open(FileAccessMode::Read)) {
 			AudioIDXHeader headerIndex;

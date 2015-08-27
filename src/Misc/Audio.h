@@ -93,7 +93,7 @@ public:
 	}
 
 private:
-	void Open(const std::string& fileBase);
+	void Open(const char* fileBase);
 
 	template <typename T>
 	using UniqueGamePtr = std::unique_ptr<T, GameDeleter>;
