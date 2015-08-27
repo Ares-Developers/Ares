@@ -137,16 +137,15 @@ HouseExt::BuildLimitStatus HouseExt::CheckBuildLimit(HouseClass *pHouse, TechnoT
 int HouseExt::CountOwnedNowTotal(
 	HouseClass* const pHouse, TechnoTypeClass const* const pItem)
 {
-	int Index = pItem->GetArrayIndex();
+	int Index = -1;
 	int Sum = 0;
-	const BuildingTypeClass *BT = nullptr;
-	const UnitTypeClass *UT = nullptr;
-	const UnitClass *U = nullptr;
-	const InfantryTypeClass *IT = nullptr;
+	const BuildingTypeClass* BT = nullptr;
+	const UnitTypeClass* UT = nullptr;
+	const InfantryTypeClass* IT = nullptr;
 
 	switch(pItem->WhatAmI()) {
 	case AbstractType::BuildingType:
-		BT = static_cast<const BuildingTypeClass *>(pItem);
+		BT = static_cast<BuildingTypeClass const*>(pItem);
 		if(BT->PowersUpBuilding[0]) {
 			if(auto const pPlug = BuildingTypeClass::Find(BT->PowersUpBuilding)) {
 				for(auto const& pBase : pHouse->Buildings) {
@@ -160,27 +159,30 @@ int HouseExt::CountOwnedNowTotal(
 				}
 			}
 		} else {
-			Sum = pHouse->OwnedBuildingTypes.GetItemCount(Index);
+			Sum = pHouse->CountOwnedNow(BT);
 			if(auto const pUndeploy = BT->UndeploysInto) {
-				Sum += pHouse->OwnedUnitTypes.GetItemCount(pUndeploy->GetArrayIndex());
+				Sum += pHouse->CountOwnedNow(pUndeploy);
 			}
 		}
 		break;
 
 	case AbstractType::UnitType:
-		Sum = pHouse->OwnedUnitTypes.GetItemCount(Index);
-		UT = static_cast<const UnitTypeClass *>(pItem);
+		UT = static_cast<UnitTypeClass const*>(pItem);
+		Sum = pHouse->CountOwnedNow(UT);
 		if(auto const pDeploy = UT->DeploysInto) {
-			Sum += pHouse->OwnedBuildingTypes.GetItemCount(pDeploy->GetArrayIndex());
+			Sum += pHouse->CountOwnedNow(pDeploy);
 		}
 		break;
 
 	case AbstractType::InfantryType:
-		Sum = pHouse->OwnedInfantryTypes.GetItemCount(Index);
-		IT = static_cast<const InfantryTypeClass *>(pItem);
+		IT = static_cast<InfantryTypeClass const*>(pItem);
+		Sum = pHouse->CountOwnedNow(IT);
 		if(IT->VehicleThief) {
+			Index = IT->ArrayIndex;
 			for(auto const& pUnit : *UnitClass::Array) {
-				if(pUnit->HijackerInfantryType == Index && pUnit->Owner == pHouse) {
+				if(pUnit->HijackerInfantryType == Index
+					&& pUnit->Owner == pHouse)
+				{
 					++Sum;
 				}
 			}
@@ -188,7 +190,8 @@ int HouseExt::CountOwnedNowTotal(
 		break;
 
 	case AbstractType::AircraftType:
-		Sum = pHouse->OwnedAircraftTypes.GetItemCount(Index);
+		Sum = pHouse->CountOwnedNow(
+			static_cast<AircraftTypeClass const*>(pItem));
 		break;
 
 	default:
