@@ -152,7 +152,7 @@ int HouseExt::CountOwnedNowTotal(
 				for(auto const& pBase : pHouse->Buildings) {
 					if(pBase->Type == pPlug) {
 						for(auto const& pUpgrade : pBase->Upgrades) {
-							if(pUpgrade == pPlug) {
+							if(pUpgrade == BT) {
 								++Sum;
 							}
 						}
