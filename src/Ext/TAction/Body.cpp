@@ -1,12 +1,11 @@
 #include "Body.h"
 
+#include "../../Ext/House/Body.h"
+
 #include "../../Misc/SWTypes.h"
 #include "../../Misc/SWTypes/Firewall.h"
 
 #include "../../Misc/SavegameDef.h"
-
-#include <HouseClass.h>
-
 
 //Static init
 template<> const DWORD Extension<TActionClass>::Canary = 0x91919191;
@@ -20,7 +19,9 @@ TActionExt::ExtContainer TActionExt::ExtMap;
 */
 bool TActionExt::ExtData::ActivateFirestorm(TActionClass* pAction, HouseClass* pHouse, ObjectClass* pObject, TriggerClass* pTrigger, CellStruct* pos)
 {
-	if(!pHouse->FirestormActive) {
+	auto const pExt = HouseExt::ExtMap.Find(pHouse);
+
+	if(!pExt->FirewallActive) {
 		auto index = pHouse->FindSuperWeaponIndex(SW_Firewall::FirewallType);
 
 		if(index >= 0) {
@@ -38,7 +39,9 @@ bool TActionExt::ExtData::ActivateFirestorm(TActionClass* pAction, HouseClass* p
 */
 bool TActionExt::ExtData::DeactivateFirestorm(TActionClass* pAction, HouseClass* pHouse, ObjectClass* pObject, TriggerClass* pTrigger, CellStruct* pos)
 {
-	if(pHouse->FirestormActive) {
+	auto const pExt = HouseExt::ExtMap.Find(pHouse);
+
+	if(!pExt->FirewallActive) {
 		auto index = pHouse->FindSuperWeaponIndex(SW_Firewall::FirewallType);
 
 		if(index >= 0) {
