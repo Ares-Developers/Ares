@@ -473,9 +473,6 @@ bool WarheadTypeExt::ExtData::applyKillDriver(TechnoClass* const pSource, Abstra
 
 			pTarget->SetTarget(nullptr);
 			pTarget->SetDestination(nullptr, false);
-
-			pTarget->SetOwningHouse(pOwner);
-			pTarget->QueueMission(Mission::Harmless, true);
 			return true;
 		}
 	}
