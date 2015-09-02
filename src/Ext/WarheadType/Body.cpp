@@ -351,8 +351,9 @@ bool WarheadTypeExt::ExtData::applyKillDriver(TechnoClass* const pSource, Abstra
 		if(pTarget->IsIronCurtained()) {
 			return false;
 		}
-		auto pTargetType = pTarget->GetTechnoType();
-		auto pTargetTypeExt = TechnoTypeExt::ExtMap.Find(pTargetType);
+
+		auto const pTargetType = pTarget->GetTechnoType();
+		auto const pTargetTypeExt = TechnoTypeExt::ExtMap.Find(pTargetType);
 
 		// conditions: Warhead is KillDriver, target is Vehicle or Aircraft, but not protected and not a living being
 		if(((pTarget->WhatAmI() == AbstractType::Unit) || (pTarget->WhatAmI() == AbstractType::Aircraft))
@@ -369,16 +370,16 @@ bool WarheadTypeExt::ExtData::applyKillDriver(TechnoClass* const pSource, Abstra
 			}
 
 			// get the new owner
-			const auto pInvoker = pSource->Owner;
+			auto const pInvoker = pSource->Owner;
 			auto pOwner = HouseExt::GetHouseKind(this->KillDriver_Owner, false,
 				nullptr, pInvoker, pInvoker, pTarget->Owner);
 			if(!pOwner) {
 				pOwner = HouseClass::FindSpecial();
 			}
 
-			const auto passive = pOwner->Type->MultiplayPassive;
+			auto const passive = pOwner->Type->MultiplayPassive;
 
-			auto TargetExt = TechnoExt::ExtMap.Find(pTarget);
+			auto const TargetExt = TechnoExt::ExtMap.Find(pTarget);
 			TargetExt->DriverKilled = passive;
 
 			// exit if owner would not change
@@ -415,8 +416,8 @@ bool WarheadTypeExt::ExtData::applyKillDriver(TechnoClass* const pSource, Abstra
 			pTarget->HijackerInfantryType = -1;
 
 			// If this unit is driving under influence, we have to free it first
-			if(auto pController = pTarget->MindControlledBy) {
-				if(auto pCaptureManager = pController->CaptureManager) {
+			if(auto const pController = pTarget->MindControlledBy) {
+				if(auto const pCaptureManager = pController->CaptureManager) {
 					pCaptureManager->FreeUnit(pTarget);
 				}
 			}
@@ -435,14 +436,14 @@ bool WarheadTypeExt::ExtData::applyKillDriver(TechnoClass* const pSource, Abstra
 			}
 
 			// This unit will be freed of its duties
-			if(auto pFoot = abstract_cast<FootClass*>(pTarget)) {
+			if(auto const pFoot = abstract_cast<FootClass*>(pTarget)) {
 				if(pFoot->BelongsToATeam()) {
 					pFoot->Team->LiberateMember(pFoot);
 				}
 			}
 
 			// If this unit spawns stuff, we should kill the spawns, since they still belong to the previous owner
-			if(auto pSpawnManager = pTarget->SpawnManager) {
+			if(auto const pSpawnManager = pTarget->SpawnManager) {
 				pSpawnManager->KillNodes();
 				pSpawnManager->ResetTarget();
 			}
@@ -453,7 +454,7 @@ bool WarheadTypeExt::ExtData::applyKillDriver(TechnoClass* const pSource, Abstra
 			// <DCoder> unlink
 			// <Renegade> so on principle, I could just re-link it?
 			// <DCoder> yes you can
-			if(auto pSlaveManager = pTarget->SlaveManager) {
+			if(auto const pSlaveManager = pTarget->SlaveManager) {
 				pSlaveManager->Killed(pSource);
 				pSlaveManager->ZeroOutSlaves();
 				pSlaveManager->Owner = pTarget;
