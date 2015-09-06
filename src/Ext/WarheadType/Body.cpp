@@ -341,29 +341,38 @@ bool WarheadTypeExt::CanAffectTarget(TechnoClass* const pTarget, HouseClass* con
 	\date 05.04.10
 	\todo This needs to be refactored to work with the generic warhead SW. I want to create a generic cellspread function first.
 */
-bool WarheadTypeExt::ExtData::applyKillDriver(TechnoClass* const pSource, AbstractClass* const pVictim) const {
+bool WarheadTypeExt::ExtData::applyKillDriver(
+	TechnoClass* const pSource, AbstractClass* const pVictim) const
+{
 	if(!pSource || !this->KillDriver) {
 		return false;
 	}
 
 	if(auto const pTarget = abstract_cast<FootClass*>(pVictim)) {
 		// don't penetrate the Iron Curtain // typedef IronCurtain ChastityBelt
-		if(pTarget->IsIronCurtained()) {
+		if(pTarget->BeingWarpedOut || pTarget->IsIronCurtained()) {
+			return false;
+		}
+
+		// target must be Vehicle or Aircraft
+		if(!Helpers::Alex::is_any_of(
+			pTarget->WhatAmI(), AbstractType::Unit, AbstractType::Aircraft))
+		{
 			return false;
 		}
 
 		auto const pTargetType = pTarget->GetTechnoType();
 		auto const pTargetTypeExt = TechnoTypeExt::ExtMap.Find(pTargetType);
 
-		// conditions: Warhead is KillDriver, target is Vehicle or Aircraft, but not protected and not a living being
-		if(((pTarget->WhatAmI() == AbstractType::Unit) || (pTarget->WhatAmI() == AbstractType::Aircraft))
-			&& !(pTarget->BeingWarpedOut || pTargetTypeExt->ProtectedDriver || pTargetType->Organic || pTargetType->Natural)
-			&& (pTarget->GetHealthPercentage() <= this->KillDriver_KillBelowPercent)) {
-
+		// conditions: not protected and not a living being
+		if(!pTargetTypeExt->ProtectedDriver
+			&& !pTargetType->Natural && !pTargetType->Organic
+			&& pTarget->GetHealthPercentage() <= this->KillDriver_KillBelowPercent)
+		{
 			// if this aircraft is expected to dock to anything, don't allow killing its pilot
 			// (reason being: the game thinks you lost the aircraft that just turned, and assumes you have free aircraft space,
 			// allowing you to build more aircraft, for the docking spot that is still occupied by the previous plane.)
-			if(auto pAircraftType = abstract_cast<AircraftTypeClass*>(pTargetType)) {
+			if(auto const pAircraftType = abstract_cast<AircraftTypeClass*>(pTargetType)) {
 				if(pAircraftType->AirportBound || pAircraftType->Dock.Count) {
 					return false;
 				}
@@ -390,11 +399,11 @@ bool WarheadTypeExt::ExtData::applyKillDriver(TechnoClass* const pSource, Abstra
 			// If this vehicle uses Operator=, we have to take care of actual "physical" drivers, rather than theoretical ones
 			if(pTargetTypeExt->IsAPromiscuousWhoreAndLetsAnyoneRideIt && pTarget->Passengers.GetFirstPassenger()) {
 				// kill first passenger
-				auto pPassenger = pTarget->RemoveFirstPassenger();
+				auto const pPassenger = pTarget->RemoveFirstPassenger();
 				pPassenger->RegisterDestruction(pSource);
 				pPassenger->UnInit();
 
-			} else if(auto pOperatorType = pTargetTypeExt->Operator) {
+			} else if(auto const pOperatorType = pTargetTypeExt->Operator) {
 				// find the driver cowardly hiding among the passengers, then kill him
 				for(NextObject passenger(pTarget->Passengers.GetFirstPassenger()); passenger; ++passenger) {
 					auto const pPassenger = static_cast<FootClass*>(*passenger);
