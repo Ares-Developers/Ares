@@ -100,6 +100,7 @@ public:
 
 		// new on 05.04.10 for #733 (KillDriver/"Jarmen Kell")
 		Valueable<bool> ProtectedDriver; //!< Whether the driver of this vehicle cannot be killed, i.e. whether this vehicle is immune to KillDriver. Request #733.
+		Nullable<double> ProtectedDriver_MinHealth; //!< The health level the unit has to be below so the driver can be killed
 		Valueable<bool> CanDrive; //!< Whether this TechnoType can act as the driver of vehicles whose driver has been killed. Request #733.
 
 		Valueable<bool> AlternateTheaterArt;

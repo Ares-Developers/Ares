@@ -264,6 +264,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 
 	// #733
 	this->ProtectedDriver.Read(exINI, section, "ProtectedDriver");
+	this->ProtectedDriver_MinHealth.Read(exINI, section, "ProtectedDriver.MinHealth");
 	this->CanDrive.Read(exINI, section, "CanDrive");
 
 	// #346, #464, #970, #1014
@@ -673,6 +674,7 @@ void TechnoTypeExt::ExtData::Serialize(T& Stm) {
 		.Process(this->Chronoshift_Allow)
 		.Process(this->Chronoshift_IsVehicle)
 		.Process(this->ProtectedDriver)
+		.Process(this->ProtectedDriver_MinHealth)
 		.Process(this->CanDrive)
 		.Process(this->AlternateTheaterArt)
 		.Process(this->PassengersGainExperience)

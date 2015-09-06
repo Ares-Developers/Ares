@@ -364,10 +364,17 @@ bool WarheadTypeExt::ExtData::applyKillDriver(
 		auto const pTargetType = pTarget->GetTechnoType();
 		auto const pTargetTypeExt = TechnoTypeExt::ExtMap.Find(pTargetType);
 
+		// because these tags kinda have negative meaning, less means better.
+		// if the driver is protected, he can by default only be killed if
+		// health is below 0.0, while 1.0 means always killable.
+		auto const maxKillHealth = Math::min(
+			pTargetTypeExt->ProtectedDriver_MinHealth.Get(
+				pTargetTypeExt->ProtectedDriver ? 0.0 : 1.0),
+			this->KillDriver_KillBelowPercent);
+
 		// conditions: not protected and not a living being
-		if(!pTargetTypeExt->ProtectedDriver
-			&& !pTargetType->Natural && !pTargetType->Organic
-			&& pTarget->GetHealthPercentage() <= this->KillDriver_KillBelowPercent)
+		if(!pTargetType->Natural && !pTargetType->Organic
+			&& pTarget->GetHealthPercentage() <= maxKillHealth)
 		{
 			// if this aircraft is expected to dock to anything, don't allow killing its pilot
 			// (reason being: the game thinks you lost the aircraft that just turned, and assumes you have free aircraft space,
