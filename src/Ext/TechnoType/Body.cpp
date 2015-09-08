@@ -428,6 +428,10 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 
 	this->Saboteur.Read(exINI, section, "Saboteur");
 
+	// note the wrong spelling of the tag for consistency
+	this->CanPassiveAcquire_Guard.Read(exINI, section, "CanPassiveAquire.Guard");
+	this->CanPassiveAcquire_Cloak.Read(exINI, section, "CanPassiveAquire.Cloak");
+
 	// quick fix - remove after the rest of weapon selector code is done
 	return;
 }
@@ -762,7 +766,9 @@ void TechnoTypeExt::ExtData::Serialize(T& Stm) {
 		.Process(this->ReloadRate)
 		.Process(this->ReloadAmount)
 		.Process(this->EmptyReloadAmount)
-		.Process(this->Saboteur);
+		.Process(this->Saboteur)
+		.Process(this->CanPassiveAcquire_Guard)
+		.Process(this->CanPassiveAcquire_Cloak);
 }
 
 void TechnoTypeExt::ExtData::LoadFromStream(AresStreamReader &Stm) {

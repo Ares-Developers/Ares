@@ -1850,3 +1850,34 @@ DEFINE_HOOK(7418AA, UnitClass_CrushCell_CrushDamage, 6)
 
 	return 0;
 }
+
+DEFINE_HOOK(4D9920, FootClass_SelectAutoTarget_Cloaked, 9)
+{
+	GET(FootClass* const, pThis, ECX);
+
+	if(pThis->Owner->ControlledByHuman()
+		&& pThis->GetCurrentMission() == Mission::Guard)
+	{
+		auto const pType = pThis->GetTechnoType();
+		auto const pExt = TechnoTypeExt::ExtMap.Find(pType);
+
+		auto allowAquire = true;
+
+		if(!pExt->CanPassiveAcquire_Guard) {
+			// we are in guard mode
+			allowAquire = false;
+		} else if(!pExt->CanPassiveAcquire_Cloak) {
+			// passive acquire is disallowed when guarding and cloakable
+			if(pThis->IsCloakable() || pThis->HasAbility(Ability::Cloak)) {
+				allowAquire = false;
+			}
+		}
+
+		if(!allowAquire) {
+			R->EAX(static_cast<TechnoClass*>(nullptr));
+			return 0x4D995C;
+		}
+	}
+
+	return 0;
+}

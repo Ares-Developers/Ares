@@ -241,6 +241,9 @@ public:
 
 		Valueable<bool> Saboteur;
 
+		Valueable<bool> CanPassiveAcquire_Guard;
+		Valueable<bool> CanPassiveAcquire_Cloak;
+
 		ExtData(TechnoTypeClass* OwnerObject) : Extension<TechnoTypeClass>(OwnerObject),
 			Survivors_PilotChance(),
 			Survivors_PassengerChance(),
@@ -262,6 +265,8 @@ public:
 			Spot_DisableB(false),
 			Spot_Reverse(false),
 			Drain_Local(false),
+			CanPassiveAcquire_Guard(true),
+			CanPassiveAcquire_Cloak(true),
 			Drain_Amount(0),
 			SmokeChanceRed(),
 			SmokeChanceDead(),
