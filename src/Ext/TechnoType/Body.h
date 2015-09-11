@@ -248,8 +248,8 @@ public:
 		Promotable<int> SelfHealing_Amount;
 
 		ExtData(TechnoTypeClass* OwnerObject) : Extension<TechnoTypeClass>(OwnerObject),
-			Survivors_PilotChance(),
-			Survivors_PassengerChance(),
+			Survivors_PilotChance(-1),
+			Survivors_PassengerChance(-1),
 			Survivors_PilotCount(-1),
 			Crew_TechnicianChance(),
 			Crew_EngineerChance(),
@@ -270,6 +270,7 @@ public:
 			Drain_Local(false),
 			CanPassiveAcquire_Guard(true),
 			CanPassiveAcquire_Cloak(true),
+			SelfHealing_Amount(1),
 			Drain_Amount(0),
 			SmokeChanceRed(),
 			SmokeChanceDead(),
@@ -283,7 +284,7 @@ public:
 			DesignatorRange(),
 			InhibitorRange(),
 			Is_Bomb(false),
-			Insignia(),
+			Insignia(nullptr),
 			Parachute_Anim(nullptr),
 			Operator(nullptr),
 			IsAPromiscuousWhoreAndLetsAnyoneRideIt(false),
@@ -351,10 +352,7 @@ public:
 			OmniCrusher_Aggressive(true),
 			ReloadAmount(1),
 			FactoryOwners_HaveAllPlans(false)
-		{
-			this->Insignia.SetAll(nullptr);
-			this->SelfHealing_Amount.SetAll(1);
-		}
+		{ }
 
 		virtual ~ExtData() = default;
 
