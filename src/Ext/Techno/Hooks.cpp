@@ -1239,17 +1239,6 @@ DEFINE_HOOK(70DEBA, TechnoClass_UpdateGattling_Cycle, 6)
 	return 0x70DEEB;
 }
 
-// prevent crashing and sinking technos from self-healing
-DEFINE_HOOK(6FA743, TechnoClass_Update_SkipSelfHeal, A)
-{
-	GET(TechnoClass*, pThis, ESI);
-	if(pThis->IsCrashing || pThis->IsSinking) {
-		return 0x6FA941;
-	}
-
-	return 0;
-}
-
 // make the space between gunner name segment and ifv
 // name smart. it disappears if one of them is empty,
 // eliminating leading and trailing spaces.
@@ -1880,4 +1869,35 @@ DEFINE_HOOK(4D9920, FootClass_SelectAutoTarget_Cloaked, 9)
 	}
 
 	return 0;
+}
+
+DEFINE_HOOK(70BE80, TechnoClass_ShouldSelfHealOneStep, 5)
+{
+	GET(TechnoClass* const, pThis, ECX);
+	auto const pExt = TechnoExt::ExtMap.Find(pThis);
+
+	R->EAX(pExt->GetSelfHealAmount() > 0);
+	return 0x70BF46;
+}
+
+DEFINE_HOOK(6FA743, TechnoClass_Update_SelfHeal, A)
+{
+	GET(TechnoClass* const, pThis, ESI);
+
+	// prevent crashing and sinking technos from self-healing
+	if(pThis->IsCrashing || pThis->IsSinking) {
+		return 0x6FA941;
+	}
+
+	auto const pExt = TechnoExt::ExtMap.Find(pThis);
+
+	// this replaces the call to pThis->ShouldSelfHealOneStep()
+	if(auto const amount = pExt->GetSelfHealAmount()) {
+		pThis->Health += amount;
+
+		R->ECX(pThis);
+		return 0x6FA75A;
+	}
+
+	return 0x6FA793;
 }

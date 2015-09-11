@@ -621,6 +621,27 @@ void TechnoExt::ExtData::RecalculateStats() {
 	//Debug::Log("[AttachEffect]Calculation was successful.\n", pThis->get_ID());
 }
 
+int TechnoExt::ExtData::GetSelfHealAmount() const
+{
+	auto const pThis = this->OwnerObject();
+	auto const pType = pThis->GetTechnoType();
+
+	if(pType->SelfHealing || pThis->HasAbility(Ability::SelfHeal)) {
+		auto const pExt = TechnoTypeExt::ExtMap.Find(pType);
+
+		auto const rate = RulesClass::Instance->RepairRate;
+		auto const frames = Math::max(static_cast<int>(rate * 900.0), 1);
+
+		if(Unsorted::CurrentFrame % frames == 0) {
+			if(pThis->Health < pType->Strength) {
+				return 1;
+			}
+		}
+	}
+
+	return 0;
+}
+
 /*! This function calculates whether the unit would be cloaked by default
 	\author Graion Dilach
 	\date 2011-10-16

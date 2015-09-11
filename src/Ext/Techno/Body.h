@@ -168,6 +168,8 @@ public:
 
 		void RecalculateStats();
 
+		int GetSelfHealAmount() const;
+
 	private:
 		template <typename T>
 		void Serialize(T& Stm);
