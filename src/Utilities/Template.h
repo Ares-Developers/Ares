@@ -188,6 +188,9 @@ public:
 	T Veteran;
 	T Elite;
 
+	Promotable() : Rookie(T()), Veteran(T()), Elite(T()) {};
+	explicit Promotable(T const& all) : Rookie(all), Veteran(all), Elite(all) {};
+
 	void SetAll(const T& val) {
 		this->Elite = this->Veteran = this->Rookie = val;
 	}
