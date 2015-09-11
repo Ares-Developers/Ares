@@ -634,8 +634,12 @@ int TechnoExt::ExtData::GetSelfHealAmount() const
 		auto const frames = Math::max(static_cast<int>(rate * 900.0), 1);
 
 		if(Unsorted::CurrentFrame % frames == 0) {
-			if(pThis->Health < pType->Strength) {
-				return 1;
+			auto const health = pThis->Health;
+			auto const maxHealth = pType->Strength;
+
+			if(health < maxHealth) {
+				auto const amount = pExt->SelfHealing_Amount.Get(pThis);
+				return Math::clamp(amount, 0, maxHealth - health);
 			}
 		}
 	}

@@ -434,6 +434,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 
 	// self healing
 	this->SelfHealing_Rate.Read(exINI, section, "SelfHealing.Rate");
+	this->SelfHealing_Amount.Read(exINI, section, "SelfHealing.%sAmount");
 
 	// quick fix - remove after the rest of weapon selector code is done
 	return;
@@ -772,7 +773,8 @@ void TechnoTypeExt::ExtData::Serialize(T& Stm) {
 		.Process(this->Saboteur)
 		.Process(this->CanPassiveAcquire_Guard)
 		.Process(this->CanPassiveAcquire_Cloak)
-		.Process(this->SelfHealing_Rate);
+		.Process(this->SelfHealing_Rate)
+		.Process(this->SelfHealing_Amount);
 }
 
 void TechnoTypeExt::ExtData::LoadFromStream(AresStreamReader &Stm) {

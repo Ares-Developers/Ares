@@ -245,6 +245,7 @@ public:
 		Valueable<bool> CanPassiveAcquire_Cloak;
 
 		Nullable<double> SelfHealing_Rate;
+		Promotable<int> SelfHealing_Amount;
 
 		ExtData(TechnoTypeClass* OwnerObject) : Extension<TechnoTypeClass>(OwnerObject),
 			Survivors_PilotChance(),
@@ -352,6 +353,7 @@ public:
 			FactoryOwners_HaveAllPlans(false)
 		{
 			this->Insignia.SetAll(nullptr);
+			this->SelfHealing_Amount.SetAll(1);
 		}
 
 		virtual ~ExtData() = default;
