@@ -629,7 +629,8 @@ int TechnoExt::ExtData::GetSelfHealAmount() const
 	if(pType->SelfHealing || pThis->HasAbility(Ability::SelfHeal)) {
 		auto const pExt = TechnoTypeExt::ExtMap.Find(pType);
 
-		auto const rate = RulesClass::Instance->RepairRate;
+		auto const rate = pExt->SelfHealing_Rate.Get(
+			RulesClass::Instance->RepairRate);
 		auto const frames = Math::max(static_cast<int>(rate * 900.0), 1);
 
 		if(Unsorted::CurrentFrame % frames == 0) {

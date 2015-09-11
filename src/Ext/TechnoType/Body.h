@@ -244,6 +244,8 @@ public:
 		Valueable<bool> CanPassiveAcquire_Guard;
 		Valueable<bool> CanPassiveAcquire_Cloak;
 
+		Nullable<double> SelfHealing_Rate;
+
 		ExtData(TechnoTypeClass* OwnerObject) : Extension<TechnoTypeClass>(OwnerObject),
 			Survivors_PilotChance(),
 			Survivors_PassengerChance(),

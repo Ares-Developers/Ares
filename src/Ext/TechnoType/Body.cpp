@@ -432,6 +432,9 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 	this->CanPassiveAcquire_Guard.Read(exINI, section, "CanPassiveAquire.Guard");
 	this->CanPassiveAcquire_Cloak.Read(exINI, section, "CanPassiveAquire.Cloak");
 
+	// self healing
+	this->SelfHealing_Rate.Read(exINI, section, "SelfHealing.Rate");
+
 	// quick fix - remove after the rest of weapon selector code is done
 	return;
 }
@@ -768,7 +771,8 @@ void TechnoTypeExt::ExtData::Serialize(T& Stm) {
 		.Process(this->EmptyReloadAmount)
 		.Process(this->Saboteur)
 		.Process(this->CanPassiveAcquire_Guard)
-		.Process(this->CanPassiveAcquire_Cloak);
+		.Process(this->CanPassiveAcquire_Cloak)
+		.Process(this->SelfHealing_Rate);
 }
 
 void TechnoTypeExt::ExtData::LoadFromStream(AresStreamReader &Stm) {
