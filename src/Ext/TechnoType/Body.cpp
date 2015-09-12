@@ -22,15 +22,7 @@ TechnoTypeExt::ExtContainer TechnoTypeExt::ExtMap;
 void TechnoTypeExt::ExtData::Initialize() {
 	auto pThis = this->OwnerObject();
 
-	this->Survivors_PilotCount = -1; // defaults to (crew ? 1 : 0)
-
-	this->PrerequisiteLists.clear();
 	this->PrerequisiteLists.push_back(std::make_unique<DynamicVectorClass<int>>());
-
-	this->PrerequisiteTheaters = 0xFFFFFFFF;
-
-	this->Secret_RequiredHouses = 0xFFFFFFFF;
-	this->Secret_ForbiddenHouses = 0;
 
 	this->Is_Deso = this->Is_Deso_Radiation = !strcmp(pThis->ID, "DESO");
 	this->Is_Cow = !strcmp(pThis->ID, "COW");

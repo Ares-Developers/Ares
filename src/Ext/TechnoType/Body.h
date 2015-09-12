@@ -255,7 +255,7 @@ public:
 			Crew_TechnicianChance(),
 			Crew_EngineerChance(),
 			PrerequisiteTheaters(0xFFFFFFFF),
-			Secret_RequiredHouses(0),
+			Secret_RequiredHouses(0xFFFFFFFF),
 			Secret_ForbiddenHouses(0),
 			Is_Deso(false),
 			Is_Deso_Radiation(false),
