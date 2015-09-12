@@ -69,8 +69,8 @@ public:
 		bool Is_Bomb;
 
 		// these are not implemented at all yet
-		DynamicVectorClass<WeaponStruct> Weapons;
-		DynamicVectorClass<WeaponStruct> EliteWeapons;
+		//DynamicVectorClass<WeaponStruct> Weapons;
+		//DynamicVectorClass<WeaponStruct> EliteWeapons;
 
 		Promotable<SHPStruct *> Insignia;
 		Nullable<bool> Insignia_ShowEnemy;
