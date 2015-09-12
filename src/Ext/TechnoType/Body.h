@@ -246,6 +246,7 @@ public:
 
 		Nullable<double> SelfHealing_Rate;
 		Promotable<int> SelfHealing_Amount;
+		Promotable<double> SelfHealing_Max;
 
 		ExtData(TechnoTypeClass* OwnerObject) : Extension<TechnoTypeClass>(OwnerObject),
 			Survivors_PilotChance(-1),
@@ -271,6 +272,7 @@ public:
 			CanPassiveAcquire_Guard(true),
 			CanPassiveAcquire_Cloak(true),
 			SelfHealing_Amount(1),
+			SelfHealing_Max(1.0),
 			Drain_Amount(0),
 			SmokeChanceRed(),
 			SmokeChanceDead(),
