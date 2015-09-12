@@ -181,13 +181,19 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 		}
 	}
 
-	for(auto const pItem : *WeaponTypeClass::Array) {
+	for(auto const& pItem : *WeaponTypeClass::Array) {
+		constexpr auto const Msg =
+			"Weapon[%s] has no %s! This usually indicates one of two things:\n"
+			"- The weapon was created too late and its rules weren't read "
+			"(see WEEDGUY hack);\n- The weapon's name was misspelled.\n";
+
 		if(!pItem->Warhead) {
-			Debug::Log(Debug::Severity::Error,
-				"Weapon[%s] has no Warhead! This usually indicates one of two "
-				"things:\n- The weapon was created too late and its rules "
-				"weren't read (see WEEDGUY hack);\n- The weapon's name was "
-				"misspelled.\n", pItem->get_ID());
+			Debug::Log(Debug::Severity::Error, Msg, pItem->ID, "Warhead");
+			Debug::RegisterParserError();
+		}
+
+		if(!pItem->Projectile) {
+			Debug::Log(Debug::Severity::Error, Msg, pItem->ID, "Projectile");
 			Debug::RegisterParserError();
 		}
 	}
