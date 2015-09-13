@@ -6,9 +6,9 @@ ContainerMapBase::~ContainerMapBase() = default;
 ContainerMapBase::value_type ContainerMapBase::find(
 	ContainerMapBase::const_key_type key) const
 {
-	auto const i = this->Items.find(key);
-	if(i != this->Items.end()) {
-		return i->second;
+	auto const it = this->Items.find(key);
+	if(it != this->Items.end()) {
+		return it->second;
 	}
 	return nullptr;
 }
@@ -22,10 +22,10 @@ void ContainerMapBase::insert(
 ContainerMapBase::value_type ContainerMapBase::remove(
 	ContainerMapBase::const_key_type key)
 {
-	auto const i = this->Items.find(key);
-	if(i != this->Items.cend()) {
-		auto const value = i->second;
-		this->Items.erase(i);
+	auto const it = this->Items.find(key);
+	if(it != this->Items.cend()) {
+		auto const value = it->second;
+		this->Items.erase(it);
 		return value;
 	}
 	return nullptr;
