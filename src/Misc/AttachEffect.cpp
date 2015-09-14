@@ -62,26 +62,26 @@ bool AttachEffectTypeClass::Save(AresStreamWriter &Stm) const {
 }
 
 void AttachEffectTypeClass::Read(INI_EX &exINI) {
-	const char* section = this->Owner->ID;
-	this->Duration.Read(exINI, section, "AttachEffect.Duration");
-	this->Cumulative.Read(exINI, section, "AttachEffect.Cumulative");
-	this->AnimType.Read(exINI, section, "AttachEffect.Animation");
-	this->AnimResetOnReapply.Read(exINI, section, "AttachEffect.AnimResetOnReapply");
-	this->TemporalHidesAnim.Read(exINI, section, "AttachEffect.TemporalHidesAnim");
-	this->ForceDecloak.Read(exINI, section, "AttachEffect.ForceDecloak");
-	this->DiscardOnEntry.Read(exINI, section, "AttachEffect.DiscardOnEntry");
-	this->FirepowerMultiplier.Read(exINI, section, "AttachEffect.FirepowerMultiplier");
-	this->ArmorMultiplier.Read(exINI, section, "AttachEffect.ArmorMultiplier");
-	this->SpeedMultiplier.Read(exINI, section, "AttachEffect.SpeedMultiplier");
-	this->Cloakable.Read(exINI, section, "AttachEffect.Cloakable");
+	auto const pSection = this->Owner->ID;
+	this->Duration.Read(exINI, pSection, "AttachEffect.Duration");
+	this->Cumulative.Read(exINI, pSection, "AttachEffect.Cumulative");
+	this->AnimType.Read(exINI, pSection, "AttachEffect.Animation");
+	this->AnimResetOnReapply.Read(exINI, pSection, "AttachEffect.AnimResetOnReapply");
+	this->TemporalHidesAnim.Read(exINI, pSection, "AttachEffect.TemporalHidesAnim");
+	this->ForceDecloak.Read(exINI, pSection, "AttachEffect.ForceDecloak");
+	this->DiscardOnEntry.Read(exINI, pSection, "AttachEffect.DiscardOnEntry");
+	this->FirepowerMultiplier.Read(exINI, pSection, "AttachEffect.FirepowerMultiplier");
+	this->ArmorMultiplier.Read(exINI, pSection, "AttachEffect.ArmorMultiplier");
+	this->SpeedMultiplier.Read(exINI, pSection, "AttachEffect.SpeedMultiplier");
+	this->Cloakable.Read(exINI, pSection, "AttachEffect.Cloakable");
 
 	/*
-	this->Damage.Read(exINI, section, "AttachEffect.Damage");
-	this->DamageDelay.Read(exINI, section, "AttachEffect.DamageDelay");
-	this->Warhead.Parse(exINI, section, "AttachEffect.Warhead");
+	this->Damage.Read(exINI, pSection, "AttachEffect.Damage");
+	this->DamageDelay.Read(exINI, pSection, "AttachEffect.DamageDelay");
+	this->Warhead.Parse(exINI, pSection, "AttachEffect.Warhead");
 	*/
 
-	this->Delay.Read(exINI, section, "AttachEffect.Delay");
+	this->Delay.Read(exINI, pSection, "AttachEffect.Delay");
 }
 
 /*!
@@ -96,24 +96,33 @@ void AttachEffectTypeClass::Read(INI_EX &exINI) {
 */
 
 //void AttachEffectTypeClass::Attach(TechnoClass* pTarget, int duration, TechnoClass* pInvoker, int DamageDelay) {
-void AttachEffectTypeClass::Attach(TechnoClass* pTarget, int duration, TechnoClass* pInvoker) {
-	if (!pTarget || pTarget->IsIronCurtained()) {
+void AttachEffectTypeClass::Attach(
+	TechnoClass* const pTarget, int const duration,
+	TechnoClass* const pInvoker)
+{
+	if(!pTarget || pTarget->IsIronCurtained()) {
 		return;
 	}
 
-	TechnoExt::ExtData *TargetExt = TechnoExt::ExtMap.Find(pTarget);
+	auto const pTargetExt = TechnoExt::ExtMap.Find(pTarget);
+	auto& Effects = pTargetExt->AttachedEffects;
 
-	if (!this->Cumulative) {
-		for (const auto& Item : TargetExt->AttachedEffects) {
-			if (this == Item->Type) {
-				Item->ActualDuration = Item->Type->Duration;
+	if(!this->Cumulative) {
+		for(auto const& pItem : Effects) {
+			if(this == pItem->Type) {
+				pItem->ActualDuration = pItem->Type->Duration;
 
-				if (!!this->AnimType && !!this->AnimResetOnReapply) {
-					Item->CreateAnim(pTarget);
+				if(this->AnimType && this->AnimResetOnReapply) {
+					pItem->CreateAnim(pTarget);
 				}
 
-				if (!!this->ForceDecloak && (pTarget->CloakState == CloakState::Cloaked || pTarget->CloakState == CloakState::Cloaking)) {
-					pTarget->Uncloak(true);
+				if(this->ForceDecloak) {
+					auto const state = pTarget->CloakState;
+					if(state == CloakState::Cloaked
+						|| state == CloakState::Cloaking)
+					{
+						pTarget->Uncloak(true);
+					}
 				}
 
 				return;
@@ -122,22 +131,21 @@ void AttachEffectTypeClass::Attach(TechnoClass* pTarget, int duration, TechnoCla
 	}
 
 	// there goes the actual attaching
-	TargetExt->AttachedEffects.push_back(std::make_unique<AttachEffectClass>(this, duration));
-	auto &Attaching = TargetExt->AttachedEffects.back();
+	Effects.emplace_back(std::make_unique<AttachEffectClass>(this, duration));
+	auto& Attaching = Effects.back();
 
 	Attaching->Invoker = pInvoker;
 
 	// update the unit with the attached effect
-	TargetExt->RecalculateStats();
+	pTargetExt->RecalculateStats();
 
-	//check cloak
-	if (!!this->ForceDecloak && pTarget->CloakState != CloakState::Uncloaked) {
+	// check cloak
+	if(this->ForceDecloak && pTarget->CloakState != CloakState::Uncloaked) {
 		pTarget->Uncloak(true);
 	}
 
 	// animation
 	Attaching->CreateAnim(pTarget);
-	
 }
 
 bool AttachEffectClass::Load(AresStreamReader &Stm, bool RegisterForChange) {
@@ -169,22 +177,23 @@ void AttachEffectClass::InvalidatePointer(void* ptr) {
 }
 
 void AttachEffectClass::CreateAnim(TechnoClass* pOwner) {
-	if ((pOwner->CloakState == CloakState::Cloaked || pOwner->CloakState == CloakState::Cloaking) ||
-		(pOwner->TemporalTargetingMe && !!this->Type->TemporalHidesAnim)) {
+	auto const pType = this->Type;
+
+	auto const state = pOwner->CloakState;
+	if((state == CloakState::Cloaked || state == CloakState::Cloaking) ||
+		(pOwner->TemporalTargetingMe && pType->TemporalHidesAnim)) {
 		return;
 	}
 
-	if (!!this->Type->AnimType) {
-		if (this->Animation){
-			this->KillAnim();
-		}
+	if(AnimTypeClass* const pAnimType = pType->AnimType) {
+		this->KillAnim();
 
-		this->Animation = GameCreate<AnimClass>(this->Type->AnimType, pOwner->Location);
-		if (auto pAnim = this->Animation) {
+		this->Animation = GameCreate<AnimClass>(pAnimType, pOwner->Location);
+		if(auto const pAnim = this->Animation) {
 			pAnim->SetOwnerObject(pOwner);
 			pAnim->RemainingIterations = 0xFFu;
 
-			if (this->Invoker && this->Invoker->Owner) {
+			if(this->Invoker && this->Invoker->Owner) {
 				pAnim->Owner = this->Invoker->Owner;
 			}
 		}
@@ -193,7 +202,7 @@ void AttachEffectClass::CreateAnim(TechnoClass* pOwner) {
 
 //animation remover, boolean is needed otherwise destructor goes to infinite loop during UnInit
 void AttachEffectClass::KillAnim() {
-	if (auto pAnim = this->Animation) {
+	if(auto const pAnim = this->Animation) {
 		this->Animation = nullptr;
 		pAnim->SetOwnerObject(nullptr);
 		pAnim->UnInit();
