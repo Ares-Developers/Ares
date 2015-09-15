@@ -108,25 +108,28 @@ void AttachEffectTypeClass::Attach(
 	auto& Effects = pTargetExt->AttachedEffects;
 
 	if(!this->Cumulative) {
-		for(auto const& pItem : Effects) {
-			if(this == pItem->Type) {
-				pItem->ActualDuration = pItem->Type->Duration;
+		auto const it = std::find_if(Effects.begin(), Effects.end(),
+			[=](auto const& item) { return item->Type == this; });
 
-				if(this->AnimType && this->AnimResetOnReapply) {
-					pItem->CreateAnim(pTarget);
-				}
+		if(it != Effects.end()) {
+			auto const& pItem = *it;
 
-				if(this->ForceDecloak) {
-					auto const state = pTarget->CloakState;
-					if(state == CloakState::Cloaked
-						|| state == CloakState::Cloaking)
-					{
-						pTarget->Uncloak(true);
-					}
-				}
+			pItem->ActualDuration = pItem->Type->Duration;
 
-				return;
+			if(this->AnimType && this->AnimResetOnReapply) {
+				pItem->CreateAnim(pTarget);
 			}
+
+			if(this->ForceDecloak) {
+				auto const state = pTarget->CloakState;
+				if(state == CloakState::Cloaked
+					|| state == CloakState::Cloaking)
+				{
+					pTarget->Uncloak(true);
+				}
+			}
+
+			return;
 		}
 	}
 
