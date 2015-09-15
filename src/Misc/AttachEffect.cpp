@@ -240,15 +240,15 @@ void AttachEffectClass::Update(TechnoClass* pSource) {
 
 		if(pSource->CloakState == CloakState::Cloaked || pSource->CloakState == CloakState::Cloaking) {
 			if(!pData->AttachEffects_RecreateAnims) {
-				for(auto i = pData->AttachedEffects.size(); i > 0; --i) {
-					pData->AttachedEffects[i - 1]->KillAnim();
+				for(auto const& pItem : pData->AttachedEffects) {
+					pItem->KillAnim();
 				}
 				pData->AttachEffects_RecreateAnims = true;
 			}
 		} else {
 			if(pData->AttachEffects_RecreateAnims) {
-				for(auto i = pData->AttachedEffects.size(); i > 0; --i) {
-					pData->AttachedEffects[i - 1]->CreateAnim(pSource);
+				for(auto const& pItem : pData->AttachedEffects) {
+					pItem->CreateAnim(pSource);
 				}
 				pData->AttachEffects_RecreateAnims = false;
 			}

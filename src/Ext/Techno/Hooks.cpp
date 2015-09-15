@@ -307,10 +307,9 @@ DEFINE_HOOK(71A84E, TemporalClass_UpdateA, 5)
 
 		//AttachEffect handling under Temporal
 		if(!pExt->AttachEffects_RecreateAnims) {
-			for(auto i = pExt->AttachedEffects.size(); i > 0; --i) {
-				auto const& Effect = pExt->AttachedEffects[i - 1];
-				if(Effect->Type->TemporalHidesAnim) {
-					Effect->KillAnim();
+			for(auto const& pItem : pExt->AttachedEffects) {
+				if(pItem->Type->TemporalHidesAnim) {
+					pItem->KillAnim();
 				}
 			}
 			pExt->AttachEffects_RecreateAnims = true;
