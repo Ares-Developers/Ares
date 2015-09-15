@@ -19,6 +19,8 @@
 #include <TiberiumClass.h>
 #include <UnitClass.h>
 
+#include <algorithm>
+
 // bugfix #297: Crewed=yes jumpjets spawn parachuted infantry on destruction, not idle
 DEFINE_HOOK(737F97, UnitClass_ReceiveDamage, 0)
 {
@@ -1025,28 +1027,31 @@ DEFINE_HOOK(6F6AC9, TechnoClass_Remove, 6) {
 	TechnoExt->PoweredUnit = nullptr;
 
 	//#1573, #1623, #255 attached effects
-	if (!TechnoExt->AttachedEffects.empty()) {
-		//auto pID = pThis->GetTechnoType()->ID;
-		bool recalculate = false;
-		for (auto i = TechnoExt->AttachedEffects.size(); i > 0; --i) {
-			//Debug::Log("[AttachEffect] Removing %d. item from %s\n", i - 1, pID);
-			auto& Item = TechnoExt->AttachedEffects[i - 1];
-			if (Item->Type->DiscardOnEntry) {
-				TechnoExt->AttachedEffects.erase(TechnoExt->AttachedEffects.begin() + i - 1);
-				recalculate = true;
-			} else {
-				Item->KillAnim();
-			}
+	auto& Effects = TechnoExt->AttachedEffects;
+	if(!Effects.empty()) {
+		//auto const pID = pThis->GetTechnoType()->ID;
+		for(auto const& Item : Effects) {
+			//Debug::Log("[AttachEffect] Removing %d. item from %s\n",
+			//	&pItem - Effects.data(), pID);
+			Item->KillAnim();
 		}
 
-		if(recalculate) {
+		auto const it = std::remove_if(
+			Effects.begin(), Effects.end(),
+			[](std::unique_ptr<AttachEffectClass> const& Item)
+		{
+			return static_cast<bool>(Item->Type->DiscardOnEntry);
+		});
+
+		if(it != Effects.end()) {
+			Effects.erase(it, Effects.end());
 			TechnoExt->RecalculateStats();
 		}
 
 		TechnoExt->AttachEffects_RecreateAnims = true;
 	}
 
-	return pThis->InLimbo ? 0x6F6C93 : 0x6F6AD5;
+	return pThis->InLimbo ? 0x6F6C93u : 0x6F6AD5u;
 }
 
 DEFINE_HOOK(74642C, UnitClass_ReceiveGunner, 6)
