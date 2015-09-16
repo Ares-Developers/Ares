@@ -111,15 +111,15 @@ void AttachEffectTypeClass::Attach(
 
 	if(!this->Cumulative) {
 		auto const it = std::find_if(Effects.begin(), Effects.end(),
-			[=](auto const& item) { return item->Type == this; });
+			[=](auto const& item) { return item.Type == this; });
 
 		if(it != Effects.end()) {
-			auto const& pItem = *it;
+			auto& Item = *it;
 
-			pItem->ActualDuration = pItem->Type->Duration;
+			Item.ActualDuration = Item.Type->Duration;
 
 			if(this->AnimType && this->AnimResetOnReapply) {
-				pItem->CreateAnim(pTarget);
+				Item.CreateAnim(pTarget);
 			}
 
 			if(this->ForceDecloak) {
@@ -136,10 +136,10 @@ void AttachEffectTypeClass::Attach(
 	}
 
 	// there goes the actual attaching
-	Effects.emplace_back(std::make_unique<AttachEffectClass>(this, duration));
+	Effects.emplace_back(this, duration);
 	auto& Attaching = Effects.back();
 
-	Attaching->Invoker = pInvoker;
+	Attaching.Invoker = pInvoker;
 
 	// update the unit with the attached effect
 	pTargetExt->RecalculateStats();
@@ -150,7 +150,25 @@ void AttachEffectTypeClass::Attach(
 	}
 
 	// animation
-	Attaching->CreateAnim(pTarget);
+	Attaching.CreateAnim(pTarget);
+}
+
+AttachEffectClass::AttachEffectClass(AttachEffectClass&& other) :
+	Type(other.Type),
+	Animation(std::exchange(other.Animation, nullptr)),
+	ActualDuration(other.ActualDuration),
+	Invoker(other.Invoker)
+{ }
+
+AttachEffectClass& AttachEffectClass::operator= (AttachEffectClass&& other) {
+	this->Destroy();
+
+	this->Type = other.Type;
+	this->Animation = std::exchange(other.Animation, nullptr);
+	this->ActualDuration = other.ActualDuration;
+	this->Invoker = other.Invoker;
+
+	return *this;
 }
 
 bool AttachEffectClass::Load(AresStreamReader &Stm, bool RegisterForChange) {
@@ -247,15 +265,15 @@ void AttachEffectClass::Update(TechnoClass* pSource) {
 			|| pSource->CloakState == CloakState::Cloaking)
 		{
 			if(!pData->AttachEffects_RecreateAnims) {
-				for(auto const& pItem : pData->AttachedEffects) {
-					pItem->KillAnim();
+				for(auto& Item : pData->AttachedEffects) {
+					Item.KillAnim();
 				}
 				pData->AttachEffects_RecreateAnims = true;
 			}
 		} else {
 			if(pData->AttachEffects_RecreateAnims) {
-				for(auto const& pItem : pData->AttachedEffects) {
-					pItem->CreateAnim(pSource);
+				for(auto& Item : pData->AttachedEffects) {
+					Item.CreateAnim(pSource);
 				}
 				pData->AttachEffects_RecreateAnims = false;
 			}
@@ -264,9 +282,9 @@ void AttachEffectClass::Update(TechnoClass* pSource) {
 		Debug::Log(Logging,
 			"[AttachEffect]AttachEffect update of %s...\n", pType->ID);
 
-		for(auto const& Effect : pData->AttachedEffects) {
-			auto const pEffectType = Effect->Type;
-			auto duration = Effect->ActualDuration;
+		for(auto& Effect : pData->AttachedEffects) {
+			auto const pEffectType = Effect.Type;
+			auto duration = Effect.ActualDuration;
 
 			if(duration > 0) {
 				--duration;
@@ -275,13 +293,13 @@ void AttachEffectClass::Update(TechnoClass* pSource) {
 			//#408, residual damage
 			/* unfinished, crash if unit gets killed and was targeted
 			if(pEffectType->Damage) {
-				if(Effect->ActualDamageDelay) {
-					--Effect->ActualDamageDelay;
+				if(Effect.ActualDamageDelay) {
+					--Effect.ActualDamageDelay;
 				} else {
-					Effect->ActualDamageDelay = pEffectType->DamageDelay;
+					Effect.ActualDamageDelay = pEffectType->DamageDelay;
 
-					auto const pAttacker = Effect->Invoker
-						? Effect->Invoker : pSource;
+					auto const pAttacker = Effect.Invoker
+						? Effect.Invoker : pSource;
 					auto const pHouse = pKiller->Owner;
 
 					int damage = pEffectType->Damage;
@@ -314,15 +332,15 @@ void AttachEffectClass::Update(TechnoClass* pSource) {
 					&Effect - pData->AttachedEffects.data());
 			}
 
-			Effect->ActualDuration = duration;
+			Effect.ActualDuration = duration;
 		}
 
 		// remove the expired effects and update the unit's properties
 		auto const it = std::remove_if(
 			pData->AttachedEffects.begin(), pData->AttachedEffects.end(),
-			[](std::unique_ptr<AttachEffectClass> const& Item)
+			[](AttachEffectClass const& Item)
 		{
-			return !Item->ActualDuration;
+			return !Item.ActualDuration;
 		});
 
 		if(it != pData->AttachedEffects.end()) {

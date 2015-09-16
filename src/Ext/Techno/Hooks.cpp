@@ -309,9 +309,9 @@ DEFINE_HOOK(71A84E, TemporalClass_UpdateA, 5)
 
 		//AttachEffect handling under Temporal
 		if(!pExt->AttachEffects_RecreateAnims) {
-			for(auto const& pItem : pExt->AttachedEffects) {
-				if(pItem->Type->TemporalHidesAnim) {
-					pItem->KillAnim();
+			for(auto& Item : pExt->AttachedEffects) {
+				if(Item.Type->TemporalHidesAnim) {
+					Item.KillAnim();
 				}
 			}
 			pExt->AttachEffects_RecreateAnims = true;
@@ -1030,17 +1030,17 @@ DEFINE_HOOK(6F6AC9, TechnoClass_Remove, 6) {
 	auto& Effects = TechnoExt->AttachedEffects;
 	if(!Effects.empty()) {
 		//auto const pID = pThis->GetTechnoType()->ID;
-		for(auto const& Item : Effects) {
+		for(auto& Item : Effects) {
 			//Debug::Log("[AttachEffect] Removing %d. item from %s\n",
-			//	&pItem - Effects.data(), pID);
-			Item->KillAnim();
+			//	&Item - Effects.data(), pID);
+			Item.KillAnim();
 		}
 
 		auto const it = std::remove_if(
 			Effects.begin(), Effects.end(),
-			[](std::unique_ptr<AttachEffectClass> const& Item)
+			[](AttachEffectClass const& Item)
 		{
-			return static_cast<bool>(Item->Type->DiscardOnEntry);
+			return static_cast<bool>(Item.Type->DiscardOnEntry);
 		});
 
 		if(it != Effects.end()) {

@@ -61,7 +61,7 @@ public:
 		std::unique_ptr<PoweredUnitClass> PoweredUnit;
 
 		//#1573, #1623, #255 Stat-modifiers/ongoing animations
-		std::vector<std::unique_ptr<AttachEffectClass>> AttachedEffects;
+		std::vector<AttachEffectClass> AttachedEffects;
 		bool AttachEffects_RecreateAnims;
 
 		//stuff for #1623

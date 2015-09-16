@@ -578,7 +578,7 @@ void TechnoExt::TransferAttachedEffects(TechnoClass *From, TechnoClass *To) {
 	// while recreation itself isn't the best idea, less hassle and more reliable
 	// list gets intact in the end
 	for(const auto& Item : FromExt->AttachedEffects) {
-		Item->Type->Attach(To, Item->ActualDuration, Item->Invoker);
+		Item.Type->Attach(To, Item.ActualDuration, Item.Invoker);
 	}
 
 	FromExt->AttachedEffects.clear();
@@ -602,7 +602,7 @@ void TechnoExt::ExtData::RecalculateStats() {
 	//Debug::Log("[AttachEffect]Recalculating stats of %s...\n", pThis->get_ID());
 
 	for(const auto& Item : this->AttachedEffects) {
-		auto const pType = Item->Type;
+		auto const pType = Item.Type;
 		Firepower *= pType->FirepowerMultiplier;
 		Speed *= pType->SpeedMultiplier;
 		Armor *= pType->ArmorMultiplier;
@@ -689,10 +689,8 @@ Action TechnoExt::ExtData::GetDeactivatedAction(ObjectClass *Hovered) const {
 }
 
 void TechnoExt::ExtData::InvalidateAttachEffectPointer(void *ptr) {
-	for(const auto& Item : this->AttachedEffects) {
-		if(Item) {
-			Item->InvalidatePointer(ptr);
-		}
+	for(auto& Item : this->AttachedEffects) {
+		Item.InvalidatePointer(ptr);
 	}
 }
 

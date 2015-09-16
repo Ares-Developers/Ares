@@ -70,12 +70,21 @@ public:
 
 class AttachEffectClass {
 public:
-	AttachEffectClass(AttachEffectTypeClass* pType, int timer) : Type(pType),
+	AttachEffectClass() : AttachEffectClass(nullptr, 0)
+	{ }
+
+	AttachEffectClass(AttachEffectTypeClass* pType, int timer) :
+		Type(pType),
 		Animation(nullptr),
 		ActualDuration(timer),
 		Invoker(nullptr)
-	{
-	}
+	{ }
+
+	AttachEffectClass(AttachEffectClass&& other);
+	AttachEffectClass& operator= (AttachEffectClass&& other);
+
+	AttachEffectClass(AttachEffectClass const& other) = delete;
+	AttachEffectClass& operator= (AttachEffectClass& other) = delete;
 
 	~AttachEffectClass() {
 		this->Destroy();
@@ -100,11 +109,4 @@ public:
 	bool Save(AresStreamWriter &Stm) const;
 
 	static void Update(TechnoClass* pSource);
-};
-
-template <>
-struct Savegame::ObjectFactory<AttachEffectClass> {
-	std::unique_ptr<AttachEffectClass> operator() (AresStreamReader &Stm) const {
-		return std::make_unique<AttachEffectClass>(nullptr, 0);
-	}
 };
