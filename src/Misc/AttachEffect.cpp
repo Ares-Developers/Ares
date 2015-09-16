@@ -258,9 +258,7 @@ void AttachEffectClass::Update(TechnoClass* pSource) {
 		}
 
 		Debug::Log(Logging, "[AttachEffect]AttachEffect update of %s...\n", pSource->get_ID());
-		auto recalculate = false;
-		for(auto i = pData->AttachedEffects.size(); i > 0; --i) {
-			auto const& Effect = pData->AttachedEffects[i - 1];
+		for(auto const& Effect : pData->AttachedEffects) {
 			auto const pEffectType = Effect->Type;
 
 			if(Effect->ActualDuration > 0) {
@@ -291,23 +289,39 @@ void AttachEffectClass::Update(TechnoClass* pSource) {
 				}
 			}*/
 
-			if(!Effect->ActualDuration || (pEffectType->Owner == pType && pSource->Deactivated)) {
-				Debug::Log(Logging, "[AttachEffect] %u. item expired, removing...\n", i - 1);
+			auto const isOwnType = (pEffectType->Owner == pType);
+			if(isOwnType && pSource->Deactivated) {
+				Effect->ActualDuration = 0;
+			}
 
-				if(pEffectType->Owner == pType) {		//#1623, hardcodes Cumulative to false
+			// expired effect will be removed
+			if(!Effect->ActualDuration) {
+				if(isOwnType) { //#1623, hardcodes Cumulative to false
 					pData->AttachedTechnoEffect_isset = false;
 					pData->AttachedTechnoEffect_Delay = pEffectType->Delay;
 				}
 
-				pData->AttachedEffects.erase(pData->AttachedEffects.begin() + i - 1);
-				recalculate = true;
-				Debug::Log(Logging, "[AttachEffect] Remove #%u was successful.\n", i - 1);
+				Debug::Log(Logging,
+					"[AttachEffect] Item at %d expired, removing...\n",
+					&Effect - pData->AttachedEffects.data());
 			}
 		}
 
-		// update the unit's properties
-		if(recalculate) {
+		// remove the expired effects and update the unit's properties
+		auto const it = std::remove_if(
+			pData->AttachedEffects.begin(), pData->AttachedEffects.end(),
+			[](std::unique_ptr<AttachEffectClass> const& Item)
+		{
+			return !Item->ActualDuration;
+		});
+
+		if(it != pData->AttachedEffects.end()) {
+			auto const count = pData->AttachedEffects.end() - it;
+			pData->AttachedEffects.erase(it, pData->AttachedEffects.end());
 			pData->RecalculateStats();
+
+			Debug::Log(Logging,
+				"[AttachEffect] Removing %d item(s) was successful.\n", count);
 		}
 
 		Debug::Log(Logging, "[AttachEffect]Update was successful.\n");
