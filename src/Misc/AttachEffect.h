@@ -70,18 +70,18 @@ public:
 
 class AttachEffectClass {
 public:
-	AttachEffectClass() : AttachEffectClass(nullptr, 0)
+	AttachEffectClass() noexcept : AttachEffectClass(nullptr, 0)
 	{ }
 
-	AttachEffectClass(AttachEffectTypeClass* pType, int timer) :
+	AttachEffectClass(AttachEffectTypeClass* pType, int timer) noexcept :
 		Type(pType),
 		Animation(nullptr),
 		ActualDuration(timer),
 		Invoker(nullptr)
 	{ }
 
-	AttachEffectClass(AttachEffectClass&& other);
-	AttachEffectClass& operator= (AttachEffectClass&& other);
+	AttachEffectClass(AttachEffectClass&& other) noexcept;
+	AttachEffectClass& operator= (AttachEffectClass&& other) noexcept;
 
 	AttachEffectClass(AttachEffectClass const& other) = delete;
 	AttachEffectClass& operator= (AttachEffectClass& other) = delete;

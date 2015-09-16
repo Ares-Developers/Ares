@@ -153,14 +153,14 @@ void AttachEffectTypeClass::Attach(
 	Attaching.CreateAnim(pTarget);
 }
 
-AttachEffectClass::AttachEffectClass(AttachEffectClass&& other) :
+AttachEffectClass::AttachEffectClass(AttachEffectClass&& other) noexcept :
 	Type(other.Type),
 	Animation(std::exchange(other.Animation, nullptr)),
 	ActualDuration(other.ActualDuration),
 	Invoker(other.Invoker)
 { }
 
-AttachEffectClass& AttachEffectClass::operator= (AttachEffectClass&& other) {
+AttachEffectClass& AttachEffectClass::operator= (AttachEffectClass&& other) noexcept {
 	this->Destroy();
 
 	this->Type = other.Type;
