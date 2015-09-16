@@ -241,7 +241,9 @@ void AttachEffectClass::Update(TechnoClass* pSource) {
 
 	if(!pData->AttachedEffects.empty()) {
 
-		if(pSource->CloakState == CloakState::Cloaked || pSource->CloakState == CloakState::Cloaking) {
+		if(pSource->CloakState == CloakState::Cloaked
+			|| pSource->CloakState == CloakState::Cloaking)
+		{
 			if(!pData->AttachEffects_RecreateAnims) {
 				for(auto const& pItem : pData->AttachedEffects) {
 					pItem->KillAnim();
@@ -257,12 +259,15 @@ void AttachEffectClass::Update(TechnoClass* pSource) {
 			}
 		}
 
-		Debug::Log(Logging, "[AttachEffect]AttachEffect update of %s...\n", pSource->get_ID());
+		Debug::Log(Logging,
+			"[AttachEffect]AttachEffect update of %s...\n", pType->ID);
+
 		for(auto const& Effect : pData->AttachedEffects) {
 			auto const pEffectType = Effect->Type;
+			auto duration = Effect->ActualDuration;
 
-			if(Effect->ActualDuration > 0) {
-				--Effect->ActualDuration;
+			if(duration > 0) {
+				--duration;
 			}
 
 			//#408, residual damage
@@ -283,7 +288,8 @@ void AttachEffectClass::Update(TechnoClass* pSource) {
 						false, pHouse);
 
 					if(res == DamageState::NowDead) {
-						//check if the unit is still alive, if residual damage killed it, no reason to continue
+						// check if the unit is still alive, if residual damage
+						// killed it, no reason to continue
 						return false;	//this is a void atm
 					}
 				}
@@ -291,20 +297,22 @@ void AttachEffectClass::Update(TechnoClass* pSource) {
 
 			auto const isOwnType = (pEffectType->Owner == pType);
 			if(isOwnType && pSource->Deactivated) {
-				Effect->ActualDuration = 0;
+				duration = 0;
 			}
 
 			// expired effect will be removed
-			if(!Effect->ActualDuration) {
+			if(!duration) {
 				if(isOwnType) { //#1623, hardcodes Cumulative to false
 					pData->AttachedTechnoEffect_isset = false;
 					pData->AttachedTechnoEffect_Delay = pEffectType->Delay;
 				}
 
 				Debug::Log(Logging,
-					"[AttachEffect] Item at %d expired, removing...\n",
+					"[AttachEffect]Item at %d expired, removing...\n",
 					&Effect - pData->AttachedEffects.data());
 			}
+
+			Effect->ActualDuration = duration;
 		}
 
 		// remove the expired effects and update the unit's properties
@@ -321,7 +329,7 @@ void AttachEffectClass::Update(TechnoClass* pSource) {
 			pData->RecalculateStats();
 
 			Debug::Log(Logging,
-				"[AttachEffect] Removing %d item(s) was successful.\n", count);
+				"[AttachEffect]Removing %d item(s) was successful.\n", count);
 		}
 
 		Debug::Log(Logging, "[AttachEffect]Update was successful.\n");
@@ -331,18 +339,16 @@ void AttachEffectClass::Update(TechnoClass* pSource) {
 	if(pTypeData->AttachedTechnoEffect.Duration && !pData->AttachedTechnoEffect_isset) {
 		if(!pData->AttachedTechnoEffect_Delay) {
 			if(!pSource->Deactivated) {
-				Debug::Log(Logging, "[AttachEffect]Missing Type effect of %s...\n", pSource->get_ID());
+				Debug::Log(Logging, "[AttachEffect]Missing Type effect of %s...\n", pType->ID);
 				//pTypeData->AttachedTechnoEffect.Attach(pSource, pTypeData->AttachedTechnoEffect.Duration, pSource, pTypeData->AttachedTechnoEffect.DamageDelay);
 
 				pTypeData->AttachedTechnoEffect.Attach(pSource, pTypeData->AttachedTechnoEffect.Duration, pSource);
 
 				pData->AttachedTechnoEffect_isset = true;
-				Debug::Log(Logging, "[AttachEffect]Readded to %s.\n", pSource->get_ID());
+				Debug::Log(Logging, "[AttachEffect]Readded to %s.\n", pType->ID);
 			}
 		} else if(pData->AttachedTechnoEffect_Delay > 0) {
 			--pData->AttachedTechnoEffect_Delay;
 		}
 	}
-
-	return;
 }
