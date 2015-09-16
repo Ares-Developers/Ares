@@ -1,10 +1,11 @@
 #pragma once
 
-#include <vector>
-#include <TechnoClass.h>
-
 #include "../Utilities/Template.h"
 
+class AbstractTypeClass;
+class AnimClass;
+class AnimTypeClass;
+class TechnoClass;
 
 class AttachEffectTypeClass {
 public:

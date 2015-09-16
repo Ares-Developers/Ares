@@ -4,6 +4,8 @@
 #include "../Ext/WarheadType/Body.h"
 #include "../Utilities/TemplateDef.h"
 
+#include <vector>
+
 /*
 Attached Effects system
 covering feature requests
