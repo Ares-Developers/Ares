@@ -377,7 +377,7 @@ namespace Helpers {
 			}
 		}
 
-		//! Stable (partial) insertion sort using a predicate or std::less
+		//! Stable (partial) selection sort using a predicate or std::less
 		/*!
 			For the overloads not taking middle, assume middle equals last. For
 			the overloads not taking pred, assume pred equals std::less<>.
@@ -400,24 +400,24 @@ namespace Helpers {
 			\date 2015-08-11
 		*/
 		template <typename FwdIt>
-		inline void insertionsort(FwdIt first, FwdIt last) {
+		inline void selectionsort(FwdIt first, FwdIt last) {
 			// this is a special case of a full partial sort
-			insertionsort(first, last, last);
+			selectionsort(first, last, last);
 		}
 
 		template <typename FwdIt, typename Pred>
-		inline void insertionsort(FwdIt first, FwdIt last, Pred pred) {
+		inline void selectionsort(FwdIt first, FwdIt last, Pred pred) {
 			// this is a special case of a full partial sort
-			insertionsort(first, last, last, pred)
+			selectionsort(first, last, last, pred)
 		}
 
 		template <typename FwdIt>
-		inline void insertionsort(FwdIt first, FwdIt middle, FwdIt last) {
-			insertionsort(first, middle, last, std::less<>());
+		inline void selectionsort(FwdIt first, FwdIt middle, FwdIt last) {
+			selectionsort(first, middle, last, std::less<>());
 		}
 
 		template <typename FwdIt, typename Pred>
-		inline void insertionsort(FwdIt first, FwdIt middle, FwdIt last, Pred pred) {
+		inline void selectionsort(FwdIt first, FwdIt middle, FwdIt last, Pred pred) {
 			while(first != middle) {
 				auto const it = std::min_element(first, last, pred);
 				std::iter_swap(first, it);

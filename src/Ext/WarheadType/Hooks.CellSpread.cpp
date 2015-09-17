@@ -96,7 +96,7 @@ DEFINE_HOOK(4899DA, DamageArea_Damage_MaxAffect, 7)
 
 			// if more than allowed, sort them and remove the ones further away
 			if(target.Count > MaxAffect) {
-				Helpers::Alex::insertionsort(
+				Helpers::Alex::selectionsort(
 					target.begin(), target.begin() + MaxAffect, target.end(),
 					[](DamageGroup** a, DamageGroup** b)
 				{
