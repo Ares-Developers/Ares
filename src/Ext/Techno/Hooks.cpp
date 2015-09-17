@@ -30,6 +30,7 @@ DEFINE_HOOK(737F97, UnitClass_ReceiveDamage, 0)
 	GET_STACK(bool, ignoreDefenses, 0x58);
 	TechnoExt::SpawnSurvivors(t, Killer, select, ignoreDefenses);
 
+	R->EBX(-1); // #1489302 trucks and crates
 	return 0x73838A;
 }
 
