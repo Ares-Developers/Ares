@@ -289,12 +289,40 @@ DEFINE_HOOK(6F407D, TechnoClass_Init_1, 6)
 		pData->OriginalHouseType = pHouseType;
 	}
 
+	// if override is in effect, do not create initial payload.
+	// this object might have been deployed, undeployed, ...
+	if(Unsorted::IKnowWhatImDoing) {
+		pData->PayloadCreated = true;
+	}
+
 	return 0x6F4102;
 }
 
 DEFINE_HOOK(6F4103, TechnoClass_Init_2, 6)
 {
 	return 0x6F41C0;
+}
+
+DEFINE_HOOK(446EE2, BuildingClass_Place_InitialPayload, 6)
+{
+	GET(BuildingClass* const, pThis, EBP);
+
+	auto const pExt = TechnoExt::ExtMap.Find(pThis);
+	pExt->CreateInitialPayload();
+
+	return 0;
+}
+
+DEFINE_HOOK(4D718C, FootClass_Put_InitialPayload, 6)
+{
+	GET(FootClass* const, pThis, ESI);
+
+	if(pThis->WhatAmI() != AbstractType::Infantry) {
+		auto const pExt = TechnoExt::ExtMap.Find(pThis);
+		pExt->CreateInitialPayload();
+	}
+
+	return 0;
 }
 
 // temporal per-slot

@@ -651,6 +651,81 @@ int TechnoExt::ExtData::GetSelfHealAmount() const
 	return 0;
 }
 
+void TechnoExt::ExtData::CreateInitialPayload()
+{
+	if(this->PayloadCreated) {
+		return;
+	}
+	this->PayloadCreated = true;
+
+	auto const pThis = this->OwnerObject();
+	auto const pBld = abstract_cast<BuildingClass*>(pThis);
+	auto const pType = pThis->GetTechnoType();
+	auto const pTypeExt = TechnoTypeExt::ExtMap.Find(pType);
+
+	auto freeSlots = pBld
+		? pBld->Type->MaxNumberOccupants - pBld->GetOccupantCount()
+		: pType->Passengers - pThis->Passengers.NumPassengers;
+
+	auto const sizePayloadNum = pTypeExt->InitialPayload_Nums.size();
+
+	for(auto i = 0u; i < pTypeExt->InitialPayload_Types.size(); ++i) {
+		auto const pPayloadType = pTypeExt->InitialPayload_Types[i];
+
+		if(!pPayloadType) {
+			continue;
+		}
+
+		// buildings and aircraft aren't valid payload, and building payload
+		// can only be infantry
+		auto const absPayload = pPayloadType->WhatAmI();
+		if(absPayload == AbstractType::BuildingType
+			|| absPayload == AbstractType::AircraftType
+			|| (pBld && absPayload != AbstractType::InfantryType))
+		{
+			continue;
+		}
+
+		// if there are no nums, index gets huge and invalid, which means 1
+		auto const idxPayloadNum = Math::min(i + 1, sizePayloadNum) - 1;
+		auto const payloadNum = (idxPayloadNum < sizePayloadNum)
+			? pTypeExt->InitialPayload_Nums[idxPayloadNum] : 1;
+
+		// never fill in more than allowed
+		auto const count = Math::min(payloadNum, freeSlots);
+		freeSlots -= count;
+
+		for(auto j = 0; j < count; ++j) {
+			auto const pObject = pPayloadType->CreateObject(pThis->Owner);
+
+			if(pBld) {
+				// buildings only allow infantry payload, so this in infantry
+				auto const pPayload = static_cast<InfantryClass*>(pObject);
+				pBld->Occupants.AddItem(pPayload);
+
+				auto const pCell = pThis->GetCell();
+				pThis->UpdateThreatInCell(pCell);
+
+			} else {
+				auto const pPayload = static_cast<FootClass*>(pObject);
+				pPayload->Remove();
+				pPayload->QueueMission(Mission::Area_Guard, true);
+
+				if(pType->OpenTopped) {
+					pThis->EnteredOpenTopped(pPayload);
+				}
+
+				pPayload->Transporter = pThis;
+				pThis->AddPassenger(pPayload);
+
+				// this is neccessary, otherwise InfantryClass::Update() kills
+				// the units because they are in no team and not on the map
+				pPayload->QueueMission(Mission::Area_Guard, true);
+			}
+		}
+	}
+}
+
 /*! This function calculates whether the unit would be cloaked by default
 	\author Graion Dilach
 	\date 2011-10-16
@@ -1256,6 +1331,7 @@ void TechnoExt::ExtData::Serialize(T& Stm) {
 		.Process(this->OriginalHouseType)
 		.Process(this->Spotlight)
 		.Process(this->AltOccupation)
+		.Process(this->PayloadCreated)
 		.Process(this->SuperWeapon)
 		.Process(this->SuperTarget);
 }

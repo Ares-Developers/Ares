@@ -200,6 +200,9 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 		}
 	}
 
+	this->InitialPayload_Types.Read(exINI, section, "InitialPayload.Types");
+	this->InitialPayload_Nums.Read(exINI, section, "InitialPayload.Nums");
+
 	this->CameoPal.LoadFromINI(CCINIClass::INI_Art, pThis->ImageFile, "CameoPalette");
 
 	if(pINI->ReadString(section, "Prerequisite.StolenTechs", "", Ares::readBuffer)) {
@@ -660,6 +663,8 @@ void TechnoTypeExt::ExtData::Serialize(T& Stm) {
 		.Process(this->Operator)
 		.Process(this->IsAPromiscuousWhoreAndLetsAnyoneRideIt)
 		.Process(this->CameoPal)
+		.Process(this->InitialPayload_Types)
+		.Process(this->InitialPayload_Nums)
 		.Process(this->RequiredStolenTech)
 		.Process(this->ImmuneToEMP)
 		.Process(this->VeteranAbilityEMPIMMUNE)

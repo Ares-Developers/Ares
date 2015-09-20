@@ -84,6 +84,8 @@ public:
 
 		Nullable<bool> AltOccupation; // if the unit marks cell occupation flags, this is set to whether it uses the "high" occupation members
 
+		bool PayloadCreated;
+
 		SuperClass* SuperWeapon; // the super weapon somehow attached to this (not provided by this)
 		AbstractClass* SuperTarget; // the attached super weapon's target (if any)
 
@@ -108,6 +110,7 @@ public:
 			MyBolt(nullptr),
 			Spotlight(nullptr),
 			AltOccupation(),
+			PayloadCreated(false),
 			SuperWeapon(nullptr),
 			SuperTarget(nullptr),
 			OriginalHouseType(nullptr),
@@ -169,6 +172,8 @@ public:
 		void RecalculateStats();
 
 		int GetSelfHealAmount() const;
+
+		void CreateInitialPayload();
 
 	private:
 		template <typename T>
