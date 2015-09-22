@@ -344,13 +344,13 @@ void Ares::UpdateStability() {
 	if(Ares::bStable) {
 		return;
 	}
-	if(Unsorted::CurrentFrame < 900) {
-		return;
-	}
-	if(!Ares::bStableNotification) {
-		Debug::FatalErrorAndExit("This version of Ares is not considered stable, but for some reason the warning text isn't showing.\n"
+	if(Unsorted::CurrentFrame >= 900 && !Ares::bStableNotification) {
+		Debug::FatalErrorAndExit(
+			"This version of Ares is not considered stable, but for some "
+			"reason the warning text isn't showing.\n"
 			"This suggests that your version of Ares has been tampered with "
-			"and the original developers cannot be held responsible for any problems you might experience.");
+			"and the original developers cannot be held responsible for any "
+			"problems you might experience.");
 	}
 }
 
