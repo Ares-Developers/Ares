@@ -82,8 +82,7 @@ public:
 	static bool bStable;
 	static bool bStableNotification;
 	static void UpdateStability();
-
-	static const wchar_t StabilityWarning[];
+	static wchar_t const* GetStabilityWarning();
 
 	static const size_t readLength = 2048;
 	static char readBuffer[readLength];

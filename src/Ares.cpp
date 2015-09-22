@@ -37,8 +37,6 @@ char Ares::readBuffer[Ares::readLength];
 const char Ares::readDelims[4] = ",";
 const char Ares::readDefval[4] = "";
 
-const wchar_t Ares::StabilityWarning[] = L"This version of Ares (" VERSION_WSTR L") is not considered stable.";
-
 MixFileClass *Ares::aresMIX = nullptr;
 
 void Ares::InitOwnResources()
@@ -354,6 +352,16 @@ void Ares::UpdateStability() {
 			"This suggests that your version of Ares has been tampered with "
 			"and the original developers cannot be held responsible for any problems you might experience.");
 	}
+}
+
+wchar_t const* Ares::GetStabilityWarning()
+{
+	if(!Ares::bStable) {
+		return L"This version of Ares (" VERSION_WSTR
+			L") is not considered stable.";
+	}
+
+	return nullptr;
 }
 
 void Ares::SaveGame() {

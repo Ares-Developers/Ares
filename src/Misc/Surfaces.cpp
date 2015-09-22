@@ -164,9 +164,9 @@ DEFINE_HOOK(4F4583, GScreenClass_DrawOnTop_TheDarkSideOfTheMoon, 6)
 		offset += wanted.Height;
 	};
 
-	if(!Ares::bStable) {
+	if(auto const pWarning = Ares::GetStabilityWarning()) {
 		Ares::bStableNotification = true;
-		DrawText(Ares::StabilityWarning, offset, COLOR_RED);
+		DrawText(pWarning, offset, COLOR_RED);
 	}
 
 	if(!AresSurfaces::ModNote.Label) {
