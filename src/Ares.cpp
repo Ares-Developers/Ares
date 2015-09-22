@@ -13,9 +13,9 @@
 #include "Misc/Exception.h"
 
 #ifdef IS_RELEASE_VER
-const bool IsStable = true;
+const auto IsStable = true;
 #else
-const bool IsStable = false;
+const auto IsStable = false;
 #endif
 
 //Init Statics
@@ -28,7 +28,7 @@ bool Ares::bTestingRun = false;
 bool Ares::bStrictParser = false;
 bool Ares::bAllowAIControl = false;
 bool Ares::bFPSCounter = false;
-bool Ares::bStable = IsStable;
+bool const Ares::bStable = IsStable;
 bool Ares::bStableNotification = false;
 bool Ares::bOutputMissingStrings = false;
 bool Ares::bShuttingDown = false;
@@ -341,6 +341,7 @@ DEFINE_HOOK(47B026, FileFindOpen, 8)
 }
 
 void Ares::UpdateStability() {
+#pragma warning(suppress: 4127) // evaluates to constant
 	if(Ares::bStable) {
 		return;
 	}
@@ -356,6 +357,7 @@ void Ares::UpdateStability() {
 
 wchar_t const* Ares::GetStabilityWarning()
 {
+#pragma warning(suppress: 4127) // evaluates to constant
 	if(!Ares::bStable) {
 		return L"This version of Ares (" VERSION_WSTR
 			L") is not considered stable.";

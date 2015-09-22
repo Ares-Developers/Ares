@@ -79,7 +79,7 @@ public:
 
 	static bool bShuttingDown;
 
-	static bool bStable;
+	static bool const bStable;
 	static bool bStableNotification;
 	static void UpdateStability();
 	static wchar_t const* GetStabilityWarning();
