@@ -244,7 +244,7 @@ void Valueable<MouseCursor>::Read(INI_EX &parser, const char* pSection, const ch
 
 	// compact way to define the cursor in one go
 	if(parser.ReadString(pSection, pKey)) {
-		char *buffer = const_cast<char *>(parser.value());
+		char *buffer = parser.value();
 		char *context = nullptr;
 		if(char *frame = strtok_s(buffer, Ares::readDelims, &context)) {
 			Parser<int>::Parse(frame, &Cursor->Frame);
@@ -297,7 +297,7 @@ void Valueable<MouseCursor>::Read(INI_EX &parser, const char* pSection, const ch
 
 	_snprintf_s(pFlagName, 31, "%s.HotSpot", pKey);
 	if(parser.ReadString(pSection, pFlagName)) {
-		char *buffer = const_cast<char *>(parser.value());
+		char *buffer = parser.value();
 		char *context = nullptr;
 		char *hotx = strtok_s(buffer, ",", &context);
 		MouseCursorHotSpotX::Parse(hotx, &Cursor->HotX);
@@ -462,7 +462,7 @@ void Valueable<SuperWeaponTarget>::Read(INI_EX &parser, const char* pSection, co
 	if(parser.ReadString(pSection, pKey)) {
 		auto value = SuperWeaponTarget::None;
 
-		auto str = const_cast<char*>(parser.value());
+		auto str = parser.value();
 		char* context = nullptr;
 		for(auto cur = strtok_s(str, Ares::readDelims, &context); cur; cur = strtok_s(nullptr, Ares::readDelims, &context)) {
 			if(!_strcmpi(cur, "land")) {
@@ -494,7 +494,7 @@ void Valueable<SuperWeaponAffectedHouse>::Read(INI_EX &parser, const char* pSect
 	if(parser.ReadString(pSection, pKey)) {
 		auto value = SuperWeaponAffectedHouse::None;
 
-		auto str = const_cast<char*>(parser.value());
+		auto str = parser.value();
 		char* context = nullptr;
 		for(auto cur = strtok_s(str, Ares::readDelims, &context); cur; cur = strtok_s(nullptr, Ares::readDelims, &context)) {
 			if(!_strcmpi(cur, "owner")) {
