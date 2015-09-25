@@ -21,8 +21,10 @@ public:
 	 : pINI(iniFile)
 	{};
 
-	bool ReadString(const char* pSection, const char* pKey) {
-		return pINI->ReadString(pSection, pKey, "", this->buffer(), this->buflen()) >= 1;
+	size_t ReadString(const char* pSection, const char* pKey) {
+		auto const res = pINI->ReadString(
+			pSection, pKey, "", this->buffer(), this->buflen());
+		return static_cast<size_t>(res);
 	}
 
 	const char * value() {
