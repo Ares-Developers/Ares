@@ -8,10 +8,6 @@
 class INI_EX {
 	CCINIClass* pINI;
 
-	size_t buflen() {
-		return Ares::readLength;
-	}
-
 public:
 	INI_EX(CCINIClass *iniFile)
 	 : pINI(iniFile)
@@ -21,6 +17,10 @@ public:
 		return Ares::readBuffer;
 	}
 
+	size_t max_size() const {
+		return Ares::readLength;
+	}
+
 	bool empty() const {
 		return !Ares::readBuffer[0];
 	}
@@ -28,7 +28,7 @@ public:
 	// basic string reader
 	size_t ReadString(const char* pSection, const char* pKey) {
 		auto const res = pINI->ReadString(
-			pSection, pKey, "", this->value(), this->buflen());
+			pSection, pKey, "", this->value(), this->max_size());
 		return static_cast<size_t>(res);
 	}
 
