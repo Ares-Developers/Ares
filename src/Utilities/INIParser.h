@@ -6,12 +6,12 @@
 #include <CCINIClass.h>
 
 class INI_EX {
-	CCINIClass* pINI;
+	CCINIClass* IniFile;
 
 public:
-	INI_EX(CCINIClass *iniFile)
-	 : pINI(iniFile)
-	{};
+	explicit INI_EX(CCINIClass* pIniFile)
+	 : IniFile(pIniFile)
+	{ }
 
 	char* value() const {
 		return Ares::readBuffer;
@@ -27,7 +27,7 @@ public:
 
 	// basic string reader
 	size_t ReadString(const char* pSection, const char* pKey) {
-		auto const res = pINI->ReadString(
+		auto const res = IniFile->ReadString(
 			pSection, pKey, "", this->value(), this->max_size());
 		return static_cast<size_t>(res);
 	}
