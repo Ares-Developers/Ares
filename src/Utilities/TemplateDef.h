@@ -154,7 +154,7 @@ void Valueable<bool>::Read(INI_EX &parser, const char* pSection, const char* pKe
 	bool buffer = this->Get();
 	if(parser.ReadBool(pSection, pKey, &buffer)) {
 		this->Set(buffer);
-	} else if(parser.declared()) {
+	} else if(!parser.empty()) {
 		Debug::INIParseFailed(pSection, pKey, parser.value(), "Expected a valid boolean value [1, true, yes, 0, false, no]");
 	}
 };
@@ -164,7 +164,7 @@ void Valueable<int>::Read(INI_EX &parser, const char* pSection, const char* pKey
 	int buffer = this->Get();
 	if(parser.ReadInteger(pSection, pKey, &buffer)) {
 		this->Set(buffer);
-	} else if(parser.declared()) {
+	} else if(!parser.empty()) {
 		Debug::INIParseFailed(pSection, pKey, parser.value(), "Expected a valid number");
 	}
 };
@@ -179,7 +179,7 @@ void Valueable<BYTE>::Read(INI_EX &parser, const char* pSection, const char* pKe
 		} else {
 			Debug::INIParseFailed(pSection, pKey, parser.value(), "Expected a valid number between 0 and 255 inclusive.");
 		}
-	} else if(parser.declared()) {
+	} else if(!parser.empty()) {
 		Debug::INIParseFailed(pSection, pKey, parser.value(), "Expected a valid number");
 	}
 };
@@ -189,7 +189,7 @@ void Valueable<float>::Read(INI_EX &parser, const char* pSection, const char* pK
 	double buffer = this->Get();
 	if(parser.ReadDouble(pSection, pKey, &buffer)) {
 		this->Set(static_cast<float>(buffer));
-	} else if(parser.declared()) {
+	} else if(!parser.empty()) {
 		Debug::INIParseFailed(pSection, pKey, parser.value(), "Expected a valid floating point number");
 	}
 };
@@ -199,7 +199,7 @@ void Valueable<double>::Read(INI_EX &parser, const char* pSection, const char* p
 	double buffer = this->Get();
 	if(parser.ReadDouble(pSection, pKey, &buffer)) {
 		this->Set(buffer);
-	} else if(parser.declared()) {
+	} else if(!parser.empty()) {
 		Debug::INIParseFailed(pSection, pKey, parser.value(), "Expected a valid floating point number");
 	}
 };
@@ -209,7 +209,7 @@ void Valueable<ColorStruct>::Read(INI_EX &parser, const char* pSection, const ch
 	ColorStruct buffer = this->Get();
 	if(parser.Read3Bytes(pSection, pKey, reinterpret_cast<byte*>(&buffer))) {
 		this->Set(buffer);
-	} else if(parser.declared()) {
+	} else if(!parser.empty()) {
 		Debug::INIParseFailed(pSection, pKey, parser.value(), "Expected a valid R,G,B color");
 	}
 };
@@ -390,7 +390,7 @@ void Valueable<Leptons>::Read(INI_EX &parser, const char* pSection, const char* 
 	double buffer = this->Get() / 256.0;
 	if(parser.ReadDouble(pSection, pKey, &buffer)) {
 		this->Set(Leptons(Game::F2I(buffer * 256.0)));
-	} else if(parser.declared()) {
+	} else if(!parser.empty()) {
 		Debug::INIParseFailed(pSection, pKey, parser.value(), "Expected a valid floating point number");
 	}
 }
@@ -431,7 +431,7 @@ void Valueable<Mission>::Read(INI_EX &parser, const char* pSection, const char* 
 		auto value = MissionControlClass::FindIndex(parser.value());
 		if(value != Mission::None) {
 			this->Set(value);
-		} else if(parser.declared()) {
+		} else if(!parser.empty()) {
 			Debug::INIParseFailed(pSection, pKey, parser.value(), "Invalid Mission name");
 		}
 	}

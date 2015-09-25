@@ -29,8 +29,8 @@ public:
 		return Ares::readBuffer;
 	}
 
-	bool declared() const {
-		return !!Ares::readBuffer[0];
+	bool empty() const {
+		return !Ares::readBuffer[0];
 	}
 
 	// parser template
