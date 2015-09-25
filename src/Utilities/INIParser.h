@@ -21,18 +21,19 @@ public:
 	 : pINI(iniFile)
 	{};
 
-	size_t ReadString(const char* pSection, const char* pKey) {
-		auto const res = pINI->ReadString(
-			pSection, pKey, "", this->buffer(), this->buflen());
-		return static_cast<size_t>(res);
-	}
-
 	const char * value() {
 		return Ares::readBuffer;
 	}
 
 	bool empty() const {
 		return !Ares::readBuffer[0];
+	}
+
+	// basic string reader
+	size_t ReadString(const char* pSection, const char* pKey) {
+		auto const res = pINI->ReadString(
+			pSection, pKey, "", this->buffer(), this->buflen());
+		return static_cast<size_t>(res);
 	}
 
 	// parser template
