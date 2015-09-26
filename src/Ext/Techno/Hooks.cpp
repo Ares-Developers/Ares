@@ -268,7 +268,7 @@ DEFINE_HOOK(6F407D, TechnoClass_Init_1, 6)
 	};
 
 	// iterate all weapons and their elite counterparts
-	for(int i = 0; i < 18; ++i) {
+	for(int i = 0; i < TechnoTypeClass::MaxWeapons; ++i) {
 		if(auto pWeapon = pType->get_Weapon(i)) {
 			CheckWeapon(pWeapon, i, "Weapon");
 		}

@@ -159,7 +159,7 @@ bool EMPulse::isEMPTypeImmune(TechnoClass* Target) {
 	auto isElite = Target->Veterancy.IsElite();
 
 	// find an emp weapon.
-	for(int i = 0; i < 18; ++i) {
+	for(int i = 0; i < TechnoTypeClass::MaxWeapons; ++i) {
 		if(auto pWeaponType = !isElite ? pType->get_Weapon(i) : pType->get_EliteWeapon(i)) {
 			auto pWarheadExt = WarheadTypeExt::ExtMap.Find(pWeaponType->Warhead);
 			if(pWarheadExt->EMP_Duration != 0) {
