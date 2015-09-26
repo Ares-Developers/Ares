@@ -194,7 +194,7 @@ bool BuildingExt::cPrismForwarding::ValidateSupportTower(BuildingExt::cPrismForw
 							idxSupport = pSlaveTypeData->PrismForwarding.SupportWeaponIndex;
 						}
 						if(idxSupport != -1) {
-							if(auto const supportWeapon = pSlaveType->get_Weapon(idxSupport)) {
+							if(auto const supportWeapon = pSlaveType->Weapon[idxSupport].WeaponType) {
 								if(Distance < supportWeapon->MinimumRange) {
 									return false; //below minimum range
 								}
@@ -203,7 +203,7 @@ bool BuildingExt::cPrismForwarding::ValidateSupportTower(BuildingExt::cPrismForw
 						}
 						if(SupportRange == 0) {
 							//not specified on SupportWeapon so use Primary + 1 cell (Marshall chose to add the +1 cell default - see manual for reason)
-							if(auto const cPrimary = pSlaveType->get_Primary()) {
+							if(auto const cPrimary = pSlaveType->Weapon[0].WeaponType) {
 								SupportRange = cPrimary->Range + 256; //256 leptons == 1 cell
 							}
 						}

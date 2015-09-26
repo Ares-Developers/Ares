@@ -108,14 +108,14 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 					cWeapon->Warhead = SuperWH;
 				}
 				cWeapon->NeverUse = true; //the modder shouldn't be expected to have to set this
-				pThis->set_Weapon(idxWeapon, cWeapon);
+				pThis->Weapon[idxWeapon].WeaponType = cWeapon;
 				//now get the FLH
-				CoordStruct supportFLH = pThis->get_WeaponFLH(13); //AlternateFLH0
+				CoordStruct supportFLH = pThis->Weapon[13].FLH; //AlternateFLH0
 				if (supportFLH == CoordStruct::Empty) {
 					//assuming that, for Prism Towers, this means the FLH was not set.
-					supportFLH = pThis->get_WeaponFLH(0); //Primary
+					supportFLH = pThis->Weapon[0].FLH; //Primary
 				}
-				pThis->set_WeaponFLH(idxWeapon, supportFLH);
+				pThis->Weapon[idxWeapon].FLH = supportFLH;
 			}
 		}
 
@@ -132,14 +132,14 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 					cWeapon->Warhead = SuperWH;
 				}
 				cWeapon->NeverUse = true; //the modder shouldn't be expected to have to set this
-				pThis->set_EliteWeapon(idxWeapon, cWeapon);
+				pThis->EliteWeapon[idxWeapon].WeaponType = cWeapon;
 				//now get the FLH
-				CoordStruct supportFLH = pThis->get_WeaponFLH(14); //AlternateFLH1
+				CoordStruct supportFLH = pThis->Weapon[14].FLH; //AlternateFLH1
 				if (supportFLH == CoordStruct::Empty) {
 					//assuming that, for Prism Towers, this means the FLH was not set.
-					supportFLH = pThis->get_EliteWeaponFLH(0); //ElitePrimary
+					supportFLH = pThis->EliteWeapon[0].FLH; //ElitePrimary
 				}
-				pThis->set_EliteWeaponFLH(idxWeapon, supportFLH);
+				pThis->EliteWeapon[idxWeapon].FLH = supportFLH;
 			}
 		}
 
@@ -147,10 +147,10 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 }
 
 signed int BuildingTypeExt::cPrismForwarding::GetUnusedWeaponSlot(BuildingTypeClass *pThis, bool elite) {
-	for(int idxWeapon = 2; idxWeapon < 13; ++idxWeapon) { //13-18 is AlternateFLH0-4
-		auto Weapon = elite ? pThis->get_EliteWeapon(idxWeapon) : pThis->get_Weapon(idxWeapon);
+	for(auto idxWeapon = 2u; idxWeapon < 13u; ++idxWeapon) { //13-18 is AlternateFLH0-4
+		auto Weapon = pThis->GetWeapon(idxWeapon, elite).WeaponType;
 		if(!Weapon) {
-			return idxWeapon;
+			return static_cast<int>(idxWeapon);
 		}
 	}
 	return -1;

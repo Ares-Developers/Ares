@@ -35,7 +35,7 @@ DEFINE_HOOK(4B99A2, DropshipLoadout_WriteUnit, 0)
 		StringCchPrintfW(pCost, StringLen, L"Cost: N/A");
 	}
 
-	if(auto pPrimary = pType->get_Primary()) {
+	if(auto pPrimary = pType->Weapon[0].WeaponType) {
 		StringCchPrintfW(pArmament, StringLen, L"Armament: %hs", pPrimary->Name);
 	} else {
 		StringCchPrintfW(pArmament, StringLen, L"Armament: NONE");

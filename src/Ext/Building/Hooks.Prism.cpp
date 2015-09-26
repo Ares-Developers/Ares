@@ -29,7 +29,7 @@ DEFINE_HOOK(44B2FE, BuildingClass_Mi_Attack_IsPrism, 6)
 			pThis->DelayBeforeFiring = pThis->Type->DelayedFireDelay;
 
 			pThis->PrismTargetCoords.X = 0;
-			if(pMasterType->get_Secondary()) {
+			if(pMasterType->Weapon[1].WeaponType) {
 				if(pThis->IsOverpowered) {
 					pThis->PrismTargetCoords.X = 1;
 				}
@@ -55,7 +55,7 @@ DEFINE_HOOK(44B2FE, BuildingClass_Mi_Attack_IsPrism, 6)
 			//a slave tower is changing into a master tower at the last second
 			pThis->PrismStage = PrismChargeState::Master;
 			pThis->PrismTargetCoords.X = 0;
-			if(pMasterType->get_Secondary()) {
+			if(pMasterType->Weapon[1].WeaponType) {
 				if(pThis->IsOverpowered) {
 					pThis->PrismTargetCoords.X = 1;
 				}
@@ -173,7 +173,7 @@ DEFINE_HOOK(44ABD0, BuildingClass_FireLaser, 5)
 	}
 
 	auto const supportWeapon = (idxSupport != -1)
-		? pType->get_Weapon(idxSupport) : nullptr;
+		? pType->Weapon[idxSupport].WeaponType : nullptr;
 
 	LaserDrawClass* LaserBeam = nullptr;
 	if(supportWeapon) {
