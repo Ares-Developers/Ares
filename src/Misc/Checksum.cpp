@@ -20,7 +20,7 @@ inline void ChecksumItem(const T *it, DWORD &CombinedChecksum) {
 	if(it->WhatAmI() != AnimClass::AbsID || it->Fetch_ID() != -2) {
 		SafeChecksummer Ch;
 		it->CalculateChecksum(Ch);
-		if(auto ExtData = AbstractExt::ExtMap.Find(const_cast<T *>(it))) {
+		if(auto ExtData = AbstractExt::ExtMap.Find(it)) {
 			ExtData->LastChecksum = Ch.Intermediate();
 		}
 		CombinedChecksum = Ch.Intermediate() + ((CombinedChecksum >> 31) + 2 * CombinedChecksum);
@@ -166,13 +166,11 @@ template<>
 void WriteLog(const HouseClass* it, int idx, DWORD checksum, FILE * F) {
 	WriteLog<void>(it, idx, checksum, F);
 
-	auto House = const_cast<HouseClass*>(it);
-
 	fprintf(F, "; CurrentPlayer: %d; ColorScheme: %s; ID: %d; HouseType: %s; Edge: %d; StartingAllies: %u; Startspot: %d,%d; Visionary: %d; MapIsClear: %d; Money: %d",
 		it->CurrentPlayer, ColorScheme::Array->GetItem(it->ColorSchemeIndex)->ID,
 		it->ArrayIndex, HouseTypeClass::Array->GetItem(it->Type->ArrayIndex)->Name,
 		it->Edge, it->StartingAllies, it->StartingCell.X, it->StartingCell.Y, it->Visionary,
-		it->MapIsClear, House->Available_Money());
+		it->MapIsClear, it->Available_Money());
 }
 
 // calls WriteLog and appends a newline
@@ -187,7 +185,7 @@ void LogItem(const T* it, int idx, FILE * F) {
 	if(it->WhatAmI() != AnimClass::AbsID || it->Fetch_ID() != -2) {
 		DWORD Checksum(0);
 #ifdef MAKE_GAME_SLOWER_FOR_NO_REASON
-		if(auto ExtData = AbstractExt::ExtMap.Find(const_cast<T *>(it))) {
+		if(auto ExtData = AbstractExt::ExtMap.Find(it)) {
 			Checksum = ExtData->LastChecksum;
 		}
 #else
