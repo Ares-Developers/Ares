@@ -100,7 +100,8 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 		{
 			if(exINI.ReadString(pID, pKey)) {
 				if(auto const pWeapon = WeaponTypeClass::FindOrAllocate(exINI.value())) {
-					auto const idxWeapon = this->GetUnusedWeaponSlot(pThis, elite);
+					auto const idxWeapon = *pSetting != -1
+						? *pSetting : this->GetUnusedWeaponSlot(pThis, elite);
 					if(idxWeapon == -1) {
 						Debug::FatalErrorAndExit(
 							"BuildingType [%s] is a Prism Tower however there "
