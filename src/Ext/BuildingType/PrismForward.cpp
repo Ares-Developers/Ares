@@ -95,54 +95,42 @@ void BuildingTypeExt::cPrismForwarding::LoadFromINIFile(BuildingTypeClass *pThis
 			SuperWH = WarheadTypeClass::Find("Super");
 		}
 
-		if(pINI->ReadString(pID, "PrismForwarding.SupportWeapon", "", Ares::readBuffer)) {
-			if (WeaponTypeClass *cWeapon = WeaponTypeClass::FindOrAllocate(Ares::readBuffer)) {
-				int idxWeapon = this->GetUnusedWeaponSlot(pThis, false); //rookie weapons
-				if (idxWeapon == -1) {
-					Debug::FatalErrorAndExit(
-						"BuildingType [%s] is a Prism Tower however there are no free\n"
-						"weapon slots to assign the support weapon to.", pThis->ID);
-				}
-				this->SupportWeaponIndex = idxWeapon;
-				if(!cWeapon->Warhead) {
-					cWeapon->Warhead = SuperWH;
-				}
-				cWeapon->NeverUse = true; //the modder shouldn't be expected to have to set this
-				pThis->Weapon[idxWeapon].WeaponType = cWeapon;
-				//now get the FLH
-				CoordStruct supportFLH = pThis->Weapon[13].FLH; //AlternateFLH0
-				if (supportFLH == CoordStruct::Empty) {
-					//assuming that, for Prism Towers, this means the FLH was not set.
-					supportFLH = pThis->Weapon[0].FLH; //Primary
-				}
-				pThis->Weapon[idxWeapon].FLH = supportFLH;
-			}
-		}
+		auto const ReadSupportWeapon = [=, &exINI]
+			(int* pSetting, const char* const pKey, bool const elite)
+		{
+			if(exINI.ReadString(pID, pKey)) {
+				if(auto const pWeapon = WeaponTypeClass::FindOrAllocate(exINI.value())) {
+					auto const idxWeapon = this->GetUnusedWeaponSlot(pThis, elite);
+					if(idxWeapon == -1) {
+						Debug::FatalErrorAndExit(
+							"BuildingType [%s] is a Prism Tower however there "
+							"are no free\nweapon slots to assign the %ssupport "
+							"weapon to.", pThis->ID, elite ? "elite " : "");
+					}
 
-		if(pINI->ReadString(pID, "PrismForwarding.EliteSupportWeapon", "", Ares::readBuffer)) {
-			if (WeaponTypeClass *cWeapon = WeaponTypeClass::FindOrAllocate(Ares::readBuffer)) {
-				int idxWeapon = this->GetUnusedWeaponSlot(pThis, true); //elite weapons
-				if (idxWeapon == -1) {
-					Debug::FatalErrorAndExit(
-						"BuildingType [%s] is a Prism Tower however there are no free\n"
-						"weapon slots to assign the elite support weapon to.", pThis->ID);
-				}
-				this->EliteSupportWeaponIndex = idxWeapon;
-				if(!cWeapon->Warhead) {
-					cWeapon->Warhead = SuperWH;
-				}
-				cWeapon->NeverUse = true; //the modder shouldn't be expected to have to set this
-				pThis->EliteWeapon[idxWeapon].WeaponType = cWeapon;
-				//now get the FLH
-				CoordStruct supportFLH = pThis->Weapon[14].FLH; //AlternateFLH1
-				if (supportFLH == CoordStruct::Empty) {
-					//assuming that, for Prism Towers, this means the FLH was not set.
-					supportFLH = pThis->EliteWeapon[0].FLH; //ElitePrimary
-				}
-				pThis->EliteWeapon[idxWeapon].FLH = supportFLH;
-			}
-		}
+					*pSetting = idxWeapon;
 
+					if(!pWeapon->Warhead) {
+						pWeapon->Warhead = SuperWH;
+					}
+					pWeapon->NeverUse = true; //the modder shouldn't be expected to have to set this
+
+					auto& Weapon = pThis->GetWeapon(idxWeapon, elite);
+					Weapon.WeaponType = pWeapon;
+
+					//now get the FLH
+					auto supportFLH = &pThis->Weapon[13 + elite].FLH; //AlternateFLH0 or 1
+					if(*supportFLH == CoordStruct::Empty) {
+						//assuming that, for Prism Towers, this means the FLH was not set.
+						supportFLH = &pThis->GetWeapon(0, elite).FLH; //[Elite]Primary
+					}
+					Weapon.FLH = *supportFLH;
+				}
+			}
+		};
+
+		ReadSupportWeapon(&this->SupportWeaponIndex, "PrismForwarding.SupportWeapon", false);
+		ReadSupportWeapon(&this->EliteSupportWeaponIndex, "PrismForwarding.EliteSupportWeapon", true);
 	}
 }
 
