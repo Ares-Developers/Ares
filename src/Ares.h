@@ -19,6 +19,7 @@
 #define GFX_SU_NF3D 0x00l
 #define GFX_SU_F3D 0x01l
 
+class AbstractClass;
 class AircraftTypeClass;
 class TechnoTypeClass;
 class CellClass;
@@ -36,6 +37,9 @@ public:
 		Full = 1,
 		NoRemove = 2
 	};
+
+	static void Clear();
+	static void PointerGotInvalid(AbstractClass* pInvalid, bool removed);
 
 	/**
 	* called before any saving takes place

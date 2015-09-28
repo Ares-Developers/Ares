@@ -220,24 +220,31 @@ auto MassActions = MassAction<
 
 DEFINE_HOOK(7258D0, AnnounceInvalidPointer, 6)
 {
-	GET(void*, ptr, ECX);
-	GET(bool, bRemoved, EDX);
+	GET(AbstractClass* const, pInvalid, ECX);
+	GET(bool const, removed, EDX);
 
-	if(Ares::bShuttingDown) {
-		return 0;
-	}
-
-	//Debug::Log("PointerGotInvalid: %X\n", ptr);
-	MassActions.InvalidPointer(ptr, bRemoved);
+	Ares::PointerGotInvalid(pInvalid, removed);
 
 	return 0;
 }
 
 DEFINE_HOOK(685659, Scenario_ClearClasses, a)
 {
-	MassActions.Clear();
-
+	Ares::Clear();
 	return 0;
+}
+
+void Ares::Clear() {
+	MassActions.Clear();
+}
+
+void Ares::PointerGotInvalid(
+	AbstractClass* const pInvalid, bool const removed)
+{
+	if(!Ares::bShuttingDown) {
+		//Debug::Log("PointerGotInvalid: %X\n", pInvalid);
+		MassActions.InvalidPointer(pInvalid, removed);
+	}
 }
 
 HRESULT Ares::SaveGameData(IStream *pStm) {
