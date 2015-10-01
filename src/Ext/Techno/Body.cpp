@@ -86,9 +86,9 @@ void TechnoExt::SpawnSurvivors(FootClass* const pThis, TechnoClass* const pKille
 						if(!EjectRandomly(pPilot, location, 144, Select)) {
 							pPilot->RegisterDestruction(pKiller);
 							GameDelete(pPilot);
-						} else {
-							if(pThis->AttachedTag && pThis->AttachedTag->IsTriggerRepeating()) {
-								pPilot->ReplaceTag(pThis->AttachedTag);
+						} else if(auto const pTag = pThis->AttachedTag) {
+							if(pTag->ShouldReplace()) {
+								pPilot->ReplaceTag(pTag);
 							}
 						}
 					}
@@ -977,9 +977,9 @@ bool TechnoExt::ExtData::PerformActionHijack(TechnoClass* const pTarget) const {
 					pThis, CellStruct::Empty, false, nullptr);
 			}
 			pTarget->Owner->HasBeenThieved = true;
-			if(pThis->AttachedTag) {
-				if(pThis->AttachedTag->IsTriggerRepeating()) {
-					pTarget->ReplaceTag(pThis->AttachedTag);
+			if(auto const pTag = pThis->AttachedTag) {
+				if(pTag->ShouldReplace()) {
+					pTarget->ReplaceTag(pTag);
 				}
 			}
 		} else {
