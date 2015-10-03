@@ -30,8 +30,8 @@ public:
 		virtual void SaveToStream(AresStreamWriter &Stm) override;
 
 		// executing actions
-		static bool ActivateFirestorm(TActionClass* pAction, HouseClass* pHouse, ObjectClass* pObject, TriggerClass* pTrigger, CellStruct* pos);
-		static bool DeactivateFirestorm(TActionClass* pAction, HouseClass* pHouse, ObjectClass* pObject, TriggerClass* pTrigger, CellStruct* pos);
+		static bool ActivateFirestorm(TActionClass* pAction, HouseClass* pHouse, ObjectClass* pObject, TriggerClass* pTrigger, CellStruct const& location);
+		static bool DeactivateFirestorm(TActionClass* pAction, HouseClass* pHouse, ObjectClass* pObject, TriggerClass* pTrigger, CellStruct const& location);
 
 	private:
 		template <typename T>
@@ -46,5 +46,7 @@ public:
 
 	static ExtContainer ExtMap;
 
-	static bool Execute(TActionClass* pAction, HouseClass* pHouse, ObjectClass* pObject, TriggerClass* pTrigger, CellStruct* pos, bool* ret);
+	static bool Execute(
+		TActionClass* pAction, HouseClass* pHouse, ObjectClass* pObject,
+		TriggerClass* pTrigger, CellStruct const& location, bool* ret);
 };

@@ -9,11 +9,13 @@ DEFINE_HOOK(6DD8D7, TActionClass_Execute, A)
 
 	GET_STACK(HouseClass*, pHouse, 0x254);
 	GET_STACK(TriggerClass*, pTrigger, 0x25C);
-	GET_STACK(CellStruct*, pCell, 0x260);
+	GET_STACK(CellStruct*, pLocation, 0x260);
 
 	// check for actions handled in Ares.
 	bool ret = false;
-	if(TActionExt::Execute(pAction, pHouse, pObject, pTrigger, pCell, &ret)) {
+	if(TActionExt::Execute(
+		pAction, pHouse, pObject, pTrigger, *pLocation, &ret))
+	{
 		// returns true or false
 		R->AL(ret ? 1 : 0);
 		return 0x6DFDDD;

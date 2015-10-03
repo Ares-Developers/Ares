@@ -17,7 +17,9 @@ TActionExt::ExtContainer TActionExt::ExtMap;
 
 	\date 2012-09-24
 */
-bool TActionExt::ExtData::ActivateFirestorm(TActionClass* pAction, HouseClass* pHouse, ObjectClass* pObject, TriggerClass* pTrigger, CellStruct* pos)
+bool TActionExt::ExtData::ActivateFirestorm(
+	TActionClass* pAction, HouseClass* pHouse, ObjectClass* pObject,
+	TriggerClass* pTrigger, CellStruct const& location)
 {
 	auto const pExt = HouseExt::ExtMap.Find(pHouse);
 
@@ -37,7 +39,9 @@ bool TActionExt::ExtData::ActivateFirestorm(TActionClass* pAction, HouseClass* p
 
 	\date 2012-09-24
 */
-bool TActionExt::ExtData::DeactivateFirestorm(TActionClass* pAction, HouseClass* pHouse, ObjectClass* pObject, TriggerClass* pTrigger, CellStruct* pos)
+bool TActionExt::ExtData::DeactivateFirestorm(
+	TActionClass* pAction, HouseClass* pHouse, ObjectClass* pObject,
+	TriggerClass* pTrigger, CellStruct const& location)
 {
 	auto const pExt = HouseExt::ExtMap.Find(pHouse);
 
@@ -59,21 +63,24 @@ bool TActionExt::ExtData::DeactivateFirestorm(TActionClass* pAction, HouseClass*
 
 	\date 2012-09-24
 */
-bool TActionExt::Execute(TActionClass* pAction, HouseClass* pHouse, ObjectClass* pObject, TriggerClass* pTrigger, CellStruct* pos, bool* ret) {
+bool TActionExt::Execute(
+	TActionClass* pAction, HouseClass* pHouse, ObjectClass* pObject,
+	TriggerClass* pTrigger, CellStruct const& location, bool* ret)
+{
 	auto pExt = ExtMap.Find(pAction);
 
 	switch(pAction->ActionKind) {
 	case TriggerAction::PlaySoundEffectRandom:
 		// #1004906: function replaced to support more than 100 waypoints
-		*ret = pAction->PlayAudioAtRandomWP(pHouse, pObject, pTrigger, *pos);
+		*ret = pAction->PlayAudioAtRandomWP(pHouse, pObject, pTrigger, location);
 		break;
 
 	case TriggerAction::ActivateFirestorm:
-		*ret = pExt->ActivateFirestorm(pAction, pHouse, pObject, pTrigger, pos);
+		*ret = pExt->ActivateFirestorm(pAction, pHouse, pObject, pTrigger, location);
 		break;
 
 	case TriggerAction::DeactivateFirestorm:
-		*ret = pExt->DeactivateFirestorm(pAction, pHouse, pObject, pTrigger, pos);
+		*ret = pExt->DeactivateFirestorm(pAction, pHouse, pObject, pTrigger, location);
 		break;
 
 	default:
