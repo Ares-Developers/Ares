@@ -95,8 +95,8 @@ DEFINE_HOOK(6F9E50, TechnoClass_Update, 5)
 	// #1208
 	if(pTypeData->PassengerTurret) {
 		// 18 = 1 8 = A H = Adolf Hitler. Clearly we can't allow it to come to that.
-		auto const passengerNumber = std::min(pThis->Passengers.NumPassengers, 17);
-		pThis->CurrentTurretNumber = std::min(passengerNumber, pType->TurretCount - 1);
+		auto const passengerNumber = Math::min(pThis->Passengers.NumPassengers, 17);
+		pThis->CurrentTurretNumber = Math::min(passengerNumber, pType->TurretCount - 1);
 	}
 
 	// #617 powered units
@@ -240,7 +240,7 @@ DEFINE_HOOK(6F407D, TechnoClass_Init_1, 6)
 
 	auto pFoot = abstract_cast<FootClass*>(pThis);
 
-	auto CheckWeapon = [=,&pCapturer,&pParasite,&pTemporal]
+	auto CheckWeapon = [=, &pCapturer, &pParasite, &pTemporal]
 		(WeaponTypeClass* pWeapon, int idxWeapon, const char* pTagName)
 	{
 		auto pWarhead = pWeapon->Warhead;
@@ -269,10 +269,10 @@ DEFINE_HOOK(6F407D, TechnoClass_Init_1, 6)
 
 	// iterate all weapons and their elite counterparts
 	for(int i = 0; i < TechnoTypeClass::MaxWeapons; ++i) {
-		if(auto pWeapon = pType->Weapon[i].WeaponType) {
+		if(auto const pWeapon = pType->Weapon[i].WeaponType) {
 			CheckWeapon(pWeapon, i, "Weapon");
 		}
-		if(auto pWeapon = pType->EliteWeapon[i].WeaponType) {
+		if(auto const pWeapon = pType->EliteWeapon[i].WeaponType) {
 			CheckWeapon(pWeapon, i, "EliteWeapon");
 		}
 	}
