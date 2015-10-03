@@ -14,22 +14,24 @@ DEFINE_HOOK(6E1780, TActionClass_PlayAudioAtRandomWP, 6)
 	//GET_STACK(TriggerClass*, pTrigger, 0xC);
 	//GET_STACK(const CellStruct*, pLocation, 0x10);
 
-	std::vector<int> eligibleWPs;
+	constexpr auto const MaxWaypoints = _countof(ScenarioClass::Waypoints);
+	int buffer[MaxWaypoints];
+	DynamicVectorClass<int> eligible(MaxWaypoints, buffer);
 
-	auto pScen = ScenarioClass::Instance;
+	auto const pScen = ScenarioClass::Instance;
 
-	for(auto ix = 0; ix < 702; ++ix) {
+	for(auto ix = 0; ix < MaxWaypoints; ++ix) {
 		if(pScen->IsDefinedWaypoint(ix)) {
-			eligibleWPs.push_back(ix);
+			eligible.AddItem(ix);
 		}
 	}
 
-	if(eligibleWPs.size() > 0) {
-		auto const index = pScen->Random.RandomRanged(0, eligibleWPs.size() - 1);
-		auto luckyWP = eligibleWPs[index];
-		CellStruct XY = pScen->GetWaypointCoords(luckyWP);
-		CoordStruct XYZ = CellClass::Cell2Coord(XY);
-		VocClass::PlayIndexAtPos(pThis->Value, XYZ);
+	if(eligible.Count > 0) {
+		auto const index = pScen->Random.RandomRanged(0, eligible.Count - 1);
+		auto const luckyWP = eligible[index];
+		auto const cell = pScen->GetWaypointCoords(luckyWP);
+		auto const coords = CellClass::Cell2Coord(cell);
+		VocClass::PlayIndexAtPos(pThis->Value, coords);
 	}
 
 	R->EAX(1);
