@@ -65,7 +65,7 @@ bool TActionExt::Execute(TActionClass* pAction, HouseClass* pHouse, ObjectClass*
 	switch(pAction->ActionKind) {
 	case TriggerAction::PlaySoundEffectRandom:
 		// #1004906: function replaced to support more than 100 waypoints
-		*ret = pAction->PlayAudioAtRandomWP(pHouse, pObject, pTrigger, pos);
+		*ret = pAction->PlayAudioAtRandomWP(pHouse, pObject, pTrigger, *pos);
 		break;
 
 	case TriggerAction::ActivateFirestorm:
