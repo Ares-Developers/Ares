@@ -22,7 +22,7 @@ TechnoTypeExt::ExtContainer TechnoTypeExt::ExtMap;
 void TechnoTypeExt::ExtData::Initialize() {
 	auto pThis = this->OwnerObject();
 
-	this->PrerequisiteLists.push_back(std::make_unique<DynamicVectorClass<int>>());
+	this->PrerequisiteLists.resize(1);
 
 	this->Is_Deso = this->Is_Deso_Radiation = !strcmp(pThis->ID, "DESO");
 	this->Is_Cow = !strcmp(pThis->ID, "COW");
@@ -116,18 +116,15 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 		PrereqListLen = 0;
 	}
 	++PrereqListLen;
-	while(PrereqListLen > static_cast<int>(this->PrerequisiteLists.size())) {
-		this->PrerequisiteLists.push_back(std::make_unique<DynamicVectorClass<int>>());
-	}
-	this->PrerequisiteLists.erase(this->PrerequisiteLists.begin() + PrereqListLen, this->PrerequisiteLists.end());
+	this->PrerequisiteLists.resize(static_cast<size_t>(PrereqListLen));
 
-	Prereqs::Parse(pINI, section, "Prerequisite", *this->PrerequisiteLists[0]);
+	Prereqs::Parse(pINI, section, "Prerequisite", this->PrerequisiteLists[0]);
 
 	Prereqs::Parse(pINI, section, "PrerequisiteOverride", pThis->PrerequisiteOverride);
 
 	for(auto i = 0u; i < this->PrerequisiteLists.size(); ++i) {
 		_snprintf_s(flag, 255, "Prerequisite.List%u", i);
-		Prereqs::Parse(pINI, section, flag, *this->PrerequisiteLists[i]);
+		Prereqs::Parse(pINI, section, flag, this->PrerequisiteLists[i]);
 	}
 
 	Prereqs::Parse(pINI, section, "Prerequisite.Negative", this->PrerequisiteNegatives);
