@@ -56,8 +56,7 @@ void JammerClass::Jam(BuildingClass* TargetBuilding) {
 	auto const pExt = BuildingExt::ExtMap.Find(TargetBuilding);
 
 	auto& Jammers = pExt->RegisteredJammers;
-	if(!Jammers.contains(this->AttachedToObject)) {
-		Jammers.insert(this->AttachedToObject, true);
+	if(Jammers.insert(this->AttachedToObject, true)) {
 		if(Jammers.size() == 1) {
 			TargetBuilding->Owner->RecheckRadar = true;
 		}
@@ -70,8 +69,7 @@ void JammerClass::Unjam(BuildingClass* TargetBuilding) {
 	auto const pExt = BuildingExt::ExtMap.Find(TargetBuilding);
 
 	auto& Jammers = pExt->RegisteredJammers;
-	if(Jammers.contains(this->AttachedToObject)) {
-		Jammers.erase(this->AttachedToObject);
+	if(Jammers.erase(this->AttachedToObject)) {
 		if(Jammers.empty()) {
 			TargetBuilding->Owner->RecheckRadar = true;
 		}
