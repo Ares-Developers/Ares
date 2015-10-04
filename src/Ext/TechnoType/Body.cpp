@@ -110,13 +110,13 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 	}
 
 	// prereqs
-	int PrereqListLen = pINI->ReadInteger(section, "Prerequisite.Lists", this->PrerequisiteLists.size() - 1);
 
-	if(PrereqListLen < 1) {
-		PrereqListLen = 0;
-	}
-	++PrereqListLen;
-	this->PrerequisiteLists.resize(static_cast<size_t>(PrereqListLen));
+	// subtract the default list, get tag (not less than 0), add one back
+	auto const prerequisiteLists = static_cast<size_t>(
+		Math::max(pINI->ReadInteger(section, "Prerequisite.Lists",
+		static_cast<int>(this->PrerequisiteLists.size()) - 1), 0) + 1);
+
+	this->PrerequisiteLists.resize(prerequisiteLists);
 
 	Prereqs::Parse(pINI, section, "Prerequisite", this->PrerequisiteLists[0]);
 
