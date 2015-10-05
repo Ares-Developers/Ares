@@ -1,4 +1,7 @@
 #include "Body.h"
+
+#include "../../Misc/Exception.h"
+
 #include <FactoryClass.h>
 #include <SuperClass.h>
 #include <Networking.h>
@@ -10,8 +13,9 @@ DynamicVectorClass<CameoDataStruct> RulesExt::TabCameos[4];
 
 template <typename... Args>
 void DumpAndExit [[noreturn]] (const char* pMessage, Args... args) {
-	Debug::FullDump();
-	Debug::FatalErrorAndExit(pMessage, std::forward<Args>(args)...);
+	//Debug::FullDump();
+	//Debug::FatalErrorAndExit(pMessage, std::forward<Args>(args)...);
+	Exception::Exit(0xCAE0);
 }
 
 void RulesExt::ClearCameos() {
