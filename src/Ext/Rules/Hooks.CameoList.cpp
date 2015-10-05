@@ -9,8 +9,7 @@
 DynamicVectorClass<CameoDataStruct> RulesExt::TabCameos[4];
 
 void RulesExt::ClearCameos() {
-	for(auto i = 0; i < 4; ++i) {
-		auto &cameos = RulesExt::TabCameos[i];
+	for(auto& cameos : RulesExt::TabCameos) {
 		cameos.Clear();
 		cameos.CapacityIncrement = 100;
 		cameos.Reserve(100);
@@ -55,9 +54,7 @@ DEFINE_HOOK(6A61B1, SidebarClass_SetFactoryForObject, 0)
 	GET(int, ItemIndex, EBP);
 	GET_STACK(FactoryClass *, Factory, STACK_OFFS(0xC, -0x4));
 
-	auto &cameos = RulesExt::TabCameos[TabIndex];
-	for(auto i = 0; i < cameos.Count; ++i) {
-		auto &cameo = cameos[i];
+	for(auto& cameo : RulesExt::TabCameos[TabIndex]) {
 		if(cameo.ItemIndex == ItemIndex && cameo.ItemType == ItemType) {
 			cameo.CurrentFactory = Factory;
 			auto &Tab = MouseClass::Instance->Tabs[TabIndex];
@@ -80,9 +77,7 @@ DEFINE_HOOK(6A63B7, SidebarClass_AddCameo_SkipSizeCheck, 0)
 	GET(AbstractType, ItemType, ESI);
 	GET(int, ItemIndex, EBP);
 
-	auto &cameos = RulesExt::TabCameos[TabIndex];
-	for(auto i = 0; i < cameos.Count; ++i) {
-		auto &cameo = cameos[i];
+	for(auto const& cameo : RulesExt::TabCameos[TabIndex]) {
 		if(cameo.ItemIndex == ItemIndex && cameo.ItemType == ItemType) {
 			return AlreadyExists;
 		}
