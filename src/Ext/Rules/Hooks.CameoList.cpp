@@ -101,15 +101,6 @@ DEFINE_HOOK(6A8710, TabCameoListClass_AddCameo_ReplaceItAll, 0)
 		Debug::FatalErrorAndExit("Unsynchronized cameo counts @ %s: tab #%d, old %d, new %d\n", __FUNCTION__, TabIndex, pTab->CameoCount, cameos.Count);
 	}
 
-	int InsertIndex = 0;
-	for(auto i = 0; i < cameos.Count; ++i) {
-		auto &currentCameo = cameos[i];
-		if(CameoDataStruct::SortsBefore(ItemType, ItemIndex, currentCameo.ItemType, currentCameo.ItemIndex)) {
-			break;
-		}
-		++InsertIndex;
-	}
-
 	CameoDataStruct newCameo(ItemIndex, ItemType);
 	if(ItemType == BuildingTypeClass::AbsID) {
 		newCameo.IsAlt = ObjectTypeClass::IsBuildCat5(ItemType, ItemIndex);
@@ -119,14 +110,11 @@ DEFINE_HOOK(6A8710, TabCameoListClass_AddCameo_ReplaceItAll, 0)
 
 	if(cameos.AddItem(newCameo)) {
 		++pTab->CameoCount;
-		auto LastIndex = cameos.Count - 1;
-		if(LastIndex > InsertIndex) {
-			for(auto i = LastIndex; i > InsertIndex; --i) {
-				//Debug::Log("Shuffling cameo from slot %d to %d\n", i - 1, i);
-				cameos[i] = cameos[i - 1];
-			}
-			cameos[InsertIndex] = newCameo;
-		}
+
+		auto const old_end = cameos.end() - 1;
+		auto const it = std::lower_bound(cameos.begin(), old_end, newCameo);
+		std::copy_backward(it, old_end, cameos.end());
+		*it = newCameo;
 	} else {
 		Debug::Log("Adding cameo failed?!\n");
 	}
