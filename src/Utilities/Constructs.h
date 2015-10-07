@@ -458,10 +458,10 @@ public:
 template <typename T, bool Persistable = false>
 struct OptionalStruct {
 	OptionalStruct() = default;
-	explicit OptionalStruct(T value) noexcept : Value(value), HasValue(true) {}
+	explicit OptionalStruct(T value) noexcept : Value(std::move(value)), HasValue(true) {}
 
 	OptionalStruct& operator= (T value) {
-		this->Value = value;
+		this->Value = std::move(value);
 		this->HasValue = true;
 		return *this;
 	}
@@ -490,11 +490,11 @@ struct OptionalStruct {
 	bool load(AresStreamReader &Stm, bool RegisterForChange) {
 		this->clear();
 
-		return load(Stm, RegisterForChange, std::integral_constant<bool, Persistable>());
+		return load(Stm, RegisterForChange, std::bool_constant<Persistable>());
 	}
 
 	bool save(AresStreamWriter &Stm) const {
-		return save(Stm, std::integral_constant<bool, Persistable>());
+		return save(Stm, std::bool_constant<Persistable>());
 	}
 
 private:
