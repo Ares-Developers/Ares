@@ -25,14 +25,14 @@ template <typename T>
 using UniqueGamePtr = std::unique_ptr<T, GameDeleter>;
 
 struct Leptons {
-	Leptons() : value(0) {}
-	explicit Leptons(int value) : value(value) {}
+	Leptons() = default;
+	explicit Leptons(int value) noexcept : value(value) {}
 
 	operator int() const {
 		return this->value;
 	}
 
-	int value;
+	int value{ 0 };
 };
 
 class CustomPalette {
@@ -42,15 +42,12 @@ public:
 		Temperate = 1
 	};
 
-	PaletteMode Mode;
-	UniqueGamePtr<ConvertClass> Convert;
-	UniqueGamePtr<BytePalette> Palette;
+	PaletteMode Mode{ PaletteMode::Default };
+	UniqueGamePtr<ConvertClass> Convert{ nullptr };
+	UniqueGamePtr<BytePalette> Palette{ nullptr };
 
-	CustomPalette(PaletteMode mode = PaletteMode::Default) :
-		Mode(mode),
-		Convert(nullptr),
-		Palette(nullptr)
-	{};
+	CustomPalette() = default;
+	explicit CustomPalette(PaletteMode mode) noexcept : Mode(mode) {};
 
 	ConvertClass* GetConvert() const {
 		return this->Convert.get();
@@ -378,7 +375,10 @@ private:
 // provides storage for a csf label with automatic lookup.
 class CSFText {
 public:
-	CSFText(const char* label = nullptr) : Text(nullptr) {
+	CSFText() noexcept {};
+	CSFText(nullptr_t) noexcept {}
+
+	explicit CSFText(const char* label) noexcept {
 		*this = label;
 	}
 
@@ -429,15 +429,16 @@ public:
 	}
 
 	FixedString<0x20> Label;
-	const wchar_t* Text;
+	const wchar_t* Text{ nullptr };
 };
 
 // fixed string with read method
 template <size_t Capacity>
 class AresFixedString : public FixedString<Capacity> {
 public:
-	explicit AresFixedString(const char* value = nullptr) : FixedString(value) {
-	}
+	AresFixedString() = default;
+	explicit AresFixedString(nullptr_t) noexcept : AresFixedString() {};
+	explicit AresFixedString(const char* value) noexcept : FixedString(value) {}
 
 	using FixedString::operator=;
 
@@ -456,8 +457,8 @@ public:
 // a wrapper for an optional value
 template <typename T, bool Persistable = false>
 struct OptionalStruct {
-	OptionalStruct() : Value(T()), HasValue(false) {}
-	explicit OptionalStruct(T value) : Value(value), HasValue(true) {}
+	OptionalStruct() = default;
+	explicit OptionalStruct(T value) noexcept : Value(value), HasValue(true) {}
 
 	OptionalStruct& operator= (T value) {
 		this->Value = value;
@@ -465,11 +466,11 @@ struct OptionalStruct {
 		return *this;
 	}
 
-	operator T& () {
+	operator T& () noexcept {
 		return this->Value;
 	}
 
-	operator const T& () const {
+	operator const T& () const noexcept {
 		return this->Value;
 	}
 
@@ -482,7 +483,7 @@ struct OptionalStruct {
 		return !this->HasValue;
 	}
 
-	const T& get() const {
+	const T& get() const noexcept {
 		return this->Value;
 	}
 
@@ -522,6 +523,6 @@ private:
 		return true;
 	}
 
-	T Value;
-	bool HasValue;
+	T Value{};
+	bool HasValue{ false };
 };

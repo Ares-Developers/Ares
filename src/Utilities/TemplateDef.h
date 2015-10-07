@@ -217,7 +217,7 @@ void Valueable<ColorStruct>::Read(INI_EX &parser, const char* pSection, const ch
 template<>
 void Valueable<CSFText>::Read(INI_EX &parser, const char* pSection, const char* pKey, bool Allocate) {
 	if(parser.ReadString(pSection, pKey)) {
-		this->Set(parser.value());
+		this->Set(CSFText(parser.value()));
 	}
 };
 
