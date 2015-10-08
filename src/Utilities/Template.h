@@ -27,13 +27,13 @@ public:
 
 	virtual ~Valueable() = default;
 
-	operator const T& () const {
+	operator const T& () const noexcept {
 		return this->Get();
 	}
 
 	// only allow this when explict works, otherwise
 	// the always-non-null pointer will be used in conditionals.
-	//explicit operator T* () {
+	//explicit operator T* () noexept {
 	//	return this->GetEx();
 	//}
 
@@ -47,7 +47,7 @@ public:
 		return this->Get();
 	}
 
-	T* operator & () {
+	T* operator & () noexcept {
 		return this->GetEx();
 	}
 
@@ -55,15 +55,15 @@ public:
 		return this->Get() == 0;
 	};
 
-	const T& Get() const {
+	const T& Get() const noexcept {
 		return this->Value;
 	}
 
-	T* GetEx() {
+	T* GetEx() noexcept {
 		return &this->Value;
 	}
 
-	const T* GetEx() const {
+	const T* GetEx() const noexcept {
 		return &this->Value;
 	}
 
@@ -120,7 +120,7 @@ public:
 	Nullable() = default;
 	Nullable(T Val) noexcept(noexcept(Valueable<T>{std::move(Val)})) : Valueable<T>(std::move(Val)), HasValue(true) {};
 
-	bool isset() const {
+	bool isset() const noexcept {
 		return this->HasValue;
 	}
 
@@ -132,11 +132,11 @@ public:
 
 	using Valueable<T>::GetEx;
 
-	T* GetEx(T* defVal) {
+	T* GetEx(T* defVal) noexcept {
 		return this->isset() ? Valueable<T>::GetEx() : defVal;
 	}
 
-	const T* GetEx(const T* defVal) const {
+	const T* GetEx(const T* defVal) const noexcept {
 		return this->isset() ? Valueable<T>::GetEx() : defVal;
 	}
 
@@ -199,11 +199,11 @@ public:
 
 	inline void Read(INI_EX &parser, const char* pSection, const char* pBaseFlag, const char* pSingleFlag = nullptr);
 
-	const T* GetEx(TechnoClass* pTechno) const {
+	const T* GetEx(TechnoClass* pTechno) const noexcept {
 		return &this->Get(pTechno);
 	}
 
-	const T& Get(TechnoClass* pTechno) const {
+	const T& Get(TechnoClass* pTechno) const noexcept {
 		VeterancyStruct *XP = &pTechno->Veterancy;
 		if(XP->IsElite()) {
 			return this->Elite;
@@ -246,11 +246,11 @@ public:
 		return -1;
 	}
 
-	bool Defined() const {
+	bool Defined() const noexcept {
 		return this->defined;
 	}
 
-	Iterator<T> GetElements() const {
+	Iterator<T> GetElements() const noexcept {
 		return Iterator<T>(*this);
 	}
 
@@ -273,13 +273,13 @@ public:
 
 	inline virtual void Read(INI_EX &parser, const char* pSection, const char* pKey) override final;
 
-	bool HasValue() const {
+	bool HasValue() const noexcept {
 		return this->hasValue;
 	}
 
 	using ValueableVector<T>::GetElements;
 
-	Iterator<T> GetElements(Iterator<T> defElements) const {
+	Iterator<T> GetElements(Iterator<T> defElements) const noexcept {
 		if(!this->hasValue) {
 			return defElements;
 		}
