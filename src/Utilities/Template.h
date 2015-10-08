@@ -17,11 +17,13 @@ class INI_EX;
 template<typename T>
 class Valueable {
 protected:
-	T    Value;
+	T    Value{};
 public:
 	using value_type = T;
 	using base_type = std::remove_pointer_t<T>;
-	Valueable(T Default = T()) : Value(Default) {};
+
+	Valueable() = default;
+	explicit Valueable(T Default) noexcept(noexcept(T{std::move(Default)})) : Value(std::move(Default)) {};
 
 	virtual ~Valueable() = default;
 
@@ -104,8 +106,8 @@ inline bool operator != (const T& other, const Valueable<T>& val) {
 template<typename Lookuper>
 class ValueableIdx : public Valueable<int> {
 public:
-	ValueableIdx() : Valueable<int>(-1) {};
-	ValueableIdx(int Default) : Valueable<int>(Default) {};
+	ValueableIdx() noexcept : Valueable<int>(-1) {};
+	ValueableIdx(int Default) noexcept : Valueable<int>(Default) {};
 
 	inline void Read(INI_EX &parser, const char* pSection, const char* pKey);
 };
@@ -113,10 +115,10 @@ public:
 template<typename T>
 class Nullable : public Valueable<T> {
 protected:
-	bool HasValue;
+	bool HasValue{ false };
 public:
-	Nullable(): Valueable<T>(T()), HasValue(false) {};
-	Nullable(T Val): Valueable<T>(Val), HasValue(true) {};
+	Nullable() = default;
+	Nullable(T Val) noexcept(noexcept(Valueable<T>{std::move(Val)})) : Valueable<T>(std::move(Val)), HasValue(true) {};
 
 	bool isset() const {
 		return this->HasValue;
@@ -161,11 +163,11 @@ public:
 template<typename Lookuper>
 class NullableIdx : public Nullable<int> {
 public:
-	NullableIdx() : Nullable<int>(-1) { 
+	NullableIdx() noexcept : Nullable<int>(-1) {
 		this->HasValue = false;
-	};
+	}
 
-	NullableIdx(int Val) : Nullable<int>(Val) {};
+	NullableIdx(int Val) noexcept : Nullable<int>(Val) {};
 
 	inline void Read(INI_EX &parser, const char* pSection, const char* pKey);
 };
@@ -184,12 +186,12 @@ public:
 template<typename T>
 class Promotable {
 public:
-	T Rookie;
-	T Veteran;
-	T Elite;
+	T Rookie{ T() };
+	T Veteran{ T() };
+	T Elite{ T() };
 
-	Promotable() : Rookie(T()), Veteran(T()), Elite(T()) {};
-	explicit Promotable(T const& all) : Rookie(all), Veteran(all), Elite(all) {};
+	Promotable() = default;
+	explicit Promotable(T const& all) noexcept(noexcept(T{all})) : Rookie(all), Veteran(all), Elite(all) {};
 
 	void SetAll(const T& val) {
 		this->Elite = this->Veteran = this->Rookie = val;
@@ -221,12 +223,12 @@ public:
 template<class T>
 class ValueableVector : public std::vector<T> {
 protected:
-	bool defined;
+	bool defined{ false };
 public:
 	using value_type = T;
 	using base_type = std::remove_pointer_t<T>;
 
-	ValueableVector() : std::vector<T>(), defined(false) {};
+	ValueableVector() noexcept = default;
 
 	virtual ~ValueableVector() = default;
 
@@ -265,9 +267,9 @@ protected:
 template<class T>
 class NullableVector : public ValueableVector<T> {
 protected:
-	bool hasValue;
+	bool hasValue{ false };
 public:
-	NullableVector() : ValueableVector<T>(), hasValue(false) {};
+	NullableVector() noexcept = default;
 
 	inline virtual void Read(INI_EX &parser, const char* pSection, const char* pKey) override final;
 
