@@ -21,138 +21,177 @@ void HouseTypeExt::ExtData::InitializeConstants() {
 	//We assign default values by country ID rather than index so you simply add a new country
 	//without having to specify all the tags for the old ones
 
-	if (!_strcmpi(pID, "Americans")) //USA
-	{
-		this->FlagFile = "usai.pcx";
-		this->LoadScreenBrief = CSFText("LoadBrief:USA");
-		this->LoadScreenBackground = "ls%sustates.shp";
-		this->LoadScreenName = CSFText("Name:Americans");
-		this->LoadScreenPalette = "mplsu.pal";
-		this->LoadScreenSpecialName = CSFText("Name:Para");
-		this->StatusText = CSFText("STT:PlayerSideAmerica");
-		this->TauntFile = "taunts\\tauam%02i.wav";
-		this->ObserverBackgroundSHP = FileSystem::LoadSHPFile("obsalli.shp");
-		this->ObserverFlagSHP = FileSystem::LoadSHPFile("usai.shp");
-	} else if (!_strcmpi(pID, "Alliance")) //Korea
-	{
-		this->FlagFile = "japi.pcx";
-		this->LoadScreenBrief = CSFText("LoadBrief:Korea");
-		this->LoadScreenBackground = "ls%skorea.shp";
-		this->LoadScreenName = CSFText("Name:Alliance");
-		this->LoadScreenPalette = "mplsk.pal";
-		this->LoadScreenSpecialName = CSFText("Name:BEAGLE");
-		this->StatusText = CSFText("STT:PlayerSideKorea");
-		this->TauntFile = "taunts\\tauko%02i.wav";
-		this->ObserverBackgroundSHP = FileSystem::LoadSHPFile("obsalli.shp");
-		this->ObserverFlagSHP = FileSystem::LoadSHPFile("japi.shp");
-	} else if (!_strcmpi(pID, "French")) //France
-	{
-		this->FlagFile = "frai.pcx";
-		this->LoadScreenBrief = CSFText("LoadBrief:French");
-		this->LoadScreenBackground = "ls%sfrance.shp";
-		this->LoadScreenName = CSFText("Name:French");
-		this->LoadScreenPalette = "mplsf.pal";
-		this->LoadScreenSpecialName = CSFText("Name:GTGCAN");
-		this->StatusText = CSFText("STT:PlayerSideFrance");
-		this->TauntFile = "taunts\\taufr%02i.wav";
-		this->ObserverBackgroundSHP = FileSystem::LoadSHPFile("obsalli.shp");
-		this->ObserverFlagSHP = FileSystem::LoadSHPFile("frai.shp");
-	} else if (!_strcmpi(pID, "Germans")) //Germany
-	{
-		this->FlagFile = "geri.pcx";
-		this->LoadScreenBrief = CSFText("LoadBrief:Germans");
-		this->LoadScreenBackground = "ls%sgermany.shp";
-		this->LoadScreenName = CSFText("Name:Germans");
-		this->LoadScreenPalette = "mplsg.pal";
-		this->LoadScreenSpecialName = CSFText("Name:TNKD");
-		this->StatusText = CSFText("STT:PlayerSideGermany");
-		this->TauntFile = "taunts\\tauge%02i.wav";
-		this->ObserverBackgroundSHP = FileSystem::LoadSHPFile("obsalli.shp");
-		this->ObserverFlagSHP = FileSystem::LoadSHPFile("geri.shp");
-	} else if (!_strcmpi(pID, "British")) //United Kingdom
-	{
-		this->FlagFile = "gbri.pcx";
-		this->LoadScreenBrief = CSFText("LoadBrief:British");
-		this->LoadScreenBackground = "ls%sukingdom.shp";
-		this->LoadScreenName = CSFText("Name:British");
-		this->LoadScreenPalette = "mplsuk.pal";
-		this->LoadScreenSpecialName = CSFText("Name:SNIPE");
-		this->StatusText = CSFText("STT:PlayerSideBritain");
-		this->TauntFile = "taunts\\taubr%02i.wav";
-		this->ObserverBackgroundSHP = FileSystem::LoadSHPFile("obsalli.shp");
-		this->ObserverFlagSHP = FileSystem::LoadSHPFile("gbri.shp");
-	} else if (!_strcmpi(pID, "Africans")) //Libya
-	{
-		this->FlagFile = "djbi.pcx";
-		this->LoadScreenBrief = CSFText("LoadBrief:Lybia");
-		this->LoadScreenBackground = "ls%slibya.shp";
-		this->LoadScreenName = CSFText("Name:Africans");
-		this->LoadScreenPalette = "mplsl.pal";
-		this->LoadScreenSpecialName = CSFText("Name:DTRUCK");
-		this->StatusText = CSFText("STT:PlayerSideLibya");
-		this->TauntFile = "taunts\\tauli%02i.wav";
-		this->ObserverBackgroundSHP = FileSystem::LoadSHPFile("obssovi.shp");
-		this->ObserverFlagSHP = FileSystem::LoadSHPFile("djbi.shp");
-	} else if (!_strcmpi(pID, "Arabs")) //Iraq
-	{
-		this->FlagFile = "arbi.pcx";
-		this->LoadScreenBrief = CSFText("LoadBrief:Iraq");
-		this->LoadScreenBackground = "ls%siraq.shp";
-		this->LoadScreenName = CSFText("Name:Arabs");
-		this->LoadScreenPalette = "mplsi.pal";
-		this->LoadScreenSpecialName = CSFText("Name:DESO");
-		this->StatusText = CSFText("STT:PlayerSideIraq");
-		this->TauntFile = "taunts\\tauir%02i.wav";
-		this->ObserverBackgroundSHP = FileSystem::LoadSHPFile("obssovi.shp");
-		this->ObserverFlagSHP = FileSystem::LoadSHPFile("arbi.shp");
-	} else if (!_strcmpi(pID, "Confederation")) //Cuba
-	{
-		this->FlagFile = "lati.pcx";
-		this->LoadScreenBrief = CSFText("LoadBrief:Cuba");
-		this->LoadScreenBackground = "ls%scuba.shp";
-		this->LoadScreenName = CSFText("Name:Confederation");
-		this->LoadScreenPalette = "mplsc.pal";
-		this->LoadScreenSpecialName = CSFText("Name:TERROR");
-		this->StatusText = CSFText("STT:PlayerSideCuba");
-		this->TauntFile = "taunts\\taucu%02i.wav";
-		this->ObserverBackgroundSHP = FileSystem::LoadSHPFile("obssovi.shp");
-		this->ObserverFlagSHP = FileSystem::LoadSHPFile("lati.shp");
-	} else if (!_strcmpi(pID, "Russians")) //Russia
-	{
-		this->FlagFile = "rusi.pcx";
-		this->LoadScreenBrief = CSFText("LoadBrief:Russia");
-		this->LoadScreenBackground = "ls%srussia.shp";
-		this->LoadScreenName = CSFText("Name:Russians");
-		this->LoadScreenPalette = "mplsr.pal";
-		this->LoadScreenSpecialName = CSFText("Name:TTNK");
-		this->StatusText = CSFText("STT:PlayerSideRussia");
-		this->TauntFile = "taunts\\tauru%02i.wav";
-		this->ObserverBackgroundSHP = FileSystem::LoadSHPFile("obssovi.shp");
-		this->ObserverFlagSHP = FileSystem::LoadSHPFile("rusi.shp");
-	} else if (!_strcmpi(pID, "YuriCountry")) //Yuri
-	{
-		this->FlagFile = "yrii.pcx";
-		this->LoadScreenBrief = CSFText("LoadBrief:YuriCountry");
-		this->LoadScreenBackground = "ls%syuri.shp";
-		this->LoadScreenName = CSFText("Name:YuriCountry");
-		this->LoadScreenPalette = "mpyls.pal";
-		this->LoadScreenSpecialName = CSFText("Name:YURI");
-		this->StatusText = CSFText("STT:PlayerSideYuriCountry");
-		this->TauntFile = "taunts\\tauyu%02i.wav";
-		this->ObserverBackgroundSHP = FileSystem::LoadSHPFile("obsyuri.shp");
-		this->ObserverFlagSHP = FileSystem::LoadSHPFile("yrii.shp");
-		this->ObserverFlagYuriPAL = true;
-	} else //Unknown
-	{
-		this->FlagFile = "rani.pcx";
-		this->LoadScreenBrief = CSFText("GUI:Unknown");
-		this->LoadScreenBackground = "ls%sobs.shp";
-		this->LoadScreenName = CSFText("GUI:Unknown");
-		this->LoadScreenPalette = "mplsobs.pal";
-		this->LoadScreenSpecialName = CSFText("GUI:Unknown");
-		this->StatusText = CSFText("GUI:Unknown");
-		this->TauntFile = "taunts\\tauam%02i.wav";
+	static char const* const Countries[] = {
+		"Americans", "Alliance", "French", "Germans", "British", "Africans",
+		"Arabs", "Confederation", "Russians", "YuriCountry" };
+	auto const it = std::find_if(std::begin(Countries), std::end(Countries),
+		[=](const char* pCountry) { return !_strcmpi(pID, pCountry); });
+	auto const index = std::distance(std::begin(Countries), it);
+
+	const char* pFlagFile = nullptr;
+	const char* pLoadScreenBrief = nullptr;
+	const char* pLoadScreenBackground = nullptr;
+	const char* pLoadScreenName = nullptr;
+	const char* pLoadScreenPalette = nullptr;
+	const char* pLoadScreenSpecialName = nullptr;
+	const char* pStatusText = nullptr;
+	const char* pTauntFile = nullptr;
+	const char* pObserverBackgroundSHP = nullptr;
+	const char* pObserverFlagSHP = nullptr;
+	bool bObserverFlagYuriPAL = false;
+
+	switch(index) {
+	case 0: // USA
+		pFlagFile = "usai.pcx";
+		pLoadScreenBrief = "LoadBrief:USA";
+		pLoadScreenBackground = "ls%sustates.shp";
+		pLoadScreenName = "Name:Americans";
+		pLoadScreenPalette = "mplsu.pal";
+		pLoadScreenSpecialName = "Name:Para";
+		pStatusText = "STT:PlayerSideAmerica";
+		pTauntFile = "taunts\\tauam%02i.wav";
+		pObserverBackgroundSHP = "obsalli.shp";
+		pObserverFlagSHP = "usai.shp";
+		break;
+	case 1: //Korea	
+		pFlagFile = "japi.pcx";
+		pLoadScreenBrief = "LoadBrief:Korea";
+		pLoadScreenBackground = "ls%skorea.shp";
+		pLoadScreenName = "Name:Alliance";
+		pLoadScreenPalette = "mplsk.pal";
+		pLoadScreenSpecialName = "Name:BEAGLE";
+		pStatusText = "STT:PlayerSideKorea";
+		pTauntFile = "taunts\\tauko%02i.wav";
+		pObserverBackgroundSHP = "obsalli.shp";
+		pObserverFlagSHP = "japi.shp";
+		break;
+	case 2: //France
+		pFlagFile = "frai.pcx";
+		pLoadScreenBrief = "LoadBrief:French";
+		pLoadScreenBackground = "ls%sfrance.shp";
+		pLoadScreenName = "Name:French";
+		pLoadScreenPalette = "mplsf.pal";
+		pLoadScreenSpecialName = "Name:GTGCAN";
+		pStatusText = "STT:PlayerSideFrance";
+		pTauntFile = "taunts\\taufr%02i.wav";
+		pObserverBackgroundSHP = "obsalli.shp";
+		pObserverFlagSHP = "frai.shp";
+		break;
+	case 3: //Germany
+		pFlagFile = "geri.pcx";
+		pLoadScreenBrief = "LoadBrief:Germans";
+		pLoadScreenBackground = "ls%sgermany.shp";
+		pLoadScreenName = "Name:Germans";
+		pLoadScreenPalette = "mplsg.pal";
+		pLoadScreenSpecialName = "Name:TNKD";
+		pStatusText = "STT:PlayerSideGermany";
+		pTauntFile = "taunts\\tauge%02i.wav";
+		pObserverBackgroundSHP = "obsalli.shp";
+		pObserverFlagSHP = "geri.shp";
+		break;
+	case 4: //United Kingdom
+		pFlagFile = "gbri.pcx";
+		pLoadScreenBrief = "LoadBrief:British";
+		pLoadScreenBackground = "ls%sukingdom.shp";
+		pLoadScreenName = "Name:British";
+		pLoadScreenPalette = "mplsuk.pal";
+		pLoadScreenSpecialName = "Name:SNIPE";
+		pStatusText = "STT:PlayerSideBritain";
+		pTauntFile = "taunts\\taubr%02i.wav";
+		pObserverBackgroundSHP = "obsalli.shp";
+		pObserverFlagSHP = "gbri.shp";
+		break;
+	case 5: //Libya
+		pFlagFile = "djbi.pcx";
+		pLoadScreenBrief = "LoadBrief:Lybia";
+		pLoadScreenBackground = "ls%slibya.shp";
+		pLoadScreenName = "Name:Africans";
+		pLoadScreenPalette = "mplsl.pal";
+		pLoadScreenSpecialName = "Name:DTRUCK";
+		pStatusText = "STT:PlayerSideLibya";
+		pTauntFile = "taunts\\tauli%02i.wav";
+		pObserverBackgroundSHP = "obssovi.shp";
+		pObserverFlagSHP = "djbi.shp";
+		break;
+	case 6: //Iraq
+		pFlagFile = "arbi.pcx";
+		pLoadScreenBrief = "LoadBrief:Iraq";
+		pLoadScreenBackground = "ls%siraq.shp";
+		pLoadScreenName = "Name:Arabs";
+		pLoadScreenPalette = "mplsi.pal";
+		pLoadScreenSpecialName = "Name:DESO";
+		pStatusText = "STT:PlayerSideIraq";
+		pTauntFile = "taunts\\tauir%02i.wav";
+		pObserverBackgroundSHP = "obssovi.shp";
+		pObserverFlagSHP = "arbi.shp";
+		break;
+	case 7: //Cuba
+		pFlagFile = "lati.pcx";
+		pLoadScreenBrief = "LoadBrief:Cuba";
+		pLoadScreenBackground = "ls%scuba.shp";
+		pLoadScreenName = "Name:Confederation";
+		pLoadScreenPalette = "mplsc.pal";
+		pLoadScreenSpecialName = "Name:TERROR";
+		pStatusText = "STT:PlayerSideCuba";
+		pTauntFile = "taunts\\taucu%02i.wav";
+		pObserverBackgroundSHP = "obssovi.shp";
+		pObserverFlagSHP = "lati.shp";
+		break;
+	case 8: //Russia
+		pFlagFile = "rusi.pcx";
+		pLoadScreenBrief = "LoadBrief:Russia";
+		pLoadScreenBackground = "ls%srussia.shp";
+		pLoadScreenName = "Name:Russians";
+		pLoadScreenPalette = "mplsr.pal";
+		pLoadScreenSpecialName = "Name:TTNK";
+		pStatusText = "STT:PlayerSideRussia";
+		pTauntFile = "taunts\\tauru%02i.wav";
+		pObserverBackgroundSHP = "obssovi.shp";
+		pObserverFlagSHP = "rusi.shp";
+		break;
+	case 9: //Yuri
+		pFlagFile = "yrii.pcx";
+		pLoadScreenBrief = "LoadBrief:YuriCountry";
+		pLoadScreenBackground = "ls%syuri.shp";
+		pLoadScreenName = "Name:YuriCountry";
+		pLoadScreenPalette = "mpyls.pal";
+		pLoadScreenSpecialName = "Name:YURI";
+		pStatusText = "STT:PlayerSideYuriCountry";
+		pTauntFile = "taunts\\tauyu%02i.wav";
+		pObserverBackgroundSHP = "obsyuri.shp";
+		pObserverFlagSHP = "yrii.shp";
+		ObserverFlagYuriPAL = true;
+		break;
+	default: //Unknown
+		pFlagFile = "rani.pcx";
+		pLoadScreenBrief = "GUI:Unknown";
+		pLoadScreenBackground = "ls%sobs.shp";
+		pLoadScreenName = "GUI:Unknown";
+		pLoadScreenPalette = "mplsobs.pal";
+		pLoadScreenSpecialName = "GUI:Unknown";
+		pStatusText = "GUI:Unknown";
+		pTauntFile = "taunts\\tauam%02i.wav";
 	}
+
+	// apply the defaults
+	this->FlagFile = pFlagFile;
+	this->LoadScreenBrief = CSFText(pLoadScreenBrief);
+	this->LoadScreenBackground = pLoadScreenBackground;
+	this->LoadScreenName = CSFText(pLoadScreenName);
+	this->LoadScreenPalette = pLoadScreenPalette;
+	this->LoadScreenSpecialName = CSFText(pLoadScreenSpecialName);
+	this->StatusText = CSFText(pStatusText);
+	this->TauntFile = pTauntFile;
+
+	if(pObserverBackgroundSHP) {
+		this->ObserverBackgroundSHP = FileSystem::LoadSHPFile(pObserverBackgroundSHP);
+	}
+
+	if(pObserverFlagSHP) {
+		this->ObserverFlagSHP = FileSystem::LoadSHPFile(pObserverFlagSHP);
+	}
+
+	this->ObserverFlagYuriPAL = bObserverFlagYuriPAL;
 }
 
 void HouseTypeExt::ExtData::Initialize() {
