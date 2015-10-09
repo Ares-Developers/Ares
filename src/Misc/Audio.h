@@ -40,7 +40,7 @@ public:
 	}
 
 private:
-	std::map<std::string, LooseAudioFile> Files;
+	std::map<std::string, LooseAudioFile, std::less<>> Files;
 };
 
 class AresAudioHelper {
