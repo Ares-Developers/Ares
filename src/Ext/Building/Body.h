@@ -104,7 +104,10 @@ public:
 
 		virtual ~ExtData() = default;
 
-		virtual void InvalidatePointer(void *ptr, bool bRemoved) override {
+		virtual void InvalidatePointer(void* ptr, bool bRemoved) override {
+			auto const pThis = this->OwnerObject();
+			AnnounceInvalidPointer(pThis->GetAnim(BuildingAnimSlot::Special), ptr);
+			AnnounceInvalidPointer(pThis->GetAnim(BuildingAnimSlot::SpecialTwo), ptr);
 		}
 
 		virtual void LoadFromStream(AresStreamReader &Stm) override;
@@ -156,6 +159,11 @@ public:
 	public:
 		ExtContainer();
 		~ExtContainer();
+
+		virtual bool InvalidateExtDataIgnorable(void* const ptr) const override {
+			auto const abs = static_cast<AbstractClass*>(ptr)->WhatAmI();
+			return abs != AbstractType::Anim;
+		}
 	};
 
 	static ExtContainer ExtMap;
