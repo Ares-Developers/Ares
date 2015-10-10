@@ -243,16 +243,25 @@ DEFINE_HOOK(6F407D, TechnoClass_Init_1, 6)
 	auto CheckWeapon = [=, &pCapturer, &pParasite, &pTemporal]
 		(WeaponTypeClass* pWeapon, int idxWeapon, const char* pTagName)
 	{
+		constexpr auto const Note = "Constructing an instance of [%s]:\r\n"
+			"%s %s (slot %d) has no %s!";
+
+		if(!pWeapon->Projectile) {
+			Debug::FatalErrorAndExit(
+				Note, pType->ID, pTagName, pWeapon->ID, idxWeapon,
+				"Projectile");
+		}
+
 		auto pWarhead = pWeapon->Warhead;
 
 		if(!pWarhead) {
 			Debug::FatalErrorAndExit(
-				"Constructing an instance of [%s]:\r\n%s %s (slot %d) has no Warhead!",
-				pType->ID, pTagName, pWeapon->ID, idxWeapon);
+				Note, pType->ID, pTagName, pWeapon->ID, idxWeapon, "Warhead");
 		}
 
 		if(pWarhead->MindControl && !pCapturer) {
-			pCapturer = GameCreate<CaptureManagerClass>(pThis, pWeapon->Damage, pWeapon->InfiniteMindControl);
+			pCapturer = GameCreate<CaptureManagerClass>(
+				pThis, pWeapon->Damage, pWeapon->InfiniteMindControl);
 		}
 
 		if(pWarhead->Temporal && !pTemporal) {
