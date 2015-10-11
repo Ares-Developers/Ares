@@ -20,10 +20,10 @@ namespace Helpers {
 
 		//! Less comparison for pointer types.
 		/*!
-		Dereferences the values before comparing them using std::less.
+			Dereferences the values before comparing them using std::less.
 
-		This compares the actual objects pointed to instead of their
-		arbitrary pointer values.
+			This compares the actual objects pointed to instead of their
+			arbitrary pointer values.
 		*/
 		struct deref_less {
 			using is_transparent = void;
@@ -36,11 +36,11 @@ namespace Helpers {
 
 		//! Represents a set of unique items.
 		/*!
-		Items can be added using the insert method. Even though an item
-		can be added multiple times, it is only contained once in the set.
+			Items can be added using the insert method. Even though an item
+			can be added multiple times, it is only contained once in the set.
 
-		Use either the for_each method to call a method using each item as
-		a parameter, or iterate the set through the begin and end methods.
+			Use either the for_each method to call a method using each item as
+			a parameter, or iterate the set through the begin and end methods.
 		*/
 		template<typename T>
 		class DistinctCollector {
