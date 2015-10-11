@@ -25,9 +25,11 @@ namespace Helpers {
 		This compares the actual objects pointed to instead of their
 		arbitrary pointer values.
 		*/
-		template <typename T>
-		struct deref_less : std::unary_function<const T, bool> {
-			bool operator()(const T lhs, const T rhs) const {
+		struct deref_less {
+			using is_transparent = void;
+
+			template <typename T, typename U>
+			bool operator()(T&& lhs, U&& rhs) const {
 				return std::less<>()(*lhs, *rhs);
 			}
 		};
@@ -42,7 +44,7 @@ namespace Helpers {
 		*/
 		template<typename T>
 		class DistinctCollector {
-			using less_type = std::conditional_t<std::is_pointer<T>::value, deref_less<T>, std::less<T>>;
+			using less_type = std::conditional_t<std::is_pointer<T>::value, deref_less, std::less<>>;
 			using set_type = std::set<T, less_type>;
 			set_type _set;
 
