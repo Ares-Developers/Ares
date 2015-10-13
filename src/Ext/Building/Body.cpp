@@ -703,6 +703,7 @@ void BuildingExt::ExtData::UpdateFirewall(bool const changedState) {
 			if(AnimTypeClass* pType = RulesExt::Global()->FirestormIdleAnim) {
 				auto const crd = pThis->GetCoords() - CoordStruct{ 740, 740, 0 };
 				Anim = GameCreate<AnimClass>(pType, crd, 0, 1, 0x604, -10);
+				Anim->IsBuildingAnim = true;
 			}
 		}
 	} else {
@@ -724,6 +725,7 @@ void BuildingExt::ExtData::UpdateFirewall(bool const changedState) {
 				auto const crd = pThis->GetCoords() - CoordStruct{ 128, 128, 0 };
 				Anim = GameCreate<AnimClass>(pType, crd, 1, 0, 0x600, -10);
 				Anim->IsFogged = pThis->IsFogged;
+				Anim->IsBuildingAnim = true;
 			}
 		} else if(Anim) {
 			GameDelete(Anim);
