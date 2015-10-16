@@ -199,7 +199,7 @@ bool NewSWType::IsLaunchSite(SWTypeExt::ExtData* pSWType, BuildingClass* pBuildi
 
 std::pair<double, double> NewSWType::GetLaunchSiteRange(SWTypeExt::ExtData* pSWType, BuildingClass* pBuilding) const
 {
-	return std::make_pair(pSWType->SW_RangeMinimum, pSWType->SW_RangeMaximum);
+	return std::make_pair(pSWType->SW_RangeMinimum.Get(), pSWType->SW_RangeMaximum.Get());
 }
 
 bool NewSWType::HasLaunchSite(SWTypeExt::ExtData* pSWType, HouseClass* pOwner, const CellStruct &Coords) const
