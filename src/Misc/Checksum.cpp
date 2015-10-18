@@ -76,7 +76,7 @@ void WriteLog(const ObjectClass* it, int idx, DWORD checksum, FILE * F) {
 	CoordStruct crd = it->GetCoords();
 	CellStruct cell = CellClass::Coord2Cell(crd);
 
-	fprintf(F, "; Type: %d (%s); Coords: %d,%d,%d (%d,%d); Health: %d; InLimbo: %d",
+	fprintf(F, "; Type: %d (%s); Coords: %d,%d,%d (%d,%d); Health: %d; InLimbo: %u",
 		typeIndex, typeID, crd.X, crd.Y, crd.Z, cell.X, cell.Y, it->Health, it->InLimbo);
 }
 
@@ -166,7 +166,7 @@ template<>
 void WriteLog(const HouseClass* it, int idx, DWORD checksum, FILE * F) {
 	WriteLog<void>(it, idx, checksum, F);
 
-	fprintf(F, "; CurrentPlayer: %d; ColorScheme: %s; ID: %d; HouseType: %s; Edge: %d; StartingAllies: %u; Startspot: %d,%d; Visionary: %d; MapIsClear: %d; Money: %d",
+	fprintf(F, "; CurrentPlayer: %u; ColorScheme: %s; ID: %d; HouseType: %s; Edge: %d; StartingAllies: %u; Startspot: %d,%d; Visionary: %d; MapIsClear: %u; Money: %d",
 		it->CurrentPlayer, ColorScheme::Array->GetItem(it->ColorSchemeIndex)->ID,
 		it->ArrayIndex, HouseTypeClass::Array->GetItem(it->Type->ArrayIndex)->Name,
 		it->Edge, it->StartingAllies, it->StartingCell.X, it->StartingCell.Y, it->Visionary,
