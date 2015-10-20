@@ -324,7 +324,7 @@ AnimTypeClass* SideExt::ExtData::GetParachuteAnim() const {
 }
 
 const char* SideExt::ExtData::GetMultiplayerScoreBarFilename(unsigned int index) const {
-	static char filename[_countof(this->ScoreMultiplayBars.data())];
+	static char filename[decltype(this->ScoreMultiplayBars)::Size];
 	auto const& data = this->ScoreMultiplayBars.data();
 	std::transform(std::begin(data), std::end(data), filename, [](const char& ch) {
 		return static_cast<char>(tolower(static_cast<unsigned char>(ch)));

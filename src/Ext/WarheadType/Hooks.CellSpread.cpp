@@ -73,12 +73,13 @@ DEFINE_HOOK(4899DA, DamageArea_Damage_MaxAffect, 7)
 		return 0;
 	}
 
-	ObjectClass* bufferHandled[1000];
-	DynamicVectorClass<ObjectClass*> handled(_countof(bufferHandled), bufferHandled);
+	constexpr auto const DefaultSize = 1000;
+	ObjectClass* bufferHandled[DefaultSize];
+	DynamicVectorClass<ObjectClass*> handled(DefaultSize, bufferHandled);
 	handled.Reserve(groups.Count);
 
-	DamageGroup** bufferTarget[1000];
-	DynamicVectorClass<DamageGroup**> target(_countof(bufferTarget), bufferTarget);
+	DamageGroup** bufferTarget[DefaultSize];
+	DynamicVectorClass<DamageGroup**> target(DefaultSize, bufferTarget);
 	target.Reserve(groups.Count);
 
 	for(auto& group : groups) {

@@ -146,7 +146,7 @@ AudioIDXData* AudioLuggage::Create(const char* pPath) {
 			FindClose(hFind);
 		}
 
-		if(lenPath < _countof(ret->Path)) {
+		if(lenPath < std::size(ret->Path)) {
 			ret->Path[lenPath - 1] = '\\';
 			ret->Path[lenPath] = '\0';
 		}

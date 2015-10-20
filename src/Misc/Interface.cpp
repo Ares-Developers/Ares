@@ -231,7 +231,7 @@ void Interface::updateMenu(HWND hDlg, YRDialogID iID) {
 			{NetworkButton, Ares::UISettings::NetworkButton},
 			{MoviesAndCreditsButton, Ares::UISettings::MoviesAndCreditsButton},
 			{OptionsButton, Ares::UISettings::UIAction::Default}};
-		Interface::updateMenuItems(hDlg, items, _countof(items));
+		Interface::updateMenuItems(hDlg, items, std::size(items));
 	}
 
 	// singleplayer menu
@@ -244,14 +244,14 @@ void Interface::updateMenu(HWND hDlg, YRDialogID iID) {
 				{NewCampaignButton, Ares::UISettings::CampaignButton},
 				{LoadSavedGameButton, Ares::UISettings::UIAction::Default},
 				{SkirmishButton, Ares::UISettings::SkirmishButton}};
-			Interface::updateMenuItems(hDlg, items, _countof(items));
+			Interface::updateMenuItems(hDlg, items, std::size(items));
 		} else {
 			const  Interface::MenuItem items[] = {
 				{SkirmishButton, Ares::UISettings::SkirmishButton},
 				{LoadSavedGameButton, Ares::UISettings::UIAction::Default},
 				{NewCampaignButton, Ares::UISettings::CampaignButton}};
 			Interface::swapItems(hDlg, NewCampaignButton, SkirmishButton);
-			Interface::updateMenuItems(hDlg, items, _countof(items));
+			Interface::updateMenuItems(hDlg, items, std::size(items));
 		}
 	}
 
@@ -263,7 +263,7 @@ void Interface::updateMenu(HWND hDlg, YRDialogID iID) {
 			{SneakPeeksButton, Ares::UISettings::SneakPeeksButton},
 			{PlayMoviesButton, Ares::UISettings::PlayMoviesButton},
 			{ViewCreditsButton, Ares::UISettings::ViewCreditsButton}};
-		Interface::updateMenuItems(hDlg, items, _countof(items));
+		Interface::updateMenuItems(hDlg, items, std::size(items));
 	}
 
 	// one-button message box

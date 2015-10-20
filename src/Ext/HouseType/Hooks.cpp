@@ -223,8 +223,9 @@ DEFINE_HOOK(4FE782, HouseClass_AI_BaseConstructionUpdate_PickPowerplant, 6)
 	GET(HouseClass* const, pThis, EBP);
 	auto const pExt = HouseTypeExt::ExtMap.Find(pThis->Type);
 
-	BuildingTypeClass* buffer[10];
-	DynamicVectorClass<BuildingTypeClass*> Eligible(_countof(buffer), buffer);
+	constexpr auto const DefaultSize = 10;
+	BuildingTypeClass* buffer[DefaultSize];
+	DynamicVectorClass<BuildingTypeClass*> Eligible(DefaultSize, buffer);
 
 	auto const it = pExt->GetPowerplants();
 	for(auto const& pPower : it) {

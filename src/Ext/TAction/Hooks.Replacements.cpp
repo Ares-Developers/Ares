@@ -5,6 +5,8 @@
 
 #include <Helpers\Macro.h>
 
+#include <type_traits>
+
 // #1004906: support more than 100 waypoints
 DEFINE_HOOK(6E1780, TActionClass_PlayAudioAtRandomWP, 6)
 {
@@ -14,7 +16,9 @@ DEFINE_HOOK(6E1780, TActionClass_PlayAudioAtRandomWP, 6)
 	//GET_STACK(TriggerClass*, pTrigger, 0xC);
 	//GET_STACK(const CellStruct*, pLocation, 0x10);
 
-	constexpr auto const MaxWaypoints = _countof(ScenarioClass::Waypoints);
+	constexpr auto const MaxWaypoints = static_cast<int>(
+		std::extent<decltype(ScenarioClass::Waypoints)>::value);
+
 	int buffer[MaxWaypoints];
 	DynamicVectorClass<int> eligible(MaxWaypoints, buffer);
 

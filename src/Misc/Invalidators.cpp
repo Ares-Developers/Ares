@@ -409,7 +409,7 @@ DEFINE_HOOK(687C16, INIClass_ReadScenario_ValidateThings, 6)
 				"Touching sound.ini with a 10-foot-pole"
 			};
 
-			const int listSize = _countof(listOfLines); // get item count of listOfLines
+			const int listSize = std::size(listOfLines); // get item count of listOfLines
 
 			std::vector<const char*> lines(listOfLines, listOfLines + listSize); // modifiable list of lines
 

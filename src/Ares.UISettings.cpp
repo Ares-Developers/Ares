@@ -224,10 +224,10 @@ void Ares::UISettings::Load(CCINIClass *pINI) {
 	uiColorDisabledObserver = ParseColorInt(section, "Color.Observer.Disabled", 0x8F8F8F);
 
 	// read the mod's version info
-	if(pINI->ReadString("VersionInfo", "Name", Ares::readDefval, Ares::readBuffer, _countof(ModName))) {
+	if(pINI->ReadString("VersionInfo", "Name", Ares::readDefval, Ares::readBuffer, std::size(ModName))) {
 		AresCRT::strCopy(ModName, Ares::readBuffer);
 	}
-	if(pINI->ReadString("VersionInfo", "Version", Ares::readDefval, Ares::readBuffer, _countof(ModVersion))) {
+	if(pINI->ReadString("VersionInfo", "Version", Ares::readDefval, Ares::readBuffer, std::size(ModVersion))) {
 		AresCRT::strCopy(ModVersion, Ares::readBuffer);
 	}
 
