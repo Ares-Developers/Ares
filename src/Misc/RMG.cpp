@@ -157,7 +157,7 @@ DEFINE_HOOK(5A65CA, MapSeedClass_Generate_PlaceUrbanStructures_Start, 5)
 	if(!RMG::UrbanStructures.Count()) {
 		return 0x5A68F1; // no structures - nothing to do
 	}
-	R->ESI<char **>(RMG::UrbanStructures.ToString());
+	R->ESI(RMG::UrbanStructures.ToString());
 	return 0x5A65D5;
 }
 

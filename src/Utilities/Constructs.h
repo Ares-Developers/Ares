@@ -122,26 +122,33 @@ private:
 template<class T>
 class VectorNames {
 protected:
-	DynamicVectorClass<char *> Strings;
-	char * Buffer;
+	DynamicVectorClass<const char*> Strings;
+	char* Buffer{ nullptr };
 
 public:
-	char* operator [](int Index) {
-		if(Index < 0 || Index > this->Strings.Count) {
-			return nullptr;
-		}
-		return this->Strings.GetItem(Index);
+	VectorNames() = default;
+
+	VectorNames(const char* pBuffer) {
+		this->Tokenize(pBuffer);
 	}
 
-	T * FindItem(int Index) {
-		return T::Find((*this)[Index]);
+	~VectorNames() {
+		this->Clear();
 	}
 
-	const DynamicVectorClass<char *> & Entries() const{
+	const char* operator[] (int index) const {
+		return this->Strings.GetItemOrDefault(index);
+	}
+
+	T* FindItem(int index) const {
+		return T::Find((*this)[index]);
+	}
+
+	const DynamicVectorClass<const char*>& Entries() const {
 		return this->Strings;
 	}
 
-	char ** ToString() {
+	const char** ToString() const {
 		return this->Strings.Items;
 	}
 
@@ -149,22 +156,30 @@ public:
 		return this->Strings.Count;
 	}
 
-	VectorNames<T>(const char * Buf = nullptr) {
-		this->Buffer = _strdup(Buf);
+	void Clear() {
+		if(this->Buffer) {
+			this->Strings.Clear();
+			free(this->Buffer);
+			this->Buffer = nullptr;
+		}
 	}
 
-	void Tokenize(const char * Buf = nullptr) {
-		if(Buf) {
-			if(this->Buffer) {
-				free(this->Buffer);
-			}
-			this->Buffer = _strdup(Buf);
-		}
-		this->Strings.Clear();
+	void Tokenize() {
+		if(this->Buffer) {
+			this->Strings.Clear();
 
-		char* context = nullptr;
-		for(char * cur = strtok_s(this->Buffer, ",", &context); cur && *cur; cur = strtok_s(nullptr, ",", &context)) {
-			this->Strings.AddItem(cur);
+			char* context = nullptr;
+			for(auto cur = strtok_s(this->Buffer, ",", &context); cur && *cur; cur = strtok_s(nullptr, ",", &context)) {
+				this->Strings.AddItem(cur);
+			}
+		}
+	}
+
+	void Tokenize(const char* pBuffer) {
+		if(pBuffer) {
+			this->Clear();
+			this->Buffer = _strdup(pBuffer);
+			this->Tokenize();
 		}
 	}
 };
