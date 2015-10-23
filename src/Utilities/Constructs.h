@@ -119,7 +119,6 @@ private:
 };
 
 // vector of char* with builtin storage
-template<class T>
 class VectorNames {
 protected:
 	DynamicVectorClass<const char*> Strings;
@@ -138,10 +137,6 @@ public:
 
 	const char* operator[] (int index) const {
 		return this->Strings.GetItemOrDefault(index);
-	}
-
-	T* FindItem(int index) const {
-		return T::Find((*this)[index]);
 	}
 
 	const DynamicVectorClass<const char*>& Entries() const {

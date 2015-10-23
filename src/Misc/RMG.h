@@ -14,7 +14,7 @@ public:
 	static bool UrbanAreas;
 	static bool UrbanAreasRead;
 	static int UrbanStructuresReadSoFar;
-	static VectorNames<BuildingTypeClass> UrbanStructures;
-	static VectorNames<UnitTypeClass> UrbanVehicles;
-	static VectorNames<InfantryTypeClass> UrbanInfantry;
+	static VectorNames UrbanStructures;
+	static VectorNames UrbanVehicles;
+	static VectorNames UrbanInfantry;
 };

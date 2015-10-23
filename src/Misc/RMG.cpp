@@ -13,9 +13,9 @@ bool RMG::UrbanAreas = 0;
 bool RMG::UrbanAreasRead = 0;
 
 int RMG::UrbanStructuresReadSoFar;
-VectorNames<BuildingTypeClass> RMG::UrbanStructures;
-VectorNames<UnitTypeClass> RMG::UrbanVehicles;
-VectorNames<InfantryTypeClass> RMG::UrbanInfantry;
+VectorNames RMG::UrbanStructures;
+VectorNames RMG::UrbanVehicles;
+VectorNames RMG::UrbanInfantry;
 
 //0x596FFE
 DEFINE_HOOK(596FFE, RMG_EnableArchipelago, 0)
@@ -191,14 +191,14 @@ DEFINE_HOOK(5A6998, MapSeedClass_Generate_PlaceUrbanFoots, 5)
 	GET(HouseClass *, Owner, EBP);
 	ObjectClass *Item = nullptr;
 	if(Index < RMG::UrbanInfantry.Count()) {
-		if(InfantryTypeClass *IType = RMG::UrbanInfantry.FindItem(Index)) {
+		if(auto const IType = InfantryTypeClass::Find(RMG::UrbanInfantry[Index])) {
 			Item = IType->CreateObject(Owner);
 		} else {
 			Debug::Log("Unknown InfantryType %s in RMG config!\n", RMG::UrbanInfantry[Index]);
 		}
 	} else {
 		Index -= RMG::UrbanInfantry.Count();
-		if(UnitTypeClass *UType = RMG::UrbanVehicles.FindItem(Index)) {
+		if(auto const UType = UnitTypeClass::Find(RMG::UrbanVehicles[Index])) {
 			Item = UType->CreateObject(Owner);
 		} else {
 			Debug::Log("Unknown VehicleType %s in RMG config!\n", RMG::UrbanVehicles[Index]);
