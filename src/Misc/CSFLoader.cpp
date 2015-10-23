@@ -86,12 +86,12 @@ DEFINE_HOOK(734823, CSF_AllocateMemory, 6)
 {
 	//aaaah... finally, some serious hax :)
 	//we don't allocate memory by the amount of labels in the base CSF,
-	//but enough for exactly CSF_MAX_ENTRIES entries.
+	//but enough for exactly MaxEntries entries.
 	//We're assuming we have only one value for one label, which is standard.
 
-	StringTable::Labels = GameCreateArray<CSFLabel>(CSF_MAX_ENTRIES);
-	StringTable::Values = GameCreateArray<wchar_t*>(CSF_MAX_ENTRIES);
-	StringTable::ExtraValues = GameCreateArray<char*>(CSF_MAX_ENTRIES);
+	StringTable::Labels = GameCreateArray<CSFLabel>(CSFLoader::MaxEntries);
+	StringTable::Values = GameCreateArray<wchar_t*>(CSFLoader::MaxEntries);
+	StringTable::ExtraValues = GameCreateArray<char*>(CSFLoader::MaxEntries);
 
 	return 0x7348BC;
 }

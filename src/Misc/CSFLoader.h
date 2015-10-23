@@ -11,11 +11,11 @@
 
 #include <unordered_map>
 
-#define CSF_MAX_ENTRIES 20000
-
 class CSFLoader
 {
 public:
+	static auto const MaxEntries = 20000u;
+
 	static int CSFCount;
 	static int NextValueIndex;
 
