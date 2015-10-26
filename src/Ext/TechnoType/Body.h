@@ -189,6 +189,8 @@ public:
 		Valueable<AnimTypeClass*> CustomMissileTakeoffAnim;
 		Valueable<AnimTypeClass*> CustomMissileTrailerAnim;
 		Valueable<int> CustomMissileTrailerSeparation;
+		Valueable<WeaponTypeClass*> CustomMissileWeapon;
+		Valueable<WeaponTypeClass*> CustomMissileEliteWeapon;
 
 		// tiberium related
 		Nullable<bool> TiberiumProof;

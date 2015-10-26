@@ -333,6 +333,8 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 		this->CustomMissileTakeoffAnim.Read(exINI, section, "Missile.TakeOffAnim");
 		this->CustomMissileTrailerAnim.Read(exINI, section, "Missile.TrailerAnim");
 		this->CustomMissileTrailerSeparation.Read(exINI, section, "Missile.TrailerSeparation");
+		this->CustomMissileWeapon.Read(exINI, section, "Missile.Weapon");
+		this->CustomMissileEliteWeapon.Read(exINI, section, "Missile.EliteWeapon");
 	}
 
 	// non-crashable aircraft
@@ -733,6 +735,8 @@ void TechnoTypeExt::ExtData::Serialize(T& Stm) {
 		.Process(this->CustomMissileTakeoffAnim)
 		.Process(this->CustomMissileTrailerAnim)
 		.Process(this->CustomMissileTrailerSeparation)
+		.Process(this->CustomMissileWeapon)
+		.Process(this->CustomMissileEliteWeapon)
 		.Process(this->TiberiumProof)
 		.Process(this->TiberiumRemains)
 		.Process(this->TiberiumSpill)

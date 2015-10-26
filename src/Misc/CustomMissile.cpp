@@ -3,9 +3,10 @@
 
 #include <AnimClass.h>
 #include <AircraftClass.h>
+#include <BulletClass.h>
 #include <LocomotionClass.h>
-#include <SpawnManagerClass.h>
 #include <RocketLocomotionClass.h>
+#include <SpawnManagerClass.h>
 
 DEFINE_HOOK(6622E0, RocketLocomotionClass_ILocomotion_Process_CustomMissile, 6)
 {
@@ -109,6 +110,41 @@ DEFINE_HOOK(66305A, RocketLocomotionClass_Explode_CustomMissile, 6)
 			*ppWarhead = (isElite ? pExt->CustomMissileEliteWarhead : pExt->CustomMissileWarhead);
 			
 			return 0x6630DD;
+		}
+	}
+
+	return 0;
+}
+
+DEFINE_HOOK(663218, RocketLocomotionClass_Explode_CustomMissile2, 5)
+{
+	GET(RocketLocomotionClass* const, pThis, ESI);
+	REF_STACK(CoordStruct const, coords, STACK_OFFS(0x60, 0x18));
+
+	auto const pOwner = static_cast<AircraftClass*>(pThis->LinkedTo);
+	auto const pType = pOwner->Type;
+
+	auto const pExt = TechnoTypeExt::ExtMap.Find(pType);
+	if(pExt->IsCustomMissile) {
+		auto const isElite = pThis->SpawnerIsElite;
+		auto const& pWeapon = isElite
+			? pExt->CustomMissileEliteWeapon : pExt->CustomMissileWeapon;
+
+		if(pWeapon) {
+			auto const pData = &pExt->CustomMissileData;
+			auto const damage = isElite ? pData->EliteDamage : pData->Damage;
+
+			auto const pBullet = pWeapon->Projectile->CreateBullet(
+				pOwner, pOwner, damage, pWeapon->Warhead, 0, pWeapon->Bright);
+
+			if(pBullet) {
+				pBullet->SetWeaponType(pWeapon);
+				pBullet->Remove();
+				pBullet->Detonate(coords);
+				pBullet->UnInit();
+			}
+
+			return 0x6632CC;
 		}
 	}
 
