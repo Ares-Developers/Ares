@@ -5,7 +5,8 @@
 #include "../../Enum/ArmorTypes.h"
 #include "../../Enum/RadTypes.h"
 #include "../../Utilities/TemplateDef.h"
-#include <GameModeOptionsClass.h>
+#include <FPSCounter.h>
+#include <GameOptionsClass.h>
 
 template<> const DWORD Extension<RulesClass>::Canary = 0x12341234;
 std::unique_ptr<RulesExt::ExtData> RulesExt::Data = nullptr;
@@ -168,6 +169,22 @@ void RulesExt::ExtData::LoadAfterTypeData(RulesClass *pThis, CCINIClass *pINI) {
 	pData->FirestormAirAnim.Read(exINI, "AudioVisual", "FirestormAirAnim");
 	pData->FirestormWarhead.Read(exINI, "CombatDamage", "FirestormWarhead");
 	pData->DamageToFirestormDamageCoefficient.Read(exINI, "General", "DamageToFirestormDamageCoefficient");
+}
+
+bool RulesExt::DetailsCurrentlyEnabled()
+{
+	// not only checks for the min frame rate from the rules, but also whether
+	// the low frame rate is actually desired. in that case, don't reduce.
+	auto const current = FPSCounter::CurrentFrameRate;
+	auto const wanted = static_cast<unsigned int>(
+		60 / Math::clamp(GameOptionsClass::Instance->GameSpeed, 1, 6));
+	return current >= wanted || current >= Detail::GetMinFrameRate();
+}
+
+bool RulesExt::DetailsCurrentlyEnabled(int const minDetailLevel)
+{
+	return GameOptionsClass::Instance->DetailLevel >= minDetailLevel
+		&& DetailsCurrentlyEnabled();
 }
 
 // =============================

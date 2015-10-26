@@ -197,4 +197,7 @@ public:
 
 	static bool LoadGlobals(AresStreamReader& Stm);
 	static bool SaveGlobals(AresStreamWriter& Stm);
+
+	static bool DetailsCurrentlyEnabled();
+	static bool DetailsCurrentlyEnabled(int minDetailLevel);
 };
