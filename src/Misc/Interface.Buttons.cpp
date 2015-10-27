@@ -76,7 +76,7 @@ void Interface::updateMenuItems(HWND hDlg, const MenuItem* items, size_t count) 
 	POINT ptDlg = {0, 0};
 	ScreenToClient(hDlg, &ptDlg);
 
-	static const size_t MaxMenuItemCount = 9;
+	constexpr size_t const MaxMenuItemCount = 9;
 
 	size_t VisibleButtons = 0;
 	count = std::min(count, MaxMenuItemCount);
