@@ -447,7 +447,7 @@ template <size_t Capacity>
 class AresFixedString : public FixedString<Capacity> {
 public:
 	AresFixedString() = default;
-	explicit AresFixedString(nullptr_t) noexcept : AresFixedString() {};
+	explicit AresFixedString(nullptr_t) noexcept {};
 	explicit AresFixedString(const char* value) noexcept : FixedString(value) {}
 
 	using FixedString::operator=;
