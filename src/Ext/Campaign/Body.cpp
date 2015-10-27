@@ -2,6 +2,7 @@
 #include "./../../Ares.h"
 #include "./../../Ares.CRT.h"
 
+#include "./../../Utilities/TemplateDef.h"
 #include "./../../Utilities/INIParser.h"
 
 #include <algorithm>
