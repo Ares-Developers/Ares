@@ -13,6 +13,7 @@
 #include "../Ext/Side/Body.h"
 #include "../Ext/TechnoType/Body.h"
 #include "../Ext/BuildingType/Body.h"
+#include "../Utilities/Helpers.Alex.h"
 #include <vector>
 #include <algorithm>
 #include <string>
@@ -31,7 +32,10 @@ DEFINE_HOOK(477007, INIClass_GetSpeedType, 8)
 			UnitTypeClass::LoadFromINI overrides it to (this->Crusher ? Track : Wheel) just before reading its SpeedType
 			so we should not alert if we're responding to a TType read and our subject is a UnitType, or all VehicleTypes without an explicit ST declaration will get dinged
 		*/
-		if(caller != 0x7121E5 || R->EBP<TechnoTypeClass *>()->WhatAmI() != AbstractType::UnitType) {
+		if(caller != 0x7121E5u
+			|| !Helpers::Alex::is_any_of(R->EBP<TechnoTypeClass*>()->WhatAmI(),
+				AbstractType::UnitType, AbstractType::BuildingType))
+		{
 			Debug::INIParseFailed(Section, Key, Value);
 		}
 	}
