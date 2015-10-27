@@ -832,9 +832,10 @@ DEFINE_HOOK(467E59, BulletClass_Update_NukeBall, 5) {
 	enum { Default = 0u, FireNow = 0x467F9Bu, PreImpact = 0x467EB6 };
 
 	auto allowFlash = true;
+	auto flashDuration = 0;
 
 	// this is a bullet launched by a super weapon
-	if(pExt->NukeSW) {
+	if(pExt->NukeSW && !pThis->WH->NukeMaker) {
 		SW_NuclearMissile::CurrentNukeType = pExt->NukeSW;
 
 		if(pThis->GetHeight() < 0) {
@@ -850,10 +851,13 @@ DEFINE_HOOK(467E59, BulletClass_Update_NukeBall, 5) {
 		}
 
 		allowFlash = pSWTypeExt->Lighting_Enabled;
+		flashDuration = 30;
 	}
 
 	// does this create a flash?
-	if(allowFlash && pWarheadExt->NukeFlashDuration > 0) {
+	auto const duration = pWarheadExt->NukeFlashDuration.Get(flashDuration);
+
+	if(allowFlash && duration > 0) {
 		// replaces call to NukeFlash::FadeIn
 
 		// manual light stuff
@@ -862,7 +866,7 @@ DEFINE_HOOK(467E59, BulletClass_Update_NukeBall, 5) {
 
 		// enable the nuke flash
 		NukeFlash::StartTime = Unsorted::CurrentFrame;
-		NukeFlash::Duration = pWarheadExt->NukeFlashDuration;
+		NukeFlash::Duration = duration;
 
 		SWTypeExt::ChangeLighting(pExt->NukeSW);
 		MapClass::Instance->RedrawSidebar(1);
