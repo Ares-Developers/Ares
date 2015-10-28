@@ -25,7 +25,7 @@ DEFINE_HOOK(5FF86E, SpotlightClass_Draw_Details, 5)
 DEFINE_HOOK(422FCC, AnimClass_Draw_Details, 5)
 {
 	auto const details = RulesExt::DetailsCurrentlyEnabled();
-	return details ? 0x422FD9u : 0x422FECu;
+	return details ? 0x422FECu : 0x422FD9u;
 }
 
 DEFINE_HOOK(550BCA, LaserDrawClass_Draw_InHouseColor_Details, 5)
