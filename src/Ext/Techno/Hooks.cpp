@@ -1872,10 +1872,14 @@ DEFINE_HOOK(7418AA, UnitClass_CrushCell_CrushDamage, 6)
 	if(auto const pTechno = abstract_cast<TechnoClass*>(pVictim)) {
 		auto pExt = TechnoTypeExt::ExtMap.Find(pVictim->GetTechnoType());
 
-		if(auto damage = pExt->CrushDamage.Get(pTechno)) {
+		auto const pWarhead = pExt->CrushDamageWarhead.Get(
+			RulesClass::Instance->C4Warhead);
+
+		auto damage = pExt->CrushDamage.Get(pTechno);
+
+		if(pWarhead && damage) {
 			pThis->ReceiveDamage(
-				&damage, 0, RulesClass::Instance->C4Warhead, nullptr, false,
-				false, nullptr);
+				&damage, 0, pWarhead, nullptr, false, false, nullptr);
 		}
 	}
 

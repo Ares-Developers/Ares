@@ -411,6 +411,7 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 	// crush
 	this->OmniCrusher_Aggressive.Read(exINI, section, "OmniCrusher.Aggressive");
 	this->CrushDamage.Read(exINI, section, "CrushDamage.%s");
+	this->CrushDamageWarhead.Read(exINI, section, "CrushDamage.Warhead");
 
 	this->ReloadRate.Read(exINI, section, "ReloadRate");
 
@@ -763,6 +764,7 @@ void TechnoTypeExt::ExtData::Serialize(T& Stm) {
 		.Process(this->AssaulterLevel)
 		.Process(this->OmniCrusher_Aggressive)
 		.Process(this->CrushDamage)
+		.Process(this->CrushDamageWarhead)
 		.Process(this->ReloadRate)
 		.Process(this->ReloadAmount)
 		.Process(this->EmptyReloadAmount)

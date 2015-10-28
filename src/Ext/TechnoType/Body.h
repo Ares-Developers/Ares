@@ -238,6 +238,7 @@ public:
 		// crushing
 		Valueable<bool> OmniCrusher_Aggressive;
 		Promotable<int> CrushDamage;
+		Nullable<WarheadTypeClass*> CrushDamageWarhead;
 
 		Nullable<double> ReloadRate;
 
