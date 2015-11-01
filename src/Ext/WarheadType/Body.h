@@ -87,6 +87,8 @@ public:
 
 		AttachEffectTypeClass AttachedEffect;
 
+		ValueableVector<TechnoTypeClass*> SuppressDeathWeapon;
+
 		ExtData(WarheadTypeClass* OwnerObject) : Extension<WarheadTypeClass>(OwnerObject),
 			MindControl_Permanent(false),
 			Ripple_Radius(0),
