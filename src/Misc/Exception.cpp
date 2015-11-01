@@ -64,11 +64,12 @@ LONG CALLBACK Exception::ExceptionFilter(PEXCEPTION_POINTERS const pExs)
 		std::wstring except_file = path + L"\\except.txt";
 
 		if(FILE *except = _wfsopen(except_file.c_str(), L"w", _SH_DENYNO)) {
-#define DELIM "---------------------\n"
+			constexpr auto const pDelim = "---------------------\n";
 			fprintf(except, "Internal Error encountered!\n");
-			fprintf(except, DELIM);
+			fprintf(except, pDelim);
 			fprintf(except, VERSION_STRVER);
-			fprintf(except, "\n" DELIM);
+			fprintf(except, "\n");
+			fprintf(except, pDelim);
 
 			fprintf(except, "Exception code: %08X at %08p\n", pExs->ExceptionRecord->ExceptionCode, pExs->ExceptionRecord->ExceptionAddress);
 
