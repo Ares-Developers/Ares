@@ -16,6 +16,7 @@
 #include <VoxClass.h>
 #include <TiberiumClass.h>
 #include <MessageListClass.h>
+#include <ScenarioClass.h>
 
 // =============================
 // other hooks

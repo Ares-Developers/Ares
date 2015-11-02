@@ -15,6 +15,7 @@
 #include <HouseClass.h>
 #include <MouseClass.h>
 #include <SuperClass.h>
+#include <ScenarioClass.h>
 
 #include "../../Misc/SavegameDef.h"
 

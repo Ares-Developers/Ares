@@ -2,8 +2,6 @@
 
 // custom paletted cameos
 // TODO: add a static vector to buffer instances of the same Palette file?
-#include <ConvertClass.h>
-#include <ScenarioClass.h>
 #include <Theater.h>
 #include <CCINIClass.h>
 #include <GeneralStructures.h>
@@ -20,6 +18,8 @@
 #include "../Ares.CRT.h"
 
 #include "../Misc/Savegame.h"
+
+class ConvertClass;
 
 template <typename T>
 using UniqueGamePtr = std::unique_ptr<T, GameDeleter>;
@@ -53,69 +53,16 @@ public:
 		return this->Convert.get();
 	}
 
-	bool LoadFromINI(CCINIClass* pINI, const char* pSection, const char* pKey, const char* pDefault = "") {
-		if(pINI->ReadString(pSection, pKey, pDefault, Ares::readBuffer)) {
-			if(char* suffix = strstr(Ares::readBuffer, "~~~")) {
-				const char* theaterSpecific = Theater::GetTheater(ScenarioClass::Instance->Theater).Extension;
-				suffix[0] = theaterSpecific[0];
-				suffix[1] = theaterSpecific[1];
-				suffix[2] = theaterSpecific[2];
-			}
+	bool LoadFromINI(
+		CCINIClass* pINI, const char* pSection, const char* pKey,
+		const char* pDefault = "");
 
-			this->Clear();
-
-			if(auto pPal = FileSystem::AllocatePalette(Ares::readBuffer)) {
-				this->Palette.reset(pPal);
-				this->CreateConvert();
-			}
-
-			return this->Convert != nullptr;
-		}
-		return false;
-	};
-
-	bool Load(AresStreamReader &Stm, bool RegisterForChange) {
-		this->Clear();
-
-		bool hasPalette = false;
-		auto ret = Stm.Load(this->Mode) && Stm.Load(hasPalette);
-
-		if(ret && hasPalette) {
-			this->Palette.reset(GameCreate<BytePalette>());
-			ret = Stm.Load(*this->Palette);
-
-			if(ret) {
-				this->CreateConvert();
-			}
-		}
-
-		return ret;
-	}
-
-	bool Save(AresStreamWriter &Stm) const {
-		Stm.Save(this->Mode);
-		Stm.Save(this->Palette != nullptr);
-		if(this->Palette) {
-			Stm.Save(*this->Palette);
-		}
-		return true;
-	}
+	bool Load(AresStreamReader &Stm, bool RegisterForChange);
+	bool Save(AresStreamWriter &Stm) const;
 
 private:
-	void Clear() {
-		this->Convert = nullptr;
-		this->Palette = nullptr;
-	}
-
-	void CreateConvert() {
-		ConvertClass* buffer = nullptr;
-		if(this->Mode == PaletteMode::Temperate) {
-			buffer = GameCreate<ConvertClass>(this->Palette.get(), FileSystem::TEMPERAT_PAL, DSurface::Primary, 53, false);
-		} else {
-			buffer = GameCreate<ConvertClass>(this->Palette.get(), this->Palette.get(), DSurface::Alternate, 1, false);
-		}
-		this->Convert.reset(buffer);
-	}
+	void Clear();
+	void CreateConvert();
 };
 
 // vector of char* with builtin storage

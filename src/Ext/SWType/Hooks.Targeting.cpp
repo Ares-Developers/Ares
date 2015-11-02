@@ -11,6 +11,7 @@
 #include <HouseClass.h>
 #include <InfantryClass.h>
 #include <SuperClass.h>
+#include <ScenarioClass.h>
 
 #include <DiscreteDistributionClass.h>
 #include <DiscreteSelectionClass.h>

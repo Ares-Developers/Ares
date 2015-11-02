@@ -4,6 +4,8 @@
 #include "../Side/Body.h"
 #include "../TechnoType/Body.h"
 
+#include <ScenarioClass.h>
+
 DEFINE_HOOK(6F3950, TechnoClass_GetCrewCount, 8)
 {
 	GET(TechnoClass*, pThis, ECX);

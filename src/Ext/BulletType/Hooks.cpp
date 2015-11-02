@@ -1,5 +1,7 @@
 #include "Body.h"
 
+#include <ScenarioClass.h>
+
 DEFINE_HOOK(6FE709, TechnoClass_Fire_BallisticScatter1, 6)
 {
 	GET_STACK(BulletTypeClass*, pProjectile, 0x68);

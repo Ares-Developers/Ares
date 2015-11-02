@@ -3,9 +3,11 @@
 #include "Misc/Interface.h"
 #include "Utilities/Constructs.h"
 
-#include <StringTable.h>
+#include <FileSystem.h>
 #include <Checksummer.h>
 #include <ColorScheme.h>
+#include <StringTable.h>
+
 #include <strsafe.h>
 
 #include <algorithm>

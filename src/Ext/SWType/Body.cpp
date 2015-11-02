@@ -21,6 +21,7 @@
 #include <WarheadTypeClass.h>
 #include <MessageListClass.h>
 #include <Notifications.h>
+#include <ScenarioClass.h>
 
 template<> const DWORD Extension<SuperWeaponTypeClass>::Canary = 0x66666666;
 SWTypeExt::ExtContainer SWTypeExt::ExtMap;

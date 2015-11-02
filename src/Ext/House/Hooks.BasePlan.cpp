@@ -2,7 +2,9 @@
 #include "../BuildingType/Body.h"
 #include "../HouseType/Body.h"
 #include "../Side/Body.h"
+
 #include <BuildingTypeClass.h>
+#include <ScenarioClass.h>
 
 // #917 - validate build list before it needs to be generated
 DEFINE_HOOK(5054B0, HouseClass_GenerateAIBuildList_EnsureSanity, 6)

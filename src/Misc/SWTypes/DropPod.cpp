@@ -8,6 +8,7 @@
 #include <BuildingTypeClass.h>
 #include <HouseClass.h>
 #include <VoxClass.h>
+#include <ScenarioClass.h>
 
 void SW_DropPod::Initialize(SWTypeExt::ExtData *pData, SuperWeaponTypeClass *pSW)
 {

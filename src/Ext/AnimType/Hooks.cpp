@@ -3,6 +3,7 @@
 
 #include <AnimClass.h>
 #include <BulletClass.h>
+#include <ScenarioClass.h>
 
 DEFINE_HOOK(4232CE, AnimClass_Draw_SetPalette, 6)
 {

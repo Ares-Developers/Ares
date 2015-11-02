@@ -15,6 +15,7 @@
 #include <VoxClass.h>
 #include <RadarEventClass.h>
 #include <SuperClass.h>
+#include <ScenarioClass.h>
 #include <MouseClass.h>
 #include <Helpers\Enumerators.h>
 
