@@ -122,20 +122,16 @@ DEFINE_HOOK(663218, RocketLocomotionClass_Explode_CustomMissile2, 5)
 	REF_STACK(CoordStruct const, coords, STACK_OFFS(0x60, 0x18));
 
 	auto const pOwner = static_cast<AircraftClass*>(pThis->LinkedTo);
-	auto const pType = pOwner->Type;
+	auto const pExt = TechnoTypeExt::ExtMap.Find(pOwner->Type);
 
-	auto const pExt = TechnoTypeExt::ExtMap.Find(pType);
 	if(pExt->IsCustomMissile) {
-		auto const isElite = pThis->SpawnerIsElite;
-		auto const& pWeapon = isElite
+		auto const& pWeapon = pThis->SpawnerIsElite
 			? pExt->CustomMissileEliteWeapon : pExt->CustomMissileWeapon;
 
 		if(pWeapon) {
-			auto const pData = &pExt->CustomMissileData;
-			auto const damage = isElite ? pData->EliteDamage : pData->Damage;
-
 			auto const pBullet = pWeapon->Projectile->CreateBullet(
-				pOwner, pOwner, damage, pWeapon->Warhead, 0, pWeapon->Bright);
+				pOwner, pOwner, pWeapon->Damage, pWeapon->Warhead, 0,
+				pWeapon->Bright);
 
 			if(pBullet) {
 				pBullet->SetWeaponType(pWeapon);
