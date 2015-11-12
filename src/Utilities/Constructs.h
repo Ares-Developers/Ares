@@ -1,7 +1,5 @@
 #pragma once
 
-// custom paletted cameos
-// TODO: add a static vector to buffer instances of the same Palette file?
 #include <Theater.h>
 #include <CCINIClass.h>
 #include <GeneralStructures.h>
