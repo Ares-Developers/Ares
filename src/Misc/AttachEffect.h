@@ -10,32 +10,32 @@ class TechnoClass;
 class AttachEffectTypeClass {
 public:
 
-	AbstractTypeClass* Owner;
-	Valueable<int> Duration;
-	Valueable<bool> Cumulative;
-	Valueable<bool> ForceDecloak;
-	Valueable<bool> DiscardOnEntry;
+	AbstractTypeClass* Owner{ nullptr };
+	Valueable<int> Duration{ 0 };
+	Valueable<bool> Cumulative{ false };
+	Valueable<bool> ForceDecloak{ false };
+	Valueable<bool> DiscardOnEntry{ false };
 	
 	//#1573, #1623 animations on units
-	Valueable<AnimTypeClass *> AnimType;
-	Valueable<bool> AnimResetOnReapply;
-	Valueable<bool> TemporalHidesAnim;
+	Valueable<AnimTypeClass*> AnimType{ nullptr };
+	Valueable<bool> AnimResetOnReapply{ false };
+	Valueable<bool> TemporalHidesAnim{ false };
 	
 	//#255, crate stat modifiers on weapons
-	Valueable<double> FirepowerMultiplier;
-	Valueable<double> ArmorMultiplier;
-	Valueable<double> SpeedMultiplier;
-	Valueable<bool> Cloakable;
+	Valueable<double> FirepowerMultiplier{ 1.0 };
+	Valueable<double> ArmorMultiplier{ 1.0 };
+	Valueable<double> SpeedMultiplier{ 1.0 };
+	Valueable<bool> Cloakable{ false };
 
 	//#408, residual damage
 	/*
-	Valueable<WarheadTypeClass *> Warhead;
-	Valueable<int> Damage;
-	Valueable<int> DamageDelay;
+	Valueable<WarheadTypeClass*> Warhead{ nullptr };
+	Valueable<int> Damage{ 0 };
+	Valueable<int> DamageDelay{ 0 };
 	*/
 
 	//#1623-only tags
-	Valueable<int> Delay;
+	Valueable<int> Delay{ 0 };
 
 	void Attach(TechnoClass* pTarget, int duration, TechnoClass* pInvoker);
 	//void Attach(TechnoClass* pTarget, int duration, TechnoClass* pInvoker, int damageDelay);
@@ -44,40 +44,19 @@ public:
 
 	bool Save(AresStreamWriter &Stm) const;
 	
-	AttachEffectTypeClass(AbstractTypeClass* pOwner) : Owner(pOwner),
-		Cumulative(false),
-		Duration(0),
-		AnimType(nullptr),
-		AnimResetOnReapply(false),
-		TemporalHidesAnim(false),
-		ForceDecloak(false),
-		DiscardOnEntry(false),
-		FirepowerMultiplier(1.0),
-		ArmorMultiplier(1.0),
-		SpeedMultiplier(1.0),
-		Cloakable(false),
-		/*
-		Warhead(RulesClass::Global()->C4Warhead),
-		Damage(0),
-		DamageDelay(0),
-		*/
-		Delay(0)
-	{
-	}
+	AttachEffectTypeClass(AbstractTypeClass* pOwner) : Owner(pOwner)
+	{ }
 
 	void Read(INI_EX &exINI);
 };
 
 class AttachEffectClass {
 public:
-	AttachEffectClass() noexcept : AttachEffectClass(nullptr, 0)
-	{ }
+	AttachEffectClass() noexcept = default;
 
 	AttachEffectClass(AttachEffectTypeClass* pType, int timer) noexcept :
 		Type(pType),
-		Animation(nullptr),
-		ActualDuration(timer),
-		Invoker(nullptr)
+		ActualDuration(timer)
 	{ }
 
 	AttachEffectClass(AttachEffectClass&& other) noexcept;
@@ -90,12 +69,12 @@ public:
 		this->Destroy();
 	}
 
-	AttachEffectTypeClass * Type;
-	AnimClass * Animation;
-	int ActualDuration;
+	AttachEffectTypeClass* Type{ nullptr };
+	AnimClass* Animation{ nullptr };
+	int ActualDuration{ 0 };
 
-	TechnoClass * Invoker;
-	//int ActualDamageDelay;
+	TechnoClass* Invoker{ nullptr };
+	//int ActualDamageDelay{ 0 };
 
 	void Destroy();
 
