@@ -153,24 +153,6 @@ void AttachEffectTypeClass::Attach(
 	Attaching.CreateAnim(pTarget);
 }
 
-AttachEffectClass::AttachEffectClass(AttachEffectClass&& other) noexcept :
-	Type(other.Type),
-	Animation(std::exchange(other.Animation, nullptr)),
-	ActualDuration(other.ActualDuration),
-	Invoker(other.Invoker)
-{ }
-
-AttachEffectClass& AttachEffectClass::operator= (AttachEffectClass&& other) noexcept {
-	this->Destroy();
-
-	this->Type = other.Type;
-	this->Animation = std::exchange(other.Animation, nullptr);
-	this->ActualDuration = other.ActualDuration;
-	this->Invoker = other.Invoker;
-
-	return *this;
-}
-
 bool AttachEffectClass::Load(AresStreamReader &Stm, bool RegisterForChange) {
 	return Stm
 		.Process(this->Type)
@@ -187,6 +169,11 @@ bool AttachEffectClass::Save(AresStreamWriter &Stm) const {
 		.Process(this->ActualDuration)
 		.Process(this->Invoker)
 		.Success();
+}
+
+void AttachEffectClass::UninitAnim::operator() (AnimClass* const pAnim) const {
+	pAnim->SetOwnerObject(nullptr);
+	pAnim->UnInit();
 }
 
 void AttachEffectClass::InvalidatePointer(void* ptr) {
@@ -209,10 +196,9 @@ void AttachEffectClass::CreateAnim(TechnoClass* pOwner) {
 	}
 
 	if(AnimTypeClass* const pAnimType = pType->AnimType) {
-		this->KillAnim();
+		this->Animation.reset(GameCreate<AnimClass>(pAnimType, pOwner->Location));
 
-		this->Animation = GameCreate<AnimClass>(pAnimType, pOwner->Location);
-		if(auto const pAnim = this->Animation) {
+		if(AnimClass* const pAnim = this->Animation) {
 			pAnim->SetOwnerObject(pOwner);
 			pAnim->RemainingIterations = 0xFFu;
 
@@ -225,16 +211,7 @@ void AttachEffectClass::CreateAnim(TechnoClass* pOwner) {
 
 //animation remover, boolean is needed otherwise destructor goes to infinite loop during UnInit
 void AttachEffectClass::KillAnim() {
-	if(auto const pAnim = this->Animation) {
-		this->Animation = nullptr;
-		pAnim->SetOwnerObject(nullptr);
-		pAnim->UnInit();
-	}
-}
-
-//destructor
-void AttachEffectClass::Destroy() {
-	this->KillAnim();
+	this->Animation.clear();
 }
 
 /*!

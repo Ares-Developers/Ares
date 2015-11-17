@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../Utilities/Constructs.h"
 #include "../Utilities/Template.h"
 
 class AbstractTypeClass;
@@ -15,12 +16,12 @@ public:
 	Valueable<bool> Cumulative{ false };
 	Valueable<bool> ForceDecloak{ false };
 	Valueable<bool> DiscardOnEntry{ false };
-	
+
 	//#1573, #1623 animations on units
 	Valueable<AnimTypeClass*> AnimType{ nullptr };
 	Valueable<bool> AnimResetOnReapply{ false };
 	Valueable<bool> TemporalHidesAnim{ false };
-	
+
 	//#255, crate stat modifiers on weapons
 	Valueable<double> FirepowerMultiplier{ 1.0 };
 	Valueable<double> ArmorMultiplier{ 1.0 };
@@ -43,7 +44,7 @@ public:
 	bool Load(AresStreamReader &Stm, bool RegisterForChange);
 
 	bool Save(AresStreamWriter &Stm) const;
-	
+
 	AttachEffectTypeClass(AbstractTypeClass* pOwner) : Owner(pOwner)
 	{ }
 
@@ -51,6 +52,10 @@ public:
 };
 
 class AttachEffectClass {
+	struct UninitAnim {
+		void operator() (AnimClass* const pAnim) const;
+	};
+
 public:
 	AttachEffectClass() noexcept = default;
 
@@ -59,24 +64,12 @@ public:
 		ActualDuration(timer)
 	{ }
 
-	AttachEffectClass(AttachEffectClass&& other) noexcept;
-	AttachEffectClass& operator= (AttachEffectClass&& other) noexcept;
-
-	AttachEffectClass(AttachEffectClass const& other) = delete;
-	AttachEffectClass& operator= (AttachEffectClass& other) = delete;
-
-	~AttachEffectClass() {
-		this->Destroy();
-	}
-
 	AttachEffectTypeClass* Type{ nullptr };
-	AnimClass* Animation{ nullptr };
+	Handle<AnimClass*, UninitAnim> Animation{ nullptr };
 	int ActualDuration{ 0 };
 
 	TechnoClass* Invoker{ nullptr };
 	//int ActualDamageDelay{ 0 };
-
-	void Destroy();
 
 	void InvalidatePointer(void* ptr);
 
