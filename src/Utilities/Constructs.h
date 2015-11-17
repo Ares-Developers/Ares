@@ -481,3 +481,68 @@ private:
 	T Value{};
 	bool HasValue{ false };
 };
+
+// owns a resource. not copyable, but movable.
+template <typename T, typename Deleter, T Default = T()>
+struct Handle {
+	constexpr Handle() noexcept = default;
+
+	constexpr explicit Handle(T value) noexcept
+		: Value(value)
+	{ }
+
+	Handle(const Handle&) = delete;
+
+	constexpr Handle(Handle&& other) noexcept
+		: Value(other.release())
+	{ }
+
+	~Handle() noexcept {
+		if(this->Value != Default) {
+			Deleter{}(this->Value);
+		}
+	}
+
+	Handle& operator = (const Handle&) = delete;
+
+	Handle& operator = (Handle&& other) noexcept {
+		this->reset(other.release());
+		return *this;
+	}
+
+	constexpr explicit operator bool() const noexcept {
+		return this->Value != Default;
+	}
+
+	constexpr operator T () const noexcept {
+		return this->Value;
+	}
+
+	constexpr T get() const noexcept {
+		return this->Value;
+	}
+
+	T release() noexcept {
+		return std::exchange(this->Value, Default);
+	}
+
+	void reset(T value) noexcept {
+		Handle(this->Value);
+		this->Value = value;
+	}
+
+	void clear() noexcept {
+		Handle(std::move(*this));
+	}
+
+	bool load(AresStreamReader &Stm, bool RegisterForChange) {
+		return Savegame::ReadAresStream(Stm, this->Value, RegisterForChange);
+	}
+
+	bool save(AresStreamWriter &Stm) const {
+		return Savegame::WriteAresStream(Stm, this->Value);
+	}
+
+private:
+	T Value{ Default };
+};
