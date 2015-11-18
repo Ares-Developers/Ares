@@ -49,7 +49,7 @@ class NewSWType
 	static std::vector<std::unique_ptr<NewSWType>> Array;
 
 	static void Register(std::unique_ptr<NewSWType> pType) {
-		pType->TypeIndex = static_cast<int>(Array.size());
+		pType->SetTypeIndex(static_cast<int>(Array.size()));
 		Array.push_back(std::move(pType));
 	}
 
@@ -119,6 +119,10 @@ public:
 	}
 
 protected:
+	virtual void SetTypeIndex(int const index) {
+		this->TypeIndex = index;
+	}
+
 	virtual bool IsLaunchSite(SWTypeExt::ExtData *pSWType, BuildingClass* pBuilding) const;
 
 	virtual std::pair<double, double> GetLaunchSiteRange(SWTypeExt::ExtData* pSWType, BuildingClass* pBuilding = nullptr) const;
