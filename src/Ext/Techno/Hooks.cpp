@@ -2025,3 +2025,23 @@ DEFINE_HOOK(700EEC, TechnoClass_CanDeploySlashUnload_NoManualUnload, 6)
 
 	return pExt->NoManualUnload ? 0x700DCEu : 0u;
 }
+
+DEFINE_HOOK(700536, TechnoClass_GetCursorOverObject_NoManualFire, 6)
+{
+	GET(TechnoClass const* const, pThis, ESI);
+
+	auto const pType = pThis->GetTechnoType();
+	auto const pExt = TechnoTypeExt::ExtMap.Find(pType);
+
+	return pExt->NoManualFire ? 0x70056C : 0;
+}
+
+DEFINE_HOOK(7008D4, TechnoClass_GetCursorOverCell_NoManualFire, 6)
+{
+	GET(TechnoClass const* const, pThis, ESI);
+
+	auto const pType = pThis->GetTechnoType();
+	auto const pExt = TechnoTypeExt::ExtMap.Find(pType);
+
+	return pExt->NoManualFire ? 0x700AB7 : 0;
+}
