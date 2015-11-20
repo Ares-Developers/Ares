@@ -661,12 +661,14 @@ void TechnoExt::ExtData::CreateInitialPayload()
 	this->PayloadCreated = true;
 
 	auto const pThis = this->OwnerObject();
-	auto const pBld = abstract_cast<BuildingClass*>(pThis);
 	auto const pType = pThis->GetTechnoType();
 	auto const pTypeExt = TechnoTypeExt::ExtMap.Find(pType);
 
-	auto freeSlots = pBld
-		? pBld->Type->MaxNumberOccupants - pBld->GetOccupantCount()
+	auto const pBld = abstract_cast<BuildingClass*>(pThis);
+	auto const pBldType = pBld ? pBld->Type : nullptr;
+
+	auto freeSlots = (pBld && pBldType->CanBeOccupied)
+		? pBldType->MaxNumberOccupants - pBld->GetOccupantCount()
 		: pType->Passengers - pThis->Passengers.NumPassengers;
 
 	auto const sizePayloadNum = pTypeExt->InitialPayload_Nums.size();
@@ -703,10 +705,33 @@ void TechnoExt::ExtData::CreateInitialPayload()
 			if(pBld) {
 				// buildings only allow infantry payload, so this in infantry
 				auto const pPayload = static_cast<InfantryClass*>(pObject);
-				pBld->Occupants.AddItem(pPayload);
 
-				auto const pCell = pThis->GetCell();
-				pThis->UpdateThreatInCell(pCell);
+				if(pBldType->CanBeOccupied) {
+					pBld->Occupants.AddItem(pPayload);
+
+					auto const pCell = pThis->GetCell();
+					pThis->UpdateThreatInCell(pCell);
+				} else {
+					pPayload->Remove();
+
+					if(pBldType->InfantryAbsorb) {
+						pPayload->Absorbed = true;
+
+						if(pPayload->CountedAsOwnedSpecial) {
+							--pPayload->Owner->OwnedInfantry;
+							pPayload->CountedAsOwnedSpecial = false;
+						}
+
+						if(pBldType->ExtraPowerBonus > 0) {
+							pBld->Owner->RecheckPower = true;
+						}
+					} else {
+						pPayload->SendCommand(RadioCommand::RequestLink, pBld);
+					}
+
+					pBld->Passengers.AddPassenger(pPayload);
+					pPayload->AbortMotion();
+				}
 
 			} else {
 				auto const pPayload = static_cast<FootClass*>(pObject);
