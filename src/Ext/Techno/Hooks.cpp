@@ -1947,3 +1947,20 @@ DEFINE_HOOK(6FA743, TechnoClass_Update_SelfHeal, A)
 
 	return 0x6FA793;
 }
+
+DEFINE_HOOK(7162B0, TechnoTypeClass_GetPipMax_MindControl, 6)
+{
+	GET(TechnoTypeClass const* const, pThis, ECX);
+
+	auto const GetMindDamage = [](WeaponTypeClass const* const pWeapon) {
+		return (pWeapon && pWeapon->Warhead->MindControl) ? pWeapon->Damage : 0;
+	};
+
+	auto count = GetMindDamage(pThis->Weapon[0].WeaponType);
+	if(count <= 0) {
+		count = GetMindDamage(pThis->Weapon[1].WeaponType);
+	}
+
+	R->EAX(count);
+	return 0x7162BC;
+}
