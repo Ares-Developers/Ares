@@ -257,6 +257,8 @@ public:
 		ValueableVector<TechnoTypeClass*> PassengersWhitelist;
 		ValueableVector<TechnoTypeClass*> PassengersBlacklist;
 
+		Valueable<bool> NoManualUnload;
+
 		ExtData(TechnoTypeClass* OwnerObject) : Extension<TechnoTypeClass>(OwnerObject),
 			Survivors_PilotChance(-1),
 			Survivors_PassengerChance(-1),

@@ -432,6 +432,8 @@ void TechnoTypeExt::ExtData::LoadFromINIFile(CCINIClass* pINI)
 	this->PassengersWhitelist.Read(exINI, section, "Passengers.Allowed");
 	this->PassengersBlacklist.Read(exINI, section, "Passengers.Disallowed");
 
+	this->NoManualUnload.Read(exINI, section, "NoManualUnload");
+
 	// quick fix - remove after the rest of weapon selector code is done
 	return;
 }
@@ -778,7 +780,8 @@ void TechnoTypeExt::ExtData::Serialize(T& Stm) {
 		.Process(this->SelfHealing_Amount)
 		.Process(this->SelfHealing_Max)
 		.Process(this->PassengersWhitelist)
-		.Process(this->PassengersBlacklist);
+		.Process(this->PassengersBlacklist)
+		.Process(this->NoManualUnload);
 }
 
 void TechnoTypeExt::ExtData::LoadFromStream(AresStreamReader &Stm) {

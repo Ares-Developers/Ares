@@ -2004,3 +2004,24 @@ DEFINE_HOOK(41949F, AircraftClass_ReceivedRadioCommand_SpecificPassengers, 6)
 
 	return allowed ? Allowed : Disallowed;
 }
+
+DEFINE_HOOK(740031, UnitClass_GetCursorOverObject_NoManualUnload, 6)
+{
+	GET(UnitClass const* const, pThis, ESI);
+
+	auto const pType = pThis->GetTechnoType();
+	auto const pExt = TechnoTypeExt::ExtMap.Find(pType);
+
+	return pExt->NoManualUnload ? 0x740115u : 0u;
+}
+
+DEFINE_HOOK(700EEC, TechnoClass_CanDeploySlashUnload_NoManualUnload, 6)
+{
+	// this techno is known to be a unit
+	GET(UnitClass const* const, pThis, ESI);
+
+	auto const pType = pThis->GetTechnoType();
+	auto const pExt = TechnoTypeExt::ExtMap.Find(pType);
+
+	return pExt->NoManualUnload ? 0x700DCEu : 0u;
+}
