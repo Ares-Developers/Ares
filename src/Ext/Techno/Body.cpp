@@ -710,8 +710,8 @@ void TechnoExt::ExtData::CreateInitialPayload()
 
 			} else {
 				auto const pPayload = static_cast<FootClass*>(pObject);
+				pPayload->SetLocation(pThis->Location);
 				pPayload->Remove();
-				pPayload->QueueMission(Mission::Area_Guard, true);
 
 				if(pType->OpenTopped) {
 					pThis->EnteredOpenTopped(pPayload);
@@ -722,10 +722,6 @@ void TechnoExt::ExtData::CreateInitialPayload()
 				auto const old = std::exchange(VocClass::VoicesEnabled, false);
 				pThis->AddPassenger(pPayload);
 				VocClass::VoicesEnabled = old;
-
-				// this is neccessary, otherwise InfantryClass::Update() kills
-				// the units because they are in no team and not on the map
-				pPayload->QueueMission(Mission::Area_Guard, true);
 			}
 		}
 	}
