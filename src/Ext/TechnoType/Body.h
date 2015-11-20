@@ -254,6 +254,9 @@ public:
 		Promotable<int> SelfHealing_Amount;
 		Promotable<double> SelfHealing_Max;
 
+		ValueableVector<TechnoTypeClass*> PassengersWhitelist;
+		ValueableVector<TechnoTypeClass*> PassengersBlacklist;
+
 		ExtData(TechnoTypeClass* OwnerObject) : Extension<TechnoTypeClass>(OwnerObject),
 			Survivors_PilotChance(-1),
 			Survivors_PassengerChance(-1),

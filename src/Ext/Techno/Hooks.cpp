@@ -1964,3 +1964,43 @@ DEFINE_HOOK(7162B0, TechnoTypeClass_GetPipMax_MindControl, 6)
 	R->EAX(count);
 	return 0x7162BC;
 }
+
+DEFINE_HOOK(73769E, UnitClass_ReceivedRadioCommand_SpecificPassengers, 8)
+{
+	GET(UnitClass* const, pThis, ESI);
+	GET(TechnoClass const* const, pSender, EDI);
+
+	auto const pType = pThis->GetTechnoType();
+	auto const pExt = TechnoTypeExt::ExtMap.Find(pType);
+
+	auto const pSenderType = pSender->GetTechnoType();
+
+	auto const allowed = (pExt->PassengersWhitelist.empty() ||
+			pExt->PassengersWhitelist.Contains(pSenderType))
+		&& !pExt->PassengersBlacklist.Contains(pSenderType);
+
+	return allowed ? 0u : 0x73780Fu;
+}
+
+DEFINE_HOOK(41949F, AircraftClass_ReceivedRadioCommand_SpecificPassengers, 6)
+{
+	GET(AircraftClass* const, pThis, ESI);
+	GET_STACK(TechnoClass const* const, pSender, 0x14);
+
+	enum { Allowed = 0x41945Fu, Disallowed = 0x41951Fu };
+
+	auto const pType = pThis->GetTechnoType();
+
+	if(pThis->Passengers.NumPassengers >= pType->Passengers) {
+		return Disallowed;
+	}
+
+	auto const pSenderType = pSender->GetTechnoType();
+	auto const pExt = TechnoTypeExt::ExtMap.Find(pType);
+
+	auto const allowed = (pExt->PassengersWhitelist.empty() ||
+			pExt->PassengersWhitelist.Contains(pSenderType))
+		&& !pExt->PassengersBlacklist.Contains(pSenderType);
+
+	return allowed ? Allowed : Disallowed;
+}
