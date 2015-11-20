@@ -22,6 +22,8 @@
 #include <SpawnManagerClass.h>
 #include <TiberiumClass.h>
 
+#include <utility>
+
 template<> const DWORD Extension<TechnoClass>::Canary = 0x55555555;
 TechnoExt::ExtContainer TechnoExt::ExtMap;
 
@@ -716,7 +718,10 @@ void TechnoExt::ExtData::CreateInitialPayload()
 				}
 
 				pPayload->Transporter = pThis;
+
+				auto const old = std::exchange(VocClass::VoicesEnabled, false);
 				pThis->AddPassenger(pPayload);
+				VocClass::VoicesEnabled = old;
 
 				// this is neccessary, otherwise InfantryClass::Update() kills
 				// the units because they are in no team and not on the map
