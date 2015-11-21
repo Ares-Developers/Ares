@@ -1355,3 +1355,11 @@ DEFINE_HOOK(4C6DDB, Networking_RespondToEvent_Selling, 8)
 
 	return 0x4C6DE3;
 }
+
+// #1415844: units in open-topped transports show behind anim
+DEFINE_HOOK(6FA2C7, TechnoClass_Update_DrawHidden, 8)
+{
+	GET(TechnoClass* const, pThis, ESI);
+	auto const disallowed = pThis->InOpenToppedTransport;
+	return !disallowed ? 0u : 0x6FA30Cu;
+}
