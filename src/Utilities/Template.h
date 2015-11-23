@@ -17,15 +17,21 @@ class INI_EX;
 template<typename T>
 class Valueable {
 protected:
-	T    Value{};
+	T Value{};
 public:
 	using value_type = T;
 	using base_type = std::remove_pointer_t<T>;
 
 	Valueable() = default;
-	explicit Valueable(T Default) noexcept(noexcept(T{std::move(Default)})) : Value(std::move(Default)) {};
+	explicit Valueable(T value) noexcept(noexcept(T{std::move(value)})) : Value(std::move(value)) {}
 
 	virtual ~Valueable() = default;
+
+	template <typename Val, typename = std::enable_if_t<std::is_assignable<T&, Val&&>::value>>
+	Valueable& operator = (Val&& value) {
+		this->Set(std::forward<Val>(value));
+		return *this;
+	}
 
 	operator const T& () const noexcept {
 		return this->Get();
@@ -37,12 +43,6 @@ public:
 	//	return this->GetEx();
 	//}
 
-	template <typename S, typename = std::enable_if_t<std::is_assignable<T&, S&&>::value>>
-	Valueable& operator = (S&& value) {
-		this->Set(value);
-		return *this;
-	}
-
 	T operator -> () const {
 		return this->Get();
 	}
@@ -53,7 +53,7 @@ public:
 
 	bool operator ! () const {
 		return this->Get() == 0;
-	};
+	}
 
 	const T& Get() const noexcept {
 		return this->Value;
@@ -106,8 +106,8 @@ inline bool operator != (const T& other, const Valueable<T>& val) {
 template<typename Lookuper>
 class ValueableIdx : public Valueable<int> {
 public:
-	ValueableIdx() noexcept : Valueable<int>(-1) {};
-	ValueableIdx(int Default) noexcept : Valueable<int>(Default) {};
+	ValueableIdx() noexcept : Valueable<int>(-1) {}
+	ValueableIdx(int value) noexcept : Valueable<int>(value) {}
 
 	inline void Read(INI_EX &parser, const char* pSection, const char* pKey);
 };
@@ -118,7 +118,7 @@ protected:
 	bool HasValue{ false };
 public:
 	Nullable() = default;
-	Nullable(T Val) noexcept(noexcept(Valueable<T>{std::move(Val)})) : Valueable<T>(std::move(Val)), HasValue(true) {};
+	Nullable(T value) noexcept(noexcept(Valueable<T>{std::move(value)})) : Valueable<T>(std::move(value)), HasValue(true) {}
 
 	bool isset() const noexcept {
 		return this->HasValue;
@@ -126,32 +126,32 @@ public:
 
 	using Valueable<T>::Get;
 
-	T Get(const T& defVal) const {
-		return this->isset() ? Valueable<T>::Get() : defVal;
+	T Get(const T& default) const {
+		return this->isset() ? this->Get() : default;
 	}
 
 	using Valueable<T>::GetEx;
 
-	T* GetEx(T* defVal) noexcept {
-		return this->isset() ? Valueable<T>::GetEx() : defVal;
+	T* GetEx(T* default) & noexcept {
+		return this->isset() ? this->GetEx() : default;
 	}
 
-	const T* GetEx(const T* defVal) const noexcept {
-		return this->isset() ? Valueable<T>::GetEx() : defVal;
+	const T* GetEx(const T* default) const noexcept {
+		return this->isset() ? this->GetEx() : default;
 	}
 
 	virtual void Set(const T& val) override final {
-		Valueable<T>::Set(val);
+		this->Value = val;
 		this->HasValue = true;
 	}
 
 	virtual void SetEx(T* val) override final {
-		Valueable<T>::SetEx(val);
+		this->Value = *val;
 		this->HasValue = true;
 	}
 
 	void Reset() {
-		Valueable<T>::Set(T());
+		this->Value = T();
 		this->HasValue = false;
 	}
 
@@ -163,11 +163,8 @@ public:
 template<typename Lookuper>
 class NullableIdx : public Nullable<int> {
 public:
-	NullableIdx() noexcept : Nullable<int>(-1) {
-		this->HasValue = false;
-	}
-
-	NullableIdx(int Val) noexcept : Nullable<int>(Val) {};
+	NullableIdx() noexcept : Nullable<int>(-1) { this->HasValue = false; }
+	NullableIdx(int value) noexcept : Nullable<int>(value) {}
 
 	inline void Read(INI_EX &parser, const char* pSection, const char* pKey);
 };
@@ -186,12 +183,12 @@ public:
 template<typename T>
 class Promotable {
 public:
-	T Rookie{ T() };
-	T Veteran{ T() };
-	T Elite{ T() };
+	T Rookie{};
+	T Veteran{};
+	T Elite{};
 
 	Promotable() = default;
-	explicit Promotable(T const& all) noexcept(noexcept(T{all})) : Rookie(all), Veteran(all), Elite(all) {};
+	explicit Promotable(T const& all) noexcept(noexcept(T{all})) : Rookie(all), Veteran(all), Elite(all) {}
 
 	void SetAll(const T& val) {
 		this->Elite = this->Veteran = this->Rookie = val;
@@ -279,12 +276,12 @@ public:
 
 	using ValueableVector<T>::GetElements;
 
-	Iterator<T> GetElements(Iterator<T> defElements) const noexcept {
+	Iterator<T> GetElements(Iterator<T> default) const noexcept {
 		if(!this->hasValue) {
-			return defElements;
+			return default;
 		}
 
-		return ValueableVector<T>::GetElements();
+		return this->GetElements();
 	}
 
 	inline virtual bool Load(AresStreamReader &Stm, bool RegisterForChange);
