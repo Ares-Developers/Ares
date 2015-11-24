@@ -442,7 +442,7 @@ bool Nullable<T>::Load(AresStreamReader &Stm, bool RegisterForChange) {
 	this->Reset();
 	auto ret = Savegame::ReadAresStream(Stm, this->HasValue);
 	if(ret && this->HasValue) {
-		ret = Valueable<T>::Load(Stm, RegisterForChange);
+		ret = Savegame::ReadAresStream(Stm, this->Value, RegisterForChange);
 	}
 	return ret;
 }
@@ -451,7 +451,7 @@ template <typename T>
 bool Nullable<T>::Save(AresStreamWriter &Stm) const {
 	auto ret = Savegame::WriteAresStream(Stm, this->HasValue);
 	if(this->HasValue) {
-		ret = Valueable<T>::Save(Stm);
+		ret = Savegame::WriteAresStream(Stm, this->Value);
 	}
 	return ret;
 }
