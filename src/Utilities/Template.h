@@ -33,8 +33,8 @@ public:
 	Valueable& operator = (Valueable&& value) = default;
 
 	template <typename Val, typename = std::enable_if_t<std::is_assignable<T&, Val&&>::value>>
-	Valueable& operator = (Val&& value) {
-		this->Set(std::forward<Val>(value));
+	Valueable& operator = (Val value) {
+		this->Value = std::move(value);
 		return *this;
 	}
 
@@ -112,12 +112,18 @@ template<typename Lookuper>
 class ValueableIdx : public Valueable<int> {
 public:
 	ValueableIdx() noexcept : Valueable<int>(-1) {}
-	ValueableIdx(int value) noexcept : Valueable<int>(value) {}
+	explicit ValueableIdx(int value) noexcept : Valueable<int>(value) {}
 	ValueableIdx(ValueableIdx const& other) = default;
 	ValueableIdx(ValueableIdx&& other) = default;
 
 	ValueableIdx& operator = (ValueableIdx const& value) = default;
 	ValueableIdx& operator = (ValueableIdx&& value) = default;
+
+	template <typename Val, typename = std::enable_if_t<std::is_assignable<int&, Val&&>::value>>
+	ValueableIdx& operator = (Val value) {
+		this->Value = std::move(value);
+		return *this;
+	}
 
 	inline void Read(INI_EX &parser, const char* pSection, const char* pKey);
 };
@@ -128,12 +134,19 @@ protected:
 	bool HasValue{ false };
 public:
 	Nullable() = default;
-	Nullable(T value) noexcept(noexcept(Valueable<T>{std::move(value)})) : Valueable<T>(std::move(value)), HasValue(true) {}
+	explicit Nullable(T value) noexcept(noexcept(Valueable<T>{std::move(value)})) : Valueable<T>(std::move(value)), HasValue(true) {}
 	Nullable(Nullable const& other) = default;
 	Nullable(Nullable&& other) = default;
 
 	Nullable& operator = (Nullable const& value) = default;
 	Nullable& operator = (Nullable&& value) = default;
+
+	template <typename Val, typename = std::enable_if_t<std::is_assignable<T&, Val&&>::value>>
+	Nullable& operator = (Val value) {
+		this->Value = std::move(value);
+		this->HasValue = true;
+		return *this;
+	}
 
 	bool isset() const noexcept {
 		return this->HasValue;
@@ -179,12 +192,19 @@ template<typename Lookuper>
 class NullableIdx : public Nullable<int> {
 public:
 	NullableIdx() noexcept : Nullable<int>(-1) { this->HasValue = false; }
-	NullableIdx(int value) noexcept : Nullable<int>(value) {}
+	explicit NullableIdx(int value) noexcept : Nullable<int>(value) {}
 	NullableIdx(NullableIdx const& other) = default;
 	NullableIdx(NullableIdx&& other) = default;
 
 	NullableIdx& operator = (NullableIdx const& value) = default;
 	NullableIdx& operator = (NullableIdx&& value) = default;
+
+	template <typename Val, typename = std::enable_if_t<std::is_assignable<int&, Val&&>::value>>
+	NullableIdx& operator = (Val value) {
+		this->Value = std::move(value);
+		this->HasValue = true;
+		return *this;
+	}
 
 	inline void Read(INI_EX &parser, const char* pSection, const char* pKey);
 };
