@@ -6,6 +6,7 @@
 
 #include "../../Utilities/Helpers.Alex.h"
 #include "../../Utilities/INIParser.h"
+#include "../../Utilities/TemplateDef.h"
 
 #include <BulletClass.h>
 #include <BulletTypeClass.h>

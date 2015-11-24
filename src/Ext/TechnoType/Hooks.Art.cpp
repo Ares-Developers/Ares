@@ -2,12 +2,14 @@
 #include "../../Misc/Debug.h"
 #include "../../Utilities/Helpers.Alex.h"
 #include "../../Utilities/INIParser.h"
+#include "../../Utilities/TemplateDef.h"
 
 #include "../../Ares.CRT.h"
 
 #include <GeneralDefinitions.h>
 #include <Theater.h>
 #include <TerrainTypeClass.h>
+#include <HouseTypeClass.h>
 #include <OverlayTypeClass.h>
 #include <AnimTypeClass.h>
 #include <SmudgeTypeClass.h>

@@ -4,6 +4,7 @@
 #include "../../Ext/Rules/Body.h"
 
 #include "../../Utilities/INIParser.h"
+#include "../../Utilities/TemplateDef.h"
 
 #include <BuildingTypeClass.h>
 #include <HouseClass.h>
