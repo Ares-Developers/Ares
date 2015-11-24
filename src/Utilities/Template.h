@@ -241,11 +241,11 @@ public:
 	}
 
 	const T& Get(TechnoClass* pTechno) const noexcept {
-		VeterancyStruct *XP = &pTechno->Veterancy;
-		if(XP->IsElite()) {
+		auto const rank = pTechno->Veterancy.GetRemainingLevel();
+		if(rank == Rank::Elite) {
 			return this->Elite;
 		}
-		if(XP->IsVeteran()) {
+		if(rank == Rank::Veteran) {
 			return this->Veteran;
 		}
 		return this->Rookie;

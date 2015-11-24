@@ -473,36 +473,29 @@ void NullableIdx<Lookuper>::Read(INI_EX &parser, const char* pSection, const cha
 
 template <typename T>
 void Promotable<T>::Read(INI_EX &parser, const char* const pSection, const char* const pBaseFlag, const char* const pSingleFlag) {
-	Nullable<T> Placeholder; 
-	char FlagName[0x40];
 
 	// read the common flag, with the trailing dot being stripped
+	char flagName[0x40];
 	auto const pSingleFormat = pSingleFlag ? pSingleFlag : pBaseFlag;
-	auto res = _snprintf_s(FlagName, _TRUNCATE, pSingleFormat, "");
-	if(res > 0 && FlagName[res - 1] == '.') {
-		FlagName[res - 1] = '\0';
+	auto res = _snprintf_s(flagName, _TRUNCATE, pSingleFormat, "");
+	if(res > 0 && flagName[res - 1] == '.') {
+		flagName[res - 1] = '\0';
 	}
 
-	Placeholder.Read(parser, pSection, FlagName);
-	if(Placeholder.isset()) {
-		this->SetAll(Placeholder);
+	T placeholder;
+	if(detail::read(placeholder, parser, pSection, flagName)) {
+		this->SetAll(placeholder);
 	}
 
 	// read specific flags
-	Placeholder.Set(this->Rookie);
-	_snprintf_s(FlagName, _TRUNCATE, pBaseFlag, "Rookie");
-	Placeholder.Read(parser, pSection, FlagName);
-	this->Rookie = Placeholder;
+	_snprintf_s(flagName, _TRUNCATE, pBaseFlag, "Rookie");
+	detail::read(this->Rookie, parser, pSection, flagName);
 
-	Placeholder.Set(this->Veteran);
-	_snprintf_s(FlagName, _TRUNCATE, pBaseFlag, "Veteran");
-	Placeholder.Read(parser, pSection, FlagName);
-	this->Veteran = Placeholder;
+	_snprintf_s(flagName, _TRUNCATE, pBaseFlag, "Veteran");
+	detail::read(this->Veteran, parser, pSection, flagName);
 
-	Placeholder.Set(this->Elite);
-	_snprintf_s(FlagName, _TRUNCATE, pBaseFlag, "Elite");
-	Placeholder.Read(parser, pSection, FlagName);
-	this->Elite = Placeholder;
+	_snprintf_s(flagName, _TRUNCATE, pBaseFlag, "Elite");
+	detail::read(this->Elite, parser, pSection, flagName);
 };
 
 template <typename T>
