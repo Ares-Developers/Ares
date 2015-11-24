@@ -397,7 +397,7 @@ namespace detail {
 // Valueable
 
 template <typename T>
-void Valueable<T>::Read(INI_EX &parser, const char* pSection, const char* pKey, bool Allocate) {
+void __declspec(noinline) Valueable<T>::Read(INI_EX &parser, const char* pSection, const char* pKey, bool Allocate) {
 	detail::read(this->Value, parser, pSection, pKey, Allocate);
 }
 
@@ -415,7 +415,7 @@ bool Valueable<T>::Save(AresStreamWriter &Stm) const {
 // ValueableIdx
 
 template <typename Lookuper>
-void ValueableIdx<Lookuper>::Read(INI_EX &parser, const char* pSection, const char* pKey) {
+void __declspec(noinline) ValueableIdx<Lookuper>::Read(INI_EX &parser, const char* pSection, const char* pKey) {
 	if(parser.ReadString(pSection, pKey)) {
 		const char * val = parser.value();
 		int idx = Lookuper::FindIndex(val);
@@ -431,7 +431,7 @@ void ValueableIdx<Lookuper>::Read(INI_EX &parser, const char* pSection, const ch
 // Nullable
 
 template <typename T>
-void Nullable<T>::Read(INI_EX &parser, const char* pSection, const char* pKey, bool Allocate) {
+void __declspec(noinline) Nullable<T>::Read(INI_EX &parser, const char* pSection, const char* pKey, bool Allocate) {
 	if(detail::read(this->Value, parser, pSection, pKey, Allocate)) {
 		this->HasValue = true;
 	}
@@ -460,7 +460,7 @@ bool Nullable<T>::Save(AresStreamWriter &Stm) const {
 // NullableIdx
 
 template <typename Lookuper>
-void NullableIdx<Lookuper>::Read(INI_EX &parser, const char* pSection, const char* pKey) {
+void __declspec(noinline) NullableIdx<Lookuper>::Read(INI_EX &parser, const char* pSection, const char* pKey) {
 	if(parser.ReadString(pSection, pKey)) {
 		const char * val = parser.value();
 		int idx = Lookuper::FindIndex(val);
@@ -477,7 +477,7 @@ void NullableIdx<Lookuper>::Read(INI_EX &parser, const char* pSection, const cha
 // Promotable
 
 template <typename T>
-void Promotable<T>::Read(INI_EX &parser, const char* const pSection, const char* const pBaseFlag, const char* const pSingleFlag) {
+void __declspec(noinline) Promotable<T>::Read(INI_EX &parser, const char* const pSection, const char* const pBaseFlag, const char* const pSingleFlag) {
 
 	// read the common flag, with the trailing dot being stripped
 	char flagName[0x40];
@@ -521,7 +521,7 @@ bool Promotable<T>::Save(AresStreamWriter &Stm) const {
 // ValueableVector
 
 template <typename T>
-void ValueableVector<T>::Read(INI_EX &parser, const char* pSection, const char* pKey) {
+void __declspec(noinline) ValueableVector<T>::Read(INI_EX &parser, const char* pSection, const char* pKey) {
 	if(parser.ReadString(pSection, pKey)) {
 		this->clear();
 		this->defined = true;
@@ -599,7 +599,7 @@ void ValueableVector<TechnoTypeClass *>::Parse(INI_EX &parser, const char* pSect
 // NullableVector
 
 template <typename T>
-void NullableVector<T>::Read(INI_EX &parser, const char* pSection, const char* pKey) {
+void __declspec(noinline) NullableVector<T>::Read(INI_EX &parser, const char* pSection, const char* pKey) {
 	if(parser.ReadString(pSection, pKey)) {
 		this->clear();
 		this->defined = true;
