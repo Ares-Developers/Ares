@@ -24,8 +24,13 @@ public:
 
 	Valueable() = default;
 	explicit Valueable(T value) noexcept(noexcept(T{std::move(value)})) : Value(std::move(value)) {}
+	Valueable(Valueable const& other) = default;
+	Valueable(Valueable&& other) = default;
 
 	virtual ~Valueable() = default;
+
+	Valueable& operator = (Valueable const& value) = default;
+	Valueable& operator = (Valueable&& value) = default;
 
 	template <typename Val, typename = std::enable_if_t<std::is_assignable<T&, Val&&>::value>>
 	Valueable& operator = (Val&& value) {
@@ -108,6 +113,11 @@ class ValueableIdx : public Valueable<int> {
 public:
 	ValueableIdx() noexcept : Valueable<int>(-1) {}
 	ValueableIdx(int value) noexcept : Valueable<int>(value) {}
+	ValueableIdx(ValueableIdx const& other) = default;
+	ValueableIdx(ValueableIdx&& other) = default;
+
+	ValueableIdx& operator = (ValueableIdx const& value) = default;
+	ValueableIdx& operator = (ValueableIdx&& value) = default;
 
 	inline void Read(INI_EX &parser, const char* pSection, const char* pKey);
 };
@@ -119,6 +129,11 @@ protected:
 public:
 	Nullable() = default;
 	Nullable(T value) noexcept(noexcept(Valueable<T>{std::move(value)})) : Valueable<T>(std::move(value)), HasValue(true) {}
+	Nullable(Nullable const& other) = default;
+	Nullable(Nullable&& other) = default;
+
+	Nullable& operator = (Nullable const& value) = default;
+	Nullable& operator = (Nullable&& value) = default;
 
 	bool isset() const noexcept {
 		return this->HasValue;
@@ -165,6 +180,11 @@ class NullableIdx : public Nullable<int> {
 public:
 	NullableIdx() noexcept : Nullable<int>(-1) { this->HasValue = false; }
 	NullableIdx(int value) noexcept : Nullable<int>(value) {}
+	NullableIdx(NullableIdx const& other) = default;
+	NullableIdx(NullableIdx&& other) = default;
+
+	NullableIdx& operator = (NullableIdx const& value) = default;
+	NullableIdx& operator = (NullableIdx&& value) = default;
 
 	inline void Read(INI_EX &parser, const char* pSection, const char* pKey);
 };
